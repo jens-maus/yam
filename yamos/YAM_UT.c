@@ -3887,7 +3887,12 @@ char *SWSSearch(char *str1, char *str2)
 
   // by calling this function with (NULL, NULL) someone wants
   // to signal us to free the destination string
-  if(str1 == NULL && str2 == NULL && Z != NULL) free(Z);
+  if(str1 == NULL || str2 == NULL)
+  {
+    if(Z) free(Z);
+    Z = NULL;
+    return NULL;
+  }
 
   // calculate the length of our buffers we need
   lx = strlen(str1)+1;
