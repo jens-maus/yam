@@ -1206,6 +1206,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    {
       ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents), NULL);
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
       return;
    }
    else if(!addr[0])
@@ -1215,6 +1216,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
       // set the TO Field active and go back
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
 
       if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), err)) mode = WRITE_HOLD;
       else return;
