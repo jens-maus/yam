@@ -404,13 +404,13 @@ BOOL Root_GlobalDispatcher(ULONG app_input)
 BOOL Root_New(BOOL hidden)
 {
 #define MUIA_Application_UsedClasses 0x8042e9a7
-   static char *classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListviews.mcc", NULL };
+   static char *classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListview.mcc", NULL };
    G->App = ApplicationObject,
-      MUIA_Application_Author     ,"Marcel Beck",
+      MUIA_Application_Author     ,"YAM Open Source Team",
       MUIA_Application_Base       ,"YAM",
       MUIA_Application_Title      ,"YAM",
       MUIA_Application_Version    ,"$VER: YAM " __YAM_VERSION " (" __YAM_VERDATE ")",
-      MUIA_Application_Copyright  ,"© 1995-2000 by Marcel Beck",
+      MUIA_Application_Copyright  ,"© 2000-2001 by YAM Open Source Team",
       MUIA_Application_Description,GetStr(MSG_AppDescription),
       MUIA_Application_UseRexx    ,FALSE,
       MUIA_Application_SingleTask ,!getenv("MultipleYAM"),
@@ -433,7 +433,7 @@ BOOL Root_New(BOOL hidden)
 void Terminate(void)
 {
    int i;
-// struct Folder **flist;
+ 	 struct Folder **flist;
 
    if (G->CO) { CO_FreeConfig(CE); free(CE); DisposeModule(&G->CO); }
    for (i = 0; i < MAXEA; i++) DisposeModule(&G->EA[i]);
@@ -451,13 +451,17 @@ void Terminate(void)
       G->Weights[1] = GetMUI(G->MA->GUI.LV_MAILS, MUIA_HorizWeight);
       SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
-/*
+
+      // lets free every folder resource
       if ((flist = FO_CreateList()))
       {
-         for (i = 1; i <= (int)*flist; i++) ClearMailList(flist[i], TRUE);
+         for (i = 1; i <= (int)*flist; i++)
+         {
+           FO_FreeFolder(flist[i]);
+         }
+
          free(flist);
       }
-*/
    }
    DisposeModule(&G->AB);
    DisposeModule(&G->MA);
@@ -607,7 +611,7 @@ void Initialise2(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 50);
    if (!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
    {
-      for (i = 0; i < 100; i++) if (oldfolders[i]) DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_InsertSingle, oldfolders[i], MUIV_NList_Insert_Bottom);
+      for (i = 0; i < 100; i++) if (oldfolders[i]) DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root, TAG_DONE);
       newfolders = TRUE;
    }
    if (oldfolders) { for (i = 0; oldfolders[i]; i++) free(oldfolders[i]); free(oldfolders); }
@@ -621,14 +625,16 @@ void Initialise2(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 75);
    for (i = 0; ; i++)
    {
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_GetEntry, i, &folder);
+    	struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIV_NListtree_GetEntry_Flag_Visible, TAG_DONE);
+      if (!tn) break;
+      folder = tn->tn_User;
       if (!folder) break;
       if ((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING || folder->Type == FT_DELETED || C->LoadAllFolders) && !(folder->XPKType&1)) MA_GetIndex(folder);
-      else if (folder->Type != FT_SEPARATOR) folder->LoadedMode = MA_LoadIndex(folder, FALSE);
+      else if (folder->Type != FT_GROUP) folder->LoadedMode = MA_LoadIndex(folder, FALSE);
       DoMethod(G->App, MUIM_Application_InputBuffered);
    }
    G->NewMsgs = -1;
-   MA_ChangeFolder(FO_GetFolderByType(FT_INCOMING,NULL));
+   MA_ChangeFolder(FO_GetFolderByType(FT_INCOMING, NULL));
    AY_PrintStatus(GetStr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
    if (!(G->RexxHost = SetupARexxHost("YAM", NULL))) Abort(GetStr(MSG_ErrorARexx));

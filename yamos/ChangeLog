@@ -281,3 +281,18 @@
       actual TimeZone is only needed once YAM is started. This changes should also
       improved the MailListview a little bit because The DisplayHook was calling
       such GetLocale calls everytime.
+
+2001-05-14  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * Added hierarchical folder support. Now it is possible to sort the mail folders
+      via a listtree and to have folder groups.
+      This feature will obsolete the folder SEPARATORs. The .folders config file format
+      should stay compatible.
+
+    * It is now possible to display a 16x16 image in front of every folder. The
+      image file have to have the name ".fimage" and have to be located in
+      the desired folder.
+      NOTE: This feature is not finished 100% and has some bug I couldn`t resolve
+      yet. -> Help wanted
+
+		* some global optimizations on the folder listtree & mail listview.

@@ -91,6 +91,7 @@ void SAVEDS MA_ChangeSelectedFunc(void)
    if (!fo) return;
    type = fo->Type;
    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+   fo->LastActive = GetMUI(gui->NL_MAILS, MUIA_NList_Active);
    if ((active = (mail != NULL))) if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
    for (i = 0; i < MAXWR; i++) if (mail && G->WR[i]) if (G->WR[i]->Mail == mail) beingedited = TRUE;
    if (!mail) if (!GetMUI(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
@@ -133,7 +134,7 @@ void SAVEDS MA_SetFolderInfoFunc(void)
    static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
    char *sh = NULL;
    struct Folder *fo = FO_GetCurrentFolder();      
-   if (fo->Type != FT_SEPARATOR) SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
+   if (fo->Type != FT_GROUP) SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
 }
 MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
@@ -1850,13 +1851,30 @@ MakeHook(PO_WindowHook, PO_Window);
 ///
 /// MA_LV_FConFunc
 //  Folder listview construction hook
-struct Folder * SAVEDS ASM MA_LV_FConFunc(REG(a1,struct Folder *fo))
+struct Folder * SAVEDS ASM MA_LV_FConFunc(REG(a1, struct MUIP_NListtree_ConstructMessage *msg))
 {
-   struct Folder *entry = malloc(sizeof(struct Folder));
-   memcpy(entry, fo, sizeof(struct Folder));
-   return entry;
+   struct Folder *entry;
+
+   if(!msg) return(NULL);
+
+   entry = malloc(sizeof(struct Folder));
+   memcpy(entry, msg->UserData, sizeof(struct Folder));
+
+   return(entry);
 }
 MakeHook(MA_LV_FConHook, MA_LV_FConFunc);
+
+///
+///
+/// MA_LV_FDesFunc
+//  Folder listview destruction hook
+LONG SAVEDS ASM MA_LV_FDesFunc(REG(a1, struct MUIP_NListtree_DestructMessage *msg))
+{
+   if(!msg) return(-1);
+   FO_FreeFolder(msg->UserData);
+   return(0);
+}
+MakeHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 
 ///
 /// MA_LV_DspFunc
@@ -1867,7 +1885,9 @@ long SAVEDS ASM MA_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), R
    struct Folder *folder = NULL;
    int type = 0;
 
-  if (G->MA) if ((folder = FO_GetCurrentFolder())) type = folder->Type;
+   if (G->MA && (folder = FO_GetCurrentFolder())) type = folder->Type;
+   else return 0;
+
    outbox = OUTGOING(type);
    if (entry)
    {
@@ -2002,7 +2022,7 @@ MakeHook(MA_LV_FCmp2Hook, MA_LV_FCmp2Func);
 
 /*** GUI ***/
 enum { MMEN_ABOUT=1,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HIDE,MMEN_QUIT,
-       MMEN_NEWF,MMEN_NEWS,MMEN_EDITF,MMEN_DELETEF,MMEN_OSAVE,MMEN_ORESET,MMEN_SELALL,MMEN_SELNONE,MMEN_SELTOGG,MMEN_SEARCH,MMEN_FILTER,MMEN_DELDEL,MMEN_INDEX,MMEN_FLUSH,MMEN_IMPORT,MMEN_EXPORT,MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,
+       MMEN_NEWF,MMEN_NEWFG,MMEN_EDITF,MMEN_DELETEF,MMEN_OSAVE,MMEN_ORESET,MMEN_SELALL,MMEN_SELNONE,MMEN_SELTOGG,MMEN_SEARCH,MMEN_FILTER,MMEN_DELDEL,MMEN_INDEX,MMEN_FLUSH,MMEN_IMPORT,MMEN_EXPORT,MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,
        MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_CROP,MMEN_EXPMSG,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD,MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_CHSUBJ,MMEN_SEND,
        MMEN_ABOOK,MMEN_CONFIG,MMEN_USER,MMEN_MUI,MMEN_SCRIPT };
 #define MMEN_MACRO   100
@@ -2089,7 +2109,7 @@ struct MA_ClassData *MA_New(void)
          End,
          MUIA_Family_Child, data->GUI.MN_FOLDER = MenuObject, MUIA_Menu_Title, GetStr(MSG_Folder),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_FOLDER_NEWFOLDER), MMEN_NEWF),
-            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_FOLDER_NEWSEPARATOR), MMEN_NEWS),
+            MUIA_Family_Child, MakeMenuitem(GetStr(MSG_FOLDER_NEWFOLDERGROUP), MMEN_NEWFG),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_FOLDER_EDIT), MMEN_EDITF),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_FOLDER_DELETE), MMEN_DELETEF),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_SortOrder),
@@ -2206,20 +2226,22 @@ struct MA_ClassData *MA_New(void)
                   MUIA_HelpNode, "MA00",
                   MUIA_CycleChain, 1,
                   MUIA_HorizWeight, 30,
+	                MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
                   MUIA_NListview_NList, data->GUI.NL_FOLDERS = NewObject(CL_FolderList->mcc_Class,NULL,
                      InputListFrame,
                      MUIA_NList_MinColSortable      , 0,
                      MUIA_NList_TitleClick          , TRUE,
                      MUIA_NList_DragType            , MUIV_NList_DragType_Immediate,
                      MUIA_NList_DragSortable        , TRUE,
-                     MUIA_NList_CompareHook2        , &MA_LV_FCmp2Hook,
-                     MUIA_NList_DisplayHook         , &MA_LV_FDspFuncHook,
-                     MUIA_NList_ConstructHook       , &MA_LV_FConHook,
-                     MUIA_NList_DestructHook        , &GeneralDesHook,
-                     MUIA_NList_TitleSeparator      , TRUE,
-                     MUIA_NList_AutoVisible         , TRUE,
-                     MUIA_NList_Title               , TRUE,
-                     MUIA_NList_DoubleClick         , TRUE,
+
+//                     MUIA_NList_CompareHook2        , &MA_LV_FCmp2Hook,
+                     MUIA_NListtree_DisplayHook     , &MA_LV_FDspFuncHook,
+                     MUIA_NListtree_ConstructHook   , &MA_LV_FConHook,
+                     MUIA_NListtree_DestructHook    , &MA_LV_FDesHook,
+//                     MUIA_NList_TitleSeparator      , TRUE,
+                     MUIA_NListtree_AutoVisible     , MUIV_NListtree_AutoVisible_Normal,
+                     MUIA_NListtree_Title           , TRUE,
+                     MUIA_NListtree_DoubleClick     , MUIV_NListtree_DoubleClick_All,
                      MUIA_NList_DefaultObjectOnClick, FALSE,
                      MUIA_Font                      , C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
                      MUIA_Dropable                  , TRUE,
@@ -2266,7 +2288,7 @@ struct MA_ClassData *MA_New(void)
          MA_MakeFOFormat(data->GUI.NL_FOLDERS);
          MA_MakeMAFormat(data->GUI.NL_MAILS);
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         for (i = 0; i < 17; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, 0);
+         for (i = 0; i < MAXIMAGES; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, 0);
          DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], 0, 0);
          set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.LV_MAILS);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUT     ,G->AY_Win,3,MUIM_Set                ,MUIA_Window_Open,TRUE);
@@ -2276,7 +2298,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_HIDE      ,MUIV_Notify_Application  ,3,MUIM_Set                 ,MUIA_Application_Iconified,TRUE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_QUIT      ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,MUIV_Application_ReturnID_Quit);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_NEWF      ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FO_NewFolderHook);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_NEWS      ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FO_NewSeparatorHook);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_NEWFG     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FO_NewFolderGroupHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_EDITF     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FO_EditFolderHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_DELETEF   ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FO_DeleteFolderHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_OSAVE     ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&FO_SetOrderHook,SO_SAVE);
@@ -2351,8 +2373,8 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FO_EditFolderHook);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_TitleClick    ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_NList_Sort2         ,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_SortType      ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_Set                 ,MUIA_NList_TitleMark,MUIV_TriggerValue);
-         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeFolderHook);
-         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetFolderInfoHook);
+         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeFolderHook);
+         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetFolderInfoHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,ID_CLOSEALL);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat del" ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_DelKeyHook,FALSE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift del" ,MUIV_Notify_Application  ,4,MUIM_CallHook      ,&MA_DelKeyHook,TRUE);
@@ -2360,7 +2382,7 @@ struct MA_ClassData *MA_New(void)
          for (i = 0; i < 10; i++)
          {
             key[8] = '0'+i;
-            DoMethod(data->GUI.WI, MUIM_Notify,MUIA_Window_InputEvent, key, data->GUI.NL_FOLDERS, 3, MUIM_Set, MUIA_NList_Active, i);
+            DoMethod(data->GUI.WI, MUIM_Notify,MUIA_Window_InputEvent, key, data->GUI.NL_FOLDERS, 3, MUIM_Set, MUIA_NListtree_Active, i);
          }
          return data;
       }

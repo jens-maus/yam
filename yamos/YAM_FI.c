@@ -470,7 +470,7 @@ void SAVEDS FI_Open(void)
       if (!(G->FI = FI_New())) return;
       folder = FO_GetCurrentFolder();
       flist = FO_CreateList();
-      for (j = 0, i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_SEPARATOR)
+      for (j = 0, i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_GROUP)
       {
          DoMethod(G->FI->GUI.LV_FOLDERS, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
          if (flist[i] == folder) apos = j;

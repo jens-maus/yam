@@ -4465,6 +4465,9 @@ New folder...
 MSG_FOLDER_NEWSEPARATOR (//)
 New separator...
 ;
+MSG_FOLDER_NEWFOLDERGROUP (//)
+New folder group...
+;
 MSG_FOLDER_EDIT (//)
 Edit
 ;

@@ -116,10 +116,12 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
                struct ComprMail cmail;
                clear(&mail, sizeof(struct Mail));               
                if (fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1) break;
-               if (cmail.MoreBytes > SIZE_LARGE) {
-fpos_t pos;
-printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.MailFile, cmail.MoreBytes);
-if (!fgetpos(fh, &pos)) printf("File position: %ld\n", pos);
+               if (cmail.MoreBytes > SIZE_LARGE)
+               {
+									fpos_t pos;
+									printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.MailFile, cmail.MoreBytes);
+									if (!fgetpos(fh, &pos)) printf("File position: %ld\n", pos);
+
                   corrupt = TRUE;
                   break;
                }
@@ -211,7 +213,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
 BOOL MA_GetIndex(struct Folder *folder)
 {
    if (!folder) return FALSE;
-   if (folder->Type == FT_SEPARATOR) return FALSE;
+   if (folder->Type == FT_GROUP) return FALSE;
    if (folder->LoadedMode != 2)
    {
       if (*folder->Password && (folder->XPKType&1))
@@ -246,7 +248,7 @@ void MA_UpdateIndexes(BOOL initial)
 
    if (flist = FO_CreateList())
    {
-      for (i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_SEPARATOR)
+      for (i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_GROUP)
          if (initial)
          {
             long dirdate = getft(GetFolderDir(flist[i]));
@@ -303,71 +305,75 @@ MakeHook(MA_FlushIndexHook, MA_FlushIndexFunc);
 //  Changes to another folder
 void MA_ChangeFolder(struct Folder *folder)
 {
-   static struct Folder *lastfolder = NULL;
-   struct Folder *actfolder = FO_GetCurrentFolder();
    BOOL folderopen = TRUE;
-   int i, pos = 0;
+   int i, pos = -1;
+   struct MA_GUIData *gui = &G->MA->GUI;
 
-   if (actfolder != folder || actfolder != lastfolder)
+   set(gui->NL_MAILS, MUIA_ShortHelp, NULL);
+
+	 if(!folder)
    {
-      struct MA_GUIData *gui = &G->MA->GUI;
-      set(gui->NL_MAILS, MUIA_ShortHelp, NULL);
-      if (lastfolder) lastfolder->LastActive = GetMUI(gui->NL_MAILS, MUIA_NList_Active);
-      if (folder) nnset(gui->NL_FOLDERS, MUIA_NList_Active, FO_GetFolderPosition(folder));
-      else folder = actfolder;
-      if (folder->Type == FT_SEPARATOR) folderopen = FALSE;
-      else if (!MA_GetIndex(folder)) folderopen = FALSE;
-      if (folderopen)
+   		folder = FO_GetCurrentFolder();
+   }
+   else if(FO_GetCurrentFolder() == folder) return;
+
+   if (folder->Type == FT_GROUP) folderopen = FALSE;
+   else if (!MA_GetIndex(folder)) folderopen = FALSE;
+
+   if(!folder->FImage) FO_LoadTreeImage(folder); // experimental !!!
+
+   if (folderopen)
+   {
+      MA_SetSortFlag();
+      DisplayMailList(folder, gui->NL_MAILS);
+
+      if (C->JumpToNewMsg)
       {
-         MA_SetSortFlag();
-         DisplayMailList(folder, gui->NL_MAILS);
-         DisplayStatistics(folder);
+         // jump to first or last unread mail in folder,
+         // depending on sort order
 
-         if (C->JumpToNewMsg)
+         int incr;
+
+         if (folder->Sort[0] < 0 || folder->Sort[1] < 0)
          {
-            // jump to first or last unread mail in folder,
-            // depending on sort order
-
-            int incr;
-
-            if (folder->Sort[0] < 0 || folder->Sort[1] < 0)
-            {
-               get(gui->NL_MAILS, MUIA_NList_Entries, &i);
-               i--;
-               incr = -1;
-            }
-            else
-            {
-               i = 0;
-               incr = 1;
-            }
-
-            while (1)
-            {
-               struct Mail *mail;
-               DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, i, &mail);
-               if (!mail) break;
-               if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR)
-               {
-                  pos = i;
-                  break;
-               }
-
-               i += incr;
-            }
+            get(gui->NL_MAILS, MUIA_NList_Entries, &i);
+            i--;
+            incr = -1;
+         }
+         else
+         {
+            i = 0;
+            incr = 1;
          }
 
-         set(gui->NL_MAILS, MUIA_NList_Active, pos);
+         while (1)
+         {
+            struct Mail *mail;
+            DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, i, &mail, TAG_DONE);
+            if (!mail)
+            {
+            	 pos = -1;
+               break;
+            }
+
+            if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR)
+            {
+               pos = i;
+               break;
+            }
+
+            i += incr;
+         }
       }
-      set(gui->LV_MAILS, MUIA_Disabled, !folderopen);
-      lastfolder = folder;
+
+      set(gui->NL_MAILS, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
    }
+   set(gui->LV_MAILS, MUIA_Disabled, !folderopen);
 }
 
 void SAVEDS MA_ChangeFolderFunc(void)
 {
-   struct Folder *folder = FO_GetCurrentFolder();
-   if (folder) MA_ChangeFolder(folder);
+	MA_ChangeFolder(NULL);
 }
 MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 ///
@@ -708,7 +714,7 @@ long SAVEDS ASM PO_InitFolderList(REG(a2,Object *pop))
    DoMethod(pop, MUIM_List_InsertSingle, GetStr(MSG_MA_Cancel), MUIV_List_Insert_Bottom);
    if (flist = FO_CreateList())
    {
-      for (i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_SEPARATOR)
+      for (i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_GROUP)
          DoMethod(pop, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
       free(flist);
    }
@@ -719,37 +725,54 @@ MakeHook(PO_InitFolderListHook, PO_InitFolderList);
 ///
 /// MA_LV_FDspFunc
 //  Folder listview display hook
-long SAVEDS ASM MA_LV_FDspFunc(REG(a2,char **array), REG(a1,struct Folder *entry))
+long SAVEDS ASM MA_LV_FDspFunc(REG(a1, struct MUIP_NListtree_DisplayMessage *msg))
 {
-   if (entry)
+   if (msg != NULL && msg->TreeNode != NULL)
    {
       static char dispfold[SIZE_DEFAULT], disptot[SIZE_SMALL], dispunr[SIZE_SMALL], dispnew[SIZE_SMALL], dispsiz[SIZE_SMALL];
-      strcpy(array[0] = dispfold, entry->Name);
-      array[1] = array[2] = array[3] = array[4] = "";
+
+    	struct Folder *entry = (struct Folder *)msg->TreeNode->tn_User;
+
+      msg->Array[0] = msg->Array[1] = msg->Array[2] = msg->Array[3] = msg->Array[4] = "";
       *dispsiz = 0;
-      if (entry->Type == FT_SEPARATOR)
-         array[DISPLAY_ARRAY_MAX] = "\033E\033t\033c";
-      else
+
+			switch(entry->Type)
       {
-         if (!*dispfold) sprintf(dispfold, "(%s)", FilePart(entry->Path));
-         if (entry->XPKType&1) strcat(dispfold, " \033o[0]");
-         if (entry->LoadedMode)
-         {
-            if (entry->New+entry->Unread) array[DISPLAY_ARRAY_MAX] = MUIX_PH;
-            sprintf(array[1] = disptot, "%d", entry->Total);
-            sprintf(array[2] = dispunr, "%d", entry->Unread);
-            sprintf(array[3] = dispnew, "%d", entry->New);
-            FormatSize(entry->Size, array[4] = dispsiz);
-         }
+      	case FT_GROUP:
+        {
+          msg->Array[0] = entry->Name;
+       		msg->Preparse[0] = MUIX_PH;
+        }
+      	break;
+
+      	default:
+        {
+		      if (entry->FImage) sprintf(msg->Array[0] = dispfold, "\033o[%d]", entry->SortIndex+1);
+          else strcpy(msg->Array[0] = dispfold, "");
+
+					if (strlen(entry->Name) > 0) strcat(dispfold, entry->Name);
+          else sprintf(dispfold, "(%s)", FilePart(entry->Path));
+
+         	if (entry->XPKType&1) strcat(dispfold, " \033o[0]");
+
+         	if (entry->LoadedMode)
+         	{
+         		if (entry->New+entry->Unread) msg->Preparse[0] = MUIX_PH;
+          	sprintf(msg->Array[1] = disptot, "%d", entry->Total);
+          	sprintf(msg->Array[2] = dispunr, "%d", entry->Unread);
+          	sprintf(msg->Array[3] = dispnew, "%d", entry->New);
+          	FormatSize(entry->Size, msg->Array[4] = dispsiz);
+         	}
+        }
       }
    }
    else 
    {
-      array[0] = GetStr(MSG_Folder);
-      array[1] = GetStr(MSG_Total);
-      array[2] = GetStr(MSG_Unread);
-      array[3] = GetStr(MSG_New);
-      array[4] = GetStr(MSG_Size);
+      msg->Array[0] = GetStr(MSG_Folder);
+      msg->Array[1] = GetStr(MSG_Total);
+      msg->Array[2] = GetStr(MSG_Unread);
+      msg->Array[3] = GetStr(MSG_New);
+      msg->Array[4] = GetStr(MSG_Size);
    }
    return 0;
 }
@@ -772,6 +795,6 @@ void MA_MakeFOFormat(APTR lv)
       if (i) strcat(format, " P=\033r");
    }
    strcat(format, " BAR");
-   set(lv, MUIA_NList_Format, format);
+   set(lv, MUIA_NListtree_Format, format);
 }
 ///

@@ -680,7 +680,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       if (!TR_OpenTCPIP()) { if (guilevel == POP_USER) ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL); return; }
       if (!CO_IsValid()) { TR_CloseTCPIP(); return; }
       if (!(G->TR = TR_New(TR_GET))) { TR_CloseTCPIP(); return; }
-      G->TR->Checking = TRUE; DisplayStatistics((struct Folder *)-1);
+      G->TR->Checking = TRUE;
       G->TR->GUIlevel = guilevel;
       G->TR->Scnt = MA_AllocRules(G->TR->Search, APPLY_REMOTE);
       if (singlepop >= 0) G->TR->SinglePOP = TRUE;

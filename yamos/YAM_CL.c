@@ -84,6 +84,7 @@ ULONG SAVEDS ASM BC_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
             {
                if (useold) data->BCD = GetBCImage(fname);
                       else data->BCD = LoadBCImage(fname);
+
                if (data->BCD)
                {
                   set(obj, MUIA_FixWidth,             data->BCD->Width);
@@ -97,9 +98,11 @@ ULONG SAVEDS ASM BC_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
                   set(obj, MUIA_Bodychunk_Masking,    data->BCD->Masking);
                   set(obj, MUIA_UserData,             useold);
                }
+               else return 0;
             }
          }
          return (ULONG)obj;
+
       case OM_DISPOSE:
          data = INST_DATA(cl,obj);
          get(obj, MUIA_UserData, &useold);
@@ -269,34 +272,46 @@ ULONG SAVEDS ASM WL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    return DoSuperMethodA(cl, obj, msg);
 }
 ///
-/// FL_Dispatcher (Folder List)
+/// FL_Dispatcher (Folder Listtree)
 //  Subclass of NList, adds Drag&Drop from message list
 ULONG SAVEDS ASM FL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
-   struct MUIP_NList_DropType *dt = (struct MUIP_NList_DropType *)msg;
+//   struct MUIP_NList_DropType *dt = (struct MUIP_NList_DropType *)msg;
    struct Folder *srcfolder, *dstfolder;
-   static Object *lastobject = NULL;
+   struct MUI_NListtree_TreeNode *tn_src, *tn_dst;
    int pos = 0;
 
    switch (msg->MethodID)
    {
-      case MUIM_NList_DropType:
-         if (lastobject != obj) *(dt->type) = MUIV_NList_DropType_Onto; // else  *(dt->type) = MUIV_NList_DropType_Above;
-         break;
       case MUIM_DragQuery:
-         lastobject = dq->obj;
-         if (dq->obj == obj) break;
+      {
          if (dq->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
-         return MUIV_DragQuery_Refuse;
+			}
+    	break;
+
       case MUIM_DragDrop:
+      {
+         // if a folder is dragged on a folder we break here and the SuperClass should handle the msg
          if (dq->obj == obj) break;
+
+         // if this is a drag&drop from one folder to another we get the source and dest
          get(obj, MUIA_NList_DropMark, &pos);
-         DoMethod(obj, MUIM_NList_GetEntry, pos, &dstfolder);
-         DoMethod(obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &srcfolder);
-         if (dstfolder->Type != FT_SEPARATOR) MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE);
+
+         tn_dst = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, 0, TAG_DONE);
+         if(!tn_dst) return 0;
+				 dstfolder = tn_dst->tn_User;
+
+         tn_src = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, MUIV_NListtree_GetEntry_Position_Active, 0, TAG_DONE);
+         if(!tn_src) return 0;
+				 srcfolder = tn_src->tn_User;
+
+         if (dstfolder->Type != FT_GROUP) MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE);
          return 0;
+      }
+    	break;
    }
+
    return DoSuperMethodA(cl,obj,msg);
 }
 ///
@@ -377,7 +392,6 @@ ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
       case MUIM_DragQuery:
 			{
          if (d->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
-
 			}
       break;
 
@@ -556,7 +570,7 @@ BOOL InitClasses(void)
 	CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
 	CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
 	CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct AL_Data), ENTRY(AL_Dispatcher));
-	CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
+	CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
 	CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));
 	CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct DumData), ENTRY(TE_Dispatcher));
 	CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));

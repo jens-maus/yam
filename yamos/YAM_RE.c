@@ -85,7 +85,7 @@ SAVEDS ASM void RE_Follow(REG(a1,int *arg))
 
    if (flist = FO_CreateList())
    {
-      for (i = 1; i < (int)*flist; i++) if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_SEPARATOR) allloaded = FALSE;
+      for (i = 1; i < (int)*flist; i++) if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_GROUP) allloaded = FALSE;
       free(flist);
    }
    if (!allloaded) if (!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_RE_FollowThreadReq))) return;
@@ -96,7 +96,7 @@ SAVEDS ASM void RE_Follow(REG(a1,int *arg))
       struct MailInfo *mi;
       int pos;
       FO_GetFolderByName(fmail->Folder->Name, &pos);
-      set(G->MA->GUI.NL_FOLDERS, MUIA_NList_Active, pos);
+      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, pos);
       mi = GetMailInfo(fmail);
       set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
       RE_ReadMessage(winnum, fmail);
@@ -119,7 +119,7 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
    MA_ChangeFolder(CurrentFolder);
    for (act += direction; act >= 0; act += direction)
    {
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, act, &mail);
+      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, act, &mail, TAG_DONE);
       if (!mail) break;
       if (!onlynew || (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
       {
@@ -152,13 +152,13 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
             // and if found read that mail
             for (i += direction; i <= (int)*flist && i >= 1; i += direction)
             {
-               if (flist[i]->Type != FT_SEPARATOR && flist[i]->Unread > 0)
+               if (flist[i]->Type != FT_GROUP && flist[i]->Unread > 0)
                {
                   if (!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_RE_MoveNextFolderReq), flist[i]->Name))
                      break;
 
                   MA_ChangeFolder(flist[i]);
-                  DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+                  DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail, TAG_DONE);
                   if (!mail) break;
                   RE_ReadMessage(winnum, mail);
                   break;
@@ -414,7 +414,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    {
       if (flist = FO_CreateList())
       {
-         for (i = 1; i <= (int)*flist; i++) if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_SEPARATOR) allloaded = FALSE;
+         for (i = 1; i <= (int)*flist; i++) if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_GROUP) allloaded = FALSE;
          free(flist);
       }
       if (allloaded && gui->TO_TOOLBAR)

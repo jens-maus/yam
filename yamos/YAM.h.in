@@ -247,6 +247,8 @@ struct Folder
    int   LastActive;
    int   LoadedMode;
    int   SortIndex;
+   int   Open;
+   APTR  FImage;
    ULONG Flags;
    struct Mail *Messages;
 };
@@ -1043,7 +1045,7 @@ enum { SEND_ALL=-2, SEND_ACTIVE, NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NE
 
 enum { ID_CLOSEALL=1000, ID_RESTART, ID_ICONIFY, ID_LOGIN };
 
-enum { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT_SEPARATOR, FT_CUSTOMSENT, FT_CUSTOMMIXED, FT_GROUP };
+enum { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT_GROUP, FT_CUSTOMSENT, FT_CUSTOMMIXED };
 
 enum { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
 
@@ -1080,7 +1082,7 @@ extern struct Hook CO_OpenHook, CO_RemoteToggleHook;
 extern struct Hook CO_EditSignatHook, CO_ToggleColHook, CO_GetDefaultPOPHook, CO_GetP3EntryHook, CO_PutP3EntryHook, CO_AddPOP3Hook, CO_DelPOP3Hook;
 extern struct Hook CO_GetFOEntryHook, CO_PutFOEntryHook, CO_AddFolderHook, CO_DelFolderHook, CO_GetRUEntryHook, CO_PutRUEntryHook, CO_AddRuleHook, CO_DelRuleHook;
 extern struct Hook CO_GetMVEntryHook, CO_PutMVEntryHook, CO_AddMimeViewHook, CO_DelMimeViewHook, CO_GetRXEntryHook, CO_PutRXEntryHook;
-extern struct Hook FO_NewSeparatorHook, FO_NewFolderHook, FO_EditFolderHook, FO_DeleteFolderHook, FO_SetOrderHook;
+extern struct Hook FO_NewFolderGroupHook, FO_NewFolderHook, FO_EditFolderHook, FO_DeleteFolderHook, FO_SetOrderHook;
 extern struct Hook FI_OpenHook;
 extern struct Hook DI_OpenHook;
 extern struct Hook US_OpenHook;
@@ -1319,8 +1321,10 @@ extern void FO_SaveConfig(struct Folder *);
 
 extern int FO_GetFolderPosition(struct Folder *);
 extern struct Folder *FO_NewFolder(int, char *, char *);
+extern BOOL FO_FreeFolder(struct Folder *);
 extern BOOL FO_CreateFolder(int, char *, char *);
 extern BOOL FO_LoadTree(char *);
+extern BOOL FO_LoadTreeImage(struct Folder *);
 extern BOOL FO_SaveTree(char *);
 
 extern APTR AB_GotoEntry(char *alias);

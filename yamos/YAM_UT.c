@@ -138,7 +138,7 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
    if (wi_fr)
    {
       flist = FO_CreateList();
-      for (i = 1; i <= (int)*flist; i++) if (flist[i] != exclude) if (flist[i]->Type != FT_SEPARATOR)
+      for (i = 1; i <= (int)*flist; i++) if (flist[i] != exclude) if (flist[i]->Type != FT_GROUP)
          DoMethod(lv_folder, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
       free(flist);
       set(lv_folder, MUIA_List_Active, lastactive);
@@ -1338,7 +1338,7 @@ time_t GetDateStamp(void)
 char *DateStamp2String(struct DateStamp *date, int mode)
 {
    static char resstr[32];
-   char *s, datestr[16], timestr[16], daystr[16];
+   char datestr[16], timestr[16], daystr[16];
    struct DateTime dt;
    struct DateStamp dsnow;
    long beat;
@@ -1355,28 +1355,28 @@ char *DateStamp2String(struct DateStamp *date, int mode)
    dt.dat_StrDay  = (STRPTR)daystr;
    DateToStr(&dt);
 
-   // strip spaces a.s.o.
-   s = Trim(datestr);
+   // strip ending space from datestr (this is faster then Trim()
+   datestr[strlen(datestr)-1] = '\0';
 
    switch (mode)
    {
       case DSS_UNIXDATE:
       {
-        int y = atoi(&s[6]);
+        int y = atoi(&datestr[6]);
 
    			// this is a Y2K patch
         // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
    			if (date->ds_Days < 8035) y += 1900;
         else y += 2000;
 
-      	sprintf(resstr, "%s %s %02ld %s %ld\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(s)-1], atoi(&s[3]), timestr, y);
+      	sprintf(resstr, "%s %s %02ld %s %ld\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
       }
       break;
 
       case DSS_DATETIME:
       {
       	timestr[5] = 0;
-        sprintf(resstr, "%s %s", s, timestr);
+        sprintf(resstr, "%s %s", datestr, timestr);
       }
       break;
 
@@ -1385,13 +1385,13 @@ char *DateStamp2String(struct DateStamp *date, int mode)
 			  // calculate the beat time
    			beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
 
-      	sprintf(resstr, "%s @%03ld", s, beat);
+      	sprintf(resstr, "%s @%03ld", datestr, beat);
       }
     	break;
 
       case DSS_USDATETIME:
       {
-      	sprintf(resstr, "%s %s", s, timestr);
+      	sprintf(resstr, "%s %s", datestr, timestr);
       }
       break;
 
@@ -1403,7 +1403,7 @@ char *DateStamp2String(struct DateStamp *date, int mode)
 
       case DSS_DATE:
       {
-      	strcpy(resstr, s);
+      	strcpy(resstr, datestr);
       }
       break;
 
@@ -1589,9 +1589,10 @@ void DisplayMailList(struct Folder *fo, APTR lv)
       Busy(GetStr(MSG_BusyDisplayingList), "", 0, 0);
       for (work = fo->Messages; work; work = work->Next) array[i++] = work;
       set(lv, MUIA_NList_Quiet, TRUE);
-      DoMethod(lv, MUIM_NList_Clear);
-      DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted);
+      DoMethod(lv, MUIM_NList_Clear, TAG_DONE);
+      DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted, TAG_DONE);
       set(lv, MUIA_NList_Quiet, FALSE);
+
       free(array);
       BusyEnd;
    }
@@ -2345,6 +2346,7 @@ struct BodyChunkData *GetBCImage(char *fname)
 //  Loads a bodychunk image from disk
 struct BodyChunkData *LoadBCImage(char *fname)
 {
+   BOOL success = TRUE;
    struct IFFHandle *iff;
    struct ContextNode *cn;
    struct BodyChunkData *bcd;
@@ -2407,16 +2409,30 @@ struct BodyChunkData *LoadBCImage(char *fname)
                      }
                   }
                }
+               else success = FALSE;
+
+	             CloseIFF(iff);
             }
-            CloseIFF(iff);
+          	else success = FALSE;
+
+	          Close(iff->iff_Stream);
          }
-         Close(iff->iff_Stream);
+         else success = FALSE;
+
+		     FreeIFF(iff);
       }
-      FreeIFF(iff);
+    	else success = FALSE;
    }
    else return NULL;
+
    if (!bcd->Depth) { FreeBCImage(bcd); return NULL; }
-   return bcd;
+
+   if(success) return bcd;
+   else
+   {
+   	 if(bcd) free(bcd);
+     return NULL;
+	 }
 }
 ///
 
@@ -2575,7 +2591,8 @@ void DisplayStatistics(struct Folder *fo)
     if (mail->Status == STATUS_UNR) fo->Unread++;
   }
 
-	DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_Redraw, FO_GetFolderPosition(fo), TAG_DONE);
+  // Now lets redraw the folderentry in the listtree
+	DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, FO_GetFolderPosition(fo), MUIV_NListtree_Redraw_Flag_Nr, TAG_DONE);
 
   if (fo == actfo)
   {

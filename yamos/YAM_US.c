@@ -438,7 +438,7 @@ LOCAL struct US_ClassData *US_New(BOOL supervisor)
                   MUIA_NList_ConstructHook, &US_LV_ConHook,
                   MUIA_NList_DestructHook, &GeneralDesHook,
                   MUIA_NList_DisplayHook, &US_LV_DspHook,
-                  MUIA_NList_DisplayHook, &MA_LV_FDspFuncHook,
+//                  MUIA_NList_DisplayHook, &MA_LV_FDspFuncHook,
                   MUIA_NList_TitleSeparator, TRUE,
                   MUIA_NList_Title, TRUE,
                   MUIA_NList_Format, "BAR,",
