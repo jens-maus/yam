@@ -1109,7 +1109,7 @@ BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
   if(hasExecuteAction(filter) && *filter->executeCmd)
   {
     char buf[SIZE_COMMAND+SIZE_PATHFILE];
-    sprintf(buf, "\"%s\" \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
+    sprintf(buf, "%s \"%s\"", filter->executeCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
     ExecuteCommand(buf, FALSE, OUT_DOS);
     G->RRs.Executed++;
   }

@@ -65,8 +65,7 @@ DECLARE(EditFile) // int n
 	{
 		char buffer[SIZE_COMMAND+SIZE_PATHFILE];
 
-		sprintf(buffer, "\"%s\" \"%s\"", C->Editor, GetRealPath((char *)xget(data->ST_MATCH[msg->n], MUIA_String_Contents)));
-
+		sprintf(buffer, "%s \"%s\"", C->Editor, GetRealPath((char *)xget(data->ST_MATCH[msg->n], MUIA_String_Contents)));
 		ExecuteCommand(buffer, TRUE, OUT_NIL);
 	}
 

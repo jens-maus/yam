@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-03-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c, YAM_FI.c, YAM_WR.c, SearchControlGroup.c: fixed a minor bug in
+      the ExecuteCommand() calls where the command to call was always
+      embedded in quotes which in fact caused some executions of a command to
+      fail.
+
 2005-03-21  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_FI.c, misc: slightly enhanced the filter management once more to allow to
