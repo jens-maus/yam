@@ -123,26 +123,20 @@ void TC_Start(enum TimerIO tio, ULONG seconds, ULONG micros)
 {
   if(micros > 0 || seconds > 0)
   {
-    struct IORequest *ioreq = &TCData.timerIO[tio]->tr_node;
-    struct timeval *timeval = &TCData.timerIO[tio]->tr_time;
+    struct timerequest *ioreq;
 
     // before we set a new timer request we make sure only one
     // is active at a time
-    if(ioreq->io_Command != 0)
-    {
-      if(CheckIO(ioreq) == NULL)
-        AbortIO(ioreq);
-
-      WaitIO(ioreq);
-    }
+    TC_Stop(tio);
 
     // issue a new timerequest
-    ioreq->io_Command = TR_ADDREQUEST;
-    timeval->tv_secs  = seconds;
-    timeval->tv_micro = micros;
+    ioreq = TCData.timerIO[tio];
+    ioreq->tr_node.io_Command = TR_ADDREQUEST;
+    ioreq->tr_time.tv_secs    = seconds;
+    ioreq->tr_time.tv_micro   = micros;
 
     DB(kprintf("Queueing timerIO[%ld] in %ld seconds %ld micros\n", tio, seconds, micros);)
-    SendIO(ioreq);
+    SendIO(&ioreq->tr_node);
   }
 }
 
@@ -174,20 +168,11 @@ static void TC_Exit(void)
   if(TCData.timerIO[0] != NULL)
   {
     int i;
-    struct IORequest *ioreq;
 
     // first make sure every TimerIO is stoppped
     for(i=0; i < TIO_NUM; i++)
     {
-      ioreq  = &TCData.timerIO[i]->tr_node;
-
-      // check if we have a already issued ioreq running
-      if(ioreq && ioreq->io_Command != 0)
-      {
-        if(CheckIO(ioreq) == NULL) AbortIO(ioreq);
-
-        WaitIO(ioreq);
-      }
+      TC_Stop(i);
     }
 
     // then close the device
@@ -200,16 +185,15 @@ static void TC_Exit(void)
     }
 
     // and then we delete the IO requests
-    for(i=0; i < TIO_NUM; i++)
+    for(i=1; i < TIO_NUM; i++)
     {
-      if((ioreq = &TCData.timerIO[i]->tr_node))
-      {
-        if(i==0) DeleteIORequest(ioreq);
-        else     FreeMem(ioreq, sizeof(struct timerequest));
-
-        TCData.timerIO[i] = NULL;
-      }
+      if(TCData.timerIO[i] == NULL)
+        break;
+      FreeMem(TCData.timerIO[i], sizeof(struct timerequest));
+      TCData.timerIO[i] = NULL;
     }
+    DeleteIORequest(&TCData.timerIO[0]->tr_node);
+    TCData.timerIO[0] = NULL;
   }
 
   // remove the MsgPort now.
@@ -237,28 +221,26 @@ static BOOL TC_Init(void)
       // then open the device
       if(!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timerIO[0]->tr_node, 0L))
       {
-        int i;
-
         // needed to get GetSysTime() working
         if((TimerBase = (APTR)TCData.timerIO[0]->tr_node.io_Device) &&
            GETINTERFACE(ITimer, TimerBase))
         {
+          int i;
+
           // create our other TimerIOs now
           for(i=1; i < TIO_NUM; i++)
           {
-            if(!(TCData.timerIO[i] = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC|MEMF_CLEAR))) return FALSE;
-
-            // then copy the data of our timerIO[0] to the other ones
+            if(!(TCData.timerIO[i] = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC)))
+              break;
+            // copy the data of timerIO[0] to the new one
             memcpy(TCData.timerIO[i], TCData.timerIO[0], sizeof(struct timerequest));
           }
-
-          return TRUE;
         }
       }
     }
   }
 
-  return FALSE;
+  return (TCData.timerIO[TIO_NUM-1] != NULL ? TRUE : FALSE);
 }
 
 ///
@@ -387,8 +369,8 @@ static void TC_Dispatcher(enum TimerIO tio)
           // update the status of the mail to READ now
           if(hasStatusNew(mail) || !hasStatusRead(mail))
           {
-		    		setStatusToRead(mail); // set to OLD
-				    DisplayStatistics(mail->Folder, TRUE);
+            setStatusToRead(mail); // set to OLD
+            DisplayStatistics(mail->Folder, TRUE);
           }
         }
         break;
@@ -772,9 +754,9 @@ static void Abort(APTR formatnum, ...)
 
          ErrReq.es_StructSize   = sizeof(struct EasyStruct);
          ErrReq.es_Flags        = 0;
-         ErrReq.es_Title        = (char *)GetStr(MSG_ErrorStartup);
+         ErrReq.es_Title        = GetStr(MSG_ErrorStartup);
          ErrReq.es_TextFormat   = error;
-         ErrReq.es_GadgetFormat = (char *)GetStr(MSG_Quit);
+         ErrReq.es_GadgetFormat = GetStr(MSG_Quit);
 
          EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
       }
@@ -1475,13 +1457,13 @@ int main(int argc, char **argv)
 
    // obtain the MainInterface of Exec before anything else.
    #ifdef __amigaos4__
-   IExec = (struct ExecIFace *)((*(struct ExecBase **)4L)->MainInterface);
+   IExec = (struct ExecIFace *)((struct ExecBase *)SysBase)->MainInterface;
 
    // check the exec version first and force be at least an 51.4 version because
-	 // this is the version with the fixed crosscall hooks.
-	 if(SysBase->lib_Version < 51 ||
-		  (SysBase->lib_Version == 51 && SysBase->lib_Revision < 4))
-	 {
+   // this is the version with the fixed crosscall hooks.
+   if(SysBase->lib_Version < 51 ||
+      (SysBase->lib_Version == 51 && SysBase->lib_Revision < 4))
+   {
       if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
          GETINTERFACE(IIntuition, IntuitionBase))
       {
@@ -1500,7 +1482,7 @@ int main(int argc, char **argv)
         CLOSELIB(IntuitionBase, IIntuition);
         exit(0);
       }
-	 }
+   }
    #endif
 
 #if defined(DEVWARNING)
