@@ -61,7 +61,7 @@ static void WR_ComposeMulti(FILE*, struct Compose*, char*);
 static struct WritePart *BuildPartsList(int);
 static char *GetDateTime(void);
 static char *NewID(BOOL);
-static int WhichEncodingForFile(char*, char*);
+static enum Encoding WhichEncodingForFile(char*, char*);
 static int WR_CharOut(char);
 static char *firstbad(char*);
 static void PutQP(unsigned char, FILE*);
@@ -572,16 +572,16 @@ static void WriteCtypeNicely(FILE *fh, char *ct)
    char *semi, *slash, *eq, *s;
 
    for (s = ct; *s; ++s) if (*s == '\n') *s = ' ';
-   if ((semi = (char *)index(ct, ';'))) *semi = '\0';
-   slash = (char *)index(ct, '/');
+   if ((semi = (char *)strchr(ct, ';'))) *semi = '\0';
+   slash = (char *)strchr(ct, '/');
    fputs(ct, fh);
    if (!slash) fputs("/unknown", fh);
    while (semi) 
    {
       ct = semi + 1;
       *semi = ';';
-      if ((semi = (char *) index(ct, ';'))) *semi = '\0';
-      if ((eq = (char *) index(ct, '='))) *eq = '\0';
+      if ((semi = (char *) strchr(ct, ';'))) *semi = '\0';
+      if ((eq = (char *) strchr(ct, '='))) *eq = '\0';
       fputs(";\n\t", fh);
       while (ISpace(*ct)) ++ct;
       fputs(ct, fh);
