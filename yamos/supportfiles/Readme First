@@ -53,6 +53,8 @@ Developers (in alphabetical order):
   threw an error message (damato)
 - Fixed: aborting a mail transfer could throw Enforcer hits, and no
   QUIT command was sent (damato)
+- Fixed: transmission of binary data containing NULL bytes could be
+  mangled, typically when transmitting PDF documents (damato)
 - Fixed: potential crash if the Edit window was opened from a Read window
   and the Read window was closed before clicking Send now/Send later/Hold
   (krille)
@@ -247,3 +249,4 @@ Developers (in alphabetical order):
   a "[...]" marker (damato)
 - Added: built-in mouse wheel support (damato)
 - Added: new "Marked" status (damato)
+- Added: application/pdf to the built-in list of MIME types (damato)
