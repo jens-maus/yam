@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-11  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: modified the error checking routines of the POP3
+      routines. This fixes a bug that caused YAM not reporting
+      any error if the POP3 server immediatlely terminates the
+      connection directly after an emitted connect.
+
 2004-01-06  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: as promised before, I totally reworked the

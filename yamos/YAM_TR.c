@@ -1540,11 +1540,10 @@ static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, APTR errorM
    // confused.
    if(command != POPCMD_CONNECT && TR_WriteLine(buf) <= 0) return NULL;
 
-   // now the server should return with a return code
-   if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0) return NULL;
-
-   // if the server answered with an error we return FALSE
-   if(strncmp(buf, POP_RESP_ERROR, strlen(POP_RESP_ERROR)) == 0)
+   // let us read the next line from the server and check if
+   // some status message can be retrieved.
+   if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0 ||
+      strncmp(buf, POP_RESP_OKAY, strlen(POP_RESP_OKAY)) != 0)
    {
       // only report a error if wished
       if(errorMsg) ER_NewError(GetStr(errorMsg), (char *)POPcmd[command], buf);
