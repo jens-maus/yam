@@ -38,6 +38,7 @@
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 
+#include "extra.h"
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
@@ -63,7 +64,6 @@ static enum FastSearch FI_IsFastSearch(char*);
 static void FI_GenerateListPatterns(struct Search*);
 static BOOL FI_DoSearch(struct Search*, struct Mail*);
 static struct FI_ClassData *FI_New(void);
-
 
 /***************************************************************************
  Module: Find

@@ -40,7 +40,6 @@
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>
-#include <extra.h>
 
 #include "extra.h"
 #include "YAM.h"

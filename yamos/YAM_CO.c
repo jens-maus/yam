@@ -37,7 +37,6 @@
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/pm.h>
-#include <extra.h>
 
 #include "extra.h"
 #include "YAM.h"
@@ -70,7 +69,6 @@ static int CO_DetectPGP(struct Config*);
 static void CO_CopyConfig(struct Config*, struct Config*);
 static APTR CO_BuildPage(struct CO_ClassData*, int);
 static struct CO_ClassData *CO_New(void);
-
 
 /***************************************************************************
  Module: Configuration

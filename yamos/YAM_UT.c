@@ -58,8 +58,8 @@
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
 #include <workbench/startup.h>
-#include <extra.h>
 
+#include "extra.h"
 #include "YAM.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"

@@ -37,6 +37,7 @@
 #include <proto/pm.h>
 #include <proto/utility.h>
 
+#include "extra.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"

@@ -37,8 +37,8 @@
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
-#include <extra.h>
 
+#include "extra.h"
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
