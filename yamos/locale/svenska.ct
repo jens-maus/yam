@@ -6896,11 +6896,11 @@ Du har inte specifierat en giltig sökväg för den nya mappen.
 ; You haven't specified a valid path for the new folder.
 ;
 MSG_MA_TOMARKED
-,\0x00Markerad
+,\000Markerad
 ; ,\000Marked
 ;
 MSG_MA_TOUNMARKED
-.\0x00Omarkerad
+.\000Omarkerad
 ; .\000Unmarked
 ;
 MSG_RE_SETMARKED
