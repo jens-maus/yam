@@ -39,6 +39,7 @@
 #include <proto/miami.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>
+#include <extra.h>
 
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"

@@ -35,6 +35,7 @@
 #include <proto/dos.h>
 #include <proto/muimaster.h>
 #include <proto/xpkmaster.h>
+#include <extra.h>
 
 #include "YAM.h"
 #include "YAM_classes.h"

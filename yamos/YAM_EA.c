@@ -34,6 +34,7 @@
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+#include <extra.h>
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
