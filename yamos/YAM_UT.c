@@ -3056,9 +3056,6 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
       }
    }
 
-   // Now lets redraw the folderentry in the listtree
-   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, pos, MUIV_NListtree_Redraw_Flag_Nr);
-
    if (fo == actfo)
    {
       CallHookPkt(&MA_SetMessageInfoHook, 0, 0);
@@ -3069,6 +3066,9 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
    if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, MUIF_NONE))
    {
       struct MUI_NListtree_TreeNode *tn_parent;
+
+      // Now lets redraw the folderentry in the listtree
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn, MUIF_NONE);
 
       // Now get the parent of the treenode
       if(tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE))

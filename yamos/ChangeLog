@@ -1,5 +1,8 @@
 2001-09-14  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed another bug in the folder listtree were on a drag&drop mail
+      move operation the incorrect folder was refreshed if a folder
+      group was fold.
     * fixed bug in folder listtree were it wasn`t possible to drag any
       mail to another folder if one of the folder groups were fold.
 
