@@ -165,6 +165,26 @@ Whenever possible a switch-case should use symbolic names rather than numbers.
 This also apply to state-machines implemented through if-then-else-if, even if
 there are only two states.
 
+If a set of cases exist with only one command then one can write a block of
+compact cases. The colons and semi-colons should be aligned with one space
+after each and one space infront of each on the longest line. It is allowed to
+have a compact block of cases within a normal switch/case sequence. Example:
+
+	switch(value)
+	{
+		case ONE   : number = "one"   ; break;
+		case TWO   : number = "two"   ; break;
+		case THREE : number = "three" ; break;
+		case FOUR  : number = "four"  ; break;
+		case FIVE  : number = "five"  ; break;
+
+		case FOURTYTWO:
+		{
+			...code...
+		}
+		break;
+	}
+
 /* ---------- */
 /* -- Tabs -- */
 /* ---------- */
@@ -236,3 +256,22 @@ struct CustomEntry *CreateEntry (STRPTR name, STRPTR address)
 
 We use Amiga types. This is STRPTR for 'char *', TEXT for a single char, VOID
 for 'void' and APTR for 'void *'. See exec/types.h for more.
+
+/* -------------- */
+/* -- Taglists -- */
+/* -------------- */
+
+When providing taglists one can either put all tags on same line (but only if
+a few tags are supplied) or put one tag on each line, which is indented with
+one more tab than the 'receiver' of this tag list. When putting one tag on its
+own line, the first line that contain the 'receiver' should not contain a tag.
+
+The comma should be immidately after the tag ID and at least one space should
+follow. More spaces are allowed for padding (but no tabs, see rule about Tabs,
+which btw also contain a taglist example). Example:
+
+	SetAttrs(obj,
+		MUIA_Window_LeftEdge,   left,
+		MUIA_Window_TopEdge,    top,
+		MUIA_Window_Width,      _width(msg->other),
+		TAG_DONE);

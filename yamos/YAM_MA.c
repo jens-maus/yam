@@ -2020,7 +2020,7 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
          else if (entry->Flags & MFLAG_REPORT) strcat(dispsta, "\033o[14]");
          else if (entry->Flags & MFLAG_MULTIPART) strcat(dispsta, "\033o[13]");
 
-#if 01
+#ifndef DISABLE_ADDRESSBOOK_LOOKUP
 {
          struct Person *pe;
 			struct MUI_NListtree_TreeNode *tn;

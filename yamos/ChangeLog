@@ -1116,7 +1116,7 @@
 
 2001-08-05  Allan Odgaard <duff@diku.dk>
 
-    * Fixed enforcer hit in Recipientstring class (introduced by... gues who?)
+    * Fixed enforcer hit in Recipientstring class («censored»).
     * ResolveOnCR defaults to FALSE similar to AdvanceOnCR.
     * Pressing 'delete' in a recipient string will now delete close the popup
       list.
@@ -1124,3 +1124,12 @@
       of the sender found in your addressbook (this name should also be used
       when replying to the letter and composing the greeting phrase, but is
       currently not).
+    * Removed classes/Classes.h dependency from class sources!
+    * Added ClassesExtra.h file.
+    * Added section about tags and compact switch/cases to the styleguide.
+    * Moved the address list popup window to its own class.
+    * The adddress list popup window will now adapt to the position and size
+      of the parent window, when changed.
+    * Escape will now close the address matchlist popup window (and
+      MUIKEY_WINDOW_CLOSE is disabled for the recipient string as long as the
+      window is open).
