@@ -187,8 +187,8 @@ struct NewToolbarEntry
 */
 #define COLLECT_SIZE 32
 #define COLLECT_RETURNIDS { \
-                            ULONG returnID[COLLECT_SIZE], csize = COLLECT_SIZE, rpos = COLLECT_SIZE, userData; \
-                            while(csize && (userData = DoMethod(G->App, MUIM_Application_Input, 0))) \
+                            ULONG returnID[COLLECT_SIZE], csize = COLLECT_SIZE, rpos = COLLECT_SIZE, userData, userSigs = 0; \
+                            while(csize && userSigs == 0 && (userData = DoMethod(G->App, MUIM_Application_NewInput, &userSigs))) \
                               returnID[--csize] = userData
 
 #define REISSUE_RETURNIDS   while(rpos > csize) \
