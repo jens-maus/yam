@@ -34,6 +34,8 @@
   #define CPU " [060]"
 #elif defined(_M68040) || defined(__M68040) || defined(__mc68040)
   #define CPU " [040]"
+#elif defined(_M68030) || defined(__M68030) || defined(__mc68030)
+  #define CPU " [030]"
 #elif defined(_M68020) || defined(__M68020) || defined(__mc68020)
   #define CPU " [020]"
 #else
@@ -48,11 +50,11 @@
 #if __YAM_DEVEL
 char * yamversion       = "YAM " __YAM_VERSION "-dev" CPU;
 char * yamversionver    = __YAM_VERSION "-dev" CPU;
-char * yamversionstring = "$VER: YAM " __YAM_VERSION " (" __YAM_VERDATE ")" CPU " dev";
+char * yamversionstring = "$VER: YAM " __YAM_VERSION "-dev" CPU " (" __YAM_VERDATE ") Copyright © 2000-2001 YAM Open Source Team";
 #else
 char * yamversion       = "YAM " __YAM_VERSION CPU;
 char * yamversionver    = __YAM_VERSION CPU;
-char * yamversionstring = "$VER: YAM " __YAM_VERSION " (" __YAM_VERDATE ")" CPU;
+char * yamversionstring = "$VER: YAM " __YAM_VERSION CPU " (" __YAM_VERDATE ") Copyright © 2000-2001 YAM Open Source Team";
 #endif
 char * yamversiondate   = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;

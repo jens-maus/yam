@@ -4822,3 +4822,6 @@ Please check your Filter configuration.
 MSG_MA_EXECUTINGCMD (//)
 Executing command...
 ;
+MSG_APP_DESCRIPTION (//39)
+SMTP/POP3 Email Client for AmigaOS
+;

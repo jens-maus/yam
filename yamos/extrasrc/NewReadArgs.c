@@ -26,7 +26,7 @@
 #include <string.h>
 
 #ifdef DEBUG
-#include "YAM_debug.h"
+#include "Debug.h"
 #define bug kprintf
 #define d(x)  x
 #else
