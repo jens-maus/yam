@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-11-24  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed small bug where upon an occurred PGP Error the
+      logfile has been deleted even if the error messages states to
+      refer to that logfile.
+
 2003-11-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * Recipientstring.c: fixed a possible enforcer hit on recipient

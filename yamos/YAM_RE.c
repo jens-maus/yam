@@ -535,8 +535,9 @@ HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
       error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, KEEPLOG);
       FinishUnpack(fullfile);
       DeleteFile("T:PGP.tmp");
-      if (error > 0) SET_FLAG(re->PGPSigned, PGPS_BADSIG);
-      if (error >= 0) RE_GetSigFromLog(arg[1], NULL); else return;
+      if(error > 0) SET_FLAG(re->PGPSigned, PGPS_BADSIG);
+      if(error >= 0) RE_GetSigFromLog(arg[1], NULL);
+      else return;
    }
 
    if(hasPGPSBadSigFlag(re) || arg[0])
@@ -1497,7 +1498,9 @@ static void RE_GetSigFromLog(int winnum, char *decrFor)
          }
       }
       fclose(fh);
-      DeleteFile(PGPLOGFILE);
+
+      if(sigDone || (decrFor && !decrFail))
+        DeleteFile(PGPLOGFILE);
    }
 }
 ///

@@ -3465,7 +3465,7 @@ int PGPCommand(char *progname, char *options, int flags)
    int error = -1;
    char command[SIZE_LARGE];
 
-   DB(kprintf("PGPCommand: [%s] [%s] - %ld\n", progname, options, flags);)
+   DB(kprintf("PGPCommand: [%s] [%s] - %ld error: ", progname, options, flags);)
 
    if ((fhi = Open("NIL:", MODE_OLDFILE)))
    {
@@ -3484,6 +3484,8 @@ int PGPCommand(char *progname, char *options, int flags)
    if (error > 0 && !hasNoErrorsFlag(flags)) ER_NewError(GetStr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
    if (error < 0) ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath, NULL);
    if (!error && !hasKeepLogFlag(flags)) DeleteFile(PGPLOGFILE);
+
+   DB(kprintf("%ld\n", error);)
    return error;
 }
 ///
