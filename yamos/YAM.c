@@ -402,11 +402,11 @@ BOOL Root_New(BOOL hidden)
 #define MUIA_Application_UsedClasses 0x8042e9a7
    static char *classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListviews.mcc", NULL };
    G->App = ApplicationObject,
-      MUIA_Application_Author     ,"Marcel Beck",
+      MUIA_Application_Author     ,"YAM Open Source Team",
       MUIA_Application_Base       ,"YAM",
       MUIA_Application_Title      ,"YAM",
       MUIA_Application_Version    ,"$VER: YAM " __YAM_VERSION " (" __YAM_VERDATE ")",
-      MUIA_Application_Copyright  ,"© 1995-2000 by Marcel Beck",
+      MUIA_Application_Copyright  ,"© 2000-2001 by YAM Open Source Team",
       MUIA_Application_Description,GetStr(MSG_AppDescription),
       MUIA_Application_UseRexx    ,FALSE,
       MUIA_Application_SingleTask ,!getenv("MultipleYAM"),
