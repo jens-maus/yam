@@ -847,3 +847,8 @@
       list rather than the tail. This makes reading large folder index much
       faster (since AddTail is O(n)), however NList layout is still required,
       so it's still painfully slow...
+
+2001-07-06  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * replaced "remailer@replay.com" in YAM_CO.c with a uptodate remailer,
+      because replay.com no longer provides a remailer service.

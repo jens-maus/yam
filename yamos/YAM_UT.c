@@ -118,23 +118,26 @@ static BPTR CloneWorkbenchPath(struct WBStartup *wbmsg)
       if (((LONG)wbmsg->sm_Message.mn_ReplyPort->mp_Flags & PF_ACTION) == PA_SIGNAL)
       {
          struct Process *wbproc = wbmsg->sm_Message.mn_ReplyPort->mp_SigTask;
+
          if (wbproc->pr_Task.tc_Node.ln_Type == NT_PROCESS)
          {
             struct CommandLineInterface *cli = BADDR(wbproc->pr_CLI);
+
             if (cli)
             {
                BPTR *p = &path;
                BPTR dir = cli->cli_CommandDir;
+
                while (dir)
                {
                   BPTR dir2;
                   struct FileLock *lock = BADDR(dir);
                   struct PathNode *node;
+
                   dir = lock->fl_Link;
                   dir2 = DupLock(lock->fl_Key);
-                  if (!dir2)
-                    break;
-                  node = AllocVec(8, MEMF_PUBLIC);
+                  if (!dir2) break;
+                  node = AllocVec(sizeof(struct PathNode), MEMF_PUBLIC);
                   if (!node)
                   {
                      UnLock(dir2);
@@ -1937,6 +1940,7 @@ void DisplayMailList(struct Folder *fo, APTR lv)
    if ((array = (struct Mail **)calloc(fo->Total+1,sizeof(struct Mail *))))
    {
       int i = 0;
+
       Busy(GetStr(MSG_BusyDisplayingList), "", 0, 0);
       for (work = fo->Messages; work; work = work->Next) array[i++] = work;
       set(lv, MUIA_NList_Quiet, TRUE);

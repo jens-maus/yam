@@ -705,8 +705,8 @@ void CO_SetDefaults(struct Config *co, int page)
       }
       *co->MyPGPID = 0;
       co->EncryptToSelf = co->LogAllEvents = TRUE;
-      strcpy(co->ReMailer, "Remailer <remailer@replay.com>");
-      strcpy(co->RMCommands, "Anon-to: %s");
+      strcpy(co->ReMailer, "Remailer <remailer@remailer.xganon.com>");
+      strcpy(co->RMCommands, "Anon-To: %s");
       strcpy(co->LogfilePath, G->ProgDir);
       co->LogfileMode = 1;
       co->SplitLogfile = FALSE;
