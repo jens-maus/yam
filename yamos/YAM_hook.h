@@ -48,11 +48,11 @@
 
   #define MakeHook(hookname, funcname) \
     } static const struct EmulLibEntry Gate_##funcname = { TRAP_LIBNR, 0, (void(*)()) funcname }; \
-    struct Hook hookname = { {NULL, NULL}, (void*)&Gate_##funcname, NULL, NULL }
+    struct Hook hookname = { {NULL, NULL}, (HOOKFUNC)&Gate_##funcname, NULL, NULL }
   #define MakeStaticHook(hookname, funcname) \
     } static const struct EmulLibEntry Gate_##funcname = { TRAP_LIBNR, 0, (void(*)()) funcname }; \
-    static struct Hook hookname = { {NULL, NULL}, (void*)&Gate_##funcname, NULL, NULL }
-  #define ENTRY(func) (void*)&Gate_##func
+    static struct Hook hookname = { {NULL, NULL}, (HOOKFUNC)&Gate_##funcname, NULL, NULL }
+  #define ENTRY(func) (APTR)&Gate_##func
 #else
   #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM(ret) name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
   #define HOOKPROTONO(name, ret, param) static SAVEDS ASM(ret) name(REG(a0, struct Hook *hook), REG(a1, param))
@@ -60,11 +60,11 @@
   #define HOOKPROTONHNO(name, ret, param) static SAVEDS ASM(ret) name(REG(a1, param))
   #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM(ret) name(REG(a2, obj))
   #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
-  #define DISPATCHERPROTO(name) static ASM(ULONG) SAVEDS name(REG(a0, struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
+  #define DISPATCHERPROTO(name) static SAVEDS ASM(ULONG) name(REG(a0, struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
 
-  #define MakeHook(hookname, funcname) struct Hook hookname = { {NULL, NULL}, (void *)funcname, NULL, NULL }
-  #define MakeStaticHook(hookname, funcname) static struct Hook hookname = { {NULL, NULL}, (void *)funcname, NULL, NULL }
-  #define ENTRY(func) func
+  #define MakeHook(hookname, funcname) struct Hook hookname = { {NULL, NULL}, (HOOKFUNC)funcname, NULL, NULL }
+  #define MakeStaticHook(hookname, funcname) static struct Hook hookname = { {NULL, NULL}, (HOOKFUNC)funcname, NULL, NULL }
+  #define ENTRY(func) (APTR)func
 #endif
 #define InitHook(hook, orighook, data) ((hook)->h_Entry = (orighook).h_Entry, (hook)->h_Data = (APTR)(data))
 
