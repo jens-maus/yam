@@ -1016,6 +1016,11 @@ void CO_Validate(struct Config *co, BOOL update)
          // we signal the mainwindow that it may check wheter to include the
          // mail preview part or not
          MA_SetupMailPreview();
+
+         // and to not let the mail preview be empty when it is newly created
+         // we have to make sure the actual selected mail is loaded
+         if(C->MailPreview)
+           DoMethod(G->App, MUIM_CallHook, &MA_ChangeSelectedHook);
       }
 
       if(G->CO->Visited[8] || G->CO->UpdateAll)

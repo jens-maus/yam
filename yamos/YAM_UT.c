@@ -639,7 +639,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     }
 
     // now lets create all other window dependencies (this have to be multithreaded later)
-    set(wi_ar, MUIA_Window_ActiveObject, lv_attach);
+    set(wi_ar, MUIA_Window_DefaultObject, lv_attach);
     set(G->App, MUIA_Application_Sleep, TRUE);
     DoMethod(G->App, OM_ADDMEMBER, wi_ar);
     DoMethod(bt_okay  , MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
@@ -4066,9 +4066,15 @@ void LoadLayout(void)
    set(G->MA->GUI.LV_FOLDERS,     MUIA_HorizWeight,                G->Weights[0]);
    set(G->MA->GUI.GR_MAILVIEW,    MUIA_HorizWeight,                G->Weights[1]);
    set(G->MA->GUI.LV_MAILS,       MUIA_VertWeight,                 G->Weights[6]);
-   set(G->MA->GUI.MN_MAILPREVIEW, MUIA_VertWeight,                 G->Weights[7]);
-   set(G->MA->GUI.MN_MAILPREVIEW, MUIA_ReadMailGroup_HGVertWeight, G->Weights[8]);
-   set(G->MA->GUI.MN_MAILPREVIEW, MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
+
+   // if the mail preview is active we set its weight values
+   if(C->MailPreview)
+   {
+     SetAttrs(G->MA->GUI.MN_MAILPREVIEW, MUIA_VertWeight,                 G->Weights[7],
+                                         MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
+                                         MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
+   }
+
 }
 ///
 /// SaveLayout
@@ -4077,13 +4083,18 @@ void SaveLayout(BOOL permanent)
 {
    char buf[SIZE_DEFAULT];
 
-   // set the weights according to their GUI elements
+   // get the weights according to their GUI elements
    G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS,      MUIA_HorizWeight);
    G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW,     MUIA_HorizWeight);
    G->Weights[6] = xget(G->MA->GUI.LV_MAILS,        MUIA_VertWeight);
-   G->Weights[7] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_VertWeight);
-   G->Weights[8] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_ReadMailGroup_HGVertWeight);
-   G->Weights[9] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_ReadMailGroup_TGVertWeight);
+
+   // if the mailpreview objects are currently active we save their weight values
+   if(C->MailPreview)
+   {
+     G->Weights[7] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_VertWeight);
+     G->Weights[8] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_ReadMailGroup_HGVertWeight);
+     G->Weights[9] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_ReadMailGroup_TGVertWeight);
+   }
 
    // we encode the different weight factors which are embeeded in a dummy string
    // gadgets:

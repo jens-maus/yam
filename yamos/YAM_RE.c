@@ -511,7 +511,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
 
       MA_FreeEMailStruct(email);
 
-      if((rmData = CreateReadWindow(FALSE)))
+      if((rmData = CreateReadWindow(TRUE)))
       {
         rmData->tempFile = tf;
 
@@ -1860,7 +1860,8 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
 
   // check wheter the folder of the mail is using XPK and if so we
   // unpack it to a temporarly file
-  if(isXPKFolder(folder))
+  if(isVirtualMail(mail) == FALSE &&
+     isXPKFolder(folder))
   {
     char tmpFile[SIZE_PATHFILE];
 
@@ -2646,13 +2647,13 @@ MakeStaticHook(ClosedReadWindowHook, ClosedReadWindowFunc);
 // Function that creates a new ReadWindow object and returns
 // the referencing ReadMailData structure which was created
 // during that process - or NULL if an error occurred.
-struct ReadMailData *CreateReadWindow(BOOL rexxWindow)
+struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 {
   Object *newReadWindow;
 
   // if MultipleWindows support if off we try to reuse an already existing
   // readWindow
-  if(rexxWindow == FALSE &&
+  if(forceNewWindow == FALSE &&
      C->MultipleWindows == FALSE &&
      IsMinListEmpty(&G->ReadMailDataList) == FALSE)
   {
@@ -2775,7 +2776,8 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData)
 
   // if the rmData carries a virtual mail we have to clear it
   // aswell
-  if(isVirtualMail(rmData->mail))
+  if(rmData->mail &&
+     isVirtualMail(rmData->mail))
   {
     free(rmData->mail);
     CloseTempFile(rmData->tempFile);

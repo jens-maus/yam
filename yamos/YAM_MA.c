@@ -3275,11 +3275,13 @@ void MA_SetupDynamicMenus(void)
 //  Updates/Setup the Mail Preview part in the main window
 void MA_SetupMailPreview(void)
 {
-  Object *mailViewGroup = G->MA->GUI.GR_MAILVIEW;
+  Object *mailViewGroup  = G->MA->GUI.GR_MAILVIEW;
+  Object *mailBalanceObj = G->MA->GUI.BL_MAILVIEW;
+  Object *mailPreviewObj = G->MA->GUI.MN_MAILPREVIEW;
 
-  // check wheter the mailview balancing object is already embeeded in our main
-  // window so that we now what to do now
-  if(isChildOfGroup(mailViewGroup, G->MA->GUI.BL_MAILVIEW))
+  // check wheter the mailpreview object is already embeeded in our main
+  // window so that we know what to do now
+  if(mailPreviewObj)
   {
     if(C->MailPreview == FALSE)
     {
@@ -3287,12 +3289,16 @@ void MA_SetupMailPreview(void)
       // window, so lets do it now
       if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
       {
-        DoMethod(mailViewGroup, OM_REMMEMBER, G->MA->GUI.MN_MAILPREVIEW);
-        DoMethod(mailViewGroup, OM_REMMEMBER, G->MA->GUI.BL_MAILVIEW);
+        DoMethod(mailViewGroup, OM_REMMEMBER, mailPreviewObj);
+        DoMethod(mailViewGroup, OM_REMMEMBER, mailBalanceObj);
 
-        // set the mailview disabled so that it doesn't response to
-        // notifies and so on
-        nnset(G->MA->GUI.MN_MAILPREVIEW, MUIA_Disabled, TRUE);
+        // dispose the objects now that we don't need them anymore
+        MUI_DisposeObject(mailPreviewObj);
+        MUI_DisposeObject(mailBalanceObj);
+
+        // and nullify it to make it readdable again
+        G->MA->GUI.MN_MAILPREVIEW = NULL;
+        G->MA->GUI.BL_MAILVIEW    = NULL;
 
         DoMethod(mailViewGroup, MUIM_Group_ExitChange);
       }
@@ -3302,36 +3308,35 @@ void MA_SetupMailPreview(void)
   {
     if(C->MailPreview == TRUE)
     {
-      // the user want to have the mail preview added tothe main
-      // window, so lets do it now
-      if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
+      // the user want to have the mail preview added to the main
+      // window, so lets do it now and create the object
+      G->MA->GUI.BL_MAILVIEW = mailBalanceObj = BalanceObject, End;
+      if(mailBalanceObj)
       {
-        DoMethod(mailViewGroup, OM_ADDMEMBER, G->MA->GUI.BL_MAILVIEW);
-        DoMethod(mailViewGroup, OM_ADDMEMBER, G->MA->GUI.MN_MAILPREVIEW);
+        G->MA->GUI.MN_MAILPREVIEW = mailPreviewObj = ReadMailGroupObject, End;
+        if(mailPreviewObj)
+        {
+          if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
+          {
+            DoMethod(mailViewGroup, OM_ADDMEMBER, mailBalanceObj);
+            DoMethod(mailViewGroup, OM_ADDMEMBER, mailPreviewObj);
 
-        // unset the mailview disabled so that does response to
-        // notifies and so on again
-        nnset(G->MA->GUI.MN_MAILPREVIEW, MUIA_Disabled, FALSE);
+            DoMethod(mailViewGroup, MUIM_Group_ExitChange);
 
-        DoMethod(mailViewGroup, MUIM_Group_ExitChange);
+            // here everything worked fine so we can return immediately
+            return;
+          }
+
+          MUI_DisposeObject(mailPreviewObj);
+          G->MA->GUI.MN_MAILPREVIEW = NULL;
+        }
+
+        MUI_DisposeObject(mailBalanceObj);
+        G->MA->GUI.BL_MAILVIEW = NULL;
       }
     }
   }
 }
-///
-/// MA_CleanupMailPreview()
-// make sure all GUI elements of the mail preview are properly disposed
-void MA_CleanupMailPreview(void)
-{
-  // we only dispose the two main mail preview object if they are not
-  // currently embedded in the main GUI
-  if(isChildOfGroup(G->MA->GUI.GR_MAILVIEW, G->MA->GUI.BL_MAILVIEW) == FALSE)
-  {
-     MUI_DisposeObject(G->MA->GUI.MN_MAILPREVIEW);
-     MUI_DisposeObject(G->MA->GUI.BL_MAILVIEW);
-  }
-}
-
 ///
 /// MA_SortWindow
 //  Resorts the main window group accordingly to the InfoBar setting
@@ -3658,9 +3663,6 @@ struct MA_ClassData *MA_New(void)
                        MUIA_ObjectID                  , MAKE_ID('N','L','0','2'),
                     End,
                  End,
-                 Child, data->GUI.BL_MAILVIEW = BalanceObject, End,
-                 Child, data->GUI.MN_MAILPREVIEW = ReadMailGroupObject,
-                 End,
                End,
             End,
          End,
@@ -3776,8 +3778,8 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeFolderHook);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetFolderInfoHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,ID_CLOSEALL);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock del",       MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, FALSE);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift del", MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, TRUE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-capslock del",       MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, FALSE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-capslock shift del", MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, TRUE);
 //       DoMethod(G->App                   ,MUIM_Notify,MUIA_Application_Iconified,FALSE        ,data->GUI.WI             ,3,MUIM_Set                 ,MUIA_Window_Open,TRUE);
 
          // Define Notifies for ShortcutFolderKeys

@@ -133,7 +133,7 @@ BOOL  RE_DecodePart(struct Part *rp);
 void  RE_DisplayMIME(char *fname, char *ctype);
 BOOL  RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi);
 
-struct ReadMailData *CreateReadWindow(BOOL rexxWindow);
+struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
 struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode);
 void FreePrivateRMData(struct ReadMailData *rmData);
 BOOL CleanupReadMailData(struct ReadMailData *rmData);

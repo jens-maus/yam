@@ -1352,92 +1352,99 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       if((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address))
         strcpy(mail->ReplyTo.RealName, mail->From.RealName);
 
-      // now we take the filename of our mailfile into account to check for
-      // the transfer date at the start of the name and for the set status
-      // flags at the end of it.
-      strncpy(dateFilePart, mail->MailFile, 12);
-      dateFilePart[12] = '\0';
 
-      // make sure there is no "-" in the base64 encoded part as we just mapped
-      // the not allowed "/" to "-" to make it possible to use base64 for
-      // the timeval encoding
-      ptr = dateFilePart;
-      while((ptr = strchr(ptr, '-')))
-        *ptr = '/';
-
-      // lets decode the base64 encoded timestring in a temporary buffer
-      if(base64decode(timebuf, dateFilePart, 12) <= 0)
+      // if this function call has a folder of NULL then we are examining a virtual mail
+      // which means this mail doesn't have any folder and also no filename that may contain
+      // any usable date or stuff
+      if(folder != NULL)
       {
-        DB(kprintf("WARNING: failure in decoding the encoded date from mailfile: '%s'\n", mail->MailFile);)
+        // now we take the filename of our mailfile into account to check for
+        // the transfer date at the start of the name and for the set status
+        // flags at the end of it.
+        strncpy(dateFilePart, mail->MailFile, 12);
+        dateFilePart[12] = '\0';
 
-        // if we weren`t able to decode the base64 encoded string
-        // we have to validate the transDate so that the calling function
-        // recognizes to rewrite the comment with a valid string.
-        mail->transDate.tv_micro = 0;
-        mail->transDate.tv_secs  = 0;
-      }
-      else
-      {
-        // everything seems to have worked so lets copy the binary data in our
-        // transDate structure
-        memcpy(&mail->transDate, timebuf, sizeof(struct timeval));
-      }
+        // make sure there is no "-" in the base64 encoded part as we just mapped
+        // the not allowed "/" to "-" to make it possible to use base64 for
+        // the timeval encoding
+        ptr = dateFilePart;
+        while((ptr = strchr(ptr, '-')))
+          *ptr = '/';
 
-      // now grab the status out of the end of the mailfilename
-      ptr = &mail->MailFile[17];
-      while(*ptr != '\0')
-      {
-        if(*ptr >= '1' && *ptr <= '7')
+        // lets decode the base64 encoded timestring in a temporary buffer
+        if(base64decode(timebuf, dateFilePart, 12) <= 0)
         {
-          setPERValue(mail, *ptr-'1'+1);
+          DB(kprintf("WARNING: failure in decoding the encoded date from mailfile: '%s'\n", mail->MailFile);)
+
+          // if we weren`t able to decode the base64 encoded string
+          // we have to validate the transDate so that the calling function
+          // recognizes to rewrite the comment with a valid string.
+          mail->transDate.tv_micro = 0;
+          mail->transDate.tv_secs  = 0;
         }
         else
         {
-          switch(*ptr)
-          {
-            case SCHAR_READ:
-              SET_FLAG(mail->sflags, SFLAG_READ);
-            break;
-
-            case SCHAR_REPLIED:
-              SET_FLAG(mail->sflags, SFLAG_REPLIED);
-            break;
-
-            case SCHAR_FORWARDED:
-              SET_FLAG(mail->sflags, SFLAG_FORWARDED);
-            break;
-
-            case SCHAR_NEW:
-              SET_FLAG(mail->sflags, SFLAG_NEW);
-            break;
-
-            case SCHAR_QUEUED:
-              SET_FLAG(mail->sflags, SFLAG_QUEUED);
-            break;
-
-            case SCHAR_HOLD:
-              SET_FLAG(mail->sflags, SFLAG_HOLD);
-            break;
-
-            case SCHAR_SENT:
-              SET_FLAG(mail->sflags, SFLAG_SENT);
-            break;
-
-            case SCHAR_DELETED:
-              SET_FLAG(mail->sflags, SFLAG_DELETED);
-            break;
-
-            case SCHAR_MARKED:
-              SET_FLAG(mail->sflags, SFLAG_MARKED);
-            break;
-
-            case SCHAR_ERROR:
-              SET_FLAG(mail->sflags, SFLAG_ERROR);
-            break;
-          }
+          // everything seems to have worked so lets copy the binary data in our
+          // transDate structure
+          memcpy(&mail->transDate, timebuf, sizeof(struct timeval));
         }
 
-        ptr++;
+        // now grab the status out of the end of the mailfilename
+        ptr = &mail->MailFile[17];
+        while(*ptr != '\0')
+        {
+          if(*ptr >= '1' && *ptr <= '7')
+          {
+            setPERValue(mail, *ptr-'1'+1);
+          }
+          else
+          {
+            switch(*ptr)
+            {
+              case SCHAR_READ:
+                SET_FLAG(mail->sflags, SFLAG_READ);
+              break;
+
+              case SCHAR_REPLIED:
+                SET_FLAG(mail->sflags, SFLAG_REPLIED);
+              break;
+
+              case SCHAR_FORWARDED:
+                SET_FLAG(mail->sflags, SFLAG_FORWARDED);
+              break;
+
+              case SCHAR_NEW:
+                SET_FLAG(mail->sflags, SFLAG_NEW);
+              break;
+
+              case SCHAR_QUEUED:
+                SET_FLAG(mail->sflags, SFLAG_QUEUED);
+              break;
+
+              case SCHAR_HOLD:
+                SET_FLAG(mail->sflags, SFLAG_HOLD);
+              break;
+
+              case SCHAR_SENT:
+                SET_FLAG(mail->sflags, SFLAG_SENT);
+              break;
+
+              case SCHAR_DELETED:
+                SET_FLAG(mail->sflags, SFLAG_DELETED);
+              break;
+
+              case SCHAR_MARKED:
+                SET_FLAG(mail->sflags, SFLAG_MARKED);
+              break;
+
+              case SCHAR_ERROR:
+                SET_FLAG(mail->sflags, SFLAG_ERROR);
+              break;
+            }
+          }
+
+          ptr++;
+        }
       }
 
       // if we found the Date in the mail itself and it was convertable we

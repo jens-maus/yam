@@ -1895,7 +1895,7 @@ static void TR_AddMessageHeader(int *count, int size, char *tfname)
 {
    struct ExtendedMail *email;
 
-   if((email = MA_ExamineMail((struct Folder *)-1, tfname, FALSE)))
+   if((email = MA_ExamineMail(NULL, tfname, FALSE)))
    {
       struct Mail *mail = malloc(sizeof(struct Mail));
       if (mail)

@@ -5,6 +5,23 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-01-27  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c: removed "-repeat" from the DELETE key definition that is
+      used to delete a mail from the main mailwindow. As deletion is a
+      very dangerous part it might be a good idea to not allow to hold
+      the delete key which would cause the continious deletion of several
+      mails if the user holds down the del key for too long.
+    * YAM_MA.c: fixed crash that occurred when trying to open a virtual
+      mail in a separate window.
+    * YAM_RE.c: fixed bug #1108922 which caused a crash upon closing the main
+      window if no mail preview was enabled and YAM was exited immediately
+      after the startup.
+    * YAM_RE.c, YAM_TR.c : fixed bug #1110862 where switching the mail preview
+      on/off could have left the user with the wrong or no mail displayed in the
+      mail preview. Also reworked some of the mail preview generation code
+      to be a bit cleaner.
+
 2005-01-27  Gunther Nikl <gni@gecko.de>
 
     * YAM.c: Simplify timer functions, eg. use TC_Stop in TC_Start and

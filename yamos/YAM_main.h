@@ -299,6 +299,5 @@ char *MA_ToXStatusHeader(struct Mail *mail);
 unsigned int MA_FromStatusHeader(char *statusflags);
 unsigned int MA_FromXStatusHeader(char *xstatusflags);
 void  MA_SetupMailPreview(void);
-void  MA_CleanupMailPreview(void);
 
 #endif /* YAM_MAIN_H */

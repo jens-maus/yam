@@ -654,14 +654,11 @@ static void Terminate(void)
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
    }
 
-   if (G->AB) DisposeModule(&G->AB);
+   if(G->AB)
+     DisposeModule(&G->AB);
 
    if(G->MA)
-   {
-     // make sure the mail preview objects are also properly disposed
-     MA_CleanupMailPreview();
      DisposeModule(&G->MA);
-   }
 
    if (G->TTin) free(G->TTin);
    if (G->TTout) free(G->TTout);
@@ -964,22 +961,21 @@ static void Initialise2(void)
 
    // Create a new Main & Addressbook Window
    if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
-   {
       Abort(MSG_ErrorMuiApp);
-   }
 
+   // make sure the GUI objects for the mail preview are created
    MA_SetupMailPreview();
 
    // Now we have to check on which position we should display the InfoBar and if it`s not
    // center or off we have to resort the main group
    if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
-   {
       MA_SortWindow();
-   }
 
    MA_SetupDynamicMenus();
    CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
    SetupAppIcons();
+
+   // load the main window GUI layout from the ENV: variable
    LoadLayout();
 
    if(G->CO_AutoTranslateIn)
