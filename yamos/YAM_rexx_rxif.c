@@ -2033,6 +2033,12 @@ void rx_getselected( struct RexxHost *host, struct rxd_getselected **rxd, long a
             for (i = 0; i < (int)mlist[0]; i++) rd->res.num[i] = (long *)&(mlist[i+2]->Position);
             free(mlist);
          }
+         else
+         {
+            rd->res.num    = calloc(1, sizeof(long));
+            rd->res.num[0] = 0;
+         }
+
          break;
       
       case RXIF_FREE:

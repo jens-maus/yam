@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_rexx_rxif.c/YAM_MA.c: fixed bug #635892 where
+      the GETSELECTED arexx command returns wrong values
+      on a use at empty folders or if a folder group was
+      actually active.
+
+2002-11-30  Jens Langner <Jens.Langner@light-speed.de>
+
+    * includes/SDI_compiler.h: added REGARGS define for MorphOS
+    * Makefile/Makefile.MorphOS: added $(CPU) to LDFLAGS
+
 2002-11-22  Gunther Nikl <gni@gecko.de>
 
     * YAM_MAf.c/FO_SetCurrentFolder: fix wrong NULL usage

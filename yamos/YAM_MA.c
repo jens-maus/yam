@@ -294,6 +294,11 @@ struct Mail **MA_CreateMarkedList(APTR lv)
 {
    int id, selected;
    struct Mail *mail, **mlist = NULL;
+   struct Folder *folder;
+
+   // we first have to check wheter this is a valid folder or not
+   folder = FO_GetCurrentFolder();
+   if(!folder || folder->Type == FT_GROUP) return NULL;
 
    DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
    if (selected)
