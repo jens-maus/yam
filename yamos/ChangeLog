@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-01  Jens Langner <Jens.Langner@light-speed.de>
+
+    * UserImage.c: another minor change to the UserImage custom class
+      where the PDTM_SCALE method call has been replaced by bit a more
+      widely available BitMapScale() call. This should drop the
+      requirement of an installed picture.datatype v45. In addition
+      the minimum height calculation of the user image has been altered
+      so that it is still possible to resize the attached NList object
+      to its minium values. This should make the userimage fit a bit
+      better into the overall layout of the ReadMailGroup object.
+
 2005-01-31  Jens Langner <Jens.Langner@light-speed.de>
 
     * UserImage.c: fixed bug #1113084 where the proportional image

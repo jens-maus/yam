@@ -3765,17 +3765,6 @@ Object *MakePGPKeyList(Object **st, BOOL secret, char *label)
    return po;
 }
 ///
-/// MakePicture
-//  Creates a MUI image object that uses image datatypes
-Object *MakePicture(char *fname)
-{
-  return  UserImageObject,
-            MUIA_UserImage_File,      fname,
-            MUIA_UserImage_MaxHeight, 64,
-            MUIA_UserImage_MaxWidth,  64,
-          End;
-}
-///
 /// MakeStatusFlag
 //  Creates a MUI object for status images
 Object *MakeStatusFlag(char *fname)

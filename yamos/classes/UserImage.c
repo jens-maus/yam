@@ -39,12 +39,14 @@
 struct Data
 {
 	char fileName[SIZE_PATHFILE];
-	Object *datatypeObject;
-	struct BitMapHeader *bitMapHeader;
-	struct BitMap *bitMap;
 
-	int maxHeight;
-	int maxWidth;
+	struct BitMap *scaledBitMap;
+
+	ULONG scaledWidth;
+	ULONG scaledHeight;
+	ULONG maxWidth;
+	ULONG maxHeight;
+	BOOL noMinHeight;
 };
 */
 
@@ -64,9 +66,10 @@ OVERLOAD(OM_NEW)
 		{
 			switch(tag->ti_Tag)
 			{
-				ATTR(File) 			: if(tag->ti_Data) stccpy(data->fileName, (char *)tag->ti_Data, SIZE_PATHFILE); break;
-				ATTR(MaxHeight) : data->maxHeight = (BOOL)tag->ti_Data ; break;
-				ATTR(MaxWidth)  : data->maxWidth  = (BOOL)tag->ti_Data ; break;
+				ATTR(File) 				: if(tag->ti_Data) stccpy(data->fileName, (char *)tag->ti_Data, SIZE_PATHFILE); break;
+				ATTR(MaxHeight) 	: data->maxHeight   = (ULONG)tag->ti_Data; break;
+				ATTR(MaxWidth)  	: data->maxWidth    = (ULONG)tag->ti_Data; break;
+				ATTR(NoMinHeight) : data->noMinHeight = (BOOL)tag->ti_Data; break;
 			}
 		}
 	}
@@ -78,13 +81,15 @@ OVERLOAD(OM_NEW)
 OVERLOAD(MUIM_Setup)
 {
 	GETDATA;
+	Object *datatypeObject;
 	struct Process *myproc;
 	APTR oldWindowPtr;
+	BOOL result = FALSE;
 
 	// call the SuperMethod() first
-	if(!DoSuperMethodA(cl,obj,msg) ||
+	if(!DoSuperMethodA(cl, obj, msg) ||
 		 data->fileName[0] == '\0')
-		return FALSE;
+		return result;
 
 	// tell DOS not to bother us with requesters
 	myproc = (struct Process *)FindTask(NULL);
@@ -92,7 +97,7 @@ OVERLOAD(MUIM_Setup)
 	myproc->pr_WindowPtr = (APTR)-1;
 
 	// create the datatypes object
-	data->datatypeObject = NewDTObject(data->fileName,
+	datatypeObject = NewDTObject(data->fileName,
 		DTA_SourceType,					DTST_FILE,
 		DTA_GroupID,						GID_PICTURE,
 		OBP_Precision, 					PRECISION_IMAGE,
@@ -108,81 +113,107 @@ OVERLOAD(MUIM_Setup)
 	myproc->pr_WindowPtr = oldWindowPtr;
 
 	// if we had success in loading the datatypes object we can go on
-	if(data->datatypeObject)
+	if(datatypeObject)
 	{
-		struct FrameInfo fri;
-
-		memset(&fri, 0, sizeof(struct FrameInfo));
-
-		// get some information about the image from picture.datatype
-		DoMethod(data->datatypeObject, DTM_FRAMEBOX, NULL, (ULONG)&fri, (ULONG)&fri, sizeof(struct FrameInfo), 0);
-
-		// check if the datatype object is somewhat valid
-		if(fri.fri_Dimensions.Depth > 0)
+		// remap the BitMap with DTM_PROCLAYOUT
+		if(DoMethod(datatypeObject, DTM_PROCLAYOUT, NULL, 1L))
 		{
-			// make sure to scale down the image if maxHeight/maxWidth is specified
-			LONG scaleHeightDiff = fri.fri_Dimensions.Height - data->maxHeight;
-			LONG scaleWidthDiff  = fri.fri_Dimensions.Width - data->maxWidth;
+			struct BitMapHeader *bitMapHeader = (struct BitMapHeader *)xget(datatypeObject, PDTA_BitMapHeader);
 
-			if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
-				 (scaleWidthDiff > 0 && data->maxWidth > 0))
+			// check if correctly obtained the header and if it is valid
+			if(bitMapHeader && bitMapHeader->bmh_Depth > 0)
 			{
-				float scaleFactor;
-				LONG newHeight;
-				LONG newWidth;
+				struct BitMap *orgBitMap = NULL;
 
-				// make sure we are scaling proportional
-				if(scaleHeightDiff > scaleWidthDiff)
-				{
-					scaleFactor = (float)fri.fri_Dimensions.Width / (float)fri.fri_Dimensions.Height;
-					newWidth = scaleFactor * data->maxHeight + 0.5; //round the value
-					newHeight = data->maxHeight;
-				}
-				else
-				{
-					scaleFactor = (float)fri.fri_Dimensions.Height / (float)fri.fri_Dimensions.Width;
-					newWidth = data->maxWidth;
-					newHeight = scaleFactor * data->maxWidth + 0.5; // round the value
-				}
-
-				// scale it now
-				DB(kprintf("UserImage scale (w/h) from %ld/%ld to %ld/%ld\n", fri.fri_Dimensions.Width,
-																																			fri.fri_Dimensions.Height,
-																																			newWidth,
-																																			newHeight);)
-				DoMethod(data->datatypeObject, PDTM_SCALE,
-																			 newWidth  > 0 ? newWidth  : 1,
-																			 newHeight > 0 ? newHeight : 1,
-																			 0);
-			}
-
-			// remap the BitMap with DTM_PROCLAYOUT
-			if(DoMethod(data->datatypeObject, DTM_PROCLAYOUT, NULL, 1))
-			{
-				data->bitMapHeader = (struct BitMapHeader *)xget(data->datatypeObject, PDTA_BitMapHeader);
-
-				if(data->bitMapHeader)
-				{
-					GetDTAttrs(data->datatypeObject, PDTA_DestBitMap, (ULONG)&data->bitMap, TAG_DONE);
+				GetDTAttrs(datatypeObject, PDTA_DestBitMap, (ULONG)&orgBitMap, TAG_DONE);
 				
-					if(!data->bitMap)
-						GetDTAttrs(data->datatypeObject, PDTA_BitMap, (ULONG)&data->bitMap, TAG_DONE);
+				// try another attribute if the above failed
+				if(!orgBitMap)
+					GetDTAttrs(datatypeObject, PDTA_BitMap, (ULONG)&orgBitMap, TAG_DONE);
 
-					if(data->bitMap)
-						return TRUE;
+				// if we had success in loading the bitmap
+				// lets scale it down now
+				if(orgBitMap)
+				{
+					// make sure to scale down the image if maxHeight/maxWidth is specified
+					LONG scaleHeightDiff = bitMapHeader->bmh_Height - data->maxHeight;
+					LONG scaleWidthDiff  = bitMapHeader->bmh_Width - data->maxWidth;
+					LONG newWidth;
+					LONG newHeight;
+
+					if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
+						 (scaleWidthDiff > 0 && data->maxWidth > 0))
+					{
+						double scaleFactor;
+
+						// make sure we are scaling proportional
+						if(scaleHeightDiff > scaleWidthDiff)
+						{
+							scaleFactor = (double)bitMapHeader->bmh_Width / (double)bitMapHeader->bmh_Height;
+							newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
+							newHeight = data->maxHeight;
+						}
+						else
+						{
+							scaleFactor = (double)bitMapHeader->bmh_Height / (double)bitMapHeader->bmh_Width;
+							newWidth = data->maxWidth;
+							newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
+						}
+					}
+					else
+					{
+						newWidth  = bitMapHeader->bmh_Width;
+						newHeight = bitMapHeader->bmh_Height;
+					}
+						
+					// now we can allocate the new bitmap and scale it
+					// if required. But we use BitMapScale() for all operations
+					data->scaledBitMap = AllocBitMap(newWidth, newHeight, GetBitMapAttr(orgBitMap, BMA_DEPTH), BMF_CLEAR, orgBitMap);
+					if(data->scaledBitMap)
+					{
+						struct BitScaleArgs args;
+	
+						args.bsa_SrcBitMap = orgBitMap;
+						args.bsa_DestBitMap = data->scaledBitMap;
+						args.bsa_Flags = 0;
+	
+						args.bsa_SrcY = 0;
+						args.bsa_DestY = 0;
+
+						args.bsa_SrcWidth = bitMapHeader->bmh_Width;
+						args.bsa_SrcHeight = bitMapHeader->bmh_Height;
+
+						args.bsa_XSrcFactor = bitMapHeader->bmh_Width;
+						args.bsa_XDestFactor = newWidth;
+
+						args.bsa_YSrcFactor = bitMapHeader->bmh_Height;
+						args.bsa_YDestFactor = newHeight;
+
+						args.bsa_SrcX = 0;
+						args.bsa_DestX = 0;
+
+						// scale the image now with the arguments set
+						BitMapScale(&args);
+
+						// read out the scaled values
+						data->scaledWidth  = args.bsa_DestWidth;
+						data->scaledHeight = args.bsa_DestHeight;
+
+						DB(kprintf("UserImage scale (w/h) from %ld/%ld to %ld/%ld\n", bitMapHeader->bmh_Width,
+																																					bitMapHeader->bmh_Height,
+																																					data->scaledWidth,
+																																					data->scaledHeight);)
+
+						result = TRUE;
+					}
 				}
 			}
 		}
-
-		DisposeDTObject(data->datatypeObject);
-		data->datatypeObject = NULL;
+		
+		DisposeDTObject(datatypeObject);
 	}
 
-	// if we reach here, the something must have gone wrong
-	data->bitMap = NULL;
-	data->bitMapHeader = NULL;
-
-	return FALSE;
+	return result;
 }
 ///
 /// OVERLOAD(MUIM_Cleanup)
@@ -190,14 +221,9 @@ OVERLOAD(MUIM_Cleanup)
 {
 	GETDATA;
 
-	data->bitMap = NULL;
-	data->bitMapHeader = NULL;
-
-	if(data->datatypeObject)
-	{
-		DisposeDTObject(data->datatypeObject);
-		data->datatypeObject = NULL;
-	}
+	// now it should be fine to free the allocated bitmap
+	if(data->scaledBitMap)
+		FreeBitMap(data->scaledBitMap);
 
 	return DoSuperMethodA(cl, obj, msg);
 }
@@ -212,8 +238,8 @@ OVERLOAD(MUIM_Draw)
 
 	if(((struct MUIP_Draw *)msg)->flags & MADF_DRAWOBJECT)
 	{
-		if(data->bitMap)
-			BltBitMapRastPort(data->bitMap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
+		if(data->scaledBitMap)
+			BltBitMapRastPort(data->scaledBitMap, 0, 0, _rp(obj), _mleft(obj), _mtop(obj), _mwidth(obj), _mheight(obj), 0xc0);
 	}
 
 	return 0;
@@ -230,15 +256,14 @@ OVERLOAD(MUIM_AskMinMax)
 
 	mi = ((struct MUIP_AskMinMax *)msg)->MinMaxInfo;
 
-	if(data->bitMap &&
-		 data->bitMapHeader)
+	if(data->scaledBitMap)
 	{
-		mi->MinWidth  += data->bitMapHeader->bmh_Width ;
-		mi->MinHeight += data->bitMapHeader->bmh_Height;
-		mi->DefWidth  += data->bitMapHeader->bmh_Width ;
-		mi->DefHeight += data->bitMapHeader->bmh_Height;
-		mi->MaxWidth  += data->bitMapHeader->bmh_Width ;
-		mi->MaxHeight += data->bitMapHeader->bmh_Height;
+		mi->MinWidth  += data->scaledWidth;
+		mi->MinHeight += data->noMinHeight ? 0 : data->scaledHeight;
+		mi->DefWidth  += data->scaledWidth;
+		mi->DefHeight += data->scaledHeight;
+		mi->MaxWidth  += data->scaledWidth;
+		mi->MaxHeight += data->scaledHeight;
 	}
 
 	return 0;

@@ -379,12 +379,22 @@ static void EA_SetPhoto(int winnum, char *fname)
 
    if (fname) strcpy(G->EA[winnum]->PhotoName, fname);
    fname = G->EA[winnum]->PhotoName;
-   if (*fname) if (DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
+
+   if(*fname && gui->BC_PHOTO &&
+      DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
    {
       DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
       MUI_DisposeObject(gui->BC_PHOTO);
-      gui->BC_PHOTO = MakePicture(fname);
+
+      gui->BC_PHOTO = UserImageObject,
+										  	MUIA_UserImage_File, 				fname,
+												MUIA_UserImage_MaxHeight,		64,
+												MUIA_UserImage_MaxWidth,		64,
+											  MUIA_UserImage_NoMinHeight, FALSE,
+											End;
+
       DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
+
       DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
    }
 }

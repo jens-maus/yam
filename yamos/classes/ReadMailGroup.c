@@ -255,7 +255,9 @@ OVERLOAD(OM_NEW)
 				MUIA_CycleChain,		FALSE,
 				MUIA_ShowMe, 				FALSE,
 				MUIA_Weight, 				1,
-				Child, data->senderImageSpace = VSpace(0),
+				Child, data->senderImageSpace = RectangleObject,
+					MUIA_Weight, 1,
+				End,
 			End,
 		End,
 		Child, data->balanceObject = BalanceObject,
@@ -575,9 +577,11 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
 					if(RE_FindPhotoOnDisk(ab, photopath) &&
 						 (data->senderImage = UserImageObject,
-																		MUIA_UserImage_File, 			photopath,
-																		MUIA_UserImage_MaxHeight,	64, // xget(data->headerList, MUIA_Height),
-																		MUIA_UserImage_MaxWidth,	64, // xget(data->headerList, MUIA_Width),
+																		MUIA_Weight, 								100,
+																		MUIA_UserImage_File, 				photopath,
+																		MUIA_UserImage_MaxHeight,		64,
+																		MUIA_UserImage_MaxWidth,		64,
+																		MUIA_UserImage_NoMinHeight, TRUE,
 																	End))
 					{
 						DB(kprintf("SenderPicture found: %s %ld %ld\n", photopath, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));)
@@ -590,10 +594,6 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 																															NULL);
 					}
 					DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
-
-					if (data->senderImage)
-						DB(kprintf("minheight: %ld %ld %ld %ld %ld\n", _minheight(data->senderImageSpace), _minheight(data->senderImage), _minheight(data->senderImageGroup), _minheight(data->headerList), _subheight(data->senderImageGroup)));
-
 				}
 			}
 			set(data->senderImageGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL) &&
