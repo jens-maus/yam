@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-09-11  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_COg.c: fixed bug #600543 where YAM will now ghost the
+      according string gadget if the preselection mode doesn`t
+      require any size input
+
 2002-09-10  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c: fixed bug #586671 in the folder index rescan

@@ -657,6 +657,13 @@ APTR CO_Page2(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
       DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,bt_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
       DoMethod(data->GUI.CH_NOTICMD  ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_noticmd             ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+
+      // let us now make sure the preselection cycle-gadget automatically ghosts the string gadget if not needed
+      nnset(data->GUI.ST_WARNSIZE, MUIA_Disabled, TRUE);
+      DoMethod(data->GUI.CY_MSGSELECT, MUIM_Notify, MUIA_Cycle_Active, 0, data->GUI.ST_WARNSIZE, 3, MUIM_Set, MUIA_Disabled, TRUE);
+      DoMethod(data->GUI.CY_MSGSELECT, MUIM_Notify, MUIA_Cycle_Active, 1, data->GUI.ST_WARNSIZE, 3, MUIM_Set, MUIA_Disabled, FALSE);
+      DoMethod(data->GUI.CY_MSGSELECT, MUIM_Notify, MUIA_Cycle_Active, 2, data->GUI.ST_WARNSIZE, 3, MUIM_Set, MUIA_Disabled, TRUE);
+      DoMethod(data->GUI.CY_MSGSELECT, MUIM_Notify, MUIA_Cycle_Active, 3, data->GUI.ST_WARNSIZE, 3, MUIM_Set, MUIA_Disabled, FALSE);
    }
    return grp;
 }
