@@ -46,8 +46,8 @@
 #include "YAM_utilities.h"
 
 /* local protos */
-static char *Bool2Txt(BOOL);
-static BOOL Txt2Bool(char*);
+static const char *Bool2Txt(BOOL);
+static BOOL Txt2Bool(const char *);
 
 /***************************************************************************
  Module: Configuration - Basic Get/Put routines
@@ -55,7 +55,7 @@ static BOOL Txt2Bool(char*);
 
 /// Bool2Txt
 //  Converts boolean value to text
-static char *Bool2Txt(BOOL bool)
+static const char *Bool2Txt(BOOL bool)
 {
    return bool ? "Y" : "N";
 }
@@ -63,10 +63,11 @@ static char *Bool2Txt(BOOL bool)
 ///
 /// Txt2Bool
 //  Converts Y/N string to boolean value
-static BOOL Txt2Bool(char *txt)
+static BOOL Txt2Bool(const char *txt)
 {
    return (BOOL)(tolower((int)*txt) == 'y');
 }
+
 ///
 /// CO_SaveConfig
 //  Saves configuration to a file
