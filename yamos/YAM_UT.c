@@ -3462,8 +3462,9 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
       // Now lets redraw the folderentry in the listtree
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn, MUIF_NONE);
 
-      // Now get the parent of the treenode
-      if((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+      // Now we have to recalculate all parent and grandparents treenodes to
+      // set their status accordingly.
+      while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
       {
          // fo_parent is NULL then it`s ROOT and we have to skip here
          struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
@@ -3480,7 +3481,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
                struct MUI_NListtree_TreeNode *tn_child;
                struct Folder *fo_child;
 
-               tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIF_NONE);
+               tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIV_NListtree_GetEntry_Flag_SameLevel);
                if(!tn_child) break;
 
                fo_child = (struct Folder *)tn_child->tn_User;
@@ -3493,7 +3494,12 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
             }
 
             DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn_parent, MUIF_NONE);
+
+            // for the next step we set tn to the current parent so that we get the
+            // grandparents ;)
+            tn = tn_parent;
          }
+         else break;
       }
    }
 

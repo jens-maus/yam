@@ -806,8 +806,8 @@ static void Initialise2(BOOL hidden)
       else folder->LoadedMode = MA_LoadIndex(folder, FALSE);
 
       // now we have to add the amount of mails of this folder to the foldergroup
-      // aswell.
-      if((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+      // aswell and also the grandparents.
+      while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
       {
          // fo_parent is NULL then it`s ROOT and we have to skip here
          // because we cannot have a status of the ROOT tree.
@@ -819,7 +819,12 @@ static void Initialise2(BOOL hidden)
             fo_parent->Total     += folder->Total;
             fo_parent->Sent      += folder->Sent;
             fo_parent->Deleted   += folder->Deleted;
+
+            // for the next step we set tn to the current parent so that we get the
+            // grandparents ;)
+            tn = tn_parent;
          }
+         else break;
       }
 
       DoMethod(G->App, MUIM_Application_InputBuffered);
