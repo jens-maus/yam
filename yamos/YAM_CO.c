@@ -1052,7 +1052,9 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
       CO_Validate(C, TRUE);
       if (*arg == 2) CO_SaveConfig(C, G->CO_PrefsFile);
    }
-   CO_FreeConfig(CE); free(CE);
+   CO_FreeConfig(CE);
+   free(CE);
+
    DisposeModulePush(&G->CO);
 }
 MakeHook(CO_CloseHook,CO_CloseFunc);

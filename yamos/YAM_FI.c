@@ -487,7 +487,10 @@ HOOKPROTONHNONP(FI_Open, void)
       set(G->FI->GUI.LV_FOLDERS, MUIA_List_Active, apos);
       free(flist);
    }
-   if (!SafeOpenWindow(G->FI->GUI.WI)) DisposeModulePush(&G->FI);
+   if (!SafeOpenWindow(G->FI->GUI.WI))
+   {
+     DisposeModulePush(&G->FI);
+   }
 }
 MakeHook(FI_OpenHook,FI_Open);
 
@@ -700,7 +703,11 @@ HOOKPROTONHNONP(FI_ReadFunc, void)
    DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
    if (mail) if ((winnum = RE_Open(-1, TRUE)) != -1)
    {
-      if (SafeOpenWindow(G->RE[winnum]->GUI.WI)) RE_ReadMessage(winnum, mail); else DisposeModulePush(G->RE[winnum]);
+      if (SafeOpenWindow(G->RE[winnum]->GUI.WI)) RE_ReadMessage(winnum, mail);
+      else
+      {
+        DisposeModulePush(G->RE[winnum]);
+      }
    }
 }
 MakeHook(FI_ReadHook, FI_ReadFunc);

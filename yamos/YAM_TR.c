@@ -152,7 +152,7 @@ static int TR_RecvDat(char *recvdata)                   /* success? */
 {
    int len;
 
-   DoMethod(G->App,MUIM_Application_InputBuffered);
+   DoMethod(G->App,MUIM_Application_InputBuffered, TAG_DONE);
    if (G->TR_Socket == SMTP_NO_SOCKET) return 0;
    len = Recv(G->TR_Socket, (STRPTR)recvdata, SIZE_LINE-1, 0);
    if (len <= 0) recvdata[0]=0;
@@ -165,7 +165,7 @@ static int TR_RecvDat(char *recvdata)                   /* success? */
 //  Sends data through a TCP/IP connection
 static BOOL TR_SendDat(char *senddata)                  /* success? */
 {
-   DoMethod(G->App,MUIM_Application_InputBuffered);
+   DoMethod(G->App,MUIM_Application_InputBuffered, TAG_DONE);
    if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
    if (!senddata) return TRUE;
    if (G->TR_Debug) printf("CLIENT: %s", senddata);
@@ -734,6 +734,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       DisplayStatistics((struct Folder *)-1);
       TR_NewMailAlert();
       MA_ChangeTransfer(TRUE);
+
       DisposeModulePush(&G->TR);
       if (G->TR_Exchange)
       {
@@ -819,15 +820,18 @@ static BOOL TR_SendSMTPCmd(char *cmdtext, char *parmtext)
    else *buffer = 0;
    if (!TR_SendDat(buffer)) return FALSE;
    if ((len = TR_RecvDat(buffer)) <= 0) return FALSE;
+
    switch (atoi(buffer))
    {
       case 211: case 214: case 220: case 221: 
       case 250: case 251: case 354: break;
       default:  ER_NewError(GetStr(MSG_ER_BadResponse), cmdtext, buffer); return FALSE;
    }
+
    cont = buffer[3];
    while (buffer[len-1] != '\n') if ((len = TR_RecvDat(buffer)) <= 0) return FALSE;
    if (cont == '-') while (buffer[len-1] != '\n') if ((len = TR_RecvDat(buffer)) <= 0) break;
+
    return TRUE;
 }
 ///
@@ -1251,12 +1255,15 @@ void TR_Cleanup(void)
 {
    struct Mail *work, *next;
 
-   if (G->TR->GUI.LV_MAILS) DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
+   if (G->TR->GUI.LV_MAILS) DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear, TAG_DONE);
+
    for (work = G->TR->List; work; work = next)
    {
       next = work->Next;
+
       if (work->UIDL) free(work->UIDL);
       free(work);
+
    }
    if (G->TR->UIDLloc) free(G->TR->UIDLloc);
    G->TR->UIDLloc = NULL;
@@ -1451,6 +1458,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
          MyAddTail(&(G->TR->List), new);
       }
    }
+
    if (c)
    {
       char host[SIZE_HOST];
@@ -1460,16 +1468,19 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       strcpy(host, C->SMTP_Server);
       if (p = strchr(host, ':')) { *p = 0; port = atoi(++p); }
       TR_SetWinTitle(FALSE, host);
+
       if (!(err = TR_Connect(host, port)))
       {
          BOOL connected;
 
          if (C->Use_SMTP_AUTH && C->SMTP_AUTH_User[0]) connected=TR_ConnectESMTP();
          else connected=TR_ConnectSMTP();
+
          if (connected)
          {
             success = TRUE;
             AppendLogVerbose(41, GetStr(MSG_LOG_ConnectSMTP), host, "", "", "");
+
             for (mail = G->TR->List; mail; mail = mail->Next)
             {
                if (G->TR->Abort || G->Error) break;
@@ -1498,6 +1509,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       }
       MA_FreeRules(G->TR->Search, G->TR->Scnt);
    }
+
    TR_AbortnClose();
    return success;
 }

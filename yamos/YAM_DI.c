@@ -230,7 +230,10 @@ HOOKPROTONHNO(DI_OpenFunc, void, int *arg)
    {
       if (!(G->DI = DI_New())) return;
       G->DI->WrWin = *arg;
-      if (!SafeOpenWindow(G->DI->GUI.WI)) DisposeModulePush(&G->DI);
+      if (!SafeOpenWindow(G->DI->GUI.WI))
+      {
+        DisposeModulePush(&G->DI);
+      }
       else if (DI_Load()) set(G->DI->GUI.LV_ENTRIES, MUIA_List_Active, 0);
    }
 }

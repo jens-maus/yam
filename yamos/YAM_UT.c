@@ -2507,12 +2507,16 @@ BOOL SafeOpenWindow(Object *obj)
    return FALSE;
 }
 ///
-/// DisposeModule
-//  Frees resources of a MUI window
+/// DisposeModulePush
+//  Frees resources of a MUI window (forwarded to DisposeModule via a hook
 void DisposeModulePush(void *module)
 {
-   DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, module);
+   DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, module, TAG_DONE);
 }
+
+///
+/// DisposeModule
+// Free resources of a MUI window
 void DisposeModule(void *modptr)
 {
    struct UniversalClassData **module = (struct UniversalClassData **)modptr;

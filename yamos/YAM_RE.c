@@ -898,7 +898,10 @@ void RE_DisplayMIME(char *fname, char *ctype)
          {
             G->RE[winnum]->TempFile = tf;
             if (SafeOpenWindow(G->RE[winnum]->GUI.WI)) RE_ReadMessage(winnum, mail);
-            else DisposeModulePush(&G->RE[winnum]);
+            else
+            {
+              DisposeModulePush(&G->RE[winnum]);
+            }
          }
       }
    }

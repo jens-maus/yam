@@ -429,3 +429,11 @@
       statistics. With that feature displaying statistics is not limited to the
       INCOMING folder anymore.
 
+2001-05-26  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed BUG #407550. Had to insert a InputBuffered at start to assure that G-TR
+      gets cleared or otherwise it will be became NULL later which caused that
+      mass of hits reported in the BugTracker.
+    * a CTRL-C will now break the application and a CTRL-D will restart it immediatly.
+
+

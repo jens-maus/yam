@@ -376,7 +376,10 @@ HOOKPROTONHNO(MA_ReadMessage, void, int *arg)
       {
          lastwin = winnum;
          if (SafeOpenWindow(G->RE[winnum]->GUI.WI)) RE_ReadMessage(winnum, mail);
-         else DisposeModulePush(&G->RE[winnum]);
+         else
+         {
+            DisposeModulePush(&G->RE[winnum]);
+         }
       }
    }
 }
@@ -503,7 +506,11 @@ int MA_NewNew(struct Mail *mail, int flags)
          MA_EditorNotification(winnum);
          set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
          if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
-      } else DisposeModulePush(&G->WR[winnum]);
+      }
+      else
+      {
+        DisposeModulePush(&G->WR[winnum]);
+      }
    }
    if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
    return winnum;
@@ -578,7 +585,11 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
          sbuf = GetMUIStringPtr(wr->GUI.ST_TO);
          set(wr->GUI.WI, MUIA_Window_ActiveObject, *sbuf ? wr->GUI.TE_EDIT : wr->GUI.ST_TO);
          if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
-      } else DisposeModulePush(&G->WR[winnum]);
+      }
+      else
+      {
+        DisposeModulePush(&G->WR[winnum]);
+      }
    }
    if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
    return winnum;
@@ -670,7 +681,11 @@ int MA_NewForward(struct Mail **mlist, int flags)
          MA_EditorNotification(winnum);
          set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
          if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
-      } else DisposeModulePush(&G->WR[winnum]);
+      }
+      else
+      {
+        DisposeModulePush(&G->WR[winnum]);
+      }
    }
    if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
    return winnum;
@@ -838,7 +853,10 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
 abort_repl:
 
-   if (doabort) DisposeModulePush(&G->WR[winnum]);
+   if (doabort)
+   {
+    DisposeModulePush(&G->WR[winnum]);
+   }
    FreeStrBuf(rto);
    FreeStrBuf(rcc);
    FreeStrBuf(rsub);

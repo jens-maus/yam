@@ -344,7 +344,10 @@ MakeHook(US_OpenHook, US_OpenFunc);
 //  Closes user list window
 HOOKPROTONHNONP(US_CloseFunc, void)
 {
-   if (US_SaveUserList()) DisposeModulePush(&G->US);
+  if (US_SaveUserList())
+  {
+    DisposeModulePush(&G->US);
+  }
 }
 MakeHook(US_CloseHook, US_CloseFunc);
 

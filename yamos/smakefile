@@ -69,6 +69,7 @@ YAM:  $(OBJS)
   TO YAM
   FROM lib:c.o $(OBJS)
   LIB lib:scnb.lib lib:amiga.lib lib:debug.lib
+  map YAM.map,fhx fwidth 32 pwidth 32 swidth 32
   STRIPDEBUG NOICONS
   <
 
