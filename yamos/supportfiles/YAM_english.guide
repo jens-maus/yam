@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (31.12.2001)
+@$VER: YAM.guide 2.4 (16.04.2002)
 
 /***************************************************************************
 
@@ -314,7 +314,7 @@ unwilling to use it, proceed as follows:
   If you have some older YAM version already installed, you probably
   can use this instead:
 
-      1.RAM Disk:> spatch -oYAM_060 -pYAM.060.pch YAM:YAM
+      1.RAM Disk:> spatch -oYAM:YAM -pYAM.060.pch YAM
 
   to replace your old YAM executable in one single step.
 
@@ -478,12 +478,12 @@ which  you  have  received  and/or  sent,  so you can arrange the mails in
 whatever way you like, including arranging them in groups.
 
 The folder list can have up to five columns: Name of the folder, number of
-messages  (in  total,  new or unread) as well as the size of the folder in
-bytes.  Which of these columns is actually shown depends on how you set up
-@{" Lists " LINK "CO08" 0} in the  configuration. The column widths can be adjusted by using
-the mouse  to drag the thin  lines separating  the column  headings in the
-folder list itself. The order of the columns can be modified by moving the
-column headers.
+messages  (in  total,  new or unread) as well as the  size of the  folder.
+Which of these columns are actually shown depends on how you set up @{" Lists " LINK "CO08" 0}
+in the configuration. The column widths can be adjusted by using the mouse
+to drag the thin  lines separating  the column headings in the folder list
+itself.  The order of the  columns can  be modified by  moving the  column
+headers.
 
 You can rearrange the folders either by @{" Drag&Drop " LINK "Drag" 0} or by clicking on the
 column heading. A little arrow on one of the column headings shows how the
@@ -814,7 +814,8 @@ Folder/Get new mail
 
 Attempts  to  connect to the mail server, checks whether there is new mail
 waiting and  if  so  downloads it into the 'Incoming' mailbox. If you have
-specified more than one @{" POP3 server " LINK "CO02" 0}, they will all be checked in turn.
+specified more than one @{" POP3 server " LINK "CO02" 0}, those marked as "Active"
+will all be checked in turn.
 
 
 Folder/Check single account
@@ -891,7 +892,7 @@ is written into any message cropped in this way.
 Message/Export...
 
 Saves one or more messages to a single file, so that they can be read by a
-different e-mail client. (See also @{" Folder/Import..." LINK "MAM2" 0}.)
+different e-mail client. (See also @{" Folder/Import... " LINK "MAM2" 0}.)
 
 
 Message/Write
@@ -998,7 +999,7 @@ MUI. These MUI modules are:
    NListviews: some of the lists in YAM, e.g. the message list
       Options: colours, fonts, miscellaneous, scrollbars.
 
-      Toolbar: icon buttons in the YAM window.
+      Toolbar: icon buttons in the YAM windows.
       Options: labels, spacing, fonts.
 
    TextEditor: internal editor as well as message display in the Read window.
@@ -1154,7 +1155,7 @@ doesn't set this.
 Lastly, the "Autodetect" button  will try to guess  what "To: pattern" and
 "To: address" data should be used by scanning the first 5 messages  in the
 folder using the  Smith & Waterman  algorithm to  search for  similarities
-between strings. This  should make it  easier to find the  corrent mailing
+between strings. This  should make it  easier to find the  correct mailing
 list pattern.
 
 
@@ -1175,7 +1176,7 @@ selected  by clicking  on  the corresponding word in  the left part of the
 configuration window.
 
   @{" First Steps    " LINK "CO00" 0}   - Essential information for YAM to work:
-                       your e-mail address, mail server & time-zone
+                       your e-mail address, mail server & timezone
   @{" TCP/IP         " LINK "CO01" 0}   - SMTP and POP3 settings for mail transfer
   @{" New Mail       " LINK "CO02" 0}   - Controlling the way mail is downloaded
   @{" Filters        " LINK "CO03" 0}   - Automated sorting and filing of messages
@@ -1192,17 +1193,22 @@ configuration window.
   @{" Miscellaneous  " LINK "CO14" 0}   - Paths, AppIcon, save/delete, tracking & packing
   @{" Hidden Options " LINK "CO_H" 0}   - You can't see them :-)
 
+
 The same three buttons appear on each sheet:
 
 [Save]
+
 Use  this  to  save  all  changes to the hard disk, so they will survive a
 reboot of the computer.
 
 [Use]
+
 With this the changes are temporary and apply only until YAM is closed.
 
 [Cancel]
+
 Discard any changes.
+
 
 The @{" menus " LINK "CO_M" 0} provide some extra possibilities.
 
@@ -1257,16 +1263,21 @@ The time and date displayed by YAM in the message list is always converted
 to  your  local time. This guarantees correct sorting of messages from all
 over  the  world sent out from different time zones. The time zone is part
 of  the message's date and specifies the difference between local time and
-Greenwich Mean Time (GMT). Should the time zone have a special value (e.g.
-a  difference  of  half  an  hour), it  can  be defined in the environment
-variable YAM_TZ.
+Greenwich Mean Time (GMT).
 
   Examples:  GMT+1 (for Germany)
              GMT   (for the U.K.)
              GMT-5 (for U.S. EST e.g.  New York City)
 
 Normally  YAM  will  get the time zone from your Locale settings, and this
-selector will be ghosted.
+selector will  be ghosted.  However, should the  time zone have  a special
+value (e.g. a  difference  of  half  an  hour), it  can  be defined in the
+environment variable YAM_TZ. For instance,
+
+  SetENV YAM_TZ SAVE 1030
+
+would set  your timezone value as  10 hours 30 minutes ahead  GMT, meaning
+you are e.g. in Adelaide, Australia.
 
 
 [ ] Add adjustment for daylight saving time
@@ -1288,15 +1299,15 @@ Server
 
 The  Internet  address  of  the  system  you're sending your mail to. This
 server which usually is a computer of your ISP (Internet Service Provider)
-must  be  capable  of processing the SMTP protocol.
+must be capable of processing the SMTP protocol.
+
+  Example:  mail.provider.de
 
 
 Port
 
 The port number of the SMTP service is 25 in most cases. If it's different
 from that, enter the number here.
-
-  Example:  mail.provider.de
 
 
 Domain
@@ -1390,7 +1401,7 @@ the full account name in the form <User ID>\@<server>.)
 Password
 
 The  password  which  has to be sent to the mailserver for logging on. You
-can  leave  this field empty for security reasons. If you do, the password
+can leave  this field empty for security reasons - if you do, the password
 will be asked to you whenever YAM checks for new mail.
 
   Example:  nguz56
@@ -1438,12 +1449,6 @@ from the mail server. The  messages will be deleted only  after they  have
 been  successfully  saved to your computer. If the POP3 account is used by
 several  people,  or if you'd like to access your account again later from
 another computer, this option can be deactivated.
-
-
-New, Delete
-
-Let you set up a new POP3 account or delete the account currently selected
-respectively.
 
 @ENDNODE
 @NODE "CO02" "Configuration - New mail"
@@ -1520,7 +1525,7 @@ Check for new mail every [xx] minutes
 
 Here  you  can  specify a time interval after which YAM will automatically
 recheck  your mail  server for new mail. To deactivate this option, simply
-enter zero.
+select zero.
 
   Example:  15 minutes
 
@@ -1596,14 +1601,15 @@ The filter's name is merely for recognition and not of any other use.
 
 [ ] Remote filter
 
-With  a remote filterm new email can be checked on the POP3 server without
+With  a remote filter, new email can be checked on the POP3 server without
 being  downloaded completely. The POP3 server must support the TOP command
-to be able to process this kind of filter. In contrast to 'normal' filters
-only  the  contents  of  the  e-mail  headers  can be searched for certain
-patterns. For obvious reasons, functions like forwarding or moving e-mails
-will  not  work  with remote filters. If remote filters are activated they
-might  slow  down  downloading  e-mail, but they are handy as a protection
-against spam or 'mailbombs'.
+to be able to process this kind of filter.
+
+In contrast to 'normal' filters, only the  contents of the e-mail  headers
+can be searched for certain patterns.  For obvious reasons, functions like
+forwarding or moving e-mails will not work  with remote filters. If remote
+filters are activated they might  slow  down downloading  e-mail, but they
+are handy as a protection against spam or 'mailbombs'.
 
 
 [ ] Apply to new mail
@@ -1670,7 +1676,7 @@ The  search  pattern may contain @{" AmigaDOS wildcards " LINK "DOSW" 0} such as
 or [abc].  Please note  that the search  pattern  [YAM]#?  will filter all
 messages  beginning  with  Y, A or M. For filtering mails out of a mailing
 list  (for  example  a mailing list related to YAM) you would do better to
-use the search pattern #?YAMML#? or have the filter compare the 'Reply-To'
+use the search pattern #?YAM#?  or have the filter  compare the 'Reply-To'
 field with the address of the mailing list.
 
   Example:  = YAM 1.3.#?
@@ -1724,6 +1730,7 @@ next to the option.
 Activate  this option when you want e-mail matching the search criteria to
 be forwarded to another person. The new recipient's e-mail address must be
 inserted into the text field next to the option.
+
 
 [ ] Reply
 
@@ -1980,7 +1987,7 @@ configuration.
    Example:  YAM:charsets/Latin1toUSASCII  (deletes mutated vowels, etc.)
 
 
-[ ] Warn when there's an empty subject line?
+[ ] Warn when there's an empty subject line
 
 Activate this option to let YAM warn you any time you try to send an email
 with  an empty  subject line. This may  be the case when  sending email to
@@ -2035,7 +2042,7 @@ YAM can cache  on disk a certain number of the most recent recipients used
 when writing a  new email, if those  recipients  aren't  already  in  your
 address book. This  may improve the  performance  of  the  automatic  name
 completer, especially if your address book  is rather brief and  you often
-find yourself typing your recipient's name and address by hand.
+find yourself having to type your recipient's name and address.
 
 If the hit ratio of the email cache is very low  in your everyday use, you
 might want to turn it off completely by selecting zero mails.
@@ -2109,7 +2116,7 @@ Use with these domains
 Whenever the recipient's address corresponds with this @{" AmigaDOS pattern " LINK "DOSW" 0},
 the alternative reply phrases will be used.
 
- Example:  #?.(de|ch|at) (Addresses of countries with German mother tongue)
+  Example:  #?.(de|ch|at) (Addresses of countries with German mother tongue)
 
 
 Mailing list reply phrase
@@ -2195,9 +2202,9 @@ Click this  button  to  open  the  external  editor  you  have  defined in
 
 Insert random tagline
 
-Click  this  button  to  insert  the  variable  '%t'  at the actual cursor
+Click  this  button  to  insert  the  '%t' variable   at the actual cursor
 position in  the  editor.  When processing a new message, YAM will replace
-this variable with a random tagline from the tagline file.
+this variable with a random tagline from the taglines file.
 
 
 Insert ENV:Signature
@@ -2265,7 +2272,7 @@ Switzerland.
 Size format
 
 This setting allows you to select the exact format  of the sizes  given in
-the message list, assuming the "Size" field is used in this list.
+the message and folder lists, as well as the preselection window.
 
 
 ---- Information bar -----------------------------------------------------
@@ -2405,7 +2412,7 @@ user-defined folders will then be loaded only when needed.
 
 [ ] Mark new mail as unread
 
-Switch  on  this option to  mark  all new messages as "unread" on startup.
+Switch this option on to  mark all new messages as "unread" on startup.
 
 
 [ ] Delete old mail
@@ -2425,7 +2432,8 @@ Switch this on to make YAM empty the 'Deleted' folder on startup.
 Switch  on  this option to make YAM search the address book on startup for
 people    whose   birthday   is   today.   This  way  you  can  send  your
 congratulations at once, in case it's the birthday of one of your pals (or
-maybe even business partners).
+maybe even  business partners). When run from a shell, the NOCHECK  switch
+prevents this check from being done.
 
 
 [ ] Send mail in outgoing queue
@@ -2479,10 +2487,10 @@ Configuration - MIME  (MIME viewers for attachments)
 The  program  selected  by  default  to display  attachments is MultiView.
 Messages  in @{" MIME format " LINK "MIME" 0} contain a field called 'Content-Type' in which
 the type  of  the encoded file is  specified. You can  define a  different
-program for  to process every single type  of file. This  is important for
-users who  do not want  to use MultiView  for processing  images and sound
-files, or for processing file types not yet supported by  datatypes. Click
-[New] to configure a display  program, or use [Delete] to delete an entry.
+program to process every single type of file. This  is important for users
+who  do not want  to use MultiView  for processing images and sound files,
+or for  processing file types not yet supported by  datatypes. Click [New]
+to configure a display  program, or use [Delete] to delete an entry.
 
 
 Attachment type
@@ -2528,7 +2536,7 @@ Some mail clients always use a Content-Type field of
   'application/octet-stream'
 
 for  binary  attachments.  To still show such attachments with the correct
-program,  YAM can search the viewer list based on the file name extenstion
+program,  YAM can search the viewer list based on the file name extension
 of the attached file (see Extension).
 
 
@@ -2562,7 +2570,7 @@ Select the items you want to see in the address book.
 
 ---- Personal data exchange ----------------------------------------------
 
-[ ] Add personal data
+[ ] Add personal info
 
 Check  this  option  to create special message headers containing personal
 data  like  your  postal address, phone number, homepage, date of birth or
@@ -2609,7 +2617,7 @@ URL of your picture
 
 If one exists, enter here  the  WWW address (URL)  of  a  small  photo  of
 yourself. The URL will be listed along with the headers of  every outgoing
-message if 'Add personal information' is enabled.
+message if 'Add personal info' is enabled.
 
   Example:  http://www.YAM.ch/gallery/BECK_Marcel.gif
 
@@ -2618,8 +2626,8 @@ HTTP Proxy server
 
 If  you're  behind a firewall and only get into the Internet using a proxy
 server, then  you  have  to enter here  the address  of that proxy server,
-otherwise it's won't be  possible to  download photos  or get  information
-about new versions of YAM.
+otherwise it won't be possible to download photos or get information about
+new versions of YAM.
 
   Example:  proxy.access.ch:8080
 
@@ -2639,7 +2647,7 @@ been downloaded.
 
 Name
 
-The  title  of  the  script  as it appears in the  ARexx menu, e.g. "Start
+The  title of the  script  as it appears in the  Scripts menu, e.g. "Start
 Browser".
 
 
@@ -2686,7 +2694,7 @@ very large messages.
 
 Position X   Y
 
-Enter here the  desired  position on your workbench for YAM's  AppIcon. If
+Enter here the  desired  position on your Workbench for YAM's  AppIcon. If
 another icon is already ocuppying this position, the Workbench will choose
 a  'safe'  position for the AppIcon on its own (so you don't have to worry
 about 'deleting' another icon).
@@ -2694,10 +2702,10 @@ about 'deleting' another icon).
   Example:  X 550  Y 144
 
 
-AppIcon label
+Label
 
 The label for the AppIcon which will be displayed while YAM is running can
-be specified here. Click the  pop-up gadget to  select a variable for new,
+be specified here. Click the  pop-up button to  select a variable for new,
 unread, etc. messages.
 
 
@@ -2724,18 +2732,18 @@ folder on deletion, but  they will instead be  erased immediately from the
 hard  disk. This saves some  time and memory, but  on the  other hand  you
 won't be able to retrieve any message deleted by mistake.
 
+
 [ ] Save sent messages
 
 Activate  this  option  to  make  YAM  save  sent messages into the 'Sent'
-folder.  You can select  this  as  well  specifically for each mail, using
-the relevant options in the @{" Write " LINK "WR02" 0} window.
+folder.  You can select this as well  specifically for any single mail, by
+using the relevant option in the @{" Write " LINK "WR02" 0} window.
 
 
 ---- Message tracking ----------------------------------------------------
 
 Here  you  can  define  how  YAM  should  react  if a message's sender has
-requested  a  disposition notification (MDN) while writing his/her message
-by choosing 'Message tracking'.
+requested a  disposition notification (MDN) while writing his/her message.
 
  Ignore   - The request will be ignored completely and there won't be any
             report.
@@ -2757,8 +2765,8 @@ disposition notification:
 
 [ ] Send at once
 
-The  condition  report  will be sent immediately if there's a TCP/IP-stack
-running. If not it will be saved to the 'Outgoing' folder.
+The  condition  report  will be sent immediately if there's a TCP/IP stack
+running, otherwise it will be saved to the 'Outgoing' folder.
 
 
 ---- XPK/LhA settings ----------------------------------------------------
@@ -2859,21 +2867,23 @@ message whenever you select a folder.
   Example:  JumpToNewMsg = N
 
 
+JumpToIncoming
+
+If this option  is set to 'Y', YAM will jump to  the first  new or  unread
+message  whenever you  download new  email. This only comes into effect if
+'Incoming' is the current folder.
+
+  Example:  JumpToIncoming = N
+
+
 AskJumpUnread
 
 If  this  option  is  set to 'N', YAM won't ask if you want to jump to the
 next/previous folder with unread  messages if you  are reading the last or
-first message and select 'Next/Previous unread message' in the menu.
+first message and select  any of the 'Next/Previous unread message'  items
+in the 'Navigation' menu.
 
   Example:  AskJumpUnread = N
-
-
-WarnSubject
-
-If  this  option  is  set  to 'N', YAM won't warn you if you try to send a
-message without a subject.
-
-  Example:  WarnSubject = N
 
 
 PrinterCheck
@@ -2888,15 +2898,15 @@ IsOnlineCheck
 
 If  you're  using  Miami or AmiTCP/Genesis, YAM can check if your Amiga is
 really online. If you're using another TCP/IP software and YAM is claiming
-a  missing connection although you're acually online, then you must switch
-off this option.
+a missing connection although you're actually online, then you must switch
+this option off.
 
   Example:  IsOnlineCheck = N
 
 
 IOCInterface
 
-Specifies  which  Miami Deluxe/AmiTCP Genesis interface should be used for
+Specifies  which  Miami Deluxe/AmiTCP/Genesis interface should be used for
 the online check (see IsOnlineCheck).
 
   Example:  IOCInterface = ppp1
@@ -2946,7 +2956,7 @@ viewers and PGP).
 Configuration - MENUS
 
 
-Project/Open
+Project/Open...
 
 Loads   a   config  file, and thus enables you to  use  several and  maybe
 different YAM setups.
@@ -2954,7 +2964,7 @@ different YAM setups.
 
 Project/Save as...
 
-Saves the actual configuration with another name.
+Saves the current configuration with another name.
 
 
 Edit/Reset to defaults
@@ -2980,7 +2990,7 @@ Discards any changes in the  settings made  since the last  time they were
 [Save]d or [Use]d.
 
 
-Extras/Import MIME viewers & types
+Extras/Import MIME viewers & types...
 
 Imports attachment types, file  name  extensions  and  MIME  viewers data.
 Supported  file  formats are mime.types, mailcap and MIME.prefs. This menu
@@ -3746,13 +3756,12 @@ a message without the other recipient(s) knowing.
 From
 
 Pretty  obvious,  really! YAM will fill this in with your address, but you
-might want to change the way your real name appears (the string in  double
-quotes).
+might want to change the way your real name appears.
 
 
 Reply to
 
-This  setting  is  valid  only for the actual message and will be inserted
+This  setting  is valid  only for the current message and will be inserted
 instead  of  the  usual  Reply-To  address  as  specified  in  the program
 settings. Leave this blank unless it needs to be different from the e-mail
 address in the From header.
@@ -3763,7 +3772,7 @@ Additional header
 If  for  any  reason it should become necessary to add one or more special
 header lines to a message, you can enter these here. Several lines must be
 separated by inserting '\\n'. YAM  will prepend  the  entered headers  with
-'X-YAM-Header-'.
+'X-YAM-Header-' in the resulting mssage.
 
   Example:  Keywords: Amiga, YAM\\nPassword: CuriosityKilledTheCat
 
@@ -4026,7 +4035,7 @@ suggestions for the correct spelling.
 Write window - ATTACHMENTS MENU
 
 
-Attachments/Add file
+Attachments/Add file...
 
 Equivalent to the button [Add file] in the @{" Attachments " LINK "WR01" 0} sheet.
 
@@ -4195,8 +4204,8 @@ Read window - TOOLBAR
 
       Button      Shortcut    Equivalent to menu...
 
-  1.  [Prev]      P,<left>    @{" Navigation/Next message " LINK "REM2" 0}
-  2.  [Next]      N,<right>   @{" Navigation/Previous message " LINK "REM2" 0}
+  1.  [Prev]      P,<left>    @{" Navigation/Previous message " LINK "REM2" 0}
+  2.  [Next]      N,<right>   @{" Navigation/Next message " LINK "REM2" 0}
   3.  [PrevThr]   T           @{" Navigation/Previous message in thread " LINK "REM2" 0}
   4.  [NextThr]   H           @{" Navigation/Next message in thread " LINK "REM2" 0}
 
@@ -4215,10 +4224,10 @@ holding down a certain qualifier key:
  Shift + [Prev]     Displays the previous unread message
  Shift + [Next]     Displays the next unread message
  Shift + [Delete]   Immediately deletes the selected messages
- Shift + [Reply]    Forces a private reply (address in From field is used)
+ Shift + [Reply]    Forces a private reply (address in "From:" field is used)
  Shift + [Forward]  Bounces the message
  Alt   + [Reply]    Forces a mailing list reply, using the address in the
-                    Reply-To field
+                    "Reply-To:" field
  Ctrl  + [Reply]    Avoids quoting the original message
  Ctrl  + [Forward]  Avoids forwarding any attachment
 
@@ -4343,7 +4352,7 @@ Message/Change subject...
 
 This  lets you change the subject of the current message, so you can amend
 uninformative  subject  headers on  some messages  you have  received. The
-original  subject  is saved in an X-Original-Subject header, to facilitate
+original  subject  is saved in an "X-Original-Subject:" header, to facilitate
 following a thread back.
 
 @ENDNODE
@@ -4442,16 +4451,13 @@ window, the @{" Read " LINK "CO04" 0} configuration settings are used.
 Settings/No headers | Short headers | Full headers
 
 Use these  to select  how much  header information  you want to see in the
-Read window. This  choice  only applies  to the  current session; when you
-open a new Read window, the @{" Read " LINK "CO04" 0} configuration settings are used.
+Read window.
 
 
 Settings/No sender info | Data fields only | Data and image
 
 This  selects how much of the  information  saved in  your @{" address book " LINK "AB_W" 0}
-about  the  sender  is  to  be displayed. This choice only applies  to the
-current session; when you open a new Read window, the @{" Read configuration " LINK "CO04" 0}
-settings are used.
+about  the  sender  is  to  be displayed.
 
 
 Settings/Wrap headers
@@ -4711,8 +4717,8 @@ Starts YAM in iconified mode.
 
 NOCHECK
 
-Starts  YAM  without  trying to  download  new mail nor check birthdays on
-startup. Useful if you are starting YAM from a web browser, for example.
+Starts YAM  without  trying to  download/send new mail nor check birthdays
+on startup. Useful if you are starting YAM from a web browser for example.
 
 
 DEBUG
@@ -4747,7 +4753,7 @@ ATTACH=<filename>
 Attaches a file to the new message (see MAILTO).
 
   Examples:  YAM USER Tom PASSWORD secret HIDE
-             YAM NOCHECK MAILTO "YAMML\@yahoogroups.com, YAMOS-dev, John Doe"
+             YAM NOCHECK MAILTO "yam\@freelists.org, YAMOS-dev, John Doe"
                SUBJECT "Bug Report" ATTACH "ram:debug.txt"
 
 @ENDNODE
@@ -4968,8 +4974,8 @@ pre-selection etc.).
 
 MAILCOPY       FOLDER/A
 
-Copies  selected message(s) to another folder. FOLDER can be the number or
-name of the destination folder.
+Copies the selected  message(s). FOLDER  can be the  number or name of the
+destination folder.
 
 
 MAILDELETE     ATONCE/S,FORCE/S
@@ -5052,7 +5058,8 @@ Sends selected or all messages in the 'Outgoing' folder.
 
 MAILSENDALL
 
-Sends all messages in the 'Outgoing' folder.
+Sends  all messages  in the 'Outgoing' folder,  i.e.  it is  equivalent to
+"MAILSEND ALL".
 
 
 MAILSTATUS       STATUS/A
@@ -5260,7 +5267,7 @@ TIPS & TRICKS, a.k.a. "The FAQ"
 
 1. How can I snapshot the window positions and sizes?
 
-Start th e MUI settings  interface by selecting "Settings/MUI...", then go
+Start the MUI settings  interface by selecting  "Settings/MUI...", then go
 to the  "Windows" section and  make sure  the third  of the  little system
 gadget buttons is activated. After saving the settings, every  window will
 have an additional system gadget in the upper right corner - one  click on
@@ -5294,7 +5301,7 @@ directories will be found:
  YAM.info          The program icon
  YAM.guide         This documentation in AmigaGuide format
 
- Icons/#?.info     Icons which show the satus of the incoming mailbox when
+ Icons/#?.info     Icons which show the status of the incoming mailbox when
                    the program is iconified:
                    empty.info     the mailbox is empty
                    old.info       the mailbox only holds "old" mail
@@ -5377,7 +5384,7 @@ example.
 
 This field is added by the recipient's mail server and contains the e-mail
 address of the sender to allow the recipient's computer to send a reply by
-e-mail
+e-mail.
 
   Received: from ina.zfn.uni-bremen.de by atlantica.access.ch
             (8.8.5/INA-1.05pri) id XAA29100;
@@ -5419,7 +5426,7 @@ represents  the time zone, expressed as the difference from Greenwich Mean
 Time.  Here  the first  two digits  show the  hours, and  the next two the
 minutes.
 
-  Message-Id: <YAM7296.1549.122414920\@zfn.uni-bremen.de>
+  Message-ID: <YAM7296.1549.122414920\@zfn.uni-bremen.de>
 
 A  unique  identifier, created automatically on despatch. Using this it is
 possible unequivocally to cancel any particular message.
@@ -5483,8 +5490,9 @@ You  need  both  types  of  key,  public  and  private,  because  they are
 inherently connected together. You can distribute your public key as often
 as  needed, but  it  will  only  work  when  matched  up  with  its  exact
 counterpart.  Hence, both  public and private keys are involved in locking
-and  (generally)  unlocking information. PGP keys are used in two distinct
-ways:
+and  (generally)  unlocking information.
+
+PGP keys are used in two distinct ways:
 
  1. Another person can encrypt information using your public key and send
     the encrypted file to you, to decipher with your private key.
@@ -5511,6 +5519,7 @@ server,  where it waits until YAM downloads it to your computer, using the
 POP3  (version  3)  protocols.  The  messages which YAM sends and receives
 conform to the conventions set out in RFC 822 and RFC 1521 (MIME).
 
+
 Outgoing mail
 
 If you want to send an e-mail message to anyone, YAM transfers the message
@@ -5526,9 +5535,10 @@ frequently  the  recipient's  server will not be available at the time you
 want to send the mail. The SMTP server solves these problems, holding back
 the message until the other computer is ready to receive it.
 
+
 Incoming mail
 
-If  someone sends you mail, the other computer transfers it using the SMTP
+If someone sends you email, the other computer transfers it using the SMTP
 protocol  as  far as your POP server. This stores the message in a sort of
 mailbox,  where  it  remains  until YAM collects it. When you look for new
 mail, YAM downloads the message to your Amiga using POP3.
@@ -5544,11 +5554,13 @@ suitable for you.
 
 WHAT IS MIME?
 
+
 MIME  stands  for  Multipurpose  Internet Mail Extensions. MIME serves two
 main  purposes:  it allows one mail application to  tell another what sort
 of data is contained in a message, and it also provides standardised rules
 by which mail applications can encode data, so that it can be sent through
 the Internet mail system.
+
 
 MIME Encoding
 
@@ -5581,6 +5593,7 @@ system.  However, Base64  makes  no  attempt  to be readable, and is  most
 appropriate for non-text data. It is equivalent to the older UUencode, but
 more reliable in use.
 
+
 Content type
 
 The  other  important  function  of  MIME  is  to  allow mail programs  to
@@ -5609,6 +5622,7 @@ most suitable utility to display an attached file.
 @NODE "DOSW" "AmigaDOS Patterns and wildcards"
 
 AMIGADOS PATTERN MATCHING
+
 
 The  use  of  wildcards  in  patterns  allows  you to set up very powerful
 searches. The special wildcard characters are listed below.
@@ -5654,7 +5668,7 @@ sequence  YAM.  If you find it, look at the following part: is it equal to
 solution  is to  make it  clear that  the string following  "YAM" must not
 start with a "1". So try: #?YAM(~1#?)
 
-This  gets  rid  of  1.3.5 alright, but there's still a problem. Sometimes
+This gets  rid  of  1.3.5 alright, but there's still a problem: sometimes,
 people  insert  a  space  between YAM and the version number and sometimes
 not.  So  references  to YAM 1 are still included. So we must say that any
 number of spaces may be present, like this: #?YAM# (~1#?)
@@ -5678,7 +5692,7 @@ that's what it's for!). Like this: (~Re:|%)YAM#?
 
 EMAIL NETIQUETTE
 
-Keep messages short and to the point.
+Keep your messages short and to the point.
 
 Give  the  message a concise and meaningful Subject header, so that it can
 easily be found again.
@@ -5746,19 +5760,15 @@ person appears on the list, unintentionally.
 
 FUTURE PLANS
 
-Along the following weeks, YAM will suffer a major internal (source level)
-redesign, making it  much much more  modular. This will make  a lot easier
-for developers to fix  the remaining bugs  and implement  all the features
-users always wanted, as well as others you folks can't even dream of right
-now, with as less effort as possible since this is for free after all. ;-)
+More attractions coming (possibly) in future versions of YAM:
 
-Some of the things planned for the future are:
-
-- User configurable context menus.
-- User configurable toolbars.
-- Asynchronous email transfer (internal multithreading).
-- No more problems under low memory situations.
-- Enhanced & ready to print documentation.
+  - Support for messages in HTML format (coming soon)
+  - Inline-display of attached files (graphics)
+  - User configurable context menus.
+  - User configurable toolbars.
+  - Support for the IMAP-4 protocol
+  - Asynchronous email transfer (internal multithreading)
+  - Enhanced and ready to print documentation
 
 @ENDNODE
 @NODE "INFO" "Useful links"
@@ -5771,10 +5781,10 @@ Wide Web:
 
                          http:\//www.yam.ch/
 
-If  you  want to discuss YAM related issues with other users, you can join
-the YAM mailing list. To subscribe, just send an empty e-mail to
-
-                  YAMML-subscribe\@yahoogroups.com
+If  you  want to discuss YAM related issues with other users, you can
+join the YAM mailing list. To subscribe, just send an email to
+yam-request@freelists.org with the subject "subscribe". Alternatively,
+you can use the web based interface at http://www.freelists.org/list/yam
 
 The YAM Open Source homepage is hosted by SourceForge.net and located at
 
