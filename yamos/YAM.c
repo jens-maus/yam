@@ -78,8 +78,6 @@
  Module: Root
 ***************************************************************************/
 
-struct Device *TimerBase = NULL;
-
 struct Global *G;
 
 static struct NewRDArgs nrda;
