@@ -39,4 +39,8 @@
 	LP3(0x1e, long, Socket, long, d, d0, long, t, d1, long, p, d2, \
 	, SOCKET_BASE_NAME)
 
+#define Errno() \
+	LP0(0xa2, /* V4 */LONG, Errno, \
+	, SOCKET_BASE_NAME)
+
 #endif /* !_INLINE_SOCKET_H */
