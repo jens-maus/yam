@@ -25,11 +25,12 @@ extern struct Library * GenesisBase;
 
 #ifdef __amigaos4__
  #include <interfaces/genesis.h>
-
  #ifdef __USE_INLINE__
   #include <inline4/genesis.h>
  #endif /* __USE_INLINE__ */
-
+ #ifndef CLIB_GENESIS_PROTOS_H
+  #define CLIB_GENESIS_PROTOS_H 1
+ #endif /* CLIB_GENESIS_PROTOS_H */
  #ifndef __NOGLOBALIFACE__
   extern struct GenesisIFace *IGenesis;
  #endif /* __NOGLOBALIFACE__ */

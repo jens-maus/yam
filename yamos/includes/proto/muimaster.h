@@ -34,11 +34,12 @@ extern struct Library * MUIMasterBase;
 
 #ifdef __amigaos4__
  #include <interfaces/muimaster.h>
-
  #ifdef __USE_INLINE__
   #include <inline4/muimaster.h>
  #endif /* __USE_INLINE__ */
-
+ #ifndef CLIB_MUIMASTER_PROTOS_H
+  #define CLIB_MUIMASTER_PROTOS_H 1
+ #endif /* CLIB_MUIMASTER_PROTOS_H */
  #ifndef __NOGLOBALIFACE__
   extern struct MUIMasterIFace *IMUIMaster;
  #endif /* __NOGLOBALIFACE__ */

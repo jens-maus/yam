@@ -34,11 +34,12 @@ extern struct Library * AmiSSLBase;
 
 #ifdef __amigaos4__
  #include <interfaces/amissl.h>
-
  #ifdef __USE_INLINE__
   #include <inline4/amissl.h>
  #endif /* __USE_INLINE__ */
-
+ #ifndef CLIB_AMISSL_PROTOS_H
+  #define CLIB_AMISSL_PROTOS_H 1
+ #endif /* CLIB_AMISSL_PROTOS_H */
  #ifndef __NOGLOBALIFACE__
   extern struct AmiSSLIFace *IAmiSSL;
  #endif /* __NOGLOBALIFACE__ */

@@ -31,11 +31,12 @@ extern struct Library * OpenURLBase;
 
 #ifdef __amigaos4__
  #include <interfaces/openurl.h>
-
  #ifdef __USE_INLINE__
   #include <inline4/openurl.h>
  #endif /* __USE_INLINE__ */
-
+ #ifndef CLIB_OPENURL_PROTOS_H
+  #define CLIB_OPENURL_PROTOS_H 1
+ #endif /* CLIB_OPENURL_PROTOS_H */
  #ifndef __NOGLOBALIFACE__
   extern struct OpenURLIFace *IOpenURL;
  #endif /* __NOGLOBALIFACE__ */

@@ -28,11 +28,12 @@ extern struct Library * XpkBase;
 
 #ifdef __amigaos4__
  #include <interfaces/xpkmaster.h>
-
  #ifdef __USE_INLINE__
   #include <inline4/xpkmaster.h>
  #endif /* __USE_INLINE__ */
-
+ #ifndef CLIB_XPKMASTER_PROTOS_H
+  #define CLIB_XPKMASTER_PROTOS_H 1
+ #endif /* CLIB_XPKMASTER_PROTOS_H */
  #ifndef __NOGLOBALIFACE__
   extern struct XpkIFace *IXpk;
  #endif /* __NOGLOBALIFACE__ */
