@@ -1,5 +1,9 @@
 2001-09-06  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * commented MUIA_Application_Sleep calls in Busy() function. This is the
+      cause for bug #458521. This busybar stuff anyway will be reworked
+      completly if the new infobar is finished which will replace this
+      bottom busybar.
     * modified makefile to reflect new genclasses tool
       Now you can directly compile the genclasses tool by specifing
       the smakefile target "GenClasses".

@@ -412,15 +412,20 @@ HOOKPROTONHNO(MA_ReadMessage, void, int *arg)
    struct Mail *mail;
    int i, winnum;
 
-   if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
+   if((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
    {
-      for (i = 0; i < MAXRE; i++) if (G->RE[i]) if (mail == G->RE[i]->MailPtr)
+      // Check if this mail is already in a readwindow
+      for(i = 0; i < MAXRE; i++)
       {
-         DoMethod(G->RE[i]->GUI.WI, MUIM_Window_ToFront);
-         set(G->RE[i]->GUI.WI, MUIA_Window_Activate, TRUE);
-         return;
+        if(G->RE[i] && mail == G->RE[i]->MailPtr)
+        {
+           DoMethod(G->RE[i]->GUI.WI, MUIM_Window_ToFront);
+           set(G->RE[i]->GUI.WI, MUIA_Window_Activate, TRUE);
+           return;
+        }
       }
-      if ((winnum = RE_Open(C->MultipleWindows ? -1 : lastwin, TRUE)) != -1)
+
+      if((winnum = RE_Open(C->MultipleWindows ? -1 : lastwin, TRUE)) != -1)
       {
          lastwin = winnum;
          if (SafeOpenWindow(G->RE[winnum]->GUI.WI)) RE_ReadMessage(winnum, mail);

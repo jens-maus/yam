@@ -2929,11 +2929,11 @@ void Busy(char *text, char *parameter, int cur, int max)
             set(G->MA->GUI.GA_INFO, MUIA_Gauge_Max, max);
          }
          BusyLevel++;
-         set(G->App, MUIA_Application_Sleep, TRUE);
+         //set(G->App, MUIA_Application_Sleep, TRUE);
       }
       else
       {
-         set(G->App, MUIA_Application_Sleep, FALSE);
+         //set(G->App, MUIA_Application_Sleep, FALSE);
          if (BusyLevel) --BusyLevel;
          if (G->MA && !BusyLevel)
          {
