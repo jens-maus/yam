@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-09-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c: slightly modified the RFC 2047 decoding to recognize
+      also encoded-words which are surrounded by " chars as more than
+      one emailer out there seems to encode such words. However, please
+      note that such encoded-words are not compliant to the RFC 2047
+      standard and are now just accepted for convienence.
+
 2004-09-21  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: reworked and redesigned the old "About" window parts

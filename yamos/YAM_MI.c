@@ -1979,7 +1979,10 @@ static int rfc2047_decode_int(const char *text,
       while(*text)
       {
         if(*text == '=' && *(text+1) == '?' &&
-           (text == start || is_lwsp(*(text-1)) || *(text-1) == '('))
+           (text == start ||
+            is_lwsp(*(text-1)) || *(text-1) == '(' ||
+            *(text-1) == '"')) // all chars in this line are not part of the RFC standard
+                               // but accepted for convienence
         {
           break;
         }
