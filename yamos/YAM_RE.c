@@ -2050,7 +2050,7 @@ static char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
 //  Extracts URL from a message line
 static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
 {
-   static const char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#";
+   static const char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#()";
    static const char *protocols[7] = {
      "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:"
    };
