@@ -1083,7 +1083,6 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
 //  Gets size, protection bits and type of a file/directory
 BOOL FileInfo(char *filename, int *size, long *bits, long *type)
 {
-  struct FileInfoBlock *fib;
   BPTR lock;
   BOOL result = FALSE;
 
@@ -1093,6 +1092,8 @@ BOOL FileInfo(char *filename, int *size, long *bits, long *type)
     // we go on so that we are faster :)
     if(size || bits || type)
     {
+      struct FileInfoBlock *fib;
+
       if((fib = AllocDosObject(DOS_FIB, NULL)))
       {
         if(Examine(lock, fib))
