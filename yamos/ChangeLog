@@ -7,6 +7,10 @@ $Source$
 
 2003-01-07  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_rexx_rxif.c: fixed bug #658683 where the APPBUSY arexx command
+      required some text. Now you can simply call APPBUSY without any
+      option and YAM will only set the application to sleep without
+      placing any text in the busy region.
     * YAM_rexx_rxif.c: fixed bug #658259 where YAM didn`t resolve names
       or aliases if they belonged to a distribution list.
     * YAM_AB.c, YAM_rexx_rxif.c: fixed bug #658175 where it was

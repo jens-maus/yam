@@ -1802,7 +1802,12 @@ void rx_appbusy( struct RexxHost *host, struct rxd_appbusy **rxd, long action, s
          
       case RXIF_ACTION:
          s = rd->arg.text;
+
+         // we don`t make a text a requirement. If the user hasn`t supplied
+         // a text for the busytext we simply use a empty string.
          if (s) BusyText(s, "");
+         else   BusyText(" ", "");
+
          if(BusyLevel == 1) nnset(G->App, MUIA_Application_Sleep, TRUE);
          rd->rc = BusyLevel ? 1 : 0;
          break;
