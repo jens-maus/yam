@@ -1184,7 +1184,7 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
    if (comp->Receipt & 1) EmitHeader(fh, "Return-Receipt-To", rcptto);
    if (comp->Receipt & 2) EmitHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
-   fprintf(fh, "X-Mailer: YAM %s AmigaOS E-Mail Client (c) 1995-2000 by Marcel Beck  http://www.yam.ch/\n", __YAM_VERSION);
+   fprintf(fh, "X-Mailer: YAM %s AmigaOS E-Mail Client (c) 1995-2001 by YAM Open Source Team - http://www.yam.ch/\n", __YAM_VERSION);
    if (comp->UserInfo) WR_WriteUserInfo(fh);
    if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
    if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
