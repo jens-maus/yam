@@ -996,7 +996,7 @@ void FreeData2D(struct Data2D *data)
 ///
 /// AllocData2D
 //  Allocates dynamic two-dimensional array
-char *AllocData2D(struct Data2D *data, LONG initsize)
+char *AllocData2D(struct Data2D *data, size_t initsize)
 {
    if (data->Used >= data->Allocated)
    {

@@ -226,7 +226,7 @@ Object * STDARGS DoSuperNew(struct IClass *cl, Object *obj, ...);
 // all the utility prototypes
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 APTR     AllocCopy(APTR source, int size);
-char *   AllocData2D(struct Data2D *data, LONG initsize);
+char *   AllocData2D(struct Data2D *data, size_t initsize);
 char *   AllocReqText(char *s);
 char *   AllocStrBuf(size_t initlen);
 void     AppendLog(int id, char *text, void *a1, void *a2, void *a3, void *a4);
