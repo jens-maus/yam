@@ -1,3 +1,9 @@
+2001-11-20  Gunther Nikl <gni@gecko.de>
+
+    * (YAM.c/InitLib): changed return type to APTR for better NDK
+      compatibility and removed cast of InitLib() calls
+    * YAM_global.c: unified yamversion#? strings
+
 2001-11-16  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * removed a unneeded error message in the SMTP send routines
