@@ -185,3 +185,9 @@
 
     * Fixed enforcer hits when listing a PGP keyring with very long UID
       lines.
+
+2001-03-21  Christian Hattemer <krille@users.sourceforge.net>
+
+    * Offers to save the address book on quit if it was modified
+
+    * Added some return statements to avoid warnings
