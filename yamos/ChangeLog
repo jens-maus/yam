@@ -7,6 +7,9 @@ $Source$
 
 2005-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c, YAM_read.h: fixed bug #1074783 where overlong MIME boundary
+      header lines caused an internal buffer to overrun which in fact caused
+      YAM to either do weird things or even crash entirely.
     * YAM_RE.c: The temporary filename generation was still not as unique as I
       thought before. Hopefully now each unique readmail operation will trigger
       an unique temporary file generation.

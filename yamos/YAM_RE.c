@@ -1257,7 +1257,9 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
       newPart->EncodingCode = first->EncodingCode;
     }
 
-    strcpy(newPart->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
+    // copy the boundary specification
+    newPart->Boundary = StrBufCpy(newPart->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
+
     newPart->rmData = rmData;
     sprintf(file, "YAMr%08lx-p%d.txt", rmData->readWindow ? (ULONG)rmData->readWindow : (ULONG)rmData->mail, newPart->Nr);
     strmfp(newPart->Filename, C->TempDir, file);
@@ -1335,6 +1337,7 @@ static void RE_UndoPart(struct Part *rp)
    // free some string buffers
    FreeStrBuf(rp->ContentType);
    FreeStrBuf(rp->ContentDisposition);
+   FreeStrBuf(rp->Boundary);
 
    // and last, but not least we free the part
    free(rp);
@@ -1461,7 +1464,11 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 
           if(*boundary == '"')
             boundary = UnquoteString(boundary, TRUE);
+
+          // form the Boundary specification
+          hrp->Boundary = AllocStrBuf(strlen(boundary)+3);
           sprintf(hrp->Boundary, "--%s", boundary);
+
           done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp);
           rp = hrp;
 
@@ -2882,6 +2889,9 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
 
     FreeStrBuf(part->ContentDisposition);
     part->ContentDisposition = NULL;
+
+    FreeStrBuf(part->Boundary);
+    part->Boundary = NULL;
 
     free(part);
   }

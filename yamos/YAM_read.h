@@ -116,6 +116,7 @@ struct Part
    char                *CParDesc;
    char                *CParRType;
    char                *CParCSet;
+   char                *Boundary;           // ptr to a buffer with the boundary
    long                 Size;
    int                  MaxHeaderLen;
    int                  Nr;
@@ -127,7 +128,6 @@ struct Part
    char                 Name[SIZE_DEFAULT];
    char                 Description[SIZE_DEFAULT];
    char                 Filename[SIZE_PATHFILE];
-   char                 Boundary[SIZE_DEFAULT];
 };
 
 struct HeaderNode
