@@ -823,7 +823,7 @@ Größe: %ld Bytes
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
-Amiga YAM %s  -  Benutzer: %s
+Amiga %s  -  Benutzer: %s
 ; Amiga YAM %s  -  User: %s
 ; VERSION, NAME
 ;

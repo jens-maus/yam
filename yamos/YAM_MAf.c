@@ -29,17 +29,54 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <libraries/iffparse.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
+#include <proto/dos.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
+#include <proto/pm.h>
+#include <proto/utility.h>
+
+#include "old.h"
+#include "extra.h"
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_rexx.h"
+#include "YAM_userlist.h"
 #include "YAM_utilities.h"
+        
+struct ComprMail
+{
+   long   cMsgID;
+   long   cIRTMsgID;
+   long   Size;
+   int    Flags;
+   int    MoreBytes;
+   struct DateStamp Date;
+   char   Status;
+   char   Importance;
+   char   MailFile[SIZE_MFILE];
+};
+
+struct FIndex
+{
+   ULONG ID;
+   int   Total;
+   int   New;
+   int   Unread;
+   int   Size;
+   long  reserved[2];
+};
 
 /* global variables */
 struct Data2D Header = { 0, 0, NULL };
@@ -131,7 +168,7 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
             {
                struct Mail mail;
                struct ComprMail cmail;
-               clear(&mail, sizeof(struct Mail));               
+               memset(&mail, 0, sizeof(struct Mail));               
                if (fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1) break;
                if (cmail.MoreBytes > SIZE_LARGE)
                {
@@ -200,7 +237,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
    fwrite(&fi, sizeof(struct FIndex), 1, fh);
    for (mail = folder->Messages; mail; mail = mail->Next)
    {
-      clear(&cmail, sizeof(struct ComprMail));
+      memset(&cmail, 0, sizeof(struct ComprMail));
       sprintf(buf, "%s\n%s\n%s\n%s\n%s\n%s\n%s\n",
          mail->Subject,
          mail->From.Address, mail->From.RealName,
@@ -574,7 +611,7 @@ BOOL MA_ReadHeader(FILE *fh)
    while (GetLine(fh, buffer, SIZE_LARGE))
    {
       if (!buffer[0]) { success = TRUE; break; }
-      clear(head, SIZE_LINE);
+      memset(head, 0, SIZE_LINE);
       strcpy(prevcharset, "us-ascii");
       RE_ProcessHeader(prevcharset, buffer, TRUE, head);
       if ((buffer[0] == ' ' || buffer[0] == '\t') && Header.Used)
@@ -600,7 +637,7 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
    if (email->NoSTo)    free(email->STo);
    if (email->NoCC )    free(email->CC );
    if (email->NoBCC)    free(email->BCC);
-   clear(email, sizeof(struct ExtendedMail));
+   memset(email, 0, sizeof(struct ExtendedMail));
 }
 
 ///
@@ -641,7 +678,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
    struct DateStamp *foundDate = NULL;
    FILE *fh;
 
-   clear(&email, sizeof(struct ExtendedMail));
+   memset(&email, 0, sizeof(struct ExtendedMail));
    stccpy(mail->MailFile, file, SIZE_MFILE);
    email.DelSend = !C->SaveSent;
    if (fh = fopen(GetMailFile(fullfile, folder, mail), "r"))

@@ -28,14 +28,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <libraries/asl.h>
+#include <mui/BetterString_mcc.h>
+#include <mui/TextEditor_mcc.h>
+#include <proto/dos.h>
+#include <proto/muimaster.h>
+#include <proto/xpkmaster.h>
+
 #include "YAM.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_find.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
+#include "YAM_mime.h"
 #include "YAM_utilities.h"
 
 /* local protos */
@@ -1051,7 +1061,7 @@ APTR CO_Page7(struct CO_ClassData *data)
 /// CO_Page8  (Lists)
 APTR CO_Page8(struct CO_ClassData *data)
 {
-   APTR grp = NULL;
+   APTR grp;
    static char *sizef[6];
    sizef[0] = GetStr(MSG_CO_SIZEFORMAT01);
    sizef[1] = GetStr(MSG_CO_SIZEFORMAT02);

@@ -28,6 +28,15 @@
 
 ***************************************************************************/
 
+#include "YAM_stringsizes.h"
+
+struct PL_Data
+{ 
+   struct Hook DisplayHook;
+   Object *    Object[MAXCPAGES];
+   APTR        Image[MAXCPAGES];
+};
+
 #define MUIA_Bodychunk_File          0x80002501
 #define MUIA_Bodychunk_UseOld        0x80002502
 #define MUIM_MainWindow_CloseWindow  0x80002521

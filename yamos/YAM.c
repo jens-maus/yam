@@ -28,20 +28,42 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <libraries/asl.h>
 #include <libraries/genesis.h>
+#include <libraries/pm.h>
+#include <mui/NList_mcc.h>
+#include <proto/datatypes.h>
+#include <proto/dos.h>
 #include <proto/exec.h>
+#include <proto/genesis.h>
+#include <proto/icon.h>
+#include <proto/iffparse.h>
+#include <proto/intuition.h>
+#include <proto/keymap.h>
 #include <proto/locale.h>
+#include <proto/muimaster.h>
+#include <proto/pm.h>
+#include <proto/rexxsyslib.h>
+#include <proto/utility.h>
+#include <proto/wb.h>
+#include <proto/xpkmaster.h>
+#include <rexx/rxslib.h>
+#include <xpk/xpk.h>
 
+#include "NewReadArgs.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
+#include "YAM_read.h"
 #include "YAM_rexx.h"
 #include "YAM_write.h"
 
@@ -49,82 +71,10 @@
  Module: Root
 ***************************************************************************/
 
-/// Global Vars
-//  Defines global variables and structures
-__near long __YAM_STACK = 32768;
-__near long __buffsize = 8192;
-__near long __MemPoolPuddleSize = 16384;
-
-struct WBStartup *WBmsg;
-
-/* no longer external visible, this is done by proto files! */
-struct Library *       CManagerBase = NULL;
-struct Library *       DataTypesBase = NULL;
-struct Library *       GenesisBase = NULL;
-struct Library *       IconBase = NULL;
-struct Library *       IFFParseBase = NULL;
-struct IntuitionBase * IntuitionBase = NULL;
-struct Library *       KeymapBase = NULL;
-struct LocaleBase *    LocaleBase = NULL;
-struct Library *       MiamiBase = NULL;
-struct Library *       MUIMasterBase = NULL;
-struct Library *       OpenURLBase = NULL;
-struct PopupMenuBase * PopupMenuBase = NULL;
-struct RxsLib *        RexxSysBase = NULL;
-struct Library *       SocketBase = NULL;
-struct UtilityBase *   UtilityBase = NULL;
-struct Library *       WorkbenchBase = NULL;
-struct Library *       XpkBase = NULL;
-
 BOOL yamFirst = TRUE, yamLast = FALSE;
 
 struct Global *G;
 
-char *Status[9] = { "U","O","F","R","W","E","H","S","N" };
-char *SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
-char *FolderNames[4] = { "incoming", "outgoing", "sent", "deleted" };
-
-char *ContType[MAXCTYPE+1] =
-{
-   /*CT_TX_PLAIN */ "text/plain",
-   /*CT_TX_HTML  */ "text/html",
-   /*CT_TX_GUIDE */ "text/x-aguide",
-   /*CT_AP_OCTET */ "application/octet-stream",
-   /*CT_AP_PS    */ "application/postscript",
-   /*CT_AP_RTF   */ "application/rtf",
-   /*CT_AP_LHA   */ "application/x-lha",
-   /*CT_AP_LZX   */ "application/x-lzx",
-   /*CT_AP_ZIP   */ "application/x-zip",
-   /*CT_AP_AEXE  */ "application/x-amiga-executable",
-   /*CT_AP_SCRIPT*/ "application/x-amigados-script",
-   /*CT_AP_REXX  */ "application/x-rexx",
-   /*CT_IM_JPG   */ "image/jpeg",
-   /*CT_IM_GIF   */ "image/gif",
-   /*CT_IM_PNG   */ "image/png",
-   /*CT_IM_TIFF  */ "image/tiff",
-   /*CT_IM_ILBM  */ "image/x-ilbm",
-   /*CT_AU_AU    */ "audio/basic",
-   /*CT_AU_8SVX  */ "audio/x-8svx",
-   /*CT_AU_WAV   */ "audio/x-wav",
-   /*CT_VI_MPG   */ "video/mpeg",
-   /*CT_VI_MOV   */ "video/quicktime",
-   /*CT_VI_ANIM  */ "video/x-anim",
-   /*CT_VI_AVI   */ "video/x-msvideo",
-   /*CT_ME_EMAIL */ "message/rfc822",
-   NULL,
-};
-APTR ContTypeDesc[MAXCTYPE] =
-{
-   MSG_CTtextplain, MSG_CTtexthtml, MSG_CTtextaguide,
-   MSG_CTapplicationoctetstream, MSG_CTapplicationpostscript, MSG_CTapplicationrtf, MSG_CTapplicationlha, MSG_CTapplicationlzx, MSG_CTapplicationzip, MSG_CTapplicationamigaexe, MSG_CTapplicationadosscript, MSG_CTapplicationrexx,
-   MSG_CTimagejpeg, MSG_CTimagegif, MSG_CTimagepng, MSG_CTimagetiff, MSG_CTimageilbm,
-   MSG_CTaudiobasic, MSG_CTaudio8svx, MSG_CTaudiowav,
-   MSG_CTvideompeg, MSG_CTvideoquicktime, MSG_CTvideoanim, MSG_CTvideomsvideo,
-   MSG_CTmessagerfc822
-};
-char *wdays[7] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
-char *months[12] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
-char *SecCodes[5] = { "none","sign","encrypt","sign+encrypt","anonymous" };
 ///
 /// Timer Class
 struct TC_Data
@@ -254,7 +204,7 @@ BOOL AY_New(BOOL hidden)
    struct DateTime dt;
    char datebuf[LEN_DATSTRING];
 
-   dt.dat_Stamp.ds_Days   = __YAM_VERDAYS;
+   dt.dat_Stamp.ds_Days   = yamversiondays;
    dt.dat_Stamp.ds_Minute = 0;
    dt.dat_Stamp.ds_Tick   = 0;
    dt.dat_Format  = FORMAT_DOS;
@@ -300,7 +250,7 @@ BOOL AY_New(BOOL hidden)
                MUIA_Group_HorizSpacing, 8,
                MUIA_Group_VertSpacing, 2,
                Child, Label(GetStr(MSG_Version)),
-               Child, LLabel(__YAM_VERSION),
+               Child, LLabel(yamversion),
                Child, Label(GetStr(MSG_CompilationDate)),
                Child, LLabel(datebuf),
              End,
@@ -441,7 +391,7 @@ BOOL Root_New(BOOL hidden)
       MUIA_Application_Author     ,"YAM Open Source Team",
       MUIA_Application_Base       ,"YAM",
       MUIA_Application_Title      ,"YAM",
-      MUIA_Application_Version    ,"$VER: YAM " __YAM_VERSION " (" __YAM_VERDATE ")",
+      MUIA_Application_Version    ,yamversionstring,
       MUIA_Application_Copyright  ,"© 2000-2001 by YAM Open Source Team",
       MUIA_Application_Description,GetStr(MSG_AppDescription),
       MUIA_Application_UseRexx    ,FALSE,

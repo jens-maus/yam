@@ -30,7 +30,6 @@
 #define DoMethod _DoMethod
 #include <clib/alib_protos.h>
 #undef DoMethod
-#include "YAM.h"
 
 #include "extrasrc/astcsma.c"
 

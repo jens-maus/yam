@@ -29,12 +29,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <mui/TextEditor_mcc.h>
+#include <proto/dos.h>
+#include <proto/intuition.h>
 #include <proto/locale.h>
+#include <proto/utility.h>
 
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_utilities.h"
 

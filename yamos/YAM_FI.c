@@ -28,12 +28,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <libraries/asl.h>
+#include <libraries/iffparse.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+#include <proto/dos.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
+#include <proto/utility.h>
+
+#include "old.h"
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
@@ -259,7 +271,7 @@ static void FI_GenerateListPatterns(struct Search *search)
 BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmode, int compar, int stat, BOOL substr, char *match, char *field)
 {
    // return value of this function isn't used currently (21.03.2001)
-   clear(search, sizeof(struct Search));
+   memset(search, 0, sizeof(struct Search));
    search->Mode      = mode;
    search->CaseSens  = casesens;
    search->PersMode  = persmode;

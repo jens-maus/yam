@@ -28,14 +28,14 @@
 
 ***************************************************************************/
 
-void kprintf(const char *formatString,...);
-
 #if defined(DEBUG)
+  void kprintf(const char *formatString,...);
+
   #define DB(x) x
+  #define DBG kprintf("File %s, Func %s, Line %d\n",__FILE__,__FUNC__,__LINE__);
 #else
   #define DB(x)
+  #define DBG
 #endif
-
-#define DBG kprintf("File %s, Func %s, Line %d\n",__FILE__,__FUNC__,__LINE__);
 
 #endif /* YAM_DEBUG_H */

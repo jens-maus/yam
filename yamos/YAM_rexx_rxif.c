@@ -30,24 +30,31 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <exec/memory.h>
-#include <rexx/storage.h>
-#include <rexx/rxslib.h>
 #include <clib/alib_protos.h>
+#include <exec/memory.h>
+#include <mui/NList_mcc.h>
+#include <mui/TextEditor_mcc.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
 #include <proto/rexxsyslib.h>
+#include <proto/utility.h>
+#include <rexx/storage.h>
+#include <rexx/rxslib.h>
 
+#include "old.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
-#include "YAM_rexx.h"
+#include "YAM_rexx_rxcl.h"
 #include "YAM_write.h"
 
 /** REXX Commands **/
@@ -2070,7 +2077,7 @@ void rx_addrnew( struct RexxHost *host, struct rxd_addrnew **rxd, long action, s
          break;
          
       case RXIF_ACTION:
-         clear(&addr, sizeof(struct ABEntry));
+         memset(&addr, 0, sizeof(struct ABEntry));
          addr.Type = AET_USER;
          if (rd->arg.type) if (tolower(*rd->arg.type) == 'g') addr.Type = AET_GROUP;
                       else if (tolower(*rd->arg.type) == 'l') addr.Type = AET_LIST;
@@ -2156,12 +2163,3 @@ void rx_geturl( struct RexxHost *host, struct rxd_geturl **rxd, long action, str
 
 ///
 
-/// ExpandRXCommand
-#ifndef RX_ALIAS_C
-char *ExpandRXCommand( struct RexxHost *host, char *command )
-{
-   /* Insert your ALIAS-HANDLER here */
-   return( NULL );
-}
-#endif
-///

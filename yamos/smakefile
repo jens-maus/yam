@@ -27,51 +27,42 @@
 
 # Programs
 CC = sc
+CP = copy
 RM = delete
 
 # Files
 OBJS = YAM_locale.o YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
        YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o \
        YAM_UT.o YAM_WR.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
-       YAM_md5.o all_sas.o
-DATE = T:YAM-date.tmp
+       YAM_md5.o all_sas.o YAM_global.o
 
 # Compiler flags
 CPU        = 68020
-YAMVERSION = "2.4-dev"
-YAMDATE    = `Type $(DATE)`
-#OPTFLAGS  = OPT OPTSIZE OPTINLOCAL OPTGO OPTLOOP OPTPEEP #OPTSCHED
-OPTFLAGS   = NOOPT
-DEBUG     = DEF DEBUG DEBUG=LINE
-
+OPTFLAGS  = OPT OPTSIZE OPTINLOCAL OPTGO OPTLOOP OPTPEEP #OPTSCHED
+#OPTFLAGS   = NOOPT
+DEBUG      = DEF DEBUG DEBUG=LINE
 # CPU can be defined outside, defaults to above
 
-CFLAGS = RESOPT PARM=R NOLINK DEF YAMVER=$(YAMVERSION) $(YAMDATE) \
-WARN=ALL IGNORE=147,306,62,165,148,178,61,212,120,51\
+CFLAGS = RESOPT NOVER PARM=R NOLINK WARN=ALL IGNORE=147,306,62,165,148,178,61,212,120,51\
 DATA=FAR CODE=FAR ERRORREXX INCLUDEDIR=includes STRINGSECTION=FAR $(DEBUG)\
-NOICONS IDLEN=60 CPU=$(CPU) NOCHECKABORT
+NOICONS IDLEN=60 CPU=$(CPU) NOCHECKABORT STRIPDEBUG UTILLIB $(OPTFLAGS)
 
-# Default rules
+YAM: $(OBJS)
+  $(CC) $(CFLAGS) LINK LIB lib:scnb.lib lib:amiga.lib lib:debug.lib TO $@ WITH <<
+  $(OBJS)
+  <
+
 .c.o:
-  $(CC) $(CFLAGS) $(OPTFLAGS) $*.c
+  $(CC) $(CFLAGS) $*.c
 
-# Targets & dependencies
-all:  $(DATE) YAM
+clean: # leaves final YAM exe
+  $(RM) \#?.(o|map|lnk) (YAM_locale.\#?)
 
-clean:
-  $(RM) \#?.(o) (YAM_locale.\#?|YAM)
+cleanall:
+  $(RM) \#?.(o|map|lnk) (YAM_locale.\#?|YAM)
 
 copy:
-  copy YAM YAM:
-
-YAM:  $(OBJS)
-  slink <with <
-  TO YAM
-  FROM lib:c.o $(OBJS)
-  LIB lib:scnb.lib lib:amiga.lib lib:debug.lib
-  map YAM.map,fhx fwidth 32 pwidth 32 swidth 32
-  STRIPDEBUG NOICONS
-  <
+  $(CP) YAM YAM:
 
 YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
   flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
@@ -103,7 +94,7 @@ YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_locale.h
 YAM_locale.o:   YAM_locale.h YAM_locale.c
 
-$(DATE):
-  @echo "Bumping date..."
-  @rx   >$(DATE) "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"
+YAM_global.o: YAM_global.c YAM_global.h YAM_stringsizes.h
+  @rx >T:YAM-date.tmp "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"
+  $(CC) $(CFLAGS) `Type T:YAM-date.tmp` YAM_global.c
 

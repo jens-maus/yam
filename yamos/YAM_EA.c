@@ -32,6 +32,7 @@
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
 #include <proto/dos.h>
+#include <proto/intuition.h>
 #include <proto/muimaster.h>
 
 #include "YAM.h"

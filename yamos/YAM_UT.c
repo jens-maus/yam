@@ -31,33 +31,45 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <datatypes/pictureclass.h>
+#include <datatypes/soundclass.h>
+#include <devices/printer.h>
 #include <dos/doshunks.h>
 #include <dos/dostags.h>
 #include <exec/execbase.h>
 #include <exec/memory.h>
 #include <libraries/asl.h>
-/*
-** the next include is required to make GCC working:
-** NListview_mcc.h uses <MUI/NList_mcc.h>
-** maybe change it there?
-*/
+#include <libraries/gadtools.h>
+#include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
-#include <workbench/startup.h>
+#include <mui/TextEditor_mcc.h>
 #include <proto/exec.h>
+#include <proto/datatypes.h>
 #include <proto/dos.h>
 #include <proto/iffparse.h>
+#include <proto/intuition.h>
+#include <proto/keymap.h>
 #include <proto/locale.h>
 #include <proto/muimaster.h>
+#include <proto/openurl.h>
+#include <proto/utility.h>
+#include <proto/wb.h>
+#include <proto/xpkmaster.h>
+#include <workbench/startup.h>
 
+#include "old.h"
 #include "YAM.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
+#include "YAM_mime.h"
 #include "YAM_read.h"
 #include "YAM_utilities.h"
 
@@ -2858,8 +2870,8 @@ void Busy(char *text, char *parameter, int cur, int max)
 //  Calculates AppIconStatistic and update the AppIcon
 void DisplayAppIconStatistics(void)
 {
-  struct Folder *fo = NULL;
-  struct Folder **flist = NULL;
+  struct Folder *fo;
+  struct Folder **flist;
   char *src, dst[10];
   int i, mode;
   static char apptit[SIZE_DEFAULT/2];
@@ -2940,7 +2952,6 @@ void DisplayAppIconStatistics(void)
 void DisplayStatistics(struct Folder *fo)
 {
    struct Mail *mail;
-   BOOL check = FALSE;
    struct Folder *actfo = FO_GetCurrentFolder();
 
    // If the parsed argument is NULL we want to show the statistics from the actual folder
@@ -2948,7 +2959,6 @@ void DisplayStatistics(struct Folder *fo)
    else if (fo == (struct Folder *)-1)
    {
      fo = FO_GetFolderByType(FT_INCOMING, NULL);
-     check = TRUE;
    }
 
    // Now we recount the amount of Messages of this Folder
@@ -3012,8 +3022,8 @@ BOOL CheckPrinter(void)
       }
       DeleteMsgPort(PrintPort);
    }
-   if (error) if (!MUI_Request(G->App, NULL, 0, GetStr(MSG_ErrorReq), GetStr(MSG_OkayCancelReq), error)) return False;
-   return True;
+   if (error) if (!MUI_Request(G->App, NULL, 0, GetStr(MSG_ErrorReq), GetStr(MSG_OkayCancelReq), error)) return FALSE;
+   return TRUE;
 }
 ///
 /// PlaySound

@@ -29,16 +29,24 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
+#include <proto/genesis.h>
+#include <proto/intuition.h>
 #include <proto/miami.h>
+#include <proto/muimaster.h>
+#include <proto/utility.h>
 
+#include "old.h"
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
@@ -219,7 +227,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
          sprintf(buf, "GET http://%s:%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, port, path, url);
       }
       else sprintf(buf, "GET http://%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, path, url);
-      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: YAM %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), __YAM_VERSION);
+      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
 */
       if (noproxy) sprintf(buf, "GET /%s HTTP/1.0\r\nHost: %s\r\n", path, host);
       else if (port = strchr(url, ':'))
@@ -228,7 +236,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
          sprintf(buf, "GET http://%s:%s/%s HTTP/1.0\r\nHost: %s\r\n", url, port, path, url);
       }
       else sprintf(buf, "GET http://%s/%s HTTP/1.0\r\nHost: %s\r\n", url, path, url);
-      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: YAM %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), __YAM_VERSION);
+      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
       if (TR_SendDat(buf))
       {
          len = TR_RecvDat(buf);
@@ -1243,7 +1251,11 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
    if ((clock = (TR_GetSeconds()-ts->Clock_Start)) == ts->Clock_Last) return;
    ts->Clock_Last = clock;
    if (clock) speed = ts->Size_Done/clock;
-   if (speed) remclock = MAX(ts->Size_Tot/speed-clock,0);
+   if(speed)
+   {
+     if((remclock = ts->Size_Tot/speed-clock) < 0)
+       remclock = 0;
+   }
    SPrintF(G->TR->StatsLabel, GetStr(MSG_TR_TransferStats),
       ts->Size_Done>>10, ts->Size_Tot>>10, speed, remclock/60, remclock%60);
    set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
@@ -1413,7 +1425,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                   }
                   TR_TransStat_Update(ts, sb);
                }
-               if (_OSERR) ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), mf, NULL);
+               if (IoErr()) ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), mf, NULL);
                else if (!G->TR->Abort && !G->Error)
                {
                   result = email->DelSend ? 2 : 1;

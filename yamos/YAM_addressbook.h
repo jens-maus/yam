@@ -43,6 +43,10 @@
 #define ASM_GROUP    32
 #define ASM_COMPLETE 64
 
+enum AddressbookMode { ABM_EDIT, ABM_TO, ABM_CC, ABM_BCC, ABM_REPLYTO, ABM_FROM };
+
+enum AddressbookFind { ABF_USER, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEEMAIL };
+
 struct AB_GUIData
 {
    APTR WI;
@@ -56,13 +60,13 @@ struct AB_GUIData
  
 struct AB_ClassData  /* address book window */
 {
-   struct AB_GUIData GUI;
-   int  Hits;
-   int  Mode;
-   int  SortBy;
-   int  WrWin;
-   BOOL Modified;
-   char WTitle[SIZE_DEFAULT];
+   struct AB_GUIData    GUI;
+   int                  Hits;
+   int                  SortBy;
+   int                  WrWin;
+   enum AddressbookMode Mode;
+   BOOL                 Modified;
+   char                 WTitle[SIZE_DEFAULT];
 };
 
 extern struct Hook AB_DeleteHook;
@@ -74,7 +78,7 @@ void   AB_CheckBirthdates(void);
 char * AB_CompleteAlias(char *text);
 long   AB_CompressBD(char *datestr);
 char * AB_ExpandBD(long date);
-BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, int mode,
+BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, enum AddressbookFind mode,
        char **result);
 APTR   AB_GotoEntry(char *alias);
 void   AB_InsertAddress(APTR string, char *alias, char *name, char *address);

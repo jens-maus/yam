@@ -153,6 +153,19 @@ struct Compose
 extern struct Hook WR_EditHook;
 extern struct Hook WR_NewMailHook;
 
-BOOL WriteOutMessage(struct Compose *comp);
+void  EmitHeader(FILE *fh, char *hdr, char *body);
+void  FreePartsList(struct WritePart *p);
+struct WritePart *NewPart(int winnum);
+BOOL  WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp);
+void  WR_AddSignature(char *mailfile, int signat);
+void  WR_App(int winnum, struct AppMessage *amsg);
+char *WR_AutoSaveFile(int winnr);
+void  WR_Cleanup(int winnum);
+char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single);
+void  WR_NewMail(int mode, int winnum);
+int   WR_Open(int winnum, BOOL bounce);
+int   WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists);
+void  WR_SetupOldMail(int winnum);
+BOOL  WriteOutMessage(struct Compose *comp);
 
 #endif /* YAM_WRITE_H */

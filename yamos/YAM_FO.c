@@ -36,6 +36,7 @@
 #include <clib/alib_protos.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
+#include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 #include <proto/xpkmaster.h>
@@ -45,6 +46,7 @@
 #include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"

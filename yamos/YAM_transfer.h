@@ -59,6 +59,8 @@ struct TR_GUIData
    char *ST_STATUS;
 };
 
+enum GuiLevel { POP_USER, POP_START, POP_TIMED, POP_REXX };
+
 struct TR_ClassData  /* transfer window */
 {
    struct TR_GUIData     GUI;
@@ -73,7 +75,7 @@ struct TR_ClassData  /* transfer window */
    long                  Start;
    int                   Scnt;
    int                   GMD_Line;
-   int                   GUIlevel;
+   enum GuiLevel         GUIlevel;
    int                   POP_Nr;
    BOOL                  SinglePOP;
    BOOL                  Checking;

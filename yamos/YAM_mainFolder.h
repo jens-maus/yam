@@ -30,6 +30,11 @@
 
 #include "YAM_utilities.h"
 
+enum MailStatus { STATUS_UNR, STATUS_OLD, STATUS_FWD, STATUS_RPD, STATUS_WFS,
+   STATUS_ERR, STATUS_HLD, STATUS_SNT, STATUS_NEW, STATUS_DEL, STATUS_LOA,
+   STATUS_SKI
+};
+
 struct Mail
 {
    struct Mail *    Next;
@@ -47,7 +52,7 @@ struct Mail
    struct Person    To;
    struct Person    ReplyTo;
 
-   char             Status;
+   enum MailStatus  Status;
    char             Importance;
    char             Subject[SIZE_SUBJECT];
    char             MailFile[SIZE_MFILE];
@@ -83,9 +88,19 @@ extern struct Hook   MA_LV_FDspFuncHook;
 extern struct Hook   PO_InitFolderListHook;
 
 void   MA_ChangeFolder(struct Folder *folder);
+void   MA_ExpireIndex(struct Folder *folder);
 struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *statstr, BOOL deep);
+void   MA_FlushIndexes(BOOL all);
+ULONG  MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg);
 void   MA_FreeEMailStruct(struct ExtendedMail *email);
+BOOL   MA_GetIndex(struct Folder *folder);
+int    MA_LoadIndex(struct Folder *folder, BOOL full);
+void   MA_MakeFOFormat(APTR lv);
+char * MA_NewMailFile(struct Folder *folder, char *mailfile, int daynumber);
 BOOL   MA_PromptFolderPassword(struct Folder *fo, APTR win);
+BOOL   MA_ReadHeader(FILE *fh);
+BOOL   MA_SaveIndex(struct Folder *folder);
+void   MA_ScanMailBox(struct Folder *folder);
 void   MA_UpdateIndexes(BOOL initial);
 void   MA_UpdateInfoBar(struct Folder *);
 

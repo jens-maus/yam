@@ -28,6 +28,20 @@
 
 ***************************************************************************/
 
+#include <stdio.h>
+
+#include "YAM_stringsizes.h"
+
+struct TranslationTable
+{
+   BOOL  Header;
+   UBYTE Table[256];
+   char  Name[SIZE_DEFAULT];
+   char  File[SIZE_PATHFILE];
+   char  SourceCharset[SIZE_NAME];
+   char  DestCharset[SIZE_NAME];
+};
+
 BOOL DoesNeedPortableNewlines(char *ctype);
 void from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines);
 void from64txt(char *src, char *dst, struct TranslationTable *tt);

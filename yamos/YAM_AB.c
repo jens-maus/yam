@@ -29,12 +29,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <dos/datetime.h>
+#include <libraries/asl.h>
+#include <libraries/iffparse.h>
+#include <libraries/gadtools.h>
+#include <mui/BetterString_mcc.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
+#include <proto/utility.h>
+
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
@@ -725,7 +738,7 @@ MakeHook(AB_DuplicateHook, AB_DuplicateFunc);
 ///
 /// AB_FindEntry (rec)
 //  Recursively searches an address book node for a given pattern
-BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, int mode, char **result)
+BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, enum AddressbookFind mode, char **result)
 {
    APTR lv = G->AB->GUI.LV_ADRESSES;
    struct MUI_NListtree_TreeNode *tn;

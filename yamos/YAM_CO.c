@@ -28,6 +28,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <libraries/asl.h>
+#include <libraries/iffparse.h>
+#include <libraries/locale.h>
+#include <mui/TextEditor_mcc.h>
+#include <proto/dos.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
+
+#include "old.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_classes.h"
@@ -37,6 +47,7 @@
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_hook.h"
@@ -579,7 +590,7 @@ void CO_FreeConfig(struct Config *co)
    for (i = 0; i < MAXP3; i++) if (co->P3[i]) free(co->P3[i]);
    for (i = 0; i < MAXRU; i++) if (co->RU[i]) free(co->RU[i]);
    for (i = 0; i < MAXMV; i++) if (co->MV[i]) free(co->MV[i]);
-   clear(co, sizeof(struct Config));
+   memset(co, 0, sizeof(struct Config));
 }  
 
 ///

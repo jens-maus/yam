@@ -35,11 +35,22 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <libraries/asl.h>
+#include <libraries/gadtools.h>
+#include <libraries/iffparse.h>
+#include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
+#include <mui/NListview_mcc.h>
+#include <mui/TextEditor_mcc.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
 #include <proto/utility.h>
+#include <workbench/workbench.h>
 
+#include "old.h"
+#include "extra.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -47,6 +58,7 @@
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_glossarydisplay.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
@@ -93,6 +105,7 @@ static char *WR_TransformText(char*, int, char*);
 static void WR_SharedSetup(struct WR_ClassData*, int);
 static APTR MakeAddressField(APTR*, char*, APTR, int, int, BOOL);
 static struct WR_ClassData *WR_NewBounce(int);
+static struct WR_ClassData *WR_New(int winnum);
 
 static char FailedAlias[SIZE_NAME];
 /**************************************************************************/
@@ -221,7 +234,7 @@ HOOKPROTONHNO(WR_VerifyAutoFunc, void, int *arg)
    else DisplayBeep(0);
    if (next) set(_win(next), MUIA_Window_ActiveObject, next);
 }
-MakeHook(WR_VerifyAutoHook, WR_VerifyAutoFunc);
+MakeStaticHook(WR_VerifyAutoHook, WR_VerifyAutoFunc);
 
 ///
 /// WR_VerifyManualFunc
@@ -237,7 +250,7 @@ HOOKPROTONHNO(WR_VerifyManualFunc, void, int *arg)
       FreeStrBuf(adr);
    }
 }
-MakeHook(WR_VerifyManualHook, WR_VerifyManualFunc);
+MakeStaticHook(WR_VerifyManualHook, WR_VerifyManualFunc);
 ///
 
 /*** Attachments list ***/
@@ -258,7 +271,7 @@ HOOKPROTONHNO(WR_GetFileEntry, void, int *arg)
       nnset(gui->ST_DESC, MUIA_String_Contents, attach->Description);
    }
 }
-MakeHook(WR_GetFileEntryHook, WR_GetFileEntry);
+MakeStaticHook(WR_GetFileEntryHook, WR_GetFileEntry);
 
 ///
 /// WR_PutFileEntry
@@ -280,7 +293,7 @@ HOOKPROTONHNO(WR_PutFileEntry, void, int *arg)
       DoMethod(gui->LV_ATTACH, MUIM_List_Redraw, MUIV_List_Redraw_Active);
    }
 }
-MakeHook(WR_PutFileEntryHook, WR_PutFileEntry);
+MakeStaticHook(WR_PutFileEntryHook, WR_PutFileEntry);
 
 ///
 /// WR_AddFileToList
@@ -1209,13 +1222,13 @@ BOOL WriteOutMessage(struct Compose *comp)
    if (comp->MailCC) EmitRcptHeader(fh, "CC", comp->MailCC);
    if (comp->MailBCC) EmitRcptHeader(fh, "BCC", comp->MailBCC);
    EmitHeader(fh, "Date", GetDateTime());
-   fprintf(fh, "Message-ID: <%s>\n", NewID(True));
+   fprintf(fh, "Message-ID: <%s>\n", NewID(TRUE));
    if (comp->IRTMsgID) EmitHeader(fh, "In-Reply-To", comp->IRTMsgID);
    rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
    if (comp->Receipt & 1) EmitHeader(fh, "Return-Receipt-To", rcptto);
    if (comp->Receipt & 2) EmitHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
-   fprintf(fh, "X-Mailer: YAM %s AmigaOS E-mail Client (c) 2000-2001 by YAM Open Source Team - http://www.yam.ch/\n", __YAM_VERSION);
+   fprintf(fh, "X-Mailer: %s AmigaOS E-mail Client (c) 2000-2001 by YAM Open Source Team - http://www.yam.ch/\n", yamversion);
    if (comp->UserInfo) WR_WriteUserInfo(fh);
    if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
    if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
@@ -1224,7 +1237,7 @@ BOOL WriteOutMessage(struct Compose *comp)
 mimebody:
 
    fputs("MIME-Version: 1.0\n", fh);
-   sprintf(boundary, "BOUNDARY.%s", NewID(False));
+   sprintf(boundary, "BOUNDARY.%s", NewID(FALSE));
    if (comp->ReportType > 0)
    {
       WR_ComposeReport(fh, comp, boundary);
@@ -1481,7 +1494,7 @@ HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
    }
    DisposeModulePush(&G->WR[winnum]);
 }
-MakeHook(WR_CancelHook, WR_CancelFunc);
+MakeStaticHook(WR_CancelHook, WR_CancelFunc);
 
 ///
 /// WR_SaveAsFunc
@@ -1499,7 +1512,7 @@ HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
          ER_NewError(GetStr(MSG_ER_CantCreateFile), filename, NULL);
    }
 }
-MakeHook(WR_SaveAsHook, WR_SaveAsFunc);
+MakeStaticHook(WR_SaveAsHook, WR_SaveAsFunc);
 
 ///
 /// WR_Edit
@@ -1545,7 +1558,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
 }
-MakeHook(WR_AddFileHook, WR_AddFileFunc);
+MakeStaticHook(WR_AddFileHook, WR_AddFileFunc);
 
 ///
 /// WR_AddArchiveFunc
@@ -1617,7 +1630,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
       WR_AddFileToList(winnum, filename, NULL, TRUE);
    }
 }
-MakeHook(WR_AddArchiveHook, WR_AddArchiveFunc);
+MakeStaticHook(WR_AddArchiveHook, WR_AddArchiveFunc);
 
 ///
 /// WR_DisplayFile
@@ -1629,7 +1642,7 @@ HOOKPROTONHNO(WR_DisplayFile, void, int *arg)
    DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &attach);
    if (attach) RE_DisplayMIME(attach->FilePath, attach->ContentType);
 }
-MakeHook(WR_DisplayFileHook, WR_DisplayFile);
+MakeStaticHook(WR_DisplayFileHook, WR_DisplayFile);
 
 ///
 /// WR_ChangeSignatureFunc
@@ -1658,7 +1671,7 @@ HOOKPROTONHNO(WR_ChangeSignatureFunc, void, int *arg)
       CloseTempFile(tf);;
    }
 }
-MakeHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
+MakeStaticHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
 ///
 
 /*** Menus ***/
@@ -1714,7 +1727,7 @@ HOOKPROTONHNO(WR_InsertSeparatorFunc, void, int *arg)
    DoMethod(ed, MUIM_TextEditor_InsertText, arg[0] ? "\n\033c\033[s:18]\n" : "\n\033c\033[s:2]\n");
    set(ed, MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_EMail);
 }
-MakeHook(WR_InsertSeparatorHook, WR_InsertSeparatorFunc);
+MakeStaticHook(WR_InsertSeparatorHook, WR_InsertSeparatorFunc);
 
 ///
 /// WR_EditorCmd
@@ -1754,7 +1767,7 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
       free(text);
    }
 }
-MakeHook(WR_EditorCmdHook, WR_EditorCmd);
+MakeStaticHook(WR_EditorCmdHook, WR_EditorCmd);
 
 ///
 /// WR_AddClipboardFunc
@@ -1772,7 +1785,7 @@ HOOKPROTONHNO(WR_AddClipboardFunc, void, int *arg)
    }
    CloseTempFile(tf);
 }
-MakeHook(WR_AddClipboardHook, WR_AddClipboardFunc);
+MakeStaticHook(WR_AddClipboardHook, WR_AddClipboardFunc);
 
 ///
 /// WR_AddPGPKeyFunc
@@ -1790,7 +1803,7 @@ HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
    }
    else ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid, NULL);
 }
-MakeHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
+MakeStaticHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
 ///
 
 /*** Open ***/
@@ -1867,7 +1880,7 @@ HOOKPROTONHNO(WR_UpdateWTitleFunc, void, int *arg)
    sprintf(wr->WTitle, "%03ld\n%03ld", GetMUI(ed,MUIA_TextEditor_CursorY)+1, GetMUI(ed,MUIA_TextEditor_CursorX)+1);
    set(wr->GUI.TX_POSI, MUIA_Text_Contents, wr->WTitle);
 }
-MakeHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
+MakeStaticHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
 ///
 
 /*** Hooks ***/
@@ -1917,7 +1930,7 @@ HOOKPROTONHNO(WR_AppFunc, LONG, ULONG *arg)
    WR_App((int)arg[1],  (struct AppMessage *)arg[0]);
    return 0;
 }
-MakeHook(WR_AppHook, WR_AppFunc);
+MakeStaticHook(WR_AppHook, WR_AppFunc);
 
 ///
 /// WR_LV_ConFunc
@@ -1928,7 +1941,7 @@ HOOKPROTONHNO(WR_LV_ConFunc, struct Attach *, struct Attach *attach)
    *entry = *attach;
    return entry;
 }
-MakeHook(WR_LV_ConFuncHook, WR_LV_ConFunc);
+MakeStaticHook(WR_LV_ConFuncHook, WR_LV_ConFunc);
 
 ///
 /// WR_LV_DspFunc
@@ -1954,7 +1967,7 @@ HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
    }
    return 0;
 }
-MakeHook(WR_LV_DspFuncHook, WR_LV_DspFunc);
+MakeStaticHook(WR_LV_DspFuncHook, WR_LV_DspFunc);
 ///
 
 /*** GUI ***/
@@ -2015,7 +2028,7 @@ enum { WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUO
        WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5 };
 extern long cmap[8];
 
-struct WR_ClassData *WR_New(int winnum)
+static struct WR_ClassData *WR_New(int winnum)
 {
    struct WR_ClassData *data;
 

@@ -30,7 +30,17 @@
 
 #include <mui/Toolbar_mcc.h>
 
+#include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
+
+enum Macro {
+   MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,
+   MACRO_MEN6, MACRO_MEN7, MACRO_MEN8, MACRO_MEN9, MACRO_STARTUP, MACRO_QUIT,
+   MACRO_PREGET, MACRO_POSTGET, MACRO_NEWMSG, MACRO_PRESEND, MACRO_POSTSEND,
+   MACRO_READ, MACRO_PREWRITE, MACRO_POSTWRITE, MACRO_URL
+};
+
+enum SendMode { SEND_ALL, SEND_ACTIVE };
 
 struct MA_GUIData
 {
@@ -102,9 +112,36 @@ extern struct Hook MA_SetMessageInfoHook;
 extern struct Hook PO_WindowHook;
 extern struct Hook MA_FolderKeyHook;
 
-int  MA_AllocRules(struct Search **search, int mode);
-void MA_FreeRules(struct Search **search, int scnt);
-void MA_SetSortFlag(void);
-BOOL MA_StartMacro(int num, char *param);
+int   MA_AllocRules(struct Search **search, int mode);
+void  MA_ChangeSubject(struct Mail *mail, char *subj);
+void  MA_ChangeTransfer(BOOL on);
+struct Mail **MA_CreateMarkedList(APTR lv);
+void  MA_DeleteMessage(BOOL delatonce, BOOL force);
+void  MA_DeleteSingle(struct Mail *mail, BOOL forceatonce);
+BOOL  MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail);
+BOOL  MA_ExportMessages(BOOL all, char *filename, BOOL append);
+void  MA_FreeRules(struct Search **search, int scnt);
+struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, int *activep);
+void  MA_GetAddress(struct Mail **mlist);
+BOOL  MA_ImportMessages(char *fname);
+struct MA_ClassData *MA_New(void);
+ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg);
+void  MA_MakeMAFormat(APTR lv);
+void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit);
+int   MA_NewBounce(struct Mail *mail, int flags);
+int   MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum);
+int   MA_NewForward(struct Mail **mlist, int flags);
+int   MA_NewMessage(int mode, int flags);
+int   MA_NewNew(struct Mail *mail, int flags);
+int   MA_NewReply(struct Mail **mlist, int flags);
+void  MA_PopNow(int mode, int pop);
+void  MA_RemoveAttach(struct Mail *mail);
+BOOL  MA_Send(enum SendMode sendpos);
+BOOL  MA_SendMList(struct Mail **mlist);
+void  MA_SetMailStatus(struct Mail *mail, enum MailStatus stat);
+void  MA_SetSortFlag(void);
+void  MA_SetStatusTo(int status);
+void  MA_SetupDynamicMenus(void);
+BOOL  MA_StartMacro(enum Macro num, char *param);
 
 #endif /* YAM_MAIN_H */

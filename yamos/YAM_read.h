@@ -118,7 +118,18 @@ struct Part
 extern struct Hook RE_CloseHook;
 extern struct Hook RE_LV_AttachDspFuncHook;
 
-BOOL RE_DecodePart(struct Part *rp);
+void  RE_CleanupMessage(int winnum);
+BOOL  RE_DecodePart(struct Part *rp);
+void  RE_DisplayMIME(char *fname, char *ctype);
+BOOL  RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi);
+BOOL  RE_Export(int winnum, char *source, char *dest, char *name, int nr, BOOL force, BOOL overwrite, char *ctype);
+void  RE_FreePrivateRC(void);
+void  RE_InitPrivateRC(struct Mail *mail, int parsemode);
+int   RE_Open(int winnum, BOOL real);
 void STACKEXT RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhitespace, char *ptr);
+char *RE_ReadInMessage(int winnum, int mode);
+void  RE_ReadMessage(int winnum, struct Mail *mail);
+void  RE_SaveAll(int winnum, char *path);
+void  RE_SaveDisplay(int winnum, FILE *fh);
 
 #endif /* YAM_READ_H */

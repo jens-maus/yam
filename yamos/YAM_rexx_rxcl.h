@@ -28,4 +28,32 @@
 
 ***************************************************************************/
 
+#define ARB_CF_ENABLED     (1L << 0)
+
+#define ARB_HF_CMDSHELL    (1L << 0)
+#define ARB_HF_USRMSGPORT  (1L << 1)
+
+struct rxs_command
+{
+   char *command, *args, *results;
+   long resindex;
+   void (*function)( struct RexxHost *, void **, long, struct RexxMsg * );
+   long flags;
+};
+
+struct arb_p_link
+{
+   char *str;
+   int   dst;
+};
+
+struct arb_p_state
+{
+   int                cmd;
+   struct arb_p_link *pa;
+};
+
+extern struct rxs_command rxs_commandlist[];
+extern struct arb_p_state arb_p_state[];
+
 #endif /* YAM_REXX_RXCL_H */

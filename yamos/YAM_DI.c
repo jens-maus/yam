@@ -33,6 +33,7 @@
 #include <libraries/iffparse.h>
 #include <mui/TextEditor_mcc.h>
 #include <proto/exec.h>
+#include <proto/intuition.h>
 #include <proto/muimaster.h>
 
 #include "YAM.h"

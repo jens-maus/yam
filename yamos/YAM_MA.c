@@ -28,6 +28,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <libraries/asl.h>
+#include <libraries/iffparse.h>
+#include <libraries/gadtools.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+#include <mui/TextEditor_mcc.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
+#include <proto/pm.h>
+#include <proto/utility.h>
+
+#include "old.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -36,6 +51,7 @@
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
@@ -71,8 +87,10 @@ static int MA_MailCompare(struct Mail*, struct Mail*, int);
 static ULONG MA_GetSortType(int sort)
 {
    ULONG sort2col[8] = { 0,4,6,1,1,3,5,0 };
-   if (sort > 0) return sort2col[ABS(sort)];
-   else return sort2col[ABS(sort)] | MUIV_NList_SortTypeAdd_2Values;
+   if(sort > 0)
+      return sort2col[sort];
+   else
+      return sort2col[-sort] | MUIV_NList_SortTypeAdd_2Values;
 }
 
 ///
@@ -179,7 +197,7 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 ///
 /// MA_SetMailStatus
 //  Sets the status of a message
-void MA_SetMailStatus(struct Mail *mail, int stat)
+void MA_SetMailStatus(struct Mail *mail, enum MailStatus stat)
 {
    struct MailInfo *mi;
    char statstr[3];
@@ -1364,7 +1382,7 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
       sprintf(buf, GetStr(MSG_MA_ConfirmFilter), folder->Name);
       if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buf)) return;
    }
-   clear(&G->RRs, sizeof(struct RuleResult));
+   memset(&G->RRs, 0, sizeof(struct RuleResult));
    set(lv, MUIA_NList_Quiet, TRUE); G->AppIconQuiet = TRUE;
    if ((scnt = MA_AllocRules(search, mode)))
    {
@@ -1430,7 +1448,7 @@ BOOL MA_SendMList(struct Mail **mlist)
 ///
 /// MA_Send
 //  Sends selected or all messages
-BOOL MA_Send(int sendpos)
+BOOL MA_Send(enum SendMode sendpos)
 {
    struct Mail **mlist;
    APTR lv = G->MA->GUI.NL_MAILS;
@@ -1776,7 +1794,7 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
 
    if (TR_OpenTCPIP())
    {
-      sscanf(__YAM_VERDATE, "%ld.%ld.%ld", &day, &mon, &year);
+      sscanf(yamversiondate, "%ld.%ld.%ld", &day, &mon, &year);
       thisver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
       Busy(GetStr(MSG_BusyGettingVerInfo), "", 0, 0);
       tf = OpenTempFile(NULL);
@@ -1787,7 +1805,7 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
             fscanf(tf->FP, "%ld.%ld.%ld", &day, &mon, &year);
             GetLine(tf->FP, newver, SIZE_SMALL);
             currver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
-            sprintf(buf, GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year, __YAM_VERSION, __YAM_VERDATE,
+            sprintf(buf, GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year, yamversion, yamversiondate,
                currver > thisver ? GetStr(MSG_MA_NewVersion) : GetStr(MSG_MA_NoNewVersion));
             if (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_CheckVersion), GetStr(MSG_MA_VersionReqOpt), buf)) GotoURL(C->SupportSite);
          }
@@ -1813,7 +1831,7 @@ MakeHook(MA_ShowErrorsHook, MA_ShowErrorsFunc);
 ///
 /// MA_StartMacro
 //  Launches user-defined ARexx script or AmigaDOS command
-BOOL MA_StartMacro(int num, char *param)
+BOOL MA_StartMacro(enum Macro num, char *param)
 {
    BPTR fh;
    char command[SIZE_LARGE], *wtitle = "CON:////YAM ARexx Window/AUTO";
@@ -2303,7 +2321,7 @@ struct MA_ClassData *MA_New(void)
       struct User *user;
       for (i = 0; i < 18; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
       if ((user = US_GetCurrentUser())) username = user->Name;
-      sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), __YAM_VERSION, username);
+      sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), yamversion, username);
       data->GUI.MS_MAIN = MenustripObject,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_PROJECT_ABOUT), MMEN_ABOUT),

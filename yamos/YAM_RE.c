@@ -29,6 +29,20 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <libraries/asl.h>
+#include <libraries/iffparse.h>
+#include <libraries/gadtools.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+#include <mui/TextEditor_mcc.h>
+#include <proto/dos.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
+#include <proto/utility.h>
+
+#include "old.h"
+#include "extra.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -38,6 +52,7 @@
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
@@ -47,8 +62,12 @@
 #include "YAM_utilities.h"
 
 /* local protos */
+static BOOL RE_LoadMessage(int winnum, int parsemode);
+static struct RE_ClassData *RE_New(int winnum, BOOL real);
+static void RE_DisplayMessage(int winnum);
 static void RE_PrintFile(char*,struct Part*);
 static void RE_PrintLaTeX(char*,struct Part*);
+static void RE_GetSigFromLog(int winnum, char *decrFor);
 #ifdef UNUSED
 static char **Init_ISO8859_to_LaTeX_Tab(char*);
 static char *ISO8859_to_LaTeX(char*);
@@ -60,7 +79,7 @@ static char *ISO8859_to_LaTeX(char*);
 
 /// RE_GetQuestion
 //  Finds previous message in a thread
-struct Mail *RE_GetQuestion(long irtid)
+static struct Mail *RE_GetQuestion(long irtid)
 {
    struct Folder **flist;
    struct Mail *mail;
@@ -78,7 +97,7 @@ struct Mail *RE_GetQuestion(long irtid)
 ///
 /// RE_GetAnswer
 //  Find next message in a thread
-struct Mail *RE_GetAnswer(long id)
+static struct Mail *RE_GetAnswer(long id)
 {
    struct Folder **flist;
    struct Mail *mail;
@@ -123,11 +142,11 @@ HOOKPROTONHNO(RE_Follow, void, int *arg)
    }
    else DisplayBeep(0);
 }
-MakeHook(RE_FollowHook, RE_Follow);
+MakeStaticHook(RE_FollowHook, RE_Follow);
 ///
 /// RE_SwitchMessage
 //  Goes to next or previous (new) message in list
-void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
+static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
 {
    struct Mail *mail = G->RE[winnum]->MailPtr;
    struct MailInfo *mi = GetMailInfo(mail);
@@ -204,22 +223,11 @@ HOOKPROTONHNO(RE_PrevNext, void, int *arg)
    if (arg[3]) return; // Toolbar qualifier bug work-around
    RE_SwitchMessage(arg[2], arg[0], onlynew);
 }
-MakeHook(RE_PrevNextHook, RE_PrevNext);
-///
-/// RE_PrevNextPageFunc
-//  Flips one page back or forth
-HOOKPROTONHNO(RE_PrevNextPageFunc, void, int *arg)
-{
-   int direct = arg[0], winnum = arg[1], visible;
-   struct RE_GUIData *gui = &G->RE[winnum]->GUI;
-   get(gui->SL_TEXT, MUIA_Prop_Visible, &visible);
-   DoMethod(gui->SL_TEXT, MUIM_Numeric_Increase, visible*direct);
-}
-MakeHook(RE_PrevNextPageHook, RE_PrevNextPageFunc);
+MakeStaticHook(RE_PrevNextHook, RE_PrevNext);
 ///
 /// RE_UpdateDisplay
 //  Updates message display after deleting/moving the current message
-void RE_UpdateDisplay(int pos, int winnum)
+static void RE_UpdateDisplay(int pos, int winnum)
 {
    struct Mail *mail = NULL;
 
@@ -239,7 +247,7 @@ void RE_UpdateDisplay(int pos, int winnum)
 ///
 /// RE_UpdateStatusGroup
 //  Updates status images (right side of the toolbar)
-void RE_UpdateStatusGroup(int winnum)
+static void RE_UpdateStatusGroup(int winnum)
 {
    struct RE_ClassData *re = G->RE[winnum];
    struct RE_GUIData *gui = &re->GUI;
@@ -252,7 +260,7 @@ void RE_UpdateStatusGroup(int winnum)
 ///
 /// RE_SendMDN
 //  Creates a message disposition notification
-void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL sendnow)
+static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL sendnow)
 {
    static char *MDNMessage[5] =
    {
@@ -292,7 +300,7 @@ void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL s
          struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, "", TRUE);
          p2->ContentType = "message/disposition-notification";
          p2->Filename = tf2->Filename;
-         sprintf(buf, "%s (YAM %s)", C->SMTP_Domain, __YAM_VERSION);
+         sprintf(buf, "%s (%s)", C->SMTP_Domain, yamversion);
          EmitHeader(tf2->FP, "Reporting-UA", buf);
          if (*email->OriginalRcpt.Address)
          {
@@ -399,11 +407,38 @@ BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi)
    return ignoreall;
 }
 ///
+/// RE_CheckSignatureFunc
+//  Checks validity of a PGP signed message
+HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
+{
+   struct RE_ClassData *re = G->RE[arg[1]];
+
+   if ((re->PGPSigned & PGPS_OLD) && !(re->PGPSigned & PGPS_CHECKED))
+   {
+      int error;
+      char fullfile[SIZE_PATHFILE], options[SIZE_LARGE];
+      if (!StartUnpack(GetMailFile(NULL, NULL, re->MailPtr), fullfile, re->MailPtr->Folder)) return;
+      sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f", fullfile, "T:PGP.tmp");
+      error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
+      FinishUnpack(fullfile);
+      DeleteFile("T:PGP.tmp");
+      if (error > 0) re->PGPSigned |= PGPS_BADSIG;
+      if (error >= 0) RE_GetSigFromLog(arg[1], NULL); else return;
+   }
+   if ((re->PGPSigned & PGPS_BADSIG) || arg[0])
+   {
+      char buffer[SIZE_LARGE];
+      strcpy(buffer, (re->PGPSigned & PGPS_BADSIG) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig));
+      if (re->PGPSigned & PGPS_ADDRESS) { strcat(buffer, GetStr(MSG_RE_SigFrom)); strcat(buffer, re->Signature); }
+      MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);
+   }
+}
+MakeStaticHook(RE_CheckSignatureHook, RE_CheckSignatureFunc);
+///
 /// RE_ReadMessage
 //  Displays a message in the read window
 void RE_ReadMessage(int winnum, struct Mail *mail)
 {
-   extern struct Hook RE_CheckSignatureHook;
    struct MailInfo *mi = GetMailInfo(mail);
    struct RE_ClassData *re = G->RE[winnum];
    struct RE_GUIData *gui = &re->GUI;
@@ -510,7 +545,7 @@ void RE_SaveDisplay(int winnum, FILE *fh)
 ///
 /// RE_SuggestName
 //  Suggests a file name based on the message subject
-char *RE_SuggestName(struct Mail *mail)
+static char *RE_SuggestName(struct Mail *mail)
 {
    static char name[SIZE_FILE];
    char *ptr = mail->Subject;
@@ -581,7 +616,7 @@ HOOKPROTONHNO(RE_MoveFunc, void, int *arg)
       }
    }
 }
-MakeHook(RE_MoveHook, RE_MoveFunc);
+MakeStaticHook(RE_MoveHook, RE_MoveFunc);
 ///
 /// RE_CopyFunc
 //  Copies the current message to another folder
@@ -608,7 +643,7 @@ HOOKPROTONHNO(RE_CopyFunc, void, int *arg)
          }
    }
 }
-MakeHook(RE_CopyHook, RE_CopyFunc);
+MakeStaticHook(RE_CopyHook, RE_CopyFunc);
 ///
 /// RE_DeleteFunc
 //  Deletes the current message
@@ -627,7 +662,7 @@ HOOKPROTONHNO(RE_DeleteFunc, void, int *arg)
       else           AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)1, folder->Name, delfolder->Name, "");
    }
 }
-MakeHook(RE_DeleteHook, RE_DeleteFunc);
+MakeStaticHook(RE_DeleteHook, RE_DeleteFunc);
 ///
 /// RE_PrintFunc
 //  Sends the current message or an attachment to the printer
@@ -659,7 +694,7 @@ HOOKPROTONHNO(RE_PrintFunc, void, int *arg)
       BusyEnd;
    }
 }
-MakeHook(RE_PrintHook, RE_PrintFunc);
+MakeStaticHook(RE_PrintHook, RE_PrintFunc);
 
 ///
 /// RE_PrintFile
@@ -877,7 +912,7 @@ HOOKPROTONHNO(RE_SaveFunc, void, int *arg)
       BusyEnd;
    }
 }
-MakeHook(RE_SaveHook, RE_SaveFunc);
+MakeStaticHook(RE_SaveHook, RE_SaveFunc);
 ///
 /// RE_DisplayMIME
 //  Displays a message part (attachment) using a MIME viewer
@@ -950,7 +985,7 @@ HOOKPROTONHNO(RE_DisplayFunc, void, int *arg)
       BusyEnd;
    }
 }
-MakeHook(RE_DisplayHook, RE_DisplayFunc);
+MakeStaticHook(RE_DisplayHook, RE_DisplayFunc);
 ///
 /// RE_SaveAll
 //  Saves all attachments to disk
@@ -981,7 +1016,7 @@ HOOKPROTONHNO(RE_SaveAllFunc, void, int *arg)
       BusyEnd;
    }
 }
-MakeHook(RE_SaveAllHook, RE_SaveAllFunc);
+MakeStaticHook(RE_SaveAllHook, RE_SaveAllFunc);
 ///
 /// RE_RemoveAttachFunc
 //  Removes attachments from the current message
@@ -998,7 +1033,7 @@ HOOKPROTONHNO(RE_RemoveAttachFunc, void, int *arg)
    }
    RE_ReadMessage(*arg, mail);
 }
-MakeHook(RE_RemoveAttachHook, RE_RemoveAttachFunc);
+MakeStaticHook(RE_RemoveAttachHook, RE_RemoveAttachFunc);
 ///
 /// RE_NewFunc
 //  Starts a new message based on the current one
@@ -1023,7 +1058,7 @@ HOOKPROTONHNO(RE_NewFunc, void, int *arg)
       case NEW_REPLY:   MA_NewReply(mlist, flags); break;
    }
 }
-MakeHook(RE_NewHook, RE_NewFunc);
+MakeStaticHook(RE_NewHook, RE_NewFunc);
 ///
 /// RE_GetAddressFunc
 //  Stores sender address of current message in the address book
@@ -1035,7 +1070,7 @@ HOOKPROTONHNO(RE_GetAddressFunc, void, int *arg)
    mlist[2] = mail;
    if (MailExists(mail, folder)) MA_GetAddress(mlist);
 }
-MakeHook(RE_GetAddressHook, RE_GetAddressFunc);
+MakeStaticHook(RE_GetAddressHook, RE_GetAddressFunc);
 ///
 /// RE_SetUnreadFunc
 //  Sets the status of the current mail to unread
@@ -1046,7 +1081,7 @@ HOOKPROTONHNO(RE_SetUnreadFunc, void, int *arg)
    RE_UpdateStatusGroup(winnum);
    DisplayStatistics(NULL);
 }
-MakeHook(RE_SetUnreadHook, RE_SetUnreadFunc);
+MakeStaticHook(RE_SetUnreadHook, RE_SetUnreadFunc);
 ///
 /// RE_ChangeSubjectFunc
 //  Changes the subject of the current message
@@ -1073,7 +1108,7 @@ HOOKPROTONHNO(RE_ChangeSubjectFunc, void, int *arg)
       }
    }
 }
-MakeHook(RE_ChangeSubjectHook, RE_ChangeSubjectFunc);
+MakeStaticHook(RE_ChangeSubjectHook, RE_ChangeSubjectFunc);
 ///
 /// RE_ExtractKeyFunc
 //  Extracts public PGP key from the current message
@@ -1087,11 +1122,11 @@ HOOKPROTONHNO(RE_ExtractKeyFunc, void, int *arg)
    PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0);
    FinishUnpack(fullfile);
 }
-MakeHook(RE_ExtractKeyHook, RE_ExtractKeyFunc);
+MakeStaticHook(RE_ExtractKeyHook, RE_ExtractKeyFunc);
 ///
 /// RE_GetAddressFromLog
 //  Finds e-mail address in PGP output
-BOOL RE_GetAddressFromLog(char *buf, char *address)
+static BOOL RE_GetAddressFromLog(char *buf, char *address)
 {
    if (buf = strchr(buf, 34))
    {
@@ -1104,7 +1139,7 @@ BOOL RE_GetAddressFromLog(char *buf, char *address)
 ///
 /// RE_GetSigFromLog
 //  Interprets logfile created from the PGP signature check
-void RE_GetSigFromLog(int winnum, char *decrFor)
+static void RE_GetSigFromLog(int winnum, char *decrFor)
 {
    BOOL sigDone = FALSE, decrFail = FALSE;
    struct RE_ClassData *re = G->RE[winnum];
@@ -1139,34 +1174,6 @@ void RE_GetSigFromLog(int winnum, char *decrFor)
       DeleteFile(PGPLOGFILE);
    }
 }
-///
-/// RE_CheckSignatureFunc
-//  Checks validity of a PGP signed message
-HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
-{
-   struct RE_ClassData *re = G->RE[arg[1]];
-
-   if ((re->PGPSigned & PGPS_OLD) && !(re->PGPSigned & PGPS_CHECKED))
-   {
-      int error;
-      char fullfile[SIZE_PATHFILE], options[SIZE_LARGE];
-      if (!StartUnpack(GetMailFile(NULL, NULL, re->MailPtr), fullfile, re->MailPtr->Folder)) return;
-      sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f", fullfile, "T:PGP.tmp");
-      error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
-      FinishUnpack(fullfile);
-      DeleteFile("T:PGP.tmp");
-      if (error > 0) re->PGPSigned |= PGPS_BADSIG;
-      if (error >= 0) RE_GetSigFromLog(arg[1], NULL); else return;
-   }
-   if ((re->PGPSigned & PGPS_BADSIG) || arg[0])
-   {
-      char buffer[SIZE_LARGE];
-      strcpy(buffer, (re->PGPSigned & PGPS_BADSIG) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig));
-      if (re->PGPSigned & PGPS_ADDRESS) { strcat(buffer, GetStr(MSG_RE_SigFrom)); strcat(buffer, re->Signature); }
-      MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);
-   }
-}
-MakeHook(RE_CheckSignatureHook, RE_CheckSignatureFunc);
 ///
 /// RE_SaveDecryptedFunc
 //  Saves decrypted version of a PGP message
@@ -1206,13 +1213,13 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
       else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
    }
 }
-MakeHook(RE_SaveDecryptedHook, RE_SaveDecryptedFunc);
+MakeStaticHook(RE_SaveDecryptedHook, RE_SaveDecryptedFunc);
 ///
 
 /*** MIME ***/
 /// StripTrailingSpace
 //  Strips trailing spaces from a string
-void StripTrailingSpace(char *s)
+static void StripTrailingSpace(char *s)
 {
    char *t = &s[strlen(s)-1];
    while (ISpace(*t) && t >= s) *t-- = 0;
@@ -1220,7 +1227,7 @@ void StripTrailingSpace(char *s)
 ///
 /// ParamEnd
 //  Finds next parameter in header field
-char *ParamEnd(char *s)
+static char *ParamEnd(char *s)
 {
    BOOL inquotes = FALSE;
 
@@ -1239,7 +1246,7 @@ char *ParamEnd(char *s)
 ///
 /// Cleanse
 //  Removes trailing and leading spaces and converts string to lower case
-char *Cleanse(char *s)
+static char *Cleanse(char *s)
 {
    char *tmp, *news;
    
@@ -1251,7 +1258,7 @@ char *Cleanse(char *s)
 ///
 /// UnquoteString
 //  Removes quotes from a string, skipping "escaped" quotes
-char *UnquoteString(char *s, BOOL new)
+static char *UnquoteString(char *s, BOOL new)
 {
    char *ans, *t, *o = s;
 
@@ -1275,7 +1282,7 @@ char *UnquoteString(char *s, BOOL new)
 ///
 /// RE_CharIn
 //  Converts character using translation table
-int RE_CharIn(char c, struct TranslationTable *tt)
+static int RE_CharIn(char c, struct TranslationTable *tt)
 {
    if (tt) if (tt->Header) return (int)tt->Table[(UBYTE)c];
    return (int)c;
@@ -1349,7 +1356,7 @@ void STACKEXT RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhite
 ///
 /// RE_ParseContentParameters
 //  Parses parameters of Content-Type header field
-void RE_ParseContentParameters(struct Part *rp)
+static void RE_ParseContentParameters(struct Part *rp)
 {
    char *s, *t, *eq, *ct = rp->ContentType;
 
@@ -1378,7 +1385,7 @@ void RE_ParseContentParameters(struct Part *rp)
 ///
 /// RE_ParseContentDispositionParameters
 //  Parses parameters of Content-Disposition header field
-void RE_ParseContentDispositionParameters(struct Part *rp)
+static void RE_ParseContentDispositionParameters(struct Part *rp)
 {
    char *s, *t, *eq, *cd = rp->ContentDisposition;
 
@@ -1402,7 +1409,7 @@ void RE_ParseContentDispositionParameters(struct Part *rp)
 ///
 /// RE_ScanHeader
 //  Parses the header of the message or of a message part
-BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
+static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 {
    int i;
    char *p;
@@ -1418,7 +1425,8 @@ BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
    {
       char *s = Header.Data[i];
       int ls = strlen(s);
-      rp->MaxHeaderLen = MAX(ls, rp->MaxHeaderLen);
+      if(ls > rp->MaxHeaderLen)
+        rp->MaxHeaderLen = ls;
       if (out) { fputs(s, out); fputc('\n', out); }
       if (!strnicmp(s, "content-type:", 13))
       {
@@ -1474,7 +1482,7 @@ BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 ///
 /// RE_ConsumeRestOfPart
 //  Processes body of a message part
-BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *tt, struct Part *rp)
+static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *tt, struct Part *rp)
 {
    char *ptr, c = 0, buf[SIZE_LINE];
    UBYTE *p;
@@ -1503,7 +1511,7 @@ BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *tt, stru
 ///
 /// RE_DecodeStream
 //  Decodes contents of a part
-void RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
+static void RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 {
    struct TranslationTable *tt = NULL;
    if (rp->Nr == C->LetterPart && rp->Printable)
@@ -1524,7 +1532,7 @@ void RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 ///
 /// RE_OpenNewPart
 //  Adds a new entry to the message part list
-FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, struct Part *first)
+static FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, struct Part *first)
 {
    FILE *fp;
    if ((*new) = calloc(1,sizeof(struct Part)))
@@ -1556,7 +1564,7 @@ FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, struct Pa
 ///
 /// RE_UndoPart
 //  Removes an entry from the message part list
-void RE_UndoPart(struct Part *rp)
+static void RE_UndoPart(struct Part *rp)
 {
    DeleteFile(rp->Filename);
    if (rp->Prev) rp->Prev->Next = rp->Next;
@@ -1568,7 +1576,7 @@ void RE_UndoPart(struct Part *rp)
 ///
 /// RE_RequiresSpecialHandling
 //  Checks if part is PGP signed/encrypted or a MDN
-int RE_RequiresSpecialHandling(struct Part *hrp)
+static int RE_RequiresSpecialHandling(struct Part *hrp)
 {
    if (!stricmp(hrp->ContentType, "multipart/report") && !stricmp(hrp->CParRType, "disposition-notification")) return 1;
    if (!stricmp(hrp->ContentType, "multipart/signed") && !stricmp(hrp->CParProt, "application/pgp-signature")) return 2;
@@ -1578,7 +1586,7 @@ int RE_RequiresSpecialHandling(struct Part *hrp)
 ///
 /// RE_IsURLencoded
 //  Checks if part contains encoded form data
-BOOL RE_IsURLencoded(struct Part *rp)
+static BOOL RE_IsURLencoded(struct Part *rp)
 {
    return (BOOL)(!stricmp(rp->ContentType, "application/x-www-form-urlencoded") ||
                  !stricmp(rp->ContentType, "application/x-url-encoded"));
@@ -1586,7 +1594,7 @@ BOOL RE_IsURLencoded(struct Part *rp)
 ///
 /// RE_SaveThisPart
 //  Decides if the part should be kept in memory
-BOOL RE_SaveThisPart(struct Part *rp)
+static BOOL RE_SaveThisPart(struct Part *rp)
 {
    int pm = G->RE[rp->Win]->ParseMode;
    switch (pm)
@@ -1601,7 +1609,7 @@ BOOL RE_SaveThisPart(struct Part *rp)
 ///
 /// RE_SetPartInfo
 //  Determines size and other information of a message part
-void RE_SetPartInfo(struct Part *rp)
+static void RE_SetPartInfo(struct Part *rp)
 {
    int size = rp->Size = FileSize(rp->Filename);
    if (!rp->Decoded && rp->Nr) switch (rp->EncodingCode)
@@ -1621,7 +1629,7 @@ void RE_SetPartInfo(struct Part *rp)
 ///
 /// RE_ParseMessage
 //  Parses a complete message
-struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Part *hrp)
+static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Part *hrp)
 {
    if (fname) in = fopen(fname, "r");
    if (in)
@@ -1754,7 +1762,7 @@ void RE_CleanupMessage(int winnum)
 ///
 /// RE_HandleMDNReport
 //  Translates a message disposition notification to readable text
-void RE_HandleMDNReport(struct Part *frp)
+static void RE_HandleMDNReport(struct Part *frp)
 {
    struct Part *rp[3];
    char file[SIZE_FILE], buf[SIZE_PATHFILE], MDNtype[SIZE_DEFAULT];
@@ -1821,7 +1829,7 @@ void RE_HandleMDNReport(struct Part *frp)
 ///
 /// RE_HandleSignedMessage
 //  Handles a PGP signed message, checks validity of signature
-void RE_HandleSignedMessage(struct Part *frp)
+static void RE_HandleSignedMessage(struct Part *frp)
 {
    struct Part *rp[2];
 
@@ -1846,7 +1854,7 @@ void RE_HandleSignedMessage(struct Part *frp)
 ///
 /// RE_DecryptPGP
 //  Decrypts a PGP encrypted file
-int RE_DecryptPGP(int winnum, char *src)
+static int RE_DecryptPGP(int winnum, char *src)
 {
    FILE *fh;
    int error;
@@ -1884,7 +1892,7 @@ int RE_DecryptPGP(int winnum, char *src)
 ///
 /// RE_HandleEncryptedMessage
 //  Handles a PGP encryped message
-void RE_HandleEncryptedMessage(struct Part *frp)
+static void RE_HandleEncryptedMessage(struct Part *frp)
 {
    struct Part *rp[2];
    FILE *in;
@@ -1912,7 +1920,7 @@ void RE_HandleEncryptedMessage(struct Part *frp)
 ///
 /// RE_LoadMessagePart
 //  Decodes a single message part
-void RE_LoadMessagePart(int winnum, struct Part *part)
+static void RE_LoadMessagePart(int winnum, struct Part *part)
 {
    struct Part *rp, *next;
    int rsh = RE_RequiresSpecialHandling(part);
@@ -1941,7 +1949,7 @@ void RE_LoadMessagePart(int winnum, struct Part *part)
 ///
 /// RE_LoadMessage
 //  Prepares a message for displaying
-BOOL RE_LoadMessage(int winnum, int parsemode)
+static BOOL RE_LoadMessage(int winnum, int parsemode)
 {
    char newfile[SIZE_PATHFILE], file[SIZE_FILE];
    struct Part *rp;
@@ -1969,7 +1977,7 @@ BOOL RE_LoadMessage(int winnum, int parsemode)
 ///
 /// RE_GetPart
 //  Gets a message part by its index number
-struct Part *RE_GetPart(int winnum, int partnr)
+static struct Part *RE_GetPart(int winnum, int partnr)
 {
    struct Part *part;
    for (part = G->RE[winnum]->FirstPart; part; part = part->Next) if (part->Nr == partnr) break;
@@ -1997,7 +2005,7 @@ void RE_FreePrivateRC(void)
 ///
 /// AppendToBuffer
 //  Appends a string to a dynamic-length buffer
-char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
+static char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
 {
    int nlen = *len, npos = (*wptr)+strlen(add);
    while (npos >= nlen-1) nlen = (nlen*3)/2;
@@ -2008,7 +2016,7 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
 ///
 /// RE_ExtractURL
 //  Extracts URL from a message line
-BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
+static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
 {
    char *protocols[7] = { "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:" };
    char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#";
@@ -2236,7 +2244,7 @@ rim_cont:
 ///
 /// RE_AddExtraHeader
 //  Adds additional headers to the header listview
-void RE_AddExtraHeader(APTR lv, char *header, char *value)
+static void RE_AddExtraHeader(APTR lv, char *header, char *value)
 {
    char buffer[SIZE_LARGE];
    if (!*value) return;
@@ -2246,7 +2254,7 @@ void RE_AddExtraHeader(APTR lv, char *header, char *value)
 ///
 /// RE_GetSenderInfo
 //  Parses X-SenderInfo header field
-void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
+static void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
 {
    char *s, *t, *eq;
    struct ExtendedMail *email;
@@ -2287,7 +2295,7 @@ void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
 ///
 /// RE_UpdateSenderInfo
 //  Updates address book entry of sender
-void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
+static void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
 {
    BOOL changed = FALSE;
 
@@ -2305,7 +2313,7 @@ void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
 ///
 /// RE_AddSenderInfo
 //  Displays sender information to header listview
-void RE_AddSenderInfo(int winnum, struct ABEntry *ab)
+static void RE_AddSenderInfo(int winnum, struct ABEntry *ab)
 {
    APTR lv = G->RE[winnum]->GUI.LV_HEAD;
    RE_AddExtraHeader(lv, GetStr(MSG_EA_RealName), ab->RealName);
@@ -2320,7 +2328,7 @@ void RE_AddSenderInfo(int winnum, struct ABEntry *ab)
 ///
 /// RE_AddToAddrbook
 //  Adds sender to the address book
-struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
+static struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
 {
    struct ABEntry new;
    char buf[SIZE_LARGE];
@@ -2363,7 +2371,7 @@ struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
 ///
 /// RE_FindPhotoOnDisk
 //  Searches portrait of sender in the gallery directory
-BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
+static BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
 {
    *photo = 0;
    if (*ab->Photo) strcpy(photo, ab->Photo);
@@ -2384,7 +2392,7 @@ BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
 ///
 /// RE_DownloadPhoto
 //  Downloads portrait photograph of sender from the YAM homepage
-BOOL RE_DownloadPhoto(APTR win, char *url, struct ABEntry *ab)
+static BOOL RE_DownloadPhoto(APTR win, char *url, struct ABEntry *ab)
 {
    char fname[SIZE_FILE], picfname[SIZE_PATHFILE], ext[SIZE_SMALL];
    char *name = *ab->Alias ? ab->Alias : "pic";
@@ -2422,7 +2430,7 @@ BOOL RE_DownloadPhoto(APTR win, char *url, struct ABEntry *ab)
 ///
 /// RE_DisplayMessage
 //  Shows message header and body in read window
-void RE_DisplayMessage(int winnum)
+static void RE_DisplayMessage(int winnum)
 {
    char *cmsg, *body;
    BOOL dispheader;
@@ -2511,7 +2519,7 @@ void RE_DisplayMessage(int winnum)
 ///
 /// RE_ClickedOnMessage
 //  User clicked on a e-mail address
-void RE_ClickedOnMessage(char *address)
+static void RE_ClickedOnMessage(char *address)
 {
    struct MUI_NListtree_TreeNode *tn;
    struct ABEntry *ab = NULL;
@@ -2580,7 +2588,7 @@ HOOKPROTONH(RE_DoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
    else return FALSE;
    return TRUE;
 }
-MakeHook(RE_DoubleClickHook, RE_DoubleClickFunc);
+MakeStaticHook(RE_DoubleClickHook, RE_DoubleClickFunc);
 ///
 /// RE_ShowEnvFunc
 //  Changes display options (header, textstyles, sender info)
@@ -2607,7 +2615,7 @@ HOOKPROTONHNO(RE_ShowEnvFunc, void, int *arg)
    RE_DisplayMessage(winnum);
    set(re->GUI.SL_TEXT, MUIA_Prop_First, lev);
 }
-MakeHook(RE_ShowEnvHook, RE_ShowEnvFunc);
+MakeStaticHook(RE_ShowEnvHook, RE_ShowEnvFunc);
 ///
 
 /*** GUI ***/
@@ -2685,7 +2693,7 @@ HOOKPROTONH(RE_LV_HDspFunc, long, char **array, char *entry)
    array[1] = stpblk(++cont);
    return 0;
 }
-MakeHook(RE_LV_HDspHook,RE_LV_HDspFunc);
+MakeStaticHook(RE_LV_HDspHook,RE_LV_HDspFunc);
 ///
 /// RE_New
 //  Creates a read window
@@ -2694,11 +2702,11 @@ enum {   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN
          RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
          RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT };
 
-APTR RE_LEDGroup(char *filename)
+static APTR RE_LEDGroup(char *filename)
 {
    return PageGroup, Child, HSpace(0), Child, MakeStatusFlag(filename), End;
 }
-struct RE_ClassData *RE_New(int winnum, BOOL real)
+static struct RE_ClassData *RE_New(int winnum, BOOL real)
 {
    struct RE_ClassData *data;
 
@@ -2921,10 +2929,10 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift del"  ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_DeleteHook,IEQUALIFIER_LSHIFT,winnum,FALSE);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat space"      ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Next Page");
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat backspace"  ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Previous Page");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat left"       ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,False,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat right"      ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,False,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift left" ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,True,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift right",MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,True,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat left"       ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,FALSE,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat right"      ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,FALSE,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift left" ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,TRUE,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift right",MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,TRUE,winnum);
          return data;
       }
       free(data);

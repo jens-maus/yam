@@ -28,7 +28,42 @@
 
 ***************************************************************************/
 
+#include <dos/datetime.h>
+
 #include "YAM_mainFolder.h"
+
+struct SearchGroup
+{
+   APTR PG_SRCHOPT;
+   APTR CY_MODE;
+   APTR ST_FIELD;
+   APTR CY_COMP[5];
+   APTR ST_MATCH[5];
+   APTR BT_FILE[5];
+   APTR BT_EDIT[5];
+   APTR RA_ADRMODE;
+   APTR CY_STATUS;
+   APTR CH_CASESENS[5];
+   APTR CH_SUBSTR[5];
+};
+
+struct FI_GUIData
+{
+   APTR WI;
+   APTR LV_FOLDERS;
+   struct SearchGroup GR_SEARCH;
+   APTR LV_MAILS;
+   APTR GR_PAGE;
+   APTR GA_PROGRESS;
+   APTR BT_SELECT;
+   APTR BT_READ;
+};
+
+struct FI_ClassData  /* find window */
+{
+   struct FI_GUIData GUI;
+   long              Abort;
+};
 
 struct Search
 {

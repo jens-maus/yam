@@ -35,6 +35,8 @@
 #define %b_LOCALE_H
 #include <exec/types.h>
 
+#define MSG_Space ((APTR)1)
+
 extern char *GetStr(APTR);
 extern char *GetStripStr(APTR);
 extern void Open%bCatalog(void);

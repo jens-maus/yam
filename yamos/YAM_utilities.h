@@ -31,6 +31,10 @@
 #include <stdio.h>
 #include <time.h>
 
+#include <dos/dos.h>
+#include <intuition/classusr.h>
+#include <mui/Toolbar_mcc.h>
+
 #include "YAM_stringsizes.h"
 
 enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
@@ -44,6 +48,24 @@ struct Person
 {       
    char Address[SIZE_ADDRESS];
    char RealName[SIZE_REALNAME];
+};
+
+struct TempFile
+{
+   FILE *FP;
+   char  Filename[SIZE_PATHFILE];
+};
+
+struct BodyChunkData
+{
+   ULONG * Colors;
+   UBYTE * Body;
+   int     Width;
+   int     Height;
+   int     Depth;
+   int     Compression;
+   int     Masking;
+   char    File[SIZE_NAME];
 };
 
 struct Data2D

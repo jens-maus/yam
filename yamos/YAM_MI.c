@@ -27,9 +27,9 @@
 
 #include <string.h>
 
-#include "YAM.h"
 #include "YAM_error.h"
 #include "YAM_locale.h"
+#include "YAM_mime.h"
 #include "YAM_utilities.h"
 
 /* local */
@@ -477,7 +477,7 @@ static BOOL gettxtline(char *buf, int size, char **rptr)
    {
       c = (int)**rptr; (*rptr)++;
       if (!c) { *ptr = '\0'; return (BOOL)(ptr == buf); }
-      else if (c == '\n' || c == '\r') { *ptr = '\0'; return False; }
+      else if (c == '\n' || c == '\r') { *ptr = '\0'; return FALSE; }
       // Emm: I guess the following line was meant to process quoted
       // mails, but it causes file corruption when the '>' is really
       // part of the uuencoding (usually, this happens for the last
@@ -485,7 +485,7 @@ static BOOL gettxtline(char *buf, int size, char **rptr)
       //else if (ptr == buf && c == '>') continue;
       else if (size > 0) { *ptr++ = c; size--; }
    } while (TRUE);
-   return False;
+   return FALSE;
 }
 
 ///
@@ -540,7 +540,7 @@ static BOOL getline(char *buf, int size, FILE *fp)
    do 
    {
       if ((c = fgetc(fp)) == -1) {*ptr = '\0'; return (BOOL)(ptr == buf); }
-      else if (c == '\n' || c == '\r') { *ptr = '\0'; return False; }
+      else if (c == '\n' || c == '\r') { *ptr = '\0'; return FALSE; }
       // Emm: I guess the following line was meant to process quoted
       // mails, but it causes file corruption when the '>' is really
       // part of the uuencoding (usually, this happens for the last
@@ -548,7 +548,7 @@ static BOOL getline(char *buf, int size, FILE *fp)
       //else if (ptr == buf && c == '>') continue;
       else if (size > 0) { *ptr++ = c; size--; }
    } while (TRUE);
-   return False;
+   return FALSE;
 }
 
 ///

@@ -28,6 +28,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
+#include <mui/BetterString_mcc.h>
+#include <mui/NList_mcc.h>
+#include <mui/TextEditor_mcc.h>
+#include <proto/intuition.h>
+#include <proto/muimaster.h>
+#include <proto/pm.h>
+#include <proto/utility.h>
+
+#include "old.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -45,6 +55,11 @@
 /***************************************************************************
  Private MUI classes
 ***************************************************************************/
+
+struct WS_Data
+{
+   struct MUI_EventHandlerNode ehnode;
+};
 
 /*** Definitions ***/
 struct MUI_CustomClass *CL_TextEditor;
@@ -288,7 +303,7 @@ DISPATCHERPROTO(WL_Dispatcher)
             {
                DoMethod(d->obj, MUIM_NList_NextSelected, &id); if (id == MUIV_NList_NextSelected_End) break;
                DoMethod(d->obj, MUIM_NList_GetEntry, id, &mail);
-               clear(&attach, sizeof(struct Attach));
+               memset(&attach, 0, sizeof(struct Attach));
                GetMailFile(attach.FilePath, NULL, mail);
                stccpy(attach.Description, mail->Subject, SIZE_DEFAULT);
                strcpy(attach.ContentType, "message/rfc822");

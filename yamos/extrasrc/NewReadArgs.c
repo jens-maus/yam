@@ -72,12 +72,6 @@ LONG NewReadArgs(struct WBStartup *, struct NewRDArgs *);
 
 void NewFreeArgs(struct NewRDArgs *rdargs)
 {
-#ifndef COMPILE_V39
-static const STRPTR NRDArgsID = "NewReadArgs 37.4 © 1997-1999 by Stephan Rupprecht";
-#else 
-static const STRPTR NRDArgsID = "NewReadArgs 39.4 © 1997-1999 by Stephan Rupprecht";
-#endif
-
   d( bug("--- NewFreeArgs ---\n"); )
   FreeArgs(rdargs->FreeArgs);
   d( bug("FreeArgs( rdargs->FreeArgs )\n"); )

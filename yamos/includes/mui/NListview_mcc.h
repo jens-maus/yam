@@ -13,7 +13,7 @@
 #endif
 
 #ifndef MUI_NList_MCC_H
-#include <MUI/NList_mcc.h>
+#include <mui/NList_mcc.h>
 #endif
 
 #define MUIC_NListview "NListview.mcc"

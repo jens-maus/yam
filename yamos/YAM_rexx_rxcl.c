@@ -24,22 +24,15 @@
  $Id$
 
 ***************************************************************************/
-/*
- * Source generated with ARexxBox 1.12 (May 18 1993)
- * which is Copyright (c) 1992,1993 Michael Balzer
- */
 
-#include <exec/types.h>
 #include <dos/dos.h>
+#include <exec/types.h>
 #include <rexx/storage.h>
 
-#define NO_GLOBALS
-#include "YAM_rexx.h"
+#include "YAM_rexx_rxcl.h"
+#include "YAM_rexx_rxif.h"
 
 #define RESINDEX(stype) (((long) &((struct stype *)0)->res) / sizeof(long))
-
-char	RexxPortBaseName[80] = "YAM";
-char	*rexx_extension = "YAM";
 
 struct rxs_command rxs_commandlist[] =
 {
@@ -117,8 +110,6 @@ struct rxs_command rxs_commandlist[] =
 	{ "WRITETO", "ADDRESS/A/M,ADD/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writeto, 1 },
 	{ NULL, NULL, NULL, NULL, NULL }
 };
-
-int		command_cnt = 72;
 
 static struct arb_p_link link0[] = {
 	{"WRITE", 1}, {"USERINFO", 16}, {"S", 17}, {"RE", 28}, {"QUIT", 37}, {"NEWMAILFILE", 38},

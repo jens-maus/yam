@@ -1,5 +1,5 @@
-#ifndef YAM_GLOSSARYDISPLAY_H
-#define YAM_GLOSSARYDISPLAY_H
+#ifndef YAM_GLOBAL_H
+#define YAM_GLOBAL_H
 
 /***************************************************************************
 
@@ -28,37 +28,22 @@
 
 ***************************************************************************/
 
+#include <exec/types.h>
+
 #include "YAM_stringsizes.h"
 
-struct Dict
-{
-   char *Text;
-   char  Alias[SIZE_NAME];
-};
+extern char *             ContType[MAXCTYPE+1];
+extern APTR               ContTypeDesc[MAXCTYPE];
+extern char *             FolderNames[4];
+extern char *             months[12];
+extern char *             SecCodes[5];
+extern char *             SigNames[3];
+extern char *             Status[9];
+extern struct WBStartup * WBmsg;
+extern char *             wdays[7];
+extern char *             yamversion;
+extern char *             yamversionstring;
+extern char *             yamversiondate;
+extern unsigned long      yamversiondays;
 
-struct DI_GUIData
-{
-   APTR WI;
-   APTR GR_LIST;
-   APTR GR_TEXT;
-   APTR LV_ENTRIES;
-   APTR ST_ALIAS;
-   APTR TE_EDIT;
-   APTR SL_EDIT;
-   APTR BT_NEW;
-   APTR BT_DELETE;
-   APTR BT_ADDSELECT;
-   APTR BT_PASTE;
-};
-
-struct DI_ClassData  /* glossary window */
-{
-   struct DI_GUIData GUI;
-   struct Dict *     OldEntry;
-   int               WrWin;
-   BOOL              Modified;
-};
-
-extern struct Hook DI_OpenHook;
-
-#endif /* YAM_GLOSSARYDISPLAY_H */
+#endif /* YAM_GLOBAL_H */

@@ -24,11 +24,6 @@
  $Id$
 
 ***************************************************************************/
-/*
- * Source generated with ARexxBox 1.12 (May 18 1993)
- * And afterwards handmodified to fix bugs!
- * which is Copyright (c) 1992,1993 Michael Balzer
- */
 
 #include <exec/types.h>
 #include <exec/memory.h>
@@ -48,6 +43,10 @@
 #include <ctype.h>
 
 #include "YAM_rexx.h"
+#include "YAM_rexx_rxcl.h"
+
+static char RexxPortBaseName[80] = "YAM";
+static char *rexx_extension = "YAM";
 
 struct rxs_stemnode
 {
@@ -56,7 +55,7 @@ struct rxs_stemnode
    char *value;
 };
 
-void (*ARexxResultHook)( struct RexxHost *, struct RexxMsg * ) = NULL;
+static void (*ARexxResultHook)( struct RexxHost *, struct RexxMsg * ) = NULL;
 
 /// ReplyRexxCommand
 void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary, char *result)
@@ -119,7 +118,7 @@ void FreeRexxCommand( struct RexxMsg *rexxmessage )
 
 ///
 /// CreateRexxCommand
-struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
+static struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
 {
    struct RexxMsg *rexx_command_message;
 
@@ -145,7 +144,7 @@ struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
 
 ///
 /// CommandToRexx
-struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rexx_command_message )
+static struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rexx_command_message )
 {
    struct MsgPort *rexxport;
 
@@ -350,7 +349,7 @@ static int find( char *input )
 
 ///
 /// FindRXCommand
-struct rxs_command *FindRXCommand( char *com )
+static struct rxs_command *FindRXCommand( char *com )
 {
    int cmd;
    
@@ -456,7 +455,7 @@ static void free_stemlist( struct rxs_stemnode *first )
 
 ///
 /// StrDup
-char *StrDup( char *s )
+static char *StrDup( char *s )
 {
    char *t = AllocVec( strlen(s)+1, MEMF_ANY );
    if( t ) strcpy( t, s );
@@ -618,27 +617,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    strcat( argb, "\n" );
    arg = argb;
    
-   if( !( rxc = ParseRXCommand( &arg ) ) )
-   {
-      if( arg = ExpandRXCommand( host, (char *) ARG0(rexxmsg) ) )
-      {
-         FreeVec( argb );
-         if( !(argb = AllocVec( strlen(arg) + 2, MEMF_ANY )) )
-         {
-            rc2 = ERROR_NO_FREE_STORE;
-            goto drc_cleanup;
-         }
-         
-         strcpy( argb, arg );
-         strcat( argb, "\n" );
-         FreeVec( arg );
-         arg = argb;
-         
-         rxc = ParseRXCommand( &arg );
-      }
-   }
-   
-   if( !rxc )
+   if(!(rxc = ParseRXCommand( &arg )))
    {
       /* Msg an ARexx schicken, vielleicht existiert ein Skript */
       struct RexxMsg *rm;

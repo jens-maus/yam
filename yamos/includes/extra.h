@@ -19,12 +19,6 @@
 #endif
 
 /*
-** <error.h>
-*/
-
-#define _OSERR IoErr()
-
-/*
 ** <string.h>
 */
 
