@@ -1889,12 +1889,6 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
       break;
 
       case DSS_DATETIME:
-      {
-//        timestr[5] = 0; // strip the seconds (only works with AmigaDOS-like DateString)
-        sprintf(resstr, "%s %s", datestr, timestr);
-      }
-      break;
-
       case DSS_USDATETIME:
       {
         sprintf(resstr, "%s %s", datestr, timestr);
