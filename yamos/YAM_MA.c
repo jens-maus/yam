@@ -790,7 +790,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
             if(mlistad && !(flags & (NEWF_REP_PRIVATE|NEWF_REP_MLIST)))
             {
-               ExtractAddress(mlistad, repto=&rtml);
+               ExtractAddress(mlistad, repto = &rtml);
                if (!strstr(rto, mlistad))
                {
                   if (*rto) rto = StrBufCat(rto, ", ");
