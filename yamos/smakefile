@@ -287,7 +287,7 @@ $(OBJDIR)/YAM_MI.o: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes
   YAM_utilities.h
 
 $(OBJDIR)/YAM_mail_lex.o: YAM_mail_lex.c
-  YAM_mail_lex.c: YAM_mail_lex.l YAM_mail_lex.h
+YAM_mail_lex.c: YAM_mail_lex.l YAM_mail_lex.h
 
 $(OBJDIR)/YAM_RE.o: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
