@@ -14,6 +14,13 @@ $Source$
       index rescanning operations on folders containing mails should hopefully be
       safer now.
 
+2005-03-04  Gunther Nikl <gni@gecko.de>
+
+    * YAM_global.c (yam_stack_size): Added required final '\n'.
+    * smakefile: Made YAM_global.o the very first object to get $STACK
+      into the first 1k of code hunk. Added missing dependencies for new
+      classes.
+
 2005-03-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_FI.c: fixed a recently introduced bug in the mail filtering routines where
