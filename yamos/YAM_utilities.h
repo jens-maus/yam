@@ -196,6 +196,9 @@ struct NewToolbarEntry
                           }
 
 // Wrapper define to be able to use the standard call of MUI_Request
+#ifdef MUI_Request
+#undef MUI_Request
+#endif
 #define MUI_Request YAMMUIRequest
 
 // function macros
