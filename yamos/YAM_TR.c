@@ -1043,7 +1043,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
 			// Now we jump to the first new mail we received if the number of messages has changed
 			// after the mail transfer
-			if(msgsInCurrentFolder < FO_GetCurrentFolder()->Total) MA_JumpToNewMsg();
+			if(C->JumpToIncoming && msgsInCurrentFolder < FO_GetCurrentFolder()->Total) MA_JumpToNewMsg();
 
       G->TR->Checking = FALSE;
       DisplayStatistics((struct Folder *)-1, TRUE);

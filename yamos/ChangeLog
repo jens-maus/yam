@@ -1,3 +1,9 @@
+2002-02-16  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added new JumpToIncoming hidden option and set it by default
+      to FALSE. If enabled YAM will jump to new incoming messages
+      after retrival.
+
 2002-01-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * the listview in the find window will be sorted by date by

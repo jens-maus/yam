@@ -808,6 +808,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->AutoSave = 600;
       strcpy(co->SupportSite, "http://www.yam.ch/");
       co->JumpToNewMsg = co->AskJumpUnread = co->PrinterCheck = co->IsOnlineCheck = TRUE;
+			co->JumpToIncoming = FALSE;
       co->ConfirmOnQuit = FALSE;
       co->HideGUIElements = 0;
       strcpy(co->LocalCharset, "iso-8859-1");

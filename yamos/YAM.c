@@ -209,6 +209,7 @@ static void AY_PrintStatus(char *txt, int percent)
 ///
 /// AY_SendMailFunc
 //  User clicked e-mail URL in About window
+/* DISABLED because not in use anymore !!
 HOOKPROTONHNONP(AY_SendMailFunc, void)
 {
    int wrwin;
@@ -219,6 +220,7 @@ HOOKPROTONHNONP(AY_SendMailFunc, void)
    }
 }
 MakeStaticHook(AY_SendMailHook, AY_SendMailFunc);
+*/
 ///
 /// AY_GoPageFunc
 //  User clicked homepage URL in About window

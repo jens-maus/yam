@@ -402,6 +402,7 @@ struct Config
    BOOL  SaveSent;
    BOOL  SendMDNAtOnce;
    BOOL  JumpToNewMsg;
+	 BOOL  JumpToIncoming;
    BOOL  PrinterCheck;
    BOOL  IsOnlineCheck;
    BOOL  ConfirmOnQuit;
@@ -409,7 +410,7 @@ struct Config
    BOOL  WarnSubject;
    BOOL  FolderCntMenu;
    BOOL  MessageCntMenu;
-   BOOL	AutomaticTranslationIn;
+	 BOOL	 AutomaticTranslationIn;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color2ndLevel;
