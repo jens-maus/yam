@@ -2656,10 +2656,11 @@ struct ReadMailData *CreateReadWindow(BOOL rexxWindow)
      C->MultipleWindows == FALSE &&
      IsMinListEmpty(&G->ReadMailDataList) == FALSE)
   {
+    struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+
     DB(kprintf("No MultipleWindows support, trying to reuse a window.\n");)
 
     // search through our ReadDataList
-    struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
     for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;

@@ -239,6 +239,10 @@ struct NewToolbarEntry
 #define Bool2Txt(b)           ((b) ? "Y" : "N")
 #define Txt2Bool(t)           (BOOL)(toupper((int)*(t)) == 'Y' || (int)*(t) == '1')
 
+#if defined(__MORPHOS__)
+#define IsMinListEmpty(x)     (((x)->mlh_TailPred) == (struct MinNode *)(x))
+#endif
+
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
 extern struct Hook    DisposeModuleHook;
