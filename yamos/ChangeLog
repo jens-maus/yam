@@ -967,7 +967,7 @@
     * WR_WriteUserInfo() now takes respect of the alternative selected From:
       address of the folder the mail was created in.
 
-2001-07-30  Allan Odgaard <duff@diku.dk>
+2001-07-31  Allan Odgaard <duff@diku.dk>
 
     * Addressbook popup gadget is no longer in cyclechain as you can popup the
       book with the standard MUI popup key (defaults to ctrl-p) -- I really
