@@ -36,11 +36,12 @@
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 
+#include "SDI_hook.h"
+
 #include "YAM.h"
 #include "YAM_classes.h"
 #include "YAM_error.h"
 #include "YAM_glossarydisplay.h"
-#include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-09  Jens Langner <Jens.Langner@light-speed.de>
+
+    * replaced YAM_hook.h with more standarized SDI_hook.h and
+      also changed the inlcude statements accordingly.
+      Also updated the SDI_compiler.h to newest version.
+
 2002-10-07  Christian Hattemer <krille@users.sourceforge.net>
 
     * YAM_RE.c: Don't try to use PGP if it's not installed

@@ -32,11 +32,12 @@
 #include <libraries/iffparse.h>
 #include <proto/muimaster.h>
 
+#include "SDI_hook.h"
+
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_error.h"
-#include "YAM_hook.h"
 #include "YAM_main.h"
 #include "YAM_locale.h"
 #include "YAM_utilities.h"

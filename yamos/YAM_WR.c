@@ -55,6 +55,8 @@
 #include <workbench/workbench.h>
 
 #include "extra.h"
+#include "SDI_hook.h"
+
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -65,7 +67,6 @@
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_glossarydisplay.h"
-#include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"

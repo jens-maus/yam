@@ -44,6 +44,8 @@
 #include <proto/amissl.h>
 
 #include "extra.h"
+#include "SDI_hook.h"
+
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
@@ -52,7 +54,6 @@
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
-#include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
@@ -2689,6 +2690,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
    FILE *f;
 
    MyStrCpy(msgfile, MA_NewMailFile(infolder, mfile, 0));
+
    if ((f = fopen(msgfile, "w")))
    {
       BOOL done = FALSE;

@@ -39,6 +39,8 @@
 #include <proto/utility.h>
 
 #include "extra.h"
+#include "SDI_hook.h"
+
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
@@ -46,7 +48,6 @@
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
-#include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"

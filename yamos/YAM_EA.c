@@ -36,6 +36,8 @@
 #include <proto/muimaster.h>
 
 #include "extra.h"
+#include "SDI_hook.h"
+
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -43,7 +45,6 @@
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_error.h"
-#include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"

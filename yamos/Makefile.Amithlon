@@ -101,29 +101,29 @@ classinfo:
 
 YAM.o.elf:	YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
 	YAM_config.h YAM_configFile.h YAM_debug.h YAM_find.h YAM_folderconfig.h \
-	YAM_global.h YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
+	YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
 	YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
 	YAM_userlist.h YAM_utilities.h YAM_write.h
 
 YAM_AB.o.elf: YAM_AB.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h YAM_global.h \
-	YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h \
+	includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h \
 	YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
 YAM_CL.o.elf: YAM_CL.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
-	YAM_folderconfig.h YAM_hook.h YAM_locale.h YAM_main.h \
+	YAM_folderconfig.h includes/SDI_hook.h YAM_locale.h YAM_main.h \
 	YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
 	YAM_userlist.h YAM_utilities.h YAM_write.h
 
 YAM_CO.o.elf: YAM_CO.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_configFile.h YAM_configGUI.h YAM_error.h \
-	YAM_find.h YAM_folderconfig.h YAM_global.h YAM_hook.h YAM_locale.h \
+	YAM_find.h YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h \
 	YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
 	YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
 YAM_COg.o.elf: YAM_COg.c YAM.h YAM_classes.h YAM_config.h YAM_find.h \
-	 YAM_global.h YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
+	 YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
 	 YAM_mime.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
 	 YAM_utilities.h
 
@@ -133,25 +133,25 @@ YAM_COs.o.elf: YAM_COs.c YAM.h YAM_config.h YAM_error.h YAM_find.h \
 	 YAM_utilities.h
 
 YAM_DI.o.elf: YAM_DI.c YAM.h YAM_classes.h YAM_error.h YAM_glossarydisplay.h \
-	YAM_hook.h YAM_locale.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
+	includes/SDI_hook.h YAM_locale.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
 	YAM_userlist.h YAM_utilities.h YAM_write.h
 
 YAM_EA.o.elf: YAM_EA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
-	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h YAM_hook.h \
+	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h includes/SDI_hook.h \
 	YAM_locale.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
 	YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
-YAM_ER.o.elf: YAM_ER.c YAM.h YAM_config.h YAM_error.h YAM_find.h YAM_hook.h \
+YAM_ER.o.elf: YAM_ER.c YAM.h YAM_config.h YAM_error.h YAM_find.h includes/SDI_hook.h \
 	YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
 	YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
 YAM_FI.o.elf: YAM_FI.c YAM.h YAM_config.h YAM_configFile.h YAM_error.h \
-	YAM_find.h YAM_folderconfig.h YAM_global.h YAM_hook.h YAM_locale.h \
+	YAM_find.h YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h \
 	YAM_main.h YAM_mainFolder.h YAM_read.h YAM_rexx_rxif.h YAM_stringsizes.h \
 	YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
 YAM_FO.o.elf: YAM_FO.c YAM.h YAM_classes.h YAM_debug.h YAM_error.h \
-	YAM_folderconfig.h YAM_global.h YAM_hook.h YAM_locale.h YAM_main.h \
+	YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h \
 	YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
 	YAM_userlist.h YAM_utilities.h
 
@@ -160,12 +160,12 @@ YAM_global.o.elf: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
 
 YAM_MA.o.elf: YAM_MA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
-	YAM_folderconfig.h YAM_global.h YAM_hook.h YAM_locale.h YAM_main.h \
+	YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h \
 	YAM_mainFolder.h YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h \
 	YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
 YAM_MAf.o.elf: YAM_MAf.c YAM.h YAM_config.h YAM_debug.h YAM_find.h \
-	 YAM_folderconfig.h YAM_global.h YAM_hook.h YAM_locale.h YAM_main.h \
+	 YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h \
 	 YAM_mainFolder.h YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h \
 	 YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
@@ -176,7 +176,7 @@ YAM_MI.o.elf: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes.h \
 
 YAM_RE.o.elf: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
-	YAM_folderconfig.h YAM_hook.h YAM_global.h YAM_locale.h YAM_main.h \
+	YAM_folderconfig.h includes/SDI_hook.h YAM_global.h YAM_locale.h YAM_main.h \
 	YAM_mainFolder.h YAM_mime.h YAM_read.h YAM_rexx_rxif.h YAM_stringsizes.h \
 	YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
@@ -191,23 +191,23 @@ YAM_rexx_rxif.o.elf: YAM_rexx_rxif.c YAM.h YAM_addressbook.h \
 	YAM_userlist.h YAM_utilities.h YAM_write.h
 
 YAM_TR.o.elf: YAM_TR.c YAM.h YAM_addressbookEntry.h YAM_config.h YAM_error.h \
-	YAM_find.h YAM_folderconfig.h YAM_global.h YAM_hook.h YAM_locale.h \
+	YAM_find.h YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h \
 	YAM_main.h YAM_mainFolder.h YAM_md5.h YAM_mime.h YAM_rexx_rxif.h \
 	YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
-YAM_US.o.elf: YAM_US.c YAM.h YAM_config.h YAM_error.h YAM_find.h YAM_hook.h \
+YAM_US.o.elf: YAM_US.c YAM.h YAM_config.h YAM_error.h YAM_find.h includes/SDI_hook.h \
 	YAM_locale.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
 	YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
 YAM_UT.o.elf: YAM_UT.c YAM.h YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h \
-	YAM_find.h YAM_folderconfig.h YAM_global.h YAM_hook.h YAM_locale.h \
+	YAM_find.h YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h \
 	YAM_main.h YAM_mainFolder.h YAM_mime.h YAM_read.h YAM_rexx_rxif.h \
 	YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
 	YAM_write.h
 
 YAM_WR.o.elf: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
-	YAM_folderconfig.h YAM_global.h YAM_glossarydisplay.h YAM_hook.h \
+	YAM_folderconfig.h YAM_global.h YAM_glossarydisplay.h includes/SDI_hook.h \
 	YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_mime.h YAM_read.h \
 	YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
 	YAM_utilities.h YAM_write.h
@@ -224,26 +224,26 @@ YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
 
 classes/Addrmatchlist.o.elf: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
-  YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+  includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
 classes/Searchwindow.o.elf: classes/Searchwindow.c classes/Searchwindow_cl.h YAM.h \
-  YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h \
+  YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h includes/SDI_hook.h \
   YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
 classes/Recipientstring.o.elf: classes/Recipientstring.c classes/Recipientstring_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
-  YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+  includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
 classes/InfoBar.o.elf: classes/InfoBar.c classes/InfoBar_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
-  YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+  includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
 classes/Classes.o.elf: classes/Classes.c classes/Classes.h YAM.h YAM_addressbook.h \
-  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
+  YAM_config.h YAM_debug.h YAM_folderconfig.h includes/SDI_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
 classes/YAM.o.elf: classes/YAM.c classes/YAM_cl.h YAM.h YAM_addressbook.h \
-  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
+  YAM_config.h YAM_debug.h YAM_folderconfig.h includes/SDI_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
 #######################################
