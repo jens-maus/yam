@@ -952,7 +952,7 @@ void rx_getfolderinfo( struct RexxHost *host, struct rxd_getfolderinfo **rxd, lo
       case RXIF_ACTION:
          key = rd->rd.arg.item;
          fo = FO_GetCurrentFolder();
-         get(G->MA->GUI.NL_FOLDERS, MUIA_NList_Active, &num);
+         num = FO_GetFolderPosition(fo);
          if (!strnicmp(key, "NUM", 3)) sprintf(rd->rd.res.value = rd->result, "%ld", num);
          else if (!strnicmp(key, "NAM", 3)) rd->rd.res.value = fo->Name;
          else if (!strnicmp(key, "PAT", 3)) rd->rd.res.value = fo->Path;

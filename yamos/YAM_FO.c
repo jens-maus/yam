@@ -197,18 +197,16 @@ static BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
 int FO_GetFolderPosition(struct Folder *findfo)
 {
    int i;
-   struct Folder *fo;
-   struct MUI_NListtree_TreeNode *tn;
+   struct Folder *fo = NULL;
+   struct MUI_NListtree_TreeNode *tn = NULL;
 
-   for (i = 0;; i++)
+   for (i = 0;;i++)
    {
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0 , TAG_DONE);
-      if (!tn) return -1;
+      if (!tn || !tn->tn_User) return(-1);
  
       fo = tn->tn_User;
-      if (!fo) return -1;
-
-      if (fo == findfo) return i;
+      if (fo == findfo) return(i);
    }
 }
 

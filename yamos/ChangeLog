@@ -621,3 +621,8 @@
     * extrasrc/dice.c: added popupmenu functions and cleanup
     * includes/extra.h: removed isascii define
     * YAM_WR.c: added isascii define
+
+2001-06-17  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * the position of a folder was calculated wrong on performed FOLDERINFO rexx
+      commands. fixed ! (Bug #433825)
