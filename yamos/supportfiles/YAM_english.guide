@@ -8700,20 +8700,87 @@ WRITEEDITOR
      VAR/K,STEM/K,COMMAND/A
 
 @{b}FUNCTION@{ub}
-     Passes an ARexx command to the internal editor.  Please refer
-     to the Texteditor class documentation for more info.
+     Passes a special ARexx command to the internal editor. These
+     commands are internal TextEditor.mcc arexx commands to control
+     a write window.
+
+     Out of the TextEditor.mcc autodocs the following commands are
+     currently supported:
+
+      CLEAR
+      CUT
+      COPY
+      PASTE
+      ERASE
+      GOTOLINE       Template: /N/A
+      GOTOCOLUMN     Template: /N/A
+      CURSOR         Template: Up/S,Down/S,Left/S,Right/S
+      LINE           Template: /N/A
+      COLUMN         Template: /N/A
+      NEXT           Template: Word/S,Sentence/S,Paragraph/S,Page/S
+      PREVIOUS       Template: Word/S,Sentence/S,Paragraph/S,Page/S
+      POSITION       Template: SOF/S,EOF/S,SOL/S,EOL/S,SOW/S,EOW/S,SOV/S,EOV/S
+      SETBOOKMARK    Template: /N/A
+      GOTOBOOKMARK   Template: /N/A
+      TEXT           Template: /F
+      UNDO
+      REDO
+      GETLINE
+      GETCURSOR      Template: Line/S,Column/S
+      MARK           Template: On/S,Off/S
+      DELETE
+      BACKSPACE
+
+     Please refer to the Texteditor class documentation for more info
+     about these commands.
 
 @{b}INPUTS@{ub}
+     VAR/K      - alternative variable to put the results into instead of
+                  RESULT
+     STEM/K     - base name used for the stems where the results will be
+                  stored
+     COMMAND/A  - the command string as described above.
 
 @{b}RETURNS@{ub}
+     VAR            - info returned by the query
+     <STEM>RESULT   - the result message of the command, if any.
+
+@{b}WARNING@{ub}
+     MAILWRITE *must* be called before using this command, otherwise
+     weird things are bound to happen.
 
 @{b}NOTES@{ub}
+     Please take a look at the below example and try to understand how you
+     have to format a command string to the WRITEEDITOR rexx command.
+     Often people are confused by the way they have to pass the argument
+     to this command.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Start a new mail */
+
+         MAILWRITE STEM st.
+         win1 = st.window
+
+         /* Edit the Write window */
+
+         MAILWRITE WINDOW win1
+         WRITETO boss@example.com
+         'WRITESUBJECT "I don't think I can go to work today"'
+
+         /* Clear the texteditor window */
+         WRITEEDITOR CLEAR
+
+         /* Write some text into the editor */
+         'WRITEEDITOR "TEXT Sorry, but I am sick today!"'
 
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" MAILWRITE " link "RX_MAILWRITE"}
 
 @endnode
 
