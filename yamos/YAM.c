@@ -255,7 +255,7 @@ BOOL AY_New(BOOL hidden)
             Child, HSpace(0),
          End,
          Child, HCenter((VGroup,
-            Child, CLabel(GetStr(MSG_ABOUT_Copyright1)),
+            Child, CLabel(GetStr(MSG_Copyright1)),
             Child, ColGroup(2),
                Child, bt_sendmail = TextObject,
                   MUIA_Text_Contents, "\033c\033u\0335support@yam.ch",
