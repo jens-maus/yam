@@ -50,6 +50,7 @@
 #include <proto/xpkmaster.h>
 #include <rexx/rxslib.h>
 #include <xpk/xpk.h>
+#include <extra.h>
 
 #include "NewReadArgs.h"
 #include "YAM.h"
@@ -482,6 +483,8 @@ static void Terminate(BOOL last)
    TC_Exit();
    if (G->AY_AboutText) FreeStrBuf(G->AY_AboutText);
 
+   if (G->HideIcon) FreeDiskObject(G->HideIcon);
+
    if (G->App) MUI_DisposeObject(G->App);
 
    for (i = 0; i < MAXICONS; i++)
@@ -665,6 +668,7 @@ static void Initialise2(BOOL hidden)
 static void Initialise(BOOL hidden)
 {
    static char iconfile[SIZE_PATHFILE];
+   char hideiconfile[SIZE_PATHFILE];
    char iconpath[SIZE_PATH];
    char *icnames[MAXICONS] = { "empty", "old", "new", "check" };
    char *imnames[MAXIMAGES] = { "status_unread",  "status_old",     "status_forward", "status_reply",
@@ -710,6 +714,11 @@ static void Initialise(BOOL hidden)
 
    if (!InitClasses()) Abort(GetStr(MSG_ErrorClasses));
    if (!Root_New(hidden)) Abort(FindPort("YAM") ? NULL : GetStr(MSG_ErrorMuiApp));
+
+   strmfp(hideiconfile, G->ProgDir, "YAM");
+   if (G->HideIcon=GetDiskObject(hideiconfile))
+      set(G->App, MUIA_Application_DiskObject, G->HideIcon);
+
    AY_PrintStatus(GetStr(MSG_InitLibs), 10);
    XpkBase = InitLib(XPKNAME, 0, 0, FALSE, FALSE);
    if ((DataTypesBase = InitLib("datatypes.library", 39, 0, FALSE, FALSE)))
@@ -795,7 +804,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 }
 ///
 /// Login
-//  Allows automatical login for AmiTCP-Genesis users
+//  Allows automatic login for AmiTCP-Genesis users
 static void Login(char *user, char *password, char *maildir, char *prefsfile)
 {
    struct genUser *guser;
