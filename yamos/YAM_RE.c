@@ -387,9 +387,10 @@ static void RE_UpdateStatusGroup(int winnum)
 ///
 /// RE_SendMDN
 //  Creates a message disposition notification
-static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL sendnow)
+static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *recipient, BOOL sendnow)
 {
-   static const char *MDNMessage[5] = {
+   static const char *MDNMessage[5] =
+   {
       "The message written on %s (UTC) to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
       "The message written on %s (UTC) to %s with subject \"%s\" has been sent somewhere %s, without being displayed to the user. The user may or may not see the message later.\n",
       "The message written on %s (UTC) to %s with subject \"%s\" has been processed %s, without being displayed to the user. The user may or may not see the message later.\n",
@@ -401,6 +402,8 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
    char buf[SIZE_LINE], disp[SIZE_DEFAULT], *mode;
    struct Compose comp;
 
+   DB(kprintf("RE_SendMDN: %d\n", sendnow);)
+
    if ((tf1 = OpenTempFile("w")))
    {
       char date[64];
@@ -410,11 +413,11 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
       DateStamp2String(date, &mail->Date, DSS_DATETIME, TZC_NONE);
 
       p1->Filename = tf1->Filename;
-      mode = isAutoActMDN(MDNtype) ? "automatically" : "in response to a user command";
-      strcpy(disp, isAutoActMDN(MDNtype) ? "automatic-action/" : "manual-action/");
-      strcat(disp, isAutoSendMDN(MDNtype) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
+      mode = isAutoActMDN(type) ? "automatically" : "in response to a user command";
+      strcpy(disp, isAutoActMDN(type) ? "automatic-action/" : "manual-action/");
+      strcat(disp, isAutoSendMDN(type) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
 
-      switch (MDNtype & MDN_TYPEMASK)
+      switch(type & MDN_TYPEMASK)
       {
          case MDN_READ: strcat(disp, "displayed");  fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj); break;
          case MDN_DISP: strcat(disp, "dispatched"); fprintf(tf1->FP, MDNMessage[1], date, rcpt, subj, mode); break;
@@ -425,7 +428,8 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
       fclose(tf1->FP); tf1->FP = NULL;
       SimpleWordWrap(tf1->Filename, 72);
       p2 = p1->Next = NewPart(2);
-      if ((tf2 = OpenTempFile("w")))
+
+      if((tf2 = OpenTempFile("w")))
       {
          char mfile[SIZE_MFILE];
          struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
@@ -466,13 +470,15 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
                 }
                 FinishUnpack(fullfile);
               }
-              fclose(tf3->FP); tf3->FP = NULL;
+              fclose(tf3->FP);
+              tf3->FP = NULL;
               memset(&comp, 0, sizeof(struct Compose));
               comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
               comp.Subject = "Disposition Notification";
               comp.ReportType = 1;
               comp.FirstPart = p1;
-              if ((comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")))
+
+              if((comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")))
               {
                 struct Mail *mlist[3];
                 mlist[0] = (struct Mail *)1; mlist[2] = NULL;
@@ -481,15 +487,19 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
 
                 if((email = MA_ExamineMail(outfolder, mfile, TRUE)))
                 {
-                  setStatusToQueued(&(email->Mail));
                   mlist[2] = AddMailToList(&email->Mail, outfolder);
+                  setStatusToQueued(mlist[2]);
                   MA_FreeEMailStruct(email);
                 }
 
                 if(sendnow && mlist[2] && !G->TR)
                   MA_SendMList(mlist);
+
+                // refresh the folder statistics
+                DisplayStatistics(outfolder, TRUE);
               }
               else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
+
               FreeStrBuf(comp.MailTo);
               CloseTempFile(tf3);
             }
@@ -503,52 +513,76 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
 ///
 /// RE_DoMDN
 //  Handles message disposition requests
-BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi)
+BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
 {
    BOOL ignoreall = FALSE;
    int MDNmode;
-   switch (MDNtype)
+
+   switch(type)
    {
       case MDN_READ: MDNmode = C->MDN_Display; break;
       case MDN_PROC:
       case MDN_DISP: MDNmode = C->MDN_Process; break;
       case MDN_DELE: MDNmode = C->MDN_Delete; break;
+
       default:       MDNmode = C->MDN_Filter; break;
    }
-   if (MDNmode)
+
+   if(MDNmode)
    {
       struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+
       if(email)
       {
         if(*email->ReceiptTo.Address)
         {
           char buttons[SIZE_DEFAULT*2];
-          BOOL isonline = TR_IsOnline(), sendnow = C->SendMDNAtOnce && isonline;
-          switch (MDNmode)
+          BOOL isonline = TR_IsOnline();
+          BOOL sendnow = C->SendMDNAtOnce && isonline;
+
+          switch(MDNmode)
           {
-            case 1: MDNtype = MDN_DENY|MDN_AUTOSEND|MDN_AUTOACT; break;
-            case 2: sendnow = FALSE;
-                    strcpy(buttons, GetStr(MSG_RE_MDNGads1));
-                    if (isonline) strcat(buttons, GetStr(MSG_RE_MDNGads2));
-                    strcat(buttons, GetStr(MSG_RE_MDNGads3));
-                    if (multi) strcat(buttons, GetStr(MSG_RE_MDNGads4));
-                    switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), buttons, GetStr(MSG_RE_MDNReq)))
-                    {
-                       case 0: ignoreall = TRUE;
-                       case 5: MDNtype = MDN_IGNORE; break;
-                       case 3: sendnow = TRUE;
-                       case 1: break;
-                       case 4: sendnow = TRUE;
-                       case 2: MDNtype = MDN_DENY; break;
-                    }
-                    break;
-            case 3: if (MDNtype != MDN_IGNORE) SET_FLAG(MDNtype, MDN_AUTOSEND); break;
+            case 1:
+              type = MDN_DENY|MDN_AUTOSEND|MDN_AUTOACT;
+            break;
+
+            case 2:
+              sendnow = FALSE;
+              strcpy(buttons, GetStr(MSG_RE_MDNGads1));
+
+              if(isonline)
+                strcat(buttons, GetStr(MSG_RE_MDNGads2));
+
+              strcat(buttons, GetStr(MSG_RE_MDNGads3));
+
+              if(multi)
+                strcat(buttons, GetStr(MSG_RE_MDNGads4));
+
+              switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), buttons, GetStr(MSG_RE_MDNReq)))
+              {
+                case 0: ignoreall = TRUE;
+                case 5: type = MDN_IGNORE; break;
+                case 3: sendnow = TRUE;
+                case 1: break;
+                case 4: sendnow = TRUE;
+                case 2: type = MDN_DENY; break;
+              }
+            break;
+
+            case 3:
+              if(type != MDN_IGNORE)
+                SET_FLAG(type, MDN_AUTOSEND);
+            break;
           }
-          if (MDNtype != MDN_IGNORE) RE_SendMDN(MDNtype, mail, &email->ReceiptTo, sendnow);
+
+          if(type != MDN_IGNORE)
+            RE_SendMDN(type, mail, &email->ReceiptTo, sendnow);
         }
+
         MA_FreeEMailStruct(email);
       }
    }
+
    return ignoreall;
 }
 ///

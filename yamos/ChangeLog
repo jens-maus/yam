@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-12  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug in the message disposition notification reply
+      routines where a mail status update call was placed slightly wrong,
+      which caused crashes under curtain situations.
+
 2004-11-10  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c, YAM_COg.c: implemented full SMTP SSLv3 compatibility and

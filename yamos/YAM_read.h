@@ -139,7 +139,7 @@ extern struct Hook RE_LV_AttachDspFuncHook;
 void  RE_CleanupMessage(int winnum);
 BOOL  RE_DecodePart(struct Part *rp);
 void  RE_DisplayMIME(char *fname, char *ctype);
-BOOL  RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi);
+BOOL  RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi);
 BOOL  RE_Export(int winnum, char *source, char *dest, char *name, int nr, BOOL force, BOOL overwrite, char *ctype);
 void  RE_FreePrivateRC(void);
 void  RE_InitPrivateRC(struct Mail *mail, enum ParseMode parsemode);
