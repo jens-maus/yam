@@ -50,6 +50,8 @@ Developer: Jens Langner (damato)
   folders containing "sent and received" mail (damato)
 - Fixed: changing the folder type failed to refresh the message list
   (damato)
+- Fixed: forgot to pack messages when they were imported into compressed
+  folders, causing all sort of calamity (damato)
 - Fixed: folders that "lost" their directory were automatically recreated
   as folders of type "outgoing" (damato)
 - Fixed: cancelling the password requester in the folder settings window
