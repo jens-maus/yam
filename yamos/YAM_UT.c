@@ -189,11 +189,11 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
             MUIA_CycleChain, 1,
             MUIA_NListview_NList, NListObject,
                InputListFrame,
-               MUIA_NList_Title, 			 	TRUE,
-               MUIA_NList_DoubleClick, 	TRUE,
-               MUIA_NList_MultiSelect, 	(mode&ATTREQ_MULTI) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
-               MUIA_NList_DisplayHook, 	&RE_LV_AttachDspFuncHook,
-               MUIA_NList_Format, 			"BAR,BAR,",
+               MUIA_NList_Title,       TRUE,
+               MUIA_NList_DoubleClick, TRUE,
+               MUIA_NList_MultiSelect, (mode&ATTREQ_MULTI) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
+               MUIA_NList_DisplayHook, &RE_LV_AttachDspFuncHook,
+               MUIA_NList_Format,      "BAR,BAR,",
             End,
          End,
          Child, ColGroup(3),
@@ -471,7 +471,7 @@ char *StrBufCpy(char *strbuf, char *source)
    char *newstrbuf;
 
    if (!strbuf)
-		if(NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
+     if (NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
    oldlen = *((long *)(strbuf-sizeof(long)));
    newstrbuf = strbuf;
    for (newlen = oldlen; newlen <= strlen(source); newlen += SIZE_DEFAULT);
@@ -492,7 +492,7 @@ char *StrBufCat(char *strbuf, char *source)
    char *newstrbuf;
 
    if (!strbuf)
-		if(NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
+     if (NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
    oldlen = *((long *)(strbuf-sizeof(long)));
    newstrbuf = strbuf;
    for (newlen = oldlen; newlen <= strlen(strbuf)+strlen(source); newlen += SIZE_DEFAULT);
@@ -500,9 +500,9 @@ char *StrBufCat(char *strbuf, char *source)
    {
       if(NULL == (newstrbuf = AllocStrBuf(newlen)))
       {
-			FreeStrBuf(strbuf);
-			return NULL;
-		}
+         FreeStrBuf(strbuf);
+         return NULL;
+      }
       strcpy(newstrbuf, strbuf);
       FreeStrBuf(strbuf);
    }
@@ -646,14 +646,14 @@ BOOL RenameFile(char *oldname, char *newname)
    BPTR lock;
    if (!Rename(oldname, newname)) return FALSE;
    if((fib = AllocDosObject(DOS_FIB,NULL)))
-	{
-	   if ((lock = Lock(newname, ACCESS_READ)))
-   	{
-	      Examine(lock, fib); UnLock(lock);
-   	   SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE));
-	   }
-	   FreeDosObject(DOS_FIB,fib);
-	} else return FALSE;
+   {
+      if ((lock = Lock(newname, ACCESS_READ)))
+      {
+         Examine(lock, fib); UnLock(lock);
+         SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE));
+      }
+      FreeDosObject(DOS_FIB,fib);
+   } else return FALSE;
    return TRUE;
 }
 ///
@@ -1326,11 +1326,11 @@ char *DescribeCT(char *ct)
 //  Get number of seconds since 1/1-1978
 time_t GetDateStamp(void)
 {
-	struct DateStamp ds;
-	struct DateStamp *rds;
+   struct DateStamp ds;
+   struct DateStamp *rds;
 
-	rds = DateStamp(&ds);
-	return (rds->ds_Days*24*60*60 + rds->ds_Minute*60 + rds->ds_Tick/TICKS_PER_SECOND);
+   rds = DateStamp(&ds);
+   return (rds->ds_Days*24*60*60 + rds->ds_Minute*60 + rds->ds_Tick/TICKS_PER_SECOND);
 }
 ///
 /// DateStamp2String
@@ -1364,61 +1364,61 @@ char *DateStamp2String(struct DateStamp *date, int mode)
       {
         int y = atoi(&datestr[6]);
 
-   			// this is a Y2K patch
+        // this is a Y2K patch
         // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
-   			if (date->ds_Days < 8035) y += 1900;
+        if (date->ds_Days < 8035) y += 1900;
         else y += 2000;
 
-      	sprintf(resstr, "%s %s %02ld %s %ld\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
+        sprintf(resstr, "%s %s %02ld %s %ld\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
       }
       break;
 
       case DSS_DATETIME:
       {
-      	timestr[5] = 0;
+        timestr[5] = 0;
         sprintf(resstr, "%s %s", datestr, timestr);
       }
       break;
 
       case DSS_DATEBEAT:
       {
-			  // calculate the beat time
-   			beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+        // calculate the beat time
+        beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
 
-      	sprintf(resstr, "%s @%03ld", datestr, beat);
+        sprintf(resstr, "%s @%03ld", datestr, beat);
       }
-    	break;
+      break;
 
       case DSS_USDATETIME:
       {
-      	sprintf(resstr, "%s %s", datestr, timestr);
+        sprintf(resstr, "%s %s", datestr, timestr);
       }
       break;
 
       case DSS_WEEKDAY:
       {
-      	strcpy(resstr, daystr);
+        strcpy(resstr, daystr);
       }
       break;
 
       case DSS_DATE:
       {
-      	strcpy(resstr, datestr);
+        strcpy(resstr, datestr);
       }
       break;
 
       case DSS_TIME:
       {
-      	strcpy(resstr, timestr);
+        strcpy(resstr, timestr);
       }
       break;
 
       case DSS_BEAT:
       {
-			  // calculate the beat time
-   			beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+        // calculate the beat time
+        beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
 
-      	sprintf(resstr, "@%03ld", beat);
+        sprintf(resstr, "@%03ld", beat);
       }
       break;
    }
@@ -1441,10 +1441,10 @@ long DateStamp2Long(struct DateStamp *date)
    dt.dat_StrDate = (STRPTR)datestr;
    DateToStr(&dt); s = Trim(datestr);
 
-	 // get the year
-	 y = atoi(&s[6]);
+   // get the year
+   y = atoi(&s[6]);
 
-	 // this is a Y2K patch
+   // this is a Y2K patch
    // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
    if (date->ds_Days < 8035) y += 1900;
    else y += 2000;
@@ -2188,7 +2188,7 @@ int GetMUI(struct Object *obj,int attr)
 //  Returns a pointer to the value of a MUI string object
 char *GetMUIStringPtr(struct Object *obj)
 {
-	return (char*)GetMUI(obj,MUIA_String_Contents);
+   return (char*)GetMUI(obj,MUIA_String_Contents);
 }
 ///
 /// GetMUIString
@@ -2411,17 +2411,17 @@ struct BodyChunkData *LoadBCImage(char *fname)
                }
                else success = FALSE;
 
-	             CloseIFF(iff);
+               CloseIFF(iff);
             }
-          	else success = FALSE;
+            else success = FALSE;
 
-	          Close(iff->iff_Stream);
+            Close(iff->iff_Stream);
          }
          else success = FALSE;
 
-		     FreeIFF(iff);
+         FreeIFF(iff);
       }
-    	else success = FALSE;
+      else success = FALSE;
    }
    else return NULL;
 
@@ -2430,9 +2430,9 @@ struct BodyChunkData *LoadBCImage(char *fname)
    if(success) return bcd;
    else
    {
-   	 if(bcd) free(bcd);
+     if(bcd) free(bcd);
      return NULL;
-	 }
+   }
 }
 ///
 
@@ -2472,19 +2472,19 @@ int PGPCommand(char *progname, char *options, int flags)
    int error = -1;
    char command[SIZE_LARGE];
 
-	if ((fhi = Open("NIL:", MODE_OLDFILE)))
-	{
-	   if ((fho = Open("NIL:", MODE_NEWFILE)))
-   	{
-	      Busy(GetStr(MSG_BusyPGPrunning), "", 0, 0);
-	      strmfp(command, C->PGPCmdPath, progname);
-	      strcat(command, " >" PGPLOGFILE " ");
-	      strcat(command, options);
-	      error = SystemTags(command, SYS_Input, fhi, SYS_Output, fho, NP_StackSize, C->StackSize, TAG_DONE);
-	      Close(fho);
-	      BusyEnd;
-		}
-		Close(fhi);
+   if ((fhi = Open("NIL:", MODE_OLDFILE)))
+   {
+      if ((fho = Open("NIL:", MODE_NEWFILE)))
+      {
+         Busy(GetStr(MSG_BusyPGPrunning), "", 0, 0);
+         strmfp(command, C->PGPCmdPath, progname);
+         strcat(command, " >" PGPLOGFILE " ");
+         strcat(command, options);
+         error = SystemTags(command, SYS_Input, fhi, SYS_Output, fho, NP_StackSize, C->StackSize, TAG_DONE);
+         Close(fho);
+         BusyEnd;
+      }
+      Close(fhi);
    }
    if (error > 0 && !(flags & NOERRORS)) ER_NewError(GetStr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
    if (error < 0) ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath, NULL);
@@ -2571,64 +2571,64 @@ void Busy(char *text, char *parameter, int cur, int max)
 //  Calculates folder statistics and update mailbox status icon
 void DisplayStatistics(struct Folder *fo)
 {
-	struct Mail *mail;
-	BOOL check = FALSE;
-	struct Folder *actfo = FO_GetCurrentFolder();
-	static char apptit[SIZE_DEFAULT/2];
+   struct Mail *mail;
+   BOOL check = FALSE;
+   struct Folder *actfo = FO_GetCurrentFolder();
+   static char apptit[SIZE_DEFAULT/2];
 
-	// If the parsed argument is NULL we set want to show the statistics from the actual folder
-	if (!fo) fo = actfo;
+   // If the parsed argument is NULL we set want to show the statistics from the actual folder
+   if (!fo) fo = actfo;
 
-	if (fo == (struct Folder *)-1)
-  {
-  	fo = FO_GetFolderByType(FT_INCOMING, NULL);
-    check = TRUE;
-  }
+   if (fo == (struct Folder *)-1)
+   {
+     fo = FO_GetFolderByType(FT_INCOMING, NULL);
+     check = TRUE;
+   }
 
-  for (mail = fo->Messages, fo->Unread = fo->New = 0; mail; mail = mail->Next)
-	{
-  	if (mail->Status == STATUS_NEW) { fo->New++; fo->Unread++; }
-    if (mail->Status == STATUS_UNR) fo->Unread++;
-  }
+   for (mail = fo->Messages, fo->Unread = fo->New = 0; mail; mail = mail->Next)
+   {
+      if (mail->Status == STATUS_NEW) { fo->New++; fo->Unread++; }
+      if (mail->Status == STATUS_UNR) fo->Unread++;
+   }
 
-  // Now lets redraw the folderentry in the listtree
-	DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, FO_GetFolderPosition(fo), MUIV_NListtree_Redraw_Flag_Nr, TAG_DONE);
+   // Now lets redraw the folderentry in the listtree
+   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, FO_GetFolderPosition(fo), MUIV_NListtree_Redraw_Flag_Nr, TAG_DONE);
 
-  if (fo == actfo)
-  {
-  	MA_SetMessageInfoFunc();
-    MA_SetFolderInfoFunc();
-  }
+   if (fo == actfo)
+   {
+      MA_SetMessageInfoFunc();
+      MA_SetFolderInfoFunc();
+   }
 
-  // if the folder that statistic has changed is the incoming folder we also have to change the AppIcon accordingly
-  if (fo->Type == FT_INCOMING && !G->AppIconQuiet)
-  {
-  	if (check || fo->New != G->NewMsgs || fo->Unread != G->UnrMsgs || fo->Total != G->TotMsgs)
-  	{
-      // we set the mode accordingly to the status of the folder (new/check/old)
-      int mode = fo->Total ? (fo->New ? 2 : 1) : 0;
+   // if the folder that statistic has changed is the incoming folder we also have to change the AppIcon accordingly
+   if (fo->Type == FT_INCOMING && !G->AppIconQuiet)
+   {
+     if (check || fo->New != G->NewMsgs || fo->Unread != G->UnrMsgs || fo->Total != G->TotMsgs)
+     {
+       // we set the mode accordingly to the status of the folder (new/check/old)
+       int mode = fo->Total ? (fo->New ? 2 : 1) : 0;
 
-      if (G->TR && G->TR->Checking) mode = 3;
-      SPrintF(apptit, GetStr(MSG_APPICON_STATS), fo->New, fo->Unread, fo->Total);
+       if (G->TR && G->TR->Checking) mode = 3;
+       SPrintF(apptit, GetStr(MSG_APPICON_STATS), fo->New, fo->Unread, fo->Total);
 
-      // We first have to remove the appicon before we can change it
-      if (G->AppIcon)
-      {
-      	RemoveAppIcon(G->AppIcon);
-        G->AppIcon = NULL;
-      }
+       // We first have to remove the appicon before we can change it
+       if (G->AppIcon)
+       {
+         RemoveAppIcon(G->AppIcon);
+         G->AppIcon = NULL;
+       }
 
-      // Now we create the new AppIcon and display it
-      if (G->DiskObj[mode])
-      {
+       // Now we create the new AppIcon and display it
+       if (G->DiskObj[mode])
+       {
          struct DiskObject *dobj=G->DiskObj[mode];
          G->AppIcon = AddAppIconA(0, 0, (STRPTR)apptit, G->AppPort, NULL, dobj, NULL);
-      }
+       }
 
-      G->NewMsgs = fo->New;
-      G->UnrMsgs = fo->Unread;
-      G->TotMsgs = fo->Total;
-   	}
+       G->NewMsgs = fo->New;
+       G->UnrMsgs = fo->Unread;
+       G->TotMsgs = fo->Total;
+     }
    }
 }
 ///
@@ -2654,12 +2654,12 @@ BOOL CheckPrinter(void)
             PrintIO->io_Command = PRD_QUERY;
             PrintIO->io_Data = &Result;
             DoIO((struct IORequest *)PrintIO);
-				if(PrintIO->io_Actual == 1)		// parallel port printer?
-				{
-	            if (((Result>>8) & 3) == 0) error = NULL;							// no error
-   	         else if ((Result>>8) & 01) error = GetStr(MSG_UT_NoPaper);	// /POUT asserted
-      	      else error = GetStr(MSG_UT_NoPrinter);								// /BUSY (hopefully no RingIndicator interference)
-				} else error = NULL;					// can't determine status of serial printers
+            if(PrintIO->io_Actual == 1)      // parallel port printer?
+            {
+               if (((Result>>8) & 3) == 0) error = NULL;                   // no error
+               else if ((Result>>8) & 01) error = GetStr(MSG_UT_NoPaper);  // /POUT asserted
+               else error = GetStr(MSG_UT_NoPrinter);                      // /BUSY (hopefully no RingIndicator interference)
+            } else error = NULL;               // can't determine status of serial printers
             CloseDevice((struct IORequest *)PrintIO);
          }
          DeleteIORequest((struct IORequest *)PrintIO);
@@ -2929,40 +2929,40 @@ void GotoURL(char *url)
 // Reentrant version of stdlib strtok()
 // Call like this:
 // char *next=input, *token, breakstring[]=", ";
-// do	{ token = strtok_r(&next,breakstring); /* ... */ } while(next);
+// do { token = strtok_r(&next,breakstring); /* ... */ } while(next);
 char *strtok_r(char **s, char *brk)
 {
 char *p,*ret;
 
-	if((s == NULL) || (*s == NULL) || (brk == NULL))
-		return NULL;
+  if((s == NULL) || (*s == NULL) || (brk == NULL))
+    return NULL;
 
-	/* find break character */
-	if((p = strpbrk(*s,brk)))
-	{
-		/* if found, terminate string there */
-		*p = '\0';
+  /* find break character */
+  if((p = strpbrk(*s,brk)))
+  {
+    /* if found, terminate string there */
+    *p = '\0';
 
-		/* scan forward to next non-break */
-		do { p++; } while(*p && (strchr(brk,*p) != NULL));
+    /* scan forward to next non-break */
+    do { p++; } while(*p && (strchr(brk,*p) != NULL));
 
-		/* if *p is a nullbyte, then no more tokens */
-		if(*p == '\0') p = NULL;
+    /* if *p is a nullbyte, then no more tokens */
+    if(*p == '\0') p = NULL;
 
-		/* save current *s to return it */
-		ret = *s;
+    /* save current *s to return it */
+    ret = *s;
 
-		/* and let *s point to first non-break */
-		*s = p;
+    /* and let *s point to first non-break */
+    *s = p;
 
-		return ret;
-	}
+    return ret;
+  }
 
-	/* no break character found - *s gets NULL */
-	ret = *s;
-	*s = NULL;
+  /* no break character found - *s gets NULL */
+  ret = *s;
+  *s = NULL;
 
-	return ret;
+  return ret;
 }
 ///
 
@@ -3001,11 +3001,11 @@ char *AllocReqText(char *s)
 //  Hook used by FormatString()
 void SAVEDS ASM putCharFunc(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale))
 {
-	char **tmp;
+  char **tmp;
 
-	((char *)hook->h_Data)[0] = c;
-	tmp = (char **)(&hook->h_Data);
-	(*tmp)++;
+  ((char *)hook->h_Data)[0] = c;
+  tmp = (char **)(&hook->h_Data);
+  (*tmp)++;
 }
 MakeHook(putCharHook, putCharFunc);
 ///
