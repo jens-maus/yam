@@ -40,7 +40,7 @@
       #define kprintf(format, args...)  ((struct ExecIFace *)((*(struct ExecBase **)4)->MainInterface))->DebugPrintF(format, ## args)
     #endif
   #else
-	  void kprintf(const char *formatString,...);
+    void kprintf(const char *formatString,...);
   #endif
 
   #define DB(x) x
