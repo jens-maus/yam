@@ -3,6 +3,8 @@
 *.info
 *.lnk
 *.map
+starter
 YAM
+YAM.debug
 YAM_locale.c
 YAM_locale.h
