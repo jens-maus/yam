@@ -17,6 +17,9 @@ $Source$
       into one loop, StayInProg: simplify
     * YAM_UT.c/PlaySound: fix warning #120 almost without a cast,
       LoadBCImage: fix and simplify
+    * YAM.c,YAM_DI.c,YAM_MAf.c,YAM_RE.c,YAM_TR.c: remove superflous test
+      before FreeStrBuf()
+    * YAM_utilities.h/FreeStrBuf: use sizeof() instead of hardcoded constant
 
 2002-12-03  Jens Langner <Jens.Langner@light-speed.de>
 
