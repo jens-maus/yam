@@ -2051,6 +2051,7 @@ static void RE_SetPartInfo(struct Part *rp)
         case ENC_QP:                rp->Size = (100*size)/106; break;
         default:
           // nothing
+        break;
       }
    }
 
@@ -3414,6 +3415,7 @@ HOOKPROTONH(RE_DoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
 
           default:
             // nothing
+          break;
         }
 
         result = TRUE;

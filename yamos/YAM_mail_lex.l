@@ -309,6 +309,7 @@ enum tokenType ExtractURL(char *text, char *resultBuffer)
 
         default:
           // nothing
+        break;
       }
     }
 

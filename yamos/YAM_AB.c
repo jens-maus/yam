@@ -990,6 +990,7 @@ HOOKPROTONO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 
             default:
               // nothing
+            break;
          }
       }
    }

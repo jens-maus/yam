@@ -1169,6 +1169,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 
     default:
       // nothing
+    break;
   }
 
   if(delete_folder)

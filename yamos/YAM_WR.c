@@ -558,6 +558,7 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 
          default:
           // nothing
+         break;
       }
    }
    if ((p = part->Description)) if (*p) EmitHeader(fh, "Content-Description", p);
@@ -1078,6 +1079,7 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
 
          default:
            // nothing
+         break;
       }
       if (success) EncodePart(fh, &pgppart);
    }

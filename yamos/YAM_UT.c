@@ -3799,6 +3799,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
         case STATUS_DEL:  { fo->Deleted++;            } break;
         default:
           // nothing
+        break;
       }
    }
 
