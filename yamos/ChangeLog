@@ -1,5 +1,13 @@
 2002-05-01  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * changed internal busy gauge handling a bit. Now there is the
+      possibility to have multiple BusyLevels (maximum defined by
+      BUSYLEVEL). This makes it possible to show a information at the
+      Infobar and by ending it with BusyEnd, it will print the previous
+      message that occured.
+      This also fixes some bugs were we wanted to show the user some
+      information but it was not possible because a previous Busy state
+      wasn`t closed by BusyEnd.
     * fixed a small flaw in the PGP recognition stuff. Now YAM will
       explicitly flag a message as crypted/signed if it couldn`t be
       found out initially by scanning the header while downloading

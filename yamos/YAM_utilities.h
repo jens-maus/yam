@@ -111,6 +111,7 @@ struct NewToolbarEntry
 #define KEEPLOG       32
 
 // special Macros for the Busy Handling of the InfoBar.
+#define BUSYLEVEL             5
 #define BusyEnd               Busy("", NULL, 0, 0)
 #define BusySet(c)            Busy(NULL, NULL, c, 0)
 #define BusyText(t, p)        Busy(t, p, 0, 0)

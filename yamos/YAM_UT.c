@@ -3128,35 +3128,44 @@ void AppendLogVerbose(int id, char *text, void *a1, void *a2, void *a3, void *a4
 //  Displays busy message
 void Busy(char *text, char *parameter, int cur, int max)
 {
-   static char infotext[SIZE_DEFAULT];
+   // we can have different busy levels (defined BUSYLEVEL)
+   static char infotext[BUSYLEVEL][SIZE_DEFAULT];
 
    if(text)
    {
       if(*text)
       {
-        sprintf(infotext, text, parameter);
+        sprintf(infotext[BusyLevel], text, parameter);
 
-        if (G->MA && BusyLevel == 0)
+        if(G->MA)
         {
           if(max > 0)
           {
-            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext, cur, max);
+            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext[BusyLevel], cur, max);
           }
           else
           {
-            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext);
+            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
           }
         }
 
-        BusyLevel++;
+        if(BusyLevel < BUSYLEVEL-1) BusyLevel++;
+        DB(else kprintf("Error: reached highest BusyLevel!!!\n");)
       }
       else
       {
          if(BusyLevel) BusyLevel--;
 
-         if (G->MA && BusyLevel == 0)
+         if(G->MA)
          {
-           DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
+            if(BusyLevel == 0)
+            {
+              DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
+            }
+            else
+            {
+              DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
+            }
          }
       }
    }
