@@ -590,37 +590,113 @@ static void Abort(APTR formatnum, ...)
    exit(5);
 }
 ///
+/// FlushLibrary
+/// Flushes a library
+static VOID FlushLibrary(STRPTR name)
+{
+	struct Library *result;
+
+	Forbid();
+	if (result = (struct Library *)FindName(&SysBase->LibList, name))
+		RemLibrary(result);
+	Permit();
+}
+///
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
 static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 {
-   Object *obj;
-   int success = 0;
+	#define OBJECTDIR "mui/"
 
-   if((obj = MUI_NewObjectA(name, NULL)))
-   {
-      int ver = (int)xget(obj, MUIA_Version);
-      int rev = (int)xget(obj, MUIA_Revision);
+	struct Library *base;
+	Object *obj;
+	ULONG ver, rev;
+	BOOL success = FALSE;
+	BOOL flush = TRUE;
+	BOOL retry;
 
-      success++;
+	do {
+		retry = FALSE;
 
-      if(ver > minver || (ver == minver && rev >= minrev))
-      {
-         success++;
-      }
-      MUI_DisposeObject(obj);
-   }
+		// First we attempt to acquire the version and revision through MUI
 
-   if(success < 2 && req)
-   {
-      if(success == 1)
-      {
-        Abort(MSG_ERR_OPENMCC, minver, minrev, name);
-      }
-      else Abort(MSG_ERR_OPENLIB, name, minver, minrev);
-   }
+		obj = MUI_NewObject(name, TAG_DONE);
+		if (obj)
+		{
+			ver = xget(obj, MUIA_Version);
+			rev = xget(obj, MUIA_Revision);
 
-   return (BOOL)(success == 2 ? TRUE : FALSE);
+			if (ver > minver || (ver == minver && rev >= minrev))
+				success = TRUE;
+
+			MUI_DisposeObject(obj);
+
+			// If we did't get the version we wanted, let's try to open the
+			// libraries ourselves and see what happens...
+
+			if (!success)
+			{
+				char libname1[256], libname2[256];
+
+				strcpy(libname1, OBJECTDIR);
+				strcat(libname1, name);
+
+				strcpy(libname2, "PROGDIR:" OBJECTDIR);
+				strcat(libname2, name);
+
+				if ((base = OpenLibrary(libname1, 0)) || (base = OpenLibrary(libname2, 0)))
+				{
+					UWORD OpenCnt = base->lib_OpenCnt;
+
+					ver = base->lib_Version;
+					rev = base->lib_Revision;
+					CloseLibrary(base);
+
+					if (OpenCnt > 1)
+					{
+						if (req && (retry = MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_IN_USE), name, minver, minrev, ver, rev)))
+							flush = TRUE;
+						else if (req)
+							exit(5); // Ugly
+						else return FALSE;
+					}
+
+					// Attempt to flush the library if open count is 0 or because
+					// the user wants to retry (meaning there's a chance that it's 0 now).
+
+					if (flush)
+					{
+						FlushLibrary(name);
+						flush = FALSE;
+						retry = TRUE;
+					}
+					else
+					{
+						// We're out of luck - open count is 0, we've tried to flush
+						// and still haven't got the version we want
+						if (req && (retry = MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_OLD), name, minver, minrev, ver, rev)))
+							flush = TRUE;
+						else if (req)
+							exit(5); // Ugly
+						else
+							return FALSE;
+					}
+				}
+			}
+		}
+		else
+		{
+			// No MCC at all - no need to attempt flush
+			retry = MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_NO_MCC), name, minver, minrev);
+			flush = FALSE;
+		}
+
+	} while (retry);
+
+	if (req && !success)
+		exit(5); // Ugly
+
+	return success;
 }
 ///
 /// InitLib
@@ -809,8 +885,7 @@ static void Initialise(BOOL hidden)
 
    SetupDebug();
 
-   /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
-   InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);
+   CheckMCC(MUIC_Toolbar, 15, 6, TRUE);
 
    // we have to have at least v20.104 of NList.mcc to get YAM working without risking
    // to have it buggy - so we make it a requirement.

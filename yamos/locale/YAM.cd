@@ -4965,15 +4965,26 @@ Folder group preferences
 MSG_FO_EDIT_FGROUPREQ (//)
 Name of folder group:
 ;
-MSG_ERR_OPENMCC (//)
-Couldn`t find version v%lu.%lu of MUI '%s' installed.\n\
-For compatibility reasons at least this version is\n\
-required by YAM. Please make sure you have installed\n\
-it correctly.
-;MCC_VERSION, MCC_REVISION, MCC_NAME
-;
 MSG_ER_UNUSABLEAMISSL (//)
 You have selected TLSv1/SSLv3 for this connection, but AmiSSL \
 couldn`t be initialized. Please check your AmiSSL installation \
 or disable TLS/SSL for this connection.
+;
+MSG_NO_MCC (//)
+Couldn't open MUI custom class '%s' V%lu.%lu.\n\
+The class is not installed.
+;
+MSG_MCC_OLD (//)
+Couldn't open MUI custom class '%s' V%lu.%lu.\n\
+You currently have V%lu.%lu installed, thus need\n\
+to upgrade.
+;
+MSG_MCC_IN_USE (//)
+Couldn't open MUI custom class '%s' V%lu.%lu.\n\
+%lu.%lu is currently in use by other applications.\n\
+Once you have installed the required version,\n\
+close all MUI programs and try again.
+;
+MSG_RETRY_QUIT_GAD (//)
+Try again|Quit
 ;
