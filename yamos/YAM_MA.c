@@ -2011,6 +2011,10 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
    long thisver, currver;
    char newver[SIZE_SMALL], buf[SIZE_LARGE];
 
+   // first we check if we can start a connection or if the
+   // tcp/ip stuff is busy right now so that we do not interrupt something
+   if(SocketBase && G->TR_Socket != SMTP_NO_SOCKET) return;
+
    if (TR_OpenTCPIP())
    {
       sscanf(yamversiondate, "%d.%d.%d", &day, &mon, &year);

@@ -7,6 +7,9 @@ $Source$
 
 2002-07-05  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_MA.c: fixed bug #431549 where it was possible to
+      interrupt a transfer by trying to use the "Check Version"
+      menuitem within the Main menu.
     * YAM_MA.c: the "Show last message" menuitem will now
       be disabled by default after a startup of YAM if there
       are no pending errors somehow.
