@@ -691,7 +691,9 @@ void SAVEDS FO_DeleteFolderFunc(void)
       case FT_CUSTOMSENT:
       case FT_CUSTOMMIXED: if (used < 2)
                            {
-                              if (!MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ConfirmDelete))) return;
+                              char *a = GetStr(MSG_CO_ConfirmDelete);
+                              if (!MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), a))
+                                 return;
                               DeleteMailDir(GetFolderDir(folder), FALSE);
                            }
                            ClearMailList(folder, TRUE);

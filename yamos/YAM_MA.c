@@ -1522,7 +1522,9 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
          strmfp(filename = outname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
          if (FileExists(filename))
          {
-            switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ExportMessages), GetStr(MSG_MA_ExportAppendOpts), GetStr(MSG_MA_ExportAppendReq)))
+            char *a = GetStr(MSG_MA_ExportAppendOpts);
+            char *b = GetStr(MSG_MA_ExportAppendReq);
+            switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ExportMessages), a, b))
             {
                case 1: append = FALSE; break;
                case 2: append = TRUE; break;

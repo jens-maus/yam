@@ -1,10 +1,10 @@
 ##stringtype C
 ##shortstrings
 /****************************************************************
-   This file was created automatically by `FlexCat V1.3'
+   This file was created automatically by `%fv'
 ****************************************************************/
 
-#include <clib/locale_protos.h>
+#include <proto/locale.h>
 
 static long %b_Version = %v;
 static const STRPTR %b_BuiltInLanguage = (STRPTR)%l;
@@ -14,7 +14,6 @@ static struct Catalog *%b_Catalog = NULL;
 
 void Open%bCatalog(void)
 {
-	extern struct Library *LocaleBase;
 	extern void Close%bCatalog(void);
 
 	if (LocaleBase && !%b_Catalog)
@@ -26,7 +25,6 @@ void Open%bCatalog(void)
 
 void Close%bCatalog(void)
 {
-	extern struct Library *LocaleBase;
   	if (LocaleBase) CloseCatalog(%b_Catalog);
   	%b_Catalog = NULL;
 }
