@@ -1,13 +1,13 @@
 @DATABASE YAM.guide
 @MASTER yamdev:YAM_e.guide
-@$VER: YAM.guide 2.2 (28.10.00)
+@$VER: YAM.guide 2.3 (1.5.2001)
 @INDEX "Index"
 
 @NODE "Main" "YAM - English documentation"
 
 
              @{b}=============================================
-              Y A M    (Yet Another Mailer)   VERSION 2.2
+              Y A M    (Yet Another Mailer)   VERSION 2.3
              =============================================@{ub}
 
                         © 2000 by Marcel Beck
@@ -43,7 +43,7 @@
 
      @{" The future       " LINK "PLAN" 0} - Planned improvements
      @{" Author           " LINK "INFO" 0} - How to contact the Author
-     @{" Thanks to        " LINK "CRED" 0} - Those who supported development of YAM 2.2
+     @{" Thanks to        " LINK "CRED" 0} - Those who supported development of YAM 2.3
 
 @ENDNODE
 @NODE "INTR" "Introduction"
@@ -104,7 +104,7 @@ advertising are just a few of the possible applications of the filters.
 Support  for  @{"PGP" LINK "PGP" 0}  encryption  and signing of messages as well as read and
 receive authentication.
 
-Inbuilt  support  for  UUencode  and @{"MIME" LINK "MIME" 0} for sending and receiving binary
+built-in support  for  UUencode  and @{"MIME" LINK "MIME" 0} for sending and receiving binary
 data and automatic recognition of over 20 datatypes.
 
 Event-sensitive starting of @{"macros" LINK "CO13" 0} and comprehensive @{"Arexx" LINK "REXX" 0} support.
@@ -124,8 +124,8 @@ Hardware
 
 Software
 
- - Kickstart 3.0 or higher
- - Workbench 3.0 or higher
+ - Kickstart 2.04 or higher
+ - Workbench 2.1 or higher
  - @{"MUI 3.8" LINK "MUI" 0} or higher
  - AmiTCP-compatible Stack (AmiTCP, Miami or TermiteTCP)
  - optional: XPK-module for compression of articles
@@ -228,7 +228,7 @@ Installation by using the installer
 Open  the 'Install' folder, double-click the icon 'English' and follow the
 instructions  given  by  the  installer.  If you have already installed an
 older  version  of YAM please restart your Amiga after the installation of
-YAM 2.0.
+YAM 2.3.
 
 Manual installation
 
@@ -249,7 +249,7 @@ unwilling to use it, proceed as follows:
 
       'MUI:libs/MUI'
 
-- Create an entry in your 's:user-startup' assigning 'YAM:' to the
+- Create an entry in your 'S:User-Startup' assigning 'YAM:' to the
   directory you have created for YAM 2.0, for example...
 
       'Assign YAM: Work:Internet/YAM'
@@ -261,8 +261,8 @@ unwilling to use it, proceed as follows:
 
 QUICKSTART
 
-This chapter is meant to be a step-by-step guide to the way YAM 2.0 works.
-It  is  assumed that you already have installed YAM 2.0 on your system and
+This chapter is meant to be a step-by-step guide to the way YAM 2.3 works.
+It  is  assumed that you already have installed YAM 2.3 on your system and
 that you're using Miami as your TCP/IP software.
 
  1. Get the following information from your internet provider:
@@ -948,7 +948,12 @@ corrections  here.  When  you reply to a mail contained in this folder YAM
 checks  if the data in the to-field of the original message is the same as
 the content of the 'To pattern' field. If they match the address contained
 in the 'To address' field will be inserted as the recipient instead of the
-recipient's address contained in the original message.
+recipient's  address  contained  in the original message. Additionally, if
+you  have entered a 'From: address', this will replace your e-mail address
+when  posting  to  the  mailing  list. This is useful if you use different
+e-mail  addresses for different mailing lists, or just want to avoid SPAM.
+You can also enter a 'Reply-To: address' in case the mailing list software
+doesn't set this.
 
 @ENDNODE
 @NODE "CO_W" "Configuration"
@@ -1041,6 +1046,9 @@ variable YAM_TZ.
              GMT   (for the U.K.)
              GMT-5 (for U.S. EST e.g.  New York City)
 
+Normally  YAM  will  get the time zone from your Locale settings, and this
+selector will be ghosted.
+
 [] Add adjustment for daylight saving time
 This  option  is  to be activated during daylight saving time. By doing so
 one  hour  will be added to the time zone value. YAM automatically changes
@@ -1090,6 +1098,17 @@ transferring.  The  best way to find out if your mail server supports this
 is  to write a message to yourself containing modified vowels and see what
 happens.
 
+User ID
+If  your  mail  server  requires  authentication, enter your login/user id
+here.
+
+Password
+The password to send to the mail server for logging on.
+
+[] Use SMTP AUTH
+Enable this, your are using a server with authentication (ask your ISP, if
+in doubt).
+
 ---- Receive mail(POP3) --------------------------------------------------
 
 POP3-Access
@@ -1111,8 +1130,8 @@ port you have to add it to the server address, separated by a colon.
 
   Example:  pop.provider.de:109
 
-User-ID
-Insert  the  user-id  for the POP3-server here. In most cases this will be
+User ID
+Insert  the  user id  for the POP3-server here. In most cases this will be
 identical  with  the  username  in  your e-mail address. However there are
 exceptions,  so check the instructions from your ISP. (YAM then constructs
 the full account name in the form <user-ID>\@<server>.)
@@ -1178,7 +1197,7 @@ gigantic  attachments.  The  size is given in kilobytes. If you don't want
 any limitation just insert '0'.
 
 In  everyday  use  the  settings 'pre-selection= large messages' and 'size
-limit=100  kb'  have  proved  to  be  advantageous.  With this setting the
+limit=100  kB'  have  proved  to  be  advantageous.  With this setting the
 pre-selection  window will only appear if at least one of the new messages
 exceeds 100 kilobytes in size.
 
@@ -1239,9 +1258,9 @@ Click the small arrow (PLAY symbol) to test the sound.
 [] Command
 This  is  the  program  to  be  executed when new mail arrives. Insert the
 command as you would in a command shell. If it is an Arexx script you have
-to put the 'rx' command in front of the name of the script.
+to put the 'RX' command in front of the name of the script.
 
-  Example:  rx YAM:rexx/Newmail.YAM
+  Example:  RX YAM:rexx/Newmail.YAM
 
 @ENDNODE
 @NODE "CO03" "Configuration - Filters"
@@ -1955,7 +1974,7 @@ Default viewer
 This  viewer  will be used if the attachment doesn't match any of the user
 defined types (see above).
 
-  Example:  SYS:Utilities/Multiview "%s" SCREEN
+  Example:  SYS:Utilities/MultiView "%s" SCREEN
 
 [] Identify binary attachments
 Some mail clients always use a ContentType field of...
@@ -3686,6 +3705,7 @@ examples which use the FOLDERINFO command:
        fi.new = 2
        fi.unread = 4
        fi.size = 23030
+       fi.type = 1
 
 Another example which returns a result of type /M:
 
@@ -3763,13 +3783,21 @@ set to 1 if YAM is currently busy.
 APPNOBUSY   Terminates "busy" state. RC is set to 1 if YAM is still busy.
 
 FOLDERINFO      VAR/K,STEM/K,FOLDER => NUMBER/N,NAME,PATH,TOTAL/N,NEW/N,
-                UNREAD/N,SIZE/N
+                UNREAD/N,SIZE/N,TYPE/N
 
 Returns information about the  current folder FOLDER.  If the parameter is
 omitted,  YAM will use the current folder.  NUMBER is the  internal number
 (0=incoming  folder),  PATH is the directory and SIZE is the total size in
 bytes.  TOTAL, NEW and  UNREAD is the number of the total,  new and unread
-messages.
+messages. TYPE is the folder type - possible values:
+
+0 = normal
+1 = incoming
+2 = outgoing
+3 = sent (default)
+4 = deleted
+5 = sent and received
+6 = sent
 
 GETSELECTED     VAR/K,STEM/K => NUM/N/M
 
