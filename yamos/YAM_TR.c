@@ -840,7 +840,7 @@ BOOL TR_IsOnline(void)
 
    if (C->IsOnlineCheck)
    {
-      if ((MiamiBase = OpenLibrary(MIAMINAME, 10)))
+      if ((MiamiBase = OpenLibrary("miami.library", 10)))
       {
          isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL); CloseLibrary(MiamiBase);
          return isonline;

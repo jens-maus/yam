@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE library SYSTEM "library.dtd">
+<library name="socket" basename="SocketBase" openname="socket.library">
+	<include>libraries/socket.h</include>
+	<include>exec/types.h</include>
+	<interface name="main" version="1.0" struct="SocketIFace" prefix="_Socket_" asmprefix="ISocket" global="ISocket">
+		<method name="Obtain" result="ULONG"/>
+		<method name="Release" result="ULONG"/>
+		<method name="Expunge" result="void" status="unimplemented"/>
+		<method name="Clone" result="struct Interface *" status="unimplemented"/>
+		<method name="Socket" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="par2" type="LONG"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Reserved1" result="void" status="unimplemented"/>
+		<method name="Reserved2" result="void" status="unimplemented"/>
+		<method name="Reserved3" result="void" status="unimplemented"/>
+		<method name="Connect" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="par2" type="const struct sockaddr *"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Reserved4" result="void" status="unimplemented"/>
+		<method name="Send" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="par2" type="const unsigned char *"/>
+			<arg name="par3" type="LONG"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Reserved5" result="void" status="unimplemented"/>
+		<method name="Recv" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="par2" type="unsigned char *"/>
+			<arg name="par3" type="LONG"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Shutdown" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Reserved6" result="void" status="unimplemented"/>
+		<method name="Reserved7" result="void" status="unimplemented"/>
+		<method name="Reserved8" result="void" status="unimplemented"/>
+		<method name="Reserved9" result="void" status="unimplemented"/>
+		<method name="IoctlSocket" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="par2" type="ULONG"/>
+			<arg name="last" type="char *"/>
+		</method>
+		<method name="CloseSocket" result="LONG">
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Reserved10" result="void" status="unimplemented"/>
+		<method name="Reserved11" result="void" status="unimplemented"/>
+		<method name="Reserved12" result="void" status="unimplemented"/>
+		<method name="ObtainSocket" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="par2" type="LONG"/>
+			<arg name="par3" type="LONG"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="ReleaseSocket" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="ReleaseCopyOfSocket" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Errno" result="LONG">
+		</method>
+		<method name="SetErrnoPtr" result="LONG">
+			<arg name="par1" type="void *"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Inet_NtoA" result="char *">
+			<arg name="last" type="ULONG"/>
+		</method>
+		<method name="Reserved13" result="void" status="unimplemented"/>
+		<method name="Inet_LnaOf" result="ULONG">
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Inet_NetOf" result="ULONG">
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Inet_MakeAddr" result="ULONG">
+			<arg name="par1" type="ULONG"/>
+			<arg name="last" type="ULONG"/>
+		</method>
+		<method name="Reserved14" result="void" status="unimplemented"/>
+		<method name="GetHostByName" result="struct hostent *">
+			<arg name="last" type="const unsigned char *"/>
+		</method>
+		<method name="Reserved15" result="void" status="unimplemented"/>
+		<method name="Reserved16" result="void" status="unimplemented"/>
+		<method name="Reserved17" result="void" status="unimplemented"/>
+		<method name="Reserved18" result="void" status="unimplemented"/>
+		<method name="Reserved19" result="void" status="unimplemented"/>
+		<method name="Reserved20" result="void" status="unimplemented"/>
+		<method name="Reserved21" result="void" status="unimplemented"/>
+		<method name="Reserved22" result="void" status="unimplemented"/>
+		<method name="Dup2Socket" result="LONG">
+			<arg name="par1" type="LONG"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="Reserved23" result="void" status="unimplemented"/>
+		<method name="Reserved24" result="void" status="unimplemented"/>
+		<method name="Reserved25" result="void" status="unimplemented"/>
+		<method name="Reserved26" result="void" status="unimplemented"/>
+		<method name="SocketBaseTagList" result="LONG">
+			<arg name="last" type="struct TagItem *"/>
+		</method>
+		<method name="SocketBaseTags" result="LONG">
+			<vararg name="last" type="LONG"/>
+		</method>
+		<method name="GetSocketEvents" result="LONG">
+			<arg name="last" type="ULONG *"/>
+		</method>
+	</interface>
+</library>

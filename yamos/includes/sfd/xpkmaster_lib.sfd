@@ -1,0 +1,37 @@
+==id $Id$
+==base _XpkBase
+==basetype struct Library *
+==libname xpkmaster.library
+==bias 36
+==public
+==include <exec/types.h>
+==include <xpk/xpk.h>
+LONG XpkExamine(struct XpkFib * fib, struct TagItem * tags) (a0,a1)
+==varargs
+LONG XpkExamineTags(struct XpkFib * fib, ULONG tags, ...) (a0,a1)
+LONG XpkPack(struct TagItem * tags) (a0)
+==varargs
+LONG XpkPackTags(ULONG tags, ...) (a0)
+LONG XpkUnpack(struct TagItem * tags) (a0)
+==varargs
+LONG XpkUnpackTags(ULONG tags, ...) (a0)
+LONG XpkOpen(struct XpkFib ** xbuf, struct TagItem * tags) (a0,a1)
+==varargs
+LONG XpkOpenTags(struct XpkFib ** xbuf, ULONG tags, ...) (a0,a1)
+LONG XpkRead(struct XpkFib * xbuf, STRPTR buf, ULONG len) (a0,a1,d0)
+LONG XpkWrite(struct XpkFib * xbuf, STRPTR buf, LONG len) (a0,a1,d0)
+LONG XpkSeek(struct XpkFib * xbuf, LONG len, LONG mode) (a0,d0,d1)
+LONG XpkClose(struct XpkFib * xbuf) (a0)
+LONG XpkQuery(struct TagItem * tags) (a0)
+==varargs
+LONG XpkQueryTags(ULONG tags, ...) (a0)
+APTR XpkAllocObject(ULONG type, struct TagItem * tags) (d0,a0)
+==varargs
+APTR XpkAllocObjectTags(ULONG type, ULONG tags, ...) (d0,a0)
+void XpkFreeObject(ULONG type, APTR object) (d0,a0)
+BOOL XpkPrintFault(LONG code, STRPTR header) (d0,a0)
+ULONG XpkFault(LONG code, STRPTR header, STRPTR buffer, ULONG size) (d0,a0,a1,d1)
+LONG XpkPassRequest(struct TagItem * tags) (a0)
+==varargs
+LONG XpkPassRequestTags(ULONG tags, ...) (a0)
+==end

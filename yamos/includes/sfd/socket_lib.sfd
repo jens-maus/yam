@@ -1,0 +1,40 @@
+==id $Id$
+==base _SocketBase
+==basetype struct Library *
+==libname socket.library
+==bias 30
+==public
+==include <libraries/socket.h>
+==include <exec/types.h>
+LONG Socket(LONG par1, LONG par2, LONG last) (d0,d1,d2)
+==reserve 3
+LONG Connect(LONG par1, const struct sockaddr * par2, LONG last) (d0,a0,d1)
+==reserve 1
+LONG Send(LONG par1, const unsigned char * par2, LONG par3, LONG last) (d0,a0,d1,d2)
+==reserve 1
+LONG Recv(LONG par1, unsigned char * par2, LONG par3, LONG last) (d0,a0,d1,d2)
+LONG Shutdown(LONG par1, LONG last) (d0,d1)
+==reserve 4
+LONG IoctlSocket(LONG par1, ULONG par2, char * last) (d0,d1,a0)
+LONG CloseSocket(LONG last) (d0)
+==reserve 3
+LONG ObtainSocket(LONG par1, LONG par2, LONG par3, LONG last) (d0,d1,d2,d3)
+LONG ReleaseSocket(LONG par1, LONG last) (d0,d1)
+LONG ReleaseCopyOfSocket(LONG par1, LONG last) (d0,d1)
+LONG Errno() ()
+LONG SetErrnoPtr(void * par1, LONG last) (a0,d0)
+char * Inet_NtoA(ULONG last) (d0)
+==reserve 1
+ULONG Inet_LnaOf(LONG last) (d0)
+ULONG Inet_NetOf(LONG last) (d0)
+ULONG Inet_MakeAddr(ULONG par1, ULONG last) (d0,d1)
+==reserve 1
+struct hostent * GetHostByName(const unsigned char * last) (a0)
+==reserve 8
+LONG Dup2Socket(LONG par1, LONG last) (d0,d1)
+==reserve 4
+LONG SocketBaseTagList(struct TagItem * last) (a0)
+==varargs
+LONG SocketBaseTags(LONG last, ...) (a0)
+LONG GetSocketEvents(ULONG * last) (a0)
+==end

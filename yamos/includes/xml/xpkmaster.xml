@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE library SYSTEM "library.dtd">
+<library name="xpkmaster" basename="XpkBase" openname="xpkmaster.library">
+	<include>exec/types.h</include>
+	<include>xpk/xpk.h</include>
+	<interface name="main" version="1.0" struct="XpkIFace" prefix="_Xpk_" asmprefix="IXpk" global="IXpk">
+		<method name="Obtain" result="ULONG"/>
+		<method name="Release" result="ULONG"/>
+		<method name="Expunge" result="void" status="unimplemented"/>
+		<method name="Clone" result="struct Interface *" status="unimplemented"/>
+		<method name="XpkExamine" result="LONG">
+			<arg name="fib" type="struct XpkFib *"/>
+			<arg name="tags" type="struct TagItem *"/>
+		</method>
+		<method name="XpkExamineTags" result="LONG">
+			<arg name="fib" type="struct XpkFib *"/>
+			<vararg name="tags" type="ULONG"/>
+		</method>
+		<method name="XpkPack" result="LONG">
+			<arg name="tags" type="struct TagItem *"/>
+		</method>
+		<method name="XpkPackTags" result="LONG">
+			<vararg name="tags" type="ULONG"/>
+		</method>
+		<method name="XpkUnpack" result="LONG">
+			<arg name="tags" type="struct TagItem *"/>
+		</method>
+		<method name="XpkUnpackTags" result="LONG">
+			<vararg name="tags" type="ULONG"/>
+		</method>
+		<method name="XpkOpen" result="LONG">
+			<arg name="xbuf" type="struct XpkFib **"/>
+			<arg name="tags" type="struct TagItem *"/>
+		</method>
+		<method name="XpkOpenTags" result="LONG">
+			<arg name="xbuf" type="struct XpkFib **"/>
+			<vararg name="tags" type="ULONG"/>
+		</method>
+		<method name="XpkRead" result="LONG">
+			<arg name="xbuf" type="struct XpkFib *"/>
+			<arg name="buf" type="STRPTR"/>
+			<arg name="len" type="ULONG"/>
+		</method>
+		<method name="XpkWrite" result="LONG">
+			<arg name="xbuf" type="struct XpkFib *"/>
+			<arg name="buf" type="STRPTR"/>
+			<arg name="len" type="LONG"/>
+		</method>
+		<method name="XpkSeek" result="LONG">
+			<arg name="xbuf" type="struct XpkFib *"/>
+			<arg name="len" type="LONG"/>
+			<arg name="mode" type="LONG"/>
+		</method>
+		<method name="XpkClose" result="LONG">
+			<arg name="xbuf" type="struct XpkFib *"/>
+		</method>
+		<method name="XpkQuery" result="LONG">
+			<arg name="tags" type="struct TagItem *"/>
+		</method>
+		<method name="XpkQueryTags" result="LONG">
+			<vararg name="tags" type="ULONG"/>
+		</method>
+		<method name="XpkAllocObject" result="APTR">
+			<arg name="type" type="ULONG"/>
+			<arg name="tags" type="struct TagItem *"/>
+		</method>
+		<method name="XpkAllocObjectTags" result="APTR">
+			<arg name="type" type="ULONG"/>
+			<vararg name="tags" type="ULONG"/>
+		</method>
+		<method name="XpkFreeObject" result="void">
+			<arg name="type" type="ULONG"/>
+			<arg name="object" type="APTR"/>
+		</method>
+		<method name="XpkPrintFault" result="BOOL">
+			<arg name="code" type="LONG"/>
+			<arg name="header" type="STRPTR"/>
+		</method>
+		<method name="XpkFault" result="ULONG">
+			<arg name="code" type="LONG"/>
+			<arg name="header" type="STRPTR"/>
+			<arg name="buffer" type="STRPTR"/>
+			<arg name="size" type="ULONG"/>
+		</method>
+		<method name="XpkPassRequest" result="LONG">
+			<arg name="tags" type="struct TagItem *"/>
+		</method>
+		<method name="XpkPassRequestTags" result="LONG">
+			<vararg name="tags" type="ULONG"/>
+		</method>
+	</interface>
+</library>

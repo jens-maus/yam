@@ -1,0 +1,18 @@
+==id $Id$
+==base _OpenURLBase
+==basetype struct Library *
+==libname openurl.library
+==bias 30
+==public
+==include <exec/types.h>
+==include <utility/tagitem.h>
+==include <libraries/openurl.h>
+BOOL URL_OpenA(STRPTR par1, struct TagItem * last) (a0,a1)
+==varargs
+BOOL URL_Open(STRPTR par1, Tag last, ...) (a0,a1)
+struct URL_Prefs * URL_GetPrefs() ()
+VOID URL_FreePrefs(struct URL_Prefs * last) (a0)
+BOOL URL_SetPrefs(struct URL_Prefs * par1, BOOL last) (a0,d0)
+struct URL_Prefs * URL_GetDefaultPrefs() ()
+BOOL URL_LaunchPrefsApp() ()
+==end

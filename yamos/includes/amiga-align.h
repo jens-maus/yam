@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@
 ** Special include file for setting a global
 ** pragma to align structures to 68k
 **
-** This is needed by MorphOS or every PPC
+** This is needed by AmigaOS4 or MorphOS or every PPC
 ** because alignment on PPC is different.
 */
-#if defined(__MORPHOS__)
+#if defined(__PPC__)
   #if defined(__GNUC__)
     #pragma pack(2)
   #elif defined(__VBCC__)

@@ -1,0 +1,50 @@
+==id $Id$
+==base _MiamiBase
+==basetype struct Library *
+==libname miami.library
+==bias 30
+==public
+==include <exec/types.h>
+long MiamiSysCtl(long * par1, unsigned long par2, void * par3, unsigned long * par4,
+	void * par5, long last) (a0,d0,a1,a2,a3,d1)
+==reserve 5
+void MiamiDisallowDNS(long last) (d0)
+==reserve 1
+void * MiamiGetPid() ()
+==reserve 2
+void * MiamiPFAddHook(struct Hook * par1, unsigned char * par2, struct TagItem * last) (a0,a1,a2)
+void MiamiPFRemoveHook(void * last) (a0)
+long MiamiGetHardwareLen(char * last) (a0)
+==reserve 6
+struct Library * MiamiOpenSSL(struct TagItem * last) (a0)
+void MiamiCloseSSL() ()
+==reserve 6
+long MiamiSetSocksConn(struct sockaddr * par1, long last) (a0,d0)
+==reserve 1
+long MiamiIsOnline(char * last) (a0)
+void MiamiOnOffline(char * par1, long last) (a0,d0)
+==reserve 1
+char * inet_ntop(long par1, void * par2, char * par3, long last) (d0,a0,a1,d1)
+long inet_aton(char * par1, struct in_addr * last) (a0,a1)
+long inet_pton(long par1, char * par2, void * last) (d0,a0,a1)
+struct hostent * gethostbyname2(char * par1, long last) (a0,d0)
+char * gai_strerror(long last) (d0)
+void freeaddrinfo(struct addrinfo * last) (a0)
+long getaddrinfo(char * par1, char * par2, struct addrinfo * par3,
+	struct addrinfo ** last) (a0,a1,a2,a3)
+long getnameinfo(struct sockaddr * par1, long par2, char * par3, long par4, char * par5,
+	long par6, long last) (a0,d0,a1,d1,a2,d2,d3)
+long if_nametoindex(char * last) (a0)
+char * if_indextoname(long par1, char * last) (d0,a0)
+struct if_nameindex * if_nameindex() ()
+void if_freenameindex(struct if_nameindex * last) (a0)
+long MiamiSupportsIPV6() ()
+long MiamiResGetOptions() ()
+void MiamiResSetOptions(long last) (d0)
+long sockatmark(long last) (d0)
+void MiamiSupportedCPUs(unsigned long * par1, unsigned long * par2, unsigned long * last) (a0,a1,a2)
+long MiamiGetFdCallback(void ** last) (a0)
+long MiamiSetFdCallback(void * par1, long last) (a0,d0)
+==reserve 1
+struct UserGroupCredentials * MiamiGetCredentials() ()
+==end

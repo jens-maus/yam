@@ -1,33 +1,57 @@
-/* Automatically generated header! Do not edit! */
-
 #ifndef PROTO_GENESIS_H
 #define PROTO_GENESIS_H
 
-#include <libraries/genesis.h>
-#include <clib/genesis_protos.h>
+/*
+**	$Id$
+**	Includes Release 50.1
+**
+**	Prototype/inline/pragma header file combo
+**
+**	(C) Copyright 2003-2004 Amiga, Inc.
+**	    All Rights Reserved
+*/
 
-#ifdef __GNUC__
-#ifndef __PPC__
-#include <inline/genesis.h>
-#else
-#include <ppcinline/genesis.h>
-#endif /* !__PPC__ */
-#endif /* __GNUC__ */
+#ifndef EXEC_TYPES_H
+#include <exec/types.h>
+#endif
 
-#ifdef __VBCC__
-#include <inline/genesis_protos.h>
-#endif /* __VBCC__ */
-
-#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
-#include <pragmas/genesis_pragmas.h>
-#endif /* __SASC */
+/****************************************************************************/
 
 #ifndef __NOLIBBASE__
-extern struct Library *
-#ifdef __CONSTLIBBASEDECL__
-__CONSTLIBBASEDECL__
-#endif /* __CONSTLIBBASEDECL__ */
-GenesisBase;
-#endif /* !__NOLIBBASE__ */
+extern struct Library * GenesisBase;
+#endif /* __NOLIBBASE__ */
 
-#endif /* !PROTO_GENESIS_H */
+/****************************************************************************/
+
+#ifdef __amigaos4__
+ #ifdef __USE_INLINE__
+  #include <inline4/genesis.h>
+ #endif /* __USE_INLINE__ */
+
+ #include <interfaces/genesis.h>
+
+ #ifndef __NOGLOBALIFACE__
+  extern struct GenesisIFace *IGenesis;
+ #endif /* __NOGLOBALIFACE__ */
+#else /* __amigaos4__ */
+ #ifndef CLIB_GENESIS_PROTOS_H
+  #include <clib/genesis_protos.h>
+ #endif /* CLIB_GENESIS_PROTOS_H */
+ #if defined(__GNUC__)
+  #ifndef __PPC__
+   #include <inline/genesis.h>
+  #else
+   #include <ppcinline/genesis.h>
+  #endif /* __PPC__ */
+ #elif defined(__VBCC__)
+  #ifndef __PPC__
+   #include <inline/genesis_protos.h>
+  #endif /* __PPC__ */
+ #else
+  #include <pragmas/genesis_pragmas.h>
+ #endif /* __GNUC__ */
+#endif /* __amigaos4__ */
+
+/****************************************************************************/
+
+#endif /* PROTO_GENESIS_H */

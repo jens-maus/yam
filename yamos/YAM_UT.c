@@ -3443,8 +3443,10 @@ struct BodyChunkData *LoadBCImage(char *fname)
                            struct BitMapHeader *bmhd = (struct BitMapHeader *)sp->sp_Data;
                            if (bmhd->bmh_Compression == cmpNone || bmhd->bmh_Compression==cmpByteRun1)
                            {
-                              LONG size = CurrentChunk(iff)->cn_Size;
-                              if ((bcd->Body = calloc((size_t)size,1)))
+                              struct ContextNode *cnode = CurrentChunk(iff);
+                              LONG size = cnode->cn_Size;
+
+                              if((bcd->Body = calloc((size_t)size,1)))
                               {
                                  if (ReadChunkBytes(iff, bcd->Body, size) == size)
                                  {

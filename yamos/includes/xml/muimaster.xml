@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE library SYSTEM "library.dtd">
+<library name="muimaster" basename="MUIMasterBase" openname="muimaster.library">
+	<include>exec/types.h</include>
+	<include>intuition/classes.h</include>
+	<include>utility/tagitem.h</include>
+	<include>libraries/mui.h</include>
+	<interface name="main" version="1.0" struct="MUIMasterIFace" prefix="_MUIMaster_" asmprefix="IMUIMaster" global="IMUIMaster">
+		<method name="Obtain" result="ULONG"/>
+		<method name="Release" result="ULONG"/>
+		<method name="Expunge" result="void" status="unimplemented"/>
+		<method name="Clone" result="struct Interface *" status="unimplemented"/>
+		<method name="MUI_NewObjectA" result="Object *">
+			<arg name="par1" type="char *"/>
+			<arg name="last" type="struct TagItem *"/>
+		</method>
+		<method name="MUI_NewObject" result="Object *">
+			<arg name="par1" type="char *"/>
+			<vararg name="last" type="Tag"/>
+		</method>
+		<method name="MUI_DisposeObject" result="VOID">
+			<arg name="last" type="Object *"/>
+		</method>
+		<method name="MUI_RequestA" result="LONG">
+			<arg name="par1" type="APTR"/>
+			<arg name="par2" type="APTR"/>
+			<arg name="par3" type="LONGBITS"/>
+			<arg name="par4" type="char *"/>
+			<arg name="par5" type="char *"/>
+			<arg name="par6" type="char *"/>
+			<arg name="last" type="APTR"/>
+		</method>
+		<method name="MUI_Request" result="LONG">
+			<arg name="par1" type="APTR"/>
+			<arg name="par2" type="APTR"/>
+			<arg name="par3" type="LONGBITS"/>
+			<arg name="par4" type="char *"/>
+			<arg name="par5" type="char *"/>
+			<arg name="par6" type="char *"/>
+			<vararg name="tag1" type="ULONG"/>
+		</method>
+		<method name="MUI_AllocAslRequest" result="APTR">
+			<arg name="par1" type="unsigned long"/>
+			<arg name="last" type="struct TagItem *"/>
+		</method>
+		<method name="MUI_AllocAslRequestTags" result="APTR">
+			<arg name="par1" type="unsigned long"/>
+			<vararg name="last" type="Tag"/>
+		</method>
+		<method name="MUI_AslRequest" result="BOOL">
+			<arg name="par1" type="APTR"/>
+			<arg name="last" type="struct TagItem *"/>
+		</method>
+		<method name="MUI_AslRequestTags" result="BOOL">
+			<arg name="par1" type="APTR"/>
+			<vararg name="last" type="Tag"/>
+		</method>
+		<method name="MUI_FreeAslRequest" result="VOID">
+			<arg name="last" type="APTR"/>
+		</method>
+		<method name="MUI_Error" result="LONG">
+		</method>
+		<method name="MUI_SetError" result="LONG">
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="MUI_GetClass" result="struct IClass *">
+			<arg name="last" type="char *"/>
+		</method>
+		<method name="MUI_FreeClass" result="VOID">
+			<arg name="last" type="struct IClass *"/>
+		</method>
+		<method name="MUI_RequestIDCMP" result="VOID">
+			<arg name="par1" type="Object *"/>
+			<arg name="last" type="ULONG"/>
+		</method>
+		<method name="MUI_RejectIDCMP" result="VOID">
+			<arg name="par1" type="Object *"/>
+			<arg name="last" type="ULONG"/>
+		</method>
+		<method name="MUI_Redraw" result="VOID">
+			<arg name="par1" type="Object *"/>
+			<arg name="last" type="ULONG"/>
+		</method>
+		<method name="MUI_CreateCustomClass" result="struct MUI_CustomClass *">
+			<arg name="par1" type="struct Library *"/>
+			<arg name="par2" type="char *"/>
+			<arg name="par3" type="struct MUI_CustomClass *"/>
+			<arg name="par4" type="int"/>
+			<arg name="last" type="APTR"/>
+		</method>
+		<method name="MUI_DeleteCustomClass" result="BOOL">
+			<arg name="last" type="struct MUI_CustomClass *"/>
+		</method>
+		<method name="MUI_MakeObjectA" result="Object *">
+			<arg name="par1" type="LONG"/>
+			<arg name="last" type="ULONG *"/>
+		</method>
+		<method name="MUI_MakeObject" result="Object *">
+			<arg name="par1" type="LONG"/>
+			<vararg name="tag1" type="ULONG"/>
+		</method>
+		<method name="MUI_Layout" result="BOOL">
+			<arg name="par1" type="Object *"/>
+			<arg name="par2" type="LONG"/>
+			<arg name="par3" type="LONG"/>
+			<arg name="par4" type="LONG"/>
+			<arg name="par5" type="LONG"/>
+			<arg name="last" type="ULONG"/>
+		</method>
+		<method name="Reserved1" result="void" status="unimplemented"/>
+		<method name="Reserved2" result="void" status="unimplemented"/>
+		<method name="Reserved3" result="void" status="unimplemented"/>
+		<method name="Reserved4" result="void" status="unimplemented"/>
+		<method name="MUI_ObtainPen" result="LONG">
+			<arg name="par1" type="struct MUI_RenderInfo *"/>
+			<arg name="par2" type="struct MUI_PenSpec *"/>
+			<arg name="last" type="ULONG"/>
+		</method>
+		<method name="MUI_ReleasePen" result="VOID">
+			<arg name="par1" type="struct MUI_RenderInfo *"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="MUI_AddClipping" result="APTR">
+			<arg name="par1" type="struct MUI_RenderInfo *"/>
+			<arg name="par2" type="WORD"/>
+			<arg name="par3" type="WORD"/>
+			<arg name="par4" type="WORD"/>
+			<arg name="last" type="WORD"/>
+		</method>
+		<method name="MUI_RemoveClipping" result="VOID">
+			<arg name="par1" type="struct MUI_RenderInfo *"/>
+			<arg name="last" type="APTR"/>
+		</method>
+		<method name="MUI_AddClipRegion" result="APTR">
+			<arg name="par1" type="struct MUI_RenderInfo *"/>
+			<arg name="last" type="struct Region *"/>
+		</method>
+		<method name="MUI_RemoveClipRegion" result="VOID">
+			<arg name="par1" type="struct MUI_RenderInfo *"/>
+			<arg name="last" type="APTR"/>
+		</method>
+		<method name="MUI_BeginRefresh" result="BOOL">
+			<arg name="par1" type="struct MUI_RenderInfo *"/>
+			<arg name="last" type="ULONG"/>
+		</method>
+		<method name="MUI_EndRefresh" result="VOID">
+			<arg name="par1" type="struct MUI_RenderInfo *"/>
+			<arg name="last" type="ULONG"/>
+		</method>
+	</interface>
+</library>

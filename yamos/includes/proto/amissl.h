@@ -1,28 +1,66 @@
-/* Automatically generated header! Do not edit! */
-
 #ifndef PROTO_AMISSL_H
 #define PROTO_AMISSL_H
 
-#include <clib/amissl_protos.h>
+/*
+**	$Id$
+**	Includes Release 50.1
+**
+**	Prototype/inline/pragma header file combo
+**
+**	(C) Copyright 2003-2004 Amiga, Inc.
+**	    All Rights Reserved
+*/
 
-#ifdef __GNUC__
-#ifndef __PPC__
-#include <inline/amissl.h>
-#else
-#include <ppcinline/amissl.h>
-#endif /* !__PPC__ */
-#endif /* __GNUC__ */
-
-#ifdef __VBCC__
-#include <inline/amissl_protos.h>
-#endif /* __VBCC__ */
-
-#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
-#include <pragmas/amissl_pragmas.h>
+#ifndef AMISSL_AMISSL_H
+#include <amissl/amissl.h>
 #endif
+#ifndef DOS_DOS_H
+#include <dos/dos.h>
+#endif
+#ifndef UTILITY_TAGITEM_H
+#include <utility/tagitem.h>
+#endif
+#ifndef STDLIB_H
+#include <stdlib.h>
+#endif
+
+/****************************************************************************/
 
 #ifndef __NOLIBBASE__
-extern struct Library *AmiSSLBase;
-#endif
+extern struct Library * AmiSSLBase;
+#endif /* __NOLIBBASE__ */
+
+/****************************************************************************/
+
+#ifdef __amigaos4__
+ #ifdef __USE_INLINE__
+  #include <inline4/amissl.h>
+ #endif /* __USE_INLINE__ */
+
+ #include <interfaces/amissl.h>
+
+ #ifndef __NOGLOBALIFACE__
+  extern struct AmiSSLIFace *IAmiSSL;
+ #endif /* __NOGLOBALIFACE__ */
+#else /* __amigaos4__ */
+ #ifndef CLIB_AMISSL_PROTOS_H
+  #include <clib/amissl_protos.h>
+ #endif /* CLIB_AMISSL_PROTOS_H */
+ #if defined(__GNUC__)
+  #ifndef __PPC__
+   #include <inline/amissl.h>
+  #else
+   #include <ppcinline/amissl.h>
+  #endif /* __PPC__ */
+ #elif defined(__VBCC__)
+  #ifndef __PPC__
+   #include <inline/amissl_protos.h>
+  #endif /* __PPC__ */
+ #else
+  #include <pragmas/amissl_pragmas.h>
+ #endif /* __GNUC__ */
+#endif /* __amigaos4__ */
+
+/****************************************************************************/
 
 #endif /* PROTO_AMISSL_H */

@@ -42,6 +42,4 @@ long MiamiGetFdCallback(void **);
 long MiamiSetFdCallback(void *,long);
 struct UserGroupCredentials *MiamiGetCredentials(void);
 
-#define MIAMINAME "miami.library"
-
 #endif

@@ -1,40 +1,57 @@
-/* Automatically generated header! Do not edit! */
-
 #ifndef PROTO_MIAMI_H
 #define PROTO_MIAMI_H
 
-#if 0
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-struct addrinfo;
+/*
+**	$Id$
+**	Includes Release 50.1
+**
+**	Prototype/inline/pragma header file combo
+**
+**	(C) Copyright 2003-2004 Amiga, Inc.
+**	    All Rights Reserved
+*/
+
+#ifndef EXEC_TYPES_H
+#include <exec/types.h>
 #endif
 
-#include <clib/miami_protos.h>
-
-#ifdef __GNUC__
-#ifndef __PPC__
-#include <inline/miami.h>
-#else
-#include <ppcinline/miami.h>
-#endif /* !__PPC__ */
-#endif /* __GNUC__ */
-
-#ifdef __VBCC__
-#include <inline/miami_protos.h>
-#endif /* __VBCC__ */
-
-#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
-#include <pragmas/miami_pragmas.h>
-#endif
+/****************************************************************************/
 
 #ifndef __NOLIBBASE__
-extern struct Library *
-#ifdef __CONSTLIBBASEDECL__
-__CONSTLIBBASEDECL__
-#endif /* __CONSTLIBBASEDECL__ */
-MiamiBase;
-#endif /* !__NOLIBBASE__ */
+extern struct Library * MiamiBase;
+#endif /* __NOLIBBASE__ */
 
-#endif /* !PROTO_MIAMI_H */
+/****************************************************************************/
+
+#ifdef __amigaos4__
+ #ifdef __USE_INLINE__
+  #include <inline4/miami.h>
+ #endif /* __USE_INLINE__ */
+
+ #include <interfaces/miami.h>
+
+ #ifndef __NOGLOBALIFACE__
+  extern struct MiamiIFace *IMiami;
+ #endif /* __NOGLOBALIFACE__ */
+#else /* __amigaos4__ */
+ #ifndef CLIB_MIAMI_PROTOS_H
+  #include <clib/miami_protos.h>
+ #endif /* CLIB_MIAMI_PROTOS_H */
+ #if defined(__GNUC__)
+  #ifndef __PPC__
+   #include <inline/miami.h>
+  #else
+   #include <ppcinline/miami.h>
+  #endif /* __PPC__ */
+ #elif defined(__VBCC__)
+  #ifndef __PPC__
+   #include <inline/miami_protos.h>
+  #endif /* __PPC__ */
+ #else
+  #include <pragmas/miami_pragmas.h>
+ #endif /* __GNUC__ */
+#endif /* __amigaos4__ */
+
+/****************************************************************************/
+
+#endif /* PROTO_MIAMI_H */

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE library SYSTEM "library.dtd">
+<library name="openurl" basename="OpenURLBase" openname="openurl.library">
+	<include>exec/types.h</include>
+	<include>utility/tagitem.h</include>
+	<include>libraries/openurl.h</include>
+	<interface name="main" version="1.0" struct="OpenURLIFace" prefix="_OpenURL_" asmprefix="IOpenURL" global="IOpenURL">
+		<method name="Obtain" result="ULONG"/>
+		<method name="Release" result="ULONG"/>
+		<method name="Expunge" result="void" status="unimplemented"/>
+		<method name="Clone" result="struct Interface *" status="unimplemented"/>
+		<method name="URL_OpenA" result="BOOL">
+			<arg name="par1" type="STRPTR"/>
+			<arg name="last" type="struct TagItem *"/>
+		</method>
+		<method name="URL_Open" result="BOOL">
+			<arg name="par1" type="STRPTR"/>
+			<vararg name="last" type="Tag"/>
+		</method>
+		<method name="URL_GetPrefs" result="struct URL_Prefs *">
+		</method>
+		<method name="URL_FreePrefs" result="VOID">
+			<arg name="last" type="struct URL_Prefs *"/>
+		</method>
+		<method name="URL_SetPrefs" result="BOOL">
+			<arg name="par1" type="struct URL_Prefs *"/>
+			<arg name="last" type="BOOL"/>
+		</method>
+		<method name="URL_GetDefaultPrefs" result="struct URL_Prefs *">
+		</method>
+		<method name="URL_LaunchPrefsApp" result="BOOL">
+		</method>
+	</interface>
+</library>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE library SYSTEM "library.dtd">
+<library name="genesis" basename="GenesisBase" openname="genesis.library">
+	<include>exec/types.h</include>
+	<interface name="main" version="1.0" struct="GenesisIFace" prefix="_Genesis_" asmprefix="IGenesis" global="IGenesis">
+		<method name="Obtain" result="ULONG"/>
+		<method name="Release" result="ULONG"/>
+		<method name="Expunge" result="void" status="unimplemented"/>
+		<method name="Clone" result="struct Interface *" status="unimplemented"/>
+		<method name="GetFileSize" result="LONG">
+			<arg name="last" type="STRPTR"/>
+		</method>
+		<method name="ParseConfig" result="BOOL">
+			<arg name="par1" type="STRPTR"/>
+			<arg name="last" type="struct ParseConfig_Data *"/>
+		</method>
+		<method name="ParseNext" result="BOOL">
+			<arg name="last" type="struct ParseConfig_Data *"/>
+		</method>
+		<method name="ParseNextLine" result="BOOL">
+			<arg name="last" type="struct ParseConfig_Data *"/>
+		</method>
+		<method name="ParseEnd" result="VOID">
+			<arg name="last" type="struct ParseConfig_Data *"/>
+		</method>
+		<method name="ReallocCopy" result="STRPTR">
+			<arg name="par1" type="STRPTR *"/>
+			<arg name="last" type="STRPTR"/>
+		</method>
+		<method name="FreeUser" result="VOID">
+			<arg name="last" type="struct genUser *"/>
+		</method>
+		<method name="GetUserName" result="BOOL">
+			<arg name="par1" type="LONG"/>
+			<arg name="par2" type="char *"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="GetUser" result="struct genUser *">
+			<arg name="par1" type="STRPTR"/>
+			<arg name="par2" type="STRPTR"/>
+			<arg name="par3" type="STRPTR"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="GetGlobalUser" result="struct genUser *">
+		</method>
+		<method name="SetGlobalUser" result="VOID">
+			<arg name="last" type="struct genUser *"/>
+		</method>
+		<method name="ClearUserList" result="VOID">
+		</method>
+		<method name="ReloadUserList" result="BOOL">
+		</method>
+		<method name="ReadFile" result="LONG">
+			<arg name="par1" type="STRPTR"/>
+			<arg name="par2" type="STRPTR"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="WriteFile" result="BOOL">
+			<arg name="par1" type="STRPTR"/>
+			<arg name="par2" type="STRPTR"/>
+			<arg name="last" type="LONG"/>
+		</method>
+		<method name="IsOnline" result="BOOL">
+			<arg name="last" type="LONG"/>
+		</method>
+	</interface>
+</library>

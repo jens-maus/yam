@@ -214,7 +214,7 @@ static BOOL TC_Init(void)
   if((TCData.port = CreateMsgPort()))
   {
     // create the TimerIOs now
-    if(TCData.timerIO[0] = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest)))
+    if((TCData.timerIO[0] = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest))))
     {
       // then open the device
       if(!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timerIO[0]->tr_node, 0L))

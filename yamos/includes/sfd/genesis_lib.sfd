@@ -1,0 +1,24 @@
+==id $Id$
+==base _GenesisBase
+==basetype struct Library *
+==libname genesis.library
+==bias 30
+==public
+==include <exec/types.h>
+LONG GetFileSize(STRPTR last) (a0)
+BOOL ParseConfig(STRPTR par1, struct ParseConfig_Data * last) (a0,a1)
+BOOL ParseNext(struct ParseConfig_Data * last) (a0)
+BOOL ParseNextLine(struct ParseConfig_Data * last) (a0)
+VOID ParseEnd(struct ParseConfig_Data * last) (a0)
+STRPTR ReallocCopy(STRPTR * par1, STRPTR last) (a0,a1)
+VOID FreeUser(struct genUser * last) (a0)
+BOOL GetUserName(LONG par1, char * par2, LONG last) (d0,a0,d1)
+struct genUser * GetUser(STRPTR par1, STRPTR par2, STRPTR par3, LONG last) (a0,a1,a2,d0)
+struct genUser * GetGlobalUser() ()
+VOID SetGlobalUser(struct genUser * last) (a0)
+VOID ClearUserList() ()
+BOOL ReloadUserList() ()
+LONG ReadFile(STRPTR par1, STRPTR par2, LONG last) (a0,a1,d0)
+BOOL WriteFile(STRPTR par1, STRPTR par2, LONG last) (a0,a1,d0)
+BOOL IsOnline(LONG last) (d0)
+==end

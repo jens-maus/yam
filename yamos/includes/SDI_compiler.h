@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.11 (09.11.2002)
+        Versionstring:  $VER: SDI_compiler.h 1.12 (18.01.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler stuff
@@ -21,6 +21,7 @@
  1.9   26.09.02 : added OFFSET macro. Thanks Frank Wille for suggestion
  1.10  18.10.02 : reverted to old MorphOS-method for GCC
  1.11  09.11.02 : added REGARGS define to MorphOS section
+ 1.12  18.01.04 : some adaptions for AmigaOS4 compatibility
 */
 
 /*
@@ -109,15 +110,18 @@
 #elif defined(__SASC)
   #define ASM(arg) arg __asm
 #elif defined(__GNUC__)
-  #define REG(reg,arg) arg __asm(#reg)
-  #define LREG(reg,arg) register REG(reg,arg)
-
-  /* Don`t use __stackext for the MorphOS version
-     because we anyway don`t have a libnix ppc with stackext
-     Also we define a VARARGS68K define here to specify
-     functions that should work with that special attribute
-     of the MOS gcc compiler for varargs68k handling. */
-  #if defined(__MORPHOS__)
+  /* we have do distinguish between AmigaOS4 and MorphOS */
+  #if defined(__amigaos4__)
+    #define INLINE __inline__
+    #define REG(reg,arg) arg
+    #define LREG(reg,arg) register REG(reg,arg)
+    #define STDARGS
+    #define STACKEXT
+    #define REGARGS
+    #define SAVEDS
+  #elif defined(__MORPHOS__)
+    #define REG(reg,arg) arg __asm(#reg)
+    #define LREG(reg,arg) register REG(reg,arg)
     #define STDARGS
     #define STACKEXT
     #define REGARGS
