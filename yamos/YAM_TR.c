@@ -173,6 +173,14 @@ static const char *POPcmd[] =
 #define hasTCP_FREEBUFFER(v)  (isFlagSet((v), TCPF_FREEBUFFER))
 
 /**************************************************************************/
+// flags for the Transfer preselection stuff
+#define TRF_NONE              (0)
+#define TRF_LOAD              (1<<0)
+#define TRF_DELETE            (1<<1)
+#define hasTR_LOAD(v)         (isFlagSet((v)->Status, TRF_LOAD))
+#define hasTR_DELETE(v)       (isFlagSet((v)->Status, TRF_DELETE))
+
+/**************************************************************************/
 // static function prototypes
 static void TR_NewMailAlert(void);
 static void TR_CompleteMsgList(void);
@@ -1305,7 +1313,7 @@ static void TR_AddMessageHeader(int *count, int size, char *tfname)
       {
         *mail = email->Mail;
         mail->Folder  = NULL;
-        mail->Status  = 1;
+        mail->Status  = TRF_LOAD;
         mail->Index   = ++(*count);
         mail->Size    = size;
         MyAddTail(&(G->TR->List), mail);
@@ -1393,8 +1401,13 @@ static BOOL TR_GetMessageList_GET(void)
 
          if(index > 0 && (newMail = calloc(1, sizeof(struct Mail))))
          {
-            static const int mode2status[16] = { 1,1,3,3,1,1,3,3,0,1,0,3,0,1,0,3 };
             int mode;
+            static const int mode2status[16] = { TRF_LOAD, TRF_LOAD, (TRF_LOAD&TRF_DELETE),
+                                                 (TRF_LOAD|TRF_DELETE), TRF_LOAD, TRF_LOAD,
+                                                 (TRF_LOAD|TRF_DELETE), (TRF_LOAD|TRF_DELETE),
+                                                 TRF_NONE, TRF_LOAD, TRF_NONE, (TRF_LOAD|TRF_DELETE),
+                                                 TRF_NONE, TRF_LOAD, TRF_NONE, (TRF_LOAD|TRF_DELETE)
+                                               };
 
             newMail->Index = index;
             newMail->Size  = size;
@@ -1527,11 +1540,11 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
       if(hasExecuteAction(rule) && *rule->ExecuteCmd) ExecuteCommand(rule->ExecuteCmd, FALSE, OUT_DOS);
       if(hasPlaySoundAction(rule) && *rule->PlaySound) PlaySound(rule->PlaySound);
 
-      if(hasDeleteAction(rule)) SET_FLAG(mail->Status, 2);
-      else CLEAR_FLAG(mail->Status, 2);
+      if(hasDeleteAction(rule)) SET_FLAG(mail->Status, TRF_DELETE);
+      else CLEAR_FLAG(mail->Status, TRF_DELETE);
 
-      if(hasSkipMsgAction(rule)) CLEAR_FLAG(mail->Status, 1);
-      else SET_FLAG(mail->Status, 1);
+      if(hasSkipMsgAction(rule)) CLEAR_FLAG(mail->Status, TRF_LOAD);
+      else SET_FLAG(mail->Status, TRF_LOAD);
 
       return;
     }
@@ -1675,7 +1688,7 @@ static void TR_GetUIDL(void)
       // use the TOP command and generate our own UIDL within
       // the GetMessageDetails function
       if (!G->TR->supportUIDL) TR_GetMessageDetails(mail, -1);
-      if (TR_FindUIDL(mail->UIDL)) { G->TR->Stats.DupSkipped++; mail->Status &= 2; }
+      if (TR_FindUIDL(mail->UIDL)) { G->TR->Stats.DupSkipped++; MASK_FLAG(mail->Status, TRF_DELETE); }
    }
 }
 ///
@@ -2091,7 +2104,7 @@ static void TR_TransStat_Init(struct TransStat *ts)
    for (mail = G->TR->List; mail; mail = mail->Next)
    {
       ts->Msgs_Tot++;
-      if (mail->Status & 1) ts->Size_Tot += mail->Size;
+      if(hasTR_LOAD(mail)) ts->Size_Tot += mail->Size;
    }
 }
 ///
@@ -2220,7 +2233,8 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
       if (new)
       {
          *new = *mlist[i+2];
-         new->Index = ++c; new->Status = 1;
+         new->Index  = ++c;
+         new->Status = TRF_LOAD;
          MyAddTail(&(G->TR->List), new);
       }
    }
@@ -2386,7 +2400,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       {
          *new = *mail;
          new->Index = ++c;
-         new->Status = 1;
+         new->Status = TRF_LOAD;
          new->Reference = mail;
          new->Next = NULL;
          MyAddTail(&(G->TR->List), new);
@@ -2581,7 +2595,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                   mail = mail->Next;
                }
                header = TRUE; body = FALSE;
-               if (mail->Status & 1)
+               if(hasTR_LOAD(mail))
                {
                   ts.Msgs_Done++;
                   TR_TransStat_NextMsg(&ts, mail->Index, mail->Position, mail->Size, GetStr(MSG_TR_Importing));
@@ -2791,16 +2805,16 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
       for (mail = G->TR->List; mail && !G->TR->Abort && !G->Error; mail = mail->Next)
       {
          TR_TransStat_NextMsg(&ts, mail->Index, mail->Position, mail->Size, GetStr(MSG_TR_Downloading));
-         if (mail->Status & 1)
+         if(hasTR_LOAD(mail))
          {
             if (TR_LoadMessage(&ts, mail->Index))
             {
                G->TR->Stats.Downloaded++;
                if (C->AvoidDuplicates) TR_AppendUIDL(mail->UIDL);
-               if (mail->Status & 2) TR_DeleteMessage(mail->Index);
+               if(hasTR_DELETE(mail)) TR_DeleteMessage(mail->Index);
             }
          }
-         else if (mail->Status & 2)
+         else if(hasTR_DELETE(mail))
          {
             TR_DeleteMessage(mail->Index);
          }
@@ -2892,8 +2906,8 @@ HOOKPROTO(TR_LV_DspFunc, long, char **array, struct Mail *entry)
       static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL], dispdate[32];
       struct Person *pe = &entry->From;
       sprintf(array[0] = dispsta, "%3d ", entry->Index);
-      if (entry->Status & 1) strcat(dispsta, "\033o[10]");
-      if (entry->Status & 2) strcat(dispsta, "\033o[9]");
+      if(hasTR_LOAD(entry))   strcat(dispsta, "\033o[10]");
+      if(hasTR_DELETE(entry)) strcat(dispsta, "\033o[9]");
       if (entry->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);
       array[1] = dispsiz; *dispsiz = 0;
       FormatSize(entry->Size, dispsiz);
@@ -3043,13 +3057,13 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
                DoMethod(data->GUI.BT_PAUSE ,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, TRUE);
                DoMethod(data->GUI.BT_PAUSE, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Pause));
                DoMethod(data->GUI.LV_MAILS ,MUIM_Notify, MUIA_NList_DoubleClick,TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_GetMessageInfoHook);
-               DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook,2);
-               DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook,3);
+               DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook, TRF_DELETE);
+               DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook, (TRF_LOAD|TRF_DELETE));
                DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Start));
                DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
             }
-            DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook,1);
-            DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook,0);
+            DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook, TRF_LOAD);
+            DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook, TRF_NONE);
             DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
             DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
             DoMethod(data->GUI.LV_MAILS, MUIM_NList_UseImage, G->MA->GUI.BC_STAT[9], 9, 0);

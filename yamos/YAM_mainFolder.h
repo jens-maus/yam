@@ -32,7 +32,6 @@
 
 enum MailStatus { STATUS_UNR, STATUS_OLD, STATUS_FWD, STATUS_RPD, STATUS_WFS,
                   STATUS_ERR, STATUS_HLD, STATUS_SNT, STATUS_NEW, STATUS_DEL,
-                  STATUS_LOA, STATUS_SKI // status for the transfer window
                 };
 
 struct Mail

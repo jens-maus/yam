@@ -7,6 +7,9 @@ $Source$
 
 2002-07-11  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_TR.c: added some general flags for the ->Status
+      flags used within the preselection routines to make it
+      easier to track down the purpose of some operations.
     * YAM_MA.c, YAM_MAf.c: changed the displayhook of the
       folder listtree and mail listview to skip certain
       operations if the user didn`t select any of the colums
