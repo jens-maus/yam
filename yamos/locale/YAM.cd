@@ -184,6 +184,7 @@ Path
 MSG_Directory (//)
 Directory
 ;
+;
 ; Module Root
 ;
 MSG_Copyright1 (//)
@@ -199,7 +200,9 @@ MSG_CompilationDate (//)
 Compilation date:
 ;
 MSG_Copyright2 (//)
-This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
+This program is free software; you're welcome to distribute \
+and/or modify it under the terms of the GNU Public License. \
+See the enclosed documents for more details.\n
 ;
 MSG_UsedSoftware (//)
 \nThis application uses the following third party software:\n
@@ -210,6 +213,7 @@ The latest news about YAM can be found at the YAM Support Site at \e5http://www.
 MSG_UserLogin (//)
 Click your name to login
 ;
+; Obsolete
 MSG_AppDescription (//39)
 SMTP/POP3 Client & Mailer for AmigaOS
 ;
@@ -221,7 +225,7 @@ Quit
 ;
 MSG_ErrorLib (//)
 Can't open library '%s', version %ld
-;LIBRARY_NAME, LIBRARY_VERSION
+; LIBRARY_NAME, LIBRARY_VERSION
 ;
 MSG_LoadingConfig (//)
 Loading configuration...
@@ -242,7 +246,7 @@ MSG_LoadingABook (//)
 Loading address book...
 ;
 MSG_InitLibs (//)
-Initialising libraries and classes...
+Initializing libraries and classes...
 ;
 MSG_ErrorClasses (//)
 Can't create MUI custom classes
@@ -470,15 +474,17 @@ Load
 MSG_UT_PGPPassReq (//)
 Please enter your PGP pass phrase:
 ;
+; Replaced by MSG_APPICON_STATS
 MSG_UT_AppStats (//)
 
-; Replaced by MSG_APPICON_STATS
+;
 ;
 MSG_UT_NoPrinter (//)
 No printer or printer offline!
 ;
 MSG_UT_NoPaper (//)
 Out of paper!
+;
 ;
 ; Module MA - Procedures
 ;
@@ -543,12 +549,13 @@ MSG_MA_xSelected (//)
 ; COUNT
 ;
 MSG_MA_ConfirmFilter (//)
-Is it okay to filter all the messages\n\
-in the folder '%s'?
+Is it okay to filter messages\n\
+in folder '%s'?
 ; FOLDER
 ;
 MSG_MA_FilterStats (//)
 Filtering done:\n\
+\n\
 %3ld messages checked,\n\
 %3ld forwarded,\n\
 %3ld archived,\n\
@@ -600,6 +607,7 @@ Check single account
 ;
 MSG_MA_FolderInfo (//)
 \ebCurrent folder\en\n\
+\n\
 Name: %s\n\
 Path: %s\n\
 Size: %lD bytes\n\
@@ -608,6 +616,7 @@ Messages: %lD (%lD new, %lD unread)
 ;
 MSG_MA_MessageInfo (//)
 \ebCurrent message\en\n\
+\n\
 From: %s <%s>\n\
 To: %s <%s>\n\
 Subject: %s\n\
@@ -623,6 +632,7 @@ Amiga YAM %s  -  User: %s
 MSG_MA_ToPrefix (//)
 \ebTo: \en
 ;
+;
 ; Module MA - Window
 ;
 MSG_MA_Incoming (//)
@@ -637,8 +647,10 @@ Sent
 MSG_MA_Deleted (//)
 Deleted
 ;
+; Obsolete
 MSG_MA_Archived (//)
 Archived
+;
 ;
 ; Module MA - Toolbar
 ;
@@ -684,6 +696,7 @@ _Addr
 MSG_MA_TBConfig (//)
 _Config
 ;
+;
 ; Module MA - Menus
 ;
 MSG_MA_Project (//)
@@ -691,14 +704,14 @@ Project
 ;
 MSG_MA_About (//)
 About YAM
-; This is the title of the about window, not the menu item.
+;This is the title of the about window, not the menu item.
 ;
 MSG_MA_AboutMUI (//)
 About MUI...
 ;
 MSG_MA_CheckVersion (//)
 Check version
-; This is the title of the check version window, not the menu item.
+;This is the title of the check version window, not the menu item.
 ;
 MSG_MA_LastErrors (//)
 Show last message
@@ -714,7 +727,7 @@ Q\000Quit
 ;
 MSG_MA_NewFolder (//)
 New folder
-; This is the title of the new folder window, not the menu item.
+;This is the title of the new folder window, not the menu item.
 ;
 MSG_MA_NewSeparator (//)
 New separator...
@@ -829,14 +842,15 @@ Settings
 ;
 MSG_MA_MAddrBook (//)
 Address Book
-; This is the title of the address book window, not the menu item.
+;This is the title of the address book window, not the menu item.
 ;
 MSG_MA_MConfig (//)
 Configuration
-; This is the title of the configuration window, not the menu item.
+;This is the title of the configuration window, not the menu item.
 ;
 MSG_MA_MUsers (//)
 Users
+;
 ;
 ; Module MA - Bubblehelp
 ;
@@ -893,6 +907,7 @@ Modify YAM's preferences
 ;
 ; Module CO - Procedures
 ;
+; Obsolete
 MSG_CO_SelectDir (//)
 Please select a directory for the new folder:
 ;
@@ -907,8 +922,8 @@ All messages in this folder will be lost!\n\
 Do you really want to delete it?
 ;
 MSG_CO_InvalidConf (//)
-Invalid configuration (missing hostname\n\
- or email address)\n\
+Invalid configuration (missing SMTP/POP3\n\
+server name or email address)\n\
 \n\
 Please fill in these fields and try again!
 ;
@@ -1021,6 +1036,7 @@ MSG_CO_ArchiveFiles (//)
 ;
 MSG_CO_ArchiveFilelist (//)
 %l  List containing filenames
+;
 ;
 ; Module CO - Window
 ;
@@ -1364,16 +1380,16 @@ MSG_CO_OtherOptions (//)
 Other options
 ;
 MSG_CO_WrapHeader (//)
-_Wrap header
+_Wrap headers
 ;
 MSG_CO_OldQuotes (//)
 Old _quotes
 ;
 MSG_CO_UseTextstyles (//)
-Use te_xtstyles
+Use te_xt styles
 ;
 MSG_CO_Header (//)
-_Header
+_Headers
 ;
 MSG_CO_SenderInfo (//)
 Sender _info
@@ -1655,7 +1671,7 @@ MSG_CO_Attach (//)
 _Attach files from
 ;
 MSG_CO_TempDir (//)
-Directory for _tempfiles
+Directory for _temporary files
 ;
 MSG_CO_AppIcon (//)
 Mailbox status AppIcon
@@ -1757,6 +1773,7 @@ _Open console window
 MSG_CO_WaitTerm (//)
 _Wait for termination
 ;
+;
 ; Module CO - Menus
 ;
 MSG_CO_Open (//)
@@ -1789,6 +1806,7 @@ Scan for folders
 MSG_CO_ImportMIME (//)
 Import MIME viewers & types...
 ;
+;
 ; Module CO - Bubblehelp
 ;
 MSG_HELP_CO_ST_REALNAME (//)
@@ -1817,8 +1835,8 @@ saving time (summer time)
 ;
 MSG_HELP_CO_ST_SMTPHOST (//)
 The address of the SMTP server to send mail to.\n\
-If you leave this field empty,\n\
-then the address of the POP3 server is used.
+If you leave this field empty, then the\n\
+address of the POP3 server is used.
 ;
 MSG_HELP_CO_ST_DOMAIN (//)
 The hostname of your Amiga. Change this\n\
@@ -1826,18 +1844,17 @@ field if the HELO commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT (//)
 Don't convert messages to 7bit when transfering.\n\
-Only use this option if your\n\
-SMTP server supports 8bit transfers!\n\
-Otherwise your messages will get corrupted.
+Only use this option if your server supports 8bit\n\
+transfers, otherwise your messages may get corrupted.
 ;
 MSG_HELP_CO_LV_POP3 (//)
-List of POP3 hosts
+List of POP3 accounts
 ;
 MSG_HELP_CO_BT_PADD (//)
-Add a new POP3 host to the list
+Add a new POP3 account to the list
 ;
 MSG_HELP_CO_BT_PDEL (//)
-Remove selected POP3 host from the list
+Remove selected POP3 account from the list
 ;
 MSG_HELP_CO_ST_POPUSERID (//)
 User name to log in on the POP3 server.\n\
@@ -1858,8 +1875,8 @@ when checking for new mail
 ;
 MSG_HELP_CO_CH_AVOIDDUP (//)
 If you don't delete old mail\n\
-on the server, use this option to\n\
-avoid duplicate messages.
+on the server, use this option\n\
+to avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN (//)
 Show progress window during mail transfers
@@ -1878,7 +1895,7 @@ size will be considered as large.
 ;
 MSG_HELP_CO_ST_INTERVAL (//)
 How frequently do you want to check for new mail?\n\
-(enter 0 or no value to disable this feature)?
+(use 0 to disable this feature)
 ;
 MSG_HELP_CO_CH_DLLARGE (//)
 When automatically checking for new mail,\n\
@@ -1886,12 +1903,12 @@ download large messages even if they are\n\
 larger than the size specified above
 ;
 MSG_HELP_CO_CH_NOTIREQ (//)
-Show a requester\n\
-when you get new mail
+Show a requester when\n\
+you get new mail
 ;
 MSG_HELP_CO_ST_NOTICMD (//)
-The program you want to\n\
-execute when you get new mail
+The program you want to execute\n\
+when you get new mail
 ;
 MSG_HELP_CO_ST_NOTISOUND (//)
 The sound file you want to play\n\
@@ -1904,7 +1921,8 @@ MSG_HELP_CO_ST_RNAME (//)
 Filter name
 ;
 MSG_HELP_CO_CH_REMOTE (//)
-Apply this filter before downloading a message
+Apply this filter before\n\
+downloading a message
 ;
 MSG_HELP_CO_CH_APPLYNEW (//)
 Apply this filter to new messages
@@ -1921,39 +1939,46 @@ How to combine the two\n\
 search keys for this filter
 ;
 MSG_HELP_CO_CH_ABOUNCE (//)
-Bounce matching messages to another person
+Bounce matching messages\n\
+to another person
 ;
 MSG_HELP_CO_ST_ABOUNCE (//)
-Email address of the person that gets the bounced messages
+Email address of the person who\n\
+gets the bounced messages
 ;
 MSG_HELP_CO_CH_AFORWARD (//)
-Forward matching messages to another person
+Forward matching messages\n\
+to another person
 ;
 MSG_HELP_CO_ST_AFORWARD (//)
-Email address of the person that gets the forwarded messages
+Email address of the person who\n\
+gets the forwarded messages
 ;
 MSG_HELP_CO_CH_ARESPONSE (//)
-Send an automatic reply for each matching message
+Send an automatic reply\n\
+for each matching message
 ;
 MSG_HELP_CO_ST_ARESPONSE (//)
 Text file that contains the response
 ;
 MSG_HELP_CO_CH_AEXECUTE (//)
-Execute a command for each matching message
+Execute a command for\n\
+each matching message
 ;
 MSG_HELP_CO_ST_AEXECUTE (//)
 Command to execute. The path of the matching\n\
 message is passed as an argument.
 ;
 MSG_HELP_CO_CH_APLAY (//)
-Plays a sound file for\n\
+Play a sound file for\n\
 each matching message
 ;
 MSG_HELP_CO_ST_APLAY (//)
 Sound file to play
 ;
 MSG_HELP_CO_CH_AMOVE (//)
-Move matching messages to a different folder
+Move matching messages\n\
+to a different folder
 ;
 MSG_HELP_CO_PO_MOVETO (//)
 Destination folder
@@ -1971,19 +1996,20 @@ MSG_HELP_CO_BT_RDEL (//)
 Remove selected filter
 ;
 MSG_HELP_CO_CA_COL2QUOT (//)
-Adjust the color used for displaying old quotes
+Color used for displaying\n\
+2nd level quotes
 ;
 MSG_HELP_CO_CH_WRAPHEAD (//)
 Display long headers on multiple lines
 ;
 MSG_HELP_CO_CH_TEXTSTYLES (//)
 Interpret / * _ and # as\n\
-control codes for textstyles
+control codes for text styles
 ;
 MSG_HELP_CO_CY_HEADER (//)
-How do you want to\n\
-display the message header\n\
-in the Read window?
+How do you want to display\n\
+the message headers in the\n\
+Read window?
 ;
 MSG_HELP_CO_ST_HEADERS (//)
 Specify an AmigaDOS pattern to\n\
@@ -1992,7 +2018,7 @@ Default is (From|To|Date|Subject)
 ;
 MSG_HELP_CO_CY_SENDERINFO (//)
 Information about the sender to display\n\
-in the read window (if available)
+in the Read window (if available)
 ;
 MSG_HELP_CO_CY_SIGSEPLINE (//)
 Type of the signature\n\
@@ -2007,16 +2033,16 @@ Display all textual parts\n\
 of a multipart message
 ;
 MSG_HELP_CO_CH_MULTIWIN (//)
-Open a new read window\n\
+Open a new Read window\n\
 for each selected message
 ;
 MSG_HELP_CO_CA_COLTEXT (//)
-Adjust the color of 'colored' text used\n\
-in the read window and the editor
+Color of 'colored' text used in\n\
+the Read window and the editor
 ;
 MSG_HELP_CO_CH_FIXFEDIT (//)
 Display messages using\n\
-a fixed-width font
+a fixed width font
 ;
 MSG_HELP_CO_ST_CTYPE (//)
 MIME viewer is activated\n\
@@ -2025,7 +2051,7 @@ by this attachment type
 MSG_HELP_CO_ST_COMMAND (//)
 Path and optional arguments of\n\
 the viewer command. Use %s to\n\
-insert the datafile.
+insert the data file.
 ;
 MSG_HELP_CO_BT_MADD (//)
 Add a new MIME viewer
@@ -2034,10 +2060,11 @@ MSG_HELP_CO_BT_MDEL (//)
 Remove selected MIME viewer
 ;
 MSG_HELP_CO_ST_EXTENS (//)
-Filename extensions used by this file type
+Filename extensions used\n\
+by this file type
 ;
 MSG_HELP_CO_ST_DEFVIEWER (//)
-Program used to displaying\n\
+Program used to display\n\
 attachments of unknown type
 ;
 MSG_HELP_CO_CH_IDENTBIN (//)
@@ -2081,8 +2108,8 @@ Select 'as you type' to insert linebreak\n\
 codes while you're typing the message
 ;
 MSG_HELP_CO_CH_LAUNCH (//)
-Launch the external editor\n\
-when you start a new message
+Automatically launch the external editor\n\
+when starting a new message
 ;
 MSG_HELP_CO_ST_EDITOR (//)
 Filename of your\n\
@@ -2093,16 +2120,16 @@ Text used to introduce a forwarded message.\n\
 Use the button at the right side to insert a variable.
 ;
 MSG_HELP_CO_ST_FWDEND (//)
-Text to insert at the\n\
-end a forwarded message.
+Text to insert at the end\n\
+of a forwarded message.
 ;
 MSG_HELP_CO_ST_REPLYTEXT (//)
-Texts used in replies to messages.\n\
-Use the button at the right side to insert a variable.
+Texts used in replies to messages. Use the\n\
+button at the right side to insert a variable.
 ;
 MSG_HELP_CO_ST_AREPLYTEXT (//)
-Use these texts in replies to messages\n\
-if the pattern below matches the recipient address.
+Use these texts in replies to messages if the\n\
+pattern below matches the recipient address.
 ;
 MSG_HELP_CO_ST_AREPLYPAT (//)
 AmigaDOS pattern that triggers\n\
@@ -2122,11 +2149,12 @@ the quoted message. Use the button at\n\
 the right side to insert a variable.
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY (//)
-Insert quote character(s) for empty lines?
+Insert quote character(s)\n\
+for empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR (//)
-Let the user select the desired recipient address\n\
-if the From and Reply-To addresses are different
+Let the user select the desired recipient address if\n\
+the 'From' and 'Reply-To' addresses are different
 ;
 MSG_HELP_CO_CH_STRIPSIG (//)
 Don't quote signature\n\
@@ -2144,7 +2172,7 @@ Insert control code for random taglines
 ;
 MSG_HELP_CO_BT_INSENV (//)
 Insert control code for the\n\
-environment variable SIGNATURE
+SIGNATURE environment variable
 ;
 MSG_HELP_CO_ST_TAGFILE (//)
 Database containing taglines (\"cookies\")
@@ -2154,17 +2182,20 @@ Character or string used to separate\n\
 the taglines in the database
 ;
 MSG_HELP_CO_CG_FO (//)
-Columns displayed in the folder list
+Columns displayed\n\
+in the folder list
 ;
 MSG_HELP_CO_CG_MA (//)
-Columns displayed in the message list
+Columns displayed\n\
+in the message list
 ;
 MSG_HELP_CO_CG_AB (//)
-Columns displayed in the address book
+Columns displayed\n\
+in the address book
 ;
 MSG_HELP_CO_CH_FIXFLIST (//)
 Display list entries\n\
-using a fixed-width font
+using a fixed width font
 ;
 MSG_HELP_CO_CH_BEAT (//)
 Display time in Swatch Beats, the\n\
@@ -2200,7 +2231,8 @@ MSG_HELP_CO_CY_LOGMODE (//)
 Select type of logging
 ;
 MSG_HELP_CO_CH_LOGALL (//)
-Disable this option to log mail transfers only
+Disable this option to\n\
+log mail transfers only
 ;
 MSG_HELP_CO_CH_LOADALL (//)
 Load index files of all folders
@@ -2215,8 +2247,8 @@ MSG_HELP_CO_CH_POPSTART (//)
 Check for mail
 ;
 MSG_HELP_CO_CH_CHECKBD (//)
-Check the address book and open a reminder\n\
-if it's a person's birthday
+Check the address book and open a\n\
+reminder if it's a person's birthday
 ;
 MSG_HELP_CO_CH_DELETEOLD (//)
 Delete messages that exceed the maximum\n\
@@ -2226,24 +2258,24 @@ MSG_HELP_CO_CH_REMOVEDEL (//)
 Empty trash folder
 ;
 MSG_HELP_CO_ST_GALLDIR (//)
-Directory to save the\n\
-pictures of your correspondents
+Directory to save the pictures\n\
+of your correspondents
 ;
 MSG_HELP_CO_ST_PHOTOURL (//)
 WWW address of your portrait image
 ;
 MSG_HELP_CO_CY_ATAB (//)
 Automatically create an address book entry\n\
-for the sender when your read his/her message?
+for the sender when you read his/her message?
 ;
 MSG_HELP_CO_ST_PROXY (//)
 Address and optional port number of your\n\
-HTTP proxy server (default port is 80)\n\
+HTTP proxy server (default port is 80).\n\
 You may leave this field empty.
 ;
 MSG_HELP_CO_ST_NEWGROUP (//)
-Add new address book entries to this group (it\n\
-will be created if it doesn't exist yet)
+Add new address book entries to this group\n\
+(it will be created if it doesn't exist yet)
 ;
 MSG_HELP_CO_ST_TEMPDIR (//)
 Directory to store\n\
@@ -2274,11 +2306,11 @@ Minimum number of messages to\n\
 display the confirmation requester
 ;
 MSG_HELP_CO_CH_REMOVE (//)
-Delete messages instantly, don't\n\
-move them to the trash folder
+Immediately delete the messages rather\n\
+than moving them to the trash folder
 ;
 MSG_HELP_CO_CH_SAVESENT (//)
-Save sent messages in the Sent folder
+Save sent messages in the 'Sent' folder
 ;
 MSG_HELP_CO_RA_MDN_DISP (//)
 When reading a message, send a\n\
@@ -2313,7 +2345,7 @@ XPK library used to\n\
 compress folders
 ;
 MSG_HELP_CO_NB_ENCPACK (//)
-Efficiency of this packer\n\
+Efficiency of this packer.\n\
 100% is best, but slowest
 ;
 MSG_HELP_CO_ST_ARCHIVER (//)
@@ -2349,6 +2381,7 @@ Close configuration\n\
 window and use old\n\
 settings
 ;
+;
 ; Module AB - Routines
 ;
 MSG_AB_BirthdayReq (//)
@@ -2382,8 +2415,9 @@ Alias
 ;
 MSG_AB_FoundEntry (//)
 Found matching entry!\n\
-Alias: %s\n\
-Name: %s
+\n\
+Alias: \eb%s\en\n\
+Name: \eb%s\en
 ; ALIAS, NAME
 ;
 MSG_AB_FindEntry (//)
@@ -2408,6 +2442,7 @@ Address book has been modified!
 ;
 MSG_AB_ModifiedGads (//)
 *_Save|_Use|_Discard changes|_Cancel
+;
 ;
 ; Module AB - Hooks
 ;
@@ -2443,6 +2478,7 @@ MSG_AB_TitlePGPId (//)
 ;
 MSG_AB_TitleHomepage (//)
 \e8Homepage
+;
 ;
 ; Module AB - Window
 ;
@@ -2497,6 +2533,7 @@ Fold all
 MSG_AB_Unfold (//)
 Unfold all
 ;
+;
 ; Module AB - Toolbar
 ;
 MSG_AB_TBSave (//)
@@ -2528,6 +2565,7 @@ _Unfold
 ;
 MSG_AB_TBCloseTree (//)
 F_old
+;
 ;
 ; Module AB - Bubblehelp
 ;
@@ -2581,6 +2619,7 @@ MSG_HELP_AB_BT_BCC (//)
 Set blind copy recipient(s)\n\
 for new message
 ;
+;
 ; Module CL
 ;
 MSG_CL_ErrorEmptyCB (//)
@@ -2604,6 +2643,7 @@ to keep the undo buffer.\n\
 \n\
 The undo buffer is lost.
 ;
+;
 ; Module EA - Procedures
 ;
 MSG_EA_EditUser (//)
@@ -2614,6 +2654,7 @@ Edit distribution list
 ;
 MSG_EA_EditGroup (//)
 Edit group
+;
 ;
 ; Module EA - Window
 ;
@@ -2680,6 +2721,7 @@ Members
 MSG_EA_Sort (//)
 _Sort
 ;
+;
 ; Module EA - Bubblehelp
 ;
 MSG_HELP_EA_ST_ALIAS (//)
@@ -2703,7 +2745,7 @@ person's public PGP key
 ;
 MSG_HELP_EA_ST_HOMEPAGE (//)
 URL of the homepage of this person.\n\
-Click the button on the right side\n\
+Click the button at the right side\n\
 to load the page into your browser.
 ;
 MSG_HELP_EA_ST_STREET (//)
@@ -2722,7 +2764,7 @@ MSG_HELP_EA_ST_PHONE (//)
 Phone and/or FAX number(s)
 ;
 MSG_HELP_EA_ST_BIRTHDAY (//)
-Date of birth\n\
+Date of birth.\n\
 Use AmigaDOS format,\n\
 e.g. 10-Jan-1950
 ;
@@ -2739,7 +2781,7 @@ from the YAM User Gallery
 ;
 MSG_HELP_EA_ST_REALNAME_L (//)
 Full name of this distribution list\n\
-(will be used in To: field)
+(will be used in the To: field)
 ;
 MSG_HELP_EA_ST_ADDRESS_L (//)
 Return address to use when\n\
@@ -2768,6 +2810,7 @@ Accept this entry
 ;
 MSG_HELP_EA_BT_CANCEL (//)
 Discard changes
+;
 ;
 ; Module RE - Procedures
 ;
@@ -2919,8 +2962,9 @@ has been %s%s.\n
 MSG_RE_PGPNotAllowed (//)
 >PGP Error<\n\
 \n\
-You're not allowed to view this PGP encrypted message. Either your PGP software\n\
-isn't configured properly, or the message was encrypted for someone else.\n
+You're not allowed to view this PGP encrypted message.\n\
+Either your PGP software isn't configured properly or\n\
+the message was encrypted for someone else.\n
 ;
 MSG_RE_MsgReadOnly (//)
 The message can only be read by %s\n
@@ -2928,7 +2972,9 @@ The message can only be read by %s\n
 ;
 MSG_RE_AddSender (//)
 Do you want to add the sender\n\
-%s\n\
+\n\
+\eb%s\en\n\
+\n\
 to your address book?
 ; SENDER
 ;
@@ -2960,6 +3006,7 @@ MSG_RE_SelectAddressEdit (//)
 MSG_RE_SelectAddressAdd (//)
 *_Write message|_Add entry|_Cancel
 ;
+;
 ; Module RE - Hooks
 ;
 MSG_RE_Original (//)
@@ -2967,6 +3014,7 @@ Raw format
 ;
 MSG_RE_AllTexts (//)
 Displayed text
+;
 ;
 ; Module RE - Menus
 ;
@@ -3025,7 +3073,8 @@ MSG_RE_WrapHeader (//)
 Wrap headers
 ;
 MSG_RE_Textstyles (//)
-Textstyles
+Text styles
+;
 ;
 ; Module RE - Toolbar
 ;
@@ -3061,6 +3110,7 @@ _Reply
 ;
 MSG_RE_TBForward (//)
 For_ward
+;
 ;
 ; Module RE - Bubblehelp
 ;
@@ -3111,19 +3161,22 @@ MSG_HELP_RE_BT_FORWARD (//)
 Forward this\n\
 message
 ;
+;
 ; Module WR - Procedures
 ;
 MSG_WR_ErrorNoRcpt (//)
-Mail is incomplete: No recipient!
+Mail is incomplete: no recipient!
 ;
 MSG_WR_NoRcptReqGad (//)
 _Add recipient later|*_Cancel
 ;
+; Obsolete
 MSG_WR_PGPMIMEconflict (//)
 PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
 ;
 MSG_WR_DiscardChanges (//)
-Do you really want to discard all modifications to this message?
+Do you really want to discard all\n\
+modifications to this message?
 ;
 MSG_WR_DiscardChangesGad (//)
 *_Send later|_Discard|_Cancel
@@ -3138,11 +3191,11 @@ MSG_WR_CreateArc (//)
 Create archive
 ;
 MSG_WR_CreateArcReq (//)
-Please enter a filename\n\
-for the new archive
+Please enter a filename for the new archive
 ;
 MSG_WR_InsertFile (//)
 Insert file...
+;
 ;
 ; Module WR - Hooks
 ;
@@ -3160,6 +3213,7 @@ MSG_WR_TitleEncoding (//)
 ;
 MSG_WR_TitleDescription (//)
 \e8Description
+;
 ;
 ; Module WR - Window
 ;
@@ -3242,7 +3296,7 @@ MSG_WR_ExtraHeaders (//)
 _Additional header
 ;
 MSG_WR_SendOpt (//)
-Send Options
+Send options
 ;
 MSG_WR_DelSend (//)
 _Delete after sending
@@ -3280,6 +3334,7 @@ Bounce message
 MSG_WR_BounceTo (//)
 Bounce _to
 ;
+;
 ; Module WR - Toolbar
 ;
 MSG_WR_TBEditor (//)
@@ -3311,6 +3366,7 @@ ULined
 ;
 MSG_WR_TBColored (//)
 Colored
+;
 ;
 ; Module WR - Menus
 ;
@@ -3357,7 +3413,7 @@ MSG_WR_Dictionary (//)
 Glossary
 ;
 MSG_WR_Textstyle (//)
-Textstyle
+Text styles
 ;
 MSG_WR_Bold (//)
 Bold
@@ -3414,7 +3470,7 @@ MSG_WR_MReceipt (//)
 Return receipt
 ;
 MSG_WR_MGetMDN (//)
-Track message
+Track message (MDN)
 ;
 MSG_WR_MAddInfo (//)
 Add personal information
@@ -3422,12 +3478,14 @@ Add personal information
 MSG_WR_MImportance (//)
 Importance
 ;
+;
 ; Module WR - Bubblehelp
 ;
 MSG_HELP_WR_ST_TO (//)
 Address (and name) or alias\n\
 of the primary recipient(s)
 ;
+; Obsolete
 MSG_HELP_WR_BT_VER (//)
 Verify recipient: find email\n\
 address for alias or name
@@ -3441,7 +3499,7 @@ Subject of your message
 ;
 MSG_HELP_WR_BT_EDITOR (//)
 Use external editor to\n\
- modify the message text
+modify the message text
 ;
 MSG_HELP_WR_BT_LOAD (//)
 Insert text file at cursor position
@@ -3477,12 +3535,12 @@ to the list
 ;
 MSG_HELP_WR_BT_ADDPACK (//)
 Create an archive from\n\
-several files and add it\n\
-as attachment to the list
+several files and add it to\n\
+the list as an attachment
 ;
 MSG_HELP_WR_BT_DEL (//)
-Remove selected attachment\n\
-from the list
+Remove the selected\n\
+attachment from the list
 ;
 MSG_HELP_WR_BT_DISPLAY (//)
 Use a configured MIME viewer\n\
@@ -3490,7 +3548,7 @@ to display this attachment
 ;
 MSG_HELP_WR_RA_ENCODING (//)
 Type of encoding used for the selected attachment.\n\
-Use UUencode only if the recipient hasn't got\n\
+Select UUencode only if the recipient hasn't got\n\
 a MIME compliant mailer.
 ;
 MSG_HELP_WR_ST_CTYPE (//)
@@ -3506,17 +3564,17 @@ Address (and name) or alias\n\
 of the secondary recipient(s)
 ;
 MSG_HELP_WR_ST_BCC (//)
-Send a blind carbon copy of the\n\
-message to this recipient
+Send a blind carbon copy of\n\
+the message to this recipient
 ;
 MSG_HELP_WR_ST_EXTHEADER (//)
 Additional message header(s) that\n\
 will be added to the message
 ;
 MSG_HELP_WR_ST_FROM (//)
-Contents of From header field\n\
-(address and name of the person\n\
-who's writing this letter)
+Contents of the 'From:' header\n\
+(name and address of the person\n\
+who is writing this letter)
 ;
 MSG_HELP_WR_ST_REPLYTO (//)
 Return address\n\
@@ -3524,7 +3582,7 @@ for this letter
 ;
 MSG_HELP_WR_CH_DELSEND (//)
 Don't store this message\n\
-in the Sent folder
+in the 'Sent' folder
 ;
 MSG_HELP_WR_CH_RECEIPT (//)
 Get a notification on\n\
@@ -3547,14 +3605,14 @@ Which signature do you want\n\
 to append to this letter?
 ;
 MSG_HELP_WR_RA_SECURITY (//)
-Select the one of these security options\n\
-to send your message PGP-signed, encrypted\n\
+Select one of these security options to send\n\
+your message PGP signed, encrypted\n\
 or anonymously
 ;
 MSG_HELP_WR_BT_HOLD (//)
 Copy the created message to\n\
-the outgoing mail folder\n\
-and set its status to HOLD
+the outgoing mail folder and\n\
+set its status to HOLD
 ;
 MSG_HELP_WR_BT_QUEUE (//)
 Copy the created message to\n\
@@ -3569,6 +3627,7 @@ MSG_HELP_WR_BT_CANCEL (//)
 Discard the\n\
 created message
 ;
+;
 ; Module TR - Procedures
 ;
 MSG_TR_Connecting (//)
@@ -3578,8 +3637,8 @@ MSG_TR_WaitWelcome (//)
 Connected, awaiting welcome message...
 ;
 MSG_TR_PopLoginReq (//)
-Please enter your POP3 password\n\
-for account %s@%s
+Please enter POP3 password for account\n\
+%s@%s
 ; USER_ID, HOST
 ;
 MSG_TR_PopLogin (//)
@@ -3642,6 +3701,7 @@ MSG_TR_NewMailReq (//)
 MSG_TR_FilterStats (//)
 \n\
 Filtering done:\n\
+\n\
 %3ld messages checked,\n\
 %3ld redirected,\n\
 %3ld forwarded,\n\
@@ -3720,6 +3780,7 @@ MSG_TR_BytesGauge0 (//)
 MSG_TR_MessageGauge0 (//)
 Message  0 of  0
 ;
+;
 ; Module TR - Bubblehelp
 ;
 MSG_HELP_TR_TX_STATUS (//)
@@ -3729,6 +3790,7 @@ of mail transfer
 MSG_HELP_TR_BT_ABORT (//)
 Abort mail transfer\n\
 as soon as possible
+;
 ;
 ; Module ER - Window
 ;
@@ -3747,6 +3809,7 @@ _Delete messages
 MSG_ER_Close (//)
 _Close window
 ;
+;
 ; Module ER - Error Messages
 ;
 MSG_ER_ErrorTTable (//)
@@ -3755,11 +3818,15 @@ Couldn't open translation table '%s'\n\
 ; FILENAME
 ;
 MSG_ER_CantCreateFile (//)
-Couldn't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
+Couldn't write to file '%s'.\n\
+\n\
+Make sure that the path exists and that the volume isn't write-protected.
 ; FILENAME
 ;
 MSG_ER_CantCreateDir (//)
-Couldn't create directory '%s'. Make sure that the volume isn't write-protected.
+Couldn't create directory '%s'.\n\
+\n\
+Make sure that the volume isn't write-protected.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias (//)
@@ -3769,16 +3836,20 @@ MSG_ER_ErrorNoAddress (//)
 You must specify an address for this entry!
 ;
 MSG_ER_ErrorDOBformat (//)
-Date of birth is in wrong format. The correct format is DD-MMM-YYYY (month names in English).
+Date of birth is in wrong format. The correct format is \
+DD-MMM-YYYY (month names in English).
 ;
 MSG_ER_NotInGallery (//)
-Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or his/her name or address is mispelt.
+Couldn't find this person in the YAM user gallery. Either the person \
+doesn't exist in the database or his/her name or address is mispelt.
 ;
 MSG_ER_NoTCP (//)
-No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
+No TCP/IP stack running! A bsdsocket.library-compatible internet \
+stack must be started before you can use this function.
 ;
 MSG_ER_ErrorDateFormat (//)
 Invalid date/time format.\n\
+\n\
 The date has to be in AmigaDOS format.\n\
 Example: %s
 ; DATE
@@ -3787,11 +3858,15 @@ MSG_ER_ErrorMaxFilters (//)
 Maximum number of filters reached! You can't add more filters.
 ;
 MSG_ER_CantOpenTempfile (//)
-Couldn't open temporary file '%s'. Check the path settings in the configuration.
+Couldn't open temporary file '%s'.\n\
+\n\
+Check the path settings in the configuration.
 ; FILENAME
 ;
 MSG_ER_CantCreateTempfile (//)
-Couldn't create temporary file. Reason: out of memory or invalid path specified in the configuration.
+Couldn't create temporary file.\n\
+\n\
+Reason: out of memory or invalid path specified in the configuration.
 ;
 MSG_ER_ErrorConsole (//)
 Couldn't open console window for script.
@@ -3801,89 +3876,125 @@ Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
 MSG_ER_UnexpEOFB64 (//)
-Unexpected EOF while decoding a BASE64 encoded file. The message seems to be truncated.
+Unexpected EOF while decoding a BASE64 encoded file. \
+The message seems to be truncated.
 ;
 MSG_ER_UnexpEOFUU (//)
-Unexpected EOF while decoding a UUencoded file. The message seems to be truncated.
+Unexpected EOF while decoding a UUencoded file. \
+The message seems to be truncated.
 ;
 MSG_ER_InvalidLength (//)
-Invalid line length in UUencoded file: %lD. A defective UUencoder was used or the message is truncated.
+Invalid line length in UUencoded file: %lD.\n\
+\n\
+A defective UUencoder was used or the message is truncated.
 ; SIZE
 ;
 MSG_ER_CreateMailError (//)
-Couldn't create mail file. Reason: invalid folder directory or unsufficient diskspace.
+Couldn't create mail file.\n\
+\n\
+Reason: invalid folder directory or unsufficient disk space.
 ;
 MSG_ER_UnknownEnc (//)
-Unknown MIME encoding: %s. YAM failed decoding a part of the message. Save the message to disk and try with a different decoder.
+Unknown MIME encoding: %s.\n\
+\n\
+YAM failed to decode a part of the message. Save the message \
+to disk and try with a different decoder.
 ; ENCODING_TYPE
 ;
 MSG_ER_UnknownHeaderEnc (//)
-Unknown header encoding: %s. YAM cannot display a particular message header correctly.
+Unknown header encoding: %s.\n\
+\n\
+YAM cannot display a particular message header correctly.
 ; ENCODING_TYPE
 ;
 MSG_ER_MultipartEOF (//)
-Incomplete multipart message: unexpected end of file. The message seems to be truncated.
+Unexpected EOF while decoding multipart message. \
+The message seems to be truncated.
 ;
 MSG_ER_MIMEError (//)
-Couldn't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
+Couldn't extract MIME message.\n\
+\n\
+The message contains badly formed MIME parts or it's empty or truncated.
 ;
 MSG_ER_MissingBoundary (//)
 Missing boundary in multipart message. The message seems to be truncated.
 ;
 MSG_ER_CantOpenFile (//)
-Couldn't read from file '%s'. The file doesn't seem to exist.
+Couldn't read from file '%s'.\n\
+\n\
+The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize (//)
-Decoded size [%lD] does not\n\
-match original size [%lD]. A defective UUencoder was used or the message is truncated.
+Decoded size [%lD] does not match original size [%lD].\n\
+\n\
+A defective UUencoder was used or the message is truncated.
 ; SIZE, SIZE
 ;
 MSG_ER_DocNotFound (//)
-HTML document '%s' not found. The file doesn't exist on the WWW server.
+HTML document '%s' not found.\n\
+\n\
+The file doesn't exist on the WWW server.
 ; FILENAME
 ;
 MSG_ER_SendHTTP (//)
 Couldn't send HTTP request. Requesting a document from the WWW server failed.
 ;
 MSG_ER_ConnectHTTP (//)
-Couldn't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
+Couldn't connect to WWW server '%s'.\n\
+\n\
+Possible reasons: TCP/IP offline, invalid address, \
+server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
 MSG_ER_BadResponse (//)
-Bad %s command response:\n%s\n\
-The mail server couldn't execute the command and replied with the error message.
+Bad %s command response:\n\
+%s\n\
+\n\
+The mail server couldn't execute the command \
+and replied with the error message.
 ; COMMAND, TEXT
 ;
 MSG_ER_UnknownPOP (//)
-Unknown POP3 server: '%s'. TCP/IP is off-line or the server address is invalid.
+Unknown POP3 server: '%s'.\n\
+\n\
+TCP/IP is offline or the server address is invalid.
 ; HOST
 ;
 MSG_ER_UnknownSMTP (//)
-Unknown SMTP server: '%s'. TCP/IP is off-line or the server address is invalid.
+Unknown SMTP server: '%s'.\n\
+\n\
+TCP/IP is offline or the server address is invalid.
 ; HOST
 ;
 MSG_ER_CantConnect (//)
-Couldn't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
+Couldn't connect to '%s'.\n\
+\n\
+The mail server is currently down or doesn't support the POP3/SMTP protocols.
 ; HOST
 ;
 MSG_ER_NoAPOP (//)
-Your POP3 server doesn't support APOP. Disable the APOP option in your YAM configuration.
+Your POP3 server doesn't support APOP. \
+Disable the APOP option in your YAM configuration.
 ;
 MSG_ER_ErrorWriteMailfile (//)
 Write error on mail file: %s.\n\
-YAM can't save the message to disk, maybe you're out of diskspace.
+\n\
+YAM can't save the message to disk, maybe you're out of disk space.
 ; FILENAME
 ;
 MSG_ER_ConnectionBroken (//)
 TCP/IP connection broken, probably due to a carrier drop.
 ;
 MSG_ER_InvalidAddress (//)
-Invalid address '%s'. The SMTP server didn't accept the address. Check for illegal characters.
+Invalid address '%s'.\n\
+\n\
+The SMTP server didn't accept the address. Check for illegal characters.
 ; ADDRESS
 ;
 MSG_ER_ErrorReadMailfile (//)
 Read error on mail file: %s.\n\
+\n\
 The file exists, but there was an error while reading it.
 ; FILENAME
 ;
@@ -3899,40 +4010,59 @@ MSG_ER_MissingName (//)
 You must specify a name for the new user!
 ;
 MSG_ER_NoPublicKeys (//)
-No public PGP keys found. Make sure that PGP is installed and the required settings are made in the configuration of YAM.
+No public PGP keys found.\n\
+\n\
+Make sure that PGP is installed and the required settings \
+are made in the configuration of YAM.
 ;
 MSG_ER_PGPreturnsError (//)
-The following PGP command returned with an error: '%s'\n\
+The following PGP command returned with an error:\n\
+\n\
+'%s'\n\
+\n\
 Check the file %s for a diagnosis.
 ; COMMAND, FILENAME
 ;
 MSG_ER_PGPnotfound (//)
 Couldn't execute PGP command.\n\
+\n\
 Check if %s exists.
 ; FILENAME
 ;
 MSG_ER_InvalidAlias (//)
-Invalid alias: %s. Multiple addresses are not allowed in this field.
+Invalid alias: %s.\n\
+\n\
+Multiple addresses are not allowed in this field.
 ; ALIAS
 ;
 MSG_ER_AliasNotFound (//)
-Unknown alias or name: %s. YAM couldn't find the email address of this recipient in the address book. Please verify the spelling.
+Unknown alias or name: %s.\n\
+\n\
+YAM couldn't find the email address of this recipient \
+in the address book. Please verify the spelling.
 ; ALIAS
 ;
 MSG_ER_AmbiguousAlias (//)
-Ambiguous alias or name: %s. There is more than one entry with this name in the address book. Please remove duplicate entries or use unique aliases.
+Ambiguous alias or name: %s.\n\
+\n\
+There is more than one entry with this name in the address book. \
+Please remove duplicate entries or use unique aliases.
 ; ALIAS
 ;
 MSG_ER_ErrorAddrDontFit (//)
-Addresses don't fit in string gadget. Use a distribution list to avoid this problem.
+Addresses don't fit in the string gadget. \
+Use a distribution list to avoid this problem.
 ;
 MSG_ER_ErrorNoPGPId (//)
 Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
 ; RECIPIENT, ADDRESS
 ;
 MSG_ER_ErrorAppendKey (//)
-Couldn't append public PGP key %s. There was a problem extracting it from the PGP keyring.
+Couldn't append public PGP key %s.\n\
+\n\
+There was a problem extracting it from the PGP keyring.
 ; KEY_ID
+;
 ;
 ; Module DI - Window
 ;
@@ -3950,6 +4080,7 @@ _Delete
 ;
 MSG_DI_Paste (//)
 _Paste
+;
 ;
 ; Module DI - Bubblehelp
 ;
@@ -3974,6 +4105,7 @@ MSG_HELP_DI_BT_PASTE (//)
 Insert selected entry at the current\n\
 position in the text editor
 ;
+;
 ; Module FI - Procedures
 ;
 MSG_FI_GaugeText (//)
@@ -3985,6 +4117,7 @@ Add filter
 ;
 MSG_FI_AddFilterReq (//)
 Enter a name for the new filter
+;
 ;
 ; Module FI - Window
 ;
@@ -4037,7 +4170,7 @@ MSG_FI_MessageSize (//)
 Message size
 ;
 MSG_FI_MessageHeader (//)
-Message header
+Message headers
 ;
 MSG_FI_MessageBody (//)
 Message body
@@ -4053,6 +4186,7 @@ Case sensitive
 ;
 MSG_FI_SubString (//)
 Substring search
+;
 ;
 ; Module FI - Window
 ;
@@ -4089,6 +4223,7 @@ _Read message
 MSG_FI_Abort (//)
 _Abort
 ;
+;
 ; Module FI - Bubblehelp
 ;
 MSG_HELP_FI_LV_FOLDERS (//)
@@ -4099,12 +4234,12 @@ MSG_HELP_FI_BT_ALL (//)
 Include all folders in your search
 ;
 MSG_HELP_FI_PO_FROMRULE (//)
-Get search criteria\n\
+Get search criterion\n\
 from a filter
 ;
 MSG_HELP_FI_BT_TORULE (//)
 Create a new filter from\n\
-these search criteria
+this search criterion
 ;
 MSG_HELP_FI_BT_SEARCH (//)
 Start the search and display\n\
@@ -4150,6 +4285,7 @@ MSG_HELP_FI_CY_COMP (//)
 Type of comparison. Select <> to get all messages that\n\
 don't match the pattern, IN to use a file of patterns
 ;
+;
 ; Module US - Routines
 ;
 MSG_US_EnterPassword (//)
@@ -4167,6 +4303,7 @@ Waiting for user login...
 MSG_US_RemoveReq (//)
 All messages, folders and configuration\n\
 files belonging to this user will be lost!\n\
+\n\
 Do you really want to remove the user?
 ;
 MSG_US_RemoveReqGads (//)
@@ -4175,6 +4312,7 @@ MSG_US_RemoveReqGads (//)
 MSG_US_ErrorNoDirectory (//)
 Mail directory not found.\n\
 Do you want to create it?
+;
 ;
 ; Module US - Window
 ;
@@ -4205,6 +4343,7 @@ _Add user
 MSG_US_DelUser (//)
 _Delete user
 ;
+;
 ; Module US - Bubblehelp
 ;
 MSG_HELP_US_ST_USER (//)
@@ -4224,11 +4363,12 @@ Share glossary\n\
 with other users
 ;
 MSG_HELP_US_ST_PASSWD (//)
-Password required for this user to login
+Password required for\n\
+this user to login
 ;
 MSG_HELP_US_CH_ROOT (//)
-Enable this option if the user\n\
-may add or remove other users
+Enable this option if the user should be\n\
+allowed to add or remove other users
 ;
 MSG_HELP_US_CH_CLONE (//)
 Use current configuration as\n\
@@ -4243,6 +4383,7 @@ Remove selected account
 ;
 ; Module FO - Routines
 ;
+; Obsolete
 MSG_FO_NewSepReq (//)
 Optional label for the separator
 ;
@@ -4287,6 +4428,7 @@ sent mail
 MSG_FO_FTBothMail (//)
 received and sent
 ;
+; Obsolete
 MSG_FO_FTSeparate (//)
 separator
 ;
@@ -4323,6 +4465,7 @@ To: _pattern
 MSG_FO_ToAddress (//)
 _To: address
 ;
+;
 ; Module FO - Bubblehelp
 ;
 MSG_HELP_FO_ST_FNAME (//)
@@ -4335,14 +4478,14 @@ the selected folder are stored
 MSG_HELP_FO_ST_MAXAGE (//)
 Old messages will automatically\n\
 be deleted after this time (in days).\n\
-Enter 0 or no value to disable this feature.
+Use 0 to disable this feature.
 ;
 MSG_HELP_FO_CY_FTYPE (//)
-Type of custom archive folder\n\
+Type of folder\n\
 (in/out/both)
 ;
 MSG_HELP_FO_CY_FMODE (//)
-Folders can be password-protected\n\
+Folders can be password protected\n\
 and/or compressed using XPK
 ;
 MSG_HELP_FO_CY_SORT0 (//)
@@ -4358,11 +4501,12 @@ Reversed sorting
 ;
 MSG_HELP_FO_ST_MLPATTERN (//)
 A message belongs to a mailing list\n\
-if the To: field matches this pattern
+if the contents of the 'To:' field are\n\
+matched by this pattern.
 ;
 MSG_HELP_FO_ST_MLADDRESS (//)
-Use this recipient address for\n\
-a reply to a mailing list message
+Use this recipient address for a\n\
+reply to a mailing list message
 ;
 ;
 ; BUSY messages
@@ -4446,17 +4590,21 @@ Decoding/saving...
 MSG_BusyDecDisplaying (//)
 Decoding/displaying...
 ;
+;
 ; ADDED AFTER 13-MAR-1999
 ;
 MSG_RE_FollowThreadReq (//)
 In order to follow the thread, YAM has to load all indices.\n\
-This may be time consuming. Do you want to continue?
+This may be quite time and memory consuming.\n\
+\n\
+Do you want to continue?
 ;
 MSG_CTapplicationadosscript (//)
 AmigaDOS script
 ;
 MSG_CTapplicationrexx (//)
 Rexx script
+;
 ;
 ; ADDED AFTER 04-DEC-2000
 ;
@@ -4469,6 +4617,7 @@ Check version
 MSG_FOLDER_NEWFOLDER (//)
 New folder...
 ;
+; Obsolete
 MSG_FOLDER_NEWSEPARATOR (//)
 New separator...
 ;
@@ -4491,7 +4640,7 @@ MSG_MESSAGE_MOVE (//)
 M\000Move...
 ;
 MSG_MESSAGE_COPY (//)
-Copy...
+Y\000Copy...
 ;
 MSG_MESSAGE_PRINT (//)
 P\000Print
@@ -4539,18 +4688,18 @@ MSG_SETTINGS_MUI (//)
 MUI...
 ;
 MSG_FO_FromAddress (//)
-From: address
+_From: address
 ;
 MSG_HELP_FO_ST_MLFROMADDRESS (//)
-Use this From: address when posting\n\
-new mails to the list
+Use this 'From:' address when\n\
+posting new mails to the list
 ;
 MSG_FO_ReplyToAddress (//)
-Reply-To: address
+_Reply-To: address
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS (//)
-Use this Reply-To: address when posting\n\
-new mails to the list
+Use this 'Reply-To:' address when\n\
+posting new mails to the list
 ;
 MSG_RE_MDNGads4 (//)
 |Ignore all
@@ -4572,6 +4721,7 @@ MSG_WR_DefSecurityConflictGads (//)
 MSG_WR_SecDefaults (//)
 Default
 ;
+; Obsolete
 MSG_ER_PGPMultipart (//)
 Error creating multipart PGP message. Encrypting/signing disabled!
 ;
@@ -4579,7 +4729,7 @@ MSG_RE_FixedFont (//)
 Fixed font
 ;
 MSG_ER_NO_SMTP_AUTH (//)
-ESMTP Server %s doesn't support SMTP AUTH!
+ESMTP server %s doesn't support SMTP AUTH!
 ;
 MSG_CO_UseSMTPAUTH (//)
 Use SMTP AU_TH
@@ -4597,7 +4747,7 @@ MSG_RE_SetUnread (//)
 Set status to unread
 ;
 MSG_WR_AltQuoted (//)
-Alternate Quoted
+Alternate quoted
 ;
 MSG_CO_AltQuote (//)
 Quote e_xternal using
@@ -4606,17 +4756,15 @@ MSG_CO_DoQuote (//)
 Qu_ote message
 ;
 MSG_HELP_CO_ST_ALTQUOTECHAR (//)
-String that should precede each line of\n\
-a quote inserted from non-email sources
+String that should precede each line of a\n\
+quote inserted from non-email sources
 ;
 MSG_EA_SelectPhoto_Title (//)
 Select portrait
 ;
 MSG_RE_MoveNextFolderReq (//)
-The next folder with unread messages\n\
-is: \eb%s\en\n\
-Change to this folder and continue\n\
-with reading there?
+Next folder with unread messages is \eb%s\en\n\
+Go to this folder and continue reading there?
 ;
 ; Obsolete
 MSG_WR_NoSubjectReqGad (//)
@@ -4642,11 +4790,13 @@ Part
 MSG_ABOUT_OKAY_GAD (//)
 \033bOkay
 ;
+;
 ; ADDED AFTER 15-MAR-2001
 ;
 MSG_FOLDER_NEWFOLDERGROUP (//)
 New folder group...
 ;This is the pulldown menu item, not the one in the pop-up menu
+;
 MSG_FOLDER_SNAPSHOT (//)
 Snapshot tree
 ;
@@ -4660,7 +4810,7 @@ MSG_CO_FIELDLISTCFG (//)
 Field settings
 ;
 MSG_CO_SIZEFORMAT (//)
-Size format
+Si_ze format
 ;
 MSG_HELP_CO_CY_SIZE (//)
 How would you like the size of\n\
@@ -4688,16 +4838,14 @@ yourself to a foreign SMTP server\n\
 If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER (//)
-Enter here the username\n\
-of the SMTP AUTH user.
+User name of the SMTP AUTH user
 ;
 MSG_HELP_CO_ST_SMTPAUTHPASS (//)
-Enter here the password\n\
-of the SMTP AUTH user.
+Password of the SMTP AUTH user
 ;
 MSG_HELP_CO_ST_APPICON (//)
 Text that should be displayed\n\
-as the label of the AppIcon.
+as the label of the AppIcon
 ;
 MSG_CO_APPICONTEXT (//)
 _Label
@@ -4726,32 +4874,33 @@ folder's statistics in the\n\
 YAM AppIcon's label?
 ;
 MSG_ERROR_IMGLOAD (//)
-The image file\nPROGDIR:Icons/%s\ncouldn't be loaded.
+The image file\n\
+PROGDIR:Icons/%s\n\
+couldn't be loaded.
 ;
 MSG_OPENGUI (//)
 Opening GUI...
 ;
 MSG_ERR_OPENLIB (//)
 Can't open '%s', version v%lu.%lu
-;LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
+; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
 MSG_CO_CONTEXTMENU (//)
 Context menu
 ;
 MSG_HELP_CO_CONTEXTMENU (//)
 Show a popup menu when clicking\n\
-the right mouse button on an\n\
-item in this list?
+the right mouse button on this list?
 ;
 MSG_CO_INFOBAR (//)
-Information bar
+Status bar
 ;
 MSG_HELP_CO_CH_INFOBAR (//)
-Here you can select the position of the InfoBar\n\
-which shows general information in YAM.
+Here you can select the position of the status bar\n\
+that shows general information in YAM.
 ;
 MSG_CO_WARNSUBJECT (//)
-Warn when there's an empty subject line
+Warn when there's an empty su_bject line
 ;
 MSG_HELP_CO_CH_WARNSUBJECT (//)
 Would you like to be warned if you\n\
@@ -4767,34 +4916,35 @@ MSG_WR_TBSearch (//)
 Search
 ;
 MSG_HELP_WR_BT_SEARCH (//)
-Search the text for a given string.
+Search the text\n\
+for a given string
 ;
 MSG_SEARCHWINDOW_TITLE (//)
 Search
 ;
 MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE (//)
-Case sensitive
+C_ase sensitive
 ;
 MSG_SEARCHWINDOW_BT_SEARCH (//)
-Search
+_Search
 ;
 MSG_SEARCHWINDOW_BT_FROMTOP (//)
-From top
+From _top
 ;
 MSG_SEARCHWINDOW_BT_CANCEL (//)
-Cancel
+_Cancel
 ;
 MSG_SEARCHNOTFOUND_TITLE (//)
 Search
 ;
 MSG_SEARCHNOTFOUND_MSG (//)
-'%s' not found
+'%s' not found.
 ;
 MSG_SEARCHNOTFOUND_BUTTON (//)
-Continue
+Okay
 ;
 MSG_WR_ERRORNOSENDER (//)
-Mail is incomplete: No sender!
+Mail is incomplete: no sender!
 ;
 MSG_WR_NOSENDERREQGAD (//)
 _Use default sender|*_Cancel
@@ -4802,22 +4952,28 @@ _Use default sender|*_Cancel
 MSG_FO_GROUP_CONFDEL (//)
 This group contains subfolders, which will\n\
 be moved to the parent folder on deletion.\n\
+\n\
 Do you really want to delete this group?
 ;
+; Obsolete
 MSG_FOLDER_NONSEL (//)
 (none selected)
 ;
+; Obsolete
 MSG_MAIL_NONSEL (//)
 (none selected)
 ;
 MSG_FO_NEWFGROUP (//)
 New folder group...
-;The item in the context menu
+; The item in the context menu
+;
 MSG_FO_NEWFGROUPREQ (//)
 Please enter a name for the new folder group:
 ;
 MSG_ER_CANTMOVEMAIL (//)
-Couldn't move mail '%s' to folder '%s' because a folder with that name doesn't exist. \
+Couldn't move mail '%s' to folder '%s'.\n\
+\n\
+No folder with this name could be found. \
 Please check your Filters configuration.
 ; MAILFILE, FOLDERNAME
 ;
@@ -4840,7 +4996,7 @@ MSG_CO_INFOBARPOS03 (//)
 Bottom
 ;
 MSG_CO_INFOBARPOS04 (//)
-Turned off
+Disabled
 ;
 MSG_CO_FOLDERLABEL (//)
 _Label
@@ -4850,10 +5006,10 @@ ML_-Support
 ;
 MSG_HELP_FO_CH_MLSUPPORT (//)
 Turn on/off the mailing list\n\
-support for this folder.
+support for this folder
 ;
 MSG_FO_AUTODETECT (//)
-Autodetect
+Auto_detect
 ;
 MSG_HELP_FO_BT_AUTODETECT (//)
 Try to guess automatically the suitable\n\
@@ -4867,7 +5023,7 @@ MSG_FO_MAXAGEFMT (//)
 %ld days
 ;
 MSG_CO_NB_EMAILCACHE (//)
-Email cache
+E_mail cache
 ;
 MSG_CO_NB_EMAILCACHEFMT (//)
 %ld mails
@@ -4878,7 +5034,7 @@ recipients not yet in the address book.\n\
 Select 0 mails to disable this feature.
 ;
 MSG_CO_USESMTPTLS (//)
-Use SMTP TLSv1/SSLv3
+Use SMTP TLSv_1/SSLv3
 ;
 MSG_HELP_CO_CH_USESMTPTLS (//)
 A TLSv1/SSLv3 secure connection will be established between\n\
@@ -4894,7 +5050,7 @@ POP3 SSL port 995 port and transfer email from there. If this\n\
 checkbox is ghosted, it means AmiSSL support is not available.
 ;
 MSG_CO_USESTLS (//)
-with STLS
+_with STLS
 ;
 MSG_HELP_CO_CH_USESTLS (//)
 If checked, the POP3 server is assumed to support STLS\n\
@@ -4919,7 +5075,8 @@ MSG_TR_INITTLS (//)
 Initializing TLSv1/SSLv3 session...
 ;
 MSG_ER_INITAMISSL (//)
-Couldn't init amissl.library - TLSv1/SSLv3 support disabled. \
+Couldn't init amissl.library - TLSv1/SSLv3 support disabled.\n\
+\n\
 Please check your AmiSSL installation and restart YAM.
 ;
 MSG_ER_INITTLS (//)
@@ -4932,7 +5089,7 @@ MSG_CO_AutoTranslateIn (//)
 Codepage Autodetect/T_ranslation
 ;
 MSG_HELP_CO_CH_AUTOTRANSLATEIN (//)
-Helps decyphering strange character sets.\n\
+Helps reading strange character sets.\n\
 Mainly for cyrillic users.
 ;
 MSG_CO_IMPORTMIMETITLE (//)
@@ -4940,29 +5097,36 @@ Import MIME viewers & types
 ;
 MSG_ER_TRANSFERMAIL (//)
 Couldn't transfer mail '%s' to folder '%s'.\n\
+\n\
 Either the file doesn't exist or it couldn't be copied for some reason.
 ; MAILFILE, FOLDERNAME
+;
 MSG_ER_IMPORTMAIL (//)
 Couldn't import any mail from file '%s'.\n\
-Please make sure that this file really contains emails \
-in the standard MBOX format (separated by a single \
-"From " line).
+\n\
+Make sure that the file really contains emails in the \
+standard MBOX format (separated by a single "From " line).
 ; FILENAME
+;
 MSG_ER_ADDRBOOKLOAD (//)
 Couldn't load address book from file '%s'.\n\
+\n\
 Either the file doesn't exist or it couldn't be opened for some reason.
 ; FILENAME
+;
 MSG_AB_NOYAMADDRBOOK (//)
-The file '%s' isn't a valid YAM address book file.\n\
-Do you still want it to be processed as a file\n\
-containing email addresses on separate lines?
+File '%s' isn't a valid YAM address book.\n\
+\n\
+Process it as a file containing email addresses\n\
+on separate lines?
 ; FILENAME
+;
 MSG_AB_NOYAMADDRBOOK_GADS (//)
 _Yes|*_No
 ;
 MSG_FO_EDIT_FGROUP (//)
 Folder group preferences
-;The item in the context menu
+;
 MSG_FO_EDIT_FGROUPREQ (//)
 Name of folder group:
 ;
@@ -4977,30 +5141,32 @@ The class is not installed.
 ;
 MSG_MCC_OLD (//)
 Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-You currently have V%lu.%lu installed, thus need\n\
-to upgrade.
+\n\
+Currently installed is V%lu.%lu, please upgrade!
 ;
 MSG_MCC_IN_USE (//)
 Couldn't open MUI custom class '%s' V%lu.%lu.\n\
 %lu.%lu is currently in use by other applications.\n\
+\n\
 Once you have installed the required version,\n\
-close all MUI programs and try again.
+close all MUI programs, make sure the old class\n\
+is flushed from memory and try again.
 ;
 MSG_RETRY_QUIT_GAD (//)
 Try again|Quit
 ;
 MSG_ER_NOSTARTTLS (//)
-The SMTP server you tried to connect to doesn't support TLS/SSL, \
-but TLSv1/SSLv3 was enabled in the configuration. Please check \
-your configuration.
+The SMTP server doesn't support TLS/SSL.
 ;
 MSG_ER_NOAUTHUSERPASS (//)
-No username or password was specified for the SMTP AUTH connection \
+No user name or password was specified for the SMTP AUTH connection \
 YAM was trying to establish. Please check your configuration.
 ;
 MSG_ER_POPWELCOME (//)
 The POP server replied with an error message during the welcome \
-procedure and the connection was terminated:\n\n%s\n
+procedure and the connection was terminated:\n\
+\n\
+%s\n
 ;
 MSG_CO_APPICON_LABEL (//)
 New: %n Total: %t
@@ -5021,19 +5187,19 @@ MSG_FROMTO (//)
 From/To
 ;
 MSG_HELP_CO_CA_COL1QUOT (//)
-Adjust the color used for displaying quotes
+Color used for displaying quotes
 ;
 MSG_HELP_CO_CA_COL3QUOT (//)
-Adjust the color used for displaying 3rd level quotes
+Color used for displaying 3rd level quotes
 ;
 MSG_HELP_CO_CA_COL4QUOT (//)
-Adjust the color used for displaying 4th level quotes
+Color used for displaying 4th level quotes
 ;
 MSG_CO_URLCOLOR (//)
 URL color
 ;
 MSG_HELP_CO_CA_COLURL (//)
-Adjust the color used for displaying clickable URL links
+Color used for displaying clickable URL links
 ;
 MSG_FO_FOLDEREXISTS (//)
 A file or directory with the given folder path already exists.\n\
@@ -5047,8 +5213,7 @@ The specified folder name is empty or already exists.\n\
 Please enter a valid folder name before you proceed.
 ;
 MSG_FO_FOLDERPATHINVALID (//)
-You haven`t specified a path for the new folder.\n\
-Please enter a valid path for the folder before you proceed.
+You haven't specified a valid path for the new folder.
 ;
 MSG_MA_TOMARKED (//)
 /\000Marked
@@ -5072,15 +5237,15 @@ MSG_MA_CTX_DEFORDER_ALL (//)
 Default Order: all
 ;
 MSG_MA_CTX_MAILLIST (//)
-MailListview Settings
+Message list
 ;
 MSG_MA_CTX_FOLDERLIST (//)
-FolderList Settings
+Folder list
 ;
 MSG_HELP_FO_CY_MLSIGNATURE (//)
-Use this Signature when posting\n\
-new mails to the list.
+Use this signature when posting\n\
+new mails to the list
 ;
 MSG_CTapplicationpdf (//)
-PDF Document
+PDF document
 ;
