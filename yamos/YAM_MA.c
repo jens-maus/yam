@@ -1760,8 +1760,6 @@ static void MA_SetMailFlagAll(int flag, BOOL clear)
       set(lv, MUIA_NList_Quiet, TRUE);
       for(i = 0; i < (int)*mlist; i++)
       {
-        struct Mail *mail = mlist[i+2];
-
         MA_SetMailFlag(mlist[i+2], flag, clear);
       }
       set(lv, MUIA_NList_Quiet, FALSE);
