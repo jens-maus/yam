@@ -665,7 +665,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
    struct Folder **flist, *folder;
    FILE *out;
    char *mlistad = NULL, buffer[SIZE_LARGE];
-   char *cmsg, *rto = NULL, *rcc = NULL, *rsub = NULL, *domain, *tofld;
+   char *cmsg, *rfrom = NULL, *rto = NULL, *rcc = NULL, *rsub = NULL, *domain, *tofld;
 
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
@@ -702,11 +702,18 @@ int MA_NewReply(struct Mail **mlist, int flags)
                {
                   if (flist = FO_CreateList())
                   {
-                     for (i = 1; i <= (int)*flist; i++) if (flist[i]->MLPattern[0]) if (MatchNoCase(tofld, flist[i]->MLPattern)) { mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : tofld; break; }
+                     for (i = 1; i <= (int)*flist; i++) if (flist[i]->MLPattern[0]) if (MatchNoCase(tofld, flist[i]->MLPattern)) {
+                        mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : tofld;
+                        if (flist[i]->MLFromAddress[0]) rfrom = flist[i]->MLFromAddress;
+                        break;
+                     }
                      free(flist);
                   }
                }
-               else if (folder->MLPattern[0]) if (MatchNoCase(tofld, folder->MLPattern)) mlistad = folder->MLAddress[0] ? folder->MLAddress : tofld;
+               else if (folder->MLPattern[0]) if (MatchNoCase(tofld, folder->MLPattern)) {
+                  mlistad = folder->MLAddress[0] ? folder->MLAddress : tofld;
+                  if (folder->MLFromAddress[0]) rfrom = folder->MLFromAddress;
+               }
             }
             if (mlistad && !(flags & (NEWF_REP_PRIVATE|NEWF_REP_MLIST)))
             {
@@ -768,6 +775,11 @@ cont_repl:  etd.R_Name = repto->RealName;
          MA_InsertIntroText(out, mlistad ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
          fclose(out);
          WR_AddSignature(G->WR_Filename[winnum], -1);
+
+         /* If this is a reply to a mail belonging to a mailing list,
+            set the "From:" address accordingly */
+         if (rfrom) setstring(wr->GUI.ST_FROM, rfrom);
+
          setstring(wr->GUI.ST_TO, rto);
          setstring(*rto ? wr->GUI.ST_CC : wr->GUI.ST_TO, rcc);
          setstring(wr->GUI.ST_SUBJECT, rsub);
