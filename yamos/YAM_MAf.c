@@ -1802,7 +1802,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                        DB(kprintf("    no transfer Date information found in mail file, taking fileDate...\n");)
 
                        // now convert the local TZ fib_Date to a UTC transDate
-                       DateStamp2TimeVal(FileDate(fname), &newMail->transDate, TZC_UTC);
+                       DateStamp2TimeVal(FileDate(GetMailFile(NULL, folder, newMail)), &newMail->transDate, TZC_UTC);
 
                        // then we update the mailfilename
                        MA_UpdateMailFile(newMail);

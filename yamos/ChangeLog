@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-03-18  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c, YAM_UT.c: fixed a crash bug in the index rescanning routines where
+      the file date function wasn't called with the full path, which in fact caused
+      it to fail and pass a NULL pointer to the DateStamp2TimeVal() function afterwards.
+
 2005-03-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_FI.c, misc: implemented an unlimited filter functionality where exec lists

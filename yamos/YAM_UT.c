@@ -2561,8 +2561,11 @@ void TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum TZCo
 //  converts a struct DateStamp to a struct timeval
 void DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZConvert tzc)
 {
-  // creates wrong timevals from DateStamps with year >= 2114 ...
+  // check if the ptrs are set or not.
+  if(ds == NULL || tv == NULL)
+    return;
 
+  // creates wrong timevals from DateStamps with year >= 2114 ...
   tv->tv_secs = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
   tv->tv_micro = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
 
