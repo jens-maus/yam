@@ -852,10 +852,10 @@ static const char *MIMEwarn =
   "To see the rest, you will need to upgrade your mail reader. Following are\n"
   "some URLs where you can find MIME-capable mail programs for common platforms:\n\n"
   "  Amiga............: YAM          http://www.yam.ch/\n"
-  "  Unix.............: Metamail     ftp://ftp.bellcore.com/nsb/\n"
-  "  Windows/Macintosh: Eudora       http://www.qualcomm.com/\n\n"
+  "  Unix.............: Metamail     ftp://thumper.bellcore.com/pub/nsb/\n"
+  "  Windows/Macintosh: Eudora       http://www.eudora.com/\n\n"
   "General info about MIME can be found at:\n\n"
-  "http://www.cis.ohio-state.edu/hypertext/faq/usenet/mail/mime-faq/top.html\n\n";
+  "http://www.faqs.org/faqs/mail/mime-faq/\n\n";
 static const char *PGPwarn  =
   "The following body part contains a PGP encrypted message. Either your\n"
   "mail reader doesn't support MIME/PGP as specified in RFC 2015, or\n"
