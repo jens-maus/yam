@@ -5,6 +5,37 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c, misc: slightly reworked the ReadInMessage() routines to not
+      show attachments inlined generally anymore because the new attachment
+      group is now the replacement for that. However, if the user selected
+      that he/she wants to display textbased attachments inlined, then YAM
+      still shows these attachments as before.
+      Also adapted the general mail flags a bit to better reflect the
+      different multipart types in future. However, please note that this
+      change required to bump the .index version to make sure all indexes
+      are rescanned properly.
+    * classes/AttachmentImage&Group: implemented two new internal MUI
+      custom classes for showing a separate attachment group object in
+      every readmail object of either the read window or the embedded
+      mail view. This attachment group displays images for every attachment
+      found in a mail. These images are either obtained with the help
+      of DefIcons or due to icon.library operations and dragable.
+      The images are clickable to select attachments for later operations
+      like saving, printing etc. In addition, context menus are enabled
+      in this group and allows to directly start these operations.
+      The group is implemented auto-sizable, which means that the images
+      for attachments are automatically grouped in columns. However, if the
+      space for the group doesn't fit all attachments it will automatically
+      be resized to make it possible to fit all attachments in the group.
+      In addition to the images also some rough information about the
+      attachments is displayed.
+    * YAM_debug.h: put some NOP ((void)0) statements in the empty
+      parts of our debug defines. This should fix some problems where
+      else branches with single debug statements caused some troubles if
+      YAM was compiled without any debugging turned on.
+
 2005-02-05  Jens Langner <Jens.Langner@light-speed.de>
 
     * UserImage.c: fixed bug #1115135 where the user image wasn't
