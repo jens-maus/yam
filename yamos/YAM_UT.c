@@ -2750,6 +2750,47 @@ void GotoURL(char *url)
 }
 ///
 
+/// strtok_r()
+/// Reentrant version of stdlib strtok()
+// Call like this:
+// char *next=input, *token, breakstring[]=", ";
+// do	{ token = strtok_r(&next,breakstring); /* ... */ } while(next);
+char *strtok_r(char **s, char *brk)
+{
+char *p,*ret;
+
+	if((s == NULL) || (*s == NULL) || (brk == NULL))
+		return NULL;
+
+	/* find break character */
+	if((p = strpbrk(*s,brk)))
+	{
+		/* if found, terminate string there */
+		*p = '\0';
+
+		/* scan forward to next non-break */
+		do { p++; } while(*p && (strchr(brk,*p) != NULL));
+
+		/* if *p is a nullbyte, then no more tokens */
+		if(*p == '\0') p = NULL;
+
+		/* save current *s to return it */
+		ret = *s;
+
+		/* and let *s point to first non-break */
+		*s = p;
+
+		return ret;
+	}
+
+	/* no break character found - *s gets NULL */
+	ret = *s;
+	*s = NULL;
+
+	return ret;
+}
+
+
 /*** REXX interface support ***/
 
 /// InsertAddresses
