@@ -179,7 +179,7 @@ static void FreeWorkbenchPath(BPTR path)
 /// YAMMUIRequest
 // Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
 // We also have a wrapper #define MUI_Request for calling that function instead.
-LONG YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
+LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
 {
   LONG result = -1;
   char reqtxt[SIZE_LINE];
@@ -2924,16 +2924,12 @@ void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int 
 ///
 /// DoSuperNew
 //  Calls parent NEW method within a subclass
-Object *DoSuperNew(struct IClass *cl, Object *obj, ...)
+#if !defined(__MORPHOS__)
+Object * STDARGS DoSuperNew(struct IClass *cl, Object *obj, ...)
 {
-#ifdef __MORPHOS__
-   va_list va;
-   va_start(va, obj);
-   return (Object *)DoSuperMethod(cl, obj, OM_NEW, va->overflow_arg_area, NULL);
-#else
-   return (Object *)DoSuperMethod(cl, obj, OM_NEW, (&obj+1), NULL);
-#endif
+  return (Object *)DoSuperMethod(cl, obj, OM_NEW, (&obj+1), NULL);
 }
+#endif
 ///
 /// xget()
 //  Gets an attribute value from a MUI object
@@ -4046,8 +4042,7 @@ MakeHook(putCharHook, putCharFunc);
 
 /// SPrintF
 //  sprintf() replacement with Locale support
-
-void SPrintF(char *outstr, char *fmtstr, ...)
+void STDARGS SPrintF(char *outstr, char *fmtstr, ...)
 {
   struct Hook hook;
 

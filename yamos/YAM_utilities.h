@@ -217,6 +217,12 @@ extern struct Hook    DisposeModuleHook;
 extern long           PNum;
 extern unsigned char  *PPtr[16];
 
+// only prototypes needed for AmigaOS
+#if !defined(__MORPHOS__)
+Object * STDARGS DoSuperNew(struct IClass *cl, Object *obj, ...);
+#endif
+
+// all the utility prototypes
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 APTR     AllocCopy(APTR source, int size);
 char *   AllocData2D(struct Data2D *data, LONG initsize);
@@ -247,7 +253,6 @@ void     DisplayAppIconStatistics(void);
 void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(char *file, char *newfile, struct Folder *folder);
-Object * DoSuperNew(struct IClass *cl, Object *obj, ...) VARARGS68K;
 BOOL     DumpClipboard(FILE *out);
 BOOL     EditorToFile(Object *editor, char *file, struct TranslationTable *tt);
 char *   Encrypt(char *source);
@@ -330,7 +335,7 @@ int      SelectMessage(struct Mail *mail);
 void     SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, UWORD flags);
 char     ShortCut(char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
-void     SPrintF(char *outstr, char *fmtstr, ...) VARARGS68K;
+void STDARGS SPrintF(char *outstr, char *fmtstr, ...) VARARGS68K;
 char *   StartUnpack(char *file, char *newfile, struct Folder *folder);
 char *   stccat(char *a, char *b, int n);
 char *   StrBufCat(char *strbuf, char *source);
@@ -347,7 +352,7 @@ char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
 BOOL     LoadParsers(void);
 void     SParse(char *);
-LONG     YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
+LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
 APTR     WhichLV(struct Folder *folder);
 
 #endif /* YAM_UTILITIES_H */
