@@ -66,6 +66,9 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SMTP-Server      = %s\n", co->SMTP_Server);
       fprintf(fh, "SMTP-Domain      = %s\n", co->SMTP_Domain);
       fprintf(fh, "Allow8bit        = %s\n", Bool2Txt(co->Allow8bit));
+      fprintf(fh, "Use-SMTP-AUTH    = %s\n", Bool2Txt(co->Use_SMTP_AUTH));
+      fprintf(fh, "SMTP-AUTH-User   = %s\n", co->SMTP_AUTH_User);
+      fprintf(fh, "SMTP-AUTH-Pass   = %s\n", Encrypt(co->SMTP_AUTH_Pass));
       for (i = 0; i < MAXP3; i++) if (co->P3[i])
       {
       struct POP3 *p3 = co->P3[i];
@@ -250,8 +253,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "HideGUIElements  = %ld\n", co->HideGUIElements);
       fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
       fprintf(fh, "StackSize        = %ld\n", co->StackSize);
-      fprintf(fh, "SMTP-AUTH-User   = %s\n", co->SMTP_AUTH_User);
-      fprintf(fh, "SMTP-AUTH-Pass   = %s\n", co->SMTP_AUTH_Pass);
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
    }
@@ -363,6 +364,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 /*1*/          if (!stricmp(buffer, "SMTP-Server"))    stccpy(co->SMTP_Server, value, SIZE_HOST);
                if (!stricmp(buffer, "SMTP-Domain"))    stccpy(co->SMTP_Domain, value, SIZE_HOST);
                if (!stricmp(buffer, "Allow8bit"))      co->Allow8bit = Txt2Bool(value);
+               if (!stricmp(buffer, "Use-SMTP-AUTH"))  co->Use_SMTP_AUTH = Txt2Bool(value);
+               if (!stricmp(buffer, "SMTP-AUTH-User")) stccpy(co->SMTP_AUTH_User, value, SIZE_USERID);
+               if (!stricmp(buffer, "SMTP-AUTH-Pass")) stccpy(co->SMTP_AUTH_Pass, Decrypt(value), SIZE_USERID);
                if (!strnicmp(buffer, "POP", 3) && buffer[5] == '.')
                {
                   int j = atoi(&buffer[3]);
@@ -539,8 +543,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "HideGUIElements")) co->HideGUIElements = atoi(value);
                if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
                if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
-               if (!stricmp(buffer, "SMTP-AUTH-User")) stccpy(co->SMTP_AUTH_User, value, SIZE_USERID);
-               if (!stricmp(buffer, "SMTP-AUTH-Pass")) stccpy(co->SMTP_AUTH_Pass, value, SIZE_USERID);
             }
          }
          fclose(fh);
@@ -572,6 +574,9 @@ void CO_GetConfig(void)
          GetMUIString(CE->SMTP_Server     ,gui->ST_SMTPHOST);
          GetMUIString(CE->SMTP_Domain     ,gui->ST_DOMAIN);
          CE->Allow8bit         = GetMUICheck  (gui->CH_SMTP8BIT);
+         CE->Use_SMTP_AUTH     = GetMUICheck  (gui->CH_USESMTPAUTH);
+         GetMUIString(CE->SMTP_AUTH_User  ,gui->ST_SMTPAUTHUSER);
+         GetMUIString(CE->SMTP_AUTH_Pass  ,gui->ST_SMTPAUTHPASS);
          break;
       case 2:
          CE->PreSelection      = GetMUICycle  (gui->CY_MSGSELECT);
@@ -731,6 +736,9 @@ void CO_SetConfig(void)
          setstring   (gui->ST_SMTPHOST  ,CE->SMTP_Server);
          setstring   (gui->ST_DOMAIN    ,CE->SMTP_Domain);
          setcheckmark(gui->CH_SMTP8BIT  ,CE->Allow8bit);
+         setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
+         setstring   (gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
+         setstring   (gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);
          DoMethod(gui->LV_POP3, MUIM_List_Clear);
          for (i = 0; i < MAXP3; i++) if (pop3 = CE->P3[i])
          {
