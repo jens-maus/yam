@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.7 (07.01.2003)
+## version $VER: YAM.catalog 5.8 (15.01.2003)
 ## codeset 0
 ;
 MSG_Folder
@@ -5865,4 +5865,19 @@ Empfangs/Versendedatum
 ;
 MSG_FROMTO
 Von/An
+;
+MSG_HELP_CO_CA_COL1QUOT
+In dieser Farbe werden aktuelle Zitate im\nLesefenster und im Editor dargestellt
+;
+MSG_HELP_CO_CA_COL3QUOT
+In dieser Farbe werden Zitate der\ndritten Ebene im Lesefenster\nund im Editor dargestellt
+;
+MSG_HELP_CO_CA_COL4QUOT
+In dieser Farbe werden Zitate der\nvierten Ebene im Lesefenster\nund im Editor dargestellt
+;
+MSG_CO_URLCOLOR
+URL Farbe
+;
+MSG_HELP_CO_CA_COLURL
+In dieser Farbe werden alle Verweise auf URLs\nim Lesefenster und im Editor dargestellt
 ;

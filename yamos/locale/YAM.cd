@@ -5020,3 +5020,18 @@ Date Sent/Received
 MSG_FROMTO (//)
 From/To
 ;
+MSG_HELP_CO_CA_COL1QUOT (//)
+Adjust the color used for displaying quotes
+;
+MSG_HELP_CO_CA_COL3QUOT (//)
+Adjust the color used for displaying 3rd level quotes
+;
+MSG_HELP_CO_CA_COL4QUOT (//)
+Adjust the color used for displaying 4th level quotes
+;
+MSG_CO_URLCOLOR (//)
+URL color
+;
+MSG_HELP_CO_CA_COLURL (//)
+Adjust the color used for displaying clickable URL links
+;
