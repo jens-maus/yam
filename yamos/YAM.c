@@ -1222,7 +1222,10 @@ static void Initialise(BOOL hidden)
       G->WR_NRequest[i].nr_Name = (UBYTE *)G->WR_Filename[i];
       G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
    }
+
+   // initialize the random number seed.
    srand((unsigned int)GetDateStamp());
+
    SplashProgress(GetStr(MSG_LoadingGFX), 20);
    strmfp(iconfile, G->ProgDir, "YAM");
    if ((G->HideIcon=GetDiskObject(iconfile)))
