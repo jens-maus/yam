@@ -30,11 +30,15 @@ TARGET = GenClasses
 #
 
 CC = gcc
+RM = rm -f
 
 OBJS = gc.o lists.o
 
 $(TARGET) : $(OBJS)
 	$(CC) -o $@ $(OBJS)
+
+clean:
+	-$(RM) $(OBJS)
 
 #
 
