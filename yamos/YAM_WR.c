@@ -997,50 +997,54 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
    if (comp->Mode == NEW_SAVEDEC) if (!WR_SaveDec(fh, comp)) return FALSE; else goto mimebody;
    if (!firstpart) return FALSE;
 
+	// encrypted multipart message requested?
    if (firstpart->Next && comp->Security >= 1 && comp->Security <= 3)
    {
 	struct Compose tcomp;
 	FILE *tfh;
 
-			DBpr("Experimental PGP/MIME multipart support\n");
-			if((tf = OpenTempFile(NULL)) &&
-				(KPrintf("Trying tempfile '%s'\n",tf->Filename),1) &&
-				(tfh = fopen(tf->Filename,"w")))
+			if((tf = OpenTempFile(NULL)) && (tfh = fopen(tf->Filename,"w")))
 			{
-				// clone struct Compose
-				memcpy(&tcomp,comp,sizeof(tcomp));
-				// set new filehandle
-				tcomp.FH = tfh;
-				// clear security field and recurse
-				tcomp.Security = 0;
-				if(WriteOutMessage(&tcomp))
+				memcpy(&tcomp,comp,sizeof(tcomp));	// clone struct Compose
+				tcomp.FH = tfh;							// set new filehandle
+				tcomp.Security = 0;						// clear security field
+
+				// clear a few other fields to avoid redundancies
+				tcomp.MailCC = tcomp.MailBCC = tcomp.ExtHeader = NULL;
+				tcomp.Receipt = tcomp.Importance = 0;
+				tcomp.DelSend = tcomp.UserInfo = FALSE;
+
+				if(WriteOutMessage(&tcomp))			// recurse!
 				{
-				int EncType;
-					
-					DBpr("successfully wrote temporary messsage file, now encoding...\n");
-					EncType = comp->FirstPart->EncType;		// save first part's encoding
-					// free parts list, this was processed by WriteOutMessage() already
-   				FreePartsList(comp->FirstPart);
+				struct WritePart *tpart = comp->FirstPart; // save parts list so we're able to recover from a calloc() error
+
 					// replace with single new part
    				if(comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart)))
 					{
-						comp->FirstPart->ContentType = "message/rfc822"; // the only part is an email message
-						comp->FirstPart->EncType = EncType;				// reuse encoding
-						comp->FirstPart->Filename = tf->Filename;		// set filename to tempfile
+						comp->FirstPart->EncType = tpart->EncType;			// reuse encoding
+	   				FreePartsList(tpart);										// free old parts list
+						comp->FirstPart->ContentType = "message/rfc822";	// the only part is an email message
+						comp->FirstPart->Filename = tf->Filename;				// set filename to tempfile
+						comp->Signature = 0;											// only use sig in enclosed mail
 					} else
 					{
-						DBpr("out of memory preparing for encoding :-(((\n");
-						return FALSE; // ugh...buggy!!!
+						// no errormsg here - the window probably won't open anyway...
+						DisplayBeep(NULL);
+						comp->FirstPart = tpart;			// just restore old parts list
+						comp->Security = 0;					// switch off security
+						// we'll most likely get more errors further down :(
 					}
 				} else
 				{
-					DBpr("Can't write temporary mail file - encryption disabled!\n");
+//					ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);		// gotta define this!
+					ER_NewError("Error while creating multipart PGP message. Encryption/signing disabled!",NULL,NULL);
 					comp->Security = 0;
 				}
 				fclose(tfh);
 			} else
 			{
-				DBpr("Can't create tempfile - encryption disabled!\n");
+//				ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
+				ER_NewError("Error while creating multipart PGP message. Encryption/signing disabled!",NULL,NULL);
 				comp->Security = 0;
 			}
    }
