@@ -781,6 +781,289 @@ BOOL TR_ConnectSMTP(void)
    return TRUE;
 }
 ///
+/// TR_ConnectESMTP
+//  Connects to a ESMTP mail server, checks some ESMTP features and sends SMTP AUTH
+/* umsrfc ReadLine() */
+/*
+ * Read one line from client. The buffer may hold a maximum of "len"
+ * characters including string terminator. The routine returns FALSE
+ * when the connection to the client was lost during reading the line.
+ * The buffer will always contain a valid C string after the call.
+.*/
+static BOOL ReadLine(LONG Socket, char *buf, LONG len)
+{
+ char *p = buf;
+
+   DoMethod(G->App,MUIM_Application_InputBuffered);
+   if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
+ /* Is enough space left in buffer to read more characters? */
+ while (--len > 0) {
+
+  /* Yes, read one character from socket */
+  if (Recv(Socket, p, 1, 0) <= 0) {
+
+   /* Error or end of input reached */
+   len = -1;
+
+   /* Leave loop */
+   break;
+  }
+
+  /* End of line reached? */
+  if (*p == '\n') {
+
+   /* Yes, strip CR if line end was marked by CRLF */
+   if ((p != buf) && (*(p - 1) == '\r')) p--;
+
+   /* Leave loop */
+   break;
+
+  } else
+   /* No, normal character */
+   p++;
+ }
+
+ /* Add string terminator */
+ *p = '\0';
+
+   if (G->TR_Debug) printf("SERVER: %s\n", buf);
+ return(len >= 0);
+}
+#define SMTP_SERVICE_NOT_AVAILABLE 421
+#define SMTP_ACTION_OK             250
+/* Read answer from server */
+static ULONG GetReturnCode(void)
+{
+ ULONG rc;
+ char *p;
+   char buffer[SIZE_LINE];
+
+ /* Read multiple lines from server */
+ do {
+
+  /* Read line from server */
+  if (ReadLine(G->TR_Socket, buffer, SIZE_LINE)) {
+
+   /* Convert number */
+   rc = strtol(buffer, &p, 10);
+
+  } else {
+   /* Error! */
+   rc = SMTP_SERVICE_NOT_AVAILABLE;
+
+   /* Leave loop */
+   break;
+  }
+
+  /* Multiple line reply? */
+ } while (*p != ' ');
+
+ return(rc);
+}
+
+#define AUTH_CRAM_MD5   1
+#define AUTH_DIGEST_MD5 2
+#define AUTH_LOGIN      4
+#define AUTH_PLAIN      8
+void hmac_md5(unsigned char*,int,unsigned char*,int,ULONG *);
+void encode64(char *s, char *d, int len);
+char *decode64 (char *dest, char *src, char *srcmax);
+BOOL TR_ConnectESMTP(void)
+{
+   int len,rc;
+   char buffer[SIZE_LINE];
+   char challenge[SIZE_LINE];
+   UBYTE ESMTPAuth=0;
+   int SMTPSocket=G->TR_Socket;
+
+   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
+   if (!TR_SendSMTPCmd(NULL, NULL)) return FALSE;
+   set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, GetStr(MSG_TR_SendHello));
+
+   if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
+   sprintf(buffer, "EHLO %s\r\n", C->SMTP_Domain);
+   if (!TR_SendDat(buffer)) return FALSE;
+   if(!(ReadLine(SMTPSocket, buffer, SIZE_LINE))) return FALSE;
+   if(SMTP_ACTION_OK!=atoi(buffer))
+   {
+      ER_NewError(GetStr(MSG_ER_BadResponse), "EHLO", buffer);
+      return FALSE;
+   }
+   while (buffer[3] == '-')
+   {
+      if(!(ReadLine(SMTPSocket, buffer, SIZE_LINE))) return FALSE;
+      if (strnicmp(buffer+4, "AUTH", 4) == 0) /* SMTP AUTH */
+      {
+         if (NULL != strstr(buffer+9,"CRAM-MD5")) ESMTPAuth|=AUTH_CRAM_MD5;
+         if (NULL != strstr(buffer+9,"DIGEST-MD5")) ESMTPAuth|=AUTH_DIGEST_MD5;
+         if (NULL != strstr(buffer+9,"PLAIN")) ESMTPAuth|=AUTH_PLAIN;
+         if (NULL != strstr(buffer+9,"LOGIN")) ESMTPAuth|=AUTH_LOGIN;
+      }
+   }
+
+   if(0==ESMTPAuth)
+   {
+      ER_NewError("ESMTP Server %s doesn't support SMTP AUTH!", C->SMTP_Server, NULL);
+      /* FixME: use locale for error text */
+      return FALSE;
+   }
+
+   if(ESMTPAuth & AUTH_CRAM_MD5) /* js_umsrfc SMTP AUTH */
+   {
+      /* Send AUTH command */
+      if(!(TR_SendDat("AUTH CRAM-MD5\r\n"))) return FALSE;
+  
+      if (ReadLine(SMTPSocket, buffer, SIZE_LINE))
+      {
+         char *p;
+  
+         /* Get return code. */
+         if ((rc=strtol(buffer, &p, 10)) == 334 )
+         {
+            ULONG digest[4];
+  
+            strncpy(challenge,p+1,511); challenge[511]=0;
+            decode64(challenge,challenge,challenge+strlen(challenge));
+  
+            hmac_md5(challenge,strlen(challenge),C->SMTP_AUTH_Pass,strlen(C->SMTP_AUTH_Pass),digest);
+  
+            len=sprintf(challenge,"%s %08lx%08lx%08lx%08lx%c%c",C->SMTP_AUTH_User,
+                        digest[0],digest[1],digest[2],digest[3],0,0)-2;
+            encode64(challenge,buffer,len);
+            strcat(buffer,"\r\n");
+  
+            /* Send AUTH response */
+            if(!(TR_SendDat(buffer))) return FALSE;
+
+            if (ReadLine(SMTPSocket, buffer, SIZE_LINE))
+            {
+               /* Get return code. */
+               if ((rc=strtol(buffer, &p, 10)) != 235 )
+               {
+                  ER_NewError( "SMTP Authentication failed! (CRAM-MD5: %s) Maybe wrong password?\n",buffer,NULL);
+                  rc = SMTP_SERVICE_NOT_AVAILABLE;
+               } else rc = SMTP_ACTION_OK;
+            } else rc = SMTP_SERVICE_NOT_AVAILABLE;
+         } else {
+            ER_NewError( "SMTP Authentication failed! (%s)\n",buffer,NULL);
+            rc = SMTP_SERVICE_NOT_AVAILABLE;
+         }
+      } else rc = SMTP_SERVICE_NOT_AVAILABLE;
+   } else if(ESMTPAuth & AUTH_DIGEST_MD5)
+   {
+      /* Send AUTH command */
+      if(!(TR_SendDat("AUTH DIGEST-MD5\r\n"))) return FALSE;
+  
+      if (ReadLine(SMTPSocket, buffer, SIZE_LINE))
+      {
+         char *p;
+  
+         /* Get return code. */
+         if ((rc=strtol(buffer, &p, 10)) == 334 )
+         {
+            ULONG digest[4];
+            MD5_CTX context;
+  
+            strncpy(challenge,p+1,511); challenge[511]=0;
+            decode64(challenge,challenge,challenge+strlen(challenge));
+  
+            strcat(challenge,C->SMTP_AUTH_Pass);
+            MD5Init(&context);
+            MD5Update(&context, challenge, strlen(challenge));
+            MD5Final((UBYTE *)digest, &context);
+
+            len=sprintf(challenge,"%s %08lx%08lx%08lx%08lx%c%c",C->SMTP_AUTH_User,
+                        digest[0],digest[1],digest[2],digest[3],0,0)-2;
+            encode64(challenge,buffer,len);
+            strcat(buffer,"\r\n");
+  
+            /* Send AUTH response */
+            if(!(TR_SendDat(buffer))) return FALSE;
+  
+            if (ReadLine(SMTPSocket, buffer, SIZE_LINE))
+            {
+               /* Get return code. */
+               if ((rc=strtol(buffer, &p, 10)) != 235 )
+               {
+                  ER_NewError( "SMTP Authentication failed! (DIGEST-MD5: %s) Maybe wrong password?\n",buffer,NULL);
+                  rc = SMTP_SERVICE_NOT_AVAILABLE;
+               } else rc = SMTP_ACTION_OK;
+            } else rc = SMTP_SERVICE_NOT_AVAILABLE;
+         } else {
+            ER_NewError( "SMTP Authentication failed! (%s)\n",buffer,NULL);
+            rc = SMTP_SERVICE_NOT_AVAILABLE;
+         }
+      } else rc = SMTP_SERVICE_NOT_AVAILABLE;
+   } else if(ESMTPAuth & AUTH_LOGIN)
+   {
+      /* Send AUTH command */
+      if(!(TR_SendDat("AUTH LOGIN\r\n"))) return FALSE;
+      /* Get return code */
+      rc = GetReturnCode();
+  
+      if (rc == 334)
+      {
+         len=sprintf(challenge,"%s%c%c",C->SMTP_AUTH_User,0,0)-2;
+         encode64(challenge,buffer,len);
+         strcat(buffer,"\r\n");
+         /* Send AUTH response Username: */
+         if(!(TR_SendDat(buffer))) return FALSE;
+         /* Get return code */
+         rc = GetReturnCode();
+         if (rc == 334)
+         {
+            len=sprintf(challenge,"%s%c%c",C->SMTP_AUTH_Pass,0,0)-2;
+            encode64(challenge,buffer,len);
+            strcat(buffer,"\r\n");
+            /* Send AUTH response Password: */
+            if(!(TR_SendDat(buffer))) return FALSE;
+            /* Get return code */
+            rc = GetReturnCode();
+            if (rc != 235 )
+            {
+               ER_NewError( "SMTP Authentication failed! (LOGIN Password: %s) Maybe wrong password?\n",buffer,NULL);
+               rc = SMTP_SERVICE_NOT_AVAILABLE;
+            } else rc = SMTP_ACTION_OK;
+         } else {
+            ER_NewError( "SMTP Authentication failed! (LOGIN Username: %s) Maybe wrong username?\n",buffer,NULL);
+            rc = SMTP_SERVICE_NOT_AVAILABLE;
+         }
+      } else {
+         ER_NewError( "SMTP Authentication failed! (%s)\n",buffer,NULL);
+         rc = SMTP_SERVICE_NOT_AVAILABLE;
+      }
+   } else if(ESMTPAuth & AUTH_PLAIN)
+   {
+      /* Send AUTH command */
+      if(!(TR_SendDat("AUTH PLAIN\r\n"))) return FALSE;
+      /* Get return code */
+      rc = GetReturnCode();
+  
+      if (rc == 334)
+      {
+         len=sprintf(challenge,"\0%s\0%s",C->SMTP_AUTH_User,C->SMTP_AUTH_Pass);
+         encode64(challenge,buffer,len);
+         strcat(buffer,"\r\n");
+         /* Send AUTH response */
+         if(!(TR_SendDat(buffer))) return FALSE;
+         /* Get return code */
+         rc = GetReturnCode();
+  
+         if (rc != 235 )
+         {
+            ER_NewError( "SMTP Authentication failed! (PLAIN: %s) Maybe wrong password?\n",buffer,NULL);
+            rc = SMTP_SERVICE_NOT_AVAILABLE;
+         } else rc = SMTP_ACTION_OK;
+      } else {
+         ER_NewError( "SMTP Authentication failed! (%s)\n",buffer,NULL);
+         rc = SMTP_SERVICE_NOT_AVAILABLE;
+      }
+   }
+
+   if(SMTP_ACTION_OK==rc) return TRUE;
+   return FALSE;
+}
+///
 /// TR_DisconnectSMTP
 //  Terminates a SMTP session
 void TR_DisconnectSMTP(void)
@@ -1111,7 +1394,11 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       TR_SetWinTitle(FALSE, host);
       if (!(err = TR_Connect(host, port)))
       {
-         if (TR_ConnectSMTP())
+         BOOL connected;
+
+         if (C->SMTP_AUTH_User) connected=TR_ConnectESMTP();
+         else connected=TR_ConnectSMTP();
+         if (connected)
          {
             success = TRUE;
             AppendLogVerbose(41, GetStr(MSG_LOG_ConnectSMTP), host, "", "", "");
