@@ -102,6 +102,7 @@ void MA_SetSortFlag(void)
 {
    struct Folder *fo = FO_GetCurrentFolder();
 
+   if (!fo) return;
    set(G->MA->GUI.NL_MAILS, MUIA_NList_SortType, MA_GetSortType(fo->Sort[0]));
    set(G->MA->GUI.NL_MAILS, MUIA_NList_SortType2, MA_GetSortType(fo->Sort[1]));
 }
@@ -173,7 +174,8 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
   static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
   char *sh = NULL;
   struct Folder *fo = FO_GetCurrentFolder();
-  if (fo->Type != FT_GROUP) SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
+  if (fo && (fo->Type != FT_GROUP))
+    SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
   set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
 }
 MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
