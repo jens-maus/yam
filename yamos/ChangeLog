@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-09  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/Recipientstring.c: fixed bug where a recipientstring allowed
+      to Advance to the next object even if the user entered a non-existent
+      alias. Now the string should stay active and in addition to that
+      present the user a DisplayBeep().
+
 2003-03-08  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: added developer version expiration requester that will be

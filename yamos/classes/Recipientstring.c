@@ -265,18 +265,21 @@ OVERLOAD(MUIM_HandleEvent)
 			{
 				if(data->ResolveOnCR)
 				{
-					DoMethod(obj, MUIM_Recipientstring_Resolve, hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE);
-
-					set(data->Matchwindow, MUIA_Window_Open, FALSE);
-					set(_win(obj), MUIA_Window_ActiveObject, obj);
-
-					// If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
-					// we have to check this within our instance data because Betterstring.mcc is buggy and don`t
-					// return MUIA_String_AdvanceOnCR within a get().
-					if(data->AdvanceOnCR)
+					// only if we successfully resolved the string we move on to the next object.
+					if(DoMethod(obj, MUIM_Recipientstring_Resolve, hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE))
 					{
-						set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+						set(data->Matchwindow, MUIA_Window_Open, FALSE);
+						set(_win(obj), MUIA_Window_ActiveObject, obj);
+
+						// If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
+						// we have to check this within our instance data because Betterstring.mcc is buggy and don`t
+						// return MUIA_String_AdvanceOnCR within a get().
+						if(data->AdvanceOnCR)
+						{
+							set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+						}
 					}
+					else DisplayBeep(NULL);
 
 					result = MUI_EventHandlerRC_Eat;
 				}
