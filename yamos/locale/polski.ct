@@ -1,10 +1,13 @@
-## version $VER: YAM.catalog 5.5 (15.01.2002) © Mariusz Danilewicz <mandi@interia.pl>
+## version $VER: YAM.catalog 5.80 (04.02.2003) (c) Mariusz Danilewicz <mandi@interia.pl>
 ## language polski
 ## codeset 0
 ;
 ;
 ; YAM.cd - YAM 2.4 catalog description file
-;
+; $Id$
+; 
+;#version 5
+;#language english
 ;
 ; General
 ;
@@ -249,12 +252,12 @@ Katalog
 MSG_Copyright1
 Program pocztowy typu Open Source dla Amigi\n\
 \n\
-Copyright © 1995-2000 Marcel Beck\n\
-Copyright © 2000-2002 YAM Open Source Team
+Copyright (c) 1995-2000 Marcel Beck\n\
+Copyright (c) 2000-2003 YAM Open Source Team
 ; Open Source E-mail package for the Amiga\n\
 ; \n\
 ; Copyright © 1995-2000 Marcel Beck\n\
-; Copyright © 2000-2002 YAM Open Source Team
+; Copyright © 2000-2003 YAM Open Source Team
 ;
 MSG_Version
 Wersja:
@@ -281,8 +284,8 @@ Wybierz uûytkownika do zalogowania
 ; Click your name to login
 ;
 MSG_AppDescription
-SMTP/POP3 Klient i Mailer dla AmiTCP
-; SMTP/POP3 Client & Mailer for AmiTCP
+SMTP/POP3 Klient i Mailer dla AmigaOS
+; SMTP/POP3 Client & Mailer for AmigaOS
 ;
 MSG_ErrorStartup
 Bîâd przy starcie
@@ -293,7 +296,7 @@ Skoïcz
 ; Quit
 ;
 MSG_ErrorLib
-Nie mogë otworzyê biblioteki '%s' w wersji %ld
+Nie mogûna otworzyê biblioteki \"%s\" w wersji %ld
 ; Can't open library '%s', version %ld
 ;LIBRARY_NAME, LIBRARY_VERSION
 ;
@@ -306,7 +309,7 @@ Tworzë interfejs uûytkownika...
 ; Creating user interface...
 ;
 MSG_ErrorMuiApp
-Nie mogë stworzyê aplikacji
+Nie moûna utworzyê aplikacji
 ; Can't create application
 ;
 MSG_RebuildIndices
@@ -326,19 +329,19 @@ Inicjalizujë biblioteki i klasy...
 ; Initialising libraries and classes...
 ;
 MSG_ErrorClasses
-Nie mogë stworzyê klas MUI
+Nie moûna utworzyê klas MUI
 ; Can't create MUI custom classes
 ;
 MSG_ErrorAslStruct
-Nie mogë zaalokowaê struktury ASL
+Nie moûna zaalokowaê struktury ASL
 ; Can't allocate ASL structure
 ;
 MSG_ErrorTimer
-Nie mogë otworzyê timer.device
+Nie moûna otworzyê timer.device
 ; Can't open timer.device
 ;
 MSG_ErrorARexx
-Nie mogë utworzyê portu ARexxa
+Nie moûna utworzyê portu ARexx'a
 ; Can't create ARexx port
 ;
 MSG_LoadingGFX
@@ -457,112 +460,112 @@ YAM przerwany
 ; YAM terminated
 ;
 MSG_LOG_LoggedIn
-Zalogowano jako uûytkownik '%s'
+Zalogowano jako uûytkownik \"%s\"
 ; Logged in as user '%s'
 ; USER_NAME
 ;
 MSG_LOG_LoggedInVerbose
-Zalogowano jako uûytkownik '%s', uûywajâc konfiguracji '%s' i katalogu poczty '%s'
+Zalogowano jako uûytkownik \"%s\", uûywajâc konfiguracji \"%s\" i katalogu poczty \"%s\"
 ; Logged in as '%s', using configuration '%s' and mail directory '%s'
 ; USER_NAME, CONFIG_FILE, FOLDER_PATH
 ;
 MSG_LOG_Deleting
-Skasowano %ld wiadomoôci w folderze '%s'
+Skasowano %ld wiadomoôci w folderze \"%s\"
 ; Deleted %ld message(s) in folder '%s'
 ; COUNT, FOLDER
 ;
 MSG_LOG_DeletingVerbose
-Skasowano wiadomoôê od '%s' o '%s' w folderze '%s'
+Skasowano wiadomoôê od \"%s\" o \"%s\" w folderze \"%s\"
 ; Deleted message from '%s' about '%s' in folder '%s'
 ; SENDER, SUBJECT, FOLDER
 ;
 MSG_LOG_Moving
-Przeniesiono %ld wiadomoôci z foldera '%s' do '%s'
+Przeniesiono %ld wiadomoôci z foldera \"%s\" do \"%s\"
 ; Moved %ld message(s) from folder '%s' to '%s'
 ; COUNT, FOLDER, FOLDER
 ;
 MSG_LOG_MovingVerbose
-Przeniesiono wiadomoôê od '%s' o '%s' z foldera '%s' do '%s'
+Przeniesiono wiadomoôê od \"%s\" o \"%s\" z foldera \"%s\" do \"%s\"
 ; Moved message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
 MSG_LOG_Copying
-Skopiowano %ld wiadomoôci z foldera '%s' do '%s'
+Skopiowano %ld wiadomoôci z foldera \"%s\" do \"%s\"
 ; Copied %ld message(s) from folder '%s' to '%s'
 ; COUNT, FOLDER, FOLDER
 ;
 MSG_LOG_CopyingVerbose
-Skopiowano wiadomoôê od '%s' o '%s' z foldera '%s' do '%s'
+Skopiowano wiadomoôê od \"%s\" o \"%s\" z foldera \"%s\" do \"%s\"
 ; Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
 MSG_LOG_ConnectPOP
-Zalogowano sië na konto POP3 '%s@%s': %ld wiadomoôci na koncie
+Zalogowano sië na konto POP3 \"%s@%s\": %ld wiadomoôci na koncie
 ; Logged in on POP3 account '%s@%s': %ld messages waiting
 ; USER_ID, HOST, COUNT
 ;
 MSG_LOG_RetrievingVerbose
-Odebrano wiadomoôê od '%s' o '%s' (%ld bajtów)
+Odebrano wiadomoôê od \"%s\" o \"%s\" (%ld bajtów)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
 ;
 MSG_LOG_Retrieving
-Odebrano %ld wiadomoôci z konta POP3 '%s@%s'
+Odebrano %ld wiadomoôci z konta POP3 \"%s@%s\"
 ; Retrieved %ld message(s) from POP3 account '%s@%s'
 ; COUNT, USER_ID, HOST
 ;
 MSG_LOG_ConnectSMTP
-Poîâczono sië z serwerem SMTP '%s'
+Poîâczono sië z serwerem SMTP \"%s\"
 ; Connected to SMTP server '%s'
 ; HOST
 ;
 MSG_LOG_SendingVerbose
-Wysîano wiadomoôê do '%s' o '%s' (%ld bajtów)
+Wysîano wiadomoôê do \"%s\" o \"%s\" (%ld bajtów)
 ; Sent message to '%s' about '%s' (%ld bytes)
 ; RECIPIENT, SUBJECT, SIZE
 ;
 MSG_LOG_Sending
-Wysîano %ld wiadomoôci uûywajâc serwera SMTP '%s'
+Wysîano %ld wiadomoôci uûywajâc serwera SMTP \"%s\"
 ; Sent %ld message(s) using SMTP server '%s'
 ; COUNT, HOST
 ;
 MSG_LOG_Editing
-Edytowano wiadomoôê od ' %s' do '%s' o '%s'
+Edytowano wiadomoôê od \"%s\" do \"%s\" o \"%s\"
 ; Edited message from '%s' to '%s' about '%s'
 ; SENDER, RECIPIENT, SUBJECT
 ;
 MSG_LOG_Creating
-Napisano nowâ wiadomoôê do '%s' o '%s', doîâczajâc %ld zaîâczników
+Napisano nowâ wiadomoôê do \"%s\" o \"%s\", doîâczajâc %ld zaîâczników
 ; Wrote new message for '%s' about '%s', including %ld attachment(s)
 ; RECIPIENT, SUBJECT, COUNT
 ;
 MSG_LOG_Replying
-Odpisano na wiadomoôê od '%s' o '%s'
+Odpisano na wiadomoôê od \"%s\" o \"%s\"
 ; Replied message from '%s' about '%s'
 ; SENDER, SUBJECT
 ;
 MSG_LOG_Bouncing
-Przekazano wiadomoôê od '%s' o '%s' do '%s'
+Przekazano wiadomoôê od \"%s\" o \"%s\" do \"%s\"
 ; Bounced message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Forwarding
-Podesîano wiadomoôê od '%s' o '%s' do '%s'
+Podesîano wiadomoôê od \"%s\" o \"%s\" do \"%s\"
 ; Forwarded message from '%s' about '%s' to '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Filtering
-Przefiltrowano %ld wiadomoôci w folderze '%s': %ld pasujâcych
+Przefiltrowano %ld wiadomoôci w folderze \"%s\": %ld pasujâcych
 ; Filtered %ld message(s) in folder '%s': %ld match(es)
 ; COUNT, FOLDER, COUNT
 ;
 MSG_LOG_SavingConfig
-Zapisano plik konfiguracyjny '%s'
+Zapisano plik konfiguracyjny \"%s\"
 ; Saved configuration file '%s'
 ; CONFIG_FILE
 ;
 MSG_LOG_SavingABook
-Zapisano ksiâûkë adresowâ '%s'
+Zapisano ksiâûkë adresowâ \"%s\"
 ; Saved address book '%s'
 ; FILENAME
 ;
@@ -571,32 +574,32 @@ Zapisano konfiguracjë uûytkownika
 ; Saved user configuration
 ;
 MSG_LOG_NewAddress
-Dodano do ksiâûki adresowej wpis '%s'
+Dodano do ksiâûki adresowej wpis \"%s\"
 ; Added address book entry '%s'
 ; ALIAS
 ;
 MSG_LOG_Importing
-Importowano %ld wiadomoôci z pliku '%s' do foldera '%s'
+Importowano %ld wiadomoôci z pliku \"%s\" do foldera \"%s\"
 ; Imported %ld message(s) from file '%s' into folder '%s'
 ; COUNT, FILENAME, FOLDER
 ;
 MSG_LOG_Exporting
-Eksportowano %ld wiadomoôci z foldera '%s' do pliku '%s'
+Eksportowano %ld wiadomoôci z foldera \"%s\" do pliku \"%s\"
 ; Exported %ld message(s) from folder '%s' to file '%s'
 ; COUNT, FOLDER, FILENAME
 ;
 MSG_LOG_SavingAtt
-Zapisano zaîâcznik '%s' z wiadomoôci '%s' w folderze '%s'
+Zapisano zaîâcznik \"%s\" z wiadomoôci \"%s\" w folderze \"%s\"
 ; Saved attachment '%s' of message '%s' in folder '%s'
 ; FILENAME, MAILFILE, FOLDER
 ;
 MSG_LOG_CroppingAtt
-Usuniëto zaîâczniki z wiadomoôci '%s' w folderze '%s'
+Usuniëto zaîâczniki z wiadomoôci \"%s\" w folderze \"%s\"
 ; Cropped attachment(s) of message '%s' in folder '%s'
 ; MAILFILE, FOLDER
 ;
 MSG_LOG_ChangingSubject
-Zmieniono temat '%s' wiadomoôci '%s' w folderze '%s' na '%s'
+Zmieniono temat \"%s\" wiadomoôci \"%s\" w folderze \"%s\" na \"%s\"
 ; Changed subject '%s' of message '%s' in folder '%s' to '%s'
 ; SUBJECT, MAILFILE, FOLDER, SUBJECT
 ;
@@ -631,7 +634,7 @@ Brak papieru!
 ; Module MA - Procedures
 ;
 MSG_MA_GetFolderPass
-Folder '%s' jest zabezpieczony.\nPodaj hasîo aby go odblokowaê:
+Folder \"%s\" jest zabezpieczony.\nPodaj hasîo aby go odblokowaê:
 ; Folder '%s' is a protected folder.\n\
 ; Please enter the password to unlock it:
 ; FOLDER
@@ -706,7 +709,7 @@ MSG_MA_xSelected
 ; COUNT
 ;
 MSG_MA_ConfirmFilter
-Czy mam przefiltrowaê wszystkie wiadomoôci\nw folderze '%s'?
+Czy mam przefiltrowaê wszystkie wiadomoôci\nw folderze \"%s\"?
 ; Is it okay to filter all the messages\n\
 ; in the folder '%s'?
 ; FOLDER
@@ -1201,7 +1204,7 @@ MSG_CO_ImportMIMEGads
 ; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
 ;
 MSG_CO_NewIntroDef
-Czeôê,\\\\n
+Czeôê,\\n
 ; Hello,\\\\n
 ;
 MSG_CO_AltRepIntroDef
@@ -1213,14 +1216,14 @@ MSG_CO_AltRepPatternDef
 ; 
 ;
 MSG_CO_ForwardIntroDef
-*** Poczâtek podsylanej wiadomoôci ***\\\\n\
-\\\\n\
-Data:  %d %t\\\\n\
-Od:    %n <%e>\\\\n\
-Temat: %s\\\\n\
-\\\\n\
---- Podsyîana wiadomoôê ---\\\\n\
-\\\\n
+*** Poczâtek podsyîanej wiadomoôci ***\\n\
+\\n\
+Data:  %d %t\\n\
+Od:    %n <%e>\\n\
+Temat: %s\\n\
+\\n\
+--- Podsyîana wiadomoôê ---\\n\
+\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
 ; Date: %d %t\\\\n\
@@ -1231,7 +1234,7 @@ Temat: %s\\\\n\
 ; \\\\n
 ;
 MSG_CO_ForwardFinishDef
-*** Koniec podsyîanej wiadomoôci ***\\\\n
+*** Koniec podsyîanej wiadomoôci ***\\n
 ; *** End of forwarded message ***\\\\n
 ;
 MSG_CO_GreetingsDef
@@ -1251,7 +1254,7 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-Dnia %d, %n napisaî:\\\\n
+Dnia %d, %n napisaî:\\n
 ; On %d, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
@@ -1259,7 +1262,7 @@ Pozdrawiam
 ; Regards
 ;
 MSG_CO_LineBreak
-\\\\n\
+\\n\
   Nowa linia
 ; \\\\n\
 ;   Line break
@@ -2263,7 +2266,7 @@ _Archiwizer
 ; _Archiver
 ;
 MSG_CO_ScriptMenu
-%ld pole menu 'Skrypty'
+%ld pole menu \"Skrypty\"
 ; 'Scripts' menu entry %ld
 ; COUNT
 ;
@@ -2729,7 +2732,7 @@ Dzieli linie w trakcie\npisania wiadomoôci
 ; while entering a message
 ;
 MSG_HELP_CO_CY_EDWRAP
-Wybierz 'kiedy piszesz' aby dzieliê\nlinie w trakcie pisania wiadomoôci
+Wybierz \"kiedy piszesz\" aby dzieliê\nlinie w trakcie pisania wiadomoôci
 ; Select 'as you type' to insert linebreak\n\
 ; codes while you're typing the message
 ;
@@ -2942,7 +2945,7 @@ Adres i opcjonalnie numer portu Twojego poôrednika\nserwera HTTP (standardowy po
 ; You may leave this field empty.
 ;
 MSG_HELP_CO_ST_NEWGROUP
-Dodaje nowe wpisy do ksiâûki adresowej do tej\ngrupy (jeôli nie istnieje, zostanie stworzona)
+Dodaje nowe wpisy do ksiâûki adresowej do tej\ngrupy (jeôli nie istnieje, zostanie utworzona)
 ; Add new address book entries to this group (it\n\
 ; will be created if it doesn't exist yet)
 ;
@@ -2962,7 +2965,7 @@ Standardowy katalog úródîowy\ndla zaîâczników
 ; for attachments
 ;
 MSG_HELP_CO_ST_APP
-Pozycja AppIkony skrzynki\nw pikselach
+Pozycja AppIkonki skrzynki\nw pikselach
 ; Position of the mailbox\n\
 ; AppIcon in pixels
 ;
@@ -3040,7 +3043,7 @@ Archiwizer i opcje uûywane do\npakowania zaîâczników
 ; to create compressed attachments
 ;
 MSG_HELP_CO_ST_RXNAME
-Opis skryptów w menu 'Skrypty'
+Opis skryptów w menu \"Skrypty\"
 ; Description of the script\n\
 ; in the 'Scripts' menu
 ;
@@ -3645,7 +3648,7 @@ Zapisywanie wiadomoôci...
 ; Save message...
 ;
 MSG_RE_Overwrite
-Plik '%s' juû istnieje.\nCzy chcesz go zastâpiê?
+Plik \"%s\" juû istnieje.\nCzy chcesz go zastâpiê?
 ; File '%s' already exists.\n\
 ; Do you want to overwrite it?
 ; FILENAME
@@ -4235,7 +4238,7 @@ Potwie_rdú odbiór
 ;
 MSG_WR_GetMDN
 Ôledú _wiadomoôê (MDN)
-; Track _message
+; Track _message (MDN)
 ;
 MSG_WR_AddInfo
 Dodaj _informacje osobowe
@@ -4624,24 +4627,24 @@ Wybierz jednâ z tych opcji aby wysîaê\nwiadomoôê podpisanâ przez PGP, zakodowanâ
 ; or anonymously
 ;
 MSG_HELP_WR_BT_HOLD
-Kopiuje stworzonâ wiadomoôê\ndo foldera Wychodzâce\ni ustawia jej status na Zatrzymana
+Kopiuje utworzonâ wiadomoôê\ndo foldera Wychodzâce\ni ustawia jej status na Zatrzymana
 ; Copy the created message to\n\
 ; the outgoing mail folder\n\
 ; and set its status to HOLD
 ;
 MSG_HELP_WR_BT_QUEUE
-Kopiuje stworzonâ wiadomoôê\ndo foldera Wychodzâce
+Kopiuje utworzonâ wiadomoôê\ndo foldera Wychodzâce
 ; Copy the created message to\n\
 ; the outgoing mail folder
 ;
 MSG_HELP_WR_BT_SEND
-Kopiuje stworzonâ wiadomoôê\ndo foldera Wychodzâce\ni wysyîa jâ natychmiast
+Kopiuje utworzonâ wiadomoôê\ndo foldera Wychodzâce\ni wysyîa jâ natychmiast
 ; Copy the created message to\n\
 ; the outgoing mail folder\n\
 ; and send it immediately
 ;
 MSG_HELP_WR_BT_CANCEL
-Usuwa stworzonâ\nwiadomoôê
+Usuwa utworzonâ\nwiadomoôê
 ; Discard the\n\
 ; created message
 ;
@@ -4690,7 +4693,7 @@ Uûywam filtrów zdalnych...
 ; Applying remote filters...
 ;
 MSG_TR_SendHello
-Wysyîam 'Hello'...
+Wysyîam \"Hello\"...
 ; Sending 'Hello'...
 ;
 MSG_TR_MessageGauge
@@ -4875,19 +4878,19 @@ _Zamknij okno
 ; Module ER - Error Messages
 ;
 MSG_ER_ErrorTTable
-Nie mogë otworzyê tabeli zmiany zestawu znaków '%s'\n(nie istniejâcy lub zîy format).
+Nie moûna otworzyê tabeli zmiany zestawu znaków \"%s\"\n(nie istniejâcy lub zîy format).
 ; Couldn't open translation table '%s'\n\
 ; (non existent or wrong format).
 ; FILENAME
 ;
 MSG_ER_CantCreateFile
-Nie mogë zapisaê do pliku '%s'. Upewnij sië, czy ôcieûka dostëpu istnieje i wolumen nie jest zabezpieczony przed zapisem.
-; Can't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
+Nie moûna zapisaê do pliku \"%s\". Upewnij sië, czy ôcieûka dostëpu istnieje i wolumen nie jest zabezpieczony przed zapisem.
+; Couldn't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
 ; FILENAME
 ;
 MSG_ER_CantCreateDir
-Nie mogë stworzyê katalogu '%s'. Upewnij sië, czy wolumen nie jest zabezpieczony przed zapisem.
-; Can't create directory '%s'. Make sure that the volume isn't write-protected.
+Nie moûna utworzyê katalogu \"%s\". Upewnij sië, czy wolumen nie jest zabezpieczony przed zapisem.
+; Couldn't create directory '%s'. Make sure that the volume isn't write-protected.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias
@@ -4903,7 +4906,7 @@ Data urodzin jest w zîym formacie. Poprawny format to DD-MMM-RRRR (nazwy miesiëc
 ; Date of birth is in wrong format. The correct format is DD-MMM-YYYY (month names in English).
 ;
 MSG_ER_NotInGallery
-Nie mogë znaleúê tej osoby w Galerii Uûytkowników YAM-a. Ta osoba nie jest wpisana do bazy, albo jej/jego imië lub adres jest bîëdnie wpisane.
+Nie moûna znaleúê tej osoby w Galerii Uûytkowników YAM-a. Ta osoba nie jest wpisana do bazy, albo jej/jego imië lub adres jest bîëdnie wpisane.
 ; Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or his/her name or address is mispelt.
 ;
 MSG_ER_NoTCP
@@ -4924,21 +4927,21 @@ Osiâgniëta maksymalna liczba filtrów! Nie moûesz dodaê wiëcej filtrów.
 ; Maximum number of filters reached! You can't add more filters.
 ;
 MSG_ER_CantOpenTempfile
-Nie mogë otworzyê pliku tymczasowego '%s'. Sprawdú ôcieûkë dostëpu w konfiguracji.
-; Can't open temporary file '%s'. Check the path settings in the configuration.
+Nie moûna otworzyê pliku tymczasowego \"%s\". Sprawdú ôcieûkë dostëpu w konfiguracji.
+; Couldn't open temporary file '%s'. Check the path settings in the configuration.
 ; FILENAME
 ;
 MSG_ER_CantCreateTempfile
-Nie mogë stworzyê pliku tymczasowego. Powód: brak pamiëci lub niewîaôciwie podana ôcieûka dostëpu w konfiguracji.
-; Can't create temporary file. Reason: out of memory or invalid path specified in the configuration.
+Nie moûna utworzyê pliku tymczasowego. Powód: brak pamiëci lub niewîaôciwie podana ôcieûka dostëpu w konfiguracji.
+; Couldn't create temporary file. Reason: out of memory or invalid path specified in the configuration.
 ;
 MSG_ER_ErrorConsole
-Nie mogë otworzyê okna konsoli dla skryptu.
-; Can't open console window for script.
+Nie moûna otworzyê okna konsoli dla skryptu.
+; Couldn't open console window for script.
 ;
 MSG_ER_ErrorARexxScript
-Nie mogë wysîaê polecenia ARexxa '%s'. Sprawdú czy ten skrypt istnieje.
-; Can't send ARexx command '%s'. Make sure that the script exists.
+Nie moûna wysîaê polecenia ARexx'a \"%s\". Sprawdú czy ten skrypt istnieje.
+; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
 MSG_ER_UnexpEOFB64
@@ -4955,8 +4958,8 @@ Niewîaôciwa dîugoôê linii w pliku kodowanym przy uûyciu kodowania UU: %lD. Byî u
 ; SIZE
 ;
 MSG_ER_CreateMailError
-Nie mogë stworzyê pliku poczty. Powód: niewîaôciwy katalog foldera lub brak miejsca na dysku.
-; Can't create mail file. Reason: invalid folder directory or unsufficient diskspace.
+Nie moûna utworzyê pliku poczty. Powód: niewîaôciwy katalog foldera lub brak miejsca na dysku.
+; Couldn't create mail file. Reason: invalid folder directory or unsufficient diskspace.
 ;
 MSG_ER_UnknownEnc
 Nieznane kodowanie MIME: %s. YAM nie moûe zdekodowaê czëôci wiadomoôci. Zapisz wiadomoôê na dysk i spróbuj innego dekodera.
@@ -4973,16 +4976,16 @@ Niekompletna wiadomoôê wieloczëôciowa: nieoczekiwany koniec pliku. Wiadomoôê moû
 ; Incomplete multipart message: unexpected end of file. The message seems to be truncated.
 ;
 MSG_ER_MIMEError
-Nie mogë odtworzyê wiadomoôci MIME. Wiadomoôê zawiera úle utworzone czëôci MIME lub jest pusta albo uszkodzona.
-; Can't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
+Nie moûna odtworzyê wiadomoôci MIME. Wiadomoôê zawiera úle utworzone czëôci MIME lub jest pusta albo uszkodzona.
+; Couldn't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
 ;
 MSG_ER_MissingBoundary
 Zaginâî separator w wiadomoôci wieloczëôciowej. Wiadomoôê moûe byê uszkodzona.
 ; Missing boundary in multipart message. The message seems to be truncated.
 ;
 MSG_ER_CantOpenFile
-Nie mogë odczytaê pliku '%s'. Plik prawdopodobnie nie istnieje.
-; Can't read from file '%s'. The file doesn't seem to exist.
+Nie moûna odczytaê pliku \"%s\". Plik prawdopodobnie nie istnieje.
+; Couldn't read from file '%s'. The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize
@@ -4992,38 +4995,39 @@ Zdekodowana dîugoôê pliku [%lD] nie zgadza sië z dîugoôciâ oryginalnâ [%lD]. Wad
 ; SIZE, SIZE
 ;
 MSG_ER_DocNotFound
-Dokument HTML '%s' nie znaleziony. Plik nie istnieje na serwerze WWW.
+Dokument HTML \"%s\" nie znaleziony. Plik nie istnieje na serwerze WWW.
 ; HTML document '%s' not found. The file doesn't exist on the WWW server.
 ; FILENAME
 ;
 MSG_ER_SendHTTP
-Nie mogë wysîaê ûâdania HTTP. Ûâdanie dokumentu z serwera WWW nie powiodîo sië.
-; Can't send HTTP request. Requesting a document from the WWW server failed.
+Nie moûna wysîaê ûâdania HTTP. Ûâdanie dokumentu z serwera WWW nie powiodîo sië.
+; Couldn't send HTTP request. Requesting a document from the WWW server failed.
 ;
 MSG_ER_ConnectHTTP
-Nie mogë poîâczyê sië z serwerem WWW '%s'. Moûliwe powody: TCP/IP nie uruchomiony, zîy adres, serwer jest teraz nieczynny lub nie obsîuguje ûâdaï HTTP.
-; Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
+Nie moûna poîâczyê sië z serwerem WWW \"%s\". Moûliwe powody: TCP/IP nie uruchomiony, zîy adres, serwer jest teraz nieczynny lub nie obsîuguje ûâdaï HTTP.
+; Couldn't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
 MSG_ER_BadResponse
-Zîa odpowiedú na polecenie %s:\n%s\nSerwer poczty nie moûe wykonaê tego polecenia i odpowiedziaî komunikatem bîëdu.
-; Bad %s command response: %s.\n\
+Zîa odpowiedú na polecenie %s:\n %s\n\
+Serwer poczty nie moûe wykonaê tego polecenia i odpowiedziaî komunikatem bîëdu.
+; Bad %s command response:\n%s\n\
 ; The mail server couldn't execute the command and replied with the error message.
 ; COMMAND, TEXT
 ;
 MSG_ER_UnknownPOP
-Nieznany serwer POP3: '%s'. TCP/IP wyîâczone lub niewîaôciwy adres serwera.
+Nieznany serwer POP3: \"%s\". TCP/IP wyîâczone lub niewîaôciwy adres serwera.
 ; Unknown POP3 server: '%s'. TCP/IP is off-line or the server address is invalid.
 ; HOST
 ;
 MSG_ER_UnknownSMTP
-Nieznany serwer SMTP: '%s'. TCP/IP wyîâczone lub niewîaôciwy adres serwera.
+Nieznany serwer SMTP: \"%s\". TCP/IP wyîâczone lub niewîaôciwy adres serwera.
 ; Unknown SMTP server: '%s'. TCP/IP is off-line or the server address is invalid.
 ; HOST
 ;
 MSG_ER_CantConnect
-Nie mogë poîâczyê sië z '%s'. Serwer poczty chwilowo wyîâczony lub nie obsîuguje protokoîu POP3/SMTP.
-; Can't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
+Nie moûna poîâczyê sië z \"%s\". Serwer poczty chwilowo wyîâczony lub nie obsîuguje protokoîu POP3/SMTP.
+; Couldn't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
 ; HOST
 ;
 MSG_ER_NoAPOP
@@ -5041,7 +5045,7 @@ Poîâczenie TCP/IP zerwane.
 ; TCP/IP connection broken, probably due to a carrier drop.
 ;
 MSG_ER_InvalidAddress
-Niewîaôciwy adres '%s'. Serwer SMTP nie akceptuje adresu. Sprawdú niedozwolone znaki.
+Niewîaôciwy adres \"%s\". Serwer SMTP nie akceptuje adresu. Sprawdú niedozwolone znaki.
 ; Invalid address '%s'. The SMTP server didn't accept the address. Check for illegal characters.
 ; ADDRESS
 ;
@@ -5052,7 +5056,7 @@ Bîâd przy odczycie pliku poczty: %s.\nPlik istnieje, ale wystëpuje bîâd przy jeg
 ; FILENAME
 ;
 MSG_ER_UserRemoved
-Katalog '%s' nie znaleziony!\nUûytkownik %s zostaî usuniëty.
+Katalog \"%s\" nie znaleziony!\nUûytkownik %s zostaî usuniëty.
 ; Directory '%s' not found!\n\
 ; User %s has been removed.
 ; PATH
@@ -5070,13 +5074,13 @@ Nie znaleziono klucza publicznego PGP. Upewnij sië, ûe pakiet PGP jest zainstalo
 ; No public PGP keys found. Make sure that PGP is installed and the required settings are made in the configuration of YAM.
 ;
 MSG_ER_PGPreturnsError
-Nastëpujâce polecenie PGP zwróciîo bîâd: '%s'\nAby uzyskaê wiëcej informacji sprawdú plik %s.
+Nastëpujâce polecenie PGP zwróciîo bîâd: \"%s\"\nAby uzyskaê wiëcej informacji sprawdú plik %s.
 ; The following PGP command returned with an error: '%s'\n\
 ; Check the file %s for a diagnosis.
 ; COMMAND, FILENAME
 ;
 MSG_ER_PGPnotfound
-Nie mogë wykonaê polecenia PGP.\nSprawdú czy plik %s istnieje.
+Nie moûna wykonaê polecenia PGP.\nSprawdú czy plik %s istnieje.
 ; Couldn't execute PGP command.\n\
 ; Check if %s exists.
 ; FILENAME
@@ -5101,13 +5105,13 @@ Adres nie mieôci sië w polu. Uûyj listy dystrybucyjnej aby rozwiâzaê ten problem
 ; Addresses don't fit in string gadget. Use a distribution list to avoid this problem.
 ;
 MSG_ER_ErrorNoPGPId
-Nie mogë znaleúê identyfikatora PGP dla '%s' w ksiâûce adresowej, teraz próbujë '%s'.
+Nie moûna znaleúê identyfikatora PGP dla \"%s\" w ksiâûce adresowej, teraz próbujë \"%s\".
 ; Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
 ; RECIPIENT, ADDRESS
 ;
 MSG_ER_ErrorAppendKey
-Nie mogë doîâczyê  klucza publicznego PGP %s. Nie moûna wyciâgnâê go z PGP keyring.
-; Can't append public PGP key %s. There was a problem extracting it from the PGP keyring.
+Nie moûna doîâczyê  klucza publicznego PGP %s. Nie moûna wyciâgnâê go z PGP keyring.
+; Couldn't append public PGP key %s. There was a problem extracting it from the PGP keyring.
 ; KEY_ID
 ;
 ; Module DI - Window
@@ -5418,7 +5422,7 @@ MSG_US_RemoveReqGads
 ; *_Okay|_Keep files|_Cancel
 ;
 MSG_US_ErrorNoDirectory
-Katalog poczty nie znaleziony.\nCzy chcesz go stworzyê?
+Katalog poczty nie znaleziony.\nCzy chcesz go utworzyê?
 ; Mail directory not found.\n\
 ; Do you want to create it?
 ;
@@ -5512,7 +5516,7 @@ Opcjonalna nazwa separatora
 ; Optional label for the separator
 ;
 MSG_FO_NewFolderReq
-Jakich ustawieï chcesz uûyê dla nowego folderu?\nWybierz 'Istniejâcy katalog' jeôli folder juû istnieje\nna Twoim dysku
+Jakich ustawieï chcesz uûyê dla nowego folderu?\nWybierz \"Istniejâcy katalog\" jeôli folder juû istnieje\nna Twoim dysku
 ; What settings do you want to use for the new folder?\n\
 ; Select 'Existing directory' if the folder already exists\n\
 ; on your disk
@@ -5667,7 +5671,7 @@ Uûywa tego adresu odbiorcy do\nodpowiadania na listë dyskusyjnâ
 ; BUSY messages
 ;
 MSG_BusySavingAB
-Zapisujë ksiâûkë adresowâ '%s'...
+Zapisujë ksiâûkë adresowâ \"%s\"...
 ; Saving address book '%s'...
 ; FILENAME
 ;
@@ -5723,17 +5727,17 @@ Pobieram informacje o nowszej wersji...
 ; Getting update information...
 ;
 MSG_BusyLoadingIndex
-Wczytujë indeks foldera '%s'...
+Wczytujë indeks foldera \"%s\"...
 ; Loading index of folder '%s'...
 ; FOLDER
 ;
 MSG_BusySavingIndex
-Zapisujë indeks foldera '%s'...
+Zapisujë indeks foldera \"%s\"...
 ; Saving index of folder '%s'...
 ; FOLDER
 ;
 MSG_BusyScanning
-Przeszukujë katalog foldera '%s'...
+Przeszukujë katalog foldera \"%s\"...
 ; Scanning directory of folder '%s'...
 ; FOLDER
 ;
@@ -5781,7 +5785,7 @@ Skrypt AmigaDOS
 ; AmigaDOS script
 ;
 MSG_CTapplicationrexx
-Skrypt ARexxa
+Skrypt ARexx'a
 ; Rexx script
 ;
 ; ADDED AFTER 04-DEC-2000
@@ -6152,7 +6156,7 @@ appikonki programu?
 ; YAM AppIcon's label?
 ;
 MSG_ERROR_IMGLOAD
-Nie mogë wczytaê obrazka\nPROGDIR:Icons/%s.
+Nie moûna wczytaê obrazka\nPROGDIR:Icons/%s.
 ; The image file\nPROGDIR:Icons/%s\ncouldn't be loaded.
 ;
 MSG_OPENGUI
@@ -6160,7 +6164,7 @@ Otwieram GUI...
 ; Opening GUI...
 ;
 MSG_ERR_OPENLIB
-Nie mogë otworzyê biblioteki '%s', w wersji v%lu.%lu
+Nie moûna otworzyê biblioteki \"%s\", w wersji v%lu.%lu
 ; Can't open '%s', version v%lu.%lu
 ;LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
@@ -6237,7 +6241,7 @@ Poszukiwanie
 ; Search
 ;
 MSG_SEARCHNOTFOUND_MSG
-Ciâg '%s' nie zostaî znaleziony
+Ciâg \"%s\" nie zostaî znaleziony
 ; '%s' not found
 ;
 MSG_SEARCHNOTFOUND_BUTTON
@@ -6277,9 +6281,9 @@ Proszë podaê nazwë nowej grupy folderów:
 ; Please enter a name for the new folder group:
 ;
 MSG_ER_CANTMOVEMAIL
-Nie mogë przenieôê wiadomoôci '%s' do foldera '%s' poniewaû folder o takiej \
+Nie moûna przenieôê wiadomoôci \"%s\" do foldera \"%s\" poniewaû folder o takiej \
 nazwie nie istnieje. Proszë sprawdziê konfiguracjë filtrów.
-; Can't move mail '%s' to folder '%s' because a folder with that name doesn't exist. \
+; Couldn't move mail '%s' to folder '%s' because a folder with that name doesn't exist. \
 ; Please check your Filters configuration.
 ; MAILFILE, FOLDERNAME
 ;
@@ -6338,7 +6342,7 @@ przeskanowanie pierwszych 5 wiadomoôci w folderze.
 ; first 5 emails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED
-Nie mogë rozpoznaê!
+Nie moûna rozpoznaê!
 ; Couldn't be recognized!
 ;
 MSG_FO_MAXAGEFMT
@@ -6356,7 +6360,7 @@ MSG_CO_NB_EMAILCACHEFMT
 MSG_HELP_CO_NB_EMAILCACHE
 Rozmiar bufora ostatnio uûywanych odbiorców\n\
 nieobecnych w ksiâûce adresowej.\n\
-Ustawienie 0 wyîâczy tâ opcjë.
+Ustawienie 0 wyîâczy të opcjë.
 ; Cache size for the most recently used\n\
 ; recipients not yet in the address book.\n\
 ; Select 0 mails to disable this feature.
@@ -6420,14 +6424,14 @@ Inicjalizujë sesjë TLSv1/SSLv3...
 ; Initializing TLSv1/SSLv3 session...
 ;
 MSG_ER_INITAMISSL
-Nie mogë zainicjalizowaê biblioteki amissl.library - obsîuga TLSv1/SSLv3 \
+Nie moûna zainicjalizowaê biblioteki amissl.library - obsîuga TLSv1/SSLv3 \
 wyîâczona. Proszë sprawdziê poprawnoôê instalacji AmiSSL i uruchomiê \
 ponownie program.
 ; Couldn't init amissl.library - TLSv1/SSLv3 support disabled. \
 ; Please check your AmiSSL installation and restart YAM.
 ;
 MSG_ER_INITTLS
-Nie mogë zainicjalizowaê sesji TLSv1/SSLv3 dla %s
+Nie moûna zainicjalizowaê sesji TLSv1/SSLv3 dla %s
 ; Couldn't initialize TLSv1/SSLv3 session for %s
 ;
 MSG_TR_SENDAUTH
@@ -6447,4 +6451,179 @@ Gîównie dla uûytkowników cyrylicy.
 MSG_CO_IMPORTMIMETITLE
 Importuj typy i przeglâdarki MIME
 ; Import MIME viewers & types
+;
+MSG_ER_TRANSFERMAIL
+Nie moûna przenieôê wiadomoôci \"%s\" do foldera \"%s\"\n\
+Moûliwe iû plik nie istnieje, lub z pewnych powodów nie moûe zostaê skopiowany.
+; Couldn't transfer mail '%s' to folder '%s'.\n\
+; Either the file doesn't exist or it couldn't be copied for some reason.
+; MAILFILE, FOLDERNAME
+MSG_ER_IMPORTMAIL
+Nie moûna zaimportowaê ûadnych wiadomoôci z pliku \"%s\"\n\
+Upewnij sië, iû plik naprawdë zawiera wiadomoôci \
+w standardowym formacie MBOX (oddzielone pojedynczâ liniâ \"FROM\").
+; Couldn't import any mail from file '%s'.\n\
+; Please make sure that this file really contains emails \
+; in the standard MBOX format (separated by a single \
+; "From " line).
+; FILENAME
+MSG_ER_ADDRBOOKLOAD
+Nie moûna odczytaê ksiâûki adresowej z pliku \"%s\".\n\
+Plik nie istnieje lub nie moûe zostaê otworzony.
+; Couldn't load address book from file '%s'.\n\
+; Either the file doesn't exist or it couldn't be opened for some reason.
+; FILENAME
+MSG_AB_NOYAMADDRBOOK
+Plik \"%s\" nie jest plikiem ksiâûki adresowej programu YAM.\n\
+Czy nadal chcesz przetwarzaê ten plik jakby zawieraî\n\
+adresy e-mail w oddzielnych liniach?
+; The file '%s' isn't a valid YAM address book file.\n\
+; Do you still want it to be processed as a file\n\
+; containing email addresses on separate lines?
+; FILENAME
+MSG_AB_NOYAMADDRBOOK_GADS
+_Tak|*_Nie
+; _Yes|*_No
+;
+MSG_FO_EDIT_FGROUP
+Preferencje - Grupa folderów
+; Folder group preferences
+;The item in the context menu
+MSG_FO_EDIT_FGROUPREQ
+Nazwa grupy folderów:
+; Name of folder group:
+;
+MSG_ER_UNUSABLEAMISSL
+Zaznaczyîeô TLSv1/SSLv3 dla etgo poîâczenia, ale AmiSSL nie moûe \
+zostaê zainicowany. Proszë sprawdziê instalacjë AmiSSL \
+lub wyîâczyê TLS/SSL dla tego poîâczenia.
+; You have selected TLSv1/SSLv3 for this connection, but AmiSSL \
+; couldn't be initialized. Please check your AmiSSL installation \
+; or disable TLS/SSL for this connection.
+;
+MSG_NO_MCC
+Nie moûna otworzyê klasy MUI \"%s\" V%lu.%lu.\n\
+Klasa nie jest zainstalowana.
+; Couldn't open MUI custom class '%s' V%lu.%lu.\n\
+; The class is not installed.
+;
+MSG_MCC_OLD
+Nie moûna otworzyê klasy MUI \"%s\" V%lu.%lu.\n\
+Obecnie masz zainstalowanâ V%lu.%lu, tak wiëc \n\
+potrzebujesz uaktualnienia.
+; Couldn't open MUI custom class '%s' V%lu.%lu.\n\
+; You currently have V%lu.%lu installed, thus need\n\
+; to upgrade.
+;
+MSG_MCC_IN_USE
+Nie moûna otworzyê klasy MUI \"%s\" V%lu.%lu.\n\
+%lu.%lu jest obecnie uûywana przez inne aplikacje.\n\
+Po zainstalowaniu wymaganej wersji, zakoïcz\n\
+dziaîanie wszystkich aplikacji MUI i spróbuj ponownie.
+; Couldn't open MUI custom class '%s' V%lu.%lu.\n\
+; %lu.%lu is currently in use by other applications.\n\
+; Once you have installed the required version,\n\
+; close all MUI programs and try again.
+;
+MSG_RETRY_QUIT_GAD
+Spróbuj ponownie|Skoïcz
+; Try again|Quit
+;
+MSG_ER_NOSTARTTLS
+Serwer SMTP z którym próbujesz sië poîâczyê nie obsîuguje poîâczeï \
+TLS/SSL, a wîâczyîeô obsîugë TLSv1/SSLv3 w konfiguracji. Sprawdú \
+dokîadniej parametry serwera i popraw konfiguracjë.
+; The SMTP server you tried to connect to doesn't support TLS/SSL, \
+; but TLSv1/SSLv3 was enabled in the configuration. Please check \
+; your configuration.
+;
+MSG_ER_NOAUTHUSERPASS
+Nie podano uûytkownika lub hasîa dla poîâczenia SMTP-AUTH \
+które YAM próbowaî ustanowiê. Proszë sprawdziê konfiguracjë.
+; No username or password was specified for the SMTP AUTH connection \
+; YAM was trying to establish. Please check your configuration.
+;
+MSG_ER_POPWELCOME
+Serwer POP odpowiedziaî komunikatem bîëdu podczas procedury \
+powitania i poîâczenie zostaîo przerwane:\n\n%s\n
+; The POP server replied with an error message during the welcome \
+; procedure and the connection was terminated:\n\n%s\n
+;
+MSG_CO_APPICON_LABEL
+Nowych: %n  Razem: %t
+; New: %n Total: %t
+;
+MSG_DATE_RECEIVED
+Otrzymano
+; Received
+;
+MSG_DATE_SENT
+Wysîano
+; Sent
+;
+MSG_DATE_SNTRCVD
+Wysîano/Otrzymano
+; Sent/Received
+;
+MSG_CO_DATE_SNTRCVD
+Data wysîania/otrzymania
+; Date Sent/Received
+;
+MSG_FROMTO
+Od/Do
+; From/To
+;
+MSG_HELP_CO_CA_COL1QUOT
+Ustala kolor uûywany do wyôwietlania cytowanego tekstu
+; Adjust the color used for displaying quotes
+;
+MSG_HELP_CO_CA_COL3QUOT
+Ustala kolor uûywany do wyôwietlania 3 poziomu cytowanego tekstu
+; Adjust the color used for displaying 3rd level quotes
+;
+MSG_HELP_CO_CA_COL4QUOT
+Ustala kolor uûywany do wyôwietlania 4 poziomu cytowanego tekstu
+; Adjust the color used for displaying 4th level quotes
+;
+MSG_CO_URLCOLOR
+Kolor URL
+; URL color
+;
+MSG_HELP_CO_CA_COLURL
+Ustala kolor uûywany do wyôwietlania adresów URL
+; Adjust the color used for displaying clickable URL links
+;
+MSG_FO_FOLDEREXISTS
+Plik lub katalog w okreôlonej ôcieûce dostëpu do folderu juû istnieje.\n\
+Czy na pewno chcesz kontynuowaê?
+; A file or directory with the given folder path already exists.\n\
+; Do you really want to proceed?
+;
+MSG_FO_FOLDERMOVE
+Czy na pewno chcesz przenieôê folder w inne miejsce?
+; Do you really want to move the folder to another path?
+;
+MSG_FO_FOLDERNAMEINVALID
+Nie podano nazwy foldera lub podano nazwë istniejâcego foldera.\n\
+Przed kontynuacjâ proszë podaê wlaôciwâ nazwë foldera.
+; The specified folder name is empty or already exists.\n\
+; Please enter a valid folder name before you proceed.
+;
+MSG_FO_FOLDERPATHINVALID
+Nie okreôliîeô ôcieûki dostëpu dla nowego foldera.\n\
+Przed kontynuacjâ proszë podaê wîaôciwâ ôcieûkë dostëpu do foldera.
+; You haven`t specified a path for the new folder.\n\
+; Please enter a valid path for the folder before you proceed.
+;
+MSG_MA_TOMARKED
+/\000Zaznaczone
+; /\000Marked
+;
+MSG_MA_TOUNMARKED
+*\000Odznaczone
+; *\000Unmarked
+;
+MSG_RE_SETMARKED
+Ustaw status na zaznaczone
+; Set status to marked
 ;
