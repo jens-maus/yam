@@ -1319,7 +1319,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       // only if the user want to proceed we go on.
       if(result)
       {
-        if(isCryptedFolder(&folder) && !FO_EnterPassword(&folder)) CLEAR_FLAG(folder.XPKType, XPK_CRYPT);
+        if(isCryptedFolder(&folder) && FO_EnterPassword(&folder) == FALSE) return;
+
         if(CreateDirectory(GetFolderDir(&folder)))
         {
           if(FO_SaveConfig(&folder))
