@@ -45,6 +45,7 @@
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
+#include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
@@ -130,7 +131,6 @@ static struct DateStamp *MA_ScanDate(char *date);
 ***************************************************************************/
 
 /*** Index Maintenance ***/
-
 /// MA_PromptFolderPassword
 //  Asks user for folder password
 BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
@@ -779,63 +779,97 @@ static BOOL MA_DetectUUE(FILE *fh)
 //  Reads header lines of a message into memory
 BOOL MA_ReadHeader(FILE *fh)
 {
-  char *buffer, *ptr, *head;
-  char *ptr2;
+  char *buffer, *ptr;
   BOOL success = FALSE;
-  char prevcharset[SIZE_DEFAULT];
+  BOOL finished = FALSE;
   int linesread = 0;
 
   if((buffer = calloc(SIZE_LINE, sizeof(char))))
   {
-    if((head = calloc(SIZE_LINE, sizeof(char))))
+    FreeData2D(&Header);
+
+    // we read out the whole header line by line and
+    // concatenate lines that are belonging together.
+    while(GetLine(fh, buffer, SIZE_LINE) && ++linesread && buffer[0] ||
+          (finished == FALSE,finished = TRUE))
     {
-      FreeData2D(&Header);
+      BOOL linestart = TRUE;
 
-      while(GetLine(fh, buffer, SIZE_LARGE) && ++linesread && buffer[0])
+      // if the start of this line is a space or a tabulator sign
+      // this line belongs to the last header also and we have to
+      // add it to the last one.
+      if((buffer[0] == ' ' || buffer[0] == '\t') &&
+         Header.Used && finished==FALSE)
       {
-        BOOL linestart = TRUE;
+        // move to the "real" start of the string so that we can copy
+        // from there to our previous header.
+        for(ptr = buffer; *ptr && isspace(*ptr); ptr++);
 
-        memset(head, 0, SIZE_LINE);
-        strcpy(prevcharset, "us-ascii");
-        RE_ProcessHeader(prevcharset, buffer, TRUE, head);
+        // we want to preserve the last space so that this headerline
+        // is correctly connected
+        if(ptr != buffer) *(--ptr) = ' ';
 
-        // Now we have to process the head and strip out every Escape Sequence
-        // This is needed to make it impossible to execute commands in MUI
-        // elements with those escape sequences because it can be dangerous !
-        for(ptr2=head; *ptr2; ptr2++)
+        // now concatenate this new headerstring to our previous one
+        ptr = StrBufCat(Header.Data[Header.Used-1], ptr);
+      }
+      else
+      {
+        // it seems that we have found another header line because
+        // it didn`t start with a linear-white-space, so lets
+        // first validate the previous one, if it exists.
+        if(Header.Used)
         {
-          // if we find a ESC sequence, strip it!
-          if(*ptr2 == 0x1b)       { *ptr2 = ' '; linestart = FALSE; }
-          else if(!success && linestart)
+          char *prevHeader = Header.Data[Header.Used-1];
+          int len;
+
+          // we first decode the header according to RFC 2047 which
+          // should give us the full charset interpretation
+          if((len = rfc2047_decode(prevHeader, prevHeader, strlen(prevHeader),
+             (G->TTin && G->TTin->Header) ? G->TTin : NULL)) == -1)
           {
-            // we also need to analyse if we at least found one valid headerline
-            // or not, because then wenn need to return FALSE
-            if(*ptr2 == ':') success = TRUE;
-            else if(isspace(*ptr2)) linestart = FALSE;
+            DB(kprintf("ERROR: malloc() error during rfc2047() decoding\n");)
+            break; // break-out
+          }
+          else if(len == -2)
+          {
+            DB(kprintf("WARNING: unknown header encoding found\n");)
+
+            // signal an error but continue.
+            ER_NewError(GetStr(MSG_ER_UnknownHeaderEnc), prevHeader, NULL);
+          }
+          else if(len == -3)
+          {
+            DB(kprintf("WARNING: base64 header decoding failed\n");)
+          }
+
+          // now that we have decoded the headerline accoring to rfc2047
+          // we have to strip out eventually existing ESC sequences as
+          // this can be dangerous with MUI.
+          for(ptr=prevHeader; *ptr; ptr++)
+          {
+            // if we find a ESC sequence, strip it!
+            if(*ptr == 0x1b) { *ptr = ' '; linestart = FALSE; }
+            else if(!success && linestart)
+            {
+              // we also need to analyse if we at least found one valid headerline
+              // or not, because then wenn need to return FALSE
+              if(*ptr == ':') success = TRUE;
+              else if(isspace(*ptr)) linestart = FALSE;
+            }
           }
         }
 
-        // if the start of this line is a space or a tabulator sign
-        // this line belongs to the last header also and we have to
-        // add it to the last one.
-        if ((buffer[0] == ' ' || buffer[0] == '\t') && Header.Used)
-        {
-          // move to the "real" start of the string so that we can copy
-          // from there to our previous header.
-          for (ptr = head; *ptr && isspace(*ptr); ptr++);
+        if(finished)
+          break;
 
-          // we want to preserve the last space so that this headerline
-          // is correctly connected
-          if(ptr != head) *(--ptr) = ' ';
-
-          ptr = StrBufCat(Header.Data[Header.Used-1], ptr);
-        }
-        else ptr = StrBufCpy(AllocData2D(&Header, SIZE_DEFAULT), head);
-
-        Header.Data[Header.Used-1] = ptr;
+        // now that we have finished the last header line
+        // we can finally start processing the new one.
+        ptr = StrBufCpy(AllocData2D(&Header, SIZE_DEFAULT), buffer);
       }
-      free(head);
+
+      Header.Data[Header.Used-1] = ptr;
     }
+
     free(buffer);
   }
 

@@ -145,7 +145,6 @@ BOOL  RE_Export(int winnum, char *source, char *dest, char *name, int nr, BOOL f
 void  RE_FreePrivateRC(void);
 void  RE_InitPrivateRC(struct Mail *mail, enum ParseMode parsemode);
 int   RE_Open(int winnum, BOOL real);
-void STACKEXT RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhitespace, char *ptr);
 char *RE_ReadInMessage(int winnum, enum ReadInMode mode);
 void  RE_ReadMessage(int winnum, struct Mail *mail);
 void  RE_SaveAll(int winnum, char *path);

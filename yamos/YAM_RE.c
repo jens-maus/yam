@@ -80,6 +80,9 @@
 #define hasPGPSAddressFlag(v)  (isFlagSet((v)->PGPSigned, PGPS_ADDRESS))
 #define hasPGPSCheckedFlag(v)  (isFlagSet((v)->PGPSigned, PGPS_CHECKED))
 
+// translation table convert macros
+#define RE_CharIn(c, tt) (((tt) && (tt)->Header) ? (tt)->Table[(UBYTE)(c)] : (c))
+
 /* local protos */
 static BOOL RE_LoadMessage(int winnum, int parsemode);
 static struct RE_ClassData *RE_New(int winnum, BOOL real);
@@ -1622,80 +1625,6 @@ static char *UnquoteString(char *s, BOOL new)
    strcpy(o, ans);
    free(ans);
    return o;
-}
-///
-/// RE_CharIn
-//  Converts character using translation table
-static int RE_CharIn(char c, struct TranslationTable *tt)
-{
-   if (tt) if (tt->Header) return (int)tt->Table[(UBYTE)c];
-   return (int)c;
-}
-///
-/// RE_ProcessHeader (rec)
-//  Processes MIME encoded message headers (RFC-2047)
-void STACKEXT RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhitespace, char *ptr)
-{
-   char *charset, *encoding, *txt, *txtend, *t;
-   enum Encoding ecode = ENC_NONE;
-   int CorrectedCharset = 0;
-   struct TranslationTable *tt = NULL;
-
-   if (MatchTT(prevcharset, G->TTin, TRUE)) tt = G->TTin;
-   while (*s && (*s != '='))
-   {
-      if (*s == ' ' || *s == '\t') { if (ShowLeadingWhitespace) *ptr++ = ' '; }
-      else 
-      {
-         if (!CorrectedCharset) { CorrectedCharset = TRUE; strcpy(prevcharset, "us-ascii"); }
-         *ptr++ = (char)RE_CharIn(*s, tt);
-      }
-      if (!ShowLeadingWhitespace) ShowLeadingWhitespace = TRUE;
-      ++s;
-   }
-   if (!*s) return;
-   if (*(s+1) != '?') 
-   {
-      *ptr++ = '=';
-      RE_ProcessHeader(prevcharset, ++s, TRUE, ptr);
-      return;
-   }
-   charset = s+2;
-   encoding = strchr(charset, '?');
-   if (!encoding) { *ptr++ = '='; RE_ProcessHeader(prevcharset, ++s, TRUE, ptr); return; }
-   txt = strchr(encoding+1, '?');
-   if (!txt) { *ptr++ = '='; RE_ProcessHeader(prevcharset, ++s, TRUE, ptr); return; }
-   txtend = txt;
-   do { txtend = strchr(txtend+1, '?'); } while(txtend && (*(txtend+1) != '='));
-   if (!txtend) {
-      *ptr++ = '=';
-      RE_ProcessHeader(prevcharset, ++s, TRUE, ptr);
-      return;
-   }
-   *encoding = 0;
-   *txt = 0;
-   *txtend = 0;
-   if (tolower((int)*(encoding+1)) == 'q') ecode = ENC_QP;
-   else if (tolower((int)*(encoding+1)) == 'b') ecode = ENC_B64;
-   else ER_NewError(GetStr(MSG_ER_UnknownHeaderEnc), encoding+1, NULL);
-   if (stricmp(charset, prevcharset))
-   {
-      char *s2;
-      strcpy(prevcharset, charset);
-      for (s2 = prevcharset; *s2; ++s2)
-         if (isupper((int)*s2)) *s2 = tolower((int)*s2);
-      if (MatchTT(prevcharset, G->TTin, TRUE)) tt = G->TTin;
-   }
-   if (ecode == ENC_NONE) for (t = txt+1; *t; ++t) *ptr++ = RE_CharIn(*t, tt);
-   else 
-   {
-      for (t = txt+1; *t; ++t) if (*t == '_') *t = ' ';
-      if (ecode == ENC_B64) from64txt(txt+1, ptr, tt);
-      else if (ecode == ENC_QP) fromqptxt(txt+1, ptr, tt);
-      while (*ptr) ptr++;
-   }
-   *encoding = '?'; *txt = '?'; *txtend = '?';
-   RE_ProcessHeader(prevcharset, txtend+2, TRUE, ptr);
 }
 ///
 /// RE_ParseContentParameters

@@ -25,6 +25,8 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "YAM_error.h"
@@ -40,6 +42,13 @@ static void uueget(char*, FILE*, int);
 static BOOL gettxtline(char*, int, char**);
 static BOOL getline(char*, int, FILE*);
 static int outdec(char*, FILE*);
+
+static int rfc2047_decode_int(const char *text,
+                              int (*func)(const char *, int, const char *, const char *, void *),
+		                          void *arg);
+static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
+                                const char *lang, void *arg);
+static char *rfc2047_search_quote(const char **ptr);
 
 
 /***************************************************************************
@@ -694,4 +703,286 @@ void touue(FILE *in, FILE *out)
       if (n <= 0) break;
    }
 }
+///
+
+/*** RFC 2047 MIME decoding routines ***/
+/// rfc2047_decode()
+// decodes a rfc2047 encoded string and eventually translates
+// each character of the decoded string according to the provided
+// translation table.
+struct rfc2047_decode_info
+{
+  char *dst;
+  unsigned int maxlen;
+  struct TranslationTable *tt;
+};
+
+// this function uses the decode_int() function and attachs a callback
+// function to it which will be called each time a token has been
+// decoded so that an eventually existing translation table can be used
+// to translate the charsets. returns the number of translated chars or
+// -1 if an malloc error occurred and -2 if some unknown encoding was
+// specified in the text, -3 if the base64 decoding failed.
+int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
+                   struct TranslationTable *tt)
+{
+  int result = 0;
+  // pack all the necessary information in the decode_info
+  // structure so that the decode function can process it.
+  struct rfc2047_decode_info info;
+  info.dst    = dst;
+  info.maxlen = maxlen;
+  info.tt     = tt;
+
+  // call the decode_int function to start decoding our
+  // data.
+  result = rfc2047_decode_int(src, &rfc2047_dec_callback, &info);
+  info.dst[0] = '\0'; // make sure this string is null-terminated
+
+  // on success return the decoded string len.
+  if(result > 0)  return (int)(maxlen)-(int)(info.maxlen);
+  else            return result;
+}
+
+///
+/// rfc2047_dec_callback()
+// the callback function that is called by the decode_int() function each
+// time a string was successfully decoded so that it can be converted.
+static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
+                                const char *lang, void *arg)
+{
+  struct rfc2047_decode_info *info = (struct rfc2047_decode_info *)arg;
+  BOOL translate = FALSE;
+
+  // before we go on we check wheter we have enough space
+  // to put the txt in our destination
+  if(info->maxlen-len < 0)
+    return -1;
+
+  // so we can savely decrease it.
+  info->maxlen -= len;
+
+  // check wheter we have a valid translation table or not
+  if(info->tt && info->tt->SourceCharset)
+  {
+    if(chset)
+    {
+      if(MatchNoCase((char *)chset, info->tt->SourceCharset))
+        translate = TRUE;
+    }
+    else if(strcmp(info->tt->SourceCharset, "#?") == 0)
+    {
+      translate = TRUE;
+    }
+  }
+
+  // if we recognized a valid charset translation, lets start
+  if(translate)
+  {
+    int i;
+
+    // it seems we have a valid translation table, so lets
+    // parse through our text and put the translated char in
+    // our destination.
+    for(i=0; i < len; i++)
+    {
+      info->dst[i] = info->tt->Table[(UBYTE)(txt[i])];
+    }
+  }
+  else
+  {
+    // no translation table is available, so lets just
+    // copy the decoded stuff in our destination pointer
+	  memcpy(info->dst, txt, len);
+  }
+
+  // increase the destination pointer so that the
+  // next iteration can profit out of it.
+  info->dst += len;
+
+  return 0;
+}
+///
+/// rfc2047_decode_int()
+// This is the main rcf2047 decoding function. It receives rfc2047-encoded
+// text, and a callback function.  The callback function is repeatedly
+// called, each time receiving a piece of decoded text.  The decoded
+// info includes the text fragment, text length, the input charset, the
+// language (if existant) and void pointer to user specific data for
+// the processing. If the callback function returns non-zero, rfc2047
+// decoding terminates, returning the result code.  Otherwise,
+// rfc2047_decode returns 0 after a successfull decoding (-1 if malloc
+// failed).
+static int rfc2047_decode_int(const char *text,
+                              int (*func)(const char *, int, const char *, const char *, void *),
+		                          void *arg)
+{
+  int	rc, result=0;
+  int unknown_enc=0;
+  int	had_last_word=0;
+  const char *p;
+  char *chset, *lang;
+  char *encoding;
+  char *enctext;
+
+  while(text && *text)
+  {
+    p=text;
+    if(text[0] != '=' || text[1] != '?')
+    {
+      while(*text)
+      {
+				if (text[0] == '=' && text[1] == '?')
+          break;
+				
+        if(!isspace((int)(unsigned char)*text))
+          had_last_word=0;
+
+        ++text;
+      }
+			
+      if(text > p && !had_last_word)
+      {
+        rc = (*func)(p, (int)(text-p), 0, 0, arg);
+        if(rc) return (rc);
+      }
+
+      continue;
+    }
+
+    text += 2;
+    if((chset = rfc2047_search_quote(&text)) == 0)
+      return -1;
+
+		if(*text) ++text;
+    if((encoding = rfc2047_search_quote(&text)) == 0)
+		{
+      free(chset);
+      return -1;
+    }
+		
+    if(*text) ++text;
+    if((enctext = rfc2047_search_quote(&text)) == 0)
+		{
+      free(encoding);
+      free(chset);
+
+      return -1;
+    }
+		
+    if(*text == '?' && text[1] == '=')
+      text += 2;
+	
+    // now we check the encoding string.
+    // q/Q defines to quoted-printable decoding
+    // b/B defines to base64 encoding
+    // and to sort out possible errors we check for the finalizing NUL-byte
+    if(encoding[0] != '\0' && encoding[1] == '\0') // have to be 1 char long
+    {
+      switch(tolower(encoding[0]))
+      {
+        // we found a quoted-printable encoded rfc2047 compliant string, so
+        // lets decode it.
+        case 'q':
+        {
+          char *q, *r;
+
+          for(q=r=enctext; *q; )
+          {
+            int c;
+
+            if(*q == '=' && q[1] && q[2])
+		  	  	{
+              char *p1 = strchr(basis_hex, toupper((int)(unsigned char)q[1]));
+              char *p2 = strchr(basis_hex, toupper((int)(unsigned char)q[2]));
+
+              *r++ = (char)(p1 ? p1-basis_hex : 0)*16+(p2 ? p2-basis_hex : 0);
+              q += 3;
+
+              continue;
+            }
+
+            c = *q++;
+	  			  if(c == '_') c = ' ';
+            *r++ = c ;
+          }
+          *r=0;
+        }
+        break;
+
+        // we found a base64 encoded rfc2047 compliant string, so
+        // lets decode it.
+        case 'b':
+    		{
+          int res = base64decode(enctext, enctext, strlen(enctext));
+          if(res > 0)
+            enctext[res] = '\0';
+          else
+          {
+            result = -3; // signal an base64 decoding error.
+            unknown_enc = 1;
+          }
+        }
+        break;
+
+        default:
+        {
+          // if we end up here the probabilty that we have a rfc2047 compliant
+          // string with an unknown encoding is somehow high.
+          result = -2; // signal unknown encoding to caller
+          unknown_enc = 1;
+        }
+        break;
+      }
+    }
+    else unknown_enc = 1;
+
+    // if no error occurred we are going to call the callback function
+    if(unknown_enc == 1)
+    {
+      rc = (*func)(p, (int)(text-p), 0, 0, arg);
+      unknown_enc = 0; // clear it immediatly
+    }
+    else
+    {
+      // RFC 2231 language
+      lang = strrchr(chset, '*');
+      if(lang) *lang++ = 0;
+
+      rc = (*func)(enctext, strlen(enctext), chset, lang, arg);
+    }
+
+    // free everything and check if a returncode was given.
+    free(enctext);
+    free(chset);
+    free(encoding);
+    if(rc) return rc;
+
+    // Ignore blanks between enc words
+		had_last_word=1;
+  }
+
+  return result;
+}
+
+///
+/// rfc2047_search_quote()
+//
+static char *rfc2047_search_quote(const char **ptr)
+{
+  const char *p = *ptr;
+  char	*s;
+
+  while(**ptr && **ptr != '?')
+    ++(*ptr);
+
+  if((s = malloc((size_t)(*ptr - p + 1))) == 0)
+    return (0);
+
+  memcpy(s, p, (size_t)(*ptr-p));
+  s[*ptr - p]=0;
+
+  return (s);
+}
+
 ///

@@ -7,6 +7,18 @@ $Source$
 
 2003-12-13  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c, YAM_MI.c, YAM_RE.c: YAM wasn`t at all RFC 2047
+      compliant and the decoding routines RE_ProcessHeader where
+      way to crippled and recursive. I totally reworked the RFC
+      2047 decoding routines and added them to YAM_MI.c where now
+      a sophisticated callback function based mechanism is used
+      to correctly decode and translate the charsets.
+      Verified that correct function of the new routines with tons
+      of mails and the examples from the RFC 2047 document. We
+      should be RFC 2047 compliant now.
+
+2003-12-13  Jens Langner <Jens.Langner@light-speed.de>
+
     * YAM_MAf.c: replaced the from64txt() call by a call to the
       new reworked base64decode() function. This allows to introduce
       a more sophisticated failure checking and probably also leads
