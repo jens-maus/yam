@@ -67,6 +67,8 @@ LOCAL BOOL FI_MatchString(struct Search *search, char *string)
       case 2: return (BOOL)(search->CaseSens ? strcmp(string, search->Match) < 0 : Stricmp(string, search->Match) < 0);
       case 3: return (BOOL)(search->CaseSens ? strcmp(string, search->Match) > 0 : Stricmp(string, search->Match) > 0);
    }
+
+   return FALSE;
 }
 
 ///
@@ -240,6 +242,7 @@ LOCAL void FI_GenerateListPatterns(struct Search *search)
 //  Initializes Search structure
 BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmode, int compar, int stat, BOOL substr, char *match, char *field)
 {
+   // return value of this function isn't used currently (21.03.2001)
    clear(search, sizeof(struct Search));
    search->Mode      = mode;
    search->CaseSens  = casesens;
@@ -287,6 +290,8 @@ BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmo
       if (casesens) ParsePattern      (search->Match, search->Pattern, SIZE_PATTERN);
       else          ParsePatternNoCase(search->Match, search->Pattern, SIZE_PATTERN);
    }
+
+   return FALSE;
 }
 
 ///
@@ -341,6 +346,8 @@ BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *sear
               return FI_DoSearch(search2, mail);
       case 3: return (BOOL)(found1 != FI_DoSearch(search2, mail));
    }
+
+   return FALSE;
 }
 
 ///

@@ -997,6 +997,8 @@ LOCAL APTR CO_BuildPage(struct CO_ClassData *data, int page)
       case 13: return CO_Page13(data);
       case 14: return CO_Page14(data);
    }
+
+   return NULL;
 }
 
 ///

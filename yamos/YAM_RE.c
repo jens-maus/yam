@@ -1529,6 +1529,8 @@ BOOL RE_SaveThisPart(struct Part *rp)
       case PM_NONE:  return FALSE;
       case PM_TEXTS: return (BOOL)(!strnicmp(rp->ContentType, "text", 4) || RE_IsURLencoded(rp));
    }
+
+   return FALSE;
 }
 ///
 /// RE_SetPartInfo

@@ -385,6 +385,8 @@ ULONG SAVEDS ASM MW_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
       MUI_DisposeObject(win);
    }
    else return DoSuperMethodA(cl, obj, (Msg)msg);
+
+   return 0;
 }
 ///
 /// TE_Dispatcher (Text Editor)
