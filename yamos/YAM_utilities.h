@@ -185,8 +185,8 @@ struct NewToolbarEntry
 **
 ** while(running)
 ** {
-**    ULONG signals;
-**    switch (DoMethod(G->App, MUIM_Application_Input, &signals))
+**    static ULONG signals=0;
+**    switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
 **    {
 **        case ID_PLAY:
 **           PlaySound();
@@ -198,7 +198,8 @@ struct NewToolbarEntry
 **           break;
 **    }
 **
-**    if (running && signals) Wait(signals);
+**    if(running && signals)
+**      signals = Wait(signals);
 ** }
 **
 ** REISSUE_RETURNIDS;
@@ -375,7 +376,7 @@ char *   StrBufCat(char *strbuf, const char *source);
 char *   StrBufCpy(char *strbuf, const char *source);
 char *   AppendToBuffer(char *buf, int *wptr, int *len, char *add);
 int      StringRequest(char *string, int size, char *title, char *body,
-                       char *yestext, char *alttext, char *notext, BOOL secret, APTR parent);
+                       char *yestext, char *alttext, char *notext, BOOL secret, Object *parent);
 char *   StripUnderscore(char *label);
 char *   stristr(const char *a, const char *b);
 char *   StrTok_R(char **s, char *sep);

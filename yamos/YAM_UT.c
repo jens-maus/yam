@@ -386,17 +386,19 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
     // lets collect the waiting returnIDs now
     COLLECT_RETURNIDS;
 
-    if(!SafeOpenWindow(WI_YAMREQ)) result = 0;
+    if(!SafeOpenWindow(WI_YAMREQ))
+      result = 0;
     else do
     {
-      ULONG signals;
+      static ULONG signals=0;
       LONG ret = DoMethod(app, MUIM_Application_NewInput, &signals);
 
       // bail out if a button was hit
       if(ret > 0 && ret < num_gads) { result = ret; break; }
       if(ret == num_gads)           { result = 0;   break; }
 
-      if(signals) Wait(signals);
+      if(signals)
+        signals = Wait(signals);
     }
     while(1);
 
@@ -416,70 +418,90 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
 ///
 /// StringRequest
 //  Puts up a string requester
-int StringRequest(char *string, int size, char *title, char *body, char *yestext, char *alttext, char *notext, BOOL secret, APTR parent)
+int StringRequest(char *string, int size, char *title, char *body, char *yestext, char *alttext, char *notext, BOOL secret, Object *parent)
 {
-   APTR bt_okay, bt_middle, bt_cancel, wi_sr, st_in;
-   int ret_code = -1;
+  Object *bt_okay;
+  Object *bt_middle;
+  Object *bt_cancel;
+  Object *wi_sr;
+  Object *st_in;
+  int ret_code = -1;
 
-   wi_sr = WindowObject,
-      MUIA_Window_Title, title ? title : "YAM",
-      MUIA_Window_RefWindow, parent,
-      MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
-      MUIA_Window_TopEdge, MUIV_Window_TopEdge_Centered,
-      MUIA_Window_ID, MAKE_ID('S','R','E','Q'),
-      WindowContents, VGroup,
-         Child, VGroup,
-            GroupFrame,
-            MUIA_Background, MUII_GroupBack,
-            Child, LLabel(body),
-            Child, st_in = secret ? MakePassString("") : MakeString(size, ""),
-         End,
-         Child, ColGroup(3),
-            Child, bt_okay = MakeButton(yestext),
-            Child, bt_middle = alttext ? MakeButton(alttext) : HSpace(0),
-            Child, bt_cancel = MakeButton(notext),
-         End,
-      End,
-   End;
-   setstring(st_in, string);
-   set(wi_sr, MUIA_Window_ActiveObject, st_in);
-   set(G->App, MUIA_Application_Sleep, TRUE);
-   DoMethod(G->App, OM_ADDMEMBER, wi_sr);
-   DoMethod(bt_okay  , MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
-   DoMethod(bt_middle, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 2);
-   DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
-   DoMethod(st_in, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
-   DoMethod(wi_sr, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
+  wi_sr = WindowObject,
+    MUIA_Window_Title,      title ? title : "YAM",
+    MUIA_Window_RefWindow,  parent,
+    MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
+    MUIA_Window_TopEdge,    MUIV_Window_TopEdge_Centered,
+    MUIA_Window_ID,         MAKE_ID('S','R','E','Q'),
+    WindowContents, VGroup,
+       Child, VGroup,
+          GroupFrame,
+          MUIA_Background, MUII_GroupBack,
+          Child, LLabel(body),
+          Child, st_in = secret ? MakePassString("") : MakeString(size, ""),
+       End,
+       Child, ColGroup(3),
+          Child, bt_okay = MakeButton(yestext),
+          Child, bt_middle = alttext ? MakeButton(alttext) : HSpace(0),
+          Child, bt_cancel = MakeButton(notext),
+       End,
+    End,
+  End;
 
-   // lets collect the waiting returnIDs now
-   COLLECT_RETURNIDS;
+  if(wi_sr)
+  {
+    setstring(st_in, string);
+    set(wi_sr, MUIA_Window_ActiveObject, st_in);
+    set(G->App, MUIA_Application_Sleep, TRUE);
 
-   if (!SafeOpenWindow(wi_sr)) ret_code = 0;
-   else while (ret_code == -1)
-   {
-      ULONG signals;
-      switch (DoMethod(G->App, MUIM_Application_Input, &signals))
+    DoMethod(G->App, OM_ADDMEMBER, wi_sr);
+
+    DoMethod(bt_okay,   MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
+    DoMethod(st_in,     MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(wi_sr,     MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
+
+    if(alttext)
+      DoMethod(bt_middle, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 2);
+
+    // lets collect the waiting returnIDs now
+    COLLECT_RETURNIDS;
+
+    if(!SafeOpenWindow(wi_sr))
+      ret_code = 0;
+    else while(ret_code == -1)
+    {
+      static ULONG signals=0;
+
+      switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
       {
-         case 1: ret_code = 1; break;
-         case 2: ret_code = 2; break;
-         case 3: ret_code = 0; break;
+        case 1: ret_code = 1; break;
+        case 2: ret_code = 2; break;
+        case 3: ret_code = 0; break;
       }
-      if (ret_code == -1 && signals) Wait(signals);
-   }
 
-   // now lets reissue the collected returnIDs again
-   REISSUE_RETURNIDS;
+      if(ret_code == -1 && signals)
+        signals = Wait(signals);
+    }
 
-   if (ret_code > 0) GetMUIString(string, st_in);
+    // now lets reissue the collected returnIDs again
+    REISSUE_RETURNIDS;
 
-   // remove & dispose the requester object
-   DoMethod(G->App, OM_REMMEMBER, wi_sr);
-   MUI_DisposeObject(wi_sr);
+    if(ret_code > 0)
+    {
+      strncpy(string, (char *)xget(st_in, MUIA_String_Contents), size);
+      string[size-1] = '\0';
+    }
 
-   // wake up the application
-   set(G->App, MUIA_Application_Sleep, FALSE);
+    // remove & dispose the requester object
+    DoMethod(G->App, OM_REMMEMBER, wi_sr);
+    MUI_DisposeObject(wi_sr);
 
-   return ret_code;
+    // wake up the application
+    set(G->App, MUIA_Application_Sleep, FALSE);
+  }
+
+  return ret_code;
 }
 ///
 /// FolderRequest
@@ -494,9 +516,9 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
    wi_fr = WindowObject,
       MUIA_Window_Title, title ? title : "YAM",
       MUIA_Window_RefWindow, parent,
-      MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
-      MUIA_Window_TopEdge, MUIV_Window_TopEdge_Centered,
-      MUIA_Window_ID, MAKE_ID('F','R','E','Q'),
+      MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
+      MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
+      MUIA_Window_ID,        MAKE_ID('F','R','E','Q'),
       WindowContents, VGroup,
          Child, LLabel(body),
          Child, lv_folder = ListviewObject,
@@ -535,11 +557,13 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
       // lets collect the waiting returnIDs now
       COLLECT_RETURNIDS;
 
-      if (!SafeOpenWindow(wi_fr)) folder = NULL;
-      else while (folder == (struct Folder *)-1)
+      if(!SafeOpenWindow(wi_fr))
+        folder = NULL;
+      else while(folder == (struct Folder *)-1)
       {
-         ULONG signals, oo = DoMethod(G->App, MUIM_Application_Input, &signals);
-         switch (oo)
+         static ULONG signals=0;
+
+         switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
          {
             case 1:
             {
@@ -556,7 +580,9 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
             }
             break;
          }
-         if (folder == (struct Folder *)-1 && signals) Wait(signals);
+
+         if(folder == (struct Folder *)-1 && signals)
+           signals = Wait(signals);
       }
 
       // now lets reissue the collected returnIDs again
@@ -651,12 +677,13 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     COLLECT_RETURNIDS;
 
     // we open the window now and listen for some events.
-    if (!SafeOpenWindow(wi_ar))
+    if(!SafeOpenWindow(wi_ar))
       retpart = NULL;
-    else while (retpart == (struct Part *)-1)
+    else while(retpart == (struct Part *)-1)
     {
-      ULONG signals;
-      switch(DoMethod(G->App, MUIM_Application_Input, &signals))
+      static ULONG signals=0;
+
+      switch(DoMethod(G->App, MUIM_Application_NewInput, &signals))
       {
         case 1:
         {
@@ -688,7 +715,9 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
         }
         break;
       }
-      if (retpart == (struct Part *)-1 && signals) Wait(signals);
+
+      if(retpart == (struct Part *)-1 && signals)
+        signals = Wait(signals);
     }
 
     // now lets reissue the collected returnIDs again
@@ -3784,14 +3813,14 @@ Object *MakeString(int maxlen, char *label)
 //  Creates a MUI string object with hidden text
 Object *MakePassString(char *label)
 {
-   return BetterStringObject,
-      StringFrame,
-      MUIA_String_MaxLen     , SIZE_PASSWORD,
-      MUIA_String_Secret     , TRUE,
-      MUIA_String_AdvanceOnCR, TRUE,
-      MUIA_ControlChar       , ShortCut(label),
-      MUIA_CycleChain        , 1,
-   End;
+  return BetterStringObject,
+    StringFrame,
+    MUIA_String_MaxLen,       SIZE_PASSWORD,
+    MUIA_String_Secret,       TRUE,
+    MUIA_String_AdvanceOnCR,  TRUE,
+    MUIA_ControlChar,         ShortCut(label),
+    MUIA_CycleChain,          TRUE,
+  End;
 }
 ///
 /// MakeInteger

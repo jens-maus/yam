@@ -129,11 +129,12 @@ OVERLOAD(OM_NEW)
 		return 0;
 	}
 
-				progressGauge = GaugeObject,
-					GaugeFrame,
-					MUIA_Gauge_InfoText, " ",
-					MUIA_Gauge_Horiz,		 TRUE,
-				End;
+	// create the progressGauge now
+	progressGauge = GaugeObject,
+		GaugeFrame,
+		MUIA_Gauge_InfoText, " ",
+		MUIA_Gauge_Horiz,		 TRUE,
+	End;
 
   // create the selectionGroup manually as we add/remove
   // it manually later on
@@ -326,7 +327,7 @@ DECLARE(SelectUser)
 
 		do
 		{
-      ULONG signals;
+			static ULONG signals=0;
 			LONG ret = DoMethod(G->App, MUIM_Application_NewInput, &signals)-ID_LOGIN;
 
       // bail out if a button was hit
@@ -337,7 +338,7 @@ DECLARE(SelectUser)
 			}
 
 			if(signals)
-				Wait(signals);
+				signals = Wait(signals);
 		}
 		while(1);
 
