@@ -723,6 +723,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->HideGUIElements = 0;
       strcpy(co->LocalCharset, "iso-8859-1");
       co->StackSize = 40000;
+      *co->SMTP_AUTH_User=*co->SMTP_AUTH_Pass=0;
    }
 }
 

@@ -250,6 +250,8 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "HideGUIElements  = %ld\n", co->HideGUIElements);
       fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
       fprintf(fh, "StackSize        = %ld\n", co->StackSize);
+      fprintf(fh, "SMTP-AUTH-User   = %s\n", co->SMTP_AUTH_User);
+      fprintf(fh, "SMTP-AUTH-Pass   = %s\n", co->SMTP_AUTH_Pass);
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
    }
@@ -537,6 +539,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "HideGUIElements")) co->HideGUIElements = atoi(value);
                if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
                if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
+               if (!stricmp(buffer, "SMTP-AUTH-User")) stccpy(co->SMTP_AUTH_User, value, SIZE_USERID);
+               if (!stricmp(buffer, "SMTP-AUTH-Pass")) stccpy(co->SMTP_AUTH_Pass, value, SIZE_USERID);
             }
          }
          fclose(fh);

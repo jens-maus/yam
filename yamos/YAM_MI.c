@@ -87,6 +87,58 @@ LOCAL int nextcharin(FILE *infile, BOOL PortableNewlines)
 }
 
 ///
+/// encode64
+//  Encodes string in base64 format
+void encode64(char *s, char *d, int len)
+{
+   int i;
+
+   for(i=0;i<len;i+=3)
+   {
+      int c1, c2, c3, c4, count=len-i;
+
+      c1 = *s >> 2;
+      c2 = ((*s << 4) & 060) | ((s[1] >> 4) & 017);
+      c3 = ((s[1] << 2) & 074) | ((s[2] >> 6) & 03);
+      c4 = s[2] & 077;
+      *d++=basis_64[c1];
+      *d++=basis_64[c2];
+      if (count == 1) {
+	 *d++='=';
+	 *d++='=';
+      } else {
+	  *d++=basis_64[c3];
+	  if (count == 2)
+              *d++='=';
+	  else
+	      *d++=basis_64[c4];
+      }
+      s+=3;
+   }
+   *d=0;
+}
+
+///
+/// decode64
+//  Decodes string in base64 format
+#define BASE64(c) (index_64[(unsigned char)(c) & 0x7F])
+char *decode64 (char *dest, char *src, char *srcmax)
+{
+   while (src + 3 < srcmax)
+     {
+	*dest++ = (BASE64(src[0]) << 2) | (BASE64(src[1]) >> 4);
+	
+	if (src[2] == '=') break;
+	*dest++ = ((BASE64(src[1]) & 0xf) << 4) | (BASE64(src[2]) >> 2);
+	
+	if (src[3] == '=') break;
+	*dest++ = ((BASE64(src[2]) & 0x3) << 6) | BASE64(src[3]);
+	src += 4;
+     }
+   *dest=0;
+   return dest;
+}
+///
 /// output64chunk
 //  Writes three bytes in base64 format
 LOCAL void output64chunk(int c1, int c2, int c3, int pads, FILE *outfile)
