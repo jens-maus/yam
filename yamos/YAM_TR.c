@@ -726,6 +726,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       if (!CO_IsValid()) { TR_CloseTCPIP(); return; }
       if (!(G->TR = TR_New(TR_GET))) { TR_CloseTCPIP(); return; }
       G->TR->Checking = TRUE;
+      DisplayAppIconStatistics();
       G->TR->GUIlevel = guilevel;
       G->TR->Scnt = MA_AllocRules(G->TR->Search, APPLY_REMOTE);
       if (singlepop >= 0) G->TR->SinglePOP = TRUE;
@@ -766,7 +767,6 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
          DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
 
       }
-
 
       return;
    }

@@ -2984,9 +2984,8 @@ void DisplayAppIconStatistics(void)
   free(flist);
 
   // we set the mode accordingly to the status of the folder (new/check/old)
-  mode = tot_msg ? (new_msg ? 2 : 1) : 0;
-
-  if (G->TR && G->TR->Checking) mode = 3;
+  if(G->TR && G->TR->Checking) mode = 3;
+  else mode = tot_msg ? (new_msg ? 2 : 1) : 0;
 
   // clear AppIcon Label first before we create it new
   apptit[0] = '\0';

@@ -151,6 +151,7 @@ char *   Decrypt(char *source);
 void     DeleteMailDir(char *dir, BOOL isroot);
 char *   DescribeCT(char *ct);
 void     DisplayMailList(struct Folder *fo, APTR lv);
+void     DisplayAppIconStatistics(void);
 void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModulePush(void *module);
 void     DisposeModule(void *modptr);

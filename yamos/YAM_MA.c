@@ -384,16 +384,19 @@ static void MA_UpdateStatus(void)
 
    if ((flist = FO_CreateList()))
    {
-      for (i = 1; i <= (int)*flist; i++) if (!OUTGOING(flist[i]->Type)) if (flist[i]->LoadedMode == 2)
+      for(i = 1; i <= (int)*flist; i++)
       {
-         BOOL updated = FALSE;
+        if(!OUTGOING(flist[i]->Type) && flist[i]->LoadedMode == 2)
+        {
+          BOOL updated = FALSE;
 
-         for (mail = flist[i]->Messages; mail; mail = mail->Next)
-         {
+          for (mail = flist[i]->Messages; mail; mail = mail->Next)
+          {
             if (mail->Status == STATUS_NEW) { updated = TRUE; MA_SetMailStatus(mail, STATUS_UNR); }
-         }
+          }
 
-         if (updated) DisplayStatistics(flist[i], TRUE);
+          if (updated) DisplayStatistics(flist[i], TRUE);
+        }
       }
       free(flist);
    }

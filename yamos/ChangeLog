@@ -1,5 +1,7 @@
 2001-09-03  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed bug #433745 where YAM was not displaying the check.info
+      icon anymore.
     * fixed bug #433751 that caused flickering of the AppIcon after
       recalculating the statistics.
     * added standard source headers to new classfiles
