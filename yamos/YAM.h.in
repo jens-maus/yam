@@ -896,7 +896,8 @@ struct WR_ClassData  /* write window */
       APTR LV_ATTACH;
       APTR BT_ADD, BT_ADDPACK, BT_DEL, BT_DISPLAY;
       APTR RA_ENCODING, CY_CTYPE, ST_CTYPE, ST_DESC;
-      APTR ST_CC, ST_BCC, ST_FROM, ST_REPLYTO, ST_EXTHEADER, CH_DELSEND, CH_RECEIPT, CH_DISPNOTI, CH_ADDINFO, CY_IMPORTANCE, RA_SECURITY, RA_SIGNATURE;
+      APTR ST_CC, ST_BCC, ST_FROM, ST_REPLYTO, ST_EXTHEADER, CH_DELSEND, CH_RECEIPT, CH_DISPNOTI, CH_ADDINFO, CY_IMPORTANCE;
+		APTR RA_SECURITY, CH_DEFSECURITY, RA_SIGNATURE;
       APTR BT_HOLD, BT_QUEUE, BT_SEND, BT_CANCEL;
       struct MUIP_Toolbar_Description TB_TOOLBAR[13];
    } GUI;
@@ -1297,6 +1298,7 @@ extern void PGPClearPassPhrase(BOOL);
 extern BOOL ExecuteCommand(char *, BOOL, BPTR);
 extern int GetSimpleID(void);
 extern void GotoURL(char *);
+extern char *strtok_r(char**, char*);
 
 extern void MA_SetSortFlag(void);
 extern BOOL MA_PromptFolderPassword(struct Folder *, APTR);
