@@ -2165,7 +2165,8 @@ static void WR_SharedSetup(struct WR_ClassData *data, int winnum)
 static struct WR_ClassData *WR_New(int winnum)
 {
    struct WR_ClassData *data = calloc(1, sizeof(struct WR_ClassData));
-   if (data)
+
+   if(data)
    {
       enum {
         WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
@@ -2479,6 +2480,7 @@ static struct WR_ClassData *WR_New(int winnum)
                  MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
                  MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT,
                  TAG_DONE);
+
          spell = xget(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell);
          set(mi_autospell, MUIA_Menuitem_Checked, spell);
          set(data->GUI.CY_IMPORTANCE, MUIA_Cycle_Active, 1);
