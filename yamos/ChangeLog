@@ -356,14 +356,23 @@
     * changed version string to "2.3p1" for the upcoming
       release.
 
+-------------------------------- 2.3p1 release ------------------------------
+
 2001-11-14  Christian Hattemer <krille@users.sourceforge.net>
 
     * Adapted smakefile from MAIN
 
-2001-11-14  Christian Hattemer <krille@users.sourceforge.net>
+2001-12-11  Christian Hattemer <krille@users.sourceforge.net>
 
     * YAM_RE.c: fixed crash when the edit window was opened from
       a read window and the read window was closed before clicking
       "Send Later", "Send Now" or "Hold" in the write window.
       Fixes Bug #481316
+
+2001-12-16  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_EA.c: Added missing MUIA_ControlChar to security cycle
+    * deutsch.ct: resolved hotkey conflict between security cycle
+      and description string in the Addressbook Entry window
+
 
