@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-22  Jacob Laursen <jlaur@mail1.stofanet.dk>
+
+    * Improved the MCC check - now automatically attempts flushing,
+      shows the version number of any existing MCC and allows for
+      retrying.
+
 2002-06-22  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * classes/Addrmatchlist.c: fixed bug #571831 where it could
