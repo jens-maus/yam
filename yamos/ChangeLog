@@ -660,3 +660,8 @@
       the user uses the context menu on a folder that is not active. This will
       fix some bugs that will result because the mail list is not in sync with
       the folder list.
+
+2001-06-17  Jacob Laursen <laursen@myself.com>
+
+    * Removed "give up after 20 lines" signature strip "feature".
+      (Bug #432034)
