@@ -619,7 +619,7 @@ SAVEDS ASM void RE_PrintFunc(REG(a1,int *arg))
    struct TempFile *prttmp;
 
    if (part = AttachRequest(GetStr(MSG_RE_PrintMsg), GetStr(MSG_RE_SelectPrintPart), GetStr(MSG_RE_PrintGad), GetStr(MSG_Cancel), winnum, ATTREQ_PRINT|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
-	   {
+   {
       if (C->PrinterCheck) if (!CheckPrinter()) return;
       Busy(GetStr(MSG_BusyDecPrinting), "", 0, 0);
       for (; part; part = part->NextSelected) switch (part->Nr)
@@ -629,9 +629,9 @@ SAVEDS ASM void RE_PrintFunc(REG(a1,int *arg))
          case -1: if (prttmp = OpenTempFile("w"))
                   {
                      RE_SaveDisplay(winnum, prttmp->FP);
-							fclose(prttmp->FP);
-							prttmp->FP = NULL;
-							RE_PrintFile(prttmp->Filename,part);
+                     fclose(prttmp->FP);
+                     prttmp->FP = NULL;
+                     RE_PrintFile(prttmp->Filename,part);
                      CloseTempFile(prttmp);
                   }
                   break;
@@ -650,94 +650,92 @@ MakeHook(RE_PrintHook, RE_PrintFunc);
 //  - make header lines to print (and parts where to print headers) configurable
 LOCAL void RE_PrintFile(char *filename, struct Part *part)
 {
-	switch(C->PrintMethod)
-	{
-		case PRINTMETHOD_DUMPRAW :
-			CopyFile("PRT:", 0, filename, 0);
-			break;
-		case PRINTMETHOD_LATEX :
-			RE_PrintLaTeX(filename,part);
-			break;
-		case PRINTMETHOD_POSTSCRIPT :
-		default:
-			MUI_Request(G->App, NULL, 0, "YAM Error", "OK",
-							"Printing method #%ld is not implemented!\n"
-							"Use 0 for raw printer dump, 1 for LaTeX",C->PrintMethod);
-			break;
-	}
+   switch(C->PrintMethod)
+   {
+      case PRINTMETHOD_DUMPRAW :
+         CopyFile("PRT:", 0, filename, 0);
+         break;
+      case PRINTMETHOD_LATEX :
+         RE_PrintLaTeX(filename,part);
+         break;
+      case PRINTMETHOD_POSTSCRIPT :
+         // fall through
+      default:
+         MUI_Request(G->App, NULL, 0, "YAM Error", "OK",
+                     "Printing method #%ld is not implemented!\n"
+                     "Use 0 for raw printer dump, 1 for LaTeX",C->PrintMethod);
+         break;
+   }
 }
 
 LOCAL void RE_PrintLaTeX(char *filename, struct Part *part)
 {
 struct TempFile *texfile;
 
-	if((texfile = OpenTempFile("w")))
-	{
-		if(CopyFile(NULL,texfile->FP,"YAM:.texheader",NULL))
-		{
-		char *ts1,*ts2;
+   if((texfile = OpenTempFile("w")))
+   {
+      if(CopyFile(NULL,texfile->FP,"YAM:.texheader",NULL))
+      {
+      char *ts1,*ts2;
 
-			if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
-			{
-				if(1 == part->Nr)
-				{
-				int i,j;
-				char Attrib[SIZE_DEFAULT];
-				char *p,*printcmd;
-				const char PrintScript[] = "YAM:Scripts/LaTeX-print";
+         if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
+         {
+            if(1 == part->Nr)
+            {
+            int i,j;
+            char Attrib[SIZE_DEFAULT];
+            char *p,*printcmd;
+            const char PrintScript[] = "YAM:Scripts/LaTeX-print";
 
-					for(i=0; i<Header.Used; i++)
-					{
-						p = Header.Data[i];
-						if(NULL != strchr(p,':'))
-						{
-							for(j=0; p[j] != ':' && j < sizeof(Attrib); j++) Attrib[j] = p[j];
-							Attrib[j++] = ':';
-							Attrib[j++] = '\0';
-							ts1 = StrBufCat(ts1,"\\NewLabWidth{");
-							ts1 = StrBufCat(ts1,Attrib);
-							ts1 = StrBufCat(ts1,"}\n");
-							ts2 = StrBufCat(ts2,Attrib);
-							ts2 = StrBufCat(ts2," &");
-							ts2 = StrBufCat(ts2,p+j-1);
-							ts2 = StrBufCat(ts2,"\\\\\n");
-						} else KPrintF("RE_PrintFile(): strange header line %s\n",p);
-					}
-					fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n\\input{%s}\n\\end{document}\n",
-								ts1,
-								"\\begin{document}\n\n"
-								"\\setlength{\\tabcolsep}{3.0pt}\n"
-								"\\setlength{\\TabRestWidth}{\\linewidth}\n"
-								"\\addtolength{\\TabRestWidth}{-\\tabcolsep}\n"
-								"\\addtolength{\\TabRestWidth}{-\\LabelWidth}\n\n"
-								"\\begin{tabular}"
-								"{@{}>{\\PBS\\raggedleft\\hspace{0pt}\\bf}p{\\LabelWidth}"
-								">{\\PBS\\raggedright\\hspace{0pt}}p{\\TabRestWidth}}\n\n",
-								ts2,
-								"\\end{tabular}\n"
-								"\\hrule\n"
-								"\\bigskip\n",
-								filename);
-					fclose(texfile->FP);
-					texfile->FP = NULL;
-					if(printcmd = malloc(sizeof(PrintScript)+strlen(texfile->Filename)+1))
-					{
-						strcpy(printcmd,PrintScript);
-						strcat(printcmd," ");
-						strcat(printcmd,texfile->Filename);
-						system(printcmd);
-						free(printcmd);
-					} else DisplayBeep(NULL);
-				} else
-				{
-					KPrintF("RE_PrintFile(): no headers for this part\n");
-				}
-			}
-			if(ts1) FreeStrBuf(ts1);
-			if(ts2) FreeStrBuf(ts2);
-		} else KPrintF("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n");
-		CloseTempFile(texfile);
-	} else KPrintF("RE_PrintFile(): can't open temp TeX file\n");
+               for(i=0; i<Header.Used; i++)
+               {
+                  p = Header.Data[i];
+                  if(NULL != strchr(p,':'))
+                  {
+                     for(j=0; p[j] != ':' && j < sizeof(Attrib); j++) Attrib[j] = p[j];
+                     Attrib[j++] = ':';
+                     Attrib[j++] = '\0';
+                     ts1 = StrBufCat(ts1,"\\NewLabWidth{");
+                     ts1 = StrBufCat(ts1,Attrib);
+                     ts1 = StrBufCat(ts1,"}\n");
+                     ts2 = StrBufCat(ts2,Attrib);
+                     ts2 = StrBufCat(ts2," &");
+                     ts2 = StrBufCat(ts2,p+j-1);
+                     ts2 = StrBufCat(ts2,"\\\\\n");
+                  } DB( else KPrintF("RE_PrintFile(): strange header line %s\n",p); )
+               }
+               fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n\\input{%s}\n\\end{document}\n",
+                        ts1,
+                        "\\begin{document}\n\n"
+                        "\\setlength{\\tabcolsep}{3.0pt}\n"
+                        "\\setlength{\\TabRestWidth}{\\linewidth}\n"
+                        "\\addtolength{\\TabRestWidth}{-\\tabcolsep}\n"
+                        "\\addtolength{\\TabRestWidth}{-\\LabelWidth}\n\n"
+                        "\\begin{tabular}"
+                        "{@{}>{\\PBS\\raggedleft\\hspace{0pt}\\bf}p{\\LabelWidth}"
+                        ">{\\PBS\\raggedright\\hspace{0pt}}p{\\TabRestWidth}}\n\n",
+                        ts2,
+                        "\\end{tabular}\n"
+                        "\\hrule\n"
+                        "\\bigskip\n",
+                        filename);
+               fclose(texfile->FP);
+               texfile->FP = NULL;
+               if(printcmd = malloc(sizeof(PrintScript)+strlen(texfile->Filename)+1))
+               {
+                  strcpy(printcmd,PrintScript);
+                  strcat(printcmd," ");
+                  strcat(printcmd,texfile->Filename);
+                  system(printcmd);
+                  free(printcmd);
+               } else DisplayBeep(NULL);
+            } DB( else KPrintF("RE_PrintFile(): no headers for this part\n"); )
+         }
+         if(ts1) FreeStrBuf(ts1);
+         if(ts2) FreeStrBuf(ts2);
+      } DB( else KPrintF("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n"); )
+      CloseTempFile(texfile);
+   } DB( else KPrintF("RE_PrintFile(): can't open temp TeX file\n"); )
 }
 
 
@@ -750,32 +748,32 @@ LOCAL char *ISO8859_to_LaTeX(char *s)
 char *result=NULL;
 char **CVTab;
 
-	if(CVTab = Init_ISO8859_to_LaTeX_Tab("YAM:.latex-chartab"))
-	{
-	int ResLen;
-	char *p;
+   if(CVTab = Init_ISO8859_to_LaTeX_Tab("YAM:.latex-chartab"))
+   {
+   int ResLen;
+   char *p;
 
-		for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
-			ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
+      for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
+         ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
 
-		KPrintF("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen);
+      DB( KPrintF("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen); )
 
-		if(result = AllocStrBuf(ResLen+1))
-		{
-		char *q = result;
-			for(p=s,ResLen=0; *p; p++)	// map input string
-			{
-				if(CVTab[*p] == NULL)
-					*q++ = *p;
-				else
-				{
-					strcpy(q,CVTab[*p]);
-					while(*q++) ;
-				}
-			}
-		}
-	}
-	return result;
+      if(result = AllocStrBuf(ResLen+1))
+      {
+      char *q = result;
+         for(p=s,ResLen=0; *p; p++)   // map input string
+         {
+            if(CVTab[*p] == NULL)
+               *q++ = *p;
+            else
+            {
+               strcpy(q,CVTab[*p]);
+               while(*q++) ;
+            }
+         }
+      }
+   }
+   return result;
 }
 ///
 
@@ -789,44 +787,44 @@ int TabSize;
 char **CVTab, *TabFile;
 BOOL success=FALSE;
 
-	if(-1 != (TabSize = FileSize(TabFileName)))
-	{
-	BPTR fh;
-		if(fh = Open(TabFileName,MODE_OLDFILE))
-		{
-			if(CVTab = AllocVec(TabSize+1+256*sizeof(char*),MEMF_ANY | MEMF_CLEAR))
-			{
-				TabFile = (char*)(CVTab+256*sizeof(char*));
-				if(Read(fh,TabFile,TabSize) == TabSize)
-				{
-				char *tok, c=0;
-					TabFile[TabSize] = '\0';
-					tok = strtok(TabFile," \t\n");
-					while(NULL != tok)
-					{
-						if(!c)
-						{
-							if(tok[1]) KPrintF("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n");
-							else c = tok[0];
-						} else
-						{
-							CVTab[c] = tok;
-							KPrintF("LaTeX mapping: '%c' -> '%s'\n",c,tok);
-							c = '\0';
-						}
-					}
-					success = TRUE;
-				}
-				if(!success)
-				{
-					FreeMem(CVTab,TabSize);
-					CVTab = NULL;
-				}
-			}
-			Close(fh);
-		}
-	}
-	return CVTab;
+   if(-1 != (TabSize = FileSize(TabFileName)))
+   {
+   BPTR fh;
+      if(fh = Open(TabFileName,MODE_OLDFILE))
+      {
+         if(CVTab = AllocVec(TabSize+1+256*sizeof(char*),MEMF_ANY | MEMF_CLEAR))
+         {
+            TabFile = (char*)(CVTab+256*sizeof(char*));
+            if(Read(fh,TabFile,TabSize) == TabSize)
+            {
+            char *tok, c=0;
+               TabFile[TabSize] = '\0';
+               tok = strtok(TabFile," \t\n");
+               while(NULL != tok)
+               {
+                  if(!c)
+                  {
+                     if(tok[1]) { DB( KPrintF("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n"); ) }
+                     else c = tok[0];
+                  } else
+                  {
+                     CVTab[c] = tok;
+                     DB( KPrintF("LaTeX mapping: '%c' -> '%s'\n",c,tok); )
+                     c = '\0';
+                  }
+               }
+               success = TRUE;
+            }
+            if(!success)
+            {
+               FreeMem(CVTab,TabSize);
+               CVTab = NULL;
+            }
+         }
+         Close(fh);
+      }
+   }
+   return CVTab;
 }
 
 ///
@@ -1786,7 +1784,7 @@ int RE_DecryptPGP(int winnum, char *src)
    char options[SIZE_LARGE], orcpt[SIZE_ADDRESS];
 
    *orcpt = 0;
-	DB(KPrintF("RE_DecryptPGP()\n"));
+   DB( KPrintF("RE_DecryptPGP()\n"); )
    PGPGetPassPhrase();
    if (G->PGPVersion == 5)
    {
@@ -1811,7 +1809,7 @@ int RE_DecryptPGP(int winnum, char *src)
       if (G->PGPVersion == 5 && *orcpt) fprintf(fh, GetStr(MSG_RE_MsgReadOnly), orcpt);
       fclose(fh);
    }
-	DB(KPrintF("RE_DecryptPGP() ends\n"));
+   DB( KPrintF("RE_DecryptPGP() ends\n"); )
    return error;
 }
 ///
@@ -1821,7 +1819,7 @@ void RE_HandleEncryptedMessage(struct Part *frp)
 {
    struct Part *rp[2];
    FILE *in;
-   DB(KPrintF("RE_HandleEncryptedMessage()\n"));
+   DB( KPrintF("RE_HandleEncryptedMessage()\n"); )
    if (rp[0] = frp->Next) if (rp[1] = rp[0]->Next)
    {
       if (!RE_DecryptPGP(frp->Win, rp[1]->Filename))
@@ -1840,7 +1838,7 @@ void RE_HandleEncryptedMessage(struct Part *frp)
          RE_UndoPart(rp[1]);
       }
    }
-	DB(KPrintF("RE_HandleEncryptedMessage() ends\n"));
+   DB( KPrintF("RE_HandleEncryptedMessage() ends\n"); )
 }
 ///
 /// RE_LoadMessagePart
@@ -1967,7 +1965,7 @@ char *RE_ReadInMessage(int winnum, int mode)
    int totsize, len, wptr;
    FILE *fh;
    
-   DB(KPrintF("RE_ReadInMessage(%ld,%ld\n",winnum,mode));
+   DB( KPrintF("RE_ReadInMessage(%ld,%ld\n",winnum,mode); )
    if (re->NoTextstyles) { tsb = "\033c\033[s:18]\033l"; sb = "\033[s:2]"; bo = "\033b"; pl = "\033n"; }
    else { tsb = "<tsb>"; sb = "<sb>"; bo = "*"; pl = "*"; }
    for (totsize = 1000, part = first; part; part = part->Next)
@@ -2085,7 +2083,7 @@ char *RE_ReadInMessage(int winnum, int mode)
 /* PGP message */    if (!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
                      {
                         struct TempFile *tf;
-                        DB(KPrintF("RE_ReadInMessage(): encrypted message\n"));
+                        DB( KPrintF("RE_ReadInMessage(): encrypted message\n"); )
                         if (tf = OpenTempFile("w"))
                         {
                            *eolptr = '\n';
@@ -2097,23 +2095,23 @@ char *RE_ReadInMessage(int winnum, int mode)
                            while (*ptr && *ptr != '\n') ptr++; eolptr = ptr++;
                            fwrite(rptr, 1, ptr-rptr, tf->FP);
                            fclose(tf->FP); tf->FP = NULL;
-                           DB(KPrintF("RE_ReadInMessage(): decrypting\n"));
+                           DB( KPrintF("RE_ReadInMessage(): decrypting\n"); )
                            if (!RE_DecryptPGP(winnum, tf->Filename)) re->PGPSigned |= PGPS_OLD;
                            if (tf->FP = fopen(tf->Filename, "r"))
                            {
                               char buf2[SIZE_LARGE];
-                              DB(KPrintF("RE_ReadInMessage(): decrypted message follows\n"));
+                              DB( KPrintF("RE_ReadInMessage(): decrypted message follows\n"); )
                               while (fgets(buf2, SIZE_LARGE, tf->FP))
                               {
                                  rptr = buf2;
-                                 DB(KPrintF(buf2));
+                                 DB( KPrintF(buf2); )
                                  cmsg = AppendToBuffer(cmsg, &wptr, &len, buf2);
                               }
                            }
                            CloseTempFile(tf);
                         }
                         re->PGPEncrypted |= PGPE_OLD;
-                        DB(KPrintF("RE_ReadInMessage(): done with decryption\n"));
+                        DB( KPrintF("RE_ReadInMessage(): done with decryption\n"); )
                         goto rim_cont;
                      }
 /* signature */      if (!strcmp(rptr, "-- "))
@@ -2163,7 +2161,7 @@ rim_cont:
       re->FirstReadDone = TRUE;
       if (mode != RIM_QUIET) BusyEnd;
    }
-   DB(KPrintF("RE_ReadInMessage() ends"));
+   DB( KPrintF("RE_ReadInMessage() ends"); )
    return cmsg;
 }
 ///
@@ -2557,7 +2555,7 @@ SAVEDS ASM long RE_LV_AttachDspFunc(REG(a2,char **array), REG(a1,struct Part *en
    }
    else
    {
-   	  array[0] = GetStr(MSG_ATTACH_NO);
+      array[0] = GetStr(MSG_ATTACH_NO);
       array[1] = GetStr(MSG_ATTACH_PART);
       array[2] = GetStr(MSG_Size);
    }
