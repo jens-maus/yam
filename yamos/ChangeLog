@@ -1,3 +1,15 @@
+2001-12-04  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * changed drag&drop routines of folder NListtree accordingly that
+      if the user tries to drop a mail to a folder it should only appear
+      if he has the mouse over the folder and not above or below it.
+      Also changed the DragReport routines that if the user drops a
+      folder onto another folder a sign should not appear and only drops
+      below or above should be allowed.
+      Concerning the MAIL->FOLDER drop routines there seems to be still a
+      flaw in NListtree because it`s somehow still possible to drag a mail
+      in between of two folder but it will then be moved to one of those.
+
 2001-12-03  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * removed the tiny font from the Autodetect button in the folder

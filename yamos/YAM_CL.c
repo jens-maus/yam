@@ -204,22 +204,65 @@ DISPATCHERPROTO(WL_Dispatcher)
 /*** FL_Dispatcher (Folder NListtree) - Subclass of NList, adds Drag&Drop from message list ***/
 DISPATCHERPROTO(FL_Dispatcher)
 {
-   struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
    struct Folder *srcfolder, *dstfolder;
    struct MUI_NListtree_TreeNode *tn_src, *tn_dst;
 
    switch (msg->MethodID)
    {
+      // we catch MUIM_DragReport because we want to restrict some dragging for some special objects
+      case MUIM_DragReport:
+      {
+        struct MUIP_DragReport *dr = (struct MUIP_DragReport *)msg;
+        struct MUI_NListtree_TestPos_Result res;
+        struct MUI_NListtree_TreeNode *tn = NULL;
+
+        DoMethod(obj, MUIM_NListtree_TestPos, dr->x, dr->y, &res);
+
+        if(tn = res.tpr_TreeNode)
+        {
+          struct Folder *folder = (struct Folder *)tn->tn_User;
+
+          // If we drag a folder on a folder we reject it immediatly because only below or above
+          // is allowed
+          if(dr->obj == obj)
+          {
+            if(folder->Type != FT_GROUP && res.tpr_Type == MUIV_NListtree_TestPos_Result_Onto)
+            {
+              return(MUIV_DragReport_Abort);
+            }
+          }
+          else
+          {
+            // If we drag a mail onto a folder we allow only dragging on and not below or above
+            if(folder->Type == FT_GROUP || res.tpr_Type != MUIV_NListtree_TestPos_Result_Onto)
+            {
+              return(MUIV_DragReport_Abort);
+            }
+          }
+
+          // to rescue the dropping we call the SuperMethod now
+          return(DoSuperMethodA(cl, obj, msg));
+        }
+
+        return(MUIV_DragReport_Abort);
+
+      }
+      break;
+
       case MUIM_DragQuery:
       {
+         struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
+
          if (dq->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
       }
       break;
 
       case MUIM_DragDrop:
       {
+         struct MUIP_DragDrop *dd = (struct MUIP_DragDrop *)msg;
+
          // if a folder is dragged on a folder we break here and the SuperClass should handle the msg
-         if (dq->obj == obj) break;
+         if (dd->obj == obj) break;
 
          tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget);
          if(!tn_dst) return 0;
