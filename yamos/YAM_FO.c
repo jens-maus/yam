@@ -62,12 +62,12 @@ struct Folder **FO_CreateList(void)
 
         if(!tn)
         {
-        	free(flist);
+          free(flist);
           return NULL;
         }
 
         flist[i+1] = tn->tn_User;
-   		}
+      }
    }
    return flist;
 }
@@ -79,7 +79,7 @@ struct Folder *FO_GetCurrentFolder(void)
 {
    struct MUI_NListtree_TreeNode *tn = NULL;
 
-	 tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, MUIV_NListtree_GetEntry_Position_Active, 0, TAG_DONE);
+   tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, MUIV_NListtree_GetEntry_Position_Active, 0, TAG_DONE);
 
    if(!tn) return NULL;
 
@@ -123,15 +123,16 @@ LOCAL struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*),
 {
    int i;
    struct Folder *fo = NULL;
-	 struct MUI_NListtree_TreeNode *tn = NULL;
+   struct MUI_NListtree_TreeNode *tn = NULL;
 
    for (i = 0;; i++, tn=NULL, fo=NULL)
    {
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0, TAG_DONE);
       if (!tn) break;
 
-    	fo = tn->tn_User;
+      fo = tn->tn_User;
       if (!fo) break;
+
       if (cmpf(fo,attr)) break;
    }
    if (pos) *pos = i;
@@ -143,25 +144,27 @@ LOCAL struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*),
 //  Finds a folder by its type
 struct Folder *FO_GetFolderByType(int type, int *pos)
 {
-	return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByType_cmp,&type,pos);
+   return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByType_cmp,&type,pos);
 }
 // comparison function for FO_GetFolderByType
 LOCAL BOOL FO_GetFolderByType_cmp(struct Folder *f, int *type)
 {
-	return (BOOL)(f->Type == *type);
+   return (BOOL)(f->Type == *type);
 }
+
 ///
 /// FO_GetFolderByName
 //  Finds a folder by its name
 struct Folder *FO_GetFolderByName(char *name, int *pos)
 {
-	return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByName_cmp,name,pos);
+   return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByName_cmp,name,pos);
 }
 // comparison function for FO_GetFolderByName
 LOCAL BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
 {
-	return (BOOL)(!strcmp(f->Name, name) && (f->Type != FT_GROUP));
+   return (BOOL)(!strcmp(f->Name, name) && (f->Type != FT_GROUP));
 }
+
 ///
 /// FO_GetFolderPosition
 //  Gets the position of a folder in the list
@@ -169,15 +172,16 @@ int FO_GetFolderPosition(struct Folder *findfo)
 {
    int i;
    struct Folder *fo;
-	 struct MUI_NListtree_TreeNode *tn;
+   struct MUI_NListtree_TreeNode *tn;
 
-   for (i = 0;; i++, tn=NULL, fo=NULL)
+   for (i = 0;; i++)
    {
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0 , TAG_DONE);
       if (!tn) return -1;
-
-    	fo = tn->tn_User;
+ 
+      fo = tn->tn_User;
       if (!fo) return -1;
+
       if (fo == findfo) return i;
    }
 }
@@ -208,13 +212,13 @@ BOOL FO_LoadConfig(struct Folder *fo)
             for (p = buffer; *p && !ISpace(*p); p++); *p = 0;
             if (*buffer && value)
             {
-               if (!stricmp(buffer, "Name"))     		stccpy(fo->Name, value, SIZE_NAME);
-               if (!stricmp(buffer, "MaxAge"))   		fo->MaxAge = atoi(value);
-               if (!stricmp(buffer, "Password")) 		stccpy(fo->Password, Decrypt(value), SIZE_PASSWORD);
-               if (!stricmp(buffer, "Type"))     		fo->Type = atoi(value);
-               if (!stricmp(buffer, "XPKType"))  		fo->XPKType = atoi(value);
-               if (!stricmp(buffer, "Sort1"))    		fo->Sort[0] = atoi(value);
-               if (!stricmp(buffer, "Sort2"))    		fo->Sort[1] = atoi(value);
+               if (!stricmp(buffer, "Name"))        stccpy(fo->Name, value, SIZE_NAME);
+               if (!stricmp(buffer, "MaxAge"))      fo->MaxAge = atoi(value);
+               if (!stricmp(buffer, "Password"))    stccpy(fo->Password, Decrypt(value), SIZE_PASSWORD);
+               if (!stricmp(buffer, "Type"))        fo->Type = atoi(value);
+               if (!stricmp(buffer, "XPKType"))     fo->XPKType = atoi(value);
+               if (!stricmp(buffer, "Sort1"))       fo->Sort[0] = atoi(value);
+               if (!stricmp(buffer, "Sort2"))       fo->Sort[1] = atoi(value);
                if (!stricmp(buffer, "MLFromAddr"))  stccpy(fo->MLFromAddress,    value, SIZE_ADDRESS);
                if (!stricmp(buffer, "MLRepToAddr")) stccpy(fo->MLReplyToAddress, value, SIZE_ADDRESS);
                if (!stricmp(buffer, "MLAddress"))   stccpy(fo->MLAddress,        value, SIZE_ADDRESS);
@@ -242,18 +246,18 @@ void FO_SaveConfig(struct Folder *fo)
    if (fh = fopen(fname, "w"))
    {
       fprintf(fh, "YFC1 - YAM Folder Configuration\n");
-      fprintf(fh, "Name        = %s\n", 	fo->Name);
-      fprintf(fh, "MaxAge      = %ld\n", 	fo->MaxAge);
-      fprintf(fh, "Password    = %s\n", 	Encrypt(fo->Password));
-      fprintf(fh, "Type        = %ld\n", 	fo->Type);
-      fprintf(fh, "XPKType     = %ld\n", 	fo->XPKType);
-      fprintf(fh, "Sort1       = %ld\n", 	fo->Sort[0]);
-      fprintf(fh, "Sort2       = %ld\n", 	fo->Sort[1]);
-      fprintf(fh, "MLFromAddr  = %s\n", 	fo->MLFromAddress);
-      fprintf(fh, "MLRepToAddr = %s\n", 	fo->MLReplyToAddress);
-      fprintf(fh, "MLPattern   = %s\n", 	fo->MLPattern);
-      fprintf(fh, "MLAddress   = %s\n", 	fo->MLAddress);
-      fprintf(fh, "MLSignature = %ld\n", 	fo->MLSignature);
+      fprintf(fh, "Name        = %s\n",  fo->Name);
+      fprintf(fh, "MaxAge      = %ld\n", fo->MaxAge);
+      fprintf(fh, "Password    = %s\n",  Encrypt(fo->Password));
+      fprintf(fh, "Type        = %ld\n", fo->Type);
+      fprintf(fh, "XPKType     = %ld\n", fo->XPKType);
+      fprintf(fh, "Sort1       = %ld\n", fo->Sort[0]);
+      fprintf(fh, "Sort2       = %ld\n", fo->Sort[1]);
+      fprintf(fh, "MLFromAddr  = %s\n",  fo->MLFromAddress);
+      fprintf(fh, "MLRepToAddr = %s\n",  fo->MLReplyToAddress);
+      fprintf(fh, "MLPattern   = %s\n",  fo->MLPattern);
+      fprintf(fh, "MLAddress   = %s\n",  fo->MLAddress);
+      fprintf(fh, "MLSignature = %ld\n", fo->MLSignature);
       fclose(fh);
       strmfp(fname, GetFolderDir(fo), ".index");
       if (!(fo->Flags&FOFL_MODIFY)) SetFileDate(fname, DateStamp(&ds));
@@ -284,7 +288,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
 {
    if(!folder) return FALSE;
 
-	 // remove the image of this folder from the objectlist at the application
+   // remove the image of this folder from the objectlist at the application
    if(!folder->FImage) MUI_DisposeObject(folder->FImage);
 
    // if we still have mails in the folder we have to clear the list
@@ -308,7 +312,7 @@ BOOL FO_CreateFolder(int type, char *path, char *name)
       if(!(DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, 0, TAG_DONE)))
       {
         free(folder);
-      	return FALSE;
+        return FALSE;
       }
       FO_SaveConfig(folder);
       free(folder);
@@ -344,8 +348,8 @@ BOOL FO_LoadTree(char *fname)
             {
                fo.Type = FT_CUSTOM;
                fo.Sort[0] = 1; fo.Sort[1] = 3;
-               stccpy(fo.Name,   Trim(&buffer[8]),SIZE_NAME);
-               stccpy(fo.Path,   Trim(GetLine(fh, buffer, sizeof(buffer))), SIZE_PATH);
+               stccpy(fo.Name, Trim(&buffer[8]),SIZE_NAME);
+               stccpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))), SIZE_PATH);
 
                if (CreateDirectory(GetFolderDir(&fo)))
                {
@@ -363,10 +367,10 @@ BOOL FO_LoadTree(char *fname)
 
                   // Now we add this folder to the folder listtree
                   if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, 0, TAG_DONE)))
-		              {
-    		           		fclose(fh);
-        		          return FALSE;
-            		  }
+                  {
+                     fclose(fh);
+                     return FALSE;
+                  }
                }
                do if (!strcmp(buffer, "@ENDFOLDER")) break;
                while (GetLine(fh, buffer, sizeof(buffer)));
@@ -382,7 +386,7 @@ BOOL FO_LoadTree(char *fname)
                fo.SortIndex = i++;
                if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST, TAG_DONE)))
                {
-               		fclose(fh);
+                  fclose(fh);
                   return FALSE;
                }
             }
@@ -396,14 +400,14 @@ BOOL FO_LoadTree(char *fname)
                // now we check if the node should be open or not
                if(GetLine(fh, buffer, sizeof(buffer)))
                {
-               		// if it is greater zero then the node should be displayed open
+                  // if it is greater zero then the node should be displayed open
                   if(atoi(buffer) > 0) tnflags = (TNF_LIST | TNF_OPEN);
                }
 
                // now we are going to add this treenode to the list
                if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags, TAG_DONE)))
                {
-               		fclose(fh);
+                  fclose(fh);
                   return FALSE;
                }
 
@@ -413,7 +417,7 @@ BOOL FO_LoadTree(char *fname)
             {
                nested--;
 
-            	 // now we check if the nested is zero and if yes then we set tn_root = MUIV_NListtree_Insert_ListNode_Root
+               // now we check if the nested is zero and if yes then we set tn_root = MUIV_NListtree_Insert_ListNode_Root
                // otherwise we go back to the root of the root
                if (nested == 0) tn_root = MUIV_NListtree_Insert_ListNode_Root;
                else tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE);
@@ -426,7 +430,7 @@ BOOL FO_LoadTree(char *fname)
       success = TRUE;
    }
 
-	 // if nested is still greater zero we have a misconfiguration
+   // if nested is still greater zero we have a misconfiguration
    if (nested > 0) success = FALSE;
 
    return success;
@@ -445,16 +449,16 @@ BOOL FO_LoadTreeImage(struct Folder *fo)
    strmfp(fname, GetFolderDir(fo), ".fimage");
 
    fo->FImage = NewObject(CL_BodyChunk->mcc_Class, NULL,
-      MUIA_Bodychunk_File, 			fname,
-      MUIA_Bodychunk_UseOld, 		FALSE,
-      MUIA_Bitmap_Transparent, 	0,
+      MUIA_Bodychunk_File,     fname,
+      MUIA_Bodychunk_UseOld,   FALSE,
+      MUIA_Bitmap_Transparent, 0,
    End;
 
-	 if(!fo->FImage) return FALSE;
+   if(!fo->FImage) return FALSE;
 
-   kprintf("Loaded TreeImage: %s - %lx - %ld\n", fo->Name, fo->FImage, fo->SortIndex+1);
+   DB( kprintf("Loaded TreeImage: %s - %lx - %ld\n", fo->Name, fo->FImage, fo->SortIndex+1); )
 
-	 // Now we say that this image could be used by this Listtree
+   // Now we say that this image could be used by this Listtree
    DoMethod(lv, MUIM_NList_UseImage, fo->FImage, fo->SortIndex+1, 0);
 
    return TRUE;
@@ -473,58 +477,59 @@ LOCAL BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
   int i;
 
   // The root-Treenode is the subtree at the start
-	tn_root = subtree;
+  tn_root = subtree;
 
   for (i = 0;; i++, tn=NULL, fo=NULL)
-	{
+  {
     if(tn_root == MUIV_NListtree_GetEntry_ListNode_Root)
     {
-			tn = tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, 0, 0, TAG_DONE);
-  	  tn_parent = subtree = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE);
-    	noendgroup = TRUE;
-	  }
-  	else
+      tn = tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, 0, 0, TAG_DONE);
+      tn_parent = subtree = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE);
+      noendgroup = TRUE;
+    }
+    else
     {
-	    // get the next treenode
-			if(i == 0) tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, i, 0, TAG_DONE);
-			else tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Next, 0, TAG_DONE);
+      // get the next treenode
+      if(i == 0) tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, i, 0, TAG_DONE);
+      else tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Next, 0, TAG_DONE);
 
-			// get the parent node of the treenode
-  	  tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE);
+      // get the parent node of the treenode
+      tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE);
     }
 
     // if tn is null or the parent of the next is not the same like the caller of this function
     // we are going to print ENDGROUP and return
     if (!tn || tn_parent != subtree)
     {
-			// if we reach here it`s just the end of a GROUP
+      // if we reach here it`s just the end of a GROUP
       if(!noendgroup) fputs("@ENDGROUP\n", fh);
 
-			break;
+      break;
     }
     else
     {
-	  	fo = tn->tn_User;
-  	  if (!fo) break;
-    	fo->SortIndex = i;
+      fo = tn->tn_User;
+      if (!fo) break;
+      fo->SortIndex = i;
 
       switch (fo->Type)
       {
-      	case FT_GROUP:
-	      {
-  	    	fprintf(fh, "@GROUP %s\n%ld\n", fo->Name, tn->tn_Flags & TNF_OPEN ? 1 : 0);
+        case FT_GROUP:
+        {
+          fprintf(fh, "@GROUP %s\n%ld\n", fo->Name, tn->tn_Flags & TNF_OPEN ? 1 : 0);
 
           // Now we recursively save this subtree first
           success = FO_SaveSubTree(fh, tn);
-				}
-				break;
+        }
+        break;
 
         default:
         {
-					fprintf(fh, "@FOLDER %s\n%s\n@ENDFOLDER\n", fo->Name, fo->Path);
+           fprintf(fh, "@FOLDER %s\n%s\n@ENDFOLDER\n", fo->Name, fo->Path);
         }
         break;
-	    }
+      }
+
       tn_root = tn;
     }
   }
@@ -540,7 +545,7 @@ BOOL FO_SaveTree(char *fname)
    BOOL success = TRUE;
    FILE *fh;
 
-	 kprintf("SaveTree!!!\n");
+   DB( kprintf("SaveTree!!!\n"); )
 
    if (fh = fopen(fname, "w"))
    {
@@ -725,11 +730,11 @@ void FO_GetFolder(struct Folder *folder, BOOL existing)
       set(gui->CY_SORT[i], MUIA_Cycle_Active, ABS(folder->Sort[i])-1);
       set(gui->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
    }
-   set(gui->ST_MLADDRESS,        MUIA_String_Contents, folder->MLAddress);
-   set(gui->ST_MLPATTERN,        MUIA_String_Contents, folder->MLPattern);
-   set(gui->ST_MLFROMADDRESS,    MUIA_String_Contents, folder->MLFromAddress);
+   set(gui->ST_MLADDRESS, MUIA_String_Contents, folder->MLAddress);
+   set(gui->ST_MLPATTERN, MUIA_String_Contents, folder->MLPattern);
+   set(gui->ST_MLFROMADDRESS, MUIA_String_Contents, folder->MLFromAddress);
    set(gui->ST_MLREPLYTOADDRESS, MUIA_String_Contents, folder->MLReplyToAddress);
-   set(gui->CY_MLSIGNATURE, 		 MUIA_Cycle_Active,    folder->MLSignature);
+   set(gui->CY_MLSIGNATURE, MUIA_Cycle_Active, folder->MLSignature);
    set(gui->CY_FTYPE, MUIA_Disabled, isdefault);
    set(gui->CY_FMODE, MUIA_Disabled, isdefault || existing);
    set(gui->BT_MOVE, MUIA_Disabled, existing);
@@ -823,27 +828,27 @@ MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
 //  Opens folder window to edit the settings of the active folder
 void SAVEDS FO_EditFolderFunc(void)
 {
-	struct Folder *folder = FO_GetCurrentFolder();
+  struct Folder *folder = FO_GetCurrentFolder();
 
-	switch(folder->Type)
-	{
+  switch(folder->Type)
+  {
     case FT_GROUP:
     {
-			if (StringRequest(folder->Name, SIZE_NAME, GetStr(MSG_FO_EditFolder), GetStr(MSG_FO_NewSepReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
-         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, 0, TAG_DONE);
-	  }
-  	break;
+      if (StringRequest(folder->Name, SIZE_NAME, GetStr(MSG_FO_EditFolder), GetStr(MSG_FO_NewSepReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, 0, TAG_DONE);
+    }
+    break;
 
-  	default:
+    default:
     {
-    	if (!G->FO)
+      if (!G->FO)
       {
-         if (!(G->FO = FO_New())) return;
-         if (!SafeOpenWindow(G->FO->GUI.WI)) { DisposeModulePush(&G->FO); return; }
+        if (!(G->FO = FO_New())) return;
+        if (!SafeOpenWindow(G->FO->GUI.WI)) { DisposeModulePush(&G->FO); return; }
       }
       FO_GetFolder(G->FO->EditFolder = folder, FALSE);
-  	}
-	}
+    }
+  }
 }
 MakeHook(FO_EditFolderHook, FO_EditFolderFunc);
 
@@ -876,7 +881,7 @@ void SAVEDS FO_DeleteFolderFunc(void)
                               DeleteMailDir(GetFolderDir(folder), FALSE);
                            }
                            ClearMailList(folder, TRUE);
-      case FT_GROUP:   		 DoMethod(lv, MUIM_NList_Remove, pos);
+      case FT_GROUP:       DoMethod(lv, MUIM_NList_Remove, pos);
                            FO_SaveTree(CreateFilename(".folders"));
                            break;
       default:             break;
@@ -1006,11 +1011,11 @@ LOCAL struct FO_ClassData *FO_New(void)
    {
       APTR bt_okay, bt_cancel;
       static char *ftypes[4], *fmodes[5], *sortopt[8], *fsignat[5];
-			fsignat[0] = GetStr(MSG_WR_NoSig);
-			fsignat[1] = GetStr(MSG_WR_DefSig);
-			fsignat[2] = GetStr(MSG_WR_AltSig1);
-			fsignat[3] = GetStr(MSG_WR_AltSig2);
-			fsignat[4] = NULL;
+      fsignat[0] = GetStr(MSG_WR_NoSig);
+      fsignat[1] = GetStr(MSG_WR_DefSig);
+      fsignat[2] = GetStr(MSG_WR_AltSig1);
+      fsignat[3] = GetStr(MSG_WR_AltSig2);
+      fsignat[4] = NULL;
       sortopt[0] = GetStr(MSG_FO_MessageDate);
       sortopt[1] = GetStr(MSG_FO_DateRecvd);
       sortopt[2] = GetStr(MSG_Sender);
@@ -1096,7 +1101,7 @@ LOCAL struct FO_ClassData *FO_New(void)
          SetHelp(data->GUI.ST_MLADDRESS,        MSG_HELP_FO_ST_MLADDRESS        );
          SetHelp(data->GUI.ST_MLFROMADDRESS,    MSG_HELP_FO_ST_MLFROMADDRESS    );
          SetHelp(data->GUI.ST_MLREPLYTOADDRESS, MSG_HELP_FO_ST_MLREPLYTOADDRESS );
-         SetHelp(data->GUI.CY_MLSIGNATURE,			MSG_HELP_WR_RA_SIGNATURE 				);
+         SetHelp(data->GUI.CY_MLSIGNATURE,      MSG_HELP_WR_RA_SIGNATURE        );
 
          DoMethod(data->GUI.BT_MOVE  ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FO_MoveHook);
          DoMethod(bt_okay            ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FO_SaveHook);
@@ -1109,4 +1114,3 @@ LOCAL struct FO_ClassData *FO_New(void)
    return NULL;
 }
 ///
-
