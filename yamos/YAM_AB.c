@@ -166,7 +166,7 @@ void AB_InsertAddress(APTR string, char *alias, char *name, char *address)
 {
    char *p;
    get(string, MUIA_UserData, &p);
-   if ((BOOL)p)
+   if ((BOOL)(p != NULL))
    {
       get(string, MUIA_String_Contents, &p);
       if (*p) DoMethod(string, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);

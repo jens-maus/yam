@@ -1755,7 +1755,7 @@ SAVEDS ASM long PO_ListPublicKeys(REG(a1) APTR string, REG(a2) APTR pop)
    int retc, keys = 0;
    FILE *fp;
 
-   get(pop, MUIA_UserData, &str); secret = (BOOL)str;
+   get(pop, MUIA_UserData, &str); secret = (BOOL)(str != NULL);
    if (G->PGPVersion == 5)
       retc = PGPCommand("pgpk", "-l +language=us", KEEPLOG);
    else
