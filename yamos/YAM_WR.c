@@ -949,7 +949,6 @@ BOOL FirstAddr=TRUE;
 	for(i=0; i<3; i++)
 	{
 		if(CheckThese[i] == NULL) continue;		// skip empty fields
-		DB(KPrintf("SetDefaultSecurity(): checking address field: '%s'\n",CheckThese[i])); 
 		// copy string as strtok() will modify it
 		if(buf = strdup(CheckThese[i]))
 		{
@@ -960,23 +959,15 @@ BOOL FirstAddr=TRUE;
 			// loop through comma-separated addresses in string
 			while(s = strtok_r(&in,","))
 			{
-				DB(KPrintf("SetDefaultSecurity(): looking for user '%s'\n",s)); 
 				while(t = strtok_r(&s," ()<>"))
 					if(strchr(t,'@')) break;
 
 				if(!t) continue; // can't find address for this entry - shouldn't happen
-				else DB(KPrintf("SetDefaultSecurity(): address is %s\n",t));
 
 				if(AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
-				{
 					currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;	// get default from entry
-					DB(KPrintf("SetDefaultSecurity(): found user w/security=%ld\n",currsec)); 
-				}
 				else
-				{
 					currsec = 0;		// entry not in address book -> no security
-					DB(KPrintf("SetDefaultSecurity(): can't find user, assuming SEC_NONE\n")); 
-				}
 
 				if(currsec != Security)
 				{
