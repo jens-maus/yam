@@ -99,7 +99,7 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
 
 					  if (pe.Address[0]) p = strchr(pe.Address, '@'); // is it an email address?
 
-			      if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
+			      if (p && p[1] == '\0') strcpy(p, strchr(C->EmailAddress, '@'));
 			      if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
 		  	    *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
         		return 0;	 // if it is an email we return without an error because finding an entry for an email isn`t a must
