@@ -5,11 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-09-27  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed another bug within the MIME Viewer parts
+      of YAM were the argument of the MIME Viewer needed some
+      extra attention concerning quotation marks. Now YAM should
+      be able to execute the mime viewer correctly even if the
+      path to the file has some whitespaces in it. It will also
+      take care of the variant if the user already used quotation
+      marks within the MIME configuration.
+
 2002-09-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c, YAM_CO.c, YAM_FI.c, YAM_MA.c, YAM_UT.c, YAM_WR.c,
       YAM_utilities.h: fixed bug #610607 where mails in a
-      PROGDIR: located folder were able to display the RAW part.
+      PROGDIR: located folder were unable to display the RAW part.
       YAM was just forwarding PROGDIR: to the third party program
       where then this programs tried to find the mailfile out of
       PROGDIR: which obviously wasn`t correct. Now YAM will always

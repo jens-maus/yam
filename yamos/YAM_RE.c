@@ -1043,9 +1043,10 @@ MakeStaticHook(RE_SaveHook, RE_SaveFunc);
 //  Displays a message part (attachment) using a MIME viewer
 void RE_DisplayMIME(char *fname, char *ctype)
 {
-  static char command[SIZE_COMMAND+SIZE_PATHFILE];
   int i;
   struct MimeView *mv = NULL;
+  static char command[SIZE_COMMAND+SIZE_PATHFILE];
+  char *fileptr;
 
   for (i = 1; i < MAXMV; i++)
   {
@@ -1112,8 +1113,75 @@ void RE_DisplayMIME(char *fname, char *ctype)
       if (!mv) mv = C->MV[0];
     }
 
-    sprintf(command, mv->Command, GetRealPath(fname));
-    ExecuteCommand(command, TRUE, OUT_NIL);
+    // now we have to generate a real commandstring and make sure that
+    // the %s is covered with "" or otherwise we will run into trouble with
+    // the execute and pathes that have whitespaces.
+    if((fileptr = strstr(mv->Command, "%s")))
+    {
+      char *startPtr = fileptr;
+      char *endPtr = fileptr;
+
+      // lets see if the %s is surrounded by some "" and find the beginning where
+      // we should place the quotation marks
+
+      // we first move back until we find whitespace or a quotation mark
+      do
+      {
+        if(*startPtr == ' ' || startPtr == &mv->Command[0])
+        {
+          startPtr++;
+          break;
+        }
+        else if(*startPtr == '"')
+        {
+          startPtr = NULL;
+          break;
+        }
+
+      }while(startPtr--);
+
+      if(startPtr)
+      {
+        // then we search for the end where we should put the closing quotation mark
+        do
+        {
+          if(*endPtr == ' ' || *endPtr == '\0') break;
+          else if(*endPtr == '"')
+          {
+            endPtr = NULL;
+            break;
+          }
+
+        }while(endPtr++);
+      }
+
+      // if we found the start and endPtr we can place the quotation marks there
+      // by copying the whole string in a buffer.
+      if(startPtr && endPtr)
+      {
+        char realcmd[SIZE_COMMAND];
+        int i,j;
+
+        for(i=0,j=0; ;i++,j++)
+        {
+          // if this is the start or end we place the first quotation mark
+          if(&mv->Command[j] == startPtr || &mv->Command[j] == endPtr)
+          {
+            realcmd[i++] = '"';
+          }
+
+          realcmd[i] = mv->Command[j];
+
+          if(mv->Command[j] == '\0') break;
+        }
+
+        sprintf(command, realcmd, GetRealPath(fname));
+      }
+      else sprintf(command, mv->Command, GetRealPath(fname));
+
+      ExecuteCommand(command, TRUE, OUT_NIL);
+    }
+    else ExecuteCommand(mv->Command, TRUE, OUT_NIL);
   }
 }
 ///
