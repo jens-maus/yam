@@ -256,13 +256,13 @@ struct PopupMenu {
     union {
     	struct PopupMenu	*Sub;		/* Sub menu pointer */
     	struct PopupMenu	*Group;		/* Group members */
-	};
+	} a;
 
     union {
         STRPTR      		Title;      /* Title */
         ULONG       		TitleID;    /* Locale string ID */
         Object      		*Boopsi;    /* Boopsi object */
-    };
+    } b;
 
     ULONG           		Flags;		/* Flags */
     ULONG           		ID;     	/* Item ID */
@@ -287,7 +287,7 @@ struct PopupMenu {
     union {
     	struct Image       	*Images[2]; /* Images/Icons (0 - unselected, 1 - sel) */
 		STRPTR				IconID;
-	};
+	} c;
 
     UBYTE           		CommKey;    /* Command Key */
     UBYTE          			Weight;     /* Weight */
