@@ -128,34 +128,26 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
       }
    }
 
+   // check if there are following/previous folders with unread
+   // mails and change to there if the user wants
    if (onlynew)
    {
       struct Folder **flist;
-
-      // only look for following folders if moving forwards
-      if (direction == -1)
-      {
-         DisplayBeep(NULL);
-         return;
-      }
 
       if (flist = FO_CreateList())
       {
          int i;
 
-         // look for next folder after the current one
+         // look for the current folder in the array
          for (i = 1; i <= (int)*flist; i++)
          {
             if (flist[i] == CurrentFolder)
-            {
-               i++;
                break;
-            }
          }
 
          // look for first folder with at least one unread mail
          // and if found read that mail
-         for ( ; i <= (int)*flist; i++)
+         for (i += direction; i <= (int)*flist && i >= 1; i += direction)
          {
             if (flist[i]->Type != FT_SEPARATOR && flist[i]->Unread > 0)
             {
@@ -171,7 +163,7 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
          }
 
          // beep if no folder with unread mails was found
-         if (i > (int)*flist)
+         if (i > (int)*flist || i < 1)
             DisplayBeep(NULL);
 
          free(flist);
