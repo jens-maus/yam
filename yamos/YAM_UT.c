@@ -381,7 +381,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
       {
         case 1:
         {
-          struct Part *prevpart;
+          struct Part *prevpart = part;
           LONG id;
 
           // now we pass through every selected entry and add it to the next part.

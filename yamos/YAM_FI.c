@@ -346,7 +346,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens
 //  Checks if a message fulfills the search criteria
 static BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 {
-   BOOL found0 = FALSE, found = FALSE;
+   BOOL found0, found = FALSE;
    int comp_bak = search->Compare;
 
    switch(search->Mode)

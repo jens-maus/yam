@@ -134,7 +134,11 @@ HOOKPROTONHNO(RE_Follow, void, int *arg)
       for (i = 1; i < (int)*flist; i++) if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_GROUP) allloaded = FALSE;
       free(flist);
    }
-   if (!allloaded) if (!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_RE_FollowThreadReq))) return;
+   if (!allloaded)
+   {
+      STRPTR str = GetStr(MSG_RE_FollowThreadReq); // don`t remove, this is a SAS/C bug workaround !
+      if(!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), str)) return;
+   }
    if (direction == -1) fmail = RE_GetQuestion(G->RE[winnum]->Mail.cIRTMsgID);
    if (direction ==  1) fmail = RE_GetAnswer  (G->RE[winnum]->Mail.cMsgID);
    if (fmail)
