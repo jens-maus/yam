@@ -3553,17 +3553,19 @@ void PlaySound(char *filename)
 {
    if (DataTypesBase)
    {
-      struct dtTrigger Play = { DTM_TRIGGER, NULL, STM_PLAY, NULL };
-      Object *sound;
-      BYTE sig;
-      if ((sound = NewDTObject((APTR)filename, DTA_GroupID, GID_SOUND, SDTA_Volume, 64, SDTA_Cycles, 1, TAG_DONE)))
+      Object *sound = NewDTObject(filename, DTA_GroupID, GID_SOUND, SDTA_Volume, 64, SDTA_Cycles, 1, TAG_DONE);
+      if (sound)
       {
-         if ((sig = AllocSignal(-1)) >= 0)
+         BYTE s = AllocSignal(-1);
+         if (s >= 0)
          {
-            if (SetDTAttrs(sound, NULL, NULL, SDTA_SignalTask, FindTask(NULL), SDTA_SignalBit, 1<<sig, TAG_END) == 2)
+            struct dtTrigger Play = { DTM_TRIGGER, NULL, STM_PLAY, NULL };
+            ULONG sig = (UBYTE)s;
+
+            if (SetDTAttrs(sound, NULL, NULL, SDTA_SignalTask, FindTask(NULL), SDTA_SignalBit, 1L<<sig, TAG_END) == 2)
             {
                DoDTMethodA(sound, NULL, NULL, (Msg)&Play);
-               Wait((ULONG)1<<sig);
+               Wait(1L<<sig);
             }
             else
             {
@@ -3577,7 +3579,7 @@ void PlaySound(char *filename)
                DoDTMethodA(sound, NULL, NULL, (Msg)&Play);
                Delay(seconds * 50);
             }
-            FreeSignal((ULONG)sig);
+            FreeSignal(sig);
          }
          DisposeDTObject(sound);
       }
