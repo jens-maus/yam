@@ -334,7 +334,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
   if(folder->FImage) FreeBCImage(folder->FImage);
 
   // if we still have mails in the folder we have to clear the list
-  if(folder->Messages) ClearMailList(folder, TRUE);
+//  if(folder->Messages) ClearMailList(folder, TRUE);
 
   // now it`s time to deallocate the folder itself
   free(folder);

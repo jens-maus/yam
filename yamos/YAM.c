@@ -484,16 +484,9 @@ void Terminate(void)
       SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
 
-      // lets free every folder resource
-      if ((flist = FO_CreateList()))
-      {
-         for (i = 1; i <= (int)*flist; i++)
-         {
-           FO_FreeFolder(flist[i]);
-         }
-
-         free(flist);
-      }
+      /** the folder and it`s resources will get freed automatically at exit
+          so we don`t have to clear it be hand here.
+      **/
    }
    if (G->AB) DisposeModule(&G->AB);
    if (G->MA) DisposeModule(&G->MA);

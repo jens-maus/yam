@@ -475,3 +475,10 @@
     * fixed LoadBCImage function where something went wrong with the stcpfn()
       function
     * added folder images from Philip A. Vedovatti to std images.
+
+2001-06-04  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * checked memory allocation&freeing of the folder listtree and it`s mails. Now it
+      seems that all works fine.
+    * reactivated the CompareHook for the folder listtree. Here we still have to do
+      some modifications.

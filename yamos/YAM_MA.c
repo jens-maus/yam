@@ -1918,7 +1918,7 @@ HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMe
 
    if(!msg) return(NULL);
 
-   entry = malloc(sizeof(struct Folder));
+   entry = calloc(1, sizeof(struct Folder));
    memcpy(entry, msg->UserData, sizeof(struct Folder));
 
    return(entry);
@@ -1926,12 +1926,12 @@ HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMe
 MakeHook(MA_LV_FConHook, MA_LV_FConFunc);
 
 ///
-/// MA_LB_FDesFunc
-/*** MA_LV_FDesFunc - Folder listview destruction hook ***/
+/// MA_LV_FDesFunc
+/*** MA_LV_FDesFunc - Folder listtree destruction hook ***/
 HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
 {
    if(!msg) return(-1);
-   FO_FreeFolder(msg->UserData);
+   if(msg->UserData) FO_FreeFolder(msg->UserData);
    return(0);
 }
 MakeHook(MA_LV_FDesHook, MA_LV_FDesFunc);
@@ -2055,16 +2055,18 @@ MakeHook(MA_LV_Cmp2Hook, MA_LV_Cmp2Func);
 
 ///
 /// MA_LV_FCmp2Func
-//  Folder listview sort hook
-HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct NList_CompareMessage *ncm)
+//  Folder listtree sort hook
+HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct MUIP_NListtree_CompareMessage *ncm)
 {
-   struct Folder *entry1 = (struct Folder *)ncm->entry1;
-   struct Folder *entry2 = (struct Folder *)ncm->entry2;
+   struct Folder *entry1 = (struct Folder *)ncm->TreeNode1->tn_User;
+   struct Folder *entry2 = (struct Folder *)ncm->TreeNode2->tn_User;
    int cmp = 0;
 
-   if (ncm->sort_type != MUIV_NList_SortType_None)
+   kprintf("CMP: %ld\n", cmp);
+
+   if (ncm->SortType != MUIV_NList_SortType_None)
    {
-      switch (ncm->sort_type & MUIV_NList_TitleMark_ColMask)
+      switch (ncm->SortType & MUIV_NList_TitleMark_ColMask)
       {
          case 0:  cmp = stricmp(entry1->Name, entry2->Name); break;
          case 1:  cmp = entry1->Total-entry2->Total; break;
@@ -2073,8 +2075,10 @@ HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct NList_CompareMessage *ncm
          case 4:  cmp = entry1->Size-entry2->Size; break;
          case 10: return entry1->SortIndex-entry2->SortIndex;
       }
-      if (ncm->sort_type & MUIV_NList_TitleMark_TypeMask) cmp = -cmp;
+      if (ncm->SortType & MUIV_NList_TitleMark_TypeMask) cmp = -cmp;
    }
+
+   kprintf("CMP: %ld\n", cmp);
    return cmp;
 }
 MakeHook(MA_LV_FCmp2Hook, MA_LV_FCmp2Func);
@@ -2419,11 +2423,10 @@ struct MA_ClassData *MA_New(void)
                      MUIA_NList_TitleClick          , TRUE,
                      MUIA_NList_DragType            , MUIV_NList_DragType_Immediate,
                      MUIA_NList_DragSortable        , TRUE,
-//                     MUIA_NList_CompareHook2        , &MA_LV_FCmp2Hook,
+                     MUIA_NListtree_CompareHook     , &MA_LV_FCmp2Hook,
                      MUIA_NListtree_DisplayHook     , &MA_LV_FDspFuncHook,
                      MUIA_NListtree_ConstructHook   , &MA_LV_FConHook,
                      MUIA_NListtree_DestructHook    , &MA_LV_FDesHook,
-//                     MUIA_NList_TitleSeparator      , TRUE,
                      MUIA_NListtree_AutoVisible     , MUIV_NListtree_AutoVisible_Normal,
                      MUIA_NListtree_Title           , TRUE,
                      MUIA_NListtree_DoubleClick     , MUIV_NListtree_DoubleClick_All,
