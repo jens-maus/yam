@@ -1206,7 +1206,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    {
       ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents), NULL);
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
-      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
       return;
    }
    else if(!addr[0])
@@ -1216,7 +1215,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
       // set the TO Field active and go back
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
-      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
 
       if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), err)) mode = WRITE_HOLD;
       else return;
@@ -2236,8 +2234,8 @@ static struct WR_ClassData *WR_New(int winnum)
                   MUIA_HelpNode, "WR01",
                   Child, NListviewObject,
                      MUIA_CycleChain, 1,
-                     MUIA_Listview_DragType, 1,
-                     MUIA_NListview_NList, data->GUI.LV_ATTACH = NewObject(CL_AttachList->mcc_Class,NULL,
+                     MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
+                     MUIA_NListview_NList,    data->GUI.LV_ATTACH = NewObject(CL_AttachList->mcc_Class,NULL,
                         InputListFrame,
                         MUIA_NList_ListBackground, MUII_ListBack,
                         MUIA_NList_TitleBackground, MUII_ListBack,
@@ -2423,6 +2421,7 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(mi_color             ,MUIM_Notify, MUIA_Menuitem_Checked,          TRUE,           data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_Pen,           7);
          DoMethod(mi_color             ,MUIM_Notify, MUIA_Menuitem_Checked,          FALSE,          data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_Pen,           0);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,0             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,FALSE);
+         DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,0             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_ActiveObject, data->GUI.ST_TO);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,1             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,2             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
          DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Acknowledge  ,MUIV_EveryTime,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_ActiveObject,data->GUI.TE_EDIT);
