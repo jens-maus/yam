@@ -2152,6 +2152,8 @@ struct WR_ClassData *WR_New(int winnum)
                      MUIA_Listview_DragType, 1,
                      MUIA_NListview_NList,		 data->GUI.LV_ATTACH = NewObject(CL_AttachList->mcc_Class,NULL,
                         InputListFrame,
+                        MUIA_NList_ListBackground, MUII_ListBack,
+                        MUIA_NList_TitleBackground, MUII_ListBack,
                         MUIA_NList_DragSortable ,TRUE,
                         MUIA_NList_Format       ,"D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
                         MUIA_NList_Title        ,TRUE,
