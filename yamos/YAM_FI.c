@@ -54,7 +54,6 @@
 #include "YAM_read.h"
 
 /* local protos */
-static void FI_MakeSubstringPattern(char*);
 static BOOL FI_MatchString(struct Search*, char*);
 static BOOL FI_MatchListPattern(struct Search*, char*);
 static BOOL FI_MatchPerson(struct Search*, struct Person*);
@@ -72,16 +71,6 @@ static struct FI_ClassData *FI_New(void);
 
 /// Global variables
 int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
-
-///
-/// FI_MakeSubstringPattern
-//  Creates pattern for substring search
-static void FI_MakeSubstringPattern(char *pattern)
-{
-   char npattern[SIZE_PATTERN];
-   sprintf(npattern, "#?%s#?", pattern);
-   strcpy(pattern, npattern);
-}
 
 ///
 /// FI_MatchString
@@ -337,7 +326,9 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens
    {
       if (substr || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
       {
-        FI_MakeSubstringPattern(search->Match);
+         // if substring is selected lets generate a substring out
+         // of the current match string, but keep the string borders in mind.
+         sprintf(search->Match, "#?%s#?", search->Match);
       }
 
       if (casesens) ParsePattern      (search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);

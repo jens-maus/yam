@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FI.c: fixed bug #721041 where YAM caused some serious
+      enforcer hits if a too long matchpattern was used together
+      with ths substring option.
 
 2003-04-14  David Rey <david@saug.org>
 
