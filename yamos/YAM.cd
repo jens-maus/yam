@@ -4562,7 +4562,7 @@ MSG_WR_DefSecurityConflictGads (//)
 *_None|_Sign|_Encrypt|_Both|Send _anonymously
 ;
 MSG_WR_SecDefaults (//)
-Try defaults
+Default
 ;
 MSG_ER_PGPMultipart (//)
 Error creating multipart PGP message. Encryption/signing disabled!
@@ -4611,7 +4611,7 @@ Change to this folder and continue\n\
 with reading there?
 ;
 MSG_WR_NoSubjectReqGad (//)
-*_Set Subject|_Continue without Subject
+*_Set subject|_Continue without subject
 ;
 MSG_NoSubjectReq (//)
 Warning: Subject is empty
