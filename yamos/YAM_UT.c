@@ -41,10 +41,6 @@ LOCAL BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, in
 LOCAL BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 LOCAL char *IdentifyFileDT(char *fname);
-/* hook functions */
-LOCAL SAVEDS ASM long GeneralDesFunc(REG(a1) void *entry);
-LOCAL SAVEDS ASM void PO_SetPublicKey(REG(a1) APTR string, REG(a2) APTR pop);
-LOCAL SAVEDS ASM long PO_ListPublicKeys(REG(a1) APTR string, REG(a2) APTR pop);
 
 
 /*** Requesters ***/
@@ -1744,7 +1740,7 @@ BOOL FileToEditor(char *file, struct Object *editor)
 /*** Hooks ***/
 /// GeneralDesFunc
 //  General purpose destruction hook
-LOCAL SAVEDS ASM long GeneralDesFunc(REG(a1) void *entry)
+SAVEDS ASM long GeneralDesFunc(REG(a1) void *entry)
 {
    free(entry);
    return 0;
@@ -1753,7 +1749,7 @@ MakeHook(GeneralDesHook, GeneralDesFunc);
 ///
 /// PO_SetPublicKey
 //  Copies public PGP key from list to string gadget
-LOCAL SAVEDS ASM void PO_SetPublicKey(REG(a1) APTR string, REG(a2) APTR pop)
+SAVEDS ASM void PO_SetPublicKey(REG(a1) APTR string, REG(a2) APTR pop)
 {
    char *var, buf[SIZE_SMALL];
 
@@ -1769,7 +1765,7 @@ MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 ///
 /// PO_ListPublicKeys
 //  Lists keys of public PGP keyring in a popup window
-LOCAL SAVEDS ASM long PO_ListPublicKeys(REG(a1) APTR string, REG(a2) APTR pop)
+SAVEDS ASM long PO_ListPublicKeys(REG(a1) APTR string, REG(a2) APTR pop)
 {  
    BOOL secret;
    char buf[SIZE_LARGE], *str, p;
