@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.8 (02.02.2003)
+## version $VER: YAM.catalog 5.8 (19.02.2003)
 ## codeset 0
 ;
 MSG_Folder
@@ -5904,4 +5904,22 @@ MSG_MA_TOUNMARKED
 ;
 MSG_RE_SETMARKED
 Status auf markiert setzen
+;
+MSG_MA_CTX_DEFWIDTH_THIS
+Standardbreite: diese
+;
+MSG_MA_CTX_DEFWIDTH_ALL
+Standardbreite: alle
+;
+MSG_MA_CTX_DEFORDER_THIS
+Standardreihenfolge: diese
+;
+MSG_MA_CTX_DEFORDER_ALL
+Standardreihenfolge: alle
+;
+MSG_MA_CTX_MAILLIST
+Nachrichtenliste Einst.
+;
+MSG_MA_CTX_FOLDERLIST
+Postfachliste Einst.
 ;
