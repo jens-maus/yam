@@ -15,7 +15,7 @@
 
 #ifndef F_OK
   #define F_OK 0
-  int access (const char *, int);
+  int access(const char *, int);
 #endif
 
 /*
@@ -29,6 +29,10 @@ extern int astcsma(const char *, const char *);
 extern char *stpblk(const char *);
 extern void strmfp(char *, const char *, const char *);
 extern void strsfn(const char *, char *, char *, char *, char *);
+
+#if defined(__VBCC__) || defined(__STORM__)
+  extern char *strdup(const char *);
+#endif
 
 /*
 ** <dos.h>
