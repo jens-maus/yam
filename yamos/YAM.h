@@ -77,7 +77,7 @@ struct Global
    struct DI_ClassData *    DI;
    struct US_ClassData *    US;
 
-   LONG                     EdColMap[9];
+   LONG                     EdColMap[16];
    LONG                     Weights[6];
    LONG                     TR_Socket;
 
