@@ -5,7 +5,7 @@
 #undef DoMethod
 #include "YAM.h"
 
-#include "extrasrc/astastcsma.c"
+#include "extrasrc/astcsma.c"
 
 int max(int x, int y)
 {
