@@ -524,4 +524,4 @@
     * changed Library check routine to show the required revision also. Users where
       complaining about the NList.mcc v19.97 -> v19.98 upgrade requirement and the
       error message just showed "required v19".
-
+    * fixed enforcer hit when creating a new folder in the listtree. -bug #431614

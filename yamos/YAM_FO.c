@@ -1053,9 +1053,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       set(gui->WI, MUIA_Window_Open, FALSE);
       if (CreateDirectory(GetFolderDir(&folder)))
       {
-         int pos;
-         get(lv, MUIA_NListtree_Active, &pos);
-         DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Root, ++pos, MUIV_NListtree_Insert_Flag_Active, TAG_DONE);
+         DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active, TAG_DONE);
          FO_SaveConfig(&folder);
          success = TRUE;
       }
