@@ -916,8 +916,7 @@ BOOL TR_ConnectESMTP(void)
 
    if(0==ESMTPAuth)
    {
-      ER_NewError("ESMTP Server %s doesn't support SMTP AUTH!", C->SMTP_Server, NULL);
-      /* FixME: use locale for error text */
+      ER_NewError(GetStr(MSG_ER_NO_SMTP_AUTH), C->SMTP_Server, NULL);
       return FALSE;
    }
 
@@ -1409,7 +1408,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       {
          BOOL connected;
 
-         if (C->SMTP_AUTH_User[0]) connected=TR_ConnectESMTP();
+         if (C->Use_SMTP_AUTH && C->SMTP_AUTH_User[0]) connected=TR_ConnectESMTP();
          else connected=TR_ConnectSMTP();
          if (connected)
          {

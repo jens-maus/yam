@@ -4227,3 +4227,6 @@ Error creating multipart PGP message. Encryption/signing disabled!
 ;
 MSG_RE_FixedFont (//)
 Fixed font
+;
+MSG_ER_NO_SMTP_AUTH (//)
+ESMTP Server %s doesn't support SMTP AUTH!

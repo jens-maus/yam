@@ -63,3 +63,7 @@
 
     * Fixed a very nasty bug when using the ARexx command MAILWRITE with
       the QUIET switch.
+
+    * YAM would try to send mails using SMTP AUTH when a username was
+      configured, even though "Use SMTP AUTH" wasn't selected. Fixed.
+      Localized ESMTP error message.
