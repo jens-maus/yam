@@ -20,4 +20,10 @@ struct PopupMenu *PM_MakeMenu(ULONG tag, ...)
 ULONG PM_OpenPopupMenu(struct Window *prevwnd, ULONG tag, ...)
 { return PM_OpenPopupMenuA(prevwnd,(struct TagItem *)&tag); }
 
+#include <proto/amissl.h>
+long InitAmiSSL(ULONG tag, ...)
+{ return InitAmiSSLA((struct TagItem *)&tag); }
+long CleanupAmiSSL(ULONG tag, ...)
+{ return CleanupAmiSSLA((struct TagItem *)&tag); }
+
 #endif
