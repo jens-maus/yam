@@ -7,6 +7,11 @@ $Source$
 
 2002-09-29  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_rexx_rxif.c, YAM_FO.c, YAM_UT.c: fixed bug #596302
+      where the FOLDERINFO and GETFOLDERINFO arexx command still
+      worked somehow on foldergroups. Also fixed the indexing
+      behaviour of FOLDERINFO aswell as the foldertype
+      specification.
     * YAM_FO.c: fixed bug #589038 where on a folderlist reset,
       the listtree didn`t show the foldericons afterwards and
       didn`t correctly freed the previous images.
