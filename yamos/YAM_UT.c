@@ -72,6 +72,7 @@
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
+#include "YAM_mail_lex.h"
 #include "YAM_main.h"
 #include "YAM_mime.h"
 #include "YAM_read.h"
@@ -933,6 +934,7 @@ char *AllocStrBuf(size_t initlen)
    if (!strbuf)
      return NULL;
    *strbuf++ = initlen;
+   DB(if(initlen > 65536) kprintf("ERROR: AllocStrBuf() overrun !!\n");)
    return (char *)strbuf;
 }
 ///
@@ -984,6 +986,18 @@ char *StrBufCat(char *strbuf, char *source)
    return newstrbuf;
 }
 ///
+/// AppendToBuffer
+//  Appends a string to a dynamic-length buffer
+char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
+{
+   int nlen = *len, npos = (*wptr)+strlen(add);
+   while (npos >= nlen-1) nlen = (nlen*3)/2;
+   if (nlen != *len) buf = realloc(buf, *len = nlen);
+   while (*add) buf[(*wptr)++] = *add++;
+   return buf;
+}
+///
+
 /// FreeData2D
 //  Frees dynamic two-dimensional array
 void FreeData2D(struct Data2D *data)
@@ -2566,9 +2580,16 @@ BOOL EditorToFile(Object *editor, char *file, struct TranslationTable *tt)
 BOOL FileToEditor(char *file, Object *editor)
 {
    char *text = FileToBuffer(file);
+   char *parsedText;
+
    if (!text) return FALSE;
-   set(editor, MUIA_TextEditor_Contents, text);
+
+   parsedText = ParseEmailText(text);
+   set(editor, MUIA_TextEditor_Contents, parsedText);
+
+   free(parsedText);
    free(text);
+
    return TRUE;
 }
 ///
