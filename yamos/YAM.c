@@ -908,8 +908,8 @@ static void Initialise(BOOL hidden)
 
    DB( SetupDebug(); )
 
-   // Lets check for the correct Toolbar.mcc version
-   CheckMCC(MUIC_Toolbar, 15, 6, TRUE);
+   // Lets check for the correct Toolbar.mcc version (minimum 15.8 because earlier versions are too buggy)
+   CheckMCC(MUIC_Toolbar, 15, 8, TRUE);
 
    // Lets check for the correct TextEditor.mcc version
    CheckMCC(MUIC_TextEditor, 15, 9, TRUE);

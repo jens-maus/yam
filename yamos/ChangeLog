@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c, YAM_MA.c YAM_RE.c: removed all Toolbar qualifier bugs
+      workarounds and made the new upcoming version v15.8 the minimum
+      requirement for YAM as all known bugs should be removed within
+      this final version. All those workarounds in YAM caused more troubles.
+
 2003-02-21  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: fixed bug in AppendToBuffer() function where we forgot

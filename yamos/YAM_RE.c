@@ -308,7 +308,6 @@ static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
 HOOKPROTONHNO(RE_PrevNext, void, int *arg)
 {  
    BOOL onlynew = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
-   if (arg[3]) return; // Toolbar qualifier bug work-around
    RE_SwitchMessage(arg[2], arg[0], onlynew);
 }
 MakeStaticHook(RE_PrevNextHook, RE_PrevNext);
@@ -803,7 +802,6 @@ HOOKPROTONHNO(RE_DeleteFunc, void, int *arg)
    int pos, winnum = arg[1];
    struct Folder *folder = G->RE[winnum]->Mail.Folder, *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
    struct Mail *mail = G->RE[winnum]->MailPtr;
-   if (arg[2]) return; // Toolbar qualifier bug work-around
    if (MailExists(mail, folder)) if ((pos = SelectMessage(mail)) >= 0)
    {
       MA_DeleteSingle(G->RE[winnum]->MailPtr, delatonce);
@@ -1340,7 +1338,6 @@ HOOKPROTONHNO(RE_NewFunc, void, int *arg)
    int mode = arg[0], winnum = arg[2], flags = 0;
    ULONG qual = arg[1];
    struct Mail *mail = G->RE[winnum]->MailPtr, *mlist[3] = { (struct Mail *)1, NULL, NULL };
-   if (arg[3]) return; // Toolbar qualifier bug work-around
    if (mode == NEW_FORWARD &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) mode = NEW_BOUNCE;
    if (mode == NEW_FORWARD && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_FWD_NOATTACH);
    if (mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) SET_FLAG(flags, NEWF_REP_PRIVATE);
@@ -3580,27 +3577,27 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
          set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.TE_TEXT);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_EDIT            ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_EDIT,0,winnum,FALSE);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_EDIT            ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_EDIT,0,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_MOVE            ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_MoveHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_COPY            ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_CopyHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_DELETE          ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_DeleteHook,0,winnum,FALSE);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_DELETE          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_DeleteHook,0,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_PRINT           ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_PrintHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SAVE            ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SaveHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_DISPLAY         ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_DisplayHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_DETACH          ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SaveAllHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_CROP            ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_RemoveAttachHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_NEW             ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_NEW,0,winnum,FALSE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_REPLY           ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_REPLY,0,winnum,FALSE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_FORWARD         ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_FORWARD,0,winnum,FALSE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_BOUNCE          ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_BOUNCE,0,winnum,FALSE);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_NEW             ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_NEW,0,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_REPLY           ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_REPLY,0,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_FORWARD         ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_FORWARD,0,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_BOUNCE          ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_BOUNCE,0,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SAVEADDR        ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_GetAddressHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SETUNREAD       ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SetUnreadHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SETMARKED       ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SetMarkedHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_CHSUBJ          ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_ChangeSubjectHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_PREV            ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,-1,0,winnum,FALSE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_NEXT            ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,1,0,winnum,FALSE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_URPREV          ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,-1,IEQUALIFIER_LSHIFT,winnum,FALSE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_URNEXT          ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,1,IEQUALIFIER_LSHIFT,winnum,FALSE);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_PREV            ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,0,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_NEXT            ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,0,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_URPREV          ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,IEQUALIFIER_LSHIFT,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_URNEXT          ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,IEQUALIFIER_LSHIFT,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_PREVTH          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,-1,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_NEXTTH          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,1,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_EXTKEY          ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_ExtractKeyHook,winnum);
@@ -3615,20 +3612,20 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_WRAPH           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,6);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_TSTYLE          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,7);
 //         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_FFONT           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,8);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,-1,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,1,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
+         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,MUIV_Toolbar_Qualifier,winnum);
+         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,MUIV_Toolbar_Qualifier,winnum);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 2, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,-1,winnum);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 3, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,1,winnum);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 5, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&RE_DisplayHook,winnum);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&RE_SaveHook,winnum);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 7, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&RE_PrintHook,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 9, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,5,MUIM_CallHook,&RE_DeleteHook,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
+         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 9, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,4,MUIM_CallHook,&RE_DeleteHook,MUIV_Toolbar_Qualifier,winnum);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&RE_MoveHook,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_REPLY,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,12, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_FORWARD,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
+         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_REPLY,MUIV_Toolbar_Qualifier,winnum);
+         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,12, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_FORWARD,MUIV_Toolbar_Qualifier,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE                 ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_CloseHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock del"        ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_DeleteHook,0,winnum,FALSE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift del"  ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_DeleteHook,IEQUALIFIER_LSHIFT,winnum,FALSE);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock del"        ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_DeleteHook,0,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift del"  ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_DeleteHook,IEQUALIFIER_LSHIFT,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock space"      ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Next Page");
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock backspace"  ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Previous Page");
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock left"       ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,FALSE,winnum);
