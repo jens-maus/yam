@@ -423,7 +423,271 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       return FALSE;
    }
 
-   if(hasCRAM_MD5_Auth(ServerFlags)) // SMTP AUTH CRAM-MD5
+   if(hasDIGEST_MD5_Auth(ServerFlags)) // SMTP AUTH DIGEST-MD5 (RFC 2831)
+   {
+      DB(kprintf("processing AUTH DIGEST-MD5:\n");)
+
+      // send the AUTH command and get the response back
+      if((resp = TR_SendSMTPCmd(ESMTP_AUTH_DIGEST_MD5, NULL, MSG_ER_BadResponse)))
+      {
+        char realm[SIZE_HOST];
+        char nonce[SIZE_DEFAULT];
+        char qop[SIZE_DEFAULT];
+        char cnonce[SIZE_DEFAULT];
+        char response[SIZE_DEFAULT];
+        char *chalRet;
+
+        // get the challenge code from the response line of the
+        // AUTH command.
+        strncpy(challenge, &resp[4], 511);
+        challenge[511] = '\0';
+
+        // now that we have the challange phrase we need to base64decode
+        // it, but have to take care to remove the ending "\r\n" cookie.
+        chalRet = strpbrk(challenge, "\r\n"); // find the first CR or LF
+        if(chalRet)
+          *chalRet = '\0'; // strip it
+
+        DB(kprintf("received DIGEST-MD5 challenge: `%s`\n", challenge);)
+        // lets base64 decode it
+        if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
+          return FALSE;
+        DB(kprintf("decoded  DIGEST-MD5 challenge: `%s`\n", challenge);)
+
+        // we now analyze the received challenge identifier and pick out
+        // the value which we are going to need for our challenge response.
+        // This is the refered STEP ONE in the RFC 2831
+        {
+          char *pstart;
+          char *pend;
+
+          // first we try to find out the "realm" of the challenge
+          if((pstart = strstr(challenge, "realm=")))
+          {
+            // iterate to the beginning of the realm
+            pstart += 6;
+
+            // skip a leading "
+            if(*pstart == '"')
+              pstart++;
+
+            // find the end of the string
+            pend = strpbrk(pstart, "\","); // find a ending " or ,
+            if(!pend)
+              pend = pstart + strlen(pstart);
+
+            // now copy the found realm into our realm string
+            memcpy(realm, pstart, (size_t)(pend-pstart));
+
+            // NUL terminate the string
+            realm[pend-pstart] = '\0';
+          }
+          else
+          {
+            // if the challenge don`t have a "realm" we assume our
+            // choosen SMTP domain to be the realm
+            strcpy(realm, C->SMTP_Domain);
+          }
+          DB(kprintf("realm: `%s`\n", realm);)
+
+          // grab the "nonce" token for later reference
+          if((pstart = strstr(challenge, "nonce=")))
+          {
+            // iterate to the beginning of the nonce
+            pstart += 6;
+
+            // skip a leading "
+            if(*pstart == '"')
+              pstart++;
+
+            // find the end of the string
+            pend = strpbrk(pstart, "\","); // find a ending " or ,
+            if(!pend)
+              pend = pstart + strlen(pstart);
+
+            // now copy the found nonce into our nonce string
+            memcpy(nonce, pstart, (size_t)(pend-pstart));
+
+            // NUL terminate the string
+            nonce[pend-pstart] = '\0';
+          }
+          else
+          {
+            DB(kprintf("no `nonce=` token found!\n");)
+            return FALSE;
+          }
+          DB(kprintf("nonce: `%s`\n", nonce);)
+
+          // now we check the "qop" to carry "auth" so that we are
+          // sure that this server really wants an authentification from us
+          // RFC 2831 says that it is OK if no qop is present, because this
+          // assumes the server to support at least "auth"
+          if((pstart = strstr(challenge, "qop=")))
+          {
+            // iterate to the beginning of the nonce
+            pstart += 4;
+
+            // skip a leading "
+            if(*pstart == '"')
+            {
+              pstart++;
+
+              // find the end of the string
+              pend = strpbrk(pstart, "\""); // find a ending "
+              if(!pend)
+                return FALSE; // no closing " - this seems to be an error!
+            }
+            else
+            {
+              // find the end of the string
+              pend = strpbrk(pstart, "\""); // find a ending "
+              if(!pend)
+                pend = pstart + strlen(pstart);
+            }
+
+            // now copy the found qop into our nonce string
+            memcpy(qop, pstart, (size_t)(pend-pstart));
+
+            // NUL terminate the string
+            qop[pend-pstart] = '\0';
+
+            // then we check wheter we have a plain "auth" within
+            // qop or not
+            pstart = qop;
+            while((pstart = strstr(qop+(pstart-qop), "auth")))
+            {
+              if(*(pstart+1) != '-')
+                break;
+            }
+
+            // check if we found a plain auth
+            if(!pstart)
+            {
+              DB(kprintf("no `auth` in `qop` token found!\n");)
+              return FALSE;
+            }
+          }
+        }
+
+        // if we passed here, the server seems to at least support all
+        // mechanisms we need for a proper DIGEST-MD5 authentication.
+        // so it`s time for STEP TWO
+
+        // let us now generate a more or less random and unique cnonce
+        // identifier which we can supply to our SMTP server.
+        sprintf(cnonce, "%08lx%08lx", rand(), rand());
+
+        // the we generate the response according to RFC 2831 with A1
+        // and A2 as MD5 encoded strings
+        {
+          unsigned char digest[16]; // 16 octets
+          ULONG digest_hex[4];      // 16 octets
+          struct MD5Context context;
+          char buf[SIZE_DEFAULT];
+          char buf2[SIZE_DEFAULT];
+          char A1[SIZE_DEFAULT];
+          int  A1_len = 16;         // 16 octects minimum
+          char A2[SIZE_DEFAULT];
+
+          // lets first generate the A1 string
+          // A1 = { H( { username-value, ":", realm-value, ":", passwd } ),
+          //      ":", nonce-value, ":", cnonce-value }
+          sprintf(buf, "%s:%s:%s", C->SMTP_AUTH_User, realm, C->SMTP_AUTH_Pass);
+          MD5Init(&context);
+          MD5Update(&context, buf, strlen(buf));
+          MD5Final(digest, &context);
+          memcpy(A1, digest, 16);
+          A1_len += sprintf(&A1[16], ":%s:%s", nonce, cnonce);
+          DB(kprintf("unencoded A1: `%s` (%ld)\n", A1, A1_len);)
+
+          // then we directly build the hexadecimal representation
+          // HEX(H(A1))
+          MD5Init(&context);
+          MD5Update(&context, A1, A1_len);
+          MD5Final((UBYTE *)digest_hex, &context);
+          sprintf(A1, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
+                                              digest_hex[2], digest_hex[3]);
+          DB(kprintf("encoded   A1: `%s`\n", A1);)
+
+
+          // then we generate the A2 string accordingly
+          // A2 = { "AUTHENTICATE:", digest-uri-value }
+          sprintf(A2, "AUTHENTICATE:smtp/%s", realm);
+          DB(kprintf("unencoded A2: `%s`\n", A2);)
+
+          // and also directly build the hexadecimal representation
+          // HEX(H(A2))
+          MD5Init(&context);
+          MD5Update(&context, A2, strlen(A2));
+          MD5Final((UBYTE *)digest_hex, &context);
+          sprintf(A2, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
+                                              digest_hex[2], digest_hex[3]);
+          DB(kprintf("encoded   A2: `%s`\n", A2);)
+
+          // now we build the string from which we also build the MD5
+          // HEX(H(A1)), ":",
+          // nonce-value, ":", nc-value, ":",
+          // cnonce-value, ":", qop-value, ":", HEX(H(A2))
+          sprintf(buf2, "%s:%s:00000001:%s:auth:%s", A1, nonce, cnonce, A2);
+          DB(kprintf("unencoded resp: `%s`\n", buf2);)
+
+          // and finally build the respone-value =
+          // HEX( KD( HEX(H(A1)), ":",
+          //          nonce-value, ":", nc-value, ":",
+          //          cnonce-value, ":", qop-value, ":", HEX(H(A2)) }))
+          MD5Init(&context);
+          MD5Update(&context, buf2, strlen(buf2));
+          MD5Final((UBYTE *)digest_hex, &context);
+          sprintf(response, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
+                                                    digest_hex[2], digest_hex[3]);
+          DB(kprintf("encoded   resp: `%s`\n", response);)
+        }
+
+        // form up the challenge to authenticate according to RFC 2831
+        sprintf(challenge,
+                "username=\"%s\","        // the username token
+                "realm=\"%s\","           // the realm token
+                "nonce=\"%s\","           // the nonce token
+                "cnonce=\"%s\","          // the client nonce (cnonce)
+                "nc=00000001,"            // the nonce count (here always 1)
+                "qop=auth,"               // we just use auth
+                "digest-uri=\"smtp/%s\"," // the digest-uri token
+                "response=%s",            // the response
+                C->SMTP_AUTH_User,
+                realm,
+                nonce,
+                cnonce,
+                realm,
+                response);
+
+        DB(kprintf("prepared challenge answer....: `%s`\n", challenge);)
+        base64encode(buffer, challenge, strlen(challenge));
+        DB(kprintf("encoded  challenge answer....: `%s`\n", buffer);)
+        strcat(buffer,"\r\n");
+
+        // now we send the SMTP AUTH response
+        if(TR_WriteLine(buffer) <= 0) return FALSE;
+
+        // get the server response and see if it was valid
+        if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 334)
+        {
+          ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+        }
+        else
+        {
+          // now that we have received the 334 code we just send a plain line
+          // to signal that we don`t need any option
+          if(TR_WriteLine("\r\n") <= 0) return FALSE;
+
+          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
+          {
+            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
+          }
+          else rc = SMTP_ACTION_OK;
+        }
+      }
+   }
+   else if(hasCRAM_MD5_Auth(ServerFlags)) // SMTP AUTH CRAM-MD5 (RFC 2195)
    {
       DB(kprintf("processing AUTH CRAM-MD5:\n");)
 
@@ -472,64 +736,6 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
         {
           ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_CRAM_MD5], buffer);
-        }
-        else rc = SMTP_ACTION_OK;
-      }
-   }
-   else if(hasDIGEST_MD5_Auth(ServerFlags)) // SMTP AUTH DIGEST-MD5 (RFC 2831)
-   {
-      DB(kprintf("processing AUTH DIGEST-MD5:\n");)
-
-      // send the AUTH command and get the response back
-      if((resp = TR_SendSMTPCmd(ESMTP_AUTH_DIGEST_MD5, NULL, MSG_ER_BadResponse)))
-      {
-        ULONG digest[4];
-        struct MD5Context context;
-        char *chalRet;
-
-        // get the challenge code from the response line of the
-        // AUTH command.
-        strncpy(challenge, &resp[4], 511);
-        challenge[511] = '\0';
-
-        // now that we have the challange phrase we need to base64decode
-        // it, but have to take care to remove the ending "\r\n" cookie.
-        chalRet = strpbrk(challenge, "\r\n"); // find the first CR or LF
-        if(chalRet)
-          *chalRet = '\0'; // strip it
-
-        DB(kprintf("received DIGEST-MD5 challenge: `%s`\n", challenge);)
-        // lets base64 decode it
-        if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
-          return FALSE;
-        DB(kprintf("decoded  DIGEST-MD5 challenge: `%s`\n", challenge);)
-
-        // lets now analyze the challenge string provided by the server.
-        // RFC 2831 clearly states that it have to have a "md5-sess"
-        // identifier.
-        // TODO...
-
-        strcat(challenge, C->SMTP_AUTH_Pass);
-        MD5Init(&context);
-        MD5Update(&context, challenge, strlen(challenge));
-        MD5Final((UBYTE *)digest, &context);
-
-        // form up the challenge to authenticate according to RFC 2831
-        sprintf(challenge,"username=%s %08lx%08lx%08lx%08lx", C->SMTP_AUTH_User,
-                digest[0], digest[1], digest[2], digest[3]);
-
-        DB(kprintf("prepared challenge answer....: `%s`\n", challenge);)
-        base64encode(buffer, challenge, strlen(challenge));
-        DB(kprintf("encoded  challenge answer....: `%s`\n", buffer);)
-        strcat(buffer,"\r\n");
-
-        // now we send the SMTP AUTH response
-        if(TR_WriteLine(buffer) <= 0) return FALSE;
-
-        // get the server response and see if it was valid
-        if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-        {
-          ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_DIGEST_MD5], buffer);
         }
         else rc = SMTP_ACTION_OK;
       }

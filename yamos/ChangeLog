@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-06  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: as promised before, I totally reworked the
+      DIGEST-MD5 authentification routines. Previously it wasn`t
+      working at all and now seems to perfectly conform to
+      RFC 2831.
+      Also exchanged the authentification priority to first check
+      for a possible DIGEST-MD5 authentification as this type of
+      authentification is per definition more secure than the
+      CRAM-MD5 variant.
+
 2004-01-04  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: reworked the whole SMTP AUTH routines to work
