@@ -7,6 +7,9 @@ $Source$
 
 2003-04-27  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_DI.c: fixed bug #728040 where the abbreviation string gadget
+      was always reset to "-new-" even if the user didn`t confirm with
+      pressing return.
     * YAM_RE.c: fixed bug #728162 where YAM didn`t quote any mail text
       upon a reply if the mail in question had an multipart attachment.
 
