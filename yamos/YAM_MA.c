@@ -639,7 +639,7 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
          MA_FreeEMailStruct(email);
          if (!quiet) set(wr->GUI.WI, MUIA_Window_Open, TRUE);
          MA_EditorNotification(winnum);
-         sbuf = GetMUIStringPtr(wr->GUI.ST_TO);
+         sbuf = (STRPTR)xget(wr->GUI.ST_TO, MUIA_String_Contents);
          set(wr->GUI.WI, MUIA_Window_ActiveObject, *sbuf ? wr->GUI.TE_EDIT : wr->GUI.ST_TO);
          if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
       }

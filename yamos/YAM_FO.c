@@ -799,25 +799,41 @@ static BOOL FO_FoldernameRequest(char *string)
       DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
       DoMethod(st_di, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
       DoMethod(wi, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
+
       if (!SafeOpenWindow(wi)) ret_code = 0;
+
       while (ret_code == -1)
       {
          ULONG signals;
          switch (DoMethod(G->App, MUIM_Application_Input, &signals))
          {
-            case 1: if (*(GetMUIStringPtr(st_di))) ret_code = 1;
-                    break;
-            case 3: ret_code = 0; break;
+            case 1:
+            {
+              if (*((STRPTR)xget(st_di, MUIA_String_Contents))) ret_code = 1;
+            }
+            break;
+
+            case 3:
+            {
+              ret_code = 0;
+            }
+            break;
          }
          if (ret_code == -1 && signals) Wait(signals);
       }
-      path = GetMUIStringPtr(st_pa);
+
+      path = (STRPTR)xget(st_pa, MUIA_String_Contents);
+
       if (ret_code > 0)
+      {
          if (!stricmp(path, G->MA_MailDir)) GetMUIString(string, st_di);
          else
          {
-           MyStrCpy(string, path); AddPart(string, GetMUIStringPtr(st_di), sizeof(string));
+           strncpy(string, path, SIZE_PATH);
+           AddPart(string, (STRPTR)xget(st_di, MUIA_String_Contents), SIZE_PATH);
          }
+      }
+
       DoMethod(G->App, OM_REMMEMBER, wi);
       set(G->App, MUIA_Application_Sleep, FALSE);
    }

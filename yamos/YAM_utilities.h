@@ -187,7 +187,6 @@ int      GetMUIInteger(Object *obj);
 int      GetMUINumer(Object *obj);
 int      GetMUIRadio(Object *obj);
 void     GetMUIString(char *a, Object *obj);
-char *   GetMUIStringPtr(Object *obj);
 void     GetMUIText(char *a, Object *obj);
 char *   GetNextLine(char *p1);
 struct Person *GetReturnAddress(struct Mail *mail);
@@ -258,6 +257,6 @@ char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
 APTR     WhichLV(struct Folder *folder);
 
-#define MyStrCpy(a,b) { strncpy((a),(b),sizeof(a)); (a)[sizeof(a)-1] = 0; }
+#define MyStrCpy(a,b) { strncpy((a),(b), sizeof(a)); (a)[sizeof(a)-1] = 0; }
 
 #endif /* YAM_UTILITIES_H */

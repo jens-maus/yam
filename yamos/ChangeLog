@@ -1,3 +1,9 @@
+2001-09-12  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug #459478 where MyStrCpy() was used with a string pointer
+      while MyStrCpy() doesn`t accept string pointer, which will result in
+      a broken string copy.
+
 2001-09-12  Christian Hattemer <krille@users.sourceforge.net>
 
     * YAM_RE.c: Now accepts "(" and ")" in URLs also

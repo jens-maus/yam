@@ -2559,13 +2559,6 @@ ULONG xget(Object *obj, ULONG attr)
    return b;
 }
 ///
-/// GetMUIStringPtr
-//  Returns a pointer to the value of a MUI string object
-char *GetMUIStringPtr(Object *obj)
-{
-   return (char*)xget(obj,MUIA_String_Contents);
-}
-///
 /// GetMUIString
 //  Returns the value of a MUI string object
 void GetMUIString(char *a,Object *obj)
@@ -2665,7 +2658,7 @@ void LoadLayout(void)
 {
    char *ls;
    DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
-   if (!*(ls = GetMUIStringPtr(G->MA->GUI.ST_LAYOUT))) ls = "35 100 25 100 30 100";
+   if (!*(ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents))) ls = "35 100 25 100 30 100";
    sscanf(ls, "%ld %ld %ld %ld %ld %ld", &G->Weights[0], &G->Weights[1], &G->Weights[2], &G->Weights[3], &G->Weights[4], &G->Weights[5]);
 }
 ///
