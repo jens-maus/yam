@@ -1261,7 +1261,7 @@ MSG_CO_AutoOperation (//)
 Automatic operation
 ;
 MSG_CO_CheckMail (//)
-Chec_k for new mail every
+Check for new mail every
 ;
 MSG_CO_Minutes (//)
 minutes
@@ -1381,7 +1381,7 @@ MSG_CO_WrapHeader (//)
 _Wrap headers
 ;
 MSG_CO_OldQuotes (//)
-Old _quotes
+Old quotes
 ;
 MSG_CO_UseTextstyles (//)
 Use te_xt styles
@@ -1396,7 +1396,7 @@ MSG_CO_SignatureSep (//)
 Separate si_g.
 ;
 MSG_CO_ColoredText (//)
-C_olored text
+Colored text
 ;
 MSG_CO_MultiReadWin (//)
 _Multiple windows
@@ -1717,10 +1717,10 @@ MSG_CO_XPK (//)
 XPK/LhA settings
 ;
 MSG_CO_XPKPack (//)
-_Packer
+Packer
 ;
 MSG_CO_XPKPackEnc (//)
-Pac_k/protect
+Pack/protect
 ;
 MSG_CO_Archiver (//)
 _Archiver
@@ -5018,7 +5018,7 @@ MSG_FO_MAXAGEFMT (//)
 %ld days
 ;
 MSG_CO_NB_EMAILCACHE (//)
-E_mail cache
+Email cache
 ;
 MSG_CO_NB_EMAILCACHEFMT (//)
 %ld mails

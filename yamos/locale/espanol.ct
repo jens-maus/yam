@@ -1683,8 +1683,8 @@ Funcionamiento automático
 ; Automatic operation
 ;
 MSG_CO_CheckMail
-Comprobar _buzón cada
-; Chec_k for new mail every
+Comprobar buzón cada
+; Check for new mail every
 ;
 MSG_CO_Minutes
 minutos
@@ -1843,8 +1843,8 @@ A_justar cabeceras
 ; _Wrap headers
 ;
 MSG_CO_OldQuotes
-Cit_as previas
-; Old _quotes
+Citas previas
+; Old quotes
 ;
 MSG_CO_UseTextstyles
 Usar estilos de te_xto
@@ -1863,8 +1863,8 @@ S_eparación de firma
 ; Separate si_g.
 ;
 MSG_CO_ColoredText
-Texto c_oloreado
-; C_olored text
+Texto coloreado
+; Colored text
 ;
 MSG_CO_MultiReadWin
 Ventanas _múltiples
@@ -2291,12 +2291,12 @@ Configuración de XPK/LhA
 ; XPK/LhA settings
 ;
 MSG_CO_XPKPack
-Com_presor
-; _Packer
+Compresor
+; Packer
 ;
 MSG_CO_XPKPackEnc
-Comprimir/Prot_eger
-; Pac_k/protect
+Comprimir/Proteger
+; Pack/protect
 ;
 MSG_CO_Archiver
 _Archivador
@@ -6910,8 +6910,8 @@ MSG_FO_MAXAGEFMT
 ; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
-Cac_hear
-; E_mail cache
+Cachear
+; Email cache
 ;
 MSG_CO_NB_EMAILCACHEFMT
 %ld mensajes
