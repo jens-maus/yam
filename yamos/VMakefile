@@ -49,8 +49,10 @@ OBJS	= YAM.o YAM_AB.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o YAM_ER.o \
 
 CLASSES	= classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o \
 	  classes/AddrBookEntryList.o classes/AddrBookListtree.o classes/Addrmatchlist.o \
-	  classes/Aboutwindow.o classes/BodychunkImage.o classes/ConfigPageList.o \
-	  classes/Splashwindow.o classes/MailTextEdit.o classes/MainFolderListtree.o \
+	  classes/Aboutwindow.o classes/AttachmentGroup.o classes/AttachmentImage.o \
+	  classes/BodychunkImage.o classes/ConfigPageList.o \
+	  classes/ReadMailGroup.o classes/ReadWindow.o classes/Splashwindow.o \
+	  classes/UserImage.o classes/MailTextEdit.o classes/MainFolderListtree.o \
 	  classes/MainMailList.o classes/MainWindow.o classes/InfoBar.o \
 	  classes/WriteAttachmentList.o classes/YAM.o
 
@@ -194,8 +196,7 @@ YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
 	YAM_utilities.h YAM_write.h
 
-
-all_vbcc.o: all_vbcc.c extrasrc/getft.c extrasrc/stccpy.c \
+all_vbcc.o: all_vbcc.c extrasrc/stccpy.c \
 	extrasrc/stcgfe.c extrasrc/strmfp.c extrasrc/strsfn.c \
 	extrasrc/NewReadArgs.c extrasrc/dice.c extrasrc/access.c extrasrc/strdup.c
 
@@ -204,6 +205,12 @@ YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
 	$(FC) locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
 
 ## CLASS DEPENDENCIES #################
+
+classes/ReadMailGroup.o: classes/ReadMailGroup.c classes/ReadMailGroup_cl.h
+
+classes/ReadWindow.o: classes/ReadWindow.c classes/ReadWindow_cl.h
+
+classes/UserImage.o: classes/UserImage.c classes/UserImage_cl.h
 
 classes/ConfigPageList.o: classes/ConfigPageList.c classes/ConfigPageList_cl.h
 
@@ -226,6 +233,10 @@ classes/MailTextEdit.o: classes/MailTextEdit.c classes/MailTextEdit_cl.h
 classes/Splashwindow.o: classes/Splashwindow.c classes/Splashwindow_cl.h
 
 classes/Aboutwindow.o: classes/Aboutwindow.c classes/Aboutwindow_cl.h
+
+classes/AttachmentGroup.o: classes/AttachmentGroup.c classes/AttachmentGroup_cl.h
+
+classes/AttachmentImage.o: classes/AttachmentImage.c classes/AttachmentImage_cl.h
 
 classes/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
 	YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
