@@ -523,6 +523,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
               Child, Label2(GetStr(MSG_EA_DefSecurity)),
               Child, data->GUI.CY_DEFSECURITY = CycleObject,
                 MUIA_Cycle_Entries, SecurityCycleEntries,
+                MUIA_ControlChar, ShortCut(GetStr(MSG_EA_DefSecurity)),
               End,
                   End,
                   Child, ColGroup(2), GroupFrameT(GetStr(MSG_EA_SnailMail)),
