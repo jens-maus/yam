@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <proto/intuition.h>
 #include <proto/utility.h>
 
 #include "Debug.h"
@@ -40,6 +41,9 @@ VOID SetupDebug (VOID)
 
 BOOL TestDebugFlag (ULONG flag)
 {
+	if(flag & DBF_ERROR)
+	   DisplayBeep(NULL);
+
 	return (BOOL)((DebugFlags & flag) ? TRUE : FALSE);
 }
 

@@ -324,7 +324,7 @@ OVERLOAD(MUIM_HandleEvent)
 HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
 	struct ABEntry *entry = (struct ABEntry *)msg->UserData;
-	return (!Stricmp(msg->User, entry->Alias) || !Stricmp(msg->User, entry->RealName) || !Stricmp(msg->User, entry->Address)) ? 0 : ~0;
+	return ((entry->Type == AET_USER) || (entry->Type == AET_LIST)) && ((!Stricmp(msg->User, entry->Alias) || !Stricmp(msg->User, entry->RealName) || !Stricmp(msg->User, entry->Address))) ? 0 : ~0;
 }
 MakeStaticHook(FindAddressHook, FindAddressFunc);
 
@@ -404,18 +404,16 @@ DECLARE(Resolve) // ULONG flags
 					}
 					else
 					{
-						DB(kprintf("String doesn't allow multiple recipients\n");)
+						D(DBF_ERROR, ("String doesn't allow multiple recipients\n"))
 						DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-						DisplayBeep(NULL);
                   res = FALSE;
 					}
 				}
 				else /* it's unknown... */
 				{
-					DB(kprintf("Unknown type: %ld\n", entry->Type);)
+					D(DBF_ERROR, ("Found matching entry in address book with unknown type: %ld", entry->Type))
 					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
                set(_win(obj), MUIA_Window_ActiveObject, obj);
-					DisplayBeep(NULL);
                res = FALSE;
 				}
 			}
@@ -434,9 +432,9 @@ DECLARE(Resolve) // ULONG flags
 		      }
             else
 				{
+					D(DBF_ERROR, ("No entry found in addressbook for alias: %s", s))
                DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
                set(_win(obj), MUIA_Window_ActiveObject, obj);
-				   DisplayBeep(NULL);
                res = FALSE;
             }
 			}

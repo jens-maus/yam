@@ -1,3 +1,9 @@
+2001-08-22  Allan Odgaard <duff@diku.dk>
+
+    * When using D(DBF_ERROR, ()) then a DisplayBeep() is issued.
+    * The FindUserData-hook used to resolve email aliases is now restricted to
+      only find matches of type AET_USER or AET_LIST.
+
 2001-08-05  Allan Odgaard <duff@diku.dk>
 
     * Added loading of email cache in OM_NEW of new application subclass.
