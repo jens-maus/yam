@@ -27,48 +27,16 @@
 
 TARGET = GenClasses
 
-# Programs
+#
 
-CC  = gcc
-CP  = copy
-RM  = rm
-
-# Compiler/Linker flags
-
-CDEFS	=
-CFLAGS	= -c -Wall
-OPTFLAG = -O2
-LDFLAGS	= -noixemul -mstackextend
-LDLIBS	=
-
-# Objects
+CC = gcc
 
 OBJS = gc.o lists.o
 
-#
-
-default: $(TARGET)
-
-# Default rule
-
-.c.o:
-	$(CC) $(CDEFS) $(CFLAGS) $(OPTFLAG) $< -o $@ -DNO_INLINE_STDARG
+$(TARGET) : $(OBJS)
+	$(CC) -o $@ $(OBJS)
 
 #
 
-
-$(TARGET): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
-
-#
-
-clean:
-	-$(RM) $(TARGET) $(OBJS)
-
-#######################################
-
-gc.o: gc.c gc.h lists.c lists.h
-
-lists.o: lists.c lists.h gc.c gc.h
-
-#######################################
+gc.o : gc.c gc.h lists.h
+lists.o : lists.c lists.h
