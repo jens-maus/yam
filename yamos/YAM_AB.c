@@ -189,7 +189,7 @@ void AB_InsertAddress(APTR string, char *alias, char *name, char *address)
 {
    char *p;
    get(string, MUIA_UserData, &p);
-   if ((BOOL)(p != NULL))
+   if (p)
    {
       get(string, MUIA_String_Contents, &p);
       if (*p) DoMethod(string, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
@@ -286,12 +286,12 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
                   stccpy(addr.PGPId   , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_DEFAULT);
                   addr.BirthDay = atol(Trim(GetLine(fh, buffer, SIZE_LARGE)));
                   stccpy(addr.Photo   , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_PATHFILE);
-                  if (strcmp(GetLine(fh, buffer, SIZE_LARGE), "@ENDUSER"))  stccpy(addr.Homepage,Trim(buffer),SIZE_URL);
+                  if (strcmp(GetLine(fh, buffer, SIZE_LARGE), "@ENDUSER")) stccpy(addr.Homepage,Trim(buffer),SIZE_URL);
                }
-          if(version > 3)
-          {
-            addr.DefSecurity = atoi(Trim(GetLine(fh, buffer, SIZE_LARGE)));
-          }
+               if (version > 3)
+               {
+                  addr.DefSecurity = atoi(Trim(GetLine(fh, buffer, SIZE_LARGE)));
+               }
                do if (!strcmp(buffer, "@ENDUSER")) break;
                while (GetLine(fh, buffer, SIZE_LARGE));
                DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, 0);
@@ -523,7 +523,7 @@ MakeHook(AB_SaveABookAsHook, AB_SaveABookAsFunc);
 //  Formats and prints a single field
 LOCAL void AB_PrintField(FILE *prt, char *fieldname, char *field)
 {
-const char *format = "%-20.20s: %-50.50s\n";
+   const char *format = "%-20.20s: %-50.50s\n";
    if (*field) fprintf(prt, format, StripUnderscore(fieldname), field);
 }
 
@@ -828,7 +828,7 @@ struct ABEntry * SAVEDS ASM AB_LV_ConFunc(REG(a1, struct MUIP_NListtree_Construc
 {
    struct ABEntry *entry = malloc(sizeof(struct ABEntry));
 
-   if (entry != NULL && msg != NULL)
+   if (entry && msg)
    {
       struct ABEntry *addr = (struct ABEntry *)msg->UserData;
 
@@ -870,7 +870,7 @@ long SAVEDS ASM AB_LV_DspFunc(REG(a0, struct Hook *hook), REG(a1, struct MUIP_NL
    static char dispal[SIZE_DEFAULT], dispco[SIZE_DEFAULT+8];
    struct AL_Data *data = (APTR)hook->h_Data;
 
-   if (msg != NULL && msg->TreeNode != NULL)
+   if (msg && msg->TreeNode)
    {
       struct ABEntry *entry = msg->TreeNode->tn_User;
 
@@ -919,7 +919,7 @@ MakeHook(AB_LV_DspFuncHook, AB_LV_DspFunc);
 ///
 /// AB_LV_CmpFunc
 //  Address book listview sort hook
-/*
+#if 0
 long SAVEDS ASM AB_LV_CmpFunc(REG(a2,struct MUI_NListtree_TreeNode *entry1), REG(a1,struct MUI_NListtree_TreeNode *entry2))
 {
    char *n1, *n2;
@@ -942,7 +942,7 @@ long SAVEDS ASM AB_LV_CmpFunc(REG(a2,struct MUI_NListtree_TreeNode *entry1), REG
    return Stricmp(ab1->Alias, ab2->Alias);
 }
 MakeHook(AB_LV_CmpFuncHook, AB_LV_CmpFunc);
-*/
+#endif
 ///
 
 /// AB_MakeABFormat
@@ -1134,4 +1134,3 @@ struct AB_ClassData *AB_New(void)
    return NULL;
 }
 ///
-
