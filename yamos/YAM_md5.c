@@ -335,10 +335,10 @@ void hmac_md5(unsigned char * text, int text_len, unsigned char *key, int key_le
 
       MD5Init(&tctx);
       MD5Update(&tctx, key, key_len);
-      MD5Final(tk, &tctx);
+      MD5Final(tk, &tctx);
 
       key = tk;
-      key_len = 16;
+      key_len = 16;
    }
 
    /*
@@ -359,7 +359,7 @@ void hmac_md5(unsigned char * text, int text_len, unsigned char *key, int key_le
     memcpy(key, k_opad, key_len);
 
     /* XOR key with ipad and opad values */
-    for (i=0; i<64; i++)
+    for (i=0; i<64; i++)
     {
        k_ipad[i] ^= 0x36;
        k_opad[i] ^= 0x5c;
