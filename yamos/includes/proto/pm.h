@@ -1,28 +1,32 @@
-#ifndef _PROTO_PM_H
-#define _PROTO_PM_H
+/* Automatically generated header! Do not edit! */
+
+#ifndef PROTO_POPUPMENU_H
+#define PROTO_POPUPMENU_H
 
 #include <clib/pm_protos.h>
+
+#ifdef __GNUC__
+#ifndef __PPC__
+#include <inline/pm.h>
+#else
+#include <ppcinline/pm.h>
+#endif /* !__PPC__ */
+#endif /* __GNUC__ */
+
+#ifdef __VBCC__
+#include <inline/pm_protos.h>
+#endif /* __VBCC__ */
+
+#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
+#include <pragmas/pm_pragmas.h>
+#endif
 
 #ifndef __NOLIBBASE__
 extern struct PopupMenuBase *
 #ifdef __CONSTLIBBASEDECL__
 __CONSTLIBBASEDECL__
-#endif
+#endif /* __CONSTLIBBASEDECL__ */
 PopupMenuBase;
 #endif
 
-#ifdef __GNUC__
-#ifdef __PPC__
-#include <ppcinline/pm.h>
-#else
-#include <inline/pm.h>
-#endif
-#else /* SAS-C */
-#ifdef __PPC__
-#include <ppcpragmas/pm_pragmas.h>
-#else
-#include <pragmas/pm_pragmas.h>
-#endif
-#endif
-
-#endif	/*  _PROTO_PM_H  */
+#endif /* !PROTO_POPUPMENU_H */

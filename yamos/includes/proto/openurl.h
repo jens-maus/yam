@@ -1,28 +1,32 @@
-#ifndef _PROTO_OPENURL_H
-#define _PROTO_OPENURL_H
+/* Automatically generated header! Do not edit! */
+
+#ifndef PROTO_OPENURL_H
+#define PROTO_OPENURL_H
 
 #include <clib/openurl_protos.h>
+
+#ifdef __GNUC__
+#ifndef __PPC__
+#include <inline/openurl.h>
+#else
+#include <ppcinline/openurl.h>
+#endif /* !__PPC__ */
+#endif /* __GNUC__ */
+
+#ifdef __VBCC__
+#include <inline/openurl_protos.h>
+#endif /* __VBCC__ */
+
+#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
+#include <pragmas/openurl_pragmas.h>
+#endif
 
 #ifndef __NOLIBBASE__
 extern struct Library *
 #ifdef __CONSTLIBBASEDECL__
 __CONSTLIBBASEDECL__
-#endif
+#endif /* __CONSTLIBBASEDECL__ */
 OpenURLBase;
-#endif
+#endif /* !__NOLIBBASE__ */
 
-#ifdef __GNUC__
-#ifdef __PPC__
-#include <ppcinline/openurl.h>
-#else
-#include <inline/openurl.h>
-#endif
-#else /* SAS-C */
-#ifdef __PPC__
-#include <ppcpragmas/openurl_pragmas.h>
-#else
-#include <pragmas/openurl_pragmas.h>
-#endif
-#endif
-
-#endif	/*  _PROTO_OPENURL_H  */
+#endif /* !PROTO_OPENURL_H */

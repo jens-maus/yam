@@ -1,28 +1,32 @@
-#ifndef _PROTO_MUIMASTER_H
-#define _PROTO_MUIMASTER_H
+/* Automatically generated header! Do not edit! */
+
+#ifndef PROTO_MUIMASTER_H
+#define PROTO_MUIMASTER_H
 
 #include <clib/muimaster_protos.h>
+
+#ifdef __GNUC__
+#ifndef __PPC__
+#include <inline/muimaster.h>
+#else
+#include <ppcinline/muimaster.h>
+#endif /* !__PPC__ */
+#endif /* __GNUC__ */
+
+#ifdef __VBCC__
+#include <inline/muimaster_protos.h>
+#endif /* __VBCC__ */
+
+#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
+#include <pragmas/muimaster_pragmas.h>
+#endif /* __SASC */
 
 #ifndef __NOLIBBASE__
 extern struct Library *
 #ifdef __CONSTLIBBASEDECL__
 __CONSTLIBBASEDECL__
-#endif
+#endif /* __CONSTLIBBASEDECL__ */
 MUIMasterBase;
-#endif
+#endif /* !__NOLIBBASE__ */
 
-#ifdef __GNUC__
-#ifdef __PPC__
-#include <ppcinline/muimaster.h>
-#else
-#include <inline/muimaster.h>
-#endif
-#else /* SAS-C */
-#ifdef __PPC__
-#include <ppcpragmas/muimaster_pragmas.h>
-#else
-#include <pragmas/muimaster_pragmas.h>
-#endif
-#endif
-
-#endif	/*  _PROTO_MUIMASTER_H  */
+#endif /* !PROTO_MUIMASTER_H */
