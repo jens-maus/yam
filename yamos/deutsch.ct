@@ -1,4 +1,4 @@
-## version $VER: Deutsch.ct 5.3 (16.02.01)
+## version $VER: Deutsch.ct 5.3 (20.02.01)
 ## language deutsch
 ## codeset 0
 ;
@@ -244,8 +244,10 @@ Verzeichnis
 ; Module Root
 ;
 MSG_Copyright1
-OpenSource E-Mail-Software für den Amiga\nCopyright © 1995-2000 Marcel Beck
-; OpenSource Email package for the Amiga\nCopyright © 1995-2000 Marcel Beck
+OpenSource E-Mail-Software für den Amiga\n\
+Copyright © 1995-2000 Marcel Beck
+; OpenSource Email package for the Amiga\n\
+; Copyright © 1995-2000 Marcel Beck
 ;
 MSG_Version
 Version:
@@ -256,16 +258,20 @@ Kompiliert am:
 ; Compilation date:
 ;
 MSG_Copyright2
-Dieses Programm ist freie Software; Sie können es unter den Bedingungen der GNU General Public License weitergeben und/oder modifizieren. Mehr Informationen dazu in der beiliegenden Dokumentation.\n
-; This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
+Dieses Programm ist freie Software; Sie können es unter den Bedingungen der GNU General Public License weitergeben und/oder modifizieren. Mehr Informationen dazu in der beiliegenden Dokumentation.\n\
+
+; This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n\
+; 
 ;
 MSG_UsedSoftware
-Dieses Programm verwendet folgende Fremdsoftware:\n
-; This application uses the following third party software:\n
+Dieses Programm verwendet folgende Fremdsoftware:\n\
+
+; This application uses the following third party software:\n\
+; 
 ;
 MSG_WebSite
-Aktuelle Informationen über YAM finden Sie auf der YAM Support Site unter \e5http://www.yam.ch
-; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch
+Aktuelle Informationen über YAM finden Sie auf der YAM Support Site unter \e5http://www.yam.ch/
+; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
 ;
 MSG_UserLogin
 Klicken Sie auf Ihren Namen um sich anzumelden
@@ -337,8 +343,10 @@ Lade Grafiken...
 ; Loading graphics...
 ;
 MSG_SendStartReq
-Das Ausgangspostfach enthält unversandte Post.\nWollen Sie diese Nachrichten jetzt senden?
-; The outgoing folder contains unsent mail.\nDo you want to send these messages now?
+Das Ausgangspostfach enthält unversandte Post.\n\
+Wollen Sie diese Nachrichten jetzt senden?
+; The outgoing folder contains unsent mail.\n\
+; Do you want to send these messages now?
 ;
 MSG_QuitYAMReq
 Wollen Sie YAM wirklich beenden?
@@ -621,13 +629,21 @@ Kein Papier im Drucker!
 ; Module MA - Procedures
 ;
 MSG_MA_GetFolderPass
-Das Postfach '%s' ist geschützt.\nGeben Sie das Paßwort ein, um es zu öffnen:
-; Folder '%s' is a protected folder.\nPlease enter the password to unlock it:
+Das Postfach '%s' ist geschützt.\n\
+Geben Sie das Paßwort ein, um es zu öffnen:
+; Folder '%s' is a protected folder.\n\
+; Please enter the password to unlock it:
 ; FOLDER
 ;
 MSG_MA_LatestVersion
-Neueste Version: %s (%2ld.%02ld.%ld)\nDiese Version: %s (%s)\n\n%s
-; Latest version: %s (%2ld.%02ld.%ld)\nThis version: %s (%s)\n\n%s
+Neueste Version: %s (%2ld.%02ld.%ld)\n\
+Diese Version: %s (%s)\n\
+\n\
+%s
+; Latest version: %s (%2ld.%02ld.%ld)\n\
+; This version: %s (%s)\n\
+; \n\
+; %s
 ; VERSION_NUMBER, DAY, MONTH, YEAR, VERSION_NUMBER, DATE, TEXT
 ;
 MSG_MA_NewVersion
@@ -643,16 +659,28 @@ _Besuche Homepage|*_Abbrechen
 ; _Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq
-Die Nachricht hat mehrere Empfänger.\nAntwort senden...
-; The selected message has multiple recipients.\nDo you want to send the reply...
+Die Nachricht hat mehrere Empfänger.\n\
+Antwort senden...
+; The selected message has multiple recipients.\n\
+; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-*an den\nAb_sender|...an den Absender _und\nalle Empfänger|...an die\n_Empfänger|_Abbrechen
-; *...to the\n_sender|...to the sender and\n_all recipients|...to the\n_recipients|_Cancel
+*an den\n\
+Ab_sender|...an den Absender _und\n\
+alle Empfänger|...an die\n\
+_Empfänger|_Abbrechen
+; *...to the\n\
+; _sender|...to the sender and\n\
+; _all recipients|...to the\n\
+; _recipients|_Cancel
 ;
 MSG_MA_CompareReq
-Der Absender (From) ist <%s>, aber\ndie Antwortadresse (Reply-To) ist <%s>.\nWelche Adresse soll benutzt werden?
-; Sender address (From) is <%s>, but\nreturn address (Reply-To) is <%s>.\nWhich address do you want to use?
+Der Absender (From) ist <%s>, aber\n\
+die Antwortadresse (Reply-To) ist <%s>.\n\
+Welche Adresse soll benutzt werden?
+; Sender address (From) is <%s>, but\n\
+; return address (Reply-To) is <%s>.\n\
+; Which address do you want to use?
 ; ADDRESS, ADDRESS
 ;
 MSG_MA_Compare3ReqOpt
@@ -664,8 +692,12 @@ _From|*_Reply-To|_Abbrechen
 ; _From|*_Reply-To|_Cancel
 ;
 MSG_MA_AttachRemoved
-\n_Die folgenden Anlagen wurden manuell entfernt:_\n
-; \n_The following attachments have been removed manually:_\n
+\n\
+_Die folgenden Anlagen wurden manuell entfernt:_\n\
+
+; \n\
+; _The following attachments have been removed manually:_\n\
+; 
 ;
 MSG_MA_ConfirmReq
 Bitte bestätigen Sie...
@@ -676,27 +708,43 @@ Bitte bestätigen Sie die Löschung.
 ; Please confirm deletion.
 ;
 MSG_MA_1Selected
-Eine Nachricht ausgewählt.\n
-; One message selected.\n
+Eine Nachricht ausgewählt.\n\
+
+; One message selected.\n\
+; 
 ;
 MSG_MA_xSelected
-%ld Nachrichten ausgewählt.\n
-; %lD messages selected.\n
+%ld Nachrichten ausgewählt.\n\
+
+; %lD messages selected.\n\
+; 
 ; COUNT
 ;
 MSG_MA_ConfirmFilter
-Sollen wirklich alle Nachrichten im\nPostfach '%s' gefiltert werden?
-; Is it okay to filter all the messages\nin the folder '%s'?
+Sollen wirklich alle Nachrichten im\n\
+Postfach '%s' gefiltert werden?
+; Is it okay to filter all the messages\n\
+; in the folder '%s'?
 ; FOLDER
 ;
 MSG_MA_FilterStats
-Filtervorgang beendet:\n%3ld Nachrichten geprüft,\n%3ld weitergeleitet,\n%3ld archiviert,\n%3ld gelöscht
-; Filtering done:\n%3ld messages checked,\n%3ld forwarded,\n%3ld archived,\n%3ld deleted
+Filtervorgang beendet:\n\
+%3ld Nachrichten geprüft,\n\
+%3ld weitergeleitet,\n\
+%3ld archiviert,\n\
+%3ld gelöscht
+; Filtering done:\n\
+; %3ld messages checked,\n\
+; %3ld forwarded,\n\
+; %3ld archived,\n\
+; %3ld deleted
 ; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_MA_ExportAppendReq
-Die Ausgabedatei existiert bereits. Soll sie\nüberschrieben oder die Nachrichten angehängt werden?
-; The output file already exists. Do you want\nto overwrite it or append the messages?
+Die Ausgabedatei existiert bereits. Soll sie\n\
+überschrieben oder die Nachrichten angehängt werden?
+; The output file already exists. Do you want\n\
+; to overwrite it or append the messages?
 ;
 MSG_MA_ExportAppendOpts
 *_Überschreiben|An_hängen|_Abbrechen
@@ -751,13 +799,33 @@ Einzelnes Konto überprüfen
 ; Check single account
 ;
 MSG_MA_FolderInfo
-\ebAktives Postfach\en\nName: %s\nPfad: %s\nGröße: %ld Bytes\nNachrichten: %ld (%ld neu, %ld ungelesen)
-; \ebCurrent folder\en\nName: %s\nPath: %s\nSize: %lD bytes\nMessages: %lD (%lD new, %lD unread)
+\ebAktives Postfach\en\n\
+Name: %s\n\
+Pfad: %s\n\
+Größe: %ld Bytes\n\
+Nachrichten: %ld (%ld neu, %ld ungelesen)
+; \ebCurrent folder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %lD bytes\n\
+; Messages: %lD (%lD new, %lD unread)
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MessageInfo
-\ebAktive Nachricht\en\nVon: %s <%s>\nAn: %s <%s>\nBetreff: %s\nDatum: %s\nDateiname: %s\nGröße: %ld Bytes
-; \ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %lD bytes
+\ebAktive Nachricht\en\n\
+Von: %s <%s>\n\
+An: %s <%s>\n\
+Betreff: %s\n\
+Datum: %s\n\
+Dateiname: %s\n\
+Größe: %ld Bytes
+; \ebCurrent message\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %lD bytes
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
@@ -1055,48 +1123,67 @@ Benutzer...
 ; Module MA - Bubblehelp
 ;
 MSG_HELP_MA_BT_READ
-Inhalt der ausgewählten\nNachricht anzeigen
-; Display contents of\nselected message
+Inhalt der ausgewählten\n\
+Nachricht anzeigen
+; Display contents of\n\
+; selected message
 ;
 MSG_HELP_MA_BT_EDIT
 Ausgewählte Nachricht ändern
-; Modify the\nselected message
+; Modify the\n\
+; selected message
 ;
 MSG_HELP_MA_BT_MOVE
-Ausgewählte Nachricht(en) in\n ein anderes Postfach verschieben
-; Move selected message(s)\nto another folder
+Ausgewählte Nachricht(en) in\n\
+ ein anderes Postfach verschieben
+; Move selected message(s)\n\
+; to another folder
 ;
 MSG_HELP_MA_BT_DELETE
 Ausgewählte Nachricht(en) löschen
 ; Delete selected message(s)
 ;
 MSG_HELP_MA_BT_GETADDRESS
-Absender der ausgewählten\nNachricht ins Adreßbuch\naufnehmen
-; Save sender's address\nin your address book
+Absender der ausgewählten\n\
+Nachricht ins Adreßbuch\n\
+aufnehmen
+; Save sender's address\n\
+; in your address book
 ;
 MSG_HELP_MA_BT_WRITE
-Eine neue Nachricht\nerstellen
+Eine neue Nachricht\n\
+erstellen
 ; Compose a new message
 ;
 MSG_HELP_MA_BT_REPLY
-Ausgewählte Nachricht(en)\nbeantworten
+Ausgewählte Nachricht(en)\n\
+beantworten
 ; Reply to selected message
 ;
 MSG_HELP_MA_BT_FORWARD
-Ausgewählte Nachricht(en) an einen\nanderen Empfänger weiterleiten
-; Forward selected message\nto another recipient
+Ausgewählte Nachricht(en) an einen\n\
+anderen Empfänger weiterleiten
+; Forward selected message\n\
+; to another recipient
 ;
 MSG_HELP_MA_BT_POPNOW
-Mit dem Postserver verbinden\nund neue Nachrichten\nherunterladen
-; Connect to the mail server\nand download new messages
+Mit dem Postserver verbinden\n\
+und neue Nachrichten\n\
+herunterladen
+; Connect to the mail server\n\
+; and download new messages
 ;
 MSG_HELP_MA_BT_SENDALL
-Nachrichten in der Warteschlange\ndes Postausgangs versenden
-; Send queued messages\nin the outgoing folder
+Nachrichten in der Warteschlange\n\
+des Postausgangs versenden
+; Send queued messages\n\
+; in the outgoing folder
 ;
 MSG_HELP_MA_BT_FILTER
-Filter auf die Nachrichten\nin diesem Postfach anwenden
-; Apply filters to all\nmessages in this folder
+Filter auf die Nachrichten\n\
+in diesem Postfach anwenden
+; Apply filters to all\n\
+; messages in this folder
 ;
 MSG_HELP_MA_BT_SEARCH
 Postfächer durchsuchen
@@ -1107,7 +1194,8 @@ Adreßbuch öffnen
 ; Open the address book
 ;
 MSG_HELP_MA_BT_CONFIG
-Die Einstellungen\nvon YAM ändern
+Die Einstellungen\n\
+von YAM ändern
 ; Modify YAM's preferences
 ;
 ;
@@ -1126,12 +1214,20 @@ Bitte geben Sie das Paßwort nochmals ein:
 ; Please re-type the password:
 ;
 MSG_CO_ConfirmDelete
-Alle Nachrichten in diesem Postfach gehen verloren!\nWollen Sie es wirklich löschen?
-; All messages in this folder will be lost!\nDo you really want to delete it?
+Alle Nachrichten in diesem Postfach gehen verloren!\n\
+Wollen Sie es wirklich löschen?
+; All messages in this folder will be lost!\n\
+; Do you really want to delete it?
 ;
 MSG_CO_InvalidConf
-Ungültige Konfiguration (Mailserver oder\nE-Mail-Adresse fehlt)\n\nBitte diese Angaben ergänzen und nochmals versuchen!
-; Invalid configuration (missing hostname\n or email address)\n\nPlease fill in these fields and try again!
+Ungültige Konfiguration (Mailserver oder\n\
+E-Mail-Adresse fehlt)\n\
+\n\
+Bitte diese Angaben ergänzen und nochmals versuchen!
+; Invalid configuration (missing hostname\n\
+;  or email address)\n\
+; \n\
+; Please fill in these fields and try again!
 ;
 MSG_CO_ImportMIMEReq
 Einstellungen importieren aus...
@@ -1142,8 +1238,10 @@ MSG_CO_ImportMIMEGads
 ; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
 ;
 MSG_CO_NewIntroDef
-Hallo,\\n
-; Hello,\\\\n
+Hallo,\\n\
+
+; Hello,\\\\n\
+; 
 ;
 MSG_CO_AltRepIntroDef
 Am %d schriebst Du:
@@ -1154,19 +1252,38 @@ MSG_CO_AltRepPatternDef
 ; 
 ;
 MSG_CO_ForwardIntroDef
-*** Start der weitergeleiteten Nachricht ***\\n\\nDatum: %d %t\\nVon: %n <%e>\\nBetreff: %s\\n\\n--- Weitergeleitete Nachricht folgt ---\\n\\n
-; *** Begin of forwarded message ***\\\\n\\\\nDate: %d %t\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n
+*** Start der weitergeleiteten Nachricht ***\\n\
+\\n\
+Datum: %d %t\\n\
+Von: %n <%e>\\n\
+Betreff: %s\\n\
+\\n\
+--- Weitergeleitete Nachricht folgt ---\\n\
+\\n\
+
+; *** Begin of forwarded message ***\\\\n\
+; \\\\n\
+; Date: %d %t\\\\n\
+; From: %n <%e>\\\\n\
+; Subject: %s\\\\n\
+; \\\\n\
+; --- Forwarded message follows ---\\\\n\
+; \\\\n\
+; 
 ;
 MSG_CO_ForwardFinishDef
-*** Ende der weitergeleiteten Nachricht ***\\n
-; *** End of forwarded message ***\\\\n
+*** Ende der weitergeleiteten Nachricht ***\\n\
+
+; *** End of forwarded message ***\\\\n\
+; 
 ;
 MSG_CO_GreetingsDef
 Mit freundlichen Grüssen
 ; Kind regards
 ;
 MSG_CO_AltRepHelloDef
-Hallo %f,\\n
+Hallo %f,\\n\
+
 ; 
 ;
 MSG_CO_AltRepByeDef
@@ -1178,16 +1295,20 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-Am %d schrieb %n:\\n
-; On %d, %n wrote:\\\\n
+Am %d schrieb %n:\\n\
+
+; On %d, %n wrote:\\\\n\
+; 
 ;
 MSG_CO_MLRepByeDef
 Gruss
 ; Regards
 ;
 MSG_CO_LineBreak
-\\n  Zeilenumbruch
-; \\\\n  Line break
+\\n\
+  Zeilenumbruch
+; \\\\n\
+;   Line break
 ;
 MSG_CO_SenderName
 %n  Ursprünglicher Sender: Name
@@ -2293,40 +2414,64 @@ MIME-Einstellungen importieren
 ; Module CO - Bubblehelp
 ;
 MSG_HELP_CO_ST_REALNAME
-Ihr vollständiger Name\n(Vorname Nachname)
-; Your full name\n(first name last name)
+Ihr vollständiger Name\n\
+(Vorname Nachname)
+; Your full name\n\
+; (first name last name)
 ;
 MSG_HELP_CO_ST_EMAIL
 Ihre E-Mail-Adresse
 ; Your email address.
 ;
 MSG_HELP_CO_ST_POPHOST
-Adresse des POP3-Servers für den Postempfang.\nWenn Sie dieses Feld leer lassen, wird die\nAdresse des SMTP-Servers übernommen.
-; Address of the POP3 server to receive mail.\nIf you leave this field empty, the address\n of the SMTP server is used.
+Adresse des POP3-Servers für den Postempfang.\n\
+Wenn Sie dieses Feld leer lassen, wird die\n\
+Adresse des SMTP-Servers übernommen.
+; Address of the POP3 server to receive mail.\n\
+; If you leave this field empty, the address\n\
+;  of the SMTP server is used.
 ;
 MSG_HELP_CO_ST_PASSWD
-Paßwort für den Zugriff\nauf den Postserver
-; Password to access\nthe mail server
+Paßwort für den Zugriff\n\
+auf den Postserver
+; Password to access\n\
+; the mail server
 ;
 MSG_HELP_CO_CY_TZONE
-Wählen Sie die Zeitzone\nIhres momentanen Standorts
-; Select the timezone of\nyour current location
+Wählen Sie die Zeitzone\n\
+Ihres momentanen Standorts
+; Select the timezone of\n\
+; your current location
 ;
 MSG_HELP_CO_CH_DLSAVING
-Zeitzone während der\nSommerzeit korrigieren
-; Adjust the timezone during daylight\nsaving time (summer time)
+Zeitzone während der\n\
+Sommerzeit korrigieren
+; Adjust the timezone during daylight\n\
+; saving time (summer time)
 ;
 MSG_HELP_CO_ST_SMTPHOST
-Adresse des SMTP-Servers für den Postversand.\nWenn Sie dieses Feld leer lassen, wird die\nAdresse des POP3-Servers übernommen.
-; Address of the SMTP server to send mail.\nIf you leave this field empty,\nthe address of the POP3 server is used.
+Adresse des SMTP-Servers für den Postversand.\n\
+Wenn Sie dieses Feld leer lassen, wird die\n\
+Adresse des POP3-Servers übernommen.
+; Address of the SMTP server to send mail.\n\
+; If you leave this field empty,\n\
+; the address of the POP3 server is used.
 ;
 MSG_HELP_CO_ST_DOMAIN
-Der Hostname Ihres Amigas. Ändern Sie dieses Feld,\nfalls der HELO-Befehl einen Fehler verursacht.
-; The hostname of your Amiga. Change this\nfield if the HELO commands fails.
+Der Hostname Ihres Amigas. Ändern Sie dieses Feld,\n\
+falls der HELO-Befehl einen Fehler verursacht.
+; The hostname of your Amiga. Change this\n\
+; field if the HELO commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
-Nachrichten vor dem Versand nicht in 7bit umwandeln.\nBenutzen Sie diese Option nur, falls Ihr SMTP-Server\n8bit-Transfers unterstützt! Andernfalls werden Ihre\nNachrichten verstümmelt.
-; Don't convert messages to 7bit for transfer.\nOnly use this option if your\nSMTP server supports 8bit transfers!\nOtherwise your messages will get corrupted.
+Nachrichten vor dem Versand nicht in 7bit umwandeln.\n\
+Benutzen Sie diese Option nur, falls Ihr SMTP-Server\n\
+8bit-Transfers unterstützt! Andernfalls werden Ihre\n\
+Nachrichten verstümmelt.
+; Don't convert messages to 7bit for transfer.\n\
+; Only use this option if your\n\
+; SMTP server supports 8bit transfers!\n\
+; Otherwise your messages will get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
 Liste der POP3-Server
@@ -2341,60 +2486,92 @@ Ausgewählten POP3-Server von der Liste entfernen
 ; Remove selected POP3 host from the list
 ;
 MSG_HELP_CO_ST_POPUSERID
-Benutzername für die Anmeldung auf dem POP3-Server.\nWenn Sie dieses Feld leer lassen, wird der Benutzername\naus Ihrer E-Mail-Adresse übernommen.
-; User name to log into the POP3 server.\nIf you leave this field empty, the user-ID\nwill be extracted from your email address.
+Benutzername für die Anmeldung auf dem POP3-Server.\n\
+Wenn Sie dieses Feld leer lassen, wird der Benutzername\n\
+aus Ihrer E-Mail-Adresse übernommen.
+; User name to log into the POP3 server.\n\
+; If you leave this field empty, the user-ID\n\
+; will be extracted from your email address.
 ;
 MSG_HELP_CO_CH_DELETE
-Löscht Nachrichten auf dem\nServer nach dem Postholen
-; Delete messages from\nmail server after\ndownloading
+Löscht Nachrichten auf dem\n\
+Server nach dem Postholen
+; Delete messages from\n\
+; mail server after\n\
+; downloading
 ;
 MSG_HELP_CO_CH_USEAPOP
 Anmeldung mittels APOP-Authentifzierung
 ; Login using APOP authentication
 ;
 MSG_HELP_CO_CH_POPENABLED
-Diesen Server beim Prüfen\nauf neue Post berücksichtigen
-; Connect to this server\nwhen checking for new mail
+Diesen Server beim Prüfen\n\
+auf neue Post berücksichtigen
+; Connect to this server\n\
+; when checking for new mail
 ;
 MSG_HELP_CO_CH_AVOIDDUP
-Falls Sie die alte Post auf dem Server\nnicht löschen, hilft Ihnen diese Option,\ndoppelte Nachrichten zu vermeiden.
-; If you don't delete old mail\non the server, use this option to\navoid duplicate messages.
+Falls Sie die alte Post auf dem Server\n\
+nicht löschen, hilft Ihnen diese Option,\n\
+doppelte Nachrichten zu vermeiden.
+; If you don't delete old mail\n\
+; on the server, use this option to\n\
+; avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN
 Fortschrittsanzeige während des Posttransfers
 ; Show progress window during mail transfers
 ;
 MSG_HELP_CO_CY_MSGSELECT
-Schalten Sie diese Option ein, um\nden Inhalt des POP3-Postfachs aufzulisten\nund die zu ladenden Nachrichten auszuwählen
-; Enable this option to show the contents of the POP3 mailbox\nand allow selection of the messages to be downloaded
+Schalten Sie diese Option ein, um\n\
+den Inhalt des POP3-Postfachs aufzulisten\n\
+und die zu ladenden Nachrichten auszuwählen
+; Enable this option to show the contents of the POP3 mailbox\n\
+; and allow selection of the messages to be downloaded
 ;
 MSG_HELP_CO_CH_UPDSTAT
-Neue Nachrichten im Postausgang vor dem\nHolen neuer Post als ungelesen markieren
-; Mark new messages in the incoming folder\nas unread before downloading new mail
+Neue Nachrichten im Postausgang vor dem\n\
+Holen neuer Post als ungelesen markieren
+; Mark new messages in the incoming folder\n\
+; as unread before downloading new mail
 ;
 MSG_HELP_CO_ST_WARNSIZE
-Nachrichten, welche diese Grösse über-\nschreiten, werden als 'gross' bezeichnet
-; Messages which exceed this\nthreshold rank as 'large'
+Nachrichten, welche diese Grösse über-\n\
+schreiten, werden als 'gross' bezeichnet
+; Messages which exceed this\n\
+; threshold rank as 'large'
 ;
 MSG_HELP_CO_ST_INTERVAL
-Wie oft wollen Sie auf neue Post prüfen?\n(Geben Sie 0 oder keinen Wert ein,\num diese Funktion auszuschalten)
-; How frequently do you want to check for new mail?\n(enter 0 or no value to disable this feature)?
+Wie oft wollen Sie auf neue Post prüfen?\n\
+(Geben Sie 0 oder keinen Wert ein,\n\
+um diese Funktion auszuschalten)
+; How frequently do you want to check for new mail?\n\
+; (enter 0 or no value to disable this feature)?
 ;
 MSG_HELP_CO_CH_DLLARGE
-Lade grosse Nachrichten beim automatischen Postholen,\nselbst wenn sie die oben angegeben Grösse überschreiten
-; When automatically checking for new mail,\ndownload large messages even if they are\nlarger than the size specified above
+Lade grosse Nachrichten beim automatischen Postholen,\n\
+selbst wenn sie die oben angegeben Grösse überschreiten
+; When automatically checking for new mail,\n\
+; download large messages even if they are\n\
+; larger than the size specified above
 ;
 MSG_HELP_CO_CH_NOTIREQ
-Beim Eintreffen neuer Post\neine Meldung anzeigen
-; Show a requester\nwhen you get new mail
+Beim Eintreffen neuer Post\n\
+eine Meldung anzeigen
+; Show a requester\n\
+; when you get new mail
 ;
 MSG_HELP_CO_ST_NOTICMD
-Programm, welches beim Eintreffen\nneuer Post ausgeführt wird
-; The program you want to\nexecute when you get new mail
+Programm, welches beim Eintreffen\n\
+neuer Post ausgeführt wird
+; The program you want to\n\
+; execute when you get new mail
 ;
 MSG_HELP_CO_ST_NOTISOUND
-Tondatei, welche beim Eintreffen\nneuer Post abgespielt wird
-; The sound file you want to play\nwhen you get new mail
+Tondatei, welche beim Eintreffen\n\
+neuer Post abgespielt wird
+; The sound file you want to play\n\
+; when you get new mail
 ;
 MSG_HELP_CO_LV_RULES
 Liste der Filter
@@ -2405,7 +2582,8 @@ Name des Filters
 ; Filter name
 ;
 MSG_HELP_CO_CH_REMOTE
-Benutze diesen Filter vor dem\nRunterladen einer Nachricht
+Benutze diesen Filter vor dem\n\
+Runterladen einer Nachricht
 ; Apply this filter before downloading a message
 ;
 MSG_HELP_CO_CH_APPLYNEW
@@ -2417,19 +2595,24 @@ Benutze diesen Filter mit versandten Nachrichten
 ; Apply this filter to sent messages
 ;
 MSG_HELP_CO_CH_APPLYREQ
-Benutze diesen Filter bei manueller\nAuslösung der Filterfunktion
-; Apply this filter when you activate\nthe filter function manually
+Benutze diesen Filter bei manueller\n\
+Auslösung der Filterfunktion
+; Apply this filter when you activate\n\
+; the filter function manually
 ;
 MSG_HELP_CO_CY_COMBINE
-Wie sollen die zwei Suchkriterien\nfür diesen Filter verknüpft werden?
-; How to combine the two\nsearch keys for this filter
+Wie sollen die zwei Suchkriterien\n\
+für diesen Filter verknüpft werden?
+; How to combine the two\n\
+; search keys for this filter
 ;
 MSG_HELP_CO_CH_ABOUNCE
 Leitet passende Nachrichten an eine andere Person um
 ; Bounce matching messages to another person
 ;
 MSG_HELP_CO_ST_ABOUNCE
-E-Mail-Adresse der Person, die\ndie umgeleitete Nachricht erhält
+E-Mail-Adresse der Person, die\n\
+die umgeleitete Nachricht erhält
 ; Email address of the person that gets the bounced messages
 ;
 MSG_HELP_CO_CH_AFORWARD
@@ -2437,11 +2620,13 @@ Leitet passende Nachrichten an eine andere Person weiter
 ; Forward matching messages to another person
 ;
 MSG_HELP_CO_ST_AFORWARD
-E-Mail-Adresse der Person, die\ndie weitergeleitete Nachricht erhält
+E-Mail-Adresse der Person, die\n\
+die weitergeleitete Nachricht erhält
 ; Email address of the person that gets the forwarded messages
 ;
 MSG_HELP_CO_CH_ARESPONSE
-Sendet eine automatische Antwort\nfür jede passende Nachricht
+Sendet eine automatische Antwort\n\
+für jede passende Nachricht
 ; Send an automatic reply for each matching message
 ;
 MSG_HELP_CO_ST_ARESPONSE
@@ -2453,19 +2638,23 @@ Führt einen Befehl für jede passende Nachricht aus
 ; Execute a command for each matching message
 ;
 MSG_HELP_CO_ST_AEXECUTE
-Ausführender Befehl. Der Pfad der passenden\nNachricht wird als Parameter übergeben.
-; Command to execute. The path of the matching\nmessage is passed as an argument.
+Ausführender Befehl. Der Pfad der passenden\n\
+Nachricht wird als Parameter übergeben.
+; Command to execute. The path of the matching\n\
+; message is passed as an argument.
 ;
 MSG_HELP_CO_CH_APLAY
 Spielt eine Ton für jede passende Nachricht ab
-; Plays a sound file for\neach matching message
+; Plays a sound file for\n\
+; each matching message
 ;
 MSG_HELP_CO_ST_APLAY
 Abzuspielende Tondatei
 ; Sound file to play
 ;
 MSG_HELP_CO_CH_AMOVE
-Verschiebt passende Nachrichten\nin ein anderes Postfach
+Verschiebt passende Nachrichten\n\
+in ein anderes Postfach
 ; Move matching messages to a different folder
 ;
 MSG_HELP_CO_PO_MOVETO
@@ -2489,60 +2678,91 @@ Entfernt ausgewählten Filter
 ; Remove selected filter
 ;
 MSG_HELP_CO_CA_COL2QUOT
-In dieser Farbe werden alte Zitate im\nLesefenster und im Editor dargestellt
+In dieser Farbe werden alte Zitate im\n\
+Lesefenster und im Editor dargestellt
 ; Adjust the color used for displaying old quotes
 ;
 MSG_HELP_CO_CH_WRAPHEAD
-Lange Kopfzeilen auf mehrere\nZeilen aufgeteilt anzeigen
+Lange Kopfzeilen auf mehrere\n\
+Zeilen aufgeteilt anzeigen
 ; Display long headers on multiple lines
 ;
 MSG_HELP_CO_CH_TEXTSTYLES
-/ * _ und # werden als Kontrollzeichen\nfür Textformatierungen interpretiert
-; Interpret / * _ and # as\ncontrol codes for textstyles
+/ * _ und # werden als Kontrollzeichen\n\
+für Textformatierungen interpretiert
+; Interpret / * _ and # as\n\
+; control codes for textstyles
 ;
 MSG_HELP_CO_CY_HEADER
-Wie sollen die Kopfzeilen\nder Nachricht im Lesefenster\ndargestellt werden?
-; How do you want to\ndisplay the message header\nin the Read window?
+Wie sollen die Kopfzeilen\n\
+der Nachricht im Lesefenster\n\
+dargestellt werden?
+; How do you want to\n\
+; display the message header\n\
+; in the Read window?
 ;
 MSG_HELP_CO_ST_HEADERS
-AmigaDOS-Muster der anzuzeigenden\nKopfzeilen im Format AUSGEWÄHLTE.\nVoreingestellt ist (From|To|Date|Subject)
-; Specify an AmigaDOS pattern to\nchoose the headers in SELECTED format.\nDefault is (From|To|Date|Subject)
+AmigaDOS-Muster der anzuzeigenden\n\
+Kopfzeilen im Format AUSGEWÄHLTE.\n\
+Voreingestellt ist (From|To|Date|Subject)
+; Specify an AmigaDOS pattern to\n\
+; choose the headers in SELECTED format.\n\
+; Default is (From|To|Date|Subject)
 ;
 MSG_HELP_CO_CY_SENDERINFO
-Im Lesefenster anzuzeigende\nAbsenderinformationen (falls verfügbar)
-; Information about the sender to display\nin the read window (if available)
+Im Lesefenster anzuzeigende\n\
+Absenderinformationen (falls verfügbar)
+; Information about the sender to display\n\
+; in the read window (if available)
 ;
 MSG_HELP_CO_CY_SIGSEPLINE
 Art der Signaturtrennlinie
-; Type of the signature\nseparation line
+; Type of the signature\n\
+; separation line
 ;
 MSG_HELP_CO_ST_INTRANS
-Verwende diese Zeichensatzkonvertierung\nbeim Lesen von Nachrichten
-; Apply this character set translation\nwhen reading messages
+Verwende diese Zeichensatzkonvertierung\n\
+beim Lesen von Nachrichten
+; Apply this character set translation\n\
+; when reading messages
 ;
 MSG_HELP_CO_CH_ALLTEXTS
-Alle Textteile einer\nmehrteiligen Nachricht anzeigen
-; Display all textual parts\nof a multipart message
+Alle Textteile einer\n\
+mehrteiligen Nachricht anzeigen
+; Display all textual parts\n\
+; of a multipart message
 ;
 MSG_HELP_CO_CH_MULTIWIN
-Öffne ein neues Lesefenster\nfür jede angeklickte Nachricht
-; Open a new read window\nfor each selected message
+Öffne ein neues Lesefenster\n\
+für jede angeklickte Nachricht
+; Open a new read window\n\
+; for each selected message
 ;
 MSG_HELP_CO_CA_COLTEXT
-In dieser Farbe wird 'farbiger' Text im\nLesefenster und im Editor dargestellt
-; Adjust the color of 'colored' text used\nin the read window and the editor
+In dieser Farbe wird 'farbiger' Text im\n\
+Lesefenster und im Editor dargestellt
+; Adjust the color of 'colored' text used\n\
+; in the read window and the editor
 ;
 MSG_HELP_CO_CH_FIXFEDIT
-Nachrichten in einer Schriftart\nfester Breite anzeigen
-; Display messages using\na fixed-width font
+Nachrichten in einer Schriftart\n\
+fester Breite anzeigen
+; Display messages using\n\
+; a fixed-width font
 ;
 MSG_HELP_CO_ST_CTYPE
-MIME-Anzeigeprogramm, welches bei\ndiesem Anlagentyp aufgerufen wird
-; MIME viewer is activated\nby this attachment type
+MIME-Anzeigeprogramm, welches bei\n\
+diesem Anlagentyp aufgerufen wird
+; MIME viewer is activated\n\
+; by this attachment type
 ;
 MSG_HELP_CO_ST_COMMAND
-Pfad und optionale Paremeter des\nAnzeigeprogramms. Bei %s wird der\nDateiname der Anlage eingefügt.
-; Path and optional arguments of\nthe viewer command. Use %s to\ninsert the datafile.
+Pfad und optionale Paremeter des\n\
+Anzeigeprogramms. Bei %s wird der\n\
+Dateiname der Anlage eingefügt.
+; Path and optional arguments of\n\
+; the viewer command. Use %s to\n\
+; insert the datafile.
 ;
 MSG_HELP_CO_BT_MADD
 Ein neues MIME-Anzeigeprogramm hinzufügen
@@ -2553,168 +2773,248 @@ Ausgewähltes MIME-Anzeigeprogramm entfernen
 ; Remove selected MIME viewer
 ;
 MSG_HELP_CO_ST_EXTENS
-Dateinamenerweiterungen, die für\ndiesen Dateityp benutzt werden
+Dateinamenerweiterungen, die für\n\
+diesen Dateityp benutzt werden
 ; Filename extensions used by this file type
 ;
 MSG_HELP_CO_ST_DEFVIEWER
-Programm, mit dem Anlagen unbe-\nkannten Typs angezeigt werden
-; Program used to displaying\nattachments of unknown type
+Programm, mit dem Anlagen unbe-\n\
+kannten Typs angezeigt werden
+; Program used to displaying\n\
+; attachments of unknown type
 ;
 MSG_HELP_CO_CH_IDENTBIN
-Versucht die Datei zu identifizieren, bevor\ndas Standardanzeigeprogramm benutzt wird
-; Try to identify the file type\nbefore using the default viewer
+Versucht die Datei zu identifizieren, bevor\n\
+das Standardanzeigeprogramm benutzt wird
+; Try to identify the file type\n\
+; before using the default viewer
 ;
 MSG_HELP_CO_ST_REPLYTO
-Geben Sie die voreingestellte\nAntwortadresse ein, falls diese sich\nvon Ihrer E-Mail-Adresse unterscheidet.
-; Enter the default return address, if\nit differs from your email address.
+Geben Sie die voreingestellte\n\
+Antwortadresse ein, falls diese sich\n\
+von Ihrer E-Mail-Adresse unterscheidet.
+; Enter the default return address, if\n\
+; it differs from your email address.
 ;
 MSG_HELP_CO_ST_ORGAN
-Der Name Ihrer Firma\noder Ihres Instituts
-; The name of your\ncompany or institute
+Der Name Ihrer Firma\n\
+oder Ihres Instituts
+; The name of your\n\
+; company or institute
 ;
 MSG_HELP_CO_ST_EXTHEADER
-Zusätzliche Kopfzeilen, die zu jeder\nversandten Nachricht hinzugefügt werden
-; Additional message header(s) that will\nbe added to every outgoing message
+Zusätzliche Kopfzeilen, die zu jeder\n\
+versandten Nachricht hinzugefügt werden
+; Additional message header(s) that will\n\
+; be added to every outgoing message
 ;
 MSG_HELP_CO_ST_HELLOTEXT
-Text, welcher am Anfang einer\nneuen Nachricht eingefügt wird
-; Text to insert at the\ntop of a new message
+Text, welcher am Anfang einer\n\
+neuen Nachricht eingefügt wird
+; Text to insert at the\n\
+; top of a new message
 ;
 MSG_HELP_CO_ST_BYETEXT
-Text, welcher am Ende einer\nneuen Nachricht eingefügt wird
-; Text to insert at the\nbottom of a new message
+Text, welcher am Ende einer\n\
+neuen Nachricht eingefügt wird
+; Text to insert at the\n\
+; bottom of a new message
 ;
 MSG_HELP_CO_ST_OUTTRANS
-Verwendet diese Zeichensatzkonvertierung\nbei neuen Nachrichten
-; Apply this characterset translation\non new messages
+Verwendet diese Zeichensatzkonvertierung\n\
+bei neuen Nachrichten
+; Apply this characterset translation\n\
+; on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP
 Spalte, bei der Nachrichtentext umgebrochen wird
-; Word-wrap message text\nat this column
+; Word-wrap message text\n\
+; at this column
 ;
 MSG_HELP_CO_CH_AUTOBREAK
-Fügt beim Eingeben der Nachricht\nechte Zeilenumbrüche ein
-; Insert real line breaks\nwhile entering a message
+Fügt beim Eingeben der Nachricht\n\
+echte Zeilenumbrüche ein
+; Insert real line breaks\n\
+; while entering a message
 ;
 MSG_HELP_CO_CY_EDWRAP
-Wählen Sie 'beim Eintippen', um bei der Eingabe\nder Nachricht Zeilenumbrüche einzufügen
-; Select 'as you type' to insert linebreak\ncodes while you're typing the message
+Wählen Sie 'beim Eintippen', um bei der Eingabe\n\
+der Nachricht Zeilenumbrüche einzufügen
+; Select 'as you type' to insert linebreak\n\
+; codes while you're typing the message
 ;
 MSG_HELP_CO_CH_LAUNCH
-Beim Eingeben einer neuen Nachricht\nden externer Editor starten
-; Launch the external editor\nwhen you start a new message
+Beim Eingeben einer neuen Nachricht\n\
+den externer Editor starten
+; Launch the external editor\n\
+; when you start a new message
 ;
 MSG_HELP_CO_ST_EDITOR
-Dateiname Ihres\nbevorzugten Texteditors
-; Filename of your\nfavorite text editor
+Dateiname Ihres\n\
+bevorzugten Texteditors
+; Filename of your\n\
+; favorite text editor
 ;
 MSG_HELP_CO_ST_FWDSTART
-Text, der einer weitergeleiteten Nachricht\nvorangestellt wird. Mit dem Knopf rechts\nkönnen diverse Variablen eingefügt werden.
-; Text used to introduce a forwarded message.\nUse the button at the right side to insert a variable.
+Text, der einer weitergeleiteten Nachricht\n\
+vorangestellt wird. Mit dem Knopf rechts\n\
+können diverse Variablen eingefügt werden.
+; Text used to introduce a forwarded message.\n\
+; Use the button at the right side to insert a variable.
 ;
 MSG_HELP_CO_ST_FWDEND
-Text, der eine weitergeleitete\nNachricht abschliesst.
-; Text to insert at the\nend a forwarded message.
+Text, der eine weitergeleitete\n\
+Nachricht abschliesst.
+; Text to insert at the\n\
+; end a forwarded message.
 ;
 MSG_HELP_CO_ST_REPLYTEXT
-Text, der einer beantworteten Nachricht\nvorangestellt wird. Mit dem Knopf rechts\nkönnen diverse Variablen eingefügt werden.
-; Texts used in replies to messages.\nUse the button at the right side to insert a variable.
+Text, der einer beantworteten Nachricht\n\
+vorangestellt wird. Mit dem Knopf rechts\n\
+können diverse Variablen eingefügt werden.
+; Texts used in replies to messages.\n\
+; Use the button at the right side to insert a variable.
 ;
 MSG_HELP_CO_ST_AREPLYTEXT
-Benutze diesen alternativen Text,\nfalls das untenstehende Muster\nauf die Empfängeradresse passt
-; Use these texts in replies to messages\nif the pattern below matches the recipient address.
+Benutze diesen alternativen Text,\n\
+falls das untenstehende Muster\n\
+auf die Empfängeradresse passt
+; Use these texts in replies to messages\n\
+; if the pattern below matches the recipient address.
 ;
 MSG_HELP_CO_ST_AREPLYPAT
-AmigaDOS-Muster, welches die alternativen\nAntwortkopfzeilen aktiviert
-; AmigaDOS pattern that triggers\nthe alternative reply headers
+AmigaDOS-Muster, welches die alternativen\n\
+Antwortkopfzeilen aktiviert
+; AmigaDOS pattern that triggers\n\
+; the alternative reply headers
 ;
 MSG_HELP_CO_ST_MREPLYTEXT
-Benutze diese Texte bei der Beantwortung\neiner Nachricht aus einer Mailingliste.
-; Use these texts in replies to\nmessages from a mailing list.
+Benutze diese Texte bei der Beantwortung\n\
+einer Nachricht aus einer Mailingliste.
+; Use these texts in replies to\n\
+; messages from a mailing list.
 ;
 MSG_HELP_CO_CH_QUOTE
-Urprüngliche Nachricht\nin der Antwort zitieren?
-; Quote original\nmessage in reply?
+Urprüngliche Nachricht\n\
+in der Antwort zitieren?
+; Quote original\n\
+; message in reply?
 ;
 MSG_HELP_CO_ST_REPLYCHAR
-Zeichenkette, welche jeder Zeile der zitierten\nNachricht vorangestellt wird. Mit dem Knopf\nrechts können diverse Variablen eingefügt werden.
-; String that should precede each line of\nthe quoted message. Use the button at\nthe right side to insert a variable.
+Zeichenkette, welche jeder Zeile der zitierten\n\
+Nachricht vorangestellt wird. Mit dem Knopf\n\
+rechts können diverse Variablen eingefügt werden.
+; String that should precede each line of\n\
+; the quoted message. Use the button at\n\
+; the right side to insert a variable.
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY
 Zitatzeichen auch bei leeren Zeilen verwenden?
 ; Insert quote character(s) for empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR
-Lässt, falls sich From und ReplyTo-\nAdressen unterscheiden, den Benutzer die\ngewünschte Empfängeradresse auswählen
-; Let the user select the desired recipient address\nif the From and Reply-To addresses are different
+Lässt, falls sich From und ReplyTo-\n\
+Adressen unterscheiden, den Benutzer die\n\
+gewünschte Empfängeradresse auswählen
+; Let the user select the desired recipient address\n\
+; if the From and Reply-To addresses are different
 ;
 MSG_HELP_CO_CH_STRIPSIG
-Signatur der ursprünglichen\nNachricht nicht zitieren
-; Don't quote signature\nof original message
+Signatur der ursprünglichen\n\
+Nachricht nicht zitieren
+; Don't quote signature\n\
+; of original message
 ;
 MSG_HELP_CO_CY_SIGNAT
 Zu bearbeitende Signatur auswählen
 ; Select signature to edit
 ;
 MSG_HELP_CO_BT_EDITSIG
-Bearbeiten Sie Ihre\nSignatur im Editor
-; Modify your signature\nusing the editor
+Bearbeiten Sie Ihre\n\
+Signatur im Editor
+; Modify your signature\n\
+; using the editor
 ;
 MSG_HELP_CO_BT_INSTAG
-Steuerzeichen für zufälliges\nCookie einfügen
+Steuerzeichen für zufälliges\n\
+Cookie einfügen
 ; Insert control code for random taglines
 ;
 MSG_HELP_CO_BT_INSENV
-Steuerzeichen für die Umgebungs-\nvariable SIGNATURE einfügen
-; Insert control code for the\nenviromental variable SIGNATURE
+Steuerzeichen für die Umgebungs-\n\
+variable SIGNATURE einfügen
+; Insert control code for the\n\
+; enviromental variable SIGNATURE
 ;
 MSG_HELP_CO_ST_TAGFILE
-Datenbank, welche die\nCookies (\"Taglines\") enthält
+Datenbank, welche die\n\
+Cookies (\"Taglines\") enthält
 ; Database containing taglines (\"cookies\")
 ;
 MSG_HELP_CO_ST_TAGSEP
-Zeichen oder Zeichenkette, die zur Trennung\nder Cookies in der Datenbank verwendet werden
-; Character or string used to separate\nthe taglines in the database
+Zeichen oder Zeichenkette, die zur Trennung\n\
+der Cookies in der Datenbank verwendet werden
+; Character or string used to separate\n\
+; the taglines in the database
 ;
 MSG_HELP_CO_CG_FO
-In der Postfachliste sichtbare Spalten.\nDie Reihenfolge lässt sich mit Drag&Drop ändern.
+In der Postfachliste sichtbare Spalten.\n\
+Die Reihenfolge lässt sich mit Drag&Drop ändern.
 ; Columns displayed in the folder list
 ;
 MSG_HELP_CO_CG_MA
-In der Nachrichtenliste sichtbare Spalten.\nDie Reihenfolge lässt sich mit Drag&Drop ändern.
+In der Nachrichtenliste sichtbare Spalten.\n\
+Die Reihenfolge lässt sich mit Drag&Drop ändern.
 ; Columns displayed in the message list
 ;
 MSG_HELP_CO_CG_AB
-Im Adreßbuch sichtbare Spalten.\nDie Reihenfolge lässt sich mit Drag&Drop ändern.
+Im Adreßbuch sichtbare Spalten.\n\
+Die Reihenfolge lässt sich mit Drag&Drop ändern.
 ; Columns displayed in the address book
 ;
 MSG_HELP_CO_CH_FIXFLIST
-Listeneinträge in einer Schriftart\nfester Breite anzeigen
-; Display list entries\nusing a fixed-width font
+Listeneinträge in einer Schriftart\n\
+fester Breite anzeigen
+; Display list entries\n\
+; using a fixed-width font
 ;
 MSG_HELP_CO_CH_BEAT
-Zeitangabe in Swatch Beats der\nrevolutionären neuen Zeiteinheit
-; Display time in Swatch Beats, the\nrevolutionary new unit of time
+Zeitangabe in Swatch Beats der\n\
+revolutionären neuen Zeiteinheit
+; Display time in Swatch Beats, the\n\
+; revolutionary new unit of time
 ;
 MSG_HELP_CO_ST_PGPCMD
-Verzeichnis, in welchem sich\ndas PGP-Programm befindet
-; Directory where the PGP\nexecutable can be found
+Verzeichnis, in welchem sich\n\
+das PGP-Programm befindet
+; Directory where the PGP\n\
+; executable can be found
 ;
 MSG_HELP_CO_ST_MYPGPID
-Die ID Ihres PGP-Schlüssels, mit\nwelchem Nachrichten signiert werden
-; The ID of your PGP key that's\nused to sign messages
+Die ID Ihres PGP-Schlüssels, mit\n\
+welchem Nachrichten signiert werden
+; The ID of your PGP key that's\n\
+; used to sign messages
 ;
 MSG_HELP_CO_CH_ENCSELF
-Neue Nachrichten auch mit Ihrem öffentlichen\nSchlüssel verschlüsseln, damit versandte Nachrichten\nimmer noch gelesen oder geändert werden können
-; Encrypt new messages with your public key,\nso you can still read or edit sent messages
+Neue Nachrichten auch mit Ihrem öffentlichen\n\
+Schlüssel verschlüsseln, damit versandte Nachrichten\n\
+immer noch gelesen oder geändert werden können
+; Encrypt new messages with your public key,\n\
+; so you can still read or edit sent messages
 ;
 MSG_HELP_CO_ST_REMAILER
-E-Mail-Adresse des Remailer-Dienstes,\nwelcher Ihre Post anonymisiert
-; Email address of the remailer service\nused to send anonymous mail
+E-Mail-Adresse des Remailer-Dienstes,\n\
+welcher Ihre Post anonymisiert
+; Email address of the remailer service\n\
+; used to send anonymous mail
 ;
 MSG_HELP_CO_ST_FIRSTLINE
-Diese Zeile wird am Anfang Ihrer\nNachricht eingefügt, falls sie via\nAnonymisierdienst versandt wird
-; Insert this line at the top of your\nmessage if it is sent via remailer
+Diese Zeile wird am Anfang Ihrer\n\
+Nachricht eingefügt, falls sie via\n\
+Anonymisierdienst versandt wird
+; Insert this line at the top of your\n\
+; message if it is sent via remailer
 ;
 MSG_HELP_CO_ST_LOGFILE
 Pfad für die Protokolldateien
@@ -2729,7 +3029,8 @@ Wählen Sie den Protokolltyp
 ; Select type of logging
 ;
 MSG_HELP_CO_CH_LOGALL
-Schalten Sie diese Option aus, damit\nnur Posttransfers protokolliert werden
+Schalten Sie diese Option aus, damit\n\
+nur Posttransfers protokolliert werden
 ; Disable this option to log mail transfers only
 ;
 MSG_HELP_CO_CH_LOADALL
@@ -2749,124 +3050,186 @@ Auf neue Post prüfen
 ; Check for mail
 ;
 MSG_HELP_CO_CH_CHECKBD
-Überprüft das Adreßbuch und gibt eine\nMeldung aus, falls jemand Geburtstag hat
-; Check the address book and open a reminder\nif it's a person's birthday
+Überprüft das Adreßbuch und gibt eine\n\
+Meldung aus, falls jemand Geburtstag hat
+; Check the address book and open a reminder\n\
+; if it's a person's birthday
 ;
 MSG_HELP_CO_CH_DELETEOLD
-Löscht Nachrichten, welche ihr\nmaximales Alter überschreiten\n(siehe Postfach-Konfiguration)
-; Delete messages that exceed the maximum\nage (see folder configuration)
+Löscht Nachrichten, welche ihr\n\
+maximales Alter überschreiten\n\
+(siehe Postfach-Konfiguration)
+; Delete messages that exceed the maximum\n\
+; age (see folder configuration)
 ;
 MSG_HELP_CO_CH_REMOVEDEL
 Leert das Postfach 'Gelöschte'
 ; Empty trash folder
 ;
 MSG_HELP_CO_ST_GALLDIR
-Verzeichnis, in welchem die Fotos\nIhrer Briefparter gespeichert werden
-; Directory to save the\npictures of your correspondents
+Verzeichnis, in welchem die Fotos\n\
+Ihrer Briefparter gespeichert werden
+; Directory to save the\n\
+; pictures of your correspondents
 ;
 MSG_HELP_CO_ST_PHOTOURL
 WWW-Adresse Ihres Porträtfotos
 ; WWW address of your portrait image
 ;
 MSG_HELP_CO_CY_ATAB
-Automatisch einen Adreßbucheintrag für den\nAbsender erzeugen, wenn Sie seinen Brief lesen?
-; Automatically create an address book entry\nfor the sender when your read his/her message?
+Automatisch einen Adreßbucheintrag für den\n\
+Absender erzeugen, wenn Sie seinen Brief lesen?
+; Automatically create an address book entry\n\
+; for the sender when your read his/her message?
 ;
 MSG_HELP_CO_ST_PROXY
-Adresse und optional Portnummer Ihres HTTP\nProxyservers (voreingestellter Port ist 80)\nSie dürfen dieses Feld leer lassen.
-; Address and optional port number of your\nHTTP proxy server (default port is 80)\nYou may leave this field empty.
+Adresse und optional Portnummer Ihres HTTP\n\
+Proxyservers (voreingestellter Port ist 80)\n\
+Sie dürfen dieses Feld leer lassen.
+; Address and optional port number of your\n\
+; HTTP proxy server (default port is 80)\n\
+; You may leave this field empty.
 ;
 MSG_HELP_CO_ST_NEWGROUP
-Neue Adreßbucheinträge werden in diese\nGruppe aufgenommen (sie wird bei\nBedarf automatisch erstellt)
-; Add new address book entries to this group (it\nwill be created if it doesn't already exist)
+Neue Adreßbucheinträge werden in diese\n\
+Gruppe aufgenommen (sie wird bei\n\
+Bedarf automatisch erstellt)
+; Add new address book entries to this group (it\n\
+; will be created if it doesn't already exist)
 ;
 MSG_HELP_CO_ST_TEMPDIR
 Verzeichnis für Temporärdateien
-; Directory to store\ntemporary files
+; Directory to store\n\
+; temporary files
 ;
 MSG_HELP_CO_ST_DETACHDIR
 In diesem Verzeichnis werden die Anlagen gespeichert
-; Directory to save\nattached files to
+; Directory to save\n\
+; attached files to
 ;
 MSG_HELP_CO_ST_ATTACHDIR
 Voreingestelltes Quellverzeichnis für Anlagen
-; Default source directory\nfor attachments
+; Default source directory\n\
+; for attachments
 ;
 MSG_HELP_CO_ST_APP
-Position des Postfach-\nAppIcons in Pixel
-; Position of the mailbox\nAppIcon in pixels
+Position des Postfach-\n\
+AppIcons in Pixel
+; Position of the mailbox\n\
+; AppIcon in pixels
 ;
 MSG_HELP_CO_CH_CLGADGET
-Soll YAM beim Betätigen des Schliessgadgets\nikonifiziert werden?
-; Do you want YAM to iconify when\nyou hit the closegadget?
+Soll YAM beim Betätigen des Schliessgadgets\n\
+ikonifiziert werden?
+; Do you want YAM to iconify when\n\
+; you hit the closegadget?
 ;
 MSG_HELP_CO_CH_CONFIRM
-Wollen Sie das Löschen von\nNachrichten bestätigen?
-; Do you want to confirm\ndeletion of messages?
+Wollen Sie das Löschen von\n\
+Nachrichten bestätigen?
+; Do you want to confirm\n\
+; deletion of messages?
 ;
 MSG_HELP_CO_NB_CONFIRMDEL
-Bestätigungsfenster erst ab dieser\nAnzahl von Nachrichten öffnen
-; Minimum number of messages to\ndisplay the confirmation requester
+Bestätigungsfenster erst ab dieser\n\
+Anzahl von Nachrichten öffnen
+; Minimum number of messages to\n\
+; display the confirmation requester
 ;
 MSG_HELP_CO_CH_REMOVE
-Löscht Nachrichten sofort, ohne den\nUmweg über das Postfach 'Gelöschte'
-; Delete messages instantly, don't\nmove them to the trash folder
+Löscht Nachrichten sofort, ohne den\n\
+Umweg über das Postfach 'Gelöschte'
+; Delete messages instantly, don't\n\
+; move them to the trash folder
 ;
 MSG_HELP_CO_CH_SAVESENT
-Versandte Nachrichten im\nPostfach 'Gesendete' speichern
+Versandte Nachrichten im\n\
+Postfach 'Gesendete' speichern
 ; Save sent messages in the Sent folder
 ;
 MSG_HELP_CO_RA_MDN_DISP
-Versendet beim Lesen einer Nachricht\neinen Zustandsbericht an den Absender,\nfalls dieser es verlangt
-; When reading a message, send a\ndisposition notification to the\nsender if requested
+Versendet beim Lesen einer Nachricht\n\
+einen Zustandsbericht an den Absender,\n\
+falls dieser es verlangt
+; When reading a message, send a\n\
+; disposition notification to the\n\
+; sender if requested
 ;
 MSG_HELP_CO_RA_MDN_PROC
-Versendet beim Weiterleiten einer ungelesenen\nNachricht einen Zustandsbericht an den Absender,\nfalls dieser es verlangt
-; When forwarding a message, send a\ndisposition notification to the\nsender if requested
+Versendet beim Weiterleiten einer ungelesenen\n\
+Nachricht einen Zustandsbericht an den Absender,\n\
+falls dieser es verlangt
+; When forwarding a message, send a\n\
+; disposition notification to the\n\
+; sender if requested
 ;
 MSG_HELP_CO_RA_MDN_DELE
-Versendet beim Löschen einer ungelesenen\nNachricht einen Zustandsbericht an den Absender,\nfalls dieser es verlangt
-; When deleting a message, send a\ndisposition notification to the\nsender if requested
+Versendet beim Löschen einer ungelesenen\n\
+Nachricht einen Zustandsbericht an den Absender,\n\
+falls dieser es verlangt
+; When deleting a message, send a\n\
+; disposition notification to the\n\
+; sender if requested
 ;
 MSG_HELP_CO_RA_MDN_RULE
-Versendet beim Löschen oder Weiterleiten einer\nungelesenen Nachricht mittels Filter einen\nZustandsbericht an den Absender, falls verlangt
-; When deleting or forwarding a message using\nfilters, send a disposition notification to the sender\nif requested
+Versendet beim Löschen oder Weiterleiten einer\n\
+ungelesenen Nachricht mittels Filter einen\n\
+Zustandsbericht an den Absender, falls verlangt
+; When deleting or forwarding a message using\n\
+; filters, send a disposition notification to the sender\n\
+; if requested
 ;
 MSG_HELP_CO_CH_SEND_MDN
-Versucht den Zustandsbericht sofort\nnach dessen Generierung zu versenden
-; Try to send the disposition notification\nas soon it has been generated
+Versucht den Zustandsbericht sofort\n\
+nach dessen Generierung zu versenden
+; Try to send the disposition notification\n\
+; as soon it has been generated
 ;
 MSG_HELP_CO_TX_ENCPACK
-XPK-Bibliothek für die Komprimierung\nund den Paßwortschutz von Postfächern
-; XPK library used to protect\nand compress folders
+XPK-Bibliothek für die Komprimierung\n\
+und den Paßwortschutz von Postfächern
+; XPK library used to protect\n\
+; and compress folders
 ;
 MSG_HELP_CO_TX_PACKER
-XPK-Bibliothek für die Komprimierung\nvon Postfächern
-; XPK library used to\ncompress folders
+XPK-Bibliothek für die Komprimierung\n\
+von Postfächern
+; XPK library used to\n\
+; compress folders
 ;
 MSG_HELP_CO_NB_ENCPACK
-Effizienz dieses Packers\n100% ist die beste, aber langsamste
-; Efficiency of this packer\n100% is best, but slowest
+Effizienz dieses Packers\n\
+100% ist die beste, aber langsamste
+; Efficiency of this packer\n\
+; 100% is best, but slowest
 ;
 MSG_HELP_CO_ST_ARCHIVER
-Archivpacker und Optionen für die\nErstellung von komprimierten Anlagen
-; Archiver command and options used\nto create compressed attachments
+Archivpacker und Optionen für die\n\
+Erstellung von komprimierten Anlagen
+; Archiver command and options used\n\
+; to create compressed attachments
 ;
 MSG_HELP_CO_ST_RXNAME
-Beschreibung des Skripts\nim 'Skript'-Menü
-; Description of the script\nin the 'Scripts' menu
+Beschreibung des Skripts\n\
+im 'Skript'-Menü
+; Description of the script\n\
+; in the 'Scripts' menu
 ;
 MSG_HELP_CO_ST_SCRIPT
 Dateiname des Skripts
 ; Filename of the script
 ;
 MSG_HELP_CO_CY_ISADOS
-Art des Skripts\n(ARexx oder AmigaDOS)
-; Type of the script\n(ARexx or AmigaDOS)
+Art des Skripts\n\
+(ARexx oder AmigaDOS)
+; Type of the script\n\
+; (ARexx or AmigaDOS)
 ;
 MSG_HELP_CO_CH_CONSOLE
-Öffnet ein Konsolenfenster für\ndie Ein- und Ausgabe des Skripts
-; Open a console window to allow input\nand output from the script
+Öffnet ein Konsolenfenster für\n\
+die Ein- und Ausgabe des Skripts
+; Open a console window to allow input\n\
+; and output from the script
 ;
 MSG_HELP_CO_CH_WAITTERM
 Startet das Skript nicht im Hintergrund
@@ -2881,14 +3244,19 @@ Benutzt die aktuellen Einstellungen
 ; Use current settings
 ;
 MSG_HELP_CO_BT_CANCEL
-Schliesst das Konfigurationsfenster\nund benutzt die alten Einstellungen
-; Close configuration\nwindow and use old\nsettings
+Schliesst das Konfigurationsfenster\n\
+und benutzt die alten Einstellungen
+; Close configuration\n\
+; window and use old\n\
+; settings
 ;
 ; Module AB - Routines
 ;
 MSG_AB_BirthdayReq
-Heute wird %s %ld Jahre alt!\nWollen Sie eine Grusskarte schicken?
-; Today, %s reaches age %ld!\nDo you want to send a greetings card?
+Heute wird %s %ld Jahre alt!\n\
+Wollen Sie eine Grusskarte schicken?
+; Today, %s reaches age %ld!\n\
+; Do you want to send a greetings card?
 ; NAME, AGE
 ;
 MSG_AB_BirthdayReminder
@@ -2924,8 +3292,12 @@ Alias
 ; Alias
 ;
 MSG_AB_FoundEntry
-Passenden Eintrag gefunden!\nAlias: %s\nName: %s
-; Found matching entry!\nAlias: %s\nName: %s
+Passenden Eintrag gefunden!\n\
+Alias: %s\n\
+Name: %s
+; Found matching entry!\n\
+; Alias: %s\n\
+; Name: %s
 ; ALIAS, NAME
 ;
 MSG_AB_FindEntry
@@ -2933,8 +3305,12 @@ Suche Eintrag
 ; Find Entry
 ;
 MSG_AB_FindEntryReq
-Dieses Module sucht einen gegebenen Text im Alias, Namen,\nAdresse, Beschreibung, Strasse, Stadt oder Land. Bitte geben\nSie den Suchbegriff ein (AmigaDOS-Muster werden unterstützt):
-; This module finds a given text in the alias, name, address,\ndescription, street, city or country fields. Please enter\nthe search pattern (AmigaDOS wildchars are supported):
+Dieses Module sucht einen gegebenen Text im Alias, Namen,\n\
+Adresse, Beschreibung, Strasse, Stadt oder Land. Bitte geben\n\
+Sie den Suchbegriff ein (AmigaDOS-Muster werden unterstützt):
+; This module finds a given text in the alias, name, address,\n\
+; description, street, city or country fields. Please enter\n\
+; the search pattern (AmigaDOS wildchars are supported):
 ;
 MSG_AB_StartSearch
 _Suche starten
@@ -3121,52 +3497,74 @@ Aktuelle Änderungen speichern
 ; Save current changes
 ;
 MSG_HELP_AB_BT_SEARCH
-Eine Eintrag im\nAdreßbuch finden
-; Find an entry in\nthe address book
+Eine Eintrag im\n\
+Adreßbuch finden
+; Find an entry in\n\
+; the address book
 ;
 MSG_HELP_AB_BT_ADDUSER
-Eine neue Person ins\nAdreßbuch aufnehmen
-; Add a new person to\nyour address book
+Eine neue Person ins\n\
+Adreßbuch aufnehmen
+; Add a new person to\n\
+; your address book
 ;
 MSG_HELP_AB_BT_ADDGROUP
-Eine neue Gruppe (Verzeichnis)\nins Adreßbuch aufnehmen
-; Add a new group (directory)\nto your address book
+Eine neue Gruppe (Verzeichnis)\n\
+ins Adreßbuch aufnehmen
+; Add a new group (directory)\n\
+; to your address book
 ;
 MSG_HELP_AB_BT_ADDMLIST
-Eine neue Verteilerliste\nins Adreßbuch aufnehmen
-; Add a new distribution list\nto your address book
+Eine neue Verteilerliste\n\
+ins Adreßbuch aufnehmen
+; Add a new distribution list\n\
+; to your address book
 ;
 MSG_HELP_AB_BT_EDIT
-Ausgewählten\nEintrag ändern
-; Modify selected\nentry
+Ausgewählten\n\
+Eintrag ändern
+; Modify selected\n\
+; entry
 ;
 MSG_HELP_AB_BT_DELETE
-Ausgewählten Eintrag aus\ndem Adreßbuch entfernen
-; Delete selected entry\nfrom your address book
+Ausgewählten Eintrag aus\n\
+dem Adreßbuch entfernen
+; Delete selected entry\n\
+; from your address book
 ;
 MSG_HELP_AB_BT_PRINT
 Ausgewählten Eintrag drucken
 ; Print selected entry
 ;
 MSG_HELP_AB_BT_OPEN
-Alle Einträge im\nAdreßbuch anzeigen
-; Display all entries in\nthe address book
+Alle Einträge im\n\
+Adreßbuch anzeigen
+; Display all entries in\n\
+; the address book
 ;
 MSG_HELP_AB_BT_CLOSE
-Nur Einträge in der obersten\nEbene des Adreßbuchs anzeigen
-; Only display root entries\nin the address book
+Nur Einträge in der obersten\n\
+Ebene des Adreßbuchs anzeigen
+; Only display root entries\n\
+; in the address book
 ;
 MSG_HELP_AB_BT_TO
-Primären Empfänger für die\nneue Nachricht festlegen
-; Set primary recipient(s)\nfor new message
+Primären Empfänger für die\n\
+neue Nachricht festlegen
+; Set primary recipient(s)\n\
+; for new message
 ;
 MSG_HELP_AB_BT_CC
-Sekundären Empfänger für die\nneue Nachricht festlegen
-; Set secondary recipient(s)\nfor new message
+Sekundären Empfänger für die\n\
+neue Nachricht festlegen
+; Set secondary recipient(s)\n\
+; for new message
 ;
 MSG_HELP_AB_BT_BCC
-Empfänger der versteckten Kopie\nder neuen Nachricht festlegen
-; Set blind copy recipient(s)\nfor new message
+Empfänger der versteckten Kopie\n\
+der neuen Nachricht festlegen
+; Set blind copy recipient(s)\n\
+; for new message
 ;
 ; Module CL
 ;
@@ -3191,8 +3589,13 @@ Es gibt nichts rückgängig zu machen.
 ; Nothing to undo.
 ;
 MSG_CL_ErrorNoUndoMem
-Zuwenig Speicher, um den Undo-\nBuffer aufrecht zu erhalten.\nEr wird gelöscht.
-; There is not enough memory\nto keep the undo buffer.\n\nThe undo buffer is lost.
+Zuwenig Speicher, um den Undo-\n\
+Buffer aufrecht zu erhalten.\n\
+Er wird gelöscht.
+; There is not enough memory\n\
+; to keep the undo buffer.\n\
+; \n\
+; The undo buffer is lost.
 ;
 ; Module EA - Procedures
 ;
@@ -3297,84 +3700,122 @@ _Sortieren
 ; Module EA - Bubblehelp
 ;
 MSG_HELP_EA_ST_ALIAS
-Identität (z.B. Spitzname oder\nAbkürzung) für diesen Eintrag
-; Identity (e.g. nickname or\nabbreviation) of this entry
+Identität (z.B. Spitzname oder\n\
+Abkürzung) für diesen Eintrag
+; Identity (e.g. nickname or\n\
+; abbreviation) of this entry
 ;
 MSG_HELP_EA_ST_DESCRIPTION
 Kommentar zu diesem Eintrag
 ; Comment for this entry
 ;
 MSG_HELP_EA_ST_REALNAME
-Vollständiger Name\nfür diesen Eintrags\n(Vorname Nachname)
-; Full name of this entry\n(first name last name)
+Vollständiger Name\n\
+für diesen Eintrags\n\
+(Vorname Nachname)
+; Full name of this entry\n\
+; (first name last name)
 ;
 MSG_HELP_EA_ST_ADDRESS
-Internet-Adresse\nfür diesen Eintrag
-; Internet address\nof this entry
+Internet-Adresse\n\
+für diesen Eintrag
+; Internet address\n\
+; of this entry
 ;
 MSG_HELP_EA_ST_PGPKEY
-Hexadezimale ID des öffentlichen\nPGP-Schlüssels dieser Person
-; Hexadecimal ID of this\nperson's public PGP key
+Hexadezimale ID des öffentlichen\n\
+PGP-Schlüssels dieser Person
+; Hexadecimal ID of this\n\
+; person's public PGP key
 ;
 MSG_HELP_EA_ST_HOMEPAGE
-URL der Homepage dieser Person.\nKlicken Sie den Knopf rechts um\ndie Seite in Ihren Browser zu laden.
-; URL of the homepage of this person.\nClick the button on the right side\nto load the page into your browser.
+URL der Homepage dieser Person.\n\
+Klicken Sie den Knopf rechts um\n\
+die Seite in Ihren Browser zu laden.
+; URL of the homepage of this person.\n\
+; Click the button on the right side\n\
+; to load the page into your browser.
 ;
 MSG_HELP_EA_ST_STREET
-Postadresse:\nStrassenname und -nummer
-; Postal address:\nStreet name and number
+Postadresse:\n\
+Strassenname und -nummer
+; Postal address:\n\
+; Street name and number
 ;
 MSG_HELP_EA_ST_CITY
-Postadresse:\nStadt und Postleitzahl
-; Postal address:\nCity and postal code
+Postadresse:\n\
+Stadt und Postleitzahl
+; Postal address:\n\
+; City and postal code
 ;
 MSG_HELP_EA_ST_COUNTRY
-Postadresse:\nBundesland/Kanton und/oder Land
-; Postal address:\nState and/or country
+Postadresse:\n\
+Bundesland/Kanton und/oder Land
+; Postal address:\n\
+; State and/or country
 ;
 MSG_HELP_EA_ST_PHONE
 Telefon- und/oder Fax-Nummer(n)
 ; Phone and/or FAX number(s)
 ;
 MSG_HELP_EA_ST_BIRTHDAY
-Geburtsdatum\nBenutzen Sie das AmigaDOS-Format,\nz.B. 10-Jan-1950
-; Date of birth\nUse AmigaDOS format,\ne.g. 10-Jan-1950
+Geburtsdatum\n\
+Benutzen Sie das AmigaDOS-Format,\n\
+z.B. 10-Jan-1950
+; Date of birth\n\
+; Use AmigaDOS format,\n\
+; e.g. 10-Jan-1950
 ;
 MSG_HELP_EA_BC_PHOTO
-Porträtbild dieser Person\n(Bild-Datatypes werden unterstützt)
+Porträtbild dieser Person\n\
+(Bild-Datatypes werden unterstützt)
 ; Portrait picture of this person
 ;
 MSG_HELP_EA_BT_SELECTPHOTO
-Bilddatei von der Festplatten laden\n(Bild-Datentypes werden unterstützt)
-; Select a picture file from disk\n(image datatypes supported)
+Bilddatei von der Festplatten laden\n\
+(Bild-Datentypes werden unterstützt)
+; Select a picture file from disk\n\
+; (image datatypes supported)
 ;
 MSG_HELP_EA_BT_LOADPHOTO
-Lädt ein Bild dieser Person von\nder YAM Benutzergalerie herunter
-; Download a picture of the person\nfrom the YAM User Gallery
+Lädt ein Bild dieser Person von\n\
+der YAM Benutzergalerie herunter
+; Download a picture of the person\n\
+; from the YAM User Gallery
 ;
 MSG_HELP_EA_ST_REALNAME_L
-Voller Name dieser Verteilerliste\n(wird in To-Feld benutzt)
-; Full name of this distribution list\n(will be used in To: field)
+Voller Name dieser Verteilerliste\n\
+(wird in To-Feld benutzt)
+; Full name of this distribution list\n\
+; (will be used in To: field)
 ;
 MSG_HELP_EA_ST_ADDRESS_L
-Antwortadresse, die beim Versenden einer\nNachricht an diese Liste benutzt wird
-; Return address to use when\nsending a message to this list
+Antwortadresse, die beim Versenden einer\n\
+Nachricht an diese Liste benutzt wird
+; Return address to use when\n\
+; sending a message to this list
 ;
 MSG_HELP_EA_LV_MEMBERS
 Mitglieder dieser Verteileriste
 ; Members of this distribution list
 ;
 MSG_HELP_EA_ST_MEMBER
-Adresse (und Name) oder\nAlias eines Mitglieds
-; Address (and name) or\nalias of a member
+Adresse (und Name) oder\n\
+Alias eines Mitglieds
+; Address (and name) or\n\
+; alias of a member
 ;
 MSG_HELP_EA_BT_ADD
-Neues Mitglied in\ndie Liste aufnehmen
-; Add a new member\nto the list
+Neues Mitglied in\n\
+die Liste aufnehmen
+; Add a new member\n\
+; to the list
 ;
 MSG_HELP_EA_BT_DEL
-Ausgewähltes Mitglied\naus der Liste entfernen
-; Remove selected member\nfrom the list
+Ausgewähltes Mitglied\n\
+aus der Liste entfernen
+; Remove selected member\n\
+; from the list
 ;
 MSG_HELP_EA_BT_SORT
 Mitglieder alphabetisch ordnen
@@ -3391,28 +3832,41 @@ MSG_HELP_EA_BT_CANCEL
 ; Module RE - Procedures
 ;
 MSG_RE_MDNGads1
-Akzeptieren und\nspäter senden|Ablehnen und\nspäter senden
-; Accept and\nsend later|Deny and\nsend later
+Akzeptieren und\n\
+später senden|Ablehnen und\n\
+später senden
+; Accept and\n\
+; send later|Deny and\n\
+; send later
 ;
 MSG_RE_MDNGads2
-|Akzeptieren und\njetzt senden|Ablehnen und\njetzt senden
-; |Accept and\nsend now|Deny and\nsend now
+|Akzeptieren und\n\
+jetzt senden|Ablehnen und\n\
+jetzt senden
+; |Accept and\n\
+; send now|Deny and\n\
+; send now
 ;
 MSG_RE_MDNGads3
 |Ignorieren
 ; |Ignore
 ;
 MSG_RE_MDNReq
-Der Absender möchte über den Status\ndieser Nachricht informiert werden (MDN).\nWie wollen Sie reagieren?
-; The sender of this message request a disposition notification (MDN).\nWhat do you want to do?
+Der Absender möchte über den Status\n\
+dieser Nachricht informiert werden (MDN).\n\
+Wie wollen Sie reagieren?
+; The sender of this message request a disposition notification (MDN).\n\
+; What do you want to do?
 ;
 MSG_RE_SaveMessage
 Nachricht speichern...
 ; Save message...
 ;
 MSG_RE_Overwrite
-Die Datei existiert bereits.\nSoll sie überschreiben werden?
-; File '%s' already exists.\nDo you want to overwrite it?
+Die Datei existiert bereits.\n\
+Soll sie überschreiben werden?
+; File '%s' already exists.\n\
+; Do you want to overwrite it?
 ; FILENAME
 ;
 MSG_RE_PrintMsg
@@ -3456,8 +3910,10 @@ Signatur in Ordnung
 ; Good signature
 ;
 MSG_RE_SigFrom
- von\n
-;  from\n
+ von\n\
+
+;  from\n\
+; 
 ;
 MSG_RE_SigCheck
 Prüfe PGP-Signatur
@@ -3468,8 +3924,10 @@ MSG_RE_SaveDecGads
 ; *_Keep|_Replace|_Cancel
 ;
 MSG_RE_SaveDecReq
-Was soll mit der ursprünglichen\n(verschlüsselten) Nachricht geschehen?
-; What do you want to do with\noriginal (encrypted) message?
+Was soll mit der ursprünglichen\n\
+(verschlüsselten) Nachricht geschehen?
+; What do you want to do with\n\
+; original (encrypted) message?
 ;
 MSG_RE_Header
 Kopf
@@ -3480,32 +3938,46 @@ Brief
 ; Letter
 ;
 MSG_RE_MDNFrom
-\nVon:
-; \nFrom:
+\n\
+Von:
+; \n\
+; From:
 ;
 MSG_RE_MDNTo
-\nAn:
-; \nTo:
+\n\
+An:
+; \n\
+; To:
 ;
 MSG_RE_MDNSubject
-\nBetreff:
-; \nSubject:
+\n\
+Betreff:
+; \n\
+; Subject:
 ;
 MSG_RE_MDNMessageID
-\nNachrichten-ID:
-; \nMessage-ID:
+\n\
+Nachrichten-ID:
+; \n\
+; Message-ID:
 ;
 MSG_RE_MDNDate
-\nDatum:
-; \nDate:
+\n\
+Datum:
+; \n\
+; Date:
 ;
 MSG_RE_MDNOrigRecpt
-\nUrsprünglicher Empfänger:
-; \nOriginal recipient:
+\n\
+Ursprünglicher Empfänger:
+; \n\
+; Original recipient:
 ;
 MSG_RE_MDNFinalRecpt
-\nEndgültiger Empfänger:
-; \nFinal recipient:
+\n\
+Endgültiger Empfänger:
+; \n\
+; Final recipient:
 ;
 MSG_RE_MDNmanual
  auf einen Benutzerbefehl hin
@@ -3516,41 +3988,106 @@ MSG_RE_MDNauto
 ;  automatically
 ;
 MSG_RE_MDNdisplay
-Die Nachricht\n%s\nwurde angezeigt.\nDies ist keine Garantie dafür, daß der Inhalt gelesen oder verstanden wurde.\n
-; The message\n%s\nhas been displayed.\nThis is no guarantee that the content has been read or understood.\n
+Die Nachricht\n\
+%s\n\
+wurde angezeigt.\n\
+Dies ist keine Garantie dafür, daß der Inhalt gelesen oder verstanden wurde.\n\
+
+; The message\n\
+; %s\n\
+; has been displayed.\n\
+; This is no guarantee that the content has been read or understood.\n\
+; 
 ;
 MSG_RE_MDNprocessed
-Die Nachricht\n%s\nwurde%s verarbeitet,\nohne daß sie dem Benutzer angezeigt wurde. Der Benutzer kann die\nNachricht unter Umständen zu einem späteren Zeitpunkt lesen.\n
-; The message\n%s\nhas been processed%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
+Die Nachricht\n\
+%s\n\
+wurde%s verarbeitet,\n\
+ohne daß sie dem Benutzer angezeigt wurde. Der Benutzer kann die\n\
+Nachricht unter Umständen zu einem späteren Zeitpunkt lesen.\n\
+
+; The message\n\
+; %s\n\
+; has been processed%s,\n\
+; without being displayed to the user. The user may or may not see\n\
+; the message later.\n\
+; 
 ;
 MSG_RE_MDNdispatched
-Die Nachricht\n%s\nwurde%s weitergesendet,\nohne daß sie dem Benutzer angezeigt wurde. Der Benutzer kann die\nNachricht unter Umständen zu einem späteren Zeitpunkt lesen.\n
-; The message\n%s\nhas been sent somewhere%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
+Die Nachricht\n\
+%s\n\
+wurde%s weitergesendet,\n\
+ohne daß sie dem Benutzer angezeigt wurde. Der Benutzer kann die\n\
+Nachricht unter Umständen zu einem späteren Zeitpunkt lesen.\n\
+
+; The message\n\
+; %s\n\
+; has been sent somewhere%s,\n\
+; without being displayed to the user. The user may or may not see\n\
+; the message later.\n\
+; 
 ;
 MSG_RE_MDNdeleted
-Die Nachricht\n%s\nwurde%s gelöscht,\nohne daß sie dem Benutzer angezeigt wurde. Der Benutzer kann die\nNachricht unter Umständen zu einem späteren Zeitpunkt \"entlöschen\"\nund lesen.\n
-; The message\n%s\nhas been deleted%s.\nThe recipient may or may not have seen the message. The recipient\nmay \"undelete\" the message at a later time and read the message.\n
+Die Nachricht\n\
+%s\n\
+wurde%s gelöscht,\n\
+ohne daß sie dem Benutzer angezeigt wurde. Der Benutzer kann die\n\
+Nachricht unter Umständen zu einem späteren Zeitpunkt \"entlöschen\"\n\
+und lesen.\n\
+
+; The message\n\
+; %s\n\
+; has been deleted%s.\n\
+; The recipient may or may not have seen the message. The recipient\n\
+; may \"undelete\" the message at a later time and read the message.\n\
+; 
 ;
 MSG_RE_MDNdenied
-Der Empfänger der Nachricht\n%s\nmöchte Sie nicht über deren Status informieren.\n
-; The recipient of the message\n%s\ndoesn't wish to inform you about the disposition of that message.\n
+Der Empfänger der Nachricht\n\
+%s\n\
+möchte Sie nicht über deren Status informieren.\n\
+
+; The recipient of the message\n\
+; %s\n\
+; doesn't wish to inform you about the disposition of that message.\n\
+; 
 ;
 MSG_RE_MDNunknown
-Die Nachricht\n%s\n wurde %s%s.\n
-; The message\n%s\nhas been %s%s.\n
+Die Nachricht\n\
+%s\n\
+ wurde %s%s.\n\
+
+; The message\n\
+; %s\n\
+; has been %s%s.\n\
+; 
 ;
 MSG_RE_PGPNotAllowed
->PGP Fehler<\n\nSie sind nicht berechtigt, diese PGP-verschlüsselte Nachricht einzusehen.\nEntweder ist Ihre PGP-Software nicht korrekt installiert, oder die Nachricht\nwurde für jemand anderen verschlüsselt.\n
-; >PGP Error<\n\nYou're not allowed to view this PGP encrypted message. Either your PGP software\nisn't configured properly, or the message was encrypted for someone else.\n
+>PGP Fehler<\n\
+\n\
+Sie sind nicht berechtigt, diese PGP-verschlüsselte Nachricht einzusehen.\n\
+Entweder ist Ihre PGP-Software nicht korrekt installiert, oder die Nachricht\n\
+wurde für jemand anderen verschlüsselt.\n\
+
+; >PGP Error<\n\
+; \n\
+; You're not allowed to view this PGP encrypted message. Either your PGP software\n\
+; isn't configured properly, or the message was encrypted for someone else.\n\
+; 
 ;
 MSG_RE_MsgReadOnly
 Diese Nachricht kann nur von %s gelesen werden
-; The message can only be read by %s\n
+; The message can only be read by %s\n\
+; 
 ; RECIPIENT
 ;
 MSG_RE_AddSender
-Wollen Sie den Absender\n%s\nin Ihr Adreßbuch aufnehmen?
-; Do you want to add the sender\n%s\nto your address book?
+Wollen Sie den Absender\n\
+%s\n\
+in Ihr Adreßbuch aufnehmen?
+; Do you want to add the sender\n\
+; %s\n\
+; to your address book?
 ; SENDER
 ;
 MSG_RE_NewGroupTitle
@@ -3558,8 +4095,12 @@ Automatisch hinzugefügte Einträge
 ; Automatically added entries
 ;
 MSG_RE_DownloadPhotoReq
-Wollen Sie das Foto des Absenders runterladen und\nin Ihre persönliche Galerie aufnehmen\n(Sie müssen online sein, bevor Sie den OKAY-Knopf klicken)
-; Do you want to download the photo of the sender\nand add it to your personal gallery?\n(You must be online before clicking the OKAY button)
+Wollen Sie das Foto des Absenders runterladen und\n\
+in Ihre persönliche Galerie aufnehmen\n\
+(Sie müssen online sein, bevor Sie den OKAY-Knopf klicken)
+; Do you want to download the photo of the sender\n\
+; and add it to your personal gallery?\n\
+; (You must be online before clicking the OKAY button)
 ;
 MSG_RE_ContentType
 Inhaltstyp
@@ -3574,8 +4115,10 @@ UU-kodierte Datei
 ; UUencoded file
 ;
 MSG_RE_SelectAddressReq
-Ausgewählte Adresse: %s\nWas wollen Sie damit tun?
-; Selected address: %s\nWhat do you want to do?
+Ausgewählte Adresse: %s\n\
+Was wollen Sie damit tun?
+; Selected address: %s\n\
+; What do you want to do?
 ; ADDRESS
 ;
 MSG_RE_SelectAddressEdit
@@ -3723,48 +4266,75 @@ _Weiter
 ; Module RE - Bubblehelp
 ;
 MSG_HELP_RE_BT_PREVIOUS
-Inhalt der vorderen\nNachricht anzeigen
-; Display contents of\nthe previous message
+Inhalt der vorderen\n\
+Nachricht anzeigen
+; Display contents of\n\
+; the previous message
 ;
 MSG_HELP_RE_BT_NEXT
-Inhalt der nächsten\nNachricht anzeigen
-; Display contents of\nthe next message
+Inhalt der nächsten\n\
+Nachricht anzeigen
+; Display contents of\n\
+; the next message
 ;
 MSG_HELP_RE_BT_QUESTION
-Nachricht anzeigen, die\nhier beantwortet wird\n(zurück im Thread)
-; Show the message which\nis being answered here\n(go back in thread)
+Nachricht anzeigen, die\n\
+hier beantwortet wird\n\
+(zurück im Thread)
+; Show the message which\n\
+; is being answered here\n\
+; (go back in thread)
 ;
 MSG_HELP_RE_BT_ANSWER
-Antwort auf diese\nNachricht anzeigen\n(vorwärts im Thread)
-; Show the reply\nto this message\n(follow thread)
+Antwort auf diese\n\
+Nachricht anzeigen\n\
+(vorwärts im Thread)
+; Show the reply\n\
+; to this message\n\
+; (follow thread)
 ;
 MSG_HELP_RE_BT_DISPLAY
-Einen Teil (Anlage) dieser Nachricht\nmit einem der konfigurierten\nMIME-Anzeigeprogramme anzeigen
-; Use a configured MIME\nviewer to display a\npart of this message
+Einen Teil (Anlage) dieser Nachricht\n\
+mit einem der konfigurierten\n\
+MIME-Anzeigeprogramme anzeigen
+; Use a configured MIME\n\
+; viewer to display a\n\
+; part of this message
 ;
 MSG_HELP_RE_BT_EXPORT
-Sichtbare Nachricht oder ein Teil\n(Anlage) davon auf Disk speichern
-; Save displayed message or\na part of it to disk
+Sichtbare Nachricht oder ein Teil\n\
+(Anlage) davon auf Disk speichern
+; Save displayed message or\n\
+; a part of it to disk
 ;
 MSG_HELP_RE_BT_PRINT
-Nachricht an den\nDrucker senden
-; Send this message\nto the printer
+Nachricht an den\n\
+Drucker senden
+; Send this message\n\
+; to the printer
 ;
 MSG_HELP_RE_BT_MOVE
-Diese Nachricht in ein anderes Postfach\nverschieben und die nächste anzeigen
-; Move this message to another folder\nand display the next one
+Diese Nachricht in ein anderes Postfach\n\
+verschieben und die nächste anzeigen
+; Move this message to another folder\n\
+; and display the next one
 ;
 MSG_HELP_RE_BT_DELETE
-Diese Nachricht löschen\nund die nächste anzeigen
-; Delete this message and\ndisplay the next one
+Diese Nachricht löschen\n\
+und die nächste anzeigen
+; Delete this message and\n\
+; display the next one
 ;
 MSG_HELP_RE_BT_REPLY
 Diese Nachricht beantworten
-; Reply to this\nmessage
+; Reply to this\n\
+; message
 ;
 MSG_HELP_RE_BT_FORWARD
-Diese Nachricht\nweiterleiten
-; Forward this\nmessage
+Diese Nachricht\n\
+weiterleiten
+; Forward this\n\
+; message
 ;
 ; Module WR - Procedures
 ;
@@ -3801,8 +4371,10 @@ Archiv erstellen
 ; Create archive
 ;
 MSG_WR_CreateArcReq
-Bitte geben Sie einen Dateinamen\nfür das neue Archiv ein
-; Please enter a filename\nfor the new archive
+Bitte geben Sie einen Dateinamen\n\
+für das neue Archiv ein
+; Please enter a filename\n\
+; for the new archive
 ;
 MSG_WR_InsertFile
 Datei einfügen...
@@ -4179,24 +4751,32 @@ Wichtigkeit
 ; Module WR - Bubblehelp
 ;
 MSG_HELP_WR_ST_TO
-Adresse (und Name) oder Alias\ndes primären Empfängers
-; Address (and name) or alias\nof the primary recipient(s)
+Adresse (und Name) oder Alias\n\
+des primären Empfängers
+; Address (and name) or alias\n\
+; of the primary recipient(s)
 ;
 MSG_HELP_WR_BT_VER
-Empfänger überprüfen: sucht E-Mail-\nAdresse zu einem Alias oder Namen
-; Verify recipient: find email\naddress for alias or name
+Empfänger überprüfen: sucht E-Mail-\n\
+Adresse zu einem Alias oder Namen
+; Verify recipient: find email\n\
+; address for alias or name
 ;
 MSG_HELP_WR_BT_ADR
-Wählt einen Empfänger\naus dem Adreßbuch
-; Select recipient from\nthe address book
+Wählt einen Empfänger\n\
+aus dem Adreßbuch
+; Select recipient from\n\
+; the address book
 ;
 MSG_HELP_WR_ST_SUBJECT
 Der Betreff Ihrer Nachricht
 ; Subject of your message
 ;
 MSG_HELP_WR_BT_EDITOR
-Text der Nachricht\nim externen Editor bearbeiten
-; Use external editor to\n modify the message text
+Text der Nachricht\n\
+im externen Editor bearbeiten
+; Use external editor to\n\
+;  modify the message text
 ;
 MSG_HELP_WR_BT_LOAD
 Textdatei an der Kursorposition einfügen
@@ -4211,11 +4791,14 @@ Markierten Text ins Clipboard kopieren
 ; Copy marked text to the clipboard
 ;
 MSG_HELP_WR_BT_PASTE
-Inhalt des Clipboards an\nder Kursorposition einfügen
-; Insert clipboard contents\nat cursor position
+Inhalt des Clipboards an\n\
+der Kursorposition einfügen
+; Insert clipboard contents\n\
+; at cursor position
 ;
 MSG_HELP_WR_BT_UNDO
-Letzte Änderungen am\nText rückgängig machen
+Letzte Änderungen am\n\
+Text rückgängig machen
 ; Undo recent changes to the text
 ;
 MSG_HELP_WR_BT_BOLD
@@ -4235,96 +4818,152 @@ Markierten Text farbig darstellen
 ; Color marked text
 ;
 MSG_HELP_WR_BT_ADD
-Eine Datei zur\nAnlagenliste hinzufügen
-; Add an attachment\nto the list
+Eine Datei zur\n\
+Anlagenliste hinzufügen
+; Add an attachment\n\
+; to the list
 ;
 MSG_HELP_WR_BT_ADDPACK
-Packt mehrere Dateien in\nein Archiv und fügt dieses\nzur Anlagenliste hinzu
-; Create an archive from\nseveral files and add it\nas attachment to the list
+Packt mehrere Dateien in\n\
+ein Archiv und fügt dieses\n\
+zur Anlagenliste hinzu
+; Create an archive from\n\
+; several files and add it\n\
+; as attachment to the list
 ;
 MSG_HELP_WR_BT_DEL
-Ausgewählte Anlage von\nder Liste entfernen
-; Remove selected attachment\nfrom the list
+Ausgewählte Anlage von\n\
+der Liste entfernen
+; Remove selected attachment\n\
+; from the list
 ;
 MSG_HELP_WR_BT_DISPLAY
-Ausgewählte Anlage mit einem\nMIME-Programm anzeigen lassen
-; Use a configured MIME viewer\nto display this attachment
+Ausgewählte Anlage mit einem\n\
+MIME-Programm anzeigen lassen
+; Use a configured MIME viewer\n\
+; to display this attachment
 ;
 MSG_HELP_WR_RA_ENCODING
-Gewünschtes Kodierungsverfahren für die ausgewählte Anlage.\nBenutzen Sie UUencode nur dann, wenn der Empfänger\nkeinen MIME-kompatiblen Mailer besitzt.
-; Type of encoding used for the selected attachment.\nUse UUencode only if the recipient hasn't got\na MIME compliant mailer.
+Gewünschtes Kodierungsverfahren für die ausgewählte Anlage.\n\
+Benutzen Sie UUencode nur dann, wenn der Empfänger\n\
+keinen MIME-kompatiblen Mailer besitzt.
+; Type of encoding used for the selected attachment.\n\
+; Use UUencode only if the recipient hasn't got\n\
+; a MIME compliant mailer.
 ;
 MSG_HELP_WR_ST_CTYPE
-MIME-Typ für die ausgewählte Anlage.\nWenn immer möglich, verwenden Sie einen aus der Popup-Liste.
-; MIME type for the selected attachment.\nWhenever possible, use one from the popup list.
+MIME-Typ für die ausgewählte Anlage.\n\
+Wenn immer möglich, verwenden Sie einen aus der Popup-Liste.
+; MIME type for the selected attachment.\n\
+; Whenever possible, use one from the popup list.
 ;
 MSG_HELP_WR_ST_DESC
-Fakultative Beschreibung\nfür die ausgewählte Anlage
-; Optional description for\nthe selected attachment
+Fakultative Beschreibung\n\
+für die ausgewählte Anlage
+; Optional description for\n\
+; the selected attachment
 ;
 MSG_HELP_WR_ST_CC
-Adresse (und Name) oder Alias\ndes sekundären Empfängers
-; Address (and name) or alias\nof the secondary recipient(s)
+Adresse (und Name) oder Alias\n\
+des sekundären Empfängers
+; Address (and name) or alias\n\
+; of the secondary recipient(s)
 ;
 MSG_HELP_WR_ST_BCC
-Sende eine versteckte Kopie der\nNachricht an diesen Empfänger
-; Send a blind carbon copy of the\nmessage to this recipient
+Sende eine versteckte Kopie der\n\
+Nachricht an diesen Empfänger
+; Send a blind carbon copy of the\n\
+; message to this recipient
 ;
 MSG_HELP_WR_ST_EXTHEADER
-Zusätzliche Kopfzeilen, die\nden Nachrichtenkopf ergänzen
-; Additional message header(s) that\nwill be added to the message
+Zusätzliche Kopfzeilen, die\n\
+den Nachrichtenkopf ergänzen
+; Additional message header(s) that\n\
+; will be added to the message
 ;
 MSG_HELP_WR_ST_FROM
-Inhalt der From-Kopfzeile\n(Adresse und Name der Person\ndie diesen Brief schreibt)
-; Contents of From header field\n(address and name of the person\nwho's writing this letter)
+Inhalt der From-Kopfzeile\n\
+(Adresse und Name der Person\n\
+die diesen Brief schreibt)
+; Contents of From header field\n\
+; (address and name of the person\n\
+; who's writing this letter)
 ;
 MSG_HELP_WR_ST_REPLYTO
-Antwortadresse\nfür diesen Brief
-; Return address\nfor this letter
+Antwortadresse\n\
+für diesen Brief
+; Return address\n\
+; for this letter
 ;
 MSG_HELP_WR_CH_DELSEND
-Speichere diese Nachricht\nnicht im Gesendet-Postfach
-; Don't store this message\nin the Sent folder
+Speichere diese Nachricht\n\
+nicht im Gesendet-Postfach
+; Don't store this message\n\
+; in the Sent folder
 ;
 MSG_HELP_WR_CH_RECEIPT
-Benachrichtigung bei\nerfolgreicher Auslieferung
-; Get a notification on\nsuccessful delivery
+Benachrichtigung bei\n\
+erfolgreicher Auslieferung
+; Get a notification on\n\
+; successful delivery
 ;
 MSG_HELP_WR_CH_DISPNOTI
-Benachrichtigung, wenn der Empfänger\ndie Nachricht liest oder verarbeitet
-; Get a notification if the recipient\nreads or processes the message
+Benachrichtigung, wenn der Empfänger\n\
+die Nachricht liest oder verarbeitet
+; Get a notification if the recipient\n\
+; reads or processes the message
 ;
 MSG_HELP_WR_CH_ADDINFO
-Erzeuge Kopfzeilen, welche die Angaben aus\nIhrem eigenen Adreßbucheintrag enthalten
-; Create header fields containing data\nfrom your personal address book entry
+Erzeuge Kopfzeilen, welche die Angaben aus\n\
+Ihrem eigenen Adreßbucheintrag enthalten
+; Create header fields containing data\n\
+; from your personal address book entry
 ;
 MSG_HELP_WR_CY_IMPORTANCE
 Priorität dieser Nachricht
-; Set the priority\nof this message
+; Set the priority\n\
+; of this message
 ;
 MSG_HELP_WR_RA_SIGNATURE
-Welche Signatur wollen Sie\nin diesem Brief verwenden?
-; Which signature do you want\nto append to this letter?
+Welche Signatur wollen Sie\n\
+in diesem Brief verwenden?
+; Which signature do you want\n\
+; to append to this letter?
 ;
 MSG_HELP_WR_RA_SECURITY
-Wählen Sie eine dieser Sicherheitsoptionen\num Ihre Nachricht PGP-signiert, verschlüsselt\noder anonym zu versenden
-; Select the one of these security options\nto send your message PGP-signed, encrypted\nor anonymously
+Wählen Sie eine dieser Sicherheitsoptionen\n\
+um Ihre Nachricht PGP-signiert, verschlüsselt\n\
+oder anonym zu versenden
+; Select the one of these security options\n\
+; to send your message PGP-signed, encrypted\n\
+; or anonymously
 ;
 MSG_HELP_WR_BT_HOLD
-Kopiert die erstellte Nachricht\nin den Postausgang und\nsperrt sie für den Versand
-; Copy the created message to\nthe outgoing mail folder\nand set its status to HOLD
+Kopiert die erstellte Nachricht\n\
+in den Postausgang und\n\
+sperrt sie für den Versand
+; Copy the created message to\n\
+; the outgoing mail folder\n\
+; and set its status to HOLD
 ;
 MSG_HELP_WR_BT_QUEUE
-Kopiert die erstellte Nachricht\nin den Postausgang
-; Copy the created message to\nthe outgoing mail folder
+Kopiert die erstellte Nachricht\n\
+in den Postausgang
+; Copy the created message to\n\
+; the outgoing mail folder
 ;
 MSG_HELP_WR_BT_SEND
-Kopiert die erstellte Nachricht\nin den Postausgang\nund versendet sie sogleich
-; Copy the created message to\nthe outgoing mail folder\nand send it immediately
+Kopiert die erstellte Nachricht\n\
+in den Postausgang\n\
+und versendet sie sogleich
+; Copy the created message to\n\
+; the outgoing mail folder\n\
+; and send it immediately
 ;
 MSG_HELP_WR_BT_CANCEL
 Verwirft die erstellte Nachricht
-; Discard the\ncreated message
+; Discard the\n\
+; created message
 ;
 ; Module TR - Procedures
 ;
@@ -4337,8 +4976,10 @@ Verbunden, warte auf Begrüßung...
 ; Connected, awaiting welcome message...
 ;
 MSG_TR_PopLoginReq
-Bitte geben Sie Ihr POP3-Paßwort für\ndas Konto %s@%s ein
-; Please enter your POP3 password\nfor account %s@%s
+Bitte geben Sie Ihr POP3-Paßwort für\n\
+das Konto %s@%s ein
+; Please enter your POP3 password\n\
+; for account %s@%s
 ; USER_ID, HOST
 ;
 MSG_TR_PopLogin
@@ -4384,8 +5025,10 @@ MSG_TR_SizeGauge
 ; SIZE, SIZE
 ;
 MSG_TR_TransferStats
-%ld von %ld KB übertragen mit %ld cps\nVerbleibende Zeit: %ld Min %ld Sec
-; %lD of %lD kB transmitted at %lD cps\nRemaining time: %lD min %ld sec
+%ld von %ld KB übertragen mit %ld cps\n\
+Verbleibende Zeit: %ld Min %ld Sec
+; %lD of %lD kB transmitted at %lD cps\n\
+; Remaining time: %lD min %ld sec
 ; SIZE, SIZE, SPEED, MINS, SECS
 ;
 MSG_TR_Exporting
@@ -4405,13 +5048,39 @@ Lösche Nachricht auf Server...
 ; Deleting mail on server...
 ;
 MSG_TR_NewMailReq
-\e8Sie erhalten neue Post!\e2\n\n%3ld Nachrichten geladen,\n%3ld verbleiben auf Server,\n%3ld Duplikate ignoriert\n
-; \e8You have new mail!\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
+\e8Sie erhalten neue Post!\e2\n\
+\n\
+%3ld Nachrichten geladen,\n\
+%3ld verbleiben auf Server,\n\
+%3ld Duplikate ignoriert\n\
+
+; \e8You have new mail!\e2\n\
+; \n\
+; %3ld messages downloaded,\n\
+; %3ld left on server\n\
+; %3ld duplicates skipped\n\
+; 
 ; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FilterStats
-\nFiltervorgang abgeschlossen:\n%ld Nachrichten überprüft,\n%3ld umgeleitet,\n%3ld weitergeleitet,\n%3ld beantwortet,\n%3ld starteten Befehl,\n%3ld verschoben,\n%3ld gelöscht
-; \nFiltering done:\n%3ld messages checked,\n%3ld redirected,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted
+\n\
+Filtervorgang abgeschlossen:\n\
+%ld Nachrichten überprüft,\n\
+%3ld umgeleitet,\n\
+%3ld weitergeleitet,\n\
+%3ld beantwortet,\n\
+%3ld starteten Befehl,\n\
+%3ld verschoben,\n\
+%3ld gelöscht
+; \n\
+; Filtering done:\n\
+; %3ld messages checked,\n\
+; %3ld redirected,\n\
+; %3ld forwarded,\n\
+; %3ld auto-replied,\n\
+; %3ld command activated,\n\
+; %3ld moved,\n\
+; %3ld deleted
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_NewMail
@@ -4492,8 +5161,10 @@ _Abbrechen
 ; _Abort
 ;
 MSG_TR_TransferStats0
-   0 von   0 KB übertragen mit    0 cps\nVerbleibende Zeit:  0 Min  0 Sek
-;   0 of   0 kB transmitted at    0 cps\nRemaining time:  0 min  0 sec
+   0 von   0 KB übertragen mit    0 cps\n\
+Verbleibende Zeit:  0 Min  0 Sek
+;   0 of   0 kB transmitted at    0 cps\n\
+; Remaining time:  0 min  0 sec
 ;
 MSG_TR_BytesGauge0
    0 von    0 Bytes
@@ -4506,12 +5177,16 @@ Nachricht  0 von  0
 ; Module TR - Bubblehelp
 ;
 MSG_HELP_TR_TX_STATUS
-Aktueller Status\ndes Posttransfers
-; Current state\nof mail transfer
+Aktueller Status\n\
+des Posttransfers
+; Current state\n\
+; of mail transfer
 ;
 MSG_HELP_TR_BT_ABORT
-Unterbreche Posttransfer bei\nder nächsten Gelegenheit
-; Abort mail transfer\nas soon as possible
+Unterbreche Posttransfer bei\n\
+der nächsten Gelegenheit
+; Abort mail transfer\n\
+; as soon as possible
 ;
 ; Module ER - Window
 ;
@@ -4538,8 +5213,10 @@ _Fenster schliessen
 ; Module ER - Error Messages
 ;
 MSG_ER_ErrorTTable
-Kann Zeichensatzkonverter '%s' nicht öffnen\n(inexistent oder falsches Format).
-; Couldn't open translation table '%s'\n(non existent or wrong format).
+Kann Zeichensatzkonverter '%s' nicht öffnen\n\
+(inexistent oder falsches Format).
+; Couldn't open translation table '%s'\n\
+; (non existent or wrong format).
 ; FILENAME
 ;
 MSG_ER_CantCreateFile
@@ -4573,8 +5250,11 @@ Es läuft kein TCP/IP-Stack! Starten Sie eine bsdsocket.library-kompatible Intern
 ; No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
 ;
 MSG_ER_ErrorDateFormat
-Ungültiges Datums/Zeit-Format. Das Datum muss in AmigaDOS-Format sein.\nBeispiel: %s
-; Invalid date/time format.\nThe date has to be in AmigaDOS format.\nExample: %s
+Ungültiges Datums/Zeit-Format. Das Datum muss in AmigaDOS-Format sein.\n\
+Beispiel: %s
+; Invalid date/time format.\n\
+; The date has to be in AmigaDOS format.\n\
+; Example: %s
 ; DATE
 ;
 MSG_ER_ErrorMaxFilters
@@ -4645,7 +5325,8 @@ Kann Datei '%s' nicht öffnen. Die Datei scheint nicht zu existieren.
 ;
 MSG_ER_UUSize
 Dekodierte Größe [%ld] stimmt nicht mit der ursprünglichen Größe [%ld] überein. Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
-; Decoded size [%lD] does not\nmatch original size [%lD]. A defective UUencoder was used or the message is truncated.
+; Decoded size [%lD] does not\n\
+; match original size [%lD]. A defective UUencoder was used or the message is truncated.
 ; SIZE, SIZE
 ;
 MSG_ER_DocNotFound
@@ -4663,8 +5344,10 @@ Keine Verbindung mit WWW-Server '%s'. Mögliche Gründe: TCP/IP offline, ungültige
 ; HOST
 ;
 MSG_ER_BadResponse
-Befehl %s antwortet mit Fehler: %s.\nDer Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
-; Bad %s command response: %s.\nThe mail server couldn't execute the command and replied with the error message.
+Befehl %s antwortet mit Fehler: %s.\n\
+Der Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
+; Bad %s command response: %s.\n\
+; The mail server couldn't execute the command and replied with the error message.
 ; COMMAND, TEXT
 ;
 MSG_ER_UnknownPOP
@@ -4687,8 +5370,10 @@ Ihr POP3-Server unterstützt kein APOP. Schalten Sie die APOP-Option in der YAM-K
 ; Your POP3 server doesn't support APOP. Disable the APOP option in your YAM configuration.
 ;
 MSG_ER_ErrorWriteMailfile
-Fehler beim Schreiben der Nachrichtdatei: %s.\nYAM kann die Nachricht nicht auf der Festplatte speichern, vielleicht ist sie voll.
-; Write error on mail file: %s.\nYAM can't save the message to disk, maybe you're out of diskspace.
+Fehler beim Schreiben der Nachrichtdatei: %s.\n\
+YAM kann die Nachricht nicht auf der Festplatte speichern, vielleicht ist sie voll.
+; Write error on mail file: %s.\n\
+; YAM can't save the message to disk, maybe you're out of diskspace.
 ; FILENAME
 ;
 MSG_ER_ConnectionBroken
@@ -4701,13 +5386,16 @@ Ungültige Adresse '%s'. Der SMTP-Server hat diese Adresse nicht akzeptiert. Verw
 ; ADDRESS
 ;
 MSG_ER_ErrorReadMailfile
-Fehler beim Lesen der Nachrichtendatei: %s.\nDie Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
-; Read error on mail file: %s.\nThe file exists, but there was an error while reading the file.
+Fehler beim Lesen der Nachrichtendatei: %s.\n\
+Die Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
+; Read error on mail file: %s.\n\
+; The file exists, but there was an error while reading the file.
 ; FILENAME
 ;
 MSG_ER_UserRemoved
 Verzeichnis '%s' existiert nicht! Der Benutzer %s wurde entfernt.
-; Directory '%s' not found!\nUser %s has been removed.
+; Directory '%s' not found!\n\
+; User %s has been removed.
 ; PATH
 ;
 MSG_ER_MissingDirectory
@@ -4723,13 +5411,16 @@ Keine öffentlichen PGP-Schlüssel gefunden. Versichern Sie sich, daß PGP installi
 ; No public PGP keys found. Make sure that PGP is installed and the required settings are made in the configuration of YAM.
 ;
 MSG_ER_PGPreturnsError
-Der folgende PGP-Befehl verursachte einen Fehler: '%s'\nEine Diagnose finden Sie in der Datei %s.
-; The following PGP command returned with an error: '%s'\nCheck the file %s for a diagnosis.
+Der folgende PGP-Befehl verursachte einen Fehler: '%s'\n\
+Eine Diagnose finden Sie in der Datei %s.
+; The following PGP command returned with an error: '%s'\n\
+; Check the file %s for a diagnosis.
 ; COMMAND, FILENAME
 ;
 MSG_ER_PGPnotfound
 Konnte PGP-Befehl nicht ausführen. Überprüfen Sie, ob %s existiert.
-; Couldn't execute PGP command.\nCheck if %s exists.
+; Couldn't execute PGP command.\n\
+; Check if %s exists.
 ; FILENAME
 ;
 MSG_ER_InvalidAlias
@@ -4794,20 +5485,26 @@ Abkürzung des gewählten Eintrags
 ; Abbreviation of selected entry
 ;
 MSG_HELP_DI_BT_NEW
-Eine neue Abkürzung ins\nGlossar aufnehmen
-; Add a new abbreviation\nto the glossary
+Eine neue Abkürzung ins\n\
+Glossar aufnehmen
+; Add a new abbreviation\n\
+; to the glossary
 ;
 MSG_HELP_DI_BT_ADDSELECT
-Erstellt einen neuen Eintrag basierend\nauf der Textmarkierung im Editor
-; Create a new entry based on\nthe marked text in the editor
+Erstellt einen neuen Eintrag basierend\n\
+auf der Textmarkierung im Editor
+; Create a new entry based on\n\
+; the marked text in the editor
 ;
 MSG_HELP_DI_BT_DELETE
 Ausgewählten Eintrag entfernen
 ; Remove selected entry
 ;
 MSG_HELP_DI_BT_PASTE
-Ausgewählten Eintrag an der aktuellen\nPosition im Texteditor einfügen
-; Insert selected entry at the current\nposition in the text editor
+Ausgewählten Eintrag an der aktuellen\n\
+Position im Texteditor einfügen
+; Insert selected entry at the current\n\
+; position in the text editor
 ;
 ; Module FI - Procedures
 ;
@@ -4963,31 +5660,42 @@ _Abbrechen
 ; Module FI - Bubblehelp
 ;
 MSG_HELP_FI_LV_FOLDERS
-Wählen Sie ein oder mehrere Postfächer,\nin denen Sie suchen wollen
-; Select one or more\nfolders to search in
+Wählen Sie ein oder mehrere Postfächer,\n\
+in denen Sie suchen wollen
+; Select one or more\n\
+; folders to search in
 ;
 MSG_HELP_FI_BT_ALL
 In allen Postfächern suchen
 ; Include all folders in your search
 ;
 MSG_HELP_FI_PO_FROMRULE
-Kopiert Suchkriterien\nvon einem Filter
-; Get search criteria\nfrom a filter
+Kopiert Suchkriterien\n\
+von einem Filter
+; Get search criteria\n\
+; from a filter
 ;
 MSG_HELP_FI_BT_TORULE
-Erstellt einen neuen Filter basierend\nauf diesen Suchkriterien
-; Create a new filter from\nthese search criteria
+Erstellt einen neuen Filter basierend\n\
+auf diesen Suchkriterien
+; Create a new filter from\n\
+; these search criteria
 ;
 MSG_HELP_FI_BT_SEARCH
-Startet die Suche und zeigt die\nResultate in obiger Liste
-; Start the search and display\nthe results in the list above
+Startet die Suche und zeigt die\n\
+Resultate in obiger Liste
+; Start the search and display\n\
+; the results in the list above
 ;
 MSG_HELP_FI_BT_SELECT
-Selektiert die gefundenen\nNachrichten im Hauptfenster
-; Select matching messages\nin the main window
+Selektiert die gefundenen\n\
+Nachrichten im Hauptfenster
+; Select matching messages\n\
+; in the main window
 ;
 MSG_HELP_FI_BT_READ
-Zeigt den Inhalt der ausgewählten\nNachricht aus obiger Liste
+Zeigt den Inhalt der ausgewählten\n\
+Nachricht aus obiger Liste
 ; Display selected message/nfrom the list above
 ;
 MSG_HELP_FI_BT_ABORT
@@ -4995,36 +5703,48 @@ Bricht die Suche ab
 ; Stop searching
 ;
 MSG_HELP_FI_CY_MODE
-Kopfzeile oder Teil der Nachricht,\nin der das Muster gesucht werden soll
-; Field or message part that\nshould match the pattern
+Kopfzeile oder Teil der Nachricht,\n\
+in der das Muster gesucht werden soll
+; Field or message part that\n\
+; should match the pattern
 ;
 MSG_HELP_FI_ST_FIELD
 Name der zu durchsuchenden Kopfzeile
 ; Name of header field to search in
 ;
 MSG_HELP_FI_RA_ADRMODE
-Wählen Sie, ob die Kopfzeile nach Adresse\noder nach Namen durchsucht werden soll
-; Choose whether you want to search in the\naddress or realname part of the field
+Wählen Sie, ob die Kopfzeile nach Adresse\n\
+oder nach Namen durchsucht werden soll
+; Choose whether you want to search in the\n\
+; address or realname part of the field
 ;
 MSG_HELP_FI_CY_STATUS
 Vergleiche mit diesem Nachrichtenstatus
 ; Message status to match
 ;
 MSG_HELP_FI_ST_MATCH
-Zu suchender Text (AmigaDOS\nSuchmuster werden unterstützt)
-; Search pattern (AmigaDOS\nwildchars are supported)
+Zu suchender Text (AmigaDOS\n\
+Suchmuster werden unterstützt)
+; Search pattern (AmigaDOS\n\
+; wildchars are supported)
 ;
 MSG_HELP_FI_CH_CASESENS
-Soll die Suche zwischen Gross- und\nKleinschreibung unterscheiden?
-; Should the search\nbe case sensitive?
+Soll die Suche zwischen Gross- und\n\
+Kleinschreibung unterscheiden?
+; Should the search\n\
+; be case sensitive?
 ;
 MSG_HELP_FI_CH_SUBSTR
-Ermöglicht die Suche\nnach Teilzeichenketten
+Ermöglicht die Suche\n\
+nach Teilzeichenketten
 ; Enable partial string search
 ;
 MSG_HELP_FI_CY_COMP
-Art des Vergleichs. <> wählt alle Nachrichten,\ndie nicht mit dem Suchmuster übereinstimmen,\nIN benutzt eine Datei, welche Suchmustern enthält.
-; Type of comparison. Select <> to get all messages that\ndon't match the pattern, IN to use a file of patterns
+Art des Vergleichs. <> wählt alle Nachrichten,\n\
+die nicht mit dem Suchmuster übereinstimmen,\n\
+IN benutzt eine Datei, welche Suchmustern enthält.
+; Type of comparison. Select <> to get all messages that\n\
+; don't match the pattern, IN to use a file of patterns
 ;
 ; Module US - Routines
 ;
@@ -5045,16 +5765,22 @@ Warte auf Benutzeranmeldung...
 ; Waiting for user login...
 ;
 MSG_US_RemoveReq
-Alle Nachrichten, Postfächer und Konfigurationsdateien\ndieses Benutzers gehen verloren! Wollen Sie den\nBenutzer wirklich löschen?
-; All messages, folders and configuration\nfiles belonging to this user will be lost!\nDo you really want to remove the user?
+Alle Nachrichten, Postfächer und Konfigurationsdateien\n\
+dieses Benutzers gehen verloren! Wollen Sie den\n\
+Benutzer wirklich löschen?
+; All messages, folders and configuration\n\
+; files belonging to this user will be lost!\n\
+; Do you really want to remove the user?
 ;
 MSG_US_RemoveReqGads
 *_Okay|_Dateien behalten|_Abbrechen
 ; *_Okay|_Keep files|_Cancel
 ;
 MSG_US_ErrorNoDirectory
-Postverzeichnis nicht gefunden.\nWollen Sie es erstellen?
-; Mail directory not found.\nDo you want to create it?
+Postverzeichnis nicht gefunden.\n\
+Wollen Sie es erstellen?
+; Mail directory not found.\n\
+; Do you want to create it?
 ;
 ; Module US - Window
 ;
@@ -5101,28 +5827,41 @@ Name des neuen YAM-Benutzers
 ; Name of the new YAM user
 ;
 MSG_HELP_US_ST_MAILDIR
-Verzeichnis, welches die Postfächer\nund die Konfigurationsdateien des\nneuen Benutzers enthält
-; Directory to store the\nfolders and config files\nof the new user account
+Verzeichnis, welches die Postfächer\n\
+und die Konfigurationsdateien des\n\
+neuen Benutzers enthält
+; Directory to store the\n\
+; folders and config files\n\
+; of the new user account
 ;
 MSG_HELP_US_CH_USEADDR
-Teile Adreßbuch mit\nden anderen Benutzern
-; Share address book\nwith other users
+Teile Adreßbuch mit\n\
+den anderen Benutzern
+; Share address book\n\
+; with other users
 ;
 MSG_HELP_US_CH_USEDICT
-Teile Glossar mit\nden anderen Benutzern
-; Share glossary\nwith other users
+Teile Glossar mit\n\
+den anderen Benutzern
+; Share glossary\n\
+; with other users
 ;
 MSG_HELP_US_ST_PASSWD
-Passwort, welches dieser\nBenutzer zum Anmelden benötigt
+Passwort, welches dieser\n\
+Benutzer zum Anmelden benötigt
 ; Password required for this user to login
 ;
 MSG_HELP_US_CH_ROOT
-Schaten Sie diese Option ein, falls der Benutzer\nandere Benutzer hinzufügen oder löschen darf
-; Enable this option if the user\nmay add or remove other users
+Schaten Sie diese Option ein, falls der Benutzer\n\
+andere Benutzer hinzufügen oder löschen darf
+; Enable this option if the user\n\
+; may add or remove other users
 ;
 MSG_HELP_US_CH_CLONE
-Benutze die aktuelle Konfiguration als\nVoreinstellung für den neuen Zugang
-; Use current configuration as\ndefault for the new account
+Benutze die aktuelle Konfiguration als\n\
+Voreinstellung für den neuen Zugang
+; Use current configuration as\n\
+; default for the new account
 ;
 MSG_HELP_US_BT_ADD
 Neuen Zugang erstellen
@@ -5140,8 +5879,12 @@ Optionale Beschriftung der Trennlinie
 ; Optional label for the separator
 ;
 MSG_FO_NewFolderReq
-Welche Einstellungen wollen Sie für das neue Postfach\nverwenden? Falls das Postfach bereits auf der Festplatte\nexistiert, wählen Sie 'Vorhandenes Verzeichnis'
-; What settings do you want to use for the new folder?\nSelect 'Existing directory' if the folder already exists\non your disk
+Welche Einstellungen wollen Sie für das neue Postfach\n\
+verwenden? Falls das Postfach bereits auf der Festplatte\n\
+existiert, wählen Sie 'Vorhandenes Verzeichnis'
+; What settings do you want to use for the new folder?\n\
+; Select 'Existing directory' if the folder already exists\n\
+; on your disk
 ;
 MSG_FO_NewFolderGads
 *_Werkeinstellung|Wie _aktuelles|_Vorhandenes Verzeichnis|_Abbrechen
@@ -5245,40 +5988,58 @@ Postfachname
 ; Folder name
 ;
 MSG_HELP_FO_TX_FPATH
-Verzeichnis, in dem die Nachrichten des\nausgewählten Postfachs gespeichert werden
-; Directory where the messages of\nthe selected folder are stored
+Verzeichnis, in dem die Nachrichten des\n\
+ausgewählten Postfachs gespeichert werden
+; Directory where the messages of\n\
+; the selected folder are stored
 ;
 MSG_HELP_FO_ST_MAXAGE
-Alte Nachrichten werden automatisch nach\nAblauf dieser Zeit (in Tagen) gelöscht.\n0 oder kein Wert schaltet diese Funktion aus.
-; Old messages will automatically\nbe deleted after this time (in days).\nEnter 0 or no value to disable this feature.
+Alte Nachrichten werden automatisch nach\n\
+Ablauf dieser Zeit (in Tagen) gelöscht.\n\
+0 oder kein Wert schaltet diese Funktion aus.
+; Old messages will automatically\n\
+; be deleted after this time (in days).\n\
+; Enter 0 or no value to disable this feature.
 ;
 MSG_HELP_FO_CY_FTYPE
-Art des benutzerdefinierten Postfachs\n(rein/raus/beides)
-; Type of custom archive folder\n(in/out/both)
+Art des benutzerdefinierten Postfachs\n\
+(rein/raus/beides)
+; Type of custom archive folder\n\
+; (in/out/both)
 ;
 MSG_HELP_FO_CY_FMODE
-Postfächer können mit einem Paßwort geschützt\noder mittels XPK komprimiert werden
-; Folders can be password-protected\nand/or compressed using XPK
+Postfächer können mit einem Paßwort geschützt\n\
+oder mittels XPK komprimiert werden
+; Folders can be password-protected\n\
+; and/or compressed using XPK
 ;
 MSG_HELP_FO_CY_SORT0
-Primärer Sortierschlüssel der\nNachrichten in diesem Postfach
-; Primary sorting order of the\nmessage in this folder
+Primärer Sortierschlüssel der\n\
+Nachrichten in diesem Postfach
+; Primary sorting order of the\n\
+; message in this folder
 ;
 MSG_HELP_FO_CY_SORT1
-Sekundärer Sortierschlüssel der\nNachrichten in diesem Postfach
-; Secondary sorting order of the\nmessage in this folder
+Sekundärer Sortierschlüssel der\n\
+Nachrichten in diesem Postfach
+; Secondary sorting order of the\n\
+; message in this folder
 ;
 MSG_HELP_FO_CH_REVERSE
 Umgekehrte Sortierung
 ; Reversed sorting
 ;
 MSG_HELP_FO_ST_MLPATTERN
-Eine Nachricht gehört zu einer Mailingliste,\nfalls das To-Feld auf dieses Muster passt
-; A message belongs to a mailing list\nif the To: field matches this pattern
+Eine Nachricht gehört zu einer Mailingliste,\n\
+falls das To-Feld auf dieses Muster passt
+; A message belongs to a mailing list\n\
+; if the To: field matches this pattern
 ;
 MSG_HELP_FO_ST_MLADDRESS
-Benutze diese Empfängeradresse bei einer\nAntwort auf eine Mailinglisten-Nachricht
-; Use this recipient address for\na reply to a mailing list message
+Benutze diese Empfängeradresse bei einer\n\
+Antwort auf eine Mailinglisten-Nachricht
+; Use this recipient address for\n\
+; a reply to a mailing list message
 ;
 ;
 ; BUSY messages
@@ -5389,8 +6150,10 @@ Dekodiere/zeige an...
 ; ADDED AFTER 13-MAR-1999
 ;
 MSG_RE_FollowThreadReq
-Um Nachrichten zum Thema zu finden, muss YAM sämtliche\nIndizes laden. Dies kann dauern. Wollen Sie weiterfahren?
-; In order to follow the thread, YAM has to load all indices.\nThis may be time consuming. Do you want to continue?
+Um Nachrichten zum Thema zu finden, muss YAM sämtliche\n\
+Indizes laden. Dies kann dauern. Wollen Sie fortfahren?
+; In order to follow the thread, YAM has to load all indices.\n\
+; This may be time consuming. Do you want to continue?
 ;
 MSG_CTapplicationadosscript
 AmigaDOS-Skript
@@ -5537,7 +6300,8 @@ Si_cherheit
 MSG_HELP_MA_CY_DEFSECURITY
 Vorwahl für die Sicherheitseinstellungen\n\
 bei neuen Mails an diese Person
-; Default security for sending\nmail to this person
+; Default security for sending\n\
+; mail to this person
 ;
 MSG_WR_DefSecurityConflict
 Für die einzelnen Empfänger dieser Nachricht sind unterschiedliche\n\

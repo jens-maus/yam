@@ -182,7 +182,8 @@ Directory
 ; Module Root
 ;
 MSG_Copyright1 (//)
-OpenSource Email package for the Amiga\nCopyright © 1995-2000 Marcel Beck
+OpenSource Email package for the Amiga\n\
+Copyright © 1995-2000 Marcel Beck
 ;
 MSG_Version (//)
 Version:
@@ -191,13 +192,15 @@ MSG_CompilationDate (//)
 Compilation date:
 ;
 MSG_Copyright2 (//)
-This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
+This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n\
+
 ;
 MSG_UsedSoftware (//)
-This application uses the following third party software:\n
+This application uses the following third party software:\n\
+
 ;
 MSG_WebSite (//)
-The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch
+The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
 ;
 MSG_UserLogin (//)
 Click your name to login
@@ -252,7 +255,8 @@ MSG_LoadingGFX (//)
 Loading graphics...
 ;
 MSG_SendStartReq (//)
-The outgoing folder contains unsent mail.\nDo you want to send these messages now?
+The outgoing folder contains unsent mail.\n\
+Do you want to send these messages now?
 ;
 MSG_QuitYAMReq (//)
 Do you really want to quit YAM?
@@ -474,11 +478,15 @@ Out of paper!
 ; Module MA - Procedures
 ;
 MSG_MA_GetFolderPass (//)
-Folder '%s' is a protected folder.\nPlease enter the password to unlock it:
+Folder '%s' is a protected folder.\n\
+Please enter the password to unlock it:
 ; FOLDER
 ;
 MSG_MA_LatestVersion (//)
-Latest version: %s (%2ld.%02ld.%ld)\nThis version: %s (%s)\n\n%s
+Latest version: %s (%2ld.%02ld.%ld)\n\
+This version: %s (%s)\n\
+\n\
+%s
 ; VERSION_NUMBER, DAY, MONTH, YEAR, VERSION_NUMBER, DATE, TEXT
 ;
 MSG_MA_NewVersion (//)
@@ -491,13 +499,19 @@ MSG_MA_VersionReqOpt (//)
 _Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq (//)
-The selected message has multiple recipients.\nDo you want to send the reply...
+The selected message has multiple recipients.\n\
+Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt (//)
-*...to the\n_sender|...to the sender and\n_all recipients|...to the\n_recipients|_Cancel
+*...to the\n\
+_sender|...to the sender and\n\
+_all recipients|...to the\n\
+_recipients|_Cancel
 ;
 MSG_MA_CompareReq (//)
-Sender address (From) is <%s>, but\nreturn address (Reply-To) is <%s>.\nWhich address do you want to use?
+Sender address (From) is <%s>, but\n\
+return address (Reply-To) is <%s>.\n\
+Which address do you want to use?
 ; ADDRESS, ADDRESS
 ;
 MSG_MA_Compare3ReqOpt (//)
@@ -507,7 +521,9 @@ MSG_MA_Compare2ReqOpt (//)
 _From|*_Reply-To|_Cancel
 ;
 MSG_MA_AttachRemoved (//)
-\n_The following attachments have been removed manually:_\n
+\n\
+_The following attachments have been removed manually:_\n\
+
 ;
 MSG_MA_ConfirmReq (//)
 Please confirm...
@@ -516,22 +532,30 @@ MSG_MA_ConfirmDel (//)
 Please confirm deletion.
 ;
 MSG_MA_1Selected (//)
-One message selected.\n
+One message selected.\n\
+
 ;
 MSG_MA_xSelected (//)
-%lD messages selected.\n
+%lD messages selected.\n\
+
 ; COUNT
 ;
 MSG_MA_ConfirmFilter (//)
-Is it okay to filter all the messages\nin the folder '%s'?
+Is it okay to filter all the messages\n\
+in the folder '%s'?
 ; FOLDER
 ;
 MSG_MA_FilterStats (//)
-Filtering done:\n%3ld messages checked,\n%3ld forwarded,\n%3ld archived,\n%3ld deleted
+Filtering done:\n\
+%3ld messages checked,\n\
+%3ld forwarded,\n\
+%3ld archived,\n\
+%3ld deleted
 ; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_MA_ExportAppendReq (//)
-The output file already exists. Do you want\nto overwrite it or append the messages?
+The output file already exists. Do you want\n\
+to overwrite it or append the messages?
 ;
 MSG_MA_ExportAppendOpts (//)
 *_Overwrite|_Append|_Cancel
@@ -573,11 +597,21 @@ MSG_MA_CheckSingle (//)
 Check single account
 ;
 MSG_MA_FolderInfo (//)
-\ebCurrent folder\en\nName: %s\nPath: %s\nSize: %lD bytes\nMessages: %lD (%lD new, %lD unread)
+\ebCurrent folder\en\n\
+Name: %s\n\
+Path: %s\n\
+Size: %lD bytes\n\
+Messages: %lD (%lD new, %lD unread)
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MessageInfo (//)
-\ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %lD bytes
+\ebCurrent message\en\n\
+From: %s <%s>\n\
+To: %s <%s>\n\
+Subject: %s\n\
+Date: %s\n\
+Filename: %s\n\
+Size: %lD bytes
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle (//)
@@ -805,19 +839,23 @@ Users...
 ; Module MA - Bubblehelp
 ;
 MSG_HELP_MA_BT_READ (//)
-Display contents of\nselected message
+Display contents of\n\
+selected message
 ;
 MSG_HELP_MA_BT_EDIT (//)
-Modify the\nselected message
+Modify the\n\
+selected message
 ;
 MSG_HELP_MA_BT_MOVE (//)
-Move selected message(s)\nto another folder
+Move selected message(s)\n\
+to another folder
 ;
 MSG_HELP_MA_BT_DELETE (//)
 Delete selected message(s)
 ;
 MSG_HELP_MA_BT_GETADDRESS (//)
-Save sender's address\nin your address book
+Save sender's address\n\
+in your address book
 ;
 MSG_HELP_MA_BT_WRITE (//)
 Compose a new message
@@ -826,16 +864,20 @@ MSG_HELP_MA_BT_REPLY (//)
 Reply to selected message
 ;
 MSG_HELP_MA_BT_FORWARD (//)
-Forward selected message\nto another recipient
+Forward selected message\n\
+to another recipient
 ;
 MSG_HELP_MA_BT_POPNOW (//)
-Connect to the mail server\nand download new messages
+Connect to the mail server\n\
+and download new messages
 ;
 MSG_HELP_MA_BT_SENDALL (//)
-Send queued messages\nin the outgoing folder
+Send queued messages\n\
+in the outgoing folder
 ;
 MSG_HELP_MA_BT_FILTER (//)
-Apply filters to all\nmessages in this folder
+Apply filters to all\n\
+messages in this folder
 ;
 MSG_HELP_MA_BT_SEARCH (//)
 Search your mail folders
@@ -859,10 +901,14 @@ MSG_CO_RetypePass (//)
 Please re-type the password:
 ;
 MSG_CO_ConfirmDelete (//)
-All messages in this folder will be lost!\nDo you really want to delete it?
+All messages in this folder will be lost!\n\
+Do you really want to delete it?
 ;
 MSG_CO_InvalidConf (//)
-Invalid configuration (missing hostname\n or email address)\n\nPlease fill in these fields and try again!
+Invalid configuration (missing hostname\n\
+ or email address)\n\
+\n\
+Please fill in these fields and try again!
 ;
 MSG_CO_ImportMIMEReq (//)
 Import settings from...
@@ -871,7 +917,8 @@ MSG_CO_ImportMIMEGads (//)
 *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
 ;
 MSG_CO_NewIntroDef (//)
-Hello,\\\\n
+Hello,\\\\n\
+
 ;
 MSG_CO_AltRepIntroDef (//)
 
@@ -880,10 +927,19 @@ MSG_CO_AltRepPatternDef (//)
 
 ;
 MSG_CO_ForwardIntroDef (//)
-*** Begin of forwarded message ***\\\\n\\\\nDate: %d %t\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n
+*** Begin of forwarded message ***\\\\n\
+\\\\n\
+Date: %d %t\\\\n\
+From: %n <%e>\\\\n\
+Subject: %s\\\\n\
+\\\\n\
+--- Forwarded message follows ---\\\\n\
+\\\\n\
+
 ;
 MSG_CO_ForwardFinishDef (//)
-*** End of forwarded message ***\\\\n
+*** End of forwarded message ***\\\\n\
+
 ;
 MSG_CO_GreetingsDef (//)
 Kind regards
@@ -898,13 +954,15 @@ MSG_CO_MLRepHelloDef (//)
 
 ;
 MSG_CO_MLRepIntroDef (//)
-On %d, %n wrote:\\\\n
+On %d, %n wrote:\\\\n\
+
 ;
 MSG_CO_MLRepByeDef (//)
 Regards
 ;
 MSG_CO_LineBreak (//)
-\\\\n  Line break
+\\\\n\
+  Line break
 ;
 MSG_CO_SenderName (//)
 %n  Original sender: Name
@@ -1736,31 +1794,43 @@ Import MIME viewers & types...
 ; Module CO - Bubblehelp
 ;
 MSG_HELP_CO_ST_REALNAME (//)
-Your full name\n(first name last name)
+Your full name\n\
+(first name last name)
 ;
 MSG_HELP_CO_ST_EMAIL (//)
 Your email address.
 ;
 MSG_HELP_CO_ST_POPHOST (//)
-Address of the POP3 server to receive mail.\nIf you leave this field empty, the address\n of the SMTP server is used.
+Address of the POP3 server to receive mail.\n\
+If you leave this field empty, the address\n\
+ of the SMTP server is used.
 ;
 MSG_HELP_CO_ST_PASSWD (//)
-Password to access\nthe mail server
+Password to access\n\
+the mail server
 ;
 MSG_HELP_CO_CY_TZONE (//)
-Select the timezone of\nyour current location
+Select the timezone of\n\
+your current location
 ;
 MSG_HELP_CO_CH_DLSAVING (//)
-Adjust the timezone during daylight\nsaving time (summer time)
+Adjust the timezone during daylight\n\
+saving time (summer time)
 ;
 MSG_HELP_CO_ST_SMTPHOST (//)
-Address of the SMTP server to send mail.\nIf you leave this field empty,\nthe address of the POP3 server is used.
+Address of the SMTP server to send mail.\n\
+If you leave this field empty,\n\
+the address of the POP3 server is used.
 ;
 MSG_HELP_CO_ST_DOMAIN (//)
-The hostname of your Amiga. Change this\nfield if the HELO commands fails.
+The hostname of your Amiga. Change this\n\
+field if the HELO commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT (//)
-Don't convert messages to 7bit for transfer.\nOnly use this option if your\nSMTP server supports 8bit transfers!\nOtherwise your messages will get corrupted.
+Don't convert messages to 7bit for transfer.\n\
+Only use this option if your\n\
+SMTP server supports 8bit transfers!\n\
+Otherwise your messages will get corrupted.
 ;
 MSG_HELP_CO_LV_POP3 (//)
 List of POP3 hosts
@@ -1772,46 +1842,62 @@ MSG_HELP_CO_BT_PDEL (//)
 Remove selected POP3 host from the list
 ;
 MSG_HELP_CO_ST_POPUSERID (//)
-User name to log into the POP3 server.\nIf you leave this field empty, the user-ID\nwill be extracted from your email address.
+User name to log into the POP3 server.\n\
+If you leave this field empty, the user-ID\n\
+will be extracted from your email address.
 ;
 MSG_HELP_CO_CH_DELETE (//)
-Delete messages from\nmail server after\ndownloading
+Delete messages from\n\
+mail server after\n\
+downloading
 ;
 MSG_HELP_CO_CH_USEAPOP (//)
 Login using APOP authentication
 ;
 MSG_HELP_CO_CH_POPENABLED (//)
-Connect to this server\nwhen checking for new mail
+Connect to this server\n\
+when checking for new mail
 ;
 MSG_HELP_CO_CH_AVOIDDUP (//)
-If you don't delete old mail\non the server, use this option to\navoid duplicate messages.
+If you don't delete old mail\n\
+on the server, use this option to\n\
+avoid duplicate messages.
 ;
 MSG_HELP_CO_CH_TRANSWIN (//)
 Show progress window during mail transfers
 ;
 MSG_HELP_CO_CY_MSGSELECT (//)
-Enable this option to show the contents of the POP3 mailbox\nand allow selection of the messages to be downloaded
+Enable this option to show the contents of the POP3 mailbox\n\
+and allow selection of the messages to be downloaded
 ;
 MSG_HELP_CO_CH_UPDSTAT (//)
-Mark new messages in the incoming folder\nas unread before downloading new mail
+Mark new messages in the incoming folder\n\
+as unread before downloading new mail
 ;
 MSG_HELP_CO_ST_WARNSIZE (//)
-Messages which exceed this\nthreshold rank as 'large'
+Messages which exceed this\n\
+threshold rank as 'large'
 ;
 MSG_HELP_CO_ST_INTERVAL (//)
-How frequently do you want to check for new mail?\n(enter 0 or no value to disable this feature)?
+How frequently do you want to check for new mail?\n\
+(enter 0 or no value to disable this feature)?
 ;
 MSG_HELP_CO_CH_DLLARGE (//)
-When automatically checking for new mail,\ndownload large messages even if they are\nlarger than the size specified above
+When automatically checking for new mail,\n\
+download large messages even if they are\n\
+larger than the size specified above
 ;
 MSG_HELP_CO_CH_NOTIREQ (//)
-Show a requester\nwhen you get new mail
+Show a requester\n\
+when you get new mail
 ;
 MSG_HELP_CO_ST_NOTICMD (//)
-The program you want to\nexecute when you get new mail
+The program you want to\n\
+execute when you get new mail
 ;
 MSG_HELP_CO_ST_NOTISOUND (//)
-The sound file you want to play\nwhen you get new mail
+The sound file you want to play\n\
+when you get new mail
 ;
 MSG_HELP_CO_LV_RULES (//)
 List of filters
@@ -1829,10 +1915,12 @@ MSG_HELP_CO_CH_APPLYSENT (//)
 Apply this filter to sent messages
 ;
 MSG_HELP_CO_CH_APPLYREQ (//)
-Apply this filter when you activate\nthe filter function manually
+Apply this filter when you activate\n\
+the filter function manually
 ;
 MSG_HELP_CO_CY_COMBINE (//)
-How to combine the two\nsearch keys for this filter
+How to combine the two\n\
+search keys for this filter
 ;
 MSG_HELP_CO_CH_ABOUNCE (//)
 Bounce matching messages to another person
@@ -1856,10 +1944,12 @@ MSG_HELP_CO_CH_AEXECUTE (//)
 Execute a command for each matching message
 ;
 MSG_HELP_CO_ST_AEXECUTE (//)
-Command to execute. The path of the matching\nmessage is passed as an argument.
+Command to execute. The path of the matching\n\
+message is passed as an argument.
 ;
 MSG_HELP_CO_CH_APLAY (//)
-Plays a sound file for\neach matching message
+Plays a sound file for\n\
+each matching message
 ;
 MSG_HELP_CO_ST_APLAY (//)
 Sound file to play
@@ -1889,40 +1979,55 @@ MSG_HELP_CO_CH_WRAPHEAD (//)
 Display long headers on multiple lines
 ;
 MSG_HELP_CO_CH_TEXTSTYLES (//)
-Interpret / * _ and # as\ncontrol codes for textstyles
+Interpret / * _ and # as\n\
+control codes for textstyles
 ;
 MSG_HELP_CO_CY_HEADER (//)
-How do you want to\ndisplay the message header\nin the Read window?
+How do you want to\n\
+display the message header\n\
+in the Read window?
 ;
 MSG_HELP_CO_ST_HEADERS (//)
-Specify an AmigaDOS pattern to\nchoose the headers in SELECTED format.\nDefault is (From|To|Date|Subject)
+Specify an AmigaDOS pattern to\n\
+choose the headers in SELECTED format.\n\
+Default is (From|To|Date|Subject)
 ;
 MSG_HELP_CO_CY_SENDERINFO (//)
-Information about the sender to display\nin the read window (if available)
+Information about the sender to display\n\
+in the read window (if available)
 ;
 MSG_HELP_CO_CY_SIGSEPLINE (//)
-Type of the signature\nseparation line
+Type of the signature\n\
+separation line
 ;
 MSG_HELP_CO_ST_INTRANS (//)
-Apply this character set translation\nwhen reading messages
+Apply this character set translation\n\
+when reading messages
 ;
 MSG_HELP_CO_CH_ALLTEXTS (//)
-Display all textual parts\nof a multipart message
+Display all textual parts\n\
+of a multipart message
 ;
 MSG_HELP_CO_CH_MULTIWIN (//)
-Open a new read window\nfor each selected message
+Open a new read window\n\
+for each selected message
 ;
 MSG_HELP_CO_CA_COLTEXT (//)
-Adjust the color of 'colored' text used\nin the read window and the editor
+Adjust the color of 'colored' text used\n\
+in the read window and the editor
 ;
 MSG_HELP_CO_CH_FIXFEDIT (//)
-Display messages using\na fixed-width font
+Display messages using\n\
+a fixed-width font
 ;
 MSG_HELP_CO_ST_CTYPE (//)
-MIME viewer is activated\nby this attachment type
+MIME viewer is activated\n\
+by this attachment type
 ;
 MSG_HELP_CO_ST_COMMAND (//)
-Path and optional arguments of\nthe viewer command. Use %s to\ninsert the datafile.
+Path and optional arguments of\n\
+the viewer command. Use %s to\n\
+insert the datafile.
 ;
 MSG_HELP_CO_BT_MADD (//)
 Add a new MIME viewer
@@ -1934,94 +2039,121 @@ MSG_HELP_CO_ST_EXTENS (//)
 Filename extensions used by this file type
 ;
 MSG_HELP_CO_ST_DEFVIEWER (//)
-Program used to displaying\nattachments of unknown type
+Program used to displaying\n\
+attachments of unknown type
 ;
 MSG_HELP_CO_CH_IDENTBIN (//)
-Try to identify the file type\nbefore using the default viewer
+Try to identify the file type\n\
+before using the default viewer
 ;
 MSG_HELP_CO_ST_REPLYTO (//)
-Enter the default return address, if\nit differs from your email address.
+Enter the default return address, if\n\
+it differs from your email address.
 ;
 MSG_HELP_CO_ST_ORGAN (//)
-The name of your\ncompany or institute
+The name of your\n\
+company or institute
 ;
 MSG_HELP_CO_ST_EXTHEADER (//)
-Additional message header(s) that will\nbe added to every outgoing message
+Additional message header(s) that will\n\
+be added to every outgoing message
 ;
 MSG_HELP_CO_ST_HELLOTEXT (//)
-Text to insert at the\ntop of a new message
+Text to insert at the\n\
+top of a new message
 ;
 MSG_HELP_CO_ST_BYETEXT (//)
-Text to insert at the\nbottom of a new message
+Text to insert at the\n\
+bottom of a new message
 ;
 MSG_HELP_CO_ST_OUTTRANS (//)
-Apply this characterset translation\non new messages
+Apply this characterset translation\n\
+on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP (//)
-Word-wrap message text\nat this column
+Word-wrap message text\n\
+at this column
 ;
 MSG_HELP_CO_CH_AUTOBREAK (//)
-Insert real line breaks\nwhile entering a message
+Insert real line breaks\n\
+while entering a message
 ;
 MSG_HELP_CO_CY_EDWRAP (//)
-Select 'as you type' to insert linebreak\ncodes while you're typing the message
+Select 'as you type' to insert linebreak\n\
+codes while you're typing the message
 ;
 MSG_HELP_CO_CH_LAUNCH (//)
-Launch the external editor\nwhen you start a new message
+Launch the external editor\n\
+when you start a new message
 ;
 MSG_HELP_CO_ST_EDITOR (//)
-Filename of your\nfavorite text editor
+Filename of your\n\
+favorite text editor
 ;
 MSG_HELP_CO_ST_FWDSTART (//)
-Text used to introduce a forwarded message.\nUse the button at the right side to insert a variable.
+Text used to introduce a forwarded message.\n\
+Use the button at the right side to insert a variable.
 ;
 MSG_HELP_CO_ST_FWDEND (//)
-Text to insert at the\nend a forwarded message.
+Text to insert at the\n\
+end a forwarded message.
 ;
 MSG_HELP_CO_ST_REPLYTEXT (//)
-Texts used in replies to messages.\nUse the button at the right side to insert a variable.
+Texts used in replies to messages.\n\
+Use the button at the right side to insert a variable.
 ;
 MSG_HELP_CO_ST_AREPLYTEXT (//)
-Use these texts in replies to messages\nif the pattern below matches the recipient address.
+Use these texts in replies to messages\n\
+if the pattern below matches the recipient address.
 ;
 MSG_HELP_CO_ST_AREPLYPAT (//)
-AmigaDOS pattern that triggers\nthe alternative reply headers
+AmigaDOS pattern that triggers\n\
+the alternative reply headers
 ;
 MSG_HELP_CO_ST_MREPLYTEXT (//)
-Use these texts in replies to\nmessages from a mailing list.
+Use these texts in replies to\n\
+messages from a mailing list.
 ;
 MSG_HELP_CO_CH_QUOTE (//)
-Quote original\nmessage in reply?
+Quote original\n\
+message in reply?
 ;
 MSG_HELP_CO_ST_REPLYCHAR (//)
-String that should precede each line of\nthe quoted message. Use the button at\nthe right side to insert a variable.
+String that should precede each line of\n\
+the quoted message. Use the button at\n\
+the right side to insert a variable.
 ;
 MSG_HELP_CO_CH_QUOTEEMPTY (//)
 Insert quote character(s) for empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR (//)
-Let the user select the desired recipient address\nif the From and Reply-To addresses are different
+Let the user select the desired recipient address\n\
+if the From and Reply-To addresses are different
 ;
 MSG_HELP_CO_CH_STRIPSIG (//)
-Don't quote signature\nof original message
+Don't quote signature\n\
+of original message
 ;
 MSG_HELP_CO_CY_SIGNAT (//)
 Select signature to edit
 ;
 MSG_HELP_CO_BT_EDITSIG (//)
-Modify your signature\nusing the editor
+Modify your signature\n\
+using the editor
 ;
 MSG_HELP_CO_BT_INSTAG (//)
 Insert control code for random taglines
 ;
 MSG_HELP_CO_BT_INSENV (//)
-Insert control code for the\nenviromental variable SIGNATURE
+Insert control code for the\n\
+enviromental variable SIGNATURE
 ;
 MSG_HELP_CO_ST_TAGFILE (//)
 Database containing taglines (\"cookies\")
 ;
 MSG_HELP_CO_ST_TAGSEP (//)
-Character or string used to separate\nthe taglines in the database
+Character or string used to separate\n\
+the taglines in the database
 ;
 MSG_HELP_CO_CG_FO (//)
 Columns displayed in the folder list
@@ -2033,25 +2165,32 @@ MSG_HELP_CO_CG_AB (//)
 Columns displayed in the address book
 ;
 MSG_HELP_CO_CH_FIXFLIST (//)
-Display list entries\nusing a fixed-width font
+Display list entries\n\
+using a fixed-width font
 ;
 MSG_HELP_CO_CH_BEAT (//)
-Display time in Swatch Beats, the\nrevolutionary new unit of time
+Display time in Swatch Beats, the\n\
+revolutionary new unit of time
 ;
 MSG_HELP_CO_ST_PGPCMD (//)
-Directory where the PGP\nexecutable can be found
+Directory where the PGP\n\
+executable can be found
 ;
 MSG_HELP_CO_ST_MYPGPID (//)
-The ID of your PGP key that's\nused to sign messages
+The ID of your PGP key that's\n\
+used to sign messages
 ;
 MSG_HELP_CO_CH_ENCSELF (//)
-Encrypt new messages with your public key,\nso you can still read or edit sent messages
+Encrypt new messages with your public key,\n\
+so you can still read or edit sent messages
 ;
 MSG_HELP_CO_ST_REMAILER (//)
-Email address of the remailer service\nused to send anonymous mail
+Email address of the remailer service\n\
+used to send anonymous mail
 ;
 MSG_HELP_CO_ST_FIRSTLINE (//)
-Insert this line at the top of your\nmessage if it is sent via remailer
+Insert this line at the top of your\n\
+message if it is sent via remailer
 ;
 MSG_HELP_CO_ST_LOGFILE (//)
 Path where the logfiles will be saved
@@ -2078,94 +2217,125 @@ MSG_HELP_CO_CH_POPSTART (//)
 Check for mail
 ;
 MSG_HELP_CO_CH_CHECKBD (//)
-Check the address book and open a reminder\nif it's a person's birthday
+Check the address book and open a reminder\n\
+if it's a person's birthday
 ;
 MSG_HELP_CO_CH_DELETEOLD (//)
-Delete messages that exceed the maximum\nage (see folder configuration)
+Delete messages that exceed the maximum\n\
+age (see folder configuration)
 ;
 MSG_HELP_CO_CH_REMOVEDEL (//)
 Empty trash folder
 ;
 MSG_HELP_CO_ST_GALLDIR (//)
-Directory to save the\npictures of your correspondents
+Directory to save the\n\
+pictures of your correspondents
 ;
 MSG_HELP_CO_ST_PHOTOURL (//)
 WWW address of your portrait image
 ;
 MSG_HELP_CO_CY_ATAB (//)
-Automatically create an address book entry\nfor the sender when your read his/her message?
+Automatically create an address book entry\n\
+for the sender when your read his/her message?
 ;
 MSG_HELP_CO_ST_PROXY (//)
-Address and optional port number of your\nHTTP proxy server (default port is 80)\nYou may leave this field empty.
+Address and optional port number of your\n\
+HTTP proxy server (default port is 80)\n\
+You may leave this field empty.
 ;
 MSG_HELP_CO_ST_NEWGROUP (//)
-Add new address book entries to this group (it\nwill be created if it doesn't already exist)
+Add new address book entries to this group (it\n\
+will be created if it doesn't already exist)
 ;
 MSG_HELP_CO_ST_TEMPDIR (//)
-Directory to store\ntemporary files
+Directory to store\n\
+temporary files
 ;
 MSG_HELP_CO_ST_DETACHDIR (//)
-Directory to save\nattached files to
+Directory to save\n\
+attached files to
 ;
 MSG_HELP_CO_ST_ATTACHDIR (//)
-Default source directory\nfor attachments
+Default source directory\n\
+for attachments
 ;
 MSG_HELP_CO_ST_APP (//)
-Position of the mailbox\nAppIcon in pixels
+Position of the mailbox\n\
+AppIcon in pixels
 ;
 MSG_HELP_CO_CH_CLGADGET (//)
-Do you want YAM to iconify when\nyou hit the closegadget?
+Do you want YAM to iconify when\n\
+you hit the closegadget?
 ;
 MSG_HELP_CO_CH_CONFIRM (//)
-Do you want to confirm\ndeletion of messages?
+Do you want to confirm\n\
+deletion of messages?
 ;
 MSG_HELP_CO_NB_CONFIRMDEL (//)
-Minimum number of messages to\ndisplay the confirmation requester
+Minimum number of messages to\n\
+display the confirmation requester
 ;
 MSG_HELP_CO_CH_REMOVE (//)
-Delete messages instantly, don't\nmove them to the trash folder
+Delete messages instantly, don't\n\
+move them to the trash folder
 ;
 MSG_HELP_CO_CH_SAVESENT (//)
 Save sent messages in the Sent folder
 ;
 MSG_HELP_CO_RA_MDN_DISP (//)
-When reading a message, send a\ndisposition notification to the\nsender if requested
+When reading a message, send a\n\
+disposition notification to the\n\
+sender if requested
 ;
 MSG_HELP_CO_RA_MDN_PROC (//)
-When forwarding a message, send a\ndisposition notification to the\nsender if requested
+When forwarding a message, send a\n\
+disposition notification to the\n\
+sender if requested
 ;
 MSG_HELP_CO_RA_MDN_DELE (//)
-When deleting a message, send a\ndisposition notification to the\nsender if requested
+When deleting a message, send a\n\
+disposition notification to the\n\
+sender if requested
 ;
 MSG_HELP_CO_RA_MDN_RULE (//)
-When deleting or forwarding a message using\nfilters, send a disposition notification to the sender\nif requested
+When deleting or forwarding a message using\n\
+filters, send a disposition notification to the sender\n\
+if requested
 ;
 MSG_HELP_CO_CH_SEND_MDN (//)
-Try to send the disposition notification\nas soon it has been generated
+Try to send the disposition notification\n\
+as soon it has been generated
 ;
 MSG_HELP_CO_TX_ENCPACK (//)
-XPK library used to protect\nand compress folders
+XPK library used to protect\n\
+and compress folders
 ;
 MSG_HELP_CO_TX_PACKER (//)
-XPK library used to\ncompress folders
+XPK library used to\n\
+compress folders
 ;
 MSG_HELP_CO_NB_ENCPACK (//)
-Efficiency of this packer\n100% is best, but slowest
+Efficiency of this packer\n\
+100% is best, but slowest
 ;
 MSG_HELP_CO_ST_ARCHIVER (//)
-Archiver command and options used\nto create compressed attachments
+Archiver command and options used\n\
+to create compressed attachments
 ;
 MSG_HELP_CO_ST_RXNAME (//)
-Description of the script\nin the 'Scripts' menu
+Description of the script\n\
+in the 'Scripts' menu
 ;
 MSG_HELP_CO_ST_SCRIPT (//)
 Filename of the script
 ;
 MSG_HELP_CO_CY_ISADOS (//)
-Type of the script\n(ARexx or AmigaDOS)
+Type of the script\n\
+(ARexx or AmigaDOS)
 ;
 MSG_HELP_CO_CH_CONSOLE (//)
-Open a console window to allow input\nand output from the script
+Open a console window to allow input\n\
+and output from the script
 ;
 MSG_HELP_CO_CH_WAITTERM (//)
 Don't run the script asynchronously
@@ -2177,12 +2347,15 @@ MSG_HELP_CO_BT_USE (//)
 Use current settings
 ;
 MSG_HELP_CO_BT_CANCEL (//)
-Close configuration\nwindow and use old\nsettings
+Close configuration\n\
+window and use old\n\
+settings
 ;
 ; Module AB - Routines
 ;
 MSG_AB_BirthdayReq (//)
-Today, %s reaches age %ld!\nDo you want to send a greetings card?
+Today, %s reaches age %ld!\n\
+Do you want to send a greetings card?
 ; NAME, AGE
 ;
 MSG_AB_BirthdayReminder (//)
@@ -2210,14 +2383,18 @@ MSG_AB_AliasFld (//)
 Alias
 ;
 MSG_AB_FoundEntry (//)
-Found matching entry!\nAlias: %s\nName: %s
+Found matching entry!\n\
+Alias: %s\n\
+Name: %s
 ; ALIAS, NAME
 ;
 MSG_AB_FindEntry (//)
 Find Entry
 ;
 MSG_AB_FindEntryReq (//)
-This module finds a given text in the alias, name, address,\ndescription, street, city or country fields. Please enter\nthe search pattern (AmigaDOS wildchars are supported):
+This module finds a given text in the alias, name, address,\n\
+description, street, city or country fields. Please enter\n\
+the search pattern (AmigaDOS wildchars are supported):
 ;
 MSG_AB_StartSearch (//)
 _Start search
@@ -2360,40 +2537,51 @@ MSG_HELP_AB_BT_SAVE (//)
 Save current changes
 ;
 MSG_HELP_AB_BT_SEARCH (//)
-Find an entry in\nthe address book
+Find an entry in\n\
+the address book
 ;
 MSG_HELP_AB_BT_ADDUSER (//)
-Add a new person to\nyour address book
+Add a new person to\n\
+your address book
 ;
 MSG_HELP_AB_BT_ADDGROUP (//)
-Add a new group (directory)\nto your address book
+Add a new group (directory)\n\
+to your address book
 ;
 MSG_HELP_AB_BT_ADDMLIST (//)
-Add a new distribution list\nto your address book
+Add a new distribution list\n\
+to your address book
 ;
 MSG_HELP_AB_BT_EDIT (//)
-Modify selected\nentry
+Modify selected\n\
+entry
 ;
 MSG_HELP_AB_BT_DELETE (//)
-Delete selected entry\nfrom your address book
+Delete selected entry\n\
+from your address book
 ;
 MSG_HELP_AB_BT_PRINT (//)
 Print selected entry
 ;
 MSG_HELP_AB_BT_OPEN (//)
-Display all entries in\nthe address book
+Display all entries in\n\
+the address book
 ;
 MSG_HELP_AB_BT_CLOSE (//)
-Only display root entries\nin the address book
+Only display root entries\n\
+in the address book
 ;
 MSG_HELP_AB_BT_TO (//)
-Set primary recipient(s)\nfor new message
+Set primary recipient(s)\n\
+for new message
 ;
 MSG_HELP_AB_BT_CC (//)
-Set secondary recipient(s)\nfor new message
+Set secondary recipient(s)\n\
+for new message
 ;
 MSG_HELP_AB_BT_BCC (//)
-Set blind copy recipient(s)\nfor new message
+Set blind copy recipient(s)\n\
+for new message
 ;
 ; Module CL
 ;
@@ -2413,7 +2601,10 @@ MSG_CL_ErrorNoUndo (//)
 Nothing to undo.
 ;
 MSG_CL_ErrorNoUndoMem (//)
-There is not enough memory\nto keep the undo buffer.\n\nThe undo buffer is lost.
+There is not enough memory\n\
+to keep the undo buffer.\n\
+\n\
+The undo buffer is lost.
 ;
 ; Module EA - Procedures
 ;
@@ -2494,64 +2685,82 @@ _Sort
 ; Module EA - Bubblehelp
 ;
 MSG_HELP_EA_ST_ALIAS (//)
-Identity (e.g. nickname or\nabbreviation) of this entry
+Identity (e.g. nickname or\n\
+abbreviation) of this entry
 ;
 MSG_HELP_EA_ST_DESCRIPTION (//)
 Comment for this entry
 ;
 MSG_HELP_EA_ST_REALNAME (//)
-Full name of this entry\n(first name last name)
+Full name of this entry\n\
+(first name last name)
 ;
 MSG_HELP_EA_ST_ADDRESS (//)
-Internet address\nof this entry
+Internet address\n\
+of this entry
 ;
 MSG_HELP_EA_ST_PGPKEY (//)
-Hexadecimal ID of this\nperson's public PGP key
+Hexadecimal ID of this\n\
+person's public PGP key
 ;
 MSG_HELP_EA_ST_HOMEPAGE (//)
-URL of the homepage of this person.\nClick the button on the right side\nto load the page into your browser.
+URL of the homepage of this person.\n\
+Click the button on the right side\n\
+to load the page into your browser.
 ;
 MSG_HELP_EA_ST_STREET (//)
-Postal address:\nStreet name and number
+Postal address:\n\
+Street name and number
 ;
 MSG_HELP_EA_ST_CITY (//)
-Postal address:\nCity and postal code
+Postal address:\n\
+City and postal code
 ;
 MSG_HELP_EA_ST_COUNTRY (//)
-Postal address:\nState and/or country
+Postal address:\n\
+State and/or country
 ;
 MSG_HELP_EA_ST_PHONE (//)
 Phone and/or FAX number(s)
 ;
 MSG_HELP_EA_ST_BIRTHDAY (//)
-Date of birth\nUse AmigaDOS format,\ne.g. 10-Jan-1950
+Date of birth\n\
+Use AmigaDOS format,\n\
+e.g. 10-Jan-1950
 ;
 MSG_HELP_EA_BC_PHOTO (//)
 Portrait picture of this person
 ;
 MSG_HELP_EA_BT_SELECTPHOTO (//)
-Select a picture file from disk\n(image datatypes supported)
+Select a picture file from disk\n\
+(image datatypes supported)
 ;
 MSG_HELP_EA_BT_LOADPHOTO (//)
-Download a picture of the person\nfrom the YAM User Gallery
+Download a picture of the person\n\
+from the YAM User Gallery
 ;
 MSG_HELP_EA_ST_REALNAME_L (//)
-Full name of this distribution list\n(will be used in To: field)
+Full name of this distribution list\n\
+(will be used in To: field)
 ;
 MSG_HELP_EA_ST_ADDRESS_L (//)
-Return address to use when\nsending a message to this list
+Return address to use when\n\
+sending a message to this list
 ;
 MSG_HELP_EA_LV_MEMBERS (//)
 Members of this distribution list
 ;
 MSG_HELP_EA_ST_MEMBER (//)
-Address (and name) or\nalias of a member
+Address (and name) or\n\
+alias of a member
 ;
 MSG_HELP_EA_BT_ADD (//)
-Add a new member\nto the list
+Add a new member\n\
+to the list
 ;
 MSG_HELP_EA_BT_DEL (//)
-Remove selected member\nfrom the list
+Remove selected member\n\
+from the list
 ;
 MSG_HELP_EA_BT_SORT (//)
 Sort member list alphabetically
@@ -2565,22 +2774,28 @@ Discard changes
 ; Module RE - Procedures
 ;
 MSG_RE_MDNGads1 (//)
-Accept and\nsend later|Deny and\nsend later
+Accept and\n\
+send later|Deny and\n\
+send later
 ;
 MSG_RE_MDNGads2 (//)
-|Accept and\nsend now|Deny and\nsend now
+|Accept and\n\
+send now|Deny and\n\
+send now
 ;
 MSG_RE_MDNGads3 (//)
 |Ignore
 ;
 MSG_RE_MDNReq (//)
-The sender of this message request a disposition notification (MDN).\nWhat do you want to do?
+The sender of this message request a disposition notification (MDN).\n\
+What do you want to do?
 ;
 MSG_RE_SaveMessage (//)
 Save message...
 ;
 MSG_RE_Overwrite (//)
-File '%s' already exists.\nDo you want to overwrite it?
+File '%s' already exists.\n\
+Do you want to overwrite it?
 ; FILENAME
 ;
 MSG_RE_PrintMsg (//)
@@ -2614,7 +2829,8 @@ MSG_RE_GoodSig (//)
 Good signature
 ;
 MSG_RE_SigFrom (//)
- from\n
+ from\n\
+
 ;
 MSG_RE_SigCheck (//)
 Check PGP signature
@@ -2623,7 +2839,8 @@ MSG_RE_SaveDecGads (//)
 *_Keep|_Replace|_Cancel
 ;
 MSG_RE_SaveDecReq (//)
-What do you want to do with\noriginal (encrypted) message?
+What do you want to do with\n\
+original (encrypted) message?
 ;
 MSG_RE_Header (//)
 Header
@@ -2632,25 +2849,32 @@ MSG_RE_Letter (//)
 Letter
 ;
 MSG_RE_MDNFrom (//)
-\nFrom:
+\n\
+From:
 ;
 MSG_RE_MDNTo (//)
-\nTo:
+\n\
+To:
 ;
 MSG_RE_MDNSubject (//)
-\nSubject:
+\n\
+Subject:
 ;
 MSG_RE_MDNMessageID (//)
-\nMessage-ID:
+\n\
+Message-ID:
 ;
 MSG_RE_MDNDate (//)
-\nDate:
+\n\
+Date:
 ;
 MSG_RE_MDNOrigRecpt (//)
-\nOriginal recipient:
+\n\
+Original recipient:
 ;
 MSG_RE_MDNFinalRecpt (//)
-\nFinal recipient:
+\n\
+Final recipient:
 ;
 MSG_RE_MDNmanual (//)
  in response to a user command
@@ -2659,39 +2883,73 @@ MSG_RE_MDNauto (//)
  automatically
 ;
 MSG_RE_MDNdisplay (//)
-The message\n%s\nhas been displayed.\nThis is no guarantee that the content has been read or understood.\n
+The message\n\
+%s\n\
+has been displayed.\n\
+This is no guarantee that the content has been read or understood.\n\
+
 ;
 MSG_RE_MDNprocessed (//)
-The message\n%s\nhas been processed%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
+The message\n\
+%s\n\
+has been processed%s,\n\
+without being displayed to the user. The user may or may not see\n\
+the message later.\n\
+
 ;
 MSG_RE_MDNdispatched (//)
-The message\n%s\nhas been sent somewhere%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
+The message\n\
+%s\n\
+has been sent somewhere%s,\n\
+without being displayed to the user. The user may or may not see\n\
+the message later.\n\
+
 ;
 MSG_RE_MDNdeleted (//)
-The message\n%s\nhas been deleted%s.\nThe recipient may or may not have seen the message. The recipient\nmay \"undelete\" the message at a later time and read the message.\n
+The message\n\
+%s\n\
+has been deleted%s.\n\
+The recipient may or may not have seen the message. The recipient\n\
+may \"undelete\" the message at a later time and read the message.\n\
+
 ;
 MSG_RE_MDNdenied (//)
-The recipient of the message\n%s\ndoesn't wish to inform you about the disposition of that message.\n
+The recipient of the message\n\
+%s\n\
+doesn't wish to inform you about the disposition of that message.\n\
+
 ;
 MSG_RE_MDNunknown (//)
-The message\n%s\nhas been %s%s.\n
+The message\n\
+%s\n\
+has been %s%s.\n\
+
 ;
 MSG_RE_PGPNotAllowed (//)
->PGP Error<\n\nYou're not allowed to view this PGP encrypted message. Either your PGP software\nisn't configured properly, or the message was encrypted for someone else.\n
+>PGP Error<\n\
+\n\
+You're not allowed to view this PGP encrypted message. Either your PGP software\n\
+isn't configured properly, or the message was encrypted for someone else.\n\
+
 ;
 MSG_RE_MsgReadOnly (//)
-The message can only be read by %s\n
+The message can only be read by %s\n\
+
 ; RECIPIENT
 ;
 MSG_RE_AddSender (//)
-Do you want to add the sender\n%s\nto your address book?
+Do you want to add the sender\n\
+%s\n\
+to your address book?
 ; SENDER
 ;
 MSG_RE_NewGroupTitle (//)
 Automatically added entries
 ;
 MSG_RE_DownloadPhotoReq (//)
-Do you want to download the photo of the sender\nand add it to your personal gallery?\n(You must be online before clicking the OKAY button)
+Do you want to download the photo of the sender\n\
+and add it to your personal gallery?\n\
+(You must be online before clicking the OKAY button)
 ;
 MSG_RE_ContentType (//)
 Content-Type
@@ -2703,7 +2961,8 @@ MSG_RE_UUencodedFile (//)
 UUencoded file
 ;
 MSG_RE_SelectAddressReq (//)
-Selected address: %s\nWhat do you want to do?
+Selected address: %s\n\
+What do you want to do?
 ; ADDRESS
 ;
 MSG_RE_SelectAddressEdit (//)
@@ -2817,37 +3076,51 @@ For_ward
 ; Module RE - Bubblehelp
 ;
 MSG_HELP_RE_BT_PREVIOUS (//)
-Display contents of\nthe previous message
+Display contents of\n\
+the previous message
 ;
 MSG_HELP_RE_BT_NEXT (//)
-Display contents of\nthe next message
+Display contents of\n\
+the next message
 ;
 MSG_HELP_RE_BT_QUESTION (//)
-Show the message which\nis being answered here\n(go back in thread)
+Show the message which\n\
+is being answered here\n\
+(go back in thread)
 ;
 MSG_HELP_RE_BT_ANSWER (//)
-Show the reply\nto this message\n(follow thread)
+Show the reply\n\
+to this message\n\
+(follow thread)
 ;
 MSG_HELP_RE_BT_DISPLAY (//)
-Use a configured MIME\nviewer to display a\npart of this message
+Use a configured MIME\n\
+viewer to display a\n\
+part of this message
 ;
 MSG_HELP_RE_BT_EXPORT (//)
-Save displayed message or\na part of it to disk
+Save displayed message or\n\
+a part of it to disk
 ;
 MSG_HELP_RE_BT_PRINT (//)
-Send this message\nto the printer
+Send this message\n\
+to the printer
 ;
 MSG_HELP_RE_BT_MOVE (//)
-Move this message to another folder\nand display the next one
+Move this message to another folder\n\
+and display the next one
 ;
 MSG_HELP_RE_BT_DELETE (//)
-Delete this message and\ndisplay the next one
+Delete this message and\n\
+display the next one
 ;
 MSG_HELP_RE_BT_REPLY (//)
-Reply to this\nmessage
+Reply to this\n\
+message
 ;
 MSG_HELP_RE_BT_FORWARD (//)
-Forward this\nmessage
+Forward this\n\
+message
 ;
 ; Module WR - Procedures
 ;
@@ -2876,7 +3149,8 @@ MSG_WR_CreateArc (//)
 Create archive
 ;
 MSG_WR_CreateArcReq (//)
-Please enter a filename\nfor the new archive
+Please enter a filename\n\
+for the new archive
 ;
 MSG_WR_InsertFile (//)
 Insert file...
@@ -3162,19 +3436,23 @@ Importance
 ; Module WR - Bubblehelp
 ;
 MSG_HELP_WR_ST_TO (//)
-Address (and name) or alias\nof the primary recipient(s)
+Address (and name) or alias\n\
+of the primary recipient(s)
 ;
 MSG_HELP_WR_BT_VER (//)
-Verify recipient: find email\naddress for alias or name
+Verify recipient: find email\n\
+address for alias or name
 ;
 MSG_HELP_WR_BT_ADR (//)
-Select recipient from\nthe address book
+Select recipient from\n\
+the address book
 ;
 MSG_HELP_WR_ST_SUBJECT (//)
 Subject of your message
 ;
 MSG_HELP_WR_BT_EDITOR (//)
-Use external editor to\n modify the message text
+Use external editor to\n\
+ modify the message text
 ;
 MSG_HELP_WR_BT_LOAD (//)
 Insert textfile at cursor position
@@ -3186,7 +3464,8 @@ MSG_HELP_WR_BT_COPY (//)
 Copy marked text to the clipboard
 ;
 MSG_HELP_WR_BT_PASTE (//)
-Insert clipboard contents\nat cursor position
+Insert clipboard contents\n\
+at cursor position
 ;
 MSG_HELP_WR_BT_UNDO (//)
 Undo recent changes to the text
@@ -3204,73 +3483,102 @@ MSG_HELP_WR_BT_COLOR (//)
 Color marked text
 ;
 MSG_HELP_WR_BT_ADD (//)
-Add an attachment\nto the list
+Add an attachment\n\
+to the list
 ;
 MSG_HELP_WR_BT_ADDPACK (//)
-Create an archive from\nseveral files and add it\nas attachment to the list
+Create an archive from\n\
+several files and add it\n\
+as attachment to the list
 ;
 MSG_HELP_WR_BT_DEL (//)
-Remove selected attachment\nfrom the list
+Remove selected attachment\n\
+from the list
 ;
 MSG_HELP_WR_BT_DISPLAY (//)
-Use a configured MIME viewer\nto display this attachment
+Use a configured MIME viewer\n\
+to display this attachment
 ;
 MSG_HELP_WR_RA_ENCODING (//)
-Type of encoding used for the selected attachment.\nUse UUencode only if the recipient hasn't got\na MIME compliant mailer.
+Type of encoding used for the selected attachment.\n\
+Use UUencode only if the recipient hasn't got\n\
+a MIME compliant mailer.
 ;
 MSG_HELP_WR_ST_CTYPE (//)
-MIME type for the selected attachment.\nWhenever possible, use one from the popup list.
+MIME type for the selected attachment.\n\
+Whenever possible, use one from the popup list.
 ;
 MSG_HELP_WR_ST_DESC (//)
-Optional description for\nthe selected attachment
+Optional description for\n\
+the selected attachment
 ;
 MSG_HELP_WR_ST_CC (//)
-Address (and name) or alias\nof the secondary recipient(s)
+Address (and name) or alias\n\
+of the secondary recipient(s)
 ;
 MSG_HELP_WR_ST_BCC (//)
-Send a blind carbon copy of the\nmessage to this recipient
+Send a blind carbon copy of the\n\
+message to this recipient
 ;
 MSG_HELP_WR_ST_EXTHEADER (//)
-Additional message header(s) that\nwill be added to the message
+Additional message header(s) that\n\
+will be added to the message
 ;
 MSG_HELP_WR_ST_FROM (//)
-Contents of From header field\n(address and name of the person\nwho's writing this letter)
+Contents of From header field\n\
+(address and name of the person\n\
+who's writing this letter)
 ;
 MSG_HELP_WR_ST_REPLYTO (//)
-Return address\nfor this letter
+Return address\n\
+for this letter
 ;
 MSG_HELP_WR_CH_DELSEND (//)
-Don't store this message\nin the Sent folder
+Don't store this message\n\
+in the Sent folder
 ;
 MSG_HELP_WR_CH_RECEIPT (//)
-Get a notification on\nsuccessful delivery
+Get a notification on\n\
+successful delivery
 ;
 MSG_HELP_WR_CH_DISPNOTI (//)
-Get a notification if the recipient\nreads or processes the message
+Get a notification if the recipient\n\
+reads or processes the message
 ;
 MSG_HELP_WR_CH_ADDINFO (//)
-Create header fields containing data\nfrom your personal address book entry
+Create header fields containing data\n\
+from your personal address book entry
 ;
 MSG_HELP_WR_CY_IMPORTANCE (//)
-Set the priority\nof this message
+Set the priority\n\
+of this message
 ;
 MSG_HELP_WR_RA_SIGNATURE (//)
-Which signature do you want\nto append to this letter?
+Which signature do you want\n\
+to append to this letter?
 ;
 MSG_HELP_WR_RA_SECURITY (//)
-Select the one of these security options\nto send your message PGP-signed, encrypted\nor anonymously
+Select the one of these security options\n\
+to send your message PGP-signed, encrypted\n\
+or anonymously
 ;
 MSG_HELP_WR_BT_HOLD (//)
-Copy the created message to\nthe outgoing mail folder\nand set its status to HOLD
+Copy the created message to\n\
+the outgoing mail folder\n\
+and set its status to HOLD
 ;
 MSG_HELP_WR_BT_QUEUE (//)
-Copy the created message to\nthe outgoing mail folder
+Copy the created message to\n\
+the outgoing mail folder
 ;
 MSG_HELP_WR_BT_SEND (//)
-Copy the created message to\nthe outgoing mail folder\nand send it immediately
+Copy the created message to\n\
+the outgoing mail folder\n\
+and send it immediately
 ;
 MSG_HELP_WR_BT_CANCEL (//)
-Discard the\ncreated message
+Discard the\n\
+created message
 ;
 ; Module TR - Procedures
 ;
@@ -3281,7 +3589,8 @@ MSG_TR_WaitWelcome (//)
 Connected, awaiting welcome message...
 ;
 MSG_TR_PopLoginReq (//)
-Please enter your POP3 password\nfor account %s@%s
+Please enter your POP3 password\n\
+for account %s@%s
 ; USER_ID, HOST
 ;
 MSG_TR_PopLogin (//)
@@ -3317,7 +3626,8 @@ MSG_TR_SizeGauge (//)
 ; SIZE, SIZE
 ;
 MSG_TR_TransferStats (//)
-%lD of %lD kB transmitted at %lD cps\nRemaining time: %lD min %ld sec
+%lD of %lD kB transmitted at %lD cps\n\
+Remaining time: %lD min %ld sec
 ; SIZE, SIZE, SPEED, MINS, SECS
 ;
 MSG_TR_Exporting (//)
@@ -3333,11 +3643,24 @@ MSG_TR_DeletingServerMail (//)
 Deleting mail on server...
 ;
 MSG_TR_NewMailReq (//)
-\e8You have new mail!\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
+\e8You have new mail!\e2\n\
+\n\
+%3ld messages downloaded,\n\
+%3ld left on server\n\
+%3ld duplicates skipped\n\
+
 ; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FilterStats (//)
-\nFiltering done:\n%3ld messages checked,\n%3ld redirected,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted
+\n\
+Filtering done:\n\
+%3ld messages checked,\n\
+%3ld redirected,\n\
+%3ld forwarded,\n\
+%3ld auto-replied,\n\
+%3ld command activated,\n\
+%3ld moved,\n\
+%3ld deleted
 ; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_NewMail (//)
@@ -3400,7 +3723,8 @@ MSG_TR_Abort (//)
 _Abort
 ;
 MSG_TR_TransferStats0 (//)
-  0 of   0 kB transmitted at    0 cps\nRemaining time:  0 min  0 sec
+  0 of   0 kB transmitted at    0 cps\n\
+Remaining time:  0 min  0 sec
 ;
 MSG_TR_BytesGauge0 (//)
    0 of    0 bytes
@@ -3411,10 +3735,12 @@ Message  0 of  0
 ; Module TR - Bubblehelp
 ;
 MSG_HELP_TR_TX_STATUS (//)
-Current state\nof mail transfer
+Current state\n\
+of mail transfer
 ;
 MSG_HELP_TR_BT_ABORT (//)
-Abort mail transfer\nas soon as possible
+Abort mail transfer\n\
+as soon as possible
 ;
 ; Module ER - Window
 ;
@@ -3436,7 +3762,8 @@ _Close window
 ; Module ER - Error Messages
 ;
 MSG_ER_ErrorTTable (//)
-Couldn't open translation table '%s'\n(non existent or wrong format).
+Couldn't open translation table '%s'\n\
+(non existent or wrong format).
 ; FILENAME
 ;
 MSG_ER_CantCreateFile (//)
@@ -3463,7 +3790,9 @@ MSG_ER_NoTCP (//)
 No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
 ;
 MSG_ER_ErrorDateFormat (//)
-Invalid date/time format.\nThe date has to be in AmigaDOS format.\nExample: %s
+Invalid date/time format.\n\
+The date has to be in AmigaDOS format.\n\
+Example: %s
 ; DATE
 ;
 MSG_ER_ErrorMaxFilters (//)
@@ -3518,7 +3847,8 @@ Can't read from file '%s'. The file doesn't seem to exists.
 ; FILENAME
 ;
 MSG_ER_UUSize (//)
-Decoded size [%lD] does not\nmatch original size [%lD]. A defective UUencoder was used or the message is truncated.
+Decoded size [%lD] does not\n\
+match original size [%lD]. A defective UUencoder was used or the message is truncated.
 ; SIZE, SIZE
 ;
 MSG_ER_DocNotFound (//)
@@ -3533,7 +3863,8 @@ Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid add
 ; HOST
 ;
 MSG_ER_BadResponse (//)
-Bad %s command response: %s.\nThe mail server couldn't execute the command and replied with the error message.
+Bad %s command response: %s.\n\
+The mail server couldn't execute the command and replied with the error message.
 ; COMMAND, TEXT
 ;
 MSG_ER_UnknownPOP (//)
@@ -3552,7 +3883,8 @@ MSG_ER_NoAPOP (//)
 Your POP3 server doesn't support APOP. Disable the APOP option in your YAM configuration.
 ;
 MSG_ER_ErrorWriteMailfile (//)
-Write error on mail file: %s.\nYAM can't save the message to disk, maybe you're out of diskspace.
+Write error on mail file: %s.\n\
+YAM can't save the message to disk, maybe you're out of diskspace.
 ; FILENAME
 ;
 MSG_ER_ConnectionBroken (//)
@@ -3563,11 +3895,13 @@ Invalid address '%s'. The SMTP server didn't accept the address. Check for illeg
 ; ADDRESS
 ;
 MSG_ER_ErrorReadMailfile (//)
-Read error on mail file: %s.\nThe file exists, but there was an error while reading the file.
+Read error on mail file: %s.\n\
+The file exists, but there was an error while reading the file.
 ; FILENAME
 ;
 MSG_ER_UserRemoved (//)
-Directory '%s' not found!\nUser %s has been removed.
+Directory '%s' not found!\n\
+User %s has been removed.
 ; PATH
 ;
 MSG_ER_MissingDirectory (//)
@@ -3580,11 +3914,13 @@ MSG_ER_NoPublicKeys (//)
 No public PGP keys found. Make sure that PGP is installed and the required settings are made in the configuration of YAM.
 ;
 MSG_ER_PGPreturnsError (//)
-The following PGP command returned with an error: '%s'\nCheck the file %s for a diagnosis.
+The following PGP command returned with an error: '%s'\n\
+Check the file %s for a diagnosis.
 ; COMMAND, FILENAME
 ;
 MSG_ER_PGPnotfound (//)
-Couldn't execute PGP command.\nCheck if %s exists.
+Couldn't execute PGP command.\n\
+Check if %s exists.
 ; FILENAME
 ;
 MSG_ER_InvalidAlias (//)
@@ -3636,16 +3972,19 @@ MSG_HELP_DI_ST_ALIAS (//)
 Abbreviation of selected entry
 ;
 MSG_HELP_DI_BT_NEW (//)
-Add a new abbreviation\nto the glossary
+Add a new abbreviation\n\
+to the glossary
 ;
 MSG_HELP_DI_BT_ADDSELECT (//)
-Create a new entry based on\nthe marked text in the editor
+Create a new entry based on\n\
+the marked text in the editor
 ;
 MSG_HELP_DI_BT_DELETE (//)
 Remove selected entry
 ;
 MSG_HELP_DI_BT_PASTE (//)
-Insert selected entry at the current\nposition in the text editor
+Insert selected entry at the current\n\
+position in the text editor
 ;
 ; Module FI - Procedures
 ;
@@ -3765,22 +4104,27 @@ _Abort
 ; Module FI - Bubblehelp
 ;
 MSG_HELP_FI_LV_FOLDERS (//)
-Select one or more\nfolders to search in
+Select one or more\n\
+folders to search in
 ;
 MSG_HELP_FI_BT_ALL (//)
 Include all folders in your search
 ;
 MSG_HELP_FI_PO_FROMRULE (//)
-Get search criteria\nfrom a filter
+Get search criteria\n\
+from a filter
 ;
 MSG_HELP_FI_BT_TORULE (//)
-Create a new filter from\nthese search criteria
+Create a new filter from\n\
+these search criteria
 ;
 MSG_HELP_FI_BT_SEARCH (//)
-Start the search and display\nthe results in the list above
+Start the search and display\n\
+the results in the list above
 ;
 MSG_HELP_FI_BT_SELECT (//)
-Select matching messages\nin the main window
+Select matching messages\n\
+in the main window
 ;
 MSG_HELP_FI_BT_READ (//)
 Display selected message/nfrom the list above
@@ -3789,28 +4133,33 @@ MSG_HELP_FI_BT_ABORT (//)
 Stop searching
 ;
 MSG_HELP_FI_CY_MODE (//)
-Field or message part that\nshould match the pattern
+Field or message part that\n\
+should match the pattern
 ;
 MSG_HELP_FI_ST_FIELD (//)
 Name of header field to search in
 ;
 MSG_HELP_FI_RA_ADRMODE (//)
-Choose whether you want to search in the\naddress or realname part of the field
+Choose whether you want to search in the\n\
+address or realname part of the field
 ;
 MSG_HELP_FI_CY_STATUS (//)
 Message status to match
 ;
 MSG_HELP_FI_ST_MATCH (//)
-Search pattern (AmigaDOS\nwildchars are supported)
+Search pattern (AmigaDOS\n\
+wildchars are supported)
 ;
 MSG_HELP_FI_CH_CASESENS (//)
-Should the search\nbe case sensitive?
+Should the search\n\
+be case sensitive?
 ;
 MSG_HELP_FI_CH_SUBSTR (//)
 Enable partial string search
 ;
 MSG_HELP_FI_CY_COMP (//)
-Type of comparison. Select <> to get all messages that\ndon't match the pattern, IN to use a file of patterns
+Type of comparison. Select <> to get all messages that\n\
+don't match the pattern, IN to use a file of patterns
 ;
 ; Module US - Routines
 ;
@@ -3827,13 +4176,16 @@ MSG_US_WaitLogin (//)
 Waiting for user login...
 ;
 MSG_US_RemoveReq (//)
-All messages, folders and configuration\nfiles belonging to this user will be lost!\nDo you really want to remove the user?
+All messages, folders and configuration\n\
+files belonging to this user will be lost!\n\
+Do you really want to remove the user?
 ;
 MSG_US_RemoveReqGads (//)
 *_Okay|_Keep files|_Cancel
 ;
 MSG_US_ErrorNoDirectory (//)
-Mail directory not found.\nDo you want to create it?
+Mail directory not found.\n\
+Do you want to create it?
 ;
 ; Module US - Window
 ;
@@ -3870,22 +4222,28 @@ MSG_HELP_US_ST_USER (//)
 Name of the new YAM user
 ;
 MSG_HELP_US_ST_MAILDIR (//)
-Directory to store the\nfolders and config files\nof the new user account
+Directory to store the\n\
+folders and config files\n\
+of the new user account
 ;
 MSG_HELP_US_CH_USEADDR (//)
-Share address book\nwith other users
+Share address book\n\
+with other users
 ;
 MSG_HELP_US_CH_USEDICT (//)
-Share glossary\nwith other users
+Share glossary\n\
+with other users
 ;
 MSG_HELP_US_ST_PASSWD (//)
 Password required for this user to login
 ;
 MSG_HELP_US_CH_ROOT (//)
-Enable this option if the user\nmay add or remove other users
+Enable this option if the user\n\
+may add or remove other users
 ;
 MSG_HELP_US_CH_CLONE (//)
-Use current configuration as\ndefault for the new account
+Use current configuration as\n\
+default for the new account
 ;
 MSG_HELP_US_BT_ADD (//)
 Create the new account
@@ -3900,7 +4258,9 @@ MSG_FO_NewSepReq (//)
 Optional label for the separator
 ;
 MSG_FO_NewFolderReq (//)
-What settings do you want to use for the new folder?\nSelect 'Existing directory' if the folder already exists\non your disk
+What settings do you want to use for the new folder?\n\
+Select 'Existing directory' if the folder already exists\n\
+on your disk
 ;
 MSG_FO_NewFolderGads (//)
 *_Internal defaults|_Like current|_Existing directory|_Cancel
@@ -3980,31 +4340,40 @@ MSG_HELP_FO_ST_FNAME (//)
 Folder name
 ;
 MSG_HELP_FO_TX_FPATH (//)
-Directory where the messages of\nthe selected folder are stored
+Directory where the messages of\n\
+the selected folder are stored
 ;
 MSG_HELP_FO_ST_MAXAGE (//)
-Old messages will automatically\nbe deleted after this time (in days).\nEnter 0 or no value to disable this feature.
+Old messages will automatically\n\
+be deleted after this time (in days).\n\
+Enter 0 or no value to disable this feature.
 ;
 MSG_HELP_FO_CY_FTYPE (//)
-Type of custom archive folder\n(in/out/both)
+Type of custom archive folder\n\
+(in/out/both)
 ;
 MSG_HELP_FO_CY_FMODE (//)
-Folders can be password-protected\nand/or compressed using XPK
+Folders can be password-protected\n\
+and/or compressed using XPK
 ;
 MSG_HELP_FO_CY_SORT0 (//)
-Primary sorting order of the\nmessage in this folder
+Primary sorting order of the\n\
+message in this folder
 ;
 MSG_HELP_FO_CY_SORT1 (//)
-Secondary sorting order of the\nmessage in this folder
+Secondary sorting order of the\n\
+message in this folder
 ;
 MSG_HELP_FO_CH_REVERSE (//)
 Reversed sorting
 ;
 MSG_HELP_FO_ST_MLPATTERN (//)
-A message belongs to a mailing list\nif the To: field matches this pattern
+A message belongs to a mailing list\n\
+if the To: field matches this pattern
 ;
 MSG_HELP_FO_ST_MLADDRESS (//)
-Use this recipient address for\na reply to a mailing list message
+Use this recipient address for\n\
+a reply to a mailing list message
 ;
 ;
 ; BUSY messages
@@ -4091,7 +4460,8 @@ Decoding/displaying...
 ; ADDED AFTER 13-MAR-1999
 ;
 MSG_RE_FollowThreadReq (//)
-In order to follow the thread, YAM has to load all indices.\nThis may be time consuming. Do you want to continue?
+In order to follow the thread, YAM has to load all indices.\n\
+This may be time consuming. Do you want to continue?
 ;
 MSG_CTapplicationadosscript (//)
 AmigaDOS script
@@ -4200,7 +4570,8 @@ MSG_EA_DefSecurity (//)
 Se_curity
 ;
 MSG_HELP_MA_CY_DEFSECURITY (//)
-Default security for sending\nmail to this person
+Default security for sending\n\
+mail to this person
 ;
 MSG_WR_DefSecurityConflict (//)
 The recipients of this mail have different default\n\
