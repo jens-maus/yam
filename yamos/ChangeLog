@@ -7,6 +7,8 @@ $Source$
 
 2002-10-12  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c: fixed bug where YAM didn`t correctly connect
+      multiline headers and stripped too many spaces.
     * YAM.c: fixed bug where on a fresh start of YAM the mail
       listview was out of sync with the folderlisttree and caused
       some weird enforcer hits if the first folder in the listtree

@@ -689,9 +689,19 @@ BOOL MA_ReadHeader(FILE *fh)
           if(*ptr2 == 0x1b) *ptr2 = ' ';
         }
 
+        // if the start of this line is a space or a tabulator sign
+        // this line belongs to the last header also and we have to
+        // add it to the last one.
         if ((buffer[0] == ' ' || buffer[0] == '\t') && Header.Used)
         {
+          // move to the "real" start of the string so that we can copy
+          // from there to our previous header.
           for (ptr = head; *ptr && ISpace(*ptr); ptr++);
+
+          // we want to preserve the last space so that this headerline
+          // is correctly connected
+          if(ptr != head) *(--ptr) = ' ';
+
           ptr = StrBufCat(Header.Data[Header.Used-1], ptr);
         }
         else ptr = StrBufCpy(AllocData2D(&Header, SIZE_DEFAULT), head);
