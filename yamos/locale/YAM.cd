@@ -4959,3 +4959,9 @@ email addresses on separate lines ?
 MSG_AB_NOYAMADDRBOOK_GADS (//)
 _Yes|*_No
 ;
+MSG_FO_EDIT_FGROUP (//)
+Folder group preferences
+;The item in the context menu
+MSG_FO_EDIT_FGROUPREQ (//)
+Name of folder group:
+;

@@ -1064,7 +1064,7 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
   {
     case FT_GROUP:
     {
-      if(StringRequest(folder->Name, SIZE_NAME, GetStr(MSG_FO_EditFolder), GetStr(MSG_FO_NewSepReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+      if(StringRequest(folder->Name, SIZE_NAME, GetStr(MSG_FO_EDIT_FGROUP), GetStr(MSG_FO_EDIT_FGROUPREQ), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
       {
         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
       }
