@@ -7,6 +7,9 @@ $Source$
 
 2002-07-08  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_FO.c: fixed another enforcer hit within the ML-Autodetect
+      functions that occured if only one mail was in a folder.
+      This should hopefully fix this whole autodetect thing now.
     * YAM_RE.c: fixed the doubleclick on mailto: functions once
       again and now it should also recognize ?subject= attributes
       and as a special bonus I also added support for cc= and bcc=

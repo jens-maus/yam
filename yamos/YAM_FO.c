@@ -1369,8 +1369,8 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   {
     if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
     {
-      if(res) res = realloc(res, strlen(res)+3);
-      else    res = malloc(strlen(res)+3);
+      if(res)  res = realloc(res, strlen(res)+3);
+      else if((res = malloc(strlen(toPattern)+3))) strcpy(res, toPattern);
 
       if(!res) return;
 
@@ -1384,8 +1384,8 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 
     if(strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
     {
-      if(res) res = realloc(res, strlen(res)+3);
-      else    res = malloc(strlen(res)+3);
+      if(res)  res = realloc(res, strlen(res)+3);
+      else if((res = malloc(strlen(toPattern)+3))) strcpy(res, toPattern);
 
       if(!res) return;
 
@@ -1399,7 +1399,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   DB(kprintf("ML-Pattern: [%s]\n", toPattern));
 
   // Now we set the new pattern & address values to the string gadgets
-  setstring(G->FO->GUI.ST_MLPATTERN, takePattern ? toPattern : notRecog);
+  setstring(G->FO->GUI.ST_MLPATTERN, takePattern && toPattern[0] ? toPattern : notRecog);
   setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
 
   // lets free all resources now
