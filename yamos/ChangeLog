@@ -99,6 +99,10 @@
     * Address Book/New/Portrait/Select: The ASL requester title was
       "Se_lect" (same string used twice) - fixed! (Bug #131008).
 
+2001-02-15 msbethke <Matthias.Bethke@gmx.net>
+
+    * Added external quote function to edit window (+preferences)
+
 2001-02-17  laursen <laursen@myself.com>
 
     * Added TYPE/N (internal format) to the STEM that ARexx command
