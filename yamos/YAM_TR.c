@@ -1396,7 +1396,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       {
          BOOL connected;
 
-         if (C->SMTP_AUTH_User) connected=TR_ConnectESMTP();
+         if (C->SMTP_AUTH_User[0]) connected=TR_ConnectESMTP();
          else connected=TR_ConnectSMTP();
          if (connected)
          {
