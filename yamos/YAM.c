@@ -851,8 +851,9 @@ static void Initialise2(BOOL hidden)
       DoMethod(G->App, MUIM_Application_InputBuffered);
    }
 
-   // Now we make sure that the InfoBar shows the correct data
-   DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, FO_GetCurrentFolder());
+   // Now we have to make sure that the current folder is really in "active" state
+   // or we risk to get a unsynced message listview.
+   MA_ChangeFolder(NULL, TRUE);
 
    AY_PrintStatus(GetStr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
@@ -920,6 +921,7 @@ static void Initialise(BOOL hidden)
 
    SetupDebug();
 
+   // Lets check for the correct Toolbar.mcc version
    CheckMCC(MUIC_Toolbar, 15, 6, TRUE);
 
    // we have to have at least v20.104 of NList.mcc to get YAM working without risking
