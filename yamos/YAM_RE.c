@@ -2531,7 +2531,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
       for (part = first->Next; part; part = part->Next)
       {
-         BOOL dodisp = (part->Printable && part->Decoded);
+         BOOL dodisp = (part->Nr <= PART_LETTER || (C->DisplayAllTexts && part->Printable && part->Decoded));
 
          prewptr = wptr;
 

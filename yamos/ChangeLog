@@ -7,6 +7,10 @@ $Source$
 
 2002-10-04  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: fixed bug #617855 where YAM showed an message part
+      text within the readwindow even if "Read/Show all Texts"
+      was disabled in the config and the user somehow "decoded"
+      the message part by selecting display or save.
     * YAM_UT.c: replaced rudimentary ComprMsgID() algorithm with
       a more unique CRC32 checksum algorithm to give the Next/Prev
       Thread function more power in finding the correct follow-up
