@@ -187,7 +187,9 @@ Diretório
 ;
 MSG_Copyright1
 Programa de email Freeware para o Amiga\n\
-Copyright © 1995-2000 Marcel Beck
+\n\
+Copyright (c) 1995-2000 Marcel Beck\n\
+Copyright (c) 2000-2004 YAM Open Source Team
 ;
 MSG_Version
 Versão:

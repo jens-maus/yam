@@ -43,6 +43,7 @@ extern char *             yamversion;
 extern char *             yamversionver;
 extern char *             yamversionstring;
 extern char *             yamversiondate;
+extern char *             yamcopyright;
 extern unsigned long      yamversiondays;
 
 enum ContTypeEntry
