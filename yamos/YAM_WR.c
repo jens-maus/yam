@@ -651,8 +651,13 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
             int size = FileSize(part->Filename);
 
             fprintf(ofh, "begin 644 %s\n", *part->Name ? part->Name : (char *)FilePart(part->Filename));
-            touue(ifh, ofh);
-            fprintf(ofh, "end\nsize %d\n", size);
+
+            if(uuencode_file(ifh, ofh) < 0)
+            {
+              ER_NewError(GetStr(MSG_ER_UUFILEENCODE), part->Filename, NULL);
+            }
+
+            fprintf(ofh, "``\nend\nsize %d\n", size);
          }
          break;
 

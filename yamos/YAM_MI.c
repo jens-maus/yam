@@ -39,7 +39,6 @@
 static void uueget(char*, FILE*, int);
 static BOOL gettxtline(char*, int, char**);
 static BOOL getline(char*, int, FILE*);
-static int outdec(char*, FILE*);
 
 static int rfc2047_decode_int(const char *text,
                               int (*func)(const char *, unsigned int, const char *, const char *, void *),
@@ -90,9 +89,17 @@ static const unsigned char index_hex[128] =
 #define QPENC_BUF   4096  // bytes to use as a quoted-printable file encoding buffer
 #define QPDEC_BUF   4096  // bytes to use as a quoted-printable file decoding buffer
 
-#define SUMSIZE       64
+#define UUENC_IWIDTH 45                   // number of unencoded input chars
+#define UUENC_OWIDTH (UUENC_IWIDTH*8/6)   // number of final output chars after encoding
+#define UUENC_IBUF   (UUENC_IWIDTH*100)   // bytes to use as a uucode input encoding buffer
+#define UUENC_OBUF   (UUENC_OWIDTH+3*80)  // bytes to use as a uucode output encoding buffer
+#define UUDEC_BUF    4096                 // bytes to use as a uucode file decoding buffer
+#define UUMAX_CHAR   64                   // the maximum value of a char to hit c + 32 = 96
+
+#define UUENCODE_CHAR(c)  (((c) & 0x3F) ? ((c) & 0x3F) + ' ' : '`')
+#define	UUDECODE_CHAR(c)  (((c) - ' ') & 0x3F)
+
 #define hexchar(c)    index_hex[(c) & 0x7F]
-#define ENC(c)        ((c) ? ((c) & 077) + ' ': '`')
 
 // The following table and macros were taken from the GMIME project`s CVS
 // and are used to help analyzing ASCII characters and to which special
@@ -1057,6 +1064,161 @@ void fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt)
 ///
 
 /*** UU encode/decode routines ***/
+/// uuencode_file()
+// Encodes a whole file using the good-old UUEncode algorithm which isn't
+// suprisingly defined in any RFC out there. So here we use a slightly, but
+// fully compatible approach of what is defined in the original BSD UUcode
+// definition. In addition to the "normal" UU encoding we add a checksum
+// char to every encoded line so that during decoding a mailer could check
+// the integrity of the UU encoded string and warn the user accordingly.
+long uuencode_file(FILE *in, FILE *out)
+{
+  unsigned char inbuffer[UUENC_IBUF+1]; // we read out data in ~4500 byte chunks
+  unsigned char outbuffer[UUENC_OBUF+1];// the output buffer
+  unsigned char *iptr;
+  unsigned char *optr = outbuffer;
+  long encoded_chars = 0;
+  BOOL eof_reached = FALSE;
+  size_t read;
+
+  DB(kprintf("uuencode_file()\n");)
+
+  while(eof_reached == FALSE)
+  {
+    // read in 4096 byte chunks
+    read = fread(inbuffer, 1, UUENC_IBUF, in);
+
+    // on a short item count we check for a potential
+    // error and return immediatly.
+    if(read != UUENC_IBUF)
+    {
+      if(feof(in) != 0)
+      {
+        DB(kprintf("EOF file at %ld\n", ftell(in));)
+
+        eof_reached = TRUE; // we found an EOF
+
+        // if the last read was zero we can exit immediatly
+        if(read == 0)
+          break;
+      }
+      else
+      {
+        DB(kprintf("error on reading data!\n");)
+
+        // an error occurred, lets return -1
+        return -1;
+      }
+    }
+
+    // let us now parse through the inbuffer and encode it according
+    // to UUEncoding rules
+    iptr = inbuffer;
+
+    while(read > 0)
+    {
+      int i;
+      int checksum = 0;
+
+      // check if we can parse a whole 45 chars long input line
+      // or if we have to enough less than that.
+      if(read/UUENC_IWIDTH > 0)
+        *optr++ = UUENCODE_CHAR(UUENC_IWIDTH);
+      else
+        *optr++ = UUENCODE_CHAR(read);
+
+      // then we encode by reading out 3 bytes each until we haven't
+      // enough bytes left and have to do it different or if we
+      // hit the line limit if 45 input chars.
+      for(i=0; read/3 > 0 && i < UUENC_IWIDTH; i+=3)
+      {
+        unsigned char c1 = *iptr++;
+        unsigned char c2 = *iptr++;
+        unsigned char c3 = *iptr++;
+
+        // encode the three chars (c1,c2,c3) into four output
+        // chars by forming groups of 6 bits like the UUcode
+        // definition defines it.
+        *optr++ = UUENCODE_CHAR(c1 >> 2);
+        *optr++ = UUENCODE_CHAR((c1 << 4) | ((c2 >> 4) & 0xF));
+        *optr++ = UUENCODE_CHAR((c2 << 2) | ((c3 >> 6) & 0x3));
+        *optr++ = UUENCODE_CHAR(c3);
+
+        // calculate an incremental checksum
+        checksum += (c1+c2+c3) % UUMAX_CHAR;
+
+        encoded_chars += 4;
+        read -= 3;
+      }
+
+      // check why we quit the above loop. If we quit it because
+      // we hit the maximum input line length or if there was
+      // nothing left to read we just write out the checksum
+      // and a newline to finish the current line
+      if(i >= UUENC_IWIDTH || read == 0)
+      {
+        *optr++ = UUENCODE_CHAR(checksum);
+        *optr++ = '\n';
+      }
+      else if(read > 0)
+      {
+        unsigned char c1 = *iptr++;
+        unsigned char c2 = 0;
+
+        // if we hit this branch, then we have still some data to
+        // process, but there are < 3 chars left, so we make it
+        // easy and start encoding iterative.
+        *optr++ = UUENCODE_CHAR(c1 >> 2);
+        read--;
+
+        // check if we still one byte left so that we can
+        // include it into the decoding.
+        if(read > 0)
+        {
+          c2 = *iptr++;
+          read--;
+        }
+
+        // ok, and as it can't be more than 2 bytes we got, we
+        // can simply encode the virtual 3 bytes into the rest
+        // of the 3 bytes here.
+        *optr++ = UUENCODE_CHAR((c1 << 4) | ((c2 >> 4) & 0xF));
+        *optr++ = UUENCODE_CHAR(c2 << 2);
+        *optr++ = '`';
+
+        encoded_chars += 4;
+
+        // put out a checksum char aswell and a finalizing newline
+        *optr++ = UUENCODE_CHAR((c1+c2)%UUMAX_CHAR);
+        *optr++ = '\n';
+      }
+
+      // let us now check if our outbuffer is filled up so that we can write
+      // out the data to our out stream.
+      if(optr-outbuffer >= UUENC_OBUF ||
+         eof_reached == TRUE)
+      {
+        size_t todo = optr-outbuffer;
+
+        // now we do a binary write of the data
+        if(fwrite(outbuffer, 1, todo, out) != todo)
+        {
+          DB(kprintf("error on writing data!\n");)
+          // an error must have occurred.
+          return -1;
+        }
+
+        // now reset the outbuffer and stuff
+        optr = outbuffer;
+      }
+    }
+  }
+
+  DB(kprintf("finished uuencode_file(): %ld\n", encoded_chars);)
+  return encoded_chars;
+}
+
+///
 /// uueget
 //  Decodes four UU encoded bytes
 static void uueget(char *ptr, FILE *outfp, int n)
@@ -1203,43 +1365,6 @@ void fromuue(FILE *infp, FILE *outfp)
    }
 }
 
-///
-/// outdec
-//  Encodes three bytes using UUE format
-static int outdec(char *p, FILE *out)
-{
-   int c1,c2,c3,c4;
-
-   c1 = *p >> 2;
-   c2 = ((p[0] << 4) & 060) | ((p[1] >> 4) & 017);
-   c3 = ((p[1] << 2) & 074) | ((p[2] >> 6) &  03);
-   c4 = p[2] & 077;
-   fputc(ENC(c1), out);
-   fputc(ENC(c2), out);
-   fputc(ENC(c3), out);
-   fputc(ENC(c4), out);
-   return (p[0]+p[1]+p[2]) % SUMSIZE;
-}
-
-///
-/// touue
-//  Encodes a file using UUE format
-void touue(FILE *in, FILE *out)
-{
-   char buf[80];
-   int i,n,checksum;
-
-   for (;;)
-   {
-      n = fread(buf, 1, 45, in);
-      fputc(ENC(n), out);
-      checksum = 0;
-      for (i = 0; i < n; i += 3) checksum = (checksum+outdec(&buf[i], out))%SUMSIZE;
-      fputc(ENC(checksum), out);
-      fputc('\n', out);
-      if (n <= 0) break;
-   }
-}
 ///
 
 /*** RFC 2047 MIME encoding/decoding routines ***/

@@ -53,6 +53,9 @@ long base64decode_file(FILE *in, FILE *out,
 long qpencode_file(FILE *in, FILE *out);
 long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt);
 
+// uucode encoding/decoding routines
+long uuencode_file(FILE *in, FILE *out);
+
 // rfc2047 decoding routines
 int rfc2047_encode_file(FILE *fh, const char *str,
                         const struct TranslationTable *tt);
@@ -63,6 +66,5 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
 void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
 void  fromuue(FILE *infp, FILE *outfp);
 void  fromuuetxt(char **txt, FILE *outfp);
-void  touue(FILE *in, FILE *out);
 
 #endif /* YAM_MIME_H */

@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-07-29  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c: rewrote the UU MIME encoding routines from scratch.
+      Introduced separate input and output buffers like with the
+      other new reworked MIME encoding routines. This sped up the
+      encoding process to only 1/3 of which the original old
+      unbuffered routines took. Now only the UUdecoding routines
+      are missing and then all MIME routines are completly fresh :)
+
 2004-07-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c: slightly modified the rfc2047 quoted-printable

@@ -5313,6 +5313,11 @@ An unexpected error occurred while trying to encode the file \
 '%s' with the quoted-printable file encoding routines.
 ; FILENAME
 ;
+MSG_ER_UUFILEENCODE (//)
+An unexpected error occurred while trying to encode the file \
+'%s' with the UUcode file encoding routines.
+; FILENAME
+;
 MSG_ER_QPDEC_FILEIO (//)
 A file input/output error occurred during decoding of the quoted \
 printable encoded file '%s'.
