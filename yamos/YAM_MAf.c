@@ -121,6 +121,7 @@ static char *MA_IndexFileName(struct Folder*);
 static BOOL MA_DetectUUE(FILE*);
 static void MA_GetRecipients(char*, struct Person**, int*);
 static BOOL MA_ScanDate(struct Mail *mail, const char *date);
+static BOOL MA_ScanMailBox(struct Folder *folder);
 static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder);
 
 /***************************************************************************
@@ -1584,7 +1585,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
 ///
 /// MA_ScanMailBox
 //  Scans for message files in a folder directory
-BOOL MA_ScanMailBox(struct Folder *folder)
+static BOOL MA_ScanMailBox(struct Folder *folder)
 {
   struct ExtendedMail *email;
   BPTR dirLock;

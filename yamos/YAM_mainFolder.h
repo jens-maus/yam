@@ -101,7 +101,6 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile);
 BOOL  MA_PromptFolderPassword(struct Folder *fo, APTR win);
 BOOL  MA_ReadHeader(FILE *fh, struct MinList *headerList);
 BOOL  MA_SaveIndex(struct Folder *folder);
-BOOL  MA_ScanMailBox(struct Folder *folder);
 void  MA_UpdateIndexes(BOOL initial);
 void  MA_UpdateInfoBar(struct Folder *);
 

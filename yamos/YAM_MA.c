@@ -2387,12 +2387,18 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
 {
    struct Folder *folder = FO_GetCurrentFolder();
 
-   if(!folder || folder->Type == FT_GROUP) return;
+   // on groups we don't allow any index rescanning operation
+   if(!folder || folder->Type == FT_GROUP)
+     return;
 
    // we make sure that the Listview is disabled before the
    // rescan takes place. This makes sure that the user can`t play around
    // with some strange data.. ;)
    set(G->MA->GUI.NL_MAILS, MUIA_Disabled, TRUE);
+
+   // make sure we clear the NList previous to our index rescanning
+   // or we risk that it still refers to some free data.
+   DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Clear);
 
    // we start a rescan by expiring the current index and issueing
    // a new MA_GetIndex(). That will also cause the GUI to refresh!
@@ -2402,7 +2408,8 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
 
    // if we are still in the folder we wanted to rescan,
    // we can refresh the list.
-   if(folder == FO_GetCurrentFolder()) MA_ChangeFolder(NULL, FALSE);
+   if(folder == FO_GetCurrentFolder())
+     MA_ChangeFolder(NULL, FALSE);
 }
 MakeHook(MA_RescanIndexHook, MA_RescanIndexFunc);
 
@@ -2909,16 +2916,20 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
          if(hasStatusMarked(entry))
          {
             // if the needed BCImage data doesn`t exist we set preparse to bold
-            if(G->BImage[17]) strcat(dispsta, "\033o[17]");
-            else msg->preparses[1] = "\033b";
+            if(G->BImage[17])
+              strcat(dispsta, "\033o[17]");
+            else
+              msg->preparses[1] = "\033b";
          }
 
          // now we generate the proper string for the mailaddress
          if(C->MessageCols & (1<<1) || searchWinHook)
          {
             array[1] = dispfro;
-            *dispfro = 0;
-            if(isMultiRCPTMail(entry)) strcat(dispfro, "\033o[11]");
+
+            *dispfro = '\0';
+            if(isMultiRCPTMail(entry))
+              strcat(dispfro, "\033o[11]");
 
             if(((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) &&
                 (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
@@ -2927,7 +2938,8 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
               pe = &entry->To;
               strcat(dispfro, GetStr(MSG_MA_ToPrefix));
             }
-            else pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
+            else
+              pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
 
 #ifndef DISABLE_ADDRESSBOOK_LOOKUP
 {
@@ -2938,8 +2950,8 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
             {
                addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
             }
-            else addr = AddrName((*pe));
-
+            else
+              addr = AddrName((*pe));
 }
 #else
             addr = AddrName((*pe));
@@ -2949,7 +2961,8 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
          }
 
          // lets set all other fields now
-         if(!searchWinHook && C->MessageCols & (1<<2)) array[2] = AddrName((entry->ReplyTo));
+         if(!searchWinHook && C->MessageCols & (1<<2))
+           array[2] = AddrName((entry->ReplyTo));
 
          // then the Subject
          array[3] = entry->Subject;

@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-03-04  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c: fixed a bug where the main mail nlist wasn't cleared previous to an
+      index rescan operation. This had the effect that it actually happend that the
+      NList was still trying to access data which was already freed during the
+      rescanning process. This actually caused a crash under certain situations. So
+      index rescanning operations on folders containing mails should hopefully be
+      safer now.
+
 2005-03-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_FI.c: fixed a recently introduced bug in the mail filtering routines where
