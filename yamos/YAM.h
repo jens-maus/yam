@@ -538,8 +538,9 @@ struct ABEntry
    long BirthDay;
    char PGPId[SIZE_ADDRESS];
    char Photo[SIZE_PATHFILE];
-   char *Members;
-   int  Type;
+   char *Members;					// member names for list entries
+   int  Type;						// AET_*
+	int  DefSecurity;				// Default security setting for mailing this person
 };
 
 struct MailInfo
@@ -815,6 +816,7 @@ struct EA_ClassData  /* address book entry window */
       APTR ST_HOMEPAGE, ST_BIRTHDAY, GR_PHOTO, BC_PHOTO, BT_SELECTPHOTO, BT_LOADPHOTO;
       APTR LV_MEMBER, ST_MEMBER, BT_ADD, BT_DEL;
       APTR BT_OKAY, BT_CANCEL;
+      APTR CY_DEFSECURITY;
    } GUI;
    int  Type;
    int  EntryPos;
@@ -1285,8 +1287,6 @@ extern void MA_SetSortFlag(void);
 extern BOOL MA_PromptFolderPassword(struct Folder *, APTR);
 extern void MA_DeleteSingle(struct Mail *, BOOL);
 extern BOOL MA_ReadHeader(FILE *);
-extern void MA_ValidateStatus(struct Folder *);
-extern char *MA_IndexFileName(struct Folder *);
 extern BOOL MA_SaveIndex(struct Folder *);
 extern int  MA_LoadIndex(struct Folder *, BOOL);
 extern BOOL MA_GetIndex(struct Folder *);
@@ -1328,7 +1328,6 @@ extern BOOL MA_SendMList(struct Mail **);
 extern BOOL MA_Send(int);
 extern void MA_PopNow(int, int);
 extern void MA_SetupDynamicMenus(void);
-extern char *MA_GetRealSubject(char *);
 extern int MA_CmpFunc(struct Mail **, struct Mail **);
 extern void MA_MakeFOFormat(APTR);
 extern void MA_MakeMAFormat(APTR);
@@ -1366,7 +1365,6 @@ extern struct Folder *FO_NewFolder(int, char *, char *);
 extern BOOL FO_CreateFolder(int, char *, char *);
 extern BOOL FO_LoadTree(char *);
 extern BOOL FO_SaveTree(char *);
-extern struct FO_ClassData *FO_New(void);
 
 extern APTR AB_GotoEntry(char *alias);
 extern void AB_InsertAddress(APTR, char *, char *, char *);
@@ -1465,7 +1463,6 @@ extern void TR_Open(void);
 extern struct TR_ClassData *TR_New(int);
 
 extern void ER_NewError(char *, char *, char *);
-extern struct ER_ClassData *ER_New(void);
 
 extern void FI_SearchGhost(struct SearchGroup *, BOOL disabled);
 extern APTR FI_ConstructSearchGroup(struct SearchGroup *, BOOL);
@@ -1475,7 +1472,6 @@ extern BOOL FI_DoComplexSearch(struct Search *, int, struct Search *, struct Mai
 
 extern BOOL US_Login(char *, char *, char *, char *);
 extern struct User *US_GetCurrentUser(void);
-extern struct US_ClassData *US_New(BOOL);
 
 extern void NewLine(FILE *, BOOL);
 extern void to64(FILE *, FILE *, BOOL);
