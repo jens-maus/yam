@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.8 (09.03.2003)
+## version $VER: YAM.catalog 5.9 (22.03.2003)
 ## codeset 0
 ;
 MSG_Folder
@@ -640,8 +640,8 @@ MSG_MA_xSelected
 ; %lD messages selected.\n
 ;
 MSG_MA_ConfirmFilter
-Sollen wirklich alle Nachrichten im\nPostfach '%s' gefiltert werden?
-; Is it okay to filter all the messages\nin the folder '%s'?
+Sollen wirklich Nachrichten im\nPostfach '%s' gefiltert werden?
+; Is it okay to filter messages\nin folder '%s'?
 ;
 MSG_MA_FilterStats
 Filtervorgang beendet:\n%3ld Nachrichten geprüft,\n%3ld weitergeleitet,\n%3ld archiviert,\n%3ld gelöscht
@@ -1064,7 +1064,7 @@ Alle Nachrichten in diesem Postfach gehen verloren!\nWollen Sie es wirklich lösc
 ; All messages in this folder will be lost!\nDo you really want to delete it?
 ;
 MSG_CO_InvalidConf
-Ungültige Konfiguration (fehlender Hostname\n oder E-Mail Adresse)\n\nBitte diese Angaben korrigieren!
+Ungültige Konfiguration (fehlender SMTP/POP3\nServername oder E-Mail Adresse)\n\nBitte diese Angaben korrigieren!
 ; Invalid configuration (missing hostname\n or email address)\n\nPlease fill in these fields and try again!
 ;
 MSG_CO_ImportMIMEReq
@@ -1657,7 +1657,7 @@ Andere Optionen
 ;
 MSG_CO_WrapHeader
 Zeilen_umbruch
-; _Wrap header
+; _Wrap headers
 ;
 MSG_CO_OldQuotes
 A_ltes Zitat
@@ -1669,7 +1669,7 @@ F_ormatierungen
 ;
 MSG_CO_Header
 _Kopfzeilen
-; _Header
+; _Headers
 ;
 MSG_CO_SenderInfo
 Sender_info
@@ -2256,16 +2256,16 @@ Nachrichten beim Versand nicht in 7bit umwandeln.\nBenutzen Sie diese Option nur
 ; Don't convert messages to 7bit when transfering.\nOnly use this option if your\nSMTP server supports 8bit transfers!\nOtherwise your messages will get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
-Liste der POP3-Server
-; List of POP3 hosts
+Liste der POP3 Zugänge
+; List of POP3 accounts
 ;
 MSG_HELP_CO_BT_PADD
-Einen neuen POP3-Server zur Liste hinzufügen
-; Add a new POP3 host to the list
+Einen neuen POP3 Zugang zur Liste hinzufügen
+; Add a new POP3 account to the list
 ;
 MSG_HELP_CO_BT_PDEL
-Ausgewählten POP3-Server von der Liste entfernen
-; Remove selected POP3 host from the list
+Ausgewählten POP3 Zugang von der Liste entfernen
+; Remove selected POP3 account from the list
 ;
 MSG_HELP_CO_ST_POPUSERID
 Benutzername für die Anmeldung auf dem POP3-Server.\nWenn Sie dieses Feld leer lassen, wird der Benutzername\naus Ihrer E-Mail-Adresse übernommen.
@@ -2304,8 +2304,8 @@ Eingehende Nachrichten, welche diese Größe\nüberschreiten, werden als 'groß' bez
 ; Incoming messages which are bigger than this\nsize will be considered as large.
 ;
 MSG_HELP_CO_ST_INTERVAL
-Wie oft wollen Sie auf neue Post prüfen?\n(Geben Sie 0 oder keinen Wert ein,\num diese Funktion auszuschalten)
-; How frequently do you want to check for new mail?\n(enter 0 or no value to disable this feature)?
+Wie oft wollen Sie auf neue Post prüfen?\n(Geben Sie 0 ein,\num diese Funktion auszuschalten)
+; How frequently do you want to check for new mail?\n(enter 0 to disable this feature)?
 ;
 MSG_HELP_CO_CH_DLLARGE
 Lade große Nachrichten beim automatischen Postholen,\nselbst wenn sie die oben angegebene Größe überschreiten
@@ -2352,7 +2352,7 @@ Wie sollen die zwei Suchkriterien\nfür diesen Filter verknüpft werden?
 ; How to combine the two\nsearch keys for this filter
 ;
 MSG_HELP_CO_CH_ABOUNCE
-Leitet passende Nachrichten an eine andere Person um
+Leitet passende Nachrichten\nan eine andere Person um
 ; Bounce matching messages to another person
 ;
 MSG_HELP_CO_ST_ABOUNCE
@@ -2360,7 +2360,7 @@ E-Mail-Adresse der Person, die\ndie umgeleitete Nachricht erhält
 ; Email address of the person that gets the bounced messages
 ;
 MSG_HELP_CO_CH_AFORWARD
-Leitet passende Nachrichten an eine andere Person weiter
+Leitet passende Nachrichten\nan eine andere Person weiter
 ; Forward matching messages to another person
 ;
 MSG_HELP_CO_ST_AFORWARD
@@ -2384,7 +2384,7 @@ Ausführender Befehl. Der Pfad der passenden\nNachricht wird als Parameter überge
 ; Command to execute. The path of the matching\nmessage is passed as an argument.
 ;
 MSG_HELP_CO_CH_APLAY
-Spielt eine Ton für jede passende Nachricht ab
+Spielt einen Ton für jede passende Nachricht ab.
 ; Plays a sound file for\neach matching message
 ;
 MSG_HELP_CO_ST_APLAY
@@ -2416,7 +2416,7 @@ Entfernt ausgewählten Filter
 ; Remove selected filter
 ;
 MSG_HELP_CO_CA_COL2QUOT
-In dieser Farbe werden alte Zitate im\nLesefenster und im Editor dargestellt
+In dieser Farbe werden Zitate der\nzweiten Ebene im Lesefenster\nund im Editor dargestellt
 ; Adjust the color used for displaying old quotes
 ;
 MSG_HELP_CO_CH_WRAPHEAD
@@ -2572,7 +2572,7 @@ Zitatzeichen auch bei leeren Zeilen verwenden?
 ; Insert quote character(s) for empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR
-Lässt, falls sich From und ReplyTo-\nAdressen unterscheiden, den Benutzer die\ngewünschte Empfängeradresse auswählen
+Lässt, falls sich 'From:' und 'ReplyTo:'\nAdressen unterscheiden, den Benutzer die\ngewünschte Empfängeradresse auswählen
 ; Let the user select the desired recipient address\nif the From and Reply-To addresses are different
 ;
 MSG_HELP_CO_CH_STRIPSIG
@@ -2848,7 +2848,7 @@ Alias
 ; Alias
 ;
 MSG_AB_FoundEntry
-Passenden Eintrag gefunden!\nAlias: %s\nName: %s
+Passenden Eintrag gefunden!\nAlias: \eb%s\en\nName: \eb%s\en
 ; Found matching entry!\nAlias: %s\nName: %s
 ;
 MSG_AB_FindEntry
@@ -3452,7 +3452,7 @@ Diese Nachricht kann nur von %s gelesen werden
 ; The message can only be read by %s\n
 ;
 MSG_RE_AddSender
-Wollen Sie den Absender\n%s\nin Ihr Adressbuch aufnehmen?
+Wollen Sie den Absender\n\eb%s\en\nin Ihr Adressbuch aufnehmen?
 ; Do you want to add the sender\n%s\nto your address book?
 ;
 MSG_RE_NewGroupTitle
@@ -3672,8 +3672,8 @@ PGP/MIME unterstützt keine Anlagen: Signieren/Verschlüsseln wurde ausgeschaltet.
 ; PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
 ;
 MSG_WR_DiscardChanges
-Wollen Sie wirklich alle Änderungen an dieser Nachricht verwerfen?
-; Do you really want to discard all modifications to this message?
+Wollen Sie wirklich alle Änderungen\nan dieser Nachricht verwerfen?
+; Do you really want to discard all\nmodifications to this message?
 ;
 MSG_WR_DiscardChangesGad
 *_Später senden|_Verwerfen|_Abbrechen
@@ -4048,7 +4048,7 @@ Empfangsbestätigung
 ; Return receipt
 ;
 MSG_WR_MGetMDN
-Nachricht verfolgen
+Nachricht verfolgen (MDN)
 ; Track message
 ;
 MSG_WR_MAddInfo
@@ -4156,7 +4156,7 @@ Zusätzliche Kopfzeilen, die\nden Nachrichtenkopf ergänzen
 ; Additional message header(s) that\nwill be added to the message
 ;
 MSG_HELP_WR_ST_FROM
-Inhalt der From-Kopfzeile\n(Adresse und Name der Person\ndie diesen Brief schreibt)
+Inhalt der 'From:' Kopfzeile\n(Name und Adresse der Person\ndie diesen Brief schreibt)
 ; Contents of From header field\n(address and name of the person\nwho's writing this letter)
 ;
 MSG_HELP_WR_ST_REPLYTO
@@ -4164,7 +4164,7 @@ Antwortadresse\nfür diesen Brief
 ; Return address\nfor this letter
 ;
 MSG_HELP_WR_CH_DELSEND
-Speichere diese Nachricht\nnicht im Gesendet-Postfach
+Speichere diese Nachricht\nnicht im 'Gesendete' Postfach
 ; Don't store this message\nin the Sent folder
 ;
 MSG_HELP_WR_CH_RECEIPT
@@ -4188,7 +4188,7 @@ Welche Signatur wollen Sie\nin diesem Brief verwenden?
 ; Which signature do you want\nto append to this letter?
 ;
 MSG_HELP_WR_RA_SECURITY
-Wählen Sie eine dieser Sicherheitsoptionen\num Ihre Nachricht PGP-signiert, verschlüsselt\noder anonym zu versenden
+Wählen Sie eine dieser Sicherheitsoptionen\num Ihre Nachricht PGP signiert, verschlüsselt\noder anonym zu versenden
 ; Select the one of these security options\nto send your message PGP-signed, encrypted\nor anonymously
 ;
 MSG_HELP_WR_BT_HOLD
@@ -4284,7 +4284,7 @@ MSG_TR_NewMailReq
 ; \e8You have new mail!\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
 ;
 MSG_TR_FilterStats
-\nFiltervorgang abgeschlossen:\n%3ld Nachrichten überprüft,\n%3ld umgeleitet,\n%3ld weitergeleitet,\n%3ld beantwortet,\n%3ld starteten Befehl,\n%3ld verschoben,\n%3ld gelöscht
+\nFiltervorgang abgeschlossen:\n\n%3ld Nachrichten überprüft,\n%3ld umgeleitet,\n%3ld weitergeleitet,\n%3ld beantwortet,\n%3ld starteten Befehl,\n%3ld verschoben,\n%3ld gelöscht
 ; \nFiltering done:\n%3ld messages checked,\n%3ld redirected,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted
 ;
 MSG_TR_NewMail
@@ -4404,11 +4404,11 @@ Kann Zeichensatzkonverter '%s' nicht öffnen\n(nicht existent oder falsches Forma
 ; Couldn't open translation table '%s'\n(non existent or wrong format).
 ;
 MSG_ER_CantCreateFile
-Kann Datei '%s' nicht erstellen. Versichern Sie sich, dass der Pfad existiert und das Laufwerk nicht schreibgeschützt ist.
+Kann Datei '%s' nicht erstellen.\n\nVersichern Sie sich, dass der Pfad existiert und das Laufwerk nicht schreibgeschützt ist.
 ; Can't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
 ;
 MSG_ER_CantCreateDir
-Kann Verzeichnis '%s' nicht erstellen. Versichern Sie sich, dass das Laufwerk nicht schreibgeschützt ist.
+Kann Verzeichnis '%s' nicht erstellen.\n\nVersichern Sie sich, dass das Laufwerk nicht schreibgeschützt ist.
 ; Can't create directory '%s'. Make sure that the volume isn't write-protected.
 ;
 MSG_ER_ErrorNoAlias
@@ -4432,7 +4432,7 @@ Es läuft kein TCP/IP-Stack! Starten Sie eine bsdsocket.library-kompatible Intern
 ; No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
 ;
 MSG_ER_ErrorDateFormat
-Ungültiges Datums/Zeit-Format. Das Datum muss in AmigaDOS-Format sein.\nBeispiel: %s
+Ungültiges Datums/Zeit-Format.\n\nDas Datum muss in AmigaDOS-Format sein.\nBeispiel: %s
 ; Invalid date/time format.\nThe date has to be in AmigaDOS format.\nExample: %s
 ;
 MSG_ER_ErrorMaxFilters
@@ -4440,11 +4440,11 @@ Maximale Anzahl von Filtern erreicht! Sie können keine weiteren Filter hinzufüge
 ; Maximum number of filters reached! You can't add more filters.
 ;
 MSG_ER_CantOpenTempfile
-Kann temporäre Datei '%s' nicht öffnen. Überprüfen Sie die Pfadeinstellung in der Konfiguration.
+Kann temporäre Datei '%s' nicht öffnen.\n\nÜberprüfen Sie die Pfadeinstellung in der Konfiguration.
 ; Can't open temporary file '%s'. Check the path settings in the configuration.
 ;
 MSG_ER_CantCreateTempfile
-Kann temporäre Datei nicht erstellen. Grund: zu wenig Speicher oder Angabe eines ungültigen Pfads in der Konfiguration.
+Kann temporäre Datei nicht erstellen.\n\nGrund: zu wenig Speicher oder Angabe eines ungültigen Pfads in der Konfiguration.
 ; Can't create temporary file. Reason: out of memory or invalid path specified in the configuration.
 ;
 MSG_ER_ErrorConsole
@@ -4464,27 +4464,27 @@ Unerwartetes Dateiende beim Dekodieren einer UU-kodierten Datei. Die Nachricht s
 ; Unexpected EOF while decoding a UUencoded file. The message seems to be truncated.
 ;
 MSG_ER_InvalidLength
-Ungültige Zeilenlänge in UU-kodierter Datei: %lD. Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
+Ungültige Zeilenlänge in UU-kodierter Datei: %lD.\n\nGrund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
 ; Invalid line length in UUencoded file: %lD. A defective UUencoder was used or the message is truncated.
 ;
 MSG_ER_CreateMailError
-Kann Maildatei nicht erstellen. Grund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
+Kann Maildatei nicht erstellen.\n\nGrund: ungültiges Postfachverzeichnis oder Festplattenspeicher erschöpft.
 ; Can't create mail file. Reason: invalid folder directory or unsufficient diskspace.
 ;
 MSG_ER_UnknownEnc
-Unbekannte MIME-Kodierung: %s. YAM konnte einen Teil der Nachricht nicht dekodieren. Speichern Sie die Nachricht ab und versuchen Sie es mit einem anderen Dekodierer.
+Unbekannte MIME-Kodierung: %s.\n\nYAM konnte einen Teil der Nachricht nicht dekodieren. Speichern Sie die Nachricht ab und versuchen Sie es mit einem anderen Dekodierer.
 ; Unknown MIME encoding: %s. YAM failed decoding a part of the message. Save the message to disk and try with a different decoder.
 ;
 MSG_ER_UnknownHeaderEnc
-Unbekannte Kopfzeilenkodierung: %s. YAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
+Unbekannte Kopfzeilenkodierung: %s.\n\nYAM kann eine bestimmte Kopfzeile nicht korrekt anzeigen.
 ; Unknown header encoding: %s. YAM cannot display a particular message header correctly.
 ;
 MSG_ER_MultipartEOF
-Fehler in Multipart-Nachricht: unerwartetes Dateiende. Die Nachricht scheint unvollständig zu sein.
+Fehler in Multipart-Nachricht.\n\nunerwartetes Dateiende. Die Nachricht scheint unvollständig zu sein.
 ; Incomplete multipart message: unexpected end of file. The message seems to be truncated.
 ;
 MSG_ER_MIMEError
-Kann MIME-Nachricht nicht extrahieren. Die Nachricht enthält falsche MIME-Kodierungen oder sie ist leer oder unvollständig.
+Kann MIME-Nachricht nicht extrahieren.\n\nDie Nachricht enthält falsche MIME-Kodierungen oder sie ist leer oder unvollständig.
 ; Can't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
 ;
 MSG_ER_MissingBoundary
@@ -4492,15 +4492,15 @@ Fehlende Begrenzung in einer Multipart-Nachricht. Die Nachricht scheint unvollst
 ; Missing boundary in multipart message. The message seems to be truncated.
 ;
 MSG_ER_CantOpenFile
-Kann Datei '%s' nicht öffnen. Die Datei scheint nicht zu existieren.
+Kann Datei '%s' nicht öffnen.\n\nDie Datei scheint nicht zu existieren.
 ; Can't read from file '%s'. The file doesn't seem to exist.
 ;
 MSG_ER_UUSize
-Dekodierte Größe [%lD] stimmt nicht mit der ursprünglichen Größe [%lD] überein. Grund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
+Dekodierte Größe [%lD] stimmt nicht mit der ursprünglichen Größe [%lD] überein.\n\nGrund: fehlerhafter UU-Kodierer oder unvollständige Nachricht.
 ; Decoded size [%lD] does not\nmatch original size [%lD]. A defective UUencoder was used or the message is truncated.
 ;
 MSG_ER_DocNotFound
-Kann HTML-Dokument '%s' nicht finden. Die Datei existiert nicht auf dem WWW-Server.
+Kann HTML-Dokument '%s' nicht finden.\n\nDie Datei existiert nicht auf dem WWW-Server.
 ; HTML document '%s' not found. The file doesn't exist on the WWW server.
 ;
 MSG_ER_SendHTTP
@@ -4512,19 +4512,19 @@ Keine Verbindung mit WWW-Server '%s'. Mögliche Gründe: TCP/IP offline, ungültige
 ; Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
 ;
 MSG_ER_BadResponse
-Befehl %s antwortet mit Fehler:\n%s\nDer Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
+Befehl %s antwortet mit Fehler:\n%s\n\nDer Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
 ; Bad %s command response: %s.\nThe mail server couldn't execute the command and replied with the error message.
 ;
 MSG_ER_UnknownPOP
-Unbekannter POP3-Server: '%s'. TCP/IP ist offline oder die Serveradresse ist ungültig.
+Unbekannter POP3-Server: '%s'.\n\nTCP/IP ist offline oder die Serveradresse ist ungültig.
 ; Unknown POP3 server: '%s'. TCP/IP is off-line or the server address is invalid.
 ;
 MSG_ER_UnknownSMTP
-Unbekannter SMTP-Server: '%s'. TCP/IP ist offline oder die Serveradresse ist ungültig.
+Unbekannter SMTP-Server: '%s'.\n\nTCP/IP ist offline oder die Serveradresse ist ungültig.
 ; Unknown SMTP server: '%s'. TCP/IP is off-line or the server address is invalid.
 ;
 MSG_ER_CantConnect
-Keine Verbindung mit '%s'. Der Postserver ist zur Zeit nicht verfügbar oder er unterstützt das POP3/SMTP-Protokoll nicht.
+Keine Verbindung mit '%s'.\n\nDer Postserver ist zur Zeit nicht verfügbar oder er unterstützt das POP3/SMTP-Protokoll nicht.
 ; Can't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
 ;
 MSG_ER_NoAPOP
@@ -4532,7 +4532,7 @@ Ihr POP3-Server unterstützt kein APOP. Schalten Sie die APOP-Option in der YAM-K
 ; Your POP3 server doesn't support APOP. Disable the APOP option in your YAM configuration.
 ;
 MSG_ER_ErrorWriteMailfile
-Fehler beim Schreiben der Nachrichtdatei: %s.\nYAM kann die Nachricht nicht auf der Festplatte speichern, vielleicht ist diese voll.
+Fehler beim Schreiben der Nachrichtdatei: %s.\n\nYAM kann die Nachricht nicht auf der Festplatte speichern, vielleicht ist diese voll.
 ; Write error on mail file: %s.\nYAM can't save the message to disk, maybe you're out of diskspace.
 ;
 MSG_ER_ConnectionBroken
@@ -4540,11 +4540,11 @@ TCP/IP-Verbindung wurde unterbrochen, vermutlich hat das Modem aufgelegt.
 ; TCP/IP connection broken, probably due to a carrier drop.
 ;
 MSG_ER_InvalidAddress
-Ungültige Adresse '%s'. Der SMTP-Server hat diese Adresse nicht akzeptiert. Verwenden Sie keine unerlaubten Zeichen.
+Ungültige Adresse '%s'.\n\nDer SMTP-Server hat diese Adresse nicht akzeptiert. Verwenden Sie keine unerlaubten Zeichen.
 ; Invalid address '%s'. The SMTP server didn't accept the address. Check for illegal characters.
 ;
 MSG_ER_ErrorReadMailfile
-Fehler beim Lesen der Nachrichtendatei: %s.\nDie Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
+Fehler beim Lesen der Nachrichtendatei: %s.\n\nDie Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
 ; Read error on mail file: %s.\nThe file exists, but there was an error while reading it.
 ;
 MSG_ER_UserRemoved
@@ -4560,27 +4560,27 @@ Sie müssen einen Namen für den neuen Benutzer angeben!
 ; You must specify a name for the new user!
 ;
 MSG_ER_NoPublicKeys
-Keine öffentlichen PGP-Schlüssel gefunden. Versichern Sie sich, dass PGP installiert ist und nehmen Sie die erforderlichen Einstellungen in YAM vor.
+Keine öffentlichen PGP-Schlüssel gefunden.\n\nVersichern Sie sich, dass PGP installiert ist und nehmen Sie die erforderlichen Einstellungen in YAM vor.
 ; No public PGP keys found. Make sure that PGP is installed and the required settings are made in the configuration of YAM.
 ;
 MSG_ER_PGPreturnsError
-Der folgende PGP-Befehl verursachte einen Fehler: '%s'\nEine Diagnose finden Sie in der Datei %s.
+Der folgende PGP-Befehl verursachte einen Fehler:\n\n'%s'\n\nEine Diagnose finden Sie in der Datei %s.
 ; The following PGP command returned with an error: '%s'\nCheck the file %s for a diagnosis.
 ;
 MSG_ER_PGPnotfound
-Konnte PGP-Befehl nicht ausführen. Überprüfen Sie, ob %s existiert.
+Konnte PGP-Befehl nicht ausführen.\n\nÜberprüfen Sie, ob %s existiert.
 ; Couldn't execute PGP command.\nCheck if %s exists.
 ;
 MSG_ER_InvalidAlias
-Ungültiger Alias: %s. Mehrere Adressen sind in diesem Feld nicht erlaubt.
+Ungültiger Alias: %s.\n\nMehrere Adressen sind in diesem Feld nicht erlaubt.
 ; Invalid alias: %s. Multiple addresses are not allowed in this field.
 ;
 MSG_ER_AliasNotFound
-Unbekannter Alias oder Name: %s. YAM konnte die E-Mail-Adresse dieses Benutzers im Adressbuch nicht finden. Überprüfen Sie die Schreibweise.
+Unbekannter Alias oder Name: %s.\n\nYAM konnte die E-Mail-Adresse dieses Benutzers im Adressbuch nicht finden. Überprüfen Sie die Schreibweise.
 ; Unknown alias or name: %s. YAM couldn't find the email address of this recipient in the address book. Please verify the spelling.
 ;
 MSG_ER_AmbiguousAlias
-Mehrdeutiger Alias oder Name: %s. Es gibt mehr als einen Eintrag mit diesem Namen im Adressbuch. Bitte entfernen Sie doppelte Einträge oder verwenden Sie eindeutige Aliase.
+Mehrdeutiger Alias oder Name: %s.\n\nEs gibt mehr als einen Eintrag mit diesem Namen im Adressbuch. Bitte entfernen Sie doppelte Einträge oder verwenden Sie eindeutige Aliase.
 ; Ambiguous alias or name: %s. There is more than one entry with this name in the address book. Please remove duplicate entries or use unique aliases.
 ;
 MSG_ER_ErrorAddrDontFit
@@ -4592,7 +4592,7 @@ Konnte das PGP-Kürzel von '%s' im Adressbuch nicht finden, versuche es nun mit '
 ; Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
 ;
 MSG_ER_ErrorAppendKey
-Kann öffentlichen PGP-Schlüssel %s nicht anhängen. Beim Extrahieren des Schlüssels vom PGP-Schlüsselring trat ein Problem auf.
+Kann öffentlichen PGP-Schlüssel %s nicht anhängen.\n\nBeim Extrahieren des Schlüssels vom PGP-Schlüsselring trat ein Problem auf.
 ; Can't append public PGP key %s. There was a problem extracting it from the PGP keyring.
 ;
 MSG_DI_Alias
@@ -4864,7 +4864,7 @@ Warte auf Benutzeranmeldung...
 ; Waiting for user login...
 ;
 MSG_US_RemoveReq
-Alle Nachrichten, Postfächer und Konfigurationsdateien\ndieses Benutzers gehen verloren! Wollen Sie den\nBenutzer wirklich löschen?
+Alle Nachrichten, Postfächer und Konfigurationsdateien\ndieses Benutzers gehen verloren!\n\nWollen Sie den\nBenutzer wirklich löschen?
 ; All messages, folders and configuration\nfiles belonging to this user will be lost!\nDo you really want to remove the user?
 ;
 MSG_US_RemoveReqGads
@@ -5056,11 +5056,11 @@ Verzeichnis, in dem die Nachrichten des\nausgewählten Postfachs gespeichert werd
 ; Directory where the messages of\nthe selected folder are stored
 ;
 MSG_HELP_FO_ST_MAXAGE
-Alte Nachrichten werden automatisch nach\nAblauf dieser Zeit (in Tagen) gelöscht.\n0 oder kein Wert schaltet diese Funktion aus.
+Alte Nachrichten werden automatisch nach\nAblauf dieser Zeit (in Tagen) gelöscht.\n0 schaltet diese Funktion aus.
 ; Old messages will automatically\nbe deleted after this time (in days).\nEnter 0 or no value to disable this feature.
 ;
 MSG_HELP_FO_CY_FTYPE
-Art des benutzerdefinierten Postfachs\n(rein/raus/beides)
+Art des benutzerdefinierten Postfachs\n(Eingang/Ausgang/Beides)
 ; Type of custom archive folder\n(in/out/both)
 ;
 MSG_HELP_FO_CY_FMODE
@@ -5184,7 +5184,7 @@ Dekodiere/zeige an...
 ; Decoding/displaying...
 ;
 MSG_RE_FollowThreadReq
-Um Nachrichten zum Thema zu finden, muss YAM sämtliche\nIndizes laden. Dies kann dauern. Wollen Sie weiterfahren?
+Um Nachrichten zum Thema zu finden, muss YAM sämtliche\nIndizes laden. Dies kann dauern.\n\nWollen Sie fortfahren?
 ; In order to follow the thread, YAM has to load all indices.\nThis may be time consuming. Do you want to continue?
 ;
 MSG_CTapplicationadosscript
@@ -5236,7 +5236,7 @@ M\000Verschieben...
 ; M\000Move...
 ;
 MSG_MESSAGE_COPY
-Kopieren...
+Y\000Kopieren...
 ; Copy...
 ;
 MSG_MESSAGE_PRINT
@@ -5300,7 +5300,7 @@ MUI...
 ; MUI...
 ;
 MSG_FO_FromAddress
-From: Adresse
+_From: Adresse
 ; From: address
 ;
 MSG_HELP_FO_ST_MLFROMADDRESS
@@ -5308,11 +5308,11 @@ Diese From: Adresse bei neuen Nachrichten\nfür diese Liste verwenden
 ; Use this From: address when posting\nnew mails to the list
 ;
 MSG_FO_ReplyToAddress
-Reply-To: Adresse
+_Reply-To: Adresse
 ; Reply-To: address
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
-Diese Reply-To: Adresse bei neuen Nachrichten\nfür diese Liste verwenden
+Diese 'Reply-To:' Adresse bei neuen Nachrichten\nfür diese Liste verwenden
 ; Use this Reply-To: address when posting\nnew mails to the list
 ;
 MSG_RE_MDNGads4
@@ -5444,7 +5444,7 @@ Feldeinstellungen
 ; Field settings
 ;
 MSG_CO_SIZEFORMAT
-Größenformat
+_Größenformat
 ; Size format
 ;
 MSG_HELP_CO_CY_SIZE
@@ -5476,11 +5476,11 @@ Auswählen, wenn man sich bei einem\nfremden SMTP-Server anmelden möchte\n(üblich
 ; Select if you wish to authenticate\nyourself to a foreign SMTP server\n(usually outside your ISP's domain).\nIf in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER
-Hier Benutzernamen des\nSMTP AUTH user eingeben.
+Benutzername des\nSMTP AUTH Nutzers.
 ; Enter here the username\nof the SMTP AUTH user.
 ;
 MSG_HELP_CO_ST_SMTPAUTHPASS
-Hier das Passwort des\nSMTP AUTH user eingeben.
+Passwort des\nSMTP AUTH Nutzers.
 ; Enter here the password\nof the SMTP AUTH user.
 ;
 MSG_HELP_CO_ST_APPICON
@@ -5540,15 +5540,15 @@ Soll ein Popupmenü beim Klicken der\nrechten Maustaste über diesem Punkt\nauf de
 ; Show a popup menu when clicking\nthe right mouse button on an\nitem in this list?
 ;
 MSG_CO_INFOBAR
-Informationsleiste
+Statusleiste
 ; Information bar
 ;
 MSG_HELP_CO_CH_INFOBAR
-Hier kann die Position der Infoleiste festgelegt werden.\nDiese zeigt allgemeine Informationen von YAM.
+Hier kann die Position der Statusleiste festgelegt werden.\nDiese zeigt allgemeine Informationen von YAM.
 ; Here you can select the position of the InfoBar\nwhich shows general information in YAM.
 ;
 MSG_CO_WARNSUBJECT
-Warnung bei leerer Betreffzeile
+Warnung _bei leerer Betreffzeile
 ; Warn when there's an empty subject line
 ;
 MSG_HELP_CO_CH_WARNSUBJECT
@@ -5576,19 +5576,19 @@ Suchen
 ; Search
 ;
 MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE
-Groß-/Kleinschreibung beachten
+_Groß-/Kleinschreibung beachten
 ; Case sensitive
 ;
 MSG_SEARCHWINDOW_BT_SEARCH
-Suchen
+_Suchen
 ; Search
 ;
 MSG_SEARCHWINDOW_BT_FROMTOP
-Von oben
+Von _oben
 ; From top
 ;
 MSG_SEARCHWINDOW_BT_CANCEL
-Abbruch
+_Abbruch
 ; Cancel
 ;
 MSG_SEARCHNOTFOUND_TITLE
@@ -5596,7 +5596,7 @@ Suchen
 ; Search
 ;
 MSG_SEARCHNOTFOUND_MSG
-'%s' nicht gefunden
+'%s' nicht gefunden.
 ; '%s' not found
 ;
 MSG_SEARCHNOTFOUND_BUTTON
@@ -5612,7 +5612,7 @@ Standardabsender _verwenden|*Abbru_ch
 ; _Use default sender|*_Cancel
 ;
 MSG_FO_GROUP_CONFDEL
-Diese Gruppe enthält Unterfächer, welche bei\nLöschung in das übergeordnete Fach verschoben\nwerden. Wirklich diese Gruppe löschen?
+Diese Gruppe enthält Unterfächer, welche bei\nLöschung in das übergeordnete Fach verschoben werden.\n\nWirklich diese Gruppe löschen?
 ; This group contains subfolders, which will\nbe moved to the parent folder on deletion.\nDo you really want to delete this group?
 ;
 MSG_FOLDER_NONSEL
@@ -5632,7 +5632,7 @@ Bitte einen Namen für die neue Gruppe eingeben:
 ; Please enter a name for the new folder group:
 ;
 MSG_ER_CANTMOVEMAIL
-Die Nachricht '%s' kann nicht in Gruppe '%s' verschoben werden, da eine Gruppe dieses Namens nicht existiert. Bitte die Filtereinstellungen überprüfen.
+Die Nachricht '%s' kann nicht in Postfach '%s' verschoben werden\n\nEin Postfach mit diesem Namen existiert nicht. Bitte die Filtereinstellungen überprüfen.
 ; Can't move mail '%s' to folder '%s' because a folder with that name doesn't exist. Please check your Filters configuration.
 ;
 MSG_MA_EXECUTINGCMD
@@ -5676,7 +5676,7 @@ Die Mailinglisten-Unterstützung für dieses Postfach (de)aktivieren.
 ; Turn on/off the mailing list\nsupport for this folder.
 ;
 MSG_FO_AUTODETECT
-Autoerkennung
+_Autoerkennung
 ; Autodetect
 ;
 MSG_HELP_FO_BT_AUTODETECT
@@ -5692,7 +5692,7 @@ MSG_FO_MAXAGEFMT
 ; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
-Adresspuffer
+Adress_puffer
 ; Email cache
 ;
 MSG_CO_NB_EMAILCACHEFMT
@@ -5704,7 +5704,7 @@ Puffergröße für die zuletzt verwendeten Empfänger,\nwelche sich nicht im Adressb
 ; Cache size for the most recently used\nrecipients not yet in the address book.\nSelect 0 mails to disable this feature.
 ;
 MSG_CO_USESMTPTLS
-SMTP TLSv1/SSLv3 benutzen
+SMTP TLSv_1/SSLv3 benutzen
 ; Use SMTP TLSv1/SSLv3
 ;
 MSG_HELP_CO_CH_USESMTPTLS
@@ -5720,7 +5720,7 @@ YAM verbindet sich über TLSv1/SSLv3 mit dem POP3-Server am POP3 SSL Port\n995 Po
 ; YAM will connect via TLSv1/SSLv3 to the POP3 server on the\nPOP3 SSL port 995 port and transfer email from there. If this\ncheckbox is ghosted, it means AmiSSL support is not available.
 ;
 MSG_CO_USESTLS
-mit STLS
+_mit STLS
 ; with STLS
 ;
 MSG_HELP_CO_CH_USESTLS
@@ -5752,7 +5752,7 @@ Initialisiere TLSv1/SSLv3 Session...
 ; Initializing TLSv1/SSLv3 session...
 ;
 MSG_ER_INITAMISSL
-Fehler beim Initialisieren der amissl.library - TLSv1/SSLv3 Unterstützung deaktiviert. Bitte die AmiSSL Installation überprüfen und YAM erneut starten.
+Fehler beim Initialisieren der amissl.library - TLSv1/SSLv3 Unterstützung deaktiviert.\n\nBitte die AmiSSL Installation überprüfen und YAM erneut starten.
 ; Couldn't init amissl.library - TLSv1/SSLv3 support disabled. Please check your AmiSSL installation and restart YAM.
 ;
 MSG_ER_INITTLS
@@ -5776,7 +5776,7 @@ Import MIME Anzeiger & Typen
 ; Import MIME viewers & types
 ;
 MSG_ER_TRANSFERMAIL
-Konnte Nachricht '%s' nicht zu Ordner '%s' transferieren.\n\
+Konnte Nachricht '%s' nicht zu Ordner '%s' transferieren.\n\n\
 Die Datei existiert eventuell nicht oder konnte nicht \
 kopiert werden.
 ; MAILFILE, FOLDERNAME
@@ -5789,13 +5789,13 @@ Zeilen).
 ; FILENAME
 ;
 MSG_ER_ADDRBOOKLOAD
-Konnte Addressbuch von Datei '%s' nicht laden.\n\
+Konnte Addressbuch von Datei '%s' nicht laden.\n\n\
 Die Datei scheint nicht zu existieren oder ein\n\
 Zugriff ist nicht möglich.
 ; FILENAME
 ;
 MSG_AB_NOYAMADDRBOOK
-Die Datei '%s' ist keine YAM Addressbuchdatei.\n\
+Die Datei '%s' ist keine YAM Addressbuchdatei.\n\n\
 Möchten Sie trotzdem diese Datei als eine durch Zeilenumbruch\n\
 getrennte Addressbuchdatei laden ?
 ; FILENAME
@@ -5820,12 +5820,12 @@ Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\
 Die Klasse ist nicht installiert.
 ;
 MSG_MCC_OLD
-Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\
+Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\n\
 Sie haben momentan Version v%lu.%lu installiert und\n\
 sollten daher upgraden.
 ;
 MSG_MCC_IN_USE
-Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\
+Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\n\
 Version %lu.%lu wird momentan von einer anderen Anwendung\n\
 verwendet. Wenn sie die benötigte Version installiert haben,\n\
 schliessen sie alle MUI Programme und probieren es erneut.
@@ -5918,10 +5918,10 @@ MSG_MA_CTX_DEFORDER_ALL
 Standardreihenfolge: alle
 ;
 MSG_MA_CTX_MAILLIST
-Nachrichtenliste Einst.
+Nachrichtenliste
 ;
 MSG_MA_CTX_FOLDERLIST
-Postfachliste Einst.
+Postfachliste
 ;
 MSG_HELP_FO_CY_MLSIGNATURE
 Diese Signatur bei neuen Nachrichten\n\
