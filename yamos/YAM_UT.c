@@ -2493,6 +2493,35 @@ Object *MakeFolderImage(char *fname)
    End;
 }
 ///
+/// MakeAddressField
+//  Creates a recipient field
+Object *MakeAddressField(APTR *string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti)
+{
+   Object *obj, *bt_adr;
+
+   if ((obj = HGroup,
+      GroupSpacing(1),
+      Child, *string = RecipientstringObject,
+         StringFrame,
+         MUIA_CycleChain,                          TRUE,
+         MUIA_String_AdvanceOnCR,                  TRUE,
+         MUIA_Recipientstring_ResolveOnCR,         TRUE,
+         MUIA_Recipientstring_MultipleRecipients,  allowmulti,
+         MUIA_ControlChar, ShortCut(label),
+      End,
+      Child, bt_adr = PopButton(MUII_PopUp),
+   End))
+   {
+      SetHelp(*string,help);
+      SetHelp(bt_adr, MSG_HELP_WR_BT_ADR);
+      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
+      DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
+   }
+
+   return obj;
+}
+
+///
 /// MakeNumeric
 //  Creates a MUI numeric slider
 Object *MakeNumeric(int min, int max, BOOL percent)

@@ -109,7 +109,6 @@ static void SetDefaultSecurity(struct Compose*);
 static BOOL WR_ComposePGP(FILE*, struct Compose*, char*);
 static char *WR_TransformText(char*, enum TransformMode, char*);
 static void WR_SharedSetup(struct WR_ClassData*, int);
-static APTR MakeAddressField(APTR*, char*, APTR, int, int, BOOL);
 static struct WR_ClassData *WR_NewBounce(int);
 static struct WR_ClassData *WR_New(int winnum);
 
@@ -1953,33 +1952,6 @@ static void WR_SharedSetup(struct WR_ClassData *data, int winnum)
    DoMethod(data->GUI.BT_SEND    ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_NewMailHook,WRITE_SEND,winnum);
    DoMethod(data->GUI.BT_CANCEL  ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_CancelHook,winnum);
    DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_CancelHook,winnum);
-}
-
-///
-/// MakeAddressField
-//  Creates a recipient field
-static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti)
-{
-   APTR obj, bt_adr;
-   if ((obj = HGroup,
-      GroupSpacing(1),
-      Child, *string = RecipientstringObject,
-         StringFrame,
-         MUIA_CycleChain,                          TRUE,
-         MUIA_String_AdvanceOnCR,                  TRUE,
-         MUIA_Recipientstring_ResolveOnCR,         TRUE,
-         MUIA_Recipientstring_MultipleRecipients,  allowmulti,
-         MUIA_ControlChar, ShortCut(label),
-      End,
-      Child, bt_adr = PopButton(MUII_PopUp),
-   End))
-   {
-      SetHelp(*string,help);
-      SetHelp(bt_adr, MSG_HELP_WR_BT_ADR);
-      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
-      DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
-   }
-   return obj;
 }
 
 ///

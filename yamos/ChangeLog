@@ -1,3 +1,8 @@
+2001-10-21  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * the folder configuration window now also uses YAM`s standard
+      Addressfield string for the ML support.
+
 2001-10-20  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * changed InfoBar label refresh not to refresh the folder image

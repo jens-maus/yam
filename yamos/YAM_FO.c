@@ -1295,11 +1295,11 @@ static struct FO_ClassData *FO_New(void)
                Child, Label2(GetStr(MSG_FO_ToPattern)),
                Child, data->GUI.ST_MLPATTERN = MakeString(SIZE_PATTERN,GetStr(MSG_FO_ToPattern)),
                Child, Label2(GetStr(MSG_FO_ToAddress)),
-               Child, data->GUI.ST_MLADDRESS = MakeString(SIZE_ADDRESS,GetStr(MSG_FO_ToAddress)),
+               Child, MakeAddressField(&data->GUI.ST_MLADDRESS, GetStr(MSG_FO_ToAddress), MSG_HELP_FO_ST_MLADDRESS, ABM_TO, -1, TRUE),
                Child, Label2(GetStr(MSG_FO_FromAddress)),
-               Child, data->GUI.ST_MLFROMADDRESS = MakeString(SIZE_ADDRESS,GetStr(MSG_FO_FromAddress)),
+               Child, MakeAddressField(&data->GUI.ST_MLFROMADDRESS, GetStr(MSG_FO_FromAddress), MSG_HELP_FO_ST_MLFROMADDRESS, ABM_TO, -1, FALSE),
                Child, Label2(GetStr(MSG_FO_ReplyToAddress)),
-               Child, data->GUI.ST_MLREPLYTOADDRESS = MakeString(SIZE_ADDRESS,GetStr(MSG_FO_ReplyToAddress)),
+               Child, MakeAddressField(&data->GUI.ST_MLREPLYTOADDRESS, GetStr(MSG_FO_ReplyToAddress), MSG_HELP_FO_ST_MLREPLYTOADDRESS, ABM_TO, -1, FALSE),
                Child, Label1(GetStr(MSG_WR_Signature)),
                Child, data->GUI.CY_MLSIGNATURE = MakeCycle(fsignat, GetStr(MSG_WR_Signature)),
             End,
@@ -1323,9 +1323,6 @@ static struct FO_ClassData *FO_New(void)
          SetHelp(data->GUI.CH_REVERSE[0],       MSG_HELP_FO_CH_REVERSE          );
          SetHelp(data->GUI.CH_REVERSE[1],       MSG_HELP_FO_CH_REVERSE          );
          SetHelp(data->GUI.ST_MLPATTERN,        MSG_HELP_FO_ST_MLPATTERN        );
-         SetHelp(data->GUI.ST_MLADDRESS,        MSG_HELP_FO_ST_MLADDRESS        );
-         SetHelp(data->GUI.ST_MLFROMADDRESS,    MSG_HELP_FO_ST_MLFROMADDRESS    );
-         SetHelp(data->GUI.ST_MLREPLYTOADDRESS, MSG_HELP_FO_ST_MLREPLYTOADDRESS );
          SetHelp(data->GUI.CY_MLSIGNATURE,      MSG_HELP_WR_RA_SIGNATURE        );
          SetHelp(data->GUI.CH_STATS,            MSG_HELP_FO_CH_STATS            );
 
