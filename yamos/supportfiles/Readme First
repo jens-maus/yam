@@ -117,7 +117,7 @@ Developers: msbethke - Matthias Bethke
   revision update - yup, this *REQUIRES ALL INDICES TO BE UPDATED*, but
   this also wins you the possibility of sorting messages by the date they
   were received or sent, which has now been implemented for real, complete
-  with a suitable new "Date sent/received" sort criterion
+  with a suitable new "Date sent/received" sort criterion (damato)
 - Fixed: a gadget in the filter definition showed junk when switching
   to a remote filter and viceversa (damato)
 - Fixed: YAM remembers again the last active message in a folder and jumps
@@ -197,8 +197,10 @@ Developers: msbethke - Matthias Bethke
   some message to show (damato)
 - Changed: sizes of uuencoded attachments are displayed with a "~" (tilde)
   character in the Read window meaning this is just an approximation
+  (damato)
 - Changed: email addresses in the usual a@b.c form are now clickable
   just like mailto: links, and they are shown highlighted just like URLs
+  (damato)
 - Changed: CTRL-C will now break the application, while CTRL-D will
   restart it immediately (damato)
 - Changed: updated default remailer address (damato)
