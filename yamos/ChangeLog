@@ -7,6 +7,9 @@ $Source$
 
 2004-10-13  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c: simplifies the copy/move routines in the TransferMailFile()
+      function and also squeezed a bug which didn't correctly move/copy
+      files from/to a XPK compressed/encrypted folder.
     * YAM_UT.c, YAM_MA.c: changed the return values the TransferMailFile()
       function returns, resulting in a slightly improved possibility to
       return error conditions. Also added an additional error message if

@@ -3127,13 +3127,9 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    int dstxpk = dstfolder->XPKType;
    char *srcpw = srcfolder->Password;
    char *dstpw = dstfolder->Password;
-   BOOL one2one;
-   BOOL needuncomp;
-   BOOL needcomp;
-   BOOL done = FALSE;
    int success = 0;
 
-   DB(kprintf("TransferMailFile: [%s] to [%s]\n", mail->MailFile, GetFolderDir(dstfolder));)
+   DB(kprintf("TransferMailFile: [%s]->[%s]\n", mail->MailFile, GetFolderDir(dstfolder));)
 
    if(!MA_GetIndex(srcfolder))
      return 0;
@@ -3141,9 +3137,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    if(!MA_GetIndex(dstfolder))
      return 0;
 
-   one2one = (srcxpk == dstxpk) && (srcxpk != 3);
-   needuncomp = srcxpk > 1;
-   needcomp   = dstxpk > 1;
+   // get some information we require
    GetPackMethod(dstxpk, &pmeth, &peff);
    GetMailFile(srcbuf, srcfolder, mail);
 
@@ -3178,59 +3172,75 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
      strcpy(mail->MailFile, dstFileName);
    }
 
-   if(one2one && !copyit && (done = MoveFile(srcbuf, dstbuf)))
-     success = 1;
-
-   if(!done)
+   // now that we have the source and destination filename
+   // we can go and do the file operation depending on some data we
+   // acquired earlier
+   if(srcxpk == dstxpk && !isCryptedFolder(srcfolder))
    {
-      if(needuncomp)
+      if(copyit)
+         success = CopyFile(dstbuf, 0, srcbuf, 0) ? 1 : -1;
+      else
+         success = MoveFile(srcbuf, dstbuf) ? 1 : -1;
+   }
+   else if(isComprFolder(srcfolder))
+   {
+      if(!isComprFolder(dstfolder))
       {
-        if(needcomp)
-        {
-          if(one2one)
-          {
+         // if we end up here the source folder is a compressed folder but the
+         // destination one not. so lets uncompress it
+         if((success = UncompressMailFile(srcbuf, dstbuf, srcpw) ? 1 : -2) > 0)
+         {
             if(!copyit)
-              success = MoveFile(srcbuf, dstbuf) ? 1 : -1;
-            else
-              success = CopyFile(dstbuf, 0, srcbuf, 0) ? 1 : -1;
-
-            copyit = TRUE;
-          }
-          else
-          {
-            struct TempFile *tf = OpenTempFile(NULL);
-
-            if(UncompressMailFile(srcbuf, tf->Filename, srcpw))
             {
-              success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
-              CloseTempFile(tf);
+               success = DeleteFile(srcbuf) ? 1 : -1;
             }
-          }
-        }
-        else
-        {
-          success = UncompressMailFile(srcbuf, dstbuf, srcpw) ? 1 : -2;
-        }
+         }
       }
       else
       {
-        if(needcomp)
-        {
-          success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
-        }
-        else
-        {
-          if(!copyit)
-            success = MoveFile(srcbuf, dstbuf) ? 1 : -1;
-          else
-            success = CopyFile(dstbuf, 0, srcbuf, 0) ? 1 : -1;
+         // here the source folder is a compressed+crypted folder and the
+         // destination one also, so we have to uncompress the file to a
+         // temporarly file and compress it immediatly with the destination
+         // password again.
+         struct TempFile *tf = OpenTempFile(NULL);
 
-          copyit = TRUE;
-        }
+         if(tf)
+         {
+            if((success = UncompressMailFile(srcbuf, tf->Filename, srcpw) ? 1 : -2) > 0)
+            {
+               // compress it immediatly again
+               if((success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff) ? 1 : -2) > 0)
+               {
+                  if(!copyit)
+                  {
+                     success = DeleteFile(srcbuf) ? 1 : -1;
+                  }
+               }
+            }
+
+            CloseTempFile(tf);
+         }
       }
-
-      if(success > 0)
-        success = MA_UpdateMailFile(mail) ? 1 : -3;
+   }
+   else
+   {
+      if(isComprFolder(dstfolder))
+      {
+         // here the source folder is not compressed, but the destination one
+         // so we compress the file in the destionation folder now
+         if((success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff) ? 1 : -2) > 0)
+         {
+            if(!copyit)
+            {
+               success = DeleteFile(srcbuf) ? 1 : -1;
+            }
+         }
+      }
+      else
+      {
+        // if we end up here then there is something seriously wrong
+        success = -3;
+      }
    }
 
    return success;
