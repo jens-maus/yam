@@ -3085,14 +3085,11 @@ struct BodyChunkData *GetBCImage(char *fname)
 //  Loads a bodychunk image from disk
 struct BodyChunkData *LoadBCImage(char *fname)
 {
-   BOOL success = TRUE;
-   struct IFFHandle *iff;
-   struct ContextNode *cn;
-   struct BodyChunkData *bcd;
-
-   if ((bcd = calloc(1,sizeof(struct BodyChunkData))))
+   struct BodyChunkData *bcd=calloc(1,sizeof(struct BodyChunkData));
+   if (bcd)
    {
-      if ((iff = AllocIFF()))
+      struct IFFHandle *iff=AllocIFF();
+      if (iff)
       {
          if ((iff->iff_Stream = Open(fname, MODE_OLDFILE)))
          {
@@ -3101,46 +3098,45 @@ struct BodyChunkData *LoadBCImage(char *fname)
             {
                if (!ParseIFF(iff, IFFPARSE_STEP))
                {
-                  if ((cn=CurrentChunk(iff)) && (cn->cn_ID == ID_FORM))
+                  struct ContextNode *cn=CurrentChunk(iff);
+                  if (cn && (cn->cn_ID == ID_FORM) && (cn->cn_Type == ID_ILBM))
                   {
-                     if (cn->cn_Type == ID_ILBM)
+                     if (!PropChunk (iff, ID_ILBM, ID_BMHD) &&
+                         !PropChunk (iff, ID_ILBM, ID_CMAP) &&
+                         !StopChunk (iff, ID_ILBM, ID_BODY) &&
+                         !StopOnExit(iff, ID_ILBM, ID_FORM) &&
+                         !ParseIFF  (iff, IFFPARSE_SCAN))
                      {
                         struct StoredProperty *sp;
-                        struct BitMapHeader *bmhd;
-                        int i, size;
-
-                        if (!PropChunk (iff, ID_ILBM, ID_BMHD) &&
-                            !PropChunk (iff, ID_ILBM, ID_CMAP) &&
-                            !StopChunk (iff, ID_ILBM, ID_BODY) &&
-                            !StopOnExit(iff, ID_ILBM, ID_FORM) &&
-                            !ParseIFF  (iff, IFFPARSE_SCAN))
+                        if ((sp = FindProp(iff, ID_ILBM, ID_CMAP)))
                         {
-                           if ((sp = FindProp(iff, ID_ILBM, ID_CMAP)))
+                           bcd->Colors = calloc((size_t)sp->sp_Size, sizeof(ULONG));
+                           if (bcd->Colors)
                            {
-                              bcd->Colors = calloc((size_t)sp->sp_Size, sizeof(ULONG));
+                              int i;
                               for (i = 0; i < sp->sp_Size; i++)
                               {
-                                 UBYTE c = ((UBYTE *)sp->sp_Data)[i];
-                                 bcd->Colors[i] = (c<<24)|(c<<16)|(c<<8)|c;
+                                 ULONG c = ((UBYTE *)sp->sp_Data)[i];
+                                 bcd->Colors[i] = (c *= 0x01010101);
                               }
                            }
-                           if ((sp = FindProp(iff,ID_ILBM,ID_BMHD)))
+                        }
+                        if ((sp = FindProp(iff,ID_ILBM,ID_BMHD)))
+                        {
+                           struct BitMapHeader *bmhd = (struct BitMapHeader *)sp->sp_Data;
+                           if (bmhd->bmh_Compression == cmpNone || bmhd->bmh_Compression==cmpByteRun1)
                            {
-                              bmhd = (struct BitMapHeader *)sp->sp_Data;
-                              if (bmhd->bmh_Compression == cmpNone || bmhd->bmh_Compression==cmpByteRun1)
+                              LONG size = CurrentChunk(iff)->cn_Size;
+                              if ((bcd->Body = calloc((size_t)size,1)))
                               {
-                                 size = CurrentChunk(iff)->cn_Size;
-                                 if ((bcd->Body = calloc(size,1)))
+                                 if (ReadChunkBytes(iff, bcd->Body, size) == size)
                                  {
-                                    if (ReadChunkBytes(iff, bcd->Body, (LONG)size) == size)
-                                    {
-                                       bcd->Width  = bmhd->bmh_Width;
-                                       bcd->Height = bmhd->bmh_Height;
-                                       bcd->Depth = bmhd->bmh_Depth;
-                                       bcd->Compression = bmhd->bmh_Compression;
-                                       bcd->Masking = bmhd->bmh_Masking;
-                                       strcpy(bcd->File, FilePart(fname));
-                                    }
+                                    bcd->Width  = bmhd->bmh_Width;
+                                    bcd->Height = bmhd->bmh_Height;
+                                    bcd->Depth = bmhd->bmh_Depth;
+                                    bcd->Compression = bmhd->bmh_Compression;
+                                    bcd->Masking = bmhd->bmh_Masking;
+                                    strcpy(bcd->File, FilePart(fname));
                                  }
                               }
                            }
@@ -3148,30 +3144,22 @@ struct BodyChunkData *LoadBCImage(char *fname)
                      }
                   }
                }
-               else success = FALSE;
 
                CloseIFF(iff);
             }
-            else success = FALSE;
 
             Close(iff->iff_Stream);
          }
-         else success = FALSE;
 
          FreeIFF(iff);
       }
-      else success = FALSE;
-   }
-   else return NULL;
 
-   if (!bcd->Depth) { FreeBCImage(bcd); return NULL; }
+      if (bcd->Depth) return bcd;
 
-   if(success) return bcd;
-   else
-   {
-     if(bcd) free(bcd);
-     return NULL;
+      FreeBCImage(bcd);
    }
+
+   return NULL;
 }
 ///
 
