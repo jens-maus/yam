@@ -7,6 +7,10 @@ $Source$
 
 2003-03-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c, YAM_UT.c: fixed bug in xget() wrapper function where we
+      forgot to set the destination variable to zero which caused the
+      CheckMCC() function to fail if a .mcc didn`t had the
+      MUIA_Version/Revision attributes.
     * YAM_FO.c: fixed bug #696732 where we used a incorrect locale text
       for the mailinglist signature help bubbles.
     * YAM_MA.c: fixed bug #697501 where the "Set status to" context menu

@@ -609,10 +609,11 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 {
    BOOL flush = TRUE;
 
+   DB(kprintf("CheckMCC: %s ", name);)
+
    for(;;) {
 
      // First we attempt to acquire the version and revision through MUI
-
      Object *obj = MUI_NewObject(name, TAG_DONE);
      if (obj)
      {
@@ -625,11 +626,13 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
        MUI_DisposeObject(obj);
 
        if (ver > minver || (ver == minver && rev >= minrev))
+       {
+         DB(kprintf("v%ld.%ld found through MUIA_Version/Revision\n", ver, rev);)
          return TRUE;
+       }
 
        // If we did't get the version we wanted, let's try to open the
        // libraries ourselves and see what happens...
-
        strcpy(libname, "PROGDIR:mui/");
        strcat(libname, name);
 
@@ -644,9 +647,11 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 
          // we add some additional check here so that eventual broken .mcc also have
          // a chance to pass this test (i.e. Toolbar.mcc is broken)
-
          if (ver > minver || (ver == minver && rev >= minrev))
+         {
+           DB(kprintf("v%ld.%ld found through OpenLibrary()\n", ver, rev);)
            return TRUE;
+         }
 
          if (OpenCnt > 1)
          {
@@ -670,6 +675,8 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
          }
          else
          {
+           DB(kprintf("couldn`t find minimum required version.\n");)
+
            // We're out of luck - open count is 0, we've tried to flush
            // and still haven't got the version we want
            if (req && MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_OLD), name, minver, minrev, ver, rev))
@@ -933,7 +940,7 @@ static void Initialise(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_InitLibs), 10);
    XpkBase = InitLib(XPKNAME, 0, 0, FALSE, FALSE);
    if ((DataTypesBase = InitLib("datatypes.library", 39, 0, FALSE, FALSE)))
-      if (CheckMCC("Dtpic.mui", 0, 0, FALSE)) G->DtpicSupported = TRUE;
+      if (CheckMCC("Dtpic.mui", 19, 0, FALSE)) G->DtpicSupported = TRUE;
    if (!TC_Init()) Abort(MSG_ErrorTimer);
    for (i = 0; i < MAXASL; i++)
       if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,

@@ -2980,7 +2980,7 @@ Object * STDARGS DoSuperNew(struct IClass *cl, Object *obj, ...)
 //  Gets an attribute value from a MUI object
 ULONG xget(Object *obj, ULONG attr)
 {
-   ULONG b;
+   ULONG b = 0;
    get(obj, attr, &b);
    return b;
 }
