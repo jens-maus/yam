@@ -1844,11 +1844,10 @@ MakeHook(PO_ListPublicKeysHook, PO_ListPublicKeys);
 //  Finds keyboard shortcut in text label
 char ShortCut(char *label)
 {
-   char *ptr = strchr(label, '_'), sc;
+   char *ptr = strchr(label, '_');
 
    if (!ptr) return 0;
-   sc = ToLower(*++ptr);
-   return sc;
+   return (char)ToLower(*++ptr);
 }
 
 /*********** Function isn't used anywhere! -msbethke **************
@@ -1914,7 +1913,7 @@ Object *MakeCheckGroup(Object **check, char *label)
    return 
    HGroup,
       Child, *check = MakeCheck(label),
-      Child, Label(label),
+      Child, Label1(label),
       Child, HSpace(0),
    End;
 }

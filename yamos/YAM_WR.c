@@ -1609,21 +1609,23 @@ LOCAL char *WR_TransformText(char *source, int mode, char *qtext)
    FILE *fp;
    char *dest = NULL;
    int ch, i, size = FileSize(source), pos = 0, p = 0, qtextlen = strlen(qtext);
-
+   BOOL quote = (mode == ED_INSQUOT || mode == ED_PASQUOT ||
+                 mode == ED_INSALTQUOT || mode == ED_PASALTQUOT);
    if (size > 0)
    {
       size += SIZE_DEFAULT;
-      if (mode == ED_INSQUOT || mode == ED_PASQUOT) size += size/20*qtextlen;
+      if (quote) size += size/20*qtextlen;
       if (dest = calloc(size, 1))
       {
          if (fp = fopen(source, "r"))
          {
             while ((ch = fgetc(fp)) != EOF)
             {
-               if (!pos && (mode == ED_INSQUOT || mode == ED_PASQUOT))
+               if (!pos && quote)
                {
                   if (p+qtextlen > size-2) dest = realloc(dest,(size += SIZE_LARGE));
-                  for (i = 0; i < qtextlen; i++) dest[p++] = qtext[i]; dest[p++] = ' ';
+                  for (i = 0; i < qtextlen; i++) dest[p++] = qtext[i];
+                  dest[p++] = ' ';
                }
                if (ch == '\n') pos = 0; else ++pos;
                if (mode == ED_INSROT13 || mode == ED_PASROT13)
@@ -1660,25 +1662,32 @@ MakeHook(WR_InsertSeparatorHook, WR_InsertSeparatorFunc);
 SAVEDS ASM void WR_EditorCmd(REG(a1,int *arg))
 {
    int cmd = arg[0], winnum = arg[1];
-   char *text, filename[SIZE_PATHFILE];
+   char *text, *quotetext, filename[SIZE_PATHFILE];
    struct TempFile *tf;
    struct WR_ClassData *wr = G->WR[winnum];
 
-   if (cmd == ED_INSERT || cmd == ED_INSQUOT || cmd == ED_INSROT13 || cmd == ED_OPEN)
+	quotetext = (cmd == ED_INSALTQUOT || cmd == ED_PASALTQUOT) ?
+						wr->AltQuoteText : wr->QuoteText;
+   switch(cmd)
    {
-      if (!ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), 0, C->AttachDir, "")) return;
-      strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
-      text = WR_TransformText(filename, cmd, wr->QuoteText);
+      case ED_INSERT:
+      case ED_INSQUOT:
+      case ED_INSALTQUOT:
+      case ED_INSROT13:
+      case ED_OPEN:
+         if (!ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), 0, C->AttachDir, "")) return;
+         strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
+ 			text = WR_TransformText(filename, cmd, quotetext);
+         break;
+      default:
+         if (!(tf = OpenTempFile("w"))) return;
+         DumpClipboard(tf->FP);
+         fclose(tf->FP); tf->FP = NULL;
+ 			text = WR_TransformText(tf->Filename, cmd, quotetext);
+         CloseTempFile(tf);
+         break;
    }
-   else
-   {
-      if (!(tf = OpenTempFile("w"))) return;
-      DumpClipboard(tf->FP);
-      fclose(tf->FP); tf->FP = NULL;
-      text = WR_TransformText(tf->Filename, cmd, wr->QuoteText);
-      CloseTempFile(tf);
-   }
-   if (text)
+   if(text)
    {
       if (cmd == ED_OPEN) DoMethod(wr->GUI.TE_EDIT, MUIM_TextEditor_ClearText);
       DoMethod(wr->GUI.TE_EDIT, MUIM_TextEditor_InsertText, text);
@@ -1930,9 +1939,9 @@ LOCAL APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, in
 ///
 /// WR_New
 //  Creates a write window
-enum { WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,
+enum { WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
        WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,
-       WMEN_PASQUOT,WMEN_PASROT13,WMEN_DICT,WMEN_STYLE1,WMEN_STYLE2,WMEN_STYLE3,
+       WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_DICT,WMEN_STYLE1,WMEN_STYLE2,WMEN_STYLE3,
        WMEN_STYLE4,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
        WMEN_AUTOSP,WMEN_SEP0,WMEN_SEP1,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
        WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
@@ -1997,6 +2006,7 @@ struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_InsertAs),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Plain), MUIA_Menuitem_Shortcut,"P", MUIA_UserData,WMEN_INSFILE, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Quoted), MUIA_UserData,WMEN_INSQUOT, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_INSALTQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_ROT13), MUIA_UserData,WMEN_INSROT13, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
@@ -2010,6 +2020,7 @@ struct WR_ClassData *WR_New(int winnum)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MPaste), MUIA_Menuitem_Shortcut,"ramiga V", MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,WMEN_PASTE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_PasteAs),
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut,"Q", MUIA_UserData,WMEN_PASQUOT, End,
+                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_AltQuoted), MUIA_UserData,WMEN_PASALTQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_ROT13), MUIA_UserData,WMEN_PASROT13, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
@@ -2238,28 +2249,30 @@ struct WR_ClassData *WR_New(int winnum)
          SetHelp(data->GUI.CY_IMPORTANCE ,MSG_HELP_WR_CY_IMPORTANCE);
          SetHelp(data->GUI.RA_SIGNATURE  ,MSG_HELP_WR_RA_SIGNATURE );
          SetHelp(data->GUI.RA_SECURITY   ,MSG_HELP_WR_RA_SECURITY  );
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_NEW      ,data->GUI.TE_EDIT      ,1,MUIM_TextEditor_ClearText);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_OPEN     ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_OPEN,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSFILE  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSERT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSQUOT  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSQUOT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSROT13 ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSROT13,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SAVEAS   ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_SaveAsHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_EDIT     ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_EditHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_CUT      ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Cut");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_COPY     ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Copy");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASTE    ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Paste");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASQUOT  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASQUOT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASROT13 ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASROT13,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_DICT     ,MUIV_Notify_Application,3,MUIM_CallHook   ,&DI_OpenHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_UNDO     ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Undo");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_REDO     ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Redo");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDFILE  ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddFileHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDCLIP  ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddClipboardHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDPGP   ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddPGPKeyHook,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_NEW       ,data->GUI.TE_EDIT      ,1,MUIM_TextEditor_ClearText);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_OPEN      ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_OPEN,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSFILE   ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSERT,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSQUOT   ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSQUOT,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSALTQUOT,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSALTQUOT,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSROT13  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSROT13,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SAVEAS    ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_SaveAsHook,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_EDIT      ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_EditHook,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_CUT       ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Cut");
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_COPY      ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Copy");
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASTE     ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Paste");
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASQUOT   ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASQUOT,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASALTQUOT,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASALTQUOT,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_PASROT13  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_PASROT13,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_DICT      ,MUIV_Notify_Application,3,MUIM_CallHook   ,&DI_OpenHook,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_UNDO      ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Undo");
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_REDO      ,data->GUI.TE_EDIT      ,3,MUIM_TextEditor_ARexxCmd,"Redo");
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDFILE   ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddFileHook,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDCLIP   ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddClipboardHook,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_ADDPGP    ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddPGPKeyHook,winnum);
          for (i = 0; i < 4; i++) DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_MenuAction,WMEN_EMOT0+i,data->GUI.TE_EDIT,2,MUIM_TextEditor_InsertText,emoticons[i]);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEP0     ,data->GUI.TE_EDIT      ,4,MUIM_CallHook   ,&WR_InsertSeparatorHook,FALSE,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEP1     ,data->GUI.TE_EDIT      ,4,MUIM_CallHook   ,&WR_InsertSeparatorHook,TRUE,winnum);
-         DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_AppMessage          ,MUIV_EveryTime,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_AppHook,MUIV_TriggerValue,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEP0      ,data->GUI.TE_EDIT      ,4,MUIM_CallHook   ,&WR_InsertSeparatorHook,FALSE,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEP1      ,data->GUI.TE_EDIT      ,4,MUIM_CallHook   ,&WR_InsertSeparatorHook,TRUE,winnum);
+         DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_AppMessage          ,MUIV_EveryTime ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_AppHook,MUIV_TriggerValue,winnum);
          DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_AreaMarked,MUIV_EveryTime,MUIV_Notify_Application,5,MUIM_MultiSet  ,MUIA_Menuitem_Enabled,MUIV_TriggerValue,mi_copy,mi_cut,NULL);
          if (data->GUI.TO_TOOLBAR)
          {

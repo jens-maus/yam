@@ -329,9 +329,8 @@ SAVEDS void US_GetUSEntryFunc(void)
 {
    struct User *user;
    struct US_GUIData *gui = &G->US->GUI;
-   BOOL notallowed, iscurrent = FALSE, limited = !G->US->Supervisor;
+   BOOL notallowed, iscurrent, limited = !G->US->Supervisor;
    int act;
-   char *md = "-";
 
    get(gui->LV_USERS, MUIA_NList_Active, &act);
    if (act != MUIV_NList_Active_Off)
@@ -339,7 +338,7 @@ SAVEDS void US_GetUSEntryFunc(void)
       DoMethod(gui->LV_USERS, MUIM_NList_GetEntry, act, &user);
       iscurrent = user->ID == G->Users.CurrentID;
       nnset(gui->ST_USER,    MUIA_String_Contents, user->Name);
-      nnset(gui->ST_MAILDIR, MUIA_String_Contents, md = user->MailDir);
+      nnset(gui->ST_MAILDIR, MUIA_String_Contents, user->MailDir);
       nnset(gui->ST_PASSWD,  MUIA_String_Contents, user->Password);
       nnset(gui->CH_USEADDR, MUIA_Selected, user->UseAddr);
       nnset(gui->CH_USEDICT, MUIA_Selected, user->UseDict);

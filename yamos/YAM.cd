@@ -4234,5 +4234,19 @@ Pa_ssword
 MSG_CO_Del (//)
 Delete
 ;
+<<<<<<< YAM.cd
+MSG_WR_AltQuoted (//)
+Alternate Quoted
+;
+MSG_CO_AltQuote (//)
+Quote external using
+;
+MSG_CO_DoQuote (//)
+Quote message
+;
+MSG_HELP_CO_ST_ALTQUOTECHAR (//)
+String that should precede each line of\na quote inserted from non-email sources
+;
 MSG_EA_SelectPhoto_Title (//)
 Select portrait
+;

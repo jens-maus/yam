@@ -438,6 +438,7 @@ LOCAL void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *e
    sbuf = ExpandText(C->QuoteText, etd);
    stccpy(wr->QuoteText, TrimEnd(sbuf), SIZE_DEFAULT);
    FreeStrBuf(sbuf);
+	stccpy(wr->AltQuoteText, C->AltQuoteText, SIZE_SMALL);
 }
 
 ///

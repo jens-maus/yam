@@ -637,6 +637,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->ForwardFinish, GetStr(MSG_CO_ForwardFinishDef));
       co->QuoteMessage = co->QuoteEmptyLines = co->CompareAddress = co->StripSignature = TRUE;
       strcpy(co->QuoteText, ">");
+      strcpy(co->AltQuoteText, "|");
    }
    if (page == 7 || page < 0)
    {

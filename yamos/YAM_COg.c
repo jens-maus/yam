@@ -408,26 +408,31 @@ APTR CO_Page0(struct CO_ClassData *data)
 /// CO_Page1  (TCP/IP)
 APTR CO_Page1(struct CO_ClassData *data)
 {
-   APTR grp,authgrp;
+   APTR grp, authgrp;
+
    if (grp = VGroup,
          MUIA_HelpNode, "CO01",
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_SendMail)),
-            Child, ColGroup(4),
-               Child, Label2(GetStr(MSG_CO_Server)),
-               Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST,GetStr(MSG_CO_Server)),
-               Child, Label2(GetStr(MSG_CO_Domain)),
-               Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,GetStr(MSG_CO_Domain)),
-            End,
-            Child, ColGroup(2),
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_USESMTPAUTH, GetStr(MSG_CO_UseSMTPAUTH)),
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_SMTP8BIT, GetStr(MSG_CO_Allow8bit)),
-            End,
-            Child, authgrp=ColGroup(4),
-               Child, Label2(GetStr(MSG_CO_SMTPUser)),
-               Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,GetStr(MSG_CO_SMTPUser)),
-               Child, Label2(GetStr(MSG_CO_SMTPPass)),
-               Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(GetStr(MSG_CO_SMTPPass)),
-            End,
+				Child, HGroup,
+					Child, VGroup,
+						Child, ColGroup(2),
+		               Child, Label2(GetStr(MSG_CO_Server)),
+   		            Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST,GetStr(MSG_CO_Server)),
+	      	         Child, Label2(GetStr(MSG_CO_Domain)),
+   	      	      Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,GetStr(MSG_CO_Domain)),
+						End,
+	               Child, MakeCheckGroup((Object **)&data->GUI.CH_SMTP8BIT, GetStr(MSG_CO_Allow8bit)),
+					End,
+					Child, VGroup,
+						Child, authgrp=ColGroup(2),
+		               Child, Label2(GetStr(MSG_CO_SMTPUser)),
+	   	            Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,GetStr(MSG_CO_SMTPUser)),
+   	   	         Child, Label2(GetStr(MSG_CO_SMTPPass)),
+      	   	      Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(GetStr(MSG_CO_SMTPPass)),
+						End,
+	               Child, MakeCheckGroup((Object **)&data->GUI.CH_USESMTPAUTH, GetStr(MSG_CO_UseSMTPAUTH)),
+					End,
+				End,
          End,
          Child, HGroup, GroupFrameT(GetStr(MSG_CO_ReceiveMail)),
             Child, ListviewObject,
@@ -475,7 +480,8 @@ APTR CO_Page1(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_DELETE      ,MSG_HELP_CO_CH_DELETE    );
       SetHelp(data->GUI.CH_USEAPOP     ,MSG_HELP_CO_CH_USEAPOP   );
       SetHelp(data->GUI.CH_POPENABLED  ,MSG_HELP_CO_CH_POPENABLED);
-      DoMethod(grp,MUIM_MultiSet,MUIA_Disabled,TRUE,data->GUI.GR_POP3,data->GUI.BT_PDEL,authgrp,NULL);
+      DoMethod(grp,MUIM_MultiSet,MUIA_Disabled,TRUE,data->GUI.GR_POP3,
+					data->GUI.BT_PDEL, authgrp, NULL);
       DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
       DoMethod(data->GUI.ST_POPHOST    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.ST_POPUSERID  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
@@ -929,31 +935,33 @@ APTR CO_Page6(struct CO_ClassData *data)
                Child, data->GUI.ST_AREPLYPAT = MakeString(SIZE_PATTERN, GetStr(MSG_CO_AltRepPat)),
                Child, Label2(GetStr(MSG_CO_MLRepInit)),
                Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, GetStr(MSG_CO_MLRepInit), GetStr(MSG_HELP_CO_ST_MREPLYTEXT)),
-            End,
-            Child, HGroup,
-               Child, data->GUI.CH_QUOTE = MakeCheck(GetStr(MSG_CO_QuoteMail)),
-               Child, Label2(GetStr(MSG_CO_QuoteMail)),
-               Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, 2, SIZE_SMALL, ""),
+					Child, Label2(GetStr(MSG_CO_QuoteMail)),
+					Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, 2, SIZE_SMALL, ""),
+					Child, Label2(GetStr(MSG_CO_AltQuote)),
+					Child, data->GUI.ST_ALTQUOTECHAR = MakeString(SIZE_SMALL, GetStr(MSG_CO_AltQuote)),
             End,
             Child, ColGroup(2),
+               Child, MakeCheckGroup((Object **)&data->GUI.CH_QUOTE, GetStr(MSG_CO_DoQuote)),
                Child, MakeCheckGroup((Object **)&data->GUI.CH_QUOTEEMPTY, GetStr(MSG_CO_QuoteEmpty)),
                Child, MakeCheckGroup((Object **)&data->GUI.CH_COMPADDR, GetStr(MSG_CO_VerifyAddress)),
                Child, MakeCheckGroup((Object **)&data->GUI.CH_STRIPSIG, GetStr(MSG_CO_StripSignature)),
-               Child, HVSpace,
             End,
          End,
          Child, HVSpace,
       End)
    {
-      SetHelp(data->GUI.ST_FWDSTART  ,MSG_HELP_CO_ST_FWDSTART  );
-      SetHelp(data->GUI.ST_FWDEND    ,MSG_HELP_CO_ST_FWDEND    );
-      SetHelp(data->GUI.ST_AREPLYPAT ,MSG_HELP_CO_ST_AREPLYPAT );
-      SetHelp(data->GUI.CH_QUOTE     ,MSG_HELP_CO_CH_QUOTE     );
-      SetHelp(data->GUI.ST_REPLYCHAR ,MSG_HELP_CO_ST_REPLYCHAR );
-      SetHelp(data->GUI.CH_QUOTEEMPTY,MSG_HELP_CO_CH_QUOTEEMPTY);
-      SetHelp(data->GUI.CH_COMPADDR  ,MSG_HELP_CO_CH_COMPADDR  );
-      SetHelp(data->GUI.CH_STRIPSIG  ,MSG_HELP_CO_CH_STRIPSIG  );
-      DoMethod(data->GUI.CH_QUOTE    ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.ST_REPLYCHAR,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+      SetHelp(data->GUI.ST_FWDSTART    ,MSG_HELP_CO_ST_FWDSTART  );
+      SetHelp(data->GUI.ST_FWDEND      ,MSG_HELP_CO_ST_FWDEND    );
+      SetHelp(data->GUI.ST_AREPLYPAT   ,MSG_HELP_CO_ST_AREPLYPAT );
+      SetHelp(data->GUI.CH_QUOTE       ,MSG_HELP_CO_CH_QUOTE     );
+      SetHelp(data->GUI.ST_REPLYCHAR   ,MSG_HELP_CO_ST_REPLYCHAR );
+      SetHelp(data->GUI.ST_ALTQUOTECHAR,MSG_HELP_CO_ST_ALTQUOTECHAR);
+      SetHelp(data->GUI.CH_QUOTEEMPTY  ,MSG_HELP_CO_CH_QUOTEEMPTY);
+      SetHelp(data->GUI.CH_COMPADDR    ,MSG_HELP_CO_CH_COMPADDR  );
+      SetHelp(data->GUI.CH_STRIPSIG    ,MSG_HELP_CO_CH_STRIPSIG  );
+      DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.ST_REPLYCHAR,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_QUOTEEMPTY,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_QUOTE      ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_STRIPSIG,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
    }
    return grp;
 }

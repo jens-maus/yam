@@ -164,6 +164,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "ForwardFinish    = %s\n", co->ForwardFinish);
       fprintf(fh, "QuoteMessage     = %s\n", Bool2Txt(co->QuoteMessage));
       fprintf(fh, "QuoteText        = %s\n", co->QuoteText);
+      fprintf(fh, "AltQuoteText     = %s\n", co->AltQuoteText);
       fprintf(fh, "QuoteEmptyLines  = %s\n", Bool2Txt(co->QuoteEmptyLines));
       fprintf(fh, "CompareAddress   = %s\n", Bool2Txt(co->CompareAddress));
       fprintf(fh, "StripSignature   = %s\n", Bool2Txt(co->StripSignature));
@@ -453,6 +454,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "ForwardFinish"))  stccpy(co->ForwardFinish, value2, SIZE_INTRO);
                if (!stricmp(buffer, "QuoteMessage"))   co->QuoteMessage = Txt2Bool(value);
                if (!stricmp(buffer, "QuoteText"))      stccpy(co->QuoteText, value2, SIZE_SMALL);
+               if (!stricmp(buffer, "AltQuoteText"))   stccpy(co->AltQuoteText, value2, SIZE_SMALL);
                if (!stricmp(buffer, "QuoteEmptyLines"))co->QuoteEmptyLines = Txt2Bool(value);
                if (!stricmp(buffer, "CompareAddress")) co->CompareAddress = Txt2Bool(value);
                if (!stricmp(buffer, "StripSignature")) co->StripSignature = Txt2Bool(value);
@@ -636,6 +638,7 @@ void CO_GetConfig(void)
          GetMUIString(CE->ForwardFinish       ,gui->ST_FWDEND);
          CE->QuoteMessage      = GetMUICheck  (gui->CH_QUOTE);
          GetMUIString(CE->QuoteText           ,gui->ST_REPLYCHAR);
+         GetMUIString(CE->AltQuoteText        ,gui->ST_ALTQUOTECHAR);
          CE->QuoteEmptyLines   = GetMUICheck  (gui->CH_QUOTEEMPTY);
          CE->CompareAddress    = GetMUICheck  (gui->CH_COMPADDR);
          CE->StripSignature    = GetMUICheck  (gui->CH_STRIPSIG);
@@ -791,29 +794,30 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_LAUNCH    ,CE->LaunchAlways);
          break;
       case 6:
-         setstring   (gui->ST_REPLYHI   ,CE->ReplyHello);
-         setstring   (gui->ST_REPLYTEXT ,CE->ReplyIntro);
-         setstring   (gui->ST_REPLYBYE  ,CE->ReplyBye);
-         setstring   (gui->ST_AREPLYHI  ,CE->AltReplyHello);
-         setstring   (gui->ST_AREPLYTEXT,CE->AltReplyIntro);
-         setstring   (gui->ST_AREPLYBYE ,CE->AltReplyBye);
-         setstring   (gui->ST_AREPLYPAT ,CE->AltReplyPattern);
-         setstring   (gui->ST_MREPLYHI  ,CE->MLReplyHello);
-         setstring   (gui->ST_MREPLYTEXT,CE->MLReplyIntro);
-         setstring   (gui->ST_MREPLYBYE ,CE->MLReplyBye);
-         setstring   (gui->ST_FWDSTART  ,CE->ForwardIntro);
-         setstring   (gui->ST_FWDEND    ,CE->ForwardFinish);
-         setcheckmark(gui->CH_QUOTE     ,CE->QuoteMessage);
-         setstring   (gui->ST_REPLYCHAR ,CE->QuoteText);
-         setcheckmark(gui->CH_QUOTEEMPTY,CE->QuoteEmptyLines);
-         setcheckmark(gui->CH_COMPADDR  ,CE->CompareAddress);
-         setcheckmark(gui->CH_STRIPSIG  ,CE->StripSignature);
+         setstring   (gui->ST_REPLYHI     ,CE->ReplyHello);
+         setstring   (gui->ST_REPLYTEXT   ,CE->ReplyIntro);
+         setstring   (gui->ST_REPLYBYE    ,CE->ReplyBye);
+         setstring   (gui->ST_AREPLYHI    ,CE->AltReplyHello);
+         setstring   (gui->ST_AREPLYTEXT  ,CE->AltReplyIntro);
+         setstring   (gui->ST_AREPLYBYE   ,CE->AltReplyBye);
+         setstring   (gui->ST_AREPLYPAT   ,CE->AltReplyPattern);
+         setstring   (gui->ST_MREPLYHI    ,CE->MLReplyHello);
+         setstring   (gui->ST_MREPLYTEXT  ,CE->MLReplyIntro);
+         setstring   (gui->ST_MREPLYBYE   ,CE->MLReplyBye);
+         setstring   (gui->ST_FWDSTART    ,CE->ForwardIntro);
+         setstring   (gui->ST_FWDEND      ,CE->ForwardFinish);
+         setcheckmark(gui->CH_QUOTE       ,CE->QuoteMessage);
+         setstring   (gui->ST_REPLYCHAR   ,CE->QuoteText);
+         setstring   (gui->ST_ALTQUOTECHAR,CE->AltQuoteText);
+         setcheckmark(gui->CH_QUOTEEMPTY  ,CE->QuoteEmptyLines);
+         setcheckmark(gui->CH_COMPADDR    ,CE->CompareAddress);
+         setcheckmark(gui->CH_STRIPSIG    ,CE->StripSignature);
          break;
       case 7:
-         setcheckmark(gui->CH_USESIG    ,CE->UseSignature);
-         setstring   (gui->ST_TAGFILE   ,CE->TagsFile);
-         setstring   (gui->ST_TAGSEP    ,CE->TagsSeparator);
-         setcycle    (gui->CY_SIGNAT    ,G->CO->LastSig);
+         setcheckmark(gui->CH_USESIG      ,CE->UseSignature);
+         setstring   (gui->ST_TAGFILE     ,CE->TagsFile);
+         setstring   (gui->ST_TAGSEP      ,CE->TagsSeparator);
+         setcycle    (gui->CY_SIGNAT      ,G->CO->LastSig);
          FileToEditor(CreateFilename(SigNames[G->CO->LastSig]), gui->TE_SIGEDIT);
          break;
       case 8:
