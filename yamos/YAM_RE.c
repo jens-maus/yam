@@ -1950,7 +1950,7 @@ static FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, st
 //  Removes an entry from the message part list
 static void RE_UndoPart(struct Part *rp)
 {
-   struct Part *trp;
+   struct Part *trp = rp;
 
    // lets delete the file first so that we can cleanly "undo" the part
    DeleteFile(rp->Filename);
@@ -1958,21 +1958,41 @@ static void RE_UndoPart(struct Part *rp)
    // if we remove a part from the part list we have to take
    // care of the part index number aswell. So all following
    // parts have to be descreased somehow by one.
-   for(trp = rp->Next; trp; trp = trp->Next)
+   //
+   // p2->p3->p4->p5
+   while(trp->Next)
    {
+      // use the next element as the current trp
+      trp = trp->Next;
+
+      // decrease the part number aswell
       trp->Nr--;
 
       // Now we also have to rename the temporary filename also
       Rename(trp->Filename, trp->Prev->Filename);
-
-      // ej, and of course we have to change the name of the filename with
-      // the next step.
-      if(!trp->Next)      strcpy(trp->Filename, trp->Prev->Filename);
-      if(trp != rp->Next) strcpy(trp->Prev->Filename, trp->Prev->Prev->Filename);
    }
 
+   // now go from the end to the start again and copy
+   // the filenames strings as we couldn`t do that in the previous
+   // loop also
+   //
+   // p5->p4->p3->p2
+   while(trp->Prev)
+   {
+      // iterate backwards
+      trp = trp->Prev;
+
+      // now copy the
+      strcpy(trp->Next->Filename, trp->Filename);
+
+      if(trp == rp) break;
+   }
+
+   // relink the partlist
    if (rp->Prev) rp->Prev->Next = rp->Next;
    if (rp->Next) rp->Next->Prev = rp->Prev;
+
+   // free some string buffers
    FreeStrBuf(rp->ContentType);
    FreeStrBuf(rp->ContentDisposition);
 

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed a serious bug in the RE_UndoPart() function
+      where YAM didn`t correctly undo a specific part and put the
+      wrong filename string in previous moved parts. This caused
+      that some multipart attachments weren`t accessable.
+
 2003-04-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_COs.c: fixed bug #724594 where YAM didn`t save the
