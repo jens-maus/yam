@@ -931,10 +931,8 @@ char *MyStrChr(const char *s, int c)
 char *AllocStrBuf(size_t initlen)
 {
    size_t *strbuf = calloc(initlen+sizeof(size_t), sizeof(char));
-   if (!strbuf)
-     return NULL;
+   if(!strbuf) return NULL;
    *strbuf++ = initlen;
-   DB(if(initlen > 65536) kprintf("ERROR: AllocStrBuf() overrun !!\n");)
    return (char *)strbuf;
 }
 ///
