@@ -37,10 +37,10 @@ CHMOD = chmod
 CPU      = -m68020
 CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 WARN     = -Wall
-OPTFLAGS = -O2 -fomit-frame-pointer
+OPTFLAGS = -O2 -fomit-frame-pointer -fstrength-reduce -fbaserel
 DEBUG    = -DDEBUG -g -O0
 CFLAGS   = -noixemul -I./includes -I./ -c $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
-LDFLAGS  = -noixemul -mstackextend
+LDFLAGS  = -noixemul -mstackextend -fbaserel
 LDLIBS   = -lmui -ldebug -lm
 
 # CPU and DEBUG can be defined outside, defaults to above

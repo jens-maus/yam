@@ -36,13 +36,13 @@ RM        = rm -f
 CHMOD     = chmod
 CC68K     = m68k-amigaos-gcc
 STR68K    = strip
-CFLAGS68K = -nostdlib -DNAME=\"YAM\" -O -fomit-frame-pointer
+CFLAGS68K = -nostdlib -DNAME=\"YAM\" -O -fomit-frame-pointer -fstrength-reduce
 
 CPU      = -mcpu=604e
 CPUFLAGS = -mmultiple
 CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 WARN     = -Wall
-OPTFLAGS = -O2 -fomit-frame-pointer -D__MORPHOS_DIRECTCALL
+OPTFLAGS = -O2 -fomit-frame-pointer -fstrength-reduce
 DEBUG    = -DDEBUG -g3 -O0
 CFLAGS   = -noixemul -I./ -I/gg/ppc-morphos/sys-include/ -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS  = -noixemul
