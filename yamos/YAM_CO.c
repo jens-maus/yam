@@ -1184,7 +1184,7 @@ HOOKPROTONHNONP(CO_OpenFunc, void)
       CO_SetConfig();
       CO_NewPrefsFile(G->CO_PrefsFile);
    }
-   if (!SafeOpenWindow(G->CO->GUI.WI)) CallHookPkt(&CO_CloseFunc, 0, 0);
+   if (!SafeOpenWindow(G->CO->GUI.WI)) CallHookPkt(&CO_CloseHook, 0, 0);
 }
 MakeHook(CO_OpenHook,CO_OpenFunc);
 ///
