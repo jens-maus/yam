@@ -826,8 +826,17 @@
     * YAM_RE.c (RE_New): likewise
     * YAM_WR.c (Wr_New): likewise
 
-2001-06-22 Allan Odgaard <duff@diku.dk>
+2001-06-22  Allan Odgaard <duff@diku.dk>
 
     * Fixed toolbar init code (uses "tb_butt[i]." instead of const "p->").
     * Added extra toolbar button to write window (search) -- nop ATM.
     * Added new source to the repository (Searchwindow_class.c).
+
+2001-06-24  Dirk Stöcker <stoecker@epost.de>
+
+    * YAM.c Added proper exitcode and modified Abort()
+    * Added classes directory, moved Searchwindow_class to this as
+      searchwindow.c, modified smakefile to support this, disabled it
+      in smakefile, as it does not yet compile (remove # in CLASSES line
+      to enable again)
+
