@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.98 (21.04.2003) ATO-Fr
+## version $VER: YAM.catalog 5.99 (28.05.2003) ATO-Fr
 ## language français
 ## codeset 0
 ;
@@ -265,7 +265,7 @@ Compilé le :
 ;
 MSG_Copyright2
 Ce programme est un un logiciel libre. Vous pouvez le distribuer \
-et/ou le modifier en accord avec les termes de la license publique GNU. \
+et/ou le modifier en accord avec les termes de la licence publique GNU. \
 Lire la documentation pour obtenir plus d'informations.\n
 ; This program is free software; you're welcome to distribute \
 ; and/or modify it under the terms of the GNU Public License. \
@@ -662,7 +662,7 @@ Vous utilisez déjà la dernière version.
 ; You're already using the latest version.
 ;
 MSG_MA_VersionReqOpt
-_Visiter page|*_Annuler
+_Visiter la page|*_Annuler
 ; _Visit homepage|*_Cancel
 ;
 MSG_MA_ReplyReq
@@ -5510,7 +5510,8 @@ Connexion TCP/IP suspendu, probablement du à un problème de porteuse.
 MSG_ER_InvalidAddress
 Adresse « %s » invalide.\n\
 \n\
-Le serveur SMTP ne peut pas accepter cette adresse. Vérifiez la présence de caractères illégaux.
+Le serveur SMTP ne peut pas accepter cette adresse. Vérifiez la présence \
+de caractères illégaux.
 ; Invalid address '%s'.\n\
 ; \n\
 ; The SMTP server didn't accept the address. Check for illegal characters.
@@ -5604,7 +5605,8 @@ Retirez le doublon, ou utilisez un alias unique.
 ; ALIAS
 ;
 MSG_ER_ErrorAddrDontFit
-Toutes les adresses ne rentrent pas dans le gadget de chaînes. Utilisez une liste de distribution pour pallier à ce problème.
+Toutes les adresses ne rentrent pas dans le gadget de chaînes. \
+Utilisez une liste de distribution pour pallier à ce problème.
 ; Addresses don't fit in the string gadget. \
 ; Use a distribution list to avoid this problem.
 ;
@@ -6514,7 +6516,8 @@ Défaut
 ;
 ; Obsolete
 MSG_ER_PGPMultipart
-Erreur durant la création d'un message PGP multi-partie. Désactivation des fonctions de chiffrage et de signature !
+Erreur durant la création d'un message PGP multi-partie. \
+Désactivation des fonctions de chiffrage et de signature !
 ; Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont
@@ -7201,8 +7204,10 @@ Couleur à utiliser pour l'affichage des liens internet utilisables.
 ;
 MSG_FO_FOLDEREXISTS
 Un fichier ou un répertoire existe déjà avec ce chemin d'accès.\n\
+\n\
 Voulez-vous poursuivre ?
 ; A file or directory with the given folder path already exists.\n\
+; \n\
 ; Do you really want to proceed?
 ;
 MSG_FO_FOLDERMOVE
@@ -7303,3 +7308,14 @@ dans la barre d'information.
 ; Text that should be displayed\n\
 ; in the status bar
 ;
+MSG_MA_CROPREQUEST
+Tous les fichiers joints à ce courrier seront détruits.\n\
+\n\
+Voulez-vous continuer l'opération ?
+; All attachments of the selected mails will be cropped.\n\
+; \n\
+; Do you really want to proceed?
+;
+MSG_YesNoReq2
+_Oui|*_Non
+; _Yes|*_No
