@@ -55,7 +55,7 @@ struct Data
 	Object *readMailGroup;
 	struct MUIP_Toolbar_Description toolbarDesc[MUIV_ReadWindow_ToolbarItems];
 
-	char  title[SIZE_DEFAULT];
+	char  title[SIZE_DEFAULT+1];
 	int  	lastDirection;
 	int 	windowNumber;
 };
@@ -608,25 +608,32 @@ DECLARE(MoveMailRequest)
 		if(dstfolder)
 		{
 			int pos = SelectMessage(mail); // select the message in the folder and return position
+			int entries;
+
+			// depending on the last move direction we
+			// set it back
+			if(data->lastDirection == -1 &&
+				 pos-1 >= 0)
+			{
+				set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, --pos);
+			}
 
 			// move the mail to the selected destionaltion folder
 			MA_MoveCopy(mail, srcfolder, dstfolder, FALSE);
 
-			// depending on the last move direction we
-			// set it back
-			if(data->lastDirection == -1)
-			{
-				if(--pos >= 0)
-					set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, pos);
-			}
-
 			// if there are still mails in the current folder we make sure
-			// it is displayed in this window now
-			if(pos >= 0)
+			// it is displayed in this window now or close it
+			entries = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries);
+			if(entries > 0)
 			{
+				if(entries < pos+1)
+					pos = entries-1;
+
 				DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, pos, &mail);
 				if(mail)
 					DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+				else
+					set(obj, MUIA_Window_Open, FALSE);
 			}
 			else
 				set(obj, MUIA_Window_Open, FALSE);
@@ -694,25 +701,32 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 	if(MailExists(mail, folder))
 	{
 		int pos = SelectMessage(mail); // select the message in the folder and return position
+		int entries;
+
+		// depending on the last move direction we
+		// set it back
+		if(data->lastDirection == -1 &&
+			 pos-1 >= 0)
+		{
+			set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, --pos);
+		}
 
 		// delete the mail
 		MA_DeleteSingle(mail, delatonce, FALSE);
 
-		// depending on the last move direction we
-		// set it back
-		if(data->lastDirection == -1)
-		{
-			if(--pos >= 0)
-				set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, pos);
-		}
-
 		// if there are still mails in the current folder we make sure
-		// it is displayed in this window now
-		if(pos >= 0)
+		// it is displayed in this window now or close it
+		entries = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries);
+		if(entries > 0)
 		{
+			if(entries < pos+1)
+				pos = entries-1;
+
 			DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, pos, &mail);
 			if(mail)
 				DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+			else
+				set(obj, MUIA_Window_Open, FALSE);
 		}
 		else
 			set(obj, MUIA_Window_Open, FALSE);
@@ -1085,8 +1099,6 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 		else
 			DisplayBeep(NULL);
 	}
-	else
-		set(obj, MUIA_Window_Open, FALSE);
 
 	return 0;
 }

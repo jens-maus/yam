@@ -2775,11 +2775,16 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
   for(part = rmData->firstPart; part; part = next)
   {
     next = part->Next;
+
     if(*part->Filename)
       DeleteFile(part->Filename);
 
-    FreeStrBuf(part->ContentType);
-    FreeStrBuf(part->ContentDisposition);
+    if(part->ContentType)
+      FreeStrBuf(part->ContentType);
+
+    if(part->ContentDisposition)
+      FreeStrBuf(part->ContentDisposition);
+
     free(part);
   }
   rmData->firstPart = NULL;
@@ -2790,14 +2795,19 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
   if(strstr(rmData->readFile, ".unp"))
     DeleteFile(rmData->readFile);
 
+  // close any opened temporary file
+  if(rmData->tempFile)
+  {
+    CloseTempFile(rmData->tempFile);
+    rmData->tempFile = NULL;
+  }
+
   // if the rmData carries a virtual mail we have to clear it
   // aswell
   if(rmData->mail &&
      isVirtualMail(rmData->mail))
   {
     free(rmData->mail);
-    CloseTempFile(rmData->tempFile);
-
     rmData->mail = NULL;
   }
 

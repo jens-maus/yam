@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-19  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c, YAM_RE.c, ReadWindow.c: fixed bug where YAM didn't close an
+      open read window on a Delete/Move operation even if no mail was left in
+      the corresponding folder. Now YAM should close the read window after the
+      last mail has been deleted/moved out by the user.
+
 2005-02-17  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_utilities.h: reverted the evaluation of the return value of GetAttr()
