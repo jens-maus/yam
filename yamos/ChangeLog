@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-05-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug in PGP signed routines where YAM didn`t give the
+      user the possibility to check the signature even if the message was
+      correctly signed.
+
 2003-05-24  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c, YAM_UT.c: fixed bug were a mail import to a compressed or

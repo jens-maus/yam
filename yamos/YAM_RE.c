@@ -526,7 +526,7 @@ HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
    // Don't try to use PGP if it's not installed
    if (G->PGPVersion == 0) return;
 
-   if(hasPGPSOldFlag(re) && !hasPGPSCheckedFlag(re))
+   if((hasPGPSOldFlag(re) || hasPGPSMimeFlag(re)) && !hasPGPSCheckedFlag(re))
    {
       int error;
       char fullfile[SIZE_PATHFILE], options[SIZE_LARGE];
@@ -610,15 +610,15 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    {
       RE_DisplayMessage(winnum, FALSE);
       set(gui->MI_EXTKEY, MUIA_Menuitem_Enabled, re->PGPKey);
-      set(gui->MI_CHKSIG, MUIA_Menuitem_Enabled, hasPGPSOldFlag(re));
-      set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && hasPGPEMimeFlag(re));
+      set(gui->MI_CHKSIG, MUIA_Menuitem_Enabled, hasPGPSOldFlag(re) || hasPGPSMimeFlag(re));
+      set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && (hasPGPEMimeFlag(re) || hasPGPEOldFlag(re)));
       RE_UpdateStatusGroup(winnum);
       MA_StartMacro(MACRO_READ, itoa(winnum));
       if (real && (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
       {
          MA_SetMailStatus(mail, STATUS_OLD);
          DisplayStatistics(folder, TRUE);
-         if(hasPGPSOldFlag(re) && !hasPGPSCheckedFlag(re))
+         if((hasPGPSOldFlag(re) || hasPGPSMimeFlag(re)) && !hasPGPSCheckedFlag(re))
          {
             DoMethod(G->App, MUIM_CallHook, &RE_CheckSignatureHook, FALSE, winnum);
          }
@@ -1490,7 +1490,9 @@ static void RE_GetSigFromLog(int winnum, char *decrFor)
             {
                if (G->PGPVersion == 5) { GetLine(fh, buffer, SIZE_LARGE); GetLine(fh, buffer, SIZE_LARGE); }
                if (RE_GetAddressFromLog(buffer, re->Signature)) SET_FLAG(re->PGPSigned, PGPS_ADDRESS);
+
                SET_FLAG(re->PGPSigned, PGPS_CHECKED);
+               break;
             }
          }
       }
@@ -2347,7 +2349,10 @@ static void RE_HandleSignedMessage(struct Part *frp)
          int error;
          struct TempFile *tf = OpenTempFile(NULL);
          char options[SIZE_LARGE];
+
+         // flag the mail as having a PGP signature within the MIME encoding
          SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_MIME);
+
          ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
          sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
          error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
@@ -2423,7 +2428,7 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
       {
          FILE *in;
 
-         if(decryptResult == 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_OLD);
+         if(decryptResult == 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_MIME);
          SET_FLAG(G->RE[frp->Win]->PGPEncrypted, PGPE_MIME);
 
          // if DecryptPGP() returns with 0 everything worked perfectly and we can
@@ -2786,6 +2791,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
                   if(RE_DecryptPGP(winnum, tf->Filename) == 0)
                   {
+                    // flag the mail as having a inline PGP signature
                     SET_FLAG(re->PGPSigned, PGPS_OLD);
 
                     // make sure that the mail is flaged as signed
@@ -2811,6 +2817,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                   CloseTempFile(tf);
                 }
 
+                // flag the mail as being inline PGP encrypted
                 SET_FLAG(re->PGPEncrypted, PGPE_OLD);
 
                 // make sure that mail is flagged as crypted
@@ -2850,6 +2857,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
               }
               else if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29))
               {
+                // flag the mail as having a inline PGP signature
                 SET_FLAG(re->PGPSigned, PGPS_OLD);
 
                 if(!isSignedMail(re->MailPtr))
