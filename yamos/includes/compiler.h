@@ -22,7 +22,8 @@
   #if defined(_M68881)
     #define __HAVE_68881__
   #endif
-  #define ASM(arg) arg __asm
+//  #define ASM(arg) arg __asm
+ #define ASM __asm
 #elif defined(__VBCC__)
   #define REG(reg,arg) __reg(#reg) arg
   #define INLINE static
@@ -31,6 +32,7 @@
   #define STACKEXT /**/
 #elif defined(__GNUC__)
   #define REG(reg,arg) arg __asm(#reg)
+  #define __near
   #define LREG(reg,arg) register REG(reg,arg)
   #define ALIAS(a,b) __asm(".stabs \"_" #a "\",11,0,0,0\n\t.stabs \"_" #b "\",1,0,0,0");
 #elif defined(_DCC)
@@ -38,6 +40,8 @@
   #define STACKEXT __stkcheck
   #define STDARGS __stkargs
   #define INLINE static
+#elif defined(__STORM__)
+  #define STDARGS /**/
 #endif
 
 /*
@@ -45,7 +49,8 @@
 */
 
 #if !defined(ASM)
-  #define ASM(arg) arg
+//  #define ASM(arg) arg
+ #define ASM
 #endif
 #if !defined(REG)
   #define REG(reg,arg) register __##reg arg
