@@ -26,14 +26,15 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_addressbook.h"
 
 /* local protos */
-LOCAL STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode*, long);
-LOCAL STACKEXT void AB_SaveTreeNode(FILE*, struct MUI_NListtree_TreeNode *);
-LOCAL void AB_PrintField(FILE*, char*, char*);
-LOCAL void AB_PrintShortEntry(FILE*, struct ABEntry*);
-LOCAL void AB_PrintLongEntry(FILE*, struct ABEntry*);
-LOCAL STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode*, FILE*, int);
+static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode*, long);
+static STACKEXT void AB_SaveTreeNode(FILE*, struct MUI_NListtree_TreeNode *);
+static void AB_PrintField(FILE*, char*, char*);
+static void AB_PrintShortEntry(FILE*, struct ABEntry*);
+static void AB_PrintLongEntry(FILE*, struct ABEntry*);
+static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode*, FILE*, int);
 
 
 /***************************************************************************
@@ -81,7 +82,7 @@ long AB_CompressBD(char *datestr)
 ///
 /// AB_FindTodaysBirthdates (rec)
 //  Recursively searches the address book for a given birth date
-LOCAL STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode *list, long today)
+static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode *list, long today)
 {
   struct MUI_NListtree_TreeNode *tn;
   int wrwin, i;
@@ -367,7 +368,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 ///
 /// AB_SaveTreeNode (rec)
 //  Recursively saves an address book node
-LOCAL STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *list)
+static STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *list)
 {
    struct MUI_NListtree_TreeNode *tn;
    struct ABEntry *ab;
@@ -521,7 +522,7 @@ MakeHook(AB_SaveABookAsHook, AB_SaveABookAsFunc);
 ///
 /// AB_PrintField
 //  Formats and prints a single field
-LOCAL void AB_PrintField(FILE *prt, char *fieldname, char *field)
+static void AB_PrintField(FILE *prt, char *fieldname, char *field)
 {
    const char *format = "%-20.20s: %-50.50s\n";
    if (*field) fprintf(prt, format, StripUnderscore(fieldname), field);
@@ -530,7 +531,7 @@ LOCAL void AB_PrintField(FILE *prt, char *fieldname, char *field)
 ///
 /// AB_PrintShortEntry
 //  Prints an address book entry in compact format
-LOCAL void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab)
+static void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab)
 {
    char types[3] = { 'P','L','G' };
    fprintf(prt, "%c %-12.12s %-20.20s %-36.36s\n", types[ab->Type-AET_USER],
@@ -540,7 +541,7 @@ LOCAL void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab)
 ///
 /// AB_PrintLongEntry
 //  Prints an address book entry in detailed format
-LOCAL void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
+static void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
 {
    fputs("------------------------------------------------------------------------\n", prt);
    switch (ab->Type)
@@ -585,7 +586,7 @@ LOCAL void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
 ///
 /// AB_PrintLevel (rec)
 //  Recursively prints an address book node
-LOCAL STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
+static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *prt, int mode)
 {
    struct MUI_NListtree_TreeNode *tn;
    int i;

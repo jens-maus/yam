@@ -25,59 +25,70 @@
 
 ***************************************************************************/
 
-#include "YAM.h"
-
-/* local protos */
-LOCAL void WR_ComposeMulti(FILE*, struct Compose*, char*);
-LOCAL struct WritePart *BuildPartsList(int);
-LOCAL char *GetDateTime(void);
-LOCAL char *NewID(BOOL);
-LOCAL int WhichEncodingForFile(char*, char*);
-LOCAL int WR_CharOut(char);
-LOCAL char *firstbad(char*);
-LOCAL void PutQP(unsigned char, FILE*);
-LOCAL void HeaderFputs(char*, FILE*);
-LOCAL void EmitRcptField(FILE*, char*);
-LOCAL void EmitRcptHeader(FILE*, char*, char*);
-LOCAL void FPutsQuoting(char*, FILE*);
-LOCAL void WriteCtypeNicely(FILE*, char*);
-LOCAL void WriteContentTypeAndEncoding(FILE*, struct WritePart*);
-LOCAL void WR_WriteUIItem(FILE*, int*, char*, char*);
-LOCAL void WR_WriteUserInfo(FILE*);
-LOCAL void EncodePart(FILE*, struct WritePart*);
-LOCAL BOOL WR_CreateHashTable(char*, char*, char*);
-LOCAL void WR_AddTagline(FILE*);
-LOCAL void WR_WriteSignature(FILE*, int);
-LOCAL void WR_Anonymize(FILE*, char*);
-LOCAL char *WR_GetPGPId(struct Person*);
-LOCAL char *WR_GetPGPIds(char*, char*);
-LOCAL BOOL WR_Bounce(FILE*, struct Compose*);
-LOCAL BOOL WR_SaveDec(FILE*, struct Compose*);
-LOCAL void WR_EmitExtHeader(FILE*, struct Compose*);
-LOCAL void WR_ComposeReport(FILE*, struct Compose*, char*);
-LOCAL void SetDefaultSecurity(struct Compose*);
-LOCAL BOOL WR_ComposePGP(FILE*, struct Compose*, char*);
-LOCAL char *WR_TransformText(char*, int, char*);
-LOCAL void WR_SharedSetup(struct WR_ClassData*, int);
-LOCAL APTR MakeAddressField(APTR*, char*, APTR, int, int, BOOL);
-LOCAL struct WR_ClassData *WR_NewBounce(int);
-
-
 /***************************************************************************
  Module: Write
 ***************************************************************************/
 
+#include <stdio.h>
+#include <string.h>
+
+#include <mui/NListtree_mcc.h>
+
+#include "YAM.h"
+#include "YAM_addressbook.h"
+#include "YAM_utilities.h"
+#include "YAM_write.h"
+#include "YAM_locale.h"
+
+/**************************************************************************/
+/* local protos */
+static void WR_ComposeMulti(FILE*, struct Compose*, char*);
+static struct WritePart *BuildPartsList(int);
+static char *GetDateTime(void);
+static char *NewID(BOOL);
+static int WhichEncodingForFile(char*, char*);
+static int WR_CharOut(char);
+static char *firstbad(char*);
+static void PutQP(unsigned char, FILE*);
+static void HeaderFputs(char*, FILE*);
+static void EmitRcptField(FILE*, char*);
+static void EmitRcptHeader(FILE*, char*, char*);
+static void FPutsQuoting(char*, FILE*);
+static void WriteCtypeNicely(FILE*, char*);
+static void WriteContentTypeAndEncoding(FILE*, struct WritePart*);
+static void WR_WriteUIItem(FILE*, int*, char*, char*);
+static void WR_WriteUserInfo(FILE*);
+static void EncodePart(FILE*, struct WritePart*);
+static BOOL WR_CreateHashTable(char*, char*, char*);
+static void WR_AddTagline(FILE*);
+static void WR_WriteSignature(FILE*, int);
+static void WR_Anonymize(FILE*, char*);
+static char *WR_GetPGPId(struct Person*);
+static char *WR_GetPGPIds(char*, char*);
+static BOOL WR_Bounce(FILE*, struct Compose*);
+static BOOL WR_SaveDec(FILE*, struct Compose*);
+static void WR_EmitExtHeader(FILE*, struct Compose*);
+static void WR_ComposeReport(FILE*, struct Compose*, char*);
+static void SetDefaultSecurity(struct Compose*);
+static BOOL WR_ComposePGP(FILE*, struct Compose*, char*);
+static char *WR_TransformText(char*, int, char*);
+static void WR_SharedSetup(struct WR_ClassData*, int);
+static APTR MakeAddressField(APTR*, char*, APTR, int, int, BOOL);
+static struct WR_ClassData *WR_NewBounce(int);
+
+static char FailedAlias[SIZE_NAME];
+/**************************************************************************/
+
 /*** Translate aliases ***/
 /// WR_ResolveName
 //  Looks for an alias, email address or name in the address book
-char FailedAlias[SIZE_NAME];
 int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
 {
    int hits = 0, i, retcode;
    struct ABEntry *ab;
    struct MUI_NListtree_TreeNode *tn, *tn2;
 
-   stccpy(FailedAlias, name, SIZE_NAME);
+   my_strcpy(FailedAlias, name);
    AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
    if (hits > 1) return 3; // multiple matches
    if (!hits)
@@ -277,18 +288,18 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
    fib = AllocDosObject(DOS_FIB, NULL);
    Examine(lock, fib);
    attach.Size = fib->fib_Size;
-   stccpy(attach.Description, fib->fib_Comment, SIZE_DEFAULT);
+   my_strcpy(attach.Description, fib->fib_Comment);
    FreeDosObject(DOS_FIB, fib);
    UnLock(lock);
    ctype = IdentifyFile(filename);
    if (*ctype)
    {  
-      strcpy(attach.FilePath, filename); 
-      strcpy(attach.Name, name ? name : (char *)FilePart(filename));
+      my_strcpy(attach.FilePath, filename); 
+      my_strcpy(attach.Name, name ? name : (char *)FilePart(filename));
       get(gui->RA_ENCODING, MUIA_Radio_Active, &encoding);
       attach.IsMIME = encoding == 0;
       attach.IsTemp = istemp;
-      strcpy(attach.ContentType, ctype);
+      my_strcpy(attach.ContentType, ctype);
       nnset(gui->ST_CTYPE, MUIA_String_Contents, attach.ContentType);
       nnset(gui->ST_DESC, MUIA_String_Contents, attach.Description);
       DoMethod(gui->LV_ATTACH, MUIM_List_InsertSingle, &attach, MUIV_List_Insert_Bottom);
@@ -303,7 +314,7 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 /*** Compose Message ***/
 /// GetDateTime
 //  Formats current date and time for Date header field
-LOCAL char *GetDateTime(void)
+static char *GetDateTime(void)
 {
    static char dt[SIZE_DEFAULT];
    struct ClockData cd;
@@ -319,7 +330,7 @@ LOCAL char *GetDateTime(void)
 ///
 /// NewID
 //  Creates a unique id, used for Message-ID header field
-LOCAL char *NewID(BOOL is_msgid)
+static char *NewID(BOOL is_msgid)
 {
    static char idbuf[SIZE_MSGID];
    static int ctr = 0;
@@ -335,7 +346,7 @@ LOCAL char *NewID(BOOL is_msgid)
 ///
 /// WhichEncodingForFile
 //  Determines best MIME encoding mode for a file
-LOCAL int WhichEncodingForFile(char *fname, char *ctype)
+static int WhichEncodingForFile(char *fname, char *ctype)
 {
    int c, linesize=0, total=0, unsafechars=0, binarychars=0, longlines=0;
    FILE *fh = fopen(fname, "r");
@@ -388,7 +399,7 @@ struct WritePart *NewPart(int winnum)
 ///
 /// BuildPartsList
 //  Builds message parts from attachment list
-LOCAL struct WritePart *BuildPartsList(int winnum)
+static struct WritePart *BuildPartsList(int winnum)
 {
    int i;
    struct Attach *att;
@@ -429,7 +440,7 @@ void FreePartsList(struct WritePart *p)
 ///
 /// WR_CharOut
 //  Outputs a single byte of a message header
-LOCAL int WR_CharOut(char c)
+static int WR_CharOut(char c)
 {
    if (G->TTout) if (G->TTout->Header) return (int)G->TTout->Table[(UBYTE)c];
    return (int)c;
@@ -438,7 +449,7 @@ LOCAL int WR_CharOut(char c)
 ///
 /// firstbad
 //  Returns a pointer to the first non-ascii or control character in a string
-LOCAL char *firstbad(char *s)
+static char *firstbad(char *s)
 {
    unsigned char *dum;
    for (dum = (unsigned char *)s; *dum; ++dum)
@@ -449,7 +460,7 @@ LOCAL char *firstbad(char *s)
 ///
 /// PutQP
 //  Outputs a base64 encoded, single byte of a message header
-LOCAL void PutQP(unsigned char c, FILE *fh)
+static void PutQP(unsigned char c, FILE *fh)
 {
    static char basis_hex[] = "0123456789ABCDEF";
    fputc('=', fh);
@@ -460,7 +471,7 @@ LOCAL void PutQP(unsigned char c, FILE *fh)
 ///
 /// HeaderFputs
 //  Outputs the value of a header line (optional QP encoding and charset translation)
-LOCAL void HeaderFputs(char *s, FILE *fh)
+static void HeaderFputs(char *s, FILE *fh)
 {
    char *firstnonascii, *wordstart;
 
@@ -493,7 +504,7 @@ void EmitHeader(FILE *fh, char *hdr, char *body)
 ///
 /// EmitRcptField
 //  Outputs the value of a recipient header line, one entry per line
-LOCAL void EmitRcptField(FILE *fh, char *body)
+static void EmitRcptField(FILE *fh, char *body)
 {
    char *part, *next, *bodycpy = malloc(strlen(body)+1);
 
@@ -511,7 +522,7 @@ LOCAL void EmitRcptField(FILE *fh, char *body)
 ///
 /// EmitRcptHeader
 //  Outputs a complete recipient header line
-LOCAL void EmitRcptHeader(FILE *fh, char *hdr, char *body)
+static void EmitRcptHeader(FILE *fh, char *hdr, char *body)
 {
    fprintf(fh, "%s: ", hdr);
    EmitRcptField(fh, body ? body : "");
@@ -521,7 +532,7 @@ LOCAL void EmitRcptHeader(FILE *fh, char *hdr, char *body)
 ///
 /// FPutsQuoting
 //  Handles quotes and slashes
-LOCAL void FPutsQuoting(char *s, FILE *fh)
+static void FPutsQuoting(char *s, FILE *fh)
 {
    char *end = s + strlen(s) - 1;
    while (ISpace(*end) && end > s) --end;
@@ -551,7 +562,7 @@ LOCAL void FPutsQuoting(char *s, FILE *fh)
 ///
 /// WriteCtypeNicely
 //  Outputs content type
-LOCAL void WriteCtypeNicely(FILE *fh, char *ct)
+static void WriteCtypeNicely(FILE *fh, char *ct)
 {
    char *semi, *slash, *eq, *s;
 
@@ -583,7 +594,7 @@ LOCAL void WriteCtypeNicely(FILE *fh, char *ct)
 ///
 /// WriteContentTypeAndEncoding
 //  Outputs content type header including parameters
-LOCAL void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
+static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 {
    char *p;
    fputs("Content-Type: ", fh);
@@ -617,7 +628,7 @@ LOCAL void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 ///
 /// WR_WriteUIItem
 //  Outputs a single parameter of the X-SenderInfo header
-LOCAL void WR_WriteUIItem(FILE *fh, int *len, char *parameter, char *value)
+static void WR_WriteUIItem(FILE *fh, int *len, char *parameter, char *value)
 {
    int l = 6+strlen(parameter)+strlen(value);
    *len += l;
@@ -630,7 +641,7 @@ LOCAL void WR_WriteUIItem(FILE *fh, int *len, char *parameter, char *value)
 ///
 /// WR_WriteUserInfo
 //  Outputs X-SenderInfo header line
-LOCAL void WR_WriteUserInfo(FILE *fh)
+static void WR_WriteUserInfo(FILE *fh)
 {
    int len = 15, hits = 0;
    struct ABEntry *ab = NULL;
@@ -659,7 +670,7 @@ LOCAL void WR_WriteUserInfo(FILE *fh)
 ///
 /// EncodePart
 //  Encodes a message part
-LOCAL void EncodePart(FILE *ofh, struct WritePart *part)
+static void EncodePart(FILE *ofh, struct WritePart *part)
 {
    FILE *ifh;
 
@@ -686,7 +697,7 @@ LOCAL void EncodePart(FILE *ofh, struct WritePart *part)
 ///
 /// WR_CreateHashTable
 //  Creates an index table for a database file
-LOCAL BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
+static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
 {
    char buffer[SIZE_LARGE];
    long fpos, l = strlen(sep);
@@ -711,7 +722,7 @@ LOCAL BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
 ///
 /// WR_AddTagline
 //  Randomly selects a tagline and writes it to the message file
-LOCAL void WR_AddTagline(FILE *fh_mail)
+static void WR_AddTagline(FILE *fh_mail)
 {
    FILE *fh_tag, *fh_hash;
    char buf[SIZE_LARGE], hashfile[SIZE_PATHFILE];
@@ -747,7 +758,7 @@ LOCAL void WR_AddTagline(FILE *fh_mail)
 ///
 /// WR_WriteSignature
 //  Writes signature to the message file
-LOCAL void WR_WriteSignature(FILE *out, int signat)
+static void WR_WriteSignature(FILE *out, int signat)
 {
    FILE *in;
    int ch;
@@ -798,7 +809,7 @@ void WR_AddSignature(char *mailfile, int signat)
 ///
 /// WR_Anonymize
 //  Inserts recipient header field for remailer service
-LOCAL void WR_Anonymize(FILE *fh, char *body)
+static void WR_Anonymize(FILE *fh, char *body)
 {
    char *ptr;
 
@@ -814,7 +825,7 @@ LOCAL void WR_Anonymize(FILE *fh, char *body)
 ///
 /// WR_GetPGPId
 //  Gets PGP key id for a person
-LOCAL char *WR_GetPGPId(struct Person *pe)
+static char *WR_GetPGPId(struct Person *pe)
 {
    int hits;
    char *pgpid = NULL;
@@ -829,7 +840,7 @@ LOCAL char *WR_GetPGPId(struct Person *pe)
 ///
 /// WR_GetPGPIds
 //  Collects PGP key ids for all persons in a recipient field
-LOCAL char *WR_GetPGPIds(char *source, char *ids)
+static char *WR_GetPGPIds(char *source, char *ids)
 {
    struct Person pe;
    char *next, *pid;
@@ -854,7 +865,7 @@ LOCAL char *WR_GetPGPIds(char *source, char *ids)
 
 /// WR_Bounce
 //  Bounce message: inserts resent-headers while copying the message
-LOCAL BOOL WR_Bounce(FILE *fh, struct Compose *comp)
+static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 {
    FILE *oldfh;
    if ((oldfh = fopen(GetMailFile(NULL, NULL, comp->OrigMail), "r")))
@@ -882,7 +893,7 @@ LOCAL BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 ///
 /// WR_SaveDec
 //  Creates decrypted copy of a PGP encrypted message
-LOCAL BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
+static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 {
    FILE *oldfh;
    if ((oldfh = fopen(GetMailFile(NULL, NULL, comp->OrigMail), "r")))
@@ -906,7 +917,7 @@ LOCAL BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 ///
 /// WR_EmitExtHeader
 //  Outputs special X-YAM-Header lines to remember user-defined headers
-LOCAL void WR_EmitExtHeader(FILE *fh, struct Compose *comp)
+static void WR_EmitExtHeader(FILE *fh, struct Compose *comp)
 {
    if (*comp->ExtHeader)
    {
@@ -925,7 +936,7 @@ LOCAL void WR_EmitExtHeader(FILE *fh, struct Compose *comp)
 ///
 /// WR_ComposeReport
 //  Assembles the parts of a message disposition notification
-LOCAL const char *MIMEwarn = "Warning: This is a message in MIME format. Your mail reader does not\n"
+static const char *MIMEwarn = "Warning: This is a message in MIME format. Your mail reader does not\n"
                              "support MIME. Some parts of this message will be readable as plain text.\n"
                              "To see the rest, you will need to upgrade your mail reader. Following are\n"
                              "some URLs where you can find MIME-capable mail programs for common platforms:\n\n"
@@ -934,11 +945,11 @@ LOCAL const char *MIMEwarn = "Warning: This is a message in MIME format. Your ma
                              "  Windows/Macintosh: Eudora       http://www.qualcomm.com/\n\n"
                              "General info about MIME can be found at:\n\n"
                              "http://www.cis.ohio-state.edu/hypertext/faq/usenet/mail/mime-faq/top.html\n\n";
-LOCAL const char *PGPwarn  = "The following body part contains a PGP encrypted message. Either your\n"
+static const char *PGPwarn  = "The following body part contains a PGP encrypted message. Either your\n"
                              "mail reader doesn't support MIME/PGP as specified in RFC 2015, or\n"
                              "the message was encrypted for someone else. To read the encrypted\n"
                              "message, run the next body part through Pretty Good Privacy.\n\n";
-LOCAL void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
+static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
 {
    struct WritePart *p;
    fprintf(fh, "Content-type: multipart/report; report-type=disposition-notification; boundary=\"%s\"\n\n", boundary);
@@ -952,7 +963,7 @@ LOCAL void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
    fprintf(fh, "\n--%s--\n\n", boundary);
 }
 
-LOCAL void SetDefaultSecurity(struct Compose *comp)
+static void SetDefaultSecurity(struct Compose *comp)
 {
 STRPTR CheckThese[3],buf;
 int i, Security=0;
@@ -1012,7 +1023,7 @@ BOOL FirstAddr=TRUE;
 ///
 /// WR_ComposePGP
 //  Creates a signed and/or encrypted PGP/MIME message
-LOCAL BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
+static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
 {
    int sec = comp->Security;
    BOOL success = FALSE;
@@ -1083,7 +1094,7 @@ LOCAL BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
 ///
 /// WR_ComposeMulti
 //  Assembles a multipart message
-LOCAL void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
+static void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
 {
    struct WritePart *p;
    fprintf(fh, "Content-type: multipart/mixed; boundary=\"%s\"\n\n", boundary);
@@ -1310,7 +1321,7 @@ void WR_NewMail(int mode, int winnum)
       if (MailExists(edmail, NULL))
       {
          comp.FH = fopen(GetMailFile(NULL, outfolder, edmail), "w");
-         strcpy(mail.MailFile, edmail->MailFile);
+         my_strcpy(mail.MailFile, edmail->MailFile);
       }
       else
       {
@@ -1571,7 +1582,7 @@ void SAVEDS ASM WR_AddArchiveFunc(REG(a1,int *arg))
       CurrentDir(olddir); UnLock(filedir);
       FreeStrBuf(dst);
       CloseTempFile(tf);
-      strcpy(filename, arcpath);
+      my_strcpy(filename, arcpath);
       if (FileSize(filename) == -1)
       {
          sprintf(filename, "%s.lha", arcpath);
@@ -1632,7 +1643,7 @@ MakeHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
 /*** Menus ***/
 /// WR_TransformText
 //  Inserts or pastes text as plain, ROT13 or quoted
-LOCAL char *WR_TransformText(char *source, int mode, char *qtext)
+static char *WR_TransformText(char *source, int mode, char *qtext)
 {
    FILE *fp;
    char *dest = NULL;
@@ -1811,11 +1822,14 @@ void WR_SetupOldMail(int winnum)
          attach.Size = part->Size;
          attach.IsMIME = part->EncodingCode != ENC_UUE;
          attach.IsTemp = TRUE;
-         if (part->Name) stccpy(attach.Name, part->Name, SIZE_FILE);
-         strcpy(attach.FilePath, part->Filename);
+         if(part->Name)
+         {
+           my_strcpy(attach.Name, part->Name);
+         }
+         my_strcpy(attach.FilePath, part->Filename);
          *part->Filename = 0;
-         stccpy(attach.ContentType, part->ContentType, SIZE_CTYPE);
-         stccpy(attach.Description, part->Description, SIZE_DEFAULT);
+         my_strcpy(attach.ContentType, part->ContentType);
+         my_strcpy(attach.Description, part->Description);
          DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_List_InsertSingle, &attach, MUIV_List_Insert_Bottom);
          BusyEnd;
       }
@@ -1922,7 +1936,7 @@ MakeHook(WR_LV_DspFuncHook, WR_LV_DspFunc);
 /*** GUI ***/
 /// WR_SharedSetup
 //  Common setup for write and bounce windows
-LOCAL void WR_SharedSetup(struct WR_ClassData *data, int winnum)
+static void WR_SharedSetup(struct WR_ClassData *data, int winnum)
 {
    SetHelp(data->GUI.ST_TO      ,MSG_HELP_WR_ST_TO      );
    SetHelp(data->GUI.BT_QUEUE   ,MSG_HELP_WR_BT_QUEUE   );
@@ -1939,7 +1953,7 @@ LOCAL void WR_SharedSetup(struct WR_ClassData *data, int winnum)
 ///
 /// MakeAddressField
 //  Creates a recipient field
-LOCAL APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti)
+static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti)
 {
    APTR obj, bt_ver, bt_adr;
    if ((obj = HGroup,
@@ -2398,7 +2412,7 @@ struct WR_ClassData *WR_New(int winnum)
 ///
 /// WR_NewBounce
 //  Creates a bounce window
-LOCAL struct WR_ClassData *WR_NewBounce(int winnum)
+static struct WR_ClassData *WR_NewBounce(int winnum)
 {
    struct WR_ClassData *data;
 

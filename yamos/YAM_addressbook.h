@@ -1,3 +1,6 @@
+#ifndef YAM_ADDRESSBOOK_H
+#define YAM_ADDRESSBOOK_H
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -25,27 +28,18 @@
 
 ***************************************************************************/
 
-#include "extrasrc/astcsma.c"
-#include "extrasrc/getft.c"
-#include "extrasrc/stccpy.c"
-#include "extrasrc/stcgfe.c"
-#include "extrasrc/stcgfn.c"
-#include "extrasrc/stpblk.c"
-#include "extrasrc/strmfp.c"
-#include "extrasrc/strsfn.c"
-#include "extrasrc/wbpath.c"
-#include "extrasrc/NewReadArgs.c"
-#include "extrasrc/stch_i.c"
-#include "extrasrc/dice.c"
+#include "compiler.h"
 
-#ifdef __libnix__
-int __oslibversion = 0;
-#endif
+#define ASM_ALIAS    0
+#define ASM_REALNAME 1
+#define ASM_ADDRESS  2
+#define ASM_TYPEMASK 7
+#define ASM_USER     8
+#define ASM_LIST     16
+#define ASM_GROUP    32
+#define ASM_COMPLETE 64
 
-#ifdef __ixemul__
-struct Library *IFFParseBase, *KeymapBase;
-struct UtilityBase *UtilityBase;
-struct RxsLib *RexxSysBase;
+int STACKEXT AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *text, int mode,
+   int *hits, struct MUI_NListtree_TreeNode **lasthit);
 
-struct WBStartup *_WBenchMsg;
-#endif
+#endif /* YAM_ADDRESSBOOK_H */

@@ -1,3 +1,6 @@
+#ifndef YAM_MD5_H
+#define YAM_MD5_H
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -25,27 +28,19 @@
 
 ***************************************************************************/
 
-#include "extrasrc/astcsma.c"
-#include "extrasrc/getft.c"
-#include "extrasrc/stccpy.c"
-#include "extrasrc/stcgfe.c"
-#include "extrasrc/stcgfn.c"
-#include "extrasrc/stpblk.c"
-#include "extrasrc/strmfp.c"
-#include "extrasrc/strsfn.c"
-#include "extrasrc/wbpath.c"
-#include "extrasrc/NewReadArgs.c"
-#include "extrasrc/stch_i.c"
-#include "extrasrc/dice.c"
+struct MD5Context
+{
+  unsigned long state[4];
+  unsigned long count[2];
+  unsigned char buffer[64];
+};
 
-#ifdef __libnix__
-int __oslibversion = 0;
-#endif
+void MD5Init(struct MD5Context *);
+void MD5Update(struct MD5Context *, unsigned char *, unsigned int);
+void MD5Final(unsigned char [16], struct MD5Context *);
 
-#ifdef __ixemul__
-struct Library *IFFParseBase, *KeymapBase;
-struct UtilityBase *UtilityBase;
-struct RxsLib *RexxSysBase;
+void hmac_md5(unsigned char *text, int text_len, unsigned char *key, int key_len,
+unsigned char digest[16]);
 
-struct WBStartup *_WBenchMsg;
-#endif
+#endif /* YAM_MD5_H */
+

@@ -1,3 +1,6 @@
+#ifndef YAM_REXX_H
+#define YAM_REXX_H
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -24,13 +27,6 @@
  $Id$
 
 ***************************************************************************/
-/*
- * Source generated with ARexxBox 1.12 (May 18 1993)
- * which is Copyright (c) 1992,1993 Michael Balzer
- */
-
-#ifndef _YAM_rexx_H
-#define _YAM_rexx_H
 
 #define RXIF_INIT   1
 #define RXIF_ACTION 2
@@ -977,4 +973,4 @@ struct rxd_writeto
 
 void rx_writeto( struct RexxHost *, struct rxd_writeto **, long, struct RexxMsg * );
 
-#endif
+#endif /* YAM_REXX_H */

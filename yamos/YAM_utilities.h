@@ -1,3 +1,6 @@
+#ifndef YAM_UTILITIES_H
+#define YAM_UTILITIES_H
+
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -25,27 +28,14 @@
 
 ***************************************************************************/
 
-#include "extrasrc/astcsma.c"
-#include "extrasrc/getft.c"
-#include "extrasrc/stccpy.c"
-#include "extrasrc/stcgfe.c"
-#include "extrasrc/stcgfn.c"
-#include "extrasrc/stpblk.c"
-#include "extrasrc/strmfp.c"
-#include "extrasrc/strsfn.c"
-#include "extrasrc/wbpath.c"
-#include "extrasrc/NewReadArgs.c"
-#include "extrasrc/stch_i.c"
-#include "extrasrc/dice.c"
+#include "YAM.h"
 
-#ifdef __libnix__
-int __oslibversion = 0;
-#endif
+struct Person
+{       
+   char Address[SIZE_ADDRESS];
+   char RealName[SIZE_REALNAME];
+};
 
-#ifdef __ixemul__
-struct Library *IFFParseBase, *KeymapBase;
-struct UtilityBase *UtilityBase;
-struct RxsLib *RexxSysBase;
+void ExtractAddress(char *line, struct Person *pe);
 
-struct WBStartup *_WBenchMsg;
-#endif
+#endif /* YAM_UTILITIES_H */

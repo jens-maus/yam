@@ -31,8 +31,8 @@
    This file was created automatically by `FlexCat V1.3'
 ****************************************************************/
 
-#ifndef %b_CAT_H
-#define %b_CAT_H
+#ifndef %b_LOCALE_H
+#define %b_LOCALE_H
 #include <exec/types.h>
 
 extern char *GetStr(APTR);
@@ -42,4 +42,4 @@ extern void Close%bCatalog(void);
 
 extern const APTR _%i;\n#define %i ((APTR) &_%i)
 
-#endif
+#endif /* %b_LOCALE_H */

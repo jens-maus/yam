@@ -26,10 +26,11 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_addressbook.h"
 
 /* local protos */
-LOCAL int EA_Open(int);
-LOCAL struct EA_ClassData *EA_New(int, int);
+static int EA_Open(int);
+static struct EA_ClassData *EA_New(int, int);
 
 /***************************************************************************
  Module: Address book entry
@@ -426,7 +427,7 @@ MakeHook(EA_HomepageHook, EA_HomepageFunc);
 ///
 /// EA_Open
 //  Assigns a number for a new window
-LOCAL int EA_Open(int type)
+static int EA_Open(int type)
 {
    int winnum;
    for (winnum = 0; winnum < 4; winnum++) if (!G->EA[winnum]) break;
@@ -448,7 +449,7 @@ MakeHook(EA_CloseHook, EA_CloseFunc);
 /*** GUI ***/
 /// EA_New
 //  Creates address book entry window
-LOCAL struct EA_ClassData *EA_New(int winnum, int type)
+static struct EA_ClassData *EA_New(int winnum, int type)
 {
 struct EA_ClassData *data;
 

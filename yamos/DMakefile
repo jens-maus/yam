@@ -4,9 +4,9 @@ SRCS1= YAM.c YAM_AB.c YAM_CL.c YAM_CO.c YAM_COg.c YAM_COs.c YAM_DI.c YAM_EA.c \
 	YAM_ER.c YAM_FI.c YAM_FO.c YAM_MAf.c YAM_TR.c YAM_US.c YAM_UT.c \
 	all_dice.c
 OBJS1= $(SRCS1:"*.c":"diceobjs/*.o")
-SRCS2= YAM_loc.c YAM_RE.c YAM_WR.c YAM_MA.c
+SRCS2= YAM_locale.c YAM_RE.c YAM_WR.c YAM_MA.c
 OBJS2= $(SRCS2:"*.c":"diceobjs/*.o")
-SRCS3= YAM_MI.c YAM_rexx.c YAM_rexx_rxcl.c hmac_md5.c
+SRCS3= YAM_MI.c YAM_rexx.c YAM_rexx_rxcl.c YAM_md5.c
 OBJS3= $(SRCS3:"*.c":"diceobjs/*.o")
 SRCS4= YAM_rexx_rxif.c
 OBJS4= $(SRCS4:"*.c":"diceobjs/*.o")
@@ -28,20 +28,17 @@ $(OBJS3): $(SRCS3)
 $(OBJS4): $(SRCS4)
 	dcc $(CFLAGS) -mD -mi -o %(left) -c %(right)
 
-YAM.h: YAM.h.in
-	Copy YAM.h.in YAM.h
+YAM_locale.h: locale/YAM.cd
+	flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
 
-YAM_loc.h: YAM.cd
-	flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
-
-YAM.m: YAM.h headers.h YAM_loc.h includes/dice.h includes/compiler.h \
+YAM.m: YAM.h headers.h YAM_locale.h includes/dice.h includes/compiler.h \
 	includes/extra.h
 	Delete %(left)
 
 diceobjs: diceobjs
 	Makedir %(left)
 
-$(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4):: YAM.h headers.h YAM_loc.h \
+$(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4):: YAM.h headers.h YAM_locale.h \
 	includes/dice.h includes/compiler.h includes/extra.h
 
 diceobjs/all_dice.o:: extrasrc/md5.c extrasrc/astcsma.c extrasrc/getft.c \

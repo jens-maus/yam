@@ -1,32 +1,131 @@
-/***************************************************************************
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <time.h>
+#include <math.h>
 
- YAM - Yet Another Mailer
- Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+#include <exec/memory.h>
+#include <exec/execbase.h>
+#include <dos/datetime.h>
+#include <dos/dostags.h>
+#include <dos/doshunks.h>
+#include <workbench/workbench.h>
+#include <workbench/startup.h>
+#include <devices/printer.h>
+#include <intuition/icclass.h>
+#include <intuition/gadgetclass.h>
+#include <datatypes/pictureclass.h>
+#include <datatypes/soundclass.h>
+#include <libraries/locale.h>
+#include <libraries/asl.h>
+#include <libraries/mui.h>
+#include <libraries/gadtools.h>
+#include <libraries/openurl.h>
+#include <libraries/genesis.h>
+#include <libraries/cmanager.h>
+#include <mui/NListtree_mcc.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+#include <mui/TextEditor_mcc.h>
+#include <mui/BetterString_mcc.h>
+#include <mui/Toolbar_mcc.h>
+#include <rexx/rxslib.h>
+#include <rexx/storage.h>
+#include <xpk/xpk.h>
+#include <clib/alib_protos.h>
+#ifdef __MORPHOS__
+#define NO_PPCINLINE_STDARG
+#include <ppcinline/locale.h>
+#include <ppcinline/socket.h>
+#else
+#include <proto/socket.h>
+#include <proto/locale.h>
+#endif
+#include <proto/muimaster.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/utility.h>
+#include <proto/icon.h>
+#include <proto/intuition.h>
+#include <proto/graphics.h>
+#include <proto/datatypes.h>
+#include <proto/wb.h>
+#include <proto/iffparse.h>
+#include <proto/keymap.h>
+#include <proto/rexxsyslib.h>
+#include <proto/xpkmaster.h>
+#include <proto/openurl.h>
+#include <proto/miami.h>
+#include <proto/genesis.h>
+#include <proto/cmanager.h>
+#include <proto/pm.h>
+#include <clib/macros.h>
+#include <NewReadArgs.h>
+#include <compiler.h>
+#include <extra.h>
 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+#ifdef __MORPHOS__
+#undef DoSuperMethod
+#define DoSuperMethod(cl,obj,a,b,c) ({ LONG m[] = { (LONG)(a), (LONG)(b), (LONG)(c) }; DoSuperMethodA(cl,obj,(Msg)m); })
+#define KPrintF dprintf
 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+/*MorphOS standard netincludes don't have these*/
 
- YAM Official Support Site :  http://www.yam.ch
- YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+struct in_addr {
+  u_long s_addr;
+};
 
- $Id$
+struct sockaddr_in {
+  u_char sin_len;
+  u_char sin_family;
+  u_short sin_port;
+  struct in_addr sin_addr;
+  char sin_zero[8];
+};
 
-***************************************************************************/
+ struct hostent {
+  char *h_name;
+  char **h_aliases;
+  int h_addrtype;
+  int h_length;
+  char **h_addr_list;
+  #define h_addr h_addr_list[0]
 
-#include "headers.h"
-#include "YAM_loc.h"
+  #define Shutdown shutdown
+  #define GetHostByName gethostbyname
+  #define Connect connect
+  #define Recv recv
+  #define Send send
+  #define Socket socket
+
+  #define SMTP_NO_SOCKET -1
+
+  #define SOCK_STREAM 1
+  #define AF_INET 2
+  #define EINPROGRESS 36
+
+};
+
+#else
+#include <clib/locale_protos.h>
+#endif
+
+#if (defined DEBUG) || (defined _MGST)
+  #include "clib/debug_protos.h"
+#endif
+
+#if (defined DEBUG)
+  #define DB(x) x
+  #define DBpr(x) (KPrintF("YAM: %s",x))
+#else
+  #define DB(x)
+  #define DBpr(x)
+#endif
+
+#include "YAM_locale.h"
+#include "YAM_utilities.h"
 
 /// Defines
 #if defined __PPC__
@@ -49,48 +148,10 @@
 #define True  ((BOOL)TRUE)
 #define False ((BOOL)FALSE)
 
-#define MAXP3 16
-#define MAXRU 100
-#define MAXMV 100
-#define MAXRX 21
-
 #define FOCOLNUM 5
 #define MACOLNUM 7
 #define ABCOLNUM 9
 
-#define MAXICONS  4
-#define MAXIMAGES 17
-#define MAXASL 8
-#define MAXERR 50
-#define MAXUSERS 16
-#define MAXCTYPE 25
-#define MAXCPAGES 15
-#define MAXEA 4
-#define MAXRE 4
-#define MAXWR 2 /* BEWARE: Don't change this value - it's hardcoded many places! */
-
-#define SIZE_USERID     60
-#define SIZE_PASSWORD   80
-#define SIZE_ADDRESS   100
-#define SIZE_HOST       80
-#define SIZE_REALNAME   40
-#define SIZE_SUBJECT   200
-#define SIZE_MSGID      80
-#define SIZE_MFILE      12
-#define SIZE_COMMAND   120
-#define SIZE_CTYPE      40
-#define SIZE_NAME       20
-#define SIZE_PATH      120
-#define SIZE_FILE       32
-#define SIZE_SMALL      16
-#define SIZE_DEFAULT    80
-#define SIZE_LARGE     512
-#define SIZE_LINE     1001
-#define SIZE_RCPTS    4096
-#define SIZE_INTRO     200
-#define SIZE_PATTERN   160
-#define SIZE_PATHFILE  SIZE_PATH+SIZE_FILE
-#define SIZE_URL       SIZE_HOST+SIZE_PATHFILE
 
 #define AddrName(abentry) ((abentry).RealName[0]?(abentry).RealName:(abentry).Address)
 #define FolderName(fo)    ((fo) ? (fo)->Name : "?")
@@ -171,14 +232,6 @@
 #define PGPS_BADSIG   4
 #define PGPS_ADDRESS  8
 #define PGPS_CHECKED 16
-#define ASM_ALIAS    0
-#define ASM_REALNAME 1
-#define ASM_ADDRESS  2
-#define ASM_TYPEMASK 7
-#define ASM_USER     8
-#define ASM_LIST     16
-#define ASM_GROUP    32
-#define ASM_COMPLETE 64
 #define HIDE_INFO    1
 #define HIDE_XY      2
 #define HIDE_TBAR    4
@@ -278,15 +331,6 @@ struct Rule
    char  **PatternsFromList;
 };       
 
-struct RxHook
-{
-   char  Name[SIZE_NAME];
-   char  Script[SIZE_PATHFILE];
-   BOOL  IsAmigaDOS;
-   BOOL  UseConsole;
-   BOOL  WaitTerm;
-};
-
 struct TranslationTable
 {
    char Name[SIZE_DEFAULT];
@@ -304,142 +348,6 @@ struct Column
    int   Width;
    int   Position;
    BOOL  Show;
-};
-///
-/// Configuration main structure
-struct Config
-{
-   char  RealName[SIZE_REALNAME]; /*0*/
-   char  EmailAddress[SIZE_ADDRESS];
-   int   TimeZone;
-   BOOL  DaylightSaving;
-   char  SMTP_Server[SIZE_HOST]; /*1*/
-   char  SMTP_Domain[SIZE_HOST];
-   BOOL  Allow8bit;
-   BOOL  Use_SMTP_AUTH;
-   char  SMTP_AUTH_User[SIZE_USERID];
-   char  SMTP_AUTH_Pass[SIZE_USERID];
-   struct POP3 *P3[MAXP3];
-   BOOL  AvoidDuplicates; /*2*/
-   int   PreSelection;
-   int   TransferWindow;
-   BOOL  UpdateStatus;
-   int   WarnSize;
-   int   CheckMailDelay;
-   BOOL  DownloadLarge;
-   int   NotifyType;
-   char  NotifySound[SIZE_PATHFILE];
-   char  NotifyCommand[SIZE_COMMAND];
-   struct Rule *RU[MAXRU]; /*3*/
-   int   ShowHeader; /*4*/
-   char  ShortHeaders[SIZE_PATTERN];
-   int   ShowSenderInfo;
-   struct MUI_PenSpec ColoredText;
-   struct MUI_PenSpec Color2ndLevel;
-   BOOL  DisplayAllTexts;
-   BOOL  FixedFontEdit;
-   BOOL  MultipleWindows;
-   int   SigSepLine;
-   BOOL  UseTextstyles;
-   BOOL  WrapHeader;
-   char  TranslationIn[SIZE_PATHFILE];
-   char  ReplyTo[SIZE_ADDRESS]; /*5*/
-   char  Organization[SIZE_DEFAULT];
-   char  ExtraHeaders[SIZE_LARGE];
-   char  NewIntro[SIZE_INTRO];
-   char  Greetings[SIZE_INTRO];
-   char  TranslationOut[SIZE_PATHFILE];
-   int   EdWrapCol;
-   int   EdWrapMode;
-   char  Editor[SIZE_PATHFILE];
-   BOOL  LaunchAlways;
-   char  ReplyHello[SIZE_INTRO]; /*6*/
-   char  ReplyIntro[SIZE_INTRO];
-   char  ReplyBye[SIZE_INTRO];
-   char  AltReplyHello[SIZE_INTRO];
-   char  AltReplyIntro[SIZE_INTRO];
-   char  AltReplyBye[SIZE_INTRO];
-   char  AltReplyPattern[SIZE_PATTERN];
-   char  MLReplyHello[SIZE_INTRO];
-   char  MLReplyIntro[SIZE_INTRO];
-   char  MLReplyBye[SIZE_INTRO];
-   char  ForwardIntro[SIZE_INTRO];
-   char  ForwardFinish[SIZE_INTRO];
-   BOOL  QuoteMessage;
-   char  QuoteText[SIZE_SMALL];
-   char  AltQuoteText[SIZE_SMALL];
-   BOOL  QuoteEmptyLines;
-   BOOL  CompareAddress;
-   BOOL  StripSignature;
-   BOOL  UseSignature; /*7*/
-   char  TagsFile[SIZE_PATHFILE];
-   char  TagsSeparator[SIZE_SMALL];
-   int   FolderCols; /*8*/
-   int   MessageCols;
-   BOOL  FixedFontList;
-   BOOL  SwatchBeat;
-   char  PGPCmdPath[SIZE_PATH]; /*9*/
-   char  MyPGPID[SIZE_DEFAULT];
-   BOOL  EncryptToSelf;
-   char  ReMailer[SIZE_ADDRESS];
-   char  RMCommands[SIZE_INTRO];
-   char  LogfilePath[SIZE_PATH];
-   int   LogfileMode;
-   BOOL  SplitLogfile;
-   BOOL  LogAllEvents;
-   BOOL  GetOnStartup; /*10*/
-   BOOL  SendOnStartup;
-   BOOL  CleanupOnStartup;
-   BOOL  RemoveOnStartup;
-   BOOL  LoadAllFolders;
-   BOOL  UpdateNewMail;
-   BOOL  CheckBirthdates;
-   BOOL  SendOnQuit;
-   BOOL  CleanupOnQuit;
-   BOOL  RemoveOnQuit;
-   struct MimeView *MV[MAXMV]; /*11*/
-   BOOL  IdentifyBin;
-   char  DetachDir[SIZE_PATH];
-   char  AttachDir[SIZE_PATH];
-   char  GalleryDir[SIZE_PATH]; /*12*/
-   char  MyPictureURL[SIZE_URL];
-   BOOL  AddMyInfo;
-   int   AddToAddrbook;
-   char  NewAddrGroup[SIZE_NAME];
-   char  ProxyServer[SIZE_HOST];
-   int   AddrbookCols;
-   BOOL  UseCManager;
-   struct RxHook RX[MAXRX]; /*13*/
-   char  TempDir[SIZE_PATH]; /*14*/
-   char  PackerCommand[SIZE_COMMAND];
-   int   IconPositionX, IconPositionY;
-   BOOL  IconifyOnQuit;
-   BOOL  Confirm;
-   int   ConfirmDelete;
-   BOOL  RemoveAtOnce;
-   BOOL  SaveSent;
-   int   MDN_Display;
-   int   MDN_Process;
-   int   MDN_Delete;
-   int   MDN_Filter;
-   BOOL  SendMDNAtOnce;
-   char  XPKPack[5];
-   char  XPKPackEncrypt[5];
-   int   XPKPackEff;
-   int   XPKPackEncryptEff;
-   int   LetterPart; /*Hidden*/
-   int   WriteIndexes;
-   int   AutoSave;
-   char  SupportSite[SIZE_HOST];
-   BOOL  JumpToNewMsg;
-   BOOL  PrinterCheck;
-   int   HideGUIElements;
-   char  LocalCharset[SIZE_CTYPE];
-   BOOL  IsOnlineCheck;
-   char  IOCInterface[SIZE_SMALL];
-   BOOL  ConfirmOnQuit;
-	int	PrintMethod;
-   int   StackSize;
 };
 ///
 /// Miscellaneous structures
@@ -460,12 +368,6 @@ struct Data2D
    int Allocated;
    int Used;
    char **Data;
-};
-
-struct Person
-{       
-   char Address[SIZE_ADDRESS];
-   char RealName[SIZE_REALNAME];
 };
 
 struct ABEntry
@@ -1335,7 +1237,6 @@ extern char *AB_CompleteAlias(char *);
 extern char *AB_ExpandBD(long date);
 extern long AB_CompressBD(char *datestr);
 extern void AB_CheckBirthdates(void);
-extern STACKEXT int AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *, int, int *, struct  MUI_NListtree_TreeNode **);
 extern BOOL AB_LoadTree(char *, BOOL, BOOL);
 extern BOOL AB_SaveTree(char *);
 extern void SAVEDS AB_SaveABookFunc(void);
@@ -1467,4 +1368,3 @@ extern void ExitClasses(void);
 	extern struct EmulLibEntry Gate_AB_LV_DspFunc;
 	extern struct EmulLibEntry Gate_CO_PL_DspFunc;
 #endif
-///

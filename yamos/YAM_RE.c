@@ -26,12 +26,13 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_addressbook.h"
 
 /* local protos */
-LOCAL void RE_PrintFile(char*,struct Part*);
-LOCAL void RE_PrintLaTeX(char*,struct Part*);
-LOCAL char **Init_ISO8859_to_LaTeX_Tab(char*);
-LOCAL char *ISO8859_to_LaTeX(char*);
+static void RE_PrintFile(char*,struct Part*);
+static void RE_PrintLaTeX(char*,struct Part*);
+static char **Init_ISO8859_to_LaTeX_Tab(char*);
+static char *ISO8859_to_LaTeX(char*);
 
 
 /***************************************************************************
@@ -648,7 +649,7 @@ MakeHook(RE_PrintHook, RE_PrintFunc);
 //  To do for LaTeX printing:
 //  - remap characters in header to LaTeX notation
 //  - make header lines to print (and parts where to print headers) configurable
-LOCAL void RE_PrintFile(char *filename, struct Part *part)
+static void RE_PrintFile(char *filename, struct Part *part)
 {
    switch(C->PrintMethod)
    {
@@ -668,7 +669,7 @@ LOCAL void RE_PrintFile(char *filename, struct Part *part)
    }
 }
 
-LOCAL void RE_PrintLaTeX(char *filename, struct Part *part)
+static void RE_PrintLaTeX(char *filename, struct Part *part)
 {
 struct TempFile *texfile;
 
@@ -743,7 +744,7 @@ struct TempFile *texfile;
 /// ISO8859_to_LaTeX
 // Takes a string in ISO-8859 charset and converts it to a equivalent
 // string in LaTeX notation. Free the result with FreeStrBuf() after use
-LOCAL char *ISO8859_to_LaTeX(char *s)
+static char *ISO8859_to_LaTeX(char *s)
 {
 char *result=NULL;
 char **CVTab;
@@ -781,7 +782,7 @@ char **CVTab;
 // Init_ISO8859_to_LaTeX_Tab
 // Takes a filename for a ISO->LaTeX mapping table and returns a table for
 // mapping ISO/ASCII codes to strings
-LOCAL char **Init_ISO8859_to_LaTeX_Tab(char *TabFileName)
+static char **Init_ISO8859_to_LaTeX_Tab(char *TabFileName)
 {
 int TabSize;
 char **CVTab, *TabFile;

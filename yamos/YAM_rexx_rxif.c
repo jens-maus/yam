@@ -24,50 +24,24 @@
  $Id$
 
 ***************************************************************************/
-/*
- * Source generated with ARexxBox 1.12 (May 18 1993)
- * And afterwards handmodified to fix bugs!
- * which is Copyright (c) 1992,1993 Michael Balzer
- */
-
-#include <exec/types.h>
-#include <exec/memory.h>
-#include <dos/dos.h>
-#include <rexx/storage.h>
-#include <rexx/rxslib.h>
-
-#ifdef __GNUC__
-/* GCC needs all struct defs */
-#include <dos/exall.h>
-#include <graphics/graphint.h>
-#include <intuition/classes.h>
-#include <devices/keymap.h>
-#include <exec/semaphores.h>
-#endif
-
-#include <clib/alib_protos.h>
-#include <proto/exec.h>
-#include <proto/dos.h>
-#include <proto/rexxsyslib.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
+#include <exec/memory.h>
+#include <rexx/storage.h>
+#include <rexx/rxslib.h>
+#include <clib/alib_protos.h>
+#include <proto/exec.h>
+#include <proto/dos.h>
+#include <proto/rexxsyslib.h>
+
+#include "YAM_addressbook.h"
 #include "YAM_rexx.h"
 #include "YAM.h"
 
-
-extern struct ExecBase *SysBase;
-extern struct DosLibrary *DOSBase;
-extern struct RxsLib *RexxSysBase;
-
-
-/* $ARB: I 876664321 */
-
-/* $ARB: B 1 SHOW */
-/// OK
 void rx_show( struct RexxHost *host, struct rxd_show **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_show *rd = *rxd;
@@ -87,11 +61,7 @@ void rx_show( struct RexxHost *host, struct rxd_show **rxd, long action, struct 
    }
    return;
 }
-///
-/* $ARB: E 1 SHOW */
 
-/* $ARB: B 2 HIDE */
-/// OK
 void rx_hide( struct RexxHost *host, struct rxd_hide **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_hide *rd = *rxd;
@@ -111,11 +81,7 @@ void rx_hide( struct RexxHost *host, struct rxd_hide **rxd, long action, struct 
    }
    return;
 }
-///
-/* $ARB: E 2 HIDE */
 
-/* $ARB: B 3 QUIT */
-/// OK
 void rx_quit( struct RexxHost *host, struct rxd_quit **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_quit *rd = *rxd;
@@ -136,11 +102,7 @@ void rx_quit( struct RexxHost *host, struct rxd_quit **rxd, long action, struct 
    }
    return;
 }
-///
-/* $ARB: E 3 QUIT */
 
-/* $ARB: B 4 HELP */
-/// OK
 void rx_help( struct RexxHost *host, struct rxd_help **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_help *rd = *rxd;
@@ -169,11 +131,7 @@ void rx_help( struct RexxHost *host, struct rxd_help **rxd, long action, struct 
    }
    return;
 }
-///
-/* $ARB: E 4 HELP */
 
-/* $ARB: B 5 INFO */
-/// OK
 void rx_info( struct RexxHost *host, struct rxd_info **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_info *rd = *rxd;
@@ -214,11 +172,7 @@ void rx_info( struct RexxHost *host, struct rxd_info **rxd, long action, struct 
    }
    return;
 }
-///
-/* $ARB: E 5 INFO */
 
-/* $ARB: B 6 WRITETO */
-/// OK
 void rx_writeto( struct RexxHost *host, struct rxd_writeto **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writeto *rd = *rxd;
@@ -239,11 +193,7 @@ void rx_writeto( struct RexxHost *host, struct rxd_writeto **rxd, long action, s
    }
    return;
 }
-///
-/* $ARB: E 6 WRITETO */
 
-/* $ARB: B 7 WRITECC */
-/// OK
 void rx_writecc( struct RexxHost *host, struct rxd_writecc **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writecc *rd = *rxd;
@@ -264,11 +214,7 @@ void rx_writecc( struct RexxHost *host, struct rxd_writecc **rxd, long action, s
    }
    return;
 }
-///
-/* $ARB: E 7 WRITECC */
 
-/* $ARB: B 8 WRITEBCC */
-/// OK
 void rx_writebcc( struct RexxHost *host, struct rxd_writebcc **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writebcc *rd = *rxd;
@@ -289,11 +235,7 @@ void rx_writebcc( struct RexxHost *host, struct rxd_writebcc **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 8 WRITEBCC */
 
-/* $ARB: B 9 WRITEATTACH */
-/// OK
 void rx_writeattach( struct RexxHost *host, struct rxd_writeattach **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writeattach *rd = *rxd;
@@ -320,11 +262,7 @@ void rx_writeattach( struct RexxHost *host, struct rxd_writeattach **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 9 WRITEATTACH */
 
-/* $ARB: B 10 WRITELETTER */
-/// OK
 void rx_writeletter( struct RexxHost *host, struct rxd_writeletter **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writeletter *rd = *rxd;
@@ -349,11 +287,7 @@ void rx_writeletter( struct RexxHost *host, struct rxd_writeletter **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 10 WRITELETTER */
 
-/* $ARB: B 11 WRITEOPTIONS */
-/// OK
 void rx_writeoptions( struct RexxHost *host, struct rxd_writeoptions **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writeoptions *rd = *rxd;
@@ -383,11 +317,7 @@ void rx_writeoptions( struct RexxHost *host, struct rxd_writeoptions **rxd, long
    }
    return;
 }
-///
-/* $ARB: E 11 WRITEOPTIONS */
 
-/* $ARB: B 12 WRITEQUEUE */
-/// OK
 void rx_writequeue( struct RexxHost *host, struct rxd_writequeue **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writequeue *rd = *rxd;
@@ -407,11 +337,7 @@ void rx_writequeue( struct RexxHost *host, struct rxd_writequeue **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 12 WRITEQUEUE */
 
-/* $ARB: B 13 WRITESEND */
-/// OK
 void rx_writesend( struct RexxHost *host, struct rxd_writesend **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writesend *rd = *rxd;
@@ -431,11 +357,7 @@ void rx_writesend( struct RexxHost *host, struct rxd_writesend **rxd, long actio
    }
    return;
 }
-///
-/* $ARB: E 13 WRITESEND */
 
-/* $ARB: B 14 MAILWRITE */
-/// OK
 void rx_mailwrite( struct RexxHost *host, struct rxd_mailwrite **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailwrite *rd = *rxd;
@@ -467,11 +389,7 @@ void rx_mailwrite( struct RexxHost *host, struct rxd_mailwrite **rxd, long actio
    }
    return;
 }
-///
-/* $ARB: E 14 MAILWRITE */
 
-/* $ARB: B 15 MAILREPLY */
-/// OK
 void rx_mailreply( struct RexxHost *host, struct rxd_mailreply **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailreply *rd = *rxd;
@@ -494,11 +412,7 @@ void rx_mailreply( struct RexxHost *host, struct rxd_mailreply **rxd, long actio
    }
    return;
 }
-///
-/* $ARB: E 15 MAILREPLY */
 
-/* $ARB: B 16 MAILFORWARD */
-/// OK
 void rx_mailforward( struct RexxHost *host, struct rxd_mailforward **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailforward *rd = *rxd;
@@ -522,11 +436,7 @@ void rx_mailforward( struct RexxHost *host, struct rxd_mailforward **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 16 MAILFORWARD */
 
-/* $ARB: B 17 MAILMOVE */
-/// OK
 void rx_mailmove( struct RexxHost *host, struct rxd_mailmove **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailmove *rd = *rxd;
@@ -549,11 +459,7 @@ void rx_mailmove( struct RexxHost *host, struct rxd_mailmove **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 17 MAILMOVE */
 
-/* $ARB: B 18 MAILREAD */
-/// OK
 void rx_mailread( struct RexxHost *host, struct rxd_mailread **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailread *rd = *rxd;
@@ -594,11 +500,7 @@ void rx_mailread( struct RexxHost *host, struct rxd_mailread **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 18 MAILREAD */
 
-/* $ARB: B 19 MAILSEND */
-/// OK
 void rx_mailsend( struct RexxHost *host, struct rxd_mailsend **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailsend *rd = *rxd;
@@ -618,11 +520,7 @@ void rx_mailsend( struct RexxHost *host, struct rxd_mailsend **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 19 MAILSEND */
 
-/* $ARB: B 20 MAILDELETE */
-/// OK
 void rx_maildelete( struct RexxHost *host, struct rxd_maildelete **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_maildelete *rd = *rxd;
@@ -642,11 +540,7 @@ void rx_maildelete( struct RexxHost *host, struct rxd_maildelete **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 20 MAILDELETE */
 
-/* $ARB: B 21 MAILCHECK */
-/// OK
 void rx_mailcheck( struct RexxHost *host, struct rxd_mailcheck **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailcheck *rd = *rxd;
@@ -682,11 +576,7 @@ void rx_mailcheck( struct RexxHost *host, struct rxd_mailcheck **rxd, long actio
    }
    return;
 }
-///
-/* $ARB: E 21 MAILCHECK */
 
-/* $ARB: B 22 MAILIMPORT */
-/// OK
 void rx_mailimport( struct RexxHost *host, struct rxd_mailimport **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailimport *rd = *rxd;
@@ -707,11 +597,7 @@ void rx_mailimport( struct RexxHost *host, struct rxd_mailimport **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 22 MAILIMPORT */
 
-/* $ARB: B 23 MAILEXPORT */
-/// OK
 void rx_mailexport( struct RexxHost *host, struct rxd_mailexport **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailexport *rd = *rxd;
@@ -731,11 +617,7 @@ void rx_mailexport( struct RexxHost *host, struct rxd_mailexport **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 23 MAILEXPORT */
 
-/* $ARB: B 24 MAILUPDATE */
-/// OK
 void rx_mailupdate( struct RexxHost *host, struct rxd_mailupdate **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailupdate *rd = *rxd;
@@ -755,11 +637,7 @@ void rx_mailupdate( struct RexxHost *host, struct rxd_mailupdate **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 24 MAILUPDATE */
 
-/* $ARB: B 25 MAILFILTER */
-/// OK
 void rx_mailfilter( struct RexxHost *host, struct rxd_mailfilter **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailfilter *rd = *rxd;
@@ -787,11 +665,7 @@ void rx_mailfilter( struct RexxHost *host, struct rxd_mailfilter **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 25 MAILFILTER */
 
-/* $ARB: B 27 MAILINFO */
-/// OK
 void rx_mailinfo( struct RexxHost *host, struct rxd_mailinfo **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct {
@@ -844,11 +718,7 @@ void rx_mailinfo( struct RexxHost *host, struct rxd_mailinfo **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 27 MAILINFO */
 
-/* $ARB: B 28 SETFOLDER */
-/// OK
 void rx_setfolder( struct RexxHost *host, struct rxd_setfolder **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_setfolder *rd = *rxd;
@@ -870,11 +740,7 @@ void rx_setfolder( struct RexxHost *host, struct rxd_setfolder **rxd, long actio
    }
    return;
 }
-///
-/* $ARB: E 28 SETFOLDER */
 
-/* $ARB: B 29 SETMAIL */
-/// OK
 void rx_setmail( struct RexxHost *host, struct rxd_setmail **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_setmail *rd = *rxd;
@@ -898,11 +764,7 @@ void rx_setmail( struct RexxHost *host, struct rxd_setmail **rxd, long action, s
    }
    return;
 }
-///
-/* $ARB: E 29 SETMAIL */
 
-/* $ARB: B 30 WRITEEDITOR */
-/// OK
 void rx_writeeditor( struct RexxHost *host, struct rxd_writeeditor **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writeeditor *rd = *rxd;
@@ -933,11 +795,7 @@ void rx_writeeditor( struct RexxHost *host, struct rxd_writeeditor **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 30 WRITEEDITOR */
 
-/* $ARB: B 31 REQUEST */
-/// OK
 void rx_request( struct RexxHost *host, struct rxd_request **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct {
@@ -965,20 +823,12 @@ void rx_request( struct RexxHost *host, struct rxd_request **rxd, long action, s
    }
    return;
 }
-///
-/* $ARB: E 31 REQUEST */
 
-/* $ARB: B 32 MAILARCHIVE */
-/// OK OBSOLETE
 void rx_mailarchive( struct RexxHost *host, struct rxd_mailarchive **rxd, long action, struct RexxMsg *rexxmsg )
 {
    rx_mailmove(host, (struct rxd_mailmove **)rxd, action, rexxmsg);
 }
-///
-/* $ARB: E 32 MAILARCHIVE */
 
-/* $ARB: B 33 MAILSENDALL */
-/// OK OBSOLETE
 void rx_mailsendall( struct RexxHost *host, struct rxd_mailsendall **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailsendall *rd = *rxd;
@@ -998,11 +848,7 @@ void rx_mailsendall( struct RexxHost *host, struct rxd_mailsendall **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 33 MAILSENDALL */
 
-/* $ARB: B 35 GETFOLDERINFO */
-/// OK
 void rx_getfolderinfo( struct RexxHost *host, struct rxd_getfolderinfo **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct {
@@ -1036,11 +882,7 @@ void rx_getfolderinfo( struct RexxHost *host, struct rxd_getfolderinfo **rxd, lo
    }
    return;
 }
-///
-/* $ARB: E 35 GETFOLDERINFO */
 
-/* $ARB: B 36 GETMAILINFO */
-/// OK OBSOLETE
 void rx_getmailinfo( struct RexxHost *host, struct rxd_getmailinfo **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct {
@@ -1080,11 +922,7 @@ void rx_getmailinfo( struct RexxHost *host, struct rxd_getmailinfo **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 36 GETMAILINFO */
 
-/* $ARB: B 37 GETCONFIGINFO */
-/// OK OBSOLETE
 void rx_getconfiginfo( struct RexxHost *host, struct rxd_getconfiginfo **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_getconfiginfo *rd = *rxd;
@@ -1108,11 +946,7 @@ void rx_getconfiginfo( struct RexxHost *host, struct rxd_getconfiginfo **rxd, lo
    }
    return;
 }
-///
-/* $ARB: E 37 GETCONFIGINFO */
 
-/* $ARB: B 38 FOLDERINFO */
-/// OK
 void rx_folderinfo( struct RexxHost *host, struct rxd_folderinfo **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_folderinfo *rd = *rxd;
@@ -1147,11 +981,7 @@ void rx_folderinfo( struct RexxHost *host, struct rxd_folderinfo **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 38 FOLDERINFO */
 
-/* $ARB: B 40 WRITESUBJECT */
-/// OK
 void rx_writesubject( struct RexxHost *host, struct rxd_writesubject **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writesubject *rd = *rxd;
@@ -1171,11 +1001,7 @@ void rx_writesubject( struct RexxHost *host, struct rxd_writesubject **rxd, long
    }
    return;
 }
-///
-/* $ARB: E 40 WRITESUBJECT */
 
-/* $ARB: B 41 SCREENTOBACK */
-/// OK
 void rx_screentoback( struct RexxHost *host, struct rxd_screentoback **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_screentoback *rd = *rxd;
@@ -1197,11 +1023,7 @@ void rx_screentoback( struct RexxHost *host, struct rxd_screentoback **rxd, long
    }
    return;
 }
-///
-/* $ARB: E 41 SCREENTOBACK */
 
-/* $ARB: B 42 SCREENTOFRONT */
-/// OK
 void rx_screentofront( struct RexxHost *host, struct rxd_screentofront **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_screentofront *rd = *rxd;
@@ -1223,11 +1045,7 @@ void rx_screentofront( struct RexxHost *host, struct rxd_screentofront **rxd, lo
    }
    return;
 }
-///
-/* $ARB: E 42 SCREENTOFRONT */
 
-/* $ARB: B 46 SETFLAG */
-/// OK
 void rx_setflag( struct RexxHost *host, struct rxd_setflag **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_setflag *rd = *rxd;
@@ -1266,11 +1084,7 @@ void rx_setflag( struct RexxHost *host, struct rxd_setflag **rxd, long action, s
    }
    return;
 }
-///
-/* $ARB: E 46 SETFLAG */
 
-/* $ARB: B 47 MAILEDIT */
-/// OK
 void rx_mailedit( struct RexxHost *host, struct rxd_mailedit **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailedit *rd = *rxd;
@@ -1293,11 +1107,7 @@ void rx_mailedit( struct RexxHost *host, struct rxd_mailedit **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 47 MAILEDIT */
 
-/* $ARB: B 48 READINFO */
-/// OK
 void rx_readinfo( struct RexxHost *host, struct rxd_readinfo **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_readinfo *rd = *rxd;
@@ -1338,11 +1148,7 @@ void rx_readinfo( struct RexxHost *host, struct rxd_readinfo **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 48 READINFO */
 
-/* $ARB: B 49 READSAVE */
-/// OK
 void rx_readsave( struct RexxHost *host, struct rxd_readsave **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_readsave *rd = *rxd;
@@ -1384,11 +1190,7 @@ void rx_readsave( struct RexxHost *host, struct rxd_readsave **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 49 READSAVE */
 
-/* $ARB: B 50 READPRINT */
-/// OK
 void rx_readprint( struct RexxHost *host, struct rxd_readprint **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_readprint *rd = *rxd;
@@ -1425,11 +1227,7 @@ void rx_readprint( struct RexxHost *host, struct rxd_readprint **rxd, long actio
    }
    return;
 }
-///
-/* $ARB: E 50 READPRINT */
 
-/* $ARB: B 51 MAILBOUNCE */
-/// OK
 void rx_mailbounce( struct RexxHost *host, struct rxd_mailbounce **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailbounce *rd = *rxd;
@@ -1452,11 +1250,7 @@ void rx_mailbounce( struct RexxHost *host, struct rxd_mailbounce **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 51 MAILBOUNCE */
 
-/* $ARB: B 52 ADDRFIND */
-/// OK
 void rx_addrfind( struct RexxHost *host, struct rxd_addrfind **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_addrfind *rd = *rxd;
@@ -1487,11 +1281,7 @@ void rx_addrfind( struct RexxHost *host, struct rxd_addrfind **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 52 ADDRFIND */
 
-/* $ARB: B 53 ADDRINFO */
-/// OK
 void rx_addrinfo( struct RexxHost *host, struct rxd_addrinfo **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct {
@@ -1548,11 +1338,7 @@ void rx_addrinfo( struct RexxHost *host, struct rxd_addrinfo **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 53 ADDRINFO */
 
-/* $ARB: B 54 ADDRRESOLVE */
-/// OK
 void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct {
@@ -1578,11 +1364,7 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 54 ADDRRESOLVE */
 
-/* $ARB: B 56 NEWMAILFILE */
-/// OK
 void rx_newmailfile( struct RexxHost *host, struct rxd_newmailfile **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct {
@@ -1609,11 +1391,7 @@ void rx_newmailfile( struct RexxHost *host, struct rxd_newmailfile **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 56 NEWMAILFILE */
 
-/* $ARB: B 57 WRITEFROM */
-/// OK
 void rx_writefrom( struct RexxHost *host, struct rxd_writefrom **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writefrom *rd = *rxd;
@@ -1634,11 +1412,7 @@ void rx_writefrom( struct RexxHost *host, struct rxd_writefrom **rxd, long actio
    }
    return;
 }
-///
-/* $ARB: E 57 WRITEFROM */
 
-/* $ARB: B 58 WRITEREPLYTO */
-/// OK
 void rx_writereplyto( struct RexxHost *host, struct rxd_writereplyto **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writereplyto *rd = *rxd;
@@ -1659,11 +1433,7 @@ void rx_writereplyto( struct RexxHost *host, struct rxd_writereplyto **rxd, long
    }
    return;
 }
-///
-/* $ARB: E 58 WRITEREPLYTO */
 
-/* $ARB: B 59 LISTSELECT */
-/// OK
 void rx_listselect( struct RexxHost *host, struct rxd_listselect **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_listselect *rd = *rxd;
@@ -1692,11 +1462,7 @@ void rx_listselect( struct RexxHost *host, struct rxd_listselect **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 59 LISTSELECT */
 
-/* $ARB: B 60 READCLOSE */
-/// OK
 void rx_readclose( struct RexxHost *host, struct rxd_readclose **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_readclose *rd = *rxd;
@@ -1716,11 +1482,7 @@ void rx_readclose( struct RexxHost *host, struct rxd_readclose **rxd, long actio
    }
    return;
 }
-///
-/* $ARB: E 60 READCLOSE */
 
-/* $ARB: B 61 SETMAILFILE */
-/// OK
 void rx_setmailfile( struct RexxHost *host, struct rxd_setmailfile **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_setmailfile *rd = *rxd;
@@ -1751,11 +1513,7 @@ void rx_setmailfile( struct RexxHost *host, struct rxd_setmailfile **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 61 SETMAILFILE */
 
-/* $ARB: B 62 MAILCOPY */
-/// OK
 void rx_mailcopy( struct RexxHost *host, struct rxd_mailcopy **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailcopy *rd = *rxd;
@@ -1778,11 +1536,7 @@ void rx_mailcopy( struct RexxHost *host, struct rxd_mailcopy **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 62 MAILCOPY */
 
-/* $ARB: B 63 APPBUSY */
-/// OK
 void rx_appbusy( struct RexxHost *host, struct rxd_appbusy **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_appbusy *rd = *rxd;
@@ -1805,11 +1559,7 @@ void rx_appbusy( struct RexxHost *host, struct rxd_appbusy **rxd, long action, s
    }
    return;
 }
-///
-/* $ARB: E 63 APPBUSY */
 
-/* $ARB: B 64 APPNOBUSY */
-/// OK
 void rx_appnobusy( struct RexxHost *host, struct rxd_appnobusy **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_appnobusy *rd = *rxd;
@@ -1830,11 +1580,7 @@ void rx_appnobusy( struct RexxHost *host, struct rxd_appnobusy **rxd, long actio
    }
    return;
 }
-///
-/* $ARB: E 64 APPNOBUSY */
 
-/* $ARB: B 65 WRITEMAILTO */
-/// OK OBSOLETE
 void rx_writemailto( struct RexxHost *host, struct rxd_writemailto **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_writemailto *rd = *rxd;
@@ -1855,11 +1601,7 @@ void rx_writemailto( struct RexxHost *host, struct rxd_writemailto **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 65 WRITEMAILTO */
 
-/* $ARB: B 66 USERINFO */
-/// OK
 void rx_userinfo( struct RexxHost *host, struct rxd_userinfo **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct {
@@ -1890,11 +1632,7 @@ void rx_userinfo( struct RexxHost *host, struct rxd_userinfo **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 66 USERINFO */
 
-/* $ARB: B 67 MAILSTATUS */
-/// OK
 void rx_mailstatus( struct RexxHost *host, struct rxd_mailstatus **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailstatus *rd = *rxd;
@@ -1921,11 +1659,7 @@ void rx_mailstatus( struct RexxHost *host, struct rxd_mailstatus **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 67 MAILSTATUS */
 
-/* $ARB: B 68 ISONLINE */
-/// OK
 void rx_isonline( struct RexxHost *host, struct rxd_isonline **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_isonline *rd = *rxd;
@@ -1945,11 +1679,7 @@ void rx_isonline( struct RexxHost *host, struct rxd_isonline **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 68 ISONLINE */
 
-/* $ARB: B 70 REQUESTSTRING */
-/// OK
 void rx_requeststring( struct RexxHost *host, struct rxd_requeststring **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct {
@@ -1978,11 +1708,7 @@ void rx_requeststring( struct RexxHost *host, struct rxd_requeststring **rxd, lo
    }
    return;
 }
-///
-/* $ARB: E 70 REQUESTSTRING */
 
-/* $ARB: B 71 REQUESTFOLDER */
-/// OK
 void rx_requestfolder( struct RexxHost *host, struct rxd_requestfolder **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_requestfolder *rd = *rxd;
@@ -2009,11 +1735,7 @@ void rx_requestfolder( struct RexxHost *host, struct rxd_requestfolder **rxd, lo
    }
    return;
 }
-///
-/* $ARB: E 71 REQUESTFOLDER */
 
-/* $ARB: B 72 GETSELECTED */
-/// OK
 void rx_getselected( struct RexxHost *host, struct rxd_getselected **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_getselected *rd = *rxd;
@@ -2042,11 +1764,7 @@ void rx_getselected( struct RexxHost *host, struct rxd_getselected **rxd, long a
    }
    return;
 }
-///
-/* $ARB: E 72 GETSELECTED */
 
-/* $ARB: B 73 ADDREDIT */
-/// OK
 void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct MUI_NListtree_TreeNode *tn = NULL;
@@ -2096,11 +1814,7 @@ void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 73 ADDREDIT */
 
-/* $ARB: B 74 ADDRDELETE */
-/// OK
 void rx_addrdelete( struct RexxHost *host, struct rxd_addrdelete **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_addrdelete *rd = *rxd;
@@ -2122,11 +1836,7 @@ void rx_addrdelete( struct RexxHost *host, struct rxd_addrdelete **rxd, long act
    }
    return;
 }
-///
-/* $ARB: E 74 ADDRDELETE */
 
-/* $ARB: B 76 ADDRSAVE */
-/// OK
 void rx_addrsave( struct RexxHost *host, struct rxd_addrsave **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_addrsave *rd = *rxd;
@@ -2154,11 +1864,7 @@ void rx_addrsave( struct RexxHost *host, struct rxd_addrsave **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 76 ADDRSAVE */
 
-/* $ARB: B 77 ADDRLOAD */
-/// OK
 void rx_addrload( struct RexxHost *host, struct rxd_addrload **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_addrload *rd = *rxd;
@@ -2179,11 +1885,7 @@ void rx_addrload( struct RexxHost *host, struct rxd_addrload **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 77 ADDRLOAD */
 
-/* $ARB: B 79 ADDRGOTO */
-/// OK
 void rx_addrgoto( struct RexxHost *host, struct rxd_addrgoto **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_addrgoto *rd = *rxd;
@@ -2204,11 +1906,7 @@ void rx_addrgoto( struct RexxHost *host, struct rxd_addrgoto **rxd, long action,
    }
    return;
 }
-///
-/* $ARB: E 79 ADDRGOTO */
 
-/* $ARB: B 80 ADDRNEW */
-/// OK
 void rx_addrnew( struct RexxHost *host, struct rxd_addrnew **rxd, long action, struct RexxMsg *rexxmsg )
 {
    static struct ABEntry addr;
@@ -2245,11 +1943,7 @@ void rx_addrnew( struct RexxHost *host, struct rxd_addrnew **rxd, long action, s
    }
    return;
 }
-///
-/* $ARB: E 80 ADDRNEW */
 
-/* $ARB: B 81 MAILCHANGESUBJECT */
-/// OK
 void rx_mailchangesubject( struct RexxHost *host, struct rxd_mailchangesubject **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_mailchangesubject *rd = *rxd;
@@ -2277,11 +1971,7 @@ void rx_mailchangesubject( struct RexxHost *host, struct rxd_mailchangesubject *
    }
    return;
 }
-///
-/* $ARB: E 81 MAILCHANGESUBJECT */
 
-/* $ARB: B 83 GETURL */
-/// OK
 void rx_geturl( struct RexxHost *host, struct rxd_geturl **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_geturl *rd = *rxd;
@@ -2308,9 +1998,6 @@ void rx_geturl( struct RexxHost *host, struct rxd_geturl **rxd, long action, str
    }
    return;
 }
-///
-/* $ARB: E 83 GETURL */
-
 
 #ifndef RX_ALIAS_C
 char *ExpandRXCommand( struct RexxHost *host, char *command )

@@ -45,7 +45,7 @@
 #include "YAM_US.c"
 #include "YAM_UT.c"
 #include "YAM_WR.c"
-//#include "YAM_loc.c"
+/*#include "YAM_locale.c"*/
 #include "YAM_rexx.c"
 #include "YAM_rexx_rxcl.c"
 #include "YAM_rexx_rxif.c"

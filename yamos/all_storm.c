@@ -25,9 +25,6 @@
 
 ***************************************************************************/
 
-#define __inline
-#include "extrasrc/md5.c"
-#undef __inline
 #include "extrasrc/astcsma.c"
 #include "extrasrc/getft.c"
 #include "extrasrc/stccpy.c"

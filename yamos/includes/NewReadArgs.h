@@ -1,3 +1,6 @@
+#ifndef NEWREADARGS_H
+#define NEWREADARGS_H
+
 /*
 **	$VER: newreadargs.h 37.1 (18.6.97)
 **
@@ -31,3 +34,5 @@ struct NewRDArgs {
 
 void NewFreeArgs(struct NewRDArgs *);
 LONG NewReadArgs(struct WBStartup *, struct NewRDArgs *);
+
+#endif /* NEWREADARGS_H */

@@ -26,7 +26,7 @@
 ***************************************************************************/
 
 #include "YAM.h"
-#include <md5.h>
+#include "YAM_md5.h"
 
 /***************************************************************************
  Module: Transfer
@@ -316,7 +316,7 @@ int TR_ConnectPOP(int guilevel)
    }
    if (C->P3[pop]->UseAPOP)
    {
-      MD5_CTX context;
+      struct MD5Context context;
       UBYTE digest[16], *welcomemsg = StrBufCpy(NULL, buf);
       int i, j;
 
@@ -896,7 +896,6 @@ static ULONG GetReturnCode(void)
 #define AUTH_DIGEST_MD5 2
 #define AUTH_LOGIN      4
 #define AUTH_PLAIN      8
-void hmac_md5(unsigned char*,int,unsigned char*,int,ULONG *);
 void encode64(char *s, char *d, int len);
 char *decode64 (char *dest, char *src, char *srcmax);
 BOOL TR_ConnectESMTP(void)
@@ -950,15 +949,20 @@ BOOL TR_ConnectESMTP(void)
          /* Get return code. */
          if ((rc=strtol(buffer, &p, 10)) == 334 )
          {
-            ULONG digest[4];
+            unsigned char digest[16];
+            int i;
   
             strncpy(challenge,p+1,511); challenge[511]=0;
             decode64(challenge,challenge,challenge+strlen(challenge));
   
             hmac_md5(challenge,strlen(challenge),C->SMTP_AUTH_Pass,strlen(C->SMTP_AUTH_Pass),digest);
-  
-            len=sprintf(challenge,"%s %08lx%08lx%08lx%08lx%c%c",C->SMTP_AUTH_User,
-                        digest[0],digest[1],digest[2],digest[3],0,0)-2;
+
+            len=sprintf(challenge,"%s ", C->SMTP_AUTH_User);
+            for(i = 0; i < 16; ++i)
+              len += sprintf(challenge+len, "%02x", digest[i]);
+            challenge[len] = 0;
+            challenge[len+1] = 0;
+            challenge[len+2] = 0;
             encode64(challenge,buffer,len);
             strcat(buffer,"\r\n");
   
@@ -992,7 +996,7 @@ BOOL TR_ConnectESMTP(void)
          if ((rc=strtol(buffer, &p, 10)) == 334 )
          {
             ULONG digest[4];
-            MD5_CTX context;
+            struct MD5Context context;
   
             strncpy(challenge,p+1,511); challenge[511]=0;
             decode64(challenge,challenge,challenge+strlen(challenge));

@@ -55,10 +55,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#ifdef LATTICE
-#undef toupper
-#endif
-
 #include <dos/rdargs.h>
 
 #include "YAM_rexx.h"
@@ -318,7 +314,10 @@ static int find( char *input )
    
    ni = tmp;
    while( *input && ni-tmp < 32 )
-      *ni++ = toupper( *input++ );
+   {
+      *ni++ = toupper(*input);
+      ++input;
+   }
    *ni = 0;
    input = tmp;
    
@@ -477,7 +476,10 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
    if( stembase )
    {
       while( *stembase )
-         *rb++ = toupper( *stembase++ );
+      {
+         *rb++ = toupper(*stembase);
+         stembase++;
+      }
    }
    *rb = '\0';
    

@@ -309,3 +309,41 @@
 
     * Modified & reactivated AB_LB_CmpFunc() again. Now the addressbook should be
       sortable again.
+
+2001-05-19  Dirk Stöcker <stoecker@epost.de>
+
+    * started first step of real code cleanup (very likely MorphOS support will
+      be broken for some time!)
+    * gen_includes.pl will be obsoleted by proper structures. If alignment cannot
+      be reached by rearranging the stuff, pad bytes maybe added.
+    * added lots of header files, added 2 new directories, moved files
+    * Later necessary renames (when BETA is rejoined):
+      YAM_DI.c --> YAM_glossery.c
+      YAM_WR.c --> YAM_write.c
+      YAM_FO.c --> YAM_folderconfig.c
+      YAM_MA.c --> YAM_main.c
+      YAM_FI.c --> YAM_find.c
+      YAM_MI.c --> YAM_mime.c
+      YAM_US.c --> YAM_userlist.c
+      YAM_AB.c --> YAM_addressbook.c
+      YAM_RE.c --> YAM_read.c
+      YAM_MAf.c--> YAM_mainFolder.c
+      YAM_CO.c --> YAM_config.c
+      YAM_TR.c --> YAM_transfer.c
+      YAM_COs.c--> YAM_configFile.c
+      YAM_COg.c--> YAM_configGUI.c
+      YAM_CL.c --> YAM_classes.c
+      YAM_UT.c --> YAM_utilities.c
+      YAM_ER.c --> YAM_error.c
+      YAM_EA.c --> YAM_addressbookEntry.c
+    * The old.h files replaces the YAM.h and headers.h and should disappear very
+      soon. The includes have to be in the source codes directly and the definitions
+      have to be in the related header files.
+    * Only really required stuff should be moved there, so we can see obsoleted
+      code after this is finished.
+    * A BIG SORRY FOR THE PROBLEMS THIS MAY CAUSE, BUT IT WILL BE WORTH THE EFFORT!
+    * added supportfiles directory and locale directory, the make process for locales
+      should be moved to locale/makefile
+    * also still undone, but the makefiles should be joined in major parts!
+    * NOTE: The makefiles are to be reworked totally, especially the dependencies
+
