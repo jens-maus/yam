@@ -202,6 +202,14 @@ static ULONG  Trampoline_FL_Dispatcher(void)
 const struct EmulLibEntry Gate_FL_Dispatcher = { TRAP_LIB, 0, (void(*)())Trampoline_FL_Dispatcher };
 
 struct IClass;
+ULONG ML_Dispatcher(struct IClass *cl, Object *obj, Msg msg);
+static ULONG  Trampoline_ML_Dispatcher(void)
+{
+   return ML_Dispatcher((struct IClass *)REG_A0, (Object *)REG_A2, (Msg)REG_A1);
+}
+const struct EmulLibEntry Gate_ML_Dispatcher = { TRAP_LIB, 0, (void(*)())Trampoline_ML_Dispatcher };
+
+struct IClass;
 ULONG EL_Dispatcher(struct IClass *cl, Object *obj, Msg msg);
 static ULONG  Trampoline_EL_Dispatcher(void)
 {

@@ -1,3 +1,30 @@
+#/***************************************************************************
+#
+# YAM - Yet Another Mailer
+# Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+# Copyright (C) 2000-2001 by YAM Open Source Team
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# YAM Official Support Site :  http://www.yam.ch
+# YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+#
+# $Id$
+#
+#***************************************************************************/
+
 # Programs
 CC = sc
 RM = delete
@@ -12,7 +39,7 @@ DATE = T:YAM-date.tmp
 
 # Compiler flags
 CPU        = 68020
-YAMVERSION = "2.3-dev"
+YAMVERSION = "2.4-dev"
 YAMDATE	   = `Type $(DATE)`
 #OPTFLAGS   = OPT OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL
 OPTFLAGS   = NOOPT
@@ -57,10 +84,10 @@ YAM:	$(OBJS)
 YAM.h: YAM.h.in
 	copy YAM.h.in YAM.h
 
-YAM_loc.h: YAM.cd
+YAM_loc.h: YAM.cd C_h.sd C_c.sd
 	flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
 
-YAM_loc.c: YAM.cd
+YAM_loc.c: YAM.cd C_h.sd C_c.sd
 	; # dummy entry to make smake happy
 
 YAM_deutsch.catalog: deutsch.ct
@@ -88,12 +115,12 @@ YAM_TR.o:  YAM_TR.c  YAM.h YAM_loc.h
 YAM_US.o:  YAM_US.c  YAM.h YAM_loc.h
 YAM_UT.o:  YAM_UT.c  YAM.h YAM_loc.h
 YAM_WR.o:  YAM_WR.c  YAM.h YAM_loc.h
+	$(CC) $(CFLAGS) NOOPT $*.c		# doesn't compile with optimization :-(
+
 YAM_rexx.o     : YAM_rexx.c YAM_rexx.h
 YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_loc.h
-
 YAM_loc.o: YAM_loc.h YAM_loc.c
-	$(CC) $(CFLAGS) YAM_loc.c
 
 $(DATE):
 	@echo "Bumping date..."

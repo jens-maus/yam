@@ -472,25 +472,19 @@ LOCAL BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
   APTR lv = G->MA->GUI.NL_FOLDERS;
   int i;
 
-  kprintf("TN: %s\n", subtree->tn_Name);
-
   // The root-Treenode is the subtree at the start
 	tn_root = subtree;
-
-	kprintf("SaveSubTree!!!\n");
 
   for (i = 0;; i++, tn=NULL, fo=NULL)
 	{
     if(tn_root == MUIV_NListtree_GetEntry_ListNode_Root)
     {
-      kprintf("ROOTLIST\n");
 			tn = tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, 0, 0, TAG_DONE);
   	  tn_parent = subtree = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE);
     	noendgroup = TRUE;
 	  }
   	else
     {
-      kprintf("SUBLIST\n");
 	    // get the next treenode
 			if(i == 0) tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, i, 0, TAG_DONE);
 			else tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Next, 0, TAG_DONE);
@@ -498,8 +492,6 @@ LOCAL BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
 			// get the parent node of the treenode
   	  tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE);
     }
-
-    kprintf("TN: [%s] - [%s] - [%lx]\n", tn->tn_Name, tn_parent->tn_Name, subtree->tn_Name);
 
     // if tn is null or the parent of the next is not the same like the caller of this function
     // we are going to print ENDGROUP and return
@@ -537,7 +529,6 @@ LOCAL BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
     }
   }
 
-	kprintf("EndSaveSubTree!!!\n");
   return success;
 }
 

@@ -91,6 +91,7 @@
 #include <proto/miami.h>
 #include <proto/genesis.h>
 #include <proto/cmanager.h>
+#include <proto/pm.h>
 #include <clib/macros.h>
 #include <NewReadArgs.h>
 #include <compiler.h>

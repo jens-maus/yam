@@ -1865,7 +1865,6 @@ struct Folder * SAVEDS ASM MA_LV_FConFunc(REG(a1, struct MUIP_NListtree_Construc
 MakeHook(MA_LV_FConHook, MA_LV_FConFunc);
 
 ///
-///
 /// MA_LV_FDesFunc
 //  Folder listview destruction hook
 LONG SAVEDS ASM MA_LV_FDesFunc(REG(a1, struct MUIP_NListtree_DestructMessage *msg))
@@ -2054,6 +2053,125 @@ void MA_SetupDynamicMenus(void)
 }
 
 ///
+/// MA_MailListContextMenu
+//  Creates a ContextMenu for the folder Listtree
+ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
+{
+  struct MUI_NList_TestPos_Result res;
+  struct Mail						*mail;
+  struct PopupMenu      *pop_menu;
+  struct Window         *win;
+  struct MA_GUIData 		*gui = &G->MA->GUI;
+  struct Folder *fo = FO_GetCurrentFolder();
+  BOOL beingedited = FALSE, hasattach = FALSE;
+  ULONG  ret = 0;
+  int i;
+
+  enum{ PMN_READ=1, PMN_EDIT, PMN_REPLY, PMN_FORWARD, PMN_BOUNCE, PMN_SAVEADDR, PMN_MOVE, PMN_COPY,
+  			PMN_DELETE, PMN_PRINT, PMN_SAVE, PMN_DETACH, PMN_CROP, PMN_EXPMSG, PMN_NEW, PMN_SELALL,
+        PMN_SELNONE, PMN_SELTOGG, PMN_CHSUBJ, PMN_TOUNREAD, PMN_TOREAD, PMN_TOHOLD, PMN_TOQUEUED,
+        PMN_SEND
+      };
+
+  // Now lets find out which entry is under the mouse pointer
+  DoMethod(gui->NL_MAILS, MUIM_NList_TestPos, msg->mx, msg->my, &res, TAG_DONE);
+
+  if(res.entry == -1) return(0);
+  DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, res.entry, &mail, TAG_DONE);
+
+  if(!mail) return(0);
+
+  if (!fo) return(0);
+  fo->LastActive = GetMUI(gui->NL_MAILS, MUIA_NList_Active);
+
+  if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
+  for (i = 0; i < MAXWR; i++) if (G->WR[i] && G->WR[i]->Mail == mail) beingedited = TRUE;
+
+  if (!GetMUI(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
+
+  // Now we set this entry as activ
+  set(gui->NL_MAILS, MUIA_NList_Active, res.entry);
+
+  // Get the window structure of the window which this listtree belongs to
+  get(_win(gui->NL_MAILS), MUIA_Window_Window, &win);
+  if(!win) return(0);
+
+  // We create the PopupMenu now
+	pop_menu = 	PMMenu(mail->MailFile),
+								PMItem(GetStripStr(MSG_MA_MRead)), 						PM_UserData, PMN_READ, 			End,
+      					PMItem(GetStripStr(MSG_MESSAGE_EDIT)),				PM_Disabled, (mail == NULL) || !OUTGOING(fo->Type) || beingedited, PM_UserData, PMN_EDIT, 		 End,
+      					PMItem(GetStripStr(MSG_MESSAGE_REPLY)),				PM_UserData, PMN_REPLY, 		End,
+      					PMItem(GetStripStr(MSG_MESSAGE_FORWARD)),			PM_UserData, PMN_FORWARD, 	End,
+      					PMItem(GetStripStr(MSG_MESSAGE_BOUNCE)),  		PM_UserData, PMN_BOUNCE, 		End,
+      					PMItem(GetStripStr(MSG_MA_MSend)),  					PM_Disabled, (fo->Type != FT_OUTGOING), PM_UserData, PMN_SEND,  		End,
+      					PMItem(GetStripStr(MSG_MA_ChangeSubj)),  			PM_UserData, PMN_CHSUBJ, 		End,
+                PMItem(GetStripStr(MSG_MA_SetStatus)), PMSimpleSub,
+                	PMItem(GetStripStr(MSG_MA_ToUnread)),				PM_Disabled, OUTGOING(fo->Type),				PM_UserData, PMN_TOUNREAD,	End,
+                  PMItem(GetStripStr(MSG_MA_ToRead)),					PM_Disabled, OUTGOING(fo->Type),				PM_UserData, PMN_TOREAD,		End,
+                  PMItem(GetStripStr(MSG_MA_ToHold)),					PM_Disabled, (fo->Type != FT_OUTGOING), PM_UserData, PMN_TOHOLD,		End,
+                  PMItem(GetStripStr(MSG_MA_ToQueued)),				PM_Disabled, (fo->Type != FT_OUTGOING), PM_UserData, PMN_TOQUEUED,	End,
+                	End,
+                End,
+                PMBar, End,
+      					PMItem(GetStripStr(MSG_MESSAGE_GETADDRESS)),	PM_UserData, PMN_SAVEADDR,	End,
+      					PMItem(GetStripStr(MSG_MESSAGE_MOVE)),				PM_UserData, PMN_MOVE, 			End,
+      					PMItem(GetStripStr(MSG_MESSAGE_COPY)),				PM_UserData, PMN_COPY, 			End,
+                PMItem(GetStripStr(MSG_MA_MDelete)),					PM_UserData, PMN_DELETE,  	End,
+                PMBar, End,
+                PMItem(GetStripStr(MSG_MESSAGE_PRINT)),	PM_UserData, PMN_PRINT,		End,
+                PMItem(GetStripStr(MSG_MESSAGE_SAVE)),	PM_UserData, PMN_SAVE,		End,
+                PMItem(GetStripStr(MSG_Attachments)),		PM_Disabled, !hasattach, PMSimpleSub,
+                	PMItem(GetStripStr(MSG_MESSAGE_SAVEATT)),	PM_Disabled, !hasattach,	PM_UserData, PMN_DETACH,	End,
+                  PMItem(GetStripStr(MSG_MESSAGE_CROP)),		PM_Disabled, !hasattach,	PM_UserData, PMN_CROP,		End,
+                	End,
+                End,
+                PMItem(GetStripStr(MSG_MESSAGE_EXPORT)),PM_UserData, PMN_EXPMSG,  End,
+                PMBar, End,
+      					PMItem(GetStripStr(MSG_MESSAGE_NEW)),					PM_UserData, PMN_NEW, 			End,
+                PMItem(GetStripStr(MSG_MA_Select)), PMSimpleSub,
+                	PMItem(GetStripStr(MSG_MA_SelectAll)),			PM_UserData, PMN_SELALL,		End,
+                  PMItem(GetStripStr(MSG_MA_SelectNone)),			PM_UserData, PMN_SELNONE,		End,
+                  PMItem(GetStripStr(MSG_MA_SelectToggle)),		PM_UserData, PMN_SELTOGG,		End,
+                	End,
+                End,
+              End;
+
+  ret = (ULONG)(PM_OpenPopupMenu(  win, PM_Menu,    pop_menu, TAG_DONE));
+
+  PM_FreePopupMenu(pop_menu);
+
+  switch(ret)
+  {
+  	case PMN_READ:			DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook, 		TAG_DONE); break;
+  	case PMN_EDIT:			DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,	 		NEW_EDIT,		 0,	 FALSE,  TAG_DONE); break;
+  	case PMN_REPLY:			DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,	 		NEW_REPLY, 	 0,	 FALSE,  TAG_DONE); break;
+    case PMN_FORWARD:		DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,	 		NEW_FORWARD, 0,	 FALSE,  TAG_DONE); break;
+    case PMN_BOUNCE:		DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,	 		NEW_BOUNCE,  0,	 FALSE,  TAG_DONE); break;
+    case PMN_SEND:			DoMethod(G->App, MUIM_CallHook, &MA_SendHook,				 		SEND_ACTIVE, TAG_DONE); break;
+  	case PMN_CHSUBJ:		DoMethod(G->App, MUIM_CallHook, &MA_ChangeSubjectHook, 	TAG_DONE); break;
+    case PMN_TOUNREAD:	DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,		STATUS_UNR, TAG_DONE); break;
+    case PMN_TOREAD:		DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,		STATUS_OLD, TAG_DONE); break;
+    case PMN_TOHOLD:		DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,		STATUS_HLD, TAG_DONE); break;
+    case PMN_TOQUEUED:	DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,		STATUS_WFS, TAG_DONE); break;
+    case PMN_SAVEADDR:	DoMethod(G->App, MUIM_CallHook, &MA_GetAddressHook, 		TAG_DONE); break;
+    case PMN_MOVE:			DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook,  	TAG_DONE); break;
+    case PMN_COPY:			DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook,		TAG_DONE); break;
+    case PMN_DELETE:		DoMethod(G->App, MUIM_CallHook, &MA_DeleteMessageHook, 	0, FALSE, TAG_DONE); break;
+    case PMN_PRINT:			DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook, 			TRUE,  TAG_DONE); break;
+    case PMN_SAVE:			DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook, 			FALSE, TAG_DONE); break;
+    case PMN_DETACH:		DoMethod(G->App, MUIM_CallHook, &MA_SaveAttachHook, 		TAG_DONE); break;
+    case PMN_CROP:			DoMethod(G->App, MUIM_CallHook, &MA_RemoveAttachHook, 	TAG_DONE); break;
+    case PMN_EXPMSG:		DoMethod(G->App, MUIM_CallHook, &MA_ExportMessagesHook,	TAG_DONE); break;
+    case PMN_NEW:				DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,			NEW_NEW,  0,  FALSE,  TAG_DONE); break;
+    case PMN_SELALL:		DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, 	 NULL, TAG_DONE); break;
+    case PMN_SELNONE:		DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, 	 NULL, TAG_DONE); break;
+    case PMN_SELTOGG:		DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle,NULL, TAG_DONE); break;
+  }
+
+  return(0);
+}
+
+///
 /// MA_MakeMAFormat
 //  Creates format definition for message listview
 void MA_MakeMAFormat(APTR lv)
@@ -2227,13 +2345,12 @@ struct MA_ClassData *MA_New(void)
                   MUIA_CycleChain, 1,
                   MUIA_HorizWeight, 30,
 	                MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
-                  MUIA_NListview_NList, data->GUI.NL_FOLDERS = NewObject(CL_FolderList->mcc_Class,NULL,
+                  MUIA_NListview_NList, data->GUI.NL_FOLDERS = NewObject(CL_FolderList->mcc_Class, NULL,
                      InputListFrame,
                      MUIA_NList_MinColSortable      , 0,
                      MUIA_NList_TitleClick          , TRUE,
                      MUIA_NList_DragType            , MUIV_NList_DragType_Immediate,
                      MUIA_NList_DragSortable        , TRUE,
-
 //                     MUIA_NList_CompareHook2        , &MA_LV_FCmp2Hook,
                      MUIA_NListtree_DisplayHook     , &MA_LV_FDspFuncHook,
                      MUIA_NListtree_ConstructHook   , &MA_LV_FConHook,
@@ -2245,7 +2362,7 @@ struct MA_ClassData *MA_New(void)
                      MUIA_NList_DefaultObjectOnClick, FALSE,
                      MUIA_Font                      , C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
                      MUIA_Dropable                  , TRUE,
-//                     MUIA_ContextMenu               , NULL,
+                     MUIA_ContextMenu               , TRUE,
                      MUIA_NList_Exports             , MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
                      MUIA_NList_Imports             , MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
                      MUIA_ObjectID, MAKE_ID('N','L','0','1'),
@@ -2255,7 +2372,7 @@ struct MA_ClassData *MA_New(void)
                Child, data->GUI.LV_MAILS = NListviewObject,
                   MUIA_HelpNode, "MA01",
                   MUIA_CycleChain,1,
-                  MUIA_NListview_NList, data->GUI.NL_MAILS = NListObject,
+                  MUIA_NListview_NList, data->GUI.NL_MAILS = NewObject(CL_MailList->mcc_Class, NULL,
                      MUIA_NList_MinColSortable, 0,
                      MUIA_NList_TitleClick    , TRUE,
                      MUIA_NList_TitleClick2   , TRUE,
@@ -2268,7 +2385,7 @@ struct MA_ClassData *MA_New(void)
                      MUIA_NList_TitleSeparator, TRUE,
                      MUIA_NList_DefaultObjectOnClick, TRUE,
                      MUIA_Font, C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-//                     MUIA_ContextMenu         , NULL,
+                     MUIA_ContextMenu         , TRUE,
                      MUIA_NList_Exports       , MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
                      MUIA_NList_Imports       , MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
                      MUIA_ObjectID, MAKE_ID('N','L','0','2'),

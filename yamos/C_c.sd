@@ -1,10 +1,38 @@
 ##stringtype C
 ##shortstrings
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2001 by YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site :  http://www.yam.ch
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+
+ $Id$
+
+***************************************************************************/
+
 /****************************************************************
    This file was created automatically by `FlexCat V1.3'
 ****************************************************************/
 
 #include <proto/locale.h>
+#include <string.h>
 
 struct FC_Type { long ID; char * Str; };
 
@@ -12,6 +40,7 @@ const struct FC_Type _%i = { %d, %s };
 
 static struct Catalog *%b_Catalog = NULL;
 
+/*** Catalog functions ***/
 char *GetStr(APTR fcstr)
 {
   char *defaultstr = ((struct FC_Type *)fcstr)->Str;
@@ -20,19 +49,32 @@ char *GetStr(APTR fcstr)
     return (char *)GetCatalogStr(%b_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
   return defaultstr;
 }
-
+///
+/// Close%bCatalog()
 void Close%bCatalog(void)
 {
   if (LocaleBase) CloseCatalog(%b_Catalog);
   %b_Catalog = NULL;
 }
-
+///
+/// Open%bCatalog(void)
 void Open%bCatalog(void)
 {
-  static const Tag tags[] = {
-    OC_BuiltInLanguage,(Tag)%l, OC_Version,%v, TAG_DONE
-  };
+   static const Tag tags[] = {
+   	OC_BuiltInLanguage, (Tag)%l, OC_Version, %v, TAG_DONE
+   };
 
-  if (LocaleBase && !%b_Catalog)
-    %b_Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)tags);
+   if (LocaleBase && !%b_Catalog)
+   	%b_Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)tags);
 }
+///
+/// GetStripStr()
+// function that will strip out the special menusigns
+char *GetStripStr(APTR fcstr)
+{
+   char *loc_str = GetStr(fcstr);
+
+	 if(loc_str[1] == '\0') return(loc_str+2);
+   else return(loc_str);
+}
+///

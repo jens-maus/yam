@@ -43,6 +43,7 @@ struct Library *DataTypesBase = NULL, *MUIMasterBase = NULL, *XpkBase = NULL;
 struct Library *OpenURLBase = NULL, *SocketBase = NULL, *CManagerBase = NULL;
 struct LocaleBase *LocaleBase = NULL;
 struct IntuitionBase *IntuitionBase = NULL;
+struct PopupMenuBase *PopupMenuBase = NULL;
 
 BOOL yamFirst = TRUE, yamLast = FALSE;
 
@@ -323,7 +324,8 @@ BOOL AY_New(BOOL hidden)
 												                            "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
             											                  "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
                        												      "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
-					                          						    "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n\n");
+					                          						    "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
+                                                    "\0338popupmenu.library (Henrik Isaksson)\n\n");
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
 
@@ -487,6 +489,7 @@ void Terminate(void)
    if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
    if (WorkbenchBase) CloseLibrary(WorkbenchBase);
    if (IconBase) CloseLibrary(IconBase);
+	 if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
 #ifdef __ixemul__
    if (RexxSysBase) CloseLibrary(RexxSysBase);
 #endif
@@ -673,6 +676,9 @@ void Initialise(BOOL hidden)
    RexxSysBase = InitLib("rexxsyslib.library", 36, 0, TRUE, FALSE);
 #endif
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
+
+	 // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
+   PopupMenuBase = (struct PopupMenuBase *)InitLib(POPUPMENU_NAME, 9, 0, FALSE, FALSE);
 
    /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);

@@ -35,6 +35,7 @@
 struct MUI_CustomClass *CL_TextEditor;
 struct MUI_CustomClass *CL_BodyChunk;
 struct MUI_CustomClass *CL_FolderList;
+struct MUI_CustomClass *CL_MailList;
 struct MUI_CustomClass *CL_AddressList;
 struct MUI_CustomClass *CL_AttachList;
 struct MUI_CustomClass *CL_DDString;
@@ -272,12 +273,11 @@ ULONG SAVEDS ASM WL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    return DoSuperMethodA(cl, obj, msg);
 }
 ///
-/// FL_Dispatcher (Folder Listtree)
+/// FL_Dispatcher (Folder NListtree)
 //  Subclass of NList, adds Drag&Drop from message list
 ULONG SAVEDS ASM FL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
-//   struct MUIP_NList_DropType *dt = (struct MUIP_NList_DropType *)msg;
    struct Folder *srcfolder, *dstfolder;
    struct MUI_NListtree_TreeNode *tn_src, *tn_dst;
    int pos = 0;
@@ -308,6 +308,32 @@ ULONG SAVEDS ASM FL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 
          if (dstfolder->Type != FT_GROUP) MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE);
          return 0;
+      }
+    	break;
+
+      // If the user tryed to open a ContextMenu we check if popupmenu.library was open and then display the ContextMenu
+      case MUIM_ContextMenuBuild:
+      {
+				if(PopupMenuBase) return(MA_FolderContextMenu((APTR)msg));
+				else return 0;
+      }
+    	break;
+   }
+
+   return DoSuperMethodA(cl,obj,msg);
+}
+///
+/// ML_Dispatcher (Mail NListview)
+//  Subclass of NList, adds ContextMenuBuild to Message List
+ULONG SAVEDS ASM ML_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+{
+   switch (msg->MethodID)
+   {
+      // If the user tryed to open a ContextMenu we check if popupmenu.library was open and then display the ContextMenu
+      case MUIM_ContextMenuBuild:
+      {
+				if(PopupMenuBase) return(MA_MailListContextMenu((APTR)msg));
+				else return 0;
       }
     	break;
    }
@@ -341,7 +367,7 @@ ULONG SAVEDS ASM EL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    return DoSuperMethodA(cl,obj,msg);
 }
 ///
-/// AL_Dispatcher (Address book Listtree)
+/// AL_Dispatcher (Address book NListtree)
 //  Subclass of Listtree, supports inline images and Drag&Drop from message list
 ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
@@ -555,6 +581,7 @@ void ExitClasses(void)
    if (CL_MainWin    ) MUI_DeleteCustomClass(CL_MainWin    );
    if (CL_TextEditor ) MUI_DeleteCustomClass(CL_TextEditor );
    if (CL_BodyChunk  ) MUI_DeleteCustomClass(CL_BodyChunk  );
+   if (CL_MailList 	 ) MUI_DeleteCustomClass(CL_MailList 	 );
    if (CL_FolderList ) MUI_DeleteCustomClass(CL_FolderList );
    if (CL_AddressList) MUI_DeleteCustomClass(CL_AddressList);
    if (CL_DDString   ) MUI_DeleteCustomClass(CL_DDString   );
@@ -571,12 +598,13 @@ BOOL InitClasses(void)
 	CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
 	CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct AL_Data), ENTRY(AL_Dispatcher));
 	CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
+	CL_MailList  	 = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(ML_Dispatcher));
 	CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));
 	CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct DumData), ENTRY(TE_Dispatcher));
 	CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));
 	CL_PageList    = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher));
 
-	return (BOOL)(CL_AttachList && CL_DDList && CL_DDString && CL_AddressList && CL_FolderList && CL_BodyChunk &&
-                CL_TextEditor && CL_MainWin && CL_PageList);
+	return (BOOL)(CL_AttachList && CL_DDList && CL_DDString && CL_AddressList && CL_FolderList && CL_MailList &&
+                CL_BodyChunk && CL_TextEditor && CL_MainWin && CL_PageList);
 }
 ///

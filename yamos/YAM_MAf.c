@@ -377,6 +377,72 @@ void SAVEDS MA_ChangeFolderFunc(void)
 }
 MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 ///
+/// MA_FolderContextMenu
+//  Creates a ContextMenu for the folder Listtree
+ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
+{
+  struct MUI_NListtree_TestPos_Result r;
+  struct MUI_NListtree_TreeNode *tn;
+  struct Folder 				*folder;
+  struct PopupMenu      *pop_menu;
+  struct Window         *win;
+  struct MA_GUIData 		*gui = &G->MA->GUI;
+  ULONG  ret = 0;
+  BOOL   tmp_dis = TRUE;
+
+  enum{ PMN_EDITF=1, PMN_DELETEF, PMN_INDEX, PMN_FLUSH, PMN_NEWF, PMN_NEWFG, PMN_SNAPS };
+
+  // Now lets find out which entry is under the mouse pointer
+  DoMethod(gui->NL_FOLDERS, MUIM_NListtree_TestPos, msg->mx, msg->my, &r);
+
+  tn = r.tpr_TreeNode;
+  if(!tn)  return(0);
+
+  folder = (struct Folder *)tn->tn_User;
+  if(!folder)  return(0);
+
+  // Set this Treenode as activ
+  nnset(gui->NL_FOLDERS, MUIA_NListtree_Active, tn);
+
+  // Get the window structure of the window which this listtree belongs to
+  get(_win(gui->NL_FOLDERS), MUIA_Window_Window, &win);
+  if(!win) return(0);
+
+  // Now we are going to add the MenuItems to this PopupMenu
+  if(folder->Type != FT_GROUP) tmp_dis = FALSE;
+
+  // We create the PopupMenu now
+	pop_menu = 	PMMenu(FolderName(folder)),
+								PMItem(GetStripStr(MSG_FOLDER_EDIT)),						PM_UserData, PMN_EDITF, 		End,
+      					PMItem(GetStripStr(MSG_FOLDER_DELETE)),					PM_UserData, PMN_DELETEF,		End,
+      					PMItem(GetStripStr(MSG_MA_UpdateIndex)),				PM_Disabled, tmp_dis, 			PM_UserData, PMN_INDEX, End,
+      					PMItem(GetStripStr(MSG_MA_FlushIndices)),				PM_Disabled, tmp_dis, 			PM_UserData, PMN_FLUSH,	End,
+                PMBar, End,
+      					PMItem(GetStripStr(MSG_FOLDER_NEWFOLDER)),  		PM_UserData, PMN_NEWF, 			End,
+      					PMItem(GetStripStr(MSG_FOLDER_NEWFOLDERGROUP)), PM_UserData, PMN_NEWFG, 		End,
+                PMBar, End,
+      					PMItem(GetStripStr(MSG_FOLDER_SNAPSHOT)), 			PM_UserData, PMN_SNAPS, 		End,
+              End;
+
+  ret = (ULONG)(PM_OpenPopupMenu(  win, PM_Menu,    pop_menu, TAG_DONE));
+
+  PM_FreePopupMenu(pop_menu);
+
+  switch(ret)
+  {
+  	case PMN_EDITF: 	DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook, 		TAG_DONE);					break;
+    case PMN_DELETEF: DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook, 	TAG_DONE);					break;
+    case PMN_INDEX:   DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook,		TAG_DONE);					break;
+    case PMN_FLUSH:   DoMethod(G->App, MUIM_CallHook, &MA_FlushIndexHook,			TAG_DONE);					break;
+  	case PMN_NEWF:		DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook, 			TAG_DONE);					break;
+  	case PMN_NEWFG:	 	DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook, TAG_DONE);					break;
+  	case PMN_SNAPS:		DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook,				SO_SAVE, TAG_DONE);	break;
+  }
+
+  return(0);
+}
+
+///
 
 /*** Mail header scanning ***/
 /// MA_NewMailFile

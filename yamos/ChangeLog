@@ -296,3 +296,10 @@
       yet. -> Help wanted
 
 		* some global optimizations on the folder listtree & mail listview.
+
+2001-05-16  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * Added separate ContextMenus for the Folder Listtree and the Mail Listview.
+    	If popupmenu.library v9 or above could be found in the system a right
+      mouseclick on the folder listtree or mail listview should pop up a nice
+      ContextMenu now.
