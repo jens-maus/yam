@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2003 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@
 
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_compat.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_error.h"
@@ -835,56 +836,51 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 //  Checks if there's an online connection
 BOOL TR_IsOnline(void)
 {
-   struct Library *socketbase;
    BOOL isonline = FALSE;
 
    if (C->IsOnlineCheck)
    {
-      #if defined(__amigaos4__)
-      if((MiamiBase = OpenLibrary("miami.library", 10)) &&
-         (IMiami = (APTR)GetInterface(MiamiBase, "main", 1L, NULL)))
-      #else
-      if((MiamiBase = OpenLibrary("miami.library", 10)))
-      #endif
+      if ((MiamiBase=OpenLibrary("miami.library", 10)))
       {
-         isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL);
+         if (!IS_AMIGAOS4 || (IMiami=(APTR)GetInterface(MiamiBase,"main",1L,NULL)))
+         {
+           isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL);
+           if (IS_AMIGAOS4) {
+             DropInterface((APTR)IMiami);
+             IMiami = NULL;
+           }
+         }
 
-         #if defined(__amigaos4__)
-         DropInterface((APTR)IMiami);
-         IMiami = NULL;
-         #endif
          CloseLibrary(MiamiBase);
          MiamiBase = NULL;
-
-         return isonline;
       }
-      #if defined(__amigaos4__)
-      else if((GenesisBase = OpenLibrary("genesis.library", 1)) &&
-              (IGenesis = (APTR)GetInterface(GenesisBase, "main", 1L, NULL)))
-      #else
-      else if((GenesisBase = OpenLibrary("genesis.library", 1)))
-      #endif
+      else if ((GenesisBase = OpenLibrary("genesis.library", 1)))
       {
-         isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0);
+         if (!IS_AMIGAOS4 || (IGenesis=(APTR)GetInterface(GenesisBase,"main",1L,NULL)))
+         {
+           isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0);
+           if (IS_AMIGAOS4) {
+             DropInterface((APTR)IGenesis);
+             IGenesis = NULL;
+           }
+         }
 
-         #if defined(__amigaos4__)
-         DropInterface((APTR)IGenesis);
-         IGenesis = NULL;
-         #endif
          CloseLibrary(GenesisBase);
          GenesisBase = NULL;
-
-         return isonline;
       }
    }
-
-   // if no online check was selected, we just check wheter we
-   // can open the bsdsocket.library or not.
-   if((socketbase = OpenLibrary("bsdsocket.library", 2L)))
+   else
    {
-      isonline = TRUE;
-      CloseLibrary(socketbase);
+     // if no online check was selected, we just check if bsdsocket.library
+     // is available.
+     struct Library *socketbase = OpenLibrary("bsdsocket.library", 2L);
+     if (socketbase)
+     {
+       CloseLibrary(socketbase);
+       isonline = TRUE;
+     }
    }
+
    return isonline;
 }
 
@@ -895,7 +891,13 @@ void TR_CloseTCPIP(void)
 {
   if(AmiSSLBase)
   {
-    CleanupAmiSSL(TAG_DONE);
+    CleanupAmiSSLA(NULL);
+  }
+
+  if(IS_AMIGAOS4 && ISocket)
+  {
+    DropInterface((APTR)ISocket);
+    ISocket = NULL;
   }
 
   if(SocketBase)
@@ -914,22 +916,19 @@ BOOL TR_OpenTCPIP(void)
   if(!TR_IsOnline())
     return FALSE;
 
-  // then open the bsdsocket.library and it`s OS4
-  // interface
+  // then open the bsdsocket.library and it`s OS4 interface
   if(!SocketBase)
   {
     if(!(SocketBase = OpenLibrary("bsdsocket.library", 2L)))
       return FALSE;
 
-    #if defined(__amigaos4__)
-    if(!(ISocket = (struct SocketIFace*)GetInterface(SocketBase, "main", 1L, NULL)))
+    if(IS_AMIGAOS4 && !(ISocket=(APTR)GetInterface(SocketBase,"main",1L,NULL)))
     {
       CloseLibrary(SocketBase);
       SocketBase = NULL;
 
       return FALSE;
     }
-    #endif
   }
 
   // Now we have to check for TLS/SSL support

@@ -67,6 +67,7 @@
 
 #include "YAM.h"
 #include "YAM_classes.h"
+#include "YAM_compat.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_error.h"
@@ -4188,29 +4189,25 @@ int GetSimpleID(void)
 //  Loads an URL using an ARexx script or openurl.library
 void GotoURL(char *url)
 {
-   if (C->RX[MACRO_URL].Script[0])
-   {
-      char newurl[SIZE_LARGE];
-      sprintf(newurl, "%c%s%c", '"', url, '"');
-      MA_StartMacro(MACRO_URL, newurl);
-   }
-   #if defined(__amigaos4__)
-   else if((OpenURLBase = OpenLibrary("openurl.library", 1)) &&
-           (IOpenURL = (struct OpenURLIFace*)GetInterface(OpenURLBase, "main", 1L, NULL)))
-   #else
-   else if((OpenURLBase = OpenLibrary("openurl.library", 1)))
-   #endif
-   {
-      URL_Open(url, TAG_DONE);
-
-      #if defined(__amigaos4__)
-      DropInterface((APTR)IOpenURL);
-      IOpenURL = NULL;
-      #endif
-
-      CloseLibrary(OpenURLBase);
-      OpenURLBase = NULL;
-   }
+  if (C->RX[MACRO_URL].Script[0])
+  {
+    char newurl[SIZE_LARGE];
+    sprintf(newurl, "%c%s%c", '"', url, '"');
+    MA_StartMacro(MACRO_URL, newurl);
+  }
+  else if((OpenURLBase=OpenLibrary("openurl.library", 1)))
+  {
+    if (!IS_AMIGAOS4 || (IOpenURL=(APTR)GetInterface(OpenURLBase,"main",1L,NULL)))
+    {
+      URL_OpenA(url, NULL);
+      if (IS_AMIGAOS4) {
+        DropInterface((APTR)IOpenURL);
+        IOpenURL = NULL;
+      }
+    }
+    CloseLibrary(OpenURLBase);
+    OpenURLBase = NULL;
+  }
 }
 ///
 /// strtok_r()
