@@ -1181,17 +1181,11 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
 //  return true/false if file exists
 BOOL FileExists(char *filename)
 {
-  BPTR lock;
-  BOOL result = FALSE;
-
-  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
-  {
-    result = TRUE;
-
-    UnLock(lock);
-  }
-
-  return result;
+  BPTR lock = Lock((STRPTR)filename, ACCESS_READ);
+  if(!lock)
+    return FALSE;
+  UnLock(lock);
+  return TRUE;
 }
 ///
 /// FileSize
