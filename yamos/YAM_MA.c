@@ -1940,8 +1940,11 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
    // with some strange data.. ;)
    set(G->MA->GUI.NL_MAILS, MUIA_Disabled, TRUE);
 
-   MA_ScanMailBox(folder);
-   MA_SaveIndex(folder);
+   // we start a rescan by expiring the current index and issueing
+   // a new MA_GetIndex(). That will also cause the GUI to refresh!
+   folder->LoadedMode = LM_UNLOAD;
+   MA_ExpireIndex(folder);
+   MA_GetIndex(folder);
 
    // if we are still in the folder we wanted to rescan,
    // we can refresh the list.

@@ -332,6 +332,26 @@ BOOL MA_GetIndex(struct Folder *folder)
 
       folder->LoadedMode = MA_LoadIndex(folder, TRUE);
       MA_ValidateStatus(folder);
+
+      // we need to refresh the entry in the folder listtree this folder belongs to
+      // but only if there is a GUI already!
+      if(folder->LoadedMode == LM_VALID && G->MA)
+      {
+        struct MUI_NListtree_TreeNode *tn;
+        int i;
+
+        for(i=0;;i++)
+        {
+          tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
+          if(!tn) break;
+
+          if(tn->tn_User == folder)
+          {
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, i, MUIV_NListtree_Redraw_Flag_Nr);
+            break;
+          }
+        }
+      }
    }
 
    return (BOOL)(folder->LoadedMode == LM_VALID);
@@ -1299,7 +1319,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 
           if(isCryptedFolder(entry)) sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCFOLDERIMG);
 
-          if (entry->LoadedMode)
+          if(entry->LoadedMode != LM_UNLOAD)
           {
             if(entry->New+entry->Unread) msg->Preparse[0] = MUIX_PH;
             if(C->FolderCols & (1<<1)) sprintf(msg->Array[1] = disptot, "%d", entry->Total);
