@@ -263,120 +263,127 @@ static BOOL TC_ActiveEditor(int wrwin)
 //  Dispatcher for timer class
 static void TC_Dispatcher(enum TimerIO tio)
 {
-   // if the IORequest isn`t ready yet we don`t wait
-   // or else we get perhaps into a deadlock
-   if(CheckIO(&TCData.timerIO[tio]->tr_node))
-   {
+  // prepare some debug information
+  #if defined(DEBUG)
+  char dateString[64];
+
+  DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
+  #endif
+
+  // now dispatch between the differnent timerIOs
+  switch(tio)
+  {
+    // in case the WriteIndexes TimerIO request was triggered
+    // we first check if no Editor is currently active and
+    // if so we write the indexes.
+    case TIO_WRINDEX:
+    {
+      DB(kprintf("TIO_WRINDEX triggered at: %s\n", dateString);)
+
+      // only write the indexes if no Editor is actually in use
+      if(!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
+      {
+        MA_UpdateIndexes(FALSE);
+      }
+
+      // restart timer now.
+      TC_Start(tio, C->WriteIndexes, 0);
+    }
+    break;
+
+    // in case the checkMail timerIO request was triggered we
+    // need to check if no writewindow is currently in use and
+    // then check for new mail.
+    case TIO_CHECKMAIL:
+    {
       int i;
 
-      // then wait&remove the IORequest
-      WaitIO(&TCData.timerIO[tio]->tr_node);
+      DB(kprintf("TIO_CHECKMAIL triggered at: %s\n", dateString);)
 
-      // now dispatch between the differnent timerIOs
-      switch(tio)
+      // only if there is currently no write window open we
+      // check for new mail.
+      for(i=0; i < MAXWR && !G->WR[i]; i++) ;
+
+      // also the configuration window needs to be closed
+      // or we skip the pop operation
+      if(i == MAXWR && !G->CO)
       {
-        // in case the WriteIndexes TimerIO request was triggered
-        // we first check if no Editor is currently active and
-        // if so we write the indexes.
-        case TIO_WRINDEX:
-        {
-          DB(kprintf("TIO_WRINDEX triggered at: %ld\n", time(NULL));)
-
-          // only write the indexes if no Editor is actually in use
-          if(!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
-          {
-            MA_UpdateIndexes(FALSE);
-          }
-
-          // restart timer now.
-          TC_Start(tio, C->WriteIndexes, 0);
-        }
-        break;
-
-        // in case the checkMail timerIO request was triggered we
-        // need to check if no writewindow is currently in use and
-        // then check for new mail.
-        case TIO_CHECKMAIL:
-        {
-          DB(kprintf("TIO_CHECKMAIL triggered at: %ld\n", time(NULL));)
-
-          // only if there is currently no write window open we
-          // check for new mail.
-          for(i=0; i < MAXWR && !G->WR[i]; i++) ;
-
-          // also the configuration window needs to be closed
-          // or we skip the pop operation
-          if(i == MAXWR && !G->CO)
-          {
-            MA_PopNow(POP_TIMED,-1);
-          }
-
-          // restart timer now.
-          TC_Start(tio, C->CheckMailDelay*60, 0);
-        }
-        break;
-
-        // and in case the AutoSave timerIO was triggered we check
-        // wheter there is really need to autosave the content of
-        // the currently used editors.
-        case TIO_AUTOSAVE:
-        {
-          DB(kprintf("TIO_AUTOSAVE triggered at: %ld\n", time(NULL));)
-
-          for(i=0; i < MAXWR; i++)
-          {
-            if(G->WR[i] && G->WR[i]->Mode != NEW_BOUNCE)
-            {
-              EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
-              G->WR[i]->AS_Done = TRUE;
-            }
-          }
-
-          // restart timer now
-          TC_Start(tio, C->AutoSave, 0);
-        }
-        break;
-
-        case TIO_READPANEUPDATE:
-        {
-          DB(kprintf("TIO_READPANEUPDATE triggered at: %ld\n", time(NULL));)
-
-          if(C->EmbeddedReadPane)
-          {
-            struct MA_GUIData *gui = &G->MA->GUI;
-            struct Mail *mail;
-
-            // get the actually active mail
-            DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-
-            // update the readMailGroup of the main window.
-            if(mail)
-              DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_ReadMail, mail,
-                                                 MUIF_ReadMailGroup_ReadMail_StatusChangeDelay);
-          }
-        }
-        break;
-
-        case TIO_READSTATUSUPDATE:
-        {
-          struct MA_GUIData *gui = &G->MA->GUI;
-          struct Mail *mail;
-
-          DB(kprintf("TIO_READSTATUSUPDATE triggered at: %ld\n", time(NULL));)
-
-          // get the actually active mail
-          DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-
-          // update the status of the mail to READ now
-          if(hasStatusNew(mail) || !hasStatusRead(mail))
-          {
-            setStatusToRead(mail); // set to OLD
-            DisplayStatistics(mail->Folder, TRUE);
-          }
-        }
-        break;
+        MA_PopNow(POP_TIMED,-1);
       }
-   }
+
+      // restart timer now.
+      TC_Start(tio, C->CheckMailDelay*60, 0);
+    }
+    break;
+
+    // and in case the AutoSave timerIO was triggered we check
+    // wheter there is really need to autosave the content of
+    // the currently used editors.
+    case TIO_AUTOSAVE:
+    {
+      int i;
+
+      DB(kprintf("TIO_AUTOSAVE triggered at: %s\n", dateString);)
+
+      for(i=0; i < MAXWR; i++)
+      {
+        if(G->WR[i] && G->WR[i]->Mode != NEW_BOUNCE)
+        {
+          EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
+          G->WR[i]->AS_Done = TRUE;
+        }
+      }
+
+      // restart timer now
+      TC_Start(tio, C->AutoSave, 0);
+    }
+    break;
+
+    // in case the READPANEUPDATE timerIO was triggered the embedded read
+    // pane in the main window should get updated. Therefore we get the
+    // currently active mail out of the main mail list and display it in the pane
+    case TIO_READPANEUPDATE:
+    {
+      DB(kprintf("TIO_READPANEUPDATE triggered at: %s\n", dateString);)
+
+      if(C->EmbeddedReadPane)
+      {
+        struct MA_GUIData *gui = &G->MA->GUI;
+        struct Mail *mail;
+
+        // get the actually active mail
+        DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+
+        // update the readMailGroup of the main window.
+        if(mail)
+          DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_ReadMail, mail,
+                                             MUIF_ReadMailGroup_ReadMail_StatusChangeDelay);
+      }
+    }
+    break;
+
+    // on a READSTATUSUPDATE timerIO request the mail status of the currently active mail
+    // should change from new/unread to read. So we get the currently active mail
+    // out of the main mail list and modify its status to read.
+    case TIO_READSTATUSUPDATE:
+    {
+      struct MA_GUIData *gui = &G->MA->GUI;
+      struct Mail *mail;
+
+      DB(kprintf("TIO_READSTATUSUPDATE triggered at: %s\n", dateString);)
+
+      // get the actually active mail
+      DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+
+      // update the status of the mail to READ now
+      if(hasStatusNew(mail) || !hasStatusRead(mail))
+      {
+        setStatusToRead(mail); // set to OLD
+        DisplayStatistics(mail->Folder, TRUE);
+      }
+    }
+    break;
+  }
 }
 
 ///
