@@ -377,7 +377,7 @@ struct Config
    int   EmailCache;
    int   SMTP_Port;
    int   TRBufferSize;
-   int   PreviewDelay;
+   int   EmbeddedMailDelay;
    int   StatusChangeDelay;
 
    enum  PrintMethod   PrintMethod;

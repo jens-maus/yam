@@ -909,7 +909,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->SocketOptions.NoDelay     = FALSE;
       co->SocketOptions.LowDelay    = FALSE;
       co->TRBufferSize = 8192;
-      co->PreviewDelay = 100; // 100ms delay by default
+      co->EmbeddedMailDelay = 200; // 200ms delay by default
    }
 }
 
