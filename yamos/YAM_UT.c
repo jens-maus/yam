@@ -3266,7 +3266,22 @@ void SaveLayout(BOOL permanent)
    sprintf(buf, "%ld %ld %ld %ld %ld %ld", G->Weights[0], G->Weights[1], G->Weights[2], G->Weights[3], G->Weights[4], G->Weights[5]);
    setstring(G->MA->GUI.ST_LAYOUT, buf);
    DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
-   if (permanent) DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
+
+   // if we want to save to ENVARC:
+   if(permanent)
+   {
+      struct Process *pr = (struct Process *)FindTask(NULL);
+      APTR oldWindowPtr = pr->pr_WindowPtr;
+
+      // this is for the people out there having their SYS: partition locked and whining about
+      // YAM popping up a error requester upon the exit - so it`s their fault now if
+      // the MUI objects aren`t saved correctly.
+      pr->pr_WindowPtr = (APTR)-1;
+
+      DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
+
+		  pr->pr_WindowPtr = oldWindowPtr; // restore the old windowPtr
+   }
 }
 ///
 /// ConvertKey

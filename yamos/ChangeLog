@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-05-16  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: YAM will now suppress any DOS requester from popping up while
+      trying to save the MUI object information to the ENVARC:mui/YAM.cfg file
+      upon the exit of YAM. This should prevent people from whining about the
+      fact that YAM wants to save the whole object information while quiting.
+      Please note that YAM doesn`t only save the NList column widths in that file,
+      but also saves information like the object weights informationm which is
+      quite important for the layout manager of MUI.
+
 2003-05-11  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: the ASL_ATTACH filerequesters will now show a "~(#?.info)"
