@@ -2477,7 +2477,7 @@ struct MA_ClassData *MA_New(void)
       if (username = C->RealName,(user = US_GetCurrentUser()))
         username = user->Name;
 
-      sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), yamversion, username);
+      sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), yamversionver, username);
 
       data->GUI.MS_MAIN = MenustripObject,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),
