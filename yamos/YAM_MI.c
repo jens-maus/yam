@@ -987,8 +987,12 @@ void touue(FILE *in, FILE *out)
 /*** RFC 2047 MIME encoding/decoding routines ***/
 /// rfc2047_encode_file()
 // Special encoding routines based on RFC2047 which directly
-// encodes header and body text into the supllied file stream.
-int rfc2047_encode_file(const FILE *fh, const char *str,
+// encodes header and body text into the supllied file stream. Please note
+// that this function tries to be as RFC compliant as possible, which means
+// that it does not simply generate a large huge encoded-word with text
+// in it. It tries to only encode those passages which really require
+// this encoding because of special characters in it.
+int rfc2047_encode_file(FILE *fh, const char *str,
                         const struct TranslationTable *tt)
 {
   char *c = (char *)str;
