@@ -686,8 +686,10 @@ static void WR_WriteSignature(FILE *out, int signat)
 ///
 /// WR_AddSignature
 //  Adds a signature to the end of the file
-void WR_AddSignature(char *mailfile, int signat)
+void WR_AddSignature(int winnum, int signat)
 {
+   char *mailfile = G->WR_Filename[winnum];
+
    if (signat == -1) 
       signat = C->UseSignature ? 1 : 0;
 
@@ -711,6 +713,10 @@ void WR_AddSignature(char *mailfile, int signat)
          fclose(fh_mail);
       }
    }
+
+   // lets set the signature radiobutton
+   // accordingly to the set signature
+   nnset(G->WR[winnum]->GUI.RA_SIGNATURE, MUIA_Radio_Active, signat);
 }
 
 ///

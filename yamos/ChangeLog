@@ -7,6 +7,9 @@ $Source$
 
 2002-06-08  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_WR.c: fixed a bug where YAM didn`t enable the correct
+      Radiobutton for Signatures if the mailinglist signature
+      feature was used.
     * YAM_MA.c: fixed bug #557522 where on a reply with a selected
       mailing list folder YAM wasn`t inserting the correct
       signature at all. Now it should insert the correct one
