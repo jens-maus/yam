@@ -28,6 +28,10 @@ Developer: Jens Langner (damato)
   listview (damato)
 - Fixed: the FOLDERINFO arexx command returns the wrong ID number for
   a "sent and received" folder type. (damato)
+- Fixed: confirmation requesters blocked YAM from quitting if it was
+  in iconify state. (damato)
+- Fixed: the HIDE option prevent the application from popping up if
+  the MUI own`s appicon or the commodity system was used. (damato)
 
 - Changed: it is now actually compatible with the most common MBOX
   formats, e.g. MBOXRD <http://www.qmail.org/man/man5/mbox.html> (damato)
