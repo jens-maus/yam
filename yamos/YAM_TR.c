@@ -1484,7 +1484,7 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
 // sure that a full buffer will be written out to the socket. i.e. if the
 // buffer is filled up so that the next call would flush it, we copy as
 // many data to the buffer as possible and flush it immediatly.
-static int TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags)
+static int TR_WriteBuffered(UNUSED LONG socket, char *ptr, int maxlen, int flags)
 {
   static int write_cnt = 0;
   static char *write_buf = NULL;

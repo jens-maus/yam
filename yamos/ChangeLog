@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-05-27  Jens Langner <Jens.Langner@light-speed.de>
+
+    * os4: removed the OS4 dependent ASM stub again as the OS4
+      kernel starting from version 51.4 finally supports m68k<>ppc
+      cross calls.
+
 2004-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c: in analogy to the new base64 encoding routines I

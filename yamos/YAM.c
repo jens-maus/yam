@@ -829,8 +829,10 @@ static void Abort(APTR formatnum, ...)
       }
       else if(IntuitionBase)
       {
-         struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
+         struct EasyStruct ErrReq;
 
+         ErrReq.es_StructSize   = sizeof(struct EasyStruct);
+         ErrReq.es_Flags        = 0;
          ErrReq.es_Title        = (char *)GetStr(MSG_ErrorStartup);
          ErrReq.es_TextFormat   = error;
          ErrReq.es_GadgetFormat = (char *)GetStr(MSG_Quit);
@@ -1518,21 +1520,49 @@ int main(int argc, char **argv)
    // obtain the MainInterface of Exec before anything else.
    #ifdef __amigaos4__
    IExec = (struct ExecIFace *)((*(struct ExecBase **)4L)->MainInterface);
+
+   // check the exec version first and force be at least an 51.4 version because
+	 // this is the version with the fixed crosscall hooks.
+	 if(SysBase->lib_Version < 51 ||
+		  (SysBase->lib_Version == 51 && SysBase->lib_Revision < 4))
+	 {
+      if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
+         GETINTERFACE(IIntuition, IntuitionBase))
+      {
+        struct EasyStruct ErrReq;
+
+        ErrReq.es_StructSize = sizeof(struct EasyStruct);
+        ErrReq.es_Flags      = 0;
+
+        ErrReq.es_Title        = "YAM Startup Error";
+        ErrReq.es_TextFormat   = "This version of YAM requires at least\n"
+                                 "an AmigaOS4 kernel version 51.4";
+        ErrReq.es_GadgetFormat = "Exit";
+
+        EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+
+        CLOSELIB(IntuitionBase, IIntuition);
+        exit(0);
+      }
+	 }
    #endif
 
 #if defined(DEVWARNING)
    {
      BOOL goon = TRUE;
 
-     if((IntuitionBase=(APTR)OpenLibrary("intuition.library", 36)) &&
+     if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
         GETINTERFACE(IIntuition, IntuitionBase))
      {
-       if((UtilityBase=(APTR)OpenLibrary("utility.library", 36)) &&
+       if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) &&
           GETINTERFACE(IUtility, UtilityBase))
        {
-         struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
+         struct EasyStruct ErrReq;
          struct DateStamp ds;
          DateStamp(&ds); // get actual time/date
+
+         ErrReq.es_StructSize = sizeof(struct EasyStruct);
+         ErrReq.es_Flags      = 0;
 
          if(EXPDATE <= ds.ds_Days)
          {
@@ -1559,7 +1589,8 @@ int main(int argc, char **argv)
                                     "for an official release!";
            ErrReq.es_GadgetFormat = "Go on|Exit";
 
-           if(!EasyRequestArgs(NULL, &ErrReq, NULL, NULL)) goon = FALSE;
+           if(!EasyRequestArgs(NULL, &ErrReq, NULL, NULL))
+             goon = FALSE;
          }
 
        }

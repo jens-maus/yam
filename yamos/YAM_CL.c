@@ -930,84 +930,8 @@ DISPATCHERPROTO(PL_Dispatcher)
 // Wrapper function to create a MUI custom class
 static struct MUI_CustomClass *CreateMCC(STRPTR supername, struct MUI_CustomClass *supermcc, int instDataSize, APTR dispatcher)
 {
-  struct MUI_CustomClass *cl;
-
-  #if defined(__amigaos4__) && defined(WITH_ASMSTUB)
-  extern ULONG muiDispatcherEntry(void);
-
-  if((cl = MUI_CreateCustomClass(NULL, supername, supermcc, instDataSize, &muiDispatcherEntry)))
-  {
-    cl->mcc_Class->cl_UserData = (ULONG)dispatcher;
-  }
-  #else
-  cl = MUI_CreateCustomClass(NULL, supername, supermcc, instDataSize, dispatcher);
-  #endif
-  return cl;
+  return MUI_CreateCustomClass(NULL, supername, supermcc, instDataSize, dispatcher);
 }
-
-#if defined(__amigaos4__) && defined(WITH_ASMSTUB)
-#warning "ASMSTUB enabled - please remove as soon as OS4 is fixed to work with crosscalls in MUI."
-#if #cpu (powerpc)
-// Let us use the Assembler muiDispatcherEntry function
-// as long as AmigaOS4 can`t handle the MUI dispatchers correctly.
-__asm__
-("\n\
-    .globl  muiDispatcherEntry\n\
-	  .type   muiDispatcherEntry, @function\n\
-\n\
-    .section .data\n\
-\n\
-  muiDispatcherEntry:\n\
-	  .short     0x4ef8                /* JMP.w */\n\
-	  .short     0                     /* Indicate switch */\n\
-	  .short     1                     /* Trap type */\n\
-	  .long      muiDispatcherEntryPPC\n\
-	  /* Register mapping */\n\
-	  .byte      4\n\
-	  .byte      1,60\n\
-	  .byte      3,32\n\
-	  .byte	     4,40\n\
-	  .byte	     5,36\n\
-	  .align	   4\n\
-\n\
-		.section .text\n\
-	  .align     2\n\
-\n\
-  muiDispatcherEntryPPC:\n\
-	  addi       r12, r1, -16        /* Calculate stackframe size */\n\
-		rlwinm     r12, r12, 0, 0, 27  /* Align it */\n\
-		stw        r1, 0(r12)          /* Store backchain pointer */\n\
-		mr         r1, r12             /* Set real stack pointer */\n\
-\n\
-		stw		     r11,12(r1)          /* Store Enter68kQuick vector */\n\
-\n\
-		lwz		     r12,36(r3)          /* Get the cl_Userdata */\n\
-		mtlr	     r12\n\
-		blrl\n\
-\n\
-		lwz		     r11,12(r1)\n\
-		mtlr	     r11\n\
-\n\
-		lwz        r1, 0(r1)           /* Cleanup stack frame */\n\
-\n\
-		blrl							             /* Return to emulation */\n\
-		.long      muiHookExit\n\
-		.byte      0                   /* Flags */\n\
-		.byte      2                   /* Two registers (a7 and d0) */\n\
-		.byte      1                   /* Map r1 */\n\
-		.byte      60                  /* to A7 */\n\
-		.byte      3                   /* Map r3 */\n\
-		.byte      0                   /* to D0 */\n\
-		.align     4\n\
-		.section .data\n\
-\n\
-  muiHookExit:\n\
-    .short     0x4e75              /* RTS */\n\
-");
-#else
- #error "no ASM for 68k OS4 required"
-#endif
-#endif
 
 ///
 /// ExitClasses()
@@ -1023,13 +947,6 @@ void ExitClasses(void)
   if(CL_AddressList) { MUI_DeleteCustomClass(CL_AddressList);  CL_AddressList  = NULL; }
   if(CL_DDList)      { MUI_DeleteCustomClass(CL_DDList);       CL_DDList       = NULL; }
   if(CL_AttachList)  { MUI_DeleteCustomClass(CL_AttachList);   CL_AttachList   = NULL; }
-
-  #if defined(__amigaos4__)
-  #warning "OS4 specific work-around still there!"
-  // this seems to work around an OS4 specific bug, but why??? remove it and YAM
-  // will crash on exit.. because of an invalid return jump? mhh?!?
-  kprintf("");
-  #endif
 }
 
 ///

@@ -113,7 +113,7 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
 void FreeRexxCommand( struct RexxMsg *rexxmessage )
 {
    if(!rexxmessage->rm_Result1 && rexxmessage->rm_Result2)
-      DeleteArgstring((UBYTE *) rexxmessage->rm_Result2);
+      DeleteArgstring((APTR)rexxmessage->rm_Result2);
 
    if( rexxmessage->rm_Stdin &&
       rexxmessage->rm_Stdin != Input() )
@@ -124,7 +124,7 @@ void FreeRexxCommand( struct RexxMsg *rexxmessage )
       rexxmessage->rm_Stdout != Output() )
       Close( rexxmessage->rm_Stdout );
 
-   DeleteArgstring((UBYTE *)ARG0(rexxmessage));
+   DeleteArgstring((APTR)ARG0(rexxmessage));
    DeleteRexxMsg( rexxmessage );
 }
 
@@ -141,7 +141,7 @@ static struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPT
    }
 
    if( (rexx_command_message->rm_Args[0] =
-      CreateArgstring((UBYTE *)buff, (ULONG)strlen(buff))) == NULL )
+      (APTR)CreateArgstring((UBYTE *)buff, (ULONG)strlen(buff))) == NULL )
    {
       DeleteRexxMsg(rexx_command_message);
       return( NULL );

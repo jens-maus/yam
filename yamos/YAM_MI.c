@@ -445,7 +445,7 @@ long base64decode_file(FILE *in, FILE *out,
 
   while(eof_reached == FALSE)
   {
-    int outLength;
+    int outLength = 0;
     char *sptr;
     char *dptr;
     size_t read;
@@ -961,7 +961,7 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
 // the callback function that is called by the decode_int() function each
 // time a string was successfully decoded so that it can be converted.
 static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *chset,
-                                const char *lang, void *arg)
+                                UNUSED const char *lang, void *arg)
 {
   struct rfc2047_decode_info *info = (struct rfc2047_decode_info *)arg;
   BOOL translate = FALSE;

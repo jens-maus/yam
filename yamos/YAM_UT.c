@@ -186,7 +186,7 @@ static void FreeWorkbenchPath(BPTR path)
 /// YAMMUIRequest
 // Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
 // We also have a wrapper #define MUI_Request for calling that function instead.
-LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
+LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, char *gadgets, char *format, ...)
 {
   LONG result = -1;
   char reqtxt[SIZE_LINE];
@@ -204,8 +204,10 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
   {
     if(IntuitionBase)
     {
-      struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
+      struct EasyStruct ErrReq;
 
+      ErrReq.es_StructSize   = sizeof(struct EasyStruct);
+      ErrReq.es_Flags        = 0;
       ErrReq.es_Title        = title;
       ErrReq.es_TextFormat   = reqtxt;
       ErrReq.es_GadgetFormat = gadgets;
