@@ -44,6 +44,7 @@
 #include <proto/iffparse.h>
 #include <proto/intuition.h>
 #include <proto/keymap.h>
+#include <proto/layers.h>
 #include <proto/locale.h>
 #include <proto/muimaster.h>
 #include <proto/rexxsyslib.h>
@@ -721,6 +722,7 @@ static void Terminate(void)
    CLOSELIB(RexxSysBase,   IRexxSys);
    CLOSELIB(IFFParseBase,  IIFFParse);
    CLOSELIB(KeymapBase,    IKeymap);
+   CLOSELIB(LayersBase,    ILayers);
    CLOSELIB(WorkbenchBase, IWorkbench);
    CLOSELIB(GfxBase,       IGraphics);
 
@@ -923,7 +925,10 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
        CloseLibrary(base);
        *libbase = NULL;
      }
-     else DB(kprintf("InitLib: library %s v%ld.%ld successfully opened.\n", libname, base->lib_Version, base->lib_Revision);)
+     else
+     {
+       DB(kprintf("InitLib: library %s v%ld.%ld successfully opened.\n", libname, base->lib_Version, base->lib_Revision);)
+     }
 
      base = iFace;
    }
@@ -1146,6 +1151,7 @@ static void Initialise(BOOL hidden)
 
    // load&initialize all required libraries
    INITLIB(IGraphics,  InitLib("graphics.library",  (APTR)&GfxBase,       36, 0, TRUE, FALSE));
+   INITLIB(ILayers,    InitLib("layers.library",    (APTR)&LayersBase,    37, 0, TRUE, FALSE));
    INITLIB(IWorkbench, InitLib("workbench.library", (APTR)&WorkbenchBase, 36, 0, TRUE, FALSE));
    INITLIB(IKeymap,    InitLib("keymap.library",    (APTR)&KeymapBase,    36, 0, TRUE, FALSE));
    INITLIB(IIFFParse,  InitLib("iffparse.library",  (APTR)&IFFParseBase,  36, 0, TRUE, FALSE));

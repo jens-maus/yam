@@ -162,9 +162,18 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
    fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
 
-   if ((active = (mail != NULL)) && isMultiPartMail(mail)) hasattach = TRUE;
-   for (i = 0; i < MAXWR; i++) if (mail && G->WR[i]) if (G->WR[i]->Mail == mail) beingedited = TRUE;
-// if (!mail) if (!xget(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
+   if((active = (mail != NULL)) && isMultiPartMail(mail))
+     hasattach = TRUE;
+
+   for(i = 0; i < MAXWR; i++)
+   {
+     if(mail && G->WR[i] && G->WR[i]->Mail == mail)
+     {
+       beingedited = TRUE;
+       break;
+     }
+   }
+
    DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
    if (gui->TO_TOOLBAR)
    {
@@ -1489,6 +1498,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
           if((out = fopen(tfname, "w")))
           {
              FILE *in;
+   					 struct MailInfo *mi = GetMailInfo(mail);
              struct Folder *fo = mail->Folder;
              int f;
 
@@ -1526,7 +1536,10 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
              fo->Size += f - mail->Size;
              mail->Size = f;
 
-             CLEAR_FLAG(mail->mflags, MFLAG_MULTIPART);
+             CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
+             SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+	   				 DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
+
              DeleteFile(fname);
 
              if(fo->Mode > FM_SIMPLE)
@@ -2876,10 +2889,10 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
          if(getImportanceLevel(entry) == IMP_HIGH)
            strcat(dispsta, "\033o[12]");
 
-         if(isCryptedMail(entry))        strcat(dispsta, "\033o[15]");
-         else if(isSignedMail(entry))    strcat(dispsta, "\033o[16]");
-         else if(isReportMail(entry))    strcat(dispsta, "\033o[14]");
-         else if(isMultiPartMail(entry)) strcat(dispsta, "\033o[13]");
+         if(isMP_CryptedMail(entry))      strcat(dispsta, "\033o[15]");
+         else if(isMP_SignedMail(entry))  strcat(dispsta, "\033o[16]");
+         else if(isMP_ReportMail(entry))  strcat(dispsta, "\033o[14]");
+         else if(isMP_MixedMail(entry))   strcat(dispsta, "\033o[13]");
 
          // if this is a marked mail we have to signal it
          if(hasStatusMarked(entry))

@@ -62,21 +62,24 @@ struct Rule;
 // Warning: Please note that if you change something here you have to make
 //          sure to increase the version number of the .index file in YAM_MAf.c!
 #define MFLAG_MULTIRCPT   (1<<0)
-#define MFLAG_MULTIPART   (1<<1)
-#define MFLAG_REPORT      (1<<2)
-#define MFLAG_CRYPT       (1<<3)
-#define MFLAG_SIGNED      (1<<4)
-#define MFLAG_SENDERINFO  (1<<5)
-#define MFLAG_SENDMDN     (1<<6)
-#define MFLAG_NOFOLDER    (1<<7)
-#define MFLAG_PERFIELD         8      // reserve 3 bits of the flags for the permanent flag section
-#define MFLAG_VOLFIELD        11      // reserve 3 bits of the flags for the volatile flag section
-#define MFLAG_IMPORTANCE      14      // reserve 2 bits to store the level of importance
+#define MFLAG_MP_MIXED    (1<<1)      // multipart/mixed
+#define MFLAG_MP_REPORT   (1<<2)      // multipart/report
+#define MFLAG_MP_CRYPT    (1<<3)      // multipart/encrypted
+#define MFLAG_MP_SIGNED   (1<<4)      // multipart/signed
+#define MFLAG_MP_ALTERN   (1<<5)      // multipart/alternative
+#define MFLAG_SENDERINFO  (1<<6)
+#define MFLAG_SENDMDN     (1<<7)
+#define MFLAG_NOFOLDER    (1<<8)
+#define MFLAG_PERFIELD         9      // reserve 3 bits of the flags for the permanent flag section
+#define MFLAG_VOLFIELD        12      // reserve 3 bits of the flags for the volatile flag section
+#define MFLAG_IMPORTANCE      15      // reserve 2 bits to store the level of importance
 #define isMultiRCPTMail(mail)         (isFlagSet((mail)->mflags, MFLAG_MULTIRCPT))
-#define isMultiPartMail(mail)         (isFlagSet((mail)->mflags, MFLAG_MULTIPART))
-#define isReportMail(mail)            (isFlagSet((mail)->mflags, MFLAG_REPORT))
-#define isCryptedMail(mail)           (isFlagSet((mail)->mflags, MFLAG_CRYPT))
-#define isSignedMail(mail)            (isFlagSet((mail)->mflags, MFLAG_SIGNED))
+#define isMultiPartMail(mail)         (hasFlag((mail)->mflags, MFLAG_MP_MIXED | MFLAG_MP_REPORT | MFLAG_MP_CRYPT | MFLAG_MP_SIGNED | MFLAG_MP_ALTERN))
+#define isMP_MixedMail(mail)          (isFlagSet((mail)->mflags, MFLAG_MP_MIXED))
+#define isMP_ReportMail(mail)         (isFlagSet((mail)->mflags, MFLAG_MP_REPORT))
+#define isMP_CryptedMail(mail)        (isFlagSet((mail)->mflags, MFLAG_MP_CRYPT))
+#define isMP_SignedMail(mail)         (isFlagSet((mail)->mflags, MFLAG_MP_SIGNED))
+#define isMP_AlternativeMail(mail)    (isFlagSet((mail)->mflags, MFLAG_MP_ALTERN))
 #define isSenderInfoMail(mail)        (isFlagSet((mail)->mflags, MFLAG_SENDERINFO))
 #define isSendMDNMail(mail)           (isFlagSet((mail)->mflags, MFLAG_SENDMDN))
 #define isVirtualMail(mail)           (isFlagSet((mail)->mflags, MFLAG_NOFOLDER))

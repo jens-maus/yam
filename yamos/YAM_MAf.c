@@ -111,7 +111,7 @@ struct FIndex
 
 // whenever you change something up there (in FIndex or ComprMail) you
 // need to increase this version ID!
-#define FINDEX_VER  (MAKE_ID('Y','I','N','6'))
+#define FINDEX_VER  (MAKE_ID('Y','I','N','7'))
 
 #include "default-align.h"
 
@@ -1303,14 +1303,21 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
             else if (!stricmp(field, "content-type"))
             {
                p = Trim(value);
-               if(!strnicmp(p, "multipart/mixed", 15))
-                 SET_FLAG(mail->mflags, MFLAG_MULTIPART);
-               else if(!strnicmp(p, "multipart/report", 16))
-                 SET_FLAG(mail->mflags, MFLAG_REPORT);
-               else if(!strnicmp(p, "multipart/encrypted", 19))
-                 SET_FLAG(mail->mflags, MFLAG_CRYPT);
-               else if(!strnicmp(p, "multipart/signed", 16))
-                 SET_FLAG(mail->mflags, MFLAG_SIGNED);
+               if(!strnicmp(p, "multipart", 9))
+               {
+                 p += 10;
+
+                 if(!strnicmp(p, "mixed", 5))
+                   SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+                 else if(!strnicmp(p, "report", 6))
+                   SET_FLAG(mail->mflags, MFLAG_MP_REPORT);
+                 else if(!strnicmp(p, "encrypted", 9))
+                   SET_FLAG(mail->mflags, MFLAG_MP_CRYPT);
+                 else if(!strnicmp(p, "signed", 6))
+                   SET_FLAG(mail->mflags, MFLAG_MP_SIGNED);
+                 else if(!strnicmp(p, "alternative", 11))
+                   SET_FLAG(mail->mflags, MFLAG_MP_ALTERN);
+               }
             }
             else if (!stricmp(field, "x-senderinfo"))
             {
@@ -1342,8 +1349,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       }
 
       // if now the mail is still not MULTIPART we have to check for uuencoded attachments
-      if(!isMultiPartMail(mail) && MA_DetectUUE(fh))
-        SET_FLAG(mail->mflags, MFLAG_MULTIPART);
+      if(!isMP_MixedMail(mail) && MA_DetectUUE(fh))
+        SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
 
       // And now we close the Mailfile
       fclose(fh);

@@ -126,6 +126,7 @@ struct Library *       XpkBase        = NULL;
 struct Library *       AmiSSLBase     = NULL;
 struct Device *        TimerBase      = NULL;
 struct Library *       GfxBase        = NULL;
+struct Library *       LayersBase     = NULL;
 
 // lets defined the AmigaOS4 style interfaces of
 // our used libraries
@@ -150,6 +151,7 @@ struct XpkIFace*        IXpk          = NULL;
 struct AmiSSLIFace*     IAmiSSL       = NULL;
 struct TimerIFace*      ITimer        = NULL;
 struct GraphicsIFace*   IGraphics     = NULL;
+struct LayersIFace*     ILayers       = NULL;
 #endif
 
 const char* const SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };

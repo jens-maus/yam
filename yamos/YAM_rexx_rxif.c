@@ -902,10 +902,10 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             sprintf(rd->rd.res.msgid = rd->msgid, "%lX", mail->cMsgID);
             sprintf(rd->rd.res.flags = rd->flags, "%c%c%c%c%c-%c%c%c",
                       isMultiRCPTMail(mail) ? 'M' : '-',
-                      isMultiPartMail(mail) ? 'A' : '-',
-                      isReportMail(mail)    ? 'R' : '-',
-                      isCryptedMail(mail)   ? 'C' : '-',
-                      isSignedMail(mail)    ? 'S' : '-',
+                      isMP_MixedMail(mail)  ? 'A' : '-',
+                      isMP_ReportMail(mail) ? 'R' : '-',
+                      isMP_CryptedMail(mail)? 'C' : '-',
+                      isMP_SignedMail(mail) ? 'S' : '-',
                       pf ? pf+'0' : '-',
                       vf ? vf+'0' : '-',
                       hasStatusMarked(mail) ? 'M' : '-'

@@ -454,17 +454,18 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
 //  Prints a file. Currently it is just dumped to PRT:
 void RE_PrintFile(char *filename)
 {
-   switch(C->PrintMethod)
-   {
-      case PRINTMETHOD_RAW :
-        // continue
+  if(C->PrinterCheck && !CheckPrinter())
+	  return;
 
-      default:
-      {
-         CopyFile("PRT:", 0, filename, 0);
-      }
-      break;
-   }
+  switch(C->PrintMethod)
+  {
+    case PRINTMETHOD_RAW :
+      // continue
+
+    default:
+      CopyFile("PRT:", 0, filename, 0);
+    break;
+  }
 }
 
 ///
@@ -1970,31 +1971,41 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     // texteditor or not and if so we run the part through the lexer
     for(part = first->Next; part; part = part->Next)
     {
-      BOOL dodisp = (part->Nr < PART_LETTER || (part->Printable && (part->Nr == PART_LETTER || (C->DisplayAllTexts && part->Decoded))));
+      BOOL dodisp = (part->Nr < PART_LETTER ||
+                    (part->Printable &&
+                      (part->Nr == PART_LETTER ||
+                      (C->DisplayAllTexts && part->Decoded))));
 
       prewptr = wptr;
 
-      if (mode != RIM_READ && part->Nr > PART_LETTER) break;
+      if(mode != RIM_READ && part->Nr > PART_LETTER)
+        break;
 
       // if we are in READ mode and other parts than the LETTER part
-      // shouldn`t be displayed in the texteditor, we drop a simple separator bar with info.
+      // should be displayed in the texteditor as well, we drop a simple separator bar with info.
       // This is used for attachments and here escape sequences are allowed as we don`t want them
       // to get stripped if the user selects "NoTextStyles"
-      if (mode == RIM_READ && (part->Nr > PART_LETTER || !dodisp))
+      if(mode == RIM_READ && part->Nr > PART_LETTER && dodisp)
       {
         char buffer[SIZE_LARGE];
 
         // lets generate the separator bar.
-        sprintf(buffer, "\033c\033[s:18]\033p[7]%d: %s\033p[0]\n\033l\033b%s:\033n %s   \033b%s:\033n %s%ld %s\n", part->Nr, part->Name, GetStr(MSG_RE_ContentType), DescribeCT(part->ContentType), GetStr(MSG_Size), part->Decoded ? "" : "~", part->Size, GetStr(MSG_Bytes));
+        sprintf(buffer, "\033c\033[s:18]\033p[7]%s:%s%s\033p[0]\n"
+                        "\033l\033b%s:\033n %s <%s>\n", GetStr(MSG_MA_ATTACHMENT),
+                                                        *part->Name ? " " : "",
+                                                        part->Name,
+                                                        GetStr(MSG_RE_ContentType),
+                                                        DescribeCT(part->ContentType),
+                                                        part->ContentType);
+
         cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
 
         *buffer = 0;
-        if(*part->Description) sprintf(buffer, "\033b%s:\033n %s\n", GetStr(MSG_RE_Description), part->Description);
-        if(dodisp)
-        {
-          strcat(buffer, "\033[s:2]\n");
-        }
-        if(*buffer) cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
+        if(*part->Description)
+          sprintf(buffer, "\033b%s:\033n %s\n", GetStr(MSG_RE_Description), part->Description);
+
+        strcat(buffer, "\033[s:2]\n");
+        cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
       }
 
       // only continue of this part should be displayed
@@ -2270,9 +2281,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     SET_FLAG(rmData->signedFlags, PGPS_OLD);
 
                     // make sure that the mail is flaged as signed
-                    if(!isSignedMail(rmData->mail))
+                    if(!isMP_SignedMail(rmData->mail))
                     {
-                      SET_FLAG(rmData->mail->mflags, MFLAG_SIGNED);
+                      SET_FLAG(rmData->mail->mflags, MFLAG_MP_SIGNED);
                       SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                     }
                   }
@@ -2296,9 +2307,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 SET_FLAG(rmData->encryptionFlags, PGPE_OLD);
 
                 // make sure that mail is flagged as crypted
-                if(!isCryptedMail(rmData->mail))
+                if(!isMP_CryptedMail(rmData->mail))
                 {
-                  SET_FLAG(rmData->mail->mflags, MFLAG_CRYPT);
+                  SET_FLAG(rmData->mail->mflags, MFLAG_MP_CRYPT);
                   SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                 }
 
@@ -2336,9 +2347,9 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 // flag the mail as having a inline PGP signature
                 SET_FLAG(rmData->signedFlags, PGPS_OLD);
 
-                if(!isSignedMail(rmData->mail))
+                if(!isMP_SignedMail(rmData->mail))
                 {
-                  SET_FLAG(rmData->mail->mflags, MFLAG_SIGNED);
+                  SET_FLAG(rmData->mail->mflags, MFLAG_MP_SIGNED);
                   SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                 }
               }
