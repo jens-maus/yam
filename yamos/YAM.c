@@ -1043,6 +1043,8 @@ int main(int argc, char **argv)
          Login(NULL, NULL, NULL, NULL);
          Initialise2(FALSE);
          DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
+         AppendLog(0, GetStr(MSG_LOG_Started), "", "", "", "");
+         MA_StartMacro(MACRO_STARTUP, NULL);
       }
       user = US_GetCurrentUser();
       AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name, "", "", "");
@@ -1105,14 +1107,13 @@ int main(int argc, char **argv)
       if (C->CleanupOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
       if (C->RemoveOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
 
-      if(ret == 1)
-      {
-         AppendLog(99, GetStr(MSG_LOG_Terminated), "", "", "", "");
-         MA_StartMacro(MACRO_QUIT, NULL);
-         FreeData2D(&Header);
-         exit(0);
-      }
+      AppendLog(99, GetStr(MSG_LOG_Terminated), "", "", "", "");
+      MA_StartMacro(MACRO_QUIT, NULL);
       FreeData2D(&Header);
+
+      // if the user really wants to exit, do it now as Terminate() is broken !
+      if(ret == 1) exit(0);
+
       Terminate();
    }
    /* not reached */

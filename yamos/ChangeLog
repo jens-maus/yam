@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-05-30  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM.c: fixed bug #556531. YAM will now also execute the
+      Start&Stop Macros, as defined within the configuration, at
+      initiating of a "Restart".
+
 2002-05-27  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_MA.c: YAM treats (SHIFT)+DEL keypresses with a turned on
