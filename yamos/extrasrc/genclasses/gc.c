@@ -48,6 +48,8 @@
  *
  * History
  * -------
+ * 0.10 - fixed CleanupClasses to deal with NULL classes
+ *
  * 0.9 - fixed crash in processclasssrc()
  *
  * 0.8 - added MORPHOS support for the vararg _NewObject() function.
@@ -104,7 +106,7 @@
  *
  */
 
-char *verstr = "0.9";
+char *verstr = "0.10";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -682,7 +684,8 @@ void gen_supportroutines( FILE *fp )
 "  long i;\n"
 "  for (i = NUMBEROFCLASSES-1; i >= 0; i--)\n"
 "  {\n"
-"    MUI_DeleteCustomClass(%sClasses[i]);\n"
+"    if (%sClasses[i])\n"
+"      MUI_DeleteCustomClass(%sClasses[i]);\n"
 "    %sClasses[i] = NULL;\n"
 "  }\n"
 "}\n"
@@ -704,7 +707,7 @@ void gen_supportroutines( FILE *fp )
 	arg_storm ? "/// "                : "",	
 	arg_storm ? bn                    : "",	
 	arg_storm ? "_CleanupClasses()\n" : "",
-	bn, bn, bn,
+	bn, bn, bn, bn,
 	arg_storm ? "///\n"               : "");
 }
 
