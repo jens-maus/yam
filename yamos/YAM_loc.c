@@ -1308,6 +1308,7 @@ const struct FC_Type _MSG_CTapplicationrexx = { 1297, "Rexx script" };
 const struct FC_Type _MSG_FO_FromAddress = { 1298, "From: address" };
 const struct FC_Type _MSG_HELP_FO_ST_MLFROMADDRESS = { 1299, "Use this from address when posting\n"\
 	"new mails to the list" };
+const struct FC_Type _MSG_RE_MDNGads4 = { 1300, "|Ignore all" };
 static struct Catalog *YAM_Catalog = NULL;
 
 void OpenYAMCatalog(void)

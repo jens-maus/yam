@@ -277,8 +277,9 @@ void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL s
 ///
 /// RE_DoMDN
 //  Handles message disposition requests
-void RE_DoMDN(int MDNtype, struct Mail *mail)
+BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi)
 {
+   BOOL ignoreall = FALSE;
    int MDNmode;
    switch (MDNtype)
    {
@@ -302,9 +303,11 @@ void RE_DoMDN(int MDNtype, struct Mail *mail)
                     strcpy(buttons, GetStr(MSG_RE_MDNGads1));
                     if (isonline) strcat(buttons, GetStr(MSG_RE_MDNGads2));
                     strcat(buttons, GetStr(MSG_RE_MDNGads3));
+                    if (multi) strcat(buttons, GetStr(MSG_RE_MDNGads4));
                     switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), buttons, GetStr(MSG_RE_MDNReq)))
                     {
-                       case 0: MDNtype = MDN_IGNORE; break;
+                       case 0: ignoreall = TRUE;
+                       case 5: MDNtype = MDN_IGNORE; break;
                        case 3: sendnow = TRUE;
                        case 1: break;
                        case 4: sendnow = TRUE;
@@ -317,6 +320,7 @@ void RE_DoMDN(int MDNtype, struct Mail *mail)
       }
       MA_FreeEMailStruct(email);
    }
+   return ignoreall;
 }
 ///
 /// RE_ReadMessage
@@ -381,7 +385,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
          MA_SetMailStatus(mail, STATUS_OLD);
          DisplayStatistics(folder);
          if (re->PGPSigned) DoMethod(G->App, MUIM_CallHook, &RE_CheckSignatureHook, FALSE, winnum);
-         RE_DoMDN(MDN_READ, mail);
+         RE_DoMDN(MDN_READ, mail, FALSE);
       }
    }
    else

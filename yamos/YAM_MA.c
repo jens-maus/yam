@@ -970,6 +970,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    APTR lv = G->MA->GUI.NL_MAILS;
    char buffer[SIZE_DEFAULT];
    struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL), *folder = FO_GetCurrentFolder();
+   BOOL ignoreall = FALSE;
 
    if (!(mlist = MA_CreateMarkedList(lv))) return;
    selected = (int)*mlist;
@@ -990,7 +991,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    {
       Busy(NULL, NULL, i, 0);
       mail = mlist[i+2];
-      if (mail->Flags & MFLAG_SENDMDN) if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) RE_DoMDN(MDN_DELE, mail);
+      if (mail->Flags & MFLAG_SENDMDN) if ((mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) && !ignoreall) ignoreall = RE_DoMDN(MDN_DELE, mail, TRUE);
       if (delatonce) MA_DeleteSingle(mail, TRUE);
       else
       {
@@ -1243,7 +1244,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
    if ((rule->Actions & 64) == 64)
    {
       G->RRs.Deleted++;
-      if (mail->Flags & MFLAG_SENDMDN) if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail);
+      if (mail->Flags & MFLAG_SENDMDN) if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
       MA_DeleteSingle(mail, FALSE);
       return FALSE;
    }

@@ -1406,7 +1406,7 @@ extern STACKEXT void EA_AddMembers(Object *, struct MUIS_Listtree_TreeNode *);
 extern void EA_SetDefaultAlias(struct ABEntry *);
 extern void EA_SetPhoto(int, char *);
 
-extern void RE_DoMDN(int MDNtype, struct Mail *mail);
+extern BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi);
 extern struct Mail *RE_GetQuestion(long);
 extern struct Mail *RE_GetAnswer(long);
 extern BOOL RE_DecodePart(struct Part *);

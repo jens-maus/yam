@@ -1322,7 +1322,7 @@ void WR_NewMail(int mode, int winnum)
                {
                   int mdntype = wr->Mode == NEW_REPLY ? MDN_DISP : MDN_PROC;
                   if (winnum == 2) mdntype |= MDN_AUTOACT;
-                  RE_DoMDN(mdntype, m);
+                  RE_DoMDN(mdntype, m, FALSE);
                }
                switch (wr->Mode)
                {

@@ -4,9 +4,9 @@ RM = delete
 
 # Files
 GST = YAM.gst
-OBJS= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
+OBJS= YAM_loc.o YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
       YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o \
-      YAM_UT.o YAM_WR.o YAM_loc.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
+      YAM_UT.o YAM_WR.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
       hmac_md5.o
 
 # Compiler flags
@@ -40,6 +40,10 @@ YAM:	$(OBJS)
 YAM.h: YAM.h.in
    copy YAM.h.in YAM.h
 
+YAM_loc.o: YAM.cd YAM_loc.h YAM_loc.c
+   flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
+   $(CC) YAM_loc.c $(OPTS)
+
 YAM.o:     YAM.c     YAM.h YAM_loc.h
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_loc.h
 YAM_CL.o:  YAM_CL.c  YAM.h YAM_loc.h
@@ -63,13 +67,9 @@ YAM_TR.o:  YAM_TR.c  YAM.h YAM_loc.h
 YAM_US.o:  YAM_US.c  YAM.h YAM_loc.h
 YAM_UT.o:  YAM_UT.c  YAM.h YAM_loc.h
 YAM_WR.o:  YAM_WR.c  YAM.h YAM_loc.h
-YAM_loc.o: YAM_loc.c
 YAM_rexx.o     : YAM_rexx.c YAM_rexx.h 
 YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_loc.h 
-
-YAM_loc.c: YAM.cd
-   flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
 
 deutsch.catalog: deutsch.ct
    flexcat YAM.cd deutsch.ct CATALOG LOCALE:catalogs/deutsch/YAM.catalog FLUSH
