@@ -1,44 +1,62 @@
+TARGET = YAM
+
 # Programs
 CC = sc
 RM = delete
 
 # Files
 GST  = YAM.gst
-OBJS = YAM_loc.o YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
+OBJS = YAM.o YAM_loc.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
        YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o \
        YAM_UT.o YAM_WR.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
        hmac_md5.o all_sas.o
 DATE = T:YAM-date.tmp
 
-# Compiler flags
+# Compiler/Linker flags
+
 CPU        = 68020
-#YAMVERSION = "2.3-dev"
-YAMDATE	   = `Type $(DATE)`
-#OPTFLAGS   = OPT OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL
-OPTFLAGS   = NOOPT
-#DEBUG	   = DEF DEBUG DEBUG=LINE
-
-# Pre-build for release:
-DEBUG      = DEBUG=LINE
 YAMVERSION = "2.3p1"
+YAMDATE	   = `Type $(DATE)`
 
-# CPU is defined outside
+WARN     = WARN=ALL IGNORE=51,61,112,120,148,165,178,212,304,306
+OPTFLAGS = STRIPDEBUG OPT OPTTIME OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL\
+  OPTGO OPTLOOP OPTPEEP OPTSCHED
+DEBUG    = NOSTRIPDEBUG NOOPT DEF DEBUG DEBUG=LINE
+CFLAGS   = RESOPT NOVER GST=$(GST) PARM=R DATA=FAR CODE=FAR NOSTKCHK STRINGMERGE\
+  IDLEN=60 ERRORREXX INCLUDEDIR=includes DEF YAMVER=$(YAMVERSION) $(YAMDATE)\
+  DEF=__USE_SYSBASE NOICONS CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
+LNKFLAGS = RESOPT NOVER LINK NOSMALLCODE NOSMALLDATA UTILLIB LIB lib:scnb.lib,lib:amiga.lib,lib:debug.lib\
+  NOICONS "LINKOPT=MAP $(TARGET).map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"\
+  NOCHECKABORT $(OPTFLAGS) $(DEBUG)
 
-CFLAGS = RESOPT NOLINK GST=$(GST) DEF YAMVER=$(YAMVERSION) $(YAMDATE) IGNORE=147,306\
-DATA=FAR CODE=FAR ERRORREXX INCLUDEDIR=includes STRINGSECTION=FAR $(DEBUG)\
-NOICONS IDLEN=60 CPU=$(CPU) NOCHECKABORT\
-DEFINE=__NOLIBBASE__ # this is required, as we use wrong UtilityBase declaration
+# CPU and DEBUG can be defined outside, defaults to above
+# using e.g. "smake DEBUG= CPU=68060" produces optimized non-debug 68060 version
+#
+# OPTFLAGS are disabled by DEBUG normally!
+#
+# ignored warnings are:
+#  51 C++ comment detected                                 -- we agreed to use them
+#  61 undefined struct/union tag "tag-name"                -- in include files
+# 112 include file "filename" not in GST                   -- only headers.h and YAM.h are in GST
+# 120 Integral type mismatch: possible portability problem -- should be used somewhen
+# 148 use of incomplete struct/union/enum tag "name"       -- in include files
+# 165 use of narrow type in prototype                      -- very unlikely portability problem
+# 178 indirect call without indirection operator           -- only old-style support
+# 212 item "name" already declared                         -- in include files
+# 304 Dead assignment eliminated "symbol"                  -- only information from global optimizer
+# 306 .. function inlined                                  -- disturbs
+
 
 # Default rules
 .c.o:
-	$(CC) $(CFLAGS) $(OPTFLAGS) $*.c
+	$(CC) $(CFLAGS) $*.c
 
 .ct.catalog:
-	flexcat YAM.cd $*.ct CATALOG=YAM_$*.catalog FLUSH
+	flexcat YAM.cd $*.ct CATALOG=Catalogs/$*/YAM.catalog FLUSH
 
 
 # Targets & dependencies
-all:	$(GST) YAM
+all:	$(DATE) $(GST) YAM catalogs
 
 clean:
 	$(RM) \#?.(o|map|gst) (YAM_loc.\#?|YAM.h|YAM)
@@ -47,27 +65,26 @@ copy:	all catalogs
 	copy YAM YAM:
 #	copy YAM_$$language.catalog LOCALE:$$language/YAM.catalog
 
-catalogs: YAM_deutsch.catalog
+catalogs: Catalogs/deutsch/YAM.catalog
 
 YAM:	$(OBJS)
-	slink <with <
-	TO YAM
-	FROM lib:c.o $(OBJS)
-	LIB lib:scnb.lib lib:amiga.lib lib:debug.lib lib:NewReadArgs.o
-	MAP YAM.map
-	STRIPDEBUG NOICONS
+	$(CC) $(LNKFLAGS) TO $@ WITH <<
+	$(OBJS)
 	<
 
 YAM.h: YAM.h.in
 	copy YAM.h.in YAM.h
 
-YAM_loc.h: YAM.cd
+YAM_loc.h: YAM.cd C_h.sd C_c.sd
 	flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
 
 YAM_loc.c: YAM.cd
 	; # dummy entry to make smake happy
 
-YAM_deutsch.catalog: deutsch.ct
+deutsch.ct: YAM.cd
+	flexcat YAM.cd $@ NEWCTFILE=$@
+
+Catalogs/deutsch/YAM.catalog: deutsch.ct
 
 YAM.o:     YAM.c     YAM.h YAM_loc.h $(DATE)
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_loc.h
@@ -80,11 +97,7 @@ YAM_EA.o:  YAM_EA.c  YAM.h YAM_loc.h
 YAM_ER.o:  YAM_ER.c  YAM.h YAM_loc.h
 YAM_FI.o:  YAM_FI.c  YAM.h YAM_loc.h
 YAM_FO.o:  YAM_FO.c  YAM.h YAM_loc.h
-	$(CC) $(CFLAGS) NOOPT $*.c		# doesn't compile with optimization :-(
-
 YAM_MA.o:  YAM_MA.c  YAM.h YAM_loc.h
-	$(CC) $(CFLAGS) NOOPT $*.c		# doesn't compile with optimization :-(
-
 YAM_MAf.o: YAM_MAf.c YAM.h YAM_loc.h $(DATE)
 YAM_MI.o:  YAM_MI.c  YAM.h YAM_loc.h
 YAM_RE.o:  YAM_RE.c  YAM.h YAM_loc.h
@@ -97,11 +110,13 @@ YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_loc.h
 
 YAM_loc.o: YAM_loc.h YAM_loc.c
-	$(CC) $(CFLAGS) YAM_loc.c
+	$(CC) $(CFLAGS) NOSTRINGMERGE YAM_loc.c
+
+all_sas.o: all_sas.c extrasrc/md5.c extrasrc/wbpath.c extrasrc/NewReadArgs.c
 
 $(DATE):
 	@echo "Bumping date..."
 	@rx   >$(DATE) "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"
 
-$(GST): headers.h YAM.h $(DATE) $(DAYS)
+$(GST): headers.h YAM.h
 	$(CC) $(CFLAGS) headers.h mkgst $(GST) IGNORE=105

@@ -2,12 +2,14 @@
 #include <proto/exec.h>
 #include <proto/dos.h>
 
+#include <compiler.h>
+
 struct PathNode {
    BPTR next;
    BPTR dir;
 };
 
-BPTR cloneWorkbenchPath(struct ExecBase *SysBase,
+BPTR STDARGS cloneWorkbenchPath(struct ExecBase *SysBase,
 			struct DosLibrary *DOSBase,
 			struct WBStartup *wbmsg)
 {
@@ -55,7 +57,7 @@ BPTR cloneWorkbenchPath(struct ExecBase *SysBase,
    return path;
 }
 
-void freeWorkbenchPath(struct ExecBase *SysBase,
+void STDARGS freeWorkbenchPath(struct ExecBase *SysBase,
 		       struct DosLibrary *DOSBase,
 		       BPTR path)
 {

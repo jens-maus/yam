@@ -123,9 +123,11 @@ STATIC LONG IsArg( STRPTR template, STRPTR keyword)
 
 LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 {
+   #ifdef ICONGETA_RemapIcon
 	static const Tag icontags[] = {
 		ICONGETA_RemapIcon,FALSE, TAG_DONE
 	};
+   #endif
 
 	d(bug("--- NewReadArgs ---\n"));
 
@@ -232,9 +234,12 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 				olddir = CurrentDir(wbarg->wa_Lock);
 
 				/*- get tooltypes from .info file -*/
-				dobj = ( IconBase->lib_Version < 44L ) ?
-						GetDiskObject(wbarg->wa_Name) :
-						GetIconTagList(wbarg->wa_Name, (struct TagItem *)icontags);
+				dobj =
+#ifdef ICONGETA_RemapIcon
+          ( IconBase->lib_Version >= 44L ) ?
+          GetIconTagList(wbarg->wa_Name, (struct TagItem *)icontags) :
+#endif
+          GetDiskObject(wbarg->wa_Name);
 
 				if( dobj )
 				{

@@ -356,4 +356,8 @@
     * changed version string to "2.3p1" for the upcoming
       release.
 
+2001-11-14  Christian Hattemer <krille@users.sourceforge.net>
+
+    * Adapted smakefile from MAIN
+
 
