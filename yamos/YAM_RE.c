@@ -2564,7 +2564,11 @@ HOOKPROTONH(RE_LV_AttachDspFunc, long, char **array, struct Part *entry)
       array[0] = array[2] = "";
       if (entry->Nr > 0) sprintf(array[0] = dispnu, "%ld", entry->Nr);
       sprintf(array[1] = dispna, *entry->Name ? entry->Name : DescribeCT(entry->ContentType));
-      if (entry->Size) sprintf(array[2] = dispsz, "%s%ld", entry->Decoded ? "" : "~", entry->Size);
+      if (entry->Size)
+      {
+        sprintf(array[2] = dispsz, "%s", entry->Decoded ? "" : "~");
+        FormatSize(entry->Size, dispsz);
+      }
    }
    else
    {

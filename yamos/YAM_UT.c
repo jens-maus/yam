@@ -1629,13 +1629,187 @@ struct DateStamp *ScanDate(char *date)
 ///
 /// FormatSize
 //  Displays large numbers using group separators
+
+#define GB  (1000000000)
+#define MB  (1000000)
+#define KB  (1000)
+
 void FormatSize(int size, char *buffer)
 {
-   char *gs = G->Locale ? (char *)G->Locale->loc_GroupSeparator : ".";
-   char *p = &buffer[strlen(buffer)];
-   if (size >= 1000000) sprintf(p, "%d%s%03d%s%03d", size/1000000, gs, (size%1000000)/1000, gs, size%1000);
-   if (size >= 1000 && size < 1000000) sprintf(p, "%d%s%03d", size/1000, gs, size%1000);
-   if (size < 1000) sprintf(p, "%d", size);
+  // get the GroupSeparator string
+  char *gs = G->Locale ? (char *)G->Locale->loc_GroupSeparator : ".";
+  char *p = &buffer[strlen(buffer)];
+  char buf[10];
+
+  // we check what SizeFormat the user has choosen
+  switch(C->SizeFormat)
+  {
+    /*
+    ** ONE Precision mode
+    ** This will result in the following output:
+    ** 1.2 GB - 12.3 MB - 123.4 KB - 1234 B
+    */
+    case SF_1PREC:
+    {
+      if (size >= GB)
+      {
+        sprintf(buf, "%d", (size%GB)/MB);
+
+        if(strlen(buf) > 1) buf[1] = '\0';
+
+        sprintf(p, "%d%s%s GB", size/GB, gs, buf);
+      }
+      else if (size >= MB)
+      {
+        sprintf(buf, "%d", (size%MB)/KB);
+
+        if(strlen(buf) > 1) buf[1] = '\0';
+
+        sprintf(p, "%d%s%s MB", size/MB, gs, buf);
+      }
+      else if (size >= KB)
+      {
+        sprintf(buf, "%d", (size%KB));
+
+        if(strlen(buf) > 1) buf[1] = '\0';
+
+        sprintf(p, "%d%s%s KB", size/KB, gs, buf);
+      }
+      else sprintf(p, "%d B", size);
+    }
+    break;
+
+    /*
+    ** TWO Precision mode
+    ** This will result in the following output:
+    ** 1.23 GB - 12.34 MB - 123.45 KB - 1234 B
+    */
+    case SF_2PREC:
+    {
+      if (size >= GB)
+      {
+        sprintf(buf, "%d", (size%GB)/MB);
+
+        if(strlen(buf) > 2) buf[2] = '\0';
+        if(strlen(buf) < 2) buf[1] = '0';
+
+        sprintf(p, "%d%s%s GB", size/GB, gs, buf);
+      }
+      else if (size >= MB)
+      {
+        sprintf(buf, "%d", (size%MB)/KB);
+
+        if(strlen(buf) > 2) buf[2] = '\0';
+        if(strlen(buf) < 2) buf[1] = '0';
+
+        sprintf(p, "%d%s%s MB", size/MB, gs, buf);
+      }
+      else if (size >= KB)
+      {
+        sprintf(buf, "%d", (size%KB));
+
+        if(strlen(buf) > 2) buf[2] = '\0';
+        if(strlen(buf) < 2) buf[1] = '0';
+
+        sprintf(p, "%d%s%s KB", size/KB, gs, buf);
+      }
+      else sprintf(p, "%d B", size);
+    }
+    break;
+
+    /*
+    ** THREE Precision mode
+    ** This will result in the following output:
+    ** 1.234 GB - 12.345 MB - 123.456 KB - 1234 B
+    */
+    case SF_3PREC:
+    {
+      if (size >= GB)
+      {
+        sprintf(buf, "%d", (size%GB)/MB);
+
+        if(strlen(buf) > 3) buf[3] = '\0';
+        if(strlen(buf) < 3) buf[2] = '0';
+        if(strlen(buf) < 2) buf[1] = '0';
+
+        sprintf(p, "%d%s%s GB", size/GB, gs, buf);
+      }
+      else if (size >= MB)
+      {
+        sprintf(buf, "%d", (size%MB)/KB);
+
+        if(strlen(buf) > 3) buf[3] = '\0';
+        if(strlen(buf) < 3) buf[2] = '0';
+        if(strlen(buf) < 2) buf[1] = '0';
+
+        sprintf(p, "%d%s%s MB", size/MB, gs, buf);
+      }
+      else if (size >= KB)
+      {
+        sprintf(buf, "%d", (size%KB));
+
+        if(strlen(buf) > 3) buf[3] = '\0';
+        if(strlen(buf) < 3) buf[2] = '0';
+        if(strlen(buf) < 2) buf[1] = '0';
+
+        sprintf(p, "%d%s%s KB", size/KB, gs, buf);
+      }
+      else sprintf(p, "%d B", size);
+    }
+    break;
+
+    /*
+    ** MIXED Precision mode
+    ** This will result in the following output:
+    ** 1.234 GB - 12.34 MB - 123.4 KB - 1234 B
+    */
+    case SF_MIXED:
+    {
+      if (size >= GB)
+      {
+        sprintf(buf, "%d", (size%GB)/MB);
+
+        if(strlen(buf) > 3) buf[3] = '\0';
+        if(strlen(buf) < 3) buf[2] = '0';
+        if(strlen(buf) < 2) buf[1] = '0';
+
+        sprintf(p, "%d%s%s GB", size/GB, gs, buf);
+      }
+      else if (size >= MB)
+      {
+        sprintf(buf, "%d", (size%MB)/KB);
+
+        if(strlen(buf) > 2) buf[2] = '\0';
+        if(strlen(buf) < 2) buf[1] = '0';
+
+        sprintf(p, "%d%s%s MB", size/MB, gs, buf);
+      }
+      else if (size >= KB)
+      {
+        sprintf(buf, "%d", (size%KB));
+
+        if(strlen(buf) > 1) buf[1] = '\0';
+
+        sprintf(p, "%d%s%s KB", size/KB, gs, buf);
+      }
+      else sprintf(p, "%d B", size);
+    }
+    break;
+
+    /*
+    ** STANDARD mode
+    ** This will result in the following output:
+    ** 1.234.567 (bytes)
+    */
+    default:
+    {
+      if (size >= GB) sprintf(p, "%d%s%03d%s%03d%s%03d", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
+      else if (size >= MB) sprintf(p, "%d%s%03d%s%03d", size/MB, gs, (size%MB)/KB, gs, size%KB);
+      else if (size >= KB) sprintf(p, "%d%s%03d", size/KB, gs, size%KB);
+      else sprintf(p, "%d", size);
+    }
+    break;
+  }
 }
 ///
 /// MailExists

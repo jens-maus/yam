@@ -495,7 +495,10 @@ int MA_NewNew(struct Mail *mail, int flags)
          MA_InsertIntroText(out, C->NewIntro, NULL);
          MA_InsertIntroText(out, C->Greetings, NULL);
          fclose(out);
-         WR_AddSignature(G->WR_Filename[winnum], -1);
+
+         // add a signature to the mail depending on the selected signature for this list
+         WR_AddSignature(G->WR_Filename[winnum], folder->Type != FT_INCOMING ? folder->MLSignature: -1);
+
          if (!quiet) set(wr->GUI.WI, MUIA_Window_Open, TRUE);
          MA_EditorNotification(winnum);
          set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.ST_TO);
@@ -657,7 +660,10 @@ int MA_NewForward(struct Mail **mlist, int flags)
          }
          MA_InsertIntroText(out, C->Greetings, NULL);
          fclose(out);
-         WR_AddSignature(G->WR_Filename[winnum], -1);
+
+         // add a signature to the mail depending on the selected signature for this list
+         WR_AddSignature(G->WR_Filename[winnum], mail->Folder->Type != FT_INCOMING ? mail->Folder->MLSignature: -1);
+
          setstring(wr->GUI.ST_SUBJECT, rsub);
          FreeStrBuf(rsub);
          if (!quiet) set(wr->GUI.WI, MUIA_Window_Open, TRUE);
@@ -999,6 +1005,8 @@ int MA_NewMessage(int mode, int flags)
    return winnr;
 }
 
+///
+/// MA_NewMessageFunc
 HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
 {
    int mode = arg[0], flags = 0;

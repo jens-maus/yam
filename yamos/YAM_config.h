@@ -30,13 +30,13 @@
 
 struct POP3
 {
-   BOOL  Enabled;
-   BOOL  UseAPOP;
-   BOOL  DeleteOnServer;
    char  Account[SIZE_USERID+SIZE_HOST];
    char  Server[SIZE_HOST];
    char  User[SIZE_USERID];
    char  Password[SIZE_USERID];
+   BOOL  Enabled;
+   BOOL  UseAPOP;
+   BOOL  DeleteOnServer;
 };
 
 /*** RxHook structure ***/
@@ -87,6 +87,7 @@ struct Config
    int   HideGUIElements;
    int   PrintMethod;
    int   StackSize;
+   int   SizeFormat;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
@@ -191,5 +192,7 @@ struct Config
 };
 
 extern struct Hook CO_PL_DspFuncHook;
+
+enum SizeFormat { SF_DEFAULT=0, SF_MIXED, SF_1PREC, SF_2PREC, SF_3PREC };
 
 #endif /* YAM_CONFIG_H */

@@ -39,10 +39,10 @@ DATE = T:YAM-date.tmp
 # Compiler flags
 CPU        = 68020
 YAMVERSION = "2.4-dev"
-YAMDATE	   = `Type $(DATE)`
+YAMDATE    = `Type $(DATE)`
 #OPTFLAGS  = OPT OPTSIZE OPTINLOCAL OPTGO OPTLOOP OPTPEEP #OPTSCHED
 OPTFLAGS   = NOOPT
-#DEBUG	   = DEF DEBUG DEBUG=LINE
+DEBUG     = DEF DEBUG DEBUG=LINE
 
 # CPU can be defined outside, defaults to above
 
@@ -53,30 +53,30 @@ NOICONS IDLEN=60 CPU=$(CPU) NOCHECKABORT
 
 # Default rules
 .c.o:
-	$(CC) $(CFLAGS) $(OPTFLAGS) $*.c
+  $(CC) $(CFLAGS) $(OPTFLAGS) $*.c
 
 # Targets & dependencies
-all:	$(DATE) YAM
+all:  $(DATE) YAM
 
 clean:
-	$(RM) \#?.(o) (YAM_locale.\#?|YAM)
+  $(RM) \#?.(o) (YAM_locale.\#?|YAM)
 
 copy:
-	copy YAM YAM:
+  copy YAM YAM:
 
-YAM:	$(OBJS)
-	slink <with <
-	TO YAM
-	FROM lib:c.o $(OBJS)
-	LIB lib:scnb.lib lib:amiga.lib lib:debug.lib
-	STRIPDEBUG NOICONS
-	<
+YAM:  $(OBJS)
+  slink <with <
+  TO YAM
+  FROM lib:c.o $(OBJS)
+  LIB lib:scnb.lib lib:amiga.lib lib:debug.lib
+  STRIPDEBUG NOICONS
+  <
 
 YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
-	flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+  flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
 
 YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
-	; # dummy entry to make smake happy
+  ; # dummy entry to make smake happy
 
 YAM.o:     YAM.c     YAM.h YAM_locale.h $(DATE)
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_locale.h
@@ -103,6 +103,6 @@ YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_locale.h
 YAM_locale.o:   YAM_locale.h YAM_locale.c
 
 $(DATE):
-	@echo "Bumping date..."
-	@rx   >$(DATE) "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"
+  @echo "Bumping date..."
+  @rx   >$(DATE) "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"
 

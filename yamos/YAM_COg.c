@@ -471,21 +471,21 @@ APTR CO_Page1(struct CO_ClassData *data)
          End,
       End)
    {
-      SetHelp(data->GUI.ST_SMTPHOST    ,MSG_HELP_CO_ST_SMTPHOST  );
-      SetHelp(data->GUI.ST_DOMAIN      ,MSG_HELP_CO_ST_DOMAIN    );
-      SetHelp(data->GUI.CH_SMTP8BIT    ,MSG_HELP_CO_CH_SMTP8BIT  );
-//      SetHelp(data->GUI.CH_USESMTPAUTH ,MSG_HELP_CO_CH_USESMTPAUTH);
-//      SetHelp(data->GUI.ST_SMTPAUTHUSER,MSG_HELP_CO_CH_SMTPAUTHUSER);
-//      SetHelp(data->GUI.ST_SMTPAUTHPASS,MSG_HELP_CO_CH_SMTPAUTHPASS);
-      SetHelp(data->GUI.LV_POP3        ,MSG_HELP_CO_LV_POP3      );
-      SetHelp(data->GUI.BT_PADD        ,MSG_HELP_CO_BT_PADD      );
-      SetHelp(data->GUI.BT_PDEL        ,MSG_HELP_CO_BT_PDEL      );
-      SetHelp(data->GUI.ST_POPHOST     ,MSG_HELP_CO_ST_POPHOST   );
-      SetHelp(data->GUI.ST_POPUSERID   ,MSG_HELP_CO_ST_POPUSERID );
-      SetHelp(data->GUI.ST_PASSWD      ,MSG_HELP_CO_ST_PASSWD    );
-      SetHelp(data->GUI.CH_DELETE      ,MSG_HELP_CO_CH_DELETE    );
-      SetHelp(data->GUI.CH_USEAPOP     ,MSG_HELP_CO_CH_USEAPOP   );
-      SetHelp(data->GUI.CH_POPENABLED  ,MSG_HELP_CO_CH_POPENABLED);
+      SetHelp(data->GUI.ST_SMTPHOST    ,MSG_HELP_CO_ST_SMTPHOST     );
+      SetHelp(data->GUI.ST_DOMAIN      ,MSG_HELP_CO_ST_DOMAIN       );
+      SetHelp(data->GUI.CH_SMTP8BIT    ,MSG_HELP_CO_CH_SMTP8BIT     );
+      SetHelp(data->GUI.CH_USESMTPAUTH ,MSG_HELP_CO_CH_USESMTPAUTH  );
+      SetHelp(data->GUI.ST_SMTPAUTHUSER,MSG_HELP_CO_ST_SMTPAUTHUSER );
+      SetHelp(data->GUI.ST_SMTPAUTHPASS,MSG_HELP_CO_ST_SMTPAUTHPASS );
+      SetHelp(data->GUI.LV_POP3        ,MSG_HELP_CO_LV_POP3         );
+      SetHelp(data->GUI.BT_PADD        ,MSG_HELP_CO_BT_PADD         );
+      SetHelp(data->GUI.BT_PDEL        ,MSG_HELP_CO_BT_PDEL         );
+      SetHelp(data->GUI.ST_POPHOST     ,MSG_HELP_CO_ST_POPHOST      );
+      SetHelp(data->GUI.ST_POPUSERID   ,MSG_HELP_CO_ST_POPUSERID    );
+      SetHelp(data->GUI.ST_PASSWD      ,MSG_HELP_CO_ST_PASSWD       );
+      SetHelp(data->GUI.CH_DELETE      ,MSG_HELP_CO_CH_DELETE       );
+      SetHelp(data->GUI.CH_USEAPOP     ,MSG_HELP_CO_CH_USEAPOP      );
+      SetHelp(data->GUI.CH_POPENABLED  ,MSG_HELP_CO_CH_POPENABLED   );
       DoMethod(grp,MUIM_MultiSet,MUIA_Disabled,TRUE,data->GUI.GR_POP3,
                data->GUI.BT_PDEL, authgrp, NULL);
       DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
@@ -1037,49 +1037,67 @@ APTR CO_Page7(struct CO_ClassData *data)
 /// CO_Page8  (Lists)
 APTR CO_Page8(struct CO_ClassData *data)
 {
-   APTR grp;
-   if (grp = VGroup,
-         MUIA_HelpNode, "CO08",
-         Child, HGroup,
-            Child, ColGroup(2), GroupFrameT(GetStr(MSG_FolderList)),
-               MUIA_ShortHelp, GetStr(MSG_HELP_CO_CG_FO),
-               Child, MakeStaticCheck(),
-               Child, LLabel(GetStr(MSG_Folder)),
-               Child, data->GUI.CH_FCOLS[1] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_Total)),
-               Child, data->GUI.CH_FCOLS[2] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_Unread)),
-               Child, data->GUI.CH_FCOLS[3] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_New)),
-               Child, data->GUI.CH_FCOLS[4] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_Size)),
-            End,
-            Child, HSpace(0),
-            Child, ColGroup(2), GroupFrameT(GetStr(MSG_MessageList)),
-               MUIA_ShortHelp, GetStr(MSG_HELP_CO_CG_MA),
-               Child, MakeStaticCheck(),
-               Child, LLabel(GetStr(MSG_Status)),
-               Child, data->GUI.CH_MCOLS[1] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_SenderRecpt)),
-               Child, data->GUI.CH_MCOLS[2] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_ReturnAddress)),
-               Child, data->GUI.CH_MCOLS[3] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_Subject)),
-               Child, data->GUI.CH_MCOLS[4] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_MessageDate)),
-               Child, data->GUI.CH_MCOLS[5] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_Size)),
-               Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
-               Child, LLabel(GetStr(MSG_Filename)),
-            End,
-         End,
-         Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST, GetStr(MSG_CO_FixedFontList)),
-         Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT, GetStr(MSG_CO_SwatchBeat)),
-         Child, HVSpace,
-      End)
+   APTR grp = NULL;
+   static char *sizef[6];
+   sizef[0] = GetStr(MSG_CO_SIZEFORMAT01);
+   sizef[1] = GetStr(MSG_CO_SIZEFORMAT02);
+   sizef[2] = GetStr(MSG_CO_SIZEFORMAT03);
+   sizef[3] = GetStr(MSG_CO_SIZEFORMAT04);
+   sizef[4] = GetStr(MSG_CO_SIZEFORMAT05);
+   sizef[5] = NULL;
+
+   if (grp =  VGroup,
+                MUIA_HelpNode, "CO08",
+                Child, HGroup, GroupFrameT(GetStr(MSG_CO_FIELDLISTCFG)),
+                  Child, ColGroup(2), GroupFrame,
+                    MUIA_FrameTitle, GetStr(MSG_FolderList),
+                    MUIA_ShortHelp, GetStr(MSG_HELP_CO_CG_FO),
+                    Child, MakeStaticCheck(),
+                    Child, LLabel(GetStr(MSG_Folder)),
+                    Child, data->GUI.CH_FCOLS[1] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_Total)),
+                    Child, data->GUI.CH_FCOLS[2] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_Unread)),
+                    Child, data->GUI.CH_FCOLS[3] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_New)),
+                    Child, data->GUI.CH_FCOLS[4] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_Size)),
+                  End,
+                  Child, HSpace(0),
+                  Child, ColGroup(2), GroupFrame,
+                    MUIA_FrameTitle, GetStr(MSG_MessageList),
+                    MUIA_ShortHelp, GetStr(MSG_HELP_CO_CG_MA),
+                    Child, MakeStaticCheck(),
+                    Child, LLabel(GetStr(MSG_Status)),
+                    Child, data->GUI.CH_MCOLS[1] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_SenderRecpt)),
+                    Child, data->GUI.CH_MCOLS[2] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_ReturnAddress)),
+                    Child, data->GUI.CH_MCOLS[3] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_Subject)),
+                    Child, data->GUI.CH_MCOLS[4] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_MessageDate)),
+                    Child, data->GUI.CH_MCOLS[5] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_Size)),
+                    Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_Filename)),
+                  End,
+                End,
+                Child, VGroup, GroupFrameT(GetStr(MSG_CO_GENLISTCFG)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST, GetStr(MSG_CO_FixedFontList)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT, GetStr(MSG_CO_SwatchBeat)),
+                  Child, HGroup,
+                    Child, Label1(GetStr(MSG_CO_SIZEFORMAT)),
+                    Child, data->GUI.CY_SIZE = MakeCycle(sizef, GetStr(MSG_CO_SIZEFORMAT)),
+                  End,
+                End,
+                Child, HVSpace,
+              End
+      )
    {
       SetHelp(data->GUI.CH_FIXFLIST,MSG_HELP_CO_CH_FIXFLIST);
       SetHelp(data->GUI.CH_BEAT    ,MSG_HELP_CO_CH_BEAT);
+      SetHelp(data->GUI.CY_SIZE    ,MSG_HELP_CO_CY_SIZE);
    }
    return grp;
 }

@@ -182,6 +182,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "MessageCols      = %ld\n", co->MessageCols);
       fprintf(fh, "FixedFontList    = %s\n", Bool2Txt(co->FixedFontList));
       fprintf(fh, "SwatchBeat       = %s\n", Bool2Txt(co->SwatchBeat));
+      fprintf(fh, "SizeFormat       = %ld\n", co->SizeFormat);
       fprintf(fh, "\n[Security]\n");
       fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
       fprintf(fh, "MyPGPID          = %s\n", co->MyPGPID);
@@ -566,6 +567,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
                if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
                if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
+/*15*/         if (!stricmp(buffer, "SizeFormat"))     co->SizeFormat = atoi(value);
             }
          }
          fclose(fh);
@@ -676,6 +678,7 @@ void CO_GetConfig(void)
          CE->MessageCols = 1; for (i = 1; i < MACOLNUM; i++) if (GetMUICheck(gui->CH_MCOLS[i])) CE->MessageCols += (1<<i);
          CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
          CE->SwatchBeat    = GetMUICheck(gui->CH_BEAT);
+         CE->SizeFormat    = GetMUICycle(gui->CY_SIZE);
          break;
       case 9:
          GetMUIString(CE->PGPCmdPath          ,gui->ST_PGPCMD);
@@ -846,6 +849,7 @@ void CO_SetConfig(void)
          for (i = 0; i < MACOLNUM; i++) setcheckmark(gui->CH_MCOLS[i], (CE->MessageCols & (1<<i)) != 0);
          setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
          setcheckmark(gui->CH_BEAT      ,CE->SwatchBeat);
+         setcycle(gui->CY_SIZE, CE->SizeFormat);
          break;
       case 9:
          setstring   (gui->ST_PGPCMD    ,CE->PGPCmdPath);

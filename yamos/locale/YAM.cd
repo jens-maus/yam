@@ -4637,3 +4637,43 @@ Part
 ;
 MSG_FOLDER_SNAPSHOT (//)
 Snapshot Tree
+;
+MSG_CO_GENLISTCFG (//)
+General settings
+;
+MSG_CO_FIELDLISTCFG (//)
+Field settings
+;
+MSG_CO_SIZEFORMAT (//)
+Sizeformat
+;
+MSG_HELP_CO_CY_SIZE (//)
+How the sizes of a message\n\
+should be displayed.
+;
+MSG_CO_SIZEFORMAT01 (//)
+1.234.567 (bytes)
+;
+MSG_CO_SIZEFORMAT02 (//)
+1.234 GB - 12.34 MB - 123.4 KB - 1234 B
+;
+MSG_CO_SIZEFORMAT03 (//)
+1.2 GB - 12.3 MB - 123.4 KB - 1234 B
+;
+MSG_CO_SIZEFORMAT04 (//)
+1.23 GB - 12.34 MB - 123.45 KB - 1234 B
+;
+MSG_CO_SIZEFORMAT05 (//)
+1.234 GB - 12.345 MB - 123.456 KB - 1234 B
+;
+MSG_HELP_CO_CH_USESMTPAUTH (//)
+Select if your SMTP Server\n\
+supports SMTP AUTH.
+;
+MSG_HELP_CO_ST_SMTPAUTHUSER (//)
+Enter the username of the\n\
+SMTP AUTH user here.
+;
+MSG_HELP_CO_ST_SMTPAUTHPASS (//)
+Enter the password of the\n\
+SMTP AUTH user here.

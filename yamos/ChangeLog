@@ -396,13 +396,21 @@
 2001-05-22  Gunther Nikl <gni@gecko.de>
 
     * converted _WBenchMsg to WBmsg initialised from argv
-
-2001-05-22  Gunther Nikl <gni@gecko.de>
-
     * YAM_CO.c: removed PL_IconBody[]
     * YAM_CL.c: added here
-
-2001-05-22  Gunther Nikl <gni@gecko.de>
-
     * YAM_UT.c: replaced stch_i() with sscanf()
     * all_gcc.c: removed usage of stch_i
+
+2001-05-22  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * variable signatures will now also be used if one want`s to write a NEW or
+      FORWARD a mail in a folder which belongs to a mailinglist.
+    * the format of the sizes can be choosen now. That means that one can choose
+      between different display formats for displaying the message & attachment
+      sizes in YAM. I added 4 more different size formats that will hopefully
+      fit everyones needs. Default is the standard YAM size format which was there
+      since ages.
+    * added forgotten Help messages for the SMTP AUTH feature of YAM.
+    * fixed bug in the alignment of POP3 struct. The listview of the POP3 accounts
+      didn`t show up the accounts anymore. Perhaps here we have to use a separate
+      displayhook if this realignment causes trouble with MorphOS.

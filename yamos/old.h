@@ -166,15 +166,15 @@ struct sockaddr_in {
 
 /// Defines
 #if defined __PPC__
-	#define CPU " [PPC]"
+  #define CPU " [PPC]"
 #elif defined _M68060
-	#define CPU " [060]"
+  #define CPU " [060]"
 #elif defined _M68040
-	#define CPU " [040]"
+  #define CPU " [040]"
 #elif defined _M68020
-	#define CPU " [020]"
+  #define CPU " [020]"
 #else
-	#define CPU ""
+  #define CPU ""
 #endif
 
 /* extern define YAMVER */
@@ -250,7 +250,7 @@ struct sockaddr_in {
 
 #define PRINTMETHOD_DUMPRAW    (0)
 #define PRINTMETHOD_LATEX      (1)
-#define PRINTMETHOD_POSTSCRIPT (2)	// not yet implemented
+#define PRINTMETHOD_POSTSCRIPT (2)  // not yet implemented
 
 
 struct MimeView
@@ -422,6 +422,7 @@ struct CO_ClassData  /* configuration window */
 /*13*/     APTR LV_REXX, ST_RXNAME, ST_SCRIPT, CY_ISADOS, CH_CONSOLE, CH_WAITTERM;
 /*14*/     APTR ST_TEMPDIR, ST_APPX, ST_APPY, CH_CLGADGET, CH_CONFIRM, NB_CONFIRMDEL, CH_REMOVE, CH_SAVESENT;
            APTR RA_MDN_DISP, RA_MDN_PROC, RA_MDN_DELE, RA_MDN_RULE, CH_SEND_MDN, TX_PACKER, TX_ENCPACK, NB_PACKER, NB_ENCPACK, ST_ARCHIVER;
+/*15*/     APTR CY_SIZE;
    } GUI;
    int VisiblePage;
    int LastSig;
