@@ -1734,6 +1734,15 @@ Scan for folders
 MSG_CO_ImportMIME (//)
 Import MIME viewers & types...
 ;
+MSG_CO_UseSMTPAUTH (//)
+Use SMTP _AUTH
+;
+MSG_CO_SMTPUser (//)
+_User ID
+;
+MSG_CO_SMTPPass (//)
+Pa_ssword
+;
 ; Module CO - Bubblehelp
 ;
 MSG_HELP_CO_ST_REALNAME (//)
