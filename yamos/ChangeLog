@@ -11,7 +11,7 @@
       DBF_ALWAYS is used for stuff that must always be shown. DBF_ERROR when
       something fails. DBF_VERBOSE is for generally interesting messages which
       doesn't really fit a category. The rest of the flags has to be added
-      when required. They should e categorized, i.e. no flag for 'my fancy
+      when required. They should be categorized, i.e. no flag for 'my fancy
       feature', but instead a flag for i/o, network stuff etc.
       You enable debug output with "SetEnv YAMDebug «flags»". Flags is a
       comma, space or semi-colon separated list of stuff you want enabled.

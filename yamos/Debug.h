@@ -27,7 +27,7 @@ void kprintf(const char *formatString, ...);
 
 #else
 
-#define InitDebug()
+#define SetupDebug()
 #define D(flag, str) ;
 
 #endif
