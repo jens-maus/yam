@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.6 for YAM 2.4 (24.04.2003) © 2000-2003 by YAM Open Source Team
+; $VER: Installer script 1.6 for YAM 2.4 (25.04.2003) © 2000-2003 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -39,7 +39,6 @@
 (set #def_cat_lang #def_lang_English)
 (set #def_doc_lang #def_doc_English)
 (set #wrongOS  "YAM needs at least OS 3.0 to run!\n")
-(set #wrongMOS "MorphOS has not been found!\n")
 (set #wrongMUI "YAM needs at least MUI 3.8 to run!\n")
 (set #wrongCPU "YAM needs at least a 68020 CPU to run!\n")
 (set #proc_type "Select which version of YAM you would like to install:")
@@ -48,6 +47,7 @@
 (set #proc_020 "Optimized for 68020/030")
 (set #proc_040 "Optimized for 68040")
 (set #proc_060 "Optimized for 68060")
+(set #proc_MOS "Optimized for MorphOS/PPC")
 (set #YAM_dir  (cat "Please select a directory for YAM\n"
                     "(NO extra drawer will be created!)"))
 (set #lang_catalog (cat "Which catalog file do you want to install?\n"
@@ -136,7 +136,6 @@
 (
 (set #def_cat_lang #def_lang_Czech)
 (set #wrongOS  "YAM vyùaduje ke spuîtëní OS3.0 nebo novëjîí\n")
-(set #wrongMOS "Operaçní systém MorphOS nebyl nalezen!\n")
 (set #wrongMUI "YAM vyùaduje ke spuîtëní MUI3.8 nebo novëjîí\n")
 (set #wrongCPU "YAM vyùaduje ke spuîtëní procesor 68020 nebo lepîí\n")
 (set #proc_type "Vyberte verzi programu YAM, kterou chcete nainstalovat:")
@@ -145,6 +144,7 @@
 (set #proc_020 "Optimalizováno pro 68020/030")
 (set #proc_040 "Optimalizováno pro 68040")
 (set #proc_060 "Optimalizováno pro 68060")
+(set #proc_MOS "Optimalizováno pro MorphOS/PPC")
 (set #YAM_dir  (cat "Vyberte domovský adresáê pro YAM\n"
                     "(adresáê NEBUDE vytvoêen!)"))
 (set #lang_catalog (cat "Který z lokalizaçních katalogû chcete nainstalovat?\n"
@@ -229,7 +229,6 @@
 (set #def_cat_lang #def_lang_Deutsch)
 (set #def_doc_lang #def_doc_Deutsch)
 (set #wrongOS  "YAM benötigt OS3.0 oder höher\n")
-(set #wrongMOS "MorphOS wurde nicht gefunden!\n")
 (set #wrongMUI "YAM benötigt MUI3.8 oder höher\n")
 (set #wrongCPU "YAM läuft nur ab einer 68020 CPU\n")
 (set #proc_type "Welche YAM-Version wollen Sie installieren?")
@@ -238,6 +237,7 @@
 (set #proc_020 "Optimiert für 68020/030")
 (set #proc_040 "Optimiert für 68040")
 (set #proc_060 "Optimiert für 68060")
+(set #proc_MOS "Optimiert für MorphOS/PPC")
 (set #YAM_dir  (cat"Wählen Sie ein Verzeichnis für YAM\n"
                    "(es wird KEIN eigenes Verzeichnis erstellt!)"))
 (set #lang_catalog (cat "Welche catalog-Datei wollen Sie installieren?\n"
@@ -299,7 +299,6 @@
 (set #def_cat_lang #def_lang_Espanol)
 (set #def_doc_lang #def_doc_Espanol)
 (set #wrongOS  "YAM necesita como mínimo el AmigaOS 3.0 para funcionar.\n")
-(set #wrongMOS "¡No se ha encontrado MorphOS!\n")
 (set #wrongMUI "YAM necesita como mínimo MUI 3.8 para funcionar.\n")
 (set #wrongCPU "YAM necesita como mínimo una CPU 68020 para funcionar.\n")
 (set #proc_type "Elija la versión de YAM que desea instalar:")
@@ -308,6 +307,7 @@
 (set #proc_020 "Optimizado para 68020/030")
 (set #proc_040 "Optimizado para 68040")
 (set #proc_060 "Optimizado para 68060")
+(set #proc_MOS "Optimizado para MorphOS/PPC")
 (set #YAM_dir  (cat "Elija el directorio donde desea instalar YAM\n"
                     "(¡no se creará ningún directorio dentro de éste!)"))
 (set #lang_catalog (cat "¿Qué idiomas (catálogos) quiere instalar?\n"
@@ -370,7 +370,6 @@
 (set #def_cat_lang #def_lang_Francais)
 (set #def_doc_lang #def_doc_Francais)
 (set #wrongOS  "YAM a besoin de l' OS 3.0 minimum !\n")
-(set #wrongMOS "MorphOS n'a pas été trouvé !\n")
 (set #wrongMUI "YAM a besoin de MUI 3.8 minimum !\n")
 (set #wrongCPU "YAM a besoin d'un CPU 68020 minimum !\n")
 (set #proc_type "Quelle version de YAM voulez-vous installer ?")
@@ -379,6 +378,7 @@
 (set #proc_020 "Optimisé pour 68020/030")
 (set #proc_040 "Optimisé pour 68040")
 (set #proc_060 "Optimisé pour 68060")
+(set #proc_MOS "Optimisé pour MorphOS/PPC")
 (set #YAM_dir  (cat "Choisissez le répertoire d'installation pour YAM.\n"
                     "(Il n'y aura pas de création de répertoire !)"))
 (set #lang_catalog (cat "Quel langage désirez-vous installer ?\n"
@@ -612,7 +612,6 @@
 (set #def_cat_lang #def_lang_Slovensko)
 (set #def_doc_lang #def_doc_Slovensko)
 (set #wrongOS  "YAM za zagon potrebuje vsaj OS 3.0!\n")
-(set #wrongMOS "MorphOS nisem na¹el!\n")
 (set #wrongMUI "YAM za zagon potrebuje vsaj MUI 3.8!\n")
 (set #wrongCPU "YAM za zagon potrebuje vsaj CPE 68020!\n")
 (set #proc_type "Izberite, katero razlièico YAM bi radi namestili:")
@@ -621,6 +620,7 @@
 (set #proc_020 "Optimalizirano za 68020/030")
 (set #proc_040 "Optimalizirano za 68040")
 (set #proc_060 "Optimalizirano za 68060")
+(set #proc_MOS "Optimalizirano za MorphOS/PPC")
 (set #YAM_dir  (cat "Izberite prosim imenik za YAM\n"
                     "(Poseben predal NE bo ustvarjen!)"))
 (set #lang_catalog (cat "Kateri jezik kataloga ¾elite namestiti?\n"
@@ -748,8 +748,6 @@
 (set OS_ver (getversion "exec.library" (resident)))
 (if (< OS_ver (* 39 65536)) (abort #wrongOS))
 
-(set MOS_ver (getversion "MorphOS"))
-
 (set MUI_ver (getversion "MUI:libs/muimaster.library"))
 (if (AND (< MUI_ver (* 19 65536)) (<> MUI_ver 0)) (abort #wrongMUI))
 
@@ -780,28 +778,41 @@
 
 (complete 5)
 
-(if (and package_cpu (not package_mos))    ; only 68k diffs available
-   (set cpu
+(if (and package_mos (not package_cpu))
+  (
+    (set cpu
       (askchoice
-         (prompt #proc_type)
-         (help #proc_help "\n" @askchoice-help)
-         (choices #proc_020 #proc_040 #proc_060)
-         (default cpu)
+        (prompt #proc_type)
+        (help #proc_help "\n" @askchoice-help)
+        (choices #proc_020 #proc_MOS)
+        (default cpu)
       )
-   )
-   (
-      (if (and package_mos (not package_cpu)) ; only MorphOS binary available
-         (
-            (if (not (MOS_ver))
-               (abort #wrongMOS)
-               (set cpu 3)
+    )
+  )
+  (
+    (if (and package_cpu (not package_mos))
+      (set cpu
+        (askchoice
+           (prompt #proc_type)
+           (help #proc_help "\n" @askchoice-help)
+           (choices #proc_020 #proc_040 #proc_060)
+           (default cpu)
+        )
+      )
+      (
+        (if package_mos
+          (set cpu
+            (askchoice
+              (prompt #proc_type)
+              (help #proc_help "\n" @askchoice-help)
+              (choices #proc_020 #proc_040 #proc_060 #proc_MOS)
+              (default cpu)
             )
-         )
-         (if (and package_mos (and package_cpu MOS_ver)) ; everything available,
-            (set cpu 3)                                  ; let's pick MOS then
-         )
+          )
+        )
       )
-   )
+    )
+  )
 )
 
 (complete 10)
@@ -891,13 +902,13 @@
 (select cpu
    (set dummy 0)
    (run 
-      (cat "/680x0/GPatch " (tackon YAM_dir "YAM") " /680x0/YAM.gpatch DIRECT")
+      (cat "C:Run <>NIL: /680x0/GPatch \"" (tackon YAM_dir "YAM") "\" /680x0/YAM.gpatch DIRECT")
    )
    (run
-      (cat "/680x0/GPatch " (tackon YAM_dir "YAM") " /680x0/YAM.gpatch DIRECT RECURSIVE")
+      (cat "C:Run <>NIL: /680x0/GPatch \"" (tackon YAM_dir "YAM") "\" /680x0/YAM.gpatch DIRECT RECURSIVE")
    )
    (
-      (rename (tackon YAM_dir "YAM") "YAM.amigaos")
+      (rename (tackon YAM_dir "YAM") (tackon YAM_dir "YAM.amigaos"))
       (copyfiles (source "/MorphOS/")
                  (dest YAM_dir)
                  (pattern "YAM#?")
