@@ -599,7 +599,6 @@ void TR_GetMessageDetails(struct Mail *mail, int lline)
             }
          }
          else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), fname, NULL);
-         fclose(f);
       }
    }
    if (lline >= 0) DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, lline);
