@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-16  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug where a found PGP PUBLIC KEY BLOCK line was not
+      displayed while viewing a mail.
+
 2003-03-15  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: fixed bug in the SMTP send routines where the new routines

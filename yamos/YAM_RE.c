@@ -2776,7 +2776,13 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                   cmsg = AppendToBuffer(cmsg, &wptr, &len, "-- \n");
                 }
               }
-/* PGP sig */ else if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31)) re->PGPKey = TRUE;
+/* PGP sig */ else if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31))
+              {
+                re->PGPKey = TRUE;
+
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+              }
               else if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29))
               {
                 SET_FLAG(re->PGPSigned, PGPS_OLD);
