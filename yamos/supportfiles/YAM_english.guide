@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (21.12.2001)
+@$VER: YAM.guide 2.4 (22.12.2001)
 
 /***************************************************************************
 
@@ -650,7 +650,7 @@ holding down a certain qualifier key:
  Shift + [Reply]     Forces a private reply (address in From field is used)
  Shift + [Forward]   Bounces the message
  Shift + [Get]       Starts a mail exchange
- Shift + [Filter]    Filters the active message only
+ Shift + [Filter]    Filters the active message(s) only
  Alt   + [Reply]     Forces a mailing list reply (address in Reply-To field
                      is used)
  Ctrl  + [Reply]     Omits quoting of the original message
@@ -1773,7 +1773,7 @@ be deleted. (You probably guessed that... ;) )
 
 If this option is activated, any message matching the search pattern  will
 not  be  downloaded  from the  mail server. You  can use  a remote  filter
-together with this option if several persons share the same POP3-account.
+together with this option if several people share the same POP3 account.
 
 @ENDNODE
 @NODE "CO04" "Configuration - Read"
@@ -1781,78 +1781,100 @@ together with this option if several persons share the same POP3-account.
 
 Configuration - READ  (Settings for reading e-mail)
 
+
 ---- Message header layout -----------------------------------------------
 
 Header
-If  'full' is selected the full header will be displayed. Select 'none' if
-you don't want to see any of the header. When you switch to 'selected' you
-can  specify  yourself  which  header fields should be visible in the read
-window.  For  specifying  the fields you can use any @{"AmigaDOS pattern" LINK "DOSW" 0}. The
+
+If 'full' is selected, all the headers will be displayed. Select 'none' if
+you  don't want to see any  header. When you switch to 'selected', you can
+specify yourself which header fields should be visible in the Read window.
+For  specifying  the fields you can use any @{"AmigaDOS pattern" LINK "DOSW" 0}. The
 fields  FROM, TO, DATE and SUBJECT are predefined as default settings. The
-header layout can also be changed (temporarily) in the read window itself.
+header layout can also be changed (temporarily) in the Read window itself.
 
   Example:  (From|Subject|Date|X-Mailer)
 
-Sender info
-If  a  mail's  sender  is  found  in  YAM's  address book, YAM can display
-additional  information  in  the  header part of the read window. If 'data
-only'  is  selected  YAM will list information like name, date, snail-mail
-address,  description,  etc.  contained  in the address book entry. Select
-'data  and  image'  to make YAM display a picture of the sender (of course
-there's  got  to  be  one in the address book ;)) in addition to the other
-data.
 
-[] Wrap headers
-Choose whether to show a long header on one line or to break it across two
-or  more.  In the first case you will need to use the horizontal scrollbar
-in order to see all of the information.
+Sender info
+
+If  a  mail's  sender  is  found  in  YAM's  address book, YAM can display
+additional  information  in  the  header part of the Read window. If 'data
+only' is selected, YAM will show some information such  as the name,  date
+of birth, snail mail address,  description,  etc. as found in the  address
+book for this entry. Select 'data and image' to make YAM display a picture
+of the sender (of course there's  got  to  be  one in the address book ;))
+in addition to the other data.
+
+
+[ ] Wrap headers
+
+Choose whether to show  long headers on  one line or to break  them on two
+or more.  In the first case, you will need to use the horizontal scrollbar
+in order to see all the information.
+
 
 ---- Message body layout -------------------------------------------------
 
 Separate sig.
+
 It  has  become  a  custom  to  separate the signature from the text of an
-e-mail  using  two  dashes  and  a  space.  If  you don't like this way of
-separation  you  can  define  another  here.  Apart  from the setting 'two
+e-mail using  two  dashes  and  a  space.  If  you don't like this kind of
+separation, you  can  define  another  here.  Apart  from the setting 'two
 dashes'  you  can select between 'separator bar', 'blank line' or even 'no
-signature' to have no sig. at all.
+signature' to have no signature at all.
+
 
 Colored text
+
 Text  passages  embedded  in  # characters will be highlighted by YAM in a
-special  colour  (in the internal editor and in the read window). Here you
-can define the colour used for that purpose.
+special  colour both in the internal editor  and in the  Read window. Here
+you can define the colour used for that purpose.
+
 
 Old quotes
-The  colour  which  is  used to display quoted text can be selected in the
-TextEditor  module of the MUI preferences. If there are multiple levels of
-quoting,  an alternative colour will be used for the even (2nd, 4th, etc.)
-levels. You can define that colour here.
 
-[] Use fixed font
-It  often  makes  more  sense  to  use a non-proportional font for reading
-messages   since  the  layout  of  any  tables  will  be  distorted  using
-proportional fonts. Don't forget to specify the font of your choice in the
-'TextEditor' module of YAM's MUI settings under 'Fonts/fixed'.
+The  colour used to display quoted text can be selected in the  TextEditor
+module of the MUI preferences. If there are multiple levels of quoting, an
+alternative colour  will be used for the even (2nd, 4th, etc.) levels. You
+can define that colour here.
 
-[] Display all texts
-If  this option is activated and the message contains attachments not only
-the  actual  message  text  will  be  displayed  but  also the attachments
-themselves, as long as they are of the 'text' type.
 
-Text styles
-YAM  uses  the characters _ / * and # to indicate underlined, italic, bold
-and  coloured text. For certain special documents (like source codes) this
-can  make  things difficult because some characters are suppressed. So you
-have the option of switching the rendering of text styles on or off.
+[ ] Use fixed font
+
+It often makes more sense to use a non-proportional font to read messages,
+since the layout of  any  tables will be distorted when using proportional
+fonts. Don't forget to specify the font of your choice in the 'TextEditor'
+module of YAM's MUI settings, under 'Fonts/fixed'.
+
+
+[ ] Display all texts
+
+If this option is activated and the message contains attachments, not only
+the  actual  body  of  the  message  will  be  displayed, but  also  those
+attachments themselves, as long as they are of the 'text' type.
+
+
+[ ] Text styles
+
+YAM  uses  the  characters '_', '/', '*' and '#' to  indicate  underlined,
+italic, bold  and  coloured text. For certain  special documents, as it is
+the case  with source code, this  can make things  difficult because  some
+characters  are  suppressed. So  you  have  the  option  of switching  the
+rendering of text styles on or off.
+
 
 ---- Other options -------------------------------------------------------
 
 Charset translation
-When  reading  messages  this  character-set  converter  is  used. In some
-countries  not  all  letters  can be written with the standard ISO-Latin-1
-charset  of  the  Amiga. In Poland for example the AmigaPL charset is very
-popular  since  it  contains  the  missing  characters.  YAM supports such
-charsets  for reading and writing messages. In the charset directory there
-are some examples. A conversion table is set up as follows:
+
+While  reading  messages, YAM will use the character set selected here. In
+some  countries,  not  all  letters  can  be  written  with  the  standard
+ISO-Latin-1 charset  of  the  Amiga - in Poland, for instance, the AmigaPL
+charset is very popular since  it  contains  the  missing  characters. YAM
+supports such charsets  for reading and writing messages. In the 'charset'
+directory there are some examples. A character set conversion table is set
+up as follows:
 
          1st line:   YCT1 - YAM Charset Translation
          2nd line:   Description of the converter
@@ -1862,16 +1884,34 @@ are some examples. A conversion table is set up as follows:
                      (optional) HEADER
                      Old character=New character
 
-Characters  are  defined  in  hex-code  with  a  $  in  front or as actual
-characters.  So a character definition can look like this: $E5=$61 or like
-this: å=a
+Characters can be  defined either in hexadecimal code with a '$' character
+in front, or  using the  actual characters. Thus, both "$E5=$61" and "å=a"
+are valid character definitions.
 
 With  the  HEADER  keyword,  the charset conversion is also applied to the
-messages headers.
+message headers.
 
-[] Multiple windows
+
+[ ] Codepage autodetect/Translation
+
+In some countries, like Russia,  there isn't such a  thing as  a  commonly
+accepted charset, but several are used, e.g. KOI8R,  Windows1251,  Alt866,
+etcetera - therefore, charset translation may not be feasible or efficient
+under these circumstances.
+
+This option  will  make  YAM  take  a  different  approach,  statistically
+scanning the message body, the From/To/Subject headers  and any  MIME text
+attachment trying to find a suitable charset to display every  part of the
+message.
+
+This option is especially meant for Russian (cyrillic) users.
+
+
+[ ] Multiple windows
+
 With this option selected, each message which you choose to read will open
-its own read window. Up to four such windows can be open at the same time.
+its own Read window. Up to four of such windows can be opened  at the same
+time.
 
 @ENDNODE
 @NODE "CO05" "Configuration - Write"
@@ -1879,80 +1919,124 @@ its own read window. Up to four such windows can be open at the same time.
 
 Configuration - WRITE (Settings for writing new messages)
 
+
 ---- Message Header ------------------------------------------------------
 
 Reply to
-Normally  this  field should remain empty. The default reply-to address is
+
+Normally  this  field should remain empty. The default Reply-To address is
 your  e-mail address. If want to use a different address (AND ONLY THEN!!)
-you can insert that different address here.
+you should insert that address here.
 
   Example:  jdoe\@home.uk
 
+
 Organization
+
 If  you  want  the  name of your organization, school, club or whatever to
-appear in the header of your message, insert it here.
+appear in a header of your message, insert it here.
 
   Example:  Doe Donut Production Ltd.
 
-Extra headers
-If  you  need to add one or more special extra lines to the header of your
-mail  for any reason, you can insert these header lines here. If you would
-like  to  insert  several  lines  separate them by inserting '\\n'. PLEASE
-DON'T  make  use of this feature unless you have the appropriate knowledge
-of the structure of internet e-mail.
 
-  Example:  Content-Language: uk\\nKeywords:Pattern, YAM, Internet
+Extra headers
+
+If for some reason you  need to add one or more special extra lines to the
+headers of your mail, you can insert these header lines here. If you would
+like  to  insert  several  lines, separate them by  inserting '\\n'. PLEASE
+DON'T  make  use of  this feature  unless you have  enough knowledge of the
+structure of Internet email.
+
+  Example:  Content-Language: uk\\nKeywords: Pattern, YAM, Internet
+
 
 ---- Message body --------------------------------------------------------
 
 Welcome phrase
+
 YAM  will insert this text at the beginning of every new message you write
 (except  for  answers and forwarded messages). You can define a line break
 by inserting '\\n'.
 
   Example:  Hello,\\n
 
+
 Closing phrase
-This  text  is  inserted  at  the end of every new message you write, just
+
+This text will be inserted at the end of every new message you write, just
 before the signature separator. You can insert a line break with '\\n'.
 
   Example:  Kind regards\\n\\nJohn Doe
 
+
 Charset translation
-This  character-set translator is used when writing messages. You can find
-further information on that in the chapter @{"READ" LINK "CO04" 0}.
+
+This character set translation will be used when writing messages. Further
+information about charset translations can be found in the @{" Read " LINK "CO04" 0}
+configuration.
 
    Example:  YAM:charsets/Latin1toUSASCII  (deletes mutated vowels, etc.)
+
+
+[ ] Warn when there's an empty subject line?
+
+Activate this option to let YAM warn you any time you try to send an email
+with  an empty  subject line. This may  be the case when  sending email to
+mailing  list managers  and other automated services, but it is  generally
+considered  as  bad taste to  use an empty subject line  when posting to a
+mailing  list. If you seldom use empty  subject lines or you use to forget
+to fill in this field, you might want to use this option.
+
 
 ---- Editor --------------------------------------------------------------
 
 Word wrap
-When  you  save  a newly written message it will be formatted to make sure
+
+When you  save  a newly written message, it will be formatted to make sure
 that  no  line  has more characters than the value specified here. You can
-also choose if YAM should insert line breaks as you type or if this should
-be delayed until you send the message.
+also decide whether YAM will insert  line breaks  as you type  or if  this
+should be postponed until you send the message.
 
   Example:  76
 
-[] Wrap as you type
+
+[ ] Wrap as you type
+
 Activate  this  option  if  you  would  like the internal editor to insert
-linebreak  codes  while  you're  typing  the  message.  This way you avoid
-unwanted surprises when the text is formatted later on saving the message.
-But be aware of the fact that the subsequent insertion or deletion of text
-might be a little less comfortable.
+line break  codes  while  you're typing  the  message.  This way you avoid
+unwanted surprises when the text is formatted later on saving the message,
+but on the other hand, any subsequent insertion or deletion  of text might
+be a little less comfortable.
+
 
 External editor
+
 If  you  do  not  like  the  internal  editor  and wish to use another one
-(thereby  forgoing automatic spell checking, text styles and glossary) you
-can  insert it here. Remember to insert the full path for the editor and a
-possible qualifier such as '-sticky' or '-keepio'.
+(thereby forgoing automatic spell checking, text styles and glossary), you
+can insert its name here. Remember to insert the full path for the editor,
+and maybe an appropriate qualifier such as '-sticky' or '-keepio'.
 
-  Example:  C:Ed   or   C:CED -keepio
+  Examples:  C:Ed
+             C:CED -keepio
 
-[] Launch immediately
-Activate this option, if you would like the external editor to be launched
+
+[ ] Launch immediately
+
+Activate this  option if you would like the external editor to be launched
 automatically as soon as you start creating a new message. By doing so you
-won't have to click on the [Editor] button in the write window.
+won't have to click on the [Editor] button in the Write window.
+
+
+Email cache
+
+YAM can cache  on disk a certain number of the most recent recipients used
+when writing a  new email, if those  recipients  aren't  already  in  your
+address book. This  may improve the  performance  of  the  automatic  name
+completer, especially if your address book  is rather brief and  you often
+find yourself typing your recipient's name and address by hand.
+
+If the hit ratio of the email cache is very low  in your everyday use, you
+might want to turn it off completely by selecting zero mails.
 
 @ENDNODE
 @NODE "CO06" "Configuration - Replying"
@@ -1960,28 +2044,34 @@ won't have to click on the [Editor] button in the write window.
 
 Configuration - REPLYING (Replying and forwarding messages)
 
+
 ---- Forwarding ----------------------------------------------------------
 
 Initial phrase
+
 This  text  will  be  added  at  the beginning of the original text of any
 message  you  forward. Click on the pop-up button to select from a list of
 variables which can be inserted (for example %r stands for the name of the
 recipient,  %s  stands  for  the subject, etc.). When the text is inserted
-into  the  message,  YAM  replaces  the variables by their values which it
-reads from the forwarded message.
+into the message, YAM replaces the variables with their respective values,
+taken from the forwarded message.
 
   Example:  *** Forwarded message, originally by %n on %d: ***\\n
 
+
 Terminating phrase
-This  text  will be inserted at the end of a forwarded message (but before
-the  greetings  phrase).  Click  on the pop-up button to select a variable
-from the list (for subject, date, sender, etc.).
+
+This text will be inserted at the end of any forwarded message, but before
+the greetings phrase. Click on the pop-up button to select a variable from 
+the list (for subject, date, sender, etc.).
 
   Example:  *** End of forwarded message ***\\n
+
 
 ---- Replying ------------------------------------------------------------
 
 Default reply phrase
+
 When  you reply to a message, YAM can automatically insert three different
 phrases  in  the  new  message:  greetings  (Open), an introduction to the
 quoted  message (Intro) and a closing phrase (Close). Use the cycle gadget
@@ -1995,13 +2085,15 @@ subject, date, sender, etc.).
     [Intro]   On %d, you wrote:\\n
     [Close]   Kind regards
 
+
 Alternative reply phrase
-Communicating  via  internet  often means writing in another language. For
-that  reason YAM is capable of using an alternative reply phrase set which
-will   be   activated   automatically  whenever  the  recipient's  address
-corresponds to a user-defined pattern. This way you can for instance use a
-German  version  of the reply phrase set for addresses in Germany, Austria
-and Switzerland while using the English version for all other countries.
+
+Communicating  via  Internet  often means writing in another language. For
+that reason YAM is capable of using an alternative reply phrase set, which
+will be used automatically  whenever  the recipient's  address corresponds
+to a  user  defined pattern. This way you can, for  instance, use a German
+version  of  the reply  phrase set  for addresses in  Germany, Austria and
+Switzerland, while using the English version for all other countries.
 
   Example:
 
@@ -2009,18 +2101,21 @@ and Switzerland while using the English version for all other countries.
     [Intro]   Am %d schriebst Du:\\n
     [Close]   Mit freundlichem Gruss
 
+
 Use with these domains
+
 Whenever  the  recipient's  address corresponds with this @{"AmigaDOS pattern" LINK "DOSW" 0}
 the alternative reply phrases will be used.
 
- Example: #?.(de|ch|at) (Addresses of countries with German mother tongue)
+ Example:  #?.(de|ch|at) (Addresses of countries with German mother tongue)
+
 
 Mailing list reply phrase
-To answer a message belonging to a mailing list, another set of phrases is
-available.  They  will  be  used  if the message that is being answered is
-stored in folder for which mailing list support has been activated
 
-(@{"folder configuration" LINK "FO_W" 0}).
+To answer a message belonging to a mailing list, another set of phrases is
+available -- they  will be  used  if the message that is being answered is
+stored in a folder for which  mailing list support has been activated (see
+@{" folder configuration " LINK "FO_W" 0}).
 
   Example:
 
@@ -2028,37 +2123,47 @@ stored in folder for which mailing list support has been activated
     [Intro]   On %d, %n wrote:\\n
     [Close]   Kind regards
 
+
 Quote message using
+
 The character(s) specified in  the editing  field plus a space will be put
 in front of each line of the original message. Click the  pop-up button to
 select a variable for the sender's initials.
 
   Example:  %i>
 
+
 Quote external using
+
 The character(s) specified in  the editing  field plus a space will be put
-in front of each line  quoted from an external  source.  This is used when
-inserting or pasting text using the "alternate quoted" method.
+in  front of each line  quoted from  an external  source, not  necessarily
+related to e-mail.  This is used when inserting or pasting  text using the
+"alternate quoted" method.
 
   Example:  |
 
-[] Quote empty lines
-Normally  the  quotation  character  is inserted at the beginning of empty
-lines  contained  in  the  quoted message. If you don't like that, for any
-reason, you should deactivate this option.
 
-[] Verify recipient address
-If this option is activated YAM will check if the sender and the recipient
-have  the same address. If the From field of the message header happens to
-be different from the ReplyTo field of the message header the user (that's
-you)  can  choose  whom  to  reply  to. That way it's fairly easy to reply
-privately to a message from a mailing list.
+[ ] Quote empty lines
 
-[] Strip signature
+Usually, the  quotation character  is inserted at  the beginning  of empty
+lines  contained in  the quoted message. If for some reason you don't like
+this, just deactivate this option.
+
+
+[ ] Verify recipient address
+
+If this option is enabled, YAM will check if the  sender and the recipient
+have  the same address -- if the 'From' and the 'Reply-To' headers  of the
+message are different, you will be asked to select whom to reply  to. This
+way it is fairly easy to reply privately to a message from a mailing list.
+
+
+[ ] Strip signature
+
 Activate  this  option to avoid quoting the signature (since you'll delete
 the  signature  anyway in most cases). This option will work only when the
 signature  in  the  quoted message is separated from the actual message by
-the standard separator '-- '. That is 2 strokes AND a space.
+the standard '-- ' separator, that is, two dashes AND a space.
 
 @ENDNODE
 @NODE "CO07" "Configuration - Signature"
@@ -2066,43 +2171,56 @@ the standard separator '-- '. That is 2 strokes AND a space.
 
 Configuration - SIGNATURE  (Definition of the signature and taglines)
 
+
 You  can  define and use one standard and up to two alternative signatures
-within  YAM  (e.g.  one  signature  for  private  mail and another one for
+within  YAM (e.g., one  signature  for  private  email and another one for
 business).  Clicking  on  the cycle button in the upper left corner of the
 window  you  can  display and edit the signatures in the small text editor
-window.
+window below.
 
-[] use signature
-When  this  option is activated a signature will be inserted at the end of
+
+[ ] Use signature
+
+If this  option is activated, a signature will be  inserted at  the end of
 each message you write.
 
-[Edit in external editor]
-Click  on  this  button  to  open  the external editor you have defined in
-'Configuration/Write/External editor' for editing the actual signature.
 
-[Insert random tagline]
-Click  on  this  button  to  insert the variable '%t' at the actual cursor
-position  in  the  editor.  YAM  will  replace this variable with a random
-tagline from the tagline file when processing a new message.
+Edit in external editor
 
-[Insert ENV:Signature]
-Click on this button to insert the variable '%e' at the actual position in
-the  editor.  YAM  will  replace  this  variable  with  the content of the
-environment  variable 'SIGNATURE' when creating a new message. That way it
-is  possible  to  have  random  values  inserted into the actual signature
-automatically,  like  the  date, or the actual temperature or time or your
+Click this  button  to  open  the  external  editor  you  have  defined in
+'Configuration/Write/External editor' to edit the actual signature.
+
+
+Insert random tagline
+
+Click  this  button  to  insert  the  variable  '%t'  at the actual cursor
+position in  the  editor.  When processing a new message, YAM will replace
+this variable with a random tagline from the tagline file.
+
+
+Insert ENV:Signature
+
+Click  this  button  to  insert  the  variable  '%e'  at the actual cursor
+position in the  editor. YAM will replace this variable with  the contents
+of the environment variable 'SIGNATURE' while creating a new message. This
+way it is  possible  to  have  random  values  automatically inserted into
+the  signature, like  the  date, the  actual  temperature, the  time, your
 weight or whatever...
 
+
 Tagline file
-The  tagline  database contains tags, little poems or other very important
-and  witty pieces of wisdom which can be selected randomly and be inserted
-into  the  signature. There are collections of thousands of these taglines
-on Aminet.
+
+The  tagline  database  contains  taglines, little  poems  or  other  very
+important and witty pieces of wisdom which can be selected randomly and be
+inserted into  the  signature. There are collections of thousands of these
+taglines on Aminet.
 
   Example:  YAM:.taglines
 
+
 Tagline separator
-Since  a tagline can consist of several actual lines the single entries in
+
+Since a tagline can consist of several actual lines, the single entries in
 the  tagline  file have to be separated from each other. Insert the string
 that  is used for separating one tagline from another in your tagline file
 into this text field.
@@ -2115,23 +2233,32 @@ into this text field.
 
 Configuration - LISTS  (Column layout in different lists)
 
+
 Folder list
-Select the items you want to show in the folder list.
+
+Select the items you want to see in the folder list.
+
 
 Message list
-Select the items you want to show in the message list.
 
-[] Use fixed font
+Select the items you want to se in the message list.
+
+
+[ ] Use fixed font
+
 It often makes more sense to use a non-proportional font since the display
 might  become  messed  up with proportional fonts. Don't forget to specify
-the  font  of your choice in the 'TextEditor' module of YAM's MUI settings
+the font  of your choice in the 'TextEditor' module of YAM's MUI settings,
 under 'Fonts/fixed'.
 
-[] Time in Swatch Beats
+
+[ ] Time in Swatch Beats
+
 Enable  this  option  to  display  the time in Swatch Beats instead of the
 hours:minutes format. This revolutionary unit of time, invented by Swatch,
 a  Swiss  watch  manufacturer, divides the day in 1000 beats and abolishes
-the different time zones. The meridian is the town Biel in Switzerland.
+the  different  time  zones. The  meridian  is  Biel, a  town  located  in
+Switzerland.
 
 @ENDNODE
 @NODE "CO09" "Configuration - Security"
@@ -2139,9 +2266,11 @@ the different time zones. The meridian is the town Biel in Switzerland.
 
 Configuration - SECURITY (Encryption, anonymous mail, protocols)
 
+
 ---- PGP -----------------------------------------------------------------
 
 PGP path
+
 The  famous  (some  people  and  authorities  might  even  say  notorious)
 programme  PGP  (Pretty  Good  Privacy)  by  Philip Zimmermann is used for
 encrypting,  decrypting  and  digitally 'signing' messages. Please install
@@ -2151,67 +2280,83 @@ PGP  executable here. YAM recognizes automatically if you're using version
 
   Example:  Work:Programs/PGP/bin/
 
-Your PGP keys ID
-If  you  want  to  sign  messages  with PGP YAM needs the shortcut of your
-secret  PGP  key.  Click  on the pop-up button and select your key. If you
-cannot  find  your  PGP  key  it could have two reasons: either PGP is not
+
+Your PGP key ID
+
+If  you  want  to  sign  messages with PGP, YAM needs the shortcut of your
+secret  PGP  key.  Click  on the pop-up button and select your key. If YAM
+cannot  find  your  PGP  key, it could have two reasons: either PGP is not
 installed  correctly on your system or you've specified the wrong path for
 the PGP executable.
 
   Example:  0x70804A7B
 
-[] Encrypt to self
+
+[ ] Encrypt to self
+
 Encrypting  messages  for  a  certain  recipient has one disadvantage: you
 cannot  read  or edit the message any more after encryption. Activate this
 option  to  be  able to read the message after encryption. YAM will enable
 you  to  do  so by simply encrypting the mail using the recipient's key as
 well as your own.
 
+
 ---- Anonymous mail ------------------------------------------------------
 
 Re-Mailer
-E-mail  address  of  the  re-mailing service you'd like to use. If sending
-e-mail  anonymously  by  using a so called 're-mailer' this re-mailer will
-erase  all  information  from  the  message  header that could be used for
-identifying the original sender and then forward the message to the actual
+
+E-mail address of the  re-mailing service you'd like to use. When you send
+e-mail anonymously  by  using a so called 're-mailer', this re-mailer will
+erase  all  information  from  the  message  headersthat could be used for
+identifying the original sender, and then forward the message to the final
 recipient.  You  can  find  addresses  of  re-mailing services by having a
-(www-) search engine examine the internet for 'remailer'.
+(www-) search engine look up the Internet for 'remailer'.
 
   Example:  Remailer <remailer\@replay.com>
 
+
 Header field
+
 The  address  of the actual recipient of the message is transmitted to the
 re-mailing  service  by  being contained in a header field or in the first
-line  of the message. In the latter case simply create a blank line at the
+line of the message. In the latter case, simply create a blank line at the
 beginning  of  the  re-mailer header line by inserting '\\n'. The variable
 '%s'  will  be  replaced  by  the recipient's address. Please refer to the
-documentation  of  the  re-mailing  service  for  information on the exact
-format of the header line.
+documentation  of  the selected re-mailing  service for information on the
+exact template of the header line.
 
   Example:  Anon-to: %s
+
 
 ---- Logfiles ------------------------------------------------------------
 
 Logfile path
-YAM  will  save  the logfiles in the path specified here. The logfiles are
+
+YAM  will  save  the logfiles to the path specified here. The logfiles are
 formatted as follows: Date/time/[code]/description of the event. The code,
 which   consists   of   a  two-digit  number,  is  handy  when  running  a
 computer-supported analysis of the logfile data since it is not related to
 the selected language (whereas the description of the event is).
 
-[] Split logfile
+
+[ ] Split logfile
+
 Switch  on this option if you want YAM to create a new logfile each month.
-To  distinguish  the different files that will be created YAM includes the
+To  distinguish the different files that will be created, YAM includes the
 date in the logfile name, e.g. YAM-Jan98.log. If you'd like one big single
-logfile just leave this option deactivated.
+logfile, just leave this option deactivated.
+
 
 Mode
-If  you are not interested in having logfiles at all select 'none'. Select
-'normal'   to  have  the  important  events  like  receiving/sending  mail
-recorded.  In 'verbose' mode YAM will protocol every transferred e-mail in
+
+If you are not interested in having logfiles at all, select 'none'. Select
+'normal' to  have  only the important events like  receiving/sending  mail
+recorded. In 'verbose' mode, YAM  will  log  every  transferred  e-mail in
 detail.
 
-[] Log all events
+
+[ ] Log all events
+
 Deactivate  this  option if you're only interested in logging events to do
 with the mail transfer (sending/receiving).
 
@@ -2221,61 +2366,80 @@ with the mail transfer (sending/receiving).
 
 Configuration - START/QUIT  (Actions to be executed at startup and exit)
 
+
 ---- On program startup --------------------------------------------------
 
-[] Load all folders
-If  you  have  many  voluminous  archive  folders  you  can increase YAM's
-starting  speed by deactivating this option. Furthermore deactivating this
+[ ] Load all folders
+
+If  you  have  many  voluminous  archive  folders, you  can increase YAM's
+starting speed by deactivating this option. Furthermore, deactivating this
 option  will  save  memory,  because  only  the  index files of the system
 folders  will  be  loaded  on  program  startup.  The  index  files of the
 user-defined folders will then be loaded only when needed.
 
-[] Mark new mail as unread
-Switch  on  this  option  to  mark  all  messages with the status 'new' as
-'unread' on startup.
 
-[] Delete old mail
-In  the  case that you have defined a maximum age for specific folders YAM
+[ ] Mark new mail as unread
+
+Switch  on  this option to  mark  all new messages as "unread" on startup.
+
+
+[ ] Delete old mail
+
+In the  case that you have defined a maximum age for specific folders, YAM
 will  delete  all  messages exceeding this age before actually quitting if
 this option is activated.
 
-[] Remove deleted mail
-Switch this on to make YAM empty the 'Deleted' folder when closing down.
 
-[] Check birthdates
+[ ] Remove deleted mail
+
+Switch this on to make YAM empty the 'Deleted' folder on startup.
+
+
+[ ] Check birthdates
+
 Switch  on  this option to make YAM search the address book on startup for
-persons   whose   birthday   is   today.   This  way  you  can  send  your
+people    whose   birthday   is   today.   This  way  you  can  send  your
 congratulations at once, in case it's the birthday of one of your pals (or
 maybe even business partners).
 
-[] Send mail in outgoing queue
-If  this  option  is  activated  YAM  will  search the outgoing folder for
+
+[ ] Send mail in outgoing queue
+
+If  this  option  is  activated, YAM  will  search the Outgoing folder for
 messages to send on startup and ask you if you'd like to send them. Please
 note  that  this  will  work  only  if  a  TCP/IP  stack  has  been loaded
 previously.  You  can  temporarily  stop YAM from doing so by starting YAM
-from a shell with the qualifier NOCHECK.
+from a shell with the NOCHECK switch.
 
-[] Download new mail
+
+[ ] Download new mail
+
 If this option is activated (and there's already a TCP/IP stack running on
-your  system)  YAM  will  check  the mail server for new messages. You can
+your  system), YAM  will  check  the mail server for new messages. You can
 temporarily  stop  YAM from doing so by starting YAM from a shell with the
-qualifier NOCHECK.
+NOCHECK switch.
+
 
 ---- On program termination ----------------------------------------------
 
-[] Send mail in outgoing queue
+[ ] Send mail in outgoing queue
+
 Activate  this  option  to make YAM look for ready to send messages in the
-outgoing  folder before actually ending the program. If it's activated YAM
+Outgoing folder before actually ending the program. If it's activated, YAM
 will  ask  you  if  you'd like to send those messages before quitting. (Of
 course  it  will  do  so  only  if  there actually are any messages in the
-outgoing folder.)
+Outgoing folder.)
 
-[] Delete old mail
-In  the  case that you have defined a maximum age for specific folders YAM
+
+[ ] Delete old mail
+
+In the  case that you have defined a maximum age for specific folders, YAM
 will  delete  all  messages exceeding this age before actually quitting if
 this option is activated.
 
-[] Remove deleted mail
+
+[ ] Remove deleted mail
+
 Switch this on to make YAM empty the 'Deleted' folder when closing down.
 
 @ENDNODE
@@ -2284,47 +2448,57 @@ Switch this on to make YAM empty the 'Deleted' folder when closing down.
 
 Configuration - MIME  (MIME viewers for attachments)
 
+
 ---- MIME viewers --------------------------------------------------------
 
-The  program  selected by default for displaying attachments is MultiView.
-Messages  in @{"MIME-Format" LINK "MIME" 0} contain a field called 'ContentType' in which the
+The  program  selected  by  default  to display  attachments is MultiView.
+Messages  in @{" MIME format " LINK "MIME" 0} contain a field called 'Content-Type' in which the
 type  of the encoded file is specified. You can define a different program
-for  processing every single type of file. That is important for users who
-do  not want to use MultiView for processing images and sound files or for
+for  to process every single type of file. This is important for users who
+do not want to use MultiView for processing images and sound files, or for
 processing  file  types  that are not yet supported by datatypes. Click on
-[New]  to  configure  a  displaying  program  or use [Delete] to delete an
-entry.
+[New] to configure a display  program, or use [Delete] to delete an entry.
+
 
 Attachment type
-This  is the type of the actual entry and corresponds with the ContentType
+
+This is the  type of the actual entry, and corresponds to the Content-Type
 field contained in the message. You can select one from the pop-up list or
 use  AmigaDOS  wildcards, e.g. 'image/#?' to use the programme for a whole
 class of file types.
 
   Example:  image/jpeg
 
+
 Extension
+
 Filename  extension for the file type. This extension allows YAM to assign
-the correct ContentType field for a file.
+the correct Content-Type field for a file.
 
   Example:  jpg jpeg jfif
 
+
 Viewer
-Choose  a  program you'd like to use for displaying the attachment. Do not
-forget  to  insert  a "%s" into the command line which will be replaced by
+
+Choose  the program  you'd like to use  to display the  attachment. Do not
+forget to  insert  a "%s" into the command line, which will be replaced by
 the filename when processing. The quotation marks in "%s" make it possible
 to use spaces in the filename.
 
   Example:  TOOLS:Gfx/ViewJPG "%s"
 
+
 Default viewer
+
 This  viewer  will be used if the attachment doesn't match any of the user
 defined types (see above).
 
   Example:  SYS:Utilities/MultiView "%s" SCREEN
 
-[] Identify binary attachments
-Some mail clients always use a ContentType field of...
+
+[ ] Identify binary attachments
+
+Some mail clients always use a Content-Type field of
 
   'application/octet-stream'
 
@@ -2332,14 +2506,18 @@ for  binary  attachments.  To still show such attachments with the correct
 program,  YAM can search the viewer list based on the file name extenstion
 of the attached file (see Extension).
 
+
 ---- Paths ---------------------------------------------------------------
 
 Decode files to
+
 This is the pre-selected directory to decode attachments into.
 
   Example:  Work:Data/In
 
+
 Attach files from
+
 Whenever  you  want to attach a file to a new message YAM will look for it
 at this position first.
 
@@ -2351,28 +2529,34 @@ at this position first.
 
 Configuration - ADDRESS BOOK  (Visible columns, personal data exchange)
 
+
 Columns
-Select the items you want to show in the address book.
+
+Select the items you want to see in the address book.
+
 
 ---- Personal data exchange ----------------------------------------------
 
-[] Add personal data
+[ ] Add personal data
+
 Check  this  option  to create special message headers containing personal
 data  like  your  postal address, phone number, homepage, date of birth or
 URL  of your picture. If the recipient works with YAM too, (s)he will able
 to  create  an  address book entry and fill it with your data. To get this
-working,  add an entry in your address book containing your data (YAM will
+working,  add an entry to your address book containing your data (YAM will
 find your entry based on the e-mail address).
 
+
 Save sender's address
+
 YAM  can  automatically  save  the  sender's address when you're reading a
 message,  i.e.  it  creates a new entry in the address book. Choose one of
 these modes:
 
   never                   Don't save addresses
-  ask before              You'll be prompted every time if the
-                          address should be saved
-  if info available; ask  You'll only be prompted if there's personal
+  ask before              You'll be asked every time whether the
+                          address should be saved or not
+  if info available; ask  You'll only be asked if there's personal
                           data of the sender available, otherwise the
                           address won't be saved
   if info available       The address will be saved automatically if
@@ -2380,29 +2564,37 @@ these modes:
   always                  All new addresses will be saved
                           automatically
 
+
 Save photos in
+
 The pictures of the senders are stored here.
 
   Example:  YAM:Gallery
 
+
 Group for new entries
+
 Alias  of  the  group  that will contain the new address book entries. The
 group will be created if it doesn't exist.
 
   Example:  NEW
 
+
 URL of your picture
-If existing, enter the WWW address (URL) of a small photo of you here. The
-URL  will  be  listed  in  the  header  of  every outgoing message if 'Add
-personal information' is enabled.
+
+If one exists, enter here  the  WWW address (URL)  of  a  small  photo  of
+yourself. The URL will be listed along with the headers of  every outgoing
+message if 'Add personal information' is enabled.
 
   Example:  http://www.YAM.ch/gallery/BECK_Marcel.gif
 
+
 HTTP Proxy server
+
 If  you're  behind a firewall and only get into the Internet using a proxy
-server, then you have to enter the address of that proxy server. Otherwise
-it's not possible to download photos or get information about new versions
-of YAM.
+server, then  you  have  to enter here  the address  of that proxy server,
+otherwise it's won't be  possible to  download photos  or get  information
+about new versions of YAM.
 
   Example:  proxy.access.ch:8080
 
@@ -2412,29 +2604,39 @@ of YAM.
 
 Configuration - AREXX   (ARexx and AmigaDOS Scripts)
 
+
 As  well  as  the  ARexx menu in the main window, which can hold up to ten
-scripts, ARexx scripts can also be started by specified events. Thus it is
-possible  with  two simple scripts to start up Miami in order to go online
-and  fetch  new  mail  and  then  close Miami again once the mail has been
-downloaded.
+scripts, ARexx scripts can also be started by certain events. For example,
+it is possible  with  two simple scripts  to start up Miami in order to go
+online and  fetch  new  mail, and then close Miami again once the mail has
+been downloaded.
+
 
 Name
-The  title  of  the  script  as it appears in the ARexx menu, e.g. Browser
-start.
+
+The  title  of  the  script  as it appears in the  ARexx menu, e.g. "Start
+Browser".
+
 
 Script
-File name of the ARexx script, with any parameters (in usual ARexx fashion
-but without a call to 'RX').
+
+File name of the  ARexx script, including  any needed  parameters (in  the
+usual ARexx fashion, but without a call to 'RX').
 
   Example:  YAM:rexx/StartBrowser.rexx
 
-[] Open Console window
-The  script  opens  a  window  for  input and output, while it is running.
-Switch this option off if it is not required.
 
-[] Wait for termination
+[ ] Open Console window
+
+The  script will open a console window  for  input and output  while it is
+running. Switch this option off if a console window is not required.
+
+
+[ ] Wait for termination
+
 Switch  this  option  off if you want the script to run in the background,
-which means you don't want to wait for it to finish.
+which means  you don't want  to wait for  it to finish  before YAM  can go
+ahead with other tasks.
 
 @ENDNODE
 @NODE "CO14" "Configuration - Miscellaneous"
@@ -2442,77 +2644,94 @@ which means you don't want to wait for it to finish.
 
 Configuration - MISCELLANEOUS
 
+
 ---- Paths ---------------------------------------------------------------
 
 Directory for temp files
-YAM requires this directory for saving some files needed while processing.
-If you are short on memory (2 MB or less) you better choose a path on your
-hard disk to avoid possible problems with large messages.
+
+YAM needs this directory  to save some files needed while  processing e.g.
+messages with MIME attachments. If you are short on memory (2 MB or less),
+you better choose a path on your hard disk to avoid possible problems with
+very large messages.
 
   Example:  RAM:t
+
 
 ---- Mailbox status AppIcon ----------------------------------------------
 
 Position X   Y
-Enter  the  desired  position on your workbench for YAM's AppIcon here. In
-case  there  should already be another icon at this position the workbench
-will  choose  a  'safe'  position for the AppIcon on its own (so you don't
-have to worry about 'deleting' another icon).
+
+Enter here the  desired  position on your workbench for YAM's  AppIcon. If
+another icon is already ocuppying this position, the Workbench will choose
+a  'safe'  position for the AppIcon on its own (so you don't have to worry
+about 'deleting' another icon).
 
   Example:  X 550  Y 144
 
-AppIcon Label
-The standard text for the AppIcon which will be displayed if YAM is running
-can be specified here. There are also several patterns you can specify, like
-Total numbers of mails a.s.o.
 
-[] Closegadget iconifies program
-Normally the closegagdet (or ESC-key) will terminate the program. Activate
-this option to iconify YAM instead.
+AppIcon label
+
+The label for the AppIcon which will be displayed while YAM is running can
+be specified here. Click the  pop-up gadget to  select a variable for new,
+unread, etc. messages.
+
+
+[ ] Close gadget iconifies program
+
+Following the  MUI default behaviour, the  close gadget (or the <Esc> key)
+will  terminate the  program. Activate this option to let them iconify YAM
+instead.
+
 
 ---- Save/delete messages ------------------------------------------------
 
-[] Confirm deletion of [xx] or more messages
-If  this  option  is  activated  a  security  requester will appear before
-deleting  a certain number of messages. This especially makes sense when a
+[ ] Confirm deletion of [xx] or more messages
+
+If  this  option  is  activated, a  security  requester will appear before
+deleting  a certain number of messages. This makes sense especially when a
 number of two or more is selected.
 
-[] Remove messages immediately
-If  this  option is switched on messages won't be moved into the 'Deleted'
-folder on deletion but will be erased from hard disk immediately. Doing so
-saves  a little time and memory but on the other hand you won't be able to
-reconstruct any message deleted by mistake.
 
-[] Save sent messages
+[ ] Remove messages immediately
+
+If this  option is switched on, messages  won't be  moved to the 'Deleted'
+folder on deletion, but  they will instead be  erased immediately from the
+hard  disk. This saves some  time and memory, but  on the  other hand  you
+won't be able to retrieve any message deleted by mistake.
+
+[ ] Save sent messages
+
 Activate  this  option  to  make  YAM  save  sent messages into the 'Sent'
-folder.  You  can  select  this  as  well  specifically for each mail when
-processing it.
+folder.  You can select  this  as  well  specifically for each mail, using
+the relevant options in the @{" Write " LINK "WR02" 0} window.
+
 
 ---- Message tracking ----------------------------------------------------
 
 Here  you  can  define  how  YAM  should  react  if a message's sender has
-requested  a  condition  report (MDN) when writing the message by choosing
-'Message tracking'.
+requested  a  disposition notification (MDN) while writing his/her message
+by choosing 'Message tracking'.
 
  Ignore   - The request will be ignored completely and there won't be any
             report.
  Autodeny - The sender will be informed that you don't wish to send a
-            condition report for the message.
- Accept   - The sender will be informed about the message's condition as
-            requested.
+            disposition notification for the message.
+ Accept   - The sender will be informed as requested about the message's
+            disposition.
  Ask user - You can decide in each case if you want to ignore, deny or
             accept the request.
 
-In  addition  YAM's  reaction  can  be related to the event activating the
-condition report:
+Additionally, YAM's  reaction  can  be related to the event activating the
+disposition notification:
 
- Display  - The message will be read or answered
- Process  - The message will be bounced or forwarded without reading
- Delete   - The message will be deleted without reading
- Filter   - The message will be automatically processed or deleted by
-            a filter
+ Display  - The message was read or answered
+ Process  - The message was bounced or forwarded without reading
+ Delete   - The message was deleted without reading
+ Filter   - The message was automatically processed or deleted by a filter
 
-[] Send at once
+
+[ ] Send at once
+
 The  condition  report  will be sent immediately if there's a TCP/IP-stack
 running. If not it will be saved to the 'Outgoing' folder.
 
