@@ -1,0 +1,62 @@
+/* LocateUser.yam - Shows geographical location of sender               */
+/* $VER: LocateUser.yam 1.0 (16.04.00) © 2000 by M.Beck <mbeck@yam.ch>  */
+/* Requires YAM 2.1 or later and Aminet:comm/www/Worldmap.lha for       */
+/* graphical display                                                    */
+
+/* Display location on worldmap? */
+UseWorldmap = 1
+
+/* Path and filename of the Worldmap executable */
+WorldmapPath = 'C:WorldMap'
+
+/* Start Worldmap if it's not already running? */
+LaunchWorldmap = 1
+
+
+OPTIONS RESULTS
+OPTIONS FAILAT 30
+
+ADDRESS 'YAM'
+MailInfo STEM mi.
+PARSE VAR mi.From name' <'email'>'
+IF email = '' THEN email = mi.From
+PARSE VAR email user'@'domain
+IF name = '' THEN name = email
+IF UseWorldmap = 1 THEN DO
+   IF ~SHOW('Ports','WORLD.1') & (LaunchWorldmap = 1) THEN ADDRESS 'COMMAND' 'Run >NIL: 'WorldmapPath
+   ADDRESS 'COMMAND' 'SYS:RexxC/WaitForPort WORLD.1'
+   IF ~SHOW('Ports','WORLD.1') THEN UseWorldMap = 0
+END
+IF UseWorldMap = 1 THEN DO
+   ADDRESS 'WORLD.1' 'CLEAR'
+   ADDRESS 'WORLD.1' 'WRITE Trying to locate 'name'...'
+END
+'GetURL "http://netgeo.caida.org/perl/netgeo.cgi?target='domain'&method=getRecord&nonblocking=true" "T:locateuser.tmp"'
+IF RC ~= 0 THEN DO
+   'Request "Connection to NetGeo server failed!\nMake sure that you are online" "_Okay"'
+   EXIT
+END
+CALL OPEN(IN, 'T:locateuser.tmp','R')
+all = READCH(IN, 10000)
+CALL CLOSE(IN)
+PARSE VAR all dummy'CITY:          'city'<br>' .
+PARSE VAR all dummy'COUNTRY:       'country'<br>' .
+PARSE VAR all dummy'STATE:         'state'<br>' .
+PARSE VAR all dummy'LAT:           'lat'<br>' .
+PARSE VAR all dummy'LONG:          'long'<br>' .
+IF (city ~= '') | (country ~= '') THEN DO
+   IF UseWorldMap = 1 THEN IF (lat ~= '') & (long ~= '') THEN IF lat*long ~= 0 THEN DO
+      ADDRESS 'WORLD.1' 'WRITE 'city' ('country')'
+      ADDRESS 'WORLD.1' 'DOT 'trunc(long) trunc(lat)
+   END
+   msg = 'Sender: 'mi.From'\nCity: 'city'\nState: 'state'\nCountry: 'country
+   'Request "'msg'" "_Okay"'
+END
+ELSE DO
+   msg = 'Domain 'domain' could not be located'
+   IF UseWorldMap = 1 THEN DO
+      ADDRESS 'WORLD.1' 'WRITE 'msg
+   END
+   ELSE 'Request "'msg'" "_Okay"'
+END
+

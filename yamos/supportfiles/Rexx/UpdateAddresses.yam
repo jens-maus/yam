@@ -1,0 +1,29 @@
+/* UpdateAddresses.yam - Updates YAM's address book                         */
+/* $VER: UpdateAddresses.yam 1.0 (12.03.00) © 2000 by M.Beck <mbeck@yam.ch> */
+/* Updates new addresses for existing people in the address book, based on  */
+/* the selected messages. Requires YAM 2.0 or later.                        */
+
+OPTIONS RESULTS
+ADDRESS YAM
+changes = 0
+GETSELECTED STEM sm.
+DO i = 0 TO sm.NUM.COUNT-1
+   MailInfo STEM mi. sm.NUM.i
+   PARSE VAR mi.FROM name' <'newmail'>'
+   'AddrFind STEM found. "'name'" NAMEONLY'
+   IF (RC = 0) & (name > '') THEN DO
+      al = found.ALIAS.0
+      'AddrInfo STEM entry. "'al'"'
+      oldmail = entry.EMAIL
+      IF newmail ~= oldmail THEN DO
+         'Request "'name' moved:\n\nOld e-mail: 'oldmail'\nNew e-mail: 'newmail'" "_Update|_Keep old"'
+         IF RESULT THEN DO
+            'AddrGoto "'al'"'
+            'AddrEdit "'al'" EMAIL "'newmail'"'
+            changes = 1
+         END
+      END
+   END
+END
+IF changes THEN AddrSave
+EXIT

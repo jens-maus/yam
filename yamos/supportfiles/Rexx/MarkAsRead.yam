@@ -1,0 +1,19 @@
+/* MarkAsRead.yam                                                       */
+/* $VER: MarkAsRead.yam 1.0 (20.06.00) © 2000 by M.Beck <mbeck@yam.ch>  */
+/* Scans the current folder and sets the status of messages written by  */
+/* the active user to 'read'                                            */
+
+OPTIONS RESULTS
+ADDRESS YAM
+
+UserInfo STEM user.
+FolderInfo STEM folder.
+ListSelect None
+DO i = 0 TO folder.TOTAL-1
+   SetMail i
+   MailInfo STEM mess.
+   PARSE VAR mess.FROM name' <'addr'>'
+   IF addr = '' THEN email = mess.FROM
+   IF addr = user.EMAIL THEN MailStatus 'O'
+END
+

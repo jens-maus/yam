@@ -1,0 +1,20 @@
+/* Archiver.yam - Creates packed attachments                            */
+/* $VER: Archiver.yam 1.0 (21.01.00) © 2000 by M.Beck <mbeck@yam.ch>    */
+/* This archiver scripts looks at the archive filename extension and    */
+/* automatically selects the appropriate archiver program. For example, */
+/* if you enter "test.lzx", the script will pack the files using LZX    */
+/* instead of LHA. Installation: Go to YAM/Config/Misc and set the      */
+/* option Archiver to "rx archiver.yam %a %f".                          */
+
+PARSE ARG arcname' 'filelist
+ext = UPPER(RIGHT(arcname,4))
+SELECT
+   WHEN ext = '.ZIP' THEN cmd = 'ZIP 'arcname filelist
+   WHEN ext = '.LZX' THEN cmd = 'LZX -a a 'arcname filelist
+   WHEN ext = '.LHA' THEN cmd = 'LhA -a -m a 'arcname filelist
+   OTHERWISE              cmd = 'LhA -a -m a 'arcname filelist
+END
+ADDRESS COMMAND cmd
+EXIT
+
+

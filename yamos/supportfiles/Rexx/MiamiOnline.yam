@@ -1,0 +1,18 @@
+/* MiamiOnline.yam - Go online in Miami                                */
+/* $VER: MiamiOnline.yam 1.0 (1.10.98) © 1998 by M.Beck <mbeck@yam.ch> */
+
+miamipath = "MIAMI:Miami"  /* Change this path if required */
+
+OPTIONS RESULTS
+IF ~SHOW('P', 'MIAMI.1') THEN DO
+   ADDRESS COMMAND
+   'Run <>NIL:' miamipath
+   'WaitForPort MIAMI.1'
+END
+ADDRESS 'MIAMI.1'
+ISONLINE
+IF RC=0 THEN ONLINE
+ISONLINE
+IF RC=0 THEN EXIT 5
+HIDE
+EXIT 0

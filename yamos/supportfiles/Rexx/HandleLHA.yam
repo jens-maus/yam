@@ -1,0 +1,54 @@
+/* HandleLHA.yam - View or extract attached LhA files in YAM          */
+/* $VER: HandleLHA.yam 1.1 (21.03.00) © 2000 by M.Beck <mbeck@yam.ch> */
+/* Improvements by J. E. Gilpin <jeff-g@hereintown.net>               */
+/* Create a new MIME viewer with the following settings:              */
+/* Attachment type = application/x-lha                                */
+/* Extension       = lha                                              */
+/* Viewer          = rx YAM:rexx/HandleLHA.yam %s                     */
+/* LhA and RX must be in your AmigaDOS search path                    */
+
+PARSE ARG attachmentname
+OPTIONS RESULTS
+IF ~SHOW(PORTS,'YAM') THEN EXIT
+ADDRESS YAM
+'Info VAR screenname SCREEN'
+console='CON:/33//200/HandleLHA/WAIT/CLOSE/SCREEN'||screenname
+
+'Request BODY "What shall I do with this archive?" GADGETS "View contents|Extract files|Save archive|Cancel"'
+choice = RESULT
+IF choice=1 THEN ADDRESS COMMAND 'LhA >'console' v 'attachmentname
+
+ELSE IF choice=2 THEN DO
+  ADDRESS COMMAND 'RequestFile >T:destdir.string DRAWERSONLY DRAWER=RAM: TITLE="Select a destination directory" SAVEMODE PUBSCREEN='screenName' '
+  IF RC=0 THEN DO
+    IF OPEN(IN,'T:destdir.string','R') THEN DO
+      destdir = STRIP(READLN(IN),'B','"')
+      CALL CLOSE(IN)
+      IF EXISTS(destdir) THEN ADDRESS COMMAND 'LhA >'console' x 'attachmentname' 'DestDir
+    END
+  END
+  IF EXISTS('T:destdir.string') THEN ADDRESS COMMAND 'Delete >NIL: "T:destdir.string"'
+END
+
+ELSE IF Choice=3 THEN DO
+  Information. = 0
+  'ReadInfo STEM ri.'
+  IF ri.TEMPFILE.COUNT < 1 THEN EXIT
+  name = STRIP(attachmentname,'B','"')
+  DO cnt=1 TO ri.TEMPFILE.COUNT
+    IF ri.TEMPFILE.cnt = name THEN realname = ri.FILENAME.cnt
+  END
+  ADDRESS COMMAND 'RequestFile >T:dest.string FILE='realname' DRAWER=RAM: TITLE="Select a directory and filename" SAVEMODE PUBSCREEN='screenname' '
+  IF RC=0 THEN DO
+    IF OPEN(IN,'T:dest.string','R') THEN DO
+      destpath = STRIP(READLN(IN),'B','"')
+      CALL CLOSE(IN)
+      length = LASTPOS('/',destpath)
+      IF length=0 THEN length = LASTPOS(':',destpath)
+      IF length~=0 THEN DO
+        IF EXISTS(LEFT(destpath,length)) THEN ADDRESS COMMAND 'Copy 'attachmentname' 'destpath
+      END
+    END
+  END
+  IF EXISTS('T:dest.string') THEN ADDRESS COMMAND 'Delete >NIL: "T:dest.string"'
+END

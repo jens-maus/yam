@@ -1,0 +1,18 @@
+/* Example1.yam - YAM ARexx interface example #1                      */
+/* $VER: Example1.yam 1.0 (14.03.99) © 1999 by M.Beck <mbeck@yam.ch>  */
+/* Save selected messages in plain text format.  Files are named      */
+/* RAM:1.msg, RAM:2.msg, etc. Requires YAM 2.0p7 or later             */
+
+OPTIONS RESULTS
+ADDRESS YAM
+
+GetSelected STEM selected.             /* Get list of selected messages */
+c = 0
+DO i = 0 TO selected.NUM.COUNT-1       /* Loop through selected mails */
+   SetMail selected.NUM.i              /* Set current message */
+   MailRead QUIET                      /* Decode message in background */
+   c = c+1                             /* Increase filename counter */
+   'ReadSave FILENAME "RAM:'c'.msg"'   /* Save visible part to RAM: */
+   ReadClose                           /* Finish reading */
+END
+

@@ -1,0 +1,17 @@
+/* MiamiOffline.yam - Go offline in Miami                               */
+/* $VER: MiamiOffline.yam 1.1 (22.3.98) © 1998 by M.Beck <mbeck@yam.ch> */
+
+quitmiami = 0                                      /* Set this 1 if Miami should be terminated */
+ports = "IBROWSE VOYAGER AMFTP.1 AWebControlPort"  /* Don't go offline if one of these applications is running */
+
+OPTIONS RESULTS
+DO i = 1 TO WORDS(ports)
+   IF SHOW('P', WORD(ports,i)) THEN EXIT 0
+END
+IF SHOW('P', 'MIAMI.1') THEN DO
+   ADDRESS 'MIAMI.1'
+   ISONLINE
+   IF RC=1 THEN OFFLINE
+   IF quitmiami = 1 THEN QUIT
+END
+EXIT 0

@@ -1,0 +1,18 @@
+/* DeleteUnread.yam  - Deletes all unread messages in the current folder  */
+/* $VER: DeleteUnread.yam 1.0 (12.03.00) © 2000 by M.Beck <mbeck@yam.ch>  */
+/* Requires YAM 2.0 or later                                              */
+
+OPTIONS RESULTS
+ADDRESS YAM
+FolderInfo STEM folder.                        
+ListSelect NONE                               
+found = 0
+DO i = 0 TO folder.TOTAL-1                      
+   MailInfo i STEM mess.                       
+   IF (mess.STATUS = 'N') | (mess.STATUS = 'U') THEN DO
+      ListSelect i
+      found = 1
+   END
+END
+IF found THEN MailDelete ATONCE
+EXIT

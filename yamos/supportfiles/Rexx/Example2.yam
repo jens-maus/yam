@@ -1,0 +1,16 @@
+/* Example2.yam - YAM ARexx interface example #2                      */
+/* $VER: Example1.yam 1.0 (14.03.99) © 1999 by M.Beck <mbeck@yam.ch>  */
+/* Gets the sender of the current message and selects all messages    */
+/* from the same sender. Requires YAM 2.0p7 or later                  */
+
+OPTIONS RESULTS
+ADDRESS YAM
+
+MailInfo STEM cmess.                            /* Get information about current message */
+FolderInfo STEM folder.                         /* Get information about current folder */
+ListSelect NONE                                 /* Clear selection */
+DO i = 0 TO folder.TOTAL-1                      /* Loop through whole folder */
+   MailInfo i STEM mess.                        /* Get information about message */
+   IF mess.FROM = cmess.FROM THEN ListSelect i  /* Select message if senders match */
+END
+
