@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.7 (17.10.2002)
+## version $VER: YAM.catalog 5.7 (18.10.2002)
 ## codeset 0
 ;
 MSG_Folder
@@ -5858,7 +5858,7 @@ MSG_DATE_SENT
 Versandt
 ;
 MSG_DATE_SNTRCVD
-Empf/Versandsdatum
+Empf/Versendedatum
 ;
 MSG_CO_DATE_SNTRCVD
 Empfangs/Versendedatum
