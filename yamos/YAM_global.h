@@ -42,6 +42,7 @@ extern char *             wdays[7];
 extern char *             yamversion;
 extern char *             yamversionver;
 extern char *             yamversionstring;
+extern char *             yamverxmailer;
 extern char *             yamversiondate;
 extern char *             yamcopyright;
 extern char *             yamcompiler;

@@ -52,7 +52,9 @@ OBJDIR    = .obj_mos
 # Compiler/Linker flags
 CPU      = -mcpu=750
 CPUFLAGS = -mmultiple
-CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
+CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
+           -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" \
+           -D__YAM_BUILDID=\"$(BUILDID)\"
 WARN     = -W -Wall
 OPTFLAGS = -O2 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG -g3 -O0

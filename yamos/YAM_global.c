@@ -54,11 +54,16 @@
 /* the version stuff */
 #define __YAM_VERSION   "2.5"
 #define __YAM_DEVEL     "-dev"
-#define __YAM_COPYRIGHT "Copyright (C) 2000-2004 YAM Open Source Team"
+#ifndef __YAM_BUILDID
+#define __YAM_BUILDID   ""
+#endif
+#define __YAM_COPYRIGHT "Copyright (c) 2000-2004 YAM Open Source Team"
 
 char * yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
 char * yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
 char * yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
+char * yamverxmailer    = "YAM " __YAM_VERSION __YAM_DEVEL __YAM_BUILDID CPU \
+                          " AmigaOS E-mail Client (c) 2000-2004 by YAM Open Source Team - http://www.yam.ch/";
 char * yamcopyright     = __YAM_COPYRIGHT;
 char * yamversiondate   = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;

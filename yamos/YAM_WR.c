@@ -1226,7 +1226,7 @@ BOOL WriteOutMessage(struct Compose *comp)
    if (hasReturnRcptFlag(comp)) EmitHeader(fh, "Return-Receipt-To", rcptto);
    if (hasMDNRcptFlag(comp)) EmitHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
-   fprintf(fh, "X-Mailer: %s AmigaOS E-mail Client (c) 2000-2004 by YAM Open Source Team - http://www.yam.ch/\n", yamversion);
+   fprintf(fh, "X-Mailer: %s\n", yamverxmailer);
    if (comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
    if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
    if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
