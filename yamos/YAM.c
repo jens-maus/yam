@@ -659,6 +659,9 @@ int GetDST(void)
 #ifdef _DCC
 extern struct WBStartup *_WBMsg;
 #define _WBenchMsg _WBMsg
+extern struct Library *WorkbenchBase;
+extern struct Library *KeymapBase;
+extern void dice_closelibs(void);
 #endif
 /// Main
 //  Program entry point, main loop
@@ -684,6 +687,13 @@ void main(int argc, char **argv)
    struct User *user;
    BPTR progdirlock, yamlock, oldcdirlock;
 
+#ifdef _DCC
+   WorkbenchBase=OpenLibrary("workbench.library",37);
+   KeymapBase=OpenLibrary("keymap.library",37);
+
+   atexit(dice_closelibs);
+   if(!WorkbenchBase || !KeymapBase) exit(5);
+#endif
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
    nrda.ExtHelp = NULL;
    nrda.Window = NULL;
