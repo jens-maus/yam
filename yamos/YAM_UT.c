@@ -3769,8 +3769,12 @@ Object *MakePGPKeyList(Object **st, BOOL secret, char *label)
 Object *MakePicture(char *fname)
 {
    return G->DtpicSupported ?
-      MUI_NewObject("Dtpic.mui", MUIA_Dtpic_Name, fname, End :
-      BodychunkImageObject, MUIA_BodychunkImage_File, fname, End;
+      MUI_NewObject("Dtpic.mui", MUIA_MaxWidth,  100,
+                                 MUIA_MaxHeight, 100,
+                                 MUIA_Dtpic_Name, fname, End :
+      BodychunkImageObject, MUIA_MaxWidth,  100,
+                            MUIA_MaxHeight, 100,
+                            MUIA_BodychunkImage_File, fname, End;
 }
 ///
 /// MakeStatusFlag

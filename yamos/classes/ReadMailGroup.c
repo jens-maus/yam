@@ -39,9 +39,9 @@ struct Data
 	struct ReadMailData *readMailData;
 	Object *headerGroup;
 	Object *headerList;
-	Object *senderInfoGroup;
 	Object *senderImageGroup;
 	Object *senderImage;
+	Object *senderImageSpace;
 	Object *balanceObject;
 	Object *mailBodyGroup;
 	Object *mailTextObject;
@@ -241,15 +241,13 @@ OVERLOAD(OM_NEW)
 					MUIA_CycleChain, 								 TRUE,
 				End,
 			End,
-			Child, data->senderInfoGroup = ScrollgroupObject,
+			Child, data->senderImageGroup = VGroup,
+				GroupSpacing(0),
+				InputListFrame,
 				MUIA_ShowMe, 								FALSE,
-				MUIA_Scrollgroup_FreeHoriz, FALSE,
 				MUIA_HorizWeight, 					0,
-				MUIA_Scrollgroup_Contents, data->senderImageGroup = VGroupV,
-					GroupSpacing(0),
-					InputListFrame,
-					Child, HVSpace,
-				End,
+				MUIA_VertWeight, 					  0,
+				Child, data->senderImageSpace = VSpace(0),
 			End,
 		End,
 		Child, data->balanceObject = BalanceObject,
@@ -349,6 +347,22 @@ DECLARE(Clear)
 	// clear all relevant GUI elements
 	DoMethod(data->headerList, MUIM_NList_Clear);
 	set(data->mailTextObject, MUIA_TextEditor_Contents, "");
+
+	// cleanup the SenderImage field as well
+	if(DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
+	{
+		if(data->senderImage)
+		{
+			DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
+			MUI_DisposeObject(data->senderImage);
+		}
+
+		data->senderImage = NULL;
+
+		DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
+	}
+
+	set(data->senderImageGroup, MUIA_ShowMe, FALSE);
 
 	return 0;
 }
@@ -546,17 +560,26 @@ DECLARE(ReadMail) // struct Mail *mail, BOOL updateOnly
 						DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
 						MUI_DisposeObject(data->senderImage);
 					}
+
 					data->senderImage = NULL;
-					if(RE_FindPhotoOnDisk(ab, photopath))
+					
+					if(RE_FindPhotoOnDisk(ab, photopath) &&
+						 (data->senderImage = MakePicture(photopath)))
 					{
-						data->senderImage = MakePicture(photopath);
-						DoMethod(data->senderImage, OM_ADDMEMBER, data->senderImageGroup);
+						DB(kprintf("SenderPicture found: %s\n", photopath);)
+
+						DoMethod(data->senderImageGroup, OM_ADDMEMBER, data->senderImage);
+
+						// resort the group so that the space object is at the bottom of it.
+						DoMethod(data->senderImageGroup, MUIM_Group_Sort, data->senderImage,
+																															data->senderImageSpace,
+																															NULL);
 					}
 					DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
 				}
 			}
-			set(data->senderInfoGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL) &&
-																							(data->senderImage != NULL));
+			set(data->senderImageGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL) &&
+																							 (data->senderImage != NULL));
 			
 			// enable the headerList again
 			set(data->headerList, MUIA_NList_Quiet, FALSE);
