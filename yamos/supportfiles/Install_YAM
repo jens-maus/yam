@@ -1,12 +1,9 @@
 ;
-; $VER: Installer script 1.6 for YAM 2.4 (11.04.2003) © 2000-2003 by YAM Open Source Team
+; $VER: Installer script 1.6 for YAM 2.4 (14.04.2003) © 2000-2003 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
 ;
-; TODO:
-;
-; - Uninstall option
 ;
 ;
 ; /// Setting up
@@ -41,13 +38,13 @@
 ;/// ***** English
 (set #def_cat_lang #def_lang_English)
 (set #def_doc_lang #def_doc_English)
-(set #wrongOS  "YAM needs at least OS3.0 to run!\n")
+(set #wrongOS  "YAM needs at least OS 3.0 to run!\n")
 (set #wrongMOS "MorphOS has not been found!\n")
-(set #wrongMUI "YAM needs at least MUI3.8 to run!\n")
+(set #wrongMUI "YAM needs at least MUI 3.8 to run!\n")
 (set #wrongCPU "YAM needs at least a 68020 CPU to run!\n")
 (set #proc_type "Select which version of YAM you would like to install:")
 (set #proc_help (cat "Here you can select which version of YAM to install "
-                     "depending on the type of OS/processor you own."))
+                     "depending on the type of processor you own."))
 (set #proc_020 "Optimized for 68020/030")
 (set #proc_040 "Optimized for 68040")
 (set #proc_060 "Optimized for 68060")
@@ -82,13 +79,17 @@
 (set #imagepool_help (cat "The Toolbar.mcc 15.8 class provided with YAM does not "
                           "support imagepool.library anymore. If nothing else "
                           "needs this library, you may want to delete it now.\n"))
+(set #yamtz_prompt "Deleting \"ENV(ARC):YAM_TZ\"")
+(set #yamtz_help (cat "YAM 2.4+ no longer supports the \"YAM_TZ\" environment "
+                      "variable. This is now entirely handled using Locale, "
+                      "so you can safely delete this variable.\n"))
 (set #assign_prompt (cat "A \"YAM:\" assign needs to be added to your "
                          "\"S:User-Startup\" file.\n\n"
                          "Do you mind?"))
 (set #assign_help (cat "If this assign is not present, the next time you boot up "
                        "your machine the program will be unable to find the files "
                        "and drawers it needs to run.\n"))
-(set #done_1   (cat "\nYAM has been succesfully installed.\n\n"
+(set #done_1   (cat "\nYAM has been successfully installed.\n\n"
                     "Double click the \"YAM\" icon in the\n"))
 (set #done_2        "\ndirectory to taste it.\n\nHave fun...")
 ; ///
@@ -286,32 +287,59 @@
 (
 (set #def_cat_lang #def_lang_Francais)
 (set #def_doc_lang #def_doc_Francais)
-(set #wrongOS  "YAM a besoin de l' OS3.0 minimum\n")
-(set #wrongMUI "YAM a besoin de MUI3.8 minimum\n")
+(set #wrongOS  "YAM a besoin de l' OS 3.0 minimum\n")
+(set #wrongMOS "MorphOS n'a pas été trouvé !\n")
+(set #wrongMUI "YAM a besoin de MUI 3.8 minimum\n")
 (set #wrongCPU "YAM a besoin d'un CPU 68020 minimum\n")
-(set #proc_type "Choisissez la version de YAM que vous voulez installer:")
+(set #proc_type "Quelle version de YAM voulez-vous installer ?")
 (set #proc_help (cat "Ici vous pouvez choisir la version de YAM à installer "
                      "en fonction de votre type de micro-processeur."))
 (set #proc_020 "Optimisé pour 68020/030")
 (set #proc_040 "Optimisé pour 68040")
 (set #proc_060 "Optimisé pour 68060")
-(set #YAM_dir  (cat "Choisissez le répertoire d'installation de YAM\n"
+(set #YAM_dir  (cat "Choisissez le répertoire d'installation pour YAM.\n"
                     "(Il n'y aura pas de création de répertoire !)"))
 (set #lang_catalog (cat "Quel langage désirez-vous installer ?\n"
                         "(L'anglais est intégré au programme)"))
 (set #lang_manual "Choisissez la langue de l'aide en ligne. (AmigaGuide)")
 (set #icons_prompt "Quel genre d'icônes et de boutons voulez-vous installer ?\n")
 (set #icons_none "Aucun")
-(set #assign_prompt (cat "l'assignation 'YAM:' devrait être ajoutée à S:USER-STARTUP\n"
+(set #charset_help (cat "YAM peut utiliser des tables de conversion de caractères "
+                        "lors de la lecture et de l'écriture des messages. Ces tables "
+                        "sont des fichiers de textes placés dans le répertoire "
+                        "« YAM:Charsets/ ». Ils décrivent comment chaque caractère "
+                        "doit être remplacé lors de la lecture et/ou de l'écriture. "
+                        "Par exemple, pour remplacer les voyelles accentuées "
+                        "(ASCII8bit -> ASCII7bit), ou pour convertir le jeu de caractères "
+                        "ISO-Latin-2 en AmigaPL et ainsi de suite...\n\n"
+                        "Si vous n'avez pas besoin de cette caractéristique, vous pouvez "
+                        "ne pas vouloir installer ces tables et économiser environ 10ko "
+                        "d'espace sur votre disque.\n"))
+(set #parser_help (cat "YAM 2.4+ offre une option pour utiliser automatiquement "
+                       "le bon jeu de caractères à afficher pour chaque partie "
+                       "des messages lors de la lecture, ce qui est particulièrement "
+                       "intéressant pour les utilisateurs des pays comme la Russie où "
+                       "il n'y a pas un jeu de caractères particulier - en fait, "
+                       "cette caractéristique supporte seulement les jeux de caractères "
+                       "Win1250, DOS866 et KOI8 et spécifiquement pour l'utilisateur "
+                       "Russes avec le cyrillic.\n\n"
+                       "Si vous n'avez pas besoin de cette caractéristique, "
+                       "vous pouvez ne pas installer les analyseurs et économiser "
+                       "50ko d'espace disque.\n"))
+(set #imagepool_prompt "Suppression de « libs:imagepool.library »")
+(set #imagepool_help (cat "La classe « Toolbar.mcc » 15.8 fournie avec YAM ne supporte "
+                          "plus « imagepool.library ». Si aucun autre logiciel n'utilise "
+                          "cette bibliothèque, vous pouvez l'effacer maintenant.\n"))
+(set #assign_prompt (cat "l'assignation « YAM: » devrait être ajoutée à "
+                         "« S:USER-STARTUP ».\n"
                          "Le souhaitez-vous ?"))
-(set #assign_help (cat "Le programme d'installation vous demande si vous voulez placer "
-                       "l'assignation dans votre fichier S:user-startup.\nYAM a besoin "
-                       "d'une assignation pour bien fonctionner. Vous devriez choisir "
-                       "le bouton \"Continuer\" ; sans quoi, la prochaine fois que vous demarrerez "
-                       "l'Amiga, le programme ne sera pas capable de trouver les fichiers et les "
-                       "répertoires nécessaires à son exécution.\n"))
+(set #assign_help (cat "YAM a besoin d'une assignation pour fonctionner correctement. "
+                       "Si cette assignation n'est pas présente, la prochaine fois "
+                       "que vous démarrerez l'Amiga, le programme ne sera pas capable "
+                       "de trouver les fichiers et les répertoires nécessaires "
+                       "à son exécution.\n"))
 (set #done_1   (cat "\nYAM a été installé avec succès.\n\n"
-                    "Cliquez sur l'icône de \"YAM\" dans le répertoire\n"))
+                    "Cliquez sur l'icône de « YAM » dans le répertoire\n"))
 (set #done_2        "\npour l'essayer.\n\nAmusez vous bien !!")
 )
 )
@@ -491,29 +519,55 @@
 (
 (set #def_cat_lang #def_lang_Slovensko)
 (set #def_doc_lang #def_doc_Slovensko)
-(set #wrongOS  "YAM za zagon potrebuje vsaj OS3.0\n")
-(set #wrongMUI "YAM za zagon potrebuje vsaj MUI3.8\n")
-(set #wrongCPU "YAM za zagon potrebuje vsaj CPE 68020\n")
+(set #wrongOS  "YAM za zagon potrebuje vsaj OS 3.0!\n")
+(set #wrongMOS "MorphOS nisem na¹el!\n")
+(set #wrongMUI "YAM za zagon potrebuje vsaj MUI 3.8!\n")
+(set #wrongCPU "YAM za zagon potrebuje vsaj CPE 68020!\n")
 (set #proc_type "Izberite, katero razlièico YAMa bi radi namestili:")
-(set #proc_help (cat "Tu lahko izberete, katera razlièica YAMa bo name¹èena "
+(set #proc_help (cat "Tu lahko izberete, katera razlièica YAM bo name¹èena "
                      "glede na tip procesorja, ki ga imate."))
 (set #proc_020 "Optimizirano za 68020/030")
 (set #proc_040 "Optimizirano za 68040")
 (set #proc_060 "Optimizirano za 68060")
-(set #YAM_dir  (cat "Izberite YAMov domaèi predal\n"
+(set #YAM_dir  (cat "Izberite prosim imenik za YAM\n"
                     "(Poseben predal NE bo ustvarjen!)"))
 (set #lang_catalog (cat "Kateri jezik kataloga ¾elite namestiti?\n"
                         "(Angle¹ki jezik je vgrajen)"))
-(set #lang_manual "Izberite jezik za AmigaGuide pomoè v programu")
-(set #icons_prompt "Katero grafiko ¾elite namestiti?\n")
-(set #assign_prompt (cat "V va¹ S:USER-STARTUP bi morala biti dodana dodelitev YAM:\n"
-                         "Se s tem strinjate?"))
-(set #assign_help (cat "Ko vas program Installer vpra¹a, èe ¾elite dodati dodelitev "
-                       "v va¹o datoteko S:user-startup, izberite gumb \"Naprej\"; v "
-                       "nasprotnem primeru program ne bo mogel najti potrebnih datotek "
-                       "in predalov, ko boste naslednjiè zagnali raèunalnik.\n"))
+(set #lang_manual "Izberite jezik za pomoè AmigaGuide v programu")
+(set #icons_prompt "Kateri nabor ikon ¾elite namestiti?\n")
+(set #charset_help (cat "YAM lahko pri branju in pisanju sporoèil uporablja "
+                        "tabele za pretvorbo znakov. Te tabele so mno¾ica datotek "
+                        "z golim besedilom, name¹èenih v \"YAM:Charsets/\", ki "
+                        "opisujejo, kako naj se preslika vsak posamezen znak "
+                        "pri branju in/ali pisanju sporoèil, naprimer za nadome¹èanje "
+                        "nagla¹enih samoglasnikov (ASCII8bit -> ASCII7bit), pretvarjanje "
+                        "nabora znakov ISO-Latin-2 v AmigaPL in tako naprej.\n\n"
+                        "Èe te funkcije ne potrebujete, morda ne ¾elite "
+                        "namestiti teh tabel in prihranili boste okrog 10 KB "
+                        "prostora na disku.\n"))
+(set #parser_help (cat "YAM 2.4+ ponuja mo¾nost samodejnega iskanja "
+                       "ustreznega nabora znakov za prikaz vsakega dela "
+                       "sporoèila pri branju, kar je ¹e posebej uporabno "
+                       "za uporabnike v de¾elah, kot je Rusija, kjer ni "
+                       "skupno sprejetega nabora znakov - pravzaprav "
+                       "trenutno ta funkcija podpira samo nabore znakov Win1250, "
+                       "DOS866 in KOI8 ter je zato ¹e posebej namenjena "
+                       "ruskim (ciriliènim) uporabnikom.\n\n"
+                       "Èe te funkcije ne potrebujete, morda ne ¾elite namestiti "
+                       "potrebnih èleniteljev in tako boste prihranili okrog 50 KB "
+                       "prostora na disku.\n"))
+(set #imagepool_prompt "Bri¹em \"libs:imagepool.library\"")
+(set #imagepool_help (cat "Razred Toolbar.mcc 15.8, ki je name¹èen s programom YAM, ne "
+                          "podpira veè knji¾nice imagepool.library. Èe je ne uporablja "
+                          "niè drugega, jo morda zdaj ¾elite izbrisati.\n"))
+(set #assign_prompt (cat "V va¹o datoteko \"S:USER-STARTUP\" mora biti dodana "
+                         "dodelitev \"YAM:\"\n"
+                         "Ali dovolite?"))
+(set #assign_help (cat "Èe ta dodelitev ni prisotna, program po naslednjem zagonu "
+                       "raèunalnika ne bo veè na¹el datotek in predalov, ki jih "
+                       "potrebuje za zagon.\n"))
 (set #done_1   (cat "\nYAM je bil uspe¹no name¹èen.\n\n"
-                    "Kliknite na ikono \"YAM\" v predalu\n"))
+                    "Dvakrat kliknite na ikono \"YAM\" v predalu\n"))
 (set #done_2        "\nin ga preizkusite.\n\nU¾ivajte...")
 )
 )
@@ -1078,83 +1132,13 @@
 
 (complete 80)
 
-(copylib (prompt "MUI - BetterString.mcc")
-   (source "/MUI/BetterString.mcc")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - BetterString.mcp")
-   (source "/MUI/BetterString.mcp")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - HotkeyString.mcc")
-   (source "/MUI/HotkeyString.mcc")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - NListtree.mcc")
-   (source "/MUI/NListtree.mcc")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - NListtree.mcp")
-   (source "/MUI/NListtree.mcp")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - NFloattext.mcc")
-   (source "/MUI/NFloattext.mcc")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - NList.mcc")
-   (source "/MUI/NList.mcc")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - NListview.mcc")
-   (source "/MUI/NListview.mcc")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - NListviews.mcp")
-   (source "/MUI/NListviews.mcp")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - TextEditor.mcc")
-   (source "/MUI/TextEditor.mcc")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - TextEditor.mcp")
-   (source "/MUI/TextEditor.mcp")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - Toolbar.mcc")
-   (source "/MUI/Toolbar.mcc")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
-)
-(copylib (prompt "MUI - Toolbar.mcp")
-   (source "/MUI/Toolbar.mcp")
-   (dest "MUI:Libs/MUI/")
-   (confirm 2)
-   (help @copylib-help)
+(foreach "/MUI/" "#?.mc?"
+   (copylib (prompt (cat "MUI - " @each-name))
+            (source (cat "/MUI/" @each-name))
+            (dest "MUI:Libs/MUI/")
+            (confirm 2)
+            (help @copylib-help)
+   )
 )
 
 (complete 90)
@@ -1164,6 +1148,18 @@
       (prompt #imagepool_prompt)
       (help #imagepool_help)
       (confirm)
+   )
+)
+
+(complete 95)
+
+(if (exists "ENV:YAM_TZ")
+   (
+      (delete "ENV:YAM_TZ")
+      (delete "ENVARC:YAM_TZ"
+         (prompt #yamtz_prompt)
+         (help #yamtz_help)
+      )
    )
 )
 
