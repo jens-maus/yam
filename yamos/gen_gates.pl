@@ -13,7 +13,10 @@ die "No source" if not $file=@ARGV[0];
 open(INP,"<$file") || die "Can't open \"".$file."\"\n";
 $source = <INP>;
 
-$source =~ s/\n(SAVEDS\s*(ASM)?\s*)(.*?)\s*\n{\s*\n(.*?)\n}\s*\n/cv_func($3,$4)/egs;
+# strip comments
+$source =~ s%/\*.*?\*/%%sg;
+
+$source =~ s/\n([^\n]*?)SAVEDS\s*(ASM)*\s*([^\n]*?)\s*\n{\s*\n(.*?)\n}\s*\n/cv_func($1.$3,$4)/egs;
 
 close <INP>;
 
@@ -40,7 +43,7 @@ sub cv_func {
     }
 
     $args = "";
-    while ($params =~ /^\s*REG\((\w\w)\)\s*(.*?)\s*(\w+)(,(.*)$|$)/) {
+    while ($params =~ /^\s*REG\((\w\w),\s*(.*?)\s*(\w+)\)(,(.*)$|$)/) {
 	$reg = $1;
 	$type = $2;
 	$param = $3;
@@ -54,7 +57,7 @@ sub cv_func {
 	}
     }
 
-    $decl =~ s/REG\(\w\w\)\s*//g;
+    $decl =~ s/REG\(\w\w,(.*?)\)\s*/$1/g;
 
     print "$decl;\n"
 	   ."static $ret_type Trampoline_$name(void)\n{\n"

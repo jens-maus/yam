@@ -45,8 +45,8 @@
 #include <ppcinline/socket.h>
 #else
 #include <proto/socket.h>
-#endif
 #include <proto/locale.h>
+#endif
 #include <proto/muimaster.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -64,7 +64,6 @@
 #include <proto/miami.h>
 #include <proto/genesis.h>
 #include <proto/cmanager.h>
-#include <clib/locale_protos.h>
 #include <clib/macros.h>
 #include <NewReadArgs.h>
 #include <compiler.h>
@@ -79,8 +78,47 @@
 #define _OSERR 		IoErr()
 #define CreatePort(a,b)	CreateMsgPort()
 #define DeletePort(a)	DeleteMsgPort(a)
-#define ABS(x) 		((x)<0?-(x):(x))
-#define MAX(x,y)        ((x)<(y)?(y):(x))
+#define KPrintF dprintf
+
+/*MorphOS standard netincludes don't have these*/
+
+struct in_addr {
+  u_long s_addr;
+};
+
+struct sockaddr_in {
+  u_char sin_len;
+  u_char sin_family;
+  u_short sin_port;
+  struct in_addr sin_addr;
+  char sin_zero[8];
+};
+
+ struct hostent {
+  char *h_name;
+  char **h_aliases;
+  int h_addrtype;
+  int h_length;
+  char **h_addr_list;
+  #define h_addr h_addr_list[0]
+
+  #define Shutdown shutdown
+  #define GetHostByName gethostbyname
+  #define Connect connect
+  #define Recv recv
+  #define Send send
+  #define Socket socket
+
+  #define SMTP_NO_SOCKET -1
+
+  #define SOCK_STREAM 1
+  #define AF_INET 2
+  #define EINPROGRESS 36
+
+};
+
+#else
+#include <clib/locale_protos.h>
 #endif
 
 #if (defined DEBUG) || (defined _MGST)

@@ -2923,8 +2923,22 @@ char *AllocReqText(char *s)
 }
 ///
 
+/// putCharFunc
+//  Hook used by FormatString()
+void SAVEDS ASM putCharFunc(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale))
+{
+	char **tmp;
+
+	((char *)hook->h_Data)[0] = c;
+	tmp = (char **)(&hook->h_Data);
+	(*tmp)++;
+}
+MakeHook(putCharHook, putCharFunc);
+///
+
 /// SPrintF
 //  sprintf() replacement with Locale support
+
 void SPrintF(char *outstr, char *fmtstr, ...)
 {
 	struct Hook hook;
@@ -2944,7 +2958,7 @@ void SPrintF(char *outstr, char *fmtstr, ...)
 	va_end(ap);
 #endif
 
-	InitHook(&hook, putChar, outstr);
+	InitHook(&hook, putCharFunc, outstr);
 
 #ifdef __PPC__
 	FormatString(G->Locale, fmtstr, &arg[0], &hook);
@@ -2952,15 +2966,3 @@ void SPrintF(char *outstr, char *fmtstr, ...)
 	FormatString(G->Locale, fmtstr, &fmtstr+1, &hook);
 #endif
 }
-///
-/// putChar
-//  Hook used by FormatString()
-void SAVEDS ASM putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale))
-{
-	char **tmp;
-
-	((char *)hook->h_Data)[0] = c;
-	tmp = (char **)(&hook->h_Data);
-	(*tmp)++;
-}
-///

@@ -30,6 +30,15 @@
   #define REGARGS /**/
   #define STDARGS /**/
   #define STACKEXT /**/
+#elif defined(__MORPHOS__)
+  #define REG(reg,arg) arg
+  #define ASM /**/
+  #define SAVEDS /**/
+  #define STACKEXT /**/
+  #define STDARGS /**/
+  #define __stdargs
+  #define __regargs
+  #define __near
 #elif defined(__GNUC__)
   #define REG(reg,arg) arg __asm(#reg)
   #define __near
@@ -46,7 +55,6 @@
   #define STACKEXT /**/
   #define REG(reg,arg) arg
 #endif
-
 /*
 ** then "common" ones
 */

@@ -144,39 +144,30 @@ static void  Trampoline_AB_Close(void)
 }
 const struct EmulLibEntry Gate_AB_Close = { TRAP_LIBNR, 0, (void(*)())Trampoline_AB_Close };
 
-struct ABEntry;
-struct ABEntry *AB_LV_ConFunc(struct ABEntry *addr);
-static struct ABEntry * Trampoline_AB_LV_ConFunc(void)
+struct MUIP_NListtree_ConstructMessage;
+struct ABEntry * AB_LV_ConFunc( struct MUIP_NListtree_ConstructMessage *msg);
+static struct ABEntry *  Trampoline_AB_LV_ConFunc(void)
 {
-   return AB_LV_ConFunc((struct ABEntry *)REG_A1);
+   return AB_LV_ConFunc((struct MUIP_NListtree_ConstructMessage *)REG_A1);
 }
 const struct EmulLibEntry Gate_AB_LV_ConFunc = { TRAP_LIB, 0, (void(*)())Trampoline_AB_LV_ConFunc };
 
-struct ABEntry;
-long AB_LV_DesFunc(struct ABEntry *entry);
+struct MUIP_NListtree_DestructMessage;
+long AB_LV_DesFunc( struct MUIP_NListtree_DestructMessage *msg);
 static long  Trampoline_AB_LV_DesFunc(void)
 {
-   return AB_LV_DesFunc((struct ABEntry *)REG_A1);
+   return AB_LV_DesFunc((struct MUIP_NListtree_DestructMessage *)REG_A1);
 }
 const struct EmulLibEntry Gate_AB_LV_DesFunc = { TRAP_LIB, 0, (void(*)())Trampoline_AB_LV_DesFunc };
 
 struct Hook;
-struct MUIS_Listtree_TreeNode;
-long AB_LV_DspFunc(struct Hook *hook, char **array, struct MUIS_Listtree_TreeNode *node);
+struct MUIP_NListtree_DisplayMessage;
+long AB_LV_DspFunc( struct Hook *hook,  struct MUIP_NListtree_DisplayMessage *msg);
 static long  Trampoline_AB_LV_DspFunc(void)
 {
-   return AB_LV_DspFunc((struct Hook *)REG_A0, (char **)REG_A2, (struct MUIS_Listtree_TreeNode *)REG_A1);
+   return AB_LV_DspFunc((struct Hook *)REG_A0, (struct MUIP_NListtree_DisplayMessage *)REG_A1);
 }
 const struct EmulLibEntry Gate_AB_LV_DspFunc = { TRAP_LIB, 0, (void(*)())Trampoline_AB_LV_DspFunc };
-
-struct MUIS_Listtree_TreeNode;
-struct MUIS_Listtree_TreeNode;
-long AB_LV_CmpFunc(struct MUIS_Listtree_TreeNode *entry1, struct MUIS_Listtree_TreeNode *entry2);
-static long  Trampoline_AB_LV_CmpFunc(void)
-{
-   return AB_LV_CmpFunc((struct MUIS_Listtree_TreeNode *)REG_A2, (struct MUIS_Listtree_TreeNode *)REG_A1);
-}
-const struct EmulLibEntry Gate_AB_LV_CmpFunc = { TRAP_LIB, 0, (void(*)())Trampoline_AB_LV_CmpFunc };
 
 struct IClass;
 ULONG BC_Dispatcher(struct IClass *cl, Object *obj, Msg msg);
@@ -459,8 +450,8 @@ static long  Trampoline_CO_LV_TDspFunc(void)
 const struct EmulLibEntry Gate_CO_LV_TDspFunc = { TRAP_LIB, 0, (void(*)())Trampoline_CO_LV_TDspFunc };
 
 struct TranslationTable;
-struct TranslationTable *CO_LV_TConFunc(struct TranslationTable *tt);
-static struct TranslationTable * Trampoline_CO_LV_TConFunc(void)
+struct TranslationTable * CO_LV_TConFunc(struct TranslationTable *tt);
+static struct TranslationTable *  Trampoline_CO_LV_TConFunc(void)
 {
    return CO_LV_TConFunc((struct TranslationTable *)REG_A1);
 }
@@ -545,8 +536,8 @@ static void  Trampoline_DI_OpenFunc(void)
 const struct EmulLibEntry Gate_DI_OpenFunc = { TRAP_LIBNR, 0, (void(*)())Trampoline_DI_OpenFunc };
 
 struct Dict;
-struct Dict *DI_LV_ConFunc(struct Dict *dict);
-static struct Dict * Trampoline_DI_LV_ConFunc(void)
+struct Dict * DI_LV_ConFunc(struct Dict *dict);
+static struct Dict *  Trampoline_DI_LV_ConFunc(void)
 {
    return DI_LV_ConFunc((struct Dict *)REG_A1);
 }
@@ -967,8 +958,8 @@ static void  Trampoline_PO_Window(void)
 const struct EmulLibEntry Gate_PO_Window = { TRAP_LIBNR, 0, (void(*)())Trampoline_PO_Window };
 
 struct Folder;
-struct Folder *MA_LV_FConFunc(struct Folder *fo);
-static struct Folder * Trampoline_MA_LV_FConFunc(void)
+struct Folder * MA_LV_FConFunc(struct Folder *fo);
+static struct Folder *  Trampoline_MA_LV_FConFunc(void)
 {
    return MA_LV_FConFunc((struct Folder *)REG_A1);
 }
@@ -1118,6 +1109,13 @@ static void  Trampoline_RE_GetAddressFunc(void)
    RE_GetAddressFunc((int *)REG_A1);
 }
 const struct EmulLibEntry Gate_RE_GetAddressFunc = { TRAP_LIBNR, 0, (void(*)())Trampoline_RE_GetAddressFunc };
+
+void RE_SetUnreadFunc(int *arg);
+static void  Trampoline_RE_SetUnreadFunc(void)
+{
+   RE_SetUnreadFunc((int *)REG_A1);
+}
+const struct EmulLibEntry Gate_RE_SetUnreadFunc = { TRAP_LIBNR, 0, (void(*)())Trampoline_RE_SetUnreadFunc };
 
 void RE_ChangeSubjectFunc(int *arg);
 static void  Trampoline_RE_ChangeSubjectFunc(void)
@@ -1285,8 +1283,8 @@ static void  Trampoline_US_PutUSEntryFunc(void)
 const struct EmulLibEntry Gate_US_PutUSEntryFunc = { TRAP_LIBNR, 0, (void(*)())Trampoline_US_PutUSEntryFunc };
 
 struct User;
-struct User *US_LV_ConFunc(struct User *user);
-static struct User * Trampoline_US_LV_ConFunc(void)
+struct User * US_LV_ConFunc(struct User *user);
+static struct User *  Trampoline_US_LV_ConFunc(void)
 {
    return US_LV_ConFunc((struct User *)REG_A1);
 }
@@ -1327,6 +1325,15 @@ static void  Trampoline_DisposeModuleFunc(void)
    DisposeModuleFunc((void **)REG_A1);
 }
 const struct EmulLibEntry Gate_DisposeModuleFunc = { TRAP_LIBNR, 0, (void(*)())Trampoline_DisposeModuleFunc };
+
+struct Hook;
+struct Locale;
+void putCharFunc( struct Hook *hook,  char c,  struct Locale *locale);
+static void  Trampoline_putCharFunc(void)
+{
+   putCharFunc((struct Hook *)REG_A0, (char)REG_A1, (struct Locale *)REG_A2);
+}
+const struct EmulLibEntry Gate_putCharFunc = { TRAP_LIBNR, 0, (void(*)())Trampoline_putCharFunc };
 
 void WR_VerifyAutoFunc(int *arg);
 static void  Trampoline_WR_VerifyAutoFunc(void)
@@ -1455,8 +1462,8 @@ static LONG  Trampoline_WR_AppFunc(void)
 const struct EmulLibEntry Gate_WR_AppFunc = { TRAP_LIB, 0, (void(*)())Trampoline_WR_AppFunc };
 
 struct Attach;
-struct Attach *WR_LV_ConFunc(struct Attach *attach);
-static struct Attach * Trampoline_WR_LV_ConFunc(void)
+struct Attach * WR_LV_ConFunc(struct Attach *attach);
+static struct Attach *  Trampoline_WR_LV_ConFunc(void)
 {
    return WR_LV_ConFunc((struct Attach *)REG_A1);
 }

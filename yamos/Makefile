@@ -1,11 +1,11 @@
 
 OBJS= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
       YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o \
-      YAM_UT.o YAM_WR.o YAM_loc.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o
+      YAM_UT.o YAM_WR.o YAM_loc.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o hmac_md5.o
 
 EXTRA_OBJS= YAM_extra.o YAM_gates.o
 YAM: $(OBJS) $(EXTRA_OBJS)
-	gcc -noixemul -o YAM $(OBJS) $(EXTRA_OBJS) gg:lib/NewReadArgs.o -lmui -lxpkmaster -lopenurl -lamiga
+	gcc -noixemul -o YAM $(OBJS) $(EXTRA_OBJS) gg:lib/NewReadArgs.o -lxpkmaster -lmui -lopenurl -lamiga
 
 starter: starter.c
 	m68k-amigaos-gcc -o starter -O2 -nostlib -noixemul -DNAME="\"YAM\"" starter.c
@@ -42,8 +42,9 @@ YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_loc.h
 YAM_extra.o: YAM_extra.c YAM.h YAM_loc.h
 YAM_gates.o: YAM_gates.c
+hmac_md5.o: hmac_md5.c
 
-YAM_loc.c: YAM.cd
+YAM_loc.h: YAM.cd
 	flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
 
 gates:
