@@ -94,7 +94,7 @@ APTR AB_GotoEntry(char *alias)
 
    if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, alias, 0, TAG_DONE))
    {
-      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, 0, TAG_DONE);
+      DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
       set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active, tn);
    }
 
@@ -809,7 +809,7 @@ BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, e
                if (mode == ABF_USER)
                {
                   char buf[SIZE_LARGE];
-                  DoMethod(lv, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, 0, TAG_DONE);
+                  DoMethod(lv, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
                   set(lv, MUIA_NListtree_Active, tn);
                   sprintf(buf, GetStr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
                   switch (MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FoundEntryGads), buf))

@@ -1,5 +1,7 @@
 2002-04-14  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed some problems with setting a folder active without opening the
+      parent node in the hierarchical system. This kills bug #528080
     * fixed behaviour of LISTSELECT arexx command to really select/deselect all
       messages as described in the documentation. Fixes bug #508202
     * fixed some possible bugs in the arexx interface were it could happen that

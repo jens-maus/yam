@@ -141,8 +141,13 @@ HOOKPROTONHNO(RE_Follow, void, int *arg)
    {
       struct MailInfo *mi;
       int pos;
-      FO_GetFolderByName(fmail->Folder->Name, &pos);
-      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, pos);
+      struct Folder *folder = FO_GetFolderByName(fmail->Folder->Name, &pos);
+
+      if(!folder) return;
+
+      // lets make this folder active
+      FO_SetCurrentFolder(folder);
+
       mi = GetMailInfo(fmail);
       set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
       RE_ReadMessage(winnum, fmail);

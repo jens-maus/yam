@@ -131,6 +131,9 @@ BOOL FO_SetCurrentFolder(struct Folder *fo)
 
       if(tn->tn_User == fo)
       {
+         // make sure the tree is opened to display it
+         DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
+
          nnset(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
          break;
       }
