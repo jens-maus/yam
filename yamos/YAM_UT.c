@@ -3459,6 +3459,8 @@ int PGPCommand(char *progname, char *options, int flags)
    int error = -1;
    char command[SIZE_LARGE];
 
+   DB(kprintf("PGPCommand: [%s] [%s] - %ld\n", progname, options, flags);)
+
    if ((fhi = Open("NIL:", MODE_OLDFILE)))
    {
       if ((fho = Open("NIL:", MODE_NEWFILE)))
