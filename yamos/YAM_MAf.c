@@ -870,11 +870,14 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                if (!stricmp(p, "high")) mail->Importance = 1;
                else if(!stricmp(p, "low")) mail->Importance = -1;
             }
-            else if (!stricmp(field, "priority") && !mail->Importance)
+            else if (!stricmp(field, "priority"))
             {
-               p = Trim(value);
-               if (!stricmp(p, "urgent")) mail->Importance = 1;
-               else if(!stricmp(p, "non-urgent")) mail->Importance = -1;
+               if(!mail->Importance)
+               {
+                  p = Trim(value);
+                  if(!stricmp(p, "urgent")) mail->Importance = 1;
+                  else if(!stricmp(p, "non-urgent")) mail->Importance = -1;
+               }
             }
             else if (!stricmp(field, "content-type"))
             {
@@ -889,22 +892,25 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                SET_FLAG(mail->Flags, MFLAG_SENDERINFO);
                if (deep) email.SenderInfo = StrBufCpy(email.SenderInfo, value);
             }
-            else if(deep && !stricmp(field, "x-yam-options"))
+            else if(deep) // and if we end up here we check if we really have to go further
             {
-              enum Security sec;
-
-              if (strstr(value, "delsent")) email.DelSend = TRUE;
-              if ((p = strstr(value, "sigfile"))) email.Signature = p[7]-'0'+1;
-              for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
+              if(!stricmp(field, "x-yam-options"))
               {
-                if(strstr(value, SecCodes[sec]))
-                email.Security = sec;
+                enum Security sec;
+
+                if (strstr(value, "delsent")) email.DelSend = TRUE;
+                if ((p = strstr(value, "sigfile"))) email.Signature = p[7]-'0'+1;
+                for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
+                {
+                  if(strstr(value, SecCodes[sec]))
+                  email.Security = sec;
+                }
               }
-            }
-            else if(deep && !strnicmp(field, "x-yam-header-", 13))
-            {
-              email.Headers = StrBufCat(StrBufCat(email.Headers, &field[13]), ":");
-              email.Headers = StrBufCat(StrBufCat(email.Headers, value), "\\n");
+              else if(!strnicmp(field, "x-yam-header-", 13))
+              {
+                email.Headers = StrBufCat(StrBufCat(email.Headers, &field[13]), ":");
+                email.Headers = StrBufCat(StrBufCat(email.Headers, value), "\\n");
+              }
             }
          }
       }
