@@ -32,6 +32,12 @@
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
+/*
+** the next include is required to make GCC working:
+** NListview_mcc.h uses <MUI/NList_mcc.h>
+** maybe change it there?
+*/
+#include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <proto/exec.h>
 #include <proto/muimaster.h>
