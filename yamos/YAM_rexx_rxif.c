@@ -1115,7 +1115,6 @@ void rx_folderinfo( struct RexxHost *host, struct rxd_folderinfo **rxd, long act
    struct rxd_folderinfo *rd = *rxd;
    struct Folder *fo;
    static long num;
-   static long type;
    switch( action )
    {
       case RXIF_INIT:
@@ -1125,8 +1124,8 @@ void rx_folderinfo( struct RexxHost *host, struct rxd_folderinfo **rxd, long act
       case RXIF_ACTION:
          fo = rd->arg.folder ? FO_GetFolderRexx(rd->arg.folder, NULL) : FO_GetCurrentFolder();
 
-         // this command should only act on a folder folder and
-         // also only on a non-group
+         // this command should only act on a folder and
+         // only on a non-group
          if (fo && fo->Type != FT_GROUP)
          {
             num = FO_GetFolderPosition(fo, FALSE);
@@ -1137,17 +1136,7 @@ void rx_folderinfo( struct RexxHost *host, struct rxd_folderinfo **rxd, long act
             rd->res.new = (long *)&fo->New;
             rd->res.unread = (long *)&fo->Unread;
             rd->res.size = (long *)&fo->Size;
-
-            // per definition of the .guide arexx docu.
-            if(fo->Type == FT_CUSTOM)           type = 0;
-            else if(fo->Type == FT_INCOMING)    type = 1;
-            else if(fo->Type == FT_OUTGOING)    type = 2;
-            else if(fo->Type == FT_SENT)        type = 3;
-            else if(fo->Type == FT_DELETED)     type = 4;
-            else if(fo->Type == FT_CUSTOMMIXED) type = 5;
-            else if(fo->Type == FT_CUSTOMSENT)  type = 6;
-
-            rd->res.type = &type;
+            rd->res.type = (long *)&fo->Type;
          }
          else rd->rc = RETURN_ERROR;
          break;

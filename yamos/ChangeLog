@@ -7,6 +7,10 @@ $Source$
 
 2003-05-21  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_rexx_rxif.c: fixed bug where the FOLDERINFO arexx command
+      returned the wrong identifier for a "sent and received" folder
+      type. Now FOLDERINFO will return the exact same id value for each
+      folder like it is saved in the .fconfig file.
     * YAM_MA.c, YAM_RE.c, YAM_main.h, YAM.cd: added a warning requester to
       the attachment crop routines because otherwise people could loose
       attachments if they used that option on accident.
