@@ -1955,12 +1955,12 @@ MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 //  Lists keys of public PGP keyring in a popup window
 HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
 {  
-   BOOL secret;
+   APTR secret;
    char buf[SIZE_LARGE], *str, p;
    int retc, keys = 0;
    FILE *fp;
 
-   get(pop, MUIA_UserData, &str); secret = (BOOL)(str != NULL);  // MUIA_UserData is actually BOOL already, but 32bit!
+   get(pop, MUIA_UserData, &str); secret = str;
    if (G->PGPVersion == 5)
       retc = PGPCommand("pgpk", "-l +language=us", KEEPLOG);
    else
@@ -2237,9 +2237,9 @@ void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int 
 ///
 /// DoSuperNew
 //  Calls parent NEW method within a subclass
-#ifdef __MORPHOS__
 ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
 {
+#ifdef __MORPHOS__
    ULONG tags[4 * 2];
    va_list args;
    // SVR4 varargs to Tags hack.
@@ -2250,13 +2250,10 @@ ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
    tags[7] = (ULONG)args->overflow_arg_area;
    va_end(args);
    return DoSuperMethod(cl, obj, OM_NEW, tags, NULL);
-}
 #else
-ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
-{
    return DoSuperMethod(cl, obj, OM_NEW, &tag1, NULL);
-}
 #endif
+}
 ///
 /// GetMUI
 //  Gets an attribute value from a MUI object
@@ -2949,9 +2946,9 @@ BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
             {
                int source, dest;
                p = buf;
-               if (*p == '$') stch_i(&p[1], &source); else source = (int)*p;
+               if (*p == '$') sscanf(&p[1], "%x", &source); else source = (int)*p;
                while (*p++ != '=');
-               if (*p == '$') stch_i(&p[1], &dest); else dest = (int)*p;
+               if (*p == '$') sscanf(&p[1], "%x", &dest); else dest = (int)*p;
                if (source >= 0 && source <= 0xFF && dest >= 0 && dest <= 0xFF) (*tt)->Table[source] = (UBYTE)dest;
             }
          fclose(fp);
