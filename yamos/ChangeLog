@@ -368,7 +368,7 @@
       HOOKPROTO definitions directly.
     * moved wbpath.c into YAM_UT.h
     * the header files are still not complete, but much more :-)
-    * compiling with SAS will get faster gaian, when old.h is away. Maybe also the
+    * compiling with SAS will get faster again, when old.h is away. Maybe also the
       optimizing problem will disappear then?
 
 2001-05-20  Dirk Stöcker <stoecker@epost.de>
@@ -603,3 +603,17 @@
       of YAM (without enforcer hits).
 
     * Corrected 'Check version' date.
+
+2001-06-16  Gunther Nikl <gni@gecko.de>
+
+    * C_c.sd: changed GetStripStr() to work with older versions of flexcat
+    * YAM_CO.c: includes "extra.h" to get prototypes for non SAS/C
+    * YAM_MA.c: fixed potential enforcer hits dueto FO_GetCurrentFolder() returning NULL
+      (NOTE: There are more cases which need fixing!)
+    * YAM_UT.c, YAM_WR.c: fixed warnings
+    * YAM_WR.c: changed to enable optimizations for SAS/C
+    * YAM_global.c: added additional processor checks for GCC and VBCC
+    * YAM_rexx_rxcl.c: swapped include order of YAM_#?.h to get rid of warnings
+    * extrasrc/dice.c: added popupmenu functions and cleanup
+    * includes/extra.h: removed isascii define
+    * YAM_WR.c: added isascii define
