@@ -563,12 +563,7 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
 	GETDATA;
 	struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 	struct Mail *mail = rmData->mail;
-	struct Mail *mlist[3]; // some fake mail list
 	int flags = 0;
-
-	mlist[0] = (struct Mail *)1;
-	mlist[1] = NULL;
-	mlist[2] = mail;
 
 	// check for qualifier keys
 	if(msg->mode == NEW_FORWARD)
@@ -594,6 +589,12 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
 	// then create a new mail depending on the current mode
 	if(MailExists(mail, NULL))
 	{
+		// create some fake mail list
+		struct Mail *mlist[3];
+		mlist[0] = (struct Mail*)1;
+		mlist[1] = NULL;
+		mlist[2] = mail;
+
 		switch(msg->mode)
 		{
 			case NEW_NEW:     MA_NewNew(mail, flags); 			break;
