@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-05-04  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c: fixed flaw in temporary filename specification for
+      a new write window. Multiple instances of YAM used the same
+      tempfile names for each write window and therefore interfered
+      each other.
+    * YAM_UT.c: fixed flaw within temporary file generation where we
+      didn`t take in consideration that two YAM instances could
+      use the same temporary files and therefore cause some trouble.
+
 2003-04-29  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_WR.c: fixed bug #729651 where YAM tried to delete a .autosave*
