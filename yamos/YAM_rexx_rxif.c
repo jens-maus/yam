@@ -1568,8 +1568,12 @@ void rx_newmailfile( struct RexxHost *host, struct rxd_newmailfile **rxd, long a
       case RXIF_ACTION:
          if (rd->rd.arg.folder) folder = FO_GetFolderRexx(rd->rd.arg.folder, NULL);
          else folder = FO_GetCurrentFolder();
-         if (folder) strcpy(rd->rd.res.filename = rd->result, MA_NewMailFile(folder, NULL, 0));
+         if (folder && folder->Type != FT_GROUP)
+         {
+           strcpy(rd->rd.res.filename = rd->result, MA_NewMailFile(folder, NULL, 0));
+         }
          else rd->rd.rc = RETURN_ERROR;
+
          break;
       
       case RXIF_FREE:
