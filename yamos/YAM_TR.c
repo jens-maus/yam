@@ -1135,7 +1135,7 @@ void TR_TransStat_Init(struct TransStat *ts)
 void TR_TransStat_Start(struct TransStat *ts)
 {
    ts->Msgs_Done = ts->Size_Done = 0;
-   SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%lD", ts->Msgs_Tot);
+   SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%ld", ts->Msgs_Tot);
    set(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel);
    set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Max, ts->Msgs_Tot);
    ts->Clock_Start = TR_GetSeconds();

@@ -3310,15 +3310,15 @@ MSG_TR_SendHello (//)
 Sending 'Hello'...
 ;
 MSG_TR_MessageGauge (//)
-Message %s of %lD
+Message %s of %ld
 ; COUNT, COUNT
 ;
 MSG_TR_SizeGauge (//)
-%%lD of %lD bytes
+%%ld of %ld bytes
 ; SIZE, SIZE
 ;
 MSG_TR_TransferStats (//)
-%lD of %lD kb transmitted at %lD cps\nRemaining time: %lD min %ld sec
+%lD of %lD kB transmitted at %lD cps\nRemaining time: %lD min %ld sec
 ; SIZE, SIZE, SPEED, MINS, SECS
 ;
 MSG_TR_Exporting (//)
@@ -3401,7 +3401,7 @@ MSG_TR_Abort (//)
 _Abort
 ;
 MSG_TR_TransferStats0 (//)
-  0 of   0 kb transmitted at    0 cps\nRemaining time:  0 min  0 sec
+  0 of   0 kB transmitted at    0 cps\nRemaining time:  0 min  0 sec
 ;
 MSG_TR_BytesGauge0 (//)
    0 of    0 bytes
@@ -4233,3 +4233,4 @@ Pa_ssword
 ;
 MSG_CO_Del (//)
 Delete
+;
