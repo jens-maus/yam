@@ -468,6 +468,10 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    struct SearchGroup *gdata = &gui->GR_SEARCH;
    struct Search search;
 
+   // by default we don`t dispose on end
+   G->FI->DisposeOnEnd = FALSE;
+   G->FI->SearchActive = TRUE;
+
    set(gui->WI, MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_None);
    set(gui->BT_SELECT, MUIA_Disabled, TRUE);
    set(gui->BT_READ, MUIA_Disabled, TRUE);
@@ -499,9 +503,12 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       pg < 2 ? GetMUICheck(gdata->CH_SUBSTR[pg]) : (pg == 4 ? TRUE : FALSE),
       match, field);
    SPrintF(gauge, GetStr(MSG_FI_GaugeText), totmsg);
-   set(ga, MUIA_Gauge_InfoText, gauge);
-   set(ga, MUIA_Gauge_Max, totmsg);
-   set(ga, MUIA_Gauge_Current, 0);
+
+   SetAttrs(ga, MUIA_Gauge_InfoText, gauge,
+                MUIA_Gauge_Max,      totmsg,
+                MUIA_Gauge_Current,  0,
+                TAG_DONE);
+
    set(gui->GR_PAGE, MUIA_Group_ActivePage, 1);
    G->FI->Abort = FALSE;
    for (i = 0; i < sfonum && !G->FI->Abort; i++)
@@ -522,6 +529,12 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    set(gui->GR_PAGE, MUIA_Group_ActivePage, 0);
    set(gui->BT_SELECT, MUIA_Disabled, !fndmsg);
    set(gui->BT_READ, MUIA_Disabled, !fndmsg);
+
+   G->FI->SearchActive = FALSE;
+
+   // if the closeHook has set the DisposeOnEnd flag we have to dispose
+   // our object now.
+   if(G->FI->DisposeOnEnd) DisposeModulePush(&G->FI);
 }
 MakeStaticHook(FI_SearchHook,FI_SearchFunc);
 
@@ -888,7 +901,18 @@ MakeStaticHook(FI_SelectHook, FI_SelectFunc);
 //  Closes find window
 HOOKPROTONHNONP(FI_Close, void)
 {
-   DisposeModulePush(&G->FI);
+   if(!G->FI->SearchActive)
+   {
+     DisposeModulePush(&G->FI);
+   }
+   else
+   {
+     // set the abort flag so that a running search will be stopped.
+     G->FI->Abort = TRUE;
+     G->FI->DisposeOnEnd = TRUE;
+
+     set(G->FI->GUI.WI, MUIA_Window_Open, FALSE);
+   }
 }
 MakeStaticHook(FI_CloseHook, FI_Close);
 ///

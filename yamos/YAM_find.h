@@ -66,7 +66,9 @@ struct FI_GUIData
 struct FI_ClassData  /* find window */
 {
    struct FI_GUIData GUI;
-   long              Abort;
+   BOOL              Abort;
+   BOOL              SearchActive;
+   BOOL              DisposeOnEnd;
 };
 
 enum FastSearch { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };

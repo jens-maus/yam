@@ -7,6 +7,9 @@ $Source$
 
 2003-03-16  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_FI.c: fixed bug where a CloseRequest to a find window caused
+      some enforcer hits if a search was actually running in that
+      particular find window.
     * YAM_WR.c: removed the GroupFrame from the bouncing request window
       because it is not needed.
     * YAM_UT.c: omit the MUIA_Window_ID for the Attachment requester or
