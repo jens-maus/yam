@@ -9,6 +9,10 @@
 #include <inline/genesis.h>
 #endif /* __GNUC__ */
 
+#ifdef __VBCC__
+#include <inline/genesis_protos.h>
+#endif /* __VBCC__ */
+
 #if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
 #include <pragmas/genesis_pragmas.h>
 #endif /* __SASC */

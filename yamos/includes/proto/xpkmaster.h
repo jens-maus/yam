@@ -10,6 +10,8 @@
 
 #ifdef __GNUC__
   #include <inline/xpkmaster.h>
+#elif defined(__VBCC__)
+  #include <inline/xpkmaster_protos.h>
 #else
   #include <pragma/xpkmaster_lib.h>
 #endif

@@ -9,6 +9,10 @@
 #include <inline/socket.h>
 #endif /* __GNUC__ */
 
+#ifdef __VBCC__
+#include <inline/socket_protos.h>
+#endif /* __VBCC__ */
+
 #if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
 #include <pragmas/socket_pragmas.h>
 #endif
