@@ -1848,7 +1848,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
          if(tt)
          {
             long t = size;
-            char *p = buf;
+            unsigned char *p = buf;
 
             // iterate through the buffer and change the chars accordingly.
             for(;size; size--, p++) *p = tt->Table[*p];

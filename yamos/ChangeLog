@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-10  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug where a missing "unsigned" definition caused
+      the automatic display charset translation to fail. Now all
+      charset converters should work as expected again.
+
 2003-03-09  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/Addrmatchlist.c: fixed bug where multiple recipientstrings
