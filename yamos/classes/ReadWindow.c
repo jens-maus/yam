@@ -301,7 +301,7 @@ OVERLOAD(OM_NEW)
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_PRINT,		obj, 1, MUIM_ReadWindow_PrintMailRequest);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SAVE,			obj, 1, MUIM_ReadWindow_SaveMailRequest);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_DISPLAY,	obj, 1, MUIM_ReadWindow_DisplayMailRequest);
-		DoMethod(obj,	MUIM_Notify, MUIA_Window_MenuAction, RMEN_DETACH,		obj, 1, MUIM_ReadWindow_SaveAttachmentsRequest);
+		DoMethod(obj,	MUIM_Notify, MUIA_Window_MenuAction, RMEN_DETACH,		data->readMailGroup, 1, MUIM_ReadMailGroup_SaveAllAttachments);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_CROP,			obj, 1, MUIM_ReadWindow_CropAttachmentsRequest);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_NEW,			obj, 3,	MUIM_ReadWindow_NewMail, NEW_NEW, 0);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_REPLY,		obj, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, 0);
@@ -427,7 +427,7 @@ DECLARE(ReadMail) // struct Mail *mail
 
 	// now we read in the mail in our read mail group
 	if(DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail,
-																	 initialCall == FALSE ? MUIF_ReadMailGroup_ReadMail_StatusChangeDelay : 0))
+																	 initialCall == FALSE ? MUIF_ReadMailGroup_ReadMail_StatusChangeDelay : MUIF_NONE))
 	{
 		struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
@@ -519,10 +519,10 @@ DECLARE(UpdateStatusGroup)
 	set(data->statusGroups[0], MUIA_Group_ActivePage, activatepage);
 
 	// Now we check for the other statuses of the mail
-	if(isCryptedMail(mail))        activatepage = 1;
-	else if(isSignedMail(mail))    activatepage = 2;
-	else if(isReportMail(mail))    activatepage = 3;
-	else if(isMultiPartMail(mail)) activatepage = 4;
+	if(isMP_CryptedMail(mail))      activatepage = 1;
+	else if(isMP_SignedMail(mail))  activatepage = 2;
+	else if(isMP_ReportMail(mail))  activatepage = 3;
+	else if(isMP_MixedMail(mail)) 	activatepage = 4;
 	else activatepage = 0;
 	set(data->statusGroups[1], MUIA_Group_ActivePage, activatepage);
 
@@ -737,9 +737,6 @@ DECLARE(PrintMailRequest)
 													 GetStr(MSG_RE_PrintGad),
 													 GetStr(MSG_Cancel), ATTREQ_PRINT|ATTREQ_MULTI, rmData)))
 	{
-		if(C->PrinterCheck && !CheckPrinter())
-			return 0;
-
 		BusyText(GetStr(MSG_BusyDecPrinting), "");
 
 		for(; part; part = part->NextSelected)
@@ -866,28 +863,6 @@ DECLARE(DisplayMailRequest)
 		}
 		
 		BusyEnd();
-	}
-
-	return 0;
-}
-
-///
-/// DECLARE(SaveAttachmentsRequest)
-//  Asks user for a directory and saves all attachments there
-DECLARE(SaveAttachmentsRequest)
-{
-	GETDATA;
-	struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
-	struct Part *part = rmData->firstPart->Next;
-
-	if(part && part->Next)
-	{
-		if(ReqFile(ASL_DETACH, obj, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
-		{
-			BusyText(GetStr(MSG_BusyDecSaving), "");
-			RE_SaveAll(rmData, G->ASLReq[ASL_DETACH]->fr_Drawer);
-      BusyEnd();
-		}
 	}
 
 	return 0;

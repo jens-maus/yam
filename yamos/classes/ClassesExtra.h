@@ -123,18 +123,28 @@
 #ifndef MUIA_Text_HiIndex
 #define MUIA_Text_HiIndex            0x804214f5 /* V11 i.. LONG     */
 #endif
+#ifndef MUIM_DeleteDragImage
+#define MUIM_DeleteDragImage 				 0x80423037
+#endif
+#if (MUIMASTER_VMIN < 18)
+#define MUIM_DoDrag 0x804216bb /* private */ /* V18 */
+struct  MUIP_DoDrag { ULONG MethodID; LONG touchx; LONG touchy; ULONG flags; }; /* private */
+#endif
 
-enum { IECODE_TAB = 66, IECODE_RETURN = 68, IECODE_ESCAPE = 69, IECODE_HELP = 95,
-			 IECODE_BACKSPACE = 65, IECODE_DEL = 70, IECODE_UP = 76, IECODE_DOWN = 77
+enum { IECODE_SPACE = 64,
+			 IECODE_TAB = 66,
+			 IECODE_RETURN = 68,
+			 IECODE_ESCAPE = 69,
+			 IECODE_HELP = 95,
+			 IECODE_BACKSPACE = 65,
+			 IECODE_DEL = 70,
+			 IECODE_UP = 76,
+			 IECODE_DOWN = 77
 		 };
 
-// some usefull macros to check mouse positions
-#define BETWEEN(a,x,b)						((x)>=(a) && (x)<=(b))
-#define xPointInObject(obj,x)			BETWEEN(_left(obj),x,_right(obj))
-#define yPointInObject(obj,y)			BETWEEN(_top(obj),y,_bottom(obj))
-#define PointInObject(obj,x,y)		(xPointInObject(obj,x) && yPointInObject(obj,y))
-#define xPointInMyObject(obj,x)		BETWEEN(_mleft(obj),x,_mright(obj))
-#define yPointInMyObject(obj,y)		BETWEEN(_mtop(obj),y,_mbottom(obj))
-#define PointInMyObject(obj,x,y)	(xPointInMyObject(obj,x) && yPointInMyObject(obj,y))
+// some own usefull MUI-style macros to check mouse positions in objects
+#define _between(a,x,b) 					((x)>=(a) && (x)<=(b))
+#define _isinobject(o,x,y) 				(_between(_mleft(o),(x),_mright (o)) && _between(_mtop(o) ,(y),_mbottom(o)))
+#define _isinwholeobject(o,x,y) 	(_between(_left(o),(x),_right (o)) && _between(_top(o) ,(y),_bottom(o)))
 
 #endif

@@ -46,6 +46,7 @@ struct Data
 	Object *mailBodyGroup;
 	Object *mailTextObject;
 	Object *textEditScrollbar;
+	Object *attachmentGroup;
 
 	BOOL hasContent;
 };
@@ -84,7 +85,7 @@ MakeStaticHook(HeaderDisplayHook, HeaderDisplayFunc);
 ///
 /// TextEditDoubleClickHook
 //  Handles double-clicks on an URL
-HOOKPROTONH(TextEditDoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
+HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 {
 	char *p;
 	BOOL result = FALSE;
@@ -161,38 +162,6 @@ HOOKPROTONH(TextEditDoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickm
 		}
 
 		FreeStrBuf(line);
-	}
-
-	// if we still don`t have a result here we check if the user clicked on
-	// a attachment.
-	if(result == FALSE)
-	{
-		p = clickmsg->LineContents;
-		if(isdigit(p[0]) && ((p[1] == ':' && p[2] == ' ') ||
-			 (p[2] == ':' && p[3] == ' ')))
-		{
-			struct ReadMailData *rmData = (struct ReadMailData *)xget(_win(obj), MUIA_UserData);
-
-			if(rmData)
-			{
-				struct Part *part;
-				int partnr = atoi(p);
-
-				for(part = rmData->firstPart; part; part = part->Next)
-				{
-					if(part->Nr == partnr)
-						break;
-				}
-
-				if(part)
-				{
-					RE_DecodePart(part);
-					RE_DisplayMIME(part->Filename, part->ContentType);
-
-					result = TRUE;
-				}
-			}
-		}
 	}
 
 	return result;
@@ -279,6 +248,9 @@ OVERLOAD(OM_NEW)
 				MUIA_CycleChain, 								 TRUE,
 			End,
 			Child, data->textEditScrollbar,
+		End,
+		Child, data->attachmentGroup = AttachmentGroupObject,
+			MUIA_ShowMe, FALSE,
 		End,
 
 		TAG_MORE, inittags(msg))))
@@ -381,6 +353,9 @@ DECLARE(Clear)
 		}
 
 		set(data->senderImageGroup, MUIA_ShowMe, FALSE);
+
+		// hide the attachmentGroup also
+		set(data->attachmentGroup, MUIA_ShowMe, FALSE);
 	}
 
 	return 0;
@@ -514,6 +489,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 					}
 				}
 			}
+
 		
 			if(rmData->senderInfoMode != SIM_OFF)
 			{
@@ -626,6 +602,33 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 				free(body);
 
 			free(cmsg);
+
+			// then we check if the mail is a multipart mail and if so we tell our attachment group
+			// about it and read the partlist
+			if(isMultiPartMail(mail))
+			{
+				if(DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_Refresh, rmData->firstPart) > 0)
+					set(data->attachmentGroup, MUIA_ShowMe, TRUE);
+				else
+				{
+					set(data->attachmentGroup, MUIA_ShowMe, FALSE);
+
+					// if this mail was/is a multipart mail but no part was
+					// actually added to our attachment group we can remove the
+					// multipart flag at all
+					if(isMP_MixedMail(mail))
+					{
+						struct MailInfo *mi = GetMailInfo(mail);
+						
+						CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
+						SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+						DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
+					}
+				}
+			}
+			else
+				set(data->attachmentGroup, MUIA_ShowMe, FALSE);
+
 
 			// start the macro
 			if(rmData->readWindow)
@@ -911,6 +914,13 @@ DECLARE(SaveDecryptedMail)
 }
 
 ///
+/// DECLARE(SaveAllAttachments)
+DECLARE(SaveAllAttachments)
+{
+	GETDATA;
+	return DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_SaveAll);
+}
+///
 /// DECLARE(ActivateMailText)
 //  sets the mailTextObject as the active object of the window
 DECLARE(ActivateMailText)
@@ -925,5 +935,3 @@ DECLARE(ActivateMailText)
 }
 
 ///
-
-

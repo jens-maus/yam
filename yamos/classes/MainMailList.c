@@ -111,7 +111,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
 
     fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
 
-    if(isMultiPartMail(mail)) hasattach = TRUE;
+		if(isMultiPartMail(mail))
+			hasattach = TRUE;
 
     for (i = 0; i < MAXWR; i++)
     {

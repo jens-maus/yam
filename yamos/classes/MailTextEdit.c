@@ -190,7 +190,7 @@ OVERLOAD(MUIM_HandleEvent)
 					}
 				}
 			}
-			else if(PointInObject(obj, imsg->MouseX, imsg->MouseY))
+			else if(_isinwholeobject(obj, imsg->MouseX, imsg->MouseY))
 			{
 				// MouseWheel events are only possible if the mouse is above the
 				// object
