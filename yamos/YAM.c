@@ -113,7 +113,7 @@ void TC_Exit(void)
 {
    if (TCData.port)
    {
-      if (TCData.req) 
+      if (TCData.req)
       {
          if (CheckIO((struct IORequest *)TCData.req)) return;
          AbortIO((struct IORequest *)TCData.req);
@@ -130,8 +130,8 @@ void TC_Exit(void)
 //  Initializes timer resources
 BOOL TC_Init(void)
 {
-   if (TCData.port = CreateMsgPort())
-      if (TCData.req = (struct timerequest *)CreateExtIO(TCData.port, sizeof(struct timerequest)))
+   if ((TCData.port = CreateMsgPort()))
+      if ((TCData.req = (struct timerequest *)CreateExtIO(TCData.port, sizeof(struct timerequest))))
          if (!OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)TCData.req, 0))
             return TRUE;
    return FALSE;
@@ -192,7 +192,7 @@ void AY_PrintStatus(char *txt, int percent)
 ///
 /// AY_SendMailFunc
 //  User clicked e-mail URL in About window
-SAVEDS void AY_SendMailFunc(void)
+void SAVEDS AY_SendMailFunc(void)
 {
    int wrwin;
    if (G->MA) if ((wrwin = MA_NewNew(NULL, 0)) >= 0)
@@ -205,7 +205,7 @@ MakeHook(AY_SendMailHook, AY_SendMailFunc);
 ///
 /// AY_GoPageFunc
 //  User clicked homepage URL in About window
-SAVEDS void AY_GoPageFunc(void)
+void SAVEDS AY_GoPageFunc(void)
 {
    GotoURL("http://www.yam.ch/");
 }
@@ -324,7 +324,7 @@ void PopUp(void)
 ///
 /// DoublestartHook
 //  A second copy of YAM was started
-SAVEDS void DoublestartFunc(void)
+void SAVEDS DoublestartFunc(void)
 {
    PopUp();
 }
@@ -416,7 +416,7 @@ void Terminate(void)
       SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
 #ifndef __SASC
-      if (flist = FO_CreateList())
+      if ((flist = FO_CreateList()))
       {
          for (i = 1; i <= (int)*flist; i++) ClearMailList(flist[i], TRUE);
          free(flist);
@@ -570,7 +570,7 @@ void Initialise(BOOL hidden)
    UtilityBase = (struct UtilityBase *)InitLib("utility.library", 36, 0, TRUE, FALSE);
    KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
    IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
-   if (LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE)) G->Locale = OpenLocale(NULL);
+   if ((LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE))) G->Locale = OpenLocale(NULL);
    OpenYAMCatalog();
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);
@@ -578,7 +578,7 @@ void Initialise(BOOL hidden)
    if (!Root_New(hidden)) Abort(FindPort("YAM") ? NULL : GetStr(MSG_ErrorMuiApp));
    AY_PrintStatus(GetStr(MSG_InitLibs), 10);
    XpkBase = InitLib(XPKNAME, 0, 0, FALSE, FALSE);
-   if (DataTypesBase = InitLib("datatypes.library", 39, 0, FALSE, FALSE))
+   if ((DataTypesBase = InitLib("datatypes.library", 39, 0, FALSE, FALSE)))
       if (InitLib("mui/Dtpic.mui", 0, 0, FALSE, TRUE)) G->DtpicSupported = TRUE;
    if (!TC_Init()) Abort(GetStr(MSG_ErrorTimer));
    for (i = 0; i < MAXASL; i++)
@@ -647,15 +647,20 @@ void DoStartup(BOOL nocheck, BOOL hide)
 ///
 /// Login
 //  Allows automatical login for AmiTCP-Genesis users
+#ifdef __STORM__
+struct Library *GenesisBase;
+#endif
 void Login(char *user, char *password, char *maildir, char *prefsfile)
 {
+#ifndef __STORM__
    struct Library *GenesisBase;
+#endif
    struct genUser *guser;
    BOOL terminate = FALSE, loggedin = FALSE;
 
-   if (GenesisBase = OpenLibrary("genesis.library", 1))
+   if ((GenesisBase = OpenLibrary("genesis.library", 1)))
    {
-      if (guser = GetGlobalUser())
+      if ((guser = GetGlobalUser()))
       {
          terminate = !(loggedin = US_Login(guser->us_name, "\01", maildir, prefsfile));
          FreeUser(guser);
@@ -684,7 +689,11 @@ int GetDST(void)
 
 /// Main
 //  Program entry point, main loop
+#ifdef __GNUC__
+void STACKEXT main(int argc, char **argv)
+#else
 void main(int argc, char **argv)
+#endif
 {
    struct NewRDArgs nrda;
    struct { STRPTR user;
@@ -716,16 +725,16 @@ void main(int argc, char **argv)
    nrda.Parameters = (LONG *)&args;
    nrda.FileParameter = -1;
    nrda.PrgToolTypesOnly = FALSE;
-   if (err = NewReadArgs(_WBenchMsg, &nrda))
+   if ((err = NewReadArgs(_WBenchMsg, &nrda)))
    {
       PrintFault(err, "YAM");
       NewFreeArgs(&nrda);
       if (WorkbenchBase) CloseLibrary(WorkbenchBase);
       if (IconBase) CloseLibrary(IconBase);
       if (IntuitionBase) CloseLibrary((struct Library *) IntuitionBase);
-      exit(5); 
+      exit(5);
    }
-   if (progdirlock = GetProgramDir())
+   if ((progdirlock = GetProgramDir()))
       NameFromLock(progdirlock, progdir, SIZE_PATH);
    else
    {
@@ -758,7 +767,7 @@ void main(int argc, char **argv)
             if (args.mailto) setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
             if (args.subject) setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
             if (args.letter) FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT);
-            if (args.attach) for (sptr = args.attach; *sptr; sptr++)
+            if (args.attach) for (sptr = (char**)args.attach; *sptr; sptr++)
                if (FileSize(*sptr) >= 0) WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
          }
          yamFirst = FALSE;
@@ -792,7 +801,7 @@ void main(int argc, char **argv)
             if (signals & appsigs)
             {
                struct AppMessage *apmsg;
-               while (apmsg = (struct AppMessage *)GetMsg(G->AppPort))
+               while ((apmsg = (struct AppMessage *)GetMsg(G->AppPort)))
                {
                   if (apmsg->am_Type == AMTYPE_APPICON)
                   {
@@ -811,17 +820,17 @@ void main(int argc, char **argv)
             }
             if (signals & notsigs0)
             {
-               while (msg = GetMsg(G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port)) ReplyMsg(msg);
+               while ((msg = GetMsg(G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port))) ReplyMsg(msg);
                if (G->WR[0]) FileToEditor(G->WR_Filename[0], G->WR[0]->GUI.TE_EDIT);
             }
             if (signals & notsigs1)
             {
-               while (msg = GetMsg(G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port)) ReplyMsg(msg);
+               while ((msg = GetMsg(G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port))) ReplyMsg(msg);
                if (G->WR[1]) FileToEditor(G->WR_Filename[1], G->WR[1]->GUI.TE_EDIT);
             }
             if (signals & notsigs2)
             {
-               while (msg = GetMsg(G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port)) ReplyMsg(msg);
+               while ((msg = GetMsg(G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port))) ReplyMsg(msg);
                if (G->WR[2]) FileToEditor(G->WR_Filename[2], G->WR[2]->GUI.TE_EDIT);
             }
          }

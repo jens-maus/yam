@@ -263,7 +263,7 @@ void MA_FlushIndexes(BOOL all)
    }
 }
 
-SAVEDS void MA_FlushIndexFunc(void)
+void SAVEDS MA_FlushIndexFunc(void)
 {
    MA_FlushIndexes(TRUE);
 }
@@ -308,7 +308,7 @@ void MA_ChangeFolder(struct Folder *folder)
    }
 }
 
-SAVEDS void MA_ChangeFolderFunc(void)
+void SAVEDS MA_ChangeFolderFunc(void)
 {
    struct Folder *folder = FO_GetCurrentFolder();
    if (folder) MA_ChangeFolder(folder);
@@ -643,7 +643,7 @@ void MA_ScanMailBox(struct Folder *folder)
 /*** Hooks ***/
 /// PO_InitFolderList
 //  Creates a popup list of all folders
-SAVEDS ASM long PO_InitFolderList(REG(a2,Object *pop))
+long SAVEDS ASM PO_InitFolderList(REG(a2,Object *pop))
 {  
    int i;
    struct Folder **flist;
@@ -663,7 +663,7 @@ MakeHook(PO_InitFolderListHook, PO_InitFolderList);
 ///
 /// MA_LV_FDspFunc
 //  Folder listview display hook
-SAVEDS ASM long MA_LV_FDspFunc(REG(a2,char **array), REG(a1,struct Folder *entry))
+long SAVEDS ASM MA_LV_FDspFunc(REG(a2,char **array), REG(a1,struct Folder *entry))
 {
    if (entry)
    {
