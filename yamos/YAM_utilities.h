@@ -346,6 +346,7 @@ char *   StartUnpack(char *file, char *newfile, struct Folder *folder);
 char *   stccat(char *a, char *b, int n);
 char *   StrBufCat(char *strbuf, char *source);
 char *   StrBufCpy(char *strbuf, char *source);
+char *   AppendToBuffer(char *buf, int *wptr, int *len, char *add);
 int      StringRequest(char *string, int size, char *title, char *body,
          char *yestext, char *alttext, char *notext, BOOL secret, APTR parent);
 char *   StripUnderscore(char *label);
