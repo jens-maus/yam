@@ -1,6 +1,6 @@
 /*
   NList.mcc (c) Copyright 1996-1997 by Gilles Masson
-  Registered MUI class, Serial Num: 1d51     0x9d510030 to 0x9d51009F / 0x9d5100C0 to 0x9d5100FF
+  Registered MUI class, Serial Num: 1d51     0x9d510030 to 0x9d5100A0 / 0x9d5100C0 to 0x9d5100FF
   *** use only YOUR OWN Serial Number for your public custom class ***
   NList_mcc.h
 */
@@ -356,6 +356,8 @@
 #define MUIV_NList_GetPos_Start          -1
 #define MUIV_NList_GetPos_End            -1
 
+#define	MUIV_NList_SelectChange_Flag_Multi (1 << 0)
+
 
 /* Structs */
 
@@ -472,6 +474,7 @@ struct MUI_NList_GetSelectInfo
 #define MUIM_NList_SetColumnCol       0x9d510094 /* GM */
 #define MUIM_NList_Sort3              0x9d510095 /* GM */
 #define MUIM_NList_GetPos             0x9d510096 /* GM */
+#define MUIM_NList_SelectChange       0x9d5100A0 /* GM */
 struct  MUIP_NList_Clear              { ULONG MethodID; };
 struct  MUIP_NList_CreateImage        { ULONG MethodID; Object *obj; ULONG flags; };
 struct  MUIP_NList_DeleteImage        { ULONG MethodID; APTR listimg; };
@@ -510,7 +513,7 @@ struct  MUIP_NList_PrevSelected       { ULONG MethodID; LONG *pos; };
 struct  MUIP_NList_SetColumnCol       { ULONG MethodID; LONG column; LONG col; };
 struct  MUIP_NList_Sort3              { ULONG MethodID; LONG sort_type; LONG sort_type_add; LONG which; };
 struct  MUIP_NList_GetPos             { ULONG MethodID; APTR entry; LONG *pos; };
-
+struct  MUIP_NList_SelectChange       { ULONG MethodID; LONG pos; LONG state; ULONG flags; };
 
 
 #define DISPLAY_ARRAY_MAX 64
