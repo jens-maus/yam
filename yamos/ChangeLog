@@ -7,6 +7,9 @@ $Source$
 
 2003-12-14  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c, YAM_utilities.h: replaced the more or less
+      short isSpace(), isGraph() and isAlNum() functions by
+      macros which should perform a bit better.
     * YAM_UT.c, YAM_RE.c: replaced the MatchTT() stub function
       by direct calls to the MatchNoCase() function.
     * YAM_MI.c: removed obsolete from64txt() base64 decoding

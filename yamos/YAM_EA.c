@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -33,6 +34,7 @@
 #include <libraries/iffparse.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
+#include <proto/locale.h>
 #include <proto/muimaster.h>
 
 #include "extra.h"

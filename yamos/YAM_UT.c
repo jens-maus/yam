@@ -695,30 +695,6 @@ BOOL MatchNoCase(char *string, char *match)
    return result;
 }
 ///
-/// isSpace
-//  Localized version if isspace()
-BOOL isSpace(int c)
-{
-   UBYTE ch = (UBYTE)c;
-   return (BOOL)(G->Locale ? (IsSpace(G->Locale,(ULONG)ch) != 0) : (isspace(ch) != 0));
-}
-///
-/// isGraph
-//  Localized version of isgraph()
-BOOL isGraph(int c)
-{
-   UBYTE ch = (UBYTE)c;
-   return (BOOL)(G->Locale ? (IsGraph(G->Locale,(ULONG)ch) != 0) : (isgraph(ch) != 0));
-}
-///
-/// isAlNum
-//  Localized version of isalnum()
-BOOL isAlNum(int c)
-{
-   UBYTE ch = (UBYTE)c;
-   return (BOOL)(G->Locale ? (IsAlNum(G->Locale,(ULONG)ch) != 0) : (isalnum(ch) != 0));
-}
-///
 /// StripUnderscore
 //  Removes underscore from button labels
 char *StripUnderscore(char *label)

@@ -216,6 +216,9 @@ struct NewToolbarEntry
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
 #define MyStrCpy(a,b)         strncpy((a),(b), sizeof(a)), (a)[sizeof(a)-1] = 0
 #define FreeStrBuf(str)       ((str) ? free(((char *)(str))-sizeof(size_t)) : (void)0)
+#define isSpace(c)            ((BOOL)(G->Locale ? (IsSpace(G->Locale, (ULONG)(c)) != 0) : (isspace((c)) != 0)))
+#define isGraph(c)            ((BOOL)(G->Locale ? (IsGraph(G->Locale, (ULONG)(c)) != 0) : (isgraph((c)) != 0)))
+#define isAlNum(c)            ((BOOL)(G->Locale ? (IsAlNum(G->Locale, (ULONG)(c)) != 0) : (isalnum((c)) != 0)))
 
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
@@ -304,7 +307,6 @@ void     GotoURL(char *url);
 char *   IdentifyFile(char *fname);
 void     InfoWindow(char *title, char *body, char *oktext, APTR parent);
 void     InsertAddresses(APTR obj, char **addr, BOOL add);
-BOOL     isAlNum(int c);
 BOOL     IsValidMailFile(char *fname);
 char *   itoa(int val);
 struct BodyChunkData *LoadBCImage(char *fname);
