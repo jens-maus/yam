@@ -1048,7 +1048,7 @@ int main(int argc, char **argv)
       }
       user = US_GetCurrentUser();
       AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name, "", "", "");
-      AppendLogVerbose(1, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir, "");
+      AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir, "");
       TC_Start();
       appsigs  = 1<<G->AppPort->mp_SigBit;
       timsigs  = 1<<TCData.port->mp_SigBit;
