@@ -241,7 +241,7 @@ static BOOL TC_Init(void)
         TimerBase = (APTR)TCData.timerIO[0]->tr_node.io_Device;
 
         #if defined(__amigaos4__)
-        ITimer = (struct TimerIFace*)GetInterface(TimerBase, "main", 1L, NULL);
+        ITimer = (struct TimerIFace*)GetInterface((struct Library *)TimerBase, "main", 1L, NULL);
         #endif
 
         // create our other TimerIOs now
@@ -1603,15 +1603,15 @@ int main(int argc, char **argv)
       BOOL goon = TRUE;
 
       #if defined(__amigaos4__)
-      if((IntuitionBase = OpenLibrary("intuition.library", 36)) &&
-         (IIntuition = (APTR)GetInterface(IntuitionBase, "main", 1L, NULL)))
+      if((IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 36)) &&
+         (IIntuition = (APTR)GetInterface((struct Library *)IntuitionBase, "main", 1L, NULL)))
       #else
       if((IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 36)))
       #endif
       {
         #if defined(__amigaos4__)
-        if((UtilityBase = OpenLibrary("utility.library", 36)) &&
-           (IUtility = (APTR)GetInterface(UtilityBase, "main", 1L, NULL)))
+        if((UtilityBase = (struct UtilityBase *)OpenLibrary("utility.library", 36)) &&
+           (IUtility = (APTR)GetInterface((struct Library *)UtilityBase, "main", 1L, NULL)))
         #else
         if((UtilityBase = OpenLibrary("utility.library", 36)))
         #endif

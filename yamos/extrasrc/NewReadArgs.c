@@ -231,7 +231,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
         /*- get tooltypes from .info file -*/
         dobj =
 #ifdef ICONGETA_RemapIcon
-          ( IconBase->lib_Version >= 44L ) ?
+          (((struct Library *)IconBase)->lib_Version >= 44L) ?
           GetIconTagList(wbarg->wa_Name, (struct TagItem *)icontags) :
 #endif
           GetDiskObject(wbarg->wa_Name);
