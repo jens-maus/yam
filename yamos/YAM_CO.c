@@ -25,14 +25,25 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "YAM.h"
 #include "YAM_addressbook.h"
+#include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_configFile.h"
 #include "YAM_configGUI.h"
+#include "YAM_error.h"
+#include "YAM_find.h"
 #include "YAM_folderconfig.h"
+#include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_hook.h"
 #include "YAM_utilities.h"
+
+struct Config *C;
+struct Config *CE;
 
 /* local protos */
 static void CO_NewPrefsFile(char*);

@@ -25,6 +25,10 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_folderconfig.h"
@@ -34,6 +38,10 @@
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_rexx.h"
+#include "YAM_utilities.h"
+
+/* global variables */
+struct Data2D Header = { 0, 0, NULL };
 
 /* local protos */
 static void MA_ValidateStatus(struct Folder*);
@@ -495,7 +503,6 @@ static BOOL MA_DetectUUE(FILE *fh)
 ///
 /// MA_ReadHeader
 //  Reads header lines of a message into memory
-struct Data2D Header = { 0, 0, NULL };
 
 BOOL MA_ReadHeader(FILE *fh)
 {

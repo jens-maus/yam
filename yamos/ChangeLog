@@ -383,7 +383,7 @@
 2001-05-20  Dirk Stöcker <stoecker@epost.de>
 
     * further reorganization
-    * made whole code optimiazble with SAS-C again (tracking down compiler bugs
+    * made whole code optimizable with SAS-C again (tracking down compiler bugs
       seems to get a hobby of me :-)
     * YAM_FO.c and YAM_EA.c are directly compilable now.
 
@@ -436,4 +436,9 @@
       mass of hits reported in the BugTracker.
     * a CTRL-C will now break the application and a CTRL-D will restart it immediatly.
 
+2001-05-27  Dirk Stöcker <stoecker@epost.de>
+
+    * moved a lot more stuff to the corresponding header files
+    * NOTE: YAM_UT.c should be splitted!
+    * Maybe the global variables from YAM.c should move into new file YAM_global.c?
 

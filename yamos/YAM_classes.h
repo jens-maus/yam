@@ -32,8 +32,18 @@
 #define MUIA_Bodychunk_UseOld        0x80002502
 #define MUIM_MainWindow_CloseWindow  0x80002521
 
+extern struct MUI_CustomClass *CL_AddressList;
+extern struct MUI_CustomClass *CL_AttachList;
 extern struct MUI_CustomClass *CL_BodyChunk;
 extern struct MUI_CustomClass *CL_DDList;
+extern struct MUI_CustomClass *CL_DDString;
+extern struct MUI_CustomClass *CL_FolderList;
+extern struct MUI_CustomClass *CL_MailList;
+extern struct MUI_CustomClass *CL_MainWin;
+extern struct MUI_CustomClass *CL_PageList;
 extern struct MUI_CustomClass *CL_TextEditor;
+
+void ExitClasses(void);
+BOOL InitClasses(void);
 
 #endif /* YAM_CLASSES_H */

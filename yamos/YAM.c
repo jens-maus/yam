@@ -25,12 +25,18 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
+#include <libraries/genesis.h>
 #include <proto/exec.h>
+#include <proto/locale.h>
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_configFile.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
@@ -73,7 +79,6 @@ struct Library *       XpkBase = NULL;
 BOOL yamFirst = TRUE, yamLast = FALSE;
 
 struct Global *G;
-struct Config *C, *CE;
 
 char *Status[9] = { "U","O","F","R","W","E","H","S","N" };
 char *SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };

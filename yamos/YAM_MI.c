@@ -25,7 +25,12 @@
 
 ***************************************************************************/
 
+#include <string.h>
+
 #include "YAM.h"
+#include "YAM_error.h"
+#include "YAM_locale.h"
+#include "YAM_utilities.h"
 
 /* local */
 static int nextcharin(FILE*, BOOL);

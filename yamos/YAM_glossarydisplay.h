@@ -57,4 +57,6 @@ struct DI_ClassData  /* glossary window */
    BOOL              Modified;
 };
 
+extern struct Hook DI_OpenHook;
+
 #endif /* YAM_GLOSSARYDISPLAY_H */

@@ -65,14 +65,23 @@ struct AB_ClassData  /* address book window */
    char WTitle[SIZE_DEFAULT];
 };
 
-extern struct Hook AB_SaveABookHook;
-extern struct Hook AB_LV_DspFuncHook;
 extern struct Hook AB_DeleteHook;
+extern struct Hook AB_LV_DspFuncHook;
+extern struct Hook AB_OpenHook;
+extern struct Hook AB_SaveABookHook;
 
+void   AB_CheckBirthdates(void);
+char * AB_CompleteAlias(char *text);
 long   AB_CompressBD(char *datestr);
 char * AB_ExpandBD(long date);
 BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, int mode,
        char **result);
+APTR   AB_GotoEntry(char *alias);
+void   AB_InsertAddress(APTR string, char *alias, char *name, char *address);
+BOOL   AB_LoadTree(char *fname, BOOL append, BOOL sorted);
+void   AB_MakeABFormat(APTR lv);
+struct AB_ClassData *AB_New(void);
+BOOL   AB_SaveTree(char *fname);
 int STACKEXT AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *text, int mode,
        int *hits, struct MUI_NListtree_TreeNode **lasthit);
 

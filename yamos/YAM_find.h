@@ -28,6 +28,34 @@
 
 ***************************************************************************/
 
+#include "YAM_mainFolder.h"
+
+struct Search
+{
+   char *          Pattern;
+   struct Rule *   Rule;
+   long            Size;
+   int             Mode;
+   int             PersMode;
+   int             Compare;
+   int             Status;
+   int             Fast;
+   BOOL            CaseSens;
+   BOOL            SubString;
+   char            Match[SIZE_PATTERN+4];
+   char            PatBuf[SIZE_PATTERN];
+   char            Field[SIZE_DEFAULT];
+   struct DateTime DT;
+   struct Data2D   List;
+};
+
+extern struct Hook FI_OpenHook;
+extern int         Mode2Group[12];
+
+APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote);
 BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail);
+BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmode,
+     int compar, int stat, BOOL substr, char *match, char *field);
+void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled);
 
 #endif /* YAM_FIND_H */

@@ -86,8 +86,15 @@ struct MA_ClassData  /* main window */
 
 extern struct Hook MA_ApplyRulesHook;
 extern struct Hook MA_ChangeSelectedHook;
+extern struct Hook MA_DeleteDeletedHook;
+extern struct Hook MA_DeleteOldHook;
+extern struct Hook MA_LV_Cmp2Hook;
+extern struct Hook MA_LV_DspFuncHook;
+extern struct Hook MA_RescanIndexHook;
+extern struct Hook MA_SendHook;
 extern struct Hook MA_SetFolderInfoHook;
 extern struct Hook MA_SetMessageInfoHook;
+extern struct Hook PO_WindowHook;
 
 int  MA_AllocRules(struct Search **search, int mode);
 void MA_FreeRules(struct Search **search, int scnt);

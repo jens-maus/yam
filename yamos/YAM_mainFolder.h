@@ -76,6 +76,12 @@ struct ExtendedMail
    char             IRTMsgID[SIZE_MSGID];
 };
 
+extern struct Data2D Header;
+extern struct Hook   MA_ChangeFolderHook;
+extern struct Hook   MA_FlushIndexHook;
+extern struct Hook   MA_LV_FDspFuncHook;
+extern struct Hook   PO_InitFolderListHook;
+
 void   MA_ChangeFolder(struct Folder *folder);
 struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *statstr, BOOL deep);
 void   MA_FreeEMailStruct(struct ExtendedMail *email);

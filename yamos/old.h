@@ -37,18 +37,6 @@
   #define __YAM_STACK __stack
 #endif
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <time.h>
-#include <math.h>
-
-#include <exec/memory.h>
-#include <exec/execbase.h>
-#include <dos/datetime.h>
-#include <dos/dostags.h>
-#include <dos/doshunks.h>
 #include <workbench/workbench.h>
 #include <workbench/startup.h>
 #include <devices/printer.h>
@@ -56,12 +44,8 @@
 #include <intuition/gadgetclass.h>
 #include <datatypes/pictureclass.h>
 #include <datatypes/soundclass.h>
-#include <libraries/locale.h>
 #include <libraries/asl.h>
-#include <libraries/mui.h>
 #include <libraries/gadtools.h>
-#include <libraries/openurl.h>
-#include <libraries/genesis.h>
 #include <libraries/cmanager.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/NList_mcc.h>
@@ -71,16 +55,7 @@
 #include <mui/Toolbar_mcc.h>
 #include <rexx/rxslib.h>
 #include <rexx/storage.h>
-#include <xpk/xpk.h>
 #include <clib/alib_protos.h>
-#ifdef __MORPHOS__
-#define NO_PPCINLINE_STDARG
-#include <ppcinline/locale.h>
-#include <ppcinline/socket.h>
-#else
-#include <proto/socket.h>
-#include <proto/locale.h>
-#endif
 #include <proto/muimaster.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -102,7 +77,6 @@
 #include <clib/macros.h>
 #include <NewReadArgs.h>
 #include <extra.h>
-
 
 #ifdef __MORPHOS__
 #undef DoSuperMethod
@@ -161,8 +135,6 @@ struct sockaddr_in {
   #define DB(x)
   #define DBpr(x)
 #endif
-
-#include "YAM_locale.h"
 
 /// Defines
 #if defined __PPC__
@@ -306,12 +278,6 @@ struct Column
 ///
 /// Miscellaneous structures
 
-struct Data2D
-{
-   int Allocated;
-   int Used;
-   char **Data;
-};
 
 struct MailInfo
 {
@@ -343,18 +309,6 @@ struct TransStat
    int Msgs_Tot, Msgs_Done;
    long Size_Tot, Size_Done, Size_Curr, Delay;
    long Clock_Start, Clock_Last;
-};
-
-struct Search
-{
-   int  Mode, PersMode, Compare, Status, Fast;
-   BOOL CaseSens, SubString;
-   char Match[SIZE_PATTERN+4], PatBuf[SIZE_PATTERN], *Pattern;
-   char Field[SIZE_DEFAULT];
-   struct DateTime DT;
-   struct Data2D List;
-   struct Rule *Rule;
-   long Size;
 };
 
 struct BodyChunkData
@@ -510,169 +464,6 @@ enum { MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,
        MACRO_PREGET, MACRO_POSTGET, MACRO_NEWMSG, MACRO_PRESEND, MACRO_POSTSEND,
        MACRO_READ, MACRO_PREWRITE, MACRO_POSTWRITE, MACRO_URL };
 
-///
-/// Declaration of external variables
-extern struct Config *CE;
-extern struct Hook AB_FromAddrBookHook;
-extern struct Hook MA_ChangeSelectedHook, MA_ChangeFolderHook, MA_SendHook, MA_RescanIndexHook, MA_FlushIndexHook, MA_ApplyRulesHook, MA_DeleteDeletedHook, MA_DeleteOldHook;
-extern struct Hook MA_LV_Cmp2Hook, MA_LV_FCmp2Hook, MA_LV_DspFuncHook, MA_LV_FDspFuncHook;
-extern struct Hook PO_InitFolderListHook, MA_PO_MoveHook, PO_WindowHook;
-extern struct Hook CO_OpenHook, CO_RemoteToggleHook;
-extern struct Hook CO_EditSignatHook, CO_ToggleColHook, CO_GetDefaultPOPHook, CO_GetP3EntryHook, CO_PutP3EntryHook, CO_AddPOP3Hook, CO_DelPOP3Hook;
-extern struct Hook CO_GetFOEntryHook, CO_PutFOEntryHook, CO_AddFolderHook, CO_DelFolderHook, CO_GetRUEntryHook, CO_PutRUEntryHook, CO_AddRuleHook, CO_DelRuleHook;
-extern struct Hook CO_GetMVEntryHook, CO_PutMVEntryHook, CO_AddMimeViewHook, CO_DelMimeViewHook, CO_GetRXEntryHook, CO_PutRXEntryHook;
-extern struct Hook FI_OpenHook;
-extern struct Hook DI_OpenHook;
-extern struct Hook US_OpenHook;
-extern struct Hook AB_OpenHook;
-extern struct Hook RE_PrevNextHook, RE_LV_AttachDspFuncHook, RE_CloseHook;
-extern struct Hook WR_NewMailHook, WR_EditHook;
-extern struct Hook GeneralDesHook, RestartHook,DisposeModuleHook;
-extern char *Status[9];
-extern char *ContType[MAXCTYPE+1];
-extern APTR ContTypeDesc[MAXCTYPE];
-extern char *SigNames[3], *FolderNames[4], *SecCodes[5];
-extern char *months[12], *wdays[7];
-extern struct MUI_CustomClass *CL_BodyChunk, *CL_FolderList, *CL_MailList, *CL_AddressList, *CL_TextEditor, *CL_PageList;
-extern struct MUI_CustomClass *CL_DDList, *CL_AttachList, *CL_DDString, *CL_MainWin;
-extern struct Data2D Header;
-extern int Mode2Group[12];
-extern int BusyLevel;
-///
-/// Function prototypes
-extern char *Protection2(void);
-extern int StringRequest(char *, int, char *, char *, char *, char *, char *, BOOL, APTR);
-extern struct Folder *FolderRequest(char *, char *, char *, char *, struct Folder *, APTR);
-extern struct Part *AttachRequest(char *, char *, char *, char *, int, int, APTR);
-extern void InfoWindow(char *, char *, char *, APTR);
-extern char *GetLine(FILE *, char *, int);
-extern BOOL CopyFile(char *, FILE *, char *, FILE *);
-extern BOOL RenameFile(char *, char *);
-extern BOOL ConvertCRLF(char *, char *, BOOL);
-extern void QuoteWordWrap(char *, int, char *, char *, FILE *);
-extern void SimpleWordWrap(char *, int);
-extern int FileSize(char *);
-extern long FileProtection(char *);
-extern int FileType(char *);
-extern BOOL FileExists(char *);
-extern BOOL PFExists(char *, char *);
-extern struct TempFile *OpenTempFile(char *);
-extern void CloseTempFile(struct TempFile *);
-extern BOOL DumpClipboard(FILE *);
-extern void DeleteMailDir(char *, BOOL);
-extern BOOL CheckPrinter(void);
-extern int MatchNoCase(char *, char *);
-extern BOOL MatchTT(char *, struct TranslationTable *, BOOL);
-extern BOOL ISpace(char);
-extern BOOL isSpace(int), isGraph(int), isAlNum(int);
-extern char *StripUnderscore(char *);
-extern char *GetNextLine(char *);
-extern char *TrimStart(char *);
-extern char *TrimEnd(char *);
-extern char *Trim(char *);
-extern char *itoa(int);
-extern char *stccat(char *, char *, int);
-extern char *stristr(char *, char *);
-extern char *MyStrChr(char *, int);
-extern char *AllocStrBuf(long);
-extern void FreeStrBuf(char *);
-extern char *StrBufCpy(char *, char *);
-extern char *StrBufCat(char *, char *);
-extern void FreeData2D(struct Data2D *);
-extern char *AllocData2D(struct Data2D *, int);
-extern APTR AllocCopy(APTR, int);
-extern char *Encrypt(char *);
-extern char *Decrypt(char *);
-extern char *DescribeCT(char *);
-extern char *BuildAddrName(char *,char *);
-extern char *CreateFilename(char *);
-extern BOOL CreateDirectory(char *);
-extern char *GetFolderDir(struct Folder *);
-extern char *GetMailFile(char *, struct Folder *, struct Mail *);
-extern time_t GetDateStamp(void);
-extern long DateStamp2Long(struct DateStamp *);
-extern char *GetTZ(void);
-extern struct DateStamp *ScanDate(char *);
-extern void FormatSize(int, char *);
-extern void MyAddTail(struct Mail **, struct Mail *);
-extern void MyRemove(struct Mail **, struct Mail *);
-extern APTR WhichLV(struct Folder *);
-extern struct MailInfo *GetMailInfo(struct Mail *);
-extern char *ExpandText(char *, struct ExpandTextData *);
-extern BOOL TransferMailFile(BOOL, struct Mail *, struct Folder *);
-extern BOOL MailExists(struct Mail *, struct Folder *);
-extern int SelectMessage(struct Mail *);
-extern void DisplayMailList(struct Folder *, APTR);
-extern struct Mail *AddMailToList(struct Mail *, struct Folder *);
-extern void RemoveMailFromList(struct Mail *);
-extern void ClearMailList(struct Folder *, BOOL);
-extern struct Person *GetReturnAddress(struct Mail *);
-extern char ShortCut(char *);
-extern void SetHelp(APTR, APTR);
-extern void DisposeModulePush(void *);
-extern void DisposeModule(void *);
-extern Object *MakeButton(char *);
-extern Object *MakeCycle(char **, char *);
-extern Object *MakeImage(UBYTE *);
-extern void FreeBCImage(struct BodyChunkData *);
-extern struct BodyChunkData *GetBCImage(char *);
-extern struct BodyChunkData *LoadBCImage(char *);
-extern Object *MakeCheck(char *);
-extern Object *MakeCheckGroup(Object **, char *);
-extern Object *MakeString(int, char *);
-extern Object *MakePassString(char *);
-extern Object *MakeInteger(int, char *);
-extern Object *MakePGPKeyList(APTR *, BOOL, char *);
-extern Object *MakePicture(char *);
-extern Object *MakeStatusFlag(char *);
-extern Object *MakeNumeric(int, int, BOOL);
-extern Object *MakeMenuitem(const UBYTE *str, ULONG ud);
-extern void SetupToolbar(struct MUIP_Toolbar_Description *, char *, char *, UWORD);
-extern void SetupMenu(int, struct NewMenu *, char *, char *, int);
-extern int GetMUI(Object *,int);
-extern char *GetMUIStringPtr(Object *);
-extern void GetMUIString(char *,Object *);
-extern void GetMUIText(char *,Object *);
-extern int GetMUIInteger(Object *);
-extern int GetMUINumer(Object *);
-extern BOOL GetMUICheck(Object *);
-extern int GetMUICycle(Object *);
-extern int GetMUIRadio(Object *);
-extern BOOL SafeOpenWindow(Object *);
-extern ULONG DoSuperNew(struct IClass *, Object *, ULONG,...);
-extern void SaveLayout(BOOL);
-extern void LoadLayout(void);
-extern ULONG ConvertKey(struct IntuiMessage *);
-extern void DisplayStatistics(struct Folder *);
-extern void SetupAppIcons(void);
-extern BOOL EditorToFile(Object *, char *, struct TranslationTable *);
-extern BOOL FileToEditor(char *, Object *);
-extern BOOL LoadTranslationTable(struct TranslationTable **, char *);
-extern int CompressMsgID(char *);
-extern BOOL RepackMailFile(struct Mail *, int, char *);
-extern char *StartUnpack(char *, char *, struct Folder *);
-extern void FinishUnpack(char *);
-extern BOOL DoPack(char *, char *, struct Folder *);
-extern BOOL IsValidMailFile(char *);
-extern void Busy(char *, char *, int, int);
-extern void PlaySound(char *);
-extern BOOL MatchExtension(char *, char *);
-extern char *IdentifyFile(char *);
-extern void InsertAddresses(APTR, char **, BOOL);
-extern char *AllocReqText(char *);
-extern void SPrintF(char *outstr, char *fmtstr, ...);
-extern void PopUp(void);
-extern void AppendLog(int, char *, void *, void *, void *, void *);
-extern void AppendLogNormal(int, char *, void *, void *, void *, void *);
-extern void AppendLogVerbose(int, char *, void *, void *, void *, void *);
-extern int PGPCommand(char *, char *, int);
-extern void PGPGetPassPhrase(void);
-extern void PGPClearPassPhrase(BOOL);
-extern BOOL ExecuteCommand(char *, BOOL, BPTR);
-extern int GetSimpleID(void);
-extern void GotoURL(char *);
-extern char *strtok_r(char**, char*);
-
 extern void MA_SetSortFlag(void);
 extern BOOL MA_PromptFolderPassword(struct Folder *, APTR);
 extern void MA_DeleteSingle(struct Mail *, BOOL);
@@ -722,35 +513,9 @@ extern void MA_MakeFOFormat(APTR);
 extern void MA_MakeMAFormat(APTR);
 extern struct MA_ClassData *MA_New(void);
 
-extern BOOL CO_IsValid(void);
-extern struct Rule *CO_NewRule(void);
-extern struct POP3 *CO_NewPOP3(struct Config *, BOOL);
-extern struct MimeView *CO_NewMimeView(void);
-extern void CO_SetDefaults(struct Config *, int);
-extern struct Rule *CO_NewRule(void);
-extern void CO_RuleGhost(struct CO_GUIData *, struct Rule *);
-extern BOOL CO_LoadConfig(struct Config *, char *, struct Folder ***);
-extern void CO_SaveConfig(struct Config *, char *);
-extern void CO_Validate(struct Config *, BOOL);
-extern void CO_SetConfig(void);
-extern void CO_GetConfig(void);
-extern void CO_FreeConfig(struct Config *);
-
-extern APTR AB_GotoEntry(char *alias);
-extern void AB_InsertAddress(APTR, char *, char *, char *);
-extern char *AB_CompleteAlias(char *);
-extern char *AB_ExpandBD(long date);
-extern long AB_CompressBD(char *datestr);
-extern void AB_CheckBirthdates(void);
-extern BOOL AB_LoadTree(char *, BOOL, BOOL);
-extern BOOL AB_SaveTree(char *);
-extern void AB_MakeABFormat(APTR);
-extern struct AB_ClassData *AB_New(void);
-
 extern BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi);
 extern struct Mail *RE_GetQuestion(long);
 extern struct Mail *RE_GetAnswer(long);
-extern BOOL RE_DecodePart(struct Part *);
 extern void RE_CleanupMessage(int);
 extern BOOL RE_LoadMessage(int, int);
 extern char *RE_ReadInMessage(int, int);
@@ -783,29 +548,3 @@ extern void WR_Cleanup(int);
 extern void WR_App(int, struct AppMessage *);
 extern struct WR_ClassData *WR_New(int);
 
-extern void ER_NewError(char *, char *, char *);
-
-extern void FI_SearchGhost(struct SearchGroup *, BOOL disabled);
-extern APTR FI_ConstructSearchGroup(struct SearchGroup *, BOOL);
-extern BOOL MyMatch(BOOL, char *, char *);
-extern BOOL FI_PrepareSearch(struct Search *, int, BOOL, int, int, int, BOOL, char *, char *);
-extern BOOL FI_DoComplexSearch(struct Search *, int, struct Search *, struct Mail *);
-
-extern BOOL US_Login(char *, char *, char *, char *);
-extern struct User *US_GetCurrentUser(void);
-
-extern void NewLine(FILE *, BOOL);
-extern void to64(FILE *, FILE *, BOOL);
-extern void toqp(FILE *, FILE *);
-extern void touue(FILE *, FILE *);
-extern void fromform(FILE *, FILE *, struct TranslationTable *);
-extern void fromqp(FILE *, FILE *, struct TranslationTable *);
-extern void from64(FILE *, FILE *, struct TranslationTable *, BOOL);
-extern void fromuue(FILE *, FILE *);
-extern void fromqptxt(char *, char *, struct TranslationTable *);
-extern void from64txt(char *, char *, struct TranslationTable *);
-extern void fromuuetxt(char **, FILE *);
-extern BOOL DoesNeedPortableNewlines(char *);
-
-extern BOOL InitClasses(void);
-extern void ExitClasses(void);

@@ -25,11 +25,18 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_error.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
@@ -276,7 +283,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
          set(G->AB->GUI.LV_ADRESSES, MUIA_NListtree_Quiet, TRUE);
          while (GetLine(fh, buffer, SIZE_LARGE))
          {
-            clear(&addr, sizeof(struct ABEntry));
+            memset(&addr, 0, sizeof(struct ABEntry));
             if (!strncmp(buffer, "@USER", 5))
             {
                addr.Type = AET_USER;
@@ -351,7 +358,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
          while (GetLine(fh, buffer, SIZE_LARGE))
          {
             char *p, *p2;
-            clear(&addr, sizeof(struct ABEntry));
+            memset(&addr, 0, sizeof(struct ABEntry));
             if (p = strchr(buffer, ' ')) *p = 0;
             stccpy(addr.Address, buffer, SIZE_ADDRESS);
             if (p)

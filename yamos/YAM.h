@@ -116,10 +116,19 @@ struct Global
 
 /**************************************************************************/
 
-extern struct WBStartup *WBmsg;
-extern struct Config *C;
-extern struct Global *G;
-extern char *FolderNames[4];
+extern char *             ContType[MAXCTYPE+1];
+extern APTR               ContTypeDesc[MAXCTYPE];
+extern char *             FolderNames[4];
+extern struct Global *    G;
+extern char *             months[12];
+extern char *             SecCodes[5];
+extern char *             SigNames[3];
+extern char *             Status[9];
+extern struct WBStartup * WBmsg;
+extern char *             wdays[7];
+
+void PopUp(void);
+void SetupAppIcons(void);
 
 /**************************************************************************/
 

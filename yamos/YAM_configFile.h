@@ -28,4 +28,9 @@
 
 ***************************************************************************/
 
-#endif /* YAM_CONFIGGUI_H */
+void CO_GetConfig(void);
+BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders);
+void CO_SaveConfig(struct Config *co, char *fname);
+void CO_SetConfig(void);
+
+#endif /* YAM_CONFIGFILE_H */

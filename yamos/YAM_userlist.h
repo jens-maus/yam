@@ -74,4 +74,9 @@ struct Users
    struct User User[MAXUSERS];
 };
 
+extern struct Hook US_OpenHook;
+
+struct User *US_GetCurrentUser(void);
+BOOL         US_Login(char *username, char *password, char *maildir, char *prefsfile);
+
 #endif /* YAM_USERLIST_H */

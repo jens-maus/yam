@@ -31,6 +31,9 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <dos/doshunks.h>
+#include <dos/dostags.h>
+#include <exec/execbase.h>
 #include <libraries/asl.h>
 #include <mui/NListview_mcc.h>
 #include <workbench/startup.h>
@@ -43,12 +46,15 @@
 #include "YAM.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_read.h"
 #include "YAM_utilities.h"
+
+int BusyLevel = 0;
 
 /***************************************************************************
  Utilities
@@ -2507,14 +2513,6 @@ BOOL SafeOpenWindow(Object *obj)
    return FALSE;
 }
 ///
-/// DisposeModulePush
-//  Frees resources of a MUI window (forwarded to DisposeModule via a hook
-void DisposeModulePush(void *module)
-{
-   DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, module, TAG_DONE);
-}
-
-///
 /// DisposeModule
 // Free resources of a MUI window
 void DisposeModule(void *modptr)
@@ -2538,6 +2536,13 @@ HOOKPROTONHNO(DisposeModuleFunc, void, void **arg)
    DisposeModule(arg[0]);
 }
 MakeHook(DisposeModuleHook,DisposeModuleFunc);
+///
+/// DisposeModulePush
+//  Frees resources of a MUI window (forwarded to DisposeModule via a hook
+void DisposeModulePush(void *module)
+{
+   DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, module, TAG_DONE);
+}
 ///
 /// LoadLayout
 //  Loads column widths from ENV:MUI/YAM.cfg
@@ -2791,7 +2796,6 @@ void AppendLogVerbose(int id, char *text, void *a1, void *a2, void *a3, void *a4
 ///
 /// Busy
 //  Displays busy message and sleep pointer
-int BusyLevel = 0;
 void Busy(char *text, char *parameter, int cur, int max)
 {
    static char infotext[SIZE_DEFAULT];

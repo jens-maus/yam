@@ -25,9 +25,18 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "YAM.h"
+#include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_find.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
+#include "YAM_main.h"
+#include "YAM_mainFolder.h"
+#include "YAM_utilities.h"
 
 /* local protos */
 static APTR MakeVarPop(APTR*, int, int, char*);

@@ -25,9 +25,18 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <proto/locale.h>
+
 #include "YAM.h"
 #include "YAM_config.h"
+#include "YAM_error.h"
 #include "YAM_folderconfig.h"
+#include "YAM_locale.h"
+#include "YAM_utilities.h"
 
 /* local protos */
 static char *Bool2Txt(BOOL);

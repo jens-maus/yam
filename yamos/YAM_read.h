@@ -115,8 +115,10 @@ struct Part
    char          Boundary[SIZE_DEFAULT];
 };
 
+extern struct Hook RE_CloseHook;
 extern struct Hook RE_LV_AttachDspFuncHook;
 
+BOOL RE_DecodePart(struct Part *rp);
 void STACKEXT RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhitespace, char *ptr);
 
 #endif /* YAM_READ_H */

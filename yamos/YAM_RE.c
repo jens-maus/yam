@@ -25,16 +25,25 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
+#include "YAM_mime.h"
 #include "YAM_read.h"
 #include "YAM_write.h"
+#include "YAM_utilities.h"
 
 /* local protos */
 static void RE_PrintFile(char*,struct Part*);
@@ -119,7 +128,6 @@ MakeHook(RE_FollowHook, RE_Follow);
 //  Goes to next or previous (new) message in list
 void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
 {
-   extern struct Hook RE_CloseHook;
    struct Mail *mail = G->RE[winnum]->MailPtr;
    struct MailInfo *mi = GetMailInfo(mail);
    int act = mi->Pos;
@@ -312,7 +320,7 @@ void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL s
                FinishUnpack(fullfile);
             }
             fclose(tf3->FP); tf3->FP = NULL;
-            clear(&comp, sizeof(struct Compose));
+            memset(&comp, 0, sizeof(struct Compose));
             comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
             comp.Subject = "Disposition Notification";
             comp.ReportType = 1;
@@ -507,7 +515,7 @@ char *RE_SuggestName(struct Mail *mail)
    char *ptr = mail->Subject;
    int i = 0;
 
-   clear(name, SIZE_FILE);
+   memset(name, 0, SIZE_FILE);
    while (*ptr && i < 26)
    {
       if ((int)*ptr <= ' ') name[i++] = '_';
@@ -1171,7 +1179,7 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
    char mfile[SIZE_MFILE];
 
    if (!(choice = MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SaveDecrypted), GetStr(MSG_RE_SaveDecGads), GetStr(MSG_RE_SaveDecReq)))) return;
-   clear(&comp, sizeof(struct Compose));
+   memset(&comp, 0, sizeof(struct Compose));
    if (comp.FH = fopen(MA_NewMailFile(folder, mfile, 0), "w"))
    {
       struct ExtendedMail *email;
@@ -2242,7 +2250,7 @@ void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
    char *s, *t, *eq;
    struct ExtendedMail *email;
 
-   clear(ab, sizeof(struct ABEntry));
+   memset(ab, 0, sizeof(struct ABEntry));
    stccpy(ab->Address, mail->From.Address, SIZE_ADDRESS);
    stccpy(ab->RealName, mail->From.RealName, SIZE_REALNAME);
    if (mail->Flags & MFLAG_SENDERINFO)
@@ -2332,13 +2340,13 @@ struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
 
       if (*C->NewAddrGroup) if (!AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, C->NewAddrGroup, ASM_ALIAS|ASM_GROUP, &hits, &tn))
       {
-         clear(&new, sizeof(struct ABEntry));
+         memset(&new, 0, sizeof(struct ABEntry));
          stccpy(new.Alias, C->NewAddrGroup, SIZE_NAME);
          stccpy(new.Comment, GetStr(MSG_RE_NewGroupTitle), SIZE_DEFAULT);
          new.Type = AET_GROUP;
          tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_Insert, new.Alias, &new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST);
       }
-      clear(&new, sizeof(struct ABEntry));
+      memset(&new, 0, sizeof(struct ABEntry));
       new.Type = AET_USER;
       RE_UpdateSenderInfo(&new, templ);
       EA_SetDefaultAlias(&new);
@@ -2670,7 +2678,7 @@ HOOKPROTONH(RE_LV_HDspFunc, long, char **array, char *entry)
    char *cont = entry;
    int i = 0;
 
-   clear(hfield, 40);
+   memset(hfield, 0, 40);
    while (*cont != ':' && *cont && i < 38) hfield[i++] = *cont++;
    array[0] = hfield;
    array[1] = stpblk(++cont);

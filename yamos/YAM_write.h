@@ -150,6 +150,9 @@ struct Compose
    enum Security      OldSecurity;
 };
 
+extern struct Hook WR_EditHook;
+extern struct Hook WR_NewMailHook;
+
 BOOL WriteOutMessage(struct Compose *comp);
 
 #endif /* YAM_WRITE_H */

@@ -192,8 +192,37 @@ struct Config
    char  AppIconText[SIZE_COMMAND];
 };
 
-extern struct Hook CO_PL_DspFuncHook;
-
 enum SizeFormat { SF_DEFAULT=0, SF_MIXED, SF_1PREC, SF_2PREC, SF_3PREC };
+
+extern struct Config *C;
+extern struct Config *CE;
+extern struct Hook    CO_AddMimeViewHook;
+extern struct Hook    CO_AddPOP3Hook;
+extern struct Hook    CO_AddRuleHook;
+extern struct Hook    CO_DelMimeViewHook;
+extern struct Hook    CO_DelPOP3Hook;
+extern struct Hook    CO_DelRuleHook;
+extern struct Hook    CO_EditSignatHook;
+extern struct Hook    CO_GetDefaultPOPHook;
+extern struct Hook    CO_GetMVEntryHook;
+extern struct Hook    CO_GetP3EntryHook;
+extern struct Hook    CO_GetRUEntryHook;
+extern struct Hook    CO_GetRXEntryHook;
+extern struct Hook    CO_OpenHook;
+extern struct Hook    CO_PL_DspFuncHook;
+extern struct Hook    CO_PutMVEntryHook;
+extern struct Hook    CO_PutP3EntryHook;
+extern struct Hook    CO_PutRUEntryHook;
+extern struct Hook    CO_PutRXEntryHook;
+extern struct Hook    CO_RemoteToggleHook;
+
+void              CO_FreeConfig(struct Config *co);
+BOOL              CO_IsValid(void);
+struct MimeView * CO_NewMimeView(void);
+struct POP3 *     CO_NewPOP3(struct Config *co, BOOL first);
+struct Rule *     CO_NewRule(void);
+void              CO_RuleGhost(struct CO_GUIData *gui, struct Rule *ru);
+void              CO_SetDefaults(struct Config *co, int page);
+void              CO_Validate(struct Config *co, BOOL update);
 
 #endif /* YAM_CONFIG_H */
