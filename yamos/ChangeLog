@@ -318,3 +318,5 @@
 
     * Now respects the "Iconified on startup" MUI setting. If the HIDE
       tooltype is present, it'll override it.
+
+    * Fixed problem with comments missing in the address book.

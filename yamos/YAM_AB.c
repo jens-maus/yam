@@ -880,6 +880,7 @@ long SAVEDS ASM AB_LV_DspFunc(REG(a0, struct Hook *hook), REG(a1, struct MUIP_NL
       {
          msg->Array[0] = entry->Alias;
          msg->Array[1] = entry->RealName;
+         msg->Array[2] = entry->Comment;
          msg->Array[3] = entry->Address;
          msg->Array[4] = entry->Street;
          msg->Array[5] = entry->City;
