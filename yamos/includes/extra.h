@@ -4,16 +4,13 @@
 #ifdef __SASC
 
 #include <dos.h>
-#include <error.h>
 
 #else
 
 #ifdef _DCC
    #include <fcntl.h>
-   #define isascii(c) (((c)&0xff)<127)
 #elif defined(__STORM__)
    #define F_OK 0
-   #define isascii(c) (((c)&0xff)<127)
 #else
    #include <unistd.h>
 #endif
