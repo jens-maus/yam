@@ -34,11 +34,7 @@
 #include "extrasrc/strmfp.c"
 #include "extrasrc/strsfn.c"
 #include "extrasrc/NewReadArgs.c"
-#include "extrasrc/stch_i.c"
-char *index(const char *s, int c)
-{
-   return strchr (s, c);
-}
+
 #include <proto/dos.h>
 int access(const char * name, int x)
 {
@@ -52,10 +48,7 @@ int access(const char * name, int x)
 
    return 0;
 }
-void bcopy(const void *src, void *dst, size_t len)
-{
-   memcpy(dst, src, len);
-}
+
 char *strdup(const char *str)
 {
    char *s;
@@ -72,10 +65,8 @@ char *strdup(const char *str)
 }
 
 void main(int, char *[]);
-struct WBStartup *_WBenchMsg;
 void wbmain(struct WBStartup *wbs)
 {
-   _WBenchMsg=wbs;
    main(0, (char**)wbs);
 }
 
