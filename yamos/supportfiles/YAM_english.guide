@@ -1,6 +1,5 @@
 @DATABASE YAM.guide
-@MASTER yamdev:YAM_e.guide
-@$VER: YAM.guide 2.3 (1.6.2001)
+@$VER: YAM.guide 2.3 (8.6.2001)
 @INDEX "Index"
 
 @NODE "Main" "YAM - English documentation"
@@ -60,8 +59,8 @@ goal  therefore  was to program a cross between AdMail and AirMail, with a
 few ideas from Pegasus Mail.
 
 The  unexpectedly  enthusiastic  response  to  Version 1.2 led to a steady
-development  of  YAM  culminating  in this Version 2.1, which is much more
-than just an upgrade for the popular Version 1.3.5.
+development  of  YAM  culminating  in Version 2.2, which is much more than
+just an upgrade for the popular Version 1.3.5.
 
 Features of YAM
 
@@ -241,16 +240,16 @@ unwilling to use it, proceed as follows:
   directories 'Charsets', 'Icons' and 'Rexx' to this new directory. Rename
   the guide file to 'YAM.guide'
 
-- Copy the English catalog file 'YAM.catalog' to the directory...
+- Copy the catalog file 'YAM.catalog' for your language to...
 
-      'LOCALE:Catalogs/English'
+      'LOCALE:Catalogs/<your language>'
 
 - Copy all MUI-libraries (mcc/mcp) from the directory 'MUI' to...
 
       'MUI:libs/MUI'
 
 - Create an entry in your 'S:User-Startup' assigning 'YAM:' to the
-  directory you have created for YAM 2.0, for example...
+  directory you have created for YAM 2.3, for example...
 
       'Assign YAM: Work:Internet/YAM'
 
@@ -663,7 +662,7 @@ Folder/Search...
 Opens the @{"Search window" LINK "FI_W" 0}, which enables you to find any particular message.
 
 Folder/Filter
-Applies  the  user-defined  @{"Filter" LINK "CO03" 0}  to all messages in the current folder.
+Applies the  user-defined  @{"Filters" LINK "CO03" 0}  to all messages in the current folder.
 Filters  are  of  the  form  'On  query , take action ', the options being
 defined in the configuration settings.
 
@@ -845,7 +844,7 @@ MUI. These MUI modules are:
       Options: fonts, colours, cursor, separator, keybindings, spell
                checker.
 
-     Listtree: structured lists in the Address book.
+    NListtree: structured lists in the Address book.
       Options: appearance of lines and group icons.
 
  BetterString: general one-line text input field.
@@ -878,7 +877,7 @@ window.
     Example:  YAM mailing list
 
 Path
-This  is  the  path in which the messages, the .config file and the .index
+This  is the  path in which the messages, the .fconfig file and the .index
 file of the actual folder will be saved. Usually this is a subdirectory of
 the  actual  basic  folder directory, but you can specify any other place,
 like another hard disk partition for example.
@@ -954,6 +953,11 @@ when  posting  to  the  mailing  list. This is useful if you use different
 e-mail  addresses for different mailing lists, or just want to avoid SPAM.
 You can also enter a 'Reply-To: address' in case the mailing list software
 doesn't set this.
+
+Signature
+Here  you  can select the  signature  that will  be used by  default  when
+replying to messages coming from this mailing list  (the ones with a "To:"
+header matching the pattern given in "To: pattern").
 
 @ENDNODE
 @NODE "CO_W" "Configuration"
@@ -1243,7 +1247,7 @@ on the server if this option is not activated.
 
 ---- Notification --------------------------------------------------------
 
-[] Type
+[] Requester
 When  YAM has downloaded new mail, it will display a requester showing the
 number of new and deleted messages.
 
@@ -1390,7 +1394,11 @@ select how this is to be done:
 [] Bounce
 Activate  this option to have mail matching the search criteria bounced to
 another  person.  The new recipient's e-mail address must be inserted into
-the  text  field  next  to the option. Example: jdoe\@athome.de [] Forward
+the  text  field  next  to the option.
+
+  Example:  jdoe\@athome.de
+
+[] Forward
 Activate  this option when you want e-mail matching the search criteria to
 be forwarded to another person. The new recipient's e-mail address must be
 inserted into the text field next to the option.
@@ -1687,13 +1695,19 @@ stored in folder for which mailing list support has been activated
     [Intro]   On %d, %n wrote:\\n
     [Close]   Kind regards
 
-[] Quote message using
-Activate this option to make YAM quote the message you're replying to. The
-character specified in the editing field to the right plus a space will be
-put  in  front  of  each line of the original message. Click on the pop-up
-button to select a variable for the sender's initials.
+Quote message using
+The character(s) specified in  the editing  field plus a space will be put
+in front of each line of the original message. Click the  pop-up button to
+select a variable for the sender's initials.
 
   Example:  %i>
+
+Quote external using
+The character(s) specified in  the editing  field plus a space will be put
+in front of each line  quoted from an external  source.  This is used when
+inserting or pasting text using the "alternate quoted" method.
+
+  Example:  |
 
 [] Quote empty lines
 Normally  the  quotation  character  is inserted at the beginning of empty
@@ -2063,7 +2077,7 @@ of YAM.
 @NODE "CO13" "Configuration - ARexx"
 @TOC "CO_W"
 
-Configuration - AREXX   (ARexx- und AmigaDOS-Scripts)
+Configuration - AREXX   (ARexx and AmigaDOS Scripts)
 
 As  well  as  the  ARexx menu in the main window, which can hold up to ten
 scripts, ARexx scripts can also be started by specified events. Thus it is
@@ -2247,8 +2261,8 @@ whenever you select a folder.
 
 AskJumpUnread
 If  this  option  is  set to 'N', YAM won't ask if you want to jump to the
-next  folder  with unread messages, when at the last message and selecting
-'Next unread message' in the menu.
+next/previous folder with unread  messages if you  are reading the last or
+first message and select 'Next/Previous unread message' in the menu.
 
   Example:  AskJumpUnread = N
 
@@ -2458,7 +2472,7 @@ Address book/Append
 Loads another address book from your hard disk and appends its contents to
 the address book presently resident in RAM.
 
-Address book/Saves
+Address book/Save
 Saves the address book to your hard disk.
 
 Address book/Save as
@@ -2934,7 +2948,7 @@ in the From header.
 Additional header
 If  for  any  reason it should become necessary to add one or more special
 header  lines to a message you can enter these here. Several lines must be
-separated by inserting '/n'.
+separated by inserting '\\n'.
 
 Send options
 
@@ -2990,7 +3004,7 @@ Select here which security measures you want to take for this message.
                    in multipart/signed format. The text of the message will
                    be readable without PGP.
           encrypt: The message will be encrypted using the recipient's PGP
-                   key and saved in multipart/signed format.
+                   key and saved in multipart/encrypted format.
  sign and encrypt: This is a combination of the two previous options
                    allowing the recipient to check the sender's identity.
  send anonymously: The mail will be sent using an ANON service so the
@@ -3020,7 +3034,11 @@ Inserts a text file at the current cursor position.
 
 Text/Insert as  » quoted
 Inserts  a  text  file at the current cursor position, prefacing each line
-with the citation character (usually '>').
+with the quote character (usually '>').
+
+Text/Insert as  » alternate quoted
+Inserts  a  text  file at the current cursor position, prefacing each line
+with an alternate quote character (usually '|').
 
 Text/Insert as  » ROT-13 encrypted
 Inserts  a  text  file  at  the  current cursor position and replaces each
@@ -3051,11 +3069,15 @@ Places a copy of the marked text on the Clipboard.
 Edit/Paste
 Inserts the text on the Clipboard at the current cursor position.
 
-Edit/PasteAs  » quoted
+Edit/Paste as  » quoted
 Inserts  the  text  on  the  Clipboard  at  the  current  cursor position,
-prefacing each line with the citation mark.
+prefacing each line with the quote mark.
 
-Edit/PasteAs  » ROT-13 encoded
+Edit/Paste as  » alternate quoted
+Inserts  the  text  on  the  Clipboard  at  the  current  cursor position,
+prefacing each line with the alternative quote mark.
+
+Edit/Paste as  » ROT-13 encoded
 Inserts  a  text  file  at  the  current  cursor position, applying ROT-13
 encoding. (See also under @{"Text/Input as" LINK "WRM1" 0}).
 
@@ -3088,7 +3110,7 @@ Toggles  coloured  type  on  or off for a marked block or for text entered
 subsequently.  The  colour  is  defined  in  the  @{"Read configuration" LINK "CO04" 0}. In a
 transmitted message the coloured text is delineated by hash signs, thus:
 
-  @{fg fill}colour -> #colour#
+  colour -> #colour#
 
 Edit/Separators  » thin or  thick
 Inserts  a  separator  at  the  current  cursor  position. It does this by
@@ -3390,15 +3412,21 @@ the main window. Shortcut: <cursor right>
 
 Navigation/previous message
 This  displays the previous message i.e. the one above the current message
-in the main window. Shortcut: <cursor leftt>
+in the main window. Shortcut: <cursor left>
 
 Navigation/next unread message
 This  displays  the  next unread message i.e. below the current message in
-the main window. Shortcut: <Shift-cursor right>
+the main window. If there are no  more  new  messages  below  the  current
+message  in  the  current  folder but in one of the following folders, you
+will be notified about this and asked if you want to change to  the  given
+folder and continue reading there. Shortcut: <Shift-cursor right>
 
 Navigation/previous unread message
-This  displays  the previous unread message i.e. above the current message
-in the main window. Shortcut: <Shift-cursor left>
+This displays the previous unread message i.e. above the  current  message
+in  the  main  window. If there are no more new messages above the current
+message in the current folder but in one of the previous folders, you will
+be notified about this and asked if you want to change to the given folder
+and continue reading there. Shortcut: <Shift-cursor left>
 
 Navigation/next message in thread
 This  displays  the  message  which  replies  to the current message. This
@@ -3590,7 +3618,7 @@ If  you  are  adding  a  new user, you can select this option and copy the
 current  settings  to  the new user directory, so saving the new user some
 tedious work setting up a configuration from scratch.
 
-[Add user]          Adds the new user to the list
+[Add user]          Adds a new user to the list
 
 [Delete user]       Deletes the selected user from the list.
 
@@ -3625,7 +3653,7 @@ YAM supports the following drag&drop operations:
   Binary file      Attachment list  Add file as attachment
 
 @ENDNODE
-@NODE "OPTI" "Start-up options"
+@NODE "OPTI" "Startup options"
 
 STARTUP OPTIONS
 
@@ -3642,7 +3670,7 @@ the password request on program startup.
 
 MAILDIR=path
 Sets  the  root  directory for the folders and configuration files. In YAM
-1.3.x  this  option was used to implement multi-user support. YAM 2.0 sets
+1.3.x  this  option was used to implement multi-user support. YAM 2.x sets
 the root directory for each user in the user configuration.
 
 PREFSFILE=filename
@@ -3705,10 +3733,10 @@ Commands  can return results in three different kinds. Let's look at these
 examples which use the FOLDERINFO command:
 
   FOLDERINFO
-    -> RESULT = "0 Incoming incoming 10 2 4 23030"
+    -> RESULT = "0 Incoming incoming 10 2 4 23030 1"
 
   FOLDERINFO VAR fi
-    -> fi = "0 Incoming incoming 10 2 4 23030"
+    -> fi = "0 Incoming incoming 10 2 4 23030 1"
 
   FOLDERINFO STEM fi.
     -> fi.number = 0
@@ -3793,7 +3821,9 @@ Switches  YAM  into  "busy" state and displays the text TEXT in the status
 bar of the main window. During this state YAM doesn't accept inputs. RC is
 set to 1 if YAM is currently busy.
 
-APPNOBUSY   Terminates "busy" state. RC is set to 1 if YAM is still busy.
+APPNOBUSY
+
+Terminates "busy" state. RC is set to 1 if YAM is still busy.
 
 FOLDERINFO      VAR/K,STEM/K,FOLDER => NUMBER/N,NAME,PATH,TOTAL/N,NEW/N,
                 UNREAD/N,SIZE/N,TYPE/N
@@ -3828,7 +3858,9 @@ HELP            FILE
 Prints  a list of supported ARexx commands in the Shell window or saves it
 to a FILE.
 
-HIDE  Turns YAM into iconified state.
+HIDE
+
+Switches YAM to iconified state.
 
 INFO            VAR/K,STEM/K,ITEM => VALUE
 
@@ -3941,7 +3973,9 @@ MAILSTATUS       STATUS
 Changes the status of the selected message(s). Valid values for STATUS are
 O (read), U (unread), H (on hold) and W (ready to send).
 
-MAILUPDATE  Updates the index of the current folder.
+MAILUPDATE
+
+Updates the index of the current folder.
 
 MAILWRITE        VAR/K,STEM/K,WINDOW/N,QUIET/S => WINDOW/N
 
@@ -3957,6 +3991,7 @@ QUIT             FORCE/S
 Terminates YAM. Use FORCE to skip safety requesters.
 
 READCLOSE
+
 Closes the active read window.
 
 READINFO         VAR/K,STEM/K => FILENAME/M,FILETYPE/M,
@@ -3994,9 +4029,13 @@ Specify  EXCLUDEACTIVE  if  the  current  folder  shouldn't be listed. The
 return  value  contains  the  name  of  the  folder. If the user clicks on
 "Cancel", RC is set to 1.
 
-SCREENTOBACK  Puts the YAM screen behind all other screens.
+SCREENTOBACK
 
-SCREENTOFRONT  Brings the YAM screen to the front.
+Brings the YAM screen to the background.
+
+SCREENTOFRONT
+
+Brings the YAM screen to the foreground.
 
 SETFLAG          VOL/K/N,PER/K/N
 
@@ -4006,7 +4045,9 @@ useful  in complex Arexx scripts. The value of the permanent flag is saved
 in  the  file  comment of the message, so it will be still present after a
 reset.
 
-SETFOLDER        FOLDER/A  Changes the current FOLDER.
+SETFOLDER        FOLDER/A
+
+Changes the current FOLDER.
 
 SETMAIL          NUM/N/A
 
@@ -4016,7 +4057,9 @@ SETMAILFILE      MAILFILE/A
 
 Selects the current message, MAILFILE is the filename of the message.
 
-SHOW  Changes back from iconified state into full view.
+SHOW
+
+Changes back from iconified state into full view.
 
 USERINFO         VAR/K,STEM/K => USERNAME,EMAIL,REALNAME,CONFIG,MAILDIR,
                  FOLDERS/N
@@ -4071,9 +4114,13 @@ WRITEREPLYTO     ADDRESS/A
 
 Enters an address or alias into the "Reply to" field in the write window.
 
-WRITESEND  Sends the new message.
+WRITESEND
 
-WRITESUBJECT     SUBJECT/A  Enters the subject in the write window.
+Sends the new message.
+
+WRITESUBJECT     SUBJECT/A
+
+Enters the subject into the Write window.
 
 WRITETO          ADDRESS/A/M,ADD/S
 
@@ -4132,7 +4179,7 @@ directories will be found:
  .taglines         your collection of @{"taglines" LINK "CO07" 0}
  .autosave?.txt    @{"backup copies" LINK "CO_H"} of the editor contents
  .uidl             used to @{"avoid duplicates" LINK "CO02" 0}
- YAM.log           protocol file (if @{"Use protocol" LINK "CO09" 0} has been set).
+ YAM.log           log file (if the @{"log feature" LINK "CO09" 0} has been set).
 
  incoming/         the incoming mailbox directory
  outgoing/         the outgoing mailbox directory
@@ -4278,7 +4325,7 @@ safely  than if sent by normal letter post. A simple, effective and widely
 used  tool  for  this  sort  of  encryption  is PGP, short for Pretty Good
 Privacy.
 
-It  was  developed  by  Phil  Zimmerman and employs the public key method.
+It  was  developed  by  Phil Zimmermann and employs the public key method.
 Using  this  PGP  program  one  can  be  sure  that the message is the one
 actually  written  by  the sender and that only the intended recipient can
 read  it.  So-called  public  keys  offer  the  highest  possible level of
@@ -4327,7 +4374,7 @@ Outgoing mail
 
 If you want to send an e-mail message to anyone, YAM transfers the message
 by  SMTP  to your local SMTP server. This computer forwards the message to
-the recipient's computer, geneally also by SMTP.
+the recipient's computer, generally also by SMTP.
 
 Why  does  YAM  not deal directly with the recipient's server? Firstly, it
 would  take  quite  a  long time for your Amiga to get a connection to one
@@ -4557,12 +4604,12 @@ person appears on the list, unintentionally.
 
 FUTURE PLANS
 
-A few functions which I may perhaps put into the next version of YAM:
+More attractions coming (possibly) in future versions of YAM:
 
-  - Support for messages in HTML-Format
-  - Inline-Display of attached files (graphics)
-  - Support for the IMAP-4 Protocol
-  - Hierarchical folders
+  - Support for messages in HTML format
+  - Inline-display of attached files (graphics)
+  - Support for the IMAP-4 protocol
+  - Hierarchical folders (coming soon)
   - Asynchrounous mail transfer
 
 @ENDNODE
@@ -4573,7 +4620,7 @@ FURTHER INFORMATION ABOUT YAM
 In  order  to  provide  all users with up-to-date information about YAM, I
 have set up a home page in the world wide web:
 
-                        http://www.YAM.ch
+                        http://www.yam.ch/
 
 If  you  want to discuss YAM-related issues with other users, you can join
 the YAM mailing list.
@@ -4582,10 +4629,10 @@ Just send an empty e-mail to YAMML-subscribe\@yahoogroups.com
 
 You can send me suggestions, questions, criticism, bug reports etc. at:
 
-                    support\@YAM.ch
-                    http://www.YAM.ch/contact.html
-                    http://sourceforge.net/projects/yamos
-                    http://marcel.buz.ch
+                    support\@yam.ch
+                    http://www.yam.ch/contact.html
+                    http://sourceforge.net/projects/yamos/
+                    http://marcel.buz.ch/
 
 or failing that, by conventional mail at:
 
@@ -4640,7 +4687,7 @@ Programmers:
         Benny Kjær Nielsen   (Toolbar.mcc)
         Marcin Orlowski      (Flexcat)
         Gilles Masson        (NList.mcc)
-        Klaus Melchior       (Listtree.mcc)
+        Carsten Scholling    (NListtree.mcc)
 
 @ENDNODE
 @NODE INDEX "Index"
