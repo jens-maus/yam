@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-10  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_RE.c: modified the ExtractURL function once more
+      to be a bit more precise on recognizing email addresses.
+      Now it should really only recognize proper email adresses
+      and not any word that contains a "@".
+
 2002-07-09  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_RE.c: reworked the DoubleClickFunc of the Readwindow

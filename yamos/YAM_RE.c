@@ -2285,7 +2285,6 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
    };
 
    char *foundurl = NULL, *p;
-   char *legalchars = (char *)URL_legalchars; // by thefault we extract with the URL legalchars
    int i;
 
    if ((p = strchr(line, ':')))
@@ -2300,8 +2299,19 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
    // now we check if the line just contains a email address
    if(!foundurl)
    {
-      if((p = strchr(line, '@')))
+      char *sp = line;
+      BOOL result = FALSE;
+
+      // we check the whole line for any valid email address in it.
+      while(!result && (p = strchr(sp, '@')))
       {
+        int atcnt = 0;
+        int dotcnt = 0;
+        int dotdis = 1;
+
+        // by default we make the result TRUE
+        result = TRUE;
+
         // now we move back from the @ until the start of the address, so that we can find out
         // from where this URL starts
         for(foundurl=p; p && strchr(EML_legalchars, *p); p--)
@@ -2310,20 +2320,53 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
           if(p == line) break;
         }
 
-        // for the following copy operation we use the EML legalchars array
-        // so that it is filtered for characters only allowed in email addresses
-        legalchars = (char *)EML_legalchars;
+        // now we copy the address in the result array and try to validate the email
+        // address also
+        for(i=0; foundurl[i] && strchr(EML_legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
+        {
+          url[i] = foundurl[i];
+
+          // check that we don`t have two @ signs or that there is nothing in front of the @
+          if(!result) continue;
+          else if(url[i] == '@')
+          {
+            atcnt++;
+            if(i == 0 || atcnt > 1) result = FALSE;
+          }
+          else if(url[i] == '.') // count the dots in the address
+          {
+            if(dotdis == 0) result = FALSE;         // if there was a dot before, this could not be a valid email
+            if(atcnt) { dotcnt++; dotdis = 0; };  // only count if we passed the @
+          }
+          else dotdis++;
+        }
+
+        // lets set sp to the next point were we stopped the analysis of this
+        sp = &foundurl[i];
+
+        // lets see if the last sign is a dot and if so reduce the counter
+        if(url[i-1] == '.') { dotcnt--; i--; };
+
+        // and last, but not least we validate the url as a email address again
+        // if there are no dots or the string is smaller than "a@b.cd" it obviously no email at all
+        if(dotcnt == 0 || i < 5) result = FALSE;
       }
-      else return FALSE;
-   }
 
-   for(i=0; foundurl[i] && strchr(legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
+      // if we still have not found a valid email we exit with FALSE
+      if(!result) return FALSE;
+   }
+   else
    {
-      url[i] = foundurl[i];
+      for(i=0; foundurl[i] && strchr(URL_legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
+      {
+        url[i] = foundurl[i];
+      }
    }
 
+   // check if the last character is a sentence end sign
    if (strchr(".?!", url[i-1])) --i;
    url[i] = 0;
+
    if (urlptr) *urlptr = foundurl;
    if (rest) *rest = &foundurl[i];
 
