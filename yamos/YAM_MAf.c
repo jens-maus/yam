@@ -868,21 +868,21 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             {
                p = Trim(value);
                if (!stricmp(p, "high")) mail->Importance = 1;
-               if (!stricmp(p, "low")) mail->Importance = -1;
+               else if(!stricmp(p, "low")) mail->Importance = -1;
             }
             else if (!stricmp(field, "priority") && !mail->Importance)
             {
                p = Trim(value);
                if (!stricmp(p, "urgent")) mail->Importance = 1;
-               if (!stricmp(p, "non-urgent")) mail->Importance = -1;
+               else if(!stricmp(p, "non-urgent")) mail->Importance = -1;
             }
             else if (!stricmp(field, "content-type"))
             {
                p = Trim(value);
-               if (!strnicmp(p, "multipart/mixed", 15))     SET_FLAG(mail->Flags, MFLAG_MULTIPART);
-               if (!strnicmp(p, "multipart/report", 16))    SET_FLAG(mail->Flags, MFLAG_REPORT);
-               if (!strnicmp(p, "multipart/encrypted", 19)) SET_FLAG(mail->Flags, MFLAG_CRYPT);
-               if (!strnicmp(p, "multipart/signed", 16))    SET_FLAG(mail->Flags, MFLAG_SIGNED);
+               if (!strnicmp(p, "multipart/mixed", 15))         SET_FLAG(mail->Flags, MFLAG_MULTIPART);
+               else if(!strnicmp(p, "multipart/report", 16))    SET_FLAG(mail->Flags, MFLAG_REPORT);
+               else if(!strnicmp(p, "multipart/encrypted", 19)) SET_FLAG(mail->Flags, MFLAG_CRYPT);
+               else if(!strnicmp(p, "multipart/signed", 16))    SET_FLAG(mail->Flags, MFLAG_SIGNED);
             }
             else if (!stricmp(field, "x-senderinfo"))
             {
