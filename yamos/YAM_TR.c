@@ -2127,8 +2127,11 @@ static void TR_TransStat_Start(struct TransStat *ts)
 {
    ts->Msgs_Done = ts->Size_Done = 0;
    SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%ld", ts->Msgs_Tot);
-   set(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel);
-   set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Max, ts->Msgs_Tot);
+
+   SetAttrs(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel,
+                                 MUIA_Gauge_Max, ts->Msgs_Tot,
+                                 TAG_DONE);
+
    ts->Clock_Start = TR_GetSeconds();
 }
 ///
@@ -2148,9 +2151,13 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, L
    if (G->TR->GUI.GR_LIST && listpos >= 0) set(G->TR->GUI.LV_MAILS, MUIA_NList_Active, listpos);
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
    set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current, index);
+
    SPrintF(G->TR->BytesLabel, GetStr(MSG_TR_SizeGauge), size);
-   set(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel);
-   set(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max, size);
+
+   SetAttrs(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current,  0,
+                                 MUIA_Gauge_InfoText, G->TR->BytesLabel,
+                                 MUIA_Gauge_Max,      size,
+                                 TAG_DONE);
 }
 ///
 /// TR_TransStat_Update
@@ -2276,6 +2283,9 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
                   }
                   if (*buf) if (buf[strlen(buf)-1] != '\n') fputc('\n', fh);
                   fclose(mfh);
+
+                  // put the transferStat to 100%
+                  TR_TransStat_Update(&ts, (int)mail->Size);
                }
                FinishUnpack(fullfile);
             }
@@ -2372,6 +2382,9 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                   // will be send incomplete.
                   if(TR_SendSMTPCmd(SMTP_FINISH, NULL, MSG_ER_BadResponse))
                   {
+                    // put the transferStat to 100%
+                    TR_TransStat_Update(ts, (int)mail->Size);
+
                     result = email->DelSend ? 2 : 1;
                     AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size, "");
                   }
@@ -2830,6 +2843,9 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
          {
             if (TR_LoadMessage(&ts, mail->Index))
             {
+               // put the transferStat to 100%
+               TR_TransStat_Update(&ts, (int)mail->Size);
+
                G->TR->Stats.Downloaded++;
                if (C->AvoidDuplicates) TR_AppendUIDL(mail->UIDL);
                if(hasTR_DELETE(mail)) TR_DeleteMessage(mail->Index);
