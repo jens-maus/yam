@@ -1,20 +1,20 @@
-PRE    = -HYAM.m=YAM.h -Hheaders.m=headers.h 
-CFLAGS = -DYAMVER="2.3-dev" -DYAMDATE="14.12.2000" -030 -ms -Iincludes -//
-OBJS1= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
-	YAM_ER.o YAM_FI.o YAM_FO.o YAM_MAf.o YAM_TR.o YAM_US.o YAM_UT.o \
-	all_dice.o
-SRCS1= $(OBJS1:"*.o":"*.c")
-OBJS2= YAM_RE.o YAM_WR.o YAM_MA.o
-SRCS2= $(OBJS2:"*.o":"*.c")
-OBJS3= YAM_loc.o
-SRCS3= $(OBJS3:"*.o":"*.c")
-OBJS4= YAM_MI.o YAM_rexx.o YAM_rexx_rxcl.o hmac_md5.o
-SRCS4= $(OBJS4:"*.o":"*.c")
-OBJS5= YAM_rexx_rxif.o
-SRCS5= $(OBJS5:"*.o":"*.c")
+PRE    = -HYAM.m=YAM.h
+CFLAGS = -DYAMVER="2.3-dev" -DYAMDATE="16.12.2000" -030 -ms -Iincludes -//
+SRCS1= YAM.c YAM_AB.c YAM_CL.c YAM_CO.c YAM_COg.c YAM_COs.c YAM_DI.c YAM_EA.c \
+	YAM_ER.c YAM_FI.c YAM_FO.c YAM_MAf.c YAM_TR.c YAM_US.c YAM_UT.c \
+	all_dice.c
+OBJS1= $(SRCS1:"*.c":"diceobjs/*.o")
+SRCS2= YAM_RE.c YAM_WR.c YAM_MA.c
+OBJS2= $(SRCS2:"*.c":"diceobjs/*.o")
+SRCS3= YAM_loc.c
+OBJS3= $(SRCS3:"*.c":"diceobjs/*.o")
+SRCS4= YAM_MI.c YAM_rexx.c YAM_rexx_rxcl.c hmac_md5.c
+OBJS4= $(SRCS4:"*.c":"diceobjs/*.o")
+SRCS5= YAM_rexx_rxif.c
+OBJS5= $(SRCS5:"*.c":"diceobjs/*.o")
 OBJS= $(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5)
 
-YAM: YAM.m $(OBJS)
+YAM: diceobjs YAM.m $(OBJS)
 	dcc $(CFLAGS) -mD -o %(left) %(right:*.o) -LMUI:Developer/C/DLib -lmui
 	xcopy YAM YAM:YAMos
 
@@ -39,9 +39,19 @@ YAM.h: YAM.h.in
 YAM_loc.h: YAM.cd
 	flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
 
-YAM.m: YAM.h headers.m YAM_loc.h
+YAM.m: YAM.h headers.h YAM_loc.h includes/dice.h includes/compiler.h \
+	includes/extra.h
 	Delete %(left)
 
-headers.m: headers.h includes/dice.h
-	Delete %(left)
+diceobjs: diceobjs
+	Makedir %(left)
+
+$(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4):: YAM.h headers.h YAM_loc.h \
+	includes/dice.h includes/compiler.h includes/extra.h
+
+diceobjs/all_dice.o:: extrasrc/md5.c extrasrc/astcsma.c extrasrc/getft.c \
+	extrasrc/stccpy.c extrasrc/stcgfe.c extrasrc/stcgfn.c \
+	extrasrc/stpblk.c extrasrc/strmfp.c extrasrc/strsfn.c \
+	extrasrc/wbpath.c extrasrc/NewReadArgs.c extrasrc/stch_i.c \
+	extrasrc/dice.c
 
