@@ -335,3 +335,10 @@
       header also (patch from MAIN)
     * YAM_AB.c: fixed sorting of the address list (patch from MAIN)
 
+2001-09-12  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_RE.c: Now accepts "(" and ")" in URLs also
+      (according to RFC 1738, ";" are also allowed in some cases
+       but not yet added)
+      Fixes Bug #460488
+

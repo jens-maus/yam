@@ -1989,7 +1989,7 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
 BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
 {
    char *protocols[7] = { "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:" };
-   char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#";
+   char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#()";
    char *foundurl = NULL, *p;
    int i;
    if (p = strchr(line, ':')) for (i = 0; i < 7; i++) if (foundurl = stristr(line, protocols[i])) break;
