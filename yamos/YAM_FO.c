@@ -533,7 +533,7 @@ BOOL FO_LoadTree(char *fname)
                fo.SortIndex = i++;
 
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-               if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
+               if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body))
                {
                   SET_FLAG(tnflags, TNF_NOSIGN);
                }
@@ -559,7 +559,7 @@ BOOL FO_LoadTree(char *fname)
                }
 
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-               if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
+               if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body))
                {
                   SET_FLAG(tnflags, TNF_NOSIGN);
                }
@@ -1024,7 +1024,7 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
       long tnflags = (TNF_LIST | TNF_OPEN);
 
       // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-      if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
+      if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body))
       {
         SET_FLAG(tnflags, TNF_NOSIGN);
       }
