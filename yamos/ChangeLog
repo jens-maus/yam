@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-03-09  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_global.c: moved the compiler information specification
+      from YAM.c to YAM_global.c,h as this is really a better place
+      for it. Also reverted the previously introduced
+      -m68020-60 CPU identification behaviour as this has been
+      changed in the latest gcc 3.3.3 68k version now.
+
 2004-03-08  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_global.c: changed version string CPU information to

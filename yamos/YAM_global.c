@@ -27,6 +27,7 @@
 
 #include "YAM_global.h"
 #include "YAM_locale.h"
+#include "YAM_utilities.h"
 
 #if defined(__PPC__)
   #if defined(__amigaos4__)
@@ -36,8 +37,6 @@
   #else
     #define CPU " [PPC]"
   #endif
-#elif defined(__mc68040) && defined(__mc68020) /* triggered by -m68020-40 and -m68020-60 */
-  #define CPU " [68k]"
 #elif defined(_M68060) || defined(__M68060) || defined(__mc68060)
   #define CPU " [060]"
 #elif defined(_M68040) || defined(__M68040) || defined(__mc68040)
@@ -47,9 +46,9 @@
 #elif defined(_M68020) || defined(__M68020) || defined(__mc68020)
   #define CPU " [020]"
 #elif defined(_M68000) || defined(__M68000) || defined(__mc68000)
-  #define CPU " [000]"
+  #define CPU " [68k]"
 #else
-  #error "Unknown CPU model - check compiler defines"
+  #error "Unsupported CPU model - check compiler defines"
 #endif
 
 /* the version stuff */
@@ -63,6 +62,22 @@ char * yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_
 char * yamcopyright     = __YAM_COPYRIGHT;
 char * yamversiondate   = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;
+
+#if defined(__GNUC__)
+  #if defined(__GNUC_PATCHLEVEL__)
+    char * yamcompiler = " (GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__) ")";
+  #else
+    char * yamcompiler = " (GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) ".x)";
+  #endif
+#elif defined(__VBCC__)
+  char * yamcompiler = " (VBCC)";
+#elif defined(__SASC)
+  char * yamcompiler = " (SAS/C " STR(__VERSION__) "." STR(__REVISION__) ")";
+#else
+  char * yamcompiler = " (unknown)";
+  #warning "unknown compiler specification"
+#endif
+
 
 #if defined(__amigaos4__)
   static const STRPTR Stack  = "$STACK:65536\n";

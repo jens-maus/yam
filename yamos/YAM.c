@@ -450,19 +450,7 @@ static BOOL AY_New(BOOL hidden)
 
    // now we add the compiler information as YAM can be
    // compiled with different versions and types of compilers
-   #if defined(__GNUC__)
-     #if defined(__GNUC_PATCHLEVEL__)
-     sprintf(&compiledon[strlen(compiledon)], " (GCC %d.%d.%d)", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
-     #else
-     sprintf(&compiledon[strlen(compiledon)], " (GCC %d.%d.x)",  __GNUC__, __GNUC_MINOR__);
-     #endif
-   #elif defined(__VBCC__)
-     strcpy(&compiledon[strlen(compiledon)],  " (VBCC)");
-   #elif defined(__SASC)
-     sprintf(&compiledon[strlen(compiledon)], " (SAS/C %d.%d)", __VERSION__, __REVISION__);
-   #else
-     strcpy(&compiledon[strlen(compiledon)],  " (unknown)");
-   #endif
+   strcat(&compiledon[strlen(compiledon)], yamcompiler);
 
    strmfp(logopath, G->ProgDir, "Icons/logo");
    G->AY_Win = WindowObject,
