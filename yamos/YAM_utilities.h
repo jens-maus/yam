@@ -146,18 +146,18 @@ struct NewToolbarEntry
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 // special flagging macros
-#define isFlagSet(v,f)	    (((v) & (f)) == (f))  // return TRUE if the flag is set
+#define isFlagSet(v,f)      (((v) & (f)) == (f))  // return TRUE if the flag is set
 #define hasFlag(v,f)        (((v) & (f)) != 0)    // return TRUE if one of the flags in f is set in v
-#define isFlagClear(v,f)	  (((v) & (f)) == 0)    // return TRUE if flag f is not set in v
-#define SET_FLAG(v,f)		    ((v) |= (f))          // set the flag f in v
-#define CLEAR_FLAG(v,f)		  ((v) &= ~(f))         // clear the flag f in v
+#define isFlagClear(v,f)    (((v) & (f)) == 0)    // return TRUE if flag f is not set in v
+#define SET_FLAG(v,f)       ((v) |= (f))          // set the flag f in v
+#define CLEAR_FLAG(v,f)     ((v) &= ~(f))         // clear the flag f in v
 #define MASK_FLAG(v,f)      ((v) &= (f))          // mask the variable v with flag f bitwise
 
 // some fileinfoblock handling macros
-#define isFile(fib)	   ((fib)->fib_DirEntryType < 0)
-#define isDrawer(fib)	 ((fib)->fib_DirEntryType >= 0 && \
-							         (fib)->fib_DirEntryType != ST_SOFTLINK && \
-							         (fib)->fib_DirEntryType != ST_LINKDIR)
+#define isFile(fib)     ((fib)->fib_DirEntryType < 0)
+#define isDrawer(fib)   ((fib)->fib_DirEntryType >= 0 && \
+                        (fib)->fib_DirEntryType != ST_SOFTLINK && \
+                        (fib)->fib_DirEntryType != ST_LINKDIR)
 
 /* ReturnID collecting macros
 ** every COLLECT_ have to be finished with a REISSUE_
@@ -238,7 +238,6 @@ void     Busy(char *text, char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
 void     ClearMailList(struct Folder *folder, BOOL resetstats);
 void     CloseTempFile(struct TempFile *tf);
-void     FreeCRCTable(void);
 ULONG    CRC32(void *buffer, unsigned int count, ULONG crc);
 ULONG    CompressMsgID(char *msgid);
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
