@@ -111,7 +111,6 @@ struct WBStartup *WBmsg;
 // struct Library ones per default
 #if defined(__amigaos4__)
 
-struct Library* CManagerBase   = NULL;
 struct Library* DataTypesBase  = NULL;
 struct Library* GenesisBase    = NULL;
 struct Library* IconBase       = NULL;
@@ -134,7 +133,6 @@ struct Library* LayersBase     = NULL;
 struct Library* DiskfontBase   = NULL;
 
 struct ExecIFace*       IExec         = NULL;
-struct CManagerIFace*   ICManager     = NULL;
 struct DataTypesIFace*  IDataTypes    = NULL;
 struct GenesisIFace*    IGenesis      = NULL;
 struct IconIFace*       IIcon         = NULL;
@@ -155,10 +153,10 @@ struct TimerIFace*      ITimer        = NULL;
 struct GraphicsIFace*   IGraphics     = NULL;
 struct LayersIFace*     ILayers       = NULL;
 struct DiskfontIFace*   IDiskfont     = NULL;
+
 #else
 
 /* no longer external visible, this is done by proto files! */
-struct Library *       CManagerBase   = NULL;
 struct Library *       DataTypesBase  = NULL;
 struct Library *       GenesisBase    = NULL;
 struct Library *       IconBase       = NULL;

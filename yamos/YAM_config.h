@@ -418,14 +418,13 @@ struct Config
    BOOL  RemoveOnQuit;
    BOOL  IdentifyBin;
    BOOL  AddMyInfo;
-   BOOL  UseCManager;
    BOOL  IconifyOnQuit;
    BOOL  Confirm;
    BOOL  RemoveAtOnce;
    BOOL  SaveSent;
    BOOL  SendMDNAtOnce;
    BOOL  JumpToNewMsg;
-	 BOOL  JumpToIncoming;
+   BOOL  JumpToIncoming;
    BOOL  PrinterCheck;
    BOOL  IsOnlineCheck;
    BOOL  ConfirmOnQuit;
@@ -433,7 +432,7 @@ struct Config
    BOOL  WarnSubject;
    BOOL  FolderCntMenu;
    BOOL  MessageCntMenu;
-	 BOOL	 AutomaticTranslationIn;
+   BOOL  AutomaticTranslationIn;
    BOOL  AutoColumnResize;
    BOOL  EmbeddedReadPane;
    BOOL  StatusChangeDelayOn;

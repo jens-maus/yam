@@ -1864,22 +1864,7 @@ void MA_GetAddress(struct Mail **mlist)
       if (outgoing && isMultiRCPTMail(mlist[2])) mode = AET_LIST;
    }
    else mode = AET_LIST;
-   if (C->UseCManager)
-   {
-/*
-      struct CMUser *user;
-      if (mode == AET_USER) if (user = CM_AllocEntry(CME_USER))
-      {
-         char *p;
-         stccpy(user->Address, pe->Address, 80);
-         stccpy(user->Name, pe->RealName, 80);
-         if (p = strchr(user->Name, ' ')) { *p = 0; stccpy(user->LastName, p, 80); }
-         CM_AddEntry(user);
-         CM_FreeEntry(user);
-      }
-*/
-   }
-   else
+
    {
       struct Person *pe = NULL;
       if (mode == AET_USER)
