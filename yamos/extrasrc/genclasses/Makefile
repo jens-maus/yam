@@ -38,7 +38,7 @@ $(TARGET) : $(OBJS)
 	$(CC) -o $@ $(OBJS)
 
 clean:
-	-$(RM) $(OBJS)
+	-$(RM) $(OBJS) $(TARGET)
 
 #
 
