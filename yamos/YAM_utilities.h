@@ -144,7 +144,7 @@ struct NewToolbarEntry
 
 // special Macros for the Busy Handling of the InfoBar.
 #define BUSYLEVEL             5
-#define BusyEnd               Busy("", NULL, 0, 0)
+#define BusyEnd()             Busy("", NULL, 0, 0)
 #define BusySet(c)            Busy(NULL, NULL, c, 0)
 #define BusyText(t, p)        Busy(t, p, 0, 0)
 #define BusyGauge(t, p, max)  Busy(t, p, 0, max)
@@ -172,11 +172,9 @@ struct NewToolbarEntry
 #define CLEAR_FLAG(v,f)     ((v) &= ~(f))         // clear the flag f in v
 #define MASK_FLAG(v,f)      ((v) &= (f))          // mask the variable v with flag f bitwise
 
-// some fileinfoblock handling macros
-#define isFile(fib)     ((fib)->fib_DirEntryType < 0)
-#define isDrawer(fib)   ((fib)->fib_DirEntryType >= 0 && \
-                        (fib)->fib_DirEntryType != ST_SOFTLINK && \
-                        (fib)->fib_DirEntryType != ST_LINKDIR)
+// some filetype handling macros
+#define isFile(etype)     (etype < 0)
+#define isDrawer(etype)   (etype >= 0 && etype != ST_SOFTLINK && etype != ST_LINKDIR)
 
 /* ReturnID collecting macros
 ** every COLLECT_ have to be finished with a REISSUE_
@@ -223,7 +221,6 @@ struct NewToolbarEntry
 
 // function macros
 #define ISpace(ch)            ((BOOL)((ch) == ' ' || ((ch) >= 9 && (ch) <= 13)))
-#define FileExists(f)         FileInfo(f, NULL, NULL, NULL)
 #define BuildAddrName2(p)     BuildAddrName((p)->Address, (p)->RealName)
 #define SetHelp(o,str)        set(o, MUIA_ShortHelp, GetStr(str))
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
@@ -232,6 +229,7 @@ struct NewToolbarEntry
 #define isSpace(c)            ((BOOL)(G->Locale ? (IsSpace(G->Locale, (ULONG)(c)) != 0) : (isspace((c)) != 0)))
 #define isGraph(c)            ((BOOL)(G->Locale ? (IsGraph(G->Locale, (ULONG)(c)) != 0) : (isgraph((c)) != 0)))
 #define isAlNum(c)            ((BOOL)(G->Locale ? (IsAlNum(G->Locale, (ULONG)(c)) != 0) : (isalnum((c)) != 0)))
+#define isValidMailFile(file) (!(strlen(file) < 17 || file[12] != '.' || file[16] != ',' || !isdigit(file[13])))
 
 #if !defined(isascii)
   #define isascii(c) ((unsigned)(c) < 0x80)
@@ -268,12 +266,14 @@ ULONG    CompressMsgID(char *msgid);
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 ULONG    ConvertKey(struct IntuiMessage *imsg);
 BOOL     CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh);
-char *   CreateFilename(char *file);
+char *   CreateFilename(const char * const file);
 BOOL     CreateDirectory(char *dir);
 long     DateStamp2Long(struct DateStamp *date);
 int      TZtoMinutes(char *tzone);
 void     DateStampUTC(struct DateStamp *ds);
 void     GetSysTimeUTC(struct timeval *tv);
+void     TimeValTZConvert(struct timeval *tv, enum TZConvert tzc);
+void     DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc);
 void     TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum TZConvert tzc);
 void     DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZConvert tzc);
 char *   TimeVal2String(const struct timeval *tv, enum DateStampType mode, enum TZConvert tzc);
@@ -293,10 +293,13 @@ char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef);
 char *   ExpandText(char *src, struct ExpandTextData *etd);
 void     ExtractAddress(char *line, struct Person *pe);
-BOOL     FileInfo(char *filename, int *size, long *bits, long *type);
+BOOL     FileExists(char *filename);
 int      FileSize(char *filename);
 BOOL     FileToEditor(char *file, Object *editor);
 int      FileType(char *filename);
+char *   FileComment(char *filename);
+struct DateStamp *FileDate(char *filename);
+long     FileCount(char *directory);
 void     FinishUnpack(char *file);
 struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext,
          struct Folder *exclude, APTR parent);
@@ -324,7 +327,6 @@ void     GotoURL(char *url);
 char *   IdentifyFile(char *fname);
 void     InfoWindow(char *title, char *body, char *oktext, APTR parent);
 void     InsertAddresses(APTR obj, char **addr, BOOL add);
-BOOL     IsValidMailFile(char *fname);
 char *   itoa(int val);
 struct BodyChunkData *LoadBCImage(char *fname);
 void     LoadLayout(void);

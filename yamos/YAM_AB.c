@@ -603,7 +603,7 @@ HOOKPROTONHNONP(AB_SaveABookFunc, void)
    Busy(GetStr(MSG_BusySavingAB), G->AB_Filename, 0, 0);
    AB_SaveTree(G->AB_Filename);
    G->AB->Modified = FALSE;
-   BusyEnd;
+   BusyEnd();
 }
 MakeHook(AB_SaveABookHook, AB_SaveABookFunc);
 
@@ -721,7 +721,7 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
       }
       AB_PrintLevel(MUIV_NListtree_GetEntry_ListNode_Root, prt, mode);
       fclose(prt);
-      BusyEnd;
+      BusyEnd();
    }
 }
 MakeStaticHook(AB_PrintABookHook, AB_PrintABookFunc);

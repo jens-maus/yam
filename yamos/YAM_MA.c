@@ -211,75 +211,124 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 }
 
 ///
-/// MA_SetMailStatus
+/// MA_ChangeMailStatus()
 //  Sets the status of a message
-void MA_SetMailStatus(struct Mail *mail, enum MailStatus status)
+void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
 {
-   if(status != mail->Status)
+   unsigned int newstatus = (mail->sflags | addflags) & ~(clearflags);
+
+   DB(kprintf("ChangeMailStatus: +%08lx -%08lx\n", addflags, clearflags);)
+
+   // check if the status is already set or not
+   if(newstatus != mail->sflags)
    {
       struct MailInfo *mi;
 
-      mail->Status = status;
+      // set the new status
+      mail->sflags = newstatus;
+
+      // set the comment to the Mailfile
+      MA_UpdateMailFile(mail);
+
+      // flag the index as expired
       MA_ExpireIndex(mail->Folder);
-      mi = GetMailInfo(mail);
 
       // if the mail is currently displayed in the listview we
       // have to redraw some stuff.
-      if (mi->Display)
+      mi = GetMailInfo(mail);
+      if(mi->Display)
       {
         // lets redraw the entry if it is actually displayed, so that
         // the status icon gets updated.
         DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
       }
    }
-
-   // And last, but not least we set the comment to
-   // the Mailfile regardless if a status changed.
-   MA_SetMailComment(mail);
 }
 
 ///
-/// MA_SetMailComment
-//  Sets the correct comment of a mail file STATUS + transferDate
-BOOL MA_SetMailComment(struct Mail *mail)
+/// MA_UpdateMailFile()
+// Updates the mail filename by taking the supplied mail structure
+// into account
+BOOL MA_UpdateMailFile(struct Mail *mail)
 {
-   int perFlag = getPERValue(mail);
-   char commentStr[15]; // it "should" be not greater than 15 bytes!
+  char dateFilePart[12+1];
+  char statusFilePart[11+1];
+  char newFileName[SIZE_MFILE];
+  char newFilePath[SIZE_PATHFILE];
+  char oldFilePath[SIZE_PATHFILE];
+  char *folderDir = GetFolderDir(mail->Folder);
+  char *ptr;
+  BOOL success = FALSE;
+  int mcounter;
 
-   // lets first copy the actual status of that mail into
-   // the start of the commentStr
-   commentStr[0] = *Status[mail->Status];
+  // modify the transferDate part
+  base64encode(dateFilePart, (char *)&mail->transDate, sizeof(struct timeval));
 
-   // then we use the second char of the commentStr for the flags
-   // the permanent flag has to go here aswell as the marked flag
-   if(isMarkedMail(mail))
-   {
-      commentStr[1] = 'M'+perFlag;
-   }
-   else
-   {
-      commentStr[1] = perFlag ? '0'+perFlag : ' ';
-   }
+  // for proper handling we have to remove an eventually existing "/" which
+  // could be part of a base64 encoding
+  while((ptr = strchr(dateFilePart, '/')))
+    *ptr = '-';
 
-   // and we have to null terminate the string now
-   commentStr[2] = '\0';
+  // get the counter from the current mailfile
+  mcounter = atoi(&mail->MailFile[13]);
+  if(mcounter < 1 || mcounter > 999)
+    mcounter = 1;
 
-   // then we check if this mail has a valid timeval and then attach
-   // the base64 encoded representation of the timeval to the commentString
-   if(mail->transDate.tv_secs > 0)
-   {
-      char transDateStr[13]; // it should always by 12bytes long + \0
+  // now modify the status part
+  ptr = statusFilePart;
+  if(hasStatusRead(mail))       *ptr++ = SCHAR_READ;
+  if(hasStatusReplied(mail))    *ptr++ = SCHAR_REPLIED;
+  if(hasStatusForwarded(mail))  *ptr++ = SCHAR_FORWARDED;
+  if(hasStatusNew(mail))        *ptr++ = SCHAR_NEW;
+  if(hasStatusQueued(mail))     *ptr++ = SCHAR_QUEUED;
+  if(hasStatusHold(mail))       *ptr++ = SCHAR_HOLD;
+  if(hasStatusSent(mail))       *ptr++ = SCHAR_SENT;
+  if(hasStatusDeleted(mail))    *ptr++ = SCHAR_DELETED;
+  if(hasStatusMarked(mail))     *ptr++ = SCHAR_MARKED;
+  if(hasStatusError(mail))      *ptr++ = SCHAR_ERROR;
+  if(getPERValue(mail) > 0)     *ptr++ = '0'+getPERValue(mail);
 
-      base64encode(transDateStr, (char *)&mail->transDate, sizeof(struct timeval));
+  *ptr = '\0'; // NUL terminate it
 
-      // lets attach the transDate to the commentString somehow
-      strcat(commentStr, transDateStr);
-   }
+  // construct the full old file path
+  strcpy(oldFilePath, folderDir);
+  AddPart(oldFilePath, mail->MailFile, SIZE_PATHFILE);
 
-   // now set the comment to the MailFile
-   if(SetComment(GetMailFile(NULL, NULL, mail), commentStr)) return TRUE;
+  while(success == FALSE)
+  {
+    // generate a new filename with the data we have collected
+    sprintf(newFileName, "%s.%03d,%s", dateFilePart, mcounter, statusFilePart);
 
-   return FALSE;
+    // now check if the filename has changed or not
+    if(strcmp(newFileName, mail->MailFile) == 0)
+    {
+      success = TRUE;
+      break;
+    }
+
+    // construct new full file path
+    strcpy(newFilePath, folderDir);
+    AddPart(newFilePath, newFileName, SIZE_PATHFILE);
+
+    // then rename it
+    if(Rename(oldFilePath, newFilePath) != 0)
+    {
+      strcpy(mail->MailFile, newFileName);
+      success = TRUE;
+    }
+    else
+    {
+      // if we end up here then a file with the newFileName
+      // probably already exists, so lets increase the mail
+      // counter.
+      mcounter++;
+
+      if(mcounter > 999)
+        break;
+    }
+  }
+
+  return success;
 }
 
 ///
@@ -300,7 +349,7 @@ static struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
       for (selected = 2, mail = fo->Messages; mail; mail = mail->Next)
       {
          // only if we want ALL or this is just a new mail we add it to our list
-         if(!onlyNew || mail->Status == STATUS_NEW)
+         if(!onlyNew || hasStatusNew(mail))
          {
             mlist[selected] = mail;
             selected++;
@@ -341,7 +390,7 @@ struct Mail **MA_CreateMarkedList(APTR lv, BOOL onlyNew)
             DoMethod(lv, MUIM_NList_GetEntry, id, &mail);
             mail->Position = id;
 
-            if(!onlyNew || mail->Status == STATUS_NEW)
+            if(!onlyNew || hasStatusNew(mail))
             {
               mlist[selected] = mail;
               selected++;
@@ -352,7 +401,7 @@ struct Mail **MA_CreateMarkedList(APTR lv, BOOL onlyNew)
    else
    {
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-      if(mail && (!onlyNew || mail->Status == STATUS_NEW))
+      if(mail && (!onlyNew || hasStatusNew(mail)))
       {
         if ((mlist = calloc(3, sizeof(struct Mail *))))
         {
@@ -424,7 +473,14 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, int pos, struct Folder 
       }
       mail = AddMailToList(&cmail, to);
       if ((lv = WhichLV(to))) DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
-      if (mail->Status == STATUS_SNT && to->Type == FT_OUTGOING) MA_SetMailStatus(mail, STATUS_WFS);
+
+      // check the status flags and set the mail statues to queued if the mail was copied into
+      // the outgoing folder
+      if(to->Type == FT_OUTGOING && hasStatusSent(mail))
+      {
+        setStatusToQueued(mail);
+      }
+
       return mail;
    }
    else ER_NewError(GetStr(MSG_ER_TRANSFERMAIL), mail->MailFile, to->Name);
@@ -462,7 +518,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
          MA_MoveCopySingle(mail, pos, frombox, tobox, copyit);
          BusySet(i+1);
       }
-      BusyEnd;
+      BusyEnd();
       set(lv, MUIA_NList_Quiet, FALSE);
       free(mlist);
    }
@@ -482,7 +538,7 @@ static void MA_UpdateStatus(void)
    struct Mail *mail;
    struct Folder **flist;
 
-   if ((flist = FO_CreateList()))
+   if((flist = FO_CreateList()))
    {
       for(i = 1; i <= (int)*flist; i++)
       {
@@ -492,10 +548,16 @@ static void MA_UpdateStatus(void)
 
           for (mail = flist[i]->Messages; mail; mail = mail->Next)
           {
-            if (mail->Status == STATUS_NEW) { updated = TRUE; MA_SetMailStatus(mail, STATUS_UNR); }
+            if(hasStatusNew(mail))
+            {
+              updated = TRUE;
+
+              setStatusToUnread(mail);
+            }
           }
 
-          if (updated) DisplayStatistics(flist[i], TRUE);
+          if(updated)
+            DisplayStatistics(flist[i], TRUE);
         }
       }
       free(flist);
@@ -509,35 +571,31 @@ char *MA_ToStatusHeader(struct Mail *mail)
 {
   static char flags[3]; // should not be more than 3 bytes
 
-  switch(mail->Status)
+  if(hasStatusRead(mail))
   {
-    case STATUS_NEW:
+    if(hasStatusNew(mail))
     {
-      flags[0] = '\0';
-    }
-    break;
-
-    case STATUS_UNR:
-    case STATUS_ERR:
-    case STATUS_DEL:
-    {
-      flags[0] = 'O';
+      flags[0] = 'R';
       flags[1] = '\0';
     }
-    break;
-
-    case STATUS_OLD:
-    case STATUS_FWD:
-    case STATUS_RPD:
-    case STATUS_WFS:
-    case STATUS_HLD:
-    case STATUS_SNT:
+    else
     {
       flags[0] = 'R';
       flags[1] = 'O';
       flags[2] = '\0';
     }
-    break;
+  }
+  else
+  {
+    if(hasStatusNew(mail))
+    {
+      flags[0] = '\0';
+    }
+    else
+    {
+      flags[0] = 'O';
+      flags[1] = '\0';
+    }
   }
 
   return flags;
@@ -550,48 +608,22 @@ char *MA_ToStatusHeader(struct Mail *mail)
 char *MA_ToXStatusHeader(struct Mail *mail)
 {
   static char flags[5]; // should not be more than 5 bytes
+  char *ptr = flags;
 
-  switch(mail->Status)
-  {
-    case STATUS_DEL:
-    {
-      flags[0] = 'D';
-    }
-    break;
+  if(hasStatusReplied(mail))
+    *ptr++ = 'A';
 
-    case STATUS_RPD:
-    {
-      flags[0] = 'A';
-    }
-    break;
+  if(hasStatusMarked(mail))
+    *ptr++ = 'F';
 
-    case STATUS_HLD:
-    {
-      flags[0] = 'T';
-    }
-    break;
+  if(hasStatusDeleted(mail))
+    *ptr++ = 'D';
 
-    default:
-    {
-      flags[0] = '\0';
-    }
-    break;
-  }
+  if(hasStatusHold(mail))
+    *ptr++ = 'T';
 
-  // now check if the mail is flagged or not
-  if(isMarkedMail(mail))
-  {
-    if(flags[0] != '\0')
-    {
-      flags[1] = 'F';
-      flags[2] = '\0';
-    }
-    else
-    {
-      flags[0] = 'F';
-      flags[1] = '\0';
-    }
-  }
+  // NUL terminate it
+  *ptr = '\0';
 
   return flags;
 }
@@ -790,9 +822,17 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
    char *cmsg, *sbuf;
 
    // return if mail is already being written/edited
-   for (i = 0; i < MAXWR; i++) if (G->WR[i] && G->WR[i]->Mail == mail) { DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront); return -1; }
+   for (i = 0; i < MAXWR; i++)
+   {
+     if(G->WR[i] && G->WR[i]->Mail == mail)
+     {
+       DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
+       return -1;
+     }
+   }
+
    // check if necessary settings fror writing are OK and open new window
-   if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+   if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
       if ((out = fopen(G->WR_Filename[winnum], "w")))
       {
@@ -802,7 +842,7 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
          wr->ReadwinNum = ReadwinNum;
          folder = mail->Folder;
 
-         if(!(email = MA_ExamineMail(folder, mail->MailFile, NULL, TRUE)))
+         if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
          {
             ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
             fclose(out);
@@ -840,7 +880,7 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
          setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
          setcheckmark(wr->GUI.CH_DISPNOTI, email->ReceiptType == RCPT_TYPE_ALL);
          setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
-         setcycle(wr->GUI.CY_IMPORTANCE, 1-mail->Importance);
+         setcycle(wr->GUI.CY_IMPORTANCE, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1);
          setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
          setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
          if (folder->Type != FT_OUTGOING) DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, wr->GUI.BT_SEND, wr->GUI.BT_HOLD, NULL);
@@ -899,7 +939,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
    FILE *out;
    char *cmsg, *rsub;
 
-   if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+   if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
       if ((out = fopen(G->WR_Filename[winnum], "w")))
       {
@@ -913,7 +953,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
          {
             mail = mlist[i+2];
 
-            if(!(email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE)))
+            if(!(email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
             {
               ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail), NULL);
               fclose(out);
@@ -1004,7 +1044,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
             mail = mlist[j+2];
             folder = mail->Folder;
 
-            if(!(email = MA_ExamineMail(folder, mail->MailFile, NULL, TRUE)))
+            if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
             {
               ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
               fclose(out);
@@ -1240,11 +1280,11 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
             fprintf(out, "%s (%ld %s, %s)\n", part->Name ? part->Name : GetStr(MSG_Unnamed), part->Size, GetStr(MSG_Bytes), part->ContentType);
          fclose(out);
          f = FileSize(tfname); fo->Size += f - mail->Size; mail->Size = f;
-         CLEAR_FLAG(mail->Flags, MFLAG_MULTIPART);
+         CLEAR_FLAG(mail->mflags, MFLAG_MULTIPART);
          DeleteFile(fname);
          if (fo->XPKType > 1) DoPack(tfname, fname, mail->Folder);
          else RenameFile(tfname, fname);
-         MA_SetMailStatus(mail, mail->Status);
+
          AppendLog(81, GetStr(MSG_LOG_CroppingAtt), mail->MailFile, mail->Folder->Name, "", "");
       }
    free(cmsg);
@@ -1278,7 +1318,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
       MA_ChangeSelectedFunc();
       DisplayStatistics(NULL, TRUE);
-      BusyEnd;
+      BusyEnd();
    }
 }
 MakeStaticHook(MA_RemoveAttachHook, MA_RemoveAttachFunc);
@@ -1313,7 +1353,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
             RE_FreePrivateRC();
          }
 
-         BusyEnd;
+         BusyEnd();
       }
       free(mlist);
    }
@@ -1344,7 +1384,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
                fputs(cmsg, tf->FP);
                fclose(tf->FP); tf->FP = NULL;
                if (doprint) CopyFile("PRT:", 0, tf->Filename, 0);
-               else RE_Export(4, tf->Filename, "", "", 0, FALSE, FALSE, ContType[CT_TX_PLAIN]);
+               else RE_Export(4, tf->Filename, "", "", 0, FALSE, FALSE, (char*)ContType[CT_TX_PLAIN]);
                CloseTempFile(tf);
             }
             free(cmsg);
@@ -1429,9 +1469,10 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    for (i = 0; i < selected; i++)
    {
       mail = mlist[i+2];
-      if(isSendMDNMail(mail))
+      if(isSendMDNMail(mail) && !ignoreall &&
+         (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
-        if ((mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) && !ignoreall) ignoreall = RE_DoMDN(MDN_DELE, mail, TRUE);
+        ignoreall = RE_DoMDN(MDN_DELE, mail, TRUE);
       }
 
       // call our subroutine with quiet option
@@ -1439,7 +1480,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
       BusySet(i+1);
    }
-   BusyEnd;
+   BusyEnd();
    set(lv, MUIA_NList_Quiet, FALSE);
    free(mlist);
 
@@ -1558,10 +1599,15 @@ void MA_GetAddress(struct Mail **mlist)
                if (outgoing)
                {
                   DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(mlist[i]->To)), MUIV_List_Insert_Bottom);
-                  if(isMultiRCPTMail(mlist[i]) && (email = MA_ExamineMail(mlist[i]->Folder, mlist[i]->MailFile, NULL, TRUE)))
+                  if(isMultiRCPTMail(mlist[i]) &&
+                     (email = MA_ExamineMail(mlist[i]->Folder, mlist[i]->MailFile, TRUE)))
                   {
-                     for (j = 0; j < email->NoSTo; j++) DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->STo[j])), MUIV_List_Insert_Bottom);
-                     for (j = 0; j < email->NoCC; j++) DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->CC[j])), MUIV_List_Insert_Bottom);
+                     for(j = 0; j < email->NoSTo; j++)
+                       DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->STo[j])), MUIV_List_Insert_Bottom);
+
+                     for(j = 0; j < email->NoCC; j++)
+                       DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->CC[j])), MUIV_List_Insert_Bottom);
+
                      MA_FreeEMailStruct(email);
                   }
                }
@@ -1619,29 +1665,49 @@ int MA_AllocRules(struct Search **search, enum ApplyMode mode)
    int scnt = 0, i, j, stat;
    struct Rule *rule;
 
-   for (i = 0; i < MAXRU; i++) if ((rule = C->RU[i]))
+   for(i = 0; i < MAXRU; i++)
    {
-      // lets check if we can skip some filters
-      if (mode == APPLY_AUTO && (!rule->ApplyToNew || rule->Remote))  continue;
-      if (mode == APPLY_USER && (!rule->ApplyOnReq || rule->Remote))  continue;
-      if (mode == APPLY_SENT && (!rule->ApplyToSent || rule->Remote)) continue;
-      if (mode == APPLY_REMOTE && !rule->Remote) continue;
+     if((rule = C->RU[i]))
+     {
+        // lets check if we can skip some filters
+        if(mode == APPLY_AUTO && (!rule->ApplyToNew || rule->Remote))  continue;
+        if(mode == APPLY_USER && (!rule->ApplyOnReq || rule->Remote))  continue;
+        if(mode == APPLY_SENT && (!rule->ApplyToSent || rule->Remote)) continue;
+        if(mode == APPLY_REMOTE && !rule->Remote) continue;
 
-      // we can combine 2 different equations
-      for (j = 0; j < 2; j++)
-      {
-         search[scnt+j*MAXRU] = calloc(1, sizeof(struct Search));
-         stat = 0;
+        // we can combine 2 different equations
+        for(j = 0; j < 2; j++)
+        {
+           search[scnt+j*MAXRU] = calloc(1, sizeof(struct Search));
+           stat = 9;
 
-         // we check the status field first and if we find a match
-         // we can immediatly break up here because we don`t need to prepare the search somehow
-         if (rule->Field[j] == 11) for (; stat < 8; stat++) if (!stricmp(rule->Match[j], Status[stat])) break;
+           // we check the status field first and if we find a match
+           // we can immediatly break up here because we don`t need to prepare the search
+           if(rule->Field[j] == 11)
+           {
+             for(stat=0; stat <= 8; stat++)
+             {
+               if(*rule->Match[j] == mailStatusCycleMap[stat])
+                 break;
+             }
+           }
 
-         FI_PrepareSearch(search[scnt+j*MAXRU], rule->Field[j], rule->CaseSens[j], rule->SubField[j], rule->Comparison[j], stat, rule->Substring[j], rule->Match[j], rule->CustomField[j]);
-         search[scnt+j*MAXRU]->Rule = rule;
-      }
-      scnt++;
+           FI_PrepareSearch(search[scnt+j*MAXRU],
+                            rule->Field[j],
+                            rule->CaseSens[j],
+                            rule->SubField[j],
+                            rule->Comparison[j],
+                            mailStatusCycleMap[stat],
+                            rule->Substring[j],
+                            rule->Match[j],
+                            rule->CustomField[j]);
+
+           search[scnt+j*MAXRU]->Rule = rule;
+        }
+        scnt++;
+     }
    }
+
    return scnt;
 }
 
@@ -1730,7 +1796,8 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   {
     G->RRs.Deleted++;
 
-    if(isSendMDNMail(mail) && (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
+    if(isSendMDNMail(mail) &&
+       (hasStatusNew(mail) || !hasStatusRead(mail)))
     {
       RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
     }
@@ -1789,7 +1856,10 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
          for (m = 0; m < (int)*mlist; m++)
          {
             mail = mlist[m+2];
-            if ((mode == APPLY_AUTO || mode == APPLY_RX) && mail->Status != STATUS_NEW) continue;
+
+            if((mode == APPLY_AUTO || mode == APPLY_RX) && !hasStatusNew(mail))
+              continue;
+
             G->RRs.Checked++;
 
             for (i = 0; i < scnt; i++)
@@ -1806,7 +1876,7 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
          if (G->RRs.Moved) MA_FlushIndexes(FALSE);
          if (G->RRs.Checked) AppendLog(26, GetStr(MSG_LOG_Filtering), (void *)(G->RRs.Checked), folder->Name, (void *)matches, "");
 
-         BusyEnd;
+         BusyEnd();
       }
       MA_FreeRules(search, scnt);
    }
@@ -1880,19 +1950,21 @@ MakeHook(MA_SendHook, MA_SendFunc);
 /*** Menu options ***/
 /// MA_SetStatusTo
 //  Sets status of selectes messages
-void MA_SetStatusTo(enum MailStatus status)
+void MA_SetStatusTo(int addflags, int clearflags)
 {
    APTR lv = G->MA->GUI.NL_MAILS;
    struct Mail **mlist;
 
-   if ((mlist = MA_CreateMarkedList(lv, FALSE)))
+   // generate a temporary list of all selected
+   // mails
+   if((mlist = MA_CreateMarkedList(lv, FALSE)))
    {
       int i;
+
       set(lv, MUIA_NList_Quiet, TRUE);
       for(i = 0; i < (int)*mlist; i++)
       {
-        if(mlist[i+2]->Status != status)
-          MA_SetMailStatus(mlist[i+2], status);
+        MA_ChangeMailStatus(mlist[i+2], addflags, clearflags);
       }
       set(lv, MUIA_NList_Quiet, FALSE);
 
@@ -1905,58 +1977,9 @@ void MA_SetStatusTo(enum MailStatus status)
 /// MA_SetStatusToFunc
 HOOKPROTONHNO(MA_SetStatusToFunc, void, int *arg)
 {
-   MA_SetStatusTo(*arg);
+   MA_SetStatusTo(arg[0], arg[1]);
 }
 MakeStaticHook(MA_SetStatusToHook, MA_SetStatusToFunc);
-
-///
-/// MA_SetMailFlag
-//  global SetMailFlag function
-void MA_SetMailFlag(struct Mail *mail, int flag, BOOL clear)
-{
-  if((clear && isFlagSet(mail->Flags, flag)) || (!clear && !isFlagSet(mail->Flags, flag)))
-  {
-    struct MailInfo *mi = GetMailInfo(mail);
-
-    if(clear) CLEAR_FLAG(mail->Flags, flag);
-    else      SET_FLAG(mail->Flags, flag);
-
-    MA_SetMailComment(mail);
-    MA_ExpireIndex(mail->Folder);
-
-    if(mi->Display) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
-  }
-}
-
-///
-/// MA_SetMailFlagAll
-//  Sets status of selectes messages
-static void MA_SetMailFlagAll(int flag, BOOL clear)
-{
-   APTR lv = G->MA->GUI.NL_MAILS;
-   struct Mail **mlist;
-
-   if((mlist = MA_CreateMarkedList(lv, FALSE)))
-   {
-      int i;
-
-      set(lv, MUIA_NList_Quiet, TRUE);
-      for(i = 0; i < (int)*mlist; i++)
-      {
-        MA_SetMailFlag(mlist[i+2], flag, clear);
-      }
-      set(lv, MUIA_NList_Quiet, FALSE);
-      free(mlist);
-   }
-}
-
-///
-/// MA_SetMailFlagFunc
-HOOKPROTONHNO(MA_SetMailFlagFunc, void, int *arg)
-{
-  MA_SetMailFlagAll(arg[0], arg[1]);
-}
-MakeStaticHook(MA_SetMailFlagHook, MA_SetMailFlagFunc);
 
 ///
 /// MA_DeleteOldFunc
@@ -1988,7 +2011,8 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
               today.ds_Days = today_days - flist[f]->MaxAge;
               if (CompareDates(&today, &(mail->Date)) < 0)
               {
-                if (flist[f]->Type == FT_DELETED || (mail->Status != STATUS_NEW && mail->Status != STATUS_UNR))
+                if(flist[f]->Type == FT_DELETED ||
+                   (!hasStatusNew(mail) && hasStatusRead(mail)))
                 {
                   MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE);
 
@@ -2006,7 +2030,7 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
       // and last but not least we update the appIcon also
       DisplayStatistics(NULL, TRUE);
 
-      BusyEnd;
+      BusyEnd();
    }
 }
 MakeHook(MA_DeleteOldHook, MA_DeleteOldFunc);
@@ -2046,7 +2070,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
     if(quiet == FALSE) DisplayStatistics(folder, TRUE);
   }
 
-  BusyEnd;
+  BusyEnd();
 }
 MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
 
@@ -2248,7 +2272,6 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       MA_ExpireIndex(fo);
       if (fo->XPKType > 1) DoPack(newfile, oldfile, fo);
       else RenameFile(newfile, oldfile);
-      MA_SetMailStatus(mail, mail->Status);
    }
    FinishUnpack(fullfile);
 }
@@ -2335,7 +2358,7 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
          else ER_NewError(GetStr(MSG_ER_CantOpenTempfile), tf->Filename, NULL);
       }
       CloseTempFile(tf);
-      BusyEnd;
+      BusyEnd();
       TR_CloseTCPIP();
    }
    else ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL);
@@ -2367,7 +2390,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
    {
       BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");
       ExecuteCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_DOS : OUT_NIL);
-      BusyEnd;
+      BusyEnd();
    }
    else if(G->RexxHost) // make sure that rexx it available
    {
@@ -2411,7 +2434,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
             }
          }
          while (waiting);
-         BusyEnd;
+         BusyEnd();
       }
    }
    else return FALSE;
@@ -2519,18 +2542,44 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
          static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL];
          struct Person *pe;
          STRPTR addr;
+         int statusicon = 0;
 
          // lets choose the status icon for that mail
-         sprintf(array[0] = dispsta, "\033o[%d]", entry->Status);
+         #warning "old status handling here. replace ASAP!"
+         if(hasStatusError(entry))
+           statusicon = 5; // Error status
+         else if(hasStatusQueued(entry))
+           statusicon = 4; // Queued (WaitForSend) status
+         else if(hasStatusHold(entry))
+           statusicon = 6; // Hold status
+         else if(hasStatusSent(entry))
+           statusicon = 7; // Sent status
+         else if(hasStatusReplied(entry))
+           statusicon = 3; // Replied status
+         else if(hasStatusForwarded(entry))
+           statusicon = 2; // Forwarded status
+         else if(!hasStatusRead(entry))
+         {
+           if(hasStatusNew(entry))
+             statusicon = 8; // New status
+           else
+             statusicon = 0; // Unread status
+         }
+         else if(!hasStatusNew(entry))
+           statusicon = 1; // Old status
 
-         if (entry->Importance == 1)      strcat(dispsta, "\033o[12]");
-         if (isCryptedMail(entry))        strcat(dispsta, "\033o[15]");
-         else if (isSignedMail(entry))    strcat(dispsta, "\033o[16]");
-         else if (isReportMail(entry))    strcat(dispsta, "\033o[14]");
-         else if (isMultiPartMail(entry)) strcat(dispsta, "\033o[13]");
+         sprintf(array[0] = dispsta, "\033o[%d]", statusicon);
+
+         if(getImportanceLevel(entry) == IMP_HIGH)
+           strcat(dispsta, "\033o[12]");
+
+         if(isCryptedMail(entry))        strcat(dispsta, "\033o[15]");
+         else if(isSignedMail(entry))    strcat(dispsta, "\033o[16]");
+         else if(isReportMail(entry))    strcat(dispsta, "\033o[14]");
+         else if(isMultiPartMail(entry)) strcat(dispsta, "\033o[13]");
 
          // if this is a marked mail we have to signal it
-         if(isMarkedMail(entry))
+         if(hasStatusMarked(entry))
          {
             // if the needed BCImage data doesn`t exist we set preparse to bold
             if(G->BImage[17]) strcat(dispsta, "\033o[17]");
@@ -2545,8 +2594,8 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
             if(isMultiRCPTMail(entry)) strcat(dispfro, "\033o[11]");
 
             if(((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) &&
-                (entry->Status == STATUS_SNT || entry->Status == STATUS_WFS || entry->Status == STATUS_HLD ||
-                 entry->Status == STATUS_ERR)) || (searchWinHook && isOutgoingFolder(entry->Folder)))
+                (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
+                 hasStatusError(entry))) || (searchWinHook && isOutgoingFolder(entry->Folder)))
             {
               pe = &entry->To;
               strcat(dispfro, GetStr(MSG_MA_ToPrefix));
@@ -2678,12 +2727,9 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
   {
     case 0:
     {
-      // this is the maparray that is depending on the enum MailStatus
-      static const int mapvalue[] = { 256, 128, 32, 64, 64, 256, 128, 32, 512, 0, 0, 0 };
-
       // lets calculate each value
-      int status1 = mapvalue[entry1->Status];
-      int status2 = mapvalue[entry2->Status];
+      int status1 = 0;
+      int status2 = 0;
 
       // We do not sort on other things than the real status and the Importance+Marked flag of
       // the message because this would be confusing if you use "Status" as a sorting
@@ -2693,11 +2739,28 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       // depending on other stuff than importance will make it impossible to sort for
       // status+date in the folder config. Perhaps we need to have a configuable way for
       // sorting by status later, but this is future stuff..
-
-      status1 += isMarkedMail(entry1)       ? 8  : 0;
-      status2 += isMarkedMail(entry2)       ? 8  : 0;
-      status1 += (entry1->Importance == 1)  ? 16 : 0;
-      status2 += (entry2->Importance == 1)  ? 16 : 0;
+      status1 += hasStatusNew(entry1) ? 512 : 0;
+      status2 += hasStatusNew(entry2) ? 512 : 0;
+      status1 += !hasStatusRead(entry1) ? 256 : 0;
+      status2 += !hasStatusRead(entry2) ? 256 : 0;
+      status1 += !hasStatusError(entry1) ? 256 : 0;
+      status2 += !hasStatusError(entry2) ? 256 : 0;
+      status1 += hasStatusHold(entry1) ? 128 : 0;
+      status2 += hasStatusHold(entry2) ? 128 : 0;
+      status1 += hasStatusReplied(entry1) ? 64 : 0;
+      status2 += hasStatusReplied(entry2) ? 64 : 0;
+      status1 += hasStatusQueued(entry1) ? 64 : 0;
+      status2 += hasStatusQueued(entry2) ? 64 : 0;
+      status1 += hasStatusForwarded(entry1) ? 32 : 0;
+      status2 += hasStatusForwarded(entry2) ? 32 : 0;
+      status1 += hasStatusSent(entry1) ? 32 : 0;
+      status2 += hasStatusSent(entry2) ? 32 : 0;
+      status1 += hasStatusDeleted(entry1) ? 16 : 0;
+      status2 += hasStatusDeleted(entry2) ? 16 : 0;
+      status1 += hasStatusMarked(entry1) ? 8  : 0;
+      status2 += hasStatusMarked(entry2) ? 8  : 0;
+      status1 += (getImportanceLevel(entry1) == IMP_HIGH)  ? 16 : 0;
+      status2 += (getImportanceLevel(entry2) == IMP_HIGH)  ? 16 : 0;
 
       return -(status1)+(status2);
     }
@@ -3088,12 +3151,12 @@ ULONG MA_MLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_Context
     case MMEN_BOUNCE:     DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_BOUNCE,  0); break;
     case MMEN_SEND:       DoMethod(G->App, MUIM_CallHook, &MA_SendHook,           SEND_ACTIVE); break;
     case MMEN_CHSUBJ:     DoMethod(G->App, MUIM_CallHook, &MA_ChangeSubjectHook); break;
-    case MMEN_TOUNREAD:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_UNR); break;
-    case MMEN_TOREAD:     DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_OLD); break;
-    case MMEN_TOHOLD:     DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_HLD); break;
-    case MMEN_TOQUEUED:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_WFS); break;
-    case MMEN_TOMARKED:   DoMethod(G->App, MUIM_CallHook, &MA_SetMailFlagHook,    MFLAG_MARK, FALSE); break;
-    case MMEN_TOUNMARKED: DoMethod(G->App, MUIM_CallHook, &MA_SetMailFlagHook,    MFLAG_MARK, TRUE); break;
+    case MMEN_TOUNREAD:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_NONE,   SFLAG_NEW|SFLAG_READ); break;
+    case MMEN_TOREAD:     DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_READ,   SFLAG_NEW); break;
+    case MMEN_TOHOLD:     DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_HOLD,   SFLAG_NEW); break;
+    case MMEN_TOQUEUED:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_QUEUED, SFLAG_SENT); break;
+    case MMEN_TOMARKED:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_MARKED, SFLAG_NONE); break;
+    case MMEN_TOUNMARKED: DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_NONE,   SFLAG_MARKED); break;
     case MMEN_SAVEADDR:   DoMethod(G->App, MUIM_CallHook, &MA_GetAddressHook); break;
     case MMEN_MOVE:       DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
     case MMEN_COPY:       DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
@@ -3428,10 +3491,12 @@ struct MA_ClassData *MA_New(void)
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
          // define the StatusFlag images that should be used
-         for (i = 0; i < MAXBCSTATUSIMG; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, MUIF_NONE);
+         for(i = 0; i < MAXBCSTATUSIMG; i++)
+           DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, MUIF_NONE);
 
          // Define the Images the FolderListtree that can be used
-         for (i = 0; i < MAXBCFOLDERIMG; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, MUIF_NONE);
+         for(i = 0; i < MAXBCFOLDERIMG; i++)
+           DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, MUIF_NONE);
 
          // Now we need the XPK image also in the folder list
          DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], MAXBCFOLDERIMG, MUIF_NONE);
@@ -3480,19 +3545,24 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SAVEADDR  ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_GetAddressHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_CHSUBJ    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSubjectHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SEND      ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_SendHook,SEND_ACTIVE);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOREAD    ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_SetStatusToHook,STATUS_OLD);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOUNREAD  ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_SetStatusToHook,STATUS_UNR);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOHOLD    ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_SetStatusToHook,STATUS_HLD);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOQUEUED  ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_SetStatusToHook,STATUS_WFS);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOMARKED  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetMailFlagHook,MFLAG_MARK, FALSE);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOUNMARKED,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetMailFlagHook,MFLAG_MARK, TRUE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOUNREAD  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_NONE,   SFLAG_NEW|SFLAG_READ);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOREAD    ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_READ,   SFLAG_NEW);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOHOLD    ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_HOLD,   SFLAG_NEW);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOQUEUED  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_QUEUED, SFLAG_SENT);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOMARKED  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_MARKED, SFLAG_NONE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOUNMARKED,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_NONE,   SFLAG_MARKED);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_CONFIG    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&CO_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_USER      ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&US_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_MUI       ,MUIV_Notify_Application  ,2,MUIM_Application_OpenConfigWindow,0);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUTMUI  ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_AboutMUIHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SCRIPT    ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_CallRexxHook,-1);
-         for (i = 0; i < 10; i++) DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_MenuAction,MMEN_MACRO+i,MUIV_Notify_Application,3,MUIM_CallHook        ,&MA_CallRexxHook, i);
-         for (i = 0; i < MAXP3; i++) DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_MenuAction,MMEN_POPHOST+i,MUIV_Notify_Application,5,MUIM_CallHook   ,&MA_PopNowHook,POP_USER,i,0);
+
+         for(i = 0; i < 10; i++)
+          DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_MenuAction,MMEN_MACRO+i,MUIV_Notify_Application,3,MUIM_CallHook, &MA_CallRexxHook, i);
+
+         for(i = 0; i < MAXP3; i++)
+          DoMethod(data->GUI.WI,MUIM_Notify,MUIA_Window_MenuAction,MMEN_POPHOST+i,MUIV_Notify_Application,5,MUIM_CallHook, &MA_PopNowHook, POP_USER, i, 0);
+
          if (data->GUI.TO_TOOLBAR)
          {
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&MA_ReadMessageHook);

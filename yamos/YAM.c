@@ -402,6 +402,8 @@ static void AY_PrintStatus(char *txt, int percent)
                         MUIA_Gauge_Current,  percent,
                         TAG_DONE);
 
+   nnset(G->AY_Progress, MUIA_ShowMe, FALSE);
+
    DoMethod(G->App, MUIM_Application_InputBuffered);
 }
 ///
@@ -432,8 +434,8 @@ MakeStaticHook(AY_GoPageHook, AY_GoPageFunc);
 //  Creates About window
 static BOOL AY_New(BOOL hidden)
 {
+   Object *bt_gopage;
    char logopath[SIZE_PATHFILE];
-   APTR ft_text, bt_gopage;
    struct DateTime dt;
    char compiledon[SIZE_DEFAULT]; // have to be at least LEN_DATSTRING long = 32
 
@@ -453,6 +455,20 @@ static BOOL AY_New(BOOL hidden)
    strcat(&compiledon[strlen(compiledon)], yamcompiler);
 
    strmfp(logopath, G->ProgDir, "Icons/logo");
+
+   // now we create the about text
+   G->AY_AboutText = AllocStrBuf(SIZE_LARGE);
+   G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_Copyright2));
+   G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_UsedSoftware));
+   G->AY_AboutText = StrBufCat(G->AY_AboutText, "\0338Magic User Interface\0332 (Stefan Stuntz)\n"
+                                                "\0338TextEditor.mcc, BetterString.mcc\0332 (Allan Odgaard)\n"
+                                                "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
+                                                "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
+                                                "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
+                                                "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
+                                                "\0338amissl.library\0332 (Andrija Antonijevic)\n\n");
+   G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
+
    G->AY_Win = WindowObject,
       MUIA_Window_Title, GetStr(MSG_MA_About),
       MUIA_Window_ID, MAKE_ID('C','O','P','Y'),
@@ -490,8 +506,11 @@ static BOOL AY_New(BOOL hidden)
          End)),
          Child, G->AY_Group = PageGroup,
             Child, ListviewObject,
-               MUIA_Listview_Input, FALSE,
-               MUIA_Listview_List, ft_text = FloattextObject, ReadListFrame, End,
+              MUIA_Listview_Input, FALSE,
+              MUIA_Listview_List, FloattextObject,
+                ReadListFrame,
+                MUIA_Floattext_Text, G->AY_AboutText,
+              End,
             End,
             Child, ScrollgroupObject,
                MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -512,28 +531,20 @@ static BOOL AY_New(BOOL hidden)
          Child, G->AY_Text = GaugeObject,
             GaugeFrame,
             MUIA_Gauge_InfoText, " ",
-            MUIA_Gauge_Horiz, TRUE,
+            MUIA_Gauge_Horiz,    TRUE,
+         End,
+         Child, G->AY_Progress = GaugeObject,
+            GaugeFrame,
+            MUIA_ShowMe,         FALSE,
+            MUIA_Gauge_InfoText, " ",
+            MUIA_Gauge_Horiz,    TRUE,
          End,
       End,
    End;
 
    /* if the WindowObject could be created */
-   if (G->AY_Win)
+   if(G->AY_Win)
    {
-      /* now we create the about text */
-      G->AY_AboutText = AllocStrBuf(SIZE_LARGE);
-      G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_Copyright2));
-      G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_UsedSoftware));
-      G->AY_AboutText = StrBufCat(G->AY_AboutText, "\0338Magic User Interface\0332 (Stefan Stuntz)\n"
-                                                   "\0338TextEditor.mcc, BetterString.mcc\0332 (Allan Odgaard)\n"
-                                                   "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
-                                                   "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
-                                                   "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
-                                                   "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
-                                                   "\0338amissl.library\0332 (Andrija Antonijevic)\n\n");
-      G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
-      set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
-
       DoMethod(G->App, OM_ADDMEMBER, G->AY_Win);
       DoMethod(bt_gopage  , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_GoPageHook);
       DoMethod(G->AY_Win  , MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->AY_Win, 3, MUIM_Set,MUIA_Window_Open, FALSE);
@@ -542,6 +553,11 @@ static BOOL AY_New(BOOL hidden)
 
       return TRUE;
    }
+   else
+   {
+     FreeStrBuf(G->AY_AboutText);
+   }
+
    return FALSE;
 }
 ///
@@ -669,14 +685,22 @@ static int Root_GlobalDispatcher(ULONG app_input)
 //  Creates MUI application
 static BOOL Root_New(BOOL hidden)
 {
-   if ((G->App = YAMObject, End))
+   if((G->App = YAMObject, End))
    {
       set(G->App, MUIA_Application_HelpFile, "YAM.guide");
-      if (hidden) set(G->App, MUIA_Application_Iconified, TRUE);
+      if(hidden)
+        set(G->App, MUIA_Application_Iconified, TRUE);
+
       DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
       DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
-      if (AY_New(hidden)) return TRUE;
+
+      if(AY_New(hidden))
+      {
+        G->InStartupPhase = TRUE;
+        return TRUE;
+      }
    }
+
    return FALSE;
 }
 ///
@@ -1077,11 +1101,20 @@ static void Initialise2(void)
    }
 
    if (oldfolders) { for (i = 0; oldfolders[i]; i++) free(oldfolders[i]); free(oldfolders); }
-   if (!FO_GetFolderByType(FT_INCOMING,NULL)) newfolders |= FO_CreateFolder(FT_INCOMING, FolderNames[0], GetStr(MSG_MA_Incoming));
-   if (!FO_GetFolderByType(FT_OUTGOING,NULL)) newfolders |= FO_CreateFolder(FT_OUTGOING, FolderNames[1], GetStr(MSG_MA_Outgoing));
-   if (!FO_GetFolderByType(FT_SENT    ,NULL)) newfolders |= FO_CreateFolder(FT_SENT    , FolderNames[2], GetStr(MSG_MA_Sent));
-   if (!FO_GetFolderByType(FT_DELETED ,NULL)) newfolders |= FO_CreateFolder(FT_DELETED , FolderNames[3], GetStr(MSG_MA_Deleted));
-   if (newfolders)
+
+   if(!FO_GetFolderByType(FT_INCOMING,NULL))
+     newfolders |= FO_CreateFolder(FT_INCOMING, FolderNames[0], GetStr(MSG_MA_Incoming));
+
+   if(!FO_GetFolderByType(FT_OUTGOING,NULL))
+     newfolders |= FO_CreateFolder(FT_OUTGOING, FolderNames[1], GetStr(MSG_MA_Outgoing));
+
+   if(!FO_GetFolderByType(FT_SENT    ,NULL))
+     newfolders |= FO_CreateFolder(FT_SENT    , FolderNames[2], GetStr(MSG_MA_Sent));
+
+   if(!FO_GetFolderByType(FT_DELETED ,NULL))
+     newfolders |= FO_CreateFolder(FT_DELETED , FolderNames[3], GetStr(MSG_MA_Deleted));
+
+   if(newfolders)
    {
       set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
       FO_SaveTree(CreateFilename(".folders"));
@@ -1163,6 +1196,8 @@ static void Initialise2(void)
       Abort(MSG_ErrorARexx);
 
    AY_PrintStatus(GetStr(MSG_OPENGUI), 100);
+   G->InStartupPhase = FALSE;
+
    // only activate the main window if the about window is activ
    // and open it immediatly
    // we always start YAM with Window_Open TRUE or else YAM the hide
@@ -1174,6 +1209,7 @@ static void Initialise2(void)
 
    set(G->AY_Win, MUIA_Window_Open, FALSE);
    set(G->AY_Text, MUIA_ShowMe, FALSE);
+   set(G->AY_Progress, MUIA_ShowMe, FALSE);
 }
 ///
 /// Initialise
@@ -1299,22 +1335,26 @@ static void SendWaitingMail(void)
 {
    struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
    struct Mail *mail;
-   int tots, hidden;
+   int tots = 0;
+   int hidden;
 
-   if (!fo) return;
+   if(!fo)
+    return;
 
-   tots = 0;
-   for (mail = fo->Messages; mail; mail = mail->Next)
+   for(mail = fo->Messages; mail; mail = mail->Next)
    {
-      if (mail->Status != STATUS_HLD) tots++;
+      if(!hasStatusHold(mail) && !hasStatusError(mail))
+        tots++;
    }
-   if (!tots) return;
+
+   if(!tots)
+    return;
 
    MA_ChangeFolder(fo, TRUE);
 
    hidden = xget(G->App, MUIA_Application_Iconified);
 
-   if (hidden || MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq)))
+   if(hidden || MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq)))
       MA_Send(SEND_ALL);
 }
 ///

@@ -83,7 +83,7 @@ struct Search
    enum SearchMode Mode;
    int             PersMode;
    int             Compare;
-   enum MailStatus Status;
+   char            Status;  // mail status flags
    enum FastSearch Fast;
    BOOL            CaseSens;
    BOOL            SubString;
@@ -95,11 +95,12 @@ struct Search
 };
 
 extern struct Hook FI_OpenHook;
-extern int         Mode2Group[12];
+extern const int   Mode2Group[12];
+extern const char mailStatusCycleMap[10];
 
 APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote);
 BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail);
-BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, enum MailStatus stat, BOOL substr, char *match, char *field);
+BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, char stat, BOOL substr, char *match, char *field);
 void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled);
 
 #endif /* YAM_FIND_H */

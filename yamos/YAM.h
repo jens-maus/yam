@@ -50,6 +50,7 @@ struct Global
    APTR                     App;
    APTR                     AY_Win;
    APTR                     AY_Text;
+   APTR                     AY_Progress;
    APTR                     AY_Group;
    APTR                     AY_List;
    APTR                     AY_AboutText;
@@ -101,6 +102,7 @@ struct Global
    BOOL                     TR_UseableTLS;
    BOOL                     TR_UseTLS;
    BOOL                     CO_AutoTranslateIn;
+   BOOL                     InStartupPhase;
 
    struct DateStamp         StartDate;
    struct Users             Users;

@@ -294,7 +294,7 @@ void rx_writeattach( UNUSED struct RexxHost *host, struct rxd_writeattach **rxd,
          break;
          
       case RXIF_ACTION:
-         if (access(rd->arg.file,F_OK) == 0 && G->WR[G->ActiveWriteWin])
+         if(FileExists(rd->arg.file) == TRUE && G->WR[G->ActiveWriteWin])
          {
             WR_AddFileToList((int)G->ActiveWriteWin, rd->arg.file, NULL, FALSE);
             if (rd->arg.desc)    setstring(G->WR[G->ActiveWriteWin]->GUI.ST_DESC, rd->arg.desc);
@@ -822,7 +822,30 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             vf = getVOLValue(mail);
             GetMailFile(rd->rd.res.filename = rd->filename, folder, mail);
             rd->rd.res.index = &rd->active;
-            rd->rd.res.status = Status[mail->Status];
+
+            #warning "old statushandling here. replace ASAP!"
+            if(hasStatusError(mail))
+              rd->rd.res.status = "E"; // Error status
+            else if(hasStatusQueued(mail))
+              rd->rd.res.status = "W"; // Queued (WaitForSend) status
+            else if(hasStatusHold(mail))
+              rd->rd.res.status = "H"; // Hold status
+            else if(hasStatusSent(mail))
+              rd->rd.res.status = "S"; // Sent status
+            else if(hasStatusReplied(mail))
+              rd->rd.res.status = "R"; // Replied status
+            else if(hasStatusForwarded(mail))
+              rd->rd.res.status = "F"; // Forwarded status
+            else if(!hasStatusRead(mail))
+            {
+              if(hasStatusNew(mail))
+                rd->rd.res.status = "N"; // New status
+              else
+                rd->rd.res.status = "U"; // Unread status
+            }
+            else if(!hasStatusNew(mail))
+              rd->rd.res.status = "O"; // Old status
+
             stccpy(rd->rd.res.from    = rd->from   , BuildAddrName2(&mail->From), SIZE_ADDRESS);
             stccpy(rd->rd.res.to      = rd->to     , BuildAddrName2(&mail->To), SIZE_ADDRESS);
             stccpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(pe), SIZE_ADDRESS);
@@ -838,7 +861,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
                       isSignedMail(mail)    ? 'S' : '-',
                       pf ? pf+'0' : '-',
                       vf ? vf+'0' : '-',
-                      isMarkedMail(mail)    ? 'M' : '-'
+                      hasStatusMarked(mail) ? 'M' : '-'
                    );
          }
          else rd->rd.rc = RETURN_ERROR;
@@ -1064,7 +1087,31 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
             rd->rd.res.value = rd->result;
             key = rd->rd.arg.item;
             if (!strnicmp(key, "ACT", 3)) sprintf(rd->result, "%d", active);
-            else if (!strnicmp(key, "STA", 3)) rd->rd.res.value = Status[mail->Status];
+            else if (!strnicmp(key, "STA", 3))
+            {
+              #warning "old statushandling here. replace ASAP!"
+              if(hasStatusError(mail))
+                rd->rd.res.value = "E"; // Error status
+              else if(hasStatusQueued(mail))
+                rd->rd.res.value = "W"; // Queued (WaitForSend) status
+              else if(hasStatusHold(mail))
+                rd->rd.res.value = "H"; // Hold status
+              else if(hasStatusSent(mail))
+                rd->rd.res.value = "S"; // Sent status
+              else if(hasStatusReplied(mail))
+                rd->rd.res.value = "R"; // Replied status
+              else if(hasStatusForwarded(mail))
+                rd->rd.res.value = "F"; // Forwarded status
+              else if(!hasStatusRead(mail))
+              {
+                if(hasStatusNew(mail))
+                  rd->rd.res.value = "N"; // New status
+                else
+                  rd->rd.res.value = "U"; // Unread status
+              }
+              else if(!hasStatusNew(mail))
+                rd->rd.res.value = "O"; // Old status
+            }
             else if (!strnicmp(key, "FRO", 3)) strcpy(rd->result, BuildAddrName2(&mail->From));
             else if (!strnicmp(key, "TO" , 2)) strcpy(rd->result, BuildAddrName2(&mail->To));
             else if (!strnicmp(key, "REP", 3)) strcpy(rd->result, BuildAddrName2(pe));
@@ -1250,11 +1297,11 @@ void rx_setflag( UNUSED struct RexxHost *host, struct rxd_setflag **rxd, long ac
             {
               if((value = *rd->arg.per) >= 0 && value < 8)
               {
-                if(value != getPERValue(mail))
+                if((unsigned int)value != getPERValue(mail))
                 {
                   setPERValue(mail, value);
 
-                  MA_SetMailComment(mail);
+                  MA_UpdateMailFile(mail);
                 }
               }
               else rd->rc = RETURN_ERROR;
@@ -1378,7 +1425,7 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, long 
             {
                RE_SaveDisplay((int)G->ActiveReadWin, tf->FP);
                fclose(tf->FP); tf->FP = NULL;
-               success = RE_Export((int)G->ActiveReadWin, tf->Filename, rd->arg.filename ? rd->arg.filename : "", "", 0, TRUE, (BOOL)rd->arg.overwrite, ContType[CT_TX_PLAIN]);
+               success = RE_Export((int)G->ActiveReadWin, tf->Filename, rd->arg.filename ? rd->arg.filename : "", "", 0, TRUE, (BOOL)rd->arg.overwrite, (char*)ContType[CT_TX_PLAIN]);
                CloseTempFile(tf);
             }
          }
@@ -1625,7 +1672,8 @@ void rx_newmailfile( UNUSED struct RexxHost *host, struct rxd_newmailfile **rxd,
          else folder = FO_GetCurrentFolder();
          if (folder && folder->Type != FT_GROUP)
          {
-           strcpy(rd->rd.res.filename = rd->result, MA_NewMailFile(folder, NULL, 0));
+           char mfile[SIZE_MFILE];
+           strcpy(rd->rd.res.filename = rd->result, MA_NewMailFile(folder, mfile));
          }
          else rd->rd.rc = RETURN_ERROR;
 
@@ -1839,7 +1887,7 @@ void rx_appnobusy( UNUSED struct RexxHost *host, struct rxd_appnobusy **rxd, lon
          break;
          
       case RXIF_ACTION:
-         BusyEnd;
+         BusyEnd();
          if(BusyLevel <= 0) nnset(G->App, MUIA_Application_Sleep, FALSE);
          rd->rc = BusyLevel ? 1 : 0;
          break;
@@ -1935,10 +1983,10 @@ void rx_mailstatus( UNUSED struct RexxHost *host, struct rxd_mailstatus **rxd, l
       case RXIF_ACTION:
          switch (tolower(rd->arg.status[0]))
          {
-            case 'o': MA_SetStatusTo(STATUS_OLD); break;
-            case 'u': MA_SetStatusTo(STATUS_UNR); break;
-            case 'h': MA_SetStatusTo(STATUS_HLD); break;
-            case 'w': MA_SetStatusTo(STATUS_WFS); break;
+            case 'o': MA_SetStatusTo(SFLAG_NONE, SFLAG_NEW); break;
+            case 'u': MA_SetStatusTo(SFLAG_NONE, SFLAG_NEW|SFLAG_READ); break;
+            case 'h': MA_SetStatusTo(SFLAG_HOLD, SFLAG_NONE); break;
+            case 'w': MA_SetStatusTo(SFLAG_QUEUED, SFLAG_SENT); break;
             default: rd->rc = RETURN_WARN;
          }
          break;
@@ -2341,7 +2389,7 @@ void rx_geturl( UNUSED struct RexxHost *host, struct rxd_geturl **rxd, long acti
             BusyText(GetStr(MSG_TR_Downloading), "");
             if (!TR_DownloadURL(rd->arg.url, NULL, NULL, rd->arg.filename)) rd->rc = RETURN_ERROR;
             TR_CloseTCPIP();
-            BusyEnd;
+            BusyEnd();
          }
          else rd->rc = RETURN_WARN;
          break;

@@ -35,12 +35,12 @@
 #define SIZE_REALNAME   40
 #define SIZE_SUBJECT   200
 #define SIZE_MSGID      80
-#define SIZE_MFILE      12
+#define SIZE_MFILE      30
 #define SIZE_COMMAND   120
 #define SIZE_CTYPE      40
 #define SIZE_NAME       30
 #define SIZE_PATH      120
-#define SIZE_FILE       32
+#define SIZE_FILE       30
 #define SIZE_SMALL      16
 #define SIZE_DEFAULT    80
 #define SIZE_LARGE     512
@@ -50,6 +50,7 @@
 #define SIZE_PATTERN   160
 #define SIZE_PATHFILE  (SIZE_PATH+SIZE_FILE)
 #define SIZE_URL       (SIZE_HOST+SIZE_PATHFILE)
+#define SIZE_EXALLBUF 32768
 
 #define MAXP3           16
 #define MAXRU          100

@@ -5,6 +5,75 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-09-08  Jens Langner <Jens.Langner@light-speed.de>
+
+    * Mail filenames: in accordance to the change in the mail
+      status handling I took the oppurtunity to rework the mail
+      filename handling aswell as this was anyway a pending
+      issue. Now YAM uses a totally different scheme in how it
+      names mail files (abutted to the maildir format).
+      As it has been always a bad idea to use the amiga specific
+      file comments for storing mail META data like status and
+      transfer time, YAM does now store this information in the
+      mail filename only, making it possible to place those files
+      on file systems like NFS.
+      The new scheme it uses now is as followed:
+
+        XXXXXXXXXXXX.001,RAFNQHSDME
+
+      where the first 12 chars (X) are used for the base64 encoded
+      transfer date followed by a dot (.), then followed by a
+      3 chars long control variable followed by a comma (,),
+      then followed by the currently available 10 possible status
+      flags:
+
+        [R] - SFLAG_READ
+        [A] - SFLAG_REPLIED
+        [F] - SFLAG_FORWARDED
+        [N] - SFLAG_NEW
+        [Q] - SFLAG_QUEUED
+        [H] - SFLAG_HOLD
+        [S] - SFLAG_SENT
+        [D] - SFLAG_DELETED
+        [M] - SFLAG_MARKED
+        [E] - SFLAG_ERROR
+
+      Please note that this change required to increase the index
+      version so that all folders will be automatically reindexed,
+      including renaming of all mail files to the new used scheme.
+
+        ATTENTION: On the first use of this version, YAM will
+        convert all mail files to the new scheme, which of course
+        makes them slightly incompatible to any earlier version.
+        This means that if you have converted all of your folders
+        with this version there will be NO easy way back in using
+        any older version - so please consider making a raw backup
+        of all your folders first.
+
+    * Statushandling: totally reworked the way YAM deals with mail
+      statuses. Previously YAM was very limited in dealing with many
+      different status flags and only used a hand full of statuses where
+      not all of them could be combined and which weren't quite enough
+      for our future development. Especially if we want to implement
+      IMAP in future or other highly status relating things.
+      YAM now uses very common and standard status distinctions like:
+
+        READ      - mail was read by user
+        REPLIED   - mail has been replied by user
+        FORWARDED - mail has been forwarded to another user
+        NEW       - mail is marked as a new incoming mail
+        QUEUED    - mail is scheduled for delivery
+        HOLD      - mail is locked
+        SENT      - mail has been sucessfully sent out
+        DELETED   - mail is flagged as deleted
+        MARKED    - mail is marked by user
+        ERROR     - an error occurred on the mail transfer
+
+      Please note that YAM can now theoretically combine all of
+      those flags, but it uses some masking to flag out statuses
+      which doesn't make sense if they are both set at the same time
+      (i.e. NEW and READ).
+
 2004-08-04  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c, YAM_MA.c: started working on Status: and X-Status:
@@ -2842,7 +2911,7 @@ $Source$
       Now YAM should resolve any entered string without the realname if the user
       press SHIFT+RETURN in a recipientstring gadget.
     * changed the string gadget checks if a mail is going to be sent accordingly
-      to the above behaviour. Now YAM will pop up an error requester if a user
+      to the above behavioõr. Now YAM will pop up an error requester if a user
       tries to send a email and it can`t resolve any entered string or if the
       From: is missing.
     * YAM will also change the focus of the pagegroup and string gadget that

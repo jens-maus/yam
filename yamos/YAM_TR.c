@@ -183,8 +183,8 @@ static const char *POPcmd[] =
 #define TRF_NONE              (0)
 #define TRF_LOAD              (1<<0)
 #define TRF_DELETE            (1<<1)
-#define hasTR_LOAD(v)         (isFlagSet((v)->Status, TRF_LOAD))
-#define hasTR_DELETE(v)       (isFlagSet((v)->Status, TRF_DELETE))
+#define hasTR_LOAD(v)         (isFlagSet((v)->tflags, TRF_LOAD))
+#define hasTR_DELETE(v)       (isFlagSet((v)->tflags, TRF_DELETE))
 
 /**************************************************************************/
 // static function prototypes
@@ -1495,7 +1495,8 @@ static int TR_WriteBuffered(UNUSED LONG socket, char *ptr, int maxlen, int flags
   // if we don`t have a buffer yet, lets allocate own
   if(!write_buf)
   {
-    if(!(write_buf = calloc(1, C->TRBufferSize*sizeof(char)))) return -1;
+    if(!(write_buf = calloc(1, C->TRBufferSize*sizeof(char))))
+      return -1;
     write_ptr = write_buf;
   }
 
@@ -1894,16 +1895,19 @@ static void TR_AddMessageHeader(int *count, int size, char *tfname)
 {
    struct ExtendedMail *email;
 
-   if ((email = MA_ExamineMail((struct Folder *)-1, tfname, NULL, FALSE)))
+   if((email = MA_ExamineMail((struct Folder *)-1, tfname, FALSE)))
    {
       struct Mail *mail = malloc(sizeof(struct Mail));
       if (mail)
       {
         *mail = email->Mail;
         mail->Folder  = NULL;
-        mail->Status  = TRF_LOAD;
         mail->Index   = ++(*count);
         mail->Size    = size;
+
+        // flag the mail as being transfered
+        mail->tflags  = TRF_LOAD;
+
         MyAddTail(&(G->TR->List), mail);
       }
       MA_FreeEMailStruct(email);
@@ -1993,7 +1997,7 @@ static BOOL TR_GetMessageList_GET(void)
          if(index > 0 && (newMail = calloc(1, sizeof(struct Mail))))
          {
             int mode;
-            static const int mode2status[16] = { TRF_LOAD, TRF_LOAD, (TRF_LOAD|TRF_DELETE),
+            static const int mode2tflags[16] = { TRF_LOAD, TRF_LOAD, (TRF_LOAD|TRF_DELETE),
                                                  (TRF_LOAD|TRF_DELETE), TRF_LOAD, TRF_LOAD,
                                                  (TRF_LOAD|TRF_DELETE), (TRF_LOAD|TRF_DELETE),
                                                  TRF_NONE, TRF_LOAD, TRF_NONE, (TRF_LOAD|TRF_DELETE),
@@ -2008,17 +2012,19 @@ static BOOL TR_GetMessageList_GET(void)
                    (G->TR->GUIlevel == POP_USER ? 4 : 0) +
                    ((C->WarnSize && newMail->Size >= (C->WarnSize<<10)) ? 8 : 0);
 
-            newMail->Status = mode2status[mode];
+            newMail->tflags = mode2tflags[mode];
             MyAddTail(&(G->TR->List), newMail);
          }
 
          // now read the next Line
-         if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0) return FALSE;
+         if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0)
+           return FALSE;
       }
 
       return TRUE;
    }
-   else return FALSE;
+   else
+     return FALSE;
 }
 ///
 /// TR_AppendUIDL
@@ -2128,14 +2134,22 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
     if (FI_DoComplexSearch(G->TR->Search[i], G->TR->Search[i]->Rule->Combine, G->TR->Search[i+MAXRU], mail))
     {
       struct Rule *rule = G->TR->Search[i]->Rule;
-      if(hasExecuteAction(rule) && *rule->ExecuteCmd) ExecuteCommand(rule->ExecuteCmd, FALSE, OUT_DOS);
-      if(hasPlaySoundAction(rule) && *rule->PlaySound) PlaySound(rule->PlaySound);
 
-      if(hasDeleteAction(rule)) SET_FLAG(mail->Status, TRF_DELETE);
-      else CLEAR_FLAG(mail->Status, TRF_DELETE);
+      if(hasExecuteAction(rule) && *rule->ExecuteCmd)
+         ExecuteCommand(rule->ExecuteCmd, FALSE, OUT_DOS);
 
-      if(hasSkipMsgAction(rule)) CLEAR_FLAG(mail->Status, TRF_LOAD);
-      else SET_FLAG(mail->Status, TRF_LOAD);
+      if(hasPlaySoundAction(rule) && *rule->PlaySound)
+         PlaySound(rule->PlaySound);
+
+      if(hasDeleteAction(rule))
+         SET_FLAG(mail->tflags, TRF_DELETE);
+      else
+         CLEAR_FLAG(mail->tflags, TRF_DELETE);
+
+      if(hasSkipMsgAction(rule))
+         CLEAR_FLAG(mail->tflags, TRF_LOAD);
+      else
+         SET_FLAG(mail->tflags, TRF_LOAD);
 
       return;
     }
@@ -2184,7 +2198,7 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
                return;
             }
 
-            if ((email = MA_ExamineMail(NULL, tfname, NULL, TRUE)))
+            if((email = MA_ExamineMail(NULL, tfname, TRUE)))
             {
                mail->From    = email->Mail.From;
                mail->To      = email->Mail.To;
@@ -2222,15 +2236,23 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
 static void TR_GetUIDL(void)
 {
    struct Mail *mail;
+
    G->TR->supportUIDL = TR_GetUIDLonServer();
    G->TR->UIDLloc = TR_GetUIDLonDisk();
-   for (mail = G->TR->List; mail; mail = mail->Next)
+
+   for(mail = G->TR->List; mail; mail = mail->Next)
    {
       // if the server doesn`t support the UIDL command we
       // use the TOP command and generate our own UIDL within
       // the GetMessageDetails function
-      if (!G->TR->supportUIDL) TR_GetMessageDetails(mail, -1);
-      if (TR_FindUIDL(mail->UIDL)) { G->TR->Stats.DupSkipped++; MASK_FLAG(mail->Status, TRF_DELETE); }
+      if(!G->TR->supportUIDL)
+         TR_GetMessageDetails(mail, -1);
+
+      if(TR_FindUIDL(mail->UIDL))
+      {
+        G->TR->Stats.DupSkipped++;
+        MASK_FLAG(mail->tflags, TRF_DELETE);
+      }
    }
 }
 ///
@@ -2382,14 +2404,14 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                CallHookPkt(&TR_ProcessGETHook, 0, 0);
             }
 
-            BusyEnd;
+            BusyEnd();
             return;
          }
       }
-
-      BusyEnd;
    }
    else G->TR->Stats.Error = TRUE;
+
+   BusyEnd();
 
    TR_GetMailFromNextPOP(FALSE, 0, 0);
 }
@@ -2625,22 +2647,27 @@ static void TR_DisconnectSMTP(void)
    TR_Disconnect();
 }
 ///
-/// TR_ChangeStatusFunc
-//  Changes status of selected messages
-HOOKPROTONHNO(TR_ChangeStatusFunc, void, int *arg)
+/// TR_ChangeTransFlagsFunc
+//  Changes transfer flags of all selected messages
+HOOKPROTONHNO(TR_ChangeTransFlagsFunc, void, int *arg)
 {
    int id = MUIV_NList_NextSelected_Start;
    struct Mail *mail;
-   for (;;)
+
+   do
    {
       DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_NextSelected, &id);
-      if (id == MUIV_NList_NextSelected_End) break;
+      if(id == MUIV_NList_NextSelected_End)
+        break;
+
       DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, id, &mail);
-      mail->Status = *arg;
+      mail->tflags = *arg;
+
       DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, id);
    }
+   while(1);
 }
-MakeStaticHook(TR_ChangeStatusHook, TR_ChangeStatusFunc);
+MakeStaticHook(TR_ChangeTransFlagsHook, TR_ChangeTransFlagsFunc);
 ///
 /// TR_TransStat_Init
 //  Initializes transfer statistics
@@ -2659,7 +2686,9 @@ static void TR_TransStat_Init(struct TransStat *ts)
    for (mail = G->TR->List; mail; mail = mail->Next)
    {
       ts->Msgs_Tot++;
-      if(hasTR_LOAD(mail)) ts->Size_Tot += mail->Size;
+
+      if(hasTR_LOAD(mail))
+        ts->Size_Tot += mail->Size;
    }
 }
 ///
@@ -2868,7 +2897,10 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
       {
          memcpy(mail, mlist[i+2], sizeof(struct Mail));
          mail->Index  = i+1;
-         mail->Status = TRF_LOAD;
+
+         // set to LOAD
+         mail->tflags = TRF_LOAD;
+
          MyAddTail(&(G->TR->List), mail);
       }
       else
@@ -3015,7 +3047,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
       {
          int j;
          BOOL rcptok = TRUE;
-         struct ExtendedMail *email = MA_ExamineMail(outfolder, mail->MailFile, NULL, TRUE);
+         struct ExtendedMail *email = MA_ExamineMail(outfolder, mail->MailFile, TRUE);
 
          if(email)
          {
@@ -3156,17 +3188,23 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
    G->TR->List = NULL;
    G->TR_Allow = G->TR->Abort = G->Error = FALSE;
-   for (c = i = 0; i < (int)*mlist; i++)
+   for(c = i = 0; i < (int)*mlist; i++)
    {
       mail = mlist[i+2];
-      if (mail->Status == STATUS_WFS || mail->Status == STATUS_ERR) if ((new = malloc(sizeof(struct Mail))))
+      if(hasStatusQueued(mail) || hasStatusError(mail))
       {
-         *new = *mail;
-         new->Index = ++c;
-         new->Status = TRF_LOAD;
-         new->Reference = mail;
-         new->Next = NULL;
-         MyAddTail(&(G->TR->List), new);
+        if((new = malloc(sizeof(struct Mail))))
+        {
+          memcpy(new, mail, sizeof(struct Mail));
+          new->Index = ++c;
+          new->Reference = mail;
+          new->Next = NULL;
+
+          // set transfer flags to LOAD
+          new->tflags = TRF_LOAD;
+
+          MyAddTail(&(G->TR->List), new);
+        }
       }
    }
 
@@ -3257,7 +3295,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   // immediatly by leaving the mailserver alone.
                   case -1:
                   {
-                    MA_SetMailStatus(mail->Reference, STATUS_ERR);
+                    setStatusToError(mail->Reference);
                     G->Error = TRUE;
                   }
                   break;
@@ -3266,7 +3304,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   // so we can abort the transaction cleanly by a RSET and QUIT
                   case 0:
                   {
-                    MA_SetMailStatus(mail->Reference, STATUS_ERR);
+                    setStatusToError(mail->Reference);
                     TR_SendSMTPCmd(SMTP_RSET, NULL, MSG_ER_BadResponse);
                   }
                   break;
@@ -3274,16 +3312,18 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   // 1 means we filter the mails and then copy/move the mail to the send folder
                   case 1:
                   {
-                    MA_SetMailStatus(mail->Reference, STATUS_SNT);
-                    if (TR_ApplySentFilters(mail->Reference)) MA_MoveCopy(mail->Reference, outfolder, sentfolder, FALSE);
+                    setStatusToSent(mail->Reference);
+                    if(TR_ApplySentFilters(mail->Reference))
+                      MA_MoveCopy(mail->Reference, outfolder, sentfolder, FALSE);
                   }
                   break;
 
                   // 2 means we filter and delete afterwards
                   case 2:
                   {
-                    MA_SetMailStatus(mail->Reference, STATUS_SNT);
-                    if (TR_ApplySentFilters(mail->Reference)) MA_DeleteSingle(mail->Reference, FALSE, FALSE);
+                    setStatusToSent(mail->Reference);
+                    if (TR_ApplySentFilters(mail->Reference))
+                      MA_DeleteSingle(mail->Reference, FALSE, FALSE);
                   }
                   break;
                }
@@ -3310,7 +3350,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
    TR_AbortnClose();
 
-   BusyEnd;
+   BusyEnd();
    return success;
 }
 ///
@@ -3345,11 +3385,14 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
          struct Folder *folder = G->TR->ImportBox;
          int btype = folder->Type;
          char buffer[SIZE_LINE];
-         enum MailStatus stat;
+         int stat;
 
-         if (btype == FT_OUTGOING) stat = STATUS_WFS;
-         else if (btype == FT_SENT || btype == FT_CUSTOMSENT) stat = STATUS_SNT;
-         else stat = STATUS_NEW;
+         if(btype == FT_OUTGOING)
+           stat = SFLAG_QUEUED;
+         else if(btype == FT_SENT || btype == FT_CUSTOMSENT)
+           stat = SFLAG_SENT;
+         else
+           stat = SFLAG_NEW;
 
          while (fgets(buffer, SIZE_LINE, fh) && !G->TR->Abort)
          {
@@ -3359,13 +3402,16 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                {
                   if (f)
                   {
-                     fclose(f); f = NULL;
-                     if ((email = MA_ExamineMail(folder, mfile, NULL, FALSE)))
+                     fclose(f);
+                     f = NULL;
+
+                     if ((email = MA_ExamineMail(folder, mfile, FALSE)))
                      {
-                        email->Mail.Status = stat;
+                        email->Mail.sflags = stat;
 
                         // depending on the Status we have to set the transDate or not
-                        if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTimeUTC(&email->Mail.transDate);
+                        if(hasStatusSent(&(email->Mail)) || hasStatusNew(&(email->Mail)))
+                          GetSysTimeUTC(&email->Mail.transDate);
 
                         // add the mail to the folderlist now
                         newmail = AddMailToList((struct Mail *)email, folder);
@@ -3387,7 +3433,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                {
                   ts.Msgs_Done++;
                   TR_TransStat_NextMsg(&ts, mail->Index, mail->Position, mail->Size, GetStr(MSG_TR_Importing));
-                  f = fopen(MA_NewMailFile(folder, mfile, 0), "w");
+                  f = fopen(MA_NewMailFile(folder, mfile), "w");
                }
             }
             else if (f && (header || body))
@@ -3411,12 +3457,13 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
          if (body && f)
          {
             fclose(f);
-            if ((email = MA_ExamineMail(folder, mfile, NULL, FALSE)))
+            if ((email = MA_ExamineMail(folder, mfile, FALSE)))
             {
-               email->Mail.Status = stat;
+               email->Mail.sflags = stat;
 
                // depending on the Status we have to set the transDate or not
-               if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTimeUTC(&email->Mail.transDate);
+               if(hasStatusSent(&(email->Mail)) || hasStatusNew(&(email->Mail)))
+                 GetSysTimeUTC(&email->Mail.transDate);
 
                // add the mail to the folderlist now
                newmail = AddMailToList((struct Mail *)email, folder);
@@ -3468,7 +3515,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
    char msgnum[SIZE_SMALL], msgfile[SIZE_PATHFILE];
    FILE *f;
 
-   MyStrCpy(msgfile, MA_NewMailFile(infolder, mfile, 0));
+   MyStrCpy(msgfile, MA_NewMailFile(infolder, mfile));
 
    if ((f = fopen(msgfile, "w")))
    {
@@ -3486,15 +3533,16 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
       if(!G->TR->Abort && !G->Error && done)
       {
          struct ExtendedMail *mail;
-         if ((mail = MA_ExamineMail(infolder, mfile, NULL, FALSE)))
+         if((mail = MA_ExamineMail(infolder, mfile, FALSE)))
          {
             struct Mail *new = AddMailToList((struct Mail *)mail, infolder);
 
             // we have to get the actual Time and place it in the transDate, so that we know at
             // which time this mail arrived
             GetSysTimeUTC(&new->transDate);
-            new->Status = STATUS_NEW;
-            MA_SetMailComment(new);
+
+            new->sflags = SFLAG_NEW;
+            MA_UpdateMailFile(new);
 
             if (FO_GetCurrentFolder() == infolder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
             AppendLogVerbose(32, GetStr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, (void *)new->Size, "");
@@ -3816,13 +3864,13 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
                DoMethod(data->GUI.BT_PAUSE ,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, TRUE);
                DoMethod(data->GUI.BT_PAUSE, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Pause));
                DoMethod(data->GUI.LV_MAILS ,MUIM_Notify, MUIA_NList_DoubleClick,TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_GetMessageInfoHook);
-               DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook, TRF_DELETE);
-               DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook, (TRF_LOAD|TRF_DELETE));
+               DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_DELETE);
+               DoMethod(bt_loaddel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, (TRF_LOAD|TRF_DELETE));
                DoMethod(data->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Start));
                DoMethod(data->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Abort));
             }
-            DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook, TRF_LOAD);
-            DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook, TRF_NONE);
+            DoMethod(bt_loadonly,        MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_LOAD);
+            DoMethod(bt_leave,           MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeTransFlagsHook, TRF_NONE);
             DoMethod(bt_all,             MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
             DoMethod(bt_none,            MUIM_Notify, MUIA_Pressed, FALSE, data->GUI.LV_MAILS, 4, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
             DoMethod(data->GUI.LV_MAILS, MUIM_NList_UseImage, G->MA->GUI.BC_STAT[9], 9, 0);

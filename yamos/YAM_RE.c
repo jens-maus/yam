@@ -247,8 +247,11 @@ static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
    for (act += direction; act >= 0; act += direction)
    {
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, act, &mail);
-      if (!mail) break;
-      if (!onlynew || (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
+      if(!mail)
+        break;
+
+      if(!onlynew ||
+        (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
          set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, act);
          RE_ReadMessage(winnum, mail);
@@ -340,23 +343,47 @@ static void RE_UpdateStatusGroup(int winnum)
    struct RE_ClassData *re = G->RE[winnum];
    struct RE_GUIData *gui = &re->GUI;
    struct Mail *mail = re->MailPtr;
-   int    status = 0;
+   int activatepage = 0;
+
+   #warning "old statushandling here. replace ASAP!"
+   if(hasStatusError(mail))
+     activatepage = 6; // Error status
+   else if(hasStatusQueued(mail))
+     activatepage = 5; // Queued (WaitForSend) status
+   else if(hasStatusHold(mail))
+     activatepage = 7; // Hold status
+   else if(hasStatusSent(mail))
+     activatepage = 8; // Sent status
+   else if(hasStatusReplied(mail))
+     activatepage = 4; // Replied status
+   else if(hasStatusForwarded(mail))
+     activatepage = 3; // Forwarded status
+   else if(!hasStatusRead(mail))
+   {
+     if(hasStatusNew(mail))
+       activatepage = 9; // New status
+     else
+       activatepage = 1; // Unread status
+   }
+   else if(!hasStatusNew(mail))
+     activatepage = 2; // Old status
 
    // set the correct page for the mail Status group
-   set(gui->GR_STATUS[0], MUIA_Group_ActivePage, 1+mail->Status);
+   set(gui->GR_STATUS[0], MUIA_Group_ActivePage, activatepage);
 
    // Now we check for the other statuses of the mail
-   if(isCryptedMail(mail))        status = 1;
-   else if(isSignedMail(mail))    status = 2;
-   else if(isReportMail(mail))    status = 3;
-   else if(isMultiPartMail(mail)) status = 4;
-   set(gui->GR_STATUS[1], MUIA_Group_ActivePage, status);
+   if(isCryptedMail(mail))        activatepage = 1;
+   else if(isSignedMail(mail))    activatepage = 2;
+   else if(isReportMail(mail))    activatepage = 3;
+   else if(isMultiPartMail(mail)) activatepage = 4;
+   else activatepage = 0;
+   set(gui->GR_STATUS[1], MUIA_Group_ActivePage, activatepage);
 
    // set the correct page for the Importance flag
-   set(gui->GR_STATUS[2], MUIA_Group_ActivePage, mail->Importance == 1 ? 1 : 0);
+   set(gui->GR_STATUS[2], MUIA_Group_ActivePage, getImportanceLevel(mail) == IMP_HIGH ? 1 : 0);
 
    // set the correct page for the Marked flag
-   set(gui->GR_STATUS[3], MUIA_Group_ActivePage, isMarkedMail(mail) ? 1 : 0);
+   set(gui->GR_STATUS[3], MUIA_Group_ActivePage, hasStatusMarked(mail) ? 1 : 0);
 }
 ///
 /// RE_SendMDN
@@ -397,7 +424,7 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
       {
          char mfile[SIZE_MFILE];
          struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-         struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE);
+         struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
 
          if(email)
          {
@@ -440,19 +467,22 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
               comp.Subject = "Disposition Notification";
               comp.ReportType = 1;
               comp.FirstPart = p1;
-              if ((comp.FH = fopen(MA_NewMailFile(outfolder, mfile, 0), "w")))
+              if ((comp.FH = fopen(MA_NewMailFile(outfolder, mfile), "w")))
               {
                 struct Mail *mlist[3];
                 mlist[0] = (struct Mail *)1; mlist[2] = NULL;
                 WriteOutMessage(&comp);
                 fclose(comp.FH);
-                if ((email = MA_ExamineMail(outfolder, mfile, NULL, TRUE)))
+
+                if((email = MA_ExamineMail(outfolder, mfile, TRUE)))
                 {
-                  email->Mail.Status = STATUS_WFS;  // Set "WaitForSend" status
+                  setStatusToQueued(&(email->Mail));
                   mlist[2] = AddMailToList(&email->Mail, outfolder);
                   MA_FreeEMailStruct(email);
                 }
-                if (sendnow && mlist[2] && !G->TR) MA_SendMList(mlist);
+
+                if(sendnow && mlist[2] && !G->TR)
+                  MA_SendMList(mlist);
               }
               else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
               FreeStrBuf(comp.MailTo);
@@ -482,7 +512,7 @@ BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi)
    }
    if (MDNmode)
    {
-      struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE);
+      struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
       if(email)
       {
         if(*email->ReceiptTo.Address)
@@ -579,7 +609,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    re->PGPKey = FALSE;
    re->PGPSigned = re->PGPEncrypted = 0;
 
-   sprintf(re->WTitle, "%s %s %s: ", mail->MailFile, out ? GetStr(MSG_To) : GetStr(MSG_From), out ? AddrName(mail->To) : AddrName(mail->From));
+   sprintf(re->WTitle, "%s %s: ", out ? GetStr(MSG_To) : GetStr(MSG_From), out ? AddrName(mail->To) : AddrName(mail->From));
    stccat(re->WTitle, mail->Subject, SIZE_DEFAULT);
    set(gui->WI, MUIA_Window_Title, re->WTitle);
    set(gui->MI_EDIT, MUIA_Menuitem_Enabled, out);
@@ -615,10 +645,13 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
       set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && (hasPGPEMimeFlag(re) || hasPGPEOldFlag(re)));
       RE_UpdateStatusGroup(winnum);
       MA_StartMacro(MACRO_READ, itoa(winnum));
-      if (real && (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
+
+      if(real &&
+         (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
-         MA_SetMailStatus(mail, STATUS_OLD);
+         setStatusToRead(mail); // set to OLD
          DisplayStatistics(folder, TRUE);
+
          if((hasPGPSOldFlag(re) || hasPGPSMimeFlag(re)) && !hasPGPSCheckedFlag(re))
          {
             DoMethod(G->App, MUIM_CallHook, &RE_CheckSignatureHook, FALSE, winnum);
@@ -786,12 +819,15 @@ HOOKPROTONHNO(RE_CopyFunc, void, int *arg)
             MA_MoveCopy(mail, srcfolder, dstfolder, TRUE);
             AppendLogNormal(24, GetStr(MSG_LOG_Copying), (void *)1, srcfolder->Name, dstfolder->Name, "");
          }
-         else if (RE_Export(winnum, G->RE[winnum]->File, MA_NewMailFile(dstfolder, mail->MailFile, 0), "", 0, FALSE, FALSE, ContType[CT_ME_EMAIL]))
+         else if(RE_Export(winnum, G->RE[winnum]->File, MA_NewMailFile(dstfolder, mail->MailFile), "", 0, FALSE, FALSE, (char*)ContType[CT_ME_EMAIL]))
          {
             APTR lv;
             struct Mail *newmail = AddMailToList(mail, dstfolder);
-            if ((lv = WhichLV(dstfolder))) DoMethod(lv, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
-            MA_SetMailStatus(newmail, STATUS_OLD);
+
+            if((lv = WhichLV(dstfolder)))
+              DoMethod(lv, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
+
+            setStatusToRead(newmail); // OLD status
          }
       }
    }
@@ -826,8 +862,11 @@ HOOKPROTONHNO(RE_PrintFunc, void, int *arg)
 
    if ((part = AttachRequest(GetStr(MSG_RE_PrintMsg), GetStr(MSG_RE_SelectPrintPart), GetStr(MSG_RE_PrintGad), GetStr(MSG_Cancel), winnum, ATTREQ_PRINT|ATTREQ_MULTI, G->RE[winnum]->GUI.WI)))
    {
-      if (C->PrinterCheck && !CheckPrinter()) return;
+      if(C->PrinterCheck && !CheckPrinter())
+        return;
+
       BusyText(GetStr(MSG_BusyDecPrinting), "");
+
       for (; part; part = part->NextSelected)
       {
         switch (part->Nr)
@@ -857,7 +896,8 @@ HOOKPROTONHNO(RE_PrintFunc, void, int *arg)
           }
         }
       }
-      BusyEnd;
+
+      BusyEnd();
    }
 }
 MakeStaticHook(RE_PrintHook, RE_PrintFunc);
@@ -1080,7 +1120,7 @@ HOOKPROTONHNO(RE_SaveFunc, void, int *arg)
       {
         case PART_ORIGINAL:
         {
-          RE_Export(winnum, G->RE[winnum]->File, "", "", 0, FALSE, FALSE, ContType[CT_ME_EMAIL]);
+          RE_Export(winnum, G->RE[winnum]->File, "", "", 0, FALSE, FALSE, (char*)ContType[CT_ME_EMAIL]);
         }
         break;
 
@@ -1091,7 +1131,7 @@ HOOKPROTONHNO(RE_SaveFunc, void, int *arg)
             RE_SaveDisplay(winnum, tf->FP);
             fclose(tf->FP);
             tf->FP = NULL;
-            RE_Export(winnum, tf->Filename, "", "", 0, FALSE, FALSE, ContType[CT_TX_PLAIN]);
+            RE_Export(winnum, tf->Filename, "", "", 0, FALSE, FALSE, (char*)ContType[CT_TX_PLAIN]);
             CloseTempFile(tf);
           }
         }
@@ -1104,7 +1144,7 @@ HOOKPROTONHNO(RE_SaveFunc, void, int *arg)
         }
       }
     }
-    BusyEnd;
+    BusyEnd();
   }
 }
 MakeStaticHook(RE_SaveHook, RE_SaveFunc);
@@ -1135,18 +1175,19 @@ void RE_DisplayMIME(char *fname, char *ctype)
     struct TempFile *tf = OpenTempFile(NULL);
     CopyFile(tf->Filename, NULL, fname, NULL);
 
-    if ((email = MA_ExamineMail(NULL, FilePart(tf->Filename), NULL, TRUE)))
+    if ((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
     {
       mail = calloc(1, sizeof(struct Mail));
-      if(!mail) return;
+      if(!mail)
+        return;
 
       memcpy(mail, &(email->Mail), sizeof(struct Mail));
       mail->Next      = NULL;
       mail->Reference = NULL;
       mail->Folder    = NULL;
       mail->UIDL      = NULL;
-      mail->Status    = STATUS_OLD;
-      SET_FLAG(mail->Flags, MFLAG_NOFOLDER);
+      mail->sflags    = SFLAG_READ; // this sets the mail as OLD
+      SET_FLAG(mail->mflags, MFLAG_NOFOLDER);
 
       MA_FreeEMailStruct(email);
 
@@ -1285,7 +1326,7 @@ HOOKPROTONHNO(RE_DisplayFunc, void, int *arg)
             }
          }
       }
-      BusyEnd;
+      BusyEnd();
    }
 }
 MakeStaticHook(RE_DisplayHook, RE_DisplayFunc);
@@ -1321,7 +1362,7 @@ HOOKPROTONHNO(RE_SaveAllFunc, void, int *arg)
    {
       BusyText(GetStr(MSG_BusyDecSaving), "");
       RE_SaveAll(*arg, G->ASLReq[ASL_DETACH]->fr_Drawer);
-      BusyEnd;
+      BusyEnd();
    }
 }
 MakeStaticHook(RE_SaveAllHook, RE_SaveAllFunc);
@@ -1385,7 +1426,7 @@ MakeStaticHook(RE_GetAddressHook, RE_GetAddressFunc);
 HOOKPROTONHNO(RE_SetUnreadFunc, void, int *arg)
 {
    int winnum = *arg;
-   MA_SetMailStatus(G->RE[winnum]->MailPtr, STATUS_UNR);
+   setStatusToUnread(G->RE[winnum]->MailPtr);
    RE_UpdateStatusGroup(winnum);
    DisplayStatistics(NULL, TRUE);
 }
@@ -1396,7 +1437,7 @@ MakeStaticHook(RE_SetUnreadHook, RE_SetUnreadFunc);
 HOOKPROTONHNO(RE_SetMarkedFunc, void, int *arg)
 {
    int winnum = *arg;
-   MA_SetMailFlag(G->RE[winnum]->MailPtr, MFLAG_MARK, FALSE);
+   setStatusToMarked(G->RE[winnum]->MailPtr);
    RE_UpdateStatusGroup(winnum);
    DisplayStatistics(NULL, TRUE);
 }
@@ -1517,12 +1558,13 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
    struct Folder *folder = re->MailPtr->Folder;
    char mfile[SIZE_MFILE];
 
-   if(!folder) return;
+   if(!folder)
+     return;
 
    if (!(choice = MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SaveDecrypted), GetStr(MSG_RE_SaveDecGads), GetStr(MSG_RE_SaveDecReq)))) return;
    memset(&comp, 0, sizeof(struct Compose));
 
-   if ((comp.FH = fopen(MA_NewMailFile(folder, mfile, 0), "w")))
+   if((comp.FH = fopen(MA_NewMailFile(folder, mfile), "w")))
    {
       struct ExtendedMail *email;
 
@@ -1534,12 +1576,12 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
       FreePartsList(p1);
       fclose(comp.FH);
 
-      if ((email = MA_ExamineMail(folder, mfile, NULL, TRUE)))
+      if ((email = MA_ExamineMail(folder, mfile, TRUE)))
       {
          struct Mail *newmail;
 
          // lets set some values depending on the original message
-         email->Mail.Status = re->MailPtr->Status;
+         email->Mail.sflags = re->MailPtr->sflags;
          memcpy(&email->Mail.transDate, &re->MailPtr->transDate, sizeof(struct timeval));
 
          // add the mail to the folder now
@@ -2662,7 +2704,7 @@ static BOOL RE_LoadMessage(int winnum, int parsemode)
 
    if (!StartUnpack(G->RE[winnum]->File, newfile, G->RE[winnum]->MailPtr->Folder))
    {
-      BusyEnd;
+      BusyEnd();
       return FALSE;
    }
 
@@ -2684,7 +2726,7 @@ static BOOL RE_LoadMessage(int winnum, int parsemode)
         }
       }
    }
-   BusyEnd;
+   BusyEnd();
    return TRUE;
 }
 ///
@@ -2837,7 +2879,10 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                 // cleanup and return NULL
                 free(msg);
                 fclose(fh);
-                if(mode != RIM_QUIET) BusyEnd;
+
+                if(mode != RIM_QUIET)
+                  BusyEnd();
+
                 return NULL;
               }
 
@@ -3076,7 +3121,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                     // make sure that the mail is flaged as signed
                     if(!isSignedMail(re->MailPtr))
                     {
-                      SET_FLAG(re->MailPtr->Flags, MFLAG_SIGNED);
+                      SET_FLAG(re->MailPtr->mflags, MFLAG_SIGNED);
                       SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                     }
                   }
@@ -3102,7 +3147,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                 // make sure that mail is flagged as crypted
                 if(!isCryptedMail(re->MailPtr))
                 {
-                  SET_FLAG(re->MailPtr->Flags, MFLAG_CRYPT);
+                  SET_FLAG(re->MailPtr->mflags, MFLAG_CRYPT);
                   SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                 }
 
@@ -3141,7 +3186,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
                 if(!isSignedMail(re->MailPtr))
                 {
-                  SET_FLAG(re->MailPtr->Flags, MFLAG_SIGNED);
+                  SET_FLAG(re->MailPtr->mflags, MFLAG_SIGNED);
                   SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                 }
               }
@@ -3165,7 +3210,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
     }
 
     if(mode != RIM_QUIET)
-      BusyEnd;
+      BusyEnd();
   }
 
   return cmsg;
@@ -3194,7 +3239,7 @@ static void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
 
    if(isSenderInfoMail(mail))
    {
-      if((email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE)))
+      if((email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
       {
         if ((s = strchr(email->SenderInfo, ';')))
         {
@@ -3365,7 +3410,7 @@ static BOOL RE_DownloadPhoto(APTR win, char *url, struct ABEntry *ab)
             CallHookPkt(&AB_SaveABookHook, 0, 0);
             success = TRUE;
          }
-         BusyEnd;
+         BusyEnd();
          TR_CloseTCPIP();
       }
       else ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL);
@@ -3508,7 +3553,7 @@ static void RE_DisplayMessage(int winnum, BOOL update)
       free(cmsg);
    }
 
-   BusyEnd;
+   BusyEnd();
 }
 ///
 /// RE_ClickedOnMessage

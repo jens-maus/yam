@@ -1430,16 +1430,16 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       else
       {
          wr->Mode = NEW_NEW;
-         comp.FH = fopen(MA_NewMailFile(outfolder, mail.MailFile, 0), "w");
+         comp.FH = fopen(MA_NewMailFile(outfolder, mail.MailFile), "w");
       }
    }
-   else comp.FH = fopen(MA_NewMailFile(outfolder, mail.MailFile, 0), "w");
+   else comp.FH = fopen(MA_NewMailFile(outfolder, mail.MailFile), "w");
 
    if (comp.FH)
    {
       struct MailInfo *mi;
       struct ExtendedMail *email;
-      enum MailStatus stat = mode == WRITE_HOLD ? STATUS_HLD : STATUS_WFS;
+      int stat = mode == WRITE_HOLD ? SFLAG_HOLD : SFLAG_QUEUED;
       BOOL done = WriteOutMessage(&comp);
       fclose(comp.FH);
 
@@ -1449,10 +1449,12 @@ void WR_NewMail(enum WriteMode mode, int winnum)
          return;
       }
 
-      if (wr->Mode != NEW_BOUNCE) EndNotify(&G->WR_NRequest[winnum]);
-      if ((email = MA_ExamineMail(outfolder, mail.MailFile, NULL, C->EmailCache > 0 ? TRUE : FALSE)))
+      if(wr->Mode != NEW_BOUNCE)
+        EndNotify(&G->WR_NRequest[winnum]);
+
+      if((email = MA_ExamineMail(outfolder, mail.MailFile, C->EmailCache > 0 ? TRUE : FALSE)))
       {
-         email->Mail.Status = stat;
+         email->Mail.sflags = stat;
          new = AddMailToList((struct Mail *)email, outfolder);
 
          // Now we have to check wheter we have to add the To & CC addresses
@@ -1472,8 +1474,11 @@ void WR_NewMail(enum WriteMode mode, int winnum)
          }
          MA_FreeEMailStruct(email);
 
-         if (FO_GetCurrentFolder() == outfolder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
-         MA_SetMailStatus(new, stat);
+         if(FO_GetCurrentFolder() == outfolder)
+           DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
+
+         MA_UpdateMailFile(new);
+
          if (wr->Mode == NEW_EDIT)
          {
             mi = GetMailInfo(wr->Mail);
@@ -1492,7 +1497,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
             m = ml[i+2];
             if (!isVirtualMail(m)) if (m->Folder->Type != FT_OUTGOING && m->Folder->Type != FT_SENT)
             {
-               if (m->Status == STATUS_NEW || m->Status == STATUS_UNR)
+               if(hasStatusNew(m) || !hasStatusRead(m))
                {
                   int mdntype = wr->Mode == NEW_REPLY ? MDN_DISP : MDN_PROC;
                   if (winnum == 2) SET_FLAG(mdntype, MDN_AUTOACT);
@@ -1502,7 +1507,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
                {
                   case NEW_REPLY:
                   {
-                    MA_SetMailStatus(m, STATUS_RPD);
+                    setStatusToReplied(m);
                     DisplayStatistics(m->Folder, FALSE);
                   }
                   break;
@@ -1510,7 +1515,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
                   case NEW_FORWARD:
                   case NEW_BOUNCE:
                   {
-                    MA_SetMailStatus(m, STATUS_FWD);
+                    setStatusToForwarded(m);
                     DisplayStatistics(m->Folder, FALSE);
                   }
                   break;
@@ -1546,7 +1551,7 @@ HOOKPROTONHNO(WR_NewMailFunc, void, int *arg)
 {
    BusyText(GetStr(MSG_BusyComposing), "");
    WR_NewMail(arg[0], arg[1]);
-   BusyEnd;
+   BusyEnd();
 }
 MakeHook(WR_NewMailHook, WR_NewMailFunc);
 
@@ -2002,7 +2007,7 @@ void WR_SetupOldMail(int winnum)
          MyStrCpy(attach.ContentType, part->ContentType);
          MyStrCpy(attach.Description, part->Description);
          DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
-         BusyEnd;
+         BusyEnd();
       }
 }
 

@@ -81,16 +81,15 @@
 */
 struct ComprMail
 {
-   int              Flags;
-   char             MailFile[SIZE_MFILE];
-   struct DateStamp Date;      // the creation date of the mail within UTC
-   struct timeval   transDate; // we need microseconds for received/sent Date
-   char             Status;
-   char             Importance;
-   unsigned long    cMsgID;
-   unsigned long    cIRTMsgID;
-   long             Size;
-   int              MoreBytes;
+   unsigned char    mailFile[SIZE_MFILE]; // mail filename without path
+   struct DateStamp date;                 // the creation date of the mail (UTC)
+   struct timeval   transDate;            // the received/sent date with ms (UTC)
+   unsigned int     sflags;               // mail status flags
+   unsigned int     mflags;               // general mail flags
+   unsigned long    cMsgID;               // compressed MessageID
+   unsigned long    cIRTMsgID;            // compressed InReturnTo MessageID
+   long             size;                 // the total size of the message
+   unsigned int     moreBytes;            // more bytes to follow as the subject
 };
 
 /*
@@ -112,7 +111,7 @@ struct FIndex
 
 // whenever you change something up there (in FIndex or ComprMail) you
 // need to increase this version ID!
-#define FINDEX_VER  (MAKE_ID('Y','I','N','5'))
+#define FINDEX_VER  (MAKE_ID('Y','I','N','6'))
 
 #include "default-align.h"
 
@@ -125,6 +124,7 @@ static char *MA_IndexFileName(struct Folder*);
 static BOOL MA_DetectUUE(FILE*);
 static void MA_GetRecipients(char*, struct Person**, int*);
 static struct DateStamp *MA_ScanDate(char *date);
+static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder);
 
 /***************************************************************************
  Module: Main - Folder handling
@@ -162,13 +162,16 @@ static void MA_ValidateStatus(struct Folder *folder)
    {
       DB(kprintf("Validating status of new msgs in folder %s\n", folder->Name);)
 
-      for (mail = folder->Messages; mail; mail = mail->Next)
+      for(mail = folder->Messages; mail; mail = mail->Next)
       {
-        if (mail->Status == STATUS_NEW)
+        if(hasStatusNew(mail))
         {
-          if (folder->Type == FT_OUTGOING)   MA_SetMailStatus(mail, STATUS_WFS);
-          else if (folder->Type == FT_SENT)  MA_SetMailStatus(mail, STATUS_SNT);
-          else                               MA_SetMailStatus(mail, STATUS_UNR);
+          if(folder->Type == FT_OUTGOING)
+            setStatusToQueued(mail);
+          else if(folder->Type == FT_SENT)
+            setStatusToSent(mail);
+          else
+            setStatusToUnread(mail);
         }
       }
    }
@@ -237,16 +240,16 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                   break;
                }
 
-               if(cmail.MoreBytes > SIZE_LARGE)
+               if(cmail.moreBytes > SIZE_LARGE)
                {
-                  printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.MailFile, cmail.MoreBytes);
+                  printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.mailFile, cmail.moreBytes);
                   printf("File position: %ld\n", ftell(fh));
 
                   corrupt = TRUE;
                   break;
                }
 
-               if(fread(buf, cmail.MoreBytes, 1, fh) != 1)
+               if(fread(buf, cmail.moreBytes, 1, fh) != 1)
                {
                  DB(kprintf("fread error while reading index file\n");)
                  error = TRUE;
@@ -261,16 +264,15 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                strcpy(mail.ReplyTo.Address, GetNextLine(NULL));
                strcpy(mail.ReplyTo.RealName, GetNextLine(NULL));
                mail.Folder = folder;
-               mail.Flags = cmail.Flags;
+               mail.mflags = cmail.mflags;
+               mail.sflags = cmail.sflags;
                setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn`t loaded
-               strcpy(mail.MailFile, cmail.MailFile);
-               mail.Date = cmail.Date;
+               strcpy(mail.MailFile, cmail.mailFile);
+               mail.Date = cmail.date;
                mail.transDate = cmail.transDate;
-               mail.Status = cmail.Status;
-               mail.Importance = cmail.Importance;
                mail.cMsgID = cmail.cMsgID;
                mail.cIRTMsgID = cmail.cIRTMsgID;
-               mail.Size = cmail.Size;
+               mail.Size = cmail.size;
 
                // finally add the new mail structure to our mail list
                if(AddMailToList(&mail, folder) == NULL)
@@ -286,7 +288,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
       if(!error && ferror(fh) == 1)
         error = TRUE;
 
-      BusyEnd;
+      BusyEnd();
       fclose(fh);
    }
 
@@ -347,24 +349,24 @@ BOOL MA_SaveIndex(struct Folder *folder)
          mail->To.Address, mail->To.RealName,
          mail->ReplyTo.Address, mail->ReplyTo.RealName);
 
-      cmail.Flags = mail->Flags;
-      setVOLValue(&cmail, 0);  // we have to make sure that the volatile flag field isn`t saved
-
-      strcpy(cmail.MailFile, mail->MailFile);
-      cmail.Date = mail->Date;
+      strcpy(cmail.mailFile, mail->MailFile);
+      cmail.date = mail->Date;
       cmail.transDate = mail->transDate;
-      cmail.Status = mail->Status;
-      cmail.Importance = mail->Importance;
+      cmail.sflags = mail->sflags;
+      cmail.mflags = mail->mflags;
+      setVOLValue(&cmail, 0);  // we have to make sure that the volatile flag field isn`t saved
       cmail.cMsgID = mail->cMsgID;
       cmail.cIRTMsgID = mail->cIRTMsgID;
-      cmail.Size = mail->Size;
-      cmail.MoreBytes = strlen(buf);
+      cmail.size = mail->Size;
+      cmail.moreBytes = strlen(buf);
       fwrite(&cmail, sizeof(struct ComprMail), 1, fh);
-      fwrite(buf, 1, cmail.MoreBytes, fh);
+      fwrite(buf, 1, cmail.moreBytes, fh);
    }
+
    fclose(fh);
    CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
-   BusyEnd;
+   BusyEnd();
+
    return TRUE;
 }
 
@@ -745,7 +747,7 @@ BOOL MA_JumpToNewMsg(VOID)
     DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
     if(!mail) break;
 
-    if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR)
+    if(hasStatusNew(mail) || !hasStatusRead(mail))
     {
       pos = i;
       break;
@@ -759,29 +761,305 @@ BOOL MA_JumpToNewMsg(VOID)
   return TRUE;
 }
 ///
+/// MA_ConvertOldMailFile()
+// This function takes a fileinfoblock and a folder and converts the
+// oldstyle mailfile referred by fib to a new YAM 2.5+ conform mail file.
+static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
+{
+  char dateFilePart[13];  // the base64 encoded date part occupies 12+1 bytes
+  char statusFilePart[4]; // we only need 3+1 bytes for the status flags here
+  char oldFilePath[SIZE_PATHFILE];
+  char *statusPartPtr = statusFilePart;
+  char *comment;
+  char *ptr;
+  char *result = filename;
+
+  // clear
+  dateFilePart[0] = '\0';
+  statusFilePart[0] = '\0';
+
+  // construct the full path of the old filename
+  // and get the file comment
+  strncpy(oldFilePath, GetFolderDir(folder), SIZE_PATHFILE);
+  if(AddPart(oldFilePath, filename, SIZE_PATHFILE) == 0 ||
+     (comment = FileComment(oldFilePath)) == NULL)
+  {
+    return NULL;
+  }
+
+  // for a proper conversion we have to take mainly the file comment into
+  // account as in there all status information aswell as the transfer
+  // data was stored in YAM versions prior to 2.5
+  if(*comment)
+  {
+    // read out the mailstatus - which was normally the first character
+    // of the comment
+    switch(comment[0])
+    {
+      case 'U':
+        // nothing
+      break;
+
+      case 'R':
+        *statusPartPtr++ = SCHAR_READ;
+        *statusPartPtr++ = SCHAR_REPLIED;
+      break;
+
+      case 'F':
+        *statusPartPtr++ = SCHAR_READ;
+        *statusPartPtr++ = SCHAR_FORWARDED;
+      break;
+
+      case 'W':
+        *statusPartPtr++ = SCHAR_READ;
+        *statusPartPtr++ = SCHAR_QUEUED;
+      break;
+
+      case 'H':
+        *statusPartPtr++ = SCHAR_READ;
+        *statusPartPtr++ = SCHAR_HOLD;
+      break;
+
+      case 'O':
+        *statusPartPtr++ = SCHAR_READ;
+      break;
+
+      case 'E':
+        *statusPartPtr++ = SCHAR_ERROR;
+      break;
+
+      case 'S':
+        *statusPartPtr++ = SCHAR_READ;
+        *statusPartPtr++ = SCHAR_SENT;
+      break;
+
+      case 'N':
+      default:
+        *statusPartPtr++ = SCHAR_NEW;
+    }
+
+    // now we check if second char is present and if we set the mailfag
+    // as "marked" and the arexx permanent flag
+    if(comment[1] && comment[1] != ' ')
+    {
+      int pval = 0;
+
+      // we have to check for the permanent flag also.
+      if(comment[1] >= 'M' && comment[1] <= 'M'+7)
+      {
+        *statusPartPtr++ = SCHAR_MARKED;
+
+        pval = comment[1]-'M';
+      }
+      else if(comment[1] >= '1' && comment[1] <= '7')
+      {
+        pval = comment[1]-'1'+1;
+      }
+
+      if(pval > 0)
+        *statusPartPtr++ = '0'+pval;
+    }
+
+    *statusPartPtr = '\0'; // NUL terminate the status part
+
+    // we check if this comment also has the transfer Date included
+    // we only take the string if it is exactly 12bytes long or
+    // otherwise it could be some weird data in the Comment string
+    if(comment[1] && comment[2] && comment[14] == '\0')
+    {
+      // ok we have the transfer Date, so lets put it at the beginning of
+      // the new filename
+      strcpy(dateFilePart, &comment[2]);
+    }
+  }
+
+  if(dateFilePart[0] == '\0')
+  {
+    struct timeval newDate;
+
+    // so we don't seem to have a transfer Date in the file comment.
+    // What we do now is that we take the date from the original file
+    // (the first 5 numerical numbers are the days)
+    newDate.tv_secs  = atol(filename) * 24 * 60 * 60;
+    newDate.tv_micro = 0;
+
+    // encode this date as a base64 encoded string
+    base64encode(dateFilePart, (char *)&newDate, sizeof(struct timeval));
+  }
+
+  // as the dateFilePart may contain slashes "/" we have to replace them
+  // with "-" chars to don't drive the filesystem crazy :)
+  while((ptr = strchr(dateFilePart, '/')))
+    *ptr = '-';
+
+  do
+  {
+    static char newFileName[SIZE_MFILE];
+    char newFilePath[SIZE_PATHFILE];
+
+    // ok, now we should have all main parts of the new filename, so we
+    // can concatenate it to one new filename and try to rename the old
+    // style mailfile to the newstyle equivalent.
+    sprintf(newFileName, "%s.001,%s", dateFilePart, statusFilePart);
+
+    // so, now we should be finished with finding the new filename of the mail file.
+    // lets try to rename it with the dos.library's Rename() function
+    strncpy(newFilePath, GetFolderDir(folder), SIZE_PATHFILE);
+    if(AddPart(newFilePath, newFileName, SIZE_PATHFILE) == 0)
+    {
+      result = NULL;
+      break;
+    }
+
+    // try to rename it and if it fails go and find out if we have to increase
+    // the mail counter or not.
+    if(Rename(oldFilePath, newFilePath) == 0)
+    {
+      BPTR dirLock;
+      int mailCounter = 0;
+
+      if((dirLock = Lock(GetFolderDir(folder), ACCESS_READ)))
+      {
+        struct ExAllControl *eac;
+
+        if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+        {
+          struct ExAllData *eabuffer;
+          char matchPattern[15+1];
+          char pattern[16*2+2];
+          LONG more;
+
+          eac->eac_LastKey = 0;
+          eac->eac_MatchFunc = NULL;
+
+          // search for files matching the dateFilePart
+          sprintf(matchPattern, "%s.#?", dateFilePart);
+          ParsePatternNoCase(matchPattern, pattern, 16*2+2);
+          eac->eac_MatchString = pattern;
+
+          if((eabuffer = malloc(SIZE_EXALLBUF)))
+          {
+            do
+            {
+              more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_NAME, eac);
+              if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
+              {
+                result = NULL;
+                break;
+              }
+
+              mailCounter += eac->eac_Entries;
+            }
+            while(more);
+
+            free(eabuffer);
+          }
+          else
+          {
+            DB(kprintf("  error on allocating enough buffers\n");)
+            result = NULL;
+          }
+
+          FreeDosObject(DOS_EXALLCONTROL, eac);
+        }
+        else
+        {
+          DB(kprintf("  error on allocating dos object\n");)
+          result = NULL;
+        }
+
+        UnLock(dirLock);
+      }
+      else
+      {
+        DB(kprintf("  error on getting folderdir lock\n");)
+        result = NULL;
+      }
+
+      // if we didn't find any matching file then this is signals
+      // another error than an already existing file!
+      if(mailCounter == 0)
+      {
+        DB(kprintf("  error on renaming '%s' to '%s'\n", oldFilePath, newFilePath);)
+        result = NULL;
+        break;
+      }
+
+      // let us now try it again to rename the file
+      sprintf(newFileName, "%s.%03d,%s", dateFilePart, ++mailCounter, statusFilePart);
+
+      strncpy(newFilePath, GetFolderDir(folder), SIZE_PATHFILE);
+      if(AddPart(newFilePath, newFileName, SIZE_PATHFILE) == 0)
+      {
+        result = NULL;
+        break;
+      }
+
+      // try to rename it and if it fails finally return an error
+      if(Rename(oldFilePath, newFilePath) == 0)
+      {
+        DB(kprintf("  error on renaming '%s' to '%s'\n", oldFilePath, newFilePath);)
+        result = NULL;
+        break;
+      }
+    }
+
+    result = newFileName;
+
+    // and to make everything as clean as possible, lets erase
+    // the filecomment as YAM 2.5+ doesn't require file comments anymore
+    SetComment(newFilePath, "");
+  }
+  while(FALSE);
+
+  return result != filename ? result : NULL;
+}
+///
 
 /*** Mail header scanning ***/
 /// MA_NewMailFile
-//  Returns an unique name for a new mail file
-char *MA_NewMailFile(struct Folder *folder, char *mailfile, int daynumber)
+//  Function that creates a new plain mail filename or by taking provided
+//  data into account. It returns the full path to the new mail file in the
+//  folder and also writes it into the mailfile parameter
+char *MA_NewMailFile(struct Folder *folder, char *mailfile)
 {
-   static char buffer[SIZE_PATHFILE];
-   char mfile[SIZE_MFILE];
-   struct Mail *mail;
-   int cnt, mcnt = 0;
+  static char fullpath[SIZE_PATHFILE];
+  char dateFilePart[12+1];
+  char newFileName[SIZE_MFILE];
+  char *folderDir = GetFolderDir(folder);
+  char *ptr;
+  struct timeval curDate;
+  int mCounter = 0;
 
-   if (!mailfile) mailfile = mfile;
-   if (!daynumber) { struct DateStamp ds; DateStamp(&ds); daynumber = ds.ds_Days; }
-   MA_GetIndex(folder);
-   for (mail = folder->Messages; mail; mail = mail->Next)
-      if (atoi(mail->MailFile) == daynumber)
-         if ((cnt = atoi(&(mail->MailFile)[6])) > mcnt) mcnt = cnt;
-   do {
-      sprintf(mailfile, "%05d.%03d", daynumber, ++mcnt);
-      strcpy(buffer, GetFolderDir(folder));
-      AddPart(buffer, mailfile, SIZE_PATHFILE);
-   } while (access(buffer,F_OK) == 0);
-   return buffer;
+  // take the current time and use it as the datePart of the
+  // new mailfile name
+  GetSysTimeUTC(&curDate);
+
+  // encode this date as a base64 encoded string
+  base64encode(dateFilePart, (char *)&curDate, sizeof(struct timeval));
+
+  // as the dateFilePart may contain slashes "/" we have to replace them
+  // with "-" chars to don't drive the filesystem crazy :)
+  while((ptr = strchr(dateFilePart, '/')))
+    *ptr = '-';
+
+  do
+  {
+    sprintf(newFileName, "%s.%03d,N", dateFilePart, ++mCounter);
+
+    if(mCounter > 999)
+      return NULL;
+
+    strcpy(fullpath, folderDir);
+    AddPart(fullpath, newFileName, SIZE_PATHFILE);
+  }
+  while(FileExists(fullpath));
+
+  // copy the newFileName to our mailfile buffer
+  if(mailfile)
+    strcpy(mailfile, newFileName);
+
+  return fullpath;
 }
 
 ///
@@ -883,14 +1161,16 @@ BOOL MA_ReadHeader(FILE *fh)
           // this can be dangerous with MUI.
           for(ptr=prevHeader; *ptr; ptr++)
           {
-            // if we find a ESC sequence, strip it!
+            // if we find an ESC sequence, strip it!
             if(*ptr == 0x1b) { *ptr = ' '; linestart = FALSE; }
             else if(!success && linestart)
             {
               // we also need to analyse if we at least found one valid headerline
               // or not, because then wenn need to return FALSE
-              if(*ptr == ':') success = TRUE;
-              else if(isspace(*ptr)) linestart = FALSE;
+              if(*ptr == ':')
+                success = TRUE;
+              else if(isspace(*ptr))
+                linestart = FALSE;
             }
           }
         }
@@ -911,7 +1191,8 @@ BOOL MA_ReadHeader(FILE *fh)
 
   // we have to make sure that the Header data is empty if we
   // hadn`t success in getting some headers
-  if(!success) FreeData2D(&Header);
+  if(!success)
+    FreeData2D(&Header);
 
   return (BOOL)(success == TRUE || linesread == 1);
 }
@@ -960,44 +1241,61 @@ static void MA_GetRecipients(char *h, struct Person **per, int *percnt)
 ///
 /// MA_ExamineMail
 //  Parses the header lines of a message and fills email structure
-struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *statstr, BOOL deep)
+struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep)
 {
    struct ExtendedMail *email;
    static struct Person pe;
    struct Mail *mail;
-   char *p, fullfile[SIZE_PATHFILE];
+   char *p;
+   char fullfile[SIZE_PATHFILE];
    int ok, i;
    struct DateStamp *foundDate = NULL;
    FILE *fh;
 
    // first we generate a new ExtendedMail buffer
-   if(!(email = calloc(1, sizeof(struct ExtendedMail)))) return NULL;
+   if(!(email = calloc(1, sizeof(struct ExtendedMail))))
+     return NULL;
 
    mail = &email->Mail;
    stccpy(mail->MailFile, file, SIZE_MFILE);
    email->DelSend = !C->SaveSent;
-   if ((fh = fopen(GetMailFile(fullfile, folder, mail), "r")))
+   if((fh = fopen(GetMailFile(fullfile, folder, mail), "r")))
    {
-      BOOL xpk = FALSE;
-      if (fgetc(fh) == 'X') if (fgetc(fh) == 'P') if (fgetc(fh) == 'K') xpk = TRUE;
-      if (xpk)
+      // if the first three bytes are 'X' 'P' 'K', then this is an XPK packed
+      // file and we have to unpack it first.
+      if(fgetc(fh) == 'X' && fgetc(fh) == 'P' && fgetc(fh) == 'K')
       {
+         // temporary close the file
          fclose(fh);
-         if (!StartUnpack(GetMailFile(NULL, folder, mail), fullfile, folder)) return NULL;
+
+         // then unpack the file with XPK routines.
+         if(!StartUnpack(GetMailFile(NULL, folder, mail), fullfile, folder))
+         {
+           free(email);
+           return NULL;
+         }
+
+         // reopen it again.
          fh = fopen(fullfile, "r");
       }
-      else rewind(fh);
+      else rewind(fh); // rewind the file handle to the start
    }
 
-   if (fh)
+   // check if the file handle is valid and the immediatly read in the
+   // header lines
+   if(fh && MA_ReadHeader(fh))
    {
-      MA_ReadHeader(fh);
+      char *ptr;
+      char dateFilePart[12+1];
+      char timebuf[sizeof(struct timeval)+1]; // +1 because the b64decode does set a NUL byte
 
       // Now we process the read header to set all flags accordingly
       for (ok=i=0; i < Header.Used; i++)
       {
-         char *value, *field = Header.Data[i];
-         if ((value = strchr(field, ':')))
+         char *value;
+         char *field = Header.Data[i];
+
+         if((value = strchr(field, ':')))
          {
             *value++ = 0;
             if (!stricmp(field, "from"))
@@ -1024,7 +1322,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                ExtractAddress(value, &pe);
                email->ReceiptTo = pe;
                email->ReceiptType = RCPT_TYPE_ALL;
-               SET_FLAG(mail->Flags, MFLAG_SENDMDN);
+               SET_FLAG(mail->mflags, MFLAG_SENDMDN);
             }
             else if (!stricmp(field, "return-view-to"))
             {
@@ -1047,20 +1345,22 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                   mail->To = pe;
                   if (p)
                   {
-                    SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
+                    SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
                     if (deep && !email->NoSTo) MA_GetRecipients(p, &(email->STo), &(email->NoSTo));
                   }
                }
             }
             else if (!stricmp(field, "cc"))
             {
-               SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
-               if (deep && !email->NoCC) MA_GetRecipients(value, &(email->CC), &(email->NoCC));
+               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+               if(deep && !email->NoCC)
+                 MA_GetRecipients(value, &(email->CC), &(email->NoCC));
             }
             else if (!stricmp(field, "bcc"))
             {
-               SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
-               if (deep && !email->NoBCC) MA_GetRecipients(value, &(email->BCC), &(email->NoBCC));
+               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+               if(deep && !email->NoBCC)
+                 MA_GetRecipients(value, &(email->BCC), &(email->NoBCC));
             }
             else if (!stricmp(field, "subject"))
             {
@@ -1084,30 +1384,41 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             }
             else if (!stricmp(field, "importance"))
             {
-               p = Trim(value);
-               if (!stricmp(p, "high")) mail->Importance = 1;
-               else if(!stricmp(p, "low")) mail->Importance = -1;
+               if(getImportanceLevel(mail) == IMP_LOW)
+               {
+                 p = Trim(value);
+                 if(!stricmp(p, "high"))
+                   setImportanceLevel(mail, IMP_HIGH);
+                 else if(!stricmp(p, "low"))
+                   setImportanceLevel(mail, IMP_LOW);
+               }
             }
             else if (!stricmp(field, "priority"))
             {
-               if(!mail->Importance)
+               if(getImportanceLevel(mail) == IMP_LOW)
                {
                   p = Trim(value);
-                  if(!stricmp(p, "urgent")) mail->Importance = 1;
-                  else if(!stricmp(p, "non-urgent")) mail->Importance = -1;
+                  if(!stricmp(p, "urgent"))
+                    setImportanceLevel(mail, IMP_HIGH);
+                  else if(!stricmp(p, "non-urgent"))
+                    setImportanceLevel(mail, IMP_HIGH);
                }
             }
             else if (!stricmp(field, "content-type"))
             {
                p = Trim(value);
-               if (!strnicmp(p, "multipart/mixed", 15))         SET_FLAG(mail->Flags, MFLAG_MULTIPART);
-               else if(!strnicmp(p, "multipart/report", 16))    SET_FLAG(mail->Flags, MFLAG_REPORT);
-               else if(!strnicmp(p, "multipart/encrypted", 19)) SET_FLAG(mail->Flags, MFLAG_CRYPT);
-               else if(!strnicmp(p, "multipart/signed", 16))    SET_FLAG(mail->Flags, MFLAG_SIGNED);
+               if(!strnicmp(p, "multipart/mixed", 15))
+                 SET_FLAG(mail->mflags, MFLAG_MULTIPART);
+               else if(!strnicmp(p, "multipart/report", 16))
+                 SET_FLAG(mail->mflags, MFLAG_REPORT);
+               else if(!strnicmp(p, "multipart/encrypted", 19))
+                 SET_FLAG(mail->mflags, MFLAG_CRYPT);
+               else if(!strnicmp(p, "multipart/signed", 16))
+                 SET_FLAG(mail->mflags, MFLAG_SIGNED);
             }
             else if (!stricmp(field, "x-senderinfo"))
             {
-               SET_FLAG(mail->Flags, MFLAG_SENDERINFO);
+               SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
                SParse(value);
                if (deep) email->SenderInfo = StrBufCpy(email->SenderInfo, value);
             }
@@ -1135,75 +1446,100 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
       }
 
       // if now the mail is still not MULTIPART we have to check for uuencoded attachments
-      if(!isMultiPartMail(mail))
-      {
-         if (MA_DetectUUE(fh)) SET_FLAG(mail->Flags, MFLAG_MULTIPART);
-      }
+      if(!isMultiPartMail(mail) && MA_DetectUUE(fh))
+        SET_FLAG(mail->mflags, MFLAG_MULTIPART);
 
       // And now we close the Mailfile
       fclose(fh);
 
       FreeData2D(&Header);
-      if ((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address)) strcpy(mail->ReplyTo.RealName, mail->From.RealName);
+      if((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address))
+        strcpy(mail->ReplyTo.RealName, mail->From.RealName);
 
-      // then we check the fileComment field and set the mail status
-      // aswell as the Date
-      if(statstr && *statstr)
+      // now we take the filename of our mailfile into account to check for
+      // the transfer date at the start of the name and for the set status
+      // flags at the end of it.
+      strncpy(dateFilePart, mail->MailFile, 12);
+
+      // make sure there is no "-" in the base64 encoded part as we just mapped
+      // the not allowed "/" to "-" to make it possible to use base64 for
+      // the timeval encoding
+      while((ptr = strchr(dateFilePart, '-')))
+        *ptr = '/';
+
+      // lets decode the base64 encoded timestring in a temporary buffer
+      if(base64decode(timebuf, dateFilePart, 12) <= 0)
       {
-         // by default this mail should be new
-         for (mail->Status = STATUS_NEW, i = 0; i < 9; i++)
-         {
-            if (statstr[0] == *Status[i])
-            {
-              mail->Status = i;
-              break;
-            }
-         }
+        DB(kprintf("WARNING: failure in decoding the encoded date from mailfile: '%s'\n", mail->MailFile);)
 
-         // now we check if second char is present and if we set the mailfag
-         // as "marked" and the arexx permanent flag
-         if(statstr[1] && statstr[1] != ' ')
-         {
-            // we have to check for the permanent flag also.
-            if(statstr[1] >= 'M' && statstr[1] <= 'M'+7)
-            {
-              setPERValue(mail, statstr[1]-'M');
-              SET_FLAG(mail->Flags, MFLAG_MARK);
-            }
-            else if(statstr[1] >= '1' && statstr[1] <= '7')
-            {
-              setPERValue(mail, statstr[1]-'1'+1);
-            }
-         }
+        // if we weren`t able to decode the base64 encoded string
+        // we have to validate the transDate so that the calling function
+        // recognizes to rewrite the comment with a valid string.
+        mail->transDate.tv_micro = 0;
+        mail->transDate.tv_secs  = 0;
+      }
+      else
+      {
+        // everything seems to have worked so lets copy the binary data in our
+        // transDate structure
+        memcpy(&mail->transDate, timebuf, sizeof(struct timeval));
+      }
 
-         // now we check if this comment also has the transfer Date included
-         // we only take the string if it is exactly 12bytes long or
-         // otherwise it could be some weird data in the Comment string
-         if(statstr[2] && statstr[14] == '\0')
-         {
-            // we need a buffer for the base64decoding
-            // or we risk to let our mail structure to get overwritten.
-            char buf[sizeof(struct timeval)+1]; // +1 because the b64decode does set a NUL byte
+      // now grab the status out of the end of the mailfilename
+      ptr = &mail->MailFile[17];
+      while(*ptr != '\0')
+      {
+        if(*ptr >= '1' && *ptr <= '7')
+        {
+          setPERValue(mail, *ptr-'1'+1);
+        }
+        else
+        {
+          switch(*ptr)
+          {
+            case SCHAR_READ:
+              SET_FLAG(mail->sflags, SFLAG_READ);
+            break;
 
-            // lets decode the base64 encoded timestring directly
-            // into the mail->transDate timeval structure
-            if(base64decode(&buf[0], &statstr[2], 12) <= 0)
-            {
-              DB(kprintf("WARNING: failure in decoding the encoded date in mailfile: '%s'\n", mail->MailFile);)
+            case SCHAR_REPLIED:
+              SET_FLAG(mail->sflags, SFLAG_REPLIED);
+            break;
 
-              // if we weren`t able to decode the base64 encoded comment string
-              // we have to validate the transDate so that the calling function
-              // recognizes to rewrite the comment with a valid string.
-              mail->transDate.tv_micro = 0;
-              mail->transDate.tv_secs  = 0;
-            }
-            else
-            {
-              // everything seems to worked so lets copy the binary data in our
-              // transDate structure
-              memcpy(&mail->transDate, &buf[0], sizeof(struct timeval));
-            }
-         }
+            case SCHAR_FORWARDED:
+              SET_FLAG(mail->sflags, SFLAG_FORWARDED);
+            break;
+
+            case SCHAR_NEW:
+              SET_FLAG(mail->sflags, SFLAG_NEW);
+            break;
+
+            case SCHAR_QUEUED:
+              SET_FLAG(mail->sflags, SFLAG_QUEUED);
+            break;
+
+            case SCHAR_HOLD:
+              SET_FLAG(mail->sflags, SFLAG_HOLD);
+            break;
+
+            case SCHAR_SENT:
+              SET_FLAG(mail->sflags, SFLAG_SENT);
+            break;
+
+            case SCHAR_DELETED:
+              SET_FLAG(mail->sflags, SFLAG_DELETED);
+            break;
+
+            case SCHAR_MARKED:
+              SET_FLAG(mail->sflags, SFLAG_MARKED);
+            break;
+
+            case SCHAR_ERROR:
+              SET_FLAG(mail->sflags, SFLAG_ERROR);
+            break;
+          }
+        }
+
+        ptr++;
       }
 
       // if we found the Date in the mail itself and it was convertable we
@@ -1219,8 +1555,26 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
       }
       else
       {
-        // and as a fallback we take the name of the MailFile as the days
-        mail->Date.ds_Days = atoi(mail->MailFile);
+        BPTR lock;
+
+        // and as a fallback we take the date of the mail file
+        if((lock = Lock(mail->MailFile, ACCESS_READ)))
+        {
+          struct FileInfoBlock *fib;
+
+          if((fib = AllocDosObject(DOS_FIB, NULL)))
+          {
+            if(Examine(lock, fib))
+            {
+              memcpy(&mail->Date, &fib->fib_Date, sizeof(struct DateStamp));
+              DateStampTZConvert(&mail->Date, TZC_UTC);
+            }
+
+            FreeDosObject(DOS_FIB, fib);
+          }
+
+          UnLock(lock);
+        }
       }
 
       // lets calculate the mailSize out of the FileSize() function
@@ -1232,87 +1586,205 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
    }
 
    FinishUnpack(fullfile);
+
+   // finish up everything before we exit with an error
+   fclose(fh);
+   free(email);
    return NULL;
 }
 
 ///
 /// MA_ScanMailBox
 //  Scans for message files in a folder directory
-void MA_ScanMailBox(struct Folder *folder)
+BOOL MA_ScanMailBox(struct Folder *folder)
 {
-   struct ExtendedMail *email;
-   struct FileInfoBlock *fib;
-   BPTR lock;
+  struct ExtendedMail *email;
+  BPTR dirLock;
+  long filecount = FileCount(GetFolderDir(folder));
+  long processedFiles = 0;
+  BOOL result = TRUE;
 
-   BusyText(GetStr(MSG_BusyScanning), folder->Name);
-   ClearMailList(folder, TRUE);
+  if(filecount < 1)
+    return FALSE;
 
-   DB(kprintf("Recanning index for folder: %s...\n", folder->Name);)
+  BusyGauge(GetStr(MSG_BusyScanning), folder->Name, filecount);
+  ClearMailList(folder, TRUE);
 
-   if((lock = Lock(GetFolderDir(folder), ACCESS_READ)))
-   {
-      if((fib = AllocDosObject(DOS_FIB, NULL)))
+  DB(kprintf("Recanning index for folder: %s...\n", folder->Name);)
+
+  if((dirLock = Lock(GetFolderDir(folder), ACCESS_READ)))
+  {
+    struct ExAllControl *eac;
+
+    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+    {
+      struct ExAllData *ead;
+      struct ExAllData *eabuffer;
+      LONG more;
+      eac->eac_LastKey = 0;
+      eac->eac_MatchString = NULL;
+      eac->eac_MatchFunc = NULL;
+
+      if((eabuffer = malloc(SIZE_EXALLBUF)))
       {
-          if(Examine(lock, fib) != DOSFALSE && ExNext(lock, fib) != DOSFALSE)
+        BOOL convertAll = FALSE;
+        BOOL skipAll = FALSE;
+
+        do
+        {
+          more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_SIZE, eac);
+          if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
           {
-            BOOL finish = FALSE;
+            result = FALSE;
+            break;
+          }
 
-            while(!finish)
+          if(eac->eac_Entries == 0)
+            continue;
+
+          ead = (struct ExAllData *)eabuffer;
+
+          do
+          {
+            // set the gauge
+            BusySet(++processedFiles);
+
+            // give the GUI the chance to refresh
+            DoMethod(G->App,MUIM_Application_InputBuffered);
+
+            // then check wheter this is a file as we don't care for subdirectories
+            if(isFile(ead->ed_Type))
             {
-              struct FileInfoBlock fib_copy = *fib;
+              // check wheter the filename is a valid mailfilename
+              char *fname = ead->ed_Name;
+              BOOL validMailFile = isValidMailFile(fname);
 
-              // lets get the next fib immediatly, because the the file for this fib
-              // can be immediatly deleted somehow and then we loose the dirtree.
-              // So we somehow "prescan" this dir with this method.
-              if(ExNext(lock, fib) == DOSFALSE) finish = TRUE;
-
-              DoMethod(G->App,MUIM_Application_InputBuffered);
-              if(isFile(&fib_copy) && IsValidMailFile(fib_copy.fib_FileName))
+              if(validMailFile == FALSE)
               {
-                if(fib_copy.fib_Size)
+                // ok, the file doesn't seem to have to be a valid mailfilename, so
+                // lets see if it is an "old" file (<= YAM2.4) or just trash
+                int i=0;
+                BOOL oldFound = TRUE;
+
+                do
                 {
-                  DB(kprintf("  examining MailFile: %s\n", fib_copy.fib_FileName);)
-
-                  if((email = MA_ExamineMail(folder, fib_copy.fib_FileName, fib_copy.fib_Comment, FALSE)))
+                  // on position 5 should be a colon
+                  if(i == 5)
                   {
-                    struct Mail *newMail = AddMailToList(&email->Mail, folder);
-
-                    // if this new mail hasn`t got a valid transDate we have to check if we
-                    // have to take the fileDate as a fallback value.
-                    if(newMail->transDate.tv_secs == 0)
+                    if(fname[i] != '.')
                     {
-                      // only if it is _not_ a "waitforsend" and "hold" message we can take the fib_Date
-                      // as the fallback
-                      if(newMail->Status != STATUS_WFS && newMail->Status != STATUS_HLD)
-                      {
-                         DB(kprintf("    no transfer Date information found in comment, taking fileDate...\n");)
-
-                         // now convert the local TZ fib_Date to a UTC transDate
-                         DateStamp2TimeVal(&fib_copy.fib_Date, &newMail->transDate, TZC_UTC);
-
-                         // then we write back the filecomment
-                         MA_SetMailComment(newMail);
-                      }
+                      oldFound = FALSE;
+                      break;
                     }
-
-                    MA_FreeEMailStruct(email);
+                  }
+                  else if(!isdigit(fname[i]))
+                  {
+                    oldFound = FALSE;
+                    break;
                   }
                 }
-                else
+                while(fname[++i] != '\0');
+
+                // check if our test was successfully and we found and old style
+                // filename
+                if(oldFound)
                 {
-                  char path[SIZE_PATHFILE];
-                  NameFromLock(lock, path, SIZE_PATHFILE);
-                  AddPart(path, fib_copy.fib_FileName, SIZE_PATHFILE);
-                  DeleteFile(path);
+                  int res;
+                  BOOL convertOnce = FALSE;
+
+                  // ok we seem to have found an old-fashioned mailfile, so lets
+                  // convert it to the newstyle
+                  DB(kprintf("  found < v2.5 style mailfile: %s\n", fname);)
+
+                  // lets ask if the user wants to convert the file or not
+                  if(!convertAll && !skipAll)
+                  {
+                    res = MUI_Request(G->App, NULL, 0, folder->Name,
+                                      GetStr(MSG_MA_YESNOTOALL),
+                                      GetStr(MSG_MA_CONVERTREQUEST),
+                                      fname, folder->Name);
+
+                    // if the user has clicked on Yes or YesToAll then
+                    // set the flags accordingly
+                    if(res == 0)
+                      skipAll = TRUE;
+                    else if(res == 1)
+                      convertOnce = TRUE;
+                    else if(res == 2)
+                      convertAll = TRUE;
+                  }
+
+                  if(convertAll || convertOnce)
+                  {
+                    // now we finally convert the file to a new style mail file
+                    if((fname = MA_ConvertOldMailFile(fname, folder)) == NULL)
+                    {
+                      // if there occurred any error we skip to the next file.
+                      ER_NewError(GetStr(MSG_ER_CONVERTMFILE), fname, folder->Name);
+                      continue;
+                    }
+                  }
+                  else continue;
                 }
+                else continue;
+              }
+
+              if(ead->ed_Size)
+              {
+                DB(kprintf("  examining MailFile: %s\n", fname);)
+
+                if((email = MA_ExamineMail(folder, fname, FALSE)))
+                {
+                  struct Mail *newMail = AddMailToList(&email->Mail, folder);
+
+                  // if this new mail hasn`t got a valid transDate we have to check if we
+                  // have to take the fileDate as a fallback value.
+                  if(newMail->transDate.tv_secs == 0)
+                  {
+                    // only if it is _not_ a "waitforsend" and "hold" message we can take the fib_Date
+                    // as the fallback
+                    if(!hasStatusQueued(newMail) && !hasStatusHold(newMail))
+                    {
+                       DB(kprintf("    no transfer Date information found in mail file, taking fileDate...\n");)
+
+                       // now convert the local TZ fib_Date to a UTC transDate
+                       DateStamp2TimeVal(FileDate(fname), &newMail->transDate, TZC_UTC);
+
+                       // then we update the mailfilename
+                       MA_UpdateMailFile(newMail);
+                    }
+                  }
+
+                  MA_FreeEMailStruct(email);
+                }
+              }
+              else
+              {
+                char path[SIZE_PATHFILE];
+                strncpy(path, GetFolderDir(folder), SIZE_PATHFILE);
+                AddPart(path, fname, SIZE_PATHFILE);
+                DeleteFile(path);
               }
             }
           }
-          FreeDosObject(DOS_FIB, fib);
+          while((ead = ead->ed_Next));
+        }
+        while(more);
+
+        free(eabuffer);
       }
-      UnLock(lock);
-   }
-   BusyEnd;
+      else result = FALSE;
+
+      FreeDosObject(DOS_EXALLCONTROL, eac);
+    }
+    else result = FALSE;
+
+    UnLock(dirLock);
+  }
+  else result = FALSE;
+
+  BusyEnd();
+  return result;
 }
 ///
 /// MA_ScanDate

@@ -71,7 +71,20 @@ static struct FI_ClassData *FI_New(void);
 ***************************************************************************/
 
 /// Global variables
-int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
+const int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
+
+// The following array is a static map of the different unique statuses a mail
+// can have. It is used by the Find Cycle gadget to map the different statuses:
+// U - New/Unread
+// O - Old/Read
+// F - Forwarded
+// R - Replied
+// W - WaitForSend (Queued)
+// E - Error
+// H - Hold
+// S - Sent
+// M - Marked/Flagged
+const char mailStatusCycleMap[10] = { 'U', 'O', 'F', 'R', 'W', 'E', 'H', 'S', 'M', '\0' };
 
 ///
 /// FI_MatchString
@@ -124,14 +137,14 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
          break;
       case FS_TO:
          if (FI_MatchPerson(search, &mail->To)) found = TRUE;
-         if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE)))
+         if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
          {
             for (j = 0; j < email->NoSTo; j++) if (FI_MatchPerson(search, &email->STo[j])) found = TRUE;
             MA_FreeEMailStruct(email);
          }
          break;
       case FS_CC:
-         if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE)))
+         if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
          {
             for (j = 0; j < email->NoCC; j++)  if (FI_MatchPerson(search, &email->CC[j])) found = TRUE;
             MA_FreeEMailStruct(email);
@@ -273,7 +286,9 @@ static void FI_GenerateListPatterns(struct Search *search)
 ///
 /// FI_PrepareSearch
 //  Initializes Search structure
-BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, enum MailStatus stat, BOOL substr, char *match, char *field)
+BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
+                      BOOL casesens, int persmode, int compar,
+                      char stat, BOOL substr, char *match, char *field)
 {
    // return value of this function isn't used currently (21.03.2001)
    memset(search, 0, sizeof(struct Search));
@@ -403,10 +418,52 @@ static BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 
       case SM_STATUS:
       {
-        enum MailStatus mstat;
+        BOOL statusFound = FALSE;
 
-        if ((mstat = mail->Status) == STATUS_NEW) mstat = STATUS_UNR;
-        if ((search->Compare == 0 && search->Status == mstat) || (search->Compare == 1 && search->Status != mstat)) found = TRUE;
+        switch(search->Status)
+        {
+          case 'U':
+            statusFound = (hasStatusNew(mail) || !hasStatusRead(mail));
+          break;
+
+          case 'O':
+            statusFound = hasStatusOld(mail);
+          break;
+
+          case 'F':
+            statusFound = hasStatusForwarded(mail);
+          break;
+
+          case 'R':
+            statusFound = hasStatusReplied(mail);
+          break;
+
+          case 'W':
+            statusFound = hasStatusQueued(mail);
+          break;
+
+          case 'E':
+            statusFound = hasStatusError(mail);
+          break;
+
+          case 'H':
+            statusFound = hasStatusHold(mail);
+          break;
+
+          case 'S':
+            statusFound = hasStatusSent(mail);
+          break;
+
+          case 'M':
+            statusFound = hasStatusMarked(mail);
+          break;
+        }
+
+        if((search->Compare == 0 && statusFound == TRUE) ||
+           (search->Compare == 1 && statusFound == FALSE))
+        {
+          found = TRUE;
+        }
       }
       break;
    }
@@ -507,11 +564,17 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    }
 
    field = (char *)xget(gdata->ST_FIELD, MUIA_String_Contents);
-   FI_PrepareSearch(&search, GetMUICycle(gdata->CY_MODE),
-      GetMUICheck(gdata->CH_CASESENS[pg]), GetMUIRadio(gdata->RA_ADRMODE),
-      GetMUICycle(gdata->CY_COMP[pg]), GetMUICycle(gdata->CY_STATUS),
-      pg < 2 ? GetMUICheck(gdata->CH_SUBSTR[pg]) : (pg == 4 ? TRUE : FALSE),
-      match, field);
+
+   FI_PrepareSearch(&search,
+                    GetMUICycle(gdata->CY_MODE),
+                    GetMUICheck(gdata->CH_CASESENS[pg]),
+                    GetMUIRadio(gdata->RA_ADRMODE),
+                    GetMUICycle(gdata->CY_COMP[pg]),
+                    mailStatusCycleMap[GetMUICycle(gdata->CY_STATUS)],
+                    pg < 2 ? GetMUICheck(gdata->CH_SUBSTR[pg]) : (pg == 4 ? TRUE : FALSE),
+                    match,
+                    field);
+
    SPrintF(gauge, GetStr(MSG_FI_GaugeText), totmsg);
 
    SetAttrs(ga, MUIA_Gauge_InfoText, gauge,
@@ -606,8 +669,11 @@ HOOKPROTONHNONP(FI_ToRuleFunc, void)
             C->RU[r]->SubField[0]   = GetMUIRadio(grp->RA_ADRMODE);
             GetMUIString(C->RU[r]->CustomField[0], grp->ST_FIELD);
             C->RU[r]->Comparison[0] = GetMUICycle(grp->CY_COMP[g]);
-            if (grp->ST_MATCH[g]) GetMUIString(C->RU[r]->Match[0], grp->ST_MATCH[g]);
-            else                  strcpy(C->RU[r]->Match[0], Status[GetMUICycle(grp->CY_STATUS)]);
+
+            if(grp->ST_MATCH[g])
+              GetMUIString(C->RU[r]->Match[0], grp->ST_MATCH[g]);
+            else
+              *C->RU[r]->Match[0] = mailStatusCycleMap[GetMUICycle(grp->CY_STATUS)];
 
             if (grp->CH_CASESENS[g]) C->RU[r]->CaseSens[0]  = GetMUICheck(grp->CH_CASESENS[g]);
             if (grp->CH_SUBSTR[g]  ) C->RU[r]->Substring[0] = GetMUICheck(grp->CH_SUBSTR[g]);
@@ -701,13 +767,16 @@ MakeStaticHook(FI_EditFileHook,FI_EditFileFunc);
 //  Creates search form
 APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote)
 {
-   static char *fldopt[2][13], *compopt[14], *statopt[9], *amode[3];
+   static char *fldopt[2][13], *compopt[14], *statopt[10], *amode[3];
    APTR grp;
    int f = remote ? 1 : 0;
 
    amode[0] = GetStr(MSG_Address);
    amode[1] = GetStr(MSG_Name);
    amode[2] = NULL;
+
+   // make sure the following array has the same
+   // order than the mailStatusMap in YAM_global.c
    statopt[0] = GetStr(MSG_FI_StatNew);
    statopt[1] = GetStr(MSG_FI_StatRead);
    statopt[2] = GetStr(MSG_FI_StatForwarded);
@@ -716,7 +785,9 @@ APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote)
    statopt[5] = GetStr(MSG_FI_StatFailed);
    statopt[6] = GetStr(MSG_FI_StatHold);
    statopt[7] = GetStr(MSG_FI_StatSent);
-   statopt[8] = NULL;
+   statopt[8] = GetStr(MSG_FI_StatMarked);
+   statopt[9] = NULL;
+
    compopt[0] = compopt[5] = compopt[ 8] = " = ";
    compopt[1] = compopt[6] = compopt[ 9] = " <> ";
    compopt[2] =              compopt[10] = " < ";
@@ -985,14 +1056,28 @@ HOOKPROTONHNP(FI_PO_FromRuleFunc, void, Object *pop)
    if (rule)
    {
       struct SearchGroup *grp = &(G->FI->GUI.GR_SEARCH);
-      int i, g = Mode2Group[rule->Field[0]];
+      int g = Mode2Group[rule->Field[0]];
       setcycle (grp->CY_MODE,   rule->Field[0]);
       setmutex (grp->RA_ADRMODE,rule->SubField[0]);
       setstring(grp->ST_FIELD,  rule->CustomField[0]);
       setcycle (grp->CY_COMP[g],rule->Comparison[0]);
-      if (grp->ST_MATCH[g]) setstring(grp->ST_MATCH[g], rule->Match[0]);
-      else for (i = 0; i < 8; i++)
-         if (!stricmp(rule->Match[0], Status[i])) setcycle(grp->CY_STATUS, i);
+
+      if(grp->ST_MATCH[g])
+        setstring(grp->ST_MATCH[g], rule->Match[0]);
+      else
+      {
+        int i;
+
+        for(i = 0; i <= 8; i++)
+        {
+          if(*rule->Match[0] == mailStatusCycleMap[i])
+          {
+            setcycle(grp->CY_STATUS, i);
+            break;
+          }
+        }
+      }
+
       if (grp->CH_CASESENS[g]) setcheckmark(grp->CH_CASESENS[g],rule->CaseSens[0]);
       if (grp->CH_SUBSTR[g]  ) setcheckmark(grp->CH_SUBSTR[g],  rule->Substring[0]);
    }

@@ -1019,7 +1019,11 @@ void CO_SetConfig(void)
          break;
       case 3:
          DoMethod(gui->LV_RULES, MUIM_List_Clear);
-         for (i = 0; i < MAXRU; i++) if (CE->RU[i]) DoMethod(gui->LV_RULES, MUIM_List_InsertSingle, CE->RU[i], MUIV_List_Insert_Bottom);
+         for(i = 0; i < MAXRU; i++)
+         {
+            if(CE->RU[i])
+              DoMethod(gui->LV_RULES, MUIM_List_InsertSingle, CE->RU[i], MUIV_List_Insert_Bottom);
+         }
          break;
       case 4:
          setcycle    (gui->CY_HEADER    ,CE->ShowHeader);

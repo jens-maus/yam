@@ -30,23 +30,22 @@
 
 #include "YAM_stringsizes.h"
 
-extern char *             ContType[];
-extern char *             ContTypeDesc[];
-extern char *             FolderNames[4];
-extern char *             months[12];
-extern char *             SecCodes[5];
-extern char *             SigNames[3];
-extern char *             Status[9];
+extern const char* const ContType[];
+extern const char* const ContTypeDesc[];
+extern const char* const FolderNames[4];
+extern const char* const months[12];
+extern const char* const SecCodes[5];
+extern const char* const SigNames[3];
+extern const char* const wdays[7];
+extern const char* const yamversion;
+extern const char* const yamversionver;
+extern const char* const yamversionstring;
+extern const char* const yamverxmailer;
+extern const char* const yamversiondate;
+extern const char* const yamcopyright;
+extern const char* const yamcompiler;
+extern const unsigned long yamversiondays;
 extern struct WBStartup * WBmsg;
-extern char *             wdays[7];
-extern char *             yamversion;
-extern char *             yamversionver;
-extern char *             yamversionstring;
-extern char *             yamverxmailer;
-extern char *             yamversiondate;
-extern char *             yamcopyright;
-extern char *             yamcompiler;
-extern unsigned long      yamversiondays;
 
 enum ContTypeEntry
 {

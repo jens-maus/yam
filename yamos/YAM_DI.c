@@ -106,7 +106,7 @@ static void DI_Save(void)
       }
       fclose(fh);
       G->DI->Modified = FALSE;
-      BusyEnd;
+      BusyEnd();
    }
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), G->DI_Filename, NULL);
 }
@@ -145,7 +145,7 @@ static int DI_Load(void)
          set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, FALSE);
       }
       fclose(fh);
-      BusyEnd;
+      BusyEnd();
    }
    return entries;
 }

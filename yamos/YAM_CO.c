@@ -230,7 +230,8 @@ HOOKPROTONHNONP(CO_GetRUEntry, void)
       nnset(gui->ST_APLAY     ,MUIA_String_Contents, rule->PlaySound);
       nnset(gui->TX_MOVETO    ,MUIA_Text_Contents, rule->MoveTo);
       set(gui->GR_LRGROUP, MUIA_Group_ActivePage, rm);
-      for (i = 0; i < 2; i++)
+
+      for(i = 0; i < 2; i++)
       {
          struct SearchGroup *sg = &(gui->GR_SEARCH[i+2*rm]);
          nnset(sg->CY_MODE       ,MUIA_Cycle_Active, rule->Field[i]);
@@ -238,8 +239,21 @@ HOOKPROTONHNONP(CO_GetRUEntry, void)
          nnset(sg->ST_FIELD      ,MUIA_String_Contents, rule->CustomField[i]);
          nnset(sg->PG_SRCHOPT    ,MUIA_Group_ActivePage, m = Mode2Group[rule->Field[i]]);
          nnset(sg->CY_COMP[m], MUIA_Cycle_Active, rule->Comparison[i]);
-         if (sg->ST_MATCH[m]) nnset(sg->ST_MATCH[m], MUIA_String_Contents, rule->Match[i]);
-         else for (k = 0; k < 8; k++) if (!stricmp(rule->Match[i], Status[k])) nnset(sg->CY_STATUS, MUIA_Cycle_Active, k);
+
+         if(sg->ST_MATCH[m])
+           nnset(sg->ST_MATCH[m], MUIA_String_Contents, rule->Match[i]);
+         else
+         {
+           for(k=0; k <= 8; k++)
+           {
+             if(*rule->Match[i] == mailStatusCycleMap[k])
+             {
+               nnset(sg->CY_STATUS, MUIA_Cycle_Active, k);
+               break;
+             }
+           }
+         }
+
          if (sg->CH_CASESENS[m]) nnset(sg->CH_CASESENS[m], MUIA_Selected, rule->CaseSens[i]);
          if (sg->CH_SUBSTR[m]) nnset(sg->CH_SUBSTR[m], MUIA_Selected, rule->Substring[i]);
       }
@@ -297,8 +311,15 @@ HOOKPROTONHNONP(CO_PutRUEntry, void)
          rule->SubField[i]   = GetMUIRadio(sg->RA_ADRMODE);
          GetMUIString(rule->CustomField[i], sg->ST_FIELD);
          rule->Comparison[i] = GetMUICycle(sg->CY_COMP[m]);
-         if (sg->ST_MATCH[m]   ) GetMUIString(rule->Match[i], sg->ST_MATCH[m]);
-                           else  strcpy(rule->Match[i], Status[GetMUICycle(sg->CY_STATUS)]);
+
+         if(sg->ST_MATCH[m])
+           GetMUIString(rule->Match[i], sg->ST_MATCH[m]);
+         else
+         {
+           rule->Match[i][0] = mailStatusCycleMap[GetMUICycle(sg->CY_STATUS)];
+           rule->Match[i][1] = '\0';
+         }
+
         if (sg->CH_CASESENS[m]) rule->CaseSens[i]  = GetMUICheck(sg->CH_CASESENS[m]);
         if (sg->CH_SUBSTR[m]  ) rule->Substring[i] = GetMUICheck(sg->CH_SUBSTR[m]);
       }
@@ -1131,7 +1152,9 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
       else return;
    }
 
-   if (!FileToEditor(CreateFilename(SigNames[sig]), ed)) DoMethod(ed, MUIM_TextEditor_ClearText);
+   if(!FileToEditor(CreateFilename(SigNames[sig]), ed))
+     DoMethod(ed, MUIM_TextEditor_ClearText);
+
    set(ed, MUIA_TextEditor_HasChanged, FALSE);
    G->CO->LastSig = sig;
 }

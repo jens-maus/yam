@@ -108,8 +108,6 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
 static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 static char *IdentifyFileDT(char *fname);
-static void TimeValTZConvert(struct timeval *tv, enum TZConvert tzc);
-static void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc);
 
 #ifndef __amigaos4__
 struct PathNode
@@ -1001,7 +999,6 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
    return buf;
 }
 ///
-
 /// FreeData2D
 //  Frees dynamic two-dimensional array
 void FreeData2D(struct Data2D *data)
@@ -1099,37 +1096,20 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
 }       
 
 ///
-/// FileInfo
-//  Gets size, protection bits and type of a file/directory
-BOOL FileInfo(char *filename, int *size, long *bits, long *type)
+/// FileExists
+//  return true/false if file exists
+BOOL FileExists(char *filename)
 {
   BPTR lock;
   BOOL result = FALSE;
 
-  if((lock = Lock((STRPTR)filename,ACCESS_READ)))
+  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
   {
-    // only if the calling function needs more info
-    // we go on so that we are faster :)
-    if(size || bits || type)
-    {
-      struct FileInfoBlock *fib;
-
-      if((fib = AllocDosObject(DOS_FIB, NULL)))
-      {
-        if(Examine(lock, fib))
-        {
-          if (size) *size = fib->fib_Size;
-          if (bits) *bits = fib->fib_Protection;
-          if (type) *type = fib->fib_DirEntryType;
-          result = TRUE;
-        }
-        FreeDosObject(DOS_FIB, fib);
-      }
-    }
-    else result = TRUE;
+    result = TRUE;
 
     UnLock(lock);
   }
+
   return result;
 }
 ///
@@ -1137,24 +1117,134 @@ BOOL FileInfo(char *filename, int *size, long *bits, long *type)
 //  Returns size of a file
 int FileSize(char *filename)
 {
-   int size;
-   if (FileInfo(filename, &size, NULL, NULL)) return size; else return -1;
+  BPTR lock;
+  int size = -1;
+
+  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
+  {
+    struct FileInfoBlock *fib;
+
+    if((fib = AllocDosObject(DOS_FIB, NULL)))
+    {
+      if(Examine(lock, fib))
+      {
+        size = fib->fib_Size;
+      }
+      FreeDosObject(DOS_FIB, fib);
+    }
+
+    UnLock(lock);
+  }
+
+  return size;
 }
 ///
 /// FileProtection
 //  Returns protection bits of a file
 long FileProtection(char *filename)
 {
-   long bits;
-   if (FileInfo(filename, NULL, &bits, NULL)) return bits; else return -1;
+  BPTR lock;
+  long prots = -1;
+
+  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
+  {
+    struct FileInfoBlock *fib;
+
+    if((fib = AllocDosObject(DOS_FIB, NULL)))
+    {
+      if(Examine(lock, fib))
+      {
+        prots = fib->fib_Protection;
+      }
+      FreeDosObject(DOS_FIB, fib);
+    }
+
+    UnLock(lock);
+  }
+
+  return prots;
 }
 ///
 /// FileType
 //  Returns file type (file/directory)
 int FileType(char *filename)
 {
-   long type;
-   if (FileInfo(filename, NULL, NULL, &type)) return (type < 0 ? 1 : 2); else return 0;
+  BPTR lock;
+  long type = 0;
+
+  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
+  {
+    struct FileInfoBlock *fib;
+
+    if((fib = AllocDosObject(DOS_FIB, NULL)))
+    {
+      if(Examine(lock, fib))
+      {
+        type = fib->fib_DirEntryType < 0 ? 1 : 2;
+      }
+      FreeDosObject(DOS_FIB, fib);
+    }
+
+    UnLock(lock);
+  }
+
+  return type;
+}
+///
+/// FileComment
+//  Returns file comment
+char *FileComment(char *filename)
+{
+  BPTR lock;
+  static char fileComment[80];
+  char *comment = NULL;
+
+  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
+  {
+    struct FileInfoBlock *fib;
+
+    if((fib = AllocDosObject(DOS_FIB, NULL)))
+    {
+      if(Examine(lock, fib))
+      {
+        strcpy(fileComment, fib->fib_Comment);
+        comment = fileComment;
+      }
+      FreeDosObject(DOS_FIB, fib);
+    }
+
+    UnLock(lock);
+  }
+
+  return comment;
+}
+///
+/// FileDate
+//  Returns the date of the file
+struct DateStamp *FileDate(char *filename)
+{
+  BPTR lock;
+  static struct DateStamp ds;
+  struct DateStamp *res = NULL;
+
+  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
+  {
+    struct FileInfoBlock *fib;
+
+    if((fib = AllocDosObject(DOS_FIB, NULL)))
+    {
+      if(Examine(lock, fib))
+      {
+        memcpy(&ds, &fib->fib_Date, sizeof(struct DateStamp));
+        res = &ds;
+      }
+      FreeDosObject(DOS_FIB, fib);
+    }
+
+    UnLock(lock);
+  }
+
+  return res;
 }
 ///
 /// RenameFile
@@ -1165,7 +1255,8 @@ BOOL RenameFile(char *oldname, char *newname)
    BPTR lock;
    BOOL result = FALSE;
 
-   if(!Rename(oldname, newname)) return FALSE;
+   if(!Rename(oldname, newname))
+     return FALSE;
 
    if((fib = AllocDosObject(DOS_FIB,NULL)))
    {
@@ -1715,7 +1806,7 @@ BOOL PFExists(char *path, char *file)
 {
    char fname[SIZE_PATHFILE];
    strmfp(fname, path, file);
-   return FileInfo(fname, NULL, NULL, NULL);
+   return FileExists(fname);
 }
 ///
 /// DeleteMailDir
@@ -1739,20 +1830,23 @@ void DeleteMailDir(char *dir, BOOL isroot)
           {
             strmfp(fname, dir, fib->fib_FileName);
             filename = FilePart(fname);
-            isdir = isDrawer(fib);
+            isdir = isDrawer(fib->fib_DirEntryType);
             cont = (ExNext(lock,fib) && IoErr() != ERROR_NO_MORE_ENTRIES);
             if (isroot)
             {
               if (isdir)
               {
-                if (IsFolderDir(fname)) DeleteMailDir(fname, FALSE);
+                if(IsFolderDir(fname))
+                  DeleteMailDir(fname, FALSE);
               }
               else
               {
-                if (!stricmp(filename, ".config") || !stricmp(filename, ".glossary") || !stricmp(filename, ".addressbook")) DeleteFile(fname);
+                if(!stricmp(filename, ".config") || !stricmp(filename, ".glossary") || !stricmp(filename, ".addressbook"))
+                  DeleteFile(fname);
               }
             }
-            else if (!isdir) if (!stricmp(filename, ".fconfig") || !stricmp(filename, ".index") || IsValidMailFile(filename)) DeleteFile(fname);
+            else if(!isdir && (isValidMailFile(filename) || !stricmp(filename, ".fconfig") || !stricmp(filename, ".index")))
+              DeleteFile(fname);
           }
         }
         UnLock(lock);
@@ -1781,6 +1875,57 @@ static char *FileToBuffer(char *file)
       free(text);
    }
    return NULL;
+}
+///
+/// FileCount()
+// returns the total number of files that are in a directory
+// or -1 if an error occurred
+long FileCount(char *directory)
+{
+  BPTR dirLock;
+  long result = 0;
+
+  if((dirLock = Lock(directory, ACCESS_READ)))
+  {
+    struct ExAllControl *eac;
+
+    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+    {
+      struct ExAllData *eabuffer;
+      LONG more;
+      eac->eac_LastKey = 0;
+      eac->eac_MatchString = NULL;
+      eac->eac_MatchFunc = NULL;
+
+      if((eabuffer = malloc(SIZE_EXALLBUF)))
+      {
+        do
+        {
+          more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_NAME, eac);
+          if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
+          {
+            result = -1;
+            break;
+          }
+
+          // count the entries
+          result += eac->eac_Entries;
+        }
+        while(more);
+
+        free(eabuffer);
+      }
+      else result = -1;
+
+      FreeDosObject(DOS_EXALLCONTROL, eac);
+    }
+    else result = -1;
+
+    UnLock(dirLock);
+  }
+  else result = -1;
+
+  return result;
 }
 ///
 
@@ -1815,7 +1960,7 @@ APTR WhichLV(struct Folder *folder)
 ///
 /// CreateFilename
 //  Prepends mail directory to a file name
-char *CreateFilename(char *file)
+char *CreateFilename(const char * const file)
 {
    static char buffer[SIZE_PATHFILE];
    strmfp(buffer, G->MA_MailDir, file);
@@ -2033,7 +2178,7 @@ char *DescribeCT(char *ct)
    {
       if(!stricmp(ct, ContType[i]))
       {
-        ct = GetStr(ContTypeDesc[i]);
+        ct = GetStr((char*)ContTypeDesc[i]);
         break;
       }
    }
@@ -2072,16 +2217,18 @@ void GetSysTimeUTC(struct timeval *tv)
 /// TimeValTZConvert
 //  converts a supplied timeval depending on the TZConvert flag to be converted
 //  to/from UTC
-static void TimeValTZConvert(struct timeval *tv, enum TZConvert tzc)
+void TimeValTZConvert(struct timeval *tv, enum TZConvert tzc)
 {
-  if(tzc == TZC_LOCAL)    tv->tv_secs += (C->TimeZone+C->DaylightSaving*60)*60;
-  else if(tzc == TZC_UTC) tv->tv_secs -= (C->TimeZone+C->DaylightSaving*60)*60;
+  if(tzc == TZC_LOCAL)
+    tv->tv_secs += (C->TimeZone+C->DaylightSaving*60)*60;
+  else if(tzc == TZC_UTC)
+    tv->tv_secs -= (C->TimeZone+C->DaylightSaving*60)*60;
 }
 ///
 /// DateStampTZConvert
 //  converts a supplied DateStamp depending on the TZConvert flag to be converted
 //  to/from UTC
-static void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
+void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
 {
   // convert the DateStamp from local -> UTC or visa-versa
   if(tzc == TZC_LOCAL)    ds->ds_Minute += (C->TimeZone+C->DaylightSaving*60);
@@ -2620,7 +2767,7 @@ void DisplayMailList(struct Folder *fo, APTR lv)
                    C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
 
       free(array);
-      BusyEnd;
+      BusyEnd();
    }
 
    // Now we have to recove the LastActive or otherwise it will be -1 later
@@ -2644,8 +2791,17 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
       // lets summarize the stats
       folder->Total++;
       folder->Size += mail->Size;
-      if (mail->Status == STATUS_NEW) { folder->New++; folder->Unread++; }
-      if (mail->Status == STATUS_UNR) folder->Unread++;
+
+      if(hasStatusNew(mail))
+      {
+        folder->New++;
+        folder->Unread++;
+      }
+      else if(!hasStatusRead(mail))
+      {
+        folder->Unread++;
+      }
+
       MA_ExpireIndex(folder);
    }
    return new;
@@ -2660,8 +2816,16 @@ void RemoveMailFromList(struct Mail *mail)
    // lets decrease the folder statistics first
    folder->Total--;
    folder->Size -= mail->Size;
-   if (mail->Status == STATUS_NEW)      { folder->New--; folder->Unread--; }
-   else if (mail->Status == STATUS_UNR) folder->Unread--;
+
+   if(hasStatusNew(mail))
+   {
+     folder->New--;
+     folder->Unread--;
+   }
+   else if(!hasStatusRead(mail))
+   {
+     folder->Unread--;
+   }
 
    // remove the mail from the folderlist now
    MyRemove(&(folder->Messages), mail);
@@ -2717,23 +2881,71 @@ static BOOL UncompressMailFile(char *src, char *dst, char *passwd)
 //  Copies or moves a message file, handles compression
 BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 {
-   char *pmeth, srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
+   char *pmeth;
+   char srcbuf[SIZE_PATHFILE];
+   char dstbuf[SIZE_PATHFILE];
+   char dstFileName[SIZE_MFILE];
    struct Folder *srcfolder = mail->Folder;
    int peff = 0;
-   int srcxpk = srcfolder->XPKType, dstxpk = dstfolder->XPKType;
-   char *srcpw = srcfolder->Password, *dstpw = dstfolder->Password;
-   BOOL one2one, needuncomp, needcomp, done = FALSE, success = FALSE;
+   int srcxpk = srcfolder->XPKType;
+   int dstxpk = dstfolder->XPKType;
+   char *srcpw = srcfolder->Password;
+   char *dstpw = dstfolder->Password;
+   BOOL one2one;
+   BOOL needuncomp;
+   BOOL needcomp;
+   BOOL done = FALSE;
+   BOOL success = FALSE;
 
-   if (!MA_GetIndex(srcfolder)) return FALSE;
-   if (!MA_GetIndex(dstfolder)) return FALSE;
+   DB(kprintf("TransferMailFile: [%s] to [%s]\n", mail->MailFile, GetFolderDir(dstfolder));)
+
+   if(!MA_GetIndex(srcfolder))
+     return FALSE;
+
+   if(!MA_GetIndex(dstfolder))
+     return FALSE;
+
    one2one = (srcxpk == dstxpk) && (srcxpk != 3);
    needuncomp = srcxpk > 1;
    needcomp   = dstxpk > 1;
    GetPackMethod(dstxpk, &pmeth, &peff);
    GetMailFile(srcbuf, srcfolder, mail);
-   strcpy(dstbuf, MA_NewMailFile(dstfolder, mail->MailFile, atoi(mail->MailFile)));
-   if (one2one && !copyit) if ((done = RenameFile(srcbuf, dstbuf))) success = TRUE;
-   if (!done)
+
+   // check if we can just take the exactly same filename in the destination
+   // folder or if we require to increase the mailfile counter to make it
+   // unique
+   strcpy(dstFileName, mail->MailFile);
+   strcpy(dstbuf, GetFolderDir(dstfolder));
+   AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
+
+   if(FileExists(dstbuf))
+   {
+     int mCounter = atoi(&dstFileName[13]);
+
+     do
+     {
+       if(mCounter < 1 || mCounter >= 999)
+         return FALSE;
+
+       mCounter++;
+
+       sprintf(&dstFileName[13], "%03d", mCounter);
+       dstFileName[16] = ','; // restore it
+
+       strcpy(dstbuf, GetFolderDir(dstfolder));
+       AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
+     }
+     while(FileExists(dstbuf));
+
+     // if we end up here we finally found a new mailfilename which we can use, so
+     // lets copy it to our MailFile variable
+     strcpy(mail->MailFile, dstFileName);
+   }
+
+   if(one2one && !copyit && (done = RenameFile(srcbuf, dstbuf)))
+     success = TRUE;
+
+   if(!done)
    {
       if(needuncomp)
       {
@@ -2741,11 +2953,17 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
         {
           if(one2one)
           {
-            success = CopyFile(dstbuf, 0, srcbuf, 0);
+            if(!copyit)
+              success = RenameFile(srcbuf, dstbuf);
+            else
+              success = CopyFile(dstbuf, 0, srcbuf, 0);
+
+            copyit = TRUE;
           }
           else
           {
             struct TempFile *tf = OpenTempFile(NULL);
+
             if(UncompressMailFile(srcbuf, tf->Filename, srcpw))
             {
               success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff);
@@ -2766,13 +2984,22 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
         }
         else
         {
-          success = CopyFile(dstbuf, 0, srcbuf, 0);
+          if(!copyit)
+            success = RenameFile(srcbuf, dstbuf);
+          else
+            success = CopyFile(dstbuf, 0, srcbuf, 0);
+
+          copyit = TRUE;
         }
       }
 
-      if (success && !copyit) DeleteFile(srcbuf);
-      if (success) SetComment(dstbuf, Status[mail->Status]);
+      if(success && !copyit)
+        DeleteFile(srcbuf);
+
+      if(success)
+        MA_UpdateMailFile(mail);
    }
+
    return success;
 }
 ///
@@ -2824,7 +3051,8 @@ BOOL RepackMailFile(struct Mail *mail, int dstxpk, char *passwd)
                                           }
                                           break;
    }
-   MA_SetMailStatus(mail, mail->Status);
+
+   MA_UpdateMailFile(mail);
    return success;
 }
 ///
@@ -2884,16 +3112,6 @@ void FinishUnpack(char *file)
 
       DeleteFile(file);
     }
-}
-///
-/// IsValidMailFile
-//  Checks if a message file name is valid
-BOOL IsValidMailFile(char *fname)
-{
-   int l = strlen(fname);
-   if (l < 7 || l > 10 || fname[5] != '.') return FALSE;
-   while (--l >= 0) if (l != 5 && !isdigit(fname[l])) return FALSE;
-   return TRUE;
 }
 ///
 
@@ -3595,7 +3813,7 @@ int PGPCommand(char *progname, char *options, int flags)
          strcat(command, options);
          error = SystemTags(command, SYS_Input, fhi, SYS_Output, fho, NP_StackSize, C->StackSize, TAG_DONE);
          Close(fho);
-         BusyEnd;
+         BusyEnd();
       }
       Close(fhi);
    }
@@ -3652,6 +3870,7 @@ void Busy(char *text, char *parameter, int cur, int max)
 {
    // we can have different busy levels (defined BUSYLEVEL)
    static char infotext[BUSYLEVEL][SIZE_DEFAULT];
+   static struct timeval last_move;
 
    if(text)
    {
@@ -3659,24 +3878,49 @@ void Busy(char *text, char *parameter, int cur, int max)
       {
         sprintf(infotext[BusyLevel], text, parameter);
 
-        if(G->MA)
+        if(max > 0)
         {
-          if(max > 0)
-          {
+          // initialize the InfoBar gauge
+          if(G->MA)
             DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext[BusyLevel], cur, max);
-          }
-          else
+
+          // check if we are in startup phase so that we also
+          // update the gauge elements of the About window
+          if(G->InStartupPhase)
           {
-            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
+            static char progressText[SIZE_DEFAULT];
+
+        		sprintf(progressText, "%%ld/%d", max);
+
+        		nnset(G->AY_Text, MUIA_Gauge_InfoText, infotext[BusyLevel]);
+        		SetAttrs(G->AY_Progress,
+              MUIA_ShowMe,          TRUE,
+			        MUIA_Gauge_InfoText,  progressText,
+			        MUIA_Gauge_Current,   cur,
+			        MUIA_Gauge_Max,       max,
+		        TAG_DONE);
+
+            GetSysTime(&last_move);
           }
         }
+        else
+        {
+          // initialize the InfoBar infotext
+          if(G->MA)
+            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
+        }
 
-        if(BusyLevel < BUSYLEVEL-1) BusyLevel++;
-        DB(else kprintf("Error: reached highest BusyLevel!!!\n");)
+        if(BusyLevel < BUSYLEVEL-1)
+          BusyLevel++;
+        else
+        {
+          DB(kprintf("Error: reached highest BusyLevel!!!\n");)
+        }
       }
       else
       {
-         if(BusyLevel) BusyLevel--;
+         if(BusyLevel)
+           BusyLevel--;
 
          if(G->MA)
          {
@@ -3695,9 +3939,34 @@ void Busy(char *text, char *parameter, int cur, int max)
    {
       // If the text is NULL we just have to set the Gauge of the infoBar to the current
       // level
-      if (G->MA && BusyLevel > 0)
+      if(BusyLevel > 0)
       {
-        DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
+        if(G->MA)
+          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
+
+        if(G->InStartupPhase)
+        {
+          struct timeval now;
+
+    		  // then we update the gauge, but we take also care of not refreshing
+		      // it too often or otherwise it slows down the whole search process.
+		      GetSysTime(&now);
+		      if(-CmpTime(&now, &last_move) > 0)
+		      {
+			      struct timeval delta;
+
+      			// how much time has passed exactly?
+			      memcpy(&delta, &now, sizeof(struct timeval));
+			      SubTime(&delta, &last_move);
+
+      			// update the display at least twice a second
+			      if(delta.tv_secs > 0 || delta.tv_micro > 250000)
+      			{
+              nnset(G->AY_Progress, MUIA_Gauge_Current, cur);
+		      		memcpy(&last_move, &now, sizeof(struct timeval));
+      			}
+      		}
+        }
       }
    }
 }
@@ -3813,16 +4082,17 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
    {
       fo->Total++;
 
-      switch(mail->Status)
-      {
-        case STATUS_NEW:  { fo->New++; fo->Unread++;  } break;
-        case STATUS_UNR:  { fo->Unread++;             } break;
-        case STATUS_SNT:  { fo->Sent++;               } break;
-        case STATUS_DEL:  { fo->Deleted++;            } break;
-        default:
-          // nothing
-        break;
-      }
+      if(hasStatusNew(mail))
+        fo->New++;
+
+      if(!hasStatusRead(mail))
+        fo->Unread++;
+
+      if(hasStatusSent(mail))
+        fo->Sent++;
+
+      if(hasStatusDeleted(mail))
+        fo->Deleted++;
    }
 
    // if this folder hasn`t got any own folder image in the folder
@@ -4029,45 +4299,58 @@ char *IdentifyFile(char *fname)
       if ((ext = strrchr(fname, '.'))) ++ext;
       else ext = "--";
 
-      if (!stricmp(ext, "htm") || !stricmp(ext, "html"))                          ctype = ContType[CT_TX_HTML];
-      else if (!strnicmp(buffer, "@database", 9) || !stricmp(ext, "guide"))       ctype = ContType[CT_TX_GUIDE];
-      else if (!stricmp(ext, "ps") || !stricmp(ext, "eps"))                       ctype = ContType[CT_AP_PS];
-      else if (!stricmp(ext, "pdf") || !strncmp(buffer, "%PDF-", 5))              ctype = ContType[CT_AP_PDF];
-      else if (!stricmp(ext, "rtf"))                                              ctype = ContType[CT_AP_RTF];
-      else if (!stricmp(ext, "lha") || !strncmp(&buffer[2], "-lh5-", 5))          ctype = ContType[CT_AP_LHA];
-      else if (!stricmp(ext, "lzx") || !strncmp(buffer, "LZX", 3))                ctype = ContType[CT_AP_LZX];
-      else if (!stricmp(ext, "zip"))                                              ctype = ContType[CT_AP_ZIP];
-      else if (*((long *)buffer) >= HUNK_UNIT && *((long *)buffer) <= HUNK_INDEX) ctype = ContType[CT_AP_AEXE];
-      else if (!stricmp(ext, "rexx") || !stricmp(ext+strlen(ext)-2, "rx"))        ctype = ContType[CT_AP_REXX];
-      else if (!strncmp(&buffer[6], "JFIF", 4))                                   ctype = ContType[CT_IM_JPG];
-      else if (!strncmp(buffer, "GIF8", 4))                                       ctype = ContType[CT_IM_GIF];
-      else if (!strnicmp(ext, "png",4) || !strncmp(&buffer[1], "PNG", 3))         ctype = ContType[CT_IM_PNG];
-      else if (!strnicmp(ext, "tif",4))                                           ctype = ContType[CT_IM_TIFF];
-      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ILBM", 4))    ctype = ContType[CT_IM_ILBM];
-      else if (!stricmp(ext, "au") || !stricmp(ext, "snd"))                       ctype = ContType[CT_AU_AU];
-      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))    ctype = ContType[CT_AU_8SVX];
-      else if (!stricmp(ext, "wav"))                                              ctype = ContType[CT_AU_WAV];
-      else if (!stricmp(ext, "mpg") || !stricmp(ext, "mpeg"))                     ctype = ContType[CT_VI_MPG];
-      else if (!stricmp(ext, "qt") || !stricmp(ext, "mov"))                       ctype = ContType[CT_VI_MOV];
-      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))    ctype = ContType[CT_VI_ANIM];
-      else if (!stricmp(ext, "avi"))                                              ctype = ContType[CT_VI_AVI];
-      else if (stristr(buffer, "\nFrom:"))                                        ctype = ContType[CT_ME_EMAIL];
+      if (!stricmp(ext, "htm") || !stricmp(ext, "html"))                          ctype = (char*)ContType[CT_TX_HTML];
+      else if (!strnicmp(buffer, "@database", 9) || !stricmp(ext, "guide"))       ctype = (char*)ContType[CT_TX_GUIDE];
+      else if (!stricmp(ext, "ps") || !stricmp(ext, "eps"))                       ctype = (char*)ContType[CT_AP_PS];
+      else if (!stricmp(ext, "pdf") || !strncmp(buffer, "%PDF-", 5))              ctype = (char*)ContType[CT_AP_PDF];
+      else if (!stricmp(ext, "rtf"))                                              ctype = (char*)ContType[CT_AP_RTF];
+      else if (!stricmp(ext, "lha") || !strncmp(&buffer[2], "-lh5-", 5))          ctype = (char*)ContType[CT_AP_LHA];
+      else if (!stricmp(ext, "lzx") || !strncmp(buffer, "LZX", 3))                ctype = (char*)ContType[CT_AP_LZX];
+      else if (!stricmp(ext, "zip"))                                              ctype = (char*)ContType[CT_AP_ZIP];
+      else if (*((long *)buffer) >= HUNK_UNIT && *((long *)buffer) <= HUNK_INDEX) ctype = (char*)ContType[CT_AP_AEXE];
+      else if (!stricmp(ext, "rexx") || !stricmp(ext+strlen(ext)-2, "rx"))        ctype = (char*)ContType[CT_AP_REXX];
+      else if (!strncmp(&buffer[6], "JFIF", 4))                                   ctype = (char*)ContType[CT_IM_JPG];
+      else if (!strncmp(buffer, "GIF8", 4))                                       ctype = (char*)ContType[CT_IM_GIF];
+      else if (!strnicmp(ext, "png",4) || !strncmp(&buffer[1], "PNG", 3))         ctype = (char*)ContType[CT_IM_PNG];
+      else if (!strnicmp(ext, "tif",4))                                           ctype = (char*)ContType[CT_IM_TIFF];
+      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ILBM", 4))    ctype = (char*)ContType[CT_IM_ILBM];
+      else if (!stricmp(ext, "au") || !stricmp(ext, "snd"))                       ctype = (char*)ContType[CT_AU_AU];
+      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))    ctype = (char*)ContType[CT_AU_8SVX];
+      else if (!stricmp(ext, "wav"))                                              ctype = (char*)ContType[CT_AU_WAV];
+      else if (!stricmp(ext, "mpg") || !stricmp(ext, "mpeg"))                     ctype = (char*)ContType[CT_VI_MPG];
+      else if (!stricmp(ext, "qt") || !stricmp(ext, "mov"))                       ctype = (char*)ContType[CT_VI_MOV];
+      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))    ctype = (char*)ContType[CT_VI_ANIM];
+      else if (!stricmp(ext, "avi"))                                              ctype = (char*)ContType[CT_VI_AVI];
+      else if (stristr(buffer, "\nFrom:"))                                        ctype = (char*)ContType[CT_ME_EMAIL];
       else
       {
-         for (i = 1; i < MAXMV; i++) if (C->MV[i])
+         for(i = 1; i < MAXMV; i++)
          {
-            if (MatchExtension(ext, C->MV[i]->Extension)) ctype = C->MV[i]->ContentType;
+           if(C->MV[i] && MatchExtension(ext, C->MV[i]->Extension))
+             ctype = C->MV[i]->ContentType;
          }
       }
 
       if (!*ctype)
       {
-         int c, notascii = 0;
-         for (i = 0; i < len; i++)
-            if (c=(int)buffer[i],c < 32 || c > 127)
-               if (c != '\t' && c != '\n') notascii++;
-         if (notascii < len/10) ctype =  ContType[(FileProtection(fname)&FIBF_SCRIPT) ? CT_AP_SCRIPT : CT_TX_PLAIN];
-         else ctype = IdentifyFileDT(fname);
+         unsigned char c;
+         int notascii = 0;
+
+         for(i = 0; i < len; i++)
+         {
+           c = buffer[i];
+
+           if((c < 32 || c > 127) &&
+              c != '\t' && c != '\n')
+           {
+             notascii++;
+           }
+         }
+
+         if(notascii < len/10)
+           ctype = (char*)ContType[(FileProtection(fname)&FIBF_SCRIPT) ? CT_AP_SCRIPT : CT_TX_PLAIN];
+         else
+           ctype = IdentifyFileDT(fname);
       }
    }
    return ctype;

@@ -58,7 +58,9 @@ struct Rule;
 
 #define ANYBOX NULL
 
-// possible flags for a mail
+// General internal flags of a mail (no status information)
+// Warning: Please note that if you change something here you have to make
+//          sure to increase the version number of the .index file in YAM_MAf.c!
 #define MFLAG_MULTIRCPT   (1<<0)
 #define MFLAG_MULTIPART   (1<<1)
 #define MFLAG_REPORT      (1<<2)
@@ -67,30 +69,79 @@ struct Rule;
 #define MFLAG_SENDERINFO  (1<<5)
 #define MFLAG_SENDMDN     (1<<6)
 #define MFLAG_NOFOLDER    (1<<7)
-#define MFLAG_MARK        (1<<8)
-#define MFLAG_PERFIELD        9  // reserve 3 bits of the flags for the permanent flag section
-#define MFLAG_VOLFIELD        12 // reserve 3 bits of the flags for the volatile flag section
-#define isMultiRCPTMail(mail)   (isFlagSet((mail)->Flags, MFLAG_MULTIRCPT))
-#define isMultiPartMail(mail)   (isFlagSet((mail)->Flags, MFLAG_MULTIPART))
-#define isReportMail(mail)      (isFlagSet((mail)->Flags, MFLAG_REPORT))
-#define isCryptedMail(mail)     (isFlagSet((mail)->Flags, MFLAG_CRYPT))
-#define isSignedMail(mail)      (isFlagSet((mail)->Flags, MFLAG_SIGNED))
-#define isSenderInfoMail(mail)  (isFlagSet((mail)->Flags, MFLAG_SENDERINFO))
-#define isSendMDNMail(mail)     (isFlagSet((mail)->Flags, MFLAG_SENDMDN))
-#define isVirtualMail(mail)     (isFlagSet((mail)->Flags, MFLAG_NOFOLDER))
-#define isMarkedMail(mail)      (isFlagSet((mail)->Flags, MFLAG_MARK))
-#define setPERValue(mail, val)  (mail)->Flags = ((mail)->Flags & ~(7<<MFLAG_PERFIELD)) | ((val) << MFLAG_PERFIELD)
-#define setVOLValue(mail, val)  (mail)->Flags = ((mail)->Flags & ~(7<<MFLAG_VOLFIELD)) | ((val) << MFLAG_VOLFIELD)
-#define getPERValue(mail)       (((mail)->Flags & (7<<MFLAG_PERFIELD)) >> MFLAG_PERFIELD)
-#define getVOLValue(mail)       (((mail)->Flags & (7<<MFLAG_VOLFIELD)) >> MFLAG_VOLFIELD)
+#define MFLAG_PERFIELD         8      // reserve 3 bits of the flags for the permanent flag section
+#define MFLAG_VOLFIELD        11      // reserve 3 bits of the flags for the volatile flag section
+#define MFLAG_IMPORTANCE      14      // reserve 2 bits to store the level of importance
+#define isMultiRCPTMail(mail)         (isFlagSet((mail)->mflags, MFLAG_MULTIRCPT))
+#define isMultiPartMail(mail)         (isFlagSet((mail)->mflags, MFLAG_MULTIPART))
+#define isReportMail(mail)            (isFlagSet((mail)->mflags, MFLAG_REPORT))
+#define isCryptedMail(mail)           (isFlagSet((mail)->mflags, MFLAG_CRYPT))
+#define isSignedMail(mail)            (isFlagSet((mail)->mflags, MFLAG_SIGNED))
+#define isSenderInfoMail(mail)        (isFlagSet((mail)->mflags, MFLAG_SENDERINFO))
+#define isSendMDNMail(mail)           (isFlagSet((mail)->mflags, MFLAG_SENDMDN))
+#define isVirtualMail(mail)           (isFlagSet((mail)->mflags, MFLAG_NOFOLDER))
+#define setPERValue(mail, val)        (mail)->mflags = ((mail)->mflags & ~(7<<MFLAG_PERFIELD)) | ((val) << MFLAG_PERFIELD)
+#define setVOLValue(mail, val)        (mail)->mflags = ((mail)->mflags & ~(7<<MFLAG_VOLFIELD)) | ((val) << MFLAG_VOLFIELD)
+#define setImportanceLevel(mail, val) (mail)->mflags = ((mail)->mflags & ~(3<<MFLAG_IMPORTANCE)) | ((val) << MFLAG_IMPORTANCE)
+#define getPERValue(mail)             (((mail)->mflags & (7<<MFLAG_PERFIELD)) >> MFLAG_PERFIELD)
+#define getVOLValue(mail)             (((mail)->mflags & (7<<MFLAG_VOLFIELD)) >> MFLAG_VOLFIELD)
+#define getImportanceLevel(mail)      (((mail)->mflags & (3<<MFLAG_IMPORTANCE)) >> MFLAG_IMPORTANCE)
 
-enum ApplyMode { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE,
-   APPLY_RX_ALL, APPLY_RX
-};
+// Status information flags of a mail (also partly stored in file comments)
+// Warning: Please note that if you change something here you have to make
+//          sure to increase the version number of the .index file in YAM_MAf.c!
+#define SFLAG_NONE      (0<<0)
+#define SFLAG_READ      (1<<0)      // has been read by the user
+#define SFLAG_REPLIED   (1<<1)      // a reply has been successfully sent
+#define SFLAG_FORWARDED (1<<2)      // the message has been forwarded
+#define SFLAG_NEW       (1<<3)      // This message is new since last startup
+#define SFLAG_QUEUED    (1<<4)      // If set, this message is queued for delivery
+#define SFLAG_HOLD      (1<<5)      // If set, this message is locked and will not be delivered or deleted
+#define SFLAG_SENT      (1<<6)      // Message was successfully sent (if outgoing mail)
+#define SFLAG_DELETED   (1<<7)      // Message was marked as deleted
+#define SFLAG_MARKED    (1<<8)      // Message is marked/flagged
+#define SFLAG_ERROR     (1<<9)      // This message is in an error state (error sending)
+#define SCHAR_READ      'R'         // [R] - SFLAG_READ
+#define SCHAR_REPLIED   'A'         // [A] - SFLAG_REPLIED
+#define SCHAR_FORWARDED 'F'         // [F] - SFLAG_FORWARDED
+#define SCHAR_NEW       'N'         // [N] - SFLAG_NEW
+#define SCHAR_QUEUED    'Q'         // [Q] - SFLAG_QUEUED
+#define SCHAR_HOLD      'H'         // [H] - SFLAG_HOLD
+#define SCHAR_SENT      'S'         // [S] - SFLAG_SENT
+#define SCHAR_DELETED   'D'         // [D] - SFLAG_DELETED
+#define SCHAR_MARKED    'M'         // [M] - SFLAG_MARKED
+#define SCHAR_ERROR     'E'         // [E] - SFLAG_ERROR
+#define hasStatusRead(mail)         (isFlagSet((mail)->sflags, SFLAG_READ))
+#define hasStatusReplied(mail)      (isFlagSet((mail)->sflags, SFLAG_REPLIED))
+#define hasStatusForwarded(mail)    (isFlagSet((mail)->sflags, SFLAG_FORWARDED))
+#define hasStatusNew(mail)          (isFlagSet((mail)->sflags, SFLAG_NEW))
+#define hasStatusQueued(mail)       (isFlagSet((mail)->sflags, SFLAG_QUEUED))
+#define hasStatusHold(mail)         (isFlagSet((mail)->sflags, SFLAG_HOLD))
+#define hasStatusSent(mail)         (isFlagSet((mail)->sflags, SFLAG_SENT))
+#define hasStatusDeleted(mail)      (isFlagSet((mail)->sflags, SFLAG_DELETED))
+#define hasStatusMarked(mail)       (isFlagSet((mail)->sflags, SFLAG_MARKED))
+#define hasStatusError(mail)        (isFlagSet((mail)->sflags, SFLAG_ERROR))
+#define setStatusToRead(mail)       MA_ChangeMailStatus(mail, SFLAG_READ, SFLAG_NEW)
+#define setStatusToReplied(mail)    MA_ChangeMailStatus(mail, SFLAG_REPLIED|SFLAG_READ, SFLAG_NEW)
+#define setStatusToForwarded(mail)  MA_ChangeMailStatus(mail, SFLAG_FORWARDED, SFLAG_NEW)
+#define setStatusToNew(mail)        MA_ChangeMailStatus(mail, SFLAG_NEW, SFLAG_NONE)
+#define setStatusToQueued(mail)     MA_ChangeMailStatus(mail, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT)
+#define setStatusToHold(mail)       MA_ChangeMailStatus(mail, SFLAG_HOLD|SFLAG_READ, SFLAG_NONE)
+#define setStatusToSent(mail)       MA_ChangeMailStatus(mail, SFLAG_SENT|SFLAG_READ, SFLAG_QUEUED|SFLAG_HOLD)
+#define setStatusToDeleted(mail)    MA_ChangeMailStatus(mail, SFLAG_DELETED, SFLAG_NONE)
+#define setStatusToMarked(mail)     MA_ChangeMailStatus(mail, SFLAG_MARKED, SFLAG_NONE)
+#define setStatusToError(mail)      MA_ChangeMailStatus(mail, SFLAG_ERROR, SFLAG_NONE)
 
-enum NewMode {
-   NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC
-};
+// For compatibility to the old status levels we use the following macros
+// But as soon as we have reworked the filename handling we can remove them again
+#define hasStatusUnread(mail)       (!hasStatusRead(mail) && !hasStatusNew(mail))
+#define hasStatusOld(mail)          (hasStatusRead(mail) && !hasStatusNew(mail))
+#define setStatusToUnread(mail)     MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_NEW|SFLAG_READ)
+#define setStatusToOld(mail)        MA_ChangeMailStatus(mail, SFLAG_READ, SFLAG_NEW)
+
+enum ImportanceLevel { IMP_NORMAL=0, IMP_LOW, IMP_HIGH };
+enum ApplyMode { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX };
+enum NewMode { NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC };
 
 // flags and macros for creating new mails
 #define NEWF_QUIET        (1<<0)
@@ -218,11 +269,10 @@ void  MA_PopNow(int mode, int pop);
 void  MA_RemoveAttach(struct Mail *mail, BOOL warning);
 BOOL  MA_Send(enum SendMode sendpos);
 BOOL  MA_SendMList(struct Mail **mlist);
-void  MA_SetMailStatus(struct Mail *mail, enum MailStatus stat);
-void  MA_SetMailFlag(struct Mail *mail, int flag, BOOL clear);
-BOOL  MA_SetMailComment(struct Mail *mail);
+void  MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags);
+BOOL  MA_UpdateMailFile(struct Mail *mail);
 void  MA_SetSortFlag(void);
-void  MA_SetStatusTo(enum MailStatus status);
+void  MA_SetStatusTo(int addflags, int clearflags);
 void  MA_SetupDynamicMenus(void);
 BOOL  MA_StartMacro(enum Macro num, char *param);
 char *MA_ToStatusHeader(struct Mail *mail);

@@ -441,9 +441,9 @@ BOOL FO_FreeFolder(struct Folder *folder)
 ///
 /// FO_CreateFolder
 //  Adds a new entry to the folder list
-BOOL FO_CreateFolder(enum FolderType type, char *path, char *name)
+BOOL FO_CreateFolder(enum FolderType type, const char * const path, char *name)
 {
-   struct Folder *folder = FO_NewFolder(type, path, name);
+   struct Folder *folder = FO_NewFolder(type, (char *)path, name);
 
    if (folder)
    {
@@ -781,7 +781,7 @@ static void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
          BusySet(i+1);
          RepackMailFile(mail, fo->XPKType, fo->Password);
       }
-      BusyEnd;
+      BusyEnd();
    }
 }
 
@@ -821,7 +821,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
       FO_Move(srcbuf, dstbuf);
       DeleteMailDir(GetFolderDir(oldfo), FALSE);
    }
-   BusyEnd;
+   BusyEnd();
    return success;
 }
 
@@ -1240,7 +1240,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
            int result;
 
            // check if the new folder already exists or not.
-           if(FileInfo(folder.Path, NULL, NULL, NULL))
+           if(FileExists(folder.Path))
            {
               result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_FOLDEREXISTS));
            }
@@ -1330,7 +1330,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERPATHINVALID));
         return;
       }
-      else if(FileInfo(folder.Path, NULL, NULL, NULL)) // check if something with folder.Path already exists
+      else if(FileExists(folder.Path)) // check if something with folder.Path already exists
       {
         result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_FOLDEREXISTS));
       }

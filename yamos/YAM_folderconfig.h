@@ -131,7 +131,7 @@ extern struct Hook FO_NewFolderGroupHook;
 extern struct Hook FO_NewFolderHook;
 extern struct Hook FO_SetOrderHook;
 
-BOOL            FO_CreateFolder(enum FolderType type, char *path, char *name);
+BOOL            FO_CreateFolder(enum FolderType type, const char * const path, char *name);
 struct Folder **FO_CreateList(void);
 BOOL            FO_FreeFolder(struct Folder *folder);
 struct Folder * FO_GetCurrentFolder(void);

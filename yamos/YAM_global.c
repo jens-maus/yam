@@ -59,27 +59,27 @@
 #endif
 #define __YAM_COPYRIGHT "Copyright (c) 2000-2004 YAM Open Source Team"
 
-char * yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
-char * yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
-char * yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
-char * yamverxmailer    = "YAM " __YAM_VERSION __YAM_DEVEL __YAM_BUILDID CPU \
-                          " AmigaOS E-mail Client (c) 2000-2004 by YAM Open Source Team - http://www.yam.ch/";
-char * yamcopyright     = __YAM_COPYRIGHT;
-char * yamversiondate   = __YAM_VERDATE;
-unsigned long yamversiondays = __YAM_VERDAYS;
+const char * const yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
+const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
+const char * const yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
+const char * const yamverxmailer    = "YAM " __YAM_VERSION __YAM_DEVEL __YAM_BUILDID CPU \
+                                      " AmigaOS E-mail Client (c) 2000-2004 by YAM Open Source Team - http://www.yam.ch/";
+const char * const yamcopyright     = __YAM_COPYRIGHT;
+const char * const yamversiondate   = __YAM_VERDATE;
+const unsigned long yamversiondays = __YAM_VERDAYS;
 
 #if defined(__GNUC__)
   #if defined(__GNUC_PATCHLEVEL__)
-    char * yamcompiler = " (GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__) ")";
+    const char * const yamcompiler = " (GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__) ")";
   #else
-    char * yamcompiler = " (GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) ".x)";
+    const char * const yamcompiler = " (GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) ".x)";
   #endif
 #elif defined(__VBCC__)
-  char * yamcompiler = " (VBCC)";
+  const char * const yamcompiler = " (VBCC)";
 #elif defined(__SASC)
-  char * yamcompiler = " (SAS/C " STR(__VERSION__) "." STR(__REVISION__) ")";
+  const char * const yamcompiler = " (SAS/C " STR(__VERSION__) "." STR(__REVISION__) ")";
 #else
-  char * yamcompiler = " (unknown)";
+  const char * const yamcompiler = " (unknown)";
   #warning "unknown compiler specification"
 #endif
 
@@ -145,11 +145,10 @@ struct AmiSSLIFace*     IAmiSSL       = NULL;
 struct TimerIFace*      ITimer        = NULL;
 #endif
 
-char *Status[9] = { "U","O","F","R","W","E","H","S","N" };
-char *SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
-char *FolderNames[4] = { "incoming", "outgoing", "sent", "deleted" };
+const char* const SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
+const char* const FolderNames[4] = { "incoming", "outgoing", "sent", "deleted" };
 
-char *ContType[] =
+const char* const ContType[] =
 {
    /*CT_TX_PLAIN */ "text/plain",
    /*CT_TX_HTML  */ "text/html",
@@ -180,7 +179,7 @@ char *ContType[] =
    NULL,
 };
 
-char *ContTypeDesc[] =
+const char* const ContTypeDesc[] =
 {
    MSG_CTtextplain,
    MSG_CTtexthtml,
@@ -211,6 +210,6 @@ char *ContTypeDesc[] =
    NULL,
 };
 
-char *wdays[7] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
-char *months[12] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
-char *SecCodes[5] = { "none","sign","encrypt","sign+encrypt","anonymous" };
+const char* const wdays[7] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
+const char* const months[12] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
+const char* const SecCodes[5] = { "none","sign","encrypt","sign+encrypt","anonymous" };

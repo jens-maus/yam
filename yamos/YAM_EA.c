@@ -449,7 +449,7 @@ HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
             fclose(db);
             if (!success) ER_NewError(GetStr(MSG_ER_NotInGallery), NULL, NULL);
          }
-         BusyEnd;
+         BusyEnd();
          TR_CloseTCPIP();
       }
       else ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL);
