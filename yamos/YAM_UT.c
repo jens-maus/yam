@@ -597,7 +597,8 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     COLLECT_RETURNIDS;
 
     // we open the window now and listen for some events.
-    if (!SafeOpenWindow(wi_ar)) retpart = NULL;
+    if (!SafeOpenWindow(wi_ar))
+      retpart = NULL;
     else while (retpart == (struct Part *)-1)
     {
       ULONG signals;
@@ -619,8 +620,10 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
             // we have to set NextSelected to NULL first
             part->NextSelected = NULL;
 
-            if(retpart == (struct Part *)-1) retpart = part;
-            else prevpart->NextSelected = part;
+            if(retpart == (struct Part *)-1)
+              retpart = part;
+            else
+              prevpart->NextSelected = part;
           }
         }
         break;
