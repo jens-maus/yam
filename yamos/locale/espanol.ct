@@ -1,96 +1,12 @@
-## version $VER: YAM.catalog 5.35 (08.06.2001)
+## version $VER: YAM.catalog 5.36 (12.02.2002)
 ## language español
 ## codeset 0
 ;
-; ----------------------------------------------------------------------
-; History:
 ;
-;
-; 5.30 (16.5.2001)
-;
-; - Initial version for release with YAM 2.3, based upon the original
-;   5.14 version by Tomás J Cantó & David Rey for YAM 2.0
-;
-;
-; 5.31 (18.5.2001)
-;
-; - Added the missing shortcuts in MSG_YesNoReq, MSG_MA_MoveGad &
-;   MSG_MA_CopyGad
-;
-; - Updated MSG_ER_ErrorDOBformat string
-;
-; - Reworded MSG_Copyright1, MSG_MA_About, MSG_HELP_CO_ST_EXTHEADER,
-;   MSG_HELP_CO_ST_PROXY, MSG_HELP_CO_ST_NEWGROUP, MSG_RE_DownloadPhotoReq,
-;   MSG_HELP_WR_ST_EXTHEADER
-;
-; - Fixed a typo in MSG_WebSite, added the trailing slash
-;
-; - Fixed the typo in MSG_ER_PGPnotfound
-;
-; - Changing the old shortcut for "Send later" to make it more useful
-;   made it necessary to change also the shortcuts used in MSG_WR_GetMDN
-;   and MSG_WR_ContentType, which aren't used that much anyway.
-;
-; - Rearranged MSG_RE_MDNReq
-;
-; - Removed the trailing dots from MSG_RE_SaveMessage for consistency
-;   with MSG_RE_DisplayMsg & MSG_RE_PrintMsg
-;
-; - Minor change in MSG_CO_BodyLayout
-;
-; - Updated the old %ld placeholders to %lD where necessary. Modified
-;   strings:
-;
-;   MSG_MA_xSelected
-;   MSG_MA_FolderInfo
-;   MSG_MA_MessageInfo
-;   MSG_TR_TransferStats
-;   MSG_ER_InvalidLength
-;   MSG_ER_UUSize
-;   MSG_FI_GaugeText
-;
-;
-; 5.32 (29.5.2001)
-;
-; - Removed the full stop from the first sentence in MSG_ER_BadResponse,
-;   since most times the dot appears in a new line anyway. This looks
-;   like a bug in the interface.
-;
-;
-; 5.33 (4.6.2001)
-;
-; - Fixed MSG_FI_GaugeText (the first argument was still %%lD, as I didn't
-;   follow to the letter the upgrade process for the .cd file...)
-;
-; - Fixed the wording of MSG_CO_PGPKey
-;
-;
-; 5.34 (7.6.2001)
-;
-; - *Changed strings*:
-;
-;   MSG_CO_Server
-;   MSG_CO_AltQuote
-;   MSG_CO_DoQuote
-;
-;   (NB: The changes are due to these strings now having an official
-;   shortcut for the 2.3 release -- please note the default strings
-;   in this source have not been updated, but just the translation
-;   itself as changes after May 16th were implemented, due to lack
-;   of time.  /David)
-;
-;
-; 5.35 (8.6.2001)
-;
-; - Changed the wording of MSG_WR_AltQuoted
-;
-; ----------------------------------------------------------------------
-;
-; YAM 2.3 catalog description
-; $Id$
+; YAM.cd - YAM 2.4 catalog description file
 ;
 ;#version 5
-;
+;#language english
 ;
 ; General
 ;
@@ -335,10 +251,11 @@ Directorio
 MSG_Copyright1
 Programa Código Abierto de correo electrónico para Amiga\n\n\
 Copyright © 1995-2000 de Marcel Beck\n\
-Copyright © 2000-2001 del equipo YAM Open Source
+Copyright © 2000-2002 del equipo YAM Open Source
 ; Open Source E-mail package for the Amiga\n\
+; \n\
 ; Copyright © 1995-2000 Marcel Beck\n\
-; Copyright © 2000-2001 YAM Open Source Team
+; Copyright © 2000-2002 YAM Open Source Team
 ;
 MSG_Version
 Versión:
@@ -352,7 +269,8 @@ MSG_Copyright2
 Este programa es de libre distribución; puede distribuirlo y/o \
 modificarlo bajo las condiciones recogidas en la Licencia Pública GNU. \
 Véase la documentación incluida para más información.\n
-; This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
+; This program is free software; you're welcome to distribute and/or \
+; modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
 ;
 MSG_UsedSoftware
 \nEsta aplicación utiliza el siguiente software de terceros:\n
@@ -454,7 +372,7 @@ Documento AmigaGuide
 ; AmigaGuide document
 ;
 MSG_CTapplicationoctetstream
-fichero binario
+Fichero binario
 ; binary file
 ;
 MSG_CTapplicationpostscript
@@ -584,12 +502,12 @@ Copia del mensaje de '%s' de asunto '%s' de la carpeta '%s' a '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
 MSG_LOG_ConnectPOP
-Conexión con cuenta POP3 '%s@%s'. %ld mensaje(s) en espera
+Conexión con cuenta POP3 '%s@%s': %ld mensaje(s) en espera
 ; Logged in on POP3 account '%s@%s': %ld messages waiting
 ; USER_ID, HOST, COUNT
 ;
 MSG_LOG_RetrievingVerbose
-Recepción del mensaje de '%s' de asunto '%s' (%ld bytes)
+Recepción de mensaje de '%s' de asunto '%s' (%ld bytes)
 ; Retrieved message from '%s' about '%s' (%ld bytes)
 ; SENDER, SUBJECT, SIZE
 ;
@@ -639,7 +557,7 @@ Reenvío del mensaje de '%s' de asunto '%s' a '%s'
 ; SENDER, SUBJECT, RECIPIENT
 ;
 MSG_LOG_Filtering
-Filtrado de %ld mensaje(s) de la carpeta '%s'. %ld coincidencia(s)
+Filtrado de %ld mensaje(s) de la carpeta '%s': %ld coincidencia(s)
 ; Filtered %ld message(s) in folder '%s': %ld match(es)
 ; COUNT, FOLDER, COUNT
 ;
@@ -733,7 +651,7 @@ Versión más reciente: %s (%2ld.%02ld.%ld)\nVersión en uso: %s (%s)\n\n%s
 ; VERSION_NUMBER, DAY, MONTH, YEAR, VERSION_NUMBER, DATE, TEXT
 ;
 MSG_MA_NewVersion
-\e8 ¡Hay una nueva versión disponible en la página web de YAM!
+\e8¡Hay una nueva versión disponible en la página web de YAM!
 ; \e8A new version is available at the YAM homepage!
 ;
 MSG_MA_NoNewVersion
@@ -750,7 +668,7 @@ El mensaje seleccionado tiene varios destinatarios.\n¿A quién desea enviar la re
 ; Do you want to send the reply...
 ;
 MSG_MA_ReplyReqOpt
-* Al\n_remitente|Al remitente y\n_todos los destinatarios|Sólo a los\n_destinatarios|_Cancelar
+*Al\n_remitente|Al remitente y\n_todos los destinatarios|Sólo a los\n_destinatarios|_Cancelar
 ; *...to the\n\
 ; _sender|...to the sender and\n\
 ; _all recipients|...to the\n\
@@ -998,7 +916,7 @@ Proyecto
 ;
 MSG_MA_About
 Acerca de YAM
-; About...
+; About YAM
 ; This is the title of the about window, not the menu item.
 ;
 MSG_MA_AboutMUI
@@ -1027,8 +945,8 @@ Q\000Salir
 ; Q\000Quit
 ;
 MSG_MA_NewFolder
-Nueva carpeta...
-; New folder...
+Nueva carpeta
+; New folder
 ; This is the title of the new folder window, not the menu item.
 ;
 MSG_MA_NewSeparator
@@ -1109,7 +1027,7 @@ D\000Leer
 ;
 MSG_MA_MEdit
 Editar...
-; Edit
+; Edit...
 ;
 MSG_MA_MDelete
 Borrar
@@ -1180,18 +1098,18 @@ Preferencias
 ; Settings
 ;
 MSG_MA_MAddrBook
-Listín...
-; Address Book...
+Listín
+; Address Book
 ; This is the title of the address book window, not the menu item.
 ;
 MSG_MA_MConfig
-Configuración...
-; Configuration...
+Configuración
+; Configuration
 ; This is the title of the configuration window, not the menu item.
 ;
 MSG_MA_MUsers
-Usuarios...
-; Users...
+Usuarios
+; Users
 ;
 ; Module MA - Bubblehelp
 ;
@@ -1647,7 +1565,7 @@ Enviar correo (SMTP)
 ;
 MSG_CO_Server
 Ser_vidor
-; Server
+; Ser_ver
 ;
 MSG_CO_Domain
 Do_minio
@@ -1730,7 +1648,7 @@ Tamaño _límite
 ; Size _limit
 ;
 MSG_CO_WarnSize2
-KB
+kB
 ; kB
 ;
 MSG_CO_AutoOperation
@@ -2262,7 +2180,7 @@ Servidor Proxy _HTTP
 ; _HTTP Proxy server
 ;
 MSG_CO_NewGroup
-_Grupo para nuevas fichas
+Grupo para _nuevas fichas
 ; _Group for new entries
 ;
 MSG_CO_AddInfo
@@ -2295,7 +2213,7 @@ Posición _X
 ;
 MSG_CO_CloseGadget
 _Botón de cierre iconifica el programa
-; Close_gadget iconifies program
+; Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete
 Almacenamiento/Supresión de mensajes
@@ -2475,9 +2393,9 @@ MSG_HELP_CO_ST_POPHOST
 Dirección del servidor POP3 para recibir\n\
 el correo. Si deja vacío este campo, se\n\
 empleará la dirección del servidor SMTP.
-; Address of the POP3 server to receive mail.\n\
-; If you leave this field empty, the address\n\
-;  of the SMTP server is used.
+; The address of the POP3 server to receive mail from.\n\
+; If you leave this field empty, then the address\n\
+; of the SMTP server is used.
 ;
 MSG_HELP_CO_ST_PASSWD
 Contraseña para acceder\nal servidor de correo.
@@ -2490,7 +2408,7 @@ Elija aquí la zona horaria del\nlugar donde se encuentra.
 ; your current location
 ;
 MSG_HELP_CO_CH_DLSAVING
-Ajusta el valor de la zona horaria\ndurante el horario de verano.
+Ajustar el valor de la zona horaria\ndurante el horario de verano.
 ; Adjust the timezone during daylight\n\
 ; saving time (summer time)
 ;
@@ -2498,9 +2416,9 @@ MSG_HELP_CO_ST_SMTPHOST
 Dirección del servidor SMTP para enviar correo.\n\
 Si deja vacío este campo, se empleará la\n\
 dirección del servidor POP3.
-; Address of the SMTP server to send mail.\n\
+; The address of the SMTP server to send mail to.\n\
 ; If you leave this field empty,\n\
-; the address of the POP3 server is used.
+; then the address of the POP3 server is used.
 ;
 MSG_HELP_CO_ST_DOMAIN
 El nombre de dominio de su Amiga. Modifique este\n\
@@ -2513,7 +2431,7 @@ No convertir los mensajes a 7 bits para su transferencia.\n\
 Utilice esta opción sólo si su servidor SMTP\n\
 soporta transferencias de 8 bits, de lo contrario\n\
 sus mensajes se corromperán.
-; Don't convert messages to 7bit for transfer.\n\
+; Don't convert messages to 7bit when transfering.\n\
 ; Only use this option if your\n\
 ; SMTP server supports 8bit transfers!\n\
 ; Otherwise your messages will get corrupted.
@@ -2534,9 +2452,9 @@ MSG_HELP_CO_ST_POPUSERID
 Nombre de usuario para acceder al servidor POP3.\n\
 Si deja vacío este campo, este IDentificador\n\
 se tomará de su dirección de correo electrónico.
-; User name to log into the POP3 server.\n\
-; If you leave this field empty, the user-ID\n\
-; will be extracted from your email address.
+; User name to log in on the POP3 server.\n\
+; If you leave this field empty, then the user-ID\n\
+; will be taken from your email address.
 ;
 MSG_HELP_CO_CH_DELETE
 Borrar los mensajes del servidor\n\
@@ -2569,7 +2487,7 @@ MSG_HELP_CO_CY_MSGSELECT
 Active esta opción para ver el contenido de la cuenta\n\
 POP3 y poder elegir los mensajes que quiere recoger.
 ; Enable this option to show the contents of the POP3 mailbox\n\
-; and allow selection of the messages to be downloaded
+; and allow selection of the messages before downloading
 ;
 MSG_HELP_CO_CH_UPDSTAT
 Marcar los mensajes nuevos de la carpeta 'Entrantes'\n\
@@ -2579,8 +2497,8 @@ como no leídos antes de recoger el correo nuevo.
 ;
 MSG_HELP_CO_ST_WARNSIZE
 Los mensajes que superen este\ntamaño se considerarán 'grandes'.
-; Messages which exceed this\n\
-; threshold rank as 'large'
+; Incoming messages which are bigger than this\n\
+; size will be considered as large.
 ;
 MSG_HELP_CO_ST_INTERVAL
 ¿Con qué frecuencia desea comprobar si hay correo nuevo?\n\
@@ -2721,7 +2639,7 @@ Interpretar '/', '*', '_' y '#' como códigos\nde control para los estilos de tex
 ; control codes for textstyles
 ;
 MSG_HELP_CO_CY_HEADER
-¿Cómo desea que se muestren las cabeceras\ndel mensaje en la ventana de Lectura?
+¿Cómo desea que se muestren las cabeceras\ndel mensaje en la ventana de lectura?
 ; How do you want to\n\
 ; display the message header\n\
 ; in the Read window?
@@ -2810,7 +2728,7 @@ Introduzca la dirección de respuesta por omisión,\nsi difiere de su dirección de
 ; it differs from your email address.
 ;
 MSG_HELP_CO_ST_ORGAN
-Nombre de su Empresa o institución.
+Nombre de su Empresa o instituto.
 ; The name of your\n\
 ; company or institute
 ;
@@ -2825,13 +2743,13 @@ Texto a insertar al comienzo\nde un nuevo mensaje.
 ; top of a new message
 ;
 MSG_HELP_CO_ST_BYETEXT
-Texto a insertar al final\nde un nuevo mensaje
+Texto a insertar al final\nde un nuevo mensaje.
 ; Text to insert at the\n\
 ; bottom of a new message
 ;
 MSG_HELP_CO_ST_OUTTRANS
 Aplicar esta conversión de\ncaracteres a sus nuevos mensajes.
-; Apply this characterset translation\n\
+; Apply this character set translation\n\
 ; on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP
@@ -2852,17 +2770,18 @@ está escribiendo el mensaje.
 ; codes while you're typing the message
 ;
 MSG_HELP_CO_CH_LAUNCH
-Iniciar el editor externo al\nescribir un nuevo mensaje
+Ejecutar automáticamente el editor\nexterno al escribir un nuevo mensaje.
 ; Launch the external editor\n\
 ; when you start a new message
 ;
 MSG_HELP_CO_ST_EDITOR
-Senda completa de su editor favorito
+Senda completa de su editor favorito.
 ; Filename of your\n\
 ; favorite text editor
 ;
 MSG_HELP_CO_ST_FWDSTART
-Texto utilizado como entradilla de un mensaje reenviado.\nUtilice el botón de la derecha para insertar una variable.
+Texto utilizado como entradilla de un mensaje reenviado.\n\
+Utilice el botón de la derecha para insertar una variable.
 ; Text used to introduce a forwarded message.\n\
 ; Use the button at the right side to insert a variable.
 ;
@@ -2872,7 +2791,8 @@ Texto a insertar al final\nde un mensaje reenviado.
 ; end a forwarded message.
 ;
 MSG_HELP_CO_ST_REPLYTEXT
-Textos empleados en las respuestas a los mensajes.\nUtilice el botón de la derecha para insertar una variable.
+Textos empleados en las respuestas a los mensajes.\n\
+Utilice el botón de la derecha para insertar una variable.
 ; Texts used in replies to messages.\n\
 ; Use the button at the right side to insert a variable.
 ;
@@ -2924,7 +2844,7 @@ No citar la firma del mensaje original.
 ; of original message
 ;
 MSG_HELP_CO_CY_SIGNAT
-Elija la firma a editar.
+Elija aquí la firma a editar.
 ; Select signature to edit
 ;
 MSG_HELP_CO_BT_EDITSIG
@@ -2940,7 +2860,7 @@ las coletillas aleatorias.
 MSG_HELP_CO_BT_INSENV
 Insertar código de control para la\nvariable de entorno SIGNATURE.
 ; Insert control code for the\n\
-; enviromental variable SIGNATURE
+; environment variable SIGNATURE
 ;
 MSG_HELP_CO_ST_TAGFILE
 Base de datos que contiene\n\
@@ -2996,7 +2916,9 @@ utilizado para enviar correo anónimo.
 ; used to send anonymous mail
 ;
 MSG_HELP_CO_ST_FIRSTLINE
-Insertar esta línea al comienzo de su\nmensaje, cuando éste sea enviado a\ntravés del servicio de re-expedición.
+Insertar esta línea al comienzo de su\n\
+mensaje, cuando éste sea enviado a\n\
+través del servicio de re-expedición.
 ; Insert this line at the top of your\n\
 ; message if it is sent via remailer
 ;
@@ -3009,7 +2931,7 @@ Iniciar un nuevo fichero de registro cada mes.
 ; Start a new logfile every month
 ;
 MSG_HELP_CO_CY_LOGMODE
-Elija el tipo de registro.
+Elija aquí el tipo de registro.
 ; Select type of logging
 ;
 MSG_HELP_CO_CH_LOGALL
@@ -3071,7 +2993,7 @@ MSG_HELP_CO_ST_NEWGROUP
 Grupo donde se guardarán las nuevas fichas\n\
 (se creará automáticamente si no existe todavía).
 ; Add new address book entries to this group (it\n\
-; will be created if it doesn't already exist)
+; will be created if it doesn't exist yet)
 ;
 MSG_HELP_CO_ST_TEMPDIR
 Directorio para almacenar ficheros temporales.
@@ -3096,7 +3018,7 @@ Posición del icono del buzón, en pixels.
 MSG_HELP_CO_CH_CLGADGET
 ¿Desea que YAM se iconifique\nal pulsar el botón de cierre?
 ; Do you want YAM to iconify when\n\
-; you hit the closegadget?
+; you hit the close gadget?
 ;
 MSG_HELP_CO_CH_CONFIRM
 ¿Desea confirmar el borrado de mensajes?
@@ -3118,7 +3040,7 @@ Guardar los mensajes enviados\nen la carpeta 'Enviados'.
 ; Save sent messages in the Sent folder
 ;
 MSG_HELP_CO_RA_MDN_DISP
-Al leer un mensaje, enviar al remitente una\n\
+Al leer un mensaje, enviar al remitente\n\
 una Notificación de Disposición de Mensaje\n\
 si éste la ha solicitado.
 ; When reading a message, send a\n\
@@ -3152,7 +3074,7 @@ de Disposición de Mensaje, si éste la ha solicitado.
 MSG_HELP_CO_CH_SEND_MDN
 Intentar enviar la Notificación de Disposición de\nMensaje tan pronto como haya sido generada.
 ; Try to send the disposition notification\n\
-; as soon it has been generated
+; as soon as it is generated
 ;
 MSG_HELP_CO_TX_ENCPACK
 Librería XPK utilizada para\ncomprimir y proteger carpetas.
@@ -3181,7 +3103,7 @@ Descripción del script en el menú 'Scripts'.
 ; in the 'Scripts' menu
 ;
 MSG_HELP_CO_ST_SCRIPT
-Nombre del fichero donde está el script.
+Fichero donde está el script.
 ; Filename of the script
 ;
 MSG_HELP_CO_CY_ISADOS
@@ -3270,7 +3192,7 @@ Por favor, indique el patrón de búsqueda\n\
 (se soportan los comodines AmigaDOS):
 ; This module finds a given text in the alias, name, address,\n\
 ; description, street, city or country fields. Please enter\n\
-; the search pattern (AmigaDOS wildchars are supported):
+; the search pattern (AmigaDOS wildcards are supported):
 ;
 MSG_AB_StartSearch
 _Iniciar búsqueda
@@ -3453,7 +3375,7 @@ Plega_r
 ; Module AB - Bubblehelp
 ;
 MSG_HELP_AB_BT_SAVE
-Guardar los cambios actuales
+Guardar los cambios actuales.
 ; Save current changes
 ;
 MSG_HELP_AB_BT_SEARCH
@@ -3588,7 +3510,7 @@ Página _web
 ;
 MSG_EA_SnailMail
 Correo ordinario
-; S_nail mail
+; Snail mail
 ;
 MSG_EA_Street
 Ca_lle
@@ -3663,7 +3585,7 @@ Nombre completo de esta\npersona (con apellidos).
 ; (first name last name)
 ;
 MSG_HELP_EA_ST_ADDRESS
-Dirección de esta\npersona en Internet.
+Dirección de este\nelemento en Internet.
 ; Internet address\n\
 ; of this entry
 ;
@@ -3706,7 +3628,7 @@ Fecha de nacimiento. En formato\nAmigaDOS, por ej. 10-Feb-1950
 ; e.g. 10-Jan-1950
 ;
 MSG_HELP_EA_BC_PHOTO
-Retrato de esta persona
+Retrato de esta persona.
 ; Portrait picture of this person
 ;
 MSG_HELP_EA_BT_SELECTPHOTO
@@ -3739,7 +3661,7 @@ Dirección (y nombre) o alias de un miembro.
 ; alias of a member
 ;
 MSG_HELP_EA_BT_ADD
-Añadir un nuevo miembro a la lista
+Añadir un nuevo miembro a la lista.
 ; Add a new member\n\
 ; to the list
 ;
@@ -3782,12 +3704,12 @@ MSG_RE_MDNReq
 El remitente de este mensaje solicita\n\
 una Notificación de Disposición (MDN).\n\
 ¿Qué desea hacer?
-; The sender of this message request a disposition notification (MDN).\n\
+; The sender of this message requests a disposition notification (MDN).\n\
 ; What do you want to do?
 ;
 MSG_RE_SaveMessage
 Guardar mensaje
-; Save message...
+; Save message
 ;
 MSG_RE_Overwrite
 El fichero '%s' ya existe.\n¿Desea sobreescribirlo?
@@ -3964,7 +3886,9 @@ El mensaje\n%s\nha sido %s%s.\n
 ; has been %s%s.\n
 ;
 MSG_RE_PGPNotAllowed
->Error PGP<\n\nUd. no tiene autorización para ver el mensaje encriptado con PGP.\n\
+>Error de PGP<\n\
+\n\
+Ud. no tiene autorización para ver el mensaje encriptado con PGP.\n\
 Quizá su software PGP no está configurado correctamente,\n\
 o bien el mensaje ha sido encriptado para otra persona.\n
 ; >PGP Error<\n\
@@ -4160,18 +4084,18 @@ Reen_viar
 ; Module RE - Bubblehelp
 ;
 MSG_HELP_RE_BT_PREVIOUS
-Mostrar contenido\ndel mensaje anterior
+Mostrar contenido\ndel mensaje anterior.
 ; Display contents of\n\
 ; the previous message
 ;
 MSG_HELP_RE_BT_NEXT
-Mostrar contenido\ndel mensaje siguiente
+Mostrar contenido\ndel mensaje siguiente.
 ; Display contents of\n\
 ; the next message
 ;
 MSG_HELP_RE_BT_QUESTION
 Mostrar el mensaje al que éste\nreplica (retroceder en el diálogo).
-; Show the message which\n\
+; Show the message that\n\
 ; is being answered here\n\
 ; (go back in thread)
 ;
@@ -4489,7 +4413,7 @@ Texto
 ; Text
 ;
 MSG_WR_InsertAs
-Insertar
+Insertar como
 ; Insert as
 ;
 MSG_WR_Plain
@@ -4502,7 +4426,7 @@ Citado
 ;
 MSG_WR_ROT13
 Codificado con ROT-13
-; ROT13 encrypted
+; ROT13 encoded
 ;
 MSG_WR_LaunchEd
 Invocar editor
@@ -4526,7 +4450,7 @@ Pegar
 ;
 MSG_WR_PasteAs
 Pegar como
-; PasteAs
+; Paste as
 ;
 MSG_WR_MUndo
 Deshacer
@@ -4656,7 +4580,7 @@ Usar editor externo para\nmodificar el texto del mensaje.
 ;
 MSG_HELP_WR_BT_LOAD
 Insertar un fichero de texto\nen la posición del cursor.
-; Insert textfile at cursor position
+; Insert text file at cursor position
 ;
 MSG_HELP_WR_BT_CUT
 Cortar al portapapeles el texto marcado.
@@ -4764,7 +4688,7 @@ No almacenar este mensaje\nen la carpeta 'Enviados'.
 ; in the Sent folder
 ;
 MSG_HELP_WR_CH_RECEIPT
-Solicitar acuse de recibo
+Solicitar acuse de recibo.
 ; Get a notification on\n\
 ; successful delivery
 ;
@@ -4789,8 +4713,8 @@ MSG_HELP_WR_RA_SIGNATURE
 ; to append to this letter?
 ;
 MSG_HELP_WR_RA_SECURITY
-Elija el sistema de seguridad que desea\n\
-para enviar su mensaje: firmado con PGP,\n\
+Elija el tipo de seguridad que desea\n\
+para enviar este mensaje: firmado con PGP,\n\
 encriptado con PGP, o anónimamente.
 ; Select the one of these security options\n\
 ; to send your message PGP-signed, encrypted\n\
@@ -4878,7 +4802,7 @@ MSG_TR_SizeGauge
 ; SIZE, SIZE
 ;
 MSG_TR_TransferStats
-%lD de %lD kb transmitidos a %lD cps\nTiempo restante: %lD min %ld seg
+%lD de %lD kB transmitidos a %lD cps\nTiempo restante: %lD min %ld seg
 ; %lD of %lD kB transmitted at %lD cps\n\
 ; Remaining time: %lD min %ld sec
 ; SIZE, SIZE, SPEED, MINS, SECS
@@ -4944,12 +4868,12 @@ Recibiendo mensaje...
 ;
 MSG_TR_MailTransferFrom
 Transferencia de correo desde %s
-; Transfer mail from %s
+; Mail transfer from %s
 ; HOST
 ;
 MSG_TR_MailTransferTo
 Transferencia de correo a %s
-; Transfer mail to %s
+; Mail transfer to %s
 ; HOST
 ;
 MSG_TR_MsgInFile
@@ -5009,7 +4933,7 @@ _Detener
 ; _Abort
 ;
 MSG_TR_TransferStats0
-  0 de   0 kb transmitidos a    0 cps\nTiempo restante:  0 min  0 seg
+  0 de   0 kB transmitidos a    0 cps\nTiempo restante:  0 min  0 seg
 ;   0 of   0 kB transmitted at    0 cps\n\
 ; Remaining time:  0 min  0 sec
 ;
@@ -5036,8 +4960,8 @@ Detener la transferencia\nde correo lo antes posible.
 ; Module ER - Window
 ;
 MSG_ER_ErrorMessages
-Mensajes de error:
-; Error messages:
+Mensajes de error
+; Error messages
 ;
 MSG_ER_PrevError
 Error _anterior
@@ -5090,7 +5014,7 @@ La fecha de nacimiento no tiene el formato correcto DD-MMM-AAAA (nombre del mes 
 MSG_ER_NotInGallery
 No se ha podido encontrar a esta persona en la Galería de Usuarios de YAM. \n\n\
 Quizá no esté en la base de datos, o su nombre o dirección no estén bien escritos.
-; Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or her name or address is misspelled.
+; Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or his/her name or address is mispelt.
 ;
 MSG_ER_NoTCP
 ¡No hay un programa de TCP/IP activo!\n\n\
@@ -5173,7 +5097,7 @@ Falta un delimitador en el mensaje multiparte. El mensaje parece estar truncado.
 ;
 MSG_ER_CantOpenFile
 No se puede leer el fichero '%s'. El fichero parece no existir.
-; Can't read from file '%s'. The file doesn't seem to exists.
+; Can't read from file '%s'. The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize
@@ -5244,7 +5168,7 @@ MSG_ER_ErrorReadMailfile
 Error de lectura en fichero de mensaje: %s.\n\n\
 El fichero existe, pero ha habido un error durante su lectura.
 ; Read error on mail file: %s.\n\
-; The file exists, but there was an error while reading the file.
+; The file exists, but there was an error while reading it.
 ; FILENAME
 ;
 MSG_ER_UserRemoved
@@ -5274,7 +5198,8 @@ Compruebe el fichero %s para ver qué ocurre.
 ; COMMAND, FILENAME
 ;
 MSG_ER_PGPnotfound
-No se puede ejecutar el comando PGP.\n\nCompruebe si existe realmente %s.
+No se ha podido ejecutar el comando PGP.\n\n\
+Compruebe si existe realmente %s.
 ; Couldn't execute PGP command.\n\
 ; Check if %s exists.
 ; FILENAME
@@ -5549,7 +5474,8 @@ Seleccionar en la ventana principal\nlos mensajes coincidentes.
 ;
 MSG_HELP_FI_BT_READ
 Mostrar el mensaje seleccionado en la lista superior.
-; Display selected message/nfrom the list above
+; Display selected message\n\
+; from the list above
 ;
 MSG_HELP_FI_BT_ABORT
 Detener la búsqueda
@@ -5567,7 +5493,7 @@ Nombre del campo de cabecera donde buscar.
 MSG_HELP_FI_RA_ADRMODE
 Decida entre buscar en la parte 'dirección'\no en la parte 'nombre real' del campo.
 ; Choose whether you want to search in the\n\
-; address or realname part of the field
+; address or real name part of the field
 ;
 MSG_HELP_FI_CY_STATUS
 Estado de los mensajes a examinar
@@ -5576,7 +5502,7 @@ Estado de los mensajes a examinar
 MSG_HELP_FI_ST_MATCH
 Plantilla de búsqueda (puede\nusar los comodines AmigaDOS).
 ; Search pattern (AmigaDOS\n\
-; wildchars are supported)
+; wildcards are supported)
 ;
 MSG_HELP_FI_CH_CASESENS
 ¿Debería la búsqueda distinguir entre\nletras mayúsculas y minúsculas?
@@ -5622,7 +5548,7 @@ se perderán.\n\n\
 ; Do you really want to remove the user?
 ;
 MSG_US_RemoveReqGads
-*_Aceptar|_Guardar ficheros|_Cancelar
+*_Aceptar|_Mantener ficheros|_Cancelar
 ; *_Okay|_Keep files|_Cancel
 ;
 MSG_US_ErrorNoDirectory
@@ -5707,7 +5633,7 @@ Usar la configuración actual como la empleada\npor omisión para el nuevo usuario
 ;
 MSG_HELP_US_BT_ADD
 Crear un nuevo usuario
-; Create the new account
+; Create a new account
 ;
 MSG_HELP_US_BT_DEL
 Borrar el usuario seleccionado
@@ -5799,7 +5725,7 @@ _Modo
 ;
 MSG_FO_SortBy
 _Ordenar por
-; S_ort by
+; _Sort by
 ;
 MSG_FO_ThenBy
 D_espués por
@@ -5834,8 +5760,8 @@ Directorio donde se almacenarán los\nmensajes de la carpeta seleccionada.
 ;
 MSG_HELP_FO_ST_MAXAGE
 Los antiguos mensajes se borrarán automáticamente\n\
-una vez que haya transcurrido este tiempo (en días).\n\
-Introduzca un 0 (o ningún valor) para desactivar esta opción.
+una vez que haya transcurrido este número de días.\n\
+Elija 0 para desactivar esta opción.
 ; Old messages will automatically\n\
 ; be deleted after this time (in days).\n\
 ; Enter 0 or no value to disable this feature.
@@ -5856,13 +5782,13 @@ MSG_HELP_FO_CY_SORT0
 Método de ordenación primario\n\
 de los mensajes de esta carpeta.
 ; Primary sorting order of the\n\
-; message in this folder
+; messages in this folder
 ;
 MSG_HELP_FO_CY_SORT1
 Método de ordenación secundario\n\
 de los mensajes de esta carpeta.
 ; Secondary sorting order of the\n\
-; message in this folder
+; messages in this folder
 ;
 MSG_HELP_FO_CH_REVERSE
 Ordenación inversa
@@ -6051,7 +5977,7 @@ Copiar...
 ;
 MSG_MESSAGE_PRINT
 P\000Imprimir
-; P\000Print...
+; P\000Print
 ;
 MSG_MESSAGE_SAVE
 V\000Guardar...
@@ -6059,7 +5985,7 @@ V\000Guardar...
 ;
 MSG_MESSAGE_SAVEATT
 T\000Guardar
-; T\000Save
+; T\000Save...
 ;
 MSG_MESSAGE_CROP
 O\000Eliminar
@@ -6116,7 +6042,7 @@ Dirección From:
 MSG_HELP_FO_ST_MLFROMADDRESS
 Usar esta dirección From: al\n\
 escribir nuevos mensajes a la lista.
-; Use this from address when posting\n\
+; Use this From: address when posting\n\
 ; new mails to the list
 ;
 MSG_FO_ReplyToAddress
@@ -6126,7 +6052,7 @@ Dirección Reply-To:
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Usar esta dirección Reply-To: al\n\
 escribir nuevos mensajes a la lista.
-; Use this reply-to address when posting\n\
+; Use this Reply-To: address when posting\n\
 ; new mails to the list
 ;
 MSG_RE_MDNGads4
@@ -6135,11 +6061,11 @@ MSG_RE_MDNGads4
 ;
 MSG_EA_DefSecurity
 _Seguridad
-; Se_curity
+; Sec_urity
 ;
 MSG_HELP_MA_CY_DEFSECURITY
-Seguridad habitual cuando se\n\
-envíe correo a esta persona.
+Nivel de seguridad a utilizar habitualmente\n\
+cuando se envíe correo a esta persona.
 ; Default security for sending\n\
 ; mail to this person
 ;
@@ -6160,7 +6086,7 @@ Por omisión
 ;
 MSG_ER_PGPMultipart
 Error al crear el mensaje PGP multiparte. Encriptación/firmado no disponibles.
-; Error creating multipart PGP message. Encryption/signing disabled!
+; Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont
 Letras de ancho fijo
@@ -6172,15 +6098,15 @@ El servidor ESMTP %s no soporta la norma SMTP AUTH.
 ;
 MSG_CO_UseSMTPAUTH
 Usar SMTP AUT_H
-; Use SMTP _AUTH
+; Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser
 I_D de usuario
-; _User ID
+; Us_er ID
 ;
 MSG_CO_SMTPPass
 Con_traseña
-; Pa_ssword
+; Passwo_rd
 ;
 MSG_CO_Del
 Borrar
@@ -6196,11 +6122,11 @@ Cita alternativa
 ;
 MSG_CO_AltQuote
 Citas e_xternas usando
-; Quote external using
+; Quote e_xternal using
 ;
 MSG_CO_DoQuote
 Citar _mensaje
-; Quote message
+; Qu_ote message
 ;
 MSG_HELP_CO_ST_ALTQUOTECHAR
 Cadena que debería preceder a cada línea de\n\
@@ -6209,7 +6135,7 @@ una cita no procedente de correo electrónico.
 ; a quote inserted from non-email sources
 ;
 MSG_EA_SelectPhoto_Title
-Elija un retrato...
+Elija un retrato
 ; Select portrait
 ;
 MSG_RE_MoveNextFolderReq
@@ -6221,12 +6147,14 @@ sin leer es \eb%s\en\n\
 ; Change to this folder and continue\n\
 ; with reading there?
 ;
+; Obsolete
 MSG_WR_NoSubjectReqGad
 *_Elegir asunto|_Continuar sin asunto
 ; *_Set subject|_Continue without subject
 ;
+; Obsolete
 MSG_NoSubjectReq
-Aviso: no se ha indicado asunto
+Aviso: no se ha indicado asunto.
 ; Warning: Subject is empty
 ;
 MSG_MA_ABookModifiedGad
@@ -6247,5 +6175,424 @@ Parte
 ; Part
 ;
 MSG_ABOUT_OKAY_GAD
-Aceptar
-; OK
+\033bAceptar
+; \033bOkay
+;
+; ADDED AFTER 15-MAR-2001
+;
+MSG_FOLDER_NEWFOLDERGROUP
+Nuevo grupo...
+; New folder group...
+;This is the pulldown menu item, not the one in the pop-up menu
+;
+MSG_FOLDER_SNAPSHOT
+Guardar este orden
+; Snapshot tree
+;
+MSG_FOLDER_RELOAD
+Restaurar orden
+; Reload tree
+;
+MSG_CO_GENLISTCFG
+General
+; General settings
+;
+MSG_CO_FIELDLISTCFG
+Presentación de campos
+; Field settings
+;
+MSG_CO_SIZEFORMAT
+Tamaños en
+; Size format
+;
+MSG_HELP_CO_CY_SIZE
+¿Cómo le gustaría que se mostrasen\n\
+los tamaños de mensajes y carpetas?
+; How would you like the size of\n\
+; each mail to be displayed?
+;
+MSG_CO_SIZEFORMAT01
+Formato antiguo (1,234,567 bytes)
+; Old format - (1.234.567 bytes)
+;
+MSG_CO_SIZEFORMAT02
+Precisión media (0.001 GB, 0.01 MB, 0.1 kB)
+; Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)
+;
+MSG_CO_SIZEFORMAT03
+Precisión 10^-1 (0.1 GB/MB/kB)
+; 10^-1 precision (0.1 GB/MB/KB)
+;
+MSG_CO_SIZEFORMAT04
+Precisión 10^-2 (0.01 GB/MB/kB)
+; 10^-2 precision (0.01 GB/MB/KB)
+;
+MSG_CO_SIZEFORMAT05
+Previsión 10^-3 (0.001 GB/MB/kB)
+; 10^-3 precision (0.001 GB/MB/KB)
+;
+MSG_HELP_CO_CH_USESMTPAUTH
+Autentificarse ante un servidor SMTP ajeno\n\
+(normalmente fuera del dominio de su proveedor).\n\
+En caso de duda, no active esta opción.
+; Select if you wish to authenticate\n\
+; yourself to a foreign SMTP server\n\
+; (usually outside your ISP's domain).\n\
+; If in doubt, don't enable this option.
+;
+MSG_HELP_CO_ST_SMTPAUTHUSER
+Nombre de usuario a utilizar en\n\
+el proceso de autentificación.
+; Enter here the username\n\
+; of the SMTP AUTH user.
+;
+MSG_HELP_CO_ST_SMTPAUTHPASS
+Contraseña a utilizar en el\n\
+proceso de autentificación.
+; Enter here the password\n\
+; of the SMTP AUTH user.
+;
+MSG_HELP_CO_ST_APPICON
+Texto que debería mostrarse\n\
+como etiqueta del icono.
+; Text that should be displayed\n\
+; as the label of the AppIcon.
+;
+MSG_CO_APPICONTEXT
+Et_iqueta
+; _Label
+;
+MSG_CO_NEWMSGS
+%n  Mensajes nuevos
+; %n  New messages
+;
+MSG_CO_UNREADMSGS
+%u  Mensajes no leídos
+; %u  Unread messages
+;
+MSG_CO_TOTALMSGS
+%t  Total de mensajes
+; %t  Total messages
+;
+MSG_CO_DELMSGS
+%d  Mensajes borrados
+; %d  Deleted messages
+;
+MSG_CO_SENTMSGS
+%s  Mensajes enviados
+; %s  Sent messages
+;
+MSG_FO_DSTATS
+E_stadísticas
+; App_Icon stats
+;
+MSG_HELP_FO_CH_STATS
+¿Le gustaría que las estadísticas\n\
+de esta carpeta se contasen en\n\
+el icono de aplicación de YAM?
+; Would you like to see this\n\
+; folder's statistics in the\n\
+; YAM AppIcon's label?
+;
+MSG_ERROR_IMGLOAD
+No ha podido cargarse el fichero de imagen\n\
+PROGDIR:Icons/%s.
+; The image file\nPROGDIR:Icons/%s\ncouldn't be loaded.
+;
+MSG_OPENGUI
+Abriendo interfaz gráfico...
+; Opening GUI...
+;
+MSG_ERR_OPENLIB
+No puede abrirse '%s', versión v%lu.%lu
+; Can't open '%s', version v%lu.%lu
+;LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
+;
+MSG_CO_CONTEXTMENU
+Menú de contexto
+; Context menu
+;
+MSG_HELP_CO_CONTEXTMENU
+¿Mostrar un menú de contexto al pulsar\n\
+con el botón derecho del ratón sobre\n\
+un elemento de esta lista?
+; Show a popup menu when clicking\n\
+; the right mouse button on an\n\
+; item in this list?
+;
+MSG_CO_INFOBAR
+Barra de estado
+; Information bar
+;
+MSG_HELP_CO_CH_INFOBAR
+Elija aquí la posición de la barra de\n\
+estado que muestra información general.
+; Here you can select the position of the InfoBar\n\
+; which shows general information in YAM.
+;
+MSG_CO_WARNSUBJECT
+Avisar si no se indica un Asunto
+; Warn when there's an empty subject line
+;
+MSG_HELP_CO_CH_WARNSUBJECT
+¿Le gustaría que YAM le avisase en caso de\n\
+olvidar indicar un asunto en su mensaje?
+; Would you like to be warned if you\n\
+; leave the subject line blank?
+;
+MSG_WR_OKAYCANCELREQ
+*Aceptar|Cancelar
+; *Okay|Cancel
+;
+MSG_WR_NOSUBJECTREQ
+Falta el asunto. ¿Continuar de todas formas?
+; The subject is missing, continue anyway?
+;
+MSG_WR_TBSearch
+Buscar
+; Search
+;
+MSG_HELP_WR_BT_SEARCH
+Buscar en el texto una determinada cadena.
+; Search the text for a given string.
+;
+MSG_SEARCHWINDOW_TITLE
+Buscar
+; Search
+;
+MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE
+Distinguir mayúsculas
+; Case sensitive
+;
+MSG_SEARCHWINDOW_BT_SEARCH
+Buscar
+; Search
+;
+MSG_SEARCHWINDOW_BT_FROMTOP
+Desde arriba
+; From top
+;
+MSG_SEARCHWINDOW_BT_CANCEL
+Cancelar
+; Cancel
+;
+MSG_SEARCHNOTFOUND_TITLE
+Buscar
+; Search
+;
+MSG_SEARCHNOTFOUND_MSG
+No se ha encontrado '%s'
+; '%s' not found
+;
+MSG_SEARCHNOTFOUND_BUTTON
+Continuar
+; Continue
+;
+MSG_WR_ERRORNOSENDER
+El mensaje está incompleto: ¡falta el remitente!
+; Mail is incomplete: No sender!
+;
+MSG_WR_NOSENDERREQGAD
+_Usar remitente por omisión|*_Cancelar
+; _Use default sender|*_Cancel
+;
+MSG_FO_GROUP_CONFDEL
+Este grupo contiene carpetas, que serán\n\
+trasladadas a la carpeta padre al ser borrado.\n\
+¿De verdad desea borrar este grupo?
+; This group contains subfolders, which will\n\
+; be moved to the parent folder on deletion.\n\
+; Do you really want to delete this group?
+;
+MSG_FOLDER_NONSEL
+(ninguna seleccionada)
+; (none selected)
+;
+MSG_MAIL_NONSEL
+(ninguno seleccionado)
+; (none selected)
+;
+MSG_FO_NEWFGROUP
+Nuevo grupo...
+; New folder group...
+;
+;The item in the context menu
+;
+MSG_FO_NEWFGROUPREQ
+Por favor, indique un nombre para el nuevo grupo:
+; Please enter a name for the new folder group:
+;
+MSG_ER_CANTMOVEMAIL
+No puede moverse el mensaje '%s' a la carpeta '%s', \
+porque no existe ninguna carpeta con ese nombre. \
+Por favor, compruebe la configuración de sus filtros.
+; Can't move mail '%s' to folder '%s' because a folder with that name doesn't exist. \
+; Please check your Filters configuration.
+; MAILFILE, FOLDERNAME
+;
+MSG_MA_EXECUTINGCMD
+Ejecutando comando...
+; Executing command...
+;
+MSG_APP_DESCRIPTION
+Cliente SMTP/POP3 para AmigaOS
+; SMTP/POP3 E-Mail Client for AmigaOS
+;
+MSG_CO_INFOBARPOS
+_Posición
+; Pos_ition
+;
+MSG_CO_INFOBARPOS01
+Superior
+; Top
+;
+MSG_CO_INFOBARPOS02
+Central
+; Center
+;
+MSG_CO_INFOBARPOS03
+Inferior
+; Bottom
+;
+MSG_CO_INFOBARPOS04
+Desactivada
+; Turned off
+;
+MSG_CO_FOLDERLABEL
+_Etiqueta
+; _Label
+;
+MSG_FO_MLSUPPORT
+_Usar soporte
+; ML_-Support
+;
+MSG_HELP_FO_CH_MLSUPPORT
+Usar soporte para lista de\n\
+correo en esta carpeta.
+; Turn on/off the mailing list\n\
+; support for this folder.
+;
+MSG_FO_AUTODETECT
+Autodetectar
+; Autodetect
+;
+MSG_HELP_FO_BT_AUTODETECT
+Intentar hallar automáticamente los ajustes\n\
+de lista de correo apropiados analizando\n\
+los primeros 5 mensajes de la carpeta.
+; Try to guess automatically the suitable\n\
+; ML support settings by scanning the\n\
+; first 5 emails in the folder.
+;
+MSG_FO_NOTRECOGNIZED
+No han podido encontrarse unos ajustes apropiados.
+; Couldn't be recognized!
+;
+MSG_FO_MAXAGEFMT
+%ld días
+; %ld days
+;
+MSG_CO_NB_EMAILCACHE
+Cachear
+; Email cache
+;
+MSG_CO_NB_EMAILCACHEFMT
+%ld mensajes
+; %ld mails
+;
+MSG_HELP_CO_NB_EMAILCACHE
+Tamaño de caché para los destinarios usados más\n\
+recientemente que no están presentes en el listín.\n\
+Elija 0 mensajes para desactivar esta función.
+; Cache size for the most recently used\n\
+; recipients not yet in the address book.\n\
+; Select 0 mails to disable this feature.
+;
+MSG_CO_USESMTPTLS
+Usar SMTP TLSv1/SSLv3
+; Use SMTP TLSv1/SSLv3
+;
+MSG_HELP_CO_CH_USESMTPTLS
+Enviar el correo estableciendo una conexión TLSv1/SSLv3\n\
+con el servidor SMTP. Si esta caja es inaccesible, ello\n\
+significa que el soporte de AmiSSL no está disponible.
+; A TLSv1/SSLv3 secure connection will be established between\n\
+; the SMTP server and YAM to send email. If this checkbox is\n\
+; ghosted, it means AmiSSL support is not available.
+;
+MSG_CO_POP3SSL
+Usar POP3 TLSv1/SSLv3
+; Use POP3 TLSv1/SSLv3
+;
+MSG_HELP_CO_CH_POP3SSL
+Recoger el correo del servidor POP3 estableciendo una\n\
+conexión TLSv1/SSLv3 con el puerto SSL 995 del servidor.\n\
+Si esta caja es inaccesible, ello significa que el\n\
+soporte de AmiSSL no está disponible.
+; YAM will connect via TLSv1/SSLv3 to the POP3 server on the\n\
+; POP3 SSL port 995 port and transfer email from there. If this\n\
+; checkbox is ghosted, it means AmiSSL support is not available.
+;
+MSG_CO_USESTLS
+con STLS
+; with STLS
+;
+MSG_HELP_CO_CH_USESTLS
+Asumir que el servidor POP3 soporta STLS, y utilizar\n\
+el puerto POP3 110 estándar como con cualquier\n\
+servidor sin soporte SSL.
+; If checked, the POP3 server is assumed to support STLS\n\
+; and use the standard POP3 110 port like any non SSL server.
+;
+MSG_CO_ST_SMTPPORT
+Puerto
+; Port
+;
+MSG_HELP_CO_ST_SMTPPORT
+Puerto utilizado por el servidor SMTP (por omisión: 25)
+; Port used by the SMTP server (default: 25)
+;
+MSG_CO_ST_POPPORT
+Puerto
+; Port
+;
+MSG_HELP_CO_ST_POPPORT
+Puerto utilizado por el servidor POP3 (por omisión: 110)
+; Port used by the POP3 server (default: 110)
+;
+MSG_CO_InfoBarDef
+- Total: %t Nuevos: %n No leídos: %u
+; - Total: %t New: %n Unread: %u
+;
+MSG_TR_INITTLS
+Inicializando sesión TLSv1/SSLv3...
+; Initializing TLSv1/SSLv3 session...
+;
+MSG_ER_INITAMISSL
+No ha podido inicializarse amissl.library - soporte \
+TLSv1/SSLv3 desactivado. Por favor, revise su instalación \
+de AmiSSL y reinicie YAM.
+; Couldn't init amissl.library - TLSv1/SSLv3 support disabled. \
+; Please check your AmiSSL installation and restart YAM.
+;
+MSG_ER_INITTLS
+No ha podido inicializarse sesión TLSv1/SSLv3 para %s
+; Couldn't initialize TLSv1/SSLv3 session for %s
+;
+MSG_TR_SENDAUTH
+Enviando petición SMTP AUTH...
+; Sending SMTP AUTH request...
+;
+MSG_CO_AutoTranslateIn
+Auto_detección/Traducción de juego de caracteres
+; Codepage Autodetect/T_ranslation
+;
+MSG_HELP_CO_CH_AUTOTRANSLATEIN
+Ayuda a descifrar juegos de caracteres extraños.\n\
+Principalmente para quienes escriben en cirílico.
+; Helps decyphering strange character sets.\n\
+; Mainly for cyrillic users.
+;
+MSG_CO_IMPORTMIMETITLE
+Importar visores y tipos MIME
+; Import MIME viewers & types
