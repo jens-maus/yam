@@ -1955,37 +1955,42 @@ static void RE_UndoPart(struct Part *rp)
    // lets delete the file first so that we can cleanly "undo" the part
    DeleteFile(rp->Filename);
 
-   // if we remove a part from the part list we have to take
-   // care of the part index number aswell. So all following
-   // parts have to be descreased somehow by one.
-   //
-   // p2->p3->p4->p5
-   while(trp->Next)
+   // we only iterate through our partlist if there is
+   // a next item, if not we can simply relink it
+   if(trp->Next)
    {
-      // use the next element as the current trp
-      trp = trp->Next;
+      // if we remove a part from the part list we have to take
+      // care of the part index number aswell. So all following
+      // parts have to be descreased somehow by one.
+      //
+      // p2->p3->p4->p5
+      do
+      {
+        // use the next element as the current trp
+        trp = trp->Next;
 
-      // decrease the part number aswell
-      trp->Nr--;
+        // decrease the part number aswell
+        trp->Nr--;
 
-      // Now we also have to rename the temporary filename also
-      Rename(trp->Filename, trp->Prev->Filename);
-   }
+        // Now we also have to rename the temporary filename also
+        Rename(trp->Filename, trp->Prev->Filename);
 
-   // now go from the end to the start again and copy
-   // the filenames strings as we couldn`t do that in the previous
-   // loop also
-   //
-   // p5->p4->p3->p2
-   while(trp->Prev)
-   {
-      // iterate backwards
-      trp = trp->Prev;
+      } while(trp->Next);
 
-      // now copy the
-      strcpy(trp->Next->Filename, trp->Filename);
+      // now go from the end to the start again and copy
+      // the filenames strings as we couldn`t do that in the previous
+      // loop also
+      //
+      // p5->p4->p3->p2
+      do
+      {
+        // iterate backwards
+        trp = trp->Prev;
 
-      if(trp == rp) break;
+        // now copy the filename string
+        strcpy(trp->Next->Filename, trp->Filename);
+
+      } while(trp->Prev && trp != rp);
    }
 
    // relink the partlist

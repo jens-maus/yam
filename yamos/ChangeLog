@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-27  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug #728162 where YAM didn`t quote any mail text
+      upon a reply if the mail in question had an multipart attachment.
+
+#### YAM 2.4 RELEASE ######################################################
+
 2003-04-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed a serious bug in the RE_UndoPart() function
