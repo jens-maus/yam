@@ -41,7 +41,6 @@
 ;/// ***** English
 (set #def_cat_lang #def_lang_English)
 (set #def_doc_lang #def_doc_English)
-(set #wronginstaller "This script requires Installer 42.6 or better!")
 (set #wrongOS  "YAM needs at least OS3.0 to run!\n")
 (set #wrongMOS "MorphOS has not been found!\n")
 (set #wrongMUI "YAM needs at least MUI3.8 to run!\n")
@@ -226,7 +225,6 @@
 (
 (set #def_cat_lang #def_lang_Espanol)
 (set #def_doc_lang #def_doc_Espanol)
-(set #wronginstaller "¡Este script necesita Installer 42.6 o superior!")
 (set #wrongOS  "YAM necesita como mínimo el AmigaOS 3.0 para funcionar\n")
 (set #wrongMOS "¡No se ha encontrado MorphOS!\n")
 (set #wrongMUI "YAM necesita como mínimo MUI 3.8 para funcionar\n")
@@ -586,9 +584,9 @@
 
 ;----------------------------------------------------------------------------
 ; /// Checking environment
-(set installer_ver (/ @installer-version 65536))
-(set installer_rev (- @installer-version (* installer_ver 65536)))
-(if (or (< installer_ver 42) (< installer_rev 6)) (abort #wronginstaller))
+;(set installer_ver (/ @installer-version 65536))
+;(set installer_rev (- @installer-version (* installer_ver 65536)))
+;(if (or (< installer_ver 42) (< installer_rev 6)) (abort #wronginstaller))
 
 (set OS_ver (getversion "exec.library" (resident)))
 (if (< OS_ver (* 39 65536)) (abort #wrongOS))
@@ -669,7 +667,7 @@
                   "Português (V2.3)"
                   "Português (Brasil) (V2.3)"
                   "Russian (V2.3)"
-                  "" ; Slovenian locale (Slovensko) is not available
+                  "Slovensko (V2.4)"
                   "Srpski (V2.3)"
                   "Suomi (V2.3)"
                   "Svenska (V2.3)"
