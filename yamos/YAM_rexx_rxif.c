@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -2079,7 +2079,18 @@ void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action,
             if (rd->arg.country)  stccpy(ab->Country, rd->arg.country, SIZE_DEFAULT);
             if (rd->arg.phone)    stccpy(ab->Phone, rd->arg.phone, SIZE_DEFAULT);
             if (rd->arg.comment)  stccpy(ab->Comment, rd->arg.comment, SIZE_DEFAULT);
-            if (rd->arg.birthdate) ab->BirthDay = *rd->arg.birthdate;
+            if (rd->arg.birthdate)
+            {
+              // if the user supplied 0 as the birthdate, he wants to "delete" the current
+              // birthdate
+              if(*rd->arg.birthdate == 0) ab->BirthDay = 0;
+              else if(AB_ExpandBD(*rd->arg.birthdate)[0]) ab->BirthDay = *rd->arg.birthdate;
+              else
+              {
+                rd->rc = RETURN_ERROR;
+                break;
+              }
+            }
             if (rd->arg.image)    stccpy(ab->Photo, rd->arg.image, SIZE_PATHFILE);
             if (rd->arg.member && ab->Type == AET_LIST)
             {
@@ -2091,7 +2102,7 @@ void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action,
                strcpy(ab->Members, memb);
                FreeStrBuf(memb);
             }
-            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, 0, TAG_DONE);
+            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
             G->AB->Modified = TRUE;
          }
          else rd->rc = RETURN_ERROR;

@@ -5,8 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
-2003-01-07  David Rey <david@saug.org>
+2003-01-07  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_AB.c, YAM_rexx_rxif.c: fixed bug #658175 where it was
+      possible that a wrong birthdate definition was passed
+      through the ADDREDIT command and throwed an enforcer hit.
+      Now the command returns an RC 10 code if something is wrong with
+      the supplied birthdate number. In case a zero is supplied
+      to the ADDREDIT command, YAM will delete the current set
+      birthdate accordingly.
     * YAM_RE.c: YAM now also correctly recognized pgp signed
       messages that begin with "-----BEGIN PGP SIGNED MESSAGE" and
       flags this messages as "signed".

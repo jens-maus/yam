@@ -110,7 +110,11 @@ APTR AB_GotoEntry(char *alias)
 char *AB_ExpandBD(long date)
 {
    static char datestr[SIZE_SMALL];
-   if (!date) return "";
+
+   // check first if it could be a valid date!
+   if (!date || date/1000000 > 31 || date/1000000 < 1 || ((date/10000)%100) > 12 || ((date/10000)%100) < 1 || date%10000 < 1000)
+     return "";
+
    sprintf(datestr, "%02ld-%s-%ld", date/1000000, months[((date/10000)%100)-1], date%10000);
    return datestr;
 }
