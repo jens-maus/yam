@@ -283,9 +283,14 @@ BOOL MA_SaveIndex(struct Folder *folder)
 
    if (!(fh = fopen(MA_IndexFileName(folder), "w"))) return FALSE;
    BusyText(GetStr(MSG_BusySavingIndex), folder->Name);
+
+   // lets prepare the Folder Index struct and write it out
+   // we clear it first, so that the reserved field is also 0
+   memset(&fi, 0, sizeof(struct FIndex));
    fi.ID = MAKE_ID('Y','I','N','3');
    fi.Total = folder->Total; fi.New = folder->New; fi.Unread = folder->Unread; fi.Size = folder->Size;
    fwrite(&fi, sizeof(struct FIndex), 1, fh);
+
    for (mail = folder->Messages; mail; mail = mail->Next)
    {
       memset(&cmail, 0, sizeof(struct ComprMail));
@@ -784,91 +789,94 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                ExtractAddress(value, &pe);
                mail->From =  pe;
             }
-            if (!stricmp(field, "reply-to"))
+            else if (!stricmp(field, "reply-to"))
             {
                SET_FLAG(ok, 8);
                SParse(value);
                ExtractAddress(value, &pe);
                mail->ReplyTo = pe;
             }
-            if (!stricmp(field, "original-recipient"))
+            else if (!stricmp(field, "original-recipient"))
             {
                ExtractAddress(value, &pe);
                email.OriginalRcpt = pe;
             }
-            if (!stricmp(field, "disposition-notification-to"))
+            else if (!stricmp(field, "disposition-notification-to"))
             {
                ExtractAddress(value, &pe);
                email.ReceiptTo = pe;
                email.ReceiptType = RCPT_TYPE_ALL;
                SET_FLAG(mail->Flags, MFLAG_SENDMDN);
             }
-            if (!stricmp(field, "return-view-to"))
+            else if (!stricmp(field, "return-view-to"))
             {
                ExtractAddress(value, &pe);
                email.ReceiptTo = pe;
                email.ReceiptType = RCPT_TYPE_READ;
             }
-            if (!stricmp(field, "return-receipt-to"))
+            else if (!stricmp(field, "return-receipt-to"))
             {
                email.RetRcpt = TRUE;
             }
-            if (!stricmp(field, "to") && !(ok & 2))
+            else if (!stricmp(field, "to"))
             {
-               SET_FLAG(ok, 2);
-               SParse(value);
-               if ((p = MyStrChr(value, ','))) *p++ = 0;
-               ExtractAddress(value, &pe);
-               mail->To = pe;
-               if (p)
+               if(!(ok & 2))
                {
-                  SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
-                  if (deep && !email.NoSTo) MA_GetRecipients(p, &(email.STo), &(email.NoSTo));
+                  SET_FLAG(ok, 2);
+                  SParse(value);
+                  if ((p = MyStrChr(value, ','))) *p++ = 0;
+                  ExtractAddress(value, &pe);
+                  mail->To = pe;
+                  if (p)
+                  {
+                    SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
+                    if (deep && !email.NoSTo) MA_GetRecipients(p, &(email.STo), &(email.NoSTo));
+                  }
                }
             }
-            if (!stricmp(field, "cc"))
+            else if (!stricmp(field, "cc"))
             {
                SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
                if (deep && !email.NoCC) MA_GetRecipients(value, &(email.CC), &(email.NoCC));
             }
-            if (!stricmp(field, "bcc"))
+            else if (!stricmp(field, "bcc"))
             {
                SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
                if (deep && !email.NoBCC) MA_GetRecipients(value, &(email.BCC), &(email.NoBCC));
             }
-            if (!stricmp(field, "subject"))
+            else if (!stricmp(field, "subject"))
             {
                SET_FLAG(ok, 4);
                SParse(value);
                stccpy(mail->Subject, Trim(value), SIZE_SUBJECT);
             }
-            if (!stricmp(field, "message-id"))
+            else if (!stricmp(field, "message-id"))
             {
                mail->cMsgID = CompressMsgID(p = Trim(value));
                stccpy(email.MsgID, p, SIZE_MSGID);
             }
-            if (!stricmp(field, "in-reply-to"))
+            else if (!stricmp(field, "in-reply-to"))
             {
                mail->cIRTMsgID = CompressMsgID(p = Trim(value));
                stccpy(email.IRTMsgID, p, SIZE_MSGID);
             }
-            if (!stricmp(field, "date"))
+            else if (!stricmp(field, "date"))
             {
                foundDate = ScanDate(value);
             }
-            if (!stricmp(field, "importance"))
+            else if (!stricmp(field, "importance"))
             {
                p = Trim(value);
                if (!stricmp(p, "high")) mail->Importance = 1;
                if (!stricmp(p, "low")) mail->Importance = -1;
             }
-            if (!stricmp(field, "priority") && !mail->Importance)
+            else if (!stricmp(field, "priority") && !mail->Importance)
             {
                p = Trim(value);
                if (!stricmp(p, "urgent")) mail->Importance = 1;
                if (!stricmp(p, "non-urgent")) mail->Importance = -1;
             }
-            if (!stricmp(field, "content-type"))
+            else if (!stricmp(field, "content-type"))
             {
                p = Trim(value);
                if (!strnicmp(p, "multipart/mixed", 15))     SET_FLAG(mail->Flags, MFLAG_MULTIPART);
@@ -876,30 +884,27 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                if (!strnicmp(p, "multipart/encrypted", 19)) SET_FLAG(mail->Flags, MFLAG_CRYPT);
                if (!strnicmp(p, "multipart/signed", 16))    SET_FLAG(mail->Flags, MFLAG_SIGNED);
             }
-            if (!stricmp(field, "x-senderinfo"))
+            else if (!stricmp(field, "x-senderinfo"))
             {
                SET_FLAG(mail->Flags, MFLAG_SENDERINFO);
                if (deep) email.SenderInfo = StrBufCpy(email.SenderInfo, value);
             }
-            if (deep)
+            else if(deep && !stricmp(field, "x-yam-options"))
             {
-               if (!stricmp(field, "x-yam-options"))
-               {
-                  enum Security sec;
+              enum Security sec;
 
-                  if (strstr(value, "delsent")) email.DelSend = TRUE;
-                  if ((p = strstr(value, "sigfile"))) email.Signature = p[7]-'0'+1;
-                  for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
-                  {
-                    if(strstr(value, SecCodes[sec]))
-                      email.Security = sec;
-                  }
-               }
-               if (!strnicmp(field, "x-yam-header-", 13))
-               {
-                  email.Headers = StrBufCat(StrBufCat(email.Headers, &field[13]), ":");
-                  email.Headers = StrBufCat(StrBufCat(email.Headers, value), "\\n");
-               }
+              if (strstr(value, "delsent")) email.DelSend = TRUE;
+              if ((p = strstr(value, "sigfile"))) email.Signature = p[7]-'0'+1;
+              for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
+              {
+                if(strstr(value, SecCodes[sec]))
+                email.Security = sec;
+              }
+            }
+            else if(deep && !strnicmp(field, "x-yam-header-", 13))
+            {
+              email.Headers = StrBufCat(StrBufCat(email.Headers, &field[13]), ":");
+              email.Headers = StrBufCat(StrBufCat(email.Headers, value), "\\n");
             }
          }
       }

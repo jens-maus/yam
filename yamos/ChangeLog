@@ -7,6 +7,13 @@ $Source$
 
 2002-07-02  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_MAf.c: did some small performance tuning to the
+      MA_ExamineMail() function where we didn`t use "else if"
+      constructs somehow.
+      Also added a mem clearing memset() to the SaveIndex()
+      function to make sure that also the reserved array of the
+      index structured is somehow equal each time a index is
+      regenerated.
     * YAM_TR.c: fixed small flaw in the newly introduced TCP/IP
       routines where we threw an error on the optional UIDL command
       which is not supported by all types of POP3 servers.
