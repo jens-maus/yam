@@ -7,6 +7,9 @@ $Source$
 
 2005-03-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_FI.c: fixed a recently introduced bug in the mail filtering routines where
+      we forgot to advance through our patternList correctly, which in fact caused
+      YAM to end in an endless loop if a pattern list was used in a filter.
     * YAM_MAf.c: slightly adapted YAM to be somehow more compliant to RFC 2046 in
       which unknown/unsupproted multipart subtypes should be treated as
       "multipart/mixed" parts. This should in fact fix problems with not correctly

@@ -115,7 +115,7 @@ static BOOL FI_MatchListPattern(struct Search *search, char *string)
     return FALSE;
 
   // Now we process the read header to set all flags accordingly
-  for(curNode = patternList->mlh_Head; curNode->mln_Succ;)
+  for(curNode = patternList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
   {
     struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
@@ -314,15 +314,16 @@ static enum FastSearch FI_IsFastSearch(char *field)
 //  Reads list of patterns from a file
 static void FI_GenerateListPatterns(struct Search *search)
 {
-   char buf[SIZE_PATTERN], pattern[SIZE_PATTERN*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
+   char pattern[SIZE_PATTERN*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
+   char buf[SIZE_PATTERN];
    FILE *fh;
 
-   if ((fh = fopen(search->Match, "r")))
+   if((fh = fopen(search->Match, "r")))
    {
       // make sure the pattern list is successfully freed
       FreeSearchPatternList(search);
 
-      while (GetLine(fh, buf, sizeof(buf)))
+      while(GetLine(fh, buf, sizeof(buf)))
       {
          if(buf[0])
          {
