@@ -1,3 +1,7 @@
+2000-11-22  Matthias Bethke <Matthias.Bethke@gmx.net>
+
+    * Added partial PGP multipart support
+
 2000-12-06  Jacob Laursen <laursen@myself.com>
 
     * Enforcer hits when doing: rx "address 'YAM';info"
