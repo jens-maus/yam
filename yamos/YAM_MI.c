@@ -982,16 +982,17 @@ static int rfc2047_decode_int(const char *text,
 static char *rfc2047_search_quote(const char **ptr)
 {
   const char *p = *ptr;
-  char  *s;
+  size_t l;
+  char *s;
 
   while(**ptr && **ptr != '?')
     ++(*ptr);
 
-  if((s = malloc((size_t)(*ptr - p + 1))) == 0)
-    return (0);
-
-  memcpy(s, p, (size_t)(*ptr-p));
-  s[*ptr - p]=0;
+  l = *ptr - p;
+  if((s = malloc(l + 1)) != NULL) {
+    memcpy(s, p, l);
+    s[l] = 0;
+  }
 
   return (s);
 }
