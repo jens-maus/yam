@@ -4,7 +4,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@
             =============================================@{ub}
 
                       © 1995-2000 by Marcel Beck
-                 © 2000-2002 by YAM Open Source Team
+                 © 2000-2003 by YAM Open Source Team
 
 
       @{" Legal stuff     " link "COPY"}  - Legal information
@@ -94,7 +94,7 @@ Legal stuff
 
 YAM - Yet Another Mailer
 Copyright (C) 1995-2000 by Marcel Beck
-Copyright (C) 2000-2002 by YAM Open Source Team
+Copyright (C) 2000-2003 by YAM Open Source Team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -290,7 +290,7 @@ archives which must be unpacked into the same directory before installation:
 Installation by using the installer
 -----------------------------------
 
-   Open the 'Install' folder, double-click the icon 'English' and
+   Open the 'Install' folder, double-click the 'English' icon and
 follow the instructions given by the installer.  If you have already
 installed an older version of YAM, please restart your Amiga after the
 installation of YAM 2.4.
@@ -2340,6 +2340,12 @@ files, or for processing file types not yet supported by datatypes.
 Click @{b}New@{ub} to configure a display program, or use @{b}Delete@{ub} to delete an
 entry.
 
+   In addition, new file types defined here are also taken into account
+when composing a new message.  For instance, if a new attachment type
+"application/pdf" is defined for filenames ending in ".pdf", YAM will
+automatically use this MIME type when attaching files that bear this
+extension.
+
 
 @{b}Attachment type@{ub}
      This is the type of the actual entry, and corresponds to the
@@ -2424,7 +2430,7 @@ Configuration - Address book
 
 @{b}Save sender's address@{ub}
      YAM can automatically save the sender's address when you're
-     reading a message, i.e. it creates a new entry in the address
+     reading a message, i.e. it will create a new entry in the address
      book.  Choose one of these modes:
 
        never                   Don't save addresses
@@ -2439,17 +2445,18 @@ Configuration - Address book
                                automatically
 
 
+@{b}Group for new entries@{ub}
+     Alias of the group that will contain the new address book entries
+     created by the previous option.  The group will be created if it
+     doesn't exist yet.
+
+     Example:  NEW
+
+
 @{b}Save photos in@{ub}
      The pictures of the senders are stored here.
 
      Example:  YAM:Gallery
-
-
-@{b}Group for new entries@{ub}
-     Alias of the group that will contain the new address book entries.
-     The group will be created if it doesn't exist yet.
-
-     Example:  NEW
 
 
 @{b}URL of your picture@{ub}
@@ -3647,6 +3654,9 @@ Buttons and Gadgets
      default setting (@{b}application/octet-stream@{ub}) will be used.  Before
      defining a new MIME type, please check that is isn't already part
      of the pop-up list.
+
+     Additional file types defined in the @{" MIME configuration " link "CO11"} are
+     also used automatically.
 
      Example:  image/gif
 
@@ -5374,20 +5384,20 @@ Alphabetical list of all ARexx commands
  @{" INFO              " link "RX_INFO"}  - Return information about the program
  @{" ISONLINE          " link "RX_ISONLINE"}  - Detect whether YAM is currently transfering email
  @{" LISTSELECT        " link "RX_LISTSELECT"}  - Select messages in the current folder
- @{" MAILARCHIVE       " link "RX_MAILARCHIVE"}  - Move selected messages to another folder
- @{" MAILBOUNCE        " link "RX_MAILBOUNCE"}  - Bounce the message currently selected
+ @{" MAILARCHIVE       " link "RX_MAILARCHIVE"}  - Move the selected messages to another folder
+ @{" MAILBOUNCE        " link "RX_MAILBOUNCE"}  - Bounce the current message
  @{" MAILCHANGESUBJECT " link "RX_MAILCHANGESUBJECT"}  - Change the subject of the selected message(s)
  @{" MAILCHECK         " link "RX_MAILCHECK"}  - Download new email
  @{" MAILCOPY          " link "RX_MAILCOPY"}  - Duplicate the selected message(s)
  @{" MAILDELETE        " link "RX_MAILDELETE"}  - Delete the selected message(s)
- @{" MAILEDIT          " link "RX_MAILEDIT"}  - Edit the currently selected message
+ @{" MAILEDIT          " link "RX_MAILEDIT"}  - Edit the current message
  @{" MAILEXPORT        " link "RX_MAILEXPORT"}  - Export the selected message(s) into a file
  @{" MAILFILTER        " link "RX_MAILFILTER"}  - Filter messages in the current folder
- @{" MAILFORWARD       " link "RX_MAILFORWARD"}  - Forward the currently selected message
+ @{" MAILFORWARD       " link "RX_MAILFORWARD"}  - Forward the selected messages
  @{" MAILIMPORT        " link "RX_MAILIMPORT"}  - Import messages from a file into the current folder
  @{" MAILINFO          " link "RX_MAILINFO"}  - Return information about a given message
- @{" MAILMOVE          " link "RX_MAILMOVE"}  - Move the selected message(s) to another folder
- @{" MAILREAD          " link "RX_MAILREAD"}  - Read the currently selected message
+ @{" MAILMOVE          " link "RX_MAILMOVE"}  - Move the selected messages to another folder
+ @{" MAILREAD          " link "RX_MAILREAD"}  - Read the current message
  @{" MAILREPLY         " link "RX_MAILREPLY"}  - Reply the currently selected message
  @{" MAILSEND          " link "RX_MAILSEND"}  - Send the messages in the @{b}Outgoing@{ub} folder
  @{" MAILSENDALL       " link "RX_MAILSENDALL"}  - Send all the messages in the @{b}Outgoing@{ub} folder
@@ -5494,17 +5504,17 @@ Message manipulation
 --------------------
 
  @{" GETMAILINFO       " link "RX_GETMAILINFO"}  - Return information about the active message
- @{" MAILARCHIVE       " link "RX_MAILARCHIVE"}  - Move selected messages to another folder
- @{" MAILBOUNCE        " link "RX_MAILBOUNCE"}  - Bounce the message currently selected
+ @{" MAILARCHIVE       " link "RX_MAILARCHIVE"}  - Move the selected messages to another folder
+ @{" MAILBOUNCE        " link "RX_MAILBOUNCE"}  - Bounce the current message
  @{" MAILCHANGESUBJECT " link "RX_MAILCHANGESUBJECT"}  - Change the subject of the selected message(s)
  @{" MAILCOPY          " link "RX_MAILCOPY"}  - Duplicate the selected message(s)
  @{" MAILDELETE        " link "RX_MAILDELETE"}  - Delete the selected message(s)
- @{" MAILEDIT          " link "RX_MAILEDIT"}  - Edit the currently selected message
+ @{" MAILEDIT          " link "RX_MAILEDIT"}  - Edit the current message
  @{" MAILEXPORT        " link "RX_MAILEXPORT"}  - Export the selected message(s) into a file
  @{" MAILIMPORT        " link "RX_MAILIMPORT"}  - Import messages from a file into the current folder
  @{" MAILINFO          " link "RX_MAILINFO"}  - Return information about a given message
- @{" MAILMOVE          " link "RX_MAILMOVE"}  - Move the selected message(s) to another folder
- @{" MAILREAD          " link "RX_MAILREAD"}  - Read the currently selected message
+ @{" MAILMOVE          " link "RX_MAILMOVE"}  - Move the selected messages to another folder
+ @{" MAILREAD          " link "RX_MAILREAD"}  - Read the current message
  @{" MAILREPLY         " link "RX_MAILREPLY"}  - Reply the currently selected message
  @{" MAILSTATUS        " link "RX_MAILSTATUS"}  - Change the status of the selected message(s)
  @{" READINFO          " link "RX_READINFO"}  - Get info about the attachments in the message being read
@@ -5536,7 +5546,7 @@ Request info from user
 Writing new email
 -----------------
 
- @{" MAILFORWARD       " link "RX_MAILFORWARD"}  - Forward the currently selected message
+ @{" MAILFORWARD       " link "RX_MAILFORWARD"}  - Forward the selected messages
  @{" MAILWRITE         " link "RX_MAILWRITE"}  - Open a new Write window to compose a new mail
  @{" WRITEATTACH       " link "RX_WRITEATTACH"}  - Attach a file to a new message
  @{" WRITEBCC          " link "RX_WRITEBCC"}  - Fill the BCC: header of a new message
@@ -5572,7 +5582,7 @@ ADDRDELETE
      Removes an entry from the address book.
 
 @{b}INPUTS@{ub}
-     alias   - Alias of the entry to be removed.  This parameter is
+     ALIAS   - Alias of the entry to be removed.  This parameter is
                optional; if it is missing, AddrDelete will remove
                the current entry, if any.
 
@@ -5620,22 +5630,23 @@ ADDREDIT
      Edits the fields of the current address book entry.
 
 @{b}INPUTS@{ub}
-     alias       - alias for the entry (upto 29 chars)
-     name        - real name for the entry (upto 39 chars)
-     email       - email address for the entry
-     pgp         - PGP ID for the entry (person only)
-     homepage    - homepage for the entry (person only) (upto 231 chars)
-     street      - snail mail address of the entry (person only) (upto 79 chars)
-     city        - city for the entry (person only) (upto 79 chars)
-     country     - country for the entry (person only) (upto 79 chars)
-     phone       - phone # for the entry (person only) (upto 79 chars)
-     comment     - comment for the entry (upto 79 chars)
-     birthdate   - birthdate for a person in DDMMYYYY format, e.g. 13091969
-     image       - image filename for the entry (person only)
-     member      - use the argument(s) to edit a member list
-     add         - combined with 'member', adds new members to a
-                   distribution list, instead of replacing the old member
-                   info
+     ALIAS         - alias for the entry (upto 29 chars)
+     NAME          - real name for the entry (upto 39 chars)
+     EMAIL         - email address for the entry
+     PGP           - PGP ID for the entry (person only)
+     HOMEPAGE      - homepage for the entry (person only) (upto 231 chars)
+     STREET        - snail mail address of the entry (person only) (upto 79
+                     chars)
+     CITY          - city for the entry (person only) (upto 79 chars)
+     COUNTRY       - country for the entry (person only) (upto 79 chars)
+     PHONE         - phone # for the entry (person only) (upto 79 chars)
+     COMMENT       - comment for the entry (upto 79 chars)
+     BIRTHDATE/N   - birthdate for a person in DDMMYYYY format, e.g. 13091969
+     IMAGE         - image filename for the entry (person only)
+     MEMBER/M      - use the argument(s) to edit a member list
+     ADD/S         - combined with 'member', adds new members to a
+                     distribution list, instead of replacing the old member
+                     info
 
 @{b}RETURNS@{ub}
      RC is set 10 if no entry is currently selected in the address book.
@@ -5700,22 +5711,22 @@ ADDRFIND
      "Description", "Street", "City" and "Country" fields.
 
 @{b}INPUTS@{ub}
-     var         - variable to store the results of the query
-     stem        - base name used for the stems where the aliases for the
-                   address book entries matching the query will be stored
-     pattern     - pattern used as search criterion; all the AmigaDOS
-                   wildcard characters are supported
-     nameonly    - restrict the search to the "Real name" field of
-                   the entries in the address book
-     emailonly   - restrict the search to the "E-mail address" field
-                   of the entries in the address book
+     VAR/K         - variable to store the results of the query
+     STEM/K        - base name used for the stems where the aliases for the
+                     address book entries matching the query will be stored
+     PATTERN/A     - pattern used as search criterion; all the AmigaDOS
+                     wildcard characters are supported
+     NAMEONLY/S    - restrict the search to the "Real name" field of
+                     the entries in the address book
+     EMAILONLY/S   - restrict the search to the "E-mail address" field
+                     of the entries in the address book
 
 @{b}RETURNS@{ub}
-     var               - string containing the number of entries matching
+     VAR               - string containing the number of entries matching
                          the query and a space separated list of the
                          matching aliases.
-     <stem>alias.count - number of matches found
-     <stem>alias.nr    - the nth alias in the list of aliases matching
+     <stem>ALIAS.COUNT - number of matches found
+     <stem>ALIAS.NR    - the nth alias in the list of aliases matching
                          the query, nr being a number between 0 and n-1.
 
      RC is set to 5 if no match is found.
@@ -5770,7 +5781,7 @@ ADDRGOTO
      according to the alias supplied.
 
 @{b}INPUTS@{ub}
-     alias   - alias of the entry to turn into the current one
+     ALIAS/A   - alias of the entry to turn into the current one
 
 @{b}RETURNS@{ub}
      RC is set to 5 if the given alias cannot be found or the address
@@ -5804,29 +5815,29 @@ ADDRINFO
      This command returns information about an address book entry.
 
 @{b}INPUTS@{ub}
-     var     - variable to store the results of the query
-     stem    - base name used for the stems where the returned data
-               will be stored
-     alias   - alias of the entry to return info about
+     VAR/K     - variable to store the results of the query
+     STEM/K    - base name used for the stems where the returned data
+                 will be stored
+     ALIAS/A   - alias of the entry to return info about
 
 @{b}RETURNS@{ub}
-     <stem>type          - type of entry, may be one of P (person),
+     <STEM>TYPE          - type of entry, may be one of P (person),
                            L (distribution list) or G (group)
-     <stem>name          - real name of this entry
-     <stem>email         - email address of this entry
-     <stem>pgp           - PGP key ID of this entry
-     <stem>homepage      - homepage of this entry
-     <stem>street        - street address of this entry
-     <stem>city          - city for this entry
-     <stem>country       - country for this entry
-     <stem>phone         - phone # of this entry
-     <stem>comment       - comment stored with this entry
-     <stem>birthdate     - date of birth of this entry, in (D)DMMYYYY format
-     <stem>image         - filename with the portrait picture of this entry
-     <stem>members.count - number of members, if the entry is actually a
+     <STEM>NAME          - real name of this entry
+     <STEM>EMAIL         - email address of this entry
+     <STEM>PGP           - PGP key ID of this entry
+     <STEM>HOMEPAGE      - homepage of this entry
+     <STEM>STREET        - street address of this entry
+     <STEM>CITY          - city for this entry
+     <STEM>COUNTRY       - country for this entry
+     <STEM>PHONE         - phone # of this entry
+     <STEM>COMMENT       - comment stored with this entry
+     <STEM>BIRTHDATE     - date of birth of this entry, in (D)DMMYYYY format
+     <STEM>IMAGE         - filename with the portrait picture of this entry
+     <STEM>MEMBERS.COUNT - number of members, if the entry is actually a
                            distribution list
-     <stem>members.nr    - the nth member if the entry is actually a
-                           distribution list, nr being a number between
+     <STEM>MEMBERS.NR    - the nth member if the entry is actually a
+                           distribution list, NR being a number between
                            0 and n-1
 
 @{b}NOTES@{ub}
@@ -5889,7 +5900,7 @@ ADDRLOAD
      current address book in RAM.
 
 @{b}INPUTS@{ub}
-     filename   - address book to be loaded
+     FILENAME/A   - address book to be loaded
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the filename cannot be opened.
@@ -5944,19 +5955,19 @@ ADDRNEW
      the active entry.
 
 @{b}INPUTS@{ub}
-     var     - variable where the alias of the resulting entry will
-               be stored
-     stem    - base name used for the stem where the name of the
-               resulting alias will be stored
-     type    - type of entry, may be one of G (group), L (distribution
-               list) or P (person, the default value)
-     alias   - alias for the new entry
-     name    - real name for the new entry
-     email   - email address for the new entry
+     VAR/K    - variable where the alias of the resulting entry will
+                be stored
+     STEM/K   - base name used for the stem where the name of the
+                resulting alias will be stored
+     TYPE     - type of entry, may be one of G (group), L (distribution
+                list) or P (person, the default value)
+     ALIAS    - alias for the new entry
+     NAME     - real name for the new entry
+     EMAIL    - email address for the new entry
 
 @{b}RETURNS@{ub}
-     var         - alias of the resulting entry
-     <stem>alias - alias of the resulting entry
+     VAR         - alias of the resulting entry
+     <STEM>ALIAS - alias of the resulting entry
 
 @{b}NOTES@{ub}
      At least one of ALIAS, NAME or EMAIL must be specified.
@@ -6010,14 +6021,15 @@ ADDRRESOLVE
      the corresponding email address(es).
 
 @{b}INPUTS@{ub}
-     var    - variable where the name and/or address(es) of the
-              matching entries will be stored
-     stem   - base name used for the stem where the name of the
-              resulting recipient will be stored
+     VAR/K     - variable where the name and/or address(es) of the
+                 matching entries will be stored
+     STEM/K    - base name used for the stem where the name of the
+                 resulting recipient will be stored
+     ALIAS/A   - alias or name to be resolved
 
 @{b}RETURNS@{ub}
-     var         - name and/or address(es) of the matching entries
-     <stem>recpt - name and/or address(es) of the matching entries
+     VAR         - name and/or address(es) of the matching entries
+     <STEM>RECPT - name and/or address(es) of the matching entries
 
 @{b}NOTES@{ub}
 
@@ -6050,7 +6062,7 @@ ADDRSAVE
      This command will try to save the address book to the disk.
 
 @{b}INPUTS@{ub}
-     filename   - the complete path of the file to save the address
+     FILENAME   - the complete path of the file to save the address
                   book to; if no filename is provided, the current
                   one will be used, usually "<MAILDIR>/.addressbook".
 
@@ -6086,7 +6098,7 @@ APPBUSY
      in the status bar.  During this state, YAM won't accept any input.
 
 @{b}INPUTS@{ub}
-     text   - optional, a brief piece of text to display in the status
+     TEXT   - optional, a brief piece of text to display in the status
               bar while YAM is in busy state
 
 @{b}RETURNS@{ub}
@@ -6177,25 +6189,25 @@ FOLDERINFO
      folder if no folder is specified.
 
 @{b}INPUTS@{ub}
-     var      - variable where the results will be stored
-     stem     - base name used for the stems where the returned data
+     VAR/K    - variable where the results will be stored
+     STEM/K   - base name used for the stems where the returned data
                 will be stored
-     folder   - name or path of the folder we want to get info about;
+     FOLDER   - name or path of the folder we want to get info about;
                 if no folder is specified, the current folder will be
                 used  (V2.2)
 
 @{b}RETURNS@{ub}
-     var          - string with a space separated list of the results
+     VAR          - string with a space separated list of the results
                     of the query
-     <stem>number - position of the folder in the folder list; the folder
+     <STEM>NUMBER - position of the folder in the folder list; the folder
                     at the top is in slot 0
-     <stem>name   - name of the folder as shown in the folder list
-     <stem>path   - path of the folder, e.g. "incoming"
-     <stem>total  - total number of messages in the folder
-     <stem>new    - number of new messages in the folder
-     <stem>unread - number of unread messages in the folder
-     <stem>size   - size of the folder, in bytes
-     <stem>type   - type of folder (V2.3), possible values are:
+     <STEM>NAME   - name of the folder as shown in the folder list
+     <STEM>PATH   - path of the folder, e.g. "incoming"
+     <STEM>TOTAL  - total number of messages in the folder
+     <STEM>NEW    - number of new messages in the folder
+     <STEM>UNREAD - number of unread messages in the folder
+     <STEM>SIZE   - size of the folder, in bytes
+     <STEM>TYPE   - type of folder (V2.3), possible values are:
 
                        0 - normal
                        1 - incoming
@@ -6253,18 +6265,18 @@ GETCONFIGINFO
      Returns information about the current user.
 
 @{b}INPUTS@{ub}
-     var    - alternative variable to put the result into instead of
-              RESULT  (V2.0)
-     stem   - base name used for the stem where the result will be
-              stored  (V2.0)
-     item   - item to return information about, may be one of
+     VAR/K    - alternative variable to put the result into instead of
+                RESULT  (V2.0)
+     STEM/K   - base name used for the stem where the result will be
+                stored  (V2.0)
+     ITEM/A   - item to return information about, may be one of
 
-                 EMA(IL)   - e-mail address
-                 NAM(E)    - real name
+                   EMA(IL)   - e-mail address
+                   NAM(E)    - real name
 
 @{b}RETURNS@{ub}
-     var         - info returned by the query
-     <stem>value - info returned by the query
+     VAR         - info returned by the query
+     <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
      This command is obsoleted by USERINFO in V2.0+.  Don't use it
@@ -6312,20 +6324,22 @@ GETFOLDERINFO
      Returns information about the current folder.
 
 @{b}INPUTS@{ub}
-     var    - alternative variable to put the results into instead of
-              RESULT  (V2.0)
-     stem   - base name used for the stems where the returned data will
-              be stored  (V2.0)
-     item   - item to return info about, may be one of
+     VAR/K    - alternative variable to put the results into instead of
+                RESULT  (V2.0)
+     STEM/K   - base name used for the stems where the returned data will
+                be stored  (V2.0)
+     ITEM/A   - item to return info about, may be one of
 
-                 NUM(BER)   - position in the folder list (0 = first folder)
-                 NAM(E)     - name of the folder as shown in the folder list
-                 MAX        - total number of messages in the folder
-                 PAT(H)     - folder directory, without path  (V1.3)
+                   NUM(BER)   - position in the folder list (0 = first
+                                folder)
+                   NAM(E)     - name of the folder as shown in the folder
+                                list
+                   MAX        - total number of messages in the folder
+                   PAT(H)     - folder directory, without path  (V1.3)
 
 @{b}RETURNS@{ub}
-     var         - info returned by the query
-     <stem>value - info returned by the query
+     VAR         - info returned by the query
+     <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
      This command is obsoleted by FOLDERINFO in V2.0+.  Don't use it
@@ -6375,37 +6389,37 @@ GETMAILINFO
      Returns information about the current message.
 
 @{b}INPUTS@{ub}
-     var    - alternative variable to put the results into instead of
-              RESULT  (V2.0)
-     stem   - base name used for the stems where the returned data will
-              be stored  (V2.0)
-     item   - item to return info about, may be one of
+     VAR/K    - alternative variable to put the results into instead of
+                RESULT  (V2.0)
+     STEM/K   - base name used for the stems where the returned data will
+                be stored  (V2.0)
+     ITEM/A   - item to return info about, may be one of
 
-                 ACT(IVE)    - number (0 = first message in the folder)
-                 STA(TUS)    - status of the message, possible values are
+                   ACT(IVE)    - number (0 = first message in the folder)
+                   STA(TUS)    - status of the message, possible values are
 
-                                  N   - new
-                                  O   - read
-                                  U   - unread
-                                  R   - replied
-                                  F   - forwarded
-                                  S   - sent
-                                  W   - pending
-                                  H   - hold
-                                  E   - error sending
+                                    N   - new
+                                    O   - read
+                                    U   - unread
+                                    R   - replied
+                                    F   - forwarded
+                                    S   - sent
+                                    W   - pending
+                                    H   - hold
+                                    E   - error sending
 
-                 FRO(M)      - sender
-                 TO          - primary recipient
-                 REP(LY)     - return address; this will be either the
-                               first recipient in the "Reply-To:" header,
-                               or the first sender in the "From:" header
-                               if no "Reply-To:" header exists
-                 SUB(JECT)   - subject
-                 FIL(E)      - full path of the message file
+                   FRO(M)      - sender
+                   TO          - primary recipient
+                   REP(LY)     - return address; this will be either the
+                                 first recipient in the "Reply-To:" header,
+                                 or the first sender in the "From:" header
+                                 if no "Reply-To:" header exists
+                   SUB(JECT)   - subject
+                   FIL(E)      - full path of the message file
 
 @{b}RETURNS@{ub}
-     var         - info returned by the query
-     <stem>value - info returned by the query
+     VAR         - info returned by the query
+     <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
      This command is obsoleted by MAILINFO in V2.0+.  Don't use it
@@ -6462,22 +6476,42 @@ GETSELECTED
      Gets the position of the messages selected in the current folder.
 
 @{b}INPUTS@{ub}
-     var    - alternative variable to put the results into instead of RESULT
-     stem   - base name used for the stems where the returned data
-              will be stored 
+     VAR/K    - alternative variable to put the results into instead of
+                RESULT
+     STEM/K   - base name used for the stems where the returned data
+                will be stored 
 
 @{b}RETURNS@{ub}
-     var             - space separated list of results
-     <stem>num.count - number of selected messages
-     <stem>num.n     - position of the nth selected message, starting
+     VAR             - space separated list of results
+     <STEM>NUM.COUNT - number of selected messages
+     <STEM>NUM.NR    - position of the nth selected message, starting
                        from 0; the message at the top of the list is
                        also at position 0
+
+     The result is just "0" if an empty folder or a folder group
+     are currently selected.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Request info */
+
+         GETSELECTED STEM st.
+
+         /* Display results */
+
+         SAY 'Messages selected:  'st.num.count
+         DO i = 0 TO st.num.count-1
+           SAY 'Position of msg #'i': 'st.num.i
+         END
 
 @{b}BUGS@{ub}
+     <stem>num.count was not initialized for empty folders.  This was
+     fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
 
@@ -6503,8 +6537,8 @@ GETURL
      to disk.
 
 @{b}INPUTS@{ub}
-     url        - complete URL to the file
-     filename   - complete filename to write the file to
+     URL/A        - complete URL to the file
+     FILENAME/A   - complete filename to write the file to
 
 @{b}RETURNS@{ub}
      RC is set to 5 if a TCP/IP stack is not running, or 10 if it is
@@ -6516,6 +6550,26 @@ GETURL
      supported.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Ignore possible error from GETURL */
+
+         OPTIONS FAILAT 11
+
+         /* Download a file */
+
+         GETURL 'http://www.yam.ch/files/YAM22.lha' 'ram:YAM22.lha'
+
+         /* Report results */
+
+         c = RC
+         SELECT
+            WHEN c = 5 THEN SAY 'TCP/IP stack not running.'
+            WHEN c > 5 THEN SAY 'Error.'
+            OTHERWISE SAY 'File downloaded successfully.'
+            END
 
 @{b}BUGS@{ub}
 
@@ -6542,7 +6596,7 @@ HELP
      or saves it to a file.
 
 @{b}INPUTS@{ub}
-     file   - optional, file to save the list to
+     FILE   - optional, file to save the list to
 
 @{b}RETURNS@{ub}
 
@@ -6600,23 +6654,23 @@ INFO
      Info -- Return information about the program.
 
 @{b}TEMPLATE@{ub}
-     VAR/K,STEM/K,ITEM
+     VAR/K,STEM/K,ITEM/A
 
 @{b}FUNCTION@{ub}
      Returns misc information about the program.
 
 @{b}INPUTS@{ub}
-     var    - alternative variable to put the results into instead of
-              RESULT  (V2.0)
-     stem   - base name used for the stems where the returned data
-              will be stored  (V2.0)
-     item   - item to return info about, may be one of TITLE, AUTHOR,
-              COPYRIGHT, DESCRIPTION, VERSION, BASE or SCREEN (see
-              the MUI AutoDoc for MUI_Application)
+     VAR/K    - alternative variable to put the results into instead of
+                RESULT  (V2.0)
+     STEM/K   - base name used for the stems where the returned data
+                will be stored  (V2.0)
+     ITEM/A   - item to return info about, may be one of TITLE, AUTHOR,
+                COPYRIGHT, DESCRIPTION, VERSION, BASE or SCREEN (see
+                the MUI AutoDoc for MUI_Application)
 
 @{b}RETURNS@{ub}
-     var    - info returned by the query
-     <stem> - (???)
+     VAR         - info returned by the query
+     <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
 
@@ -6684,14 +6738,18 @@ LISTSELECT
      Selects messages in the current folder.
 
 @{b}INPUTS@{ub}
-     mode   - may be one of N (none), A (all), T (toggle selection) or
-              a numeric value to add to the selection the message in
-              that position, 0 referring to the message at the top of
-              the folder.
+     MODE/A   - may be one of N (none), A (all), T (toggle selection) or
+                a numeric value to add to the selection the message in
+                that position, 0 referring to the message at the top of
+                the folder.
 
 @{b}RETURNS@{ub}
 
 @{b}NOTES@{ub}
+     'LISTSELECT N' doesn't actually unselect everything in the folder:
+     the @{b}current@{ub} entry still remains as such, and for all intents
+     and purposes will be considered as "selected" by some commands, e.g.
+     @{" GETSELECTED " link "RX_GETSELECTED"}.
 
 @{b}EXAMPLE@{ub}
 
@@ -6710,7 +6768,7 @@ MAILARCHIVE
 -----------
 
 @{b}NAME@{ub}
-     MailArchive -- Move selected messages to another folder.
+     MailArchive -- Move the selected messages to another folder.
 
 @{b}TEMPLATE@{ub}
      FOLDER/A
@@ -6719,9 +6777,9 @@ MAILARCHIVE
      Moves the selected messages to the specified folder.
 
 @{b}INPUTS@{ub}
-     folder   - name, directory or number of the destination folder;
-                the folder at the top of the folder list is at
-                position 0
+     FOLDER/A   - name, directory or number of the destination folder;
+                  the folder at the top of the folder list is at
+                  position 0
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the specified folder doesn't exist.
@@ -6729,12 +6787,10 @@ MAILARCHIVE
 @{b}NOTES@{ub}
      This command is obsoleted by MAILMOVE in V2.0+.
 
-     If <folder> resembles a numerical value (e.g. "10"), a folder
-     named after that number won't yet be used as destination on
-     purpose, since MailArchive will be trying to move the messages
-     to folder #10.
-
 @{b}EXAMPLE@{ub}
+         /* Move the selected messages to the Archived folder */
+
+         MAILARCHIVE Archived
 
 @{b}BUGS@{ub}
 
@@ -6752,32 +6808,39 @@ MAILBOUNCE
 ----------
 
 @{b}NAME@{ub}
-     MailBounce -- Open a new Write window to bounce the selected message.
+     MailBounce -- Open a new Write window to bounce the current message.
                    (V2.0)
 
 @{b}TEMPLATE@{ub}
      VAR/K,STEM/K,QUIET/S
 
 @{b}FUNCTION@{ub}
-     Opens a cut-down Write window to bounce the selected message
+     Opens a cut-down Write window to bounce the current message to
+     another recipient.
 
 @{b}INPUTS@{ub}
-     var     - alternative variable to store the number of the created
-               window instead of RESULT
-     stem    - base name used for the stem where the returned data
-               will be stored
-     quiet   - force the window to stay invisible  (V2.1)
+     VAR/K     - alternative variable to store the number of the created
+                 window instead of RESULT
+     STEM/K    - base name used for the stem where the returned data
+                 will be stored
+     QUIET/S   - force the window to stay invisible  (V2.1)
 
 @{b}RETURNS@{ub}
-     <stem>window - number of the created window, if the command had
-                    success
+     <STEM>WINDOW - number of the created window if the command had
+                    success; may be 0 or 1 (or 2, if QUIET is enabled)
 
      RC is set to 10 if the window cannot be opened, maybe because the
      limit of two Write windows has been reached.
 
 @{b}NOTES@{ub}
+     In the outgoing message, only the "To:" field can be edited.
 
 @{b}EXAMPLE@{ub}
+         /* Silently bounce the current message */
+
+         MAILBOUNCE QUIET
+         WRITETO 'joe@provider.uk' 'mars'
+         WRITESEND
 
 @{b}BUGS@{ub}
 
@@ -6804,15 +6867,23 @@ MAILCHANGESUBJECT
      Changes the subject of all the selected messages.
 
 @{b}INPUTS@{ub}
-     subject   - new subject
+     SUBJECT/A   - new subject (upto 199 characters)
 
 @{b}RETURNS@{ub}
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+     /* Change the subject of the selected messages */
+
+     'MAILCHANGESUBJECT "This is the new subject"'
 
 @{b}BUGS@{ub}
+     MAILCHANGESUBJECT doesn't actually check that the string is not longer
+     than the allowed maximum of 199 characters, the result being that the
+     command wipes the message info contained in the filename comment, thus
+     requiring an index update and possibly causing further calamities
+     later on.  Handle with care for now.
 
 @{b}SEE ALSO@{ub}
 
@@ -6837,37 +6908,56 @@ MAILCHECK
      of them if none is specified.
 
 @{b}INPUTS@{ub}
-     var      - alternative variable to store the number of the created
-                window instead of RESULT  (V2.0)
-     stem     - base name used for the stems where the returned data
-                will be stored  (V2.0)
-     pop      - POP3 mail server to check (V2.0), specified as the position
-                in the list of POP3 servers in Configuration ->TCP/IP;
-                the server at the top is server 0
-     manual   - open the transfer window to enable user interaction,
-                i.e. message preselection  (V2.0)
+     VAR/K      - alternative variable to store the number of the created
+                  window instead of RESULT  (V2.0)
+     STEM/K     - base name used for the stems where the returned data
+                  will be stored  (V2.0)
+     POP/K/N    - POP3 mail server to check (V2.0), specified as the position
+                  in the list of POP3 servers in Configuration ->TCP/IP;
+                  the server at the top is server 0
+     MANUAL/S   - open the transfer window to enable user interaction,
+                  i.e. message preselection  (V2.0)
 
 @{b}RETURNS@{ub}
-     var              - info returned by the query
-     <stem>downloaded - total number of downloaded emails
-     <stem>onserver   - total number of emails remaining on the server
-     <stem>dupskipped - total number of duplicates skipped
-     <stem>deleted    - total number of emails deleted from the server
+     VAR              - info returned by the query
+     <STEM>DOWNLOADED - total number of downloaded emails
+     <STEM>ONSERVER   - total number of emails remaining on the server
+     <STEM>DUPSKIPPED - total number of duplicates skipped
+     <STEM>DELETED    - total number of emails deleted from the server
 
-     RC is set to 5 if the TCP/IP stack is not online.  (V???)
+     In V1.x, RC was always set to 0.  As of V2.0 however, RC is set to
+     5 if the TCP/IP stack is not online or if no messages are found on
+     the server
 
-     RESULT is set to the number of downloaded emails, or -1 if the
-     connection to the mail server failed.
+     Likewise, in V1.x RESULT was set to the number of downloaded emails,
+     or -1 if the connection to the mail server failed.
 
 @{b}NOTES@{ub}
      The command returns immediately if MANUAL is used.
 
      If no server is specified, the command will only check those
-     mail servers marked as "active" in the configuration.
+     mail servers marked as "active" in the configuration, just like
+     if the "Get" button was pressed in the toolbar.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Download email from a server */
+
+         MAILCHECK POP 2 STEM st.
+
+         /* Display results */
+
+         SAY 'Downloaded emails:  'st.downloaded
+         SAY 'Left on server:     'st.onserver
+         SAY 'Duplicates skipped: 'st.dupskipped
+         SAY 'Deleted on server:  'st.deleted
 
 @{b}BUGS@{ub}
+     Currently <stem>onserver simply returns the number of messages
+     found in the server.
 
 @{b}SEE ALSO@{ub}
 
@@ -6891,18 +6981,22 @@ MAILCOPY
      Copies the selected messages to the specified folder.
 
 @{b}INPUTS@{ub}
-     folder   - name or number of the destination folder; the folder
-                at the top is at position 0
+     FOLDER/A   - name or number of the destination folder; the folder
+                  at the top is at position 0
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the specified folder doesn't exist.
 
 @{b}NOTES@{ub}
-     If <folder> resembles a numerical value (e.g. "10"), a folder
-     named after that number won't yet be used as destination on
-     purpose, since MailCopy will be trying to copy to folder #10.
+     Except for the filenames, the copies are identical to the originals.
+
+     The command doesn't mind the type of folder, i.e. it will copy an
+     outgoing email to the "Incoming" folder if instructed to do so.
 
 @{b}EXAMPLE@{ub}
+         /* Copy the selected messages to a custom folder */
+
+         MAILCOPY Archived
 
 @{b}BUGS@{ub}
 
@@ -6928,9 +7022,9 @@ MAILDELETE
      Deletes the messages selected in the current folder
 
 @{b}INPUTS@{ub}
-     atonce   - delete the messages immediately, without moving them
-                to the 'Deleted' folder  (V2.0)
-     force    - skip any confirmation requester  (V2.0)
+     ATONCE/S   - delete the messages immediately, without moving them
+                  to the 'Deleted' folder  (V2.0)
+     FORCE/S    - skip any confirmation requester  (V2.0)
 
 @{b}RETURNS@{ub}
 
@@ -6938,6 +7032,9 @@ MAILDELETE
      MailDelete can't delete files protected against deletion.
 
 @{b}EXAMPLE@{ub}
+         /* Force delete immediately the selected messages */
+
+         MAILDELETE FORCE ATONCE
 
 @{b}BUGS@{ub}
 
@@ -6954,7 +7051,7 @@ MAILEDIT
 --------
 
 @{b}NAME@{ub}
-     MailEdit -- Edit the selected message in a new Write window.  (V2.0)
+     MailEdit -- Edit the current message in a new Write window.  (V2.0)
 
 @{b}TEMPLATE@{ub}
      VAR/K,STEM/K,QUIET/S
@@ -6963,15 +7060,48 @@ MAILEDIT
      Opens a new Write window to edit the selected message.
 
 @{b}INPUTS@{ub}
-     var            - info returned by the command
-     <stem>window   - number of the created window, may be either 0 or 1
-     quiet          - force the Write window to stay invisible  (V2.1)
+     VAR/K     - alternative variable to store the number of the created
+                 window instead of RESULT
+     STEM/K    - base name used for the stem where the returned data
+                 will be stored
+     QUIET/S   - force the Write window to stay invisible  (V2.1)
 
 @{b}RETURNS@{ub}
+     VAR          - info returned by the command
+     <STEM>WINDOW - number of the created window, may be either 0 or 1
+                    (or 2, if QUIET is enabled)
+
+     RC is set to 10 if the window cannot be opened, maybe because the
+     limit of two Write windows has been reached.
 
 @{b}NOTES@{ub}
+     The command works even with email that is NOT intended as "outgoing",
+     like email in the Incoming folder for instance, in which case the
+     [Send now] and [Hold] buttons in the Write window are disabled.
+     After being edited, the mail is marked as "ready to send" no matter
+     in which folder it is located, and all the old headers are replaced
+     except for "From:" and "To:", which must be manually edited.  Special
+     care must be taken to ensure that these remain valid in the resulting
+     message and no "undisclosed-recipients:;" or some such remains there
+     by the time it is again saved.  Handle with caution.
 
 @{b}EXAMPLE@{ub}
+         /* Select the first message in the Outgoing folder */
+
+         SETFOLDER Outgoing
+         SETMAIL 0
+
+         /* Edit this message */
+
+         MAILEDIT
+
+         /* Change the subject */
+
+         'WRITESUBJECT "Email address change"'
+
+         /* Put the message again in the queue */
+
+         WRITEQUEUE
 
 @{b}BUGS@{ub}
 
@@ -6994,12 +7124,13 @@ MAILEXPORT
      FILENAME/A,ALL/S,APPEND/S
 
 @{b}FUNCTION@{ub}
-     Exports the selected messages to a file.
+     Exports the selected messages to a file, in a format ready to
+     be used by any mail application which supports the MBOX format.
 
 @{b}INPUTS@{ub}
-     filename   - filename to use
-     all        - export the whole folder
-     append     - append the data to an (already existing) file
+     FILENAME/A   - filename to use
+     ALL/S        - export the whole folder
+     APPEND/S     - append the data to an (already existing) file
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no message is selected or if the output file
@@ -7008,6 +7139,9 @@ MAILEXPORT
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Export all the contents of the current folder */
+
+         MAILEXPORT 'ram:spool' ALL
 
 @{b}BUGS@{ub}
 
@@ -7034,34 +7168,55 @@ MAILFILTER
      marked as "new".
 
 @{b}INPUTS@{ub}
-     var    - alternative variable to put the results into instead of
-              RESULT  (V2.0)
-     stem   - base name used for the stems where the returned data
-              will be stored  (V2.0)
-     all    - filter ALL the messages in the folder, instead of only
-              those marked as "new"
+     VAR/K    - alternative variable to put the results into instead of
+                RESULT  (V2.0)
+     STEM/K   - base name used for the stems where the returned data
+                will be stored  (V2.0)
+     ALL/S    - filter ALL the messages in the folder, instead of only
+                those marked as "new"
 
 @{b}RETURNS@{ub}
-     var             - info returned by the query
-     <stem>checked   - total number of messages checked
-     <stem>bounced   - number of messages bounced
-     <stem>forwarded - number of messages forwarded
-     <stem>replied   - number of messages auto-replied
-     <stem>executed  - number of messages that triggered a command
+     VAR             - info returned by the query
+     <STEM>CHECKED   - total number of messages checked
+     <STEM>BOUNCED   - number of messages bounced
+     <STEM>FORWARDED - number of messages forwarded
+     <STEM>REPLIED   - number of messages auto-replied
+     <STEM>EXECUTED  - number of messages that triggered a command
                        execution
-     <stem>moved     - number of messages moved to another folder
-     <stem>deleted   - number of messages deleted
+     <STEM>MOVED     - number of messages moved to another folder
+     <STEM>DELETED   - number of messages deleted
+
+     Note that stems are initialized even for empty folders.
 
 @{b}WARNING@{ub}
      Due to a design flaw in YAM, filtering a large amount of mail
      where lots of folder indices need to be loaded is potentially
      dangerous on Amigas with few memory, as the system might run
-     out of memory while the filtering  is being done, thus leading
+     out of memory while the filtering is being done, thus leading
      to a crash.  Use with caution.
 
 @{b}NOTES@{ub}
+     Contrary to what happens when using the GUI, the command doesn't
+     put up any warning when working in a folder other than "Incoming".
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Filter all the messages in the current folder */
+
+         MAILFILTER ALL STEM st.
+
+         /* Display results */
+
+         SAY 'Checked messages:   'st.checked
+         SAY 'Bounced:            'st.bounced
+         SAY 'Auto-forwarded:     'st.forwarded
+         SAY 'Auto-replied:       'st.replied
+         SAY 'Commands triggered: 'st.executed
+         SAY 'Moved:              'st.moved
+         SAY 'Deleted:            'st.deleted
 
 @{b}BUGS@{ub}
 
@@ -7078,25 +7233,26 @@ MAILFORWARD
 -----------
 
 @{b}NAME@{ub}
-     MailForward -- Open a new Write window to forward the currently
-                    selected message.
+     MailForward -- Open a new Write window to forward the selected
+                    messages.
 
 @{b}TEMPLATE@{ub}
      VAR/K,STEM/K,QUIET/S
 
 @{b}FUNCTION@{ub}
-     Opens a new Write window to forward the currently selected message.
+     Opens a new Write window to forward the selected messages.
 
 @{b}INPUTS@{ub}
-     var     - alternative variable to put the results into instead of
-               RESULT  (V2.0)
-     stem    - base name used for the stem where the number of the created
-               window will be stored  (V2.0)
-     quiet   - force the Write window to stay invisible  (V2.1)
+     VAR/K     - alternative variable to put the results into instead of
+                 RESULT  (V2.0)
+     STEM/K    - base name used for the stem where the number of the created
+                 window will be stored  (V2.0)
+     QUIET/S   - force the Write window to stay invisible  (V2.1)
 
 @{b}RETURNS@{ub}
-     var          - number of the created window, may be 0 or 1
-     <stem>window - number of the created window, may be 0 or 1
+     VAR          - info returned by the command
+     <STEM>WINDOW - number of the created window, may be 0 or 1 (or 2,
+                    if QUIET is enabled)
 
      RC is set to 10 if the window cannot be opened, maybe because the
      limit of two Write windows has been reached.
@@ -7104,6 +7260,11 @@ MAILFORWARD
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Silently forward the selected messages */
+
+         MAILFORWARD QUIET
+         WRITETO 'joe@provider.uk' 'mars'
+         WRITESEND
 
 @{b}BUGS@{ub}
 
@@ -7128,11 +7289,12 @@ MAILIMPORT
 
 @{b}FUNCTION@{ub}
      Imports messages from a file on disk into the current folder.
+     The file is assumed to be in MBOX format.
 
 @{b}INPUTS@{ub}
-     filename   - file to import messages from
-     wait       - open the transfer window to enable user interaction,
-                  i.e. message preselection  (V2.0)
+     FILENAME/A   - file to import messages from
+     WAIT/S       - open the transfer window to enable user interaction,
+                    i.e. message preselection  (V2.0)
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the filename cannot be opened.
@@ -7141,10 +7303,15 @@ MAILIMPORT
      The command returns immediately if the WAIT switch is used.
 
 @{b}EXAMPLE@{ub}
+         /* Selectively import messages to the Incoming folder */
+
+         SETFOLDER Incoming
+         MAILIMPORT 'ram:spool' WAIT
 
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" NEWMAILFILE " link "RX_NEWMAILFILE"}
 
 @endnode
 
@@ -7167,19 +7334,19 @@ MAILINFO
      message in none is specified.
 
 @{b}INPUTS@{ub}
-     var     - alternative variable to put the results into instead of
-               RESULT
-     stem    - base name used for the stems where the returned data will
-               be stored
-     index   - position of the message you want info about, the message
-               at the top of the list occupying position 0; if no index
-               is specified, the current message will be used
+     VAR/K     - alternative variable to put the results into instead of
+                 RESULT
+     STEM/K    - base name used for the stems where the returned data will
+                 be stored
+     INDEX/N   - position of the message you want info about, the message
+                 at the top of the list occupying position 0; if no index
+                 is specified, the current message will be used
 
 @{b}RETURNS@{ub}
-     var            - info returned by the query
-     <stem>index    - position of the message in the list; the message
+     VAR            - info returned by the query
+     <STEM>INDEX    - position of the message in the list; the message
                       at the top occupies position 0
-     <stem>status   - status of the message; possible values are
+     <STEM>STATUS   - status of the message; possible values are
 
                          N - new
                          O - read
@@ -7191,21 +7358,21 @@ MAILINFO
                          H - hold
                          E - error sending
 
-     <stem>from     - sender of the message; specifically, the first sender
+     <STEM>FROM     - sender of the message; specifically, the first sender
                       noted in the "From:" header
-     <stem>to       - recipient of the message; actually, the first recipient
+     <STEM>TO       - recipient of the message; actually, the first recipient
                       noted in the "To:" header
-     <stem>replyto  - return address of the message; this will be either the
+     <STEM>REPLYTO  - return address of the message; this will be either the
                       first recipient in the "Reply-To:" header, or the first
                       sender in the "From:" header if no "Reply-To:" header
                       exists
-     <stem>subject  - subject of the message (contents of the "Subject:"
+     <STEM>SUBJECT  - subject of the message (contents of the "Subject:"
                       header)
-     <stem>filename - filename where the message is stored, including
+     <STEM>FILENAME - filename where the message is stored, including
                       path
-     <stem>size     - size of the message, in bytes
-     <stem>date     - date of the message, in "MM-DD-YY HH:MM:SS" format
-     <stem>flags    - an 8 byte string in "MARCS-00" format:
+     <STEM>SIZE     - size of the message, in bytes
+     <STEM>DATE     - date of the message, in "MM-DD-YY HH:MM:SS" format
+     <STEM>FLAGS    - an 8 byte string in "MARCS-00" format:
 
                          MARCS-00
                          ||||| ||
@@ -7217,7 +7384,7 @@ MAILINFO
                          |`---------------- contains @{b}a@{ub}ttachments
                          `----------------- @{b}m@{ub}ultiple recipients
 
-     <stem>msgid    - compressed 32 bit representation of the contents
+     <STEM>MSGID    - compressed 32 bit representation of the contents
                       of the "Message-ID:" header, e.g. 7008417  (V2.1)
 
      RC is set to 10 if INDEX is out of the range of messages available in
@@ -7226,6 +7393,39 @@ MAILINFO
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Get info about the current message */
+
+         MAILINFO STEM st.
+
+         /* Display results */
+
+         SAY 'Message:    'st.index
+         status = st.status
+         SELECT
+            WHEN status = 'N' THEN status = 'New'
+            WHEN status = 'O' THEN status = 'Read'
+            WHEN status = 'U' THEN status = 'Unread'
+            WHEN status = 'R' THEN status = 'Replied'
+            WHEN status = 'F' THEN status = 'Forwarded'
+            WHEN status = 'S' THEN status = 'Sent'
+            WHEN status = 'W' THEN status = 'Pending'
+            WHEN status = 'H' THEN status = 'Hold'
+            OTHERWISE status = 'Error sending'
+            END
+         SAY 'Status:     'status
+         SAY 'From:       'st.from
+         SAY 'To:         'st.to
+         SAY 'Reply-To:   'st.replyto
+         SAY 'Subject:    'st.subject
+         SAY 'Filename:   'st.filename
+         SAY 'Size:       'st.size
+         SAY 'Date:       'st.date
+         SAY 'Flags:      'st.flags
+         SAY 'Message-ID: 'st.msgid
 
 @{b}BUGS@{ub}
 
@@ -7249,26 +7449,26 @@ MAILMOVE
      FOLDER/A
 
 @{b}FUNCTION@{ub}
-     Moves the selected messages to another folder.
+     Moves the selected messages to the specified folder.
 
 @{b}INPUTS@{ub}
-     folder   - name, directory or number of the destination folder;
-                the folder at the top of the folder list is at position 0
+     FOLDER/A   - name, directory or number of the destination folder;
+                  the folder at the top of the folder list is at position 0
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the specified folder doesn't exist.
 
 @{b}NOTES@{ub}
-     If <folder> resembles a numerical value (e.g. "10"), a folder
-     named after that number won't yet be used as destination on
-     purpose, since MailMove will be trying to move the messages to
-     folder #10.
 
 @{b}EXAMPLE@{ub}
+         /* Move the selected messages to the Archived folder */
+
+         MAILMOVE Archived
 
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" NEWMAILFILE " link "RX_NEWMAILFILE"}
 
 @endnode
 
@@ -7281,33 +7481,47 @@ MAILREAD
 --------
 
 @{b}NAME@{ub}
-     MailRead -- Load the active message in the Read window.  (V2.0)
+     MailRead -- Load the current message in the Read window.  (V2.0)
 
 @{b}TEMPLATE@{ub}
      VAR/K,STEM/K,WINDOW/N,QUIET/S
 
 @{b}FUNCTION@{ub}
-     Loads the active message into the Read window, or activates an
+     Loads the current message into the Read window, or activates an
      already opened Read window.
 
 @{b}INPUTS@{ub}
-     var      - alternative variable to put the results into instead of
-                RESULT
-     stem     - base name used for the stem where the returned data will
-                be stored
-     window   - change the command behavior to just activate an
-                already opened Read window, possible values go
-                between 0 and 3
-     quiet    - force the window to stay invisible
+     VAR/K      - alternative variable to put the results into instead of
+                  RESULT
+     STEM/K     - base name used for the stem where the returned data will
+                  be stored
+     WINDOW/N   - change the command behavior to just activate an
+                  already opened Read window, possible values go
+                  between 0 and 3
+     QUIET/S    - force the window to stay invisible
 
 @{b}RETURNS@{ub}
-     var          - info returned by the command
-     <stem>window - number of the Read window now active
+     VAR          - info returned by the command
+     <STEM>WINDOW - number of the Read window now active, possible values
+                    go between 0 and 3
 
-     RC is set to 10 if <window> is used with a value referring to an
+     RC is set to 10 if WINDOW is used with a value referring to an
      inexistant window.
 
 @{b}NOTES@{ub}
+     For all intents and purposes, the status of the "Multiple windows"
+     flag in the configuration is irrelevant for this command.
+
+     Window slots are dinamically assigned as they are required until
+     all four are occupied, and remain in use until the relevant window
+     is closed (an "invisible" Read window is also "open" within this
+     context).  The optional WINDOW parameter sets the @{b}active@{ub} Read window,
+     upon which the @{" READCLOSE " link "RX_READCLOSE"}, @{" READINFO " link "RX_READINFO"}, @{" READPRINT " link "RX_READPRINT"} and @{" READSAVE " link "RX_READSAVE"}
+     commands will act when called.  Therefore, the MAILREAD command
+     SHOULD be called before using any of them to ensure they act on
+     the window that they are supposed to; note that manually activating
+     a Read window using the GUI does @{b}not@{ub} magically makes it the target
+     of the above mentioned commands.
 
 @{b}EXAMPLE@{ub}
 
@@ -7337,15 +7551,16 @@ MAILREPLY
      Opens a new Write window in order to reply the selected message.
 
 @{b}INPUTS@{ub}
-     var     - alternative variable to put the results into instead of
-               RESULT  (V2.0)
-     stem    - base name used for the stem where the returned data will
-               be stored  (V2.0)
-     quiet   - force the window to stay invisible  (V2.1)
+     VAR/K     - alternative variable to put the results into instead of
+                 RESULT  (V2.0)
+     STEM/K    - base name used for the stem where the returned data will
+                 be stored  (V2.0)
+     QUIET/S   - force the window to stay invisible  (V2.1)
 
 @{b}RETURNS@{ub}
-     var          - info returned by the command
-     <stem>window - number of the created window, may be 0 or 1
+     VAR          - info returned by the command
+     <STEM>WINDOW - number of the created window, may be 0 or 1 (or 2,
+                    if QUIET is enabled)
 
 @{b}NOTES@{ub}
 
@@ -7376,7 +7591,7 @@ MAILSEND
      folder.
 
 @{b}INPUTS@{ub}
-     all   - optional, force the command to send all the messages  (V2.0)
+     ALL/S   - optional, force the command to send all the messages  (V2.0)
 
 @{b}RETURNS@{ub}
      RC is set to 5 if the system is not online or if there isn't any
@@ -7448,14 +7663,16 @@ MAILSTATUS
      Changes the status of the selected messages.
 
 @{b}INPUTS@{ub}
-     status   - may be one of
+     STATUS/A   - may be one of
 
-                   O - read
-                   U - unread
-                   H - on hold
-                   W - ready to send
+                     O - read
+                     U - unread
+                     H - on hold
+                     W - ready to send
 
 @{b}RETURNS@{ub}
+     RC is set to 5 if no valid STATUS is supplied, or to 10 if it is
+     not supplied at all.
 
 @{b}NOTES@{ub}
      The command won't mind the type of folder, i.e. it will change
@@ -7463,6 +7680,9 @@ MAILSTATUS
      if instructed to do so.
 
 @{b}EXAMPLE@{ub}
+         /* Switch all selected messages to "Unread" */
+
+         MAILSTATUS U
 
 @{b}BUGS@{ub}
 
@@ -7512,37 +7732,101 @@ MAILWRITE
 ---------
 
 @{b}NAME@{ub}
-     MailWrite -- Open a new Write window or select one already opened.
+     MailWrite -- Open a new Write window or activate one already opened.
                   (V1.3)
 
 @{b}TEMPLATE@{ub}
      VAR/K,STEM/K,WINDOW/N,QUIET/S
 
 @{b}FUNCTION@{ub}
-     Opens a new Write window or selects one already opened.  This
+     Opens a new Write window or activates one already opened.  This
      command MUST always be used before trying to edit any part of
      a new message.
 
 @{b}INPUTS@{ub}
-     var      - alternative variable to put the results into instead of
-                RESULT  (V2.0)
-     stem     - base name used for the stem where the window number will
-                be returned  (V2.0)
-     window   - change the command behavior to just activate an
-                already opened Write window, may be 0 or 1  (V2.0)
-     quiet    - force the window to stay invisible  (V2.1)
+     VAR/K      - alternative variable to put the results into instead of
+                  RESULT  (V2.0)
+     STEM/K     - base name used for the stem where the returned data will
+                  be stored  (V2.0)
+     WINDOW/N   - change the command behavior to just activate an already
+                  opened Write window, may be 0 or 1 (or 2, to refer to an
+                  invisible Write window)
+     QUIET/S    - force the window to stay invisible  (V2.1)
 
 @{b}RETURNS@{ub}
-     var          - info returned by the command
-     <stem>window - number of the created/selected window, may be 0 or 1
+     VAR          - info returned by the command
+     <STEM>WINDOW - number of the created/activated window, may be 0 or 1
+                    (or 2, if QUIET is enabled)
 
-     RC is set to 5 if the <window> parameter is supplied and refers to
-     an inexistant window, or to 10 if the window cannot be opened, maybe
+     RC is set to 5 if WINDOW is used with a value referring to an
+     inexistant window, or to 10 if the window cannot be opened, maybe
      because the limit of two Write windows has been reached.
 
 @{b}NOTES@{ub}
+     Window slots are dinamically assigned as they are required until
+     all of them are occupied, and remain in use until the relevant window
+     is closed (an "invisible" Write window is also "open" within this
+     context).  The optional WINDOW parameter sets the @{b}active@{ub} Write window,
+     upon which the @{" WRITEATTACH " link "RX_WRITEATTACH"}, @{" WRITEBCC " link "RX_WRITEBCC"}, @{" WRITECC " link "RX_WRITECC"}, @{" WRITEEDITOR " link "RX_WRITEEDITOR"}
+     @{" WRITEFROM " link "RX_WRITEFROM"}, @{" WRITELETTER " link "RX_WRITELETTER"}, @{" WRITEMAILTO " link "RX_WRITEMAILTO"}, @{" WRITEOPTIONS " link "RX_WRITEOPTIONS"},
+     @{" WRITEQUEUE " link "RX_WRITEQUEUE"}, @{" WRITEREPLYTO " link "RX_WRITEREPLYTO"}, @{" WRITESEND " link "RX_WRITESEND"}, @{" WRITESUBJECT" link "RX_WRITESUBJECT"}, and
+     @{" WRITETO " link "RX_WRITETO"} commands will act when called.  Therefore, the MAILWRITE
+     command SHOULD be called before using any of them to ensure they act
+     on the window that they are supposed to; note that manually activating
+     a Write window using the GUI does @{b}not@{ub} magically makes it the
+     target of the above mentioned commands.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Start a new mail */
+
+         MAILWRITE STEM st.
+         win1 = st.window
+
+         /* Start yet another mail */
+
+         MAILWRITE STEM st.
+         win2 = st.window
+
+         /* Edit the first Write window */
+
+         MAILWRITE WINDOW win1
+         WRITETO boss@isp.com
+         'WRITESUBJECT "I don't think I can go to work today"'
+         WRITELETTER 'work:excuses.txt'
+
+         /* Edit the second Write window */
+
+         MAILWRITE WINDOW win2
+         WRITETO peggy@provider.uk
+         'WRITESUBJECT "Stuffed at work, I'll be late"'
+
+         /* Put the first email in the Outgoing queue */
+
+         MAILWRITE WINDOW win1
+         WRITEQUEUE
+
+         /* Start a new email using an invisible Write window */
+
+         MAILWRITE STEM st. QUIET
+         win3 = st.window   /* just for completeness sake */
+         WRITETO sales@pizzahut.com
+         'WRITESUBJECT "Two with Mozarella + lots of coke"'
+         WRITELETTER 'dh5:priv/Snail_Linda.txt'
+
+         /* Finish editing the second email and send it at once */
+
+         MAILWRITE WINDOW win2
+         WRITESEND
+
+         /* Send the third email */
+
+         MAILWRITE WINDOW win3
+         WRITEOPTIONS DELETE   /* avoid leaving any traces */
+         WRITESEND
 
 @{b}BUGS@{ub}
      MAILWRITE would throw Enforcer hits if YAM was iconified and the
@@ -7570,19 +7854,20 @@ NEWMAILFILE
 
 @{b}FUNCTION@{ub}
      Returns a valid but still unused message filename for a folder,
-     based on the current date.
+     based on the current date.  This is the filename that YAM will
+     use when adding the next message to this folder.
 
 @{b}INPUTS@{ub}
-     var      - alternative variable to put the results into instead of
+     VAR/K    - alternative variable to put the results into instead of
                 RESULT
-     stem     - base name used for the stem where the filename will be
+     STEM/K   - base name used for the stem where the filename will be
                 returned
-     folder   - optional, name or number of the folder; if none if
+     FOLDER   - optional, name or number of the folder; if none if
                 supplied, the current folder will be used
 
 @{b}RETURNS@{ub}
-     var            - info returned by the query
-     <stem>filename - filename returned, with path
+     VAR            - info returned by the query
+     <STEM>FILENAME - filename returned, with path
 
      RC is set to 10 if the specified folder doesn't exist.
 
@@ -7617,8 +7902,8 @@ QUIT
      Quits the application.
 
 @{b}INPUTS@{ub}
-     force   - skip any safety requester, except for changes in the
-               address book done using the GUI
+     FORCE/S   - skip any safety requester, except for changes in the
+                 address book done using the GUI
 
 @{b}RETURNS@{ub}
 
@@ -7646,22 +7931,25 @@ READCLOSE
 @{b}TEMPLATE@{ub}
 
 @{b}FUNCTION@{ub}
-     Closes the active Read window.
+     Closes the active Read window as set by @{" MAILREAD " link "RX_MAILREAD"}.
 
 @{b}INPUTS@{ub}
 
 @{b}RETURNS@{ub}
+     RC is set to 10 if no window was previously specified as "active"
+     with @{" MAILREAD " link "RX_MAILREAD"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
 
 @{b}BUGS@{ub}
-     The scope of the command is limited to one Read window, namely
-     the one opened first if "Multiple windows" has been activated
-     in the Read configuration.
+     The command used to blindly act upon the first Read window opened
+     at any given time; this was changed in V2.4 to require the use
+     of @{" MAILREAD " link "RX_MAILREAD"} to explicitely mark a window as "active".
 
 @{b}SEE ALSO@{ub}
+     @{" MAILREAD " link "RX_MAILREAD"}
 
 @endnode
 
@@ -7682,45 +7970,72 @@ READINFO
 
 @{b}FUNCTION@{ub}
      Returns information about the attachments of the message in the
-     active Read window.
+     active Read window as set by @{" MAILREAD " link "RX_MAILREAD"}.
 
 @{b}INPUTS@{ub}
-     var    - alternative variable to put the results into instead of
-              RESULT
-     stem   - base name used for the stems where the results will be stored
+     VAR/K    - alternative variable to put the results into instead of
+                RESULT
+     STEM/K   - base name used for the stems where the results will be
+                stored
 
 @{b}RETURNS@{ub}
-     var                  - info returned by the query
-     <stem>filename.count - number of parts of the message, excluding
+     VAR                  - info returned by the query
+     <STEM>FILENAME.COUNT - number of parts of the message, excluding
                             the first header block
-     <stem>filename.nr    - filename of the nth part of the message, where
+     <STEM>FILENAME.NR    - filename of the nth part of the message, where
                             nr is a number between 0 and n-1 (0 = first part
                             after the headers, usually the body of the
                             message)
-     <stem>filetype.nr    - content type of the nth part of the message,
+     <STEM>FILETYPE.NR    - content type of the nth part of the message,
                             where nr is a number between 0 and n-1
                             (0 = first part after the headers, usually
                             the body of the message)
-     <stem>filesize.nr    - size of the nth part of the message, where
+     <STEM>FILESIZE.NR    - size of the nth part of the message, where
                             nr is a number between 0 and n-1 (0 = first
                             part after the headers, usually the body of
                             the message)
-     <stem>tempfile.nr    - temporary file where the nth part of the message
+     <STEM>TEMPFILE.NR    - temporary file where the nth part of the message
                             is stored, nr being a number between 0 and n-1
                             (0 = first part after the headers, usually the
-                             body of the message)
+                            body of the message)
+
+     RC is set to 10 if no window was previously specified as "active"
+     with @{" MAILREAD " link "RX_MAILREAD"}.
 
 @{b}NOTES@{ub}
      No filename is returned for the body of the message.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Silently decode the current message */
+        
+         MAILREAD QUIET
+
+         /* Get info about the message, then close the window */
+
+         READINFO STEM ri.
+         READCLOSE
+
+         /* Display results */
+
+         DO i = 0 TO ri.filename.count-1
+            SAY 'Information about part #'i+1
+            SAY '  File name: 'ri.filename.i
+            SAY '  File type: 'ri.filetype.i
+	    SAY '  File size: 'ri.filesize.i
+	    SAY '  Stored at: 'ri.tempfile.i
+	 END
 
 @{b}BUGS@{ub}
-     The scope of the command is limited to one Read window, namely
-     the one opened first if "Multiple windows" has been activated
-     in the Read configuration.
+     The command used to blindly act upon the first Read window opened
+     at any given time; this was changed in V2.4 to require the use
+     of @{" MAILREAD " link "RX_MAILREAD"} to explicitely mark a window as "active".
 
 @{b}SEE ALSO@{ub}
+     @{" MAILREAD " link "RX_MAILREAD"}
 
 @endnode
 
@@ -7740,13 +8055,14 @@ READPRINT
      PART/N
 
 @{b}FUNCTION@{ub}
-     Prints a part of the message in the active Read window to the printer.
+     Sends to the printer a part of the message in the active Read window,
+     as set by @{" MAILREAD " link "RX_MAILREAD"}.
 
 @{b}INPUTS@{ub}
-     part   - part of the message to send to the printer, possible values
-              are 1 for the first part of the message (usually the body),
-              2 or higher for further parts, or no value at all to get a
-              printout of the visible part of the message
+     PART/N   - part of the message to send to the printer, possible values
+                are 1 for the first part of the message (usually the body),
+                2 or higher for further parts, or no value at all to get a
+                printout of the visible part of the message
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the specified part does not exist.
@@ -7756,11 +8072,12 @@ READPRINT
 @{b}EXAMPLE@{ub}
 
 @{b}BUGS@{ub}
-     The scope of the command is limited to one Read window, namely
-     the one opened first if "Multiple windows" has been activated
-     in the Read configuration.
+     The command used to blindly act upon the first Read window opened
+     at any given time; this was changed in V2.4 to require the use
+     of @{" MAILREAD " link "RX_MAILREAD"} to explicitely mark a window as "active".
 
 @{b}SEE ALSO@{ub}
+     @{" MAILREAD " link "RX_MAILREAD"}
 
 @endnode
 
@@ -7783,13 +8100,13 @@ READSAVE
      Saves a part of the message in the active Read window to a file.
 
 @{b}INPUTS@{ub}
-     part        - part of the message to save, possible values are 1 for
-                   the first part of the message (usually the body), 2 or
-                   higher for further parts, or no value at all to get a
-                   printout of the visible part of the message
-     filename    - filename to use
-     overwrite   - avoid any security requesters opened due to an
-                   already existing file
+     PART/N        - part of the message to save, possible values are 1 for
+                     the first part of the message (usually the body), 2 or
+                     higher for further parts, or no value at all to get a
+                     printout of the visible part of the message
+     FILENAME/K    - filename to use
+     OVERWRITE/S   - avoid any security requesters opened due to an
+                     already existing file
 
 @{b}RETURNS@{ub}
 
@@ -7825,17 +8142,17 @@ REQUEST
      returns the choice taken by the user.
 
 @{b}INPUTS@{ub}
-     var       - alternative variable to put the result into instead of
-                 RESULT  (V2.0)
-     stem      - base name used for the stem where the result will be stored
-                 (V2.0)
-     body      - a string containing the body of the requester
-     gadgets   - a string containing a vertical bar ("|") separated list of
-                 gadgets; upto 32 gadgets can be used
+     VAR/K       - alternative variable to put the result into instead of
+                   RESULT  (V2.0)
+     STEM/K      - base name used for the stem where the result will be
+                   stored  (V2.0)
+     BODY/A      - a string containing the body of the requester
+     GADGETS/A   - a string containing a vertical bar ("|") separated list
+                   of gadgets; up to 32 gadgets can be used
 
 @{b}RETURNS@{ub}
-     var          - info returned by the query
-     <stem>result - number of the selected gadget; may be 0 for the
+     VAR          - info returned by the query
+     <STEM>RESULT - number of the selected gadget; may be 0 for the
                     rightmost gadget, 1 for the leftmost gadget, and
                     2..n for the second, etc. gadget from the left
 
@@ -7868,16 +8185,16 @@ REQUESTFOLDER
      active folder.
 
 @{b}INPUTS@{ub}
-     var             - alternative variable to put the result into
-                       instead of RESULT
-     stem            - base name used for the stem where the result
-                       will be stored
-     body            - a string containing the body of the requester
-     excludeactive   - exclude the active folder from the list
+     VAR/K             - alternative variable to put the result into
+                         instead of RESULT
+     STEM/K            - base name used for the stem where the result
+                         will be stored
+     BODY/A            - a string containing the body of the requester
+     EXCLUDEACTIVE/S   - exclude the active folder from the list
 
 @{b}RETURNS@{ub}
-     var          - info returned by the query
-     <stem>folder - name of the selected folder
+     VAR          - info returned by the query
+     <STEM>FOLDER - name of the selected folder
 
      RC is set to 1 if the user cancels the requester.
 
@@ -7910,16 +8227,17 @@ REQUESTSTRING
      Opens a requester asking the user to enter a text string.
 
 @{b}INPUTS@{ub}
-     var      - alternative variable to put the result into instead of
-                RESULT
-     stem     - base name used for the stem where the result will be stored
-     body     - a string containing the body of the requester
-     string   - optional, text string used by default
-     secret   - force characters to appear as asterisks ("*")
+     VAR/K      - alternative variable to put the result into instead of
+                  RESULT
+     STEM/K     - base name used for the stem where the result will be
+                  stored
+     BODY/A     - a string containing the body of the requester
+     STRING/K   - optional, text string used by default
+     SECRET/S   - force characters to appear as asterisks ("*")
 
 @{b}RETURNS@{ub}
-     var          - info returned by the query
-     <stem>string - text entered in the requester
+     VAR          - info returned by the query
+     <STEM>STRING - text entered in the requester
 
      RC is set to 1 if the user cancels the requester.
 
@@ -8018,8 +8336,8 @@ SETFLAG
      after a reboot.
 
 @{b}INPUTS@{ub}
-     vol   - value of the VOLatile flag, may be between 0 and 7
-     per   - value of the PERmanent flag, may be between 0 and 7
+     VOL/K/N   - value of the VOLatile flag, may be between 0 and 7
+     PER/K/N   - value of the PERmanent flag, may be between 0 and 7
 
 @{b}RETURNS@{ub}
 
@@ -8051,8 +8369,8 @@ SETFOLDER
      Makes the named folder the current folder.
 
 @{b}INPUTS@{ub}
-     folder   - name or directory of the folder to turn into the
-                current folder
+     FOLDER/A   - name or directory of the folder to turn into the
+                  current folder
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the specified folder doesn't exist.
@@ -8093,8 +8411,8 @@ SETMAIL
      in the list.
 
 @{b}INPUTS@{ub}
-     num   - position occupied by the message in the list, may be a
-             number between 0 and n-1
+     NUM/N/A   - position occupied by the message in the list, may be a
+                 number between 0 and n-1
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the message referred with NUM doesn't exist.
@@ -8130,7 +8448,7 @@ SETMAILFILE
      Sets the current message in the current folder by filename.
 
 @{b}INPUTS@{ub}
-     mailfile   - filename where the message is stored, without path
+     MAILFILE/A   - filename where the message is stored, (without path ???)
 
 @{b}RETURNS@{ub}
      RC is set to 5 if the supplied filename can't be found.
@@ -8194,18 +8512,19 @@ USERINFO
      Returns details about the user currently logged in.
 
 @{b}INPUTS@{ub}
-     var    - alternative variable to put the results into instead of
-              RESULT
-     stem   - base name used for the stems where the results will be stored
+     VAR/K    - alternative variable to put the results into instead of
+                RESULT
+     STEM/K   - base name used for the stems where the results will be
+                stored
 
 @{b}RETURNS@{ub}
-     var            - info returned by the query
-     <stem>username - username of this user
-     <stem>email    - email address of this user
-     <stem>realname - real name of this user
-     <stem>config   - configuration file of this user
-     <stem>maildir  - mail directory of this user
-     <stem>folders  - current number of entries in the folder list;
+     VAR            - info returned by the query
+     <STEM>USERNAME - username of this user
+     <STEM>EMAIL    - email address of this user
+     <STEM>REALNAME - real name of this user
+     <STEM>CONFIG   - configuration file of this user
+     <STEM>MAILDIR  - mail directory of this user
+     <STEM>FOLDERS  - current number of entries in the folder list;
                       groups will be ignored  (V2.1)
 
 @{b}NOTES@{ub}
@@ -8236,11 +8555,11 @@ WRITEATTACH
      Attaches a file to a new message.
 
 @{b}INPUTS@{ub}
-     file      - filename to attach, with path
-     desc      - optional, string with a description for the file  (V1.3)
-     encmode   - optional, encoding type for the file; may be either
+     FILE/A    - filename to attach, with path
+     DESC      - optional, string with a description for the file  (V1.3)
+     ENCMODE   - optional, encoding type for the file; may be either
                  "uu" or "b64"  (V1.3)
-     ctype     - optional, content type of the file  (V1.3)
+     CTYPE     - optional, content type of the file  (V1.3)
 
 @{b}RETURNS@{ub}
 
@@ -8280,9 +8599,9 @@ WRITEBCC
      field of the Write window.
 
 @{b}INPUTS@{ub}
-     address   - list of addresses or aliases to add
-     add       - prevent the new data from replacing the old data already
-                 present in the "Hidden copies to" field
+     ADDRESS/A/M   - list of addresses or aliases to add
+     ADD/S         - prevent the new data from replacing the old data
+                     already present in the "Hidden copies to" field
 
 @{b}RETURNS@{ub}
 
@@ -8321,9 +8640,9 @@ WRITECC
      field of the Write window
 
 @{b}INPUTS@{ub}
-     address   - list of addresses or aliases to add
-     add       - prevent the new data from replacing the old data already
-                 present in the "Copies to" field
+     ADDRESS/A/M   - list of addresses or aliases to add
+     ADD/S         - prevent the new data from replacing the old data
+                     already present in the "Copies to" field
 
 @{b}RETURNS@{ub}
 
@@ -8396,7 +8715,7 @@ WRITEFROM
      if any.
 
 @{b}INPUTS@{ub}
-     address   - address or alias to enter in the "From" field
+     ADDRESS/A   - address or alias to enter in the "From" field
 
 @{b}RETURNS@{ub}
 
@@ -8433,8 +8752,8 @@ WRITELETTER
      Loads a file into the internal text editor.
 
 @{b}INPUTS@{ub}
-     file    - file to load; only a plain text file will be accepted
-     nosig   - prevent the addition of any signature  (V2.0)
+     FILE/A    - file to load; only a plain text file will be accepted
+     NOSIG/S   - prevent the addition of any signature  (V2.0)
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the specified file does not exist or no Write
@@ -8471,7 +8790,7 @@ WRITEMAILTO
      the Write window, replacing whatever was already there.
 
 @{b}INPUTS@{ub}
-     address   - list of addresses or aliases to add
+     ADDRESS/A/M   - list of addresses or aliases to add
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no Write window has been opened.
@@ -8509,32 +8828,32 @@ WRITEOPTIONS
      Sets the options for the new message.
 
 @{b}INPUTS@{ub}
-     delete       - discard the message completely after sending
-     receipt      - ask for a return receipt
-     notif        - enable message tracking
-     addinfo      - add personal information
-     importance   - grade of importance of the message, possible values are
+     DELETE/S       - discard the message completely after sending
+     RECEIPT/S      - ask for a return receipt
+     NOTIF/S        - enable message tracking
+     ADDINFO/S      - add personal information
+     IMPORTANCE/N   - importance of the message, possible values are
 
-                       0 - high
-                       1 - normal (default)
-                       2 - low
+                         0 - high
+                         1 - normal (default)
+                         2 - low
 
-     sig          - signature to use, possible values are
+     SIG/N          - signature to use, possible values are
 
-                       0 - no signature
-                       1 - default value taken from the Signatures
-                           configuration (default)
-                       2 - alt. signature #1
-                       3 - alt. signature #2
+                         0 - no signature
+                         1 - default value taken from the Signatures
+                             configuration (default)
+                         2 - alt. signature #1
+                         3 - alt. signature #2
 
-     security     - level of security to use, possible values are
+     SECURITY/N     - security to use, possible values are
 
-                       0 - none
-                       1 - PGP signed
-                       2 - PGP encrypted
-                       3 - PGP signed & encrypted
-                       4 - send anonymously
-                       5 - default value for this recipient
+                         0 - none
+                         1 - PGP signed
+                         2 - PGP encrypted
+                         3 - PGP signed & encrypted
+                         4 - send anonymously
+                         5 - default value for this recipient
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no Write window has been opened.
@@ -8572,8 +8891,8 @@ WRITEQUEUE
      Puts a new, just composed message into the Outgoing queue.
 
 @{b}INPUTS@{ub}
-     hold   - mark the message as "Hold" to avoid sending it by
-              mistake  (V2.0)
+     HOLD/S   - mark the message as "Hold" to avoid sending it by
+                mistake  (V2.0)
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no Write window has been opened.
@@ -8611,7 +8930,7 @@ WRITEREPLYTO
      Write window.
 
 @{b}INPUTS@{ub}
-     address   - address or alias to enter in the field
+     ADDRESS/A   - address or alias to enter in the field
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no Write window has been opened.
@@ -8684,7 +9003,7 @@ WRITESUBJECT
      Enters a subject into a new message.
 
 @{b}INPUTS@{ub}
-     subject   - subject of the message
+     SUBJECT/A   - subject of the message
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no Write window has been opened.
@@ -8724,9 +9043,9 @@ WRITETO
      of the Write window.
 
 @{b}INPUTS@{ub}
-     address   - list of addresses or aliases to enter
-     add       - prevent the new data from replacing the old data already
-                 present in the "To" field
+     ADDRESS/A/M   - list of addresses or aliases to enter
+     ADD/S         - prevent the new data from replacing the old data
+                     already present in the "To" field
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no Write window has been opened.
@@ -9114,8 +9433,8 @@ Avoiding context menus from getting on your way
    The context menus for the folder & message lists provided by
 @{b}popupmenu.library@{ub} may get in your way and prevent you from using the
 usual menu item shortcuts unless you move the pointer outside the list.
-Unfortunately this is a bug in MUI, which can only worked around by
-disabling the context menus themselves in @{" Configuration/Lists " link "CO08"}.
+Unfortunately this is a bug in MUI <=3.8, which can only worked around
+by disabling the context menus themselves in @{" Configuration/Lists " link "CO08"}.
 
    If your menu shortcuts still don't work, it's probably because the
 NList context sensitive menus are enabled.  To disable them, start the
@@ -9185,8 +9504,8 @@ The gauge in the mail transfer window looks wrong
 may "overflow" its container when representing very high values,
 typically around 8MB and beyond.  This bug is harmless, but an
 updated MUI (3.9 or better) is necessary to properly address
-this problem.  No such update was still available at the time of
-writing this document.
+this problem.  No such update was still available for 68K Amigas
+at the time of writing this document.
 
 
 Menu shortcuts don't work while context sensitive menus are enabled
@@ -9200,8 +9519,40 @@ Enforcer hits when flushing memory after uniconifying YAM and its MUI prefs
 
    If you iconify YAM while its MUI prefs window is opened, then
 you do an AVAIL FLUSH and then uniconify YAM, you get Enforcer hits.
-Unfortunately, this is again a bug in MUI - the same problem can be
-reproduced with any other MUI application.
+Unfortunately, this is again a bug in MUI <=3.8.  The same problem
+can be reproduced with any other MUI application.
+
+
+The "Colored text" gadget in the Read configuration looks wrong the
+first time I open this sheet
+-------------------------------------------------------------------
+
+   Yet another MUI bug, already fixed in 3.9+.
+
+
+YAM is taking braces as in "[http://www.site.com]" as part of URLs
+------------------------------------------------------------------
+
+   This is a side effect of people using "[]" as part of URLs.
+Despite the recommendation in RFC #1738 to encode such characters
+when they are supposed to be part of URLs, a number of Internet
+resources, entities and users keep using the "[]" braces in unencoded
+form, thus making e.g. YAM to stop parsing an URL as soon as such
+characters are found, as in "<http://www.site.com/files[7]/myfile>".
+As a workaround for this problem, YAM 2.4 will take these characters
+as part of the URL.
+
+   On the other hand, parenthesis are allowed in URLs in unencoded
+form, which again negates the use of () to delimit URLs.  You are
+advised to use "<" and ">" instead.
+
+
+The system hangs when deleting a block of text in the editor while
+using a key qualifier
+------------------------------------------------------------------
+
+   Unfortunately, this is a bug in texteditor.mcc, and its sources
+were lost.  A solution is being considered for a future YAM release.
 
 @endnode
 
@@ -9624,7 +9975,7 @@ MUI
 
                         MUI - MagicUserInterface
 
-                (c) Copyright 1993-2002 by Stefan Stuntz
+                (c) Copyright 1993-2003 by Stefan Stuntz
 
 MUI  is  a system to generate and maintain graphical user interfaces. With
 the  aid  of  a  preferences  program,  the user of an application has the
