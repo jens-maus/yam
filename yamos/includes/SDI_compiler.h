@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.9 (26.09.2002)
+        Versionstring:  $VER: SDI_compiler.h 1.10 (18.10.2002)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler stuff
@@ -19,6 +19,7 @@
  1.7   16.06.01 : added MorphOS specials and VARARGS68K
  1.8   21.09.02 : added MorphOS register stuff
  1.9   26.09.02 : added OFFSET macro. Thanks Frank Wille for suggestion
+ 1.10  18.10.02 : reverted to old MorphOS-method for GCC
 */
 
 /*
@@ -77,6 +78,25 @@
   #define OFFSET(p,m) __offsetof(struct p,m)
   #if defined(__MORPHOS__)
     #define REG(reg,arg) __reg(MOS__##reg) arg
+
+    /* NOTE: This assumes "quick native mode" when compiling libraries. */
+    #define MOS__a0 "r24"
+    #define MOS__a1 "r25"
+    #define MOS__a2 "r26"
+    #define MOS__a3 "r27"
+    #define MOS__a4 "r28"
+    #define MOS__a5 "r29"
+    #define MOS__a6 "r30"
+    /* #define MOS__a7 "r31" */
+    #define MOS__d0 "r16"
+    #define MOS__d1 "r17"
+    #define MOS__d2 "r18"
+    #define MOS__d3 "r19"
+    #define MOS__d4 "r20"
+    #define MOS__d5 "r21"
+    #define MOS__d6 "r22"
+    #define MOS__d7 "r23"
+
   #else
     #define REG(reg,arg) __reg(#reg) arg
   #endif
@@ -88,6 +108,7 @@
 #elif defined(__SASC)
   #define ASM(arg) arg __asm
 #elif defined(__GNUC__)
+  #define REG(reg,arg) arg __asm(#reg)
   #define LREG(reg,arg) register REG(reg,arg)
 
   /* Don`t use __stackext for the MorphOS version
@@ -99,35 +120,12 @@
     #define STDARGS
     #define STACKEXT
     #define VARARGS68K  __attribute__((varargs68k))
-    #define REG(reg,arg) arg __asm(MOS__##reg)
-  #else
-    #define REG(reg,arg) arg __asm(#reg)
   #endif
 #elif defined(_DCC)
   #define REG(reg,arg) __##reg arg
   #define STACKEXT __stkcheck
   #define STDARGS __stkargs
   #define INLINE static
-#endif
-
-/* NOTE: This assumes "quick native mode" when compiling libraries. */
-#if defined(__MORPHOS__)
-  #define MOS__a0 "r24"
-  #define MOS__a1 "r25"
-  #define MOS__a2 "r26"
-  #define MOS__a3 "r27"
-  #define MOS__a4 "r28"
-  #define MOS__a5 "r29"
-  #define MOS__a6 "r30"
-  /* #define MOS__a7 "r31" */
-  #define MOS__d0 "r16"
-  #define MOS__d1 "r17"
-  #define MOS__d2 "r18"
-  #define MOS__d3 "r19"
-  #define MOS__d4 "r20"
-  #define MOS__d5 "r21"
-  #define MOS__d6 "r22"
-  #define MOS__d7 "r23"
 #endif
 
 /* then "common" ones */
