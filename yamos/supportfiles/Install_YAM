@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.6 for YAM 2.4 (25.04.2003) © 2000-2003 by YAM Open Source Team
+; $VER: Installer script 1.7 for YAM 2.5 (XX.XX.2005) © 2000-2005 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -1298,7 +1298,7 @@
    (copylib (prompt (cat "MUI - " @each-name))
             (source (cat "/MUI/" @each-name))
             (dest "MUI:Libs/MUI/")
-            (confirm 2)
+            (confirm)
             (help @copylib-help)
    )
 )

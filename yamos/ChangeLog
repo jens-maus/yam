@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+
+2005-03-06  David Rey <tactica@users.sourceforge.net>
+
+    * Install_YAM: fixed bogus "(confirm 2)" parameter when copying MUI
+      custom classes. Thanks to Detlef Wuerkner for the heads up!
+      Also updated version string for the upcoming 2.5 release.
+
 2005-03-04  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed a bug where the main mail nlist wasn't cleared previous to an
