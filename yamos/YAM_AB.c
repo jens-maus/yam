@@ -1072,23 +1072,6 @@ struct AB_ClassData *AB_New(void)
       // If we successfully created the WindowObject
       if (data->GUI.WI)
       {
-        long ver, rev;
-
-				// We first check the version of the NListtree object and if this has the wrong version we don`t go on
-				get(data->GUI.LV_ADRESSES, MUIA_Version,  &ver);
-				get(data->GUI.LV_ADRESSES, MUIA_Revision, &rev);
-
-        // if we have the wrong version we put and error message that this is not the latest NListtree
-        if(ver < 18)
-        {
-				  char buf[SIZE_LARGE];
-
-		      SPrintF(buf, GetStr(MSG_NTREE_ERROR), ver, rev);
-
-        	// now we put the error message into the window
-          ER_NewError(buf, "", "");
-        }
-
 	      AB_MakeABFormat(data->GUI.LV_ADRESSES);
 	      DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
   	    set(data->GUI.WI, MUIA_Window_DefaultObject, list);

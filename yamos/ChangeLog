@@ -200,8 +200,21 @@
 
     * Nicer compilation date in About window ("7.4.2001" -> "07-Apr-01").
 
+2001-04-25  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * replaced Listtree.mcc with NListtree.mcc of Carsten Scholling
+    * fixed some minor bugs in the addressbook code
+    * added CVS $id tags to every source file for better revision control
+    * changed AppIcon to also show the unread messages of the INCOMING folder
+      (this is a feature I was searching for a long time :)
+    * did some small cosmetic changes to the code
+
 2001-04-26  Jacob Laursen <laursen@myself.com>
 
     * Added correct MCC version check.
     * Library open errors will now always be displayed in a requester,
       no matter if MUI is available. If possible, localized.
+
+2001-04-26  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * removed obsolete MCC NListtree check in addressbook code
