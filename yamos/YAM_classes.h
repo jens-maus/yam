@@ -37,8 +37,9 @@ struct PL_Data
    APTR        Image[MAXCPAGES];
 };
 
-#define MUIA_Bodychunk_File          0x80002501
-#define MUIA_Bodychunk_UseOld        0x80002502
+#define MUIA_Bodychunk_File          0x80002501    // [I..]
+#define MUIA_Bodychunk_UseOld        0x80002502    // [I..]
+
 #define MUIM_MainWindow_CloseWindow  0x80002521
 
 extern struct MUI_CustomClass *CL_AddressList;

@@ -150,25 +150,18 @@ DISPATCHERPROTO(BC_Dispatcher)
                   set(obj, MUIA_Bodychunk_Masking,    data->BCD->Masking);
                   set(obj, MUIA_UserData,             useold);
                }
-               else
-               {
-                  // Print out a error message that this image couldn`t be loaded
-//                ER_NewError(GetStr(MSG_ERROR_IMGLOAD), fname, NULL);
-// this would pop up in front of the about window while loading indices,
-// and can't be closed until covered by the main window. Very clumpsy. It
-// would also show up when de-iconifying YAM. Therefore removed!
-               }
             }
          }
          return (ULONG)obj;
       }
       break;
 
+
       case OM_DISPOSE:
       {
          data = INST_DATA(cl,obj);
          get(obj, MUIA_UserData, &useold);
-         if (!useold) FreeBCImage(data->BCD);
+         if (!useold && data->BCD) FreeBCImage(data->BCD);
       }
       break;
    }

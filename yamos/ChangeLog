@@ -957,3 +957,8 @@
       much simpler and thus more transparent.
       Some functionality still lack and it needs some finetuning (e.g.
       multiple recipient support)...
+
+2001-07-30  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug #440000. Now the NListtree default foldergroup icons will be
+      displayed if one of the folder_fold/unfold images are missing.
