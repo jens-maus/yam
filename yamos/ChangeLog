@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-20  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * Makefile.MorphOS: added stub link library calls so that YAM will
+      get the correct stub functions for some STDARG functions.
+      This should fix some strange hang ups when using YAM with MOS.
+    * extrasrc/dice.c: removed the NO_PPCINLINE_STDARG check, because we
+      cannot use the STDARG functions in there for PPC. We have to use
+      stub functions instead provided by stubs libraries.
+    * YAM_COg.c: added some debug information to debug the XPK a bit.
+    * YAM_hook.h: added some documentation/example about the hook macros.
+
 2002-06-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_hook.h: fixed a nasty bug within the HOOK macros for MorphOS
