@@ -698,3 +698,8 @@
     * YAM_global.(c,h): replaced "APTR" wth "void *" and removed include
     * YAM_UT.c: (DisplayAppIconStatistics) replaced AppAppIconA() with AddAppIcon()
                 (DisplayStatistics) small cleanup
+
+2001-06-18  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed potential enforcer hits where check for NULL of FO_GetCurrentFolder()
+      was missing. Should also fix some enforcer hits on exit of YAM.

@@ -900,21 +900,36 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
    switch (mode)
    {
       case 0: return;
-      case 1: if (!FO_FoldernameRequest(folder.Path)) return;
-              MyStrCpy(folder.Name, FilePart(folder.Path));
-              break;
-      case 2: memcpy(&folder, FO_GetCurrentFolder(), sizeof(struct Folder));
-              if (folder.Type == FT_GROUP) { FO_NewFolderGroupFunc(); return; }
-              else if (folder.Type == FT_INCOMING || folder.Type == FT_DELETED) folder.Type = FT_CUSTOM;
-              else if (folder.Type == FT_OUTGOING || folder.Type == FT_SENT) folder.Type = FT_CUSTOMSENT;
-              *folder.Path = 0;
-              if (!FO_FoldernameRequest(folder.Path)) return;
-              MyStrCpy(folder.Name, FilePart(folder.Path));
-              break;
-      case 3: if (!ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), 4, G->MA_MailDir, "")) return;
-              MyStrCpy(folder.Path, G->ASLReq[ASL_FOLDER]->fr_Drawer);
-              FO_LoadConfig(&folder);
-              break;
+      case 1:
+      {
+         if (!FO_FoldernameRequest(folder.Path)) return;
+         MyStrCpy(folder.Name, FilePart(folder.Path));
+      }
+      break;
+
+      case 2:
+      {
+         struct Folder *tmp_folder = FO_GetCurrentFolder();
+
+         if(!tmp_folder) return;
+
+         memcpy(&folder, FO_GetCurrentFolder(), sizeof(struct Folder));
+         if (folder.Type == FT_GROUP) { FO_NewFolderGroupFunc(); return; }
+         else if (folder.Type == FT_INCOMING || folder.Type == FT_DELETED) folder.Type = FT_CUSTOM;
+         else if (folder.Type == FT_OUTGOING || folder.Type == FT_SENT) folder.Type = FT_CUSTOMSENT;
+         *folder.Path = 0;
+         if (!FO_FoldernameRequest(folder.Path)) return;
+         MyStrCpy(folder.Name, FilePart(folder.Path));
+      }
+      break;
+
+      case 3:
+      {
+         if (!ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), 4, G->MA_MailDir, "")) return;
+         MyStrCpy(folder.Path, G->ASLReq[ASL_FOLDER]->fr_Drawer);
+         FO_LoadConfig(&folder);
+      }
+      break;
    }
    if (!G->FO)
    {
@@ -931,6 +946,8 @@ MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
 HOOKPROTONHNONP(FO_EditFolderFunc, void)
 {
   struct Folder *folder = FO_GetCurrentFolder();
+
+  if(!folder) return;
 
   switch(folder->Type)
   {

@@ -347,6 +347,8 @@ void MA_FlushIndexes(BOOL all)
    int i;
    struct Folder *fo, **flist, *actfo = FO_GetCurrentFolder();
 
+   if(!actfo) return;
+
    if (flist = FO_CreateList())
    {
       for (i = 1; i <= (int)*flist; i++)
@@ -380,15 +382,15 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 {
    BOOL folderopen = TRUE;
    int i, pos = -1;
+   struct Folder *actfo = FO_GetCurrentFolder();
    struct MA_GUIData *gui = &G->MA->GUI;
+
+   if(!actfo) return;
 
    set(gui->NL_MAILS, MUIA_ShortHelp, NULL);
 
-   if(!folder)
-   {
-      folder = FO_GetCurrentFolder();
-   }
-   else if(FO_GetCurrentFolder() == folder) return;
+   if(!folder) folder = actfo;
+   else if(actfo == folder) return;
    else if(set_active) FO_SetCurrentFolder(folder);
 
    if (folder->Type == FT_GROUP) folderopen = FALSE;
@@ -535,12 +537,13 @@ void MA_UpdateInfoBar(struct Folder *folder)
   struct MA_GUIData *gui = &G->MA->GUI;
   struct BodyChunkData *bcd = NULL;
 
+  if(!folder) return;
+
   // Now we set the GUI element of the InfoBar
   // visible or invisible
   set(gui->GR_INFO, MUIA_ShowMe, C->InfoBar);
 
   if(!C->InfoBar) return;
-  if(!folder) return;
 
   // set the name of the folder as the info text
   set(gui->TX_INFO, MUIA_Text_Contents, folder->Name);

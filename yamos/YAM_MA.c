@@ -100,8 +100,8 @@ static ULONG MA_GetSortType(int sort)
 void MA_SetSortFlag(void)
 {
    struct Folder *fo = FO_GetCurrentFolder();
-
    if (!fo) return;
+
    set(G->MA->GUI.NL_MAILS, MUIA_NList_SortType, MA_GetSortType(fo->Sort[0]));
    set(G->MA->GUI.NL_MAILS, MUIA_NList_SortType2, MA_GetSortType(fo->Sort[1]));
 }
@@ -128,6 +128,7 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    struct Mail *mail;
 
    if (!fo) return;
+
    type = fo->Type;
    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
    fo->LastActive = GetMUI(gui->NL_MAILS, MUIA_NList_Active);
@@ -170,12 +171,16 @@ MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
 //  Builds help bubble for folder list
 HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
 {
-  static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
-  char *sh = NULL;
-  struct Folder *fo = FO_GetCurrentFolder();
-  if (fo && (fo->Type != FT_GROUP))
-    SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
-  set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
+   static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
+   char *sh = NULL;
+   struct Folder *fo = FO_GetCurrentFolder();
+
+   if (fo && (fo->Type != FT_GROUP))
+   {
+      SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
+   }
+
+   set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
 }
 MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
 
@@ -189,6 +194,9 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
    struct Mail *mail = NULL;
 
    folder = forcefolder ? forcefolder : FO_GetCurrentFolder();
+
+   if(!folder) return(NULL);
+
    MA_GetIndex(folder);
    get(G->MA->GUI.NL_MAILS, MUIA_NList_Active, &active);
    if (active != MUIV_NList_Active_Off) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, active, &mail);
@@ -226,6 +234,8 @@ static struct Mail **MA_CreateFullList(struct Folder *fo)
 {
    int selected = fo->Total;
    struct Mail *mail, **mlist = NULL;
+
+   if(!fo) return(NULL);
 
    if (selected) if ((mlist = calloc(selected+2, sizeof(struct Mail *))))
    {
@@ -510,6 +520,8 @@ int MA_NewNew(struct Mail *mail, int flags)
    struct WR_ClassData *wr;
    FILE *out;
 
+   if(!folder) return(-1);
+
    /* First check if the basic configuration is okay, then open write window */
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
@@ -519,11 +531,13 @@ int MA_NewNew(struct Mail *mail, int flags)
          wr->Mode = NEW_NEW;
          wr->Mail = mail;
          if (mail) setstring(wr->GUI.ST_TO, BuildAddrName2(GetReturnAddress(mail)));
-         else if (folder && folder->Type != FT_INCOMING) {
+         else if (folder->Type != FT_INCOMING)
+         {
             if (folder->MLAddress[0]) setstring(wr->GUI.ST_TO, folder->MLAddress);
             if (folder->MLFromAddress[0]) setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
             if (folder->MLReplyToAddress[0]) setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
          }
+
          MA_SetupQuoteString(wr, NULL, NULL);
          MA_InsertIntroText(out, C->NewIntro, NULL);
          MA_InsertIntroText(out, C->Greetings, NULL);
@@ -1081,6 +1095,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL), *folder = FO_GetCurrentFolder();
    BOOL ignoreall = FALSE;
 
+   if(!folder || !delfolder) return;
+
    if (!(mlist = MA_CreateMarkedList(lv))) return;
    selected = (int)*mlist;
    if (C->Confirm && selected >= C->ConfirmDelete && !force)
@@ -1381,6 +1397,9 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
 
    if (arg[2]) return; // Toolbar qualifier bug work-around
    folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder();
+
+   if(!folder) return;
+
    if (mode == APPLY_USER && folder->Type != FT_INCOMING)
    {
       sprintf(buf, GetStr(MSG_MA_ConfirmFilter), folder->Name);
@@ -1545,6 +1564,8 @@ HOOKPROTONHNONP(MA_DeleteDeletedFunc, void)
    struct Mail *mail;
    struct Folder *folder = FO_GetFolderByType(FT_DELETED, NULL);
 
+   if(!folder) return;
+
    Busy(GetStr(MSG_BusyEmptyingTrash), "", 0, folder->Total);
    for (mail = folder->Messages; mail; mail = mail->Next)
    {
@@ -1568,6 +1589,8 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
 {
    struct Folder *folder = FO_GetCurrentFolder();
 
+   if(!folder) return;
+
    MA_ScanMailBox(folder);
    MA_SaveIndex(folder);
    MA_ChangeFolder(NULL, FALSE);
@@ -1584,6 +1607,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
    struct Mail **mlist;
    if (all) mlist = MA_CreateFullList(FO_GetCurrentFolder());
    else mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS);
+
    if (mlist)
    {
       if (!filename) if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ExportMessages), 1, C->DetachDir, ""))
@@ -1624,7 +1648,10 @@ MakeStaticHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 //  Imports messages from a UUCP mailbox file
 BOOL MA_ImportMessages(char *fname)
 {
+   struct Folder *actfo = FO_GetCurrentFolder();
    FILE *fh;
+
+   if(!actfo) return(FALSE);
 
    if ((fh = fopen(fname, "r")))
    {
@@ -1632,7 +1659,8 @@ BOOL MA_ImportMessages(char *fname)
       {
          stccpy(G->TR->ImportFile, fname, SIZE_PATHFILE);
          TR_SetWinTitle(TRUE, FilePart(fname));
-         G->TR->ImportBox = FO_GetCurrentFolder();
+         G->TR->ImportBox = actfo;
+
          if (SafeOpenWindow(G->TR->GUI.WI))
          {
             TR_GetMessageList_IMPORT(fh);
@@ -1665,6 +1693,9 @@ MakeStaticHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 HOOKPROTONHNONP(MA_MoveMessageFunc, void)
 {
    struct Folder *src = FO_GetCurrentFolder(), *dst;
+
+   if(!src) return;
+
    if ((dst = FolderRequest(GetStr(MSG_MA_MoveMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_MoveGad), GetStr(MSG_Cancel), src, G->MA->GUI.WI)))
       MA_MoveCopy(NULL, src, dst, FALSE);
 }
@@ -1676,6 +1707,9 @@ MakeStaticHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 HOOKPROTONHNONP(MA_CopyMessageFunc, void)
 {
    struct Folder *src = FO_GetCurrentFolder(), *dst;
+
+   if(!src) return;
+
    if ((dst = FolderRequest(GetStr(MSG_MA_CopyMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_CopyGad), GetStr(MSG_Cancel), NULL, G->MA->GUI.WI)))
       MA_MoveCopy(NULL, src, dst, TRUE);
 }
@@ -2206,6 +2240,8 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
         PMN_SEND
       };
 
+  if (!fo) return(0);
+
   // Now lets find out which entry is under the mouse pointer
   DoMethod(gui->NL_MAILS, MUIM_NList_TestPos, msg->mx, msg->my, &res, TAG_DONE);
 
@@ -2214,7 +2250,6 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
 
   if(!mail) return(0);
 
-  if (!fo) return(0);
   fo->LastActive = GetMUI(gui->NL_MAILS, MUIA_NList_Active);
 
   if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;

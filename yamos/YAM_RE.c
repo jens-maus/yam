@@ -1208,6 +1208,8 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
    struct Folder *folder = re->MailPtr->Folder;
    char mfile[SIZE_MFILE];
 
+   if(!folder) return;
+
    if (!(choice = MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SaveDecrypted), GetStr(MSG_RE_SaveDecGads), GetStr(MSG_RE_SaveDecReq)))) return;
    memset(&comp, 0, sizeof(struct Compose));
    if (comp.FH = fopen(MA_NewMailFile(folder, mfile, 0), "w"))

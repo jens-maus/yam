@@ -496,6 +496,7 @@ HOOKPROTONHNONP(FI_Open, void)
    {
       if (!(G->FI = FI_New())) return;
       folder = FO_GetCurrentFolder();
+      if(!folder) return;
       flist = FO_CreateList();
       for (j = 0, i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_GROUP)
       {
@@ -738,6 +739,8 @@ HOOKPROTONHNONP(FI_SelectFunc, void)
 {
    int i;
    struct Folder *folder = FO_GetCurrentFolder();
+
+   if(!folder) return;
 
    DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
    for (i = 0; ; i++)
