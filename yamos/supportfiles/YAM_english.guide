@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (04.03.2003)
+@$VER: YAM.guide 2.4 (06.03.2003)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -30,7 +30,6 @@
 /*
 **  TO DO...
 **
-** - Good examples along the ARexx documentation
 ** - Explain the NListtree tricks for the folder list
 ** - Give real life examples of how to use the Mailing list support
 **   settings. For the best results, this will have to wait for both
@@ -249,10 +248,10 @@ Software
             http://home.t-online.de/home/sebauer/MCC_NListtree.lha
         - TextEditor
             http://www.top-house.dk/~nr8/AmigaArchives/MCC_TextEditor.LZX
-        - Toolbar
+        - Toolbar 15.8+
             http://us.aminet.net/pub/aminet/dev/mui/MCC_Toolbar.lha
 
-   * AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX], TermiteTCP, Roadshow)
+   * AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX], TermiteTCP, RoadShow)
    * optional: XPK for compression of articles
    * optional: PGP 2.6 or 5.0 for encryption and signing messages
    * optional: AmiSSL for TLSv1/SSLv3 security layers over SMTP/POP
@@ -278,8 +277,8 @@ archives which must be unpacked into the same directory before installation:
      or better, and the English manual in AmigaGuide format.
 
 @{b}YAM24cpu.lha@{ub}
-     Diffs to patch the 020 executable and turn it into a 68040/060
-     executable.  Includes the spatch utility.
+     Diff to patch the 020 executable and turn it into a 68040/060
+     executable.  Includes the GPatch utility.
 
 @{b}YAM24loc.lha@{ub}
      Foreign language support files: catalogs and AmigaGuide manuals.
@@ -321,24 +320,24 @@ unable or unwilling to use it, proceed as follows:
 - Create an entry in your @{b}S:User-Startup@{ub} assigning @{b}YAM:@{ub} to the
   directory you have created for YAM 2.4.  For example,
 
-                Assign YAM: Work:Internet/YAM
+          1:> assign YAM: Work:Internet/YAM
 
 - If you have a 68040 or 68060 CPU, you might want to use a version
-  of YAM optimized for those processors.  To do this, just use the
-  supplied @{b}spatch@{ub} CLI utility, which you should copy to your @{b}C:@{ub}
-  directory for a future use.  Now, assuming you have both @{b}YAM@{ub} (020)
-  and @{b}YAM.060.pch@{ub} in your RAM: disk, you might use:
+  of YAM optimized for those processors.  To do this, you need the
+  supplied @{b}GPatch@{ub} CLI utility -which you should copy to your @{b}C:@{ub}
+  directory for future use- and the @{b}YAM.gpatch@{ub} file.  This file
+  contains patches to update the basic 020 executable to both 040
+  and 060 binaries.  Use the following command to create a 040 binary:
 
-                1.RAM Disk:> spatch -oYAM_060 -pYAM.060.pch YAM
+          1:> GPatch YAM:YAM  <path/>YAM.gpatch  DIRECT
 
-  which would result in a fresh new @{b}YAM_060@{ub} executable that should
-  now be copied to your @{b}YAM:@{ub} directory to replace the standard 020
-  compile.  Alternatively, if you have some older YAM version already
-  installed, you probably can use this instead:
+  If you want the 060 flavour instead, use this command:
 
-                1.RAM Disk:> spatch -oYAM:YAM -pYAM.060.pch YAM
+          1:> GPatch YAM:YAM  <path/>YAM.gpatch  DIRECT RECURSIVE
 
-  to replace your old YAM executable in one single step.
+- (Optional) Delete libs:imagepool.library.  This library was formerly
+  used by Toolbar.mcc, but the bugfixed Toolbar class supplied with
+  YAM 2.4 no longer supports it.
 
 - Reboot your Amiga
 
@@ -352,15 +351,15 @@ Installation notes under MorphOS
   either manually or using the installer script) as "YAM.amigaos"
   (don't rename the icon!):
 
-                1.RAM Disk:> rename YAM:YAM as YAM:YAM.amigaos
+          1:> rename YAM:YAM as YAM:YAM.amigaos
 
 - Copy the "YAM.morphos" binary from "YAM24mos.lha" to your YAM: directory:
 
-                1.RAM Disk:> copy YAM.morphos YAM:
+          1:> copy YAM.morphos YAM:
 
 - Copy the "YAM.starter" executable as "YAM" into your YAM: directory:
 
-                1.RAM Disk:> copy YAM.starter YAM:YAM
+          1:> copy YAM.starter YAM:YAM
 
    Now you can launch YAM in the usual way (from CLI or Workbench).
 The 68k or the PPC version will be selected automatically according
@@ -1559,13 +1558,9 @@ bottom of the list.
 
      The search pattern may contain @{" AmigaDOS wildcards " link "DOSW"} such as @{b}?@{ub}, @{b}#?@{ub},
      @{b}(a|b)@{ub} or @{b}[abc]@{ub}.  Please note that the search pattern @{b}[YAM]#?@{ub} will
-     filter all messages beginning with Y, A or M because the characters [
-     and ] are special characters within AmigaDOS patterns. Therefore
-     filtering mails coming from a mailing list (for example, a mailing
-     list related to YAM) and the subject always begins with [YAM] you
-     need to enter @{b}'[YAM']#?@{ub} as the filtering pattern including
-     the special ' escape characters.
-     Or you'd better use the search pattern @{b}#?YAM#?@{ub} or have the
+     filter all messages beginning with Y, A or M.  For filtering mails
+     coming from a mailing list (for example, a mailing list related to
+     YAM), you'd better use the search pattern @{b}#?YAM#?@{ub} or have the
      filter compare the @{b}Reply-To:@{ub} field with the address of the
      mailing list.
 
@@ -2442,11 +2437,11 @@ Configuration - Address book
      book.  Choose one of these modes:
 
        never                   Don't save addresses
-       ask before              You'll be asked every time whether the
-                               address should be saved or not
        if info available; ask  You'll only be asked if there's personal
                                data of the sender available, otherwise the
                                address won't be saved
+       ask before              You'll be asked every time whether the
+                               address should be saved or not
        if info available       The address will be saved automatically if
                                there's personal data of the sender available
        always                  All new addresses will be saved
@@ -3049,13 +3044,13 @@ Status icons
    Messages which have already been read.
 
  Answered messages             opened envelope with an 'R'
-   Messages which have already been answered
+   Messages which have already been answered.
 
  Forwarded messages            opened envelope with an 'F'
    Messages which have been forwarded to a third party.
 
  Unsent messages               front of envelope
-   Messages in 'Outgoing', ready to send
+   Messages in 'Outgoing', ready to send.
 
  Held messages                 envelope (front) with an 'H'
    Messages in 'Outgoing' which need further work before sending.
@@ -3070,16 +3065,19 @@ Status icons
    Messages with one or more files attached.
 
  Locked messages               grey key
-   Messages which have been encrypted with PGP
+   Messages which have been encrypted with PGP.
 
  Signed messages               orange key
-   Messages which have been signed with PGP
+   Messages which have been signed with PGP.
 
  Status report                 little sign with the letter 'i'
-   Automatic reply from the mail server or the recipient's mail program
+   Automatic reply from the mail server or the recipient's mail program.
 
  Important message             exclamation mark
-   Message marked as important by the sender
+   Message noted as important by the sender.
+
+ Marked messages               light bulb or sender/recipient in bold letters
+   Messages which have been locally "marked" for some reason.
 
 @endnode
 
@@ -3371,7 +3369,7 @@ Main window - Message menu
      a message has several recipients, then you get the option of
      creating a new distribution list.
 
-@{b}Message/Set status to  »  Unread | Read | Hold | Queued@{ub}
+@{b}Message/Set status to  »  Marked | Unmarked | Unread | Read | Hold | Queued@{ub}
      This changes the status of one or more messages.  Thus you can
      release held messages in the Outgoing mailbox, or mark unread
      messages as read.
@@ -4026,7 +4024,7 @@ The internal editor
 handling.  Many aspects of the editor, such as keybindings,
 spellchecking or fonts can be changed in the @{b}TextEditor@{ub} sheet of the
 @{" MUI configuration " link "MAM4"}.  Although you can modify the keybindings, here
-is a list of the important default settings:
+is a list of the important default settings in TextEditor 15.9:
 
 
         <Control-Up>         go to the start of the text
@@ -4042,7 +4040,7 @@ is a list of the important default settings:
         <RAmiga-v>           paste
         <RAmiga-z>           undo
         <RAmiga-RShift-z>    redo
-        <Help>               suggest a word
+        <Command-Help>       suggest a word
         <Del>                delete the character
         <Shift-Backspace>    delete to start of line
         <Shift-Del>          delete to end of line
@@ -4280,6 +4278,10 @@ Read window - Message menu
 
 @{b}Message/Set status to unread@{ub}
      Lets you change the status of the current message to unread.
+
+
+@{b}Message/Set status to marked@{ub}
+     Adds a visible mark to the message to make it easier to find.
 
 
 @{b}Message/Change subject...@{ub}
@@ -5030,16 +5032,12 @@ Finding messages - Search criteria
      as used for names in a telephone directory, so James < Jim and 12
      < 2.
 
-     The search pattern may contain @{" AmigaDOS wildcards " link "DOSW"} such as @{b}?@{ub}, @{b}#?@{ub},
+     The search pattern may contain AmigaDOS @{" wildcards " link "DOSW"} such as @{b}?@{ub}, @{b}#?@{ub},
      @{b}(a|b)@{ub} or @{b}[abc]@{ub}.  Please note that the search pattern @{b}[YAM]#?@{ub} will
-     filter all messages beginning with Y, A or M because the characters [
-     and ] are special characters within AmigaDOS patterns. Therefore
-     filtering mails coming from a mailing list (for example, a mailing
-     list related to YAM) and the subject always begins with [YAM] you
-     need to enter @{b}'[YAM']#?@{ub} as the filtering pattern including
-     the special ' escape characters.
-     Or you'd better use the search pattern @{b}#?YAM#?@{ub} or have the
-     filter compare the @{b}Reply-To:@{ub} field with the address of the
+     match any message beginning with Y, A or M.  To filter email coming
+     from a mailing list (for example, a mailing list related to YAM),
+     you should use the search pattern @{b}#?YAM#?@{ub} or, even better, have
+     the filter compare the @{b}Reply-To@{ub} field with the address of the
      mailing list.
 
      Example:  = YAM 1.3.#?
@@ -5448,7 +5446,7 @@ Alphabetical list of all ARexx commands
  @{" WRITEMAILTO       " link "RX_WRITEMAILTO"}  - Fill the TO: header of a new message
  @{" WRITEOPTIONS      " link "RX_WRITEOPTIONS"}  - Set the options of a new message
  @{" WRITEQUEUE        " link "RX_WRITEQUEUE"}  - Move a new message to the @{b}Outgoing@{ub} queue
- @{" WRITEREPLYTO      " link "RX_WRITEREPLYTO"}  - Fill REPLY-TO: header of a new message
+ @{" WRITEREPLYTO      " link "RX_WRITEREPLYTO"}  - Fill the REPLY-TO: header of a new message
  @{" WRITESEND         " link "RX_WRITESEND"}  - Send a new message
  @{" WRITESUBJECT      " link "RX_WRITESUBJECT"}  - Fill the SUBJECT: header of a new message
  @{" WRITETO           " link "RX_WRITETO"}  - Fill the TO: header of a new message
@@ -5575,7 +5573,7 @@ Writing new email
  @{" WRITEMAILTO       " link "RX_WRITEMAILTO"}  - Fill the TO: header of a new message
  @{" WRITEOPTIONS      " link "RX_WRITEOPTIONS"}  - Set the options of a new message
  @{" WRITEQUEUE        " link "RX_WRITEQUEUE"}  - Move a new message to the @{b}Outgoing@{ub} queue
- @{" WRITEREPLYTO      " link "RX_WRITEREPLYTO"}  - Fill REPLY-TO: header of a new message
+ @{" WRITEREPLYTO      " link "RX_WRITEREPLYTO"}  - Fill the REPLY-TO: header of a new message
  @{" WRITESEND         " link "RX_WRITESEND"}  - Send a new message
  @{" WRITESUBJECT      " link "RX_WRITESUBJECT"}  - Fill the SUBJECT: header of a new message
  @{" WRITETO           " link "RX_WRITETO"}  - Fill the TO: header of a new message
@@ -6297,7 +6295,7 @@ GETCONFIGINFO
      <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
-     This command is obsoleted by USERINFO in V2.0+.  Don't use it
+     This command is superseded by USERINFO in V2.0+.  Don't use it
      in new scripts.
 
 @{b}EXAMPLE@{ub}
@@ -6360,7 +6358,7 @@ GETFOLDERINFO
      <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
-     This command is obsoleted by FOLDERINFO in V2.0+.  Don't use it
+     This command is superseded by FOLDERINFO in V2.0+.  Don't use it
      in new scripts.
 
 @{b}EXAMPLE@{ub}
@@ -6440,7 +6438,7 @@ GETMAILINFO
      <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
-     This command is obsoleted by MAILINFO in V2.0+.  Don't use it
+     This command is superseded by MAILINFO in V2.0+.  Don't use it
      in new scripts.
 
 @{b}EXAMPLE@{ub}
@@ -6810,7 +6808,7 @@ MAILARCHIVE
      RC is set to 10 if the specified folder doesn't exist.
 
 @{b}NOTES@{ub}
-     This command is obsoleted by MAILMOVE in V2.0+.
+     Superseded by MAILMOVE in V2.0+.  Don't use it in new scripts.
 
 @{b}EXAMPLE@{ub}
          /* Move the selected messages to the Archived folder */
@@ -7288,7 +7286,7 @@ MAILFORWARD
          /* Silently forward the selected messages */
 
          MAILFORWARD QUIET
-         WRITETO 'joe@example.com' 'mars'
+         WRITETO 'joe@example.com'
          WRITESEND
 
 @{b}BUGS@{ub}
@@ -7397,11 +7395,11 @@ MAILINFO
                       path
      <STEM>SIZE     - size of the message, in bytes
      <STEM>DATE     - date of the message, in "MM-DD-YY HH:MM:SS" format
-     <STEM>FLAGS    - an 9 byte string in "MARCS-77M" format:
+     <STEM>FLAGS    - a 9 byte string in "MARCS-77M" format:
 
                          MARCS-77M
                          ||||| |||
-                         ||||| ||`--------- @{b}M@{ub}arked flag (>= v2.4)
+                         ||||| ||`--------- @{b}M@{ub}arked flag  (V2.4)
                          ||||| |`---------- volatile flag (see @{" SETFLAG " link "RX_SETFLAG"})
                          ||||| `----------- permanent flag (see @{" SETFLAG " link "RX_SETFLAG"})
                          ||||`------------- PGP @{b}S@{ub}igned
@@ -7410,18 +7408,14 @@ MAILINFO
                          |`---------------- contains @{b}A@{ub}ttachments
                          `----------------- @{b}M@{ub}ultiple recipients
 
-                      Please note that if the volatile or permanent flag has
-                      a value of zero, the last 2 bytes of the string will
-                      have the value of "-" instead of "0".
-
      <STEM>MSGID    - compressed hexadecimal 32 bit representation of the
-                      contents of the "Message-ID:" header, e.g. BBC62595
-                      (V2.1)
+                      "Message-ID:" header contents, e.g. BBC62595  (V2.1)
 
      RC is set to 10 if INDEX is out of the range of messages available in
      the folder.
 
 @{b}NOTES@{ub}
+     Starting with V2.4, <STEM>MSGID returns an hexadecimal value.
 
 @{b}EXAMPLE@{ub}
          /* Enable result codes */
@@ -7545,16 +7539,16 @@ MAILREAD
 
 @{b}NOTES@{ub}
      For all intents and purposes, the status of the "Multiple windows"
-     flag in the configuration is irrelevant for this command.
+     flag in the Read configuration is irrelevant for this command.
 
      Window slots are dynamically assigned as they are required until
      all four are occupied, and remain in use until the relevant window
      is closed (an "invisible" Read window is also "open" within this
      context).  The optional WINDOW parameter sets the @{b}active@{ub} Read window,
      upon which the @{" READCLOSE " link "RX_READCLOSE"}, @{" READINFO " link "RX_READINFO"}, @{" READPRINT " link "RX_READPRINT"} and @{" READSAVE " link "RX_READSAVE"}
-     commands will act when called.  Therefore, the MAILREAD command
+     commands will act when called; therefore, the MAILREAD command
      @{b}should@{ub} be called before using any of them to ensure they act on
-     the window that they are supposed to; note that manually activating
+     the window that they are supposed to.  Note that manually activating
      a Read window using the GUI does @{b}not@{ub} magically makes it the target
      of the above mentioned commands.
 
@@ -7565,6 +7559,7 @@ MAILREAD
      in V2.4.
 
 @{b}SEE ALSO@{ub}
+     @{" READCLOSE " link "RX_READCLOSE"}
 
 @endnode
 
@@ -7597,6 +7592,9 @@ MAILREPLY
      <STEM>WINDOW - number of the created window, may be 0 or 1 (or 2,
                     if QUIET is enabled)
 
+     RC is set to 10 if no message is selected, typically because the
+     folder is empty.
+
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
@@ -7625,23 +7623,25 @@ MAILSEND
      Sends either all or only the selected messages in the "Outgoing"
      folder.
 
+     Messages marked as "Hold" are not affected by the command.
+
 @{b}INPUTS@{ub}
      ALL/S   - optional, force the command to send all the messages  (V2.0)
 
 @{b}RETURNS@{ub}
      RC is set to 5 if the system is not online or if there isn't any
-     message ready to be sent.  (V???)
+     message ready to be sent.  (V2.0)
 
 @{b}NOTES@{ub}
-     Messages marked as "Hold" are not affected by the command.
 
 @{b}EXAMPLE@{ub}
 
 @{b}BUGS@{ub}
-     No error was returned in case of a problem to send.  This was
-     fixed in V???.
+     No warning was returned in case of a problem to send.  This was
+     fixed in V2.0.
 
 @{b}SEE ALSO@{ub}
+     @{" MAILSENDALL " link "RX_MAILSENDALL"}
 
 @endnode
 
@@ -7661,6 +7661,8 @@ MAILSENDALL
 @{b}FUNCTION@{ub}
      Sends all the messages in the "Outgoing" folder.
 
+     Messages marked as "Hold" are not affected by the command.
+
 @{b}INPUTS@{ub}
 
 @{b}RETURNS@{ub}
@@ -7668,12 +7670,11 @@ MAILSENDALL
      message ready to be sent.  (V???)
 
 @{b}NOTES@{ub}
-     Messages marked as "Hold" are not affected by the command.
 
 @{b}EXAMPLE@{ub}
 
 @{b}BUGS@{ub}
-     No error was returned in case of a problem to send.  This was
+     No warning was returned in case of a problem to send.  This was
      fixed in V???.
 
 @{b}SEE ALSO@{ub}
@@ -7774,9 +7775,12 @@ MAILWRITE
      VAR/K,STEM/K,WINDOW/N,QUIET/S
 
 @{b}FUNCTION@{ub}
-     Opens a new Write window or activates one already opened.  This
-     command MUST always be used before trying to edit any part of
-     a new message.
+     Opens a Write window to compose a new mail or activates one already
+     opened.
+
+     Except when replying/forwarding/bouncing email where only one
+     Write window is used, MAILWRITE is needed before trying to edit
+     any part of a new message.
 
 @{b}INPUTS@{ub}
      VAR/K      - alternative variable to put the results into instead of
@@ -7805,11 +7809,15 @@ MAILWRITE
      upon which the @{" WRITEATTACH " link "RX_WRITEATTACH"}, @{" WRITEBCC " link "RX_WRITEBCC"}, @{" WRITECC " link "RX_WRITECC"}, @{" WRITEEDITOR " link "RX_WRITEEDITOR"}
      @{" WRITEFROM " link "RX_WRITEFROM"}, @{" WRITELETTER " link "RX_WRITELETTER"}, @{" WRITEMAILTO " link "RX_WRITEMAILTO"}, @{" WRITEOPTIONS " link "RX_WRITEOPTIONS"},
      @{" WRITEQUEUE " link "RX_WRITEQUEUE"}, @{" WRITEREPLYTO " link "RX_WRITEREPLYTO"}, @{" WRITESEND " link "RX_WRITESEND"}, @{" WRITESUBJECT" link "RX_WRITESUBJECT"}, and
-     @{" WRITETO " link "RX_WRITETO"} commands will act when called.  Therefore, the MAILWRITE
-     command SHOULD be called before using any of them to ensure they act
-     on the window that they are supposed to; note that manually activating
-     a Write window using the GUI does @{b}not@{ub} magically makes it the
-     target of the above mentioned commands.
+     @{" WRITETO " link "RX_WRITETO"} commands will act when called, though strictly speaking
+     this is only necessary when at least two Write windows are opened
+     at the same time - in that case, "MAILWRITE WINDOW x" should be
+     called before using any of these commands to ensure they act on
+     the window they are supposed to.
+
+     Regardless, note that manually activating a Write window using the
+     GUI does @{b}not@{ub} magically make it the target of the above mentioned
+     commands.
 
 @{b}EXAMPLE@{ub}
          /* Enable result codes */
@@ -7971,8 +7979,8 @@ READCLOSE
 @{b}INPUTS@{ub}
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if no window was previously specified as "active"
-     with @{" MAILREAD " link "RX_MAILREAD"}.
+     RC is set to 10 if no Read window was previously specified as
+     "active" with @{" MAILREAD " link "RX_MAILREAD"}.
 
 @{b}NOTES@{ub}
 
@@ -8034,7 +8042,7 @@ READINFO
                             (0 = first part after the headers, usually the
                             body of the message)
 
-     RC is set to 10 if no window was previously specified as "active"
+     RC is set to 10 if no Read window was previously specified as "active"
      with @{" MAILREAD " link "RX_MAILREAD"}.
 
 @{b}NOTES@{ub}
@@ -8061,7 +8069,7 @@ READINFO
             SAY '  File name: 'ri.filename.i
             SAY '  File type: 'ri.filetype.i
 	    SAY '  File size: 'ri.filesize.i
-	    SAY '  Stored at: 'ri.tempfile.i
+	    SAY '  Stored in: 'ri.tempfile.i
 	 END
 
 @{b}BUGS@{ub}
@@ -8100,11 +8108,24 @@ READPRINT
                 printout of the visible part of the message
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if the specified part does not exist.
+     RC is set to 10 if the specified part does not exist or no Read window
+     was previously specified as "active" with @{" MAILREAD " link "RX_MAILREAD"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Silently decode the current message */
+        
+         MAILREAD QUIET
+
+         /* Print the body, then close the message */
+
+         READPRINT 1
+         READCLOSE
 
 @{b}BUGS@{ub}
      The command used to blindly act upon the first Read window opened
@@ -8112,7 +8133,7 @@ READPRINT
      of @{" MAILREAD " link "RX_MAILREAD"} to explicitely mark a window as "active".
 
 @{b}SEE ALSO@{ub}
-     @{" MAILREAD " link "RX_MAILREAD"}
+     @{" MAILREAD " link "RX_MAILREAD"}, @{" READINFO " link "RX_READINFO"}
 
 @endnode
 
@@ -8144,17 +8165,33 @@ READSAVE
                      already existing file
 
 @{b}RETURNS@{ub}
+     RC is set to 10 if the specified part doesn't exist, if the file
+     couldn't be written to or if no Read window was previously specified
+     as "active" with @{" MAILREAD " link "RX_MAILREAD"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Silently decode the current message */
+        
+         MAILREAD QUIET
+
+         /* Save the body to a file, then close the message */
+
+         READSAVE 1 FILENAME 'mail:important'
+         READCLOSE
 
 @{b}BUGS@{ub}
-     The scope of the command is limited to one Read window, namely
-     the one opened first if "Multiple windows" has been activated
-     in the Read configuration.
+     The command used to blindly act upon the first Read window opened
+     at any given time; this was changed in V2.4 to require the use
+     of @{" MAILREAD " link "RX_MAILREAD"} to explicitely mark a window as "active".
 
 @{b}SEE ALSO@{ub}
+     @{" MAILREAD " link "RX_MAILREAD"}, @{" READINFO " link "RX_READINFO"}
 
 @endnode
 
@@ -8183,7 +8220,7 @@ REQUEST
                    stored  (V2.0)
      BODY/A      - a string containing the body of the requester
      GADGETS/A   - a string containing a vertical bar ("|") separated list
-                   of gadgets; up to 32 gadgets can be used
+                   of gadget labels
 
 @{b}RETURNS@{ub}
      VAR          - info returned by the query
@@ -8192,8 +8229,30 @@ REQUEST
                     2..n for the second, etc. gadget from the left
 
 @{b}NOTES@{ub}
+     Following the MUI specs, every gadget can have a shortcut by
+     inserting a '_' (underscore) character in front of the character
+     that should be used as shortcut.  A default gadget can also be
+     defined with a '*' (asterisk) character in front; the default
+     gadget is activated when pressing the <Return> key.
+
+     Styles can also be used.  See the MUI developer documentation
+     for more info.
+
+     Please respect the Amiga User Interface Style Guide when creating
+     requesters.  For instance, the rightmost gadget will be triggered
+     by the <Esc> key, and should always offer a safe way out.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Open a custom requester */
+
+         body = '"Isn't YAM just great?"'
+         gadgets = '"*_Yeah!|_No way, Outlook rules!|_What is YAM?"'
+
+         REQUEST body gadgets
 
 @{b}BUGS@{ub}
 
@@ -8217,7 +8276,7 @@ REQUESTFOLDER
 
 @{b}FUNCTION@{ub}
      Requests the user to select a folder, perhaps excluding the
-     active folder.
+     current folder.
 
 @{b}INPUTS@{ub}
      VAR/K             - alternative variable to put the result into
@@ -8225,7 +8284,7 @@ REQUESTFOLDER
      STEM/K            - base name used for the stem where the result
                          will be stored
      BODY/A            - a string containing the body of the requester
-     EXCLUDEACTIVE/S   - exclude the active folder from the list
+     EXCLUDEACTIVE/S   - exclude the current folder from the list
 
 @{b}RETURNS@{ub}
      VAR          - info returned by the query
@@ -8240,6 +8299,7 @@ REQUESTFOLDER
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" SETFOLDER " link "RX_SETFOLDER"}
 
 @endnode
 
@@ -8279,6 +8339,16 @@ REQUESTSTRING
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Request the user to type something */
+
+         body = '"Please type your name"'
+         default = '"Bill Clinton"'
+
+         REQUESTSTRING body STRING default
 
 @{b}BUGS@{ub}
 
@@ -8314,6 +8384,7 @@ SCREENTOBACK
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" SCREENTOFRONT " link "RX_SCREENTOFRONT"}
 
 @endnode
 
@@ -8345,6 +8416,7 @@ SCREENTOFRONT
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" SCREENTOBACK " link "RX_SCREENTOBACK"}
 
 @endnode
 
@@ -8366,26 +8438,32 @@ SETFLAG
 @{b}FUNCTION@{ub}
      Sets the PERmanent and VOLatile flags of the currently selected
      message.  These flags aren't used internally, but may come in handy
-     in complex ARexx scripts.  The value of the permanent flag is saved
-     to the file comment of the message to ensure it will be present
-     after a restart or index rescan. The value of the volatile flag is
-     lost after a exit or reboot of YAM.
+     in complex ARexx scripts.
+
+     The value of the permanent flag is stored in the message file
+     comment to ensure it will survive a restart or index rescan.
+     The value of the volatile flag is lost when any of these events
+     happens.
 
 @{b}INPUTS@{ub}
-     VOL/K/N   - value of the VOLatile flag, may be between 0 and 7, where
-                 a value of 0 clears the flag.
-     PER/K/N   - value of the PERmanent flag, may be between 0 and 7, where
-                 a value of 0 clears the flag.
+     VOL/K/N   - value of the VOLatile flag, may be between 0 and 7
+     PER/K/N   - value of the PERmanent flag, may be between 0 and 7
 
 @{b}RETURNS@{ub}
+     RC is set to 10 if the supplied value is out of the acceptable
+     range.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Set the permanent flag */
+
+         SETFLAG PER 5
 
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" MAILINFO " link "RX_MAILINFO"}
 
 @endnode
 
@@ -8407,25 +8485,35 @@ SETFOLDER
      Makes the named folder the current folder.
 
 @{b}INPUTS@{ub}
-     FOLDER/A   - name or directory of the folder to turn into the
-                  current folder
+     FOLDER/A   - name, directory or number of the folder to turn into
+                  the current folder; folder numbers start from 0
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the specified folder doesn't exist.
 
-@{b}WARNING@{ub}
-     In YAM 1.0, SetFolder could only accept a folder number as argument.
-     This was changed in ??? to accept folder names and directories
-     instead; therefore, to be on the safe side scripts should check
-     the YAM version in use before deciding to use the latter as argument.
-
 @{b}NOTES@{ub}
+     In YAM 1.0 - 1.3.2, SETFOLDER could only accept a folder number
+     as argument.  This was changed in 1.3.3 to also accept folder names,
+     and again in 2.2 to accept directory names, too.  Therefore, to be
+     on the safe side scripts should check the YAM version in use before
+     deciding to use the latter as argument.
+
+     Also, bear in mind localization when referring to folders by their
+     name.
 
 @{b}EXAMPLE@{ub}
+         /* Switch to the Outgoing folder */
+
+         SETFOLDER Outgoing
+
+         /* Switch to the first folder in the list */
+
+         SETFOLDER 0
 
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" REQUESTFOLDER " link "RX_REQUESTFOLDER"}
 
 @endnode
 
@@ -8454,17 +8542,21 @@ SETMAIL
                  number between 0 and n-1
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if the message referred with NUM doesn't exist.
+     RC is set to 10 if the specified message doesn't exist.
 
 @{b}NOTES@{ub}
-     SetMail sets the current message, but doesn't *select* messages by
+     SETMAIL sets the current message, but doesn't *select* messages by
      itself; use @{" LISTSELECT " link "RX_LISTSELECT"} for that.
 
 @{b}EXAMPLE@{ub}
+         /* Make the third message in the list the current message */
+
+         SETMAIL 2
 
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" LISTSELECT " link "RX_LISTSELECT"}, @{" SETMAILFILE " link "RX_SETMAILFILE"}
 
 @endnode
 
@@ -8487,18 +8579,22 @@ SETMAILFILE
      Sets the current message in the current folder by filename.
 
 @{b}INPUTS@{ub}
-     MAILFILE/A   - filename where the message is stored, (without path ???)
+     MAILFILE/A   - filename where the message is stored
 
 @{b}RETURNS@{ub}
      RC is set to 5 if the supplied filename can't be found.
 
 @{b}NOTES@{ub}
+     Path names are stripped.  For instance, if "09193.017" exists
+     in the current folder and a bogus "foobar:bogus/09193.017"
+     filename is supplied, the file will still be found.
 
 @{b}EXAMPLE@{ub}
 
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" SETMAIL " link "RX_SETMAIL"}
 
 @endnode
 
@@ -8601,17 +8697,34 @@ WRITEATTACH
      CTYPE     - optional, content type of the file  (V1.3)
 
 @{b}RETURNS@{ub}
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
+     The default encoding type is Base64 (MIME).
+
+     The default content type is taken after scanning the built-in
+     list of MIME types and then looking at the MIME types defined
+     in the user configuration.  For instance, if the user has
+     defined "application/pdf" as MIME type for files using the
+     ".pdf" extension, all files attached bearing this extension
+     will default to "application/pdf" unless CTYPE overrides this.
+     If no suitable MIME type is found and no content type has been
+     specified, YAM will fallback to "application/octet-stream".
+
+     Never, ever use MIME types not standardised when sending email
+     through the Internet, otherwise you risk the data to be mangled
+     along the way.
 
 @{b}EXAMPLE@{ub}
+         /* Attach a file */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         WRITEATTACH 'Docs:Noise.pdf' ENCMODE 'b64' CTYPE 'application/pdf'
 
 @{b}BUGS@{ub}
-     No error is returned if the specified file cannot be opened.
+     No error is returned if the specified file was found but couldn't
+     be opened.
 
 @{b}SEE ALSO@{ub}
      @{" MAILWRITE " link "RX_MAILWRITE"}
@@ -8627,30 +8740,33 @@ WRITEBCC
 --------
 
 @{b}NAME@{ub}
-     WriteBCC -- Enter one or more addresses or aliases into the
+     WriteBCC -- Enter one or more names, addresses or aliases into the
                  "Hidden copies to" field of the Write window.  (V2.0)
 
 @{b}TEMPLATE@{ub}
      ADDRESS/A/M,ADD/S
 
 @{b}FUNCTION@{ub}
-     Enters one or more addresses or aliases into the "Hidden copies to"
-     field of the Write window.
+     Enters one or more names, addresses or aliases into the
+     "Hidden copies to" field of the Write window.  YAM will
+     resolve names and aliases looking in the address book.
 
 @{b}INPUTS@{ub}
-     ADDRESS/A/M   - list of addresses or aliases to add
+     ADDRESS/A/M   - list of names/addresses/aliases
      ADD/S         - prevent the new data from replacing the old data
                      already present in the "Hidden copies to" field
 
 @{b}RETURNS@{ub}
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Adds some BCC recipients to a message */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         'WRITEBCC "George Bush" "j_doe" "carol@example.com" ADD'
 
 @{b}BUGS@{ub}
 
@@ -8668,30 +8784,33 @@ WRITECC
 -------
 
 @{b}NAME@{ub}
-     WriteCC -- Enter one or more addresses or aliases into the
+     WriteCC -- Enter one or more names, addresses or aliases into the
                 "Copies to" field of the Write window.  (V2.0)
 
 @{b}TEMPLATE@{ub}
      ADDRESS/A/M,ADD/S
 
 @{b}FUNCTION@{ub}
-     Enters one or more addresses or aliases into the "Copies to"
-     field of the Write window
+     Enters one or more names, addresses or aliases into the "Copies to"
+     field of the Write window.  YAM will resolve names and aliases
+     looking in the address book.
 
 @{b}INPUTS@{ub}
-     ADDRESS/A/M   - list of addresses or aliases to add
+     ADDRESS/A/M   - list of names/addresses/aliases
      ADD/S         - prevent the new data from replacing the old data
                      already present in the "Copies to" field
 
 @{b}RETURNS@{ub}
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Adds some CC recipients to a message */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         'WRITECC "George Bush" "jdoe" "carol@example.com" ADD'
 
 @{b}BUGS@{ub}
 
@@ -8716,12 +8835,11 @@ WRITEEDITOR
      VAR/K,STEM/K,COMMAND/A
 
 @{b}FUNCTION@{ub}
-     Passes a special ARexx command to the internal editor. These
-     commands are internal TextEditor.mcc arexx commands to control
-     a write window.
+     Passes an ARexx command to the internal editor to act upon the
+     contents of a given Write window.
 
-     Out of the TextEditor.mcc autodocs the following commands are
-     currently supported:
+     Quoting the TextEditor.mcc class autodoc, the following commands
+     are currently supported:
 
       CLEAR
       CUT
@@ -8746,30 +8864,28 @@ WRITEEDITOR
       MARK           Template: On/S,Off/S
       DELETE
       BACKSPACE
+      KILLLINE
+      TOUPPER
+      TOLOWER
 
-     Please refer to the Texteditor class documentation for more info
+     Please refer to the Amiga User Interface Style Guide for more info
      about these commands.
 
 @{b}INPUTS@{ub}
-     VAR/K      - alternative variable to put the results into instead of
-                  RESULT
-     STEM/K     - base name used for the stems where the results will be
-                  stored
-     COMMAND/A  - the command string as described above.
+     VAR/K       - alternative variable to put the results into instead of
+                   RESULT
+     STEM/K      - base name used for the stem where the result will be
+                   stored
+     COMMAND/A   - the command string to be passed
 
 @{b}RETURNS@{ub}
-     VAR            - info returned by the query
-     <STEM>RESULT   - the result message of the command, if any.
+     VAR          - info returned by the query
+     <STEM>RESULT - results of the command, if any
 
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
-     Please take a look at the below example and try to understand how you
-     have to format a command string to the WRITEEDITOR rexx command.
-     Often people are confused by the way they have to pass the argument
-     to this command.
 
 @{b}EXAMPLE@{ub}
          /* Enable result codes */
@@ -8779,18 +8895,20 @@ WRITEEDITOR
          /* Start a new mail */
 
          MAILWRITE STEM st.
-         win1 = st.window
+         win = st.window
 
          /* Edit the Write window */
 
-         MAILWRITE WINDOW win1
+         MAILWRITE WINDOW win
          WRITETO boss@example.com
          'WRITESUBJECT "I don't think I can go to work today"'
 
-         /* Clear the texteditor window */
+         /* Clear the editor */
+
          WRITEEDITOR CLEAR
 
          /* Write some text into the editor */
+
          'WRITEEDITOR "TEXT Sorry, but I am sick today!"'
 
 @{b}BUGS@{ub}
@@ -8809,29 +8927,31 @@ WRITEFROM
 ---------
 
 @{b}NAME@{ub}
-     WriteFrom -- Enter an address or alias into the "From" field
+     WriteFrom -- Enter a name, address or alias into the "From" field
                   of the Write window.  (V2.0)
 
 @{b}TEMPLATE@{ub}
      ADDRESS/A
 
 @{b}FUNCTION@{ub}
-     Enters an address or alias into the "From" field of the Write
-     window.  The new data will replace the old contents of the field,
-     if any.
+     Enters a name, address or alias into the "From" field of the Write
+     window, replacing its old contents, if any.  YAM will resolve the
+     name or alias looking in the address book.
 
 @{b}INPUTS@{ub}
-     ADDRESS/A   - address or alias to enter in the "From" field
+     ADDRESS/A   - name, address or alias
 
 @{b}RETURNS@{ub}
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as "active"
+     with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Set the sender of a letter */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         WRITEFROM 'jdoe'
 
 @{b}BUGS@{ub}
 
@@ -8855,19 +8975,25 @@ WRITELETTER
      FILE/A,NOSIG/S
 
 @{b}FUNCTION@{ub}
-     Loads a file into the internal text editor.
+     Loads a file into the internal text editor.  The file replaces
+     the current contents of the editor.
 
 @{b}INPUTS@{ub}
-     FILE/A    - file to load; only a plain text file will be accepted
+     FILE/A    - file to load; only a text file will be accepted
      NOSIG/S   - prevent the addition of any signature  (V2.0)
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if the specified file does not exist or no Write
-     window has been opened.  (V???)
+     RC is set to 10 if the specified file could not be opened or
+     if no Write window was previously specified as "active" with
+     @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Load a file into the editor */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         WRITELETTER 'mail:templates/t2' NOSIG
 
 @{b}BUGS@{ub}
 
@@ -8885,29 +9011,32 @@ WRITEMAILTO
 -----------
 
 @{b}NAME@{ub}
-     WriteMailTo -- Enter one or more addresses or aliases into the
-                    "To" field of the Write window.
+     WriteMailTo -- Enter one or more names, addresses or aliases
+                    into the "To" field of the Write window.
 
 @{b}TEMPLATE@{ub}
      ADDRESS/A/M
 
 @{b}FUNCTION@{ub}
-     Enters one or more addresses or aliases into the "To" field of
-     the Write window, replacing whatever was already there.
+     Enters one or more names, addresses or aliases into the "To"
+     field of the Write window, replacing whatever was already there.
+     YAM will resolve names and aliases looking in the address book.
 
 @{b}INPUTS@{ub}
-     ADDRESS/A/M   - list of addresses or aliases to add
+     ADDRESS/A/M   - list of names/addresses/aliases
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if no Write window has been opened.
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
+     Superseded by @{" WRITETO " link "RX_WRITETO"} in V2.0+.
 
 @{b}EXAMPLE@{ub}
+         /* Set the primary recipients of a message */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         'WRITEMAILTO "George Bush" "jdoe" "carol@example.com"'
 
 @{b}BUGS@{ub}
 
@@ -8925,13 +9054,13 @@ WRITEOPTIONS
 ------------
 
 @{b}NAME@{ub}
-     WriteOptions -- Set the options for the new message.  (V2.0)
+     WriteOptions -- Set the options of a new message.  (V2.0)
 
 @{b}TEMPLATE@{ub}
      DELETE/S,RECEIPT/S,NOTIF/S,ADDINFO/S,IMPORTANCE/N,SIG/N,SECURITY/N
 
 @{b}FUNCTION@{ub}
-     Sets the options for the new message.
+     Sets the options of a new message.
 
 @{b}INPUTS@{ub}
      DELETE/S       - discard the message completely after sending
@@ -8959,18 +9088,22 @@ WRITEOPTIONS
                          2 - PGP encrypted
                          3 - PGP signed & encrypted
                          4 - send anonymously
-                         5 - default value for this recipient
+                         5 - default value for this recipient (default)
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if no Write window has been opened.
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
+     Defaults are taken from the program configuration.  If anonymous
+     send is specified, personal info and signatures are removed
+     automatically.
 
 @{b}EXAMPLE@{ub}
+         /* Set a message to be sent anonymously */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         WRITEOPTIONS SECURITY 4
 
 @{b}BUGS@{ub}
 
@@ -9001,18 +9134,24 @@ WRITEQUEUE
                 mistake  (V2.0)
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if no Write window has been opened.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* New mail */
+
+         MAILWRITE
+         WRITETO boss@example.com
+         'WRITESUBJECT "I don't think I can go to work today"'
+         WRITELETTER 'work:excuses.txt'
+         WRITEQUEUE
 
 @{b}BUGS@{ub}
-     No error is returned if the message couldn't be put in the
-     Outgoing queue for some reason.
 
 @{b}SEE ALSO@{ub}
-     @{" MAILWRITE" link "RX_MAILWRITE"}
+     @{" MAILWRITE" link "RX_MAILWRITE"}, @{" WRITESEND " link "RX_WRITESEND"}
 
 @endnode
 
@@ -9025,29 +9164,31 @@ WRITEREPLYTO
 ------------
 
 @{b}NAME@{ub}
-     WriteReplyTo -- Enter an address or alias into the "Reply to" field
-                     of the Write window.  (V2.0)
+     WriteReplyTo -- Enter a name, address or alias into the "Reply to"
+                     field of the Write window.  (V2.0)
 
 @{b}TEMPLATE@{ub}
      ADDRESS/A
 
 @{b}FUNCTION@{ub}
-     Enters an address or alias into the "Reply to" field of the
-     Write window.
+     Enters a name, address or alias into the "Reply to" field of the
+     Write window
 
 @{b}INPUTS@{ub}
-     ADDRESS/A   - address or alias to enter in the field
+     ADDRESS/A   - name, address or alias
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if no Write window has been opened.
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"} or if an attempt is made to enter
+     more than one sender.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Set Reply-To */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         WRITEREPLYTO jdoe@example.net
 
 @{b}BUGS@{ub}
 
@@ -9075,19 +9216,24 @@ WRITESEND
 @{b}INPUTS@{ub}
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if no Write window has been opened.
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* New mail */
+
+         MAILWRITE
+         WRITETO boss@example.com
+         'WRITESUBJECT "Sorry, but I am sick today!"'
+         WRITELETTER 'work:excuses.txt'
+         WRITESEND
 
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" MAILWRITE " link "RX_MAILWRITE"}, @{" WRITEQUEUE " link "RX_WRITEQUEUE"}
 
 @endnode
 
@@ -9109,18 +9255,20 @@ WRITESUBJECT
      Enters a subject into a new message.
 
 @{b}INPUTS@{ub}
-     SUBJECT/A   - subject of the message
+     SUBJECT/A   - subject of the message (up to 199 characters)
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if no Write window has been opened.
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
+     If the subject is longer than 199 characters, it will be truncated.
 
 @{b}EXAMPLE@{ub}
+         /* Set subject */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         'WRITESUBJECT "This is the subject"'
 
 @{b}BUGS@{ub}
 
@@ -9138,31 +9286,33 @@ WRITETO
 -------
 
 @{b}NAME@{ub}
-     WriteTo -- Enter one or more addresses or aliases into the "To"
-                field of the Write window.  (V2.0)
+     WriteTo -- Enter one or more names, addresses or aliases into the
+                "To" field of the Write window.  (V2.0)
 
 @{b}TEMPLATE@{ub}
      ADDRESS/A/M,ADD/S
 
 @{b}FUNCTION@{ub}
-     Enters one or more addresses or aliases into the "To" field
-     of the Write window.
+     Enters one or more names, addresses or aliases into the "To" field
+     of the Write window.  YAM will resolve names and aliases looking
+     in the address book.
 
 @{b}INPUTS@{ub}
-     ADDRESS/A/M   - list of addresses or aliases to enter
+     ADDRESS/A/M   - list of names/addresses/aliases
      ADD/S         - prevent the new data from replacing the old data
                      already present in the "To" field
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if no Write window has been opened.
-
-@{b}WARNING@{ub}
-     MAILWRITE *must* be called before using this command, otherwise
-     weird things are bound to happen.
+     RC is set to 10 if no Write window was previously specified as
+     "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Set the primary recipients of a message */
+
+         MAILWRITE WINDOW 0      /* Set the active Write window */
+         'WRITETO "George Bush" "jdoe" "carol@example.com"'
 
 @{b}BUGS@{ub}
 
@@ -9505,16 +9655,16 @@ Tips & tricks
 *************
 
 
- @{" Snapshotting the window positions and sizes      " link "TIP0"}
- @{" Avoiding context menus from getting on your way  " link "TIP1"}
- @{" Moving YAM to another partition or directory     " link "TIP2"}
- @{" Avoiding a index rescan after a .index copy/move " link "TIP3"}
+ @{" Snapshotting the window positions and sizes     " link "TIP0"}
+ @{" Avoiding context menus from getting on your way " link "TIP1"}
+ @{" Moving YAM to another partition or directory    " link "TIP2"}
+ @{" Avoiding excessive disk trashing on startup     " link "TIP3"}
 
 @endnode
 
 @node "TIP0" "Snapshotting the window positions and sizes"
 @next "TIP1"
-@prev "TIP2"
+@prev "TIP3"
 @toc "TIPS"
 
 Snapshotting the window positions and sizes
@@ -9539,9 +9689,9 @@ Avoiding context menus from getting on your way
 
    The context menus for the folder & message lists may get in your way
 and prevent you from using the usual menu item shortcuts unless you move
-the pointer outside the list.
-Unfortunately this is a bug in MUI <=3.8, which can only worked around
-by disabling the context menus themselves in @{" Configuration/Lists " link "CO08"}.
+the pointer outside the list.  Unfortunately this is a bug in MUI <=3.8,
+which can only worked around by disabling the context menus themselves
+in @{" Configuration/Lists " link "CO08"}.
 
    If your menu shortcuts still don't work, it's probably because the
 NList context sensitive menus are enabled.  To disable them, start the
@@ -9572,7 +9722,7 @@ requiring four steps:
 
      The "CLONE" switch for Copy is paramount here, as it will prevent
      your mail from getting their status information (read, new, etc.)
-     wiped.
+     lost.
 
   3. Point your YAM: assign to the new place.  You should use "assign
      YAM: <new path>" now and modify this statement in your
@@ -9589,22 +9739,35 @@ be a safe operation now.
 
 @endnode
 
-@node "TIP3" "Avoiding a index rescan after a .index copy/move"
+@node "TIP3" "Avoiding excessive disk trashing on startup"
 @next "TIP0"
-@prev "TIP1"
+@prev "TIP2"
 @toc "TIPS"
 
-Avoiding a index rescan after a .index copy/move
-------------------------------------------------
+Avoiding excessive disk trashing on startup
+-------------------------------------------
 
-   If you keep backups of your .index files somewhere and want to restore a
-.index file in a folder that hasn`t changed since the backup or you want to
-transfer a whole folder to another YAM installation and don`t want YAM to start
-a complete index rescan at the next time you start it.
+   On startup, YAM checks the indices of all its folders against the
+datestamp of the directory where they are stored (the "Rebuilding
+folders' indices" part).  Under normal circumstances, since filesystems
+update a directory datestamp whenever its contents are modified, both
+the index and the directory should have the same datestamp, and therefore
+this stage shouldn't take too long.
 
-Then make sure that the modification date of the folder`s .index file is more
-recent than the date of the directory, or otherwise YAM will rescan the whole
-folder at the next start.
+   However, if for some reason an index is found to be older than the
+directory where it is stored, YAM will assume that something has changed
+in the folder without being written back to the index, so it will promptly
+delete the current index and rescan the whole folder to create a new one,
+which can indeed take a long time.
+
+   Possible reasons for an index not to be in sync with the directory are:
+
+     - Faulty or inexistant battery backed up clock, causing impredictable
+       results especially if you are not aware of the problem or simply
+       forget to set the system time manually.
+
+     - A faulty filesystem, not updating a directory datestamp whenever
+       its contents change.
 
 @endnode
 
@@ -9659,18 +9822,17 @@ first time I open this sheet
 YAM is taking braces as in "[http://www.example.com]" as part of URLs
 ---------------------------------------------------------------------
 
-   This is a side effect of people using "[]" as part of URLs.
-Despite the recommendation in RFC #1738 to encode such characters
+   Despite the recommendation in RFC #1738 to encode such characters
 when they are supposed to be part of URLs, a number of Internet
 resources, entities and users keep using the "[]" braces in unencoded
-form, thus making e.g. YAM to stop parsing an URL as soon as such
-characters are found, as in "<http://www.example.com/files[7]/myfile>".
-As a workaround for this problem, YAM 2.4 will take these characters
-as part of the URL.
+form, and this used to make YAM stop parsing an URL as soon as such
+characters were found, as in "<http://www.example.com/files[7]/myfile>".
+As a workaround for this problem, YAM 2.4 takes these characters as
+part of the URL.
 
-   On the other hand, parenthesis are allowed in URLs in unencoded
-form, which again negates the use of () to delimit URLs.  You are
-advised to use "<" and ">" instead.
+   Parenthesis are allowed in URLs in unencoded form, which again
+negates the use of () to delimit URLs.  You are advised to use "<"
+and ">" for this purpose.
 
 
 The system hangs when deleting a block of text in the editor while
@@ -9698,10 +9860,10 @@ searches.  The special wildcard characters are listed below.
   #   Matches zero or more occurrences of the following item
       so Y#AM matches YM, YAM, YAAM, YAAAM etc.
 
-  #?  matches anything at all (including nothing!)
+  #?  Matches anything at all (including nothing!)
       so #?YAM#? matches any string containing "YAM"
 
-  %   matches an empty string.  Not terribly useful by itself, but you
+  %   Matches an empty string.  Not terribly useful by itself, but you
       could use it to find messages with blank "Subject:" headers.
 
   ()  Round brackets are used to group characters and expressions and show
@@ -9709,24 +9871,21 @@ searches.  The special wildcard characters are listed below.
       Thus #(Re:)YAM matches YAM, Re:YAM, Re:Re:YAM ...
 
   []  Square brackets are used to indicate a list of alternatives
-      so [YAM] matches any of the single letters Y, A or M but not  YAM
+      so [YAM] matches any of the single letters Y, A or M but not YAM
 
-  -   indicates a range, so [0-9] matches any single digit
+  -   Indicates a range, so [0-9] matches any single digit
       and #[0-9] matches any integral number.
 
-  ~   means NOT, referring to the whole expression following,
+  ~   Means NOT, referring to the whole expression following,
       so ~Re: matches any string that does not start with "Re:"
 
-  |   means OR, referring to the expressions either side.  You have to
+  |   Means OR, referring to the expressions either side.  You have to
       enclose the whole expression in round brackets:
       e.g.  (#?YAM#?|#?MUI#?) finds strings including either "YAM" or
       "MUI".
 
-  '   The quote character neutralizes the special meaning of a
-      special character.  Here are some examples:
-      - '#'? matches only the literal string "#?"
-      - '?(A|B|%)'# matches the literal strings "?#", "?A#", "?B#"
-      - '[Mailinglist'] matches the literal string "[Mailinglist]"
+  '   Removes the meaning of a special character.  For instance,
+      '#'? matches the literal string "#?"
 
 @{b}   WARNING!@{ub} It's not as easy as it looks!  For example, let's
 construct a filter that will find references to YAM or YAM2, but will
@@ -9828,6 +9987,10 @@ to <yamos-dev-request@freelists.org> with the subject "subscribe"
 (without the quotes).  Alternatively, you can use the web based
 interface at http://www.freelists.org/list/yamos-dev or review the
 list archive at http://www.freelists.org/archives/yamos-dev
+
+   Please note that subscriptions to YAMos-dev are not accepted unless
+you contact the list owner at david@saug.org or some YAMos developer
+stating how you are going to contribute to the project.
 
 @endnode
 
@@ -9960,9 +10123,7 @@ Future plans
 
    More attractions coming (possibly) in future versions of YAM:
 
-   - Support for messages in HTML format (coming soon)
-
-   - Inline-display of attached files (graphics)
+   - Support for messages in HTML format
 
    - User-defined context menus
 
@@ -9972,7 +10133,7 @@ Future plans
 
    - Asynchronous email transfer (internal multithreading)
 
-   - Enhanced and printable documentation (Postscript)
+   - Ready to print documentation
 
 @endnode
 
@@ -10044,6 +10205,11 @@ Credits
       Ash Thomas
 
 
+   GPatch
+
+      Ralf Gruner
+
+
    YAM 1.0 - 2.2 betatesters
 
       Phil Beazley, Benjamin Busche, Mario Cattaneo, Patrick Ernst,
@@ -10098,7 +10264,7 @@ to replace text) and they look very professional now.
 
 @endnode
 
-@node "MUI" "MUI"
+@node "MUI"
 
 MUI
 ***
@@ -10119,20 +10285,20 @@ lots of examples and more information about registration please look for a
 file  called  @{b}MUIXXusr.lha@{ub}  (XX shows the latest version number) on your
 local bulletin boards or on public domain disks.
 
-          If you want to register directly, feel free to send
+            If you want to register directly, feel free to send
 
-                         DM 30.-  or  US$ 20.-
+                           DM 30.-  or  US$ 20.-
 
-                                  to
+                                    to
 
-                             Stefan Stuntz
-                        Eduard-Spranger-Straße 7
-                             80935 München
-                                GERMANY
+                              Stefan Stuntz
+                         Eduard-Spranger-Straße 7
+                              80935 München
+                                 GERMANY
 
-             Support and online registration is available at
+              Support and online registration is available at
 
-                          http://www.sasg.com/
+                           http://www.sasg.com/
 
 @endnode
 
@@ -10220,7 +10386,12 @@ or for administrating mailing lists.
 
      Additionally, several flags are also taken into account:
 
- important > PGP encrypted > PGP signed > status report > contains attachments
+       1. important
+       2. marked
+       3. PGP encrypted
+       4. PGP signed
+       5. status report
+       6. contains attachments
 
      With the option 'Rev', the order will be reversed (e.g. Z-A
      instead of A-Z).
