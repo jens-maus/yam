@@ -878,3 +878,10 @@
 
     * replaced "remailer@replay.com" in YAM_CO.c with a uptodate remailer,
       because replay.com no longer provides a remailer service.
+
+2001-07-17  Gunther Nikl <gni@gecko.de>
+
+    * YAM.c: (struct Args): fixed GCC cpp problem
+
+    * YAM.c, YAM_addressbookEntry.h, YAM_main.h, YAM_utilities.h, YAM_write.h
+      includes/proto/genesis.h: fixed GCC warnings
