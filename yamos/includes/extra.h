@@ -48,15 +48,6 @@ int stch_i(const char *s,int *res);
 
 extern long getft(const char *);
 
-/*
-** <sys/commwben.h>
-*/
-
-#ifdef _DCC
-#define _WBenchMsg _WBMsg
-#endif
-extern struct WBStartup *_WBenchMsg;
-
 #endif /* __SASC */
 
 #endif /* _EXTRA_H */
