@@ -7,6 +7,9 @@ $Source$
 
 2002-06-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * smakefile: changed SAS/C makefile to start the autogenerating
+      tools automatically if something has changed. Also added
+      directory variables to easily change them on compiletime.
     * YAM.c, YAM:CO.c, YAM_COg.c, YAM_COs.c, YAM_MA.c, YAM_TR.c:
       fixed a bug in the TLS/SSL recognition routines where it could
       have happen that a user selected SSL for a connection but the
