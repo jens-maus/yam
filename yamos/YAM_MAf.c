@@ -60,25 +60,35 @@
 **
 ** DO NOT CHANGE ALIGNMENT here or the .index
 ** files of a folder will be corrupt !
+**
+** We also use special ALIGN and PACKED defines here
+** to align the structure to the PPC, so that the .folder
+** file will be interchangeable between PPC<>68k
+** :see SDI_compiler.h
 */
 struct ComprMail
 {
    int    Flags;
    char   MailFile[SIZE_MFILE];
-   struct DateStamp Date;
+   struct DateStamp ALIGN Date;
    char   Status;
    char   Importance;
-   long   cMsgID;
-   long   cIRTMsgID;
-   long   Size;
-   int    MoreBytes;
-};
+   long ALIGN cMsgID;
+   long ALIGN cIRTMsgID;
+   long ALIGN Size;
+   int  ALIGN MoreBytes;
+} PACKED;
 
 /*
 ** structure of the Folder Index
 **
 ** DO NOT CHANGE ALIGNMENT here or the .index
 ** files of a folder will be corrupt !
+**
+** We also use special ALIGN and PACKED defines here
+** to align the structure to the PPC, so that the .folder
+** file will be interchangeable between PPC<>68k
+** :see SDI_compiler.h
 */
 struct FIndex
 {
@@ -88,7 +98,7 @@ struct FIndex
    int   Unread;
    int   Size;
    long  reserved[2];
-};
+} PACKED;
 
 /* global variables */
 struct Data2D Header = { 0, 0, NULL };

@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-12  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_MAf.c: fixed corrupt .index file WARNING for MorphOS.
+      We simply forgot to align the .index structures for PPC. Also
+      added some general ALIGN and PACKED defines to the
+      SDI_compiler.h for easier use.
+      NOTE: We have to be careful in future with intercommunication
+      structures between 68k and PPC, so all structures that used
+      directly on both plaforms (like for this .index files) have to
+      be aligned for the PPC, so that this files will be compatible to
+      eachother.
+
 2002-06-10  David Rey <david@saug.org>
 
     * Logfile related fixes:
