@@ -1,13 +1,6 @@
-## version $VER: YAM.catalog 5.80 (04.02.2003) (c) Mariusz Danilewicz <mandi@interia.pl>
+## version $VER: YAM.catalog 5.81 (19.03.2003) (c) Mariusz Danilewicz <mandi@interia.pl>
 ## language polski
 ## codeset 0
-;
-;
-; YAM.cd - YAM 2.4 catalog description file
-; $Id$
-; 
-;#version 5
-;#language english
 ;
 ; General
 ;
@@ -6626,4 +6619,38 @@ MSG_MA_TOUNMARKED
 MSG_RE_SETMARKED
 Ustaw status na zaznaczone
 ; Set status to marked
+;
+MSG_MA_CTX_DEFWIDTH_THIS
+Domyôlna szerokoôê: tej
+; Default Width: this
+;
+MSG_MA_CTX_DEFWIDTH_ALL
+Domyôlna szerokoôê: wszystkich
+; Default Width: all
+;
+MSG_MA_CTX_DEFORDER_THIS
+Domyôlny porzâdek: tej
+; Default Order: this
+;
+MSG_MA_CTX_DEFORDER_ALL
+Domyôlny porzâdek: wszystkich
+; Default Order: all
+;
+MSG_MA_CTX_MAILLIST
+Ustawienia listy wiadomoôci
+; MailListview Settings
+;
+MSG_MA_CTX_FOLDERLIST
+Ustawienia listy folderów
+; FolderList Settings
+;
+MSG_HELP_FO_CY_MLSIGNATURE
+Uûywa tej sygnatury podczas\n\
+wysyîania nowej wiadomoôci na listë.
+; Use this Signature when posting\n\
+; new mails to the list.
+;
+MSG_CTapplicationpdf
+Dokument PDF
+; PDF Document
 ;
