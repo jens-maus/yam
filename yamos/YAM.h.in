@@ -1049,6 +1049,7 @@ __near extern struct Library *LocaleBase;
 extern struct Library *DataTypesBase, *MUIMasterBase, *SocketBase, *XpkBase, *OpenURLBase, *CManagerBase;
 extern struct ExecBase *SysBase;
 extern struct DosLibrary *DOSBase;
+extern struct Library *UtilityBase;
 extern struct Global *G;
 extern struct Config *C, *CE;
 extern struct Hook AB_FromAddrBookHook;

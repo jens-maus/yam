@@ -53,6 +53,8 @@
       font when needed. It doesn't work yet, though, since TextEditor.mcc
       doesn't seem to catch MUIA_TextEditor_FixedFont on the fly.
 
+    * Now explicitly opens utility.library.
+
 2000-12-20  Jörg Strohmayer <joergs@users.sourceforge.net>
 
     * Added SMTP AUTH to config GUI.

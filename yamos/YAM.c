@@ -438,6 +438,7 @@ void Terminate(void)
    CloseYAMCatalog();
    if (G->Locale) CloseLocale(G->Locale);
    if (LocaleBase) CloseLibrary(LocaleBase);
+   if (UtilityBase) CloseLibrary(UtilityBase);
    free(C); free(G);
    if (yamLast) exit(0);
 }
@@ -550,6 +551,7 @@ void Initialise(BOOL hidden)
    int i;
 
    DateStamp(&G->StartDate);
+   UtilityBase = InitLib("utility.library", 36, 0, TRUE, FALSE);
    if (LocaleBase = InitLib("locale.library", 38, 0, TRUE, FALSE)) G->Locale = OpenLocale(NULL);
    OpenYAMCatalog();
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
