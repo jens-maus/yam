@@ -26,6 +26,12 @@
  Superclass:  MUIC_Area
  Description: Custom class to display an image for a specific attachment
 
+ Credits: This class was highly inspired by the similar attachment group &
+					image functionality available in Thunderbird and SimpleMail. Large
+					code portions where borrowed by the iconclass implementation of
+					SimpleMail to allow loading of the default icons via icon.library
+					and supporting Drag&Drop on the workbench. Thanks sba! :)
+
 ***************************************************************************/
 
 #include "AttachmentImage_cl.h"
