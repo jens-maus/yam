@@ -502,6 +502,101 @@ static void MA_UpdateStatus(void)
    }
 }
 ///
+/// MA_ToStatusHeader()
+// Function that converts the current flags of a message
+// to "Status:" headerline flags
+char *MA_ToStatusHeader(struct Mail *mail)
+{
+  static char flags[3]; // should not be more than 3 bytes
+
+  switch(mail->Status)
+  {
+    case STATUS_NEW:
+    {
+      flags[0] = '\0';
+    }
+    break;
+
+    case STATUS_UNR:
+    case STATUS_ERR:
+    case STATUS_DEL:
+    {
+      flags[0] = 'O';
+      flags[1] = '\0';
+    }
+    break;
+
+    case STATUS_OLD:
+    case STATUS_FWD:
+    case STATUS_RPD:
+    case STATUS_WFS:
+    case STATUS_HLD:
+    case STATUS_SNT:
+    {
+      flags[0] = 'R';
+      flags[1] = 'O';
+      flags[2] = '\0';
+    }
+    break;
+  }
+
+  return flags;
+}
+
+///
+/// MA_ToXStatusHeader()
+// Function that converts the current flags of a message
+// to "X-Status:" headerline flags
+char *MA_ToXStatusHeader(struct Mail *mail)
+{
+  static char flags[5]; // should not be more than 5 bytes
+
+  switch(mail->Status)
+  {
+    case STATUS_DEL:
+    {
+      flags[0] = 'D';
+    }
+    break;
+
+    case STATUS_RPD:
+    {
+      flags[0] = 'A';
+    }
+    break;
+
+    case STATUS_HLD:
+    {
+      flags[0] = 'T';
+    }
+    break;
+
+    default:
+    {
+      flags[0] = '\0';
+    }
+    break;
+  }
+
+  // now check if the mail is flagged or not
+  if(isMarkedMail(mail))
+  {
+    if(flags[0] != '\0')
+    {
+      flags[1] = 'F';
+      flags[2] = '\0';
+    }
+    else
+    {
+      flags[0] = 'F';
+      flags[1] = '\0';
+    }
+  }
+
+  return flags;
+}
+
+///
 
 /*** Main button functions ***/
 /// MA_ReadMessage

@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-08-04  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c, YAM_MA.c: started working on Status: and X-Status:
+      export/import support when I realized that the whole mail
+      status handling in YAM seems to be a total mess. So this is
+      just a partial checking leaving the Status: headerline
+      support yet unfinished until I have completly reworked the
+      mail status flags handling.
+
 2004-08-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c, YAM_MI.c: rewrote the inline based UUdecoding

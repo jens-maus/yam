@@ -2852,41 +2852,63 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 {
    BOOL success = FALSE;
    struct TransStat ts;
-   int i, c;
    char buf[SIZE_LINE], fullfile[SIZE_PATHFILE];
    FILE *fh, *mfh;
    struct Mail *mail;
+   int i;
 
+   // reset our processing list
    G->TR->List = NULL;
-   for (c = i = 0; i < (int)*mlist; i++)
+
+   // temporarly copy all data out of our mlist to the
+   // processing list and mark all mails to get "loaded"
+   for(i = 0; i < (int)*mlist; i++)
    {
-      struct Mail *new = malloc(sizeof(struct Mail));
-      if (new)
+      if((mail = malloc(sizeof(struct Mail))))
       {
-         *new = *mlist[i+2];
-         new->Index  = ++c;
-         new->Status = TRF_LOAD;
-         MyAddTail(&(G->TR->List), new);
+         memcpy(mail, mlist[i+2], sizeof(struct Mail));
+         mail->Index  = i+1;
+         mail->Status = TRF_LOAD;
+         MyAddTail(&(G->TR->List), mail);
       }
+      else
+        return FALSE;
    }
-   if (c)
+
+   // if we have now something in our processing list,
+   // lets go on
+   if(G->TR->List)
    {
       TR_SetWinTitle(FALSE, FilePart(fname));
       TR_TransStat_Init(&ts);
       TR_TransStat_Start(&ts);
-      if ((fh = fopen(fname, append ? "a" : "w")))
+
+      // open our final destination file either in append or in a fresh
+      // write mode.
+      if((fh = fopen(fname, append ? "a" : "w")))
       {
          success = TRUE;
-         for (mail = G->TR->List; mail && !G->TR->Abort; mail = mail->Next)
+         for(mail = G->TR->List; mail && !G->TR->Abort && success; mail = mail->Next)
          {
+            // update the transfer status
             ts.Msgs_Done++;
             TR_TransStat_NextMsg(&ts, mail->Index, -1, mail->Size, GetStr(MSG_TR_Exporting));
-            if (StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
+
+            if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
             {
-               if ((mfh = fopen(fullfile, "r")))
+               // open the message file to start exporting it
+               if((mfh = fopen(fullfile, "r")))
                {
+                  BOOL inHeader = TRUE;
+
                   // printf out our leading "From " MBOX format line first
                   fprintf(fh, "From %s %s", mail->From.Address, DateStamp2String(&mail->Date, DSS_UNIXDATE, TZC_NONE));
+
+                  // let us put out the Status: header field
+                  fprintf(fh, "Status: %s\n", MA_ToStatusHeader(mail));
+
+                  // let us put out the X-Status: header field
+                  fprintf(fh, "X-Status: %s\n", MA_ToXStatusHeader(mail));
 
                   // initialize buf first
                   buf[0] = '\0';
@@ -2897,30 +2919,79 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
                   {
                      char *tmp = buf;
 
-                     // the mboxrd format specifies that we need to quote any From, >From, >>From etc. occurance.
+                     // check if this is a single \n so that it
+                     // signals the end if a line
+                     if(*buf == '\n')
+                     {
+                       inHeader = FALSE;
+                       fputs(buf, fh);
+                       continue;
+                     }
+
+                     // the mboxrd format specifies that we need to quote any
+                     // From, >From, >>From etc. occurance.
                      // http://www.qmail.org/man/man5/mbox.html
                      while(*tmp == '>') tmp++;
-                     if(strncmp(tmp, "From ", 5) == 0) fputc('>', fh);
+                     if(strncmp(tmp, "From ", 5) == 0)
+                     {
+                       fputc('>', fh);
+                     }
+                     else if(inHeader)
+                     {
+                       // let us skip some specific headerlines
+                       // because we placed our own here
+                       if(strncmp(buf, "Status: ", 8) == 0 ||
+                          strncmp(buf, "X-Status: ", 10) == 0)
+                       {
+                          // skip line
+                          continue;
+                       }
+                     }
 
                      // write the line to our destination file
                      fputs(buf, fh);
 
+                     // make sure we have a newline at the end of the line
+                     if(buf[strlen(buf)-1] != '\n')
+                       fputc('\n', fh);
+
+                     // update the transfer status
                      TR_TransStat_Update(&ts, strlen(buf));
                   }
-                  if(*buf && buf[strlen(buf)-1] != '\n') fputc('\n', fh);
+
+                  // check why we exited the while() loop and
+                  // if everything is fine
+                  if(feof(mfh) == 0)
+                  {
+                    DB(kprintf("error on reading data!\n");)
+
+                    // an error occurred, lets return -1
+                    success = FALSE;
+                  }
+
+                  // close file pointer
                   fclose(mfh);
 
                   // put the transferStat to 100%
                   TR_TransStat_Update(&ts, TS_SETMAX);
                }
+               else
+                success = FALSE;
+
                FinishUnpack(fullfile);
             }
+            else
+              success = FALSE;
          }
 
+         // close file pointer
          fclose(fh);
+
+         // write the status to our logfile
          AppendLog(51, GetStr(MSG_LOG_Exporting), (void *)ts.Msgs_Done, G->TR->List->Folder->Name, fname, "");
       }
    }
+
    TR_AbortnClose();
    return success;
 }

@@ -225,6 +225,8 @@ void  MA_SetSortFlag(void);
 void  MA_SetStatusTo(enum MailStatus status);
 void  MA_SetupDynamicMenus(void);
 BOOL  MA_StartMacro(enum Macro num, char *param);
+char *MA_ToStatusHeader(struct Mail *mail);
+char *MA_ToXStatusHeader(struct Mail *mail);
 
 // real methods (will be separated later in own ML class
 ULONG MA_MLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_ContextMenuBuild *msg);
