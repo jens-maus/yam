@@ -650,6 +650,8 @@ void Initialise(BOOL hidden)
    /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);
 
+   CheckMCC(MUIC_NListtree, 18, 0, TRUE);
+
    if (!InitClasses()) Abort(GetStr(MSG_ErrorClasses));
    if (!Root_New(hidden)) Abort(FindPort("YAM") ? NULL : GetStr(MSG_ErrorMuiApp));
    AY_PrintStatus(GetStr(MSG_InitLibs), 10);
