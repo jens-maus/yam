@@ -33,6 +33,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
@@ -56,7 +57,6 @@ struct MUI_CustomClass *CL_DDString;
 struct MUI_CustomClass *CL_DDList;
 struct MUI_CustomClass *CL_MainWin;
 struct MUI_CustomClass *CL_PageList;
-
 
 /// BC_Dispatcher (BodyChunk)
 /*** BC_Dispatcher (BodyChunk) - Subclass of BodyChunk, can load images from files ***/
@@ -120,9 +120,8 @@ DISPATCHERPROTO(BC_Dispatcher)
                }
                else
                {
-                  // Popup a Error-Requester
-                  MUI_Request(G->App, NULL, 0, GetStr(MSG_ErrorStartup), GetStr(MSG_Quit), GetStr(MSG_ERROR_IMGLOAD), fname);
-                  return 0;
+                  // Print out a error message that this image couldn`t be loaded
+                  ER_NewError(GetStr(MSG_ERROR_IMGLOAD), fname, NULL);
                }
             }
          }
@@ -409,50 +408,10 @@ DISPATCHERPROTO(EL_Dispatcher)
      Subclass of Listtree, supports inline images and Drag&Drop from message list ***/
 DISPATCHERPROTO(AL_Dispatcher)
 {
-   struct AL_Data *data;
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
    switch (msg->MethodID)
    {
-      case OM_NEW:
-      {
-         obj = (Object *)DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
-
-         if (obj)
-         {
-            struct AL_Data *data = INST_DATA(cl, obj);
-            InitHook(&data->DisplayHook, AB_LV_DspFuncHook, data);
-            set(obj, MUIA_NListtree_DisplayHook, &data->DisplayHook);
-
-         }
-         return (ULONG)obj;
-      }
-      break;
-
-      case MUIM_Setup:
-      {
-         if (!DoSuperMethodA(cl, obj, msg)) return FALSE;
-         data = INST_DATA(cl, obj);
-         data->Object = NewObject(CL_BodyChunk->mcc_Class,NULL,
-                                  MUIA_Bodychunk_File, "status_group",
-                                  MUIA_Bodychunk_UseOld, TRUE,
-                                  MUIA_Bitmap_Transparent, 0,
-                              End;
-         data->Image = (APTR)DoMethod(obj, MUIM_List_CreateImage, data->Object, 0);
-         MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-         return TRUE;
-      }
-      break;
-
-      case MUIM_Cleanup: 
-      {
-         data = INST_DATA(cl, obj);
-         MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-         DoMethod(obj, MUIM_List_DeleteImage, data->Image);
-         if (data->Object) MUI_DisposeObject(data->Object);
-      }
-      break;
-
       case MUIM_DragQuery:
       {
          if (d->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
@@ -887,7 +846,7 @@ BOOL InitClasses(void)
    CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
    CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
    CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
-   CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct AL_Data), ENTRY(AL_Dispatcher));
+   CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(AL_Dispatcher));
    CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
    CL_MailList    = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(ML_Dispatcher));
    CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));

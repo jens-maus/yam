@@ -400,12 +400,6 @@ struct BC_Data
    struct BodyChunkData *BCD;
 };
 
-struct AL_Data 
-{ 
-   struct Hook DisplayHook;
-   Object *Object;
-   APTR Image;
-};
 struct PL_Data
 { 
    struct Hook DisplayHook;

@@ -4716,6 +4716,7 @@ Select if you want the statistics of\n\
 this folder be displayed at the AppIcon.
 ;
 MSG_ERROR_IMGLOAD (//)
-The image file\n\
-\eb%s\en\n\
-couldn`t be loaded.
+The image file PROGDIR:Icons/\eb%s\en couldn`t be loaded.
+;
+MSG_OPENGUI (//)
+Finished.. opening GUI..

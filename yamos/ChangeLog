@@ -504,3 +504,10 @@
     * now the SortFlag of the NList Mail List should work again without flickering the
       Listview.
     * removed "Flush indices" entry of the FolderList ContextMenu
+
+2001-06-08  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed addressbook NListtree bug where status_group image got trashed somehow.
+    * now YAM doesn`t require the PROGDIR:Icons/* images anymore. This "feature" was
+      added accidently and now it should only print a warning message to the
+      Errorwindow of YAM.

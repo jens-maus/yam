@@ -660,7 +660,7 @@ void Initialise2(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
    if (!(G->RexxHost = SetupARexxHost("YAM", NULL))) Abort(GetStr(MSG_ErrorARexx));
-   AY_PrintStatus("", 100);
+   AY_PrintStatus(GetStr(MSG_OPENGUI), 100);
    set(G->MA->GUI.WI, MUIA_Window_Open, !hidden);
    set(G->AY_Win, MUIA_Window_Open, FALSE);
    set(G->AY_Text, MUIA_ShowMe, FALSE);
@@ -691,6 +691,8 @@ void Initialise(BOOL hidden)
       in case some of the other libraries can't be opened. */
    if ((LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE)))
      G->Locale = OpenLocale(NULL);
+
+   // Now load the catalog of YAM
    OpenYAMCatalog();
 
    WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
@@ -704,6 +706,10 @@ void Initialise(BOOL hidden)
 
    /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);
+
+   // we have to have at least v19.98 of NList.mcc to get YAM working without risking
+   // to have it buggy - so we make it a requirement.
+   CheckMCC(MUIC_NList, 19, 98, TRUE);
 
    // we make v18.7 the minimum requirement for YAM because earlier versions are
    // buggy
