@@ -16,7 +16,7 @@ YAMDATE	   = "10.12.2000"
 OPTFLAGS   = NOOPT
 DEBUG	   = DEF DEBUG
 
-CFLAGS = NOLINK GST=$(GST) DEF YAMVER=$(YAMVERSION) DEF YAMDATE=$(YAMDATE) $(DEBUG)
+CFLAGS = NOLINK GST=$(GST) DEF YAMVER=$(YAMVERSION) DEF YAMDATE=$(YAMDATE) $(DEBUG) DEBUG=FULL
 
 
 # Default rules
@@ -24,7 +24,7 @@ CFLAGS = NOLINK GST=$(GST) DEF YAMVER=$(YAMVERSION) DEF YAMDATE=$(YAMDATE) $(DEB
 	$(CC) $(CFLAGS) $(OPTFLAGS) $*.c
 
 .ct.catalog:
-	flexcat YAM.cd $*.ct CATALOG=YAM_$*.catalog
+	flexcat YAM.cd $*.ct CATALOG=YAM_$*.catalog FLUSH
 
 
 # Targets & dependencies
@@ -85,8 +85,5 @@ YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_loc.h
 YAM_loc.o: YAM_loc.h YAM_loc.c
 	$(CC) YAM_loc.c $(CFLAGS)
 
-deutsch.catalog: deutsch.ct
-   flexcat YAM.cd deutsch.ct CATALOG LOCALE:catalogs/deutsch/YAM.catalog FLUSH
-
-$(GST): headers.h
+$(GST): headers.h YAM.h
    sc headers.h mkgst $(GST) IGNORE=105
