@@ -48,6 +48,8 @@
  *
  * History
  * -------
+ * 0.8 - added MORPHOS support for the vararg _NewObject() function.
+ *
  * 0.7 - added cast to CreateCustomClass call to get rid of #120 Warnings
  *
  * 0.6 - generated headernames now end with _cl.h to avoid name clashes
@@ -100,7 +102,7 @@
  *
  */
 
-char *verstr = "0.7";
+char *verstr = "0.8";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -633,14 +635,20 @@ void gen_supportroutines( FILE *fp )
 	char *bn = arg_basename;
 	fprintf(fp,
 "%s%s%s"
-"Object *%s_NewObject(STRPTR class, ULONG tag, ...)\n"
+"Object *%s_NewObject(STRPTR class, ...)\n"
 "{\n"
 "  long i;\n"
 "  for(i = 0; i < NUMBEROFCLASSES; i++)\n"
 "  {\n"
 "    if(!strcmp(MCCInfo[i].Name, class))\n"
 "    {\n"
-"      return NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)&tag);\n"
+"#if defined(__MORPHOS__)\n"
+"			 va_list va;\n"
+"			 va_start(va, class);\n"
+"			 return NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)va->overflow_arg_area);\n"
+"#else\n"
+"			 return NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)(&class+1));\n"
+"#endif\n"
 "    }\n"
 "  }\n"
 "  return NULL;\n"
@@ -682,7 +690,7 @@ void gen_supportroutines( FILE *fp )
 	arg_storm ? "/// "                : "",	
 	arg_storm ? bn                    : "",	
 	arg_storm ? "_NewObject()\n"      : "",
-	bn, bn,
+	bn, bn, bn,
 	arg_storm ? "///\n"               : "",	
 
 	arg_storm ? "/// "                : "",	
@@ -841,7 +849,7 @@ long gen_header( char *destfile, struct list *classlist )
 		"#define NUMBEROFCLASSES %ld\n"
 		"\n"
 		"extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n"
-		"Object *%s_NewObject( STRPTR class, ULONG tag, ... );\n"
+		"Object *%s_NewObject( STRPTR class, ... ) VARARGS68K;\n"
 		"long %s_SetupClasses( void );\n"
 		"void %s_CleanupClasses( void );\n"
 		"\n",
