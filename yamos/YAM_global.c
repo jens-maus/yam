@@ -113,7 +113,7 @@ char *ContType[MAXCTYPE+1] =
    NULL,
 };
 
-APTR ContTypeDesc[MAXCTYPE] =
+void *ContTypeDesc[MAXCTYPE] =
 {
    MSG_CTtextplain, MSG_CTtexthtml, MSG_CTtextaguide,
    MSG_CTapplicationoctetstream, MSG_CTapplicationpostscript, MSG_CTapplicationrtf, MSG_CTapplicationlha, MSG_CTapplicationlzx, MSG_CTapplicationzip, MSG_CTapplicationamigaexe, MSG_CTapplicationadosscript, MSG_CTapplicationrexx,

@@ -28,12 +28,10 @@
 
 ***************************************************************************/
 
-#include <exec/types.h>
-
 #include "YAM_stringsizes.h"
 
 extern char *             ContType[MAXCTYPE+1];
-extern APTR               ContTypeDesc[MAXCTYPE];
+extern void *             ContTypeDesc[MAXCTYPE];
 extern char *             FolderNames[4];
 extern char *             months[12];
 extern char *             SecCodes[5];
