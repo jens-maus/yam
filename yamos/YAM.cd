@@ -4113,3 +4113,25 @@ new mails to the list
 ;
 MSG_RE_MDNGads4 (//)
 |Ignore all
+;
+; ADDED AFTER 06-DEC-2000
+;
+MSG_EA_DefSecurity (//)
+Se_curity
+;
+MSG_HELP_MA_CY_DEFSECURITY (//)
+Default security for sending\nmail to this person
+;
+MSG_WR_DefSecurityConflict (//)
+The recipients of this mail have different default\n\
+security settings. What kind of security do you want?
+;
+MSG_WR_DefSecurityConflictGads (//)
+*_None|_Sign|_Encrypt|_Both|Send _anonymously
+;
+MSG_WR_CH_UseDefSecurity (//)
+Try defaults
+;
+MSG_HELP_WR_CH_UseDefSecurity (//)
+Try to use security presets from\naddress book
+;
