@@ -5389,7 +5389,7 @@ Kan ikke kople til WWW tjener '%s'. Sannsynlig grunn: TCP/IP av-logget, ugyldig 
 ; HOST
 ;
 MSG_ER_BadResponse
-Dårlig kommando %s respons: %s.\n\
+Dårlig kommando %s respons:\n%s\n\
 Post tjeneren kunne ikke utføre kommandoen og svarte med en feil melding.
 ; Bad %s command response: %s.\n\
 ; The mail server couldn't execute the command and replied with the error message.

@@ -3850,7 +3850,7 @@ Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid add
 ; HOST
 ;
 MSG_ER_BadResponse (//)
-Bad %s command response: %s.\n\
+Bad %s command response:\n%s\n\
 The mail server couldn't execute the command and replied with the error message.
 ; COMMAND, TEXT
 ;

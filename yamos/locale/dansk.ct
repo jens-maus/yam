@@ -5323,7 +5323,7 @@ Kan ikke få forbindelse til WWW-serveren '%s'. Mulige årsager: TCP/IP nedkoblet,
 ; HOST
 ;
 MSG_ER_BadResponse
-Negativt svar på %s-kommando: %s.\n\
+Negativt svar på %s-kommando:\n%s\n\
 Postserveren kunne ikke udføre kommandoen og svarede med en fejlmeddelelse.
 ; Bad %s command response: %s.\n\
 ; The mail server couldn't execute the command and replied with the error message.

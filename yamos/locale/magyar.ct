@@ -3741,7 +3741,7 @@ MSG_ER_ConnectHTTP
 Nem tudtam kapcsolódni a(z) '%s' WWW szerverhez. Lehetséges hibaokok: nincs TCP/IP kapcsolat, hibás cím, a szerver most nem mûködik vagy nem támogatja a HTTP kérést.
 ;
 MSG_ER_BadResponse
-%s parancs, válasz: %s.\n\
+%s parancs, válasz:\n%s\n\
 A levelezõ szerver nem tudta végrehajtani a parancsot, és hibaüzenettel válaszolt.
 ;
 MSG_ER_UnknownPOP

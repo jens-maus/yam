@@ -3645,7 +3645,7 @@ MSG_ER_ConnectHTTP
 Kunde inte koppla upp mot webbservern "%s". Möjliga felorsaker: TCP/IP-stacken är inte uppkopplad, servern är nere eller stöder inte HTTP-förfrågningar.
 ;
 MSG_ER_BadResponse
-Felaktigt svar på kommandot %s: %s.\n\
+Felaktigt svar på kommandot %s:\n%s\n\
 E-postservern kunde inte exekvera kommandot och svarade med felmeddelandet.
 ;
 MSG_ER_UnknownPOP

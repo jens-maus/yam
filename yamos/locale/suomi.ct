@@ -4716,7 +4716,7 @@ WWW-palvelimeen '%s' ei voi yhdist‰‰. Mahdollisia syit‰: TCP/IP-yhteys poikki, k
 ; HOST
 ;
 MSG_ER_BadResponse
-Kelvoton komennon %s vastaus: %s.\nPostipalvelin ei voinut suorittaa komentoa ja vastasi virheilmoituksella.
+Kelvoton komennon %s vastaus:\n%s\nPostipalvelin ei voinut suorittaa komentoa ja vastasi virheilmoituksella.
 ; Bad %s command response: %s.\nThe mail server couldn't execute the command and replied with the error message.
 ; COMMAND, TEXT
 ;

@@ -5152,7 +5152,7 @@ Nelze se pêipojit k WWW serveru '%s'. Moùné dûvody: TCP/IP je offline, neplatná 
 ; HOST
 ;
 MSG_ER_BadResponse
-Neplatná odezva na pêíkaz %s: %s.\n\
+Neplatná odezva na pêíkaz %s:\n%s\n\
 Poîtovní server nezná daný pêíkaz a ohlásil chybu.
 ; Bad %s command response: %s.\n\
 ; The mail server couldn't execute the command and replied with the error message.

@@ -3770,7 +3770,7 @@ MSG_ER_ConnectHTTP
 Não foi possível estabelecer a ligação com o servidor WWW '%s'. Motivos possíveis: o programa de TCP/IP está off-line, o endereço é inválido ou o servidor está desactivado e/ou não suporta pedidos HTTP.
 ;
 MSG_ER_BadResponse
-Resposta inválida ao comando %s: %s\n\
+Resposta inválida ao comando %s:\n%s\n\
 O servidor de correio não conseguiu executar o comando e respondeu com uma mensagem de erro.
 ;
 MSG_ER_UnknownPOP

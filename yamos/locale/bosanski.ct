@@ -5038,7 +5038,7 @@ Ne mogu se prikljuciti na WWW server '%s'. Moguci razlozi: TCP/IP je iskljucen, 
 ; HOST
 ;
 MSG_ER_BadResponse
-Los odgovor na %s komandu: %s.\nServer nije mogao izvrsiti komandu pa je odgovorio sa porukom greske.
+Los odgovor na %s komandu:\n%s\nServer nije mogao izvrsiti komandu pa je odgovorio sa porukom greske.
 ; Bad %s command response: %s.\n\
 ; The mail server couldn't execute the command and replied with the error message.
 ; COMMAND, TEXT

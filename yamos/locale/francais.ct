@@ -5322,7 +5322,7 @@ Impossible de se connecter au serveur WWW « %s ». Raisons possibles : La couche 
 ; HOST
 ;
 MSG_ER_BadResponse
-Mauvaise commande %s répond : %s.\n\
+Mauvaise commande %s répond :\n%s\n\
 Le serveur ne peut exécuter cette commande et a répondu avec un message d'erreur.
 ; Bad %s command response: %s.\n\
 ; The mail server couldn't execute the command and replied with the error message.

@@ -4514,7 +4514,7 @@ MSG_ER_ConnectHTTP
 ;Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
 ;
 MSG_ER_BadResponse
-Εσφαλμένη %s απάντηση εντολής: %s.\nΟ διακομιστής αλληλογραφίας δεν μπόρεσε να εκτελέσει την εντολή και απάντησε με μήνυμα λάθους.
+Εσφαλμένη %s απάντηση εντολής:\n%s\nΟ διακομιστής αλληλογραφίας δεν μπόρεσε να εκτελέσει την εντολή και απάντησε με μήνυμα λάθους.
 ;Bad %s command response: %s.\nThe mail server couldn't execute the command and replied with the error message.
 ;
 MSG_ER_UnknownPOP

@@ -5011,7 +5011,7 @@ Non posso connettermi al server WWW '%s'. Cause possibili: TCP/IP non in linea, 
 ; HOST
 ;
 MSG_ER_BadResponse
-Risposta al comando %s errata: %s.\nIl server di posta non può eseguire il comando ed ha risposto con un messaggio d'errore.
+Risposta al comando %s errata:\n%s\nIl server di posta non può eseguire il comando ed ha risposto con un messaggio d'errore.
 ; Bad %s command response: %s.\n\
 ; The mail server couldn't execute the command and replied with the error message.
 ; COMMAND, TEXT

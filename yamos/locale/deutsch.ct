@@ -4512,7 +4512,7 @@ Keine Verbindung mit WWW-Server '%s'. Mögliche Gründe: TCP/IP offline, ungültige
 ; Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
 ;
 MSG_ER_BadResponse
-Befehl %s antwortet mit Fehler: %s.\nDer Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
+Befehl %s antwortet mit Fehler:\n%s\nDer Postserver konnte den Befehl nicht ausführen und antwortete mit einer Fehlermeldung.
 ; Bad %s command response: %s.\nThe mail server couldn't execute the command and replied with the error message.
 ;
 MSG_ER_UnknownPOP
@@ -5809,16 +5809,45 @@ Postfachgruppeneinstellungen
 MSG_FO_EDIT_FGROUPREQ
 Name der Postfachgruppe:
 ;
-MSG_ERR_OPENMCC
-Konnte version v%lu.lu der MUI '%s' Klasse nicht finden.\n\
-Zwecks Kompatibilitätsgründen ist es notwendig das mindestens\n\
-diese version mit YAM benutzt wird. Bitte stellen Sie\n\
-sicher das diese bei Ihnen installiert ist.
-;MCC_VERSION, MCC_REVISION, MCC_NAME
-;
 MSG_ER_UNUSABLEAMISSL
 Sie haben TLSv1/SSLv3 Unterstützung für diese Verbindung \
 ausgewählt, jedoch konnte AmiSSL nicht initialisiert werden. \
 Bitte überprüfen Sie ihre AmiSSL Installation oder schalten Sie \
 die TLS/SSL Unterstützung für diese Verbindung aus.
+;
+MSG_NO_MCC
+Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\
+Die Klasse ist nicht installiert.
+;
+MSG_MCC_OLD
+Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\
+Sie haben momentan Version v%lu.%lu installiert und\n\
+sollten daher upgraden.
+;
+MSG_MCC_IN_USE
+Konnte die MUI Klasse '%s' v%lu.%lu nicht öffnen.\n\
+Version %lu.%lu wird momentan von einer anderen Anwendung\n\
+verwendet. Wenn sie die benötigte Version installiert haben,\n\
+schliessen sie alle MUI Programme und probieren es erneut.
+;
+MSG_RETRY_QUIT_GAD
+Wiederholen|Beenden
+;
+MSG_ER_NOSTARTTLS
+Der SMTP Server zu dem sie versucht haben eine Verbindung aufzubauen, \
+unterstützt das TLS/SSL protokoll nicht, jedoch haben Sie dies in der \
+Konfiguration ausgewählt. Bitte kontrollieren Sie ihre Serverdaten und \
+begutachten Sie die Konfigurationseinstellungen erneut.
+;
+MSG_ER_NOAUTHUSERPASS
+Es wurde kein Benutzername oder Passwort für die aufzubauende SMTP-AUTH \
+Verbindung eingestellt. Bitte kontrollieren Sie ihre Konfiguration und \
+wiederholen Sie den Verbindungsaufbau.
+;
+MSG_ER_POPWELCOME
+Der POP Server hat mit einer Fehlermeldung beim Verbindungsaufbau reagiert \
+und die Verbindung wurde daraufhin beendet:\n\n%s\n
+;
+MSG_CO_APPICON_LABEL
+Neu: %n Gesamt: %t
 ;

@@ -5068,7 +5068,7 @@ Ne mogu da se poveäem na WWW server \"%s\"'. Moguái razlozi: nije ukljuàen TCP/I
 ; HOST
 ;
 MSG_ER_BadResponse
-Loã odgovor na komandu %s: %s.\nServer za poãtu nije mogao da izvrãi komandu i odgovorio je porukom o greãci.
+Loã odgovor na komandu %s:\n%s\nServer za poãtu nije mogao da izvrãi komandu i odgovorio je porukom o greãci.
 ; Bad %s command response: %s.\n\
 ; The mail server couldn't execute the command and replied with the error message.
 ; COMMAND, TEXT

@@ -5121,7 +5121,7 @@ No se puede conectar con el servidor web '%s'. Posibles motivos: programa TCP/IP
 ; HOST
 ;
 MSG_ER_BadResponse
-Respuesta al comando %s fallida: %s\n\n\
+Respuesta al comando %s fallida:\n%s\n\
 El servidor de correo no ha podido ejecutar el comando y ha respondido con el mensaje de error.
 ; Bad %s command response: %s.\n\
 ; The mail server couldn't execute the command and replied with the error message.

@@ -5368,7 +5368,7 @@ MSG_ER_ConnectHTTP
 ;HOST
 ;
 MSG_ER_BadResponse
-Сообщение об ошибке при работе команды «%s»: %s.\n\
+Сообщение об ошибке при работе команды «%s»:\n%s\n\
 Почтовый сервер не может выполнить команду и ответил сообщением об ошибке.
 ;Bad %s command response: %s.
 ;The mail server couldn't execute the command and replied with the error message.

@@ -5006,7 +5006,7 @@ Nie mogë poîâczyê sië z serwerem WWW '%s'. Moûliwe powody: TCP/IP nie uruchomion
 ; HOST
 ;
 MSG_ER_BadResponse
-Zîa odpowiedú na polecenie %s: %s\nSerwer poczty nie moûe wykonaê tego polecenia i odpowiedziaî komunikatem bîëdu.
+Zîa odpowiedú na polecenie %s:\n%s\nSerwer poczty nie moûe wykonaê tego polecenia i odpowiedziaî komunikatem bîëdu.
 ; Bad %s command response: %s.\n\
 ; The mail server couldn't execute the command and replied with the error message.
 ; COMMAND, TEXT
