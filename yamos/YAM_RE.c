@@ -695,14 +695,13 @@ char *RE_SuggestName(struct Mail *mail)
    memset(name, 0, SIZE_FILE);
    while (*ptr && i < 26)
    {
-
       tc = *ptr++;
 
       if ((tc <= 32) || (tc > 0x80 && tc < 0xA0) || (tc == ':') || (tc == '/'))
+      {
          name[i++] = '_';
-
+      }
       else name[i++] = tc;
-
    }
 
    strcat(name, ".msg");
@@ -1095,7 +1094,7 @@ HOOKPROTONHNO(RE_SaveFunc, void, int *arg)
         default:
         {
           RE_DecodePart(part);
-          RE_Export(winnum, part->Filename, "", part->Name, part->Nr, FALSE, FALSE, part->ContentType);
+          RE_Export(winnum, part->Filename, "", part->CParFileName ? part->CParFileName : part->Name, part->Nr, FALSE, FALSE, part->ContentType);
         }
       }
     }
@@ -1289,16 +1288,21 @@ MakeStaticHook(RE_DisplayHook, RE_DisplayFunc);
 void RE_SaveAll(int winnum, char *path)
 {
    struct Part *part;
-   char dest[SIZE_PATHFILE], fname[SIZE_FILE];
+   char fname[SIZE_DEFAULT], *dest;
+
+   if(!(dest = calloc(1, strlen(path)+SIZE_DEFAULT+1))) return;
 
    for (part = G->RE[winnum]->FirstPart->Next->Next; part; part = part->Next)
    {
-      if (*part->Name) stccpy(fname, part->Name, SIZE_FILE);
+      if (*part->Name) stccpy(fname, part->Name, SIZE_DEFAULT);
       else sprintf(fname, "%s-%d", G->RE[winnum]->Mail.MailFile, part->Nr);
       strmfp(dest, path, fname);
+
       RE_DecodePart(part);
       RE_Export(winnum, part->Filename, dest, part->Name, part->Nr, FALSE, FALSE, part->ContentType);
    }
+
+   free(dest);
 }
 ///
 /// RE_SaveAllFunc
@@ -1701,11 +1705,11 @@ static void RE_ParseContentParameters(struct Part *rp)
             SParse(eq);
             rp->CParName = eq;
          }
-         if (!stricmp(s, "description")) rp->CParDesc = eq;
-         if (!stricmp(s, "boundary")) rp->CParBndr = eq;
-         if (!stricmp(s, "protocol")) rp->CParProt = eq;
-         if (!stricmp(s, "report-type")) rp->CParRType = eq;
-         if (!stricmp(s, "charset")) rp->CParCSet = eq;
+         else if (!stricmp(s, "description")) rp->CParDesc  = eq;
+         else if (!stricmp(s, "boundary"))    rp->CParBndr  = eq;
+         else if (!stricmp(s, "protocol"))    rp->CParProt  = eq;
+         else if (!stricmp(s, "report-type")) rp->CParRType = eq;
+         else if (!stricmp(s, "charset"))     rp->CParCSet  = eq;
       }
       s = t;
    } while (t);
@@ -1729,7 +1733,10 @@ static void RE_ParseContentDispositionParameters(struct Part *rp)
          s = Cleanse(s); eq = stpblk(eq);
          StripTrailingSpace(eq);
          UnquoteString(eq, FALSE);
-         if (!stricmp(s, "filename")) rp->CParName = eq;
+         if (!stricmp(s, "filename"))
+         {
+            rp->CParFileName = eq;
+         }
       }
       s = t;
    } while (t);
@@ -1792,22 +1799,18 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
       } 
       else if (!strnicmp(s, "content-disposition:", 20))
       {
-        // at the moment we read the content-disposition only if a Part-Name was
-        // not specified before. If we want to read more from a content-disposition
-        // later we have to change this behaviour
-        if(!(rp->CParName))
+        // if we found a content-disposition field we have to parse it for
+        // some information.
+        rp->ContentDisposition = StrBufCpy(rp->ContentDisposition, p = stpblk(&s[20]));
+        while (TRUE)
         {
-          rp->ContentDisposition = StrBufCpy(rp->ContentDisposition, p = stpblk(&s[20]));
-          while (TRUE)
-          {
-            if (!(p = strchr(rp->ContentDisposition, '/'))) break;
-            if (ISpace(*(p-1)))       for (--p; *p; ++p) *p = *(p+1);
-            else if(ISpace(*(p+1)))   for (++p; *p; ++p) *p = *(p+1);
-            else break;
-          }
-          StripTrailingSpace(rp->ContentDisposition);
-          RE_ParseContentDispositionParameters(rp);
+          if (!(p = strchr(rp->ContentDisposition, '/'))) break;
+          if (ISpace(*(p-1)))       for (--p; *p; ++p) *p = *(p+1);
+          else if(ISpace(*(p+1)))   for (++p; *p; ++p) *p = *(p+1);
+          else break;
         }
+        StripTrailingSpace(rp->ContentDisposition);
+        RE_ParseContentDispositionParameters(rp);
       }
    }
    for (p = rp->ContentType; *p; ++p) if (isupper((int)*p)) *p = tolower((int)*p);
@@ -2022,9 +2025,9 @@ static void RE_SetPartInfo(struct Part *rp)
    }
 
    // if this part hasn`t got any name, we place the CParName as the normal name
-   if (!*rp->Name && rp->CParName)
+   if (!*rp->Name && (rp->CParName || rp->CParFileName))
    {
-      stccpy(rp->Name, rp->CParName, SIZE_FILE);
+      stccpy(rp->Name, rp->CParName ? rp->CParName : rp->CParFileName, SIZE_DEFAULT);
       UnquoteString(rp->Name, FALSE);
    }
 

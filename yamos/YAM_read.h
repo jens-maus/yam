@@ -113,6 +113,7 @@ struct Part
    char *        ContentDisposition;
    char *        JunkParameter;
    char *        CParName;
+   char *        CParFileName;
    char *        CParBndr;
    char *        CParProt;
    char *        CParDesc;
@@ -127,7 +128,7 @@ struct Part
    BOOL          Decoded;
    enum Encoding EncodingCode;
 
-   char          Name[SIZE_FILE];
+   char          Name[SIZE_DEFAULT];
    char          Description[SIZE_DEFAULT];
    char          Filename[SIZE_PATHFILE];
    char          Boundary[SIZE_DEFAULT];
