@@ -59,7 +59,7 @@ static BOOL FI_MatchPerson(struct Search*, struct Person*);
 static BOOL FI_SearchPatternFast(struct Search*, struct Mail*);
 static BOOL FI_SearchPatternInBody(struct Search*, struct Mail*);
 static BOOL FI_SearchPatternInHeader(struct Search*, struct Mail*);
-static enum FI_FastSearch FI_IsFastSearch(char*);
+static enum FastSearch FI_IsFastSearch(char*);
 static void FI_GenerateListPatterns(struct Search*);
 static BOOL FI_DoSearch(struct Search*, struct Mail*);
 static struct FI_ClassData *FI_New(void);
