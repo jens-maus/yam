@@ -4720,3 +4720,7 @@ The image file PROGDIR:Icons/\eb%s\en couldn`t be loaded.
 ;
 MSG_OPENGUI (//)
 Finished.. opening GUI..
+;
+MSG_ERR_OPENLIB (//)
+Can't open library '%s', version v%ld.%ld
+;LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION

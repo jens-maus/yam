@@ -576,7 +576,7 @@ BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 
    if (!success && req) {
       static char errorlib[SIZE_DEFAULT];
-      sprintf(errorlib, GetStr(MSG_ErrorLib), name, minver);
+      sprintf(errorlib, GetStr(MSG_ERR_OPENLIB), name, minver, minrev);
       Abort(errorlib);
    }
 
@@ -592,7 +592,7 @@ struct Library *InitLib(char *libname, int version, int revision, BOOL required,
    if (!lib && required)
    {
       static char errorlib[SIZE_DEFAULT];
-      sprintf(errorlib, GetStr(MSG_ErrorLib), libname, version);
+      sprintf(errorlib, GetStr(MSG_ERR_OPENLIB), libname, version, revision);
       Abort(errorlib);
    }
    if (lib && close) CloseLibrary(lib);

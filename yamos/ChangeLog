@@ -521,4 +521,7 @@
     * fixed addressbook entry selection bug. If a new mail was created and the user
       doubleclicked a entry in the addressbook to get the name in the addressfield
       YAM was not coping this address.
+    * changed Library check routine to show the required revision also. Users where
+      complaining about the NList.mcc v19.97 -> v19.98 upgrade requirement and the
+      error message just showed "required v19".
 
