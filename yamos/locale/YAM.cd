@@ -5344,7 +5344,7 @@ While trying to UUdecode file '%s', YAM wasn't able to find the required \
 ; FILENAME, TAG
 ;
 MSG_ER_UUDEC_CHECKSUM (//)
-While trying to UUdecode file '%s', YAM has found that some embeeded \
+While trying to UUdecode file '%s', YAM has found that some embedded \
 checksums were invalid and therefore suggests to check that the resulting \
 file isn't corrupted.\n\
 \n\
@@ -5423,13 +5423,47 @@ Activates an embeeded mail read pane directly\n\
 in the main window.
 ;
 MSG_CO_SETSTATUSDELAYED1 (//)
-Mark showed mail as read after
+Delay marking of displayed mail as read for
 ;
 MSG_CO_SETSTATUSDELAYED2 (//)
 second(s)
 ;
 MSG_HELP_CO_SETSTATUSDELAYED (//)
-Upon switching mails or showing a mail in the preview pane, YAM\n\
-will mark a mail as read after this specified amount of seconds\n\
-has passed by.
+Upon switching mails or showing a mail in the embedded mail view,\n\
+YAM will delay the marking of a mail as read for the specified amount\n\
+of seconds.
+;
+MSG_MA_ATTACHMENT (//)
+Attachment
+;
+MSG_MA_ATTACHMENTS (//)
+Attachments:
+;
+MSG_MA_ATTACHMENTINFO (//)
+\ebAttachment - MIME-Part #%lD\en\n\
+Name: %s\n\
+Description: %s\n\
+Content-Type: %s <%s>\n\
+Size: ~%lD bytes
+; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
+MSG_MA_ATTACHMENT_PART (//)
+Attachment/MIME-Part #%lD
+;
+MSG_MA_ATTACHMENT_DISPLAY (//)
+Display
+;
+MSG_MA_ATTACHMENT_SAVEAS (//)
+Save as...
+;
+MSG_MA_ATTACHMENT_PRINT (//)
+Print
+;
+MSG_MA_ATTACHMENT_SAVEALL (//)
+Save all...
+;
+MSG_MA_ATTACHMENT_SAVESEL (//)
+Save selected...
+;
+MSG_MA_ATTACHMENT_CROPALL (//)
+Crop all
 ;
