@@ -40,6 +40,7 @@
 
 #include "extra.h"
 #include "YAM.h"
+#include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 #include "YAM_error.h"
@@ -771,14 +772,43 @@ APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote)
 //  Sets active folder according to the selected message in the results window
 HOOKPROTONHNONP(FI_SwitchFunc, void)
 {
-   struct Mail *mail;
-   struct MailInfo *mi;
-   DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-   if (mail)
+   struct Mail *foundmail;
+
+   // get the mail from the find list
+   DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &foundmail);
+
+   if(foundmail)
    {
-      MA_ChangeFolder(mail->Folder, TRUE);
-      mi = GetMailInfo(mail);
-      set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
+      int i;
+
+      MA_ChangeFolder(foundmail->Folder, TRUE);
+
+      // now get the position of the foundmail in the real mail list and set it active
+      // this is faster than using GetMailInfo()
+      for(i=0; ;i++)
+      {
+        struct Mail *mail;
+
+        // get the real mail out of the mail list
+        DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
+        if(!mail) break;
+
+        // if both are the same we set the mail list now.
+        if(mail == foundmail)
+        {
+          // Because the NList for the maillistview and the NList for the find listview
+          // are sharing the same displayhook we have to call MUIA_NList_DisplayRecall
+          // twice here to that it will recognize that something has changed or
+          // otherwise both NLists will show glitches.
+          SetAttrs(G->MA->GUI.NL_MAILS,  MUIA_NList_DisplayRecall, TRUE,
+                                         MUIA_NList_Active, i,
+                                         TAG_DONE
+                  );
+          set(G->FI->GUI.LV_MAILS, MUIA_NList_DisplayRecall, TRUE);
+
+          break;
+        }
+      }
    }
 }
 MakeStaticHook(FI_SwitchHook, FI_SwitchFunc);
@@ -813,15 +843,36 @@ HOOKPROTONHNONP(FI_SelectFunc, void)
    if(!folder) return;
 
    DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
-   for (i = 0; ; i++)
+
+   for(i=0; ;i++)
    {
-      struct Mail *mail;
-      DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, i, &mail);
-      if (!mail) break;
-      if (mail->Folder == folder)
+      struct Mail *foundmail;
+
+      DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, i, &foundmail);
+      if (!foundmail) break;
+
+      // only if the current folder is the same as this messages resists in
+      if(foundmail->Folder == folder)
       {
-         struct MailInfo *mi = GetMailInfo(mail);
-         DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Select, mi->Pos, MUIV_NList_Select_On, NULL);
+        int j;
+
+        // now get the position of the foundmail in the real mail list and select it
+        // this is faster than using GetMailInfo()
+        for(j=0; ;j++)
+        {
+          struct Mail *mail;
+
+          // get the real mail out of the mail list
+          DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, j, &mail);
+          if (!mail) break;
+
+          // if both are the same we set the mail list now.
+          if(mail == foundmail)
+          {
+            DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Select, j, MUIV_NList_Select_On, NULL);
+            break;
+          }
+        }
       }
    }
 }

@@ -2095,13 +2095,13 @@ HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
 MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 
 ///
-/// FindAddressHook()
-HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDataMessage *msg)
+/// MA_FindAddressHook()
+HOOKPROTONH(MA_FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
    struct ABEntry *entry = (struct ABEntry *)msg->UserData;
    return Stricmp(msg->User, entry->Address);
 }
-MakeStaticHook(FindAddressHook, FindAddressFunc);
+MakeHook(MA_FindAddressHook, MA_FindAddressFunc);
 
 ///
 /// MA_LV_DspFunc
@@ -2138,7 +2138,7 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
          pe = outbox ? &entry->To : &entry->From;
          to = (type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress) ? (pe = &entry->To, GetStr(MSG_MA_ToPrefix)) : "";
 
-         set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
+         set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &MA_FindAddressHook);
          if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], 0))
          {
             addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));

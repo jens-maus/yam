@@ -1,8 +1,12 @@
 2002-04-15  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed bug #528105 that was caused because of the usage of one shared
+      displayhook for the maillistview and the findmaillistview in the find
+      window. Now we just set MUIA_NList_DisplayRecall to inform both listview
+      of this situation.
     * fixed a small flaw in the Mail Listview display hook were YAM could have
       been displaying empty From: strings when a user/group doesn`t have a name
-      wihtin the addressbook. Now it just displays the email instead.
+      within the addressbook. Now it just displays the email instead.
     * changed behaviour of Folder Listtree according to doubleclick events a
       bit. If the user now double clicks on a folder group it will just fold
       or unfold the tree and not popup the change requester for it. This

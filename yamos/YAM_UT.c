@@ -1482,15 +1482,19 @@ struct MailInfo *GetMailInfo(struct Mail *smail)
    static struct MailInfo mi;
    int i;
    
-   mi.Display = smail->Folder == FO_GetCurrentFolder();
+   mi.Display = (smail->Folder == FO_GetCurrentFolder());
    mi.Pos = -1;
    mi.FName = GetMailFile(NULL, smail->Folder, smail);
-   if (mi.Display) for (i=0; mi.Pos == -1; i++)
+
+   if (mi.Display)
    {
-      struct Mail *mail;
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
-      if (!mail) break;
-      if (mail == smail) mi.Pos = i;
+      for(i=0; mi.Pos == -1; i++)
+      {
+        struct Mail *mail;
+        DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
+        if (!mail) break;
+        if (mail == smail) mi.Pos = i;
+      }
    }
    return &mi;
 }
