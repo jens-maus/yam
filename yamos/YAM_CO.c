@@ -917,7 +917,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
    int mode;
 
    if (mode = MUI_Request(G->App, G->CO->GUI.WI, 0, GetStr(MSG_CO_ImportMIME), GetStr(MSG_CO_ImportMIMEGads), GetStr(MSG_CO_ImportMIMEReq)))
-      if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, "Import MIME viewers & types", 0, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types"))))
+      if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_IMPORTMIMETITLE), 0, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types"))))
       {
          char buffer[SIZE_LARGE], fname[SIZE_PATHFILE], *p, *p2;
          struct MimeView *mv;

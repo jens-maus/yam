@@ -4932,6 +4932,9 @@ Sending SMTP AUTH request...
 MSG_CO_AutoTranslateIn (//)
 Codepage Autodetect/T_ranslation
 ;
-MSH_HELP_CO_CH_AUTOTRANSLATEIN (//)
+MSG_HELP_CO_CH_AUTOTRANSLATEIN (//)
 Autodetect and translation of codepages\n(mainly for cyrillic users - see guide)
+;
+MSG_CO_IMPORTMIMETITLE (//)
+Import MIME viewers & types
 ;

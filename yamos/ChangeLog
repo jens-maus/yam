@@ -1,5 +1,7 @@
 2001-12-04  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed a not localized string in the MIME import functions
+      (Bug #441917)
     * changed drag&drop routines of folder NListtree accordingly that
       if the user tries to drop a mail to a folder it should only appear
       if he has the mouse over the folder and not above or below it.
