@@ -94,41 +94,108 @@ static char *ISO8859_to_LaTeX(char*);
  Module: Read
 ***************************************************************************/
 
-/// RE_GetQuestion
-//  Finds previous message in a thread
-static struct Mail *RE_GetQuestion(long irtid)
+/// RE_GetThread
+//  Function that find the next/prev message in a thread and returns a pointer to it
+static struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, int winnum)
 {
    struct Folder **flist;
-   struct Mail *mail;
-   int b;
-   
-   if (irtid) if ((flist = FO_CreateList()))
+   struct Mail *mail = NULL;
+   BOOL found = FALSE;
+
+   if(srcMail)
    {
-     for (b = 1; b <= (int)*flist; b++) if (MA_GetIndex(flist[b]))
-        for (mail = flist[b]->Messages; mail; mail = mail->Next)
-           if (mail->cMsgID) if (mail->cMsgID == irtid) { free(flist); return mail; }
-     free(flist);
+      // first we take the folder of the srcMail as a priority in the
+      // search of the next/prev thread so we have to check that we
+      // have a valid index before we are going to go on.
+      if(srcMail->Folder->LoadedMode != LM_VALID && MA_GetIndex(srcMail->Folder))
+      {
+        return NULL;
+      }
+
+      // ok the folder is valid and we can scan it now
+      for(mail = srcMail->Folder->Messages; mail; mail = mail->Next)
+      {
+        if(nextThread) // find the answer to the srcMail
+        {
+          if(mail->cIRTMsgID && mail->cIRTMsgID == srcMail->cMsgID)
+          {
+            found = TRUE;
+            break;
+          }
+        }
+        else // else we have to find the question to the srcMail
+        {
+          if(mail->cMsgID && mail->cMsgID == srcMail->cIRTMsgID)
+          {
+            found = TRUE;
+            break;
+          }
+        }
+      }
+
+      // if we still haven`t found the mail we have to scan the other folder aswell
+      if(!found && (flist = FO_CreateList()))
+      {
+        int i;
+        int autoloadindex = -1;
+
+        for(i=1; i <= (int)*flist && !found; i++)
+        {
+          // we already scanned this folder so lets skip it.
+          if(flist[i] != srcMail->Folder)
+          {
+            if(flist[i]->LoadedMode != LM_VALID)
+            {
+              if(autoloadindex == -1)
+              {
+                if(askLoadAllFolder)
+                {
+                  char *str = GetStr(MSG_RE_FollowThreadReq); // don`t remove, this is a SAS/C bug workaround !
+                  if(MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), str))
+                  {
+                    autoloadindex = 1;
+                  }
+                  else autoloadindex = 0;
+                }
+                else autoloadindex = 0;
+              }
+
+              // we have to check again and perhaps load the index or continue
+              if(autoloadindex == 1)
+              {
+                if(!MA_GetIndex(flist[i])) continue;
+              }
+              else continue;
+            }
+
+            // if we end up here we have a valid index and can scan the folder
+            for(mail = flist[i]->Messages; mail; mail = mail->Next)
+            {
+              if(nextThread) // find the answer to the srcMail
+              {
+                if(mail->cIRTMsgID && mail->cIRTMsgID == srcMail->cMsgID)
+                {
+                  found = TRUE;
+                  break;
+                }
+              }
+              else // else we have to find the question to the srcMail
+              {
+                if(mail->cMsgID && mail->cMsgID == srcMail->cIRTMsgID)
+                {
+                  found = TRUE;
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
    }
-   return NULL;
+
+   return mail;
 }
-///
-/// RE_GetAnswer
-//  Find next message in a thread
-static struct Mail *RE_GetAnswer(long id)
-{
-   struct Folder **flist;
-   struct Mail *mail;
-   int b;
-   
-   if (id) if ((flist = FO_CreateList()))
-   {
-     for (b = 1; b <= (int)*flist; b++) if (MA_GetIndex(flist[b]))
-         for (mail = flist[b]->Messages; mail; mail = mail->Next)
-            if (mail->cIRTMsgID) if (mail->cIRTMsgID == id) { free(flist); return mail; }
-     free(flist);
-   }
-   return NULL;
-}
+
 ///
 /// RE_Follow
 //  Follows a thread in either direction
@@ -137,28 +204,19 @@ HOOKPROTONHNO(RE_Follow, void, int *arg)
    int direction = arg[0], winnum = arg[1];
    struct Mail *fmail = NULL;
 
-   if(!AllFolderLoaded())
-   {
-      STRPTR str = GetStr(MSG_RE_FollowThreadReq); // don`t remove, this is a SAS/C bug workaround !
-      if(!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), str)) return;
-   }
+   // depending on the direction we get the Question or Answer to the current Message
+   fmail = RE_GetThread(&G->RE[winnum]->Mail, direction <= 0 ? FALSE : TRUE, TRUE, winnum);
 
-   if (direction == -1) fmail = RE_GetQuestion(G->RE[winnum]->Mail.cIRTMsgID);
-   if (direction ==  1) fmail = RE_GetAnswer  (G->RE[winnum]->Mail.cMsgID);
-   if (fmail)
+   if(fmail)
    {
       struct MailInfo *mi;
-      int pos;
-      struct Folder *folder = FO_GetFolderByName(fmail->Folder->Name, &pos);
-
-      if(!folder) return;
 
       // we have to make sure that the folder where the message will be showed
       // from is active and ready to display the mail
-      MA_ChangeFolder(folder, TRUE);
+      MA_ChangeFolder(fmail->Folder, TRUE);
 
       mi = GetMailInfo(fmail);
-      set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
+      if(mi->Display) set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
       RE_ReadMessage(winnum, fmail);
    }
    else DisplayBeep(0);
@@ -531,8 +589,8 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    {
       if (AllFolderLoaded() && gui->TO_TOOLBAR)
       {
-         DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, !RE_GetQuestion(mail->cIRTMsgID));
-         DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, !RE_GetAnswer(mail->cMsgID));
+         DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, !RE_GetThread(mail, FALSE, FALSE, -1));
+         DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, !RE_GetThread(mail, TRUE, FALSE, -1));
       }
    }
    else if (gui->TO_TOOLBAR)

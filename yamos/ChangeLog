@@ -5,6 +5,22 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-17  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: reworked the Next/Prev Thread routines a bit and
+      made them first search the folder of the refering mail we are
+      searching from. If no followup could have been found in this
+      folder, YAM will prompt the user if he really wants to
+      load other index files to scan other folders. This should make
+      the searching for the next/prev thread remarkable faster and
+      also hopefully safer.
+      Please note that there still exists the flaw that a message
+      could have more than one followup to it and that YAM actually
+      just search for the first followup and then immediatly displays
+      the message.
+    * YAM_UT.c: fixed bug in the AllFolderLoaded() function where
+      YAM didn`t also check the last folder in the list.
+
 2002-10-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * added the possibility to correctly display/sort messages
