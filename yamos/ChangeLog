@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-25  David Rey <david@saug.org>
+
+    * YAM_rexx_rxcl.c: the INFO template was still wrong.
+
 2002-12-20  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c, YAM_rexx_rxif.c: changed the bugfix of
@@ -808,14 +812,12 @@ $Source$
 
 2002-06-10  David Rey <david@saug.org>
 
-    * Logfile related fixes:
-
-      - YAM_TR.c: Changed the event code issued with MSG_LOG_SendingVerbose
-                  to be 42.  41 was already in use by MSG_LOG_ConnectSMTP,
-                  and on the other hand 42 is also consistent with 32 as
-                  used by MSG_LOG_RetrievingVerbose
-      - YAM.c: Likewise, MSG_LOG_LoggedInVerbose will use code 2 from now
-               on instead of 1, which is reserved for MSG_LOG_LoggedIn
+    * YAM_TR.c: Changed the event code issued with MSG_LOG_SendingVerbose
+      to be 42.  41 was already in use by MSG_LOG_ConnectSMTP, and on the
+      other hand 42 is also consistent with 32 as used by
+      MSG_LOG_RetrievingVerbose
+    * YAM.c: Likewise, MSG_LOG_LoggedInVerbose will use code 2 from now
+      on instead of 1, which is reserved for MSG_LOG_LoggedIn
 
 2002-06-10  Jens Langner <Jens.Langner@htw-dresden.de>
 
