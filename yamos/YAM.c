@@ -1112,6 +1112,12 @@ int main(int argc, char **argv)
       G->TR_Allow = TRUE;
       G->CO_DST = GetDST();
 
+      // We have to initialize the ActiceWin flags to -1, so
+      // that the arexx commands for the windows are reporting an
+      // error if some window wasn`t set active manually by a own rexx command.
+      G->ActiveReadWin = -1;
+      G->ActiveWriteWin = -1;
+
       if(yamFirst)
       {
          Initialise((BOOL)args.hide);

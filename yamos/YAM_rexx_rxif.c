@@ -1691,6 +1691,7 @@ void rx_readclose( struct RexxHost *host, struct rxd_readclose **rxd, long actio
          
       case RXIF_ACTION:
          if (G->RE[G->ActiveReadWin]) DoMethod(G->App, MUIM_CallHook, &RE_CloseHook, G->ActiveReadWin);
+         else rd->rc = RETURN_ERROR;
          break;
       
       case RXIF_FREE:

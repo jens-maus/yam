@@ -5,6 +5,22 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-27  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM.c, YAM_rexx_rxif.c: the WRITE#? and READ#? rexx commands
+      were often missunderstood to work on the actual windows that
+      are opened by the gui. But for these commands to work properly
+      it is necessary to issue a MAILWRITE or MAILREAD command first
+      to set a window active within the own arexx scope. The only
+      problem that arised from the actual implementation was, that
+      this scope variables were set by default to 0 and therefore
+      the first opened window was the actual window this commands
+      were performed on. Now YAM will set this active variables by
+      default to -1 so that a user HAVE TO issue a MAILREAD/WRITE
+      command before using any of the WRITE#?/READ#? commands.
+      This should explain and make the reported "bugs" #555118 and
+      #555120 obsolete.
+
 2002-06-26  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_TR.c: fixed another flaw in the POP3 implementation of YAM
