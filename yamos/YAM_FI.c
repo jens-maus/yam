@@ -550,18 +550,22 @@ static BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 //  Does a complex search with combined criterias based on the rules of a filter
 BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail)
 {
+  int i;
   struct MinNode *curNode;
   BOOL lastCond = FALSE;
 
   // we have to iterate through our ruleList and depending on the combine
   // operation we evaluate if the filter hits any mail criteria or not.
-  for(curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  for(i=0, curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
   {
     struct RuleNode *rule = (struct RuleNode *)curNode;
 
     if(rule->search)
     {
       BOOL actCond = FI_DoSearch(rule->search, mail);
+
+      if(i == 0)
+        rule->combine = CB_NONE;
 
       // if this isn't the first rule we do a compare
       switch(rule->combine)
@@ -1399,8 +1403,6 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter)
 
   if(rule)
   {
-    rule->combine = CB_AND;
-
     // if a filter was specified we immediatley add this new rule to it
     if(filter)
       AddTail((struct List *)&filter->ruleList, (struct Node *)rule);

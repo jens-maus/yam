@@ -86,6 +86,7 @@ OVERLOAD(OM_NEW)
 	static char *bcrit[5];
 	struct Data *data;
 	struct Data *tmpData;
+	struct TagItem *tags = inittags(msg), *tag;
 
 	amode[0] = GetStr(MSG_Address);
 	amode[1] = GetStr(MSG_Name);
@@ -136,7 +137,6 @@ OVERLOAD(OM_NEW)
 		return 0;
 
 	// get eventually set attributes first
-	struct TagItem *tags = inittags(msg), *tag;
 	while((tag = NextTagItem(&tags)))
 	{
 		switch(tag->ti_Tag)

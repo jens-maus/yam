@@ -212,10 +212,16 @@ void CO_SaveConfig(struct Config *co, char *fname)
             fprintf(fh, "FI%02d.Match       = %s\n", i, rule->matchPattern);
             fprintf(fh, "FI%02d.CaseSens    = %s\n", i, Bool2Txt(rule->caseSensitive));
             fprintf(fh, "FI%02d.Substring   = %s\n", i, Bool2Txt(rule->subString));
-            fprintf(fh, "FI%02d.Combine     = %d\n", i, rule->combine);
           }
           else
           {
+            // we handle the combine string different as it relates
+            // to the previous one
+            if(j > 1)
+              fprintf(fh, "FI%02d.Combine%d    = %d\n", i, j, rule->combine);
+            else
+              fprintf(fh, "FI%02d.Combine     = %d\n", i, rule->combine);
+
             fprintf(fh, "FI%02d.Field%d      = %d\n", i, j+1, rule->searchMode);
             fprintf(fh, "FI%02d.SubField%d   = %d\n", i, j+1, rule->subSearchMode);
             fprintf(fh, "FI%02d.CustomField%d= %s\n", i, j+1, rule->customField);
@@ -223,7 +229,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
             fprintf(fh, "FI%02d.Match%d      = %s\n", i, j+1, rule->matchPattern);
             fprintf(fh, "FI%02d.CaseSens%d   = %s\n", i, j+1, Bool2Txt(rule->caseSensitive));
             fprintf(fh, "FI%02d.Substring%d  = %s\n", i, j+1, Bool2Txt(rule->subString));
-            fprintf(fh, "FI%02d.Combine%d    = %d\n", i, j+1, rule->combine);
           }
         }
 
@@ -445,12 +450,15 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
       {
          version = buffer[3]-'0';
          CO_SetDefaults(co, -1);
+
          while (fgets(buffer, SIZE_LARGE, fh))
          {
             char *p, *value, *value2 = "";
+
             if ((value = strchr(buffer, '='))) for (value2 = (++value)+1; ISpace(*value); value++);
             if ((p = strpbrk(buffer,"\r\n"))) *p = 0;
             for (p = buffer; *p && *p != '=' && !ISpace(*p); p++); *p = 0;
+
             if (*buffer && value)
             {
                // check for an old config version and try to import its values
@@ -706,11 +714,13 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
                      rule->subString = Txt2Bool(value);
                    }
-                   else if(!strnicmp(p, "Combine", 7))
+                   else if(!strnicmp(p, "Combine", 7) && atoi(value) > CB_NONE)
                    {
                      int n = atoi(p+7);
 
-                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                     // here we use n and not n-1 on purpose because the combine line
+                     // refers always to the next one.
+                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n : 1)))
                        CreateNewRule(lastFilter);
 
                      rule->combine = atoi(value);
