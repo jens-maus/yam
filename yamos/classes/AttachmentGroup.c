@@ -30,7 +30,10 @@
 
 #include "AttachmentGroup_cl.h"
 
+#include <clib/wb_protos.h>
+
 #include <proto/graphics.h>
+#include <proto/wb.h>
 
 /* CLASSDATA
 struct Data
@@ -552,10 +555,11 @@ DECLARE(Refresh) // struct Part *firstPart
 													 MUIA_AttachmentImage_MaxWidth,	 TEXTROWS*_font(obj)->tf_YSize,
 												 End;
 
-			// conntect the doubleclick attribute of the image with the DisplayAttachment
-			// method
+			// connect some notifies which we might be interested in
 			DoMethod(newImage, MUIM_Notify, MUIA_AttachmentImage_DoubleClick, TRUE,
 							 obj, 2, MUIM_AttachmentGroup_Display, rp);
+			DoMethod(newImage, MUIM_Notify, MUIA_AttachmentImage_DropPath, MUIV_EveryTime,
+							 obj, 3, MUIM_AttachmentGroup_ImageDropped, newImage, MUIV_TriggerValue);
 
 			DoMethod(obj, OM_ADDMEMBER, newImage);
 			DB(kprintf("added image for attachment: %ld:%s\n", rp->Nr, rp->Name);)
@@ -723,6 +727,61 @@ DECLARE(CropAll)
 		DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail);
 	else
 		DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, MUIF_NONE);
+
+	return 0;
+}
+///
+/// DECLARE(ImageDropped)
+DECLARE(ImageDropped) // Object *imageObject, char *dropPath
+{
+	struct Part *mailPart = (struct Part *)xget(msg->imageObject, MUIA_AttachmentImage_MailPart);
+
+	if(mailPart && msg->dropPath)
+	{
+		BOOL result;
+		char *fileName;
+		char filePathBuf[SIZE_PATHFILE];
+		
+		DB(kprintf("Image of Part %d was dropped at [%s]\n", mailPart->Nr, msg->dropPath);)
+
+		BusyText(GetStr(MSG_BusyDecSaving), "");
+
+		// make sure the drawer is opened upon the drag operation
+		if(WorkbenchBase->lib_Version >= 44)
+			OpenWorkbenchObject(msg->dropPath, TAG_DONE);
+
+		// prepare the final path
+		fileName = mailPart->CParFileName ? mailPart->CParFileName : mailPart->Name;
+		strmfp(filePathBuf, msg->dropPath, fileName);
+
+		RE_DecodePart(mailPart);
+		result = RE_Export(mailPart->rmData,
+											 mailPart->Filename,
+											 filePathBuf,
+											 "",
+											 mailPart->Nr,
+											 FALSE,
+											 FALSE,
+											 mailPart->ContentType);
+
+		// let the workbench know about the change
+		if(result)
+		{
+			BPTR parentDirLock = Lock(msg->dropPath, SHARED_LOCK);
+			UpdateWorkbench(fileName, parentDirLock, UPDATEWB_ObjectAdded);
+			UnLock(parentDirLock);
+
+			// Now that the workbench knows about the new object we also have to make sure the icon
+			// is actually visible in the window
+			if(WorkbenchBase->lib_Version >= 44)
+				MakeWorkbenchObjectVisible(filePathBuf, TAG_DONE);
+		}
+		else
+			DisplayBeep(NULL);
+
+    BusyEnd();
+
+	}
 
 	return 0;
 }

@@ -62,9 +62,13 @@ OVERLOAD(MUIM_Cleanup)
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
-   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
+	// the attachmentlist either accepts drag requests from the main mail list
+	// or from a readmailgroup object
 	if(d->obj == G->MA->GUI.NL_MAILS)
+		return MUIV_DragQuery_Accept;
+	else if(xget(d->obj, MUIA_AttachmentImage_MailPart) != 0)
 		return MUIV_DragQuery_Accept;
 
 	return DoSuperMethodA(cl, obj, msg);
@@ -99,6 +103,46 @@ OVERLOAD(MUIM_DragDrop)
 		}
 		while(TRUE);
 
+		return 0;
+	}
+	else if(xget(d->obj, MUIA_AttachmentImage_MailPart) != 0)
+	{
+		char tempFile[SIZE_FILE];
+		struct Attach attach;
+		struct Part *mailPart = (struct Part *)xget(d->obj, MUIA_AttachmentImage_MailPart);
+
+		BusyText(GetStr(MSG_BusyDecSaving), "");
+
+		// make sure the mail part is properly decoded before we add it
+		RE_DecodePart(mailPart);
+
+		// clear the attachment structure
+		memset(&attach, 0, sizeof(struct Attach));
+
+		// then we create a copy of our decoded file which we can use
+		// independent from the object we got the mailPart from
+		sprintf(tempFile, "YAMt%08lx.tmp", (ULONG)mailPart);
+		strmfp(attach.FilePath, C->TempDir, tempFile);
+
+		// copy the file now
+		if(CopyFile(attach.FilePath, NULL, mailPart->Filename, NULL))
+		{
+			strcpy(attach.Description, mailPart->Description);
+			stccpy(attach.ContentType, mailPart->ContentType, SIZE_CTYPE);
+			attach.Size = mailPart->Size;
+			attach.IsMIME = mailPart->EncodingCode != ENC_UUE;
+			attach.IsTemp = TRUE;
+
+			if(mailPart->Name)
+				strcpy(attach.Name, mailPart->Name);
+
+			// add the new attachment to the NList
+			DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+		}
+		else
+			DisplayBeep(NULL);
+
+		BusyEnd();
 		return 0;
 	}
 

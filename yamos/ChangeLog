@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-16  Jens Langner <Jens.Langner@light-speed.de>
+
+    * AttachmentGroup, WriteAttachmentList: implemented the missing drag&drop
+      functionality of the new attachment images. Now a user can drag&drop
+      an attachment image directly into a workbench drawer (v45+ workbench)
+      or to an attachment listview of a write window. YAM will then
+      automatically export/copy the attachment in question to the selected
+      destination.
+
 2005-02-15  Jens Langner <Jens.Langner@light-speed.de>
 
     * misc: fixed a bug in the temporary file handling where it happened

@@ -97,6 +97,8 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
 		{
 			if((msg->destName = calloc(1, strlen(ism->ism_Name)+1)))
 				strcpy(msg->destName, ism->ism_Name);
+
+			return ISMACTION_Select;
 		}
 		else if(ism->ism_Type == WBDISK)
 		{
@@ -104,6 +106,8 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
 			{
 				strcpy(msg->destName, ism->ism_Name);
 				strcat(msg->destName, ":");
+
+				return ISMACTION_Select;
 			}
 		}
 
@@ -152,6 +156,20 @@ OVERLOAD(OM_NEW)
 	}
 
 	return (ULONG)obj;
+}
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+	GETDATA;
+
+	if(data->dropPath)
+	{
+		free(data->dropPath);
+		data->dropPath = NULL;
+	}
+
+	return DoSuperMethodA(cl, obj, msg);
 }
 ///
 /// OVERLOAD(OM_GET)
@@ -599,6 +617,8 @@ OVERLOAD(MUIM_HandleEvent)
 OVERLOAD(MUIM_DeleteDragImage)
 {
 	GETDATA;
+
+	DB(kprintf("MUIM_DeleteDragImage\n");)
 	
 	// this stuff only works with Workbench v45+
 	if(WorkbenchBase->lib_Version >= 45)
@@ -678,6 +698,8 @@ OVERLOAD(MUIM_DeleteDragImage)
 					if(selMsg.finish && selMsg.destName)
 						data->dropPath = selMsg.destName;
 				}
+
+				DB(kprintf("found dropPath: [%s]\n", data->dropPath ? data->dropPath : "n/a");)
 
 				// signal other listening for the DropPath that we
 				// found out where to icon has dropped at exactly.
