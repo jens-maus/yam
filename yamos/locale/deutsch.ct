@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.8 (05.03.2003)
+## version $VER: YAM.catalog 5.8 (09.03.2003)
 ## codeset 0
 ;
 MSG_Folder
@@ -5926,4 +5926,7 @@ Postfachliste Einst.
 MSG_HELP_FO_CY_MLSIGNATURE
 Diese Signatur bei neuen Nachrichten\n\
 in dieser Liste verwenden.
+;
+MSG_CTapplicationpdf
+PDF Dokument
 ;
