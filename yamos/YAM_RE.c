@@ -2278,7 +2278,7 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
    // some constant arrays for legal characters within a URL and
    // within a email address
    static const char *URL_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=;:*#()";
-   static const char *EML_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_+-.=";
+   static const char *EML_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_-.";
    static const char *protocols[7] =
    {
      "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:"
