@@ -278,7 +278,7 @@ enum tokenType ExtractURL(char *text, char *resultBuffer)
   enum tokenType type;
   enum tokenType result = 0;
 
-  if(!text || !resultBuffer) return NULL;
+  if(!text || !resultBuffer) return 0;
 
   // clear the resultBuffer
   resultBuffer[0] = '\0';
