@@ -4793,7 +4793,7 @@ MSG_SEARCHNOTFOUND_BUTTON (//)
 Continue
 ;
 MSG_WR_ERRORNOSENDER (//)
-Mail is incomplete: No Sender!
+Mail is incomplete: No sender!
 ;
 MSG_WR_NOSENDERREQGAD (//)
 _Use default sender|*_Cancel
@@ -4819,11 +4819,12 @@ MSG_ER_CANTMOVEMAIL (//)
 Can't move mail '%s' to folder '%s' because a folder with that name doesn`t exist.\n\
 Please check your Filter configuration.
 ; MAILFILE, FOLDERNAME
+;
 MSG_MA_EXECUTINGCMD (//)
 Executing command...
 ;
 MSG_APP_DESCRIPTION (//39)
-SMTP/POP3 Email Client for AmigaOS
+SMTP/POP3 E-Mail Client for AmigaOS
 ;
 MSG_CO_INFOBARPOS (//)
 Position
@@ -4912,15 +4913,18 @@ MSG_HELP_CO_ST_POPPORT (//)
 Here you can explictly specify the port the POP3\n\
 server is running at. (default: 110)
 ;
+MSG_CO_InfoBarDef (//)
+- Total: %t New: %n Unread: %u
+;
 MSG_TR_INITTLS (//)
 Initializing TLS/SSL session...
 ;
 MSG_ER_INITAMISSL (//)
-Couldn`t init amissl.library. Disabled TLS/SSL support completly.\
+Couldn't init amissl.library. Disabled TLS/SSL support completely.\
 Please check your AmiSSL installation and restart YAM.
 ;
 MSG_ER_INITTLS (//)
-Couldn`t initialize TLS/SSL session for %s
+Couldn't initialize TLS/SSL session for %s
 ;
 MSG_TR_SENDAUTH (//)
 Sending SMTP AUTH request...

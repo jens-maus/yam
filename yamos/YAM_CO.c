@@ -733,7 +733,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;
       co->InfoBar = IB_POS_CENTER;
-      strcpy(co->InfoBarText, "- Total: %t New: %n Unread: %u");
+      strcpy(co->InfoBarText, GetStr(MSG_CO_InfoBarDef));
    }
    if (page == 9 || page < 0)
    {
