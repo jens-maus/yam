@@ -7,6 +7,9 @@ $Source$
 
 2003-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: fixed bug where on a use of PGPv5 a unknown keyid wasn`t
+      correctly identified. Damn, this whole PGP stuff really needs a
+      complete rework soon.
     * YAM_UT.c: replaced redundant CompNoCase() function with a call to
       strnicmp() which anyway does the same.
     * YAM_UT.c, YAM_FI.c: increased the sizes of all buffers used with

@@ -64,15 +64,16 @@
 #include "classes/Classes.h"
 
 // PGP flags & macros
-#define PGPE_MIME     1
-#define PGPE_OLD      2
-#define PGPS_MIME     1
-#define PGPS_OLD      2
-#define PGPS_BADSIG   4
-#define PGPS_ADDRESS  8
-#define PGPS_CHECKED 16
+#define PGPE_MIME     (1<<0)
+#define PGPE_OLD      (1<<1)
 #define hasPGPEMimeFlag(v)     (isFlagSet((v)->PGPEncrypted, PGPE_MIME))
 #define hasPGPEOldFlag(v)      (isFlagSet((v)->PGPEncrypted, PGPE_OLD))
+
+#define PGPS_MIME     (1<<0)
+#define PGPS_OLD      (1<<1)
+#define PGPS_BADSIG   (1<<2)
+#define PGPS_ADDRESS  (1<<3)
+#define PGPS_CHECKED  (1<<4)
 #define hasPGPSMimeFlag(v)     (isFlagSet((v)->PGPSigned, PGPS_MIME))
 #define hasPGPSOldFlag(v)      (isFlagSet((v)->PGPSigned, PGPS_OLD))
 #define hasPGPSBadSigFlag(v)   (isFlagSet((v)->PGPSigned, PGPS_BADSIG))
@@ -1457,19 +1458,27 @@ static void RE_GetSigFromLog(int winnum, char *decrFor)
    {
       while (GetLine(fh, buffer, SIZE_LARGE))
       {
-         if (!decrFail && decrFor && G->PGPVersion == 5)
-            if (!strnicmp(buffer, "cannot decrypt", 14))
+         if(!decrFail && decrFor && G->PGPVersion == 5)
+         {
+            if(!strnicmp(buffer, "cannot decrypt", 14))
             {
                *decrFor = 0;
                GetLine(fh, buffer, SIZE_LARGE); GetLine(fh, buffer, SIZE_LARGE);
                RE_GetAddressFromLog(buffer, decrFor);
                decrFail = TRUE;
             }
-         if (!sigDone)
+         }
+
+         if(!sigDone)
          {
-            if (!strnicmp(buffer, "good signature", 14)) sigDone = TRUE;
-            if (!strnicmp(buffer, "bad signature", 13)) { SET_FLAG(re->PGPSigned, PGPS_BADSIG); sigDone = TRUE; }
-            if (sigDone)
+            if(!strnicmp(buffer, "good signature", 14)) sigDone = TRUE;
+            else if(!strnicmp(buffer, "bad signature", 13) || !stristr(buffer, "unknown keyid"))
+            {
+              SET_FLAG(re->PGPSigned, PGPS_BADSIG);
+              sigDone = TRUE;
+            }
+
+            if(sigDone)
             {
                if (G->PGPVersion == 5) { GetLine(fh, buffer, SIZE_LARGE); GetLine(fh, buffer, SIZE_LARGE); }
                if (RE_GetAddressFromLog(buffer, re->Signature)) SET_FLAG(re->PGPSigned, PGPS_ADDRESS);
@@ -2266,7 +2275,8 @@ static void RE_HandleSignedMessage(struct Part *frp)
          error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
          if (error > 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_BADSIG);
          if (error >= 0) RE_GetSigFromLog(frp->Win, NULL);
-         tf->FP = NULL; CloseTempFile(tf);
+         tf->FP = NULL;
+         CloseTempFile(tf);
       }
       RE_DecodePart(rp[0]);
    }
