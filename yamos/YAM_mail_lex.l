@@ -42,15 +42,15 @@
     #define YY_NO_INPUT 1
 %}
 
-NOTBLANK   [^[:blank:]\r\n()<>\[\]*.\"]
-NOTBLANKAT [^[:blank:]\r\n()<>\[\]*.@\"]
+NOTBLANK   [^[:blank:]\n()<>\[\]*.\"]
+NOTBLANKAT [^[:blank:]\n()<>\[\]*.@\"]
+NOTEOR     [^[:blank:]\n()<>\[\]*.\",!?]
 INITIALS   [[:alpha:]]
 
 %%
 ^"<sb>"                             {return tSB ;}
 ^"<tsb>"                            {return tTSB;}
 ^([[:blank:]]*{INITIALS}{0,3}">")+  {return tCITE;}
-^"-- \n"                            {return tSIGNATURE;}
 
 " "  {return tSPACE      ;}
 "  " {return tDOUBLESPACE;}
@@ -71,15 +71,15 @@ INITIALS   [[:alpha:]]
 "_"[^[:blank:]\n_][^\n_]*[^[:blank:]\n_]"_"[[:blank:]\n,.!?:]                     {return tUNDERLINE ;}
 "#"[^[:blank:]\n#][^\n#]*[^[:blank:]\n#]"#"[[:blank:]\n,.!?:]                     {return tCOLORED   ;}
 
-"http://"({NOTBLANK}|[.])*                                                        {return tHTTP      ;}
-"https://"({NOTBLANK}|[.])*                                                       {return tHTTPS     ;}
-"ftp://"({NOTBLANK}|[.])*                                                         {return tFTP       ;}
-"gopher://"({NOTBLANK}|[.])*                                                      {return tGOPHER    ;}
-"telnet://"({NOTBLANK}|[.])*                                                      {return tTELNET    ;}
-"mailto:"({NOTBLANK}|[.])*                                                        {return tMAILTO    ;}
-"news:"({NOTBLANK}|[.])*                                                          {return tNEWS      ;}
-({NOTBLANKAT}|".")+"@"({NOTBLANKAT}+".")+{NOTBLANKAT}{2,4}                        {return tEMAIL     ;}
-("www"|"ftp")"."{NOTBLANK}{3,}({NOTBLANK}|".")*"."{NOTBLANK}{2,4}"/"?{NOTBLANK}*  {return tURL       ;}
+"http://"({NOTBLANK}|[.])*{NOTEOR}                                                {return tHTTP      ;}
+"https://"({NOTBLANK}|[.])*{NOTEOR}                                               {return tHTTPS     ;}
+"ftp://"({NOTBLANK}|[.])*{NOTEOR}                                                 {return tFTP       ;}
+"gopher://"({NOTBLANK}|[.])*{NOTEOR}                                              {return tGOPHER    ;}
+"telnet://"({NOTBLANK}|[.])*{NOTEOR}                                              {return tTELNET    ;}
+"mailto:"({NOTBLANK}|[.])*{NOTEOR}                                                {return tMAILTO    ;}
+"news:"({NOTBLANK}|[.])*{NOTEOR}                                                  {return tNEWS      ;}
+({NOTBLANKAT}|".")+"@"({NOTBLANKAT}+".")+{NOTEOR}{2,4}                            {return tEMAIL     ;}
+("www"|"ftp")"."{NOTBLANK}{3,}({NOTBLANK}|".")*"."{NOTEOR}{2,}                    {return tURL       ;}
 .                                                                                 {return tNORMALTEXT;}
 
 %%
