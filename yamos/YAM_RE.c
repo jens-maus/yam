@@ -1354,6 +1354,30 @@ void RE_ParseContentParameters(struct Part *rp)
    } while (t);
 }
 ///
+/// RE_ParseContentDispositionParameters
+//  Parses parameters of Content-Disposition header field
+void RE_ParseContentDispositionParameters(struct Part *rp)
+{
+   char *s, *t, *eq, *cd = rp->ContentDisposition;
+
+   s = strchr(cd, ';');
+   if (!s) return;
+   *s++ = 0;
+   do {
+      if (t = ParamEnd(s)) *t++ = 0;
+      if (!(eq = strchr(s, '='))) rp->JunkParameter = Cleanse(s);
+      else
+      {
+         *eq++ = 0;
+         s = Cleanse(s); eq = stpblk(eq);
+         StripTrailingSpace(eq);
+         UnquoteString(eq, FALSE);
+         if (!stricmp(s, "filename")) rp->CParName = eq;
+      }
+      s = t;
+   } while (t);
+}
+///
 /// RE_ScanHeader
 //  Parses the header of the message or of a message part
 BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
@@ -1402,6 +1426,25 @@ BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
       {
          stccpy(rp->Description, stpblk(&s[20]), SIZE_DEFAULT);
       } 
+      else if (!strnicmp(s, "content-disposition:", 20))
+      {
+        // at the moment we read the content-disposition only if a Part-Name was
+        // not specified before. If we want to read more from a content-disposition
+        // later we have to change this behaviour
+        if(!(rp->CParName))
+        {
+          rp->ContentDisposition = StrBufCpy(rp->ContentDisposition, p = stpblk(&s[20]));
+          while (TRUE)
+          {
+            if (!(p = strchr(rp->ContentDisposition, '/'))) break;
+            if (ISpace(*(p-1)))    for (--p; *p; ++p) *p = *(p+1);
+            else if (ISpace(*++p)) for ( ; *p; ++p) *p = *(p+1);
+            else break;
+          }
+          StripTrailingSpace(rp->ContentDisposition);
+          RE_ParseContentDispositionParameters(rp);
+        }
+      }
    }
    for (p = rp->ContentType; *p; ++p) if (isupper((int)*p)) *p = tolower((int)*p);
    return TRUE;
@@ -1497,6 +1540,7 @@ void RE_UndoPart(struct Part *rp)
    if (rp->Prev) rp->Prev->Next = rp->Next;
    if (rp->Next) rp->Next->Prev = rp->Prev;
    if (rp->ContentType) FreeStrBuf(rp->ContentType);
+   if (rp->ContentDisposition) FreeStrBuf(rp->ContentDisposition);
    free(rp);
 }
 ///
@@ -1677,6 +1721,7 @@ void RE_CleanupMessage(int winnum)
       next = part->Next;
       if (*part->Filename) DeleteFile(part->Filename);
       if (part->ContentType) FreeStrBuf(part->ContentType);
+      if (part->ContentDisposition) FreeStrBuf(part->ContentDisposition);
       free(part);
    }
    re->FirstPart     = NULL;

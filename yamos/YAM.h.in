@@ -605,6 +605,7 @@ struct Part
    char Name[SIZE_FILE];
    char Description[SIZE_DEFAULT];
    char *ContentType;
+   char *ContentDisposition;
    char Filename[SIZE_PATHFILE];
    char Boundary[SIZE_DEFAULT];
    char *JunkParameter;
