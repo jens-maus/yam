@@ -63,6 +63,7 @@
 #include "YAM.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -2949,7 +2950,9 @@ void DisplayAppIconStatistics(void)
 //  Calculates folder statistics and update mailbox status icon
 void DisplayStatistics(struct Folder *fo)
 {
+   int pos;
    struct Mail *mail;
+   struct MUI_NListtree_TreeNode *tn = NULL;
    struct Folder *actfo = FO_GetCurrentFolder();
 
    // If the parsed argument is NULL we want to show the statistics from the actual folder
@@ -2958,6 +2961,9 @@ void DisplayStatistics(struct Folder *fo)
    {
      fo = FO_GetFolderByType(FT_INCOMING, NULL);
    }
+
+   // Get Position of Folder
+   pos = FO_GetFolderPosition(fo);
 
    // Now we recount the amount of Messages of this Folder
    for (mail = fo->Messages, fo->Unread = fo->New = fo->Total = fo->Sent = fo->Deleted = 0; mail; mail = mail->Next)
@@ -2974,12 +2980,52 @@ void DisplayStatistics(struct Folder *fo)
    }
 
    // Now lets redraw the folderentry in the listtree
-   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, FO_GetFolderPosition(fo), MUIV_NListtree_Redraw_Flag_Nr, TAG_DONE);
+   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, pos, MUIV_NListtree_Redraw_Flag_Nr, TAG_DONE);
 
    if (fo == actfo)
    {
       CallHookPkt(&MA_SetMessageInfoHook, 0, 0);
       CallHookPkt(&MA_SetFolderInfoHook, 0, 0);
+   }
+
+   // Recalc the number of messages of the folder group
+   if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, 0, TAG_DONE))
+   {
+      struct MUI_NListtree_TreeNode *tn_parent = NULL;
+
+      // Now get the parent of the treenode
+      if(tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE))
+      {
+         // only if the parent one is not ROOT
+         if(tn_parent != MUIV_NListtree_GetEntry_ListNode_Root)
+         {
+            struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
+            int i;
+
+            // clear the parent mailvariables first
+            fo_parent->Unread = fo_parent->New = fo_parent->Total = fo_parent->Sent = fo_parent->Deleted = 0;
+
+            // Now we scan every child of the parent and count the mails
+            for(i=0;;i++)
+            {
+               struct MUI_NListtree_TreeNode *tn_child = NULL;
+               struct Folder *fo_child = NULL;
+
+               tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, 0, TAG_DONE);
+               if(!tn_child) break;
+
+               fo_child = (struct Folder *)tn_child->tn_User;
+
+               fo_parent->Unread    += fo_child->Unread;
+               fo_parent->New       += fo_child->New;
+               fo_parent->Total     += fo_child->Total;
+               fo_parent->Sent      += fo_child->Sent;
+               fo_parent->Deleted   += fo_child->Deleted;
+            }
+
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn_parent, 0, TAG_DONE);
+         }
+      }
    }
 
    if (!G->AppIconQuiet) DisplayAppIconStatistics();

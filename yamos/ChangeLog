@@ -586,6 +586,8 @@
       wants to be warned or not if he is going to send a message without a subject.
     * fixed alignment bug in struct Rule.
     * Flush indices didn`t work on grouped folders - fixed. (Bug #433506)
+    * Folder groups will be displayed highlighted&bold now if any child has new or
+      unread mail.
 
 2001-06-16  Christian Hattemer <krille@users.sourceforge.net>
 

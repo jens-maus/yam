@@ -2227,8 +2227,6 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
   if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
   for (i = 0; i < MAXWR; i++) if (G->WR[i] && G->WR[i]->Mail == mail) beingedited = TRUE;
 
-  if (!GetMUI(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
-
   // Now we set this entry as activ
   set(gui->NL_MAILS, MUIA_NList_Active, res.entry);
 
@@ -2548,7 +2546,7 @@ struct MA_ClassData *MA_New(void)
                      MUIA_NList_TitleSeparator      , TRUE,
                      MUIA_NList_DefaultObjectOnClick, TRUE,
                      MUIA_ContextMenu               , C->MessageCntMenu,
-                     MUIA_Font, C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+                     MUIA_Font                      , C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
                      MUIA_NList_Exports             , MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
                      MUIA_NList_Imports             , MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
                      MUIA_ObjectID                  , MAKE_ID('N','L','0','2'),

@@ -953,7 +953,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
         case FT_GROUP:
         {
           sprintf(msg->Array[0] = dispfold, "\033o[%d] %s", (msg->TreeNode->tn_Flags & TNF_OPEN) ? 1 : 0, entry->Name);
-          msg->Preparse[0] = MUIX_PH;
+          msg->Preparse[0] = (entry->New+entry->Unread) ? (MUIX_B MUIX_PH) : MUIX_PH;
         }
         break;
 
