@@ -269,3 +269,6 @@
       entering a eMail address YAM will try to resolve it from the addressbook.
       The resolve & expand ording will be Alias->RealName->eMail.
 
+    * Fixed mailing list stuff again. Now Shift/Alt-Reply should behave like
+      before.
+

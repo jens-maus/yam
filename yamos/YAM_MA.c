@@ -741,14 +741,24 @@ int MA_NewReply(struct Mail **mlist, int flags)
                   rto = StrBufCat(rto, mlistad);
                }
             }
+
             if (mail->Flags & MFLAG_MULTIRCPT)
-               if (!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ReplyReqOpt), GetStr(MSG_MA_ReplyReq))))
-               { MA_FreeEMailStruct(email); fclose(out); doabort = TRUE; goto abort_repl; }
+            {
+            	if (!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ReplyReqOpt), GetStr(MSG_MA_ReplyReq))))
+              {
+              	MA_FreeEMailStruct(email);
+                fclose(out);
+                doabort = TRUE;
+                goto abort_repl;
+              }
+            }
+
             repto = GetReturnAddress(mail);
+
             if (repmode == 1)
             {
                if (flags & NEWF_REP_PRIVATE) repto = &mail->From;
-               else if (flags & NEWF_REP_MLIST);
+               else if ((flags & NEWF_REP_MLIST) || mlistad);
                else if (C->CompareAddress && *mail->ReplyTo.Address) if (stricmp(mail->From.Address, mail->ReplyTo.Address))
                {
                   sprintf(buffer, GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
@@ -760,7 +770,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                      case 0: MA_FreeEMailStruct(email); doabort = TRUE; fclose(out); goto abort_repl;
                   }
                }
-               if(!(folder->MLAddress[0])) rto = AppendRcpt(rto, repto, FALSE);
+               rto = AppendRcpt(rto, repto, FALSE);
             }
             else
             {
@@ -769,6 +779,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                for (i = 0; i < email->NoSTo; i++) rto = AppendRcpt(rto, &email->STo[i], TRUE);
                for (i = 0; i < email->NoCC; i++) rcc = AppendRcpt(rcc, &email->CC[i], TRUE);
             }
+
 						etd.R_Name = repto->RealName;
             etd.R_Address = repto->Address;
             altpat = FALSE;
