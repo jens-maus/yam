@@ -304,10 +304,10 @@
 (
 (set #def_cat_lang #def_lang_Francais)
 (set #def_doc_lang #def_doc_Francais)
-(set #wrongOS  "YAM a besoin de l' OS 3.0 minimum\n")
+(set #wrongOS  "YAM a besoin de l' OS 3.0 minimum !\n")
 (set #wrongMOS "MorphOS n'a pas été trouvé !\n")
-(set #wrongMUI "YAM a besoin de MUI 3.8 minimum\n")
-(set #wrongCPU "YAM a besoin d'un CPU 68020 minimum\n")
+(set #wrongMUI "YAM a besoin de MUI 3.8 minimum !\n")
+(set #wrongCPU "YAM a besoin d'un CPU 68020 minimum !\n")
 (set #proc_type "Quelle version de YAM voulez-vous installer ?")
 (set #proc_help (cat "Ici vous pouvez choisir la version de YAM à installer "
                      "en fonction de votre type de micro-processeur."))
@@ -320,6 +320,12 @@
                         "(L'anglais est intégré au programme)"))
 (set #lang_manual "Choisissez la langue de l'aide en ligne. (AmigaGuide)")
 (set #icons_prompt "Quel genre d'icônes et de boutons voulez-vous installer ?\n")
+(set #icons_help (cat "Veuillez sélectionner le type d'icônes que vous voulez installer :\n\n"
+                      "- MagicWB (8 couleurs)\n"
+                      "- ProLite (16 couleurs)\n"
+                      "- NewIcons (32 couleurs)\n"
+                      "- GlowIcons (64 couleurs)\n"
+                      "- GlowIcons-2 (64 couleurs)"))
 (set #icons_none "Aucun")
 (set #charset_help (cat "YAM peut utiliser des tables de conversion de caractères "
                         "lors de la lecture et de l'écriture des messages. Ces tables "
@@ -344,9 +350,13 @@
                        "vous pouvez ne pas installer les analyseurs et économiser "
                        "50ko d'espace disque.\n"))
 (set #imagepool_prompt "Suppression de « libs:imagepool.library »")
-(set #imagepool_help (cat "La classe « Toolbar.mcc » 15.8 fournie avec YAM ne supporte "
+(set #imagepool_help (cat "La classe « Toolbar.mcc » 15.8 fournie avec YAM n'utilise "
                           "plus « imagepool.library ». Si aucun autre logiciel n'utilise "
                           "cette bibliothèque, vous pouvez l'effacer maintenant.\n"))
+(set #yamtz_prompt "Suppression de « ENV(ARC):YAM_TZ »")
+(set #yamtz_help (cat "YAM 2.4+ n'utilise plus la variable d'environnement « YAM_TZ » "
+                      "Tout est maintenant géré via la « Locale », "
+                      "vous pouvez donc effacer cette variable en toute sécurité.\n"))
 (set #assign_prompt (cat "l'assignation « YAM: » devrait être ajoutée à "
                          "« S:USER-STARTUP ».\n"
                          "Le souhaitez-vous ?"))
@@ -540,18 +550,25 @@
 (set #wrongMOS "MorphOS nisem na¹el!\n")
 (set #wrongMUI "YAM za zagon potrebuje vsaj MUI 3.8!\n")
 (set #wrongCPU "YAM za zagon potrebuje vsaj CPE 68020!\n")
-(set #proc_type "Izberite, katero razlièico YAMa bi radi namestili:")
+(set #proc_type "Izberite, katero razlièico YAM bi radi namestili:")
 (set #proc_help (cat "Tu lahko izberete, katera razlièica YAM bo name¹èena "
                      "glede na tip procesorja, ki ga imate."))
-(set #proc_020 "Optimizirano za 68020/030")
-(set #proc_040 "Optimizirano za 68040")
-(set #proc_060 "Optimizirano za 68060")
+(set #proc_020 "Optimalizirano za 68020/030")
+(set #proc_040 "Optimalizirano za 68040")
+(set #proc_060 "Optimalizirano za 68060")
 (set #YAM_dir  (cat "Izberite prosim imenik za YAM\n"
                     "(Poseben predal NE bo ustvarjen!)"))
 (set #lang_catalog (cat "Kateri jezik kataloga ¾elite namestiti?\n"
                         "(Angle¹ki jezik je vgrajen)"))
 (set #lang_manual "Izberite jezik za pomoè AmigaGuide v programu")
 (set #icons_prompt "Kateri nabor ikon ¾elite namestiti?\n")
+(set #icons_help (cat "Izberite prosim nabor ikon, ki ga ¾elite namestiti:\n\n"
+                      "- MagicWB (8 barv)\n"
+                      "- ProLite (16 barv)\n"
+                      "- NewIcons (32 barv)\n"
+                      "- GlowIcons (64 barv)\n"
+                      "- GlowIcons-2 (64 barv)"))
+(set #icons_none "Nobenega")
 (set #charset_help (cat "YAM lahko pri branju in pisanju sporoèil uporablja "
                         "tabele za pretvorbo znakov. Te tabele so mno¾ica datotek "
                         "z golim besedilom, name¹èenih v \"YAM:Charsets/\", ki "
@@ -577,7 +594,11 @@
 (set #imagepool_help (cat "Razred Toolbar.mcc 15.8, ki je name¹èen s programom YAM, ne "
                           "podpira veè knji¾nice imagepool.library. Èe je ne uporablja "
                           "niè drugega, jo morda zdaj ¾elite izbrisati.\n"))
-(set #assign_prompt (cat "V va¹o datoteko \"S:USER-STARTUP\" mora biti dodana "
+(set #yamtz_prompt "Bri¹em \"ENV(ARC):YAM_TZ\"")
+(set #yamtz_help (cat "YAM 2.4+ ne podpira veè spremenljivke okolja \"YAM_TZ\". "
+                      "Èasovni pasovi so zdaj v celoti odvisni od sistemskih nastavitev, "
+                      "zato lahko to spremenljivko varno izbri¹ete.\n"))
+(set #assign_prompt (cat "V va¹o datoteko \"S:User-Startup\" mora biti dodana "
                          "dodelitev \"YAM:\"\n"
                          "Ali dovolite?"))
 (set #assign_help (cat "Èe ta dodelitev ni prisotna, program po naslednjem zagonu "
