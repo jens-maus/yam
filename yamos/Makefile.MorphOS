@@ -45,9 +45,7 @@ OPTFLAGS = -O2 -fomit-frame-pointer -D__MORPHOS_DIRECTCALL
 DEBUG    = -DDEBUG -g3 -O0
 CFLAGS   = -noixemul -I./ -I/gg/ppc-morphos/sys-include/ -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS  = -noixemul
-#LDFLAGS  = -mstackextend
-LDLIBS    = -lamigastubs -lmui -lsyscall
-#LDLIBS   = -lmui -lpm -lamissl -lopenurl -lxpkmaster -lamiga
+LDLIBS    = -lamigastubs -lmui -lsyscall -lxpkmaster -lpm -lamissl -lopenurl
 
 # CPU and DEBUG can be defined outside, defaults to above
 # using e.g. "make DEBUG= CPU=-mcpu=603e" produces optimized non-debug PPC-603e version
