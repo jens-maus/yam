@@ -548,9 +548,6 @@ static void Terminate(void)
       if (G->BImage[i]) FreeBCImage(G->BImage[i]);
    }
 
-   // lets free the buffer from the CRC32 checksum routines as well.
-   FreeCRCTable();
-
    CO_FreeConfig(C);
    YAM_CleanupClasses();
    ExitClasses();
