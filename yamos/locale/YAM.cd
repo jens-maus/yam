@@ -1,8 +1,9 @@
 ;
-; YAM 2.4 catalog description
+; YAM.cd - YAM 2.4 catalog description file
 ; $Id$
 ;
 #version 5
+#language english
 ;
 ; General
 ;
@@ -207,7 +208,7 @@ MSG_WebSite (//)
 The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
 ;
 MSG_UserLogin (//)
-Click on your name to login
+Click your name to login
 ;
 MSG_AppDescription (//39)
 SMTP/POP3 Client & Mailer for AmiTCP
@@ -219,7 +220,7 @@ MSG_Quit (//)
 Quit
 ;
 MSG_ErrorLib (//)
-Can't open '%s', version %ld
+Can't open library '%s', version %ld
 ;LIBRARY_NAME, LIBRARY_VERSION
 ;
 MSG_LoadingConfig (//)
@@ -375,7 +376,7 @@ Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
 MSG_LOG_ConnectPOP (//)
-Logged into POP3 account '%s@%s': %ld messages waiting
+Logged in on POP3 account '%s@%s': %ld messages waiting
 ; USER_ID, HOST, COUNT
 ;
 MSG_LOG_RetrievingVerbose (//)
@@ -487,7 +488,7 @@ Please enter the password to unlock it:
 ; FOLDER
 ;
 MSG_MA_LatestVersion (//)
-Latest version: %s (%ld.%ld.%ld)\n\
+Latest version: %s (%2ld.%02ld.%ld)\n\
 This version: %s (%s)\n\
 \n\
 %s
@@ -1663,7 +1664,7 @@ MSG_CO_PositionX (//)
 Position _X
 ;
 MSG_CO_CloseGadget (//)
-Close_gadget iconifies program
+Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete (//)
 Save/delete messages
@@ -1745,7 +1746,7 @@ MSG_CO_ScriptPostWriteMsg (//)
 After writing a message
 ;
 MSG_CO_ScriptClickURL (//)
-When double-clicking a URL
+When double-clicking an URL
 ;
 MSG_CO_Script (//)
 Sc_ript
@@ -1800,7 +1801,7 @@ Your email address.
 MSG_HELP_CO_ST_POPHOST (//)
 The address of the POP3 server to receive mail from.\n\
 If you leave this field empty, then the address\n\
- of the SMTP server is used.
+of the SMTP server is used.
 ;
 MSG_HELP_CO_ST_PASSWD (//)
 Password to access\n\
@@ -1839,7 +1840,7 @@ MSG_HELP_CO_BT_PDEL (//)
 Remove selected POP3 host from the list
 ;
 MSG_HELP_CO_ST_POPUSERID (//)
-User name to log into the POP3 server.\n\
+User name to log in on the POP3 server.\n\
 If you leave this field empty, then the user-ID\n\
 will be taken from your email address.
 ;
@@ -1872,7 +1873,7 @@ Mark new messages in the incoming folder\n\
 as unread before downloading new mail
 ;
 MSG_HELP_CO_ST_WARNSIZE (//)
-Incomming messages which are bigger than this\n\
+Incoming messages which are bigger than this\n\
 size will be considered as large.
 ;
 MSG_HELP_CO_ST_INTERVAL (//)
@@ -2064,7 +2065,7 @@ Text to insert at the\n\
 bottom of a new message
 ;
 MSG_HELP_CO_ST_OUTTRANS (//)
-Apply this characterset translation\n\
+Apply this character set translation\n\
 on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP (//)
@@ -2143,7 +2144,7 @@ Insert control code for random taglines
 ;
 MSG_HELP_CO_BT_INSENV (//)
 Insert control code for the\n\
-enviroment variable SIGNATURE
+environment variable SIGNATURE
 ;
 MSG_HELP_CO_ST_TAGFILE (//)
 Database containing taglines (\"cookies\")
@@ -2262,7 +2263,7 @@ AppIcon in pixels
 ;
 MSG_HELP_CO_CH_CLGADGET (//)
 Do you want YAM to iconify when\n\
-you hit the closegadget?
+you hit the close gadget?
 ;
 MSG_HELP_CO_CH_CONFIRM (//)
 Do you want to confirm\n\
@@ -2301,7 +2302,7 @@ if requested
 ;
 MSG_HELP_CO_CH_SEND_MDN (//)
 Try to send the disposition notification\n\
-as soon it is generated
+as soon as it is generated
 ;
 MSG_HELP_CO_TX_ENCPACK (//)
 XPK library used to protect\n\
@@ -3443,7 +3444,7 @@ Use external editor to\n\
  modify the message text
 ;
 MSG_HELP_WR_BT_LOAD (//)
-Insert textfile at cursor position
+Insert text file at cursor position
 ;
 MSG_HELP_WR_BT_CUT (//)
 Cut marked text to the clipboard
@@ -3976,7 +3977,7 @@ position in the text editor
 ; Module FI - Procedures
 ;
 MSG_FI_GaugeText (//)
-%%ld of %ld messages
+%%ld of %lD messages
 ; COUNT, COUNT
 ;
 MSG_FI_AddFilter (//)
@@ -4129,7 +4130,7 @@ Name of header field to search in
 ;
 MSG_HELP_FI_RA_ADRMODE (//)
 Choose whether you want to search in the\n\
-address or realname part of the field
+address or real name part of the field
 ;
 MSG_HELP_FI_CY_STATUS (//)
 Message status to match
@@ -4541,14 +4542,14 @@ MSG_FO_FromAddress (//)
 From: address
 ;
 MSG_HELP_FO_ST_MLFROMADDRESS (//)
-Use this FROM: address when posting\n\
+Use this From: address when posting\n\
 new mails to the list
 ;
 MSG_FO_ReplyToAddress (//)
 Reply-To: address
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS (//)
-Use this REPLY-TO: address when posting\n\
+Use this Reply-To: address when posting\n\
 new mails to the list
 ;
 MSG_RE_MDNGads4 (//)
@@ -4645,7 +4646,7 @@ MSG_ABOUT_OKAY_GAD (//)
 ;
 MSG_FOLDER_NEWFOLDERGROUP (//)
 New folder group...
-;
+;This is the Intuition menu item, not the one in the pop-up menu
 MSG_FOLDER_SNAPSHOT (//)
 Snapshot tree
 ;
@@ -4662,8 +4663,8 @@ MSG_CO_SIZEFORMAT (//)
 Size format
 ;
 MSG_HELP_CO_CY_SIZE (//)
-How would you like to display\n\
-the size of each email?
+How would you like the size of\n\
+each mail to be displayed?
 ;
 MSG_CO_SIZEFORMAT01 (//)
 Old format - (1.234.567 bytes)
@@ -4684,22 +4685,22 @@ MSG_HELP_CO_CH_USESMTPAUTH (//)
 Select if you wish to authenticate\n\
 yourself to a foreign SMTP server\n\
 (usually outside your ISP's domain).\n\
-If unsure, don't enable this option
+If in doubt, don't enable this option.
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER (//)
-Enter the username of the\n\
-SMTP AUTH user here.
+Enter here the username\n\
+of the SMTP AUTH user.
 ;
 MSG_HELP_CO_ST_SMTPAUTHPASS (//)
-Enter the password of the\n\
-SMTP AUTH user here.
+Enter here the password\n\
+of the SMTP AUTH user.
 ;
 MSG_HELP_CO_ST_APPICON (//)
-Enter text that should be displayed\n\
-as the text of the AppIcon.
+Text that should be displayed\n\
+as the label of the AppIcon.
 ;
 MSG_CO_APPICONTEXT (//)
-AppIcon label
+AppIcon _label
 ;
 MSG_CO_NEWMSGS (//)
 %n  New messages
@@ -4717,15 +4718,15 @@ MSG_CO_SENTMSGS (//)
 %s  Sent messages
 ;
 MSG_FO_DSTATS (//)
-AppIcon stats
+App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS (//)
-Would you like to show this\n\
+Would you like to see this\n\
 folder's statistics in the\n\
-AppIcon's label?
+YAM AppIcon's label?
 ;
 MSG_ERROR_IMGLOAD (//)
-The image file PROGDIR:Icons/%s couldn't be loaded.
+The image file\nPROGDIR:Icons/%s\ncouldn't be loaded.
 ;
 MSG_OPENGUI (//)
 Opening GUI...
@@ -4738,9 +4739,9 @@ MSG_CO_CONTEXTMENU (//)
 Context menu
 ;
 MSG_HELP_CO_CONTEXTMENU (//)
-Show a popup menu when clicking the\n\
-right mouse button on an item in this\n\
-list?
+Show a popup menu when clicking\n\
+the right mouse button on an\n\
+item in this list?
 ;
 MSG_CO_INFOBAR (//)
 Information bar
@@ -4750,7 +4751,7 @@ Here you can select the position of the InfoBar\n\
 which shows general information in YAM.
 ;
 MSG_CO_WARNSUBJECT (//)
-Warn when there's an empty subject line?
+Warn when there's an empty subject line
 ;
 MSG_HELP_CO_CH_WARNSUBJECT (//)
 Would you like to be warned if you\n\
@@ -4799,25 +4800,25 @@ MSG_WR_NOSENDERREQGAD (//)
 _Use default sender|*_Cancel
 ;
 MSG_FO_GROUP_CONFDEL (//)
-This group contains subfolders which will be\n\
-moved to the parent folder on deletion!\n\
-Do you really want to delete this group ?
+This group contains subfolders, which will\n\
+be moved to the parent folder on deletion.\n\
+Do you really want to delete this group?
 ;
 MSG_FOLDER_NONSEL (//)
-(non selected)
+(none selected)
 ;
 MSG_MAIL_NONSEL (//)
-(non selected)
+(none selected)
 ;
 MSG_FO_NEWFGROUP (//)
 New folder group...
-;
+;The item in the context menu
 MSG_FO_NEWFGROUPREQ (//)
-Enter name of new folder group please:
+Please enter a name for the new folder group:
 ;
 MSG_ER_CANTMOVEMAIL (//)
-Can't move mail '%s' to folder '%s' because a folder with that name doesn`t exist.\n\
-Please check your Filter configuration.
+Can't move mail '%s' to folder '%s' because a folder with that name doesn't exist. \
+Please check your Filters configuration.
 ; MAILFILE, FOLDERNAME
 ;
 MSG_MA_EXECUTINGCMD (//)
@@ -4827,7 +4828,7 @@ MSG_APP_DESCRIPTION (//39)
 SMTP/POP3 E-Mail Client for AmigaOS
 ;
 MSG_CO_INFOBARPOS (//)
-Position
+Pos_ition
 ;
 MSG_CO_INFOBARPOS01 (//)
 Top
@@ -4842,25 +4843,25 @@ MSG_CO_INFOBARPOS04 (//)
 Turned off
 ;
 MSG_CO_FOLDERLABEL (//)
-Folderlabel
+_Label
 ;
 MSG_FO_MLSUPPORT (//)
-ML-Support
+ML_-Support
 ;
 MSG_HELP_FO_CH_MLSUPPORT (//)
-Here you can enable/disable the whole mailinglist\n\
+Turn on/off the mailing list\n\
 support for this folder.
 ;
 MSG_FO_AUTODETECT (//)
 Autodetect
 ;
 MSG_HELP_FO_BT_AUTODETECT (//)
-On use, YAM tries to recognize the ML properties\n\
-automatically by scanning the first 5 emails in the\n\
-folder.
+Try to guess automatically the suitable\n\
+ML support settings by scanning the\n\
+first 5 emails in the folder.
 ;
 MSG_FO_NOTRECOGNIZED (//)
-Couldn`t be recognized!
+Couldn't be recognized!
 ;
 MSG_FO_MAXAGEFMT (//)
 %ld days
@@ -4872,8 +4873,8 @@ MSG_CO_NB_EMAILCACHEFMT (//)
 %ld mails
 ;
 MSG_HELP_CO_NB_EMAILCACHE (//)
-Here you can select the amount of a separate cache\n\
-for emails which will be used in recipient strings.\n\
+Cache size for the most recently used\n\
+recipients not yet in the address book.\n\
 Select 0 mails to disable this feature.
 ;
 MSG_CO_USESMTPTLS (//)
@@ -4881,37 +4882,35 @@ Use SMTP TLSv1/SSLv3
 ;
 MSG_HELP_CO_CH_USESMTPTLS (//)
 A TLSv1/SSLv3 secure connection will be established between\n\
-the SMTP server and YAM to send emails.\n\
-If this checkbox is ghosted AmiSSL support is not available.
+the SMTP server and YAM to send email. If this checkbox is\n\
+ghosted, it means AmiSSL support is not available.
 ;
 MSG_CO_POP3SSL (//)
 Use POP3 TLSv1/SSLv3
 ;
 MSG_HELP_CO_CH_POP3SSL (//)
-If checked, YAM is going to connect via TLSv1/SSLv3 to the POP3\n\
-server on the POP3-SSL 995 port and transfers mail from there.\n\
-If this checkbox is ghosted AmiSSL support is not available.
+YAM will connect via TLSv1/SSLv3 to the POP3 server on the\n\
+POP3 SSL port 995 port and transfer email from there. If this\n\
+checkbox is ghosted, it means AmiSSL support is not available.
 ;
 MSG_CO_USESTLS (//)
 with STLS
 ;
 MSG_HELP_CO_CH_USESTLS (//)
-If checked, the POP3 server supports STLS and is running on the\n\
-standard 110 POP3 port like a non SSL server.
+If checked, the POP3 server is assumed to support STLS\n\
+and use the standard POP3 110 port like any non SSL server.
 ;
 MSG_CO_ST_SMTPPORT (//)
 Port
 ;
 MSG_HELP_CO_ST_SMTPPORT (//)
-Here you can explictly specify the port the SMTP\n\
-server is running at. (default: 25)
+Port used by the SMTP server (default: 25)
 ;
 MSG_CO_ST_POPPORT (//)
 Port
 ;
 MSG_HELP_CO_ST_POPPORT (//)
-Here you can explictly specify the port the POP3\n\
-server is running at. (default: 110)
+Port used by the POP3 server (default: 110)
 ;
 MSG_CO_InfoBarDef (//)
 - Total: %t New: %n Unread: %u
@@ -4920,7 +4919,7 @@ MSG_TR_INITTLS (//)
 Initializing TLSv1/SSLv3 session...
 ;
 MSG_ER_INITAMISSL (//)
-Couldn't init amissl.library. Disabled TLSv1/SSLv3 support completely.\
+Couldn't init amissl.library - TLSv1/SSLv3 support disabled. \
 Please check your AmiSSL installation and restart YAM.
 ;
 MSG_ER_INITTLS (//)
@@ -4933,7 +4932,8 @@ MSG_CO_AutoTranslateIn (//)
 Codepage Autodetect/T_ranslation
 ;
 MSG_HELP_CO_CH_AUTOTRANSLATEIN (//)
-Autodetect and translation of codepages\n(mainly for cyrillic users - see guide)
+Helps decyphering strange character sets.\n\
+Mainly for cyrillic users.
 ;
 MSG_CO_IMPORTMIMETITLE (//)
 Import MIME viewers & types
