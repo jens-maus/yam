@@ -5,6 +5,7 @@
 *.lnk
 *.map
 *.debug
+*.dump
 starter
 YAM
 YAM.amigaos
