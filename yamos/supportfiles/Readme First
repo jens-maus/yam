@@ -33,15 +33,15 @@ YAM Open Source homepage at http://yamos.sourceforge.net/
 
 What's new since YAM 2.3p1?
 ---------------------------
-Developers: msbethke - Matthias Bethke
-            krille   - Christian Hattemer
-            damato   - Jens Langner
-            laursen  - Jacob Laursen
-            joergs   - Jörg Strohmayer
-            gizmo    - Dirk Stöcker
-            AmiS     - Alexey Ivanov
-            charlie  - Karoly Balogh
-            tactica  - David Rey
+Developers..: Alexey Ivanov       (AmiS)
+(alphabetic)  Allan Odgaard       (duff)
+              Christian Hattemer  (krille)
+              David Rey           (tactica)
+              Dirk Stöcker        (gizmo)
+              Jacob Laursen       (laursen)
+              Jens Langner        (damato)
+              Jörg Strohmayer     (joergs)
+              Karoly Balogh       (charlie)
 
 - Fixed: no more Enforcer hits on exit (damato)
 - Fixed: didn't really disconnect from the server if an STMP AUTH
@@ -160,6 +160,9 @@ Developers: msbethke - Matthias Bethke
 - Fixed: the duplicated "shift right" menu shortcut in the Read window
   is now gone (tactica)
 
+- Changed: The routines for the text highlighting mechanisms were exchanged
+  with a more intelligent flex environment which makes it highlight
+  certain text areas more accurate.
 - Changed: All elementary TCP/IP routines were completly rewritten and
   tuned up to use separate transfer buffers which should especially speed up
   transfers on low connection speeds (damato)
