@@ -4624,5 +4624,8 @@ MSG_APPICON_STATS (//)
 N:%lD U:%lD T:%lD
 ; COUNT, COUNT, COUNT
 ;
+MSG_ATTACH_NO (//)
+No.
+;
 MSG_ATTACH_PART (//)
 Part

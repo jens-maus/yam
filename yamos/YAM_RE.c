@@ -2557,7 +2557,7 @@ SAVEDS ASM long RE_LV_AttachDspFunc(REG(a2,char **array), REG(a1,struct Part *en
    }
    else
    {
-   		array[0] = "#";
+   	  array[0] = GetStr(MSG_ATTACH_NO);
       array[1] = GetStr(MSG_ATTACH_PART);
       array[2] = GetStr(MSG_Size);
    }
