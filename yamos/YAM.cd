@@ -4127,10 +4127,9 @@ security settings. What kind of security do you want?
 MSG_WR_DefSecurityConflictGads (//)
 *_None|_Sign|_Encrypt|_Both|Send _anonymously
 ;
-MSG_WR_CH_UseDefSecurity (//)
+MSG_WR_SecDefaults (//)
 Try defaults
 ;
-MSG_HELP_WR_CH_UseDefSecurity (//)
-Try to use security presets from\n\
-address book
+MSG_ER_PGPMultipart (//)
+Error creating multipart PGP message. Encryption/signing disabled!
 ;
