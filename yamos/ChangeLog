@@ -1025,6 +1025,10 @@
       code has made a lot of functions obsolete and I'm going to wait a little
       before I start to remove all this code (which is currently marked by an
       #ifndef DUFF).
+    * One can go back in the recipientstring gadget and change previous
+      entries, even with name completion (earlier that would delete the rest
+      of the string). The completion will only kick in if the character under
+      the cursor is '\0' or ','.
 
 ««« Some bugs/flaws which remain: »»»
 
