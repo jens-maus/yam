@@ -927,8 +927,8 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
         // and then decode it accordingly
         if(read >= 2)
         {
-          char c1 = hexchar(*iptr);
-          char c2 = hexchar(*(iptr+1));
+          unsigned char c1 = hexchar(*iptr);
+          unsigned char c2 = hexchar(*(iptr+1));
 
           // so we have enough space, lets decode it, but let us
           // check if the two chars are really hexadecimal chars
