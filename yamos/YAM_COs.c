@@ -247,6 +247,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "XPKPack          = %s;%ld\n", co->XPKPack, co->XPKPackEff);
       fprintf(fh, "XPKPackEncrypt   = %s;%ld\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
       fprintf(fh, "PackerCommand    = %s\n", co->PackerCommand);
+      fprintf(fh, "AppIconText      = %s\n", co->AppIconText);
       fprintf(fh, "\n[Advanced]\n");
       fprintf(fh, "LetterPart       = %ld\n", co->LetterPart);
       fprintf(fh, "WriteIndexes     = %ld\n", co->WriteIndexes);
@@ -554,7 +555,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "SendMDNAtOnce"))  co->SendMDNAtOnce = Txt2Bool(value);
                if (!stricmp(buffer, "XPKPack"))        { stccpy(co->XPKPack, value, 5); co->XPKPackEff = atoi(&value[5]); }
                if (!stricmp(buffer, "XPKPackEncrypt")) { stccpy(co->XPKPackEncrypt, value, 5); co->XPKPackEncryptEff = atoi(&value[5]); }
-               if (!stricmp(buffer, "PackerCommand"))  stccpy(co->PackerCommand, value, SIZE_COMMAND);              
+               if (!stricmp(buffer, "PackerCommand"))  stccpy(co->PackerCommand, value, SIZE_COMMAND);
+               if (!stricmp(buffer, "AppIconText"))    stccpy(co->AppIconText, value, SIZE_DEFAULT/2);
 /*Hidden*/     if (!stricmp(buffer, "LetterPart"))     co->LetterPart = atoi(value);
                if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
                if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);

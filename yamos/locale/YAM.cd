@@ -4699,3 +4699,10 @@ MSG_CO_DELMSGS (//)
 ;
 MSG_CO_SENTMSGS (//)
 %s  Sent Messages
+;
+MSG_FO_DSTATS (//)
+AppIcon Stats
+;
+MSG_HELP_FO_CH_STATS (//)
+Select if you want the statistics of\n\
+this folder be displayed at the AppIcon.

@@ -226,6 +226,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
       {
          /* pick a default value */
          fo->MLSignature = 1;
+         fo->Stats = 0;
 
          while (fgets(buffer, SIZE_LARGE, fh))
          {
@@ -242,6 +243,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
                if (!stricmp(buffer, "XPKType"))     fo->XPKType = atoi(value);
                if (!stricmp(buffer, "Sort1"))       fo->Sort[0] = atoi(value);
                if (!stricmp(buffer, "Sort2"))       fo->Sort[1] = atoi(value);
+               if (!stricmp(buffer, "Stats"))       fo->Stats = atoi(value);
                if (!stricmp(buffer, "MLFromAddr"))  MyStrCpy(fo->MLFromAddress,value);
                if (!stricmp(buffer, "MLRepToAddr")) MyStrCpy(fo->MLReplyToAddress, value);
                if (!stricmp(buffer, "MLAddress"))   MyStrCpy(fo->MLAddress, value);
@@ -276,6 +278,7 @@ void FO_SaveConfig(struct Folder *fo)
       fprintf(fh, "XPKType     = %ld\n", fo->XPKType);
       fprintf(fh, "Sort1       = %ld\n", fo->Sort[0]);
       fprintf(fh, "Sort2       = %ld\n", fo->Sort[1]);
+      fprintf(fh, "Stats       = %ld\n", fo->Stats);
       fprintf(fh, "MLFromAddr  = %s\n",  fo->MLFromAddress);
       fprintf(fh, "MLRepToAddr = %s\n",  fo->MLReplyToAddress);
       fprintf(fh, "MLPattern   = %s\n",  fo->MLPattern);
@@ -479,9 +482,7 @@ BOOL FO_LoadTreeImage(struct Folder *fo)
 
    if(!fo->FImage) return FALSE;
 
-#ifdef DEBUG
-   kprintf("Loaded TreeImage: %s - %lx - %ld\n", fo->Name, fo->FImage, fo->SortIndex+1);
-#endif
+   DB( kprintf("Loaded TreeImage: %s - %lx - %ld\n", fo->Name, fo->FImage, fo->SortIndex+1); )
 
    // Now we say that this image could be used by this Listtree
    DoMethod(lv, MUIM_NList_UseImage, fo->FImage, fo->SortIndex+1, 0);
@@ -760,6 +761,8 @@ static void FO_GetFolder(struct Folder *folder, BOOL existing)
       set(gui->CY_SORT[i], MUIA_Cycle_Active, (folder->Sort[i] < 0 ? -folder->Sort[i] : folder->Sort[i])-1);
       set(gui->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
    }
+
+   set(gui->CH_STATS, MUIA_Selected, folder->Stats == 1);
    set(gui->ST_MLADDRESS, MUIA_String_Contents, folder->MLAddress);
    set(gui->ST_MLPATTERN, MUIA_String_Contents, folder->MLPattern);
    set(gui->ST_MLFROMADDRESS, MUIA_String_Contents, folder->MLFromAddress);
@@ -793,6 +796,10 @@ static void FO_PutFolder(struct Folder *folder)
       folder->Sort[i] = GetMUICycle(gui->CY_SORT[i])+1;
       if (GetMUICheck(gui->CH_REVERSE[i])) folder->Sort[i] = -folder->Sort[i];
    }
+
+   if (GetMUICheck(gui->CH_STATS)) folder->Stats = 1;
+   else folder->Stats = 0;
+
    GetMUIString(folder->MLPattern,        gui->ST_MLPATTERN);
    GetMUIString(folder->MLAddress,        gui->ST_MLADDRESS);
    GetMUIString(folder->MLFromAddress,    gui->ST_MLFROMADDRESS);
@@ -974,6 +981,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       oldfolder->MLSignature = folder.MLSignature;
       oldfolder->Sort[0] = folder.Sort[0];
       oldfolder->Sort[1] = folder.Sort[1];
+      oldfolder->Stats   = folder.Stats;
       oldfolder->MaxAge  = folder.MaxAge;
       if (!GetMUI(gui->CY_FTYPE, MUIA_Disabled))
       {
@@ -1018,6 +1026,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort);
       MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL));
       FO_SaveTree(CreateFilename(".folders"));
+      DisplayStatistics(&folder);
    }
    DisposeModulePush(&G->FO);
 }
@@ -1101,6 +1110,11 @@ static struct FO_ClassData *FO_New(void)
                   Child, data->GUI.CH_REVERSE[1] = MakeCheck(GetStr(MSG_FO_Reverse)),
                   Child, LLabel1(GetStr(MSG_FO_Reverse)),
                End,
+               Child, Label1(GetStr(MSG_FO_DSTATS)),
+               Child, HGroup,
+                Child, data->GUI.CH_STATS = MakeCheck(GetStr(MSG_FO_DSTATS)),
+                Child, HSpace(0),
+               End,
             End,
             Child, ColGroup(2), GroupFrameT(GetStr(MSG_FO_MLSupport)),
                Child, Label2(GetStr(MSG_FO_ToPattern)),
@@ -1138,6 +1152,7 @@ static struct FO_ClassData *FO_New(void)
          SetHelp(data->GUI.ST_MLFROMADDRESS,    MSG_HELP_FO_ST_MLFROMADDRESS    );
          SetHelp(data->GUI.ST_MLREPLYTOADDRESS, MSG_HELP_FO_ST_MLREPLYTOADDRESS );
          SetHelp(data->GUI.CY_MLSIGNATURE,      MSG_HELP_WR_RA_SIGNATURE        );
+         SetHelp(data->GUI.CH_STATS,            MSG_HELP_FO_CH_STATS            );
 
          DoMethod(data->GUI.BT_MOVE  ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FO_MoveHook);
          DoMethod(bt_okay            ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FO_SaveHook);

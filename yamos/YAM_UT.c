@@ -2820,6 +2820,88 @@ void Busy(char *text, char *parameter, int cur, int max)
       set(G->MA->GUI.GA_INFO, MUIA_Gauge_Current, cur);
    }
 }
+
+///
+/// DisplayAppIconStatistics
+//  Calculates AppIconStatistic and update the AppIcon
+void DisplayAppIconStatistics(void)
+{
+  struct Folder *fo = NULL;
+  struct Folder **flist = NULL;
+  char *src, dst[10];
+  int i, mode;
+  static char apptit[SIZE_DEFAULT/2];
+  int new_msg = 0;
+  int unr_msg = 0;
+  int tot_msg = 0;
+  int snt_msg = 0;
+  int del_msg = 0;
+
+  if(!(flist = FO_CreateList())) return;
+
+  for (i = 1; i <= (int)*flist; i++)
+  {
+    fo = flist[i];
+    if(!fo) break;
+
+    if(fo->Stats != 0)
+    {
+      new_msg += fo->New;
+      unr_msg += fo->Unread;
+      tot_msg += fo->Total;
+      snt_msg += fo->Sent;
+      del_msg += fo->Deleted;
+    }
+  }
+
+  free(flist);
+
+  // we set the mode accordingly to the status of the folder (new/check/old)
+  mode = tot_msg ? (new_msg ? 2 : 1) : 0;
+
+  if (G->TR && G->TR->Checking) mode = 3;
+
+  // clear AppIcon Label first before we create it new
+  apptit[0] = '\0';
+
+  // Lets create the label of the AppIcon now
+  for (src = C->AppIconText; *src; src++)
+  {
+    if (*src == '%')
+    {
+      switch (*++src)
+      {
+        case '%': strcpy(dst, "%");             break;
+        case 'n': sprintf(dst, "%ld", new_msg); break;
+        case 'u': sprintf(dst, "%ld", unr_msg); break;
+        case 't': sprintf(dst, "%ld", tot_msg); break;
+        case 's': sprintf(dst, "%ld", snt_msg); break;
+        case 'd': sprintf(dst, "%ld", del_msg); break;
+      }
+    }
+    else
+    {
+      sprintf(dst, "%c", *src);
+    }
+
+    strcat(apptit, dst);
+  }
+
+  // We first have to remove the appicon before we can change it
+  if (G->AppIcon)
+  {
+    RemoveAppIcon(G->AppIcon);
+    G->AppIcon = NULL;
+  }
+
+  // Now we create the new AppIcon and display it
+  if (G->DiskObj[mode])
+  {
+    struct DiskObject *dobj=G->DiskObj[mode];
+    G->AppIcon = AddAppIconA(0, 0, (STRPTR)apptit, G->AppPort, NULL, dobj, NULL);
+  }
+}
+
 ///
 /// DisplayStatistics
 //  Calculates folder statistics and update mailbox status icon
@@ -2828,21 +2910,27 @@ void DisplayStatistics(struct Folder *fo)
    struct Mail *mail;
    BOOL check = FALSE;
    struct Folder *actfo = FO_GetCurrentFolder();
-   static char apptit[SIZE_DEFAULT/2];
 
-   // If the parsed argument is NULL we set want to show the statistics from the actual folder
+   // If the parsed argument is NULL we want to show the statistics from the actual folder
    if (!fo) fo = actfo;
-
-   if (fo == (struct Folder *)-1)
+   else if (fo == (struct Folder *)-1)
    {
      fo = FO_GetFolderByType(FT_INCOMING, NULL);
      check = TRUE;
    }
 
-   for (mail = fo->Messages, fo->Unread = fo->New = 0; mail; mail = mail->Next)
+   // Now we recount the amount of Messages of this Folder
+   for (mail = fo->Messages, fo->Unread = fo->New = fo->Total = fo->Sent = fo->Deleted = 0; mail; mail = mail->Next)
    {
-      if (mail->Status == STATUS_NEW) { fo->New++; fo->Unread++; }
-      if (mail->Status == STATUS_UNR) fo->Unread++;
+      fo->Total++;
+
+      switch(mail->Status)
+      {
+        case STATUS_NEW:  { fo->New++; fo->Unread++;  } break;
+        case STATUS_UNR:  { fo->Unread++;             } break;
+        case STATUS_SNT:  { fo->Sent++;               } break;
+        case STATUS_DEL:  { fo->Deleted++;            } break;
+      }
    }
 
    // Now lets redraw the folderentry in the listtree
@@ -2854,63 +2942,9 @@ void DisplayStatistics(struct Folder *fo)
       CallHookPkt(&MA_SetFolderInfoHook, 0, 0);
    }
 
-   // if the folder that statistic has changed is the incoming folder we also have to change the AppIcon accordingly
-   if (fo->Type == FT_INCOMING && !G->AppIconQuiet)
-   {
-     if (check || fo->New != G->NewMsgs || fo->Unread != G->UnrMsgs || fo->Total != G->TotMsgs)
-     {
-       char *src;
-       char dst[10];
-
-       // we set the mode accordingly to the status of the folder (new/check/old)
-       int mode = fo->Total ? (fo->New ? 2 : 1) : 0;
-
-       if (G->TR && G->TR->Checking) mode = 3;
-
-       // clear AppIcon Label first before we create it new
-       apptit[0] = '\0';
-
-       // Lets create the label of the AppIcon now
-       for (src = C->AppIconText; *src; src++)
-       {
-         if (*src == '%')
-         {
-            switch (*++src)
-            {
-              case '%': strcpy(dst, "%");                break;
-              case 'n': sprintf(dst, "%ld", fo->New);    break;
-              case 'u': sprintf(dst, "%ld", fo->Unread); break;
-              case 't': sprintf(dst, "%ld", fo->Total);  break;
-            }
-         }
-         else
-         {
-            sprintf(dst, "%c", *src);
-         }
-
-         strcat(apptit, dst);
-       }
-
-       // We first have to remove the appicon before we can change it
-       if (G->AppIcon)
-       {
-         RemoveAppIcon(G->AppIcon);
-         G->AppIcon = NULL;
-       }
-
-       // Now we create the new AppIcon and display it
-       if (G->DiskObj[mode])
-       {
-         struct DiskObject *dobj=G->DiskObj[mode];
-         G->AppIcon = AddAppIconA(0, 0, (STRPTR)apptit, G->AppPort, NULL, dobj, NULL);
-       }
-
-       G->NewMsgs = fo->New;
-       G->UnrMsgs = fo->Unread;
-       G->TotMsgs = fo->Total;
-     }
-   }
+   if (!G->AppIconQuiet) DisplayAppIconStatistics();
 }
+
 ///
 /// CheckPrinter
 //  Checks if printer is ready

@@ -661,7 +661,6 @@ void Initialise2(BOOL hidden)
       else if (folder->Type != FT_GROUP) folder->LoadedMode = MA_LoadIndex(folder, FALSE);
       DoMethod(G->App, MUIM_Application_InputBuffered);
    }
-   G->NewMsgs = -1;
    MA_ChangeFolder(FO_GetFolderByType(FT_INCOMING, NULL));
    AY_PrintStatus(GetStr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);

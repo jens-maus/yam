@@ -423,3 +423,9 @@
     * YAM reads the Content-Disposition: of a multipart message now. If a name of
       a part could not be found in the Content-Type: field we get it from the
       Disposition field now. (i.e. mails with attachments from ELM behave like this)
+    * fixed today introduced bug. Now the AppIcon Label text gets saved & loaded
+      correctly
+    * a user can now select all folders that should be included in the AppIcon
+      statistics. With that feature displaying statistics is not limited to the
+      INCOMING folder anymore.
+

@@ -46,6 +46,7 @@ struct FO_GUIData
    APTR ST_MLREPLYTOADDRESS;
    APTR ST_MLADDRESS;
    APTR CY_MLSIGNATURE;
+   APTR CH_STATS;
 };
 
 struct FO_ClassData  /* folder configuration window */
@@ -66,13 +67,16 @@ struct Folder
    APTR            FImage;
    struct Mail *   Messages;
    ULONG           Flags;
-   int	           MLSignature;
+   int             MLSignature;
    int             XPKType;
    int             Total;
    int             New;
    int             Unread;
+   int             Sent;
+   int             Deleted;
    int             Size;
    int             Sort[2];
+   int             Stats;
    int             MaxAge;
    int             LastActive;
    int             LoadedMode;

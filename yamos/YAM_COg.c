@@ -281,8 +281,8 @@ static APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
          case 4:  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_NEWMSGS), MUIV_List_Insert_Bottom);
                   DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_UNREADMSGS), MUIV_List_Insert_Bottom);
                   DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_TOTALMSGS), MUIV_List_Insert_Bottom);
-//                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_DELMSGS), MUIV_List_Insert_Bottom);
-//                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SENTMSGS), MUIV_List_Insert_Bottom);
+                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_DELMSGS), MUIV_List_Insert_Bottom);
+                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SENTMSGS), MUIV_List_Insert_Bottom);
                   break;
       }
       DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);

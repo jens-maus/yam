@@ -81,9 +81,6 @@ struct Global
    long                     ActiveReadWin;
    long                     ActiveWriteWin;
 
-   int                      TotMsgs;
-   int                      UnrMsgs;
-   int                      NewMsgs;
    int                      GM_Count;
    int                      SI_Count;
    int                      PGPVersion;

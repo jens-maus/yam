@@ -806,7 +806,7 @@ void CO_Validate(struct Config *co, BOOL update)
          LoadLayout();
       }
       if (G->CO->Visited[12] || G->CO->UpdateAll) AB_MakeABFormat(G->AB->GUI.LV_ADRESSES);
-      if (G->CO->Visited[14] || G->CO->UpdateAll) { SetupAppIcons(); G->TotMsgs = -1; DisplayStatistics(FO_GetFolderByType(FT_INCOMING, NULL)); }
+      if (G->CO->Visited[14] || G->CO->UpdateAll) { SetupAppIcons(); DisplayStatistics((struct Folder *)-1); }
    }
 }
 
