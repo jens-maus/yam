@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@
 
 char * yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
 char * yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
-char * yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") Copyright © 2000-2002 YAM Open Source Team";
+char * yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") Copyright © 2000-2003 YAM Open Source Team";
 char * yamversiondate   = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;
 
