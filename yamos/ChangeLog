@@ -569,3 +569,9 @@
     * fixed some addressbook<->NListtree related bugs/issues.
     * fixed Distribution List bug (BUG #431536)
 
+
+2001-06-15  Jacob Laursen <laursen@myself.com>
+
+    * Removed information bar, since it was redundant.
+
+    * Last year digit was missing in error window - fixed! (Bug #431947)

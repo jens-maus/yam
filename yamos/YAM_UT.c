@@ -1463,9 +1463,6 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
    dt.dat_StrDay  = (STRPTR)daystr;
    DateToStr(&dt);
 
-   // strip ending space from datestr (this is faster then Trim()
-   datestr[strlen(datestr)-1] = '\0';
-
    switch (mode)
    {
       case DSS_UNIXDATE:
