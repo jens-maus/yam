@@ -5676,7 +5676,7 @@ Die Mailinglisten-Unterstützung für dieses Postfach (de)aktivieren.
 ; Turn on/off the mailing list\nsupport for this folder.
 ;
 MSG_FO_AUTODETECT
-_Autoerkennung
+Autoer_kennung
 ; Autodetect
 ;
 MSG_HELP_FO_BT_AUTODETECT
