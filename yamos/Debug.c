@@ -16,6 +16,8 @@ VOID SetupDebug (VOID)
 		static struct { char *token; int flag; } tokens[] =
 		{
 			{ "io",        DBF_IO         },
+			{ "verbose",   DBF_VERBOSE    },
+			{ "folders",   DBF_FOLDERS    },
 			{ "all",       0xffffffff     },
 			{ NULL,        0              }
 		};
@@ -33,7 +35,7 @@ VOID SetupDebug (VOID)
 		}
 	}
 
-	D(DBF_ALWAYS, ("Debug flags %04x", DebugFlags))
+	D(DBF_VERBOSE, ("Debug flags %04x", DebugFlags))
 }
 
 BOOL TestDebugFlag (ULONG flag)

@@ -50,6 +50,7 @@
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
 
+#include "Debug.h"
 #include "extra.h"
 #include "NewReadArgs.h"
 #include "YAM.h"
@@ -401,22 +402,7 @@ static BOOL Root_GlobalDispatcher(ULONG app_input)
 //  Creates MUI application
 static BOOL Root_New(BOOL hidden)
 {
-#define MUIA_Application_UsedClasses 0x8042e9a7
-   static const char *classes[] = {
-     "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListview.mcc", NULL
-   };
-   G->App = ApplicationObject,
-      MUIA_Application_Author     ,"YAM Open Source Team",
-      MUIA_Application_Base       ,"YAM",
-      MUIA_Application_Title      ,"YAM",
-      MUIA_Application_Version    ,yamversionstring,
-      MUIA_Application_Copyright  ,"© 2000-2001 by YAM Open Source Team",
-      MUIA_Application_Description,GetStr(MSG_AppDescription),
-      MUIA_Application_UseRexx    ,FALSE,
-      MUIA_Application_SingleTask ,!getenv("MultipleYAM"),
-      MUIA_Application_UsedClasses, classes,
-   End;
-   if (G->App)
+   if (G->App = YAMObject, End)
    {
       set(G->App, MUIA_Application_HelpFile, "YAM.guide");
       if (hidden) set(G->App, MUIA_Application_Iconified, TRUE);
@@ -576,7 +562,7 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
    Object *obj;
    BOOL success = FALSE;
 
-   obj = MUI_NewObject(name, TAG_DONE);
+   obj = MUI_NewObjectA(name, NULL);
    if (obj) {
       ULONG tmp;
       int ver, rev;
@@ -724,6 +710,8 @@ static void Initialise(BOOL hidden)
 
    // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
    PopupMenuBase = (struct PopupMenuBase *)InitLib(POPUPMENU_NAME, 9, 0, FALSE, FALSE);
+
+	SetupDebug();
 
    /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);

@@ -3,7 +3,9 @@
 
 #define DBF_ERROR       0x00000001
 #define DBF_ALWAYS      0x00000002
-#define DBF_IO          0x00000002
+#define DBF_IO          0x00000004
+#define DBF_VERBOSE     0x00000008
+#define DBF_FOLDERS     0x00000010
 #define DBF_ALL         0xffffffff
 
 #ifdef DEBUG
