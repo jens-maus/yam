@@ -100,10 +100,12 @@ struct NewToolbarEntry
 };
 
 #define PGPLOGFILE    "T:PGP.log"
-#define OUT_NIL       ((BPTR)1)
 #define NOERRORS      16
 #define KEEPLOG       32
 #define BusyEnd       Busy("", NULL, 0, 0)
+
+#define OUT_DOS       ((BPTR)0)
+#define OUT_NIL       ((BPTR)1)
 
 #define ATTREQ_DISP   0
 #define ATTREQ_SAVE   1
