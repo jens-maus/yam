@@ -1826,7 +1826,7 @@ MakeStaticHook(TR_LV_DspFuncHook,TR_LV_DspFunc);
 ///
 /// TR_New
 //  Creates transfer window
-struct TR_ClassData *TR_New(int TRmode)
+struct TR_ClassData *TR_New(enum TransferType TRmode)
 {
    struct TR_ClassData *data;
 
