@@ -4843,3 +4843,21 @@ Turned off
 MSG_CO_FOLDERLABEL (//)
 Folderlabel
 ;
+MSG_FO_MLSUPPORT (//)
+ML-Support
+;
+MSG_HELP_FO_CH_MLSUPPORT (//)
+Here you can enable/disable the whole mailinglist\n\
+support for this folder.
+;
+MSG_FO_AUTODETECT (//)
+Autodetect
+;
+MSG_HELP_FO_BT_AUTODETECT (//)
+On use, YAM tries to recognize the ML properties\n\
+automatically by scanning the first 5 emails in the\n\
+folder.
+;
+MSG_FO_NOTRECOGNIZED (//)
+Couldn`t be recognized, please check manually!
+;

@@ -46,17 +46,13 @@
 #include "YAM_locale.h"
 #include "YAM_utilities.h"
 
-/* local protos */
-static const char *Bool2Txt(BOOL);
-static BOOL Txt2Bool(const char *);
-
 /***************************************************************************
  Module: Configuration - Basic Get/Put routines
 ***************************************************************************/
 
 /// Bool2Txt
 //  Converts boolean value to text
-static const char *Bool2Txt(BOOL bool)
+const char *Bool2Txt(BOOL bool)
 {
    return bool ? "Y" : "N";
 }
@@ -64,9 +60,9 @@ static const char *Bool2Txt(BOOL bool)
 ///
 /// Txt2Bool
 //  Converts Y/N string to boolean value
-static BOOL Txt2Bool(const char *txt)
+BOOL Txt2Bool(const char *txt)
 {
-   return (BOOL)(tolower((int)*txt) == 'y');
+   return (BOOL)(toupper((int)*txt) == 'Y' || (int)*txt == '1');
 }
 
 ///

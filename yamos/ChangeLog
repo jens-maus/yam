@@ -1,3 +1,18 @@
+2001-10-25  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added feature to try to automatically detect the mailinglist
+      pattern and To: field by integrating the Smith&Waterman
+      algorithm for a string similarity search.
+      YAM will try to detect the pattern from the first 5 messages
+      in a folder and only if the pattern is != #? it will be
+      placed into the pattern string gadget.
+      This should make it easier to enter the correct mailinglist
+      pattern.
+    * by default we disable the ML support for the standard folders
+      like INCOMING/OUTGOING/SENT/DELETED.
+    * the mailinglist support of every folder can now be explicitly
+      enabled/disabled
+
 2001-10-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * the folder configuration window now also uses YAM`s standard

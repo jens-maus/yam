@@ -257,6 +257,7 @@ int      StringRequest(char *string, int size, char *title, char *body,
 char *   StripUnderscore(char *label);
 char *   stristr(const char *a, const char *b);
 char *   strtok_r(char **s, char *brk);
+char *   SWSSearch(char *str1, char*str2);
 BOOL     TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder);
 char *   Trim(char *s);
 char *   TrimEnd(char *s);

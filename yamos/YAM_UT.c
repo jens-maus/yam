@@ -2514,8 +2514,9 @@ Object *MakeAddressField(APTR *string, char *label, APTR help, int abmode, int w
    {
       SetHelp(*string,help);
       SetHelp(bt_adr, MSG_HELP_WR_BT_ADR);
-      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
-      DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
+      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum);
+      DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum);
+      DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime,  bt_adr, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
    }
 
    return obj;
@@ -3467,7 +3468,6 @@ void GotoURL(char *url)
    }
 }
 ///
-
 /// strtok_r()
 // Reentrant version of stdlib strtok()
 // Call like this:
@@ -3507,6 +3507,156 @@ char *p,*ret;
 
   return ret;
 }
+///
+/// SWSSearch()
+// Smith&Waterman 1981 extended string similarity search algorithm
+// X, Y are the two strings that will be compared for similarity
+// It will return a pattern which will reflect the similarity of str1 and str2
+// in a Amiga suitable format. This is case-insensitive !
+char *SWSSearch(char *str1, char *str2)
+{
+  int   L[SIZE_ADDRESS+1][SIZE_ADDRESS+1];    // L matrix
+  int   Ind[SIZE_ADDRESS+1][SIZE_ADDRESS+1];  // Index matrix
+  char  X[SIZE_ADDRESS+1];                    // 1.string X
+  char  Y[SIZE_ADDRESS+1];                    // 2.string Y
+  int   lx;                                   // length of X
+  int   ly;                                   // length of Y
+  int   lz;                                   // length of Z
+  int   i, j, k;
+  BOOL  firstLoop = TRUE;
+  static  char Z[3*SIZE_ADDRESS+1];           // the destination string (result)
+
+  enum  IndType { DELX=0, DELY, DONE, TAKEBOTH };   // special enum for the Indicator
+
+  // we copy str1&str2 into X and Y but have to copy a placeholder in front of them
+  sprintf(X, " %s", str1);
+  sprintf(Y, " %s", str2);
+
+  // calculate the length of every string
+  lx = strlen(X);
+  ly = strlen(Y);
+
+  // Now we initialize the two matrixes first
+  for(i=0; i < lx; i++)
+  {
+    L[i][0] = 0;
+    Ind[i][0] = DELX;
+  }
+
+  for(j=0; j < ly; j++)
+  {
+    L[0][j] = 0;
+    Ind[0][j] = DELY;
+  }
+
+  Ind[0][0] = DONE;
+
+  // Now we calculate the L matrix
+  // this is the first step of the SW algorithm
+  for(i=1; i < lx; i++)
+  {
+    for(j=1; j < ly; j++)
+    {
+      if(toupper(X[i]) == toupper(Y[j]))  // case insensitive version
+      {
+        L[i][j] = L[i-1][j-1] + 1;
+        Ind[i][j] = TAKEBOTH;
+      }
+      else
+      {
+        if(L[i-1][j] > L[i][j-1])
+        {
+          L[i][j] = L[i-1][j];
+          Ind[i][j] = DELX;
+        }
+        else
+        {
+          L[i][j] = L[i][j-1];
+          Ind[i][j] = DELY;
+        }
+      }
+    }
+  }
+
+#ifdef DEBUG
+
+  // for debugging only
+  // This will print out the L & Ind matrix to identify problems
+/*
+  kprintf(" ");
+  for(j=0; j < ly; j++)
+  {
+    kprintf(" %c", Y[j]);
+  }
+  kprintf("\n");
+
+  for(i=0; i < lx; i++)
+  {
+    kprintf("%c ", X[i]);
+
+    for(j=0; j < ly; j++)
+    {
+      kprintf("%ld", L[i][j]);
+      if(Ind[i][j] == 3) kprintf("`");
+      else if(Ind[i][j] == 0) kprintf("^");
+      else if(Ind[i][j] == 1) kprintf("<");
+      else kprintf("*");
+    }
+    kprintf("\n");
+  }
+*/
+#endif
+
+  // lets alloc the result Z string
+  // we calulate the maximum that is possible if each char is followed
+  // by a wildcard (3*lz+1) even if we don`t need it completly
+  lz = 3*SIZE_ADDRESS+1;
+
+  Z[--lz] = '\0';
+  Z[--lz] = '?';
+  Z[--lz] = '#';
+
+  // the second step of the SW algorithm where we
+  // process the Ind matrix which represents which
+  // char we take and which we delete
+
+  k = i = lx-1;
+  j = ly-1;
+
+  while(Ind[i][j] != DONE)
+  {
+    if(Ind[i][j] == TAKEBOTH)
+    {
+      if(k-i > 1 && !firstLoop)
+      {
+        Z[--lz]   = '?';
+        Z[--lz] = '#';
+        Z[--lz] = X[i];
+      }
+      else
+      {
+        Z[--lz] = X[i];
+        firstLoop = FALSE;
+      }
+
+      k = i--;
+      j--;
+
+    }
+    else if(Ind[i][j] == DELX) i--;
+    else if(Ind[i][j] == DELY) j--;
+
+  }
+
+  if(!firstLoop)
+  {
+    Z[--lz] = '?';
+    Z[--lz] = '#';
+  }
+
+  return &(Z[lz]);
+}
+
 ///
 
 /*** REXX interface support ***/

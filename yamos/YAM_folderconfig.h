@@ -47,6 +47,10 @@ struct FO_GUIData
    APTR ST_MLADDRESS;
    APTR CY_MLSIGNATURE;
    APTR CH_STATS;
+   APTR CH_MLSUPPORT;
+   APTR BT_AUTODETECT;
+   APTR BT_OKAY;
+   APTR BT_CANCEL;
 };
 
 struct FO_ClassData  /* folder configuration window */
@@ -98,6 +102,8 @@ struct Folder
    char            MLAddress[SIZE_ADDRESS];
    char            MLFromAddress[SIZE_ADDRESS];
    char            MLReplyToAddress[SIZE_ADDRESS];
+
+   BOOL            MLSupport;
 };
 
 extern struct Hook FO_DeleteFolderHook;

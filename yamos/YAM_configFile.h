@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+const char *Bool2Txt(BOOL);
+BOOL Txt2Bool(const char *);
 void CO_GetConfig(void);
 BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders);
 void CO_SaveConfig(struct Config *co, char *fname);

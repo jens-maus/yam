@@ -829,7 +829,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                   {
                      for (i = 1; i <= (int)*flist; i++)
                      {
-                       if (flist[i]->MLPattern[0] && MatchNoCase(tofld, flist[i]->MLPattern))
+                       if (flist[i]->MLSupport && flist[i]->MLPattern[0] && MatchNoCase(tofld, flist[i]->MLPattern))
                        {
                           mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : fromfld;
                           folder = flist[i];
@@ -841,7 +841,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                      free(flist);
                   }
                }
-               else if (folder->MLPattern[0] && MatchNoCase(tofld, folder->MLPattern))
+               else if (folder->MLSupport && folder->MLPattern[0] && MatchNoCase(tofld, folder->MLPattern))
                {
                   mlistad = folder->MLAddress[0] ? folder->MLAddress : fromfld;
                   if (folder->MLFromAddress[0])    rfrom  = folder->MLFromAddress;
