@@ -76,6 +76,7 @@
   ** of the MOS gcc compiler for varargs68k handling.
   */
   #if defined(__MORPHOS__)
+    #define STDARGS
     #define STACKEXT
     #define VARARGS68K  __attribute__((varargs68k))
   #endif
