@@ -349,6 +349,8 @@ static BOOL ADSTnotify_start(void)
       return StartNotify(nr);
     }
   }
+
+  return FALSE;
 }
 
 ///
