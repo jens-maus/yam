@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.6 for YAM 2.4 (22.04.2003) © 2000-2003 by YAM Open Source Team
+; $VER: Installer script 1.6 for YAM 2.4 (24.04.2003) © 2000-2003 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -135,30 +135,59 @@
 (IF (= @language "czech")
 (
 (set #def_cat_lang #def_lang_Czech)
-(set #wrongOS  "YAM vyÚaduje ke spuÓtÅnÉ alespoÎ OS3.0\n")
-(set #wrongMUI "YAM vyÚaduje ke spuÓtÅnÉ alespoÎ MUI3.8\n")
-(set #wrongCPU "YAM vyÚaduje ke spuÓtÅnÉ alespoÎ procesor 68020\n")
-(set #proc_type "Select which version of YAM you would like to install:")
-(set #proc_help (cat "Here you can select which version of YAM to install "
-                     "depending on type of processor you own."))
-(set #proc_020 "Optimized for 68020/030")
-(set #proc_040 "Optimized for 68040")
-(set #proc_060 "Optimized for 68060")
-(set #YAM_dir  (cat "Zvolte domovskÙ adresÁÒ pro YAM\n"
-                    "(AdresÁÒ NEBUDE vytvoÒen!)"))
-(set #lang_catalog (cat "KterÙ z lokalizaÃnÉch katalogÊ chcete nainstalovat?\n"
-                        "(angliÃtinu pouÚÉvÁ program internÅ)"))
-(set #lang_manual "Zvolte jazyk, ve kter×m chcete nainstalovat nÁpovÅdu v AmigaGuide")
-(set #icons_prompt "Kterou sadu grafiky pro liÓty s tlaÃÉtky chcete nainstalovat?\n")
-(set #assign_prompt (cat "Do S:USER-STARTUP by mÅlo bÙt pÒidÁno pÒiÒazenÉ YAM:\n"
-                         "NemÁte proti tomu nÁmitky?"))
-(set #assign_help (cat "I kdyÚ zde mÁte volbu, zda pÒidat nebo nepÒidat toto pÒiÒazenÉ "
-                       "do S:user-startup, mÅli byste vÚdy zmÁÃknout tlaÃÉtko \"PokraÃovat\". "
-                       "V opaÃn×m pÒÉpadÅ YAM po restartu poÃÉtaÃe nenalezne soubory "
-                       "a adresÁÒe potÒebn× ke sprÁvn× funkci.\n"))
-(set #done_1   (cat "\nProgram YAM byl ÕspÅÓnÅ nainstalovÁn.\n\n"
-                    "KliknÅte na ikonu \"YAM\" v pÒÉsluÓn×m\n"))
-(set #done_2        "\nadresÁÒi a vyzkouÓejte.\n\nUÚijte si to...")
+(set #wrongOS  "YAM vyùaduje ke spuîtëní OS3.0 nebo novëjîí\n")
+(set #wrongMOS "Operaçní systém MorphOS nebyl nalezen!\n")
+(set #wrongMUI "YAM vyùaduje ke spuîtëní MUI3.8 nebo novëjîí\n")
+(set #wrongCPU "YAM vyùaduje ke spuîtëní procesor 68020 nebo lepîí\n")
+(set #proc_type "Vyberte verzi programu YAM, kterou chcete nainstalovat:")
+(set #proc_help (cat "V této çásti instalace si mûùete vybrat verzi programu "
+                     "YAM optimalizovanou právë pro váî procesor."))
+(set #proc_020 "Optimalizováno pro 68020/030")
+(set #proc_040 "Optimalizováno pro 68040")
+(set #proc_060 "Optimalizováno pro 68060")
+(set #YAM_dir  (cat "Vyberte domovskı adresáê pro YAM\n"
+                    "(adresáê NEBUDE vytvoêen!)"))
+(set #lang_catalog (cat "Kterı z lokalizaçních katalogû chcete nainstalovat?\n"
+                        "(angliçtinu pouùívá program internë)"))
+(set #lang_manual "Vyberte jazykovou mutaci nápovëdy k programu")
+(set #icons_prompt "Kam chcete nainstalovat arexxové skripty?")
+(set #icons_help (cat "Vyberte prosím poùadovanou sadu ikon:\n\n"
+                      "- MagicWB (8 barev)\n"
+                      "- ProLite (16 barev)\n"
+                      "- NewIcons (32 barev)\n"
+                      "- GlowIcons (64 barev)\n"
+                      "- GlowIcons-2 (64 barev)"))
+(set #icons_none "Ùádné")
+(set #charset_help (cat "YAM pouùívá ke çtení a odesílání zpráv konverzní tabulky. "
+                        "Tabulky jsou prostı text, naleznete je  v \"YAM:Charsets/\" "
+                        "a slouùí k pêemapování znakû z jednoho kódování do druhého.\n\n"
+                        "Pokud zmínëné moùnosti nechcete vyuùít, dané "
+                        "programy neinstalujte (uîetêíte 10 kB místa na disku.\n"))
+(set #parser_help (cat "YAM 2.4 a novëjîí nabízí moùnost automatického "
+                       "zjiîtëní a zobrazení odpovídající kódové stránky. "
+                       "V souçasnosti jsou podporována kódování Win1250, "
+                       "DOS866 a KOI8.\n\n"
+                       "Pokud zmínëné moùnosti nechcete vyuùít, dané "
+                       "programy neinstalujte (uîetêíte 50 kB místa na disku.\n"))
+(set #imagepool_prompt "Odstranëní knihovny \"libs:imagepool.library\"")
+(set #imagepool_help (cat "Externí têída MUI Toolbar.mcc (v15.8) distribuovaná "
+                          "spoleçnë s tímto balíkem nadále nevyuùívá knihovnu "
+                          "imagepool.library. Pokud ùádnı jinı program tuto "
+                          "knihovnu nevyùaduje, máte moùnost ji smazat.\n"))
+(set #yamtz_prompt "Odstranëní \"ENV(ARC):YAM_TZ\"")
+(set #yamtz_help (cat "YAM od verze 2.4 nepodporuje speciální promënnou "
+                      "\"YAM_TZ\" a namísto toho pouùívá systém Locale. "
+                      "Promënnou není potêeba a mûùete ji smazat.\n"))
+(set #assign_prompt (cat "Ke správné Do skriptu S:User-startup je têeba pêidat "
+                         "pêíkaz assign YAM:\n"
+                         "Nemáte proti tomu námitky?"))
+(set #assign_help (cat "I kdyù zde máte volbu, zda pêidat nebo nepêidat toto pêiêazení "
+                       "do S:user-startup, mëli byste vùdy zmáçknout tlaçítko "
+                       "\"Pokraçovat\". V opaçném pêípadë YAM po restartu poçítaçe "
+                       "nenalezne soubory a adresáêe potêebné ke správné funkci.\n"))
+(set #done_1   (cat "\nProgram YAM byl úspëînë nainstalován.\n\n"
+                    "Kliknëte na ikonu \"YAM\" v pêísluîném\n"))
+(set #done_2        "\nadresáêi a vyzkouîejte.\n\nUùijte si to...")
 )
 )
 ; ///
