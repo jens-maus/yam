@@ -99,13 +99,8 @@
 
 
 #ifdef __MORPHOS__
-#define CreateExtIO	CreateIORequest
-#define DeleteExtIO	DeleteIORequest
 #undef DoSuperMethod
 #define DoSuperMethod(cl,obj,a,b,c) ({ LONG m[] = { (LONG)(a), (LONG)(b), (LONG)(c) }; DoSuperMethodA(cl,obj,(Msg)m); })
-#define _OSERR 		IoErr()
-#define CreatePort(a,b)	CreateMsgPort()
-#define DeletePort(a)	DeleteMsgPort(a)
 #define KPrintF dprintf
 
 /*MorphOS standard netincludes don't have these*/
