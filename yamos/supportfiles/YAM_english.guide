@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (02.12.2002)
+@$VER: YAM.guide 2.4 (19.02.2003)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -254,7 +254,6 @@ Software
 
    * AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX], TermiteTCP, Roadshow)
    * optional: XPK for compression of articles
-   * optional: popupmenu.library V9+ for pop-up menus
    * optional: PGP 2.6 or 5.0 for encryption and signing messages
    * optional: AmiSSL for TLSv1/SSLv3 security layers over SMTP/POP
    * optional: Archiver for attachment compression, e.g.  LhA
@@ -9520,9 +9519,9 @@ of the window for future sessions.
 Avoiding context menus from getting on your way
 -----------------------------------------------
 
-   The context menus for the folder & message lists provided by
-@{b}popupmenu.library@{ub} may get in your way and prevent you from using the
-usual menu item shortcuts unless you move the pointer outside the list.
+   The context menus for the folder & message lists may get in your way
+and prevent you from using the usual menu item shortcuts unless you move
+the pointer outside the list.
 Unfortunately this is a bug in MUI <=3.8, which can only worked around
 by disabling the context menus themselves in @{" Configuration/Lists " link "CO08"}.
 
