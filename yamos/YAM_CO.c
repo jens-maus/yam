@@ -1176,14 +1176,14 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
                   if (*ctype == '#') continue;
                   for (p2 = p = ctype; !ISpace(*p) && *p && *p != ';'; p2 = ++p);
                   if ((p = strpbrk(p,";"))) ++p;
-                  if (p) command = stpblk(p);
+                  if (p) command = TrimStart(p);
                   *p2 = 0;
                }
                else
                {
                   if (*ctype == '#') continue;
                   for (p2 = p = ctype; !ISpace(*p) && *p; p2 = ++p);
-                  if (*p) ext = stpblk(p);
+                  if (*p) ext = TrimStart(p);
                   *p2 = 0;
                }
                for (mv = NULL, i = 0; i < MAXMV; i++) if (CE->MV[i]) if (!stricmp(CE->MV[i]->ContentType, ctype)) { mv = CE->MV[i]; break; }

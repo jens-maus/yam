@@ -7,6 +7,10 @@ $Source$
 
 2005-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
+    * extrasrc/stpblk.c: replaced all stpblk() function usages by TrimStart() calls
+      as these two function are totally redundant.
+    * extrasrc/stcgfn.c: removed as not used anymore.
+    * extrasrc/stch_i.c: removed as not used anymore.
     * YAM_RE.c, YAM_read.h: fixed bug #1074783 where overlong MIME boundary
       header lines caused an internal buffer to overrun which in fact caused
       YAM to either do weird things or even crash entirely.

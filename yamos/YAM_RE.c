@@ -762,7 +762,7 @@ static char *Cleanse(char *s)
 {
    char *tmp, *news;
 
-   news = s = stpblk(s);
+   news = s = TrimStart(s);
    for (tmp=s; *tmp; ++tmp) if (isupper((int)*tmp)) *tmp = tolower((int)*tmp);
    while (tmp > news && *--tmp && ISpace(*tmp)) *tmp = 0;
    return news;
@@ -807,7 +807,7 @@ static void RE_ParseContentParameters(struct Part *rp)
       else
       {
          *eq++ = 0;
-         s = Cleanse(s); eq = stpblk(eq);
+         s = Cleanse(s); eq = TrimStart(eq);
          StripTrailingSpace(eq);
          UnquoteString(eq, FALSE);
 
@@ -847,7 +847,7 @@ static void RE_ParseContentDispositionParameters(struct Part *rp)
       else
       {
          *eq++ = 0;
-         s = Cleanse(s); eq = stpblk(eq);
+         s = Cleanse(s); eq = TrimStart(eq);
          StripTrailingSpace(eq);
          UnquoteString(eq, FALSE);
          if (!stricmp(s, "filename"))
@@ -2501,7 +2501,7 @@ void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
             else
             {
                *eq++ = 0;
-               s = Cleanse(s); eq = stpblk(eq);
+               s = Cleanse(s); eq = TrimStart(eq);
                StripTrailingSpace(eq);
                UnquoteString(eq, FALSE);
                if (!stricmp(s, "street")) stccpy(ab->Street, eq, SIZE_DEFAULT);

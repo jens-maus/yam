@@ -29,8 +29,6 @@
 #if !defined(__MORPHOS__) || !defined(__libnix)
   #include "extrasrc/stccpy.c"
   #include "extrasrc/stcgfe.c"
-  //#include "extrasrc/stcgfn.c"
-  #include "extrasrc/stpblk.c"
   #include "extrasrc/strmfp.c"
   #include "extrasrc/strsfn.c"
 #endif
