@@ -31,7 +31,7 @@
 #include "YAM_utilities.h"
 
 enum MailStatus { STATUS_UNR, STATUS_OLD, STATUS_FWD, STATUS_RPD, STATUS_WFS,
-                  STATUS_ERR, STATUS_HLD, STATUS_SNT, STATUS_NEW, STATUS_DEL,
+                  STATUS_ERR, STATUS_HLD, STATUS_SNT, STATUS_NEW, STATUS_DEL
                 };
 
 struct Mail
