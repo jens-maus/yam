@@ -100,8 +100,8 @@ NEW FEATURES
 
 SPECIAL REQUIREMENTS
 
-     * AmigaOS V39+, MC68020+, MUI3.8+ and the latest NList, NListtree,
-       Toolbar, TextEditor & BetterString classes (included)
+     * AmigaOS V39+, MC68020+, MUI3.8+ and the latest BetterString,
+       NList, NListtree, TextEditor & Toolbar classes (included)
 
 
 AVAILABILITY
@@ -113,7 +113,7 @@ AVAILABILITY
 
 DIRECTORY
 
-     /pub/aminet/comm/mail
+     /pub/aminet/comm/mail  (hopefully soon comm/yam :-)
 
 
 FILE NAMES
@@ -159,4 +159,4 @@ For the YAMOS team,
 
 -- 
 David Rey
-<tactica@users.sourceforge.net>
+david @ saug . org
