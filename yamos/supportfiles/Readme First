@@ -8,7 +8,7 @@ archives which must be unpacked into the same directory before installation.
 YAM24.lha        YAM 2.4 basic installation for 68020 processors or better,
                  includes English manual
 YAM24cpu.lha     Diff for 68040 and 68060 processors
-YAM24mos.lha     YAM 2.4 MorphOS executables for PPC support.
+YAM24mos.lha     MorphOS version, includes starter tool
 YAM24loc.lha     Foreign language support (catalogs and manuals)
 YAM24con.lha     Additional graphics, ARexx scripts, etc.
 
@@ -28,7 +28,7 @@ Due to lack of time and motivation Marcel gave up development of YAM.
 The sources have been released under the GNU General Public License
 at SourceForge.net. If you want to develop this program further or
 if you want to port it to a different operating system, visit the
-YAM Open Source homepage at http://yamos.sourceforge.net/
+YAM Open Source homepage at http://sourceforge.net/projects/yamos/
 
 
 What's new since YAM 2.3p1?
@@ -182,6 +182,7 @@ Developers (in alphabetical order):
   (tactica)
 - Fixed: the duplicated "shift right" menu shortcut in the Read window
   is now gone (tactica)
+- Fixed: the SMTP port number was never saved to the configuration (damato)
 
 - Changed: replaced TextEditor.mcc style routines in the Read window
   with a more intelligent flex environment to make highlighting more
@@ -284,3 +285,4 @@ Developers (in alphabetical order):
 - Added: application/pdf to the built-in list of MIME types (damato)
 - Added: the "Message/Select/None | Toggle" menu items have now a
   convenient shortcut, too (tactica)
+
