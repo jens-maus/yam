@@ -99,6 +99,7 @@ CLASSES	= \
 
 # and the other object files
 OBJS = \
+	$(OBJDIR)/YAM_global.o \
 	$(OBJDIR)/YAM.o \
 	$(OBJDIR)/YAM_AB.o \
 	$(OBJDIR)/YAM_CO.o \
@@ -109,7 +110,6 @@ OBJS = \
 	$(OBJDIR)/YAM_ER.o \
 	$(OBJDIR)/YAM_FI.o \
 	$(OBJDIR)/YAM_FO.o \
-	$(OBJDIR)/YAM_global.o \
 	$(OBJDIR)/YAM_locale.o \
 	$(OBJDIR)/YAM_MA.o \
 	$(OBJDIR)/YAM_MAf.o \
