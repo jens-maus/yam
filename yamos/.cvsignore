@@ -1,10 +1,13 @@
 *.o
+*.elf
 *.gst
 *.info
 *.lnk
 *.map
+*.debug
 starter
 YAM
-YAM.debug
+YAM.amigaos
+YAM.morphos
 YAM_locale.c
 YAM_locale.h
