@@ -1434,7 +1434,7 @@ void MA_PopNow(int mode, int pop)
 HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
 {
    ULONG qual = (ULONG)arg[2];
-   if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) {kprintf("Qualifier pressed!!\n"); G->TR_Exchange = TRUE; }
+   if(hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) G->TR_Exchange = TRUE;
    MA_PopNow(arg[0],arg[1]);
 }
 MakeStaticHook(MA_PopNowHook, MA_PopNowFunc);
