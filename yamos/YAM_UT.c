@@ -2502,25 +2502,29 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
 ///
 /// DescribeCT
 //  Returns description of a content type
-char *DescribeCT(char *ct)
+char *DescribeCT(const char *ct)
 {
+  ENTER();
+  char *ret = (char *)ct;
+
   if(ct == NULL)
-    return GetStr(MSG_CTunknown);
+    ret = GetStr(MSG_CTunknown);
   else
   {
-    int i;
+    unsigned int i;
 
-    for(i = 0; ContType[i]; i++)
+    for(i=0; ContType[i]; i++)
     {
-      if(!stricmp(ct, ContType[i]))
+      if(stricmp(ct, ContType[i]) == 0)
       {
-        ct = GetStr((char*)ContTypeDesc[i]);
+        ret = GetStr((char*)ContTypeDesc[i]);
         break;
       }
     }
   }
 
-  return ct;
+  RETURN(ret);
+  return ret;
 }
 ///
 /// GetDateStamp

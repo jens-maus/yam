@@ -1414,7 +1414,7 @@ static void RE_SetPartInfo(struct Part *rp)
    }
 
    // if this part hasn`t got any name, we place the CParName as the normal name
-   if (!*rp->Name && (rp->CParName || rp->CParFileName))
+   if(!*rp->Name && (rp->CParName || rp->CParFileName))
    {
       stccpy(rp->Name, rp->CParName ? rp->CParName : rp->CParFileName, SIZE_DEFAULT);
       UnquoteString(rp->Name, FALSE);
@@ -2940,6 +2940,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     FreeStrBuf(part->Boundary);
     part->Boundary = NULL;
 
+    D(DBF_MAIL, "freeing mailpart: %08lx", part);
     free(part);
   }
   rmData->firstPart = NULL;

@@ -287,7 +287,7 @@ BOOL     DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType 
 BOOL     DateStamp2RFCString(char *dst, struct DateStamp *date, int timeZone, BOOL convert);
 char *   Decrypt(char *source);
 BOOL     DeleteMailDir(char *dir, BOOL isroot);
-char *   DescribeCT(char *ct);
+char *   DescribeCT(const char *ct);
 void     DisplayMailList(struct Folder *fo, APTR lv);
 void     DisplayAppIconStatistics(void);
 void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);

@@ -64,6 +64,8 @@ struct Data
 /// LayoutHook
 HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 {
+	ENTER();
+
 	switch(lm->lm_Type)
 	{
 		case MUILM_MINMAX:
@@ -101,7 +103,8 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 			lm->lm_MinMax.MaxWidth  = MUI_MAXMAX;
 			lm->lm_MinMax.MaxHeight = maxMinHeight;
 
-			return(0);
+			RETURN(0);
+			return 0;
 		}
 		break;
 
@@ -136,6 +139,8 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 				LONG mw = _minwidth(child);
 				LONG mh = _minheight(child);
 				struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart);
+
+				D(DBF_GUI, "layouting child %08lx - mp: %08lx %08lx %08lx %08lx", child, mailPart, mailPart->ContentType, mailPart->headerList, mailPart->rmData);
 
 				if(mailPart)
 				{
@@ -186,6 +191,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 								// it that it should relayout the whole thing
 								set(obj, MUIA_AttachmentGroup_MinHeight, requiredHeight);
 
+								RETURN(TRUE);
 								return TRUE;
 							}
 						}
@@ -203,7 +209,10 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 					
 					D(DBF_GUI, "layout: %ld %ld %ld", mh, _minheight(child), _font(obj)->tf_YSize);
 					if(!MUI_Layout(child, left, top+(mh-_minheight(child))/2, mw, _minheight(child), 0))
+					{
+						RETURN(FALSE);
 						return FALSE;
+					}
 
 					lastItemHeight = mh;
 					itemsInRow++;
@@ -221,11 +230,13 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 				set(obj, MUIA_AttachmentGroup_MinHeight, usedHeight+BORDER);
 			}
 
+			RETURN(TRUE);
 			return TRUE;
 		}
 		break;
 	}
 
+	RETURN(MUILM_UNKNOWN);
 	return MUILM_UNKNOWN;
 }
 MakeStaticHook(LayoutHook, LayoutFunc);
@@ -525,6 +536,8 @@ DECLARE(Clear)
 	GETDATA;
 	struct List *childList = (struct List *)xget(obj, MUIA_Group_ChildList);
 
+	ENTER();
+
 	// iterate through our child list and remove all attachmentimages
 	if(childList)
 	{
@@ -544,6 +557,7 @@ DECLARE(Clear)
 
 	data->firstPart = NULL;
 
+	RETURN(0);
 	return 0;
 }
 ///
@@ -584,7 +598,7 @@ DECLARE(Refresh) // struct Part *firstPart
 							 obj, 3, MUIM_AttachmentGroup_ImageDropped, newImage, MUIV_TriggerValue);
 
 			DoMethod(obj, OM_ADDMEMBER, newImage);
-			D(DBF_GUI, "added image for attachment: %ld:%s", rp->Nr, rp->Name);
+			D(DBF_GUI, "added image obj %08lx for attachment: %ld:%s mp: %08lx %08lx %08lx %08lx", newImage, rp->Nr, rp->Name, rp, rp->ContentType, rp->headerList, rp->rmData);
 
 			addedParts++;
 		}
