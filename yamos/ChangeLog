@@ -1,4 +1,4 @@
-2000-12-06  laursen <laursen@myself.com>
+2000-12-06  Jacob Laursen <laursen@myself.com>
 
     * Enforcer hits when doing: rx "address 'YAM';info"
       (without arguments) Fixed!
@@ -9,17 +9,17 @@
     * When deleting a bunch of mails, and one with Disposition
       Notification pops up - new option: Ignore all
 
-2000-12-07  laursen <laursen@myself.com>
+2000-12-07  Jacob Laursen <laursen@myself.com>
 
     * Added "Reply-To:" address to folder options. Useful for folders that
       are mail aliases instead of real mailing lists, to avoid getting
       dublicate answers.
 
-2000-12-10  laursen <laursen@myself.com>
+2000-12-10  Jacob Laursen <laursen@myself.com>
 
     * Removed custom bsdsocket.library interface - now uses the includes.
 
-2000-12-17  laursen <laursen@myself.com>
+2000-12-17  Jacob Laursen <laursen@myself.com>
 
     * SAS/C fixes. Now compiles again, also without V44 includes.
 
@@ -29,7 +29,7 @@
 
     * Added sprintf() replacement with Locale support.
 
-2000-12-18  laursen <laursen@myself.com>
+2000-12-18  Jacob Laursen <laursen@myself.com>
 
     * Using ARexx commands MAILWRITE and MAILSEND, while YAM is iconified
       and the external editor is configured to be spawned always, would
@@ -38,14 +38,14 @@
     * Got rid of the ANSI C time() function, which would access ENV:TZ
       each time a log entry or new mail was to be written.
 
-2000-12-19  laursen <laursen@myself.com>
+2000-12-19  Jacob Laursen <laursen@myself.com>
 
     * Fixed .taglines bug - %'s was used for formatting, which would
       result in a "***NULL POINTER***" mess.
 
     * Localized all menu shortcuts in main window.
 
-2000-12-20  laursen <laursen@myself.com>
+2000-12-20  Jacob Laursen <laursen@myself.com>
 
     * Finished slave work on menus in main window.
 
@@ -59,7 +59,7 @@
 
     * Added SMTP AUTH to config GUI.
 
-2000-12-21  laursen <laursen@myself.com>
+2000-12-21  Jacob Laursen <laursen@myself.com>
 
     * Fixed a very nasty bug when using the ARexx command MAILWRITE with
       the QUIET switch.
@@ -68,17 +68,17 @@
       configured, even though "Use SMTP AUTH" wasn't selected. Fixed.
       Localized ESMTP error message.
 
-2001-01-28  stoecker <stoecker@amigaworld.com>
+2001-01-28  Dirk Stöcker <stoecker@amigaworld.com>
 
     * Moved SAS-C make process completely into smakefile
 
     * Now uses original Listtree includes
 
-2001-01-29  laursen <laursen@myself.com>
+2001-01-29  Jacob Laursen <laursen@myself.com>
 
     * Added dynamic date string creation in smakefile.
 
-2001-02-01  laursen <laursen@myself.com>
+2001-02-01  Jacob Laursen <laursen@myself.com>
 
     * Removed enforcer hits when encountering message headers with
       non-terminated MIME-encoded text (i.e. during a folder rescan).
@@ -89,12 +89,12 @@
       and some other minor changes to be able to compile with GCC again.
       SAS/C users with old, broken includes have to fix them now.
 
-2001-02-04  laursen <laursen@myself.com>
+2001-02-04  Jacob Laursen <laursen@myself.com>
 
     * Fixed broken ARexx interface for SAS/C (introduced on January
       28th).
 
-2001-02-14  laursen <laursen@myself.com>
+2001-02-14  Jacob Laursen <laursen@myself.com>
 
     * Address Book/New/Portrait/Select: The ASL requester title was
       "Se_lect" (same string used twice) - fixed! (Bug #131008).
@@ -103,7 +103,7 @@
 
     * Added external quote function to edit window (+preferences)
 
-2001-02-17  laursen <laursen@myself.com>
+2001-02-17  Jacob Laursen <laursen@myself.com>
 
     * Added TYPE/N (internal format) to the STEM that ARexx command
       FOLDERINFO returns:
@@ -120,7 +120,7 @@
     * Fixed wbstart-crash, which was introduced with the removal of
       the library auto-open (on January 28th).
 
-2001-02-19  laursen <laursen@myself.com>
+2001-02-19  Jacob Laursen <laursen@myself.com>
 
     * Removed memory deallocation of all mails on shutdown when
       compiling with SAS/C - based on the assumption that SAS/C uses
@@ -133,3 +133,9 @@
       (below the current one in the folders list).
       If there are such folders the user is asked if he wants to change
       to the first of these and continue reading there.
+
+2001-03-06  Jacob Laursen <laursen@myself.com>
+
+    * Changed compiler options to avoid linker warning.
+
+    * Changed default CPU target in SAS/C makefile to 68020.
