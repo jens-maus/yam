@@ -1,3 +1,14 @@
+2002-05-10  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_CO.c: changed the AddRule button behaviour a bit, so
+      that it will now automatically activate the name stringgadget
+      and autoselect any string in there. This should be a bit more
+      handy for the user.
+    * YAM_MA.c: fixed bug where a Remote-Filter executed actions
+      it was not supposed to do and it was also possible to fire
+      a remote filter were it shouldn`t have been possible at all.
+      i.e. on the Filter button in the main window aso.
+
 2002-05-09  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_TR.c: fixed bug where we didn`t checked the result code
