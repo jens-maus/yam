@@ -30,12 +30,12 @@
 #include <math.h>
 
 #include <clib/alib_protos.h>
+#include <libraries/gadtools.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
-#include <proto/pm.h>
 #include <proto/utility.h>
 
 #include "extra.h"
@@ -221,6 +221,17 @@ DISPATCHERPROTO(FL_Dispatcher)
 
    switch (msg->MethodID)
    {
+      // we need to make sure that everything is disposed
+      case OM_DISPOSE:
+      {
+    	  struct FL_Data *data = (struct FL_Data *)INST_DATA(cl,obj);
+
+        // make sure that our context menus are also disposed
+	      if(data->context_menu) MUI_DisposeObject(data->context_menu);
+	      if(data->title_menu)   MUI_DisposeObject(data->title_menu);
+      }
+      break;
+
       // we catch MUIM_DragReport because we want to restrict some dragging for some special objects
       case MUIM_DragReport:
       {
@@ -289,12 +300,17 @@ DISPATCHERPROTO(FL_Dispatcher)
       }
       break;
 
-      // If the user tried to open a ContextMenu we check if
-      // popupmenu.library was open and then display the ContextMenu
-      case MUIM_ContextMenuBuild:
+      // we use the MUI internal methods to create a context menu
+      case MUIM_NList_ContextMenuBuild:
       {
-         if(PopupMenuBase && C->FolderCntMenu) return(MA_FolderContextMenu((APTR)msg));
-         else return(0);
+        return MA_FLContextMenuBuild(cl, obj, (struct MUIP_NList_ContextMenuBuild *)msg);
+      }
+      break;
+
+      // If the user chooses a item out of the ContextMenu we have to process it.
+      case MUIM_ContextMenuChoice:
+      {
+        return MA_FLContextMenuChoice(cl, obj, (struct MUIP_ContextMenuChoice *)msg);
       }
       break;
    }
@@ -307,14 +323,30 @@ DISPATCHERPROTO(FL_Dispatcher)
 /*** ML_Dispatcher (Mail NListview) - Subclass of NList, adds ContextMenuBuild to Message List ***/
 DISPATCHERPROTO(ML_Dispatcher)
 {
-  switch (msg->MethodID)
+  switch(msg->MethodID)
   {
-    // If the user tried to open a ContextMenu we check if
-    // popupmenu.library was open and then display the ContextMenu
-    case MUIM_ContextMenuBuild:
+    // we need to make sure that everything is disposed
+    case OM_DISPOSE:
     {
-      if(PopupMenuBase) return(MA_MailListContextMenu((APTR)msg));
-      else return(0);
+    	struct ML_Data *data = (struct ML_Data *)INST_DATA(cl,obj);
+
+      // make sure that our context menus are also disposed
+	    if(data->context_menu) MUI_DisposeObject(data->context_menu);
+	    if(data->title_menu)   MUI_DisposeObject(data->title_menu);
+    }
+    break;
+
+    // we use the MUI internal methods to create a context menu
+    case MUIM_NList_ContextMenuBuild:
+    {
+      return MA_MLContextMenuBuild(cl, obj, (struct MUIP_NList_ContextMenuBuild *)msg);
+    }
+    break;
+
+    // If the user chooses a item out of the ContextMenu we have to process it.
+    case MUIM_ContextMenuChoice:
+    {
+      return MA_MLContextMenuChoice(cl, obj, (struct MUIP_ContextMenuChoice *)msg);
     }
     break;
   }
@@ -916,8 +948,8 @@ BOOL InitClasses(void)
    CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
    CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
    CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(AL_Dispatcher));
-   CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
-   CL_MailList    = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(ML_Dispatcher));
+   CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct FL_Data), ENTRY(FL_Dispatcher));
+   CL_MailList    = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct ML_Data), ENTRY(ML_Dispatcher));
    CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));
    CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct TE_Data), ENTRY(TE_Dispatcher));
    CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));

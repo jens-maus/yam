@@ -33,7 +33,6 @@
 #include <exec/execbase.h>
 #include <libraries/asl.h>
 #include <libraries/genesis.h>
-#include <libraries/pm.h>
 #include <mui/NList_mcc.h>
 #include <proto/datatypes.h>
 #include <proto/dos.h>
@@ -45,7 +44,6 @@
 #include <proto/keymap.h>
 #include <proto/locale.h>
 #include <proto/muimaster.h>
-#include <proto/pm.h>
 #include <proto/rexxsyslib.h>
 #include <proto/timer.h>
 #include <proto/utility.h>
@@ -339,7 +337,6 @@ static BOOL AY_New(BOOL hidden)
                                                    "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
                                                    "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
                                                    "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
-                                                   "\0338popupmenu.library\0332 (Henrik Isaksson)\n"
                                                    "\0338amissl.library\0332 (Andrija Antonijevic)\n\n");
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
@@ -560,7 +557,6 @@ static void Terminate(void)
    if (DataTypesBase) CloseLibrary(DataTypesBase);
    if (XpkBase)       CloseLibrary(XpkBase);
    if (AmiSSLBase)    CloseLibrary(AmiSSLBase);
-   if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
    if (MUIMasterBase) CloseLibrary(MUIMasterBase);
    if (RexxSysBase) CloseLibrary((struct Library *)RexxSysBase);
    if (IFFParseBase) CloseLibrary(IFFParseBase);
@@ -901,9 +897,6 @@ static void Initialise(BOOL hidden)
    IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
    RexxSysBase = InitLib(RXSNAME, 36, 0, TRUE, FALSE);
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
-
-   // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
-   PopupMenuBase = InitLib(POPUPMENU_NAME, 9, 0, FALSE, FALSE);
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later

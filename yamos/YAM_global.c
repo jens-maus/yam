@@ -80,7 +80,6 @@ struct LocaleBase *    LocaleBase = NULL;
 struct Library *       MiamiBase = NULL;
 struct Library *       MUIMasterBase = NULL;
 struct Library *       OpenURLBase = NULL;
-struct PopupMenuBase * PopupMenuBase = NULL;
 struct RxsLib *        RexxSysBase = NULL;
 struct Library *       SocketBase = NULL;
 struct UtilityBase *   UtilityBase = NULL;

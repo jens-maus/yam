@@ -166,6 +166,14 @@ struct MA_ClassData  /* main window */
    char WinTitle[SIZE_DEFAULT];
 };
 
+// MailList class instance data
+struct ML_Data
+{
+   Object *context_menu;
+   Object *title_menu;
+};
+
+
 extern struct Hook MA_ApplyRulesHook;
 extern struct Hook MA_ChangeSelectedHook;
 extern struct Hook MA_DeleteDeletedHook;
@@ -192,7 +200,6 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 void  MA_GetAddress(struct Mail **mlist);
 BOOL  MA_ImportMessages(char *fname);
 struct MA_ClassData *MA_New(void);
-ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg);
 BOOL  MA_SortWindow(void);
 void  MA_MakeMAFormat(APTR lv);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit);
@@ -213,5 +220,9 @@ void  MA_SetSortFlag(void);
 void  MA_SetStatusTo(int status);
 void  MA_SetupDynamicMenus(void);
 BOOL  MA_StartMacro(enum Macro num, char *param);
+
+// real methods (will be separated later in own ML class
+ULONG MA_MLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_ContextMenuBuild *msg);
+ULONG MA_MLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_ContextMenuChoice *msg);
 
 #endif /* YAM_MAIN_H */

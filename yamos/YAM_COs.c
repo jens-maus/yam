@@ -35,7 +35,6 @@
 #include <proto/intuition.h>
 #include <proto/locale.h>
 #include <proto/utility.h>
-#include <proto/pm.h>
 
 #include "extra.h"
 #include "YAM.h"
@@ -945,8 +944,6 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
          setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
          setcycle(gui->CY_INFOBAR,       CE->InfoBar);
-         set(gui->CH_FCNTMENU, MUIA_Disabled, !PopupMenuBase);
-         set(gui->CH_MCNTMENU, MUIA_Disabled, !PopupMenuBase);
          setstring(gui->ST_INFOBARTXT   ,CE->InfoBarText);
          break;
       case 9:

@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-18  Jens Langner <Jens.Langner@light-speed.de>
+
+    * replaced the popupmenu.library based contextmenus with better
+      integrateable MUI based contextmenus. This allows to separate the
+      contextmenu in two different areas - one for the title and one
+      for the rest of the listview. Also contextmenus are now possible
+      even if the user hasn`t got popupmenu.library installed.
+      Now YAM doesn`t require/use popupmenu.library anymore which is a
+      bit more "natural" for a MUI application.
+
 2003-02-17  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l: reworked the textstyle highlighting regular

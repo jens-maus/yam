@@ -38,7 +38,6 @@
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
-#include <proto/pm.h>
 
 #include "extra.h"
 #include "SDI_hook.h"
@@ -902,8 +901,8 @@ void CO_Validate(struct Config *co, BOOL update)
          set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
 
          // Modify the ContextMenu flags
-         set(G->MA->GUI.NL_MAILS,   MUIA_ContextMenu, (C->MessageCntMenu && PopupMenuBase));
-         set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, (C->FolderCntMenu && PopupMenuBase));
+         set(G->MA->GUI.NL_MAILS,   MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+         set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
 
          // Now we reorder the Maingroup accordingly to the InfoBar setting
          MA_SortWindow();

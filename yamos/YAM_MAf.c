@@ -30,13 +30,13 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
-#include <proto/pm.h>
 #include <proto/utility.h>
 
 #include "extra.h"
@@ -463,26 +463,24 @@ HOOKPROTONHNONP(MA_ChangeFolderFunc, void)
 }
 MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 ///
-/// MA_FolderContextMenu
-//  Creates a ContextMenu for the folder Listtree
-ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
+/// MA_FLContextMenuBuild
+// If the user chooses a item out of the ContextMenu we have to process it.
+enum { CMN_EDITF=1, CMN_DELETEF, CMN_INDEX, CMN_NEWF, CMN_NEWFG, CMN_SNAPS, CMN_RELOAD };
+
+ULONG MA_FLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_ContextMenuBuild *msg)
 {
+  struct FL_Data *data = (struct FL_Data *)INST_DATA(cl,obj);
+
+  Object *context_menu;
   struct MUI_NListtree_TestPos_Result r;
   struct MUI_NListtree_TreeNode *tn;
   struct Folder *folder = NULL;
-  struct PopupMenu *pop_menu;
-  struct Window *win;
   struct MA_GUIData *gui = &G->MA->GUI;
-  ULONG ret;
   BOOL disable_delete   = FALSE;
   BOOL disable_edit     = FALSE;
   BOOL disable_update   = FALSE;
 
-  enum{ PMN_EDITF=1, PMN_DELETEF, PMN_INDEX, PMN_NEWF, PMN_NEWFG, PMN_SNAPS, PMN_RELOAD };
-
-  // Get the window structure of the window which this listtree belongs to
-  win = (struct Window *)xget(_win(gui->NL_FOLDERS), MUIA_Window_Window);
-  if(!win) return(0);
+  if(msg->ontop) return NULL; // The default NList Menu should be returned
 
   // Now lets find out which entry is under the mouse pointer
   DoMethod(gui->NL_FOLDERS, MUIM_NListtree_TestPos, msg->mx, msg->my, &r);
@@ -491,61 +489,74 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
 
   if(!tn || !tn->tn_User)
   {
-      disable_delete = TRUE;
-      disable_edit   = TRUE;
-      disable_update = TRUE;
+    disable_delete = TRUE;
+    disable_edit   = TRUE;
+    disable_update = TRUE;
   }
   else
   {
-      folder = (struct Folder *)tn->tn_User;
+    folder = (struct Folder *)tn->tn_User;
 
-      // Set this Treenode as activ
-      if(tn != (struct MUI_NListtree_TreeNode *)xget(gui->NL_FOLDERS, MUIA_NListtree_Active))
-      {
-         set(gui->NL_FOLDERS, MUIA_NListtree_Active, tn);
-      }
+    // Set this Treenode as activ
+    if(tn != (struct MUI_NListtree_TreeNode *)xget(gui->NL_FOLDERS, MUIA_NListtree_Active))
+    {
+      set(gui->NL_FOLDERS, MUIA_NListtree_Active, tn);
+    }
 
-      // Now we have to set the disabled flag if this is not a custom folder
-      if(folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED && folder->Type != FT_GROUP)
-      {
-         disable_delete = TRUE;
-      }
+    // Now we have to set the disabled flag if this is not a custom folder
+    if(folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED && folder->Type != FT_GROUP)
+    {
+      disable_delete = TRUE;
+    }
 
-      if(folder->Type == FT_GROUP)
-      {
-         disable_update = TRUE;
-      }
-   }
-
-  // We create the PopupMenu now
-  pop_menu =   PMMenu(folder ? FolderName(folder) : GetStr(MSG_FOLDER_NONSEL)),
-                 PMItem(GetStripStr(MSG_FOLDER_EDIT)),           PM_Disabled, disable_edit,   PM_UserData, PMN_EDITF,     End,
-                 PMItem(GetStripStr(MSG_FOLDER_DELETE)),         PM_Disabled, disable_delete, PM_UserData, PMN_DELETEF,   End,
-                 PMItem(GetStripStr(MSG_MA_UpdateIndex)),        PM_Disabled, disable_update, PM_UserData, PMN_INDEX,     End,
-                 PMBar, End,
-                 PMItem(GetStripStr(MSG_FOLDER_NEWFOLDER)),      PM_UserData, PMN_NEWF,      End,
-                 PMItem(GetStripStr(MSG_FOLDER_NEWFOLDERGROUP)), PM_UserData, PMN_NEWFG,     End,
-                 PMBar, End,
-                 PMItem(GetStripStr(MSG_FOLDER_SNAPSHOT)),       PM_UserData, PMN_SNAPS,     End,
-                 PMItem(GetStripStr(MSG_FOLDER_RELOAD)),         PM_UserData, PMN_RELOAD,    End,
-               End;
-
-  ret = (ULONG)(PM_OpenPopupMenu(win, PM_Menu, pop_menu, TAG_DONE));
-
-  PM_FreePopupMenu(pop_menu);
-
-  switch(ret)
-  {
-    case PMN_EDITF:   { DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);          } break;
-    case PMN_DELETEF: { DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook);        } break;
-    case PMN_INDEX:   { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);         } break;
-    case PMN_NEWF:    { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook);           } break;
-    case PMN_NEWFG:   { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook);      } break;
-    case PMN_SNAPS:   { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_SAVE);   } break;
-    case PMN_RELOAD:  { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_RESET);  } break;
+    if(folder->Type == FT_GROUP)
+    {
+      disable_update = TRUE;
+    }
   }
 
-  return(0);
+  // We create the ContextMenu now
+  context_menu = MenustripObject,
+    Child, MenuObjectT(folder ? FolderName(folder) : GetStr(MSG_FOLDER_NONSEL)),
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_EDIT),           MUIA_Menuitem_Enabled, !disable_edit,   MUIA_UserData, CMN_EDITF,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_DELETE),         MUIA_Menuitem_Enabled, !disable_delete, MUIA_UserData, CMN_DELETEF, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_UpdateIndex),        MUIA_Menuitem_Enabled, !disable_update, MUIA_UserData, CMN_INDEX,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_NEWFOLDER),      MUIA_UserData, CMN_NEWF,   End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_NEWFOLDERGROUP), MUIA_UserData, CMN_NEWFG,  End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_SNAPSHOT),       MUIA_UserData, CMN_SNAPS,  End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_RELOAD),         MUIA_UserData, CMN_RELOAD, End,
+    End,
+  End;
+
+  data->context_menu = context_menu;
+
+  return (ULONG)context_menu;
+}
+
+///
+/// MA_FLContextMenuChoice
+// If the user chooses a item out of the ContextMenu we have to process it.
+ULONG MA_FLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_ContextMenuChoice *msg)
+{
+  switch(xget(msg->item, MUIA_UserData))
+  {
+    case CMN_EDITF:   { DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);          } break;
+    case CMN_DELETEF: { DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook);        } break;
+    case CMN_INDEX:   { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);         } break;
+    case CMN_NEWF:    { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook);           } break;
+    case CMN_NEWFG:   { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook);      } break;
+    case CMN_SNAPS:   { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_SAVE);   } break;
+    case CMN_RELOAD:  { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_RESET);  } break;
+
+    default:
+    {
+      return DoSuperMethodA(cl, obj, (Msg)msg);
+    }
+  }
+
+  return 0;
 }
 
 ///
