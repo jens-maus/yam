@@ -5,8 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-16  Gunther Nikl <gni@gecko.de>
+
+    * Makefile: revert LDLIBS change.
+    * classes/AttachmentImage.c: use non-varargs function.
+    * classes/AttachmentGroup.c: use non-varargs functions and require v44
+      (OS 3.5) only.
+    * extrasrc/dice.c: add stubs for icon+wb v44
+      (these should be in amiga.lib but ...)
+
 2005-02-16  Alexey Ivanov <AmiS@amiga.org.ru>
-    * ReadMailGroup, misc: àdded 'image only' mode to show sender image in
+    * ReadMailGroup, misc: added 'image only' mode to show sender image in
       read window with out other sender infos.
 
 2005-02-16  Jens Langner <Jens.Langner@light-speed.de>
