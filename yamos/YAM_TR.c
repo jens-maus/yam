@@ -118,8 +118,9 @@ int TR_Connect(char *host, int port)
    if (Connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1) {
       return 0;
    }
-   if (Errno() == EINPROGRESS) return 0;
+
    /* Preparation for non-blocking I/O */
+   if (Errno() == EINPROGRESS) return 0;
 
    TR_Disconnect();
    return -3;
@@ -718,36 +719,36 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    }
    G->TR->POP_Nr = pop;
    G->TR_Allow = G->TR->Abort = G->Error = FALSE;
-   if ((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)		// connection succeeded
+   if ((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)    // connection succeeded
    {
-      if (msgs)														// there are messages on the server
+      if (msgs)                                          // there are messages on the server
       {
-         if (TR_GetMessageList_GET(msgs))						// message list read OK
+         if (TR_GetMessageList_GET(msgs))                // message list read OK
          {
             BOOL preselect = FALSE;
             G->TR->Stats.OnServer += msgs;
-            if (G->TR->Scnt)										// filter messages on server?
+            if (G->TR->Scnt)                             // filter messages on server?
             {
                set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_ApplyFilters));
                for (mail = G->TR->List; mail; mail = mail->Next)
                   TR_GetMessageDetails(mail, -2);
             }
-            if (C->AvoidDuplicates) TR_GetUIDL();			// read UIDL file to compare against already received messages
-            if (G->TR->GUIlevel == POP_USER)					// manually initiated transfer
+            if (C->AvoidDuplicates) TR_GetUIDL();        // read UIDL file to compare against already received messages
+            if (G->TR->GUIlevel == POP_USER)             // manually initiated transfer
             {
-               if (C->PreSelection >= 2) preselect = TRUE;				// preselect messages if preference is "always [sizes only]"
-               if (C->WarnSize && C->PreSelection)							// ...or any sort of preselection and there is a maximum size
-                  for (mail = G->TR->List; mail; mail = mail->Next)	// ...and one of the messages is at least this big
+               if (C->PreSelection >= 2) preselect = TRUE;           // preselect messages if preference is "always [sizes only]"
+               if (C->WarnSize && C->PreSelection)                   // ...or any sort of preselection and there is a maximum size
+                  for (mail = G->TR->List; mail; mail = mail->Next)  // ...and one of the messages is at least this big
                      if (mail->Size >= C->WarnSize<<10) { preselect = TRUE; break; }
             }
-            if (preselect)												// anything to preselect?
+            if (preselect)                               // anything to preselect?
             {
                set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
                if (C->PreSelection == 1)
                {
-                  TR_DisplayMailList(TRUE);										// add entries to list
-                  set(G->TR->GUI.GR_LIST, MUIA_ShowMe, TRUE);				// ...and show it
-                  set(G->TR->GUI.WI, MUIA_Window_Activate, TRUE);			// activate window
+                  TR_DisplayMailList(TRUE);                          // add entries to list
+                  set(G->TR->GUI.GR_LIST, MUIA_ShowMe, TRUE);        // ...and show it
+                  set(G->TR->GUI.WI, MUIA_Window_Activate, TRUE);    // activate window
                   DoMethod(G->TR->GUI.WI, MUIM_Window_ScreenToFront);
                }
                else TR_DisplayMailList(FALSE);
