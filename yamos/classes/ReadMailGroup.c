@@ -762,7 +762,7 @@ DECLARE(CheckPGPSignature) // BOOL forceRequester
 			strcat(buffer, rmData->sigAuthor);
 		}
 		
-		MUI_Request(G->App, obj, 0, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);
+		MUI_Request(G->App, _win(obj), MUIF_NONE, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);
 	}
 
 	return TRUE;
