@@ -28,13 +28,13 @@
 #include "YAM_global.h"
 #include "YAM_locale.h"
 
-#if defined __PPC__
+#if defined(__PPC__)
   #define CPU " [PPC]"
-#elif defined _M68060
+#elif defined(_M68060) || defined(__M68060) || defined(__mc68060)
   #define CPU " [060]"
-#elif defined _M68040
+#elif defined(_M68040) || defined(__M68040) || defined(__mc68040)
   #define CPU " [040]"
-#elif defined _M68020
+#elif defined(_M68020) || defined(__M68020) || defined(__mc68020)
   #define CPU " [020]"
 #else
   #define CPU ""
@@ -122,4 +122,3 @@ APTR ContTypeDesc[MAXCTYPE] =
 char *wdays[7] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
 char *months[12] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
 char *SecCodes[5] = { "none","sign","encrypt","sign+encrypt","anonymous" };
-
