@@ -92,7 +92,9 @@ APTR AB_GotoEntry(char *alias)
 {
    struct MUI_NListtree_TreeNode *tn;
 
-   if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, alias, 0, TAG_DONE))
+   if(!alias) return NULL;
+
+   if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, alias, MUIF_NONE))
    {
       DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
       set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active, tn);

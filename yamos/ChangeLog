@@ -1,3 +1,8 @@
+2002-05-02  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug #551543 where we didn`t check for a NULL pointer in
+      YAM_AB.c - AB_GotoEntry().
+
 2002-05-01  David Rey <david@saug.org>
 
     * YAM_WR.c: updated the URLs given by the MIME warning in
