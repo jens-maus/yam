@@ -1,5 +1,8 @@
 2002-05-10  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * added #define vars for the rule actions in YAM_main.h and
+      spread them all over the sources to deal with symbolic names
+      instead.
     * YAM_CO.c: changed the AddRule button behaviour a bit, so
       that it will now automatically activate the name stringgadget
       and autoselect any string in there. This should be a bit more

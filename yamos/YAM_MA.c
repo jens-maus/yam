@@ -1444,7 +1444,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   mlist[0] = (struct Mail *)1; mlist[1] = NULL; mlist[2] = mail;
 
   // Bounce Action
-  if ((rule->Actions & 1) == 1 && !rule->Remote && *rule->BounceTo)
+  if ((rule->Actions & RULE_BOUNCE) == RULE_BOUNCE && !rule->Remote && *rule->BounceTo)
   {
     G->RRs.Bounced++;
     MA_NewBounce(mail, TRUE);
@@ -1453,7 +1453,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // Forward Action
-  if ((rule->Actions & 2) == 2 && !rule->Remote && *rule->ForwardTo)
+  if ((rule->Actions & RULE_FORWARD) == RULE_FORWARD && !rule->Remote && *rule->ForwardTo)
   {
     G->RRs.Forwarded++;
     MA_NewForward(mlist, TRUE);
@@ -1462,7 +1462,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // Reply Action
-  if ((rule->Actions & 4) == 4 && !rule->Remote && *rule->ReplyFile)
+  if ((rule->Actions & RULE_REPLY) == RULE_REPLY && !rule->Remote && *rule->ReplyFile)
   {
     MA_NewReply(mlist, TRUE);
     FileToEditor(rule->ReplyFile, G->WR[2]->GUI.TE_EDIT);
@@ -1471,7 +1471,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // Execute Action
-  if ((rule->Actions & 8) == 8 && *rule->ExecuteCmd)
+  if ((rule->Actions & RULE_EXECUTE) == RULE_EXECUTE && *rule->ExecuteCmd)
   {
     char buf[SIZE_COMMAND+SIZE_PATHFILE];
     sprintf(buf, "%s %s", rule->ExecuteCmd, GetMailFile(NULL, NULL, mail));
@@ -1480,13 +1480,13 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // PlaySound Action
-  if ((rule->Actions & 16) == 16 && *rule->PlaySound)
+  if ((rule->Actions & RULE_PLAYSOUND) == RULE_PLAYSOUND && *rule->PlaySound)
   {
     PlaySound(rule->PlaySound);
   }
 
   // Move Action
-  if ((rule->Actions & 32) == 32 && !rule->Remote)
+  if ((rule->Actions & RULE_MOVE) == RULE_MOVE && !rule->Remote)
   {
     if((fo = FO_GetFolderByName(rule->MoveTo, NULL)))
     {
@@ -1502,7 +1502,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // Delete Action
-  if ((rule->Actions & 64) == 64)
+  if ((rule->Actions & RULE_DELETE) == RULE_DELETE)
   {
     G->RRs.Deleted++;
     if (mail->Flags & MFLAG_SENDMDN) if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);

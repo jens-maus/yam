@@ -44,6 +44,7 @@
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
+#include "YAM_main.h"
 #include "YAM_utilities.h"
 
 /***************************************************************************
@@ -377,14 +378,14 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                      stccpy(ru->Match[0], p2, SIZE_PATTERN);
                      switch (atoi(p))
                      {
-                        case 0: ru->Actions = 32; break;
-                        case 1: ru->Actions = 64; break;
-                        case 2: ru->Actions = 2; break;
+                        case 0: ru->Actions = RULE_MOVE;    break;
+                        case 1: ru->Actions = RULE_DELETE;  break;
+                        case 2: ru->Actions = RULE_FORWARD; break;
                      }
                      p = strchr(p2 = &p[2], ';'); *p++ = 0;
                      stccpy(ru->MoveTo, p2, SIZE_NAME);
                      stccpy(ru->ForwardTo, p, SIZE_ADDRESS);
-                     if (*ru->ForwardTo) ru->Actions |= 2;
+                     if (*ru->ForwardTo) ru->Actions |= RULE_FORWARD;
                   }
                   if (!strnicmp(buffer, "MimeViewer", 10))
                   {

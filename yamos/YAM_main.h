@@ -37,6 +37,16 @@
 struct Rule;
 #endif
 
+// lets define all the Rule->Actions flags
+#define RULE_BOUNCE       1
+#define RULE_FORWARD      2
+#define RULE_REPLY        4
+#define RULE_EXECUTE      8
+#define RULE_PLAYSOUND   16
+#define RULE_MOVE        32
+#define RULE_DELETE      64
+#define RULE_SKIP       128
+
 #define ANYBOX NULL
 
 #define MFLAG_MULTIRCPT   1
