@@ -1,4 +1,4 @@
-## version $VER: Deutsch.ct 5.2 (28.10.00)
+## version $VER: Deutsch.ct 5.3 (27.1.01)
 ## language deutsch
 ## codeset 0
 ;
@@ -876,12 +876,12 @@ Neu starten
 ;Restart
 ;
 MSG_MA_Hide
-Verbergen
-;Hide
+H\000Verbergen
+;H\000Hide
 ;
 MSG_MA_Quit
-Beenden
-;Quit
+Q\000Beenden
+;Q\000Quit
 ;
 MSG_MA_NewFolder
 Neues Postfach...
@@ -908,8 +908,8 @@ Auswählen
 ;Select
 ;
 MSG_MA_SelectAll
-Alle
-;All
+L\000Alle
+;L\000All
 ;
 MSG_MA_SelectNone
 Keine
@@ -920,20 +920,20 @@ Invertieren
 ;Toggle
 ;
 MSG_MA_MSearch
-Suchen...
-;Search...
+F\000Suchen...
+;F\000Search...
 ;
 MSG_MA_MFilter
-Filtern...
-;Filter
+I\000Filtern...
+;I\000Filter
 ;
 MSG_MA_RemoveDeleted
-Gelöschte entfernen
-;Empty trash
+Z\000Gelöschte entfernen
+;Z\000Empty trash
 ;
 MSG_MA_UpdateIndex
-Index erneuern
-;Update index
+U\000Index erneuern
+;U\000Update index
 ;
 MSG_MA_FlushIndices
 Indizes freigeben
@@ -948,20 +948,20 @@ Importieren...
 ;Import...
 ;
 MSG_MA_MSendAll
-Post in Warteschlange senden
-;Send queued mail
+S\000Post in Warteschlange senden
+;S\000Send queued mail
 ;
 MSG_MA_Exchange
-Post austauschen
-;Exchange mail
+X\000Post austauschen
+;X\000Exchange mail
 ;
 MSG_MA_MGetMail
-Neue Post holen
-;Get new mail
+G\000Neue Post holen
+;G\000Get new mail
 ;
 MSG_MA_MRead
-Lesen
-;Read
+D\000Lesen
+;D\000Read
 ;
 MSG_MA_MEdit
 Ändern
@@ -1008,20 +1008,20 @@ Status setzen
 ;Set status to
 ;
 MSG_MA_ToUnread
-Ungelesen
-;Unread
++\000Ungelesen
+;[\000Unread
 ;
 MSG_MA_ToRead
-Gelesen
-;Read
+-\000Gelesen
+;]\000Read
 ;
 MSG_MA_ToHold
-Gesperrt
-;Hold
+*\000Gesperrt
+;{\000Hold
 ;
 MSG_MA_ToQueued
-In Warteschlange
-;Queued
+_\000In Warteschlange
+;}\000Queued
 ;
 MSG_MA_ChangeSubj
 Betreff ändern...
@@ -5398,6 +5398,106 @@ Rexx-Skript
 ;
 ; ADDED AFTER 04-DEC-2000
 ;
+MSG_PROJECT_ABOUT
+?\000Über...
+;?\000About...
+;
+MSG_PROJECT_CHECKVERSION
+Version überprüfen
+;Check version
+;
+MSG_FOLDER_NEWFOLDER
+Neues Postfach...
+;New folder...
+;
+MSG_FOLDER_NEWSEPARATOR
+Neue Trennlinie...
+;New separator...
+;
+MSG_FOLDER_EDIT
+Bearbeiten
+;Edit
+;
+MSG_FOLDER_DELETE
+Löschen
+;Delete
+;
+MSG_FOLDER_IMPORT
+Importieren...
+;Import...
+;
+MSG_FOLDER_EXPORT
+Exportieren...
+;Export...
+;
+MSG_MESSAGE_EDIT
+E\000Bearbeiten
+;E\000Edit
+;
+MSG_MESSAGE_MOVE
+M\000Verschieben...
+;M\000Move...
+;
+MSG_MESSAGE_COPY
+Kopieren...
+;Copy...
+;
+MSG_MESSAGE_PRINT
+P\000Drucken...
+;P\000Print...
+;
+MSG_MESSAGE_SAVE
+S\000Speichern...
+;V\000Save...
+;
+MSG_MESSAGE_SAVEATT
+T\000Speichern
+;T\000Save
+;
+MSG_MESSAGE_CROP
+O\000Abschneiden
+;O\000Crop
+;
+MSG_MESSAGE_EXPORT
+Exportieren...
+;Export...
+;
+MSG_MESSAGE_NEW
+N\000Neu
+;N\000New
+;
+MSG_MESSAGE_REPLY
+R\000Antworten...
+;R\000Reply...
+;
+MSG_MESSAGE_FORWARD
+W\000Weiterleiten...
+;W\000Forward...
+;
+MSG_MESSAGE_BOUNCE
+B\000Umleiten...
+;B\000Bounce...
+;
+MSG_MESSAGE_GETADDRESS
+J\000Adresse speichern...
+;J\000Save address...
+;
+MSG_MESSAGE_CHANGESUBJECT
+Betreff ändern...
+;Change subject...
+;
+MSG_SETTINGS_ADDRESSBOOK
+A\000Addressbuch...
+;A\000Address Book...
+;
+MSG_SETTINGS_CONFIG
+K\000Konfiguration...
+;K\000Configuration...
+;
+MSG_SETTINGS_USERS
+Benutzer...
+;Users...
+;
 MSG_FO_FromAddress
 Absenderadresse
 ;From: address
@@ -5439,10 +5539,29 @@ MSG_WR_DefSecurityConflictGads
 *_Keine|_Signieren|_Verschlüsseln|_Beides|_Anonym senden
 ;*_None|_Sign|_Encrypt|_Both|Send _anonymously
 ;
-MSG_WR_CH_UseDefSecurity
+MSG_WR_SecDefaults
 Voreinstellungen versuchen
 ;
-MSG_HELP_WR_CH_UseDefSecurity
-Versuche die Voreinstellungen aus dem\n\
-Adressbuch zu verwenden
+MSG_ER_PGPMultipart
+Fehler beim Erstellen der Multipart-PGP-Nachricht. Verschlüsselung/Signatur abgeschaltet!
+;Error creating multipart PGP message. Encryption/signing disabled!
 ;
+MSG_RE_FixedFont
+Zeichensatz fester Breite
+;Fixed font
+;
+MSG_ER_NO_SMTP_AUTH
+Der ESMTP Server %s unterstützt kein SMTP AUTH!
+;ESMTP Server %s doesn't support SMTP AUTH!
+;
+MSG_CO_UseSMTPAUTH
+SMTP _AUTH benutzen
+;Use SMTP _AUTH
+;
+MSG_CO_SMTPUser
+_Benutzerkennung
+;_User ID
+;
+MSG_CO_SMTPPass
+Pa_sswort
+;Pa_ssword
