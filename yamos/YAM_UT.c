@@ -2469,11 +2469,12 @@ ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
 ///
 /// GetMUI
 //  Gets an attribute value from a MUI object
-int GetMUI(Object *obj,int attr)
+LONG GetMUI(Object *obj, ULONG attr)
 {
    LONG b;
-   get(obj,attr,&b);
-   return (int)b;
+
+   get(obj, attr, &b);
+   return b;
 }
 ///
 /// GetMUIStringPtr

@@ -61,11 +61,11 @@ struct EA_GUIData
 
 struct EA_ClassData  /* address book entry window */
 {
-   struct EA_GUIData              GUI;
-   struct MUI_NListtree_TreeNode *EditNode;
-   int                            Type;
-   int                            EntryPos;
-   char                           PhotoName[SIZE_PATHFILE];
+   struct EA_GUIData  GUI;
+   struct ABEntry     *ABEntry;
+   int                Type;
+   int                EntryPos;
+   char               PhotoName[SIZE_PATHFILE];
 };
 
 enum ABEntry_Type { AET_USER=0, AET_LIST, AET_GROUP };
@@ -93,7 +93,7 @@ struct ABEntry
 void   EA_AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn);
 void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list);
 void   EA_FixAlias(struct ABEntry *ab, BOOL excludemyself);
-int    EA_Init(enum ABEntry_Type type, struct MUI_NListtree_TreeNode *tn);
+int    EA_Init(enum ABEntry_Type type, struct ABEntry *ab);
 void   EA_InsertBelowActive(struct ABEntry *addr, int flags);
 void   EA_SetDefaultAlias(struct ABEntry *ab);
 void   EA_Setup(int winnum, struct ABEntry *ab);

@@ -6,7 +6,7 @@
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
+ the Free Software Foundation; either version 2 of the License
  (at your option) any later version.
 
  This program is distributed in the hope that it will be useful,
@@ -56,6 +56,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -107,7 +108,7 @@ static APTR MakeAddressField(APTR*, char*, APTR, int, int, BOOL);
 static struct WR_ClassData *WR_NewBounce(int);
 static struct WR_ClassData *WR_New(int winnum);
 
-static char FailedAlias[SIZE_NAME];
+static char FailedAlias[SIZE_ADDRESS];
 /**************************************************************************/
 
 /*** Translate aliases ***/
@@ -115,77 +116,74 @@ static char FailedAlias[SIZE_NAME];
 /*** WR_ResolveName - Looks for an alias, email address or name in the address book ***/
 int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
 {
-   int hits = 0, i, retcode;
-   struct ABEntry *ab;
-   struct MUI_NListtree_TreeNode *tn, *tn2;
+  int hits = 0, retcode;
+  struct ABEntry *ab = NULL;
 
-   MyStrCpy(FailedAlias, name);
-   AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
-   if (hits > 1) return 3; /* multiple matches */
-   if (!hits)
-   {
-      AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
-      if (hits > 1) return 3;
-      else if (!hits)
+  MyStrCpy(FailedAlias, name);
+
+  if((hits = AB_SearchEntry(name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab)) == 0)
+  {
+    if((hits = AB_SearchEntry(name, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP, &ab)) == 0)
+    {
+      if((hits = AB_SearchEntry(name, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_GROUP, &ab)) != 1)
       {
-        AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
-        if (hits > 1) return 3;
-        else
+        if (strchr(name, '@'))
         {
-          if (!hits && strchr(name, '@'))
-          {
-            char *p = NULL;
-            struct Person pe;
+          char *p = NULL;
+          struct Person pe;
 
-            ExtractAddress(name, &pe);
+          ExtractAddress(name, &pe);
 
-            if (pe.Address[0]) p = strchr(pe.Address, '@'); // is it an email address?
+          if (pe.Address[0]) p = strchr(pe.Address, '@'); // is it an email address?
 
-            if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
-            if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
-            *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
-            return 0; // if it is an email we return without an error because finding an entry for an email isn`t a must
-          }
-          else if (!hits) return 2;
+          if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
+          if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
+          *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
+
+          return 0; // if it is an email we return without an error because finding an entry for an email isn`t a must
+        }
+        else return 2;
+      }
+    }
+  }
+
+  // if we found more than one entry we return with error 3
+  if (hits > 1) return 3;
+
+  switch (ab->Type)
+  {
+    case AET_USER:
+    {
+      if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
+      *adrstr = StrBufCat(*adrstr, BuildAddrName(ab->Address, ab->RealName));
+    }
+    break;
+
+    case AET_LIST:
+    {
+      if (nolists) return 4;
+      if (winnum >= 0 && (ab->Address[0] || ab->RealName[0]) && !G->WR[winnum]->ListEntry) G->WR[winnum]->ListEntry = ab;
+
+      if (ab->Members)
+      {
+        char *ptr;
+
+        for (ptr = ab->Members; *ptr; ptr++)
+        {
+          char *nptr = strchr(ptr, '\n');
+
+          if (nptr) *nptr = 0;
+          else break;
+
+          retcode = WR_ResolveName(winnum, ptr, adrstr, nolists);
+          *nptr = '\n'; ptr = nptr;
+          if (retcode) return retcode;
         }
       }
+    }
+    break;
    }
 
-   ab = tn->tn_User;
-
-   switch (ab->Type)
-   {
-      case AET_USER:
-         if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
-         *adrstr = StrBufCat(*adrstr, BuildAddrName(ab->Address, ab->RealName));
-         break;
-      case AET_LIST:
-         if (nolists) return 4;
-         if (winnum >= 0) if ((ab->Address[0] || ab->RealName[0]) && !G->WR[winnum]->ListEntry) G->WR[winnum]->ListEntry = ab;
-         if (ab->Members)
-         {
-            char *ptr;
-            for (ptr = ab->Members; *ptr; ptr++)
-            {
-               char *nptr = strchr(ptr, '\n');
-               if (nptr) *nptr = 0; else break;
-               retcode = WR_ResolveName(winnum, ptr, adrstr, nolists);
-               *nptr = '\n'; ptr = nptr;
-               if (retcode) return retcode;
-            }
-         }
-         break;
-      case AET_GROUP:
-         if (nolists) return 4;
-         for (i=0; ; i++)
-            if ((tn2 = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_GetEntry, tn, i, MUIV_NListtree_GetEntry_Flag_SameLevel, 0)))
-            {
-               struct ABEntry *ab2 = tn2->tn_User;
-               if ((retcode = WR_ResolveName(winnum, ab2->Alias, adrstr, nolists))) return retcode;
-            }
-            else break;
-         break;
-   }
    return 0;
 }
 
@@ -664,19 +662,19 @@ static void WR_WriteUIItem(FILE *fh, int *len, char *parameter, char *value)
 //  Outputs X-SenderInfo header line
 static void WR_WriteUserInfo(FILE *fh)
 {
-   int len = 15, hits = 0;
+   int len = 15;
    struct ABEntry *ab = NULL;
-   struct MUI_NListtree_TreeNode *tn;
 
-   if (AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, C->EmailAddress, ASM_ADDRESS|ASM_USER, &hits, &tn))
+   if (AB_SearchEntry(C->EmailAddress, ASM_ADDRESS|ASM_USER, &ab))
    {
-      ab = tn->tn_User;
       if (ab->Type != AET_USER) ab = NULL;
       else if (!*ab->Homepage && !*ab->Phone && !*ab->Street && !*ab->City && !*ab->Country && !ab->BirthDay) ab = NULL;
    }
+
    if (!ab && !*C->MyPictureURL) return;
    fputs("X-SenderInfo: 1", fh);
    if (*C->MyPictureURL) WR_WriteUIItem(fh, &len, "picture", C->MyPictureURL);
+
    if (ab)
    {
       if (*ab->Homepage) WR_WriteUIItem(fh, &len, "homepage", ab->Homepage);
@@ -848,15 +846,19 @@ static void WR_Anonymize(FILE *fh, char *body)
 //  Gets PGP key id for a person
 static char *WR_GetPGPId(struct Person *pe)
 {
-   int hits;
-   char *pgpid = NULL;
-   struct MUI_NListtree_TreeNode *tn;
-   if (!AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, pe->RealName, ASM_REALNAME|ASM_USER, &hits, &tn))
-        AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, pe->Address, ASM_ADDRESS|ASM_USER, &hits, &tn);
-   if (hits && tn && tn->tn_User)
-      if (((struct ABEntry *)(tn->tn_User))->PGPId[0])
-         pgpid = ((struct ABEntry *)(tn->tn_User))->PGPId;
-   return pgpid;
+  char *pgpid = NULL;
+  struct ABEntry *ab = NULL;
+
+  if(AB_SearchEntry(pe->RealName, ASM_REALNAME|ASM_USER, &ab) == 0)
+  {
+    AB_SearchEntry(pe->Address, ASM_ADDRESS|ASM_USER, &ab);
+  }
+
+  if(!ab) return(NULL);
+
+  if (ab->PGPId[0]) pgpid = ab->PGPId;
+
+  return pgpid;
 }
 ///
 /// WR_GetPGPIds
@@ -1005,10 +1007,9 @@ static void SetDefaultSecurity(struct Compose *comp)
       /* copy string as strtok() will modify it */
       if((buf = (STRPTR)strdup(CheckThese[i])))
       {
-         int hits = 0;
          enum Security currsec;
          STRPTR in=buf,s,t;
-         struct MUI_NListtree_TreeNode *tn;
+         struct ABEntry *ab = NULL;
 
          /* loop through comma-separated addresses in string */
          while((s = strtok_r((char **)&in,",")))
@@ -1019,14 +1020,13 @@ static void SetDefaultSecurity(struct Compose *comp)
                   break;
             }
 
-            if(!t)
-               continue; /* can't find address for this entry - shouldn't happen */
+            if(!t) continue; /* can't find address for this entry - shouldn't happen */
 
-            if(AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, t,
-            ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
-               currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity; /* get default from entry */
-            else
-               currsec = 0;    /* entry not in address book -> no security */
+            if(AB_SearchEntry(t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &ab) && (ab != NULL))
+            {
+              currsec = ab->DefSecurity; /* get default from entry */
+            }
+            else currsec = 0;    /* entry not in address book -> no security */
 
             if(currsec != security)
             {

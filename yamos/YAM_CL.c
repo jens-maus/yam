@@ -245,8 +245,8 @@ DISPATCHERPROTO(WS_Dispatcher)
       case MUIM_DragQuery:
          result = MUIV_DragQuery_Refuse;
          if (d->obj == G->MA->GUI.NL_MAILS) result = MUIV_DragQuery_Accept;
-         else if (d->obj == G->AB->GUI.LV_ADRESSES)
-            if (active = (struct MUI_NListtree_TreeNode *)DoMethod(d->obj, MUIM_NListtree_GetEntry, NULL, MUIV_NListtree_GetEntry_Position_Active, 0))
+         else if (d->obj == G->AB->GUI.LV_ADDRESSES)
+            if (active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active))
                if (!(active->tn_Flags & TNF_LIST)) result = MUIV_DragQuery_Accept;
          break;
       case MUIM_DragDrop:
@@ -257,9 +257,9 @@ DISPATCHERPROTO(WS_Dispatcher)
             if (OUTGOING(mail->Folder->Type)) AB_InsertAddress(obj, "", mail->To.RealName, mail->To.Address);
             else AB_InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
          }
-         else if (d->obj == G->AB->GUI.LV_ADRESSES)
+         else if (d->obj == G->AB->GUI.LV_ADDRESSES)
          {
-            struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)DoMethod(d->obj, MUIM_NListtree_GetEntry, NULL, MUIV_NListtree_GetEntry_Position_Active, 0);
+            struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active);
             struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
             AB_InsertAddress(obj, addr->Alias, addr->RealName, "");
          }
@@ -348,7 +348,7 @@ DISPATCHERPROTO(FL_Dispatcher)
          if(!tn_dst) return 0;
          dstfolder = tn_dst->tn_User;
 
-         tn_src = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, MUIV_NListtree_GetEntry_Position_Active, 0, TAG_DONE);
+         tn_src = (struct MUI_NListtree_TreeNode *)GetMUI(obj, MUIA_NListtree_Active);
          if(!tn_src) return 0;
          srcfolder = tn_src->tn_User;
 
@@ -402,14 +402,14 @@ DISPATCHERPROTO(EL_Dispatcher)
    {
       case MUIM_DragQuery:
          if (d->obj == obj) break;
-         if (d->obj == G->AB->GUI.LV_ADRESSES && d->obj != obj)
-            if (active = (struct MUI_NListtree_TreeNode *)DoMethod(d->obj, MUIM_NListtree_GetEntry, NULL, MUIV_NListtree_GetEntry_Position_Active, 0))
+         if (d->obj == G->AB->GUI.LV_ADDRESSES && d->obj != obj)
+            if (active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active))
                if (!((struct ABEntry *)(active->tn_User))->Members) return MUIV_DragQuery_Accept;
          return MUIV_DragQuery_Refuse;
       case MUIM_DragDrop:
          if (d->obj == obj) break;
-         if (d->obj == G->AB->GUI.LV_ADRESSES && d->obj != obj)
-            if (active = (struct MUI_NListtree_TreeNode *)DoMethod(d->obj, MUIM_NListtree_GetEntry, NULL, MUIV_NListtree_GetEntry_Position_Active, 0))
+         if (d->obj == G->AB->GUI.LV_ADDRESSES && d->obj != obj)
+            if (active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active))
                if (active->tn_Flags & TNF_LIST) EA_AddMembers(obj, active);
                else EA_AddSingleMember(obj, active);
          return 0;
@@ -479,15 +479,15 @@ DISPATCHERPROTO(TE_Dispatcher)
       case MUIM_DragQuery:
       {
          struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-         return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADRESSES);
+         return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADDRESSES);
       }
       case MUIM_DragDrop:
       {
          struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-         if (drop_msg->obj == G->AB->GUI.LV_ADRESSES)
+         if (drop_msg->obj == G->AB->GUI.LV_ADDRESSES)
          {
             struct MUI_NListtree_TreeNode *tn;
-            if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(drop_msg->obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Active, MUIV_NListtree_GetEntry_Position_Active, 0))
+            if (tn = (struct MUI_NListtree_TreeNode *)GetMUI(drop_msg->obj, MUIA_NListtree_Active))
             {
                struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
                if (ab->Type != AET_GROUP)

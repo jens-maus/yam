@@ -32,6 +32,7 @@
 #include <mui/Toolbar_mcc.h>
 
 #include "SDI_compiler.h"
+#include "YAM_addressbookEntry.h"
 #include "YAM_stringsizes.h"
 
 #define ASM_ALIAS    0
@@ -51,7 +52,7 @@ struct AB_GUIData
 {
    APTR WI;
    APTR TO_TOOLBAR;
-   APTR LV_ADRESSES;
+   APTR LV_ADDRESSES;
    APTR BT_TO;
    APTR BT_CC;
    APTR BT_BCC;
@@ -78,15 +79,16 @@ void   AB_CheckBirthdates(void);
 char * AB_CompleteAlias(char *text);
 long   AB_CompressBD(char *datestr);
 char * AB_ExpandBD(long date);
-BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, enum AddressbookFind mode,
-       char **result);
+BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, enum AddressbookFind mode, char **result);
 APTR   AB_GotoEntry(char *alias);
 void   AB_InsertAddress(APTR string, char *alias, char *name, char *address);
 BOOL   AB_LoadTree(char *fname, BOOL append, BOOL sorted);
 void   AB_MakeABFormat(APTR lv);
 struct AB_ClassData *AB_New(void);
 BOOL   AB_SaveTree(char *fname);
-int STACKEXT AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *text, int mode,
-       int *hits, struct MUI_NListtree_TreeNode **lasthit);
+int AB_SearchEntry(char *text, int mode, struct ABEntry **ab);
+
+//int STACKEXT AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *text, int mode,
+//       int *hits, struct MUI_NListtree_TreeNode **lasthit);
 
 #endif /* YAM_ADDRESSBOOK_H */

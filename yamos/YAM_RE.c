@@ -2344,9 +2344,10 @@ static void RE_AddSenderInfo(int winnum, struct ABEntry *ab)
 //  Adds sender to the address book
 static struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
 {
-   struct ABEntry new;
+   struct ABEntry ab_new;
    char buf[SIZE_LARGE];
    BOOL doit = FALSE;
+
    switch (C->AddToAddrbook)
    {        
       case 1: if (!templ->Type) break;
@@ -2356,24 +2357,25 @@ static struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
       case 3: if (!templ->Type) break;
       case 4: doit = TRUE;
    }
+
    if (doit)
    {
-      struct MUI_NListtree_TreeNode *tn = MUIV_NListtree_Insert_ListNode_Root;
-      int hits = 0;
+      struct MUI_NListtree_TreeNode *tn = NULL;
 
-      if (*C->NewAddrGroup) if (!AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, C->NewAddrGroup, ASM_ALIAS|ASM_GROUP, &hits, &tn))
+      if (*C->NewAddrGroup && !DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, C->NewAddrGroup, 0, TAG_DONE))
       {
-         memset(&new, 0, sizeof(struct ABEntry));
-         stccpy(new.Alias, C->NewAddrGroup, SIZE_NAME);
-         stccpy(new.Comment, GetStr(MSG_RE_NewGroupTitle), SIZE_DEFAULT);
-         new.Type = AET_GROUP;
-         tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_Insert, new.Alias, &new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST);
+         memset(&ab_new, 0, sizeof(struct ABEntry));
+         stccpy(ab_new.Alias, C->NewAddrGroup, SIZE_NAME);
+         stccpy(ab_new.Comment, GetStr(MSG_RE_NewGroupTitle), SIZE_DEFAULT);
+         ab_new.Type = AET_GROUP;
+         tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST, TAG_DONE);
       }
-      memset(&new, 0, sizeof(struct ABEntry));
-      new.Type = AET_USER;
-      RE_UpdateSenderInfo(&new, templ);
-      EA_SetDefaultAlias(&new);
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_Insert, new.Alias, &new, tn, MUIV_NListtree_Insert_PrevNode_Sorted, 0);
+
+      memset(&ab_new, 0, sizeof(struct ABEntry));
+      ab_new.Type = AET_USER;
+      RE_UpdateSenderInfo(&ab_new, templ);
+      EA_SetDefaultAlias(&ab_new);
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, tn, MUIV_NListtree_Insert_PrevNode_Sorted, 0, TAG_DONE);
       if (tn)
       {
          CallHookPkt(&AB_SaveABookHook, 0, 0);
@@ -2450,7 +2452,6 @@ static void RE_DisplayMessage(int winnum)
    BOOL dispheader;
    struct RE_GUIData *gui = &(G->RE[winnum]->GUI);
    struct Person *from = &G->RE[winnum]->Mail.From;
-   struct MUI_NListtree_TreeNode *tn;
    struct ABEntry *ab = NULL, abtmpl;
    int hits = 0;
 
@@ -2478,10 +2479,14 @@ static void RE_DisplayMessage(int winnum)
          while (*body && *body != '\n') body++;
          if (*body) body++;
       }
-      if (!AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, from->Address, ASM_ADDRESS|ASM_USER, &hits, &tn) && *from->RealName)
-           AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, from->RealName, ASM_REALNAME|ASM_USER, &hits, &tn);
-      if (hits) ab = tn->tn_User;
+
+      if ((hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab)) == 0 && *from->RealName)
+      {
+        hits = AB_SearchEntry(from->RealName, ASM_REALNAME|ASM_USER, &ab);
+      }
+
       RE_GetSenderInfo(G->RE[winnum]->MailPtr, &abtmpl);
+
       if (!stricmp(from->Address, C->EmailAddress) || !stricmp(from->RealName, C->RealName))
       {
          if (!ab) { ab = &abtmpl; *ab->Photo = 0; }
@@ -2527,6 +2532,7 @@ static void RE_DisplayMessage(int winnum)
       set(gui->TE_TEXT, MUIA_TextEditor_ImportHook, G->RE[winnum]->NoTextstyles ? MUIV_TextEditor_ImportHook_Plain : MUIV_TextEditor_ImportHook_EMail);
       set(gui->TE_TEXT, MUIA_TextEditor_FixedFont, G->RE[winnum]->FixedFont);
       set(gui->TE_TEXT, MUIA_TextEditor_Contents, body);
+
       free(cmsg);
    }
 }
@@ -2535,41 +2541,54 @@ static void RE_DisplayMessage(int winnum)
 //  User clicked on a e-mail address
 static void RE_ClickedOnMessage(char *address)
 {
-   struct MUI_NListtree_TreeNode *tn;
    struct ABEntry *ab = NULL;
    int l, win, hits = 0;
    char *p, *gads, buf[SIZE_LARGE], *body = NULL, *subject = NULL;
+
    if (l = strlen(address)) if (strchr(".?!", address[--l])) address[l] = 0;
+
    for (p = strchr(address, '&'); p; p = strchr(p, '&'))
    {
       *p++ = 0;
       if (!strnicmp(p, "body=", 5)) body = &p[5];
       if (!strnicmp(p, "subject=", 8)) subject = &p[8];
    }
-   if (AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, address, ASM_ADDRESS|ASM_USER|ASM_LIST, &hits, &tn)) ab = tn->tn_User;
+
+   hits = AB_SearchEntry(address, ASM_ADDRESS|ASM_USER|ASM_LIST, &ab);
+   if(!ab) return;
+
    sprintf(buf, GetStr(MSG_RE_SelectAddressReq), address);
    gads = GetStr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd);
+
    switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, gads, buf))
    {
-      case 1: if ((win = MA_NewNew(NULL, 0)) >= 0)
-              {
-                 struct WR_GUIData *gui = &G->WR[win]->GUI;
-                 setstring(gui->ST_TO, hits ? BuildAddrName(address, ab->RealName) : address);
-                 if (subject) setstring(gui->ST_SUBJECT, subject);
-                 if (body) set(gui->TE_EDIT, MUIA_TextEditor_Contents, body);
-                 set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
-              }
-              break;
-      case 2: DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
-              if (hits)
-              {
-                 if ((win = EA_Init(ab->Type, tn)) >= 0) EA_Setup(win, ab);
-              }
-              else
-              {
-                 if ((win = EA_Init(AET_USER, NULL)) >= 0) setstring(G->EA[win]->GUI.ST_ADDRESS, address);
-              }
-              break;
+      case 1:
+      {
+        if ((win = MA_NewNew(NULL, 0)) >= 0)
+        {
+          struct WR_GUIData *gui = &G->WR[win]->GUI;
+
+          setstring(gui->ST_TO, hits ? BuildAddrName(address, ab->RealName) : address);
+          if (subject) setstring(gui->ST_SUBJECT, subject);
+          if (body) set(gui->TE_EDIT, MUIA_TextEditor_Contents, body);
+          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
+        }
+      }
+      break;
+
+      case 2:
+      {
+        DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT, TAG_DONE);
+        if (hits)
+        {
+          if ((win = EA_Init(ab->Type, ab)) >= 0) EA_Setup(win, ab);
+        }
+        else
+        {
+          if ((win = EA_Init(AET_USER, NULL)) >= 0) setstring(G->EA[win]->GUI.ST_ADDRESS, address);
+        }
+      }
+      break;
    }
 }
 ///

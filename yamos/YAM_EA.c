@@ -40,6 +40,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
@@ -58,19 +59,21 @@ static struct EA_ClassData *EA_New(int, int);
 /*** Init & Open ***/
 /// EA_Init
 //  Creates and opens an address book entry window
-int EA_Init(enum ABEntry_Type type, struct MUI_NListtree_TreeNode *tn)
+int EA_Init(enum ABEntry_Type type, struct ABEntry *ab)
 {
    struct EA_ClassData *ea;
    int winnum;
    char *title = "";
+
    if ((winnum = EA_Open(type)) < 0) return -1;
    ea = G->EA[winnum];
-   ea->EditNode   = tn;
+   ea->ABEntry = ab;
+
    switch (type)
    {
-      case AET_USER:  title = tn ? GetStr(MSG_EA_EditUser) : GetStr(MSG_AB_AddUser); break;
-      case AET_LIST:  title = tn ? GetStr(MSG_EA_EditList) : GetStr(MSG_AB_AddList); break;
-      case AET_GROUP: title = tn ? GetStr(MSG_EA_EditGroup): GetStr(MSG_AB_AddGroup);
+      case AET_USER:  title = ab ? GetStr(MSG_EA_EditUser) : GetStr(MSG_AB_AddUser); break;
+      case AET_LIST:  title = ab ? GetStr(MSG_EA_EditList) : GetStr(MSG_AB_AddList); break;
+      case AET_GROUP: title = ab ? GetStr(MSG_EA_EditGroup): GetStr(MSG_AB_AddGroup);
    }
    set(ea->GUI.WI, MUIA_Window_Title, title);
    if (!SafeOpenWindow(ea->GUI.WI)) { DisposeModulePush(&G->EA[winnum]); return -1; }
@@ -145,7 +148,7 @@ void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
    int i;
    
    for (i=0; ; i++)
-      if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel))
+      if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel))
          if (tn->tn_Flags & TNF_LIST) EA_AddMembers(obj, tn);
          else EA_AddSingleMember(obj, tn);
       else break;
@@ -205,7 +208,7 @@ MakeStaticHook(EA_PutEntryHook, EA_PutEntry);
 //  Inserts an entry into the address book tree
 void EA_InsertBelowActive(struct ABEntry *addr, int flags)
 {
-  APTR lt = G->AB->GUI.LV_ADRESSES;
+  APTR lt = G->AB->GUI.LV_ADDRESSES;
   struct MUI_NListtree_TreeNode *node, *list;
 
   // get the active node
@@ -230,17 +233,24 @@ void EA_InsertBelowActive(struct ABEntry *addr, int flags)
 //  Avoids ambiguos aliases
 void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
 {
-   char alias[SIZE_NAME];
-   int c = 1, l, hits = 0;
-   struct MUI_NListtree_TreeNode *tn;
-   strcpy(alias, ab->Alias);
-   while (AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
-   {
-      if (tn->tn_User == ab && excludemyself && hits == 1) break;
-      if ((l = strlen(ab->Alias)) > SIZE_NAME-2) l = SIZE_NAME-2;
-      sprintf(&alias[l], "%ld", ++c); hits = 0;
-   }
-   strcpy(ab->Alias, alias);
+  char alias[SIZE_NAME];
+  int c = 1, l, hits = 0;
+  struct ABEntry *ab_found = NULL;
+
+  DB( kprintf("EA_FixAlias()\n"); )
+
+  strcpy(alias, ab->Alias);
+
+  while(AB_SearchEntry(alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab_found) > 0)
+  {
+    if (excludemyself && ab == ab_found) return;
+
+    if ((l = strlen(ab->Alias)) > SIZE_NAME-2) l = SIZE_NAME-2;
+    sprintf(&alias[l], "%ld", ++c);
+  }
+
+  // copy the modified string back
+  strcpy(ab->Alias, alias);
 }
 
 ///
@@ -276,7 +286,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
    int i, winnum = *arg;
    long bdate = 0;
    struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
-   BOOL old = G->EA[winnum]->EditNode != NULL;
+   BOOL old = G->EA[winnum]->ABEntry != NULL;
 
    memset(&newaddr, 0, sizeof(struct ABEntry));
    if (G->EA[winnum]->Type)
@@ -293,7 +303,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
    }
    set(gui->WI, MUIA_Window_Open, FALSE);
    G->AB->Modified = TRUE;
-   if (old) addr = G->EA[winnum]->EditNode->tn_User; else addr = &newaddr;
+   if (old) addr = G->EA[winnum]->ABEntry; else addr = &newaddr;
    GetMUIString(addr->Alias, gui->ST_ALIAS);
    GetMUIString(addr->Comment, gui->ST_COMMENT);
    switch (addr->Type = G->EA[winnum]->Type)
@@ -338,7 +348,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
       case AET_GROUP: EA_FixAlias(addr, old);
                       if (!old) EA_InsertBelowActive(addr, TNF_LIST);
    }
-   if (old) DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
+   if (old) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
    else AppendLogVerbose(71, GetStr(MSG_LOG_NewAddress), addr->Alias, "", "", "");
    DisposeModulePush(&G->EA[winnum]);
 }

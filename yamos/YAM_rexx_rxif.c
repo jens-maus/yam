@@ -1401,8 +1401,8 @@ void rx_addrinfo( struct RexxHost *host, struct rxd_addrinfo **rxd, long action,
    } *rd = (void *)*rxd;
    static char *types[3] = { "P","L","G"};
    char *ptr;
-   struct MUI_NListtree_TreeNode *tn;
-   int i, hits;
+   struct ABEntry *ab = NULL;
+   int i, j;
    switch( action )
    {
       case RXIF_INIT:
@@ -1410,42 +1410,45 @@ void rx_addrinfo( struct RexxHost *host, struct rxd_addrinfo **rxd, long action,
          break;
          
       case RXIF_ACTION:
-         hits = 0;
-         if (AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, rd->rd.arg.alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
-         {
-            struct ABEntry *ab = (struct ABEntry *)tn->tn_User;
-            rd->rd.res.type = types[ab->Type];
-            rd->rd.res.name = ab->RealName;
-            rd->rd.res.email = ab->Address;
-            rd->rd.res.pgp = ab->PGPId;
-            rd->rd.res.homepage = ab->Homepage;
-            rd->rd.res.street = ab->Street;
-            rd->rd.res.city = ab->City;
-            rd->rd.res.country = ab->Country;
-            rd->rd.res.phone = ab->Phone;
-            rd->rd.res.comment = ab->Comment;
-            rd->rd.res.birthdate = &ab->BirthDay;
-            rd->rd.res.image = ab->Photo;
-            if (ab->Members)
+      {
+        if (AB_SearchEntry(rd->rd.arg.alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab) && (ab != NULL))
+        {
+          rd->rd.res.type = types[ab->Type];
+          rd->rd.res.name = ab->RealName;
+          rd->rd.res.email = ab->Address;
+          rd->rd.res.pgp = ab->PGPId;
+          rd->rd.res.homepage = ab->Homepage;
+          rd->rd.res.street = ab->Street;
+          rd->rd.res.city = ab->City;
+          rd->rd.res.country = ab->Country;
+          rd->rd.res.phone = ab->Phone;
+          rd->rd.res.comment = ab->Comment;
+          rd->rd.res.birthdate = &ab->BirthDay;
+          rd->rd.res.image = ab->Photo;
+
+          if (ab->Members)
+          {
+            rd->members = calloc(strlen(ab->Members)+1,1);
+            strcpy(rd->members, ab->Members);
+            for (j = 0, ptr = rd->members; *ptr; j++, ptr++)
             {
-               rd->members = calloc(strlen(ab->Members)+1,1);
-               strcpy(rd->members, ab->Members);
-               for (hits = 0, ptr = rd->members; *ptr; hits++, ptr++)
-               {
-                  if (ptr = strchr(ptr, '\n')) *ptr = 0; else break;
-               }
-               rd->rd.res.members = rd->memberptr = calloc(hits+1, sizeof(char *));
-               for (i = 0, ptr = rd->members; i < hits; ptr += strlen(ptr)+1) rd->memberptr[i++] = ptr;
+              if (ptr = strchr(ptr, '\n')) *ptr = 0; else break;
             }
-         }
-         else rd->rd.rc = RETURN_ERROR;
-         break;
+            rd->rd.res.members = rd->memberptr = calloc(j+1, sizeof(char *));
+            for (i = 0, ptr = rd->members; i < j; ptr += strlen(ptr)+1) rd->memberptr[i++] = ptr;
+          }
+        }
+        else rd->rd.rc = RETURN_ERROR;
+      }
+      break;
       
       case RXIF_FREE:
-         if (rd->members) free(rd->members);
-         if (rd->memberptr) free(rd->memberptr);
-         FreeVec( rd );
-         break;
+      {
+        if (rd->members) free(rd->members);
+        if (rd->memberptr) free(rd->memberptr);
+        FreeVec( rd );
+      }
+      break;
    }
    return;
 }
@@ -1924,7 +1927,8 @@ void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action,
          break;
          
       case RXIF_ACTION:
-         if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Active, MUIV_NListtree_GetEntry_Position_Active, 0))
+      {
+         if(tn = (struct MUI_NListtree_TreeNode *)GetMUI(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
          {
             struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
             if (rd->arg.alias)    stccpy(ab->Alias, rd->arg.alias, SIZE_NAME);
@@ -1949,11 +1953,12 @@ void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action,
                strcpy(ab->Members, memb);
                FreeStrBuf(memb);
             }
-            DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_List_Redraw, MUIV_List_Redraw_All);
+            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, 0, TAG_DONE);
             G->AB->Modified = TRUE;
          }
          else rd->rc = RETURN_ERROR;
-         break;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );

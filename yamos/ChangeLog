@@ -563,4 +563,9 @@
 
     * fixed bug that caused that it was not possible to remove a entry from the folder
       listtree. (BUG #431912)
+    * reworked addressbook search functions (AB_SearchEntry) completly. Now a search
+      in the addressbook should perform faster. This will result in a faster
+      name completion in AddressFields and if a mail is going to be sent out
+    * fixed some addressbook<->NListtree related bugs/issues.
+    * fixed Distribution List bug (BUG #431536)
 
