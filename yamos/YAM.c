@@ -616,7 +616,7 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 ///
 /// InitLib
 //  Opens a library
-static struct Library *InitLib(char *libname, int version, int revision, BOOL required, BOOL close)
+static APTR InitLib(char *libname, int version, int revision, BOOL required, BOOL close)
 {
    struct Library *lib = OpenLibrary(libname, version);
 
@@ -739,7 +739,7 @@ static void Initialise(BOOL hidden)
 
    /* First open locale.library, so we can display a translated error requester
       in case some of the other libraries can't be opened. */
-   if ((LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE)))
+   if ((LocaleBase = InitLib("locale.library", 38, 0, TRUE, FALSE)))
      G->Locale = OpenLocale(NULL);
 
    // Now load the catalog of YAM
@@ -748,11 +748,11 @@ static void Initialise(BOOL hidden)
    WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
    KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
    IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
-   RexxSysBase = (struct RxsLib *)InitLib(RXSNAME, 36, 0, TRUE, FALSE);
+   RexxSysBase = InitLib(RXSNAME, 36, 0, TRUE, FALSE);
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
 
    // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
-   PopupMenuBase = (struct PopupMenuBase *)InitLib(POPUPMENU_NAME, 9, 0, FALSE, FALSE);
+   PopupMenuBase = InitLib(POPUPMENU_NAME, 9, 0, FALSE, FALSE);
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
@@ -947,9 +947,9 @@ int main(int argc, char **argv)
 
    WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
-   IntuitionBase = (struct IntuitionBase *)InitLib("intuition.library", 36, 0, TRUE, FALSE);
+   IntuitionBase = InitLib("intuition.library", 36, 0, TRUE, FALSE);
    IconBase = InitLib("icon.library", 36, 0, TRUE, FALSE);
-   UtilityBase = (struct UtilityBase *)InitLib("utility.library", 36, 0, TRUE, FALSE);
+   UtilityBase = InitLib("utility.library", 36, 0, TRUE, FALSE);
 
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
    nrda.ExtHelp = NULL;
