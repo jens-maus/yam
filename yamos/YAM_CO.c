@@ -303,14 +303,14 @@ HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
    for (i = 0; i < 2; i++)
    {
       src = &(gui->GR_SEARCH[i+2*(!rm)]); dst = &(gui->GR_SEARCH[i+2*rm]);
-      nnset(dst->CY_MODE, MUIA_Cycle_Active, GetMUICycle(src->CY_MODE));
+      set(dst->CY_MODE, MUIA_Cycle_Active, GetMUICycle(src->CY_MODE));
       nnset(dst->RA_ADRMODE, MUIA_Radio_Active, GetMUIRadio(src->RA_ADRMODE));
       nnset(dst->ST_FIELD, MUIA_String_Contents, (STRPTR)xget(src->ST_FIELD, MUIA_String_Contents));
       for (m = 0; m < 5; m++)
       {
          nnset(dst->CY_COMP[m], MUIA_Cycle_Active, GetMUICycle(src->CY_COMP[m]));
          if (src->ST_MATCH[m]) nnset(dst->ST_MATCH[m], MUIA_String_Contents, (STRPTR)xget(src->ST_MATCH[m], MUIA_String_Contents));
-                          else nnset(dst->CY_STATUS, MUIA_Cycle_Active, GetMUICycle(src->CY_STATUS));
+         else nnset(dst->CY_STATUS, MUIA_Cycle_Active, GetMUICycle(src->CY_STATUS));
          if (src->CH_CASESENS[m]) nnset(dst->CH_CASESENS[m], MUIA_Selected, GetMUICheck(src->CH_CASESENS[m]));
          if (src->CH_SUBSTR[m]  ) nnset(dst->CH_SUBSTR[m]  , MUIA_Selected, GetMUICheck(src->CH_SUBSTR[m]));
       }

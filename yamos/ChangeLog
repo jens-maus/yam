@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-11  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_CO.c: fixed a small bug in the filter configuration
+      page, where on a change from/to a Remote-Filter the
+      Cycle gadget of the filter rule wasn`t notified and
+      therefore showed some weird data.
+
 2002-07-10  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_RE.c: modified the ExtractURL function once more
