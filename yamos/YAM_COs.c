@@ -160,7 +160,11 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "WrapHeader       = %s\n", Bool2Txt(co->WrapHeader));
       fprintf(fh, "SigSepLine       = %d\n", co->SigSepLine);
       fprintf(fh, "ColoredText      = %s\n", co->ColoredText.buf);
+      fprintf(fh, "Color1stLevel    = %s\n", co->Color1stLevel.buf);
       fprintf(fh, "Color2ndLevel    = %s\n", co->Color2ndLevel.buf);
+      fprintf(fh, "Color3rdLevel    = %s\n", co->Color3rdLevel.buf);
+      fprintf(fh, "Color4thLevel    = %s\n", co->Color4thLevel.buf);
+      fprintf(fh, "ColorURL         = %s\n", co->ColorURL.buf);
       fprintf(fh, "DisplayAllTexts  = %s\n", Bool2Txt(co->DisplayAllTexts));
       fprintf(fh, "FixedFontEdit    = %s\n", Bool2Txt(co->FixedFontEdit));
       fprintf(fh, "UseTextstyles    = %s\n", Bool2Txt(co->UseTextstyles));
@@ -325,7 +329,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
    if ((fh = fopen(fname, "r")))
    {
       fgets(buffer, SIZE_LARGE, fh);
-      if (!Strnicmp(buffer, "YCO", 3))
+      if (!strnicmp(buffer, "YCO", 3))
       {
          version = buffer[3]-'0';
          CO_SetDefaults(co, -1);
@@ -340,20 +344,23 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (version == 2)
                {
                   if (!stricmp(buffer, "POP3-Server"))    stccpy(co->P3[0]->Server, value, SIZE_HOST);
-                  if (!stricmp(buffer, "POP3-Password"))  stccpy(co->P3[0]->Password, Decrypt(value), SIZE_PASSWORD);
-                  if (!stricmp(buffer, "POP3-User"))      stccpy(co->P3[0]->User, value, SIZE_USERID);
-                  if (!stricmp(buffer, "DeleteOnServer")) co->P3[0]->DeleteOnServer = Txt2Bool(value);
-                  if (!stricmp(buffer, "CheckMail"))      if (!Txt2Bool(value)) co->CheckMailDelay = 0;
-                  if (!stricmp(buffer, "ConfirmSize")) switch (atoi(value))
+                  else if (!stricmp(buffer, "POP3-Password"))  stccpy(co->P3[0]->Password, Decrypt(value), SIZE_PASSWORD);
+                  else if (!stricmp(buffer, "POP3-User"))      stccpy(co->P3[0]->User, value, SIZE_USERID);
+                  else if (!stricmp(buffer, "DeleteOnServer")) co->P3[0]->DeleteOnServer = Txt2Bool(value);
+                  else if (!stricmp(buffer, "CheckMail"))      if (!Txt2Bool(value)) co->CheckMailDelay = 0;
+                  else if (!stricmp(buffer, "ConfirmSize"))
                   {
-                     case  0: co->PreSelection = 2; co->WarnSize = 0; break;
-                     case 13: co->PreSelection = 0; co->WarnSize = 0; break;
-                     default: co->PreSelection = 1; co->WarnSize = 1<<atoi(value); break;
+                    switch (atoi(value))
+                    {
+                      case  0: co->PreSelection = 2; co->WarnSize = 0; break;
+                      case 13: co->PreSelection = 0; co->WarnSize = 0; break;
+                      default: co->PreSelection = 1; co->WarnSize = 1<<atoi(value); break;
+                    }
                   }
-                  if (!stricmp(buffer, "Verbosity"))      co->TransferWindow = atoi(value) > 0 ? 2 : 0;
-                  if (!stricmp(buffer, "WordWrap"))       co->EdWrapCol = atoi(value);
-                  if (!stricmp(buffer, "DeleteOnExit"))   co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
-                  if (!strnicmp(buffer, "Folder", 6) && oldfolders)
+                  else if (!stricmp(buffer, "Verbosity"))      co->TransferWindow = atoi(value) > 0 ? 2 : 0;
+                  else if (!stricmp(buffer, "WordWrap"))       co->EdWrapCol = atoi(value);
+                  else if (!stricmp(buffer, "DeleteOnExit"))   co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
+                  else if (!strnicmp(buffer, "Folder", 6) && oldfolders)
                   {
                      static const int sortconv[4] = { -1, 1, 3, 5 };
                      int j = atoi(&buffer[6]), type;
@@ -363,7 +370,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                      p = strchr(&value[4], ';'); *p++ = 0;
                      if (!ofo[j]) if ((ofo[j] = FO_NewFolder(type, &value[4], p))) ofo[j]->Sort[0] = sortconv[atoi(&value[2])];
                   }
-                  if (!strnicmp(buffer, "Rule", 4))
+                  else if (!strnicmp(buffer, "Rule", 4))
                   {
                      int j = atoi(&buffer[4]);
                      struct Rule *ru = co->RU[j];
@@ -387,7 +394,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                      stccpy(ru->ForwardTo, p, SIZE_ADDRESS);
                      if (*ru->ForwardTo) SET_FLAG(ru->Actions, RULE_FORWARD);
                   }
-                  if (!strnicmp(buffer, "MimeViewer", 10))
+                  else if (!strnicmp(buffer, "MimeViewer", 10))
                   {
                      int j = atoi(&buffer[10]);
                      struct MimeView *mv = co->MV[j];
@@ -396,13 +403,14 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                      stccpy(mv->ContentType, value, SIZE_CTYPE);
                      stccpy(mv->Command, p, SIZE_COMMAND);
                   }
-                  if (!Strnicmp(buffer, "RexxMenu", 8))
+                  else if (!strnicmp(buffer, "RexxMenu", 8))
                   {
                      int j = atoi(&buffer[8]);
                      stccpy(co->RX[j].Name, FilePart(value), SIZE_NAME);
                      stccpy(co->RX[j].Script, value, SIZE_PATHFILE);
                   }
                }
+
                if (!strnicmp(buffer, "FolderPath", 10) && oldfolders)
                {
                   int j = atoi(&buffer[10]);
@@ -410,10 +418,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   if (!ofo[j]) ofo[j] = FO_NewFolder(FT_CUSTOM, value, FilePart(value));
                   if (!FO_LoadConfig(ofo[j])) FO_SaveConfig(ofo[j]);
                }
-/*0*/          if (!stricmp(buffer, "RealName"))       stccpy(co->RealName, value, SIZE_REALNAME);
-               if (!stricmp(buffer, "EmailAddress"))   stccpy(co->EmailAddress, value, SIZE_ADDRESS);
-
-               if (!stricmp(buffer, "TimeZone"))
+/*0*/          else if (!stricmp(buffer, "RealName"))       stccpy(co->RealName, value, SIZE_REALNAME);
+               else if (!stricmp(buffer, "EmailAddress"))   stccpy(co->EmailAddress, value, SIZE_ADDRESS);
+               else if (!stricmp(buffer, "TimeZone"))
                {
                  /* If Locale is present, don't use the timezone from the config */
                  if (G->Locale)
@@ -426,42 +433,41 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                     co->TimeZone = atoi(value);
                  }
                }
-
-               if (!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
-/*1*/          if (!stricmp(buffer, "SMTP-Server"))    stccpy(co->SMTP_Server, value, SIZE_HOST);
-               if (!stricmp(buffer, "SMTP-Port"))      co->SMTP_Port = atoi(value);
-               if (!stricmp(buffer, "SMTP-Domain"))    stccpy(co->SMTP_Domain, value, SIZE_HOST);
-               if (!stricmp(buffer, "Allow8bit"))      co->Allow8bit = Txt2Bool(value);
-               if (!stricmp(buffer, "Use-SMTP-TLS"))   co->Use_SMTP_TLS = Txt2Bool(value);
-               if (!stricmp(buffer, "Use-SMTP-AUTH"))  co->Use_SMTP_AUTH = Txt2Bool(value);
-               if (!stricmp(buffer, "SMTP-AUTH-User")) stccpy(co->SMTP_AUTH_User, value, SIZE_USERID);
-               if (!stricmp(buffer, "SMTP-AUTH-Pass")) stccpy(co->SMTP_AUTH_Pass, Decrypt(value), SIZE_USERID);
-               if (!strnicmp(buffer, "POP", 3) && buffer[5] == '.')
+               else if (!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
+/*1*/          else if (!stricmp(buffer, "SMTP-Server"))    stccpy(co->SMTP_Server, value, SIZE_HOST);
+               else if (!stricmp(buffer, "SMTP-Port"))      co->SMTP_Port = atoi(value);
+               else if (!stricmp(buffer, "SMTP-Domain"))    stccpy(co->SMTP_Domain, value, SIZE_HOST);
+               else if (!stricmp(buffer, "Allow8bit"))      co->Allow8bit = Txt2Bool(value);
+               else if (!stricmp(buffer, "Use-SMTP-TLS"))   co->Use_SMTP_TLS = Txt2Bool(value);
+               else if (!stricmp(buffer, "Use-SMTP-AUTH"))  co->Use_SMTP_AUTH = Txt2Bool(value);
+               else if (!stricmp(buffer, "SMTP-AUTH-User")) stccpy(co->SMTP_AUTH_User, value, SIZE_USERID);
+               else if (!stricmp(buffer, "SMTP-AUTH-Pass")) stccpy(co->SMTP_AUTH_Pass, Decrypt(value), SIZE_USERID);
+               else if (!strnicmp(buffer, "POP", 3) && buffer[5] == '.')
                {
                   int j = atoi(&buffer[3]);
                   struct POP3 *p3 = co->P3[j];
                   p = &buffer[6];
                   if (!p3) p3 = co->P3[j] = CO_NewPOP3(co, FALSE);
                   if (!stricmp(p, "Server"))    stccpy(p3->Server, value, SIZE_HOST);
-                  if (!stricmp(p, "Port"))      p3->Port = atoi(value);
-                  if (!stricmp(p, "Password"))  stccpy(p3->Password, Decrypt(value), SIZE_PASSWORD);
-                  if (!stricmp(p, "User"))      stccpy(p3->User, value, SIZE_USERID);
-                  if (!stricmp(p, "Enabled"))   p3->Enabled = Txt2Bool(value);
-                  if (!stricmp(p, "SSLMode"))   p3->SSLMode = atoi(value);
-                  if (!stricmp(p, "UseAPOP"))   p3->UseAPOP = Txt2Bool(value);
-                  if (!stricmp(p, "Delete"))    p3->DeleteOnServer = Txt2Bool(value);
+                  else if (!stricmp(p, "Port"))      p3->Port = atoi(value);
+                  else if (!stricmp(p, "Password"))  stccpy(p3->Password, Decrypt(value), SIZE_PASSWORD);
+                  else if (!stricmp(p, "User"))      stccpy(p3->User, value, SIZE_USERID);
+                  else if (!stricmp(p, "Enabled"))   p3->Enabled = Txt2Bool(value);
+                  else if (!stricmp(p, "SSLMode"))   p3->SSLMode = atoi(value);
+                  else if (!stricmp(p, "UseAPOP"))   p3->UseAPOP = Txt2Bool(value);
+                  else if (!stricmp(p, "Delete"))    p3->DeleteOnServer = Txt2Bool(value);
                }
-/*2*/          if (!stricmp(buffer, "AvoidDuplicates"))co->AvoidDuplicates = Txt2Bool(value);
-               if (!stricmp(buffer, "PreSelection"))   co->PreSelection = atoi(value);
-               if (!stricmp(buffer, "TransferWindow")) co->TransferWindow = atoi(value);
-               if (!stricmp(buffer, "UpdateStatus"))   co->UpdateStatus = Txt2Bool(value);
-               if (!stricmp(buffer, "WarnSize"))       co->WarnSize = atoi(value);
-               if (!stricmp(buffer, "CheckMailDelay")) co->CheckMailDelay = atoi(value);
-               if (!stricmp(buffer, "DownloadLarge"))  co->DownloadLarge = Txt2Bool(value);
-               if (!stricmp(buffer, "NotifyType"))     co->NotifyType = atoi(value);
-               if (!stricmp(buffer, "NotifySound"))    stccpy(co->NotifySound, value, SIZE_COMMAND);
-               if (!stricmp(buffer, "NotifyCommand"))  stccpy(co->NotifyCommand, value, SIZE_COMMAND);
-/*3*/          if (!strnicmp(buffer, "FI", 2) && buffer[4] == '.')
+/*2*/          else if (!stricmp(buffer, "AvoidDuplicates"))co->AvoidDuplicates = Txt2Bool(value);
+               else if (!stricmp(buffer, "PreSelection"))   co->PreSelection = atoi(value);
+               else if (!stricmp(buffer, "TransferWindow")) co->TransferWindow = atoi(value);
+               else if (!stricmp(buffer, "UpdateStatus"))   co->UpdateStatus = Txt2Bool(value);
+               else if (!stricmp(buffer, "WarnSize"))       co->WarnSize = atoi(value);
+               else if (!stricmp(buffer, "CheckMailDelay")) co->CheckMailDelay = atoi(value);
+               else if (!stricmp(buffer, "DownloadLarge"))  co->DownloadLarge = Txt2Bool(value);
+               else if (!stricmp(buffer, "NotifyType"))     co->NotifyType = atoi(value);
+               else if (!stricmp(buffer, "NotifySound"))    stccpy(co->NotifySound, value, SIZE_COMMAND);
+               else if (!stricmp(buffer, "NotifyCommand"))  stccpy(co->NotifyCommand, value, SIZE_COMMAND);
+/*3*/          else if (!strnicmp(buffer, "FI", 2) && buffer[4] == '.')
                {
                   int j = atoi(&buffer[2]);
                   struct Rule *ru = co->RU[j];
@@ -488,145 +494,148 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   if (!stricmp(p, "PlaySound"))  stccpy(ru->PlaySound, value, SIZE_PATHFILE);
                   if (!stricmp(p, "MoveTo"))     stccpy(ru->MoveTo, value, SIZE_NAME);
                }
-/*4*/          if (!stricmp(buffer, "ShowHeader"))     co->ShowHeader = atoi(value);
-               if (!stricmp(buffer, "ShortHeaders"))   stccpy(co->ShortHeaders, value, SIZE_PATTERN);
-               if (!stricmp(buffer, "ShowSenderInfo")) co->ShowSenderInfo = atoi(value);
-               if (!stricmp(buffer, "WrapHeader"))     co->WrapHeader = Txt2Bool(value);
-               if (!stricmp(buffer, "SigSepLine"))     co->SigSepLine = atoi(value);
-               if (!stricmp(buffer, "ColoredText"))    stccpy(co->ColoredText.buf, value, 32);
-               if (!stricmp(buffer, "Color2ndLevel"))  stccpy(co->Color2ndLevel.buf, value, 32);
-               if (!stricmp(buffer, "DisplayAllTexts"))co->DisplayAllTexts = Txt2Bool(value);
-               if (!stricmp(buffer, "FixedFontEdit"))  co->FixedFontEdit = Txt2Bool(value);
-               if (!stricmp(buffer, "UseTextstyles"))  co->UseTextstyles = Txt2Bool(value);
-               if (!stricmp(buffer, "MultipleWindows"))co->MultipleWindows = Txt2Bool(value);
-               if (!stricmp(buffer, "TranslationIn"))  stccpy(co->TranslationIn, value, SIZE_PATHFILE);
-               if (!stricmp(buffer, "AutoTranslationIn"))co->AutomaticTranslationIn = Txt2Bool(value);
-/*5*/          if (!stricmp(buffer, "ReplyTo"))        stccpy(co->ReplyTo,  value, SIZE_ADDRESS);
-               if (!stricmp(buffer, "Organization"))   stccpy(co->Organization, value, SIZE_DEFAULT);
-               if (!stricmp(buffer, "ExtraHeaders"))   stccpy(co->ExtraHeaders, value, SIZE_LARGE);
-               if (!stricmp(buffer, "NewIntro"))       stccpy(co->NewIntro, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "Greetings"))      stccpy(co->Greetings, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "TranslationOut")) stccpy(co->TranslationOut, value, SIZE_PATHFILE);
-               if (!stricmp(buffer, "WarnSubject"))    co->WarnSubject = Txt2Bool(value);
-               if (!stricmp(buffer, "EdWrapCol"))      co->EdWrapCol = atoi(value);
-               if (!stricmp(buffer, "EdWrapMode"))     co->EdWrapMode = atoi(value);
-               if (!stricmp(buffer, "Editor"))         stccpy(co->Editor, value, SIZE_PATHFILE);
-               if (!stricmp(buffer, "LaunchAlways"))   co->LaunchAlways = Txt2Bool(value);
-               if (!stricmp(buffer, "EmailCache"))     co->EmailCache = atoi(value);
-/*6*/          if (!stricmp(buffer, "ReplyHello"))     stccpy(co->ReplyHello, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "ReplyIntro"))     stccpy(co->ReplyIntro, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "ReplyBye"))       stccpy(co->ReplyBye, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "AltReplyHello"))  stccpy(co->AltReplyHello, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "AltReplyIntro"))  stccpy(co->AltReplyIntro, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "AltReplyBye"))    stccpy(co->AltReplyBye, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "AltReplyPattern"))stccpy(co->AltReplyPattern, value2, SIZE_PATTERN);
-               if (!stricmp(buffer, "MLReplyHello"))   stccpy(co->MLReplyHello, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "MLReplyIntro"))   stccpy(co->MLReplyIntro, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "MLReplyBye"))     stccpy(co->MLReplyBye, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "ForwardIntro"))   stccpy(co->ForwardIntro, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "ForwardFinish"))  stccpy(co->ForwardFinish, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "QuoteMessage"))   co->QuoteMessage = Txt2Bool(value);
-               if (!stricmp(buffer, "QuoteText"))      stccpy(co->QuoteText, value2, SIZE_SMALL);
-               if (!stricmp(buffer, "AltQuoteText"))   stccpy(co->AltQuoteText, value2, SIZE_SMALL);
-               if (!stricmp(buffer, "QuoteEmptyLines"))co->QuoteEmptyLines = Txt2Bool(value);
-               if (!stricmp(buffer, "CompareAddress")) co->CompareAddress = Txt2Bool(value);
-               if (!stricmp(buffer, "StripSignature")) co->StripSignature = Txt2Bool(value);
-/*7*/          if (!stricmp(buffer, "UseSignature"))   co->UseSignature = Txt2Bool(value);
-               if (!stricmp(buffer, "TagsFile"))       stccpy(co->TagsFile, value, SIZE_PATHFILE);
-               if (!stricmp(buffer, "TagsSeparator"))  stccpy(co->TagsSeparator, value2, SIZE_SMALL);
-/*8*/          if (!stricmp(buffer, "FolderCols"))     co->FolderCols = atoi(value);
-               if (!stricmp(buffer, "MessageCols"))    co->MessageCols = atoi(value);
-               if (!stricmp(buffer, "FixedFontList"))  co->FixedFontList = Txt2Bool(value);
-               if (!stricmp(buffer, "SwatchBeat"))     co->SwatchBeat = Txt2Bool(value);
-               if (!stricmp(buffer, "SizeFormat"))     co->SizeFormat = atoi(value);
-               if (!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
-               if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
-               if (!stricmp(buffer, "InfoBar"))        co->InfoBar = atoi(value);
-               if (!stricmp(buffer, "InfoBarText"))    stccpy(co->InfoBarText, value, SIZE_DEFAULT);
-/*9*/          if (!stricmp(buffer, "PGPCmdPath"))     stccpy(co->PGPCmdPath, value, SIZE_PATH);
-               if (!stricmp(buffer, "MyPGPID"))        stccpy(co->MyPGPID, value, SIZE_DEFAULT);
-               if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
-               if (!stricmp(buffer, "ReMailer"))       stccpy(co->ReMailer, value, SIZE_ADDRESS);
-               if (!stricmp(buffer, "RMCommands"))     stccpy(co->RMCommands, value2, SIZE_INTRO);
-               if (!stricmp(buffer, "LogfilePath"))    stccpy(co->LogfilePath, value, SIZE_PATH);
-               if (!stricmp(buffer, "LogfileMode"))    co->LogfileMode = atoi(value);
-               if (!stricmp(buffer, "SplitLogfile"))   co->SplitLogfile = Txt2Bool(value);
-               if (!stricmp(buffer, "LogAllEvents"))   co->LogAllEvents = Txt2Bool(value);
-/*10*/         if (!stricmp(buffer, "GetOnStartup"))   co->GetOnStartup = Txt2Bool(value);
-               if (!stricmp(buffer, "SendOnStartup"))  co->SendOnStartup = Txt2Bool(value);
-               if (!stricmp(buffer, "CleanupOnStartup")) co->CleanupOnStartup = Txt2Bool(value);
-               if (!stricmp(buffer, "RemoveOnStartup"))  co->RemoveOnStartup = Txt2Bool(value);
-               if (!stricmp(buffer, "LoadAllFolders")) co->LoadAllFolders = Txt2Bool(value);
-               if (!stricmp(buffer, "UpdateNewMail"))  co->UpdateNewMail = Txt2Bool(value);
-               if (!stricmp(buffer, "CheckBirthdates"))co->CheckBirthdates = Txt2Bool(value);
-               if (!stricmp(buffer, "SendOnQuit"))     co->SendOnQuit = Txt2Bool(value);
-               if (!stricmp(buffer, "CleanupOnQuit"))  co->CleanupOnQuit = Txt2Bool(value);
-               if (!stricmp(buffer, "RemoveOnQuit"))   co->RemoveOnQuit = Txt2Bool(value);
-/*11*/         if (!strnicmp(buffer, "MV", 2) && buffer[4] == '.')
+/*4*/          else if (!stricmp(buffer, "ShowHeader"))     co->ShowHeader = atoi(value);
+               else if (!stricmp(buffer, "ShortHeaders"))   stccpy(co->ShortHeaders, value, SIZE_PATTERN);
+               else if (!stricmp(buffer, "ShowSenderInfo")) co->ShowSenderInfo = atoi(value);
+               else if (!stricmp(buffer, "WrapHeader"))     co->WrapHeader = Txt2Bool(value);
+               else if (!stricmp(buffer, "SigSepLine"))     co->SigSepLine = atoi(value);
+               else if (!stricmp(buffer, "ColoredText"))    stccpy(co->ColoredText.buf, value, 32);
+               else if (!stricmp(buffer, "Color1stLevel"))  stccpy(co->Color1stLevel.buf, value, 32);
+               else if (!stricmp(buffer, "Color2ndLevel"))  stccpy(co->Color2ndLevel.buf, value, 32);
+               else if (!stricmp(buffer, "Color3rdLevel"))  stccpy(co->Color3rdLevel.buf, value, 32);
+               else if (!stricmp(buffer, "Color4thLevel"))  stccpy(co->Color4thLevel.buf, value, 32);
+               else if (!stricmp(buffer, "ColorURL"))       stccpy(co->ColorURL.buf, value, 32);
+               else if (!stricmp(buffer, "DisplayAllTexts"))co->DisplayAllTexts = Txt2Bool(value);
+               else if (!stricmp(buffer, "FixedFontEdit"))  co->FixedFontEdit = Txt2Bool(value);
+               else if (!stricmp(buffer, "UseTextstyles"))  co->UseTextstyles = Txt2Bool(value);
+               else if (!stricmp(buffer, "MultipleWindows"))co->MultipleWindows = Txt2Bool(value);
+               else if (!stricmp(buffer, "TranslationIn"))  stccpy(co->TranslationIn, value, SIZE_PATHFILE);
+               else if (!stricmp(buffer, "AutoTranslationIn"))co->AutomaticTranslationIn = Txt2Bool(value);
+/*5*/          else if (!stricmp(buffer, "ReplyTo"))        stccpy(co->ReplyTo,  value, SIZE_ADDRESS);
+               else if (!stricmp(buffer, "Organization"))   stccpy(co->Organization, value, SIZE_DEFAULT);
+               else if (!stricmp(buffer, "ExtraHeaders"))   stccpy(co->ExtraHeaders, value, SIZE_LARGE);
+               else if (!stricmp(buffer, "NewIntro"))       stccpy(co->NewIntro, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "Greetings"))      stccpy(co->Greetings, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "TranslationOut")) stccpy(co->TranslationOut, value, SIZE_PATHFILE);
+               else if (!stricmp(buffer, "WarnSubject"))    co->WarnSubject = Txt2Bool(value);
+               else if (!stricmp(buffer, "EdWrapCol"))      co->EdWrapCol = atoi(value);
+               else if (!stricmp(buffer, "EdWrapMode"))     co->EdWrapMode = atoi(value);
+               else if (!stricmp(buffer, "Editor"))         stccpy(co->Editor, value, SIZE_PATHFILE);
+               else if (!stricmp(buffer, "LaunchAlways"))   co->LaunchAlways = Txt2Bool(value);
+               else if (!stricmp(buffer, "EmailCache"))     co->EmailCache = atoi(value);
+/*6*/          else if (!stricmp(buffer, "ReplyHello"))     stccpy(co->ReplyHello, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "ReplyIntro"))     stccpy(co->ReplyIntro, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "ReplyBye"))       stccpy(co->ReplyBye, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "AltReplyHello"))  stccpy(co->AltReplyHello, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "AltReplyIntro"))  stccpy(co->AltReplyIntro, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "AltReplyBye"))    stccpy(co->AltReplyBye, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "AltReplyPattern"))stccpy(co->AltReplyPattern, value2, SIZE_PATTERN);
+               else if (!stricmp(buffer, "MLReplyHello"))   stccpy(co->MLReplyHello, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "MLReplyIntro"))   stccpy(co->MLReplyIntro, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "MLReplyBye"))     stccpy(co->MLReplyBye, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "ForwardIntro"))   stccpy(co->ForwardIntro, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "ForwardFinish"))  stccpy(co->ForwardFinish, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "QuoteMessage"))   co->QuoteMessage = Txt2Bool(value);
+               else if (!stricmp(buffer, "QuoteText"))      stccpy(co->QuoteText, value2, SIZE_SMALL);
+               else if (!stricmp(buffer, "AltQuoteText"))   stccpy(co->AltQuoteText, value2, SIZE_SMALL);
+               else if (!stricmp(buffer, "QuoteEmptyLines"))co->QuoteEmptyLines = Txt2Bool(value);
+               else if (!stricmp(buffer, "CompareAddress")) co->CompareAddress = Txt2Bool(value);
+               else if (!stricmp(buffer, "StripSignature")) co->StripSignature = Txt2Bool(value);
+/*7*/          else if (!stricmp(buffer, "UseSignature"))   co->UseSignature = Txt2Bool(value);
+               else if (!stricmp(buffer, "TagsFile"))       stccpy(co->TagsFile, value, SIZE_PATHFILE);
+               else if (!stricmp(buffer, "TagsSeparator"))  stccpy(co->TagsSeparator, value2, SIZE_SMALL);
+/*8*/          else if (!stricmp(buffer, "FolderCols"))     co->FolderCols = atoi(value);
+               else if (!stricmp(buffer, "MessageCols"))    co->MessageCols = atoi(value);
+               else if (!stricmp(buffer, "FixedFontList"))  co->FixedFontList = Txt2Bool(value);
+               else if (!stricmp(buffer, "SwatchBeat"))     co->SwatchBeat = Txt2Bool(value);
+               else if (!stricmp(buffer, "SizeFormat"))     co->SizeFormat = atoi(value);
+               else if (!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
+               else if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
+               else if (!stricmp(buffer, "InfoBar"))        co->InfoBar = atoi(value);
+               else if (!stricmp(buffer, "InfoBarText"))    stccpy(co->InfoBarText, value, SIZE_DEFAULT);
+/*9*/          else if (!stricmp(buffer, "PGPCmdPath"))     stccpy(co->PGPCmdPath, value, SIZE_PATH);
+               else if (!stricmp(buffer, "MyPGPID"))        stccpy(co->MyPGPID, value, SIZE_DEFAULT);
+               else if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
+               else if (!stricmp(buffer, "ReMailer"))       stccpy(co->ReMailer, value, SIZE_ADDRESS);
+               else if (!stricmp(buffer, "RMCommands"))     stccpy(co->RMCommands, value2, SIZE_INTRO);
+               else if (!stricmp(buffer, "LogfilePath"))    stccpy(co->LogfilePath, value, SIZE_PATH);
+               else if (!stricmp(buffer, "LogfileMode"))    co->LogfileMode = atoi(value);
+               else if (!stricmp(buffer, "SplitLogfile"))   co->SplitLogfile = Txt2Bool(value);
+               else if (!stricmp(buffer, "LogAllEvents"))   co->LogAllEvents = Txt2Bool(value);
+/*10*/         else if (!stricmp(buffer, "GetOnStartup"))   co->GetOnStartup = Txt2Bool(value);
+               else if (!stricmp(buffer, "SendOnStartup"))  co->SendOnStartup = Txt2Bool(value);
+               else if (!stricmp(buffer, "CleanupOnStartup")) co->CleanupOnStartup = Txt2Bool(value);
+               else if (!stricmp(buffer, "RemoveOnStartup"))  co->RemoveOnStartup = Txt2Bool(value);
+               else if (!stricmp(buffer, "LoadAllFolders")) co->LoadAllFolders = Txt2Bool(value);
+               else if (!stricmp(buffer, "UpdateNewMail"))  co->UpdateNewMail = Txt2Bool(value);
+               else if (!stricmp(buffer, "CheckBirthdates"))co->CheckBirthdates = Txt2Bool(value);
+               else if (!stricmp(buffer, "SendOnQuit"))     co->SendOnQuit = Txt2Bool(value);
+               else if (!stricmp(buffer, "CleanupOnQuit"))  co->CleanupOnQuit = Txt2Bool(value);
+               else if (!stricmp(buffer, "RemoveOnQuit"))   co->RemoveOnQuit = Txt2Bool(value);
+/*11*/         else if (!strnicmp(buffer, "MV", 2) && buffer[4] == '.')
                {
                   int j = atoi(&buffer[2]);
                   struct MimeView *mv = co->MV[j];
                   p = &buffer[5];
                   if (!mv) mv = co->MV[j] = CO_NewMimeView();
                   if (!stricmp(p, "ContentType")) stccpy(mv->ContentType, value, SIZE_CTYPE);
-                  if (!stricmp(p, "Extension"))   stccpy(mv->Extension, value, SIZE_NAME);
-                  if (!stricmp(p, "Command"))     stccpy(mv->Command, value, SIZE_COMMAND);
+                  else if (!stricmp(p, "Extension"))   stccpy(mv->Extension, value, SIZE_NAME);
+                  else if (!stricmp(p, "Command"))     stccpy(mv->Command, value, SIZE_COMMAND);
                }
-               if (!stricmp(buffer, "IdentifyBin"))    co->IdentifyBin = Txt2Bool(value);
-               if (!stricmp(buffer, "DetachDir"))      stccpy(co->DetachDir, value, SIZE_PATH);
-               if (!stricmp(buffer, "AttachDir"))      stccpy(co->AttachDir, value, SIZE_PATH);
-/*12*/
-               if (!stricmp(buffer, "GalleryDir"))     stccpy(co->GalleryDir, value, SIZE_PATH);
-               if (!stricmp(buffer, "MyPictureURL"))   stccpy(co->MyPictureURL, value, SIZE_URL);
-               if (!stricmp(buffer, "ProxyServer"))    stccpy(co->ProxyServer, value, SIZE_HOST);
-               if (!stricmp(buffer, "NewAddrGroup"))   stccpy(co->NewAddrGroup, value, SIZE_NAME);
-               if (!stricmp(buffer, "AddToAddrbook"))  co->AddToAddrbook = atoi(value);
-               if (!stricmp(buffer, "AddMyInfo")    )  co->AddMyInfo= Txt2Bool(value);
-               if (!stricmp(buffer, "AddrbookCols"))   co->AddrbookCols = atoi(value);
-/*13*/         if (!strnicmp(buffer, "Rexx", 4) && buffer[6] == '.')
+               else if (!stricmp(buffer, "IdentifyBin"))    co->IdentifyBin = Txt2Bool(value);
+               else if (!stricmp(buffer, "DetachDir"))      stccpy(co->DetachDir, value, SIZE_PATH);
+               else if (!stricmp(buffer, "AttachDir"))      stccpy(co->AttachDir, value, SIZE_PATH);
+/*12*/         else if (!stricmp(buffer, "GalleryDir"))     stccpy(co->GalleryDir, value, SIZE_PATH);
+               else if (!stricmp(buffer, "MyPictureURL"))   stccpy(co->MyPictureURL, value, SIZE_URL);
+               else if (!stricmp(buffer, "ProxyServer"))    stccpy(co->ProxyServer, value, SIZE_HOST);
+               else if (!stricmp(buffer, "NewAddrGroup"))   stccpy(co->NewAddrGroup, value, SIZE_NAME);
+               else if (!stricmp(buffer, "AddToAddrbook"))  co->AddToAddrbook = atoi(value);
+               else if (!stricmp(buffer, "AddMyInfo")    )  co->AddMyInfo= Txt2Bool(value);
+               else if (!stricmp(buffer, "AddrbookCols"))   co->AddrbookCols = atoi(value);
+/*13*/         else if (!strnicmp(buffer, "Rexx", 4) && buffer[6] == '.')
                {
                   int j = atoi(&buffer[4]);
                   if (j < MAXRX)
                   {
                      p = &buffer[7];
                      if (!stricmp(p, "Name"))       stccpy(co->RX[j].Name, value, SIZE_NAME);
-                     if (!stricmp(p, "Script"))     stccpy(co->RX[j].Script, value, SIZE_PATHFILE);
-                     if (!stricmp(p, "IsAmigaDOS")) co->RX[j].IsAmigaDOS = Txt2Bool(value);
-                     if (!stricmp(p, "UseConsole")) co->RX[j].UseConsole = Txt2Bool(value);
-                     if (!stricmp(p, "WaitTerm"))   co->RX[j].WaitTerm = Txt2Bool(value);
+                     else if (!stricmp(p, "Script"))     stccpy(co->RX[j].Script, value, SIZE_PATHFILE);
+                     else if (!stricmp(p, "IsAmigaDOS")) co->RX[j].IsAmigaDOS = Txt2Bool(value);
+                     else if (!stricmp(p, "UseConsole")) co->RX[j].UseConsole = Txt2Bool(value);
+                     else if (!stricmp(p, "WaitTerm"))   co->RX[j].WaitTerm = Txt2Bool(value);
                   }
                }
-/*14*/         if (!stricmp(buffer, "TempDir"))        stccpy(co->TempDir, value, SIZE_PATH);
-               if (!stricmp(buffer, "IconPosition"))   sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
-               if (!stricmp(buffer, "IconifyOnQuit"))  co->IconifyOnQuit = Txt2Bool(value);
-               if (!stricmp(buffer, "Confirm"))        co->Confirm = Txt2Bool(value);
-               if (!stricmp(buffer, "ConfirmDelete"))  co->ConfirmDelete = atoi(value);
-               if (!stricmp(buffer, "RemoveAtOnce"))   co->RemoveAtOnce = Txt2Bool(value);
-               if (!stricmp(buffer, "SaveSent"))       co->SaveSent = Txt2Bool(value);
-               if (!stricmp(buffer, "MDN_Display"))    co->MDN_Display = atoi(value);
-               if (!stricmp(buffer, "MDN_Process"))    co->MDN_Process = atoi(value);
-               if (!stricmp(buffer, "MDN_Delete"))     co->MDN_Delete = atoi(value);
-               if (!stricmp(buffer, "MDN_Filter"))     co->MDN_Filter = atoi(value);
-               if (!stricmp(buffer, "SendMDNAtOnce"))  co->SendMDNAtOnce = Txt2Bool(value);
-               if (!stricmp(buffer, "XPKPack"))        { stccpy(co->XPKPack, value, 5); co->XPKPackEff = atoi(&value[5]); }
-               if (!stricmp(buffer, "XPKPackEncrypt")) { stccpy(co->XPKPackEncrypt, value, 5); co->XPKPackEncryptEff = atoi(&value[5]); }
-               if (!stricmp(buffer, "PackerCommand"))  stccpy(co->PackerCommand, value, SIZE_COMMAND);
-               if (!stricmp(buffer, "AppIconText"))    stccpy(co->AppIconText, value, SIZE_DEFAULT/2);
-/*Hidden*/     if (!stricmp(buffer, "LetterPart"))     co->LetterPart = atoi(value);
-               if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
-               if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
-               if (!stricmp(buffer, "SupportSite"))    stccpy(co->SupportSite, value, SIZE_HOST);
-               if (!stricmp(buffer, "JumpToNewMsg"))   co->JumpToNewMsg = Txt2Bool(value);
-               if (!stricmp(buffer, "JumpToIncoming")) co->JumpToIncoming = Txt2Bool(value);
-               if (!stricmp(buffer, "AskJumpUnread"))  co->AskJumpUnread = Txt2Bool(value);
-               if (!stricmp(buffer, "PrinterCheck"))   co->PrinterCheck = Txt2Bool(value);
-               if (!stricmp(buffer, "IsOnlineCheck"))  co->IsOnlineCheck = Txt2Bool(value);
-               if (!stricmp(buffer, "IOCInterface"))   stccpy(co->IOCInterface, value, SIZE_SMALL);
-               if (!stricmp(buffer, "ConfirmOnQuit"))  co->ConfirmOnQuit = Txt2Bool(value);
-               if (!stricmp(buffer, "HideGUIElements")) co->HideGUIElements = atoi(value);
-               if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
-               if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
-               if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
+/*14*/         else if (!stricmp(buffer, "TempDir"))        stccpy(co->TempDir, value, SIZE_PATH);
+               else if (!stricmp(buffer, "IconPosition"))   sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
+               else if (!stricmp(buffer, "IconifyOnQuit"))  co->IconifyOnQuit = Txt2Bool(value);
+               else if (!stricmp(buffer, "Confirm"))        co->Confirm = Txt2Bool(value);
+               else if (!stricmp(buffer, "ConfirmDelete"))  co->ConfirmDelete = atoi(value);
+               else if (!stricmp(buffer, "RemoveAtOnce"))   co->RemoveAtOnce = Txt2Bool(value);
+               else if (!stricmp(buffer, "SaveSent"))       co->SaveSent = Txt2Bool(value);
+               else if (!stricmp(buffer, "MDN_Display"))    co->MDN_Display = atoi(value);
+               else if (!stricmp(buffer, "MDN_Process"))    co->MDN_Process = atoi(value);
+               else if (!stricmp(buffer, "MDN_Delete"))     co->MDN_Delete = atoi(value);
+               else if (!stricmp(buffer, "MDN_Filter"))     co->MDN_Filter = atoi(value);
+               else if (!stricmp(buffer, "SendMDNAtOnce"))  co->SendMDNAtOnce = Txt2Bool(value);
+               else if (!stricmp(buffer, "XPKPack"))        { stccpy(co->XPKPack, value, 5); co->XPKPackEff = atoi(&value[5]); }
+               else if (!stricmp(buffer, "XPKPackEncrypt")) { stccpy(co->XPKPackEncrypt, value, 5); co->XPKPackEncryptEff = atoi(&value[5]); }
+               else if (!stricmp(buffer, "PackerCommand"))  stccpy(co->PackerCommand, value, SIZE_COMMAND);
+               else if (!stricmp(buffer, "AppIconText"))    stccpy(co->AppIconText, value, SIZE_DEFAULT/2);
+/*Hidden*/     else if (!stricmp(buffer, "LetterPart"))     co->LetterPart = atoi(value);
+               else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
+               else if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
+               else if (!stricmp(buffer, "SupportSite"))    stccpy(co->SupportSite, value, SIZE_HOST);
+               else if (!stricmp(buffer, "JumpToNewMsg"))   co->JumpToNewMsg = Txt2Bool(value);
+               else if (!stricmp(buffer, "JumpToIncoming")) co->JumpToIncoming = Txt2Bool(value);
+               else if (!stricmp(buffer, "AskJumpUnread"))  co->AskJumpUnread = Txt2Bool(value);
+               else if (!stricmp(buffer, "PrinterCheck"))   co->PrinterCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "IsOnlineCheck"))  co->IsOnlineCheck = Txt2Bool(value);
+               else if (!stricmp(buffer, "IOCInterface"))   stccpy(co->IOCInterface, value, SIZE_SMALL);
+               else if (!stricmp(buffer, "ConfirmOnQuit"))  co->ConfirmOnQuit = Txt2Bool(value);
+               else if (!stricmp(buffer, "HideGUIElements")) co->HideGUIElements = atoi(value);
+               else if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
+               else if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
+               else if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
             }
          }
          fclose(fh);
@@ -686,8 +695,12 @@ void CO_GetConfig(void)
          GetMUIString(CE->ShortHeaders        ,gui->ST_HEADERS);
          CE->ShowSenderInfo    = GetMUICycle  (gui->CY_SENDERINFO);
          CE->SigSepLine        = GetMUICycle  (gui->CY_SIGSEPLINE);
-         get(gui->CA_COLTEXT, MUIA_Pendisplay_Spec, &ps); CE->ColoredText = *ps;
+         get(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec, &ps); CE->ColoredText = *ps;
+         get(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec, &ps); CE->Color1stLevel = *ps;
          get(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec, &ps); CE->Color2ndLevel = *ps;
+         get(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec, &ps); CE->Color3rdLevel = *ps;
+         get(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec, &ps); CE->Color4thLevel = *ps;
+         get(gui->CA_COLURL,   MUIA_Pendisplay_Spec, &ps); CE->ColorURL = *ps;
          CE->DisplayAllTexts   = GetMUICheck  (gui->CH_ALLTEXTS);
          CE->FixedFontEdit     = GetMUICheck  (gui->CH_FIXFEDIT);
          CE->WrapHeader        = GetMUICheck  (gui->CH_WRAPHEAD);
@@ -868,8 +881,12 @@ void CO_SetConfig(void)
          setstring   (gui->ST_HEADERS   ,CE->ShortHeaders);
          setcycle    (gui->CY_SENDERINFO,CE->ShowSenderInfo);
          setcycle    (gui->CY_SIGSEPLINE,CE->SigSepLine);
-         set(gui->CA_COLTEXT, MUIA_Pendisplay_Spec, &CE->ColoredText);
+         set(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec, &CE->ColoredText);
+         set(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec, &CE->Color1stLevel);
          set(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec, &CE->Color2ndLevel);
+         set(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec, &CE->Color3rdLevel);
+         set(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec, &CE->Color4thLevel);
+         set(gui->CA_COLURL,   MUIA_Pendisplay_Spec, &CE->ColorURL);
          setcheckmark(gui->CH_ALLTEXTS  ,CE->DisplayAllTexts);
          setcheckmark(gui->CH_FIXFEDIT  ,CE->FixedFontEdit);
          setcheckmark(gui->CH_WRAPHEAD  ,CE->WrapHeader);

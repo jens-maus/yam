@@ -694,7 +694,11 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->ShortHeaders,"(From|To|Date|Subject)");
       co->ShowSenderInfo = 2;
       strcpy(co->ColoredText.buf, "m6");
+      strcpy(co->Color1stLevel.buf, "m0");
       strcpy(co->Color2ndLevel.buf, "m7");
+      strcpy(co->Color3rdLevel.buf, "m3");
+      strcpy(co->Color4thLevel.buf, "m1");
+      strcpy(co->ColorURL.buf, "p6");
       co->DisplayAllTexts = co->FixedFontEdit = co->UseTextstyles = TRUE;
       co->AutomaticTranslationIn = co->WrapHeader = co->MultipleWindows = FALSE;
       co->SigSepLine = 2;

@@ -915,8 +915,16 @@ APTR CO_Page4(struct CO_ClassData *data)
             Child, data->GUI.CA_COLTEXT = PoppenObject, MUIA_CycleChain, 1, End,
             Child, MakeCheckGroup((Object **)&data->GUI.CH_ALLTEXTS, GetStr(MSG_CO_DisplayAll)),
             Child, Label1(GetStr(MSG_CO_OldQuotes)),
-            Child, data->GUI.CA_COL2QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+            Child, HGroup,
+              Child, data->GUI.CA_COL1QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+              Child, data->GUI.CA_COL2QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+              Child, data->GUI.CA_COL3QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+              Child, data->GUI.CA_COL4QUOT = PoppenObject, MUIA_CycleChain, 1, End,
+            End,
             Child, MakeCheckGroup((Object **)&data->GUI.CH_TEXTSTYLES, GetStr(MSG_CO_UseTextstyles)),
+            Child, Label1(GetStr(MSG_CO_URLCOLOR)),
+            Child, data->GUI.CA_COLURL = PoppenObject, MUIA_CycleChain, 1, End,
+            Child, HSpace(0),
          End,
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_OtherOptions)),
             Child, HGroup,
@@ -937,7 +945,11 @@ APTR CO_Page4(struct CO_ClassData *data)
       SetHelp(data->GUI.CY_SENDERINFO,MSG_HELP_CO_CY_SENDERINFO);
       SetHelp(data->GUI.ST_INTRANS   ,MSG_HELP_CO_ST_INTRANS   );
       SetHelp(data->GUI.CA_COLTEXT   ,MSG_HELP_CO_CA_COLTEXT   );
+      SetHelp(data->GUI.CA_COL1QUOT  ,MSG_HELP_CO_CA_COL1QUOT  );
       SetHelp(data->GUI.CA_COL2QUOT  ,MSG_HELP_CO_CA_COL2QUOT  );
+      SetHelp(data->GUI.CA_COL3QUOT  ,MSG_HELP_CO_CA_COL3QUOT  );
+      SetHelp(data->GUI.CA_COL4QUOT  ,MSG_HELP_CO_CA_COL4QUOT  );
+      SetHelp(data->GUI.CA_COLURL    ,MSG_HELP_CO_CA_COLURL    );
       SetHelp(data->GUI.CH_ALLTEXTS  ,MSG_HELP_CO_CH_ALLTEXTS  );
       SetHelp(data->GUI.CH_AUTOTRANSLATEIN, MSG_HELP_CO_CH_AUTOTRANSLATEIN);
       SetHelp(data->GUI.CH_MULTIWIN  ,MSG_HELP_CO_CH_MULTIWIN  );
