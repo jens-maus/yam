@@ -4143,15 +4143,6 @@ After  saving  the  settings  every  window will have an additional system
 gadget  in  the upper right corner. One click on this gadget will snapshot
 the actual size and position of the window for future sessions.
 
-
-
-YAM complains about a "Bad signature" on PGP signed Mails.
-
-You don't have PGP installed, at least not correctly.
-To make this message disappear either correct your installation,  or  make
-sure that in the Configuration on the Page Security the PGP path string is
-empty. YAM will not try to use PGP then.
-
 @ENDNODE
 @NODE "TECH" "Technical"
 
