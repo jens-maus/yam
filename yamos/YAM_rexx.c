@@ -32,34 +32,20 @@
 
 #include <exec/types.h>
 #include <exec/memory.h>
-#include <dos/dos.h>
 #include <rexx/storage.h>
 #include <rexx/rxslib.h>
-
-#ifdef __GNUC__
-/* GCC needs all struct defs */
-#include <dos/exall.h>
-#include <graphics/graphint.h>
-#include <intuition/classes.h>
-#include <devices/keymap.h>
-#include <exec/semaphores.h>
-#endif
+#include <dos/rdargs.h>
+#include <dos/dos.h>
 
 #include <clib/alib_protos.h>
+#include <proto/rexxsyslib.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
-#include <proto/rexxsyslib.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-
-#include <dos/rdargs.h>
-
-#ifdef DEBUG
-#include <clib/debug_protos.h>
-#endif
 
 #include "YAM_rexx.h"
 
@@ -69,10 +55,6 @@ struct rxs_stemnode
    char *name;
    char *value;
 };
-
-extern struct ExecBase *SysBase;
-extern struct DosLibrary *DOSBase;
-extern struct RxsLib *RexxSysBase;
 
 void (*ARexxResultHook)( struct RexxHost *, struct RexxMsg * ) = NULL;
 
