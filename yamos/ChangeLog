@@ -5,6 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-03  Gunther Nikl <gni@gecko.de>
+
+    * YAM_UT.c/YAMMUIRequest: use do/while loop, correct type of return
+      value for MUIM_Application_NewInput
+    * YAM.c/DoStartup: use do/while loop
+    * YAM_CL.c/BC_Dispatcher: improve data->BCD handling
+    * YAM.c/Initialise: use MAXWR+1 as loop count when initialising notify
+      requests, main: move local variables to better scopes, fix signal mask
+      (notsig2 was never waited for!), merged separate notifyrequest handling
+      into one loop, StayInProg: simplify
+    * YAM_UT.c/PlaySound: fix warning #120 almost without a cast,
+      LoadBCImage: fix and simplify
+
 2002-12-03  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_CL.c: replaced multiple set() call to the same object
@@ -92,7 +105,7 @@ $Source$
     * YAM_global.c: added it here
     * YAM_find.h: define FORMAT_DEF if its not defined
 
-2001-10-31  AmiS <amis@amiga.org.ru>
+2002-10-31  AmiS <amis@amiga.org.ru>
 
     * Added analyse "x-senderinfo" fields and and automatically
       translate them to system codepage if "Codepage Autodetect/Translation"
