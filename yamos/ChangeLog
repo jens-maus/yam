@@ -1,5 +1,8 @@
 2002-05-15  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_AB.c: fixed bug #555112 where we cleared the Listtree before
+      we checked if the file can be opened and therefore could have
+      lost the whole addressbook if it wasn`t loadable at all.
     * accordingly to recent discussions in the dev-ML I added some
       general flag handling macros to YAM_utilities.h and spread
       them all over the sources. With this macros flag handling

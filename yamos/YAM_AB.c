@@ -324,12 +324,13 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
    FILE *fh;
    int len, nested = 0;
 
-   G->AB->Modified = append;
-   if (!append) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0, TAG_DONE);
-
-   parent[nested] = MUIV_NListtree_Insert_ListNode_Root;
    if (fh = fopen(fname, "r"))
    {
+      G->AB->Modified = append;
+      if (!append) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
+
+      parent[nested] = MUIV_NListtree_Insert_ListNode_Root;
+
       GetLine(fh, buffer, SIZE_LARGE);
       if (!strncmp(buffer,"YAB",3))
       {
