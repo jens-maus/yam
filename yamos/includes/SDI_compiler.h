@@ -14,7 +14,7 @@
  1.3   29.02.00 : fixed VBCC REG define
  1.4   30.03.00 : fixed SAVEDS for VBCC
  1.5   29.07.00 : added #undef statements (needed e.g. for AmiTCP together
-        with vbcc)
+                  with vbcc)
  1.6   19.05.01 : added STACKEXT and Dice stuff
  1.7   16.06.01 : added MorphOS specials and VARARGS68K
  1.8   21.09.02 : added MorphOS register stuff
@@ -33,6 +33,7 @@
                   different compiler versions.
  1.19  04.07.04 : register specification for variables is not supported on MorphOS,
                   so we modified the REG() macro accordingly.
+ 1.20  28.02.05 : correct INLINE for VBCC.
 */
 
 /*
@@ -106,7 +107,11 @@
   #define STDARGS
   #define STACKEXT
   #define REGARGS
-  #define INLINE
+  #if (__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L)
+    #define INLINE inline
+  #else
+    #define INLINE static
+  #endif
   #define OFFSET(p,m) __offsetof(struct p,m)
   #if defined(__MORPHOS__)
     #define REG(reg,arg) __reg(MOS__##reg) arg
