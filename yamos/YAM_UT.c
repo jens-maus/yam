@@ -1800,7 +1800,7 @@ long SAVEDS ASM PO_ListPublicKeys(REG(a1,APTR string), REG(a2,APTR pop))
    int retc, keys = 0;
    FILE *fp;
 
-   get(pop, MUIA_UserData, &str); secret = (BOOL)(str != NULL);
+   get(pop, MUIA_UserData, &str); secret = (BOOL)(str != NULL);  // MUIA_UserData is actually BOOL already, but 32bit!
    if (G->PGPVersion == 5)
       retc = PGPCommand("pgpk", "-l +language=us", KEEPLOG);
    else
@@ -1818,7 +1818,7 @@ long SAVEDS ASM PO_ListPublicKeys(REG(a1,APTR string), REG(a2,APTR pop))
    {
       get(string, MUIA_String_Contents, &str);
       DoMethod(pop, MUIM_List_Clear);
-      while (GetLine(fp, buf, SIZE_LARGE))
+      while (GetLine(fp, buf, sizeof(buf)))
       {
          char entry[SIZE_DEFAULT];
          clear(entry, SIZE_DEFAULT);
@@ -1827,9 +1827,9 @@ long SAVEDS ASM PO_ListPublicKeys(REG(a1,APTR string), REG(a2,APTR pop))
             if (!strncmp(buf, "sec", 3) || (!strncmp(&buf[1], "ub", 2) && !secret))
             {
                memcpy(entry, &buf[12], 8);
-               while (GetLine(fp, buf, SIZE_LARGE))
-                  if (!strncmp(buf, "uid", 3)) { strncat(entry, &buf[4], SIZE_DEFAULT-8); break; }
-             }
+               while (GetLine(fp, buf, sizeof(buf)))
+                  if (!strncmp(buf, "uid", 3)) { strncat(entry, &buf[4], SIZE_DEFAULT-9); break; }
+            }
          }
          else
          {
