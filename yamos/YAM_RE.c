@@ -597,7 +597,7 @@ void RE_SaveDisplay(int winnum, FILE *fh)
 {
    char *ptr;
 
-   if (G->RE[winnum]->Header)
+   if (G->RE[winnum]->Header != HM_NOHEADER)
    {
       int i;
       fputs("\033[3m", fh);
@@ -2389,7 +2389,7 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
 {
    // some constant arrays for legal characters within a URL and
    // within a email address
-   static const char *URL_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=;:*#()";
+   static const char *URL_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=;:*#()[]";
    static const char *EML_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_-.";
    static const char *protocols[7] =
    {
@@ -2953,17 +2953,20 @@ static void RE_DisplayMessage(int winnum)
 
    if ((cmsg = RE_ReadInMessage(winnum, RIM_READ)))
    {
-      dispheader = G->RE[winnum]->Header != 0;
+      dispheader = (G->RE[winnum]->Header != HM_NOHEADER);
       set(gui->GR_HEAD, MUIA_ShowMe, dispheader);
       set(gui->BO_BALANCE, MUIA_ShowMe, dispheader);
       DoMethod(gui->LV_HEAD, MUIM_NList_Clear);
       set(gui->LV_HEAD, MUIA_NList_Quiet, TRUE);
       body = cmsg;
+
+      // here we have to parse the header and place all header
+      // information in the header listview.
       while (*body)
       {
          if (*body == '\n') { body++; break; }
-         dispheader = G->RE[winnum]->Header == 2;
-         if (G->RE[winnum]->Header == 1)
+         dispheader = (G->RE[winnum]->Header == HM_FULLHEADER);
+         if (G->RE[winnum]->Header == HM_SHORTHEADER)
          {
             char header[SIZE_DEFAULT];
             int i;
@@ -3367,9 +3370,9 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                MUIA_Family_Child, data->GUI.MI_SAVEDEC = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SaveDecrypted), MUIA_Menuitem_Shortcut,"V", MUIA_UserData,RMEN_SAVEDEC, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Settings),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_NoHeaders),  MUIA_Menuitem_Shortcut,"0", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->Header==0, MUIA_Menuitem_Exclude,0x06, MUIA_UserData,RMEN_HNONE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_ShortHeaders), MUIA_Menuitem_Shortcut,"1", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->Header==1, MUIA_Menuitem_Exclude,0x05, MUIA_UserData,RMEN_HSHORT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FullHeaders),  MUIA_Menuitem_Shortcut,"2", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->Header==2, MUIA_Menuitem_Exclude,0x03, MUIA_UserData,RMEN_HFULL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_NoHeaders),  MUIA_Menuitem_Shortcut,"0", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->Header==HM_NOHEADER, MUIA_Menuitem_Exclude,0x06, MUIA_UserData,RMEN_HNONE, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_ShortHeaders), MUIA_Menuitem_Shortcut,"1", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->Header==HM_SHORTHEADER, MUIA_Menuitem_Exclude,0x05, MUIA_UserData,RMEN_HSHORT, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FullHeaders),  MUIA_Menuitem_Shortcut,"2", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->Header==HM_FULLHEADER, MUIA_Menuitem_Exclude,0x03, MUIA_UserData,RMEN_HFULL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_NoSInfo), MUIA_Menuitem_Shortcut,"3", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->SenderInfo==0, MUIA_Menuitem_Exclude,0x60, MUIA_UserData,RMEN_SNONE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SInfo), MUIA_Menuitem_Shortcut,"4", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->SenderInfo==1, MUIA_Menuitem_Exclude,0x50, MUIA_UserData,RMEN_SDATA, End,
@@ -3434,7 +3437,7 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                End),
             Child, VGroup,
                Child, data->GUI.GR_HEAD = HGroup, GroupSpacing(0),
-                  MUIA_ShowMe, data->Header > 0,
+                  MUIA_ShowMe, data->Header != HM_NOHEADER,
                   MUIA_VertWeight, G->Weights[2],
                   Child, NListviewObject,
                      MUIA_NListview_NList, data->GUI.LV_HEAD = NListObject,
@@ -3461,7 +3464,7 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                   End,
                End,
                Child, data->GUI.BO_BALANCE = BalanceObject,
-                  MUIA_ShowMe, data->Header > 0,
+                  MUIA_ShowMe, data->Header != HM_NOHEADER,
                End,
                Child, data->GUI.GR_BODY = HGroup,
                   MUIA_VertWeight, G->Weights[3],
