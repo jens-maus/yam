@@ -2778,11 +2778,10 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
         { MSG_RE_TBForward, MSG_HELP_RE_BT_FORWARD  },
         { NULL,             NULL                    }
       };
-      const struct NewToolbarEntry *p;
       int i;
 
-      for (p = &tb_butt[0], i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), p->label?(p->label==MSG_Space?"":GetStr(p->label)):NULL, p->help?GetStr(p->help):NULL, 0);
+      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
 
       data->GUI.SL_TEXT = ScrollbarObject, End;
       data->Header = C->ShowHeader;

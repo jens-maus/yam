@@ -33,8 +33,13 @@ CC = sc
 CP = copy
 RM = delete quiet
 
-# Compiler/Linker flags
+# Files
+OBJS = all_sas.o YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o \
+  YAM_DI.o YAM_EA.o YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o \
+  YAM_MA.o YAM_MAf.o YAM_md5.o YAM_MI.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o \
+  YAM_rexx_rxif.o YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o Searchwindow_class.o
 
+# Compiler/Linker flags
 CPU      = 68020
 CDEFS    = `rx "say 'DEF __YAM_VERDATE=' || '22'x ||\
   right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) ||\
@@ -217,3 +222,5 @@ all_sas.o: all_sas.c extrasrc/NewReadArgs.c
 YAM_locale.c: YAM_locale.h
 YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
   flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+
+Searchwindow_class.o: Searchwindow_class.c

@@ -2389,13 +2389,12 @@ struct MA_ClassData *MA_New(void)
         { MSG_MA_TBConfig,   MSG_HELP_MA_BT_CONFIG     },
         { NULL,              NULL                      }
       };
-      const struct NewToolbarEntry *p;
       char *key = "-repeat 0", *username;
       struct User *user;
       int i;
 
-      for (p = &tb_butt[0], i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), p->label?(p->label==MSG_Space?"":GetStr(p->label)):NULL, p->help?GetStr(p->help):NULL, 0);
+      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
 
       if (username = C->RealName,(user = US_GetCurrentUser()))
         username = user->Name;

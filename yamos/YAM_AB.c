@@ -1061,12 +1061,11 @@ struct AB_ClassData *AB_New(void)
         { MSG_AB_TBCloseTree, MSG_HELP_AB_BT_CLOSE    },
         { NULL              , NULL                    }
       };
-      const struct NewToolbarEntry *p;
       APTR list;
       int i;
 
-      for (p = &tb_butt[0], i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), p->label?(p->label==MSG_Space?"":GetStr(p->label)):NULL, p->help?GetStr(p->help):NULL, 0);
+      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
 
       data->GUI.WI = WindowObject,
          MUIA_HelpNode,"AB_W",

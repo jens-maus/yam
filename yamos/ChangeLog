@@ -825,3 +825,9 @@
     * YAM_MA.c (MA_New): likewise
     * YAM_RE.c (RE_New): likewise
     * YAM_WR.c (Wr_New): likewise
+
+2001-06-22 Allan Odgaard <duff@diku.dk>
+
+    * Fixed toolbar init code (uses "tb_butt[i]." instead of const "p->").
+    * Added extra toolbar button to write window (search) -- nop ATM.
+    * Added new source to the repository (Searchwindow_class.c).

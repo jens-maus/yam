@@ -67,7 +67,7 @@ struct WR_GUIData
    APTR BT_QUEUE;
    APTR BT_SEND;
    APTR BT_CANCEL;
-   struct MUIP_Toolbar_Description TB_TOOLBAR[13];
+   struct MUIP_Toolbar_Description TB_TOOLBAR[15];
 };
 
 struct WR_ClassData  /* write window */
