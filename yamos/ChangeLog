@@ -5,7 +5,23 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-03-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_AB.c: correctly fixed the DoubleClick and OpenFunc Hooks
+      where within the change on 14th February the default cases
+      had been specified incorrectly which caused different
+      problems in using the addressbook.
+    * YAM_MI.c, YAM_WR.c: completly rewrote the base64 file encoding
+      routines to use the recently new introduced base64encode()
+      function. Aside from the effect of having a more robust base64
+      file encoding routine now, this increased the performance
+      especially with large files to about 150% of the old retired
+      function. Now only the old UU and quoted printable routines
+      have to be rewritten to have all MIME I/O functions to be
+      uptodate and also hopefully sped up.
+
 2004-03-25  Alexey Ivanov <amis@amiga.org.ru>
+
     * YAM_AB.c: fixed "Address Book double click" bug, introduction 
       since 14.02.2004.
 
