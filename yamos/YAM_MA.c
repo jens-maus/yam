@@ -2065,7 +2065,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
       ExecuteCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_DOS : OUT_NIL);
       BusyEnd;
    }
-   else
+   else if(G->RexxHost) // make sure that rexx it available
    {
       if (!(fh = Open(C->RX[num].UseConsole ? wtitle : "NIL:", MODE_NEWFILE)))
       {
@@ -2110,6 +2110,8 @@ BOOL MA_StartMacro(enum Macro num, char *param)
          BusyEnd;
       }
    }
+   else return FALSE;
+
    return TRUE;
 }
 

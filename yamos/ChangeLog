@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-05  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_MA.c: fixed enforcer hit that occured on clicking
+      the support URL within the About window while YAM
+      was starting up. (bug #576191)
+
 2002-07-04  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_RE.c: fixed bug #557524 where the doubleclick action
