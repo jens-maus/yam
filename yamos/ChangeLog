@@ -558,3 +558,9 @@
     * fixed alignment Problem in "struct ComprMail" which causes the corruption of
       the old .index files from older 2.x versions. Now we should be compatible again.
     * merge the differences from RELEASE 2.3 branch to actual MAIN branch
+
+2001-06-14  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug that caused that it was not possible to remove a entry from the folder
+      listtree. (BUG #431912)
+

@@ -104,8 +104,7 @@ struct Folder *FO_GetCurrentFolder(void)
 {
    struct MUI_NListtree_TreeNode *tn;
 
-   tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, MUIV_NListtree_GetEntry_Position_Active, 0, TAG_DONE);
-
+   get(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, &tn);
    if(!tn) return NULL;
 
    return((struct Folder *)tn->tn_User);
@@ -936,41 +935,31 @@ MakeHook(FO_EditFolderHook, FO_EditFolderFunc);
 //  Removes the active folder
 HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 {
-   APTR lv = G->MA->GUI.NL_FOLDERS;
-   struct Folder *f, *folder = FO_GetCurrentFolder();
-   struct MUI_NListtree_TreeNode *tn;
-   int i, pos, used = 0;
-   get(lv, MUIA_NListtree_Active, &pos);
+  APTR lv = G->MA->GUI.NL_FOLDERS;
+  struct Folder *folder = FO_GetCurrentFolder();
 
-   for (i = 0; ; i++)
-   {
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIV_NListtree_GetEntry_Flag_Visible, TAG_DONE);
-      if (!tn) break;
+  if(!folder) return;
 
-      f = tn->tn_User;
-      if (!f) break; else if (!stricmp(f->Path, folder->Path)) used++;
-   }
-   switch (folder->Type)
-   {
-      case FT_CUSTOM:
-      case FT_CUSTOMSENT:
-      case FT_CUSTOMMIXED:
-        if(used < 2)
-        {
-           char * a = GetStr(MSG_CO_ConfirmDelete);
+  switch (folder->Type)
+  {
+    case FT_CUSTOM:
+    case FT_CUSTOMSENT:
+    case FT_CUSTOMMIXED:
+    {
+      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ConfirmDelete))) return;
 
-           if(!MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), a))
-             return;
-           DeleteMailDir(GetFolderDir(folder), FALSE);
-        }
-        ClearMailList(folder, TRUE);
-      case FT_GROUP:
-        DoMethod(lv, MUIM_NList_Remove, pos);
-        FO_SaveTree(CreateFilename(".folders"));
-        break;
-      default:
-        break;
-   }
+      DeleteMailDir(GetFolderDir(folder), FALSE);
+      ClearMailList(folder, TRUE);
+    }
+    break;
+  }
+
+  // remove the entry from the listtree now
+  DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, 0, TAG_DONE);
+
+  // Save the Tree to the folder config now
+  FO_SaveTree(CreateFilename(".folders"));
+
 }
 MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
 
