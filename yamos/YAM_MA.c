@@ -373,8 +373,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
       if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
       {
         // search through our ReadDataList
-        struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
-
+        struct MinNode *curNode;
         for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
         {
           struct ReadMailData *rmData = (struct ReadMailData *)curNode;
@@ -811,7 +810,7 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
     if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
     {
       // search through our ReadDataList
-      struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+      struct MinNode *curNode;
       for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         rmData = (struct ReadMailData *)curNode;

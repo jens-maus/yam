@@ -467,7 +467,7 @@ void PopUp(void)
    if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
    {
       // search through our ReadDataList
-      struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+      struct MinNode *curNode;
       for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
@@ -627,7 +627,7 @@ static void Terminate(void)
    if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
    {
       // search through our ReadDataList
-      struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+      struct MinNode *curNode;
       for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
