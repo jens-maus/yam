@@ -255,7 +255,9 @@ OVERLOAD(MUIM_Setup)
 		}
 	}
 	else
+	{
 		DB(kprintf("DiskObject for file [%s] retrieved with DefIcons\n", mailPart->Filename);)
+	}
 
 	// now that we should have the diskObject we get the image of it, blit it in
 	// a temporary rastport so that we scan scale it down
