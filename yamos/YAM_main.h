@@ -39,14 +39,14 @@ struct Rule;
 
 // lets define all the Rule->Actions flags and
 // define some flag macros for them
-#define RULE_BOUNCE       1
-#define RULE_FORWARD      2
-#define RULE_REPLY        4
-#define RULE_EXECUTE      8
-#define RULE_PLAYSOUND   16
-#define RULE_MOVE        32
-#define RULE_DELETE      64
-#define RULE_SKIPMSG    128
+#define RULE_BOUNCE       (1<<0)
+#define RULE_FORWARD      (1<<1)
+#define RULE_REPLY        (1<<2)
+#define RULE_EXECUTE      (1<<3)
+#define RULE_PLAYSOUND    (1<<4)
+#define RULE_MOVE         (1<<5)
+#define RULE_DELETE       (1<<6)
+#define RULE_SKIPMSG      (1<<7)
 #define hasBounceAction(rule)     (isFlagSet((rule)->Actions, RULE_BOUNCE))
 #define hasForwardAction(rule)    (isFlagSet((rule)->Actions, RULE_FORWARD))
 #define hasReplyAction(rule)      (isFlagSet((rule)->Actions, RULE_REPLY))
@@ -59,14 +59,15 @@ struct Rule;
 #define ANYBOX NULL
 
 // possible flags for a mail
-#define MFLAG_MULTIRCPT   1
-#define MFLAG_MULTIPART   2
-#define MFLAG_REPORT      4
-#define MFLAG_CRYPT       8
-#define MFLAG_SIGNED     16
-#define MFLAG_SENDERINFO 32
-#define MFLAG_SENDMDN    64
-#define MFLAG_NOFOLDER  128
+#define MFLAG_MULTIRCPT   (1<<0)
+#define MFLAG_MULTIPART   (1<<1)
+#define MFLAG_REPORT      (1<<2)
+#define MFLAG_CRYPT       (1<<3)
+#define MFLAG_SIGNED      (1<<4)
+#define MFLAG_SENDERINFO  (1<<5)
+#define MFLAG_SENDMDN     (1<<6)
+#define MFLAG_NOFOLDER    (1<<7)
+#define MFLAG_MARK        (1<<8)
 #define isMultiRCPTMail(mail)   (isFlagSet((mail)->Flags, MFLAG_MULTIRCPT))
 #define isMultiPartMail(mail)   (isFlagSet((mail)->Flags, MFLAG_MULTIPART))
 #define isReportMail(mail)      (isFlagSet((mail)->Flags, MFLAG_REPORT))
@@ -75,6 +76,7 @@ struct Rule;
 #define isSenderInfoMail(mail)  (isFlagSet((mail)->Flags, MFLAG_SENDERINFO))
 #define isSendMDNMail(mail)     (isFlagSet((mail)->Flags, MFLAG_SENDMDN))
 #define isVirtualMail(mail)     (isFlagSet((mail)->Flags, MFLAG_NOFOLDER))
+#define isMarkedMail(mail)      (isFlagSet((mail)->Flags, MFLAG_MARK))
 
 enum ApplyMode { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE,
    APPLY_RX_ALL, APPLY_RX
@@ -85,11 +87,11 @@ enum NewMode {
 };
 
 // flags and macros for creating new mails
-#define NEWF_QUIET        1
-#define NEWF_REP_NOQUOTE  2
-#define NEWF_REP_PRIVATE  4
-#define NEWF_REP_MLIST    8
-#define NEWF_FWD_NOATTACH 16
+#define NEWF_QUIET        (1<<0)
+#define NEWF_REP_NOQUOTE  (1<<1)
+#define NEWF_REP_PRIVATE  (1<<2)
+#define NEWF_REP_MLIST    (1<<3)
+#define NEWF_FWD_NOATTACH (1<<4)
 #define hasQuietFlag(v)         (isFlagSet((v), NEWF_QUIET))
 #define hasNoQuoteFlag(v)       (isFlagSet((v), NEWF_REP_NOQUOTE))
 #define hasPrivateFlag(v)       (isFlagSet((v), NEWF_REP_PRIVATE))
@@ -112,8 +114,8 @@ struct MA_GUIData
    APTR MN_REXX;
    APTR MS_MAIN;
    APTR BC_GROUP;
-   APTR BC_STAT[17];
-   APTR BC_FOLDER[MAXBCSTDIMAGES];
+   APTR BC_STAT[MAXBCSTATUSIMG];
+   APTR BC_FOLDER[MAXBCFOLDERIMG];
    APTR ST_LAYOUT;
    APTR MI_ERRORS;
    APTR MI_CSINGLE;
@@ -142,6 +144,8 @@ struct MA_GUIData
    APTR MI_TOUNREAD;
    APTR MI_TOHOLD;
    APTR MI_TOQUEUED;
+   APTR MI_TOMARKED;
+   APTR MI_TOUNMARKED;
    APTR MI_CHSUBJ;
    APTR MI_SEND;
    APTR LV_FOLDERS;
@@ -203,6 +207,7 @@ void  MA_RemoveAttach(struct Mail *mail);
 BOOL  MA_Send(enum SendMode sendpos);
 BOOL  MA_SendMList(struct Mail **mlist);
 void  MA_SetMailStatus(struct Mail *mail, enum MailStatus stat);
+void  MA_SetMailFlag(struct Mail *mail, int flag, BOOL clear);
 BOOL  MA_SetMailComment(struct Mail *mail);
 void  MA_SetSortFlag(void);
 void  MA_SetStatusTo(int status);

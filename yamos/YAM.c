@@ -875,7 +875,7 @@ static void Initialise(BOOL hidden)
      "status_waitsend", "status_error",  "status_hold",     "status_sent",
      "status_new",      "status_delete", "status_download", "status_group",
      "status_urgent",   "status_attach", "status_report",   "status_crypt",
-     "status_signed",
+     "status_signed",   "status_mark",
      "folder_fold",     "folder_unfold",       "folder_incoming", "folder_incoming_new",
      "folder_outgoing", "folder_outgoing_new", "folder_deleted",  "folder_deleted_new",
      "folder_sent"

@@ -454,7 +454,7 @@ BOOL FO_LoadTree(char *fname)
    static struct Folder fo;
    BOOL success = FALSE;
    char buffer[SIZE_LARGE];
-   int nested = 0, i = 0, j = MAXBCSTDIMAGES+1;
+   int nested = 0, i = 0, j = MAXBCFOLDERIMG+1;
    FILE *fh;
    APTR lv = G->MA->GUI.NL_FOLDERS;
    struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
@@ -606,7 +606,7 @@ BOOL FO_LoadFolderImages(struct Folder *fo)
   APTR lv = G->MA->GUI.NL_FOLDERS;
 
   // first we make sure that valid data is underway.
-  if(!fo && fo->ImageIndex < MAXBCSTDIMAGES+1) return FALSE;
+  if(!fo && fo->ImageIndex < MAXBCFOLDERIMG+1) return FALSE;
 
   MyStrCpy(fname, GetFolderDir(fo));
   AddPart(fname, ".fimage", sizeof(fname));

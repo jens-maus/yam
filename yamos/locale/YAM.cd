@@ -5050,3 +5050,12 @@ MSG_FO_FOLDERPATHINVALID (//)
 You haven`t specified a path for the new folder.\n\
 Please enter a valid path for the folder before you proceed.
 ;
+MSG_MA_TOMARKED (//)
+/\000Marked
+;
+MSG_MA_TOUNMARKED (//)
+*\000Unmarked
+;
+MSG_RE_SETMARKED (//)
+Set status to marked
+;

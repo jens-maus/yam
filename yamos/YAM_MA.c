@@ -247,7 +247,9 @@ BOOL MA_SetMailComment(struct Mail *mail)
 
    // lets first copy the actual status of that mail into
    // the start of the commentStr
-   strcpy(commentStr, Status[mail->Status]);
+   commentStr[0] = *Status[mail->Status];
+   commentStr[1] = isMarkedMail(mail) ? 'M' : ' '; // if this mail was "marked"
+   commentStr[2] = '\0';
 
    // then we check if this mail has a valid timeval and then attach
    // the base64 encoded representation of the timeval to the commentString
@@ -258,7 +260,7 @@ BOOL MA_SetMailComment(struct Mail *mail)
       encode64((char *)&mail->transDate, transDateStr, sizeof(struct timeval));
 
       // lets attach the transDate to the commentString somehow
-      sprintf(commentStr, "%s %s", commentStr, transDateStr);
+      strcat(commentStr, transDateStr);
    }
 
    // now set the comment to the MailFile
@@ -1725,6 +1727,57 @@ HOOKPROTONHNO(MA_SetStatusToFunc, void, int *arg)
 MakeStaticHook(MA_SetStatusToHook, MA_SetStatusToFunc);
 
 ///
+/// MA_SetMailFlag
+//  global SetMailFlag function
+void MA_SetMailFlag(struct Mail *mail, int flag, BOOL clear)
+{
+  if((clear && isFlagSet(mail->Flags, flag)) || (!clear && !isFlagSet(mail->Flags, flag)))
+  {
+    struct MailInfo *mi = GetMailInfo(mail);
+
+    if(clear) CLEAR_FLAG(mail->Flags, flag);
+    else      SET_FLAG(mail->Flags, flag);
+
+    MA_SetMailComment(mail);
+    MA_ExpireIndex(mail->Folder);
+
+    if(mi->Display) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
+  }
+}
+
+///
+/// MA_SetMailFlagAll
+//  Sets status of selectes messages
+static void MA_SetMailFlagAll(int flag, BOOL clear)
+{
+   APTR lv = G->MA->GUI.NL_MAILS;
+   struct Mail **mlist;
+
+   if((mlist = MA_CreateMarkedList(lv)))
+   {
+      int i;
+
+      set(lv, MUIA_NList_Quiet, TRUE);
+      for(i = 0; i < (int)*mlist; i++)
+      {
+        struct Mail *mail = mlist[i+2];
+
+        MA_SetMailFlag(mlist[i+2], flag, clear);
+      }
+      set(lv, MUIA_NList_Quiet, FALSE);
+      free(mlist);
+   }
+}
+
+///
+/// MA_SetMailFlagFunc
+HOOKPROTONHNO(MA_SetMailFlagFunc, void, int *arg)
+{
+  MA_SetMailFlagAll(arg[0], arg[1]);
+}
+MakeStaticHook(MA_SetMailFlagHook, MA_SetMailFlagFunc);
+
+///
 /// MA_DeleteOldFunc
 //  Deletes old messages
 HOOKPROTONHNONP(MA_DeleteOldFunc, void)
@@ -2285,6 +2338,14 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
          else if (isReportMail(entry))    strcat(dispsta, "\033o[14]");
          else if (isMultiPartMail(entry)) strcat(dispsta, "\033o[13]");
 
+         // if this is a marked mail we have to signal it
+         if(isMarkedMail(entry))
+         {
+            // if the needed BCImage data doesn`t exist we set preparse to bold
+            if(G->BImage[17]) strcat(dispsta, "\033o[17]");
+            else msg->preparses[1] = "\033b";
+         }
+
          // now we generate the proper string for the mailaddress
          if(C->MessageCols & (1<<1) || searchWinHook)
          {
@@ -2434,7 +2495,7 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       int status1 = mapvalue[entry1->Status];
       int status2 = mapvalue[entry2->Status];
 
-      // We do not sort on other things than the real status and the Importance flag of
+      // We do not sort on other things than the real status and the Importance+Marked flag of
       // the message because this would be confusing if you use "Status" as a sorting
       // criteria within the folder config. Why should a MultiPart mail be sorted with
       // other multipart messages? It`s more important to sort just for New/Unread/Read aso
@@ -2443,6 +2504,8 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       // status+date in the folder config. Perhaps we need to have a configuable way for
       // sorting by status later, but this is future stuff..
 
+      status1 += isMarkedMail(entry1)       ? 8  : 0;
+      status2 += isMarkedMail(entry2)       ? 8  : 0;
       status1 += (entry1->Importance == 1)  ? 16 : 0;
       status2 += (entry2->Importance == 1)  ? 16 : 0;
 
@@ -2605,9 +2668,13 @@ MakeHook(MA_FolderClickHook, MA_FolderClickFunc);
 
 /*** GUI ***/
 enum { MMEN_ABOUT=100,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HIDE,MMEN_QUIT,
-       MMEN_NEWF,MMEN_NEWFG,MMEN_EDITF,MMEN_DELETEF,MMEN_OSAVE,MMEN_ORESET,MMEN_SELALL,MMEN_SELNONE,MMEN_SELTOGG,MMEN_SEARCH,MMEN_FILTER,MMEN_DELDEL,MMEN_INDEX,MMEN_FLUSH,MMEN_IMPORT,MMEN_EXPORT,MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,
-       MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_CROP,MMEN_EXPMSG,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD,MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_CHSUBJ,MMEN_SEND,
-       MMEN_ABOOK,MMEN_CONFIG,MMEN_USER,MMEN_MUI,MMEN_SCRIPT, MMEN_POPHOST, MMEN_MACRO=MMEN_POPHOST+MAXP3
+       MMEN_NEWF,MMEN_NEWFG,MMEN_EDITF,MMEN_DELETEF,MMEN_OSAVE,MMEN_ORESET,MMEN_SELALL,MMEN_SELNONE,
+       MMEN_SELTOGG,MMEN_SEARCH,MMEN_FILTER,MMEN_DELDEL,MMEN_INDEX,MMEN_FLUSH,MMEN_IMPORT,MMEN_EXPORT,
+       MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,
+       MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_CROP,MMEN_EXPMSG,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD,
+       MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_TOMARKED,
+       MMEN_TOUNMARKED,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,MMEN_USER,MMEN_MUI,MMEN_SCRIPT,
+       MMEN_POPHOST, MMEN_MACRO=MMEN_POPHOST+MAXP3
      };
 
 /// MA_SetupDynamicMenus
@@ -2686,7 +2753,7 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
   enum{ PMN_READ=1, PMN_EDIT, PMN_REPLY, PMN_FORWARD, PMN_BOUNCE, PMN_SAVEADDR, PMN_MOVE, PMN_COPY,
         PMN_DELETE, PMN_PRINT, PMN_SAVE, PMN_DETACH, PMN_CROP, PMN_EXPMSG, PMN_NEW, PMN_SELALL,
         PMN_SELNONE, PMN_SELTOGG, PMN_CHSUBJ, PMN_TOUNREAD, PMN_TOREAD, PMN_TOHOLD, PMN_TOQUEUED,
-        PMN_SEND
+        PMN_SEND, PMN_TOMARKED, PMN_TOUNMARKED
       };
 
   if (!fo) return(0);
@@ -2744,6 +2811,8 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
                  PMItem(GetStripStr(MSG_MA_MSend)),            PM_Disabled, nomail || (fo->Type != FT_OUTGOING), PM_UserData, PMN_SEND,      End,
                  PMItem(GetStripStr(MSG_MA_ChangeSubj)),       PM_Disabled, nomail,        PM_UserData, PMN_CHSUBJ,    End,
                  PMItem(GetStripStr(MSG_MA_SetStatus)),        PM_Disabled, nomail, PMSimpleSub,
+                   PMItem(GetStripStr(MSG_MA_TOMARKED)),       PM_Disabled, nomail,               PM_UserData, PMN_TOMARKED,  End,
+                   PMItem(GetStripStr(MSG_MA_TOUNMARKED)),     PM_Disabled, nomail,               PM_UserData, PMN_TOUNMARKED,End,
                    PMItem(GetStripStr(MSG_MA_ToUnread)),       PM_Disabled, nomail || isOutBox,   PM_UserData, PMN_TOUNREAD,  End,
                    PMItem(GetStripStr(MSG_MA_ToRead)),         PM_Disabled, nomail || isOutBox,   PM_UserData, PMN_TOREAD,    End,
                    PMItem(GetStripStr(MSG_MA_ToHold)),         PM_Disabled, nomail || !isOutBox,  PM_UserData, PMN_TOHOLD,    End,
@@ -2780,30 +2849,32 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
 
   switch(ret)
   {
-    case PMN_READ:     DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook,    TAG_DONE); break;
-    case PMN_EDIT:     DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_EDIT,    0,   FALSE,  TAG_DONE); break;
-    case PMN_REPLY:    DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_REPLY,   0,   FALSE,  TAG_DONE); break;
-    case PMN_FORWARD:  DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_FORWARD, 0,   FALSE,  TAG_DONE); break;
-    case PMN_BOUNCE:   DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_BOUNCE,  0,   FALSE,  TAG_DONE); break;
-    case PMN_SEND:     DoMethod(G->App, MUIM_CallHook, &MA_SendHook,           SEND_ACTIVE, TAG_DONE); break;
-    case PMN_CHSUBJ:   DoMethod(G->App, MUIM_CallHook, &MA_ChangeSubjectHook,  TAG_DONE); break;
-    case PMN_TOUNREAD: DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_UNR, TAG_DONE); break;
-    case PMN_TOREAD:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_OLD, TAG_DONE); break;
-    case PMN_TOHOLD:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_HLD, TAG_DONE); break;
-    case PMN_TOQUEUED: DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_WFS, TAG_DONE); break;
-    case PMN_SAVEADDR: DoMethod(G->App, MUIM_CallHook, &MA_GetAddressHook,     TAG_DONE); break;
-    case PMN_MOVE:     DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook,    TAG_DONE); break;
-    case PMN_COPY:     DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook,    TAG_DONE); break;
-    case PMN_DELETE:   DoMethod(G->App, MUIM_CallHook, &MA_DeleteMessageHook,  0, FALSE, TAG_DONE); break;
-    case PMN_PRINT:    DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook,      TRUE,  TAG_DONE); break;
-    case PMN_SAVE:     DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook,      FALSE, TAG_DONE); break;
-    case PMN_DETACH:   DoMethod(G->App, MUIM_CallHook, &MA_SaveAttachHook,     TAG_DONE); break;
-    case PMN_CROP:     DoMethod(G->App, MUIM_CallHook, &MA_RemoveAttachHook,   TAG_DONE); break;
-    case PMN_EXPMSG:   DoMethod(G->App, MUIM_CallHook, &MA_ExportMessagesHook, TAG_DONE); break;
-    case PMN_NEW:      DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_NEW,  0,  FALSE,  TAG_DONE); break;
-    case PMN_SELALL:   DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On,     NULL); break;
-    case PMN_SELNONE:  DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off,    NULL); break;
-    case PMN_SELTOGG:  DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL); break;
+    case PMN_READ:       DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook); break;
+    case PMN_EDIT:       DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_EDIT,    0,   FALSE); break;
+    case PMN_REPLY:      DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_REPLY,   0,   FALSE); break;
+    case PMN_FORWARD:    DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_FORWARD, 0,   FALSE); break;
+    case PMN_BOUNCE:     DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_BOUNCE,  0,   FALSE); break;
+    case PMN_SEND:       DoMethod(G->App, MUIM_CallHook, &MA_SendHook,           SEND_ACTIVE); break;
+    case PMN_CHSUBJ:     DoMethod(G->App, MUIM_CallHook, &MA_ChangeSubjectHook); break;
+    case PMN_TOUNREAD:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_UNR); break;
+    case PMN_TOREAD:     DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_OLD); break;
+    case PMN_TOHOLD:     DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_HLD); break;
+    case PMN_TOQUEUED:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    STATUS_WFS); break;
+    case PMN_TOMARKED:   DoMethod(G->App, MUIM_CallHook, &MA_SetMailFlagHook,    MFLAG_MARK, FALSE); break;
+    case PMN_TOUNMARKED: DoMethod(G->App, MUIM_CallHook, &MA_SetMailFlagHook,    MFLAG_MARK, TRUE); break;
+    case PMN_SAVEADDR:   DoMethod(G->App, MUIM_CallHook, &MA_GetAddressHook); break;
+    case PMN_MOVE:       DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
+    case PMN_COPY:       DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;
+    case PMN_DELETE:     DoMethod(G->App, MUIM_CallHook, &MA_DeleteMessageHook,  0, FALSE); break;
+    case PMN_PRINT:      DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook,      TRUE); break;
+    case PMN_SAVE:       DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook,      FALSE); break;
+    case PMN_DETACH:     DoMethod(G->App, MUIM_CallHook, &MA_SaveAttachHook); break;
+    case PMN_CROP:       DoMethod(G->App, MUIM_CallHook, &MA_RemoveAttachHook); break;
+    case PMN_EXPMSG:     DoMethod(G->App, MUIM_CallHook, &MA_ExportMessagesHook); break;
+    case PMN_NEW:        DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_NEW,  0,  FALSE); break;
+    case PMN_SELALL:     DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On,     NULL); break;
+    case PMN_SELNONE:    DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off,    NULL); break;
+    case PMN_SELTOGG:    DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL); break;
   }
 
   return(0);
@@ -2976,6 +3047,8 @@ struct MA_ClassData *MA_New(void)
                MUIA_Family_Child, MakeMenuitem(GetStr(MSG_MA_SelectToggle), MMEN_SELTOGG),
             End,
             MUIA_Family_Child, data->GUI.MI_STATUS = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_SetStatus),
+               MUIA_Family_Child, data->GUI.MI_TOMARKED = MakeMenuitem(GetStr(MSG_MA_TOMARKED), MMEN_TOMARKED),
+               MUIA_Family_Child, data->GUI.MI_TOUNMARKED = MakeMenuitem(GetStr(MSG_MA_TOUNMARKED), MMEN_TOUNMARKED),
                MUIA_Family_Child, data->GUI.MI_TOUNREAD = MakeMenuitem(GetStr(MSG_MA_ToUnread), MMEN_TOUNREAD),
                MUIA_Family_Child, data->GUI.MI_TOREAD = MakeMenuitem(GetStr(MSG_MA_ToRead), MMEN_TOREAD),
                MUIA_Family_Child, data->GUI.MI_TOHOLD = MakeMenuitem(GetStr(MSG_MA_ToHold), MMEN_TOHOLD),
@@ -3034,6 +3107,7 @@ struct MA_ClassData *MA_New(void)
                Child, data->GUI.BC_STAT[14] = MakeStatusFlag("status_report"),
                Child, data->GUI.BC_STAT[15] = MakeStatusFlag("status_crypt"),
                Child, data->GUI.BC_STAT[16] = MakeStatusFlag("status_signed"),
+               Child, data->GUI.BC_STAT[17] = MakeStatusFlag("status_mark"),
                // Create the default folder image objects
                Child, data->GUI.BC_FOLDER[0] = MakeFolderImage("folder_fold"),
                Child, data->GUI.BC_FOLDER[1] = MakeFolderImage("folder_unfold"),
@@ -3115,13 +3189,13 @@ struct MA_ClassData *MA_New(void)
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
          // define the StatusFlag images that should be used
-         for (i = 0; i < 17; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, MUIF_NONE);
+         for (i = 0; i < MAXBCSTATUSIMG; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, MUIF_NONE);
 
          // Define the Images the FolderListtree that can be used
-         for (i = 0; i < MAXBCSTDIMAGES; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, MUIF_NONE);
+         for (i = 0; i < MAXBCFOLDERIMG; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, MUIF_NONE);
 
          // Now we need the XPK image also in the folder list
-         DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], MAXBCSTDIMAGES, MUIF_NONE);
+         DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], MAXBCFOLDERIMG, MUIF_NONE);
 
          set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.NL_MAILS);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUT     ,G->AY_Win,3,MUIM_Set                ,MUIA_Window_Open,TRUE);
@@ -3171,6 +3245,8 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOUNREAD  ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_SetStatusToHook,STATUS_UNR);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOHOLD    ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_SetStatusToHook,STATUS_HLD);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOQUEUED  ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_SetStatusToHook,STATUS_WFS);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOMARKED  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetMailFlagHook,MFLAG_MARK, FALSE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOUNMARKED,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetMailFlagHook,MFLAG_MARK, TRUE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_CONFIG    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&CO_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_USER      ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&US_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_MUI       ,MUIV_Notify_Application  ,2,MUIM_Application_OpenConfigWindow,0);

@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.8 (01.02.2003)
+## version $VER: YAM.catalog 5.8 (02.02.2003)
 ## codeset 0
 ;
 MSG_Folder
@@ -5895,4 +5895,13 @@ Bitte bestimmen Sie einen korrekten Postfachnamen.
 MSG_FO_FOLDERPATHINVALID
 Sie haben kein Verzeichnis für das neue Postfach angegeben.\n\
 Bitte geben Sie einen Pfad an bevor Sie fortfahren.
+;
+MSG_MA_TOMARKED
+/\000Markiert
+;
+MSG_MA_TOUNMARKED
+*\000Nicht Markiert
+;
+MSG_RE_SETMARKED
+Status auf markiert setzen
 ;

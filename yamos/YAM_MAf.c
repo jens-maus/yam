@@ -936,7 +936,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
 
       // then we check the fileComment field and set the mail status
       // aswell as the Date
-      if (statstr)
+      if(statstr && *statstr)
       {
          // by default this mail should be new
          for (mail->Status = STATUS_NEW, i = 0; i < 9; i++)
@@ -948,10 +948,14 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             }
          }
 
+         // now we check if second char is present and if we set the mailfag
+         // as "marked"
+         if(statstr[1] && statstr[1] == 'M') SET_FLAG(mail->Flags, MFLAG_MARK);
+
          // now we check if this comment also has the transfer Date included
          // we only take the string if it is exactly 12bytes long or
          // otherwise it could be some weird data in the Comment string
-         if(statstr[1] == ' ' && statstr[2] && statstr[14] == '\0')
+         if(statstr[2] && statstr[14] == '\0')
          {
             // lets decode the base64 encoded timestring directly
             // into the mail->transDate timeval structure
@@ -1118,7 +1122,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
           if (entry->Name[0]) strcat(dispfold, entry->Name);
           else sprintf(dispfold, "(%s)", FilePart(entry->Path));
 
-          if(isCryptedFolder(entry)) sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCSTDIMAGES);
+          if(isCryptedFolder(entry)) sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCFOLDERIMG);
 
           if (entry->LoadedMode)
           {

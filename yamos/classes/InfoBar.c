@@ -176,7 +176,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
 
 		// lets see which image we should display
 		if(folder->FImage) 								bcd = folder->FImage;
-		else if(folder->ImageIndex >= 0)	bcd = G->BImage[folder->ImageIndex+(MAXIMAGES-MAXBCSTDIMAGES)];
+		else if(folder->ImageIndex >= 0)	bcd = G->BImage[folder->ImageIndex+MAXBCSTATUSIMG];
 		else bcd = NULL;
 
 		// only if the image should be changed we proceed or otherwise
