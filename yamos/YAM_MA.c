@@ -224,6 +224,9 @@ void MA_SetMailStatus(struct Mail *mail, enum MailStatus stat)
       MA_ExpireIndex(mail->Folder);
       mi = GetMailInfo(mail);
       SetComment(mi->FName, statstr);
+
+      // if the mail is currently displayed in the listview we
+      // have to redraw some stuff.
       if (mi->Display)
       {
         LONG sorttype1 = xget(G->MA->GUI.NL_MAILS, MUIA_NList_SortType);
@@ -238,7 +241,25 @@ void MA_SetMailStatus(struct Mail *mail, enum MailStatus stat)
 
         // we also have to resort the MailListView if the Listview is
         // sorted by status (column==0), so that it will be resorted somehow.
-        if(sorttype1 == 0 || sorttype2 == 0) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort);
+        if(sorttype1 == 0 || sorttype2 == 0)
+        {
+          int i;
+          BOOL resort = TRUE;
+
+          // we only really resort the listview if the mail is not
+          // actually displayed in a readwindow, or the readwindow will loose the track
+          // of the messages (next/prev would do weird things)
+          for(i = 0; i < MAXRE; i++)
+          {
+            if(G->RE[i] && mail->Folder == G->RE[i]->MailPtr->Folder)
+            {
+              resort = FALSE;
+              break;
+            }
+          }
+
+          if(resort) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort);
+        }
       }
    }
    else SetComment(GetMailFile(NULL, NULL, mail), statstr);
