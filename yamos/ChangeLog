@@ -7,6 +7,16 @@ $Source$
 
 2004-11-10  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_TR.c, YAM_COg.c: implemented full SMTP SSLv3 compatibility and
+      added a possibility to directly select the secure connection method
+      for SMTP connections in the configuration. In contrast to TLSv1, the
+      SSLv3 method directly connects to the specified port and initiates the
+      secure connection without previously querying the mail server via the
+      STARTTLS command, which is quite common for some SMTP-SSL servers out
+      there.
+    * misc: replaced all GUI based "APTR" occurances with proper "Object *"
+      types. This is no functional change but should make the source better
+      maintainable in future.
     * YAM_rexx.c: minor changed to the ReadArgs() calling mechanism of YAM's
       ARexxPort implementation to conform a bit better to the documented
       standard.

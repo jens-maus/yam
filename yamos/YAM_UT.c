@@ -3602,9 +3602,9 @@ Object *MakeInteger(int maxlen, char *label)
 ///
 /// MakePGPKeyList
 //  Creates a PGP id popup list
-Object *MakePGPKeyList(APTR *st, BOOL secret, char *label)
+Object *MakePGPKeyList(Object **st, BOOL secret, char *label)
 {
-   APTR po, lv;
+   Object *po, *lv;
 
    if ((po = PopobjectObject,
          MUIA_Popstring_String, *st = MakeString(SIZE_DEFAULT, label),
@@ -3622,7 +3622,10 @@ Object *MakePGPKeyList(APTR *st, BOOL secret, char *label)
             End,
          End,
       End))
+   {
       DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+   }
+
    return po;
 }
 ///
@@ -3659,7 +3662,7 @@ Object *MakeFolderImage(char *fname)
 ///
 /// MakeAddressField
 //  Creates a recipient field
-Object *MakeAddressField(APTR *string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti)
+Object *MakeAddressField(Object **string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti)
 {
    Object *obj, *bt_adr;
 
@@ -4531,7 +4534,7 @@ static char *IdentifyFileDT(char *fname)
             switch (dth->dth_GroupID)
             {
                case GID_SYSTEM:     break;
-               case GID_DOCUMENT:   type = "application"; break;
+               case GID_DOCUMENT:   type = "applicátion"; break;
                case GID_TEXT:       type = "text"; break;
                case GID_SOUND:
                case GID_INSTRUMENT: type = "audio"; break;

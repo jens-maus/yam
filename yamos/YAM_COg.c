@@ -57,8 +57,8 @@ enum VarPopMode { VPM_FORWARD=0, VPM_REPLYHELLO, VPM_REPLYINTRO, VPM_REPLYBYE,
                   VPM_QUOTE, VPM_ARCHIVE, VPM_MAILSTATS };
 
 /* local protos */
-static APTR MakeVarPop(APTR *, enum VarPopMode, int, char *);
-static APTR MakePhraseGroup(APTR*, APTR*, APTR*, char*, char*);
+static Object *MakeVarPop(Object **, enum VarPopMode, int, char *);
+static Object *MakePhraseGroup(Object **, Object **, Object **, char*, char*);
 static Object *MakeStaticCheck(void);
 
 /***************************************************************************
@@ -141,9 +141,9 @@ MakeStaticHook(PO_HandleXPKHook, PO_HandleXPKFunc);
 ///
 /// MakeXPKPop
 //  Creates a popup list of available XPK sublibraries
-static APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
+static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
 {
-   APTR lv, po;
+   Object *lv, *po;
 
    if ((po = PopobjectObject,
       MUIA_Popstring_String, *text = TextObject, TextFrame,
@@ -203,9 +203,9 @@ MakeStaticHook(PO_HandleTransHook, PO_HandleTrans);
 ///
 /// MakeTransPop
 //  Creates a popup list of available translation tables
-static APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
+static Object *MakeTransPop(Object **string, BOOL output,  char *shortcut)
 {
-   APTR lv, po;
+   Object *lv, *po;
 
    if ((po = PopobjectObject,
       MUIA_Popstring_String, *string = MakeString(SIZE_PATHFILE, shortcut),
@@ -304,9 +304,9 @@ MakeStaticHook(PO_HandleVarHook, PO_HandleVar);
 ///
 /// MakeVarPop
 //  Creates a popup list containing variables and descriptions for phrases etc.
-static APTR MakeVarPop(APTR *string, enum VarPopMode mode, int size, char *shortcut)
+static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, char *shortcut)
 {
-   APTR lv, po;
+   Object *lv, *po;
 
    if ((po = PopobjectObject,
       MUIA_Popstring_String, *string = MakeString(size, shortcut),
@@ -383,14 +383,16 @@ static APTR MakeVarPop(APTR *string, enum VarPopMode mode, int size, char *short
 ///
 /// MakePhraseGroup
 //  Creates a cycle/string gadgets for forward and reply phrases
-static APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, char *help)
+static Object *MakePhraseGroup(Object **hello, Object **intro, Object **bye, char *label, char *help)
 {
-   APTR grp, cycl, pgrp;
+   Object *grp, *cycl, *pgrp;
    static char *cytext[4];
+
    cytext[0] = GetStr(MSG_CO_PhraseOpen);
    cytext[1] = GetStr(MSG_CO_PhraseIntro);
    cytext[2] = GetStr(MSG_CO_PhraseClose);
    cytext[3] = NULL;
+
    if ((grp = HGroup,
          MUIA_Group_HorizSpacing, 1,
          Child, cycl = CycleObject,
@@ -518,6 +520,12 @@ APTR CO_Page0(struct CO_ClassData *data)
 APTR CO_Page1(struct CO_ClassData *data)
 {
    APTR grp, authgrp;
+   static char *secureMethods[4];
+
+   secureMethods[0] = GetStr(MSG_CO_SMTPSECURE_NO);
+   secureMethods[1] = GetStr(MSG_CO_SMTPSECURE_TLS);
+   secureMethods[2] = GetStr(MSG_CO_SMTPSECURE_SSL);
+   secureMethods[3] = NULL;
 
    if ((grp = VGroup,
          MUIA_HelpNode, "CO01",
@@ -532,17 +540,28 @@ APTR CO_Page1(struct CO_ClassData *data)
                      Child, Label2(GetStr(MSG_CO_Domain)),
                      Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,GetStr(MSG_CO_Domain)),
                   End,
+                  Child, VSpace(3),
+                  Child, LLabel(GetStr(MSG_CO_SMTPSECURE)),
+                  Child, HGroup,
+                    Child, HSpace(5),
+                    Child, data->GUI.RA_SMTPSECURE = RadioObject,
+                      MUIA_Group_Horiz,   TRUE,
+                      MUIA_Radio_Entries, secureMethods,
+                      MUIA_CycleChain,    TRUE,
+                    End,
+                    Child, HSpace(0),
+                  End,
+                  Child, VSpace(3),
                   Child, MakeCheckGroup((Object **)&data->GUI.CH_SMTP8BIT, GetStr(MSG_CO_Allow8bit)),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_SMTPTLS, GetStr(MSG_CO_USESMTPTLS)),
                End,
                Child, VGroup,
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USESMTPAUTH, GetStr(MSG_CO_UseSMTPAUTH)),
                   Child, authgrp=ColGroup(2),
                      Child, Label2(GetStr(MSG_CO_SMTPUser)),
                      Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,GetStr(MSG_CO_SMTPUser)),
                      Child, Label2(GetStr(MSG_CO_SMTPPass)),
                      Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(GetStr(MSG_CO_SMTPPass)),
                   End,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USESMTPAUTH, GetStr(MSG_CO_UseSMTPAUTH)),
                   Child, VSpace(0),
                End,
             End,
@@ -601,7 +620,7 @@ APTR CO_Page1(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_DELETE      ,MSG_HELP_CO_CH_DELETE       );
       SetHelp(data->GUI.CH_USEAPOP     ,MSG_HELP_CO_CH_USEAPOP      );
       SetHelp(data->GUI.CH_POPENABLED  ,MSG_HELP_CO_CH_POPENABLED   );
-      SetHelp(data->GUI.CH_SMTPTLS     ,MSG_HELP_CO_CH_USESMTPTLS   );
+      SetHelp(data->GUI.RA_SMTPSECURE  ,MSG_HELP_CO_RA_SMTPSECURE   );
       SetHelp(data->GUI.CH_POP3SSL     ,MSG_HELP_CO_CH_POP3SSL      );
       SetHelp(data->GUI.CH_USESTLS     ,MSG_HELP_CO_CH_USESTLS      );
 
@@ -620,8 +639,9 @@ APTR CO_Page1(struct CO_ClassData *data)
       DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_DelPOP3Hook,0);
       DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,authgrp,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
       DoMethod(data->GUI.CH_POP3SSL    ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_USESTLS,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-      DoMethod(data->GUI.CH_SMTPTLS    ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_SMTPTLS,3,MUIM_Set,MUIA_Disabled, !G->TR_UseableTLS);
+      DoMethod(data->GUI.RA_SMTPSECURE ,MUIM_Notify,MUIA_Radio_Active, 0,data->GUI.RA_SMTPSECURE,3,MUIM_Set,MUIA_Disabled, !G->TR_UseableTLS);
    }
+
    return grp;
 }
 

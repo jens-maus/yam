@@ -5397,3 +5397,21 @@ Mailfile in old format found
 MSG_MA_CREQ_UNKNOWN_TITLE (//)
 Unknown file in folder directory found
 ;
+MSG_CO_SMTPSECURE (//)
+Use secure connection:
+;
+MSG_CO_SMTPSECURE_NO (//)
+No
+;
+MSG_CO_SMTPSECURE_TLS (//)
+with TLSv1
+;
+MSG_CO_SMTPSECURE_SSL (//)
+with SSLv3
+;
+MSG_HELP_CO_RA_SMTPSECURE (//)
+A TLSv1 or SSLv3 secure connection will be established between\n\
+the SMTP server and YAM to send email through an encrypted connection.\n\
+If these radio buttons are ghosted, it means AmiSSL support is\n\
+currently not available.
+;

@@ -391,7 +391,7 @@ static struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 ///
 /// MA_CreateMarkedList
 //  Builds a linked list containing the selected messages
-struct Mail **MA_CreateMarkedList(APTR lv, BOOL onlyNew)
+struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 {
    int id, selected;
    struct Mail *mail, **mlist = NULL;
@@ -3172,7 +3172,7 @@ BOOL MA_SortWindow(void)
 ///
 /// MA_MakeMAFormat
 //  Creates format definition for message listview
-void MA_MakeMAFormat(APTR lv)
+void MA_MakeMAFormat(Object *lv)
 {
    static const int defwidth[MACOLNUM] = { -1,-1,-1,-1,-1,-1,-1,-1 };
    char format[SIZE_LARGE];

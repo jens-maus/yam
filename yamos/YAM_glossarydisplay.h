@@ -38,17 +38,17 @@ struct Dict
 
 struct DI_GUIData
 {
-   APTR WI;
-   APTR GR_LIST;
-   APTR GR_TEXT;
-   APTR LV_ENTRIES;
-   APTR ST_ALIAS;
-   APTR TE_EDIT;
-   APTR SL_EDIT;
-   APTR BT_NEW;
-   APTR BT_DELETE;
-   APTR BT_ADDSELECT;
-   APTR BT_PASTE;
+   Object *WI;
+   Object *GR_LIST;
+   Object *GR_TEXT;
+   Object *LV_ENTRIES;
+   Object *ST_ALIAS;
+   Object *TE_EDIT;
+   Object *SL_EDIT;
+   Object *BT_NEW;
+   Object *BT_DELETE;
+   Object *BT_ADDSELECT;
+   Object *BT_PASTE;
 };
 
 struct DI_ClassData  /* glossary window */

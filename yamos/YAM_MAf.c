@@ -1900,7 +1900,7 @@ MakeHook(MA_LV_FDspFuncHook,MA_LV_FDspFunc);
 ///
 /// MA_MakeFOFormat
 //  Creates format definition for folder listview
-void MA_MakeFOFormat(APTR lv)
+void MA_MakeFOFormat(Object *lv)
 {
    static const int defwidth[FOCOLNUM] = { -1,-1,-1,-1,-1 };
    char format[SIZE_LARGE];

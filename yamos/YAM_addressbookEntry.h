@@ -28,39 +28,36 @@
 
 ***************************************************************************/
 
+#include <mui/NListtree_mcc.h>
+
 #include "SDI_compiler.h"
-
 #include "YAM_stringsizes.h"
-
-#ifndef NLISTTREE_MCC_H
-struct MUI_NListtree_TreeNode;
-#endif
 
 struct EA_GUIData
 {
-   APTR WI;
-   APTR ST_ALIAS;
-   APTR ST_REALNAME;
-   APTR ST_ADDRESS;
-   APTR ST_COMMENT;
-   APTR ST_PHONE;
-   APTR ST_STREET;
-   APTR ST_CITY;
-   APTR ST_COUNTRY;
-   APTR ST_PGPKEY;
-   APTR CY_DEFSECURITY;
-   APTR ST_HOMEPAGE;
-   APTR ST_BIRTHDAY;
-   APTR GR_PHOTO;
-   APTR BC_PHOTO;
-   APTR BT_SELECTPHOTO;
-   APTR BT_LOADPHOTO;
-   APTR LV_MEMBER;
-   APTR ST_MEMBER;
-   APTR BT_ADD;
-   APTR BT_DEL;
-   APTR BT_OKAY;
-   APTR BT_CANCEL;
+   Object *WI;
+   Object *ST_ALIAS;
+   Object *ST_REALNAME;
+   Object *ST_ADDRESS;
+   Object *ST_COMMENT;
+   Object *ST_PHONE;
+   Object *ST_STREET;
+   Object *ST_CITY;
+   Object *ST_COUNTRY;
+   Object *ST_PGPKEY;
+   Object *CY_DEFSECURITY;
+   Object *ST_HOMEPAGE;
+   Object *ST_BIRTHDAY;
+   Object *GR_PHOTO;
+   Object *BC_PHOTO;
+   Object *BT_SELECTPHOTO;
+   Object *BT_LOADPHOTO;
+   Object *LV_MEMBER;
+   Object *ST_MEMBER;
+   Object *BT_ADD;
+   Object *BT_DEL;
+   Object *BT_OKAY;
+   Object *BT_CANCEL;
 };
 
 struct EA_ClassData  /* address book entry window */

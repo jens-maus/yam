@@ -29,14 +29,15 @@
 ***************************************************************************/
 
 #include <exec/types.h>
+#include <proto/intuition.h>
 
 struct ER_GUIData
 {
-   APTR WI;
-   APTR LV_ERROR;
-   APTR BT_NEXT;
-   APTR NB_ERROR;
-   APTR BT_PREV;
+   Object *WI;
+   Object *LV_ERROR;
+   Object *BT_NEXT;
+   Object *NB_ERROR;
+   Object *BT_PREV;
 };
 
 struct ER_ClassData  /* error window */

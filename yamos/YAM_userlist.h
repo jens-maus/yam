@@ -32,18 +32,18 @@
 
 struct US_GUIData
 {
-   APTR WI;
-   APTR LV_USERS;
-   APTR BT_ADD;
-   APTR BT_DEL;
-   APTR PO_MAILDIR;
-   APTR ST_MAILDIR;
-   APTR ST_USER;
-   APTR ST_PASSWD;
-   APTR CH_USEDICT;
-   APTR CH_USEADDR;
-   APTR CH_CLONE;
-   APTR CH_ROOT;
+   Object *WI;
+   Object *LV_USERS;
+   Object *BT_ADD;
+   Object *BT_DEL;
+   Object *PO_MAILDIR;
+   Object *ST_MAILDIR;
+   Object *ST_USER;
+   Object *ST_PASSWD;
+   Object *CH_USEDICT;
+   Object *CH_USEADDR;
+   Object *CH_CLONE;
+   Object *CH_ROOT;
 };
 
 struct US_ClassData  /* user list window */

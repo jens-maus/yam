@@ -721,7 +721,7 @@ void CO_SetDefaults(struct Config *co, int page)
       *co->SMTP_Server = *co->SMTP_Domain = 0;
       co->SMTP_Port = 25;
       co->Allow8bit = FALSE;
-      co->Use_SMTP_TLS = FALSE;
+      co->SMTP_SecureMethod = SMTPSEC_NONE;
       co->Use_SMTP_AUTH = FALSE;
       *co->SMTP_AUTH_User = *co->SMTP_AUTH_Pass = 0;
       co->P3[0] = CO_NewPOP3(co, TRUE); co->P3[0]->DeleteOnServer = TRUE;

@@ -59,12 +59,12 @@ enum AddressbookFind { ABF_USER, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEE
 
 struct AB_GUIData
 {
-   APTR WI;
-   APTR TO_TOOLBAR;
-   APTR LV_ADDRESSES;
-   APTR BT_TO;
-   APTR BT_CC;
-   APTR BT_BCC;
+   Object *WI;
+   Object *TO_TOOLBAR;
+   Object *LV_ADDRESSES;
+   Object *BT_TO;
+   Object *BT_CC;
+   Object *BT_BCC;
    struct MUIP_Toolbar_Description TB_TOOLBAR[13];
 };
  

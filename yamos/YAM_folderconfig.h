@@ -32,26 +32,26 @@
 
 struct FO_GUIData
 {
-   APTR WI;
-   APTR ST_FNAME;
-   APTR ST_FPATH;
-   APTR NM_MAXAGE;
-   APTR CY_FMODE;
-   APTR CY_FTYPE;
-   APTR CY_SORT[2];
-   APTR CH_REVERSE[2];
-   APTR ST_MLPATTERN;
-   APTR ST_MLFROMADDRESS;
-   APTR ST_MLREPLYTOADDRESS;
-   APTR ST_MLADDRESS;
-   APTR CY_MLSIGNATURE;
-   APTR CH_STATS;
-   APTR CH_MLSUPPORT;
-   APTR BT_AUTODETECT;
-   APTR BT_OKAY;
-   APTR BT_CANCEL;
-   APTR ST_HELLOTEXT;
-   APTR ST_BYETEXT;
+   Object *WI;
+   Object *ST_FNAME;
+   Object *ST_FPATH;
+   Object *NM_MAXAGE;
+   Object *CY_FMODE;
+   Object *CY_FTYPE;
+   Object *CY_SORT[2];
+   Object *CH_REVERSE[2];
+   Object *ST_MLPATTERN;
+   Object *ST_MLFROMADDRESS;
+   Object *ST_MLREPLYTOADDRESS;
+   Object *ST_MLADDRESS;
+   Object *CY_MLSIGNATURE;
+   Object *CH_STATS;
+   Object *CH_MLSUPPORT;
+   Object *BT_AUTODETECT;
+   Object *BT_OKAY;
+   Object *BT_CANCEL;
+   Object *ST_HELLOTEXT;
+   Object *ST_BYETEXT;
 };
 
 struct FO_ClassData  /* folder configuration window */

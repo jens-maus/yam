@@ -769,10 +769,10 @@ MakeStaticHook(FI_EditFileHook,FI_EditFileFunc);
 ///
 /// FI_ConstructSearchGroup
 //  Creates search form
-APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote)
+Object *FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote)
 {
    static char *fldopt[2][13], *compopt[14], *statopt[10], *amode[3];
-   APTR grp;
+   Object *grp;
    int f = remote ? 1 : 0;
 
    amode[0] = GetStr(MSG_Address);

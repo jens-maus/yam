@@ -30,7 +30,8 @@
 
 #include <stdio.h>
 
-enum TransferType {TR_IMPORT,TR_EXPORT,TR_GET,TR_SEND};
+enum TransferType   { TR_IMPORT, TR_EXPORT, TR_GET, TR_SEND };
+enum SMTPSecMethod  { SMTPSEC_NONE, SMTPSEC_TLS, SMTPSEC_SSL };
 
 #define SMTP_NO_SOCKET -1
 
@@ -61,19 +62,19 @@ struct DownloadResult
 
 struct TR_GUIData
 {
-   APTR WI;
-   APTR GR_LIST;
-   APTR GR_PAGE;
-   APTR LV_MAILS;
-   APTR BT_PAUSE;
-   APTR BT_RESUME;
-   APTR BT_QUIT;
-   APTR BT_START;
-   APTR TX_STATS;
-   APTR TX_STATUS;
-   APTR GA_COUNT;
-   APTR GA_BYTES;
-   APTR BT_ABORT;
+   Object *WI;
+   Object *GR_LIST;
+   Object *GR_PAGE;
+   Object *LV_MAILS;
+   Object *BT_PAUSE;
+   Object *BT_RESUME;
+   Object *BT_QUIT;
+   Object *BT_START;
+   Object *TX_STATS;
+   Object *TX_STATUS;
+   Object *GA_COUNT;
+   Object *GA_BYTES;
+   Object *BT_ABORT;
    char *ST_STATUS;
 };
 

@@ -2523,9 +2523,10 @@ clean_exit:
 //  Connects to a SMTP mail server
 static BOOL TR_ConnectSMTP(void)
 {
-  // If we did a TLS negotitaion previously we don`t have to skip the
-  // welcome message.
-  if(!G->TR_UseTLS)
+  // If we did a TLS negotitaion previously we have to skip the
+  // welcome message, but if it was another connection like a normal or a SSL
+  // one we have wait for the welcome
+  if(!G->TR_UseTLS || C->SMTP_SecureMethod == SMTPSEC_SSL)
   {
     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
     if(!TR_SendSMTPCmd(SMTP_CONNECT, NULL, MSG_ER_BadResponse)) return FALSE;
@@ -2545,20 +2546,20 @@ static int TR_ConnectESMTP(void)
    char *resp;
    int ServerFlags = 0;
 
-   // If we did a TLS negotitaion previously we don`t have to skip the
-   // welcome message.
-   if(!G->TR_UseTLS)
+   // If we did a TLS negotitaion previously we have to skip the
+   // welcome message, but if it was another connection like a normal or a SSL
+   // one we have wait for the welcome
+   if(!G->TR_UseTLS || C->SMTP_SecureMethod == SMTPSEC_SSL)
    {
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
       if(!TR_SendSMTPCmd(SMTP_CONNECT, NULL, MSG_ER_BadResponse)) return 0;
-
-      set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, GetStr(MSG_TR_SendHello));
    }
 
    // Now we send the EHLO command to get the list of features returned.
    if (G->TR_Socket == SMTP_NO_SOCKET) return 0;
 
    // Now send the EHLO ESMTP command to log in
+   set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, GetStr(MSG_TR_SendHello));
    if(!(resp = TR_SendSMTPCmd(ESMTP_EHLO, C->SMTP_Domain, MSG_ER_BadResponse))) return 0;
 
    // Now lets see what features this ESMTP Server really has
@@ -3216,7 +3217,8 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
       // now we have to check wheter SSL/TLS is selected for SMTP account,
       // but perhaps TLS is not working.
-      if(C->Use_SMTP_TLS && !G->TR_UseableTLS)
+      if(C->SMTP_SecureMethod != SMTPSEC_NONE &&
+         !G->TR_UseableTLS)
       {
         ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL), NULL, NULL);
         return FALSE;
@@ -3241,15 +3243,31 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       {
          BOOL connected = TRUE;
 
+         // first we check wheter the user wants to connect to a plain SSLv3 server
+         // so that we initiate the SSL connection now
+         if(C->SMTP_SecureMethod == SMTPSEC_SSL)
+         {
+            // lets try to establish the SSL connection via AmiSSL
+            if(TR_InitTLS() && TR_StartTLS())
+            {
+              G->TR_UseTLS = TRUE;
+            }
+            else
+            {
+              ER_NewError(GetStr(MSG_ER_INITTLS), host, NULL);
+              return FALSE;
+            }
+         }
+
          // first we have to check wheter the user requested some
          // feature that requires a ESMTP Server, and if so we connect via ESMTP
-         if(C->Use_SMTP_AUTH || C->Use_SMTP_TLS)
+         if(C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS)
          {
             int ServerFlags = TR_ConnectESMTP();
 
             // Now we have to check whether the user has selected SSL/TLS
             // and then we have to initiate the STARTTLS command followed by the TLS negotiation
-            if(C->Use_SMTP_TLS)
+            if(C->SMTP_SecureMethod == SMTPSEC_TLS)
             {
               connected = TR_InitSTARTTLS(ServerFlags);
 
@@ -3279,7 +3297,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
          }
 
          // If we are still "connected" we can proceed with transfering the data
-         if (connected)
+         if(connected)
          {
             success = TRUE;
             AppendLogVerbose(41, GetStr(MSG_LOG_ConnectSMTP), host, "", "", "");

@@ -38,29 +38,29 @@
 
 struct SearchGroup
 {
-   APTR PG_SRCHOPT;
-   APTR CY_MODE;
-   APTR ST_FIELD;
-   APTR CY_COMP[5];
-   APTR ST_MATCH[5];
-   APTR BT_FILE[5];
-   APTR BT_EDIT[5];
-   APTR RA_ADRMODE;
-   APTR CY_STATUS;
-   APTR CH_CASESENS[5];
-   APTR CH_SUBSTR[5];
+   Object *PG_SRCHOPT;
+   Object *CY_MODE;
+   Object *ST_FIELD;
+   Object *CY_COMP[5];
+   Object *ST_MATCH[5];
+   Object *BT_FILE[5];
+   Object *BT_EDIT[5];
+   Object *RA_ADRMODE;
+   Object *CY_STATUS;
+   Object *CH_CASESENS[5];
+   Object *CH_SUBSTR[5];
 };
 
 struct FI_GUIData
 {
-   APTR WI;
-   APTR LV_FOLDERS;
+   Object *WI;
+   Object *LV_FOLDERS;
    struct SearchGroup GR_SEARCH;
-   APTR LV_MAILS;
-   APTR GR_PAGE;
-   APTR GA_PROGRESS;
-   APTR BT_SELECT;
-   APTR BT_READ;
+   Object *LV_MAILS;
+   Object *GR_PAGE;
+   Object *GA_PROGRESS;
+   Object *BT_SELECT;
+   Object *BT_READ;
 };
 
 struct FI_ClassData  /* find window */
@@ -98,7 +98,7 @@ extern struct Hook FI_OpenHook;
 extern const int   Mode2Group[12];
 extern const char mailStatusCycleMap[10];
 
-APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote);
+Object *FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote);
 BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail);
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, char stat, BOOL substr, char *match, char *field);
 void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled);
