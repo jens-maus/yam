@@ -363,8 +363,11 @@ static void ADSTnotify_stop(void)
     // stop the NotifyRequest
     struct NotifyRequest *nr = &ADSTdata.nRequest;
 
-    EndNotify(nr);
-    FreeSignal((LONG)nr->nr_stuff.nr_Signal.nr_SignalNum);
+    if(nr->nr_Name)
+    {
+      EndNotify(nr);
+      FreeSignal((LONG)nr->nr_stuff.nr_Signal.nr_SignalNum);
+    }
   }
 }
 
