@@ -1,12 +1,40 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.3 (8.6.2001)
+@$VER: YAM.guide 2.4 (18.12.2001)
+
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2001 by YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site :  http://www.yam.ch/
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+
+$Id$
+
+***************************************************************************/
+
 @INDEX "Index"
 
 @NODE "Main" "YAM - English documentation"
 
 
              @{b}=============================================
-              Y A M    (Yet Another Mailer)   VERSION 2.3
+              Y A M    (Yet Another Mailer)   VERSION 2.4
              =============================================@{ub}
 
                       © 1995-2000 by Marcel Beck
@@ -49,7 +77,8 @@
 
 INTRODUCTION
 
-YAM  (Yet  Another  Mailer) lets you send and receive @{"electronic mail" LINK "MAIL" 0} over
+
+YAM  (Yet  Another  Mailer) lets you send and receive @{" electronic mail " LINK "MAIL" 0} over
 the Internet and maintain archives of messages in your computer.
 
 The  idea for YAM came to me in 1995, when I first tried using E-mail. The
@@ -62,51 +91,54 @@ The  unexpectedly  enthusiastic  response  to  Version 1.2 led to a steady
 development  of  YAM  culminating  in Version 2.2, which is much more than
 just an upgrade for the popular Version 1.3.5.
 
+As of YAM 2.3, YAM is now maintained by the YAM Open Source Team.
+
+
 Features of YAM
 
-Straightforward @{"installation" LINK "INST" 0} and @{"configuration" LINK "TUTO" 0}, taking only a few minutes.
+Straightforward @{" installation " LINK "INST" 0} and @{" configuration " LINK "TUTO" 0}, taking only a few minutes.
 
-Easy operation using buttons, menus, keyboard and @{"drag&drop" LINK "Drag" 0}.
+Easy operation using buttons, menus, keyboard and @{" drag&drop " LINK "Drag" 0}.
 
 Context-sensitive online Help using help bubbles and AmigaGuide.
 
-Provision  for  up  to  16  different  @{"Users" LINK "US_W" 0},  who can each have their own
+Provision  for  up  to  16  different  @{" Users " LINK "US_W" 0},  who can each have their own
 folders and define their own preferences.
 
-Any  number  of  @{"user-defined folders" LINK "FO_W" 0},  which  can  be  compressed or have
-passwords set.
+Any  number  of  @{" user-defined folders " LINK "FO_W" 0},  which  can  be  compressed and/or
+have passwords set, and be arranged in groups.
 
-Hierarchical  @{"Address book" LINK "AB_W" 0}  with  groups and distribution lists as well as
+Hierarchical  @{" Address book " LINK "AB_W" 0}  with  groups and distribution lists as well as
 comprehensive descriptions for each entry.
 
-Freely customisable interface, thanks to @{"MUI" LINK "MUI" 0}.
+Freely customisable interface, thanks to @{" MUI " LINK "MUI" 0}.
 
-A choice of MagicWorkbench icons or @{"NewIcons" LINK "NEWI" 0}.
+A choice of MagicWorkbench icons or @{" NewIcons " LINK "NEWI" 0}.
 
-Inbuilt  @{"POP3" LINK "PROT" 0}  client,  which can check up to 16 different post servers in
+Built-in  @{" POP3 " LINK "PROT" 0}  client,  which can check up to 16 different POP3 servers in
 one  connection  and  also  allows  prior  selection of the messages to be
 downloaded.
 
-Messages  can  be  written  or  answered offline and then sent to the post
-server using the inbuilt @{"SMTP" LINK "PROT" 0} client.
+Messages  can  be  written  or  answered offline and then sent to the mail
+server using the built-in @{" SMTP " LINK "PROT" 0} client.
 
-Powerful  @{"text editor" LINK "EDIT" 0}  for  writing E-mails providing several type styles,
-@{"glossary" LINK "DI_W" 0} and spellchecking.
+Powerful  @{" text editor " LINK "EDIT" 0}  for  writing E-mails providing several type styles,
+@{" glossary " LINK "DI_W" 0} and spellchecking.
 
-Comprehensive  @{"search capabilities" LINK "FI_W" 0}, for example a full text search through
+Comprehensive  @{" search capabilities " LINK "FI_W" 0}, for example a full text search through
 all articles using a single query.
 
-Automatic  sorting  of  the  post  with  up  to  100 @{"filters" LINK "CO03" 0}. Archiving or
+Automatic  sorting  of  the  post  with  up  to  100 @{" filters " LINK "CO03" 0}. Archiving or
 diversion  of  specified  articles,  automatic  replies or the deletion of
 advertising are just a few of the possible applications of the filters.
 
-Support  for  @{"PGP" LINK "PGP" 0}  encryption  and signing of messages as well as read and
+Support  for  @{" PGP " LINK "PGP" 0}  encryption  and signing of messages as well as read and
 receive authentication.
 
-Built-in support  for  UUencode  and @{"MIME" LINK "MIME" 0} for sending and receiving binary
+Built-in support  for  UUencode  and @{" MIME " LINK "MIME" 0} for sending and receiving binary
 data and automatic recognition of over 20 datatypes.
 
-Event-sensitive starting of @{"macros" LINK "CO13" 0} and comprehensive @{"Arexx" LINK "REXX" 0} support.
+Event-sensitive starting of @{" macros " LINK "CO13" 0} and comprehensive @{" Arexx " LINK "REXX" 0} support.
 
 Localised for many languages.
 
@@ -125,10 +157,20 @@ Software
 
  - Kickstart 2.04 or higher
  - Workbench 2.1 or higher
- - @{"MUI 3.8" LINK "MUI" 0} or higher
- - AmiTCP-compatible Stack (AmiTCP, Miami or TermiteTCP)
- - optional: XPK-module for compression of articles
+ - @{" MUI " LINK "MUI" 0} 3.8 or higher
+ - 3rd party MUI custom classes:
+ 
+    BetterString      - http:\//www.p2p-it.dk/duff/MCC_BetterString.LZX
+    NList, NListview  - http:\//www.aphaso.de/download/MCC_NList0_90.lha
+    NListtree         - http:\//www.aphaso.de/download/MCC_NListtree18.8.lha
+    TextEditor        - http:\//www.p2p-it.dk/duff/MCC_TextEditor.LZX
+    Toolbar           - http:\//us.aminet.net/pub/aminet/dev/mui/MCC_Toolbar.lha
+
+ - AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX] or TermiteTCP)
+ - optional: XPK for compression of articles
+ - optional: popupmenu.library for pop-up menus
  - optional: PGP 2.6 or 5.0 for encryption and signing messages
+ - optional: AmiSSL for SSL security layers over SMTP/POP
  - optional: Archiver for compressing folders, e.g.  LhA
  - optional: Program for spell-checking, e.g.  AlphaSpell
 
@@ -185,7 +227,7 @@ local bulletin boards or on public domain disks.
 
              Support and online registration is available at
 
-                          http://www.sasg.com/
+                          http:\//www.sasg.com/
 
 @ENDNODE
 @NODE "NEWI" "NewIcons"
@@ -222,16 +264,18 @@ look very professional now.
 
 INSTALLATION
 
+
 Installation by using the installer
 
 Open  the 'Install' folder, double-click the icon 'English' and follow the
 instructions  given  by  the  installer.  If you have already installed an
 older  version  of YAM please restart your Amiga after the installation of
-YAM 2.3.
+YAM 2.4.
+
 
 Manual installation
 
-If you don't have the Amiga installer or for some reason you are unable or
+If you don't have the Amiga Installer or for some reason you are unable or
 unwilling to use it, proceed as follows:
 
 - Create a directory for YAM on your hard disk.
@@ -240,7 +284,7 @@ unwilling to use it, proceed as follows:
   directories 'Charsets', 'Icons' and 'Rexx' to this new directory. Rename
   the guide file to 'YAM.guide'
 
-- Copy the catalog file 'YAM.catalog' for your language to...
+- (If appropriate) Copy the file 'YAM.catalog' for your language to
 
       'LOCALE:Catalogs/<your language>'
 
@@ -252,6 +296,25 @@ unwilling to use it, proceed as follows:
   directory you have created for YAM 2.3, for example...
 
       'Assign YAM: Work:Internet/YAM'
+
+- If you have a 68040 or 68060 CPU, you might want to use a version
+  of YAM optimized for those processors. To do this, just use the
+  supplied "spatch" CLI utility, which you should copy to your C:
+  directory for a future use. Now, assuming you have both "YAM" (020)
+  and "YAM.060.pch" in your RAM: disk, you might use:
+
+      1.RAM Disk:> spatch -oYAM_060 -pYAM.060.pch YAM
+
+  which would result in a fresh new 'YAM_060' executable that should
+  now be copied to your YAM: directory to replace the standard 020
+  compile.
+
+  If you have some older YAM version already installed, you probably
+  can use this instead:
+
+      1.RAM Disk:> spatch -oYAM_060 -pYAM.060.pch YAM:YAM
+
+  to replace your old YAM executable in one single step.
 
 - Reboot your Amiga
 
@@ -310,7 +373,7 @@ The control string \\n forces a new line after the word 'regards'.
  5. Save  the  settings  now by clicking on [Save]. YAM now has sufficient
 data to allow you to write your first message.
 
- 6. After  saving  the  settings you`re back in the main window. Click the
+ 6. After  saving  the  settings you're back in the main window. Click the
 button  'Write'  (sixth  button  from  the  left) or choose 'New' from the
 'Message'  menu. The editor window will open. Insert the e-mail address of
 the recipient into the 'To' textfield (like 'jdoe\@provider.uk'). Normally
@@ -321,7 +384,7 @@ do  nicely  for  this one!) Now click in the large blank area and type the
 actual message.
 
 If  you were using YAM in a normal way, and wish to send copies (including
-hidden  copies) to anyone, this can be done by clicking on `Options', thus
+hidden  copies) to anyone, this can be done by clicking on 'Options', thus
 activating  the  third of the three sheets (Message, Attachments, Options)
 of the Write window.
 
@@ -335,8 +398,8 @@ Send  the  message  by  clicking  the 'Send' button (fifth button from the
 right  hand  side).  The  transfer  status  window  will appear and report
 progress as YAM logs in on the mail-server and sends the message.
 
- 9. As  you`ve  probably noticed the mail has vanished from the 'Outgoing'
-folder.  Don`t  panic!  It has been moved to the 'Sent' folder. The letter
+ 9. As  you've  probably noticed the mail has vanished from the 'Outgoing'
+folder.  Don't  panic!  It has been moved to the 'Sent' folder. The letter
 symbol  in  the  list  has  a little stamp on it now, which means that the
 message has been sent successfully.
 
@@ -345,7 +408,7 @@ should  be  able  to  recognize  the text written by you. The lines in the
 upper  part  of  the  message  have  been inserted by YAM and contain data
 needed for mail transfer (the so-called "headers").
 
-11. Since you`ve written the mail to yourself you should start looking for
+11. Since you've written the mail to yourself you should start looking for
 new  mail  now.  Click the read window to the background or close it, then
 click on the 'Get' button (sixth button from the right hand side).
 
@@ -355,7 +418,7 @@ everything  runs  as  it  should a requester will open up with the message
 that  you  have received new mail. You can read the mail in the 'Incoming'
 folder.
 
-If  you`ve  made  it  this  far  without  major  problems you now know the
+If  you've  made  it  this  far  without  major  problems you now know the
 essential  functions  of  YAM.  For further explanations and more detailed
 information on single topics please read the following chapters.
 
@@ -371,6 +434,8 @@ YAM's main window is laid out as shown:
     @{"Project" LINK "MAM1" 0} @{"Folder" LINK "MAM2" 0} @{"Message" LINK "MAM3" 0} @{"Settings" LINK "MAM4" 0} @{"Scripts" LINK "MAM5" 0}
 
    .--------------------------------------------------------.
+   |                       Status bar                       |
+   |--------------------------------------------------------.
    |              @{"Toolbar" LINK "MA02" 0}                                   |
    |________________________________________________________|
    |                 |                                      |
@@ -379,10 +444,7 @@ YAM's main window is laid out as shown:
    |                 |      This shows the contents         |
    |                 |      of the selected folder          |
    |                 |                                      |
-   |_________________|______________________________________|
-   |                                                        |
-   `--------------------------------------------------------'
-                         ^ status bar
+   `-----------------^--------------------------------------'
 
 @ENDNODE
 @NODE "MA00" "Main window - folder list"
@@ -395,43 +457,41 @@ The following four standard 'mailbox' folders are always present:
 Incoming:  This  mailbox holds new messages addressed to you. Whenever you
 download  new  mail, this is where the new messages will go initially. You
 can  however  redistribute incoming messages to other folders, as desired,
-by the use of @{"filters" LINK "CO03" 0}.
+by the use of @{" filters " LINK "CO03" 0}.
 
 Outgoing: This mailbox holds the messages which you have written and which
 you intend to transmit when you are next online.
 
 Sent:  Here you can see the messages which you have already sent. Messages
 are   moved   to  this  box  (from  'Outgoing')  when  they  are  actually
-transmitted.  Again you can use @{"filters" LINK "CO03" 0} to transfer sent messages to other
+transmitted.  Again you can use @{" filters " LINK "CO03" 0} to transfer sent messages to other
 folders.
 
 Deleted: This box contains messages marked for deletion. Normally messages
 are  not  actually  deleted  from  the  hard disk until you quit YAM. This
 allows you to recover messages deleted earlier in the session.
 
-Using  the  @{"folder menu" LINK "MAM2" 0} menu you can create more folders to hold messages
+Using  the  @{" folder menu " LINK "MAM2" 0} menu you can create more folders to hold messages
 which  you  have  received  and/or  sent,  so you can arrange the mails in
-whatever way you like.
+whatever way you like, including arranging them in groups.
 
 The folder list can have up to five columns: Name of the folder, number of
 messages  (in  total,  new or unread) as well as the size of the folder in
 bytes.  Which of these columns is actually shown depends on how you set up
-@{"Lists" LINK "CO08" 0} in the configuration. The column widths can be adjusted by using the
+@{" Lists " LINK "CO08" 0} in the configuration. The column widths can be adjusted by using the
 mouse  to drag the thin lines separating the column headings in the folder
 list itself. The order of the columns can be modified by moving the column
 headers.
 
-You  can  rearrange  the folders either by @{"Drag&Drop" LINK "Drag" 0} or by clicking on the
-column heading. A little arrow in the one of the column headings shows how
-the  messages  are sorted. A second click on the same heading reverses the
-order of sorting (Z->A instead of A->Z).
+You  can  rearrange  the folders either by @{" Drag&Drop " LINK "Drag" 0} or by clicking on the
+column heading. A little arrow on one of the column headings shows how the
+messages are sorted. A second click on the same heading reverses the order
+of sorting (Z->A instead of A->Z).
 
 If  the  name  of  the  folder  is shown in white, this means that the box
 contains  new  or  unread  mail. When the numerical indication is missing,
 this  shows  that  the  folder  has  not been scanned (which saves storage
-space).  When  the folder name is shown centred between two thick bars, it
-is  not  an  actual  folder  but rather is acting as a divider to show the
-grouping of your user-defined folders.
+space). All of this applies to folder groups, too.
 
 If  you  "park"  the  mouse pointer over the list for some seconds, a help
 bubble containing information about the current folder pops up.
@@ -440,8 +500,8 @@ To  see  the  contents  of  any particular folder click on that row in the
 folder  list.  The message list appears at the right, maybe after a slight
 pause.
 
-Doubleclicking  an  entry in the list opens the @{"configuration window" LINK "FO_W" 0} where
-you can edit the properties of the selected folder.
+Doubleclicking  an  entry in the list opens the @{" configuration window " LINK "FO_W" 0} where
+you can edit the properties of the selected folder or group.
 
 @ENDNODE
 @NODE "MA01" "Main window - message list"
@@ -450,9 +510,9 @@ you can edit the properties of the selected folder.
 Main window - MESSAGE LIST
 
 The  message  list can have up to eight columns, the contents being set in
-the @{"Lists" LINK "CO08" 0} configuration.
+the @{" Lists " LINK "CO08" 0} configuration.
 
-Message  status:  An  icon showing the @{"status" LINK "MA0S" 0} of the message (new, unread,
+Message  status:  An  icon showing the @{" status " LINK "MA0S" 0} of the message (new, unread,
 read, etc.)
 
 Sender/Recipient:  E-mail address or, in this case, the name of the sender
@@ -465,14 +525,14 @@ the subject, the prefixes Re: and AW: are ignored.
 
 Date:  The  date  of  posting  of the message, calculated according to the
 local  time (for you). For this to work, both you and the sender must have
-set your correct @{"timezone" LINK "CO00" 0}.
+set your correct @{" timezone " LINK "CO00" 0}.
 
-Filename: Name of the file attached to the message.
+Filename: Name of the file containing the message.
 
 Reply address: Contents of the Reply-To: header in the message. If this is
 missing, then the sender's address is given (the From: header).
 
-Size: Size of the message in Bytes.
+Size: Size of the message.
 
 The  column  widths  can  be  adjusted by using the mouse to drag the thin
 lines separating the column headings in the message list itself. The order
@@ -484,15 +544,15 @@ according  to  this  property. A second click on the same heading reverses
 the  order  of sorting (Z->A instead of A->Z). To set the second sort key,
 keep  the  Shift  key  pressed while clicking on the column heading. These
 changes are only temporary; if you want to make them permanent you must do
-this in the @{"configuration settings" LINK "FO_W" 0}.
+this in the @{" folder settings " LINK "FO_W" 0} window.
 
 If  you  "park"  the  mouse pointer over the list for some seconds, a help
 bubble containing information about the current message pops up.
 
-A  double  click  on an entry in the list opens a @{"Read window" LINK "RE_W" 0} and displays
+A  double  click  on an entry in the list opens a @{" Read window " LINK "RE_W" 0} and displays
 the  corresponding  message.  You  can  use  the mouse to move messages to
 another  folder.  Click  on an entry and drag down (holding the left mouse
-button)  to mark a block of messages. Then click and @{"drag" LINK "Drag" 0} the marked block
+button)  to mark a block of messages. Then click and @{" drag " LINK "Drag" 0} the marked block
 to the left, into the folder list, and drop it onto the chosen folder.
 
 @ENDNODE
@@ -560,23 +620,23 @@ icons, labels or both on the buttons: see @{"Settings/MUI" LINK "MAM4" 0}.
 
       Button      Shortcut    Equivalent to menu...
  -----------------------------------------------------------------------
-  1   [Read]      D,<return>  @{"Message/Read" LINK "MAM3" 0}
-  2   [Edit]      E           @{"Message/Edit" LINK "MAM3" 0}
-  3   [Move]      V           @{"Message/Move" LINK "MAM3" 0}
-  4   [Delete]    L,<del>     @{"Message/Delete" LINK "MAM3" 0}
-  5   [GetAdd]    T           @{"Message/Save Address" LINK "MAM3" 0}
+  1   [Read]      D,<return>  @{" Message/Read " LINK "MAM3" 0}
+  2   [Edit]      E           @{" Message/Edit " LINK "MAM3" 0}
+  3   [Move]      V           @{" Message/Move " LINK "MAM3" 0}
+  4   [Delete]    L,<del>     @{" Message/Delete " LINK "MAM3" 0}
+  5   [GetAdd]    T           @{" Message/Save Address " LINK "MAM3" 0}
 
-  6   [New]       N           @{"Message/Write" LINK "MAM3" 0}
-  7   [Reply]     R           @{"Message/Reply" LINK "MAM3" 0}
-  8   [Forward]   W           @{"Message/Forward" LINK "MAM3" 0}
+  6   [New]       N           @{" Message/Write " LINK "MAM3" 0}
+  7   [Reply]     R           @{" Message/Reply " LINK "MAM3" 0}
+  8   [Forward]   W           @{" Message/Forward " LINK "MAM3" 0}
 
-  9   [Get]       G           @{"Folder/Get new mail" LINK "MAM2" 0}
- 10   [Send]      S           @{"Folder/Send queued mail" LINK "MAM2" 0}
+  9   [Get]       G           @{" Folder/Get new mail " LINK "MAM2" 0}
+ 10   [Send]      S           @{" Folder/Send queued mail " LINK "MAM2" 0}
 
- 11   [Filter]    I           @{"Folder/Filter" LINK "MAM2" 0}
- 12   [Find]      F           @{"Folder/Find" LINK "MAM2" 0}
- 13   [Addr]      A           @{"Settings/Address book" LINK "MAM4" 0}
- 14   [Config]    C           @{"Settings/Configuration" LINK "MAM4" 0}
+ 11   [Filter]    I           @{" Folder/Filter " LINK "MAM2" 0}
+ 12   [Find]      F           @{" Folder/Find " LINK "MAM2" 0}
+ 13   [Addr]      A           @{" Settings/Address book " LINK "MAM4" 0}
+ 14   [Config]    C           @{" Settings/Configuration " LINK "MAM4" 0}
 
 Additional  features  are  available  by  clicking  a toolbar button while
 holding down a certain qualifier key:
@@ -586,7 +646,7 @@ holding down a certain qualifier key:
  Shift + [Forward]   Bounces the message
  Shift + [Get]       Starts a mail exchange
  Shift + [Filter]    Filters the active message only
- Alt   + [Reply]     Forces a mailing list reply (address in ReplyTo field
+ Alt   + [Reply]     Forces a mailing list reply (address in Reply-To field
                      is used)
  Ctrl  + [Reply]     Omits quoting of the original message
  Ctrl  + [Forward]   Omits forwarding of the attachments
@@ -597,34 +657,50 @@ holding down a certain qualifier key:
 
 Main window - PROJECT MENU
 
+
 Project/About
-Shows @{"Copyright Information" LINK "COPY" 0} for this program.
+
+Shows @{" Copyright Information " LINK "COPY" 0} for this program.
+
 
 Project/About MUI
-Shows copyright and version information for @{"MUI" LINK "MUI" 0}.
+
+Shows copyright and version information for @{" MUI " LINK "MUI" 0}.
+
 
 Project/Check Version
+
 Fetches information about the newest version of YAM from the YAM homepage.
 Make sure that you are online before calling this function. YAM then tells
 you  whether there is an update for your version. The button [To Homepage]
-will  then  start  an  @{"ARexx script" LINK "CO13" 0} which connects your browser to the YAM
+will  then  start  an  @{" ARexx script " LINK "CO13" 0} which connects your browser to the YAM
 homepage.
 
+
 Project/Show last message
+
 Shows recent error messages.
 
+
 Project/Restart
-Forces  a  "warm start" of YAM. In this way when there are several defined
-@{"users" LINK "US_W" 0} you can re-enter with another username.
+
+Forces  a  "warm start" of YAM. You can use this to login in again using
+@{" another username " LINK "US_W" 0}, for instance.
+
 
 Project/Hide
-This  switches the program to iconified mode. The icon shows the @{"status" LINK "MA0S" 0} of
-the  incoming mailbox (empty, old mail, new mail). The periodic mail check
-and  any  @{"ARexx" LINK "REXX" 0} scripts remain active. The appearance of the mailbox icons
-can  be  changed,  if  you  want.  All  you have to do is to put new files
-new.info, old.info, empty.info and check.infointo YAM's Icons directory.
+
+This  switches the program to iconified mode. The icon will still show the
+@{" status " LINK "MA0S" 0} of those folders for whom the "AppIcon stats"
+have been activated in the @{" folder settings " LINK "FO_W" 0}; also, the periodic
+mail check and  any  @{" ARexx " LINK "REXX" 0} scripts remain active. The appearance
+of the mailbox icons can  be  changed,  if  you  want. All  you have to do
+is to put new files  new.info,  old.info,  empty.info and  check.info into
+YAM's /Icons directory.
+
 
 Project/Quit
+
 Exit from YAM.
 
 @ENDNODE
@@ -633,81 +709,116 @@ Exit from YAM.
 
 Main window - FOLDER MENU
 
-Folder/New folder
+
+Folder/New folder...
+
 Creates  a  new folder and inserts it below the current one. If the folder
 directory already exists (e.g. a folder of another user), select "Existing
 directory".  To  create  a  new  folder you can either use YAM's "Internal
 defaults"  or  copy the settings from the current folder ("Like current").
 In the following dialogue, enter the name for the directory that should be
 created.  Only  change the parent directory (path) if absolutely required.
-Now a @{"configuration panel" LINK "FO_W" 0} opens where you can modify the properties of the
+Now a @{" configuration panel " LINK "FO_W" 0} opens where you can modify the properties of the
 new folder.
 
-Folder/New separator
-Inserts  a  new  separator  bar  with  an optional label below the current
-folder. Separators can be used to group folders in categories.
 
-Folder/Edit
-Opens  a  @{"configuration panel" LINK "FO_W" 0}  where you can  modify the properties of the
-current folder.
+Folder/New folder group...
+
+Creates a new folder group and inserts it at the end of the folder list.
+Groups are useful to group your folders in categories, saving also precious
+state space in your folder list. Folders can also be nested, i.e. you can
+insert a group into another group.
+
+
+Folder/Edit...
+
+Opens  a  @{" configuration panel " LINK "FO_W" 0}  where you can  modify the properties of the
+current folder. If a group is selected, only its name can be changed here.
+
 
 Folder/Delete
-Removes the current (user defined) folder.
 
-Folder/Order  » save|reset
-Saves  or  restores  the order of the folders in their @{"list" LINK "MA00" 0}. This order is
+Removes the current (user defined) folder, asking for confirmation first.
+When a group is deleted, its contents just move one place up in the tree.
+
+
+Folder/Order »  Save | Reset
+
+Saves  or  restores  the order of the folders in their @{" list " LINK "MA00" 0}. This order is
 also saved when modifing the folder settings.
 
+
 Folder/Search...
-Opens the @{"Search window" LINK "FI_W" 0}, which enables you to find any particular message.
+
+Opens the @{" Search window " LINK "FI_W" 0}, which allows you to find any particular message.
+
 
 Folder/Filter
-Applies the  user-defined  @{"Filters" LINK "CO03" 0}  to all messages in the current folder.
-Filters  are  of  the  form  'On  query , take action ', the options being
+
+Applies the  user-defined  @{" filters " LINK "CO03" 0}  to all messages in the current folder.
+Filters  are  of  the  form  'On  query , take action', the options being
 defined in the configuration settings.
 
+
 Folder/Empty trash
+
 Actually deletes the messages in the 'Deleted' folder.
 
+
 Folder/Update index
+
 Scans  the  directory  for the current folder and builds a new index file.
 Normally  YAM  updates the index file automatically, as needed. However it
-can  be  useful  to  update  the  index after a crash or in the event of a
+can be useful to  force an index update after a crash or in the event of a
 problem.
 
+
 Folder/Flush indices
+
 Removes  the  indices  of  the  user  defined folders, which is helpful if
 you're  low  on  memory.  If you change to one of these folders at a later
-time, the index is reloaded from the hard disk.
+time, the index will be reloaded from the hard disk.
 
-Folder/Import
+
+Folder/Import...
+
 Allows  the  import of a mail file created by a different application. The
-file  must  be  in  standard  UUCP mailbox format, such as is generated by
-external  mail-server  client programs like AmiPOP or IMAP clients. Such a
-file  may  contain  several  messages which are identified by their 'From:
-ADDRESS DATE' headers.
+file  must  be  in  standard  UUCP mailbox format as generated by external
+mail server  client programs like AmiPOP or IMAP clients. Such a file  may
+contain  several messages which are identified by their 'From:' and 'Date'
+headers.
 
-Folder/Export
+
+Folder/Export...
+
 Saves  all  the  messages  in the current folder to a single file, so that
-they can be read by a different Mailer program. (See also under Import.)
+they can be read by a different e-mail client. (See also under Import.)
+
 
 Folder/Send queued mail
+
 Transmits all messages in the Outgoing mailbox (except for those which are
 on 'Hold').
 
+
 Folder/Exchange mail
-First  fetches  new mail from your mail-server and then sends the messages
-in  the  outgoing  mailbox.  This  simply combines the actions of 'Get new
+
+First  fetches  new mail from your mail server and then sends the messages
+in  the  Outgoing  mailbox.  This  simply combines the actions of 'Get new
 mail' and 'Send queued mail'.
 
+
 Folder/Get new mail
-Attempts  to  connect to the mail-server, checks whether there is new mail
-waiting  and  if  so  downloads  it to the 'Incoming' mailbox. If you have
-specified more than one @{"POP3 server" LINK "CO02" 0}, they will each be tested in turn.
+
+Attempts  to  connect to the mail server, checks whether there is new mail
+waiting and  if  so  downloads it into the 'Incoming' mailbox. If you have
+specified more than one @{" POP3 server " LINK "CO02" 0}, they will all be checked in turn.
+
 
 Folder/Check single account
+
 If  you  have  set  up  several POP3 servers, you can use this function to
-check any one single server.
+check any single server.
 
 @ENDNODE
 @NODE "MAM3" "Main window - Message Menu"
@@ -715,99 +826,138 @@ check any one single server.
 
 Main window - MESSAGE MENU
 
+
 Message/Read
-Loads the selected Message into the @{"Read window" LINK "RE_W" 0}.
+
+Loads the selected message into the @{" Read window " LINK "RE_W" 0}.
+
 
 Message/Edit
+
 Allows you to edit a message you have composed earlier.
 
-Message/Move
-Moves  one  or  more Messages into another folder. You can also do this by
-@{"dragging" LINK "Drag" 0}  the  message(s)  from  the message list into the @{"folder list" LINK "MA00" 0} and
+
+Message/Move...
+
+Moves  one  or  more messages into another folder. You can also do this by
+@{" dragging " LINK "Drag" 0}  the  message(s)  from  the message list into the @{" folder list " LINK "MA00" 0} and
 dropping them onto the desired destination.
 
-Message/Copy
-Copies one or more messages to another folder; the copies are identical to
-the original apart from their names.
+
+Message/Copy...
+
+Allows you to duplicate a message. The copy is identical to the original
+apart from its filename on disk.
+
 
 Message/Delete
+
 Moves one or more messages to the 'Deleted' folder (from which they can be
 recovered  if  needed).  If  you  want  messages  actually  to  be deleted
-immediately  then check "Remove messages immediately" in the @{"Miscellaneous" LINK "CO14" 0}
-configuration settings. The <Del> key works as a shortcut for Menu/Delete,
-while <Shift-Del> forces immediate deletion from the hard disk, regardless
-of configuration settings.
+immediately, then check "Remove messages immediately" in the @{"Miscellaneous" LINK "CO14" 0}
+configuration settings. The  <Del> key  works as  a keyboard  shortcut for
+this menu item, while <Shift-Del> forces immediate deletion from  the hard
+disk, regardless of the configuration settings.
+
 
 Message/Print
+
 Sends  the  readable  part  (text  and  headers)  of the message(s) to the
 printer.
 
+
 Message/Save
+
 Saves  the text (and headers) of one or more messages, creating a separate
 file  for  each  message.  Should  you  want to save the messages in their
-original (UUCP) format, use @{"Folder/Export" LINK "MAM2" 0}.
+original (UUCP) format, use @{" Folder/Export " LINK "MAM2" 0}.
 
-Message/Attachments » Save
+
+Message/Attachments »  Save
+
 Saves  the  attached  files  from  one or more messages in a directory you
 select.
 
-Message/Attachments » Crop
+
+Message/Attachments »  Crop
+
 Deletes,  without  further  warning, the MIME attachments from one or more
 messages,  in order to save storage space. A notice about the deleted data
 is written into any message cropped in this way.
 
-Message/Export
+
+Message/Export...
+
 Saves one or more messages to a single file, so that they can be read by a
-different Mailer program. (See also under Import.)
+different e-mail client. (See also @{" Folder/Import..." LINK "MAM2" 0}.)
+
 
 Message/Write
-Opens the @{"Write window" LINK "WR_W" 0}, in which you can compose a new message.
+
+Opens the @{" Write window " LINK "WR_W" 0}, in which you can compose a new message.
+
 
 Message/Reply
+
 Use  this to reply to a message which someone has sent to you. Subject and
 recipient  headers  are  filled  in automatically and the original text is
 quoted.  It  is also possible to select several messages which will all be
 quoted   in  the  same  reply  and  sent  back  to  the  original  senders
 ("Multi-reply").
 
+
 Message/Forward
-This  lets you send on the contents of an e-mail to another recipient. The
+
+This  lets you send the contents of an e-mail on to another recipient. The
 subject  and  the body text are copied across whereas a new message header
 is  created.  At  the beginning and the end of the quoted text YAM inserts
 the  phrases for forwarding, which you can define in the @{"Reply" LINK "CO06" 0} settings in
 the  configuration.  You  can also select multiple messages, in which case
 these are combined into a single forwarded message ("Multi-forward").
 
+
 Message/Bounce
-This  lets  you send on a message to another recipient, with no changes at
+
+This  lets  you send a message on to another recipient, with no changes at
 all.  Only  the To: field of the header is changed and a couple of Resent:
 fields  are added. The phrases defined for forwarded messages are not used
 here.
 
-Message/Select  » All|None|Toggle
-Selects  all  messages  in  the  current  folder, clears any selections or
-toggles them (i.e. exchanges selected and unselected items).
 
-Message/Save address
-The  address  of  the  sender  of  the selected message (or the recipient,
-depending  on  which  mailbox is in use) is added to your @{"address book" LINK "AB_W" 0}. If
+Message/Select  »  All | None | Toggle
+
+Selects all the messages in the  current  folder, clears any  selection or
+toggles  the  selection (i.e. exchanges  selected  and  unselected items),
+respectively.
+
+
+Message/Save address...
+
+The address of  the  sender  of  the selected message (or the recipient's,
+depending  on  which  type of mailbox is open) is added to your @{"address book" LINK "AB_W" 0}. If
 multiple  messages  are  selected  or if a message has several recipients,
 then you get the option of creating a new distribution list.
 
-Message/Set status » unread|read|hold|queued
-This changes the status of one or more messages. Thus you can release held
-messages in the Outgoing mailbox or mark unread messages as read.
 
-Message/Change subject
+Message/Set status to  »  Unread | Read | Hold | Queued
+
+This changes the status of one or more messages. Thus you can release held
+messages in the Outgoing mailbox, or mark unread messages as read.
+
+
+Message/Change subject...
+
 This  alters  the  subject  of  one  or  more  messages,  so you can amend
 irrelevant  Subject: fields in messages you have received. To preserve the
 capability  of tracing a thread back, the original subject is saved in the
-message header as X-Original-Subject.
+message headers as X-Original-Subject.
+
 
 Message/Send
+
 Makes a connection to the mail server and transmits the selected messages.
 If  you  want  to send all the messages in the Outgoing folder, then it is
-better to choose @{"Folder/Send queued mail" LINK "MAM2" 0}.
+better to choose @{" Folder/Send queued mail " LINK "MAM2" 0}.
 
 @ENDNODE
 @NODE "MAM4" "Main window - Settings Menu"
@@ -815,18 +965,26 @@ better to choose @{"Folder/Send queued mail" LINK "MAM2" 0}.
 
 Main window - SETTINGS MENU
 
+
 Settings/Address book...
-Permits you to edit the entries in the @{"Address book" LINK "AB_W" 0}.
+
+Lets you edit the entries in the @{" address book " LINK "AB_W" 0}.
+
 
 Settings/Configuration...
-Opens the @{"Configuration window" LINK "CO_W" 0}, in which you can change YAM's settings.
+
+Opens the @{" configuration window " LINK "CO_W" 0}, in which you can change YAM's settings.
+
 
 Settings/Users...
-Starts   the   @{"User window" LINK "US_W" 0},   where   you   can   add  new  program  users
+
+Opens  the   @{" users window " LINK "US_W" 0},  where you can add new users
 ("Multi-User").
 
+
 Settings/MUI...
-Starts  the settings window for @{"MUI" LINK "MUI" 0} where you can specify virtually all of
+
+Opens the settings window for @{" MUI " LINK "MUI" 0} where you can specify virtually all of
 the  visual  features  of  YAM,  including  fonts,  palette,  screen mode,
 background, borders, gadgets, keyboard shortcuts and so on. Please see the
 MUI  documentation  for more information. YAM utilises several MUI classes
@@ -834,17 +992,17 @@ which  were  not  in  the  original  release of MUI. For this reason, some
 settings are not made in YAM's configuration window but rather in that for
 MUI. These MUI modules are:
 
-   NListviews: some of the lists in YAM, e.g.  folders, messages.
+   NListviews: some of the lists in YAM, e.g. the message list
       Options: colours, fonts, miscellaneous, scrollbars.
 
       Toolbar: icon buttons in the YAM window.
       Options: labels, spacing, fonts.
 
-   TextEditor: internal editor as well as message display in read window.
+   TextEditor: internal editor as well as message display in the Read window.
       Options: fonts, colours, cursor, separator, keybindings, spell
                checker.
 
-    NListtree: structured lists in the Address book.
+    NListtree: structured lists: address book, folder list
       Options: appearance of lines and group icons.
 
  BetterString: general one-line text input field.
@@ -856,8 +1014,10 @@ MUI. These MUI modules are:
 
 Main window - SCRIPTS MENU
 
+
 Scripts/Execute script...
-  Lets you select an @{"ARexx" LINK "REXX" 0}-Script and run it.
+
+  Lets you select an @{" ARexx " LINK "REXX" 0}-Script and run it.
 
 @ENDNODE
 @NODE "FO_W" "Folder settings"
@@ -865,18 +1025,23 @@ Scripts/Execute script...
 
 FOLDER SETTINGS
 
+
 Apart  from  the  four  mailbox folders 'Incoming', 'Outgoing', 'Sent' and
 'Deleted' you can create any number of user-defined folders. These folders
 are   useful   e.g.  for  archiving  received  and/or  sent  mail  or  for
 administrating mailing lists.
 
+
 Name
+
 The  name  of  the  folder  will  appear in the folder listing in the main
 window.
 
     Example:  YAM mailing list
 
+
 Path
+
 This  is the  path in which the messages, the .fconfig file and the .index
 file of the actual folder will be saved. Usually this is a subdirectory of
 the  actual  basic  folder directory, but you can specify any other place,
@@ -884,49 +1049,58 @@ like another hard disk partition for example.
 
     Example:  YAM_ml
 
-Max. age
-If  you  like  you  can  make  YAM delete messages exceeding a certain age
-automatically.  To  do so insert a value different from zero in this field
-(which stands for the maximum age of the mail in DAYS). Then switch to the
-'Start/Quit' menu and activate the option 'Delete old mail'.
 
-N.B.:  messages  with  the  status  'new'  or 'unread' will not be deleted
+Max. age
+
+If  you  like  you  can  make  YAM delete messages exceeding a certain age
+automatically.  To do so, just drag the slider to select a value different
+from  zero (which stands for  the  maximum age of  the mail in DAYS). Then
+switch to the  'Start/Quit'  configuration sheet and  activate the  option
+'Delete old mail'.
+
+N.B.:  Messages  with  the  status  'new'  or 'unread' will not be deleted
 automatically.
 
+
 Type
+
 Here  you  choose  if  the  folder  is for incoming and/or sent mail. This
 influences the column titles and whose address is displayed in the message
 list.
 
+
 Mode
+
 Folders  can  be  protected  with  a  password  and/or  be  compressed  if
 necessary. There are the following modes available:
 
-normal                   no password protection, no compression
-                         + fast
-                         - no protection of your e-mail from third persons
-                           with access to your computer
+normal                    no password protection, no compression
+                          + fast
+                          - no protection of your e-mail from third persons
+                            with access to your computer
 
-simple protection        simple password protection, no compression
-                         + fast
-                         - your e-mails are protected within YAM only
+simple protection         simple password protection, no compression
+                          + fast
+                          - your e-mails are protected within YAM only
 
-compressed               XPK-compression without password protection
-                         + saves hard disk space
-                         - slow, no protection of your e-mail
+compressed                XPK compression without password protection
+                          + saves hard disk space
+                          - slow, no protection for your e-mail
 
-compressed with password XPK-compression with password protection
-                         + saves hard disk space, good protection
-                         - slow
+compressed with password  XPK compression with password protection
+                          + saves hard disk space, good protection
+                          - slow
 
 The XPK software package is needed for compressing. It is not contained in
 the  YAM  archive  but  can  be  downloaded e.g. from Aminet for free. The
-settings for the compression library can be found at @{"Miscellaneous" LINK "CO14" 0}.
+settings for the compression library can be found at @{" Miscellaneous " LINK "CO14" 0}.
+
 
 Sort by
+
 Here  the primary order of the messages in the chosen folder is specified.
 You  can  have  the  mail  sorted  by message date, date received, sender,
-recipient,  subject,  size  or  status.  Concerning the message status the
+recipient,  subject,  size  or  status. Concerning the message status, the
 messages will be sorted in the following orders:
 
   new > unread > read > replied > forwarded
@@ -934,27 +1108,55 @@ messages will be sorted in the following orders:
 
 With the option 'Rev' the order will be reversed (e.g. Z-A instead of A-Z)
 
+
 Then by
+
 Here  the  secondary  order  of  the  messages  in  the  chosen  folder is
-specified.  If for instance mails are sorted by subject primarily messages
-with  the  same  subject can be sorted by date or author using this second
-key.
+specified.  If for example mails are sorted by subject on a first instance,
+messages with the same  subject can be sorted by date or author using this
+second key.
+
+
+AppIcon stats
+
+Enable this if you want this folder's statistics to be added to those
+shown in the application icon YAM usually puts on the Workbench screen.
+By default, only the stats for the 'Incoming' folder are noted there.
+
+Exactly what data appears under the appicon depends on the label set in
+the @{" Miscellaneous settings " LINK "CO14" 0}.
+
 
 Mailing list support
+
 Since  not  all mailing list servers set the reply-to field to the correct
-address  (which  would  be  the  mailing-list's  address)  YAM can do some
-corrections  here.  When  you reply to a mail contained in this folder YAM
-checks  if the data in the to-field of the original message is the same as
-the content of the 'To pattern' field. If they match the address contained
-in the 'To address' field will be inserted as the recipient instead of the
-recipient's  address  contained  in the original message. Additionally, if
-you  have entered a 'From: address', this will replace your e-mail address
-when  posting  to  the  mailing  list. This is useful if you use different
-e-mail  addresses for different mailing lists, or just want to avoid SPAM.
+address  (which would be the  mailing list  address), YAM can  help you to
+work around this problem, offering also some  other nice tricks for a good
+measure.
+
+When  you reply to a mail contained in this folder, YAM checks if the data
+in the TO: field of the original message is matched by the contents of the
+'To: pattern' field - if they do, the address entered in the 'To: address'
+field will be inserted as the recipient instead of the recipient's address
+contained  in the original message.
+
+Additionally, if  you  have entered a  'From: address', this will  replace
+your e-mail address when  posting  to  the  mailing  list. This  is useful
+if you use different e-mail addresses for different mailing lists, or just
+want to avoid SPAM.
+
 You can also enter a 'Reply-To: address' in case the mailing list software
 doesn't set this.
 
+Lastly, the "Autodetect" button  will try to guess  what "To: pattern" and
+"To: address" data should be used by scanning the first 5 messages  in the
+folder using the  Smith & Waterman  algorithm to  search for  similarities
+between strings. This  should make it  easier to find the  corrent mailing
+list pattern.
+
+
 Signature
+
 Here  you  can select the  signature  that will  be used by  default  when
 replying to messages coming from this mailing list  (the ones with a "To:"
 header matching the pattern given in "To: pattern").
@@ -964,10 +1166,10 @@ header matching the pattern given in "To: pattern").
 
 CONFIGURATION
 
-YAM  has numerous options which can be set up in the configuration window.
-The  program  options  are divided into 15 sheets which can be selected by
-clicking  on  the corresponding word in the left part of the configuration
-window.
+YAM has a huge number of options, which can be set up in the configuration
+window. The  program options  are divided  into  15 sheets  which  can  be
+selected  by clicking  on  the corresponding word in  the left part of the
+configuration window.
 
   @{" First Steps    " LINK "CO00" 0}   - Essential information for YAM to work:
                        your e-mail address, mail server & time-zone
@@ -1007,54 +1209,66 @@ The @{"Menu" LINK "CO_M" 0} provides some extra possibilities.
 
 Configuration - FIRST STEPS (Essential information needed for YAM to work)
 
+
 ---- Minimal configuration -----------------------------------------------
 
 Full Name
+
 Your  real name and surname. Please take care that this field is filled in
 correctly. Please don't use quotation marks in your name.
 
   Example:  John Doe
 
+
 E-mail address
+
 This is your e-mail address, consisting of your <username>\@<domain name>.
 
   Example:  jdoe\@provider.uk
 
-POP3-server
-The  internet  address  of  your  system's  mail server. This server which
+
+POP3 server
+
+The  Internet  address  of  your  system's  mail server. This server which
 normally  is  a  computer  of your ISP (internet service provider) must be
-capable of working with the POP3 protocol. If you don`t fill in this entry
-YAM will use the address of the SMTP-server.
+capable of working with the POP3 protocol. If you don't fill in this entry
+YAM will use the address of the SMTP server.
 
   Example:  mail.provider.uk
 
+
 Password
+
 The password which is asked from you by your mail server. This password is
-possibly  but  not  necessarily  identical  with  the password you use for
-logging on to your ISP (e.g. using PPP).
+possibly  but  not necessarily identical to the password you use to log in
+on your ISP (e.g. using PPP).
 
   Example:  nguz56
+
 
 ---- Time zone -----------------------------------------------------------
 
 Timezone
+
 The time and date displayed by YAM in the message list is always converted
 to  your  local time. This guarantees correct sorting of messages from all
 over  the  world sent out from different time zones. The time zone is part
 of  the message's date and specifies the difference between local time and
 Greenwich Mean Time (GMT). Should the time zone have a special value (e.g.
-a  difference  of  half  an  hour)  it  can  be defined in the environment
+a  difference  of  half  an  hour), it  can  be defined in the environment
 variable YAM_TZ.
 
-  Examples : GMT+1 (for Germany)
+  Examples:  GMT+1 (for Germany)
              GMT   (for the U.K.)
              GMT-5 (for U.S. EST e.g.  New York City)
 
 Normally  YAM  will  get the time zone from your Locale settings, and this
 selector will be ghosted.
 
-[] Add adjustment for daylight saving time
-This  option  is  to be activated during daylight saving time. By doing so
+
+[ ] Add adjustment for daylight saving time
+
+This  option  is to be activated during daylight saving time. By doing so,
 one  hour  will be added to the time zone value. YAM automatically changes
 to/from daylight saving time if SummertimeGuard is installed.
 
@@ -1062,31 +1276,41 @@ to/from daylight saving time if SummertimeGuard is installed.
 @NODE "CO01" "Configuration - TCP/IP"
 @TOC "CO_W"
 
-Configuration - TCP/IP  (Information needed for internet mail-transfer)
+Configuration - TCP/IP  (Information needed for Internet mail transfer)
 
----- Send mail(SMTP) -----------------------------------------------------
+
+---- Send mail (SMTP) ----------------------------------------------------
 
 Server
-The  internet  Address  of  the  system  you're sending your mail to. This
+
+The  Internet  address  of  the  system  you're sending your mail to. This
 server which usually is a computer of your ISP (Internet Service Provider)
-must  be  capable  of processing the SMTP-protocol. The port number of the
-SMTP-service is 25 in most cases. If it's different from that it has to be
-appended to your mailserver's address, separated by a colon.
+must  be  capable  of processing the SMTP protocol.
+
+
+Port
+
+The port number of the SMTP service is 25 in most cases. If it's different
+from that, enter the number here.
 
   Example:  mail.provider.de
 
+
 Domain
-When sending mails your Amiga has to identify itself to the SMTP-server by
-giving its address (HELO-command). The SMTP-server decides whether you are
+
+When sending mails your Amiga has to identify itself to the SMTP server by
+giving its address (HELO command). The SMTP server decides whether you are
 allowed to use it by checking this address. Normally YAM identifies itself
-by  sending  the  domain  part  of  your  e-mail  address, which functions
-perfectly well in most cases. However, if you encounter trouble and get an
-error  message from your SMTP-server when trying to send mail, you'll have
+by  sending  the  domain  part  of  your  e-mail  address, which will work
+just fine in most cases. However, if you encounter some trouble and get an
+error  message from your SMTP server when trying to send mail, you'll have
 to edit your domain setting, e.g . by inserting a name for your computer.
 
   Example:  mYAMiga.provider.uk
 
-[] SMTP-Server allows 8bit
+
+[ ] SMTP server allows 8bit
+
 Originally  only the US-ASCII character set was allowed for use in e-mail,
 which  meant  that  the  users  were forced to do without modified vowels.
 Instead  of  'ä' they had to write 'ae'. The reason for that was that many
@@ -1102,85 +1326,126 @@ transferring.  The  best way to find out if your mail server supports this
 is  to write a message to yourself containing modified vowels and see what
 happens.
 
-User ID
-If  your  mail  server  requires  authentication, enter your login/user id
-here.
 
-Password
-The password to send to the mail server for logging on.
+[ ] Use SMTP AUTH
 
-[] Use SMTP AUTH
-Enable this, your are using a server with authentication (ask your ISP, if
-in doubt).
+Enable this  if  you want  to use  SMTP Authentication, whereby  YAM  will
+request  your  mail  server  to  use  an  extra  authentication  layer  as
+documented in RFC 2554. You will need to fill in another couple of User Id
+/Password fields in this case.
 
----- Receive mail(POP3) --------------------------------------------------
+If your ESMTP server does not support SMTP AUTH, you will receive an error
+message when trying to send email. Ask your ISP if in doubt.
 
-POP3-Access
-Apart  from the primary POP3-server already defined in @{"First steps" LINK "CO00" 0} you can
-specify  access  data  for  15 more accounts here; the names appear in the
-list  on the left and clicking on a name brings up the relevant details on
-the  right.  Note that the account can be for the same user on a different
-server,  or a different user on the same server. Either way, you can check
-for  new mail with a single mouse-click. Click on [New] to insert the data
-required  for  a  new  e-mail  account.  With [Delete] you can (obviously)
-delete accounts.
 
-Server
-The  internet  address  of  the  system  you wish to fetch mail from. This
+---- Receive mail (POP3) -------------------------------------------------
+
+Apart  from the primary POP3 server already defined in @{" First steps " LINK "CO00" 0} you can
+set upto 15 extra POP3 accounts here; the names appear in the list  on the
+left and clicking on a name brings up the relevant  details on the  right.
+Note  that the account can be for the same user on a different server,  or
+a  different user  on the same  server. Either way, you can  check for new
+mail with a single mouse click. Click on [New] to insert the data required
+for  a  new  e-mail  account.  With  [Delete] you can  (obviously)  delete
+accounts.
+
+
+POP3 server
+
+The  Internet  address  of  the  system  you wish to fetch mail from. This
 server,  which  will be a computer of your ISP (Internet Service Provider)
-in  most  cases, must be capable of processing the POP3-protocol. The port
-number  of  a  POP3-server usually is 110. If your server uses a different
-port you have to add it to the server address, separated by a colon.
+in  most  cases, must be capable of processing the POP3 protocol.
 
-  Example:  pop.provider.de:109
+  Example:  pop.provider.de
+
+
+Port
+
+The port number  of  a  POP3 server is usually 110.  If your server uses a
+different port, enter that number here.
+
+  Example:  109
+
 
 User ID
-Insert  the  user id  for the POP3-server here. In most cases this will be
-identical  with  the  username  in  your e-mail address. However there are
+
+Insert  the  User ID for the POP3 server here.  In most cases this will be
+identical to  the  username  in  your  e-mail  address. However, there are
 exceptions,  so check the instructions from your ISP. (YAM then constructs
-the full account name in the form <user-ID>\@<server>.)
+the full account name in the form <User ID>\@<server>.)
 
   Example:  jdoe
 
+
 Password
+
 The  password  which  has to be sent to the mailserver for logging on. You
 can  leave  this field empty for security reasons. If you do, the password
-will be asked from you whenever YAM checks for new mail.
+will be asked to you whenever YAM checks for new mail.
 
   Example:  nguz56
 
-[] Active
-Switch  on  this  option  to have the selected POP3-server checked for new
-mail.  If  you don't want this e-mail account to be checked automatically,
-switch  off  this  option  and  use the menu function 'Folder/Check single
-account' from the main window instead.
 
-[] Login using APOP
-Normally  the user-id and the password are transmitted as normal text when
-connecting  to  a POP3-server. Under certain circumstances this could be a
-security  risk.  For  this  reason  modern  POP3-servers support the APOP-
-authentication  which  transmits  the  data  encrypted with a key which is
-delivered  by the server. If your POP3-server does not support APOP you'll
-receive  an  error message when checking for new mail. In that case switch
+[ ] Active
+
+Switch   this  option on  to have the selected POP3 server checked for new
+mail  whenever you use the  "Get new mail"  button in the  toolbar, or the
+equivalent item in the "Folder" menu. If you don't want this email account
+to be checked automatically, switch this option off and  use the menu item
+'Folder/Check single account' from the main window instead.
+
+
+[ ] Use POP3 SSL/TLS
+
+Activate this option to use SSL based encryption under the TLS protocol as
+described in  RFC  2595. This adds extra  security to prevent  the typical
+eavesdropping and hijacking  attacks which POP is commonly subject to, and
+will use port 995 instead of the usual 110.
+
+The "with STLS" gadget will force  the use of the POP3 STARTTLS extension,
+adding  another layer of security to the communication, using  again  port
+110.
+
+If your POP3 server doesn't support any of this, you will receive an error
+message when checking for new mail. Also, AmiSSL is required.
+
+
+[ ] Login using APOP
+
+Normally  the User ID and the password are transmitted  as plain text when
+connecting  to a POP3 server. Under certain circumstances, this could be a
+security  risk, and for this reason  modern  POP3 servers support the APOP
+authentication, which  transmits  the  data  encrypted with a key which is
+delivered  by the server. If your POP3 server does not support APOP you'll
+receive an  error message when checking for new mail. In that case, switch
 this option off.
 
-[] Delete mail on server
-When  this  option is activated new mail will be deleted after downloading
-it from the mail server. The messages will be deleted only after they have
-been  successfully  saved to your computer. If the POP3-account is used by
+[ ] Delete mail on server
+
+If this option is activated, new mail will be deleted after downloading it
+from the mail server. The  messages will be deleted only  after they  have
+been  successfully  saved to your computer. If the POP3 account is used by
 several  people,  or if you'd like to access your account again later from
 another computer, this option can be deactivated.
 
+
+New, Delete
+
+Let you set up a new POP3 account or delete the account currently selected
+respectively.
+
 @ENDNODE
-@NODE "CO02" "Configuration - New mail "
+@NODE "CO02" "Configuration - New mail"
 @TOC "CO_W"
 
-Configuration - NEW MAIL  (Set-up for downloading mail)
+Configuration - NEW MAIL  (Set up for downloading mail)
+
 
 ---- Download ------------------------------------------------------------
 
 Pre-selection
-After  establishing  a link with the POP3-server a @{"preselection window" LINK "TR_W" 0} may
+
+After  establishing  a link with the POP3 server a @{"preselection window" LINK "TR_W" 0} may
 open  showing  a list of all new mail in the POP3 mailbox. This allows you
 to  decide  whether  to download, delete or leave a message on the server,
 according to its size, topic or sender. For pre-selection to work properly
@@ -1194,75 +1459,93 @@ the server must support the TOP command (which most of them do).
                      will be shown. The advantage of this method is that
                      it is pretty fast.
 
-Size limit
-If  pre-selection  is activated messages which exceed the value given here
-in  size will be highlighted. This way you avoid downloading messages with
-gigantic  attachments.  The  size is given in kilobytes. If you don't want
-any limitation just insert '0'.
 
-In  everyday  use  the  settings 'pre-selection= large messages' and 'size
+Size limit
+
+If pre-selection  is activated, messages which exceed the  size given here
+will be highlighted. This way you can avoid downloading messages with huge
+attachments. The size is given in kilobytes. If you don't want to  use any
+limit, just insert '0'.
+
+In  everyday  use, the settings 'pre-selection = large messages' and 'size
 limit=100  kB'  have  proved  to  be  advantageous.  With this setting the
 pre-selection  window will only appear if at least one of the new messages
 exceeds 100 kilobytes in size.
 
-[] Transfer window
-Here  you  can  decide  if  you  want  to  see  the @{"transfer window" LINK "TR_W" 0} during
-receiving  or sending mail. With 'automatic' it only opens if you manually
-initialize the transfer, it stays closed when YAM automatically checks for
-mail.
 
-[] Avoid duplicates
+[ ] Transfer window
+
+Here  you  can  decide  if  you  want  to  see  the @{"transfer window" LINK "TR_W" 0} while
+receiving  or sending mail. With 'automatic' it only opens if you manually
+initialize the transfer, staying closed while YAM automatically checks for
+new mail.
+
+
+[ ] Avoid duplicates
+
 If  you  choose  not to have YAM delete the mail on the server after down-
 loading it will be downloaded again next time YAM gets your mail, so every
 message  will appear twice in your mail folder. To prevent this, switch on
-the  'Avoid  duplicates'  option . As long as this option is activated YAM
+the 'Avoid  duplicates'  option - as long as this option is activated, YAM
 keeps  track  of all your downloaded messages in the '.uidl' file and uses
-special  commands of the POP3-server to avoid downloading the same message
-twice.  If the POP3-server supports these UIDL-commands this check will be
+special  commands of the POP3 server to avoid downloading the same message
+twice. If the POP3 server supports these UIDL commands, this check will be
 done rather quickly. If the server doesn't support these commands YAM will
-try  to  read  the  message-id  using the TOP-command instead of the UIDL-
-commands.  In  case  the mail-server doesn't support any of these commands
+try  to  read  the  Message-ID  using the TOP command instead of the UIDL-
+commands.  In case  the mail server doesn't support any of these commands,
 this option must be deactivated.
 
-[] Update message status
-If  this  option  is  activated  all messages in the 'incoming' folder are
+
+[ ] Update message status
+
+If  this  option  is  activated, all messages in the 'Incoming' folder are
 marked  from  'new'  to 'unread'. This way you can instantly recognize the
 new mail that was downloaded the last time you've fetched mail.
+
 
 ---- Automatic operation -------------------------------------------------
 
 Check for new mail every [xx] minutes
+
 Here  you  can  specify a time interval after which YAM will automatically
-recheck  your  mail  server for new mail. To deactivate this option simply
+recheck  your mail  server for new mail. To deactivate this option, simply
 enter zero.
 
   Example:  15 minutes
 
-[] Download large messages
+
+[ ] Download large messages
+
 Whenever  new  mail  is downloaded automatically (every x minutes or using
-Arexx)  the  selection  window won't pop up since the user is likely to be
-working  with  another program at the time or not in front of the computer
+ARexx), the  selection  window won't pop up since the user is likely to be
+working with  another program at the time, or not in front of the computer
 at all. Mails exceeding the size limit won't be downloaded and will remain
 on the server if this option is not activated.
 
+
 ---- Notification --------------------------------------------------------
 
-[] Requester
+[ ] Requester
+
 When  YAM has downloaded new mail, it will display a requester showing the
 number of new and deleted messages.
 
-[] Sound
-When  YAM  has  downloaded  new mail, it plays a sound file. The datatypes
-library  is  used  for playing so the soundfile can be of any format (like
+
+[ ] Sound
+
+When YAM has downloaded new mail, it will play a sound file. The datatypes
+library is used  for playing, so the sound file can be of any format (like
 AIFF  or  WAVE)  as  long as you have installed the appropriate datatypes.
 Click the small arrow (PLAY symbol) to test the sound.
 
   Example:  Data:Audio/Newmail.snd
 
-[] Command
+
+[ ] Command
+
 This  is  the  program  to  be  executed when new mail arrives. Insert the
-command as you would in a command shell. If it is an Arexx script you have
-to put the 'RX' command in front of the name of the script.
+command as you'd do at a command line interface. If it is an Arexx script,
+you have to put the 'RX' command in front of the name of the script.
 
   Example:  RX YAM:rexx/Newmail.YAM
 
@@ -1272,9 +1555,10 @@ to put the 'RX' command in front of the name of the script.
 
 Configuration - FILTERS  (user defined mail filters)
 
+
 The  purpose  of  a  mail  filter is to process mail according to criteria
-defined  by  the  user. Whenever a mail matches a specified pattern it can
-activate  certain  actions.  Applications  for the use of filters are, for
+defined by  the  user. Whenever a mail matches a specified pattern, it can
+trigger  certain  actions.  Applications  for the use of  filters are, for
 example:
 
  - automatically moving mail from a mailing list to a specified folder
@@ -1284,100 +1568,120 @@ example:
    nowadays)
  - automatic re-directing of mails to another recipient.
 
-You  can  define  up  to  100 such filters. The list on the left shows the
+You  can  define up to 100 of such filters. The list on the left shows the
 names  of  all the filters defined so far. Click on a name to bring up its
 details on the right, spread across three sheets - Options, Comparison and
 Action.  Click  on  [New] to create a new filter or use [Delete] to delete
 one.  Filters  are  executed  in top-to-bottom order, therefore you should
 place filters that delete or move messages at the bottom of the list.
 
+
 ---- Options sheet -------------------------------------------------------
 
 Name
+
 The filter's name is merely for recognition and not of any other use.
 
-[] Remote-Filter
-With  a remote filter new e-mail can be checked on the POP3-server without
-being  downloaded completely. The POP3-server must support the TOP-command
+
+[ ] Remote filter
+
+With  a remote filterm new email can be checked on the POP3 server without
+being  downloaded completely. The POP3 server must support the TOP command
 to be able to process this kind of filter. In contrast to 'normal' filters
 only  the  contents  of  the  e-mail  headers  can be searched for certain
-patterns.  For obvious reasons functions like forwarding or moving e-mails
+patterns. For obvious reasons, functions like forwarding or moving e-mails
 will  not  work  with remote filters. If remote filters are activated they
-might  slow  down  downloading  e-mail  but they are handy as a protection
+might  slow  down  downloading  e-mail, but they are handy as a protection
 against spam or 'mailbombs'.
 
-[] Apply to new mail
+
+[ ] Apply to new mail
+
 Activate  this  option  to  have  all  new  mail processed by this filter.
 Processing will be initiated automatically after receiving new mail.
 
-[] Apply to sent mail
+
+[ ] Apply to sent mail
+
 Activate  this  option  to  have  all  sent mail processed by this filter.
 Processing will be initiated automatically after sending mail.
 
-[] Apply on request
-When  this  option  is  activated the filtering process will be started by
-clicking  on  the filter button in the main window or by choosing 'Filter'
+
+[ ] Apply on request
+
+If this  option  is  activated, the filtering process  will be  started by
+clicking  on  the Filter button in the main window or by choosing 'Filter'
 from  the  'Folder' menu. This way you can also process old messages which
-do not necessarily have to be in the incoming folder.
+do not necessarily have to be in the Incoming folder.
+
 
 ---- Comparison sheet ----------------------------------------------------
 
 Search in
+
 Here  you  can  define  what  part of the e-mail should be scanned for the
-search  pattern.  If you want a field of the message header to be searched
+search  pattern. If you want a field of the message header to be searched,
 you  can choose one from the list which appears when clicking on the cycle
-gadget  or  select  'Other  field' and insert the name of the header field
+gadget, or  select  'Other  field' and insert the name of the header field
 into  the  text  field  on the right side of the cycle gadget. If 'Message
-body'  is  selected  the  whole  message  except  for  the  header will be
+body'  is  selected, the  whole  message  except  for the  headers will be
 searched.  Please note that this type of full text search may take quite a
 long  time  when big mails are processed (YAM will have to decode mails in
 MIME format).
 
   Example:  Other field:  X-Mailer
 
+
 Comparison
+
 The instruction comprises the comparison operator and the search pattern.
 
 YAM supports the following comparison operators:
 
  =   the text which is compared must match the search pattern
- <   the text must be less than the search pattern
- >   the text must be greater than the search pattern
+ <   the text must be "less" than the search pattern
+ >   the text must be "greater than" the search pattern
  <>  the text must be different from the search pattern
  IN  the text must match pattern contained in the file which is specified
      in the text field to the right side of the comparison cycle gadget.
-     Instead of a search pattern itself the name of a file is to be
+     Instead of a search pattern itself, the name of a file has to be
      inserted here, containing one or several lines of search patterns. In
      this way it is possible to create a so-called 'Killfile' containing a
      list of e-mail addresses. Click on the page icon to edit the file.
 
-Note  that  the comparison operators < and > work differently according to
-the  type  of  field. YAM knows that a message size or date is numeric and
-sorts   these  in  numerical  order  but  for  fields  such  as  'Subject'
+Note that  the comparison operators '<' and '>' work differently according
+to the type of field. YAM knows that a message size or date is numeric and
+sorts   these  in  numerical  order, but  for  fields  such  as  'Subject'
 alphanumeric  order  is  used, as in a telephone directory, so James < Jim
 and 12 < 2.
 
-The search pattern may contain @{"Amiga-DOS wildcards" LINK "DOSW" 0} such as ?, #?, (a|b) or
+The  search pattern may contain @{"AmigaDOS wildcards" LINK "DOSW" 0} such as ?, #?, (a|b) or
 [abc].  Please  note  that  the  search  pattern  [YAM]#?  will filter all
 messages  beginning  with  Y, A or M. For filtering mails out of a mailing
 list  (for  example  a mailing list related to YAM) you would do better to
-use  the  search pattern #?YAM#? or have the filter compare the 'To' field
-with the address of the mailing list.
+use the search pattern #?YAMML#? or have the filter compare the 'Reply-To'
+field with the address of the mailing list.
 
   Example:  = YAM 1.3.#?
 
+
 Address/Name
-If  you make the filter search a header field containing an e-mail address
+
+If you make the filter search a header field containing an e-mail address,
 you can specify here whether the search pattern should be processed on the
 address (e.g. jdoe\@provider.uk) or the author's name (e.g. 'John Doe').
 
-[] Case sensitive
+
+[ ] Case sensitive
+
 Activate  this  option  if  you  want the filtering process to distinguish
 between normal and capital letters.
 
-[] Substring search
+
+[ ] Substring search
+
 If the search pattern consists of only a part of the header field which is
-to  be  searched  through  you  must  activate  this option. YAM will then
+to  be  searched  through, you  must  activate  this option. YAM will then
 complete the search pattern with #? internally.
 
 It  is  possible to combine two search criteria. The cycle gadget lets you
@@ -1389,58 +1693,76 @@ select how this is to be done:
  exclusive or    either one or the other of the two criteria must apply,
                  but not both
 
+
 ---- Action sheet --------------------------------------------------------
 
-[] Bounce
+[ ] Bounce
+
 Activate  this option to have mail matching the search criteria bounced to
-another  person.  The new recipient's e-mail address must be inserted into
-the  text  field  next  to the option.
+another  recipient. For  instance, you  might use  this  to  automatically
+resend certain email to your mailbox at work.
+
+The new recipient's  e-mail address must be  inserted into the  text field
+next to the option.
 
   Example:  jdoe\@athome.de
 
-[] Forward
+
+[ ] Forward
+
 Activate  this option when you want e-mail matching the search criteria to
 be forwarded to another person. The new recipient's e-mail address must be
 inserted into the text field next to the option.
 
-[] Reply
-When  this  option  is  activated  YAM will send an automatic reply to the
-e-mail  matching  the search pattern. Insert the file containing the auto-
+[ ] Reply
+
+If  this  option  is  activated,  YAM will send an  automatic reply to any
+mail matching the search pattern. Enter the filename containing  the auto-
 answer text into the text field next to this option.
 
   Example:  YAM:Auto-Texts/Answer1.txt
 
-[] Execute
-When  this  option  is  activated  an  external  program  will be executed
-whenever  an e-mail matches the search criteria. YAM will send the path of
+
+[ ] Execute
+
+If  this  option  is  activated,  an  external  program  will be  executed
+whenever an email matches the  search criterion. YAM will send the path of
 the  e-mail  to  the  external program as a starting parameter. Insert the
 command  line into the text field next to this option. Please note that if
-you  want  an Arexx script to be executed you will have to put in the 'RX'
-command first.
+you want an  ARexx script to be executed, you will have to explicitely put
+the 'RX' command first.
 
   Example:  rx YAM:Rexx/Subscribe.rexx
 
-[] Play sound
+
+[ ] Play sound
+
 Activate this option to have a sound played whenever a message matches the
-search  pattern. The sound file is to be inserted into the text field next
-to  this  option.  YAM  uses  the Datatypes library for playing the sound.
+search  pattern. The sound file name is to be inserted into the text field
+next to this option. YAM uses the datatypes library for playing the sound.
 Click the small arrow (PLAY symbol) to test the sound.
 
   Example:  Data:Audio/Ihatespam.wav
 
-[] Move
-If  you  activate  this  option  YAM  will move e-mail matching the search
+
+[ ] Move
+
+If  you activate this option, YAM will move any e-mail matching the search
 pattern  to  another  folder.  You  can  select the folder with the pop-up
 button.
 
-[] Delete
-When  this  option  is  activated all messages matching the search pattern
-will be deleted. (You probably guessed that... ;) )
 
-[] Don't download
-When  this option is activated e-mail matching the search pattern will not
-be  downloaded  from the mail server. You can use a remote filter together
-with this option if several persons share the same POP3-account.
+[ ] Delete
+
+If this option is activated, all messages matching the search pattern will
+be deleted. (You probably guessed that... ;) )
+
+
+[ ] Don't download
+
+If this option is activated, any message matching the search pattern  will
+not  be  downloaded  from the  mail server. You  can use  a remote  filter
+together with this option if several persons share the same POP3-account.
 
 @ENDNODE
 @NODE "CO04" "Configuration - Read"
@@ -3029,22 +3351,26 @@ Clears any text to start a new message.
 Text/Open...
 Opens an existing file.
 
-Text/Insert as  » plain
+Text/Insert as »  plain
 Inserts a text file at the current cursor position.
 
-Text/Insert as  » quoted
+Text/Insert as »  quoted
 Inserts  a  text  file at the current cursor position, prefacing each line
 with the quote character (usually '>').
 
-Text/Insert as  » alternate quoted
+Text/Insert as »  alternate quoted
 Inserts  a  text  file at the current cursor position, prefacing each line
 with an alternate quote character (usually '|').
 
-Text/Insert as  » ROT-13 encrypted
+Text/Insert as »  ROT-13 encrypted
 Inserts  a  text  file  at  the  current cursor position and replaces each
 letter  with  the one 13 characters on, cycling back from Z to A (so A->M,
 B->N,  M->A).  This  very  simple  code  is  used for example for indecent
 humour.
+
+Text/Save as...
+Saves the current message  (only the text part, without  any header) to  a
+file of your choice.
 
 Text/Launch editor
 This  lets  you  compose  your  message  with  your  favourite  editor (as
@@ -3069,15 +3395,15 @@ Places a copy of the marked text on the Clipboard.
 Edit/Paste
 Inserts the text on the Clipboard at the current cursor position.
 
-Edit/Paste as  » quoted
+Edit/Paste as »  quoted
 Inserts  the  text  on  the  Clipboard  at  the  current  cursor position,
 prefacing each line with the quote mark.
 
-Edit/Paste as  » alternate quoted
+Edit/Paste as »  alternate quoted
 Inserts  the  text  on  the  Clipboard  at  the  current  cursor position,
 prefacing each line with the alternative quote mark.
 
-Edit/Paste as  » ROT-13 encoded
+Edit/Paste as »  ROT-13 encoded
 Inserts  a  text  file  at  the  current  cursor position, applying ROT-13
 encoding. (See also under @{"Text/Input as" LINK "WRM1" 0}).
 
@@ -3090,34 +3416,34 @@ Restores the change just undone with 'Edit/Undo'
 Edit/Glossary
 Opens the @{"Glossary" LINK "DI_W" 0} window.
 
-Edit/Textstyle » Bold
+Edit/Textstyle »  Bold
 Toggles  bold  type  on  or  off  for  a  marked block or for text entered
 subsequently.  In a transmitted message text in bold type is delineated by
 asterisks, thus: bold -> *bold*
 
-Edit/Textstyle » Italic
+Edit/Textstyle »  Italic
 Toggles  italic  type  on  or  off  for a marked block or for text entered
 subsequently.  In  a  transmitted message text in italics is delineated by
 slashes, thus: italic -> /italic/
 
-Edit/Textstyle » Underlined
+Edit/Textstyle »  Underlined
 Toggles  underlining  on  or  off  for  a marked block or for text entered
 subsequently.  In a transmitted message text in bold type is delineated by
 underline characters, thus: underline -> _underline_
 
-Edit/Textstyle » Alternative color
+Edit/Textstyle »  Alternative color
 Toggles  coloured  type  on  or off for a marked block or for text entered
 subsequently.  The  colour  is  defined  in  the  @{"Read configuration" LINK "CO04" 0}. In a
 transmitted message the coloured text is delineated by hash signs, thus:
 
   colour -> #colour#
 
-Edit/Separators  » thin or  thick
+Edit/Separators »  thin or  thick
 Inserts  a  separator  at  the  current  cursor  position. It does this by
 inserting  an  extra  line  containing either <sb> or <tsb>. YAM and other
 (MUI-)Mail programs interpret this character sequence as a separator.
 
-Edit/Emoticons » happy | indifferent | sad/angry | ironic
+Edit/Emoticons »  happy | indifferent | sad/angry | ironic
 Inserts  a  'smiley'  at the current cursor position. Smilies express your
 feelings  about  the  topic and compensate for the loss of intonation when
 expressing yourself in writing rather than speech.
@@ -3351,18 +3677,18 @@ Again a requester appears to let you choose whether to save the message in
 raw  format,  the  decoded  message  (the  same  as it appears in the read
 window), or to save one of the attached files.
 
-Message/Attachments  » Display
+Message/Attachments »  Display
 This  displays  the  current message, or part of it, using the MIME viewer
 specified in the @{"MIME configuration" LINK "CO11" 0}. You can choose whether to display the
 message in raw format (to check for errors) or to view one of the attached
 files.  If  nothing  happens,  check  the settings for MIME viewers in the
 configuration.
 
-Message/Attachments  » Save all
+Message/Attachments »  Save all
 Saves  all  the  files  attached to the current message to a directory you
 select.
 
-Message/Attachments  » Crop
+Message/Attachments »  Crop
 Deletes  all  the  attached files for the current message in order to save
 disk  space.  Note - these files are not sent to the deleted folder, so be
 sure  that  you  don't  want  to  keep  one! This function only applies to
