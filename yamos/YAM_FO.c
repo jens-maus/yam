@@ -115,48 +115,12 @@ LOCAL struct Folder *GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*), vo
    return fo;
 }
 
-#ifdef _DCC
-///
-/// FO_GetFolderByName
-//  Finds a folder by its name
-struct Folder *FO_GetFolderByName(char *name, int *pos)
-{
-   int i;
-   struct Folder *fo = NULL;
-
-   for (i = 0;; i++)
-   {
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_GetEntry, i, &fo);
-      if (!fo) break;
-      if (!strcmp(fo->Name, name) && fo->Type != FT_SEPARATOR) break;
-   }
-   if (pos) *pos = i;
-   return fo;
-}
 ///
 /// FO_GetFolderByType
 //  Finds a folder by its type
 struct Folder *FO_GetFolderByType(int type, int *pos)
 {
-   int i;
-   struct Folder *fo = NULL;
-
-   for (i = 0;; i++)
-   {
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_GetEntry, i, &fo);
-      if (!fo) break;
-      if (fo->Type == type) break;
-   }
-   if (fo && pos) *pos = i;
-   return fo;
-}
-#else
-///
-/// FO_GetFolderByType
-//  Finds a folder by its type
-struct Folder *FO_GetFolderByType(int type, int *pos)
-{
-	return GetFolderByAttribute(&GetFolderByType_cmp,&type,pos);
+	return GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&GetFolderByType_cmp,&type,pos);
 }
 // comparison function for FO_GetFolderByType
 LOCAL BOOL GetFolderByType_cmp(struct Folder *f, int *type)
@@ -169,14 +133,13 @@ LOCAL BOOL GetFolderByType_cmp(struct Folder *f, int *type)
 //  Finds a folder by its name
 struct Folder *FO_GetFolderByName(char *name, int *pos)
 {
-	return GetFolderByAttribute(&GetFolderByName_cmp,name,pos);
+	return GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&GetFolderByName_cmp,name,pos);
 }
 // comparison function for FO_GetFolderByName
 LOCAL BOOL GetFolderByName_cmp(struct Folder *f, char *name)
 {
 	return (BOOL)(!strcmp(f->Name, name) && (f->Type != FT_SEPARATOR));
 }
-#endif
 
 
 ///
