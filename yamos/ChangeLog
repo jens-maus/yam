@@ -1097,3 +1097,6 @@
 
     * Recipientstring class no longer sets the frame, cyclechain or 'advance
       on cr' tags.
+    * Ensured that all source descriptions are now prefixed with ' Module:'.
+      This allows e.g. to do a »Search YAM_#?.c "*N Module:"« to see the
+      description of each source file.

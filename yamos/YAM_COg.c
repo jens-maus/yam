@@ -55,7 +55,7 @@ static APTR MakePhraseGroup(APTR*, APTR*, APTR*, char*, char*);
 static Object *MakeStaticCheck(void);
 
 /***************************************************************************
- Modul: Configuration - GUI for sections
+ Module: Configuration - GUI for sections
 ***************************************************************************/
 
 /*** Hooks ***/
