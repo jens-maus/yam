@@ -1133,6 +1133,37 @@ int main(int argc, char **argv)
    BOOL yamFirst = TRUE;
    BPTR progdir;
 
+#ifndef NO_DEVWARNING
+
+   {
+     struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
+     char *reqtxt = "This is a *internal* developer version and\n"
+                    "not recommended for public usage.\n"
+                    "Please note that it may contain bugs that could\n"
+                    "lead to any loss of data and that no support for\n"
+                    "this version is available in any form.\n\n"
+                    "So if your are unsure, please reconsider to wait\n"
+                    "for a official release!";
+
+     ErrReq.es_Title        = "YAM Developer Version Warning";
+     ErrReq.es_TextFormat   = reqtxt;
+     ErrReq.es_GadgetFormat = "Go on|Exit";
+
+     if((IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 36)))
+     {
+        BOOL cont = TRUE;
+
+        if(EasyRequest(NULL, &ErrReq, NULL, reqtxt) == 0)
+          cont = FALSE;
+
+       CloseLibrary((struct Library *)IntuitionBase);
+
+       if(!cont) exit(0);
+     }
+   }
+
+#endif
+
    atexit(yam_exitfunc); /* we need to free the stuff on exit()! */
 
    memset(&args, 0, sizeof(struct Args));
