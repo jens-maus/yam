@@ -224,7 +224,22 @@ void MA_SetMailStatus(struct Mail *mail, enum MailStatus stat)
       MA_ExpireIndex(mail->Folder);
       mi = GetMailInfo(mail);
       SetComment(mi->FName, statstr);
-      if (mi->Display) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
+      if (mi->Display)
+      {
+        LONG sorttype1 = xget(G->MA->GUI.NL_MAILS, MUIA_NList_SortType);
+        LONG sorttype2 = xget(G->MA->GUI.NL_MAILS, MUIA_NList_SortType2);
+
+        // lets mask out the SortType Value
+        MASK_FLAG(sorttype1, MUIV_NList_SortTypeValue_Mask);
+        MASK_FLAG(sorttype2, MUIV_NList_SortTypeValue_Mask);
+
+        // now we first redraw the entry because we have to get the new icon displayed.
+        DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
+
+        // we also have to resort the MailListView if the Listview is
+        // sorted by status (column==0), so that it will be resorted somehow.
+        if(sorttype1 == 0 || sorttype2 == 0) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort);
+      }
    }
    else SetComment(GetMailFile(NULL, NULL, mail), statstr);
 }

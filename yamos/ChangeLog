@@ -7,6 +7,9 @@ $Source$
 
 2002-09-27  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed bug where YAM didn`t resort the mail
+      listview if it was selected to be sorted by status and
+      the status changed somehow.
     * YAM_MA.c: changed the status sorting priorities back again
       to just take the real mail status (New/Unread/Read aso.) and
       the importance of the mail in account for sorting the mails
