@@ -128,7 +128,6 @@ struct Library* DiskfontBase  = NULL;
 
 /* AmigaOS4 style interfaces */
 #if defined(__amigaos4__)
-struct ExecIFace*       IExec         = NULL;
 struct DataTypesIFace*  IDataTypes    = NULL;
 struct GenesisIFace*    IGenesis      = NULL;
 struct IconIFace*       IIcon         = NULL;
