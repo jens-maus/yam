@@ -505,7 +505,9 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
    FILE *out;
    char *cmsg, *sbuf;
 
+	// return if mail is already being written/edited
    for (i = 0; i < MAXWR; i++) if (G->WR[i] && G->WR[i]->Mail == mail) { DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront); return -1; }
+	// check if necessary settings fror writing are OK and open new window
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
       if ((out = fopen(G->WR_Filename[winnum], "w")))
