@@ -1,0 +1,238 @@
+/* $id$ */
+
+/* ------------ */
+/* -- Blocks -- */
+/* ------------ */
+
+Blocks start at a new line with same indentation as the previous line and end
+likewise. Example:
+
+	for(i = 0; i < 10; i++)
+	{
+		...code...
+	}
+
+The braces can be omitted for one-line blocks. E.g.
+
+	for(i = 0; i < 10; i++)
+		array[i] += 30;
+
+One exception from this rule is the do-while. This should be formatted like
+this:
+
+	do {
+
+		...code...
+
+	} while(a < 10);
+
+Notice the two empty lines on each side of the code.
+
+/* ------------- */
+/* -- if/then -- */
+/* ------------- */
+
+Normal block rules apply. However if both branches of an if-else statement is
+one line blocks then they should be formatted like this:
+
+	if(a < 20)
+			Foo();
+	else	Bar();
+
+If-then-else-if should be merged like this:
+
+	if(a < 20)
+	{
+		...code...
+	}
+	else if(a < 40)
+	{
+		...code...
+	}
+
+All blocks in a merged if-then-else-if sequence should choose the same style
+when it comes to having their braces or not (where the latter is then only
+possible when all branches are one line blocks -- further more the rule about
+special indentation for one line if-else statements do not apply to merged
+if-then-else-if sequences).
+
+/* ------------ */
+/* -- Tuples -- */
+/* ------------ */
+
+A tuple is one parenthesis immidiately followed by first member. If more
+members are present then these should be seperated with ", ". Example:
+
+(ULONG first, ULONG second, ULONG last)
+
+/* --------------- */
+/* -- Functions -- */
+/* --------------- */
+
+Functions are always proper case. That means first letter is capital, and if
+the function name is made up of several words then these also start with
+capital letters.
+
+There is one space after the return type, unless this is a pointer (marked by
+an asterik) then the space is between the type and the asterik. There is again
+a space after the function name.
+
+There is exactly one blank line between functions.
+
+Example functions:
+
+STRPTR AllocateBuffer (ULONG size)
+{
+	...code...
+}
+
+or
+
+ULONG *AllocateArray (ULONG size)
+{
+	...code...
+}
+
+/* ------------ */
+/* -- return -- */
+/* ------------ */
+
+A function should only have an exit point at the end of that function. An
+exception is for resource allocation or similar sanity checks placed in the
+beginning of the function (at outermost scope). Here one can immidiately
+return a failure. Example:
+
+BOOL IsLegal (STRPTR str)
+{
+	if(str == NULL)
+		return FALSE;
+
+	...code...
+
+	return res;
+}
+
+The rule says »...*an* exit point at the end« rather than *one*. This allows
+to make a function with several exit points all placed at the end like this:
+
+BOOL IsWhitespace (TEXT character)
+{
+	if(character == ' ' || ...)
+			return TRUE;
+	else	return FALSE;
+}
+
+Just for the records, return is a flow-control-directive similar to case, break,
+continue and goto and thus the value provided should not be encapsulated in
+parenthesis.
+
+/* ----------------- */
+/* -- switch/case -- */
+/* ----------------- */
+
+A switch case looks like this:
+
+	switch(value)
+	{
+		case ONE:
+		{
+			...code...
+		}
+		break;
+
+		case TWO:
+		{
+			...code...
+		}
+		/* continue */
+
+		default:
+		{
+			...code...
+		}
+		break;
+	}
+
+If a case needs to fall through to the next one then a comment should be put
+instead of the break, as in the example. The text within this comment is
+situation-specific, but generally 'continue' will do.
+
+The case follow normal block rules, but extend the rule about braces being
+optional for one-line blocks. In fact braces may be omitted for larger blocks,
+preferably not more than 5 commands though.
+
+Whenever possible a switch-case should use symbolic names rather than numbers.
+This also apply to state-machines implemented through if-then-else-if, even if
+there are only two states.
+
+/* ---------- */
+/* -- Tabs -- */
+/* ---------- */
+
+Tab is used for indentation (not spaces). However one is only allowed to use
+tabs up till the first character of a line. Example:
+
+	win = OpenWindowTags(NULL,
+		WA_Title,        "Test",
+		WA_InnerWidth,   width,
+		WA_InnerHeight,  height,
+		TAG_DONE);
+^ - tabs             ^ - spaces.
+
+This last rule does not hold for if-else with one command in the block (see
+first example of if/then).
+
+/* --------------- */
+/* -- Variables -- */
+/* --------------- */
+
+Variables should generally have as meaningfull names as possible. Avoid custom
+abbreviations but do use common ones (like scr, win, obj etc.). Do not use
+negating words like 'no' in a boolean value but try instead to use something
+like 'is'. E.g. "isUppercase". This both apply to boolean values but also
+functions which return a boolean.
+
+Local variables and function arguments are either completely lowercase or
+camelon (?) notation which is first letter is lowercase and the first letter
+of succeding words are uppercase, like in previous example.
+
+Class names have first letter uppercase and the rest is lowercase (this is a
+MUI convention), e.g. "Texteditor" instead of "TextEditor".
+
+Defines (both constants and macros) are completely uppercase.
+
+Enumerations, global variables and structure names and memebers are proper
+case as defined under functions.
+
+Abbreviations which normally appear in uppercase (e.g. HTML) should still be
+uppercase despite the above rules.
+
+Some examples:
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+#define PI     3.14159265358979323846
+
+Object *GlobalConfig = DataspaceObject, ..., End;
+
+struct CustomEntry
+{
+	STRPTR Name, Address;
+};
+
+struct CustomEntry *CreateEntry (STRPTR name, STRPTR address)
+{
+	struct CustomEntry *res;
+	if(res = malloc(sizeof(struct CustomEntry))
+	{
+		res->Name = name;
+		res->Address = address;
+	}
+	return res;
+}
+
+/* ----------- */
+/* -- Types -- */
+/* ----------- */
+
+We use Amiga types. This is STRPTR for 'char *', TEXT for a single char, VOID
+for 'void' and APTR for 'void *'. See exec/types.h for more.
