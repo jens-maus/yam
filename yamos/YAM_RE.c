@@ -702,7 +702,7 @@ struct TempFile *texfile;
                      ts2 = StrBufCat(ts2," &");
                      ts2 = StrBufCat(ts2,p+j-1);
                      ts2 = StrBufCat(ts2,"\\\\\n");
-                  } DB( else KPrintF("RE_PrintFile(): strange header line %s\n",p); )
+                  } DB(else kprintf("RE_PrintFile(): strange header line %s\n",p);)
                }
                fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n\\input{%s}\n\\end{document}\n",
                         ts1,
@@ -729,13 +729,13 @@ struct TempFile *texfile;
                   system(printcmd);
                   free(printcmd);
                } else DisplayBeep(NULL);
-            } DB( else KPrintF("RE_PrintFile(): no headers for this part\n"); )
+            } DB(else kprintf("RE_PrintFile(): no headers for this part\n");)
          }
          if(ts1) FreeStrBuf(ts1);
          if(ts2) FreeStrBuf(ts2);
-      } DB( else KPrintF("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n"); )
+      } DB(else kprintf("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n");)
       CloseTempFile(texfile);
-   } DB( else KPrintF("RE_PrintFile(): can't open temp TeX file\n"); )
+   } DB(else kprintf("RE_PrintFile(): can't open temp TeX file\n");)
 }
 
 
@@ -756,7 +756,7 @@ char **CVTab;
       for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
          ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
 
-      DB( KPrintF("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen); )
+      DB(kprintf("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen);)
 
       if(result = AllocStrBuf(ResLen+1))
       {
@@ -804,12 +804,12 @@ BOOL success=FALSE;
                {
                   if(!c)
                   {
-                     if(tok[1]) { DB( KPrintF("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n"); ) }
+                     if(tok[1]) { DB( kprintf("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n"); ) }
                      else c = tok[0];
                   } else
                   {
                      CVTab[c] = tok;
-                     DB( KPrintF("LaTeX mapping: '%c' -> '%s'\n",c,tok); )
+                     DB( kprintf("LaTeX mapping: '%c' -> '%s'\n",c,tok); )
                      c = '\0';
                   }
                }
@@ -1784,7 +1784,7 @@ int RE_DecryptPGP(int winnum, char *src)
    char options[SIZE_LARGE], orcpt[SIZE_ADDRESS];
 
    *orcpt = 0;
-   DB( KPrintF("RE_DecryptPGP()\n"); )
+   DB( kprintf("RE_DecryptPGP()\n"); )
    PGPGetPassPhrase();
    if (G->PGPVersion == 5)
    {
@@ -1809,7 +1809,7 @@ int RE_DecryptPGP(int winnum, char *src)
       if (G->PGPVersion == 5 && *orcpt) fprintf(fh, GetStr(MSG_RE_MsgReadOnly), orcpt);
       fclose(fh);
    }
-   DB( KPrintF("RE_DecryptPGP() ends\n"); )
+   DB( kprintf("RE_DecryptPGP() ends\n"); )
    return error;
 }
 ///
@@ -1819,7 +1819,7 @@ void RE_HandleEncryptedMessage(struct Part *frp)
 {
    struct Part *rp[2];
    FILE *in;
-   DB( KPrintF("RE_HandleEncryptedMessage()\n"); )
+   DB( kprintf("RE_HandleEncryptedMessage()\n"); )
    if (rp[0] = frp->Next) if (rp[1] = rp[0]->Next)
    {
       if (!RE_DecryptPGP(frp->Win, rp[1]->Filename))
@@ -1838,7 +1838,7 @@ void RE_HandleEncryptedMessage(struct Part *frp)
          RE_UndoPart(rp[1]);
       }
    }
-   DB( KPrintF("RE_HandleEncryptedMessage() ends\n"); )
+   DB( kprintf("RE_HandleEncryptedMessage() ends\n"); )
 }
 ///
 /// RE_LoadMessagePart
@@ -1965,7 +1965,7 @@ char *RE_ReadInMessage(int winnum, int mode)
    int totsize, len, wptr;
    FILE *fh;
    
-   DB( KPrintF("RE_ReadInMessage(%ld,%ld\n",winnum,mode); )
+   DB( kprintf("RE_ReadInMessage(%ld,%ld\n",winnum,mode); )
    if (re->NoTextstyles) { tsb = "\033c\033[s:18]\033l"; sb = "\033[s:2]"; bo = "\033b"; pl = "\033n"; }
    else { tsb = "<tsb>"; sb = "<sb>"; bo = "*"; pl = "*"; }
    for (totsize = 1000, part = first; part; part = part->Next)
@@ -2083,7 +2083,7 @@ char *RE_ReadInMessage(int winnum, int mode)
 /* PGP message */    if (!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
                      {
                         struct TempFile *tf;
-                        DB( KPrintF("RE_ReadInMessage(): encrypted message\n"); )
+                        DB( kprintf("RE_ReadInMessage(): encrypted message\n"); )
                         if (tf = OpenTempFile("w"))
                         {
                            *eolptr = '\n';
@@ -2095,23 +2095,23 @@ char *RE_ReadInMessage(int winnum, int mode)
                            while (*ptr && *ptr != '\n') ptr++; eolptr = ptr++;
                            fwrite(rptr, 1, ptr-rptr, tf->FP);
                            fclose(tf->FP); tf->FP = NULL;
-                           DB( KPrintF("RE_ReadInMessage(): decrypting\n"); )
+                           DB( kprintf("RE_ReadInMessage(): decrypting\n"); )
                            if (!RE_DecryptPGP(winnum, tf->Filename)) re->PGPSigned |= PGPS_OLD;
                            if (tf->FP = fopen(tf->Filename, "r"))
                            {
                               char buf2[SIZE_LARGE];
-                              DB( KPrintF("RE_ReadInMessage(): decrypted message follows\n"); )
+                              DB( kprintf("RE_ReadInMessage(): decrypted message follows\n"); )
                               while (fgets(buf2, SIZE_LARGE, tf->FP))
                               {
                                  rptr = buf2;
-                                 DB( KPrintF(buf2); )
+                                 DB( kprintf(buf2); )
                                  cmsg = AppendToBuffer(cmsg, &wptr, &len, buf2);
                               }
                            }
                            CloseTempFile(tf);
                         }
                         re->PGPEncrypted |= PGPE_OLD;
-                        DB( KPrintF("RE_ReadInMessage(): done with decryption\n"); )
+                        DB( kprintf("RE_ReadInMessage(): done with decryption\n"); )
                         goto rim_cont;
                      }
 /* signature */      if (!strcmp(rptr, "-- "))
@@ -2161,7 +2161,7 @@ rim_cont:
       re->FirstReadDone = TRUE;
       if (mode != RIM_QUIET) BusyEnd;
    }
-   DB( KPrintF("RE_ReadInMessage() ends"); )
+   DB( kprintf("RE_ReadInMessage() ends"); )
    return cmsg;
 }
 ///

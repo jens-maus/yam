@@ -91,7 +91,8 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
    int indexloaded = 0;
    char buf[SIZE_LARGE];
 
-   DB( KPrintF("Loading index for folder %s\n", folder->Name); )
+   DB( kprintf("Loading index for folder %s\n", folder->Name); )
+
    if (fh = fopen(MA_IndexFileName(folder), "r"))
    {
       struct FIndex fi;

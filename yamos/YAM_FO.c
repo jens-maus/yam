@@ -456,7 +456,7 @@ BOOL FO_LoadTreeImage(struct Folder *fo)
 
    if(!fo->FImage) return FALSE;
 
-   DB( kprintf("Loaded TreeImage: %s - %lx - %ld\n", fo->Name, fo->FImage, fo->SortIndex+1); )
+   DB(kprintf("Loaded TreeImage: %s - %lx - %ld\n", fo->Name, fo->FImage, fo->SortIndex+1));
 
    // Now we say that this image could be used by this Listtree
    DoMethod(lv, MUIM_NList_UseImage, fo->FImage, fo->SortIndex+1, 0);
@@ -545,7 +545,7 @@ BOOL FO_SaveTree(char *fname)
    BOOL success = TRUE;
    FILE *fh;
 
-   DB( kprintf("SaveTree!!!\n"); )
+   DB(kprintf("SaveTree!!!\n"));
 
    if (fh = fopen(fname, "w"))
    {

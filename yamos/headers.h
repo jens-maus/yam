@@ -145,13 +145,13 @@ struct sockaddr_in {
 #endif
 
 #if (defined DEBUG) || (defined _MGST)
-	#include "clib/debug_protos.h"
+  #include "clib/debug_protos.h"
 #endif
 
 #if (defined DEBUG)
-	#define DB(x) (x)
-	#define DBpr(x) (KPrintF("YAM: %s",x))
+  #define DB(x) x
+  #define DBpr(x) (KPrintF("YAM: %s",x))
 #else
-	#define DB(x)
-	#define DBpr(x)
+  #define DB(x)
+  #define DBpr(x)
 #endif
