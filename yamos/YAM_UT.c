@@ -1456,6 +1456,7 @@ void CloseTempFile(struct TempFile *tf)
    if (tf)
    {
       if (tf->FP) fclose(tf->FP);
+      DB(kprintf("DeleteTempFile: %s\n", tf->Filename);)
       DeleteFile(tf->Filename);
       free(tf);
    }
@@ -2465,7 +2466,20 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
 //  Deletes temporary unpacked file
 void FinishUnpack(char *file)
 {
-   if (strstr(file, ".unp")) DeleteFile(file);
+   // we just delete if this is really related to a unpack file
+   if (strstr(file, ".unp"))
+   {
+      int i;
+
+      // now we check if the file is still in use by a read window somewhere
+      for(i=0; i < MAXRE; i++)
+      {
+        // if this file is still in use we cannot delete it.
+        if(G->RE[i] && strcmp(file, G->RE[i]->File) == 0) return;
+      }
+
+      DeleteFile(file);
+    }
 }
 ///
 /// IsValidMailFile
