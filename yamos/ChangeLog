@@ -1,3 +1,11 @@
+2001-09-13  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug #432328 where the wrong image was displayed if a folder
+      was a password protected one.
+    * fixed bug #450062 where the index of some folders wasn`t displayed
+      because only visible entries of the Listtree were selected to be
+      displayed.
+
 2001-09-12  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed bug #432331 where it happened that, if no action was performed

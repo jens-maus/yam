@@ -2477,7 +2477,7 @@ struct MA_ClassData *MA_New(void)
       if (username = C->RealName,(user = US_GetCurrentUser()))
         username = user->Name;
 
-      sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), yamversionver, username);
+      sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), yamversion, username);
 
       data->GUI.MS_MAIN = MenustripObject,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),
@@ -2694,10 +2694,13 @@ struct MA_ClassData *MA_New(void)
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
          // define the StatusFlag images that should be used
-         for (i = 0; i < 17; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, 0, TAG_DONE);
+         for (i = 0; i < 17; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, 0);
 
          // Define the Images the FolderListtree that can be used
-         for (i = 0; i < MAXBCSTDIMAGES; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, 0, TAG_DONE);
+         for (i = 0; i < MAXBCSTDIMAGES; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, 0);
+
+         // Now we need the XPK image also in the folder list
+         DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], MAXBCSTDIMAGES, 0);
 
          set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.NL_MAILS);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUT     ,G->AY_Win,3,MUIM_Set                ,MUIA_Window_Open,TRUE);

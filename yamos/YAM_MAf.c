@@ -1025,7 +1025,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
           if (strlen(entry->Name) > 0) strcat(dispfold, entry->Name);
           else sprintf(dispfold, "(%s)", FilePart(entry->Path));
 
-          if (entry->XPKType&1) strcat(dispfold, " \033o[0]");
+          if (entry->XPKType&1) sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCSTDIMAGES);
 
           if (entry->LoadedMode)
           {

@@ -639,7 +639,7 @@ static void Initialise2(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 50);
    if (!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
    {
-      for (i = 0; i < 100; i++) if (oldfolders[i]) DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root, TAG_DONE);
+      for (i = 0; i < 100; i++) if (oldfolders[i]) DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
       newfolders = TRUE;
    }
    if (oldfolders) { for (i = 0; oldfolders[i]; i++) free(oldfolders[i]); free(oldfolders); }
@@ -653,7 +653,7 @@ static void Initialise2(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 75);
    for (i = 0; ; i++)
    {
-      struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIV_NListtree_GetEntry_Flag_Visible, TAG_DONE);
+      struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
       if (!tn) break;
       folder = tn->tn_User;
       if (!folder) break;

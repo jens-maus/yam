@@ -409,7 +409,7 @@ BOOL FO_LoadTree(char *fname)
       GetLine(fh, buffer, sizeof(buffer));
       if (!strncmp(buffer, "YFO", 3))
       {
-         DoMethod(lv, MUIM_NListtree_Clear, NULL, 0, TAG_DONE);
+         DoMethod(lv, MUIM_NListtree_Clear, NULL, 0);
          set(lv, MUIA_NListtree_Quiet, TRUE);
          while (GetLine(fh, buffer, sizeof(buffer)))
          {
@@ -440,7 +440,7 @@ BOOL FO_LoadTree(char *fname)
                   if(FO_LoadFolderImages(&fo)) j++;
 
                   // Now we add this folder to the folder listtree
-                  if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, 0, TAG_DONE)))
+                  if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, 0)))
                   {
                      fclose(fh);
                      return FALSE;
@@ -494,7 +494,7 @@ BOOL FO_LoadTree(char *fname)
                }
 
                // now we are going to add this treenode to the list
-               if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags, TAG_DONE)))
+               if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
                {
                   fclose(fh);
                   return FALSE;
@@ -509,7 +509,7 @@ BOOL FO_LoadTree(char *fname)
                // now we check if the nested is zero and if yes then we set tn_root = MUIV_NListtree_Insert_ListNode_Root
                // otherwise we go back to the root of the root
                if (nested == 0) tn_root = MUIV_NListtree_Insert_ListNode_Root;
-               else tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE);
+               else tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Parent, 0);
             }
          }
          set(lv, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
