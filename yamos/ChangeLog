@@ -885,3 +885,9 @@
 
     * YAM.c, YAM_addressbookEntry.h, YAM_main.h, YAM_utilities.h, YAM_write.h
       includes/proto/genesis.h: fixed GCC warnings
+
+2001-07-17  Gunther Nikl <gni@gecko.de>
+
+    * Makefile: renamed revision 1.12 to Makefile.MorphOS 
+    * Makefile.m68k-AmigaOS: renamed revison 1.14 to Makefile
+    * Makefile.m68k-AmigaOS-ixemul: deleted
