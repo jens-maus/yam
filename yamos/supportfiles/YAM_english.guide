@@ -1886,10 +1886,6 @@ Configuration - Write
      Example:  76
 
 
-@{b}Wrap as you type@{ub}
-     Activate this option if you would like 
-
-
 @{b}External editor@{ub}
      If you do not like the internal editor and wish to use another one
      (thereby forgoing automatic spell checking, text styles and
