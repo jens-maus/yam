@@ -90,4 +90,14 @@
   #define PLAIN(x) x
 #endif
 
+/*
+** stacksize definitions
+*/
+
+#ifdef __STORMGCC__
+  #define __YAM_STACK __stacksize
+#else
+  #define __YAM_STACK __stack
+#endif
+
 #endif /* _COMPILER_H */

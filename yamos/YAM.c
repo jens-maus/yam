@@ -31,7 +31,7 @@
 
 /// Global Vars
 //  Defines global variables and structures
-__near long __stack = 20000;
+__near long __YAM_STACK = 20000;
 __near long __buffsize = 8192;
 __near long __MemPoolPuddleSize = 16384;
 
