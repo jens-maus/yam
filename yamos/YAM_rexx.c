@@ -51,8 +51,8 @@
 #include "YAM_rexx.h"
 #include "YAM_rexx_rxcl.h"
 
-static char RexxPortBaseName[80] = "YAM";
-static char *rexx_extension = "YAM";
+#define RexxPortBaseName "YAM"
+#define RexxMsgExtension "YAM"
 
 struct rxs_stemnode
 {
@@ -129,7 +129,7 @@ static struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPT
    struct RexxMsg *rexx_command_message;
 
    if( (rexx_command_message = CreateRexxMsg( host->port,
-      rexx_extension, host->port->mp_Node.ln_Name)) == NULL )
+      RexxMsgExtension, host->port->mp_Node.ln_Name)) == NULL )
    {
       return( NULL );
    }
@@ -237,9 +237,7 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    struct RexxHost *host;
    int ext = 0;
    
-   if( !basename )
-      basename = RexxPortBaseName;
-   else if( !*basename )
+   if( !basename || !*basename )
       basename = RexxPortBaseName;
    
    if( !(host = AllocVec(sizeof(struct RexxHost), MEMF_CLEAR)) )
@@ -247,9 +245,8 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    
    strcpy( host->portname, basename );
    
-   if( usrport )
+   if( (host->port = usrport) )
    {
-      host->port   = usrport;
       host->flags |= ARB_HF_USRMSGPORT;
    }
    else if( !(host->port = CreateMsgPort()) )
@@ -275,7 +272,7 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    if( !(host->rdargs = AllocDosObject(DOS_RDARGS, NULL)) )
    {
       RemPort( host->port );
-      if( !usrport ) DeleteMsgPort( host->port );
+      if( !(host->flags & ARB_HF_USRMSGPORT) ) DeleteMsgPort( host->port );
       FreeVec( host );
       return NULL;
    }
