@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-08-29  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: fixed the BusyText display while transfering data
+      from a POP server. Now YAM will even show a message within the
+      InfoBar that the transfer is in progress, even if the transfer
+      window is disabled.
+    * YAM_TR.c: fixed the Transfer Status routines once more. I forgot
+      to make sure that the status display is updated correctly at
+      least at the end of each mail transfer. That should make the
+      whole transfer progress a bit smoother.
+
 2003-08-24  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: reworked the Transfer Status routines once more to not only

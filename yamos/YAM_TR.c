@@ -1331,7 +1331,6 @@ static int TR_ConnectPOP(int guilevel)
          case -1: ER_NewError(GetStr(MSG_ER_UnknownPOP), C->P3[pop]->Server, NULL); break;
          default: ER_NewError(GetStr(MSG_ER_CantConnect), C->P3[pop]->Server, NULL);
       }
-      BusyEnd;
       return -1;
    }
 
@@ -1342,12 +1341,12 @@ static int TR_ConnectPOP(int guilevel)
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
 
       // Initiate a connect and see if we succeed
-      if(!(resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, MSG_ER_POPWELCOME))) { BusyEnd; return -1; }
+      if(!(resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, MSG_ER_POPWELCOME))) return -1;
       welcomemsg = StrBufCpy(NULL, resp);
 
       // If the user selected STLS support we have to first send the command
       // to start TLS negotiation (RFC 2595)
-      if(!TR_SendPOP3Cmd(POPCMD_STLS, NULL, MSG_ER_BadResponse)) { BusyEnd; return -1; }
+      if(!TR_SendPOP3Cmd(POPCMD_STLS, NULL, MSG_ER_BadResponse)) return -1;
    }
 
    // Here start the TLS/SSL Connection stuff
@@ -1363,7 +1362,6 @@ static int TR_ConnectPOP(int guilevel)
      else
      {
         ER_NewError(GetStr(MSG_ER_INITTLS), host, NULL);
-        BusyEnd;
         return -1;
      }
    }
@@ -1373,7 +1371,7 @@ static int TR_ConnectPOP(int guilevel)
    if(C->P3[pop]->SSLMode != P3SSL_STLS)
    {
       // Initiate a connect and see if we succeed
-      if(!(resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, MSG_ER_POPWELCOME))) { BusyEnd; return -1; }
+      if(!(resp = TR_SendPOP3Cmd(POPCMD_CONNECT, NULL, MSG_ER_POPWELCOME))) return -1;
       welcomemsg = StrBufCpy(NULL, resp);
    }
 
@@ -1382,7 +1380,6 @@ static int TR_ConnectPOP(int guilevel)
       sprintf(buf, GetStr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
       if (!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_TR_PopLogin), buf, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->TR->GUI.WI))
       {
-        BusyEnd;
         return -1;
       }
    }
@@ -1411,31 +1408,29 @@ static int TR_ConnectPOP(int guilevel)
          for(j=strlen(buf), i=0; i<16; j+=2, i++) sprintf(&buf[j], "%02x", digest[i]);
          buf[j] = 0;
          set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendAPOPLogin));
-         if (!TR_SendPOP3Cmd(POPCMD_APOP, buf, MSG_ER_BadResponse)) { BusyEnd; return -1; }
+         if (!TR_SendPOP3Cmd(POPCMD_APOP, buf, MSG_ER_BadResponse)) return -1;
       }
       else
       {
          ER_NewError(GetStr(MSG_ER_NoAPOP), NULL, NULL);
-         BusyEnd;
          return -1;
       }
    }
    else
    {
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendUserID));
-      if (!TR_SendPOP3Cmd(POPCMD_USER, C->P3[pop]->User, MSG_ER_BadResponse)) { BusyEnd; return -1; }
+      if (!TR_SendPOP3Cmd(POPCMD_USER, C->P3[pop]->User, MSG_ER_BadResponse)) return -1;
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendPassword));
-      if (!TR_SendPOP3Cmd(POPCMD_PASS, passwd, MSG_ER_BadResponse)) { BusyEnd; return -1; }
+      if (!TR_SendPOP3Cmd(POPCMD_PASS, passwd, MSG_ER_BadResponse)) return -1;
    }
 
    FreeStrBuf(welcomemsg);
 
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_GetStats));
-   if (!(resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, MSG_ER_BadResponse))) { BusyEnd; return -1; }
+   if (!(resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, MSG_ER_BadResponse))) return -1;
    sscanf(&resp[4], "%d", &msgs);
    if (msgs) AppendLogVerbose(31, GetStr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, (void *)msgs, "");
 
-   BusyEnd;
    return msgs;
 }
 ///
@@ -1950,9 +1945,12 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                CallHookPkt(&TR_ProcessGETHook, 0, 0);
             }
 
+            BusyEnd;
             return;
          }
       }
+
+      BusyEnd;
    }
    else G->TR->Stats.Error = TRUE;
 
@@ -2329,10 +2327,33 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
    }
    else if(size_incr == TS_SETMAX)
    {
+     struct timeval now;
+     ULONG deltatime; 
+     ULONG speed = 0;
+     ULONG remclock = 0;
+
      ts->Size_Done += ts->Size_Curr_Max - ts->Size_Curr;
 
      // if the window isn`t open we don`t need to update it, do we?
      if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) return;
+
+     // we make sure that we, at least update the gauge at the end
+     GetSysTime(&now);
+     deltatime = now.tv_secs - ts->Clock_Start;
+
+     // first we calculate the speed in bytes/sec
+     // to display to the user
+     if(deltatime)
+       speed = ts->Size_Done/deltatime;
+
+     // calculate the estimated remaining time
+     if(speed && ((remclock = (ts->Size_Tot/speed)-deltatime) < 0))
+       remclock = 0;
+
+     // now format the StatsLabel and update it aswell as the gauge
+     SPrintF(G->TR->StatsLabel, GetStr(MSG_TR_TransferStats),
+             ts->Size_Done/1024, ts->Size_Tot/1024, speed, remclock/60, remclock%60);
+     set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
 
      // if size_increment is a negative number it is
      // a signal that we are at the end of the transfer, so we can put up
