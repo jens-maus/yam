@@ -85,6 +85,33 @@ OVERLOAD(OM_NEW)
 	return (ULONG)obj;
 }
 ///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+	GETDATA;
+
+	if(data->Matchwindow)
+	{
+		DB(kprintf("Dispose addrlistpopup: %lx\n", data->Matchwindow);)
+
+		// we know that _app(obj) is documented as only valid in
+		// MUIM_Cleanup/Setup, but these two methods are also called
+		// if a window gets iconfied only. And by looking at the MUI source,
+		// MUI first calls each OM_DISPOSE of all children, so _app(obj)
+		// should also be valid during a OM_DISPOSE call, and obviously it
+		// doesn`t cause any problem.
+		DoMethod(_app(obj), OM_REMMEMBER, data->Matchwindow);
+		MUI_DisposeObject(data->Matchwindow);
+
+		data->Matchwindow = NULL;
+	}
+
+	if(data->CurrentRecipient)
+		free(data->CurrentRecipient);
+
+	return DoSuperMethodA(cl, obj, msg);
+}
+///
 /// OVERLOAD(OM_GET)
 /* this is just so that we can notify the popup tag */
 OVERLOAD(OM_GET)
@@ -148,22 +175,6 @@ OVERLOAD(MUIM_Setup)
 	}
 
 	return FALSE;
-}
-///
-/// OVERLOAD(MUIM_Cleanup)
-OVERLOAD(MUIM_Cleanup)
-{
-	GETDATA;
-
-	if(data->Matchwindow)
-	{
-		DB(kprintf("Dispose addrlistpopup: %lx\n", data->Matchwindow);)
-		DoMethod(_app(obj), OM_REMMEMBER, data->Matchwindow);
-		MUI_DisposeObject(data->Matchwindow);
-	}
-
-	free(data->CurrentRecipient);
-	return DoSuperMethodA(cl, obj, msg);
 }
 ///
 /// OVERLOAD(MUIM_Show)
@@ -610,8 +621,11 @@ DECLARE(CurrentRecipient)
 	STRPTR buf, end;
 	LONG pos;
 
-	free(data->CurrentRecipient);
-	data->CurrentRecipient = NULL;
+	if(data->CurrentRecipient)
+	{
+		free(data->CurrentRecipient);
+		data->CurrentRecipient = NULL;
+	}
 
 	get(obj, MUIA_String_Contents, &buf);
 	get(obj, MUIA_String_BufferPos, &pos);
