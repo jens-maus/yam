@@ -1565,7 +1565,6 @@ MakeStaticHook(WR_AddFileHook, WR_AddFileFunc);
 HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
 {
    int i, winnum = *arg;
-   static char chr[2] = { 0,0 };
    char *src, *dst, filename[SIZE_PATHFILE], arcpath[SIZE_PATHFILE], arcname[SIZE_FILE];
    struct TempFile *tf = NULL;
    struct FileRequester *ar = G->ASLReq[ASL_ATTACH];
@@ -1607,6 +1606,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
          }
          else
          {
+            static char chr[2] = { 0,0 };
             chr[0] = *src;
             dst = StrBufCat(dst, chr);
          }
