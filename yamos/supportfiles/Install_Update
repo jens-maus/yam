@@ -173,11 +173,11 @@
 ; /// ***** Polski
 (if (= @language "polski")
    (
-      (set #wrongOS  "YAM do uruchomienia wymaga systemu w wersji 3.0 lub wyûszej\n")
-      (set #wrongMUI "YAM do uruchomienia wymaga MUI w wersji 3.8 lub wyûszej\n")
-      (set #wrongCPU "YAM do uruchomienia wymaga procesura 68020 lub nowszego\n")
-      (set #proc_type "Wybierz którâ wersjë YAMa chcesz zainstalowaê:")
-      (set #proc_help (cat "Tu moûesz wybraê którâ wersjë YAMa chcesz zainstalowaê "
+      (set #wrongOS  "YAM do uruchomienia wymaga systemu w wersji 3.0 lub nowszej!\n")
+      (set #wrongMUI "YAM do uruchomienia wymaga MUI w wersji 3.8 lub nowszej!\n")
+      (set #wrongCPU "YAM do uruchomienia wymaga procesura 68020 lub nowszego!\n")
+      (set #proc_type "Wybierz którâ wersjë YAM-a chcesz zainstalowaê:")
+      (set #proc_help (cat "Tu moûesz wybraê którâ wersjë YAM-a chcesz zainstalowaê "
                            "zaleûnie od typu procesora który posiadasz."))
       (set #proc_020 "Zoptymalizowanâ dla 68020/030")
       (set #proc_040 "Zoptymalizowanâ dla 68040")
@@ -185,7 +185,7 @@
       (set #proc_MOS "Zoptymalizowanâ dla MorphOS/PPC")
       (set #YAM_dir  "Wybierz katalog gdzie mam zainstalowaê YAMa")
       (set #done_1   (cat "\nYAM zostaî zainstalowany.\n\n"
-                          "Kliknij ikonë \"YAM\" w katalogu\n"))
+                          "Kliknij ikonkë \"YAM\" w katalogu\n"))
       (set #done_2        "\naby go uruchomiê.\n\nMiîej zabawy...")
    )
 )

@@ -481,30 +481,65 @@
 (IF (= @language "polski")
 (
 (set #def_cat_lang #def_lang_Polski)
-(set #wrongOS  "YAM do uruchomienia wymaga systemu w wersji 3.0 lub wyûszej\n")
-(set #wrongMUI "YAM do uruchomienia wymaga MUI w wersji 3.8 lub wyûszej\n")
-(set #wrongCPU "YAM do uruchomienia wymaga procesura 68020 lub nowszego\n")
-(set #proc_type "Wybierz którâ wersjë YAMa chcesz zainstalowaê:")
-(set #proc_help (cat "Tu moûesz wybraê którâ wersjë YAMa chcesz zainstalowaê "
+(set #wrongOS  "YAM do uruchomienia wymaga systemu w wersji 3.0 lub nowszej!\n")
+(set #wrongMOS "Nie znaleziono systemu MorphOS!\n")
+(set #wrongMUI "YAM do uruchomienia wymaga MUI w wersji 3.8 lub nowszej!\n")
+(set #wrongCPU "YAM do uruchomienia wymaga procesura 68020 lub nowszego!\n")
+(set #proc_type "Wybierz którâ wersjë YAM-a chcesz zainstalowaê:")
+(set #proc_help (cat "Tutaj moûesz wybraê którâ wersjë YAM-a chcesz zainstalowaê "
                      "zaleûnie od typu procesora który posiadasz."))
 (set #proc_020 "Zoptymalizowanâ dla 68020/030")
 (set #proc_040 "Zoptymalizowanâ dla 68040")
 (set #proc_060 "Zoptymalizowanâ dla 68060")
-(set #YAM_dir  (cat "Wybierz katalog gdzie mam zainstalowaê YAMa\n"
-                    "(Dodatkowy katalog NIE zostanie stworzony!)"))
+(set #YAM_dir  (cat "Wybierz katalog gdzie mam zainstalowaê YAM-a\n"
+                    "(Dodatkowy katalog NIE zostanie utworzony!)"))
 (set #lang_catalog (cat "Który plik tîumaczenia chcesz zainstalowaê?\n"
                         "(Jëzyk angielski jest wbudowany)"))
 (set #lang_manual "Wybierz jëzyk dla pomocy on-line")
 (set #icons_prompt "Które pliki graficzne chcesz zaistalowaê?\n")
-(set #assign_prompt (cat "Przypis YAM: powinien zostaê dodany do pliku S:USER-STARTUP\n"
-                         "Zgadzasz sië?"))
-(set #assign_help (cat "Kiedy Installer zapyta czy chceesz dodaê ten przypis "
-                       "do Twojego pliku S:user-startup, powinieneô wybraê "
-                       "przycisk \"Kontynuuj\"; w przeciwnym razie, po resecie komputera "
-                       "program nie bëdzie mógî znaleúê plików i katalogów "
-                       "wymaganych do uruchomienia.\n"))
-(set #done_1   (cat "\nYAM zostaî zainstalowany.\n\n"
-                    "Kliknij ikonë \"YAM\" w katalogu\n"))
+(set #icons_help (cat "Proszë wybraê które pliki graficzne chcesz zainstalowaê:\n\n"
+                      "- MagicWB (8 kolorów)\n"
+                      "- ProLite (16 kolorów)\n"
+                      "- NewIcons (32 kolory)\n"
+                      "- GlowIcons (64 kolory)\n"
+                      "- GlowIcons-2 (64 kolory)"))
+(set #icons_none "Ûadne")
+(set #charset_help (cat "YAM moûe uûywaê przy czytaniu i pisaniu wiadomoôci tabel "
+                        "konwersji znaków. Tabele te sâ zestawem plików tekstowych "
+                        "zainstalowanych w katalogu \"YAM:Charsets/\", które "
+                        "opisujâ jak kaûdy znak ma byê zastëpowany podczas "
+                        "czytania i/lub pisania wiadomoôci, na przykîad aby zastâpiê "
+                        "znaki z akcentami (ASCII8bit -> ASCII7bit), dokonaê konwersji "
+                        "z tabeli kodowej ISO-Latin-2 na AmigaPL i tak dalej.\n\n"
+                        "Jeôli nie potrzebujesz tej opcji, moûesz nie instalowaê "
+                        "tych tabel i zaoszczëdziê okoîo 10kB miejsca na dysku.\n"))
+(set #parser_help (cat "YAM w wersji 2.4+ oferuje opcjë automatycznego dopasowywania "
+                       "odpowiedniego zestawu znaków do wyôwietlenia kaûdej czëôci "
+                       "czytanej wiadomoôci, co jest szczególnie przydatne "
+                       "uûytkownikom takich krajów jak Rosja, gdzie "
+                       "nie ma ogólnie przyjëtego standardu zestawu znaków - "
+                       "prawdë powiedziawszy, opcja ta obecnie obsîuguje jedynie "
+                       "zestawy znaków Win1250, DOS866 oraz KOI8 i dlatego teû "
+                       "jest przewidziana gîównie dla uûytkowników z Rosji.\n\n"
+                       "Jeôli nie potrzebujesz tej opcji, moûesz nie instalowaê "
+                       "tych analizatorów skîadni i zaoszczëdziê okoîo 50kB "
+                       "miejsca na dysku.\n"))
+(set #imagepool_prompt "Kasujë \"libs:imagepool.library\"")
+(set #imagepool_help (cat "Klasa Toolbar.mcc 15.8 dostarczona z programem YAM "
+                          "nie wykorzystuje biblioteki imagepool.library. "
+                          "Jeôli ûaden inny program nie wymaga tej biblioteki, "
+                          "moûesz jâ teraz skasowaê.\n"))
+(set #yamtz_prompt "Kasujë \"ENV(ARC):YAM_TZ\"")
+(set #yamtz_help (cat "YAM w wersji 2.4+ nie obsîuguje juû zmiennej \"YAM_TZ\". "
+                      "Teraz jest to obsîugiwane wewnëtrznie poprzez Locale, "
+                      "wiëc moûesz spokojnie skasowaê të zmiennâ.\n"))
+(set #assign_prompt (cat "Przypis \"YAM:\" powinien zostaê dodany do pliku "
+                         "\"S:USER-STARTUP\"\n\nZgadzasz sië?"))
+(set #assign_help (cat "Jeôli ten przypis nie bëdzie obecny przy nastëpnych "
+                       "uruchomieniach komputera program nie bëdzie mógî "
+                       "znaleúê plików i katalogów wymaganych do uruchomienia.\n"))
+(set #done_1   (cat "\nYAM zostaî zainstalowany pomyôlnie.\n\n"
+                    "Kliknij ikonkë \"YAM\" w katalogu\n"))
 (set #done_2        "\naby go uruchomiê.\n\nMiîej zabawy...")
 )
 )
