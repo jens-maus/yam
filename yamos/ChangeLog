@@ -7,6 +7,9 @@ $Source$
 
 2003-05-04  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed bug in Popupmenu routines where the use of
+      the "Export Message" item caused YAM to export all messages
+      instead of just the selected one.
     * YAM_CO.c: fixed flaw in temporary filename specification for
       a new write window. Multiple instances of YAM used the same
       tempfile names for each write window and therefore interfered
