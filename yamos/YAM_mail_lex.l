@@ -67,7 +67,7 @@ INITIALS   [[:alpha:]]
 "#"  {return tHASH       ;}
 
 "*"[^[:blank:]\n*][^\n*]*[^[:blank:]\n*]"*"[[:blank:]\n,.!?:]                     {return tBOLD      ;}
-"/"[^[:blank:]\n/][^\n/]*[^[:blank:]\n_]"/"[[:blank:]\n,.!?:]                     {return tITALIC    ;}
+"/"[^[:blank:]\n/][^\n/]*[^[:blank:]\n/]"/"[[:blank:]\n,.!?:]                     {return tITALIC    ;}
 "_"[^[:blank:]\n_][^\n_]*[^[:blank:]\n_]"_"[[:blank:]\n,.!?:]                     {return tUNDERLINE ;}
 "#"[^[:blank:]\n#][^\n#]*[^[:blank:]\n#]"#"[[:blank:]\n,.!?:]                     {return tCOLORED   ;}
 
