@@ -590,14 +590,12 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    struct Folder *folder = mail->Folder;
    BOOL real = !isVirtualMail(mail);
    BOOL out = real ? isOutgoingFolder(folder) : FALSE;
+   int titleLen;
 
-   /* Check if the window is still open,
-    * needed for the "update readwindow after writewindow close" feature
-    */
-   if (re == NULL)
-   {
+   // Check if the window is still open,
+   // needed for the "update readwindow after writewindow close" feature
+   if(re == NULL)
       return;
-   }
 
    // lets clean the previous mail out of the window if exists to make the
    // window ready for the new message
@@ -609,9 +607,21 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    re->PGPKey = FALSE;
    re->PGPSigned = re->PGPEncrypted = 0;
 
-   sprintf(re->WTitle, "%s %s: ", out ? GetStr(MSG_To) : GetStr(MSG_From), out ? AddrName(mail->To) : AddrName(mail->From));
-   stccat(re->WTitle, mail->Subject, SIZE_DEFAULT);
+   // set the window title to something usefull
+   titleLen = sprintf(re->WTitle, "%s %s: ", out ? GetStr(MSG_To) : GetStr(MSG_From), out ? AddrName(mail->To) : AddrName(mail->From));
+   if(strlen(mail->Subject)+titleLen > SIZE_DEFAULT)
+   {
+     if(titleLen < SIZE_DEFAULT-3)
+     {
+       strncat(re->WTitle, mail->Subject, SIZE_DEFAULT-titleLen-3);
+       strcat(re->WTitle, "..."); // signals that the string was cut.
+     }
+     else
+       strcat(&re->WTitle[SIZE_DEFAULT-4], "...");
+   }
+   else strcat(re->WTitle, mail->Subject);
    set(gui->WI, MUIA_Window_Title, re->WTitle);
+
    set(gui->MI_EDIT, MUIA_Menuitem_Enabled, out);
    if (gui->TO_TOOLBAR)
    {

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-09-11  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: changed read window title formating to include
+      three dots "..." at the end of the text if it was too huge
+      to put it into the buffer and therefore was cut.
+
 2004-09-10  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed a minor bug which caused that with the
