@@ -1374,10 +1374,10 @@ MakeStaticHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
 //  User pressed DEL key
 HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
 {
-   Object *actobj = xget(G->MA->GUI.WI, MUIA_Window_ActiveObject);
+   Object *actobj = (Object *)xget(G->MA->GUI.WI, MUIA_Window_ActiveObject);
 
    if(!actobj || actobj == MUIV_Window_ActiveObject_None)
-    actobj = xget(G->MA->GUI.WI, MUIA_Window_DefaultObject);
+    actobj = (Object *)xget(G->MA->GUI.WI, MUIA_Window_DefaultObject);
 
    if(actobj == G->MA->GUI.LV_FOLDERS)
    {
@@ -3281,7 +3281,7 @@ struct MA_ClassData *MA_New(void)
                      MUIA_NListtree_Title           , TRUE,
                      MUIA_NListtree_DoubleClick     , MUIV_NListtree_DoubleClick_All,
                      MUIA_NList_DefaultObjectOnClick, FALSE,
-                     MUIA_ContextMenu               , C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : NULL,
+                     MUIA_ContextMenu               , C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : 0,
                      MUIA_Font                      , C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
                      MUIA_Dropable                  , TRUE,
                      MUIA_NList_Exports             , MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
@@ -3305,7 +3305,7 @@ struct MA_ClassData *MA_New(void)
                      MUIA_NList_Title               , TRUE,
                      MUIA_NList_TitleSeparator      , TRUE,
                      MUIA_NList_DefaultObjectOnClick, FALSE,
-                     MUIA_ContextMenu               , C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : NULL,
+                     MUIA_ContextMenu               , C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : 0,
                      MUIA_Font                      , C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
                      MUIA_NList_Exports             , MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
                      MUIA_NList_Imports             , MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,

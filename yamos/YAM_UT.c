@@ -2832,7 +2832,7 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
       {
          char nfile[SIZE_FILE];
 
-         sprintf(nfile, "%s_%08lx.unp", FilePart(file), folder);
+         sprintf(nfile, "%s_%08lx.unp", FilePart(file), (ULONG)folder);
 
          strmfp(newfile, C->TempDir, nfile);
          if (FileSize(newfile) < 0) if (!UncompressMailFile(file, newfile, folder ? folder->Password : "")) return NULL;
@@ -3761,7 +3761,7 @@ void DisplayAppIconStatistics(void)
   if (G->DiskObj[mode])
   {
     struct DiskObject *dobj=G->DiskObj[mode];
-    G->AppIcon = AddAppIcon(0, 0, (STRPTR)apptit, G->AppPort, NULL, dobj, TAG_DONE);
+    G->AppIcon = AddAppIconA(0, 0, apptit, G->AppPort, (BPTR)NULL, dobj, NULL);
   }
 }
 
@@ -3797,6 +3797,8 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
         case STATUS_UNR:  { fo->Unread++;             } break;
         case STATUS_SNT:  { fo->Sent++;               } break;
         case STATUS_DEL:  { fo->Deleted++;            } break;
+        default:
+          // nothing
       }
    }
 
@@ -3882,7 +3884,7 @@ BOOL CheckPrinter(void)
    if ((PrintPort = CreateMsgPort()))
    {
       //PrintPort->mp_Node.ln_Name = "YAM PrintPort";
-      if ((PrintIO = CreateIORequest(PrintPort, sizeof(struct IOStdReq))))
+      if ((PrintIO = (struct IOStdReq *)CreateIORequest(PrintPort, sizeof(struct IOStdReq))))
       {
          if (!(OpenDevice("printer.device", 0, (struct IORequest *)PrintIO, 0)))
          {
@@ -4198,7 +4200,7 @@ void GotoURL(char *url)
    }
    #if defined(__amigaos4__)
    else if((OpenURLBase = OpenLibrary("openurl.library", 1)) &&
-           (IOpenURL = GetInterface(OpenURLBase, "main", 1L, NULL)))
+           (IOpenURL = (struct OpenURLIFace*)GetInterface(OpenURLBase, "main", 1L, NULL)))
    #else
    else if((OpenURLBase = OpenLibrary("openurl.library", 1)))
    #endif
@@ -4206,7 +4208,7 @@ void GotoURL(char *url)
       URL_Open(url, TAG_DONE);
 
       #if defined(__amigaos4__)
-      DropInterface(IOpenURL);
+      DropInterface((APTR)IOpenURL);
       IOpenURL = NULL;
       #endif
 

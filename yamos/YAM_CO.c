@@ -1252,7 +1252,7 @@ HOOKPROTO(CO_PL_DspFunc, long, char **array, struct PageList *entry)
 {
    static char page[SIZE_DEFAULT];
    struct PL_Data *data = (APTR)hook->h_Data;
-   sprintf(array[0] = page, "\033O[%08lx] %s", data->Image[entry->Offset], GetStr(entry->PageLabel));
+   sprintf(array[0] = page, "\033O[%08lx] %s", (ULONG)data->Image[entry->Offset], GetStr(entry->PageLabel));
    return 0;
 }
 MakeHook(CO_PL_DspFuncHook,CO_PL_DspFunc);

@@ -233,9 +233,9 @@ static char *NewID(BOOL is_msgid)
       struct DateStamp ds;
       DateStamp(&ds);
 
-      sprintf(idbuf, "yam%ld.%ld.%ld@%s", ds.ds_Days, ds.ds_Tick, FindTask(NULL), C->SMTP_Server);
+      sprintf(idbuf, "yam%ld.%ld.%ld@%s", ds.ds_Days, ds.ds_Tick, (ULONG)FindTask(NULL), C->SMTP_Server);
    }
-   else sprintf(idbuf, "%ld.%d", FindTask(NULL), ++ctr);
+   else sprintf(idbuf, "%ld.%d", (ULONG)FindTask(NULL), ++ctr);
 
    return idbuf;
 }
@@ -555,6 +555,9 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
          case ENC_UUE:  fputs("x-uue\n", fh); break;
          case ENC_8BIT: fputs("8bit\n", fh); break;
          case ENC_BIN:  fputs("binary\n", fh); break;
+
+         default:
+          // nothing
       }
    }
    if ((p = part->Description)) if (*p) EmitHeader(fh, "Content-Description", p);
@@ -1072,6 +1075,9 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
             if (*C->MyPGPID) { strcat(options, " -u "); strcat(options, C->MyPGPID); }
             if (!PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0)) success = TRUE;
             break;
+
+         default:
+           // nothing
       }
       if (success) EncodePart(fh, &pgppart);
    }

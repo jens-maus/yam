@@ -7,6 +7,8 @@ $Source$
 
 2004-02-14  Jens Langner <Jens.Langner@light-speed.de>
 
+    * fixed a whole bunch of gcc dependent compiler warnings. Now
+      it should compile without any warning if gcc 2.95.3 is used.
     * Makefile.OS4/MorphOS: modified and improved makefiles and
       synced them with the latest changes done to the main Makefile.
 

@@ -575,7 +575,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
         // let us now generate a more or less random and unique cnonce
         // identifier which we can supply to our SMTP server.
-        sprintf(cnonce, "%08lx%08lx", rand(), rand());
+        sprintf(cnonce, "%08lx%08lx", (ULONG)rand(), (ULONG)rand());
 
         // the we generate the response according to RFC 2831 with A1
         // and A2 as MD5 encoded strings
@@ -850,7 +850,7 @@ BOOL TR_IsOnline(void)
          isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL);
 
          #if defined(__amigaos4__)
-         DropInterface(IMiami);
+         DropInterface((APTR)IMiami);
          IMiami = NULL;
          #endif
          CloseLibrary(MiamiBase);
@@ -868,7 +868,7 @@ BOOL TR_IsOnline(void)
          isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0);
 
          #if defined(__amigaos4__)
-         DropInterface(IGenesis);
+         DropInterface((APTR)IGenesis);
          IGenesis = NULL;
          #endif
          CloseLibrary(GenesisBase);
@@ -922,7 +922,7 @@ BOOL TR_OpenTCPIP(void)
       return FALSE;
 
     #if defined(__amigaos4__)
-    if(!(ISocket = GetInterface(SocketBase, "main", 1L, NULL)))
+    if(!(ISocket = (struct SocketIFace*)GetInterface(SocketBase, "main", 1L, NULL)))
     {
       CloseLibrary(SocketBase);
       SocketBase = NULL;
@@ -1058,7 +1058,7 @@ static int TR_Recv(char *recvdata, int maxlen)
    if (len <= 0) recvdata[0] = '\0';
    else recvdata[len] = '\0';
 
-   if (G->TR_Debug) printf("SERVER[%04ld]: %s", len, recvdata);
+   if (G->TR_Debug) printf("SERVER[%04d]: %s", len, recvdata);
 
    return len;
 }
@@ -1221,7 +1221,7 @@ static int TR_Send(char *ptr, int len, int flags)
 
   DoMethod(G->App,MUIM_Application_InputBuffered);
   if (G->TR_Socket == SMTP_NO_SOCKET) return -1;
-  if (G->TR_Debug && ptr) printf("CLIENT[%04ld]: %s", len, ptr);
+  if (G->TR_Debug && ptr) printf("CLIENT[%04d]: %s", len, ptr);
 
   // we call the WriteBuffered() function to write this characters
   // out to the socket. the provided flag will define if it
@@ -1275,7 +1275,7 @@ static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
 
   *ptr = 0;                 // null terminate like fgets()
 
-  if(G->TR_Debug) printf("SERVER[%04ld]: %s", n, vptr);
+  if(G->TR_Debug) printf("SERVER[%04d]: %s", n, vptr);
 
   return n; // return the number of chars we read
 }

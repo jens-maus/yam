@@ -11,7 +11,7 @@ int astcsma(const char *s, const char *p)
    char *buf=malloc(len);
 
    if(!buf) return 0;
-   if (ParsePatternNoCase(p, buf, len) < 0) ret=0;
+   if (ParsePatternNoCase((char *)p, buf, len) < 0) ret=0;
    else ret=MatchPatternNoCase(buf, (STRPTR)s);
    free(buf);
    return ret;

@@ -162,6 +162,8 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
             break;
          }
 
+      default:
+        // nothing
    }
    return found;
 }
@@ -319,6 +321,9 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens
 
       case SM_HEADER:   // continue
       case SM_WHOLE:    *search->Field = 0;
+
+      default:
+        // nothing
    }
 
    if (compar == 4) FI_GenerateListPatterns(search);

@@ -190,7 +190,7 @@ static void TC_Exit(void)
     {
       // drop the OS4 Interface of the TimerBase
       #if defined(__amigaos4__)
-      DropInterface(ITimer);
+      DropInterface((APTR)ITimer);
       ITimer = NULL;
       #endif
 
@@ -241,7 +241,7 @@ static BOOL TC_Init(void)
         TimerBase = (APTR)TCData.timerIO[0]->tr_node.io_Device;
 
         #if defined(__amigaos4__)
-        ITimer = GetInterface(TimerBase, "main", 1L, NULL);
+        ITimer = (struct TimerIFace*)GetInterface(TimerBase, "main", 1L, NULL);
         #endif
 
         // create our other TimerIOs now
@@ -1497,7 +1497,7 @@ static int GetDST(BOOL update)
    // SetDST saves the DST settings in the TZONE env-variable which
    // is a bit more complex than the others, so we need to do some advance parsing
    if((!update || ADSTdata.method == ADST_SETDST)
-      && GetVar(&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
+      && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
    {
       int i;
 
@@ -1517,7 +1517,7 @@ static int GetDST(BOOL update)
    // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
    // Hex 00 or 01 to indicate the DST value.
    if((!update || ADSTdata.method == ADST_FACTS) && result == 0
-      && GetVar(&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
+      && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
    {
       ADSTdata.method = ADST_FACTS;
 
@@ -1527,7 +1527,7 @@ static int GetDST(BOOL update)
 
    // SummerTimeGuard sets the last string to "YES" if DST is actually active
    if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
-      && GetVar(&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
+      && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
    {
       ADSTdata.method = ADST_SGUARD;
 
@@ -1538,7 +1538,7 @@ static int GetDST(BOOL update)
    // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
    // DST is actually active.
    if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
-      && GetVar(&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
+      && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
    {
       ADSTdata.method = ADST_IXGMT;
 
@@ -1593,8 +1593,8 @@ int main(int argc, char **argv)
 
    // obtain the MainInterface of Exec before anything else.
    #ifdef __amigaos4__
-	 SysBase = *((struct Library **)4L);
-	 IExec = (struct ExecIFace *) ((struct ExecBase *)SysBase)->MainInterface;
+	 struct Library* SysBase = *((struct Library **)4L);
+	 IExec = (struct ExecIFace *)((struct ExecBase *)SysBase)->MainInterface;
    #endif
 
 #if defined(DEVWARNING)

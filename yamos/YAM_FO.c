@@ -1166,6 +1166,9 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       else delete_folder = TRUE;
     }
     break;
+
+    default:
+      // nothing
   }
 
   if(delete_folder)
@@ -1213,7 +1216,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
       // lets first check for a valid folder name
       // if the foldername is empty or it was changed and the new name already exists it`s invalid
-      if(*folder.Name == NULL || (stricmp(oldfolder->Name, folder.Name) && FO_GetFolderByName(folder.Name, NULL)))
+      if(*folder.Name == '\0' || (stricmp(oldfolder->Name, folder.Name) != 0 && FO_GetFolderByName(folder.Name, NULL)))
       {
         MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERNAMEINVALID));
         return;
@@ -1315,14 +1318,14 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
       // lets first check for a valid folder name
       // if the foldername is empty or the new name already exists it`s invalid
-      if(*folder.Name == NULL || FO_GetFolderByName(folder.Name, NULL))
+      if(*folder.Name == '\0' || FO_GetFolderByName(folder.Name, NULL))
       {
         MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERNAMEINVALID));
         return;
       }
 
       // lets check if entered folder path is valid or not
-      if(*folder.Path == NULL)
+      if(*folder.Path == '\0')
       {
         MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERPATHINVALID));
         return;

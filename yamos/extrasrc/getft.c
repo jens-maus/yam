@@ -30,7 +30,7 @@ long getft(const char *name)
       fib->fib_Date.ds_Days = 0;
       fib->fib_Date.ds_Minute = 0;
       fib->fib_Date.ds_Tick = 0;
-      if ((lock = Lock(name, ACCESS_READ)))
+      if ((lock = Lock((STRPTR)name, ACCESS_READ)))
       {
         Examine(lock, fib);
         UnLock(lock);

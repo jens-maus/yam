@@ -418,11 +418,11 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
             {
                if (version == 2)
                {
-                  if (!stricmp(buffer, "POP3-Server"))    stccpy(co->P3[0]->Server, value, SIZE_HOST);
+                  if (!stricmp(buffer, "POP3-Server"))         stccpy(co->P3[0]->Server, value, SIZE_HOST);
                   else if (!stricmp(buffer, "POP3-Password"))  stccpy(co->P3[0]->Password, Decrypt(value), SIZE_PASSWORD);
                   else if (!stricmp(buffer, "POP3-User"))      stccpy(co->P3[0]->User, value, SIZE_USERID);
                   else if (!stricmp(buffer, "DeleteOnServer")) co->P3[0]->DeleteOnServer = Txt2Bool(value);
-                  else if (!stricmp(buffer, "CheckMail"))      if (!Txt2Bool(value)) co->CheckMailDelay = 0;
+                  else if (!stricmp(buffer, "CheckMail"))      { if (!Txt2Bool(value)) co->CheckMailDelay = 0; }
                   else if (!stricmp(buffer, "ConfirmSize"))
                   {
                     switch (atoi(value))

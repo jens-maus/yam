@@ -525,11 +525,12 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
       APTR obj = NULL;
       switch (G->AB->Mode)
       {
-         case ABM_TO:      obj = gui->ST_TO; break;
-         case ABM_CC:      obj = gui->ST_CC; break;
-         case ABM_BCC:     obj = gui->ST_BCC; break;
-         case ABM_FROM:    obj = gui->ST_FROM; break;
+         case ABM_TO:      obj = gui->ST_TO;      break;
+         case ABM_CC:      obj = gui->ST_CC;      break;
+         case ABM_BCC:     obj = gui->ST_BCC;     break;
+         case ABM_FROM:    obj = gui->ST_FROM;    break;
          case ABM_REPLYTO: obj = gui->ST_REPLYTO; break;
+         default:          obj = gui->ST_TO;      break;
       }
       DoMethod(G->App, MUIM_CallHook, &AB_FromAddrBookHook, obj, TAG_DONE);
       set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
@@ -874,11 +875,12 @@ HOOKPROTONHNO(AB_OpenFunc, void, int *arg)
 
    switch (ab->Mode = arg[0])
    {
-      case ABM_TO:      md = "(To)"; break;
-      case ABM_CC:      md = "(CC)"; break;
-      case ABM_BCC:     md = "(BCC)"; break;
-      case ABM_FROM:    md = "(From)"; break;
-      case ABM_REPLYTO: md = "(Reply-To)"; break;
+      case ABM_TO:      md = "(To)";      break;
+      case ABM_CC:      md = "(CC)";      break;
+      case ABM_BCC:     md = "(BCC)";     break;
+      case ABM_FROM:    md = "(From)";    break;
+      case ABM_REPLYTO: md = "(Reply-To)";break;
+      default:          md = "(To)";      break;
    }
    ab->WrWin = *md ? arg[1] : -1;
    ab->Modified = FALSE;
@@ -985,6 +987,9 @@ HOOKPROTONO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
               msg->Preparse[2] = MUIX_B;
             }
             break;
+
+            default:
+              // nothing
          }
       }
    }

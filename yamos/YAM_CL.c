@@ -425,7 +425,7 @@ DISPATCHERPROTO(MW_Dispatcher)
       APTR win = ((struct MUIP_MainWindow_CloseWindow *)msg)->Window;
 
       set(win, MUIA_Window_Open, FALSE);
-      app = xget(win, MUIA_ApplicationObject);
+      app = (Object *)xget(win, MUIA_ApplicationObject);
 
       DoMethod(app, OM_REMMEMBER, win);
       MUI_DisposeObject(win);
