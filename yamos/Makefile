@@ -42,7 +42,7 @@ WARN	= -Wall
 OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel -funroll-loops
 DEBUG	= -DDEBUG -g -O0
 CFLAGS	= -I. -I./includes $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
-LDFLAGS	= -noixemul -fbaserel $(CPU)
+LDFLAGS	= -noixemul -mstackextend -fbaserel $(CPU)
 LDLIBS	= -ldebug -lmui -lm
 
 # Special flags
