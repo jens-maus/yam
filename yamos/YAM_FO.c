@@ -253,7 +253,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
       fgets(buffer, SIZE_LARGE, fh);
       if (!strnicmp(buffer, "YFC", 3))
       {
-         /* pick a default value */
+         // pick a default value
          fo->MLSignature  = 1;
          fo->Stats        = FALSE;
          fo->MLSupport    = TRUE;
@@ -283,6 +283,14 @@ BOOL FO_LoadConfig(struct Folder *fo)
             }
          }
          success = TRUE;
+
+         // check for the non custom folder
+         // and set some values which shouldn`t be changed
+         if(!CUSTOMFOLDER(fo->Type))
+         {
+           fo->MLSignature  = -1;
+           fo->MLSupport    = FALSE;
+         }
       }
       fclose(fh);
    }
@@ -854,8 +862,8 @@ static BOOL FO_FoldernameRequest(char *string)
 static void FO_GetFolder(struct Folder *folder, BOOL existing)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
-   BOOL isdefault = (folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED);
-   static const int type2cycle[9] = { 0,0,1,1,2,-1,1,2,-1 };
+   BOOL isdefault = !CUSTOMFOLDER(folder->Type);
+   static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, -1 };
    int i;
 
    set(gui->ST_FNAME, MUIA_String_Contents, folder->Name);
@@ -914,8 +922,8 @@ static void FO_GetFolder(struct Folder *folder, BOOL existing)
 static void FO_PutFolder(struct Folder *folder)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
-   BOOL isdefault = (folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED);
-   static const int cycle2type[3] = { FT_CUSTOM,FT_CUSTOMSENT,FT_CUSTOMMIXED };
+   BOOL isdefault = !CUSTOMFOLDER(folder->Type);
+   static const int cycle2type[3] = { FT_CUSTOM, FT_CUSTOMSENT, FT_CUSTOMMIXED };
    int i;
 
    GetMUIString(folder->Name, gui->ST_FNAME);

@@ -59,11 +59,12 @@ struct FO_ClassData  /* folder configuration window */
    struct Folder *   EditFolder;
 };
 
-#define OUTGOING(type) (type == FT_OUTGOING || type == FT_SENT || type == FT_CUSTOMSENT)
+#define OUTGOING(type)      (type == FT_OUTGOING || type == FT_SENT || type == FT_CUSTOMSENT)
+#define CUSTOMFOLDER(type)  (type == FT_CUSTOM || type == FT_CUSTOMSENT || type == FT_CUSTOMMIXED)
 
 enum FolderType { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT_GROUP, FT_CUSTOMSENT, FT_CUSTOMMIXED };
 
-enum SetOrder { SO_SAVE, SO_RESET };
+enum SetOrder { SO_SAVE=0, SO_RESET };
 
 #define FolderName(fo) ((fo) ? (fo)->Name : "?")
 
