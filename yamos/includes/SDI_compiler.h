@@ -4,7 +4,7 @@
 /* Includeheader
 
 	Name:           SDI_compiler.h
-	Versionstring:	$VER: SDI_compiler.h 1.6 (19.05.2001)
+	Versionstring:	$VER: SDI_compiler.h 1.8 (12.06.2002)
 	Author:         SDI
 	Distribution:   PD
 	Description:    defines to hide compiler stuff
@@ -16,6 +16,7 @@
  1.5   29.07.00 : added #undef statements (needed e.g. for AmiTCP together with vbcc)
  1.6   19.05.01 : added STACKEXT and Dice stuff
  1.7   09.06.02 : added #ifdef check for __stackext as the cross-gcc of morphos doesn`t support stackext
+ 1.8   12.06.02 : added ALIGN and PACKED for PPC (MorphOS) support
 */
 
 #ifdef ASM
@@ -67,6 +68,10 @@
 #elif defined(__GNUC__)
   #define REG(reg,arg) arg __asm(#reg)
   #define LREG(reg,arg) register REG(reg,arg)
+  #if defined(__MORPHOS__)
+    #define ALIGN __attribute__((aligned(2)))
+    #define PACKED __attribute__((packed))
+  #endif
 #elif defined(_DCC)
   #define REG(reg,arg) __ ## reg arg
   #define STACKEXT __stkcheck
@@ -106,6 +111,12 @@
   #else
     #define STACKEXT
   #endif
+#endif
+#if !defined(ALIGN)
+  #define ALIGN
+#endif
+#if !defined(PACKED)
+  #define PACKED
 #endif
 
 #endif /* SDI_COMPILER_H */
