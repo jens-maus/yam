@@ -7,6 +7,12 @@ $Source$
 
 2005-02-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: forgot to clear the PGP signed/encrypted flags of a readmaildata
+      structure in the CleanupReadMailData() function which caused that even no
+      PGP mails got scanned for a signature upon mail switching.
+    * classes/ReadMailGroup.c: fixed bug in the PGP signature checking functions
+      where the readmailgroup object was passed to the MUI_Request() function
+      instead of the window of that group.
     * YAM_MAf.c: fixed bug #681110 where an CC: or BCC: header still triggered
       the mail to show up as a multiple receipient mail even if it contained
       no real receipient at all.

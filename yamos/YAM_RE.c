@@ -2820,6 +2820,12 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
     rmData->mail = NULL;
   }
 
+  // now clear some flags and stuff so that others may have a clean readmaildata
+  // structure
+  rmData->signedFlags = 0;
+  rmData->encryptionFlags = 0;
+  rmData->hasPGPKey = 0;
+
   // clean up the read window now
   if(windowCleanup && rmData->readWindow)
   {
