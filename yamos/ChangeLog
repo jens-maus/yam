@@ -1,3 +1,13 @@
+2001-11-10  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed a security flaw in YAM where it was possible that a user
+      received a mail with special escape sequences in the Mail header
+      that were interpreted by MUI. And with additional knowledge
+      about PIPE mechanisms it was possible to execute real commands
+      that could harm the system!
+      YAM now strips out those escape sequences in the header of a
+      mail as soon as it receives them.
+
 2001-10-28  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed bug where a empty ", ," string in a recipient gadget were
