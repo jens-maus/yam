@@ -1561,7 +1561,7 @@ Ma_ximal
 ;
 MSG_CO_WarnSize2
 KB
-; KB
+; kB
 ;
 MSG_CO_AutoOperation
 Automatischer Betrieb
@@ -1973,7 +1973,7 @@ ausführlich
 ;
 MSG_CO_PGPExe
 _PGP-Pfad
-; P_GP path
+; P_GP's directory
 ;
 MSG_CO_PGPKey
 _Ihr Schlüssel
@@ -5584,4 +5584,36 @@ Löschen
 MSG_RE_SetUnread
 Status ungelesen setzen
 ; Set status to unread
+;
+MSG_WR_AltQuoted
+Alternatives Zitat
+; Alternate Quoted
+;
+MSG_CO_AltQuote
+Externes Zitat mit
+; Quote external using
+;
+MSG_CO_DoQuote
+Nachricht zitieren
+; Quote message
+;
+MSG_HELP_CO_ST_ALTQUOTECHAR
+Zeichenkette, welche jeder Zeile eines Zitats\n\
+aus einer anderen Quelle als email vorangestellt wird.
+; String that should precede each line of\n\
+; a quote inserted from non-email sources
+;
+MSG_EA_SelectPhoto_Title
+Portrait auswählen
+; Select portrait
+;
+MSG_RE_MoveNextFolderReq
+Das nächste Postfach mit ungelesenen Nachrichten\n\
+ist: \eb%s\en\n\
+In dieses Postfach wechseln und\n\
+das lesen fortsetzen?
+; The next folder with unread messages\n\
+; is: \eb%s\en\n\
+; Change to this folder and continue\n\
+; with reading there?
 ;
