@@ -1,5 +1,8 @@
 2002-05-06  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * added a Busy() call to the POP transfer functions so that
+      the user still has a indicator what`s going on if he has
+      enabled time depending mail checking.
     * fixed another bug in the ADDRRESOLVE rexx command where it
       was also checking the emailcache what is not supposed to
       happen with the command.

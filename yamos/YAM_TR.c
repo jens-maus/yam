@@ -598,6 +598,7 @@ static int TR_ConnectPOP(int guilevel)
    // take this one, even if its not needed anymore.
    if (p = strchr(host, ':')) { *p = 0; port = atoi(++p); }
 
+   BusyText(GetStr(MSG_TR_MailTransferFrom), host);
    TR_SetWinTitle(TRUE, host);
 
    if (err = TR_Connect(host, port))
@@ -607,6 +608,7 @@ static int TR_ConnectPOP(int guilevel)
          case -1: ER_NewError(GetStr(MSG_ER_UnknownPOP), C->P3[pop]->Server, NULL); break;
          default: ER_NewError(GetStr(MSG_ER_CantConnect), C->P3[pop]->Server, NULL);
       }
+      BusyEnd;
       return -1;
    }
 
@@ -616,20 +618,20 @@ static int TR_ConnectPOP(int guilevel)
    {
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
 
-      if(TR_RecvDat(buf) <= 0) return -1;
+      if(TR_RecvDat(buf) <= 0) { BusyEnd; return -1; }
       welcomemsg = StrBufCpy(NULL, buf);
 
       // in STLS mode we get a welcome message and we have to get it out first
       while (!strstr(buf, "\n"))
       {
-        if(TR_RecvDat(buf) <= 0) return -1;
+        if(TR_RecvDat(buf) <= 0) { BusyEnd; return -1; }
         welcomemsg = StrBufCat(welcomemsg, buf);
       }
       *buf = 0;
 
       // If the user selected STLS support we have to first send the command
       // to start TLS negotiation (RFC 2595)
-      if(!TR_SendPopCmd(buf, "STLS", NULL, POPCMD_WAITEOL)) return -1;
+      if(!TR_SendPopCmd(buf, "STLS", NULL, POPCMD_WAITEOL)) { BusyEnd; return -1; }
    }
 
    // Here start the TLS/SSL Connection stuff
@@ -645,6 +647,7 @@ static int TR_ConnectPOP(int guilevel)
      else
      {
         ER_NewError(GetStr(MSG_ER_INITTLS), host, NULL);
+        BusyEnd;
         return -1;
      }
    }
@@ -654,12 +657,12 @@ static int TR_ConnectPOP(int guilevel)
    // we have to get the welcome message now
    if(!G->TR_UseableTLS || C->P3[pop]->SSLMode != P3SSL_STLS)
    {
-      if(TR_RecvDat(buf) <= 0) return -1;
+      if(TR_RecvDat(buf) <= 0) { BusyEnd; return -1; }
       welcomemsg = StrBufCpy(NULL, buf);
 
       while (!strstr(buf, "\n"))
       {
-        if (TR_RecvDat(buf) <= 0) return -1;
+        if (TR_RecvDat(buf) <= 0) { BusyEnd; return -1; }
         welcomemsg = StrBufCat(welcomemsg, buf);
       }
       *buf = 0;
@@ -668,7 +671,11 @@ static int TR_ConnectPOP(int guilevel)
    if (!*passwd)
    {
       sprintf(buf, GetStr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
-      if (!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_TR_PopLogin), buf, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->TR->GUI.WI)) return -1;
+      if (!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_TR_PopLogin), buf, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->TR->GUI.WI))
+      {
+        BusyEnd;
+        return -1;
+      }
    }
 
    if (C->P3[pop]->UseAPOP)
@@ -691,22 +698,24 @@ static int TR_ConnectPOP(int guilevel)
       for (j=strlen(buf), i=0; i<16; j+=2, i++) sprintf(&buf[j], "%02x", digest[i]);
       buf[j] = 0;
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendAPOPLogin));
-      if (!TR_SendPopCmd(buf, "APOP", buf, POPCMD_WAITEOL)) return -1;
+      if (!TR_SendPopCmd(buf, "APOP", buf, POPCMD_WAITEOL)) { BusyEnd; return -1; }
    }
    else
    {
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendUserID));
-      if (!TR_SendPopCmd(buf, "USER", C->P3[pop]->User, POPCMD_WAITEOL)) return -1;
+      if (!TR_SendPopCmd(buf, "USER", C->P3[pop]->User, POPCMD_WAITEOL)) { BusyEnd; return -1; }
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendPassword));
-      if (!TR_SendPopCmd(buf, "PASS", passwd, POPCMD_WAITEOL)) return -1;
+      if (!TR_SendPopCmd(buf, "PASS", passwd, POPCMD_WAITEOL)) { BusyEnd; return -1; }
    }
 
    if(welcomemsg) FreeStrBuf(welcomemsg);
 
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_GetStats));
-   if (!TR_SendPopCmd(buf, "STAT", NULL, POPCMD_WAITEOL)) return -1;
+   if (!TR_SendPopCmd(buf, "STAT", NULL, POPCMD_WAITEOL)) { BusyEnd; return -1; }
    sscanf(&buf[4], "%ld", &msgs);
    if (msgs) AppendLogVerbose(31, GetStr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, (void *)msgs, "");
+
+   BusyEnd;
    return msgs;
 }
 ///
