@@ -1015,7 +1015,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
             // selected we have to get into a local event loop
             if(G->TR && xget(G->TR->GUI.WI, MUIA_Window_Open))
             {
-              LONG result = 0;
+              LONG result;
 
               set(G->MA->GUI.WI, MUIA_Window_Sleep, TRUE);
 
@@ -1024,14 +1024,12 @@ static void DoStartup(BOOL nocheck, BOOL hide)
               // lets collect the waiting returnIDs now
               COLLECT_RETURNIDS;
 
-              while(result == 0)
-              {
+              do {
                 ULONG signals;
                 result = DoMethod(G->App, MUIM_Application_NewInput, &signals);
-
-                if(result > 0) break;
-                if(signals) Wait(signals);
-              }
+                if (result > 0) break;
+                if (signals) Wait(signals);
+              } while (result == 0);
 
               // now lets reissue the collected returnIDs again
               REISSUE_RETURNIDS;
