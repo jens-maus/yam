@@ -63,8 +63,8 @@ static int MA_MailCompare(struct Mail*, struct Mail*, int);
 static ULONG MA_GetSortType(int sort)
 {
    ULONG sort2col[8] = { 0,4,6,1,1,3,5,0 };
-   if (sort > 0) return sort2col[abs(sort)];
-   else return sort2col[abs(sort)] | MUIV_NList_SortTypeAdd_2Values;
+   if (sort > 0) return sort2col[ABS(sort)];
+   else return sort2col[ABS(sort)] | MUIV_NList_SortTypeAdd_2Values;
 }
 
 ///
