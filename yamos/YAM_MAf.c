@@ -353,6 +353,7 @@ void MA_FlushIndexes(BOOL all)
       for (i = 1; i <= (int)*flist; i++)
       {
          fo = flist[i];
+
          if ((fo->Type == FT_SENT || fo->Type == FT_CUSTOM || fo->Type == FT_CUSTOMSENT) && fo != actfo  && fo->LoadedMode == 2 && (all || (fo->Flags&FOFL_FREEXS)))
          {
             if (fo->Flags&FOFL_MODIFY) MA_SaveIndex(fo);
@@ -362,7 +363,7 @@ void MA_FlushIndexes(BOOL all)
          }
       }
       free(flist);
-      DoMethod(G->MA->GUI.LV_FOLDERS, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, TAG_DONE);
    }
 }
 

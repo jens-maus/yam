@@ -585,6 +585,7 @@
     * made WarnSubject a public option. The user can now select in the config if he
       wants to be warned or not if he is going to send a message without a subject.
     * fixed alignment bug in struct Rule.
+    * Flush indices didn`t work on grouped folders - fixed. (Bug #433506)
 
 2001-06-16  Christian Hattemer <krille@users.sourceforge.net>
 

@@ -77,7 +77,8 @@ struct Folder **FO_CreateList(void)
    struct Folder **flist;
    APTR lv = G->MA->GUI.NL_FOLDERS;
 
-   get(lv, MUIA_NList_Entries, &max);
+   max = DoMethod(lv, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll, TAG_DONE);
+
    if (flist = calloc(max+1, sizeof(struct Folder *)))
    {
       flist[0] = (struct Folder *)max;
