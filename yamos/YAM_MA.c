@@ -130,7 +130,7 @@ SAVEDS void MA_SetFolderInfoFunc(void)
    static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
    char *sh = NULL;
    struct Folder *fo = FO_GetCurrentFolder();      
-   if (fo->Type != FT_SEPARATOR) sprintf(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
+   if (fo->Type != FT_SEPARATOR) SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
 }
 MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
@@ -996,7 +996,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    selected = (int)*mlist;
    if (C->Confirm && selected >= C->ConfirmDelete && !force)
    {
-      sprintf(buffer, selected==1 ? GetStr(MSG_MA_1Selected) : GetStr(MSG_MA_xSelected), selected);
+      SPrintF(buffer, selected==1 ? GetStr(MSG_MA_1Selected) : GetStr(MSG_MA_xSelected), selected);
       strcat(buffer, GetStr(MSG_MA_ConfirmDel));
       if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_OkayCancelReq), buffer))
       {

@@ -1135,7 +1135,7 @@ void TR_TransStat_Init(struct TransStat *ts)
 void TR_TransStat_Start(struct TransStat *ts)
 {
    ts->Msgs_Done = ts->Size_Done = 0;
-   sprintf(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%ld", ts->Msgs_Tot);
+   SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%lD", ts->Msgs_Tot);
    set(G->TR->GUI.GA_COUNT, MUIA_Gauge_InfoText, G->TR->CountLabel);
    set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Max, ts->Msgs_Tot);
    ts->Clock_Start = TR_GetSeconds();
@@ -1157,7 +1157,7 @@ void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, int size
    if (G->TR->GUI.GR_LIST && listpos >= 0) set(G->TR->GUI.LV_MAILS, MUIA_NList_Active, listpos);
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, status);
    set(G->TR->GUI.GA_COUNT, MUIA_Gauge_Current, index);
-   sprintf(G->TR->BytesLabel, GetStr(MSG_TR_SizeGauge), size);
+   SPrintF(G->TR->BytesLabel, GetStr(MSG_TR_SizeGauge), size);
    set(G->TR->GUI.GA_BYTES, MUIA_Gauge_InfoText, G->TR->BytesLabel);
    set(G->TR->GUI.GA_BYTES, MUIA_Gauge_Max, size);
 }
@@ -1184,7 +1184,7 @@ void TR_TransStat_Update(struct TransStat *ts, int size_incr)
    ts->Clock_Last = clock;
    if (clock) speed = ts->Size_Done/clock;
    if (speed) remclock = MAX(ts->Size_Tot/speed-clock,0);
-   sprintf(G->TR->StatsLabel, GetStr(MSG_TR_TransferStats),
+   SPrintF(G->TR->StatsLabel, GetStr(MSG_TR_TransferStats),
       ts->Size_Done>>10, ts->Size_Tot>>10, speed, remclock/60, remclock%60);
    set(G->TR->GUI.TX_STATS, MUIA_Text_Contents, G->TR->StatsLabel);
 }

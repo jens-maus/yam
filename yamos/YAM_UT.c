@@ -2479,7 +2479,7 @@ void DisplayStatistics(struct Folder *fo)
    {
       int mode = fo->Total ? (fo->New ? 2 : 1) : 0;
       if (G->TR) if (G->TR->Checking) mode = 3;
-      sprintf(apptit, GetStr(MSG_UT_AppStats), fo->New, fo->Total);
+      SPrintF(apptit, GetStr(MSG_UT_AppStats), fo->New, fo->Total);
       if (G->AppIcon) { RemoveAppIcon(G->AppIcon); G->AppIcon = NULL; }
       if (G->DiskObj[mode])
       {

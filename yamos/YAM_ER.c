@@ -54,14 +54,14 @@ void ER_NewError(char *error, char *arg1, char *arg2)
          free(G->ER_Message[0]);
          for (--G->ER_NumErr, i = 1; i < G->ER_NumErr; i++) G->ER_Message[i-1] = G->ER_Message[i];
       }
-      sprintf(buf, error, arg1, arg2); strcat(buf, "\n\n(");
+      SPrintF(buf, error, arg1, arg2); strcat(buf, "\n\n(");
 //      strcat(buf, DateStamp2String(NULL, DSS_DATE)); strcat(buf, " ");
 //      strcat(buf, DateStamp2String(NULL, DSS_TIME)); strcat(buf, ")");
       strcat(buf, DateStamp2String(NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
       strcat(buf, ")");
       strcpy(G->ER_Message[G->ER_NumErr-1] = malloc(strlen(buf)+1), buf);
    }
-   sprintf(label, "\033c%s %%ld/%ld", GetStr(MSG_ErrorReq), G->ER_NumErr);
+   SPrintF(label, "\033c%s %%ld/%ld", GetStr(MSG_ErrorReq), G->ER_NumErr);
    set(gui->NB_ERROR, MUIA_Numeric_Format, label);
    set(gui->NB_ERROR, MUIA_Numeric_Min, 1);
    set(gui->NB_ERROR, MUIA_Numeric_Max, G->ER_NumErr);

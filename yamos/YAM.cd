@@ -463,7 +463,7 @@ MSG_UT_PGPPassReq (//)
 Please enter your PGP pass phrase:
 ;
 MSG_UT_AppStats (//)
-New:%ld Total:%ld
+New:%lD Total:%lD
 ; COUNT, COUNT
 ;
 MSG_UT_NoPrinter (//)
@@ -520,7 +520,7 @@ MSG_MA_1Selected (//)
 One message selected.\n
 ;
 MSG_MA_xSelected (//)
-%ld messages selected.\n
+%lD messages selected.\n
 ; COUNT
 ;
 MSG_MA_ConfirmFilter (//)
@@ -574,11 +574,11 @@ MSG_MA_CheckSingle (//)
 Check single account
 ;
 MSG_MA_FolderInfo (//)
-\ebCurrent folder\en\nName: %s\nPath: %s\nSize: %ld bytes\nMessages: %ld (%ld new, %ld unread)
+\ebCurrent folder\en\nName: %s\nPath: %s\nSize: %lD bytes\nMessages: %lD (%lD new, %lD unread)
 ; NAME, PATH, SIZE, COUNT, COUNT, COUNT
 ;
 MSG_MA_MessageInfo (//)
-\ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %ld bytes
+\ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %lD bytes
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle (//)
@@ -3310,15 +3310,15 @@ MSG_TR_SendHello (//)
 Sending 'Hello'...
 ;
 MSG_TR_MessageGauge (//)
-Message %s of %ld
+Message %s of %lD
 ; COUNT, COUNT
 ;
 MSG_TR_SizeGauge (//)
-%%ld of %ld bytes
+%%lD of %lD bytes
 ; SIZE, SIZE
 ;
 MSG_TR_TransferStats (//)
-%ld of %ld kb transmitted at %ld cps\nRemaining time: %ld min %ld sec
+%lD of %lD kb transmitted at %lD cps\nRemaining time: %lD min %ld sec
 ; SIZE, SIZE, SPEED, MINS, SECS
 ;
 MSG_TR_Exporting (//)
@@ -3491,7 +3491,7 @@ MSG_ER_UnexpEOFUU (//)
 Unexpected EOF while decoding a UUencoded file. The message seems to be truncated.
 ;
 MSG_ER_InvalidLength (//)
-Invalid line length in UUencoded file: %ld. A defective UUencoder was used or the message is truncated.
+Invalid line length in UUencoded file: %lD. A defective UUencoder was used or the message is truncated.
 ; SIZE
 ;
 MSG_ER_CreateMailError (//)
@@ -3519,7 +3519,7 @@ Can't read from file '%s'. The file doesn't seem to exists.
 ; FILENAME
 ;
 MSG_ER_UUSize (//)
-Decoded size [%ld] does not\nmatch original size [%ld]. A defective UUencoder was used or the message is truncated.
+Decoded size [%lD] does not\nmatch original size [%lD]. A defective UUencoder was used or the message is truncated.
 ; SIZE, SIZE
 ;
 MSG_ER_DocNotFound (//)
@@ -3651,7 +3651,7 @@ Insert selected entry at the current\nposition in the text editor
 ; Module FI - Procedures
 ;
 MSG_FI_GaugeText (//)
-%%ld of %ld messages
+%%lD of %lD messages
 ; COUNT, COUNT
 ;
 MSG_FI_AddFilter (//)
@@ -4230,3 +4230,6 @@ _User ID
 ;
 MSG_CO_SMTPPass (//)
 Pa_ssword
+;
+MSG_CO_Del (//)
+Delete

@@ -1443,7 +1443,7 @@ APTR CO_Page14(struct CO_ClassData *data)
                Child, ColGroup(5),
                   Child, LLabel(GetStr(MSG_Display)),
                   Child, LLabel(GetStr(MSG_Process)),
-                  Child, LLabel(GetStr(MSG_Del)),
+                  Child, LLabel(GetStr(MSG_CO_Del)),
                   Child, LLabel(GetStr(MSG_Filter)),
                   Child, HSpace(0),
                   Child, data->GUI.RA_MDN_DISP = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,

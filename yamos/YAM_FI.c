@@ -385,7 +385,7 @@ SAVEDS void FI_SearchFunc(void)
       GetMUICycle(gdata->CY_COMP[pg]), GetMUICycle(gdata->CY_STATUS),
       pg < 2 ? GetMUICheck(gdata->CH_SUBSTR[pg]) : (pg == 4 ? TRUE : FALSE),
       match, field);
-   sprintf(gauge, GetStr(MSG_FI_GaugeText), totmsg);
+   SPrintF(gauge, GetStr(MSG_FI_GaugeText), totmsg);
    set(ga, MUIA_Gauge_InfoText, gauge);
    set(ga, MUIA_Gauge_Max, totmsg);
    set(ga, MUIA_Gauge_Current, 0);
