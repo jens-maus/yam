@@ -3,7 +3,7 @@
 /***************************************************************************
 
  YAM - Yet Another Mailer
- Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck\@yam.ch>
  Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
@@ -386,7 +386,7 @@ system and that you're using Miami as your TCP/IP software.
     - your password, required to log in on the mail server
 
     As an example here's the setup for a fictitious user named 'John
-    Doe' living in Britain.  His e-mail address is 'jdoe@example.com'
+    Doe' living in Britain.  His e-mail address is 'jdoe\@example.com'
     and the address of his mail server is 'mail.example.com'.  His
     password is 'nguz56'.
 
@@ -402,7 +402,7 @@ system and that you're using Miami as your TCP/IP software.
     transfer.  Following our example this is:
 
                       Real Name:     John Doe
-                      Email address: jdoe@example.com
+                      Email address: jdoe\@example.com
                       POP3 server:   mail.example.com
                       Password:      nguz56
                       Time zone:     GMT
@@ -431,7 +431,7 @@ system and that you're using Miami as your TCP/IP software.
     the button 'Write' (sixth button from the left) or choose 'New'
     from the 'Message' menu.  The editor window will open.  Insert
     the e-mail address of the recipient into the 'To' textfield (e.g.
-    'jdoe@example.com').  Normally of course you would put someone
+    'jdoe\@example.com').  Normally of course you would put someone
     else's address, but right now you want to test the system, so put
     your own address instead.  Insert two or three words to indicate
     the subject into the 'Subject' text field ('test' will do nicely
@@ -536,7 +536,7 @@ transmission problems.  A few of the important fields are explained by
 means of the following example.
 
 
-  Return-Path: <just@zfn.uni-bremen.de>
+  Return-Path: <just\@zfn.uni-bremen.de>
 
    This field is added by the recipient's mail server and contains
 the e-mail address of the sender to allow the recipient's computer to
@@ -557,12 +557,12 @@ came from.  This allows one to reconstruct transmission problems
 which may have affected the message along its route.
 
 
-  From: Christian Just <just@example.net>
+  From: Christian Just <just\@example.net>
 
    E-mail address and real name of the sender.
 
 
-  Reply-To: just@example.org
+  Reply-To: just\@example.org
 
    The address to which any reply to this message should be sent.
 This is used if the message is despatched from a computer which the
@@ -571,11 +571,11 @@ this field to say where a reply should be sent.  In the absence of a
 @{b}Reply-To:@{ub} field, replies go to the address given in the @{b}From:@{ub} field.
 
 
-  To: "Marcel Beck (Yet another Mailer-author)" <mbeck@example.com>
+  To: "Marcel Beck (Yet another Mailer-author)" <mbeck\@example.com>
 
    The address of the recipient; additional names can be given,
 separated by commas.  This field may contain simply the address
-in the form name@domain or else it may be prefaced by an additional
+in the form name\@domain or else it may be prefaced by an additional
 comment, such as the recipient's name -- in this case, the address
 must be enclosed in pointed brackets.
 
@@ -588,13 +588,13 @@ Time.  Here the first two digits show the hours, and the next two the
 minutes.
 
 
-  Message-ID: <YAM7296.1549.122414920@zfn.uni-bremen.de>
+  Message-ID: <YAM7296.1549.122414920\@zfn.uni-bremen.de>
 
    An unique identifier, created automatically on despatch.  Using
 this it is possible unequivocally to cancel any particular message.
 
 
-  In-Reply-To: <YAM7296.263.121102896@mail.access.ch>
+  In-Reply-To: <YAM7296.263.121102896\@mail.access.ch>
 
    A precise reference to the message being replied, such as its
 Message-ID
@@ -1107,10 +1107,10 @@ Configuration - First steps
 
 
 @{b}E-mail address@{ub}
-     This is your e-mail address, consisting of your <username>@<domain
+     This is your e-mail address, consisting of your <username>\@<domain
      name>.
 
-     Example:  jdoe@example.com
+     Example:  jdoe\@example.com
 
 
 @{b}POP3 server@{ub}
@@ -1275,7 +1275,7 @@ can (obviously) delete accounts.
      Insert the User ID for the POP3 server here.  In most cases this will
      be identical to the username in your e-mail address.  However, there
      are exceptions, so check the instructions from your ISP (YAM then
-     constructs the full account name in the form <User ID>@<server>).
+     constructs the full account name in the form <User ID>\@<server>).
 
      Example:  jdoe
 
@@ -1577,7 +1577,7 @@ bottom of the list.
 @{b}Address/Name@{ub}
      If you make the filter search a header field containing an e-mail
      address, you can specify here whether the search pattern should be
-     processed on the actual address (e.g. @{b}jdoe@example.com@{ub}) or the
+     processed on the actual address (e.g. @{b}jdoe\@example.com@{ub}) or the
      author's name (e.g. 'John Doe').
 
 
@@ -1611,7 +1611,7 @@ bottom of the list.
      The new recipient's e-mail address must be inserted into the text
      field next to the option.
 
-     Example:  jdoe@example.net
+     Example:  jdoe\@example.net
 
 
 @{b}Forward@{ub}
@@ -1807,7 +1807,7 @@ Configuration - Write
      address book window, and then drag an entry from there into this
      field.
 
-     Example:  jdoe@example.com
+     Example:  jdoe\@example.com
 
 
 @{b}Organization@{ub}
@@ -2203,7 +2203,7 @@ Configuration - Security
      You can find addresses of re-mailing services by having a (www-)
      search engine look up the Internet for 'remailer'.
 
-     Example:  Remailer <remailer@example.com>
+     Example:  Remailer <remailer\@example.com>
 
 
 @{b}Header field@{ub}
@@ -3581,7 +3581,7 @@ toolbar.
 
      Example:
 
-            jdoe, boss@work.whyme.com
+            jdoe, boss\@work.whyme.com
 
 
 @{b}Subject@{ub}
@@ -4483,7 +4483,7 @@ Address book
    .----------------------------------------------------------------.
    | Alias    |     Name     |   Description   |       Address      |
    |----------|--------------|-----------------|--------------------|
-   |js        | John Smith   | mate            | jsmith@example.com |
+   |js        | John Smith   | mate            | jsmith\@example.com |
    |          |              |                 |                    |
    |          |              |                 |                    |
    |          |              |                 |                    |
@@ -4615,11 +4615,11 @@ Address book - Menus
      of email addresses, with one address per line.  Items can be
      specified as
 
-      <email@example.com> Real name
+      <email\@example.com> Real name
 
      or
 
-      email@example.net
+      email\@example.net
 
      because names are optional.  YAM will automatically create aliases
      for the new items.
@@ -4723,7 +4723,7 @@ PERSON
 @{b}Email address@{ub}
      The Internet mail address to use to send mail to this person.
 
-     Example:  jdoe@example.com
+     Example:  jdoe\@example.com
 
 
 @{b}PGP key ID@{ub}
@@ -4834,7 +4834,7 @@ LIST
      button to open the address book window and then drag an entry
      from there into this field.
 
-     Example:  discussion@example.net
+     Example:  discussion\@example.net
 
 
 @{b}Mailing list name@{ub}
@@ -5070,7 +5070,7 @@ Finding messages - Search criteria
 @{b}Address/Name@{ub}
      If you want to search a header field containing an e-mail address,
      you can specify here whether the search pattern should be
-     processed on the address (e.g. @{b}jdoe@example.com@{ub}) or on the
+     processed on the address (e.g. @{b}jdoe\@example.com@{ub}) or on the
      author's name (e.g. @{b}John Doe@{ub}).
 
 
@@ -5270,7 +5270,7 @@ Shell and as Workbench tooltypes.
      a real name that can be found in your address book, as YAM will
      expand them as appropriate.  Use commas to separate each recipient.
 
-     Example:  MAILTO="Marcel Beck, damato, mum@example.org
+     Example:  MAILTO="Marcel Beck, damato, mum\@example.org
 
 
 @{b}SUBJECT=<subject>@{ub}
@@ -5288,7 +5288,7 @@ Shell and as Workbench tooltypes.
    A couple of examples:
 
             YAM USER Tom PASSWORD secret HIDE
-            YAM NOCHECK MAILTO "yam@freelists.org, YAMOS-dev, John Doe"
+            YAM NOCHECK MAILTO "yam\@freelists.org, YAMOS-dev, John Doe"
                 SUBJECT "Bug Report" ATTACH "ram:debug.txt"
 
 @endnode
@@ -5705,7 +5705,7 @@ ADDREDIT
  
          /* Edit this entry */
 
-         'ADDREDIT EMAIL "yam@freelists.org" COMMENT "The place to be"'
+         'ADDREDIT EMAIL "yam\@freelists.org" COMMENT "The place to be"'
 
          /* Select a distribution list */
 
@@ -5717,7 +5717,7 @@ ADDREDIT
 
          /* Add a couple of members */
 
-         ADDREDIT MEMBER 'jobs@example.com' MEMBER 'smith@example.net' ADD
+         ADDREDIT MEMBER 'jobs\@example.com' MEMBER 'smith\@example.net' ADD
 
 @{b}BUGS@{ub}
      Even if a group or person is selected, MEMBER [ADD] will return
@@ -5781,7 +5781,7 @@ ADDRFIND
 
          /* Find all the entries using a given provider */
 
-         ADDRFIND PATTERN '#?@saug.org' STEM st. EMAILONLY
+         ADDRFIND PATTERN '#?\@saug.org' STEM st. EMAILONLY
 
          /* List results */
 
@@ -5958,11 +5958,11 @@ ADDRLOAD
      will open to let the user select whether he wants it to be loaded
      as a list of email addresses where items can be specified as
 
-      <email@example.com> Real name
+      <email\@example.com> Real name
 
      or
 
-      email@example.com
+      email\@example.com
 
      because names are optional.  YAM will automatically create aliases
      for the new items, and the command will not return until the
@@ -6023,7 +6023,7 @@ ADDRNEW
      If no alias is provided, one will be created automatically by
      using a cut-down version of the NAME or EMAIL arguments; for
      instance, "Jose Luis Feliciano" would turn into "J_Feliciano",
-     or "Jose" if Jose@example.com was the only argument provided.
+     or "Jose" if Jose\@example.com was the only argument provided.
      The rule mentioned above is also applied.
 
      While using spaces in aliases is possible, it is discouraged.
@@ -6889,7 +6889,7 @@ MAILBOUNCE
          /* Silently bounce the current message */
 
          MAILBOUNCE QUIET
-         WRITETO 'joe@example.com' 'mars'
+         WRITETO 'joe\@example.com' 'mars'
          WRITESEND
 
 @{b}BUGS@{ub}
@@ -7313,7 +7313,7 @@ MAILFORWARD
          /* Silently forward the selected messages */
 
          MAILFORWARD QUIET
-         WRITETO 'joe@example.com'
+         WRITETO 'joe\@example.com'
          WRITESEND
 
 @{b}BUGS@{ub}
@@ -7864,14 +7864,14 @@ MAILWRITE
          /* Edit the first Write window */
 
          MAILWRITE WINDOW win1
-         WRITETO boss@example.com
+         WRITETO boss\@example.com
          'WRITESUBJECT "I don't think I can go to work today"'
          WRITELETTER 'work:excuses.txt'
 
          /* Edit the second Write window */
 
          MAILWRITE WINDOW win2
-         WRITETO peggy@example.org
+         WRITETO peggy\@example.org
          'WRITESUBJECT "Stuffed at work, I'll be late"'
 
          /* Put the first email in the Outgoing queue */
@@ -7883,7 +7883,7 @@ MAILWRITE
 
          MAILWRITE STEM st. QUIET
          win3 = st.window   /* just for completeness sake */
-         WRITETO sales@example.com
+         WRITETO sales\@example.com
          'WRITESUBJECT "Two with Mozzarella + lots of coke"'
          WRITELETTER 'dh5:priv/Snail_Linda.txt'
 
@@ -8793,7 +8793,7 @@ WRITEBCC
          /* Adds some BCC recipients to a message */
 
          MAILWRITE WINDOW 0      /* Set the active Write window */
-         'WRITEBCC "George Bush" "j_doe" "carol@example.com" ADD'
+         'WRITEBCC "George Bush" "j_doe" "carol\@example.com" ADD'
 
 @{b}BUGS@{ub}
 
@@ -8837,7 +8837,7 @@ WRITECC
          /* Adds some CC recipients to a message */
 
          MAILWRITE WINDOW 0      /* Set the active Write window */
-         'WRITECC "George Bush" "jdoe" "carol@example.com" ADD'
+         'WRITECC "George Bush" "jdoe" "carol\@example.com" ADD'
 
 @{b}BUGS@{ub}
 
@@ -8927,7 +8927,7 @@ WRITEEDITOR
          /* Edit the Write window */
 
          MAILWRITE WINDOW win
-         WRITETO boss@example.com
+         WRITETO boss\@example.com
          'WRITESUBJECT "I don't think I can go to work today"'
 
          /* Clear the editor */
@@ -9063,7 +9063,7 @@ WRITEMAILTO
          /* Set the primary recipients of a message */
 
          MAILWRITE WINDOW 0      /* Set the active Write window */
-         'WRITEMAILTO "George Bush" "jdoe" "carol@example.com"'
+         'WRITEMAILTO "George Bush" "jdoe" "carol\@example.com"'
 
 @{b}BUGS@{ub}
 
@@ -9170,7 +9170,7 @@ WRITEQUEUE
          /* New mail */
 
          MAILWRITE
-         WRITETO boss@example.com
+         WRITETO boss\@example.com
          'WRITESUBJECT "I don't think I can go to work today"'
          WRITELETTER 'work:excuses.txt'
          WRITEQUEUE
@@ -9215,7 +9215,7 @@ WRITEREPLYTO
          /* Set Reply-To */
 
          MAILWRITE WINDOW 0      /* Set the active Write window */
-         WRITEREPLYTO jdoe@example.net
+         WRITEREPLYTO jdoe\@example.net
 
 @{b}BUGS@{ub}
 
@@ -9252,7 +9252,7 @@ WRITESEND
          /* New mail */
 
          MAILWRITE
-         WRITETO boss@example.com
+         WRITETO boss\@example.com
          'WRITESUBJECT "Sorry, but I am sick today!"'
          WRITELETTER 'work:excuses.txt'
          WRITESEND
@@ -9339,7 +9339,7 @@ WRITETO
          /* Set the primary recipients of a message */
 
          MAILWRITE WINDOW 0      /* Set the active Write window */
-         'WRITETO "George Bush" "jdoe" "carol@example.com"'
+         'WRITETO "George Bush" "jdoe" "carol\@example.com"'
 
 @{b}BUGS@{ub}
 
@@ -9502,9 +9502,9 @@ format:
 
 
     YAB4 - YAM Addressbook                          - Identifier
-    @GROUP alias  ·································
+    \@GROUP alias  ·································
     description                                   ·
-    @USER alias     -------------.                ·
+    \@USER alias     -------------.                ·
     e-mail address               |                ·
     real name                    |                ·
     description                  |                ·
@@ -9517,8 +9517,8 @@ format:
     portrait                     |                 · GROUP
     homepage                     |                ·
     default security             |                ·
-    @ENDUSER        -------------'                ·
-    @LIST alias     »»»»»»»»»»»»»                 ·
+    \@ENDUSER        -------------'                ·
+    \@LIST alias     »»»»»»»»»»»»»                 ·
     return address               v                ·
     list name                    v                ·
     description                  v                ·
@@ -9527,12 +9527,12 @@ format:
     ...                          ^                ·
     member #n                    ^                ·
                                  ^                ·
-    @ENDLIST        »»»»»»»»»»»»»                 ·
-    @ENDGROUP     ·································
+    \@ENDLIST        »»»»»»»»»»»»»                 ·
+    \@ENDGROUP     ·································
 
 
-   Groups, lists and people are started with @GROUP <alias>, @LIST <alias>
-and @USER <alias> and closed with @ENDGROUP, @ENDLIST and @ENDUSER,
+   Groups, lists and people are started with \@GROUP <alias>, \@LIST <alias>
+and \@USER <alias> and closed with \@ENDGROUP, \@ENDLIST and \@ENDUSER,
 respectively.  Groups may include lists, and lists may include members.
 Both lists and people may appear outside groups.  List members may be
 either aliases, addresses or fully qualified "Real name <address>" pairs.
@@ -9671,24 +9671,24 @@ format:
 
 
     YFO1 - YAM Folders                              - Identifier
-    @FOLDER name    ------------------.
+    \@FOLDER name    ------------------.
     directory                          > Folder
-    @ENDFOLDER      ------------------'
-    @GROUP name              ································
+    \@ENDFOLDER      ------------------'
+    \@GROUP name              ································
     status                                                  ·
-    @FOLDER name    ------------------.                     ·
+    \@FOLDER name    ------------------.                     ·
     directory                          > Folder             ·
-    @ENDFOLDER      ------------------'                     ·
-    @GROUP name              ······················         ·
+    \@ENDFOLDER      ------------------'                     ·
+    \@GROUP name              ······················         ·
     status                                        ·         ·
-    @FOLDER name    ------------------.           ·          · GROUP
+    \@FOLDER name    ------------------.           ·          · GROUP
     directory                          > Folder   ·         ·
-    @ENDFOLDER      ------------------'            · GROUP  ·
-    @FOLDER name    ------------------.           ·         ·
+    \@ENDFOLDER      ------------------'            · GROUP  ·
+    \@FOLDER name    ------------------.           ·         ·
     directory                          > Folder   ·         ·
-    @ENDFOLDER      ------------------'           ·         ·
-    @ENDGROUP                ······················         ·
-    @ENDGROUP                ································
+    \@ENDFOLDER      ------------------'           ·         ·
+    \@ENDGROUP                ······················         ·
+    \@ENDGROUP                ································
 
 
    where <status> may be either 0 or 1, the latter meaning that the
@@ -9713,12 +9713,12 @@ using this format:
 
 
     YDI1 - YAM Dictionary
-    @ENTRY abbreviation
+    \@ENTRY abbreviation
     contents
-    @ENDENTRY
-    @ENTRY abbreviation
+    \@ENDENTRY
+    \@ENTRY abbreviation
     contents
-    @ENDENTRY
+    \@ENDENTRY
     ...
 
 @endnode
@@ -9744,18 +9744,18 @@ if this also fails, an error will be generated.
    The Unique ID Listing received from the server is compared against
 the contents of the "PROGDIR:.uidl" file; if this file doesn't exist
 yet, it will be created.  This is a plain text file with one ID per
-line using the format <ID>@<POP3 server>, e.g.
+line using the format <ID>\@<POP3 server>, e.g.
 
 
-    9685@mail.saug.org
-    9686@mail.saug.org
-    9687@mail.saug.org
-    9688@mail.saug.org
-    (k5"!N1!"!RkI"!YT4"!@pop.wanadoo.es
-    9689@mail.saug.org
-    9690@mail.saug.org
-    9691@mail.saug.org
-    9692@mail.saug.org
+    9685\@mail.saug.org
+    9686\@mail.saug.org
+    9687\@mail.saug.org
+    9688\@mail.saug.org
+    (k5"!N1!"!RkI"!YT4"!\@pop.wanadoo.es
+    9689\@mail.saug.org
+    9690\@mail.saug.org
+    9691\@mail.saug.org
+    9692\@mail.saug.org
 
 
    Whenever an ID is already found in the "PROGDIR:.uidl" file, the
@@ -9781,11 +9781,11 @@ unless maybe you are @{" moving YAM " link "TIP2"} to another place in your hard
 
 
         1st line:   YUS2 - YAM Users
-        2nd line:   @USER <username>
+        2nd line:   \@USER <username>
         3rd line:   mail directory of this user, e.g.  Comm:YAM
         4th line:   number
         5th line:   encrypted password, if any
-        6th line:   @ENDUSER
+        6th line:   \@ENDUSER
    further lines:   next user definition, up to 16 maximum.
 
 
@@ -9878,8 +9878,8 @@ is enabled in the @{" Security options " link "CO09"}.
 25 - Copied message from 'sender' about 'subject' from folder 'folder'
      to 'folder'
 26 - Filtered n message(s) in folder 'folder': n match(es)
-30 - Retrieved n message(s) from POP3 account 'user_id@host'
-31 - Logged in on POP3 account 'user_id@host': n messages waiting
+30 - Retrieved n message(s) from POP3 account 'user_id\@host'
+31 - Logged in on POP3 account 'user_id\@host': n messages waiting
 32 - Retrieved message from 'sender' about 'subject' (n bytes)
 40 - Sent n message(s) using SMTP server 'host'
 41 - Connected to SMTP server 'host'
@@ -10038,7 +10038,7 @@ special handling.  As of V2.4, the default signature selection is
 also part of these settings.
 
    First and foremost, enter the mailing list address as a pattern in
-the @{b}To: pattern@{ub} field, e.g. "#?mylist@example.net#?" (without the quotes,
+the @{b}To: pattern@{ub} field, e.g. "#?mylist\@example.net#?" (without the quotes,
 of course).  This way, these settings will be used whenever you start
 a new message or reply to an already existing message while this is
 the current folder.
@@ -10182,7 +10182,7 @@ searches.  The special wildcard characters are listed below.
 
 
   ?   Matches any single character
-      so Y?M matches YAM, YUM, Y@M etc.
+      so Y?M matches YAM, YUM, Y\@M etc.
 
   #   Matches zero or more occurrences of the following item
       so Y#AM matches YM, YAM, YAAM, YAAAM etc.
@@ -10300,7 +10300,7 @@ Support - mailing lists
 
    If you want to discuss YAM related issues with other users or be
 notified about new releases, you can join the YAM users mailing list.
-To subscribe, just send an email to <yam-request@freelists.org>
+To subscribe, just send an email to <yam-request\@freelists.org>
 with the subject "subscribe" (without the quotes).  Alternatively,
 you can use the web based interface at http://www.freelists.org/list/yam
 or review the list archive at http://www.freelists.org/archives/yam
@@ -10310,13 +10310,13 @@ or review the list archive at http://www.freelists.org/archives/yam
 
    If you want to contribute to the development of YAM, you are welcome
 to join the YAMos-dev mailing list.  To subscribe, just send an email
-to <yamos-dev-request@freelists.org> with the subject "subscribe"
+to <yamos-dev-request\@freelists.org> with the subject "subscribe"
 (without the quotes).  Alternatively, you can use the web based
 interface at http://www.freelists.org/list/yamos-dev or review the
 list archive at http://www.freelists.org/archives/yamos-dev
 
    Please note that subscriptions to YAMos-dev are not accepted unless
-you contact the list owner at david@saug.org or some YAMos developer
+you contact the list owner at david\@saug.org or some YAMos developer
 stating how you are going to contribute to the project.
 
 @endnode
@@ -10427,12 +10427,12 @@ Support - CVS repository
 checked out through anonymous (pserver) CVS.  To begin with, you will
 probably need to login on the server with
 
-     cvs -d:pserver:anonymous@cvs.yamos.sf.net:/cvsroot/yamos login
+     cvs -d:pserver:anonymous\@cvs.yamos.sf.net:/cvsroot/yamos login
 
 hitting <Return> when prompted for a password.  Then you can checkout the
 whole project with
 
-     cvs -d:pserver:anonymous@cvs.yamos.sf.net:/cvsroot/yamos checkout .
+     cvs -d:pserver:anonymous\@cvs.yamos.sf.net:/cvsroot/yamos checkout .
 
    If you want to get write access and contribute to the project, please
 join the @{" YAMOS developers mailing list " link "INF1"} and ask there.
@@ -10475,16 +10475,16 @@ Credits
 
    The YAM 2.4 update was brought to you by (in alphabetical order):
 
-      Alexey Ivanov <amis@amiga.org.ru>
-      Allan Odgaard <duff@diku.dk>
-      Christian Hattemer <krille@users.sourceforge.net>
-      Dirk Stöcker <stoecker@epost.de>
-      Giles Burdett <layabouts@the-giant-sofa.demon.co.uk>
-      Gunther Nikl <gni@gecko.de>
-      Jacob Laursen <laursen@myself.com>
-      Jens Langner <Jens.Langner@light-speed.de>
-      Jörg Strohmayer <nospam@gmx.de>
-      Karoly Balogh <charlie@scenergy.dfmk.hu>
+      Alexey Ivanov <amis\@amiga.org.ru>
+      Allan Odgaard <duff\@diku.dk>
+      Christian Hattemer <krille\@users.sourceforge.net>
+      Dirk Stöcker <stoecker\@epost.de>
+      Giles Burdett <layabouts\@the-giant-sofa.demon.co.uk>
+      Gunther Nikl <gni\@gecko.de>
+      Jacob Laursen <laursen\@myself.com>
+      Jens Langner <Jens.Langner\@light-speed.de>
+      Jörg Strohmayer <nospam\@gmx.de>
+      Karoly Balogh <charlie\@scenergy.dfmk.hu>
 
 
    Third party contributors
@@ -10519,7 +10519,7 @@ Credits
 
    Folder images
 
-      Philip A. Vedovatti <vedovatti@u.washington.edu>
+      Philip A. Vedovatti <vedovatti\@u.washington.edu>
 
 
    Titles, button borders and status icons
@@ -10586,7 +10586,7 @@ and they will stay the same size.  Text wasn't needed (icons are supposed
 to replace text) and they look very professional now.
 
 
-                  eMAIL:  ash@absurd.demon.co.uk
+                  eMAIL:  ash\@absurd.demon.co.uk
                     URL:  http://www.absurd.demon.co.uk »
 
 @endnode
