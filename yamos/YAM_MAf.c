@@ -365,7 +365,7 @@ void MA_FlushIndexes(BOOL all)
          }
       }
       free(flist);
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, TAG_DONE);
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All);
    }
 }
 
@@ -484,10 +484,10 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
   BOOL disable_edit     = FALSE;
   BOOL disable_update   = FALSE;
 
-  enum{ PMN_EDITF=1, PMN_DELETEF, PMN_INDEX, PMN_NEWF, PMN_NEWFG, PMN_SNAPS };
+  enum{ PMN_EDITF=1, PMN_DELETEF, PMN_INDEX, PMN_NEWF, PMN_NEWFG, PMN_SNAPS, PMN_RELOAD };
 
   // Get the window structure of the window which this listtree belongs to
-  get(_win(gui->NL_FOLDERS), MUIA_Window_Window, &win);
+  win = (struct Window *)xget(_win(gui->NL_FOLDERS), MUIA_Window_Window);
   if(!win) return(0);
 
   // Now lets find out which entry is under the mouse pointer
@@ -533,6 +533,7 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
                  PMItem(GetStripStr(MSG_FOLDER_NEWFOLDERGROUP)), PM_UserData, PMN_NEWFG,     End,
                  PMBar, End,
                  PMItem(GetStripStr(MSG_FOLDER_SNAPSHOT)),       PM_UserData, PMN_SNAPS,     End,
+                 PMItem(GetStripStr(MSG_FOLDER_RELOAD)),         PM_UserData, PMN_RELOAD,    End,
                End;
 
   ret = (ULONG)(PM_OpenPopupMenu(win, PM_Menu, pop_menu, TAG_DONE));
@@ -541,12 +542,13 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
 
   switch(ret)
   {
-    case PMN_EDITF:   { DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook,        TAG_DONE); } break;
-    case PMN_DELETEF: { DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook,      TAG_DONE); } break;
-    case PMN_INDEX:   { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook,       TAG_DONE); } break;
-    case PMN_NEWF:    { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook,         TAG_DONE); } break;
-    case PMN_NEWFG:   { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook,    TAG_DONE); } break;
-    case PMN_SNAPS:   { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_SAVE, TAG_DONE); } break;
+    case PMN_EDITF:   { DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);          } break;
+    case PMN_DELETEF: { DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook);        } break;
+    case PMN_INDEX:   { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);         } break;
+    case PMN_NEWF:    { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook);           } break;
+    case PMN_NEWFG:   { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook);      } break;
+    case PMN_SNAPS:   { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_SAVE);   } break;
+    case PMN_RELOAD:  { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_RESET);  } break;
   }
 
   return(0);

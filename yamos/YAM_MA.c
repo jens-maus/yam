@@ -2195,6 +2195,7 @@ MakeHook(MA_LV_Cmp2Hook, MA_LV_Cmp2Func);
 ///
 /// MA_LV_FCmp2Func
 //  Folder listtree sort hook
+/*
 HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct MUIP_NListtree_CompareMessage *ncm)
 {
    struct Folder *entry1 = (struct Folder *)ncm->TreeNode1->tn_User;
@@ -2218,6 +2219,7 @@ HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct MUIP_NListtree_CompareMes
    return cmp;
 }
 MakeStaticHook(MA_LV_FCmp2Hook, MA_LV_FCmp2Func);
+*/
 ///
 /// MA_FolderKeyFunc
 //  If the user pressed 0-9 we jump to folder 1-10
@@ -2230,14 +2232,14 @@ HOOKPROTONHNO(MA_FolderKeyFunc, void, int *idx)
   // and so on, until we have a real entry for that key or we set nothing active
   for(i=0; i <= count; i++)
   {
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0, TAG_DONE);
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
     if(!tn) return;
 
     if(tn->tn_Flags & TNF_LIST) count++;
   }
 
   // Force that the list is open at this entry
-  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, 0, TAG_DONE);
+  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
 
   // Now set this treenode activ
   set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
@@ -2644,15 +2646,15 @@ struct MA_ClassData *MA_New(void)
                   MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
                   MUIA_NListview_NList, data->GUI.NL_FOLDERS = NewObject(CL_FolderList->mcc_Class,NULL,
                      InputListFrame,
-                     MUIA_NList_MinColSortable      , 0,
-                     MUIA_NList_TitleClick          , TRUE,
+//                     MUIA_NList_MinColSortable      , 0,
+//                     MUIA_NList_TitleClick          , TRUE,
                      MUIA_NList_DragType            , MUIV_NList_DragType_Immediate,
                      MUIA_NList_DragSortable        , TRUE,
-                     MUIA_NListtree_CompareHook     , &MA_LV_FCmp2Hook,
+//                     MUIA_NListtree_CompareHook     , &MA_LV_FCmp2Hook,
                      MUIA_NListtree_DisplayHook     , &MA_LV_FDspFuncHook,
                      MUIA_NListtree_ConstructHook   , &MA_LV_FConHook,
                      MUIA_NListtree_DestructHook    , &MA_LV_FDesHook,
-                     MUIA_NListtree_AutoVisible     , MUIV_NListtree_AutoVisible_Normal,
+                     MUIA_NListtree_DragDropSort    , TRUE,
                      MUIA_NListtree_Title           , TRUE,
                      MUIA_NListtree_DoubleClick     , MUIV_NListtree_DoubleClick_All,
                      MUIA_NList_DefaultObjectOnClick, FALSE,
@@ -2705,13 +2707,13 @@ struct MA_ClassData *MA_New(void)
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
          // define the StatusFlag images that should be used
-         for (i = 0; i < 17; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, 0);
+         for (i = 0; i < 17; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, MUIF_NONE);
 
          // Define the Images the FolderListtree that can be used
-         for (i = 0; i < MAXBCSTDIMAGES; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, 0);
+         for (i = 0; i < MAXBCSTDIMAGES; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, MUIF_NONE);
 
          // Now we need the XPK image also in the folder list
-         DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], MAXBCSTDIMAGES, 0);
+         DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], MAXBCSTDIMAGES, MUIF_NONE);
 
          set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.NL_MAILS);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUT     ,G->AY_Win,3,MUIM_Set                ,MUIA_Window_Open,TRUE);
@@ -2794,8 +2796,8 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetMessageInfoHook);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FO_EditFolderHook);
-         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_TitleClick    ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_NList_Sort2         ,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
-         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_SortType      ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_Set                 ,MUIA_NList_TitleMark,MUIV_TriggerValue);
+//         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_TitleClick    ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_NList_Sort2         ,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
+//         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_SortType      ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_Set                 ,MUIA_NList_TitleMark,MUIV_TriggerValue);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeFolderHook);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetFolderInfoHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,ID_CLOSEALL);

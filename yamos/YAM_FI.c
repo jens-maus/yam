@@ -402,7 +402,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    set(gui->BT_SELECT, MUIA_Disabled, TRUE);
    set(gui->BT_READ, MUIA_Disabled, TRUE);
    DoMethod(gui->LV_MAILS, MUIM_NList_Clear);
-   get(gui->LV_FOLDERS, MUIA_List_Entries, &fnr);
+   fnr = xget(gui->LV_FOLDERS, MUIA_List_Entries);
    sfo = calloc(fnr, sizeof(struct Folder *));
    id = MUIV_List_NextSelected_Start;
    while (TRUE)

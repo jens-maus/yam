@@ -4649,6 +4649,9 @@ New folder group...
 MSG_FOLDER_SNAPSHOT (//)
 Snapshot tree
 ;
+MSG_FOLDER_RELOAD (//)
+Reload tree
+;
 MSG_CO_GENLISTCFG (//)
 General settings
 ;

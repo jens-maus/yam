@@ -1,5 +1,10 @@
 2001-10-12  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed bug #468896 where the old Folder/Order/Reset option caused
+      a serious crash of YAM.
+    * added reload tree option to the folder context menu
+    * switched off automatic sorting of the folder listtree because it`s
+      not supported yet.
     * Added/Created new InfoBar class, removed the bottom gauge bar and
       made this InfoBar a default setting.
       This new InfoBar combines the old first version of the InfoBar

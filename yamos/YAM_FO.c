@@ -78,14 +78,14 @@ struct Folder **FO_CreateList(void)
    struct Folder **flist;
    APTR lv = G->MA->GUI.NL_FOLDERS;
 
-   max = DoMethod(lv, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll, TAG_DONE);
+   max = DoMethod(lv, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll);
 
    if (flist = calloc(max+1, sizeof(struct Folder *)))
    {
       flist[0] = (struct Folder *)max;
       for (i = 0; i < max; i++)
       {
-        struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0, TAG_DONE);
+        struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
 
         if(!tn)
         {
@@ -106,7 +106,7 @@ struct Folder *FO_GetCurrentFolder(void)
 {
    struct MUI_NListtree_TreeNode *tn;
 
-   get(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, &tn);
+   tn = (struct MUI_NListtree_TreeNode *)xget(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active);
    if(!tn) return NULL;
 
    return((struct Folder *)tn->tn_User);
@@ -124,7 +124,7 @@ BOOL FO_SetCurrentFolder(struct Folder *fo)
 
    for (i = 0;;i++)
    {
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0 , TAG_DONE);
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
       if (!tn || !tn->tn_User) return(FALSE);
 
       if(tn->tn_User == fo)
@@ -176,9 +176,9 @@ static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*)
    struct Folder *fo = NULL;
    struct MUI_NListtree_TreeNode *tn;
 
-   for(i = 0; ; i++)
+   for(i = 0;;i++)
    {
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0, TAG_DONE);
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
       if (!tn) break;
 
       fo = tn->tn_User;
@@ -228,7 +228,7 @@ int FO_GetFolderPosition(struct Folder *findfo)
 
    for (i = 0;;i++)
    {
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0);
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
       if (!tn || !tn->tn_User) return(-1);
  
       fo = tn->tn_User;
@@ -358,7 +358,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
     // is going to call this function.
 
     // remove the bodychunk object from the nlist
-    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, 0, TAG_DONE);
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
   }
 
   // free the Bodychunk
@@ -379,7 +379,7 @@ BOOL FO_CreateFolder(enum FolderType type, char *path, char *name)
 
    if (folder)
    {
-      if(!(DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, 0, TAG_DONE)))
+      if(!(DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
       {
         free(folder);
         return FALSE;
@@ -440,7 +440,7 @@ BOOL FO_LoadTree(char *fname)
                   if(FO_LoadFolderImages(&fo)) j++;
 
                   // Now we add this folder to the folder listtree
-                  if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, 0)))
+                  if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
                   {
                      fclose(fh);
                      return FALSE;
@@ -467,7 +467,7 @@ BOOL FO_LoadTree(char *fname)
                   tnflags |= TNF_NOSIGN;
                }
 
-               if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags, TAG_DONE)))
+               if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
                {
                   fclose(fh);
                   return FALSE;
@@ -509,11 +509,14 @@ BOOL FO_LoadTree(char *fname)
                // now we check if the nested is zero and if yes then we set tn_root = MUIV_NListtree_Insert_ListNode_Root
                // otherwise we go back to the root of the root
                if (nested == 0) tn_root = MUIV_NListtree_Insert_ListNode_Root;
-               else tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Parent, 0);
+               else tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_root, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE);
             }
          }
-         set(lv, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
-         set(lv, MUIA_NListtree_Quiet, FALSE);
+
+         SetAttrs(lv, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible,
+                      MUIA_NListtree_Quiet, FALSE,
+                      TAG_DONE
+                 );
       }
       fclose(fh);
       success = TRUE;
@@ -568,7 +571,7 @@ BOOL FO_LoadFolderImages(struct Folder *fo)
   }
 
   // Now we say that this image could be used by this Listtree
-  DoMethod(lv, MUIM_NList_UseImage, fo->BC_FImage, fo->ImageIndex, 0, TAG_DONE);
+  DoMethod(lv, MUIM_NList_UseImage, fo->BC_FImage, fo->ImageIndex, MUIF_NONE);
 
   return TRUE;
 }
@@ -999,7 +1002,7 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
     case FT_GROUP:
     {
       if (StringRequest(folder->Name, SIZE_NAME, GetStr(MSG_FO_EditFolder), GetStr(MSG_FO_NewSepReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
-        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, 0, TAG_DONE);
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_Active, MUIF_NONE);
     }
     break;
 
@@ -1175,7 +1178,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
          oldfolder->Type = folder.Type;
       }
       set(gui->WI, MUIA_Window_Open, FALSE);
-      DoMethod(lv, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, 0, TAG_DONE);
+      DoMethod(lv, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
       FO_SaveConfig(&folder);
       success = TRUE;
    }
@@ -1187,7 +1190,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       set(gui->WI, MUIA_Window_Open, FALSE);
       if (CreateDirectory(GetFolderDir(&folder)))
       {
-         DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active, TAG_DONE);
+         DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
          FO_SaveConfig(&folder);
          success = TRUE;
       }
@@ -1195,7 +1198,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
    if (success)
    {
       MA_SetSortFlag();
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort, TAG_DONE);
+      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort);
       MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL), FALSE);
       FO_SaveTree(CreateFilename(".folders"));
       DisplayStatistics(&folder, TRUE);
@@ -1212,7 +1215,7 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
    switch (*arg)
    {
       case SO_SAVE:  FO_SaveTree(CreateFilename(".folders")); break;
-      case SO_RESET: DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Sort, MUIV_NListtree_Sort_ListNode_Root, MUIV_NListtree_Sort_Flag_RecursiveAll, TAG_DONE); break;
+      case SO_RESET: FO_LoadTree(CreateFilename(".folders")); break;
    }
 }
 MakeHook(FO_SetOrderHook, FO_SetOrderFunc);

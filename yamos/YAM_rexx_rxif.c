@@ -1773,7 +1773,7 @@ void rx_userinfo( struct RexxHost *host, struct rxd_userinfo **rxd, long action,
          rd->rd.res.realname = C->RealName;
          rd->rd.res.config = G->CO_PrefsFile;
          rd->rd.res.maildir = G->MA_MailDir;
-         get(G->MA->GUI.NL_FOLDERS, MUIA_NList_Entries, &rd->folders);
+         rd->folders = DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll);
          rd->rd.res.folders = (long *)&rd->folders;
          break;
       
