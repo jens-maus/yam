@@ -58,10 +58,10 @@ Developer: Jens Langner (damato)
   would create a folder protected with an empty password (damato)
 - Fixed: the "Export..." item in the popup menu would export the whole
   folder contents (damato)
-- Fixed: the "check signature" menuitem in the read window was sometimes
-  disabled even if the mail had a signature to check. (damato)
-- Fixed: the "save decrypted message" menuitem within the read window
-  didn`t correctly work within a compressed/encrypted folder.
+- Fixed: the "Check PGP signature" menu item in the Read window was
+  sometimes disabled even if the message had a signature to check (damato)
+- Fixed: the "Save decrypted message" menu item in the Read window
+  didn't work as it should in compressed/encrypted folders (damato)
 
 - Changed: it is now actually compatible with the most common MBOX
   formats, e.g. MBOXRD <http://www.qmail.org/man/man5/mbox.html> (damato)
@@ -214,6 +214,3 @@ you can expect in future releases are:
   email with a single button click, and do not worry ever again about
   charsets.
 
-
-"I think, therefore I YAM"
-  -- Marcel Beck, 1996
