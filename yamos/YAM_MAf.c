@@ -1386,7 +1386,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
             }
             else if (!stricmp(field, "importance"))
             {
-               if(getImportanceLevel(mail) == IMP_LOW)
+               if(getImportanceLevel(mail) == IMP_NORMAL)
                {
                  p = Trim(value);
                  if(!stricmp(p, "high"))
@@ -1397,7 +1397,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
             }
             else if (!stricmp(field, "priority"))
             {
-               if(getImportanceLevel(mail) == IMP_LOW)
+               if(getImportanceLevel(mail) == IMP_NORMAL)
                {
                   p = Trim(value);
                   if(!stricmp(p, "urgent"))

@@ -7,6 +7,9 @@ $Source$
 
 2004-09-16  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c: fixed recognition of Importance: and Priority:
+      headerlines after it has been broken during the rework
+      of the status handling.
     * YAM_global.c: fixed $STACK: definition as it had been
       removed by the gcc3 optimizer. Also added a proper
       __stack_size definition for clib2. This should hopefully
