@@ -39,6 +39,7 @@ struct Data
 	STRPTR CurrentRecipient;
 	BOOL MultipleRecipients;
 	BOOL ResolveOnCR;
+	BOOL AdvanceOnCR;										// we have to save this attribute ourself because Betterstring.mcc is buggy.
 };
 */
 
@@ -70,6 +71,9 @@ OVERLOAD(OM_NEW)
 				ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
 				ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
 				ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
+
+				// we also catch foreign attributes
+				case MUIA_String_AdvanceOnCR: data->AdvanceOnCR = tag->ti_Data     ; break;
 			}
 		}
 
@@ -101,11 +105,17 @@ OVERLOAD(OM_DISPOSE)
 /* this is just so that we can notify the popup tag */
 OVERLOAD(OM_GET)
 {
+	GETDATA;
 	ULONG *store = ((struct opGet *)msg)->opg_Storage;
+
 	switch(((struct opGet *)msg)->opg_AttrID)
 	{
 		ATTR(Popup) : *store = FALSE ; return TRUE;
+
+		// we also return foreign attributes
+		case MUIA_String_AdvanceOnCR: *store = data->AdvanceOnCR; return TRUE;
 	}
+
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
@@ -123,6 +133,9 @@ OVERLOAD(OM_SET)
 			ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
 			ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
 			ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
+
+			// we also catch foreign attributes
+			case MUIA_String_AdvanceOnCR: data->AdvanceOnCR = tag->ti_Data     ; break;
 		}
 	}
 
@@ -258,8 +271,12 @@ OVERLOAD(MUIM_HandleEvent)
 					set(_win(obj), MUIA_Window_ActiveObject, obj);
 
 					// If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
-					if(xget(obj, MUIA_String_AdvanceOnCR))
+					// we have to check this within our instance data because Betterstring.mcc is buggy and don`t
+					// return MUIA_String_AdvanceOnCR within a get().
+					if(data->AdvanceOnCR)
+					{
 						set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+					}
 
 					result = MUI_EventHandlerRC_Eat;
 				}

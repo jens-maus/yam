@@ -7,6 +7,10 @@ $Source$
 
 2003-03-08  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/Recipientstring.c: added workaround for buggy Betterstring.mcc
+      behaviour. Betterstring.mcc`s OM_GET method is broken and doesn`t
+      return the correct MUIA_String_AdvanceOnCR value. Therefore we catch
+      the attribute ourself and return it to the caller accordingly.
     * YAM_TR.c, YAM_RE.c, YAM_WR.c: fixed serious flaw within the mail
       parsing and transfer routines where YAM didn`t take respect of
       binary data could being transfered/parsed. All main parsing
