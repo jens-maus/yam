@@ -28,14 +28,9 @@
 
 ***************************************************************************/
 
-#include "Classes.h"
+#include "Searchwindow.h"
 
-/* ---------------------------------- */
-#define DECLARE(method) ULONG m_Searchwindow_## method (struct IClass *cl, Object *obj, struct MUIP_Searchwindow_## method *msg)
-#define OVERLOAD(method) ULONG m_Searchwindow_## method (struct IClass *cl, Object *obj, Msg msg)
-#define ATTR(attr) case MUIA_Searchwindow_## attr
-/* ---------------------------------- */
-
+/* CLASSDATA
 struct Data
 {
 	Object *Searchstring;
@@ -43,8 +38,7 @@ struct Data
 	Object *ParentWindow;
 	ULONG CaseSensitive;
 };
-
-ULONG SearchwindowGetSize (VOID) { return sizeof(struct Data); }
+*/
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)

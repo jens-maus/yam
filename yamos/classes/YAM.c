@@ -28,23 +28,17 @@
 
 ***************************************************************************/
 
-#include "Classes.h"
-
-/* ---------------------------------- */
-#define DECLARE(method) ULONG m_YAM_## method (struct IClass *cl, Object *obj, struct MUIP_YAM_## method *msg)
-#define OVERLOAD(method) ULONG m_YAM_## method (struct IClass *cl, Object *obj, Msg msg)
-#define ATTR(attr) case MUIA_YAM_## attr
-/* ---------------------------------- */
+#include "classes/YAM.h"
 
 #define EMAILCACHENAME "PROGDIR:.emailcache"
 
+/* CLASSDATA
 struct Data
 {
 	struct List EMailCache;
 	STRPTR EMailCacheName;
 };
-
-ULONG YAMGetSize (VOID) { return sizeof(struct Data); }
+*/
 
 struct EMailCacheNode
 {

@@ -28,25 +28,25 @@
 
 ***************************************************************************/
 
-#include "Classes.h"
+#include "Recipientstring.h"
 
-/* ---------------------------------- */
-#define DECLARE(method) ULONG m_Recipientstring_## method (struct IClass *cl, Object *obj, struct MUIP_Recipientstring_## method *msg)
-#define OVERLOAD(method) ULONG m_Recipientstring_## method (struct IClass *cl, Object *obj, Msg msg)
-#define ATTR(attr) case MUIA_Recipientstring_## attr
-/* ---------------------------------- */
-
+/* CLASSDATA
 struct Data
 {
 	struct MUI_EventHandlerNode ehnode;
-	Object *Matchwindow; //, *Matchlist;
-	Object *From, *ReplyTo; /* used when resolving a list address */
+	Object *Matchwindow;                //, *Matchlist;
+	Object *From, *ReplyTo;             // used when resolving a list address
 	STRPTR CurrentRecipient;
 	BOOL MultipleRecipients;
 	BOOL ResolveOnCR;
 };
+*/
 
-ULONG RecipientstringGetSize (VOID) { return sizeof(struct Data); }
+/* EXPORT
+#define MUIF_Recipientstring_Resolve_NoFullName  (1 << 0) // do not resolve with fullname "Mister X <misterx@mister.com>"
+#define MUIF_Recipientstring_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
+*/
+
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -327,11 +327,6 @@ HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDa
 	return ((entry->Type == AET_USER) || (entry->Type == AET_LIST)) && ((!Stricmp(msg->User, entry->Alias) || !Stricmp(msg->User, entry->RealName) || !Stricmp(msg->User, entry->Address))) ? 0 : ~0;
 }
 MakeStaticHook(FindAddressHook, FindAddressFunc);
-
-/* Export header info
-#define MUIF_Recipientstring_Resolve_NoFullName  (1 << 0) // do not resolve with fullname "Mister X <misterx@mister.com>"
-#define MUIF_Recipientstring_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
-*/
 
 /// DECLARE(Resolve)
 /* resolve all addresses */

@@ -1,3 +1,30 @@
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2001 by YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site :  http://www.yam.ch/
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+
+ $Id$
+
+***************************************************************************/
+
 #ifndef CLASSES_CLASSES_EXTRA_H
 #define CLASSES_CLASSES_EXTRA_H
 
@@ -28,7 +55,6 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
-#include "YAM_utilities.h"
 #include "YAM_write.h"
 
 #ifndef MUIF_NONE
@@ -53,9 +79,6 @@
 #endif
 #define MUIA_List_CursorType         0x8042c53e /* V4  is. LONG  */
 #define MUIV_List_CursorType_Bar 1
-
-#define inittags(msg) (((struct opSet *)msg)->ops_AttrList)
-#define GETDATA struct Data *data = (struct Data *)INST_DATA(cl,obj)
 
 enum { IECODE_RETURN = 68, IECODE_ESCAPE = 69, IECODE_HELP = 95, IECODE_BACKSPACE = 65, IECODE_DEL = 70, IECODE_UP = 76, IECODE_DOWN = 77 };
 

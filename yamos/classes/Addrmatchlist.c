@@ -25,23 +25,18 @@
 
  Superclass:  MUIC_Window
  Description: Popup a list of addresses which match a given substring
+
 ***************************************************************************/
 
-#include "Classes.h"
+#include "Addrmatchlist.h"
 
-/* ---------------------------------- */
-#define DECLARE(method) ULONG m_Addrmatchlist_## method (struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_## method *msg)
-#define OVERLOAD(method) ULONG m_Addrmatchlist_## method (struct IClass *cl, Object *obj, Msg msg)
-#define ATTR(attr) case MUIA_Addrmatchlist_## attr
-/* ---------------------------------- */
-
+/* CLASSDATA
 struct Data
 {
 	Object *Matchlist, *String;
 	BOOL Open;
 };
-
-ULONG AddrmatchlistGetSize (VOID) { return sizeof(struct Data); }
+*/
 
 struct CustomABEntry
 {
