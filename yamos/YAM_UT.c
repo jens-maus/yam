@@ -89,6 +89,9 @@ struct UniversalClassData
 
 int BusyLevel = 0;
 
+long PNum = 0;
+unsigned char *PPtr[16];
+
 /***************************************************************************
  Utilities
 ***************************************************************************/
@@ -847,7 +850,7 @@ BOOL LoadParsers(void)
       {
         if(Examine(lock, fib))
         {
-          while ((PNum < 16) && ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
+          while ((PNum < ARRAY_SIZE(PPtr)) && ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
           {
             strmfp(file, dir, fib->fib_FileName);
 
