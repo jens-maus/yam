@@ -5270,6 +5270,6 @@ MSG_CO_TZone13 (//)
 (GMT+13:00) Nuku'alofa (NZDT)
 ;
 MSG_HELP_CO_ST_INFOBARTXT (//)
-Here you can enter a prefered infobarlabel text\n\
-that should be displayed within the main window.
+Text that should be displayed\n\
+in the status bar
 ;
