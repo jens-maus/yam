@@ -1161,7 +1161,7 @@ MakeHook(MA_GetAddressHook, MA_GetAddressFunc);
 //  Fetches new mail from POP3 account(s)
 void MA_PopNow(int mode, int pop)
 {
-   if (G->TR) return;
+   if (G->TR) return; // Don't proceed if another transfer is in progress
    if (C->UpdateStatus) MA_UpdateStatus();
    MA_StartMacro(MACRO_PREGET, itoa(mode-POP_USER));
    TR_GetMailFromNextPOP(TRUE, pop, mode);
@@ -1696,7 +1696,7 @@ void SAVEDS MA_CheckVersionFunc(void)
 
    if (TR_OpenTCPIP())
    {
-      sscanf(YAMDATE, "%ld.%ld.%ld", &day, &mon, &year);
+      sscanf(__YAM_VERDATE, "%ld.%ld.%ld", &day, &mon, &year);
       thisver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
       Busy(GetStr(MSG_BusyGettingVerInfo), "", 0, 0);
       tf = OpenTempFile(NULL);

@@ -20,7 +20,7 @@ DEBUG	   = DEF DEBUG DEBUG=LINE
 
 # CPU is defined outside
 
-CFLAGS = RESOPT NOLINK GST=$(GST) DEF YAMVER=$(YAMVERSION) DEF YAMDATE=$(YAMDATE) IGNORE=147,306\
+CFLAGS = RESOPT NOLINK GST=$(GST) DEF YAMVER=$(YAMVERSION) $(YAMDATE) IGNORE=147,306\
 DATA=FAR CODE=FAR ERRORREXX INCLUDEDIR=includes STRINGSECTION=FAR $(DEBUG)\
 NOICONS IDLEN=60 CPU=$(CPU) NOCHECKABORT\
 DEFINE=__NOLIBBASE__ # this is required, as we use wrong UtilityBase declaration
@@ -65,7 +65,7 @@ YAM_loc.c: YAM.cd
 
 YAM_deutsch.catalog: deutsch.ct
 
-YAM.o:     YAM.c     YAM.h YAM_loc.h
+YAM.o:     YAM.c     YAM.h YAM_loc.h $(DATE)
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_loc.h
 YAM_CL.o:  YAM_CL.c  YAM.h YAM_loc.h
 YAM_CO.o:  YAM_CO.c  YAM.h YAM_loc.h
@@ -81,7 +81,7 @@ YAM_FO.o:  YAM_FO.c  YAM.h YAM_loc.h
 YAM_MA.o:  YAM_MA.c  YAM.h YAM_loc.h
 	$(CC) $(CFLAGS) NOOPT $*.c		# doesn't compile with optimization :-(
 
-YAM_MAf.o: YAM_MAf.c YAM.h YAM_loc.h
+YAM_MAf.o: YAM_MAf.c YAM.h YAM_loc.h $(DATE)
 YAM_MI.o:  YAM_MI.c  YAM.h YAM_loc.h
 YAM_RE.o:  YAM_RE.c  YAM.h YAM_loc.h
 YAM_TR.o:  YAM_TR.c  YAM.h YAM_loc.h
@@ -97,7 +97,7 @@ YAM_loc.o: YAM_loc.h YAM_loc.c
 
 $(DATE):
 	@echo "Bumping date..."
-	@rx   >$(DATE) "say '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x"
+	@rx   >$(DATE) "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"
 
-$(GST): headers.h YAM.h $(DATE)
+$(GST): headers.h YAM.h $(DATE) $(DAYS)
 	$(CC) $(CFLAGS) headers.h mkgst $(GST) IGNORE=105

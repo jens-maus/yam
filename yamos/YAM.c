@@ -217,6 +217,18 @@ BOOL AY_New(BOOL hidden)
 {
    char *text, logopath[SIZE_PATHFILE];
    APTR ft_text, bt_sendmail, bt_gopage;
+   struct DateTime dt;
+   char datebuf[LEN_DATSTRING];
+
+   dt.dat_Stamp.ds_Days   = __YAM_VERDAYS;
+   dt.dat_Stamp.ds_Minute = 0;
+   dt.dat_Stamp.ds_Tick   = 0;
+   dt.dat_Format  = FORMAT_DOS;
+   dt.dat_Flags   = 0L;
+   dt.dat_StrDay  = NULL;
+   dt.dat_StrDate = datebuf;
+   dt.dat_StrTime = NULL;
+   DateToStr(&dt);
 
    strmfp(logopath, G->ProgDir, "Icons/logo");
    G->AY_Win = WindowObject,
@@ -256,7 +268,7 @@ BOOL AY_New(BOOL hidden)
                Child, Label(GetStr(MSG_Version)),
                Child, LLabel(__YAM_VERSION),
                Child, Label(GetStr(MSG_CompilationDate)),
-               Child, LLabel(__YAM_VERDATE),
+               Child, LLabel(datebuf),
              End,
          End)),
          Child, G->AY_Group = PageGroup,

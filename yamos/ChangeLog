@@ -195,3 +195,7 @@
 2001-04-02  Jacob Laursen <laursen@myself.com>
 
     * Using Locale timezone setting now if available.
+
+2001-04-07  Jacob Laursen <laursen@myself.com>
+
+    * Nicer compilation date in About window ("7.4.2001" -> "07-Apr-01").

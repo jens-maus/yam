@@ -14,7 +14,7 @@ YAM.h: YAM.h.in
 	perl gen_include.pl YAM.h.in >YAM.h
 
 %.o: %.c
-	gcc -noixemul -O2 -mmultiple -mcpu=604e -c -DYAMVER="\"2.2\"" -DYAMDATE="\"07.11.00\"" $<
+	gcc -noixemul -O2 -mmultiple -mcpu=604e -c -DYAMVER="\"2.2\"" -D__YAM_VERDATE="\"7.4.2001\"" -D__YAM_VERDAYS=8497 $<
 
 
 YAM.o:     YAM.c     YAM.h YAM_loc.h
