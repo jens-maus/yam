@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-02-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * Makefile.OS4/MorphOS: modified and improved makefiles and
+      synced them with the latest changes done to the main Makefile.
+
 2004-02-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * Makefile: modified and improved. Now it omits the compiler

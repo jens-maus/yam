@@ -50,8 +50,8 @@ CPU     = -m68020-60 -msoft-float
 CDEFS	  = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 WARN	  = -Wall
 OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel -funroll-loops
-DEBUG	  = -DDEBUG -g -O0
-CFLAGS  = -noixemul -I. -I./includes -DNO_INLINE_STDARG $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
+DEBUG	  = -DDEBUG -g3 -O0
+CFLAGS  = -noixemul -pipe -I. -I./includes -DNO_INLINE_STDARG $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS = -noixemul -mstackextend -fbaserel $(CPU)
 LDLIBS  = -ldebug -lmui -lm
 
@@ -65,7 +65,7 @@ DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
 #
 # ignored warnings are:
 # none - because we want to compile with -Wall all the time
-.PHONY: all clean cleanall distclean classinfo
+.PHONY: all clean cleanall distclean classinfo dump
 
 # our few new rewritten classes
 CLASSES	= \
@@ -134,6 +134,9 @@ $(TARGET): $(OBJS)
 	@$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
 	@$(STRIP) -o $@ $@.debug
 	@$(CHMOD) a+x $@
+
+dump:
+	-$(OBJDUMP) --section-headers --all-headers --reloc --disassemble-all $(TARGET).debug > $(TARGET).dump
 
 clean:
 	-$(RM) $(TARGET) $(TARGET).debug $(OBJS)
