@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -35,34 +35,7 @@
 #include "extrasrc/strsfn.c"
 #include "extrasrc/NewReadArgs.c"
 #include "extrasrc/dice.c"
-
-#include <proto/dos.h>
-int access(const char *name, int x)
-{
-   BPTR l;
-
-   if((l=Lock(name,ACCESS_READ)))
-   {
-      UnLock(l);
-      return 1;
-   }
-
-   return 0;
-}
-
-char *strdup(const char *str)
-{
-   char *s;
-
-   if(!str) return NULL;
-
-   if((s=malloc(strlen(str)+1)))
-   {
-      strcpy(s,str);
-      return s;
-   }
-
-   return NULL;
-}
+#include "extrasrc/access.c"
+#include "extrasrc/strdup.c"
 
 void _chkabort(void) {}
