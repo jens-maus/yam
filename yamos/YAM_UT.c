@@ -3013,9 +3013,6 @@ void DisposeModule(void *modptr)
       APTR window = (*module)->GUI.WI;
       set(window, MUIA_Window_Open, FALSE);
       DoMethod(G->App, OM_REMMEMBER, window);
-#ifndef __SASC
-      if(modptr!=&G->WR[0] && modptr!=&G->WR[1] && modptr!=&G->WR[2])
-#endif
       MUI_DisposeObject(window);
       free(*module);
       *module = NULL;
