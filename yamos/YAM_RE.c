@@ -937,8 +937,8 @@ static void RE_PrintLaTeX(char *filename, struct Part *part)
           } else DisplayBeep(NULL);
         } DB( else kprintf("RE_PrintFile(): no headers for this part\n"); )
       }
-      if(ts1) FreeStrBuf(ts1);
-      if(ts2) FreeStrBuf(ts2);
+      FreeStrBuf(ts1);
+      FreeStrBuf(ts2);
     } DB( else kprintf("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n"); )
 
     CloseTempFile(texfile);
@@ -1890,8 +1890,8 @@ static void RE_UndoPart(struct Part *rp)
 
    if (rp->Prev) rp->Prev->Next = rp->Next;
    if (rp->Next) rp->Next->Prev = rp->Prev;
-   if (rp->ContentType) FreeStrBuf(rp->ContentType);
-   if (rp->ContentDisposition) FreeStrBuf(rp->ContentDisposition);
+   FreeStrBuf(rp->ContentType);
+   FreeStrBuf(rp->ContentDisposition);
 
    // and last, but not least we free the part
    free(rp);
@@ -2144,8 +2144,8 @@ void RE_CleanupMessage(int winnum)
    {
       next = part->Next;
       if (*part->Filename) DeleteFile(part->Filename);
-      if (part->ContentType) FreeStrBuf(part->ContentType);
-      if (part->ContentDisposition) FreeStrBuf(part->ContentDisposition);
+      FreeStrBuf(part->ContentType);
+      FreeStrBuf(part->ContentDisposition);
       free(part);
    }
    re->FirstPart     = NULL;

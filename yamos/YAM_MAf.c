@@ -709,11 +709,11 @@ BOOL MA_ReadHeader(FILE *fh)
 //  Frees an extended email structure
 void MA_FreeEMailStruct(struct ExtendedMail *email)
 {
-   if (email->SenderInfo) FreeStrBuf(email->SenderInfo);
-   if (email->Headers ) FreeStrBuf(email->Headers );
-   if (email->NoSTo)    free(email->STo);
-   if (email->NoCC )    free(email->CC );
-   if (email->NoBCC)    free(email->BCC);
+   FreeStrBuf(email->SenderInfo);
+   FreeStrBuf(email->Headers);
+   if (email->NoSTo) free(email->STo);
+   if (email->NoCC ) free(email->CC );
+   if (email->NoBCC) free(email->BCC);
    memset(email, 0, sizeof(struct ExtendedMail));
 }
 

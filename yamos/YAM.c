@@ -536,7 +536,7 @@ static void Terminate(void)
 
    TC_Exit();
 
-   if (G->AY_AboutText) FreeStrBuf(G->AY_AboutText);
+   FreeStrBuf(G->AY_AboutText);
 
    if (G->HideIcon) FreeDiskObject(G->HideIcon);
 

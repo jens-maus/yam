@@ -260,7 +260,7 @@ MakeStaticHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 //  Glossary listview destruction hook
 HOOKPROTONHNO(DI_LV_DesFunc, long, struct Dict *entry)
 {
-   if (entry->Text) FreeStrBuf(entry->Text);
+   FreeStrBuf(entry->Text);
    free(entry);
    return 0;
 }

@@ -1275,7 +1275,7 @@ static int TR_ConnectPOP(int guilevel)
       if (!TR_SendPOP3Cmd(POPCMD_PASS, passwd, MSG_ER_BadResponse)) { BusyEnd; return -1; }
    }
 
-   if(welcomemsg) FreeStrBuf(welcomemsg);
+   FreeStrBuf(welcomemsg);
 
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_GetStats));
    if (!(resp = TR_SendPOP3Cmd(POPCMD_STAT, NULL, MSG_ER_BadResponse))) { BusyEnd; return -1; }
