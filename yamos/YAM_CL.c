@@ -401,7 +401,7 @@ DISPATCHERPROTO(AL_Dispatcher)
       {
         if (d->obj == G->MA->GUI.NL_MAILS)
         {
-          struct Mail **mlist = MA_CreateMarkedList(d->obj);
+          struct Mail **mlist = MA_CreateMarkedList(d->obj, FALSE);
           if (mlist) { MA_GetAddress(mlist); free(mlist); }
         }
       }

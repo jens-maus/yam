@@ -195,7 +195,7 @@ extern struct Hook MA_FolderKeyHook;
 int   MA_AllocRules(struct Search **search, enum ApplyMode mode);
 void  MA_ChangeSubject(struct Mail *mail, char *subj);
 void  MA_ChangeTransfer(BOOL on);
-struct Mail **MA_CreateMarkedList(APTR lv);
+struct Mail **MA_CreateMarkedList(APTR lv, BOOL onlyNew);
 void  MA_DeleteMessage(BOOL delatonce, BOOL force);
 void  MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet);
 BOOL  MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail);

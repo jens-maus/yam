@@ -7,6 +7,8 @@ $Source$
 
 2003-04-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed bug #715777 where the gauge while filtering upon new
+      mails did show all and not only the new mails.
     * YAM_RE.c: fixed bug #706756 where every action within a read window
       triggered an automatic addition to the addressbook if the option was
       enabled within the configuration.

@@ -2057,7 +2057,7 @@ void rx_getselected( struct RexxHost *host, struct rxd_getselected **rxd, long a
          break;
          
       case RXIF_ACTION:
-         if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
+         if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
          {
             int i;
             rd->res.num = calloc(1+(int)mlist[0], sizeof(long));
@@ -2315,7 +2315,7 @@ void rx_mailchangesubject( struct RexxHost *host, struct rxd_mailchangesubject *
          break;
          
       case RXIF_ACTION:
-         if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
+         if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
          {
             int i, selected = (int)*mlist;
             for (i = 0; i < selected; i++) MA_ChangeSubject(mlist[i+2], rd->arg.subject);

@@ -69,7 +69,7 @@
 
 /* local protos */
 static ULONG MA_GetSortType(int);
-static struct Mail **MA_CreateFullList(struct Folder*);
+static struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew);
 static struct Mail *MA_MoveCopySingle(struct Mail*, int, struct Folder*, struct Folder*, BOOL);
 static void MA_UpdateStatus(void);
 static char *MA_AppendRcpt(char*, struct Person*, BOOL);
@@ -284,27 +284,36 @@ BOOL MA_SetMailComment(struct Mail *mail)
 ///
 /// MA_CreateFullList
 //  Builds a list containing all messages in a folder
-static struct Mail **MA_CreateFullList(struct Folder *fo)
+static struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 {
-   int selected = fo->Total;
+   int selected;
    struct Mail *mail, **mlist = NULL;
 
    if(!fo) return(NULL);
+   selected = onlyNew ? fo->New : fo->Total;
 
-   if (selected) if ((mlist = calloc(selected+2, sizeof(struct Mail *))))
+   if(selected && (mlist = calloc(selected+2, sizeof(struct Mail *))))
    {
       mlist[0] = (struct Mail *)selected;
       mlist[1] = (struct Mail *)2;
-      for (selected = 2, mail = fo->Messages; mail; selected++, mail = mail->Next)
-         mlist[selected] = mail;
+      for (selected = 2, mail = fo->Messages; mail; mail = mail->Next)
+      {
+         // only if we want ALL or this is just a new mail we add it to our list
+         if(!onlyNew || mail->Status == STATUS_NEW)
+         {
+            mlist[selected] = mail;
+            selected++;
+         }
+      }
    }
+
    return mlist;
 }
 
 ///
 /// MA_CreateMarkedList
 //  Builds a linked list containing the selected messages
-struct Mail **MA_CreateMarkedList(APTR lv)
+struct Mail **MA_CreateMarkedList(APTR lv, BOOL onlyNew)
 {
    int id, selected;
    struct Mail *mail, **mlist = NULL;
@@ -321,27 +330,39 @@ struct Mail **MA_CreateMarkedList(APTR lv)
       {
          mlist[0] = (struct Mail *)selected;
          mlist[1] = (struct Mail *)1;
-         for (selected = 2, id = MUIV_NList_NextSelected_Start; ; selected++)
+         selected = 2;
+         id = MUIV_NList_NextSelected_Start;
+
+         while(1)
          {
             DoMethod(lv, MUIM_NList_NextSelected, &id);
             if (id == MUIV_NList_NextSelected_End) break;
             DoMethod(lv, MUIM_NList_GetEntry, id, &mail);
             mail->Position = id;
-            mlist[selected] = mail;
+
+            if(!onlyNew || mail->Status == STATUS_NEW)
+            {
+              mlist[selected] = mail;
+              selected++;
+            }
          }
       }
    }
    else
    {
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-      if (mail) if ((mlist = calloc(3, sizeof(struct Mail *))))
+      if(mail && (!onlyNew || mail->Status == STATUS_NEW))
       {
-         get(G->MA->GUI.NL_MAILS, MUIA_NList_Active, &id);
-         mail->Position = id;
-         mlist[0] = (struct Mail *)1;
-         mlist[2] = mail;
+        if ((mlist = calloc(3, sizeof(struct Mail *))))
+        {
+          get(G->MA->GUI.NL_MAILS, MUIA_NList_Active, &id);
+          mail->Position = id;
+          mlist[0] = (struct Mail *)1;
+          mlist[2] = mail;
+        }
       }
    }
+
    return mlist;
 }
 
@@ -428,7 +449,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
       mi = GetMailInfo(mail);
       MA_MoveCopySingle(mail, mi->Pos, frombox, tobox, copyit);
    }
-   else if ((mlist = MA_CreateMarkedList(lv)))
+   else if ((mlist = MA_CreateMarkedList(lv, FALSE)))
    {
       selected = (int)*mlist;
       set(lv, MUIA_NList_Quiet, TRUE);
@@ -1132,7 +1153,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
    struct Mail **mlist;
    int i;
 
-   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
+   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
    {
       int selected = (int)*mlist;
       BusyGauge(GetStr(MSG_BusyRemovingAtt), "", selected);
@@ -1159,7 +1180,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
    char *cmsg;
    int i;
 
-   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
+   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
    {
       if (ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
       {
@@ -1198,7 +1219,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
    int i;
 
    if (doprint && C->PrinterCheck) if (!CheckPrinter()) return;
-   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
+   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
    {
       for (i = 0; i < (int)*mlist; i++)
       {
@@ -1237,9 +1258,9 @@ int MA_NewMessage(int mode, int flags)
                         break;
       case NEW_BOUNCE:  if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewBounce(mail, flags);
                         break;
-      case NEW_FORWARD: if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS))) winnr = MA_NewForward(mlist, flags);
+      case NEW_FORWARD: if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE))) winnr = MA_NewForward(mlist, flags);
                         break;
-      case NEW_REPLY:   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS))) winnr = MA_NewReply(mlist, flags);
+      case NEW_REPLY:   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE))) winnr = MA_NewReply(mlist, flags);
                         break;
    }
    if (mlist) free(mlist);
@@ -1277,7 +1298,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 
    if(!folder || !delfolder) return;
 
-   if (!(mlist = MA_CreateMarkedList(lv))) return;
+   if (!(mlist = MA_CreateMarkedList(lv, FALSE))) return;
    selected = (int)*mlist;
    if (C->Confirm && selected >= C->ConfirmDelete && !force)
    {
@@ -1440,7 +1461,7 @@ void MA_GetAddress(struct Mail **mlist)
 //  Stores addresses from selected messages to the address book
 HOOKPROTONHNONP(MA_GetAddressFunc, void)
 {
-   struct Mail **mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS);
+   struct Mail **mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE);
    if (mlist)
    {
       MA_GetAddress(mlist);
@@ -1609,14 +1630,13 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
 {
    struct Mail *mail, **mlist = NULL;
    struct Folder *folder;
-   int m, i, scnt, matches = 0, minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
+   int scnt, matches = 0, minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
    enum ApplyMode mode = arg[0];
    struct Search *search[2*MAXRU];
    APTR lv = G->MA->GUI.NL_MAILS;
    char buf[SIZE_LARGE];
 
    folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder();
-
    if(!folder) return;
 
    if (mode == APPLY_USER && folder->Type != FT_INCOMING)
@@ -1624,14 +1644,28 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
       sprintf(buf, GetStr(MSG_MA_ConfirmFilter), folder->Name);
       if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buf)) return;
    }
+
    memset(&G->RRs, 0, sizeof(struct RuleResult));
-   set(lv, MUIA_NList_Quiet, TRUE); G->AppIconQuiet = TRUE;
+   set(lv, MUIA_NList_Quiet, TRUE);
+   G->AppIconQuiet = TRUE;
+
    if ((scnt = MA_AllocRules(search, mode)))
    {
-      if (mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL) if ((mlist = MA_CreateMarkedList(lv))) if ((int)mlist[0] < minselected) { free(mlist); mlist = NULL; }
-      if (!mlist) mlist = MA_CreateFullList(folder);
+      if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL)
+      {
+        if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) && (int)mlist[0] < minselected)
+        {
+          free(mlist);
+          mlist = NULL;
+        }
+      }
+
+      if(!mlist) mlist = MA_CreateFullList(folder, (mode == APPLY_AUTO || mode == APPLY_RX));
+
       if (mlist)
       {
+         int m, i;
+
          BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
          for (m = 0; m < (int)*mlist; m++)
          {
@@ -1706,7 +1740,7 @@ BOOL MA_Send(enum SendMode sendpos)
    {
       MA_ChangeFolder(FO_GetFolderByType(FT_OUTGOING, NULL), TRUE);
       if (sendpos == SEND_ALL) DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
-      if ((mlist = MA_CreateMarkedList(lv)))
+      if ((mlist = MA_CreateMarkedList(lv, FALSE)))
       {
          success = MA_SendMList(mlist);
          free(mlist);
@@ -1732,7 +1766,7 @@ void MA_SetStatusTo(int status)
    APTR lv = G->MA->GUI.NL_MAILS;
    struct Mail **mlist;
 
-   if ((mlist = MA_CreateMarkedList(lv)))
+   if ((mlist = MA_CreateMarkedList(lv, FALSE)))
    {
       int i;
       set(lv, MUIA_NList_Quiet, TRUE);
@@ -1778,7 +1812,7 @@ static void MA_SetMailFlagAll(int flag, BOOL clear)
    APTR lv = G->MA->GUI.NL_MAILS;
    struct Mail **mlist;
 
-   if((mlist = MA_CreateMarkedList(lv)))
+   if((mlist = MA_CreateMarkedList(lv, FALSE)))
    {
       int i;
 
@@ -1921,8 +1955,8 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
    BOOL success = FALSE;
    char outname[SIZE_PATHFILE];
    struct Mail **mlist;
-   if (all) mlist = MA_CreateFullList(FO_GetCurrentFolder());
-   else mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS);
+   if (all) mlist = MA_CreateFullList(FO_GetCurrentFolder(), FALSE);
+   else mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE);
 
    if (mlist)
    {
@@ -2101,7 +2135,7 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
    APTR lv = G->MA->GUI.NL_MAILS;
    char subj[SIZE_SUBJECT];
 
-   if (!(mlist = MA_CreateMarkedList(lv))) return;
+   if (!(mlist = MA_CreateMarkedList(lv, FALSE))) return;
    selected = (int)*mlist;
    for (i = 0; i < selected; i++)
    {
