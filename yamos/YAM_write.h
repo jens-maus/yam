@@ -78,7 +78,6 @@ struct WR_ClassData  /* write window */
    struct Mail **    MList;
    struct ABEntry *  ListEntry;
 
-/*   int               WindowNr; seems to be unused */
    int               Mode;
    int               OldSecurity;
    int               AS_Count;
@@ -86,10 +85,38 @@ struct WR_ClassData  /* write window */
 
    BOOL              Bounce;
    BOOL              AS_Done;
+
    char              MsgID[SIZE_MSGID];
    char              QuoteText[SIZE_DEFAULT];
    char              AltQuoteText[SIZE_SMALL]; /* no variable substitution -> SIZE_SMALL! */
    char              WTitle[SIZE_DEFAULT];
+};
+
+struct Attach
+{
+   int  Size;
+
+   BOOL IsMIME;
+   BOOL IsTemp;
+
+   char FilePath[SIZE_PATHFILE];
+   char Name[SIZE_FILE];
+   char ContentType[SIZE_CTYPE];
+   char Description[SIZE_DEFAULT];
+};
+
+enum Encoding { ENC_NONE, ENC_QP, ENC_B64, ENC_UUE, ENC_BIN, ENC_8BIT, ENC_FORM };
+
+struct WritePart
+{
+   struct WritePart *       Next;
+   char *                   ContentType;
+   char *                   Filename;
+   char *                   Description;
+   char *                   Name;
+   struct TranslationTable *TTable;
+   BOOL                     IsTemp;
+   enum Encoding            EncType;
 };
 
 #endif /* YAM_WRITE_H */

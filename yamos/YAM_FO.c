@@ -26,20 +26,21 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_mainFolder.h"
 
 /* local protos */
-LOCAL void FO_XPKUpdateFolder(struct Folder*, int);
-LOCAL BOOL FO_Move(char*, char*);
-LOCAL BOOL FO_MoveFolderDir(struct Folder*, struct Folder*);
-LOCAL BOOL FO_EnterPassword(struct Folder*);
-LOCAL BOOL FO_FoldernameRequest(char*);
-LOCAL struct FO_ClassData *FO_New(void);
-LOCAL BOOL FO_GetFolderByType_cmp(struct Folder*, int*);
-LOCAL BOOL FO_GetFolderByName_cmp(struct Folder*, char*);
-LOCAL struct Folder *FO_GetFolderByAttribute(BOOL(*)(struct Folder*,void*), void*, int*);
-LOCAL BOOL FO_SaveSubTree(FILE *, struct MUI_NListtree_TreeNode *);
-//LOCAL BOOL FO_LoadTreeImage(struct Folder *);
+static void FO_XPKUpdateFolder(struct Folder*, int);
+static BOOL FO_Move(char*, char*);
+static BOOL FO_MoveFolderDir(struct Folder*, struct Folder*);
+static BOOL FO_EnterPassword(struct Folder*);
+static BOOL FO_FoldernameRequest(char*);
+static struct FO_ClassData *FO_New(void);
+static BOOL FO_GetFolderByType_cmp(struct Folder*, int*);
+static BOOL FO_GetFolderByName_cmp(struct Folder*, char*);
+static struct Folder *FO_GetFolderByAttribute(BOOL(*)(struct Folder*,void*), void*, int*);
+static BOOL FO_SaveSubTree(FILE *, struct MUI_NListtree_TreeNode *);
 
 /***************************************************************************
  Module: Folder Configuration
@@ -120,7 +121,7 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
 ///
 /// FO_GetFolderByAttribute
 //  Generalized find-folder function
-LOCAL struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*), void *attr, int *pos)
+static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*), void *attr, int *pos)
 {
    int i;
    struct Folder *fo = NULL;
@@ -143,12 +144,12 @@ LOCAL struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*),
 ///
 /// FO_GetFolderByType
 //  Finds a folder by its type
-struct Folder *FO_GetFolderByType(int type, int *pos)
+struct Folder *FO_GetFolderByType(enum FolderType type, int *pos)
 {
    return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByType_cmp,&type,pos);
 }
 // comparison function for FO_GetFolderByType
-LOCAL BOOL FO_GetFolderByType_cmp(struct Folder *f, int *type)
+static BOOL FO_GetFolderByType_cmp(struct Folder *f, enum FolderType *type)
 {
    return (BOOL)(f->Type == *type);
 }
@@ -161,7 +162,7 @@ struct Folder *FO_GetFolderByName(char *name, int *pos)
    return FO_GetFolderByAttribute((BOOL (*)(struct Folder*,void*))&FO_GetFolderByName_cmp,name,pos);
 }
 // comparison function for FO_GetFolderByName
-LOCAL BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
+static BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
 {
    return (BOOL)(!strcmp(f->Name, name) && (f->Type != FT_GROUP));
 }
@@ -269,7 +270,7 @@ void FO_SaveConfig(struct Folder *fo)
 ///
 /// FO_NewFolder
 //  Initializes a new folder and creates its directory
-struct Folder *FO_NewFolder(int type, char *path, char *name)
+struct Folder *FO_NewFolder(enum FolderType type, char *path, char *name)
 {
    struct Folder *folder = calloc(1, sizeof(struct Folder));
    folder->Sort[0] = 1;
@@ -304,7 +305,7 @@ BOOL FO_FreeFolder(struct Folder *folder)
 ///
 /// FO_CreateFolder
 //  Adds a new entry to the folder list
-BOOL FO_CreateFolder(int type, char *path, char *name)
+BOOL FO_CreateFolder(enum FolderType type, char *path, char *name)
 {
    struct Folder *folder = FO_NewFolder(type, path, name);
 
@@ -468,7 +469,7 @@ BOOL FO_LoadTreeImage(struct Folder *fo)
 ///
 /// FO_SaveSubTree
 //  Saves a sub folder list to a file
-LOCAL BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
+static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
 {
   BOOL success = TRUE;
   BOOL noendgroup = FALSE;
@@ -564,7 +565,7 @@ BOOL FO_SaveTree(char *fname)
 ///
 /// FO_XPKUpdateFolder
 //  Updates compression mode for a folder
-LOCAL void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
+static void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
 {
    if (fo->XPKType != oldtype)
    {
@@ -583,7 +584,7 @@ LOCAL void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
 ///
 /// FO_Move
 //  Moves a folder directory to a new destination
-LOCAL BOOL FO_Move(char *srcbuf, char *dstbuf)
+static BOOL FO_Move(char *srcbuf, char *dstbuf)
 {
    if (!RenameFile(srcbuf, dstbuf)) if (!CopyFile(dstbuf, 0, srcbuf, 0)) return FALSE;
    return TRUE;
@@ -592,7 +593,7 @@ LOCAL BOOL FO_Move(char *srcbuf, char *dstbuf)
 ///
 /// FO_MoveFolderDir
 //  Moves a folder to a new directory
-LOCAL BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
+static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 {
    struct Mail *mail;
    char srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
@@ -623,7 +624,7 @@ LOCAL BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 ///
 /// FO_EnterPassword
 //  Sets password for a protected folder
-LOCAL BOOL FO_EnterPassword(struct Folder *fo)
+static BOOL FO_EnterPassword(struct Folder *fo)
 {
    char passwd[SIZE_PASSWORD], passwd2[SIZE_PASSWORD];
 
@@ -642,7 +643,7 @@ LOCAL BOOL FO_EnterPassword(struct Folder *fo)
 ///
 /// FO_FoldernameRequest
 //  Asks user for a folder name and path
-LOCAL BOOL FO_FoldernameRequest(char *string)
+static BOOL FO_FoldernameRequest(char *string)
 {
    char *path;
    APTR bt_okay, bt_cancel, wi, st_pa, st_di;
@@ -714,7 +715,7 @@ LOCAL BOOL FO_FoldernameRequest(char *string)
 ///
 /// FO_GetFolder
 //  Fills form with data from folder structure
-void FO_GetFolder(struct Folder *folder, BOOL existing)
+static void FO_GetFolder(struct Folder *folder, BOOL existing)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
    BOOL isdefault = (folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED);
@@ -744,7 +745,7 @@ void FO_GetFolder(struct Folder *folder, BOOL existing)
 ///
 /// FO_PutFolder
 //  Updates folder structure with form data
-void FO_PutFolder(struct Folder *folder)
+static void FO_PutFolder(struct Folder *folder)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
    BOOL isdefault = (folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED);
@@ -899,7 +900,7 @@ HOOKPROTONHNONP(FO_MoveFunc, void)
    GetMUIText(path, G->FO->GUI.TX_FPATH);
    if (FO_FoldernameRequest(path)) set(G->FO->GUI.TX_FPATH, MUIA_Text_Contents, path);
 }
-MakeHook(FO_MoveHook, FO_MoveFunc);
+MakeStaticHook(FO_MoveHook, FO_MoveFunc);
 
 ///
 /// FO_CloseFunc
@@ -908,7 +909,7 @@ HOOKPROTONHNONP(FO_CloseFunc, void)
 {
    DisposeModulePush(&G->FO);
 }
-MakeHook(FO_CloseHook, FO_CloseFunc);
+MakeStaticHook(FO_CloseHook, FO_CloseFunc);
 
 ///
 /// FO_SaveFunc
@@ -986,7 +987,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
    }
    DisposeModulePush(&G->FO);
 }
-MakeHook(FO_SaveHook, FO_SaveFunc);
+MakeStaticHook(FO_SaveHook, FO_SaveFunc);
 
 ///
 /// FO_SetOrderFunc
@@ -1004,7 +1005,7 @@ MakeHook(FO_SetOrderHook, FO_SetOrderFunc);
 
 /// FO_New
 //  Creates folder configuration window
-LOCAL struct FO_ClassData *FO_New(void)
+static struct FO_ClassData *FO_New(void)
 {
    struct FO_ClassData *data;
 

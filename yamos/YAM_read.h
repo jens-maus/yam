@@ -30,6 +30,92 @@
 
 #include "SDI_compiler.h"
 
+#include "YAM_mainFolder.h"
+#include "YAM_write.h"
+
+struct RE_GUIData
+{
+   APTR WI;
+   APTR MI_EDIT;
+   APTR MI_DETACH;
+   APTR MI_CROP;
+   APTR MI_WRAPH;
+   APTR MI_TSTYLE;
+   APTR MI_FFONT;
+   APTR MI_EXTKEY;
+   APTR MI_CHKSIG;
+   APTR MI_SAVEDEC;
+   APTR GR_BODY;
+   APTR GR_HEAD;
+   APTR LV_HEAD;
+   APTR TO_TOOLBAR;
+   APTR TE_TEXT;
+   APTR SL_TEXT;
+   APTR GR_STATUS[6];
+   APTR GR_INFO;
+   APTR GR_PHOTO;
+   APTR BC_PHOTO;
+   APTR LV_INFO;
+   APTR BO_BALANCE;
+   struct MUIP_Toolbar_Description TB_TOOLBAR[13];
+};
+
+struct RE_ClassData  /* read window */
+{
+   struct RE_GUIData GUI;
+   struct Mail      *MailPtr;
+   struct TempFile  *TempFile;
+   FILE             *Fh;
+   struct Part      *FirstPart;
+   int               ParseMode;
+   int               Header;
+   int               SenderInfo;
+   int               LastDirection;
+   int               PGPSigned;
+   int               PGPEncrypted;
+   BOOL              FirstReadDone;
+   BOOL              NoTextstyles;
+   BOOL              WrapHeader;
+   BOOL              FixedFont;
+   BOOL              PGPKey;
+
+   struct Mail       Mail;
+
+   char              File[SIZE_PATHFILE];
+   char              Signature[SIZE_ADDRESS];
+   char              WTitle[SIZE_DEFAULT];
+};
+
+struct Part
+{
+   struct Part * Prev;
+   struct Part * Next;
+   struct Part * NextSelected;
+   char *        ContentType;
+   char *        JunkParameter;
+   char *        CParName;
+   char *        CParBndr;
+   char *        CParProt;
+   char *        CParDesc;
+   char *        CParRType;
+   char *        CParCSet;
+   int           MaxHeaderLen;
+   int           Size;
+   int           Nr;
+   int           Win;
+   BOOL          HasHeaders;
+   BOOL          Printable;
+   BOOL          Decoded;
+   enum Encoding EncodingCode;
+
+   char          Name[SIZE_FILE];
+   char          Description[SIZE_DEFAULT];
+   char          Filename[SIZE_PATHFILE];
+   char          Boundary[SIZE_DEFAULT];
+};
+
+extern struct Hook RE_LV_AttachDspFuncHook;
+
 void STACKEXT RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhitespace, char *ptr);
 
 #endif /* YAM_READ_H */

@@ -30,10 +30,10 @@
 #include "YAM_write.h"
 
 /* local protos */
-LOCAL void DI_FinishEdit(void);
-LOCAL void DI_Save(void);
-LOCAL int DI_Load(void);
-LOCAL struct DI_ClassData *DI_New(void);
+static void DI_FinishEdit(void);
+static void DI_Save(void);
+static int DI_Load(void);
+static struct DI_ClassData *DI_New(void);
 
 /***************************************************************************
  Module: Glossary
@@ -41,7 +41,7 @@ LOCAL struct DI_ClassData *DI_New(void);
 
 /// DI_FinishEdit
 //  Adds/updates changed glossary entry
-LOCAL void DI_FinishEdit(void)
+static void DI_FinishEdit(void)
 {
    struct DI_GUIData *gui = &G->DI->GUI;
    int modified;
@@ -68,7 +68,7 @@ LOCAL void DI_FinishEdit(void)
 ///
 /// DI_Save
 //  Saves glossary to disk
-LOCAL void DI_Save(void)
+static void DI_Save(void)
 {
    FILE *fh;
    struct Dict *entry;
@@ -94,7 +94,7 @@ LOCAL void DI_Save(void)
 ///
 /// DI_Load
 //  Load glossary from disk
-LOCAL int DI_Load(void)
+static int DI_Load(void)
 {
    int entries = 0;
    FILE *fh;
@@ -247,7 +247,7 @@ MakeHook(DI_LV_DesFuncHook, DI_LV_DesFunc);
 ///
 /// DI_New
 //  Creates glossary window
-LOCAL struct DI_ClassData *DI_New(void)
+static struct DI_ClassData *DI_New(void)
 {
    struct DI_ClassData *data;
 

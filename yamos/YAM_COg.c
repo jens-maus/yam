@@ -29,9 +29,9 @@
 #include "YAM_hook.h"
 
 /* local protos */
-LOCAL APTR MakeVarPop(APTR*, int, int, char*);
-LOCAL APTR MakePhraseGroup(APTR*, APTR*, APTR*, char*, char*);
-LOCAL Object *MakeStaticCheck(void);
+static APTR MakeVarPop(APTR*, int, int, char*);
+static APTR MakePhraseGroup(APTR*, APTR*, APTR*, char*, char*);
+static Object *MakeStaticCheck(void);
 
 
 /***************************************************************************
@@ -235,7 +235,7 @@ MakeHook(PO_HandleVarHook, PO_HandleVar);
 ///
 /// MakeVarPop
 //  Creates a popup list containing variables and descriptions for phrases etc.
-LOCAL APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
+static APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
 {
    APTR lv, po;
 
@@ -287,7 +287,7 @@ LOCAL APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
 ///
 /// MakePhraseGroup
 //  Creates a cycle/string gadgets for forward and reply phrases
-LOCAL APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, char *help)
+static APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, char *help)
 {
    APTR grp, cycl, pgrp;
    static char *cytext[4];
@@ -320,7 +320,7 @@ LOCAL APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, cha
 ///
 /// MakeStaticCheck
 //  Creates non-interactive checkmark gadget
-LOCAL Object *MakeStaticCheck(void)
+static Object *MakeStaticCheck(void)
 {
    return
    ImageObject,

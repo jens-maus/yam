@@ -28,8 +28,12 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_mainFolder.h"
+#include "YAM_write.h"
 
 /***************************************************************************
  Private MUI classes

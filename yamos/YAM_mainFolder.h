@@ -28,4 +28,52 @@
 
 ***************************************************************************/
 
+#include "YAM_utilities.h"
+
+struct Mail
+{
+   struct Mail *    Next;
+   struct Mail *    Reference;
+   struct Folder *  Folder;
+   char *           UIDL;
+   long             cMsgID;
+   long             cIRTMsgID;
+   long             Size;
+   int              Flags;
+   int              Position;
+   int              Index;
+   struct DateStamp Date;
+   struct Person    From;
+   struct Person    To;
+   struct Person    ReplyTo;
+
+   char             Status;
+   char             Importance;
+   char             Subject[SIZE_SUBJECT];
+   char             MailFile[SIZE_MFILE];
+};
+
+struct ExtendedMail
+{
+   struct Mail      Mail;
+   struct Person *  STo;
+   struct Person *  CC;
+   struct Person *  BCC;
+   char *           Headers;
+   char *           SenderInfo;
+   int              NoSTo;
+   int              NoCC;
+   int              NoBCC;
+   int              Signature;
+   int              Security;
+   int              ReceiptType;
+   BOOL             DelSend;
+   BOOL             RetRcpt;
+   struct Person    ReceiptTo;
+   struct Person    OriginalRcpt;
+
+   char             MsgID[SIZE_MSGID];
+   char             IRTMsgID[SIZE_MSGID];
+};
+
 #endif /* YAM_MAINFOLDER_H */

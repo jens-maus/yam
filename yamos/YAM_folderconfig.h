@@ -28,6 +28,80 @@
 
 ***************************************************************************/
 
+struct FO_GUIData
+{
+   APTR WI;
+   APTR ST_FNAME;
+   APTR TX_FPATH;
+   APTR BT_MOVE;
+   APTR ST_MAXAGE;
+   APTR CY_FMODE;
+   APTR CY_FTYPE;
+   APTR CY_SORT[2];
+   APTR CH_REVERSE[2];
+   APTR ST_MLPATTERN;
+   APTR ST_MLFROMADDRESS;
+   APTR ST_MLREPLYTOADDRESS;
+   APTR ST_MLADDRESS;
+   APTR CY_MLSIGNATURE;
+};
+
+struct FO_ClassData  /* folder configuration window */
+{
+   struct FO_GUIData GUI;
+   struct Folder *   EditFolder;
+};
+
+enum FolderType { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT_GROUP, FT_CUSTOMSENT, FT_CUSTOMMIXED };
+
+struct Folder
+{
+   APTR            FImage;
+   struct Mail *   Messages;
+   ULONG           Flags;
+   int	           MLSignature;
+   int             XPKType;
+   int             Total;
+   int             New;
+   int             Unread;
+   int             Size;
+   int             Sort[2];
+   int             MaxAge;
+   int             LastActive;
+   int             LoadedMode;
+   int             SortIndex;
+   int             Open;
+
+   enum FolderType Type;
+
+   char            Name[SIZE_NAME];
+   char            Path[SIZE_PATH];
+   char            Password[SIZE_USERID];   
+   char            MLPattern[SIZE_PATTERN];
+   char            MLAddress[SIZE_ADDRESS];
+   char            MLFromAddress[SIZE_ADDRESS];
+   char            MLReplyToAddress[SIZE_ADDRESS];
+};
+
 extern struct Hook FO_DeleteFolderHook;
+extern struct Hook FO_EditFolderHook;
+extern struct Hook FO_NewFolderGroupHook;
+extern struct Hook FO_NewFolderHook;
+extern struct Hook FO_SetOrderHook;
+
+BOOL            FO_CreateFolder(enum FolderType type, char *path, char *name);
+struct Folder **FO_CreateList(void);
+BOOL            FO_FreeFolder(struct Folder *folder);
+struct Folder * FO_GetCurrentFolder(void);
+struct Folder * FO_GetFolderByName(char *name, int *pos);
+struct Folder * FO_GetFolderByType(enum FolderType type, int *pos);
+struct Folder * FO_GetFolderRexx(char *arg, int *pos);
+int             FO_GetFolderPosition(struct Folder *findfo);
+BOOL            FO_LoadConfig(struct Folder *fo);
+BOOL            FO_LoadTree(char *fname);
+BOOL            FO_LoadTreeImage(struct Folder *fo);
+struct Folder * FO_NewFolder(enum FolderType type, char *path, char *name);
+void            FO_SaveConfig(struct Folder *fo);
+BOOL            FO_SaveTree(char *fname);
 
 #endif /* YAM_FOLDERCONFIG_H */

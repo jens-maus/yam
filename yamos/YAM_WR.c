@@ -29,6 +29,7 @@
  Module: Write
 ***************************************************************************/
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,12 +37,17 @@
 #include <clib/alib_protos.h>
 #include <mui/NListtree_mcc.h>
 #include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/utility.h>
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_error.h"
+#include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_mainFolder.h"
+#include "YAM_read.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 #include "YAM_locale.h"
@@ -338,7 +344,7 @@ static char *NewID(BOOL is_msgid)
 ///
 /// WhichEncodingForFile
 //  Determines best MIME encoding mode for a file
-static int WhichEncodingForFile(char *fname, char *ctype)
+static enum Encoding WhichEncodingForFile(char *fname, char *ctype)
 {
    int c, linesize=0, total=0, unsafechars=0, binarychars=0, longlines=0;
    FILE *fh = fopen(fname, "r");

@@ -28,14 +28,15 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_configGUI.h"
+#include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 
 /* local protos */
-LOCAL void CO_NewPrefsFile(char*);
-LOCAL int CO_DetectPGP(struct Config*);
-LOCAL void CO_CopyConfig(struct Config*, struct Config*);
-LOCAL APTR CO_BuildPage(struct CO_ClassData*, int);
-LOCAL struct CO_ClassData *CO_New(void);
+static void CO_NewPrefsFile(char*);
+static int CO_DetectPGP(struct Config*);
+static void CO_CopyConfig(struct Config*, struct Config*);
+static APTR CO_BuildPage(struct CO_ClassData*, int);
+static struct CO_ClassData *CO_New(void);
 
 
 /***************************************************************************
@@ -44,7 +45,7 @@ LOCAL struct CO_ClassData *CO_New(void);
 
 /// CO_NewPrefsFile
 //  Sets the name of the configuration file
-LOCAL void CO_NewPrefsFile(char *fname)
+static void CO_NewPrefsFile(char *fname)
 {
    static char wtitle[SIZE_SMALL+SIZE_PATHFILE];
    strcpy(G->CO_PrefsFile, fname);
@@ -548,7 +549,7 @@ BOOL CO_IsValid(void)
 ///
 /// CO_DetectPGP
 //  Checks if PGP 2 or 5 is available
-LOCAL int CO_DetectPGP(struct Config *co)
+static int CO_DetectPGP(struct Config *co)
 {
    if (PFExists(co->PGPCmdPath, "pgpe")) return 5;
    else if (PFExists(co->PGPCmdPath, "pgp")) return 2;
@@ -739,7 +740,7 @@ void CO_SetDefaults(struct Config *co, int page)
 ///
 /// CO_CopyConfig
 //  Copies a configuration structure
-LOCAL void CO_CopyConfig(struct Config *dco, struct Config *sco)
+static void CO_CopyConfig(struct Config *dco, struct Config *sco)
 {
    int i;
    memcpy(dco, sco, sizeof(struct Config));
@@ -983,7 +984,7 @@ MakeHook(CO_ResetToDefaultHook,CO_ResetToDefaultFunc);
 ///
 /// CO_BuildPage
 //  Creates a GUI section of the configuration
-LOCAL APTR CO_BuildPage(struct CO_ClassData *data, int page)
+static APTR CO_BuildPage(struct CO_ClassData *data, int page)
 {
    switch (page)
    {
@@ -1333,7 +1334,7 @@ const UBYTE PL_IconBody[MAXCPAGES][240] = {
 //  Creates configuration window
 enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_REST, CMEN_MIME };
 
-LOCAL struct CO_ClassData *CO_New(void)
+static struct CO_ClassData *CO_New(void)
 {
    struct CO_ClassData *data;
 

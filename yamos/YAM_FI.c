@@ -26,20 +26,23 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_mainFolder.h"
+#include "YAM_read.h"
 
 /* local protos */
-LOCAL void FI_MakeSubstringPattern(char*);
-LOCAL BOOL FI_MatchString(struct Search*, char*);
-LOCAL BOOL FI_MatchListPattern(struct Search*, char*);
-LOCAL BOOL FI_MatchPerson(struct Search*, struct Person*);
-LOCAL BOOL FI_SearchPatternFast(struct Search*, struct Mail*);
-LOCAL BOOL FI_SearchPatternInBody(struct Search*, struct Mail*);
-LOCAL BOOL FI_SearchPatternInHeader(struct Search*, struct Mail*);
-LOCAL int FI_IsFastSearch(char*);
-LOCAL void FI_GenerateListPatterns(struct Search*);
-LOCAL BOOL FI_DoSearch(struct Search*, struct Mail*);
-LOCAL struct FI_ClassData *FI_New(void);
+static void FI_MakeSubstringPattern(char*);
+static BOOL FI_MatchString(struct Search*, char*);
+static BOOL FI_MatchListPattern(struct Search*, char*);
+static BOOL FI_MatchPerson(struct Search*, struct Person*);
+static BOOL FI_SearchPatternFast(struct Search*, struct Mail*);
+static BOOL FI_SearchPatternInBody(struct Search*, struct Mail*);
+static BOOL FI_SearchPatternInHeader(struct Search*, struct Mail*);
+static int FI_IsFastSearch(char*);
+static void FI_GenerateListPatterns(struct Search*);
+static BOOL FI_DoSearch(struct Search*, struct Mail*);
+static struct FI_ClassData *FI_New(void);
 
 
 /***************************************************************************
@@ -52,7 +55,7 @@ int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
 ///
 /// FI_MakeSubstringPattern
 //  Creates pattern for substring search
-LOCAL void FI_MakeSubstringPattern(char *pattern)
+static void FI_MakeSubstringPattern(char *pattern)
 {
    char npattern[SIZE_PATTERN];
    sprintf(npattern, "#?%s#?", pattern);
@@ -62,7 +65,7 @@ LOCAL void FI_MakeSubstringPattern(char *pattern)
 ///
 /// FI_MatchString
 //  Matches string against pattern
-LOCAL BOOL FI_MatchString(struct Search *search, char *string)
+static BOOL FI_MatchString(struct Search *search, char *string)
 {
    switch (search->Compare)
    {
@@ -78,7 +81,7 @@ LOCAL BOOL FI_MatchString(struct Search *search, char *string)
 ///
 /// FI_MatchListPattern
 //  Matches string against a list of patterns
-LOCAL BOOL FI_MatchListPattern(struct Search *search, char *string)
+static BOOL FI_MatchListPattern(struct Search *search, char *string)
 {
    int i;
    for (i = 0; i < search->List.Used; i++)
@@ -89,7 +92,7 @@ LOCAL BOOL FI_MatchListPattern(struct Search *search, char *string)
 ///
 /// FI_MatchPerson
 //  Matches string against a person's name or address
-LOCAL BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
+static BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
 {
    if (search->Compare == 4) return FI_MatchListPattern(search, search->PersMode ? pe->RealName : pe->Address);
                         else return FI_MatchString(search, search->PersMode ? pe->RealName : pe->Address);
@@ -97,7 +100,7 @@ LOCAL BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
 ///
 /// FI_SearchPatternFast
 //  Searches string in standard header fields
-LOCAL BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
+static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 {
    struct ExtendedMail *email;
    int j;
@@ -156,7 +159,7 @@ LOCAL BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 ///
 /// FI_SearchPatternInBody
 //  Searches string in message body
-LOCAL BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
+static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 {
    char *rptr, *ptr, *cmsg;
    BOOL found = FALSE;
@@ -178,7 +181,7 @@ LOCAL BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 ///
 /// FI_SearchPatternInHeader
 //  Searches string in header field(s)
-LOCAL BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
+static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 {
    char *rptr, *line, fullfile[SIZE_PATHFILE];
    BOOL found = FALSE;
@@ -210,7 +213,7 @@ LOCAL BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 ///
 /// FI_IsFastSearch
 //  Checks if quick search is available for selected header field
-LOCAL int FI_IsFastSearch(char *field)
+static int FI_IsFastSearch(char *field)
 {
    if (!stricmp(field, "from"))     return FS_FROM;
    if (!stricmp(field, "to"))       return FS_TO;
@@ -224,7 +227,7 @@ LOCAL int FI_IsFastSearch(char *field)
 ///
 /// FI_GenerateListPatterns
 //  Reads list of patterns from a file
-LOCAL void FI_GenerateListPatterns(struct Search *search)
+static void FI_GenerateListPatterns(struct Search *search)
 {
    char buf[SIZE_PATTERN], pattern[SIZE_PATTERN];
    FILE *fh;
@@ -301,7 +304,7 @@ BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmo
 ///
 /// FI_DoSearch
 //  Checks if a message fulfills the search criteria
-LOCAL BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
+static BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 {
    BOOL found0, found = FALSE;
    int comp_bak = search->Compare, mstat;
@@ -771,7 +774,7 @@ MakeHook(FI_PO_FromRuleHook, FI_PO_FromRuleFunc);
 ///
 /// FI_New
 //  Creates find window
-LOCAL struct FI_ClassData *FI_New(void)
+static struct FI_ClassData *FI_New(void)
 {
    struct FI_ClassData *data;
 

@@ -26,15 +26,17 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_mainFolder.h"
 #include "YAM_read.h"
 #include "YAM_rexx.h"
 
 /* local protos */
-LOCAL void MA_ValidateStatus(struct Folder*);
-LOCAL char *MA_IndexFileName(struct Folder*);
-LOCAL BOOL MA_DetectUUE(FILE*);
-LOCAL void MA_GetRecipients(char*, struct Person**, int*);
+static void MA_ValidateStatus(struct Folder*);
+static char *MA_IndexFileName(struct Folder*);
+static BOOL MA_DetectUUE(FILE*);
+static void MA_GetRecipients(char*, struct Person**, int*);
 
 /***************************************************************************
  Module: Main - Folder handling
@@ -62,7 +64,7 @@ BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
 ///
 /// MA_ValidateStatus
 //  Avoids invalid status values
-LOCAL void MA_ValidateStatus(struct Folder *folder)
+static void MA_ValidateStatus(struct Folder *folder)
 {
    struct Mail *mail;
 
@@ -76,7 +78,7 @@ LOCAL void MA_ValidateStatus(struct Folder *folder)
 ///
 /// MA_IndexFileName
 //  Returns file name of folder index
-LOCAL char *MA_IndexFileName(struct Folder *folder)
+static char *MA_IndexFileName(struct Folder *folder)
 {
    static char buffer[SIZE_PATHFILE];
    strcpy(buffer, GetFolderDir(folder));
@@ -474,7 +476,7 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile, int daynumber)
 ///
 /// MA_DetectUUE
 //  Checks if message contains an uuencoded file
-LOCAL BOOL MA_DetectUUE(FILE *fh)
+static BOOL MA_DetectUUE(FILE *fh)
 {
    char *buffer;
    BOOL found = FALSE;
@@ -536,7 +538,7 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
 ///
 /// MA_GetRecipients
 //  Extracts recipients from a header field
-LOCAL void MA_GetRecipients(char *h, struct Person **per, int *percnt)
+static void MA_GetRecipients(char *h, struct Person **per, int *percnt)
 {
    int cnt;
    char *p = h, *next;

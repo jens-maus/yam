@@ -29,11 +29,11 @@
 #include "YAM_hook.h"
 
 /* local protos */
-LOCAL void US_SaveUsers(void);
-LOCAL void US_LoadUsers(void);
-LOCAL BOOL US_PromptForPassword(struct User*, APTR);
-LOCAL BOOL US_SaveUserList(void);
-LOCAL struct US_ClassData *US_New(BOOL);
+static void US_SaveUsers(void);
+static void US_LoadUsers(void);
+static BOOL US_PromptForPassword(struct User*, APTR);
+static BOOL US_SaveUserList(void);
+static struct US_ClassData *US_New(BOOL);
 
 /***************************************************************************
  Module: User list
@@ -52,7 +52,7 @@ struct User *US_GetCurrentUser(void)
 ///
 /// US_SaveUsers
 //  Saves user database to .users
-LOCAL void US_SaveUsers(void)
+static void US_SaveUsers(void)
 {
    FILE *fh;
    char *fname = "PROGDIR:.users";
@@ -78,7 +78,7 @@ LOCAL void US_SaveUsers(void)
 ///
 /// US_LoadUsers
 //  Loads user database from .users
-LOCAL void US_LoadUsers(void)
+static void US_LoadUsers(void)
 {
    BOOL save = FALSE;
    FILE *fh;
@@ -139,7 +139,7 @@ LOCAL void US_LoadUsers(void)
 ///
 /// US_PromptForPassword
 //  User login: asks for user password
-LOCAL BOOL US_PromptForPassword(struct User *u, APTR win)
+static BOOL US_PromptForPassword(struct User *u, APTR win)
 {
    char passwd[SIZE_PASSWORD];
 
@@ -259,7 +259,7 @@ MakeHook(US_AddHook, US_AddFunc);
 ///
 /// US_SaveUserList
 //  Initializes configuration files for new users and saves the user database
-LOCAL BOOL US_SaveUserList(void)
+static BOOL US_SaveUserList(void)
 {
    int i;
 
@@ -420,7 +420,7 @@ MakeHook(US_LV_DspHook,US_LV_DspFunc);
 ///
 /// US_New
 //  Creates user list window
-LOCAL struct US_ClassData *US_New(BOOL supervisor)
+static struct US_ClassData *US_New(BOOL supervisor)
 {
    struct US_ClassData *data;
 

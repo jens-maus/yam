@@ -29,23 +29,26 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_mainFolder.h"
+#include "YAM_read.h"
 #include "YAM_rexx.h"
+#include "YAM_utilities.h"
 #include "YAM_write.h"
 
 /* local protos */
-LOCAL ULONG MA_GetSortType(int);
-LOCAL struct Mail **MA_CreateFullList(struct Folder*);
-LOCAL struct Mail *MA_MoveCopySingle(struct Mail*, int, struct Folder*, struct Folder*, BOOL);
-LOCAL void MA_UpdateStatus(void);
-LOCAL char *AppendRcpt(char*, struct Person*, BOOL);
-LOCAL int MA_CmpDate(struct Mail**, struct Mail**);
-LOCAL void MA_InsertIntroText(FILE*, char*, struct ExpandTextData*);
-LOCAL void MA_EditorNotification(int);
-LOCAL void MA_SetupQuoteString(struct WR_ClassData*, struct ExpandTextData*, struct Mail*);
-LOCAL int MA_CheckWriteWindow(int);
-LOCAL struct Person *MA_GetAddressSelect(struct Mail*);
-LOCAL char *MA_GetRealSubject(char*);
-LOCAL int MA_MailCompare(struct Mail*, struct Mail*, int);
+static ULONG MA_GetSortType(int);
+static struct Mail **MA_CreateFullList(struct Folder*);
+static struct Mail *MA_MoveCopySingle(struct Mail*, int, struct Folder*, struct Folder*, BOOL);
+static void MA_UpdateStatus(void);
+static char *AppendRcpt(char*, struct Person*, BOOL);
+static int MA_CmpDate(struct Mail**, struct Mail**);
+static void MA_InsertIntroText(FILE*, char*, struct ExpandTextData*);
+static void MA_EditorNotification(int);
+static void MA_SetupQuoteString(struct WR_ClassData*, struct ExpandTextData*, struct Mail*);
+static int MA_CheckWriteWindow(int);
+static struct Person *MA_GetAddressSelect(struct Mail*);
+static char *MA_GetRealSubject(char*);
+static int MA_MailCompare(struct Mail*, struct Mail*, int);
 
 /***************************************************************************
  Module: Main
@@ -54,7 +57,7 @@ LOCAL int MA_MailCompare(struct Mail*, struct Mail*, int);
 /*** Private functions ***/
 /// MA_GetSortType
 //  Calculates value for sort indicator
-LOCAL ULONG MA_GetSortType(int sort)
+static ULONG MA_GetSortType(int sort)
 {
    ULONG sort2col[8] = { 0,4,6,1,1,3,5,0 };
    if (sort > 0) return sort2col[abs(sort)];
@@ -186,7 +189,7 @@ void MA_SetMailStatus(struct Mail *mail, int stat)
 ///
 /// MA_CreateFullList
 //  Builds a list containing all messages in a folder
-LOCAL struct Mail **MA_CreateFullList(struct Folder *fo)
+static struct Mail **MA_CreateFullList(struct Folder *fo)
 {
    int selected = fo->Total;
    struct Mail *mail, **mlist = NULL;
@@ -259,7 +262,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce)
 ///
 /// MA_MoveCopySingle
 //  Moves or copies a single message from one folder to another
-LOCAL struct Mail *MA_MoveCopySingle(struct Mail *mail, int pos, struct Folder *from, struct Folder *to, BOOL copyit)
+static struct Mail *MA_MoveCopySingle(struct Mail *mail, int pos, struct Folder *from, struct Folder *to, BOOL copyit)
 {
    struct Mail cmail = *mail;
    char mfile[SIZE_MFILE];
@@ -329,7 +332,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
 ///
 /// MA_UpdateStatus
 //  Changes status of all new messages to unread
-LOCAL void MA_UpdateStatus(void)
+static void MA_UpdateStatus(void)
 {
    int i;
    struct Mail *mail;
@@ -379,7 +382,7 @@ MakeHook(MA_ReadMessageHook, MA_ReadMessage);
 ///
 /// AppendRcpt
 //  Appends a recipient address to a string
-LOCAL char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
+static char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 {
    char *ins;
    if (strchr(pe->Address,'@'))
@@ -400,7 +403,7 @@ LOCAL char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 ///
 /// MA_CmpDate
 //  Compares two messages by date
-LOCAL int MA_CmpDate(struct Mail **pentry1, struct Mail **pentry2)
+static int MA_CmpDate(struct Mail **pentry1, struct Mail **pentry2)
 {
    return CompareDates(&(pentry2[0]->Date), &(pentry1[0]->Date));
 }
@@ -408,7 +411,7 @@ LOCAL int MA_CmpDate(struct Mail **pentry1, struct Mail **pentry2)
 ///
 /// MA_InsertIntroText
 //  Inserts a phrase into the message text
-LOCAL void MA_InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
+static void MA_InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
 {
    if (*text)
    {
@@ -422,7 +425,7 @@ LOCAL void MA_InsertIntroText(FILE *fh, char *text, struct ExpandTextData *etd)
 ///
 /// MA_EditorNotification
 //  Starts file notification for temporary message file
-LOCAL void MA_EditorNotification(int winnum)
+static void MA_EditorNotification(int winnum)
 {
    FileToEditor(G->WR_Filename[winnum], G->WR[winnum]->GUI.TE_EDIT);
    StartNotify(&G->WR_NRequest[winnum]);
@@ -432,7 +435,7 @@ LOCAL void MA_EditorNotification(int winnum)
 ///
 /// MA_SetupQuoteString
 //  Creates quote string by replacing variables with values
-LOCAL void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *etd, struct Mail *mail)
+static void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *etd, struct Mail *mail)
 {
    struct ExpandTextData l_etd;
    char *sbuf;
@@ -452,7 +455,7 @@ LOCAL void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *e
 ///
 /// MA_CheckWriteWindow
 //  Opens a write window
-LOCAL int MA_CheckWriteWindow(int winnum)
+static int MA_CheckWriteWindow(int winnum)
 {
    if (SafeOpenWindow(G->WR[winnum]->GUI.WI)) return winnum;
    WR_Cleanup(winnum);
@@ -1086,7 +1089,7 @@ MakeHook(MA_DelKeyHook, MA_DelKeyFunc);
 ///
 /// MA_GetAddressSelect
 //  Asks user which address (from/replyto) to store
-LOCAL struct Person *MA_GetAddressSelect(struct Mail *mail)
+static struct Person *MA_GetAddressSelect(struct Mail *mail)
 {
    struct Person *pe = GetReturnAddress(mail);
    if (C->CompareAddress && *mail->ReplyTo.Address) if (stricmp(mail->From.Address, mail->ReplyTo.Address))
@@ -1935,7 +1938,7 @@ MakeHook(MA_LV_DspFuncHook,MA_LV_DspFunc);
 ///
 /// MA_GetRealSubject
 //  Strips reply prefix / mailing list name from subject
-LOCAL char *MA_GetRealSubject(char *sub)
+static char *MA_GetRealSubject(char *sub)
 {
    char *p, *pend = &sub[strlen(sub)];
    if (strlen(sub) < 3) return sub;
@@ -1948,7 +1951,7 @@ LOCAL char *MA_GetRealSubject(char *sub)
 ///
 /// MA_MailCompare
 //  Compares two messages
-LOCAL int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, int column)
+static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, int column)
 {
    static int values[9] = { 50, 35, 30, 25, 45, 60, 40, 20, 55 };
    switch (column)

@@ -28,13 +28,13 @@
 #include "YAM.h"
 
 /* local */
-LOCAL int nextcharin(FILE*, BOOL);
-LOCAL void output64chunk(int, int, int, int, FILE*);
-LOCAL void almostputc(int, FILE*, struct TranslationTable*, BOOL);
-LOCAL void uueget(char*, FILE*, int);
-LOCAL BOOL gettxtline(char*, int, char**);
-LOCAL BOOL getline(char*, int, FILE*);
-LOCAL int outdec(char*, FILE*);
+static int nextcharin(FILE*, BOOL);
+static void output64chunk(int, int, int, int, FILE*);
+static void almostputc(int, FILE*, struct TranslationTable*, BOOL);
+static void uueget(char*, FILE*, int);
+static BOOL gettxtline(char*, int, char**);
+static BOOL getline(char*, int, FILE*);
+static int outdec(char*, FILE*);
 
 
 /***************************************************************************
@@ -78,7 +78,7 @@ BOOL *NeedsPortableNewlines;
 
 /// nextcharin
 //  Reads next byte from a text files, handles CRLF line breaks
-LOCAL int nextcharin(FILE *infile, BOOL PortableNewlines)
+static int nextcharin(FILE *infile, BOOL PortableNewlines)
 {
    int c;
 
@@ -145,7 +145,7 @@ char *decode64 (char *dest, char *src, char *srcmax)
 ///
 /// output64chunk
 //  Writes three bytes in base64 format
-LOCAL void output64chunk(int c1, int c2, int c3, int pads, FILE *outfile)
+static void output64chunk(int c1, int c2, int c3, int pads, FILE *outfile)
 {
    fputc(basis_64[c1>>2], outfile);
    fputc(basis_64[((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4)], outfile);
@@ -207,7 +207,7 @@ void to64(FILE *infile, FILE *outfile, BOOL PortableNewlines)
 ///
 /// almostputc
 //  Writes a bytes, handles line breaks and translation tables
-LOCAL void almostputc(int c, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines)
+static void almostputc(int c, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines)
 {
    if (tt) c = (int)tt->Table[(UBYTE)c];
    if (CRpending) 
@@ -442,7 +442,7 @@ BOOL DoesNeedPortableNewlines(char *ctype)
 /*** UU encode/decode stuff ***/
 /// uueget
 //  Decodes four UU encoded bytes
-LOCAL void uueget(char *ptr, FILE *outfp, int n)
+static void uueget(char *ptr, FILE *outfp, int n)
 {
    int c1, c2, c3;
    unsigned char p0, p1, p2, p3;
@@ -462,7 +462,7 @@ LOCAL void uueget(char *ptr, FILE *outfp, int n)
 ///
 /// gettxtline
 //  Reads next line of UU encoded string
-LOCAL BOOL gettxtline(char *buf, int size, char **rptr)
+static BOOL gettxtline(char *buf, int size, char **rptr)
 {
    int c;
    char *ptr = buf;
@@ -526,7 +526,7 @@ void fromuuetxt(char **txt, FILE *outfp)
 ///
 /// getline
 //  Reads next line from a UU encoded file
-LOCAL BOOL getline(char *buf, int size, FILE *fp)
+static BOOL getline(char *buf, int size, FILE *fp)
 {
    int c;
    char *ptr = buf;
@@ -589,7 +589,7 @@ void fromuue(FILE *infp, FILE *outfp)
 ///
 /// outdec
 //  Encodes three bytes using UUE format
-LOCAL int outdec(char *p, FILE *out)
+static int outdec(char *p, FILE *out)
 {
    int c1,c2,c3,c4;
 

@@ -28,8 +28,11 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_main.h"
+#include "YAM_mainFolder.h"
+#include "YAM_read.h"
 #include "YAM_write.h"
 
 /* local protos */
@@ -1268,7 +1271,8 @@ int RE_CharIn(char c, struct TranslationTable *tt)
 void STACKEXT RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhitespace, char *ptr)
 {
    char *charset, *encoding, *txt, *txtend, *t;
-   int ecode = ENC_NONE, CorrectedCharset = 0;
+   enum Encoding ecode = ENC_NONE;
+   int CorrectedCharset = 0;
    struct TranslationTable *tt = NULL;
 
    if (MatchTT(prevcharset, G->TTin, TRUE)) tt = G->TTin;

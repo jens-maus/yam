@@ -26,10 +26,11 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_folderconfig.h"
 
 /* local protos */
-LOCAL char *Bool2Txt(BOOL);
-LOCAL BOOL Txt2Bool(char*);
+static char *Bool2Txt(BOOL);
+static BOOL Txt2Bool(char*);
 
 /***************************************************************************
  Module: Configuration - Basic Get/Put routines
@@ -37,7 +38,7 @@ LOCAL BOOL Txt2Bool(char*);
 
 /// Bool2Txt
 //  Converts boolean value to text
-LOCAL char *Bool2Txt(BOOL bool)
+static char *Bool2Txt(BOOL bool)
 {
    return bool ? "Y" : "N";
 }
@@ -45,7 +46,7 @@ LOCAL char *Bool2Txt(BOOL bool)
 ///
 /// Txt2Bool
 //  Converts Y/N string to boolean value
-LOCAL BOOL Txt2Bool(char *txt)
+static BOOL Txt2Bool(char *txt)
 {
    return (BOOL)(tolower((int)*txt) == 'y');
 }

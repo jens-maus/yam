@@ -29,7 +29,7 @@
 #include "YAM_hook.h"
 
 /* local protos */
-LOCAL struct ER_ClassData *ER_New(void);
+static struct ER_ClassData *ER_New(void);
 
 /***************************************************************************
  Module: Error window
@@ -104,7 +104,7 @@ MakeHook(ER_CloseHook, ER_CloseFunc);
 /*** GUI***/
 /// ER_New
 //  Creates error window
-LOCAL struct ER_ClassData *ER_New(void)
+static struct ER_ClassData *ER_New(void)
 {
    struct ER_ClassData *data;
 

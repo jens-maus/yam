@@ -25,31 +25,47 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <clib/alib_protos.h>
+#include <libraries/asl.h>
+#include <mui/NListview_mcc.h>
 #include <workbench/startup.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
+#include <proto/iffparse.h>
+#include <proto/locale.h>
+#include <proto/muimaster.h>
 
 #include "YAM.h"
+#include "YAM_classes.h"
+#include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
 #include "YAM_main.h"
+#include "YAM_read.h"
+#include "YAM_utilities.h"
 
 /***************************************************************************
  Utilities
 ***************************************************************************/
 
 /* local protos */
-LOCAL int GetWord(char **rptr, char *wbuf, int max);
-LOCAL char *ReflowParagraph(char *start, char *end, int lmax, char *dest);
-LOCAL char *RemoveQuoteString(char *start, char *end, char *quot, char *dest);
-LOCAL char *InsertQuoteString(char *start, char *quote, FILE *out);
-LOCAL void SaveParagraph(char *start, char *end, char *prefix, FILE *out);
-LOCAL char *FileToBuffer(char *file);
-LOCAL int TZtoMinutes(char *tzone);
-LOCAL BOOL GetPackMethod(int xpktype, char **method, int *eff);
-LOCAL BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
-LOCAL BOOL UncompressMailFile(char *src, char *dst, char *passwd);
-LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
-LOCAL char *IdentifyFileDT(char *fname);
+static int GetWord(char **rptr, char *wbuf, int max);
+static char *ReflowParagraph(char *start, char *end, int lmax, char *dest);
+static char *RemoveQuoteString(char *start, char *end, char *quot, char *dest);
+static char *InsertQuoteString(char *start, char *quote, FILE *out);
+static void SaveParagraph(char *start, char *end, char *prefix, FILE *out);
+static char *FileToBuffer(char *file);
+static int TZtoMinutes(char *tzone);
+static BOOL GetPackMethod(int xpktype, char **method, int *eff);
+static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
+static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
+static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
+static char *IdentifyFileDT(char *fname);
 
 struct PathNode {
    BPTR next;
@@ -646,7 +662,7 @@ char *Encrypt(char *source)
 char *GetLine(FILE *fh, char *buffer, int bufsize)
 {
    char *ptr;
-   clear(buffer, bufsize);
+   memset(buffer, 0, bufsize);
    if (!fgets(buffer, bufsize, fh)) return NULL;
    if ((ptr = strpbrk(buffer, "\r\n"))) *ptr = 0;
    return buffer;
@@ -767,7 +783,7 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
 ///
 /// GetWord
 //  Word-wrapping algorithm: gets next word
-LOCAL int GetWord(char **rptr, char *wbuf, int max)
+static int GetWord(char **rptr, char *wbuf, int max)
 {
    int c, i = 0;
    static int nonblanks = 0;
@@ -803,7 +819,7 @@ LOCAL int GetWord(char **rptr, char *wbuf, int max)
 ///
 /// ReflowParagraph
 //  Word-wrapping algorithm: process a paragraph
-LOCAL char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
+static char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
 {
    int lword, lline = 0;
    char c, word[SIZE_LARGE], *p;
@@ -838,7 +854,7 @@ LOCAL char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
 ///
 /// RemoveQuoteString
 //  Removes reply prefix
-LOCAL char *RemoveQuoteString(char *start, char *end, char *quot, char *dest)
+static char *RemoveQuoteString(char *start, char *end, char *quot, char *dest)
 {
    while (start <= end)
    {
@@ -852,7 +868,7 @@ LOCAL char *RemoveQuoteString(char *start, char *end, char *quot, char *dest)
 ///
 /// InsertQuoteString
 //  Inserts reply prefix
-LOCAL char *InsertQuoteString(char *start, char *quote, FILE *out)
+static char *InsertQuoteString(char *start, char *quote, FILE *out)
 {
    if ((*start != '\n' || C->QuoteEmptyLines) && strncmp(start, "<sb>", 4) && strncmp(start, "<tsb>", 5))
    {
@@ -872,7 +888,7 @@ LOCAL char *InsertQuoteString(char *start, char *quote, FILE *out)
 ///
 /// SaveParagraph
 //  Writes a paragraph and inserts reply prefixes
-LOCAL void SaveParagraph(char *start, char *end, char *prefix, FILE *out)
+static void SaveParagraph(char *start, char *end, char *prefix, FILE *out)
 {
    while (start <= end)
    {
@@ -1120,7 +1136,7 @@ void DeleteMailDir(char *dir, BOOL isroot)
 ///
 /// FileToBuffer
 //  Reads a complete file into memory
-LOCAL char *FileToBuffer(char *file)
+static char *FileToBuffer(char *file)
 {
    char *text;
    int size = FileSize(file);
@@ -1296,8 +1312,8 @@ void ExtractAddress(char *line, struct Person *pe)
    }
    if (*ra[2] == '\"') ra[2]++;
    if (*ra[3] == '\"' && *(ra[3]-1) != '\\') *ra[3] = 0;
-   stccpy(pe->Address , Trim(ra[0]), SIZE_ADDRESS);
-   stccpy(pe->RealName, Trim(ra[2]), SIZE_REALNAME);
+   MyStrCpy(pe->Address ,Trim(ra[0]));
+   MyStrCpy(pe->RealName, Trim(ra[2]));
    strcpy(line, save);
    free(save);
 }
@@ -1337,7 +1353,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
          switch (*src)
          {
             case 'n': dst = StrBufCat(dst, etd->OS_Name); break;
-            case 'f': stccpy(buf, etd->OS_Name, SIZE_ADDRESS);
+            case 'f': MyStrCpy(buf, etd->OS_Name);
                       if ((p = strchr(buf, ','))) p = Trim(++p);
                       else { for (p = buf; *p && *p != ' '; p++); *p = 0; p = buf; }
                       dst = StrBufCat(dst, p); break;
@@ -1412,7 +1428,7 @@ char *DateStamp2String(struct DateStamp *date, int mode)
    // if this argument is not set we get the actual time
    if (!date) date = DateStamp(&dsnow);
 
-   clear(&dt, sizeof(struct DateTime));
+   memset(&dt, 0, sizeof(struct DateTime));
    dt.dat_Stamp   = *date;
    dt.dat_Format  = FORMAT_DOS;
    if (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) dt.dat_Format = FORMAT_USA;
@@ -1501,7 +1517,7 @@ long DateStamp2Long(struct DateStamp *date)
    int y;
 
    if (!date) date = DateStamp(&dsnow);
-   clear(&dt, sizeof(struct DateTime));
+   memset(&dt, 0, sizeof(struct DateTime));
    dt.dat_Stamp   = *date;
    dt.dat_Format  = FORMAT_USA;
    dt.dat_StrDate = (STRPTR)datestr;
@@ -1541,7 +1557,7 @@ char *GetTZ(void)
 ///
 /// TZtoMinutes
 //  Converts time zone into a numeric offset
-LOCAL int TZtoMinutes(char *tzone)
+static int TZtoMinutes(char *tzone)
 {
    int i, tzcorr = 0;
    static struct TimeZones { char *TZname; int TZcorr; }
@@ -1713,7 +1729,7 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
 ///
 /// GetPackMethod
 //  Returns packer type and efficiency
-LOCAL BOOL GetPackMethod(int xpktype, char **method, int *eff)
+static BOOL GetPackMethod(int xpktype, char **method, int *eff)
 {
    if (xpktype == 2) { *method = C->XPKPack; *eff = C->XPKPackEff; return TRUE; }
    if (xpktype == 3) { *method = C->XPKPackEncrypt; *eff = C->XPKPackEncryptEff; return TRUE; }
@@ -1722,7 +1738,7 @@ LOCAL BOOL GetPackMethod(int xpktype, char **method, int *eff)
 ///
 /// CompressMailFile
 //  Shrinks a message file
-LOCAL BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
+static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
 {
    int err;
    if (!XpkBase) return FALSE;
@@ -1732,7 +1748,7 @@ LOCAL BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, in
 ///
 /// UncompressMailFile
 //  Expands a compressed message file
-LOCAL BOOL UncompressMailFile(char *src, char *dst, char *passwd)
+static BOOL UncompressMailFile(char *src, char *dst, char *passwd)
 {
    if (!XpkBase) return FALSE;
    return (BOOL)(!XpkUnpackTags(XPK_InName, src, XPK_OutName, dst, XPK_Password, passwd, TAG_DONE));
@@ -1964,7 +1980,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
       while (GetLine(fp, buf, sizeof(buf)))
       {
          char entry[SIZE_DEFAULT];
-         clear(entry, SIZE_DEFAULT);
+         memset(entry, 0, SIZE_DEFAULT);
          if (G->PGPVersion == 5)
          {
             if (!strncmp(buf, "sec", 3) || (!strncmp(&buf[1], "ub", 2) && !secret))
@@ -2013,7 +2029,7 @@ char ShortCut(char *label)
 ///
 /// RemoveCut
 //  Removes shortcut character from text label
-LOCAL char *RemoveCut(char *label)
+static char *RemoveCut(char *label)
 {
    static char lab[SIZE_DEFAULT], *p;
 
@@ -2560,7 +2576,7 @@ int PGPCommand(char *progname, char *options, int flags)
 ///
 /// AppendToLogfile
 //  Appends a line to the logfile
-LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4)
+static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4)
 {
    FILE *fh;
    char logfile[SIZE_PATHFILE], filename[SIZE_FILE];
@@ -2785,7 +2801,7 @@ BOOL MatchExtension(char *fileext, char *extlist)
 ///
 /// IdentifyFileDT
 //  Detects the file type using datatypes.library
-LOCAL char *IdentifyFileDT(char *fname)
+static char *IdentifyFileDT(char *fname)
 {
    static char ctype[SIZE_CTYPE], *type = NULL;
    struct Library *DataTypesBase = OpenLibrary("datatypes.library", 39);
@@ -2912,15 +2928,21 @@ BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
       UBYTE buf[SIZE_DEFAULT], *p;
       int i;
       for (i = 0; i < 256; i++) (*tt)->Table[i] = (UBYTE)i;
-      stccpy((*tt)->File, file, SIZE_PATHFILE);
+      MyStrCpy((*tt)->File, file);
       fgets(buf, SIZE_DEFAULT, fp);
       if (!strncmp(buf, "YCT1", 4))
       {
          fgets((*tt)->Name, SIZE_DEFAULT, fp);
          if ((p = strchr((*tt)->Name,'\n'))) *p = 0;
          while (fgets(buf, SIZE_DEFAULT, fp))
-            if (!strnicmp(buf, "from", 4)) stccpy((*tt)->SourceCharset, Trim(&buf[5]), SIZE_CTYPE);
-            else if  (!strnicmp(buf, "to", 2)) stccpy((*tt)->DestCharset, Trim(&buf[3]), SIZE_CTYPE);
+            if (!strnicmp(buf, "from", 4))
+            {
+              MyStrCpy((*tt)->SourceCharset, Trim(&buf[5]));
+            }
+            else if (!strnicmp(buf, "to", 2))
+            {
+              MyStrCpy((*tt)->DestCharset, Trim(&buf[3]));
+            }
             else if (!strnicmp(buf, "header", 6)) (*tt)->Header = TRUE;
             else if (!strnicmp(buf, "author", 6));
             else if (strchr(buf, '='))

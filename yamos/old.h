@@ -163,7 +163,6 @@ struct sockaddr_in {
 #endif
 
 #include "YAM_locale.h"
-#include "YAM_utilities.h"
 
 /// Defines
 #if defined __PPC__
@@ -201,13 +200,11 @@ struct sockaddr_in {
 #define DBGP DBG Delay(100);
 #define clear(p,l) memset((p), 0, (l));
 
-#define LOCAL static
 #define nnsetstring(obj,s) nnset((obj),MUIA_String_Contents,(s))
 
 #define MUIA_Bodychunk_File          0x80002501
 #define MUIA_Bodychunk_UseOld        0x80002502
 #define MUIA_Slider_Weights          0x80002511
-#define MUIM_MainWindow_CloseWindow  0x80002521
 #define MUIA_Dtpic_Name              0x80423d72
 #define MUIM_GoActive                0x8042491a
 #define MUIM_GoInactive              0x80422c0c
@@ -283,30 +280,6 @@ struct MimeView
    char  Extension[SIZE_NAME];
 };
 
-struct Folder
-{
-   char  Name[SIZE_NAME];
-   char  Path[SIZE_PATH];
-   char  Password[SIZE_USERID];   
-   char  MLPattern[SIZE_PATTERN];
-   char  MLAddress[SIZE_ADDRESS];
-   char  MLFromAddress[SIZE_ADDRESS];
-   char  MLReplyToAddress[SIZE_ADDRESS];
-   int	 MLSignature;
-   int   Type, XPKType;
-   int   Total, New, Unread;
-   int   Size;
-   int   Sort[2];
-   int   MaxAge;
-   int   LastActive;
-   int   LoadedMode;
-   int   SortIndex;
-   int   Open;
-   APTR  FImage;
-   ULONG Flags;
-   struct Mail *Messages;
-};
-
 struct Rule
 {
    char  Name[SIZE_NAME];
@@ -366,46 +339,6 @@ struct MailInfo
    char *FName;
    BOOL  Display;
 };
-
-struct Mail
-{
-   struct Mail *Next;
-   struct Folder *Folder;
-   struct Person From;
-   struct Person To;
-   struct Person ReplyTo;
-   int    Flags;
-   char   Subject[SIZE_SUBJECT];
-   char   MailFile[SIZE_MFILE];
-   struct DateStamp Date;
-   char   Status;
-   char   Importance;
-   long   cMsgID, cIRTMsgID;
-   char  *UIDL;
-   int    Position;
-   int    Index;
-   long   Size;
-   struct Mail *Reference;
-};
-
-struct ExtendedMail
-{
-   struct Mail   Mail;
-   struct Person *STo;
-   struct Person *CC;
-   struct Person *BCC;
-   int NoSTo, NoCC, NoBCC;
-   struct Person ReceiptTo;
-   struct Person OriginalRcpt;
-   int    ReceiptType;
-   char   MsgID[SIZE_MSGID];
-   char   IRTMsgID[SIZE_MSGID];
-   BOOL   DelSend, RetRcpt;
-   int    Signature;
-   int    Security;
-   char  *Headers;
-   char  *SenderInfo;
-};
         
 struct ComprMail
 {
@@ -417,26 +350,6 @@ struct ComprMail
    long   cMsgID, cIRTMsgID;
    long   Size;
    int    MoreBytes;
-};
-
-struct Attach
-{
-   char FilePath[SIZE_PATHFILE];
-   char Name[SIZE_FILE];
-   int  Size;
-   BOOL IsMIME;
-   char ContentType[SIZE_CTYPE];
-   char Description[SIZE_DEFAULT];
-   BOOL IsTemp;
-};
-
-struct WritePart
-{
-   struct WritePart *Next;
-   char *ContentType, *Filename, *Description, *Name;
-   int   EncType;
-   BOOL  IsTemp;
-   struct TranslationTable *TTable;
 };
 
 struct TempFile
@@ -467,28 +380,6 @@ struct Compose
    BOOL UserInfo;
    struct WritePart *FirstPart;
    struct Mail *OrigMail;
-};
-
-struct Part
-{
-   struct Part *Prev;
-   struct Part *Next;
-   struct Part *NextSelected;
-   int  Win;
-   char Name[SIZE_FILE];
-   char Description[SIZE_DEFAULT];
-   char *ContentType;
-   char Filename[SIZE_PATHFILE];
-   char Boundary[SIZE_DEFAULT];
-   char *JunkParameter;
-   char *CParName, *CParBndr, *CParProt, *CParDesc, *CParRType, *CParCSet;
-   int  EncodingCode;
-   int  MaxHeaderLen;
-   int  Size;
-   int  Nr;
-   BOOL HasHeaders;
-   BOOL Printable;
-   BOOL Decoded;
 };
 
 struct TransStat
@@ -601,16 +492,6 @@ struct CO_ClassData  /* configuration window */
    BOOL UpdateAll;
 };
 
-struct FO_ClassData  /* folder configuration window */
-{
-   struct FO_GUIData
-   {
-      APTR WI;
-      APTR ST_FNAME, TX_FPATH, BT_MOVE, ST_MAXAGE, CY_FMODE, CY_FTYPE, CY_SORT[2], CH_REVERSE[2], ST_MLPATTERN, ST_MLFROMADDRESS, ST_MLREPLYTOADDRESS, ST_MLADDRESS, CY_MLSIGNATURE;
-   } GUI;
-   struct Folder *EditFolder;
-};
-
 struct EA_ClassData  /* address book entry window */
 {
    struct EA_GUIData
@@ -625,35 +506,6 @@ struct EA_ClassData  /* address book entry window */
    int  EntryPos;
    char PhotoName[SIZE_PATHFILE];
    struct MUI_NListtree_TreeNode *EditNode;
-};
-
-struct RE_ClassData  /* read window */
-{
-   struct RE_GUIData
-   {
-      APTR WI;
-      APTR MI_EDIT, MI_DETACH, MI_CROP, MI_WRAPH, MI_TSTYLE, MI_FFONT, MI_EXTKEY, MI_CHKSIG, MI_SAVEDEC;
-      APTR GR_BODY, GR_HEAD, LV_HEAD, TO_TOOLBAR, TE_TEXT, SL_TEXT, GR_STATUS[6];
-      APTR GR_INFO, GR_PHOTO, BC_PHOTO, LV_INFO, BO_BALANCE;
-      struct MUIP_Toolbar_Description TB_TOOLBAR[13];
-   } GUI;
-   int               WindowNr; // seems to be unused
-   struct Mail       Mail;
-   struct Mail      *MailPtr;
-   struct TempFile  *TempFile;
-   char              File[SIZE_PATHFILE];
-   FILE             *Fh;
-   struct Part      *FirstPart;
-   BOOL              FirstReadDone;
-   int               ParseMode;
-   int               Header;
-   int               SenderInfo;
-   BOOL              NoTextstyles, WrapHeader, FixedFont;
-   int               LastDirection;
-   BOOL              PGPKey;
-   int               PGPSigned, PGPEncrypted;
-   char              Signature[SIZE_ADDRESS];
-   char              WTitle[SIZE_DEFAULT];
 };
 
 struct TR_ClassData  /* transfer window */
@@ -770,8 +622,6 @@ struct WS_Data
 /// Enumerations
 enum { STATUS_UNR, STATUS_OLD, STATUS_FWD, STATUS_RPD, STATUS_WFS, STATUS_ERR, STATUS_HLD, STATUS_SNT, STATUS_NEW, STATUS_DEL, STATUS_LOA, STATUS_SKI };
 
-enum { ENC_NONE, ENC_QP, ENC_B64, ENC_UUE, ENC_BIN, ENC_8BIT, ENC_FORM };
-
 enum { CT_TX_PLAIN=0, CT_TX_HTML, CT_TX_GUIDE,
        CT_AP_OCTET, CT_AP_PS, CT_AP_RTF, CT_AP_LHA, CT_AP_LZX, CT_AP_ZIP, CT_AP_AEXE, CT_AP_SCRIPT, CT_AP_REXX,
        CT_IM_JPG, CT_IM_GIF, CT_IM_PNG, CT_IM_TIFF, CT_IM_ILBM,
@@ -794,8 +644,6 @@ enum { SEND_ALL=-2, SEND_ACTIVE, NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NE
        SO_SAVE, SO_RESET };
 
 enum { ID_CLOSEALL=1000, ID_RESTART, ID_ICONIFY, ID_LOGIN };
-
-enum { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT_GROUP, FT_CUSTOMSENT, FT_CUSTOMMIXED };
 
 enum { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
 
@@ -831,7 +679,6 @@ extern struct Hook CO_OpenHook, CO_RemoteToggleHook;
 extern struct Hook CO_EditSignatHook, CO_ToggleColHook, CO_GetDefaultPOPHook, CO_GetP3EntryHook, CO_PutP3EntryHook, CO_AddPOP3Hook, CO_DelPOP3Hook;
 extern struct Hook CO_GetFOEntryHook, CO_PutFOEntryHook, CO_AddFolderHook, CO_DelFolderHook, CO_GetRUEntryHook, CO_PutRUEntryHook, CO_AddRuleHook, CO_DelRuleHook;
 extern struct Hook CO_GetMVEntryHook, CO_PutMVEntryHook, CO_AddMimeViewHook, CO_DelMimeViewHook, CO_GetRXEntryHook, CO_PutRXEntryHook;
-extern struct Hook FO_NewFolderGroupHook, FO_NewFolderHook, FO_EditFolderHook, FO_DeleteFolderHook, FO_SetOrderHook;
 extern struct Hook FI_OpenHook;
 extern struct Hook DI_OpenHook;
 extern struct Hook US_OpenHook;
@@ -1053,22 +900,6 @@ extern void CO_Validate(struct Config *, BOOL);
 extern void CO_SetConfig(void);
 extern void CO_GetConfig(void);
 extern void CO_FreeConfig(struct Config *);
-
-extern struct Folder **FO_CreateList(void);
-extern struct Folder *FO_GetCurrentFolder(void);
-extern struct Folder *FO_GetFolderRexx(char *, int *);
-extern struct Folder *FO_GetFolderByName(char *, int *);
-extern struct Folder *FO_GetFolderByType(int, int *);
-extern BOOL FO_LoadConfig(struct Folder *);
-extern void FO_SaveConfig(struct Folder *);
-
-extern int FO_GetFolderPosition(struct Folder *);
-extern struct Folder *FO_NewFolder(int, char *, char *);
-extern BOOL FO_FreeFolder(struct Folder *);
-extern BOOL FO_CreateFolder(int, char *, char *);
-extern BOOL FO_LoadTree(char *);
-extern BOOL FO_LoadTreeImage(struct Folder *);
-extern BOOL FO_SaveTree(char *);
 
 extern APTR AB_GotoEntry(char *alias);
 extern void AB_InsertAddress(APTR, char *, char *, char *);
