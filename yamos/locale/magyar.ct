@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.5 (11.05.2003)
+## version $VER: YAM.catalog 5.6 (01.06.2003)
 ## language magyar
 ## codeset 0
 ## chunk AUTH Dósa Márton <dm_@freemail.hu>
@@ -7016,4 +7016,16 @@ MSG_HELP_CO_ST_INFOBARTXT
 Az a szöveg, ami kijelzésre\nkerül az állapotcsíkon
 ; Text that should be displayed\n\
 ; in the status bar
+;
+MSG_MA_CROPREQUEST
+A kiválasztott levelekbõl az összes csatolt fájl el lesz távolítva.\n\
+\n\
+Tényleg folytatni akarod?
+; All attachments of the selected mails will be cropped.\n\
+; \n\
+; Do you really want to proceed?
+;
+MSG_YesNoReq2
+Igen|*_Nem
+; _Yes|*_No
 ;
