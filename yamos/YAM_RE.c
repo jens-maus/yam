@@ -2445,7 +2445,18 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                            fwrite(rptr, 1, ptr-rptr, tf->FP);
                            fclose(tf->FP); tf->FP = NULL;
                            DB( kprintf("RE_ReadInMessage(): decrypting\n"); )
-                           if (!RE_DecryptPGP(winnum, tf->Filename)) re->PGPSigned |= PGPS_OLD;
+
+                           if (!RE_DecryptPGP(winnum, tf->Filename))
+                           {
+                              re->PGPSigned |= PGPS_OLD;
+                              // make sure that the mail is flaged as signed
+                              if(!(re->MailPtr->Flags & MFLAG_SIGNED))
+                              {
+                                re->MailPtr->Flags |= MFLAG_SIGNED;
+                                re->MailPtr->Folder->Flags |= FOFL_MODIFY;  // flag folder as modified
+                              }
+                           }
+
                            if (tf->FP = fopen(tf->Filename, "r"))
                            {
                               char buf2[SIZE_LARGE];
@@ -2459,7 +2470,15 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                            }
                            CloseTempFile(tf);
                         }
+
                         re->PGPEncrypted |= PGPE_OLD;
+                        // make sure that mail is flagged as crypted
+                        if(!(re->MailPtr->Flags & MFLAG_CRYPT))
+                        {
+                          re->MailPtr->Flags |= MFLAG_CRYPT;
+                          re->MailPtr->Folder->Flags |= FOFL_MODIFY;  // flag folder as modified
+                        }
+
                         DB( kprintf("RE_ReadInMessage(): done with decryption\n"); )
                         goto rim_cont;
                      }

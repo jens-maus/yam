@@ -1,3 +1,11 @@
+2002-05-01  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed a small flaw in the PGP recognition stuff. Now YAM will
+      explicitly flag a message as crypted/signed if it couldn`t be
+      found out initially by scanning the header while downloading
+      the message. Now YAM will flag this message as crypted/signed
+      along with flagging the folder it resists in as modified.
+
 2002-04-30  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed (worked-around) the bug #534430. I call this "worked-around"
