@@ -279,7 +279,7 @@ void     DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum 
 char *   TimeVal2String(const struct timeval *tv, enum DateStampType mode, enum TZConvert tzc);
 char *   DateStamp2String(struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc);
 char *   Decrypt(char *source);
-void     DeleteMailDir(char *dir, BOOL isroot);
+BOOL     DeleteMailDir(char *dir, BOOL isroot);
 char *   DescribeCT(char *ct);
 void     DisplayMailList(struct Folder *fo, APTR lv);
 void     DisplayAppIconStatistics(void);
@@ -369,7 +369,6 @@ char     ShortCut(char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
 void STDARGS VARARGS68K SPrintF(char *outstr, char *fmtstr, ...);
 char *   StartUnpack(char *file, char *newfile, struct Folder *folder);
-char *   stccat(char *a, char *b, int n);
 char *   StrBufCat(char *strbuf, char *source);
 char *   StrBufCpy(char *strbuf, char *source);
 char *   AppendToBuffer(char *buf, int *wptr, int *len, char *add);

@@ -752,7 +752,7 @@ char *TrimEnd(char *s)
 }
 ///
 /// Trim
-//  Removes leading and trailing spaces
+//  Removes leading and trailing spaces
 char *Trim(char *s)
 {
    if(s)
@@ -837,79 +837,97 @@ void SParse(char *s)
 }
 ///
 /// LoadParsers
-//  Load a parser tables into memory
+//  Load parser tables into memory
 BOOL LoadParsers(void)
 {
-   char *temp;
-   char dir[SIZE_PATH], file[SIZE_PATHFILE];
-   struct FileInfoBlock *fib;
-   FILE *fp;
-   BPTR lock;
-   BOOL result = TRUE;
+  char dir[SIZE_PATH];
+  BPTR dirLock;
+  BOOL result = TRUE;
 
-   if(PNum) return TRUE;
+  if(PNum)
+    return TRUE;
 
-   strmfp(dir, G->ProgDir, "parsers");
+  strmfp(dir, G->ProgDir, "parsers");
 
-   if((lock = Lock((STRPTR)dir, ACCESS_READ)))
-   {
-      if((fib = AllocDosObject(DOS_FIB, NULL)))
+  if((dirLock = Lock(dir, ACCESS_READ)))
+  {
+    struct ExAllControl *eac;
+
+    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+    {
+      struct ExAllData *ead;
+      struct ExAllData *eabuffer;
+      LONG more;
+      eac->eac_LastKey = 0;
+      eac->eac_MatchString = NULL;
+      eac->eac_MatchFunc = NULL;
+
+      if((eabuffer = malloc(SIZE_EXALLBUF)))
       {
-        if(Examine(lock, fib))
+        do
         {
-          while((PNum < (long)ARRAY_SIZE(PPtr)) &&
-                 ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
+          more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_PROTECTION, eac);
+          if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
           {
-            strmfp(file, dir, fib->fib_FileName);
+            result = -1;
+            break;
+          }
 
-            if ((fp = fopen(file, "rb")))
+          if(eac->eac_Entries == 0)
+            continue;
+
+          ead = (struct ExAllData *)eabuffer;
+
+          while(PNum < (long)ARRAY_SIZE(PPtr) && ead)
+          {
+            FILE *fp;
+            char file[SIZE_PATHFILE];
+
+            strmfp(file, dir, ead->ed_Name);
+
+            if((fp = fopen(file, "rb")))
             {
-              if ((PPtr[PNum] = calloc(1, 16640)))
+              if((PPtr[PNum] = calloc(1, 16640)))
               {
                 fread(PPtr[PNum], 1, 16640, fp);
 
-                if(isFlagSet(fib->fib_Protection, FIBF_PURE))
+                if(isFlagSet(ead->ed_Prot, FIBF_PURE))
                 {
+                  char *temp;
                   temp = PPtr[PNum];
                   PPtr[PNum] = PPtr[0];
                   PPtr[0] = temp;
                 }
 
                 PNum++;
-
               }
               else result = FALSE;
 
               fclose(fp);
             }
             else result = FALSE;
+
+            // iterate to next
+            ead = ead->ed_Next;
           }
         }
-        else result = FALSE;
+        while(more && PNum < (long)ARRAY_SIZE(PPtr));
 
-        FreeDosObject(DOS_FIB, fib);
+        free(eabuffer);
       }
       else result = FALSE;
 
-      UnLock(lock);
-   }
-   else result = FALSE;
+      FreeDosObject(DOS_EXALLCONTROL, eac);
+    }
+    else result = FALSE;
 
-   return result;
+    UnLock(dirLock);
+  }
+  else result = FALSE;
+
+  return result;
 }
 
-///
-/// stccat
-//  Safe string concatenation
-char *stccat(char *a, char *b, int n)
-{
-   int m = 1;
-   char *p = a;
-   while (*p) { p++; m++; }
-   while (*b && m < n) { *p++ = *b++; m++; }
-   *p = 0;
-   return a;
-}
 ///
 /// stristr
 //  Case insensitive version of strstr()
@@ -1814,49 +1832,93 @@ BOOL PFExists(char *path, char *file)
 ///
 /// DeleteMailDir
 //  Recursively deletes a mail directory
-void DeleteMailDir(char *dir, BOOL isroot)
+BOOL DeleteMailDir(char *dir, BOOL isroot)
 {
-   char fname[SIZE_PATHFILE], *filename, dirname[SIZE_PATHFILE];
-   struct FileInfoBlock *fib;
-   BOOL cont, isdir;
-   BPTR lock;
+  BPTR dirLock;
+  BOOL result = TRUE;
 
-   if((fib = AllocDosObject(DOS_FIB,NULL)))
-   {
-      if((lock = Lock(dir, ACCESS_READ)))
+  if((dirLock = Lock(dir, ACCESS_READ)))
+  {
+    struct ExAllControl *eac;
+
+    if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+    {
+      struct ExAllData *ead;
+      struct ExAllData *eabuffer;
+      LONG more;
+      eac->eac_LastKey = 0;
+      eac->eac_MatchString = NULL;
+      eac->eac_MatchFunc = NULL;
+
+      if((eabuffer = malloc(SIZE_EXALLBUF)))
       {
-        strcpy(dirname, dir);
-        if(Examine(lock, fib))
+        do
         {
-          cont = (ExNext(lock,fib) && IoErr() != ERROR_NO_MORE_ENTRIES);
-          while (cont)
+          more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_TYPE, eac);
+          if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
           {
-            strmfp(fname, dir, fib->fib_FileName);
-            filename = FilePart(fname);
-            isdir = isDrawer(fib->fib_DirEntryType);
-            cont = (ExNext(lock,fib) && IoErr() != ERROR_NO_MORE_ENTRIES);
-            if (isroot)
+            result = FALSE;
+            break;
+          }
+
+          if(eac->eac_Entries == 0)
+            continue;
+
+          ead = (struct ExAllData *)eabuffer;
+          do
+          {
+            BOOL isdir = isDrawer(ead->ed_Type);
+            char *filename = ead->ed_Name;
+            char fname[SIZE_PATHFILE];
+
+            strmfp(fname, dir, filename);
+
+            if(isroot)
             {
-              if (isdir)
+              if(isdir)
               {
                 if(IsFolderDir(fname))
-                  DeleteMailDir(fname, FALSE);
+                  result = DeleteMailDir(fname, FALSE);
               }
               else
               {
-                if(!stricmp(filename, ".config") || !stricmp(filename, ".glossary") || !stricmp(filename, ".addressbook"))
-                  DeleteFile(fname);
+                if(stricmp(filename, ".config")      == 0 ||
+                   stricmp(filename, ".glossary")    == 0 ||
+                   stricmp(filename, ".addressbook") == 0 ||
+                   stricmp(filename, ".emailcache")  == 0)
+                {
+                  result = DeleteFile(fname);
+                }
               }
             }
-            else if(!isdir && (isValidMailFile(filename) || !stricmp(filename, ".fconfig") || !stricmp(filename, ".index")))
-              DeleteFile(fname);
+            else if(!isdir && (isValidMailFile(filename) ||
+                    stricmp(filename, ".fconfig") == 0   ||
+                    stricmp(filename, ".index") == 0)
+                   )
+            {
+              result = DeleteFile(fname);
+            }
           }
+          while((ead = ead->ed_Next) && result);
         }
-        UnLock(lock);
-        DeleteFile(dirname);
+        while(more && result);
+
+        free(eabuffer);
       }
-      FreeDosObject(DOS_FIB,fib);
-   }
+      else result = FALSE;
+
+      FreeDosObject(DOS_EXALLCONTROL, eac);
+    }
+    else result = FALSE;
+
+    UnLock(dirLock);
+
+    if(result)
+      result = DeleteFile(dir);
+  }
+  else result = FALSE;
+
+  return result;
 }
 ///
 /// FileToBuffer

@@ -7,6 +7,12 @@ $Source$
 
 2004-09-11  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c: convered all Examine()/ExNext() usages to proper
+      ExAll() calls which slightly increases the performance
+      in traversing through directory entries.
+    * YAM_UT.c: removed the not required stccat() function.
+    * YAM_rexx_rxif.c: fixed bug where a "MAILSTATUS O" didn't
+      work anymore after the recent mail status changes.
     * YAM_RE.c: changed read window title formating to include
       three dots "..." at the end of the text if it was too huge
       to put it into the buffer and therefore was cut.

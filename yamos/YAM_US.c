@@ -258,10 +258,14 @@ HOOKPROTONHNONP(US_DelFunc, void)
 
    i = xget(lv, MUIA_NList_Active);
    DoMethod(lv, MUIM_NList_GetEntry, i, &user);
-   if (*user->MailDir)
+
+   if(*user->MailDir)
    {
-      if (!(m = MUI_Request(G->App, G->US->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_US_RemoveReqGads), GetStr(MSG_US_RemoveReq)))) return;
-      if (m == 1) DeleteMailDir(user->MailDir, TRUE);
+      if(!(m = MUI_Request(G->App, G->US->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_US_RemoveReqGads), GetStr(MSG_US_RemoveReq))))
+        return;
+
+      if(m == 1)
+        DeleteMailDir(user->MailDir, TRUE);
    }
    DoMethod(lv, MUIM_NList_Remove, i);
 }

@@ -223,36 +223,65 @@ static APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
       End,
    End))
    {
-      char dir[SIZE_PATH], file[SIZE_PATHFILE];
-      struct FileInfoBlock *fib;
-      BPTR lock;
+      char dir[SIZE_PATH];
+      BPTR dirLock;
 
       strmfp(dir, G->ProgDir, "charsets");
-      if((fib = AllocDosObject(DOS_FIB,NULL)))
+      if((dirLock = Lock(dir, ACCESS_READ)))
       {
-        if((lock = Lock(dir, ACCESS_READ)))
-        {
-          if(Examine(lock, fib))
-          {
-            while (ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
-            {
-              struct TranslationTable *tt = NULL;
+        struct ExAllControl *eac;
 
-              strmfp(file, dir, fib->fib_FileName);
-              if (LoadTranslationTable(&tt, file))
+        if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
+        {
+          struct ExAllData *ead;
+          struct ExAllData *eabuffer;
+          LONG more;
+          eac->eac_LastKey = 0;
+          eac->eac_MatchString = NULL;
+          eac->eac_MatchFunc = NULL;
+
+          if((eabuffer = malloc(SIZE_EXALLBUF)))
+          {
+            do
+            {
+              more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_NAME, eac);
+              if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
+                break;
+
+              if(eac->eac_Entries == 0)
+                continue;
+
+              ead = (struct ExAllData *)eabuffer;
+              do
               {
-                if ((output && *tt->DestCharset) || (!output && *tt->SourceCharset))
-                  DoMethod(lv, MUIM_List_InsertSingle, tt, MUIV_List_Insert_Bottom);
-                free(tt);
+                char file[SIZE_PATHFILE];
+                struct TranslationTable *tt = NULL;
+
+                strmfp(file, dir, ead->ed_Name);
+                if(LoadTranslationTable(&tt, file))
+                {
+                  if((output && *tt->DestCharset) || (!output && *tt->SourceCharset))
+                    DoMethod(lv, MUIM_List_InsertSingle, tt, MUIV_List_Insert_Bottom);
+
+                  free(tt);
+                }
               }
+              while((ead = ead->ed_Next));
             }
+            while(more);
+
+            free(eabuffer);
           }
-          UnLock(lock);
+
+          FreeDosObject(DOS_EXALLCONTROL, eac);
         }
-        FreeDosObject(DOS_FIB,fib);
+
+        UnLock(dirLock);
       }
+
       DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
    }
+
    return po;
 }
 

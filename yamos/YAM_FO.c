@@ -816,10 +816,13 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    }
    if (success)
    {
-      MyStrCpy(srcbuf, GetFolderDir(oldfo)); AddPart(srcbuf, ".index", sizeof(srcbuf));
-      MyStrCpy(dstbuf, GetFolderDir(fo)); AddPart(dstbuf, ".index", sizeof(dstbuf));
+      MyStrCpy(srcbuf, GetFolderDir(oldfo));
+      AddPart(srcbuf, ".index", sizeof(srcbuf));
+      MyStrCpy(dstbuf, GetFolderDir(fo));
+      AddPart(dstbuf, ".index", sizeof(dstbuf));
       FO_Move(srcbuf, dstbuf);
-      DeleteMailDir(GetFolderDir(oldfo), FALSE);
+
+      success = DeleteMailDir(GetFolderDir(oldfo), FALSE);
    }
    BusyEnd();
    return success;
