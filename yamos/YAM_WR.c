@@ -2039,7 +2039,11 @@ static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, i
    APTR obj, bt_ver, bt_adr;
    if ((obj = HGroup,
       GroupSpacing(1),
+#ifdef DUFF
+      Child, *string = RecipientstringObject,
+#else
       Child, *string = NewObject(CL_DDString->mcc_Class, NULL,
+#endif
          MUIA_ControlChar, ShortCut(label),
          MUIA_UserData, allowmulti,
       End,

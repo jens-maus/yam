@@ -937,3 +937,11 @@
       mailinglist. if you now press SHIFT+RETURN after entering a string that
       matches a addressbook entry to should not complete it with the realname.
       Also if you send a mail it will not complete already valid email addresses.
+
+2001-07-28  Allan Odgaard <duff@diku.dk>
+
+    * Moved the Recipient String class to its own file
+      (classes/Recipientstring.c) and added a popup window when multiple
+      candidates exist for address completion. Some functionality is still
+      pending (you can navigate the list with arrow up/down but return just
+      does a DisplayBeep()) -- you need to define DUFF for this to work.

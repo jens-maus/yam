@@ -57,15 +57,19 @@
  Private MUI classes
 ***************************************************************************/
 
+#ifndef DUFF
 #define MUIM_GoActive                0x8042491a
 #define MUIM_GoInactive              0x80422c0c
+#endif
 
 struct DumData { long dummy; };
 
+#ifndef DUFF
 struct WS_Data
 {
    struct MUI_EventHandlerNode ehnode;
 };
+#endif
 
 struct BC_Data
 {
@@ -79,7 +83,9 @@ struct MUI_CustomClass *CL_FolderList;
 struct MUI_CustomClass *CL_MailList;
 struct MUI_CustomClass *CL_AddressList;
 struct MUI_CustomClass *CL_AttachList;
+#ifndef DUFF
 struct MUI_CustomClass *CL_DDString;
+#endif
 struct MUI_CustomClass *CL_DDList;
 struct MUI_CustomClass *CL_MainWin;
 struct MUI_CustomClass *CL_PageList;
@@ -169,6 +175,7 @@ DISPATCHERPROTO(BC_Dispatcher)
    return DoSuperMethodA(cl, obj, msg);
 }
 
+#ifndef DUFF
 ///
 /// WS_Dispatcher (Recipient String)
 /*** WS_Dispatcher (Recipient String) - Subclass of Betterstring, handles alias
@@ -362,8 +369,8 @@ DISPATCHERPROTO(WS_Dispatcher)
       break;
    }
    return result;
-
 }
+#endif
 
 ///
 /// WL_Dispatcher (Attachment List)
@@ -941,7 +948,9 @@ void ExitClasses(void)
    if (CL_MailList   ) MUI_DeleteCustomClass(CL_MailList   );
    if (CL_FolderList ) MUI_DeleteCustomClass(CL_FolderList );
    if (CL_AddressList) MUI_DeleteCustomClass(CL_AddressList);
+#ifndef DUFF
    if (CL_DDString   ) MUI_DeleteCustomClass(CL_DDString   );
+#endif
    if (CL_DDList     ) MUI_DeleteCustomClass(CL_DDList     );
    if (CL_AttachList ) MUI_DeleteCustomClass(CL_AttachList );
 }
@@ -953,7 +962,9 @@ BOOL InitClasses(void)
 {
    CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
    CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
+#ifndef DUFF
    CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
+#endif
    CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(AL_Dispatcher));
    CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
    CL_MailList    = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(ML_Dispatcher));
@@ -962,7 +973,11 @@ BOOL InitClasses(void)
    CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));
    CL_PageList    = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher));
 
-   return (BOOL)(CL_AttachList && CL_DDList && CL_DDString && CL_AddressList && CL_FolderList && CL_MailList &&
+#ifndef DUFF
+	if(!CL_DDString) return FALSE;
+#endif
+
+   return (BOOL)(CL_AttachList && CL_DDList && CL_AddressList && CL_FolderList && CL_MailList &&
                  CL_BodyChunk && CL_TextEditor && CL_MainWin && CL_PageList);
 }
 ///

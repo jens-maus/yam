@@ -30,7 +30,6 @@
 
 #include <string.h>
 #include <libraries/iffparse.h>
-#include <mui/BetterString_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include "Classes.h"
 #include "YAM_locale.h"

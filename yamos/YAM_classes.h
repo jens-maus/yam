@@ -45,7 +45,9 @@ extern struct MUI_CustomClass *CL_AddressList;
 extern struct MUI_CustomClass *CL_AttachList;
 extern struct MUI_CustomClass *CL_BodyChunk;
 extern struct MUI_CustomClass *CL_DDList;
+#ifndef DUFF
 extern struct MUI_CustomClass *CL_DDString;
+#endif
 extern struct MUI_CustomClass *CL_FolderList;
 extern struct MUI_CustomClass *CL_MailList;
 extern struct MUI_CustomClass *CL_MainWin;
