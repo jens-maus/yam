@@ -216,8 +216,12 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
     MUIA_Window_RefWindow,    win,
     MUIA_Window_LeftEdge,     MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,      MUIV_Window_TopEdge_Centered,
+		MUIA_Window_Width,        MUIV_Window_Width_MinMax(0),
+		MUIA_Window_Height,       MUIV_Window_Height_MinMax(0),
     MUIA_Window_CloseGadget,  FALSE,
     MUIA_Window_SizeGadget,   FALSE,
+		MUIA_Window_Activate,     TRUE,
+		MUIA_Window_NoMenus,      TRUE,
     WindowContents, VGroup,
        MUIA_Background,       MUII_RequesterBack,
        Child, HGroup,
@@ -246,6 +250,7 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
     char *token;
     int active = -1;
     int num_gads = 0;
+    char fstring[] = "-capslock f1"; // by default we set it to "-capslock f1" so that we can press f1
 
     set(app, MUIA_Application_Sleep, TRUE);
     DoMethod(app, OM_ADDMEMBER, WI_YAMREQ);
@@ -275,6 +280,7 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
       DoMethod(BT_GROUP, OM_ADDMEMBER, BT_REQ[0]);
       DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
       DoMethod(BT_REQ[0], MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, 2);
+      DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, fstring, app, 2, MUIM_Application_ReturnID, 2);
     }
     else
     {
@@ -286,13 +292,21 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
         DoMethod(BT_GROUP, OM_ADDMEMBER, BT_REQ[j]);
         DoMethod(BT_REQ[j], MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, j+2 <= num_gads ? j+2 : 1);
         set(BT_REQ[j], MUIA_CycleChain, 1);
+
+        // lets bind the f-keys 1-8 to the buttons also,
+        // because the original MUI_Request() is doing this also.
+        if(j <= 8)
+        {
+          fstring[11] = '0'+j+1;
+          DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, fstring, app, 2, MUIM_Application_ReturnID, j+2 <= num_gads ? j+2 : 1);
+        }
       }
     }
     DoMethod(BT_GROUP, MUIM_Group_ExitChange);
 
     // we add the esc key to the input event of the requester and if we receive it we close the requester by safely
     // exiting with the last button
-    DoMethod(WI_YAMREQ ,MUIM_Notify, MUIA_Window_InputEvent, "-capslock esc", app, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(WI_YAMREQ ,MUIM_Notify, MUIA_Window_CloseRequest, TRUE, app, 2, MUIM_Application_ReturnID, 1);
 
     // now activate that button with a starting "*"
     if(active > -1) set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_REQ[active]);

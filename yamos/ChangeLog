@@ -7,6 +7,10 @@ $Source$
 
 2002-07-04  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_UT.c: made our own MUI_Request() replacement even more
+      compatible with some information provided by Allan.
+      Now the requester should also be useable with F-keys like
+      the native one and will listen to Window Closerequests also.
     * YAM_WR.c: changed the menu shortcuts for the TextEditor
       to be show up as normal shortcuts and not as CommandStrings
       as I can`t see really a good reason not to do so.
