@@ -7,6 +7,9 @@ $Source$
 
 2004-09-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * misc: added some missing MUI_DisposeObject() calls on some
+      requesters. This might have caused that YAM ate more memory
+      during a long usage period than necessary.
     * extrasrc/NewReadArgs.c: fixed bug in NewReadArgs() function where
       tooltype-less icons like the PNG icons of PowerIcons caused a
       basepage access if used as the application icon of YAM.

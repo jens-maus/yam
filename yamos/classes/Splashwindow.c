@@ -288,7 +288,9 @@ DECLARE(SelectUser)
 		set(data->selectGroup, MUIA_ShowMe, FALSE);
 
 		DoMethod(data->userGroup, MUIM_Group_InitChange);
+		// remove & dispose the group object
 		DoMethod(data->userGroup, OM_REMMEMBER, group);
+		MUI_DisposeObject(group);
 		DoMethod(data->userGroup, MUIM_Group_ExitChange);
 	}
 

@@ -363,7 +363,11 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
     // now lets reissue the collected returnIDs again
     REISSUE_RETURNIDS;
 
+    // remove & dispose the requester object
     DoMethod(app, OM_REMMEMBER, WI_YAMREQ);
+    MUI_DisposeObject(WI_YAMREQ);
+
+    // wake up the application
     set(app, MUIA_Application_Sleep, FALSE);
   }
 
@@ -427,8 +431,14 @@ int StringRequest(char *string, int size, char *title, char *body, char *yestext
    REISSUE_RETURNIDS;
 
    if (ret_code > 0) GetMUIString(string, st_in);
+
+   // remove & dispose the requester object
    DoMethod(G->App, OM_REMMEMBER, wi_sr);
+   MUI_DisposeObject(wi_sr);
+
+   // wake up the application
    set(G->App, MUIA_Application_Sleep, FALSE);
+
    return ret_code;
 }
 ///
@@ -512,7 +522,11 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
       // now lets reissue the collected returnIDs again
       REISSUE_RETURNIDS;
 
+      // remove & dipose the requester object
       DoMethod(G->App, OM_REMMEMBER, wi_fr);
+      MUI_DisposeObject(wi_fr);
+
+      // wake up the application
       set(G->App, MUIA_Application_Sleep, FALSE);
    }
    return folder;
@@ -640,9 +654,14 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     // now lets reissue the collected returnIDs again
     REISSUE_RETURNIDS;
 
+    // remove & dispose the requester object
     DoMethod(G->App, OM_REMMEMBER, wi_ar);
+    MUI_DisposeObject(wi_ar);
+
+    // wake up the application
     set(G->App, MUIA_Application_Sleep, FALSE);
   }
+
   return retpart;
 }
 ///
