@@ -1018,21 +1018,30 @@ static int TR_ConnectPOP(int guilevel)
       UBYTE digest[16];
       int i, j;
 
-      if ((p = strchr(welcomemsg, '<')))
+      // Now we get the APOP Identifier out of the welcome
+      // message
+      if((p = strchr(welcomemsg, '<')))
       {
          strcpy(buf, p);
          if ((p = strchr(buf, '>'))) p[1] = 0;
+
+         // then we send the APOP command to authenticate via APOP
+         strcat(buf, passwd);
+         MD5Init(&context);
+         MD5Update(&context, buf, strlen(buf));
+         MD5Final(digest, &context);
+         sprintf(buf, "%s ", C->P3[pop]->User);
+         for(j=strlen(buf), i=0; i<16; j+=2, i++) sprintf(&buf[j], "%02x", digest[i]);
+         buf[j] = 0;
+         set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendAPOPLogin));
+         if (!TR_SendPopCmd(buf, "APOP", buf, POPCMD_WAITEOL)) { BusyEnd; return -1; }
       }
-      else ER_NewError(GetStr(MSG_ER_NoAPOP), NULL, NULL);
-      strcat(buf, passwd);
-      MD5Init(&context);
-      MD5Update(&context, buf, strlen(buf));
-      MD5Final(digest, &context);
-      sprintf(buf, "%s ", C->P3[pop]->User);
-      for (j=strlen(buf), i=0; i<16; j+=2, i++) sprintf(&buf[j], "%02x", digest[i]);
-      buf[j] = 0;
-      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendAPOPLogin));
-      if (!TR_SendPopCmd(buf, "APOP", buf, POPCMD_WAITEOL)) { BusyEnd; return -1; }
+      else
+      {
+         ER_NewError(GetStr(MSG_ER_NoAPOP), NULL, NULL);
+         BusyEnd;
+         return -1;
+      }
    }
    else
    {
