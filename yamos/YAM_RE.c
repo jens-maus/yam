@@ -132,42 +132,46 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
    // mails and change to there if the user wants
    if (onlynew)
    {
-      struct Folder **flist;
-
-      if (flist = FO_CreateList())
+      if (!getenv("DoNotBotherMe"))
       {
-         int i;
+         struct Folder **flist;
 
-         // look for the current folder in the array
-         for (i = 1; i <= (int)*flist; i++)
+         if (flist = FO_CreateList())
          {
-            if (flist[i] == CurrentFolder)
-               break;
-         }
+            int i;
 
-         // look for first folder with at least one unread mail
-         // and if found read that mail
-         for (i += direction; i <= (int)*flist && i >= 1; i += direction)
-         {
-            if (flist[i]->Type != FT_SEPARATOR && flist[i]->Unread > 0)
+            // look for the current folder in the array
+            for (i = 1; i <= (int)*flist; i++)
             {
-               if (!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_RE_MoveNextFolderReq), flist[i]->Name))
+               if (flist[i] == CurrentFolder)
                   break;
-
-               MA_ChangeFolder(flist[i]);
-               DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-               if (!mail) break;
-               RE_ReadMessage(winnum, mail);
-               break;
             }
+
+            // look for first folder with at least one unread mail
+            // and if found read that mail
+            for (i += direction; i <= (int)*flist && i >= 1; i += direction)
+            {
+               if (flist[i]->Type != FT_SEPARATOR && flist[i]->Unread > 0)
+               {
+                  if (!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_RE_MoveNextFolderReq), flist[i]->Name))
+                     break;
+
+                  MA_ChangeFolder(flist[i]);
+                  DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+                  if (!mail) break;
+                  RE_ReadMessage(winnum, mail);
+                  break;
+               }
+            }
+
+            // beep if no folder with unread mails was found
+            if (i > (int)*flist || i < 1)
+               DisplayBeep(NULL);
+
+            free(flist);
          }
-
-         // beep if no folder with unread mails was found
-         if (i > (int)*flist || i < 1)
-            DisplayBeep(NULL);
-
-         free(flist);
       }
+      else DisplayBeep(NULL);
    }
    else DoMethod(G->App, MUIM_CallHook, &RE_CloseHook, winnum);
 }
