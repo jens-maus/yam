@@ -2755,7 +2755,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
   struct Part *part;
   struct Part *next;
 
-  DB(kprintf("CleanupReadMailData(): %ld\n", windowCleanup);)
+  DB(kprintf("CleanupReadMailData(): %lx %ld\n", rmData, windowCleanup);)
 
   if(windowCleanup && rmData->readWindow)
   {
