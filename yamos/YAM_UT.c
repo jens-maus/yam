@@ -464,16 +464,17 @@ char *StrBufCpy(char *strbuf, char *source)
    long oldlen, newlen;
    char *newstrbuf;
 
-   if (!strbuf) strbuf = AllocStrBuf(strlen(source)+1);
+   if (!strbuf)
+		if(NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
    oldlen = *((long *)(strbuf-sizeof(long)));
    newstrbuf = strbuf;
    for (newlen = oldlen; newlen <= strlen(source); newlen += SIZE_DEFAULT);
    if (newlen != oldlen)
    {
-      newstrbuf = AllocStrBuf(newlen);
       FreeStrBuf(strbuf);
+      newstrbuf = AllocStrBuf(newlen);
    }
-   strcpy(newstrbuf, source);
+   if(newstrbuf) strcpy(newstrbuf, source);
    return newstrbuf;
 }
 ///
@@ -484,13 +485,18 @@ char *StrBufCat(char *strbuf, char *source)
    long oldlen, newlen;
    char *newstrbuf;
 
-   if (!strbuf) strbuf = AllocStrBuf(strlen(source)+1);
+   if (!strbuf)
+		if(NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
    oldlen = *((long *)(strbuf-sizeof(long)));
    newstrbuf = strbuf;
    for (newlen = oldlen; newlen <= strlen(strbuf)+strlen(source); newlen += SIZE_DEFAULT);
    if (newlen != oldlen)
    {
-      newstrbuf = AllocStrBuf(newlen);
+      if(NULL == (newstrbuf = AllocStrBuf(newlen)))
+      {
+			FreeStrBuf(strbuf);
+			return NULL;
+		}
       strcpy(newstrbuf, strbuf);
       FreeStrBuf(strbuf);
    }
