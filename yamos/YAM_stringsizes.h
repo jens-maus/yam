@@ -56,9 +56,9 @@
 #define MAXMV          100
 #define MAXRX           21
 
-#define MAXBCSTDIMAGES   4
+#define MAXBCSTDIMAGES   9
 #define MAXICONS         4
-#define MAXIMAGES       21
+#define MAXIMAGES       26
 #define MAXASL           8
 #define MAXERR          50
 #define MAXUSERS        16

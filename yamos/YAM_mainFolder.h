@@ -87,5 +87,6 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
 void   MA_FreeEMailStruct(struct ExtendedMail *email);
 BOOL   MA_PromptFolderPassword(struct Folder *fo, APTR win);
 void   MA_UpdateIndexes(BOOL initial);
+void   MA_UpdateInfoBar(struct Folder *);
 
 #endif /* YAM_MAINFOLDER_H */

@@ -465,7 +465,6 @@ BOOL Root_New(BOOL hidden)
 void Terminate(void)
 {
    int i;
-   struct Folder **flist;
 
    if (G->CO) { CO_FreeConfig(CE); free(CE); DisposeModule(&G->CO); }
    for (i = 0; i < MAXEA; i++) DisposeModule(&G->EA[i]);
@@ -679,8 +678,10 @@ void Initialise(BOOL hidden)
                                 "status_waitsend","status_error",   "status_hold",    "status_sent",
                                 "status_new",     "status_delete",  "status_download","status_group",
                                 "status_urgent",  "status_attach",  "status_report",  "status_crypt",
-                                "status_signed",  "folder_incoming","folder_outgoing","folder_sent",
-                                "folder_deleted"
+                                "status_signed",
+                                "folder_fold",    "folder_unfold",  "folder_incoming","folder_incoming_new",
+                                "folder_outgoing","folder_outgoing_new",  "folder_deleted", "folder_deleted_new",
+                                "folder_sent"
                               };
    int i;
 

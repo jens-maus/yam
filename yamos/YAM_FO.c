@@ -430,7 +430,7 @@ BOOL FO_LoadTree(char *fname)
                do if (!strcmp(buffer, "@ENDSEPARATOR")) break;
                while (GetLine(fh, buffer, sizeof(buffer)));
                fo.SortIndex = i++;
-               if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST, TAG_DONE)))
+               if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, (TNF_LIST | TNF_NOSIGN) , TAG_DONE)))
                {
                   fclose(fh);
                   return FALSE;
@@ -438,7 +438,7 @@ BOOL FO_LoadTree(char *fname)
             }
             else if (!strncmp(buffer, "@GROUP", 6))
             {
-               long tnflags = (TNF_LIST);
+               long tnflags = (TNF_LIST | TNF_NOSIGN);
 
                fo.Type = FT_GROUP;
                MyStrCpy(fo.Name, Trim(&buffer[7]));
@@ -447,7 +447,7 @@ BOOL FO_LoadTree(char *fname)
                if(GetLine(fh, buffer, sizeof(buffer)))
                {
                   // if it is greater zero then the node should be displayed open
-                  if(atoi(buffer) > 0) tnflags = (TNF_LIST | TNF_OPEN);
+                  if(atoi(buffer) > 0) tnflags = (tnflags | TNF_OPEN);
                }
 
                // now we are going to add this treenode to the list
@@ -857,7 +857,7 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
    folder.Type = FT_GROUP;
    if (StringRequest(folder.Name, SIZE_NAME, GetStr(MSG_MA_NewSeparator), GetStr(MSG_FO_NewSepReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
    {
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, (TNF_LIST | TNF_OPEN), TAG_DONE);
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, (TNF_LIST | TNF_OPEN | TNF_NOSIGN), TAG_DONE);
    }
 }
 MakeHook(FO_NewFolderGroupHook, FO_NewFolderGroupFunc);

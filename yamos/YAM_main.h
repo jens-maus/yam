@@ -77,6 +77,9 @@ struct MA_GUIData
    APTR NL_MAILS;
    APTR TO_TOOLBAR;
    APTR GA_INFO;
+   APTR GR_INFO;
+   APTR BC_INFO;
+   APTR TX_INFO;
    struct MUIP_Toolbar_Description TB_TOOLBAR[18];
 };
 

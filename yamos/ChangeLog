@@ -449,10 +449,10 @@
 
 2001-06-01  Gunther Nikl <gni@gecko.de>
 
-   * created YAM_debug.h with stuff taken from old.h/YAM.h
-   * YAM_FO.c, YAM_MAf.c, YAM_RE.c: use "YAM_debug.h"
-   * YAM_UT.c: lame fix for a MUI header problem with GCC
-   * YAM_md5.c: removed non-breaking spaces
+    * created YAM_debug.h with stuff taken from old.h/YAM.h
+    * YAM_FO.c, YAM_MAf.c, YAM_RE.c: use "YAM_debug.h"
+    * YAM_UT.c: lame fix for a MUI header problem with GCC
+    * YAM_md5.c: removed non-breaking spaces
 
 2001-06-02  Jens Langner <Jens.Langner@htw-dresden.de>
 
@@ -482,3 +482,13 @@
       seems that all works fine.
     * reactivated the CompareHook for the folder listtree. Here we still have to do
       some modifications.
+
+2001-06-05  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added next version of the folder_xxxx images to CVS
+    * included the new folder_xxxx images in the code. Now also alternative images
+      for INCOMING/OUTGOING and DELETED show be loaded and if there is new mail in the
+      folder the image should change accordingly.
+    * added a nice FolderInfoBar above the Listviews. Perhaps we have to make this
+      bar optional, but I think it will fit in the layout if we are going to
+      introduce TearOff.mcc in YAM.

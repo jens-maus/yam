@@ -458,6 +458,58 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
 }
 
 ///
+/// MA_UpdateInfoBar
+//  updates the information bar above the mail listview
+void MA_UpdateInfoBar(struct Folder *folder)
+{
+  struct MA_GUIData *gui = &G->MA->GUI;
+  struct BodyChunkData *bcd = NULL;
+
+  if(!folder) return;
+
+  // set the name of the folder as the info text
+  set(gui->TX_INFO, MUIA_Text_Contents, folder->Name);
+
+  // Prepare the GR_INFO group for adding a new child
+  if(DoMethod(gui->GR_INFO, MUIM_Group_InitChange))
+  {
+    if(gui->BC_INFO)
+    {
+      DoMethod(gui->GR_INFO, OM_REMMEMBER, gui->BC_INFO);
+      MUI_DisposeObject(gui->BC_INFO);
+      gui->BC_INFO = NULL;
+    }
+
+    if(folder->FImage) bcd = folder->FImage;
+    else if(folder->ImageIndex >= 0) bcd = G->BImage[folder->ImageIndex+(MAXIMAGES-MAXBCSTDIMAGES)];
+
+    if(bcd)
+    {
+      gui->BC_INFO = BodychunkObject,
+                        MUIA_FixWidth,             bcd->Width,
+                        MUIA_FixHeight,            bcd->Height,
+                        MUIA_Bitmap_Width,         bcd->Width,
+                        MUIA_Bitmap_Height,        bcd->Height,
+                        MUIA_Bitmap_SourceColors,  bcd->Colors,
+                        MUIA_Bodychunk_Depth,      bcd->Depth,
+                        MUIA_Bodychunk_Body,       bcd->Body,
+                        MUIA_Bodychunk_Compression,bcd->Compression,
+                        MUIA_Bodychunk_Masking,    bcd->Masking,
+                        MUIA_Bitmap_Transparent,   0,
+                        MUIA_InnerBottom,          0,
+                        MUIA_InnerLeft,            0,
+                        MUIA_InnerRight,           0,
+                        MUIA_InnerTop,             0,
+                      End;
+
+      if(gui->BC_INFO) DoMethod(gui->GR_INFO, OM_ADDMEMBER, gui->BC_INFO);
+    }
+
+    DoMethod(gui->GR_INFO, MUIM_Group_ExitChange);
+  }
+}
+
+///
 
 /*** Mail header scanning ***/
 /// MA_NewMailFile
@@ -826,19 +878,32 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
       {
         case FT_GROUP:
         {
-          msg->Array[0] = entry->Name;
+          sprintf(msg->Array[0] = dispfold, "\033o[%d] %s", (msg->TreeNode->tn_Flags & TNF_OPEN) ? 1 : 0, entry->Name);
           msg->Preparse[0] = MUIX_PH;
         }
         break;
 
         default:
         {
-          if (entry->BC_FImage) sprintf(msg->Array[0] = dispfold, "\033o[%d] ", entry->ImageIndex);
-          else if(entry->Type == FT_INCOMING) strcpy(msg->Array[0] = dispfold, "\033o[0] ");
-          else if(entry->Type == FT_OUTGOING) strcpy(msg->Array[0] = dispfold, "\033o[1] ");
-          else if(entry->Type == FT_SENT)     strcpy(msg->Array[0] = dispfold, "\033o[2] ");
-          else if(entry->Type == FT_DELETED)  strcpy(msg->Array[0] = dispfold, "\033o[3] ");
-          else strcpy(msg->Array[0] = dispfold, " ");
+          BOOL new_mail = FALSE;
+
+          // check if there is new mail
+          if(entry->New+entry->Unread) new_mail = TRUE;
+
+          if (!entry->BC_FImage)
+          {
+            if(entry->Type == FT_INCOMING)      entry->ImageIndex = new_mail ? 3 : 2;
+            else if(entry->Type == FT_OUTGOING) entry->ImageIndex = new_mail ? 5 : 4;
+            else if(entry->Type == FT_DELETED)  entry->ImageIndex = new_mail ? 7 : 6;
+            else if(entry->Type == FT_SENT)     entry->ImageIndex = 8;
+            else
+            {
+              strcpy(msg->Array[0] = dispfold, " ");
+              entry->ImageIndex = -1;
+            }
+          }
+
+          if(entry->ImageIndex >= 0) sprintf(msg->Array[0] = dispfold, "\033o[%d] ", entry->ImageIndex);
 
           if (strlen(entry->Name) > 0) strcat(dispfold, entry->Name);
           else sprintf(dispfold, "(%s)", FilePart(entry->Path));
@@ -847,7 +912,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 
           if (entry->LoadedMode)
           {
-            if (entry->New+entry->Unread) msg->Preparse[0] = MUIX_PH;
+            if (new_mail) msg->Preparse[0] = MUIX_PH;
             sprintf(msg->Array[1] = disptot, "%d", entry->Total);
             sprintf(msg->Array[2] = dispunr, "%d", entry->Unread);
             sprintf(msg->Array[3] = dispnew, "%d", entry->New);

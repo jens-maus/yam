@@ -149,11 +149,14 @@ MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
 //  Builds help bubble for folder list
 HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
 {
-   static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
-   char *sh = NULL;
-   struct Folder *fo = FO_GetCurrentFolder();      
-   if (fo->Type != FT_GROUP) SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
-   set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
+  static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
+  char *sh = NULL;
+  struct Folder *fo = FO_GetCurrentFolder();
+  if (fo->Type != FT_GROUP) SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
+  set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
+
+  // Now we update the InfoBar accordingly
+  MA_UpdateInfoBar(fo);
 }
 MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
 
@@ -2062,8 +2065,6 @@ HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct MUIP_NListtree_CompareMes
    struct Folder *entry2 = (struct Folder *)ncm->TreeNode2->tn_User;
    int cmp = 0;
 
-   kprintf("CMP: %ld\n", cmp);
-
    if (ncm->SortType != MUIV_NList_SortType_None)
    {
       switch (ncm->SortType & MUIV_NList_TitleMark_ColMask)
@@ -2078,7 +2079,6 @@ HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct MUIP_NListtree_CompareMes
       if (ncm->SortType & MUIV_NList_TitleMark_TypeMask) cmp = -cmp;
    }
 
-   kprintf("CMP: %ld\n", cmp);
    return cmp;
 }
 MakeHook(MA_LV_FCmp2Hook, MA_LV_FCmp2Func);
@@ -2401,14 +2401,30 @@ struct MA_ClassData *MA_New(void)
                Child, data->GUI.BC_STAT[15] = MakeStatusFlag("status_crypt"),
                Child, data->GUI.BC_STAT[16] = MakeStatusFlag("status_signed"),
                // Create the default folder image objects
-               Child, data->GUI.BC_FOLDER[0] = MakeFolderImage("folder_incoming"),
-               Child, data->GUI.BC_FOLDER[1] = MakeFolderImage("folder_outgoing"),
-               Child, data->GUI.BC_FOLDER[2] = MakeFolderImage("folder_sent"),
-               Child, data->GUI.BC_FOLDER[3] = MakeFolderImage("folder_deleted"),
+               Child, data->GUI.BC_FOLDER[0] = MakeFolderImage("folder_fold"),
+               Child, data->GUI.BC_FOLDER[1] = MakeFolderImage("folder_unfold"),
+               Child, data->GUI.BC_FOLDER[2] = MakeFolderImage("folder_incoming"),
+               Child, data->GUI.BC_FOLDER[3] = MakeFolderImage("folder_incoming_new"),
+               Child, data->GUI.BC_FOLDER[4] = MakeFolderImage("folder_outgoing"),
+               Child, data->GUI.BC_FOLDER[5] = MakeFolderImage("folder_outgoing_new"),
+               Child, data->GUI.BC_FOLDER[6] = MakeFolderImage("folder_deleted"),
+               Child, data->GUI.BC_FOLDER[7] = MakeFolderImage("folder_deleted_new"),
+               Child, data->GUI.BC_FOLDER[8] = MakeFolderImage("folder_sent"),
                Child, data->GUI.ST_LAYOUT = StringObject,
                   MUIA_ObjectID, MAKE_ID('S','T','L','A'),
                   MUIA_String_MaxLen, SIZE_DEFAULT,
                End,
+            End,
+            Child, data->GUI.GR_INFO = HGroup,
+              MUIA_InnerTop,    3,
+              MUIA_InnerBottom, 3,
+              MUIA_InnerLeft,   3,
+              MUIA_InnerRight,  3,
+              MUIA_Background,  MUII_HSHADOWSHADOW,
+              Child, data->GUI.TX_INFO = TextObject,
+                MUIA_Font,          MUIV_Font_Big,
+                MUIA_Text_PreParse, "\0338\033b",
+              End,
             End,
             Child, HGroup,
                MUIA_Group_Spacing, 1,
