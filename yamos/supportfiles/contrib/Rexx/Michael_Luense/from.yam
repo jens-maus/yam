@@ -1,0 +1,16 @@
+/*******************************************************************************/
+/* Schreibt eine Log datei von allen mails vom Absender im gewählten Postfach  */
+/* © Michael Lünse <m.luense@t-online.de> 12-Juni-2000                         */
+/*******************************************************************************/
+
+options results
+address 'YAM'
+'GetMailInfo Act'
+'GetFolderInfo Max'
+n=result
+do m=0 to n-1
+'SetMail' m
+call open(tmp,'Ram:Von.Log','W')
+MAILINFO STEM mi.
+call writeln(tmp,""mi.From"")
+end

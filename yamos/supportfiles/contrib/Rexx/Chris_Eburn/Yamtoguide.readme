@@ -1,0 +1,48 @@
+Short: Converts Yam Folders to AmigaGuide.
+Uploader: scott@online.u-net.com (Scott)
+Author:   scott@online.u-net.com (Scott)
+Type:     dev/rexx
+
+
+Converts YAM V2 Folders to AmigaGuide format. i developed this to rexx program
+create the blitz list mailing list Guide. which was then modified by Chris Eburn.
+
+you may midifiy this as you see fit as long as you give the origanl author(s)
+creadit.
+
+--------------------------------------------------------------------------------
+
+YamToGuide  v1.1ß (12.08.98) ©Scott Beardwood
+
+Modified from the original at the request of Scott Beardwood
+by Chris Eburn <ceburn@midcoast.com.au>
+
+There are two simple ways to use this script (and several more less simple)
+
+1) rx YamToGuide.rexx [[+f]FolderId] [[+t]GuideTitle]
+2) from the Yam rexx menu  <-- see the YAM manual for this optimal technique
+
+The two variables of FolderId and GuideTitle are optional.mEither position 
+OR plus commands (+lowercase) may be used to specify which variable[s] have 
+been given.
+
+
+If no Folder or Title is supplied then the current folder and a guide
+with a title based on that folder name will be processed
+
+
+This script was developed on an A2000/030 25Mhz machine with 9Megs RAM
+and as such the fully commented nature has little affect on execution speed
+a reduction in loading time would be achieved by removing comment BUT
+this will NOT increase the speed of execution once running
+
+
+
+Any questions about this script may be directed to either myself, Chris
+Eburn (ceburn@midcoast.com.au>, or Scott Beardwood <scott@online.u-net.com>.
+
+The copyright for this script belongs to Scott Beardwood who had the
+original idea/need and created the original logic flow. I retain the
+right to use individual program components as I see fit.
+
+THIS IS A LARGLY UNTESTED BETA RELEASE, USE IT AT YOUR OWN RISK.

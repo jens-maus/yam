@@ -1,0 +1,90 @@
+/*********************************************************/
+/* vcardtoadr.yam                           version 1.01 */
+/* (c)opyright        21-April-2000 <Roy_Bartsch@gmx.de> */
+/* last changes       24-April-2000 <Roy_Bartsch@gmx.de> */
+/*                                                       */
+/* creates an addressbookentry by doubleclicking on an   */
+/* attached `VCARD`                                      */
+/*                                                       */
+/* USAGE:                                                */
+/* Create a new MIME type `text/x-vcard` with `.vcf` as  */
+/* extension and `rx [your path]/vcardtoadr.yam` as      */
+/* executable. That`s it :-)                             */
+/*********************************************************/
+
+options RESULTS
+
+PARSE ARG vcard
+
+vcard=SUBSTR(vcard,2,LENGTH(vcard)-2)
+
+address 'YAM'
+
+call open(tmp,vcard,'R')
+DO WHILE ~EOF(tmp)
+   zeile=readln(tmp)
+   trenn=POS(":",zeile)
+   IF LEFT(zeile,2)="N:" THEN NEWNAME=SUBSTR(zeile,3)
+   IF LEFT(zeile,3)="FN:" THEN NEWNAME=SUBSTR(zeile,4)
+   IF LEFT(zeile,3)="TEL" THEN NEWPHONE=SUBSTR(zeile,trenn+1)
+   IF UPPER(LEFT(zeile,3))="PGP" THEN NEWPGP=STRIP(SUBSTR(zeile,trenn+1))
+   IF LEFT(zeile,8)="ADR;HOME" THEN DO
+      firstpos=POS(";",zeile,trenn)
+      streetpos=POS(";",zeile,firstpos+1)+1
+      citypos=POS(";",zeile,streetpos)+1
+      blpos=POS(";",zeile,citypos)+1
+      plzpos=POS(";",zeile,blpos)+1
+      countrypos=POS(";",zeile,plzpos)+1
+      NEWSTREET=SUBSTR(zeile,streetpos,citypos-streetpos-1)
+      NEWCITY=SUBSTR(zeile,plzpos,countrypos-plzpos-1)"/"SUBSTR(zeile,citypos,blpos-citypos-1)
+      NEWCOUNTRY=SUBSTR(zeile,blpos,plzpos-blpos-1)"/"SUBSTR(zeile,countrypos)
+      END
+   IF LEFT(zeile,4)="BDAY" THEN DO
+      jahr=SUBSTR(zeile,6,4)
+      monat=SUBSTR(zeile,10,2)
+      tag=SUBSTR(zeile,12,2)
+      NEWBIRTHDATE=tag""monat""jahr
+      END
+   IF LEFT(zeile,5)="EMAIL" THEN DO
+      prefpos=POS(";",zeile,trenn)
+      IF prefpos>0 THEN DO
+         internetpos=POS(";",zeile,prefpos+1)+1
+         NEWEMAIL=SUBSTR(zeile,trenn+1,POS(";",zeile,trenn+1)-trenn-1)
+         NEWHOMEPAGE=SUBSTR(zeile,internetpos)
+         END
+      ELSE NEWEMAIL=SUBSTR(zeile,trenn+1)
+      END
+END
+call close(tmp)
+IF VERIFY(NEWNAME,";",'M') THEN DO
+   tname=TRANSLATE(NEWNAME," ",";")
+   initial=LEFT(WORD(tname,2),1)
+   lastname=WORD(tname,1)
+   END
+ELSE DO
+   initial=LEFT(NEWNAME,1)
+   lastname=WORD(NEWNAME,WORDS(NEWNAME))
+   END
+NEWALIAS=initial"_"lastname
+IF WORDS(NEWNAME)=1 THEN NEWALIAS=NEWNAME
+ADDRFIND STEM adr. NEWEMAIL
+found=ADR.ALIAS.COUNT
+falias=adr.alias.0
+nz=D2C(10)
+IF found~="ADR.ALIAS.COUNT" THEN DO
+   question="An entry "UPPER(NEWEMAIL)" does already exists as alias "UPPER(falias)". Should I overwrite it?"
+   answers="_Yes|_No"
+   REQUEST '"'question'"' '"'answers'"'
+   choice=RESULT
+   IF choice=1 THEN DO
+      ADDRGOTO falias
+      ADDREDIT NEWALIAS '"'NEWNAME'"' NEWEMAIL '"'NEWPGP'"' '"'NEWHOMEPAGE'"' '"'NEWSTREET'"' '"'NEWCITY'"' '"'NEWCOUNTRY'"' '"'NEWPHONE'"' "VCARD" NEWBIRTHDATE
+      EXIT
+      END
+   ELSE EXIT
+   END
+
+ADDRNEW
+ADDREDIT NEWALIAS '"'NEWNAME'"' NEWEMAIL '"'NEWPGP'"' '"'NEWHOMEPAGE'"' '"'NEWSTREET'"' '"'NEWCITY'"' '"'NEWCOUNTRY'"' '"'NEWPHONE'"' "VCARD" NEWBIRTHDATE
+
+EXIT

@@ -1,0 +1,52 @@
+Short:    Create and attach an HTML version to a Yam 2.0 mail
+Uploader: dwhiting@europa.com  (Dick Whiting)
+Author:   dwhiting@europa.com  (Dick Whiting)
+Type:     comm/mail
+Version:  v1.6 requires Yam2.x by Marcel Beck
+
+                 Copyright ©1999 by Dick Whiting                      
+
+
+  Standard Disclaimer: I wrote it, it works for me, I don't guarantee           
+  that it will do anything productive for anyone else, etc. etc. ;-)            
+
+  HOWEVER, if you do find a use for it: I homeschool my kids and they would
+  love a postcard from where EVER you live. Instant Geography Lesson;)          
+
+  Postcards:    Dick Whiting
+                28590 S. Beavercreek Rd.
+                Mulino, Oregon 97042
+                USA                                                             
+
+  Email:        Dick Whiting <dwhiting@europa.com>
+  Web  :        http://www.europa.com/~dwhiting/
+
+
+What it does:
+
+   Create and attach an HTML version of the selected email. Support of Yam
+   text styling, quoting, highlighted URL's, and Mailto: are supported.
+
+   It has a _multitude_ of tailoring options to control the final look.
+   Read the comments within the script. Feel free to write me for help.
+ 
+Installation: 
+
+   Unpack files.
+   Place them with your other Yam scripts
+   Read the comments in the script and modify values to your taste. 
+   Edit HEFY.sig -- knowing a bit of HTML helps.
+   Add the script to either the Yam Arexx menu or to an URB button
+
+To use it:
+
+   1) Select a mail in your Outgoing folder.
+   2) Start script
+   3) Wait until edit window closes.
+   4) View attachment by double-clicking on the attachment.
+
+
+Dick
+
+Oct 06, 1999
+

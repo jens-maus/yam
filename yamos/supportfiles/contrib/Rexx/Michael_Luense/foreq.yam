@@ -1,0 +1,14 @@
+/************************************************/
+/* Gibt in einen Requester die Postfachinfo aus */
+/* V1.01 © Michael Lünse <m.luense@t-online.de> */
+/* Benötigt YAM 2.xx                            */
+/* Benutznug: Script in den YAM Rexx Ordner     */
+/* kopieren,Postfach auswählen,Script starten   */
+/* Mailware                                     */
+/************************************************/
+
+options results
+address 'YAM'
+FOLDERINFO STEM fi.
+'Request "Interne Nummer: P[2]'fi.number'P[1]*NPostfach:P[2]'fi.name'P[1]*nPfad: P[2]'fi.path'P[1]*nMails: P[2]'fi.total'P[1]*nDavon neu: P[2]'fi.new'P[1]*nUngelesen: P[2]'fi.unread'P[1]*nPostfach Größe: P[2]'fi.size'P[1] bytes""_OK"'
+EXIT

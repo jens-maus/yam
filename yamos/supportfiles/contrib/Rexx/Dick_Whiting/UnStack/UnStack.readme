@@ -1,0 +1,67 @@
+Short:    Separate joined email for Yam
+Uploader: dwhiting@europa.com  (Dick Whiting)
+Author:   dwhiting@europa.com  (Dick Whiting)
+Type:     comm/mail
+Version:  Should work for any Yam version
+
+                 Copyright ©1999 by Dick Whiting                      
+
+
+  Standard Disclaimer: I wrote it, it works for me, I don't guarantee           
+  that it will do anything productive for anyone else, etc. etc. ;-)            
+
+  HOWEVER, if you do find a use for it: I homeschool my kids and they would
+  love a postcard from where EVER you live. Instant Geography Lesson;)          
+
+  Postcards:    Dick Whiting
+                28590 S. Beavercreek Rd.
+                Mulino, Oregon 97042
+                USA                                                             
+
+  Email:        Dick Whiting <dwhiting@europa.com>
+  Web  :        www.europa.com/~dwhiting/
+
+
+What they do:
+
+   These scripts will separate a 'joined' file of email into individual 
+   files that are useable by YAM.
+
+   UnStack1.rexx ASSUMES that a new mail will start with one of the 
+   following lines:                                                     
+                                                                     
+     Return-Path:                                                    
+     Received:                                                       
+
+   UnStack2.rexx ASSUMES that a new mail will start with the following line:                                                     
+                                                                     
+     From:
+
+Installation: 
+
+   Unpack it.
+   Place them with your other Yam scripts
+
+To use it:
+
+   1) Use Yam to create new folders, one for each of the input files.
+      e.g. Yam:junk1, Yam:junk2, ....
+   
+   2) Determine WHICH script to use for the joined file by examining
+      the file in a text viewer or editor.
+
+   3) Run the script from a CLI against the first input file with the
+   output-directory being your first new Yam folder.
+   
+   4) In YAM go to that directory and do an Update Index
+   
+   5) If all goes well, you can repeat steps 2 - 4 for each additional
+   input-file output-directory pair.
+   
+   WARNING!!! make sure you DON'T run with the same OUTPUT directory twice. The
+   existing files will be replaced.  
+   
+
+Dick
+
+Sep 09, 1999

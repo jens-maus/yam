@@ -1,0 +1,50 @@
+Short:    Remove duplicate mails from Yam2.x folder
+Uploader: dwhiting@europa.com  (Dick Whiting)
+Author:   dwhiting@europa.com  (Dick Whiting)
+Type:     comm/mail
+Version:  Works ONLY with Yam 2.x
+
+                 Copyright ©1998 by Dick Whiting                      
+
+
+  Standard Disclaimer: I wrote it, it works for me, I don't guarantee           
+  that it will do anything productive for anyone else, etc. etc. ;-)            
+
+  HOWEVER, if you do find a use for it: I homeschool my kids and they would
+  love a postcard from where EVER you live. Instant Geography Lesson;)          
+
+  Postcards:    Dick Whiting
+                28590 S. Beavercreek Rd.
+                Mulino, Oregon 97042
+                USA                                                             
+
+  Email:        Dick Whiting <dwhiting@europa.com>
+  Web  :        www.europa.com/~dwhiting/
+
+
+What they do:
+
+   DeDup.rexx locates duplicate mail in your Yam2.x folder and moves them
+   to your Deleted folder. See comments in script for identifying duplicates.
+
+   DeSim.rexx locates similar mail in your Yam2.x folder and moves them
+   to your Deleted folder. See comments in script for identifying 'similar'.
+
+Installation: 
+
+   Unpack arexxqsort.lha and place quicksort in Sys:rexxc
+   Place DeDup.rexx and DeSim.rexx with your other Yam2.x scripts
+   Add the script(s) to either the Yam Arexx menu or to an URB button
+
+
+To use it:
+
+   1) Open the folder in Yam2.x
+   2) Start script
+   3) Wait....
+   4) Check the Deleted folder for the ones moved.
+
+Dick
+
+Sep 10, 1998
+

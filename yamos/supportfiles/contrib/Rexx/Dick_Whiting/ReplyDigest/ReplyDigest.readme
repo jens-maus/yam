@@ -1,0 +1,187 @@
+Short:    Reply to a selected message within a digest
+Uploader: dwhiting@europa.com  (Dick Whiting)
+Author:   dwhiting@europa.com  (Dick Whiting)
+Type:     comm/mail
+Version:  v1.0 requires Yam2.x by Marcel Beck
+
+                 Copyright ©1999 by Dick Whiting                      
+
+
+  Standard Disclaimer: I wrote it, it works for me, I don't guarantee           
+  that it will do anything productive for anyone else, etc. etc. ;-)            
+
+  HOWEVER, if you do find a use for it: I homeschool my kids and they would
+  love a postcard from where EVER you live. Instant Geography Lesson;)          
+
+  Postcards:    Dick Whiting
+                28590 S. Beavercreek Rd.
+                Mulino, Oregon 97042
+                USA                                                             
+
+  Email:        Dick Whiting <dwhiting@europa.com>
+  Web  :        http://www.europa.com/~dwhiting/
+
+
+What it does:
+
+   Allows you to reply to an individual posting within a digest format.   
+   Selection is via a standard Yam requester with buttons corresponding
+   to the displayed index of mail within the digest.
+
+   It has a _multitude_ of tailoring options for parsing digests.
+   Read the comments within the script and below. Feel free to write me for help.
+ 
+Installation: 
+
+   Unpack files.
+
+   Place them with your other Yam scripts
+
+   Adjust the variable MAXLINES for your screen size. This should be a multiple
+   of two, since many indices use two lines per entry. Default should work fine.
+
+   Set variable DELETETEMP=0 if you DON'T want temporary files deleted.
+
+   Set variable OUTFOLDER to the NUMBER of your Outgoing folder. This is
+   only necessary if you have changed the order of your default folders.
+
+   It is preconfigured to handle these digests:
+
+      All      digests from onelist.com 
+      All      digests from egroups.com
+     *I-AMIGA  digest  from LISTSERV.ACSU.BUFFALO.EDU
+     *YAM      digest  from tu-clausthal.de
+     
+
+    * You need to set your listserv options to DIGESTS and MIME for these
+      to work properly. Without MIME set, parsing individual messages is
+      prone to error. These same definitions will probably work for other
+      listserv digests besides Yam and I-Amiga.
+
+      Additional digest support can be added by adding more definitions
+      within the script. Make sure that you update digest.0 for the 
+      correct count of definitions and that the definitions have unique
+      and consecutive numbering starting from 1.
+
+      Example digest.1.replyto=
+                .
+                .   (rest of definition for digest 1)
+                .
+              digest.2.replyto=
+                .
+                .   (rest of definition for digest 2)
+                .
+              digest.n.replyto=
+                .
+                .   (rest of definition for digest n)
+                .
+
+   Add the script to either the Yam Arexx menu or to an URB button
+
+To use it:
+
+   1) Select, or while reading, a digest...
+   2) Start script
+   3) Select message to reply to from requester
+   4) Handle as you normally would in Yam.
+
+
+Meaning of digest definition fields:
+
+
+   I know that this may be a bit overwhelming for some users. If you have any
+   problems configuring a new digest, feel free to email me a copy of the 
+   digest that you're trying to define and I'll help you set up the definition.
+
+digest.n.replyto="@onelist.com"
+digest.n.from=""                            
+
+   The script uses this for the first test of which digest is being processed.
+   Set one OR the other for the correct sending address.
+
+   If ALL digests from the same domain name use the same format, then you can
+   just use the @xxxxx.yyyy format. If different digests from the same domain
+   use different formats, then you will need to use zzzz@xxxxx.yyyy format.
+
+   Most digests should have digest.n.replyto set and digest.n.from will be =""
+
+digest.n.keyfld="Subject"                   
+
+   Next test for which digest is being processed. This says to look in the
+   Subject: line for a keyword. The keyword(s) should be something common
+   to ALL digests to be processed using this definition.
+
+   Only keyfld="Subject" is currently implemented (haven't found a need for others)
+
+digest.n.keyval="Digest Number"             
+
+   The keyword(s) to look for in the digest.n.keyfld
+
+digest.n.sindx="Topics in today's digest:"  
+
+   Character string that appears before the digest Index entries.
+
+digest.n.pindx=1                            
+
+   Type of index that the digest provides.
+   
+   1 = Index lists ALL messages AND numbers them from 1            
+   2 = Index lists ALL messages but does NOT number them from 1 OR 
+       does NOT number them.                                       
+   3 = Index lists MULTIPLE messages as a single entry (i.e. Yam,I-Amiga,...)             
+
+digest.n.eindx=""                           
+
+   Line indicatating the END of the index. Usually this is a null line.
+
+digest.n.lindx=2                            
+
+   Number of lines per index entry. Most have a subject followed by a line
+   showing the sender of the posting, but some combine it all into 1 line.
+
+digest.n.ptype=1                            
+
+   1 = Message divider has an index number STARTING from 1 in it        
+   2 = Must COUNT occurences of string to find message start (Date: ) 
+
+digest.n.divs="Message: #"                  
+
+   Line used to identify the start of a message. If the divider lines include
+   an index number starting with 1 you can use '#' within the divider string
+   to show where the posting number occurs.
+
+   If digest.n.divs='MIME' the script will expect to find a boundary=xxxxx
+   statement within the digest header and will use the defined boundary as the
+   divider between messages. 
+                                            
+digest.n.deldiv=1                           
+                                            
+   Number of lines to skip between the divider and the message start. 
+   This includes the divider line. Some digests have to be defined using values
+   in the posters header, such as "Date:    " to locate the start of a message.
+   In these cases, set digest.n.deldiv=0 to keep from deleting any of that
+   information.
+                                            
+   If 'MIME' was specified for digest.n.divs, then this will be ignored.
+
+digest.n.ecomp=1                            
+
+   Type of compare to use for locating the last line of a posting message.
+
+   1 = Ending line EQUALS this value                    
+   2 = Ending line CONTAINS this value (make it as UNIQUE as possible) 
+
+   If 'MIME' was specified for digest.n.divs, then this will be ignored.
+
+digest.n.ends=copies("_",79)                
+
+   Character string that indicates the end of a posting message.
+   You can use a string within double quotes or valid ARexx code.
+   The example would look for a line consisting of 79 underscore characters.
+
+   If 'MIME' was specified for digest.n.divs, then this will be ignored.
+   
+Dick
+
+Nov 05, 1999
+

@@ -1,0 +1,72 @@
+
+
+
+                       YAM - Croatian charset translation
+                Addition to WarpHRII - Croatian font localization
+
+
+
+--------- ---------
+HRVATSKI: CROATIAN:
+--------- ---------
+
+ Koristite ove prijevode obavezno, jer s time dobijate pravilan HEADER u YAM-u,
+tako da vaši prijatelji s drugih platformi mogu èitati vašu poštu kako je vi
+vidite.
+
+
+ Uputa:
+
+ · U CROSCII æete rijetko trebati, npr. ako redovito šaljete poruke na BBS-ove
+    preko interneta, i to ako primalac koristi CROSCII fontove
+ · U ASCII æete vjerojatno rijetko trebati, iz sliènog razloga. Ako se dvoumite
+    izmeðu ASCII i CROSCII, izaberite ASCII, neæete pogriješiti
+ · Fontove za ove charsete naravno možete naæi na WWWWarpu;
+    http://islands.zesoi.fer.hr/~dpuljiz/warp, a tamo kliknite na [Kanta]
+ · Latin2 su fontovi s ekstenzijom '-LII' iz iste arhive, Win1250 su fontovi bez
+    ekstenzije, i oni se koriste po defaultu
+ · Preporuka: stavite Latin2 -> Win1250, ili Latin2 -> Win1250 što znaèi da i vi
+    možete èitati, i vaši frendovi na drugim platformama (najvjerojatnije)
+
+
+--------- ---------
+ENGLISH:  ENGLESKI:
+--------- ---------
+
+ You should use this charsets translationa, since you get regular HEADER in YAM
+outgoing mail, and this way you make sure your ‘other-platform’ friends may read
+your mail as you see it.
+
+
+ Usage:
+
+ · To CROSCII option; rarely used, i.e. in case you send your messges to BBS'
+    overt the internet on regular (daily) basis, in addition to that,
+    recipient has to use CROSCII fonts
+ · To ASCII option; same as above, but if you're in doubt which one to use, I
+    suggest you go for ASCII, this way you cannot go wrong about it
+ · All the fonts you need you got on WWWWarp site;
+               http://islands.zesoi.fer.hr/~dpuljiz/warp,
+    click at [Kanta], and follow the links outthere
+ · Latin2 are the fonts w/ extension '-LII' from archive above, Win1250 are
+    normal fonts, and they are used by default
+ · Advised: use Latin2 -> Win1250, or Latin2 -> Win1250
+
+
+
+YAM:__________________________________________________________________freeware
+
+ YAM: http://www.yam.ch
+ EM@: support@yam.ch
+ AUT: Marcel Beck <mbeck@dplanet.ch>
+
+
+WarpHRII:_____________________________________________________________freeware
+
+ EM@: dpuljiz@zesoi.fer.hr, dalibor.puljiz@zg.tel.hr, ratedrr@usa.net
+ URL: http://islands.zesoi.fer.hr/~dpuljiz               ICQ: 2463483
+ ORG: WARP - Croatian Amiga Magazine             CTY: Croatia, Europe
+
+  I asked Jesus, "How much do you love me?"...
+  "This much," He answered, then He stretched out his arms, and died.
+

@@ -1,0 +1,185 @@
+/* print.yam - Prints ansi YAM messages via ARexx interface   */
+/* Requires YAM  */
+
+/************************************************** Printer Codes */
+
+    ascii.lf  = '0A'x
+    ascii.cr  = '0D'x
+    ascii.esc = '1b'x
+
+    csi = '1B5B'x
+    ansi.SBold = csi || '1m'
+    ansi.EBold = csi || '22m'
+    ansi.SItal = csi || '3m'
+    ansi.EItal = csi || '23m'
+    ansi.SUlin = csi || '4m'
+    ansi.EUlin = csi || '24m'
+
+    ansi.SColr = csi || '41m'
+    ansi.EColr = csi || '40m'
+
+    ansi.Normal_pitch   = csi || "0w"
+    ansi.SElite_pitch   = csi || "2w"
+    ansi.EElite_pitch   = csi || "1w"
+    ansi.SConds_pitch   = csi || "4w"
+    ansi.EConds_pitch   = csi || "3w"
+    ansi.Letter_Quality = csi || '2""m'
+
+
+/************************************************** Start of code */
+parse arg output_file_name
+if arg() <1 THEN output_file_name = "PRT:"
+
+
+OPTIONS RESULTS
+ADDRESS YAM
+
+base_filename = "t:"
+ext_filename  = "-print.msg"
+
+GetSelected STEM selected.                      /* Get list of selected messages */
+c = 0
+DO i = 0 TO selected.NUM.COUNT-1                /* Loop through selected mails */
+   SetMail selected.NUM.i                       /* Set current message */
+   MailRead QUIET                               /* Decode message in background */
+   c = c+1                                      /* Increase filename counter */
+   save_name=base_filename || c || ext_filename
+   'ReadSave FILENAME "'save_name'" OVERWRITE'  /*  Save visible part to T: */
+   ReadClose                                    /* Finish reading */
+
+   CALL printmail(save_name,output_file_name)
+
+END
+EXIT
+
+
+
+
+/************************************************** Print Line Procedure */
+/* This handles printing the whole mail message line by line             */
+/*************************************************************************/
+printmail: PROCEDURE EXPOSE ansi. ascii.
+  arg in_filename,out_filename
+
+    /************************************************** default print formats */
+    printer_reset= ansi.Letter_Quality  ansi.SElite_pitch
+    BaseInDent   = "   "
+    HeadInDent   = BaseInDent || "     "
+
+    Shead_text   = ansi.SBold || ansi.Normal_pitch || HeadInDent
+    Ehead_text   = ansi.EBold
+    Lhead_text   = 70
+
+    BInDent      = BaseInDent || " "
+    SBody_text   = ansi.SElite_pitch || BInDent
+    EBody_text   = ansi.EElite_pitch
+    LBody_text   = 80
+
+    QInDent      = BInDent     || "    "
+    SQuote_text  = ansi.SConds_pitch || QInDent
+    EQuote_text  = ansi.EConds_pitch
+    LQuote_text  = 95
+
+  line_count = 0
+
+  if open(output, out_filename,"WRITE") THEN
+    DO
+      CALL printline(" ", printer_reset  , " ",80 )
+      IF open(mailfile,in_filename,"READ") THEN
+        DO
+          do while ~EOF(mailfile)
+            previous_mail_line = current_mail_line
+            current_mail_line  = readln(mailfile)
+            line_count = line_count + 1
+            Umail_line = UPPER(current_mail_line)
+
+            parse VAR current_mail_line htitle ": " hitem
+
+            if (index(Umail_line,"FROM:") ~=0) & (line_count < 12) THEN                                  /* Header case */
+              CALL printline( Shead_text,  htitle||":       "   hitem , Ehead_text, Lhead_text)
+            else if (index(Umail_line,"TO:") ~=0) & (line_count < 12) THEN
+              CALL printline( Shead_text,  htitle||":         " hitem , Ehead_text, Lhead_text)
+            else if (index(Umail_line,"DATE:") ~=0) & (line_count < 12) THEN
+              CALL printline( Shead_text,  htitle||":       "   hitem , Ehead_text, Lhead_text)
+            else if (index(Umail_line,"SUBJECT:") ~=0) & (line_count < 12) THEN
+              CALL printline( Shead_text,  htitle||":    "      ansi.SUlin || hitem || ansi.EUlin , Ehead_text, Lhead_text)
+            else if (index(Umail_line,"REAL NAME:") ~=0) & (line_count < 12) THEN
+              CALL printline( Shead_text,  htitle||":  "        hitem , Ehead_text, Lhead_text)
+            else if (index(Umail_line,"DESCRIPTION:") ~=0) & (line_count < 12) THEN
+              CALL printline( Shead_text,  htitle||":"          hitem , Ehead_text, Lhead_text)
+            else if (index(Umail_line,"CC:") ~=0) & (line_count < 12) THEN
+              CALL printline( Shead_text,  htitle||":         " hitem , Ehead_text, Lhead_text)
+            else
+              do                                                                                         /* Body case */
+                if left(strip(current_mail_line),1) ~= ">" THEN
+                  CALL printline( SBody_text ,  current_mail_line, EBody_text , LBody_text )
+                else
+                  DO                 /* DO QUOTED TEXT */
+                    if (left(previous_mail_line,1) ~= ">") & LENGTH(previous_mail_line)>1 THEN CALL printline( " " , " ", " ", LQuote_text)
+                    ql = get_quote_level(current_mail_line)
+                    sq = ansi.SBold || ">" || COPIES("  -->",ql-1) || ansi.EBold || " "
+                    CALL printline( SQuote_text || sq, get_quoted_text(current_mail_line), EQuote_text, LQuote_text - (ql*5))
+                  END
+              end
+
+          end
+          CALL close (mailfile)
+        END
+      else
+        say "error in opening" in_filename
+
+      CALL close (output)
+    END
+  else
+    say "error in opening output file" out_filename
+
+
+return
+
+
+
+/************************************************** Print Line Procedure */
+/* This handles line wraps                                               */
+/*************************************************************************/
+printline: PROCEDURE EXPOSE output
+  parse arg Startline,linetoprint,Endline,max_len
+
+  if LENGTH(linetoprint) > max_len THEN
+    DO
+      firstpart = left(linetoprint,max_len)
+      endofline = lastpos(" ", firstpart)
+
+      CALL writeln(output, Startline || left(linetoprint,endofline) || Endline)
+
+      if substr(linetoprint,endofline+1) ~= "" THEN CALL printline(Startline,"  "||SUBSTR(linetoprint,endofline+1),Endline,max_len)
+    END
+  else
+    CALL writeln(output, Startline || linetoprint || Endline)
+
+return
+
+
+/********************************************* get quoted text Procedure */
+/* This handles quoted text indents                                      */
+/*************************************************************************/
+get_quoted_text : PROCEDURE
+  parse arg line
+
+  line = STRIP(line)
+
+  if left(line,1) ~= ">" THEN return strip(line)
+  else RETURN get_quoted_text(substr(line,2))
+
+
+/********************************************* get quote level procedure */
+/* This retuns the quoted level                                          */
+/*************************************************************************/
+get_quote_level : PROCEDURE
+  parse arg line
+
+  line = STRIP(line)
+
+  if left(line,1) ~= ">" THEN RETURN 0
+  else                        RETURN 1 + get_quote_level(substr(line,2))
+
+

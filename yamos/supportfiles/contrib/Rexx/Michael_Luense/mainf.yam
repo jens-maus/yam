@@ -1,0 +1,11 @@
+/************************************************************/
+/* Gibt in einen Requester Infos über die gewählte mail aus */
+/* © Michael Lünse <m.luense@t-online.de> 12-Juni-2000      */
+/************************************************************/
+
+
+options results
+address 'YAM'
+MAILINFO STEM mi.
+'Request "Mail steht an Position P[2]'mi.INDEX'P[1]*nVon P[2]'mi.FROM'P[1]*nAn P[2]'mi.TO'P[1]*nBetreff P[2]'mi.SUBJECT'P[1]*nBytes P[2]'mi.SIZE'P[1]*nDateiname der Mail P[2]'mi.FILENAME'P[1]""_Cool"'
+EXIT

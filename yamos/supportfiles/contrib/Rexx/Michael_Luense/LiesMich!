@@ -1,0 +1,17 @@
+DataBaseEingang.yam  - Erstellt vom Eingangsordener in der Ram eine Log Datei
+weiterleiten.yam     - Gewählte mail weiterleiten
+umleiten.yam         - Gewählte mail umleiten
+mainf.yam            - Öffnet einen Requester und gibt mail infos aus
+indexnew.yam         - Erneuert den Postfach Index
+from.yam             - Erstellt in Ram eine Datei die den Absender ausgibt
+foreq.yam            - Öffnet einen Requester der Postfach Infos ausgibt
+betreffmerging.yam   - Erstellt in Ram eine Datei die die Betreffs vom Postfach ausgibt
+AlleU.yam            - Setzt den Status von allen mails auf ungelesen
+AlleO.yam            - Setzt den Status von allen mails auf gelesen
+AlleH.yam            - Setzt den Status von allen mails auf Halten
+AlleAnwählen.yam     - Alle mails auswählen im Postfach
+abs.yam              - Erstellt in Ram eine datei über die Anlagen der gewählten
+                       Mail und hängt diese an die mail
+vCard.yam            - Erstellt eine vCard wie mit MS Internet Explorer
+vCardtoadr.yam       - Wandelt eine vCard in einen YAM Adressbuch Eintrag um
+

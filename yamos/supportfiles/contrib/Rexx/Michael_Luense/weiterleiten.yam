@@ -1,0 +1,8 @@
+/*******************************************************/
+/* Gewählte mail weiterleiten                          */
+/* © Michael Lünse <m.luense@t-online.de> 12-Juni-2000 */
+/*******************************************************/
+
+address 'YAM'
+GETSELECTED
+MAILFORWARD

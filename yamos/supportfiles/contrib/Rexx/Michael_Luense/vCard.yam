@@ -1,0 +1,69 @@
+/******************************************************/
+/* vCard.yam                             version 1.02 */
+/* (c)opyright   16-April-2000 <m.luense@t-online.de> */
+/* last changes  24-April-2000 <Roy_Bartsch@gmx.de>   */
+/* last changes  19-May-2000   <m.luense@t-online.de> */
+/*                                                    */
+/*      Erstellt eine vCard wie `MSOutlock`           */
+/*                                                    */
+/* Benutzung:                                         */
+/* 1. Erstelle Sie einen eigenen Adressbuch Eintrag   */
+/*    in YAM mit Information die Sie wollen.Beachten  */
+/*    Sie beim Ausfüllen der `Doppeleinträge` wie     */
+/*    `PLZ/Stadt` und `Bundesland/Land`) das          */
+/*     Trennzeichen (`/`) mit einzutragen             */
+/*     (z.Bsp.: 39130/Magdeburg)                      */
+/* 2. Ändern Sie dieses Script in Zeile xx indem Sie  */
+/*    den ALIAS in Ihren ändern                       */
+/* 3. Change your `Prefs/ARexx/before writing a mail` */
+/*    to this script                                  */
+/******************************************************/
+
+options results
+address 'YAM'
+
+ADDRINFO STEM ai. ALIAS Ich /* ATTENTION !!! CANGE `VCARD` INTO YOUR ALIAS */
+
+tmpname=ai.NAME
+maxname=WORDS(tmpname)
+vorname=WORD(tmpname,1)
+
+
+nachname=WORD(tmpname,maxname)
+adr1=ai.CITY
+adr2=ai.Country
+trennadr1=POS("/",adr1)
+trennadr2=POS("/",adr2)
+plz=LEFT(adr1,trennadr1-1)
+city=RIGHT(adr1,LENGTH(adr1)-trennadr1)
+bl=LEFT(adr2,trennadr2-1)
+country=RIGHT(adr2,LENGTH(adr2)-trennadr2)
+tmpbday=ai.Birthdate
+tag=left(tmpbday,2)
+monat=SUBSTR(tmpbday,3,2)
+jahr=RIGHT(tmpbday,4)
+bday=jahr""monat""tag
+
+call open(tmp,'Ram:vcard.vcf','W')
+call writeln(tmp,"BEGIN:VCARD")
+call writeln(tmp,"N:"nachname";"vorname)
+call writeln(tmp,"FN:"ai.NAME)
+call writeln(tmp,"TEL;HOME;VOICE:"ai.PHONE)
+call writech(tmp,"ADR;HOME:;;"ai.STREET)
+call writech(tmp,";"city)
+call writech(tmp,";"bl";"plz";"country)
+call writeln(tmp,"")
+call writeln(tmp,"EMAIL;PREF;INTERNET:"ai.EMAIL";;"ai.HOMEPAGE"")
+call writeln(tmp,"Pgp:            "ai.PGP"")
+call writeln(tmp,"BDAY:"bday"")
+call writeln(tmp,"END:VCARD")
+call close(tmp)
+'Request "P[2]vCardP[1] an die Mail hängen ?" "_Ja|_Nein"'
+choice=RESULT
+if choice=1 then do
+'MAILEDIT'
+'WRITEATTACH "ram:vcard.vcf" DESC "vCard created by vCard.yam"'
+/*WRITEQUEUE*/
+if choice=0 then exit
+END
+EXIT

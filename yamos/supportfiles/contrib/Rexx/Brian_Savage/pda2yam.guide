@@ -1,0 +1,290 @@
+@database "pda2yam.guide"
+@author "Brian Savage"
+@remark "$VER: pda2yam Guide 1.0 (5. September 2002)"
+@remark "Created with GoldED 6.18 (22.7.0)"
+
+
+@node MAIN "Welcome"
+
+=====================================================================
+
+
+                            pda2yam.rexx
+
+                        Brian Savage (C)2002
+
+
+=====================================================================
+
+@{"Distribution" link distribution}
+
+@{"Introduction" link introduction}
+
+@{"Features" link features}
+
+@{"Installation" link installation}
+
+@{"Usage" link usage}
+
+@{"Contacting the Author" link contactingtheauthor}
+
+@{"References" link references}
+
+@{"History" link history}
+
+@{"Future" link future}
+
+@endnode
+@node INSTALLATION "Installation"
+
+@{b}Installation@{ub}
+
+Installation is straightforward. Copy pda2yam.rexx to your REXX:
+directory or any other directory.
+
+@endnode
+@node INTRODUCTION "Introduction"
+
+@{b}Introduction@{ub}
+
+@{u}What is pda2yam.rexx?@{uu}
+
+pda2yam.rexx is an Arexx scipt that will read your @{"address.dat" link address.dat}
+file from your Palm desktop and convert it to a Yam address book
+file. It is compatible with Yam version 2.3 and the address book
+with PalmOS version 3.5. I'm not sure of compatibility with other
+Yam or PalmOS versions. Some feedback would be nice.
+
+It is important to note that @{b}NO@{ub} synchronization takes
+place. pda2yam.rexx is @{b}NOT@{ub} a synchronization program.
+Information flows only one way. Edits you make to the Yam address
+book file after importing from your pda will be lost the next
+time that you import (unless of course you save the original
+address book under a new name).
+
+pda2yam.rexx runs surprisingly fast even though it is only an
+Arexx script. Why Arexx? Because I love how easy it is to parse
+data with Arexx. On my A2500 060/50, the script takes about 3
+minutes to process 700 records from the address.dat file. Not
+bad. Time to purge my address book though!
+
+@{u}Background@{uu}
+
+I got tired of having a different address book on my Amiga, my PC
+and then again my Visor Pro (Palm OS). Just about everytime I
+looked for an email address it would turn up invariably on a
+machine other than the one I was sitting in front of.
+
+I looked into synchronizing all of my address books but that was
+out of the question as the Visor has a USB cradle that couldn't
+be used on the Amiga (I don't know if PDA USB cradles can be used
+with the new Amiga USB cards). I also looked into using Spitfire
+on the Amiga while my Visor was in it's cradle on the PC and
+synchronizing over my network. A check with Spitfire's author
+proved that this could not be done.
+
+Additionally, as far as I know there is no method of
+synchronizing a PC Eudora address book with a PalmOS address book
+either. I noticed though that Eudora 5.x on the Mac has this
+feature.
+
+I seemed to be at a deadend so I therefore decided to take
+matters into my own hands. I searched the internet and found the
+@{"file format" link references} for the Palm desktop adressbook. I also decided that
+in order for this to work I had to use my Visor's address book as
+the master and just export the address books to Yam on the Amiga
+and Eudora on the PC. This suits me just fine because I use my
+Visor extensively and all email addresses & contacts usually end
+up on the Visor before any of my computers anyway.
+
+Then I sat down and wrote pda2yam.rexx...
+
+
+@endnode
+@node HISTORY "History"
+@{b}History@{ub}
+
+September 2002 - v1.0 first Aminet release
+
+
+@endnode
+@node FUTURE "Future"
+@{b}Future enhancements@{ub}
+
+Here are some of my ideas:
+
+1. Re-write in C.  This would definitely decrease processing time
+2. Add modules for other Amiga applications, CSV etc
+
+
+@endnode
+@node REFERENCES "References"
+@{b}References@{ub}
+
+I would not have been able to write this script without the
+information that I found on this page - file format
+specifications for most of the PalmOS built-in applications with
+some example scripts done in Perl. Thanks to Scott Leighton
+
+http://www.geocities.com/Heartland/Acres/3216/palmrecs.htm
+
+@endnode
+@node CONTACTINGTHEAUTHOR "Contacting the Author"
+
+@{b}Contacting the author@{ub}
+
+Brian Savage
+3106 Splendour Place,
+Mississauga, Ontario,
+Canada L5M 6V9
+
+tel: 905-826-0639
+
+@{u}email@{uu}: b.savage@rogers.com
+
+The latest version of pda2yam.rexx as well as other programs that I have
+written for the Amiga are available on Aminet and from my homepage at:
+
+@{u}http@{uu}://members.rogers.com/b.savage
+
+My other Amiga programs include:
+
+SunCalc   - shell based sunrise/sunset calculator
+SciCalc   - programmable scientific calculator
+CalCom    - calendar commodity
+Cal       - shell based calendar
+Convert   - unit converter
+RelVel    - relative/true wind velocity/direction calculator
+
+
+@endnode
+@node USAGE "Usage"
+
+@{b}Usage@{ub}
+
+Template:
+
+rx pda2yam.rexx [FROM] {<sourcefile>} [TO] {<destinationfile>}
+
+
+If the FROM and TO arguments (and their corresponding sourcefile
+and destinationfile names obviously) are not provided, the
+following defaults are used:
+
+sourcefile = "@{"address.dat" link address.dat}" (if it exists) from current directory
+(directory that script is run from)
+
+destinationfile = "palm.addressbook". It will be written to
+current directory.
+
+@{b}@{u}MAKE A COPY OF YOUR ADDRESS.DAT FILE TO USE WITH THIS
+SCRIPT!! @{uu}@{ub}
+
+I WILL TAKE NO RESPONSIBILITY FOR CORRUPTION, DELETION, LOSS OR
+DAMAGE TO YOUR PALMOS ADDRESS.DAT DATA FILES. PLEASE DO NOT RUN
+THIS SCRIPT ON THE ORIGINAL ADDRESS.DAT FILE. ALWAYS MAKE A COPY
+FOR USE WITH THIS SCRIPT. PDA2YAM.REXX DOES NOT WRITE TO
+ADDRESS.DAT BUT IT IS BETTER TO BE SAFE THAN SORRY.
+
+@endnode
+@node DISTRIBUTION "Distribution"
+
+@{b}Program and distribution notes@{ub}
+
+pda2yam.rexx is (C) 2002 by Brian Savage and it is freely
+distributable as long as all of its files are included in their
+original form without additions, deletions, or modifications of
+any kind, and only a nominal fee is charged for its distribution.
+
+pda2yam.rexx is EmailWare and as such is completely FREE! All I
+ask is that if you like pda2yam.rexx and find it useful, please
+send me an email giving your name and the country that you live
+in.
+
+Permission is required by the author for inclusion of
+pda2yam.rexx on magazine disks or CDROMS with the exception of
+the Aminet CD.
+
+This software is provided "AS IS" without warranty of any kind,
+either expressed or implied.
+
+I WILL TAKE NO RESPONSIBILITY FOR CORRUPTION, DELETION, LOSS OR
+DAMAGE TO YOUR PALMOS ADDRESS.DAT DATA FILES. PLEASE DO NOT RUN
+THIS SCRIPT ON THE ORIGINAL ADDRESS.DAT FILE. ALWAYS MAKE A COPY
+FOR USE WITH THIS SCRIPT. PDA2YAM.REXX DOES NOT WRITE TO
+ADDRESS.DAT BUT IT IS BETTER TO BE SAFE THAN SORRY.
+
+@endnode
+@node FEATURES "Features"
+
+@{b}Features@{ub}
+
+1. Retains Palm address book categories and transforms them into
+Yam address book groups.
+
+2. A Palm address book record can have more than one email
+address. The Yam address book does not allow this. pda2yam.rexx
+will create a record for each email address it finds in a palm
+record. All other information in that record such as telephone
+numbers and address info is duplicated in each new record.
+
+3. All line feeds and carriage returns are stripped from palm
+address book fields to prevent corruption of the yam address
+book.
+
+4. Yam address book sorted by lastname using quicksort algorithm.
+
+5. A Palm address.dat record contains 5 fields in which various
+telephone & email contact information can be recorded. The user
+has the choice over what type of information goes in each of the
+5 fields (from a list of 8 possible types). pda2yam.rexx parses
+this information and builds a single string comprised of all of
+the various telephone numbers with a suffix added to each one
+identify the information type as follows:
+
+@{u}Type@{uu}    @{u}Suffix@{uu}
+Work    (W)
+Home    (H)
+Fax     (F)
+Other   (O)
+E-mail  (E)*
+Main    (M)
+Pager   (P)
+Mobile  (C)
+
+The Yam "Phone number(s)" field will contain this string and a
+single string could have as many as 5 telephone numbers, each
+telphone number with a suffix from above added to identify it.
+
+* - Note: special case for email addresses - email addresses are
+not added to phone numbers field as a separatre Yam addressbook
+record is created for each eamil address found as noted in item 2
+above.
+
+6. Custom fields. The Palm address book has 4 custom fields.
+pda2yam.rexx will scan these fields looking for email addresses.
+If any are found, new Yam address book records will be created as
+noted in item 2 above. A simple function was created to check for
+valid addresses. It should work for most conventional addresses.
+
+@endnode
+
+@node ADDRESS.DAT "Address.dat"
+
+@{u}What is the Address.dat file and where can I find it?@{uu}
+
+The address.dat file is the file on your PC where your Palm
+destop software stores the synchronized address book obtained
+from your pda.
+
+I have a Handspring Visor. I used the default install path when I
+initially bought my Visor. My address.dat file then ended up
+here...
+
+"C:/Program Files/Handspring/savageb/address/address.dat"
+
+Substitute your own Palm user name for "savageb" and of course
+"Handspring" with the main directory name of your Palm destop
+software.
+
+@endnode

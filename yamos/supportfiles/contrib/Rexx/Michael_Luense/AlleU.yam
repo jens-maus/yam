@@ -1,0 +1,12 @@
+/*************************************************************/
+/* Alle mails auswählen und Status auf ungelesen setzen      */
+/* © Michael Lünse <m.luense@t-online.de> 12-Juni-2000       */
+/*************************************************************/
+
+address 'YAM'
+'Show'
+'APPBUSY "Setze nun den Mailstatus von ALLEN Mails auf ungelesen"'
+'LISTSELECT "A" '
+MAILSTATUS U
+'APPNOBUSY'
+EXIT

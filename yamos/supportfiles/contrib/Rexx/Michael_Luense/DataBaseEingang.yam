@@ -1,0 +1,23 @@
+/**************************************************************************/
+/* Schreibt eine Info Log datei von allen mails im gewählten Postfach     */
+/* © Michael Lünse <m.luense@t-online.de> 12-Juni-2000                    */
+/**************************************************************************/
+
+OPTIONS RESULTS
+ADDRESS 'YAM'
+'SETFOLDER Eingang'
+'FOLDERINFO stem folder.'
+
+call open(temp, 'Ram:Eingang.log', 'w')
+
+Do i = 0 TO folder.total - 1
+
+    'SETMAIL' i
+    'MAILINFO stem msg.'
+
+    entry = msg.index || ' ' || "Von:" msg.from "Betreff:" msg.subject
+
+    call writeln(temp, entry)
+end
+
+call close(temp)

@@ -1,0 +1,14 @@
+Short:    PalmOS to Yam address book converter
+Uploader: b.savage@rogers.com (Brian Savage)
+Author:   b.savage@rogers.com (Brian Savage)
+Type:     comm/mail
+Version:  1.0
+Requires: Yam 2.3, pda running PalmOS 3.5
+
+ 
+pda2yam is an Arexx script that converts a Palm desktop address book file
+(address.dat) to a Yam addressbook.
+
+Brian Savage
+Mississauga, Ontario, Canada
+September 2002

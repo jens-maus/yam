@@ -1,0 +1,126 @@
+/***********************************************************/
+/* Erstellt eine Logdatei von den angehängten Dateien      */
+/* und hängt diesen an die gewählte email an.              */
+/* Benutzung:Mail schreiben,mail auswählen,Script starten  */
+/* © Michael Lünse <m.luense@t-online.de> 12-Juni-2000     */
+/***********************************************************/
+
+
+options results
+address 'YAM'
+call open(tmp,'Ram:Abs.log','W')
+MAILINFO STEM mi.
+call writeln(tmp,"Absender   : "mi.From"")
+call writeln(tmp,"Empfänger  : "mi.To"")
+call writech(tmp,"Betreff    : "mi.Subject"")
+IF mi.Subject=''
+then call writech(tmp,"[Kein Betreff angegeben]")
+ELSE SAY "Hallo"
+
+call writeln(tmp,"")
+call writeln(tmp,"Größe      : "mi.Size" bytes")
+call writech(tmp,"Flags      : "mi.Flags"")
+SELECT
+   when mi.flags='M-------' then call writech(tmp,"	»Mail hat mehrere Empfänger«")
+   when mi.flags='-A------' then call writech(tmp,"	»Mail hat Anlage(n)«")
+   when mi.flags='--R-----' then call writech(tmp,"	»Mail enthält Bericht«")
+   when mi.flags='---C----' then call writech(tmp,"	»Mail ist verschlüsselt«")
+   when mi.flags='----S---' then call writech(tmp,"	»Mail ist signiert«")
+   when mi.flags='--------' then call writech(tmp,"	»Keine Flags vorhanden«")
+   when mi.flags='MA------' then call writech(tmp,"	»Mehrere Empfänger & Anlage(n)«")
+   OTHERWISE NOOP
+END
+
+call writeln(tmp,"")
+call writeln(tmp,"-----------------------------------------------------------")
+call writeln(tmp,"")
+call writeln(tmp,"Warning: This is a message in MIME format. Your mail reader does not")
+call writeln(tmp,"support MIME. Some parts of this message will be readable as plain text.")
+call writeln(tmp,"To see the rest, you will need to upgrade your mail reader. Following are")
+call writeln(tmp,"some URLs where you can find MIME-capable mail programs for common platforms:")
+call writeln(tmp,"")
+call writeln(tmp,"")
+call writeln(tmp,"")
+call writeln(tmp,"  Amiga............: YAM          http://www.yam.ch/")
+call writeln(tmp,"  Unix.............: Metamail     ftp://ftp.bellcore.com/nsb/")
+call writeln(tmp,"  Windows/Macintosh: Eudora       http://www.qualcomm.com/")
+call writeln(tmp,"")
+call writeln(tmp,"")
+call writeln(tmp,"")
+call writeln(tmp,"General info about MIME can be found at:")
+call writeln(tmp,"")
+call writeln(tmp,"")
+call writeln(tmp,"http://www.cis.ohio-state.edu/hypertext/faq/usenet/mail/mime-faq/top.html")
+call writeln(tmp,"")
+call writeln(tmp,"")
+
+/*ADDRESS COMMAND WAIT 1*/
+options results
+address 'YAM'
+GETSELECTED
+MailRead QUIET
+ReadInfo STEM ri.
+
+DO i = 1 TO ri.filename.count -1
+ReadClose
+call writeln(tmp,"----------------- Attachment - Information -----------------")
+call writeln(tmp,"")
+call writeln(tmp,"    File: "ri.filename.i"")
+call writeln(tmp,"    Size: "ri.filesize.i" bytes")
+call writeln(tmp,"    Type: "ri.filetype.i"")
+call writeln(tmp,"")
+END
+call writeln(tmp,"")
+call writeln(tmp,"-----------------------------------------------------------")
+call writeln(tmp,"")
+call writech(tmp,"Report geschrieben am ")
+day = date(w)
+select
+   when day='Sunday' then call writech(tmp,"Sonntag")
+   when day='Monday' then call writech(tmp,"Montag")
+   when day='Tuesday' then call writech(tmp,"Dienstag")
+   when day='Wednesday' then call writech(tmp,"Mittwoch")
+   when day='Thursday' then call writech(tmp,"Donnerstag")
+   when day='Friday' then call writech(tmp,"Freitag")
+   when day='Saturday' then call writech(tmp,"Samstag")
+   otherwise NOOP
+end
+
+
+Tag = LEFT(date(),2)
+call writech(tmp,"" Tag"-")
+
+Monat = date(m)
+
+SELECT
+when date(m)='January' then call writech(tmp,"Januar-")
+when date(m)='February' then call writech(tmp,"Februar-")
+when date(m)='March' then call writech(tmp,"März-")
+when date(m)='April' then call writech(tmp,"April-")
+when date(m)='May' then call writech(tmp,"Mai-")
+when date(m)='June' then call writech(tmp,"Juni-")
+when date(m)='July' then call writech(tmp,"Juli-")
+when date(m)='August' then call writech(tmp,"August-")
+when date(m)='September' then call writech(tmp,"September-")
+when date(m)='October' then call writech(tmp,"Oktober-")
+when date(m)='November' then call writech(tmp,"November-")
+when date(m)='December' then call writech(tmp,"Dezember-")
+OTHERWISE NOOP
+END
+
+Jahr = RIGHT(date(),4)
+call writech(tmp,""Jahr" um")
+call writech(tmp,"" Time()" Uhr")
+call writeln(tmp,"")
+call writeln(tmp,"Mit Abs.yam v1.2 © Michael Lünse <m.luense@t-online.de>")
+call close (tmp)
+ReadClose
+'Request "*Soll ich die Datei P[2] Ram:attach.log  P[1]an die Mail anhängen?" "_Ja|_Nein"'
+choice=RESULT
+if choice=1 then do
+'MAILEDIT'
+'WRITEATTACH "RAM:Abs.log" DESC "Attachment Information (c) m.luense@t-online.de"'
+WRITEQUEUE
+if choice=0 then exit
+END
+EXIT

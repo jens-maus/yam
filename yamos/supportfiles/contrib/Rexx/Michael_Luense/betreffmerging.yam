@@ -1,0 +1,19 @@
+/**************************************************************************/
+/* Schreibt eine Betreff Log datei von allen mails im gewählten Postfach  */
+/* © Michael Lünse <m.luense@t-online.de> 12-Juni-2000                    */
+/**************************************************************************/
+
+options results
+address 'YAM'
+'APPBUSY "Erstelle Logdatei...Schauen Sie bitte in die Ram Disk  © m.luense@t-online.de 12-Juni-2000"'
+'GetMailInfo Act'
+'GetFolderInfo Max'
+n=result
+do m=0 to n-1
+'SetMail' m
+call open(tmp,'Ram:Betreff.Log','W')
+MAILINFO STEM mi.
+call writeln(tmp,""mi.Index" "mi.Subject"")
+end
+'APPNOBUSY'
+EXIT
