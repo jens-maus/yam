@@ -639,17 +639,26 @@ void RE_SaveDisplay(int winnum, FILE *fh)
    if (G->RE[winnum]->Header != HM_NOHEADER)
    {
       int i;
+      struct MUI_NList_GetEntryInfo res;
+
       fputs("\033[3m", fh);
-      for (i = 0; ; i++)
+      for (i=0;;i++)
       {
-         DoMethod(G->RE[winnum]->GUI.LV_HEAD, MUIM_NList_GetEntry, i, &ptr);
-         if (!ptr) break;
+         res.pos = MUIV_NList_GetEntryInfo_Line;
+         res.line = i;
+         DoMethod(G->RE[winnum]->GUI.LV_HEAD, MUIM_NList_GetEntryInfo, &res);
+         if (!res.entry) break;
+
+         ptr = (char *)res.entry;
          if (!strcmp(ptr, MUIX_I)) ptr += strlen(MUIX_I);
-         fputs(ptr, fh); fputc('\n', fh);
+         fputs(ptr, fh);
+         fputc('\n', fh);
       }
       fputs("\033[23m\n", fh);
    }
+
    for (ptr = (char *)DoMethod(G->RE[winnum]->GUI.TE_TEXT, MUIM_TextEditor_ExportText); *ptr; ptr++)
+   {
       if (*ptr == '\033')
       {
          switch (*++ptr)
@@ -665,6 +674,7 @@ void RE_SaveDisplay(int winnum, FILE *fh)
          }
       }
       else fputc(*ptr, fh);
+   }
 }  
 
 ///

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-01-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug where the SaveDisplay functionality did save
+      the same headerline more than once to the resulting file if it
+      was wrapped within the header display.
+
 2003-01-21  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l: modified the regular expressions of the text scanner
