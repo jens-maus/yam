@@ -1,4 +1,4 @@
-2001-11-14  Christian Hattemer <krille@users.sourceforge.net>
+2001-12-11  Christian Hattemer <krille@users.sourceforge.net>
 
     * YAM_RE.c: fixed crash when the edit window was opened from
       a read window and the read window was closed before clicking
