@@ -2411,6 +2411,23 @@ HOOKPROTONHNONP(MA_AboutMUIFunc, void)
 MakeStaticHook(MA_AboutMUIHook, MA_AboutMUIFunc);
 
 ///
+/// MA_ShowAboutWindowFunc
+//  Displays 'About' window
+HOOKPROTONHNONP(MA_ShowAboutWindowFunc, void)
+{
+  if(!G->AboutWinObject)
+  {
+    G->AboutWinObject = AboutwindowObject, End;
+  }
+
+  if(G->AboutWinObject)
+    SafeOpenWindow(G->AboutWinObject);
+  else
+    DisplayBeep(0);
+}
+MakeStaticHook(MA_ShowAboutWindowHook, MA_ShowAboutWindowFunc);
+
+///
 /// MA_CheckVersionFunc
 //  Checks YAM homepage for new program versions
 HOOKPROTONHNONP(MA_CheckVersionFunc, void)
@@ -3586,7 +3603,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], MAXBCFOLDERIMG, MUIF_NONE);
 
          set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.NL_MAILS);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUT     ,G->AY_Win,3,MUIM_Set                ,MUIA_Window_Open,TRUE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUT     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ShowAboutWindowHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_VERSION   ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_CheckVersionHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ERRORS    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ShowErrorsHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_LOGIN     ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,ID_RESTART);

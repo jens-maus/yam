@@ -40,6 +40,7 @@
 
 #include "extra.h"
 #include "SDI_hook.h"
+#include "classes/Classes.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -176,74 +177,60 @@ static BOOL US_PromptForPassword(struct User *u, APTR win)
 BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
 {
    int i, user = -1;
-   APTR button, button0 = 0, group;
    struct User *u;
    BOOL loggedin = TRUE;
 
+   // Load the .users file first
    US_LoadUsers();
-   if (username)
+
+   // if a username was given check if we have this username in
+   // our loaded user list
+   if(username)
    {
-      for (i = 0; i < G->Users.Num; i++) if (!stricmp(G->Users.User[i].Name, username)) user = i;
+      for(i = 0; i < G->Users.Num; i++)
+      {
+        if(!stricmp(G->Users.User[i].Name, username))
+        {
+          user = i;
+          break;
+        }
+      }
    }
-   if (user < 0)
+
+   // if we didn't find the specified user in our .users file or
+   // if no username was given lets query in the splash window
+   // for it.
+   if(user < 0)
    {
       password = NULL;
-      if (G->Users.Num > 1)
-         if (DoMethod(G->AY_List, MUIM_Group_InitChange))
-         {
-            group = ColGroup(2), End;
-            for (i = 0; i < G->Users.Num; i++)
-            {
-               button = MakeButton(G->Users.User[i].Name);
-               if (!i) button0 = button;
-               DoMethod(group, OM_ADDMEMBER, button);
-               DoMethod(button, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_LOGIN+i);
-            }
-            if (i%2 == 1) DoMethod(group, OM_ADDMEMBER, HSpace(0));
-            DoMethod(G->AY_List, OM_ADDMEMBER, group);
-            DoMethod(G->AY_List, MUIM_Group_ExitChange);
-            set(G->AY_Text, MUIA_ShowMe, TRUE);
-            set(G->AY_Text, MUIA_Gauge_InfoText, GetStr(MSG_US_WaitLogin));
-            set(G->AY_Group, MUIA_Group_ActivePage, 1);
-            set(G->AY_Win, MUIA_Window_ActiveObject, button0);
-            set(G->AY_Win, MUIA_Window_Open, TRUE);
-
-            // lets collect the waiting returnIDs now
-            COLLECT_RETURNIDS;
-
-            while (user == -1)
-            {
-               ULONG signals;
-               long winopen, iconified;
-               get(G->AY_Win, MUIA_Window_Open, &winopen);
-               get(G->App, MUIA_Application_Iconified, &iconified);
-               if (!winopen && !iconified) return FALSE;
-               if ((i = DoMethod(G->App, MUIM_Application_Input, &signals)-ID_LOGIN) >= 0 && i < G->Users.Num) user = i;
-               else if (signals) Wait(signals);
-            }
-
-            // now lets reissue the collected returnIDs again
-            REISSUE_RETURNIDS;
-
-            set(G->AY_Group, MUIA_Group_ActivePage, 0);
-            DoMethod(G->AY_List, MUIM_Group_InitChange);
-            DoMethod(G->AY_List, OM_REMMEMBER, group);
-            DoMethod(G->AY_List, MUIM_Group_ExitChange);
-         }
-         else user = 0;
+      if(G->Users.Num > 1)
+      {
+        if((user = DoMethod(G->SplashWinObject, MUIM_Splashwindow_SelectUser)) < 0)
+          user = 0;
+      }
       else user = 0;
    }
+
    u = &G->Users.User[user];
    G->Users.CurrentID = u->ID;
    strcpy(G->MA_MailDir, maildir ? maildir : u->MailDir);
-   if (prefsfile) strcpy(G->CO_PrefsFile, prefsfile); else strmfp(G->CO_PrefsFile, G->MA_MailDir, ".config");
+
+   if(prefsfile)
+     strcpy(G->CO_PrefsFile, prefsfile);
+   else
+     strmfp(G->CO_PrefsFile, G->MA_MailDir, ".config");
+
    strmfp(G->AB_Filename, u->UseAddr ? G->ProgDir : G->MA_MailDir, ".addressbook");
    strmfp(G->DI_Filename, u->UseDict ? G->ProgDir : G->MA_MailDir, ".glossary");
-   if (u->Password[0])
+
+   if(u->Password[0])
    {
-      if (password) loggedin = (!strcmp(password, u->Password) || *password == '\01');
-      else loggedin = US_PromptForPassword(u, G->AY_Win);
+      if(password)
+        loggedin = (!strcmp(password, u->Password) || *password == '\01');
+      else
+        loggedin = US_PromptForPassword(u, G->SplashWinObject);
    }
+
    return loggedin;
 }
 

@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-09-21  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: reworked and redesigned the old "About" window parts
+      and splitted them into two separate custom classes "Aboutwindow"
+      and "Splashwindow". As the name implies the first one is only
+      to display information if the user selects the "About" menu
+      item from within the main application. In contrast, the
+      second one is now the new startup (also called "Splash")
+      window when YAM loads/initializes all main data.
+
 2004-09-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c: fixed recognition of Importance: and Priority:

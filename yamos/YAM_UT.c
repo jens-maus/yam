@@ -3960,13 +3960,8 @@ void Busy(char *text, char *parameter, int cur, int max)
 
         		sprintf(progressText, "%%ld/%d", max);
 
-        		nnset(G->AY_Text, MUIA_Gauge_InfoText, infotext[BusyLevel]);
-        		SetAttrs(G->AY_Progress,
-              MUIA_ShowMe,          TRUE,
-			        MUIA_Gauge_InfoText,  progressText,
-			        MUIA_Gauge_Current,   cur,
-			        MUIA_Gauge_Max,       max,
-		        TAG_DONE);
+            DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, infotext[BusyLevel], -1);
+            DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, progressText, cur, max);
 
             GetSysTime(&last_move);
           }
@@ -4030,8 +4025,8 @@ void Busy(char *text, char *parameter, int cur, int max)
       			// update the display at least twice a second
 			      if(delta.tv_secs > 0 || delta.tv_micro > 250000)
       			{
-              nnset(G->AY_Progress, MUIA_Gauge_Current, cur);
-		      		memcpy(&last_move, &now, sizeof(struct timeval));
+		      		DoMethod(G->SplashWinObject, MUIM_Splashwindow_ProgressChange, NULL, cur, -1);
+              memcpy(&last_move, &now, sizeof(struct timeval));
       			}
       		}
         }

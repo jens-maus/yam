@@ -76,6 +76,8 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/Recipientstring.o \
 	$(OBJDIR)/$(CLASSDIR)/Searchwindow.o \
 	$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
+	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
 	$(OBJDIR)/$(CLASSDIR)/InfoBar.o \
 	$(OBJDIR)/$(CLASSDIR)/YAM.o
 
@@ -156,7 +158,8 @@ distclean: cleanall
 classinfo: $(CLASSDIR)/Classes.h
 
 $(CLASSDIR)/Classes.h: $(GENCLASSES)/GenClasses $(CLASSDIR)/Addrmatchlist.c $(CLASSDIR)/Searchwindow.c\
-  $(CLASSDIR)/Recipientstring.c $(CLASSDIR)/InfoBar.c $(CLASSDIR)/YAM.c
+  $(CLASSDIR)/Recipientstring.c $(CLASSDIR)/InfoBar.c $(CLASSDIR)/YAM.c $(CLASSDIR)/Aboutwindow.c\
+  $(CLASSDIR)/Splashwindow.c
 	@printf '\033[33mGenerating class files...\033[0m\n'
 	@$(GENCLASSES)/GenClasses classes -bYAM -gpl -storm -iClassesExtra.h
 
@@ -295,6 +298,12 @@ $(OBJDIR)/all_gcc.o: all_gcc.c $(EXTRASRC)/astcsma.c $(EXTRASRC)/getft.c $(EXTRA
 	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/dice.c
 
 ## CLASS DEPENDENCIES #################
+
+$(OBJDIR)/$(CLASSDIR)/Splashwindow.o: $(CLASSDIR)/Splashwindow.c \
+	$(CLASSDIR)/Splashwindow_cl.h
+
+$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o: $(CLASSDIR)/Aboutwindow.c \
+	$(CLASSDIR)/Aboutwindow_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o: $(CLASSDIR)/Addrmatchlist.c \
 	$(CLASSDIR)/Addrmatchlist_cl.h YAM.h YAM_addressbook.h YAM_config.h \

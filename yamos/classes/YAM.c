@@ -37,6 +37,7 @@ struct Data
 {
 	struct List EMailCache;
 	STRPTR EMailCacheName;
+	char compileInfo[SIZE_DEFAULT];
 };
 */
 
@@ -340,7 +341,14 @@ OVERLOAD(OM_NEW)
 	// prepare a string pointer array with all the
 	// names of the used classes within. This array is only usefull if MUI v20
 	// is used and the user wants to alter the MUI settings of the application
-	static const STRPTR Classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "NListtree.mcc", "NList.mcc", "NListviews.mcc", NULL };
+	static const STRPTR Classes[] = { "TextEditor.mcc",
+																		"Toolbar.mcc",
+																		"BetterString.mcc",
+																		"NListtree.mcc",
+																		"NList.mcc",
+																		"NListviews.mcc",
+																		NULL
+																	};
 
 	if((obj = (Object *)DoSuperNew(cl, obj,
 		MUIA_Application_Author,         "YAM Open Source Team",
@@ -355,9 +363,26 @@ OVERLOAD(OM_NEW)
 		TAG_MORE,                        inittags(msg))))
 	{
 		GETDATA;
+		struct DateTime dt;
 		struct TagItem *tags = inittags(msg), *tag;
 
 		data->EMailCacheName = EMAILCACHENAME;
+
+		// now we generate some static default for our whole application
+		dt.dat_Stamp.ds_Days   = yamversiondays;
+		dt.dat_Stamp.ds_Minute = 0;
+		dt.dat_Stamp.ds_Tick   = 0;
+		dt.dat_Format          = FORMAT_DEF;
+		dt.dat_Flags           = 0L;
+		dt.dat_StrDay          = NULL;
+		dt.dat_StrDate         = data->compileInfo;
+		dt.dat_StrTime         = NULL;
+		DateToStr(&dt);
+		data->compileInfo[31] = '\0';  // make sure that the string is really terminated at LEN_DATSTRING.
+
+		// now we add the compiler information as YAM can be
+		// compiled with different versions and types of compilers
+		strcat(&data->compileInfo[strlen(data->compileInfo)], yamcompiler);
 
 		while((tag = NextTagItem(&tags)))
 		{
@@ -390,3 +415,18 @@ OVERLOAD(OM_DISPOSE)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+	GETDATA;
+	ULONG *store = ((struct opGet *)msg)->opg_Storage;
+
+	switch(((struct opGet *)msg)->opg_AttrID)
+	{
+		ATTR(CompileInfo) : *store = (ULONG)data->compileInfo; return TRUE;
+	}
+
+	return DoSuperMethodA(cl, obj, msg);
+}
+///
+

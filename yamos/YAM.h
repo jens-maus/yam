@@ -47,15 +47,11 @@ enum TimerIO { TIO_WRINDEX=0, TIO_CHECKMAIL, TIO_AUTOSAVE };
 struct Global 
 {
    /* pointers first */
-   APTR                     App;
-   APTR                     AY_Win;
-   APTR                     AY_Text;
-   APTR                     AY_Progress;
-   APTR                     AY_Group;
-   APTR                     AY_List;
-   APTR                     AY_AboutText;
-   APTR                     WI_SEARCH;
+   Object *                 App;
+   Object *                 WI_SEARCH;
    Object *                 NewMailSound_Obj;
+   Object *                 SplashWinObject;
+   Object *                 AboutWinObject;
    char *                   ER_Message[MAXERR];
    struct DiskObject *      HideIcon;
    struct AppIcon *         AppIcon;

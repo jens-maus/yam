@@ -394,171 +394,11 @@ static void ADSTnotify_stop(void)
 }
 
 ///
-/// AY_PrintStatus
-//  Shows progress of program initialization
-static void AY_PrintStatus(char *txt, int percent)
+/// SplashProgress
+//  Shows progress of program initialization in the splash window
+static void SplashProgress(char *txt, int percent)
 {
-   SetAttrs(G->AY_Text, MUIA_Gauge_InfoText, txt,
-                        MUIA_Gauge_Current,  percent,
-                        TAG_DONE);
-
-   nnset(G->AY_Progress, MUIA_ShowMe, FALSE);
-
-   DoMethod(G->App, MUIM_Application_InputBuffered);
-}
-///
-/// AY_SendMailFunc
-//  User clicked e-mail URL in About window
-/* DISABLED because not in use anymore !!
-HOOKPROTONHNONP(AY_SendMailFunc, void)
-{
-   int wrwin;
-   if (G->MA) if ((wrwin = MA_NewNew(NULL, 0)) >= 0)
-   {
-      setstring(G->WR[wrwin]->GUI.ST_TO, "YAM Support <support@yam.ch>");
-      set(G->WR[wrwin]->GUI.WI, MUIA_Window_ActiveObject, G->WR[wrwin]->GUI.ST_SUBJECT);
-   }
-}
-MakeStaticHook(AY_SendMailHook, AY_SendMailFunc);
-*/
-///
-/// AY_GoPageFunc
-//  User clicked homepage URL in About window
-HOOKPROTONHNONP(AY_GoPageFunc, void)
-{
-   GotoURL("http://www.yam.ch/");
-}
-MakeStaticHook(AY_GoPageHook, AY_GoPageFunc);
-///
-/// AY_New
-//  Creates About window
-static BOOL AY_New(BOOL hidden)
-{
-   Object *bt_gopage;
-   char logopath[SIZE_PATHFILE];
-   struct DateTime dt;
-   char compiledon[SIZE_DEFAULT]; // have to be at least LEN_DATSTRING long = 32
-
-   dt.dat_Stamp.ds_Days   = yamversiondays;
-   dt.dat_Stamp.ds_Minute = 0;
-   dt.dat_Stamp.ds_Tick   = 0;
-   dt.dat_Format          = FORMAT_DEF;
-   dt.dat_Flags           = 0L;
-   dt.dat_StrDay          = NULL;
-   dt.dat_StrDate         = compiledon;
-   dt.dat_StrTime         = NULL;
-   DateToStr(&dt);
-   compiledon[31] = '\0';  // make sure that the string is really terminated at LEN_DATSTRING.
-
-   // now we add the compiler information as YAM can be
-   // compiled with different versions and types of compilers
-   strcat(&compiledon[strlen(compiledon)], yamcompiler);
-
-   strmfp(logopath, G->ProgDir, "Icons/logo");
-
-   // now we create the about text
-   G->AY_AboutText = AllocStrBuf(SIZE_LARGE);
-   G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_Copyright2));
-   G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_UsedSoftware));
-   G->AY_AboutText = StrBufCat(G->AY_AboutText, "\0338Magic User Interface\0332 (Stefan Stuntz)\n"
-                                                "\0338TextEditor.mcc, BetterString.mcc\0332 (Allan Odgaard)\n"
-                                                "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
-                                                "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
-                                                "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
-                                                "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
-                                                "\0338amissl.library\0332 (Andrija Antonijevic)\n\n");
-   G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
-
-   G->AY_Win = WindowObject,
-      MUIA_Window_Title, GetStr(MSG_MA_About),
-      MUIA_Window_ID, MAKE_ID('C','O','P','Y'),
-      MUIA_HelpNode, "COPY",
-      WindowContents, VGroup,
-         MUIA_Background, MUII_GroupBack,
-         Child, HGroup,
-            MUIA_Group_Spacing, 0,
-            Child, HSpace(0),
-            Child, NewObject(CL_BodyChunk->mcc_Class,NULL,
-               MUIA_Bodychunk_File, logopath,
-            End,
-            Child, HSpace(0),
-         End,
-         Child, HCenter((VGroup,
-            Child, CLabel(GetStr(MSG_Copyright1)),
-            Child, ColGroup(2),
-               Child, bt_gopage = TextObject,
-                  MUIA_Text_Contents, "\033c\033u\0335http://www.yam.ch/",
-                  MUIA_InputMode, MUIV_InputMode_RelVerify,
-               End,
-            End,
-            Child, RectangleObject,
-               MUIA_Rectangle_HBar, TRUE,
-               MUIA_FixHeight, 8,
-            End,
-            Child, ColGroup(2),
-               MUIA_Group_HorizSpacing, 8,
-               MUIA_Group_VertSpacing, 2,
-               Child, Label(GetStr(MSG_Version)),
-               Child, LLabel(yamversionver),
-               Child, Label(GetStr(MSG_CompilationDate)),
-               Child, LLabel(compiledon),
-             End,
-         End)),
-         Child, G->AY_Group = PageGroup,
-            Child, ListviewObject,
-              MUIA_Listview_Input, FALSE,
-              MUIA_Listview_List, FloattextObject,
-                ReadListFrame,
-                MUIA_Floattext_Text, G->AY_AboutText,
-              End,
-            End,
-            Child, ScrollgroupObject,
-               MUIA_Scrollgroup_FreeHoriz, FALSE,
-               MUIA_Scrollgroup_Contents, VGroupV,
-                  GroupFrame,
-                  Child, G->AY_List = VGroup,
-                     Child, TextObject,
-                        MUIA_Text_Contents, GetStr(MSG_UserLogin),
-                        MUIA_Background,    MUII_TextBack,
-                        MUIA_Frame,         MUIV_Frame_Text,
-                        MUIA_Text_PreParse, MUIX_C MUIX_PH,
-                     End,
-                  End,
-                  Child, HVSpace,
-               End,
-            End,
-         End,
-         Child, G->AY_Text = GaugeObject,
-            GaugeFrame,
-            MUIA_Gauge_InfoText, " ",
-            MUIA_Gauge_Horiz,    TRUE,
-         End,
-         Child, G->AY_Progress = GaugeObject,
-            GaugeFrame,
-            MUIA_ShowMe,         FALSE,
-            MUIA_Gauge_InfoText, " ",
-            MUIA_Gauge_Horiz,    TRUE,
-         End,
-      End,
-   End;
-
-   /* if the WindowObject could be created */
-   if(G->AY_Win)
-   {
-      DoMethod(G->App, OM_ADDMEMBER, G->AY_Win);
-      DoMethod(bt_gopage  , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_GoPageHook);
-      DoMethod(G->AY_Win  , MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->AY_Win, 3, MUIM_Set,MUIA_Window_Open, FALSE);
-
-      set(G->AY_Win, MUIA_Window_Open, !hidden);
-
-      return TRUE;
-   }
-   else
-   {
-     FreeStrBuf(G->AY_AboutText);
-   }
-
-   return FALSE;
+  DoMethod(G->SplashWinObject, MUIM_Splashwindow_StatusChange, txt, percent);
 }
 ///
 /// PopUp
@@ -694,9 +534,14 @@ static BOOL Root_New(BOOL hidden)
       DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
       DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
 
-      if(AY_New(hidden))
+      // create the splash window object and return true if
+      // everything worked out fine.
+      if((G->SplashWinObject = SplashwindowObject, End))
       {
         G->InStartupPhase = TRUE;
+
+        set(G->SplashWinObject, MUIA_Window_Open, !hidden);
+
         return TRUE;
       }
    }
@@ -790,21 +635,24 @@ static void Terminate(void)
 
    // check if we have an allocated NewMailSound_Obj and dispose it.
    if(G->NewMailSound_Obj)
-    DisposeDTObject(G->NewMailSound_Obj);
+     DisposeDTObject(G->NewMailSound_Obj);
 
-   FreeStrBuf(G->AY_AboutText);
+   if(G->HideIcon)
+     FreeDiskObject(G->HideIcon);
 
-   if (G->HideIcon) FreeDiskObject(G->HideIcon);
+   if(G->App)
+     MUI_DisposeObject(G->App);
 
-   if (G->App) MUI_DisposeObject(G->App);
-
-   for (i = 0; i < MAXICONS; i++)
+   for(i = 0; i < MAXICONS; i++)
    {
-      if (G->DiskObj[i]) FreeDiskObject(G->DiskObj[i]);
+      if(G->DiskObj[i])
+        FreeDiskObject(G->DiskObj[i]);
    }
-   for (i = 0; i < MAXIMAGES; i++)
+
+   for(i = 0; i < MAXIMAGES; i++)
    {
-      if (G->BImage[i]) FreeBCImage(G->BImage[i]);
+      if(G->BImage[i])
+        FreeBCImage(G->BImage[i]);
    }
 
    CO_FreeConfig(C);
@@ -1059,11 +907,11 @@ static void Initialise2(void)
    int i;
    struct Folder *folder, **oldfolders = NULL;
 
-   AY_PrintStatus(GetStr(MSG_LoadingConfig), 30);
+   SplashProgress(GetStr(MSG_LoadingConfig), 30);
    CO_SetDefaults(C, -1);
    CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
    CO_Validate(C, FALSE);
-   AY_PrintStatus(GetStr(MSG_CreatingGUI), 40);
+   SplashProgress(GetStr(MSG_CreatingGUI), 40);
 
    // Create a new Main & Addressbook Window
    if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
@@ -1088,7 +936,7 @@ static void Initialise2(void)
    if(G->CO_AutoTranslateIn)
      LoadParsers();
 
-   AY_PrintStatus(GetStr(MSG_LoadingFolders), 50);
+   SplashProgress(GetStr(MSG_LoadingFolders), 50);
    if(!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
    {
       for(i = 0; i < 100; i++)
@@ -1120,10 +968,10 @@ static void Initialise2(void)
       FO_SaveTree(CreateFilename(".folders"));
    }
 
-   AY_PrintStatus(GetStr(MSG_RebuildIndices), 60);
+   SplashProgress(GetStr(MSG_RebuildIndices), 60);
    MA_UpdateIndexes(TRUE);
 
-   AY_PrintStatus(GetStr(MSG_LoadingFolders), 75);
+   SplashProgress(GetStr(MSG_LoadingFolders), 75);
    for(i = 0; ;i++)
    {
       struct MUI_NListtree_TreeNode *tn;
@@ -1190,12 +1038,12 @@ static void Initialise2(void)
    // or we risk to get a unsynced message listview.
    MA_ChangeFolder(NULL, TRUE);
 
-   AY_PrintStatus(GetStr(MSG_LoadingABook), 90);
+   SplashProgress(GetStr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
    if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))
       Abort(MSG_ErrorARexx);
 
-   AY_PrintStatus(GetStr(MSG_OPENGUI), 100);
+   SplashProgress(GetStr(MSG_OPENGUI), 100);
    G->InStartupPhase = FALSE;
 
    // only activate the main window if the about window is activ
@@ -1203,13 +1051,11 @@ static void Initialise2(void)
    // we always start YAM with Window_Open TRUE or else YAM the hide
    // functionality doesn`t work as expected.
    SetAttrs(G->MA->GUI.WI,
-            MUIA_Window_Activate, xget(G->AY_Win, MUIA_Window_Activate),
+            MUIA_Window_Activate, xget(G->SplashWinObject, MUIA_Window_Activate),
             MUIA_Window_Open,     TRUE,
             TAG_DONE);
 
-   set(G->AY_Win, MUIA_Window_Open, FALSE);
-   set(G->AY_Text, MUIA_ShowMe, FALSE);
-   set(G->AY_Progress, MUIA_ShowMe, FALSE);
+   set(G->SplashWinObject, MUIA_Window_Open, FALSE);
 }
 ///
 /// Initialise
@@ -1286,7 +1132,7 @@ static void Initialise(BOOL hidden)
       Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
 
    // lets advance the progress bar to 10%
-   AY_PrintStatus(GetStr(MSG_InitLibs), 10);
+   SplashProgress(GetStr(MSG_InitLibs), 10);
 
    INITLIB(IXpk, InitLib(XPKNAME, (APTR)&XpkBase, 0, 0, FALSE, FALSE));
 
@@ -1309,7 +1155,7 @@ static void Initialise(BOOL hidden)
       G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
    }
    srand((unsigned int)GetDateStamp());
-   AY_PrintStatus(GetStr(MSG_LoadingGFX), 20);
+   SplashProgress(GetStr(MSG_LoadingGFX), 20);
    strmfp(iconfile, G->ProgDir, "YAM");
    if ((G->HideIcon=GetDiskObject(iconfile)))
       set(G->App, MUIA_Application_DiskObject, G->HideIcon);
@@ -1428,11 +1274,12 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 static void Login(char *user, char *password, char *maildir, char *prefsfile)
 {
    struct genUser *guser;
-   BOOL terminate = FALSE, loggedin = FALSE;
+   BOOL terminate = FALSE;
+   BOOL loggedin = FALSE;
 
    if(INITLIB(IGenesis, InitLib("genesis.library", (APTR)&GenesisBase, 1, 0, FALSE, FALSE)))
    {
-      if ((guser = GetGlobalUser()))
+      if((guser = GetGlobalUser()))
       {
          terminate = !(loggedin = US_Login(guser->us_name, "\01", maildir, prefsfile));
          FreeUser(guser);
@@ -1440,7 +1287,9 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
 
       CLOSELIB(GenesisBase, IGenesis);
    }
-   if (!loggedin && !terminate) terminate = !US_Login(user, password, maildir, prefsfile);
+
+   if(!loggedin && !terminate)
+      terminate = !US_Login(user, password, maildir, prefsfile);
 
    if(terminate)
      exit(5);
@@ -1672,7 +1521,6 @@ int main(int argc, char **argv)
    for(yamFirst=TRUE;;)
    {
       ULONG signals, timsig, adstsig, rexsig, appsig, notsig[MAXWR+1], i;
-      Object *root, *grp, *bt_okay;
       struct Message *msg;
       struct User *user;
       int wrwin, ret;
@@ -1705,24 +1553,6 @@ int main(int argc, char **argv)
          Initialise(FALSE);
          Login(NULL, NULL, NULL, NULL);
          Initialise2();
-      }
-
-      grp = HGroup,
-        Child, RectangleObject, End,
-        Child, bt_okay = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
-        Child, RectangleObject, End,
-      End;
-
-      root = (Object *)xget(G->AY_Win, MUIA_Window_RootObject);
-      if(root && grp && DoMethod(root, MUIM_Group_InitChange))
-      {
-        DoMethod(root, OM_ADDMEMBER, grp);
-        DoMethod(root, MUIM_Group_ExitChange);
-        DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-        SetAttrs(G->AY_Win,
-          MUIA_Window_Activate, TRUE,
-          MUIA_Window_DefaultObject, bt_okay,
-        TAG_DONE);
       }
 
       DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
