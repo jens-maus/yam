@@ -1,10 +1,10 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (28.04.2003)
+@$VER: YAM.guide 2.5 (10.11.2004)
 /***************************************************************************
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck\@yam.ch>
- Copyright (C) 2000-2003 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@
             =============================================@{ub}
 
                       © 1995-2000 by Marcel Beck
-                 © 2000-2003 by YAM Open Source Team
+                 © 2000-2004 by YAM Open Source Team
 
 
       @{" Legal stuff     " link "COPY"}  - Legal information
@@ -82,7 +82,7 @@ Legal stuff
 
 YAM - Yet Another Mailer
 Copyright (C) 1995-2000 by Marcel Beck
-Copyright (C) 2000-2003 by YAM Open Source Team
+Copyright (C) 2000-2004 by YAM Open Source Team
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -10977,7 +10977,7 @@ MUI
 
                         MUI - MagicUserInterface
 
-                (c) Copyright 1993-2003 by Stefan Stuntz
+                (c) Copyright 1993-2004 by Stefan Stuntz
 
 MUI  is  a system to generate and maintain graphical user interfaces. With
 the  aid  of  a  preferences  program,  the user of an application has the
