@@ -5034,14 +5034,15 @@ void GotoURL(char *url)
   }
 }
 ///
-/// strtok_r()
+/// StrTok_R()
 // Reentrant version of stdlib strtok()
 // Call like this:
 // char *next=input, *token, breakstring[]=", ";
 // do { token = strtok_r(&next,breakstring); /* ... */ } while(next);
-char *strtok_r(char **s, char *brk)
+#warning "replace against standard strtok_r() ASAP"
+char *StrTok_R(char **s, char *brk)
 {
-char *p,*ret;
+  char *p,*ret;
 
   if((s == NULL) || (*s == NULL) || (brk == NULL))
     return NULL;

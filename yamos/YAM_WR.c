@@ -1020,9 +1020,9 @@ static void SetDefaultSecurity(struct Compose *comp)
          char *in=buf,*s,*t;
 
          /* loop through comma-separated addresses in string */
-         while((s = strtok_r(&in,",")))
+         while((s = StrTok_R(&in,",")))
          {
-            while((t = strtok_r(&s," ()<>")))
+            while((t = StrTok_R(&s," ()<>")))
             {
                if(strchr(t,'@'))
                   break;
@@ -1687,6 +1687,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
          strmfp(filename, ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
+
    }
 }
 MakeStaticHook(WR_AddFileHook, WR_AddFileFunc);
