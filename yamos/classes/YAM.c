@@ -30,6 +30,8 @@
 
 #include "YAM_cl.h"
 
+#include "Debug.h"
+
 #define EMAILCACHENAME "PROGDIR:.emailcache"
 
 /* CLASSDATA
@@ -75,14 +77,14 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
 			}
 			else
 			{
-				DB( D(DBF_ERROR, ("Error with '%s', parsing line:\n%s", name, line)) )
+				D(DBF_STARTUP, "Error with '%s', parsing line: '%s'", name, line);
 			}
 		}
 		Close(fh);
 	}
 	else
 	{
-		DB( D(DBF_ERROR, ("Error opening file '%s' for reading", name)) )
+		E(DBF_STARTUP, "Error opening file '%s' for reading", name);
 	}
 }
 
@@ -118,7 +120,7 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 	}
 	else
 	{
-		DB( D(DBF_ERROR, ("Error opening file '%s' for writing", name)) )
+		E(DBF_STARTUP, "Error opening file '%s' for writing", name);
 	}
 }
 

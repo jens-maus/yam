@@ -3,7 +3,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2003 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@
 %{
     #include <string.h>
     #include <proto/exec.h>
-    #include "YAM_debug.h"
     #include "YAM_mail_lex.h"
     #include "YAM_utilities.h"
 

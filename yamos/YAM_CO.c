@@ -58,6 +58,8 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "Debug.h"
+
 struct Config *C = NULL;
 struct Config *CE = NULL;
 
@@ -298,7 +300,7 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
   struct FilterNode *filter = NULL;
   struct CO_GUIData *gui = &G->CO->GUI;
 
-  DB(kprintf("GetActiveFilterData()\n");)
+  ENTER();
 
   // get the active filterNode
   DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
@@ -375,6 +377,8 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
   }
 
   GhostOutFilter(gui, filter);
+
+  LEAVE();
 }
 MakeHook(GetActiveFilterDataHook, GetActiveFilterData);
 
@@ -386,7 +390,7 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
   struct FilterNode *filter = NULL;
   struct CO_GUIData *gui = &G->CO->GUI;
 
-  DB(kprintf("SetActiveFilterData()\n");)
+  ENTER();
 
   // get the active filterNode
   DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
@@ -447,6 +451,8 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
     GhostOutFilter(gui, filter);
     DoMethod(gui->LV_RULES, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
   }
+
+  LEAVE();
 }
 MakeHook(SetActiveFilterDataHook, SetActiveFilterData);
 
@@ -808,7 +814,8 @@ void CO_FreeConfig(struct Config *co)
   struct MinNode *curNode;
   int i;
 
-  DB(kprintf("CO_FreeConfig: %08lx\n", co);)
+  ENTER();
+  SHOWVALUE(DBF_CONFIG, co);
 
   // free all config elements
   for(i = 0; i < MAXP3; i++) { if(co->P3[i]) free(co->P3[i]); }
@@ -835,6 +842,8 @@ void CO_FreeConfig(struct Config *co)
 
   // init the filterList & stuff
   NewList((struct List *)&co->filterList);
+
+  LEAVE();
 }
 
 ///
@@ -844,7 +853,9 @@ void CO_SetDefaults(struct Config *co, int page)
 {
    int i;
 
-   DB(kprintf("CO_SetDefaults: %08lx %d\n", co, page);)
+   ENTER();
+   SHOWVALUE(DBF_CONFIG, co);
+   SHOWVALUE(DBF_CONFIG, page);
 
    // [Start]
    if(page == 0 || page < 0)
@@ -1077,6 +1088,8 @@ void CO_SetDefaults(struct Config *co, int page)
       co->TRBufferSize = 8192;
       co->EmbeddedMailDelay = 200; // 200ms delay by default
    }
+
+   LEAVE();
 }
 
 ///
@@ -1087,7 +1100,9 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
   int i;
   struct MinNode *curNode;
 
-  DB(kprintf("CopyConfigData: %08lx->%08lx\n", sco, dco);)
+  ENTER();
+  SHOWVALUE(DBF_CONFIG, sco);
+  SHOWVALUE(DBF_CONFIG, dco);
 
   // first we copy all raw data via memcpy
   memcpy(dco, sco, sizeof(struct Config));
@@ -1111,6 +1126,8 @@ static void CopyConfigData(struct Config *dco, struct Config *sco)
 
     AddTail((struct List *)&dco->filterList, (struct Node *)dstFilter);
   }
+
+  LEAVE();
 }
 
 ///

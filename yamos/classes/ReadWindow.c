@@ -30,6 +30,8 @@
 
 #include "ReadWindow_cl.h"
 
+#include "Debug.h"
+
 /* EXPORT
 #define MUIV_ReadWindow_ToolbarItems 14
 */
@@ -140,7 +142,7 @@ OVERLOAD(OM_NEW)
 		// our readWindow ID
 		if(curNode->mln_Succ == NULL)
 		{
-			DB(kprintf("Free window number %d found.\n", i);)
+			D(DBF_GUI, "Free window number %d found.", i);
 			data->windowNumber = i;
 
 			break;
@@ -412,7 +414,7 @@ DECLARE(ReadMail) // struct Mail *mail
 	BOOL initialCall = data->title[0] == '\0'; // TRUE if this is the first call
 	int titleLen;
 
-	DB(kprintf("setting up readWindow for reading a mail\n");)
+	D(DBF_GUI, "setting up readWindow for reading a mail");
 
 	// enable/disable some menuitems in advance
 	set(data->MI_EDIT, 		MUIA_Menuitem_Enabled, isOutgoingMail);
@@ -1054,7 +1056,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 	mi = GetMailInfo(mail);
 	act = mi->Pos;
 
-	DB(kprintf("act: %d - direction: %d\n", act, direction);)
+	D(DBF_GUI, "act: %d - direction: %d", act, direction);
 
 	for(act += direction; act >= 0; act += direction)
 	{

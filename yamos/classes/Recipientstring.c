@@ -30,6 +30,8 @@
 
 #include "Recipientstring_cl.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -133,7 +135,7 @@ OVERLOAD(OM_DISPOSE)
 
 	if(data->Matchwindow)
 	{
-		DB(kprintf("Dispose addrlistpopup: %lx\n", data->Matchwindow);)
+		D(DBF_GUI, "Dispose addrlistpopup: %lx", data->Matchwindow);
 
 		// we know that _app(obj) is documented as only valid in
 		// MUIM_Cleanup/Setup, but these two methods are also called
@@ -201,7 +203,7 @@ OVERLOAD(MUIM_Setup)
 
 	if(!data->Matchwindow && (data->Matchwindow = AddrmatchlistObject, MUIA_Addrmatchlist_String, obj, End))
 	{
-		DB(kprintf("Create addrlistpopup: %lx\n", data->Matchwindow);)
+		D(DBF_GUI, "Create addrlistpopup: %lx", data->Matchwindow);
 		DoMethod(_app(obj), OM_ADDMEMBER, data->Matchwindow);
 	}
 
@@ -485,10 +487,10 @@ DECLARE(Resolve) // ULONG flags
 		// clear the string gadget without notifing others
 		nnset(obj, MUIA_String_Contents, NULL);
 
-		DB(kprintf("Resolve this string: %s\n", tmp);)
+		D(DBF_GUI, "Resolve this string: '%s'", tmp);
 		while((s = Trim(rcptok(tmp, &quote)))) /* tokenize string and resolve each recipient */
 		{
-			DB(kprintf("token: '%s'\n", s);)
+			D(DBF_GUI, "token: '%s'", s);
 
 			// if the resolve string is empty we skip it and go on
 			if(!s[0])
@@ -499,7 +501,7 @@ DECLARE(Resolve) // ULONG flags
 
 			if(checkvalids == FALSE && (tmp = strchr(s, '@')))
 			{
-				DB(kprintf("Valid address found.. will not resolve it: %s\n", s);)
+				D(DBF_GUI, "Valid address found.. will not resolve it: %s", s);
 				DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 
 				/* email address lacks domain... */
@@ -510,14 +512,14 @@ DECLARE(Resolve) // ULONG flags
 			{
 				struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
 				struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
-				DB(kprintf("Found match: %s\n", s);)
+				D(DBF_GUI, "Found match: %s", s);
 
 				// Now we have to check if there exists another entry in the AB with this string
 				if(!nexttn || !DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode))
 				{
 					if(entry->Type == AET_USER) /* it's a normal person */
 					{
-						DB(kprintf("\tPlain user: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
+						D(DBF_GUI, "\tPlain user: %s (%s, %s)", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);
 						DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
 					}
 					else if(entry->Type == AET_LIST) /* it's a list of persons */
@@ -530,7 +532,7 @@ DECLARE(Resolve) // ULONG flags
 								while((lf = strchr(members, '\n')))
 									lf[0] = ',';
 
-								DB(kprintf("Found list: »%s«\n", members);)
+								D(DBF_GUI, "Found list: »%s«", members);
 								DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
 								free(members);
 
@@ -545,14 +547,14 @@ DECLARE(Resolve) // ULONG flags
 						}
 						else
 						{
-							DB( D(DBF_ERROR, ("String doesn't allow multiple recipients\n")) )
+							D(DBF_GUI, "String doesn't allow multiple recipients");
 							DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 							res = FALSE;
 						}
 					}
 					else /* it's unknown... */
 					{
-						DB( D(DBF_ERROR, ("Found matching entry in address book with unknown type: %ld", entry->Type)) )
+						D(DBF_GUI, "Found matching entry in address book with unknown type: %ld", entry->Type);
 						DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 						if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
 						res = FALSE;
@@ -560,7 +562,7 @@ DECLARE(Resolve) // ULONG flags
 				}
 				else
 				{
-					DB( D(DBF_ERROR, ("Found more than one matching entry in address book!\n")) )
+					D(DBF_GUI, "Found more than one matching entry in address book!");
 					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 					if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
 					res = FALSE;
@@ -568,16 +570,16 @@ DECLARE(Resolve) // ULONG flags
 			}
 			else if(withcache && (entry = (struct ABEntry *)DoMethod(G->App, MUIM_YAM_FindEmailCacheMatch, s)))
 			{
-				DB(kprintf("\tEmailCache Hit: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
+				D(DBF_GUI, "\tEmailCache Hit: %s (%s, %s)", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);
 				DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
 			}
 			else
 			{
-				DB(kprintf("Entry not found: %s\n", s);)
+				D(DBF_GUI, "Entry not found: '%s'", s);
 
 				if((tmp = strchr(s, '@'))) /* entry seems to be an email address */
 				{
-					DB(kprintf("Email address: %s\n", s);)
+					D(DBF_GUI, "Email address: '%s'", s);
 					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 
 					/* email address lacks domain... */
@@ -586,7 +588,7 @@ DECLARE(Resolve) // ULONG flags
 				}
 				else
 				{
-					DB( D(DBF_ERROR, ("No entry found in addressbook for alias: %s", s)) )
+					D(DBF_GUI, "No entry found in addressbook for alias: '%s'", s);
 					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 					if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
 					res = FALSE;

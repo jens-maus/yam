@@ -40,6 +40,8 @@
 #include <proto/icon.h>
 #include <proto/wb.h>
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -116,7 +118,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 			LONG usedHeight = BORDER+_font(obj)->tf_YSize;
 			LONG objMinHeight = xget(obj, MUIA_AttachmentGroup_MinHeight);
 
-			DB(kprintf("attgroup layout: %lx %ld/%ld %ld/%ld\n", obj, _mwidth(obj), _mheight(obj), lm->lm_Layout.Width, lm->lm_Layout.Height);)
+			D(DBF_GUI, "attgroup layout: %lx %ld/%ld %ld/%ld", obj, _mwidth(obj), _mheight(obj), lm->lm_Layout.Width, lm->lm_Layout.Height);
 
 			InitRastPort(&rp);
 			SetFont(&rp, _font(obj));
@@ -164,7 +166,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 					{
 						LONG requiredHeight = top+lastItemHeight+SPACING+mh;
 
-						DB(kprintf("obj [%s] doesn't fit in current row! %ld %ld %ld\n", mailPart->Name, itemsInRow, requiredHeight, objMinHeight);)
+						D(DBF_GUI, "obj [%s] doesn't fit in current row! %ld %ld %ld", mailPart->Name, itemsInRow, requiredHeight, objMinHeight);
 						
 						// the objects doesn't seem to fit into the current line,
 						// so we have to put it in another line.
@@ -178,7 +180,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 							// for another height increase anyway
 							if(itemsInRow > 0)
 							{
-								DB(kprintf("group isn't high enough, signal relayout to get a height of %ld\n", requiredHeight);)
+								D(DBF_GUI, "group isn't high enough, signal relayout to get a height of %ld", requiredHeight);
 
 								// our group doesn't seem to be high enough so we have to signal
 								// it that it should relayout the whole thing
@@ -199,7 +201,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 						}
 					}
 					
-					DB(kprintf("layout: %ld %ld %ld\n", mh, _minheight(child), _font(obj)->tf_YSize);)
+					D(DBF_GUI, "layout: %ld %ld %ld", mh, _minheight(child), _font(obj)->tf_YSize);
 					if(!MUI_Layout(child, left, top+(mh-_minheight(child))/2, mw, _minheight(child), 0))
 						return FALSE;
 
@@ -215,7 +217,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 			// of its provided height space or if we have to reduce the minHeight here
 			if(lm->lm_Layout.Height-1 > usedHeight+BORDER)
 			{
-				DB(kprintf("group uses too much space, reducing and relayouting.. %ld > %ld\n", lm->lm_Layout.Height-1, usedHeight+BORDER);)
+				D(DBF_GUI, "group uses too much space, reducing and relayouting.. %ld > %ld", lm->lm_Layout.Height-1, usedHeight+BORDER);
 				set(obj, MUIA_AttachmentGroup_MinHeight, usedHeight+BORDER);
 			}
 
@@ -552,7 +554,8 @@ DECLARE(Refresh) // struct Part *firstPart
 	ULONG addedParts = 0;
 	struct Part *rp;
 
-	DB(kprintf("MUIM_AttachmentGroup_Refresh: %lx %ld/%ld\n", obj, _mwidth(obj), _mheight(obj));)
+	ENTER();
+	D(DBF_GUI, "%lx %ld/%ld", obj, _mwidth(obj), _mheight(obj));
 
 	// before we are going to add some new childs we have to clean
 	// out all old children
@@ -581,7 +584,7 @@ DECLARE(Refresh) // struct Part *firstPart
 							 obj, 3, MUIM_AttachmentGroup_ImageDropped, newImage, MUIV_TriggerValue);
 
 			DoMethod(obj, OM_ADDMEMBER, newImage);
-			DB(kprintf("added image for attachment: %ld:%s\n", rp->Nr, rp->Name);)
+			D(DBF_GUI, "added image for attachment: %ld:%s", rp->Nr, rp->Name);
 
 			addedParts++;
 		}
@@ -595,6 +598,7 @@ DECLARE(Refresh) // struct Part *firstPart
 	// signal that the group relayouting is finished
 	DoMethod(obj, MUIM_Group_ExitChange);
 
+	RETURN(addedParts);
 	return addedParts;
 }
 ///
@@ -761,7 +765,7 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
 		char *fileName;
 		char filePathBuf[SIZE_PATHFILE];
 		
-		DB(kprintf("Image of Part %d was dropped at [%s]\n", mailPart->Nr, msg->dropPath);)
+		D(DBF_GUI, "Image of Part %d was dropped at [%s]", mailPart->Nr, msg->dropPath);
 
 		BusyText(GetStr(MSG_BusyDecSaving), "");
 

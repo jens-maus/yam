@@ -48,7 +48,6 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
@@ -56,6 +55,8 @@
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 #include "classes/Classes.h"
+
+#include "Debug.h"
 
 /* local protos */
 static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode*, long);

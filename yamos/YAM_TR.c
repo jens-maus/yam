@@ -52,7 +52,6 @@
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -62,6 +61,8 @@
 #include "YAM_mainFolder.h"
 #include "YAM_md5.h"
 #include "YAM_mime.h"
+
+#include "Debug.h"
 
 struct TransStat
 {
@@ -230,19 +231,19 @@ BOOL TR_InitTLS(VOID)
   SSL_load_error_strings();
 
   // We have to feed the random number generator first
-  DB(kprintf("Seeding random number generator...\n");)
+  D(DBF_NET, "Seeding random number generator...");
   sprintf(tmp, "%lx%lx", (unsigned long)time((time_t *)0), (unsigned long)FindTask(NULL));
   RAND_seed(tmp, strlen(tmp));
 
   if (!(method = SSLv23_client_method()))
   {
-    DB(kprintf("SSLv23_client_method() error !\n");)
+    E(DBF_NET, "SSLv23_client_method() error !");
     return FALSE;
   }
 
   if (!(ctx = SSL_CTX_new(method)))
   {
-    DB(kprintf("Can't create SSL_CTX object !\n");)
+    E(DBF_NET, "Can't create SSL_CTX object !");
     return FALSE;
   }
 
@@ -250,10 +251,10 @@ BOOL TR_InitTLS(VOID)
   // in the application instead of using the default ones.
   if (CAfile || CApath)
   {
-    DB(kprintf("CAfile = %s, CApath = %s\n", CAfile ? CAfile : "none", CApath ? CApath : "none");)
+    D(DBF_NET, "CAfile = %s, CApath = %s", CAfile ? CAfile : "none", CApath ? CApath : "none");
     if ((!SSL_CTX_load_verify_locations(ctx, CAfile, CApath)))
     {
-      DB(kprintf("Error setting default verify locations !\n");)
+      E(DBF_NET, "Error setting default verify locations !");
       return FALSE;
     }
   }
@@ -261,14 +262,14 @@ BOOL TR_InitTLS(VOID)
   {
     if((!SSL_CTX_set_default_verify_paths(ctx)))
     {
-      DB(kprintf("Error setting default verify locations !\n");)
+      E(DBF_NET, "Error setting default verify locations !");
       return FALSE;
     }
   }
 
   if (!(SSL_CTX_set_cipher_list(ctx, "DEFAULT")))
   {
-    DB(kprintf("SSL_CTX_set_cipher_list() error !\n");)
+    E(DBF_NET, "SSL_CTX_set_cipher_list() error !");
     return FALSE;
   }
 
@@ -282,23 +283,23 @@ BOOL TR_InitTLS(VOID)
 // function that starts & initializes the TLS/SSL session
 BOOL TR_StartTLS(VOID)
 {
-  DB(kprintf("Initializing TLS/SSL session...\n");)
+  D(DBF_NET, "Initializing TLS/SSL session...");
 
   if (!(ssl = SSL_new(ctx)))
   {
-    DB(kprintf("Can't create a new SSL structure for a connection !\n");)
+    E(DBF_NET, "Can't create a new SSL structure for a connection !");
     return FALSE;
   }
 
   if (!(SSL_set_fd(ssl, (int)G->TR_Socket)))
   {
-    DB(kprintf("SSL_set_fd() error !\n");)
+    E(DBF_NET, "SSL_set_fd() error !");
     return FALSE;
   }
 
   if ((SSL_connect(ssl)) <= 0)
   {
-    DB(kprintf("TLS/SSL handshake error !\n");)
+    E(DBF_NET, "TLS/SSL handshake error !");
     return FALSE;
   }
 
@@ -313,34 +314,34 @@ BOOL TR_StartTLS(VOID)
 
     if (cipher)
     {
-      DB(kprintf("%s connection using %s\n", SSL_CIPHER_get_version(cipher), SSL_get_cipher(ssl));)
+      D(DBF_NET, "%s connection using %s", SSL_CIPHER_get_version(cipher), SSL_get_cipher(ssl));
     }
 
     if (!(server_cert = SSL_get_peer_certificate(ssl)))
     {
-      DB(kprintf("SSL_get_peer_certificate() error !\n");)
+      E(DBF_NET, "SSL_get_peer_certificate() error !");
     }
 
-    DB(kprintf("Server public key is %ld bits\n", EVP_PKEY_bits(X509_get_pubkey(server_cert)));)
+    D(DBF_NET, "Server public key is %ld bits", EVP_PKEY_bits(X509_get_pubkey(server_cert)));
 
     #define X509BUFSIZE 4096
 
     x509buf = (char *)malloc(X509BUFSIZE);
     memset(x509buf, 0, X509BUFSIZE);
 
-    DB(kprintf("Server certificate:\n");)
+    D(DBF_NET, "Server certificate:");
 
     if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
     {
-      DB(kprintf("X509_NAME_oneline...[subject] error !\n");)
+      E(DBF_NET, "X509_NAME_oneline...[subject] error !");
     }
-    DB(kprintf("subject: %s\n", x509buf);)
+    D(DBF_NET, "subject: %s", x509buf);
 
     if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
     {
-      DB(kprintf("X509_NAME_oneline...[issuer] error !\n");)
+      E(DBF_NET, "X509_NAME_oneline...[issuer] error !");
     }
-    DB(kprintf("issuer:  %s\n", x509buf);)
+    D(DBF_NET, "issuer:  %s", x509buf);
 
     if(x509buf)     free(x509buf);
     if(server_cert) X509_free(server_cert);
@@ -425,7 +426,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
    if(hasDIGEST_MD5_Auth(ServerFlags)) // SMTP AUTH DIGEST-MD5 (RFC 2831)
    {
-      DB(kprintf("processing AUTH DIGEST-MD5:\n");)
+      D(DBF_NET, "processing AUTH DIGEST-MD5:");
 
       // send the AUTH command and get the response back
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_DIGEST_MD5, NULL, MSG_ER_BadResponse)))
@@ -448,11 +449,13 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         if(chalRet)
           *chalRet = '\0'; // strip it
 
-        DB(kprintf("received DIGEST-MD5 challenge: `%s`\n", challenge);)
+        D(DBF_NET, "received DIGEST-MD5 challenge: `%s`", challenge);
+
         // lets base64 decode it
         if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
           return FALSE;
-        DB(kprintf("decoded  DIGEST-MD5 challenge: `%s`\n", challenge);)
+
+        D(DBF_NET, "decoded  DIGEST-MD5 challenge: `%s`", challenge);
 
         // we now analyze the received challenge identifier and pick out
         // the value which we are going to need for our challenge response.
@@ -488,7 +491,8 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
             // choosen SMTP domain to be the realm
             strcpy(realm, C->SMTP_Domain);
           }
-          DB(kprintf("realm: `%s`\n", realm);)
+
+          D(DBF_NET, "realm: `%s`", realm);
 
           // grab the "nonce" token for later reference
           if((pstart = strstr(challenge, "nonce=")))
@@ -513,10 +517,10 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           }
           else
           {
-            DB(kprintf("no `nonce=` token found!\n");)
+            E(DBF_NET, "no `nonce=` token found!");
             return FALSE;
           }
-          DB(kprintf("nonce: `%s`\n", nonce);)
+          D(DBF_NET, "nonce: `%s`", nonce);
 
           // now we check the "qop" to carry "auth" so that we are
           // sure that this server really wants an authentification from us
@@ -563,7 +567,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
             // check if we found a plain auth
             if(!pstart)
             {
-              DB(kprintf("no `auth` in `qop` token found!\n");)
+              E(DBF_NET, "no `auth` in `qop` token found!");
               return FALSE;
             }
           }
@@ -598,7 +602,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           MD5Final(digest, &context);
           memcpy(A1, digest, 16);
           A1_len += sprintf(&A1[16], ":%s:%s", nonce, cnonce);
-          DB(kprintf("unencoded A1: `%s` (%ld)\n", A1, A1_len);)
+          D(DBF_NET, "unencoded A1: `%s` (%ld)", A1, A1_len);
 
           // then we directly build the hexadecimal representation
           // HEX(H(A1))
@@ -607,13 +611,13 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           MD5Final((UBYTE *)digest_hex, &context);
           sprintf(A1, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                               digest_hex[2], digest_hex[3]);
-          DB(kprintf("encoded   A1: `%s`\n", A1);)
+          D(DBF_NET, "encoded   A1: `%s`", A1);
 
 
           // then we generate the A2 string accordingly
           // A2 = { "AUTHENTICATE:", digest-uri-value }
           sprintf(A2, "AUTHENTICATE:smtp/%s", realm);
-          DB(kprintf("unencoded A2: `%s`\n", A2);)
+          D(DBF_NET, "unencoded A2: `%s`", A2);
 
           // and also directly build the hexadecimal representation
           // HEX(H(A2))
@@ -622,14 +626,14 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           MD5Final((UBYTE *)digest_hex, &context);
           sprintf(A2, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                               digest_hex[2], digest_hex[3]);
-          DB(kprintf("encoded   A2: `%s`\n", A2);)
+          D(DBF_NET, "encoded   A2: `%s`", A2);
 
           // now we build the string from which we also build the MD5
           // HEX(H(A1)), ":",
           // nonce-value, ":", nc-value, ":",
           // cnonce-value, ":", qop-value, ":", HEX(H(A2))
           sprintf(buf2, "%s:%s:00000001:%s:auth:%s", A1, nonce, cnonce, A2);
-          DB(kprintf("unencoded resp: `%s`\n", buf2);)
+          D(DBF_NET, "unencoded resp: `%s`", buf2);
 
           // and finally build the respone-value =
           // HEX( KD( HEX(H(A1)), ":",
@@ -640,7 +644,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           MD5Final((UBYTE *)digest_hex, &context);
           sprintf(response, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                                     digest_hex[2], digest_hex[3]);
-          DB(kprintf("encoded   resp: `%s`\n", response);)
+          D(DBF_NET, "encoded   resp: `%s`", response);
         }
 
         // form up the challenge to authenticate according to RFC 2831
@@ -660,9 +664,9 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
                 realm,
                 response);
 
-        DB(kprintf("prepared challenge answer....: `%s`\n", challenge);)
+        D(DBF_NET, "prepared challenge answer....: `%s`", challenge);
         base64encode(buffer, challenge, strlen(challenge));
-        DB(kprintf("encoded  challenge answer....: `%s`\n", buffer);)
+        D(DBF_NET, "encoded  challenge answer....: `%s`", buffer);
         strcat(buffer,"\r\n");
 
         // now we send the SMTP AUTH response
@@ -689,7 +693,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
    }
    else if(hasCRAM_MD5_Auth(ServerFlags)) // SMTP AUTH CRAM-MD5 (RFC 2195)
    {
-      DB(kprintf("processing AUTH CRAM-MD5:\n");)
+      D(DBF_NET, "processing AUTH CRAM-MD5:");
 
       // send the AUTH command and get the response back
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_CRAM_MD5, NULL, MSG_ER_BadResponse)))
@@ -711,22 +715,22 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         if(chalRet)
           *chalRet = '\0'; // strip it
 
-        DB(kprintf("received CRAM-MD5 challenge: `%s`\n", challenge);)
+        D(DBF_NET, "received CRAM-MD5 challenge: `%s`", challenge);
 
         // lets base64 decode it
         if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
           return FALSE;
 
-        DB(kprintf("decoded  CRAM-MD5 challenge: `%s`\n", challenge);)
+        D(DBF_NET, "decoded  CRAM-MD5 challenge: `%s`", challenge);
 
         // compose the md5 challenge
         hmac_md5(challenge, strlen(challenge), password, strlen(password), (char *)digest);
         sprintf(buf, "%s %08lx%08lx%08lx%08lx", login, digest[0], digest[1], digest[2], digest[3]);
 
-        DB(kprintf("prepared CRAM-MD5 reponse..: `%s`\n", buf);)
+        D(DBF_NET, "prepared CRAM-MD5 reponse..: `%s`", buf);
         // lets base64 encode the md5 challenge for the answer
         base64encode(buffer, buf, strlen(buf));
-        DB(kprintf("encoded  CRAM-MD5 reponse..: `%s`\n", buffer);)
+        D(DBF_NET, "encoded  CRAM-MD5 reponse..: `%s`", buffer);
         strcat(buffer, "\r\n");
 
         // now we send the SMTP AUTH response
@@ -742,15 +746,15 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
    }
    else if(hasLOGIN_Auth(ServerFlags))  // SMTP AUTH LOGIN
    {
-      DB(kprintf("processing AUTH LOGIN:\n");)
+      D(DBF_NET, "processing AUTH LOGIN:");
 
       // send the AUTH command
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, MSG_ER_BadResponse)))
       {
          // prepare the username challenge
-         DB(kprintf("prepared AUTH LOGIN challenge: `%s`\n", C->SMTP_AUTH_User);)
+         D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_User);
          base64encode(buffer, C->SMTP_AUTH_User, strlen(C->SMTP_AUTH_User));
-         DB(kprintf("encoded  AUTH LOGIN challenge: `%s`\n", buffer);)
+         D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
          strcat(buffer,"\r\n");
 
          // now we send the SMTP AUTH response (UserName)
@@ -761,9 +765,9 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
             && (rc = getResponseCode(buffer)) == 334)
          {
             // prepare the password challenge
-            DB(kprintf("prepared AUTH LOGIN challenge: `%s`\n", C->SMTP_AUTH_Pass);)
+            D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_Pass);
             base64encode(buffer, C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
-            DB(kprintf("encoded  AUTH LOGIN challenge: `%s`\n", buffer);)
+            D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
             strcat(buffer,"\r\n");
 
             // now lets send the Password
@@ -786,8 +790,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
    else if(hasPLAIN_Auth(ServerFlags))  // SMTP AUTH PLAIN (RFC 2595)
    {
       int len=0;
-
-      DB(kprintf("processing AUTH PLAIN:\n");)
+      D(DBF_NET, "processing AUTH PLAIN:");
 
       // The AUTH PLAIN command string is a single command string, so we go
       // and prepare the challenge first
@@ -824,7 +827,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       ER_NewError(GetStr(MSG_ER_NO_SMTP_AUTH), C->SMTP_Server, NULL);
    }
 
-   DB(kprintf("Server responded with %ld\n", rc);)
+   D(DBF_NET, "Server responded with %ld", rc);
 
    return (BOOL)(rc == SMTP_ACTION_OK);
 }
@@ -983,22 +986,20 @@ static int TR_Connect(char *host, int port)
   }
 
   #ifdef DEBUG
-  kprintf("Host %s :\n", host);
-  kprintf("  Officially:\t%s\n", hostaddr->h_name);
-  kprintf("  Aliases:\t");
+  D(DBF_NET, "Host '%s':", host);
+  D(DBF_NET, "  Officially:\t%s", hostaddr->h_name);
 
   for(i=0; hostaddr->h_aliases[i]; ++i)
   {
-    if(i) kprintf(", ");
-    kprintf("%s", hostaddr->h_aliases[i]);
+    D(DBF_NET, "  Alias:\t%s", hostaddr->h_aliases[i]);
   }
 
-  kprintf("\n  Type:\t\t%s\n", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
+  D(DBF_NET, "  Type:\t\t%s", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
   if(hostaddr->h_addrtype == AF_INET)
   {
     for(i=0; hostaddr->h_addr_list[i]; ++i)
     {
-      kprintf("  Address:\t%s\n", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr));
+      D(DBF_NET, "  Address:\t%s", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr));
     }
   }
   #endif
@@ -1016,7 +1017,7 @@ static int TR_Connect(char *host, int port)
   {
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) == -1)
     {
-      DB(kprintf("setsockopt(SO_KEEPALIVE) error\n"));
+      E(DBF_NET, "setsockopt(SO_KEEPALIVE) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_KEEPALIVE", NULL);
     }
   }
@@ -1025,7 +1026,7 @@ static int TR_Connect(char *host, int port)
   {
     if(setsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) == -1)
     {
-      DB(kprintf("setsockopt(TCP_NODELAY) error\n"));
+      E(DBF_NET, "setsockopt(TCP_NODELAY) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "TCP_NODELAY", NULL);
     }
   }
@@ -1035,7 +1036,7 @@ static int TR_Connect(char *host, int port)
     optval = IPTOS_LOWDELAY;
     if(setsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, sizeof(optval)) == -1)
     {
-      DB(kprintf("setsockopt(IPTOS_LOWDELAY) error\n"));
+      E(DBF_NET, "setsockopt(IPTOS_LOWDELAY) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "IPTOS_LOWDELAY", NULL);
     }
   }
@@ -1044,7 +1045,7 @@ static int TR_Connect(char *host, int port)
   {
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, sizeof(optval)) == -1)
     {
-      DB(kprintf("setsockopt(SO_SNDBUF) error\n"));
+      E(DBF_NET, "setsockopt(SO_SNDBUF) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDBUF", NULL);
     }
   }
@@ -1053,7 +1054,7 @@ static int TR_Connect(char *host, int port)
   {
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, sizeof(optval)) == -1)
     {
-      DB(kprintf("setsockopt(SO_RCVBUF) error\n"));
+      E(DBF_NET, "setsockopt(SO_RCVBUF) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVBUF", NULL);
     }
   }
@@ -1062,7 +1063,7 @@ static int TR_Connect(char *host, int port)
   {
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, sizeof(optval)) == -1)
     {
-      DB(kprintf("setsockopt(SO_SNDLOWAT) error\n"));
+      E(DBF_NET, "setsockopt(SO_SNDLOWAT) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDLOWAT", NULL);
     }
   }
@@ -1071,7 +1072,7 @@ static int TR_Connect(char *host, int port)
   {
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, sizeof(optval)) == -1)
     {
-      DB(kprintf("setsockopt(SO_RCVLOWAT) error\n"));
+      E(DBF_NET, "setsockopt(SO_RCVLOWAT) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVLOWAT", NULL);
     }
   }
@@ -1085,7 +1086,7 @@ static int TR_Connect(char *host, int port)
 
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct timeval)) == -1)
     {
-      DB(kprintf("setsockopt(SO_SNDTIMEO) error\n"));
+      E(DBF_NET, "setsockopt(SO_SNDTIMEO) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDTIMEO", NULL);
     }
   }
@@ -1099,7 +1100,7 @@ static int TR_Connect(char *host, int port)
 
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval)) == -1)
     {
-      DB(kprintf("setsockopt(SO_RCVTIMEO) error\n"));
+      E(DBF_NET, "setsockopt(SO_RCVTIMEO) error");
       ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVTIMEO", NULL);
     }
   }
@@ -1110,33 +1111,43 @@ static int TR_Connect(char *host, int port)
     LONG optlen = sizeof(optval);
     struct timeval tv;
     LONG tvlen = sizeof(struct timeval);
-    kprintf("Opened socket: %lx\n", G->TR_Socket);
+
+    D(DBF_NET, "Opened socket: %lx", G->TR_Socket);
+
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
-    kprintf("  SO_KEEPALIVE..: %ld\n", optval);
+    D(DBF_NET, "SO_KEEPALIVE..: %ld", optval);
+
     getsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, &optlen);
-    kprintf("  TCP_NODELAY...: %ld\n", optval);
+    D(DBF_NET, "TCP_NODELAY...: %ld", optval);
+
     getsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, &optlen);
-    kprintf("  IPTOS_LOWDELAY: %ld\n", hasFlag(optval, IPTOS_LOWDELAY));
+    D(DBF_NET, "IPTOS_LOWDELAY: %ld", hasFlag(optval, IPTOS_LOWDELAY));
+
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, &optlen);
-    kprintf("  SO_SNDBUF.....: %ld bytes\n", optval);
+    D(DBF_NET, "SO_SNDBUF.....: %ld bytes", optval);
+
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, &optlen);
-    kprintf("  SO_RCVBUF.....: %ld bytes\n", optval);
+    D(DBF_NET, "SO_RCVBUF.....: %ld bytes", optval);
+
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, &optlen);
-    kprintf("  SO_SNDLOWAT...: %ld\n", optval);
+    D(DBF_NET, "SO_SNDLOWAT...: %ld", optval);
+
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, &optlen);
-    kprintf("  SO_RCVLOWAT...: %ld\n", optval);
+    D(DBF_NET, "SO_RCVLOWAT...: %ld", optval);
+
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, &tvlen);
-    kprintf("  SO_SNDTIMEO...: %ld\n", tv.tv_sec);
+    D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.tv_sec);
+
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, &tvlen);
-    kprintf("  SO_RCVTIMEO...: %ld\n", tv.tv_sec);
+    D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.tv_sec);
   }
   #endif
 
   // copy the hostaddr data in a local copy for further reference
   memset(&G->TR_INetSocketAddr, 0, sizeof(G->TR_INetSocketAddr));
-  G->TR_INetSocketAddr.sin_len          = sizeof(G->TR_INetSocketAddr);
-  G->TR_INetSocketAddr.sin_family       = AF_INET;
-  G->TR_INetSocketAddr.sin_port         = htons(port);
+  G->TR_INetSocketAddr.sin_len    = sizeof(G->TR_INetSocketAddr);
+  G->TR_INetSocketAddr.sin_family = AF_INET;
+  G->TR_INetSocketAddr.sin_port   = htons(port);
 
   // now we try a connection for every address we have for this host
   // because a hostname can have more than one IP in h_addr_list[]
@@ -2625,20 +2636,20 @@ static int TR_ConnectESMTP(void)
    }
 
 #ifdef DEBUG
-   kprintf("ESMTP Server '%s' serves:\n", C->SMTP_Server);
-   kprintf("  AUTH CRAM-MD5......: %ld\n", hasCRAM_MD5_Auth(ServerFlags));
-   kprintf("  AUTH DIGEST-MD5....: %ld\n", hasDIGEST_MD5_Auth(ServerFlags));
-   kprintf("  AUTH LOGIN.........: %ld\n", hasLOGIN_Auth(ServerFlags));
-   kprintf("  AUTH PLAIN.........: %ld\n", hasPLAIN_Auth(ServerFlags));
-   kprintf("  STARTTLS...........: %ld\n", hasSTARTTLS(ServerFlags));
-   kprintf("  SIZE...............: %ld\n", hasSIZE(ServerFlags));
-   kprintf("  PIPELINING.........: %ld\n", hasPIPELINING(ServerFlags));
-   kprintf("  8BITMIME...........: %ld\n", has8BITMIME(ServerFlags));
-   kprintf("  DSN................: %ld\n", hasDSN(ServerFlags));
-   kprintf("  ETRN...............: %ld\n", hasETRN(ServerFlags));
-   kprintf("  ENHANCEDSTATUSCODES: %ld\n", hasENHANCEDSTATUSCODES(ServerFlags));
-   kprintf("  DELIVERBY..........: %ld\n", hasDELIVERBY(ServerFlags));
-   kprintf("  HELP...............: %ld\n", hasHELP(ServerFlags));
+   D(DBF_NET, "ESMTP Server '%s' serves:", C->SMTP_Server);
+   D(DBF_NET, "  AUTH CRAM-MD5......: %ld", hasCRAM_MD5_Auth(ServerFlags));
+   D(DBF_NET, "  AUTH DIGEST-MD5....: %ld", hasDIGEST_MD5_Auth(ServerFlags));
+   D(DBF_NET, "  AUTH LOGIN.........: %ld", hasLOGIN_Auth(ServerFlags));
+   D(DBF_NET, "  AUTH PLAIN.........: %ld", hasPLAIN_Auth(ServerFlags));
+   D(DBF_NET, "  STARTTLS...........: %ld", hasSTARTTLS(ServerFlags));
+   D(DBF_NET, "  SIZE...............: %ld", hasSIZE(ServerFlags));
+   D(DBF_NET, "  PIPELINING.........: %ld", hasPIPELINING(ServerFlags));
+   D(DBF_NET, "  8BITMIME...........: %ld", has8BITMIME(ServerFlags));
+   D(DBF_NET, "  DSN................: %ld", hasDSN(ServerFlags));
+   D(DBF_NET, "  ETRN...............: %ld", hasETRN(ServerFlags));
+   D(DBF_NET, "  ENHANCEDSTATUSCODES: %ld", hasENHANCEDSTATUSCODES(ServerFlags));
+   D(DBF_NET, "  DELIVERBY..........: %ld", hasDELIVERBY(ServerFlags));
+   D(DBF_NET, "  HELP...............: %ld", hasHELP(ServerFlags));
 #endif
 
    return ServerFlags;
@@ -3019,7 +3030,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
                   // if everything is fine
                   if(feof(mfh) == 0)
                   {
-                    DB(kprintf("error on reading data!\n");)
+                    E(DBF_NET, "error on reading data!");
 
                     // an error occurred, lets return -1
                     success = FALSE;

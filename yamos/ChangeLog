@@ -5,6 +5,65 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-04-04  Jens Langner <Jens.Langner@light-speed.de>
+
+    * Debug.c,h: reworked the whole debug output management in YAM and replaced it
+      by a more sophisticated and modern runtime debugging framework.
+      This new framework allows our developers now to specify a special debug flag on
+      which this particular debug output should be displayed. An environment
+      variable (ENV:yamdebug) can then be used to enable/disable certain debug
+      information prior to the start of YAM. The currently available debug classes
+      and flags are:
+
+      debug classes:
+      -------------
+      @ctrace      - function tracing (ENTER/LEAVE)
+      @report  (*) - user reports (SHOWVALUE/SHOWSTRING)
+      @assert  (*) - error assertions (ASSERT)
+      @timeval     - profiling time evaluations
+      @debug   (*) - standard debug output (D)
+      @error   (*) - error message output (E)
+      @warning (*) - standard warning output (W)
+      @all         - matches all of the above
+
+      debug flags:
+      -----------
+      always   (*) - output should always be present
+      startup  (*) - startup/shutdown output
+      timerio      - timer.device & timerIO dependent output
+      config       - configuration management output
+      filter       - filter management output
+      folder       - folder management output
+      mail         - mail management output
+      mime         - mime encoding/decoding output
+      gui          - GUI management output
+      rexx         - rexx management output
+      net          - network management output
+      util         - helping utility functions/methods
+      all          - matches all of the above.
+
+      Debug flags and classes marked with a (*) are enabled by default if YAM is
+      compiled with the standard DEBUG define. All the other flags and classes can
+      be enabled by specifying them in the ENV:yamdebug environment variable.
+      Please note, that classes have to be specified by a "@" as the first character
+      and that also a negation of debugging flags can be done by specifying a "!".
+      So for example, setting yamdebug as follows:
+
+      1> setenv yamdebug "@all all"
+
+      will enable ALL debug classes and ALL debug flags output, which in fact is the
+      maximum debug output you can get. And specifying:
+
+      1> setenv yamdebug "@ctrace !startup"
+
+      will enable the function/call tracing output as well as disabling the startup
+      debug output. Also note, that there is an additional "ansi" token that can be
+      specified to enable fully ANSI-color compliant debug output in case your
+      serial debug terminal can display these colors.
+      This totally new debugging framework hopefully increases our possibilities
+      to track down problems and allow users of nightly builds to send us more flexible
+      and helpfull problem/debugging reports.
+
 2005-04-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * Splashwindow.c, YAM_US.c: moved the authentication request for password

@@ -55,6 +55,8 @@
 #include "YAM_read.h"
 #include "classes/Classes.h"
 
+#include "Debug.h"
+
 /* local protos */
 static BOOL FI_MatchString(struct Search*, char*);
 static BOOL FI_MatchListPattern(struct Search*, char*);
@@ -1275,7 +1277,8 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
 {
   struct MinNode *curNode;
 
-  DB(kprintf("CopyFilterData [%s]\n", srcFilter->name);)
+  ENTER();
+  SHOWSTRING(DBF_FILTER, srcFilter->name);
 
   // raw copy all global stuff first
   memcpy(dstFilter, srcFilter, sizeof(struct FilterNode));
@@ -1303,6 +1306,8 @@ void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
     // add the rule to the ruleList of our desitionation filter
     AddTail((struct List *)&dstFilter->ruleList, (struct Node *)newRule);
   }
+
+  LEAVE();
 }
 
 ///
@@ -1312,7 +1317,7 @@ static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 {
   struct MinNode *curNode;
 
-  DB(kprintf("CopySearchData\n");)
+  ENTER();
 
   // raw copy all global stuff first
   memcpy(dstSearch, srcSearch, sizeof(struct Search));
@@ -1334,6 +1339,8 @@ static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
 
     AddTail((struct List *)&dstSearch->patternList, (struct Node *)dstNode);
   }
+
+  LEAVE();
 }
 
 ///
@@ -1399,7 +1406,8 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter)
 {
   struct RuleNode *rule = calloc(1, sizeof(struct RuleNode));
 
-  DB(kprintf("CreateNewRule [%s]\n", filter->name);)
+  ENTER();
+  SHOWSTRING(DBF_FILTER, filter->name);
 
   if(rule)
   {
@@ -1408,6 +1416,7 @@ struct RuleNode *CreateNewRule(struct FilterNode *filter)
       AddTail((struct List *)&filter->ruleList, (struct Node *)rule);
   }
 
+  RETURN(rule);
   return rule;
 }
 

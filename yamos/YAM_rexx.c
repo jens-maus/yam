@@ -48,11 +48,12 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "YAM_debug.h"
 #include "YAM_mime.h"
 #include "YAM_rexx.h"
 #include "YAM_rexx_rxcl.h"
 #include "YAM_utilities.h"
+
+#include "Debug.h"
 
 #define RexxPortBaseName "YAM"
 #define RexxMsgExtension "YAM"
@@ -244,14 +245,17 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    struct RexxHost *host;
    int ext = 0;
    
-   DB(kprintf("SetupARexxHost()\n");)
+   ENTER();
 
    if( !basename || !*basename )
       basename = RexxPortBaseName;
    
    if( !(host = AllocVec(sizeof(struct RexxHost), MEMF_CLEAR)) )
+   {
+      RETURN(NULL);
       return NULL;
-   
+   }
+
    strcpy( host->portname, basename );
    
    if( (host->port = usrport) )
@@ -261,6 +265,8 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    else if( !(host->port = CreateMsgPort()) )
    {
       FreeVec( host );
+
+      RETURN(NULL);
       return NULL;
    }
    else
@@ -284,12 +290,15 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
       RemPort( host->port );
       if(isFlagClear(host->flags, ARB_HF_USRMSGPORT)) DeleteMsgPort( host->port );
       FreeVec( host );
+
+      RETURN(NULL);
       return NULL;
    }
    
    host->rdargs->RDA_Flags = RDAF_NOPROMPT;
    
-   return( host );
+   RETURN(host);
+   return(host);
 }
 
 ///
@@ -366,14 +375,19 @@ static struct rxs_command *FindRXCommand( char *com )
 {
    int cmd;
 
-   DB(kprintf("FindRXCommand: '%s'\n", com);)
+   ENTER();
+   SHOWSTRING(DBF_REXX, com);
    
-   cmd = find( com );
+   cmd = find(com);
    
-   if( cmd == -1 )
+   if(cmd == -1)
+   {
+      RETURN(NULL);
       return NULL;
-   else
-      return( rxs_commandlist + cmd );
+   }
+
+   RETURN(rxs_commandlist+cmd);
+   return(rxs_commandlist+cmd);
 }
 
 ///
@@ -620,6 +634,8 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    long rc=20, rc2;
    char *result = NULL;
    
+   ENTER();
+
    if( !(argb = AllocVec((ULONG)strlen((char *) ARG0(rexxmsg)) + 2, MEMF_ANY)) )
    {
       rc2 = ERROR_NO_FREE_STORE;
@@ -632,7 +648,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    strcat( argb, "\n" );
    arg = argb;
 
-   DB(kprintf("DoRXCommand: '%s'\n", arg);)
+   SHOWSTRING(DBF_REXX, arg);
    
    if(!(rxc = ParseRXCommand( &arg )))
    {
@@ -648,6 +664,8 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
          {
             /* Reply wird später vom Dispatcher gemacht */
             if( argb ) FreeVec( argb );
+
+            LEAVE();
             return;
          }
          else
@@ -812,6 +830,8 @@ drc_cleanup:
    if( cargstr ) FreeVec( cargstr );
    if( array ) (rxc->function)( host, (void **)(APTR)&array, RXIF_FREE, rexxmsg );
    if( argb ) FreeVec( argb );
+
+   LEAVE();
 }
 
 ///
@@ -820,7 +840,7 @@ void ARexxDispatch( struct RexxHost *host )
 {
    struct RexxMsg *rexxmsg;
 
-   DB(kprintf("ARexxDispatch()\n");)
+   ENTER();
 
    while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)))
    {
@@ -865,5 +885,7 @@ void ARexxDispatch( struct RexxHost *host )
          ReplyMsg( (struct Message *) rexxmsg );
       }
    }
+
+   LEAVE();
 }
 ///

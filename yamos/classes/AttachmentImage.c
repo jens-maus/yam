@@ -43,6 +43,8 @@
 #include <proto/icon.h>
 #include <proto/wb.h>
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -271,7 +273,7 @@ OVERLOAD(MUIM_Setup)
 	}
 	else
 	{
-		DB(kprintf("DiskObject for file [%s] retrieved with DefIcons\n", mailPart->Filename);)
+		D(DBF_GUI, "DiskObject for file [%s] retrieved with DefIcons", mailPart->Filename);
 	}
 
 	// now that we should have the diskObject we get the image of it, blit it in
@@ -385,10 +387,10 @@ OVERLOAD(MUIM_Setup)
 				data->scaledWidth  = args.bsa_DestWidth;
 				data->scaledHeight = args.bsa_DestHeight;
 
-				DB(kprintf("AttachmentImage selected scale (w/h) from %ld/%ld to %ld/%ld\n", orgWidth,
-																																										 orgHeight,
-																																										 data->scaledWidth,
-																																										 data->scaledHeight);)
+				D(DBF_GUI, "AttachmentImage selected scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
+																																									 orgHeight,
+																																									 data->scaledWidth,
+																																									 data->scaledHeight);
 			}
 
 			// now that we have the selectedBitMap filled we have to scale down the unselected state
@@ -430,10 +432,10 @@ OVERLOAD(MUIM_Setup)
 				data->scaledWidth  = args.bsa_DestWidth;
 				data->scaledHeight = args.bsa_DestHeight;
 
-				DB(kprintf("AttachmentImage normal scale (w/h) from %ld/%ld to %ld/%ld\n", orgWidth,
-																																									 orgHeight,
-																																									 data->scaledWidth,
-																																									 data->scaledHeight);)
+				D(DBF_GUI, "AttachmentImage normal scale (w/h) from %ld/%ld to %ld/%ld", orgWidth,
+																																								 orgHeight,
+																																								 data->scaledWidth,
+																																								 data->scaledHeight);
 			}
 
 			FreeBitMap(orgBitMap);
@@ -637,7 +639,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 {
 	GETDATA;
 
-	DB(kprintf("MUIM_DeleteDragImage\n");)
+	D(DBF_GUI, "MUIM_DeleteDragImage");
 	
 	// this stuff only works with Workbench v45+
 	if(WorkbenchBase->lib_Version >= 45)
@@ -718,7 +720,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 						data->dropPath = selMsg.destName;
 				}
 
-				DB(kprintf("found dropPath: [%s]\n", data->dropPath ? data->dropPath : "n/a");)
+				D(DBF_GUI, "found dropPath: [%s]", data->dropPath ? data->dropPath : "n/a");
 
 				// signal other listening for the DropPath that we
 				// found out where to icon has dropped at exactly.

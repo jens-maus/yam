@@ -44,7 +44,6 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_find.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
@@ -52,6 +51,8 @@
 #include "YAM_mainFolder.h"
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
+
+#include "Debug.h"
 
 enum VarPopMode { VPM_FORWARD=0, VPM_REPLYHELLO, VPM_REPLYINTRO, VPM_REPLYBYE,
                   VPM_QUOTE, VPM_ARCHIVE, VPM_MAILSTATS };
@@ -168,7 +169,7 @@ static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
          struct XpkPackerInfo xpi;
          ULONG i;
 
-         DB(kprintf("Loaded XPK Packerlist: %ld packers found\n", xpl.xpl_NumPackers);)
+         D(DBF_CONFIG, "Loaded XPK Packerlist: %ld packers found", xpl.xpl_NumPackers);
 
          for (i = 0; i < xpl.xpl_NumPackers; i++)
          {
@@ -178,7 +179,7 @@ static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
                if (encrypt && isFlagClear(xpi.xpi_Flags, XPKIF_ENCRYPTION)) suits = FALSE;
                if (pack && isFlagClear(xpi.xpi_Flags, 0x3f)) suits = FALSE;
 
-               DB(kprintf("Found XPKPacker: %ld: [%s] - suits: %d\n", i, xpl.xpl_Packer[i], suits);)
+               D(DBF_CONFIG, "Found XPKPacker: %ld: [%s] - suits: %d", i, xpl.xpl_Packer[i], suits);
 
                if (suits) DoMethod(lv, MUIM_List_InsertSingle, xpl.xpl_Packer[i], MUIV_List_Insert_Sorted);
             }

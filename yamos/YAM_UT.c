@@ -68,7 +68,6 @@
 
 #include "YAM.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -81,8 +80,9 @@
 #include "classes/Classes.h"
 #include "classes/ClassesExtra.h"
 
-#define CRYPTBYTE       164
-#define MUIA_Dtpic_Name 0x80423d72
+#include "Debug.h"
+
+#define CRYPTBYTE 164
 
 struct UniversalClassData
 {
@@ -1881,7 +1881,7 @@ void CloseTempFile(struct TempFile *tf)
    if (tf)
    {
       if (tf->FP) fclose(tf->FP);
-      DB(kprintf("DeleteTempFile: %s\n", tf->Filename);)
+      D(DBF_UTIL, "DeleteTempFile: %s\n", tf->Filename);
       DeleteFile(tf->Filename);
       free(tf);
    }
@@ -3004,11 +3004,13 @@ int TZtoMinutes(char *tzone)
           if(strnicmp(time_zone_table[i].TZname, tzone, strlen(time_zone_table[i].TZname)) == 0)
           {
             tzcorr = time_zone_table[i].TZcorr;
-            DB(kprintf("TZtoMinutes: found abbreviation '%s' (%ld)\n", time_zone_table[i].TZname, tzcorr);)
+            D(DBF_UTIL, "TZtoMinutes: found abbreviation '%s' (%ld)", time_zone_table[i].TZname, tzcorr);
             break;
           }
         }
-        DB(if(tzcorr == -1) kprintf("TZtoMinutes: abbreviation '%s' NOT found!\n", tzone);)
+
+        if(tzcorr == -1)
+          D(DBF_UTIL, "TZtoMinutes: abbreviation '%s' NOT found!", tzone);
       }
    }
 
@@ -3279,7 +3281,7 @@ static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff)
 //  Shrinks a message file
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
 {
-   DB(kprintf("CompressMailFile: %08lx - [%s] -> [%s] - [%s] - [%s] - %ld\n", XpkBase, src, dst, passwd, method, eff);)
+   D(DBF_UTIL, "CompressMailFile: %08lx - [%s] -> [%s] - [%s] - [%s] - %ld", XpkBase, src, dst, passwd, method, eff);
 
    if(!XpkBase)
      return FALSE;
@@ -3296,7 +3298,7 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
 //  Expands a compressed message file
 static BOOL UncompressMailFile(char *src, char *dst, char *passwd)
 {
-   DB(kprintf("UncompressMailFile: %08lx - [%s] -> [%s] - [%s]\n", XpkBase, src, dst, passwd);)
+   D(DBF_UTIL, "UncompressMailFile: %08lx - [%s] -> [%s] - [%s]", XpkBase, src, dst, passwd);
 
    if(!XpkBase)
       return FALSE;
@@ -3323,7 +3325,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    char *dstpw = dstfolder->Password;
    int success = 0;
 
-   DB(kprintf("TransferMailFile: %d->%d [%s]->[%s]\n", srcMode, dstMode, mail->MailFile, GetFolderDir(dstfolder));)
+   D(DBF_UTIL, "TransferMailFile: %d->%d [%s]->[%s]", srcMode, dstMode, mail->MailFile, GetFolderDir(dstfolder));
 
    if(!MA_GetIndex(srcfolder))
      return 0;
@@ -3453,7 +3455,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
    enum FolderMode srcMode = folder->Mode;
    BOOL success = FALSE;
 
-   DB(kprintf("RepackMailFile: ");)
+   ENTER();
 
    // if this function was called with dstxpk=-1 and passwd=NULL then
    // we assume we need to pack the file from plain text to the currently
@@ -3470,7 +3472,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
    GetPackMethod(dstMode, &pmeth, &peff);
    sprintf(dstbuf, "%s.tmp", srcbuf);
 
-   DB(kprintf("[%s] - ", srcbuf);)
+   SHOWSTRING(DBF_UTIL, srcbuf);
 
    if((srcMode == dstMode && srcMode <= FM_SIMPLE) ||
       (srcMode <= FM_SIMPLE && dstMode <= FM_SIMPLE))
@@ -3478,13 +3480,13 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
       // the FolderModes are the same so lets do nothing
       success = TRUE;
 
-      DB(kprintf("repack not required.\n");)
+      D(DBF_UTIL, "repack not required.");
    }
    else if(srcMode > FM_SIMPLE)
    {
       if(dstMode <= FM_SIMPLE)
       {
-         DB(kprintf("uncompressing\n");)
+         D(DBF_UTIL, "uncompressing");
 
          // if we end up here the source folder is a compressed folder so we
          // have to just uncompress the file
@@ -3498,7 +3500,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
       {
          // if we end up here, the source folder is a compressed+crypted one and
          // the destination mode also
-         DB(kprintf("uncompressing/recompress\n");)
+         D(DBF_UTIL, "uncompressing/recompress");
 
          if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
             CompressMailFile(dstbuf, srcbuf, passwd, pmeth, peff))
@@ -3511,7 +3513,7 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
    {
       if(dstMode > FM_SIMPLE)
       {
-         DB(kprintf("compressing\n");)
+         D(DBF_UTIL, "compressing");
 
          // here the source folder is not compressed, but the destination mode
          // signals to compress it
@@ -3524,6 +3526,8 @@ BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
    }
 
    MA_UpdateMailFile(mail);
+
+   RETURN(success);
    return success;
 }
 ///
@@ -4065,7 +4069,7 @@ void LoadLayout(void)
    char *ls;
    char *endptr;
 
-   DB(kprintf("LoadLayout\n");)
+   ENTER();
 
    // Load the application configuration from the ENV: directory.
    DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
@@ -4163,6 +4167,8 @@ void LoadLayout(void)
                                               MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
                                               MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
    }
+
+   LEAVE();
 }
 ///
 /// SaveLayout
@@ -4171,7 +4177,8 @@ void SaveLayout(BOOL permanent)
 {
    char buf[SIZE_DEFAULT+1];
 
-   DB(kprintf("SaveLayout: %ld\n", permanent);)
+   ENTER();
+   SHOWVALUE(DBF_UTIL, permanent);
 
    // we encode the different weight factors which are embeeded in a dummy string
    // gadgets:
@@ -4219,6 +4226,8 @@ void SaveLayout(BOOL permanent)
 
       pr->pr_WindowPtr = oldWindowPtr; // restore the old windowPtr
    }
+
+   LEAVE();
 }
 ///
 /// ConvertKey
@@ -4416,7 +4425,8 @@ int PGPCommand(char *progname, char *options, int flags)
    int error = -1;
    char command[SIZE_LARGE];
 
-   DB(kprintf("PGPCommand: [%s] [%s] - %ld error: ", progname, options, flags);)
+   ENTER();
+   D(DBF_UTIL, "[%s] [%s] - flags: %ld", progname, options, flags);
 
    if ((fhi = Open("NIL:", MODE_OLDFILE)))
    {
@@ -4436,7 +4446,7 @@ int PGPCommand(char *progname, char *options, int flags)
    if (error < 0) ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath, NULL);
    if (!error && !hasKeepLogFlag(flags)) DeleteFile(PGPLOGFILE);
 
-   DB(kprintf("%ld\n", error);)
+   RETURN(error);
    return error;
 }
 ///
@@ -4526,7 +4536,7 @@ void Busy(char *text, char *parameter, int cur, int max)
           BusyLevel++;
         else
         {
-          DB(kprintf("Error: reached highest BusyLevel!!!\n");)
+          E(DBF_UTIL, "Error: reached highest BusyLevel!!!");
         }
       }
       else
@@ -5052,7 +5062,8 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
    BPTR in, out;
    int ret;
 
-   DB(kprintf("Execute cmd: [%s]", cmd);)
+   ENTER();
+   SHOWSTRING(DBF_UTIL, cmd);
 
    switch (outdef)
    {
@@ -5067,7 +5078,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
    {
       BPTR path = CloneWorkbenchPath(WBmsg);
 
-      DB(kprintf(" with CloneWBPath()\n");)
+      D(DBF_UTIL, "with CloneWBPath()");
 
       if ((ret = SystemTags(cmd,
                             SYS_Input,    in,
@@ -5082,7 +5093,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
    }
    else
    {
-      DB(kprintf(" without CloneWBPath()\n");)
+      D(DBF_UTIL, "without CloneWBPath()");
 
       ret = SystemTags(cmd,
                        SYS_Input,     in,
@@ -5094,6 +5105,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
 
    if (ret == -1 && asynch && outdef) { Close(out); Close(in); }
 
+   RETURN(!ret);
    return (BOOL)(!ret);
 }
 ///

@@ -48,7 +48,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Debug.h"
 #include "extra.h"
 #include "newmouse.h"
 #include "SDI_hook.h"
@@ -57,7 +56,6 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"

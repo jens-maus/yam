@@ -44,7 +44,6 @@
 
 #include "YAM.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -58,6 +57,7 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
+#include "Debug.h"
 /*
 ** The following structures are used to build the
 ** .index files of a folder.
@@ -158,7 +158,7 @@ static void MA_ValidateStatus(struct Folder *folder)
       folder->Type == FT_SENT
      )
    {
-      DB(kprintf("Validating status of new msgs in folder %s\n", folder->Name);)
+      D(DBF_FOLDER, "Validating status of new msgs in folder %s", folder->Name);
 
       for(mail = folder->Messages; mail; mail = mail->Next)
       {
@@ -197,16 +197,16 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
    BOOL corrupt = FALSE;
    BOOL error = FALSE;
 
-   DB( kprintf("Loading index for folder %s\n", folder->Name); )
+   D(DBF_FOLDER, "Loading index for folder '%s'", folder->Name);
 
-   if ((fh = fopen(MA_IndexFileName(folder), "r")))
+   if((fh = fopen(MA_IndexFileName(folder), "r")))
    {
       struct FIndex fi;
 
       BusyText(GetStr(MSG_BusyLoadingIndex), folder->Name);
       if(fread(&fi, sizeof(struct FIndex), 1, fh) != 1)
       {
-        DB(kprintf("error while loading struct FIndex from .index file\n");)
+        E(DBF_FOLDER, "error while loading struct FIndex from .index file");
         error = TRUE;
       }
       else if(fi.ID == FINDEX_VER)
@@ -230,7 +230,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                   // check if we are here because of an error or EOF
                   if(ferror(fh) != 0 || feof(fh) == 0)
                   {
-                    DB(kprintf("error while loading ComprMail struct from .index file\n");)
+                    E(DBF_FOLDER, "error while loading ComprMail struct from .index file");
                     error = TRUE;
                   }
 
@@ -249,7 +249,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
                if(fread(buf, cmail.moreBytes, 1, fh) != 1)
                {
-                 DB(kprintf("fread error while reading index file\n");)
+                 E(DBF_FOLDER, "fread error while reading index file");
                  error = TRUE;
                  break;
                }
@@ -275,7 +275,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                // finally add the new mail structure to our mail list
                if(AddMailToList(&mail, folder) == NULL)
                {
-                 DB(kprintf("AddMailToList returned NULL!\n");)
+                 E(DBF_FOLDER, "AddMailToList returned NULL!");
                  error = TRUE;
                  break;
                }
@@ -292,7 +292,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
    if(error)
    {
-     DB(kprintf("an error occurred while trying to load the index file '%s'\n", MA_IndexFileName(folder));)
+     E(DBF_FOLDER, "an error occurred while trying to load the index file '%s'", MA_IndexFileName(folder));
      ClearMailList(folder, TRUE);
 
      return LM_UNLOAD;
@@ -300,7 +300,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
    if(corrupt || indexloaded == LM_UNLOAD)
    {
-     DB( kprintf("  corrupt or outdated .index file detected, %s\n", full ? "rebuilding..." : "skipping..."); )
+     W(DBF_FOLDER, "  corrupt or outdated .index file detected, %s", full ? "rebuilding..." : "skipping...");
      ClearMailList(folder, TRUE);
      if(full)
      {
@@ -833,7 +833,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
           }
           else
           {
-            DB(kprintf("  error on allocating enough buffers\n");)
+            E(DBF_FOLDER, "  error on allocating enough buffers");
             result = NULL;
           }
 
@@ -841,7 +841,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
         }
         else
         {
-          DB(kprintf("  error on allocating dos object\n");)
+          E(DBF_FOLDER, "  error on allocating dos object");
           result = NULL;
         }
 
@@ -849,7 +849,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       }
       else
       {
-        DB(kprintf("  error on getting folderdir lock\n");)
+        E(DBF_FOLDER, "  error on getting folderdir lock");
         result = NULL;
       }
 
@@ -857,7 +857,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       // another error than an already existing file!
       if(mailCounter == 0)
       {
-        DB(kprintf("  error on renaming '%s' to '%s'\n", oldFilePath, newFilePath);)
+        E(DBF_FOLDER, "  error on renaming '%s' to '%s'", oldFilePath, newFilePath);
         result = NULL;
         break;
       }
@@ -877,7 +877,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       // try to rename it and if it fails finally return an error
       if(Rename(oldFilePath, newFilePath) == 0)
       {
-        DB(kprintf("  error on renaming '%s' to '%s'\n", oldFilePath, newFilePath);)
+        E(DBF_FOLDER, "  error on renaming '%s' to '%s'", oldFilePath, newFilePath);
         result = NULL;
         break;
       }
@@ -1030,19 +1030,19 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
           if((len = rfc2047_decode(hdrContents, hdrContents, strlen(hdrContents),
              (G->TTin && G->TTin->Header) ? G->TTin : NULL)) == -1)
           {
-            DB(kprintf("ERROR: malloc() error during rfc2047() decoding\n");)
+            E(DBF_FOLDER, "ERROR: malloc() error during rfc2047() decoding");
             break; // break-out
           }
           else if(len == -2)
           {
-            DB(kprintf("WARNING: unknown header encoding found\n");)
+            W(DBF_FOLDER, "WARNING: unknown header encoding found");
 
             // signal an error but continue.
             ER_NewError(GetStr(MSG_ER_UnknownHeaderEnc), hdrContents, NULL);
           }
           else if(len == -3)
           {
-            DB(kprintf("WARNING: base64 header decoding failed\n");)
+            W(DBF_FOLDER, "WARNING: base64 header decoding failed");
           }
 
           // now that we have decoded the headerline accoring to rfc2047
@@ -1457,7 +1457,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
         // lets decode the base64 encoded timestring in a temporary buffer
         if(base64decode(timebuf, dateFilePart, 12) <= 0)
         {
-          DB(kprintf("WARNING: failure in decoding the encoded date from mailfile: '%s'\n", mail->MailFile);)
+          W(DBF_FOLDER, "WARNING: failure in decoding the encoded date from mailfile: '%s'", mail->MailFile);
 
           // if we weren`t able to decode the base64 encoded string
           // we have to validate the transDate so that the calling function
@@ -1599,7 +1599,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   BusyGauge(GetStr(MSG_BusyScanning), folder->Name, filecount);
   ClearMailList(folder, TRUE);
 
-  DB(kprintf("Recanning index for folder: %s...\n", folder->Name);)
+  D(DBF_FOLDER, "Recanning index for folder: '%s'...", folder->Name);
 
   if((dirLock = Lock(GetFolderDir(folder), ACCESS_READ)))
   {
@@ -1686,7 +1686,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
                   // ok we seem to have found an old-fashioned mailfile, so lets
                   // convert it to the newstyle
-                  DB(kprintf("  found < v2.5 style mailfile: %s\n", fname);)
+                  W(DBF_FOLDER, "found < v2.5 style mailfile: '%s'", fname);
 
                   // lets ask if the user wants to convert the file or not
                   if(!convertAllOld && !skipAllOld)
@@ -1727,7 +1727,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                   int res;
                   BOOL convertOnce = FALSE;
 
-                  DB(kprintf("  found unknown file: %s\n", fname);)
+                  W(DBF_FOLDER, "found unknown file: %s", fname);
 
                   // lets ask if the user wants to convert the file or not
                   if(!convertAllUnknown && !skipAllUnknown)
@@ -1785,7 +1785,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
               if(ead->ed_Size)
               {
-                DB(kprintf("  examining MailFile: %s\n", fname);)
+                D(DBF_FOLDER, "examining MailFile: %s", fname);
 
                 if((email = MA_ExamineMail(folder, fname, FALSE)))
                 {
@@ -1799,7 +1799,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                     // as the fallback
                     if(!hasStatusQueued(newMail) && !hasStatusHold(newMail))
                     {
-                       DB(kprintf("    no transfer Date information found in mail file, taking fileDate...\n");)
+                       W(DBF_FOLDER, "no transfer Date information found in mail file, taking fileDate...");
 
                        // now convert the local TZ fib_Date to a UTC transDate
                        DateStamp2TimeVal(FileDate(GetMailFile(NULL, folder, newMail)), &newMail->transDate, TZC_UTC);

@@ -45,12 +45,13 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_locale.h"
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
+
+#include "Debug.h"
 
 /* local protos */
 static void EA_SetPhoto(int winnum, char *fname);

@@ -40,13 +40,14 @@
 #include "extra.h"
 #include "YAM.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_utilities.h"
+
+#include "Debug.h"
 
 /***************************************************************************
  Module: Configuration - Basic Get/Put routines
@@ -960,7 +961,7 @@ void CO_GetConfig(void)
    int i;
    struct CO_GUIData *gui = &G->CO->GUI;
 
-   DB(kprintf("CO_GetConfig\n");)
+   ENTER();
 
    switch (G->CO->VisiblePage)
    {
@@ -1157,6 +1158,8 @@ void CO_GetConfig(void)
          GetMUIString(CE->AppIconText         ,gui->ST_APPICON);
          break;
    }
+
+   LEAVE();
 }
 
 ///
@@ -1168,7 +1171,7 @@ void CO_SetConfig(void)
    struct POP3 *pop3;
    int i;
 
-   DB(kprintf("CO_SetConfig\n");)
+   ENTER();
 
    switch (G->CO->VisiblePage)
    {
@@ -1371,5 +1374,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_APPICON   ,CE->AppIconText);
          break;
    }
+
+   LEAVE();
 }
 ///

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -29,12 +29,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "YAM_debug.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_locale.h"
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
+
+#include "Debug.h"
 
 /* local */
 static int rfc2047_decode_int(const char *text,
@@ -335,7 +336,8 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
   int encoded;
   size_t read = 0;
 
-  DB(kprintf("base64encode_file(): %ld\n", convLF);)
+  ENTER();
+  SHOWVALUE(DBF_MIME, convLF);
 
   while(eof_reached == FALSE)
   {
@@ -356,7 +358,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
     {
       if(feof(in) != 0)
       {
-        DB(kprintf("EOF file at %ld\n", ftell(in));)
+        D(DBF_MIME, "EOF file at %ld", ftell(in));
 
         eof_reached = TRUE; // we found an EOF
 
@@ -366,9 +368,10 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
       }
       else
       {
-        DB(kprintf("error on reading data!\n");)
+        E(DBF_MIME, "error on reading data!");
 
         // an error occurred, lets return -1
+        RETURN(-1);
         return -1;
       }
     }
@@ -432,7 +435,9 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
     // something wrong
     if(encoded <= 0)
     {
-      DB(kprintf("error on encoding data!\n");)
+      E(DBF_MIME, "error on encoding data!");
+
+      RETURN(-1);
       return -1;
     }
 
@@ -462,8 +467,10 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
       // now we do a binary write of the data
       if(fwrite(optr, 1, todo, out) != todo)
       {
-        DB(kprintf("error on writing data!\n");)
+        E(DBF_MIME, "error on writing data!");
+
         // an error must have occurred.
+        RETURN(-1);
         return -1;
       }
 
@@ -484,14 +491,16 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
       }
       else if(fputc('\n', out) == EOF)
       {
-        DB(kprintf("error on writing newline\n");)
+        E(DBF_MIME, "error on writing newline");
+
+        RETURN(-1);
         return -1;
       }
       else missing_chars = 0;
     }
   }
 
-  DB(kprintf("finished base64encode_file(): %ld\n", sumencoded);)
+  RETURN(sumencoded);
   return sumencoded;
 }
 
@@ -512,7 +521,7 @@ long base64decode_file(FILE *in, FILE *out,
   size_t next_unget = 0;
   BOOL eof_reached = FALSE;
 
-  DB(kprintf("base64decode_file(): %ld %ld\n", convCRLF, tt);)
+  ENTER();
 
   while(eof_reached == FALSE)
   {
@@ -536,7 +545,7 @@ long base64decode_file(FILE *in, FILE *out,
     {
       if(feof(in) != 0)
       {
-        DB(kprintf("EOF file at %ld\n", ftell(in));)
+        D(DBF_MIME, "EOF file at %ld", ftell(in));
 
         eof_reached = TRUE; // we found an EOF
 
@@ -546,9 +555,10 @@ long base64decode_file(FILE *in, FILE *out,
       }
       else
       {
-        DB(kprintf("error on reading data!\n");)
+        E(DBF_MIME, "error on reading data!");
 
         // an error occurred, lets return -1
+        RETURN(-1);
         return -1;
       }
     }
@@ -598,6 +608,7 @@ long base64decode_file(FILE *in, FILE *out,
       else
       {
         // on an EOF we shouldn`t have any unget chars
+        RETURN(-1);
         return -1;
       }
     }
@@ -608,16 +619,19 @@ long base64decode_file(FILE *in, FILE *out,
     if(read <= 0 ||
        (outLength = base64decode(outbuffer, inbuffer, read)) <= 0)
     {
-      DB(kprintf("error on decoding: %ld %ld\n", read, outLength);)
+      E(DBF_MIME, "error on decoding: %ld %ld", read, outLength);
 
       // it should not happen that we face a shortCount
       // or error
+      RETURN(-1);
       return -1;
     }
     #if defined(DEBUG)
     else if(outLength > B64DEC_BUF/4*3)
     {
-      kprintf("Error: outbuffer has been overwritten by base64decode()!!!\n");
+      E(DBF_MIME, "Error: outbuffer has been overwritten by base64decode()!!!");
+
+      RETURN(-1);
       return -1;
     }
     #endif
@@ -667,9 +681,10 @@ long base64decode_file(FILE *in, FILE *out,
     // our file
     if(fwrite(outbuffer, sizeof(char), (size_t)outLength, out) != (size_t)outLength)
     {
-      DB(kprintf("error on writing data!\n");)
+      E(DBF_MIME, "error on writing data!");
 
       // an error occurred while writing...
+      RETURN(-1);
       return -1;
     }
 
@@ -677,7 +692,7 @@ long base64decode_file(FILE *in, FILE *out,
     decodedChars += outLength;
   }
 
-  DB(kprintf("finished base64decode_file(): %ld\n", decodedChars);)
+  RETURN(decodedChars);
   return decodedChars;
 }
 
@@ -704,7 +719,7 @@ long qpencode_file(FILE *in, FILE *out)
   BOOL eof_reached = FALSE;
   size_t read;
 
-  DB(kprintf("qpencode_file()\n");)
+  ENTER();
 
   while(eof_reached == FALSE)
   {
@@ -717,7 +732,7 @@ long qpencode_file(FILE *in, FILE *out)
     {
       if(feof(in) != 0)
       {
-        DB(kprintf("EOF file at %ld\n", ftell(in));)
+        D(DBF_MIME, "EOF file at %ld", ftell(in));
 
         eof_reached = TRUE; // we found an EOF
 
@@ -727,9 +742,10 @@ long qpencode_file(FILE *in, FILE *out)
       }
       else
       {
-        DB(kprintf("error on reading data!\n");)
+        E(DBF_MIME, "error on reading data!");
 
         // an error occurred, lets return -1
+        RETURN(-1);
         return -1;
       }
     }
@@ -822,8 +838,10 @@ long qpencode_file(FILE *in, FILE *out)
         // now we do a binary write of the data
         if(fwrite(outbuffer, 1, todo, out) != todo)
         {
-          DB(kprintf("error on writing data!\n");)
+          E(DBF_MIME, "error on writing data!");
+
           // an error must have occurred.
+          RETURN(-1);
           return -1;
         }
 
@@ -844,13 +862,15 @@ long qpencode_file(FILE *in, FILE *out)
     // now we do a binary write of the data
     if(fwrite(outbuffer, 1, todo, out) != todo)
     {
-      DB(kprintf("error on writing data!\n");)
+      E(DBF_MIME, "error on writing data!");
+
       // an error must have occurred.
+      RETURN(-1);
       return -1;
     }
   }
 
-  DB(kprintf("finished qpencode_file(): %ld\n", encoded_chars);)
+  RETURN(encoded_chars);
   return encoded_chars;
 }
 
@@ -875,7 +895,7 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
   int result = 0;
   BOOL eof_reached = FALSE;
 
-  DB(kprintf("qpdecode_file()\n");)
+  ENTER();
 
   while(eof_reached == FALSE)
   {
@@ -888,7 +908,7 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
     {
       if(feof(in) != 0)
       {
-        DB(kprintf("EOF file at %ld\n", ftell(in));)
+        D(DBF_MIME, "EOF file at %ld", ftell(in));
 
         eof_reached = TRUE; // we found an EOF
 
@@ -898,9 +918,10 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
       }
       else
       {
-        DB(kprintf("error on reading data!\n");)
+        E(DBF_MIME, "error on reading data!");
 
         // an error occurred, lets return -1
+        RETURN(-1);
         return -1;
       }
     }
@@ -1002,8 +1023,10 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
         // now we do a binary write of the data
         if(fwrite(outbuffer, 1, todo, out) != todo)
         {
-          DB(kprintf("error on writing data!\n");)
+          E(DBF_MIME, "error on writing data!");
+
           // an error must have occurred.
+          RETURN(-1);
           return -1;
         }
 
@@ -1022,8 +1045,10 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
     // now we do a binary write of the data
     if(fwrite(outbuffer, 1, todo, out) != todo)
     {
-      DB(kprintf("error on writing data!\n");)
+      E(DBF_MIME, "error on writing data!");
+
       // an error must have occurred.
+      RETURN(-1);
       return -1;
     }
   }
@@ -1031,11 +1056,14 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
   // if we end up here and read > 0 then the decoding wasn't finished
   // and we have to return an error
   if(read > 0)
+  {
+    RETURN(-2);
     return -2; // -2 means "unfinished decoding"
+  }
 
   // on success lets return the number of decoded
   // chars
-  DB(kprintf("finished qpdecode_file(): %ld\n", decoded);)
+  RETURN(result == 0 ? decoded : result);
   return result == 0 ? decoded : result;
 }
 
@@ -1087,7 +1115,7 @@ long uuencode_file(FILE *in, FILE *out)
   BOOL eof_reached = FALSE;
   size_t read;
 
-  DB(kprintf("uuencode_file()\n");)
+  ENTER();
 
   while(eof_reached == FALSE)
   {
@@ -1100,7 +1128,7 @@ long uuencode_file(FILE *in, FILE *out)
     {
       if(feof(in) != 0)
       {
-        DB(kprintf("EOF file at %ld\n", ftell(in));)
+        D(DBF_MIME, "EOF file at %ld", ftell(in));
 
         eof_reached = TRUE; // we found an EOF
 
@@ -1110,9 +1138,10 @@ long uuencode_file(FILE *in, FILE *out)
       }
       else
       {
-        DB(kprintf("error on reading data!\n");)
+        E(DBF_MIME, "error on reading data!");
 
         // an error occurred, lets return -1
+        RETURN(-1);
         return -1;
       }
     }
@@ -1210,8 +1239,10 @@ long uuencode_file(FILE *in, FILE *out)
         // now we do a binary write of the data
         if(fwrite(outbuffer, 1, todo, out) != todo)
         {
-          DB(kprintf("error on writing data!\n");)
+          E(DBF_MIME, "error on writing data!");
+
           // an error must have occurred.
+          RETURN(-1);
           return -1;
         }
 
@@ -1221,7 +1252,7 @@ long uuencode_file(FILE *in, FILE *out)
     }
   }
 
-  DB(kprintf("finished uuencode_file(): %ld\n", encoded_chars);)
+  RETURN(encoded_chars);
   return encoded_chars;
 }
 
@@ -1245,7 +1276,7 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
   int checksum = 0;
   BOOL eof_reached = FALSE;
 
-  DB(kprintf("uudecode_file()\n");)
+  ENTER();
 
   // before we start with our decoding we have to search for
   // the starting "begin XXX" line
@@ -1259,9 +1290,15 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
         break;
     }
     else if(feof(in) != 0)
+    {
+      RETURN(-2);
       return -2; // -2 means "no UUcode start found"
+    }
     else
+    {
+      RETURN(-1);
       return -1; // -1 means unexpected error
+    }
   }
   while(TRUE);
 
@@ -1277,7 +1314,7 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
     {
       if(feof(in) != 0)
       {
-        DB(kprintf("EOF file at %ld\n", ftell(in));)
+        D(DBF_MIME, "EOF file at %ld", ftell(in));
 
         eof_reached = TRUE; // we found an EOF
 
@@ -1287,9 +1324,10 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
       }
       else
       {
-        DB(kprintf("error on reading data!\n");)
+        E(DBF_MIME, "error on reading data!");
 
         // an error occurred, lets return -1
+        RETURN(-1);
         return -1;
       }
     }
@@ -1374,7 +1412,7 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
           }
           else
           {
-            DB(kprintf("error: invalid length ID\n");)
+            E(DBF_MIME, "error: invalid length ID");
 
             result = -3; // -3 means "invalid length ID"
           }
@@ -1433,8 +1471,10 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
           // now we do a binary write of the data
           if(fwrite(outbuffer, 1, todo, out) != todo)
           {
-            DB(kprintf("error on writing data!\n");)
+            E(DBF_MIME, "error on writing data!");
+
             // an error must have occurred.
+            RETURN(-1);
             return -1;
           }
 
@@ -1465,7 +1505,7 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
             // identical to the last char found
             if(UUENCODE_CHAR(checksum) != last)
             {
-              DB(kprintf("wrong checksum: %ld:%ld != %ld\n", checksum, UUENCODE_CHAR(checksum), last);)
+              E(DBF_MIME, "wrong checksum: %ld:%ld != %ld", checksum, UUENCODE_CHAR(checksum), last);
 
               // the checksum seems to be wrong
               // so lets signal it on exiting this
@@ -1478,12 +1518,13 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
           }
           else
           {
-            DB(kprintf("error: no newline or no checksum found at end\n");)
+            E(DBF_MIME, "error: no newline or no checksum found at end");
 
             // something serious must have happend
             // as either the last char isn't a newline
             // or a checksum is wrong, so lets exit with
             // an error immediatly
+            RETURN(-5);
             return -5; // -5 means corrupted UUcode string found
           }
         }
@@ -1512,15 +1553,17 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
     // now we do a binary write of the data
     if(fwrite(outbuffer, 1, todo, out) != todo)
     {
-      DB(kprintf("error on writing data!\n");)
+      E(DBF_MIME, "error on writing data!");
+
       // an error must have occurred.
+      RETURN(-1);
       return -1;
     }
   }
 
   // on success lets return the number of decoded
   // chars
-  DB(kprintf("finished uudecode_file(): %ld\n", decoded);)
+  RETURN(result == 0 ? decoded : result);
   return result == 0 ? decoded : result;
 }
 

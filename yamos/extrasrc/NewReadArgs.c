@@ -25,7 +25,7 @@
 #include <proto/dos.h>
 #include <string.h>
 
-#include "YAM_debug.h"
+#include "Debug.h"
 
 #if defined(__amigaos4__)
   #define COMPILE_V39
@@ -68,20 +68,24 @@ LONG NewReadArgs(struct WBStartup *, struct NewRDArgs *);
 
 void NewFreeArgs(struct NewRDArgs *rdargs)
 {
-  DB(kprintf("--- NewFreeArgs ---\n");)
+  ENTER();
+
+  D(DBF_STARTUP, "FreeArgs(rdargs->FreeArgs)");
   FreeArgs(rdargs->FreeArgs);
-  DB(kprintf("FreeArgs( rdargs->FreeArgs )\n");)
+
   if(rdargs->RDArgs)
   {
     FreeVec( rdargs->RDArgs->RDA_Source.CS_Buffer );
+
+    D(DBF_STARTUP, "FreeDosObject(DOS_RDARGS, rdargs->RDArgs)");
     FreeDosObject(DOS_RDARGS, rdargs->RDArgs);
   }
-  DB(kprintf("FreeDosObject( DOS_RDARGS, rdargs->RDArgs )\n");)
+
   if(rdargs->WinFH) 
   {
+    D(DBF_STARTUP, "SelectOutput( .. ) .. Close( ... )");
     SelectOutput(rdargs->OldOutput);
     Close(SelectInput(rdargs->OldInput));
-    DB(kprintf("SelectOutput( .. )\nClose( ... )\n");)
   }
 
   #ifndef COMPILE_V39
@@ -91,8 +95,10 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
   if(rdargs->Pool)
     DeletePool(rdargs->Pool);
   #endif
-  DB(kprintf("memory freed\n");)
-  DB(kprintf("--- EXIT ---\n");)
+
+  D(DBF_STARTUP, "memory freed");
+
+  LEAVE();
 }
 
 /****************************************************************************/
@@ -120,7 +126,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
   };
   #endif
 
-  DB(kprintf("--- NewReadArgs ---\n");)
+  ENTER();
 
   nrdargs->RDArgs   =
   nrdargs->FreeArgs = NULL;
@@ -153,7 +159,10 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       LONG MultiArg = -1L;
 
       if(!(ptr = nrdargs->Template))
+      {
+        RETURN(ERROR_BAD_TEMPLATE);
         return(ERROR_BAD_TEMPLATE);
+      }
 
       /*- count max number of args -*/
       while(*ptr)
@@ -166,7 +175,8 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
         else if(*(ptr-1) == ',')
           MaxArgs++;
       }
-      DB(kprintf("Args: %ld\n", MaxArgs);)
+
+      D(DBF_STARTUP, "Args: %ld", MaxArgs);
       ptr = nrdargs->Template;
 
       /*- how many file args? -*/
@@ -175,10 +185,16 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
       #ifndef COMPILE_V39
       if(!(Args = AllocRemember(remember, MaxArgs*sizeof(STRPTR)*2, MEMF_ANY|MEMF_CLEAR)))
+      {
+        RETURN(ERROR_NO_FREE_STORE);
         return(ERROR_NO_FREE_STORE);
+      }
       #else
       if(!(pool = nrdargs->Pool = CreatePool(MEMF_ANY, 1024, 1024)) || !(Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)))
+      {
+        RETURN(ERROR_NO_FREE_STORE);
         return(ERROR_NO_FREE_STORE);
+      }
 
       for(num = 0L; num < (MaxArgs*2); num++)
         Args[num] = 0L;
@@ -200,7 +216,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
           if(FArgNum < FileArgs && FArgNum >= 0L)
           {
-            DB(kprintf("ICON: %s\n", wbarg->wa_Name);)
+            D(DBF_STARTUP, "ICON: %s", wbarg->wa_Name);
 
             if( NameFromLock(wbarg->wa_Lock, buf, sizeof(buf)) &&
               AddPart(buf, wbarg->wa_Name, sizeof(buf)) )
@@ -218,9 +234,17 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
                 ArgLen[FArgNum] = len;
               }
-              else return(ERROR_NO_FREE_STORE);
+              else
+              {
+                RETURN(ERROR_NO_FREE_STORE);
+                return(ERROR_NO_FREE_STORE);
+              }
             }
-            else return(ERROR_LINE_TOO_LONG);
+            else
+            {
+              RETURN(ERROR_LINE_TOO_LONG);
+              return(ERROR_LINE_TOO_LONG);
+            }
           }
 
           FArgNum++;
@@ -252,7 +276,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                 STRPTR src = *tarray;
                 LONG i;
 
-                DB(kprintf("tt: %s\n", *tarray);)
+                D(DBF_STARTUP, "tt: %s", *tarray);
 
                 /*- valid arg ? -*/
                 if((i = IsArg(ptr, src)) > -1)
@@ -283,7 +307,10 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                       ArgLen[i] = len;
                     }
                     else
+                    {
+                      RETURN(ERROR_NO_FREE_STORE);
                       return(ERROR_NO_FREE_STORE);
+                    }
                   }
                   else
                   {
@@ -368,12 +395,16 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
             }
           }
         }
-        else return(ERROR_NO_FREE_STORE);
+        else
+        {
+          RETURN(ERROR_NO_FREE_STORE);
+          return(ERROR_NO_FREE_STORE);
+        }
 
         *(ptr-1) = '\n';
         *ptr = '\0'; // not really needed
 
-        DB(kprintf("CS_Buffer: %s", nrdargs->RDArgs->RDA_Source.CS_Buffer);)
+        D(DBF_STARTUP, "CS_Buffer: %s", nrdargs->RDArgs->RDA_Source.CS_Buffer);
       }
       else
       {
@@ -387,23 +418,29 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
     nrdargs->RDArgs->RDA_ExtHelp = nrdargs->ExtHelp;
     if(!(nrdargs->FreeArgs = ReadArgs(nrdargs->Template, nrdargs->Parameters, nrdargs->RDArgs)))
     {
-      DB(kprintf("ReadArgs() error\n");)
+      E(DBF_STARTUP, "ReadArgs() error");
+
+      RETURN(IoErr());
       return(IoErr());
     }
 
-    DB(kprintf("ReadArgs() okay\n");)
+    D(DBF_STARTUP, "ReadArgs() okay");
 
     /*- when started from wb, open window if requested -*/
     if(ToolWindow && WBStartup)
     {
-      DB(kprintf("WINDOW has been defined\n");)
+      D(DBF_STARTUP, "WINDOW has been defined");
       if((nrdargs->WinFH = Open(ToolWindow, MODE_READWRITE)))
       {
-        DB(kprintf("Opened WINDOW=%s\n", ToolWindow);)
+        D(DBF_STARTUP, "Opened WINDOW=%s", ToolWindow);
         nrdargs->OldInput = SelectInput(nrdargs->WinFH);
         nrdargs->OldOutput = SelectOutput(nrdargs->WinFH);
       }
-      else return(IoErr());
+      else
+      {
+        RETURN(IoErr());
+        return(IoErr());
+      }
     }
 
     #ifdef COMPILE_V39
@@ -421,10 +458,12 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
     #endif
   }
   else
+  {
+    RETURN(ERROR_NO_FREE_STORE);
     return(ERROR_NO_FREE_STORE);
+  }
 
-  DB(kprintf("--- EXIT ---\n");)
-
+  RETURN(RETURN_OK);
   return(RETURN_OK);
 }
 

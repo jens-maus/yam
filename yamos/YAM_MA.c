@@ -49,7 +49,6 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -64,6 +63,8 @@
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 #include "classes/Classes.h"
+
+#include "Debug.h"
 
 /* local protos */
 static ULONG MA_GetSortType(int);
@@ -128,10 +129,13 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    BOOL active, hasattach = FALSE, beingedited = FALSE;
    struct Mail *mail;
 
-   DB(kprintf("MA_ChangeSelected\n");)
+   ENTER();
 
    if(!fo)
+   {
+     LEAVE();
      return;
+   }
 
    // we make sure the an eventually running timer event for setting the mail
    // status of a previous mail to read is canceled beforehand
@@ -188,6 +192,8 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, type == FT_OUTGOING && (active || selected), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isOutgoingFolder(fo) && (active || selected) , gui->MI_TOREAD, gui->MI_TOUNREAD, NULL);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || selected), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
+
+   LEAVE();
 }
 MakeHook(MA_ChangeSelectedHook, MA_ChangeSelectedFunc);
 
@@ -265,7 +271,7 @@ void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
 {
    unsigned int newstatus = (mail->sflags | addflags) & ~(clearflags);
 
-   DB(kprintf("ChangeMailStatus: +%08lx -%08lx\n", addflags, clearflags);)
+   D(DBF_MAIL, "ChangeMailStatus: +%08lx -%08lx", addflags, clearflags);
 
    // check if the status is already set or not
    if(newstatus != mail->sflags)
@@ -566,7 +572,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, int pos, struct Folder 
    }
    else
    {
-      DB(kprintf("MA_MoveCopySingle error: %ld\n", result);)
+      W(DBF_MAIL, "MA_MoveCopySingle error: %ld", result);
 
       switch(result)
       {

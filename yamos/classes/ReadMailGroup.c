@@ -33,6 +33,8 @@
 #include "YAM_error.h"
 #include "YAM_read.h"
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -83,7 +85,7 @@ HOOKPROTONHNO(TextEditDoubleClickFunc, BOOL, struct ClickMessage *clickmsg)
 	char *p;
 	BOOL result = FALSE;
 
-	DB(kprintf("DoubleClick: %ld - [%s]\n", clickmsg->ClickPosition, clickmsg->LineContents);)
+	D(DBF_GUI, "DoubleClick: %ld - [%s]", clickmsg->ClickPosition, clickmsg->LineContents);
 
 	DoMethod(G->App, MUIM_Application_InputBuffered);
 
@@ -599,7 +601,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 																		MUIA_UserImage_NoMinHeight, TRUE,
 																	End))
 					{
-						DB(kprintf("SenderPicture found: %s %ld %ld\n", photopath, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));)
+						D(DBF_GUI, "SenderPicture found: %s %ld %ld", photopath, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));
 
 						DoMethod(data->senderImageGroup, OM_ADDMEMBER, data->senderImage);
 

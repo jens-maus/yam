@@ -37,11 +37,12 @@
 
 #include "YAM.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_main.h"
 #include "YAM_locale.h"
 #include "YAM_utilities.h"
+
+#include "Debug.h"
 
 /* local protos */
 static struct ER_ClassData *ER_New(void);

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2003 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
 ***************************************************************************/
 
 #include "Addrmatchlist_cl.h"
+
+#include "Debug.h"
 
 /* CLASSDATA
 struct Data
@@ -133,7 +135,7 @@ OVERLOAD(OM_NEW)
 
 		if(!data->String)
 		{
-			DB(kprintf("No MUIA_Addrmatchlist_String supplied\n");)
+			E(DBF_GUI, "No MUIA_Addrmatchlist_String supplied");
 			CoerceMethod(cl, obj, OM_DISPOSE);
 			obj = NULL;
 		}
@@ -256,7 +258,7 @@ DECLARE(Open) // STRPTR str
 	LONG entries;
 	struct CustomABEntry *entry;
 
-	DB(kprintf("Match this: %s\n", msg->str);)
+	D(DBF_GUI, "Match this: '%s'", msg->str);
 
 	set(data->Matchlist, MUIA_List_Quiet, TRUE);
 

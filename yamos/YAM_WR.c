@@ -57,7 +57,6 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -71,6 +70,8 @@
 #include "YAM_write.h"
 #include "YAM_locale.h"
 #include "classes/Classes.h"
+
+#include "Debug.h"
 
 /**************************************************************************/
 /* local protos */
@@ -273,7 +274,7 @@ static enum Encoding WhichEncodingForFile(char *fname, char *ctype)
    }
    fclose(fh);
 
-   DB(kprintf("EncodingTest [%s] t:%ld l:%ld u:%ld b:%ld\n", fname, total, longlines, unsafechars, binarychars);)
+   D(DBF_MIME, "EncodingTest [%s] t:%ld l:%ld u:%ld b:%ld", fname, total, longlines, unsafechars, binarychars);
 
    // now that we analyzed the file we have to decide which encoding to take
    if(longlines || unsafechars || binarychars)
@@ -1675,13 +1676,15 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
    {
       if (!ar->fr_NumArgs)
       {
-         DB(kprintf("choosen file: [%s] from drawer: [%s]\n", ar->fr_File, ar->fr_Drawer);)
+         D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", ar->fr_File, ar->fr_Drawer);
+
          strmfp(filename, ar->fr_Drawer, ar->fr_File);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
       else for (i = 0; i < ar->fr_NumArgs; i++)
       {
-         DB(kprintf("choosen file: [%s] from drawer: [%s]\n", ar->fr_ArgList[i].wa_Name, ar->fr_Drawer);)
+         D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", ar->fr_ArgList[i].wa_Name, ar->fr_Drawer);
+
          strmfp(filename, ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }

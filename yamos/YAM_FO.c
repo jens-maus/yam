@@ -46,7 +46,6 @@
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -55,6 +54,8 @@
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 #include "classes/ClassesExtra.h"
+
+#include "Debug.h"
 
 /* local protos */
 static BOOL FO_MoveFolderDir(struct Folder *dst, struct Folder *src);
@@ -1454,7 +1455,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   {
     char *result;
 
-    DB(kprintf("SWS: [%s] [%s]\n", toPattern, mail->To.Address);)
+    D(DBF_FOLDER, "SWS: [%s] [%s]", toPattern, mail->To.Address);
 
     // Analyze the ToAdress through the Smith&Waterman algorithm
     if(takePattern && (result = SWSSearch(toPattern, mail->To.Address)))
@@ -1514,7 +1515,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
     }
   }
 
-  DB(kprintf("ML-Pattern: [%s]\n", toPattern);)
+  D(DBF_FOLDER, "ML-Pattern: [%s]", toPattern);
 
   // Now we set the new pattern & address values to the string gadgets
   notRecog = GetStr(MSG_FO_NOTRECOGNIZED);

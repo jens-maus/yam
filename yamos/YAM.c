@@ -63,7 +63,6 @@
 #include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
-#include "YAM_debug.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
@@ -73,6 +72,8 @@
 #include "YAM_rexx.h"
 #include "YAM_write.h"
 #include "classes/Classes.h"
+
+#include "Debug.h"
 
 /***************************************************************************
  Module: Root
@@ -143,7 +144,7 @@ void TC_Start(enum TimerIO tio, int seconds, int micros)
 
     #if defined(DEBUG)
     DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
-    kprintf("Queueing timerIO[%ld] in %ld seconds %ld micros @ %s\n", tio, seconds, micros, dateString);
+    D(DBF_TIMERIO, "Queueing timerIO[%ld] in %ld seconds %ld micros @ %s", tio, seconds, micros, dateString);
     #endif
 
     SendIO((struct IORequest *)ioreq);
@@ -165,7 +166,7 @@ void TC_Stop(enum TimerIO tio)
 
     WaitIO(ioreq);
 
-    DB(kprintf("Stopped timerIO[%ld]\n", tio);)
+    D(DBF_TIMERIO, "Stopped timerIO[%ld]", tio);
   }
 }
 
@@ -287,7 +288,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // if so we write the indexes.
     case TIO_WRINDEX:
     {
-      DB(kprintf("TIO_WRINDEX triggered at: %s\n", dateString);)
+      D(DBF_TIMERIO, "TIO_WRINDEX triggered at: %s", dateString);
 
       // only write the indexes if no Editor is actually in use
       if(!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
@@ -307,7 +308,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     {
       int i;
 
-      DB(kprintf("TIO_CHECKMAIL triggered at: %s\n", dateString);)
+      D(DBF_TIMERIO, "TIO_CHECKMAIL triggered at: %s", dateString);
 
       // only if there is currently no write window open we
       // check for new mail.
@@ -332,7 +333,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     {
       int i;
 
-      DB(kprintf("TIO_AUTOSAVE triggered at: %s\n", dateString);)
+      D(DBF_TIMERIO, "TIO_AUTOSAVE triggered at: %s", dateString);
 
       for(i=0; i < MAXWR; i++)
       {
@@ -353,7 +354,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // currently active mail out of the main mail list and display it in the pane
     case TIO_READPANEUPDATE:
     {
-      DB(kprintf("TIO_READPANEUPDATE triggered at: %s\n", dateString);)
+      D(DBF_TIMERIO, "TIO_READPANEUPDATE triggered at: %s", dateString);
 
       if(C->EmbeddedReadPane)
       {
@@ -379,7 +380,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       struct MA_GUIData *gui = &G->MA->GUI;
       struct Mail *mail;
 
-      DB(kprintf("TIO_READSTATUSUPDATE triggered at: %s\n", dateString);)
+      D(DBF_TIMERIO, "TIO_READSTATUSUPDATE triggered at: %s", dateString);
 
       // get the actually active mail
       DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
@@ -615,7 +616,7 @@ static void Terminate(void)
 {
    int i;
 
-   DB(kprintf("Terminate()\n");)
+   ENTER();
 
    while (PNum > 0)
       if (PPtr[PNum-1]) free(PPtr[--PNum]);
@@ -743,7 +744,7 @@ static void Terminate(void)
    free(C);
    free(G);
 
-   DB(kprintf("End of Terminate()\n");)
+   LEAVE();
 }
 ///
 /// Abort
@@ -790,7 +791,7 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
 {
    BOOL flush = TRUE;
 
-   DB(kprintf("CheckMCC: %s ", name);)
+   ENTER();
 
    for(;;)
    {
@@ -808,7 +809,9 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
 
        if(ver > minver || (ver == minver && rev >= minrev))
        {
-         DB(kprintf("v%ld.%ld found through MUIA_Version/Revision\n", ver, rev);)
+         D(DBF_STARTUP, "%s v%ld.%ld found through MUIA_Version/Revision", name, ver, rev);
+
+         RETURN(TRUE);
          return TRUE;
        }
 
@@ -830,7 +833,9 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
          // a chance to pass this test (i.e. Toolbar.mcc is broken)
          if (ver > minver || (ver == minver && rev >= minrev))
          {
-           DB(kprintf("v%ld.%ld found through OpenLibrary()\n", ver, rev);)
+           D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
+
+           RETURN(TRUE);
            return TRUE;
          }
 
@@ -844,8 +849,7 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
 
          // Attempt to flush the library if open count is 0 or because the
          // user wants to retry (meaning there's a chance that it's 0 now)
-
-         if (flush)
+         if(flush)
          {
            struct Library *result;
            Forbid();
@@ -856,7 +860,7 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
          }
          else
          {
-           DB(kprintf("couldn`t find minimum required version.\n");)
+           E(DBF_STARTUP, "%s: couldn`t find minimum required version.", name);
 
            // We're out of luck - open count is 0, we've tried to flush
            // and still haven't got the version we want
@@ -877,9 +881,10 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
 
    }
 
-   if (req)
+   if(req)
      exit(5); // Ugly
 
+   RETURN(FALSE);
    return FALSE;
 }
 ///
@@ -899,7 +904,7 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
    {
      if(base->lib_Version == version && base->lib_Revision < revision)
      {
-       DB(kprintf("InitLib: can`t open library %s with minimum version v%ld.%d\n", libname, version, revision);)
+       D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%d", libname, version, revision);
 
        CloseLibrary(base);
        base = NULL;
@@ -908,7 +913,7 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
 
    if(base && close)
    {
-     DB(kprintf("InitLib: library %s v%ld.%ld successfully opened - autoclosed.\n", libname, base->lib_Version, base->lib_Revision);)
+     D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened - autoclosed.", libname, base->lib_Version, base->lib_Revision);
 
      CloseLibrary(base);
      base = NULL;
@@ -927,21 +932,21 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
      // if we weren`t able to obtain the main interface, lets close the library also
      if(GETINTERFACE(iFace, base) == NULL)
      {
-       DB(kprintf("InitLib: can`t get main interface of library %s\n", libname);)
+       D(DBF_STARTUP, "InitLib: can`t get main interface of library %s", libname);
 
        CloseLibrary(base);
        *libbase = NULL;
      }
      else
      {
-       DB(kprintf("InitLib: library %s v%ld.%ld successfully opened.\n", libname, base->lib_Version, base->lib_Revision);)
+       D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened.", libname, base->lib_Version, base->lib_Revision);
      }
 
      base = iFace;
    }
    else if(base)
    {
-     DB(kprintf("InitLib: library %s v%ld.%ld successfully opened.\n", libname, base->lib_Version, base->lib_Revision);)
+     D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened.", libname, base->lib_Version, base->lib_Revision);
    }
    #endif
 
@@ -1180,12 +1185,7 @@ static void Initialise(BOOL hidden)
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
    if(INITLIB(IAmiSSL, InitLib("amissl.library", (APTR)&AmiSSLBase, AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, FALSE, FALSE)))
-   {
-      DB(kprintf("AmiSSL library found and enabled!\n");)
       G->TR_UseableTLS = TRUE;
-   }
-
-   DB( SetupDebug(); )
 
    // Lets check for the correct Toolbar.mcc version (minimum 15.8 because earlier versions are too buggy)
    CheckMCC(MUIC_Toolbar, 15, 8, TRUE);
@@ -1470,7 +1470,7 @@ static int GetDST(BOOL update)
 /* This makes it possible to leave YAM without explicitely calling cleanup procedure */
 static void yam_exitfunc(void)
 {
-   DB(kprintf("yam_exitfunc()\n");)
+   ENTER();
 
    if(olddirlock != -1)
    {  Terminate();
@@ -1485,7 +1485,7 @@ static void yam_exitfunc(void)
    CLOSELIB(IconBase,       IIcon);
    CLOSELIB(IntuitionBase,  IIntuition);
 
-   DB(kprintf("end of yam_exitfunc()\n");)
+   LEAVE();
 }
 
 ///
@@ -1598,6 +1598,11 @@ int main(int argc, char **argv)
        exit(0);
    }
 #endif
+
+   // initialize our debugging system.
+   #if defined(DEBUG)
+   SetupDebug();
+   #endif
 
    atexit(yam_exitfunc); /* we need to free the stuff on exit()! */
 
@@ -1712,16 +1717,14 @@ int main(int argc, char **argv)
       notsig[1] = 1UL << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
       notsig[2] = 1UL << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
 
-      #ifdef DEBUG
-      kprintf("YAM allocated signals:\n");
-      kprintf(" adstsig  = %08lx\n", adstsig);
-      kprintf(" timsig   = %08lx\n", timsig);
-      kprintf(" rexsig   = %08lx\n", rexsig);
-      kprintf(" appsig   = %08lx\n", appsig);
-      kprintf(" notsig[0]= %08lx\n", notsig[0]);
-      kprintf(" notsig[1]= %08lx\n", notsig[1]);
-      kprintf(" notsig[2]= %08lx\n", notsig[2]);
-      #endif
+      D(DBF_STARTUP, "YAM allocated signals:");
+      D(DBF_STARTUP, " adstsig  = %08lx", adstsig);
+      D(DBF_STARTUP, " timsig   = %08lx", timsig);
+      D(DBF_STARTUP, " rexsig   = %08lx", rexsig);
+      D(DBF_STARTUP, " appsig   = %08lx", appsig);
+      D(DBF_STARTUP, " notsig[0]= %08lx", notsig[0]);
+      D(DBF_STARTUP, " notsig[1]= %08lx", notsig[1]);
+      D(DBF_STARTUP, " notsig[2]= %08lx", notsig[2]);
 
       // start the event loop
       while (!(ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))))
@@ -1743,14 +1746,14 @@ int main(int argc, char **argv)
               char dateString[64];
 
               DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
-              kprintf("timer signal received @ %s\n", dateString);
+              D(DBF_TIMERIO, "timer signal received @ %s", dateString);
               #endif
 
 
               // check if we have a waiting message
               while((timeReq = (struct timerequest *)GetMsg(TCData.port)))
               {
-                DB(kprintf("timeReq: %08lx\n", timeReq);)
+                D(DBF_TIMERIO, "timeReq: %08lx", timeReq);
 
                 for(i=0; i < TIO_NUM; i++)
                 {
@@ -1821,7 +1824,7 @@ int main(int argc, char **argv)
       // if the user really wants to exit, do it now as Terminate() is broken !
       if(ret == 1) exit(0);
 
-      DB(kprintf("Restart issued\n");)
+      D(DBF_STARTUP, "Restart issued");
 
       // prepare for restart
       Terminate();

@@ -48,7 +48,6 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
-#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
@@ -61,6 +60,8 @@
 #include "YAM_write.h"
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
+
+#include "Debug.h"
 
 /***************************************************************************
  Module: Read
@@ -189,7 +190,8 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
    char buf[SIZE_LINE], disp[SIZE_DEFAULT], *mode;
    struct Compose comp;
 
-   DB(kprintf("RE_SendMDN: %d\n", sendnow);)
+   ENTER();
+   SHOWVALUE(DBF_MAIL, sendnow);
 
    if ((tf1 = OpenTempFile("w")))
    {
@@ -296,6 +298,8 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
       CloseTempFile(tf1);
    }
    FreePartsList(p1);
+
+   LEAVE();
 }
 ///
 /// RE_DoMDN
@@ -1098,7 +1102,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       case ENC_B64:
       {
         long decoded = base64decode_file(in, out, tt, rp->Printable);
-        DB(kprintf("base64 decoded %ld bytes of part %ld.\n", decoded, rp->Nr);)
+        D(DBF_MAIL, "base64 decoded %ld bytes of part %ld.", decoded, rp->Nr);
 
         if(decoded > 0)
           decodeResult = TRUE;
@@ -1111,7 +1115,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       case ENC_QP:
       {
         long decoded = qpdecode_file(in, out, tt);
-        DB(kprintf("quoted-printable decoded %ld chars of part %ld.\n", decoded, rp->Nr);)
+        D(DBF_MAIL, "quoted-printable decoded %ld chars of part %ld.", decoded, rp->Nr);
 
         if(decoded >= 0)
           decodeResult = TRUE;
@@ -1158,7 +1162,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       case ENC_UUE:
       {
         long decoded = uudecode_file(in, out, tt);
-        DB(kprintf("UU decoded %ld chars of part %ld.\n", decoded, rp->Nr);)
+        D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, rp->Nr);
 
         if(decoded >= 0 &&
            RE_ConsumeRestOfPart(in, NULL, NULL, NULL))
@@ -1244,7 +1248,8 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
   FILE *fp;
   struct Part *newPart;
 
-  DB(kprintf("RE_OpenNewPart(): %08lx, %08lx, %08lx, %08lx\n", rmData, new, prev, first);)
+  ENTER();
+  D(DBF_MAIL, "%08lx, %08lx, %08lx, %08lx", rmData, new, prev, first);
 
   if(((*new) = newPart = calloc(1,sizeof(struct Part))))
   {
@@ -1276,14 +1281,16 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     strmfp(newPart->Filename, C->TempDir, file);
 
     if((fp = fopen(newPart->Filename, "w")))
+    {
+      RETURN(fp);
       return fp;
+    }
 
     free(newPart);
     *new = NULL;
   }
 
-  DB(kprintf("Creating a new part failed.\n");)
-
+  RETURN(NULL);
   return NULL;
 }
 ///
@@ -1383,7 +1390,7 @@ static BOOL RE_SaveThisPart(struct Part *rp)
     case PM_TEXTS: return (BOOL)(!strnicmp(rp->ContentType, "text", 4) || RE_IsURLencoded(rp));
   }
 
-  DB(kprintf("ERROR on RE_SaveThisPart()\n");)
+  E(DBF_MAIL, "ERROR on RE_SaveThisPart()");
   return FALSE;
 }
 ///
@@ -1434,7 +1441,8 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
                                     char *fname,
                                     struct Part *hrp)
 {
-  DB(kprintf("RE_ParseMessage(): %08lx, %08lx, %08lx, %08lx\n", rmData, in, fname, hrp);)
+  ENTER();
+  D(DBF_MAIL, "%08lx, %08lx, %08lx, %08lx", rmData, in, fname, hrp);
 
   if(in == NULL && fname)
     in = fopen(fname, "r");
@@ -1545,28 +1553,29 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       fclose(in);
   }
 
-#ifdef DEBUG
-if(fname)
-{
-  struct Part *rp;
-
-  kprintf("\nHeaderPart: [%lx]\n", hrp);
-
-  for(rp = hrp; rp; rp = rp->Next)
+  #if defined(DEBUG)
+  if(fname)
   {
-    kprintf("Part[%lx] - %ld\n", rp, rp->Nr);
-    kprintf("  Name.......: [%s]\n", rp->Name);
-    kprintf("  ContentType: [%s]\n", rp->ContentType);
-    kprintf("  Encoding...: %ld\n",  rp->EncodingCode);
-    kprintf("  Filename...: [%s]\n", rp->Filename);
-    kprintf("  Size.......: %ld\n", rp->Size);
-    kprintf("  Nextptr....: %lx\n", rp->Next);
-    kprintf("  Prevptr....: %lx\n", rp->Prev);
-    kprintf("  headerList.: %lx\n", rp->headerList);
-  }
-}
-#endif
+    struct Part *rp;
 
+    D(DBF_MAIL, "HeaderPart: [%lx]", hrp);
+
+    for(rp = hrp; rp; rp = rp->Next)
+    {
+      D(DBF_MAIL, "Part[%lx] - %ld", rp, rp->Nr);
+      D(DBF_MAIL, "  Name.......: [%s]", rp->Name);
+      D(DBF_MAIL, "  ContentType: [%s]", rp->ContentType);
+      D(DBF_MAIL, "  Encoding...: %ld",  rp->EncodingCode);
+      D(DBF_MAIL, "  Filename...: [%s]", rp->Filename);
+      D(DBF_MAIL, "  Size.......: %ld", rp->Size);
+      D(DBF_MAIL, "  Nextptr....: %lx", rp->Next);
+      D(DBF_MAIL, "  Prevptr....: %lx", rp->Prev);
+      D(DBF_MAIL, "  headerList.: %lx", rp->headerList);
+    }
+  }
+  #endif
+
+  RETURN(hrp);
   return hrp;
 }
 ///
@@ -1602,7 +1611,7 @@ BOOL RE_DecodePart(struct Part *rp)
            // as we shouldn`t have a EOF or real error here.
            if(ferror(in) || feof(in))
            {
-             DB(kprintf("ferror() or feof() while parsing through PartHeader.\n");)
+             E(DBF_MAIL, "ferror() or feof() while parsing through PartHeader.");
              fclose(in);
              return FALSE;
            }
@@ -2027,11 +2036,15 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   char *cmsg;
   int totsize, len;
 
-  DB(kprintf("RE_ReadInMessage: %08lx, mode: %d\n", rmData, mode);)
+  ENTER();
+  D(DBF_MAIL, "%08lx, mode: %d", rmData, mode);
 
   // save exit conditions
   if(!rmData || !(first = rmData->firstPart))
+  {
+    RETURN(NULL);
     return NULL;
+  }
 
   // first we precalucalte the size of the final buffer where the message text will be put in
   for(totsize = 1000, part = first; part; part = part->Next)
@@ -2140,12 +2153,13 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
             // lets check if an error or short item count occurred
             if(nread == 0 || nread != part->Size)
             {
-              DB(kprintf("Warning: EOF or short item count detected: feof()=%ld ferror()=%ld\n", feof(fh), ferror(fh));)
+              W(DBF_MAIL, "Warning: EOF or short item count detected: feof()=%ld ferror()=%ld", feof(fh), ferror(fh));
+
               // distinguish between EOF and error
               if(feof(fh) == 0 && ferror(fh) != 0)
               {
                 // an error occurred, lets signal it by returning NULL
-                DB(kprintf("ERROR occurred while reading at pos %ld of %s\n", ftell(fh), part->Filename);)
+                E(DBF_MAIL, "ERROR occurred while reading at pos %ld of '%s'", ftell(fh), part->Filename);
 
                 // cleanup and return NULL
                 free(msg);
@@ -2154,12 +2168,13 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 if(mode != RIM_QUIET)
                   BusyEnd();
 
+                RETURN(NULL);
                 return NULL;
               }
 
               // if we end up here it is "just" an EOF so lets put out
               // a warning and continue.
-              DB(kprintf("Warning: EOF detected at pos %ld of %s\n", ftell(fh), part->Filename);)
+              W(DBF_MAIL, "Warning: EOF detected at pos %ld of '%s'", ftell(fh), part->Filename);
             }
 
             // nothing serious happened so lets continue...
@@ -2213,7 +2228,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                 FILE *outfh;
                 char *nameptr = NULL;
 
-                DB(kprintf("inline UUencoded passage found!\n");)
+                D(DBF_MAIL, "inline UUencoded passage found!");
 
                 // now we have to get the filename off the 'begin' line
                 // so that we can put our new part together
@@ -2251,7 +2266,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                     // now that we are on the correct position, we
                     // call the uudecoding function accordingly.
                     long decoded = uudecode_file(fh, outfh, NULL); // no translation table
-                    DB(kprintf("UU decoded %ld chars of part %ld.\n", decoded, uup->Nr);)
+                    D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, uup->Nr);
 
                     if(decoded >= 0)
                       uup->Decoded = TRUE;
@@ -2364,7 +2379,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 /* PGP msg */ else if(!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
               {
                 struct TempFile *tf;
-                DB( kprintf("RE_ReadInMessage(): encrypted message\n"); )
+                D(DBF_MAIL, "inline PGP encrypted message found");
 
                 if((tf = OpenTempFile("w")))
                 {
@@ -2383,7 +2398,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   fclose(tf->FP);
                   tf->FP = NULL;
 
-                  DB( kprintf("RE_ReadInMessage(): decrypting\n"); )
+                  D(DBF_MAIL, "decrypting");
 
                   if(RE_DecryptPGP(rmData, tf->Filename) == 0)
                   {
@@ -2401,12 +2416,12 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   if ((tf->FP = fopen(tf->Filename, "r")))
                   {
                     char buf2[SIZE_LARGE];
-                    DB( kprintf("RE_ReadInMessage(): decrypted message follows\n"); )
+                    D(DBF_MAIL, "decrypted message follows:");
 
                     while(fgets(buf2, SIZE_LARGE, tf->FP))
                     {
                       rptr = buf2;
-                      DB( kprintf(buf2); )
+                      D(DBF_MAIL, "%s", buf2);
                       cmsg = AppendToBuffer(cmsg, &wptr, &len, buf2);
                     }
                   }
@@ -2423,7 +2438,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                 }
 
-                DB( kprintf("RE_ReadInMessage(): done with decryption\n"); )
+                D(DBF_MAIL, "done with decryption");
               }
 /* Signat. */ else if(!strcmp(rptr, "-- "))
               {
@@ -2486,8 +2501,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       BusyEnd();
   }
 
-  DB(kprintf("RE_ReadInMessage(): finished\n");)
-
+  RETURN(cmsg);
   return cmsg;
 }
 ///
@@ -2677,10 +2691,15 @@ void RE_ClickedOnMessage(char *address)
    char *p, *gads, buf[SIZE_LARGE];
    char *body = NULL, *subject = NULL, *cc = NULL, *bcc = NULL;
 
-   DB(kprintf("ClickedOnMessage: [%s]\n", address);)
+   ENTER();
+   SHOWSTRING(DBF_MAIL, address);
 
    // just prevent something bad from happening.
-   if(!address || !(l = strlen(address))) return;
+   if(!address || !(l = strlen(address)))
+   {
+     LEAVE();
+     return;
+   }
 
    // now we check for additional options to the mailto: string (if it is one)
    if((p = strchr(address, '?'))) *p++ = '\0';
@@ -2743,6 +2762,8 @@ void RE_ClickedOnMessage(char *address)
       }
       break;
    }
+
+   LEAVE();
 }
 ///
 
@@ -2777,6 +2798,8 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 {
   Object *newReadWindow;
 
+  ENTER();
+
   // if MultipleWindows support if off we try to reuse an already existing
   // readWindow
   if(forceNewWindow == FALSE &&
@@ -2785,18 +2808,22 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
   {
     struct MinNode *curNode = G->readMailDataList.mlh_Head;
 
-    DB(kprintf("No MultipleWindows support, trying to reuse a window.\n");)
+    D(DBF_GUI, "No MultipleWindows support, trying to reuse a window.");
 
     // search through our ReadDataList
     for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
     {
       struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
       if(rmData->readWindow)
+      {
+        RETURN(rmData);
         return rmData;
+      }
     }
   }
 
-  DB(kprintf("Creating new Read Window.\n");)
+  D(DBF_GUI, "Creating new Read Window.");
 
   // if we end up here we create a new ReadWindowObject
   newReadWindow = ReadWindowObject, End;
@@ -2807,7 +2834,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
 
     if(rmData && rmData->readWindow == newReadWindow)
     {
-      DB(kprintf("Read window created: 0x%08lx\n", rmData);)
+      D(DBF_GUI, "Read window created: 0x%08lx", rmData);
 
       // before we continue we make sure we connect a notify to the new window
       // so that we get informed if the window is closed and therefore can be
@@ -2819,6 +2846,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
                               MUIV_Notify_Application, 6,
                                 MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &ClosedReadWindowHook, rmData);
 
+      RETURN(rmData);
       return rmData;
     }
 
@@ -2826,7 +2854,9 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
     MUI_DisposeObject(newReadWindow);
   }
 
-  DB(kprintf("ERROR occurred during read Window creation!\n");)
+  E(DBF_GUI, "ERROR occurred during read Window creation!");
+
+  RETURN(NULL);
   return NULL;
 }
 
@@ -2868,7 +2898,9 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   struct Part *part;
   struct Part *next;
 
-  DB(kprintf("CleanupReadMailData(): %lx %ld\n", rmData, fullCleanup);)
+  ENTER();
+  SHOWVALUE(DBF_MAIL, rmData);
+  SHOWVALUE(DBF_MAIL, fullCleanup);
 
   if(fullCleanup && rmData->readWindow)
   {
@@ -2951,6 +2983,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
     }
   }
 
+  RETURN(TRUE);
   return TRUE;
 }
 
@@ -2984,4 +3017,3 @@ void FreeHeaderList(struct MinList *headerList)
 }
 
 ///
-

@@ -35,6 +35,8 @@
 #include <proto/icon.h>
 #include <proto/graphics.h>
 
+#include "Debug.h"
+
 /* CLASSDATA
 struct Data
 {
@@ -196,10 +198,10 @@ OVERLOAD(MUIM_Setup)
 					data->scaledWidth  = args.bsa_DestWidth;
 					data->scaledHeight = args.bsa_DestHeight;
 
-					DB(kprintf("UserImage scale (w/h) from %ld/%ld to %ld/%ld\n", bitMapHeader->bmh_Width,
-																																				bitMapHeader->bmh_Height,
-																																				data->scaledWidth,
-																																				data->scaledHeight);)
+					D(DBF_GUI, "UserImage scale (w/h) from %ld/%ld to %ld/%ld", bitMapHeader->bmh_Width,
+																																			bitMapHeader->bmh_Height,
+																																			data->scaledWidth,
+																																			data->scaledHeight);
 
 					result = TRUE;
 				}
