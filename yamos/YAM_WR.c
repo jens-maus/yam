@@ -86,24 +86,24 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
       if (hits > 1) return 3;
       else if (!hits)
       {
-	      AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
-				if (hits > 1) return 3;
+        AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
+        if (hits > 1) return 3;
         else
         {
           if (!hits && strchr(name, '@'))
-	        {
-					  char *p = NULL;
-					  struct Person pe;
+          {
+            char *p = NULL;
+            struct Person pe;
 
-					  ExtractAddress(name, &pe);
+            ExtractAddress(name, &pe);
 
-					  if (pe.Address[0]) p = strchr(pe.Address, '@'); // is it an email address?
+            if (pe.Address[0]) p = strchr(pe.Address, '@'); // is it an email address?
 
-			      if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
-			      if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
-		  	    *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
-        		return 0;	 // if it is an email we return without an error because finding an entry for an email isn`t a must
-	      	}
+            if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
+            if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
+            *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
+            return 0; // if it is an email we return without an error because finding an entry for an email isn`t a must
+          }
           else if (!hits) return 2;
         }
       }
@@ -822,8 +822,8 @@ LOCAL char *WR_GetPGPId(struct Person *pe)
    if (!AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, pe->RealName, ASM_REALNAME|ASM_USER, &hits, &tn))
         AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, pe->Address, ASM_ADDRESS|ASM_USER, &hits, &tn);
    if (hits && tn && tn->tn_User)
-		if (((struct ABEntry *)(tn->tn_User))->PGPId[0])
-			pgpid = ((struct ABEntry *)(tn->tn_User))->PGPId;
+      if (((struct ABEntry *)(tn->tn_User))->PGPId[0])
+         pgpid = ((struct ABEntry *)(tn->tn_User))->PGPId;
    return pgpid;
 }
 ///
@@ -958,55 +958,55 @@ STRPTR CheckThese[3],buf;
 int i, Security=0;
 BOOL FirstAddr=TRUE;
 
-	/* collect address pointers for easier iteration */
-	CheckThese[0] = comp->MailTo;
-	CheckThese[1] = comp->MailCC;
-	CheckThese[2] = comp->MailBCC;
+  /* collect address pointers for easier iteration */
+  CheckThese[0] = comp->MailTo;
+  CheckThese[1] = comp->MailCC;
+  CheckThese[2] = comp->MailBCC;
 
-	/* go through all addresses */
-	for(i=0; i<3; i++)
-	{
-		if(CheckThese[i] == NULL) continue;		// skip empty fields
-		// copy string as strtok() will modify it
-		if((buf = (STRPTR)strdup(CheckThese[i])))
-		{
-		int hits = 0, currsec;
-		STRPTR in=buf,s,t;
-		struct MUI_NListtree_TreeNode *tn;
+  /* go through all addresses */
+  for(i=0; i<3; i++)
+  {
+    if(CheckThese[i] == NULL) continue;    // skip empty fields
+    // copy string as strtok() will modify it
+    if((buf = (STRPTR)strdup(CheckThese[i])))
+    {
+    int hits = 0, currsec;
+    STRPTR in=buf,s,t;
+    struct MUI_NListtree_TreeNode *tn;
 
-			// loop through comma-separated addresses in string
-			while((s = strtok_r((char **)&in,",")))
-			{
-				while((t = strtok_r((char **)&s," ()<>")))
-					if(strchr(t,'@')) break;
+      // loop through comma-separated addresses in string
+      while((s = strtok_r((char **)&in,",")))
+      {
+        while((t = strtok_r((char **)&s," ()<>")))
+          if(strchr(t,'@')) break;
 
-				if(!t) continue; // can't find address for this entry - shouldn't happen
+        if(!t) continue; // can't find address for this entry - shouldn't happen
 
-				if(AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
-					currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;	// get default from entry
-				else
-					currsec = 0;		// entry not in address book -> no security
+        if(AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
+          currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;  // get default from entry
+        else
+          currsec = 0;    // entry not in address book -> no security
 
-				if(currsec != Security)
-				{
-					if(FirstAddr)		// first address' setting is always used
-					{
-						FirstAddr = FALSE;
-						Security = currsec;	// assume as default
-					} else						// conflict: two addresses have different defaults
-					{
-						Security = MUI_RequestA(G->App, NULL, 0, NULL, GetStr(MSG_WR_DefSecurityConflictGads),
-														GetStr(MSG_WR_DefSecurityConflict),NULL);
-						if(SEC_NONE == Security) Security = SEC_MAXDUMMY-1;	// correct 1..N numbering of requester buttons
-						else Security--;
-						break;	// terminate recipient loop
-					}
-				}
-			}
-			free(buf);
-		}
-	}
-	comp->Security = Security;
+        if(currsec != Security)
+        {
+          if(FirstAddr)    // first address' setting is always used
+          {
+            FirstAddr = FALSE;
+            Security = currsec;  // assume as default
+          } else            // conflict: two addresses have different defaults
+          {
+            Security = MUI_RequestA(G->App, NULL, 0, NULL, GetStr(MSG_WR_DefSecurityConflictGads),
+                            GetStr(MSG_WR_DefSecurityConflict),NULL);
+            if(SEC_NONE == Security) Security = SEC_MAXDUMMY-1;  // correct 1..N numbering of requester buttons
+            else Security--;
+            break;  // terminate recipient loop
+          }
+        }
+      }
+      free(buf);
+    }
+  }
+  comp->Security = Security;
 }
 
 ///
@@ -1124,48 +1124,48 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
       struct Compose tcomp;
       FILE *tfh;
 
-         if((tf = OpenTempFile(NULL)) && (tfh = fopen(tf->Filename,"w")))
+      if((tf = OpenTempFile(NULL)) && (tfh = fopen(tf->Filename,"w")))
+      {
+         memcpy(&tcomp,comp,sizeof(tcomp));   // clone struct Compose
+         tcomp.FH = tfh;                      // set new filehandle
+         tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
+
+         // clear a few other fields to avoid redundancies
+         tcomp.MailCC = tcomp.MailBCC = tcomp.ExtHeader = NULL;
+         tcomp.Receipt = tcomp.Importance = 0;
+         tcomp.DelSend = tcomp.UserInfo = FALSE;
+
+         if(WriteOutMessage(&tcomp))    // recurse!
          {
-            memcpy(&tcomp,comp,sizeof(tcomp));   // clone struct Compose
-            tcomp.FH = tfh;                      // set new filehandle
-            tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
+            struct WritePart *tpart = comp->FirstPart; // save parts list so we're able to recover from a calloc() error
 
-            // clear a few other fields to avoid redundancies
-            tcomp.MailCC = tcomp.MailBCC = tcomp.ExtHeader = NULL;
-            tcomp.Receipt = tcomp.Importance = 0;
-            tcomp.DelSend = tcomp.UserInfo = FALSE;
-
-            if(WriteOutMessage(&tcomp))    // recurse!
+            // replace with single new part
+            if((comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart))))
             {
-               struct WritePart *tpart = comp->FirstPart; // save parts list so we're able to recover from a calloc() error
-
-               // replace with single new part
-               if((comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart))))
-               {
-                  comp->FirstPart->EncType = tpart->EncType;          // reuse encoding
-                  FreePartsList(tpart);                               // free old parts list
-                  comp->FirstPart->ContentType = "message/rfc822";    // the only part is an email message
-                  comp->FirstPart->Filename = tf->Filename;           // set filename to tempfile
-                  comp->Signature = 0;                                // only use sig in enclosed mail
-               } else
-               {
-                  // no errormsg here - the window probably won't open anyway...
-                  DisplayBeep(NULL);
-                  comp->FirstPart = tpart;     // just restore old parts list
-                  comp->Security = 0;          // switch off security
-                  // we'll most likely get more errors further down :(
-               }
+               comp->FirstPart->EncType = tpart->EncType;          // reuse encoding
+               FreePartsList(tpart);                               // free old parts list
+               comp->FirstPart->ContentType = "message/rfc822";    // the only part is an email message
+               comp->FirstPart->Filename = tf->Filename;           // set filename to tempfile
+               comp->Signature = 0;                                // only use sig in enclosed mail
+            } else
+            {
+               // no errormsg here - the window probably won't open anyway...
+               DisplayBeep(NULL);
+               comp->FirstPart = tpart;     // just restore old parts list
+               comp->Security = 0;          // switch off security
+               // we'll most likely get more errors further down :(
+            }
          } else
          {
             ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
             comp->Security = 0;
          }
          fclose(tfh);
-         } else
-         {
-            ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
-            comp->Security = 0;
-         }
+      } else
+      {
+         ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
+         comp->Security = 0;
+      }
    }
    *options = 0;
    if (comp->DelSend) strcat(options, ",delsent");
@@ -1191,6 +1191,7 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
    if (comp->ExtHeader) WR_EmitExtHeader(fh, comp);
 
 mimebody:
+
    fputs("MIME-Version: 1.0\n", fh);
    sprintf(boundary, "BOUNDARY.%s", NewID(False));
    if (comp->ReportType > 0)
@@ -1211,7 +1212,7 @@ mimebody:
          WR_Anonymize(fh, comp->MailTo);
       fputs("\n", fh);
       EncodePart(fh, firstpart);
-		success = TRUE;
+      success = TRUE;
    }
    CloseTempFile(tf);
    return success;
@@ -1293,7 +1294,7 @@ void WR_NewMail(int mode, int winnum)
       if (GetMUICheck(gui->CH_DISPNOTI)) comp.Receipt |= 2;
       comp.Signature = GetMUIRadio(gui->RA_SIGNATURE);
       if((comp.Security = GetMUIRadio(gui->RA_SECURITY)) == SEC_DEFAULTS)
-			SetDefaultSecurity(&comp);
+         SetDefaultSecurity(&comp);
       comp.DelSend = GetMUICheck(gui->CH_DELSEND);
       comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
       get(gui->LV_ATTACH, MUIA_List_Entries, &att);
@@ -1693,8 +1694,8 @@ void SAVEDS ASM WR_EditorCmd(REG(a1,int *arg))
    struct TempFile *tf;
    struct WR_ClassData *wr = G->WR[winnum];
 
-	quotetext = (cmd == ED_INSALTQUOT || cmd == ED_PASALTQUOT) ?
-						wr->AltQuoteText : wr->QuoteText;
+   quotetext = (cmd == ED_INSALTQUOT || cmd == ED_PASALTQUOT) ?
+                  wr->AltQuoteText : wr->QuoteText;
    switch(cmd)
    {
       case ED_INSERT:
@@ -1704,13 +1705,13 @@ void SAVEDS ASM WR_EditorCmd(REG(a1,int *arg))
       case ED_OPEN:
          if (!ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), 0, C->AttachDir, "")) return;
          strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
- 			text = WR_TransformText(filename, cmd, quotetext);
+         text = WR_TransformText(filename, cmd, quotetext);
          break;
       default:
          if (!(tf = OpenTempFile("w"))) return;
          DumpClipboard(tf->FP);
          fclose(tf->FP); tf->FP = NULL;
- 			text = WR_TransformText(tf->Filename, cmd, quotetext);
+         text = WR_TransformText(tf->Filename, cmd, quotetext);
          CloseTempFile(tf);
          break;
    }
@@ -1996,32 +1997,32 @@ struct WR_ClassData *WR_New(int winnum)
                            MSG_HELP_WR_BT_BOLD,MSG_HELP_WR_BT_ITALIC,MSG_HELP_WR_BT_UNDERL,MSG_HELP_WR_BT_COLOR,NULL };
       int i, spell;
       for (i = 0; i < 13; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, (i>=8 && i<=11)?TDF_TOGGLE:0);
-		if(NULL == rtitles[0])	// only initialize static data on first call
-		{
-			rtitles[0] = GetStr(MSG_Message);
-			rtitles[1] = GetStr(MSG_Attachments);
-			rtitles[2] = GetStr(MSG_Options);
-			rtitles[3] = NULL;
-			encoding[0] = "Base64/QP";
-			encoding[1] = "UUencode";
-			encoding[2] = NULL;
-			security[SEC_NONE]    = GetStr(MSG_WR_SecNone);
-			security[SEC_SIGN]    = GetStr(MSG_WR_SecSign);
-			security[SEC_ENCRYPT] = GetStr(MSG_WR_SecEncrypt);
-			security[SEC_BOTH]    = GetStr(MSG_WR_SecBoth);
-			security[SEC_SENDANON]= GetStr(MSG_WR_SecAnon);
-			security[SEC_DEFAULTS]= GetStr(MSG_WR_SecDefaults);
-			security[SEC_MAXDUMMY]= NULL;
-			priority[0] = GetStr(MSG_WR_ImpHigh);
-			priority[1] = GetStr(MSG_WR_ImpNormal);
-			priority[2] = GetStr(MSG_WR_ImpLow);
-			priority[3] = NULL;
-			signat[0] = GetStr(MSG_WR_NoSig);
-			signat[1] = GetStr(MSG_WR_DefSig);
-			signat[2] = GetStr(MSG_WR_AltSig1);
-			signat[3] = GetStr(MSG_WR_AltSig2);
-			signat[4] = NULL;
-		}
+      if(NULL == rtitles[0])   // only initialize static data on first call
+      {
+         rtitles[0] = GetStr(MSG_Message);
+         rtitles[1] = GetStr(MSG_Attachments);
+         rtitles[2] = GetStr(MSG_Options);
+         rtitles[3] = NULL;
+         encoding[0] = "Base64/QP";
+         encoding[1] = "UUencode";
+         encoding[2] = NULL;
+         security[SEC_NONE]    = GetStr(MSG_WR_SecNone);
+         security[SEC_SIGN]    = GetStr(MSG_WR_SecSign);
+         security[SEC_ENCRYPT] = GetStr(MSG_WR_SecEncrypt);
+         security[SEC_BOTH]    = GetStr(MSG_WR_SecBoth);
+         security[SEC_SENDANON]= GetStr(MSG_WR_SecAnon);
+         security[SEC_DEFAULTS]= GetStr(MSG_WR_SecDefaults);
+         security[SEC_MAXDUMMY]= NULL;
+         priority[0] = GetStr(MSG_WR_ImpHigh);
+         priority[1] = GetStr(MSG_WR_ImpNormal);
+         priority[2] = GetStr(MSG_WR_ImpLow);
+         priority[3] = NULL;
+         signat[0] = GetStr(MSG_WR_NoSig);
+         signat[1] = GetStr(MSG_WR_DefSig);
+         signat[2] = GetStr(MSG_WR_AltSig1);
+         signat[3] = GetStr(MSG_WR_AltSig2);
+         signat[4] = NULL;
+      }
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_WR_WriteWT),
          MUIA_HelpNode, "WR_W",
@@ -2165,7 +2166,7 @@ struct WR_ClassData *WR_New(int winnum)
                   Child, NListviewObject,
                      MUIA_CycleChain, 1,
                      MUIA_Listview_DragType, 1,
-                     MUIA_NListview_NList,		 data->GUI.LV_ATTACH = NewObject(CL_AttachList->mcc_Class,NULL,
+                     MUIA_NListview_NList, data->GUI.LV_ATTACH = NewObject(CL_AttachList->mcc_Class,NULL,
                         InputListFrame,
                         MUIA_NList_ListBackground, MUII_ListBack,
                         MUIA_NList_TitleBackground, MUII_ListBack,
@@ -2235,10 +2236,10 @@ struct WR_ClassData *WR_New(int winnum)
                      End,
                      Child, HSpace(0),
                      Child, data->GUI.RA_SECURITY = RadioObject, GroupFrameT(GetStr(MSG_WR_Security)),
-  	                     MUIA_Radio_Entries, security,
-     	                  MUIA_Radio_Active, SEC_DEFAULTS,
-     	                  MUIA_CycleChain, 1,
-        	            End,
+                        MUIA_Radio_Entries, security,
+                        MUIA_Radio_Active, SEC_DEFAULTS,
+                        MUIA_CycleChain, 1,
+                     End,
                   End,
                End,
             End,
@@ -2381,10 +2382,10 @@ struct WR_ClassData *WR_New(int winnum)
          }
          for (i = SEC_NONE; i < SEC_MAXDUMMY; i++) 
          {
-				// connect menuitems -> radiobuttons
-				DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SECUR0+i,data->GUI.RA_SECURITY,3,MUIM_Set        ,MUIA_Radio_Active    ,i);
-				// ...and the other way round
-				DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active     ,i            ,sec_menus[i]         ,3,MUIM_NoNotifySet,MUIA_Menuitem_Checked,TRUE);
+            // connect menuitems -> radiobuttons
+            DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SECUR0+i,data->GUI.RA_SECURITY,3,MUIM_Set        ,MUIA_Radio_Active    ,i);
+            // ...and the other way round
+            DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active     ,i            ,sec_menus[i]         ,3,MUIM_NoNotifySet,MUIA_Menuitem_Checked,TRUE);
          }
          WR_SharedSetup(data, winnum);
          return data;
@@ -2432,4 +2433,4 @@ LOCAL struct WR_ClassData *WR_NewBounce(int winnum)
    }
    return NULL;
 }
-/// vi: set ts=3 ss=0 scs si nu:
+///
