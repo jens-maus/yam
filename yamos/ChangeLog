@@ -1,5 +1,10 @@
 2001-09-03  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * added error message to move mail filter operation if it tries
+      to move a mail to a folder that couldn`t be found by name.
+      This can happen if a filter rule exists and the user renames
+      a folder. Now a error message pops up and tells the user that
+      this operation failed !
     * added missing localization to the newfoldergroup requester.
     * fixed bug #433745 where YAM was not displaying the check.info
       icon anymore.

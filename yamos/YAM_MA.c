@@ -1337,57 +1337,72 @@ void MA_FreeRules(struct Search **search, int scnt)
 //  Applies filter action to a message
 BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
 {
-   struct Mail *mlist[3];
-   struct Folder* fo;
-   mlist[0] = (struct Mail *)1; mlist[1] = NULL; mlist[2] = mail;
-   if ((rule->Actions & 1) == 1) if (*rule->BounceTo)
-   {
-      G->RRs.Bounced++;
-      MA_NewBounce(mail, TRUE);
-      setstring(G->WR[2]->GUI.ST_TO, rule->BounceTo);
-      DoMethod(G->App, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, 2);
-   }
-   if ((rule->Actions & 2) == 2) if (*rule->ForwardTo)
-   {
-      G->RRs.Forwarded++;
-      MA_NewForward(mlist, TRUE);
-      setstring(G->WR[2]->GUI.ST_TO, rule->ForwardTo);
-      WR_NewMail(WRITE_QUEUE, 2);
-   }
-   if ((rule->Actions & 4) == 4) if (*rule->ReplyFile)
-   {
-      MA_NewReply(mlist, TRUE);
-      FileToEditor(rule->ReplyFile, G->WR[2]->GUI.TE_EDIT);
-      WR_NewMail(WRITE_QUEUE, 2);
-      G->RRs.Replied++;
-   }
-   if ((rule->Actions & 8) == 8) if (*rule->ExecuteCmd)
-   {
-      char buf[SIZE_COMMAND+SIZE_PATHFILE];
-      strcpy(buf, rule->ExecuteCmd); strcat(buf, " ");
-      strcat(buf, GetMailFile(NULL, NULL, mail));
-      ExecuteCommand(buf, FALSE, OUT_DOS);
-      G->RRs.Executed++;
-   }
-   if ((rule->Actions & 16) == 16) if (*rule->PlaySound)
-   {
-      PlaySound(rule->PlaySound);
-   }
-   if ((rule->Actions & 32) == 32) if ((fo = FO_GetFolderByName(rule->MoveTo, NULL))) if (mail->Folder != fo)  // Move
-   {
-      G->RRs.Moved++;
-      if (fo->LoadedMode != 2 && (fo->XPKType&1)) fo->Flags |= FOFL_FREEXS;
-      MA_MoveCopy(mail, mail->Folder, fo, FALSE);
-      return FALSE;
-   }
-   if ((rule->Actions & 64) == 64)
-   {
-      G->RRs.Deleted++;
-      if (mail->Flags & MFLAG_SENDMDN) if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
-      MA_DeleteSingle(mail, FALSE);
-      return FALSE;
-   }
-   return TRUE;
+  struct Mail *mlist[3];
+  struct Folder* fo;
+  mlist[0] = (struct Mail *)1; mlist[1] = NULL; mlist[2] = mail;
+
+  if ((rule->Actions & 1) == 1) if (*rule->BounceTo)
+  {
+    G->RRs.Bounced++;
+    MA_NewBounce(mail, TRUE);
+    setstring(G->WR[2]->GUI.ST_TO, rule->BounceTo);
+    DoMethod(G->App, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, 2);
+  }
+
+  if ((rule->Actions & 2) == 2) if (*rule->ForwardTo)
+  {
+    G->RRs.Forwarded++;
+    MA_NewForward(mlist, TRUE);
+    setstring(G->WR[2]->GUI.ST_TO, rule->ForwardTo);
+    WR_NewMail(WRITE_QUEUE, 2);
+  }
+
+  if ((rule->Actions & 4) == 4) if (*rule->ReplyFile)
+  {
+    MA_NewReply(mlist, TRUE);
+    FileToEditor(rule->ReplyFile, G->WR[2]->GUI.TE_EDIT);
+    WR_NewMail(WRITE_QUEUE, 2);
+    G->RRs.Replied++;
+  }
+
+  if ((rule->Actions & 8) == 8) if (*rule->ExecuteCmd)
+  {
+    char buf[SIZE_COMMAND+SIZE_PATHFILE];
+    strcpy(buf, rule->ExecuteCmd); strcat(buf, " ");
+    strcat(buf, GetMailFile(NULL, NULL, mail));
+    ExecuteCommand(buf, FALSE, OUT_DOS);
+    G->RRs.Executed++;
+  }
+
+  if ((rule->Actions & 16) == 16) if (*rule->PlaySound)
+  {
+    PlaySound(rule->PlaySound);
+  }
+
+  if ((rule->Actions & 32) == 32)
+  {
+    if((fo = FO_GetFolderByName(rule->MoveTo, NULL)))
+    {
+      if (mail->Folder != fo)
+      {
+        G->RRs.Moved++;
+        if (fo->LoadedMode != 2 && (fo->XPKType&1)) fo->Flags |= FOFL_FREEXS;
+        MA_MoveCopy(mail, mail->Folder, fo, FALSE);
+        return FALSE;
+      }
+    }
+    else ER_NewError(GetStr(MSG_ER_CANTMOVEMAIL), mail->MailFile, rule->MoveTo);
+  }
+
+  if ((rule->Actions & 64) == 64)
+  {
+    G->RRs.Deleted++;
+    if (mail->Flags & MFLAG_SENDMDN) if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
+    MA_DeleteSingle(mail, FALSE);
+    return FALSE;
+  }
+
+  return TRUE;
 }
 
 ///
@@ -1427,6 +1442,7 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
             mail = mlist[m+2];
             if ((mode == APPLY_AUTO || mode == APPLY_RX) && mail->Status != STATUS_NEW) continue;
             G->RRs.Checked++;
+
             for (i = 0; i < scnt; i++)
             {
                DoMethod(G->App, MUIM_Application_InputBuffered);

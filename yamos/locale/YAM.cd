@@ -4811,3 +4811,8 @@ New folder group...
 ;
 MSG_FO_NEWFGROUPREQ (//)
 Enter name of new folder group please:
+;
+MSG_ER_CANTMOVEMAIL (//)
+Can't move mail '%s' to folder '%s' because a folder with that name doesn`t exist.\n\
+Please check your Filter configuration.
+; MAILFILE, FOLDERNAME

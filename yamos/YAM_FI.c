@@ -208,20 +208,26 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
    FILE *fh;
    int i;
 
-   if (StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
+   if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
    {
-      if (fh = fopen(fullfile, "r"))
+      if(fh = fopen(fullfile, "r"))
       {
          MA_ReadHeader(fh);
-        for (i = 0; i < Header.Used && !found; i++)
+
+         for(i = 0; i < Header.Used && !found; i++)
          {
             DoMethod(G->App,MUIM_Application_InputBuffered);
             rptr = line = Header.Data[i];
-            if (*search->Field)
-               if (Strnicmp(line, search->Field, strlen(search->Field))) continue;
+
+            if(*search->Field)
+            {
+               if(Strnicmp(line, search->Field, strlen(search->Field)) != 0) continue;
                else rptr = Trim(&line[strlen(search->Field)+1]);
+            }
+
             if ((search->Compare == 4) ? FI_MatchListPattern(search, rptr) : FI_MatchString(search, rptr)) found = TRUE;
          }
+
          FreeData2D(&Header);
          fclose(fh);
       }
