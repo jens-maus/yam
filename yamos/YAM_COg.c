@@ -33,6 +33,7 @@
 #include <mui/BetterString_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <proto/dos.h>
+#include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/xpkmaster.h>
 

@@ -80,7 +80,7 @@ void ER_NewError(char *error, char *arg1, char *arg2)
       strcat(buf, DateStamp2String(NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
       strcat(buf, ")");
 
-      if(G->ER_Message[G->ER_NumErr-1] = malloc(strlen(buf)+1))
+      if((G->ER_Message[G->ER_NumErr-1] = malloc(strlen(buf)+1)))
       {
         strcpy(G->ER_Message[G->ER_NumErr-1], buf);
       }

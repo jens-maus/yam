@@ -32,6 +32,7 @@
 #include <clib/socket_protos.h>
 #include <clib/macros.h>
 #include <libraries/iffparse.h>
+#include <libraries/genesis.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <proto/dos.h>
