@@ -31,7 +31,7 @@ TARGET	= YAM
 
 CC	= gcc
 RM	= rm -f
-CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" -c
+CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 CFLAGS	= -noixemul -O2 -mmultiple -mcpu=604e -c
 LDFLAGS	= -noixemul
 LDLIBS	= gg:lib/NewReadArgs.o -lmui -lopenurl -lxpkmaster -lamiga
