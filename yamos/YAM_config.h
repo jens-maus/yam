@@ -245,6 +245,8 @@ struct CO_GUIData
    Object *CH_AUTOTRANSLATEIN;
    Object *RA_SMTPSECURE;
    Object *CH_MAILPREVIEW;
+   Object *CH_DELAYEDSTATUS;
+   Object *NB_DELAYEDSTATUS;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -365,11 +367,10 @@ struct Config
    int   MDN_Filter;
    int   XPKPackEff;
    int   XPKPackEncryptEff;
-   int   LetterPart; /*Hidden*/
+   int   LetterPart;
    int   WriteIndexes;
    int   AutoSave;
    int   HideGUIElements;
-   enum PrintMethod PrintMethod;
    int   StackSize;
    int   SizeFormat;
    int   InfoBar;
@@ -377,7 +378,10 @@ struct Config
    int   SMTP_Port;
    int   TRBufferSize;
    int   PreviewDelay;
-   enum SMTPSecMethod SMTP_SecureMethod;
+   int   StatusChangeDelay;
+
+   enum  PrintMethod   PrintMethod;
+   enum  SMTPSecMethod SMTP_SecureMethod;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
@@ -431,6 +435,7 @@ struct Config
 	 BOOL	 AutomaticTranslationIn;
    BOOL  AutoColumnResize;
    BOOL  MailPreview;
+   BOOL  StatusChangeDelayOn;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

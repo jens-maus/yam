@@ -42,7 +42,14 @@
 /**************************************************************************/
 
 enum GlobalDispatcherJob { ID_CLOSEALL=1000, ID_RESTART, ID_ICONIFY, ID_LOGIN };
-enum TimerIO { TIO_WRINDEX=0, TIO_CHECKMAIL, TIO_AUTOSAVE, TIO_PREVIEWUPDATE };
+
+// all the different timerIOs YAM is using
+enum TimerIO { TIO_WRINDEX=0,
+               TIO_CHECKMAIL,
+               TIO_AUTOSAVE,
+               TIO_PREVIEWUPDATE,
+               TIO_READSTATUSUPDATE
+             };
 
 /*** Global Structure ***/
 struct Global 

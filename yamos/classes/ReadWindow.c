@@ -388,6 +388,7 @@ DECLARE(ReadMail) // struct Mail *mail
 	BOOL isRealMail = !isVirtualMail(mail);
 	BOOL isOutgoingMail = isRealMail ? isOutgoingFolder(folder) : FALSE;
 	BOOL result = FALSE;
+	BOOL initialCall = data->title[0] == '\0'; // TRUE if this is the first call
 	int titleLen;
 
 	DB(kprintf("setting up readWindow for reading a mail\n");)
@@ -425,7 +426,8 @@ DECLARE(ReadMail) // struct Mail *mail
 	}
 
 	// now we read in the mail in our read mail group
-	if(DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail, FALSE))
+	if(DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, mail,
+																	 initialCall == FALSE ? MUIF_ReadMailGroup_ReadMail_StatusChangeDelay : 0))
 	{
 		struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
@@ -433,7 +435,7 @@ DECLARE(ReadMail) // struct Mail *mail
 		// displayed in this readwindow, so we can set the mailTextObject of the readmailgroup
 		// as the active object so that the user can browse through the mailtext immediatley after
 		// opening the window
-		if(data->title[0] == '\0')
+		if(initialCall)
 			DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ActivateMailText);
 
 		// set the title of the readWindow now
@@ -1155,7 +1157,8 @@ DECLARE(ChangeHeaderMode) // enum HeaderMode hmode
 	rmData->headerMode = msg->hmode;
 
 	// issue an update of the readMailGroup
-	DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail, TRUE);
+	DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail,
+																MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
 	return 0;
 }
@@ -1172,7 +1175,8 @@ DECLARE(ChangeSenderInfoMode) // enum SInfoMode simode
 	rmData->senderInfoMode = msg->simode;
 
 	// issue an update of the readMailGroup
-	DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail, TRUE);
+	DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail,
+																MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
 	return 0;
 }
@@ -1192,10 +1196,10 @@ DECLARE(StyleOptionsChanged)
 	rmData->useFixedFont	= xget(data->MI_FFONT, MUIA_Menuitem_Checked);
 
 	// issue an update of the readMailGroup
-	DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail, TRUE);
+	DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ReadMail, rmData->mail,
+																MUIF_ReadMailGroup_ReadMail_UpdateOnly);
 
 	return 0;
 }
 
 ///
-

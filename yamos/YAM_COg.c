@@ -569,8 +569,8 @@ APTR CO_Page1(struct CO_ClassData *data)
          End,
          Child, HGroup, GroupFrameT(GetStr(MSG_CO_ReceiveMail)),
             Child, ListviewObject,
-               MUIA_Weight, 60,
-               MUIA_CycleChain, 1,
+               MUIA_CycleChain, TRUE,
+               MUIA_Weight,     60,
                MUIA_Listview_List, data->GUI.LV_POP3 = ListObject,
                   InputListFrame,
                End,
@@ -694,7 +694,7 @@ APTR CO_Page2(struct CO_ClassData *data)
             Child, HGroup,
                Child, Label(GetStr(MSG_CO_CheckMail)),
                Child, data->GUI.NM_INTERVAL = NumericbuttonObject,
-                 MUIA_CycleChain,      1,
+                 MUIA_CycleChain,      TRUE,
                  MUIA_Numeric_Min,     0,
                  MUIA_Numeric_Max,     240,
                  MUIA_Numeric_Default, 5,
@@ -992,11 +992,23 @@ APTR CO_Page4(struct CO_ClassData *data)
             Child, MakeCheckGroup((Object **)&data->GUI.CH_AUTOTRANSLATEIN, GetStr(MSG_CO_AutoTranslateIn)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, GetStr(MSG_CO_MultiReadWin)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_MAILPREVIEW, GetStr(MSG_CO_SHOWMAILPREVIEW)),
+            Child, HGroup,
+               Child, data->GUI.CH_DELAYEDSTATUS = MakeCheck(GetStr(MSG_CO_ConfirmDelPart1)),
+               Child, Label2(GetStr(MSG_CO_SETSTATUSDELAYED1)),
+               Child, data->GUI.NB_DELAYEDSTATUS = NumericbuttonObject,
+                 MUIA_CycleChain,  TRUE,
+                 MUIA_Numeric_Min, 1,
+                 MUIA_Numeric_Max, 10,
+               End,
+               Child, Label2(GetStr(MSG_CO_SETSTATUSDELAYED2)),
+               Child, HSpace(0),
+            End,
          End,
          Child, HVSpace,
       End))
    {
       set(data->GUI.ST_HEADERS, MUIA_Disabled, TRUE);
+
       SetHelp(data->GUI.CY_HEADER,          MSG_HELP_CO_CY_HEADER);
       SetHelp(data->GUI.ST_HEADERS,         MSG_HELP_CO_ST_HEADERS);
       SetHelp(data->GUI.CY_SENDERINFO,      MSG_HELP_CO_CY_SENDERINFO);
@@ -1015,6 +1027,8 @@ APTR CO_Page4(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_FIXFEDIT,        MSG_HELP_CO_CH_FIXFEDIT);
       SetHelp(data->GUI.CH_WRAPHEAD,        MSG_HELP_CO_CH_WRAPHEAD);
       SetHelp(data->GUI.CH_TEXTSTYLES,      MSG_HELP_CO_CH_TEXTSTYLES);
+      SetHelp(data->GUI.CH_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
+      SetHelp(data->GUI.NB_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
 
       DoMethod(data->GUI.CH_AUTOTRANSLATEIN, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.ST_INTRANS, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,0             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);

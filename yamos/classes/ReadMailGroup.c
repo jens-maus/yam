@@ -49,6 +49,14 @@ struct Data
 };
 */
 
+/* EXPORT
+#define MUIF_ReadMailGroup_ReadMail_UpdateOnly				(1<<0) // the call to ReadMail is just because of an update of the same mail
+#define MUIF_ReadMailGroup_ReadMail_StatusChangeDelay	(1<<1) // the mail status should not be change immediatley but with a specified time interval
+
+#define hasUpdateOnlyFlag(v)				(isFlagSet((v), MUIF_ReadMailGroup_ReadMail_UpdateOnly))
+#define hasStatusChangeDelayFlag(v)	(isFlagSet((v), MUIF_ReadMailGroup_ReadMail_StatusChangeDelay))
+*/
+
 /* Hooks */
 /// HeaderDisplayHook
 //  Header listview display hook
@@ -369,7 +377,7 @@ DECLARE(Clear)
 
 ///
 /// DECLARE(ReadMail)
-DECLARE(ReadMail) // struct Mail *mail, BOOL updateOnly
+DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 {
 	GETDATA;
 	struct Mail *mail = msg->mail;
@@ -474,14 +482,16 @@ DECLARE(ReadMail) // struct Mail *mail, BOOL updateOnly
 				if(ab)
 				{
 					RE_UpdateSenderInfo(ab, &abtmpl);
-					if(!msg->updateOnly && C->AddToAddrbook > 0 && !*ab->Photo && *abtmpl.Photo && *C->GalleryDir)
+					if(!hasUpdateOnlyFlag(msg->flags) &&
+						 C->AddToAddrbook > 0 && !*ab->Photo && *abtmpl.Photo && *C->GalleryDir)
 					{
 						RE_DownloadPhoto(_win(obj), abtmpl.Photo, ab);
 					}
 				}
 				else
 				{
-					if(!msg->updateOnly && C->AddToAddrbook > 0 && (ab = RE_AddToAddrbook(_win(obj), &abtmpl)))
+					if(!hasUpdateOnlyFlag(msg->flags) &&
+						 C->AddToAddrbook > 0 && (ab = RE_AddToAddrbook(_win(obj), &abtmpl)))
 					{
 						if(*abtmpl.Photo && *C->GalleryDir)
 							RE_DownloadPhoto(_win(obj), abtmpl.Photo, ab);
@@ -610,10 +620,25 @@ DECLARE(ReadMail) // struct Mail *mail, BOOL updateOnly
 			if(!isVirtualMail(mail) &&
          (hasStatusNew(mail) || !hasStatusRead(mail)))
       {
-				setStatusToRead(mail); // set to OLD
-				DisplayStatistics(folder, TRUE);
+				// depending on the local delayedStatusChange and the global
+				// configuration settings for the mail status change interval we either
+				// start the timer that will change the mail status to read after a
+				// specified time has passed or we change it immediatley here
+				if(hasStatusChangeDelayFlag(msg->flags) &&
+					 C->StatusChangeDelayOn && C->StatusChangeDelay > 0)
+				{
+					// start the timer event. Please note that the timer event might be
+					// canceled by the MA_ChangeSelected() function when the next mail
+					// will be selected.
+					TC_Start(TIO_READSTATUSUPDATE, 0, (C->StatusChangeDelay-500)*1000);
+				}
+				else
+				{
+					setStatusToRead(mail); // set to OLD
+					DisplayStatistics(folder, TRUE);
+				}
 
-				// and dependingnon the PGP status we either check an existing
+				// and depending on the PGP status we either check an existing
 				// PGP signature or not.
 				if((hasPGPSOldFlag(rmData) || hasPGPSMimeFlag(rmData))
 					 && !hasPGPSCheckedFlag(rmData))

@@ -7,6 +7,14 @@ $Source$
 
 2005-01-26  Jens Langner <Jens.Langner@light-speed.de>
 
+    * misc: added new StatusChangeDelay functionality to YAM that changes
+      the status of a NEW/UNREAD mail to READ only after a configured
+      time interval passed. This should increase the usability of the
+      previously introduced mail preview because YAM will now only change
+      the status of a mail after that short interval passed. However, for
+      doubleclicking a mail the behaviour hasn't been changed as that
+      user operation should be certain enough to tell that the user really
+      wanted to read that particular mail.
     * ReadWindow.c, ReadMailGroup.c: the mailtextedit object will again be
       the default object if a new read window is created.
     * YAM_stringsizes.h: slightly modified the string sizes for the filename

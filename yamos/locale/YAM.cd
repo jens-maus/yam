@@ -5422,3 +5422,14 @@ MSG_HELP_CO_CH_MAILPREVIEW (//)
 Show an embeeded mail preview directly\n\
 in the main window.
 ;
+MSG_CO_SETSTATUSDELAYED1 (//)
+Mark showed mail as read after
+;
+MSG_CO_SETSTATUSDELAYED2 (//)
+second(s)
+;
+MSG_HELP_CO_SETSTATUSDELAYED (//)
+Upon switching mails or showing a mail in the preview pane, YAM\n\
+will mark a mail as read after this specified amount of seconds\n\
+has passed by.
+;

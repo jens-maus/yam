@@ -232,6 +232,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "TranslationIn    = %s\n", co->TranslationIn);
       fprintf(fh, "AutoTranslationIn= %s\n", Bool2Txt(co->AutomaticTranslationIn));
       fprintf(fh, "MailPreview      = %s\n", Bool2Txt(co->MailPreview));
+      fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelay);
 
       fprintf(fh, "\n[Write]\n");
       fprintf(fh, "ReplyTo          = %s\n", co->ReplyTo);
@@ -840,6 +841,8 @@ void CO_GetConfig(void)
          CE->UseTextstyles     = GetMUICheck  (gui->CH_TEXTSTYLES);
          CE->MultipleWindows   = GetMUICheck  (gui->CH_MULTIWIN);
          CE->MailPreview       = GetMUICheck  (gui->CH_MAILPREVIEW);
+         CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
+         CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
          GetMUIString(CE->TranslationIn       ,gui->ST_INTRANS);
          CE->AutomaticTranslationIn = GetMUICheck(gui->CH_AUTOTRANSLATEIN);
          break;
@@ -1032,6 +1035,8 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_TEXTSTYLES,CE->UseTextstyles);
          setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
          setcheckmark(gui->CH_MAILPREVIEW,CE->MailPreview);
+         setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
+         set(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay/1000);
          setstring   (gui->ST_INTRANS   ,CE->TranslationIn);
          setcheckmark(gui->CH_AUTOTRANSLATEIN, CE->AutomaticTranslationIn);
          break;

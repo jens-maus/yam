@@ -3698,13 +3698,13 @@ Object *MakeCheckGroup(Object **check, char *label)
 //  Creates a MUI string object
 Object *MakeString(int maxlen, char *label)
 {
-   return BetterStringObject,
-      StringFrame,
-      MUIA_String_MaxLen     , maxlen,
-      MUIA_String_AdvanceOnCR, TRUE,
-      MUIA_ControlChar       , ShortCut(label),
-      MUIA_CycleChain        , 1,
-   End;
+  return BetterStringObject,
+    StringFrame,
+    MUIA_String_MaxLen,      maxlen,
+    MUIA_String_AdvanceOnCR, TRUE,
+    MUIA_ControlChar,        ShortCut(label),
+    MUIA_CycleChain,         TRUE,
+  End;
 }
 ///
 /// MakePassString
@@ -3725,14 +3725,15 @@ Object *MakePassString(char *label)
 //  Creates a MUI string object for numeric input
 Object *MakeInteger(int maxlen, char *label)
 {
-   Object *str = MakeString(maxlen+1, label);
-   if (str)
-   {
-      SetAttrs(str, MUIA_String_Integer,  0,
-                    MUIA_String_Accept,   "0123456789",
-                    TAG_DONE);
-   }
-   return str;
+  return BetterStringObject,
+    StringFrame,
+    MUIA_String_MaxLen,       maxlen+1,
+    MUIA_String_AdvanceOnCR,  TRUE,
+    MUIA_ControlChar,         ShortCut(label),
+    MUIA_CycleChain,          TRUE,
+    MUIA_String_Integer,      0,
+    MUIA_String_Accept,       "0123456789",
+  End;
 }
 ///
 /// MakePGPKeyList
@@ -3832,12 +3833,11 @@ Object *MakeAddressField(Object **string, char *label, APTR help, int abmode, in
 //  Creates a MUI numeric slider
 Object *MakeNumeric(int min, int max, BOOL percent)
 {
-   return
-   NumericbuttonObject,
+   return NumericbuttonObject,
       MUIA_Numeric_Min, min,
       MUIA_Numeric_Max, max,
       MUIA_Numeric_Format, percent ? "%ld%%" : "%ld",
-      MUIA_CycleChain, 1,
+      MUIA_CycleChain, TRUE,
    End;
 }
 ///

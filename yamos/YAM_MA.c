@@ -134,9 +134,14 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    if(!fo)
      return;
 
+   // we make sure the an eventually running timer event for setting the mail
+   // status of a previous mail to read is canceled beforehand
+   if(C->StatusChangeDelayOn)
+      TC_Stop(TIO_READSTATUSUPDATE);
+
    // make sure the mail is displayed in our readMailGroup of the main window
    // (if enabled) - but we do only issue a timer event here so the mail preview
-   // is only refreshed about 200 milliseconds after the last change in the listview
+   // is only refreshed about 100 milliseconds after the last change in the listview
    // was recognized.
    if(C->MailPreview)
       TC_Start(TIO_PREVIEWUPDATE, 0, C->PreviewDelay*1000);

@@ -760,7 +760,8 @@ void CO_SetDefaults(struct Config *co, int page)
       co->AutomaticTranslationIn = co->WrapHeader = co->MultipleWindows = FALSE;
       co->SigSepLine = 2;
       *co->TranslationIn = 0;
-
+      co->StatusChangeDelayOn = TRUE;
+      co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
    }
 
    if (page == 5 || page < 0)

@@ -97,7 +97,7 @@ struct Args {
 /**************************************************************************/
 
 // the used number of timerIO requests (refer to YAM.h)
-#define TIO_NUM (4)
+#define TIO_NUM (5)
 
 // Timer Class
 static struct TC_Data
@@ -368,7 +368,27 @@ static void TC_Dispatcher(enum TimerIO tio)
 
             // update the readMailGroup of the main window.
             if(mail)
-              DoMethod(gui->MN_MAILPREVIEW, MUIM_ReadMailGroup_ReadMail, mail, FALSE);
+              DoMethod(gui->MN_MAILPREVIEW, MUIM_ReadMailGroup_ReadMail, mail,
+                                            MUIF_ReadMailGroup_ReadMail_StatusChangeDelay);
+          }
+        }
+        break;
+
+        case TIO_READSTATUSUPDATE:
+        {
+          struct MA_GUIData *gui = &G->MA->GUI;
+          struct Mail *mail;
+
+          DB(kprintf("TIO_READSTATUSUPDATE triggered at: %ld\n", time(NULL));)
+
+          // get the actually active mail
+          DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+
+          // update the status of the mail to READ now
+          if(hasStatusNew(mail) || !hasStatusRead(mail))
+          {
+		    		setStatusToRead(mail); // set to OLD
+				    DisplayStatistics(mail->Folder, TRUE);
           }
         }
         break;
