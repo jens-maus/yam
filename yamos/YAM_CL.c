@@ -68,14 +68,7 @@ struct BC_Data
    struct BodyChunkData *BCD;
 };
 
-struct TE_Data
-{
-   Object *slider;
-   struct MUI_EventHandlerNode ehnode;
-};
-
 /*** Definitions ***/
-struct MUI_CustomClass *CL_TextEditor   = NULL;
 struct MUI_CustomClass *CL_BodyChunk    = NULL;
 struct MUI_CustomClass *CL_FolderList   = NULL;
 struct MUI_CustomClass *CL_MailList     = NULL;
@@ -436,191 +429,6 @@ DISPATCHERPROTO(MW_Dispatcher)
 }
 
 ///
-/// TE_Dispatcher (Text Editor)
-// TE_Dispatcher (Text Editor) - Subclass of Texteditor, adds
-// error requester, Drag&Drop capabilities and multi-color support
-DISPATCHERPROTO(TE_Dispatcher)
-{
-   switch (msg->MethodID)
-   {
-      // we catch the OM_NEW method to save a pointer to the correct
-      // slider gadget so that we can send newmouse events later on.
-      case OM_NEW:
-      {
-        if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
-        {
-          struct TE_Data *data = INST_DATA(cl, obj);
-          struct TagItem *tags = inittags(msg), *tag;
-
-          while((tag = NextTagItem(&tags)))
-          {
-            switch(tag->ti_Tag)
-            {
-              case MUIA_TextEditor_Slider: data->slider = (Object *)tag->ti_Data; break;
-            }
-          }
-        }
-
-        return (ULONG)obj;
-      }
-      break;
-
-      case MUIM_DragQuery:
-      {
-         struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-         return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADDRESSES);
-      }
-      break;
-
-      case MUIM_DragDrop:
-      {
-         struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-         if (drop_msg->obj == G->AB->GUI.LV_ADDRESSES)
-         {
-            struct MUI_NListtree_TreeNode *tn;
-            if ((tn = (struct MUI_NListtree_TreeNode *)xget(drop_msg->obj, MUIA_NListtree_Active)))
-            {
-               struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
-               if (ab->Type != AET_GROUP)
-               {
-                  DoMethod(obj, MUIM_TextEditor_InsertText, AB_PrettyPrintAddress(ab), MUIV_TextEditor_InsertText_Cursor);
-               }
-            }
-         }
-      }
-      break;
-
-      case MUIM_TextEditor_HandleError:
-      {
-         char *errortxt = NULL;
-         switch(((struct MUIP_TextEditor_HandleError *)msg)->errorcode)
-         {
-            case Error_ClipboardIsEmpty:  errortxt = GetStr(MSG_CL_ErrorEmptyCB); break;
-            case Error_ClipboardIsNotFTXT:errortxt = GetStr(MSG_CL_ErrorNotFTXT); break;
-            case Error_NoAreaMarked:      errortxt = GetStr(MSG_CL_ErrorNoArea); break;
-            case Error_NothingToRedo:     errortxt = GetStr(MSG_CL_ErrorNoRedo); break;
-            case Error_NothingToUndo:     errortxt = GetStr(MSG_CL_ErrorNoUndo); break;
-            case Error_NotEnoughUndoMem:  errortxt = GetStr(MSG_CL_ErrorNoUndoMem); break;
-         }
-         if (errortxt) MUI_Request(_app(obj), _win(obj), 0L, NULL, GetStr(MSG_OkayReq), errortxt);
-      }
-      break;
-
-      case MUIM_Show:
-      {
-         G->EdColMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
-         G->EdColMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
-         G->EdColMap[8] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
-         G->EdColMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
-         G->EdColMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
-         G->EdColMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
-      }
-      break;
-
-      case MUIM_Hide:
-      {
-         if (G->EdColMap[6] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[6]);
-         if (G->EdColMap[7] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[7]);
-         if (G->EdColMap[8] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[8]);
-         if (G->EdColMap[9] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[9]);
-         if (G->EdColMap[10] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[10]);
-         if (G->EdColMap[11] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[11]);
-      }
-      break;
-
-      // On the Setup of the TextEditor gadget we prepare the evenhandlernode
-      // for adding it later on a GoActive Method call.
-      case MUIM_Setup:
-      {
-        struct TE_Data *data = INST_DATA(cl, obj);
-        data->ehnode.ehn_Priority = 1;
-        data->ehnode.ehn_Flags    = 0;
-        data->ehnode.ehn_Object   = obj;
-        data->ehnode.ehn_Class    = cl;
-        data->ehnode.ehn_Events   = IDCMP_RAWKEY;
-
-        DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-      }
-      break;
-
-      // On a Cleanup we have to remove the EventHandler
-      case MUIM_Cleanup:
-      {
-        struct TE_Data *data = INST_DATA(cl, obj);
-        DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
-      }
-      break;
-
-      // We use HandleEvent to implement our neat tiny feature that on a press of
-      // RAMIGA+DEL while a multiline text is marked YAM deletes the text and
-      // inserts the famous [...] substitution.
-      case MUIM_HandleEvent:
-      {
-        struct TE_Data *data = INST_DATA(cl, obj);
-        struct IntuiMessage *imsg;
-
-        if(!(imsg = ((struct MUIP_HandleEvent *)msg)->imsg)) break;
-
-        if(imsg->Class == IDCMP_RAWKEY)
-        {
-          if(imsg->Code == IECODE_DEL)
-          {
-            if(isFlagSet(imsg->Qualifier, IEQUALIFIER_RCOMMAND) && !xget(obj, MUIA_TextEditor_ReadOnly))
-            {
-              ULONG ret;
-              ULONG x1, y1, x2, y2;
-
-              // let`s check first if a multiline block is marked or not
-              if(DoMethod(obj, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) && y2-y1 >= 1)
-              {
-                // then we first clear the qualifier so that the real
-                // TextEditor HandleEvent method treats this imsg as a normal DEL pressed imsg
-                CLEAR_FLAG(imsg->Qualifier, IEQUALIFIER_RCOMMAND);
-                ret = DoSuperMethodA(cl, obj, msg);
-
-                // Now that the marked text is cleared we can insert our great [...]
-                // snip text ;)
-                DoMethod(obj, MUIM_TextEditor_InsertText, "[...]\n", MUIV_TextEditor_InsertText_Cursor);
-
-                return ret;
-              }
-            }
-          }
-          else if(PointInObject(obj, imsg->MouseX, imsg->MouseY))
-          {
-            // MouseWheel events are only possible if the mouse is above the
-            // object
-            if(imsg->Code == NM_WHEEL_UP   || imsg->Code == NM_WHEEL_LEFT ||
-               imsg->Code == NM_WHEEL_DOWN || imsg->Code == NM_WHEEL_RIGHT)
-            {
-              LONG visible = xget(obj, MUIA_TextEditor_Prop_Visible);
-
-              if(visible > 0)
-              {
-                // we scroll 1/6 of the displayed text by default
-                LONG delta = ((((float)visible)/6.0)+0.5); // round the value
-
-                // make sure that we scroll at least 1 line
-                if(delta < 1) delta = 1;
-
-                if(imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT)
-                {
-                  DoMethod(data->slider, MUIM_Prop_Decrease, delta);
-                }
-                else DoMethod(data->slider, MUIM_Prop_Increase, delta);
-              }
-
-              return MUI_EventHandlerRC_Eat;
-            }
-          }
-        }
-      }
-      break;
-   }
-
-   return DoSuperMethodA(cl, obj, msg);
-}
-///
 
 /// Images
 //  Images for section listview in ILBM/BODY format
@@ -940,7 +748,6 @@ void ExitClasses(void)
 {
   if(CL_PageList)    { MUI_DeleteCustomClass(CL_PageList);     CL_PageList     = NULL; }
   if(CL_MainWin)     { MUI_DeleteCustomClass(CL_MainWin);      CL_MainWin      = NULL; }
-  if(CL_TextEditor)  { MUI_DeleteCustomClass(CL_TextEditor);   CL_TextEditor   = NULL; }
   if(CL_BodyChunk)   { MUI_DeleteCustomClass(CL_BodyChunk);    CL_BodyChunk    = NULL; }
   if(CL_MailList)    { MUI_DeleteCustomClass(CL_MailList);     CL_MailList     = NULL; }
   if(CL_FolderList)  { MUI_DeleteCustomClass(CL_FolderList);   CL_FolderList   = NULL; }
@@ -960,7 +767,6 @@ BOOL InitClasses(void)
   if((CL_FolderList   = CreateMCC(MUIC_NListtree, NULL, sizeof(struct FL_Data), ENTRY(FL_Dispatcher))))
   if((CL_MailList     = CreateMCC(MUIC_NList,     NULL, sizeof(struct ML_Data), ENTRY(ML_Dispatcher))))
   if((CL_BodyChunk    = CreateMCC(MUIC_Bodychunk, NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher))))
-  if((CL_TextEditor   = CreateMCC(MUIC_TextEditor,NULL, sizeof(struct TE_Data), ENTRY(TE_Dispatcher))))
   if((CL_MainWin      = CreateMCC(MUIC_Window,    NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher))))
   if((CL_PageList     = CreateMCC(MUIC_List,      NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher))))
   {

@@ -78,6 +78,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
 	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
 	$(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
 	$(OBJDIR)/$(CLASSDIR)/InfoBar.o \
 	$(OBJDIR)/$(CLASSDIR)/YAM.o
 
@@ -159,7 +160,7 @@ classinfo: $(CLASSDIR)/Classes.h
 
 $(CLASSDIR)/Classes.h: $(GENCLASSES)/GenClasses $(CLASSDIR)/Addrmatchlist.c $(CLASSDIR)/Searchwindow.c\
   $(CLASSDIR)/Recipientstring.c $(CLASSDIR)/InfoBar.c $(CLASSDIR)/YAM.c $(CLASSDIR)/Aboutwindow.c\
-  $(CLASSDIR)/Splashwindow.c
+  $(CLASSDIR)/Splashwindow.c $(CLASSDIR)/MailTextEdit.c
 	@printf '\033[33mGenerating class files...\033[0m\n'
 	@$(GENCLASSES)/GenClasses classes -bYAM -gpl -storm -iClassesExtra.h
 
@@ -298,6 +299,9 @@ $(OBJDIR)/all_gcc.o: all_gcc.c $(EXTRASRC)/astcsma.c $(EXTRASRC)/getft.c $(EXTRA
 	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/dice.c
 
 ## CLASS DEPENDENCIES #################
+
+$(OBJDIR)/$(CLASSDIR)/MailTextEdit.o: $(CLASSDIR)/MailTextEdit.c \
+	$(CLASSDIR)/MailTextEdit_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/Splashwindow.o: $(CLASSDIR)/Splashwindow.c \
 	$(CLASSDIR)/Splashwindow_cl.h

@@ -37,6 +37,7 @@
 #include <proto/muimaster.h>
 
 #include "SDI_hook.h"
+#include "classes/Classes.h"
 
 #include "YAM.h"
 #include "YAM_classes.h"
@@ -304,7 +305,7 @@ static struct DI_ClassData *DI_New(void)
                   End,
                   Child, HGroup,
                      MUIA_Group_Spacing, 0,
-                     Child, data->GUI.TE_EDIT = NewObject(CL_TextEditor->mcc_Class, NULL,
+                     Child, data->GUI.TE_EDIT = MailTextEditObject,
                         InputListFrame,
                         MUIA_CycleChain, TRUE,
                         MUIA_TextEditor_Slider, data->GUI.SL_EDIT,

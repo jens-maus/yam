@@ -2331,7 +2331,7 @@ static struct WR_ClassData *WR_New(int winnum)
                   Child, HGroup,
                      MUIA_HelpNode, "EDIT",
                      MUIA_Group_Spacing, 0,
-                     Child, data->GUI.TE_EDIT = NewObject(CL_TextEditor->mcc_Class,NULL,
+                     Child, data->GUI.TE_EDIT = MailTextEditObject,
                         InputListFrame,
                         MUIA_TextEditor_Slider, slider,
                         MUIA_TextEditor_ColorMap, G->EdColMap,

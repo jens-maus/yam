@@ -39,6 +39,7 @@
 
 #include "extra.h"
 #include "SDI_hook.h"
+#include "classes/Classes.h"
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -1154,7 +1155,7 @@ APTR CO_Page7(struct CO_ClassData *data)
             End,
             Child, HGroup,
                MUIA_Group_Spacing, 0,
-               Child, data->GUI.TE_SIGEDIT = NewObject(CL_TextEditor->mcc_Class, NULL,
+               Child, data->GUI.TE_SIGEDIT = MailTextEditObject,
                   InputListFrame,
                   MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_EMail,
                   MUIA_CycleChain, TRUE,

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-09-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * MailTextEdit.c: moved CL_TextEditor custom class implementation
+      to the new classes system as "MailTextEdit".
+
 2004-09-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * misc: added some missing MUI_DisposeObject() calls on some

@@ -4066,7 +4066,7 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                Child, data->GUI.GR_BODY = HGroup,
                   MUIA_VertWeight, G->Weights[3],
                   MUIA_Group_Spacing, 0,
-                  Child, data->GUI.TE_TEXT = NewObject(CL_TextEditor->mcc_Class,NULL,
+                  Child, data->GUI.TE_TEXT = MailTextEditObject,
                      InputListFrame,
                      MUIA_TextEditor_Slider, data->GUI.SL_TEXT,
                      MUIA_TextEditor_FixedFont, data->FixedFont,
