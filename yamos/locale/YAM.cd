@@ -1,6 +1,5 @@
 ;
 ; YAM.cd - YAM 2.4 catalog description file
-; $Id$
 ;
 #version 5
 #language english
@@ -4700,7 +4699,7 @@ Text that should be displayed\n\
 as the label of the AppIcon.
 ;
 MSG_CO_APPICONTEXT (//)
-AppIcon _label
+_Label
 ;
 MSG_CO_NEWMSGS (//)
 %n  New messages
