@@ -342,3 +342,9 @@
        but not yet added)
       Fixes Bug #460488
 
+2001-11-04  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_MA.c: fixed ML reply problem when the mail had no
+      Reply-To header (patch from MAIN)
+
+
