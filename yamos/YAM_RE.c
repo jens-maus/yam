@@ -2686,7 +2686,10 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
         if(*buffer) cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
       }
 
-      if(dodisp)
+      // only continue of this part should be displayed
+      // and is greater than zero, or else we don`t have
+      // to parse anything at all.
+      if(dodisp && part->Size > 0)
       {
         FILE *fh;
 
@@ -2701,39 +2704,53 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
             *msg = '\n';
             nread = fread(msg+1, 1, (size_t)(part->Size), fh);
-            if(nread > 0 && nread == part->Size)
+
+            // lets check if an error or short item count occurred
+            if(nread == 0 || nread != part->Size)
             {
-              rptr = msg+1;
-
-              // find signature first if it should be stripped
-              if(mode == RIM_QUOTE && C->StripSignature)
+              DB(kprintf("Warning: EOF or short item count detected: feof()=%ld ferror()=%ld\n", feof(fh), ferror(fh));)
+              // distinguish between EOF and error
+              if(feof(fh) == 0 && ferror(fh) != 0)
               {
-                sigptr = msg + part->Size;
-                while(sigptr > msg)
+                // an error occurred, lets signal it by returning NULL
+                DB(kprintf("ERROR occurred while reading at pos %ld of %s\n", ftell(fh), part->Filename);)
+
+                // cleanup and return NULL
+                free(msg);
+                fclose(fh);
+                if(mode != RIM_QUIET) BusyEnd;
+                return NULL;
+              }
+
+              // if we end up here it is "just" an EOF so lets put out
+              // a warning and continue.
+              DB(kprintf("Warning: EOF detected at pos %ld of %s\n", ftell(fh), part->Filename);)
+            }
+
+            // nothing serious happened so lets continue...
+            rptr = msg+1;
+
+            // find signature first if it should be stripped
+            if(mode == RIM_QUOTE && C->StripSignature)
+            {
+              sigptr = msg + nread;
+              while(sigptr > msg)
+              {
+                sigptr--;
+                while((sigptr > msg) && (*sigptr != '\n')) sigptr--;  // step back to previous line
+
+                if((sigptr <= msg+1))
                 {
-                  sigptr--;
-                  while((sigptr > msg) && (*sigptr != '\n')) sigptr--;  // step back to previous line
+                  sigptr = NULL;
+                  break;
+                }
 
-                  if((sigptr <= msg+1))
-                  {
-                    sigptr = NULL;
-                    break;
-                  }
-
-                  if(strncmp(sigptr+1, "-- \n", 4) == 0)                // check for sig separator
-                  {                                                     // per definition it is a "-- " on a single line
-                    sigptr++;
-                    break;
-                  }
+                if(strncmp(sigptr+1, "-- \n", 4) == 0)                // check for sig separator
+                {                                                     // per definition it is a "-- " on a single line
+                  sigptr++;
+                  break;
                 }
               }
-            }
-            else
-            {
-              DB(kprintf("ERROR or short item count!!!\n");)
-              // an error or short item count has happend
-              free(msg);
-              return NULL;
             }
 
             // parse the message string

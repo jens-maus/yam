@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-11-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed tiny flaws within the test parsing routines
+      that caused YAM not to display any mail text if a message part
+      had zero size.
+      Also increased the error checking a bit so that error
+      conditions while reading the data of a part are better checked.
+
 2003-11-24  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed small bug where upon an occurred PGP Error the
