@@ -204,7 +204,7 @@ static struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL ask
 HOOKPROTONHNO(RE_Follow, void, int *arg)
 {  
    int direction = arg[0], winnum = arg[1];
-   struct Mail *fmail = NULL;
+   struct Mail *fmail;
 
    // depending on the direction we get the Question or Answer to the current Message
    fmail = RE_GetThread(&G->RE[winnum]->Mail, direction <= 0 ? FALSE : TRUE, TRUE, winnum);
@@ -1838,7 +1838,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
 {
    char c = 0, buf[SIZE_LINE];
    int blen = 0;
-   long cpos;
+   long cpos = 0;
    BOOL cempty = TRUE;
 
    if(!in) return FALSE;

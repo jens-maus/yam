@@ -641,10 +641,10 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 //  Creates an index table for a database file
 static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
 {
+   int result = FALSE;
    char buffer[SIZE_LARGE];
    long fpos, l = strlen(sep);
    FILE *in, *out;
-   BOOL success = FALSE;
 
    if ((in = fopen(source, "r")))
    {
@@ -653,12 +653,14 @@ static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
          fpos = 0; fwrite(&fpos, sizeof(long), 1, out);
          while (fgets(buffer, SIZE_LARGE, in))
             if (!strncmp(buffer, sep, (size_t)l)) { fpos = ftell(in); fwrite(&fpos, sizeof(long), 1, out); }
-         success = TRUE;
+
+         result = TRUE;
          fclose(out);
       }
       fclose(in);
    }
-   return success;
+
+   return (BOOL)result;
 }
 
 ///

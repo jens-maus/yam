@@ -634,8 +634,7 @@ ULONG MA_FLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_Context
 BOOL MA_JumpToNewMsg(VOID)
 {
   struct Folder *folder = FO_GetCurrentFolder();
-  int pos = -1;
-  int i, incr;
+  int i, incr, pos = -1;
 
   if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
   {
@@ -648,17 +647,12 @@ BOOL MA_JumpToNewMsg(VOID)
     i = 0;
     incr = 1;
   }
-  
+
   while(1)
   {
     struct Mail *mail;
     DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
-
-    if(!mail)
-    {
-      pos = -1;
-      break;
-    }
+    if(!mail) break;
 
     if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR)
     {

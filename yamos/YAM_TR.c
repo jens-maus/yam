@@ -2758,7 +2758,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
       {
          struct ExtendedMail *email;
          struct Mail *mail = G->TR->List;
-         struct Mail *newmail = NULL;
+         struct Mail *newmail;
          static char mfile[SIZE_MFILE];
          BOOL header = FALSE, body = FALSE;
          struct Folder *folder = G->TR->ImportBox;
