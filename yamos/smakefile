@@ -49,7 +49,7 @@ YAM:	$(OBJS)
 	slink <with <
 	TO YAM
 	FROM lib:c.o $(OBJS)
-	LIB lib:scnb.lib lib:amiga.lib lib:debug.lib lib:NewReadArgs.o
+	LIB lib:scnb.lib lib:amiga.lib lib:debug.lib
 	MAP YAM.map
 	STRIPDEBUG NOICONS
 	<
