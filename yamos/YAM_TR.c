@@ -30,21 +30,21 @@
 #include <time.h>
 
 #include <clib/alib_protos.h>
-#include <clib/socket_protos.h>
 #include <clib/macros.h>
 #include <libraries/iffparse.h>
 #include <libraries/genesis.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
+#include <proto/amissl.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/genesis.h>
 #include <proto/intuition.h>
+#include <proto/bsdsocket.h>
 #include <proto/miami.h>
 #include <proto/muimaster.h>
 #include <proto/timer.h>
 #include <proto/utility.h>
-#include <proto/amissl.h>
 
 #include "extra.h"
 #include "SDI_hook.h"
@@ -959,7 +959,7 @@ static void TR_Disconnect(void)
         G->TR_UseTLS = FALSE;
       }
 
-      Shutdown(G->TR_Socket, 2);
+      shutdown(G->TR_Socket, 2);
       CloseSocket(G->TR_Socket);
       G->TR_Socket = SMTP_NO_SOCKET;
 
@@ -976,7 +976,7 @@ static int TR_Connect(char *host, int port)
   struct hostent *hostaddr;
 
   // get the hostent out of the supplied hostname
-  if(!(hostaddr = GetHostByName((STRPTR)host)))
+  if(!(hostaddr = gethostbyname((STRPTR)host)))
   {
     return -1;
   }
@@ -1003,7 +1003,7 @@ static int TR_Connect(char *host, int port)
 #endif
 
   // lets create a standard AF_INET socket now
-  G->TR_Socket = Socket(AF_INET, SOCK_STREAM, 0);
+  G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0);
   if (G->TR_Socket == -1)
   {
     return -2;
@@ -1021,7 +1021,7 @@ static int TR_Connect(char *host, int port)
   {
     memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr_list[i], hostaddr->h_length);
 
-    if(Connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1)
+    if(connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1)
     {
       // if all works and we finally established a connection we can return with zero.
       return 0;
@@ -1316,7 +1316,7 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
     again:
 
       if(G->TR_UseTLS) read_cnt = SSL_read(ssl, read_buf, SIZE_BUFSIZE);
-      else             read_cnt = Recv(socket, read_buf, SIZE_BUFSIZE, 0);
+      else             read_cnt = recv(socket, read_buf, SIZE_BUFSIZE, 0);
 
       if(read_cnt < 0)
       {
@@ -1398,7 +1398,7 @@ static int TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags)
     while(write_cnt > 0)
     {
       if(G->TR_UseTLS)  nwritten = SSL_write(ssl, write_ptr, write_cnt);
-      else              nwritten = Send(G->TR_Socket, write_ptr, (LONG)write_cnt, 0);
+      else              nwritten = send(G->TR_Socket, write_ptr, (LONG)write_cnt, 0);
 
       if(nwritten <= 0)
       {
@@ -1455,7 +1455,7 @@ static int TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags)
     while(write_cnt > 0)
     {
       if(G->TR_UseTLS)  nwritten = SSL_write(ssl, write_ptr, write_cnt);
-      else              nwritten = Send(G->TR_Socket, write_ptr, (LONG)write_cnt, 0);
+      else              nwritten = send(G->TR_Socket, write_ptr, (LONG)write_cnt, 0);
 
       if(nwritten <= 0)
       {

@@ -8,6 +8,8 @@
 **
 **	(C) Copyright 1996 Holger Kruse
 **	    All Rights Reserved
+**
+** Adapted by the YAMOS team to only carry the miami.library specific
 */
 
 long MiamiSysCtl(long *,unsigned long,void *,unsigned long *,void *,long);
@@ -21,22 +23,9 @@ void MiamiCloseSSL(void);
 long MiamiSetSocksConn(struct sockaddr *,long);
 long MiamiIsOnline(char *);
 void MiamiOnOffline(char *,long);
-char *inet_ntop(long,void *,char *,long);
-long inet_aton(char *,struct in_addr *);
-long inet_pton(long,char *,void *);
-struct hostent *gethostbyname2(char *,long);
-char *gai_strerror(long);
-void freeaddrinfo(struct addrinfo *);
-long getaddrinfo(char *,char *,struct addrinfo *,struct addrinfo **);
-long getnameinfo(struct sockaddr *,long,char *,long,char *,long,long);
-long if_nametoindex(char *);
-char *if_indextoname(long,char *);
-struct if_nameindex *if_nameindex(void);
-void if_freenameindex(struct if_nameindex *);
 long MiamiSupportsIPV6(void);
 long MiamiResGetOptions(void);
 void MiamiResSetOptions(long);
-long sockatmark(long);
 void MiamiSupportedCPUs(unsigned long *,unsigned long *,unsigned long *);
 long MiamiGetFdCallback(void **);
 long MiamiSetFdCallback(void *,long);

@@ -20,10 +20,6 @@
 #include <exec/interfaces.h>
 #endif
 
-#ifndef LIBRARIES_SOCKET_H
-#include <libraries/socket.h>
-#endif
-
 /* Inline macros for Interface "main" */
 #define MiamiSysCtl(par1, par2, par3, par4, par5, last) IMiami->MiamiSysCtl(par1, par2, par3, par4, par5, last) 
 #define MiamiDisallowDNS(last) IMiami->MiamiDisallowDNS(last) 
@@ -36,22 +32,9 @@
 #define MiamiSetSocksConn(par1, last) IMiami->MiamiSetSocksConn(par1, last) 
 #define MiamiIsOnline(last) IMiami->MiamiIsOnline(last) 
 #define MiamiOnOffline(par1, last) IMiami->MiamiOnOffline(par1, last) 
-#define inet_ntop(par1, par2, par3, last) IMiami->inet_ntop(par1, par2, par3, last) 
-#define inet_aton(par1, last) IMiami->inet_aton(par1, last) 
-#define inet_pton(par1, par2, last) IMiami->inet_pton(par1, par2, last) 
-#define gethostbyname2(par1, last) IMiami->gethostbyname2(par1, last) 
-#define gai_strerror(last) IMiami->gai_strerror(last) 
-#define freeaddrinfo(last) IMiami->freeaddrinfo(last) 
-#define getaddrinfo(par1, par2, par3, last) IMiami->getaddrinfo(par1, par2, par3, last) 
-#define getnameinfo(par1, par2, par3, par4, par5, par6, last) IMiami->getnameinfo(par1, par2, par3, par4, par5, par6, last) 
-#define if_nametoindex(last) IMiami->if_nametoindex(last) 
-#define if_indextoname(par1, last) IMiami->if_indextoname(par1, last) 
-#define if_nameindex() IMiami->if_nameindex() 
-#define if_freenameindex(last) IMiami->if_freenameindex(last) 
 #define MiamiSupportsIPV6() IMiami->MiamiSupportsIPV6() 
 #define MiamiResGetOptions() IMiami->MiamiResGetOptions() 
 #define MiamiResSetOptions(last) IMiami->MiamiResSetOptions(last) 
-#define sockatmark(last) IMiami->sockatmark(last) 
 #define MiamiSupportedCPUs(par1, par2, last) IMiami->MiamiSupportedCPUs(par1, par2, last) 
 #define MiamiGetFdCallback(last) IMiami->MiamiGetFdCallback(last) 
 #define MiamiSetFdCallback(par1, last) IMiami->MiamiSetFdCallback(par1, last) 

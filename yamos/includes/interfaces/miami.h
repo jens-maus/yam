@@ -16,10 +16,6 @@
 #include <exec/interfaces.h>
 #endif
 
-#ifndef LIBRARIES_SOCKET_H
-#include <libraries/socket.h>
-#endif
-
 struct MiamiIFace
 {
 	struct InterfaceData Data;
@@ -66,8 +62,8 @@ struct MiamiIFace
 	long APICALL (*inet_pton)(struct MiamiIFace *Self, long par1, char * par2, void * last);
 	struct hostent * APICALL (*gethostbyname2)(struct MiamiIFace *Self, char * par1, long last);
 	char * APICALL (*gai_strerror)(struct MiamiIFace *Self, long last);
-	void APICALL (*freeaddrinfo)(struct MiamiIFace *Self, struct addrinfo * last);
-	long APICALL (*getaddrinfo)(struct MiamiIFace *Self, char * par1, char * par2, struct addrinfo * par3, struct addrinfo ** last);
+	void APICALL (*Reserved23)(struct MiamiIFace *Self);
+	void APICALL (*Reserved24)(struct MiamiIFace *Self);
 	long APICALL (*getnameinfo)(struct MiamiIFace *Self, struct sockaddr * par1, long par2, char * par3, long par4, char * par5, long par6, long last);
 	long APICALL (*if_nametoindex)(struct MiamiIFace *Self, char * last);
 	char * APICALL (*if_indextoname)(struct MiamiIFace *Self, long par1, char * last);
@@ -80,7 +76,7 @@ struct MiamiIFace
 	void APICALL (*MiamiSupportedCPUs)(struct MiamiIFace *Self, unsigned long * par1, unsigned long * par2, unsigned long * last);
 	long APICALL (*MiamiGetFdCallback)(struct MiamiIFace *Self, void ** last);
 	long APICALL (*MiamiSetFdCallback)(struct MiamiIFace *Self, void * par1, long last);
-	void APICALL (*Reserved23)(struct MiamiIFace *Self);
+	void APICALL (*Reserved25)(struct MiamiIFace *Self);
 	struct UserGroupCredentials * APICALL (*MiamiGetCredentials)(struct MiamiIFace *Self);
 };
 

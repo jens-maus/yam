@@ -14,9 +14,6 @@
 #ifndef EXEC_TYPES_H
 #include <exec/types.h>
 #endif
-#ifndef LIBRARIES_SOCKET_H
-#include <libraries/socket.h>
-#endif
 
 /****************************************************************************/
 

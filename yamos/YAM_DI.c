@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -61,8 +61,7 @@ static struct DI_ClassData *DI_New(void);
 static void DI_FinishEdit(void)
 {
    struct DI_GUIData *gui = &G->DI->GUI;
-   int modified;
-   get(gui->TE_EDIT, MUIA_TextEditor_HasChanged, &modified);
+   int modified = xget(gui->TE_EDIT, MUIA_TextEditor_HasChanged);
    if (modified && G->DI->OldEntry)
    {
       struct Dict new;

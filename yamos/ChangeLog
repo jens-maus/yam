@@ -7,6 +7,11 @@ $Source$
 
 2004-03-07  Jens Langner <Jens.Langner@light-speed.de>
 
+    * retired the old socket library includes in favour of the new
+      bsdsocket.library interface of Roadshow. This doesn`t mean you
+      need Roadshow for a working YAM, but it will allow us to use
+      special features of Roadshow in future as this is going to be
+      the default TCP/IP stack of future AmigaOS versions.
     * YAM.c: added compiler version to compile information of the
       about/splash window. As YAM can be compiled with different
       versions and types of compilers it`s probably a good idea

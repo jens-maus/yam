@@ -38,42 +38,6 @@ long __MiamiIsOnline(__reg("a0") char * name, __reg("a6") APTR)="\tjsr\t-210(a6)
 void __MiamiOnOffline(__reg("a0") char * name, __reg("d0") long val, __reg("a6") APTR)="\tjsr\t-216(a6)";
 #define MiamiOnOffline(name, val) __MiamiOnOffline((name), (val), MiamiBase)
 
-char * __inet_ntop(__reg("d0") long family, __reg("a0") void * addrptr, __reg("a1") char * strptr, __reg("d1") long len, __reg("a6") APTR)="\tjsr\t-228(a6)";
-#define inet_ntop(family, addrptr, strptr, len) __inet_ntop((family), (addrptr), (strptr), (len), MiamiBase)
-
-long __inet_aton(__reg("a0") char * cp, __reg("a1") struct in_addr * addr, __reg("a6") APTR)="\tjsr\t-234(a6)";
-#define inet_aton(cp, addr) __inet_aton((cp), (addr), MiamiBase)
-
-long __inet_pton(__reg("d0") long family, __reg("a0") char * strptr, __reg("a1") void * addrptr, __reg("a6") APTR)="\tjsr\t-240(a6)";
-#define inet_pton(family, strptr, addrptr) __inet_pton((family), (strptr), (addrptr), MiamiBase)
-
-struct hostent * __gethostbyname2(__reg("a0") char * name, __reg("d0") long fam, __reg("a6") APTR)="\tjsr\t-246(a6)";
-#define gethostbyname2(name, fam) __gethostbyname2((name), (fam), MiamiBase)
-
-char * __gai_strerror(__reg("d0") long err, __reg("a6") APTR)="\tjsr\t-252(a6)";
-#define gai_strerror(err) __gai_strerror((err), MiamiBase)
-
-void __freeaddrinfo(__reg("a0") struct addrinfo * aihead, __reg("a6") APTR)="\tjsr\t-258(a6)";
-#define freeaddrinfo(aihead) __freeaddrinfo((aihead), MiamiBase)
-
-long __getaddrinfo(__reg("a0") char * hostname, __reg("a1") char * servname, __reg("a2") struct addrinfo * hintsp, __reg("a3") struct addrinfo ** result, __reg("a6") APTR)="\tjsr\t-264(a6)";
-#define getaddrinfo(hostname, servname, hintsp, result) __getaddrinfo((hostname), (servname), (hintsp), (result), MiamiBase)
-
-long __getnameinfo(__reg("a0") struct sockaddr * sa, __reg("d0") long salen, __reg("a1") char * host, __reg("d1") long hostlen, __reg("a2") char * serv, __reg("d2") long servlen, __reg("d3") long flags, __reg("a6") APTR)="\tjsr\t-270(a6)";
-#define getnameinfo(sa, salen, host, hostlen, serv, servlen, flags) __getnameinfo((sa), (salen), (host), (hostlen), (serv), (servlen), (flags), MiamiBase)
-
-long __if_nametoindex(__reg("a0") char * ifname, __reg("a6") APTR)="\tjsr\t-276(a6)";
-#define if_nametoindex(ifname) __if_nametoindex((ifname), MiamiBase)
-
-char * __if_indextoname(__reg("d0") long ifindex, __reg("a0") char * ifname, __reg("a6") APTR)="\tjsr\t-282(a6)";
-#define if_indextoname(ifindex, ifname) __if_indextoname((ifindex), (ifname), MiamiBase)
-
-struct if_nameindex * __if_nameindex(__reg("a6") APTR)="\tjsr\t-288(a6)";
-#define if_nameindex() __if_nameindex(MiamiBase)
-
-void __if_freenameindex(__reg("a0") struct if_nameindex * ptr, __reg("a6") APTR)="\tjsr\t-294(a6)";
-#define if_freenameindex(ptr) __if_freenameindex((ptr), MiamiBase)
-
 long __MiamiSupportsIPV6(__reg("a6") APTR)="\tjsr\t-300(a6)";
 #define MiamiSupportsIPV6() __MiamiSupportsIPV6(MiamiBase)
 
@@ -82,9 +46,6 @@ long __MiamiResGetOptions(__reg("a6") APTR)="\tjsr\t-306(a6)";
 
 void __MiamiResSetOptions(__reg("d0") long options, __reg("a6") APTR)="\tjsr\t-312(a6)";
 #define MiamiResSetOptions(options) __MiamiResSetOptions((options), MiamiBase)
-
-long __sockatmark(__reg("d0") long fd, __reg("a6") APTR)="\tjsr\t-318(a6)";
-#define sockatmark(fd) __sockatmark((fd), MiamiBase)
 
 void __MiamiSupportedCPUs(__reg("a0") unsigned long * apis, __reg("a1") unsigned long * callbacks, __reg("a2") unsigned long * kernel, __reg("a6") APTR)="\tjsr\t-324(a6)";
 #define MiamiSupportedCPUs(apis, callbacks, kernel) __MiamiSupportedCPUs((apis), (callbacks), (kernel), MiamiBase)

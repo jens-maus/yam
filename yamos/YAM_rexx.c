@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -660,8 +660,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    }
    
    /* Speicher für Argumente etc. holen */
-   
-   (rxc->function)( host, (void **) &array, RXIF_INIT, rexxmsg );
+   (rxc->function)(host, (void **)(APTR)&array, RXIF_INIT, rexxmsg);
    cargstr = AllocVec((ULONG)(rxc->args ? 15+strlen(rxc->args) : 15), MEMF_ANY );
    
    if( !array || !cargstr )
@@ -705,7 +704,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
    /* Funktion aufrufen */
    
-   (rxc->function)( host, (void **) &array, RXIF_ACTION, rexxmsg );
+   (rxc->function)( host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg );
    
    rc = array[0];
    rc2 = array[1];
@@ -802,7 +801,7 @@ drc_cleanup:
    if( result ) FreeVec( result );
    FreeArgs( host->rdargs );
    if( cargstr ) FreeVec( cargstr );
-   if( array ) (rxc->function)( host, (void **) &array, RXIF_FREE, rexxmsg );
+   if( array ) (rxc->function)( host, (void **)(APTR)&array, RXIF_FREE, rexxmsg );
    if( argb ) FreeVec( argb );
 }
 

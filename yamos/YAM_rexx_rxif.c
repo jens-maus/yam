@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2003 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ void rx_info( struct RexxHost *host, struct rxd_info **rxd, long action, struct 
          {
             struct Screen *screen;
             rd->res.value = "Workbench";
-            get(G->MA->GUI.WI, MUIA_Window_Screen, &screen);
+            screen = (struct Screen *)xget(G->MA->GUI.WI, MUIA_Window_Screen);
             if(screen)
             {
               struct Node *pubs;
@@ -890,7 +890,7 @@ void rx_setmail( struct RexxHost *host, struct rxd_setmail **rxd, long action, s
          
       case RXIF_ACTION:
          mail = *rd->arg.num;
-         get(G->MA->GUI.NL_MAILS, MUIA_NList_Entries, &max);
+         max = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries);
          if (mail < 0 || mail >= max) rd->rc = RETURN_ERROR;
          else set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mail);
          break;
