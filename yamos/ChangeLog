@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/Addrmatchlist.c, classes/Recipientstring.c: changed the
+      Recipientstring and it`s matchwindow to support selection via
+      the mouse including the possibility to use the wheel to scroll
+      up/down in the addrmatchlist. This also fixes bug #645653.
+    * YAM_WR.c: changed writewindow to automatically select the
+      To string gadget as the active object upon a selection of the
+      first page.
+
 2003-02-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/Addrmatchlist.c: if the window that the addrmatchlist was

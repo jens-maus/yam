@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
 /* CLASSDATA
 struct Data
 {
+	struct MUI_EventHandlerNode ehnode;
 	Object *Matchlist, *String;
 	BOOL Open;
 };
@@ -73,9 +74,8 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 
 HOOKPROTONH(CompareFunc, LONG, struct CustomABEntry *e2, struct CustomABEntry *e1)
 {
-	if(e1->MatchField == e2->MatchField)
-			return Stricmp(e1->MatchString, e2->MatchString);
-	else	return e1->MatchField < e2->MatchField ? -1 : +1;
+	if(e1->MatchField == e2->MatchField) return Stricmp(e1->MatchString, e2->MatchString);
+	else return e1->MatchField < e2->MatchField ? -1 : +1;
 }
 MakeStaticHook(CompareHook, CompareFunc);
 
@@ -83,7 +83,8 @@ MakeStaticHook(CompareHook, CompareFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-	Object *list;
+	Object *listview, *list;
+
 	if((obj = DoSuperNew(cl, obj,
 		MUIA_Window_Activate,         FALSE,
 		MUIA_Window_Borderless,       TRUE,
@@ -91,16 +92,20 @@ OVERLOAD(OM_NEW)
 		MUIA_Window_DepthGadget,      FALSE,
 		MUIA_Window_DragBar,          FALSE,
 		MUIA_Window_SizeGadget,       FALSE,
+		MUIA_Window_IsSubWindow,			TRUE,
 		WindowContents, GroupObject,
 			InnerSpacing(0, 0),
-			Child, list = ListObject,
-				InputListFrame,
-				MUIA_List_CompareHook,     &CompareHook,
-				MUIA_List_ConstructHook,   &ConstructHook,
-				MUIA_List_CursorType,      MUIV_List_CursorType_Bar,
-				MUIA_List_DestructHook,    &GeneralDesHook,
-				MUIA_List_DisplayHook,     &DisplayHook,
-				MUIA_List_Format,          ",,",
+			Child, listview = ListviewObject,
+				MUIA_Listview_ScrollerPos,	 MUIV_Listview_ScrollerPos_None,
+				MUIA_Listview_List,	list = ListObject,
+					InputListFrame,
+					MUIA_List_CompareHook,     &CompareHook,
+					MUIA_List_ConstructHook,   &ConstructHook,
+					MUIA_List_CursorType,      MUIV_List_CursorType_Bar,
+					MUIA_List_DestructHook,    &GeneralDesHook,
+					MUIA_List_DisplayHook,     &DisplayHook,
+					MUIA_List_Format,          ",,",
+				End,
 			End,
 		End,
 		TAG_MORE, inittags(msg))))
@@ -124,7 +129,25 @@ OVERLOAD(OM_NEW)
 			CoerceMethod(cl, obj, OM_DISPOSE);
 			obj = NULL;
 		}
+		else
+		{
+			// we need to catch the RAWKEY events and forward them directly
+			// to our string object
+			data->ehnode.ehn_Priority = 1;
+			data->ehnode.ehn_Flags	  = 0;
+			data->ehnode.ehn_Object	  = data->String;
+			data->ehnode.ehn_Class	  = 0;
+			data->ehnode.ehn_Events	  = IDCMP_RAWKEY;
+
+			DoMethod(obj, MUIM_Window_AddEventHandler, &data->ehnode);
+
+			// set the doubleclick notify to signal the string to resolve a entry
+			DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, data->String, 2, MUIM_Recipientstring_Resolve, MUIF_NONE);
+			DoMethod(listview, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+			DoMethod(list, MUIM_Notify, MUIA_List_Active, MUIV_EveryTime, obj, 2, MUIM_Addrmatchlist_ActiveChange, MUIV_TriggerValue);
+		}
 	}
+
 	return (ULONG)obj;
 }
 
@@ -176,50 +199,24 @@ DECLARE(ChangeWindow)
 DECLARE(Event) // struct IntuiMessage *imsg
 {
 	GETDATA;
-	STRPTR res = NULL;
 
 	if(xget(obj, MUIA_Window_Open))
 	{
-		struct CustomABEntry *entry;
 		struct IntuiMessage *imsg = msg->imsg;
+		LONG direction = (imsg->Code == IECODE_UP || imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT) ? MUIV_List_Active_Up : MUIV_List_Active_Down;
+		LONG position = xget(data->Matchlist, MUIA_List_Active);
 
-		if(xget(data->Matchlist, MUIA_List_Active) != MUIV_List_Active_Off)
+		// to enable a circular selection model we have to make some checks.
+		if(direction == MUIV_List_Active_Up)
 		{
-			set(data->Matchlist, MUIA_List_Active, (imsg->Code == IECODE_UP || imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT) ? MUIV_List_Active_Up     : MUIV_List_Active_Down);
+			if(position == 0) direction = MUIV_List_Active_Bottom;
 		}
-		else
-		{
-			set(data->Matchlist, MUIA_List_Active, (imsg->Code == IECODE_UP || imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT) ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
-		}
+		else if(position == xget(data->Matchlist, MUIA_List_Entries)-1) direction = MUIV_List_Active_Top;
 
-		DoMethod(data->Matchlist, MUIM_List_GetEntry, xget(data->Matchlist, MUIA_List_Active), &entry);
-
-		res = entry->MatchString;
-
-		// Now we check if the match is because of the real name and the same name exists twice in
-		// this list we have to return the email as matchstring
-		if(entry->MatchField == 1)  // RealName
-		{
-			int i;
-			for(i=0;;i++)
-			{
-				struct CustomABEntry *compareEntry;
-
-				DoMethod(data->Matchlist, MUIM_List_GetEntry, i, &compareEntry);
-				if(!compareEntry) break;
-
-				if(compareEntry != entry)
-				{
-					if(Stricmp(compareEntry->MatchEntry->RealName, entry->MatchString) == 0)
-					{
-						res = entry->MatchEntry->Address;
-						break;
-					}
-				}
-			}
-		}
+		set(data->Matchlist, MUIA_List_Active, direction);
 	}
-	return (ULONG)res;
+
+	return 0;
 }
 
 ///
@@ -239,18 +236,68 @@ DECLARE(Open) // STRPTR str
 
 	DoMethod(_app(obj), MUIM_YAM_FindEmailMatches, msg->str, data->Matchlist);
 
-	set(data->Matchlist, MUIA_List_Quiet, FALSE);
-
 	/* is there more entries in the list and if only one, is it longer than what the user already typed... */
 	entries = xget(data->Matchlist, MUIA_List_Entries);
 	if(entries > 0 && (DoMethod(data->Matchlist, MUIM_List_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
+	{
 		res = entry->MatchString;
+		nnset(data->Matchlist, MUIA_List_Active, MUIV_List_Active_Top);
+	}
 
 	/* should we open the popup list (if not already shown) */
 	if(!res || !xget(obj, MUIA_Window_Open))
 		set(obj, MUIA_Window_Open, res ? TRUE : FALSE);
 
+	set(data->Matchlist, MUIA_List_Quiet, FALSE);
+
 	return (ULONG)res;
+}
+
+///
+/// DECLARE(ActiveChange)
+DECLARE(ActiveChange) // LONG active
+{
+	GETDATA;
+	struct CustomABEntry *entry;
+	STRPTR res = NULL;
+
+	if(msg->active < 0) return 0;
+
+	// get the active entry
+	DoMethod(data->Matchlist, MUIM_List_GetEntry, msg->active, &entry);
+
+	res = entry->MatchString;
+
+	// Now we check if the match is because of the real name and the same name exists twice in
+	// this list we have to return the email as matchstring
+	if(entry->MatchField == 1)  // RealName
+	{
+		int i;
+		LONG elen = (LONG)strlen(entry->MatchString);
+
+		for(i=0;;i++)
+		{
+			struct CustomABEntry *compareEntry;
+
+			DoMethod(data->Matchlist, MUIM_List_GetEntry, i, &compareEntry);
+			if(!compareEntry) break;
+
+			if(compareEntry != entry)
+			{
+				if(Strnicmp(compareEntry->MatchEntry->RealName, entry->MatchString, elen) == 0)
+				{
+					res = entry->MatchEntry->Address;
+					break;
+				}
+			}
+		}
+	}
+
+	// signal the string that we need to replace the selected part with
+	// some new entry
+	if(res) DoMethod(data->String, MUIM_Recipientstring_ReplaceSelected, res);
+
+	return 0;
 }
 
 ///

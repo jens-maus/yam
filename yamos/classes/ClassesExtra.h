@@ -29,6 +29,7 @@
 #define CLASSES_CLASSES_EXTRA_H
 
 #include <clib/alib_protos.h>
+#include <clib/macros.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
@@ -83,7 +84,9 @@
 #define MUIA_List_CursorType         0x8042c53e /* V4  is. LONG  */
 #define MUIV_List_CursorType_Bar 1
 
-enum { IECODE_RETURN = 68, IECODE_ESCAPE = 69, IECODE_HELP = 95, IECODE_BACKSPACE = 65, IECODE_DEL = 70, IECODE_UP = 76, IECODE_DOWN = 77 };
+enum { IECODE_TAB = 66, IECODE_RETURN = 68, IECODE_ESCAPE = 69, IECODE_HELP = 95,
+			 IECODE_BACKSPACE = 65, IECODE_DEL = 70, IECODE_UP = 76, IECODE_DOWN = 77
+		 };
 
 // some usefull macros to check mouse positions
 #define BETWEEN(a,x,b)						((x)>=(a) && (x)<=(b))

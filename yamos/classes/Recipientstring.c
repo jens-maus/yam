@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -81,7 +81,6 @@ OVERLOAD(OM_NEW)
 	return (ULONG)obj;
 }
 ///
-
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
 {
@@ -98,7 +97,6 @@ OVERLOAD(OM_DISPOSE)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
 /// OVERLOAD(OM_GET)
 /* this is just so that we can notify the popup tag */
 OVERLOAD(OM_GET)
@@ -111,7 +109,6 @@ OVERLOAD(OM_GET)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
@@ -132,7 +129,6 @@ OVERLOAD(OM_SET)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
 {
@@ -157,7 +153,6 @@ OVERLOAD(MUIM_Setup)
 	return FALSE;
 }
 ///
-
 /// OVERLOAD(MUIM_Show)
 OVERLOAD(MUIM_Show)
 {
@@ -166,7 +161,6 @@ OVERLOAD(MUIM_Show)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
 /// OVERLOAD(MUIM_GoActive)
 OVERLOAD(MUIM_GoActive)
 {
@@ -175,17 +169,22 @@ OVERLOAD(MUIM_GoActive)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
 /// OVERLOAD(MUIM_GoInactive)
 OVERLOAD(MUIM_GoInactive)
 {
 	GETDATA;
 	DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
-	set(data->Matchwindow, MUIA_Window_Open, FALSE);
+
+	// only if the matchwindow is not active we can close it on a inactive state of
+	// this object
+	if(!xget(data->Matchwindow, MUIA_Window_Activate))
+	{
+		set(data->Matchwindow, MUIA_Window_Open, FALSE);
+	}
+
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
@@ -207,7 +206,6 @@ OVERLOAD(MUIM_DragQuery)
 	return result;
 }
 ///
-
 /// OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_DragDrop)
 {
@@ -229,7 +227,6 @@ OVERLOAD(MUIM_DragDrop)
 	return 0;
 }
 ///
-
 /// OVERLOAD(MUIM_Popstring_Open)
 /* this method is invoked when the MUI popup key is pressed, we let it trigger a notify, so that the address book will open -- in the future this should be removed and we should just use a Popupstring object */
 OVERLOAD(MUIM_Popstring_Open)
@@ -238,7 +235,6 @@ OVERLOAD(MUIM_Popstring_Open)
 	return 0;
 }
 ///
-
 /// OVERLOAD(MUIM_HandleEvent)
 OVERLOAD(MUIM_HandleEvent)
 {
@@ -250,7 +246,6 @@ OVERLOAD(MUIM_HandleEvent)
 
 	if(imsg->Class == IDCMP_RAWKEY)
 	{
-		STRPTR new_address = NULL;
 		switch(imsg->Code)
 		{
 			case IECODE_RETURN:
@@ -258,6 +253,9 @@ OVERLOAD(MUIM_HandleEvent)
 				if(data->ResolveOnCR)
 				{
 					DoMethod(obj, MUIM_Recipientstring_Resolve, hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE);
+
+					set(data->Matchwindow, MUIA_Window_Open, FALSE);
+					set(_win(obj), MUIA_Window_ActiveObject, obj);
 
 					// If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
 					if(xget(obj, MUIA_String_AdvanceOnCR))
@@ -276,34 +274,29 @@ OVERLOAD(MUIM_HandleEvent)
 			case NM_WHEEL_LEFT:
 			case NM_WHEEL_RIGHT:
 			{
-				if((new_address = (STRPTR)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg)))
-				{
-					LONG start;
-					STRPTR old;
+				// forward this event to the addrmatchlist
+				DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg);
 
-					// we first have to clear the selected area
-					DoMethod(obj, MUIM_BetterString_ClearSelected);
-
-					start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
-					old = (STRPTR)xget(obj, MUIA_String_Contents);
-
-					if(Strnicmp(new_address, &old[start], (LONG)strlen(&old[start])) != 0)
-					{
-						SetAttrs(obj, MUIA_String_BufferPos, start,
-							MUIA_BetterString_SelectSize, strlen(&old[start]),
-							TAG_DONE);
-
-						DoMethod(obj, MUIM_BetterString_ClearSelected);
-					}
-
-					result = MUI_EventHandlerRC_Eat;
-				}
+				result = MUI_EventHandlerRC_Eat;
 			}
 			break;
 
 			case IECODE_DEL:
 			case IECODE_ESCAPE: /* FIXME: Escape should clear the marked text. Currently the marked text goes when leaving the gadget or e.g. pressing ','. Seems to be a refresh problem */
 				set(data->Matchwindow, MUIA_Window_Open, FALSE);
+			break;
+
+			// a IECODE_TAB will only be triggered if the tab key
+			// is used within the matchwindow
+			case IECODE_TAB:
+			{
+				if(xget(data->Matchwindow, MUIA_Window_Open))
+				{
+					set(data->Matchwindow, MUIA_Window_Open, FALSE);
+					set(_win(obj), MUIA_Window_ActiveObject, obj);
+					set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+				}
+			}
 			break;
 
 			case IECODE_BACKSPACE:
@@ -313,6 +306,7 @@ OVERLOAD(MUIM_HandleEvent)
 			default:
 			{
 				STRPTR old, new;
+				STRPTR new_address = NULL;
 
 				if(xget(obj, MUIA_BetterString_SelectSize) != 0 && ConvertKey(imsg) == ',')
 					set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
@@ -327,27 +321,28 @@ OVERLOAD(MUIM_HandleEvent)
 
 				free(old);
 
+				if(new_address) /* this is the complete address of what the user is typing, so let's insert it (marked) */
+				{
+					LONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+					LONG pos = xget(obj, MUIA_String_BufferPos);
+
+					DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
+
+					SetAttrs(obj, MUIA_String_BufferPos, pos,
+												MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
+												TAG_DONE);
+				}
+
 				result = MUI_EventHandlerRC_Eat;
 			}
 			break;
-		}
-
-		if(new_address) /* this is the complete address of what the user is typing, so let's insert it (marked) */
-		{
-			LONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
-			LONG pos = xget(obj, MUIA_String_BufferPos);
-
-			DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
-
-			SetAttrs(obj, MUIA_String_BufferPos, pos,
-                    MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
-                    TAG_DONE);
 		}
 	}
 	else if(imsg->Class == IDCMP_CHANGEWINDOW)
 	{
 		DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
 	}
+
 	return result;
 }
 ///
@@ -535,7 +530,6 @@ DECLARE(Resolve) // ULONG flags
 	return (res ? xget(obj, MUIA_String_Contents) : 0);
 }
 ///
-
 /// DECLARE(AddRecipient)
 /* add a recipient to this string taking care of comma (if in multi-mode). */
 DECLARE(AddRecipient) // STRPTR address
@@ -555,7 +549,6 @@ DECLARE(AddRecipient) // STRPTR address
 	return 0;
 }
 ///
-
 /// DECALRE(RecipientStart)
 /* return the index where current recipient start (from cursor pos), this is only useful for objects with more than one recipient */
 DECLARE(RecipientStart)
@@ -584,7 +577,6 @@ DECLARE(RecipientStart)
 	return i;
 }
 ///
-
 /// DECLARE(CurrentRecipient)
 /* return current recipient if cursor is at the end of it (i.e at comma or '\0'-byte */
 DECLARE(CurrentRecipient)
@@ -602,5 +594,39 @@ DECLARE(CurrentRecipient)
 		end[0] = '\0';
 
 	return (ULONG)data->CurrentRecipient;
+}
+///
+/// DECLARE(ReplaceSelected)
+DECLARE(ReplaceSelected) // STRPTR address
+{
+	LONG start, pos;
+	STRPTR old, new_address = msg->address;
+
+	// we first have to clear the selected area
+	DoMethod(obj, MUIM_BetterString_ClearSelected);
+
+	start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+	old = (STRPTR)xget(obj, MUIA_String_Contents);
+
+	if(Strnicmp(new_address, &old[start], (LONG)strlen(&old[start])) != 0)
+	{
+		SetAttrs(obj, MUIA_String_BufferPos, start,
+									MUIA_BetterString_SelectSize, strlen(&old[start]),
+									TAG_DONE);
+
+		DoMethod(obj, MUIM_BetterString_ClearSelected);
+
+		start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+	}
+
+	pos = xget(obj, MUIA_String_BufferPos);
+
+	DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
+
+	SetAttrs(obj, MUIA_String_BufferPos, pos,
+								MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
+								TAG_DONE);
+
+	return 0;
 }
 ///
