@@ -525,8 +525,8 @@ HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
       int error;
       char fullfile[SIZE_PATHFILE], options[SIZE_LARGE];
       if (!StartUnpack(GetMailFile(NULL, NULL, re->MailPtr), fullfile, re->MailPtr->Folder)) return;
-      sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f", fullfile, "T:PGP.tmp");
-      error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
+      sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f +lang=en", fullfile, "T:PGP.tmp");
+      error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, KEEPLOG);
       FinishUnpack(fullfile);
       DeleteFile("T:PGP.tmp");
       if (error > 0) SET_FLAG(re->PGPSigned, PGPS_BADSIG);
@@ -2777,8 +2777,22 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                            goto rim_cont;
                         }
                      }
+
+                     // and last, but not least we check for some more PGP features.
                      if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31)) re->PGPKey = TRUE;
-                     if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29)) SET_FLAG(re->PGPSigned, PGPS_OLD);
+                     else if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29))
+                     {
+                        SET_FLAG(re->PGPSigned, PGPS_OLD);
+
+                        if(!isSignedMail(re->MailPtr))
+                        {
+                          SET_FLAG(re->MailPtr->Flags, MFLAG_SIGNED);
+                          SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+                        }
+
+                        goto rim_cont; // don`t put the PGP line into the TextEditor!
+                     }
+
                      cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
                      cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
 rim_cont:

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-01-07  David Rey <david@saug.org>
+
+    * YAM_RE.c: YAM now also correctly recognized pgp signed
+      messages that begin with "-----BEGIN PGP SIGNED MESSAGE" and
+      flags this messages as "signed".
+
 2002-12-25  David Rey <david@saug.org>
 
     * YAM_rexx_rxcl.c: the INFO template was still wrong.
