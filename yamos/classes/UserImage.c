@@ -118,94 +118,90 @@ OVERLOAD(MUIM_Setup)
 		// remap the BitMap with DTM_PROCLAYOUT
 		if(DoMethod(datatypeObject, DTM_PROCLAYOUT, NULL, 1L))
 		{
-			struct BitMapHeader *bitMapHeader = (struct BitMapHeader *)xget(datatypeObject, PDTA_BitMapHeader);
+			struct BitMap *orgBitMap = NULL;
+			struct BitMapHeader *bitMapHeader = NULL;
+			
+			GetDTAttrs(datatypeObject, PDTA_BitMapHeader, &bitMapHeader,
+																 PDTA_DestBitMap,		&orgBitMap,
+																 TAG_DONE);
+
+			// try another attribute if the other DestBitMap failed
+			if(!orgBitMap)
+				GetDTAttrs(datatypeObject, PDTA_BitMap, &orgBitMap, TAG_DONE);
 
 			// check if correctly obtained the header and if it is valid
-			if(bitMapHeader && bitMapHeader->bmh_Depth > 0)
+			if(orgBitMap && bitMapHeader && bitMapHeader->bmh_Depth > 0)
 			{
-				struct BitMap *orgBitMap = NULL;
+				// make sure to scale down the image if maxHeight/maxWidth is specified
+				LONG scaleHeightDiff = bitMapHeader->bmh_Height - data->maxHeight;
+				LONG scaleWidthDiff  = bitMapHeader->bmh_Width - data->maxWidth;
+				LONG newWidth;
+				LONG newHeight;
 
-				GetDTAttrs(datatypeObject, PDTA_DestBitMap, (ULONG)&orgBitMap, TAG_DONE);
-				
-				// try another attribute if the above failed
-				if(!orgBitMap)
-					GetDTAttrs(datatypeObject, PDTA_BitMap, (ULONG)&orgBitMap, TAG_DONE);
-
-				// if we had success in loading the bitmap
-				// lets scale it down now
-				if(orgBitMap)
+				if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
+					 (scaleWidthDiff > 0 && data->maxWidth > 0))
 				{
-					// make sure to scale down the image if maxHeight/maxWidth is specified
-					LONG scaleHeightDiff = bitMapHeader->bmh_Height - data->maxHeight;
-					LONG scaleWidthDiff  = bitMapHeader->bmh_Width - data->maxWidth;
-					LONG newWidth;
-					LONG newHeight;
+					double scaleFactor;
 
-					if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
-						 (scaleWidthDiff > 0 && data->maxWidth > 0))
+					// make sure we are scaling proportional
+					if(scaleHeightDiff > scaleWidthDiff)
 					{
-						double scaleFactor;
-
-						// make sure we are scaling proportional
-						if(scaleHeightDiff > scaleWidthDiff)
-						{
-							scaleFactor = (double)bitMapHeader->bmh_Width / (double)bitMapHeader->bmh_Height;
-							newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
-							newHeight = data->maxHeight;
-						}
-						else
-						{
-							scaleFactor = (double)bitMapHeader->bmh_Height / (double)bitMapHeader->bmh_Width;
-							newWidth = data->maxWidth;
-							newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
-						}
+						scaleFactor = (double)bitMapHeader->bmh_Width / (double)bitMapHeader->bmh_Height;
+						newWidth = scaleFactor * data->maxHeight + 0.5; // roundup the value
+						newHeight = data->maxHeight;
 					}
 					else
 					{
-						newWidth  = bitMapHeader->bmh_Width;
-						newHeight = bitMapHeader->bmh_Height;
+						scaleFactor = (double)bitMapHeader->bmh_Height / (double)bitMapHeader->bmh_Width;
+						newWidth = data->maxWidth;
+						newHeight = scaleFactor * data->maxWidth + 0.5; // roundup the value
 					}
-						
-					// now we can allocate the new bitmap and scale it
-					// if required. But we use BitMapScale() for all operations
-					data->scaledBitMap = AllocBitMap(newWidth, newHeight, GetBitMapAttr(orgBitMap, BMA_DEPTH), BMF_CLEAR, orgBitMap);
-					if(data->scaledBitMap)
-					{
-						struct BitScaleArgs args;
+				}
+				else
+				{
+					newWidth  = bitMapHeader->bmh_Width;
+					newHeight = bitMapHeader->bmh_Height;
+				}
+
+				// now we can allocate the new bitmap and scale it
+				// if required. But we use BitMapScale() for all operations
+				data->scaledBitMap = AllocBitMap(newWidth, newHeight, bitMapHeader->bmh_Depth, BMF_CLEAR|BMF_MINPLANES, orgBitMap);
+				if(data->scaledBitMap)
+				{
+					struct BitScaleArgs args;
+
+					args.bsa_SrcBitMap = orgBitMap;
+					args.bsa_DestBitMap = data->scaledBitMap;
+					args.bsa_Flags = 0;
 	
-						args.bsa_SrcBitMap = orgBitMap;
-						args.bsa_DestBitMap = data->scaledBitMap;
-						args.bsa_Flags = 0;
-	
-						args.bsa_SrcY = 0;
-						args.bsa_DestY = 0;
+					args.bsa_SrcY = 0;
+					args.bsa_DestY = 0;
 
-						args.bsa_SrcWidth = bitMapHeader->bmh_Width;
-						args.bsa_SrcHeight = bitMapHeader->bmh_Height;
+					args.bsa_SrcWidth = bitMapHeader->bmh_Width;
+					args.bsa_SrcHeight = bitMapHeader->bmh_Height;
 
-						args.bsa_XSrcFactor = bitMapHeader->bmh_Width;
-						args.bsa_XDestFactor = newWidth;
+					args.bsa_XSrcFactor = bitMapHeader->bmh_Width;
+					args.bsa_XDestFactor = newWidth;
 
-						args.bsa_YSrcFactor = bitMapHeader->bmh_Height;
-						args.bsa_YDestFactor = newHeight;
+					args.bsa_YSrcFactor = bitMapHeader->bmh_Height;
+					args.bsa_YDestFactor = newHeight;
 
-						args.bsa_SrcX = 0;
-						args.bsa_DestX = 0;
+					args.bsa_SrcX = 0;
+					args.bsa_DestX = 0;
 
-						// scale the image now with the arguments set
-						BitMapScale(&args);
+					// scale the image now with the arguments set
+					BitMapScale(&args);
 
-						// read out the scaled values
-						data->scaledWidth  = args.bsa_DestWidth;
-						data->scaledHeight = args.bsa_DestHeight;
+					// read out the scaled values
+					data->scaledWidth  = args.bsa_DestWidth;
+					data->scaledHeight = args.bsa_DestHeight;
 
-						DB(kprintf("UserImage scale (w/h) from %ld/%ld to %ld/%ld\n", bitMapHeader->bmh_Width,
-																																					bitMapHeader->bmh_Height,
-																																					data->scaledWidth,
-																																					data->scaledHeight);)
+					DB(kprintf("UserImage scale (w/h) from %ld/%ld to %ld/%ld\n", bitMapHeader->bmh_Width,
+																																				bitMapHeader->bmh_Height,
+																																				data->scaledWidth,
+																																				data->scaledHeight);)
 
-						result = TRUE;
-					}
+					result = TRUE;
 				}
 			}
 		}
@@ -223,7 +219,10 @@ OVERLOAD(MUIM_Cleanup)
 
 	// now it should be fine to free the allocated bitmap
 	if(data->scaledBitMap)
+	{
 		FreeBitMap(data->scaledBitMap);
+		data->scaledBitMap = NULL;
+	}
 
 	return DoSuperMethodA(cl, obj, msg);
 }

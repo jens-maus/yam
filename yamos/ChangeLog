@@ -7,6 +7,10 @@ $Source$
 
 2005-02-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * UserImage.c: fixed bug #1115135 where the user image wasn't
+      always displayed correctly on all machines which seem to be
+      cause by the missing BMF_MINPLANES flag for the AllocBitMap()
+      call.
     * YAM_COs.c: the checkmark status for the status delay change
       wasn't saved in the .config file at all. That should be fixed
       now.
