@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-01-27  Gunther Nikl <gni@gecko.de>
+
+    * YAM.c: Simplify timer functions, eg. use TC_Stop in TC_Start and
+      TC_Exit. Remove tabs und superflous casts.
+
 2005-01-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * misc: added new StatusChangeDelay functionality to YAM that changes
@@ -22,7 +27,7 @@ $Source$
     * ReadMailGroup.c, YAM_UT.c: fixed a minor bug in the user image display
       routines which caused unexpected crashes and behaviour when switching
       between messages that cause YAM to display the appropriate user image.
-      Also slightlz modifed the display of those user images so that they
+      Also slightly modifed the display of those user images so that they
       are aligned to the top and don't use a scrollgroup anymore which make
       them a bit more compact.
 
