@@ -81,6 +81,7 @@ static ULONG MA_GetSortType(int sort)
 void MA_SetSortFlag(void)
 {
    struct Folder *fo = FO_GetCurrentFolder();
+
    set(G->MA->GUI.NL_MAILS, MUIA_NList_SortType, MA_GetSortType(fo->Sort[0]));
    set(G->MA->GUI.NL_MAILS, MUIA_NList_SortType2, MA_GetSortType(fo->Sort[1]));
 }

@@ -334,16 +334,19 @@ void MA_ChangeFolder(struct Folder *folder)
    }
    else if(FO_GetCurrentFolder() == folder) return;
 
-   // Now we update the InfoBar accordingly
-   MA_UpdateInfoBar(folder);
-
    if (folder->Type == FT_GROUP) folderopen = FALSE;
    else if (!MA_GetIndex(folder)) folderopen = FALSE;
 
    if (folderopen)
    {
-      DisplayMailList(folder, gui->NL_MAILS);
+      // set the SortFlag in the NList accordingly
       MA_SetSortFlag();
+
+      // Now we update the InfoBar accordingly
+      MA_UpdateInfoBar(folder);
+
+      // Create the Mail List and display it
+      DisplayMailList(folder, gui->NL_MAILS);
 
       if (C->JumpToNewMsg)
       {
@@ -386,6 +389,9 @@ void MA_ChangeFolder(struct Folder *folder)
 
       set(gui->NL_MAILS, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
    }
+   else MA_UpdateInfoBar(folder);
+
+   // disable/reactivate the Listview with the mails in it
    set(gui->LV_MAILS, MUIA_Disabled, !folderopen);
 }
 
