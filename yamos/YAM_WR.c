@@ -2421,7 +2421,6 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(mi_color             ,MUIM_Notify, MUIA_Menuitem_Checked,          TRUE,           data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_Pen,           7);
          DoMethod(mi_color             ,MUIM_Notify, MUIA_Menuitem_Checked,          FALSE,          data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_Pen,           0);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,0             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,FALSE);
-         DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,0             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_ActiveObject, data->GUI.ST_TO);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,1             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_Group_ActivePage    ,2             ,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_NoMenus,TRUE);
          DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Acknowledge  ,MUIV_EveryTime,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_ActiveObject,data->GUI.TE_EDIT);
