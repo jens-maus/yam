@@ -1838,13 +1838,25 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
 static void RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 {
    struct TranslationTable *tt = NULL;
-   if (rp->Nr == PART_LETTER && rp->Printable)
+
+   if(rp->Nr == PART_LETTER && rp->Printable &&
+      G->TTin && G->TTin->SourceCharset
+     )
    {
-      if (!rp->CParCSet)
+      char *srcCharset = G->TTin->SourceCharset;
+
+      if(!rp->CParCSet)
       {
-         if (MatchTT(C->LocalCharset, G->TTin, TRUE) || MatchTT("us-ascii", G->TTin, TRUE)) tt = G->TTin;
+         if(MatchNoCase(C->LocalCharset, srcCharset) ||
+            MatchNoCase("us-ascii", srcCharset))
+         {
+            tt = G->TTin;
+         }
       }
-      else if (MatchTT(rp->CParCSet, G->TTin, TRUE)) tt = G->TTin;
+      else if(MatchNoCase(rp->CParCSet, srcCharset))
+      {
+         tt = G->TTin;
+      }
    }
 
    switch (rp->EncodingCode)

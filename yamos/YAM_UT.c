@@ -695,14 +695,6 @@ BOOL MatchNoCase(char *string, char *match)
    return result;
 }
 ///
-/// MatchTT
-//  Checks if charset matches a translation table
-BOOL MatchTT(char *charset, struct TranslationTable *tt, BOOL in)
-{
-   if (!tt) return FALSE;
-   return MatchNoCase(charset, in ? tt->SourceCharset : tt->DestCharset);
-}
-////
 /// isSpace
 //  Localized version if isspace()
 BOOL isSpace(int c)
