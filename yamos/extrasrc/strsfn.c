@@ -54,5 +54,7 @@ void strsfn(const char *file, char *drive, char *path, char *node, char *ext)
     memcpy(path, p, end - p);
     path += end - p;
   }
-  *path = '\0';
+
+  if (path)
+    *path = '\0';
 }
