@@ -800,7 +800,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->TempDir, "T:");
       strcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"");
       co->IconPositionX = co->IconPositionY = 0;
-      strcpy(co->AppIconText, "New: %n Total: %t");
+      strcpy(co->AppIconText, GetStr(MSG_CO_APPICON_LABEL));
       co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
       co->Confirm = co->SaveSent = co->SendMDNAtOnce = TRUE;
       co->ConfirmDelete = 2;

@@ -7,6 +7,8 @@ $Source$
 
 2002-07-17  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_CO.c: fixed bug #580961 where the default AppIcon Label
+      wasn`t localized at all.
     * YAM_rexx_rxif.c: fixed bug #580964 where the ADDRDELETE
       arexx command had deleted the active entry if the command
       was called with an entry that didn`t exists in the ABook

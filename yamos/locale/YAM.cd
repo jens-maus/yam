@@ -5002,3 +5002,6 @@ MSG_ER_POPWELCOME (//)
 The POP server responsed with an error message during the welcome \
 procedure and the connection was terminated:\n\n%s\n
 ;
+MSG_CO_APPICON_LABEL (//)
+New: %n Total: %t
+;
