@@ -2762,20 +2762,27 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
         RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT
       };
 
-      static const APTR tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-         MSG_RE_TBPrev,MSG_RE_TBNext,MSG_RE_TBPrevTh,MSG_RE_TBNextTh,MSG_Space,
-         MSG_RE_TBDisplay,MSG_RE_TBSave,MSG_RE_TBPrint,MSG_Space,
-         MSG_RE_TBDelete,MSG_RE_TBMove,MSG_RE_TBReply,MSG_RE_TBForward,NULL
+      static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
+        { MSG_RE_TBPrev,    MSG_HELP_RE_BT_PREVIOUS },
+        { MSG_RE_TBNext,    MSG_HELP_RE_BT_NEXT     },
+        { MSG_RE_TBPrevTh,  MSG_HELP_RE_BT_QUESTION },
+        { MSG_RE_TBNextTh,  MSG_HELP_RE_BT_ANSWER   },
+        { MSG_Space,        NULL                    },
+        { MSG_RE_TBDisplay, MSG_HELP_RE_BT_DISPLAY  },
+        { MSG_RE_TBSave,    MSG_HELP_RE_BT_EXPORT   },
+        { MSG_RE_TBPrint,   MSG_HELP_RE_BT_PRINT    },
+        { MSG_Space,        NULL                    },
+        { MSG_RE_TBDelete,  MSG_HELP_RE_BT_DELETE   },
+        { MSG_RE_TBMove,    MSG_HELP_RE_BT_MOVE     },
+        { MSG_RE_TBReply,   MSG_HELP_RE_BT_REPLY    },
+        { MSG_RE_TBForward, MSG_HELP_RE_BT_FORWARD  },
+        { NULL,             NULL                    }
       };
-      static const APTR tb_help[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-         MSG_HELP_RE_BT_PREVIOUS,MSG_HELP_RE_BT_NEXT,MSG_HELP_RE_BT_QUESTION,MSG_HELP_RE_BT_ANSWER,NULL,
-         MSG_HELP_RE_BT_DISPLAY,MSG_HELP_RE_BT_EXPORT,MSG_HELP_RE_BT_PRINT,NULL,
-         MSG_HELP_RE_BT_DELETE,MSG_HELP_RE_BT_MOVE,MSG_HELP_RE_BT_REPLY,MSG_HELP_RE_BT_FORWARD,NULL
-      };
+      const struct NewToolbarEntry *p;
       int i;
 
-      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
+      for (p = &tb_butt[0], i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), p->label?(p->label==MSG_Space?"":GetStr(p->label)):NULL, p->help?GetStr(p->help):NULL, 0);
 
       data->GUI.SL_TEXT = ScrollbarObject, End;
       data->Header = C->ShowHeader;

@@ -1046,21 +1046,27 @@ struct AB_ClassData *AB_New(void)
         AMEN_FOLD,AMEN_UNFOLD
       };
 
-      static const APTR tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        MSG_AB_TBSave,MSG_AB_TBFind,MSG_Space,
-        MSG_AB_TBNewUser,MSG_AB_TBNewList,MSG_AB_TBNewGroup,MSG_AB_TBEdit,MSG_AB_TBDelete,MSG_AB_TBPrint,MSG_Space,
-        MSG_AB_TBOpenTree,MSG_AB_TBCloseTree,NULL
+      static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
+        { MSG_AB_TBSave,      MSG_HELP_AB_BT_SAVE     },
+        { MSG_AB_TBFind,      MSG_HELP_AB_BT_SEARCH   },
+        { MSG_Space,          NULL                    },
+        { MSG_AB_TBNewUser,   MSG_HELP_AB_BT_ADDUSER  },
+        { MSG_AB_TBNewList,   MSG_HELP_AB_BT_ADDMLIST },
+        { MSG_AB_TBNewGroup,  MSG_HELP_AB_BT_ADDGROUP },
+        { MSG_AB_TBEdit,      MSG_HELP_AB_BT_EDIT     },
+        { MSG_AB_TBDelete,    MSG_HELP_AB_BT_DELETE,  },
+        { MSG_AB_TBPrint,     MSG_HELP_AB_BT_PRINT,   },
+        { MSG_Space,          NULL                    },
+        { MSG_AB_TBOpenTree,  MSG_HELP_AB_BT_OPEN     },
+        { MSG_AB_TBCloseTree, MSG_HELP_AB_BT_CLOSE    },
+        { NULL              , NULL                    }
       };
-      static const APTR tb_help[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        MSG_HELP_AB_BT_SAVE,MSG_HELP_AB_BT_SEARCH,NULL,
-        MSG_HELP_AB_BT_ADDUSER,MSG_HELP_AB_BT_ADDMLIST,MSG_HELP_AB_BT_ADDGROUP,MSG_HELP_AB_BT_EDIT,MSG_HELP_AB_BT_DELETE,MSG_HELP_AB_BT_PRINT,NULL,
-        MSG_HELP_AB_BT_OPEN,MSG_HELP_AB_BT_CLOSE,NULL
-      };
+      const struct NewToolbarEntry *p;
       APTR list;
       int i;
 
-      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
+      for (p = &tb_butt[0], i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), p->label?(p->label==MSG_Space?"":GetStr(p->label)):NULL, p->help?GetStr(p->help):NULL, 0);
 
       data->GUI.WI = WindowObject,
          MUIA_HelpNode,"AB_W",

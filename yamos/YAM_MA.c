@@ -2369,24 +2369,33 @@ struct MA_ClassData *MA_New(void)
    struct MA_ClassData *data = calloc(1, sizeof(struct MA_ClassData));
    if (data)
    {
-      static const APTR tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        MSG_MA_TBRead,MSG_MA_TBEdit,MSG_MA_TBMove,MSG_MA_TBDelete,MSG_MA_TBGetAddr,MSG_Space,
-        MSG_MA_TBWrite,MSG_MA_TBReply,MSG_MA_TBForward,MSG_Space,
-        MSG_MA_TBGetMail,MSG_MA_TBSendAll,MSG_Space,
-        MSG_MA_TBFilter,MSG_MA_TBFind,MSG_MA_TBAddrBook,MSG_MA_TBConfig,NULL
+      static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
+        { MSG_MA_TBRead,     MSG_HELP_MA_BT_READ       },
+        { MSG_MA_TBEdit,     MSG_HELP_MA_BT_EDIT       },
+        { MSG_MA_TBMove,     MSG_HELP_MA_BT_MOVE       },
+        { MSG_MA_TBDelete,   MSG_HELP_MA_BT_DELETE     },
+        { MSG_MA_TBGetAddr,  MSG_HELP_MA_BT_GETADDRESS },
+        { MSG_Space,         NULL                      },
+        { MSG_MA_TBWrite,    MSG_HELP_MA_BT_WRITE      },
+        { MSG_MA_TBReply,    MSG_HELP_MA_BT_REPLY      },
+        { MSG_MA_TBForward,  MSG_HELP_MA_BT_FORWARD    },
+        { MSG_Space,         NULL                      },
+        { MSG_MA_TBGetMail,  MSG_HELP_MA_BT_POPNOW     },
+        { MSG_MA_TBSendAll,  MSG_HELP_MA_BT_SENDALL    },
+        { MSG_Space,         NULL                      },
+        { MSG_MA_TBFilter,   MSG_HELP_MA_BT_FILTER     },
+        { MSG_MA_TBFind,     MSG_HELP_MA_BT_SEARCH     },
+        { MSG_MA_TBAddrBook, MSG_HELP_MA_BT_ABOOK      },
+        { MSG_MA_TBConfig,   MSG_HELP_MA_BT_CONFIG     },
+        { NULL,              NULL                      }
       };
-      static const APTR tb_help[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        MSG_HELP_MA_BT_READ,MSG_HELP_MA_BT_EDIT,MSG_HELP_MA_BT_MOVE,MSG_HELP_MA_BT_DELETE,MSG_HELP_MA_BT_GETADDRESS,NULL,
-        MSG_HELP_MA_BT_WRITE,MSG_HELP_MA_BT_REPLY,MSG_HELP_MA_BT_FORWARD,NULL,
-        MSG_HELP_MA_BT_POPNOW,MSG_HELP_MA_BT_SENDALL,NULL,
-        MSG_HELP_MA_BT_FILTER,MSG_HELP_MA_BT_SEARCH,MSG_HELP_MA_BT_ABOOK,MSG_HELP_MA_BT_CONFIG,NULL
-      };
+      const struct NewToolbarEntry *p;
       char *key = "-repeat 0", *username;
       struct User *user;
       int i;
 
-      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
+      for (p = &tb_butt[0], i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), p->label?(p->label==MSG_Space?"":GetStr(p->label)):NULL, p->help?GetStr(p->help):NULL, 0);
 
       if (username = C->RealName,(user = US_GetCurrentUser()))
         username = user->Name;

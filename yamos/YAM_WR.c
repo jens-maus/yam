@@ -2053,24 +2053,30 @@ static struct WR_ClassData *WR_New(int winnum)
       static const char *emoticons[4] = {
         ":-)", ":-|", ":-(", ";-)"
       };
-      static const APTR tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        MSG_WR_TBEditor,MSG_WR_TBInsert,MSG_Space,
-        MSG_WR_TBCut,MSG_WR_TBCopy,MSG_WR_TBPaste,MSG_WR_TBUndo,MSG_Space,
-        MSG_WR_TBBold,MSG_WR_TBItalic,MSG_WR_TBUnderlined,MSG_WR_TBColored,NULL
+      static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
+        { MSG_WR_TBEditor,     MSG_HELP_WR_BT_EDITOR },
+        { MSG_WR_TBInsert,     MSG_HELP_WR_BT_LOAD   },
+        { MSG_Space,           NULL                  },
+        { MSG_WR_TBCut,        MSG_HELP_WR_BT_CUT    },
+        { MSG_WR_TBCopy,       MSG_HELP_WR_BT_COPY   },
+        { MSG_WR_TBPaste,      MSG_HELP_WR_BT_PASTE  },
+        { MSG_WR_TBUndo,       MSG_HELP_WR_BT_UNDO   },
+        { MSG_Space,           NULL                  },
+        { MSG_WR_TBBold,       MSG_HELP_WR_BT_BOLD   },
+        { MSG_WR_TBItalic,     MSG_HELP_WR_BT_ITALIC },
+        { MSG_WR_TBUnderlined, MSG_HELP_WR_BT_UNDERL },
+        { MSG_WR_TBColored,    MSG_HELP_WR_BT_COLOR  },
+        { NULL,                NULL                  }
       };
-      static const APTR tb_help[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        MSG_HELP_WR_BT_EDITOR,MSG_HELP_WR_BT_LOAD,NULL,
-        MSG_HELP_WR_BT_CUT,MSG_HELP_WR_BT_COPY,MSG_HELP_WR_BT_PASTE,MSG_HELP_WR_BT_UNDO,NULL,
-        MSG_HELP_WR_BT_BOLD,MSG_HELP_WR_BT_ITALIC,MSG_HELP_WR_BT_UNDERL,MSG_HELP_WR_BT_COLOR,NULL
-      };
+      const struct NewToolbarEntry *p;
       APTR sec_menus[SEC_MAXDUMMY];
       APTR mi_copy, mi_cut, mi_redo, mi_undo, mi_bold, mi_italic, mi_underl, mi_color;
       APTR strip, mi_autospell, mi_delsend, mi_receipt, mi_dispnoti, mi_addinfo;
       APTR slider = ScrollbarObject, End;
       int spell, i;
 
-      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, (i>=8 && i<=11)?TDF_TOGGLE:0);
+      for (p = &tb_butt[0], i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), p->label?(p->label==MSG_Space?"":GetStr(p->label)):NULL, p->help?GetStr(p->help):NULL, (i>=8 && i<=11)?TDF_TOGGLE:0);
 
       if(NULL == rtitles[0])   // only initialize static data on first call
       {
