@@ -37,6 +37,7 @@
 struct Data
 {
 	struct ReadMailData *readMailData;
+
 	Object *headerGroup;
 	Object *headerList;
 	Object *senderImageGroup;
@@ -47,6 +48,8 @@ struct Data
 	Object *mailTextObject;
 	Object *textEditScrollbar;
 	Object *attachmentGroup;
+
+	struct MinList senderInfoHeaders;
 
 	BOOL hasContent;
 };
@@ -63,21 +66,11 @@ struct Data
 /* Hooks */
 /// HeaderDisplayHook
 //  Header listview display hook
-HOOKPROTONH(HeaderDisplayFunc, long, char **array, char *entry)
+HOOKPROTONH(HeaderDisplayFunc, long, char **array, struct HeaderNode *hdrNode)
 {
-	static char hfield[40];
-	char *cont = entry;
-	int i = 0;
-
-	// copy the headername into the static hfield to display it.
-	while(*cont != ':' && *cont && i < 38)
-		hfield[i++] = *cont++;
-	
-	hfield[i] = '\0';
-	
 	// set the array now so that the NList shows the correct values.
-	array[0] = hfield;
-	array[1] = stpblk(++cont);
+	array[0] = hdrNode->name;
+	array[1] = hdrNode->content;
 
 	return 0;
 }
@@ -222,8 +215,6 @@ OVERLOAD(OM_NEW)
 			Child, NListviewObject,
 				MUIA_NListview_NList, data->headerList = NListObject,
 					InputListFrame,
-					MUIA_NList_ConstructHook, 			 MUIV_NList_ConstructHook_String,
-					MUIA_NList_DestructHook, 				 MUIV_NList_DestructHook_String,
 					MUIA_NList_DisplayHook, 				 &HeaderDisplayHook,
 					MUIA_NList_Format, 							 "P=\033r\0338 W=-1 MIW=-1,",
 					MUIA_NList_Input, 							 FALSE,
@@ -277,6 +268,9 @@ OVERLOAD(OM_NEW)
 		// copy back the data stored in our temporarly struct Data
 		memcpy(data, tmpData, sizeof(struct Data));
 
+		// prepare the senderInfoHeader list
+		NewMinList(&data->senderInfoHeaders);
+
 		// place our data in the node and add it to the readMailDataList
 		rmData->readMailGroup = obj;
 		AddTail((struct List *)&(G->ReadMailDataList), (struct Node *)data->readMailData);
@@ -292,6 +286,9 @@ OVERLOAD(OM_NEW)
 OVERLOAD(OM_DISPOSE)
 {
 	GETDATA;
+
+	// clear the senderInfoHeaders
+	FreeHeaderList(&data->senderInfoHeaders);
 
 	if(data->readMailData)
 	{
@@ -352,6 +349,9 @@ DECLARE(Clear)
 		DoMethod(data->headerList, MUIM_NList_Clear);
 		set(data->mailTextObject, MUIA_TextEditor_Contents, "");
 
+		// cleanup the senderInfoHeaders list
+		FreeHeaderList(&data->senderInfoHeaders);
+
 		// cleanup the SenderImage field as well
 		if(DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
 		{
@@ -407,11 +407,9 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 			struct Person *from = &rmData->mail->From;
 			struct ABEntry *ab = NULL;
 			struct ABEntry abtmpl;
-			char headername[SIZE_DEFAULT];
 			char *body;
 			BOOL dispheader;
 			int hits;
-			int i;
 
 			dispheader = (rmData->headerMode != HM_NOHEADER);
 			set(data->headerGroup, MUIA_ShowMe, dispheader);
@@ -421,51 +419,32 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 			set(data->headerList, MUIA_NList_Quiet, TRUE);
 			body = cmsg;
 
-			// here we have to parse the header and place all header
-			// information in the header listview.
-			while(*body)
+			// we first go through the headerList of our first Part, which should in fact
+			// be the headerPart
+			if(rmData->firstPart && dispheader)
 			{
-				// if the first char in the line is a newline \n, then we found the start of
-				// the body and break here.
-				if(*body == '\n') { body++; break; }
+				struct MinNode *curNode;
 
-				// we copy the headername from the mail as long as there is no space and
-				// no interrupting character is found
-				for(i = 0; body[i] != ':' && !isspace(body[i]) && body[i] != '\n' && body[i] != '\0' && i < SIZE_DEFAULT-1; i++)
+				// Now we process the read header to set all flags accordingly
+				for(curNode = rmData->firstPart->headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
 				{
-					headername[i] = body[i];
-				}
+					struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
 
-				// if we end up here and body[i] isn`t a : then this wasn`t a proper headerline and we
-				// can ignore it anyway because the RFC says that a headerline must have characters
-				// without any space followed by a ":"
-				if(body[i] == ':')
-				{
-					headername[i] = '\0'; // terminate with 0
-				
-					// Now we check if this is a header the user wants to be displayed if he has choosen
-					// to display only shortheaders
+					// now we use MatchNoCase() to find out if we should include that headerNode
+					// in out headerList or not
 					if(rmData->headerMode == HM_SHORTHEADER)
-						dispheader = MatchNoCase(headername, C->ShortHeaders);
+						dispheader = MatchNoCase(hdrNode->name, C->ShortHeaders);
 					else
 						dispheader = (rmData->headerMode == HM_FULLHEADER);
 
 					if(dispheader)
 					{
-						// we simply insert the whole thing from the actual body pointer
-						// because the ConstructHook_String of NList will anyway just copy until a \n, \r or \0
-						DoMethod(data->headerList, MUIM_NList_InsertSingleWrap, body,
+						// we simply insert the whole headerNode and split the display later in our HeaderDisplayHook
+						DoMethod(data->headerList, MUIM_NList_InsertSingleWrap, hdrNode,
 																			 MUIV_NList_Insert_Bottom,
 																			 rmData->wrapHeaders ? WRAPCOL1 : NOWRAP, ALIGN_LEFT);
 					}
 				}
-
-				// then we move forward until the end of the line
-				while(*body && *body != '\n')
-					body++;
-			
-				if(*body)
-					body++; // if the end of the line isn`t a \0 we have to move on
 			}
 
 			if((hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab)) == 0 &&
@@ -518,55 +497,81 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 				{
 					if(hits == 1 || ab->Type == AET_LIST)
 					{
-						// Add some extra headers with sender info
-						char buffer[SIZE_LARGE];
+						struct HeaderNode *newNode;
 
-						if(*ab->RealName)
+						// make sure we cleaned up the senderInfoHeader List beforehand
+						FreeHeaderList(&data->senderInfoHeaders);
+
+						if(*ab->RealName && (newNode = malloc(sizeof(struct HeaderNode))))
 						{
-							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_RealName)), ab->RealName);
-							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+							newNode->name = StrBufCpy(NULL, MUIX_I);
+							newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_RealName)));
+							newNode->content = StrBufCpy(NULL, ab->RealName);
+							AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
 						}
 
-						if(*ab->Street)
+						if(*ab->Street && (newNode = malloc(sizeof(struct HeaderNode))))
 						{
-							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Street)), ab->Street);
-							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+							newNode->name = StrBufCpy(NULL, MUIX_I);
+							newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Street)));
+							newNode->content = StrBufCpy(NULL, ab->Street);
+							AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
 						}
 
-						if(*ab->City)
+						if(*ab->City && (newNode = malloc(sizeof(struct HeaderNode))))
 						{
-							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_City)), ab->City);
-							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+							newNode->name = StrBufCpy(NULL, MUIX_I);
+							newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_City)));
+							newNode->content = StrBufCpy(NULL, ab->City);
+							AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
 						}
 
-						if(*ab->Country)
+						if(*ab->Country && (newNode = malloc(sizeof(struct HeaderNode))))
 						{
-							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Country)), ab->Country);
-							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+							newNode->name = StrBufCpy(NULL, MUIX_I);
+							newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Country)));
+							newNode->content = StrBufCpy(NULL, ab->Country);
+							AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
 						}
 
-						if(*ab->Phone)
+						if(*ab->Phone && (newNode = malloc(sizeof(struct HeaderNode))))
 						{
-							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Phone)), ab->Phone);
-							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+							newNode->name = StrBufCpy(NULL, MUIX_I);
+							newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Phone)));
+							newNode->content = StrBufCpy(NULL, ab->Phone);
+							AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
 						}
 
-						if(*AB_ExpandBD(ab->BirthDay))
+						if(*AB_ExpandBD(ab->BirthDay) && (newNode = malloc(sizeof(struct HeaderNode))))
 						{
-							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_DOB)), AB_ExpandBD(ab->BirthDay));
-							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+							newNode->name = StrBufCpy(NULL, MUIX_I);
+							newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_DOB)));
+							newNode->content = StrBufCpy(NULL, AB_ExpandBD(ab->BirthDay));
+							AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
 						}
 
-						if(*ab->Comment)
+						if(*ab->Comment && (newNode = malloc(sizeof(struct HeaderNode))))
 						{
-							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Description)), ab->Comment);
-							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+							newNode->name = StrBufCpy(NULL, MUIX_I);
+							newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Description)));
+							newNode->content = StrBufCpy(NULL, ab->Comment);
+							AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
 						}
 
-						if(*ab->Homepage)
+						if(*ab->Homepage && (newNode = malloc(sizeof(struct HeaderNode))))
 						{
-							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Homepage)), ab->Homepage);
-							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+							newNode->name = StrBufCpy(NULL, MUIX_I);
+							newNode->name = StrBufCat(newNode->name, StripUnderscore(GetStr(MSG_EA_Homepage)));
+							newNode->content = StrBufCpy(NULL, ab->Homepage);
+							AddTail((struct List *)&data->senderInfoHeaders, (struct Node *)newNode);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, newNode, MUIV_NList_Insert_Bottom);
 						}
 					}
 				}
@@ -806,19 +811,25 @@ DECLARE(SaveDisplay) // FILE *fileHandle
 		fputs("\033[3m", fh);
 		for(i=0;;i++)
 		{
+			struct HeaderNode *curNode;
 			res.pos = MUIV_NList_GetEntryInfo_Line;
 			res.line = i;
 			
 			DoMethod(data->headerList, MUIM_NList_GetEntryInfo, &res);
-			if(!res.entry)
-				break;
 
-			ptr = (char *)res.entry;
-			if(!strcmp(ptr, MUIX_I))
-				ptr += strlen(MUIX_I);
-			
-			fputs(ptr, fh);
-			fputc('\n', fh);
+			if((curNode = (struct HeaderNode *)res.entry))
+			{
+				char *name = curNode->name;
+				char *content = curNode->content;
+
+				// skip the italic style if present
+				if(strncmp(name, MUIX_I, strlen(MUIX_I)) == 0)
+					name += strlen(MUIX_I);
+
+				fprintf(fh, "%s: %s\n", name, content);
+			}
+			else
+				break;
 		}
 		fputs("\033[23m\n", fh);
 	}
@@ -850,10 +861,18 @@ DECLARE(SaveDisplay) // FILE *fileHandle
 					break;
 				
 				case '[':
+				{
 					if(!strncmp(ptr, "[s:18]", 6))
+					{
 						fputs("===========================================================", fh);
+						ptr += 5;
+					}
 					else if(!strncmp(ptr, "[s:2]", 5))
+					{
 						fputs("-----------------------------------------------------------", fh);
+						ptr += 4;
+					}
+				}
 				break;
 
 				case 'p':

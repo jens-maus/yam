@@ -819,7 +819,7 @@ char *Trim(char *s)
    {
       char *e = s+strlen(s)-1;
       while (*s && ISpace(*s)) ++s;
-      while (e >= s && ISpace(*e)) *e-- = 0;
+      while (e >= s && ISpace(*e)) *e-- = '\0';
    }
    return s;
 }
@@ -1022,50 +1022,77 @@ char *AllocStrBuf(size_t initlen)
 ///
 /// StrBufCpy
 //  Fills a dynamic buffer
-char *StrBufCpy(char *strbuf, char *source)
+char *StrBufCpy(char *strbuf, const char *source)
 {
-   size_t oldlen, newlen, reqlen=strlen(source);
-   char *newstrbuf;
+  size_t oldlen;
+  size_t newlen;
+  size_t reqlen=strlen(source);
+  char *newstrbuf;
 
-   if (!strbuf)
-     if (NULL == (strbuf = AllocStrBuf(reqlen+1))) return NULL;
-   oldlen = ((size_t *)strbuf)[-1];
-   newstrbuf = strbuf;
-   for (newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
-   if (newlen != oldlen)
-   {
-      FreeStrBuf(strbuf);
-      newstrbuf = AllocStrBuf(newlen);
-   }
-   if(newstrbuf) strcpy(newstrbuf, source);
-   return newstrbuf;
+  // if our strbuf is NULL we have to allocate a new buffer
+  if(!strbuf && (strbuf = AllocStrBuf(reqlen+1)) == NULL)
+    return NULL;
+
+  oldlen = ((size_t *)strbuf)[-1];
+
+  // make sure we allocate in SIZE_DEFAULT chunks
+  for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
+
+  // if we have to change the size do it now
+  if(newlen != oldlen)
+  {
+    FreeStrBuf(strbuf);                // free previous buffer
+    newstrbuf = AllocStrBuf(newlen+1); // allocate a new one
+  }
+  else
+    newstrbuf = strbuf;
+
+  // do a string copy into the new buffer
+  if(newstrbuf)
+    strcpy(newstrbuf, source);
+
+  return newstrbuf;
 }
 ///
 /// StrBufCat
 //  String concatenation using a dynamic buffer
-char *StrBufCat(char *strbuf, char *source)
+char *StrBufCat(char *strbuf, const char *source)
 {
-   size_t oldlen, newlen, reqlen=strlen(source);
-   char *newstrbuf;
+  size_t oldlen;
+  size_t newlen;
+  size_t reqlen=strlen(source);
+  char *newstrbuf;
 
-   if (!strbuf)
-     if (NULL == (strbuf = AllocStrBuf(reqlen+1))) return NULL;
-   reqlen += strlen(strbuf);
-   oldlen = ((size_t *)strbuf)[-1];
-   newstrbuf = strbuf;
-   for (newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
-   if (newlen != oldlen)
-   {
-      if(NULL == (newstrbuf = AllocStrBuf(newlen)))
-      {
-         FreeStrBuf(strbuf);
-         return NULL;
-      }
+  // if our strbuf is NULL we have to allocate a new buffer
+  if(!strbuf)
+  {
+    if((strbuf = AllocStrBuf(reqlen+1)) == NULL)
+      return NULL;
+  }
+  else
+    reqlen += strlen(strbuf);
+
+  oldlen = ((size_t *)strbuf)[-1];
+
+  // make sure we allocate in SIZE_DEFAULT chunks
+  for(newlen = oldlen; newlen <= reqlen; newlen += SIZE_DEFAULT);
+
+  // if we have to change the size do it now
+  if(newlen != oldlen)
+  {
+    if((newstrbuf = AllocStrBuf(newlen+1)))
       strcpy(newstrbuf, strbuf);
-      FreeStrBuf(strbuf);
-   }
-   strcat(newstrbuf, source);
-   return newstrbuf;
+
+    FreeStrBuf(strbuf);
+  }
+  else
+    newstrbuf = strbuf;
+
+  // do a string copy into the new buffer
+  if(newstrbuf)
+    strcat(newstrbuf, source);
+
+  return newstrbuf;
 }
 ///
 /// AppendToBuffer
@@ -1078,33 +1105,6 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
    while (*add) buf[(*wptr)++] = *add++;
    buf[*wptr] = '\0'; // we have to make sure that the string is null terminated
    return buf;
-}
-///
-/// FreeData2D
-//  Frees dynamic two-dimensional array
-void FreeData2D(struct Data2D *data)
-{
-   while(data->Used)
-   {
-      data->Used--;
-      FreeStrBuf(data->Data[data->Used]);
-   }
-
-   if (data->Allocated) free(data->Data);
-   data->Data = NULL; data->Allocated = 0;
-}
-///
-/// AllocData2D
-//  Allocates dynamic two-dimensional array
-char *AllocData2D(struct Data2D *data, size_t initsize)
-{
-   if (data->Used >= data->Allocated)
-   {
-      data->Allocated += 10;
-      if (data->Data) data->Data = realloc(data->Data, data->Allocated*sizeof(char *));
-      else            data->Data = malloc(data->Allocated*sizeof(char *));
-   }
-   return data->Data[data->Used++] = AllocStrBuf(initsize);
 }
 ///
 /// AllocCopy

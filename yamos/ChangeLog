@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-27  Jens Langner <Jens.Langner@light-speed.de>
+
+    * misc: replaced the whole "struct Data2D" usages by proper exec list usages.
+      The formerly used structure including the AllocData2D/FreeData2D calls was
+      way too error prone and uncommon to handle such two dimendional data. Please
+      note that the main use of "struct Data2D" was the management/parsing of
+      mail header lines which was done in a single global variable throughout
+      the whole YAM application. After dropping the whole "struct Data2D" stuff
+      now each mail part contains its own private header list which should make the
+      parsing routines more safe and probably also a bit faster was we don't have
+      to parse the headers out of files multiple times before displaying them to
+      the user. Also future multithreading capabilities should not have to worry
+      about that global variable anymore.
+
 2005-02-24  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_global.c: fixed library base definitions by separating them due to

@@ -115,9 +115,6 @@ struct FIndex
 
 #include "default-align.h"
 
-/* global variables */
-struct Data2D Header = { 0, 0, NULL };
-
 /* local protos */
 static void MA_ValidateStatus(struct Folder*);
 static char *MA_IndexFileName(struct Folder*);
@@ -973,54 +970,63 @@ static BOOL MA_DetectUUE(FILE *fh)
 ///
 /// MA_ReadHeader
 //  Reads header lines of a message into memory
-BOOL MA_ReadHeader(FILE *fh)
+BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
 {
-  char *buffer, *ptr;
+  char *buffer;
   BOOL success = FALSE;
-  BOOL finished = FALSE;
   int linesread = 0;
 
+  if(headerList == NULL)
+    return FALSE;
+
+  // Allocate some memory for use as a read buffer
   if((buffer = calloc(SIZE_LINE, sizeof(char))))
   {
-    FreeData2D(&Header);
+    char *ptr;
+    BOOL finished = FALSE;
+    struct HeaderNode *hdrNode = NULL;
+
+    // clear the headerList first
+    NewMinList(headerList);
 
     // we read out the whole header line by line and
     // concatenate lines that are belonging together.
     while((GetLine(fh, buffer, SIZE_LINE) && (++linesread, buffer[0])) ||
           (finished == FALSE && (finished = TRUE)))
     {
-      BOOL linestart = TRUE;
-
       // if the start of this line is a space or a tabulator sign
       // this line belongs to the last header also and we have to
       // add it to the last one.
-      if((buffer[0] == ' ' || buffer[0] == '\t') &&
-         Header.Used && finished==FALSE)
+      if((buffer[0] == ' ' || buffer[0] == '\t') && finished == FALSE)
       {
-        // move to the "real" start of the string so that we can copy
-        // from there to our previous header.
-        for(ptr = buffer; *ptr && isspace(*ptr); ptr++);
+        if(hdrNode)
+        {
+          // move to the "real" start of the string so that we can copy
+          // from there to our previous header.
+          for(ptr = buffer; *ptr && isspace(*ptr); ptr++);
 
-        // we want to preserve the last space so that this headerline
-        // is correctly connected
-        if(ptr != buffer) *(--ptr) = ' ';
+          // we want to preserve the last space so that this headerline
+          // is correctly connected
+          if(ptr != buffer)
+            *(--ptr) = ' ';
 
-        // now concatenate this new headerstring to our previous one
-        ptr = StrBufCat(Header.Data[Header.Used-1], ptr);
+          // now concatenate this new headerstring to our previous one
+          hdrNode->content = StrBufCat(hdrNode->content, ptr);
+        }
       }
       else
       {
         // it seems that we have found another header line because
         // it didn`t start with a linear-white-space, so lets
         // first validate the previous one, if it exists.
-        if(Header.Used)
+        if(hdrNode)
         {
-          char *prevHeader = Header.Data[Header.Used-1];
+          char *hdrContents = hdrNode->content;
           int len;
 
           // we first decode the header according to RFC 2047 which
           // should give us the full charset interpretation
-          if((len = rfc2047_decode(prevHeader, prevHeader, strlen(prevHeader),
+          if((len = rfc2047_decode(hdrContents, hdrContents, strlen(hdrContents),
              (G->TTin && G->TTin->Header) ? G->TTin : NULL)) == -1)
           {
             DB(kprintf("ERROR: malloc() error during rfc2047() decoding\n");)
@@ -1031,7 +1037,7 @@ BOOL MA_ReadHeader(FILE *fh)
             DB(kprintf("WARNING: unknown header encoding found\n");)
 
             // signal an error but continue.
-            ER_NewError(GetStr(MSG_ER_UnknownHeaderEnc), prevHeader, NULL);
+            ER_NewError(GetStr(MSG_ER_UnknownHeaderEnc), hdrContents, NULL);
           }
           else if(len == -3)
           {
@@ -1041,42 +1047,81 @@ BOOL MA_ReadHeader(FILE *fh)
           // now that we have decoded the headerline accoring to rfc2047
           // we have to strip out eventually existing ESC sequences as
           // this can be dangerous with MUI.
-          for(ptr=prevHeader; *ptr; ptr++)
+          for(ptr=hdrContents; *ptr; ptr++)
           {
             // if we find an ESC sequence, strip it!
-            if(*ptr == 0x1b) { *ptr = ' '; linestart = FALSE; }
-            else if(!success && linestart)
-            {
-              // we also need to analyse if we at least found one valid headerline
-              // or not, because then wenn need to return FALSE
-              if(*ptr == ':')
-                success = TRUE;
-              else if(isspace(*ptr))
-                linestart = FALSE;
-            }
+            if(*ptr == 0x1b)
+              *ptr = ' ';
           }
+
+          // the headerNode seems to be finished so we put it into our
+          // headerList
+          AddTail((struct List *)headerList, (struct Node *)hdrNode);
         }
 
+        // if we are finished we break out here
         if(finished)
+        {
+          success = TRUE;
           break;
+        }
 
         // now that we have finished the last header line
-        // we can finally start processing the new one.
-        ptr = StrBufCpy(AllocData2D(&Header, SIZE_DEFAULT), buffer);
-      }
+        // we can finally start processing a new one.
+        // Which means we allocate a new HeaderNode and try to get out the header
+        // name
+        if((hdrNode = calloc(1, sizeof(struct HeaderNode))))
+        {
+          // now we try to find the name of the header (ends with a ':' and no white space
+          // or control character in between
+          for(ptr = buffer; *ptr; ptr++)
+          {
+            if(*ptr == ':')
+              break;
+            else if(*ptr < 33 || *ptr > 126)
+            {
+              ptr = NULL;
+              break;
+            }
+          }
 
-      Header.Data[Header.Used-1] = ptr;
+          if(ptr && *ptr)
+          {
+            *ptr = '\0';
+
+            // use our StrBufCpy() function to copy the name of the header
+            // into our ->name element
+            if((hdrNode->name = StrBufCpy(NULL, buffer)))
+            {
+              // now we copy also the rest of buffer into the contents
+              // of the headerNode
+              if((hdrNode->content = StrBufCpy(NULL, Trim(ptr+1))))
+              {
+                // everything seemed to work fine, so lets continue
+                continue;
+              }
+            }
+          }
+
+          // if we end up here then something went wrong and we have to clear
+          // the header Node and stuff
+          free(hdrNode);
+          hdrNode = NULL;
+        }
+        else
+          break;
+      }
     }
 
     free(buffer);
   }
 
-  // we have to make sure that the Header data is empty if we
-  // hadn`t success in getting some headers
+  // if we haven't had success in reading the headers
+  // we make sure we clean everything up
   if(!success)
-    FreeData2D(&Header);
+    FreeHeaderList(headerList);
 
-  return (BOOL)(success == TRUE || linesread == 1);
+  return (BOOL)((success == TRUE && IsMinListEmpty(headerList) == FALSE) || linesread == 1);
 }
 
 ///
@@ -1087,7 +1132,7 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
    if(email)
    {
       FreeStrBuf(email->SenderInfo);
-      FreeStrBuf(email->Headers);
+      FreeStrBuf(email->extraHeaders);
       if (email->NoSTo) free(email->STo);
       if (email->NoCC ) free(email->CC );
       if (email->NoBCC) free(email->BCC);
@@ -1127,10 +1172,11 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
 {
    struct ExtendedMail *email;
    static struct Person pe;
+   struct MinList headerList;
    struct Mail *mail;
    char *p;
    char fullfile[SIZE_PATHFILE];
-   int ok, i;
+   int ok;
    BOOL dateFound = FALSE;
    FILE *fh;
 
@@ -1165,211 +1211,217 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
 
    // check if the file handle is valid and the immediatly read in the
    // header lines
-   if(fh && MA_ReadHeader(fh))
+   if(fh && MA_ReadHeader(fh, &headerList))
    {
       char *ptr;
       char dateFilePart[12+1];
       char timebuf[sizeof(struct timeval)+1]; // +1 because the b64decode does set a NUL byte
+      struct MinNode *curNode = headerList.mlh_Head;
 
       // Now we process the read header to set all flags accordingly
-      for (ok=i=0; i < Header.Used; i++)
+      for(ok=0; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
-         char *value;
-         char *field = Header.Data[i];
+         struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+         char *field = hdrNode->name;
+         char *value = hdrNode->content;
 
-         if((value = strchr(field, ':')))
+         if(!stricmp(field, "from"))
          {
-            *value++ = 0;
-            if (!stricmp(field, "from"))
-            {
-               SET_FLAG(ok, 1);
-               SParse(value);
-               ExtractAddress(value, &pe);
-               mail->From = pe;
-            }
-            else if (!stricmp(field, "reply-to"))
-            {
-               SET_FLAG(ok, 8);
-               SParse(value);
-               ExtractAddress(value, &pe);
-               mail->ReplyTo = pe;
-            }
-            else if (!stricmp(field, "original-recipient"))
-            {
-               ExtractAddress(value, &pe);
-               email->OriginalRcpt = pe;
-            }
-            else if (!stricmp(field, "disposition-notification-to"))
-            {
-               ExtractAddress(value, &pe);
-               email->ReceiptTo = pe;
-               email->ReceiptType = RCPT_TYPE_ALL;
-               SET_FLAG(mail->mflags, MFLAG_SENDMDN);
-            }
-            else if (!stricmp(field, "return-view-to"))
-            {
-               ExtractAddress(value, &pe);
-               email->ReceiptTo = pe;
-               email->ReceiptType = RCPT_TYPE_READ;
-            }
-            else if (!stricmp(field, "return-receipt-to"))
-            {
-               email->RetRcpt = TRUE;
-            }
-            else if (!stricmp(field, "to"))
-            {
-               if(!(ok & 2))
-               {
-                  SET_FLAG(ok, 2);
-                  SParse(value);
-                  if ((p = MyStrChr(value, ','))) *p++ = 0;
-                  ExtractAddress(value, &pe);
-                  mail->To = pe;
-                  if (p)
-                  {
-                    if(deep)
-                    {
-                      if(email->NoSTo == 0)
-                        MA_GetRecipients(p, &(email->STo), &(email->NoSTo));
-
-                      if(email->NoSTo > 0)
-                        SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-                    }
-                    else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
-                      SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-                  }
-               }
-            }
-            else if (!stricmp(field, "cc"))
-            {
-               if(deep)
-               {
-                 if(email->NoCC == 0)
-                 {
-                   SParse(value);
-                   MA_GetRecipients(value, &(email->CC), &(email->NoCC));
-                 }
-
-                 if(email->NoCC > 0)
-                   SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-               }
-               else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
-                 SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-            }
-            else if (!stricmp(field, "bcc"))
-            {
-               if(deep)
-               {
-                 if(email->NoBCC == 0)
-                 {
-                   SParse(value);
-                   MA_GetRecipients(value, &(email->BCC), &(email->NoBCC));
-                 }
-
-                 if(email->NoBCC > 0)
-                   SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-               }
-               else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
-                 SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-            }
-            else if (!stricmp(field, "subject"))
-            {
-               SET_FLAG(ok, 4);
-               SParse(value);
-               stccpy(mail->Subject, Trim(value), SIZE_SUBJECT);
-            }
-            else if (!stricmp(field, "message-id"))
-            {
-               mail->cMsgID = CompressMsgID(p = Trim(value));
-               stccpy(email->MsgID, p, SIZE_MSGID);
-            }
-            else if (!stricmp(field, "in-reply-to"))
-            {
-               mail->cIRTMsgID = CompressMsgID(p = Trim(value));
-               stccpy(email->IRTMsgID, p, SIZE_MSGID);
-            }
-            else if (!stricmp(field, "date"))
-            {
-               dateFound = MA_ScanDate(mail, value);
-            }
-            else if (!stricmp(field, "importance"))
-            {
-               if(getImportanceLevel(mail) == IMP_NORMAL)
-               {
-                 p = Trim(value);
-                 if(!stricmp(p, "high"))
-                   setImportanceLevel(mail, IMP_HIGH);
-                 else if(!stricmp(p, "low"))
-                   setImportanceLevel(mail, IMP_LOW);
-               }
-            }
-            else if (!stricmp(field, "priority"))
-            {
-               if(getImportanceLevel(mail) == IMP_NORMAL)
-               {
-                  p = Trim(value);
-                  if(!stricmp(p, "urgent"))
-                    setImportanceLevel(mail, IMP_HIGH);
-                  else if(!stricmp(p, "non-urgent"))
-                    setImportanceLevel(mail, IMP_HIGH);
-               }
-            }
-            else if (!stricmp(field, "content-type"))
-            {
-               p = Trim(value);
-               if(!strnicmp(p, "multipart", 9))
-               {
-                 p += 10;
-
-                 if(!strnicmp(p, "mixed", 5))
-                   SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
-                 else if(!strnicmp(p, "report", 6))
-                   SET_FLAG(mail->mflags, MFLAG_MP_REPORT);
-                 else if(!strnicmp(p, "encrypted", 9))
-                   SET_FLAG(mail->mflags, MFLAG_MP_CRYPT);
-                 else if(!strnicmp(p, "signed", 6))
-                   SET_FLAG(mail->mflags, MFLAG_MP_SIGNED);
-                 else if(!strnicmp(p, "alternative", 11))
-                   SET_FLAG(mail->mflags, MFLAG_MP_ALTERN);
-               }
-            }
-            else if (!stricmp(field, "x-senderinfo"))
-            {
-               SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
-               SParse(value);
-               if (deep) email->SenderInfo = StrBufCpy(email->SenderInfo, value);
-            }
-            else if(deep) // and if we end up here we check if we really have to go further
-            {
-              if(!stricmp(field, "x-yam-options"))
-              {
-                enum Security sec;
-
-                if (strstr(value, "delsent")) email->DelSend = TRUE;
-                if ((p = strstr(value, "sigfile"))) email->Signature = p[7]-'0'+1;
-                for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
-                {
-                  if(strstr(value, SecCodes[sec]))
-                  email->Security = sec;
-                }
-              }
-              else if(!strnicmp(field, "x-yam-header-", 13))
-              {
-                email->Headers = StrBufCat(StrBufCat(email->Headers, &field[13]), ":");
-                email->Headers = StrBufCat(StrBufCat(email->Headers, value), "\\n");
-              }
-            }
+           SET_FLAG(ok, 1);
+           SParse(value);
+           ExtractAddress(value, &pe);
+           mail->From = pe;
          }
+         else if(!stricmp(field, "reply-to"))
+         {
+           SET_FLAG(ok, 8);
+           SParse(value);
+           ExtractAddress(value, &pe);
+           mail->ReplyTo = pe;
+         }
+         else if(!stricmp(field, "original-recipient"))
+         {
+           ExtractAddress(value, &pe);
+           email->OriginalRcpt = pe;
+         }
+         else if(!stricmp(field, "disposition-notification-to"))
+         {
+           ExtractAddress(value, &pe);
+           email->ReceiptTo = pe;
+           email->ReceiptType = RCPT_TYPE_ALL;
+           SET_FLAG(mail->mflags, MFLAG_SENDMDN);
+         }
+         else if(!stricmp(field, "return-view-to"))
+         {
+           ExtractAddress(value, &pe);
+           email->ReceiptTo = pe;
+           email->ReceiptType = RCPT_TYPE_READ;
+         }
+         else if(!stricmp(field, "return-receipt-to"))
+         {
+           email->RetRcpt = TRUE;
+         }
+         else if(!stricmp(field, "to"))
+         {
+           if(!(ok & 2))
+           {
+             SET_FLAG(ok, 2);
+             SParse(value);
+             if((p = MyStrChr(value, ',')))
+               *p++ = 0;
+
+             ExtractAddress(value, &pe);
+             mail->To = pe;
+             if(p)
+             {
+               if(deep)
+               {
+                 if(email->NoSTo == 0)
+                   MA_GetRecipients(p, &(email->STo), &(email->NoSTo));
+
+                 if(email->NoSTo > 0)
+                   SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+               }
+               else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
+                 SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+             }
+           }
+         }
+         else if(!stricmp(field, "cc"))
+         {
+           if(deep)
+           {
+             if(email->NoCC == 0)
+             {
+               SParse(value);
+               MA_GetRecipients(value, &(email->CC), &(email->NoCC));
+             }
+
+             if(email->NoCC > 0)
+               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+           }
+           else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
+             SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+         }
+         else if(!stricmp(field, "bcc"))
+         {
+           if(deep)
+           {
+             if(email->NoBCC == 0)
+             {
+               SParse(value);
+               MA_GetRecipients(value, &(email->BCC), &(email->NoBCC));
+             }
+
+             if(email->NoBCC > 0)
+               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+           }
+           else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
+             SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+         }
+         else if(!stricmp(field, "subject"))
+         {
+           SET_FLAG(ok, 4);
+           SParse(value);
+           stccpy(mail->Subject, Trim(value), SIZE_SUBJECT);
+         }
+         else if(!stricmp(field, "message-id"))
+         {
+           mail->cMsgID = CompressMsgID(p = Trim(value));
+           stccpy(email->MsgID, p, SIZE_MSGID);
+         }
+         else if(!stricmp(field, "in-reply-to"))
+         {
+           mail->cIRTMsgID = CompressMsgID(p = Trim(value));
+           stccpy(email->IRTMsgID, p, SIZE_MSGID);
+         }
+         else if(!stricmp(field, "date"))
+         {
+           dateFound = MA_ScanDate(mail, value);
+         }
+         else if(!stricmp(field, "importance"))
+         {
+           if(getImportanceLevel(mail) == IMP_NORMAL)
+           {
+             p = Trim(value);
+             if(!stricmp(p, "high"))
+               setImportanceLevel(mail, IMP_HIGH);
+             else if(!stricmp(p, "low"))
+               setImportanceLevel(mail, IMP_LOW);
+           }
+         }
+         else if(!stricmp(field, "priority"))
+         {
+           if(getImportanceLevel(mail) == IMP_NORMAL)
+           {
+             p = Trim(value);
+             if(!stricmp(p, "urgent"))
+               setImportanceLevel(mail, IMP_HIGH);
+             else if(!stricmp(p, "non-urgent"))
+               setImportanceLevel(mail, IMP_HIGH);
+           }
+         }
+         else if(!stricmp(field, "content-type"))
+         {
+           p = Trim(value);
+           if(!strnicmp(p, "multipart", 9))
+           {
+             p += 10;
+
+             if(!strnicmp(p, "mixed", 5))
+               SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+             else if(!strnicmp(p, "report", 6))
+               SET_FLAG(mail->mflags, MFLAG_MP_REPORT);
+             else if(!strnicmp(p, "encrypted", 9))
+               SET_FLAG(mail->mflags, MFLAG_MP_CRYPT);
+             else if(!strnicmp(p, "signed", 6))
+               SET_FLAG(mail->mflags, MFLAG_MP_SIGNED);
+             else if(!strnicmp(p, "alternative", 11))
+               SET_FLAG(mail->mflags, MFLAG_MP_ALTERN);
+           }
+         }
+         else if(!stricmp(field, "x-senderinfo"))
+         {
+            SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
+            SParse(value);
+            if(deep)
+              email->SenderInfo = StrBufCpy(email->SenderInfo, value);
+         }
+         else if(deep) // and if we end up here we check if we really have to go further
+         {
+           if(!stricmp(field, "x-yam-options"))
+           {
+             enum Security sec;
+
+             if(strstr(value, "delsent"))
+               email->DelSend = TRUE;
+
+             if((p = strstr(value, "sigfile")))
+               email->Signature = p[7]-'0'+1;
+
+             for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
+             {
+               if(strstr(value, SecCodes[sec]))
+                 email->Security = sec;
+             }
+           }
+           else if(!strnicmp(field, "x-yam-header-", 13))
+           {
+             email->extraHeaders = StrBufCat(StrBufCat(email->extraHeaders, &field[13]), ":");
+             email->extraHeaders = StrBufCat(StrBufCat(email->extraHeaders, value), "\\n");
+           }
+         }
+
       }
 
       // if now the mail is still not MULTIPART we have to check for uuencoded attachments
       if(!isMP_MixedMail(mail) && MA_DetectUUE(fh))
         SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
 
-      // And now we close the Mailfile
+      // And now we close the Mailfile and clear the temporary headerList again
       fclose(fh);
+      FreeHeaderList(&headerList);
 
-      FreeData2D(&Header);
       if((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address))
         strcpy(mail->ReplyTo.RealName, mail->From.RealName);
 

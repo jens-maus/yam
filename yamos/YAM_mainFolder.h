@@ -66,7 +66,7 @@ struct ExtendedMail
    struct Person *  STo;
    struct Person *  CC;
    struct Person *  BCC;
-   char *           Headers;
+   char *           extraHeaders; // YAM internal headers (X-YAM-...)
    char *           SenderInfo;
    int              NoSTo;
    int              NoCC;
@@ -83,11 +83,10 @@ struct ExtendedMail
    char             IRTMsgID[SIZE_MSGID];
 };
 
-extern struct Data2D Header;
-extern struct Hook   MA_ChangeFolderHook;
-extern struct Hook   MA_FlushIndexHook;
-extern struct Hook   MA_LV_FDspFuncHook;
-extern struct Hook   PO_InitFolderListHook;
+extern struct Hook MA_ChangeFolderHook;
+extern struct Hook MA_FlushIndexHook;
+extern struct Hook MA_LV_FDspFuncHook;
+extern struct Hook PO_InitFolderListHook;
 
 void  MA_ChangeFolder(struct Folder *folder, BOOL set_active);
 void  MA_ExpireIndex(struct Folder *folder);
@@ -100,7 +99,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full);
 void  MA_MakeFOFormat(Object *lv);
 char *MA_NewMailFile(struct Folder *folder, char *mailfile);
 BOOL  MA_PromptFolderPassword(struct Folder *fo, APTR win);
-BOOL  MA_ReadHeader(FILE *fh);
+BOOL  MA_ReadHeader(FILE *fh, struct MinList *headerList);
 BOOL  MA_SaveIndex(struct Folder *folder);
 BOOL  MA_ScanMailBox(struct Folder *folder);
 void  MA_UpdateIndexes(BOOL initial);

@@ -101,10 +101,11 @@ struct ReadMailData
 
 struct Part
 {
-   struct Part         *Prev;
-   struct Part         *Next;
-   struct Part         *NextSelected;
+   struct Part         *Prev;               // ptr to previous part or NULL
+   struct Part         *Next;               // ptr to next part or NULL
+   struct Part         *NextSelected;       // ptr to next selected or NULL
    struct ReadMailData *rmData;             // ptr to the parent readmail Data
+   struct MinList      *headerList;         // ptr to a list of headers or NULL
    char                *ContentType;
    char                *ContentDisposition;
    char                *JunkParameter;
@@ -115,7 +116,7 @@ struct Part
    char                *CParDesc;
    char                *CParRType;
    char                *CParCSet;
-   LONG                 Size;
+   long                 Size;
    int                  MaxHeaderLen;
    int                  Nr;
    BOOL                 HasHeaders;
@@ -129,6 +130,13 @@ struct Part
    char                 Boundary[SIZE_DEFAULT];
 };
 
+struct HeaderNode
+{
+  struct MinNode node; // required for placing it into struct Part
+  char *name;          // the name of the header - without ':'
+  char *content;       // the content of the header
+};
+
 BOOL  RE_DecodePart(struct Part *rp);
 void  RE_DisplayMIME(char *fname, char *ctype);
 BOOL  RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi);
@@ -137,6 +145,7 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
 struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode);
 void FreePrivateRMData(struct ReadMailData *rmData);
 BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup);
+void FreeHeaderList(struct MinList *headerList);
 BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode);
 char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode rMode);
 void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab);

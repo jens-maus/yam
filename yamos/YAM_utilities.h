@@ -108,13 +108,6 @@ struct BodyChunkData
    char    File[SIZE_NAME];
 };
 
-struct Data2D
-{
-   int Allocated;
-   int Used;
-   char **Data;
-};
-
 struct NewToolbarEntry
 {
    APTR label;
@@ -259,7 +252,6 @@ Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 // all the utility prototypes
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 APTR     AllocCopy(APTR source, int size);
-char *   AllocData2D(struct Data2D *data, size_t initsize);
 char *   AllocReqText(char *s);
 char *   AllocStrBuf(size_t initlen);
 void     AppendLog(int id, char *text, void *a1, void *a2, void *a3, void *a4);
@@ -320,7 +312,6 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
          struct Folder *exclude, APTR parent);
 void     FormatSize(LONG size, char *buffer);
 void     FreeBCImage(struct BodyChunkData *bcd);
-void     FreeData2D(struct Data2D *data);
 struct BodyChunkData *GetBCImage(char *fname);
 time_t   GetDateStamp(void);
 char *   GetFolderDir(struct Folder *fo);
@@ -382,8 +373,8 @@ char     ShortCut(char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
 void STDARGS VARARGS68K SPrintF(char *outstr, char *fmtstr, ...);
 char *   StartUnpack(char *file, char *newfile, struct Folder *folder);
-char *   StrBufCat(char *strbuf, char *source);
-char *   StrBufCpy(char *strbuf, char *source);
+char *   StrBufCat(char *strbuf, const char *source);
+char *   StrBufCpy(char *strbuf, const char *source);
 char *   AppendToBuffer(char *buf, int *wptr, int *len, char *add);
 int      StringRequest(char *string, int size, char *title, char *body,
                        char *yestext, char *alttext, char *notext, BOOL secret, APTR parent);

@@ -1073,8 +1073,8 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
                 setstring(wr->GUI.ST_TO, sbuf);
 
               FreeStrBuf(sbuf);
-              if(email->Headers)
-                setstring(wr->GUI.ST_EXTHEADER, email->Headers);
+              if(email->extraHeaders)
+                setstring(wr->GUI.ST_EXTHEADER, email->extraHeaders);
 
               setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
               setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
@@ -1669,7 +1669,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
          {
             char *cmsg;
 
-            if((cmsg = RE_ReadInMessage(rmData, RIM_READ)))
+            if((cmsg = RE_ReadInMessage(rmData, RIM_PRINT)))
             {
                struct TempFile *tf;
 
@@ -2018,12 +2018,21 @@ int MA_AllocRules(struct Search **search, enum ApplyMode mode)
 //  Frees filter search structures
 void MA_FreeRules(struct Search **search, int scnt)
 {
-   int i, j;
-   for (i = 0; i < scnt; i++) for (j = 0; j < 2; j++)
-   {
-      FreeData2D(&(search[i+j*MAXRU]->List));
-      free(search[i+j*MAXRU]);
-   }
+  int i, j;
+
+  for(i = 0; i < scnt; i++)
+  {
+    for(j = 0; j < 2; j++)
+    {
+      struct Search *curSearch = search[i+j*MAXRU];
+
+      if(curSearch)
+      {
+        FreeSearchPatternList(curSearch);
+        free(curSearch);
+      }
+    }
+  }
 }
 
 ///

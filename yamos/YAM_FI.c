@@ -108,11 +108,22 @@ static BOOL FI_MatchString(struct Search *search, char *string)
 //  Matches string against a list of patterns
 static BOOL FI_MatchListPattern(struct Search *search, char *string)
 {
-   int i;
-   for (i = 0; i < search->List.Used; i++)
-      if (search->CaseSens ? MatchPattern(search->List.Data[i], string)
-                           : MatchPatternNoCase(search->List.Data[i], string)) return TRUE;
-   return FALSE;
+  struct MinList *patternList = &search->patternList;
+  struct MinNode *curNode;
+
+  if(IsMinListEmpty(patternList) == TRUE)
+    return FALSE;
+
+  // Now we process the read header to set all flags accordingly
+  for(curNode = patternList->mlh_Head; curNode->mln_Succ;)
+  {
+    struct SearchPatternNode *patternNode = (struct PatternNode *)curNode;
+
+    if(search->CaseSens ? MatchPattern(patternNode->pattern, string)
+                        : MatchPatternNoCase(patternNode->pattern, string)) return TRUE;
+  }
+
+  return FALSE;
 }
 ///
 /// FI_MatchPerson
@@ -221,36 +232,67 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 //  Searches string in header field(s)
 static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 {
-   char *rptr, *line, fullfile[SIZE_PATHFILE];
-   BOOL found = FALSE;
-   FILE *fh;
-   int i;
+  char fullfile[SIZE_PATHFILE];
+  BOOL found = FALSE;
+  FILE *fh;
 
-   if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
-   {
-      if((fh = fopen(fullfile, "r")))
+  if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
+  {
+    if((fh = fopen(fullfile, "r")))
+    {
+      struct MinList *headerList = calloc(1, sizeof(struct MinList));
+
+      if(MA_ReadHeader(fh, headerList))
       {
-         MA_ReadHeader(fh);
+        struct MinNode *curNode = headerList->mlh_Head;
 
-         for(i = 0; i < Header.Used && !found; i++)
-         {
-            rptr = line = Header.Data[i];
+        // search through our headerList
+        for(; curNode->mln_Succ && !found; curNode = curNode->mln_Succ)
+        {
+          struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
 
-            if(*search->Field)
-            {
-               if(Strnicmp(line, search->Field, (LONG)strlen(search->Field)) != 0) continue;
-               else rptr = Trim(&line[strlen(search->Field)+1]);
-            }
+          // if the field is explicitly specified we search for it or
+          // otherwise skip our search
+          if(*search->Field)
+          {
+            int searchLen;
+            char *ptr = strchr(search->Field, ':');
 
-            if ((search->Compare == 4) ? FI_MatchListPattern(search, rptr) : FI_MatchString(search, rptr)) found = TRUE;
-         }
+            // if the field is specified we search if it was specified with a ':'
+            // at the end
+            if(ptr)
+              searchLen = ptr-(search->Field);
+            else
+              searchLen = strlen(search->Field);
 
-         FreeData2D(&Header);
-         fclose(fh);
+            if(strnicmp(hdrNode->name, search->Field, searchLen) != 0)
+              continue;
+          }
+
+          if(search->Compare == 4)
+          {
+            if(FI_MatchListPattern(search, hdrNode->content))
+              found = TRUE;
+          }
+          else if(FI_MatchString(search, hdrNode->content))
+            found = TRUE;
+        }
+
+        // free our temporary header list
+        FreeHeaderList(headerList);
       }
-      FinishUnpack(fullfile);
-   }
-   return found;
+
+      // free our temporary headerList
+      free(headerList);
+
+      // close the file
+      fclose(fh);
+    }
+
+    FinishUnpack(fullfile);
+  }
+
+  return found;
 }
 
 ///
@@ -277,15 +319,27 @@ static void FI_GenerateListPatterns(struct Search *search)
 
    if ((fh = fopen(search->Match, "r")))
    {
-      FreeData2D(&(search->List));
+      // make sure the pattern list is successfully freed
+      FreeSearchPatternList(search);
+
       while (GetLine(fh, buf, SIZE_PATTERN))
       {
          if(*buf)
          {
+            struct SearchPatternNode *newNode;
+
             if (search->CaseSens) ParsePattern      (buf, pattern, SIZE_PATTERN*2+2);
             else                  ParsePatternNoCase(buf, pattern, SIZE_PATTERN*2+2);
 
-            strcpy(AllocData2D(&search->List, strlen(pattern)+1), pattern);
+            // put the pattern in our search pattern list
+            if((newNode = calloc(1, sizeof(struct SearchPatternNode))))
+            {
+              strncpy(newNode->pattern, pattern, SIZE_PATTERN*2+2);
+              newNode->pattern[SIZE_PATTERN*2+2] = '\0';
+
+              // add the pattern to our list
+              AddTail((struct List *)&search->patternList, (struct Node *)newNode);
+            }
          }
       }
       fclose(fh);
@@ -311,6 +365,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
    stccpy(search->Field, field, SIZE_DEFAULT);
    search->Pattern = search->PatBuf;
    search->Fast = FS_NONE;
+   NewMinList(&search->patternList);
 
    switch(mode)
    {
@@ -644,7 +699,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    // signal the application to update now
    DoMethod(G->App, MUIM_Application_InputBuffered);
 
-   FreeData2D(&(search.List));
+   FreeSearchPatternList(&search);
    free(sfo);
    set(gui->GR_PAGE, MUIA_Group_ActivePage, 0);
    set(gui->BT_SELECT, MUIA_Disabled, !fndmsg);
@@ -825,7 +880,13 @@ Object *FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote)
       Child, HGroup,
          Child, Label1(GetStr(MSG_FI_SearchIn)),
             Child, gdata->CY_MODE = MakeCycle(fldopt[f],GetStr(MSG_FI_SearchIn)),
-            Child, gdata->ST_FIELD = MakeString(SIZE_DEFAULT, ""),
+            Child, gdata->ST_FIELD = BetterStringObject,
+              StringFrame,
+              MUIA_String_Accept,      "!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvwxyz{|}~",
+              MUIA_String_MaxLen,      SIZE_DEFAULT,
+              MUIA_String_AdvanceOnCR, TRUE,
+              MUIA_CycleChain,         TRUE,
+            End,
          End,
          Child, gdata->PG_SRCHOPT = PageGroup,
             Child, VGroup, /* 0  from, to, cc, reply-to */
@@ -1052,6 +1113,32 @@ HOOKPROTONHNONP(FI_Close, void)
    }
 }
 MakeStaticHook(FI_CloseHook, FI_Close);
+///
+/// FreeSearchPatternList()
+// Function to make the whole pattern list is correctly cleaned up
+void FreeSearchPatternList(struct Search *search)
+{
+  struct MinList *patternList = &search->patternList;
+  struct MinNode *curNode;
+
+  if(IsMinListEmpty(patternList) == TRUE)
+    return;
+
+  // Now we process the read header to set all flags accordingly
+  for(curNode = patternList->mlh_Head; curNode->mln_Succ;)
+  {
+    struct PatternNode *patternNode = (struct PatternNode *)curNode;
+
+    // before we remove the node we have to save the pointer to the next one
+    curNode = curNode->mln_Succ;
+
+    // Remove node from list
+    Remove((struct Node *)patternNode);
+
+    free(patternNode);
+  }
+}
+
 ///
 
 /*** GUI ***/

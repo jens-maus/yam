@@ -865,81 +865,117 @@ static void RE_ParseContentDispositionParameters(struct Part *rp)
 //  Parses the header of the message or of a message part
 static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 {
-   int i;
-   char *p;
+  char *p;
+  struct MinNode *curNode;
 
-   if (!MA_ReadHeader(in))
-   {
-      if (mode == 0) ER_NewError(GetStr(MSG_ER_MIMEError), NULL, NULL);
-      else if (mode == 1) ER_NewError(GetStr(MSG_ER_MultipartEOF), NULL, NULL);
-
-      rp->HasHeaders = FALSE;
+  // check if we already have a headerList and if so we clean it first
+  if(rp->headerList)
+    FreeHeaderList(rp->headerList);
+  else
+  {
+    // we do not have any headerList yet so lets allocate a new one
+    if((rp->headerList = calloc(1, sizeof(struct MinList))) == NULL)
       return FALSE;
-   }
+  }
 
-   rp->HasHeaders = TRUE;
-   for (i = 0; i < Header.Used; i++)
-   {
-      char *s = Header.Data[i];
-      int ls = strlen(s);
-      if(ls > rp->MaxHeaderLen)
-        rp->MaxHeaderLen = ls;
-      if (out) { fputs(s, out); fputc('\n', out); }
-      if (!strnicmp(s, "content-type:", 13))
-      {
-         rp->ContentType = StrBufCpy(rp->ContentType, p = stpblk(&s[13]));
-         while (TRUE)
-         {
-            if (!(p = strchr(rp->ContentType, '/'))) break;
-            if (ISpace(*(p-1)))     for (--p; *p; ++p) *p = *(p+1);
-            else if(ISpace(*(p+1))) for (++p; *p; ++p) *p = *(p+1);
-            else break;
-         }
-         StripTrailingSpace(rp->ContentType);
-         RE_ParseContentParameters(rp);
-      }
-      else if (!strnicmp(s, "content-transfer-encoding:", 26))
-      {
-         char buf[SIZE_DEFAULT];
-         stccpy(p = buf, stpblk(&s[26]), SIZE_DEFAULT);
-         StripTrailingSpace(p);
+  // we read in the headers from our mail file
+  if(!MA_ReadHeader(in, rp->headerList))
+  {
+    if(mode == 0)
+      ER_NewError(GetStr(MSG_ER_MIMEError), NULL, NULL);
+    else if(mode == 1)
+      ER_NewError(GetStr(MSG_ER_MultipartEOF), NULL, NULL);
 
-         // As the content-transfer-encoding field is mostly used in
-         // attachment MIME fields, we first check for common attachement encodings
-         if     (!stricmp(p, "base64"))                        rp->EncodingCode = ENC_B64;
-         else if(!stricmp(p, "quoted-printable"))              rp->EncodingCode = ENC_QP;
-         else if(!strnicmp(p, "x-uue", 5))                     rp->EncodingCode = ENC_UUE;
-         else if(!stricmp(p, "8bit") || !stricmp(p, "8-bit"))  rp->EncodingCode = ENC_8BIT;
-         else if(!stricmp(p, "binary"))                        rp->EncodingCode = ENC_BIN;
-         else if(!stricmp(p, "7bit") || !stricmp(p, "7-bit")
-                 || !stricmp(p, "none"))                       rp->EncodingCode = ENC_NONE;
-         else
-         {
-            ER_NewError(GetStr(MSG_ER_UnknownEnc), p, NULL);
-         }
-      }
-      else if (!strnicmp(s, "content-description:", 20))
+    rp->HasHeaders = FALSE;
+    return FALSE;
+  }
+  else
+    rp->HasHeaders = TRUE;
+
+  // Now we process the read header to set all flags accordingly
+  for(curNode = rp->headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+    char *field = hdrNode->name;
+    char *value = hdrNode->content;
+    int headerLen = strlen(field)+strlen(value)+2;
+
+    // check the real one-line headerLen
+    if(headerLen > rp->MaxHeaderLen)
+      rp->MaxHeaderLen = headerLen;
+
+    // if we have a fileoutput pointer lets write out the header immediatly
+    if(out)
+      fprintf(out, "%s: %s\n", field, value);
+
+    if(!stricmp(field, "content-type"))
+    {
+      rp->ContentType = StrBufCpy(rp->ContentType, p=value);
+
+      // now we scan for the content subtype and strip eventually
+      // existing spaces in front or after the dividing '/'
+      do
       {
-         stccpy(rp->Description, stpblk(&s[20]), SIZE_DEFAULT);
+        if(!(p = strchr(rp->ContentType, '/'))) break;
+
+        if (ISpace(*(p-1)))     for (--p; *p; ++p) *p = *(p+1);
+        else if(ISpace(*(p+1))) for (++p; *p; ++p) *p = *(p+1);
+        else break;
       }
-      else if (!strnicmp(s, "content-disposition:", 20))
+      while(1);
+
+      StripTrailingSpace(rp->ContentType);
+      RE_ParseContentParameters(rp);
+    }
+    else if(!stricmp(field, "content-transfer-encoding"))
+    {
+      char buf[SIZE_DEFAULT];
+
+      stccpy(p = buf, value, SIZE_DEFAULT);
+      StripTrailingSpace(p);
+
+      // As the content-transfer-encoding field is mostly used in
+      // attachment MIME fields, we first check for common attachement encodings
+      if     (!stricmp(p, "base64"))                        rp->EncodingCode = ENC_B64;
+      else if(!stricmp(p, "quoted-printable"))              rp->EncodingCode = ENC_QP;
+      else if(!strnicmp(p, "x-uue", 5))                     rp->EncodingCode = ENC_UUE;
+      else if(!stricmp(p, "8bit") || !stricmp(p, "8-bit"))  rp->EncodingCode = ENC_8BIT;
+      else if(!stricmp(p, "binary"))                        rp->EncodingCode = ENC_BIN;
+      else if(!stricmp(p, "7bit") || !stricmp(p, "7-bit") ||
+              !stricmp(p, "none"))                          rp->EncodingCode = ENC_NONE;
+      else
       {
-        // if we found a content-disposition field we have to parse it for
-        // some information.
-        rp->ContentDisposition = StrBufCpy(rp->ContentDisposition, p = stpblk(&s[20]));
-        while (TRUE)
-        {
-          if (!(p = strchr(rp->ContentDisposition, '/'))) break;
-          if (ISpace(*(p-1)))       for (--p; *p; ++p) *p = *(p+1);
-          else if(ISpace(*(p+1)))   for (++p; *p; ++p) *p = *(p+1);
-          else break;
-        }
-        StripTrailingSpace(rp->ContentDisposition);
-        RE_ParseContentDispositionParameters(rp);
+        ER_NewError(GetStr(MSG_ER_UnknownEnc), p, NULL);
       }
-   }
-   for (p = rp->ContentType; *p; ++p) if (isupper((int)*p)) *p = tolower((int)*p);
-   return TRUE;
+    }
+    else if(!stricmp(field, "content-description"))
+    {
+      stccpy(rp->Description, value, SIZE_DEFAULT);
+    }
+    else if(!stricmp(field, "content-disposition"))
+    {
+      // if we found a content-disposition field we have to parse it for
+      // some information.
+      rp->ContentDisposition = StrBufCpy(rp->ContentDisposition, p = value);
+
+      // now we scan for the content disposition subtype and strip eventually
+      // existing spaces in front or after the dividing '/'
+      do
+      {
+        if(!(p = strchr(rp->ContentDisposition, '/'))) break;
+
+        if(ISpace(*(p-1)))       for (--p; *p; ++p) *p = *(p+1);
+        else if(ISpace(*(p+1)))  for (++p; *p; ++p) *p = *(p+1);
+        else break;
+      }
+      while(1);
+
+      StripTrailingSpace(rp->ContentDisposition);
+      RE_ParseContentDispositionParameters(rp);
+    }
+  }
+
+  return TRUE;
 }
 ///
 /// RE_ConsumeRestOfPart
@@ -1289,6 +1325,13 @@ static void RE_UndoPart(struct Part *rp)
    if (rp->Prev) rp->Prev->Next = rp->Next;
    if (rp->Next) rp->Next->Prev = rp->Prev;
 
+   // free an eventually existing headerList
+   if(rp->headerList)
+   {
+     FreeHeaderList(rp->headerList);
+     free(rp->headerList);
+   }
+
    // free some string buffers
    FreeStrBuf(rp->ContentType);
    FreeStrBuf(rp->ContentDisposition);
@@ -1501,6 +1544,7 @@ if(fname)
     kprintf("  Size.......: %ld\n", rp->Size);
     kprintf("  Nextptr....: %lx\n", rp->Next);
     kprintf("  Prevptr....: %lx\n", rp->Prev);
+    kprintf("  headerList.: %lx\n", rp->headerList);
   }
 }
 #endif
@@ -1596,67 +1640,104 @@ BOOL RE_DecodePart(struct Part *rp)
 //  Translates a message disposition notification to readable text
 static void RE_HandleMDNReport(struct Part *frp)
 {
-   struct Part *rp[3];
-   char file[SIZE_FILE], buf[SIZE_PATHFILE], MDNtype[SIZE_DEFAULT];
-   char *msgdesc, *mode = "", *type;
-   int i, j;
-   FILE *out, *fh;
+  struct Part *rp[3];
+  char file[SIZE_FILE], buf[SIZE_PATHFILE], MDNtype[SIZE_DEFAULT];
+  char *msgdesc, *mode = "", *type;
+  int j;
+  FILE *out, *fh;
 
-   if ((rp[0] = frp->Next)) if ((rp[1] = rp[0]->Next))
-   {
-      rp[2] = rp[1]->Next;
-      msgdesc = AllocStrBuf(80);
-      strcpy(MDNtype, "");
-      for (j = 1; j < (rp[2] ? 3 : 2); j++)
+  if((rp[0] = frp->Next) && (rp[1] = rp[0]->Next))
+  {
+    rp[2] = rp[1]->Next;
+    msgdesc = AllocStrBuf(80);
+    strcpy(MDNtype, "");
+
+    for(j = 1; j < (rp[2] ? 3 : 2); j++)
+    {
+      RE_DecodePart(rp[j]);
+
+      if((fh = fopen(rp[j]->Filename, "r")))
       {
-         RE_DecodePart(rp[j]);
-         if ((fh = fopen(rp[j]->Filename, "r")))
-         {
-            MA_ReadHeader(fh);
-            fclose(fh);
-            for (i = 0; i < Header.Used; i++)
+        struct MinList *headerList = calloc(1, sizeof(struct MinList));
+
+        if(headerList)
+        {
+          // read in the header into the headerList
+          MA_ReadHeader(fh, headerList);
+          fclose(fh);
+
+          if(IsMinListEmpty(headerList) == FALSE)
+          {
+            struct MinNode *curNode;
+
+            for(curNode = headerList->mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
             {
-               char *value, *field = Header.Data[i];
-               if ((value = strchr(field, ':')))
-               {
-                  *value++ = 0;
-                  if (!stricmp(field, "from")) msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNFrom)), value);
-                  else if (!stricmp(field, "to")) msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNTo)), value);
-                  else if (!stricmp(field, "subject")) msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNSubject)), value);
-                  else if (!stricmp(field, "original-message-id")) msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNMessageID)), value);
-                  else if (!stricmp(field, "date")) msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNDate)), value);
-                  else if (!stricmp(field, "original-recipient")) msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNOrigRecpt)), value);
-                  else if (!stricmp(field, "final-recipient")) msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNFinalRecpt)), value);
-                  else if (!stricmp(field, "disposition")) stccpy(MDNtype, Trim(value), SIZE_DEFAULT);
-               }
-            }
-            FreeData2D(&Header);
-         }
+              struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+              char *field = hdrNode->name;
+              char *value = hdrNode->content;
+
+              if(!stricmp(field, "from"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNFrom)), value);
+              else if(!stricmp(field, "to"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNTo)), value);
+              else if(!stricmp(field, "subject"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNSubject)), value);
+              else if(!stricmp(field, "original-message-id"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNMessageID)), value);
+              else if(!stricmp(field, "date"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNDate)), value);
+              else if(!stricmp(field, "original-recipient"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNOrigRecpt)), value);
+              else if(!stricmp(field, "final-recipient"))
+                msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNFinalRecpt)), value);
+              else if(!stricmp(field, "disposition"))
+                stccpy(MDNtype, Trim(value), SIZE_DEFAULT);
+             }
+          }
+
+          FreeHeaderList(headerList);
+          free(headerList);
+        }
       }
-      msgdesc = StrBufCat(msgdesc, "\n");
-      if (!strnicmp(MDNtype, "manual-action", 13)) mode = GetStr(MSG_RE_MDNmanual);
-      if (!strnicmp(MDNtype, "automatic-action", 16)) mode = GetStr(MSG_RE_MDNauto);
-      if ((type = strchr(MDNtype, ';'))) type = Trim(++type); else type = MDNtype;
-      sprintf(file, "YAMm%08lx-p%d.txt", (ULONG)rp[0]->rmData->mail, rp[0]->Nr);
-      strmfp(buf, C->TempDir, file);
-      if ((out = fopen(buf, "w")))
-      {
-         if      (!stricmp(type, "displayed"))  fprintf(out, GetStr(MSG_RE_MDNdisplay), msgdesc);
-         else if (!stricmp(type, "processed"))  fprintf(out, GetStr(MSG_RE_MDNprocessed), msgdesc, mode);
-         else if (!stricmp(type, "dispatched")) fprintf(out, GetStr(MSG_RE_MDNdispatched), msgdesc, mode);
-         else if (!stricmp(type, "deleted"))    fprintf(out, GetStr(MSG_RE_MDNdeleted), msgdesc, mode);
-         else if (!stricmp(type, "denied"))     fprintf(out, GetStr(MSG_RE_MDNdenied), msgdesc);
-         else fprintf(out, GetStr(MSG_RE_MDNunknown), msgdesc, type, mode);
-         fclose(out);
-         DeleteFile(rp[0]->Filename);
-         strcpy(rp[0]->Filename, buf);
-         rp[0]->Decoded = TRUE;
-         RE_SetPartInfo(rp[0]);
-         if (rp[2]) RE_UndoPart(rp[2]);
-         RE_UndoPart(rp[1]);
-      }
-      FreeStrBuf(msgdesc);
-   }
+    }
+
+    msgdesc = StrBufCat(msgdesc, "\n");
+
+    if(!strnicmp(MDNtype, "manual-action", 13))
+      mode = GetStr(MSG_RE_MDNmanual);
+    else if(!strnicmp(MDNtype, "automatic-action", 16))
+      mode = GetStr(MSG_RE_MDNauto);
+
+    if((type = strchr(MDNtype, ';')))
+      type = Trim(++type);
+    else
+      type = MDNtype;
+
+    sprintf(file, "YAMm%08lx-p%d.txt", (ULONG)rp[0]->rmData->mail, rp[0]->Nr);
+    strmfp(buf, C->TempDir, file);
+
+    if((out = fopen(buf, "w")))
+    {
+      if     (!stricmp(type, "displayed"))  fprintf(out, GetStr(MSG_RE_MDNdisplay), msgdesc);
+      else if(!stricmp(type, "processed"))  fprintf(out, GetStr(MSG_RE_MDNprocessed), msgdesc, mode);
+      else if(!stricmp(type, "dispatched")) fprintf(out, GetStr(MSG_RE_MDNdispatched), msgdesc, mode);
+      else if(!stricmp(type, "deleted"))    fprintf(out, GetStr(MSG_RE_MDNdeleted), msgdesc, mode);
+      else if(!stricmp(type, "denied"))     fprintf(out, GetStr(MSG_RE_MDNdenied), msgdesc);
+      else fprintf(out, GetStr(MSG_RE_MDNunknown), msgdesc, type, mode);
+      fclose(out);
+
+      DeleteFile(rp[0]->Filename);
+      strcpy(rp[0]->Filename, buf);
+      rp[0]->Decoded = TRUE;
+      RE_SetPartInfo(rp[0]);
+      if(rp[2])
+        RE_UndoPart(rp[2]);
+
+      RE_UndoPart(rp[1]);
+    }
+
+    FreeStrBuf(msgdesc);
+  }
 }
 ///
 /// RE_HandleSignedMessage
@@ -1952,9 +2033,10 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
       BusyText(GetStr(MSG_BusyDisplaying), "");
 
     // then we copy the first part (which is the header of the mail
-    // into our final buffer because we don`t need to preparse it
-    // but only if we are in READ mode
-    if(mode == RIM_READ)
+    // into our final buffer because we don`t need to preparse it. However, we just
+    // have to do it in RIM_PRINT mode because all other modes do take
+    // respect of the headerList
+    if(mode == RIM_PRINT)
     {
       FILE *fh;
 
@@ -2429,7 +2511,7 @@ void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
        }
        MA_FreeEMailStruct(email);
      }
-   }
+  }
 }
 ///
 /// RE_UpdateSenderInfo
@@ -2788,11 +2870,18 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
     if(*part->Filename)
       DeleteFile(part->Filename);
 
-    if(part->ContentType)
-      FreeStrBuf(part->ContentType);
+    if(part->headerList)
+    {
+      FreeHeaderList(part->headerList);
+      free(part->headerList);
+      part->headerList = NULL;
+    }
 
-    if(part->ContentDisposition)
-      FreeStrBuf(part->ContentDisposition);
+    FreeStrBuf(part->ContentType);
+    part->ContentType = NULL;
+
+    FreeStrBuf(part->ContentDisposition);
+    part->ContentDisposition = NULL;
 
     free(part);
   }
@@ -2837,3 +2926,33 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
 }
 
 ///
+/// FreeHeaderList()
+// Free all items of an existing header list
+void FreeHeaderList(struct MinList *headerList)
+{
+  struct MinNode *curNode;
+
+  if(headerList == NULL || IsMinListEmpty(headerList) == TRUE)
+    return;
+
+  // Now we process the read header to set all flags accordingly
+  for(curNode = headerList->mlh_Head; curNode->mln_Succ;)
+  {
+    struct HeaderNode *hdrNode = (struct HeaderNode *)curNode;
+
+    // before we remove the node we have to save the pointer to the next one
+    curNode = curNode->mln_Succ;
+
+    // Remove node from list
+    Remove((struct Node *)hdrNode);
+
+    // Free everything of the node
+    FreeStrBuf(hdrNode->name);
+    FreeStrBuf(hdrNode->content);
+
+    free(hdrNode);
+  }
+}
+
+///
+

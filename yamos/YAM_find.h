@@ -91,7 +91,13 @@ struct Search
    char            PatBuf[(SIZE_PATTERN+4)*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
    char            Field[SIZE_DEFAULT];
    struct DateTime DT;
-   struct Data2D   List;
+   struct MinList  patternList;                  // for storing search patterns
+};
+
+struct SearchPatternNode
+{
+  struct MinNode node;            // for storing it into the patternList
+  char pattern[SIZE_PATTERN*2+2]; // for storing the already parsed pattern
 };
 
 extern struct Hook FI_OpenHook;
@@ -102,5 +108,6 @@ Object *FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote);
 BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail);
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, char stat, BOOL substr, char *match, char *field);
 void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled);
+void FreeSearchPatternList(struct Search *search);
 
 #endif /* YAM_FIND_H */

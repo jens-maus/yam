@@ -1800,8 +1800,6 @@ int main(int argc, char **argv)
       AppendLog(99, GetStr(MSG_LOG_Terminated), "", "", "", "");
       MA_StartMacro(MACRO_QUIT, NULL);
 
-      FreeData2D(&Header);
-
       // if the user really wants to exit, do it now as Terminate() is broken !
       if(ret == 1) exit(0);
 
