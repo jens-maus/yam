@@ -58,11 +58,7 @@
 
 extern struct ExecBase *SysBase;
 extern struct DosLibrary *DOSBase;
-#ifndef _DCC
 extern struct RxsLib *RexxSysBase;
-#else
-extern struct Library *RexxSysBase;
-#endif
 
 
 /* $ARB: I 876664321 */
