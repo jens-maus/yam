@@ -92,8 +92,8 @@ static void CO_NewPrefsFile(char *fname)
 //  Initializes a new rule
 struct Rule *CO_NewRule(void)
 {
-   struct Rule *rule;
-   if (rule = calloc(1,sizeof(struct Rule)))
+   struct Rule *rule = calloc(1, sizeof(struct Rule));
+   if (rule)
    {
       strcpy(rule->Name, GetStr(MSG_NewEntry));
       rule->ApplyToNew = rule->ApplyOnReq = TRUE;
@@ -318,12 +318,13 @@ MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
 //  Initializes a new POP3 account
 struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
 {
-   struct POP3 *pop3;
-   if (pop3 = calloc(1, sizeof(struct POP3)))
+   struct POP3 *pop3 = calloc(1, sizeof(struct POP3));
+   if (pop3)
    {
       if (first)
       {
          char *p, buffer[SIZE_USERID];
+
          stccpy(buffer, co->EmailAddress, SIZE_USERID);
          if (p = strchr(buffer, '@')) *p = 0;
          strcpy(pop3->User, buffer);
@@ -442,8 +443,8 @@ MakeHook(CO_GetDefaultPOPHook,CO_GetDefaultPOPFunc);
 //  Initializes a new MIME viewer
 struct MimeView *CO_NewMimeView(void)
 {
-   struct MimeView *mv;
-   if (mv = calloc(1, sizeof(struct MimeView)))
+   struct MimeView *mv = calloc(1, sizeof(struct MimeView));
+   if (mv)
    {
       stccpy(mv->ContentType, "?/?", SIZE_CTYPE);
    }
@@ -1138,13 +1139,13 @@ enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_RES
 
 static struct CO_ClassData *CO_New(void)
 {
-   struct CO_ClassData *data;
-
-   if (data = calloc(1,sizeof(struct CO_ClassData)))
+   struct CO_ClassData *data = calloc(1, sizeof(struct CO_ClassData));
+   if (data)
    {
       static struct PageList page[MAXCPAGES], *pages[MAXCPAGES+1];
       APTR lv;
       int i;
+
       for (i = 0; i < MAXCPAGES; i++) { page[i].Offset = i; pages[i] = &page[i]; }
       pages[i] = NULL;
       page[ 0].PageLabel = MSG_CO_CrdFirstSteps;
@@ -1232,5 +1233,5 @@ static struct CO_ClassData *CO_New(void)
       free(data);
    }
    return NULL;
-}  
+}
 ////
