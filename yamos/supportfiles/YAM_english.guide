@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (03.04.2003)
+@$VER: YAM.guide 2.4 (11.04.2003)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -8,6 +8,7 @@
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
+
  the Free Software Foundation; either version 2 of the License, or
  (at your option) any later version.
 
@@ -249,9 +250,10 @@ Software
    * AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX], TermiteTCP, RoadShow)
    * optional: XPK for compression of articles
    * optional: PGP 2.6 or 5.0 for encryption and signing messages
-   * optional: AmiSSL for TLSv1/SSLv3 security layers over SMTP/POP
+   * optional: AmiSSL v1 for TLSv1/SSLv3 security layers over SMTP/POP
    * optional: Archiver for attachment compression, e.g.  LhA
    * optional: Program for spell-checking, e.g.  AlphaSpell
+   * optional: AutoDST tool, e.g. SetDST, SummerTimeGuard
 
 @endnode
 
@@ -1161,7 +1163,7 @@ Configuration - First steps
      By doing so, one hour will be added to the time zone value.
 
      YAM automatically changes to/from daylight saving time if
-     @{b}SummertimeGuard@{ub} is installed.
+     a @{ " AutoDST " link "TIP5"} tool like @{b}SetDST@{ub} or @{b}SummertimeGuard@{ub} is installed.
 
 @endnode
 
@@ -9907,11 +9909,12 @@ Tips & tricks
 *************
 
 
- @{" Snapshotting the window positions and sizes     " link "TIP0"}
- @{" Avoiding context menus from getting on your way " link "TIP1"}
- @{" Moving YAM to another partition or directory    " link "TIP2"}
- @{" Avoiding excessive disk trashing on startup     " link "TIP3"}
- @{" Using Mailing list support settings properly    " link "TIP4"}
+ @{" Snapshotting the window positions and sizes      " link "TIP0"}
+ @{" Avoiding context menus from getting on your way  " link "TIP1"}
+ @{" Moving YAM to another partition or directory     " link "TIP2"}
+ @{" Avoiding excessive disk trashing on startup      " link "TIP3"}
+ @{" Using Mailing list support settings properly     " link "TIP4"}
+ @{" Setting Daylight Savings time properly (AutoDST) " line "TIP5"}
 
 @endnode
 
@@ -10025,7 +10028,7 @@ which can indeed take a long time.
 @endnode
 
 @node "TIP4" "Using Mailing list support settings properly"
-@next "TIP0"
+@next "TIP5"
 @prev "TIP3"
 @toc "TIPS"
 
@@ -10095,6 +10098,50 @@ settings to your advantage.
    Please note that only one address can be entered into these fields.
    Also, some mail servers refuse to transmit messages apparently not
    originating from within their own domain.
+
+@endnode
+
+@node "TIP5" "Setting Daylight Savings time properly (AutoDST)"
+@next "TIP0"
+@prev "TIP4"
+@toc "TIPS"
+
+Setting Daylight Savings time properly (AutoDST)
+------------------------------------------------
+
+   Amiga systems lacks one important feature concerning the timezone
+handling - there is no method in Locale to indicate that a system is
+currently operating within daylight saving time. It also lacks the
+possibility to automatically detect the change from/to daylight saving.
+This could lead to problems if you send emails while your timezone
+settings are incorrect just because you forgot to set the DST settings
+correct.
+
+   As this is a common problem on AmigaOS systems, there are also some,
+more or less, good third party solutions for automatic DST setting.
+YAM currently supports 3 methods to indicate if your system operates in
+DST mode or not. While starting, YAM tries to find several environment
+variables which are normally generated/modified by such AutoDST tools:
+
+   1) SetDST (ENV:TZONE)
+      [http://www.sfxsoft.de/de/setdst.html]
+
+   2) SummerTimeGuard (ENV:SUMMERTIME)
+      [http://us.aminet.net/pub/aminet/utils/time/sguard.lha]
+
+   3) ENV:IXGMTOFFSET
+      ixemul specific gmtoffset variable that is used/modified by the
+			ixtimezone tools of the geekgadgets package.
+
+   If YAM was able to find one of these three environment variables it
+will automatically adjust the Daylight Savings setting of the configuration
+and disable the possibility to switch DST manually within YAM. Please note
+that if such a AutoDST variant was found, YAM will also poll every hour
+for a DST change, so that you don't have to restart YAM.
+
+   So if you want to get rid of all this manual DST back/forward setting
+all year, simply install one of the above (or similar) AutoDST system and
+you should never have to worry about all that timezone mess.
 
 @endnode
 
@@ -10812,6 +10859,7 @@ or for administrating mailing lists.
    @{" ARexx, Defining macros launched by events " link "CO13"}
    @{" ATTACH, Tooltype " link "RF00"}
    @{" Authors " link "CRED"}
+	 @{" AutoDST " link "TIP5"}
    @{" Automatic charset translation " link "CO04"}
    @{" Automatic mail checking " link "CO02"}
    @{" Avoid duplicates " link "CO02"}
