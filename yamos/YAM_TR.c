@@ -940,12 +940,12 @@ BOOL TR_ConnectESMTP(void)
                /* Get return code. */
                if ((rc=strtol(buffer, &p, 10)) != 235 )
                {
-                  ER_NewError( "SMTP Authentication failed! (CRAM-MD5: %s) Maybe wrong password?\n",buffer,NULL);
+                  ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH CRAM-MD5", buffer);
                   rc = SMTP_SERVICE_NOT_AVAILABLE;
                } else rc = SMTP_ACTION_OK;
             } else rc = SMTP_SERVICE_NOT_AVAILABLE;
          } else {
-            ER_NewError( "SMTP Authentication failed! (%s)\n",buffer,NULL);
+            ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH CRAM-MD5", buffer);
             rc = SMTP_SERVICE_NOT_AVAILABLE;
          }
       } else rc = SMTP_SERVICE_NOT_AVAILABLE;
@@ -985,12 +985,12 @@ BOOL TR_ConnectESMTP(void)
                /* Get return code. */
                if ((rc=strtol(buffer, &p, 10)) != 235 )
                {
-                  ER_NewError( "SMTP Authentication failed! (DIGEST-MD5: %s) Maybe wrong password?\n",buffer,NULL);
+                  ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH DIGEST-MD5", buffer);
                   rc = SMTP_SERVICE_NOT_AVAILABLE;
                } else rc = SMTP_ACTION_OK;
             } else rc = SMTP_SERVICE_NOT_AVAILABLE;
          } else {
-            ER_NewError( "SMTP Authentication failed! (%s)\n",buffer,NULL);
+            ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH DIGEST-MD5", buffer);
             rc = SMTP_SERVICE_NOT_AVAILABLE;
          }
       } else rc = SMTP_SERVICE_NOT_AVAILABLE;
@@ -1021,15 +1021,15 @@ BOOL TR_ConnectESMTP(void)
             rc = GetReturnCode();
             if (rc != 235 )
             {
-               ER_NewError( "SMTP Authentication failed! (LOGIN Password: %s) Maybe wrong password?\n",buffer,NULL);
+               ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
                rc = SMTP_SERVICE_NOT_AVAILABLE;
             } else rc = SMTP_ACTION_OK;
          } else {
-            ER_NewError( "SMTP Authentication failed! (LOGIN Username: %s) Maybe wrong username?\n",buffer,NULL);
+            ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
             rc = SMTP_SERVICE_NOT_AVAILABLE;
          }
       } else {
-         ER_NewError( "SMTP Authentication failed! (%s)\n",buffer,NULL);
+         ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
          rc = SMTP_SERVICE_NOT_AVAILABLE;
       }
    } else if(ESMTPAuth & AUTH_PLAIN)
@@ -1051,11 +1051,11 @@ BOOL TR_ConnectESMTP(void)
   
          if (rc != 235 )
          {
-            ER_NewError( "SMTP Authentication failed! (PLAIN: %s) Maybe wrong password?\n",buffer,NULL);
+            ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
             rc = SMTP_SERVICE_NOT_AVAILABLE;
          } else rc = SMTP_ACTION_OK;
       } else {
-         ER_NewError( "SMTP Authentication failed! (%s)\n",buffer,NULL);
+         ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
          rc = SMTP_SERVICE_NOT_AVAILABLE;
       }
    }
