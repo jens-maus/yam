@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-01-29  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_mail_lex.l: fixed bug #674998 where a empty mailbody caused
+      YAM to not refresh the read window or even hang the whole
+      application.
+
 2003-01-28  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l: the new syntax highlighter didn`t center lines that

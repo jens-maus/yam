@@ -98,7 +98,7 @@ char *ParseEmailText(char *mailTxt)
   // lets prepare the mailTxt for the lexer
   if((buffer = yy_scan_string(mailTxt)))
   {
-    if((cmsg = calloc(len=(strlen(mailTxt)*3)/2, sizeof(char))))
+    if((cmsg = calloc(len=(strlen(mailTxt)*3)/2+1, sizeof(char))))
     {
       BOOL centerActivated = FALSE;
       char *colorTag = NULL;
