@@ -1425,7 +1425,7 @@ MSG_CO_TZoneM9
 ; (GMT-09:00) Anchorage (AKST)
 ;
 MSG_CO_TZoneM8
-(GMT-08:00) Los Angeles, San Francisco (PDT)
+(GMT-08:00) Los Angeles, San Francisco (PST)
 ; (GMT-08:00) Los Angeles, San Francisco (PST)
 ;
 MSG_CO_TZoneM7
@@ -6014,7 +6014,7 @@ Diese From: Adresse bei neuen Nachrichten\nfür diese Liste verwenden
 ; posting new mails to the list
 ;
 MSG_FO_ReplyToAddress
-_Reply-To: Adresse
+Rep_ly-To: Adresse
 ; _Reply-To: address
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
@@ -6212,7 +6212,7 @@ Text, welcher mit dem\nAppIcon dargestellt wird.
 ; as the label of the AppIcon
 ;
 MSG_CO_APPICONTEXT
-AppIcon _Text
+Ap_pIcon Text
 ; _Label
 ;
 MSG_CO_NEWMSGS
@@ -6279,7 +6279,7 @@ Hier kann die Position der Statusleiste festgelegt werden.\nDiese zeigt allgemei
 ; that shows general information in YAM.
 ;
 MSG_CO_WARNSUBJECT
-Warnung _bei leerer Betreffzeile
+Warnung bei _leerer Betreffzeile
 ; Warn when there's an empty su_bject line
 ;
 MSG_HELP_CO_CH_WARNSUBJECT
@@ -6462,7 +6462,7 @@ Eine sichere Verbindung über TLSv1/SSLv3 wird zwischen dem SMTP-Server\nund YAM 
 ; ghosted, it means AmiSSL support is not available.
 ;
 MSG_CO_POP3SSL
-POP3 TLSv1/SSLv3 benutzen
+POP3 TLSv1/SSLv3 benut_zen
 ; Use POP3 TLSv1/SSLv3
 ;
 MSG_HELP_CO_CH_POP3SSL
