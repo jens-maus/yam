@@ -348,7 +348,7 @@ SAVEDS ASM void EA_SelectPhotoFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
 
-   if (ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, GetStr(MSG_EA_SelectPhoto), 0, C->GalleryDir, ""))
+   if (ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, GetStr(MSG_EA_SelectPhoto_Title), 0, C->GalleryDir, ""))
    {
       strmfp(G->EA[winnum]->PhotoName, G->ASLReq[ASL_PHOTO]->fr_Drawer, G->ASLReq[ASL_PHOTO]->fr_File);
       EA_SetPhoto(winnum, NULL);

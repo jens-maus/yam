@@ -1186,7 +1186,7 @@ MSG_CO_WarnSize1 (//)
 Size _limit
 ;
 MSG_CO_WarnSize2 (//)
-KB
+kB
 ;
 MSG_CO_AutoOperation (//)
 Automatic operation
@@ -1495,7 +1495,7 @@ MSG_CO_LogVerbose (//)
 verbose
 ;
 MSG_CO_PGPExe (//)
-P_GP path
+P_GP's directory
 ;
 MSG_CO_PGPKey (//)
 Your PGP key _ID
@@ -4234,3 +4234,5 @@ Pa_ssword
 MSG_CO_Del (//)
 Delete
 ;
+MSG_EA_SelectPhoto_Title (//)
+Select portrait
