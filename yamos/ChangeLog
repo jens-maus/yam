@@ -7,6 +7,8 @@ $Source$
 
 2005-02-19  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed bug #1098671 where upon moving/deleting a mail through
+      a filter didn't update the folder statistics correctly.
     * classes/AttachmentGroup.c: added some _mtop/_mleft checkings to make
       sure no text is drawn outside our rastport. This should hopefully fix
       bug #1123850

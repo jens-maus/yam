@@ -489,30 +489,34 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
 void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
 {
    struct MailInfo *mi = GetMailInfo(mail);
+   struct Folder *mailFolder = mail->Folder;
 
-   if (C->RemoveAtOnce || mail->Folder->Type == FT_DELETED || forceatonce)
+   if(C->RemoveAtOnce || mailFolder->Type == FT_DELETED || forceatonce)
    {
-      AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mail->Folder->Name, "");
+      AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mailFolder->Name, "");
       DeleteFile(mi->FName);
-      if (mi->Display) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Remove, mi->Pos);
+      if(mi->Display)
+        DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Remove, mi->Pos);
+
       RemoveMailFromList(mail);
 
       // if we are allowed to make some noise we
       // update our Statistics
-      if(!quiet) DisplayStatistics(mail->Folder, TRUE);
+      if(!quiet)
+        DisplayStatistics(mailFolder, TRUE);
    }
    else
    {
       struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
 
-      MA_MoveCopySingle(mail, mi->Pos, mail->Folder, delfolder, FALSE);
+      MA_MoveCopySingle(mail, mi->Pos, mailFolder, delfolder, FALSE);
 
       // if we are allowed to make some noise we
       // update our Statistics
       if(!quiet)
       {
         DisplayStatistics(delfolder, FALSE);  // don`t update the appicon
-        DisplayStatistics(NULL, FALSE);       // but update it now.
+        DisplayStatistics(mailFolder, TRUE);  // but update it now.
       }
    }
 }
@@ -2098,6 +2102,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
     }
 
     MA_DeleteSingle(mail, FALSE, FALSE);
+
     return FALSE;
   }
 
