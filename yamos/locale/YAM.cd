@@ -4666,19 +4666,19 @@ How would you like to display\n\
 the size of each email?
 ;
 MSG_CO_SIZEFORMAT01 (//)
-1.234.567 (bytes)
+Old format - (1.234.567 bytes)
 ;
 MSG_CO_SIZEFORMAT02 (//)
-1.234 GB - 12.34 MB - 123.4 KB - 1234 B
+Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)
 ;
 MSG_CO_SIZEFORMAT03 (//)
-1.2 GB - 12.3 MB - 123.4 KB - 1234 B
+10^-1 precision (0.1 GB/MB/KB)
 ;
 MSG_CO_SIZEFORMAT04 (//)
-1.23 GB - 12.34 MB - 123.45 KB - 1234 B
+10^-2 precision (0.01 GB/MB/KB)
 ;
 MSG_CO_SIZEFORMAT05 (//)
-1.234 GB - 12.345 MB - 123.456 KB - 1234 B
+10^-3 precision (0.001 GB/MB/KB)
 ;
 MSG_HELP_CO_CH_USESMTPAUTH (//)
 Select if you wish to authenticate\n\

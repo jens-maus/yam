@@ -1,3 +1,8 @@
+2001-10-19  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * changed catalog description for the new introduced size formats
+      in YAM, because they were a bit strange :)
+
 2001-10-18  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed another bug that caused the insert of a wrong signature
