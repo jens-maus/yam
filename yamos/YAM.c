@@ -207,7 +207,7 @@ MakeHook(AY_SendMailHook, AY_SendMailFunc);
 //  User clicked homepage URL in About window
 SAVEDS void AY_GoPageFunc(void)
 {
-   GotoURL("http://www.yam.ch");
+   GotoURL("http://www.yam.ch/");
 }
 MakeHook(AY_GoPageHook, AY_GoPageFunc);
 ///
@@ -395,8 +395,10 @@ BOOL Root_New(BOOL hidden)
 void Terminate(void)
 {
    int i;
+#ifndef __SASC
    struct Folder **flist;
- 
+#endif
+
    if (G->CO) { CO_FreeConfig(CE); free(CE); DisposeModule(&G->CO); }
    for (i = 0; i < MAXEA; i++) DisposeModule(&G->EA[i]);
    for (i = 0; i < MAXRE; i++) if (G->RE[i]) { RE_CleanupMessage(i); DisposeModule(&G->RE[i]); }
@@ -413,11 +415,18 @@ void Terminate(void)
       G->Weights[1] = GetMUI(G->MA->GUI.LV_MAILS, MUIA_HorizWeight);
       SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
+#ifndef __SASC
       if (flist = FO_CreateList())
       {
          for (i = 1; i <= (int)*flist; i++) ClearMailList(flist[i], TRUE);
          free(flist);
       }
+#endif
+/*
+   Ugly hack (relies on SAS/C's malloc()/free() implementation), but
+   reduces shutdown time DRASTICALLY. We might as well generate a
+   fast SAS/C executable until we start using memory pools officially.
+*/
    }
    DisposeModule(&G->AB);
    DisposeModule(&G->MA);
@@ -625,8 +634,14 @@ void DoStartup(BOOL nocheck, BOOL hide)
    if (C->CheckBirthdates && !nocheck && !hide) AB_CheckBirthdates();
    if (TR_IsOnline())
    {
-      if (C->GetOnStartup && !nocheck) { MA_PopNow(POP_START,-1); DisposeModule(&G->TR); }
-      if (C->SendOnStartup && !nocheck) { SendWaitingMail(); DisposeModule(&G->TR); }
+      if (C->GetOnStartup && !nocheck) {
+         MA_PopNow(POP_START,-1);
+         if (G->TR) DisposeModule(&G->TR);
+      }
+      if (C->SendOnStartup && !nocheck) {
+         SendWaitingMail();
+         if (G->TR) DisposeModule(&G->TR);
+      }
    }
 }
 ///

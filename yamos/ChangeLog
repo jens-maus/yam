@@ -89,6 +89,16 @@
       and some other minor changes to be able to compile with GCC again.
       SAS/C users with old, broken includes have to fix them now.
 
+2001-02-04  laursen <laursen@myself.com>
+
+    * Fixed broken ARexx interface for SAS/C (introduced on January
+      28th).
+
+2001-02-14  laursen <laursen@myself.com>
+
+    * Address Book/New/Portrait/Select: The ASL requester title was
+      "Se_lect" (same string used twice) - fixed! (Bug #131008).
+
 2001-02-17  laursen <laursen@myself.com>
 
     * Added TYPE/N (internal format) to the STEM that ARexx command
@@ -104,4 +114,10 @@
       or "To:" header line.
 
     * Fixed wbstart-crash, which was introduced with the removal of
-      the library auto-open.
+      the library auto-open (on January 28th).
+
+2001-02-19  laursen <laursen@myself.com>
+
+    * Removed memory deallocation of all mails on shutdown when
+      compiling with SAS/C - based on the assumption that SAS/C uses
+      memory pools in its malloc()/free() implementation.
