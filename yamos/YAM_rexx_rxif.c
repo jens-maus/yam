@@ -1,7 +1,7 @@
 /***************************************************************************
 
  YAM - Yet Another Mailer
- Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.cè>
  Copyright (C) 2000-2001 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
@@ -2085,9 +2085,21 @@ void rx_addrdelete( struct RexxHost *host, struct rxd_addrdelete **rxd, long act
          break;
          
       case RXIF_ACTION:
-         AB_GotoEntry(rd->arg.alias);
-         CallHookPkt(&AB_DeleteHook, 0, 0);
-         break;
+      {
+         // if the command was called without any parameter it will delete the active entry
+         // if not we search for the one in question and if found delete it.
+         if(!rd->arg.alias)
+         {
+            if(xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active) != MUIV_NListtree_Active_Off)
+            {
+              CallHookPkt(&AB_DeleteHook, 0, 0);
+            }
+            else rd->rc = RETURN_WARN;
+         }
+         else if(AB_GotoEntry(rd->arg.alias)) CallHookPkt(&AB_DeleteHook, 0, 0);
+         else rd->rc = RETURN_WARN;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );

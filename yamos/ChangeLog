@@ -5,7 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
-2002-07-16  Jens Langner <Jens.Langner@htw-dresden.de>
+2002-07-17  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_rexx_rxif.c: fixed bug #580964 where the ADDRDELETE
+      arexx command had deleted the active entry if the command
+      was called with an entry that didn`t exists in the ABook
+      at all. Now the command will return a WARN(5) code if the
+      entry wasn`t found.
+
+2002-07-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: added an additional check to the new CheckMCC
       function that will allow also broken .mcc to pass the
