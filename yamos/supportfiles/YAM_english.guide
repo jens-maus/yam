@@ -7397,17 +7397,22 @@ MAILINFO
                       path
      <STEM>SIZE     - size of the message, in bytes
      <STEM>DATE     - date of the message, in "MM-DD-YY HH:MM:SS" format
-     <STEM>FLAGS    - an 8 byte string in "MARCS-00" format:
+     <STEM>FLAGS    - an 9 byte string in "MARCS-77M" format:
 
-                         MARCS-00
-                         ||||| ||
+                         MARCS-77M
+                         ||||| |||
+                         ||||| ||`--------- @{b}M@{ub}arked flag (>= v2.4)
                          ||||| |`---------- volatile flag (see @{" SETFLAG " link "RX_SETFLAG"})
                          ||||| `----------- permanent flag (see @{" SETFLAG " link "RX_SETFLAG"})
-                         ||||`------------- PGP @{b}s@{ub}igned
-                         |||`-------------- PGP en@{b}c@{ub}rypted
-                         ||`--------------- status @{b}r@{ub}eport
-                         |`---------------- contains @{b}a@{ub}ttachments
-                         `----------------- @{b}m@{ub}ultiple recipients
+                         ||||`------------- PGP @{b}S@{ub}igned
+                         |||`-------------- PGP en@{b}C@{ub}rypted
+                         ||`--------------- status @{b}R@{ub}eport
+                         |`---------------- contains @{b}A@{ub}ttachments
+                         `----------------- @{b}M@{ub}ultiple recipients
+
+                      Please note that if the volatile or permanent flag has
+                      a value of zero, the last 2 bytes of the string will
+                      have the value of "-" instead of "0".
 
      <STEM>MSGID    - compressed 32 bit representation of the contents
                       of the "Message-ID:" header, e.g. 7008417  (V2.1)
@@ -8362,11 +8367,14 @@ SETFLAG
      message.  These flags aren't used internally, but may come in handy
      in complex ARexx scripts.  The value of the permanent flag is saved
      to the file comment of the message to ensure it will be present
-     after a reboot.
+     after a restart or index rescan. The value of the volatile flag is
+     lost after a exit or reboot of YAM.
 
 @{b}INPUTS@{ub}
-     VOL/K/N   - value of the VOLatile flag, may be between 0 and 7
-     PER/K/N   - value of the PERmanent flag, may be between 0 and 7
+     VOL/K/N   - value of the VOLatile flag, may be between 0 and 7, where
+                 a value of 0 clears the flag.
+     PER/K/N   - value of the PERmanent flag, may be between 0 and 7, where
+                 a value of 0 clears the flag.
 
 @{b}RETURNS@{ub}
 
