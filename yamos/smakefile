@@ -67,12 +67,12 @@ LNKFLAGS = RESOPT NOVER LINK SMALLCODE SMALLDATA UTILLIB LIB lib:debug.lib\
 
 # Objects
 
-CLASSES = classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o classes/Addrmatchlist.o
+CLASSES = classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o classes/Addrmatchlist.o classes/YAM.o
 
 OBJS = YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
   YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o YAM_MA.o YAM_MAf.o \
   YAM_md5.o YAM_MI.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
-  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o all_sas.o $(CLASSES)
+  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o all_sas.o $(CLASSES) Debug.o
 
 #
 
