@@ -58,7 +58,6 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 #include "YAM_debug.h"
@@ -657,7 +656,6 @@ static void Terminate(void)
 
    CO_FreeConfig(C);
    YAM_CleanupClasses();
-   ExitClasses();
 
    // on OS4 we close the Interfaces now
    CLOSELIB(DataTypesBase, IDataTypes);
@@ -1124,7 +1122,7 @@ static void Initialise(BOOL hidden)
    CheckMCC(MUIC_NListtree, 18, 12, TRUE);
 
    // Initialise and Setup our own MUI custom classes before we go on
-   if(!InitClasses() || !YAM_SetupClasses())
+   if(!YAM_SetupClasses())
       Abort(MSG_ErrorClasses);
 
    // allocate the MUI root object and popup the progress/about window

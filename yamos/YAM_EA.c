@@ -44,7 +44,6 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_error.h"

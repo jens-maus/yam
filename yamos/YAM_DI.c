@@ -40,7 +40,6 @@
 #include "classes/Classes.h"
 
 #include "YAM.h"
-#include "YAM_classes.h"
 #include "YAM_error.h"
 #include "YAM_glossarydisplay.h"
 #include "YAM_locale.h"

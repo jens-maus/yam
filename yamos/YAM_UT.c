@@ -67,7 +67,6 @@
 #include "SDI_stdarg.h"
 
 #include "YAM.h"
-#include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_error.h"

@@ -44,7 +44,6 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
-#include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 #include "YAM_configGUI.h"
@@ -59,12 +58,6 @@
 
 struct Config *C;
 struct Config *CE;
-
-struct PageList
-{
-   int  Offset;
-   APTR PageLabel;
-};
 
 /* local protos */
 static void CO_NewPrefsFile(char*);
@@ -1320,18 +1313,6 @@ MakeHook(CO_OpenHook,CO_OpenFunc);
 
 /*** GUI ***/
 
-/// CO_PL_DspFunc
-//  Section listview displayhook
-HOOKPROTO(CO_PL_DspFunc, long, char **array, struct PageList *entry)
-{
-   static char page[SIZE_DEFAULT];
-   struct PL_Data *data = (APTR)hook->h_Data;
-   sprintf(array[0] = page, "\033O[%08lx] %s", (ULONG)data->Image[entry->Offset], GetStr(entry->PageLabel));
-   return 0;
-}
-MakeHook(CO_PL_DspFuncHook,CO_PL_DspFunc);
-///
-
 /// CO_New
 //  Creates configuration window
 enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_REST, CMEN_MIME };
@@ -1385,7 +1366,7 @@ static struct CO_ClassData *CO_New(void)
             Child, HGroup,
                Child, lv = ListviewObject,
                   MUIA_CycleChain,1,
-                  MUIA_Listview_List, data->GUI.LV_PAGE = NewObject(CL_PageList->mcc_Class,NULL,
+                  MUIA_Listview_List, data->GUI.LV_PAGE = ConfigPageListObject,
                      InputListFrame,
                      MUIA_List_AdjustWidth, TRUE,
                      MUIA_List_MinLineHeight, 16,

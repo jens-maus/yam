@@ -53,9 +53,11 @@ OVERLOAD(OM_NEW)
 	{
 		GETDATA;
 		char fname[SIZE_PATHFILE];
+		struct TagItem *tags = inittags(msg);
+		struct TagItem *tag;
+
 		*fname = '\0';
 
-		struct TagItem *tags = inittags(msg), *tag;
 		while((tag = NextTagItem(&tags)))
 		{
 			switch(tag->ti_Tag)
