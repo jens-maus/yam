@@ -971,13 +971,13 @@ static void Initialise(BOOL hidden)
 //  Sends pending mail on startup
 static void SendWaitingMail(void)
 {
-   struct Mail *mail;
-   BOOL doit = TRUE;
-   int tots = 0, hidden;
    struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
+   struct Mail *mail;
+   int tots, hidden;
 
-   if(!fo) return;
+   if (!fo) return;
 
+   tots = 0;
    for (mail = fo->Messages; mail; mail = mail->Next)
    {
       if (mail->Status != STATUS_HLD) tots++;
@@ -987,9 +987,8 @@ static void SendWaitingMail(void)
    MA_ChangeFolder(fo, TRUE);
 
    get(G->App, MUIA_Application_Iconified, &hidden);
-   if (!hidden) doit = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq));
-
-   if (doit) MA_Send(SEND_ALL);
+   if (hidden || MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq)))
+      MA_Send(SEND_ALL);
 }
 ///
 /// DoStartup
@@ -1203,7 +1202,7 @@ int main(int argc, char **argv)
       G->TR_Allow = TRUE;
       G->CO_DST = GetDST();
 
-      // We have to initialize the ActiceWin flags to -1, so than the
+      // We have to initialize the ActiveWin flags to -1, so than the
       // the arexx commands for the windows are reporting an error if
       // some window wasn`t set active manually by an own rexx command.
       G->ActiveReadWin = -1;
