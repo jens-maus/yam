@@ -445,8 +445,13 @@ MakeStaticHook(MA_ReadMessageHook, MA_ReadMessage);
 static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 {
    char *ins;
+
+   if(!pe) return sbuf;
+
    if (strchr(pe->Address,'@'))
+   {
       ins = BuildAddrName2(pe);
+   }
    else
    {
       char addr[SIZE_ADDRESS];
@@ -761,13 +766,13 @@ int MA_NewReply(struct Mail **mlist, int flags)
    struct ExtendedMail *email;
    struct ExpandTextData etd;
    struct Person *repto, rtml;
-   struct Folder **flist, *folder = 0;
+   struct Folder *folder = NULL;
    FILE *out;
    char *mlistad = NULL, buffer[SIZE_LARGE];
    char *cmsg, *rfrom = NULL, *rrepto = NULL, *rto = NULL, *rcc = NULL, *rsub = NULL;
    char *domain;
 
-   if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
+   if (CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
       if ((out = fopen(G->WR_Filename[winnum], "w")))
       {
@@ -778,6 +783,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
          rcc = AllocStrBuf(SIZE_ADDRESS);
          rsub = AllocStrBuf(SIZE_SUBJECT);
          qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
+
+         // Now we iterate through all selected mails
          for (j = 0; j < (int)mlist[0]; j++)
          {
             mail = mlist[j+2];
@@ -785,9 +792,13 @@ int MA_NewReply(struct Mail **mlist, int flags)
             email = MA_ExamineMail(folder, mail->MailFile, NULL, TRUE);
             MA_SetupQuoteString(wr, &etd, mail);
             etd.OM_MessageID = email->MsgID;
+
+            // If this mail already have a subject we are going to add a "Re:" to it.
             if (*mail->Subject)
             {
-               if (j) strcpy(buffer, mail->Subject); else sprintf(buffer, "Re: %s", MA_GetRealSubject(mail->Subject));
+               if (j) strcpy(buffer, mail->Subject);
+               else sprintf(buffer, "Re: %s", MA_GetRealSubject(mail->Subject));
+
                if (!strstr(rsub, buffer))
                {
                   if (*rsub) rsub = StrBufCat(rsub, "; ");
@@ -796,6 +807,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
             }
             if (!multi) strcpy(wr->MsgID, email->MsgID);
 
+            // Now we analyse the folder of the selected mail and if it
+            // is a mailing list we have to do some operation
             if (folder)
             {
                char tofld[SIZE_LARGE], fromfld[SIZE_LARGE];
@@ -803,26 +816,36 @@ int MA_NewReply(struct Mail **mlist, int flags)
                strcpy(tofld, BuildAddrName2(&mail->To));
                strcpy(fromfld, BuildAddrName2(&mail->From));
 
+               // if the mail we are going to reply resists in the incoming folder
+               // we have to check all other folders first.
                if (folder->Type == FT_INCOMING)
                {
+                  struct Folder **flist = NULL;
+
                   if ((flist = FO_CreateList()))
                   {
-                     for (i = 1; i <= (int)*flist; i++) if (flist[i]->MLPattern[0]) if (MatchNoCase(tofld, flist[i]->MLPattern)) {
-                        mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : fromfld;
-                        if (flist[i]->MLFromAddress[0])    rfrom  = flist[i]->MLFromAddress;
-                        if (flist[i]->MLReplyToAddress[0]) rrepto = flist[i]->MLReplyToAddress;
-                        break;
+                     for (i = 1; i <= (int)*flist; i++)
+                     {
+                       if (flist[i]->MLPattern[0] && MatchNoCase(tofld, flist[i]->MLPattern))
+                       {
+                          mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : fromfld;
+                          if (flist[i]->MLFromAddress[0])    rfrom  = flist[i]->MLFromAddress;
+                          if (flist[i]->MLReplyToAddress[0]) rrepto = flist[i]->MLReplyToAddress;
+                          break;
+                       }
                      }
                      free(flist);
                   }
                }
-               else if (folder->MLPattern[0]) if (MatchNoCase(tofld, folder->MLPattern)) {
+               else if (folder->MLPattern[0] && MatchNoCase(tofld, folder->MLPattern))
+               {
                   mlistad = folder->MLAddress[0] ? folder->MLAddress : fromfld;
                   if (folder->MLFromAddress[0])    rfrom  = folder->MLFromAddress;
                   if (folder->MLReplyToAddress[0]) rrepto = folder->MLReplyToAddress;
                }
             }
-            if (mlistad && !(flags & (NEWF_REP_PRIVATE|NEWF_REP_MLIST)))
+
+            if(mlistad && !(flags & (NEWF_REP_PRIVATE|NEWF_REP_MLIST)))
             {
                ExtractAddress(mlistad, repto = &rtml);
                if (!strstr(rto, mlistad))
@@ -831,8 +854,10 @@ int MA_NewReply(struct Mail **mlist, int flags)
                   rto = StrBufCat(rto, mlistad);
                }
             }
+            else repto = GetReturnAddress(mail);
 
-            if (mail->Flags & MFLAG_MULTIRCPT)
+            // If this mail is a standard (non-ML) mail and the user hasn`t pressed shift
+            if (mail->Flags & MFLAG_MULTIRCPT && !(flags & (NEWF_REP_PRIVATE|NEWF_REP_MLIST)))
             {
               if (!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ReplyReqOpt), GetStr(MSG_MA_ReplyReq))))
               {
@@ -843,21 +868,40 @@ int MA_NewReply(struct Mail **mlist, int flags)
               }
             }
 
-            repto = GetReturnAddress(mail);
-
             if (repmode == 1)
             {
                if (flags & NEWF_REP_PRIVATE) repto = &mail->From;
-               else if ((flags & NEWF_REP_MLIST) || mlistad);
-               else if (C->CompareAddress && *mail->ReplyTo.Address) if (stricmp(mail->From.Address, mail->ReplyTo.Address))
+               else if ((flags & NEWF_REP_MLIST) || mlistad) ; // do nothing
+               else if (C->CompareAddress && *mail->ReplyTo.Address && stricmp(mail->From.Address, mail->ReplyTo.Address))
                {
                   sprintf(buffer, GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
                   switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare3ReqOpt), buffer))
                   {
-                     case 3: rcc = MA_AppendRcpt(rcc, &mail->From, FALSE);
-                     case 2: repto = &mail->ReplyTo; break;
-                     case 1: repto = &mail->From; break;
-                     case 0: MA_FreeEMailStruct(email); doabort = TRUE; fclose(out); goto abort_repl;
+                     case 3:
+                     {
+                        rcc = MA_AppendRcpt(rcc, &mail->From, FALSE);
+                     }
+                     // continue
+
+                     case 2:
+                     {
+                        repto = &mail->ReplyTo;
+                     }
+                     break;
+
+                     case 1:
+                     {
+                        repto = &mail->From;
+                     }
+                     break;
+
+                     case 0:
+                     {
+                        MA_FreeEMailStruct(email);
+                        doabort = TRUE;
+                        fclose(out);
+                        goto abort_repl;
+                     }
                   }
                }
                rto = MA_AppendRcpt(rto, repto, FALSE);
@@ -906,7 +950,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
          set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.TE_EDIT);
          if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
       } else doabort = TRUE;
-  }
+   }
    if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
 
 abort_repl:

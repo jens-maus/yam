@@ -1,3 +1,9 @@
+2001-10-17  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed another bug in the ML support were it happened that on a
+      reply of a mail without a ReplyTo: field the mail were sent
+      to the mailinglist and the sender.
+
 2001-10-12  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed bug #468896 where the old Folder/Order/Reset option caused
