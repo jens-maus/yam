@@ -48,6 +48,8 @@ struct CustomABEntry
 };
 */
 
+/* Hooks */
+/// ConstructHook
 HOOKPROTONHNO(ConstructFunc, struct CustomABEntry *, struct CustomABEntry *e)
 {
 	struct CustomABEntry *res;
@@ -57,6 +59,8 @@ HOOKPROTONHNO(ConstructFunc, struct CustomABEntry *, struct CustomABEntry *e)
 }
 MakeStaticHook(ConstructHook, ConstructFunc);
 
+///
+/// DisplayHook
 HOOKPROTONH(DisplayFunc, LONG, STRPTR *array, struct CustomABEntry *e)
 {
 	static TEXT buf[SIZE_ADDRESS + 4];
@@ -72,12 +76,16 @@ HOOKPROTONH(DisplayFunc, LONG, STRPTR *array, struct CustomABEntry *e)
 }
 MakeStaticHook(DisplayHook, DisplayFunc);
 
+///
+/// CompareHook
 HOOKPROTONH(CompareFunc, LONG, struct CustomABEntry *e2, struct CustomABEntry *e1)
 {
 	if(e1->MatchField == e2->MatchField) return Stricmp(e1->MatchString, e2->MatchString);
 	else return e1->MatchField < e2->MatchField ? -1 : +1;
 }
 MakeStaticHook(CompareHook, CompareFunc);
+
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
