@@ -1134,8 +1134,6 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
    BOOL dateFound = FALSE;
    FILE *fh;
 
-   DB(kprintf("MA_ExamineMail: [%s]\n", file);)
-
    // first we generate a new ExtendedMail buffer
    if(!(email = calloc(1, sizeof(struct ExtendedMail))))
      return NULL;
