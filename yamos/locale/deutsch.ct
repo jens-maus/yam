@@ -1,46 +1,7 @@
-## chunk AUTH Dirk Neubauer [ATO]
+## chunk AUTH Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.4 (07.06.2001)
+## version $VER: YAM.catalog 5.5 (05.01.2002)
 ## codeset 0
-;
-; ----------------------------------------------------------------------
-; History:
-;
-; 5.3 (6.6.2001)
-;
-; Initial version
-;
-;
-; 5.4 (7.6.2001)
-;
-; - QA by David Rey
-;
-; - Fixed $VER: string, added the missing 'codeset' command, cleaned up
-;   this source
-;
-; - Shortcuts clashing in Folder configuration: fixed the shortcut in
-;   MSG_FO_FolderMode
-;
-; - Shortcuts clashing in Addressbook -> Edit Person: fixed the shortcut
-;   in MSG_EA_DefSecurity
-;
-; - Shortcuts clashing in Configuration/TCP/IP: fixed the shortcut in
-;   MSG_CO_SMTPUser
-;
-; - MSG_AB_ModifiedGads lacked one gadget (!)
-;
-; - Fixed the duplicated shortcut in MSG_FO_NewFolderGads
-;
-; - Some strings were still using the old %ld placeholders instead of %lD
-;
-; - Added the missing %s placeholder in MSG_RE_Overwrite
-;
-; - The first placeholder in MSG_TR_FilterStats was broken
-;
-; - Added the shortcuts to the now officially updated MSG_CO_Server,
-;   MSG_CO_AltQuote & MSG_CO_DoQuote strings
-;
-; ----------------------------------------------------------------------
 ;
 MSG_Folder
 Postfach
@@ -279,8 +240,8 @@ Verzeichnis
 ; Directory
 ;
 MSG_Copyright1
-OpenSource E-Mail-Software für den Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2001 YAM Open Source Team
-; Open Source E-mail package for the Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2001 YAM Open Source Team
+OpenSource E-Mail-Software für den Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2002 YAM Open Source Team
+; Open Source E-mail package for the Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2002 YAM Open Source Team
 ;
 MSG_Version
 Version:
@@ -751,7 +712,7 @@ MSG_MA_MessageInfo
 ; \ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %lD bytes
 ;
 MSG_MA_WinTitle
-Amiga %s  -  Benutzer: %s
+Amiga YAM %s  -  Benutzer: %s
 ; Amiga YAM %s  -  User: %s
 ;
 MSG_MA_ToPrefix
@@ -839,8 +800,8 @@ Projekt
 ; Project
 ;
 MSG_MA_About
-Über...
-; About...
+Über YAM
+; About YAM
 ;
 MSG_MA_AboutMUI
 Über MUI...
@@ -867,8 +828,8 @@ Q\000Beenden
 ; Q\000Quit
 ;
 MSG_MA_NewFolder
-Neues Postfach...
-; New folder...
+Neues Postfach
+; New folder
 ;
 MSG_MA_NewSeparator
 Neue Trennlinie...
@@ -1019,16 +980,16 @@ Einstellungen
 ; Settings
 ;
 MSG_MA_MAddrBook
-Adressbuch...
-; Address Book...
+Adressbuch
+; Address Book
 ;
 MSG_MA_MConfig
-Konfiguration...
-; Configuration...
+Konfiguration
+; Configuration
 ;
 MSG_MA_MUsers
-Benutzer...
-; Users...
+Benutzer
+; Users
 ;
 MSG_HELP_MA_BT_READ
 Inhalt der ausgewählten\nNachricht anzeigen
@@ -1140,15 +1101,15 @@ Mit freundlichen Grüssen
 ;
 MSG_CO_AltRepHelloDef
 Hallo %f,\\n
-; 
+;
 ;
 MSG_CO_AltRepByeDef
 Mit freundlichem Gruss,
-; 
+;
 ;
 MSG_CO_MLRepHelloDef
 
-; 
+;
 ;
 MSG_CO_MLRepIntroDef
 Am %d schrieb %n:\\n
@@ -1448,7 +1409,7 @@ Post versenden (SMTP)
 ;
 MSG_CO_Server
 Ser_ver
-; Server
+; Ser_ver
 ;
 MSG_CO_Domain
 _Domäne
@@ -2267,8 +2228,8 @@ Ihre E-Mail-Adresse
 ; Your email address.
 ;
 MSG_HELP_CO_ST_POPHOST
-Adresse des POP3-Servers für den Postempfang.\nWenn Sie dieses Feld leer lassen, wird die\nAdresse des SMTP-Servers übernommen.
-; Address of the POP3 server to receive mail.\nIf you leave this field empty, the address\n of the SMTP server is used.
+Die Adresse des POP3-Servers für den Postempfang.\nWenn Sie dieses Feld leer lassen, wird die\nAdresse des SMTP-Servers übernommen.
+; The address of the POP3 server to receive mail from.\nIf you leave this field empty, then the address\nof the SMTP server is used.
 ;
 MSG_HELP_CO_ST_PASSWD
 Passwort für den Zugriff\nauf den Postserver
@@ -2283,16 +2244,16 @@ Zeitzone während der\nSommerzeit korrigieren
 ; Adjust the timezone during daylight\nsaving time (summer time)
 ;
 MSG_HELP_CO_ST_SMTPHOST
-Adresse des SMTP-Servers für den Postversand.\nWenn Sie dieses Feld leer lassen, wird die\nAdresse des POP3-Servers übernommen.
-; Address of the SMTP server to send mail.\nIf you leave this field empty,\nthe address of the POP3 server is used.
+Die Adresse des SMTP-Servers für den Postversand.\nWenn Sie dieses Feld leer lassen, wird die\nAdresse des POP3-Servers übernommen.
+; The address of the SMTP server to send mail to.\nIf you leave this field empty,\nthen the address of the POP3 server is used.
 ;
 MSG_HELP_CO_ST_DOMAIN
 Der Hostname Ihres Amigas. Ändern Sie dieses Feld,\nfalls der HELO-Befehl einen Fehler verursacht.
 ; The hostname of your Amiga. Change this\nfield if the HELO commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT
-Nachrichten vor dem Versand nicht in 7bit umwandeln.\nBenutzen Sie diese Option nur, falls Ihr SMTP-Server\n8bit-Transfers unterstützt! Andernfalls werden Ihre\nNachrichten verstümmelt.
-; Don't convert messages to 7bit for transfer.\nOnly use this option if your\nSMTP server supports 8bit transfers!\nOtherwise your messages will get corrupted.
+Nachrichten beim Versand nicht in 7bit umwandeln.\nBenutzen Sie diese Option nur, falls Ihr SMTP-Server\n8bit-Übertragungen unterstützt! Andernfalls werden\nIhre Nachrichten verstümmelt.
+; Don't convert messages to 7bit when transfering.\nOnly use this option if your\nSMTP server supports 8bit transfers!\nOtherwise your messages will get corrupted.
 ;
 MSG_HELP_CO_LV_POP3
 Liste der POP3-Server
@@ -2308,7 +2269,7 @@ Ausgewählten POP3-Server von der Liste entfernen
 ;
 MSG_HELP_CO_ST_POPUSERID
 Benutzername für die Anmeldung auf dem POP3-Server.\nWenn Sie dieses Feld leer lassen, wird der Benutzername\naus Ihrer E-Mail-Adresse übernommen.
-; User name to log into the POP3 server.\nIf you leave this field empty, the user-ID\nwill be extracted from your email address.
+; User name to log in on the POP3 server.\nIf you leave this field empty, then the user-ID\nwill be taken from your email address.
 ;
 MSG_HELP_CO_CH_DELETE
 Löscht Nachrichten auf dem\nServer nach dem Postholen
@@ -2331,16 +2292,16 @@ Fortschrittsanzeige während des Posttransfers
 ; Show progress window during mail transfers
 ;
 MSG_HELP_CO_CY_MSGSELECT
-Schalten Sie diese Option ein, um\nden Inhalt des POP3-Postfachs aufzulisten\nund die zu ladenden Nachrichten auszuwählen
-; Enable this option to show the contents of the POP3 mailbox\nand allow selection of the messages to be downloaded
+Schalten Sie diese Option ein, um den Inhalt\ndes POP3-Postfachs aufzulisten und vor dem\nHerunterladen eine Auswahl treffen zu können
+; Enable this option to show the contents of the POP3 mailbox\nand allow selection of the messages before downloading
 ;
 MSG_HELP_CO_CH_UPDSTAT
 Neue Nachrichten im Postausgang vor dem\nHolen neuer Post als ungelesen markieren
 ; Mark new messages in the incoming folder\nas unread before downloading new mail
 ;
 MSG_HELP_CO_ST_WARNSIZE
-Nachrichten, welche diese Größe über-\nschreiten, werden als 'groß' bezeichnet
-; Messages which exceed this\nthreshold rank as 'large'
+Eingehende Nachrichten, welche diese Größe\nüberschreiten, werden als 'groß' bezeichnet.
+; Incoming messages which are bigger than this\nsize will be considered as large.
 ;
 MSG_HELP_CO_ST_INTERVAL
 Wie oft wollen Sie auf neue Post prüfen?\n(Geben Sie 0 oder keinen Wert ein,\num diese Funktion auszuschalten)
@@ -4419,8 +4380,8 @@ Unterbreche Posttransfer bei\nder nächsten Gelegenheit
 ; Abort mail transfer\nas soon as possible
 ;
 MSG_ER_ErrorMessages
-Fehlermeldungen:
-; Error messages:
+Fehlermeldungen
+; Error messages
 ;
 MSG_ER_PrevError
 _Vorderer Fehler
@@ -4584,7 +4545,7 @@ Ungültige Adresse '%s'. Der SMTP-Server hat diese Adresse nicht akzeptiert. Verw
 ;
 MSG_ER_ErrorReadMailfile
 Fehler beim Lesen der Nachrichtendatei: %s.\nDie Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
-; Read error on mail file: %s.\nThe file exists, but there was an error while reading the file.
+; Read error on mail file: %s.\nThe file exists, but there was an error while reading it.
 ;
 MSG_ER_UserRemoved
 Verzeichnis '%s' existiert nicht! Der Benutzer %s wurde entfernt.
@@ -4940,7 +4901,7 @@ _Passwort
 ;
 MSG_US_SuperVisor
 _Managerprivilegien
-; _Supervisor priviledges
+; _Supervisor privileges
 ;
 MSG_US_AddUser
 Benutzer _hinzufügen
@@ -4995,7 +4956,7 @@ Welche Einstellungen wollen Sie für das neue Postfach\nverwenden? Falls das Post
 ; What settings do you want to use for the new folder?\nSelect 'Existing directory' if the folder already exists\non your disk
 ;
 MSG_FO_NewFolderGads
-*_Werkeinstellung|Wie a_ktuelles|_Vorhandenes Verzeichnis|_Abbrechen
+*_Werkseinstellung|Wie a_ktuelles|_Vorhandenes Verzeichnis|_Abbrechen
 ; *_Internal defaults|_Like current|_Existing directory|_Cancel
 ;
 MSG_FO_SelectDir
@@ -5416,11 +5377,11 @@ Alternatives Zitat
 ;
 MSG_CO_AltQuote
 bei e_xternen Zitaten
-; Quote external using
+; Quote e_xternal using
 ;
 MSG_CO_DoQuote
 Nachr_icht zitieren
-; Quote message
+; Qu_ote message
 ;
 MSG_HELP_CO_ST_ALTQUOTECHAR
 Zeichenkette, die jeder zitierten Zeile aus einer\nEMail fremden Quelle vorangestellt werden soll
@@ -5459,6 +5420,358 @@ Teil
 ; Part
 ;
 MSG_ABOUT_OKAY_GAD
-OK
-; OK
+\033bOk
+; \033bOkay
+;
+MSG_FOLDER_NEWFOLDERGROUP
+Neue Postfachgruppe...
+; New folder group...
+;
+MSG_FOLDER_SNAPSHOT
+Baum fixieren
+; Snapshot tree
+;
+MSG_FOLDER_RELOAD
+Baum aktualisieren
+; Reload tree
+;
+MSG_CO_GENLISTCFG
+Allgemeine Einstellungen
+; General settings
+;
+MSG_CO_FIELDLISTCFG
+Feldeinstellungen
+; Field settings
+;
+MSG_CO_SIZEFORMAT
+Größenformat
+; Size format
+;
+MSG_HELP_CO_CY_SIZE
+Wie soll die Größe jeder\nNachricht dargestellt werden?
+; How would you like the size of\neach mail to be displayed?
+;
+MSG_CO_SIZEFORMAT01
+Altes Format - (1.234.567 Bytes)
+; Old format - (1.234.567 bytes)
+;
+MSG_CO_SIZEFORMAT02
+Gemischte Angaben (0.001 GB, 0.01 MB, 0.1 kB)
+; Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)
+;
+MSG_CO_SIZEFORMAT03
+10^-1 Angaben (0.1 GB/MB/kB)
+; 10^-1 precision (0.1 GB/MB/KB)
+;
+MSG_CO_SIZEFORMAT04
+10^-2 Angaben (0.01 GB/MB/kB)
+; 10^-2 precision (0.01 GB/MB/KB)
+;
+MSG_CO_SIZEFORMAT05
+10^-3 Angaben (0.001 GB/MB/kB)
+; 10^-3 precision (0.001 GB/MB/KB)
+;
+MSG_HELP_CO_CH_USESMTPAUTH
+Auswählen, wenn man sich bei einem\nfremden SMTP-Server anmelden möchte\n(üblicherweise außerhalb Ihrer ISP Domäne).\nFalls Zweifel bestehen, diese Option nicht aktivieren.
+; Select if you wish to authenticate\nyourself to a foreign SMTP server\n(usually outside your ISP's domain).\nIf in doubt, don't enable this option.
+;
+MSG_HELP_CO_ST_SMTPAUTHUSER
+Hier Benutzernamen des\nSMTP AUTH user eingeben.
+; Enter here the username\nof the SMTP AUTH user.
+;
+MSG_HELP_CO_ST_SMTPAUTHPASS
+Hier das Passwort des\nSMTP AUTH user eingeben.
+; Enter here the password\nof the SMTP AUTH user.
+;
+MSG_HELP_CO_ST_APPICON
+Text, welcher mit dem\nAppIcon dargestellt wird.
+; Text that should be displayed\nas the label of the AppIcon.
+;
+MSG_CO_APPICONTEXT
+AppIcon _Text
+; AppIcon _label
+;
+MSG_CO_NEWMSGS
+%n  Neue Nachrichten
+; %n  New messages
+;
+MSG_CO_UNREADMSGS
+%u  Ungelesene Nachrichten
+; %u  Unread messages
+;
+MSG_CO_TOTALMSGS
+%t  Nachrichten insgesamt
+; %t  Total messages
+;
+MSG_CO_DELMSGS
+%d  Gelöschte Nachrichten
+; %d  Deleted messages
+;
+MSG_CO_SENTMSGS
+%s  Versandte Nachrichten
+; %s  Sent messages
+;
+MSG_FO_DSTATS
+App_Icon Statistiken
+; App_Icon stats
+;
+MSG_HELP_FO_CH_STATS
+Sollen die Postfachstatistiken im\nAppIcon-Text von YAM angezeigt werden?
+; Would you like to see this\nfolder's statistics in the\nYAM AppIcon's label?
+;
+MSG_ERROR_IMGLOAD
+Fehler beim Laden der\nBilddatei PROGDIR:Icons/%s.
+; The image file\nPROGDIR:Icons/%s\ncouldn't be loaded.
+;
+MSG_OPENGUI
+Oberfläche wird geöffnet...
+; Opening GUI...
+;
+MSG_ERR_OPENLIB
+Fehler beim Öffnen von '%s', Version V%lu.%lu
+; Can't open '%s', version v%lu.%lu
+;
+MSG_CO_CONTEXTMENU
+Kontextmenü
+; Context menu
+;
+MSG_HELP_CO_CONTEXTMENU
+Soll ein Popupmenü beim Klicken der\nrechten Maustaste über diesem Punkt\nauf der Liste angezeigt werden?
+; Show a popup menu when clicking\nthe right mouse button on an\nitem in this list?
+;
+MSG_CO_INFOBAR
+Informationsleiste
+; Information bar
+;
+MSG_HELP_CO_CH_INFOBAR
+Hier kann die Position der Infoleiste festgelegt werden.\nDiese zeigt allgemeine Informationen von YAM.
+; Here you can select the position of the InfoBar\nwhich shows general information in YAM.
+;
+MSG_CO_WARNSUBJECT
+Warnung bei leerer Betreffzeile
+; Warn when there's an empty subject line
+;
+MSG_HELP_CO_CH_WARNSUBJECT
+Soll bei leerer Betreff-\nzeile gewarnt werden?
+; Would you like to be warned if you\nleave the subject line blank?
+;
+MSG_WR_OKAYCANCELREQ
+*OK|Abbruch
+; *Okay|Cancel
+;
+MSG_WR_NOSUBJECTREQ
+Kein Betreff gesetzt, trotzdem fortfahren?
+; The subject is missing, continue anyway?
+;
+MSG_WR_TBSearch
+Suchen
+; Search
+;
+MSG_HELP_WR_BT_SEARCH
+Sucht den Text für eine gegebene Zeichenkette.
+; Search the text for a given string.
+;
+MSG_SEARCHWINDOW_TITLE
+Suchen
+; Search
+;
+MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE
+Groß-/Kleinschreibung beachten
+; Case sensitive
+;
+MSG_SEARCHWINDOW_BT_SEARCH
+Suchen
+; Search
+;
+MSG_SEARCHWINDOW_BT_FROMTOP
+Von oben
+; From top
+;
+MSG_SEARCHWINDOW_BT_CANCEL
+Abbruch
+; Cancel
+;
+MSG_SEARCHNOTFOUND_TITLE
+Suchen
+; Search
+;
+MSG_SEARCHNOTFOUND_MSG
+'%s' nicht gefunden
+; '%s' not found
+;
+MSG_SEARCHNOTFOUND_BUTTON
+Fortsetzen
+; Continue
+;
+MSG_WR_ERRORNOSENDER
+Die Nachricht ist nicht vollständig: Kein Absender!
+; Mail is incomplete: No sender!
+;
+MSG_WR_NOSENDERREQGAD
+Standardabsender _verwenden|*Abbru_ch
+; _Use default sender|*_Cancel
+;
+MSG_FO_GROUP_CONFDEL
+Diese Gruppe enthält Unterfächer, welche bei\nLöschung in das übergeordnete Fach verschoben\nwerden. Wirklich diese Gruppe löschen?
+; This group contains subfolders, which will\nbe moved to the parent folder on deletion.\nDo you really want to delete this group?
+;
+MSG_FOLDER_NONSEL
+(nichts ausgewählt)
+; (none selected)
+;
+MSG_MAIL_NONSEL
+(nichts ausgewählt)
+; (none selected)
+;
+MSG_FO_NEWFGROUP
+Neue Postfachgruppe...
+; New folder group...
+;
+MSG_FO_NEWFGROUPREQ
+Bitte einen Namen für die neue Gruppe eingeben:
+; Please enter a name for the new folder group:
+;
+MSG_ER_CANTMOVEMAIL
+Die Nachricht '%s' kann nicht in Gruppe '%s' verschoben werden, da eine Gruppe dieses Namens nicht existiert. Bitte die Filtereinstellungen überprüfen.
+; Can't move mail '%s' to folder '%s' because a folder with that name doesn't exist. Please check your Filters configuration.
+;
+MSG_MA_EXECUTINGCMD
+Befehlsausführung...
+; Executing command...
+;
+MSG_APP_DESCRIPTION
+SMTP/POP3 E-Mail Client für AmigaOS
+; SMTP/POP3 E-Mail Client for AmigaOS
+;#SET (//39)
+MSG_CO_INFOBARPOS
+Pos_ition
+; Pos_ition
+;
+MSG_CO_INFOBARPOS01
+Oben
+; Top
+;
+MSG_CO_INFOBARPOS02
+Mittig
+; Center
+;
+MSG_CO_INFOBARPOS03
+Unten
+; Bottom
+;
+MSG_CO_INFOBARPOS04
+Abgeschaltet
+; Turned off
+;
+MSG_CO_FOLDERLABEL
+Inha_lt
+; _Label
+;
+MSG_FO_MLSUPPORT
+ML_-Unterstützung
+; ML_-Support
+;
+MSG_HELP_FO_CH_MLSUPPORT
+Die Mailinglisten-Unterstützung für dieses Postfach (de)aktivieren.
+; Turn on/off the mailing list\nsupport for this folder.
+;
+MSG_FO_AUTODETECT
+Autoerkennung
+; Autodetect
+;
+MSG_HELP_FO_BT_AUTODETECT
+Versucht die passenden Einstellungen der ML-\nUnterstützung durch Auswertung der ersten 5\nNachrichten im Postfach automatisch zu finden.
+; Try to guess automatically the suitable\nML support settings by scanning the\nfirst 5 emails in the folder.
+;
+MSG_FO_NOTRECOGNIZED
+Keine Erkennung!
+; Couldn't be recognized!
+;
+MSG_FO_MAXAGEFMT
+%ld Tage
+; %ld days
+;
+MSG_CO_NB_EMAILCACHE
+Nachrichtenpuffer
+; Email cache
+;
+MSG_CO_NB_EMAILCACHEFMT
+%ld Nachrichten
+; %ld mails
+;
+MSG_HELP_CO_NB_EMAILCACHE
+Puffergröße für die zuletzt verwendeten Empfänger,\nwelche sich nicht im Adressbuch befinden. Bei Auswahl\nvon 0 Nachrichten wird diese Option deaktiviert.
+; Cache size for the most recently used\nrecipients not yet in the address book.\nSelect 0 mails to disable this feature.
+;
+MSG_CO_USESMTPTLS
+SMTP TLSv1/SSLv3 benutzen
+; Use SMTP TLSv1/SSLv3
+;
+MSG_HELP_CO_CH_USESMTPTLS
+Eine sichere Verbindung über TLSv1/SSLv3 wird zwischen dem SMTP-Server\nund YAM zum Senden von Nachrichten aufgebaut. Falls dieser Schalter nicht\nanwählbar ist, steht keine AmiSSL-Unterstützung zur Verfügung.
+; A TLSv1/SSLv3 secure connection will be established between\nthe SMTP server and YAM to send email. If this checkbox is\nghosted, it means AmiSSL support is not available.
+;
+MSG_CO_POP3SSL
+POP3 TLSv1/SSLv3 benutzen
+; Use POP3 TLSv1/SSLv3
+;
+MSG_HELP_CO_CH_POP3SSL
+YAM verbindet sich über TLSv1/SSLv3 mit dem POP3-Server am POP3 SSL Port\n995 Port und überträgt die Nachrichten von dort. Falls dieser Schalter nicht\nanwählbar ist, steht keine AmiSSL-Unterstützung zur Verfügung.
+; YAM will connect via TLSv1/SSLv3 to the POP3 server on the\nPOP3 SSL port 995 port and transfer email from there. If this\ncheckbox is ghosted, it means AmiSSL support is not available.
+;
+MSG_CO_USESTLS
+mit STLS
+; with STLS
+;
+MSG_HELP_CO_CH_USESTLS
+Wenn aktiviert, wird angenommen, der POP3-Server unterstützt STLS\nund benutzt den Standard POP3 110 Port, wie jeder Nicht-SSL-Server.
+; If checked, the POP3 server is assumed to support STLS\nand use the standard POP3 110 port like any non SSL server.
+;
+MSG_CO_ST_SMTPPORT
+Port
+; Port
+;
+MSG_HELP_CO_ST_SMTPPORT
+Port des SMTP-Server (Vorgabe: 25)
+; Port used by the SMTP server (default: 25)
+;
+MSG_CO_ST_POPPORT
+Port
+; Port
+;
+MSG_HELP_CO_ST_POPPORT
+Port des POP3-Server (Vorgabe: 110)
+; Port used by the POP3 server (default: 110)
+;
+MSG_CO_InfoBarDef
+- Gesamt: %t Neu: %n Ungelesen: %u
+; - Total: %t New: %n Unread: %u
+;
+MSG_TR_INITTLS
+Initialisiere TLSv1/SSLv3 Session...
+; Initializing TLSv1/SSLv3 session...
+;
+MSG_ER_INITAMISSL
+Fehler beim Initialisieren der amissl.library - TLSv1/SSLv3 Unterstützung deaktiviert. Bitte die AmiSSL Installation überprüfen und YAM erneut starten.
+; Couldn't init amissl.library - TLSv1/SSLv3 support disabled. Please check your AmiSSL installation and restart YAM.
+;
+MSG_ER_INITTLS
+Fehler beim Initialisieren der TLSv1/SSLv3 Session für %s
+; Couldn't initialize TLSv1/SSLv3 session for %s
+;
+MSG_TR_SENDAUTH
+Sende SMTP AUTH Anfrage...
+; Sending SMTP AUTH request...
+;
+MSG_CO_AutoTranslateIn
+Codepage Autoe_rkennung/Umsetzung
+; Codepage Autodetect/T_ranslation
+;
+MSG_HELP_CO_CH_AUTOTRANSLATEIN
+Hilft beim Erkennen fremdartiger Zeichensätze.\nHauptsächlich für Benutzer kyrillischer Zeichen.
+; Helps decyphering strange character sets.\nMainly for cyrillic users.
+;
+MSG_CO_IMPORTMIMETITLE
+Import MIME Anzeiger & Typen
+; Import MIME viewers & types
 ;
