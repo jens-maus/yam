@@ -1089,17 +1089,24 @@ BOOL FileInfo(char *filename, int *size, long *bits, long *type)
 
   if((lock = Lock((STRPTR)filename,ACCESS_READ)))
   {
-    if((fib = AllocDosObject(DOS_FIB, NULL)))
+    // only if the calling function needs more info
+    // we go on so that we are faster :)
+    if(size || bits || type)
     {
-      if(Examine(lock, fib))
+      if((fib = AllocDosObject(DOS_FIB, NULL)))
       {
-        if (size) *size = fib->fib_Size;
-        if (bits) *bits = fib->fib_Protection;
-        if (type) *type = fib->fib_DirEntryType;
-        result = TRUE;
+        if(Examine(lock, fib))
+        {
+          if (size) *size = fib->fib_Size;
+          if (bits) *bits = fib->fib_Protection;
+          if (type) *type = fib->fib_DirEntryType;
+          result = TRUE;
+        }
+        FreeDosObject(DOS_FIB, fib);
       }
-      FreeDosObject(DOS_FIB, fib);
     }
+    else result = TRUE;
+
     UnLock(lock);
   }
   return result;
@@ -1545,7 +1552,7 @@ BOOL PFExists(char *path, char *file)
 {
    char fname[SIZE_PATHFILE];
    strmfp(fname, path, file);
-   return (BOOL)(FileSize(fname) >= 0);
+   return FileInfo(fname, NULL, NULL, NULL);
 }
 ///
 /// DeleteMailDir
