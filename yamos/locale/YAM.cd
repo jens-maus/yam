@@ -4645,7 +4645,7 @@ MSG_FOLDER_NEWFOLDERGROUP (//)
 New folder group...
 ;
 MSG_FOLDER_SNAPSHOT (//)
-Snapshot Tree
+Snapshot tree
 ;
 MSG_CO_GENLISTCFG (//)
 General settings
@@ -4654,7 +4654,7 @@ MSG_CO_FIELDLISTCFG (//)
 Field settings
 ;
 MSG_CO_SIZEFORMAT (//)
-Sizeformat
+Size format
 ;
 MSG_HELP_CO_CY_SIZE (//)
 How the sizes of a message\n\
@@ -4692,36 +4692,36 @@ Enter text that should be displayed\n\
 as the text of the AppIcon.
 ;
 MSG_CO_APPICONTEXT (//)
-AppIcon Label
+AppIcon label
 ;
 MSG_CO_NEWMSGS (//)
-%n  New Messages
+%n  New messages
 ;
 MSG_CO_UNREADMSGS (//)
-%u  Unread Messages
+%u  Unread messages
 ;
 MSG_CO_TOTALMSGS (//)
-%t  Total Messages
+%t  Total messages
 ;
 MSG_CO_DELMSGS (//)
-%d  Deleted Messages
+%d  Deleted messages
 ;
 MSG_CO_SENTMSGS (//)
-%s  Sent Messages
+%s  Sent messages
 ;
 MSG_FO_DSTATS (//)
-AppIcon Stats
+AppIcon stats
 ;
 MSG_HELP_FO_CH_STATS (//)
 Select if you want the statistics of\n\
-this folder be displayed at the AppIcon.
+this folder displayed at the AppIcon.
 ;
 MSG_ERROR_IMGLOAD (//)
-The image file PROGDIR:Icons/\eb%s\en couldn`t be loaded.
+The image file PROGDIR:Icons/%s couldn't be loaded.
 ;
 MSG_OPENGUI (//)
-Finished.. opening GUI..
+Opening GUI...
 ;
 MSG_ERR_OPENLIB (//)
-Can't open library '%s', version v%ld.%ld
+Can't open library '%s', version v%lu.%lu
 ;LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
