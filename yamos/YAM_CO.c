@@ -886,7 +886,7 @@ void CO_Validate(struct Config *co, BOOL update)
    // If Locale is present, don't use the timezone from the config
    // and if not we first check if we have a ENV:YAM_TZ variable and use this instead
    if(G->Locale)                                          co->TimeZone = -G->Locale->loc_GMTOffset/60;
-   else if(GetVar("YAM_TZ", sbuffer, SIZE_SMALL, 0) > 0)  co->TimeZone = atoi(sbuffer);
+   else if(GetVar("YAM_TZ", sbuffer, SIZE_SMALL, 0) >= 5) co->TimeZone = atoi(sbuffer);
    else                                                   co->TimeZone = 0;
 
    // lets check the DaylightSaving stuff now
