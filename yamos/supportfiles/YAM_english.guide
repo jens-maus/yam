@@ -184,7 +184,7 @@ Features of YAM
 * A choice of MagicWorkbench icons or @{" NewIcons " link "NEWI"}.
 
 * Built-in @{" POP3 " link "PROT"} client, which can check up to 16 different POP3
-  servers in one connection and also allows prior selection of the
+  accounts in one connection and also allows prior selection of the
   messages to be downloaded.
 
 * Messages can be written or answered offline and then sent to the
@@ -236,7 +236,7 @@ Hardware
 Software
 --------
 
-   * AmigaOS 3.0 (Kickstart v39) or higher
+   * AmigaOS 3.0 (Kickstart V39) or higher
    * @{" MUI " link "MUI"} 3.8 or higher
    * 3rd party MUI custom classes:
 
@@ -421,7 +421,7 @@ system and that you're using Miami as your TCP/IP software.
     all of your e-mail as a complimentary closing phrase.  To define it
     you have to click on 'Write' in the list on the left hand side of
     the configuration window.  On the page appearing now select the
-    text field 'Greetings phrase', delete the original text by hitting
+    text field 'Welcome phrase', delete the original text by hitting
     RAmiga-X and insert something such as:
 
                            Kind regards,\\n  Joe
@@ -458,7 +458,7 @@ system and that you're using Miami as your TCP/IP software.
     the main window.  Send the message by clicking the 'Send' button
     (fifth button from the right hand  side).  The transfer status
     window will appear and report progress as YAM logs in on the
-    mail-server and sends the message.
+    mail server and sends the message.
 
  9. As you've probably noticed the mail has vanished from the
     'Outgoing' folder.  Don't panic!  It has been moved to the 'Sent'
@@ -476,7 +476,7 @@ system and that you're using Miami as your TCP/IP software.
     hand side).
 
 12. The transfer status window you saw before opens again and you can
-    watch how YAM downloads your mail from the mail-server.  Provided
+    watch how YAM downloads your mail from the mail server.  Provided
     that everything runs as it should, a requester will open up with
     the message that you  have received new mail.  You can read the
     mail in the 'Incoming' folder.
@@ -832,45 +832,51 @@ is easy to find on the Internet at http://www.pgpi.org/
 Installing PGP 2.6.x
 --------------------
 
-1. To begin with, download PGP2 from a reliable source.  For instance,
-you can use the International PGP homepage visiting
+   1. To begin with, download PGP2 from a reliable source.  For instance,
+      you can use the International PGP homepage visiting
 
-  http://www.pgpi.org/cgi/download.cgi?filename=PGPAmiga-2.6.3is.lha
+       http://www.pgpi.org/cgi/download.cgi?filename=PGPAmiga-2.6.3is.lha
 
-and then selecting the site which is closest to you.
+      and then selecting the site which is closest to you.
 
-2. Install PGP in e.g. "Work:PGP/" and create your key pair entering
-"pgp -kg" in a shell window.  The PGP2 directory has the following structure:
+   2. Install PGP in e.g. "Work:PGP/" and create your key pair entering
+      "pgp -kg" in a shell window.  The PGP2 directory has the following
+      structure:
 
-  PGP2 (dir)
-    bin (dir)
-       pgp
-       config.txt
-       language.idx
-       language.txt
-       pubring.pgp
-       randseed.bin
-       secring.pgp
+       PGP2 (dir)
+         bin (dir)
+            pgp
+            config.txt
+            language.idx
+            language.txt
+            pubring.pgp
+            randseed.bin
+            secring.pgp
 
-3. Add an assign to your s:User-startup file to assign PGP: to the PGP2
-directory, then set the environment variable "PGPPath" to PGP:bin in a
-permanent way.  For instance,
+   3. Add an assign to your s:User-startup file to assign PGP: to the
+      PGP2 directory, then set the environment variable "PGPPath" to
+      PGP:bin in a permanent way.  For instance,
 
-  5.RAM Disk:> setenv PGPPath SAVE Work:PGP/bin
+       1.> SetENV PGPPath SAVE Work:PGP/bin
 
-4. In Configuration/Security, set the "PGP Path" option to the directory
-where the PGP executable may be found, e.g. "Work:PGP/bin/".
+   4. In Configuration/Security, set the "PGP's directory" option
+      to the directory where the PGP executable may be found, e.g.
+      "Work:PGP/bin/".
 
-5. If you want to be able to edit or read outgoing messages that have
-been encrypted already, switch the "Encrypt to self" option on.
+   5. If you want to be able to edit or read outgoing messages that have
+      been encrypted already, switch the "Encrypt to self" option on.
 
-6. In "PGP:config.txt" the following changes should be made:
+   6. In "PGP:bin/config.txt" the following changes should be made:
 
-  Language = en
-  EncryptToSelf = off
-  PubRing = "PGP:bin/pubring.pgp"
-  SecRing = "PGP:bin/secring.pgp"
-  RandSeed = "PGP:bin/randseed.bin"
+@REMARK *** NOTE FOR TRANSLATORS ***
+@REMARK Please specify the correct "Language = XX" parameter for
+@REMARK your language, if it is officially supported by PGP
+
+       Language = en
+       EncryptToSelf = off
+       PubRing = "PGP:bin/pubring.pgp"
+       SecRing = "PGP:bin/secring.pgp"
+       RandSeed = "PGP:bin/randseed.bin"
 
 @endnode
 
@@ -882,66 +888,72 @@ been encrypted already, switch the "Encrypt to self" option on.
 Installing PGP 5.0i
 -------------------
 
-1. To begin with, download PGP5 from a reliable source.  A good starting
-point is
+   1. To begin with, download PGP5 from a reliable source.  A good
+      starting point is
 
-  http://www.pgpi.org/products/pgp/versions/freeware/amiga/5.0i/
+       http://www.pgpi.org/products/pgp/versions/freeware/amiga/5.0i/
 
-2. Install PGP in e.g. "Work:PGP/" and create your key pair entering
-"pgpk -g" in a shell window.  The PGP5 directory has the following structure:
+   2. Install PGP in e.g. "Work:PGP/" and create your key pair entering
+      "pgpk -g" in a shell window.  The PGP5 directory has the following
+      structure:
 
-  PGP5 (dir)
-    bin (dir)
-       pgpe
-       pgpk
-       pgps
-       pgpv
-    keys50 (dir)
-       pubring.pkr
-       randseed.bin
-       secring.skr
-    language50.txt
-    pgp.cfg
-    randseed.bin
+       PGP5 (dir)
+         bin (dir)
+            pgpe
+            pgpk
+            pgps
+            pgpv
+         keys50 (dir)
+            pubring.pkr
+            randseed.bin
+            secring.skr
+            language50.txt
+            pgp.cfg
+            randseed.bin
 
-(yes, there are two copies of randseed.bin!)
+   (yes, there are two copies of randseed.bin!)
 
-3. Add an assign to your s:User-startup file to assign PGP: to the PGP5
-directory, then set the environment variable "PGPPath" to PGP:bin in a
-permanent way.  For instance,
+   3. Add an assign to your s:User-startup file to assign PGP: to the
+      PGP5 directory, then set the environment variable "PGPPath" to
+      PGP:bin in a permanent way.  For instance,
 
-  5.RAM Disk:> setenv PGPPath SAVE Work:PGP/bin
+       1.> SetENV PGPPath SAVE Work:PGP/bin
 
-4. In Configuration/Security, set the "PGP Path" option to the directory
-where the PGP executable may be found, e.g. "Work:PGP/bin/".
+   4. In Configuration/Security, set the "PGP's directory" option
+      to the directory where the PGP executable may be found, e.g.
+      "Work:PGP/bin/".
 
-5. If you want to be able to edit or read outgoing messages that have
-been encrypted already, switch the "Encrypt to self" option on.
+   5. If you want to be able to edit or read outgoing messages that have
+      been encrypted already, switch the "Encrypt to self" option on.
 
-6. In "PGP:pgp.cfg" the following changes should be made:
+   6. In "PGP:keys50/pgp.cfg" the following changes should be made:
 
-  Language = en
-  EncryptToSelf = off
-  PubRing = "PGP:keys50/pubring.pkr"
-  SecRing = "PGP:keys50/secring.skr"
-  RandSeed = "PGP:keys50/randseed.bin"
+@REMARK *** NOTE FOR TRANSLATORS ***
+@REMARK Please specify the correct "Language = XX" parameter for
+@REMARK your language, if it is officially supported by PGP
 
-7. Check the validity of the keys in your public keyring with "pgpk -e",
-then validate them with "pgpk -s <UserID>".  Bear in mind you can't send
-encrypted mail to anyone whose key hasn't been trusted.
+       Language = en
+       EncryptToSelf = off
+       PubRing = "PGP:keys50/pubring.pkr"
+       SecRing = "PGP:keys50/secring.skr"
+       RandSeed = "PGP:keys50/randseed.bin"
+
+   7. Check the validity of the keys in your public keyring with "pgpk -e",
+      then validate them with "pgpk -s <UserID>".  Bear in mind you can't
+      send encrypted mail to anyone whose key hasn't been trusted.
 
 
 IMPORTANT! BUG in PGP5
 ......................
 
-If a message is encrypted for more than one recipient (including you),
+   If a message is encrypted for more than one recipient (including you),
 PGP doesn't set an error code as long as there is a valid key for at
 least one of the recipients.
 
-For example, you try to encrypt a message for John and yourself; there's
-no valid key for John, but there's one for you and PGP doesn't tell YAM
-that encryption wasn't successful.  The resulting message can be read by
-you, but not by John!
+   For example, you try to encrypt a message for John and yourself;
+there's no valid key for John, but there's one for you and PGP doesn't
+tell YAM that encryption wasn't successful.  The resulting message can
+be read by you, but not by John!
 
 @endnode
 
@@ -1051,15 +1063,15 @@ part of the configuration window.  There are also three menus available.
  @{" Write          " link "CO05"}  - Headers, stock phrases and editor settings
  @{" Reply          " link "CO06"}  - Options for quoting messages
  @{" Signature      " link "CO07"}  - Signatures... and taglines!
- @{" Lists          " link "CO08"}  - Visible columns in folder and message lists
+ @{" Lists          " link "CO08"}  - Columns, sizes, time unit, context menus
  @{" Security       " link "CO09"}  - Encrypting with @{" PGP " link "PGP"} and use of remailers
  @{" Start/End      " link "CO10"}  - Options for actions at start up and termination
  @{" MIME           " link "CO11"}  - @{" MIME " link "MIME"} viewers for attachments
  @{" Address book   " link "CO12"}  - Visible columns, personal data exchange
  @{" ARexx          " link "CO13"}  - Setting up your macros
  @{" Miscellaneous  " link "CO14"}  - Paths, AppIcon, save/delete, tracking & packing
- @{" Hidden Options " link "CO_H"}  - You can't see them :-)
 
+ @{" Hidden Options " link "CO_H"}  - You can't see them :-)
  @{" Menus          " link "CO_M"}  - The Project, Edit and Extras menus
 
 
@@ -1143,7 +1155,7 @@ Configuration - First steps
      a special value (e.g. a difference of half an hour), it can be
      defined in the environment variable YAM_TZ.  For instance,
 
-            SetENV YAM_TZ SAVE 1030
+            1.> SetENV YAM_TZ SAVE 1030
 
      would set your timezone value as 10 hours 30 minutes ahead GMT,
      meaning you are e.g. in Adelaide, Australia.
@@ -1241,7 +1253,7 @@ as well as define additional POP3 accounts.
    Apart from the primary POP3 server already defined in @{" First steps " link "CO00"},
 you can set upto 15 extra POP3 accounts here; the names appear in the
 list on the left and clicking on a name brings up the relevant details
-on the right.  Note that the account can be for the same user on a
+on the right.  Note that these accounts can be for the same user on a
 different server, or a different user on the same server.  Either way,
 you can check for new mail with a single mouse click.  Click on [New] to
 insert the data required for a new e-mail account.  With [Delete] you
@@ -1274,16 +1286,16 @@ can (obviously) delete accounts.
 
 
 @{b}Password@{ub}
-     The password which has to be sent to the mailserver for logging
-     on.  You can leave this field empty for security reasons -- if you
-     do, the password will be asked to you whenever YAM checks for new
-     mail.  Also, remember the password is case sensitive.
+     The password which has to be sent to the mail server at login time.
+     You can leave this field empty for security reasons -- if you do,
+     the password will be asked to you whenever YAM checks for new mail.
+     Also, remember the password is case sensitive.
 
      Example:  nguz56
 
 
 @{b}Active@{ub}
-     Switch this option on to have the selected POP3 server checked for
+     Switch this option on to have the selected POP3 account checked for
      new mail whenever you use the @{b}Get new mail@{ub} button in the toolbar,
      or the equivalent item in the "Folder" menu.  If you don't want
      this email account to be checked automatically, switch this option
@@ -1298,7 +1310,7 @@ can (obviously) delete accounts.
      is commonly subject to, and will use port 995 instead of the usual
      110.
 
-     The @{b}with STLS@{ub} gadget will force the use of the POP3 @{i}STARTTLS @{ui}
+     The @{b}with STLS@{ub} option will force the use of the POP3 @{i}STARTTLS @{ui}
      extension, adding another layer of security to the communication,
      using again port 110.
 
@@ -1490,7 +1502,7 @@ bottom of the list.
 
      In contrast to 'normal' filters, only the contents of the e-mail
      headers can be searched for certain patterns.  For obvious reasons,
-     functions like forwarding or moving e-mails will not work with
+     functions like forwarding or moving e-mails cannot be used with
      remote filters.  If remote filters are activated they might slow
      down downloading e-mail, but they are handy as a protection
      against spam or 'mailbombs'.
@@ -1721,10 +1733,7 @@ Configuration - Read
 
 
 @{b}Old quotes@{ub}
-     The color used to display quoted text can be selected in the
-     TextEditor module of the MUI preferences.  If there are multiple
-     levels of quoting, an alternative color will be used for the even
-     (2nd, 4th, etc.) levels.  You can define that color here.
+     Select here the color used for the several levels of quoting.
 
 
 @{b}Use fixed font@{ub}
@@ -1867,18 +1876,18 @@ Configuration - Write
      When you save a newly written message, it will be formatted to
      make sure that no line has more characters than the value
      specified here.  You can also decide whether YAM will insert line
-     breaks as you type or if this should be postponed until you send
-     the message.
+     breaks @{b}as you type@{ub} or if this should be postponed until you send
+     the message.  In the first case, the internal editor will insert
+     line break codes while you're typing the message.  This way you
+     avoid unwanted surprises when the text is formatted later on
+     saving the message, but on the other hand, any subsequent insertion
+     or deletion of text might be a little less comfortable.
 
      Example:  76
 
 
 @{b}Wrap as you type@{ub}
-     Activate this option if you would like the internal editor to
-     insert line break codes while you're typing the message.  This way
-     you avoid unwanted surprises when the text is formatted later on
-     saving the message, but on the other hand, any subsequent
-     insertion or deletion of text might be a little less comfortable.
+     Activate this option if you would like 
 
 
 @{b}External editor@{ub}
@@ -2106,6 +2115,8 @@ Configuration - Lists
 @{b}Folder list, Message list@{ub}
      Select the items you want to see in these lists.
 
+     As of YAM 2.4, you can also have a context menu for both the folder
+     and message lists.
 
 ---- General settings ----------------------------------------------------
 
@@ -2130,17 +2141,17 @@ Configuration - Lists
      window.
 
 
----- Information bar -----------------------------------------------------
+---- Status bar ----------------------------------------------------------
 
 @{b}Position@{ub}
-     Allows you to select the position of the information (status) bar,
-     or even disable it completely.
+     Allows you to select the position of the status bar, or even
+     disable it completely.
 
      Example:  Top
 
 
 @{b}Label@{ub}
-     The contents of the information bar.  Use the pop-up button at the
+     The contents of the status bar.  Use the pop-up button at the
      right to select a variable for new, unread, etc. messages.
 
      Example:  - Total: %t New: %n Unread: %u
@@ -2158,7 +2169,7 @@ Configuration - Security
 
 ---- PGP -----------------------------------------------------------------
 
-@{b}PGP path@{ub}
+@{b}PGP's directory@{ub}
      The famous (some people and authorities might even say notorious)
      programme @{b}PGP@{ub} (Pretty Good Privacy) by Philip Zimmermann is used
      for encrypting, decrypting and digitally 'signing' messages.
@@ -2194,9 +2205,12 @@ Configuration - Security
      you send e-mail anonymously by using a so called 're-mailer', this
      re-mailer will erase any information from the message headers that
      could be used for identifying the original sender, and then forward
-     the message to the final recipient.  You can find addresses of
-     re-mailing services by having a (www-) search engine look up the
-     Internet for 'remailer'.
+     the message to the final recipient.  In addition, YAM will
+     automatically remove any personal info from the message, including
+     headers and signature.
+
+     You can find addresses of re-mailing services by having a (www-)
+     search engine look up the Internet for 'remailer'.
 
      Example:  Remailer <remailer@example.com>
 
@@ -2345,7 +2359,7 @@ entry.
 
    In addition, new file types defined here are also taken into account
 when composing a new message.  For instance, if a new attachment type
-"application/pdf" is defined for filenames ending in ".pdf", YAM will
+"application/pgs" is defined for filenames ending in ".pgs", YAM will
 automatically use this MIME type when attaching files that bear this
 extension.
 
@@ -2369,8 +2383,7 @@ extension.
 @{b}Viewer@{ub}
      Choose the program you'd like to use to display the attachment.
      Do not forget to insert a @{b}"%s"@{ub} into the command line, which will
-     be replaced by the filename when processing.  The quotation marks
-     in @{b}"%s"@{ub} make it possible to use spaces in the filename.
+     be replaced by the filename when processing.
 
      Example:  TOOLS:Gfx/ViewJPG "%s"
 
@@ -2413,6 +2426,7 @@ extension.
 
 Configuration - Address book
 ****************************
+
 
 ---- Columns -------------------------------------------------------------
 
@@ -2489,15 +2503,15 @@ Configuration - ARexx
 *********************
 
 
-   As well as the ARexx menu in the main window, which can hold up to
-ten scripts, ARexx scripts can also be started by certain events.  For
-example, it is possible with two simple scripts to start up Miami in
-order to go online and fetch new mail, and then close Miami again once
-the mail has been downloaded.
+   As well as the "Scripts" menu in the main window, which can hold up
+to ten scripts, ARexx scripts can also be started by certain events.
+For example, it is possible with two simple scripts to start up Miami
+in order to go online and fetch new mail, and then close Miami again
+once the mail has been downloaded.
 
 
 @{b}Name@{ub}
-     The title of the script as it appears in the Scripts menu, e.g.
+     The title of the script as it appears in the "Scripts" menu, e.g.
      "Start Browser".
 
 
@@ -3110,8 +3124,8 @@ to show icons, labels or both on the buttons: see @{" Settings/MUI " link "MAM4"
   5   [GetAdd]    T           @{" Message/Save Address... " link "MAM3"}
 
   6   [New]       N           @{" Message/Write " link "MAM3"}
-  7   [Reply]     R           @{" Message/Reply " link "MAM3"}
-  8   [Forward]   W           @{" Message/Forward " link "MAM3"}
+  7   [Reply]     R           @{" Message/Reply... " link "MAM3"}
+  8   [Forward]   W           @{" Message/Forward... " link "MAM3"}
 
   9   [Get]       G           @{" Folder/Get new mail " link "MAM2"}
  10   [Send]      S           @{" Folder/Send queued mail " link "MAM2"}
@@ -3195,10 +3209,8 @@ Main window - Folder menu
      folder directory already exists (e.g. a folder of another user),
      select "Existing directory".  To create a new folder you can either
      use YAM's "Internal defaults" or copy the settings from the current
-     folder ("Like current").  In the following dialogue, enter the name
-     for the directory that should be created.  Only change the parent
-     directory (path) if absolutely required.  Now a @{" configuration panel " link "FO_W"}
-     opens where you can modify the properties of the new folder.
+     folder ("Like current").  Now a @{" configuration panel " link "FO_W"} opens where
+     you can modify the properties of the new folder.
 
 @{b}Folder/New folder group...@{ub}
      Creates a new folder group and inserts it at the end of the
@@ -3262,18 +3274,18 @@ Main window - Folder menu
 
 @{b}Folder/Exchange mail@{ub}
      First fetches new mail from your mail server and then sends the
-     messages in the  Outgoing mailbox.  This simply combines the
+     messages in the Outgoing mailbox.  This simply combines the
      actions of 'Get new mail' and 'Send queued mail'.
 
 @{b}Folder/Get new mail@{ub}
      Attempts to connect to the mail server, checks whether there is
      new mail waiting and if so downloads it into the 'Incoming'
-     mailbox.  If you have specified more than one @{" POP3 server " link "CO02"},
+     mailbox.  If you have specified more than one @{" POP3 account " link "CO02"},
      those marked as "Active" will all be checked in turn.
 
 @{b}Folder/Check single account@{ub}
-     If you have set up several POP3 servers, you can use this function
-     to check any single server.
+     If you have set up several POP3 accounts, you can use this function
+     to check any single account.
 
 @endnode
 
@@ -3316,8 +3328,9 @@ Main window - Message menu
 
 @{b}Message/Save@{ub}
      Saves the text (and headers) of one or more messages, creating
-     a separate file for each message.  Should you want to save the
-     messages in their original mailbox (MBOX) format, use @{" Folder/Export " link "MAM2"}.
+     a separate file for each message.  Should you want to save all
+     the messages in the folder to a single file in mailbox (MBOX)
+     format, use @{" Folder/Export " link "MAM2"} instead.
 
 @{b}Message/Attachments »  Save@{ub}
      Saves the attached files from one or more messages in a directory
@@ -3413,9 +3426,7 @@ Main window - Settings menu
      palette, screen mode, background, borders, gadgets, keyboard
      shortcuts and so on.  Please see the MUI documentation for more
      information.  YAM utilises several MUI classes which were not in
-     the original release of MUI.  For this reason, some settings are
-     not made in YAM's configuration window but rather in that for MUI.
-     These MUI modules are:
+     the original release of MUI.  These MUI modules are:
 
 
         NListviews: some of the lists in YAM, e.g. the message list
@@ -3463,17 +3474,17 @@ answer or forward an already existing message.  You can open TWO Write
 windows at a time.  The Write window consists of three sheets, laid out
 as shown below.  The menu bar is the same for each sheet.
 
-  @{" Text " link "WRM1" 0} @{" Edit " link "WRM2" 0} @{" Attachments " link "WRM3" 0} @{" Options " link "WR02" 0}
+  @{" Text " link "WRM1"} @{" Edit " link "WRM2"} @{" Attachments " link "WRM3"} @{" Options " link "WR02"}
   
     .-----------------------. .------------------.   .--------------------.
-    |      @{"  Message  " link "WR00" 0}     | |  @{" Attachments " link "WR01" 0}   |  |    @{"  Options  " link "WR02" 0}     |
+    |      @{"  Message  " link "WR00"}     | |  @{" Attachments " link "WR01"}   |  |    @{"  Options  " link "WR02"}     |
     |                       |_|__________________|___|____________________|
     |                                                                     |
     |                                                                     |
     |                                                                     |
     |                                                                     |
     |            The big text edit field on the 'Message'                 |
-    |            sheet is the @{" internal editor " link "EDIT" 0} which you                 |
+    |            sheet is the @{" internal editor " link "EDIT"} which you                 |
     |            can use to enter your message.                           |
     |                                                                     |
     |                                                                     |
@@ -3560,16 +3571,12 @@ toolbar.
           start typing the alias, first name or email address of your
           recipient in the @{b}To:@{ub} field.  This way you are quickly
           presented with a dropdown list of the possible matches, taken
-          from your address book; now just use the cursor up/down keys
-          to select the intended recipient and then press <Return>.
+          from your address book.
 
           <Shift-Return> adds only the recipient address and drops the
           real name, whilst pressing <Return> without selecting a recipient
           will add the first match in the dropdown list.  Both techniques
           can be combined.
-
-          Please note that you cannot use the mouse to operate this
-          dropdown list.
 
      If YAM cannot find a name or alias you've inserted manually into
      the @{b}To:@{ub} field, you will get an error report as soon as you try to
@@ -3616,11 +3623,11 @@ Write window - Attachments sheet
    You can add one or more files to your message.  This way you can send
 binary files such as archives, pictures, etc. via e-mail.  You can choose
 the method of encoding (MIME or UUencoded) and write a comment for each
-file.  Files can be archived automatically to reducethe size of the
+file.  Files can be archived automatically to reduce the size of the
 resulting message.
 
    The attachment list contains five columns: filename, size (in bytes),
-contents, encryption and description.  You can re-order the files using
+contents, encoding and description.  You can re-order the files using
 Drag & Drop.
 
 
@@ -3697,10 +3704,10 @@ sheet.
    The layout of this sheet is:
 
                     _________________________________________________
-          Copies to|_____________________________________________|<|^|
-   Hidden copies to|_____________________________________________|<|^|
-               From|_____________________________________________|<|^|
-           Reply to|_____________________________________________|<|^|
+          Copies to|_______________________________________________|^|
+   Hidden copies to|_______________________________________________|^|
+               From|_______________________________________________|^|
+           Reply to|_______________________________________________|^|
   Additional header|_________________________________________________|
 
      .-------------.           .-------------.          .------------.
@@ -3980,7 +3987,7 @@ Write window - Edit menu
 
      If you type in a word which is not in the dictionary, the screen
      flashes (and you will get an audible signal, too, if you have set
-     this up in your Workbench Sound preferences).  Hit the <Help> key
+     this up in your Workbench Sound preferences).  Use <Amiga-Help>
      to get a list of suggestions for the correct spelling.
 
 @endnode
@@ -4607,10 +4614,25 @@ Address book - Menus
      Opens an existing address book from your hard disk.  The address
      book currently resident in RAM will be replaced.
 
+     If you try opening a file that does not seem to be a valid YAM
+     address book, you will be offered the chance to load it as a list
+     of email addresses, with one address per line.  Items can be
+     specified as
 
+      <email@example.com> Real name
+
+     or
+
+      email@example.net
+
+     because names are optional.  YAM will automatically create aliases
+     for the new items.
+
+    
 @{b}Address book/Append...@{ub}
      Loads another address book from your hard disk and appends its
-     contents to the address book currently resident in RAM.
+     contents to the address book currently resident in RAM.  See
+     also the previous option.
 
 
 @{b}Address book/Save@{ub}
@@ -4856,12 +4878,15 @@ Mail transfers
 transfer window that gives you some control over the process.
 
    If pre-selection is enabled, YAM will display a list of the messages
-available for import or download.  Messages exceeding the maximum size
-selected are highlighted with white letters.  Two explanatory status
-symbols may appear at the left of the message: a little trashcan means
-the message will be deleted from the server, whereas the floppy disk
-icon indicates that the message will be downloaded.  Therefore, there
-exist the following possibilities:
+available for import or download.  Depending on your settings, messages
+exceeding the maximum size may be the only ones appearing in the list,
+to make it easier for you to decide what to do with them without having
+to face a too cluttered list: messages below the maxium size will just
+be downloaded silently.  Two explanatory status symbols may appear at
+the left of the message: a little trashcan means the message will be
+deleted from the server, whereas the floppy disk icon indicates that
+the message will be downloaded.  Therefore, there exist the following
+possibilities:
 
 
   Trashcan   Diskette  Action
@@ -4992,6 +5017,9 @@ Functions of the buttons
 @endnode
 
 @node "FI_K" "Finding messages - Search criteria"
+@next "FI_W"
+@prev "FI_W"
+@toc "FI_W"
 
 Finding messages - Search criteria
 **********************************
@@ -5102,16 +5130,16 @@ Users window.
 
 @{b}Use global address book@{ub}
      Enable this option if the user won't be using his or her own
-     address book.  The address book is then shared with the other
-     users -- the file is kept in the program home directory and not
-     in the user's home directory.
+     address book.  The address book is then shared with at least
+     the default user -- the file is kept in the program home
+     directory and not in the user's home directory.
 
 
 @{b}Use global glossary@{ub}
      Enable this option if the user will not maintain a separate
-     glossary but will instead share one with the other users.  The file
-     is kept in the program home directory and not in this user's home
-     directory.
+     glossary but will instead share one with at least the default
+     user.  The file is kept in the program home directory and not
+     in this user's home directory.
 
 
 @{b}Supervisor privileges@{ub}
@@ -5160,10 +5188,10 @@ another object by releasing the mouse button to trigger some operation.
   Address book     Editor window    Insert address in letter
   Address book     Member list      Add members to distribution list
   Member list      Member list      Rearrange list members
-  Text file        Editor window    Insert file as letter
+  Text file        Editor window    Insert file in letter
   Text file        Attachment list  Add file as attachment
-  Text file        Status icon      Use file as text in new message
-  Binary file      Status icon      Use file as attachment in new message
+  Text file        AppIcon          Use file as text in new message
+  Binary file      AppIcon          Use file as attachment in new message
   Binary file      Editor window    Add file as attachment
   Binary file      Attachment list  Add file as attachment
 
@@ -5932,14 +5960,17 @@ ADDRLOAD
      As of V2.4, YAM pays attention to the contents of the supplied file.
      If the file is not recognised as a valid address book, a requester
      will open to let the user select whether he wants it to be loaded
-     as a list of email addresses in the format
+     as a list of email addresses where items can be specified as
 
-        <email address> <name>
-        <email address> <name>
-        ...
+      <email@example.com> Real name
 
-     instead of loading whatever it is thrown at it.  The command will
-     not return until the requester is satisfied.
+     or
+
+      email@example.com
+
+     because names are optional.  YAM will automatically create aliases
+     for the new items, and the command will not return until the
+     requester is satisfied.
 
 @{b}EXAMPLE@{ub}
          /* Load an address book from disk */
@@ -6927,7 +6958,7 @@ MAILCHECK
      VAR/K,STEM/K,POP/K/N,MANUAL/S
 
 @{b}FUNCTION@{ub}
-     Downloads new email from the specified POP3 server, or from all
+     Downloads new email from the specified POP3 account, or from all
      of them if none is specified.
 
 @{b}INPUTS@{ub}
@@ -6935,9 +6966,9 @@ MAILCHECK
                   window instead of RESULT  (V2.0)
      STEM/K     - base name used for the stems where the returned data
                   will be stored  (V2.0)
-     POP/K/N    - POP3 mail server to check (V2.0), specified as the position
-                  in the list of POP3 servers in Configuration ->TCP/IP;
-                  the server at the top is server 0
+     POP/K/N    - POP3 mail account to check (V2.0), specified as the position
+                  in the list of POP3 accounts in Configuration ->TCP/IP;
+                  the account at the top is account 0
      MANUAL/S   - open the transfer window to enable user interaction,
                   i.e. message preselection  (V2.0)
 
@@ -6950,7 +6981,7 @@ MAILCHECK
 
      In V1.x, RC was always set to 0.  As of V2.0 however, RC is set to
      5 if the TCP/IP stack is not online or if no messages are found on
-     the server
+     the server.
 
      Likewise, in V1.x RESULT was set to the number of downloaded emails,
      or -1 if the connection to the mail server failed.
@@ -6958,8 +6989,8 @@ MAILCHECK
 @{b}NOTES@{ub}
      The command returns immediately if MANUAL is used.
 
-     If no server is specified, the command will only check those
-     mail servers marked as "active" in the configuration, just like
+     If no account is specified, the command will only check those
+     mail accounts marked as "active" in the configuration, just like
      if the "Get" button was pressed in the toolbar.
 
 @{b}EXAMPLE@{ub}
@@ -6967,7 +6998,7 @@ MAILCHECK
 
          OPTIONS RESULTS
 
-         /* Download email from a server */
+         /* Download email from a mail account */
 
          MAILCHECK POP 2 STEM st.
 
@@ -8706,9 +8737,9 @@ WRITEATTACH
      The default content type is taken after scanning the built-in
      list of MIME types and then looking at the MIME types defined
      in the user configuration.  For instance, if the user has
-     defined "application/pdf" as MIME type for files using the
-     ".pdf" extension, all files attached bearing this extension
-     will default to "application/pdf" unless CTYPE overrides this.
+     defined "application/pgs" as MIME type for files using the
+     ".pgs" extension, all files attached bearing this extension
+     will default to "application/pgs" unless CTYPE overrides this.
      If no suitable MIME type is found and no content type has been
      specified, YAM will fallback to "application/octet-stream".
 
@@ -8720,7 +8751,7 @@ WRITEATTACH
          /* Attach a file */
 
          MAILWRITE WINDOW 0      /* Set the active Write window */
-         WRITEATTACH 'Docs:Noise.pdf' ENCMODE 'b64' CTYPE 'application/pdf'
+         WRITEATTACH 'Docs:Mag.pgs' ENCMODE 'b64' CTYPE 'application/pgs'
 
 @{b}BUGS@{ub}
      No error is returned if the specified file was found but couldn't
@@ -9401,8 +9432,7 @@ User Interface.  There are several kinds of icons:
 empty.info
 new.info
 old.info@{ub}
-     Icons which show the status of the incoming mailbox when the program
-is iconified:
+     Icons which show the status of the incoming mailbox:
 
      check.info     YAM is checking for new mail
      empty.info     the mailbox is empty
@@ -9466,6 +9496,53 @@ Reference - Misc file formats
 The .addressbook file
 ---------------------
 
+   This plain text file uses a hierarchical scheme following this general
+format:
+
+
+    YAB4 - YAM Addressbook                          - Identifier
+    @GROUP alias  ·································
+    description                                   ·
+    @USER alias     -------------.                ·
+    e-mail address               |                ·
+    real name                    |                ·
+    description                  |                ·
+    phone #                      |                ·
+    street address               |                ·
+    ZIP/City                      > Person        ·
+    country                      |                ·
+    PGP ID                       |                ·
+    birth date                   |                ·
+    portrait                     |                 · GROUP
+    homepage                     |                ·
+    default security             |                ·
+    @ENDUSER        -------------'                ·
+    @LIST alias     »»»»»»»»»»»»»                 ·
+    return address               v                ·
+    list name                    v                ·
+    description                  v                ·
+    member #1                     » LIST          ·
+    member #2                    ^                ·
+    ...                          ^                ·
+    member #n                    ^                ·
+                                 ^                ·
+    @ENDLIST        »»»»»»»»»»»»»                 ·
+    @ENDGROUP     ·································
+
+
+   Groups, lists and people are started with @GROUP <alias>, @LIST <alias>
+and @USER <alias> and closed with @ENDGROUP, @ENDLIST and @ENDUSER,
+respectively.  Groups may include lists, and lists may include members.
+Both lists and people may appear outside groups.  List members may be
+either aliases, addresses or fully qualified "Real name <address>" pairs.
+
+   GUI-wise, a group may be dragged&dropped onto a distribution list and
+viceversa to get all its recipients added to the list.  Recursive loops
+are watched and promptly avoided when appropriate - for instance, if a
+group contanining a list is dragged&dropped on that list, only the items
+available in the group other than the contents of the list itself are
+added to it.
+
 @endnode
 
 @node "RFCA" "The .emailcache file"
@@ -9485,9 +9562,9 @@ configuration is exceeded, the oldest entry (i.e. the one at the bottom)
 is dropped.
 
    If it is already in the cache when writing the mail, the entry is
-moved to the top -- this way, the next time, the most recently used recipient
-will be suggested first.  Entries in the address book will still have
-priority over the cache, though.
+moved to the top -- this way, the next time, the most recently used
+recipient will be suggested first.  Entries in the address book will
+still have priority over the cache, though.
 
 @endnode
 
@@ -9499,6 +9576,38 @@ priority over the cache, though.
 The .folders file
 -----------------
 
+   This plain text file uses a hierarchical scheme following this general
+format:
+
+
+    YFO1 - YAM Folders                              - Identifier
+    @FOLDER name    ------------------.
+    directory                          > Folder
+    @ENDFOLDER      ------------------'
+    @GROUP name              ································
+    status                                                  ·
+    @FOLDER name    ------------------.                     ·
+    directory                          > Folder             ·
+    @ENDFOLDER      ------------------'                     ·
+    @GROUP name              ······················         ·
+    status                                        ·         ·
+    @FOLDER name    ------------------.           ·          · GROUP
+    directory                          > Folder   ·         ·
+    @ENDFOLDER      ------------------'            · GROUP  ·
+    @FOLDER name    ------------------.           ·         ·
+    directory                          > Folder   ·         ·
+    @ENDFOLDER      ------------------'           ·         ·
+    @ENDGROUP                ······················         ·
+    @ENDGROUP                ································
+
+
+   where <status> may be either 0 or 1, the latter meaning that the
+group is unfolded, e.g. its contents are being displayed.  Folders
+may live both inside and outside groups, and groups may be nested.
+
+   The order of the folder tree is saved on disk whenever the
+@{" Folder/Order/Save " link "MAM2"} menu item is called.
+
 @endnode
 
 @node "RFGL" "The .glossary file"
@@ -9509,6 +9618,19 @@ The .folders file
 The .glossary file
 ------------------
 
+   This file contains a list of the definitions made in the @{" glossary " link "DI_W"}
+using this format:
+
+
+    YDI1 - YAM Dictionary
+    @ENTRY abbreviation
+    contents
+    @ENDENTRY
+    @ENTRY abbreviation
+    contents
+    @ENDENTRY
+    ...
+
 @endnode
 
 @node "RFUI" "The .uidl file"
@@ -9518,6 +9640,38 @@ The .glossary file
 
 The .uidl file
 --------------
+
+   If "Avoid duplicates" is enabled in @{" Configuration/New mail " link "CO02"}, YAM
+will use the UIDL POP3 command when connecting to your POP3 server to
+request a Unique ID Listing of the messages in your mail account.
+The POP3 server is responsible for assigning an unique ID to every
+message and put it into a "X-UIDL:" header.
+
+   If the server doesn't support the UIDL POP3 command, YAM will fall
+back to the TOP command and try using the "Message-ID:" header instead;
+if this also fails, an error will be generated.
+
+   The Unique ID Listing received from the server is compared against
+the contents of the "PROGDIR:.uidl" file; if this file doesn't exist
+yet, it will be created.  This is a plain text file with one ID per
+line using the format <ID>@<POP3 server>, e.g.
+
+
+    9685@mail.saug.org
+    9686@mail.saug.org
+    9687@mail.saug.org
+    9688@mail.saug.org
+    (k5"!N1!"!RkI"!YT4"!@pop.wanadoo.es
+    9689@mail.saug.org
+    9690@mail.saug.org
+    9691@mail.saug.org
+    9692@mail.saug.org
+
+
+   Whenever an ID is already found in the "PROGDIR:.uidl" file, the
+relevant message will be considered a duplicate, and thus it won't be
+downloaded.  New IDs not yet in the "PROGDIR:.uidl" file will be added
+to it as the corresponding messages are sucessfully downloaded.
 
 @endnode
 
@@ -9531,7 +9685,7 @@ The .users file
 
    This file contains a list of the users that can log in and use YAM.
 YAM maintains this file by itself, so you shouldn't ever touch it,
-unless maybe you are moving YAM to another place in your hard disk.
+unless maybe you are @{" moving YAM " link "TIP2"} to another place in your hard disk.
 
    The file uses the following format:
 
@@ -9551,6 +9705,7 @@ the following set of elements:
         No Supervisor privileges  = 4
         Share global address book = 2
         Share global glossary     = 1
+
 
    Thus, "3" would mean the user has Supervisor privileges and is sharing
 the global address book and glossary.  This is the default value in a
@@ -10027,8 +10182,8 @@ points:
               are welcome to do so.
 
          1b.  Please note that the bug may already be fixed internally,
-              and therefore removed from the database.  Check the ChangeLog
-              to be sure:
+              and therefore not be listed in the default "Open bugs" list.
+              You may want to check the ChangeLog to be sure:
 
       http://cvs.sf.net/cgi-bin/viewcvs.cgi/*checkout*/yamos/yamos/ChangeLog
 
@@ -10168,9 +10323,9 @@ Credits
       Marcin Orlowski      (Flexcat)
       Gilles Masson,
       Carsten Scholling,
-      P. Gruchala,
+      Przemyslaw Gruchala,
       Sebastian Bauer
-      & Jens Langner       (NList.mcc)
+      & Jens Langner       (NList.mcc, NListview.mcc)
       Carsten Scholling    (NListtree.mcc)
       Andrija Antonijevic  (AmiSSL library)
 
@@ -10454,130 +10609,358 @@ or for administrating mailing lists.
 
    A...
 
-   @{" Address Book " link AB_W}
-   @{" Address book - Menus " link AB_M}
-   @{" Address book - Toolbar " link AB_B}
-   @{" AmigaDOS Patterns and wildcards " link DOSW}
-   @{" ARexx Interface " link REXX}
+   @{" Accounts, Defining multiple POP3 " link "CO01"}
+   @{" Additional headers " link "CO05"}
+   @{" ADDRDELETE, ARexx command " link "RX_ADDRDELETE"}
+   @{" ADDREDIT, ARexx command " link "RX_ADDREDIT"}
+   @{" Address book " link "AB_W"}
+   @{" Address book, Configuration " link "CO12"}
+   @{" Address book - Menus " link "AB_M"}
+   @{" Address book - toolbar " link "AB_B"}
+   @{" ADDRFIND, ARexx command " link "RX_ADDRFIND"}
+   @{" ADDRGOTO, ARexx command " link "RX_ADDRGOTO"}
+   @{" ADDRINFO, ARexx command " link "RX_ADDRINFO"}
+   @{" ADDRLOAD, ARexx command " link "RX_ADDRLOAD"}
+   @{" ADDRNEW, ARexx command " link "RX_ADDRNEW"}
+   @{" ADDRRESOLVE, ARexx command " link "RX_ADDRRESOLVE"}
+   @{" ADDRSAVE, ARexx command " link "RX_ADDRSAVE"}
+   @{" AmigaDOS Patterns and wildcards " link "DOSW"}
+   @{" AmigaDOS scripts triggered by some events " link "CO13"}
+   @{" APPBUSY, ARexx command " link "RX_APPBUSY"}
+   @{" AppIcon, Defining the position and label of the " link "CO14"}
+   @{" APPNOBUSY, ARexx command " link "RX_APPNOBUSY"}
+   @{" Archiver, Setting one to archive attachments " link "CO14"}
+   @{" ARexx commands supported, Alphabetical list of " link "REXX"}
+   @{" ARexx commands supported, List sorted by function " link "REXL"}
+   @{" ARexx, Defining macros launched by events " link "CO13"}
+   @{" ATTACH, Tooltype " link "RF00"}
+   @{" Authors " link "CRED"}
+   @{" Automatic charset translation " link "CO04"}
+   @{" Automatic mail checking " link "CO02"}
+   @{" Avoid duplicates " link "CO02"}
 
    B...
 
-   @{" Basics - Encrypting with PGP " link PGP}
-   @{" Basics - Mail Protocols " link PROT}
-   @{" Basics - MIME " link MIME}
-   @{" Basics - what is e-mail? " link MAIL}
+   @{" Bar, Status " link "CO08"}
+   @{" Base64, MIME " link "MIME"}
+   @{" Bug reporting " link "INF2"}
 
    C...
 
-   @{" Configuration " link CO_W}
-   @{" Configuration - Address book " link CO12}
-   @{" Configuration - ARexx " link CO13}
-   @{" Configuration - Filters " link CO03}
-   @{" Configuration - First steps " link CO00}
-   @{" Configuration - Hidden Options " link CO_H}
-   @{" Configuration - Lists " link CO08}
-   @{" Configuration - Menus " link CO_M}
-   @{" Configuration - MIME " link CO11}
-   @{" Configuration - Miscellaneous " link CO14}
-   @{" Configuration - New mail  " link CO02}
-   @{" Configuration - Read " link CO04}
-   @{" Configuration - Replying " link CO06}
-   @{" Configuration - Security " link CO09}
-   @{" Configuration - Signature " link CO07}
-   @{" Configuration - Start/Quit " link CO10}
-   @{" Configuration - TCP/IP " link CO01}
-   @{" Configuration - Write " link CO05}
-   @{" Credits " link CRED}
+   @{" Cache, Email " link "CO05"}
+   @{" Change requests " link "INF4"}
+   @{" Charset conversion when reading " link "CO04"}
+   @{" Charset conversion when writing " link "CO05"}
+   @{" Charset, Automatic translation " link "CO04"}
+   @{" Close gadget, Defining the behaviour of the " link "CO14"}
+   @{" Closing phrase " link "CO05"}
+   @{" Color for URLs " link "CO04"}
+   @{" Colored text " link "CO04"}
+   @{" Commands, ARexx " link "REXX"}
+   @{" Configuration " link "CO_W"}
+   @{" Configuration - Address book " link "CO12"}
+   @{" Configuration - ARexx " link "CO13"}
+   @{" Configuration - Filters " link "CO03"}
+   @{" Configuration - First steps " link "CO00"}
+   @{" Configuration - Hidden options " link "CO_H"}
+   @{" Configuration - Lists " link "CO08"}
+   @{" Configuration - Menus " link "CO_M"}
+   @{" Configuration - MIME " link "CO11"}
+   @{" Configuration - Miscellaneous " link "CO14"}
+   @{" Configuration - New mail  " link "CO02"}
+   @{" Configuration - Read " link "CO04"}
+   @{" Configuration - Reply " link "CO06"}
+   @{" Configuration - Security " link "CO09"}
+   @{" Configuration - Signature " link "CO07"}
+   @{" Configuration - Start/Quit " link "CO10"}
+   @{" Configuration - TCP/IP " link "CO01"}
+   @{" Configuration - Write " link "CO05"}
+   @{" Context menus " link "CO08"}
+   @{" Confirm deletion of X messages, Configuration " link "CO14"}
+   @{" Credits " link "CRED"}
+   @{" CVS repository " link "INF5"}
 
    D...
 
-   @{" Drag & Drop " link DRAG}
+   @{" Daylight saving time, First Steps configuration " link "CO00"}
+   @{" DEBUG, Tooltype " link "RF00"}
+   @{" Default signature " link "CO07"}
+   @{" Delete messages immediately " link "CO14"}
+   @{" Deletion of X messages, Confirm " link "CO14"}
+   @{" Directory for temporary files " link "CO14"}
+   @{" Drag & Drop " link "Drag"}
+   @{" Duplicates, Avoid " link "CO02"}
 
    E...
 
-   @{" Editor features " link EDIT}
-   @{" Entering addresses " link EA_W}
+   @{" Editor features " link "EDIT"}
+   @{" Electronic mail, What is it " link "MAIL"}
+   @{" Email cache " link "CO05"}
+   @{" Empty lines, Quote " link "CO06"}
+   @{" Enhancement requests " link "INF3"}
+   @{" Entering addresses, Address book " link "EA_W"}
+   @{" Exporting a whole folder " link "MAM2"}
+   @{" External editor " link "CO05"}
+   @{" Extra headers, Defining default " link "CO05"}
 
    F...
 
-   @{" Finding messages " link FI_W}
-   @{" Finding messages - Search criteria " link FI_K}
-   @{" Folder settings " link FO_W}
-   @{" Future Plans " link PLAN}
+   @{" Feature requests " link "INF3"}
+   @{" File formats " link "RF05"}
+   @{" Filters, Configuration " link "CO03"}
+   @{" Finding messages " link "FI_W"}
+   @{" Finding messages - Search criteria " link "FI_K"}
+   @{" Folder list, Main window " link "MA00"}
+   @{" Folder settings " link "FO_W"}
+   @{" FOLDERINFO, ARexx command " link "RX_FOLDERINFO"}
+   @{" Format, Size " link "CO08"}
+   @{" Forward settings " link "CO06"}
+   @{" Function, Supported ARexx commads sorted by " link "REXL"}
+   @{" Future plans " link "PLAN"}
+
+   G...
+
+   @{" GETFOLDERINFO, ARexx command " link "RX_GETFOLDERINFO"}
+   @{" GETSELECTED, ARexx command " link "RX_GETSELECTED"}
+   @{" Getting started " link "BEGI"}
+   @{" GETURL, ARexx command " link "RX_GETURL"}
+   @{" GPL " link "COPY"}
+
+   H...
+
+   @{" Headers, Selecting how many are displayed " link "CO04"}
+   @{" Headers, What's that " link "HEAD"}
+   @{" HELP, ARexx command " link "RX_HELP"}
+   @{" HIDE, ARexx command " link "RX_HIDE"}
+   @{" HIDE, Tooltype " link "RF00"}
+   @{" How can I change the icons " link "RF04"}
+   @{" How is email stored " link "RF03"}
+   @{" HTTP proxy server, Configuration " link "CO12"}
 
    I...
 
-   @{" Installation " link INST}
-   @{" Introduction " link INTR}
+   @{" Icon handling " link "RF04"}
+   @{" Immediately, Delete messages " link "CO14"}
+   @{" Importing email " link "MAM2"}
+   @{" INFO, ARexx command " link "RX_INFO"}
+   @{" Installation " link "INST"}
+   @{" Internal editor " link "EDIT"}
+   @{" Introduction " link "INTR"}
+   @{" ISONLINE, ARexx command " link "RX_ISONLINE"}
+
+   K...
+
+   @{" Killfiles, Defining " link "CO03"}
+   @{" Known problems " link "PROB"}
 
    L...
 
-   @{" Legal issues " link COPY}
-   @{" List of all ARexx commands " link REXL}
+   @{" Large messages, Download " link "CO02"}
+   @{" Legal issues " link "COPY"}
+   @{" LETTER, Tooltype " link "RF00"}
+   @{" Limit, Message size " link "CO02"}
+   @{" List of all ARexx commands " link "REXX"}
+   @{" LISTSELECT, ARexx command " link "RX_LISTSELECT"}
+   @{" Logfiles, Using " link "CO09"}
 
    M...
 
-   @{" Mail Transfers " link TR_W}
-   @{" Main window " link MA_W}
-   @{" Main window - folder list " link MA00}
-   @{" Main window - Folder Menu " link MAM2}
-   @{" Main window - message list " link MA01}
-   @{" Main window - Message Menu " link MAM3}
-   @{" Main window - Project Menu " link MAM1}
-   @{" Main window - Scripts Menu " link MAM5}
-   @{" Main window - Settings Menu " link MAM4}
-   @{" Main window - toolbar " link MA02}
-   @{" Make up of a message header " link HEAD}
-   @{" MUI " link MUI}
+   @{" Mail transfers " link "TR_W"}
+   @{" Mail protocols " link "PROT"}
+   @{" MAILARCHIVE, ARexx command " link "RX_MAILARCHIVE"}
+   @{" MAILBOUNCE, ARexx command " link "RX_MAILBOUNCE"}
+   @{" MAILCHANGESUBJECT, ARexx command " link "RX_MAILCHANGESUBJECT"}
+   @{" MAILCHECK, ARexx command " link "RX_MAILCHECK"}
+   @{" MAILCOPY, ARexx command " link "RX_MAILCOPY"}
+   @{" MAILDELETE, ARexx command " link "RX_MAILDELETE"}
+   @{" MAILDIR, Tooltype " link "RF00"}
+   @{" MAILEDIT, ARexx command " link "RX_MAILEDIT"}
+   @{" MAILEXPORT, ARexx command " link "RX_MAILEXPORT"}
+   @{" MAILFILTER, ARexx command " link "RX_MAILFILTER"}
+   @{" MAILFORWARD, ARexx command " link "RX_MAILFORWARD"}
+   @{" MAILIMPORT, ARexx command " link "RX_MAILIMPORT"}
+   @{" MAILINFO, ARexx command " link "RX_MAILINFO"}
+   @{" Mailing lists " link "INF1"}
+   @{" MAILMOVE, ARexx command " link "RX_MAILMOVE"}
+   @{" MAILREAD, ARexx command " link "RX_MAILREAD"}
+   @{" MAILREPLY, ARexx command " link "RX_MAILREPLY"}
+   @{" MAILSEND, ARexx command " link "RX_MAILSEND"}
+   @{" MAILSENDALL, ARexx command " link "RX_MAILSENDALL"}
+   @{" MAILSTATUS, ARexx command " link "RX_MAILSTATUS"}
+   @{" MAILTO, Tooltype " link "RF00"}
+   @{" MAILUPDATE, ARexx command " link "RX_MAILUPDATE"}
+   @{" MAILWRITE, ARexx command " link "RX_MAILWRITE"}
+   @{" Main window " link "MA_W"}
+   @{" Main window - folder list " link "MA00"}
+   @{" Main window - Folder menu " link "MAM2"}
+   @{" Main window - message list " link "MA01"}
+   @{" Main window - Message menu " link "MAM3"}
+   @{" Main window - Project menu " link "MAM1"}
+   @{" Main window - Scripts menu " link "MAM5"}
+   @{" Main window - Settings menu " link "MAM4"}
+   @{" Main window - toolbar " link "MA02"}
+   @{" Make up of a message header " link "HEAD"}
+   @{" Menus, Context " link "CO08"}
+   @{" Message pre-selection " link "CO02"}
+   @{" Message storage " link "RF03"}
+   @{" Message tracking " link "CO14"}
+   @{" MIME viewers, Defining " link "CO11"}
+   @{" MUI " link "MUI"}
+   @{" Multiple Read windows " link "CO04"}
 
    N...
 
-   @{" NewIcons " link NEWI}
+   @{" Netiquette " link "NETI"}
+   @{" NewIcons " link "NEWI"}
+   @{" NEWMAILFILE, ARexx command " link "RX_NEWMAILFILE"}
+   @{" NOCHECK, Tooltype " link "RF00"}
+   @{" Notification " link "CO02"}
+
+   O...
+
+   @{" Organization, Setting the header " link "CO05"}
+
+   P...
+
+   @{" PASSWORD, Tooltype " link "RF00"}
+   @{" Pattern matching " link "DOSW"}
+   @{" Personal data, Exchanging " link "CO12"}
+   @{" PGP, Encrypting with " link "PGP"}
+   @{" PGP 2.6.x, Installing " link "PGP0"}
+   @{" PGP 5.0i, Installing " link "PGP1"}
+   @{" POP3 accounts, Defining multiple " link "CO01"}
+   @{" PREFSFILE, Tooltype " link "RF00"}
+   @{" Pre-selection, Message " link "CO02"}
+   @{" Problems, Known " link "PROB"}
+   @{" Proxy server, Defining an HTTP " link "CO12"}
 
    Q...
 
-   @{" Quickstart " link TUTO}
+   @{" Quickstart " link "TUTO"}
+   @{" QUIT, ARexx command " link "RX_QUIT"}
+   @{" Quote empty lines " link "CO06"}
+   @{" Quote message " link "CO06"}
+   @{" Quoted-Printable, MIME " link "MIME"}
+   @{" Quotes, Previous " link "CO04"}
 
    R...
 
-   @{" Read window " link RE_W}
-   @{" Read window - Buttons " link RE_B}
-   @{" Read window - Message Menu " link REM1}
-   @{" Read window - Navigation menu " link REM2}
-   @{" Read window - PGP menu " link REM3}
-   @{" Read window - Settings menu " link REM4}
-   @{" Requirements " link REQS}
+   @{" Read window " link "RE_W"}
+   @{" Read window - toolbar " link "RE_B"}
+   @{" Read window - Message menu " link "REM1"}
+   @{" Read window - Navigation menu " link "REM2"}
+   @{" Read window - PGP menu " link "REM3"}
+   @{" Read window - Settings menu " link "REM4"}
+   @{" Read windows, Multiple " link "CO04"}
+   @{" READCLOSE, ARexx command " link "RX_READCLOSE"}
+   @{" READINFO, ARexx command " link "RX_READINFO"}
+   @{" READPRINT, ARexx command " link "RX_READPRINT"}
+   @{" READSAVE, ARexx command " link "RX_READSAVE"}
+   @{" Reference " link "RF_W"}
+   @{" Remailer, Using a " link "CO09"}
+   @{" Remote filters " link "CO03"}
+   @{" Reply-To: address " link "CO05"}
+   @{" REQUEST, ARexx command " link "RX_REQUEST"}
+   @{" REQUESTFOLDER, ARexx command " link "RX_REQUESTFOLDER"}
+   @{" REQUESTSTRING, ARexx command " link "RX_REQUESTSTRING"}
+   @{" Requirements " link "REQS"}
 
    S...
 
-   @{" Start-up options " link OPTI}
+   @{" Save sent messages, Configuration " link "CO14"}
+   @{" SCREENTOBACK, ARexx command " link "RX_SCREENTOBACK"}
+   @{" SCREENTOFRONT, ARexx command " link "RX_SCREENTOFRONT"}
+   @{" Scripts, Using ARexx " link "CO13"}
+   @{" Searching messages " link "FI_W"}
+   @{" Sent messages, Save " link "CO14"}
+   @{" SETFLAG, ARexx command " link "RX_SETFLAG"}
+   @{" SETFOLDER, ARexx command " link "RX_SETFOLDER"}
+   @{" SETMAIL, ARexx command " link "RX_SETMAIL"}
+   @{" SETMAILFILE, ARexx command " link "RX_SETMAILFILE"}
+   @{" SHOW, ARexx command " link "RX_SHOW"}
+   @{" SIGNATURE, Environment variable " link "CO07"}
+   @{" Signature, Use " link "CO07"}
+   @{" Signatures, How are they displayed " link "CO04"}
+   @{" Size format " link "CO08"}
+   @{" SMTP AUTH " link "CO01"}
+   @{" SMTP server " link "CO01"}
+   @{" Sources, Getting the " link "INF5"}
+   @{" SSLv3, POP3 secure settings " link "CO01"}
+   @{" Startup options " link "RF00"}
+   @{" Status bar " link "CO08"}
    @{" Status Icons " link MA0S}
+   @{" STLS, POP3 secure settings " link "CO01"}
+   @{" Structure, Install " link "RF02"}
+   @{" Styles, Text " link "CO04"}
+   @{" SUBJECT, Tooltype " link "RF00"}
+   @{" Subject, Warn when there's an empty " link "CO05"}
+   @{" Support " link "INFO"}
+   @{" Swatch Beats, Time unit " link "CO08"}
 
    T...
 
-   @{" Technical " link TECH}
-   @{" The basics - Email Netiquette " link NETI}
-   @{" The Glossary " link DI_W}
-   @{" Tips & Tricks " link TIPS}
-
+   @{" Taglines " link "CO07"}
+   @{" Temporary files, Directory for " link "CO14"}
+   @{" Text styles, Read window " link "CO04"}
+   @{" Glossary " link "DI_W"}
+   @{" Time zone, First Steps configuration " link "CO00"}
+   @{" Tips & tricks " link "TIPS"}
+   @{" TLSv1/SSLv3 POP3 settings " link "CO01"}
+   @{" Tooltypes " link "RF00"}
+   @{" Tracking, Message " link "CO14"}
+   @{" Transfer window " link "CO02"}
+   @{" Transfers, Mail " link "TR_W"}
+   
    U...
 
-   @{" Useful links " link INFO}
-   @{" Users " link US_W}
+   @{" Updates, Checking for " link "MAM1"}
+   @{" URL color " link "CO04"}
+   @{" Useful links " link "INFO"}
+   @{" USER, Tooltype " link "RF00"}
+   @{" USERINFO, ARexx command " link "RX_USERINFO"}
+   @{" Users " link "US_W"}
+   @{" UUencoding, MIME " link "MIME"}
+
+   V...
+
+   @{" Viewers, Defining MIME " link "CO11"}
 
    W...
 
-   @{" Write window " link WR_W}
-   @{" Write window - Attachments  " link WR01}
-   @{" Write window - Attachments menu " link WRM3}
-   @{" Write window - Edit menu " link WRM2}
-   @{" Write window - message " link WR00}
-   @{" Write window - Options " link WR02}
-   @{" Write window - Text menu " link WRM1}
+   @{" Warn when there's an empty Subject " link "CO05"}
+   @{" Welcome phrase " link "CO05"}
+   @{" Wildcards " link "DOSW"}
+   @{" Word wrapping " link "CO05"}
+   @{" Write window " link "WR_W"}
+   @{" Write window - Attachments  " link "WR01"}
+   @{" Write window - Attachments menu " link "WRM3"}
+   @{" Write window - Edit menu " link "WRM2"}
+   @{" Write window - Message " link "WR00"}
+   @{" Write window - Options " link "WR02"}
+   @{" Write window - Text menu " link "WRM1"}
+   @{" WRITEATTACH, ARexx command " link "RX_WRITEATTACH"}
+   @{" WRITEBCC, ARexx command " link "RX_WRITEBCC"}
+   @{" WRITECC, ARexx command " link "RX_WRITECC"}
+   @{" WRITEEDITOR, ARexx command " link "RX_WRITEEDITOR"}
+   @{" WRITEFROM, ARexx command " link "RX_WRITEFROM"}
+   @{" WRITELETTER, ARexx command " link "RX_WRITELETTER"}
+   @{" WRITEMAILTO, ARexx command " link "RX_WRITEMAILTO"}
+   @{" WRITEOPTIONS, ARexx command " link "RX_WRITEOPTIONS"}
+   @{" WRITEQUEUE, ARexx command " link "RX_WRITEQUEUE"}
+   @{" WRITEREPLYTO, ARexx command " link "RX_WRITEREPLYTO"}
+   @{" WRITESEND, ARexx command " link "RX_WRITESEND"}
+   @{" WRITESUBJECT, ARexx command " link "RX_WRITESUBJECT"}
+   @{" WRITETO, ARexx command " link "RX_WRITETO"}
+
+   X...
+
+   @{" XPK, Setting packer & efficiency " link "CO14"}
+   @{" XPK, Enabling it to compress and protect folders " link "FO_W"}
 
    Y...
 
-   @{" YAM - English documentation " link MAIN}
-
+   @{" YAM - English documentation " link "Main"}
+   @{" YAM in the World Wide Web " link "INF0"}
+   @{" YAMOS team " link "CRED"}
 @{BODY}
 @endnode
