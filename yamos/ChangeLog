@@ -5,6 +5,25 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-03  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: fixed a bug in the timerIO evaluation routines where the
+      additional CheckIO/WaitIO combo seemed to have cause that some
+      timer events were get lost under certain circumstances. Hopefully
+      the whole emitting and receiving of the timer events should be
+      more rock proofed now.
+    * YAM_MAf.c: slightly modified the folderlist highlighting once more.
+      Now YAM will not use the highlighting pen anymore and use two
+      different ways of highlighting folders with new and/or unreaded
+      mail. In fact, if a folder contains new mail the folder name will
+      get bold and if it just contains unread mail it will also turn
+      gray to signal that this folder just contain unread, not newly
+      downloaded mail. Also the amount of unread/new mails will be
+      appended to the folder name in case the corresponding column
+      is not turned on. This whole change should give the user a more
+      easy way of quickly finding out which folder carries new and unread
+      mail.
+
 2005-02-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c, ReadMailGroup.c: fixed bug #1114873 where a multiselect
