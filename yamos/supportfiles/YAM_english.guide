@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (24.12.2001)
+@$VER: YAM.guide 2.4 (31.12.2001)
 
 /***************************************************************************
 
@@ -39,6 +39,7 @@ $Id$
 
                       © 1995-2000 by Marcel Beck
                  © 2000-2001 by YAM Open Source Team
+
 
      @{" Introduction    " LINK "INTR" 0} - About YAM
      @{" Requirements    " LINK "REQS" 0} - System requirements and software needed
@@ -192,7 +193,7 @@ any later version.
 
 This  program  is distributed  in the  hope that  it will  be useful,  but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or  FITNESS FOR A PARTICULAR PURPOSE.  See the  @{"GNU General Public License" link "GPL.txt/main"}
+or  FITNESS FOR A PARTICULAR PURPOSE. See the @{" GNU General Public License " link "GPL.txt/main"}
 for more details.
 
 You should  have received  a copy of the  GNU General Public License along
@@ -434,16 +435,16 @@ YAM's main window is laid out as shown:
 
     Menu bar:
 
-    @{"Project" LINK "MAM1" 0} @{"Folder" LINK "MAM2" 0} @{"Message" LINK "MAM3" 0} @{"Settings" LINK "MAM4" 0} @{"Scripts" LINK "MAM5" 0}
+    @{" Project " LINK "MAM1" 0} @{" Folder " LINK "MAM2" 0} @{" Message " LINK "MAM3" 0} @{" Settings " LINK "MAM4" 0} @{" Scripts " LINK "MAM5" 0}
 
    .--------------------------------------------------------.
-   |              @{"Toolbar" LINK "MA02" 0}                                   |
+   |              @{" Toolbar " LINK "MA02" 0}                                 |
    |--------------------------------------------------------|
    |                       Status bar                       |
    |--------------------------------------------------------|
    |                 |                                      |
-   |                 |           @{"Message list" LINK "MA01" 0}               |
-   |   @{"Folder list" LINK "MA00" 0}   |                                      |
+   |                 |          @{" Message list " LINK "MA01" 0}              |
+   |  @{" Folder list " LINK "MA00" 0}  |                                      |
    |                 |      This shows the contents         |
    |                 |      of the selected folder          |
    |                 |                                      |
@@ -467,8 +468,8 @@ you intend to transmit when you are next online.
 
 Sent:  Here you can see the messages which you have already sent. Messages
 are   moved   to  this  box  (from  'Outgoing')  when  they  are  actually
-transmitted. Again you can use @{" filters " LINK "CO03" 0} to transfer sent messages to other
-folders.
+transmitted.  Again  you can  use  @{" filters " LINK "CO03" 0} to transfer sent messages to
+other folders.
 
 Deleted: This box contains messages marked for deletion. Normally messages
 are  not  actually  deleted  from  the  hard disk until you quit YAM. This
@@ -735,7 +736,7 @@ you can insert a group into another group.
 
 Folder/Edit...
 
-Opens a  @{" configuration panel " LINK "FO_W" 0} where you can  modify the properties of the
+Opens a @{" configuration panel " LINK "FO_W" 0} where you can  modify the properties of the
 current folder. If a group is selected, only its name can be changed here.
 
 
@@ -758,7 +759,7 @@ Opens the @{" Search window " LINK "FI_W" 0}, which allows you to find any parti
 
 Folder/Filter
 
-Applies the user defined @{" filters " LINK "CO03" 0} to all messages in the current folder.
+Applies the user defined @{" filters " LINK "CO03" 0} to all messages in the  current folder.
 Filters  are  of  the  form  'On  query , take action', the  options being
 defined in the configuration settings.
 
@@ -988,8 +989,8 @@ Opens  the   @{" users window " LINK "US_W" 0},  where you can add new users
 
 Settings/MUI...
 
-Opens the settings window for @{" MUI " LINK "MUI" 0} where you can specify virtually all of
-the  visual  features  of  YAM,  including  fonts,  palette,  screen mode,
+Opens the  settings window for @{" MUI " LINK "MUI" 0}, where you can specify virtually all
+of the visual features of  YAM,  including  fonts,  palette,  screen mode,
 background, borders, gadgets, keyboard shortcuts and so on. Please see the
 MUI  documentation  for more information. YAM utilises several MUI classes
 which  were  not  in  the  original  release of MUI. For this reason, some
@@ -1205,7 +1206,7 @@ With this the changes are temporary and apply only until YAM is closed.
 [Cancel]
 Discard any changes.
 
-The @{" menu " LINK "CO_M" 0} provides some extra possibilities.
+The @{" menus " LINK "CO_M" 0} provide some extra possibilities.
 
 @ENDNODE
 @NODE "CO00" "Configuration - First steps"
@@ -1341,11 +1342,12 @@ documented in RFC 2554. You will need to fill in another couple of User Id
 If your ESMTP server does not support SMTP AUTH, you will receive an error
 message when trying to send email. Ask your ISP if in doubt.
 
+
 [ ] Use SMTP TLSv1/SSLv3
 
 Enable this  if  your SMTP server supports TLSv1/SSLv3 secure connections.
-If enabled, YAM will connect via the AmiSSL library with the SMTP server
-and encryptes every transfer.
+If enabled, YAM will connect via the  AmiSSL library  with the SMTP server
+and encrypts every transfer.
 
 
 ---- Receive mail (POP3) -------------------------------------------------
@@ -1429,6 +1431,7 @@ authentication, which  transmits  the  data  encrypted with a key which is
 delivered  by the server. If your POP3 server does not support APOP you'll
 receive an  error message when checking for new mail. In that case, switch
 this option off.
+
 
 [ ] Delete mail on server
 
@@ -1665,8 +1668,8 @@ sorts   these  in  numerical  order, but  for  fields  such  as  'Subject'
 alphanumeric  order  is  used, as in a telephone directory, so James < Jim
 and 12 < 2.
 
-The  search pattern may contain @{"AmigaDOS wildcards" LINK "DOSW" 0} such as ?, #?, (a|b) or
-[abc].  Please  note  that  the  search  pattern  [YAM]#?  will filter all
+The  search  pattern may contain @{" AmigaDOS wildcards " LINK "DOSW" 0} such as ?, #?, (a|b)
+or [abc].  Please note  that the search  pattern  [YAM]#?  will filter all
 messages  beginning  with  Y, A or M. For filtering mails out of a mailing
 list  (for  example  a mailing list related to YAM) you would do better to
 use the search pattern #?YAMML#? or have the filter compare the 'Reply-To'
@@ -1788,9 +1791,9 @@ Header
 If 'full' is selected, all the headers will be displayed. Select 'none' if
 you  don't want to see any  header. When you switch to 'selected', you can
 specify yourself which header fields should be visible in the Read window.
-For  specifying  the fields you can use any @{"AmigaDOS pattern" LINK "DOSW" 0}. The
-fields  FROM, TO, DATE and SUBJECT are predefined as default settings. The
-header layout can also be changed (temporarily) in the Read window itself.
+For  specifying  the fields you can use any @{" AmigaDOS pattern " LINK "DOSW" 0}. The FROM,
+TO, DATE  and  SUBJECT fields  are displayed by default. The header layout
+can also be changed (temporarily) in the Read window itself.
 
   Example:  (From|Subject|Date|X-Mailer)
 
@@ -2918,7 +2921,7 @@ position in the editor, and 1 for the status bar.
 
   Example:  HideGUIElements = 3
 
-Please note that as of YAM 2.4, the status bar is not affected by this
+Please note that as of  YAM 2.4, the  status  bar is not  affected by this
 setting anymore, but it is now set in Configuration/Lists.
 
 
@@ -2978,7 +2981,9 @@ Edit/Restore
 Discards any changes in the  settings made  since the last  time they were
 [Save]d or [Use]d.
 
+
 Extras/Import MIME viewers & types
+
 Imports attachment types, file  name  extensions  and  MIME  viewers data.
 Supported  file  formats are mime.types, mailcap and MIME.prefs. This menu
 item can only be called from the @{" MIME " LINK "CO11" 0} sheet.
@@ -3146,7 +3151,7 @@ different address book files.
 
 Address book/Find...
 
-Searches the address book for a certain string. See @{" BUTTONS " LINK "AB_B" 0}/Search for
+Searches  the  address  book for a  certain string. See @{" TOOLBAR " LINK "AB_B" 0}/Find for
 more info.
 
 
@@ -3161,8 +3166,8 @@ Entry/New person...
 Entry/New distribution list...
 Entry/New group...
 
-They open the @{" Edit address window " LINK "EA_W" 0} to add a new entry to the address book.
-The appearance of the window depends on the type of entry.
+They open  the  @{" Edit address window " LINK "EA_W" 0} to add  a new  entry to the address
+book. The appearance of the window depends on the type of entry.
 
 
 Entry/Edit...
@@ -4406,7 +4411,7 @@ Read window - PGP MENU
 
 PGP/Extract public key(s)
 
-If  the  sender of the current message has attached his @{" public PGP key " LINK "PGP" 0},
+If  the  sender of the current message has attached his  @{" public PGP key " LINK "PGP" 0},
 you can copy this to your "key ring". You can then use this if this person
 sends you any encrypted message.
 
@@ -4557,7 +4562,7 @@ disappointed  if  the transmission seems not to measure up to the speed of
 the  modem.  The  transfer  of a short message requires a relatively large
 time  for negotiation between YAM and the server, which is not taken  into
 account  while computing  the calculated  rate. You can try it yourself by
-sending yourself a message with a large attachment (e.g. 100kb).
+sending yourself a message with a large attachment (e.g. 100kB).
 
 The  [Abort]  button forces a premature end of the transfer. It only works
 while YAM has  control over  the  transfer - if  YAM  apparently 'freezes'
