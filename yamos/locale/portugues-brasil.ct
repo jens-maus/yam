@@ -576,7 +576,7 @@ Nome do arquivo: %s\n\
 Tamanho: %ld bytes
 ;
 MSG_MA_WinTitle
-Amiga YAM %s - Usuário: %s
+YAM %s - Usuário: %s
 ;
 MSG_MA_ToPrefix
 \ebPara: \en

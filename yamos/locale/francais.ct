@@ -832,8 +832,8 @@ Taille : %lD octets
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
-YAM Amiga %s - Utilisateur : %s
-; Amiga YAM %s  -  User: %s
+YAM %s - Utilisateur : %s
+; YAM %s  -  User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix

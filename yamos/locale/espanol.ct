@@ -832,8 +832,8 @@ Tamaño: %lD bytes
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
-YAM Amiga %s  -  Usuario: %s
-; Amiga YAM %s  -  User: %s
+YAM %s  -  Usuario: %s
+; YAM %s  -  User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix

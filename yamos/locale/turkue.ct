@@ -878,8 +878,8 @@ Boyut: %lD bayt
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
-Amiga YAM %s - Kullanýcý: %s
-; Amiga YAM %s  -  User: %s
+YAM %s - Kullanýcý: %s
+; YAM %s  -  User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix

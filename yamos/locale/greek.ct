@@ -714,8 +714,8 @@ MSG_MA_MessageInfo
 ;\ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %lD bytes
 ;
 MSG_MA_WinTitle
-Amiga YAM %s  -  Χρήστης: %s
-;Amiga YAM %s  -  User: %s
+YAM %s  -  Χρήστης: %s
+; YAM %s  -  User: %s
 ;
 MSG_MA_ToPrefix
 \ebΠρος: \en

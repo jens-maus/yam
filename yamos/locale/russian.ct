@@ -866,8 +866,8 @@ MSG_MA_MessageInfo
 ;NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
-Amiga YAM %s  -  Пользователь: %s
-;Amiga YAM %s  -  User: %s
+YAM %s  -  Пользователь: %s
+; YAM %s  -  User: %s
 ;
 ;VERSION, NAME
 ;

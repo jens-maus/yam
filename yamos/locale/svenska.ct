@@ -824,8 +824,8 @@ Storlek: %lD byte
 ; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
 ;
 MSG_MA_WinTitle
-Amiga YAM %s  -  Användare: %s
-; Amiga YAM %s  -  User: %s
+YAM %s  -  Användare: %s
+; YAM %s  -  User: %s
 ; VERSION, NAME
 ;
 MSG_MA_ToPrefix
