@@ -10450,13 +10450,15 @@ Future plans
 
    More attractions coming (possibly) in future versions of YAM:
 
-   - Support for messages in HTML format
+   - Support for messages in HTML format (read only)
 
    - User-defined context menus
 
    - User-defined toolbars
 
    - Support for the IMAP-4 protocol
+
+   - Support for LDAP functionality to replace addressbook.
 
    - Asynchronous email transfer (internal multithreading)
 
