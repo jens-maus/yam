@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -46,8 +46,8 @@
   #define DB(x) x
   #define DBG   kprintf("File %s, Func %s, Line %d\n",__FILE__,__FUNC__,__LINE__);
 #else
-  #define DB(x)
-  #define DBG
+  #define DB(x) ((void)0);
+  #define DBG   ((void)0);
 #endif
 
 #endif /* YAM_DEBUG_H */
