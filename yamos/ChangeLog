@@ -7,6 +7,10 @@ $Source$
 
 2002-09-28  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: YAM didn`t clear the listview if the user issued
+      a index rescan. That caused some corrupt listview display
+      if the user scrolled around the listview if the rescan was
+      still underway.
     * YAM_RE.c: fixed bug where YAM didn`t switch to the correct
       folder and highlighted the message if a SwitchMessage()
       (Next/Prev) was done in a readwindow with a mail whos

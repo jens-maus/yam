@@ -1803,9 +1803,17 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
 
    if(!folder || folder->Type == FT_GROUP) return;
 
+   // we make sure that the Listview is disabled before the
+   // rescan takes place. This makes sure that the user can`t play around
+   // with some strange data.. ;)
+   set(G->MA->GUI.NL_MAILS, MUIA_Disabled, TRUE);
+
    MA_ScanMailBox(folder);
    MA_SaveIndex(folder);
-   MA_ChangeFolder(NULL, FALSE);
+
+   // if we are still in the folder we wanted to rescan,
+   // we can refresh the list.
+   if(folder == FO_GetCurrentFolder()) MA_ChangeFolder(NULL, FALSE);
 }
 MakeHook(MA_RescanIndexHook, MA_RescanIndexFunc);
 
