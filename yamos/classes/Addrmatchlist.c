@@ -217,7 +217,7 @@ DECLARE(Event) // struct IntuiMessage *imsg
 
 				if(compareEntry != entry)
 				{
-					if(Stricmp(compareEntry->MatchString, entry->MatchString) == 0)
+					if(Stricmp(compareEntry->MatchEntry->RealName, entry->MatchString) == 0)
 					{
 						res = entry->MatchEntry->Address;
 						break;

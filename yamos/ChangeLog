@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-22  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * classes/Addrmatchlist.c: fixed bug #571831 where it could
+      have happened that entries with the same Realname in the
+      address matchlist caused a conflict and made it impossible
+      to select the second entry.
+
 2002-06-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * smakefile: changed SAS/C makefile to start the autogenerating
