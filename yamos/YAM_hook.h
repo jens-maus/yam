@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -29,6 +29,40 @@
 ***************************************************************************/
 
 #include "SDI_compiler.h"
+
+/*
+** Special general hook macros to handle the creation of Hooks/Dispatchers
+** for different Operating System versions.
+** Currently AmigaOSv3 and MorphOS is supported.
+**
+** Example:
+**
+** Creates a hook with the name "GeneralDesHook" that calls a coresponding
+** function "GeneralDesFunc" that will be called with a pointer "entry"
+** (REG_A1) and returns a long.
+**
+** HOOKPROTONHNO(GeneralDesFunc, long, void *entry)
+** {
+**   free(entry);
+**   return 0;
+** }
+** MakeHook(GeneralDesHook, GeneralDesFunc);
+**
+** Every function that is created with HOOKPROTO* >HAVE TO< be finished
+** with either MakeHook() or MakeStaticHook() so that the macros will
+** be closed correctly.
+**
+** The naming convention for the Hook Prototype macros is as followed:
+**
+** HOOKPROTO[NH][NO][NP]
+**           ^^  ^^  ^^
+**      NoHook   |    NoParameter
+**            NoObject
+**
+** So a plain HOOKPROTO() creates you a Hook function that requires
+** 4 parameters, the "name" of the hookfunction, the "obj" in REG_A2,
+** the "param" in REG_A1 and a "hook" in REG_A0.
+*/
 
 #ifdef __MORPHOS__
   #include <emul/emulinterface.h>
@@ -66,6 +100,7 @@
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname = { {NULL, NULL}, (HOOKFUNC)funcname, NULL, NULL }
   #define ENTRY(func) (APTR)func
 #endif
+
 #define InitHook(hook, orighook, data) ((hook)->h_Entry = (orighook).h_Entry, (hook)->h_Data = (APTR)(data))
 
 #endif /* YAM_HOOK_H */
