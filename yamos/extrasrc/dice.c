@@ -1,31 +1,23 @@
 #if defined(_DCC) || defined(NO_INLINE_STDARG)
+
 #include <proto/xpkmaster.h>
-LONG XpkQueryTags(ULONG tags, ...)
-{
-   struct TagItems *_tags =(struct TagItems *)&tags;
-   return XpkQuery(_tags);
-}
+LONG XpkQueryTags(ULONG tag, ...)
+{ return XpkQuery((struct TagItem *)&tag); }
+LONG XpkPackTags(ULONG tag, ...)
+{ return XpkPack((struct TagItem *)&tag); }
+LONG XpkUnpackTags(ULONG tag, ...)
+{ return XpkUnpack((struct TagItem *)&tag); }
 
-LONG XpkPackTags(ULONG tags, ...)
-{
-   struct TagItems *_tags =(struct TagItems *)&tags;
-   return XpkPack(_tags);
-}
-
-LONG XpkUnpackTags(ULONG tags, ...)
-{
-   struct TagItems *_tags =(struct TagItems *)&tags;
-   return XpkUnpack(_tags);
-}
 #include <proto/openurl.h>
-BOOL URL_Open(STRPTR str, ULONG tags, ...)
-{
-   struct TagItems *_tags =(struct TagItems *)&tags;
-   return URL_OpenA(str,_tags);
-}
-#endif
+BOOL URL_Open(STRPTR str, ULONG tag, ...)
+{ return URL_OpenA(str,(struct TagItem *)&tag); }
 
+#include <proto/pm.h>
+struct PopupMenu *PM_MakeItem(ULONG tag, ...)
+{ return PM_MakeItemA((struct TagItem *)&tag); }
+struct PopupMenu *PM_MakeMenu(ULONG tag, ...)
+{ return PM_MakeMenuA((struct TagItem *)&tag); }
+ULONG PM_OpenPopupMenu(struct Window *prevwnd, ULONG tag, ...)
+{ return PM_OpenPopupMenuA(prevwnd,(struct TagItem *)&tag); }
 
-#ifdef _DCC
-struct Library *KeymapBase;
 #endif
