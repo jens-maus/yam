@@ -663,6 +663,7 @@ About MUI...
 ;
 MSG_MA_CheckVersion (//)
 Check version
+; This is the title of the check version window, not the menu item.
 ;
 MSG_MA_LastErrors (//)
 Show last message
@@ -678,6 +679,7 @@ Q\000Quit
 ;
 MSG_MA_NewFolder (//)
 New folder...
+; This is the title of the new folder window, not the menu item.
 ;
 MSG_MA_NewSeparator (//)
 New separator...
@@ -4103,11 +4105,35 @@ Rexx script
 MSG_PROJECT_ABOUT (//)
 ?\000About...
 ;
+MSG_PROJECT_CHECKVERSION (//)
+Check version
+;
+MSG_FOLDER_NEWFOLDER (//)
+New folder...
+;
+MSG_FOLDER_NEWSEPARATOR (//)
+New separator...
+;
+MSG_FOLDER_EDIT (//)
+Edit
+;
+MSG_FOLDER_DELETE (//)
+Delete
+;
+MSG_FOLDER_IMPORT (//)
+Import...
+;
+MSG_FOLDER_EXPORT (//)
+Export...
+;
 MSG_MESSAGE_EDIT (//)
 E\000Edit
 ;
 MSG_MESSAGE_MOVE (//)
 M\000Move...
+;
+MSG_MESSAGE_COPY (//)
+Copy...
 ;
 MSG_MESSAGE_PRINT (//)
 P\000Print...
@@ -4120,6 +4146,9 @@ T\000Save
 ;
 MSG_MESSAGE_CROP (//)
 O\000Crop
+;
+MSG_MESSAGE_EXPORT (//)
+Export...
 ;
 MSG_MESSAGE_NEW (//)
 N\000New
@@ -4136,11 +4165,17 @@ B\000Bounce...
 MSG_MESSAGE_GETADDRESS (//)
 J\000Save address...
 ;
+MSG_MESSAGE_CHANGESUBJECT (//)
+Change subject...
+;
 MSG_SETTINGS_ADDRESSBOOK (//)
 A\000Address Book...
 ;
 MSG_SETTINGS_CONFIG (//)
 K\000Configuration...
+;
+MSG_SETTINGS_USERS (//)
+Users...
 ;
 MSG_SETTINGS_MUI (//)
 MUI...

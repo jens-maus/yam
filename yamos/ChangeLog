@@ -44,3 +44,7 @@
       result in a "***NULL POINTER***" mess.
 
     * Localized all menu shortcuts in main window.
+
+2000-12-20  laursen <laursen@myself.com>
+
+    * Finished slave work on menus in main window.
