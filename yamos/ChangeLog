@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_COs.c: fixed bug #724594 where YAM didn`t save the
+      separate SMTP port value at all to the configuration.
+
 2003-04-20  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: fixed bug #724394 where a opened bounce window caused

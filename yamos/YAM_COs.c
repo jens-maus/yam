@@ -159,6 +159,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
 
       fprintf(fh, "\n[TCP/IP]\n");
       fprintf(fh, "SMTP-Server      = %s\n", co->SMTP_Server);
+      fprintf(fh, "SMTP-Port        = %d\n", co->SMTP_Port);
       fprintf(fh, "SMTP-Domain      = %s\n", co->SMTP_Domain);
       fprintf(fh, "Allow8bit        = %s\n", Bool2Txt(co->Allow8bit));
       fprintf(fh, "Use-SMTP-TLS     = %s\n", Bool2Txt(co->Use_SMTP_TLS));
