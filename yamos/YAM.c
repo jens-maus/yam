@@ -127,6 +127,9 @@ void TC_Start(enum TimerIO tio, int seconds, int micros)
   if(micros > 0 || seconds > 0)
   {
     struct timerequest *ioreq;
+    #if defined(DEBUG)
+    char dateString[64];
+    #endif
 
     // before we set a new timer request we make sure only one
     // is active at a time
@@ -138,8 +141,12 @@ void TC_Start(enum TimerIO tio, int seconds, int micros)
     ioreq->tr_time.tv_secs    = seconds;
     ioreq->tr_time.tv_micro   = micros;
 
-    DB(kprintf("Queueing timerIO[%ld] in %ld seconds %ld micros\n", tio, seconds, micros);)
-    SendIO(&ioreq->tr_node);
+    #if defined(DEBUG)
+    DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
+    kprintf("Queueing timerIO[%ld] in %ld seconds %ld micros @ %s\n", tio, seconds, micros, dateString);
+    #endif
+
+    SendIO((struct IORequest *)ioreq);
   }
 }
 
@@ -148,7 +155,7 @@ void TC_Start(enum TimerIO tio, int seconds, int micros)
 //  Stop a currently running TimerIO request
 void TC_Stop(enum TimerIO tio)
 {
-  struct IORequest *ioreq = &TCData.timerIO[tio]->tr_node;
+  struct IORequest *ioreq = (struct IORequest *)TCData.timerIO[tio];
 
   // check if we have a already issued ioreq running
   if(ioreq && ioreq->io_Command != 0)
@@ -464,11 +471,11 @@ void PopUp(void)
 
    // Now we check if there is any read and write window open and bring it also
    // to the front
-   if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
+   if(IsMinListEmpty(&G->readMailDataList) == FALSE)
    {
       // search through our ReadDataList
       struct MinNode *curNode;
-      for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
         if(rmData->readWindow)
@@ -624,11 +631,11 @@ static void Terminate(void)
       DisposeModule(&G->EA[i]);
 
    // cleanup the still existing readmailData objects
-   if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
+   if(IsMinListEmpty(&G->readMailDataList) == FALSE)
    {
       // search through our ReadDataList
       struct MinNode *curNode;
-      for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
@@ -1637,8 +1644,9 @@ int main(int argc, char **argv)
       G->TR_Allow = TRUE;
       G->CO_DST = GetDST(FALSE);
 
-      // prepare the List of ReadMailData structures
-      NewList((struct List *)&(G->ReadMailDataList));
+      // prepare some exec lists of either the Global or Config structure
+      NewList((struct List *)&(G->readMailDataList));
+      NewList((struct List *)&(C->filterList));
 
       // We have to initialize the ActiveWin flags to -1, so than the
       // the arexx commands for the windows are reporting an error if
@@ -1731,9 +1739,19 @@ int main(int argc, char **argv)
               int i;
               struct timerequest *timeReq;
 
+              #if defined(DEBUG)
+              char dateString[64];
+
+              DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
+              kprintf("timer signal received @ %s\n", dateString);
+              #endif
+
+
               // check if we have a waiting message
               while((timeReq = (struct timerequest *)GetMsg(TCData.port)))
               {
+                DB(kprintf("timeReq: %08lx\n", timeReq);)
+
                 for(i=0; i < TIO_NUM; i++)
                 {
                   if(timeReq == TCData.timerIO[i])

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -58,15 +58,15 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
-struct Config *C;
-struct Config *CE;
+struct Config *C = NULL;
+struct Config *CE = NULL;
 
 /* local protos */
 static void CO_NewPrefsFile(char*);
 static int CO_DetectPGP(struct Config*);
-static void CO_CopyConfig(struct Config*, struct Config*);
 static APTR CO_BuildPage(struct CO_ClassData*, int);
 static struct CO_ClassData *CO_New(void);
+static void CopyConfigData(struct Config*, struct Config*);
 
 /***************************************************************************
  Module: Configuration
@@ -83,246 +83,293 @@ static void CO_NewPrefsFile(char *fname)
 }
 ///
 
-/**** Rules ****/
-/// CO_NewRule
+/**** Filters ****/
+/// CreateNewFilter
 //  Initializes a new rule
-struct Rule *CO_NewRule(void)
+struct FilterNode *CreateNewFilter(void)
 {
-   struct Rule *rule = calloc(1, sizeof(struct Rule));
-   if (rule)
-   {
-      strcpy(rule->Name, GetStr(MSG_NewEntry));
-      rule->ApplyToNew = rule->ApplyOnReq = TRUE;
-   }
-   return rule;
+  struct FilterNode *filter = calloc(1, sizeof(struct FilterNode));
+
+  if(filter)
+  {
+    strcpy(filter->Name, GetStr(MSG_NewEntry));
+    filter->ApplyToNew = TRUE;
+    filter->ApplyOnReq = TRUE;
+  }
+
+  return filter;
 }
 ///
-/// CO_AddRule
-//  Adds a new entry to the rule list
-HOOKPROTONHNONP(CO_AddRule, void)
+/// AddNewFilterToList
+//  Adds a new entry to the global filter list
+HOOKPROTONHNONP(AddNewFilterToList, void)
 {
-   int i, m, s;
-   for (i = 0; i < MAXRU; i++)
-      if (!CE->RU[i])
+  struct FilterNode *filterNode;
+
+  if((filterNode = CreateNewFilter()))
+  {
+    int s;
+
+    for(s = 0; s < 4; s++)
+    {
+      int m;
+
+      for(m = 0; m < 5; m++)
       {
-         CE->RU[i] = CO_NewRule();
-         for (s = 0; s < 4; s++) for (m = 0; m < 5; m++)
-         {
-            struct SearchGroup *sg = &(G->CO->GUI.GR_SEARCH[s]);
-            nnset(sg->CY_COMP[m], MUIA_Cycle_Active, 0);
-            if (sg->ST_MATCH[m]) nnset(sg->ST_MATCH[m], MUIA_String_Contents, "");
-            else nnset(sg->CY_STATUS, MUIA_Cycle_Active, 0);
-            if (sg->CH_CASESENS[m]) nnset(sg->CH_CASESENS[m], MUIA_Selected, FALSE);
-            if (sg->CH_SUBSTR[m]) nnset(sg->CH_SUBSTR[m], MUIA_Selected, FALSE);
-         }
-         DoMethod(G->CO->GUI.LV_RULES, MUIM_List_InsertSingle, CE->RU[i], MUIV_List_Insert_Bottom);
-         set(G->CO->GUI.LV_RULES, MUIA_List_Active, i);
+        struct SearchGroup *sg = &(G->CO->GUI.GR_SEARCH[s]);
 
-         // lets set the new string gadget active and select all text in there automatically to
-         // be more handy to the user ;)
-         set(_win(G->CO->GUI.LV_RULES), MUIA_Window_ActiveObject, G->CO->GUI.ST_RNAME);
-         set(G->CO->GUI.ST_RNAME, MUIA_BetterString_SelectSize, -((LONG)strlen(CE->RU[i]->Name)));
+        // reset all GUI elements due to the new active filter
+        nnset(sg->CY_COMP[m], MUIA_Cycle_Active, 0);
 
-         break;
+        if(sg->ST_MATCH[m])
+          nnset(sg->ST_MATCH[m], MUIA_String_Contents, "");
+        else
+          nnset(sg->CY_STATUS, MUIA_Cycle_Active, 0);
+
+        if(sg->CH_CASESENS[m])
+          nnset(sg->CH_CASESENS[m], MUIA_Selected, FALSE);
+
+        if(sg->CH_SUBSTR[m])
+          nnset(sg->CH_SUBSTR[m], MUIA_Selected, FALSE);
       }
+    }
+
+    DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filterNode, MUIV_NList_Insert_Bottom);
+    set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
+
+    // lets set the new string gadget active and select all text in there automatically to
+    // be more handy to the user ;)
+    set(_win(G->CO->GUI.LV_RULES), MUIA_Window_ActiveObject, G->CO->GUI.ST_RNAME);
+    set(G->CO->GUI.ST_RNAME, MUIA_BetterString_SelectSize, -((LONG)strlen(filterNode->Name)));
+
+    // now add the filterNode to our global filterList
+    AddTail((struct List *)&CE->filterList, (struct Node *)filterNode);
+  }
 }
-MakeHook(CO_AddRuleHook,CO_AddRule);
+MakeHook(AddNewFilterToListHook, AddNewFilterToList);
 
 ///
-/// CO_DelRule
-//  Deletes an entry from the rule list
-HOOKPROTONHNONP(CO_DelRule, void)
+/// RemoveActiveFilter
+//  Deletes the active filter entry from the filter list
+HOOKPROTONHNONP(RemoveActiveFilter, void)
 {
-   int p = xget(G->CO->GUI.LV_RULES, MUIA_List_Active);
+  struct FilterNode *filterNode = NULL;
 
-   if(p != MUIV_List_Active_Off)
-   {
-      int i;
+  // get the active filterNode
+  DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filterNode);
 
-      DoMethod(G->CO->GUI.LV_RULES, MUIM_List_Remove, p);
+  // if we got an active entry lets remove it from the GUI List
+  // and also from our own global filterList
+  if(filterNode)
+  {
+    DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_Remove, MUIV_NList_Remove_Active);
 
-      for(i=p+1; i < MAXRU; i++)
+    Remove((struct Node *)filterNode);
+    free(filterNode);
+  }
+}
+MakeHook(RemoveActiveFilterHook, RemoveActiveFilter);
+
+///
+/// GhostOutFilter
+//  Enables/disables GUI gadgets in filter form
+void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
+{
+  BOOL isremote = filter ? filter->Remote : FALSE;
+  BOOL single = filter ? !filter->Combine : FALSE;
+  LONG pos = MUIV_NList_GetPos_Start;
+
+  set(gui->ST_RNAME,             MUIA_Disabled, !filter);
+  set(gui->CH_REMOTE,            MUIA_Disabled, !filter);
+  set(gui->CH_APPLYNEW,          MUIA_Disabled, !filter || isremote);
+  set(gui->CH_APPLYREQ,          MUIA_Disabled, !filter || isremote);
+  set(gui->CH_APPLYSENT,         MUIA_Disabled, !filter || isremote);
+  set(gui->CY_COMBINE[isremote], MUIA_Disabled, !filter);
+  set(gui->CH_ABOUNCE,           MUIA_Disabled, !filter || isremote);
+  set(gui->CH_AFORWARD,          MUIA_Disabled, !filter || isremote);
+  set(gui->CH_ARESPONSE,         MUIA_Disabled, !filter || isremote);
+  set(gui->CH_AEXECUTE,          MUIA_Disabled, !filter);
+  set(gui->CH_APLAY,             MUIA_Disabled, !filter);
+  set(gui->CH_AMOVE,             MUIA_Disabled, !filter || isremote);
+  set(gui->CH_ADELETE,           MUIA_Disabled, !filter);
+  set(gui->CH_ASKIP,             MUIA_Disabled, !filter || !isremote);
+  set(gui->ST_ABOUNCE,           MUIA_Disabled, !filter || isremote || !xget(gui->CH_ABOUNCE,    MUIA_Selected));
+  set(gui->ST_AFORWARD,          MUIA_Disabled, !filter || isremote || !xget(gui->CH_AFORWARD,   MUIA_Selected));
+  set(gui->PO_ARESPONSE,         MUIA_Disabled, !filter || isremote || !xget(gui->CH_ARESPONSE,  MUIA_Selected));
+  set(gui->PO_AEXECUTE,          MUIA_Disabled, !filter || !xget(gui->CH_AEXECUTE, MUIA_Selected));
+  set(gui->PO_APLAY,             MUIA_Disabled, !filter || !xget(gui->CH_APLAY, MUIA_Selected));
+  set(gui->BT_APLAY,             MUIA_Disabled, !filter || !xget(gui->CH_APLAY, MUIA_Selected));
+  set(gui->PO_MOVETO,            MUIA_Disabled, !filter || !xget(gui->CH_AMOVE, MUIA_Selected));
+  set(gui->BT_RDEL,              MUIA_Disabled, !filter);
+
+  // lets make sure we ghost the filter up/down buttons if necessary
+  if(filter)
+    DoMethod(gui->LV_RULES, MUIM_NList_GetPos, filter, &pos);
+
+  set(gui->BT_FILTERUP,   MUIA_Disabled, !filter || pos == 0);
+  set(gui->BT_FILTERDOWN, MUIA_Disabled, !filter || pos+1 == (LONG)xget(gui->LV_RULES, MUIA_NList_Entries));
+
+  FI_SearchGhost(&(gui->GR_SEARCH[2*isremote]), !filter);
+  FI_SearchGhost(&(gui->GR_SEARCH[2*isremote+1]), !filter || single);
+}
+
+///
+/// GetActiveFilterData
+//  Fills GUI elements with data from currently active list entry (filter)
+HOOKPROTONHNONP(GetActiveFilterData, void)
+{
+  struct FilterNode *filter = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
+
+  DB(kprintf("GetActiveFilterData()\n");)
+
+  // get the active filterNode
+  DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
+
+  // if we got an active entry lets set all other GUI elements from the
+  // values of this filter
+  if(filter)
+  {
+    int i;
+    int rm = filter->Remote ? 1 : 0;
+
+    nnset(gui->ST_RNAME,      MUIA_String_Contents,   filter->Name);
+    nnset(gui->CH_REMOTE,     MUIA_Selected,          rm);
+    nnset(gui->CH_APPLYNEW,   MUIA_Selected,          filter->ApplyToNew);
+    nnset(gui->CH_APPLYSENT,  MUIA_Selected,          filter->ApplyToSent);
+    nnset(gui->CH_APPLYREQ,   MUIA_Selected,          filter->ApplyOnReq);
+    nnset(gui->CY_COMBINE[rm],MUIA_Cycle_Active,      filter->Combine);
+    nnset(gui->CH_ABOUNCE,    MUIA_Selected,          hasBounceAction(filter));
+    nnset(gui->CH_AFORWARD,   MUIA_Selected,          hasForwardAction(filter));
+    nnset(gui->CH_ARESPONSE,  MUIA_Selected,          hasReplyAction(filter));
+    nnset(gui->CH_AEXECUTE,   MUIA_Selected,          hasExecuteAction(filter));
+    nnset(gui->CH_APLAY,      MUIA_Selected,          hasPlaySoundAction(filter));
+    nnset(gui->CH_AMOVE,      MUIA_Selected,          hasMoveAction(filter));
+    nnset(gui->CH_ADELETE,    MUIA_Selected,          hasDeleteAction(filter));
+    nnset(gui->CH_ASKIP,      MUIA_Selected,          hasSkipMsgAction(filter));
+    nnset(gui->ST_ABOUNCE,    MUIA_String_Contents,   filter->BounceTo);
+    nnset(gui->ST_AFORWARD,   MUIA_String_Contents,   filter->ForwardTo);
+    nnset(gui->ST_ARESPONSE,  MUIA_String_Contents,   filter->ReplyFile);
+    nnset(gui->ST_AEXECUTE,   MUIA_String_Contents,   filter->ExecuteCmd);
+    nnset(gui->ST_APLAY,      MUIA_String_Contents,   filter->PlaySound);
+    nnset(gui->TX_MOVETO,     MUIA_Text_Contents,     filter->MoveTo);
+    set(gui->GR_LRGROUP,      MUIA_Group_ActivePage,  rm);
+
+    for(i = 0; i < 2; i++)
+    {
+      struct SearchGroup *sg = &(gui->GR_SEARCH[i+2*rm]);
+      int m;
+
+      nnset(sg->CY_MODE,      MUIA_Cycle_Active,      filter->Field[i]);
+      nnset(sg->RA_ADRMODE,   MUIA_Radio_Active,      filter->SubField[i]);
+      nnset(sg->ST_FIELD,     MUIA_String_Contents,   filter->CustomField[i]);
+      nnset(sg->PG_SRCHOPT,   MUIA_Group_ActivePage,  m = Mode2Group[filter->Field[i]]);
+      nnset(sg->CY_COMP[m],   MUIA_Cycle_Active,      filter->Comparison[i]);
+
+      if(sg->ST_MATCH[m])
+        nnset(sg->ST_MATCH[m], MUIA_String_Contents, filter->Match[i]);
+      else
       {
-        CE->RU[i-1] = CE->RU[i];
+        int k;
+
+        for(k=0; k <= 8; k++)
+        {
+          if(*filter->Match[i] == mailStatusCycleMap[k])
+          {
+            nnset(sg->CY_STATUS, MUIA_Cycle_Active, k);
+            break;
+          }
+        }
       }
 
-      CE->RU[i-1] = 0;
-   }
+      if(sg->CH_CASESENS[m])
+        nnset(sg->CH_CASESENS[m], MUIA_Selected, filter->CaseSens[i]);
+
+      if(sg->CH_SUBSTR[m])
+        nnset(sg->CH_SUBSTR[m], MUIA_Selected, filter->Substring[i]);
+    }
+  }
+
+  GhostOutFilter(gui, filter);
 }
-MakeHook(CO_DelRuleHook,CO_DelRule);
+MakeHook(GetActiveFilterDataHook, GetActiveFilterData);
 
 ///
-/// CO_RuleGhost
-//  Enables/disables gadgets in rule form
-void CO_RuleGhost(struct CO_GUIData *gui, struct Rule *ru)
+/// SetActiveFilterData
+//  Fills filter data structure out of the GUI elements
+HOOKPROTONHNONP(SetActiveFilterData, void)
 {
-   BOOL isremote = FALSE, single = FALSE;
+  struct FilterNode *filter = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
 
-   if(ru)
-   {
-    isremote = ru->Remote;
-    single = !ru->Combine;
-   }
+  DB(kprintf("SetActiveFilterData()\n");)
 
-   set(gui->ST_RNAME,             MUIA_Disabled, !ru);
-   set(gui->CH_REMOTE,            MUIA_Disabled, !ru);
-   set(gui->CH_APPLYNEW,          MUIA_Disabled, !ru || isremote);
-   set(gui->CH_APPLYREQ,          MUIA_Disabled, !ru || isremote);
-   set(gui->CH_APPLYSENT,         MUIA_Disabled, !ru || isremote);
-   set(gui->CY_COMBINE[isremote], MUIA_Disabled, !ru);
-   set(gui->CH_ABOUNCE,           MUIA_Disabled, !ru || isremote);
-   set(gui->CH_AFORWARD,          MUIA_Disabled, !ru || isremote);
-   set(gui->CH_ARESPONSE,         MUIA_Disabled, !ru || isremote);
-   set(gui->CH_AEXECUTE,          MUIA_Disabled, !ru);
-   set(gui->CH_APLAY,             MUIA_Disabled, !ru);
-   set(gui->CH_AMOVE,             MUIA_Disabled, !ru || isremote);
-   set(gui->CH_ADELETE,           MUIA_Disabled, !ru);
-   set(gui->CH_ASKIP,             MUIA_Disabled, !ru || !isremote);
-   set(gui->ST_ABOUNCE,           MUIA_Disabled, !ru || isremote || !xget(gui->CH_ABOUNCE,    MUIA_Selected));
-   set(gui->ST_AFORWARD,          MUIA_Disabled, !ru || isremote || !xget(gui->CH_AFORWARD,   MUIA_Selected));
-   set(gui->PO_ARESPONSE,         MUIA_Disabled, !ru || isremote || !xget(gui->CH_ARESPONSE,  MUIA_Selected));
-   set(gui->PO_AEXECUTE,          MUIA_Disabled, !ru || !xget(gui->CH_AEXECUTE, MUIA_Selected));
-   set(gui->PO_APLAY,             MUIA_Disabled, !ru || !xget(gui->CH_APLAY, MUIA_Selected));
-   set(gui->BT_APLAY,             MUIA_Disabled, !ru || !xget(gui->CH_APLAY, MUIA_Selected));
-   set(gui->PO_MOVETO,            MUIA_Disabled, !ru || !xget(gui->CH_AMOVE, MUIA_Selected));
-   set(gui->BT_RDEL,              MUIA_Disabled, !ru);
+  // get the active filterNode
+  DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
 
-   FI_SearchGhost(&(gui->GR_SEARCH[2*isremote]), !ru);
-   FI_SearchGhost(&(gui->GR_SEARCH[2*isremote+1]), !ru || single);
+  // if we got an active entry lets set all other GUI elements from the
+  // values of this filter
+  if(filter)
+  {
+    char *tx;
+    int i;
+    int rm = GetMUICheck(gui->CH_REMOTE);
 
-}
+    GetMUIString(filter->Name, gui->ST_RNAME);
+    filter->Remote = (rm == 1);
+    filter->ApplyToNew  = GetMUICheck(gui->CH_APPLYNEW);
+    filter->ApplyToSent = GetMUICheck(gui->CH_APPLYSENT);
+    filter->ApplyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
+    filter->Combine     = GetMUICycle(gui->CY_COMBINE[rm]);
+    filter->Actions = 0;
+    if(GetMUICheck(gui->CH_ABOUNCE))    SET_FLAG(filter->Actions, RULE_BOUNCE);
+    if(GetMUICheck(gui->CH_AFORWARD))   SET_FLAG(filter->Actions, RULE_FORWARD);
+    if(GetMUICheck(gui->CH_ARESPONSE))  SET_FLAG(filter->Actions, RULE_REPLY);
+    if(GetMUICheck(gui->CH_AEXECUTE))   SET_FLAG(filter->Actions, RULE_EXECUTE);
+    if(GetMUICheck(gui->CH_APLAY))      SET_FLAG(filter->Actions, RULE_PLAYSOUND);
+    if(GetMUICheck(gui->CH_AMOVE))      SET_FLAG(filter->Actions, RULE_MOVE);
+    if(GetMUICheck(gui->CH_ADELETE))    SET_FLAG(filter->Actions, RULE_DELETE);
+    if(GetMUICheck(gui->CH_ASKIP))      SET_FLAG(filter->Actions, RULE_SKIPMSG);
+    GetMUIString(filter->BounceTo,   gui->ST_ABOUNCE);
+    GetMUIString(filter->ForwardTo,  gui->ST_AFORWARD);
+    GetMUIString(filter->ReplyFile,  gui->ST_ARESPONSE);
+    GetMUIString(filter->ExecuteCmd, gui->ST_AEXECUTE);
+    GetMUIString(filter->PlaySound,  gui->ST_APLAY);
 
-///
-/// CO_GetRUEntry
-//  Fills form with data from selected list entry
-HOOKPROTONHNONP(CO_GetRUEntry, void)
-{
-   struct Rule *rule = NULL;
-   struct CO_GUIData *gui = &G->CO->GUI;
+    tx = (char *)xget(gui->TX_MOVETO, MUIA_Text_Contents);
+    strncpy(filter->MoveTo, tx, SIZE_NAME);
+    filter->MoveTo[SIZE_NAME-1] = '\0';
 
-   DoMethod(gui->LV_RULES, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &rule);
-   if (rule)
-   {
-      int m, i, k, rm = rule->Remote ? 1 : 0;
-      nnset(gui->ST_RNAME,    MUIA_String_Contents, rule->Name);
-      nnset(gui->CH_REMOTE,   MUIA_Selected, rm);
-      nnset(gui->CH_APPLYNEW, MUIA_Selected, rule->ApplyToNew);
-      nnset(gui->CH_APPLYSENT,MUIA_Selected, rule->ApplyToSent);
-      nnset(gui->CH_APPLYREQ, MUIA_Selected, rule->ApplyOnReq);
-      nnset(gui->CY_COMBINE[rm],MUIA_Cycle_Active, rule->Combine);
-      nnset(gui->CH_ABOUNCE,   MUIA_Selected, hasBounceAction(rule));
-      nnset(gui->CH_AFORWARD,  MUIA_Selected, hasForwardAction(rule));
-      nnset(gui->CH_ARESPONSE, MUIA_Selected, hasReplyAction(rule));
-      nnset(gui->CH_AEXECUTE,  MUIA_Selected, hasExecuteAction(rule));
-      nnset(gui->CH_APLAY,     MUIA_Selected, hasPlaySoundAction(rule));
-      nnset(gui->CH_AMOVE,     MUIA_Selected, hasMoveAction(rule));
-      nnset(gui->CH_ADELETE,   MUIA_Selected, hasDeleteAction(rule));
-      nnset(gui->CH_ASKIP,     MUIA_Selected, hasSkipMsgAction(rule));
-      nnset(gui->ST_ABOUNCE   ,MUIA_String_Contents, rule->BounceTo);
-      nnset(gui->ST_AFORWARD  ,MUIA_String_Contents, rule->ForwardTo);
-      nnset(gui->ST_ARESPONSE ,MUIA_String_Contents, rule->ReplyFile);
-      nnset(gui->ST_AEXECUTE  ,MUIA_String_Contents, rule->ExecuteCmd);
-      nnset(gui->ST_APLAY     ,MUIA_String_Contents, rule->PlaySound);
-      nnset(gui->TX_MOVETO    ,MUIA_Text_Contents, rule->MoveTo);
-      set(gui->GR_LRGROUP, MUIA_Group_ActivePage, rm);
+    for(i = 0; i < 2; i++)
+    {
+      struct SearchGroup *sg = &(gui->GR_SEARCH[i+2*rm]);
+      int m = xget(sg->PG_SRCHOPT, MUIA_Group_ActivePage);
 
-      for(i = 0; i < 2; i++)
+      filter->Field[i]      = GetMUICycle(sg->CY_MODE);
+      filter->SubField[i]   = GetMUIRadio(sg->RA_ADRMODE);
+      GetMUIString(filter->CustomField[i], sg->ST_FIELD);
+      filter->Comparison[i] = GetMUICycle(sg->CY_COMP[m]);
+
+      if(sg->ST_MATCH[m])
+        GetMUIString(filter->Match[i], sg->ST_MATCH[m]);
+      else
       {
-         struct SearchGroup *sg = &(gui->GR_SEARCH[i+2*rm]);
-         nnset(sg->CY_MODE       ,MUIA_Cycle_Active, rule->Field[i]);
-         nnset(sg->RA_ADRMODE    ,MUIA_Radio_Active, rule->SubField[i]);
-         nnset(sg->ST_FIELD      ,MUIA_String_Contents, rule->CustomField[i]);
-         nnset(sg->PG_SRCHOPT    ,MUIA_Group_ActivePage, m = Mode2Group[rule->Field[i]]);
-         nnset(sg->CY_COMP[m], MUIA_Cycle_Active, rule->Comparison[i]);
-
-         if(sg->ST_MATCH[m])
-           nnset(sg->ST_MATCH[m], MUIA_String_Contents, rule->Match[i]);
-         else
-         {
-           for(k=0; k <= 8; k++)
-           {
-             if(*rule->Match[i] == mailStatusCycleMap[k])
-             {
-               nnset(sg->CY_STATUS, MUIA_Cycle_Active, k);
-               break;
-             }
-           }
-         }
-
-         if (sg->CH_CASESENS[m]) nnset(sg->CH_CASESENS[m], MUIA_Selected, rule->CaseSens[i]);
-         if (sg->CH_SUBSTR[m]) nnset(sg->CH_SUBSTR[m], MUIA_Selected, rule->Substring[i]);
+        filter->Match[i][0] = mailStatusCycleMap[GetMUICycle(sg->CY_STATUS)];
+        filter->Match[i][1] = '\0';
       }
-   }
-   CO_RuleGhost(gui, rule);
+
+      if(sg->CH_CASESENS[m])
+        filter->CaseSens[i]  = GetMUICheck(sg->CH_CASESENS[m]);
+
+      if(sg->CH_SUBSTR[m])
+        filter->Substring[i] = GetMUICheck(sg->CH_SUBSTR[m]);
+    }
+
+    GhostOutFilter(gui, filter);
+    DoMethod(gui->LV_RULES, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
+  }
 }
-MakeHook(CO_GetRUEntryHook,CO_GetRUEntry);
-
-///
-/// CO_PutRUEntry
-//  Fills form data into selected list entry
-HOOKPROTONHNONP(CO_PutRUEntry, void)
-{
-   struct Rule *rule = NULL;
-   struct CO_GUIData *gui = &G->CO->GUI;
-   char *tx;
-
-   DB(kprintf("CO_PutRUEntry()\n");)
-
-   DoMethod(gui->LV_RULES, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &rule);
-   if (rule)
-   {
-      int i, rm = GetMUICheck(gui->CH_REMOTE);
-
-      GetMUIString(rule->Name, gui->ST_RNAME);
-      rule->Remote = rm == 1;
-      rule->ApplyToNew  = GetMUICheck(gui->CH_APPLYNEW);
-      rule->ApplyToSent = GetMUICheck(gui->CH_APPLYSENT);
-      rule->ApplyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
-      rule->Combine     = GetMUICycle(gui->CY_COMBINE[rm]);
-      rule->Actions = 0;
-      if (GetMUICheck(gui->CH_ABOUNCE))    SET_FLAG(rule->Actions, RULE_BOUNCE);
-      if (GetMUICheck(gui->CH_AFORWARD))   SET_FLAG(rule->Actions, RULE_FORWARD);
-      if (GetMUICheck(gui->CH_ARESPONSE))  SET_FLAG(rule->Actions, RULE_REPLY);
-      if (GetMUICheck(gui->CH_AEXECUTE))   SET_FLAG(rule->Actions, RULE_EXECUTE);
-      if (GetMUICheck(gui->CH_APLAY))      SET_FLAG(rule->Actions, RULE_PLAYSOUND);
-      if (GetMUICheck(gui->CH_AMOVE))      SET_FLAG(rule->Actions, RULE_MOVE);
-      if (GetMUICheck(gui->CH_ADELETE))    SET_FLAG(rule->Actions, RULE_DELETE);
-      if (GetMUICheck(gui->CH_ASKIP))      SET_FLAG(rule->Actions, RULE_SKIPMSG);
-      GetMUIString(rule->BounceTo,   gui->ST_ABOUNCE);
-      GetMUIString(rule->ForwardTo , gui->ST_AFORWARD);
-      GetMUIString(rule->ReplyFile , gui->ST_ARESPONSE);
-      GetMUIString(rule->ExecuteCmd, gui->ST_AEXECUTE);
-      GetMUIString(rule->PlaySound,  gui->ST_APLAY);
-
-      tx = (char *)xget(gui->TX_MOVETO, MUIA_Text_Contents);
-      strcpy(rule->MoveTo, tx);
-
-      for (i = 0; i < 2; i++)
-      {
-         struct SearchGroup *sg = &(gui->GR_SEARCH[i+2*rm]);
-         int m = xget(sg->PG_SRCHOPT, MUIA_Group_ActivePage);
-
-         rule->Field[i]      = GetMUICycle(sg->CY_MODE);
-         rule->SubField[i]   = GetMUIRadio(sg->RA_ADRMODE);
-         GetMUIString(rule->CustomField[i], sg->ST_FIELD);
-         rule->Comparison[i] = GetMUICycle(sg->CY_COMP[m]);
-
-         if(sg->ST_MATCH[m])
-           GetMUIString(rule->Match[i], sg->ST_MATCH[m]);
-         else
-         {
-           rule->Match[i][0] = mailStatusCycleMap[GetMUICycle(sg->CY_STATUS)];
-           rule->Match[i][1] = '\0';
-         }
-
-        if (sg->CH_CASESENS[m]) rule->CaseSens[i]  = GetMUICheck(sg->CH_CASESENS[m]);
-        if (sg->CH_SUBSTR[m]  ) rule->Substring[i] = GetMUICheck(sg->CH_SUBSTR[m]);
-      }
-      CO_RuleGhost(gui, rule);
-      DoMethod(gui->LV_RULES, MUIM_List_Redraw, MUIV_List_Redraw_Active);
-   }
-}
-MakeHook(CO_PutRUEntryHook,CO_PutRUEntry);
+MakeHook(SetActiveFilterDataHook, SetActiveFilterData);
 
 ///
 /// CO_RemoteToggleFunc
@@ -351,7 +398,8 @@ HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
          if (src->CH_SUBSTR[m]  ) nnset(dst->CH_SUBSTR[m]  , MUIA_Selected, GetMUICheck(src->CH_SUBSTR[m]));
       }
    }
-   CO_PutRUEntry();
+
+   SetActiveFilterData();
 }
 MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
 ///
@@ -661,7 +709,6 @@ HOOKPROTONHNONP(CO_PutRXEntry, void)
 }
 MakeHook(CO_PutRXEntryHook,CO_PutRXEntry);
 ///
-
 /// CO_IsValid
 //  Verifies if the required settings have been made
 BOOL CO_IsValid(void)
@@ -688,15 +735,44 @@ static int CO_DetectPGP(struct Config *co)
 //  Deallocates a configuration structure
 void CO_FreeConfig(struct Config *co)
 {
-   int i;
+  struct MinNode *curNode;
+  int i;
 
-   // free all config elements
-   for(i = 0; i < MAXP3; i++) { if(co->P3[i]) free(co->P3[i]); }
-   for(i = 0; i < MAXRU; i++) { if(co->RU[i]) free(co->RU[i]); }
-   for(i = 0; i < MAXMV; i++) { if(co->MV[i]) free(co->MV[i]); }
+  DB(kprintf("CO_FreeConfig: %08lx\n", co);)
 
-   // clear the config.
-   memset(co, 0, sizeof(struct Config));
+  // free all config elements
+  for(i = 0; i < MAXP3; i++) { if(co->P3[i]) free(co->P3[i]); }
+  for(i = 0; i < MAXMV; i++) { if(co->MV[i]) free(co->MV[i]); }
+
+  // we have to free the filterList
+  for(curNode = co->filterList.mlh_Head; curNode->mln_Succ;)
+  {
+    int i;
+    struct FilterNode *filter = (struct FilterNode *)curNode;
+
+    for(i=0; i < 2; i++)
+    {
+      if(filter->search[i])
+      {
+        FreeSearchPatternList(filter->search[i]);
+        free(filter->search[i]);
+        filter->search[i] = NULL;
+      }
+    }
+
+    // before we remove the node we have to save the pointer to the next one
+    curNode = curNode->mln_Succ;
+
+    // Remove node from list
+    Remove((struct Node *)filter);
+    free(filter);
+  }
+
+  // clear the config
+  memset(co, 0, sizeof(struct Config));
+
+  // init the filterList & stuff
+  NewList((struct List *)&co->filterList);
 }
 
 ///
@@ -706,7 +782,10 @@ void CO_SetDefaults(struct Config *co, int page)
 {
    int i;
 
-   if (page == 0 || page < 0)
+   DB(kprintf("CO_SetDefaults: %08lx %d\n", co, page);)
+
+   // [Start]
+   if(page == 0 || page < 0)
    {
       *co->RealName = *co->EmailAddress = 0;
 
@@ -717,7 +796,8 @@ void CO_SetDefaults(struct Config *co, int page)
       co->DaylightSaving = FALSE;
    }
 
-   if (page == 1 || page < 0)
+   // [TCP/IP]
+   if(page == 1 || page < 0)
    {
       for (i = 0; i < MAXP3; i++) { if (co->P3[i]) free(co->P3[i]); co->P3[i] = NULL; }
       *co->SMTP_Server = *co->SMTP_Domain = 0;
@@ -729,7 +809,8 @@ void CO_SetDefaults(struct Config *co, int page)
       co->P3[0] = CO_NewPOP3(co, TRUE); co->P3[0]->DeleteOnServer = TRUE;
    }
 
-   if (page == 2 || page < 0)
+   // [New Mail]
+   if(page == 2 || page < 0)
    {
       co->AvoidDuplicates = FALSE;
       co->TransferWindow = 2;
@@ -741,12 +822,21 @@ void CO_SetDefaults(struct Config *co, int page)
       *co->NotifySound = *co->NotifyCommand = 0;
    }
 
-   if (page == 3 || page < 0)
+   // [Filters]
+   if(page == 3 || page < 0)
    {
-      for (i = 0; i < MAXRU; i++) { if (co->RU[i]) free(co->RU[i]); co->RU[i] = NULL; }
+      struct MinNode *curNode;
+
+      // we have to free the filterList
+      for(curNode = co->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      {
+        free(curNode);
+      }
+      NewList((struct List *)&co->filterList);
    }
 
-   if (page == 4 || page < 0)
+   // [Read]
+   if(page == 4 || page < 0)
    {
       for (i = 0; i < MAXMV; i++) { if (co->MV[i]) free(co->MV[i]); co->MV[i] = NULL; }
       co->ShowHeader = 1;
@@ -766,7 +856,8 @@ void CO_SetDefaults(struct Config *co, int page)
       co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
    }
 
-   if (page == 5 || page < 0)
+   // [Write]
+   if(page == 5 || page < 0)
    {
       *co->ReplyTo = *co->Organization = *co->ExtraHeaders = *co->TranslationOut = 0;
       strcpy(co->NewIntro, GetStr(MSG_CO_NewIntroDef));
@@ -779,7 +870,8 @@ void CO_SetDefaults(struct Config *co, int page)
       co->EmailCache = 10;
    }
 
-   if (page == 6 || page < 0)
+   // [Reply/Forward]
+   if(page == 6 || page < 0)
    {
       strcpy(co->ReplyHello, "Hello %f\\n");
       strcpy(co->ReplyIntro, "On %d, you wrote:\\n");
@@ -798,14 +890,16 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->AltQuoteText, "|");
    }
 
-   if (page == 7 || page < 0)
+   // [Signature]
+   if(page == 7 || page < 0)
    {
       co->UseSignature = FALSE;
       strmfp(co->TagsFile, G->ProgDir, ".taglines");
       strcpy(co->TagsSeparator, "%%");
    }
 
-   if (page == 8 || page < 0)
+   // [Lists]
+   if(page == 8 || page < 0)
    {
       co->FolderCols = 1+2+16;
       co->MessageCols = 1+2+8+16;
@@ -816,7 +910,8 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->InfoBarText, GetStr(MSG_CO_InfoBarDef));
    }
 
-   if (page == 9 || page < 0)
+   // [Security]
+   if(page == 9 || page < 0)
    {
       G->PGPVersion = 0;
       if (GetVar("PGPPATH", co->PGPCmdPath, SIZE_PATH, 0) >= 0) G->PGPVersion = CO_DetectPGP(co);
@@ -834,14 +929,16 @@ void CO_SetDefaults(struct Config *co, int page)
       co->SplitLogfile = FALSE;
    }
 
-   if (page == 10 || page < 0)
+   // [Start/Quit]
+   if(page == 10 || page < 0)
    {
       co->GetOnStartup = co->SendOnStartup = co->LoadAllFolders = co->SendOnQuit = FALSE;
       co->CleanupOnStartup = co->RemoveOnStartup = FALSE;
       co->UpdateNewMail = co->CheckBirthdates = co->CleanupOnQuit = co->RemoveOnQuit = TRUE;
    }
 
-   if (page == 11 || page < 0)
+   // [MIME]
+   if(page == 11 || page < 0)
    {
       co->MV[0] = CO_NewMimeView();
       strcpy(co->MV[0]->ContentType, GetStr(MSG_Default));
@@ -851,7 +948,8 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->AttachDir, "RAM:");
    }
 
-   if (page == 12 || page < 0)
+   // [Address book]
+   if(page == 12 || page < 0)
    {
       strcpy(co->GalleryDir, "YAM:Gallery");
       strcpy(co->NewAddrGroup, "NEW");
@@ -860,7 +958,8 @@ void CO_SetDefaults(struct Config *co, int page)
       co->AddrbookCols = 1+2+4;
    }
 
-   if (page == 13 || page < 0)
+   // [Scripts]
+   if(page == 13 || page < 0)
    {
       for (i = 0; i < MAXRX; i++)
       {
@@ -870,7 +969,8 @@ void CO_SetDefaults(struct Config *co, int page)
       }
    }
 
-   if (page == 14 || page < 0)
+   // [Mixed]
+   if(page == 14 || page < 0)
    {
       strcpy(co->TempDir, "T:");
       strcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"");
@@ -887,7 +987,8 @@ void CO_SetDefaults(struct Config *co, int page)
       co->XPKPackEncryptEff = 50;
    }
 
-   if (page < 0)
+   // everything else
+   if(page < 0)
    {
       co->LetterPart = 1;
       co->WriteIndexes = 120;
@@ -917,15 +1018,37 @@ void CO_SetDefaults(struct Config *co, int page)
 }
 
 ///
-/// CO_CopyConfig
-//  Copies a configuration structure
-static void CO_CopyConfig(struct Config *dco, struct Config *sco)
+/// CopyConfigData
+//  Copies a configuration structure (deep copy)
+static void CopyConfigData(struct Config *dco, struct Config *sco)
 {
-   int i;
-   memcpy(dco, sco, sizeof(struct Config));
-   for (i = 0; i < MAXP3; i++) dco->P3[i] = sco->P3[i] ? (struct POP3     *)AllocCopy(sco->P3[i], sizeof(struct POP3)) : NULL;
-   for (i = 0; i < MAXRU; i++) dco->RU[i] = sco->RU[i] ? (struct Rule     *)AllocCopy(sco->RU[i], sizeof(struct Rule)) : NULL;
-   for (i = 0; i < MAXMV; i++) dco->MV[i] = sco->MV[i] ? (struct MimeView *)AllocCopy(sco->MV[i], sizeof(struct MimeView)) : NULL;
+  int i;
+  struct MinNode *curNode;
+
+  DB(kprintf("CopyConfigData: %08lx->%08lx\n", sco, dco);)
+
+  // first we copy all raw data via memcpy
+  memcpy(dco, sco, sizeof(struct Config));
+
+  // then we have to do a deep copy any allocate separate memory for our copy
+  for(i = 0; i < MAXP3; i++)
+    dco->P3[i] = sco->P3[i] ? (struct POP3 *)AllocCopy(sco->P3[i], sizeof(struct POP3)) : NULL;
+
+  for(i = 0; i < MAXMV; i++)
+    dco->MV[i] = sco->MV[i] ? (struct MimeView *)AllocCopy(sco->MV[i], sizeof(struct MimeView)) : NULL;
+
+  // for copying the filters we do have to do another deep copy
+  NewList((struct List *)&dco->filterList);
+
+  for(curNode = sco->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    struct FilterNode *srcFilter = (struct FilterNode *)curNode;
+    struct FilterNode *dstFilter = calloc(1, sizeof(struct FilterNode));
+
+    CopyFilterData(dstFilter, srcFilter);
+
+    AddTail((struct List *)&dco->filterList, (struct Node *)dstFilter);
+  }
 }
 
 ///
@@ -1289,7 +1412,7 @@ MakeStaticHook(CO_SaveConfigAsHook, CO_SaveConfigAs);
 HOOKPROTONHNONP(CO_Restore, void)
 {
    CO_FreeConfig(CE);
-   CO_CopyConfig(CE, C);
+   CopyConfigData(CE, C);
    CO_SetConfig();
 }
 MakeStaticHook(CO_RestoreHook,CO_Restore);
@@ -1375,18 +1498,26 @@ MakeStaticHook(CO_ChangePageHook,CO_ChangePageFunc);
 //  Closes configuration window
 HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 {
-   if (*arg >= 1)
-   {
-      CO_GetConfig();
-      CO_FreeConfig(C);
-      CO_CopyConfig(C, CE);
-      CO_Validate(C, TRUE);
-      if (*arg == 2) CO_SaveConfig(C, G->CO_PrefsFile);
-   }
-   CO_FreeConfig(CE);
-   free(CE);
+  // check if we should copy our edited configuration
+  // to the real one or if we should just free/drop it
+  if(*arg >= 1)
+  {
+    CO_GetConfig();
+    CO_FreeConfig(C);
+    CopyConfigData(C, CE);
+    CO_Validate(C, TRUE);
 
-   DisposeModulePush(&G->CO);
+    // if the configuration should be saved we do it immediatley
+    if(*arg == 2)
+      CO_SaveConfig(C, G->CO_PrefsFile);
+  }
+
+  // then we free our temporary config structure
+  CO_FreeConfig(CE);
+  free(CE);
+  CE = NULL;
+
+  DisposeModulePush(&G->CO);
 }
 MakeStaticHook(CO_CloseHook,CO_CloseFunc);
 
@@ -1395,21 +1526,29 @@ MakeStaticHook(CO_CloseHook,CO_CloseFunc);
 //  Opens configuration window
 HOOKPROTONHNONP(CO_OpenFunc, void)
 {
-   if (!G->CO)
-   {
-      if (!(G->CO = CO_New())) return;
-      CE = malloc(sizeof(struct Config));
-      CO_CopyConfig(CE, C);
-      CO_SetConfig();
-      CO_NewPrefsFile(G->CO_PrefsFile);
-   }
-   if (!SafeOpenWindow(G->CO->GUI.WI)) CallHookPkt(&CO_CloseHook, 0, 0);
+  // check if there isn't already a configuration
+  // open
+  if(!G->CO)
+  {
+    if(!(G->CO = CO_New()))
+      return;
+
+    if((CE = malloc(sizeof(struct Config))) == NULL)
+      return;
+
+    CopyConfigData(CE, C);
+    CO_SetConfig();
+    CO_NewPrefsFile(G->CO_PrefsFile);
+  }
+
+  // make sure the configuration window is open
+  if(!SafeOpenWindow(G->CO->GUI.WI))
+    CallHookPkt(&CO_CloseHook, 0, 0);
 }
 MakeHook(CO_OpenHook,CO_OpenFunc);
 ///
 
 /*** GUI ***/
-
 /// CO_New
 //  Creates configuration window
 enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_REST, CMEN_MIME };

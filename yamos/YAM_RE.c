@@ -2781,9 +2781,9 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
   // readWindow
   if(forceNewWindow == FALSE &&
      C->MultipleWindows == FALSE &&
-     IsMinListEmpty(&G->ReadMailDataList) == FALSE)
+     IsMinListEmpty(&G->readMailDataList) == FALSE)
   {
-    struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+    struct MinNode *curNode = G->readMailDataList.mlh_Head;
 
     DB(kprintf("No MultipleWindows support, trying to reuse a window.\n");)
 

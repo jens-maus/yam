@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -32,10 +32,6 @@
 
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
-
-#ifndef YAM_CONFIG_H
-struct Rule;
-#endif
 
 // lets define all the Rule->Actions flags and
 // define some flag macros for them
@@ -143,7 +139,6 @@ struct Rule;
 #define setStatusToOld(mail)        MA_ChangeMailStatus(mail, SFLAG_READ, SFLAG_NEW)
 
 enum ImportanceLevel { IMP_NORMAL=0, IMP_LOW, IMP_HIGH };
-enum ApplyMode { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX };
 enum NewMode { NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC };
 
 // flags and macros for creating new mails
@@ -252,7 +247,6 @@ extern struct Hook MA_SavePrintHook;
 extern struct Hook MA_SaveAttachHook;
 extern struct Hook MA_RemoveAttachHook;
 extern struct Hook MA_ExportMessagesHook;
-extern struct Hook MA_ApplyRulesHook;
 extern struct Hook MA_ChangeSelectedHook;
 extern struct Hook MA_DeleteDeletedHook;
 extern struct Hook MA_DeleteOldHook;
@@ -265,15 +259,13 @@ extern struct Hook MA_SetMessageInfoHook;
 extern struct Hook PO_WindowHook;
 extern struct Hook MA_FolderKeyHook;
 
-int   MA_AllocRules(struct Search **search, enum ApplyMode mode);
 void  MA_ChangeSubject(struct Mail *mail, char *subj);
 void  MA_ChangeTransfer(BOOL on);
 struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew);
+struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew);
 void  MA_DeleteMessage(BOOL delatonce, BOOL force);
 void  MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet);
-BOOL  MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail);
 BOOL  MA_ExportMessages(BOOL all, char *filename, BOOL append);
-void  MA_FreeRules(struct Search **search, int scnt);
 struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folderp, int *activep);
 void  MA_GetAddress(struct Mail **mlist);
 BOOL  MA_ImportMessages(char *fname);

@@ -248,6 +248,8 @@ struct CO_GUIData
    Object *CH_EMBEDDEDREADPANE;
    Object *CH_DELAYEDSTATUS;
    Object *NB_DELAYEDSTATUS;
+   Object *BT_FILTERUP;
+   Object *BT_FILTERDOWN;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -283,31 +285,6 @@ struct MimeView
    char  Extension[SIZE_NAME];
 };
 
-struct Rule
-{
-   char  Name[SIZE_NAME];     // due to alignment this entry have to be on the top
-   char  **PatternsFromList;
-   int   Combine;
-   int   Field[2];
-   int   SubField[2];
-   int   Comparison[2];
-   int   Actions;
-   BOOL  Remote;
-   BOOL  ApplyToNew;
-   BOOL  ApplyOnReq;
-   BOOL  ApplyToSent;
-   BOOL  CaseSens[2];
-   BOOL  Substring[2];
-   char  CustomField[2][SIZE_DEFAULT];
-   char  Match[2][SIZE_PATTERN];
-   char  BounceTo[SIZE_ADDRESS];
-   char  ForwardTo[SIZE_ADDRESS];
-   char  ReplyFile[SIZE_PATHFILE];
-   char  ExecuteCmd[SIZE_COMMAND];
-   char  PlaySound[SIZE_PATHFILE];
-   char  MoveTo[SIZE_NAME];
-};       
-
 /*** RxHook structure ***/
 struct RxHook
 {
@@ -340,8 +317,9 @@ enum PrintMethod { PRINTMETHOD_RAW };
 struct Config
 {
    struct POP3 *    P3[MAXP3];
-   struct Rule *    RU[MAXRU];
    struct MimeView *MV[MAXMV];
+
+   struct MinList filterList; // list of currently available filter node
 
    int   TimeZone;
    int   PreSelection;
@@ -507,33 +485,36 @@ enum InfoBarPos { IB_POS_TOP=0, IB_POS_CENTER, IB_POS_BOTTOM, IB_POS_OFF };
 
 extern struct Config *C;
 extern struct Config *CE;
-extern struct Hook    CO_AddMimeViewHook;
-extern struct Hook    CO_AddPOP3Hook;
-extern struct Hook    CO_AddRuleHook;
-extern struct Hook    CO_DelMimeViewHook;
-extern struct Hook    CO_DelPOP3Hook;
-extern struct Hook    CO_DelRuleHook;
-extern struct Hook    CO_EditSignatHook;
-extern struct Hook    CO_GetDefaultPOPHook;
-extern struct Hook    CO_GetMVEntryHook;
-extern struct Hook    CO_GetP3EntryHook;
-extern struct Hook    CO_GetRUEntryHook;
-extern struct Hook    CO_GetRXEntryHook;
-extern struct Hook    CO_OpenHook;
-extern struct Hook    CO_PL_DspFuncHook;
-extern struct Hook    CO_PutMVEntryHook;
-extern struct Hook    CO_PutP3EntryHook;
-extern struct Hook    CO_PutRUEntryHook;
-extern struct Hook    CO_PutRXEntryHook;
-extern struct Hook    CO_RemoteToggleHook;
+
+// external hooks
+extern struct Hook CO_AddMimeViewHook;
+extern struct Hook CO_AddPOP3Hook;
+extern struct Hook CO_DelMimeViewHook;
+extern struct Hook CO_DelPOP3Hook;
+extern struct Hook CO_EditSignatHook;
+extern struct Hook CO_GetDefaultPOPHook;
+extern struct Hook CO_GetMVEntryHook;
+extern struct Hook CO_GetP3EntryHook;
+extern struct Hook CO_GetRXEntryHook;
+extern struct Hook CO_OpenHook;
+extern struct Hook CO_PL_DspFuncHook;
+extern struct Hook CO_PutMVEntryHook;
+extern struct Hook CO_PutP3EntryHook;
+extern struct Hook CO_PutRXEntryHook;
+extern struct Hook CO_RemoteToggleHook;
+extern struct Hook AddNewFilterToListHook;
+extern struct Hook RemoveActiveFilterHook;
+extern struct Hook SetActiveFilterDataHook;
+extern struct Hook GetActiveFilterDataHook;
 
 void              CO_FreeConfig(struct Config *co);
 BOOL              CO_IsValid(void);
 struct MimeView * CO_NewMimeView(void);
 struct POP3 *     CO_NewPOP3(struct Config *co, BOOL first);
-struct Rule *     CO_NewRule(void);
-void              CO_RuleGhost(struct CO_GUIData *gui, struct Rule *ru);
 void              CO_SetDefaults(struct Config *co, int page);
 void              CO_Validate(struct Config *co, BOOL update);
+
+struct FilterNode *CreateNewFilter(void);
+void               GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 
 #endif /* YAM_CONFIG_H */

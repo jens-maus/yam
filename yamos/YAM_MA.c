@@ -67,7 +67,6 @@
 
 /* local protos */
 static ULONG MA_GetSortType(int);
-static struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew);
 static struct Mail *MA_MoveCopySingle(struct Mail*, int, struct Folder*, struct Folder*, BOOL);
 static void MA_UpdateStatus(void);
 static char *MA_AppendRcpt(char*, struct Person*, BOOL);
@@ -370,11 +369,11 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
       // they contain the mail we have changed the status, so
       // that we can update the filename in the read window structure
       // aswell
-      if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
+      if(IsMinListEmpty(&G->readMailDataList) == FALSE)
       {
         // search through our ReadDataList
         struct MinNode *curNode;
-        for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
         {
           struct ReadMailData *rmData = (struct ReadMailData *)curNode;
           if(rmData->mail == mail)
@@ -400,7 +399,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 ///
 /// MA_CreateFullList
 //  Builds a list containing all messages in a folder
-static struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
+struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
 {
    int selected;
    struct Mail *mail, **mlist = NULL;
@@ -807,11 +806,11 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
     struct ReadMailData *rmData;
 
     // Check if this mail is already in a readwindow
-    if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
+    if(IsMinListEmpty(&G->readMailDataList) == FALSE)
     {
       // search through our ReadDataList
       struct MinNode *curNode;
-      for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         rmData = (struct ReadMailData *)curNode;
 
@@ -1952,252 +1951,6 @@ MakeStaticHook(MA_PopNowHook, MA_PopNowFunc);
 ///
 
 /*** Sub-button functions ***/
-/// MA_AllocRules
-//  Allocates and initializes search structures for filters
-int MA_AllocRules(struct Search **search, enum ApplyMode mode)
-{
-   int scnt = 0, i, j, stat;
-   struct Rule *rule;
-
-   for(i = 0; i < MAXRU; i++)
-   {
-     if((rule = C->RU[i]))
-     {
-        // lets check if we can skip some filters
-        if(mode == APPLY_AUTO && (!rule->ApplyToNew || rule->Remote))  continue;
-        if(mode == APPLY_USER && (!rule->ApplyOnReq || rule->Remote))  continue;
-        if(mode == APPLY_SENT && (!rule->ApplyToSent || rule->Remote)) continue;
-        if(mode == APPLY_REMOTE && !rule->Remote) continue;
-
-        // we can combine 2 different equations
-        for(j = 0; j < 2; j++)
-        {
-           search[scnt+j*MAXRU] = calloc(1, sizeof(struct Search));
-           stat = 9;
-
-           // we check the status field first and if we find a match
-           // we can immediatly break up here because we don`t need to prepare the search
-           if(rule->Field[j] == 11)
-           {
-             for(stat=0; stat <= 8; stat++)
-             {
-               if(*rule->Match[j] == mailStatusCycleMap[stat])
-                 break;
-             }
-           }
-
-           FI_PrepareSearch(search[scnt+j*MAXRU],
-                            rule->Field[j],
-                            rule->CaseSens[j],
-                            rule->SubField[j],
-                            rule->Comparison[j],
-                            mailStatusCycleMap[stat],
-                            rule->Substring[j],
-                            rule->Match[j],
-                            rule->CustomField[j]);
-
-           search[scnt+j*MAXRU]->Rule = rule;
-        }
-        scnt++;
-     }
-   }
-
-   return scnt;
-}
-
-///
-/// MA_FreeRules
-//  Frees filter search structures
-void MA_FreeRules(struct Search **search, int scnt)
-{
-  int i, j;
-
-  for(i = 0; i < scnt; i++)
-  {
-    for(j = 0; j < 2; j++)
-    {
-      struct Search *curSearch = search[i+j*MAXRU];
-
-      if(curSearch)
-      {
-        FreeSearchPatternList(curSearch);
-        free(curSearch);
-      }
-    }
-  }
-}
-
-///
-/// MA_ExecuteRuleAction
-//  Applies filter action to a message
-BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
-{
-  struct Mail *mlist[3];
-  struct Folder* fo;
-  mlist[0] = (struct Mail *)1; mlist[1] = NULL; mlist[2] = mail;
-
-  // Bounce Action
-  if(hasBounceAction(rule) && !rule->Remote && *rule->BounceTo)
-  {
-    G->RRs.Bounced++;
-    MA_NewBounce(mail, TRUE);
-    setstring(G->WR[2]->GUI.ST_TO, rule->BounceTo);
-    DoMethod(G->App, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, 2);
-  }
-
-  // Forward Action
-  if(hasForwardAction(rule) && !rule->Remote && *rule->ForwardTo)
-  {
-    G->RRs.Forwarded++;
-    MA_NewForward(mlist, TRUE);
-    setstring(G->WR[2]->GUI.ST_TO, rule->ForwardTo);
-    WR_NewMail(WRITE_QUEUE, 2);
-  }
-
-  // Reply Action
-  if(hasReplyAction(rule) && !rule->Remote && *rule->ReplyFile)
-  {
-    MA_NewReply(mlist, TRUE);
-    FileToEditor(rule->ReplyFile, G->WR[2]->GUI.TE_EDIT);
-    WR_NewMail(WRITE_QUEUE, 2);
-    G->RRs.Replied++;
-  }
-
-  // Execute Action
-  if(hasExecuteAction(rule) && *rule->ExecuteCmd)
-  {
-    char buf[SIZE_COMMAND+SIZE_PATHFILE];
-    sprintf(buf, "%s %s", rule->ExecuteCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
-    ExecuteCommand(buf, FALSE, OUT_DOS);
-    G->RRs.Executed++;
-  }
-
-  // PlaySound Action
-  if(hasPlaySoundAction(rule) && *rule->PlaySound)
-  {
-    PlaySound(rule->PlaySound);
-  }
-
-  // Move Action
-  if(hasMoveAction(rule) && !rule->Remote)
-  {
-    if((fo = FO_GetFolderByName(rule->MoveTo, NULL)))
-    {
-      if (mail->Folder != fo)
-      {
-        G->RRs.Moved++;
-        if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo))
-          SET_FLAG(fo->Flags, FOFL_FREEXS);
-
-        MA_MoveCopy(mail, mail->Folder, fo, FALSE);
-        return FALSE;
-      }
-    }
-    else ER_NewError(GetStr(MSG_ER_CANTMOVEMAIL), mail->MailFile, rule->MoveTo);
-  }
-
-  // Delete Action
-  if(hasDeleteAction(rule))
-  {
-    G->RRs.Deleted++;
-
-    if(isSendMDNMail(mail) &&
-       (hasStatusNew(mail) || !hasStatusRead(mail)))
-    {
-      RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
-    }
-
-    MA_DeleteSingle(mail, FALSE, FALSE);
-
-    return FALSE;
-  }
-
-  return TRUE;
-}
-
-///
-/// MA_ApplyRulesFunc
-//  Apply filters
-HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
-{
-   struct Mail *mail, **mlist = NULL;
-   struct Folder *folder;
-   int scnt, matches = 0, minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
-   enum ApplyMode mode = arg[0];
-   struct Search *search[2*MAXRU];
-   APTR lv = G->MA->GUI.NL_MAILS;
-   char buf[SIZE_LARGE];
-
-   folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder();
-   if(!folder) return;
-
-   if (mode == APPLY_USER && folder->Type != FT_INCOMING)
-   {
-      sprintf(buf, GetStr(MSG_MA_ConfirmFilter), folder->Name);
-      if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buf)) return;
-   }
-
-   memset(&G->RRs, 0, sizeof(struct RuleResult));
-   set(lv, MUIA_NList_Quiet, TRUE);
-   G->AppIconQuiet = TRUE;
-
-   if ((scnt = MA_AllocRules(search, mode)))
-   {
-      if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL)
-      {
-        if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) && (int)mlist[0] < minselected)
-        {
-          free(mlist);
-          mlist = NULL;
-        }
-      }
-
-      if(!mlist) mlist = MA_CreateFullList(folder, (mode == APPLY_AUTO || mode == APPLY_RX));
-
-      if (mlist)
-      {
-         int m, i;
-
-         BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
-         for (m = 0; m < (int)*mlist; m++)
-         {
-            mail = mlist[m+2];
-
-            if((mode == APPLY_AUTO || mode == APPLY_RX) && !hasStatusNew(mail))
-              continue;
-
-            G->RRs.Checked++;
-
-            for (i = 0; i < scnt; i++)
-            {
-               if (FI_DoComplexSearch(search[i], search[i]->Rule->Combine, search[i+MAXRU], mail))
-               {
-                  matches++;
-                  if (!MA_ExecuteRuleAction(search[i]->Rule, mail)) break;
-               }
-            }
-            BusySet(m+1);
-         }
-         free(mlist);
-         if (G->RRs.Moved) MA_FlushIndexes(FALSE);
-         if (G->RRs.Checked) AppendLog(26, GetStr(MSG_LOG_Filtering), (void *)(G->RRs.Checked), folder->Name, (void *)matches, "");
-
-         BusyEnd();
-      }
-      MA_FreeRules(search, scnt);
-   }
-   set(lv, MUIA_NList_Quiet, FALSE); G->AppIconQuiet = FALSE;
-   if(mode != APPLY_AUTO) DisplayStatistics(NULL, TRUE);
-
-   if (G->RRs.Checked && mode == APPLY_USER)
-   {
-      sprintf(buf, GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
-      MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), buf);
-   }
-}
-MakeHook(MA_ApplyRulesHook, MA_ApplyRulesFunc);
-
-///
 /// MA_SendMList
 //  Sends a list of messages
 BOOL MA_SendMList(struct Mail **mlist)
@@ -2801,7 +2554,6 @@ MakeStaticHook(MA_CallRexxHook, MA_CallRexxFunc);
 ///
 
 /*** Hooks ***/
-
 /// PO_Window
 /*** PO_Window - Window hook for popup objects ***/
 HOOKPROTONH(PO_Window, void, Object *pop, Object *win)
@@ -3756,7 +3508,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SELNONE   ,data->GUI.NL_MAILS,4,MUIM_NList_Select,MUIV_NList_Select_All,MUIV_NList_Select_Off,NULL);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SELTOGG   ,data->GUI.NL_MAILS,4,MUIM_NList_Select,MUIV_NList_Select_All,MUIV_NList_Select_Toggle,NULL);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SEARCH    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FI_OpenHook);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_FILTER    ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_ApplyRulesHook,APPLY_USER,0);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_FILTER    ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&ApplyFiltersHook,APPLY_USER,0);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_DELDEL    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_DeleteDeletedHook, FALSE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_INDEX     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_RescanIndexHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_FLUSH     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FlushIndexHook);
@@ -3813,7 +3565,7 @@ struct MA_ClassData *MA_New(void)
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify, 8, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&MA_NewMessageHook,NEW_FORWARD,MUIV_Toolbar_Qualifier);
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,9,MUIM_Application_PushMethod,G->App,5,MUIM_CallHook,&MA_PopNowHook,POP_USER,-1,MUIV_Toolbar_Qualifier);
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,7,MUIM_Application_PushMethod,G->App,3,MUIM_CallHook,&MA_SendHook,SEND_ALL);
-            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,13, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&MA_ApplyRulesHook,APPLY_USER,MUIV_Toolbar_Qualifier);
+            DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,13, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&ApplyFiltersHook,APPLY_USER,MUIV_Toolbar_Qualifier);
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,14, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&FI_OpenHook);
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,15, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,3,MUIM_CallHook,&AB_OpenHook,ABM_EDIT);
             DoMethod(data->GUI.TO_TOOLBAR     ,MUIM_Toolbar_Notify,16, MUIV_Toolbar_Notify_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&CO_OpenHook);

@@ -53,7 +53,6 @@
 #define SIZE_EXALLBUF 32768
 
 #define MAXP3           16
-#define MAXRU          100
 #define MAXMV          100
 #define MAXRX           21
 

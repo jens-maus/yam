@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -289,7 +289,7 @@ static Object *MakeTransPop(Object **string, BOOL output,  char *shortcut)
 ///
 /// PO_HandleVar
 //  Pastes an entry from variable listview into string gadget
-HOOKPROTONH(PO_HandleVar, void, APTR pop, APTR string)
+HOOKPROTONH(PO_HandleVar, void, Object *pop, Object *string)
 {
    char *var, buf[3];
 
@@ -442,6 +442,43 @@ HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
    PlaySound((STRPTR)xget((Object *)arg[0], MUIA_String_Contents));
 }
 MakeStaticHook(CO_PlaySoundHook,CO_PlaySoundFunc);
+///
+/// FilterDisplayFunc
+// Filter list display hook
+HOOKPROTONHNO(FilterDisplayFunc, LONG, struct NList_DisplayMessage *msg)
+{
+  struct FilterNode *entry;
+  char **array;
+
+  if(!msg)
+    return 0;
+
+  // now we set our local variables to the DisplayMessage structure ones
+  entry = (struct FilterNode *)msg->entry;
+  array = msg->strings;
+
+  if(entry)
+  {
+    array[0] = entry->Name;
+    array[1] = entry->Remote ? "x" : " ";
+    array[2] = entry->ApplyToNew && !entry->Remote ?  "x" : " ";
+    array[3] = entry->ApplyToSent && !entry->Remote ? "x" : " ";
+    array[4] = entry->ApplyOnReq && !entry->Remote ?  "x" : " ";
+  }
+  else
+  {
+    array[0] = GetStr(MSG_CO_Filter_Name);
+    array[1] = GetStr(MSG_CO_Filter_RType);
+    array[2] = GetStr(MSG_CO_Filter_NType);
+    array[3] = GetStr(MSG_CO_Filter_SType);
+    array[4] = GetStr(MSG_CO_Filter_UType);
+  }
+
+  return 0;
+}
+MakeStaticHook(FilterDisplayHook, FilterDisplayFunc);
+
+
 ///
 
 /*** Pages ***/
@@ -753,7 +790,7 @@ APTR CO_Page2(struct CO_ClassData *data)
 }
 
 ///
-/// CO_Page3  (Rules)
+/// CO_Page3  (Filters)
 APTR CO_Page3(struct CO_ClassData *data)
 {
    static char *bcrit[5], *rtitles[4];
@@ -771,20 +808,28 @@ APTR CO_Page3(struct CO_ClassData *data)
          MUIA_HelpNode, "CO03",
          MUIA_Background, MUII_GroupBack,
          Child, VGroup,
-            MUIA_Weight, 50,
-            Child, ListviewObject,
-               MUIA_CycleChain, 1,
-               MUIA_Listview_DragType, MUIV_Listview_DragType_Immediate,
-               MUIA_Listview_List, data->GUI.LV_RULES = ListObject,
-                  MUIA_List_DragSortable, TRUE,
+            MUIA_Weight, 70,
+            Child, NListviewObject,
+               MUIA_CycleChain, TRUE,
+               MUIA_NListview_NList, data->GUI.LV_RULES = NListObject,
                   InputListFrame,
+                  MUIA_NList_Format,       "BAR, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1, P=\033c NB CW=1 MICW=1 MACW=1",
+                  MUIA_NList_Title,        TRUE,
+                  MUIA_NList_DragType,     MUIV_NList_DragType_Immediate,
+                  MUIA_NList_DragSortable, TRUE,
+                  MUIA_NList_DisplayHook2, &FilterDisplayHook,
                End,
             End,
-            Child, ColGroup(2),
+            Child, ColGroup(3),
                Child, data->GUI.BT_RADD = MakeButton(GetStr(MSG_Add)),
                Child, data->GUI.BT_RDEL = MakeButton(GetStr(MSG_Del)),
+               Child, ColGroup(2),
+                 Child, data->GUI.BT_FILTERUP = PopButton(MUII_ArrowUp),
+                 Child, data->GUI.BT_FILTERDOWN = PopButton(MUII_ArrowDown),
+               End,
             End,
          End,
+         Child, BalanceObject, End,
          Child, RegisterGroup(rtitles),
             MUIA_CycleChain,1,
             Child, VGroup,
@@ -887,53 +932,61 @@ APTR CO_Page3(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_ASKIP     ,MSG_HELP_CO_CH_ASKIP     );
       SetHelp(data->GUI.BT_RADD      ,MSG_HELP_CO_BT_RADD      );
       SetHelp(data->GUI.BT_RDEL      ,MSG_HELP_CO_BT_RDEL      );
-      set(data->GUI.BT_APLAY, MUIA_CycleChain, 1);
-      set(bt_moveto,MUIA_CycleChain,1);
-      CO_RuleGhost(&(data->GUI), NULL);
-      DoMethod(data->GUI.LV_RULES    ,MUIM_Notify,MUIA_List_Active        ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_GetRUEntryHook);
-      DoMethod(data->GUI.ST_RNAME    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
+
+      // set the cyclechain
+      set(data->GUI.BT_APLAY, MUIA_CycleChain, TRUE);
+      set(bt_moveto,MUIA_CycleChain, TRUE);
+      set(data->GUI.BT_FILTERUP, MUIA_CycleChain, TRUE);
+      set(data->GUI.BT_FILTERDOWN, MUIA_CycleChain, TRUE);
+
+      GhostOutFilter(&(data->GUI), NULL);
+
+      DoMethod(data->GUI.LV_RULES    ,MUIM_Notify,MUIA_NList_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&GetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_RNAME    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_REMOTE   ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_RemoteToggleHook,MUIV_TriggerValue);
-      DoMethod(data->GUI.CH_APPLYREQ ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_APPLYSENT,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_APPLYNEW ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CY_COMBINE[0],MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CY_COMBINE[1],MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_ABOUNCE  ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_AFORWARD ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_ARESPONSE,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_AEXECUTE ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_APLAY    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_AMOVE    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_ADELETE  ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.CH_ASKIP    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.ST_ABOUNCE  ,MUIM_Notify,MUIA_String_BufferPos   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.ST_AFORWARD ,MUIM_Notify,MUIA_String_BufferPos   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.ST_ARESPONSE,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.ST_AEXECUTE ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.ST_APLAY    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
+      DoMethod(data->GUI.CH_APPLYREQ ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_APPLYSENT,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_APPLYNEW ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CY_COMBINE[0],MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CY_COMBINE[1],MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_ABOUNCE  ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_AFORWARD ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_ARESPONSE,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_AEXECUTE ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_APLAY    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_AMOVE    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_ADELETE  ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.CH_ASKIP    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_ABOUNCE  ,MUIM_Notify,MUIA_String_BufferPos   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_AFORWARD ,MUIM_Notify,MUIA_String_BufferPos   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_ARESPONSE,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_AEXECUTE ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
+      DoMethod(data->GUI.ST_APLAY    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.BT_APLAY    ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook, &CO_PlaySoundHook,data->GUI.ST_APLAY);
-      DoMethod(data->GUI.TX_MOVETO   ,MUIM_Notify,MUIA_Text_Contents      ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
+      DoMethod(data->GUI.TX_MOVETO   ,MUIM_Notify,MUIA_Text_Contents      ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.PO_MOVETO   ,2,MUIM_Popstring_Close,TRUE);
       DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.CH_AMOVE    ,3,MUIM_Set,MUIA_Selected,TRUE);
       for (j = 0; j < 4; j++)
       {
          struct SearchGroup *sg = &(data->GUI.GR_SEARCH[j]);
-         DoMethod(sg->CY_MODE     ,MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRUEntryHook);
-         DoMethod(sg->RA_ADRMODE  ,MUIM_Notify,MUIA_Radio_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRUEntryHook);
-         DoMethod(sg->ST_FIELD    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRUEntryHook);
-         DoMethod(sg->CY_STATUS   ,MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRUEntryHook);
+         DoMethod(sg->CY_MODE     ,MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
+         DoMethod(sg->RA_ADRMODE  ,MUIM_Notify,MUIA_Radio_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
+         DoMethod(sg->ST_FIELD    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
+         DoMethod(sg->CY_STATUS   ,MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
          for (i = 0; i < 5; i++)
          {
-            if (sg->CY_COMP[i])     DoMethod(sg->CY_COMP[i]    ,MUIM_Notify,MUIA_Cycle_Active   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRUEntryHook);
-            if (sg->ST_MATCH[i])    DoMethod(sg->ST_MATCH[i]   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRUEntryHook);
-            if (sg->CH_CASESENS[i]) DoMethod(sg->CH_CASESENS[i],MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRUEntryHook);
-            if (sg->CH_SUBSTR[i])   DoMethod(sg->CH_SUBSTR[i]  ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&CO_PutRUEntryHook);
+            if (sg->CY_COMP[i])     DoMethod(sg->CY_COMP[i]    ,MUIM_Notify,MUIA_Cycle_Active   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
+            if (sg->ST_MATCH[i])    DoMethod(sg->ST_MATCH[i]   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
+            if (sg->CH_CASESENS[i]) DoMethod(sg->CH_CASESENS[i],MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
+            if (sg->CH_SUBSTR[i])   DoMethod(sg->CH_SUBSTR[i]  ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
          }
       }
-      DoMethod(data->GUI.BT_RADD      ,MUIM_Notify,MUIA_Pressed ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_AddRuleHook);
-      DoMethod(data->GUI.BT_RDEL      ,MUIM_Notify,MUIA_Pressed ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_DelRuleHook);
-      DoMethod(data->GUI.CH_AMOVE     ,MUIM_Notify,MUIA_Selected,TRUE          ,data->GUI.CH_ADELETE  ,3,MUIM_Set, MUIA_Selected,FALSE);
-      DoMethod(data->GUI.CH_ADELETE   ,MUIM_Notify,MUIA_Selected,TRUE          ,data->GUI.CH_AMOVE   , 3,MUIM_Set, MUIA_Selected,FALSE);
+      DoMethod(data->GUI.BT_RADD,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &AddNewFilterToListHook);
+      DoMethod(data->GUI.BT_RDEL,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &RemoveActiveFilterHook);
+      DoMethod(data->GUI.BT_FILTERUP,   MUIM_Notify, MUIA_Pressed,  FALSE,  data->GUI.LV_RULES,       3,  MUIM_NList_Move,  MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
+      DoMethod(data->GUI.BT_FILTERDOWN, MUIM_Notify, MUIA_Pressed,  FALSE,  data->GUI.LV_RULES,       3,  MUIM_NList_Move,  MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
+      DoMethod(data->GUI.CH_AMOVE,      MUIM_Notify, MUIA_Selected, TRUE,   data->GUI.CH_ADELETE,     3,  MUIM_Set,         MUIA_Selected,            FALSE);
+      DoMethod(data->GUI.CH_ADELETE,    MUIM_Notify, MUIA_Selected, TRUE,   data->GUI.CH_AMOVE,       3,  MUIM_Set,         MUIA_Selected,            FALSE);
    }
    return grp;
 }

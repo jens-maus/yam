@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-03-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FI.c, misc: implemented an unlimited filter functionality where exec lists
+      are now used instead of a static array to manage all filters. This in fact
+      allows now to break the 100 filters barrier. Now a user can perfectly specify
+      a theoretically unlimited amount of filters in their setup. Please note that
+      due to the rework filters are handled now not only some GUI/internal functions
+      changed, but there might still be some flaws lying around which we are going
+      to kill until the final 2.5 release.
+    * YAM_global.c: removed the IExec definition as the latest clib2 runtime library
+      contains such a reference now.
 
 2005-03-06  David Rey <tactica@users.sourceforge.net>
 

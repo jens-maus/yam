@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -85,14 +85,13 @@ struct TR_ClassData  /* transfer window */
    struct TR_GUIData     GUI;
    struct Mail *         List;
    struct Mail *         GMD_Mail;
-   struct Search *       Search[2*MAXRU];
    struct Folder *       ImportBox;
    char *                UIDLloc;
 
    long                  Abort;
    long                  Pause;
    long                  Start;
-   int                   Scnt;
+   int                   SearchCount;
    int                   GMD_Line;
    enum GuiLevel         GUIlevel;
    int                   POP_Nr;

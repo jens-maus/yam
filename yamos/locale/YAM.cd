@@ -5491,3 +5491,18 @@ MSG_CO_SenderRFCDateTime (//)
 MSG_CO_SenderTimeZone (//)
 %z  Original sender: TimeZone (+0000)
 ;
+MSG_CO_Filter_Name (//)
+Name
+;
+MSG_CO_Filter_RType (//)
+R
+;
+MSG_CO_Filter_NType (//)
+N
+;
+MSG_CO_Filter_SType (//)
+S
+;
+MSG_CO_Filter_UType (//)
+U
+;

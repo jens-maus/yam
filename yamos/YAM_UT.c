@@ -3534,11 +3534,11 @@ void FinishUnpack(char *file)
   // we just delete if this is really related to a unpack file
   if(strstr(file, ".unp"))
   {
-    if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
+    if(IsMinListEmpty(&G->readMailDataList) == FALSE)
     {
       // search through our ReadDataList
       struct MinNode *curNode;
-      for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
         if(stricmp(file, rmData->readFile) == 0)

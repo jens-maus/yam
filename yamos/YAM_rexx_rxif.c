@@ -614,7 +614,7 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long 
            // through our ReadDataList and find the window with this particular
            // number
            int winnr = *rd->arg.window;
-           struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+           struct MinNode *curNode = G->readMailDataList.mlh_Head;
 
            for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
            {
@@ -815,7 +815,7 @@ void rx_mailfilter( UNUSED struct RexxHost *host, struct rxd_mailfilter **rxd, l
          break;
          
       case RXIF_ACTION:
-         DoMethod(G->App, MUIM_CallHook, &MA_ApplyRulesHook, rd->arg.all ? APPLY_RX_ALL : APPLY_RX, 0, FALSE);
+         DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, rd->arg.all ? APPLY_RX_ALL : APPLY_RX, 0);
          rd->res.checked = &rr->Checked;
          rd->res.bounced = &rr->Bounced;
          rd->res.forwarded = &rr->Forwarded;

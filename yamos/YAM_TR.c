@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -2127,33 +2127,38 @@ static BOOL TR_GetUIDLonServer(void)
 //  Applies remote filters to a message
 static void TR_ApplyRemoteFilters(struct Mail *mail)
 {
-   int i;
+  struct MinNode *curNode;
 
-   for (i = 0; i < G->TR->Scnt; i++)
-   {
-    if (FI_DoComplexSearch(G->TR->Search[i], G->TR->Search[i]->Rule->Combine, G->TR->Search[i+MAXRU], mail))
+  // if there is no search count we can break out immediatly
+  if(G->TR->SearchCount <= 0)
+    return;
+
+  // Now we process the read header to set all flags accordingly
+  for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    struct FilterNode *filter = (struct FilterNode *)curNode;
+
+    if(FI_DoComplexSearch(filter->search[0], filter->Combine, filter->search[1], mail))
     {
-      struct Rule *rule = G->TR->Search[i]->Rule;
+      if(hasExecuteAction(filter) && *filter->ExecuteCmd)
+         ExecuteCommand(filter->ExecuteCmd, FALSE, OUT_DOS);
 
-      if(hasExecuteAction(rule) && *rule->ExecuteCmd)
-         ExecuteCommand(rule->ExecuteCmd, FALSE, OUT_DOS);
+      if(hasPlaySoundAction(filter) && *filter->PlaySound)
+         PlaySound(filter->PlaySound);
 
-      if(hasPlaySoundAction(rule) && *rule->PlaySound)
-         PlaySound(rule->PlaySound);
-
-      if(hasDeleteAction(rule))
+      if(hasDeleteAction(filter))
          SET_FLAG(mail->tflags, TRF_DELETE);
       else
          CLEAR_FLAG(mail->tflags, TRF_DELETE);
 
-      if(hasSkipMsgAction(rule))
+      if(hasSkipMsgAction(filter))
          CLEAR_FLAG(mail->tflags, TRF_LOAD);
       else
          SET_FLAG(mail->tflags, TRF_LOAD);
 
       return;
     }
-   }
+  }
 }
 ///
 /// TR_GetMessageDetails
@@ -2283,7 +2288,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       G->TR->Checking = TRUE;
       DisplayAppIconStatistics();
       G->TR->GUIlevel = guilevel;
-      G->TR->Scnt = MA_AllocRules(G->TR->Search, APPLY_REMOTE);
+      G->TR->SearchCount = AllocFilterSearch(APPLY_REMOTE);
       if (singlepop >= 0) G->TR->SinglePOP = TRUE;
       else G->TR->POP_Nr = -1;
       laststats = 0;
@@ -2305,7 +2310,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    {
       TR_CloseTCPIP();
       set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
-      MA_FreeRules(G->TR->Search, G->TR->Scnt);
+      FreeFilterSearch();
+      G->TR->SearchCount = 0;
       MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
 
       // tell the appicon that we are finished with checking mail
@@ -2315,7 +2321,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       // we only apply the filters if we downloaded something, or it`s wasted
       if(G->TR->Stats.Downloaded > 0)
       {
-        DoMethod(G->App, MUIM_CallHook, &MA_ApplyRulesHook, APPLY_AUTO, 0, FALSE);
+        DoMethod(G->App, MUIM_CallHook, &ApplyFiltersHook, APPLY_AUTO, 0);
 
         // Now we jump to the first new mail we received if the number of messages has changed
         // after the mail transfer
@@ -2359,7 +2365,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
          {
             BOOL preselect = FALSE;
             G->TR->Stats.OnServer += msgs;
-            if (G->TR->Scnt)                             // filter messages on server?
+            if(G->TR->SearchCount > 0)                   // filter messages on server?
             {
                set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_ApplyFilters));
                for (mail = G->TR->List; mail; mail = mail->Next)
@@ -2867,11 +2873,26 @@ static void TR_AbortnClose(void)
 //  Applies filters to a sent message
 static BOOL TR_ApplySentFilters(struct Mail *mail)
 {
-   int i;
-   for (i = 0; i < G->TR->Scnt; i++)
-      if (FI_DoComplexSearch(G->TR->Search[i], G->TR->Search[i]->Rule->Combine, G->TR->Search[i+MAXRU], mail))
-         if (!MA_ExecuteRuleAction(G->TR->Search[i]->Rule, mail)) return FALSE;
-   return TRUE;
+  struct MinNode *curNode;
+
+  // only if we have a positiv search count we start
+  // our filtering at all, otherwise we return immediatly
+  if(G->TR->SearchCount > 0)
+  {
+    // Now we process the read header to set all flags accordingly
+    for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct FilterNode *filter = (struct FilterNode *)curNode;
+
+      if(FI_DoComplexSearch(filter->search[0], filter->Combine, filter->search[1], mail))
+      {
+        if(!ExecuteFilterAction(filter, mail))
+          return FALSE;
+      }
+    }
+  }
+
+  return TRUE;
 }
 ///
 
@@ -3224,7 +3245,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
         return FALSE;
       }
 
-      G->TR->Scnt = MA_AllocRules(G->TR->Search, APPLY_SENT);
+      G->TR->SearchCount = AllocFilterSearch(APPLY_SENT);
       TR_TransStat_Init(&ts);
       TR_TransStat_Start(&ts);
       strcpy(host, C->SMTP_Server);
@@ -3365,7 +3386,8 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
         }
       }
 
-      MA_FreeRules(G->TR->Search, G->TR->Scnt);
+      FreeFilterSearch();
+      G->TR->SearchCount = 0;
    }
 
    TR_AbortnClose();

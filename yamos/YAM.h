@@ -113,7 +113,7 @@ struct Global
    struct NotifyRequest     WR_NRequest[MAXWR+1];
    struct sockaddr_in       TR_INetSocketAddr;
 
-   struct MinList           ReadMailDataList;
+   struct MinList           readMailDataList;
 
    char                     ProgDir[SIZE_PATH];
    char                     PGPPassPhrase[SIZE_DEFAULT];

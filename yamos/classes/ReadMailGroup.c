@@ -276,7 +276,7 @@ OVERLOAD(OM_NEW)
 
 		// place our data in the node and add it to the readMailDataList
 		rmData->readMailGroup = obj;
-		AddTail((struct List *)&(G->ReadMailDataList), (struct Node *)data->readMailData);
+		AddTail((struct List *)&(G->readMailDataList), (struct Node *)data->readMailData);
 	}
 
 	// free the temporary mem we allocated before

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -66,9 +66,10 @@ static enum FastSearch FI_IsFastSearch(char*);
 static void FI_GenerateListPatterns(struct Search*);
 static BOOL FI_DoSearch(struct Search*, struct Mail*);
 static struct FI_ClassData *FI_New(void);
+static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch);
 
 /***************************************************************************
- Module: Find
+ Module: Find & Filters
 ***************************************************************************/
 
 /// Global variables
@@ -384,14 +385,16 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
         search->DT.dat_Format = FORMAT_DEF;
         search->DT.dat_StrDate = match;
         search->DT.dat_StrTime = (time = strchr(match,' ')) ? time+1 : "00:00:00";
-        if (!StrToDate(&(search->DT)))
+
+        if(!StrToDate(&(search->DT)))
         {
           char datstr[64];
           DateStamp2String(datstr, NULL, DSS_DATE, TZC_NONE);
           ER_NewError(GetStr(MSG_ER_ErrorDateFormat), datstr, NULL);
 
           return FALSE;
-        };
+        }
+
         search->Pattern = (char *)&(search->DT.dat_Stamp);
       }
       break;
@@ -413,7 +416,8 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
       break;
    }
 
-   if (compar == 4) FI_GenerateListPatterns(search);
+   if(compar == 4)
+     FI_GenerateListPatterns(search);
    else if (search->Fast != FS_DATE && search->Fast != FS_SIZE && mode != SM_SIZE)
    {
       if (substr || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
@@ -548,7 +552,7 @@ BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *sear
 {
    BOOL found1 = FI_DoSearch(search1, mail);
 
-   // lets check if there is another rule with which we have to combine the
+   // lets check if there is another filter with which we have to combine the
    // first search
    switch(combine)
    {
@@ -716,43 +720,57 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 MakeStaticHook(FI_SearchHook,FI_SearchFunc);
 
 ///
-/// FI_ToRuleFunc
+/// CreateFilterFromSearch
 //  Creates a filter from the current search options
-HOOKPROTONHNONP(FI_ToRuleFunc, void)
+HOOKPROTONHNONP(CreateFilterFromSearch, void)
 {
-   int ch, i, r = -1;
+  int ch;
+  char name[SIZE_NAME];
+  *name = '\0';
 
-   for (i = 0; i < MAXRU; i++) if (!C->RU[i]) { r = i; break; }
-   if (r >= 0)
-   {
-      char name[SIZE_NAME];
-      *name = 0;
-      if ((ch = StringRequest(name, SIZE_NAME, GetStr(MSG_FI_AddFilter), GetStr(MSG_FI_AddFilterReq), GetStr(MSG_Save), GetStr(MSG_Use), GetStr(MSG_Cancel), FALSE, G->FI->GUI.WI)))
-         if ((C->RU[r] = CO_NewRule()))
-         {
-            struct SearchGroup *grp = &(G->FI->GUI.GR_SEARCH);
-            int g = xget(grp->PG_SRCHOPT, MUIA_Group_ActivePage);
+  // request a name for that new filter from the user
+  if((ch = StringRequest(name, SIZE_NAME,
+                               GetStr(MSG_FI_AddFilter),
+                               GetStr(MSG_FI_AddFilterReq),
+                               GetStr(MSG_Save),
+                               GetStr(MSG_Use),
+                               GetStr(MSG_Cancel), FALSE,
+                               G->FI->GUI.WI)))
+  {
+    struct FilterNode *filter;
 
-            strcpy(C->RU[r]->Name, name);
-            C->RU[r]->ApplyOnReq = C->RU[r]->ApplyToNew = TRUE;
-            C->RU[r]->Field[0]      = GetMUICycle(grp->CY_MODE);
-            C->RU[r]->SubField[0]   = GetMUIRadio(grp->RA_ADRMODE);
-            GetMUIString(C->RU[r]->CustomField[0], grp->ST_FIELD);
-            C->RU[r]->Comparison[0] = GetMUICycle(grp->CY_COMP[g]);
+    if((filter = CreateNewFilter()))
+    {
+      struct SearchGroup *grp = &(G->FI->GUI.GR_SEARCH);
+      int g = xget(grp->PG_SRCHOPT, MUIA_Group_ActivePage);
 
-            if(grp->ST_MATCH[g])
-              GetMUIString(C->RU[r]->Match[0], grp->ST_MATCH[g]);
-            else
-              *C->RU[r]->Match[0] = mailStatusCycleMap[GetMUICycle(grp->CY_STATUS)];
+      strcpy(filter->Name, name);
+      filter->Field[0]      = GetMUICycle(grp->CY_MODE);
+      filter->SubField[0]   = GetMUIRadio(grp->RA_ADRMODE);
+      GetMUIString(filter->CustomField[0], grp->ST_FIELD);
+      filter->Comparison[0] = GetMUICycle(grp->CY_COMP[g]);
 
-            if (grp->CH_CASESENS[g]) C->RU[r]->CaseSens[0]  = GetMUICheck(grp->CH_CASESENS[g]);
-            if (grp->CH_SUBSTR[g]  ) C->RU[r]->Substring[0] = GetMUICheck(grp->CH_SUBSTR[g]);
-            if (ch == 1) CO_SaveConfig(C, G->CO_PrefsFile);
-         }
-   }
-   else ER_NewError(GetStr(MSG_ER_ErrorMaxFilters), NULL, NULL);
+      if(grp->ST_MATCH[g])
+        GetMUIString(filter->Match[0], grp->ST_MATCH[g]);
+      else
+        *filter->Match[0] = mailStatusCycleMap[GetMUICycle(grp->CY_STATUS)];
+
+      if(grp->CH_CASESENS[g])
+        filter->CaseSens[0] = GetMUICheck(grp->CH_CASESENS[g]);
+
+      if(grp->CH_SUBSTR[g])
+        filter->Substring[0] = GetMUICheck(grp->CH_SUBSTR[g]);
+
+      // Now add the new filter to our list
+      AddTail((struct List *)&C->filterList, (struct Node *)filter);
+
+      // check if we should immediatly save our configuration or not
+      if(ch == 1)
+        CO_SaveConfig(C, G->CO_PrefsFile);
+    }
+  }
 }
-MakeStaticHook(FI_ToRuleHook,FI_ToRuleFunc);
+MakeStaticHook(CreateFilterFromSearchHook, CreateFilterFromSearch);
 
 ///
 /// FI_Open
@@ -1142,57 +1160,446 @@ void FreeSearchPatternList(struct Search *search)
 }
 
 ///
-
-/*** GUI ***/
-/// FI_PO_InitRuleListFunc
-//  Creates a popup list of configured filters
-HOOKPROTONHNP(FI_PO_InitRuleListFunc, long, Object *pop)
+/// AllocFilterSearch()
+//  Allocates and initializes search structures for filters and returns
+//  the number of active filters/search structures allocated.
+int AllocFilterSearch(enum ApplyFilterMode mode)
 {
-   int i;
-   DoMethod(pop, MUIM_List_Clear);
-   for (i = 0; i < MAXRU; i++) if (C->RU[i])
-      DoMethod(pop, MUIM_List_InsertSingle, C->RU[i], MUIV_List_Insert_Bottom);
-   return TRUE;
-}
-MakeStaticHook(FI_PO_InitRuleListHook, FI_PO_InitRuleListFunc);
+  int active=0;
+  struct MinNode *curNode;
 
-///
-/// FI_PO_FromRuleFunc
-//  Gets search options from selected filter
-HOOKPROTONHNP(FI_PO_FromRuleFunc, void, Object *pop)
-{
-   struct Rule *rule;
-   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &rule);
-   if (rule)
-   {
-      struct SearchGroup *grp = &(G->FI->GUI.GR_SEARCH);
-      int g = Mode2Group[rule->Field[0]];
-      setcycle (grp->CY_MODE,   rule->Field[0]);
-      setmutex (grp->RA_ADRMODE,rule->SubField[0]);
-      setstring(grp->ST_FIELD,  rule->CustomField[0]);
-      setcycle (grp->CY_COMP[g],rule->Comparison[0]);
+  // iterate through our filter List
+  for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    struct FilterNode *filter = (struct FilterNode *)curNode;
 
-      if(grp->ST_MATCH[g])
-        setstring(grp->ST_MATCH[g], rule->Match[0]);
-      else
+    // lets check if we can skip some filters because of the ApplyMode
+    // and filter relation.
+    if((mode == APPLY_AUTO && (!filter->ApplyToNew || filter->Remote)) ||
+       (mode == APPLY_USER && (!filter->ApplyOnReq || filter->Remote)) ||
+       (mode == APPLY_SENT && (!filter->ApplyToSent || filter->Remote)) ||
+       (mode == APPLY_REMOTE && !filter->Remote))
+    {
+      int i;
+
+      // make sure the current search structures of that filter are freed
+      for(i=0; i < 2; i++)
       {
-        int i;
-
-        for(i = 0; i <= 8; i++)
+        if(filter->search[i])
         {
-          if(*rule->Match[0] == mailStatusCycleMap[i])
+          FreeSearchPatternList(filter->search[i]);
+          free(filter->search[i]);
+          filter->search[i] = NULL;
+        }
+      }
+    }
+    else
+    {
+      int i;
+
+      // check if the search structures are already allocated or not
+      for(i = 0; i < 2; i++)
+      {
+        // check if that search structure already exists or not
+        if(filter->search[i] == NULL &&
+           (filter->search[i] = calloc(1, sizeof(struct Search))))
+        {
+          int stat = 9;
+
+          // we check the status field first and if we find a match
+          // we can immediatly break up here because we don`t need to prepare the search
+          if(filter->Field[i] == 11)
           {
-            setcycle(grp->CY_STATUS, i);
-            break;
+            for(stat=0; stat <= 8; stat++)
+            {
+              if(*filter->Match[i] == mailStatusCycleMap[stat])
+                break;
+            }
           }
+
+          FI_PrepareSearch(filter->search[i],
+                           filter->Field[i],
+                           filter->CaseSens[i],
+                           filter->SubField[i],
+                           filter->Comparison[i],
+                           mailStatusCycleMap[stat],
+                           filter->Substring[i],
+                           filter->Match[i],
+                           filter->CustomField[i]);
+
+          // save a pointer to the filter in the search structure as well.
+          filter->search[i]->filter = filter;
         }
       }
 
-      if (grp->CH_CASESENS[g]) setcheckmark(grp->CH_CASESENS[g],rule->CaseSens[0]);
-      if (grp->CH_SUBSTR[g]  ) setcheckmark(grp->CH_SUBSTR[g],  rule->Substring[0]);
+      active++;
+    }
+  }
+
+  return active;
+}
+
+///
+/// FreeFilterSearch()
+//  Frees filter search structures
+void FreeFilterSearch(void)
+{
+  struct MinNode *curNode;
+
+  // Now we process the read header to set all flags accordingly
+  for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    int i;
+    struct FilterNode *filter = (struct FilterNode *)curNode;
+
+    for(i=0; i < 2; i++)
+    {
+      if(filter->search[i])
+      {
+        FreeSearchPatternList(filter->search[i]);
+        free(filter->search[i]);
+        filter->search[i] = NULL;
+      }
+    }
+  }
+}
+
+///
+/// ExecuteFilterAction()
+//  Applies filter action to a message
+BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail)
+{
+  struct Mail *mlist[3];
+  struct Folder* fo;
+
+  // initialize mlist
+  mlist[0] = (struct Mail *)1;
+  mlist[1] = NULL;
+  mlist[2] = mail;
+
+  // Bounce Action
+  if(hasBounceAction(filter) && !filter->Remote && *filter->BounceTo)
+  {
+    G->RRs.Bounced++;
+    MA_NewBounce(mail, TRUE);
+    setstring(G->WR[2]->GUI.ST_TO, filter->BounceTo);
+    DoMethod(G->App, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, 2);
+  }
+
+  // Forward Action
+  if(hasForwardAction(filter) && !filter->Remote && *filter->ForwardTo)
+  {
+    G->RRs.Forwarded++;
+    MA_NewForward(mlist, TRUE);
+    setstring(G->WR[2]->GUI.ST_TO, filter->ForwardTo);
+    WR_NewMail(WRITE_QUEUE, 2);
+  }
+
+  // Reply Action
+  if(hasReplyAction(filter) && !filter->Remote && *filter->ReplyFile)
+  {
+    MA_NewReply(mlist, TRUE);
+    FileToEditor(filter->ReplyFile, G->WR[2]->GUI.TE_EDIT);
+    WR_NewMail(WRITE_QUEUE, 2);
+    G->RRs.Replied++;
+  }
+
+  // Execute Action
+  if(hasExecuteAction(filter) && *filter->ExecuteCmd)
+  {
+    char buf[SIZE_COMMAND+SIZE_PATHFILE];
+    sprintf(buf, "%s %s", filter->ExecuteCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
+    ExecuteCommand(buf, FALSE, OUT_DOS);
+    G->RRs.Executed++;
+  }
+
+  // PlaySound Action
+  if(hasPlaySoundAction(filter) && *filter->PlaySound)
+  {
+    PlaySound(filter->PlaySound);
+  }
+
+  // Move Action
+  if(hasMoveAction(filter) && !filter->Remote)
+  {
+    if((fo = FO_GetFolderByName(filter->MoveTo, NULL)))
+    {
+      if(mail->Folder != fo)
+      {
+        G->RRs.Moved++;
+
+        if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo))
+          SET_FLAG(fo->Flags, FOFL_FREEXS);
+
+        MA_MoveCopy(mail, mail->Folder, fo, FALSE);
+        return FALSE;
+      }
+    }
+    else
+      ER_NewError(GetStr(MSG_ER_CANTMOVEMAIL), mail->MailFile, filter->MoveTo);
+  }
+
+  // Delete Action
+  if(hasDeleteAction(filter))
+  {
+    G->RRs.Deleted++;
+
+    if(isSendMDNMail(mail) &&
+       (hasStatusNew(mail) || !hasStatusRead(mail)))
+    {
+      RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
+    }
+
+    MA_DeleteSingle(mail, FALSE, FALSE);
+
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+///
+/// ApplyFiltersFunc()
+//  Apply filters
+HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
+{
+  struct Mail *mail;
+  struct Mail **mlist = NULL;
+  struct Folder *folder;
+  int scnt;
+  int matches = 0;
+  int minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
+  enum ApplyFilterMode mode = arg[0];
+  APTR lv = G->MA->GUI.NL_MAILS;
+  char buf[SIZE_LARGE];
+
+  folder = (mode == APPLY_AUTO) ? FO_GetFolderByType(FT_INCOMING, NULL) : FO_GetCurrentFolder();
+  if(!folder)
+    return;
+
+  // if this function was called manually by the user we ask him
+  // if he really wants to apply the filters or not.
+  if(mode == APPLY_USER)
+  {
+    sprintf(buf, GetStr(MSG_MA_ConfirmFilter), folder->Name);
+    if(!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), buf))
+      return;
+  }
+
+  memset(&G->RRs, 0, sizeof(struct RuleResult));
+  set(lv, MUIA_NList_Quiet, TRUE);
+  G->AppIconQuiet = TRUE;
+
+  if((scnt = AllocFilterSearch(mode)))
+  {
+    if(mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL)
+    {
+      if((mlist = MA_CreateMarkedList(lv, mode == APPLY_RX)) && (int)mlist[0] < minselected)
+      {
+        free(mlist);
+        mlist = NULL;
+      }
+    }
+
+    if(!mlist)
+      mlist = MA_CreateFullList(folder, (mode == APPLY_AUTO || mode == APPLY_RX));
+
+    if(mlist)
+    {
+      int m;
+
+      BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
+      for(m = 0; m < (int)*mlist; m++)
+      {
+        struct MinNode *curNode;
+
+        mail = mlist[m+2];
+
+        if((mode == APPLY_AUTO || mode == APPLY_RX) && !hasStatusNew(mail))
+          continue;
+
+        G->RRs.Checked++;
+
+        // now we process the search
+        for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+        {
+          struct FilterNode *filter = (struct FilterNode *)curNode;
+
+          if(filter->search[0] != NULL)
+          {
+            if(FI_DoComplexSearch(filter->search[0], filter->Combine, filter->search[1], mail))
+            {
+              matches++;
+              if(!ExecuteFilterAction(filter, mail))
+                break;
+            }
+          }
+        }
+
+        BusySet(m+1);
+      }
+      free(mlist);
+
+      if(G->RRs.Moved)
+        MA_FlushIndexes(FALSE);
+
+      if(G->RRs.Checked)
+        AppendLog(26, GetStr(MSG_LOG_Filtering), (void *)(G->RRs.Checked), folder->Name, (void *)matches, "");
+
+      BusyEnd();
+    }
+
+    FreeFilterSearch();
+  }
+
+  set(lv, MUIA_NList_Quiet, FALSE);
+  G->AppIconQuiet = FALSE;
+
+  if(mode != APPLY_AUTO)
+    DisplayStatistics(NULL, TRUE);
+
+  if(G->RRs.Checked && mode == APPLY_USER)
+  {
+    sprintf(buf, GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
+    MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), buf);
+  }
+}
+MakeHook(ApplyFiltersHook, ApplyFiltersFunc);
+
+///
+/// CopyFilterData()
+// copy all data of a filter node (deep copy)
+void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter)
+{
+  int i;
+
+  DB(kprintf("CopyFilterData [%s]\n", srcFilter->Name);)
+
+  // raw copy all global stuff first
+  memcpy(dstFilter, srcFilter, sizeof(struct FilterNode));
+
+  // then iterate through our search structure and see
+  // if we have to copy them as well
+  for(i=0; i < 2; i++)
+  {
+    // check if that search structure exists and if so
+    // so start another deep copy
+    if(srcFilter->search[i])
+    {
+      dstFilter->search[i] = calloc(1, sizeof(struct Search));
+      CopySearchData(dstFilter->search[i], srcFilter->search[i]);
+    }
+    else
+      dstFilter->search[i] = NULL;
+  }
+}
+
+///
+/// CopySearchData()
+// copy all data of a search structure (deep copy)
+static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch)
+{
+  struct MinNode *curNode;
+
+  DB(kprintf("CopySearchData\n");)
+
+  // raw copy all global stuff first
+  memcpy(dstSearch, srcSearch, sizeof(struct Search));
+
+  // then we check whether we have to copy another bunch of sub data or not
+  if(srcSearch->Pattern == srcSearch->PatBuf)
+    dstSearch->Pattern = dstSearch->PatBuf;
+  else if(srcSearch->Pattern == (char *)&(srcSearch->DT.dat_Stamp))
+    dstSearch->Pattern = (char *)&(dstSearch->DT.dat_Stamp);
+
+  // now we have to copy the patternList as well
+  NewList((struct List *)&dstSearch->patternList);
+  for(curNode = srcSearch->patternList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    struct SearchPatternNode *srcNode = (struct SearchPatternNode *)curNode;
+    struct SearchPatternNode *dstNode = calloc(1, sizeof(struct SearchPatternNode));
+
+    memcpy(dstNode, srcNode, sizeof(struct SearchPatternNode));
+
+    AddTail((struct List *)&dstSearch->patternList, (struct Node *)dstNode);
+  }
+}
+
+///
+
+/*** GUI ***/
+/// InitFilterPopupList
+//  Creates a popup list of configured filters
+HOOKPROTONHNP(InitFilterPopupList, ULONG, Object *pop)
+{
+  struct MinNode *curNode;
+
+  // clear the popup list first
+  DoMethod(pop, MUIM_List_Clear);
+
+  // Now we process the read header to set all flags accordingly
+  for(curNode = C->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+  {
+    DoMethod(pop, MUIM_List_InsertSingle, curNode, MUIV_List_Insert_Bottom);
+  }
+
+  return TRUE;
+}
+MakeStaticHook(InitFilterPopupListHook, InitFilterPopupList);
+
+///
+/// FilterPopupDisplayHook
+HOOKPROTONH(FilterPopupDisplayFunc, ULONG, char **array, struct FilterNode *filter)
+{
+	array[0] = filter->Name;
+	return 0;
+}
+MakeStaticHook(FilterPopupDisplayHook, FilterPopupDisplayFunc);
+
+///
+/// SearchOptFromFilterPopup
+//  Gets search options from selected filter
+HOOKPROTONHNP(SearchOptFromFilterPopup, void, Object *pop)
+{
+  struct FilterNode *filter;
+
+  // get the currently active filter
+  DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &filter);
+
+  if(filter)
+  {
+    struct SearchGroup *grp = &(G->FI->GUI.GR_SEARCH);
+    int g = Mode2Group[filter->Field[0]];
+
+    setcycle(grp->CY_MODE,    filter->Field[0]);
+    setmutex(grp->RA_ADRMODE, filter->SubField[0]);
+    setstring(grp->ST_FIELD,  filter->CustomField[0]);
+    setcycle(grp->CY_COMP[g], filter->Comparison[0]);
+
+    if(grp->ST_MATCH[g])
+      setstring(grp->ST_MATCH[g], filter->Match[0]);
+    else
+    {
+      int i;
+
+      for(i = 0; i <= 8; i++)
+      {
+        if(*filter->Match[0] == mailStatusCycleMap[i])
+        {
+          setcycle(grp->CY_STATUS, i);
+          break;
+        }
+      }
+    }
+
+    if(grp->CH_CASESENS[g])
+      setcheckmark(grp->CH_CASESENS[g], filter->CaseSens[0]);
+
+    if(grp->CH_SUBSTR[g])
+      setcheckmark(grp->CH_SUBSTR[g], filter->Substring[0]);
    }
 }
-MakeStaticHook(FI_PO_FromRuleHook, FI_PO_FromRuleFunc);
+MakeStaticHook(SearchOptFromFilterPopupHook, SearchOptFromFilterPopup);
 
 ///
 /// FI_New
@@ -1226,11 +1633,13 @@ static struct FI_ClassData *FI_New(void)
                   Child, ColGroup(2),
                      Child, po_fromrule = PopobjectObject,
                         MUIA_Popstring_Button, MakeButton(GetStr(MSG_FI_UseFilter)),
-                        MUIA_Popobject_ObjStrHook, &FI_PO_FromRuleHook,
-                        MUIA_Popobject_StrObjHook, &FI_PO_InitRuleListHook,
+                        MUIA_Popobject_ObjStrHook, &SearchOptFromFilterPopupHook,
+                        MUIA_Popobject_StrObjHook, &InitFilterPopupListHook,
                         MUIA_Popobject_WindowHook, &PO_WindowHook,
                         MUIA_Popobject_Object, lv_fromrule = ListviewObject,
-                           MUIA_Listview_List, ListObject, InputListFrame,
+                           MUIA_Listview_List, ListObject,
+                             InputListFrame,
+                             MUIA_List_DisplayHook, &FilterPopupDisplayHook,
                            End,
                         End,
                      End,
@@ -1290,7 +1699,7 @@ static struct FI_ClassData *FI_New(void)
          DoMethod(bt_abort           ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_WriteLong,TRUE,&(data->Abort));
          DoMethod(lv_fromrule        ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE          ,po_fromrule            ,2,MUIM_Popstring_Close,TRUE);
          DoMethod(bt_all             ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,data->GUI.LV_FOLDERS   ,5,MUIM_List_Select,MUIV_List_Select_All,MUIV_List_Select_On,NULL);
-         DoMethod(bt_torule          ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FI_ToRuleHook);
+         DoMethod(bt_torule          ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&CreateFilterFromSearchHook);
          DoMethod(bt_search          ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FI_SearchHook);
          DoMethod(data->GUI.BT_SELECT,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FI_SelectHook);
          DoMethod(data->GUI.LV_MAILS ,MUIM_Notify,MUIA_NList_TitleClick    ,MUIV_EveryTime,MUIV_Notify_Self       ,4,MUIM_NList_Sort3,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values,MUIV_NList_Sort3_SortType_Both);

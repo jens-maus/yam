@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -71,27 +71,28 @@ struct FI_ClassData  /* find window */
    BOOL              DisposeOnEnd;
 };
 
+enum ApplyFilterMode { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX };
 enum FastSearch { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
 enum SearchMode { SM_FROM=0, SM_TO, SM_CC, SM_REPLYTO, SM_SUBJECT, SM_DATE, SM_HEADLINE,
                   SM_SIZE, SM_HEADER, SM_BODY, SM_WHOLE, SM_STATUS };
 
 struct Search
 {
-   char *          Pattern;
-   struct Rule *   Rule;
-   long            Size;
-   enum SearchMode Mode;
-   int             PersMode;
-   int             Compare;
-   char            Status;  // mail status flags
-   enum FastSearch Fast;
-   BOOL            CaseSens;
-   BOOL            SubString;
-   char            Match[SIZE_PATTERN+4];
-   char            PatBuf[(SIZE_PATTERN+4)*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
-   char            Field[SIZE_DEFAULT];
-   struct DateTime DT;
-   struct MinList  patternList;                  // for storing search patterns
+   char *               Pattern;
+   struct FilterNode *  filter;
+   long                 Size;
+   enum SearchMode      Mode;
+   int                  PersMode;
+   int                  Compare;
+   char                 Status;  // mail status flags
+   enum FastSearch      Fast;
+   BOOL                 CaseSens;
+   BOOL                 SubString;
+   char                 Match[SIZE_PATTERN+4];
+   char                 PatBuf[(SIZE_PATTERN+4)*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
+   char                 Field[SIZE_DEFAULT];
+   struct DateTime      DT;
+   struct MinList       patternList;                  // for storing search patterns
 };
 
 struct SearchPatternNode
@@ -100,14 +101,50 @@ struct SearchPatternNode
   char pattern[SIZE_PATTERN*2+2]; // for storing the already parsed pattern
 };
 
+// A filter is represented as a single filter node
+// containing actions and stuff to apply
+struct FilterNode
+{
+  struct MinNode  node;           // required for placing it into struct Config
+  struct Search*  search[2];      // ptr to our search structures or NULL if not ready yet
+  int             Combine;
+  int             Field[2];
+  int             SubField[2];
+  int             Comparison[2];
+  int             Actions;
+  BOOL            Remote;
+  BOOL            ApplyToNew;
+  BOOL            ApplyOnReq;
+  BOOL            ApplyToSent;
+  BOOL            CaseSens[2];
+  BOOL            Substring[2];
+  char            Name[SIZE_NAME];
+  char            CustomField[2][SIZE_DEFAULT];
+  char            Match[2][SIZE_PATTERN];
+  char            BounceTo[SIZE_ADDRESS];
+  char            ForwardTo[SIZE_ADDRESS];
+  char            ReplyFile[SIZE_PATHFILE];
+  char            ExecuteCmd[SIZE_COMMAND];
+  char            PlaySound[SIZE_PATHFILE];
+  char            MoveTo[SIZE_NAME];
+};
+
+// external hooks
 extern struct Hook FI_OpenHook;
-extern const int   Mode2Group[12];
+extern struct Hook ApplyFiltersHook;
+
+extern const int Mode2Group[12];
 extern const char mailStatusCycleMap[10];
 
 Object *FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote);
 BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail);
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, char stat, BOOL substr, char *match, char *field);
 void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled);
+
 void FreeSearchPatternList(struct Search *search);
+int AllocFilterSearch(enum ApplyFilterMode mode);
+void FreeFilterSearch(void);
+BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail);
+void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter);
 
 #endif /* YAM_FIND_H */

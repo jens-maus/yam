@@ -122,7 +122,7 @@ OVERLOAD(OM_NEW)
 	i=0;
 	do
 	{
-		struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+		struct MinNode *curNode = G->readMailDataList.mlh_Head;
 		
 		for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
 		{
