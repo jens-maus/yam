@@ -1,3 +1,8 @@
+2001-08-06  Jacob Laursen <laursen@myself.com>
+
+    * Now respects the "Iconified on startup" MUI setting. If the HIDE
+      tooltype is present, it'll override it.
+
 2001-08-05  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * the delete folder menu item & context menu entry does not allow to remove

@@ -419,7 +419,7 @@ static BOOL Root_New(BOOL hidden)
    if (G->App)
    {
       set(G->App, MUIA_Application_HelpFile, "YAM.guide");
-      set(G->App, MUIA_Application_Iconified, hidden);
+      if (hidden) set(G->App, MUIA_Application_Iconified, TRUE);
       DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
       DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
       if (AY_New(hidden)) return TRUE;
