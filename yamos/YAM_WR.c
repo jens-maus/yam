@@ -713,7 +713,7 @@ LOCAL void WR_AddTagline(FILE *fh_mail)
                fpos = (((long)rand())%hsize)*sizeof(long);
                fseek(fh_hash, fpos, SEEK_SET); fread(&fpos, sizeof(long), 1, fh_hash);
                fseek(fh_tag, fpos, SEEK_SET);
-               if (GetLine(fh_tag, buf, SIZE_LARGE)) fprintf(fh_mail, buf);
+               if (GetLine(fh_tag, buf, SIZE_LARGE)) fputs(buf, fh_mail);
                while (GetLine(fh_tag, buf, SIZE_LARGE))
                   if (!strncmp(buf, C->TagsSeparator, strlen(C->TagsSeparator))) break;
                   else fprintf(fh_mail, "\n%s", buf);

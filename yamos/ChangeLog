@@ -37,3 +37,8 @@
 
     * Got rid of the ANSI C time() function, which would access ENV:TZ
       each time a log entry or new mail was to be written.
+
+2000-12-19  laursen <laursen@myself.com>
+
+    * Fixed .taglines bug - %'s would be used for formatting, which would
+      result in a "***NULL POINTER***" mess.
