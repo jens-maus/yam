@@ -191,8 +191,25 @@ LONG YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, c
 
   // lets create the requester text
   va_start(args, format);
-  sprintf(reqtxt, format, va_arg(args, ULONG));
+  vsprintf(reqtxt, format, args);
   va_end(args);
+
+  // if the applicationpointer is NULL we fall back to a standard requester
+  if(app == NULL)
+  {
+    if(IntuitionBase)
+    {
+      struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
+
+      ErrReq.es_Title        = title;
+      ErrReq.es_TextFormat   = reqtxt;
+      ErrReq.es_GadgetFormat = gadgets;
+
+      result = EasyRequest(NULL, &ErrReq, NULL, reqtxt);
+    }
+
+    return result;
+  }
 
   WI_YAMREQ = WindowObject,
     MUIA_Window_Title,        title ? title : "YAM",
