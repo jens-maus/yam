@@ -90,6 +90,7 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
    int indexloaded = 0;
    char buf[SIZE_LARGE];
 
+   KPrintF("Loading index for folder %s\n", folder->Name);
    if (fh = fopen(MA_IndexFileName(folder), "r"))
    {
       struct FIndex fi;
@@ -97,8 +98,14 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
       fread(&fi, sizeof(struct FIndex), 1, fh);
       if (fi.ID == MAKE_ID('Y','I','N','3'))
       {
-         folder->Total = fi.Total; folder->New = fi.New; folder->Unread = fi.Unread; folder->Size = fi.Size;
+         BOOL corrupt = FALSE;
+
+         folder->Total  = fi.Total;
+         folder->New    = fi.New;
+         folder->Unread = fi.Unread;
+         folder->Size   = fi.Size;
          indexloaded++;
+
          if (full)
          {
             ClearMailList(folder, TRUE);
@@ -108,6 +115,14 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
                struct ComprMail cmail;
                clear(&mail, sizeof(struct Mail));               
                if (fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1) break;
+               if (cmail.MoreBytes > SIZE_LARGE) {
+fpos_t pos;
+printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.MailFile, cmail.MoreBytes);
+if (!fgetpos(fh, &pos)) printf("File position: %ld\n", pos);
+                  corrupt = TRUE;
+                  break;
+               }
+
                fread(buf, 1, cmail.MoreBytes, fh);
                strcpy(mail.Subject, GetNextLine(buf));
                strcpy(mail.From.Address, GetNextLine(NULL));
@@ -127,8 +142,18 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
                mail.Size = cmail.Size;
                AddMailToList(&mail, folder);
             }
-            indexloaded++;
-            folder->Flags &= ~FOFL_MODIFY;
+            if (corrupt) {
+               ClearMailList(folder, TRUE);
+/*
+If/when this is enabled, remove the "else".
+               MA_ScanMailBox(folder);
+               MA_SaveIndex(folder);
+*/
+            }
+            else {
+               indexloaded++;
+               folder->Flags &= ~FOFL_MODIFY;
+            }
          }
       }
       BusyEnd;

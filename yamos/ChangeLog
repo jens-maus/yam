@@ -218,3 +218,9 @@
 2001-04-26  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * removed obsolete MCC NListtree check in addressbook code
+
+2001-04-30  Jacob Laursen <laursen@myself.com>
+
+    * Fixed a nasty crash bug when loading corrupted indices.  Left some
+      debug info in there, since I lost the corrupted index during the
+      tests.
