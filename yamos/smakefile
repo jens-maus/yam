@@ -2,7 +2,7 @@
 #
 # YAM - Yet Another Mailer
 # Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
-# Copyright (C) 2000-2002 by YAM Open Source Team
+# Copyright (C) 2000-2004 by YAM Open Source Team
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ TARGET = YAM
 CC   = sc
 CP   = copy
 RM   = delete quiet
+RMDIR= delete all quiet
+MKDIR= makedir
 FC   = flexcat
 FLEX = flex
 
@@ -40,6 +42,7 @@ CLASSDIR   = $(PREFIX)classes
 LOCALE     = $(PREFIX)locale
 EXTSRC     = $(PREFIX)extrasrc
 GENCLASSES = $(EXTSRC)/genclasses
+OBJDIR     = .obj_sas
 
 # Compiler/Linker flags
 CPU      = 68020
@@ -75,61 +78,93 @@ DEVFLAGS = DEF=DEVWARNING `rx "say 'DEF EXPDATE=' || date('I')+31"`
 # 212 item "name" already declared                         -- in include files
 # 306 .. function inlined                                  -- disturbs
 
-# Objects
+# our few new rewritten classes
+CLASSES	= \
+  $(OBJDIR)/$(CLASSDIR)/Classes.o \
+  $(OBJDIR)/$(CLASSDIR)/Recipientstring.o \
+  $(OBJDIR)/$(CLASSDIR)/Searchwindow.o \
+  $(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
+  $(OBJDIR)/$(CLASSDIR)/InfoBar.o \
+  $(OBJDIR)/$(CLASSDIR)/YAM.o
 
-CLASSES = $(CLASSDIR)/Classes.o $(CLASSDIR)/Recipientstring.o $(CLASSDIR)/Searchwindow.o\
-  $(CLASSDIR)/Addrmatchlist.o $(CLASSDIR)/InfoBar.o $(CLASSDIR)/YAM.o
-
-OBJS = YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o\
-  YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o YAM_MA.o YAM_MAf.o\
-  YAM_md5.o YAM_MI.o YAM_mail_lex.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o\
-  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o $(CLASSES) all_sas.o Debug.o
+# and the other object files
+OBJS = \
+  $(OBJDIR)/YAM.o \
+  $(OBJDIR)/YAM_AB.o \
+  $(OBJDIR)/YAM_CL.o \
+  $(OBJDIR)/YAM_CO.o \
+  $(OBJDIR)/YAM_COg.o \
+  $(OBJDIR)/YAM_COs.o \
+  $(OBJDIR)/YAM_DI.o \
+  $(OBJDIR)/YAM_EA.o \
+  $(OBJDIR)/YAM_ER.o \
+  $(OBJDIR)/YAM_FI.o \
+  $(OBJDIR)/YAM_FO.o \
+  $(OBJDIR)/YAM_global.o \
+  $(OBJDIR)/YAM_locale.o \
+  $(OBJDIR)/YAM_MA.o \
+  $(OBJDIR)/YAM_MAf.o \
+  $(OBJDIR)/YAM_md5.o \
+  $(OBJDIR)/YAM_MI.o \
+  $(OBJDIR)/YAM_mail_lex.o \
+  $(OBJDIR)/YAM_RE.o \
+  $(OBJDIR)/YAM_rexx.o \
+  $(OBJDIR)/YAM_rexx_rxcl.o \
+  $(OBJDIR)/YAM_rexx_rxif.o \
+  $(OBJDIR)/YAM_TR.o \
+  $(OBJDIR)/YAM_US.o \
+  $(OBJDIR)/YAM_UT.o \
+  $(OBJDIR)/YAM_WR.o \
+  $(OBJDIR)/all_sas.o \
+  $(OBJDIR)/Debug.o \
+  $(CLASSES)
 
 #
 
-default: ClassInfo $(TARGET)
+all: $(OBJDIR) classinfo YAM_locale.c YAM_mail_lex.c $(TARGET)
+
+# make the object directories
+$(OBJDIR):
+  @echo "*e[33mGenerating $@ directory*e[0m"
+  @$(MKDIR) $(OBJDIR)
+  @$(MKDIR) $(OBJDIR)/$(CLASSDIR)
 
 # Default rule
 
 .c.o:
-  @echo "*e[32mCompiling $*.c*e[0m"
-  @$(CC) $(CFLAGS) $<
-
-#
+  @echo "*e[32mCompiling $<*e[0m"
+  @$(CC) $(CFLAGS) $< OBJNAME=$@
 
 .ct.catalog:
-  @echo "*e[33mGenerating $*.catalog*e[0m"
-  @$(FC) $(LOCALE)/YAM.cd $*.ct CATALOG $*.catalog
+  @echo "*e[33mGenerating $@*e[0m"
+  @$(FC) $(LOCALE)/YAM.cd $< CATALOG $@
+
+.l.c:
+  @echo "*e[33mGenerating lexer $*.l*e[0m"
+  @$(FLEX) -Cem -i -t $< > $@
 
 #
 
 $(TARGET): $(OBJS)
-  @echo "*e[32mLinking $**e[0m"
+  @echo "*e[32mLinking *e[1m$@*e[0m"
   @$(CC) $(LNKFLAGS) TO $@ WITH <<
   $(OBJS)
   <
 
 #
 
-clean: # leaves final YAM exe
-  -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.c YAM_locale.h YAM_mail_lex.c
-  -$(RM) $(CLASSDIR)/Classes.c $(CLASSDIR)/Classes.h $(CLASSDIR)/*_cl.h
+clean:
+  -$(RM) $(TARGET) $(TARGET).debug $(TARGET).lnk $(TARGET).map $(OBJS)
+
+cleanall: clean
+  -$(RM) YAM_locale.* YAM_mail_lex.c $(CLASSDIR)/Classes.* $(CLASSDIR)/*_cl.h
+  -$(RMDIR) $(OBJDIR)
+
+distclean: cleanall
   @execute <<
     cd $(EXTSRC)/genclasses
     smake -s clean
   <
-
-#
-
-cleanall: clean
-  -$(RM) $(TARGET)
-
-#
-
-copy:
-  $(CP) $(TARGET) YAM:
-
-#
 
 ## AUTOGEN TOOLS ######################
 
@@ -143,11 +178,11 @@ $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h\
     smake -s
   <
 
-ClassInfo: $(CLASSDIR)/Classes.h
+classinfo: $(CLASSDIR)/Classes.h
 
 $(CLASSDIR)/Classes.h: $(GENCLASSES)/GenClasses $(CLASSDIR)/Addrmatchlist.c $(CLASSDIR)/Searchwindow.c \
   $(CLASSDIR)/Recipientstring.c $(CLASSDIR)/InfoBar.c $(CLASSDIR)/YAM.c
-  @echo "*e[33mGenerating Classinfo...*e[0m"
+  @echo "*e[33mGenerating classinfo...*e[0m"
   @$(GENCLASSES)/GenClasses $(CLASSDIR) -b$(TARGET) -gpl -storm -iClassesExtra.h
 
 Catalogs: $(LOCALE)/deutsch.catalog $(LOCALE)/bosanski.catalog $(LOCALE)/czech.catalog\
@@ -158,159 +193,161 @@ Catalogs: $(LOCALE)/deutsch.catalog $(LOCALE)/bosanski.catalog $(LOCALE)/czech.c
 
 ## MAIN DEPENDENCIES ##################
 
-YAM.o: YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
+$(OBJDIR)/YAM_global.o: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
+  @echo "*e[32mCompiling $*.c*e[0m"
+  @$(CC) $(CFLAGS) $(CDEFS) YAM_global.c OBJNAME=$@
+
+YAM_locale.h: YAM_locale.c
+YAM_locale.c: $(LOCALE)/YAM.cd C_h.sd C_c.sd
+  @echo "*e[33mConverting Catalog with flexcat*e[0m"
+  @$(FC) $(LOCALE)/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+
+$(OBJDIR)/YAM_locale.o: YAM_locale.c YAM_locale.h
+
+$(OBJDIR)/YAM.o: YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
   YAM_config.h YAM_configFile.h YAM_debug.h YAM_find.h YAM_folderconfig.h \
   YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
   YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
   YAM_userlist.h YAM_utilities.h YAM_write.h
   @echo "*e[32mCompiling $*.c*e[0m"
-  @$(CC) $(CFLAGS) $(DEVFLAGS) $<
+  @$(CC) $(CFLAGS) $(DEVFLAGS) $< OBJNAME=$@
 
-YAM_AB.o: YAM_AB.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
+$(OBJDIR)/YAM_AB.o: YAM_AB.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h YAM_global.h \
   includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
-YAM_CL.o: YAM_CL.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
+$(OBJDIR)/YAM_CL.o: YAM_CL.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
   YAM_folderconfig.h includes/SDI_hook.h YAM_locale.h YAM_main.h \
   YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
   YAM_userlist.h YAM_utilities.h YAM_write.h
 
-YAM_CO.o: YAM_CO.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
+$(OBJDIR)/YAM_CO.o: YAM_CO.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_configFile.h YAM_configGUI.h YAM_error.h \
   YAM_find.h YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
-YAM_COg.o: YAM_COg.c YAM.h YAM_classes.h YAM_config.h YAM_find.h \
+$(OBJDIR)/YAM_COg.o: YAM_COg.c YAM.h YAM_classes.h YAM_config.h YAM_find.h \
   YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
   YAM_mime.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h
 
-YAM_COs.o: YAM_COs.c YAM.h YAM_config.h YAM_error.h YAM_find.h \
+$(OBJDIR)/YAM_COs.o: YAM_COs.c YAM.h YAM_config.h YAM_error.h YAM_find.h \
   YAM_folderconfig.h YAM_global.h YAM_locale.h YAM_mainFolder.h \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h
 
-YAM_DI.o: YAM_DI.c YAM.h YAM_classes.h YAM_error.h YAM_glossarydisplay.h \
+$(OBJDIR)/YAM_DI.o: YAM_DI.c YAM.h YAM_classes.h YAM_error.h YAM_glossarydisplay.h \
   includes/SDI_hook.h YAM_locale.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
   YAM_userlist.h YAM_utilities.h YAM_write.h
 
-YAM_EA.o: YAM_EA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
+$(OBJDIR)/YAM_EA.o: YAM_EA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h includes/SDI_hook.h \
   YAM_locale.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
-YAM_ER.o: YAM_ER.c YAM.h YAM_config.h YAM_error.h YAM_find.h includes/SDI_hook.h \
+$(OBJDIR)/YAM_ER.o: YAM_ER.c YAM.h YAM_config.h YAM_error.h YAM_find.h includes/SDI_hook.h \
   YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
-YAM_FI.o: YAM_FI.c YAM.h YAM_config.h YAM_configFile.h YAM_error.h \
+$(OBJDIR)/YAM_FI.o: YAM_FI.c YAM.h YAM_config.h YAM_configFile.h YAM_error.h \
   YAM_find.h YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_read.h YAM_rexx_rxif.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
-YAM_FO.o: YAM_FO.c YAM.h YAM_classes.h YAM_debug.h YAM_error.h \
+$(OBJDIR)/YAM_FO.o: YAM_FO.c YAM.h YAM_classes.h YAM_debug.h YAM_error.h \
   YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h \
   YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
   YAM_userlist.h YAM_utilities.h
 
-YAM_global.o: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
-  @echo "*e[32mCompiling $*.c*e[0m"
-  @$(CC) $(CFLAGS) $(CDEFS) YAM_global.c
-
-YAM_MA.o: YAM_MA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
+$(OBJDIR)/YAM_MA.o: YAM_MA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
   YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h \
   YAM_mainFolder.h YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
-YAM_MAf.o: YAM_MAf.c YAM.h YAM_config.h YAM_debug.h YAM_find.h \
+$(OBJDIR)/YAM_MAf.o: YAM_MAf.c YAM.h YAM_config.h YAM_debug.h YAM_find.h \
   YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h \
   YAM_mainFolder.h YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
-YAM_md5.o: YAM_md5.c YAM_md5.h
+$(OBJDIR)/YAM_md5.o: YAM_md5.c YAM_md5.h
 
-YAM_MI.o: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes.h \
+$(OBJDIR)/YAM_MI.o: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes.h \
   YAM_utilities.h
 
-YAM_mail_lex.o: YAM_mail_lex.c
+$(OBJDIR)/YAM_mail_lex.o: YAM_mail_lex.c
 YAM_mail_lex.c: YAM_mail_lex.l YAM_mail_lex.h
-  @echo "*e[32mGenerating lexer $*.c*e[0m"
-  @$(FLEX) -Cem -i -t YAM_mail_lex.l > $*.c
 
-YAM_RE.o: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
+$(OBJDIR)/YAM_RE.o: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
   YAM_folderconfig.h includes/SDI_hook.h YAM_global.h YAM_locale.h YAM_main.h \
   YAM_mainFolder.h YAM_mime.h YAM_read.h YAM_rexx_rxif.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h YAM_write.h
 
-YAM_rexx.o: YAM_rexx.c YAM_rexx.h YAM_rexx_rxcl.h YAM_rexx_rxif.h
+$(OBJDIR)/YAM_rexx.o: YAM_rexx.c YAM_rexx.h YAM_rexx_rxcl.h YAM_rexx_rxif.h
 
-YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx_rxcl.h YAM_rexx_rxif.h
+$(OBJDIR)/YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx_rxcl.h YAM_rexx_rxif.h
 
-YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM.h YAM_addressbook.h \
+$(OBJDIR)/YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM.h YAM_addressbook.h \
   YAM_addressbookEntry.h YAM_config.h YAM_find.h YAM_folderconfig.h \
   YAM_global.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_read.h \
   YAM_rexx_rxcl.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
   YAM_userlist.h YAM_utilities.h YAM_write.h
 
-YAM_TR.o: YAM_TR.c YAM.h YAM_addressbookEntry.h YAM_config.h YAM_error.h \
+$(OBJDIR)/YAM_TR.o: YAM_TR.c YAM.h YAM_addressbookEntry.h YAM_config.h YAM_error.h \
   YAM_find.h YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_md5.h YAM_mime.h YAM_rexx_rxif.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
-YAM_US.o: YAM_US.c YAM.h YAM_config.h YAM_error.h YAM_find.h includes/SDI_hook.h \
+$(OBJDIR)/YAM_US.o: YAM_US.c YAM.h YAM_config.h YAM_error.h YAM_find.h includes/SDI_hook.h \
   YAM_locale.h YAM_mainFolder.h YAM_rexx_rxif.h YAM_stringsizes.h \
   YAM_transfer.h YAM_userlist.h YAM_utilities.h
 
-YAM_UT.o: YAM_UT.c YAM.h YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h \
+$(OBJDIR)/YAM_UT.o: YAM_UT.c YAM.h YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h \
   YAM_find.h YAM_folderconfig.h YAM_global.h includes/SDI_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_mime.h YAM_read.h YAM_rexx_rxif.h \
   YAM_stringsizes.h YAM_transfer.h YAM_userlist.h YAM_utilities.h \
   YAM_write.h
 
-YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
+$(OBJDIR)/YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
   YAM_folderconfig.h YAM_global.h YAM_glossarydisplay.h includes/SDI_hook.h \
   YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_mime.h YAM_read.h \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_write.h
 
-all_sas.o: all_sas.c $(EXTSRC)/NewReadArgs.c
+$(OBJDIR)/all_sas.o: all_sas.c $(EXTSRC)/NewReadArgs.c
 
-YAM_locale.c: YAM_locale.h
-YAM_locale.h: $(LOCALE)/YAM.cd C_h.sd C_c.sd
-  @echo "*e[33mConverting Catalog with flexcat*e[0m"
-  @$(FC) $(LOCALE)/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+$(OBJDIR)/Debug.o: Debug.c Debug.h
 
 ## CLASS DEPENDENCIES #################
 
-$(CLASSDIR)/Addrmatchlist.o: $(CLASSDIR)/Addrmatchlist.c $(CLASSDIR)/Addrmatchlist_cl.h \
+$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o: $(CLASSDIR)/Addrmatchlist.c $(CLASSDIR)/Addrmatchlist_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
   includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
-$(CLASSDIR)/Searchwindow.o: $(CLASSDIR)/Searchwindow.c $(CLASSDIR)/Searchwindow_cl.h YAM.h \
+$(OBJDIR)/$(CLASSDIR)/Searchwindow.o: $(CLASSDIR)/Searchwindow.c $(CLASSDIR)/Searchwindow_cl.h YAM.h \
   YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h includes/SDI_hook.h \
   YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
-$(CLASSDIR)/Recipientstring.o: $(CLASSDIR)/Recipientstring.c $(CLASSDIR)/Recipientstring_cl.h \
+$(OBJDIR)/$(CLASSDIR)/Recipientstring.o: $(CLASSDIR)/Recipientstring.c $(CLASSDIR)/Recipientstring_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
   includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
-$(CLASSDIR)/InfoBar.o: $(CLASSDIR)/InfoBar.c $(CLASSDIR)/InfoBar_cl.h \
+$(OBJDIR)/$(CLASSDIR)/InfoBar.o: $(CLASSDIR)/InfoBar.c $(CLASSDIR)/InfoBar_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
   includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
-$(CLASSDIR)/Classes.o: $(CLASSDIR)/Classes.c $(CLASSDIR)/Classes.h YAM.h YAM_addressbook.h \
+$(OBJDIR)/$(CLASSDIR)/Classes.o: $(CLASSDIR)/Classes.c $(CLASSDIR)/Classes.h YAM.h YAM_addressbook.h \
   YAM_config.h YAM_debug.h YAM_folderconfig.h includes/SDI_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
 $(CLASSDIR)/Classes.c: # this is needed because it`s autogenerated in here.
   @echo NOLINE
 
-$(CLASSDIR)/YAM.o: $(CLASSDIR)/YAM.c $(CLASSDIR)/YAM_cl.h YAM.h YAM_addressbook.h \
+$(OBJDIR)/$(CLASSDIR)/YAM.o: $(CLASSDIR)/YAM.c $(CLASSDIR)/YAM_cl.h YAM.h YAM_addressbook.h \
   YAM_config.h YAM_debug.h YAM_folderconfig.h includes/SDI_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h

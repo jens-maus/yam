@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-02-15  Jens Langner <Jens.Langner@light-speed.de>
+
+    * smakefile: adapted SAS/C makefile to also put all object
+      files in a separate object directory like the gcc makefiles.
+
 2004-02-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * fixed a whole bunch of gcc dependent compiler warnings. Now
