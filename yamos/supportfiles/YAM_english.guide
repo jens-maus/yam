@@ -8813,12 +8813,13 @@ Tips & tricks
  @{" Snapshotting the window positions and sizes     " link "TIP0"}
  @{" Avoiding context menus from getting on your way " link "TIP1"}
  @{" Moving YAM to another partition or directory    " link "TIP2"}
+ @{" Avoiding the 'Bad signature' requester          " link "TIP3"}
 
 @endnode
 
 @node "TIP0" "Snapshotting the window positions and sizes"
 @next "TIP1"
-@prev "TIP2"
+@prev "TIP3"
 @toc "TIPS"
 
 Snapshotting the window positions and sizes
@@ -8855,7 +8856,7 @@ ContextMenu = Never.  Save your MUI settings and you're done.
 @endnode
 
 @node "TIP2" "Moving YAM to another partition or directory"
-@next "TIP0"
+@next "TIP3"
 @prev "TIP1"
 @toc "TIPS"
 
@@ -8890,6 +8891,21 @@ requiring four steps:
    Finally, if you can run YAM again in the new place and all seems
 to work fine, deleting YAM and all its files from the old place should
 be a safe operation now.
+
+@endnode
+
+@node "TIP3" "Avoiding the 'Bad signature' requester"
+@next "TIP0"
+@prev "TIP2"
+@toc "TIPS"
+
+Avoiding the 'Bad signature' requester
+--------------------------------------
+
+You don't have PGP installed, at least not correctly.
+To make this message disappear either correct your installation,  or  make
+sure that in the Configuration on the Page Security the PGP path string is
+empty. YAM will not try to use PGP then.
 
 @endnode
 
