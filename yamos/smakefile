@@ -7,7 +7,7 @@ GST = YAM.gst
 OBJS= YAM_loc.o YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
       YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o \
       YAM_UT.o YAM_WR.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
-      hmac_md5.o
+      hmac_md5.o all_sas.c
 
 # Compiler flags
 YAMVERSION = "2.3-dev"
@@ -43,7 +43,7 @@ YAM:	$(OBJS)
 	slink <with <
 	TO YAM
 	FROM lib:c.o $(OBJS)
-	LIB lib:sc.lib lib:amiga.lib lib:debug.lib lib:md5.lib lib:wbpath.o lib:NewReadArgs.o 
+	LIB lib:sc.lib lib:amiga.lib lib:debug.lib
 	MAP YAM.map
 	<
 

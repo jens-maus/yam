@@ -1109,7 +1109,7 @@ BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
    {
       char *s = Header.Data[i];
       int ls = strlen(s);
-      rp->MaxHeaderLen = max(ls, rp->MaxHeaderLen);
+      rp->MaxHeaderLen = MAX(ls, rp->MaxHeaderLen);
       if (out) { fputs(s, out); fputc('\n', out); }
       if (!strnicmp(s, "content-type:", 13))
       {

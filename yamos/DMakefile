@@ -1,26 +1,47 @@
-CFLAGS = -DYAMVER="2.3-dev" -DYAMDATE="09.12.2000" -020 -mC -mD -Iincludes -//
+PRE    = -HYAM.m=YAM.h -Hheaders.m=headers.h 
+CFLAGS = -DYAMVER="2.3-dev" -DYAMDATE="14.12.2000" -030 -ms -Iincludes -//
+OBJS1= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
+	YAM_ER.o YAM_FI.o YAM_FO.o YAM_MAf.o YAM_TR.o YAM_US.o YAM_UT.o \
+	all_dice.o
+SRCS1= $(OBJS1:"*.o":"*.c")
+OBJS2= YAM_RE.o YAM_WR.o YAM_MA.o
+SRCS2= $(OBJS2:"*.o":"*.c")
+OBJS3= YAM_loc.o
+SRCS3= $(OBJS3:"*.o":"*.c")
+OBJS4= YAM_MI.o YAM_rexx.o YAM_rexx_rxcl.o hmac_md5.o
+SRCS4= $(OBJS4:"*.o":"*.c")
+OBJS5= YAM_rexx_rxif.o
+SRCS5= $(OBJS5:"*.o":"*.c")
+OBJS= $(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4) $(OBJS5)
 
-OBJS= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
-      YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o \
-      YAM_WR.o YAM_loc.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
-      md5.o hmac_md5.o dice.o
+YAM: YAM.m $(OBJS)
+	dcc $(CFLAGS) -mD -o %(left) %(right:*.o) -LMUI:Developer/C/DLib -lmui
+	xcopy YAM YAM:YAMos
 
-SRCS= $(OBJS:"*.o":"*.c")
+$(OBJS1): $(SRCS1)
+	dcc $(CFLAGS) $(PRE) -mD -mi -o %(left) -c %(right)
 
+$(OBJS2): $(SRCS2)
+	dcc $(CFLAGS) $(PRE) -mD -mC -mi -o %(left) -c %(right)
 
-YAM: YAM.h YAM_loc.h $(OBJS) YAM_UT.o
-   dcc $(CFLAGS) -o YAM $(OBJS) YAM_UT.o lib/wbpath.o lib/NewReadArgs.o -LMUI:Developer/C/DLib -lmui
-   xcopy YAM YAM:YAMos
+$(OBJS3): $(SRCS3)
+	dcc $(CFLAGS) $(PRE) -mC -mi -o %(left) -c %(right)
 
-$(OBJS)  : $(SRCS)
-         dcc $(CFLAGS) -mi -o %(left) -c %(right)
+$(OBJS4): $(SRCS4)
+	dcc $(CFLAGS) $(PRE) -mi -o %(left) -c %(right)
 
-YAM_UT.o : YAM_UT.c
-         dcc $(CFLAGS) -o %(left) -c %(right)
+$(OBJS5): $(SRCS5)
+	dcc $(CFLAGS) -mD -mi -o %(left) -c %(right)
 
 YAM.h: YAM.h.in
-   copy YAM.h.in YAM.h
+	Copy YAM.h.in YAM.h
 
 YAM_loc.h: YAM.cd
 	flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
+
+YAM.m: YAM.h headers.m YAM_loc.h
+	Delete %(left)
+
+headers.m: headers.h includes/dice.h
+	Delete %(left)
 

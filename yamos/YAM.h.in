@@ -122,19 +122,16 @@
 #define InitHook(hook, funcname, data) ((hook)->h_Entry = (void *)funcname, (hook)->h_Data = (APTR)(data))
 #define ENTRY(func)	  func
 
+	#define SAVEDS __saveds
 #ifdef _DCC
 	#define REG(x) __ ## x
 	#define ASM
-	#define SAVEDS __geta4
 	#define STACKEXT __stkcheck
 	#define __stdargs __stkargs
-	#define F_OK 0
-	#define FNSIZE 108
 	#define _OSERR IoErr()
 #else
 	#define REG(x) register __ ## x
 	#define ASM    __asm
-	#define SAVEDS __saveds
 	#define STACKEXT __stackext
 #endif
 
@@ -212,59 +209,6 @@
 
 BPTR __stdargs cloneWorkbenchPath(struct ExecBase *, struct DosLibrary *, struct WBStartup *);
 void __stdargs freeWorkbenchPath(struct ExecBase *, struct DosLibrary *, BPTR);
-
-///
-/// MD5.lib Interface
-typedef unsigned char *POINTER;
-typedef unsigned short int UINT2;
-typedef unsigned long int UINT4;
-
-typedef struct
-{
-  UINT4 state[4];
-  UINT4 count[2];
-  unsigned char buffer[64];
-} MD5_CTX;
-
-void MD5Init (MD5_CTX *);
-void MD5Update (MD5_CTX *, unsigned char *, unsigned int);
-void MD5Final (unsigned char [16], MD5_CTX *);
-
-///
-/// bsdsocket.library Interface
-#ifdef __GNUC__
-   #ifdef __MORPHOS__
-      #include <ppcinline/socket.h>
-   #else
-      #include <inline/socket.h>
-   #endif
-#else
-   #include <proto/socket.h>
-#endif
-
-#include <netdb.h>
-#include <sys/time.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#include <netinet/tcp.h>
-#include <netinet/in.h>
-#include <bsdsocket/socketbasetags.h>
-#include <errno.h>
-#ifdef __SASC
-   #undef EAGAIN
-   #include <sys/errno.h>  /* SAS/C's errno.h doesn't define EINPROGRESS */
-#endif
-#include <time.h>
-
-#define SMTP_NO_SOCKET (-1)
-
-/* To be deleted - all socket functions should be called by their real name */
-#define Socket        socket
-#define Connect       connect
-#define Send          send
-#define Recv          recv
-#define Shutdown      shutdown
-#define GetHostByName gethostbyname
 
 ///
 /// Configuration sub-structures

@@ -2451,7 +2451,11 @@ void DisplayStatistics(struct Folder *fo)
       if (G->TR) if (G->TR->Checking) mode = 3;
       sprintf(apptit, GetStr(MSG_UT_AppStats), fo->New, fo->Total);
       if (G->AppIcon) { RemoveAppIcon(G->AppIcon); G->AppIcon = NULL; }
-      if (G->DiskObj[mode]) G->AppIcon = AddAppIconA(0, 0, (STRPTR)apptit, G->AppPort, NULL, G->DiskObj[mode], NULL);
+      if (G->DiskObj[mode])
+      {
+         struct DiskObject *dobj=G->DiskObj[mode];
+         G->AppIcon = AddAppIconA(0, 0, (STRPTR)apptit, G->AppPort, NULL, dobj, NULL);
+      }
       G->NewMsgs = fo->New; G->TotMsgs = fo->Total;
    }
 }

@@ -1,8 +1,4 @@
-#ifdef _DCC
-#include "md5.h"
-#else
-#include "YAM.h"
-#endif
+#include <md5.h>
 #include <string.h>
 #include <sys/types.h>
 

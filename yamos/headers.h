@@ -9,16 +9,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <math.h>
-#ifdef __MORPHOS__
-#include <unistd.h>
-#else
-#ifndef _DCC
-#include <error.h>
-#endif
-#endif
-#ifndef _DCC
-#include <dos.h>
-#endif
+
 #include <exec/memory.h>
 #include <exec/execbase.h>
 #include <dos/datetime.h>
@@ -50,6 +41,11 @@
 #include <clib/alib_protos.h>
 #ifdef __MORPHOS__
 #define NO_PPCINLINE_STDARG
+#include <ppcinline/locale.h>
+#include <ppcinline/socket.h>
+#else
+#include <proto/socket.h>
+#endif
 #include <proto/muimaster.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
@@ -68,36 +64,11 @@
 #include <proto/genesis.h>
 #include <proto/cmanager.h>
 #include <clib/locale_protos.h>
-#include <ppcinline/locale.h>
-#include <ppcinline/socket.h>
-#else
-#include <clib/muimaster_protos.h>
-#include <clib/dos_protos.h>
-#include <clib/exec_protos.h>
-#include <clib/utility_protos.h>
-#include <clib/locale_protos.h>
-#include <clib/icon_protos.h>
-#include <clib/graphics_protos.h>
-#include <clib/datatypes_protos.h>
-#include <clib/wb_protos.h>
 #include <clib/macros.h>
-#include <clib/wb_protos.h>
-#include <clib/iffparse_protos.h>
-#include <clib/keymap_protos.h>
-#include <clib/rexxsyslib_protos.h>
-#include <clib/xpkmaster_protos.h>
-#include <clib/openurl_protos.h>
-#include <clib/miami_protos.h>
-#include <clib/genesis_protos.h>
-#include <clib/cmanager_protos.h>
-#include <pragmas/muimaster_pragmas.h>
-#include <pragmas/openurl_pragmas.h>
-#include <pragmas/xpkmaster_pragmas.h>
-#include <pragmas/miami_pragmas.h>
-#include <pragmas/genesis_pragmas.h>
-#include <pragmas/cmanager_pragmas.h>
-#endif
 #include <NewReadArgs.h>
+#include <compiler.h>
+#include <extra.h>
+
 
 #ifdef __MORPHOS__
 #define CreateExtIO	CreateIORequest
