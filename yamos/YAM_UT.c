@@ -186,7 +186,7 @@ static void FreeWorkbenchPath(BPTR path)
 /// YAMMUIRequest
 // Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
 // We also have a wrapper #define MUI_Request for calling that function instead.
-LONG STDARGS VARARGS68K YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
+LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
 {
   LONG result = -1;
   char reqtxt[SIZE_LINE];
@@ -195,12 +195,7 @@ LONG STDARGS VARARGS68K YAMMUIRequest(APTR app, APTR win, LONG flags, char *titl
   va_list args;
 
   // lets create the requester text
-  #if defined(__amigaos4__)
-  va_startlinear(args, format);
-  #else
   va_start(args, format);
-  #endif
-
   vsprintf(reqtxt, format, args);
   va_end(args);
 
@@ -3489,10 +3484,8 @@ struct BodyChunkData *LoadBCImage(char *fname)
                            struct BitMapHeader *bmhd = (struct BitMapHeader *)sp->sp_Data;
                            if (bmhd->bmh_Compression == cmpNone || bmhd->bmh_Compression==cmpByteRun1)
                            {
-                              struct ContextNode *cnode = CurrentChunk(iff);
-                              LONG size = cnode->cn_Size;
-
-                              if((bcd->Body = calloc((size_t)size,1)))
+                              LONG size = CurrentChunk(iff)->cn_Size;
+                              if ((bcd->Body = calloc((size_t)size,1)))
                               {
                                  if (ReadChunkBytes(iff, bcd->Body, size) == size)
                                  {
