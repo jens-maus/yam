@@ -2304,17 +2304,17 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       int status1 = mapvalue[entry1->Status];
       int status2 = mapvalue[entry2->Status];
 
-      // add the importance & other status flags of that mails
+      // We do not sort on other things than the real status and the Importance flag of
+      // the message because this would be confusing if you use "Status" as a sorting
+      // criteria within the folder config. Why should a MultiPart mail be sorted with
+      // other multipart messages? It`s more important to sort just for New/Unread/Read aso
+      // and then be able to sort as a second criteria for the date. Sorting the message
+      // depending on other stuff than importance will make it impossible to sort for
+      // status+date in the folder config. Perhaps we need to have a configuable way for
+      // sorting by status later, but this is future stuff..
+
       status1 += (entry1->Importance == 1)  ? 16 : 0;
       status2 += (entry2->Importance == 1)  ? 16 : 0;
-      status1 += isCryptedMail(entry1)      ?  8 : 0;
-      status2 += isCryptedMail(entry2)      ?  8 : 0;
-      status1 += isSignedMail(entry1)       ?  4 : 0;
-      status2 += isSignedMail(entry2)       ?  4 : 0;
-      status1 += isReportMail(entry1)       ?  2 : 0;
-      status2 += isReportMail(entry2)       ?  2 : 0;
-      status1 += isMultiPartMail(entry1)    ?  1 : 0;
-      status2 += isMultiPartMail(entry2)    ?  1 : 0;
 
       return -(status1)+(status2);
     }

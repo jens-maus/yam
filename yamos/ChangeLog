@@ -7,6 +7,12 @@ $Source$
 
 2002-09-27  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: changed the status sorting priorities back again
+      to just take the real mail status (New/Unread/Read aso.) and
+      the importance of the mail in account for sorting the mails
+      or otherwise a sorting by status&date would be kinda
+      confusing. For more detailed description refer to the affected
+      source code parts.
     * YAM_RE.c: fixed another bug within the MIME Viewer parts
       of YAM were the argument of the MIME Viewer needed some
       extra attention concerning quotation marks. Now YAM should
