@@ -1525,7 +1525,7 @@ BOOL AllFolderLoaded(void)
    {
       int i;
 
-      for (i = 1; i < (int)*flist; i++)
+      for (i = 1; i <= (int)*flist; i++)
       {
         if (flist[i]->LoadedMode != LM_VALID && flist[i]->Type != FT_GROUP)
         {
