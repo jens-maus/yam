@@ -31,7 +31,6 @@
 #include <clib/alib_protos.h>
 #include <libraries/iffparse.h>
 #include <proto/muimaster.h>
-#include <proto/intuition.h>
 
 #include "SDI_hook.h"
 
