@@ -119,8 +119,41 @@ void SAVEDS MA_SetMessageInfoFunc(void)
 {
    static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
    char *sh = NULL;
+
    struct Mail *mail = MA_GetActiveMail(NULL, NULL, NULL);   
-   if (mail) SPrintF(sh = buffer, GetStr(MSG_MA_MessageInfo), mail->From.RealName, mail->From.Address, mail->To.RealName, mail->To.Address, mail->Subject, DateStamp2String(&mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME), mail->MailFile, mail->Size);
+   if (mail)
+   {
+      char FromRealName[SIZE_REALNAME];
+      char FromAddress[SIZE_ADDRESS];
+      char ToRealName[SIZE_REALNAME];
+      char ToAddress[SIZE_ADDRESS];
+      char Subject[SIZE_SUBJECT];
+      char *p;
+
+      /* Hack! */
+
+      strcpy(FromRealName, mail->From.RealName);
+      for (p = FromRealName; *p; p++)
+         if (*p == '\033') *p = '^';
+
+      strcpy(FromAddress, mail->From.Address);
+      for (p = FromAddress; *p; p++)
+         if (*p == '\033') *p = '^';
+
+      strcpy(ToRealName, mail->To.RealName);
+      for (p = ToRealName; *p; p++)
+         if (*p == '\033') *p = '^';
+
+      strcpy(ToAddress, mail->To.Address);
+      for (p = ToAddress; *p; p++)
+         if (*p == '\033') *p = '^';
+
+      strcpy(Subject, mail->Subject);
+      for (p = Subject; *p; p++)
+         if (*p == '\033') *p = '^';
+
+      SPrintF(sh = buffer, GetStr(MSG_MA_MessageInfo), FromRealName, FromAddress, ToRealName, ToAddress, Subject, DateStamp2String(&mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME), mail->MailFile, mail->Size);
+   }
    set(G->MA->GUI.NL_MAILS, MUIA_ShortHelp, sh);
 }
 MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
@@ -1900,25 +1933,40 @@ long SAVEDS ASM MA_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), R
       {
          static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL];
          struct Person *pe;
+
          sprintf(array[0] = dispsta, "\033o[%ld]", entry->Status);
          if (entry->Importance == 1) strcat(dispsta, "\033o[12]");
          if (entry->Flags & MFLAG_CRYPT) strcat(dispsta, "\033o[15]");
          else if (entry->Flags & MFLAG_SIGNED) strcat(dispsta, "\033o[16]");
          else if (entry->Flags & MFLAG_REPORT) strcat(dispsta, "\033o[14]");
          else if (entry->Flags & MFLAG_MULTIPART) strcat(dispsta, "\033o[13]");
-         array[1] = dispfro; *dispfro = 0;
-         if (entry->Flags & MFLAG_MULTIRCPT) strcat(dispfro, "\033o[11]");
+
+         array[1] = dispfro;
+         *dispfro = '\0';
+         if (entry->Flags & MFLAG_MULTIRCPT)
+            strcat(dispfro, "\033o[11]\033-");
+         else
+            strcat(dispfro, "\033-");
+
          pe = outbox ? &entry->To : &entry->From;
-         if (type == FT_CUSTOMMIXED || type == FT_DELETED) if (!stricmp(pe->Address, C->EmailAddress))
+         if (type == FT_CUSTOMMIXED || type == FT_DELETED)
          {
-            pe = &entry->To; strcat(dispfro, GetStr(MSG_MA_ToPrefix));
+            if (!stricmp(pe->Address, C->EmailAddress))
+            {
+               pe = &entry->To;
+               strcat(dispfro, GetStr(MSG_MA_ToPrefix));
+            }
          }
          strncat(dispfro, AddrName((*pe)), SIZE_DEFAULT-strlen(dispfro)-1);
+
          array[2] = AddrName((entry->ReplyTo));
          array[3] = entry->Subject;
          array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME);
-         array[5] = dispsiz; *dispsiz = 0;
+
+         array[5] = dispsiz;
+         *dispsiz = '\0';
          FormatSize(entry->Size, dispsiz);
+
          array[6] = entry->MailFile;
          array[7] = entry->Folder->Name;
       }
@@ -2101,12 +2149,23 @@ void MA_MakeMAFormat(APTR lv)
    int defwidth[MACOLNUM] = { -1,-1,-1,-1,-1,-1,-1 };
    char format[SIZE_LARGE];
    BOOL first = TRUE;
-   *format = 0;
+
+   *format = '\0';
+
    for (i = 0; i < MACOLNUM; i++) if (C->MessageCols & (1<<i))
    {
-      if (first) first = FALSE; else strcat(format, " BAR,");
+      if (first)
+         first = FALSE;
+      else
+      {
+         strcat(format, " BAR,");
+      }
+
       sprintf(&format[strlen(format)], "COL=%ld W=%ld", i, defwidth[i]);
-      if (i == 5) strcat(format, " P=\033r");
+      if (i > 1 && i < 4)
+         strcat(format, " P=\033-");
+      else if (i == 5)
+         strcat(format, " P=\033r");
    }
    strcat(format, " BAR");
    set(lv, MUIA_NList_Format, format);

@@ -2800,7 +2800,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
                         MUIA_NList_ConstructHook, MUIV_NList_ConstructHook_String,
                         MUIA_NList_DestructHook, MUIV_NList_DestructHook_String,
                         MUIA_NList_DisplayHook, &RE_LV_HDspHook,
-                        MUIA_NList_Format, "P=\033r\0338 W=-1 MIW=-1,",
+                        MUIA_NList_Format, "P=\033r\0338 W=-1 MIW=-1,P=\033-",
                         MUIA_NList_Input, FALSE,
                         MUIA_NList_TypeSelect, MUIV_NList_TypeSelect_Char,
                         MUIA_NList_DefaultObjectOnClick, FALSE,

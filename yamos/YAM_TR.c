@@ -1829,7 +1829,7 @@ struct TR_ClassData *TR_New(int TRmode)
                MUIA_CycleChain,1,
                MUIA_NListview_NList, data->GUI.LV_MAILS = NListObject,
                   MUIA_NList_MultiSelect, MUIV_NList_MultiSelect_Default,
-                  MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 BAR,MICW=16 BAR,MICW=9 MACW=15",
+                  MUIA_NList_Format        , "W=-1 BAR,W=-1 MACW=9 P=\33r BAR,MICW=20 P=\033- BAR,MICW=16 P=\033- BAR,MICW=9 MACW=15",
                   MUIA_NList_DisplayHook   , &TR_LV_DspFuncHook,
                   MUIA_NList_AutoVisible   , TRUE,
                   MUIA_NList_Title         , TRUE,
