@@ -53,6 +53,7 @@ struct Global
    APTR                     AY_List;
    APTR                     AY_AboutText;
    char *                   ER_Message[MAXERR];
+   struct DiskObject *      HideIcon;
    struct AppIcon *         AppIcon;
    struct MsgPort *         AppPort;
    struct RexxHost *        RexxHost;
