@@ -391,6 +391,10 @@ HOOKPROTONHNONP(CO_GetP3Entry, void)
    struct CO_GUIData *gui = &G->CO->GUI;
 
    DoMethod(gui->LV_POP3, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &pop3);
+
+   if(xget(gui->GR_POP3, MUIA_Disabled) != !pop3) set(gui->GR_POP3, MUIA_Disabled, !pop3); // This is needed due to a bug in MUI
+   set(gui->BT_PDEL, MUIA_Disabled, !pop3 || xget(gui->LV_POP3, MUIA_List_Entries) < 2);
+
    if (pop3)
    {
       nnset(gui->ST_POPHOST,   MUIA_String_Contents, pop3->Server);
@@ -402,14 +406,11 @@ HOOKPROTONHNONP(CO_GetP3Entry, void)
       nnset(gui->CH_USESTLS,   MUIA_Selected, (pop3->SSLMode == P3SSL_STLS));
       nnset(gui->CH_USEAPOP,   MUIA_Selected, pop3->UseAPOP);
       nnset(gui->CH_DELETE,    MUIA_Selected, pop3->DeleteOnServer);
+
+      // we have to enabled/disable the SSL support accordingly
+      set(gui->CH_USESTLS, MUIA_Disabled, !G->TR_UseableTLS || pop3->SSLMode == P3SSL_OFF);
+      set(gui->CH_POP3SSL, MUIA_Disabled, !G->TR_UseableTLS && pop3->SSLMode == P3SSL_OFF);
    }
-
-   if(xget(gui->GR_POP3, MUIA_Disabled) != !pop3) set(gui->GR_POP3, MUIA_Disabled, !pop3); // This is needed due to a bug in MUI
-   set(gui->BT_PDEL, MUIA_Disabled, !pop3 || xget(gui->LV_POP3, MUIA_List_Entries) < 2);
-
-   // we have to enabled/disable the SSL support accordingly
-   if(pop3) set(gui->CH_USESTLS, MUIA_Disabled, !G->TR_UseableTLS || (pop3->SSLMode == P3SSL_OFF));
-   set(gui->CH_POP3SSL, MUIA_Disabled, !G->TR_UseableTLS && pop3->SSLMode == P3SSL_OFF);
 }
 MakeHook(CO_GetP3EntryHook,CO_GetP3Entry);
 

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c: fixed bug #683672 where upon a reload of the default
+      values within the TCP/IP configuration a enforcer hit was
+      triggered.
+
 2003-03-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_FI.c: fixed bug where a CloseRequest to a find window caused
