@@ -93,12 +93,6 @@ default: ClassInfo $(TARGET)
 
 #
 
-.l.c:
-  @echo "*e[32mGenerating lexer $*.c*e[0m"
-  @$(FLEX) -Cfe -i -o$*.c $<
-
-#
-
 .ct.catalog:
   @echo "*e[33mGenerating $*.catalog*e[0m"
   @$(FC) $(LOCALE)/YAM.cd $*.ct CATALOG $*.catalog
@@ -236,7 +230,10 @@ YAM_md5.o: YAM_md5.c YAM_md5.h
 YAM_MI.o: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes.h \
   YAM_utilities.h
 
-YAM_mail_lex.o: YAM_mail_lex.l YAM_mail_lex.c YAM_mail_lex.h
+YAM_mail_lex.o: YAM_mail_lex.c
+YAM_mail_lex.c: YAM_mail_lex.l YAM_mail_lex.h
+  @echo "*e[32mGenerating lexer $*.c*e[0m"
+  @$(FLEX) -Cem -i -t YAM_mail_lex.l > $*.c
 
 YAM_RE.o: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \

@@ -77,9 +77,6 @@ all: $(TARGET)
 %.o.elf: %.c
 	$(CC) $(CFLAGS) $< -o $@ -DNO_INLINE_STDARG
 
-%.c: %.l
-	$(FLEX) -Cfe -i -t $< > $@
-
 #
 
 $(TARGET): $(OBJS)
@@ -178,7 +175,9 @@ YAM_md5.o.elf: YAM_md5.c YAM_md5.h
 YAM_MI.o.elf: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes.h \
 	YAM_utilities.h
 
-YAM_mail_lex.o.elf: YAM_mail_lex.l YAM_mail_lex.c YAM_mail_lex.h
+YAM_mail_lex.o.elf: YAM_mail_lex.c
+YAM_mail_lex.c: YAM_mail_lex.l YAM_mail_lex.h
+	$(FLEX) -Cem -i -t YAM_mail_lex.l > $@
 
 YAM_RE.o.elf: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
