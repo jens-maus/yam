@@ -487,7 +487,7 @@ Please enter the password to unlock it:
 ; FOLDER
 ;
 MSG_MA_LatestVersion (//)
-Latest version: %s (%2ld.%02ld.%ld)\n\
+Latest version: %s (%ld.%ld.%ld)\n\
 This version: %s (%s)\n\
 \n\
 %s
@@ -4727,26 +4727,27 @@ Opening GUI...
 MSG_ERR_OPENLIB (//)
 Can't open library '%s', version v%lu.%lu
 ;LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
+;
 MSG_CO_CONTEXTMENU (//)
-ContextMenu
+Context menu
 ;
 MSG_HELP_CO_CONTEXTMENU (//)
 Select if you want the context\n\
 menu enabled in this list.
 ;
 MSG_CO_INFOBAR (//)
-Information Bar
+Information bar
 ;
 MSG_HELP_CO_CH_INFOBAR (//)
-Displays a information bar between\n\
-toolbar and mail listview.
+Displays an information bar between\n\
+the toolbar and mail listview.
 ;
 MSG_CO_WARNSUBJECT (//)
-Subject Warning
+Subject warning
 ;
 MSG_HELP_CO_CH_WARNSUBJECT (//)
-Check if you want to be warned for\n\
-empty subject lines.
+Enable this option if you want\n\
+empty subject warnings.
 ;
 MSG_WR_OKAYCANCELREQ (//)
 _Okay|*_Cancel
