@@ -829,7 +829,7 @@ void rx_mailinfo( struct RexxHost *host, struct rxd_mailinfo **rxd, long action,
             strcpy(rd->rd.res.date    = rd->date   , DateStamp2String(&mail->Date, DSS_USDATETIME));
             rd->rd.res.subject = mail->Subject;
             rd->rd.res.size = &mail->Size;
-            sprintf(rd->rd.res.msgid = rd->msgid, "%lx", mail->cMsgID);
+            sprintf(rd->rd.res.msgid = rd->msgid, "%lX", mail->cMsgID);
             sprintf(rd->rd.res.flags = rd->flags, "%c%c%c%c%c-%c%c%c",
                       isMultiRCPTMail(mail) ? 'M' : '-',
                       isMultiPartMail(mail) ? 'A' : '-',
