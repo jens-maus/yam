@@ -32,7 +32,6 @@
 ****************************************************************/
 
 #include <proto/locale.h>
-#include <string.h>
 
 struct FC_Type { long ID; char * Str; };
 
@@ -50,6 +49,15 @@ char *GetStr(APTR fcstr)
   return defaultstr;
 }
 ///
+/// GetStripStr()
+// function that will strip out the special menusigns
+char *GetStripStr(APTR fcstr)
+{
+   char *loc_str = GetStr(fcstr);
+
+   return (loc_str[1] == '\0' ? &loc_str[2] : loc_str);
+}
+///
 /// Close%bCatalog()
 void Close%bCatalog(void)
 {
@@ -60,21 +68,11 @@ void Close%bCatalog(void)
 /// Open%bCatalog(void)
 void Open%bCatalog(void)
 {
-   static const Tag tags[] = {
-   	OC_BuiltInLanguage, (Tag)%l, OC_Version, %v, TAG_DONE
-   };
+  static const Tag tags[] = {
+    OC_BuiltInLanguage,(Tag)%l, OC_Version,%v, TAG_DONE
+  };
 
-   if (LocaleBase && !%b_Catalog)
-   	%b_Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)tags);
-}
-///
-/// GetStripStr()
-// function that will strip out the special menusigns
-char *GetStripStr(APTR fcstr)
-{
-   char *loc_str = GetStr(fcstr);
-
-	 if(loc_str[1] == '\0') return(loc_str+2);
-   else return(loc_str);
+  if (LocaleBase && !%b_Catalog)
+    %b_Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)tags);
 }
 ///
