@@ -3200,7 +3200,7 @@ MSG_WR_Receipt
 Confirma_r a Chegada da Mensagem
 ;
 MSG_WR_GetMDN
-Registar as Acções do Destinatário
+Registar as Acções do Destinatário (MDN)
 ;
 MSG_WR_AddInfo
 Adicionar Informação _Pessoal

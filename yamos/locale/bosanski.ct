@@ -4269,7 +4269,7 @@ Povratni_ca
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-Prati por_uku
+Prati por_uku (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

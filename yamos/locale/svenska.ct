@@ -3099,7 +3099,7 @@ MSG_WR_Receipt
 _Begär kvitto
 ;
 MSG_WR_GetMDN
-Sp_åra brev
+Sp_åra brev (MDN)
 ;
 MSG_WR_AddInfo
 _Lägg till personinfo

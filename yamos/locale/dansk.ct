@@ -4491,7 +4491,7 @@ B_estille modtagelseskvittering
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-Be_stille behandlingsmeldinger
+Be_stille behandlingsmeldinger (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

@@ -3180,7 +3180,7 @@ MSG_WR_Receipt
 Visszaiga_zolás
 ;
 MSG_WR_GetMDN
-Levél n_yomkövetés
+Levél n_yomkövetés (MDN)
 ;
 MSG_WR_AddInfo
 Személy_i adatok hozzáadása

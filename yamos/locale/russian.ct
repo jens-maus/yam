@@ -4525,7 +4525,7 @@ _Подтверждение приёма
 ;_Return receipt
 ;
 MSG_WR_GetMDN
-Переме_щение сообщения
+Переме_щение сообщения (MDN)
 ;Track _message
 ;
 MSG_WR_AddInfo

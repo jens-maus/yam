@@ -4002,7 +4002,7 @@ Pyydä k_uittaus
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-_Jäljitä viesti
+_Jäljitä viesti (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

@@ -4565,7 +4565,7 @@ _Retur mottaker
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-Sp_or beskjed
+Sp_or beskjed (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

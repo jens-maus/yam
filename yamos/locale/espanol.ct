@@ -4325,7 +4325,7 @@ Acuse de reci_bo
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-Se_guir mensaje
+Se_guir mensaje (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

@@ -4299,7 +4299,7 @@ _Vrati potvrdu
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-P_rati poruku
+P_rati poruku (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

@@ -3167,7 +3167,7 @@ MSG_WR_Receipt
 _Retornar recibo
 ;
 MSG_WR_GetMDN
-Rastrear _mensagem
+Rastrear _mensagem (MDN)
 ;
 MSG_WR_AddInfo
 Adicionar informações _pessoais

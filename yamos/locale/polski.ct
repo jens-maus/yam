@@ -4234,7 +4234,7 @@ Potwie_rdú odbiór
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-Ôledú _wiadomoôê
+Ôledú _wiadomoôê (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

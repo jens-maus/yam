@@ -4508,7 +4508,7 @@ _Alýndý al
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-_Mesajý izle
+_Mesajý izle (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

@@ -4344,7 +4344,7 @@ Potv_rdit pêíjem
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-Sledovat zprá_vu
+Sledovat zprá_vu (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

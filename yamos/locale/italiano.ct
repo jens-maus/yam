@@ -4242,7 +4242,7 @@ Rice_vuta di ritorno
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-Tracciatura _messaggio
+Tracciatura _messaggio (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo

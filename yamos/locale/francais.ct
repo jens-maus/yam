@@ -4495,7 +4495,7 @@ Accusé de _réception
 ; _Return receipt
 ;
 MSG_WR_GetMDN
-Suivre le _message
+Suivre le _message (MDN)
 ; Track _message
 ;
 MSG_WR_AddInfo
