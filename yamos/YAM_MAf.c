@@ -553,11 +553,20 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
   struct Folder *actfo = FO_GetCurrentFolder();
   struct MA_GUIData *gui = &G->MA->GUI;
 
-  if(!actfo) return;
+  if(!actfo)
+    return;
 
-  if(!folder) folder = actfo;
-  else if(actfo == folder) return;
-  else if(set_active) FO_SetCurrentFolder(folder);
+  if(!folder)
+    folder = actfo;
+  else if(actfo == folder)
+    return;
+  else if(set_active)
+    FO_SetCurrentFolder(folder);
+
+  // in case the main window has a mail preview pane, we have to
+  // clear it before changing the actual folder
+  if(C->MailPreview)
+    DoMethod(gui->MN_MAILPREVIEW, MUIM_ReadMailGroup_Clear);
 
   // if this folder should be disabled, lets do it now
   if(folder->Type == FT_GROUP || MA_GetIndex(folder) == FALSE)
@@ -583,14 +592,14 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
     set(gui->NL_MAILS, MUIA_Disabled, FALSE);
 
     // Now we jump to messages that are NEW
-    if(C->JumpToNewMsg) MA_JumpToNewMsg();
-    else if(folder->LastActive >= 0) set(gui->NL_MAILS, MUIA_NList_Active, folder->LastActive);
+    if(C->JumpToNewMsg)
+      MA_JumpToNewMsg();
+    else if(folder->LastActive >= 0)
+      set(gui->NL_MAILS, MUIA_NList_Active, folder->LastActive);
 
     // if there is still no entry active in the NList we make the first one active
     if(xget(gui->NL_MAILS, MUIA_NList_Active) == (ULONG)MUIV_NList_Active_Off)
-    {
       set(gui->NL_MAILS, MUIA_NList_Active, MUIV_NList_Active_Top);
-    }
   }
 }
 
@@ -1928,13 +1937,23 @@ void MA_MakeFOFormat(Object *lv)
    int i;
 
    *format = 0;
-   for (i = 0; i < FOCOLNUM; i++) if (C->FolderCols & (1<<i))
+   for(i = 0; i < FOCOLNUM; i++)
    {
-      if (first) first = FALSE; else strcat(format, " BAR,");
-      sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
-      if (i) strcat(format, " P=\033r");
+      if(C->FolderCols & (1<<i))
+      {
+          if(first)
+            first = FALSE;
+          else
+            strcat(format, " BAR,");
+
+          sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
+
+          if(i > 0)
+            strcat(format, " P=\033r");
+      }
    }
    strcat(format, " BAR");
+
    set(lv, MUIA_NListtree_Format, format);
 }
 ///

@@ -5,20 +5,52 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-01-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c: used the modular functionality of our new internal readmail
+      classes to integrate a MailPreview pane similar to others found in
+      mail clients like Thunderbird&Co. This pane always shows the currently
+      selected mail which allows to read the mail without having to open any
+      separate window. However, as this is a new major feature the pane can
+      be disabled in the main YAM configuration to ensure the old behaviour
+      without any pane.
+      In addition, to make the browsing in the mail list a bit smoother, the
+      pane will only load the new selected mail after a specified short time
+      interval which can however be altered in the hidden configuration of YAM.
+      Per default this timeinterval is 100ms, which means that if the user
+      hasn't moved on in the mail list for 100ms YAM will load and display the
+      last selected mail into the mailpreview pane.
+    * YAM_RE.c, ...: reworked the whole ReadWindow related codebase, separated
+      the window code from the readmail code and integrated it into own
+      internal custom MUI classes. This, aside from the more modular and
+      safer approach for reading mails, allows now to put an unlimited number
+      of readmail objects whereever required.
+      In fact, YAM does now support to open an unlimited number of read window
+      instead of just the old possible maximum of 3 simultaneous opened read
+      windows when the "Multiple windows" option is enabled in the YAM config.
+
+        ATTENTION: Please note that due to the heaps of changes in the
+        development of this new object-oriented readwindow facility, some
+        features dependent on the old behaviour might be broken. This can
+        include, but is not limited to, Arexx commands previously expecting/
+        serving only for up to a maximum of 3 possible read windows. So if you
+        stumble over a problem with the new readmail facility, please don't
+        hestitate to bring it to our attention so that we can fix it immediatly.
+	 
 2005-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
-	 * YAM_stringsizes.h: increased the SIZE_FILE buffer length define
-	   to 107 and the SIZE_PATH define to 1024. This does not only fix
-		problem when trying to add files as an attachment if their filename
-		is larger than 30 chars, but also should make YAM a bit safer when
-		dealing with huge directory path lengths.
+    * YAM_stringsizes.h: increased the SIZE_FILE buffer length define
+      to 107 and the SIZE_PATH define to 1024. This does not only fix
+      problem when trying to add files as an attachment if their filename
+      is larger than 30 chars, but also should make YAM a bit safer when
+      dealing with huge directory path lengths.
     * YAM_MAf.c: YAM does now check the archive bit of the folder
-	   directory and the .index file as well before issuing an automatic
-		index rebuild. This should prevent YAM from rescanning all folders
-		after a backup program has set all archive bits in a folder
-		directory and therefore modified the directory timestamp as well.
-	 * extrasrc/getft.c: converted function to FileTime() function
-	   in YAM_UT.c and removed file
+      directory and the .index file as well before issuing an automatic
+      index rebuild. This should prevent YAM from rescanning all folders
+      after a backup program has set all archive bits in a folder
+      directory and therefore modified the directory timestamp as well.
+    * extrasrc/getft.c: converted function to FileTime() function
+      in YAM_UT.c and removed it completly.
 
 2005-01-18  Jens Langner <Jens.Langner@light-speed.de>
 

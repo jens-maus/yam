@@ -53,6 +53,7 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
+#include "classes/Classes.h"
 
 /* local protos */
 static BOOL FI_MatchString(struct Search*, char*);
@@ -188,23 +189,31 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 //  Searches string in message body
 static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 {
-   char *rptr, *ptr, *cmsg;
-   BOOL found = FALSE;
+  BOOL found = FALSE;
+  struct ReadMailData *rmData;
 
-   RE_InitPrivateRC(mail, PM_TEXTS);
-   rptr = cmsg = RE_ReadInMessage(4, RIM_QUIET);
+  if((rmData = AllocPrivateRMData(mail, PM_TEXTS)))
+  {
+    char *rptr, *ptr, *cmsg;
 
-   while(*rptr && !found && (G->FI ? !G->FI->Abort : TRUE))
-   {
-      for (ptr = rptr; *ptr && *ptr != '\n'; ptr++); *ptr = 0;
-      if (FI_MatchString(search, rptr)) found = TRUE;
+    rptr = cmsg = RE_ReadInMessage(rmData, RIM_QUIET);
+
+    while(*rptr && !found && (G->FI ? !G->FI->Abort : TRUE))
+    {
+      for(ptr = rptr; *ptr && *ptr != '\n'; ptr++);
+
+      *ptr = 0;
+      if(FI_MatchString(search, rptr))
+        found = TRUE;
+
       rptr = ++ptr;
-   }
+    }
 
-   free(cmsg);
-   RE_FreePrivateRC();
+    free(cmsg);
+    FreePrivateRMData(rmData);
+  }
 
-   return found;
+  return found;
 }
 
 ///
@@ -956,17 +965,25 @@ MakeStaticHook(FI_SwitchHook, FI_SwitchFunc);
 //  Reads a message listed in the results window
 HOOKPROTONHNONP(FI_ReadFunc, void)
 {
-   struct Mail *mail;
-   int winnum;
-   DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-   if (mail) if ((winnum = RE_Open(-1, TRUE)) != -1)
-   {
-      if (SafeOpenWindow(G->RE[winnum]->GUI.WI)) RE_ReadMessage(winnum, mail);
-      else
+  struct Mail *mail;
+
+  DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+
+  if(mail)
+  {
+    struct ReadMailData *rmData;
+    if((rmData = CreateReadWindow(FALSE)))
+    {
+      // make sure it is opened correctly and then read in a mail
+      if(SafeOpenWindow(rmData->readWindow) == FALSE ||
+         DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail) == FALSE)
       {
-        DisposeModulePush(G->RE[winnum]);
+        // on any error we make sure to delete the read window
+        // immediatly again.
+        CleanupReadMailData(rmData);
       }
-   }
+    }
+  }
 }
 MakeStaticHook(FI_ReadHook, FI_ReadFunc);
 

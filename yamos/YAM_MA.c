@@ -129,11 +129,22 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    BOOL active, hasattach = FALSE, beingedited = FALSE;
    struct Mail *mail;
 
-   if (!fo) return;
+   DB(kprintf("MA_ChangeSelected\n");)
+
+   if(!fo)
+     return;
+
+   // make sure the mail is displayed in our readMailGroup of the main window
+   // (if enabled) - but we do only issue a timer event here so the mail preview
+   // is only refreshed about 200 milliseconds after the last change in the listview
+   // was recognized.
+   if(C->MailPreview)
+      TC_Start(TIO_PREVIEWUPDATE, 0, C->PreviewDelay*1000);
 
    type = fo->Type;
    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
    fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
+
    if ((active = (mail != NULL)) && isMultiPartMail(mail)) hasattach = TRUE;
    for (i = 0; i < MAXWR; i++) if (mail && G->WR[i]) if (G->WR[i]->Mail == mail) beingedited = TRUE;
 // if (!mail) if (!xget(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
@@ -326,8 +337,6 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)
     {
-      int i;
-
       strcpy(mail->MailFile, newFileName);
       success = TRUE;
 
@@ -335,12 +344,16 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
       // they contain the mail we have changed the status, so
       // that we can update the filename in the read window structure
       // aswell
-      for(i=0; i < MAXRE; i++)
+      if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
       {
-        if(G->RE[i] && G->RE[i]->MailPtr == mail)
+        // search through our ReadDataList
+        struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+
+        for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
         {
-          strcpy(G->RE[i]->File, newFilePath);
-          break;
+          struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+          if(rmData->mail == mail)
+            strcpy(rmData->readFile, newFilePath);
         }
       }
     }
@@ -758,33 +771,46 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags)
 //  Loads active message into a read window
 HOOKPROTONHNONP(MA_ReadMessage, void)
 {
-   static int lastwin = 0;
-   struct Mail *mail;
-   int i, winnum;
+  struct Mail *mail;
 
-   if((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
-   {
-      // Check if this mail is already in a readwindow
-      for(i = 0; i < MAXRE; i++)
+  if((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
+  {
+    struct ReadMailData *rmData;
+
+    // Check if this mail is already in a readwindow
+    if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
+    {
+      // search through our ReadDataList
+      struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+      for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
-        if(G->RE[i] && mail == G->RE[i]->MailPtr)
+        rmData = (struct ReadMailData *)curNode;
+
+        // check if the active mail is already open in another read
+        // window, and if so we just bring it to the front.
+        if(rmData->readWindow &&
+           rmData->mail == mail)
         {
-           DoMethod(G->RE[i]->GUI.WI, MUIM_Window_ToFront);
-           set(G->RE[i]->GUI.WI, MUIA_Window_Activate, TRUE);
-           return;
+          DoMethod(rmData->readWindow, MUIM_Window_ToFront);
+          set(rmData->readWindow, MUIA_Window_Activate, TRUE);
+          return;
         }
       }
+    }
 
-      if((winnum = RE_Open(C->MultipleWindows ? -1 : lastwin, TRUE)) != -1)
+    // if not, then we create/reuse a new one
+    if((rmData = CreateReadWindow(FALSE)))
+    {
+      // make sure it is opened correctly and then read in a mail
+      if(SafeOpenWindow(rmData->readWindow) == FALSE ||
+         DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail) == FALSE)
       {
-         lastwin = winnum;
-         if (SafeOpenWindow(G->RE[winnum]->GUI.WI)) RE_ReadMessage(winnum, mail);
-         else
-         {
-            DisposeModulePush(&G->RE[winnum]);
-         }
+        // on any error we make sure to delete the read window
+        // immediatly again.
+        CleanupReadMailData(rmData);
       }
-   }
+    }
+  }
 }
 MakeHook(MA_ReadMessageHook, MA_ReadMessage);
 
@@ -934,7 +960,7 @@ int MA_NewNew(struct Mail *mail, int flags)
 ///
 /// MA_NewEdit
 //  Edits a message
-int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
+int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
 {
    BOOL quiet = hasQuietFlag(flags);
    int i, winnum = -1;
@@ -957,12 +983,14 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
    // check if necessary settings fror writing are OK and open new window
    if(CO_IsValid() && (winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
-      if ((out = fopen(G->WR_Filename[winnum], "w")))
+      if((out = fopen(G->WR_Filename[winnum], "w")))
       {
+         struct ReadMailData *rmData;
+
          wr = G->WR[winnum];
          wr->Mode = NEW_EDIT;
          wr->Mail = mail;
-         wr->ReadwinNum = ReadwinNum;
+         wr->readWindow = readWindow;
          folder = mail->Folder;
 
          if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
@@ -974,55 +1002,85 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
          }
 
          MA_SetupQuoteString(wr, NULL, mail);
-         RE_InitPrivateRC(mail, PM_ALL);
-         cmsg = RE_ReadInMessage(4, RIM_EDIT);
-         fputs(cmsg, out);
-         free(cmsg);
-         strcpy(wr->MsgID, email->IRTMsgID);
-         setstring(wr->GUI.ST_SUBJECT, mail->Subject);
-         setstring(wr->GUI.ST_FROM, BuildAddrName2(&mail->From));
-         setstring(wr->GUI.ST_REPLYTO, BuildAddrName2(&mail->ReplyTo));
-         sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->To));
-         if(isMultiRCPTMail(mail))
+
+         if((rmData = AllocPrivateRMData(mail, PM_ALL)))
          {
-            *sbuf = 0;
-            sbuf = MA_AppendRcpt(sbuf, &mail->To, FALSE);
-            for (i = 0; i < email->NoSTo; i++) sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
-            setstring(wr->GUI.ST_TO, sbuf);
-            *sbuf = 0;
-            for (i = 0; i < email->NoCC; i++) sbuf = MA_AppendRcpt(sbuf, &email->CC[i], FALSE);
-            setstring(wr->GUI.ST_CC, sbuf);
-            *sbuf = 0;
-            for (i = 0; i < email->NoBCC; i++) sbuf = MA_AppendRcpt(sbuf, &email->BCC[i], FALSE);
-            setstring(wr->GUI.ST_BCC, sbuf);
+            if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
+            {
+              fputs(cmsg, out);
+              free(cmsg);
+
+              strcpy(wr->MsgID, email->IRTMsgID);
+              setstring(wr->GUI.ST_SUBJECT, mail->Subject);
+              setstring(wr->GUI.ST_FROM, BuildAddrName2(&mail->From));
+              setstring(wr->GUI.ST_REPLYTO, BuildAddrName2(&mail->ReplyTo));
+              sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->To));
+
+              if(isMultiRCPTMail(mail))
+              {
+                *sbuf = 0;
+                sbuf = MA_AppendRcpt(sbuf, &mail->To, FALSE);
+                for(i = 0; i < email->NoSTo; i++)
+                  sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
+
+                setstring(wr->GUI.ST_TO, sbuf);
+                *sbuf = 0;
+
+                for(i = 0; i < email->NoCC; i++)
+                  sbuf = MA_AppendRcpt(sbuf, &email->CC[i], FALSE);
+
+                setstring(wr->GUI.ST_CC, sbuf);
+                *sbuf = 0;
+
+                for(i = 0; i < email->NoBCC; i++)
+                  sbuf = MA_AppendRcpt(sbuf, &email->BCC[i], FALSE);
+
+                setstring(wr->GUI.ST_BCC, sbuf);
+              }
+              else
+                setstring(wr->GUI.ST_TO, sbuf);
+
+              FreeStrBuf(sbuf);
+              if(email->Headers)
+                setstring(wr->GUI.ST_EXTHEADER, email->Headers);
+
+              setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
+              setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
+              setcheckmark(wr->GUI.CH_DISPNOTI, email->ReceiptType == RCPT_TYPE_ALL);
+              setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
+              setcycle(wr->GUI.CY_IMPORTANCE, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1);
+              setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
+              setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
+
+              if(folder->Type != FT_OUTGOING)
+                DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, wr->GUI.BT_SEND, wr->GUI.BT_HOLD, NULL);
+
+              WR_SetupOldMail(winnum, rmData);
+            }
+
+            FreePrivateRMData(rmData);
          }
-         else setstring(wr->GUI.ST_TO, sbuf);
-         FreeStrBuf(sbuf);
-         if (email->Headers) setstring(wr->GUI.ST_EXTHEADER, email->Headers);
-         setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
-         setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
-         setcheckmark(wr->GUI.CH_DISPNOTI, email->ReceiptType == RCPT_TYPE_ALL);
-         setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
-         setcycle(wr->GUI.CY_IMPORTANCE, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1);
-         setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
-         setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
-         if (folder->Type != FT_OUTGOING) DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, wr->GUI.BT_SEND, wr->GUI.BT_HOLD, NULL);
-         WR_SetupOldMail(winnum);
-         RE_FreePrivateRC();
+
          fclose(out);
          MA_FreeEMailStruct(email);
-         if (!quiet) set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+
+         if(!quiet)
+           set(wr->GUI.WI, MUIA_Window_Open, TRUE);
+
          MA_EditorNotification(winnum);
          sbuf = (STRPTR)xget(wr->GUI.ST_TO, MUIA_String_Contents);
          set(wr->GUI.WI, MUIA_Window_ActiveObject, *sbuf ? wr->GUI.TE_EDIT : wr->GUI.ST_TO);
-         if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
+
+         if(C->LaunchAlways && !quiet)
+           DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
       }
       else
-      {
         DisposeModulePush(&G->WR[winnum]);
-      }
    }
-   if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
+
+   if(winnum >= 0 && !quiet)
+     return MA_CheckWriteWindow(winnum);
+
    return winnum;
 }
 
@@ -1074,6 +1132,8 @@ int MA_NewForward(struct Mail **mlist, int flags)
          MA_InsertIntroText(out, C->NewIntro, NULL);
          for (i = 0; i < (int)mlist[0]; i++)
          {
+            struct ReadMailData *rmData;
+
             mail = mlist[i+2];
 
             if(!(email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
@@ -1098,16 +1158,26 @@ int MA_NewForward(struct Mail **mlist, int flags)
                   rsub = StrBufCat(rsub, buffer);
                }
             }
-            RE_InitPrivateRC(mail, PM_ALL);
-            etd.HeaderFile = G->RE[4]->FirstPart->Filename;
-            MA_InsertIntroText(out, C->ForwardIntro, &etd);
-            MA_FreeEMailStruct(email);
-            cmsg = RE_ReadInMessage(4, RIM_EDIT);
-            fputs(cmsg, out);
-            free(cmsg);
-            MA_InsertIntroText(out, C->ForwardFinish, &etd);
-            if(!hasNoAttachFlag(flags)) WR_SetupOldMail(winnum);
-            RE_FreePrivateRC();
+
+            if((rmData = AllocPrivateRMData(mail, PM_ALL)))
+            {
+              etd.HeaderFile = rmData->firstPart->Filename;
+              MA_InsertIntroText(out, C->ForwardIntro, &etd);
+              MA_FreeEMailStruct(email);
+
+              if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
+              {
+                fputs(cmsg, out);
+                free(cmsg);
+
+                MA_InsertIntroText(out, C->ForwardFinish, &etd);
+
+                if(!hasNoAttachFlag(flags))
+                  WR_SetupOldMail(winnum, rmData);
+              }
+
+              FreePrivateRMData(rmData);
+            }
          }
          MA_InsertIntroText(out, C->Greetings, NULL);
          fclose(out);
@@ -1123,9 +1193,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
          if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
       }
       else
-      {
         DisposeModulePush(&G->WR[winnum]);
-      }
    }
    if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
    return winnum;
@@ -1317,14 +1385,23 @@ int MA_NewReply(struct Mail **mlist, int flags)
             if (!j) MA_InsertIntroText(out, mlistad ? C->MLReplyHello : (altpat ? C->AltReplyHello : C->ReplyHello), &etd);
             if(C->QuoteMessage && !hasNoQuoteFlag(flags))
             {
-               if(j) fputc('\n', out);
-               RE_InitPrivateRC(mail, PM_TEXTS);
-               etd.HeaderFile = G->RE[4]->FirstPart->Filename;
-               MA_InsertIntroText(out, mlistad ? C->MLReplyIntro : (altpat ? C->AltReplyIntro : C->ReplyIntro), &etd);
-               cmsg = RE_ReadInMessage(4, RIM_QUOTE);
-               Quote_Text(out, cmsg, strlen(cmsg), C->EdWrapMode ? C->EdWrapCol-strlen(wr->QuoteText)-1 : 1024, wr->QuoteText);
-               free(cmsg);
-               RE_FreePrivateRC();
+               struct ReadMailData *rmData;
+
+               if(j)
+                 fputc('\n', out);
+
+               if((rmData = AllocPrivateRMData(mail, PM_TEXTS)))
+               {
+                 etd.HeaderFile = rmData->firstPart->Filename;
+                 MA_InsertIntroText(out, mlistad ? C->MLReplyIntro : (altpat ? C->AltReplyIntro : C->ReplyIntro), &etd);
+                 if((cmsg = RE_ReadInMessage(rmData, RIM_QUOTE)))
+                 {
+                   Quote_Text(out, cmsg, strlen(cmsg), C->EdWrapMode ? C->EdWrapCol-strlen(wr->QuoteText)-1 : 1024, wr->QuoteText);
+                   free(cmsg);
+                 }
+
+                 FreePrivateRMData(rmData);
+               }
             }
             MA_FreeEMailStruct(email);
          }
@@ -1366,55 +1443,89 @@ int MA_NewReply(struct Mail **mlist, int flags)
 //  Removes attachments from a message
 void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 {
-   struct Part *part;
-   int f;
-   FILE *out, *in;
-   char *cmsg, buf[SIZE_LINE], fname[SIZE_PATHFILE], tfname[SIZE_PATHFILE];
-   struct Folder *fo = mail->Folder;
+   struct ReadMailData *rmData;
 
    // if we need to warn the user of this operation we put up a requester
    // before we go on
-   if(warning && MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) == 0)
+   if(warning &&
+      MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) == 0)
    {
      return;
    }
 
-   sprintf(tfname, "%s.tmp", GetMailFile(fname, NULL, mail));
-   RE_InitPrivateRC(mail, PM_ALL);
-   cmsg = RE_ReadInMessage(4, RIM_QUIET);
-   if ((part = G->RE[4]->FirstPart->Next)) if (part->Next)
-      if ((out = fopen(tfname, "w")))
-      {
-         if ((in = fopen(G->RE[4]->FirstPart->Filename, "r")))
-         {
-            BOOL infield = FALSE, inbody = FALSE;
-            while (fgets(buf, SIZE_LINE, in))
-            {
-               if (!ISpace(*buf)) infield = !strnicmp(buf, "content-transfer-encoding", 25) || !strnicmp(buf, "content-type", 12);
-               if (!infield || inbody) fputs(buf, out);
-            }
-            fclose(in);
-         }
-         fputs("Content-Transfer-Encoding: 8bit\nContent-Type: text/plain; charset=iso-8859-1\n\n", out);
-         fputs(cmsg, out);
-         MA_ExpireIndex(mail->Folder);
-         fputs(GetStr(MSG_MA_AttachRemoved), out);
-         for (part = part->Next; part; part = part->Next)
-            fprintf(out, "%s (%ld %s, %s)\n", part->Name ? part->Name : GetStr(MSG_Unnamed), part->Size, GetStr(MSG_Bytes), part->ContentType);
-         fclose(out);
-         f = FileSize(tfname); fo->Size += f - mail->Size; mail->Size = f;
-         CLEAR_FLAG(mail->mflags, MFLAG_MULTIPART);
-         DeleteFile(fname);
+   if((rmData = AllocPrivateRMData(mail, PM_ALL)))
+   {
+     struct Part *part;
+     char *cmsg;
+     char buf[SIZE_LINE];
+     char fname[SIZE_PATHFILE];
+     char tfname[SIZE_PATHFILE];
 
-         if(fo->Mode > FM_SIMPLE)
-           DoPack(tfname, fname, mail->Folder);
-         else
-           RenameFile(tfname, fname);
+     sprintf(tfname, "%s.tmp", GetMailFile(fname, NULL, mail));
 
-         AppendLog(81, GetStr(MSG_LOG_CroppingAtt), mail->MailFile, mail->Folder->Name, "", "");
-      }
-   free(cmsg);
-   RE_FreePrivateRC();
+     if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)))
+     {
+       if((part = rmData->firstPart->Next) && part->Next)
+       {
+          FILE *out;
+
+          if((out = fopen(tfname, "w")))
+          {
+             FILE *in;
+             struct Folder *fo = mail->Folder;
+             int f;
+
+             if((in = fopen(rmData->firstPart->Filename, "r")))
+             {
+                BOOL infield = FALSE, inbody = FALSE;
+
+                while(fgets(buf, SIZE_LINE, in))
+                {
+                  if(!ISpace(*buf))
+                    infield = !strnicmp(buf, "content-transfer-encoding", 25) || !strnicmp(buf, "content-type", 12);
+
+                  if(!infield || inbody)
+                    fputs(buf, out);
+                }
+                fclose(in);
+             }
+
+             fputs("Content-Transfer-Encoding: 8bit\nContent-Type: text/plain; charset=iso-8859-1\n\n", out);
+             fputs(cmsg, out);
+             MA_ExpireIndex(fo);
+             fputs(GetStr(MSG_MA_AttachRemoved), out);
+
+             for(part = part->Next; part; part = part->Next)
+             {
+               fprintf(out, "%s (%ld %s, %s)\n", part->Name ? part->Name : GetStr(MSG_Unnamed),
+                                                 part->Size,
+                                                 GetStr(MSG_Bytes),
+                                                 part->ContentType);
+             }
+
+             fclose(out);
+
+             f = FileSize(tfname);
+             fo->Size += f - mail->Size;
+             mail->Size = f;
+
+             CLEAR_FLAG(mail->mflags, MFLAG_MULTIPART);
+             DeleteFile(fname);
+
+             if(fo->Mode > FM_SIMPLE)
+               DoPack(tfname, fname, fo);
+             else
+               RenameFile(tfname, fname);
+
+             AppendLog(81, GetStr(MSG_LOG_CroppingAtt), mail->MailFile, fo->Name, "", "");
+          }
+       }
+
+       free(cmsg);
+     }
+
+     FreePrivateRMData(rmData);
+   }
 }
 
 ///
@@ -1454,29 +1565,39 @@ MakeHook(MA_RemoveAttachHook, MA_RemoveAttachFunc);
 //  Saves all attachments of selected messages to disk
 HOOKPROTONHNONP(MA_SaveAttachFunc, void)
 {
-   struct Mail **mlist, *mail;
-   struct Part *part;
-   char *cmsg;
-   int i;
+   struct Mail **mlist;
 
-   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
+   if((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
    {
-      if (ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
+      if(ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
       {
+         int i;
+
          BusyText(GetStr(MSG_BusyDecSaving), "");
 
          for (i = 0; i < (int)*mlist; i++)
          {
-            RE_InitPrivateRC(mail = mlist[i+2], PM_ALL);
-            if ((cmsg = RE_ReadInMessage(4, RIM_QUIET)))
+            struct ReadMailData *rmData;
+
+            if((rmData = AllocPrivateRMData(mlist[i+2], PM_ALL)))
             {
-               free(cmsg);
-               if ((part = G->RE[4]->FirstPart->Next) && part->Next)
-               {
-                  RE_SaveAll(4, G->ASLReq[ASL_DETACH]->fr_Drawer);
-               }
+              char *cmsg;
+
+              if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)))
+              {
+                struct Part *part;
+
+                // free the message again as we don't need its content here.
+                free(cmsg);
+
+                if((part = rmData->firstPart->Next) && part->Next)
+                {
+                  RE_SaveAll(rmData, G->ASLReq[ASL_DETACH]->fr_Drawer);
+                }
+              }
+
+              FreePrivateRMData(rmData);
             }
-            RE_FreePrivateRC();
          }
 
          BusyEnd();
@@ -1491,32 +1612,48 @@ MakeHook(MA_SaveAttachHook, MA_SaveAttachFunc);
 //  Prints selected messages
 HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
 {
-   BOOL doprint = *arg != 0;
-   struct TempFile *tf;
+   BOOL doprint = (*arg != 0);
    struct Mail **mlist;
-   char *cmsg;
-   int i;
 
-   if (doprint && C->PrinterCheck) if (!CheckPrinter()) return;
-   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
+   if(doprint && C->PrinterCheck && !CheckPrinter())
+     return;
+
+   if((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
    {
-      for (i = 0; i < (int)*mlist; i++)
+      int i;
+
+      for(i = 0; i < (int)*mlist; i++)
       {
-         RE_InitPrivateRC(mlist[i+2], PM_TEXTS);
-         if ((cmsg = RE_ReadInMessage(4, RIM_READ)))
+         struct ReadMailData *rmData;
+
+         if((rmData = AllocPrivateRMData(mlist[i+2], PM_TEXTS)))
          {
-            if ((tf = OpenTempFile("w")))
+            char *cmsg;
+
+            if((cmsg = RE_ReadInMessage(rmData, RIM_READ)))
             {
-               fputs(cmsg, tf->FP);
-               fclose(tf->FP); tf->FP = NULL;
-               if (doprint) CopyFile("PRT:", 0, tf->Filename, 0);
-               else RE_Export(4, tf->Filename, "", "", 0, FALSE, FALSE, (char*)ContType[CT_TX_PLAIN]);
-               CloseTempFile(tf);
+               struct TempFile *tf;
+
+               if((tf = OpenTempFile("w")))
+               {
+                  fputs(cmsg, tf->FP);
+                  fclose(tf->FP); tf->FP = NULL;
+
+                  if(doprint)
+                    CopyFile("PRT:", 0, tf->Filename, 0);
+                  else
+                    RE_Export(rmData, tf->Filename, "", "", 0, FALSE, FALSE, (char*)ContType[CT_TX_PLAIN]);
+
+                  CloseTempFile(tf);
+               }
+
+               free(cmsg);
             }
-            free(cmsg);
+
+            FreePrivateRMData(rmData);
          }
-         RE_FreePrivateRC();
       }
+
       free(mlist);
    }
 }
@@ -1533,7 +1670,7 @@ int MA_NewMessage(int mode, int flags)
    {
       case NEW_NEW:     winnr = MA_NewNew(NULL, flags);
                         break;
-      case NEW_EDIT:    if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewEdit(mail, flags, -1);
+      case NEW_EDIT:    if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewEdit(mail, flags, NULL);
                         break;
       case NEW_BOUNCE:  if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewBounce(mail, flags);
                         break;
@@ -3129,6 +3266,68 @@ void MA_SetupDynamicMenus(void)
 }
 
 ///
+/// MA_SetupMailPreview()
+//  Updates/Setup the Mail Preview part in the main window
+void MA_SetupMailPreview(void)
+{
+  Object *mailViewGroup = G->MA->GUI.GR_MAILVIEW;
+
+  // check wheter the mailview balancing object is already embeeded in our main
+  // window so that we now what to do now
+  if(isChildOfGroup(mailViewGroup, G->MA->GUI.BL_MAILVIEW))
+  {
+    if(C->MailPreview == FALSE)
+    {
+      // the user want to have the mail preview removed from the main
+      // window, so lets do it now
+      if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
+      {
+        DoMethod(mailViewGroup, OM_REMMEMBER, G->MA->GUI.MN_MAILPREVIEW);
+        DoMethod(mailViewGroup, OM_REMMEMBER, G->MA->GUI.BL_MAILVIEW);
+
+        // set the mailview disabled so that it doesn't response to
+        // notifies and so on
+        nnset(G->MA->GUI.MN_MAILPREVIEW, MUIA_Disabled, TRUE);
+
+        DoMethod(mailViewGroup, MUIM_Group_ExitChange);
+      }
+    }
+  }
+  else
+  {
+    if(C->MailPreview == TRUE)
+    {
+      // the user want to have the mail preview added tothe main
+      // window, so lets do it now
+      if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
+      {
+        DoMethod(mailViewGroup, OM_ADDMEMBER, G->MA->GUI.BL_MAILVIEW);
+        DoMethod(mailViewGroup, OM_ADDMEMBER, G->MA->GUI.MN_MAILPREVIEW);
+
+        // unset the mailview disabled so that does response to
+        // notifies and so on again
+        nnset(G->MA->GUI.MN_MAILPREVIEW, MUIA_Disabled, FALSE);
+
+        DoMethod(mailViewGroup, MUIM_Group_ExitChange);
+      }
+    }
+  }
+}
+///
+/// MA_CleanupMailPreview()
+// make sure all GUI elements of the mail preview are properly disposed
+void MA_CleanupMailPreview(void)
+{
+  // we only dispose the two main mail preview object if they are not
+  // currently embedded in the main GUI
+  if(isChildOfGroup(G->MA->GUI.GR_MAILVIEW, G->MA->GUI.BL_MAILVIEW) == FALSE)
+  {
+     MUI_DisposeObject(G->MA->GUI.MN_MAILPREVIEW);
+     MUI_DisposeObject(G->MA->GUI.BL_MAILVIEW);
+  }
+}
+
+///
 /// MA_SortWindow
 //  Resorts the main window group accordingly to the InfoBar setting
 BOOL MA_SortWindow(void)
@@ -3141,19 +3340,31 @@ BOOL MA_SortWindow(void)
   {
     case IB_POS_TOP:
     {
-      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.IB_INFOBAR, G->MA->GUI.GR_TOP, G->MA->GUI.BC_GROUP, G->MA->GUI.GR_BOTTOM, NULL);
+      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.IB_INFOBAR,
+                                                    G->MA->GUI.GR_TOP,
+                                                    G->MA->GUI.BC_GROUP,
+                                                    G->MA->GUI.GR_BOTTOM,
+                                                    NULL);
     }
     break;
 
     case IB_POS_CENTER:
     {
-      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP, G->MA->GUI.BC_GROUP, G->MA->GUI.IB_INFOBAR, G->MA->GUI.GR_BOTTOM, NULL);
+      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
+                                                    G->MA->GUI.BC_GROUP,
+                                                    G->MA->GUI.IB_INFOBAR,
+                                                    G->MA->GUI.GR_BOTTOM,
+                                                    NULL);
     }
     break;
 
     case IB_POS_BOTTOM:
     {
-      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP, G->MA->GUI.BC_GROUP, G->MA->GUI.GR_BOTTOM, G->MA->GUI.IB_INFOBAR, NULL);
+      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP,
+                                                    G->MA->GUI.BC_GROUP,
+                                                    G->MA->GUI.GR_BOTTOM,
+                                                    G->MA->GUI.IB_INFOBAR,
+                                                    NULL);
     }
     break;
 
@@ -3182,13 +3393,23 @@ void MA_MakeMAFormat(Object *lv)
    int i;
 
    *format = 0;
-   for (i = 0; i < MACOLNUM; i++) if (C->MessageCols & (1<<i))
+   for(i = 0; i < MACOLNUM; i++)
    {
-      if (first) first = FALSE; else strcat(format, " BAR,");
-      sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
-      if (i == 5) strcat(format, " P=\033r");
+      if(C->MessageCols & (1<<i))
+      {
+          if(first)
+            first = FALSE;
+          else
+            strcat(format, " BAR,");
+
+          sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
+
+          if(i == 5)
+            strcat(format, " P=\033r");
+      }
    }
    strcat(format, " BAR");
+
    set(lv, MUIA_NList_Format, format);
 }
 
@@ -3315,6 +3536,7 @@ struct MA_ClassData *MA_New(void)
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_SETTINGS_MUI), MMEN_MUI),
          End,
       End,
+
       data->GUI.WI = MainWindowObject,
          MUIA_Window_Title, data->WinTitle,
          MUIA_HelpNode, "MA_W",
@@ -3406,27 +3628,34 @@ struct MA_ClassData *MA_New(void)
                   End,
                End,
                Child, BalanceObject, End,
-               Child, data->GUI.LV_MAILS = NListviewObject,
-                  MUIA_HelpNode,   "MA01",
-                  MUIA_CycleChain, TRUE,
-                  MUIA_NListview_NList, data->GUI.NL_MAILS = MainMailListObject,
-                     MUIA_NList_MinColSortable, 0,
-                     MUIA_NList_TitleClick          , TRUE,
-                     MUIA_NList_TitleClick2         , TRUE,
-                     MUIA_NList_DragType            , MUIV_NList_DragType_Default,
-                     MUIA_NList_MultiSelect         , MUIV_NList_MultiSelect_Default,
-                     MUIA_NList_CompareHook2        , &MA_LV_Cmp2Hook,
-                     MUIA_NList_DisplayHook2        , &MA_LV_DspFuncHook,
-                     MUIA_NList_AutoVisible         , TRUE,
-                     MUIA_NList_Title               , TRUE,
-                     MUIA_NList_TitleSeparator      , TRUE,
-                     MUIA_NList_DefaultObjectOnClick, FALSE,
-                     MUIA_ContextMenu               , C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : 0,
-                     MUIA_Font                      , C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
-                     MUIA_NList_Exports             , MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
-                     MUIA_NList_Imports             , MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
-                     MUIA_ObjectID                  , MAKE_ID('N','L','0','2'),
-                  End,
+               Child, data->GUI.GR_MAILVIEW = VGroup,
+                 GroupSpacing(1),
+                 Child, data->GUI.LV_MAILS = NListviewObject,
+                    MUIA_HelpNode,   "MA01",
+                    MUIA_VertWeight, 25,
+                    MUIA_CycleChain, TRUE,
+                    MUIA_NListview_NList, data->GUI.NL_MAILS = MainMailListObject,
+                       MUIA_NList_MinColSortable, 0,
+                       MUIA_NList_TitleClick          , TRUE,
+                       MUIA_NList_TitleClick2         , TRUE,
+                       MUIA_NList_DragType            , MUIV_NList_DragType_Default,
+                       MUIA_NList_MultiSelect         , MUIV_NList_MultiSelect_Default,
+                       MUIA_NList_CompareHook2        , &MA_LV_Cmp2Hook,
+                       MUIA_NList_DisplayHook2        , &MA_LV_DspFuncHook,
+                       MUIA_NList_AutoVisible         , TRUE,
+                       MUIA_NList_Title               , TRUE,
+                       MUIA_NList_TitleSeparator      , TRUE,
+                       MUIA_NList_DefaultObjectOnClick, FALSE,
+                       MUIA_ContextMenu               , C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : 0,
+                       MUIA_Font                      , C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
+                       MUIA_NList_Exports             , MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
+                       MUIA_NList_Imports             , MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
+                       MUIA_ObjectID                  , MAKE_ID('N','L','0','2'),
+                    End,
+                 End,
+                 Child, data->GUI.BL_MAILVIEW = BalanceObject, End,
+                 Child, data->GUI.MN_MAILPREVIEW = ReadMailGroupObject,
+                 End,
                End,
             End,
          End,
@@ -3533,7 +3762,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_TitleClick2   ,MUIV_EveryTime,MUIV_Notify_Self         ,4,MUIM_NList_Sort3         ,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values,MUIV_NList_Sort3_SortType_2);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_SortType      ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_Set                 ,MUIA_NList_TitleMark,MUIV_TriggerValue);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_SortType2     ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_Set                 ,MUIA_NList_TitleMark2,MUIV_TriggerValue);
-         DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_SelectChange  ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
+         //DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_SelectChange  ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetMessageInfoHook);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FolderClickHook);
@@ -3552,10 +3781,13 @@ struct MA_ClassData *MA_New(void)
             key[8] = '0'+i;
             DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_FolderKeyHook, i);
          }
+
          return data;
       }
+
       free(data);
    }
+
    return NULL;
 }
 ///

@@ -244,6 +244,7 @@ struct CO_GUIData
    Object *NB_EMAILCACHE;
    Object *CH_AUTOTRANSLATEIN;
    Object *RA_SMTPSECURE;
+   Object *CH_MAILPREVIEW;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -330,8 +331,7 @@ struct RxHook
 #define hasSoundNotify(f)     (isFlagSet((f), NOTIFY_SOUND))
 #define hasCommandNotify(f)   (isFlagSet((f), NOTIFY_CMD))
 
-enum PrintMethod {PRINTMETHOD_DUMPRAW, PRINTMETHOD_LATEX, PRINTMETHOD_POSTSCRIPT};
-/* PS not yet implemented */
+enum PrintMethod { PRINTMETHOD_RAW };
 
 /*** Configuration main structure ***/
 struct Config
@@ -376,6 +376,7 @@ struct Config
    int   EmailCache;
    int   SMTP_Port;
    int   TRBufferSize;
+   int   PreviewDelay;
    enum SMTPSecMethod SMTP_SecureMethod;
 
    BOOL  DaylightSaving;
@@ -429,6 +430,7 @@ struct Config
    BOOL  MessageCntMenu;
 	 BOOL	 AutomaticTranslationIn;
    BOOL  AutoColumnResize;
+   BOOL  MailPreview;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

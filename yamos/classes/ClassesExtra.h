@@ -41,7 +41,10 @@
 #include <libraries/mui.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -59,16 +62,43 @@
 #include "YAM_global.h"
 #include "YAM_locale.h"
 #include "YAM_locale.h"
+#include "YAM_mail_lex.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
+#include "YAM_read.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 
+// some own MUI macros (not official)
 #ifndef MUIF_NONE
 #define MUIF_NONE                    0
 #endif
 
-/* some private (mostly undocumented) MUI stuff... */
+#define MenuChild										MUIA_Family_Child
+#define Menuitem(t,s,e,c,u)					MenuitemObject, 										\
+																			MUIA_Menuitem_Title,					(t),\
+																			MUIA_Menuitem_Shortcut,				(s),\
+																			MUIA_Menuitem_Enabled,				(e),\
+																			MUIA_Menuitem_CommandString,	(c),\
+																			MUIA_UserData,								(u),\
+																		End
+
+#define MenuitemCheck(t,s,e,g,x,u)	MenuitemObject,											\
+																			MUIA_Menuitem_Checkit,			 TRUE,\
+																			MUIA_Menuitem_Title,					(t),\
+																			MUIA_Menuitem_Shortcut,				(s),\
+																			MUIA_Menuitem_Checked,				(e),\
+																			MUIA_Menuitem_Toggle,					(g),\
+																			MUIA_Menuitem_Exclude,				(x),\
+																			MUIA_UserData,								(u),\
+																		End
+
+#define MenuBarLabel								MenuitemObject,											\
+																			MUIA_Menuitem_Title,  NM_BARLABEL,\
+																		End
+
+
+// some private (mostly undocumented) MUI stuff...
 #ifndef MUIM_GoActive
 #define MUIM_GoActive                0x8042491a /* V8  */
 #endif

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -989,32 +989,33 @@ APTR CO_Page4(struct CO_ClassData *data)
                Child, Label2(GetStr(MSG_CO_CharsetTrans)),
                Child, MakeTransPop(&data->GUI.ST_INTRANS, FALSE, GetStr(MSG_CO_CharsetTrans)),
             End,
-            Child, HGroup,
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_AUTOTRANSLATEIN, GetStr(MSG_CO_AutoTranslateIn)),
-               Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, GetStr(MSG_CO_MultiReadWin)),
-            End,
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_AUTOTRANSLATEIN, GetStr(MSG_CO_AutoTranslateIn)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, GetStr(MSG_CO_MultiReadWin)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_MAILPREVIEW, GetStr(MSG_CO_SHOWMAILPREVIEW)),
          End,
          Child, HVSpace,
       End))
    {
       set(data->GUI.ST_HEADERS, MUIA_Disabled, TRUE);
-      SetHelp(data->GUI.CY_HEADER    ,MSG_HELP_CO_CY_HEADER    );
-      SetHelp(data->GUI.ST_HEADERS   ,MSG_HELP_CO_ST_HEADERS   );
-      SetHelp(data->GUI.CY_SENDERINFO,MSG_HELP_CO_CY_SENDERINFO);
-      SetHelp(data->GUI.ST_INTRANS   ,MSG_HELP_CO_ST_INTRANS   );
-      SetHelp(data->GUI.CA_COLTEXT   ,MSG_HELP_CO_CA_COLTEXT   );
-      SetHelp(data->GUI.CA_COL1QUOT  ,MSG_HELP_CO_CA_COL1QUOT  );
-      SetHelp(data->GUI.CA_COL2QUOT  ,MSG_HELP_CO_CA_COL2QUOT  );
-      SetHelp(data->GUI.CA_COL3QUOT  ,MSG_HELP_CO_CA_COL3QUOT  );
-      SetHelp(data->GUI.CA_COL4QUOT  ,MSG_HELP_CO_CA_COL4QUOT  );
-      SetHelp(data->GUI.CA_COLURL    ,MSG_HELP_CO_CA_COLURL    );
-      SetHelp(data->GUI.CH_ALLTEXTS  ,MSG_HELP_CO_CH_ALLTEXTS  );
+      SetHelp(data->GUI.CY_HEADER,          MSG_HELP_CO_CY_HEADER);
+      SetHelp(data->GUI.ST_HEADERS,         MSG_HELP_CO_ST_HEADERS);
+      SetHelp(data->GUI.CY_SENDERINFO,      MSG_HELP_CO_CY_SENDERINFO);
+      SetHelp(data->GUI.ST_INTRANS,         MSG_HELP_CO_ST_INTRANS);
+      SetHelp(data->GUI.CA_COLTEXT,         MSG_HELP_CO_CA_COLTEXT);
+      SetHelp(data->GUI.CA_COL1QUOT,        MSG_HELP_CO_CA_COL1QUOT);
+      SetHelp(data->GUI.CA_COL2QUOT,        MSG_HELP_CO_CA_COL2QUOT);
+      SetHelp(data->GUI.CA_COL3QUOT,        MSG_HELP_CO_CA_COL3QUOT);
+      SetHelp(data->GUI.CA_COL4QUOT,        MSG_HELP_CO_CA_COL4QUOT);
+      SetHelp(data->GUI.CA_COLURL,          MSG_HELP_CO_CA_COLURL);
+      SetHelp(data->GUI.CH_ALLTEXTS,        MSG_HELP_CO_CH_ALLTEXTS);
       SetHelp(data->GUI.CH_AUTOTRANSLATEIN, MSG_HELP_CO_CH_AUTOTRANSLATEIN);
-      SetHelp(data->GUI.CH_MULTIWIN  ,MSG_HELP_CO_CH_MULTIWIN  );
-      SetHelp(data->GUI.CY_SIGSEPLINE,MSG_HELP_CO_CY_SIGSEPLINE);
-      SetHelp(data->GUI.CH_FIXFEDIT  ,MSG_HELP_CO_CH_FIXFEDIT  );
-      SetHelp(data->GUI.CH_WRAPHEAD  ,MSG_HELP_CO_CH_WRAPHEAD  );
-			SetHelp(data->GUI.CH_TEXTSTYLES,MSG_HELP_CO_CH_TEXTSTYLES);
+      SetHelp(data->GUI.CH_MULTIWIN,        MSG_HELP_CO_CH_MULTIWIN);
+      SetHelp(data->GUI.CH_MAILPREVIEW,     MSG_HELP_CO_CH_MAILPREVIEW);
+      SetHelp(data->GUI.CY_SIGSEPLINE,      MSG_HELP_CO_CY_SIGSEPLINE);
+      SetHelp(data->GUI.CH_FIXFEDIT,        MSG_HELP_CO_CH_FIXFEDIT);
+      SetHelp(data->GUI.CH_WRAPHEAD,        MSG_HELP_CO_CH_WRAPHEAD);
+      SetHelp(data->GUI.CH_TEXTSTYLES,      MSG_HELP_CO_CH_TEXTSTYLES);
+
       DoMethod(data->GUI.CH_AUTOTRANSLATEIN, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.ST_INTRANS, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,0             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,1             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,FALSE);

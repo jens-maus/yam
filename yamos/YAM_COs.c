@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -50,22 +50,6 @@
  Module: Configuration - Basic Get/Put routines
 ***************************************************************************/
 
-/// Bool2Txt
-//  Converts boolean value to text
-const char *Bool2Txt(BOOL bool)
-{
-   return bool ? "Y" : "N";
-}
-
-///
-/// Txt2Bool
-//  Converts Y/N string to boolean value
-BOOL Txt2Bool(const char *txt)
-{
-   return (BOOL)(toupper((int)*txt) == 'Y' || (int)*txt == '1');
-}
-
-///
 /// MapTZ
 //
 static int MapTZ(int value, BOOL forward)
@@ -247,6 +231,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleWindows));
       fprintf(fh, "TranslationIn    = %s\n", co->TranslationIn);
       fprintf(fh, "AutoTranslationIn= %s\n", Bool2Txt(co->AutomaticTranslationIn));
+      fprintf(fh, "MailPreview      = %s\n", Bool2Txt(co->MailPreview));
 
       fprintf(fh, "\n[Write]\n");
       fprintf(fh, "ReplyTo          = %s\n", co->ReplyTo);
@@ -410,6 +395,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
 
       fprintf(fh, "SocketOptions    =%s\n", buf);
       fprintf(fh, "TRBufferSize     = %d\n", co->TRBufferSize);
+      fprintf(fh, "PreviewDelay     = %d\n", co->PreviewDelay);
 
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
@@ -601,6 +587,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "MultipleWindows"))co->MultipleWindows = Txt2Bool(value);
                else if (!stricmp(buffer, "TranslationIn"))  stccpy(co->TranslationIn, value, SIZE_PATHFILE);
                else if (!stricmp(buffer, "AutoTranslationIn"))co->AutomaticTranslationIn = Txt2Bool(value);
+               else if (!stricmp(buffer, "MailPreview"))    co->MailPreview = Txt2Bool(value);
 /*5*/          else if (!stricmp(buffer, "ReplyTo"))        stccpy(co->ReplyTo,  value, SIZE_ADDRESS);
                else if (!stricmp(buffer, "Organization"))   stccpy(co->Organization, value, SIZE_DEFAULT);
                else if (!stricmp(buffer, "ExtraHeaders"))   stccpy(co->ExtraHeaders, value, SIZE_LARGE);
@@ -781,6 +768,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   }
                }
                else if (!stricmp(buffer, "TRBufferSize")) co->TRBufferSize = atoi(value);
+               else if (!stricmp(buffer, "PreviewDelay")) co->PreviewDelay = atoi(value);
             }
          }
          fclose(fh);
@@ -851,6 +839,7 @@ void CO_GetConfig(void)
          CE->WrapHeader        = GetMUICheck  (gui->CH_WRAPHEAD);
          CE->UseTextstyles     = GetMUICheck  (gui->CH_TEXTSTYLES);
          CE->MultipleWindows   = GetMUICheck  (gui->CH_MULTIWIN);
+         CE->MailPreview       = GetMUICheck  (gui->CH_MAILPREVIEW);
          GetMUIString(CE->TranslationIn       ,gui->ST_INTRANS);
          CE->AutomaticTranslationIn = GetMUICheck(gui->CH_AUTOTRANSLATEIN);
          break;
@@ -1042,6 +1031,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_WRAPHEAD  ,CE->WrapHeader);
          setcheckmark(gui->CH_TEXTSTYLES,CE->UseTextstyles);
          setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
+         setcheckmark(gui->CH_MAILPREVIEW,CE->MailPreview);
          setstring   (gui->ST_INTRANS   ,CE->TranslationIn);
          setcheckmark(gui->CH_AUTOTRANSLATEIN, CE->AutomaticTranslationIn);
          break;

@@ -68,7 +68,6 @@
 #define MAXCTYPE        25
 #define MAXCPAGES       15
 #define MAXEA            4
-#define MAXRE            4
 #define MAXWR            2 /* BEWARE: Don't change this value - it's hardcoded many places! */
 
 #endif /* YAM_STRINGSIZES_H */

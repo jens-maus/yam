@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -28,8 +28,6 @@
 
 ***************************************************************************/
 
-const char *Bool2Txt(BOOL);
-BOOL Txt2Bool(const char *);
 void CO_GetConfig(void);
 BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders);
 void CO_SaveConfig(struct Config *co, char *fname);

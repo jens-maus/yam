@@ -180,6 +180,47 @@ static void FreeWorkbenchPath(BPTR path)
 }
 ///
 
+/*** Hooks ***/
+/// AttachDspFunc
+//  Attachment listview display hook
+HOOKPROTONH(AttachDspFunc, long, char **array, struct Part *entry)
+{
+   if (entry)
+   {
+      static char dispnu[SIZE_SMALL], dispsz[SIZE_SMALL];
+      array[0] = array[2] = "";
+
+      if(entry->Nr > PART_RAW)
+        sprintf(array[0] = dispnu, "%d", entry->Nr);
+
+      if(*entry->Name) array[1] = entry->Name;
+      else             array[1] = DescribeCT(entry->ContentType);
+
+      if(entry->Size > 0)
+      {
+        array[2] = dispsz;
+
+        if(entry->Decoded)
+          FormatSize(entry->Size, dispsz);
+        else
+        {
+          dispsz[0] = '~';
+          FormatSize(entry->Size, &dispsz[1]);
+        }
+      }
+   }
+   else
+   {
+      array[0] = GetStr(MSG_ATTACH_NO);
+      array[1] = GetStr(MSG_ATTACH_PART);
+      array[2] = GetStr(MSG_Size);
+   }
+
+   return 0;
+}
+MakeStaticHook(AttachDspHook, AttachDspFunc);
+///
+
 /*** Requesters ***/
 /// YAMMUIRequest
 // Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
@@ -533,7 +574,7 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
 ///
 /// AttachRequest
 //  Allows user to select a message part (attachment) from a list
-struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext, int winnum, int mode, APTR parent)
+struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext, int mode, struct ReadMailData *rmData)
 {
   struct Part *retpart = (struct Part *)-1, *part;
   APTR bt_okay, bt_cancel, wi_ar, lv_attach;
@@ -541,7 +582,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
   // lets create the AttachSelection window now
   wi_ar = WindowObject,
     MUIA_Window_Title,      title ? title : "YAM",
-    MUIA_Window_RefWindow,  parent,
+    MUIA_Window_RefWindow,  rmData->readWindow,
     MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,    MUIV_Window_TopEdge_Centered,
 //    MUIA_Window_ID,         MAKE_ID('A','R','E','Q'), // we don`t supply a windowID or otherwise the upper three attributes don`t work.
@@ -554,7 +595,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
             MUIA_NList_Title,       TRUE,
             MUIA_NList_DoubleClick, TRUE,
             MUIA_NList_MultiSelect, isMultiReq(mode) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
-            MUIA_NList_DisplayHook, &RE_LV_AttachDspFuncHook,
+            MUIA_NList_DisplayHook, &AttachDspHook,
             MUIA_NList_Format,      "BAR,BAR,",
           End,
         End,
@@ -573,7 +614,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     static struct Part spart[2];
     spart[0].Nr = PART_ORIGINAL;
     strcpy(spart[0].Name, GetStr(MSG_RE_Original));
-    spart[0].Size = G->RE[winnum]->Mail.Size;
+    spart[0].Size = rmData->mail->Size;
     spart[0].Decoded = TRUE;
 
     DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Bottom);
@@ -589,7 +630,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     }
 
     // now we process the mail and pick every part out to the NListview
-    for(part = G->RE[winnum]->FirstPart->Next; part; part = part->Next)
+    for(part = rmData->firstPart->Next; part; part = part->Next)
     {
       if(!isPrintReq(mode) || part->Printable)
       {
@@ -3431,20 +3472,24 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
 //  Deletes temporary unpacked file
 void FinishUnpack(char *file)
 {
-   // we just delete if this is really related to a unpack file
-   if (strstr(file, ".unp"))
-   {
-      int i;
+  // we just delete if this is really related to a unpack file
+  if(strstr(file, ".unp"))
+  {
+    if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
+    {
+      // search through our ReadDataList
+      struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
 
-      // now we check if the file is still in use by a read window somewhere
-      for(i=0; i < MAXRE; i++)
+      for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
-        // if this file is still in use we cannot delete it.
-        if(G->RE[i] && strcmp(file, G->RE[i]->File) == 0) return;
+        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+        if(stricmp(file, rmData->readFile) == 0)
+          return;
       }
-
-      DeleteFile(file);
     }
+
+    DeleteFile(file);
+  }
 }
 ///
 
@@ -3813,13 +3858,14 @@ Object *MakeMenuitem(const UBYTE *str, ULONG ud)
 ///
 /// SetupToolbar
 //  Initializes a single button in a MUI toolbar object
-void SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, UWORD flags)
+void SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, ULONG flags)
 {
    tb->Type = label ? (*label ? TDT_BUTTON : TDT_SPACE) : TDT_END;
    tb->Flags = flags;
    tb->ToolText = tb->Type == TDT_BUTTON ? label : NULL;
    tb->HelpString = help;
-   tb->MutualExclude = 0; tb->Key = 0;
+   tb->MutualExclude = 0;
+   tb->Key = 0;
 }
 ///
 /// SetupMenu
@@ -3938,9 +3984,87 @@ MakeHook(DisposeModuleHook,DisposeModuleFunc);
 void LoadLayout(void)
 {
    char *ls;
+   char *endptr;
+
+   // Load the application configuration from the ENV: directory.
    DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
-   if (!*(ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents))) ls = "35 100 25 100 30 100";
-   sscanf(ls, "%ld %ld %ld %ld %ld %ld", &G->Weights[0], &G->Weights[1], &G->Weights[2], &G->Weights[3], &G->Weights[4], &G->Weights[5]);
+
+   // we encode the different weight factors which are embeeded in a dummy string
+   // gadgets:
+   //
+   // 0: Horizontal weight of left foldertree in main window.
+   // 1: Horizontal weight of right maillistview in main window.
+   // 2: Vertical weight of top headerlistview in read window
+   // 3: Vertical weight of bottom texteditor field in read window
+   // 4: Horizontal weight of listview group in the glossary window
+   // 5: Horizontal weight of text group in the glossary window
+   // 6: Vertical weight of top right maillistview group in main window.
+   // 7: Vertical weight of bottom right mail preview object in the main window.
+   // 8: Vertical weight of top object (headerlist) of the mail preview
+   // 9: Vertical weight of bottom object (texteditor) of the mail preview
+
+   if(!*(ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents)))
+     ls = "30 100 25 100 30 100 25 100 5 100";
+
+   // lets get the numbers for each weight factor out of the contents
+   // of the fake string gadget
+   G->Weights[0] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[0] = 30;
+
+   ls = endptr;
+   G->Weights[1] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[1] = 100;
+
+   ls = endptr;
+   G->Weights[2] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[2] = 25;
+
+   ls = endptr;
+   G->Weights[3] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[3] = 100;
+
+   ls = endptr;
+   G->Weights[4] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[4] = 30;
+
+   ls = endptr;
+   G->Weights[5] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[5] = 100;
+
+   ls = endptr;
+   G->Weights[6] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[6] = 25;
+
+   ls = endptr;
+   G->Weights[7] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[7] = 100;
+
+   ls = endptr;
+   G->Weights[8] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[8] = 5;
+
+   ls = endptr;
+   G->Weights[9] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[9] = 100;
+
+   // lets set the weight factors to the corresponding GUI elements now
+   // if they exist
+   set(G->MA->GUI.LV_FOLDERS,     MUIA_HorizWeight,                G->Weights[0]);
+   set(G->MA->GUI.GR_MAILVIEW,    MUIA_HorizWeight,                G->Weights[1]);
+   set(G->MA->GUI.LV_MAILS,       MUIA_VertWeight,                 G->Weights[6]);
+   set(G->MA->GUI.MN_MAILPREVIEW, MUIA_VertWeight,                 G->Weights[7]);
+   set(G->MA->GUI.MN_MAILPREVIEW, MUIA_ReadMailGroup_HGVertWeight, G->Weights[8]);
+   set(G->MA->GUI.MN_MAILPREVIEW, MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
 }
 ///
 /// SaveLayout
@@ -3948,7 +4072,39 @@ void LoadLayout(void)
 void SaveLayout(BOOL permanent)
 {
    char buf[SIZE_DEFAULT];
-   sprintf(buf, "%ld %ld %ld %ld %ld %ld", G->Weights[0], G->Weights[1], G->Weights[2], G->Weights[3], G->Weights[4], G->Weights[5]);
+
+   // set the weights according to their GUI elements
+   G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS,      MUIA_HorizWeight);
+   G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW,     MUIA_HorizWeight);
+   G->Weights[6] = xget(G->MA->GUI.LV_MAILS,        MUIA_VertWeight);
+   G->Weights[7] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_VertWeight);
+   G->Weights[8] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_ReadMailGroup_HGVertWeight);
+   G->Weights[9] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_ReadMailGroup_TGVertWeight);
+
+   // we encode the different weight factors which are embeeded in a dummy string
+   // gadgets:
+   //
+   // 0: Horizontal weight of left foldertree in main window.
+   // 1: Horizontal weight of right maillistview in main window.
+   // 2: Vertical weight of top headerlistview in read window
+   // 3: Vertical weight of bottom texteditor field in read window
+   // 4: Horizontal weight of listview group in the glossary window
+   // 5: Horizontal weight of text group in the glossary window
+   // 6: Vertical weight of top right maillistview group in main window.
+   // 7: Vertical weight of bottom right mail preview object in the main window.
+   // 8: Vertical weight of top object (headerlist) of the mail preview
+   // 9: Vertical weight of bottom object (texteditor) of the mail preview
+   sprintf(buf, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
+                                                           G->Weights[1],
+                                                           G->Weights[2],
+                                                           G->Weights[3],
+                                                           G->Weights[4],
+                                                           G->Weights[5],
+                                                           G->Weights[6],
+                                                           G->Weights[7],
+                                                           G->Weights[8],
+                                                           G->Weights[9]);
+
    setstring(G->MA->GUI.ST_LAYOUT, buf);
    DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
 

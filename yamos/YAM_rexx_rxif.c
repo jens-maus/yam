@@ -562,8 +562,6 @@ void rx_mailmove( UNUSED struct RexxHost *host, struct rxd_mailmove **rxd, long 
 void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long action, UNUSED struct RexxMsg *rexxmsg )
 {
    struct rxd_mailread *rd = *rxd;
-   struct Mail *mail;
-   int winnr;
 
    switch( action )
    {
@@ -572,30 +570,78 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long 
          break;
          
       case RXIF_ACTION:
-         winnr = rd->arg.window ? *rd->arg.window : -1;
-         rd->res.window = &G->ActiveReadWin;
-         if (winnr < 0)
-         {
-            if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
-               if ((winnr = RE_Open(-1, TRUE)) >= 0)
-               {
-                  G->ActiveReadWin = winnr;
-                  if (!rd->arg.quiet) set(G->RE[winnr]->GUI.WI, MUIA_Window_Open, TRUE);
-                  RE_ReadMessage(winnr, mail);
-               }
-               else rd->rc = RETURN_ERROR;
-            else rd->rc = RETURN_WARN;
+      {
+        static int winNumber = -1;
+        struct Mail *mail;
+
+        rd->res.window = &winNumber;
+
+        if(rd->arg.window == NULL)
+        {
+          if((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
+          {
+            struct ReadMailData *rmData;
+
+            if((rmData = CreateReadWindow(TRUE)))
+            {
+              G->ActiveRexxRMData = rmData;
+
+              if(!rd->arg.quiet)
+                SafeOpenWindow(rmData->readWindow);
+
+              if(DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail) == FALSE)
+              {
+                G->ActiveRexxRMData = NULL;
+
+                // on any error we make sure to delete the read window
+                // immediatly again.
+                CleanupReadMailData(rmData);
+
+                rd->rc = RETURN_ERROR;
+              }
+              else
+                winNumber = xget(rmData->readWindow, MUIA_ReadWindow_Num);
+            }
+            else
+              rd->rc = RETURN_ERROR;
+          }
+          else
+            rd->rc = RETURN_WARN;
          }
          else
          {
-            if (winnr >= 0 && winnr <= 3 && G->RE[winnr])
-            {
-              G->ActiveReadWin = winnr;
-              if(!rd->arg.quiet) set(G->RE[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
-            }
-            else rd->rc = RETURN_ERROR;
+           // if a window number was specified with the command we have to search
+           // through our ReadDataList and find the window with this particular
+           // number
+           int winnr = *rd->arg.window;
+           struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+
+           for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
+           {
+             struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+             if(rmData->readWindow &&
+                (int)xget(rmData->readWindow, MUIA_ReadWindow_Num) == winnr)
+             {
+               G->ActiveRexxRMData = rmData;
+
+               // bring the window to the user's attention
+               if(!rd->arg.quiet)
+                 set(rmData->readWindow, MUIA_Window_Activate, TRUE);
+
+               winNumber = winnr;
+
+               break;
+             }
+           }
+
+           // check if we successfully found the window with that
+           // number or if we have to return an error message
+           if(curNode->mln_Succ == NULL)
+             rd->rc = RETURN_ERROR;
          }
-         break;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );
@@ -1357,8 +1403,7 @@ void rx_mailedit( UNUSED struct RexxHost *host, struct rxd_mailedit **rxd, long 
 void rx_readinfo( UNUSED struct RexxHost *host, struct rxd_readinfo **rxd, long action, UNUSED struct RexxMsg *rexxmsg )
 {
    struct rxd_readinfo *rd = *rxd;
-   struct Part *part;
-   int i, parts;
+
    switch( action )
    {
       case RXIF_INIT:
@@ -1366,14 +1411,22 @@ void rx_readinfo( UNUSED struct RexxHost *host, struct rxd_readinfo **rxd, long 
          break;
          
       case RXIF_ACTION:
-         if (G->RE[G->ActiveReadWin])
+      {
+         struct ReadMailData *rmData = G->ActiveRexxRMData;
+
+         if(rmData)
          {
-            for (parts = 0, part = G->RE[G->ActiveReadWin]->FirstPart->Next; part; parts++, part = part->Next);
+            struct Part *part;
+            int i, parts;
+
+            for(parts = 0, part = rmData->firstPart->Next; part; parts++, part = part->Next);
+
             rd->res.filename = calloc(parts+1, sizeof(char *));
             rd->res.filetype = calloc(parts+1, sizeof(char *));
             rd->res.filesize = calloc(parts+1, sizeof(long));
             rd->res.tempfile = calloc(parts+1, sizeof(char *));
-            for (i = 0, part = G->RE[G->ActiveReadWin]->FirstPart->Next; part; i++, part = part->Next)
+
+            for(i = 0, part = rmData->firstPart->Next; part; i++, part = part->Next)
             {
                rd->res.filename[i] = part->Name;
                rd->res.filetype[i] = part->ContentType;
@@ -1381,8 +1434,10 @@ void rx_readinfo( UNUSED struct RexxHost *host, struct rxd_readinfo **rxd, long 
                rd->res.tempfile[i] = part->Filename;
             }
          }
-         else rd->rc = RETURN_ERROR;
-         break;
+         else
+           rd->rc = RETURN_ERROR;
+      }
+      break;
       
       case RXIF_FREE:
          if (rd->res.filename) free(rd->res.filename);
@@ -1400,10 +1455,7 @@ void rx_readinfo( UNUSED struct RexxHost *host, struct rxd_readinfo **rxd, long 
 void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, long action, UNUSED struct RexxMsg *rexxmsg )
 {
    struct rxd_readsave *rd = *rxd;
-   struct Part *part;
-   struct TempFile *tf;
-   BOOL success = FALSE;
-   char file[SIZE_PATHFILE];
+
    switch( action )
    {
       case RXIF_INIT:
@@ -1411,28 +1463,61 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, long 
          break;
          
       case RXIF_ACTION:
-         if (G->RE[G->ActiveReadWin])
+      {
+         BOOL success = FALSE;
+         struct ReadMailData *rmData = G->ActiveRexxRMData;
+
+         if(rmData)
          {
-            if (rd->arg.part)
+            struct TempFile *tf;
+
+            if(rd->arg.part)
             {
-               for (part = G->RE[G->ActiveReadWin]->FirstPart->Next; part; part = part->Next)
-                  if (part->Nr == *(rd->arg.part))
-                     if (RE_DecodePart(part))
-                     {
-                        strmfp(file, C->DetachDir, part->Name);
-                        success = RE_Export((int)G->ActiveReadWin, part->Filename, rd->arg.filename ? rd->arg.filename : "", part->Name, part->Nr, TRUE, (BOOL)rd->arg.overwrite, part->ContentType);
-                     }
+               struct Part *part;
+
+               for(part = rmData->firstPart->Next; part; part = part->Next)
+               {
+                  if(part->Nr == *(rd->arg.part) &&
+                     RE_DecodePart(part))
+                  {
+                    char file[SIZE_PATHFILE];
+
+                    strmfp(file, C->DetachDir, part->Name);
+
+                    success = RE_Export(rmData,
+                                        part->Filename,
+                                        rd->arg.filename ? rd->arg.filename : "",
+                                        part->Name,
+                                        part->Nr,
+                                        TRUE,
+                                        (BOOL)rd->arg.overwrite,
+                                        part->ContentType);
+                  }
+               }
             }
-            else if ((tf = OpenTempFile("w")))
+            else if((tf = OpenTempFile("w")))
             {
-               RE_SaveDisplay((int)G->ActiveReadWin, tf->FP);
-               fclose(tf->FP); tf->FP = NULL;
-               success = RE_Export((int)G->ActiveReadWin, tf->Filename, rd->arg.filename ? rd->arg.filename : "", "", 0, TRUE, (BOOL)rd->arg.overwrite, (char*)ContType[CT_TX_PLAIN]);
-               CloseTempFile(tf);
+              DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_SaveDisplay, tf->FP);
+
+              fclose(tf->FP);
+              tf->FP = NULL;
+
+              success = RE_Export(rmData,
+                                  tf->Filename,
+                                  rd->arg.filename ? rd->arg.filename : "",
+                                  "",
+                                  0,
+                                  TRUE,
+                                  (BOOL)rd->arg.overwrite,
+                                  (char*)ContType[CT_TX_PLAIN]);
+              CloseTempFile(tf);
             }
          }
-         if (!success) rd->rc = RETURN_ERROR;
-         break;
+
+         if(!success)
+           rd->rc = RETURN_ERROR;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );
@@ -1446,9 +1531,7 @@ void rx_readsave( UNUSED struct RexxHost *host, struct rxd_readsave **rxd, long 
 void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, long action, UNUSED struct RexxMsg *rexxmsg )
 {
    struct rxd_readprint *rd = *rxd;
-   struct Part *part;
-   FILE *prt;
-   BOOL success = FALSE;
+
    switch( action )
    {
       case RXIF_INIT:
@@ -1456,24 +1539,46 @@ void rx_readprint( UNUSED struct RexxHost *host, struct rxd_readprint **rxd, lon
          break;
          
       case RXIF_ACTION:
-         if (C->PrinterCheck) if (!CheckPrinter()) { rd->rc = RETURN_ERROR; break; }
-         if (G->RE[G->ActiveReadWin])
+      {
+         struct ReadMailData *rmData = G->ActiveRexxRMData;
+         BOOL success = FALSE;
+
+         if(C->PrinterCheck && !CheckPrinter())
          {
-            if (rd->arg.part)
+           rd->rc = RETURN_ERROR;
+           break;
+         }
+
+         if(rmData)
+         {
+            FILE *prt;
+
+            if(rd->arg.part)
             {
-               for (part = G->RE[G->ActiveReadWin]->FirstPart->Next; part; part = part->Next)
-                  if (part->Nr == *(rd->arg.part))
-                     if (RE_DecodePart(part)) success = CopyFile("PRT:", 0, part->Filename, 0);
+               struct Part *part;
+
+               for(part = rmData->firstPart->Next; part; part = part->Next)
+               {
+                  if(part->Nr == *(rd->arg.part) &&
+                     RE_DecodePart(part))
+                  {
+                    success = CopyFile("PRT:", 0, part->Filename, 0);
+                  }
+               }
             }
-            else if ((prt = fopen("PRT:","w")))
+            else if((prt = fopen("PRT:", "w")))
             {
-               RE_SaveDisplay((int)G->ActiveReadWin, prt);
+               DoMethod(rmData->readMailGroup, MUIM_ReadMailGroup_SaveDisplay, prt);
+
                fclose(prt);
                success = TRUE;
             }
          }
-         if (!success) rd->rc = RETURN_ERROR;
-         break;
+
+         if(!success)
+           rd->rc = RETURN_ERROR;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );
@@ -1770,6 +1875,7 @@ void rx_listselect( UNUSED struct RexxHost *host, struct rxd_listselect **rxd, l
 void rx_readclose( UNUSED struct RexxHost *host, struct rxd_readclose **rxd, long action, UNUSED struct RexxMsg *rexxmsg )
 {
    struct rxd_readclose *rd = *rxd;
+
    switch( action )
    {
       case RXIF_INIT:
@@ -1777,9 +1883,15 @@ void rx_readclose( UNUSED struct RexxHost *host, struct rxd_readclose **rxd, lon
          break;
          
       case RXIF_ACTION:
-         if (G->RE[G->ActiveReadWin]) DoMethod(G->App, MUIM_CallHook, &RE_CloseHook, G->ActiveReadWin);
-         else rd->rc = RETURN_ERROR;
-         break;
+      {
+         struct ReadMailData *rmData = G->ActiveRexxRMData;
+
+         if(rmData && rmData->readWindow)
+           set(rmData->readWindow, MUIA_Window_Open, FALSE);
+         else
+           rd->rc = RETURN_ERROR;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );

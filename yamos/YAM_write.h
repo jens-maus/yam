@@ -80,10 +80,10 @@ struct WR_ClassData  /* write window */
 
    struct Mail *     Mail;
    struct Mail **    MList;
+   Object *          readWindow; // ptr to read window the editor was invoked from, or NULL
 
    int               Mode;
    int               OldSecurity;
-   int               ReadwinNum; /* winnum of the read window the editor was invoked from, or -1 */
 
    BOOL              Bounce;
    BOOL              AS_Done;
@@ -178,7 +178,7 @@ char *WR_AutoSaveFile(int winnr);
 void  WR_Cleanup(int winnum);
 void  WR_NewMail(enum WriteMode mode, int winnum);
 int   WR_Open(int winnum, BOOL bounce);
-void  WR_SetupOldMail(int winnum);
+void  WR_SetupOldMail(int winnum, struct ReadMailData *rmData);
 BOOL  WriteOutMessage(struct Compose *comp);
 
 #endif /* YAM_WRITE_H */

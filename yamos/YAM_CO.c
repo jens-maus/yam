@@ -756,7 +756,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->Color3rdLevel.buf, "m3");
       strcpy(co->Color4thLevel.buf, "m1");
       strcpy(co->ColorURL.buf, "p6");
-      co->DisplayAllTexts = co->FixedFontEdit = co->UseTextstyles = TRUE;
+      co->DisplayAllTexts = co->FixedFontEdit = co->UseTextstyles = co->MailPreview = TRUE;
       co->AutomaticTranslationIn = co->WrapHeader = co->MultipleWindows = FALSE;
       co->SigSepLine = 2;
       *co->TranslationIn = 0;
@@ -895,7 +895,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->ConfirmOnQuit = FALSE;
       co->HideGUIElements = 0;
       strcpy(co->LocalCharset, "iso-8859-1");
-      co->PrintMethod = PRINTMETHOD_DUMPRAW;
+      co->PrintMethod = PRINTMETHOD_RAW;
       co->StackSize = 40000;
       co->AutoColumnResize = TRUE;
       co->SocketOptions.SendBuffer  = -1;
@@ -908,6 +908,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->SocketOptions.NoDelay     = FALSE;
       co->SocketOptions.LowDelay    = FALSE;
       co->TRBufferSize = 8192;
+      co->PreviewDelay = 100; // 100ms delay by default
    }
 }
 
@@ -955,8 +956,10 @@ void CO_Validate(struct Config *co, BOOL update)
    if(G->CO_DST) co->DaylightSaving = G->CO_DST==2;
 
    // lets generate the TimeZoneStr string now
-   if(co->TimeZone >= 0) sprintf(co->TimeZoneStr, "+%02d%02d", (co->TimeZone + (co->DaylightSaving ? 60 : 0))/60, co->TimeZone%60);
-   else                  sprintf(co->TimeZoneStr, "-%02d%02d", -(co->TimeZone + (co->DaylightSaving ? 60 : 0))/60, -(co->TimeZone%60));
+   if(co->TimeZone >= 0)
+     sprintf(co->TimeZoneStr, "+%02d%02d", (co->TimeZone + (co->DaylightSaving ? 60 : 0))/60, co->TimeZone%60);
+   else
+     sprintf(co->TimeZoneStr, "-%02d%02d", -(co->TimeZone + (co->DaylightSaving ? 60 : 0))/60, -(co->TimeZone%60));
 
    G->PGPVersion = CO_DetectPGP(co);
 
@@ -972,18 +975,22 @@ void CO_Validate(struct Config *co, BOOL update)
       strmfp(G->WR_Filename[i], co->TempDir, filename);
    }
 
-   LoadTranslationTable(&(G->TTin), co->AutomaticTranslationIn?NULL:co->TranslationIn);
+   LoadTranslationTable(&(G->TTin), co->AutomaticTranslationIn ? NULL : co->TranslationIn);
    G->CO_AutoTranslateIn = co->AutomaticTranslationIn;
    LoadTranslationTable(&(G->TTout), co->TranslationOut);
    G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
-   if(G->CO_AutoTranslateIn) LoadParsers();
-   if (update && G->CO)
+
+   if(G->CO_AutoTranslateIn)
+     LoadParsers();
+
+   if(update && G->CO)
    {
       switch (G->CO->VisiblePage)
       {
          case 0:
             setstring(G->CO->GUI.ST_POPHOST0, co->P3[0]->Server);
             break;
+
          case 1:
             setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
             set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, co->SMTP_Port);
@@ -993,16 +1000,24 @@ void CO_Validate(struct Config *co, BOOL update)
             DoMethod(G->CO->GUI.LV_POP3, MUIM_List_Redraw, MUIV_List_Redraw_All);
             break;
       }
-      if (G->CO->Visited[1] || G->CO->Visited[13] || G->CO->UpdateAll) MA_SetupDynamicMenus();
+
+      if(G->CO->Visited[1] || G->CO->Visited[13] || G->CO->UpdateAll)
+        MA_SetupDynamicMenus();
 
       if(G->CO->Visited[2] || G->CO->UpdateAll)
       {
         // requeue the timerequest for the CheckMailDelay
-        TC_Stop(TIO_CHECKMAIL);
-        TC_Start(TIO_CHECKMAIL, co->CheckMailDelay*60);
+        TC_Start(TIO_CHECKMAIL, co->CheckMailDelay*60, 0);
       }
 
-      if (G->CO->Visited[8] || G->CO->UpdateAll)
+      if(G->CO->Visited[4] || G->CO->UpdateAll)
+      {
+         // we signal the mainwindow that it may check wheter to include the
+         // mail preview part or not
+         MA_SetupMailPreview();
+      }
+
+      if(G->CO->Visited[8] || G->CO->UpdateAll)
       {
          // First we set the NL_MAILS and NL_FOLDER Quiet
          set(G->MA->GUI.NL_MAILS,   MUIA_NList_Quiet,     TRUE);
@@ -1027,8 +1042,15 @@ void CO_Validate(struct Config *co, BOOL update)
          set(G->MA->GUI.NL_MAILS,   MUIA_NList_Quiet,     FALSE);
          set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
       }
-      if (G->CO->Visited[12] || G->CO->UpdateAll) AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
-      if (G->CO->Visited[14] || G->CO->UpdateAll) { SetupAppIcons(); DisplayStatistics((struct Folder *)-1, TRUE); }
+
+      if(G->CO->Visited[12] || G->CO->UpdateAll)
+         AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
+
+      if(G->CO->Visited[14] || G->CO->UpdateAll)
+      {
+        SetupAppIcons();
+        DisplayStatistics((struct Folder *)-1, TRUE);
+      }
    }
 }
 

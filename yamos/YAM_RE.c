@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -62,42 +62,13 @@
 #include "YAM_utilities.h"
 #include "classes/Classes.h"
 
-// PGP flags & macros
-#define PGPE_MIME     (1<<0)
-#define PGPE_OLD      (1<<1)
-#define hasPGPEMimeFlag(v)     (isFlagSet((v)->PGPEncrypted, PGPE_MIME))
-#define hasPGPEOldFlag(v)      (isFlagSet((v)->PGPEncrypted, PGPE_OLD))
-
-#define PGPS_MIME     (1<<0)
-#define PGPS_OLD      (1<<1)
-#define PGPS_BADSIG   (1<<2)
-#define PGPS_ADDRESS  (1<<3)
-#define PGPS_CHECKED  (1<<4)
-#define hasPGPSMimeFlag(v)     (isFlagSet((v)->PGPSigned, PGPS_MIME))
-#define hasPGPSOldFlag(v)      (isFlagSet((v)->PGPSigned, PGPS_OLD))
-#define hasPGPSBadSigFlag(v)   (isFlagSet((v)->PGPSigned, PGPS_BADSIG))
-#define hasPGPSAddressFlag(v)  (isFlagSet((v)->PGPSigned, PGPS_ADDRESS))
-#define hasPGPSCheckedFlag(v)  (isFlagSet((v)->PGPSigned, PGPS_CHECKED))
-
-/* local protos */
-static BOOL RE_LoadMessage(int winnum, int parsemode);
-static struct RE_ClassData *RE_New(int winnum, BOOL real);
-static void RE_DisplayMessage(int winnum, BOOL update);
-static void RE_PrintFile(char*,struct Part*);
-static void RE_PrintLaTeX(char*,struct Part*);
-static void RE_GetSigFromLog(int winnum, char *decrFor);
-#if 0
-static char **Init_ISO8859_to_LaTeX_Tab(char*);
-static char *ISO8859_to_LaTeX(char*);
-#endif
-
 /***************************************************************************
  Module: Read
 ***************************************************************************/
 
 /// RE_GetThread
 //  Function that find the next/prev message in a thread and returns a pointer to it
-static struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, int winnum)
+struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL askLoadAllFolder, Object *readWindow)
 {
    struct Folder **flist;
    struct Mail *mail = NULL;
@@ -151,8 +122,11 @@ static struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL ask
               {
                 if(askLoadAllFolder)
                 {
-                  char *str = GetStr(MSG_RE_FollowThreadReq); // don`t remove, this is a SAS/C bug workaround !
-                  if(MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), str))
+                  // if we are going to ask for loading all folders we do it now
+                  if(MUI_Request(G->App, readWindow, 0,
+                                 GetStr(MSG_MA_ConfirmReq),
+                                 GetStr(MSG_YesNoReq),
+                                 GetStr(MSG_RE_FollowThreadReq)))
                   {
                     autoloadindex = 1;
                   }
@@ -197,193 +171,6 @@ static struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL ask
    return mail;
 }
 
-///
-/// RE_Follow
-//  Follows a thread in either direction
-HOOKPROTONHNO(RE_Follow, void, int *arg)
-{
-   int direction = arg[0], winnum = arg[1];
-   struct Mail *fmail;
-
-   // depending on the direction we get the Question or Answer to the current Message
-   fmail = RE_GetThread(&G->RE[winnum]->Mail, direction <= 0 ? FALSE : TRUE, TRUE, winnum);
-
-   if(fmail)
-   {
-      struct MailInfo *mi;
-
-      // we have to make sure that the folder where the message will be showed
-      // from is active and ready to display the mail
-      MA_ChangeFolder(fmail->Folder, TRUE);
-
-      mi = GetMailInfo(fmail);
-      if(mi->Display) set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
-      RE_ReadMessage(winnum, fmail);
-   }
-   else DisplayBeep(0);
-}
-MakeStaticHook(RE_FollowHook, RE_Follow);
-///
-/// RE_SwitchMessage
-//  Goes to next or previous (new) message in list
-static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
-{
-   struct Mail *mail = G->RE[winnum]->MailPtr;
-   struct MailInfo *mi;
-   int act;
-   struct Folder *CurrentFolder = mail->Folder;
-
-   G->RE[winnum]->LastDirection = direction;
-
-   // we have to make sure that the folder the next/prev mail will
-   // be showed from is active, that`s why we call ChangeFolder with TRUE.
-   MA_ChangeFolder(CurrentFolder, TRUE);
-
-   // after changing the folder we have to get the MailInfo (Position etc.)
-   mi = GetMailInfo(mail);
-   act = mi->Pos;
-
-   for (act += direction; act >= 0; act += direction)
-   {
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, act, &mail);
-      if(!mail)
-        break;
-
-      if(!onlynew ||
-        (hasStatusNew(mail) || !hasStatusRead(mail)))
-      {
-         set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, act);
-         RE_ReadMessage(winnum, mail);
-         return;
-      }
-   }
-
-   // check if there are following/previous folders with unread
-   // mails and change to there if the user wants
-   if (onlynew)
-   {
-      if (C->AskJumpUnread)
-      {
-         struct Folder **flist;
-
-         if ((flist = FO_CreateList()))
-         {
-            int i;
-
-            // look for the current folder in the array
-            for (i = 1; i <= (int)*flist; i++)
-            {
-               if (flist[i] == CurrentFolder)
-                  break;
-            }
-
-            // look for first folder with at least one unread mail
-            // and if found read that mail
-            for (i += direction; i <= (int)*flist && i >= 1; i += direction)
-            {
-               if (flist[i]->Type != FT_GROUP && flist[i]->Unread > 0)
-               {
-                  if (!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_RE_MoveNextFolderReq), flist[i]->Name))
-                     break;
-
-                  MA_ChangeFolder(flist[i], TRUE);
-                  DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-                  if (!mail) break;
-                  RE_ReadMessage(winnum, mail);
-                  break;
-               }
-            }
-
-            // beep if no folder with unread mails was found
-            if (i > (int)*flist || i < 1)
-               DisplayBeep(NULL);
-
-            free(flist);
-         }
-      }
-      else DisplayBeep(NULL);
-   }
-   else DoMethod(G->App, MUIM_CallHook, &RE_CloseHook, winnum);
-}
-///
-/// RE_PrevNext
-//  Goes to next or previous (new) message in list
-HOOKPROTONHNO(RE_PrevNext, void, int *arg)
-{
-   BOOL onlynew = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
-   RE_SwitchMessage(arg[2], arg[0], onlynew);
-}
-MakeStaticHook(RE_PrevNextHook, RE_PrevNext);
-///
-/// RE_UpdateDisplay
-//  Updates message display after deleting/moving the current message
-static void RE_UpdateDisplay(int pos, int winnum)
-{
-   struct Mail *mail = NULL;
-
-   if (G->RE[winnum]->LastDirection == -1) --pos;
-   if (pos >= 0)
-   {
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, pos, &mail);
-      if (mail)
-      {
-         set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, pos);
-         RE_ReadMessage(winnum, mail);
-         return;
-      }
-   }
-   DoMethod(G->App, MUIM_CallHook, &RE_CloseHook, winnum);
-}
-///
-/// RE_UpdateStatusGroup
-//  Updates status images (right side of the toolbar)
-static void RE_UpdateStatusGroup(int winnum)
-{
-   struct RE_ClassData *re = G->RE[winnum];
-   struct RE_GUIData *gui = &re->GUI;
-   struct Mail *mail = re->MailPtr;
-   int activatepage = 0;
-
-   #warning "old statushandling here. replace ASAP!"
-   if(hasStatusError(mail))
-     activatepage = 6; // Error status
-   else if(hasStatusQueued(mail))
-     activatepage = 5; // Queued (WaitForSend) status
-   else if(hasStatusHold(mail))
-     activatepage = 7; // Hold status
-   else if(hasStatusSent(mail))
-     activatepage = 8; // Sent status
-   else if(hasStatusReplied(mail))
-     activatepage = 4; // Replied status
-   else if(hasStatusForwarded(mail))
-     activatepage = 3; // Forwarded status
-   else if(!hasStatusRead(mail))
-   {
-     if(hasStatusNew(mail))
-       activatepage = 9; // New status
-     else
-       activatepage = 1; // Unread status
-   }
-   else if(!hasStatusNew(mail))
-     activatepage = 2; // Old status
-
-   // set the correct page for the mail Status group
-   set(gui->GR_STATUS[0], MUIA_Group_ActivePage, activatepage);
-
-   // Now we check for the other statuses of the mail
-   if(isCryptedMail(mail))        activatepage = 1;
-   else if(isSignedMail(mail))    activatepage = 2;
-   else if(isReportMail(mail))    activatepage = 3;
-   else if(isMultiPartMail(mail)) activatepage = 4;
-   else activatepage = 0;
-   set(gui->GR_STATUS[1], MUIA_Group_ActivePage, activatepage);
-
-   // set the correct page for the Importance flag
-   set(gui->GR_STATUS[2], MUIA_Group_ActivePage, getImportanceLevel(mail) == IMP_HIGH ? 1 : 0);
-
-   // set the correct page for the Marked flag
-   set(gui->GR_STATUS[3], MUIA_Group_ActivePage, hasStatusMarked(mail) ? 1 : 0);
-}
 ///
 /// RE_SendMDN
 //  Creates a message disposition notification
@@ -586,189 +373,6 @@ BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
    return ignoreall;
 }
 ///
-/// RE_CheckSignatureFunc
-//  Checks validity of a PGP signed message
-HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
-{
-   struct RE_ClassData *re = G->RE[arg[1]];
-
-   // Don't try to use PGP if it's not installed
-   if (G->PGPVersion == 0) return;
-
-   if((hasPGPSOldFlag(re) || hasPGPSMimeFlag(re)) && !hasPGPSCheckedFlag(re))
-   {
-      int error;
-      char fullfile[SIZE_PATHFILE], options[SIZE_LARGE];
-      if (!StartUnpack(GetMailFile(NULL, NULL, re->MailPtr), fullfile, re->MailPtr->Folder)) return;
-      sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s -o %s +bat +f +lang=en", fullfile, "T:PGP.tmp");
-      error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, KEEPLOG);
-      FinishUnpack(fullfile);
-      DeleteFile("T:PGP.tmp");
-      if(error > 0) SET_FLAG(re->PGPSigned, PGPS_BADSIG);
-      if(error >= 0) RE_GetSigFromLog(arg[1], NULL);
-      else return;
-   }
-
-   if(hasPGPSBadSigFlag(re) || arg[0])
-   {
-      char buffer[SIZE_LARGE];
-      strcpy(buffer, hasPGPSBadSigFlag(re) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig));
-      if(hasPGPSAddressFlag(re)) { strcat(buffer, GetStr(MSG_RE_SigFrom)); strcat(buffer, re->Signature); }
-      MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);
-   }
-}
-MakeStaticHook(RE_CheckSignatureHook, RE_CheckSignatureFunc);
-///
-/// RE_ReadMessage
-//  Displays a message in the read window
-void RE_ReadMessage(int winnum, struct Mail *mail)
-{
-   struct MailInfo *mi = GetMailInfo(mail);
-   struct RE_ClassData *re = G->RE[winnum];
-   struct RE_GUIData *gui;
-   struct Folder *folder = mail->Folder;
-   BOOL real = !isVirtualMail(mail);
-   BOOL out = real ? isOutgoingFolder(folder) : FALSE;
-   int titleLen;
-
-   // Check if the window is still open,
-   // needed for the "update readwindow after writewindow close" feature
-   if(re == NULL)
-      return;
-
-   // lets clean the previous mail out of the window if exists to make the
-   // window ready for the new message
-   RE_CleanupMessage(winnum);
-
-   gui = &re->GUI;
-   re->Mail = *mail;
-   re->MailPtr = mail;
-   re->PGPKey = FALSE;
-   re->PGPSigned = re->PGPEncrypted = 0;
-
-   // set the window title to something usefull
-   titleLen = sprintf(re->WTitle, "%s %s: ", out ? GetStr(MSG_To) : GetStr(MSG_From), out ? AddrName(mail->To) : AddrName(mail->From));
-   if(strlen(mail->Subject)+titleLen > SIZE_DEFAULT)
-   {
-     if(titleLen < SIZE_DEFAULT-3)
-     {
-       strncat(re->WTitle, mail->Subject, SIZE_DEFAULT-titleLen-3);
-       strcat(re->WTitle, "..."); // signals that the string was cut.
-     }
-     else
-       strcat(&re->WTitle[SIZE_DEFAULT-4], "...");
-   }
-   else strcat(re->WTitle, mail->Subject);
-   set(gui->WI, MUIA_Window_Title, re->WTitle);
-
-   set(gui->MI_EDIT, MUIA_Menuitem_Enabled, out);
-   if (gui->TO_TOOLBAR)
-   {
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, real ? mi->Pos == 0 : TRUE);
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, real ? mi->Pos == folder->Total-1 : TRUE);
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 9, MUIV_Toolbar_Set_Ghosted, !real);
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set,10, MUIV_Toolbar_Set_Ghosted, !real);
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set,11, MUIV_Toolbar_Set_Ghosted, out);
-   }
-   if (real)
-   {
-      if (AllFolderLoaded() && gui->TO_TOOLBAR)
-      {
-         DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, !RE_GetThread(mail, FALSE, FALSE, -1));
-         DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, !RE_GetThread(mail, TRUE, FALSE, -1));
-      }
-   }
-   else if (gui->TO_TOOLBAR)
-   {
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, TRUE);
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, TRUE);
-   }
-
-   GetMailFile(G->RE[winnum]->File, folder, mail);
-
-   if(RE_LoadMessage(winnum, PM_ALL))
-   {
-      RE_DisplayMessage(winnum, FALSE);
-      set(gui->MI_EXTKEY, MUIA_Menuitem_Enabled, re->PGPKey);
-      set(gui->MI_CHKSIG, MUIA_Menuitem_Enabled, hasPGPSOldFlag(re) || hasPGPSMimeFlag(re));
-      set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && (hasPGPEMimeFlag(re) || hasPGPEOldFlag(re)));
-      RE_UpdateStatusGroup(winnum);
-      MA_StartMacro(MACRO_READ, itoa(winnum));
-
-      if(real &&
-         (hasStatusNew(mail) || !hasStatusRead(mail)))
-      {
-         setStatusToRead(mail); // set to OLD
-         DisplayStatistics(folder, TRUE);
-
-         if((hasPGPSOldFlag(re) || hasPGPSMimeFlag(re)) && !hasPGPSCheckedFlag(re))
-         {
-            DoMethod(G->App, MUIM_CallHook, &RE_CheckSignatureHook, FALSE, winnum);
-         }
-         RE_DoMDN(MDN_READ, mail, FALSE);
-      }
-   }
-   else
-   {
-      // check first if the mail file exists and if not we have to exit with an error
-      if(!FileExists(mail->MailFile))
-      {
-        ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
-      }
-
-      RE_CleanupMessage(winnum);
-      DisposeModulePush(&G->RE[winnum]);
-   }
-}
-///
-/// RE_SaveDisplay
-//  Saves current message as displayed
-void RE_SaveDisplay(int winnum, FILE *fh)
-{
-   char *ptr;
-
-   if (G->RE[winnum]->Header != HM_NOHEADER)
-   {
-      int i;
-      struct MUI_NList_GetEntryInfo res;
-
-      fputs("\033[3m", fh);
-      for (i=0;;i++)
-      {
-         res.pos = MUIV_NList_GetEntryInfo_Line;
-         res.line = i;
-         DoMethod(G->RE[winnum]->GUI.LV_HEAD, MUIM_NList_GetEntryInfo, &res);
-         if (!res.entry) break;
-
-         ptr = (char *)res.entry;
-         if (!strcmp(ptr, MUIX_I)) ptr += strlen(MUIX_I);
-         fputs(ptr, fh);
-         fputc('\n', fh);
-      }
-      fputs("\033[23m\n", fh);
-   }
-
-   for (ptr = (char *)DoMethod(G->RE[winnum]->GUI.TE_TEXT, MUIM_TextEditor_ExportText); *ptr; ptr++)
-   {
-      if (*ptr == '\033')
-      {
-         switch (*++ptr)
-         {
-            case 'u': fputs("\033[4m", fh); break;
-            case 'b': fputs("\033[1m", fh); break;
-            case 'i': fputs("\033[3m", fh); break;
-            case 'n': fputs("\033[0m", fh); break;
-            case 'h': break;
-            case '[': if (!strncmp(ptr, "[s:18]", 6))     { fputs("===========================================================", fh); }
-                      else if (!strncmp(ptr, "[s:2]", 5)) { fputs("-----------------------------------------------------------", fh); }
-            case 'p': while (*ptr != ']' && *ptr && *ptr != '\n') ptr++; break;
-         }
-      }
-      else fputc(*ptr, fh);
-   }
-}
-
-///
 /// RE_SuggestName
 //  Suggests a file name based on the message subject
 char *RE_SuggestName(struct Mail *mail)
@@ -797,406 +401,72 @@ char *RE_SuggestName(struct Mail *mail)
 ///
 /// RE_Export
 //  Saves message or attachments to disk
-BOOL RE_Export(int winnum, char *source, char *dest, char *name, int nr, BOOL force, BOOL overwrite, char *ctype)
+BOOL RE_Export(struct ReadMailData *rmData, char *source,
+               char *dest, char *name, int nr, BOOL force, BOOL overwrite, char *ctype)
 {
-   char buffer[SIZE_PATHFILE], buffer2[SIZE_FILE+SIZE_DEFAULT];
-   APTR win = winnum==4 ? G->MA->GUI.WI : G->RE[winnum]->GUI.WI;
-   struct Mail *mail = &G->RE[winnum]->Mail;
+  char buffer[SIZE_PATHFILE];
+  char buffer2[SIZE_FILE+SIZE_DEFAULT];
+  Object *win = rmData->readWindow ? rmData->readWindow : G->MA->GUI.WI;
+  struct Mail *mail = rmData->mail;
 
-   if (!*dest)
-   {
-      if (*name) strcpy(buffer2, name);
-      else if (nr) sprintf(buffer2, "%s-%d", G->RE[winnum]->Mail.MailFile, nr);
-      else strcpy(buffer2, RE_SuggestName(&(G->RE[winnum]->Mail)));
-      if (force) strmfp(dest = buffer, C->DetachDir, buffer2);
-      else if (ReqFile(ASL_DETACH, win, GetStr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, buffer2))
-         strmfp(dest = buffer, G->ASLReq[ASL_DETACH]->fr_Drawer, G->ASLReq[ASL_DETACH]->fr_File);
-      else return FALSE;
-   }
-   if (FileExists(dest) && !overwrite)
-   {
-      if (!MUI_Request(G->App, win, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_OkayCancelReq), GetStr(MSG_RE_Overwrite), FilePart(dest)))
-        return FALSE;
-   }
-   if (!CopyFile(dest, 0, source, 0))
-   {
-      ER_NewError(GetStr(MSG_ER_CantCreateFile), dest, NULL);
+  if(!*dest)
+  {
+    if(*name)
+      strcpy(buffer2, name);
+    else if (nr)
+      sprintf(buffer2, "%s-%d", mail->MailFile, nr);
+    else
+      strcpy(buffer2, RE_SuggestName(mail));
+
+    if(force)
+      strmfp(dest = buffer, C->DetachDir, buffer2);
+    else if(ReqFile(ASL_DETACH, win, GetStr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, buffer2))
+      strmfp(dest = buffer, G->ASLReq[ASL_DETACH]->fr_Drawer, G->ASLReq[ASL_DETACH]->fr_File);
+    else
       return FALSE;
-   }
-   SetComment(dest, BuildAddrName2(&mail->From));
-   if (!stricmp(ctype, ContType[CT_AP_AEXE])) SetProtection(dest, 0);
-   if (!stricmp(ctype, ContType[CT_AP_SCRIPT])) SetProtection(dest, FIBF_SCRIPT);
-   AppendLogVerbose(80, GetStr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder), "");
-   return TRUE;
+  }
+
+  if(FileExists(dest) && !overwrite)
+  {
+    if(!MUI_Request(G->App, win, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_OkayCancelReq), GetStr(MSG_RE_Overwrite), FilePart(dest)))
+      return FALSE;
+  }
+
+  if(!CopyFile(dest, 0, source, 0))
+  {
+    ER_NewError(GetStr(MSG_ER_CantCreateFile), dest, NULL);
+    return FALSE;
+  }
+  SetComment(dest, BuildAddrName2(&mail->From));
+
+  if(!stricmp(ctype, ContType[CT_AP_AEXE]))
+    SetProtection(dest, 0);
+
+  if(!stricmp(ctype, ContType[CT_AP_SCRIPT]))
+    SetProtection(dest, FIBF_SCRIPT);
+
+  AppendLogVerbose(80, GetStr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder), "");
+
+  return TRUE;
 }
-///
-/// RE_MoveFunc
-//  Moves the current message to another folder
-HOOKPROTONHNO(RE_MoveFunc, void, int *arg)
-{
-   int winnum = *arg;
-   struct Folder *srcfolder = G->RE[winnum]->Mail.Folder;
-   struct Mail *mail = G->RE[winnum]->MailPtr;
-   if (MailExists(mail, srcfolder))
-   {
-      int pos;
-      struct Folder *dstfolder = FolderRequest(GetStr(MSG_MA_MoveMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_MoveGad), GetStr(MSG_Cancel), srcfolder, G->RE[winnum]->GUI.WI);
-      if (dstfolder) if ((pos = SelectMessage(mail)) >= 0)
-      {
-         MA_MoveCopy(mail, srcfolder, dstfolder, FALSE);
-         RE_UpdateDisplay(pos, winnum);
-         AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)1, srcfolder->Name, dstfolder->Name, "");
-      }
-   }
-}
-MakeStaticHook(RE_MoveHook, RE_MoveFunc);
-///
-/// RE_CopyFunc
-//  Copies the current message to another folder
-HOOKPROTONHNO(RE_CopyFunc, void, int *arg)
-{
-   int winnum = *arg;
-   struct Folder *srcfolder = G->RE[winnum]->Mail.Folder;
-   struct Mail *mail = G->RE[winnum]->MailPtr;
-   if (MailExists(mail, srcfolder))
-   {
-      struct Folder *dstfolder = FolderRequest(GetStr(MSG_MA_CopyMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_CopyGad), GetStr(MSG_Cancel), NULL, G->RE[winnum]->GUI.WI);
-      if (dstfolder)
-      {
-         if (srcfolder)
-         {
-            MA_MoveCopy(mail, srcfolder, dstfolder, TRUE);
-            AppendLogNormal(24, GetStr(MSG_LOG_Copying), (void *)1, srcfolder->Name, dstfolder->Name, "");
-         }
-         else if(RE_Export(winnum, G->RE[winnum]->File, MA_NewMailFile(dstfolder, mail->MailFile), "", 0, FALSE, FALSE, (char*)ContType[CT_ME_EMAIL]))
-         {
-            APTR lv;
-            struct Mail *newmail = AddMailToList(mail, dstfolder);
-
-            if((lv = WhichLV(dstfolder)))
-              DoMethod(lv, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
-
-            setStatusToRead(newmail); // OLD status
-         }
-      }
-   }
-}
-MakeStaticHook(RE_CopyHook, RE_CopyFunc);
-///
-/// RE_DeleteFunc
-//  Deletes the current message
-HOOKPROTONHNO(RE_DeleteFunc, void, int *arg)
-{
-   BOOL delatonce = hasFlag(arg[0], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
-   int pos, winnum = arg[1];
-   struct Folder *folder = G->RE[winnum]->Mail.Folder, *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
-   struct Mail *mail = G->RE[winnum]->MailPtr;
-   if (MailExists(mail, folder)) if ((pos = SelectMessage(mail)) >= 0)
-   {
-      MA_DeleteSingle(G->RE[winnum]->MailPtr, delatonce, FALSE);
-      RE_UpdateDisplay(pos, winnum);
-      if (delatonce) AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)1, folder->Name, "", "");
-      else           AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)1, folder->Name, delfolder->Name, "");
-   }
-}
-MakeStaticHook(RE_DeleteHook, RE_DeleteFunc);
-///
-/// RE_PrintFunc
-//  Sends the current message or an attachment to the printer
-HOOKPROTONHNO(RE_PrintFunc, void, int *arg)
-{
-   int winnum = *arg;
-   struct Part *part;
-   struct TempFile *prttmp;
-
-   if ((part = AttachRequest(GetStr(MSG_RE_PrintMsg), GetStr(MSG_RE_SelectPrintPart), GetStr(MSG_RE_PrintGad), GetStr(MSG_Cancel), winnum, ATTREQ_PRINT|ATTREQ_MULTI, G->RE[winnum]->GUI.WI)))
-   {
-      if(C->PrinterCheck && !CheckPrinter())
-        return;
-
-      BusyText(GetStr(MSG_BusyDecPrinting), "");
-
-      for (; part; part = part->NextSelected)
-      {
-        switch (part->Nr)
-        {
-          case PART_ORIGINAL:
-          {
-            RE_PrintFile(G->RE[winnum]->File,part);
-          }
-          break;
-
-          case PART_ALLTEXT:
-          {
-            if ((prttmp = OpenTempFile("w")))
-            {
-              RE_SaveDisplay(winnum, prttmp->FP);
-              fclose(prttmp->FP);
-              prttmp->FP = NULL;
-              RE_PrintFile(prttmp->Filename,part);
-              CloseTempFile(prttmp);
-            }
-          }
-          break;
-
-          default:
-          {
-            RE_PrintFile(part->Filename,part);
-          }
-        }
-      }
-
-      BusyEnd();
-   }
-}
-MakeStaticHook(RE_PrintHook, RE_PrintFunc);
-
 ///
 /// RE_PrintFile
 //  Prints a file. Currently it is just dumped to PRT:
-//  To do for LaTeX printing:
-//  - remap characters in header to LaTeX notation
-//  - make header lines to print (and parts where to print headers) configurable
-static void RE_PrintFile(char *filename, struct Part *part)
+void RE_PrintFile(char *filename)
 {
    switch(C->PrintMethod)
    {
-      case PRINTMETHOD_DUMPRAW :
-         CopyFile("PRT:", 0, filename, 0);
-         break;
-      case PRINTMETHOD_LATEX :
-         RE_PrintLaTeX(filename,part);
-         break;
-      case PRINTMETHOD_POSTSCRIPT :
-         // fall through
+      case PRINTMETHOD_RAW :
+        // continue
+
       default:
-         MUI_Request(G->App, NULL, 0, "YAM Error", "OK",
-                     "Printing method #%ld is not implemented!\n"
-                     "Use 0 for raw printer dump, 1 for LaTeX",C->PrintMethod);
-         break;
+      {
+         CopyFile("PRT:", 0, filename, 0);
+      }
+      break;
    }
 }
 
-static void RE_PrintLaTeX(char *filename, struct Part *part)
-{
-  struct TempFile *texfile;
-
-  if((texfile = OpenTempFile("w")))
-  {
-    if(CopyFile(NULL,texfile->FP,"YAM:.texheader",NULL))
-    {
-      char *ts1,*ts2 = 0;
-
-      if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
-      {
-        if(part->Nr == PART_LETTER)
-        {
-          int i,j;
-          char Attrib[SIZE_DEFAULT];
-          char *p,*printcmd;
-          const char PrintScript[] = "YAM:Scripts/LaTeX-print";
-
-          for(i=0; i<Header.Used; i++)
-          {
-            p = Header.Data[i];
-            if(NULL != strchr(p,':'))
-            {
-              for(j=0; p[j] != ':' && j < (int)sizeof(Attrib); j++)
-                Attrib[j] = p[j];
-
-              Attrib[j++] = ':';
-              Attrib[j++] = '\0';
-              ts1 = StrBufCat(ts1,"\\NewLabWidth{");
-              ts1 = StrBufCat(ts1,Attrib);
-              ts1 = StrBufCat(ts1,"}\n");
-              ts2 = StrBufCat(ts2,Attrib);
-              ts2 = StrBufCat(ts2," &");
-              ts2 = StrBufCat(ts2,p+j-1);
-              ts2 = StrBufCat(ts2,"\\\\\n");
-            } DB( else kprintf("RE_PrintFile(): strange header line %s\n",p); )
-          }
-
-          fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n\\input{%s}\n\\end{document}\n",
-                  ts1,
-                  "\\begin{document}\n\n"
-                  "\\setlength{\\tabcolsep}{3.0pt}\n"
-                  "\\setlength{\\TabRestWidth}{\\linewidth}\n"
-                  "\\addtolength{\\TabRestWidth}{-\\tabcolsep}\n"
-                  "\\addtolength{\\TabRestWidth}{-\\LabelWidth}\n\n"
-                  "\\begin{tabular}"
-                  "{@{}>{\\PBS\\raggedleft\\hspace{0pt}\\bf}p{\\LabelWidth}"
-                  ">{\\PBS\\raggedright\\hspace{0pt}}p{\\TabRestWidth}}\n\n",
-                  ts2,
-                  "\\end{tabular}\n"
-                  "\\hrule\n"
-                  "\\bigskip\n",
-                  filename);
-
-          fclose(texfile->FP);
-          texfile->FP = NULL;
-
-          if((printcmd = malloc(sizeof(PrintScript)+strlen(texfile->Filename)+1)))
-          {
-            strcpy(printcmd,PrintScript);
-            strcat(printcmd," ");
-            strcat(printcmd,texfile->Filename);
-            system(printcmd);
-            free(printcmd);
-          } else DisplayBeep(NULL);
-        } DB( else kprintf("RE_PrintFile(): no headers for this part\n"); )
-      }
-      FreeStrBuf(ts1);
-      FreeStrBuf(ts2);
-    } DB( else kprintf("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n"); )
-
-    CloseTempFile(texfile);
-
-  } DB( else kprintf("RE_PrintFile(): can't open temp TeX file\n"); )
-}
-
-
-#if 0
-///
-/// ISO8859_to_LaTeX
-// Takes a string in ISO-8859 charset and converts it to a equivalent
-// string in LaTeX notation. Free the result with FreeStrBuf() after use
-static char *ISO8859_to_LaTeX(char *s)
-{
-  char *result=NULL;
-  char **CVTab;
-
-  if(CVTab = Init_ISO8859_to_LaTeX_Tab("YAM:.latex-chartab"))
-  {
-    int ResLen;
-    char *p;
-
-    for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
-    {
-      ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
-    }
-
-    DB( kprintf("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen); )
-
-    if(result = AllocStrBuf(ResLen+1))
-    {
-      char *q = result;
-
-      for(p=s,ResLen=0; *p; p++)   // map input string
-      {
-
-        if(CVTab[*p] == NULL) *q++ = *p;
-        else
-        {
-          strcpy(q,CVTab[*p]);
-          while(*q++) ;
-        }
-      }
-    }
-  }
-  return result;
-}
-///
-/// Init_ISO8859_to_LaTeX_Tab
-// Takes a filename for a ISO->LaTeX mapping table and returns a table for
-// mapping ISO/ASCII codes to strings
-static char **Init_ISO8859_to_LaTeX_Tab(char *TabFileName)
-{
-  int TabSize;
-  char **CVTab, *TabFile;
-  BOOL success=FALSE;
-
-  if(-1 != (TabSize = FileSize(TabFileName)))
-  {
-    BPTR fh;
-
-    if(fh = Open(TabFileName,MODE_OLDFILE))
-    {
-      if(CVTab = AllocVec(TabSize+1+256*sizeof(char*), MEMF_ANY|MEMF_CLEAR))
-      {
-        TabFile = (char*)(CVTab+256*sizeof(char*));
-
-        if(Read(fh,TabFile,TabSize) == TabSize)
-        {
-          char *tok, c=0;
-
-          TabFile[TabSize] = '\0';
-          tok = strtok(TabFile," \t\n");
-
-          while(NULL != tok)
-          {
-            if(!c)
-            {
-              if(tok[1]) { DB(kprintf("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n");) }
-              else c = tok[0];
-            }
-            else
-            {
-              CVTab[c] = tok;
-              DB(kprintf("LaTeX mapping: '%c' -> '%s'\n",c,tok);)
-              c = '\0';
-            }
-          }
-          success = TRUE;
-        }
-
-        if(!success)
-        {
-          FreeVec(CVTab);
-          CVTab = NULL;
-        }
-      }
-      Close(fh);
-    }
-  }
-  return CVTab; // and who one will free this Vector ????
-}
-#endif
-///
-/// RE_SaveFunc
-//  Saves the current message or an attachment to disk
-HOOKPROTONHNO(RE_SaveFunc, void, int *arg)
-{
-  int winnum = *arg;
-  struct Part *part;
-  struct TempFile *tf;
-
-  if ((part = AttachRequest(GetStr(MSG_RE_SaveMessage), GetStr(MSG_RE_SelectSavePart), GetStr(MSG_RE_SaveGad), GetStr(MSG_Cancel), winnum, ATTREQ_SAVE|ATTREQ_MULTI, G->RE[winnum]->GUI.WI)))
-  {
-    BusyText(GetStr(MSG_BusyDecSaving), "");
-    for (; part; part = part->NextSelected)
-    {
-      switch (part->Nr)
-      {
-        case PART_ORIGINAL:
-        {
-          RE_Export(winnum, G->RE[winnum]->File, "", "", 0, FALSE, FALSE, (char*)ContType[CT_ME_EMAIL]);
-        }
-        break;
-
-        case PART_ALLTEXT:
-        {
-          if ((tf = OpenTempFile("w")))
-          {
-            RE_SaveDisplay(winnum, tf->FP);
-            fclose(tf->FP);
-            tf->FP = NULL;
-            RE_Export(winnum, tf->Filename, "", "", 0, FALSE, FALSE, (char*)ContType[CT_TX_PLAIN]);
-            CloseTempFile(tf);
-          }
-        }
-        break;
-
-        default:
-        {
-          RE_DecodePart(part);
-          RE_Export(winnum, part->Filename, "", part->CParFileName ? part->CParFileName : part->Name, part->Nr, FALSE, FALSE, part->ContentType);
-        }
-      }
-    }
-    BusyEnd();
-  }
-}
-MakeStaticHook(RE_SaveHook, RE_SaveFunc);
 ///
 /// RE_DisplayMIME
 //  Displays a message part (attachment) using a MIME viewer
@@ -1207,7 +477,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
   static char command[SIZE_COMMAND+SIZE_PATHFILE];
   char *fileptr;
 
-  for (i = 1; i < MAXMV; i++)
+  for(i = 1; i < MAXMV; i++)
   {
     if (C->MV[i] && MatchNoCase(ctype, C->MV[i]->ContentType))
     {
@@ -1216,16 +486,17 @@ void RE_DisplayMIME(char *fname, char *ctype)
     }
   }
 
-  if (!mv && !stricmp(ctype, "message/rfc822"))
+  if(!mv && !stricmp(ctype, "message/rfc822"))
   {
-    int winnum;
     struct Mail *mail;
     struct ExtendedMail *email;
     struct TempFile *tf = OpenTempFile(NULL);
     CopyFile(tf->Filename, NULL, fname, NULL);
 
-    if ((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
+    if((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
     {
+      struct ReadMailData *rmData;
+
       mail = calloc(1, sizeof(struct Mail));
       if(!mail)
         return;
@@ -1240,20 +511,24 @@ void RE_DisplayMIME(char *fname, char *ctype)
 
       MA_FreeEMailStruct(email);
 
-      if ((winnum = RE_Open(-1, FALSE)) != -1)
+      if((rmData = CreateReadWindow(FALSE)))
       {
-        G->RE[winnum]->TempFile = tf;
-        if(SafeOpenWindow(G->RE[winnum]->GUI.WI))
+        rmData->tempFile = tf;
+
+        // make sure it is opened correctly and then read in a mail
+        if(SafeOpenWindow(rmData->readWindow) == FALSE ||
+           DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail) == FALSE)
         {
-          RE_ReadMessage(winnum, mail);
-        }
-        else
-        {
-          DisposeModulePush(&G->RE[winnum]);
-          free(mail);
+          // on any error we make sure to delete the read window
+          // immediatly again.
+          CleanupReadMailData(rmData);
         }
       }
-      else free(mail);
+      else
+      {
+        CloseTempFile(tf);
+        free(mail);
+      }
     }
   }
   else
@@ -1300,7 +575,8 @@ void RE_DisplayMIME(char *fname, char *ctype)
           break;
         }
 
-      }while(startPtr--);
+      }
+      while(startPtr--);
 
       if(startPtr)
       {
@@ -1314,7 +590,8 @@ void RE_DisplayMIME(char *fname, char *ctype)
             break;
           }
 
-        }while(endPtr++);
+        }
+        while(endPtr++);
       }
 
       // if we found the start and endPtr we can place the quotation marks there
@@ -1339,199 +616,43 @@ void RE_DisplayMIME(char *fname, char *ctype)
 
         sprintf(command, realcmd, GetRealPath(fname));
       }
-      else sprintf(command, mv->Command, GetRealPath(fname));
+      else
+        sprintf(command, mv->Command, GetRealPath(fname));
 
       ExecuteCommand(command, TRUE, OUT_NIL);
     }
-    else ExecuteCommand(mv->Command, TRUE, OUT_NIL);
+    else
+      ExecuteCommand(mv->Command, TRUE, OUT_NIL);
   }
 }
 ///
-/// RE_DisplayFunc
-//  Shows message or attachments separately
-HOOKPROTONHNO(RE_DisplayFunc, void, int *arg)
-{
-   int winnum = *arg;
-   struct Part *part;
-
-   if ((part = AttachRequest(GetStr(MSG_RE_DisplayMsg), GetStr(MSG_RE_SelectDisplayPart), GetStr(MSG_RE_DisplayGad), GetStr(MSG_Cancel), winnum, ATTREQ_DISP|ATTREQ_MULTI, G->RE[winnum]->GUI.WI)))
-   {
-      BusyText(GetStr(MSG_BusyDecDisplaying), "");
-
-      for (; part; part = part->NextSelected)
-      {
-         RE_DecodePart(part);
-         switch(part->Nr)
-         {
-            case PART_ORIGINAL:
-            {
-              RE_DisplayMIME(G->RE[winnum]->File, "text/plain");
-            }
-            break;
-
-            default:
-            {
-              RE_DisplayMIME(part->Filename, part->ContentType);
-            }
-         }
-      }
-      BusyEnd();
-   }
-}
-MakeStaticHook(RE_DisplayHook, RE_DisplayFunc);
-///
 /// RE_SaveAll
 //  Saves all attachments to disk
-void RE_SaveAll(int winnum, char *path)
+void RE_SaveAll(struct ReadMailData *rmData, char *path)
 {
-   struct Part *part;
-   char fname[SIZE_DEFAULT], *dest;
+  char *dest;
 
-   if(!(dest = calloc(1, strlen(path)+SIZE_DEFAULT+1))) return;
+  if((dest = calloc(1, strlen(path)+SIZE_DEFAULT+1)))
+  {
+    struct Part *part;
+    char fname[SIZE_DEFAULT];
 
-   for (part = G->RE[winnum]->FirstPart->Next->Next; part; part = part->Next)
-   {
-      if (*part->Name) stccpy(fname, part->Name, SIZE_DEFAULT);
-      else sprintf(fname, "%s-%d", G->RE[winnum]->Mail.MailFile, part->Nr);
+    for(part = rmData->firstPart->Next->Next; part; part = part->Next)
+    {
+      if(*part->Name)
+        stccpy(fname, part->Name, SIZE_DEFAULT);
+      else
+        sprintf(fname, "%s-%d", rmData->mail->MailFile, part->Nr);
+
       strmfp(dest, path, fname);
 
       RE_DecodePart(part);
-      RE_Export(winnum, part->Filename, dest, part->Name, part->Nr, FALSE, FALSE, part->ContentType);
-   }
+      RE_Export(rmData, part->Filename, dest, part->Name, part->Nr, FALSE, FALSE, part->ContentType);
+    }
 
-   free(dest);
+    free(dest);
+  }
 }
-///
-/// RE_SaveAllFunc
-//  Asks user for a directory and saves all attachments there
-HOOKPROTONHNO(RE_SaveAllFunc, void, int *arg)
-{
-   struct Part *part = G->RE[*arg]->FirstPart->Next;
-   if (part) if (part->Next) if (ReqFile(ASL_DETACH, G->RE[*arg]->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
-   {
-      BusyText(GetStr(MSG_BusyDecSaving), "");
-      RE_SaveAll(*arg, G->ASLReq[ASL_DETACH]->fr_Drawer);
-      BusyEnd();
-   }
-}
-MakeStaticHook(RE_SaveAllHook, RE_SaveAllFunc);
-///
-/// RE_RemoveAttachFunc
-//  Removes attachments from the current message
-HOOKPROTONHNO(RE_RemoveAttachFunc, void, int *arg)
-{
-   struct Mail *mail = G->RE[*arg]->MailPtr;
-   struct MailInfo *mi;
-   MA_RemoveAttach(mail, TRUE);
-   if ((mi = GetMailInfo(mail))->Pos >= 0)
-   {
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
-      CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
-      DisplayStatistics(mail->Folder, TRUE);
-   }
-   RE_ReadMessage(*arg, mail);
-}
-MakeStaticHook(RE_RemoveAttachHook, RE_RemoveAttachFunc);
-///
-/// RE_NewFunc
-//  Starts a new message based on the current one
-HOOKPROTONHNO(RE_NewFunc, void, int *arg)
-{
-   int mode = arg[0], winnum = arg[2], flags = 0;
-   ULONG qual = arg[1];
-   struct Mail *mail = G->RE[winnum]->MailPtr, *mlist[3] = { (struct Mail *)1, NULL, NULL };
-   if (mode == NEW_FORWARD &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) mode = NEW_BOUNCE;
-   if (mode == NEW_FORWARD && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_FWD_NOATTACH);
-   if (mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) SET_FLAG(flags, NEWF_REP_PRIVATE);
-   if (mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))     SET_FLAG(flags, NEWF_REP_MLIST);
-   if (mode == NEW_REPLY   && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_REP_NOQUOTE);
-   mlist[2] = mail;
-
-   if (MailExists(mail, NULL)) switch (mode)
-   {
-      case NEW_NEW:     MA_NewNew(mail, flags); break;
-      case NEW_EDIT:    MA_NewEdit(mail, flags, winnum); break;
-      case NEW_BOUNCE:  MA_NewBounce(mail, flags); break;
-      case NEW_FORWARD: MA_NewForward(mlist, flags); break;
-      case NEW_REPLY:   MA_NewReply(mlist, flags); break;
-   }
-}
-MakeStaticHook(RE_NewHook, RE_NewFunc);
-///
-/// RE_GetAddressFunc
-//  Stores sender address of current message in the address book
-HOOKPROTONHNO(RE_GetAddressFunc, void, int *arg)
-{
-   int winnum = *arg;
-   struct Folder *folder = G->RE[winnum]->Mail.Folder;
-   struct Mail *mail = G->RE[winnum]->MailPtr, *mlist[3] = { (struct Mail *)1, NULL, NULL };
-   mlist[2] = mail;
-   if (MailExists(mail, folder)) MA_GetAddress(mlist);
-}
-MakeStaticHook(RE_GetAddressHook, RE_GetAddressFunc);
-///
-/// RE_SetUnreadFunc
-//  Sets the status of the current mail to unread
-HOOKPROTONHNO(RE_SetUnreadFunc, void, int *arg)
-{
-   int winnum = *arg;
-   setStatusToUnread(G->RE[winnum]->MailPtr);
-   RE_UpdateStatusGroup(winnum);
-   DisplayStatistics(NULL, TRUE);
-}
-MakeStaticHook(RE_SetUnreadHook, RE_SetUnreadFunc);
-///
-/// RE_SetMarkedFunc
-//  Sets the flags of the current mail to marked
-HOOKPROTONHNO(RE_SetMarkedFunc, void, int *arg)
-{
-   int winnum = *arg;
-   setStatusToMarked(G->RE[winnum]->MailPtr);
-   RE_UpdateStatusGroup(winnum);
-   DisplayStatistics(NULL, TRUE);
-}
-MakeStaticHook(RE_SetMarkedHook, RE_SetMarkedFunc);
-///
-/// RE_ChangeSubjectFunc
-//  Changes the subject of the current message
-HOOKPROTONHNO(RE_ChangeSubjectFunc, void, int *arg)
-{
-   char subj[SIZE_SUBJECT];
-   int winnum = *arg;
-   struct Folder *folder = G->RE[winnum]->Mail.Folder;
-   struct Mail *mail = G->RE[winnum]->MailPtr;
-   struct MailInfo *mi;
-   if (MailExists(mail, folder))
-   {
-      strcpy(subj, mail->Subject);
-      if (StringRequest(subj, SIZE_SUBJECT, GetStr(MSG_MA_ChangeSubj), GetStr(MSG_MA_ChangeSubjReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->RE[*arg]->GUI.WI))
-      {
-         MA_ChangeSubject(mail, subj);
-         if ((mi = GetMailInfo(mail))->Pos >= 0)
-         {
-            DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
-            CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
-            DisplayStatistics(mail->Folder, TRUE);
-         }
-         RE_ReadMessage(*arg, mail);
-      }
-   }
-}
-MakeStaticHook(RE_ChangeSubjectHook, RE_ChangeSubjectFunc);
-///
-/// RE_ExtractKeyFunc
-//  Extracts public PGP key from the current message
-HOOKPROTONHNO(RE_ExtractKeyFunc, void, int *arg)
-{
-   char fullfile[SIZE_PATHFILE], options[SIZE_PATHFILE];
-   struct Mail *mail = G->RE[*arg]->MailPtr;
-
-   if (!StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder)) return;
-   sprintf(options, (G->PGPVersion == 5) ? "-a %s +batchmode=1 +force" : "-ka %s +bat +f", fullfile);
-   PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0);
-   FinishUnpack(fullfile);
-}
-MakeStaticHook(RE_ExtractKeyHook, RE_ExtractKeyFunc);
 ///
 /// RE_GetAddressFromLog
 //  Finds e-mail address in PGP output
@@ -1548,110 +669,62 @@ static BOOL RE_GetAddressFromLog(char *buf, char *address)
 ///
 /// RE_GetSigFromLog
 //  Interprets logfile created from the PGP signature check
-static void RE_GetSigFromLog(int winnum, char *decrFor)
+void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 {
-   BOOL sigDone = FALSE, decrFail = FALSE;
-   struct RE_ClassData *re = G->RE[winnum];
-   FILE *fh;
-   char buffer[SIZE_LARGE];
+  BOOL sigDone = FALSE;
+  BOOL decrFail = FALSE;
+  FILE *fh;
+  char buffer[SIZE_LARGE];
 
-   if ((fh = fopen(PGPLOGFILE, "r")))
-   {
-      while (GetLine(fh, buffer, SIZE_LARGE))
+  if((fh = fopen(PGPLOGFILE, "r")))
+  {
+    while (GetLine(fh, buffer, SIZE_LARGE))
+    {
+      if(!decrFail && decrFor && G->PGPVersion == 5)
       {
-         if(!decrFail && decrFor && G->PGPVersion == 5)
-         {
-            if(!strnicmp(buffer, "cannot decrypt", 14))
-            {
-               *decrFor = 0;
-               GetLine(fh, buffer, SIZE_LARGE); GetLine(fh, buffer, SIZE_LARGE);
-               RE_GetAddressFromLog(buffer, decrFor);
-               decrFail = TRUE;
-            }
-         }
-
-         if(!sigDone)
-         {
-            if(!strnicmp(buffer, "good signature", 14)) sigDone = TRUE;
-            else if(!strnicmp(buffer, "bad signature", 13) || stristr(buffer, "unknown keyid"))
-            {
-              SET_FLAG(re->PGPSigned, PGPS_BADSIG);
-              sigDone = TRUE;
-            }
-
-            if(sigDone)
-            {
-               if (G->PGPVersion == 5) { GetLine(fh, buffer, SIZE_LARGE); GetLine(fh, buffer, SIZE_LARGE); }
-               if (RE_GetAddressFromLog(buffer, re->Signature)) SET_FLAG(re->PGPSigned, PGPS_ADDRESS);
-
-               SET_FLAG(re->PGPSigned, PGPS_CHECKED);
-               break;
-            }
-         }
+        if(!strnicmp(buffer, "cannot decrypt", 14))
+        {
+          *decrFor = '\0';
+          GetLine(fh, buffer, SIZE_LARGE);
+          GetLine(fh, buffer, SIZE_LARGE);
+          RE_GetAddressFromLog(buffer, decrFor);
+          decrFail = TRUE;
+        }
       }
-      fclose(fh);
 
-      if(sigDone || (decrFor && !decrFail))
-        DeleteFile(PGPLOGFILE);
-   }
-}
-///
-/// RE_SaveDecryptedFunc
-//  Saves decrypted version of a PGP message
-HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
-{
-   struct RE_ClassData *re = G->RE[*arg];
-   struct WritePart *p1;
-   struct Compose comp;
-   int choice;
-   struct Folder *folder = re->MailPtr->Folder;
-   char mfile[SIZE_MFILE];
-
-   if(!folder)
-     return;
-
-   if (!(choice = MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SaveDecrypted), GetStr(MSG_RE_SaveDecGads), GetStr(MSG_RE_SaveDecReq)))) return;
-   memset(&comp, 0, sizeof(struct Compose));
-
-   if((comp.FH = fopen(MA_NewMailFile(folder, mfile), "w")))
-   {
-      struct ExtendedMail *email;
-
-      comp.Mode = NEW_SAVEDEC;
-      comp.OrigMail = re->MailPtr;
-      comp.FirstPart = p1 = NewPart(2);
-      p1->Filename = re->FirstPart->Next->Filename;
-      WriteOutMessage(&comp);
-      FreePartsList(p1);
-      fclose(comp.FH);
-
-      if ((email = MA_ExamineMail(folder, mfile, TRUE)))
+      if(!sigDone)
       {
-         struct Mail *newmail;
+        if(!strnicmp(buffer, "good signature", 14))
+          sigDone = TRUE;
+        else if(!strnicmp(buffer, "bad signature", 13) || stristr(buffer, "unknown keyid"))
+        {
+          SET_FLAG(rmData->signedFlags, PGPS_BADSIG);
+          sigDone = TRUE;
+        }
 
-         // lets set some values depending on the original message
-         email->Mail.sflags = re->MailPtr->sflags;
-         memcpy(&email->Mail.transDate, &re->MailPtr->transDate, sizeof(struct timeval));
+        if(sigDone)
+        {
+          if(G->PGPVersion == 5)
+          {
+            GetLine(fh, buffer, SIZE_LARGE);
+            GetLine(fh, buffer, SIZE_LARGE);
+          }
 
-         // add the mail to the folder now
-         newmail = AddMailToList(&email->Mail, folder);
+          if(RE_GetAddressFromLog(buffer, rmData->sigAuthor))
+            SET_FLAG(rmData->signedFlags, PGPS_ADDRESS);
 
-         // if this was a compressed/encrypted folder we need to pack the mail now
-         if(folder->Mode > FM_SIMPLE)
-            RepackMailFile(newmail, -1, NULL);
+          SET_FLAG(rmData->signedFlags, PGPS_CHECKED);
 
-         if (FO_GetCurrentFolder() == folder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
-         MA_FreeEMailStruct(email);
-         if (choice == 2)
-         {
-            MA_DeleteSingle(re->MailPtr, FALSE, FALSE);
-            RE_ReadMessage(*arg, newmail);
-         }
+          break;
+        }
       }
-      else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
-   }
+    }
+    fclose(fh);
+
+    if(sigDone || (decrFor && !decrFail))
+      DeleteFile(PGPLOGFILE);
+  }
 }
-MakeStaticHook(RE_SaveDecryptedHook, RE_SaveDecryptedFunc);
 ///
 
 /*** MIME ***/
@@ -2109,35 +1182,53 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 ///
 /// RE_OpenNewPart
 //  Adds a new entry to the message part list
-static FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, struct Part *first)
+static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
+                            struct Part **new,
+                            struct Part *prev,
+                            struct Part *first)
 {
-   FILE *fp;
+  FILE *fp;
+  struct Part *newPart;
 
-   if (((*new) = calloc(1,sizeof(struct Part))))
-   {
-      char file[SIZE_FILE];
-      if (prev)
-      {
-         (*new)->Prev = prev;
-         prev->Next = *new;
-         (*new)->Nr = prev->Nr+1;
-      }
-      (*new)->ContentType = StrBufCpy(NULL, "text/plain");
-      (*new)->EncodingCode = ENC_NONE;
-      if (first) if (strnicmp(first->ContentType, "multipart", 9))
-      {
-         (*new)->ContentType = StrBufCpy((*new)->ContentType, first->ContentType);
-         (*new)->CParCSet = first->CParCSet;
-         (*new)->EncodingCode = first->EncodingCode;
-      }
-      strcpy((*new)->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
-      (*new)->Win = winnum;
-      sprintf(file, "YAMr%08lx-w%dp%d.txt", (ULONG)G->RE[winnum]->MailPtr, winnum, (*new)->Nr);
-      strmfp((*new)->Filename, C->TempDir, file);
-      if ((fp = fopen((*new)->Filename, "w"))) return fp;
-      free(*new);
-   }
-   return NULL;
+  DB(kprintf("RE_OpenNewPart(): %08lx, %08lx, %08lx, %08lx\n", rmData, new, prev, first);)
+
+  if(((*new) = newPart = calloc(1,sizeof(struct Part))))
+  {
+    char file[SIZE_FILE];
+
+    if(prev)
+    {
+      // link in the new Part
+      newPart->Prev = prev;
+      prev->Next = newPart;
+      newPart->Nr = prev->Nr+1;
+    }
+
+    newPart->ContentType = StrBufCpy(NULL, "text/plain");
+    newPart->EncodingCode = ENC_NONE;
+
+    if(first && strnicmp(first->ContentType, "multipart", 9))
+    {
+      newPart->ContentType = StrBufCpy(newPart->ContentType, first->ContentType);
+      newPart->CParCSet = first->CParCSet;
+      newPart->EncodingCode = first->EncodingCode;
+    }
+
+    strcpy(newPart->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
+    newPart->rmData = rmData;
+    sprintf(file, "YAMr%08lx-p%d.txt", (ULONG)rmData, newPart->Nr);
+    strmfp(newPart->Filename, C->TempDir, file);
+
+    if((fp = fopen(newPart->Filename, "w")))
+      return fp;
+
+    free(newPart);
+    *new = NULL;
+  }
+
+  DB(kprintf("Creating a new part failed.\n");)
+
+  return NULL;
 }
 ///
 /// RE_UndoPart
@@ -2221,15 +1312,15 @@ static BOOL RE_IsURLencoded(struct Part *rp)
 //  Decides if the part should be kept in memory
 static BOOL RE_SaveThisPart(struct Part *rp)
 {
-   int pm = G->RE[rp->Win]->ParseMode;
-   switch (pm)
-   {
-      case PM_ALL:   return TRUE;
-      case PM_NONE:  return FALSE;
-      case PM_TEXTS: return (BOOL)(!strnicmp(rp->ContentType, "text", 4) || RE_IsURLencoded(rp));
-   }
+  switch(rp->rmData->parseMode)
+  {
+    case PM_ALL:   return TRUE;
+    case PM_NONE:  return FALSE;
+    case PM_TEXTS: return (BOOL)(!strnicmp(rp->ContentType, "text", 4) || RE_IsURLencoded(rp));
+  }
 
-   return FALSE;
+  DB(kprintf("ERROR on RE_SaveThisPart()\n");)
+  return FALSE;
 }
 ///
 /// RE_SetPartInfo
@@ -2274,9 +1365,15 @@ static void RE_SetPartInfo(struct Part *rp)
 ///
 /// RE_ParseMessage
 //  Parses a complete message
-static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Part *hrp)
+static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
+                                    FILE *in,
+                                    char *fname,
+                                    struct Part *hrp)
 {
-  if(in == NULL && fname) in = fopen(fname, "r");
+  DB(kprintf("RE_ParseMessage(): %08lx, %08lx, %08lx, %08lx\n", rmData, in, fname, hrp);)
+
+  if(in == NULL && fname)
+    in = fopen(fname, "r");
 
   if(in)
   {
@@ -2286,27 +1383,34 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
 
     if(hrp == NULL)
     {
-      if ((out = RE_OpenNewPart(winnum, &hrp, NULL, NULL)))
+      if((out = RE_OpenNewPart(rmData, &hrp, NULL, NULL)))
       {
         BOOL parse_ok = RE_ScanHeader(hrp, in, out, 0);
 
         fclose(out);
-        if (parse_ok) RE_SetPartInfo(hrp);
+
+        if(parse_ok)
+          RE_SetPartInfo(hrp);
       }
-      else ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
+      else
+        ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
     }
 
     if(hrp)
     {
-      if (!(boundary = hrp->CParBndr)) boundary = hrp->JunkParameter;
+      if(!(boundary = hrp->CParBndr))
+        boundary = hrp->JunkParameter;
 
-      if (!strnicmp(hrp->ContentType, "multipart", 9))
+      if(!strnicmp(hrp->ContentType, "multipart", 9))
       {
-        if(!boundary) ER_NewError(GetStr(MSG_ER_MissingBoundary), NULL, NULL);
+        if(!boundary)
+          ER_NewError(GetStr(MSG_ER_MissingBoundary), NULL, NULL);
         else
         {
           BOOL done;
-          if (*boundary == '"') boundary = UnquoteString(boundary, TRUE);
+
+          if(*boundary == '"')
+            boundary = UnquoteString(boundary, TRUE);
           sprintf(hrp->Boundary, "--%s", boundary);
           done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp);
           rp = hrp;
@@ -2314,7 +1418,7 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
           while (!done)
           {
             struct Part *prev = rp;
-            out = RE_OpenNewPart(winnum, &rp, prev, hrp);
+            out = RE_OpenNewPart(rmData, &rp, prev, hrp);
 
             if(out == NULL) break;
 
@@ -2329,7 +1433,7 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
             {
               fclose(out);
 
-              if(RE_ParseMessage(winnum, in, NULL, rp))
+              if(RE_ParseMessage(rmData, in, NULL, rp))
               {
                 RE_UndoPart(rp);
                 done = RE_ConsumeRestOfPart(in, NULL, NULL, prev);
@@ -2353,9 +1457,9 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
           }
         }
       }
-      else if ((out = RE_OpenNewPart(winnum, &rp, hrp, hrp)))
+      else if((out = RE_OpenNewPart(rmData, &rp, hrp, hrp)))
       {
-        if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
+        if(RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
         {
           RE_ConsumeRestOfPart(in, out, NULL, NULL); fclose(out);
           RE_SetPartInfo(rp);
@@ -2369,7 +1473,8 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
       }
     }
 
-    if (fname) fclose(in);
+    if(fname)
+      fclose(in);
   }
 
 #ifdef DEBUG
@@ -2440,7 +1545,7 @@ BOOL RE_DecodePart(struct Part *rp)
            *ext = 0; // if the file extension is longer than 10 chars lets use "tmp"
 
          // lets generate the destination file name for the decoded part
-         sprintf(file, "YAMm%08lx-w%dp%d.%s", (ULONG)G->RE[rp->Win]->MailPtr, rp->Win, rp->Nr, *ext ? ext : "tmp");
+         sprintf(file, "YAMm%08lx-p%d.%s", (ULONG)rp->rmData, rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
 
          // now open the stream and decode it afterwards.
@@ -2478,29 +1583,6 @@ BOOL RE_DecodePart(struct Part *rp)
    }
 
    return rp->Decoded;
-}
-///
-/// RE_CleanupMessage
-//  Cleanup memory and temporary files used to display the message
-void RE_CleanupMessage(int winnum)
-{
-   struct RE_ClassData *re = G->RE[winnum];
-   struct Part *part, *next;
-
-   for (part = re->FirstPart; part; part = next)
-   {
-      next = part->Next;
-      if (*part->Filename) DeleteFile(part->Filename);
-      FreeStrBuf(part->ContentType);
-      FreeStrBuf(part->ContentDisposition);
-      free(part);
-   }
-   re->FirstPart = NULL;
-
-   // now we have to check whether there is a .unp (unpack) file and delete
-   // it acoordingly (we can`t use the FinishUnpack() function because the
-   // window still refers to the file which will be prevent the deletion.
-   if(strstr(re->File, ".unp")) DeleteFile(re->File);
 }
 ///
 /// RE_HandleMDNReport
@@ -2548,7 +1630,7 @@ static void RE_HandleMDNReport(struct Part *frp)
       if (!strnicmp(MDNtype, "manual-action", 13)) mode = GetStr(MSG_RE_MDNmanual);
       if (!strnicmp(MDNtype, "automatic-action", 16)) mode = GetStr(MSG_RE_MDNauto);
       if ((type = strchr(MDNtype, ';'))) type = Trim(++type); else type = MDNtype;
-      sprintf(file, "YAMm%08lx-w%dp%d.txt", (ULONG)G->RE[rp[0]->Win]->MailPtr, rp[0]->Win, rp[0]->Nr);
+      sprintf(file, "YAMm%08lx-p%d.txt", (ULONG)rp[0]->rmData, rp[0]->Nr);
       strmfp(buf, C->TempDir, file);
       if ((out = fopen(buf, "w")))
       {
@@ -2585,13 +1667,17 @@ static void RE_HandleSignedMessage(struct Part *frp)
          char options[SIZE_LARGE];
 
          // flag the mail as having a PGP signature within the MIME encoding
-         SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_MIME);
+         SET_FLAG(frp->rmData->signedFlags, PGPS_MIME);
 
          ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
          sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
          error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
-         if (error > 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_BADSIG);
-         if (error >= 0) RE_GetSigFromLog(frp->Win, NULL);
+         if(error > 0)
+           SET_FLAG(frp->rmData->signedFlags, PGPS_BADSIG);
+
+         if(error >= 0)
+           RE_GetSigFromLog(frp->rmData, NULL);
+
          tf->FP = NULL;
          CloseTempFile(tf);
       }
@@ -2601,40 +1687,46 @@ static void RE_HandleSignedMessage(struct Part *frp)
 ///
 /// RE_DecryptPGP
 //  Decrypts a PGP encrypted file
-static int RE_DecryptPGP(int winnum, char *src)
+static int RE_DecryptPGP(struct ReadMailData *rmData, char *src)
 {
-   FILE *fh;
-   int error;
-   char options[SIZE_LARGE], orcpt[SIZE_ADDRESS];
+  FILE *fh;
+  int error;
+  char options[SIZE_LARGE], orcpt[SIZE_ADDRESS];
 
-   *orcpt = 0;
-   DB( kprintf("RE_DecryptPGP()\n"); )
-   PGPGetPassPhrase();
-   if (G->PGPVersion == 5)
-   {
-      char fname[SIZE_PATHFILE];
-      sprintf(fname, "%s.asc", src); Rename(src, fname);
-      sprintf(options, "%s +batchmode=1 +force +language=us", fname);
-      error = PGPCommand("pgpv", options, KEEPLOG|NOERRORS);
-      RE_GetSigFromLog(winnum, orcpt);
-      if (*orcpt) error = 2;
-      DeleteFile(fname);
-   }
-   else
-   {
-      sprintf(options, "%s +bat +f +lang=en", src);
-      error = PGPCommand("pgp", options, KEEPLOG|NOERRORS);
-      RE_GetSigFromLog(winnum, NULL);
-   }
-   PGPClearPassPhrase(error < 0 || error > 1);
-   if (error < 0 || error > 1) if ((fh = fopen(src, "w")))
-   {
-      fputs(GetStr(MSG_RE_PGPNotAllowed), fh);
-      if (G->PGPVersion == 5 && *orcpt) fprintf(fh, GetStr(MSG_RE_MsgReadOnly), orcpt);
-      fclose(fh);
-   }
-   DB( kprintf("RE_DecryptPGP() ends: %ld\n", error); )
-   return error;
+  *orcpt = 0;
+  PGPGetPassPhrase();
+
+  if(G->PGPVersion == 5)
+  {
+    char fname[SIZE_PATHFILE];
+    sprintf(fname, "%s.asc", src); Rename(src, fname);
+    sprintf(options, "%s +batchmode=1 +force +language=us", fname);
+    error = PGPCommand("pgpv", options, KEEPLOG|NOERRORS);
+    RE_GetSigFromLog(rmData, orcpt);
+    if(*orcpt)
+      error = 2;
+
+    DeleteFile(fname);
+  }
+  else
+  {
+    sprintf(options, "%s +bat +f +lang=en", src);
+    error = PGPCommand("pgp", options, KEEPLOG|NOERRORS);
+    RE_GetSigFromLog(rmData, NULL);
+  }
+
+  PGPClearPassPhrase(error < 0 || error > 1);
+  if((error < 0 || error > 1) && (fh = fopen(src, "w")))
+  {
+    fputs(GetStr(MSG_RE_PGPNotAllowed), fh);
+
+    if(G->PGPVersion == 5 && *orcpt)
+      fprintf(fh, GetStr(MSG_RE_MsgReadOnly), orcpt);
+
+    fclose(fh);
+  }
+
+  return error;
 }
 ///
 /// RE_HandleEncryptedMessage
@@ -2656,14 +1748,16 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
       fclose(tf->FP);
       tf->FP = NULL;
 
-      decryptResult = RE_DecryptPGP(frp->Win, tf->Filename);
+      decryptResult = RE_DecryptPGP(frp->rmData, tf->Filename);
 
       if(decryptResult == 1 || decryptResult == 0)
       {
          FILE *in;
 
-         if(decryptResult == 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_MIME);
-         SET_FLAG(G->RE[frp->Win]->PGPEncrypted, PGPE_MIME);
+         if(decryptResult == 0)
+           SET_FLAG(frp->rmData->signedFlags, PGPS_MIME);
+
+         SET_FLAG(frp->rmData->encryptionFlags, PGPE_MIME);
 
          // if DecryptPGP() returns with 0 everything worked perfectly and we can
          // convert & copy our decrypted file over the encrypted part
@@ -2701,7 +1795,7 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
 ///
 /// RE_LoadMessagePart
 //  Decodes a single message part
-static void RE_LoadMessagePart(int winnum, struct Part *part)
+static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
 {
    int rsh = RE_RequiresSpecialHandling(part);
 
@@ -2739,7 +1833,7 @@ static void RE_LoadMessagePart(int winnum, struct Part *part)
           }
           else if(!stricmp(rp->ContentType, "application/pgp-keys"))
           {
-            G->RE[winnum]->PGPKey = TRUE;
+            rmData->hasPGPKey = TRUE;
           }
           else if(rp->Nr < PART_LETTER || (rp->Printable && (rp->Nr == PART_LETTER || C->DisplayAllTexts)))
           {
@@ -2751,90 +1845,82 @@ static void RE_LoadMessagePart(int winnum, struct Part *part)
 }
 ///
 /// RE_LoadMessage
-//  Prepares a message for displaying
-static BOOL RE_LoadMessage(int winnum, int parsemode)
+// Function that preparses a mail for either direct display in a read mail group
+// or for background parsing (for Arexx and stuff)
+BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
 {
-   char newfile[SIZE_PATHFILE], file[SIZE_FILE];
-   struct Part *rp;
-   int i;
+  struct Mail *mail = rmData->mail;
+  struct Folder *folder = mail->Folder;
+  struct Part *part;
 
-   BusyText(GetStr(MSG_BusyReading), "");
+  BusyText(GetStr(MSG_BusyReading), "");
 
-   if (!StartUnpack(G->RE[winnum]->File, newfile, G->RE[winnum]->MailPtr->Folder))
-   {
+	// here we read in the mail in our read mail group
+	GetMailFile(rmData->readFile, folder, mail);
+
+  // check wheter the folder of the mail is using XPK and if so we
+  // unpack it to a temporarly file
+  if(isXPKFolder(folder))
+  {
+    char tmpFile[SIZE_PATHFILE];
+
+    if(!StartUnpack(rmData->readFile, tmpFile, folder))
+    {
       BusyEnd();
       return FALSE;
-   }
+    }
 
-   strcpy(G->RE[winnum]->File, newfile);
-   G->RE[winnum]->ParseMode = parsemode;
-   if ((rp = G->RE[winnum]->FirstPart = RE_ParseMessage(winnum, NULL, G->RE[winnum]->File, NULL)))
-   {
-      RE_LoadMessagePart(winnum, rp);
-      for (i = 0; rp; i++, rp = rp->Next)
+    strcpy(rmData->readFile, tmpFile);
+  }
+
+  rmData->parseMode = pMode;
+  if((part = rmData->firstPart = RE_ParseMessage(rmData, NULL, rmData->readFile, NULL)))
+  {
+    int i;
+
+    RE_LoadMessagePart(rmData, part);
+
+    for(i = 0; part; i++, part = part->Next)
+    {
+      if(part->Nr != i)
       {
-        if (rp->Nr != i)
-        {
-          rp->Nr = i;
-          sprintf(file, "YAMm%08lx-w%dp%d%s", (ULONG)G->RE[winnum]->MailPtr, winnum, i, strchr(rp->Filename,'.'));
-          strmfp(newfile, C->TempDir, file);
+        char tmpFile[SIZE_PATHFILE];
+        char file[SIZE_FILE];
 
-          RenameFile(rp->Filename, newfile);
-          strcpy(rp->Filename, newfile);
-        }
+        part->Nr = i;
+        sprintf(file, "YAMm%08lx-p%d%s", (ULONG)rmData, i, strchr(part->Filename, '.'));
+        strmfp(tmpFile, C->TempDir, file);
+
+        RenameFile(part->Filename, tmpFile);
+        strcpy(part->Filename, tmpFile);
       }
-   }
-   BusyEnd();
-   return TRUE;
+    }
+  }
+
+  BusyEnd();
+  return TRUE;
 }
-///
-/// RE_GetPart
-//  Gets a message part by its index number
-static struct Part *RE_GetPart(int winnum, int partnr)
-{
-   struct Part *part;
-   for (part = G->RE[winnum]->FirstPart; part; part = part->Next) if (part->Nr == partnr) break;
-   return part;
-}
-///
-/// RE_InitPrivateRC
-//  Allocates resources for background message parsing
-void RE_InitPrivateRC(struct Mail *mail, enum ParseMode parsemode)
-{
-   struct RE_ClassData *data = calloc(1, sizeof(struct RE_ClassData));
-   if ((G->RE[4] = data))
-   {
-     data->Mail = *mail;
-     data->MailPtr = mail;
-     GetMailFile(data->File, mail->Folder, mail);
-     RE_LoadMessage(4, parsemode);
-   }
-}
-///
-/// RE_FreePrivateRC
-//  Frees resources used by background message parsing
-void RE_FreePrivateRC(void)
-{
-   RE_CleanupMessage(4);
-   free(G->RE[4]);
-}
+
 ///
 /// RE_ReadInMessage
 //  Reads a message into a dynamic buffer and returns this buffer.
 //  The text returned should *NOT* contain any MUI specific escape sequences, as
 //  we will later parse the buffer again before we put it into the texteditor. So no deeep lexical analysis
 //  are necessary here.
-char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
+char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 {
-  struct RE_ClassData *re = G->RE[winnum];
-  struct Part *first, *last, *part, *uup = NULL;
+  struct Part *first;
+  struct Part *last;
+  struct Part *part;
+  struct Part *uup = NULL;
   char *cmsg;
   int totsize, len;
 
-  DB(kprintf("RE_ReadInMessage\n");)
+  DB(kprintf("RE_ReadInMessage: %08lx, mode: %d\n", rmData, mode);)
 
   // save exit conditions
-  if(!re || !(first = re->FirstPart)) return NULL;
+  if(!rmData || !(first = rmData->firstPart))
+    return NULL;
 
   // first we precalucalte the size of the final buffer where the message text will be put in
   for(totsize = 1000, part = first; part; part = part->Next)
@@ -2854,12 +1940,13 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
     int wptr=0, prewptr;
 
     // if this function wasn`t called with QUIET we place a BusyText into the Main Window
-    if (mode != RIM_QUIET) BusyText(GetStr(MSG_BusyDisplaying), "");
+    if(mode != RIM_QUIET)
+      BusyText(GetStr(MSG_BusyDisplaying), "");
 
     // then we copy the first part (which is the header of the mail
     // into our final buffer because we don`t need to preparse it
     // but only if we are in READ mode
-    if (mode == RIM_READ)
+    if(mode == RIM_READ)
     {
       FILE *fh;
 
@@ -2995,6 +2082,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
               // now that we have a full line we can check for inline stuff
               // like inline uuencode/pgp sections
+
 /* UUenc */   if(strncmp(rptr, "begin ", 6) == 0 &&
                  rptr[6] >= '0' && rptr[6] <= '7' &&
                  rptr[7] >= '0' && rptr[7] <= '7' &&
@@ -3016,7 +2104,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
                 // then create the new part to which we will put our uudecoded
                 // data
-                if((outfh = RE_OpenNewPart(winnum, &uup, last, first)))
+                if((outfh = RE_OpenNewPart(rmData, &uup, last, first)))
                 {
                   char *endptr = rptr+strlen(rptr)+1;
                   long old_pos;
@@ -3175,16 +2263,16 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
                   DB( kprintf("RE_ReadInMessage(): decrypting\n"); )
 
-                  if(RE_DecryptPGP(winnum, tf->Filename) == 0)
+                  if(RE_DecryptPGP(rmData, tf->Filename) == 0)
                   {
                     // flag the mail as having a inline PGP signature
-                    SET_FLAG(re->PGPSigned, PGPS_OLD);
+                    SET_FLAG(rmData->signedFlags, PGPS_OLD);
 
                     // make sure that the mail is flaged as signed
-                    if(!isSignedMail(re->MailPtr))
+                    if(!isSignedMail(rmData->mail))
                     {
-                      SET_FLAG(re->MailPtr->mflags, MFLAG_SIGNED);
-                      SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+                      SET_FLAG(rmData->mail->mflags, MFLAG_SIGNED);
+                      SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                     }
                   }
 
@@ -3204,13 +2292,13 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                 }
 
                 // flag the mail as being inline PGP encrypted
-                SET_FLAG(re->PGPEncrypted, PGPE_OLD);
+                SET_FLAG(rmData->encryptionFlags, PGPE_OLD);
 
                 // make sure that mail is flagged as crypted
-                if(!isCryptedMail(re->MailPtr))
+                if(!isCryptedMail(rmData->mail))
                 {
-                  SET_FLAG(re->MailPtr->mflags, MFLAG_CRYPT);
-                  SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+                  SET_FLAG(rmData->mail->mflags, MFLAG_CRYPT);
+                  SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                 }
 
                 DB( kprintf("RE_ReadInMessage(): done with decryption\n"); )
@@ -3234,9 +2322,10 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                   cmsg = AppendToBuffer(cmsg, &wptr, &len, "-- \n");
                 }
               }
+
 /* PGP sig */ else if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31))
               {
-                re->PGPKey = TRUE;
+                rmData->hasPGPKey = TRUE;
 
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
                 cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
@@ -3244,12 +2333,12 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
               else if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29))
               {
                 // flag the mail as having a inline PGP signature
-                SET_FLAG(re->PGPSigned, PGPS_OLD);
+                SET_FLAG(rmData->signedFlags, PGPS_OLD);
 
-                if(!isSignedMail(re->MailPtr))
+                if(!isSignedMail(rmData->mail))
                 {
-                  SET_FLAG(re->MailPtr->mflags, MFLAG_SIGNED);
-                  SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+                  SET_FLAG(rmData->mail->mflags, MFLAG_SIGNED);
+                  SET_FLAG(rmData->mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                 }
               }
 /* other */   else
@@ -3275,22 +2364,14 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
       BusyEnd();
   }
 
+  DB(kprintf("RE_ReadInMessage(): finished\n");)
+
   return cmsg;
-}
-///
-/// RE_AddExtraHeader
-//  Adds additional headers to the header listview
-static void RE_AddExtraHeader(APTR lv, char *header, char *value)
-{
-   char buffer[SIZE_LARGE];
-   if (!*value) return;
-   sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(header), value);
-   DoMethod(lv, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
 }
 ///
 /// RE_GetSenderInfo
 //  Parses X-SenderInfo header field
-static void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
+void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
 {
    char *s, *t, *eq;
    struct ExtendedMail *email;
@@ -3335,7 +2416,7 @@ static void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
 ///
 /// RE_UpdateSenderInfo
 //  Updates address book entry of sender
-static void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
+void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
 {
    BOOL changed = FALSE;
 
@@ -3351,24 +2432,9 @@ static void RE_UpdateSenderInfo(struct ABEntry *old, struct ABEntry *new)
       CallHookPkt(&AB_SaveABookHook, 0, 0);
 }
 ///
-/// RE_AddSenderInfo
-//  Displays sender information to header listview
-static void RE_AddSenderInfo(int winnum, struct ABEntry *ab)
-{
-   APTR lv = G->RE[winnum]->GUI.LV_HEAD;
-   RE_AddExtraHeader(lv, GetStr(MSG_EA_RealName), ab->RealName);
-   RE_AddExtraHeader(lv, GetStr(MSG_EA_Street), ab->Street);
-   RE_AddExtraHeader(lv, GetStr(MSG_EA_City), ab->City);
-   RE_AddExtraHeader(lv, GetStr(MSG_EA_Country), ab->Country);
-   RE_AddExtraHeader(lv, GetStr(MSG_EA_Phone), ab->Phone);
-   RE_AddExtraHeader(lv, GetStr(MSG_EA_DOB), AB_ExpandBD(ab->BirthDay));
-   RE_AddExtraHeader(lv, GetStr(MSG_EA_Description), ab->Comment);
-   RE_AddExtraHeader(lv, GetStr(MSG_EA_Homepage), ab->Homepage);
-}
-///
 /// RE_AddToAddrbook
 //  Adds sender to the address book
-static struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
+struct ABEntry *RE_AddToAddrbook(Object *win, struct ABEntry *templ)
 {
    struct ABEntry ab_new;
    char buf[SIZE_LARGE];
@@ -3423,7 +2489,7 @@ static struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
 ///
 /// RE_FindPhotoOnDisk
 //  Searches portrait of sender in the gallery directory
-static BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
+BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
 {
    *photo = 0;
    if (*ab->Photo) strcpy(photo, ab->Photo);
@@ -3444,7 +2510,7 @@ static BOOL RE_FindPhotoOnDisk(struct ABEntry *ab, char *photo)
 ///
 /// RE_DownloadPhoto
 //  Downloads portrait photograph of sender from the YAM homepage
-static BOOL RE_DownloadPhoto(APTR win, char *url, struct ABEntry *ab)
+BOOL RE_DownloadPhoto(Object *win, char *url, struct ABEntry *ab)
 {
    char fname[SIZE_FILE], picfname[SIZE_PATHFILE], ext[SIZE_SMALL];
    char *name = *ab->Alias ? ab->Alias : "pic";
@@ -3480,147 +2546,9 @@ static BOOL RE_DownloadPhoto(APTR win, char *url, struct ABEntry *ab)
    return success;
 }
 ///
-/// RE_DisplayMessage
-//  Shows message header and body in read window
-static void RE_DisplayMessage(int winnum, BOOL update)
-{
-   char *cmsg, *body;
-   BOOL dispheader;
-   struct RE_GUIData *gui = &(G->RE[winnum]->GUI);
-   struct Person *from = &G->RE[winnum]->Mail.From;
-   struct ABEntry *ab = NULL, abtmpl;
-   int hits;
-
-   BusyText(GetStr(MSG_BusyDisplaying), "");
-
-   if ((cmsg = RE_ReadInMessage(winnum, RIM_READ)))
-   {
-      char headername[SIZE_DEFAULT];
-      int i;
-
-      dispheader = (G->RE[winnum]->Header != HM_NOHEADER);
-      set(gui->GR_HEAD, MUIA_ShowMe, dispheader);
-      set(gui->BO_BALANCE, MUIA_ShowMe, dispheader);
-      DoMethod(gui->LV_HEAD, MUIM_NList_Clear);
-      set(gui->LV_HEAD, MUIA_NList_Quiet, TRUE);
-      body = cmsg;
-
-      // here we have to parse the header and place all header
-      // information in the header listview.
-      while (*body)
-      {
-         // if the first char in the line is a newline \n, then we found the start of
-         // the body and break here.
-         if (*body == '\n') { body++; break; }
-
-         // we copy the headername from the mail as long as there is no space and
-         // no interrupting character is found
-         for(i = 0; body[i] != ':' && !isspace(body[i]) && body[i] != '\n' && body[i] != '\0' && i < SIZE_DEFAULT-1; i++)
-         {
-           headername[i] = body[i];
-         }
-
-         // if we end up here and body[i] isn`t a : then this wasn`t a proper headerline and we
-         // can ignore it anyway because the RFC says that a headerline must have characters
-         // without any space followed by a ":"
-         if(body[i] == ':')
-         {
-           headername[i] = '\0'; // terminate with 0
-
-           // Now we check if this is a header the user wants to be displayed if he has choosen
-           // to display only shortheaders
-           if(G->RE[winnum]->Header == HM_SHORTHEADER) dispheader = MatchNoCase(headername, C->ShortHeaders);
-           else dispheader = (G->RE[winnum]->Header == HM_FULLHEADER);
-
-           if(dispheader)
-           {
-              // we simply insert the whole thing from the actual body pointer
-              // because the ConstructHook_String of NList will anyway just copy until a \n, \r or \0
-              DoMethod(gui->LV_HEAD, MUIM_NList_InsertSingleWrap, body, MUIV_NList_Insert_Bottom, G->RE[winnum]->WrapHeader ? WRAPCOL1 : NOWRAP, ALIGN_LEFT);
-           }
-         }
-
-         // then we move forward until the end of the line
-         while (*body && *body != '\n') body++;
-         if (*body) body++; // if the end of the line isn`t a \0 we have to move on
-      }
-
-      if ((hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab)) == 0 && *from->RealName)
-      {
-        hits = AB_SearchEntry(from->RealName, ASM_REALNAME|ASM_USER, &ab);
-      }
-
-      RE_GetSenderInfo(G->RE[winnum]->MailPtr, &abtmpl);
-
-      if (!stricmp(from->Address, C->EmailAddress) || !stricmp(from->RealName, C->RealName))
-      {
-         if (!ab) { ab = &abtmpl; *ab->Photo = 0; }
-      }
-      else
-      {
-         if (ab)
-         {
-            RE_UpdateSenderInfo(ab, &abtmpl);
-            if(!update && C->AddToAddrbook > 0 && !*ab->Photo && *abtmpl.Photo && *C->GalleryDir)
-            {
-              RE_DownloadPhoto(gui->WI, abtmpl.Photo, ab);
-            }
-         }
-         else
-         {
-            if(!update && C->AddToAddrbook > 0 && (ab = RE_AddToAddrbook(gui->WI, &abtmpl)))
-            {
-               if (*abtmpl.Photo && *C->GalleryDir) RE_DownloadPhoto(gui->WI, abtmpl.Photo, ab);
-            }
-            else { ab = &abtmpl; *ab->Photo = 0; }
-         }
-      }
-      if (G->RE[winnum]->SenderInfo)
-      {
-         if (hits == 1 || ab->Type == AET_LIST) RE_AddSenderInfo(winnum, ab);
-         if (G->RE[winnum]->SenderInfo == 2) if (DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
-         {
-            char photopath[SIZE_PATHFILE];
-            if (gui->BC_PHOTO)
-            {
-               DoMethod(gui->GR_PHOTO, OM_REMMEMBER, gui->BC_PHOTO);
-               MUI_DisposeObject(gui->BC_PHOTO);
-            }
-            gui->BC_PHOTO = NULL;
-            if (RE_FindPhotoOnDisk(ab, photopath))
-            {
-               gui->BC_PHOTO = MakePicture(photopath);
-               DoMethod(gui->GR_PHOTO, OM_ADDMEMBER, gui->BC_PHOTO);
-            }
-            DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
-         }
-      }
-      set(gui->GR_INFO, MUIA_ShowMe, (G->RE[winnum]->SenderInfo == 2) && (gui->BC_PHOTO != NULL));
-      set(gui->LV_HEAD, MUIA_NList_Quiet, FALSE);
-
-      // before we can put the message body into the TextEditor, we have to preparse the text and
-      // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
-      // more powerful this way.
-      if(!G->RE[winnum]->NoTextstyles)
-        body = ParseEmailText(body);
-
-      SetAttrs(gui->TE_TEXT, MUIA_TextEditor_FixedFont,  G->RE[winnum]->FixedFont,
-                             MUIA_TextEditor_Contents,   body,
-                             TAG_DONE);
-
-      // free the parsed text afterwards as the texteditor has copied it anyway.
-      if(!G->RE[winnum]->NoTextstyles)
-        free(body);
-
-      free(cmsg);
-   }
-
-   BusyEnd();
-}
-///
 /// RE_ClickedOnMessage
 //  User clicked on a e-mail address
-static void RE_ClickedOnMessage(char *address)
+void RE_ClickedOnMessage(char *address)
 {
    struct ABEntry *ab = NULL;
    int l, win, hits;
@@ -3695,497 +2623,171 @@ static void RE_ClickedOnMessage(char *address)
    }
 }
 ///
-/// RE_DoubleClickFunc
-//  Handles double-clicks on an URL
-HOOKPROTONH(RE_DoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
-{
-   char *p;
-   BOOL result = FALSE;
-
-   DB(kprintf("DoubleClick: %ld - [%s]\n", clickmsg->ClickPosition, clickmsg->LineContents);)
-
-   DoMethod(G->App, MUIM_Application_InputBuffered);
-
-   // for safety reasons
-   if(!clickmsg->LineContents) return FALSE;
-
-   // if the user clicked on space we skip the following
-   // analysis of a URL and just check if it was an attachment the user clicked at
-   if(!ISpace(clickmsg->LineContents[clickmsg->ClickPosition]))
-   {
-      int pos = clickmsg->ClickPosition;
-      char *line, *surl;
-      static char url[SIZE_URL];
-      enum tokenType type;
-
-      // then we make a copy of the LineContents
-      if(!(line = StrBufCpy(NULL, clickmsg->LineContents))) return FALSE;
-
-      // find the beginning of the word we clicked at
-      surl = &line[pos];
-      while(surl != &line[0] && !ISpace(*(surl-1))) surl--;
-
-      // now find the end of the word the user clicked at
-      p = &line[pos];
-      while(p+1 != &line[strlen(line)] && !ISpace(*(p+1))) p++;
-      *(++p) = '\0';
-
-      // now we start our quick lexical analysis to find a clickable element within
-      // the doubleclick area
-      if((type = ExtractURL(surl, url)))
-      {
-        switch(type)
-        {
-          case tEMAIL:
-          {
-            RE_ClickedOnMessage(url);
-          }
-          break;
-
-          case tMAILTO:
-          {
-            RE_ClickedOnMessage(&url[7]);
-          }
-          break;
-
-          case tHTTP:
-          case tHTTPS:
-          case tFTP:
-          case tGOPHER:
-          case tTELNET:
-          case tNEWS:
-          case tURL:
-          {
-            GotoURL(url);
-          }
-          break;
-
-          default:
-            // nothing
-          break;
-        }
-
-        result = TRUE;
-      }
-
-      FreeStrBuf(line);
-   }
-
-   // if we still don`t have a result here we check if the user clicked on
-   // a attachment.
-   if(result == FALSE)
-   {
-      p = clickmsg->LineContents;
-      if(isdigit(p[0]) && ((p[1] == ':' && p[2] == ' ') || (p[2] == ':' && p[3] == ' ')))
-      {
-        struct Part *part = RE_GetPart((int)xget(_win(obj), MUIA_UserData), atoi(p));
-
-        if(part)
-        {
-          RE_DecodePart(part);
-          RE_DisplayMIME(part->Filename, part->ContentType);
-
-          result = TRUE;
-        }
-      }
-   }
-
-   return result;
-}
-MakeStaticHook(RE_DoubleClickHook, RE_DoubleClickFunc);
-///
-/// RE_ShowEnvFunc
-//  Changes display options (header, textstyles, sender info)
-HOOKPROTONHNO(RE_ShowEnvFunc, void, int *arg)
-{
-   int lev, winnum = arg[0], mode = arg[1];
-   struct RE_ClassData *re = G->RE[winnum];
-   long opt;
-
-   lev = xget(re->GUI.SL_TEXT, MUIA_Prop_First);
-   switch (mode)
-   {
-      case 0: case 1: case 2: re->Header = mode;
-                              break;
-      case 3: case 4: case 5: re->SenderInfo = mode-3;
-                              break;
-      case 6:  get(re->GUI.MI_WRAPH, MUIA_Menuitem_Checked, &opt);
-               re->WrapHeader = opt; break;
-      case 7:  get(re->GUI.MI_TSTYLE, MUIA_Menuitem_Checked, &opt);
-               re->NoTextstyles = !opt; break;
-      case 8:  get(re->GUI.MI_FFONT, MUIA_Menuitem_Checked, &opt);
-               re->FixedFont = opt; break;
-   }
-   RE_DisplayMessage(winnum, TRUE);
-   set(re->GUI.SL_TEXT, MUIA_Prop_First, lev);
-}
-MakeStaticHook(RE_ShowEnvHook, RE_ShowEnvFunc);
-///
 
 /*** GUI ***/
-/// RE_LV_AttachDspFunc
-//  Attachment listview display hook
-HOOKPROTONH(RE_LV_AttachDspFunc, long, char **array, struct Part *entry)
+/// ClosedReadWindowHook()
+//  Hook that will be called as soon as a read window is closed
+HOOKPROTONHNO(ClosedReadWindowFunc, void, struct ReadMailData **arg)
 {
-   if (entry)
-   {
-      static char dispnu[SIZE_SMALL], dispsz[SIZE_SMALL];
-      array[0] = array[2] = "";
+  struct ReadMailData *rmData = *arg;
 
-      if(entry->Nr > PART_RAW)
-        sprintf(array[0] = dispnu, "%d", entry->Nr);
+  // check if this rmData is the current active Rexx background
+  // processing one and if so set the ptr to NULL to signal the rexx
+  // commands that their active window was closed
+  if(rmData == G->ActiveRexxRMData)
+    G->ActiveRexxRMData = NULL;
 
-      if(*entry->Name) array[1] = entry->Name;
-      else             array[1] = DescribeCT(entry->ContentType);
-
-      if(entry->Size > 0)
-      {
-        array[2] = dispsz;
-
-        if(entry->Decoded)
-          FormatSize(entry->Size, dispsz);
-        else
-        {
-          dispsz[0] = '~';
-          FormatSize(entry->Size, &dispsz[1]);
-        }
-      }
-   }
-   else
-   {
-      array[0] = GetStr(MSG_ATTACH_NO);
-      array[1] = GetStr(MSG_ATTACH_PART);
-      array[2] = GetStr(MSG_Size);
-   }
-
-   return 0;
+  // calls the CleanupReadMailData to clean everything else up
+  CleanupReadMailData(rmData);
 }
-MakeHook(RE_LV_AttachDspFuncHook,RE_LV_AttachDspFunc);
+MakeStaticHook(ClosedReadWindowHook, ClosedReadWindowFunc);
 ///
-/// RE_CloseFunc
-//  Closes a read window
-HOOKPROTONHNO(RE_CloseFunc, void, int *arg)
+/// CreateReadWindow()
+// Function that creates a new ReadWindow object and returns
+// the referencing ReadMailData structure which was created
+// during that process - or NULL if an error occurred.
+struct ReadMailData *CreateReadWindow(BOOL rexxWindow)
 {
-   int winnum = *arg;
-   struct RE_ClassData *re = G->RE[winnum];
+  Object *newReadWindow;
 
-   RE_CleanupMessage(winnum);
-   if(isVirtualMail(re->MailPtr))
-   {
-      free(re->MailPtr);
-      CloseTempFile(re->TempFile);
-   }
-   G->Weights[2] = xget(re->GUI.GR_HEAD, MUIA_VertWeight);
-   G->Weights[3] = xget(re->GUI.GR_BODY, MUIA_VertWeight);
-   DisposeModulePush(&G->RE[winnum]);
+  // if MultipleWindows support if off we try to reuse an already existing
+  // readWindow
+  if(rexxWindow == FALSE &&
+     C->MultipleWindows == FALSE &&
+     IsMinListEmpty(&G->ReadMailDataList) == FALSE)
+  {
+    DB(kprintf("No MultipleWindows support, trying to reuse a window.\n");)
+
+    // search through our ReadDataList
+    struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+    for(; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+      if(rmData->readWindow)
+        return rmData;
+    }
+  }
+
+  DB(kprintf("Creating new Read Window.\n");)
+
+  // if we end up here we create a new ReadWindowObject
+  newReadWindow = ReadWindowObject, End;
+  if(newReadWindow)
+  {
+    // get the ReadMailData and check that it is the same like created
+    struct ReadMailData *rmData = (struct ReadMailData *)xget(newReadWindow, MUIA_ReadWindow_ReadMailData);
+
+    if(rmData && rmData->readWindow == newReadWindow)
+    {
+      DB(kprintf("Read window created: 0x%08lx\n", rmData);)
+
+      // before we continue we make sure we connect a notify to the new window
+      // so that we get informed if the window is closed and therefore can be
+      // disposed
+      DoMethod(newReadWindow, MUIM_Notify, MUIA_Window_Open, FALSE,
+                              MUIV_Notify_Application, 3, MUIM_CallHook, &ClosedReadWindowHook, rmData);
+
+      return rmData;
+    }
+
+    DoMethod(G->App, OM_REMMEMBER, newReadWindow);
+    MUI_DisposeObject(newReadWindow);
+  }
+
+  DB(kprintf("ERROR occurred during read Window creation!\n");)
+  return NULL;
 }
-MakeHook(RE_CloseHook, RE_CloseFunc);
+
 ///
-/// RE_Open
-//  Opens a read window
-int RE_Open(int winnum, BOOL real)
+
+/*** ReadMailData ***/
+/// AllocPrivateRMData()
+//  Allocates resources for background message parsing
+struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode)
 {
-   if (winnum < 0) for (winnum = 0; winnum < 4; winnum++) if (!G->RE[winnum]) break;
-   if (winnum > 3) return -1;
-   if (!G->RE[winnum])
-   {
-      if (!(G->RE[winnum] = RE_New(winnum, real))) return -1;
-      G->RE[winnum]->Header = C->ShowHeader;
-   }
-   return winnum;
+	struct ReadMailData *rmData = calloc(1, sizeof(struct ReadMailData));
+
+  if(rmData)
+  {
+    rmData->mail = mail;
+
+    if(RE_LoadMessage(rmData, pMode) == FALSE)
+    {
+      free(rmData);
+      rmData = NULL;
+    }
+  }
+
+  return rmData;
 }
 ///
-/// RE_LV_HDspFunc
-//  Header listview display hook
-HOOKPROTONH(RE_LV_HDspFunc, long, char **array, char *entry)
+/// FreePrivateRMData()
+//  Frees resources used by background message parsing
+void FreePrivateRMData(struct ReadMailData *rmData)
 {
-   static char hfield[40];
-   char *cont = entry;
-   int i = 0;
-
-   // copy the headername into the static hfield to display it.
-   while (*cont != ':' && *cont && i < 38) hfield[i++] = *cont++;
-   hfield[i] = '\0';
-
-   // set the array now so that the NList shows the correct values.
-   array[0] = hfield;
-   array[1] = stpblk(++cont);
-
-   return 0;
+  if(CleanupReadMailData(rmData))
+  {
+    free(rmData);
+  }
 }
-MakeStaticHook(RE_LV_HDspHook,RE_LV_HDspFunc);
 ///
-/// RE_New
-//  Creates a read window
-static struct RE_ClassData *RE_New(int winnum, BOOL real)
+/// CleanupReadMailData()
+// cleans/deletes all data of a readmaildata structure
+BOOL CleanupReadMailData(struct ReadMailData *rmData)
 {
-   struct RE_ClassData *data = calloc(1, sizeof(struct RE_ClassData));
-   if (data)
-   {
-      enum {
-        RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,
-        RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_SETUNREAD,RMEN_SETMARKED,
-        RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,
-        RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
-        RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT
-      };
+  struct Part *part;
+  struct Part *next;
 
-      static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
-        { MSG_RE_TBPrev,    MSG_HELP_RE_BT_PREVIOUS },
-        { MSG_RE_TBNext,    MSG_HELP_RE_BT_NEXT     },
-        { MSG_RE_TBPrevTh,  MSG_HELP_RE_BT_QUESTION },
-        { MSG_RE_TBNextTh,  MSG_HELP_RE_BT_ANSWER   },
-        { MSG_Space,        NULL                    },
-        { MSG_RE_TBDisplay, MSG_HELP_RE_BT_DISPLAY  },
-        { MSG_RE_TBSave,    MSG_HELP_RE_BT_EXPORT   },
-        { MSG_RE_TBPrint,   MSG_HELP_RE_BT_PRINT    },
-        { MSG_Space,        NULL                    },
-        { MSG_RE_TBDelete,  MSG_HELP_RE_BT_DELETE   },
-        { MSG_RE_TBMove,    MSG_HELP_RE_BT_MOVE     },
-        { MSG_RE_TBReply,   MSG_HELP_RE_BT_REPLY    },
-        { MSG_RE_TBForward, MSG_HELP_RE_BT_FORWARD  },
-        { NULL,             NULL                    }
-      };
-      ULONG i;
+  if(rmData->readWindow)
+  {
+    // make sure the window is really closed
+    nnset(rmData->readWindow, MUIA_Window_Open, FALSE);
 
-      for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
-      {
-        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
-      }
+    // for other windows we have to save the GUI object weights
+    // aswell
+    if(rmData->readMailGroup)
+    {
+      G->Weights[2] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
+      G->Weights[3] = xget(rmData->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
+    }
+  }
 
-      data->GUI.SL_TEXT = ScrollbarObject, End;
-      data->Header = C->ShowHeader;
-      data->SenderInfo = C->ShowSenderInfo;
-      data->WrapHeader = C->WrapHeader;
-      data->NoTextstyles = !C->UseTextstyles;
-      data->FixedFont = C->FixedFontEdit;
-      data->GUI.WI = WindowObject,
-         MUIA_Window_Title, "",
-         MUIA_HelpNode, "RE_W",
-         MUIA_Window_ID, MAKE_ID('R','E','A','D'),
-         MUIA_UserData, winnum,
-         MUIA_Window_Menustrip, MenustripObject,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_Message),
-               MUIA_Family_Child, data->GUI.MI_EDIT = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MEdit), MUIA_Menuitem_Shortcut,"E", MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_EDIT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MMove), MUIA_Menuitem_Shortcut, "M", MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_MOVE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MCopy),MUIA_Menuitem_Shortcut,"Y",  MUIA_UserData,RMEN_COPY, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MDelete), MUIA_Menuitem_Shortcut,"Del", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_DELETE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_Print), MUIA_Menuitem_Shortcut, "P", MUIA_UserData,RMEN_PRINT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_Save), MUIA_Menuitem_Shortcut, "S", MUIA_UserData,RMEN_SAVE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_Attachments),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MDisplay), MUIA_Menuitem_Shortcut, "D", MUIA_UserData,RMEN_DISPLAY, End,
-                  MUIA_Family_Child, data->GUI.MI_DETACH = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SaveAll), MUIA_Menuitem_Shortcut,"A", MUIA_UserData,RMEN_DETACH, End,
-                  MUIA_Family_Child, data->GUI.MI_CROP = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_Crop), MUIA_Menuitem_Shortcut,"O", MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_CROP, End,
-              End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_New), MUIA_Menuitem_Shortcut,"N", MUIA_UserData,RMEN_NEW, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MReply), MUIA_Menuitem_Shortcut,"R", MUIA_UserData,RMEN_REPLY, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MForward), MUIA_Menuitem_Shortcut,"W", MUIA_UserData,RMEN_FORWARD, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MBounce), MUIA_Menuitem_Shortcut,"B", MUIA_UserData,RMEN_BOUNCE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MGetAddress), MUIA_Menuitem_Shortcut,"J", MUIA_UserData,RMEN_SAVEADDR, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SetUnread), MUIA_Menuitem_Shortcut,"U", MUIA_UserData,RMEN_SETUNREAD, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SETMARKED), MUIA_Menuitem_Shortcut,",", MUIA_UserData,RMEN_SETMARKED, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_ChangeSubj), MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_CHSUBJ, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_RE_Navigation),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MNext),  MUIA_Menuitem_Shortcut, "right", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_NEXT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MPrev),  MUIA_Menuitem_Shortcut, "left", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_PREV, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MURNext),MUIA_Menuitem_Shortcut, "shift right", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_URNEXT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MURPrev),MUIA_Menuitem_Shortcut, "shift left", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_URPREV, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MNextTh),MUIA_Menuitem_Shortcut, ">", MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_NEXTTH, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MPrevTh),MUIA_Menuitem_Shortcut, "<", MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_PREVTH, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, "PGP",
-               MUIA_Family_Child, data->GUI.MI_EXTKEY = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_ExtractKey), MUIA_Menuitem_Shortcut,"X", MUIA_UserData,RMEN_EXTKEY, End,
-               MUIA_Family_Child, data->GUI.MI_CHKSIG = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SigCheck), MUIA_Menuitem_Shortcut,"K", MUIA_UserData,RMEN_CHKSIG, End,
-               MUIA_Family_Child, data->GUI.MI_SAVEDEC = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SaveDecrypted), MUIA_Menuitem_Shortcut,"V", MUIA_UserData,RMEN_SAVEDEC, End,
-            End,
-            MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Settings),
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_NoHeaders),  MUIA_Menuitem_Shortcut,"0", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->Header==HM_NOHEADER, MUIA_Menuitem_Exclude,0x06, MUIA_UserData,RMEN_HNONE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_ShortHeaders), MUIA_Menuitem_Shortcut,"1", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->Header==HM_SHORTHEADER, MUIA_Menuitem_Exclude,0x05, MUIA_UserData,RMEN_HSHORT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FullHeaders),  MUIA_Menuitem_Shortcut,"2", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->Header==HM_FULLHEADER, MUIA_Menuitem_Exclude,0x03, MUIA_UserData,RMEN_HFULL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_NoSInfo), MUIA_Menuitem_Shortcut,"3", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->SenderInfo==0, MUIA_Menuitem_Exclude,0x60, MUIA_UserData,RMEN_SNONE, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SInfo), MUIA_Menuitem_Shortcut,"4", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->SenderInfo==1, MUIA_Menuitem_Exclude,0x50, MUIA_UserData,RMEN_SDATA, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SInfoImage), MUIA_Menuitem_Shortcut,"5", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->SenderInfo==2, MUIA_Menuitem_Exclude,0x30, MUIA_UserData,RMEN_SFULL, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-               MUIA_Family_Child, data->GUI.MI_WRAPH = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_WrapHeader), MUIA_Menuitem_Shortcut,"H", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->WrapHeader, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_WRAPH, End,
-               MUIA_Family_Child, data->GUI.MI_TSTYLE = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_Textstyles), MUIA_Menuitem_Shortcut,"T", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,!data->NoTextstyles, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_TSTYLE, End,
-               //MUIA_Family_Child, data->GUI.MI_FFONT = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FixedFont), MUIA_Menuitem_Shortcut,"F", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->FixedFont, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_FFONT, End,
-            End,
-         End,
-         WindowContents, VGroup,
-            Child, hasHideToolBarFlag(C->HideGUIElements) ?
-               (RectangleObject, MUIA_ShowMe, FALSE, End) :
-               (HGroup, GroupSpacing(0),
-                  Child, HGroupV,
-                     Child, data->GUI.TO_TOOLBAR = ToolbarObject,
-                        MUIA_HelpNode, "RE_B",
-                        MUIA_Toolbar_ImageType,      MUIV_Toolbar_ImageType_File,
-                        MUIA_Toolbar_ImageNormal,    "PROGDIR:Icons/Read.toolbar",
-                        MUIA_Toolbar_ImageGhost,     "PROGDIR:Icons/Read_G.toolbar",
-                        MUIA_Toolbar_ImageSelect,    "PROGDIR:Icons/Read_S.toolbar",
-                        MUIA_Toolbar_Description,    data->GUI.TB_TOOLBAR,
-                        MUIA_Toolbar_ParseUnderscore,TRUE,
-                        MUIA_Font,                   MUIV_Font_Tiny,
-                        MUIA_ShortHelp, TRUE,
-                     End,
-                     Child, HSpace(0),
-                  End,
-                  Child, HSpace(8),
-                  Child, VGroup,
-                     Child, VSpace(0),
-                     Child, HGroup,
-                        TextFrame,
-                        MUIA_Group_Spacing, 1,
-                        MUIA_Background, MUII_TextBack,
-                        Child, data->GUI.GR_STATUS[0] = PageGroup,
-                           Child, HSpace(0),
-                           Child, MakeStatusFlag("status_unread"),
-                           Child, MakeStatusFlag("status_old"),
-                           Child, MakeStatusFlag("status_forward"),
-                           Child, MakeStatusFlag("status_reply"),
-                           Child, MakeStatusFlag("status_waitsend"),
-                           Child, MakeStatusFlag("status_error"),
-                           Child, MakeStatusFlag("status_hold"),
-                           Child, MakeStatusFlag("status_sent"),
-                           Child, MakeStatusFlag("status_new"),
-                        End,
-                        Child, data->GUI.GR_STATUS[1] = PageGroup,
-                           Child, HSpace(0),
-                           Child, MakeStatusFlag("status_crypt"),
-                           Child, MakeStatusFlag("status_signed"),
-                           Child, MakeStatusFlag("status_report"),
-                           Child, MakeStatusFlag("status_attach"),
-                        End,
-                        Child, data->GUI.GR_STATUS[2] = PageGroup,
-                           Child, HSpace(0),
-                           Child, MakeStatusFlag("status_urgent"),
-                        End,
-                        Child, data->GUI.GR_STATUS[3] = PageGroup,
-                           Child, HSpace(0),
-                           Child, MakeStatusFlag("status_mark"),
-                        End,
-                     End,
-                     Child, VSpace(0),
-                  End,
-               End),
-            Child, VGroup,
-               Child, data->GUI.GR_HEAD = HGroup, GroupSpacing(0),
-                  MUIA_ShowMe, data->Header != HM_NOHEADER,
-                  MUIA_VertWeight, G->Weights[2],
-                  Child, NListviewObject,
-                     MUIA_NListview_NList, data->GUI.LV_HEAD = NListObject,
-                        InputListFrame,
-                        MUIA_NList_ConstructHook, MUIV_NList_ConstructHook_String,
-                        MUIA_NList_DestructHook, MUIV_NList_DestructHook_String,
-                        MUIA_NList_DisplayHook, &RE_LV_HDspHook,
-                        MUIA_NList_Format, "P=\033r\0338 W=-1 MIW=-1,",
-                        MUIA_NList_Input, FALSE,
-                        MUIA_NList_TypeSelect, MUIV_NList_TypeSelect_Char,
-                        MUIA_NList_DefaultObjectOnClick, FALSE,
-                        MUIA_ContextMenu, NULL,
-                        MUIA_CycleChain, 1,
-                     End,
-                  End,
-                  Child, data->GUI.GR_INFO = ScrollgroupObject,
-                     MUIA_ShowMe, FALSE,
-                     MUIA_Scrollgroup_FreeHoriz, FALSE,
-                     MUIA_HorizWeight, 0,
-                     MUIA_Scrollgroup_Contents, data->GUI.GR_PHOTO = VGroupV, GroupSpacing(0),
-                        InputListFrame,
-                        Child, HVSpace,
-                     End,
-                  End,
-               End,
-               Child, data->GUI.BO_BALANCE = BalanceObject,
-                  MUIA_ShowMe, data->Header != HM_NOHEADER,
-               End,
-               Child, data->GUI.GR_BODY = HGroup,
-                  MUIA_VertWeight, G->Weights[3],
-                  MUIA_Group_Spacing, 0,
-                  Child, data->GUI.TE_TEXT = MailTextEditObject,
-                     InputListFrame,
-                     MUIA_TextEditor_Slider, data->GUI.SL_TEXT,
-                     MUIA_TextEditor_FixedFont, data->FixedFont,
-                     MUIA_TextEditor_DoubleClickHook, &RE_DoubleClickHook,
-//                     MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_EMail,
-                     MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain,
-                     MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_Plain,
-                     MUIA_TextEditor_ReadOnly, TRUE,
-                     MUIA_TextEditor_ColorMap, G->EdColMap,
-                     MUIA_CycleChain, TRUE,
-                  End,
-                  Child, data->GUI.SL_TEXT,
-               End,
-            End,
-         End,
-      End;
-      if (data->GUI.WI)
-      {
-         DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.TE_TEXT);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_EDIT            ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_EDIT,0,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_MOVE            ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_MoveHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_COPY            ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_CopyHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_DELETE          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_DeleteHook,0,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_PRINT           ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_PrintHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SAVE            ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SaveHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_DISPLAY         ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_DisplayHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_DETACH          ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SaveAllHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_CROP            ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_RemoveAttachHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_NEW             ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_NEW,0,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_REPLY           ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_REPLY,0,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_FORWARD         ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_FORWARD,0,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_BOUNCE          ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_BOUNCE,0,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SAVEADDR        ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_GetAddressHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SETUNREAD       ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SetUnreadHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SETMARKED       ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SetMarkedHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_CHSUBJ          ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_ChangeSubjectHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_PREV            ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,0,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_NEXT            ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,0,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_URPREV          ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,IEQUALIFIER_LSHIFT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_URNEXT          ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,IEQUALIFIER_LSHIFT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_PREVTH          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,-1,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_NEXTTH          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,1,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_EXTKEY          ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_ExtractKeyHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_CHKSIG          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_CheckSignatureHook,TRUE,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SAVEDEC         ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SaveDecryptedHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_HNONE           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,0);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_HSHORT          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,1);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_HFULL           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,2);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SNONE           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,3);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SDATA           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,4);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SFULL           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,5);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_WRAPH           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,6);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_TSTYLE          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,7);
-//         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_FFONT           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,8);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,MUIV_Toolbar_Qualifier,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,MUIV_Toolbar_Qualifier,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 2, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,-1,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 3, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,1,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 5, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&RE_DisplayHook,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 6, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&RE_SaveHook,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 7, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&RE_PrintHook,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 9, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,4,MUIM_CallHook,&RE_DeleteHook,MUIV_Toolbar_Qualifier,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&RE_MoveHook,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_REPLY,MUIV_Toolbar_Qualifier,winnum);
-         DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,12, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,5,MUIM_CallHook,&RE_NewHook,NEW_FORWARD,MUIV_Toolbar_Qualifier,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE                 ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_CloseHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock del"        ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_DeleteHook,0,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift del"  ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_DeleteHook,IEQUALIFIER_LSHIFT,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock space"      ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Next Page");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock backspace"  ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Previous Page");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock left"       ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,FALSE,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock right"      ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,FALSE,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift left" ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,TRUE,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift right",MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,TRUE,winnum);
-         return data;
-      }
-      free(data);
-   }
-   return NULL;
+  // cleanup the parts and their temporarly files/memory areas
+  for(part = rmData->firstPart; part; part = next)
+  {
+    next = part->Next;
+    if(*part->Filename)
+      DeleteFile(part->Filename);
+
+    FreeStrBuf(part->ContentType);
+    FreeStrBuf(part->ContentDisposition);
+    free(part);
+  }
+  rmData->firstPart = NULL;
+
+  // now we have to check whether there is a .unp (unpack) file and delete
+  // it acoordingly (we can`t use the FinishUnpack() function because the
+  // window still refers to the file which will be prevent the deletion.
+  if(strstr(rmData->readFile, ".unp"))
+    DeleteFile(rmData->readFile);
+
+
+  // if the rmData carries a virtual mail we have to clear it
+  // aswell
+  if(isVirtualMail(rmData->mail))
+  {
+    free(rmData->mail);
+    CloseTempFile(rmData->tempFile);
+  }
+
+  // clean up the read window now
+  if(rmData->readWindow)
+  {
+    DoMethod(G->App, OM_REMMEMBER, rmData->readWindow);
+    MUI_DisposeObject(rmData->readWindow);
+  }
+
+  return TRUE;
 }
+
 ///

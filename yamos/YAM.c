@@ -97,7 +97,7 @@ struct Args {
 /**************************************************************************/
 
 // the used number of timerIO requests (refer to YAM.h)
-#define TIO_NUM (3)
+#define TIO_NUM (4)
 
 // Timer Class
 static struct TC_Data
@@ -119,16 +119,30 @@ static struct ADST_Data
 
 /// TC_Start
 //  Start a delay depending on the time specified
-void TC_Start(enum TimerIO tio, int seconds)
+void TC_Start(enum TimerIO tio, ULONG seconds, ULONG micros)
 {
-  if(seconds > 0)
+  if(micros > 0 || seconds > 0)
   {
-    TCData.timerIO[tio]->tr_node.io_Command = TR_ADDREQUEST;
-    TCData.timerIO[tio]->tr_time.tv_secs    = seconds;
-    TCData.timerIO[tio]->tr_time.tv_micro   = 0;
+    struct IORequest *ioreq = &TCData.timerIO[tio]->tr_node;
+    struct timeval *timeval = &TCData.timerIO[tio]->tr_time;
 
-    DB(kprintf("Queueing timerIO[%ld] in %ld seconds\n", tio, seconds);)
-    SendIO(&TCData.timerIO[tio]->tr_node);
+    // before we set a new timer request we make sure only one
+    // is active at a time
+    if(ioreq->io_Command != 0)
+    {
+      if(CheckIO(ioreq) == NULL)
+        AbortIO(ioreq);
+
+      WaitIO(ioreq);
+    }
+
+    // issue a new timerequest
+    ioreq->io_Command = TR_ADDREQUEST;
+    timeval->tv_secs  = seconds;
+    timeval->tv_micro = micros;
+
+    DB(kprintf("Queueing timerIO[%ld] in %ld seconds %ld micros\n", tio, seconds, micros);)
+    SendIO(ioreq);
   }
 }
 
@@ -142,7 +156,8 @@ void TC_Stop(enum TimerIO tio)
   // check if we have a already issued ioreq running
   if(ioreq && ioreq->io_Command != 0)
   {
-    if(CheckIO(ioreq) == NULL) AbortIO(ioreq);
+    if(CheckIO(ioreq) == NULL)
+      AbortIO(ioreq);
 
     WaitIO(ioreq);
 
@@ -291,7 +306,7 @@ static void TC_Dispatcher(enum TimerIO tio)
           }
 
           // restart timer now.
-          TC_Start(tio, C->WriteIndexes);
+          TC_Start(tio, C->WriteIndexes, 0);
         }
         break;
 
@@ -314,7 +329,7 @@ static void TC_Dispatcher(enum TimerIO tio)
           }
 
           // restart timer now.
-          TC_Start(tio, C->CheckMailDelay*60);
+          TC_Start(tio, C->CheckMailDelay*60, 0);
         }
         break;
 
@@ -335,7 +350,26 @@ static void TC_Dispatcher(enum TimerIO tio)
           }
 
           // restart timer now
-          TC_Start(tio, C->AutoSave);
+          TC_Start(tio, C->AutoSave, 0);
+        }
+        break;
+
+        case TIO_PREVIEWUPDATE:
+        {
+          DB(kprintf("TIO_PREVIEWUPDATE triggered at: %ld\n", time(NULL));)
+
+          if(C->MailPreview)
+          {
+            struct MA_GUIData *gui = &G->MA->GUI;
+            struct Mail *mail;
+
+            // get the actually active mail
+            DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+
+            // update the readMailGroup of the main window.
+            if(mail)
+              DoMethod(gui->MN_MAILPREVIEW, MUIM_ReadMailGroup_ReadMail, mail);
+          }
         }
         break;
       }
@@ -410,20 +444,27 @@ void PopUp(void)
    nnset(G->App, MUIA_Application_Iconified, FALSE);
 
    // avoid MUIA_Window_Open's side effect of activating the window if it was already open
-   if(!xget(G->MA->GUI.WI, MUIA_Window_Open)) set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
+   if(!xget(G->MA->GUI.WI, MUIA_Window_Open))
+     set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
 
    DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToFront);
    DoMethod(G->MA->GUI.WI, MUIM_Window_ToFront);
 
    // Now we check if there is any read and write window open and bring it also
    // to the front
-   for(i = 0; i < MAXRE; i++)
+   if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
    {
-     if(G->RE[i])
-     {
-       DoMethod(G->RE[i]->GUI.WI, MUIM_Window_ToFront);
-       window = G->RE[i]->GUI.WI;
-     }
+      // search through our ReadDataList
+      struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+      for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+      {
+        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+        if(rmData->readWindow)
+        {
+          DoMethod(rmData->readWindow, MUIM_Window_ToFront);
+          window = rmData->readWindow;
+        }
+      }
    }
 
    // Bring the write window to the front
@@ -570,12 +611,16 @@ static void Terminate(void)
    for (i = 0; i < MAXEA; i++)
       DisposeModule(&G->EA[i]);
 
-   for (i = 0; i < MAXRE; i++)
+   // cleanup the still existing readmailData objects
+   if(IsMinListEmpty(&G->ReadMailDataList) == FALSE)
    {
-      if (G->RE[i])
+      // search through our ReadDataList
+      struct MinNode *curNode = G->ReadMailDataList.mlh_Head;
+      for(curNode = G->ReadMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
       {
-         RE_CleanupMessage(i);
-         DisposeModule(&G->RE[i]);
+        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+
+        CleanupReadMailData(rmData);
       }
    }
 
@@ -603,14 +648,18 @@ static void Terminate(void)
    if (G->MA)
    {
       MA_UpdateIndexes(FALSE);
-      G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS, MUIA_HorizWeight);
-      G->Weights[1] = xget(G->MA->GUI.LV_MAILS,   MUIA_HorizWeight);
       SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
    }
 
    if (G->AB) DisposeModule(&G->AB);
-   if (G->MA) DisposeModule(&G->MA);
+
+   if(G->MA)
+   {
+     // make sure the mail preview objects are also properly disposed
+     MA_CleanupMailPreview();
+     DisposeModule(&G->MA);
+   }
 
    if (G->TTin) free(G->TTin);
    if (G->TTout) free(G->TTout);
@@ -917,6 +966,8 @@ static void Initialise2(void)
       Abort(MSG_ErrorMuiApp);
    }
 
+   MA_SetupMailPreview();
+
    // Now we have to check on which position we should display the InfoBar and if it`s not
    // center or off we have to resort the main group
    if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
@@ -928,8 +979,6 @@ static void Initialise2(void)
    CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
    SetupAppIcons();
    LoadLayout();
-   set(G->MA->GUI.LV_FOLDERS, MUIA_HorizWeight, G->Weights[0]);
-   set(G->MA->GUI.LV_MAILS,   MUIA_HorizWeight, G->Weights[1]);
 
    if(G->CO_AutoTranslateIn)
      LoadParsers();
@@ -1549,10 +1598,12 @@ int main(int argc, char **argv)
       G->TR_Allow = TRUE;
       G->CO_DST = GetDST(FALSE);
 
+      // prepare the List of ReadMailData structures
+      NewList((struct List *)&(G->ReadMailDataList));
+
       // We have to initialize the ActiveWin flags to -1, so than the
       // the arexx commands for the windows are reporting an error if
       // some window wasn`t set active manually by an own rexx command.
-      G->ActiveReadWin = -1;
       G->ActiveWriteWin = -1;
 
       if(yamFirst)
@@ -1598,9 +1649,9 @@ int main(int argc, char **argv)
       AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir, "");
 
       // start our TimerIO requests for different purposes (writeindexes/mailcheck/autosave)
-      TC_Start(TIO_WRINDEX,   C->WriteIndexes);
-      TC_Start(TIO_CHECKMAIL, C->CheckMailDelay*60);
-      TC_Start(TIO_AUTOSAVE,  C->AutoSave);
+      TC_Start(TIO_WRINDEX,   C->WriteIndexes, 0);
+      TC_Start(TIO_CHECKMAIL, C->CheckMailDelay*60, 0);
+      TC_Start(TIO_AUTOSAVE,  C->AutoSave, 0);
 
       // Now start the NotifyRequest for the AutoDST file
       if(ADSTnotify_start()) adstsig = 1UL << ADSTdata.nRequest.nr_stuff.nr_Signal.nr_SignalNum;

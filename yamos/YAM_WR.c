@@ -1483,8 +1483,11 @@ void WR_NewMail(enum WriteMode mode, int winnum)
             {
               int j;
 
-              for (j = 0; j < email->NoSTo; j++) DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->STo[j]);
-              for (j = 0; j < email->NoCC; j++)  DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->CC[j]);
+              for(j = 0; j < email->NoSTo; j++)
+                DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->STo[j]);
+
+              for(j = 0; j < email->NoCC; j++)
+                DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->CC[j]);
             }
          }
          MA_FreeEMailStruct(email);
@@ -1500,7 +1503,9 @@ void WR_NewMail(enum WriteMode mode, int winnum)
             if (mi->Display) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Remove, mi->Pos);
             RemoveMailFromList(wr->Mail);
             wr->Mail = new;
-            if (wr->ReadwinNum != -1) RE_ReadMessage(wr->ReadwinNum, new);
+
+            if(wr->readWindow != NULL)
+              DoMethod(wr->readWindow, MUIM_ReadWindow_ReadMail, new);
          }
       }
       if (wr->Mode != NEW_NEW)
@@ -2001,31 +2006,39 @@ int WR_Open(int winnum, BOOL bounce)
 ///
 /// WR_SetupOldMail
 /*** WR_SetupOldMail - When editing a message, sets write window options to old values ***/
-void WR_SetupOldMail(int winnum)
+void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
 {
    static struct Attach attach;
-   struct Part *part = G->RE[4]->FirstPart->Next;
+   struct Part *part = rmData->firstPart->Next;
 
-   if (part) for (part = part->Next; part; part = part->Next)
-      if (stricmp(part->ContentType, "application/pgp-signature"))
-      {
-         BusyText(GetStr(MSG_BusyDecSaving), "");
-         RE_DecodePart(part);
-         memset(&attach, 0, sizeof(struct Attach));
-         attach.Size = part->Size;
-         attach.IsMIME = part->EncodingCode != ENC_UUE;
-         attach.IsTemp = TRUE;
-         if(part->Name)
-         {
-           MyStrCpy(attach.Name, part->Name);
-         }
-         MyStrCpy(attach.FilePath, part->Filename);
-         *part->Filename = 0;
-         MyStrCpy(attach.ContentType, part->ContentType);
-         MyStrCpy(attach.Description, part->Description);
-         DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
-         BusyEnd();
-      }
+   if(part)
+   {
+     for(part = part->Next; part; part = part->Next)
+     {
+        if(stricmp(part->ContentType, "application/pgp-signature"))
+        {
+          BusyText(GetStr(MSG_BusyDecSaving), "");
+
+          RE_DecodePart(part);
+          memset(&attach, 0, sizeof(struct Attach));
+          attach.Size = part->Size;
+          attach.IsMIME = part->EncodingCode != ENC_UUE;
+          attach.IsTemp = TRUE;
+
+          if(part->Name)
+          {
+            MyStrCpy(attach.Name, part->Name);
+          }
+          MyStrCpy(attach.FilePath, part->Filename);
+          *part->Filename = 0;
+          MyStrCpy(attach.ContentType, part->ContentType);
+          MyStrCpy(attach.Description, part->Description);
+          DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+
+          BusyEnd();
+        }
+     }
+  }
 }
 
 ///

@@ -30,6 +30,7 @@
 
 #include <dos/notify.h>
 #include <exec/types.h>
+#include <libraries/asl.h>
 #include <libraries/mui.h>
 #include <proto/bsdsocket.h>
 
@@ -41,7 +42,7 @@
 /**************************************************************************/
 
 enum GlobalDispatcherJob { ID_CLOSEALL=1000, ID_RESTART, ID_ICONIFY, ID_LOGIN };
-enum TimerIO { TIO_WRINDEX=0, TIO_CHECKMAIL, TIO_AUTOSAVE };
+enum TimerIO { TIO_WRINDEX=0, TIO_CHECKMAIL, TIO_AUTOSAVE, TIO_PREVIEWUPDATE };
 
 /*** Global Structure ***/
 struct Global 
@@ -67,7 +68,6 @@ struct Global
    struct CO_ClassData *    CO;
    struct AB_ClassData *    AB;
    struct EA_ClassData *    EA[MAXEA];
-   struct RE_ClassData *    RE[MAXRE+1];
    struct WR_ClassData *    WR[MAXWR+1];
    struct TR_ClassData *    TR;
    struct ER_ClassData *    ER;
@@ -75,15 +75,15 @@ struct Global
    struct FO_ClassData *    FO;
    struct DI_ClassData *    DI;
    struct US_ClassData *    US;
+   struct ReadMailData *    ActiveRexxRMData;
 
    LONG                     EdColMap[16];
-   LONG                     Weights[6];
+   LONG                     Weights[10];
    LONG                     TR_Socket;
 
    int                      PGPVersion;
    int                      CO_DST;
    int                      ER_NumErr;
-   int                      ActiveReadWin;
    int                      ActiveWriteWin;
 
    BOOL                     Error;
@@ -107,6 +107,8 @@ struct Global
    struct NotifyRequest     WR_NRequest[MAXWR+1];
    struct sockaddr_in       TR_INetSocketAddr;
 
+   struct MinList           ReadMailDataList;
+
    char                     ProgDir[SIZE_PATH];
    char                     PGPPassPhrase[SIZE_DEFAULT];
    char                     MA_MailDir[SIZE_PATH];
@@ -118,7 +120,7 @@ struct Global
 
 extern struct Global *G;
 
-void TC_Start(enum TimerIO tio, int seconds);
+void TC_Start(enum TimerIO tio, ULONG seconds, ULONG micros);
 void TC_Stop(enum TimerIO tio);
 void PopUp(void);
 void SetupAppIcons(void);

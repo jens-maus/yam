@@ -224,6 +224,9 @@ struct MA_GUIData
    Object *GR_MAIN;
    Object *GR_TOP;
    Object *GR_BOTTOM;
+   Object *GR_MAILVIEW;
+   Object *BL_MAILVIEW;
+   Object *MN_MAILPREVIEW;
    struct MUIP_Toolbar_Description TB_TOOLBAR[18];
 };
 
@@ -276,7 +279,7 @@ BOOL  MA_SortWindow(void);
 void  MA_MakeMAFormat(Object *lv);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit);
 int   MA_NewBounce(struct Mail *mail, int flags);
-int   MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum);
+int   MA_NewEdit(struct Mail *mail, int flags, Object *readWindow);
 int   MA_NewForward(struct Mail **mlist, int flags);
 int   MA_NewMessage(int mode, int flags);
 int   MA_NewNew(struct Mail *mail, int flags);
@@ -295,5 +298,7 @@ char *MA_ToStatusHeader(struct Mail *mail);
 char *MA_ToXStatusHeader(struct Mail *mail);
 unsigned int MA_FromStatusHeader(char *statusflags);
 unsigned int MA_FromXStatusHeader(char *xstatusflags);
+void  MA_SetupMailPreview(void);
+void  MA_CleanupMailPreview(void);
 
 #endif /* YAM_MAIN_H */

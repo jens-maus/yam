@@ -42,12 +42,17 @@
 #define STR(x)  STR2(x)
 #define STR2(x) #x
 
+// some forward declarations
 #ifndef YAM_FOLDERCONFIG_H
 struct Folder;
 #endif
 
 #ifndef YAM_MIME_H
 struct TranslationTable;
+#endif
+
+#ifndef YAM_READ_H
+struct ReadMailData;
 #endif
 
 enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
@@ -231,6 +236,8 @@ struct NewToolbarEntry
 #define isGraph(c)            ((BOOL)(G->Locale ? (IsGraph(G->Locale, (ULONG)(c)) != 0) : (isgraph((c)) != 0)))
 #define isAlNum(c)            ((BOOL)(G->Locale ? (IsAlNum(G->Locale, (ULONG)(c)) != 0) : (isalnum((c)) != 0)))
 #define isValidMailFile(file) (!(strlen(file) < 17 || file[12] != '.' || file[16] != ',' || !isdigit(file[13])))
+#define Bool2Txt(b)           ((b) ? "Y" : "N")
+#define Txt2Bool(t)           (BOOL)(toupper((int)*(t)) == 'Y' || (int)*(t) == '1')
 
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
@@ -252,7 +259,7 @@ char *   AllocStrBuf(size_t initlen);
 void     AppendLog(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 void     AppendLogNormal(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 void     AppendLogVerbose(int id, char *text, void *a1, void *a2, void *a3, void *a4);
-struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext, int winnum, int mode, APTR parent);
+struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext, int mode, struct ReadMailData *rmData);
 char *   BuildAddrName(char *address, char *name);
 void     Busy(char *text, char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
@@ -365,7 +372,7 @@ int      ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char 
 BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
 int      SelectMessage(struct Mail *mail);
-void     SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, UWORD flags);
+void     SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, ULONG flags);
 char     ShortCut(char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
 void STDARGS VARARGS68K SPrintF(char *outstr, char *fmtstr, ...);

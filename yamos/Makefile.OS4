@@ -83,6 +83,8 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
 	$(OBJDIR)/$(CLASSDIR)/BodychunkImage.o \
 	$(OBJDIR)/$(CLASSDIR)/ConfigPageList.o \
+	$(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o \
+	$(OBJDIR)/$(CLASSDIR)/ReadWindow.o \
 	$(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
 	$(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
 	$(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o \
@@ -312,6 +314,9 @@ $(OBJDIR)/all_gcc.o: all_gcc.c $(EXTRASRC)/stccpy.c \
 	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/dice.c
 
 ## CLASS DEPENDENCIES #################
+
+$(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o: $(CLASSDIR)/ReadMailGroup.c \
+	$(CLASSDIR)/ReadMailGroup_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/ConfigPageList.o: $(CLASSDIR)/ConfigPageList.c \
 	$(CLASSDIR)/ConfigPageList_cl.h
