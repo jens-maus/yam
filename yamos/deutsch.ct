@@ -3,6 +3,10 @@
 ## codeset 0
 ;
 ;
+; YAM 2.3 catalog description
+; $Id$
+;
+;
 ; General
 ;
 MSG_Folder
@@ -246,8 +250,10 @@ Verzeichnis
 MSG_Copyright1
 OpenSource E-Mail-Software für den Amiga\n\
 Copyright © 1995-2001 Marcel Beck
-; OpenSource Email package for the Amiga\n\
-; Copyright © 1995-2001 Marcel Beck
+; Open Source E-mail package for the Amiga\n\
+; \n\
+; Copyright © 1995-2000 Marcel Beck\n\
+; Copyright © 2000-2001 YAM Open Source Team
 ;
 MSG_Version
 Version:
@@ -264,7 +270,7 @@ Dieses Programm ist freie Software; Sie können es unter den Bedingungen der GNU 
 ;
 MSG_UsedSoftware
 \nDieses Programm verwendet folgende Fremdsoftware:\n
-; This application uses the following third party software:\n
+; \nThis application uses the following third party software:\n
 ;
 MSG_WebSite
 Aktuelle Informationen über YAM finden Sie auf der YAM Support Site unter \e5http://www.yam.ch/
@@ -612,8 +618,8 @@ Bitte geben Sie Ihr PGP-Paßwort ein:
 ;
 MSG_UT_AppStats
 N:%ld U:%ld G:%ld
-; N:%ld U:%ld T:%ld
-; COUNT, COUNT, COUNT
+; 
+; Replaced by MSG_APPICON_STATS
 ;
 MSG_UT_NoPrinter
 Kein Drucker oder Drucker offline!
@@ -633,11 +639,11 @@ Geben Sie das Paßwort ein, um es zu öffnen:
 ; FOLDER
 ;
 MSG_MA_LatestVersion
-Neueste Version: %s (%2ld.%02ld.%ld)\n\
+Neueste Version: %s (%ld.%ld.%ld)\n\
 Diese Version: %s (%s)\n\
 \n\
 %s
-; Latest version: %s (%2ld.%02ld.%ld)\n\
+; Latest version: %s (%ld.%ld.%ld)\n\
 ; This version: %s (%s)\n\
 ; \n\
 ; %s
@@ -1030,7 +1036,7 @@ D\000Lesen
 ;
 MSG_MA_MEdit
 Ändern
-; Edit
+; Edit...
 ;
 MSG_MA_MDelete
 Löschen
@@ -1588,7 +1594,7 @@ Post versenden (SMTP)
 ;
 MSG_CO_Server
 Ser_ver
-; Server
+; Ser_ver
 ;
 MSG_CO_Domain
 _Domäne
@@ -2236,7 +2242,7 @@ Position _X
 ;
 MSG_CO_CloseGadget
 Beim Schließen _ikonifizieren
-; Close_gadget iconifies program
+; Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete
 Speichern/Löschen von Nachrichten
@@ -2813,7 +2819,7 @@ neuen Nachricht eingefügt wird
 MSG_HELP_CO_ST_OUTTRANS
 Verwendet diese Zeichensatzkonvertierung\n\
 bei neuen Nachrichten
-; Apply this characterset translation\n\
+; Apply this character set translation\n\
 ; on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP
@@ -2934,7 +2940,7 @@ MSG_HELP_CO_BT_INSENV
 Steuerzeichen für die Umgebungs-\n\
 variable SIGNATURE einfügen
 ; Insert control code for the\n\
-; enviromental variable SIGNATURE
+; environment variable SIGNATURE
 ;
 MSG_HELP_CO_ST_TAGFILE
 Datenbank, welche die\n\
@@ -3085,7 +3091,7 @@ Neue Adreßbucheinträge werden in diese\n\
 Gruppe aufgenommen (sie wird bei\n\
 Bedarf automatisch erstellt)
 ; Add new address book entries to this group (it\n\
-; will be created if it doesn't already exist)
+; will be created if it doesn't exist yet)
 ;
 MSG_HELP_CO_ST_TEMPDIR
 Verzeichnis für Temporärdateien
@@ -3112,7 +3118,7 @@ MSG_HELP_CO_CH_CLGADGET
 Soll YAM beim Betätigen des Schliessgadgets\n\
 ikonifiziert werden?
 ; Do you want YAM to iconify when\n\
-; you hit the closegadget?
+; you hit the close gadget?
 ;
 MSG_HELP_CO_CH_CONFIRM
 Wollen Sie das Löschen von\n\
@@ -3173,7 +3179,7 @@ MSG_HELP_CO_CH_SEND_MDN
 Versucht den Zustandsbericht sofort\n\
 nach dessen Generierung zu versenden
 ; Try to send the disposition notification\n\
-; as soon it has been generated
+; as soon as it is generated
 ;
 MSG_HELP_CO_TX_ENCPACK
 XPK-Bibliothek für die Komprimierung\n\
@@ -3319,7 +3325,7 @@ Adreßbuch wurde geändert!
 ; Address book has been modified!
 ;
 MSG_AB_ModifiedGads
-*_Speichern|_Benutzen|_Abbrechen
+*_Speichern|_Benutzen|_Verwerfen|_Abbrechen
 ; *_Save|_Use|_Discard changes|_Cancel
 ;
 ; Module AB - Hooks
@@ -3629,7 +3635,7 @@ _Homepage
 ;
 MSG_EA_SnailMail
 Schneckenpost
-; S_nail mail
+; Snail mail
 ;
 MSG_EA_Street
 _Strasse
@@ -3845,7 +3851,7 @@ MSG_RE_MDNReq
 Der Absender möchte über den Status\n\
 dieser Nachricht informiert werden (MDN).\n\
 Wie wollen Sie reagieren?
-; The sender of this message request a disposition notification (MDN).\n\
+; The sender of this message requests a disposition notification (MDN).\n\
 ; What do you want to do?
 ;
 MSG_RE_SaveMessage
@@ -4262,7 +4268,7 @@ MSG_HELP_RE_BT_QUESTION
 Nachricht anzeigen, die\n\
 hier beantwortet wird\n\
 (zurück im Thread)
-; Show the message which\n\
+; Show the message that\n\
 ; is being answered here\n\
 ; (go back in thread)
 ;
@@ -4603,7 +4609,7 @@ Zitat
 ;
 MSG_WR_ROT13
 ROT13-verschlüsselt
-; ROT13 encrypted
+; ROT13 encoded
 ;
 MSG_WR_LaunchEd
 Editor starten
@@ -4627,7 +4633,7 @@ Einfügen
 ;
 MSG_WR_PasteAs
 Einfügen als
-; PasteAs
+; Paste as
 ;
 MSG_WR_MUndo
 Rückgängig
@@ -4761,7 +4767,7 @@ im externen Editor bearbeiten
 ;
 MSG_HELP_WR_BT_LOAD
 Textdatei an der Kursorposition einfügen
-; Insert textfile at cursor position
+; Insert text file at cursor position
 ;
 MSG_HELP_WR_BT_CUT
 Markierten Text ins Clipboard verschieben
@@ -5076,12 +5082,12 @@ Lade Nachricht...
 ;
 MSG_TR_MailTransferFrom
 Posttransfer von %s
-; Transfer mail from %s
+; Mail transfer from %s
 ; HOST
 ;
 MSG_TR_MailTransferTo
 Posttransfer nach %s
-; Transfer mail to %s
+; Mail transfer to %s
 ; HOST
 ;
 MSG_TR_MsgInFile
@@ -5223,7 +5229,8 @@ Das Geburtsdatum ist im falschen Format. Das korrekte Format ist DD-MMM-YYYY (en
 ;
 MSG_ER_NotInGallery
 Konnte diese Person in der YAM Benutzergalerie nicht finden. Entweder existiert diese Person in der Datenbank nicht, oder ihr Name/ihre Adresse ist falsch geschrieben.
-; Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or her name or address is misspelled.
+; Couldn't find this person in the YAM user gallery. Either the person \
+; doesn't exist in the database or his/her name or address is mispelt.
 ;
 MSG_ER_NoTCP
 Es läuft kein TCP/IP-Stack! Starten Sie eine bsdsocket.library-kompatible Internetsoftware bevor Sie diese Funktion benutzen.
@@ -5300,7 +5307,7 @@ Fehlende Begrenzung in einer Multipart-Nachricht. Die Nachricht scheint unvollst
 ;
 MSG_ER_CantOpenFile
 Kann Datei '%s' nicht öffnen. Die Datei scheint nicht zu existieren.
-; Can't read from file '%s'. The file doesn't seem to exists.
+; Can't read from file '%s'. The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize
@@ -5490,7 +5497,7 @@ Position im Texteditor einfügen
 ;
 MSG_FI_GaugeText
 %%ld von %ld Nachrichten
-; %%lD of %lD messages
+; %%ld of %lD messages
 ; COUNT, COUNT
 ;
 MSG_FI_AddFilter
@@ -5676,7 +5683,7 @@ Nachrichten im Hauptfenster
 MSG_HELP_FI_BT_READ
 Zeigt den Inhalt der ausgewählten\n\
 Nachricht aus obiger Liste
-; Display selected message/nfrom the list above
+; Display selected message\nfrom the list above
 ;
 MSG_HELP_FI_BT_ABORT
 Bricht die Suche ab
@@ -5696,7 +5703,7 @@ MSG_HELP_FI_RA_ADRMODE
 Wählen Sie, ob die Kopfzeile nach Adresse\n\
 oder nach Namen durchsucht werden soll
 ; Choose whether you want to search in the\n\
-; address or realname part of the field
+; address or real name part of the field
 ;
 MSG_HELP_FI_CY_STATUS
 Vergleiche mit diesem Nachrichtenstatus
@@ -5790,7 +5797,7 @@ _Passwort
 ;
 MSG_US_SuperVisor
 _Managerprivilegien
-; _Supervisor privileges
+; _Supervisor priviledges
 ;
 MSG_US_AddUser
 Benutzer _hinzufügen
@@ -5845,7 +5852,7 @@ Voreinstellung für den neuen Zugang
 ;
 MSG_HELP_US_BT_ADD
 Neuen Zugang erstellen
-; Create the new account
+; Create a new account
 ;
 MSG_HELP_US_BT_DEL
 Ausgewählten Zugang entfernen
@@ -5939,7 +5946,7 @@ M_odus
 ;
 MSG_FO_SortBy
 So_rtieren
-; S_ort by
+; _Sort by
 ;
 MSG_FO_ThenBy
 _Dann nach
@@ -5997,13 +6004,13 @@ MSG_HELP_FO_CY_SORT0
 Primärer Sortierschlüssel der\n\
 Nachrichten in diesem Postfach
 ; Primary sorting order of the\n\
-; message in this folder
+; messages in this folder
 ;
 MSG_HELP_FO_CY_SORT1
 Sekundärer Sortierschlüssel der\n\
 Nachrichten in diesem Postfach
 ; Secondary sorting order of the\n\
-; message in this folder
+; messages in this folder
 ;
 MSG_HELP_FO_CH_REVERSE
 Umgekehrte Sortierung
@@ -6163,7 +6170,7 @@ Neue Trennlinie...
 ;
 MSG_FOLDER_EDIT
 Bearbeiten
-; Edit
+; Edit...
 ;
 MSG_FOLDER_DELETE
 Löschen
@@ -6179,7 +6186,7 @@ Exportieren...
 ;
 MSG_MESSAGE_EDIT
 E\000Bearbeiten
-; E\000Edit
+; E\000Edit...
 ;
 MSG_MESSAGE_MOVE
 M\000Verschieben...
@@ -6191,7 +6198,7 @@ Kopieren...
 ;
 MSG_MESSAGE_PRINT
 P\000Drucken...
-; P\000Print...
+; P\000Print
 ;
 MSG_MESSAGE_SAVE
 S\000Speichern...
@@ -6199,7 +6206,7 @@ S\000Speichern...
 ;
 MSG_MESSAGE_SAVEATT
 T\000Speichern
-; T\000Save
+; T\000Save...
 ;
 MSG_MESSAGE_CROP
 O\000Abschneiden
@@ -6256,7 +6263,7 @@ Absenderadresse
 MSG_HELP_FO_ST_MLFROMADDRESS
 Diese Absenderadresse (From:) für\n\
 neue Mails an die Liste benutzen
-; Use this from address when posting\n\
+; Use this From: address when posting\n\
 ; new mails to the list
 ;
 MSG_FO_ReplyToAddress
@@ -6266,7 +6273,7 @@ Antwortadresse
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Diese Antwortadresse (Reply-To:) für\n\
 neue Mails an die Liste benutzen
-; Use this reply-to address when posting\n\
+; Use this Reply-To: address when posting\n\
 ; new mails to the list
 ;
 MSG_RE_MDNGads4
@@ -6275,7 +6282,7 @@ MSG_RE_MDNGads4
 ;
 MSG_EA_DefSecurity
 Si_cherheit
-; Se_curity
+; Sec_urity
 ;
 MSG_HELP_MA_CY_DEFSECURITY
 Vorwahl für die Sicherheitseinstellungen\n\
@@ -6299,7 +6306,7 @@ Voreinstellungen
 ;
 MSG_ER_PGPMultipart
 Fehler beim Erstellen der Multipart-PGP-Nachricht. Verschlüsselung/Signatur abgeschaltet!
-; Error creating multipart PGP message. Encryption/signing disabled!
+; Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont
 Zeichensatz fester Breite
@@ -6311,15 +6318,15 @@ Der ESMTP Server %s unterstützt kein SMTP AUTH!
 ;
 MSG_CO_UseSMTPAUTH
 SMTP _AUTH benutzen
-; Use SMTP _AUTH
+; Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser
 _Benutzerkennung
-; _User ID
+; Us_er ID
 ;
 MSG_CO_SMTPPass
 Pa_sswort
-; Pa_ssword
+; Passwo_rd
 ;
 MSG_CO_Del
 Löschen
@@ -6335,11 +6342,11 @@ Alternatives Zitat
 ;
 MSG_CO_AltQuote
 Externes Zitat mit
-; Quote external using
+; Quote e_xternal using
 ;
 MSG_CO_DoQuote
 Nachricht zitieren
-; Quote message
+; Qu_ote message
 ;
 MSG_HELP_CO_ST_ALTQUOTECHAR
 Zeichenkette, welche jeder Zeile eines Zitats\n\
@@ -6373,3 +6380,19 @@ MSG_MA_ABookModifiedGad
 *_Jetzt speichern|_Beenden ohne speichern
 ; *_Save now|_Quit without saving
 ;
+MSG_APPICON_STATS
+N:%lD U:%lD T:%lD
+; N:%lD U:%lD T:%lD
+; COUNT, COUNT, COUNT
+;
+MSG_ATTACH_NO
+Nr.
+; No.
+;
+MSG_ATTACH_PART
+Teil
+; Part
+;
+MSG_ABOUT_OKAY_GAD
+OK
+; OK
