@@ -86,7 +86,7 @@ const unsigned long yamversiondays = __YAM_VERDAYS;
 // some platform/compiler dependent stack definitions.
 static const char USED_VAR Stack[] = "$STACK:65536";
 #if defined(__amigaos4__)
-  //long USED_VAR __stack_size = 65536;             // set the minimum startup stack for clib2
+  long USED_VAR __stack_size = 65536;             // set the minimum startup stack for clib2
   long USED_VAR __default_pool_size = 128*1024;   // set the pool & puddle size for the
   long USED_VAR __default_puddle_size = 32*1024;  // AllocPool() functions to something more reasonable.
 #elif defined(__SASC) || defined(__GNUC__)
