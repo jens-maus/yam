@@ -36,6 +36,7 @@
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+#include <proto/pm.h>
 
 #include "old.h"
 #include "extra.h"
@@ -828,8 +829,8 @@ void CO_Validate(struct Config *co, BOOL update)
       if (G->CO->Visited[8] || G->CO->UpdateAll)
       {
          // Modify the ContextMenu flags
-         set(G->MA->GUI.NL_MAILS,   MUIA_ContextMenu, C->MessageCntMenu);
-         set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu);
+         set(G->MA->GUI.NL_MAILS,   MUIA_ContextMenu, (C->MessageCntMenu && PopupMenuBase));
+         set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, (C->FolderCntMenu && PopupMenuBase));
 
          SaveLayout(FALSE);
          MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);

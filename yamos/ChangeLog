@@ -591,6 +591,10 @@
     * Flush indices didn`t work on grouped folders - fixed. (Bug #433506)
     * Folder groups will be displayed highlighted&bold now if any child has new or
       unread mail.
+    * if popupmenu.library is not present, the contextmenus are disabled completly
+      now and it is possible to use the normal menu with shortcuts. Also the config
+      items for the ContextMenu are disabled.
+    * fixed recently introduced enforcer hits (Bug #433797)
 
 2001-06-16  Christian Hattemer <krille@users.sourceforge.net>
 

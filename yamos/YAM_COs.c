@@ -35,6 +35,7 @@
 #include <proto/intuition.h>
 #include <proto/locale.h>
 #include <proto/utility.h>
+#include <proto/pm.h>
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -886,6 +887,8 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
          setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
          setcheckmark(gui->CH_INFOBAR   ,CE->InfoBar);
+         set(gui->CH_FCNTMENU, MUIA_Disabled, !PopupMenuBase);
+         set(gui->CH_MCNTMENU, MUIA_Disabled, !PopupMenuBase);
          break;
       case 9:
          setstring   (gui->ST_PGPCMD    ,CE->PGPCmdPath);
