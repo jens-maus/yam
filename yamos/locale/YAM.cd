@@ -4799,3 +4799,9 @@ MSG_FO_GROUP_CONFDEL (//)
 This group contains subfolders which will be\n\
 moved to the parent folder on deletion!\n\
 Do you really want to delete this group ?
+;
+MSG_FOLDER_NONSEL (//)
+(non selected)
+;
+MSG_MAIL_NONSEL (//)
+(non selected)

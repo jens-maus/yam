@@ -472,39 +472,59 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
 {
   struct MUI_NListtree_TestPos_Result r;
   struct MUI_NListtree_TreeNode *tn;
-  struct Folder *folder;
+  struct Folder *folder = NULL;
   struct PopupMenu *pop_menu;
   struct Window *win;
   struct MA_GUIData *gui = &G->MA->GUI;
   ULONG ret;
-  BOOL tmp_dis = TRUE;
+  BOOL disable_delete   = FALSE;
+  BOOL disable_edit     = FALSE;
+  BOOL disable_update   = FALSE;
 
   enum{ PMN_EDITF=1, PMN_DELETEF, PMN_INDEX, PMN_NEWF, PMN_NEWFG, PMN_SNAPS };
-
-  // Now lets find out which entry is under the mouse pointer
-  DoMethod(gui->NL_FOLDERS, MUIM_NListtree_TestPos, msg->mx, msg->my, &r);
-
-  tn = r.tpr_TreeNode;
-  if(!tn)  return(0);
-
-  folder = (struct Folder *)tn->tn_User;
-  if(!folder)  return(0);
-
-  // Set this Treenode as activ
-  set(gui->NL_FOLDERS, MUIA_NListtree_Active, tn);
 
   // Get the window structure of the window which this listtree belongs to
   get(_win(gui->NL_FOLDERS), MUIA_Window_Window, &win);
   if(!win) return(0);
 
-  // Now we have to set the disabled flag if this is not a custom folder
-  if(folder->Type == FT_CUSTOM || folder->Type == FT_CUSTOMSENT || folder->Type == FT_CUSTOMMIXED || folder->Type == FT_GROUP) tmp_dis = FALSE;
+  // Now lets find out which entry is under the mouse pointer
+  DoMethod(gui->NL_FOLDERS, MUIM_NListtree_TestPos, msg->mx, msg->my, &r);
+
+  tn = r.tpr_TreeNode;
+
+  if(!tn || !tn->tn_User)
+  {
+      disable_delete = TRUE;
+      disable_edit   = TRUE;
+      disable_update = TRUE;
+  }
+  else
+  {
+      folder = (struct Folder *)tn->tn_User;
+
+      // Set this Treenode as activ
+      if(tn != (struct MUI_NListtree_TreeNode *)xget(gui->NL_FOLDERS, MUIA_NListtree_Active))
+      {
+         set(gui->NL_FOLDERS, MUIA_NListtree_Active, tn);
+      }
+
+      // Now we have to set the disabled flag if this is not a custom folder
+      if(folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED && folder->Type != FT_GROUP)
+      {
+         disable_delete = TRUE;
+      }
+
+      if(folder->Type == FT_GROUP)
+      {
+         disable_update = TRUE;
+      }
+   }
 
   // We create the PopupMenu now
-  pop_menu =   PMMenu(FolderName(folder)),
-                 PMItem(GetStripStr(MSG_FOLDER_EDIT)),           PM_UserData, PMN_EDITF,     End,
-                 PMItem(GetStripStr(MSG_FOLDER_DELETE)),         PM_Disabled, tmp_dis,       PM_UserData, PMN_DELETEF,   End,
-                 PMItem(GetStripStr(MSG_MA_UpdateIndex)),        PM_Disabled, (folder->Type == FT_GROUP),       PM_UserData, PMN_INDEX, End,
+  pop_menu =   PMMenu(folder ? FolderName(folder) : GetStr(MSG_FOLDER_NONSEL)),
+                 PMItem(GetStripStr(MSG_FOLDER_EDIT)),           PM_Disabled, disable_edit,   PM_UserData, PMN_EDITF,     End,
+                 PMItem(GetStripStr(MSG_FOLDER_DELETE)),         PM_Disabled, disable_delete, PM_UserData, PMN_DELETEF,   End,
+                 PMItem(GetStripStr(MSG_MA_UpdateIndex)),        PM_Disabled, disable_update, PM_UserData, PMN_INDEX,     End,
                  PMBar, End,
                  PMItem(GetStripStr(MSG_FOLDER_NEWFOLDER)),      PM_UserData, PMN_NEWF,      End,
                  PMItem(GetStripStr(MSG_FOLDER_NEWFOLDERGROUP)), PM_UserData, PMN_NEWFG,     End,

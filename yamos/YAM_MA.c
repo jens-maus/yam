@@ -1993,7 +1993,6 @@ HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDa
 	return Stricmp(msg->User, entry->Address);
 }
 MakeStaticHook(FindAddressHook, FindAddressFunc);
-///
 
 ///
 /// MA_LV_DspFunc
@@ -2258,12 +2257,13 @@ void MA_SetupDynamicMenus(void)
 ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
 {
   struct MUI_NList_TestPos_Result res;
-  struct Mail *mail;
+  struct Mail *mail = NULL;
   struct PopupMenu *pop_menu;
   struct Window *win;
   struct MA_GUIData *gui = &G->MA->GUI;
   struct Folder *fo = FO_GetCurrentFolder();
   BOOL beingedited = FALSE, hasattach = FALSE;
+  BOOL nomail = FALSE;
   ULONG  ret;
   int i;
 
@@ -2276,61 +2276,68 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
   if (!fo) return(0);
 
   // Now lets find out which entry is under the mouse pointer
-  DoMethod(gui->NL_MAILS, MUIM_NList_TestPos, msg->mx, msg->my, &res, TAG_DONE);
+  DoMethod(gui->NL_MAILS, MUIM_NList_TestPos, msg->mx, msg->my, &res);
 
-  if(res.entry == -1) return(0);
-  DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, res.entry, &mail, TAG_DONE);
+  if(res.entry == -1) nomail = TRUE;
+  else
+  {
+      DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, res.entry, &mail);
 
-  if(!mail) return(0);
+      if(!mail) return(0);
 
-  fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
+      fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
 
-  if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
-  for (i = 0; i < MAXWR; i++) if (G->WR[i] && G->WR[i]->Mail == mail) beingedited = TRUE;
+      if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
 
-  // Now we set this entry as activ
-  set(gui->NL_MAILS, MUIA_NList_Active, res.entry);
+      for (i = 0; i < MAXWR; i++)
+      {
+         if (G->WR[i] && G->WR[i]->Mail == mail) beingedited = TRUE;
+      }
+
+      // Now we set this entry as activ
+      if(fo->LastActive != res.entry) set(gui->NL_MAILS, MUIA_NList_Active, res.entry);
+  }
 
   // Get the window structure of the window which this listtree belongs to
   get(_win(gui->NL_MAILS), MUIA_Window_Window, &win);
   if(!win) return(0);
 
   // We create the PopupMenu now
-  pop_menu =   PMMenu(mail->MailFile),
-                 PMItem(GetStripStr(MSG_MA_MRead)),           PM_UserData, PMN_READ,      End,
-                 PMItem(GetStripStr(MSG_MESSAGE_EDIT)),       PM_Disabled, (mail == NULL) || !OUTGOING(fo->Type) || beingedited, PM_UserData, PMN_EDIT, End,
-                 PMItem(GetStripStr(MSG_MESSAGE_REPLY)),      PM_UserData, PMN_REPLY,     End,
-                 PMItem(GetStripStr(MSG_MESSAGE_FORWARD)),    PM_UserData, PMN_FORWARD,   End,
-                 PMItem(GetStripStr(MSG_MESSAGE_BOUNCE)),     PM_UserData, PMN_BOUNCE,    End,
-                 PMItem(GetStripStr(MSG_MA_MSend)),           PM_Disabled, (fo->Type != FT_OUTGOING), PM_UserData, PMN_SEND,      End,
-                 PMItem(GetStripStr(MSG_MA_ChangeSubj)),      PM_UserData, PMN_CHSUBJ,    End,
-                 PMItem(GetStripStr(MSG_MA_SetStatus)), PMSimpleSub,
-                   PMItem(GetStripStr(MSG_MA_ToUnread)),      PM_Disabled, OUTGOING(fo->Type),        PM_UserData, PMN_TOUNREAD,  End,
-                   PMItem(GetStripStr(MSG_MA_ToRead)),        PM_Disabled, OUTGOING(fo->Type),        PM_UserData, PMN_TOREAD,    End,
-                   PMItem(GetStripStr(MSG_MA_ToHold)),        PM_Disabled, (fo->Type != FT_OUTGOING), PM_UserData, PMN_TOHOLD,    End,
-                   PMItem(GetStripStr(MSG_MA_ToQueued)),      PM_Disabled, (fo->Type != FT_OUTGOING), PM_UserData, PMN_TOQUEUED,  End,
+  pop_menu =   PMMenu(mail ? mail->MailFile : GetStr(MSG_MAIL_NONSEL)),
+                 PMItem(GetStripStr(MSG_MA_MRead)),            PM_Disabled, nomail,        PM_UserData, PMN_READ,      End,
+                 PMItem(GetStripStr(MSG_MESSAGE_EDIT)),        PM_Disabled, nomail || !OUTGOING(fo->Type) || beingedited, PM_UserData, PMN_EDIT, End,
+                 PMItem(GetStripStr(MSG_MESSAGE_REPLY)),       PM_Disabled, nomail,        PM_UserData, PMN_REPLY,     End,
+                 PMItem(GetStripStr(MSG_MESSAGE_FORWARD)),     PM_Disabled, nomail,        PM_UserData, PMN_FORWARD,   End,
+                 PMItem(GetStripStr(MSG_MESSAGE_BOUNCE)),      PM_Disabled, nomail,        PM_UserData, PMN_BOUNCE,    End,
+                 PMItem(GetStripStr(MSG_MA_MSend)),            PM_Disabled, nomail || (fo->Type != FT_OUTGOING), PM_UserData, PMN_SEND,      End,
+                 PMItem(GetStripStr(MSG_MA_ChangeSubj)),       PM_Disabled, nomail,        PM_UserData, PMN_CHSUBJ,    End,
+                 PMItem(GetStripStr(MSG_MA_SetStatus)),        PM_Disabled, nomail, PMSimpleSub,
+                   PMItem(GetStripStr(MSG_MA_ToUnread)),       PM_Disabled, nomail || OUTGOING(fo->Type),   PM_UserData, PMN_TOUNREAD,  End,
+                   PMItem(GetStripStr(MSG_MA_ToRead)),         PM_Disabled, nomail || OUTGOING(fo->Type),   PM_UserData, PMN_TOREAD,    End,
+                   PMItem(GetStripStr(MSG_MA_ToHold)),         PM_Disabled, nomail || !OUTGOING(fo->Type),  PM_UserData, PMN_TOHOLD,    End,
+                   PMItem(GetStripStr(MSG_MA_ToQueued)),       PM_Disabled, nomail || !OUTGOING(fo->Type),  PM_UserData, PMN_TOQUEUED,  End,
                    End,
                  End,
                  PMBar, End,
-                 PMItem(GetStripStr(MSG_MESSAGE_GETADDRESS)),  PM_UserData, PMN_SAVEADDR, End,
-                 PMItem(GetStripStr(MSG_MESSAGE_MOVE)),        PM_UserData, PMN_MOVE,     End,
-                 PMItem(GetStripStr(MSG_MESSAGE_COPY)),        PM_UserData, PMN_COPY,     End,
-                 PMItem(GetStripStr(MSG_MA_MDelete)),          PM_UserData, PMN_DELETE,   End,
+                 PMItem(GetStripStr(MSG_MESSAGE_GETADDRESS)),  PM_Disabled, nomail, PM_UserData, PMN_SAVEADDR, End,
+                 PMItem(GetStripStr(MSG_MESSAGE_MOVE)),        PM_Disabled, nomail, PM_UserData, PMN_MOVE,     End,
+                 PMItem(GetStripStr(MSG_MESSAGE_COPY)),        PM_Disabled, nomail, PM_UserData, PMN_COPY,     End,
+                 PMItem(GetStripStr(MSG_MA_MDelete)),          PM_Disabled, nomail, PM_UserData, PMN_DELETE,   End,
                  PMBar, End,
-                 PMItem(GetStripStr(MSG_MESSAGE_PRINT)), PM_UserData, PMN_PRINT,   End,
-                 PMItem(GetStripStr(MSG_MESSAGE_SAVE)),  PM_UserData, PMN_SAVE,    End,
-                 PMItem(GetStripStr(MSG_Attachments)),   PM_Disabled, !hasattach, PMSimpleSub,
-                   PMItem(GetStripStr(MSG_MESSAGE_SAVEATT)), PM_Disabled, !hasattach,  PM_UserData, PMN_DETACH,  End,
-                   PMItem(GetStripStr(MSG_MESSAGE_CROP)),    PM_Disabled, !hasattach,  PM_UserData, PMN_CROP,    End,
+                 PMItem(GetStripStr(MSG_MESSAGE_PRINT)),       PM_Disabled, nomail, PM_UserData, PMN_PRINT,   End,
+                 PMItem(GetStripStr(MSG_MESSAGE_SAVE)),        PM_Disabled, nomail, PM_UserData, PMN_SAVE,    End,
+                 PMItem(GetStripStr(MSG_Attachments)),         PM_Disabled, nomail || !hasattach, PMSimpleSub,
+                   PMItem(GetStripStr(MSG_MESSAGE_SAVEATT)),   PM_Disabled, nomail || !hasattach,  PM_UserData, PMN_DETACH,  End,
+                   PMItem(GetStripStr(MSG_MESSAGE_CROP)),      PM_Disabled, nomail || !hasattach,  PM_UserData, PMN_CROP,    End,
                    End,
                  End,
-                 PMItem(GetStripStr(MSG_MESSAGE_EXPORT)),PM_UserData, PMN_EXPMSG, End,
+                 PMItem(GetStripStr(MSG_MESSAGE_EXPORT)),      PM_Disabled, nomail, PM_UserData, PMN_EXPMSG, End,
                  PMBar, End,
-                 PMItem(GetStripStr(MSG_MESSAGE_NEW)),            PM_UserData, PMN_NEW,     End,
-                 PMItem(GetStripStr(MSG_MA_Select)), PMSimpleSub,
-                   PMItem(GetStripStr(MSG_MA_SelectAll)),         PM_UserData, PMN_SELALL,  End,
-                   PMItem(GetStripStr(MSG_MA_SelectNone)),        PM_UserData, PMN_SELNONE, End,
-                   PMItem(GetStripStr(MSG_MA_SelectToggle)),      PM_UserData, PMN_SELTOGG, End,
+                 PMItem(GetStripStr(MSG_MESSAGE_NEW)),         PM_UserData, PMN_NEW,     End,
+                 PMItem(GetStripStr(MSG_MA_Select)),           PMSimpleSub,
+                   PMItem(GetStripStr(MSG_MA_SelectAll)),      PM_UserData, PMN_SELALL,  End,
+                   PMItem(GetStripStr(MSG_MA_SelectNone)),     PM_UserData, PMN_SELNONE, End,
+                   PMItem(GetStripStr(MSG_MA_SelectToggle)),   PM_UserData, PMN_SELTOGG, End,
                    End,
                  End,
                End;

@@ -1,3 +1,11 @@
+2001-08-06  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * ContextMenus now also open in areas where no mail/folder is, so that this
+      popupmenus can be used to generate at least a new folder/group or mail.
+    * If a context menu is opened on a already active entry the maillist will
+      not be refreshed anymore. This should reduce flickering at least on
+      already active entries.
+
 2001-08-06  Jacob Laursen <laursen@myself.com>
 
     * Now respects the "Iconified on startup" MUI setting. If the HIDE
