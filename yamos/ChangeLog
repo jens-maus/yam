@@ -7,6 +7,8 @@ $Source$
 
 2005-01-26  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_stringsizes.h: slightly modified the string sizes for the filename
+      and path buffers again.
     * ReadMailGroup.c, YAM_UT.c: fixed a minor bug in the user image display
       routines which caused unexpected crashes and behaviour when switching
       between messages that cause YAM to display the appropriate user image.

@@ -39,8 +39,8 @@
 #define SIZE_COMMAND   120
 #define SIZE_CTYPE      40
 #define SIZE_NAME       30
-#define SIZE_PATH     1024 // max. possible directory path length
-#define SIZE_FILE      107 // max. possible filename length
+#define SIZE_PATH      512 // max. possible directory path length (512 should be enough)
+#define SIZE_FILE      108 // max. possible filename length (107+1)
 #define SIZE_SMALL      16
 #define SIZE_DEFAULT    80
 #define SIZE_LARGE     512
