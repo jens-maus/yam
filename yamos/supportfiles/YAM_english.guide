@@ -241,11 +241,16 @@ Software
    * @{" MUI " link "MUI"} 3.8 or higher
    * 3rd party MUI custom classes:
 
-        - BetterString      - http://www.p2p-it.dk/duff/MCC_BetterString.LZX
-        - NList 20.104+     - http://home.t-online.de/home/sebauer/MCC_NList.lha
-        - NListtree 18.12+  - http://home.t-online.de/home/sebauer/MCC_NListtree.lha
-        - TextEditor        - http://www.p2p-it.dk/duff/MCC_TextEditor.LZX
-        - Toolbar           - http://us.aminet.net/pub/aminet/dev/mui/MCC_Toolbar.lha
+        - BetterString
+            http://www.top-house.dk/~nr8/AmigaArchives/MCC_BetterString.LZX
+        - NList 20.104+
+            http://home.t-online.de/home/sebauer/MCC_NList.lha
+        - NListtree 18.12+
+            http://home.t-online.de/home/sebauer/MCC_NListtree.lha
+        - TextEditor
+            http://www.top-house.dk/~nr8/AmigaArchives/MCC_TextEditor.LZX
+        - Toolbar
+            http://us.aminet.net/pub/aminet/dev/mui/MCC_Toolbar.lha
 
    * AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX], TermiteTCP, Roadshow)
    * optional: XPK for compression of articles
@@ -388,8 +393,8 @@ system and that you're using Miami as your TCP/IP software.
     - your password, required to log in on the mail server
 
     As an example here's the setup for a fictitious user named 'John
-    Doe' living in Britain.  His e-mail address is 'jdoe@provider.uk'
-    and the address of his mail server is 'mail.provider.uk'.  His
+    Doe' living in Britain.  His e-mail address is 'jdoe@example.com'
+    and the address of his mail server is 'mail.example.com'.  His
     password is 'nguz56'.
 
  2. Start YAM by double-clicking its icon.  After the copyright window
@@ -404,8 +409,8 @@ system and that you're using Miami as your TCP/IP software.
     transfer.  Following our example this is:
 
                       Real Name:     John Doe
-                      Email address: jdoe@provider.uk
-                      POP3 server:   mail.provider.uk
+                      Email address: jdoe@example.com
+                      POP3 server:   mail.example.com
                       Password:      nguz56
                       Time zone:     GMT
 
@@ -433,7 +438,7 @@ system and that you're using Miami as your TCP/IP software.
     the button 'Write' (sixth button from the left) or choose 'New'
     from the 'Message' menu.  The editor window will open.  Insert
     the e-mail address of the recipient into the 'To' textfield (e.g.
-    'jdoe@provider.uk').  Normally of course you would put someone
+    'jdoe@example.com').  Normally of course you would put someone
     else's address, but right now you want to test the system, so put
     your own address instead.  Insert two or three words to indicate
     the subject into the 'Subject' text field ('test' will do nicely
@@ -559,12 +564,12 @@ came from.  This allows one to reconstruct transmission problems
 which may have affected the message along its route.
 
 
-  From: Christian Just <just@zfn.uni-bremen.de>
+  From: Christian Just <just@example.net>
 
    E-mail address and real name of the sender.
 
 
-  Reply-To: just@zfn.uni-bremen.de
+  Reply-To: just@example.org
 
    The address to which any reply to this message should be sent.
 This is used if the message is despatched from a computer which the
@@ -573,7 +578,7 @@ this field to say where a reply should be sent.  In the absence of a
 @{b}Reply-To:@{ub} field, replies go to the address given in the @{b}From:@{ub} field.
 
 
-  To: "Marcel Beck (Yet another Mailer-author)" <mbeck@themanhimself.ch>
+  To: "Marcel Beck (Yet another Mailer-author)" <mbeck@example.com>
 
    The address of the recipient; additional names can be given,
 separated by commas.  This field may contain simply the address
@@ -1100,7 +1105,7 @@ Configuration - First steps
      This is your e-mail address, consisting of your <username>@<domain
      name>.
 
-     Example:  jdoe@provider.uk
+     Example:  jdoe@example.com
 
 
 @{b}POP3 server@{ub}
@@ -1110,7 +1115,7 @@ Configuration - First steps
      If you don't fill in this entry, YAM will use the address of
      the SMTP server.
 
-     Example:  mail.provider.uk
+     Example:  mail.example.com
 
 
 @{b}Password@{ub}
@@ -1176,7 +1181,7 @@ as well as define additional POP3 accounts.
      Service Provider), must be capable of processing the SMTP
      protocol.
 
-     Example:  mail.provider.de
+     Example:  mail.example.com
 
 
 @{b}Port@{ub}
@@ -1195,7 +1200,7 @@ as well as define additional POP3 accounts.
      edit your domain setting, e.g. by inserting a name for your
      computer.
 
-     Example:  mYAMiga.provider.uk
+     Example:  mYAMiga.example.com
 
 
 @{b}SMTP server allows 8bit@{ub}
@@ -1251,7 +1256,7 @@ can (obviously) delete accounts.
      Service Provider) in most cases, must be capable of processing the
      POP3 protocol.
 
-     Example:  pop.provider.de
+     Example:  pop.example.com
 
 
 @{b}Port@{ub}
@@ -1567,7 +1572,7 @@ bottom of the list.
 @{b}Address/Name@{ub}
      If you make the filter search a header field containing an e-mail
      address, you can specify here whether the search pattern should be
-     processed on the actual address (e.g. @{b}jdoe@provider.uk@{ub}) or the
+     processed on the actual address (e.g. @{b}jdoe@example.com@{ub}) or the
      author's name (e.g. 'John Doe').
 
 
@@ -1601,7 +1606,7 @@ bottom of the list.
      The new recipient's e-mail address must be inserted into the text
      field next to the option.
 
-     Example:  jdoe@athome.de
+     Example:  jdoe@example.net
 
 
 @{b}Forward@{ub}
@@ -1800,7 +1805,7 @@ Configuration - Write
      address book window, and then drag an entry from there into this
      field.
 
-     Example:  jdoe@home.uk
+     Example:  jdoe@example.com
 
 
 @{b}Organization@{ub}
@@ -2195,7 +2200,7 @@ Configuration - Security
      re-mailing services by having a (www-) search engine look up the
      Internet for 'remailer'.
 
-     Example:  Remailer <remailer@replay.com>
+     Example:  Remailer <remailer@example.com>
 
 
 @{b}Header field@{ub}
@@ -2473,7 +2478,7 @@ Configuration - Address book
      proxy server, otherwise it won't be possible to download photos
      or get information about new versions of YAM.
 
-     Example:  proxy.access.ch:8080
+     Example:  proxy.example.com:8080
 
 @endnode
 
@@ -2956,7 +2961,7 @@ Main window - message list
 **************************
 
 
-   The message list can have up to seven columns, the contents being
+   The message list can have up to eight columns, the contents being
 set in the @{" Lists " link "CO08"} configuration.
 
 @{b}Message status@{ub}
@@ -2974,9 +2979,10 @@ set in the @{" Lists " link "CO08"} configuration.
      to the subject, the prefixes Re: and AW: are ignored.
 
 @{b}Date@{ub}
-     The date of posting of the message, calculated according to the
+     The date the message was written, calculated according to the
      local time (for you).  For this to work, both you and the sender
-     must have set your correct @{" timezone " link "CO00"}.
+     must have set your correct @{" timezone " link "CO00"}, and the system date and
+     time must be correct on both ends.
 
 @{b}Filename@{ub}
      Name of the file containing the message.
@@ -2987,6 +2993,13 @@ set in the @{" Lists " link "CO08"} configuration.
 
 @{b}Size@{ub}
      Size of the message.
+
+@{b}Date sent/received@{ub}
+     The date the message was sent or received, depending on the type
+     of mailbox.  Again, for this to work properly, both you and the
+     sender must have set your correct @{" timezone " link "CO00"}, and the system
+     date and time must be correct on both ends.
+
 
    The column widths can be adjusted by using the mouse to drag the
 thin lines separating the column headings in the message list itself.
@@ -4036,7 +4049,7 @@ is a list of the important default settings:
 
    The TextEditor homepage can be found at
 
-   http://www.diku.dk/students/duff/TextEditor/index.html
+   http://www.diku.dk/hjemmesider/studerende/duff/TextEditor/index.html
 
 @endnode
 
@@ -4462,7 +4475,7 @@ Address book
    .----------------------------------------------------------------.
    | Alias    |     Name     |   Description   |       Address      |
    |----------|--------------|-----------------|--------------------|
-   |js        | John Smith   | mate            | jsmith@isp.co.uk   |
+   |js        | John Smith   | mate            | jsmith@example.com |
    |          |              |                 |                    |
    |          |              |                 |                    |
    |          |              |                 |                    |
@@ -4687,7 +4700,7 @@ PERSON
 @{b}Email address@{ub}
      The Internet mail address to use to send mail to this person.
 
-     Example:  jdoe@athome.uk
+     Example:  jdoe@example.com
 
 
 @{b}PGP key ID@{ub}
@@ -4738,8 +4751,6 @@ PERSON
 
 @{b}Phone number(s)@{ub}
      One or more phone numbers (voice, FAX, mobile phone, whatever...).
-
-     Example:  08154711
 
 
 ---- Miscellaneous -------------------------------------------------------
@@ -4800,7 +4811,7 @@ LIST
      button to open the address book window and then drag an entry
      from there into this field.
 
-     Example:  discussion@provider.uk
+     Example:  discussion@example.net
 
 
 @{b}Mailing list name@{ub}
@@ -5030,7 +5041,7 @@ Finding messages - Search criteria
 @{b}Address/Name@{ub}
      If you want to search a header field containing an e-mail address,
      you can specify here whether the search pattern should be
-     processed on the address (e.g. @{b}jdoe@provider.uk@{ub}) or on the
+     processed on the address (e.g. @{b}jdoe@example.com@{ub}) or on the
      author's name (e.g. @{b}John Doe@{ub}).
 
 
@@ -5230,7 +5241,7 @@ Shell and as Workbench tooltypes.
      a real name that can be found in your address book, as YAM will
      expand them as appropriate.  Use commas to separate each recipient.
 
-     Example:  MAILTO="Marcel Beck, damato, mum@provider.uk"
+     Example:  MAILTO="Marcel Beck, damato, mum@example.org
 
 
 @{b}SUBJECT=<subject>@{ub}
@@ -5398,7 +5409,7 @@ Alphabetical list of all ARexx commands
  @{" MAILINFO          " link "RX_MAILINFO"}  - Return information about a given message
  @{" MAILMOVE          " link "RX_MAILMOVE"}  - Move the selected messages to another folder
  @{" MAILREAD          " link "RX_MAILREAD"}  - Read the current message
- @{" MAILREPLY         " link "RX_MAILREPLY"}  - Reply the currently selected message
+ @{" MAILREPLY         " link "RX_MAILREPLY"}  - Reply the currently selected messages
  @{" MAILSEND          " link "RX_MAILSEND"}  - Send the messages in the @{b}Outgoing@{ub} folder
  @{" MAILSENDALL       " link "RX_MAILSENDALL"}  - Send all the messages in the @{b}Outgoing@{ub} folder
  @{" MAILSTATUS        " link "RX_MAILSTATUS"}  - Change the status of the selected message(s)
@@ -5515,7 +5526,7 @@ Message manipulation
  @{" MAILINFO          " link "RX_MAILINFO"}  - Return information about a given message
  @{" MAILMOVE          " link "RX_MAILMOVE"}  - Move the selected messages to another folder
  @{" MAILREAD          " link "RX_MAILREAD"}  - Read the current message
- @{" MAILREPLY         " link "RX_MAILREPLY"}  - Reply the currently selected message
+ @{" MAILREPLY         " link "RX_MAILREPLY"}  - Reply the currently selected messages
  @{" MAILSTATUS        " link "RX_MAILSTATUS"}  - Change the status of the selected message(s)
  @{" READINFO          " link "RX_READINFO"}  - Get info about the attachments in the message being read
  @{" READPRINT         " link "RX_READPRINT"}  - Print an attachment
@@ -5677,7 +5688,7 @@ ADDREDIT
 
          /* Add a couple of members */
 
-         ADDREDIT MEMBER 'jobs@isp.com' MEMBER 'smith@provider.uk' ADD
+         ADDREDIT MEMBER 'jobs@example.com' MEMBER 'smith@example.net' ADD
 
 @{b}BUGS@{ub}
      Even if a group or person is selected, MEMBER [ADD] will return
@@ -5980,7 +5991,7 @@ ADDRNEW
      If no alias is provided, one will be created automatically by
      using a cut-down version of the NAME or EMAIL arguments; for
      instance, "Jose Luis Feliciano" would turn into "J_Feliciano",
-     or "Jose" if Jose@provider.uk was the only argument provided.
+     or "Jose" if Jose@example.com was the only argument provided.
      The rule mentioned above is also applied.
 
      While using spaces in aliases is possible, it is discouraged.
@@ -6711,6 +6722,13 @@ ISONLINE
      RC is set to 1 if YAM is currently getting or sending email.
 
 @{b}NOTES@{ub}
+     Due to the fact that YAM is not multithreaded yet, the ARexx host
+     runs into the very same task and thus the command doesn't return
+     until the transference is finished, and then of course it returns 0.
+     Therefore, the command is only useful when using mail preselection
+     (it will return 1 after all the headers are transferred and the
+     application stops to wait for user interaction) until multithreading
+     is implemented.
 
 @{b}EXAMPLE@{ub}
 
@@ -6735,7 +6753,7 @@ LISTSELECT
      MODE/A
 
 @{b}FUNCTION@{ub}
-     Selects messages in the current folder.
+     Selects or unselects messages in the current folder.
 
 @{b}INPUTS@{ub}
      MODE/A   - may be one of N (none), A (all), T (toggle selection) or
@@ -6746,10 +6764,10 @@ LISTSELECT
 @{b}RETURNS@{ub}
 
 @{b}NOTES@{ub}
-     'LISTSELECT N' doesn't actually unselect everything in the folder:
-     the @{b}current@{ub} entry still remains as such, and for all intents
-     and purposes will be considered as "selected" by some commands, e.g.
-     @{" GETSELECTED " link "RX_GETSELECTED"}.
+     While 'LISTSELECT N' will unselect everything in the folder, the
+     @{b}current@{ub} message still remains as such, and for all intents and
+     purposes will be considered as "selected" by all commands dealing
+     with selected messages, e.g. @{" GETSELECTED " link "RX_GETSELECTED"}.
 
 @{b}EXAMPLE@{ub}
 
@@ -6839,7 +6857,7 @@ MAILBOUNCE
          /* Silently bounce the current message */
 
          MAILBOUNCE QUIET
-         WRITETO 'joe@provider.uk' 'mars'
+         WRITETO 'joe@example.com' 'mars'
          WRITESEND
 
 @{b}BUGS@{ub}
@@ -7263,7 +7281,7 @@ MAILFORWARD
          /* Silently forward the selected messages */
 
          MAILFORWARD QUIET
-         WRITETO 'joe@provider.uk' 'mars'
+         WRITETO 'joe@example.com' 'mars'
          WRITESEND
 
 @{b}BUGS@{ub}
@@ -7331,7 +7349,7 @@ MAILINFO
 
 @{b}FUNCTION@{ub}
      Returns information about a message in the list, or the current
-     message in none is specified.
+     message if none is specified.
 
 @{b}INPUTS@{ub}
      VAR/K     - alternative variable to put the results into instead of
@@ -7428,9 +7446,11 @@ MAILINFO
          SAY 'Message-ID: 'st.msgid
 
 @{b}BUGS@{ub}
+     In V2.3p1, <stem>FILENAME omitted the folder name part if an INDEX
+     was specified.  This was fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
-     @{" SETFLAG " link "RX_SETFLAG"}
+     @{"SETFLAG " link "RX_SETFLAG"}
 
 @endnode
 
@@ -7488,7 +7508,8 @@ MAILREAD
 
 @{b}FUNCTION@{ub}
      Loads the current message into the Read window, or activates an
-     already opened Read window.
+     already opened Read window to let other commands act upon it
+     afterwards.
 
 @{b}INPUTS@{ub}
      VAR/K      - alternative variable to put the results into instead of
@@ -7506,19 +7527,20 @@ MAILREAD
                     go between 0 and 3
 
      RC is set to 10 if WINDOW is used with a value referring to an
-     inexistant window.
+     inexistant window or if another slot is asked but all of them
+     are already taken.
 
 @{b}NOTES@{ub}
      For all intents and purposes, the status of the "Multiple windows"
      flag in the configuration is irrelevant for this command.
 
-     Window slots are dinamically assigned as they are required until
+     Window slots are dynamically assigned as they are required until
      all four are occupied, and remain in use until the relevant window
      is closed (an "invisible" Read window is also "open" within this
      context).  The optional WINDOW parameter sets the @{b}active@{ub} Read window,
      upon which the @{" READCLOSE " link "RX_READCLOSE"}, @{" READINFO " link "RX_READINFO"}, @{" READPRINT " link "RX_READPRINT"} and @{" READSAVE " link "RX_READSAVE"}
      commands will act when called.  Therefore, the MAILREAD command
-     SHOULD be called before using any of them to ensure they act on
+     @{b}should@{ub} be called before using any of them to ensure they act on
      the window that they are supposed to; note that manually activating
      a Read window using the GUI does @{b}not@{ub} magically makes it the target
      of the above mentioned commands.
@@ -7542,13 +7564,13 @@ MAILREPLY
 ---------
 
 @{b}NAME@{ub}
-     MailReply -- Open a new Write window to reply the selected message.
+     MailReply -- Open a new Write window to reply the selected messages.
 
 @{b}TEMPLATE@{ub}
      VAR/K,STEM/K,QUIET/S
 
 @{b}FUNCTION@{ub}
-     Opens a new Write window in order to reply the selected message.
+     Opens a new Write window in order to reply the selected messages.
 
 @{b}INPUTS@{ub}
      VAR/K     - alternative variable to put the results into instead of
@@ -7794,14 +7816,14 @@ MAILWRITE
          /* Edit the first Write window */
 
          MAILWRITE WINDOW win1
-         WRITETO boss@isp.com
+         WRITETO boss@example.com
          'WRITESUBJECT "I don't think I can go to work today"'
          WRITELETTER 'work:excuses.txt'
 
          /* Edit the second Write window */
 
          MAILWRITE WINDOW win2
-         WRITETO peggy@provider.uk
+         WRITETO peggy@example.org
          'WRITESUBJECT "Stuffed at work, I'll be late"'
 
          /* Put the first email in the Outgoing queue */
@@ -7813,8 +7835,8 @@ MAILWRITE
 
          MAILWRITE STEM st. QUIET
          win3 = st.window   /* just for completeness sake */
-         WRITETO sales@pizzahut.com
-         'WRITESUBJECT "Two with Mozarella + lots of coke"'
+         WRITETO sales@example.com
+         'WRITESUBJECT "Two with Mozzarella + lots of coke"'
          WRITELETTER 'dh5:priv/Snail_Linda.txt'
 
          /* Finish editing the second email and send it at once */
@@ -8408,7 +8430,8 @@ SETMAIL
 
 @{b}FUNCTION@{ub}
      Sets the current message in the current folder by its position
-     in the list.
+     in the list.  The message list is redrawn if necessary to make the
+     new current message visible.
 
 @{b}INPUTS@{ub}
      NUM/N/A   - position occupied by the message in the list, may be a
@@ -9530,15 +9553,15 @@ first time I open this sheet
    Yet another MUI bug, already fixed in 3.9+.
 
 
-YAM is taking braces as in "[http://www.site.com]" as part of URLs
-------------------------------------------------------------------
+YAM is taking braces as in "[http://www.example.com]" as part of URLs
+---------------------------------------------------------------------
 
    This is a side effect of people using "[]" as part of URLs.
 Despite the recommendation in RFC #1738 to encode such characters
 when they are supposed to be part of URLs, a number of Internet
 resources, entities and users keep using the "[]" braces in unencoded
 form, thus making e.g. YAM to stop parsing an URL as soon as such
-characters are found, as in "<http://www.site.com/files[7]/myfile>".
+characters are found, as in "<http://www.example.com/files[7]/myfile>".
 As a workaround for this problem, YAM 2.4 will take these characters
 as part of the URL.
 
@@ -9855,8 +9878,8 @@ Credits
 
    The YAM 2.4 update was brought to you by (in alphabetical order):
 
+      Alexey Ivanov <amis@amiga.org.ru>
       Allan Odgaard <duff@diku.dk>
-      AmiS <amis@amiga.org.ru>
       Christian Hattemer <krille@users.sourceforge.net>
       Dirk Stöcker <stoecker@epost.de>
       Giles Burdett <layabouts@the-giant-sofa.demon.co.uk>
@@ -9864,6 +9887,7 @@ Credits
       Jacob Laursen <laursen@myself.com>
       Jens Langner <Jens.Langner@htw-dresden.de>
       Jörg Strohmayer <nospam@gmx.de>
+      Karoly Balogh <charlie@scenergy.dfmk.hu>
 
 
    Third party contributors
@@ -9956,7 +9980,7 @@ the window borders on the preview picture: check out Birdie (currently
 isn't complete either), but this version is much better than v7.
 The icons don't move down and right a pixel, they animate just like
 newicons do.  I have also drawn them so you can turn off text (via MUI)
-and they will stay the same size.  Text wasn't needed (icons are suppose
+and they will stay the same size.  Text wasn't needed (icons are supposed
 to replace text) and they look very professional now.
 
 
@@ -10078,9 +10102,9 @@ or for administrating mailing lists.
 @{b}Sort by@{ub}
      Here the primary order of the messages in the chosen folder is
      specified.  You can have the mail sorted by message date, date
-     received, sender, recipient, subject, size or status.  Concerning
-     the message status, the messages will be sorted in the following
-     orders:
+     sent/received, sender, recipient, subject, size or status.
+     Concerning the message status, the messages will be sorted in
+     the following orders:
 
        new > unread > read > replied > forwarded (for incoming mail)
        error sending > hold > in queue > sent (for outgoing mail)
