@@ -182,14 +182,31 @@ OVERLOAD(OM_SET)
 DECLARE(ChangeWindow)
 {
 	GETDATA;
-	ULONG left = xget(_win(data->String), MUIA_Window_LeftEdge) + _left(data->String);
-	ULONG top = xget(_win(data->String), MUIA_Window_TopEdge) + _bottom(data->String) + 1;
+	struct Window *match_win = (struct Window *)xget(obj, MUIA_Window_Window);
+	struct Window *write_win = (struct Window *)xget(_win(data->String), MUIA_Window_Window);
+	ULONG left = write_win->LeftEdge + _left(data->String);
+	ULONG top = write_win->TopEdge + _bottom(data->String) + 1;
 
-	SetAttrs(obj,
-		MUIA_Window_LeftEdge,   left,
-		MUIA_Window_TopEdge,    top,
-		MUIA_Window_Width,      _width(data->String),
-		TAG_DONE);
+	// only when the window is close a set() is valid to change
+	// the position of a MUI window. Otherwise we have to use ChangeWindowBox()
+	if(match_win && xget(obj, MUIA_Window_Open))
+	{
+		// change the window position/sizes
+		ChangeWindowBox(match_win, left, top, _width(data->String), match_win->Height);
+
+		// also make sure the window is always in front of the write window
+		MoveWindowInFrontOf(match_win, write_win);
+	}
+	else
+	{
+		// if there is currently no window open we can use set()
+		// to change the position/sizes
+		SetAttrs(obj,
+			MUIA_Window_LeftEdge,   left,
+			MUIA_Window_TopEdge,    top,
+			MUIA_Window_Width,      _width(data->String),
+			TAG_DONE);
+	}
 
 	return 0;
 }

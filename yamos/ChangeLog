@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/Addrmatchlist.c: fixed bug #805686 where SetAttr() was used on
+      some window tags while the window was open and therefore caused that
+      the adrrmatchwindow did not always follow the main window positions.
+
 2005-02-20  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_WR.c, YAM_CO.c, YAM_COg.c, YAM_MA.c, misc: added two new expansion
