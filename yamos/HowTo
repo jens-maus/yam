@@ -1,0 +1,34 @@
+
+How to compile YAM 2.3-dev from a clean SAS/C 6.58 installation:
+----------------------------------------------------------------
+
+* Download 'dev/mui/mui38dev.lha' from Aminet and install the includes.
+
+* Download http://ftp1.sourceforge.net/yamos/YAM22src.lha and copy
+  'lib/NewReadArgs.o' from the archive to lib:
+
+* If you are using the NDK 3.1 from the SAS/C installation:
+  - In include:proto/locale.h, change line 4 from:
+
+extern struct Library *LocaleBase ;
+    to:
+extern struct LocaleBase *LocaleBase ;
+
+  - In include:proto/rexxsyslib.h, change line 4 from:
+
+extern struct Library *RexxSysBase ;
+    to:
+extern struct RxsLib *RexxSysBase ;
+
+  - In include:proto/utility.h, change line 4 from:
+
+extern struct Library *UtilityBase ;
+    to:
+extern struct UtilityBase *UtilityBase ;
+
+* If you are using NDK 3.5 from the Developer CD V2.1:
+  - In include:proto/utility.h, change line 22 from:
+
+extern struct Library * UtilityBase;
+    to:
+extern struct UtilityBase * UtilityBase;
