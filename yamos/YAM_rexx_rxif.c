@@ -1985,11 +1985,13 @@ void rx_mailstatus( UNUSED struct RexxHost *host, struct rxd_mailstatus **rxd, l
       case RXIF_ACTION:
          switch (tolower(rd->arg.status[0]))
          {
-            case 'o': MA_SetStatusTo(SFLAG_READ, SFLAG_NEW); break;
-            case 'u': MA_SetStatusTo(SFLAG_NONE, SFLAG_NEW|SFLAG_READ); break;
-            case 'h': MA_SetStatusTo(SFLAG_HOLD, SFLAG_NONE); break;
-            case 'w': MA_SetStatusTo(SFLAG_QUEUED, SFLAG_SENT); break;
-            default: rd->rc = RETURN_WARN;
+            case 'o': MA_SetStatusTo(SFLAG_READ,              SFLAG_NEW);                         break;
+            case 'u': MA_SetStatusTo(SFLAG_NONE,              SFLAG_NEW|SFLAG_READ);              break;
+            case 'h': MA_SetStatusTo(SFLAG_HOLD|SFLAG_READ,   SFLAG_QUEUED|SFLAG_ERROR);          break;
+            case 'w': MA_SetStatusTo(SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR); break;
+
+            default:
+              rd->rc = RETURN_WARN;
          }
          break;
       

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-15  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c: fixed a minor bug in the mail status handling which didn't
+      allow a user to manually set/unset a mail to/from the HOLD status.
+      Modified all HOLD status handling accordingly.
+
 2004-11-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * misc: fixed bug #1052533 where mail couldn't be move to a simple
