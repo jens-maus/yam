@@ -1058,12 +1058,12 @@ int MA_NewReply(struct Mail **mlist, int flags)
             if (!j) MA_InsertIntroText(out, mlistad ? C->MLReplyHello : (altpat ? C->AltReplyHello : C->ReplyHello), &etd);
             if(C->QuoteMessage && !hasNoQuoteFlag(flags))
             {
-               if (j) fputs("\n", out);
+               if(j) fputc('\n', out);
                RE_InitPrivateRC(mail, PM_TEXTS);
                etd.HeaderFile = G->RE[4]->FirstPart->Filename;
                MA_InsertIntroText(out, mlistad ? C->MLReplyIntro : (altpat ? C->AltReplyIntro : C->ReplyIntro), &etd);
                cmsg = RE_ReadInMessage(4, RIM_QUOTE);
-               QuoteWordWrap(cmsg, C->EdWrapMode ? C->EdWrapCol-strlen(wr->QuoteText)-1 : 1024, NULL, wr->QuoteText, out);
+               Quote_Text(out, cmsg, strlen(cmsg), C->EdWrapMode ? C->EdWrapCol-strlen(wr->QuoteText)-1 : 1024, wr->QuoteText);
                free(cmsg);
                RE_FreePrivateRC();
             }

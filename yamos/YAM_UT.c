@@ -99,11 +99,8 @@ unsigned char *PPtr[16];
 ***************************************************************************/
 
 /* local protos */
-static int GetWord(char **rptr, char *wbuf, int max);
-static char *ReflowParagraph(char *start, char *end, int lmax, char *dest);
-static void RemoveQuoteString(char *start, char *end, char *quot, char *dest);
-static char *InsertQuoteString(char *start, char *quote, FILE *out);
-static void SaveParagraph(char *start, char *end, char *prefix, FILE *out);
+static int  Word_Length(const char *buf);
+static int  Quoting_Chars(char *buf, int len, char *text, int *post_spaces);
 static char *FileToBuffer(char *file);
 static BOOL GetPackMethod(int xpktype, char **method, int *eff);
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
@@ -1211,179 +1208,264 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
    return success;
 }
 ///
-/// GetWord
-//  Word-wrapping algorithm: gets next word
-static int GetWord(char **rptr, char *wbuf, int max)
+/// Word_Length
+//  returns the string length of the next word
+static int Word_Length(const char *buf)
 {
-   int c, i = 0;
-   static int nonblanks = 0;
+	unsigned char c;
+	int len = 0;
 
-   if (!(c = *(*rptr)++)) { *wbuf = 0; return 0; }
-   if (isSpace(c))
-   {
-      while (isSpace(c) && c != '\n')
-      {
-         if (i < max-1) wbuf[i++] = c;
-         c = *(*rptr)++;
-      }
-      if (c == '\n' || !c) { i = 0; wbuf[i++] = '\n'; }
-   }
-   else
-   {
-      while (isGraph(c))
-      {
-         if (i < max-1) wbuf[i++] = c; else break;
-         c = *(*rptr)++;
-      }
-      nonblanks += i;
-      while (isSpace(c) && c != '\n') c = *(*rptr)++;
-      if (c == '\n')
-      {
-         if (nonblanks <= 20) wbuf[i++] = '\n';
-         nonblanks = 0;
-      }
-   }
-   if (isGraph(c)) (*rptr)--;
-   wbuf[i] = '\0'; return i;
-}
-///
-/// ReflowParagraph
-//  Word-wrapping algorithm: process a paragraph
-static char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
-{
-   int lword, lline = 0;
-   char c, word[SIZE_LARGE], *p;
-   BOOL dented = FALSE;
+	while((c = *buf))
+	{
+		if(isspace(c))
+		{
+			if(c == '\n' || c == '\r')
+        return 0;
 
-   while ((lword = GetWord(&start, word, SIZE_LARGE)))
-   {
-      if ((c = word[lword-1]) == '\n')  word[--lword] = '\0';
-      if (!lword);
-      else if (isSpace(*word))
-      {
-         if (lline) *dest++ = '\n';
-         dented = TRUE; lline = lword;
-         for (p = word; *p; p++) *dest++ = *p;
-      }
-      else
-      {
-         if (lline == 0 || dented) { for (p = word; *p; p++) *dest++ = *p; lline += lword; dented = FALSE; }
-         else
-         {
-            if (lline+lword < lmax) { *dest++ = ' '; for (p = word; *p; p++) *dest++ = *p; lline += lword+1; }
-            else { *dest++ = '\n'; for (p = word; *p; p++) *dest++ = *p; lline = lword; }
-         }
-      }
-      if (c == '\n') { *dest++ = '\n'; lline = 0; }
-      if (start > end) break;
-   }
-   if (lline) *dest++ = '\n';
-   *dest-- = 0;
-   return dest;
-}
-///
-/// RemoveQuoteString
-//  Removes reply prefix
-static void RemoveQuoteString(char *start, char *end, char *quot, char *dest)
-{
-   int quotlen = strlen(quot);
+			len++;
+		}
+    else break;
 
-   while (start <= end)
-   {
-      if (!strncmp(start, quot, quotlen)) start += quotlen;
-      while (*start && *start != '\n') *dest++ = *start++;
-      if (*start) *dest++ = *start++;
-   }
-   *dest = '\0'; // null-terminate
-}
-///
-/// InsertQuoteString
-//  Inserts reply prefix
-static char *InsertQuoteString(char *start, char *quote, FILE *out)
-{
-   if ((*start != '\n' || C->QuoteEmptyLines) && strncmp(start, "<sb>", 4) && strncmp(start, "<tsb>", 5))
-   {
-      int level, i;
-      for (i = level = 0; start[i] && start[i] != '\n' && i < 16; i++)
-      {
-         if (isSpace(start[i]) && (!level || start[i+1] == '>')) continue;
-         if (start[i] == '>') level++; else if (!isAlNum(start[i]) || level) break;
-      }
-      if (level) start = &start[i];
-      if (level > 8) level = 8;
-      fputs(quote, out); while (level--) fputc('>', out);
-      if (*start != ' ') fputc(' ', out);
-   }
-   return start;
-}
-///
-/// SaveParagraph
-//  Writes a paragraph and inserts reply prefixes
-static void SaveParagraph(char *start, char *end, char *prefix, FILE *out)
-{
-   while (start <= end)
-   {
-      if (*prefix) start = InsertQuoteString(start, prefix, out);
-      while (*start && *start != '\n') fputc(*start++, out);
-      if (*start) fputc(*start++, out);
-   }
-}
-///
-/// QuoteWordWrap
-//  Reformats quoted messages to a new line length
-void QuoteWordWrap(char *rptr, int lmax, char *prefix, char *firstprefix, FILE *out)
-{
-   if (!prefix) prefix = firstprefix;
-   while (*rptr)
-   {
-      char *p, *ps = rptr, *pe, quot[17], c;
-      int lsm = 0;
-      *quot = 0;
-      while (TRUE)
-      {
-         int ls = 0;
-         char *p = rptr;
-         while (*rptr && *rptr != '\n') { rptr++; ls++; }
-         if (ls && *p == '>' && !*quot)
-         {
-            int i = 0;
-            while ((*p == ' ' || *p == '>') && i < 16) quot[i++] = *p++;
-            quot[i] = 0;
-            while (i > 1) if (quot[i-2] == ' ' && quot[i-1] == ' ') quot[--i] = 0; else break;
-         }
-         if (ls > lsm) lsm = ls;
-         if (!*rptr) break;
-         c = rptr[1];
-         if (isSpace(c) || !c || c == '\n') break;
-         if (!*quot && c == '>') break;
-         if (*quot) if (strncmp(&rptr[1], quot, strlen(quot))) break;
-         rptr++;
-      }
-      pe = rptr;
-      if (lsm > lmax)
-      {
-         char *buf = calloc((size_t)(2*(pe-ps+2)), sizeof(char));
-         if (buf)
-         {
-           if (*quot)
-           {
-              char newprefix[SIZE_DEFAULT];
-              RemoveQuoteString(ps, pe, quot, buf);
-              strcpy(newprefix, firstprefix); strcat(newprefix, TrimEnd(quot));
-              QuoteWordWrap(buf, lmax-strlen(quot), newprefix, firstprefix, out);
-           }
-           else
-           {
-              p = ReflowParagraph(ps, pe, lmax, buf);
-              SaveParagraph(buf, p, prefix, out);
-           }
+		buf++;
+	}
 
-           free(buf);
-         }
+
+	while((c = *buf))
+	{
+		if(isspace(c) || c == '\0')
+      break;
+
+		len++;
+		buf++;
+	}
+
+	return len;
+}
+///
+/// Quoting_Chars
+//  Determines and copies all quoting characters ">" to the buffer "buf"
+//  out of the supplied text. It also returns the number of skipable
+//  characters since the start of line like "JL>"
+static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
+{
+  unsigned char c;
+  int new_color = 0;
+	int i=0;
+	int last_bracket = 0;
+  int skip_chars = 0;
+  (*post_spaces) = 0;
+
+	while((c = *text++) && i < len-1)
+	{
+		if(c == '>')
+		{
+			last_bracket = i+1;
+
+			if(new_color == 1)
+        new_color = 2;
+			else
+        new_color = 1;
+		}
+    else
+		{
+			if(c == '\n')
+        break;
+
+			if(c != ' ' && (new_color == 1 || new_color == 2))
+        break;
+
+			if(c == ' ')
+      {
+        if(new_color == 0)
+          break;
+
+        // if we end up here we can count the number of spaces
+        // after the quoting characters
+        (*post_spaces)++;
       }
-      else SaveParagraph(ps, pe, prefix, out);
-      rptr = pe+1;
-   }
+      else skip_chars++;
+		}
+
+		buf[i++] = c;
+	}
+
+	buf[last_bracket] = '\0';
+
+  // return the number of skipped chars before
+  // any quote char was found.
+  return last_bracket ? skip_chars : 0;
+}
+///
+/// Quote_Text
+//  Main mail text quotation function. It takes the source string "src" and
+//  analyzes it concerning existing quoting characters. Depending on this
+//  information it adds new quoting marks "prefix" to the start of each line
+//  taking care of a correct word wrap if the line gets longs than "line_max".
+//  All output is directly written to the already opened filehandle "out".
+void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
+{
+  // make sure the output file handle is valid
+	if(out)
+	{
+  	static char temp_buf[128];
+	  int temp_len = 0;
+		BOOL newline = TRUE;
+		BOOL wrapped = FALSE; // needed to implement automatic wordwrap while quoting
+    BOOL lastwasspace = FALSE;
+		int line_len = 0;
+    int skip_chars = 0;
+    int post_spaces = 0;
+
+    // find out how many quoting chars the next line has
+    skip_chars = Quoting_Chars(temp_buf, sizeof(temp_buf), src, &post_spaces);
+		temp_len = strlen(temp_buf) - skip_chars;
+    src += skip_chars;
+    len -= skip_chars;
+
+		while(len > 0)
+		{
+			char c = *src;
+
+      // break out if we received a NUL byte, because this
+      // should really never happen
+      if(c == '\0')
+        break;
+
+      // skip any LF
+			if(c == '\r')
+			{
+				src++;
+				len--;
+				continue;
+			}
+
+      // on a CR (newline)
+			if(c == '\n')
+			{
+				src++;
+				len--;
+
+        // find out how many quoting chars the next line has
+				skip_chars = Quoting_Chars(temp_buf, sizeof(temp_buf), src, &post_spaces);
+        src += skip_chars;
+        len -= skip_chars;
+
+				if(temp_len == (strlen(temp_buf)-skip_chars) && wrapped)
+				{
+					// the text has been wrapped previously and the quoting chars
+					// are the same like the previous line, so the following text
+					// probably belongs to the same paragraph
+
+					len -= temp_len; // skip the quoting chars
+					src += temp_len;
+					wrapped = FALSE;
+
+          // check wheter the next char will be a newline or not, because
+          // a newline indicates a new empty line, so there is no need to
+          // cat something together at all
+          if(*src != '\n')
+          {
+  					// add a space to if this was the first quoting
+	  				if(temp_len == 0 || (*src != ' ' && lastwasspace == FALSE))
+		  			{
+			  			fputc(' ', out);
+				  		line_len++;
+              lastwasspace = TRUE;
+  					}
+
+	  				continue;
+          }
+				}
+
+				temp_len = strlen(temp_buf)-skip_chars;
+				wrapped = FALSE;
+
+        // check wheter this line would be zero or not and if so we
+        // have to care about if the user wants to also quote empty lines
+        if(line_len == 0 && C->QuoteEmptyLines)
+          fputs(prefix, out);
+
+        // then put a newline in our file
+				fputc('\n', out);
+				newline = TRUE;
+        lastwasspace = FALSE;
+
+				line_len = 0;
+
+				continue;
+			}
+
+			if(newline)
+			{
+				if(c == '>')
+        {
+          fputs(prefix, out);
+          line_len+=strlen(prefix);
+        }
+				else
+        {
+          fputs(prefix, out);
+          fputc(' ', out);
+          line_len+=strlen(prefix)+1;
+        }
+				
+        newline = FALSE;
+			}
+
+      // we check wheter this char was a whitespace
+      // or not and if so we set the lastwasspace flag and we also check if
+      // we are near the end of the line so that we have to initiate a word wrap
+			if((lastwasspace = isspace(c)) && line_len + Word_Length(src) >= line_max)
+			{
+				src++;
+        len--;
+
+        // output a newline to start a new line
+        fputc('\n', out);
+
+        // reset line_len
+        line_len = 0;
+
+				fputs(prefix, out);
+				line_len += strlen(prefix);
+
+        if(strlen(temp_buf))
+        {
+          fputs(temp_buf+skip_chars, out);
+          line_len += strlen(temp_buf)-skip_chars;
+
+          // first reset the lastwasspace flag
+          lastwasspace = FALSE;
+
+				  while(post_spaces--)
+          {
+            fputc(' ', out);
+            line_len++;
+            lastwasspace = TRUE;
+          }
+        }
+        else
+        {
+          fputc(' ', out);
+          line_len++;
+        }
+
+				wrapped = TRUE; // indicates that a word has been wrapped manually
+				continue;
+			}
+
+			fputc(c, out);
+			line_len++;
+
+			src++;
+			len--;
+		}
+
+    // check wheter we finished the quoting with
+    // a newline or otherwise the followed signature won`t fit correctly
+    if(newline == FALSE)
+      fputc('\n', out);
+	}
 }
 ///
 /// SimpleWordWrap
@@ -4378,7 +4460,6 @@ ULONG CRC32(void *buffer, unsigned int count, ULONG crc)
 ///
 
 /*** REXX interface support ***/
-
 /// InsertAddresses
 //  Appends an array of addresses to a string gadget
 void InsertAddresses(APTR obj, char **addr, BOOL add)

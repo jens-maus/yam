@@ -5,6 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-17  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: after receiving some bug reports about some screwed
+      up text while replying mails, I realized that the quotation
+      functions of YAM were somehow totally broken and way to
+      complicated/slow.
+      Therefore I totally rewrote the functions for generating
+      quoted reply texts as well as applying an automatic wordwrap
+      if some text passages exceed the specified text width. Like
+      anything new, this needs some more testing before these new
+      routines can be considered stable, but the first tests with
+      some complicated mails look good and promising that this new
+      functions work way better than the previous more or less
+      cryptic version.
+
 2004-01-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: reworked the PlaySound() function to not use any

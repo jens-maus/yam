@@ -337,7 +337,7 @@ void     PGPClearPassPhrase(BOOL force);
 int      PGPCommand(char *progname, char *options, int flags);
 void     PGPGetPassPhrase(void);
 void     PlaySound(char *filename);
-void     QuoteWordWrap(char *rptr, int lmax, char *prefix, char *firstprefix, FILE *out);
+void     Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix);
 void     RemoveMailFromList(struct Mail *mail);
 BOOL     RenameFile(char *oldname, char *newname);
 BOOL     RepackMailFile(struct Mail *mail, int dstxpk, char *passwd);
