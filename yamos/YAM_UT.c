@@ -1338,6 +1338,7 @@ char *DateStamp2String(struct DateStamp *date, int mode)
    struct DateTime dt;
    struct DateStamp dsnow;
    long beat;
+   int tz;
 
    if (!date) date = DateStamp(&dsnow);
    clear(&dt, sizeof(struct DateTime));
@@ -1348,7 +1349,16 @@ char *DateStamp2String(struct DateStamp *date, int mode)
    dt.dat_StrTime = (STRPTR)timestr;
    dt.dat_StrDay  = (STRPTR)daystr;
    DateToStr(&dt);
-   beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+
+   /* If Locale is present, don't use the timezone from the config */
+   if (G->Locale) {
+      CloseLocale(G->Locale);
+      G->Locale = OpenLocale(NULL);
+      tz = -G->Locale->loc_GMTOffset/60;
+   }
+   else tz = C->TimeZone;
+   beat = (((date->ds_Minute-60*tz+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+
    s = Trim(datestr);
    switch (mode)
    {
@@ -1390,9 +1400,16 @@ char *GetTZ(void)
    static char tzone[SIZE_SMALL];
    if (GetVar("YAM_TZ", tzone, SIZE_SMALL, 0) < 0)
    {
-      int tz = C->TimeZone + (C->DaylightSaving ? 1 : 0);
-      if (C->TimeZone >= 0) sprintf(tzone, "+%02d00", tz);
-      else                 sprintf(tzone, "-%02d00", -tz);
+      int tz, tzd;
+      if (G->Locale) {
+         CloseLocale(G->Locale);
+         G->Locale = OpenLocale(NULL);
+         tz = -G->Locale->loc_GMTOffset/60;
+      }
+      else tz = C->TimeZone;
+      tzd = tz + (C->DaylightSaving ? 1 : 0);
+      if (tz >= 0) sprintf(tzone, "+%02d00", tzd);
+      else         sprintf(tzone, "-%02d00", -tzd);
    }
    return tzone;
 }
@@ -1526,7 +1543,7 @@ void DisplayMailList(struct Folder *fo, APTR lv)
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
 {
    struct Mail *new = malloc(sizeof(struct Mail));
-   if (new) 
+   if (new)
    {
       *new = *mail;
       new->Folder = folder;
