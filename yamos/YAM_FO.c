@@ -1182,7 +1182,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort, TAG_DONE);
       MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL), FALSE);
       FO_SaveTree(CreateFilename(".folders"));
-      DisplayStatistics(&folder);
+      DisplayStatistics(&folder, TRUE);
    }
    DisposeModulePush(&G->FO);
 }

@@ -846,7 +846,7 @@ void CO_Validate(struct Config *co, BOOL update)
          MA_UpdateInfoBar(FO_GetCurrentFolder());
       }
       if (G->CO->Visited[12] || G->CO->UpdateAll) AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
-      if (G->CO->Visited[14] || G->CO->UpdateAll) { SetupAppIcons(); DisplayStatistics((struct Folder *)-1); }
+      if (G->CO->Visited[14] || G->CO->UpdateAll) { SetupAppIcons(); DisplayStatistics((struct Folder *)-1, TRUE); }
    }
 }
 

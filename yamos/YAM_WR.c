@@ -1355,11 +1355,20 @@ void WR_NewMail(enum WriteMode mode, int winnum)
                }
                switch (wr->Mode)
                {
-                  case NEW_REPLY:  MA_SetMailStatus(m, STATUS_RPD);
-                                   DisplayStatistics(m->Folder); break;
+                  case NEW_REPLY:
+                  {
+                    MA_SetMailStatus(m, STATUS_RPD);
+                    DisplayStatistics(m->Folder, FALSE);
+                  }
+                  break;
+
                   case NEW_FORWARD:
-                  case NEW_BOUNCE: MA_SetMailStatus(m, STATUS_FWD);
-                                   DisplayStatistics(m->Folder); break;
+                  case NEW_BOUNCE:
+                  {
+                    MA_SetMailStatus(m, STATUS_FWD);
+                    DisplayStatistics(m->Folder, FALSE);
+                  }
+                  break;
                }
             }
          }
@@ -1384,7 +1393,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    }
    DeleteFile(WR_AutoSaveFile(winnum));
    DisposeModulePush(&G->WR[winnum]);
-   DisplayStatistics(outfolder);
+   DisplayStatistics(outfolder, TRUE);
 }
 
 HOOKPROTONHNO(WR_NewMailFunc, void, int *arg)

@@ -755,7 +755,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       DoMethod(G->App, MUIM_CallHook, &MA_ApplyRulesHook, APPLY_AUTO, 0, FALSE);
 
       G->TR->Checking = FALSE;
-      DisplayStatistics((struct Folder *)-1);
+      DisplayStatistics((struct Folder *)-1, TRUE);
       TR_NewMailAlert();
       MA_ChangeTransfer(TRUE);
 
@@ -1619,7 +1619,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
          fclose(fh);
          DisplayMailList(folder, G->MA->GUI.NL_MAILS);
          AppendLog(50, GetStr(MSG_LOG_Importing), (void *)ts.Msgs_Done, G->TR->ImportFile, folder->Name, "");
-         DisplayStatistics(folder);
+         DisplayStatistics(folder, TRUE);
       }
    }
    TR_AbortnClose();
@@ -1635,7 +1635,9 @@ HOOKPROTONHNONP(TR_AbortGETFunc, void)
    MA_FreeRules(G->TR->Search, G->TR->Scnt);
    TR_AbortnClose();
    TR_CloseTCPIP();
-   G->TR->Checking = FALSE; DisplayStatistics((struct Folder *)-1);
+   G->TR->Checking = FALSE;
+
+   DisplayStatistics((struct Folder *)-1, TRUE);
 }
 MakeStaticHook(TR_AbortGETHook, TR_AbortGETFunc);
 ///
@@ -1770,7 +1772,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
             TR_DeleteMessage(mail->Index);
          }
       }
-      DisplayStatistics(FO_GetFolderByType(FT_INCOMING, NULL));
+      DisplayStatistics((struct Folder *)-1, TRUE);
    }
    TR_GetMailFromNextPOP(FALSE, 0, 0);
 }

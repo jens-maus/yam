@@ -859,7 +859,7 @@ static int GetDST(void)
 }
 ///
 
-
+/// yam_exitfunc()
 /* This makes it possible to leave YAM without explicitely calling cleanup procedure */
 static void yam_exitfunc(void)
 {
@@ -876,6 +876,7 @@ static void yam_exitfunc(void)
       CloseLibrary((struct Library *) IntuitionBase);
 }
 
+///
 /// Main
 //  Program entry point, main loop
 int main(int argc, char **argv)
@@ -1033,7 +1034,7 @@ int main(int argc, char **argv)
       }
       if (C->SendOnQuit && !args.nocheck) if (TR_IsOnline()) SendWaitingMail();
       if (C->CleanupOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
-      if (C->RemoveOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
+      if (C->RemoveOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, TRUE);
 
       if(ret == 1)
       {

@@ -18,8 +18,8 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
- YAM Official Support Site :	http://www.yam.ch
- YAM OpenSource project		:	http://sourceforge.net/projects/yamos/
+ YAM Official Support Site : http://www.yam.ch
+ YAM OpenSource project		 : http://sourceforge.net/projects/yamos/
 
  $Id$
 

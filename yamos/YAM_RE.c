@@ -509,7 +509,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
       if (real && (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
       {
          MA_SetMailStatus(mail, STATUS_OLD);
-         DisplayStatistics(folder);
+         DisplayStatistics(folder, TRUE);
          if (re->PGPSigned) DoMethod(G->App, MUIM_CallHook, &RE_CheckSignatureHook, FALSE, winnum);
          RE_DoMDN(MDN_READ, mail, FALSE);
       }
@@ -1056,7 +1056,7 @@ HOOKPROTONHNO(RE_RemoveAttachFunc, void, int *arg)
    {
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
       CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
-      DisplayStatistics(mail->Folder);
+      DisplayStatistics(mail->Folder, TRUE);
    }
    RE_ReadMessage(*arg, mail);
 }
@@ -1106,7 +1106,7 @@ HOOKPROTONHNO(RE_SetUnreadFunc, void, int *arg)
    int winnum = *arg;
    MA_SetMailStatus(G->RE[winnum]->MailPtr, STATUS_UNR);
    RE_UpdateStatusGroup(winnum);
-   DisplayStatistics(NULL);
+   DisplayStatistics(NULL, TRUE);
 }
 MakeStaticHook(RE_SetUnreadHook, RE_SetUnreadFunc);
 ///
@@ -1129,7 +1129,7 @@ HOOKPROTONHNO(RE_ChangeSubjectFunc, void, int *arg)
          {
             DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
             CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
-            DisplayStatistics(mail->Folder);
+            DisplayStatistics(mail->Folder, TRUE);
          }
          RE_ReadMessage(*arg, mail);
       }

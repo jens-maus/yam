@@ -368,8 +368,8 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
    }
    if (copyit) AppendLogNormal(24, GetStr(MSG_LOG_Copying), (void *)selected, FolderName(frombox), FolderName(tobox), "");
           else AppendLogNormal(22, GetStr(MSG_LOG_Moving),  (void *)selected, FolderName(frombox), FolderName(tobox), "");
-   if (!copyit) DisplayStatistics(frombox);
-   DisplayStatistics(tobox);
+   if (!copyit) DisplayStatistics(frombox, FALSE);
+   DisplayStatistics(tobox, TRUE);
    MA_ChangeSelectedFunc();
 }
 
@@ -387,9 +387,13 @@ static void MA_UpdateStatus(void)
       for (i = 1; i <= (int)*flist; i++) if (!OUTGOING(flist[i]->Type)) if (flist[i]->LoadedMode == 2)
       {
          BOOL updated = FALSE;
+
          for (mail = flist[i]->Messages; mail; mail = mail->Next)
+         {
             if (mail->Status == STATUS_NEW) { updated = TRUE; MA_SetMailStatus(mail, STATUS_UNR); }
-         if (updated) DisplayStatistics(flist[i]);
+         }
+
+         if (updated) DisplayStatistics(flist[i], TRUE);
       }
       free(flist);
    }
@@ -973,7 +977,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
       }
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
       MA_ChangeSelectedFunc();
-      DisplayStatistics(NULL);
+      DisplayStatistics(NULL, TRUE);
       BusyEnd;
    }
 }
@@ -1133,9 +1137,9 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    else
    {
       AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)selected, folder->Name, delfolder->Name, "");
-      DisplayStatistics(delfolder);
+      DisplayStatistics(delfolder, FALSE);
    }
-   DisplayStatistics(NULL);
+   DisplayStatistics(NULL, TRUE);
    MA_ChangeSelectedFunc();
 }
 
@@ -1439,7 +1443,7 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
       MA_FreeRules(search, scnt);
    }
    set(lv, MUIA_NList_Quiet, FALSE); G->AppIconQuiet = FALSE;
-   DisplayStatistics(NULL);
+   DisplayStatistics(NULL, TRUE);
    if (G->RRs.Checked && mode == APPLY_USER)
    {
       sprintf(buf, GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);
@@ -1514,7 +1518,7 @@ void MA_SetStatusTo(int status)
       for (i = 0; i < (int)*mlist; i++) if (mlist[i+2]->Status != status) MA_SetMailStatus(mlist[i+2], status);
       set(lv, MUIA_NList_Quiet, FALSE);
       free(mlist);
-      DisplayStatistics(NULL);
+      DisplayStatistics(NULL, TRUE);
    }
 }
 
@@ -1559,27 +1563,39 @@ MakeHook(MA_DeleteOldHook, MA_DeleteOldFunc);
 ///
 /// MA_DeleteDeletedFunc
 //  Removes messages from 'deleted' folder
-HOOKPROTONHNONP(MA_DeleteDeletedFunc, void)
-{       
-   int i = 0;
-   struct Mail *mail;
-   struct Folder *folder = FO_GetFolderByType(FT_DELETED, NULL);
+HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
+{
+  BOOL quiet = *arg != 0;
+  int i = 0;
+  struct Mail *mail;
+  struct Folder *folder = FO_GetFolderByType(FT_DELETED, NULL);
 
-   if(!folder) return;
+  if(!folder) return;
 
-   Busy(GetStr(MSG_BusyEmptyingTrash), "", 0, folder->Total);
-   for (mail = folder->Messages; mail; mail = mail->Next)
-   {
-      Busy(NULL, NULL, i++, 0);
-      AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name, "");
-      DeleteFile(GetMailFile(NULL, NULL, mail));
-   }
-   ClearMailList(folder, TRUE);
-   MA_ExpireIndex(folder);
-   if (FO_GetCurrentFolder() == folder) DisplayMailList(folder, G->MA->GUI.NL_MAILS);
-   if (i) AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)i, folder->Name, "", "");
-   DisplayStatistics(folder);
-   BusyEnd;
+  Busy(GetStr(MSG_BusyEmptyingTrash), "", 0, folder->Total);
+
+  for (mail = folder->Messages; mail; mail = mail->Next)
+  {
+    Busy(NULL, NULL, i++, 0);
+    AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name, "");
+    DeleteFile(GetMailFile(NULL, NULL, mail));
+  }
+
+  // We only clear the folder if it wasn`t empty anyway..
+  if(i > 0)
+  {
+    ClearMailList(folder, TRUE);
+
+    MA_ExpireIndex(folder);
+
+    if(FO_GetCurrentFolder() == folder) DisplayMailList(folder, G->MA->GUI.NL_MAILS);
+
+    AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)i, folder->Name, "", "");
+
+    if(quiet == FALSE) DisplayStatistics(folder, TRUE);
+  }
+
+  BusyEnd;
 }            
 MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
 
@@ -1793,7 +1809,7 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
    }
    free(mlist);
    DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-   DisplayStatistics(NULL);
+   DisplayStatistics(NULL, TRUE);
 }
 MakeStaticHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 
@@ -2677,7 +2693,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SELTOGG   ,data->GUI.NL_MAILS,4,MUIM_NList_Select,MUIV_NList_Select_All,MUIV_NList_Select_Toggle,NULL);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_SEARCH    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FI_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_FILTER    ,MUIV_Notify_Application  ,5,MUIM_CallHook            ,&MA_ApplyRulesHook,APPLY_USER,0,FALSE);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_DELDEL    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_DeleteDeletedHook);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_DELDEL    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_DeleteDeletedHook, FALSE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_INDEX     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_RescanIndexHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_FLUSH     ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FlushIndexHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOOK     ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&AB_OpenHook,ABM_EDIT);

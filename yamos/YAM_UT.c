@@ -1953,8 +1953,8 @@ void DisplayMailList(struct Folder *fo, APTR lv)
 
       // We do not encapsulate this Clear&Insert with a NList_Quiet because
       // this will speed up the Insert with about 3-4 seconds for ~6000 items
-      DoMethod(lv, MUIM_NList_Clear, TAG_DONE);
-      DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted, TAG_DONE);
+      DoMethod(lv, MUIM_NList_Clear);
+      DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted);
 
       free(array);
       BusyEnd;
@@ -3032,7 +3032,7 @@ void DisplayAppIconStatistics(void)
 ///
 /// DisplayStatistics
 //  Calculates folder statistics and update mailbox status icon
-void DisplayStatistics(struct Folder *fo)
+void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
 {
    int pos;
    struct Mail *mail;
@@ -3112,7 +3112,7 @@ void DisplayStatistics(struct Folder *fo)
       }
    }
 
-   if (!G->AppIconQuiet) DisplayAppIconStatistics();
+   if (!G->AppIconQuiet && updateAppIcon) DisplayAppIconStatistics();
 }
 
 ///

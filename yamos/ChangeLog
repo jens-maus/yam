@@ -1,3 +1,10 @@
+2001-09-03  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug #433751 that caused flickering of the AppIcon after
+      recalculating the statistics.
+    * added standard source headers to new classfiles
+    * set emailcache filename lowercase with a uppercase assign.
+
 2001-08-22  Allan Odgaard <duff@diku.dk>
 
     * When using D(DBF_ERROR, ()) then a DisplayBeep() is issued.
