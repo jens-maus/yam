@@ -23,12 +23,21 @@ CFLAGS = NOLINK GST=$(GST) DEF YAMVER=$(YAMVERSION) DEF YAMDATE=$(YAMDATE) $(DEB
 .c.o:
 	$(CC) $(CFLAGS) $(OPTFLAGS) $*.c
 
+.ct.catalog:
+	flexcat YAM.cd $*.ct CATALOG=YAM_$*.catalog
+
 
 # Targets & dependencies
 all:	$(GST) YAM
 
 clean:
 	$(RM) YAM *.o $(GST)
+
+copy:	all catalogs
+	copy YAM YAM:
+	copy YAM_$$language.catalog LOCALE:$$language/YAM.catalog
+
+catalogs: YAM_deutsch.catalog
 
 YAM:	$(OBJS)
 	slink <with <
@@ -41,8 +50,10 @@ YAM.h: YAM.h.in
    copy YAM.h.in YAM.h
 
 YAM_loc.o: YAM.cd YAM_loc.h YAM_loc.c
-   flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
-   $(CC) YAM_loc.c $(OPTS)
+	flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
+	$(CC) YAM_loc.c $(CFLAGS)
+
+YAM_deutsch.catalog: deutsch.ct
 
 YAM.o:     YAM.c     YAM.h YAM_loc.h
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_loc.h
