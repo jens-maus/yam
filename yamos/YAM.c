@@ -290,14 +290,10 @@ BOOL AY_New(BOOL hidden)
             MUIA_Gauge_InfoText, " ",
             MUIA_Gauge_Horiz, TRUE,
          End,
-         Child, G->AY_Button = TextObject,
-           MUIA_ShowMe,        FALSE,
-           MUIA_Text_Contents, GetStr(MSG_ABOUT_OKAY_GAD),
-           MUIA_Background,    MUII_ButtonBack,
-           MUIA_Frame,         MUIV_Frame_Button,
-           MUIA_InputMode,     MUIV_InputMode_RelVerify,
-           MUIA_Text_SetMax,   TRUE,
-           MUIA_CycleChain,    1,
+         Child, HGroup,
+            Child, HSpace(0),
+            Child, G->AY_Button = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
+            Child, HSpace(0),
          End,
       End,
    End;
@@ -318,6 +314,7 @@ BOOL AY_New(BOOL hidden)
                                                    "\0338popupmenu.library\0332 (Henrik Isaksson)\n\n");
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
+      set(G->AY_Button, MUIA_ShowMe, FALSE);
 
       DoMethod(G->App, OM_ADDMEMBER, G->AY_Win);
       DoMethod(bt_sendmail, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_SendMailHook);
@@ -424,43 +421,92 @@ void Terminate(void)
 {
    int i;
 
-   if (G->CO) { CO_FreeConfig(CE); free(CE); DisposeModule(&G->CO); }
-   for (i = 0; i < MAXEA; i++) DisposeModule(&G->EA[i]);
-   for (i = 0; i < MAXRE; i++) if (G->RE[i]) { RE_CleanupMessage(i); DisposeModule(&G->RE[i]); }
-   for (i = 0; i <=MAXWR; i++) if (G->WR[i]) { WR_Cleanup(i); DisposeModule(&G->WR[i]); }
-   if (G->TR) { TR_Cleanup(); TR_CloseTCPIP(); DisposeModule(&G->TR); }
+   if (G->CO)
+   {
+      CO_FreeConfig(CE);
+      free(CE);
+      DisposeModule(&G->CO);
+   }
+
+   for (i = 0; i < MAXEA; i++)
+      DisposeModule(&G->EA[i]);
+
+   for (i = 0; i < MAXRE; i++)
+   {
+      if (G->RE[i])
+      {
+         RE_CleanupMessage(i);
+         DisposeModule(&G->RE[i]);
+      }
+   }
+
+   for (i = 0; i <=MAXWR; i++)
+   {
+      if (G->WR[i])
+      {
+         WR_Cleanup(i);
+         DisposeModule(&G->WR[i]);
+      }
+   }
+
+   if (G->TR)
+   {
+      TR_Cleanup();
+      TR_CloseTCPIP();
+      DisposeModule(&G->TR);
+   }
+
    if (G->FO) DisposeModule(&G->FO);
    if (G->FI) DisposeModule(&G->FI);
    if (G->ER) DisposeModule(&G->ER);
    if (G->US) DisposeModule(&G->US);
+
    if (G->MA)
    {
       MA_UpdateIndexes(FALSE);
       G->Weights[0] = GetMUI(G->MA->GUI.LV_FOLDERS, MUIA_HorizWeight);
-      G->Weights[1] = GetMUI(G->MA->GUI.LV_MAILS, MUIA_HorizWeight);
+      G->Weights[1] = GetMUI(G->MA->GUI.LV_MAILS,   MUIA_HorizWeight);
       SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
-
-      /** the folder and its resources will get freed automatically on exit,
-          so we don't have to clear it by hand here.
-      **/
    }
+
    if (G->AB) DisposeModule(&G->AB);
    if (G->MA) DisposeModule(&G->MA);
+
    if (G->TTin) free(G->TTin);
    if (G->TTout) free(G->TTout);
-   for (i = 0; i < MAXASL; i++) if (G->ASLReq[i]) MUI_FreeAslRequest(G->ASLReq[i]);
-   for (i = 0; i < MAXWR+1; i++) if (G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port) DeleteMsgPort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+
+   for (i = 0; i < MAXASL; i++)
+      if (G->ASLReq[i])
+         MUI_FreeAslRequest(G->ASLReq[i]);
+
+   for (i = 0; i < MAXWR+1; i++)
+      if (G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port)
+         DeleteMsgPort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+
    if (G->AppIcon) RemoveAppIcon(G->AppIcon);
    if (G->AppPort) DeleteMsgPort(G->AppPort);
    if (G->RexxHost) CloseDownARexxHost(G->RexxHost);
+
    TC_Exit();
    if (G->AY_AboutText) FreeStrBuf(G->AY_AboutText);
+
    if (G->App) MUI_DisposeObject(G->App);
-   for (i = 0; i < MAXICONS; i++) if (G->DiskObj[i]) FreeDiskObject(G->DiskObj[i]);
-   for (i = 0; i < MAXIMAGES; i++) if (G->BImage[i]) FreeBCImage(G->BImage[i]);
+
+   for (i = 0; i < MAXICONS; i++)
+   {
+      if (G->DiskObj[i]) FreeDiskObject(G->DiskObj[i]);
+   }
+   for (i = 0; i < MAXIMAGES; i++)
+   {
+      if (G->BImage[i]) FreeBCImage(G->BImage[i]);
+   }
    CO_FreeConfig(C);
    ExitClasses();
+
+   CloseYAMCatalog();
+   if (G->Locale) CloseLocale(G->Locale);
+
    if (DataTypesBase) CloseLibrary(DataTypesBase);
    if (XpkBase)       CloseLibrary(XpkBase);
    if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
@@ -469,13 +515,14 @@ void Terminate(void)
    if (IFFParseBase) CloseLibrary(IFFParseBase);
    if (KeymapBase) CloseLibrary(KeymapBase);
    if (WorkbenchBase) CloseLibrary(WorkbenchBase);
-   CloseYAMCatalog();
-   if (G->Locale) CloseLocale(G->Locale);
    if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
    if (IconBase) CloseLibrary(IconBase);
    if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
    if (UtilityBase) CloseLibrary((struct Library *)UtilityBase);
-   free(C); free(G);
+
+   free(C);
+   free(G);
+
    if (yamLast) exit(0);
 }
 ///
