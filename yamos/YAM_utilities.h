@@ -34,6 +34,7 @@
 #include <dos/dos.h>
 #include <intuition/classusr.h>
 #include <mui/Toolbar_mcc.h>
+#include <proto/intuition.h>
 
 #include "SDI_compiler.h"
 #include "YAM_folderconfig.h"
