@@ -46,6 +46,7 @@
 #else
 #include <proto/socket.h>
 #endif
+#include <proto/locale.h>
 #include <proto/muimaster.h>
 #include <proto/dos.h>
 #include <proto/exec.h>

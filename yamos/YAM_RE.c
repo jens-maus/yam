@@ -1966,22 +1966,22 @@ struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
    }
    if (doit)
    {
-      struct MUIS_Listtree_TreeNode *tn = MUIV_Lt_Insert_ListNode_Root;
+      struct MUIS_Listtree_TreeNode *tn = MUIV_Listtree_Insert_ListNode_Root;
       int hits = 0;
 
-      if (*C->NewAddrGroup) if (!AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, C->NewAddrGroup, ASM_ALIAS|ASM_GROUP, &hits, &tn))
+      if (*C->NewAddrGroup) if (!AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, C->NewAddrGroup, ASM_ALIAS|ASM_GROUP, &hits, &tn))
       {
          clear(&new, sizeof(struct ABEntry));
          stccpy(new.Alias, C->NewAddrGroup, SIZE_NAME);
          stccpy(new.Comment, GetStr(MSG_RE_NewGroupTitle), SIZE_DEFAULT);
          new.Type = AET_GROUP;
-         tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_Insert, new.Alias, &new, MUIV_Lt_Insert_ListNode_Root, MUIV_Lt_Insert_PrevNode_Sorted, TNF_LIST);
+         tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_Insert, new.Alias, &new, MUIV_Listtree_Insert_ListNode_Root, MUIV_Listtree_Insert_PrevNode_Sorted, TNF_LIST);
       }
       clear(&new, sizeof(struct ABEntry));
       new.Type = AET_USER;
       RE_UpdateSenderInfo(&new, templ);
       EA_SetDefaultAlias(&new);
-      tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_Insert, new.Alias, &new, tn, MUIV_Lt_Insert_PrevNode_Sorted, 0);
+      tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_Insert, new.Alias, &new, tn, MUIV_Listtree_Insert_PrevNode_Sorted, 0);
       if (tn)
       {
          AB_SaveABookFunc();
@@ -2086,8 +2086,8 @@ void RE_DisplayMessage(int winnum)
          while (*body && *body != '\n') body++;
          if (*body) body++;
       }
-      if (!AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, from->Address, ASM_ADDRESS|ASM_USER, &hits, &tn) && *from->RealName)
-           AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, from->RealName, ASM_REALNAME|ASM_USER, &hits, &tn);
+      if (!AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, from->Address, ASM_ADDRESS|ASM_USER, &hits, &tn) && *from->RealName)
+           AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, from->RealName, ASM_REALNAME|ASM_USER, &hits, &tn);
       if (hits) ab = tn->tn_User;
       RE_GetSenderInfo(G->RE[winnum]->MailPtr, &abtmpl);
       if (!stricmp(from->Address, C->EmailAddress) || !stricmp(from->RealName, C->RealName))
@@ -2154,7 +2154,7 @@ void RE_ClickedOnMessage(char *address)
       if (!strnicmp(p, "body=", 5)) body = &p[5];
       if (!strnicmp(p, "subject=", 8)) subject = &p[8];
    }
-   if (AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, address, ASM_ADDRESS|ASM_USER|ASM_LIST, &hits, &tn)) ab = tn->tn_User;
+   if (AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, address, ASM_ADDRESS|ASM_USER|ASM_LIST, &hits, &tn)) ab = tn->tn_User;
    sprintf(buf, GetStr(MSG_RE_SelectAddressReq), address);
    gads = GetStr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd);
    switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, gads, buf))

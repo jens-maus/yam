@@ -34,10 +34,11 @@
 __near long __stack = 20000;
 __near long __buffsize = 8192;
 __near long __MemPoolPuddleSize = 16384;
-void __regargs __chkabort(void) {}
 
-__near struct Library  *LocaleBase = NULL;
-struct Library *DataTypesBase, *MUIMasterBase, *XpkBase, *OpenURLBase, *SocketBase, *CManagerBase;
+struct Library *LocaleBase = NULL, *WorkbenchBase = NULL, *IconBase = NULL;
+struct Library *DataTypesBase = NULL, *MUIMasterBase = NULL, *XpkBase = NULL;
+struct Library *OpenURLBase = NULL, *SocketBase = NULL, *CManagerBase = NULL;
+struct IntuitionBase *IntuitionBase = NULL;
 
 BOOL yamFirst = TRUE, yamLast = FALSE;
 
@@ -295,7 +296,7 @@ BOOL AY_New(BOOL hidden)
                              "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
                              "\0338Listtree.mcc\0332 (Klaus Melchior)\n"
                              "\0338NList.mcc\0332 (Gilles Masson)\n"
-                             "\0338XPK\0332 (Urban Dominik Müller)\n\n");
+                             "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n\n");
       text = StrBufCat(text, GetStr(MSG_WebSite));
       set(ft_text, MUIA_Floattext_Text, text);
       FreeStrBuf(text);
@@ -438,6 +439,11 @@ void Terminate(void)
    CloseYAMCatalog();
    if (G->Locale) CloseLocale(G->Locale);
    if (LocaleBase) CloseLibrary(LocaleBase);
+   if (WorkbenchBase) CloseLibrary(WorkbenchBase);
+   if (IconBase) CloseLibrary(IconBase);
+   if (IFFParseBase) CloseLibrary(IFFParseBase);
+   if (KeymapBase) CloseLibrary(KeymapBase);
+   if (IntuitionBase) CloseLibrary((struct Library *) IntuitionBase);
    if (UtilityBase) CloseLibrary(UtilityBase);
    free(C); free(G);
    if (yamLast) exit(0);
@@ -552,6 +558,11 @@ void Initialise(BOOL hidden)
 
    DateStamp(&G->StartDate);
    UtilityBase = InitLib("utility.library", 36, 0, TRUE, FALSE);
+   IntuitionBase = (struct IntuitionBase *) InitLib("intuition.library", 36, 0, TRUE, FALSE);
+   KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
+   IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
+   IconBase = InitLib("icon.library", 36, 0, TRUE, FALSE);
+   WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
    if (LocaleBase = InitLib("locale.library", 38, 0, TRUE, FALSE)) G->Locale = OpenLocale(NULL);
    OpenYAMCatalog();
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
@@ -705,7 +716,6 @@ void main(int argc, char **argv)
    oldcdirlock = CurrentDir(yamlock);
    while (1)
    {
-      DataTypesBase = MUIMasterBase = XpkBase = OpenURLBase = SocketBase = NULL;
       G = calloc(1,sizeof(struct Global));
       C = calloc(1,sizeof(struct Config));
       strcpy(G->ProgDir, progdir);

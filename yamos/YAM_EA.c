@@ -121,7 +121,7 @@ STACKEXT void EA_AddMembers(Object *obj, struct MUIS_Listtree_TreeNode *list)
    int i;
    
    for (i=0; ; i++)
-      if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, list, i, MUIV_Lt_GetEntry_Flags_SameLevel))
+      if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, list, i, MUIV_Listtree_GetEntry_Flags_SameLevel))
          if (tn->tn_Flags & TNF_LIST) EA_AddMembers(obj, tn);
          else EA_AddSingleMember(obj, tn);
       else break;
@@ -168,18 +168,18 @@ void EA_InsertBelowActive(struct ABEntry *addr, int flags)
    APTR lt = G->AB->GUI.LV_ADRESSES;
    struct TreeNode *node, *list, *res;
    get(lt, MUIA_Listtree_Active, &node);
-   if (node == MUIV_Lt_Active_Off)
+   if (node == MUIV_Listtree_Active_Off)
    {
-      res = (struct TreeNode *)DoMethod(lt, MUIM_Listtree_Insert, addr->Alias, addr, MUIV_Lt_Insert_ListNode_Root, MUIV_Lt_Insert_PrevNode_Sorted, flags);
+      res = (struct TreeNode *)DoMethod(lt, MUIM_Listtree_Insert, addr->Alias, addr, MUIV_Listtree_Insert_ListNode_Root, MUIV_Listtree_Insert_PrevNode_Sorted, flags);
    }
    else
    {
-      list = (struct TreeNode *)DoMethod(lt, MUIM_Listtree_GetEntry, MUIV_Lt_GetEntry_ListNode_Active, MUIV_Lt_GetEntry_Position_Parent, 0);
+      list = (struct TreeNode *)DoMethod(lt, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Parent, 0);
       res = (struct TreeNode *)DoMethod(lt, MUIM_Listtree_Insert, addr->Alias, addr, list, node, flags);
    }
 /*
    
-   ULONG pred = DoMethod(lt, MUIM_Listtree_GetEntry, MUIV_Lt_GetEntry_ListNode_Active, MUIV_Lt_GetEntry_Position_Active, 0);
+   ULONG pred = DoMethod(lt, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0);
 */
    if (res) set(lt, MUIA_Listtree_Active, res);
 }
@@ -193,7 +193,7 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
    int c = 1, l, hits = 0;
    struct MUIS_Listtree_TreeNode *tn;
    strcpy(alias, ab->Alias);
-   while (AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
+   while (AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
    {
       if (tn->tn_User == ab && excludemyself && hits == 1) break;
       if ((l = strlen(ab->Alias)) > SIZE_NAME-2) l = SIZE_NAME-2;

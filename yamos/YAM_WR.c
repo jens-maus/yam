@@ -86,11 +86,11 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
    }
    pe.Address[0] = 0;
    stccpy(FailedAlias, name, SIZE_NAME);
-   AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
+   AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
    if (hits > 1) return 3; // multiple matches
    if (!hits)
    {
-      AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, name, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
+      AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, name, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
       if (hits > 1) return 3; else if (!hits) return 2;
    }
    ab = tn->tn_User;
@@ -119,7 +119,7 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
       case AET_GROUP:
          if (nolists) return 4;
          for (i=0; ; i++)
-            if (tn2 = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, tn, i, MUIV_Lt_GetEntry_Flags_SameLevel))
+            if (tn2 = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, tn, i, MUIV_Listtree_GetEntry_Flags_SameLevel))
             {
                struct ABEntry *ab2 = tn2->tn_User;
                if (retcode = WR_ResolveName(winnum, ab2->Alias, adrstr, nolists)) return retcode;
@@ -618,7 +618,7 @@ LOCAL void WR_WriteUserInfo(FILE *fh)
    struct ABEntry *ab = NULL;
    struct MUIS_Listtree_TreeNode *tn;
 
-   if (AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, C->EmailAddress, ASM_ADDRESS|ASM_USER, &hits, &tn))
+   if (AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, C->EmailAddress, ASM_ADDRESS|ASM_USER, &hits, &tn))
    {
       ab = tn->tn_User;
       if (ab->Type != AET_USER) ab = NULL;
@@ -801,8 +801,8 @@ LOCAL char *WR_GetPGPId(struct Person *pe)
    int hits;
    char *pgpid = NULL;
    struct MUIS_Listtree_TreeNode *tn;
-   if (!AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, pe->RealName, ASM_REALNAME|ASM_USER, &hits, &tn))
-        AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, pe->Address, ASM_ADDRESS|ASM_USER, &hits, &tn);
+   if (!AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, pe->RealName, ASM_REALNAME|ASM_USER, &hits, &tn))
+        AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, pe->Address, ASM_ADDRESS|ASM_USER, &hits, &tn);
    if (hits && tn && tn->tn_User)
 		if (((struct ABEntry *)(tn->tn_User))->PGPId[0])
 			pgpid = ((struct ABEntry *)(tn->tn_User))->PGPId;
@@ -967,7 +967,7 @@ BOOL FirstAddr=TRUE;
 				if(!t) continue; // can't find address for this entry - shouldn't happen
 				else DB(KPrintf("SetDefaultSecurity(): address is %s\n",t));
 
-				if(AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
+				if(AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
 				{
 					currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;	// get default from entry
 					DB(KPrintf("SetDefaultSecurity(): found user w/security=%ld\n",currsec)); 
@@ -2008,9 +2008,9 @@ struct WR_ClassData *WR_New(int winnum)
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Quoted), MUIA_UserData,WMEN_INSQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_ROT13), MUIA_UserData,WMEN_INSROT13, End,
                End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,(char)NM_BARLABEL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_SaveAs), MUIA_UserData,WMEN_SAVEAS, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,(char)NM_BARLABEL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_LaunchEd), MUIA_Menuitem_Shortcut,"E", MUIA_UserData,WMEN_EDIT, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_WR_Edit),
@@ -2021,10 +2021,10 @@ struct WR_ClassData *WR_New(int winnum)
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Quoted), MUIA_Menuitem_Shortcut,"Q", MUIA_UserData,WMEN_PASQUOT, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_ROT13), MUIA_UserData,WMEN_PASROT13, End,
                End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,(char)NM_BARLABEL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, mi_undo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MUndo), MUIA_Menuitem_Shortcut,"ramiga Z", MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,WMEN_UNDO, End,
                MUIA_Family_Child, mi_redo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Redo), WMEN_REDO, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,(char)NM_BARLABEL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Dictionary), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,WMEN_DICT, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Textstyle),
                   MUIA_Family_Child, mi_bold = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Bold), MUIA_Menuitem_Shortcut,"B", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_STYLE1, End,
@@ -2042,7 +2042,7 @@ struct WR_ClassData *WR_New(int winnum)
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Sad), MUIA_UserData,WMEN_EMOT2, End,
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Ironic), MUIA_UserData,WMEN_EMOT3, End,
                End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,(char)NM_BARLABEL, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, mi_autospell = MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_WR_SpellCheck), MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,WMEN_AUTOSP, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_Attachments),

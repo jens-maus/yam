@@ -67,3 +67,10 @@
     * YAM would try to send mails using SMTP AUTH when a username was
       configured, even though "Use SMTP AUTH" wasn't selected. Fixed.
       Localized ESMTP error message.
+
+2001-01-28  stoecker <stoecker@amigaworld.com>
+
+    * Moved SAS-C make process completely into smakefile
+
+    * Now uses original Listtree includes
+

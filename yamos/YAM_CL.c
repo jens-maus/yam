@@ -195,7 +195,7 @@ SAVEDS ASM ULONG WS_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          result = MUIV_DragQuery_Refuse;
          if (d->obj == G->MA->GUI.NL_MAILS) result = MUIV_DragQuery_Accept;
          else if (d->obj == G->AB->GUI.LV_ADRESSES)
-            if (active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Lt_GetEntry_Position_Active, 0))
+            if (active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Listtree_GetEntry_Position_Active, 0))
                if (!(active->tn_Flags & TNF_LIST)) result = MUIV_DragQuery_Accept;
          break;
       case MUIM_DragDrop:
@@ -208,7 +208,7 @@ SAVEDS ASM ULONG WS_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          }
          else if (d->obj == G->AB->GUI.LV_ADRESSES)
          {
-            struct MUIS_Listtree_TreeNode *active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Lt_GetEntry_Position_Active, 0);
+            struct MUIS_Listtree_TreeNode *active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Listtree_GetEntry_Position_Active, 0);
             struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
             AB_InsertAddress(obj, addr->Alias, addr->RealName, "");
          }
@@ -309,13 +309,13 @@ SAVEDS ASM ULONG EL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
       case MUIM_DragQuery:
          if (d->obj == obj) break;
          if (d->obj == G->AB->GUI.LV_ADRESSES && d->obj != obj)
-            if (active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Lt_GetEntry_Position_Active, 0))
+            if (active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Listtree_GetEntry_Position_Active, 0))
                if (!((struct ABEntry *)(active->tn_User))->Members) return MUIV_DragQuery_Accept;
          return MUIV_DragQuery_Refuse;
       case MUIM_DragDrop:
          if (d->obj == obj) break;
          if (d->obj == G->AB->GUI.LV_ADRESSES && d->obj != obj)
-            if (active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Lt_GetEntry_Position_Active, 0))
+            if (active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Listtree_GetEntry_Position_Active, 0))
                if (active->tn_Flags & TNF_LIST) EA_AddMembers(obj, active);
                else EA_AddSingleMember(obj, active);
          return 0;
@@ -431,7 +431,7 @@ SAVEDS ASM ULONG TE_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          if (drop_msg->obj == G->AB->GUI.LV_ADRESSES)
          {
             struct MUIS_Listtree_TreeNode *tn;
-            if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(drop_msg->obj, MUIM_Listtree_GetEntry, MUIV_Lt_GetEntry_ListNode_Active, MUIV_Lt_GetEntry_Position_Active, 0))
+            if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(drop_msg->obj, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0))
             {
                struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
                if (ab->Type != AET_GROUP)

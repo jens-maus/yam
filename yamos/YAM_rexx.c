@@ -1,5 +1,6 @@
 /*
  * Source generated with ARexxBox 1.12 (May 18 1993)
+ * And afterwards handmodified to fix bugs!
  * which is Copyright (c) 1992,1993 Michael Balzer
  */
 
@@ -19,43 +20,14 @@
 #endif
 
 #include <clib/alib_protos.h>
-#include <clib/exec_protos.h>
-#include <clib/dos_protos.h>
-#include <clib/rexxsyslib_protos.h>
-
-#ifndef __NO_PRAGMAS
-
-#ifdef AZTEC_C
-#include <pragmas/exec_lib.h>
-#include <pragmas/dos_lib.h>
-#include <pragmas/rexxsyslib_lib.h>
-#endif
-
-#ifdef LATTICE
-#include <pragmas/exec_pragmas.h>
-#include <pragmas/dos_pragmas.h>
-#include <pragmas/rexxsyslib_pragmas.h>
-#endif
-
-#endif /* __NO_PRAGMAS */
+#include <proto/exec.h>
+#include <proto/dos.h>
+#include <proto/rexxsyslib.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-
-#ifdef LATTICE
-#undef toupper
-#define inline __inline
-#endif
-
-#ifdef AZTEC_C
-#define inline
-#endif
-
-#ifdef _DCC
-#define inline
-#endif
 
 #include <dos/rdargs.h>
 
@@ -299,7 +271,7 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
 
 /* StateMachine für FindRXCommand() */
 
-static inline char *scmp( char *inp, char *str )
+static char *scmp( char *inp, char *str )
 {
    while( *str && *inp )
       if( *inp++ != *str++ )

@@ -1,5 +1,6 @@
 /*
  * Source generated with ARexxBox 1.12 (May 18 1993)
+ * And afterwards handmodified to fix bugs!
  * which is Copyright (c) 1992,1993 Michael Balzer
  */
 
@@ -19,41 +20,17 @@
 #endif
 
 #include <clib/alib_protos.h>
-#include <clib/exec_protos.h>
-#include <clib/dos_protos.h>
-#include <clib/rexxsyslib_protos.h>
-
-#ifndef __NO_PRAGMAS
-
-#ifdef AZTEC_C
-#include <pragmas/exec_lib.h>
-#include <pragmas/dos_lib.h>
-#include <pragmas/rexxsyslib_lib.h>
-#endif
-
-#ifdef LATTICE
-#include <pragmas/exec_pragmas.h>
-#include <pragmas/dos_pragmas.h>
-#include <pragmas/rexxsyslib_pragmas.h>
-#endif
-
-#endif /* __NO_PRAGMAS */
+#include <proto/exec.h>
+#include <proto/dos.h>
+#include <proto/rexxsyslib.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
-#ifdef LATTICE
-#undef toupper
-#define inline __inline
-#endif
-
-#ifdef AZTEC_C
-#define inline
-#endif
-
 #include "YAM_rexx.h"
+#include "YAM.h"
 
 
 extern struct ExecBase *SysBase;
@@ -63,9 +40,7 @@ extern struct RxsLib *RexxSysBase;
 
 /* $ARB: I 876664321 */
 
-
 /* $ARB: B 1 SHOW */
-#include "YAM.h"
 /// OK
 void rx_show( struct RexxHost *host, struct rxd_show **rxd, long action, struct RexxMsg *rexxmsg )
 {
@@ -1469,11 +1444,11 @@ void rx_addrfind( struct RexxHost *host, struct rxd_addrfind **rxd, long action,
          G->AB->Hits = 0;
          if (rd->arg.nameonly) mode = rd->arg.emailonly ? ABF_RX_NAMEEMAIL : ABF_RX_NAME;
                           else mode = rd->arg.emailonly ? ABF_RX_EMAIL     : ABF_RX;
-         AB_FindEntry(MUIV_Lt_GetEntry_ListNode_Root, rd->arg.pattern, mode, NULL);
+         AB_FindEntry(MUIV_Listtree_GetEntry_ListNode_Root, rd->arg.pattern, mode, NULL);
          if (G->AB->Hits)
          {
             rd->res.alias = calloc(G->AB->Hits+1, sizeof(char *));
-            AB_FindEntry(MUIV_Lt_GetEntry_ListNode_Root, rd->arg.pattern, mode, rd->res.alias);
+            AB_FindEntry(MUIV_Listtree_GetEntry_ListNode_Root, rd->arg.pattern, mode, rd->res.alias);
          }
          else rd->rc = RETURN_WARN;
          break;
@@ -1508,7 +1483,7 @@ void rx_addrinfo( struct RexxHost *host, struct rxd_addrinfo **rxd, long action,
          
       case RXIF_ACTION:
          hits = 0;
-         if (AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, rd->rd.arg.alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
+         if (AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, rd->rd.arg.alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
          {
             struct ABEntry *ab = (struct ABEntry *)tn->tn_User;
             rd->rd.res.type = types[ab->Type];
@@ -2057,7 +2032,7 @@ void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action,
          break;
          
       case RXIF_ACTION:
-         if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, MUIV_Lt_GetEntry_ListNode_Active, MUIV_Lt_GetEntry_Position_Active, 0))
+         if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0))
          {
             struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
             if (rd->arg.alias)    stccpy(ab->Alias, rd->arg.alias, SIZE_NAME);
