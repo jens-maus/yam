@@ -552,8 +552,6 @@ DECLARE(Resolve) // ULONG flags
 
 	} while(list_expansion && max_list_nesting-- > 0);
 
-	kprintf("res: %ld\n", res);
-
 	return (res ? xget(obj, MUIA_String_Contents) : 0);
 }
 ///
