@@ -207,7 +207,7 @@ MSG_WebSite (//)
 The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
 ;
 MSG_UserLogin (//)
-Click your name to login
+Click on your name to login
 ;
 MSG_AppDescription (//39)
 SMTP/POP3 Client & Mailer for AmiTCP
@@ -219,7 +219,7 @@ MSG_Quit (//)
 Quit
 ;
 MSG_ErrorLib (//)
-Can't open library '%s', version %ld
+Can't open '%s', version %ld
 ;LIBRARY_NAME, LIBRARY_VERSION
 ;
 MSG_LoadingConfig (//)
@@ -375,7 +375,7 @@ Copied message from '%s' about '%s' from folder '%s' to '%s'
 ; SENDER, SUBJECT, FOLDER, FOLDER
 ;
 MSG_LOG_ConnectPOP (//)
-Logged in on POP3 account '%s@%s': %ld messages waiting
+Logged into POP3 account '%s@%s': %ld messages waiting
 ; USER_ID, HOST, COUNT
 ;
 MSG_LOG_RetrievingVerbose (//)
@@ -1745,7 +1745,7 @@ MSG_CO_ScriptPostWriteMsg (//)
 After writing a message
 ;
 MSG_CO_ScriptClickURL (//)
-When double-clicking an URL
+When double-clicking a URL
 ;
 MSG_CO_Script (//)
 Sc_ript
@@ -1798,8 +1798,8 @@ MSG_HELP_CO_ST_EMAIL (//)
 Your email address.
 ;
 MSG_HELP_CO_ST_POPHOST (//)
-Address of the POP3 server to receive mail.\n\
-If you leave this field empty, the address\n\
+The address of the POP3 server to receive mail from.\n\
+If you leave this field empty, then the address\n\
  of the SMTP server is used.
 ;
 MSG_HELP_CO_ST_PASSWD (//)
@@ -1815,16 +1815,16 @@ Adjust the timezone during daylight\n\
 saving time (summer time)
 ;
 MSG_HELP_CO_ST_SMTPHOST (//)
-Address of the SMTP server to send mail.\n\
+The address of the SMTP server to send mail to.\n\
 If you leave this field empty,\n\
-the address of the POP3 server is used.
+then the address of the POP3 server is used.
 ;
 MSG_HELP_CO_ST_DOMAIN (//)
 The hostname of your Amiga. Change this\n\
 field if the HELO commands fails.
 ;
 MSG_HELP_CO_CH_SMTP8BIT (//)
-Don't convert messages to 7bit for transfer.\n\
+Don't convert messages to 7bit when transfering.\n\
 Only use this option if your\n\
 SMTP server supports 8bit transfers!\n\
 Otherwise your messages will get corrupted.
@@ -1840,8 +1840,8 @@ Remove selected POP3 host from the list
 ;
 MSG_HELP_CO_ST_POPUSERID (//)
 User name to log into the POP3 server.\n\
-If you leave this field empty, the user-ID\n\
-will be extracted from your email address.
+If you leave this field empty, then the user-ID\n\
+will be taken from your email address.
 ;
 MSG_HELP_CO_CH_DELETE (//)
 Delete messages from\n\
@@ -1865,15 +1865,15 @@ Show progress window during mail transfers
 ;
 MSG_HELP_CO_CY_MSGSELECT (//)
 Enable this option to show the contents of the POP3 mailbox\n\
-and allow selection of the messages to be downloaded
+and allow selection of the messages before downloading
 ;
 MSG_HELP_CO_CH_UPDSTAT (//)
 Mark new messages in the incoming folder\n\
 as unread before downloading new mail
 ;
 MSG_HELP_CO_ST_WARNSIZE (//)
-Messages which exceed this\n\
-threshold rank as 'large'
+Incomming messages which are bigger than this\n\
+size will be considered as large.
 ;
 MSG_HELP_CO_ST_INTERVAL (//)
 How frequently do you want to check for new mail?\n\
@@ -3883,7 +3883,7 @@ Invalid address '%s'. The SMTP server didn't accept the address. Check for illeg
 ;
 MSG_ER_ErrorReadMailfile (//)
 Read error on mail file: %s.\n\
-The file exists, but there was an error while reading the file.
+The file exists, but there was an error while reading it.
 ; FILENAME
 ;
 MSG_ER_UserRemoved (//)
@@ -4659,8 +4659,8 @@ MSG_CO_SIZEFORMAT (//)
 Size format
 ;
 MSG_HELP_CO_CY_SIZE (//)
-How the sizes of a message\n\
-should be displayed.
+How would you like to display\n\
+the size of each email?
 ;
 MSG_CO_SIZEFORMAT01 (//)
 1.234.567 (bytes)
@@ -4678,8 +4678,10 @@ MSG_CO_SIZEFORMAT05 (//)
 1.234 GB - 12.345 MB - 123.456 KB - 1234 B
 ;
 MSG_HELP_CO_CH_USESMTPAUTH (//)
-Select if your SMTP Server\n\
-supports SMTP AUTH.
+Select if you wish to authenticate\n\
+yourself to a foreign SMTP server\n\
+(usually outside your ISP's domain).\n\
+If unsure, don't enable this option
 ;
 MSG_HELP_CO_ST_SMTPAUTHUSER (//)
 Enter the username of the\n\
@@ -4715,8 +4717,9 @@ MSG_FO_DSTATS (//)
 AppIcon stats
 ;
 MSG_HELP_FO_CH_STATS (//)
-Select if you want the statistics of\n\
-this folder displayed at the AppIcon.
+Would you like to show this\n\
+folder's statistics in the\n\
+AppIcon's label?
 ;
 MSG_ERROR_IMGLOAD (//)
 The image file PROGDIR:Icons/%s couldn't be loaded.
@@ -4725,15 +4728,16 @@ MSG_OPENGUI (//)
 Opening GUI...
 ;
 MSG_ERR_OPENLIB (//)
-Can't open library '%s', version v%lu.%lu
+Can't open '%s', version v%lu.%lu
 ;LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
 ;
 MSG_CO_CONTEXTMENU (//)
 Context menu
 ;
 MSG_HELP_CO_CONTEXTMENU (//)
-Select if you want the context\n\
-menu enabled in this list.
+Show a popup menu when clicking the\n\
+right mouse button on an item in this\n\
+list?
 ;
 MSG_CO_INFOBAR (//)
 Information bar
@@ -4743,11 +4747,11 @@ Displays an information bar between\n\
 the toolbar and mail listview.
 ;
 MSG_CO_WARNSUBJECT (//)
-Subject warning
+Warn when there's an empty subject line?
 ;
 MSG_HELP_CO_CH_WARNSUBJECT (//)
-Enable this option if you want\n\
-empty subject warnings.
+Would you like to be warned if you\n\
+leave the subject line blank?
 ;
 MSG_WR_OKAYCANCELREQ (//)
 _Okay|_Cancel
