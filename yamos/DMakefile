@@ -1,5 +1,5 @@
 PRE    = -HYAM.m=YAM.h
-CFLAGS = -d1 -DYAMVER="2.3-dev" `rx "say '-D __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' -D __YAM_VERDAYS=' || date('I')"` -020 -ms -Iincludes -//
+CFLAGS = -d1 -DYAMVER="2.4-dev" `rx "say '-D __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' -D __YAM_VERDAYS=' || date('I')"` -020 -ms -Iincludes -//
 SRCS1= YAM.c YAM_AB.c YAM_CL.c YAM_CO.c YAM_COg.c YAM_COs.c YAM_DI.c YAM_EA.c \
 	YAM_ER.c YAM_FI.c YAM_FO.c YAM_MAf.c YAM_TR.c YAM_US.c YAM_UT.c \
 	all_dice.c

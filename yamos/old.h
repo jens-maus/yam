@@ -200,8 +200,6 @@ struct sockaddr_in {
 #define clear(p,l) memset((p), 0, (l));
 
 
-#define MUIA_Bodychunk_File          0x80002501
-#define MUIA_Bodychunk_UseOld        0x80002502
 #define MUIA_Slider_Weights          0x80002511
 #define MUIA_Dtpic_Name              0x80423d72
 #define MUIM_GoActive                0x8042491a
@@ -244,8 +242,6 @@ struct sockaddr_in {
 #define ATTREQ_SAVE  1
 #define ATTREQ_PRINT 2
 #define ATTREQ_MULTI 32
-#define FOFL_MODIFY  1
-#define FOFL_FREEXS  2
 #define NEWF_QUIET 1
 #define NEWF_REP_NOQUOTE  2
 #define NEWF_REP_PRIVATE  4
@@ -498,12 +494,12 @@ enum { PA_LOAD, PA_DELETE, PA_SKIP,
 };
 
 
-enum { SEND_ALL=-2, SEND_ACTIVE, NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC,
+enum { SEND_ALL = -2, SEND_ACTIVE, NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC,
        POP_USER, POP_START, POP_TIMED, POP_REXX, APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE,
        APPLY_RX_ALL, APPLY_RX, WRITE_HOLD, WRITE_SEND, WRITE_QUEUE, RIM_QUIET, RIM_READ, RIM_EDIT,
        RIM_QUOTE, RIM_PRINT, RCPT_TYPE_ALL, RCPT_TYPE_READ,
        ABF_USER, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEEMAIL,
-       SO_SAVE, SO_RESET };
+       };
 
 enum { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
 
@@ -590,12 +586,10 @@ extern char *Encrypt(char *);
 extern char *Decrypt(char *);
 extern char *DescribeCT(char *);
 extern char *BuildAddrName(char *,char *);
-extern char *BuildAddrName2(struct Person *);
 extern char *CreateFilename(char *);
 extern BOOL CreateDirectory(char *);
 extern char *GetFolderDir(struct Folder *);
 extern char *GetMailFile(char *, struct Folder *, struct Mail *);
-extern void ExtractAddress(char *, struct Person *);
 extern time_t GetDateStamp(void);
 extern char *DateStamp2String(struct DateStamp *, int);
 extern long DateStamp2Long(struct DateStamp *);
@@ -780,7 +774,6 @@ extern void WR_AddSignature(char *, int);
 extern void WR_OpenWin(int);
 extern void WR_FromAddrBook(Object *);
 extern void EmitHeader(FILE *, char *, char *);
-extern BOOL WriteOutMessage(struct Compose *);
 extern struct WritePart *NewPart(int);
 extern int WR_Open(int, BOOL);
 extern void WR_SetupOldMail(int);

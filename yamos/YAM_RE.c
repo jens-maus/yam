@@ -39,9 +39,10 @@
 /* local protos */
 static void RE_PrintFile(char*,struct Part*);
 static void RE_PrintLaTeX(char*,struct Part*);
+#ifdef UNUSED
 static char **Init_ISO8859_to_LaTeX_Tab(char*);
 static char *ISO8859_to_LaTeX(char*);
-
+#endif
 
 /***************************************************************************
  Module: Read
@@ -685,7 +686,7 @@ struct TempFile *texfile;
    {
       if(CopyFile(NULL,texfile->FP,"YAM:.texheader",NULL))
       {
-      char *ts1,*ts2;
+      char *ts1,*ts2 = 0;
 
          if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
          {
@@ -748,6 +749,7 @@ struct TempFile *texfile;
 }
 
 
+#ifdef UNUSED
 ///
 /// ISO8859_to_LaTeX
 // Takes a string in ISO-8859 charset and converts it to a equivalent
@@ -835,7 +837,7 @@ BOOL success=FALSE;
    }
    return CVTab;
 }
-
+#endif
 ///
 /// RE_SaveFunc
 //  Saves the current message or an attachment to disk
@@ -2016,7 +2018,7 @@ char *RE_ReadInMessage(int winnum, int mode)
             {       
                if (msg = calloc(part->Size+3,1))
                {
-               char *sigptr;
+               char *sigptr = 0;
 
                   *msg = '\n';
                   fread(msg+1, 1, part->Size, fh);

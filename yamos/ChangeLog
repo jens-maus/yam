@@ -380,3 +380,10 @@
       declarations elsewhere (Maybe we should move these declarations to
       YAM_globals.c as Gunther suggested).
 
+2001-05-20  Dirk Stöcker <stoecker@epost.de>
+
+    * further reorganization
+    * made whole code optimiazble with SAS-C again (tracking down compiler bugs
+      seems to get a hobby of me :-)
+    * YAM_FO.c and YAM_EA.c are directly compilable now.
+

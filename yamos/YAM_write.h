@@ -150,4 +150,6 @@ struct Compose
    enum Security      OldSecurity;
 };
 
+BOOL WriteOutMessage(struct Compose *comp);
+
 #endif /* YAM_WRITE_H */

@@ -1126,11 +1126,11 @@ static void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
 //  Outputs header and body of a new message
 BOOL WriteOutMessage(struct Compose *comp)
 {
-BOOL success=FALSE;
-struct TempFile *tf=NULL;
-FILE *fh = comp->FH;
-struct WritePart *firstpart = comp->FirstPart;
-char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
+   BOOL success;
+   struct TempFile *tf=NULL;
+   FILE *fh = comp->FH;
+   struct WritePart *firstpart = comp->FirstPart;
+   char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
 
    if (comp->Mode == NEW_BOUNCE)
    {
@@ -1282,7 +1282,8 @@ void WR_NewMail(int mode, int winnum)
    get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
    if (wr->Mode != NEW_BOUNCE && *comp.Subject == '\0')
    {
-      if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoSubjectReqGad), GetStr(MSG_NoSubjectReq)))
+      char *a = GetStr(MSG_NoSubjectReq);
+      if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoSubjectReqGad), a))
       {
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
          return;

@@ -257,7 +257,7 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
 //  Allows user to select a message part (attachment) from a list
 struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext, int winnum, int mode, APTR parent)
 {
-   struct Part *retpart = (struct Part *)-1, *part, *prevpart;
+   struct Part *retpart = (struct Part *)-1, *part, *prevpart = 0;
    APTR bt_okay, bt_cancel, wi_ar, lv_attach;
 
    wi_ar = WindowObject,
@@ -524,7 +524,6 @@ int Index(char *str, char chr)
 //  Allocates a dynamic buffer
 char *AllocStrBuf(long initlen)
 {
-//   char *strbuf = AllocMem(initlen+4, MEMF_PUBLIC|MEMF_CLEAR);
    char *strbuf = calloc(initlen+4,1);
    if (strbuf)
    {
@@ -538,11 +537,8 @@ char *AllocStrBuf(long initlen)
 //  Frees a dynamic buffer
 void FreeStrBuf(char *strbuf)
 {
-   long len;
-
-   if (!strbuf) return;
-   len = *((long *)(strbuf-4));
-//   FreeMem(strbuf-4, len+4);
+   if(!strbuf)
+     return;
    free(strbuf-4);
 }
 ///
@@ -863,7 +859,7 @@ static char *RemoveQuoteString(char *start, char *end, char *quot, char *dest)
       while (*start && *start != '\n') *dest++ = *start++;
       if (*start) *dest++ = *start++;
    }
-   *dest-- = 0;
+   *(dest--) = 0;
    return dest;
 }
 ///

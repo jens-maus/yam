@@ -683,7 +683,7 @@ void rx_mailinfo( struct RexxHost *host, struct rxd_mailinfo **rxd, long action,
       char filename[SIZE_PATHFILE], date[32];
    } *rd = (void *)*rxd;
    struct Mail *mail;
-   struct Folder *folder;
+   struct Folder *folder = 0;
    int pf, vf;
 
    switch( action )
@@ -1616,7 +1616,7 @@ void rx_userinfo( struct RexxHost *host, struct rxd_userinfo **rxd, long action,
       struct rxd_userinfo rd;
       int folders;
    } *rd = (void *)*rxd;
-   struct User *u = NULL;
+   struct User *u;
    switch( action )
    {
       case RXIF_INIT:
@@ -1775,7 +1775,7 @@ void rx_getselected( struct RexxHost *host, struct rxd_getselected **rxd, long a
 
 void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action, struct RexxMsg *rexxmsg )
 {
-   struct MUI_NListtree_TreeNode *tn = NULL;
+   struct MUI_NListtree_TreeNode *tn;
    struct rxd_addredit *rd = *rxd;
 
    switch( action )

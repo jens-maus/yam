@@ -595,15 +595,15 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
 
 void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
 {
-   struct rxs_command *rxc;
-   char *argb = NULL, *arg;
+   struct rxs_command *rxc = 0;
+   char *argb, *arg;
    
    LONG *array = NULL;
    LONG *argarray;
    LONG *resarray;
    
    char *cargstr = NULL;
-   long rc=20, rc2=0;
+   long rc=20, rc2;
    char *result = NULL;
    
    if( !(argb = AllocVec(strlen((char *) ARG0(rexxmsg)) + 2, MEMF_ANY)) )

@@ -682,7 +682,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
    struct ExtendedMail *email;
    struct ExpandTextData etd;
    struct Person *repto, rtml;
-   struct Folder **flist, *folder;
+   struct Folder **flist, *folder = 0;
    FILE *out;
    char *mlistad = NULL, buffer[SIZE_LARGE];
    char *cmsg, *rfrom = NULL, *rrepto = NULL, *rto = NULL, *rcc = NULL, *rsub = NULL;
@@ -745,7 +745,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
             }
             if (mlistad && !(flags & (NEWF_REP_PRIVATE|NEWF_REP_MLIST)))
             {
-               ExtractAddress(mlistad, repto=&rtml);
+               ExtractAddress(mlistad, repto = &rtml);
                if (!strstr(rto, mlistad))
                {
                   if (*rto) rto = StrBufCat(rto, ", ");
@@ -1535,7 +1535,9 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
          strmfp(filename = outname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
          if (FileExists(filename))
          {
-            switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ExportMessages), GetStr(MSG_MA_ExportAppendOpts), GetStr(MSG_MA_ExportAppendReq)))
+            char * a = GetStr(MSG_MA_ExportAppendOpts);
+            char * b = GetStr(MSG_MA_ExportAppendReq);
+            switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ExportMessages), a, b))
             {
                case 1: append = FALSE; break;
                case 2: append = TRUE; break;
@@ -1887,8 +1889,8 @@ MakeHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
 {
    BOOL outbox;
-   struct Folder *folder = NULL;
-   int type = 0;
+   struct Folder *folder;
+   int type;
 
    if (G->MA && (folder = FO_GetCurrentFolder())) type = folder->Type;
    else return 0;
@@ -2070,7 +2072,7 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
   struct MA_GUIData *gui = &G->MA->GUI;
   struct Folder *fo = FO_GetCurrentFolder();
   BOOL beingedited = FALSE, hasattach = FALSE;
-  ULONG  ret = 0;
+  ULONG  ret;
   int i;
 
   enum{ PMN_READ=1, PMN_EDIT, PMN_REPLY, PMN_FORWARD, PMN_BOUNCE, PMN_SAVEADDR, PMN_MOVE, PMN_COPY,

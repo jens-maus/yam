@@ -9,7 +9,7 @@ YAM: $(OBJS) $(EXTRA_OBJS)
 	gcc -noixemul -o YAM $(OBJS) $(EXTRA_OBJS) -lmui -lstack
 
 %.o: %.c
-	gcc -W -Wall -Iincludes -DNO_INLINE_STDARG -noixemul -O2 -funsigned-char -c -DYAMVER="\"2.3-dev\"" -D__YAM_VERDATE="\"`date +%d.%m.%Y`\"" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" $<
+	gcc -W -Wall -Iincludes -DNO_INLINE_STDARG -noixemul -O2 -funsigned-char -c -DYAMVER="\"2.4-dev\"" -D__YAM_VERDATE="\"`date +%d.%m.%Y`\"" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" $<
 
 YAM.o:     YAM.c     YAM.h YAM_locale.h
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_locale.h

@@ -12,7 +12,7 @@ starter: starter.c
 	m68k-amigaos-gcc -o starter -O2 -nostlib -noixemul -DNAME="\"YAM\"" starter.c
 
 %.o: %.c
-	gcc -noixemul -O2 -mmultiple -mcpu=604e -c -DYAMVER="\"2.2\"" -D__YAM_VERDATE="\"7.4.2001\"" -D__YAM_VERDAYS=8497 $<
+	gcc -noixemul -O2 -mmultiple -mcpu=604e -c -DYAMVER="\"2.4\"" -D__YAM_VERDATE="\"7.4.2001\"" -D__YAM_VERDAYS=8497 $<
 
 YAM.o:     YAM.c     YAM.h YAM_locale.h
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_locale.h

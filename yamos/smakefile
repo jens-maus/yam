@@ -40,13 +40,14 @@ DATE = T:YAM-date.tmp
 CPU        = 68020
 YAMVERSION = "2.4-dev"
 YAMDATE	   = `Type $(DATE)`
-#OPTFLAGS  = OPT OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL
+#OPTFLAGS  = OPT OPTSIZE OPTINLOCAL OPTGO OPTLOOP OPTPEEP #OPTSCHED
 OPTFLAGS   = NOOPT
-DEBUG	   = DEF DEBUG DEBUG=LINE
+#DEBUG	   = DEF DEBUG DEBUG=LINE
 
-# CPU is defined outside
+# CPU can be defined outside, defaults to above
 
-CFLAGS = RESOPT NOLINK DEF YAMVER=$(YAMVERSION) $(YAMDATE) IGNORE=147,306\
+CFLAGS = RESOPT PARM=R NOLINK DEF YAMVER=$(YAMVERSION) $(YAMDATE) \
+WARN=ALL IGNORE=147,306,62,165,148,178,61,212,120,51\
 DATA=FAR CODE=FAR ERRORREXX INCLUDEDIR=includes STRINGSECTION=FAR $(DEBUG)\
 NOICONS IDLEN=60 CPU=$(CPU) NOCHECKABORT
 
@@ -88,11 +89,7 @@ YAM_EA.o:  YAM_EA.c  YAM.h YAM_locale.h
 YAM_ER.o:  YAM_ER.c  YAM.h YAM_locale.h
 YAM_FI.o:  YAM_FI.c  YAM.h YAM_locale.h
 YAM_FO.o:  YAM_FO.c  YAM.h YAM_locale.h
-	$(CC) $(CFLAGS) NOOPT $*.c		# doesn't compile with optimization :-(
-
 YAM_MA.o:  YAM_MA.c  YAM.h YAM_locale.h
-	$(CC) $(CFLAGS) NOOPT $*.c		# doesn't compile with optimization :-(
-
 YAM_MAf.o: YAM_MAf.c YAM.h YAM_locale.h $(DATE)
 YAM_MI.o:  YAM_MI.c  YAM.h YAM_locale.h
 YAM_RE.o:  YAM_RE.c  YAM.h YAM_locale.h
@@ -100,8 +97,6 @@ YAM_TR.o:  YAM_TR.c  YAM.h YAM_locale.h
 YAM_US.o:  YAM_US.c  YAM.h YAM_locale.h
 YAM_UT.o:  YAM_UT.c  YAM.h YAM_locale.h
 YAM_WR.o:  YAM_WR.c  YAM_write.h YAM.h YAM_locale.h
-	$(CC) $(CFLAGS) NOOPT $*.c		# doesn't compile with optimization :-(
-
 YAM_rexx.o  : YAM_rexx.c YAM_rexx.h
 YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_locale.h

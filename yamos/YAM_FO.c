@@ -25,13 +25,30 @@
 
 ***************************************************************************/
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <libraries/asl.h>
+#include <libraries/iffparse.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
+#include <clib/alib_protos.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/muimaster.h>
+#include <proto/utility.h>
+#include <proto/xpkmaster.h>
+
 #include "YAM.h"
+#include "YAM_classes.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
+#include "YAM_utilities.h"
 
 /* local protos */
 static void FO_XPKUpdateFolder(struct Folder*, int);
@@ -82,7 +99,7 @@ struct Folder **FO_CreateList(void)
 //  Returns pointer to active folder
 struct Folder *FO_GetCurrentFolder(void)
 {
-   struct MUI_NListtree_TreeNode *tn = NULL;
+   struct MUI_NListtree_TreeNode *tn;
 
    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, MUIV_NListtree_GetEntry_Position_Active, 0, TAG_DONE);
 
@@ -128,9 +145,9 @@ static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*)
 {
    int i;
    struct Folder *fo = NULL;
-   struct MUI_NListtree_TreeNode *tn = NULL;
+   struct MUI_NListtree_TreeNode *tn;
 
-   for (i = 0;; i++, tn=NULL, fo=NULL)
+   for(i = 0; ; i++)
    {
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0, TAG_DONE);
       if (!tn) break;
@@ -139,6 +156,7 @@ static struct Folder *FO_GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*)
       if (!fo) break;
 
       if (cmpf(fo,attr)) break;
+      fo = NULL;
    }
    if (pos) *pos = i;
    return fo;
@@ -200,7 +218,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
    FILE *fh;
    char buffer[SIZE_LARGE], fname[SIZE_PATHFILE];
 
-   strmfp(fname, GetFolderDir(fo), ".fconfig");
+   MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".fconfig", sizeof(fname));
    if (fh = fopen(fname, "r"))
    {
       fgets(buffer, SIZE_LARGE, fh);
@@ -217,17 +235,17 @@ BOOL FO_LoadConfig(struct Folder *fo)
             for (p = buffer; *p && !ISpace(*p); p++); *p = 0;
             if (*buffer && value)
             {
-               if (!stricmp(buffer, "Name"))        stccpy(fo->Name, value, SIZE_NAME);
+               if (!stricmp(buffer, "Name"))        MyStrCpy(fo->Name, value);
                if (!stricmp(buffer, "MaxAge"))      fo->MaxAge = atoi(value);
-               if (!stricmp(buffer, "Password"))    stccpy(fo->Password, Decrypt(value), SIZE_PASSWORD);
+               if (!stricmp(buffer, "Password"))    MyStrCpy(fo->Password, Decrypt(value));
                if (!stricmp(buffer, "Type"))        fo->Type = atoi(value);
                if (!stricmp(buffer, "XPKType"))     fo->XPKType = atoi(value);
                if (!stricmp(buffer, "Sort1"))       fo->Sort[0] = atoi(value);
                if (!stricmp(buffer, "Sort2"))       fo->Sort[1] = atoi(value);
-               if (!stricmp(buffer, "MLFromAddr"))  stccpy(fo->MLFromAddress,    value, SIZE_ADDRESS);
-               if (!stricmp(buffer, "MLRepToAddr")) stccpy(fo->MLReplyToAddress, value, SIZE_ADDRESS);
-               if (!stricmp(buffer, "MLAddress"))   stccpy(fo->MLAddress,        value, SIZE_ADDRESS);
-               if (!stricmp(buffer, "MLPattern"))   stccpy(fo->MLPattern,        value, SIZE_PATTERN);
+               if (!stricmp(buffer, "MLFromAddr"))  MyStrCpy(fo->MLFromAddress,value);
+               if (!stricmp(buffer, "MLRepToAddr")) MyStrCpy(fo->MLReplyToAddress, value);
+               if (!stricmp(buffer, "MLAddress"))   MyStrCpy(fo->MLAddress, value);
+               if (!stricmp(buffer, "MLPattern"))   MyStrCpy(fo->MLPattern, value);
                if (!stricmp(buffer, "MLSignature")) fo->MLSignature = atoi(value);
             }
          }
@@ -247,7 +265,7 @@ void FO_SaveConfig(struct Folder *fo)
    char fname[SIZE_PATHFILE];
    FILE *fh;
 
-   strmfp(fname, GetFolderDir(fo), ".fconfig");
+   MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".fconfig", sizeof(fname));
    if (fh = fopen(fname, "w"))
    {
       fprintf(fh, "YFC1 - YAM Folder Configuration\n");
@@ -264,7 +282,7 @@ void FO_SaveConfig(struct Folder *fo)
       fprintf(fh, "MLAddress   = %s\n",  fo->MLAddress);
       fprintf(fh, "MLSignature = %ld\n", fo->MLSignature);
       fclose(fh);
-      strmfp(fname, GetFolderDir(fo), ".index");
+      MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".index", sizeof(fname));
       if (!(fo->Flags&FOFL_MODIFY)) SetFileDate(fname, DateStamp(&ds));
    }
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
@@ -279,8 +297,8 @@ struct Folder *FO_NewFolder(enum FolderType type, char *path, char *name)
    folder->Sort[0] = 1;
    folder->Sort[1] = 3;
    folder->Type = type;
-   stccpy(folder->Path, path, SIZE_PATH);
-   stccpy(folder->Name, name, SIZE_NAME);
+   MyStrCpy(folder->Path, path);
+   MyStrCpy(folder->Name, name);
    if (CreateDirectory(GetFolderDir(folder))) return folder;
    free(folder);
    return NULL;
@@ -348,13 +366,13 @@ BOOL FO_LoadTree(char *fname)
          set(lv, MUIA_NListtree_Quiet, TRUE);
          while (GetLine(fh, buffer, sizeof(buffer)))
          {
-            clear(&fo, sizeof(struct Folder));
+            memset(&fo, 0, sizeof(struct Folder));
             if (!strncmp(buffer, "@FOLDER", 7))
             {
                fo.Type = FT_CUSTOM;
                fo.Sort[0] = 1; fo.Sort[1] = 3;
-               stccpy(fo.Name, Trim(&buffer[8]),SIZE_NAME);
-               stccpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))), SIZE_PATH);
+               MyStrCpy(fo.Name, Trim(&buffer[8]));
+               MyStrCpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))));
 
                if (CreateDirectory(GetFolderDir(&fo)))
                {
@@ -385,7 +403,7 @@ BOOL FO_LoadTree(char *fname)
                // SEPARATOR support is obsolete since the folder hierachical order
                // that`s why we handle SEPARATORs as GROUPs now for backward compatibility
                fo.Type = FT_GROUP;
-               stccpy(fo.Name, Trim(&buffer[11]), SIZE_NAME);
+               MyStrCpy(fo.Name, Trim(&buffer[11]));
                do if (!strcmp(buffer, "@ENDSEPARATOR")) break;
                while (GetLine(fh, buffer, sizeof(buffer)));
                fo.SortIndex = i++;
@@ -400,7 +418,7 @@ BOOL FO_LoadTree(char *fname)
                long tnflags = (TNF_LIST);
 
                fo.Type = FT_GROUP;
-               stccpy(fo.Name, Trim(&buffer[7]), SIZE_NAME);
+               MyStrCpy(fo.Name, Trim(&buffer[7]));
 
                // now we check if the node should be open or not
                if(GetLine(fh, buffer, sizeof(buffer)))
@@ -451,7 +469,7 @@ BOOL FO_LoadTreeImage(struct Folder *fo)
 
    if(!fo) return FALSE;
 
-   strmfp(fname, GetFolderDir(fo), ".fimage");
+   MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".fimage", sizeof(fname));
 
    fo->FImage = NewObject(CL_BodyChunk->mcc_Class, NULL,
       MUIA_Bodychunk_File,     fname,
@@ -461,7 +479,9 @@ BOOL FO_LoadTreeImage(struct Folder *fo)
 
    if(!fo->FImage) return FALSE;
 
-   DB(kprintf("Loaded TreeImage: %s - %lx - %ld\n", fo->Name, fo->FImage, fo->SortIndex+1));
+#ifdef DEBUG
+   kprintf("Loaded TreeImage: %s - %lx - %ld\n", fo->Name, fo->FImage, fo->SortIndex+1);
+#endif
 
    // Now we say that this image could be used by this Listtree
    DoMethod(lv, MUIM_NList_UseImage, fo->FImage, fo->SortIndex+1, 0);
@@ -484,7 +504,7 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
   // The root-Treenode is the subtree at the start
   tn_root = subtree;
 
-  for (i = 0;; i++, tn=NULL, fo=NULL)
+  for (i = 0;; i++)
   {
     if(tn_root == MUIV_NListtree_GetEntry_ListNode_Root)
     {
@@ -550,7 +570,9 @@ BOOL FO_SaveTree(char *fname)
    BOOL success = TRUE;
    FILE *fh;
 
-   DB(kprintf("SaveTree!!!\n"));
+#ifdef DEBUG
+   kprintf("SaveTree!!!\n");
+#endif
 
    if (fh = fopen(fname, "w"))
    {
@@ -615,8 +637,8 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    }
    if (success)
    {
-      strmfp(srcbuf, GetFolderDir(oldfo), ".index");
-      strmfp(dstbuf, GetFolderDir(fo), ".index");
+      MyStrCpy(srcbuf, GetFolderDir(oldfo)); AddPart(srcbuf, ".index", sizeof(srcbuf));
+      MyStrCpy(dstbuf, GetFolderDir(fo)); AddPart(dstbuf, ".index", sizeof(dstbuf));
       FO_Move(srcbuf, dstbuf);
       DeleteMailDir(GetFolderDir(oldfo), FALSE);
    }
@@ -708,7 +730,10 @@ static BOOL FO_FoldernameRequest(char *string)
       path = GetMUIStringPtr(st_pa);
       if (ret_code > 0)
          if (!stricmp(path, G->MA_MailDir)) GetMUIString(string, st_di);
-         else strmfp(string, path, GetMUIStringPtr(st_di));
+         else
+         {
+           MyStrCpy(string, path); AddPart(string, GetMUIStringPtr(st_di), sizeof(string));
+         }
       DoMethod(G->App, OM_REMMEMBER, wi);
       set(G->App, MUIA_Application_Sleep, FALSE);
    }
@@ -732,7 +757,7 @@ static void FO_GetFolder(struct Folder *folder, BOOL existing)
    set(gui->CY_FMODE, MUIA_Cycle_Active, folder->XPKType);
    for (i = 0; i < 2; i++)
    {
-      set(gui->CY_SORT[i], MUIA_Cycle_Active, ABS(folder->Sort[i])-1);
+      set(gui->CY_SORT[i], MUIA_Cycle_Active, (folder->Sort[i] < 0 ? -folder->Sort[i] : folder->Sort[i])-1);
       set(gui->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
    }
    set(gui->ST_MLADDRESS, MUIA_String_Contents, folder->MLAddress);
@@ -781,7 +806,7 @@ static void FO_PutFolder(struct Folder *folder)
 HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
 {
    struct Folder folder;
-   clear(&folder, sizeof(struct Folder));
+   memset(&folder, 0, sizeof(struct Folder));
    folder.Type = FT_GROUP;
    if (StringRequest(folder.Name, SIZE_NAME, GetStr(MSG_MA_NewSeparator), GetStr(MSG_FO_NewSepReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
    {
@@ -798,13 +823,13 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
    int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_NewFolder), GetStr(MSG_FO_NewFolderGads), GetStr(MSG_FO_NewFolderReq));
    static struct Folder folder;
 
-   clear(&folder, sizeof(struct Folder));
+   memset(&folder, 0, sizeof(struct Folder));
    folder.Sort[0] = 1; folder.Sort[1] = 3; folder.Type = FT_CUSTOM;
    switch (mode)
    {
       case 0: return;
       case 1: if (!FO_FoldernameRequest(folder.Path)) return;
-              stccpy(folder.Name, FilePart(folder.Path), SIZE_NAME);
+              MyStrCpy(folder.Name, FilePart(folder.Path));
               break;
       case 2: memcpy(&folder, FO_GetCurrentFolder(), sizeof(struct Folder));
               if (folder.Type == FT_GROUP) { FO_NewFolderGroupFunc(); return; }
@@ -812,10 +837,10 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
               else if (folder.Type == FT_OUTGOING || folder.Type == FT_SENT) folder.Type = FT_CUSTOMSENT;
               *folder.Path = 0;
               if (!FO_FoldernameRequest(folder.Path)) return;
-              stccpy(folder.Name, FilePart(folder.Path), SIZE_NAME);
+              MyStrCpy(folder.Name, FilePart(folder.Path));
               break;
       case 3: if (!ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), 4, G->MA_MailDir, "")) return;
-              stccpy(folder.Path, G->ASLReq[ASL_FOLDER]->fr_Drawer, SIZE_PATH);
+              MyStrCpy(folder.Path, G->ASLReq[ASL_FOLDER]->fr_Drawer);
               FO_LoadConfig(&folder);
               break;
    }
@@ -868,7 +893,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
    int i, pos, used = 0;
    get(lv, MUIA_NListtree_Active, &pos);
 
-   for (i = 0; ; i++, tn=NULL, f=NULL)
+   for (i = 0; ; i++)
    {
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIV_NListtree_GetEntry_Flag_Visible, TAG_DONE);
       if (!tn) break;
@@ -880,16 +905,22 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
    {
       case FT_CUSTOM:
       case FT_CUSTOMSENT:
-      case FT_CUSTOMMIXED: if (used < 2)
-                           {
-                              if (!MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ConfirmDelete))) return;
-                              DeleteMailDir(GetFolderDir(folder), FALSE);
-                           }
-                           ClearMailList(folder, TRUE);
-      case FT_GROUP:       DoMethod(lv, MUIM_NList_Remove, pos);
-                           FO_SaveTree(CreateFilename(".folders"));
-                           break;
-      default:             break;
+      case FT_CUSTOMMIXED:
+        if(used < 2)
+        {
+           char * a = GetStr(MSG_CO_ConfirmDelete);
+
+           if(!MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), a))
+             return;
+           DeleteMailDir(GetFolderDir(folder), FALSE);
+        }
+        ClearMailList(folder, TRUE);
+      case FT_GROUP:
+        DoMethod(lv, MUIM_NList_Remove, pos);
+        FO_SaveTree(CreateFilename(".folders"));
+        break;
+      default:
+        break;
    }
 }
 MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
@@ -968,7 +999,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
    }
    else
    {
-      clear(&folder, sizeof(struct Folder));
+      memset(&folder, 0, sizeof(struct Folder));
       FO_PutFolder(&folder);
       if (folder.XPKType&1) if (!FO_EnterPassword(&folder)) folder.XPKType &= ~1;
       set(gui->WI, MUIA_Window_Open, FALSE);
@@ -995,7 +1026,7 @@ MakeStaticHook(FO_SaveHook, FO_SaveFunc);
 ///
 /// FO_SetOrderFunc
 //  Saves or resets folder order
-HOOKPROTONHNO(FO_SetOrderFunc, void, int *arg)
+HOOKPROTONHNO(FO_SetOrderFunc, void, enum SortOrder *arg)
 {
    switch (*arg)
    {

@@ -172,7 +172,7 @@ static BOOL US_PromptForPassword(struct User *u, APTR win)
 BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
 {
    int i, user = -1;
-   APTR button, button0, group;
+   APTR button, button0 = 0, group;
    struct User *u;
    BOOL loggedin = TRUE;
 
@@ -322,7 +322,7 @@ HOOKPROTONHNONP(US_OpenFunc, void)
    if (!G->US)
    {
       int i;
-      struct User *u;
+      struct User *u = 0;
       for (i = 0; i < G->Users.Num; i++) if (G->Users.User[i].ID == G->Users.CurrentID) u = &G->Users.User[i];
       if (!*G->Users.User[0].Name) MyStrCpy(G->Users.User[0].Name, C->RealName);
       if (!(G->US = US_New(!u->Limited))) return;

@@ -395,7 +395,7 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
   struct PopupMenu *pop_menu;
   struct Window *win;
   struct MA_GUIData *gui = &G->MA->GUI;
-  ULONG ret = 0;
+  ULONG ret;
   BOOL tmp_dis = TRUE;
 
   enum{ PMN_EDITF=1, PMN_DELETEF, PMN_INDEX, PMN_FLUSH, PMN_NEWF, PMN_NEWFG, PMN_SNAPS };

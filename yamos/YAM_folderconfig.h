@@ -28,6 +28,8 @@
 
 ***************************************************************************/
 
+#include "YAM_stringsizes.h"
+
 struct FO_GUIData
 {
    APTR WI;
@@ -53,6 +55,11 @@ struct FO_ClassData  /* folder configuration window */
 };
 
 enum FolderType { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT_GROUP, FT_CUSTOMSENT, FT_CUSTOMMIXED };
+
+enum SetOrder { SO_SAVE, SO_RESET };
+
+#define FOFL_MODIFY  1
+#define FOFL_FREEXS  2
 
 struct Folder
 {

@@ -452,7 +452,7 @@ void TR_GetMessageList_IMPORT(FILE *fh)
 ///
 /// TR_GetMessageList_GET
 //  Collects messages waiting on a POP3 server
-static BOOL TR_GetMessageList_GET(int maxmsgs)
+static BOOL TR_GetMessageList_GET(void)
 {
    char buf[SIZE_LINE];
 
@@ -742,7 +742,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    {
       if (msgs)                                          // there are messages on the server
       {
-         if (TR_GetMessageList_GET(msgs))                // message list read OK
+         if (TR_GetMessageList_GET())                    /* message list read OK */
          {
             BOOL preselect = FALSE;
             G->TR->Stats.OnServer += msgs;
@@ -919,7 +919,7 @@ void encode64(char *s, char *d, int len);
 char *decode64 (char *dest, char *src, char *srcmax);
 static BOOL TR_ConnectESMTP(void)
 {
-   int len,rc;
+   int len,rc=0;
    char buffer[SIZE_LINE];
    char challenge[SIZE_LINE];
    UBYTE ESMTPAuth=0;

@@ -31,8 +31,8 @@
 #include "SDI_compiler.h"
 
 #ifdef __MORPHOS__
-  "#include <emul/emulinterface.h>"
-  "#include <emul/emulregs.h>"
+  #include <emul/emulinterface.h>
+  #include <emul/emulregs.h>
   #define HOOKPROTO(name, ret, obj, param) static ret name(void) { struct Hook *hook = REG_A0; obj = REG_A2; param = REG_A1;
   #define HOOKPROTONO(name, ret, param) static ret name(void) { struct Hook *hook = REG_A0; param = REG_A1;
   #define HOOKPROTONH(name, ret, obj, param) static ret name(void) { obj = REG_A2; param = REG_A1;

@@ -30,6 +30,8 @@
 
 #include <mui/Toolbar_mcc.h>
 
+#include "YAM_stringsizes.h"
+
 struct MA_GUIData
 {
    APTR WI;
@@ -89,6 +91,7 @@ extern struct Hook MA_SetMessageInfoHook;
 
 int  MA_AllocRules(struct Search **search, int mode);
 void MA_FreeRules(struct Search **search, int scnt);
+void MA_SetSortFlag(void);
 BOOL MA_StartMacro(int num, char *param);
 
 #endif /* YAM_MAIN_H */
