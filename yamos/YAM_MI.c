@@ -83,12 +83,10 @@ static const char index_hex[128] = {
 };
 
 #define hexchar(c)  (((c) > 127) ? -1 : index_hex[(c)])
-#define char64(c)   (((c) < 0 || (c) > 127) ? 255 : index_64[(c)])
 #define SUMSIZE     64
 #define ENC(c)      ((c) ? ((c) & 077) + ' ': '`')
 
 static BOOL InNewline = FALSE;
-static BOOL CRpending = FALSE;
 ///
 
 /*** BASE64 encode/decode routines ***/
