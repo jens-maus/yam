@@ -302,7 +302,7 @@ BOOL TR_OpenTCPIP(void)
   if(!SocketBase) SocketBase = OpenLibrary("bsdsocket.library", 2L);
 
   // Now we have to check for TLS/SSL support
-  if(AmiSSLBase && SocketBase)
+  if(G->TR_UseableTLS && AmiSSLBase && SocketBase)
   {
     if(InitAmiSSL(AmiSSL_Version,     AmiSSL_CurrentVersion,
                   AmiSSL_Revision,    AmiSSL_CurrentRevision,

@@ -773,7 +773,10 @@ static void Initialise(BOOL hidden)
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
-   if((AmiSSLBase = InitLib("amissl.library", 1, 0, FALSE, FALSE))) G->TR_UseableTLS = TRUE;
+   if((AmiSSLBase = InitLib("amissl.library", AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, FALSE, FALSE)))
+   {
+      G->TR_UseableTLS = TRUE;
+   }
 
    SetupDebug();
 
