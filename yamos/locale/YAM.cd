@@ -3250,7 +3250,7 @@ MSG_WR_Receipt (//)
 _Return receipt
 ;
 MSG_WR_GetMDN (//)
-Track _message
+Track _message (MDN)
 ;
 MSG_WR_AddInfo (//)
 Add _personal info
