@@ -3057,10 +3057,8 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeFolderHook);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetFolderInfoHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,ID_CLOSEALL);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat del",                MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, FALSE);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat capslock del",       MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, FALSE);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift del",          MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, TRUE);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat capslock shift del", MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, TRUE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock del",       MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, FALSE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift del", MUIV_Notify_Application, 3, MUIM_CallHook, &MA_DelKeyHook, TRUE);
 //       DoMethod(G->App                   ,MUIM_Notify,MUIA_Application_Iconified,FALSE        ,data->GUI.WI             ,3,MUIM_Set                 ,MUIA_Window_Open,TRUE);
 
          // Define Notifies for ShortcutFolderKeys
