@@ -44,9 +44,9 @@ static BOOL getline(char*, int, FILE*);
 static int outdec(char*, FILE*);
 
 static int rfc2047_decode_int(const char *text,
-                              int (*func)(const char *, int, const char *, const char *, void *),
+                              int (*func)(const char *, unsigned int, const char *, const char *, void *),
                               void *arg);
-static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
+static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *chset,
                                 const char *lang, void *arg);
 static char *rfc2047_search_quote(const char **ptr);
 
@@ -750,7 +750,7 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
   info.dst[0] = '\0'; // make sure this string is null-terminated
 
   // on success return the decoded string len.
-  if(result > 0)  return (int)(maxlen)-(int)(info.maxlen);
+  if(result > 0)  return (int)(maxlen-info.maxlen);
   else            return result;
 }
 
@@ -758,7 +758,7 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
 /// rfc2047_dec_callback()
 // the callback function that is called by the decode_int() function each
 // time a string was successfully decoded so that it can be converted.
-static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
+static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *chset,
                                 const char *lang, void *arg)
 {
   struct rfc2047_decode_info *info = (struct rfc2047_decode_info *)arg;
@@ -766,7 +766,7 @@ static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
 
   // before we go on we check wheter we have enough space
   // to put the txt in our destination
-  if(info->maxlen-len < 0)
+  if(info->maxlen<len)
     return -1;
 
   // so we can savely decrease it.
@@ -789,7 +789,7 @@ static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
   // if we recognized a valid charset translation, lets start
   if(translate)
   {
-    int i;
+    unsigned int i;
 
     // it seems we have a valid translation table, so lets
     // parse through our text and put the translated char in
@@ -824,12 +824,12 @@ static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
 // rfc2047_decode returns 0 after a successfull decoding (-1 if malloc
 // failed).
 static int rfc2047_decode_int(const char *text,
-                              int (*func)(const char *, int, const char *, const char *, void *),
+                              int (*func)(const char *, unsigned int, const char *, const char *, void *),
                               void *arg)
 {
-  int  rc, result=0;
+  int rc, result=0;
   int unknown_enc=0;
-  int  had_last_word=0;
+  int had_last_word=0;
   const char *p;
   char *chset, *lang;
   char *encoding;
@@ -853,7 +853,7 @@ static int rfc2047_decode_int(const char *text,
 
       if(text > p && !had_last_word)
       {
-        rc = (*func)(p, (int)(text-p), 0, 0, arg);
+        rc = (*func)(p, text-p, 0, 0, arg);
         if(rc) return (rc);
       }
 
@@ -950,7 +950,7 @@ static int rfc2047_decode_int(const char *text,
     // if no error occurred we are going to call the callback function
     if(unknown_enc == 1)
     {
-      rc = (*func)(p, (int)(text-p), 0, 0, arg);
+      rc = (*func)(p, text-p, 0, 0, arg);
       unknown_enc = 0; // clear it immediatly
     }
     else
