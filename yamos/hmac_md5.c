@@ -1,6 +1,8 @@
-#include "md5.h"
+#include "YAM.h"
 #include <string.h>
 #include <sys/types.h>
+
+void hmac_md5(unsigned char *, int, unsigned char *, int, caddr_t);
 
 /*
 ** Function: hmac_md5
