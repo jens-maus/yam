@@ -1,3 +1,7 @@
+2001-05-31  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added gcc Makefile
+
 2001-05-06  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * added a cast to the MUI_CreateCustomClass() call to get rid of the
