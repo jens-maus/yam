@@ -14,24 +14,24 @@ Developer: Jens Langner (damato)
 - Fixed: failed to quote messages containing attachments (damato)
 - Fixed: the "Abbreviation" string gadget in the Glossary reset itself
   to "- new -" every time the contents were deleted (damato)
-- Fixed: if AutoSave was disabled for the internal editor (AutoSave = 0),
-  it tried to delete an inexistant ".autosave0" file (damato)
 - Fixed: it could happen that a temporary letter file was used for
-  different Write windows at once (damato)
-- Fixed: the "Export..." item in the popup menu exported the whole folder
-  contents (damato)
+  several Write windows at once (damato)
+- Fixed: would try to delete an inexistant ".autosave0" file if the
+  AutoSave option was set to 0 (damato)
+- Fixed: couldn't exit if ConfirmOnQuit was enabled and YAM was iconified
+  (damato)
+- Fixed: the HIDE option prevented the application from popping up if
+  MUI's own appicon or the commodity system were used (damato)
+- Fixed: the FOLDERINFO ARexx command returned the wrong ID number for
+  folders containing "sent and received" mail (damato)
+- Fixed: changing the folder type failed to refresh the message list
+  (damato)
 - Fixed: folders that "lost" their directory were automatically recreated
   as folders of type "outgoing" (damato)
-- Fixed: pressing "cancel" in the password acquiration window causes YAM
-  to use a empty password (damato)
-- Fixed: changing the folder type doesn`t refresh the title of the mail
-  listview (damato)
-- Fixed: the FOLDERINFO arexx command returns the wrong ID number for
-  a "sent and received" folder type. (damato)
-- Fixed: confirmation requesters blocked YAM from quitting if it was
-  in iconify state. (damato)
-- Fixed: the HIDE option prevent the application from popping up if
-  the MUI own`s appicon or the commodity system was used. (damato)
+- Fixed: cancelling the password requester in the folder settings window
+  would create a folder protected with an empty password (damato)
+- Fixed: the "Export..." item in the popup menu would export the whole
+  folder contents (damato)
 
 - Changed: it is now actually compatible with the most common MBOX
   formats, e.g. MBOXRD <http://www.qmail.org/man/man5/mbox.html> (damato)
@@ -45,7 +45,7 @@ Developer: Jens Langner (damato)
 - Added: new hidden option "AutoColumnResize" for YAM to resize the NList
   columns when switching folders if the option is enabled, which it is by
   default (damato)
-- Added: warning requester for the "crop attachments" operations (damato)
+- Added: confirmation requester before cropping attachments (damato)
 
 
 A more detailed and recent history of changes can be viewed at

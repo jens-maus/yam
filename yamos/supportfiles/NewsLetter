@@ -38,24 +38,24 @@ Developer: Jens Langner (damato)
 - Fixed: failed to quote messages containing attachments (damato)
 - Fixed: the "Abbreviation" string gadget in the Glossary reset itself
   to "- new -" every time the contents were deleted (damato)
-- Fixed: if AutoSave was disabled for the internal editor (AutoSave = 0),
-  it tried to delete an inexistant ".autosave0" file (damato)
 - Fixed: it could happen that a temporary letter file was used for
-  different Write windows at once (damato)
-- Fixed: the "Export..." item in the popup menu exported the whole folder
-  contents (damato)
+  several Write windows at once (damato)
+- Fixed: would try to delete an inexistant ".autosave0" file if the
+  AutoSave option was set to 0 (damato)
+- Fixed: couldn't exit if ConfirmOnQuit was enabled and YAM was iconified
+  (damato)
+- Fixed: the HIDE option prevented the application from popping up if
+  MUI's own appicon or the commodity system were used (damato)
+- Fixed: the FOLDERINFO ARexx command returned the wrong ID number for
+  folders containing "sent and received" mail (damato)
+- Fixed: changing the folder type failed to refresh the message list
+  (damato)
 - Fixed: folders that "lost" their directory were automatically recreated
   as folders of type "outgoing" (damato)
-- Fixed: pressing "cancel" in the password acquiration window causes YAM
-  to use a empty password (damato)
-- Fixed: changing the folder type doesn`t refresh the title of the mail
-  listview (damato)
-- Fixed: the FOLDERINFO arexx command returns the wrong ID number for
-  a "sent and received" folder type. (damato)
-- Fixed: confirmation requesters blocked YAM from quitting if it was
-  in iconify state. (damato)
-- Fixed: the HIDE option prevent the application from popping up if
-  the MUI own`s appicon or the commodity system was used. (damato)
+- Fixed: cancelling the password requester in the folder settings window
+  would create a folder protected with an empty password (damato)
+- Fixed: the "Export..." item in the popup menu would export the whole
+  folder contents (damato)
 
 - Changed: it is now actually compatible with the most common MBOX
   formats, e.g. MBOXRD <http://www.qmail.org/man/man5/mbox.html> (damato)
@@ -69,7 +69,8 @@ Developer: Jens Langner (damato)
 - Added: new hidden option "AutoColumnResize" for YAM to resize the NList
   columns when switching folders if the option is enabled, which it is by
   default (damato)
-- Added: warning requester for the "crop attachments" operations (damato)
+- Added: confirmation requester before cropping attachments (damato)
+
 
 2. Current versions
 ===================
@@ -105,17 +106,14 @@ As a temporary solution to this problem, the hidden option "AutoColumnResize"
 has been implemented in YAM 2.4p1. This option will default to Y (Yes) -
 as long as it is enabled, YAM will resize the columns itself, the downside
 being that you will lose the quick message listing while switching folders.
-Those who have a very fast Amiga, are running the MorphOS version or even
-just have few mails in their folders won't probably notice the speed
-difference, but if you have a low-end machine or have dozens of mails lying
-in your folders, you probably want to simply configure the list to your
+Those who have a very fast Amiga, are running the MorphOS version or simply
+don't have very voluminous folders won't probably notice the difference,
+but if you have a low-end machine or have to open some large folders
+frequently, you probably want to simply configure the list to your
 tastes, "snapshot" the main YAM window and then set this option to N (No).
 This way, you get the best possible performance as NList won't be
-recalculating the columns widths every time and even large folders will be
-opened in a second.
-
-So if you are keen enough, we request anyone to use "AutoColumResize=N"
-in their .config file to get out the best performance while using YAM.
+recalculating the columns widths every time and even large folders will
+be opened in a flash.
 
 
 4. Errata in YAM 2.4 documentation
@@ -143,6 +141,8 @@ should actually say
                        6 - sent
                        7 - sent and received
 
+because this is what you will get when using YAM 2.4p1.
+
 
 5. The "yamnews" mailing list is about to be closed
 ===================================================
@@ -168,49 +168,46 @@ Along the following months YAM will be suffering major changes in its
 internal workings, meaning that the next major release is unlikely
 to be available until we are well into 2004, though an intermediate
 version will appear as AmigaOS4 is released. Among the new features
-you can expect in future releases are (cue your preferred soundtrack):
+you can expect in future releases are:
 
 - Improved NList & NListtree MUI classes. Changing the order of your
   folders will no longer be a pain, and switching folders will immediately
-  show thousands of messages even on "low-end" Amigas without having to
-  mess with any hidden options.
+  list everything even on "low-end" Amigas without having to mess with any
+  hidden options.
 
 - Threaded message list as an option. For the first time ever, YAM will let
-  you browse threads and save valuable time as you don't need to read every
-  single message when it is clear that you aren't interested in a given
-  conversation.
+  you browse threads and save a precious time as you don't need to read
+  every single message when it is clear that you aren't interested in a
+  thread.
 
-- Toolbar reimplementation. The ancient Toolbar.mcc will be dropped in
+- Updated toolbar class. The ancient Toolbar.mcc will be dropped in
   favour of the much better Speedbar.mcc, allowing for a much better
   control over the layout of the toolbars and leaving behind all the
-  bugs in the old class.
+  annoying bugs in the old class.
 
-- Own internal editor. While TextEditor.mcc made a great service to YAM
+- Updated internal editor. While TextEditor.mcc made a great service to YAM
   along the last few years, it is starting to show its age. There's simply
   no chance to fix its bugs as the sources were lost many moons ago, and we
   all want YAM to remain as the flagship Amiga mailer, stability being
-  priority number 1. Therefore, expect YAM to use an own texteditor
+  priority number 1. Therefore, expect YAM to use an updated texteditor
   class in the next release.
 
-- Full integration of internal HTML read capatibilities. (please note that
-  we won`t support writing HTML mails because we believe this is an offence)
+- Built-in HTML mail read capability.
 
-- Full multithreaded design. Abort mail transfers and filters without
+- Fully multithreaded design. Abort mail transfers and filters without
   losing your hair in the process.
 
 - Reworked multiuser capability. Become another user with a couple of
   mouse clicks.
 
-- Implementation of modern services and protocols like LDAP directory
-  services or full IMAPv4 functionality.
+- Support for newly introduced technologies. LDAP directory services
+  and IMAP4 are already planned.
 
-- We always keep track of the newest RFC releases to keep YAM uptodate to
-  the newest standards - so expect something to happen here aswell.
-
-- Seamless integration in the upcoming AmigaOS 4.0. Be notified about new
-  mail in AmiDock, click a button to read your mail, and forget all about
-  charsets. Enjoy YAM at its best!
+- Seamless integration in the latest OS upgrades. For instance, AmigaOS 4
+  users will be able to be notified about new mail in AmiDock, read their
+  email with a single button click, and do not worry ever again about
+  charsets.
 
 
 "I think, therefore I YAM"
-  -- Marcel Beck
+  -- Marcel Beck, 1996
