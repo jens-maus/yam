@@ -43,6 +43,7 @@
 #include <string.h>
 
 #include "Debug.h"
+#include "extra.h"
 #include "SDI_hook.h"
 
 #include "YAM.h"
