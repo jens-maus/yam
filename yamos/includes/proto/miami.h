@@ -24,11 +24,11 @@ extern struct Library * MiamiBase;
 /****************************************************************************/
 
 #ifdef __amigaos4__
+ #include <interfaces/miami.h>
+
  #ifdef __USE_INLINE__
   #include <inline4/miami.h>
  #endif /* __USE_INLINE__ */
-
- #include <interfaces/miami.h>
 
  #ifndef __NOGLOBALIFACE__
   extern struct MiamiIFace *IMiami;

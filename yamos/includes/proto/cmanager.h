@@ -24,11 +24,11 @@ extern struct Library * CManagerBase;
 /****************************************************************************/
 
 #ifdef __amigaos4__
+ #include <interfaces/cmanager.h>
+
  #ifdef __USE_INLINE__
   #include <inline4/cmanager.h>
  #endif /* __USE_INLINE__ */
-
- #include <interfaces/cmanager.h>
 
  #ifndef __NOGLOBALIFACE__
   extern struct CManagerIFace *ICManager;

@@ -27,11 +27,11 @@ extern struct Library * SocketBase;
 /****************************************************************************/
 
 #ifdef __amigaos4__
+ #include <interfaces/socket.h>
+
  #ifdef __USE_INLINE__
   #include <inline4/socket.h>
  #endif /* __USE_INLINE__ */
-
- #include <interfaces/socket.h>
 
  #ifndef __NOGLOBALIFACE__
   extern struct SocketIFace *ISocket;
