@@ -1244,7 +1244,7 @@ APTR CO_Page8(struct CO_ClassData *data)
            Child, Label1(GetStr(MSG_CO_INFOBARPOS)),
            Child, data->GUI.CY_INFOBAR = MakeCycle(infob, GetStr(MSG_CO_INFOBARPOS)),
            Child, Label2(GetStr(MSG_CO_FOLDERLABEL)),
-           Child, MakeVarPop(&data->GUI.ST_INFOBARTXT, VPM_MAILSTATS, SIZE_DEFAULT, ""),
+           Child, MakeVarPop(&data->GUI.ST_INFOBARTXT, VPM_MAILSTATS, SIZE_DEFAULT, GetStr(MSG_CO_FOLDERLABEL)),
          End,
          Child, HVSpace,
       End))
@@ -1252,6 +1252,7 @@ APTR CO_Page8(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_FIXFLIST,MSG_HELP_CO_CH_FIXFLIST);
       SetHelp(data->GUI.CH_BEAT    ,MSG_HELP_CO_CH_BEAT);
       SetHelp(data->GUI.CY_INFOBAR ,MSG_HELP_CO_CH_INFOBAR);
+      SetHelp(data->GUI.ST_INFOBARTXT,MSG_HELP_CO_ST_INFOBARTXT);
       SetHelp(data->GUI.CY_SIZE    ,MSG_HELP_CO_CY_SIZE);
       SetHelp(data->GUI.CH_FCNTMENU,MSG_HELP_CO_CONTEXTMENU);
       SetHelp(data->GUI.CH_MCNTMENU,MSG_HELP_CO_CONTEXTMENU);
@@ -1621,7 +1622,7 @@ APTR CO_Page14(struct CO_ClassData *data)
                End,
                Child, HGroup,
                 Child, Label2(GetStr(MSG_CO_APPICONTEXT)),
-                Child, MakeVarPop(&data->GUI.ST_APPICON, VPM_MAILSTATS, SIZE_DEFAULT/2, ""),
+                Child, MakeVarPop(&data->GUI.ST_APPICON, VPM_MAILSTATS, SIZE_DEFAULT/2, GetStr(MSG_CO_APPICONTEXT)),
                End,
                Child, MakeCheckGroup((Object **)&data->GUI.CH_CLGADGET, GetStr(MSG_CO_CloseGadget)),
             End,

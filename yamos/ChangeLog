@@ -7,6 +7,9 @@ $Source$
 
 2003-04-10  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_COg.c, YAM.cd: fixed bug #717880 and #717881 where we forgot
+      to set a bubble help text and some shortcuts within the YAM
+      configuration.
     * YAM_MA.c, YAM_MAf.c: fixed refresh bug where upon a index rescan
       the folderlisttree wasn`t correctly refreshed.
     * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_ER.c, YAM_FI.c, YAM_MA.c,
