@@ -919,7 +919,7 @@ BOOL TR_OpenTCPIP(void)
     if(!(SocketBase = OpenLibrary("bsdsocket.library", 2L)))
       return FALSE;
 
-    if(GETINTERFACE(ISocket, SocketBase) == NULL)
+    if(!GETINTERFACE(ISocket, SocketBase))
     {
       CloseLibrary(SocketBase);
       SocketBase = NULL;
