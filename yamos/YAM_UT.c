@@ -2059,24 +2059,41 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    if (one2one && !copyit) if ((done = RenameFile(srcbuf, dstbuf))) success = TRUE;
    if (!done)
    {
-      if (needuncomp)
-         if (needcomp)
-            if (one2one)
-               success = CopyFile(dstbuf, 0, srcbuf, 0);
-            else
-            {
-               struct TempFile *tf = OpenTempFile(NULL);
-               if (UncompressMailFile(srcbuf, tf->Filename, srcpw))
-                  success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff);
-               CloseTempFile(tf);
-            }
-         else
-            success = UncompressMailFile(srcbuf, dstbuf, srcpw);
-      else
-         if (needcomp)
-            success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff);
-         else
+      if(needuncomp)
+      {
+        if(needcomp)
+        {
+          if(one2one)
+          {
             success = CopyFile(dstbuf, 0, srcbuf, 0);
+          }
+          else
+          {
+            struct TempFile *tf = OpenTempFile(NULL);
+            if(UncompressMailFile(srcbuf, tf->Filename, srcpw))
+            {
+              success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff);
+              CloseTempFile(tf);
+            }
+          }
+        }
+        else
+        {
+          success = UncompressMailFile(srcbuf, dstbuf, srcpw);
+        }
+      }
+      else
+      {
+        if(needcomp)
+        {
+          success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff);
+        }
+        else
+        {
+          success = CopyFile(dstbuf, 0, srcbuf, 0);
+        }
+      }
+
       if (success && !copyit) DeleteFile(srcbuf);
       if (success) SetComment(dstbuf, Status[mail->Status]);
    }
