@@ -55,7 +55,7 @@ struct rxs_command rxs_commandlist[] =
 	{ "GETURL", "URL/A,FILENAME/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_geturl, 1 },
 	{ "HELP", "FILE", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_help, 1 },
 	{ "HIDE", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_hide, 1 },
-	{ "INFO", "ITEM", "VALUE", RESINDEX(rxd_info), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_info, 1 },
+	{ "INFO", "ITEM/A", "VALUE", RESINDEX(rxd_info), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_info, 1 },
 	{ "ISONLINE", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_isonline, 1 },
 	{ "LISTSELECT", "MODE/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_listselect, 1 },
 	{ "MAILARCHIVE", "FOLDER/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailarchive, 1 },
