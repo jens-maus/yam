@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-28  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FI.c, YAM_MAf.c, ReadMailGroup.c: replaced all v45+ only NewMinList()
+      usages by NewList() equivalents.
+    * YAM_utilities.h: put back <time.h> inclusion as it is required for
+      the GetDateStamp() prototype.
+    * YAM_global.c: reverted the USED_VAR usage for the static $STACK
+      string as discussed.
+
 2005-02-28  Gunther Nikl <gni@gecko.de>
 
     * includes/inline/bsdsocket_protos.h: New.

@@ -366,7 +366,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
    stccpy(search->Field, field, SIZE_DEFAULT);
    search->Pattern = search->PatBuf;
    search->Fast = FS_NONE;
-   NewMinList(&search->patternList);
+   NewList((struct List *)&search->patternList);
 
    switch(mode)
    {

@@ -987,7 +987,7 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
     struct HeaderNode *hdrNode = NULL;
 
     // clear the headerList first
-    NewMinList(headerList);
+    NewList((struct List *)headerList);
 
     // we read out the whole header line by line and
     // concatenate lines that are belonging together.

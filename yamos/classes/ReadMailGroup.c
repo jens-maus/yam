@@ -272,7 +272,7 @@ OVERLOAD(OM_NEW)
 		memcpy(data, tmpData, sizeof(struct Data));
 
 		// prepare the senderInfoHeader list
-		NewMinList(&data->senderInfoHeaders);
+		NewList((struct List *)&data->senderInfoHeaders);
 
 		// place our data in the node and add it to the readMailDataList
 		rmData->readMailGroup = obj;
