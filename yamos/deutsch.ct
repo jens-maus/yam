@@ -1,4 +1,4 @@
-## version $VER: Deutsch.ct 5.3 (20.02.01)
+## version $VER: Deutsch.ct 5.3 (22.03.01)
 ## language deutsch
 ## codeset 0
 ;
@@ -6295,8 +6295,8 @@ MSG_WR_DefSecurityConflictGads
 ; *_None|_Sign|_Encrypt|_Both|Send _anonymously
 ;
 MSG_WR_SecDefaults
-Voreinstellungen versuchen
-; Try defaults
+Voreinstellungen
+; Default
 ;
 MSG_ER_PGPMultipart
 Fehler beim Erstellen der Multipart-PGP-Nachricht. Verschlüsselung/Signatur abgeschaltet!
@@ -6364,9 +6364,13 @@ das lesen fortsetzen?
 ;
 MSG_WR_NoSubjectReqGad
 *_Betreff setzen|_Weiter ohne Betreff
-; *_Set Subject|_Continue without Subject
+; *_Set subject|_Continue without subject
 ;
 MSG_NoSubjectReq
 Warnung: Der Betreff ist leer
 ; Warning: Subject is empty
+;
+MSG_MA_ABookModifiedGad
+*_Jetzt speichern|_Beenden ohne speichern
+; *_Save now|_Quit without saving
 ;

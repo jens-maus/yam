@@ -4616,3 +4616,6 @@ MSG_WR_NoSubjectReqGad (//)
 MSG_NoSubjectReq (//)
 Warning: Subject is empty
 ;
+MSG_MA_ABookModifiedGad (//)
+*_Save now|_Quit without saving
+;

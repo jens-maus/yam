@@ -337,11 +337,16 @@ BOOL StayInProg(void)
    BOOL req = FALSE;
    int i, fq;
 
-   if (G->AB->Modified || G->CO || C->ConfirmOnQuit) req = TRUE;
-   if (G->CO) req = TRUE;
+   if (G->AB->Modified)
+   {
+      if (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ABookModifiedGad), GetStr(MSG_AB_Modified)))
+         AB_SaveABookFunc();
+   }
+   if (G->CO || C->ConfirmOnQuit) req = TRUE;
    for (i = 0; i < 4; i++) if (G->EA[i]) req = TRUE;
    for (i = 0; i < 2; i++) if (G->WR[i]) req = TRUE;
-   get(G->App, MUIA_Application_ForceQuit, &fq); if (fq) req = FALSE;
+   get(G->App, MUIA_Application_ForceQuit, &fq);
+   if (fq) req = FALSE;
    if (!req) return FALSE;
    return (BOOL)!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq));
 }
