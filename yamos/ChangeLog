@@ -224,3 +224,8 @@
     * Fixed a nasty crash bug when loading corrupted indices.  Left some
       debug info in there, since I lost the corrupted index during the
       tests.
+
+2001-05-01  Jacob Laursen <laursen@myself.com>
+
+    * Removed enforcer hits when trying to spawn a second instance of YAM
+      while the first one is starting up.

@@ -340,7 +340,9 @@ void PopUp(void)
 //  A second copy of YAM was started
 void SAVEDS DoublestartFunc(void)
 {
-   PopUp();
+//   PopUp();
+//   ^^^^^^^^ Crap! If we want to popup the other (running) YAM,
+//            we can't use our own app object (NULL) pointer!
 }
 MakeHook(DoublestartHook, DoublestartFunc);
 ///
@@ -391,7 +393,7 @@ BOOL Root_New(BOOL hidden)
       MUIA_Application_Base       ,"YAM",
       MUIA_Application_Title      ,"YAM",
       MUIA_Application_Version    ,"$VER: YAM " __YAM_VERSION " (" __YAM_VERDATE ")",
-      MUIA_Application_Copyright  ,"© 1995-2001 by Marcel Beck",
+      MUIA_Application_Copyright  ,"© 1995-2000 by Marcel Beck",
       MUIA_Application_Description,GetStr(MSG_AppDescription),
       MUIA_Application_UseRexx    ,FALSE,
       MUIA_Application_SingleTask ,!getenv("MultipleYAM"),
