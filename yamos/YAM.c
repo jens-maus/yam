@@ -395,9 +395,7 @@ BOOL Root_New(BOOL hidden)
 void Terminate(void)
 {
    int i;
-#ifndef __SASC
-   struct Folder **flist;
-#endif
+// struct Folder **flist;
 
    if (G->CO) { CO_FreeConfig(CE); free(CE); DisposeModule(&G->CO); }
    for (i = 0; i < MAXEA; i++) DisposeModule(&G->EA[i]);
@@ -415,17 +413,12 @@ void Terminate(void)
       G->Weights[1] = GetMUI(G->MA->GUI.LV_MAILS, MUIA_HorizWeight);
       SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
-#ifndef __SASC
+/*
       if ((flist = FO_CreateList()))
       {
          for (i = 1; i <= (int)*flist; i++) ClearMailList(flist[i], TRUE);
          free(flist);
       }
-#endif
-/*
-   Ugly hack (relies on SAS/C's malloc()/free() implementation), but
-   reduces shutdown time DRASTICALLY. We might as well generate a
-   fast SAS/C executable until we start using memory pools officially.
 */
    }
    DisposeModule(&G->AB);
