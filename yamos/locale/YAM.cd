@@ -4965,3 +4965,10 @@ Folder group preferences
 MSG_FO_EDIT_FGROUPREQ (//)
 Name of folder group:
 ;
+MSG_ERR_OPENMCC (//)
+Couldn`t find version v%lu.%lu of MUI '%s' installed.\n\
+For compatibility reasons at least this version is\n\
+required by YAM. Please make sure you have installed\n\
+it correctly.
+;MCC_VERSION, MCC_REVISION, MCC_NAME
+;

@@ -562,16 +562,16 @@ static void Terminate(void)
 static void Abort(APTR formatnum, ...)
 {
    va_list a;
-   static char error[SIZE_DEFAULT];
+   static char error[SIZE_LINE];
 
    va_start(a, formatnum);
    if(formatnum)
    {
       vsprintf(error, GetStr(formatnum), a);
 
-      if(MUIMasterBase)
+      if(MUIMasterBase && G && G->App)
       {
-         MUI_Request(G->App ? G->App : NULL, NULL, 0, GetStr(MSG_ErrorStartup), GetStr(MSG_Quit), error);
+         MUI_Request(G->App, NULL, MUIF_NONE, GetStr(MSG_ErrorStartup), GetStr(MSG_Quit), error);
       }
       else if(IntuitionBase)
       {
@@ -595,28 +595,32 @@ static void Abort(APTR formatnum, ...)
 static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 {
    Object *obj;
-   BOOL success = FALSE;
+   int success = 0;
 
-   obj = MUI_NewObjectA(name, NULL);
-   if (obj) {
-      ULONG tmp;
-      int ver, rev;
+   if(obj = MUI_NewObjectA(name, NULL))
+   {
+      int ver = (int)xget(obj, MUIA_Version);
+      int rev = (int)xget(obj, MUIA_Revision);
 
-      get(obj, MUIA_Version, &tmp);
-      ver = (int)tmp;
-      get(obj, MUIA_Revision, &tmp);
-      rev = (int)tmp;
+      success++;
 
-      if (ver > minver || (ver == minver && rev >= minrev)) {
-         success = TRUE;
+      if(ver > minver || (ver == minver && rev >= minrev))
+      {
+         success++;
       }
       MUI_DisposeObject(obj);
    }
 
-   if(!success && req)
-      Abort(MSG_ERR_OPENLIB, name, minver, minrev);
+   if(success < 2 && req)
+   {
+      if(success == 1)
+      {
+        Abort(MSG_ERR_OPENMCC, minver, minrev, name);
+      }
+      else Abort(MSG_ERR_OPENLIB, name, minver, minrev);
+   }
 
-   return success;
+   return (BOOL)(success == 2 ? TRUE : FALSE);
 }
 ///
 /// InitLib
@@ -776,13 +780,13 @@ static void Initialise(BOOL hidden)
    /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);
 
-   // we have to have at least v19.98 of NList.mcc to get YAM working without risking
+   // we have to have at least v20.104 of NList.mcc to get YAM working without risking
    // to have it buggy - so we make it a requirement.
-   CheckMCC(MUIC_NList, 19, 98, TRUE);
+   CheckMCC(MUIC_NList, 20, 104, TRUE);
 
-   // we make v18.7 the minimum requirement for YAM because earlier versions are
+   // we make v18.12 the minimum requirement for YAM because earlier versions are
    // buggy
-   CheckMCC(MUIC_NListtree, 18, 7, TRUE);
+   CheckMCC(MUIC_NListtree, 18, 12, TRUE);
 
    if(!InitClasses() || !YAM_SetupClasses())
       Abort(MSG_ErrorClasses);

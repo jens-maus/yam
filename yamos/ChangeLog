@@ -1,5 +1,11 @@
 2002-05-22  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM.c, YAM.cd: added a more descriptive error message about
+      the minimum requirement versions of MCCs and reworked the Abort()
+      routines a bit
+    * YAM.c: raised minimum requirement version for NList.mcc to
+      v20.104 and NListtree v18.12 as this versions fixes some bugs
+      that would otherwise make YAM unstable.
     * YAM_UT.c: reimplemented the original MUI_Request() function
       in a more secure, reliable way. This fixes some LONG READ
       enforcer hits as it seems that the original MUI_Request()
