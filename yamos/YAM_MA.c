@@ -313,8 +313,23 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)
     {
+      int i;
+
       strcpy(mail->MailFile, newFileName);
       success = TRUE;
+
+      // before we exit we check through all our read windows if
+      // they contain the mail we have changed the status, so
+      // that we can update the filename in the read window structure
+      // aswell
+      for(i=0; i < MAXRE; i++)
+      {
+        if(G->RE[i] && G->RE[i]->MailPtr == mail)
+        {
+          strcpy(G->RE[i]->File, newFilePath);
+          break;
+        }
+      }
     }
     else
     {

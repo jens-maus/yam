@@ -7,6 +7,9 @@ $Source$
 
 2004-09-10  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed a minor bug which caused that with the
+      new mailfile naming scheme YAM wasn't able to display the
+      RAW text of a mail because the mailfile name changed.
     * YAM_MA.c, YAM_RE.c, YAM_TR.c, YAM_UT.c: reworked the
       FormatSize() invocation a bit and removed a unnecessary
       strlen() call as we anyway call this function mostly to put
