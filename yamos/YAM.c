@@ -242,7 +242,7 @@ BOOL AY_New(BOOL hidden)
                   MUIA_InputMode, MUIV_InputMode_RelVerify,
                End,
                Child, bt_gopage = TextObject,
-                  MUIA_Text_Contents, "\033c\033u\0335http://www.yam.ch",
+                  MUIA_Text_Contents, "\033c\033u\0335http://www.yam.ch/",
                   MUIA_InputMode, MUIV_InputMode_RelVerify,
                End,
             End,
