@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (18.04.2003)
+@$VER: YAM.guide 2.4 (20.04.2003)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -170,7 +170,7 @@ Features of YAM
 
 * Freely customisable interface, thanks to @{" MUI " link "MUI"}.
 
-* A choice of MagicWorkbench icons or @{" NewIcons " link "NEWI"}.
+* A choice of MagicWorkbench, ProLite, @{" NewIcons " link "NEWI"} and GlowIcons.
 
 * Built-in @{" POP3 " link "PROT"} client, which can check up to 16 different POP3
   accounts in one connection and also allows prior selection of the
@@ -2970,8 +2970,8 @@ set in the @{" lists " link "CO08"} configuration.  You can also use the context
 or disabled.
 
 @{b}Message status@{ub}
-     An icon showing the @{" status " link "MA0S"} of the message (new, unread, read,
-     etc.)
+     One or more icons showing the @{" status " link "MA0S"} of the message (new, unread,
+     read, etc.)
 
 @{b}Sender/Recipient@{ub}
      E-mail address or, in this case, the name of the sender or
@@ -3038,6 +3038,14 @@ onto the chosen folder.
 
 Status icons
 ************
+
+
+   YAM uses several icons to display the status of the messages.  Apart
+from the basic read, unread, outgoing and sent status, additional icons
+may appear to display several flags which are also relevant, e.g. new,
+replied, important, PGP signed, etc.  How exactly all this status
+information is displayed depends upon the icon set that is currently
+installed, here are the defaults for the classic MagicWB style:
 
 
  Message status                Icon
@@ -3814,14 +3822,14 @@ Send options
      Activate this option to request the recipient's e-mail program to
      let you know about what the recipient did with your message, e.g.
      if the message has been read by the recipient or if the recipient
-     has deleted or forwarded it.  Please note there are only a bunch of
-     e-mail programs which support this function, as well as the fact
-     that the recipient might forbid the sending of any status report
-     on e-mails.  Therefore, not getting any information even with this
-     option in use does not necessarily mean the message has not been
-     read.  The command to send a status report is contained in the
-     @{b}Disposition-Notification-To:@{ub} header field.  At the time of writing
-     this document, the Internet standard for Message Disposition
+     has deleted or forwarded it.  Please note that there are only a
+     handful of e-mail programs which support this function, as well as
+     the fact that the recipient might forbid the sending of any status
+     report on e-mails.  Therefore, not getting any information even with
+     this option in use does not necessarily mean that the message has
+     not been read.  The command to send a status report is contained
+     in the @{b}Disposition-Notification-To:@{ub} header field.  At the time of
+     writing this document, the Internet standard for Message Disposition
      Notifications (MDN) was still being formulated.
 
 
@@ -3839,8 +3847,8 @@ Send options
 
 @{b}Importance@{ub}
      Specify here how important the message is for the recipient.
-     Messages noted as important will be displayed with an exclamation
-     mark in the status line and will be put into first place by
+     Messages noted as important will usually be displayed with an
+     exclamation mark in the status line and put into first place by
      automatic mail sorting.  The level of importance is stored in
      the @{b}Importance:@{ub} header.
 
@@ -4552,7 +4560,7 @@ settings window will open with the following options:
      mail, in @{b}days@{ub}).  Then switch to the 'Start/Quit' configuration
      sheet and activate the option 'Delete old mail'.
 
-     N.B.: Messages with the status 'new' or 'unread' will not be
+     @{b}NOTE:@{ub} Messages with the status 'new' or 'unread' will not be
      deleted automatically.
 
 
@@ -5079,12 +5087,12 @@ to make it easier for you to decide what to do with them without having
 to face a too cluttered list: messages below the maxium size will just
 be downloaded silently.  Two explanatory status symbols may appear at
 the left of the message: a little trashcan means the message will be
-deleted from the server, whereas the floppy disk icon indicates that
-the message will be downloaded.  Therefore, there exist the following
+deleted from the server, whereas the disk icon indicates that the
+message will be downloaded.  Therefore, there exist the following
 possibilities:
 
 
-  Trashcan   Diskette  Action
+  Trashcan    Disk     Action
   ----------------------------------------------------------------------
    yes        yes      The message will be downloaded and then deleted
                        from the server
@@ -7955,6 +7963,10 @@ MAILSTATUS
 @{b}FUNCTION@{ub}
      Changes the status of the selected messages.
 
+     Only the basic "read", "unread", "on hold" and "ready to send"
+     status can be changed with the command; additional flags like
+     "marked", "important", etc. remain untouched.
+
 @{b}INPUTS@{ub}
      STATUS/A   - may be one of
 
@@ -9660,7 +9672,7 @@ User Interface.  There are several kinds of icons:
 empty.info
 new.info
 old.info@{ub}
-     Icons which show the status of the incoming mailbox:
+     Icons which show the status of the "Incoming" mailbox:
 
      check.info     YAM is checking for new mail
      empty.info     the mailbox is empty
@@ -9682,6 +9694,10 @@ old.info@{ub}
 @{b}status_#?@{ub}
      These are the @{" status icons " link "MA0S"} displayed by YAM to show the status
      of the messages.
+
+     The "status_mark" icon used when messages are set to "marked"
+     is special: if it is not present, YAM will mark the messages by
+     displaying the sender/recipient data in bold letters.
 
 
 @{b}folder_#?@{ub} (V2.4)
@@ -9991,7 +10007,7 @@ line using the format <ID>\@<POP3 server>, e.g.
    Whenever an ID is already found in the "PROGDIR:.uidl" file, the
 relevant message will be considered a duplicate, and thus it won't be
 downloaded.  New IDs not yet in the "PROGDIR:.uidl" file will be added
-to it as the corresponding messages are sucessfully downloaded.
+to it as the corresponding messages are successfully downloaded.
 
 @endnode
 
@@ -10779,12 +10795,12 @@ Credits
       Michael Trebilcock
 
 
-   Folder images
+   Standard folder images
 
       Philip A. Vedovatti <vedovatti\@u.washington.edu>
 
 
-   Titles, button borders and status icons
+   MagicWB icons
 
       Pavel Narozny, Roman Patzner
 
@@ -10794,9 +10810,15 @@ Credits
       Ash Thomas
 
 
-   Additional GlowIcons
+   ProLite style icons
+
+      Eric van Velthooveen, Trevor Morris
+
+
+   GlowIcons
 
       Thomas Peterseim  <http://mitglied.lycos.de/IconDesigner/>
+      Martin Merz       <http://www.masonicons.de/>
 
 
    YAM 1.0 - 2.2 betatesters
