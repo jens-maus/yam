@@ -41,7 +41,7 @@ WARN	= -Wall
 OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel
 DEBUG	= -DDEBUG -g -O0
 CFLAGS	= -I. -I./includes $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
-LDFLAGS	= -noixemul -mstackextend -fbaserel
+LDFLAGS	= -noixemul -mstackextend -fbaserel $(CPU)
 LDLIBS	= -ldebug -lmui -lm
 
 # CPU and DEBUG can be defined outside, defaults to above

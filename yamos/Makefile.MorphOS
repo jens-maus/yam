@@ -45,7 +45,7 @@ WARN     = -Wall
 OPTFLAGS = -O2 -fomit-frame-pointer -fstrength-reduce
 DEBUG    = -DDEBUG -g3 -O0
 CFLAGS   = -noixemul -I./ -I/gg/ppc-morphos/sys-include/ -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
-LDFLAGS  = -noixemul
+LDFLAGS  = -noixemul $(CPU)
 LDLIBS    = -lamigastubs -lmui -lsyscall -lxpkmaster -lpm -lamissl -lopenurl
 
 # CPU and DEBUG can be defined outside, defaults to above
