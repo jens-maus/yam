@@ -88,7 +88,7 @@
  *
  */
 
-char *verstr = "0.2";
+char *verstr = "0.3";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -199,11 +199,11 @@ char *stralloc( char *str )
 		c = *estr;				
 		if (c == '\t' || c == '\r' || c == '\n' || c == ' ' || c == 0xa0) --estr; else break;
 	}
-	memcpy(strvec, str, (estr - str) + 1);
+	memcpy(strvec, str, (size_t)(estr - str) + 1);
 	return strvec;	
 }
 
-long myaddpart( char *path, char *name, long len )
+long myaddpart( char *path, char *name, size_t len )
 {
 	/* A version of dos.library/AddPart() that should
 	   work on both UNIX and Amiga systems. */
@@ -354,14 +354,14 @@ void add_exportblk( struct classdef *cd, char *textblk )
 
 void add_attr( struct classdef *cd, char *name )
 {
-	struct attrdef *ad, *nextad;
+	struct attrdef *ad;
 	if (!(ad = (struct attrdef *) calloc(1, sizeof(struct attrdef)))) return;
 	if (!(ad->name = stralloc(name))) return;
 	if (list_findname(&cd->attrlist, name))
 	{
 		if (arg_v) printf("ATTR %s already collected, skipped.\n", name);
-		free_attr(ad); return;
-		return;
+		free_attr(ad);
+    return;
 	}
 	list_saveitem(&cd->attrlist, ad->name, ad);
 }
@@ -372,7 +372,8 @@ struct classdef *processclasssrc( char *path )
 	long lineno = 0;
 	char line[256], *p, *ob, *cb, *sub;
 	struct classdef *cd;
-	long spos, epos = 0, exlineno = lineno; char *blk = NULL;
+	long spos, epos = 0, exlineno = lineno;
+  char *blk = NULL;
 
 	if (!(cd = calloc(1, sizeof(struct classdef)))) return NULL;
 	if (!(fp = fopen(path, "r")))
@@ -415,11 +416,11 @@ struct classdef *processclasssrc( char *path )
 				if (!(p = strstr(line, "*/"))) continue;
 				epos += (p - line) - 3; /* + offset into line... */
 				fseek(fp, spos, SEEK_SET);
-				if (!(blk = calloc(1, epos - spos + 1)))
+				if (!(blk = calloc(1, (size_t)(epos - spos + 1))))
 				{
 					printf("WARNING: Cannot read " KEYWD_CLASSDATA " block at line %ld, out of memory!\n", exlineno); break;
 				}
-				fread(blk, epos - spos, 1, fp);
+				fread(blk, (size_t)(epos - spos), 1, fp);
 				if ((ob = strchr(blk, '{')))
 				{
 					if (!(cb = strchr(ob + 1, '}'))) cb = blk + strlen(blk);
@@ -473,11 +474,11 @@ struct classdef *processclasssrc( char *path )
 					if (!(p = strstr(line, "*/"))) continue;
 					epos += (p - line) - 3; /* + offset into line... */
 					fseek(fp, spos, SEEK_SET);
-					if (!(blk = calloc(1, epos - spos + 1)))
+					if (!(blk = calloc(1, (size_t)(epos - spos + 1))))
 					{
 						printf("WARNING: Cannot read " KEYWD_EXPORT " block at line %ld, out of memory!\n", exlineno); break;
 					}
-					fread(blk, epos - spos, 1, fp);
+					fread(blk, (size_t)(epos - spos), 1, fp);
 					add_exportblk(cd, blk);
 					free(blk);
 					break;
@@ -524,7 +525,7 @@ long scanclasses( char *dirname, struct list *classlist )
 {
 	DIR *dir;
 	struct dirent *de;
-	char *n, *p, dirbuf[256];
+	char *n, dirbuf[256];
 	long len, srccnt = 0;
 	struct classdef *cd;
 	strncpy(dirbuf, dirname, 255);
@@ -1009,10 +1010,10 @@ long gen_makefile( char *destfile, struct list *classlist )
  *
  */ 
 
-long getstrarg( char *argid, char *argline, char *dest, long destlen )
+long getstrarg( char *argid, char *argline, char *dest, size_t destlen )
 {
-	char *p, *e;
-	long arglen = strlen(argid);
+	char *p;
+	size_t arglen = strlen(argid);
 	if (strncmp(argid, argline, arglen) != 0) return 0;
 	p = &argline[arglen];
 	strncpy(dest, p, destlen);
@@ -1029,7 +1030,6 @@ long getblnarg( char *argid, char *argline, long *blnlong )
 long doargs( int argc, char *argv[] )
 {
 	long i, success;
-	char c;
 	if (argc < 2)
 	{
 		printf(
@@ -1084,11 +1084,10 @@ long doargs( int argc, char *argv[] )
 
 int main( int argc, char *argv[] )
 {
-	char *p;
 	struct node *n;
 	struct list classlist;
 	list_init(&classlist);
-    printf("GenClasses %s by Andrew Bell\n\n", verstr);
+    printf("GenClasses v%s by Andrew Bell\n\n", verstr);
 	if (!doargs(argc, argv)) return 0;
 	if (scanclasses(arg_classdir, &classlist))
 	{

@@ -1,6 +1,7 @@
 
 #include "lists.h"
 #include <string.h>
+#include <stdlib.h>
 
 /* Portable linked list support */
 
