@@ -408,21 +408,26 @@ MakeStaticHook(DoublestartHook, DoublestartFunc);
 //  Makes sure that the user really wants to quit the program
 static BOOL StayInProg(void)
 {
-   BOOL req = FALSE;
    int i, fq;
 
    if (G->AB->Modified)
    {
-      if (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ABookModifiedGad), GetStr(MSG_AB_Modified)))
-         CallHookPkt(&AB_SaveABookHook, 0, 0);
+     if (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ABookModifiedGad), GetStr(MSG_AB_Modified)))
+       CallHookPkt(&AB_SaveABookHook, 0, 0);
    }
-   if (G->CO || C->ConfirmOnQuit) req = TRUE;
-   for (i = 0; i < 4; i++) if (G->EA[i]) req = TRUE;
-   for (i = 0; i < 2; i++) if (G->WR[i]) req = TRUE;
+
    get(G->App, MUIA_Application_ForceQuit, &fq);
-   if (fq) req = FALSE;
-   if (!req) return FALSE;
-   return (BOOL)!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq));
+   if (!fq)
+   {
+     BOOL req = FALSE;
+     for (i = 0; i < 4; i++) if (G->EA[i]) req = TRUE;
+     for (i = 0; i < 2; i++) if (G->WR[i]) req = TRUE;
+     if (req || G->CO || C->ConfirmOnQuit)
+       if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq)))
+         return TRUE;
+   }
+
+   return FALSE;
 }
 ///
 /// Root_GlobalDispatcher
