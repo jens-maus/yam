@@ -56,7 +56,8 @@ OPTFLAGS= -O3 -fomit-frame-pointer -funroll-loops
 DEBUG	= -DDEBUG -g3 -O0
 CFLAGS  = -I. -I./includes -DNO_INLINE_STDARG $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS = -noixemul -mstackextend $(CPU)
-LDLIBS  = -ldebug -lmui -lm
+LDSTUBS = -lmui -licon -lwb
+LDLIBS  = $(LDSTUBS) -ldebug -lm
 
 # Special flags
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
@@ -79,6 +80,8 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/AddrBookListtree.o \
 	$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
 	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/AttachmentGroup.o \
+	$(OBJDIR)/$(CLASSDIR)/AttachmentImage.o \
 	$(OBJDIR)/$(CLASSDIR)/BodychunkImage.o \
 	$(OBJDIR)/$(CLASSDIR)/ConfigPageList.o \
 	$(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o \
