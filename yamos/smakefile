@@ -31,25 +31,25 @@ CP = copy
 RM = delete
 
 # Files
-OBJS = YAM_locale.o YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
-       YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o \
-       YAM_UT.o YAM_WR.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
-       YAM_md5.o all_sas.o YAM_global.o
+OBJS = YAM_locale.o YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o\
+  YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o\
+  YAM_UT.o YAM_WR.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o\
+  YAM_md5.o all_sas.o YAM_global.o
 
 # Compiler flags
-CPU        = 68020
-#OPTFLAGS  = OPT OPTSIZE OPTINLOCAL OPTGO OPTLOOP OPTPEEP #OPTSCHED
-OPTFLAGS   = NOOPT
-DEBUG      = DEF DEBUG DEBUG=LINE
+CPU      = 68020
+OPTFLAGS = OPT OPTSIZE OPTINLOCAL OPTGO OPTLOOP OPTPEEP #OPTSCHED
+DEBUG    = DEF DEBUG DEBUG=LINE NOSTRIPDEBUG NOOPT
 # CPU can be defined outside, defaults to above
+# OPTFLAGS are disabled by DEBUG!
 
 CFLAGS = RESOPT NOVER PARM=R NOLINK WARN=ALL IGNORE=147,306,62,165,148,178,61,212,120,51\
-DATA=FAR CODE=FAR ERRORREXX INCLUDEDIR=includes STRINGSECTION=FAR $(DEBUG)\
-NOICONS IDLEN=60 CPU=$(CPU) NOCHECKABORT STRIPDEBUG UTILLIB $(OPTFLAGS)
+  DATA=FAR CODE=FAR ERRORREXX INCLUDEDIR=includes STRINGSECTION=FAR STRIPDEBUG $(OPTFLAGS)\
+  NOICONS IDLEN=60 CPU=$(CPU) NOCHECKABORT UTILLIB SMALLCODE $(DEBUG)
 
 YAM: $(OBJS)
-  $(CC) $(CFLAGS) "LINKOPT=MAP=YAM.map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32 STRIPDEBUG" \
-  LINK LIB lib:scnb.lib lib:amiga.lib lib:debug.lib TO $@ WITH <<
+  $(CC) $(CFLAGS) LINK "LINKOPT=MAP YAM.map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"\
+  LIB lib:scnb.lib lib:amiga.lib lib:debug.lib TO $@ WITH <<
   $(OBJS)
   <
 
@@ -65,13 +65,9 @@ cleanall:
 copy:
   $(CP) YAM YAM:
 
-YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
-  flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+#######################################
 
-YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
-  ; # dummy entry to make smake happy
-
-YAM.o:     YAM.c     YAM.h YAM_locale.h $(DATE)
+YAM.o:     YAM.c     YAM.h YAM_locale.h
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_locale.h
 YAM_CL.o:  YAM_CL.c  YAM.h YAM_locale.h
 YAM_CO.o:  YAM_CO.c  YAM.h YAM_locale.h
@@ -83,7 +79,7 @@ YAM_ER.o:  YAM_ER.c  YAM.h YAM_locale.h
 YAM_FI.o:  YAM_FI.c  YAM.h YAM_locale.h
 YAM_FO.o:  YAM_FO.c  YAM.h YAM_locale.h
 YAM_MA.o:  YAM_MA.c  YAM.h YAM_locale.h
-YAM_MAf.o: YAM_MAf.c YAM.h YAM_locale.h $(DATE)
+YAM_MAf.o: YAM_MAf.c YAM.h YAM_locale.h
 YAM_MI.o:  YAM_MI.c  YAM.h YAM_locale.h
 YAM_RE.o:  YAM_RE.c  YAM.h YAM_locale.h
 YAM_TR.o:  YAM_TR.c  YAM.h YAM_locale.h
@@ -96,6 +92,11 @@ YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_locale.h
 YAM_locale.o:   YAM_locale.h YAM_locale.c
 
 YAM_global.o: YAM_global.c YAM_global.h YAM_stringsizes.h
-  @rx >T:YAM-date.tmp "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"
-  $(CC) $(CFLAGS) `Type T:YAM-date.tmp` YAM_global.c
+  $(CC) $(CFLAGS)  YAM_global.c `rx >T:YAM-date.tmp "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"`
+
+YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
+  flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+
+YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
+  ; # dummy entry to make smake happy
 
