@@ -1,5 +1,9 @@
 2002-05-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_AB.c: fixed bug/flaw #555113 by adding additional
+      checkings and a requester to inform the user that YAM
+      will process a non YAM addressbook file as a newline
+      separated file of email addresses.
     * YAM_UT.c, YAM_utilities.h: added a wrapper function to
       implement a MUI_Request() in a secure way. Also added a
       wrapper #define for MUI_Request() to automatically use

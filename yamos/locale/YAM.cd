@@ -4947,3 +4947,15 @@ Please make sure that this file really contains emails \
 in the standard MBOX format (separated by a single \
 "From " line).
 ; FILENAME
+MSG_ER_ADDRBOOKLOAD (//)
+Couldn't load address book from file '%s'.\n\
+The file doesn`t seem to exist.
+; FILENAME
+MSG_AB_NOYAMADDRBOOK (//)
+The file '%s' isn`t a valid YAM addressbook file.\n\
+Do you still want to process it as a file that contains\n\
+email addresses on separate lines ?
+; FILENAME
+MSG_AB_NOYAMADDRBOOK_GADS (//)
+_Yes|*_No
+;

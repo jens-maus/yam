@@ -326,15 +326,16 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 
    if (fh = fopen(fname, "r"))
    {
-      G->AB->Modified = append;
-      if (!append) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
-
       parent[nested] = MUIV_NListtree_Insert_ListNode_Root;
 
       GetLine(fh, buffer, SIZE_LARGE);
       if (!strncmp(buffer,"YAB",3))
       {
          int version = buffer[3]-'0';
+
+         G->AB->Modified = append;
+         if (!append) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
+
          set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Quiet, TRUE);
          while (GetLine(fh, buffer, SIZE_LARGE))
          {
@@ -363,7 +364,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
                }
                do if (!strcmp(buffer, "@ENDUSER")) break;
                while (GetLine(fh, buffer, SIZE_LARGE));
-               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, 0, TAG_DONE);
+               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
             }
             else if (!strncmp(buffer, "@LIST", 5))
             {
@@ -389,7 +390,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
                addr.Members = malloc(len);
                strcpy(addr.Members, members);
                FreeStrBuf(members);
-               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, 0, TAG_DONE);
+               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
                free(addr.Members);
             }
             else if (!strncmp(buffer, "@GROUP", 6))
@@ -398,7 +399,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
                stccpy(addr.Alias  , Trim(&buffer[7]), SIZE_NAME);
                stccpy(addr.Comment, Trim(GetLine(fh, buffer, SIZE_LARGE)), SIZE_DEFAULT);
                nested++;
-               parent[nested] = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested-1], MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST, TAG_DONE);
+               parent[nested] = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested-1], MUIV_NListtree_Insert_PrevNode_Tail, TNF_LIST);
             }
             else if (!strcmp(buffer,"@ENDGROUP"))
             {
@@ -409,26 +410,38 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
       }
       else
       {
-         fseek(fh, 0, SEEK_SET);
-         while (GetLine(fh, buffer, SIZE_LARGE))
+         // ask the user if he really wants to read out a non YAM
+         // Addressbook file.
+         if(MUI_Request(G->App, G->AB->GUI.WI, MUIF_NONE, NULL, GetStr(MSG_AB_NOYAMADDRBOOK_GADS), GetStr(MSG_AB_NOYAMADDRBOOK), fname))
          {
-            char *p, *p2;
-            memset(&addr, 0, sizeof(struct ABEntry));
-            if (p = strchr(buffer, ' ')) *p = 0;
-            stccpy(addr.Address, buffer, SIZE_ADDRESS);
-            if (p)
-            {
-               stccpy(addr.RealName, ++p, SIZE_REALNAME);
-               if (p2 = strchr(p, ' ')) *p2 = 0;
-            }
-            else if (p2 = strchr(p = buffer, '@')) *p2 = 0;
-            stccpy(addr.Alias, p, SIZE_NAME);
-            DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, 0, TAG_DONE);
+           G->AB->Modified = append;
+           if (!append) DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Clear, NULL, 0);
+
+           fseek(fh, 0, SEEK_SET);
+           while (GetLine(fh, buffer, SIZE_LARGE))
+           {
+              char *p, *p2;
+              memset(&addr, 0, sizeof(struct ABEntry));
+              if (p = strchr(buffer, ' ')) *p = 0;
+              stccpy(addr.Address, buffer, SIZE_ADDRESS);
+              if (p)
+              {
+                 stccpy(addr.RealName, ++p, SIZE_REALNAME);
+                 if (p2 = strchr(p, ' ')) *p2 = 0;
+              }
+              else if (p2 = strchr(p = buffer, '@')) *p2 = 0;
+              stccpy(addr.Alias, p, SIZE_NAME);
+              DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
+           }
          }
       }
       fclose(fh);
    }
-   else return FALSE;
+   else
+   {
+      ER_NewError(GetStr(MSG_ER_ADDRBOOKLOAD), fname, NULL);
+      return FALSE;
+   }
 
    return TRUE;
 }
