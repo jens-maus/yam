@@ -689,15 +689,15 @@
 
 2001-06-18  Gunther Nikl <gni@gecko.de>
 
-    * YAM.c. (Terminate) always release resources in reverse allocation order
-             (main) removed warning about return type and discarded STACKEXT
-             (NOTE: STACKEXT doesn't do what was intended! It does *only* extend the
-              stack if there is not enough space for the current frame. Thats hardly
-              the case for main() ...)
+    * YAM.c: (Terminate) always release resources in reverse allocation order
+      (main) removed warning about return type and discarded STACKEXT
+      (NOTE: STACKEXT doesn't do what was intended! It does *only* extend the
+      stack if there is not enough space for the current frame. Thats hardly
+      the case for main() ...)
     * YAM_FI.c: fix prototype for FI_IsFastSearch()
     * YAM_global.(c,h): replaced "APTR" with "void *" and removed include
     * YAM_UT.c: (DisplayAppIconStatistics) replaced AppAppIconA() with AddAppIcon()
-                (DisplayStatistics) small cleanup
+      (DisplayStatistics) small cleanup
 
 2001-06-18  Jens Langner <Jens.Langner@htw-dresden.de>
 
@@ -717,3 +717,57 @@
     * mada DATA=NEAR in smakefile, suggested by Gunther
     * added YAMOS-texts to other makefiles
 
+2001-06-20  Gunther Nikl <gni@gecko.de>
+
+    * YAM.c: (Initialise) use iconfile as buffer for hideicon,
+      move hidecion loading to an appropriate location
+      (header) cleanup
+    * YAM.c: (Root_New) added const qualifier
+      (Initialise) likewise
+    * YAM_AB.c: (AB_PrintField) removed format variable
+      (AB_PrintShortEntry) added const qualifier
+      (AB_New) moved menu enums inside function,
+      fixed GCC warning, added const qualifier
+    * YAM_CO.c: (CO_NewRule) fixed GCC warning
+      (CO_NewPOP3,CO_NewMimeView,CO_New) likewise
+    * YAM_COg.c: (CO_Page13) changed stype into a constant array
+    * YAM_COs.c: (Bool2Txt,Txt2Bool): added const qualifier
+    * YAM_DI.c: (DI_New) fixed GCC warning
+    * YAM_EA.c: (EA_NEW) likewise
+    * YAM_ER.c: (ER_New) likewise
+    * YAM_FI.c: (FI_New) likewise
+    * YAM_FO.c: (FO_GetFolder,FO_PutFolder) added const qualifier
+      (FO_New) fixed GCC warning
+    * YAM_MA.c: (MA_GetSortType.MA_MailCompare,MA_SetupDynamicMenus,MA_MakeMAFormat)
+      added const qualifier
+      (MA_New) likewise, fixed GCC warning
+    * YAM_MAf.c: (MA_MakeFOFormat) added const qualifier
+    * YAM_MI.c: (global) added const qualifier
+    * YAM_RE.c: (RE_ExtractURL) likewise
+      (RE_New) likewise, fixed GCC warning
+    * YAM_TR.c: (TR_GetMessageList_GET) added const qualifier
+      (TR_ProcessEXPORT) fixed GCC warning
+      (TR_New) likewise
+    * YAM_US.c: (US_New) fixed GCC warning
+    * YAM_UT.c, YAM_utilities.h: (CompNoCase, stristr, MyStrChr, ReqFile, GetTZ)
+      added const qualifier
+      (Index) disabled
+      (FormatSize() changed #defines into enum
+    * YAM_WR.c: (PutQP) added const qualifier
+      (WR_New, WR_NewBounce) likewise, fixed GCC warning
+
+2001-06-20  Gunther Nikl <gni@gecko.de>
+
+    * YAM_COg.c: (CO_LV_TConFunc, MakeTransPop) fixed potential enforcer hit
+    * YAM_FO.c: (FO_NewFolder) likewise
+    * YAM_MAf.c: (MA_ScanMailBox) likewise
+    * YAM_TR.c: (TR_AddMessageHeader) likewise
+    * YAM_RE.c: (RE_InitPrivateRC) likewise
+    * YAM_US.c: (US_LV_ConFunc) likewise
+    * YAM_US.c: (US_LV_ConFunc) likewise
+    * YAM_WR.c: (NewPart, EmitRcptField, WR_LV_ConFunc) likewise
+
+2001-06-20  Gunther Nikl <gni@gecko.de>
+
+    * (smakefile) refined CFLAGS
+    * (YAM_global.c) removed __near
