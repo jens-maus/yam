@@ -1,6 +1,8 @@
 ;
-; $VER: Installer script 1.4 for YAM 2.3 (8.6.2001) © Marcel Beck & YAM Open Source Team
+; $VER: Installer script 1.5 for YAM 2.3 (11.11.2001) © 2000-2001 by YAM Open Source Team
 ; language support added by Sönke Tesch/ATO
+;
+; $Id$
 
 ; /// Setting up
 (set #def_lang_English              0)
