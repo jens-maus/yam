@@ -30,16 +30,12 @@
 
 #include "AttachmentImage_cl.h"
 
-// for our old OS3 includes
-#include <clib/icon_protos.h>
-#include <clib/wb_protos.h>
+#include <workbench/icon.h>
 
 #include <proto/graphics.h>
-#include <proto/icon.h>
 #include <proto/layers.h>
+#include <proto/icon.h>
 #include <proto/wb.h>
-
-#include <workbench/icon.h>
 
 /* CLASSDATA
 struct Data
@@ -278,11 +274,10 @@ OVERLOAD(MUIM_Setup)
 		// get some information about our diskObject like width/height
 		if(IconBase->lib_Version >= 44)
 		{
+			static const Tag tags[] = { ICONDRAWA_Borderless, TRUE, TAG_DONE };
 			struct Rectangle rect;
 	
-			GetIconRectangle(NULL, diskObject, NULL, &rect,
-											 ICONDRAWA_Borderless, TRUE,
-					 						 TAG_DONE);
+			GetIconRectangleA(NULL, diskObject, NULL, &rect, (APTR)tags);
 
 			orgWidth  = rect.MaxX - rect.MinX + 1;
 			orgHeight = rect.MaxY - rect.MinY + 1;
