@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -190,10 +190,12 @@ static void TR_CompleteMsgList(void);
 static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, APTR errorMsg);
 static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, APTR errorMsg);
 static int  TR_Recv(char *vptr, int maxlen);
+static int  TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts);
 static int  TR_ReadLine(LONG socket, char *vptr, int maxlen);
 static int  TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags);
 static int  TR_Send(char *vptr, int len, int flags);
 static int  TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags);
+static void TR_TransStat_Update(struct TransStat *ts, int size_incr);
 
 #define TR_WriteLine(buf)       (TR_Send((buf), strlen(buf), TCPF_FLUSH))
 #define TR_WriteFlush()         (TR_Send(NULL,  0, TCPF_FLUSHONLY))
@@ -740,6 +742,154 @@ static int TR_Recv(char *recvdata, int maxlen)
    if (G->TR_Debug) printf("SERVER[%04ld]: %s", len, recvdata);
 
    return len;
+}
+
+///
+/// TR_RecvToFile()
+// function that receives data from a POP3 server until it receives a \r\n.\r\n termination
+// line. It automatically writes that data to the supplied filehandle and if present also
+// updates the Transfer status
+static int TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts)
+{
+  int l=0, read, state=0, count;
+  char buf[SIZE_LINE];
+  char line[SIZE_LINE];
+  char *bufptr;
+  BOOL done=FALSE;
+
+  // get the first data the pop server returns after the TOP command
+  if((read = count = TR_Recv(buf, SIZE_LINE)) <= 0) G->Error = TRUE;
+
+  while(!G->Error && !G->TR->Abort)
+  {
+    // now we iterate through the received string
+    // and strip out the '\r' character.
+    // we iterate through it because the strings we receive
+    // from the socket can be splitted somehow.
+    for(bufptr = buf; read > 0; bufptr++, read--)
+    {
+      // first we check if out buffer is full and if so we
+      // write it to the file.
+      if(l == SIZE_LINE || done == TRUE)
+      {
+        // update the transferstatus
+        if(ts) TR_TransStat_Update(ts, l);
+
+        // write the line to the file now
+        if(fwrite(line, 1, l, fh) != l) { ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), filename, NULL); break; }
+
+        // if we end up here and done is true we have to break that iteration
+        if(done) break;
+
+        // set l to zero so that the next char gets written to the beginning
+        l=0;
+      }
+
+      // we have to analyze different states because we iterate through our
+      // received buffer char by char.
+      switch(state)
+      {
+        // stat==1 is only reached if a "\r" was found previously
+        case 1:
+        {
+          // if we previously found a \r and the actual char is not a \n, then
+          // we write the \r in the buffer and iterate to the next char.
+          if(*bufptr != '\n')
+          {
+            line[l++] = '\r';
+            read++;
+            bufptr--;
+            state = 0;
+
+            continue;
+          }
+
+          // write the actual char "\n" in the line buffer
+          line[l++] = *bufptr;
+
+          state = 2; // we found a "\r\n" so we move to stat 2 on the next iteration.
+          continue;
+        }
+        break;
+
+        // stat==2 is only reached if we previously found a "\r\n"
+        // stat==5 if we found a lonely "\n"
+        case 2:
+        case 5:
+        {
+          if(*bufptr == '.') { state++; continue; } // now it`s 3 or 6
+
+          state = 0;
+        }
+        break;
+
+        // stat==3 is only reached if we previously found a "\r\n."
+        // stat==6 if we found a lonely "\n."
+        case 3:
+        case 6:
+        {
+          if(state == 3 && *bufptr == '\r') state = 4; // we found a \r directly after a "\r\n.", so it can be the start of a TERM
+          else if(*bufptr == '.')
+          {
+            // (RFC 1939) - the server handles "." as "..", so we only write "."
+            line[l++] = '.';
+            state = 0;
+          }
+          else
+          {
+            // write the actual char in the line buffer
+            line[l++] = '.';
+            read++;
+            bufptr--;
+            state = 0;
+          }
+
+          continue;
+        }
+        break;
+
+        // stat==4 is only reached if we previsouly found a "\r\n.\r"
+        case 4:
+        {
+          if(*bufptr != '\n')
+          {
+            line[l++] = '.';
+            read += 2;
+            bufptr -= 2;
+            state = 0;
+
+            continue;
+          }
+
+          // so if we end up here we finally found our termination line "\r\n.\r\n"
+          // and make sure the buffer is written before we break out here.
+          read = 2;
+          done = TRUE;
+
+          continue;
+        }
+        break;
+      }
+
+      // if we find a \r we set the stat to 1 and check on the next iteration if
+      // the following char is a \n and if so we have to strip it out.
+      if(*bufptr == '\r')       { state=1; continue; }
+      else if(*bufptr == '\n')    state=5;
+
+      // write the actual char in the line buffer
+      line[l++] = *bufptr;
+    }
+
+    // if we received the term octet we can exit the while loop now
+    if(done || G->Error || G->TR->Abort) break;
+
+    // if not, we get another bunch of data and start over again.
+    if((read = TR_Recv(buf, SIZE_LINE)) <= 0) break;
+    count += read;
+  }
+
+  if(done) return count;
+  else     return 0;
 }
 
 ///
@@ -1569,7 +1719,6 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
       sprintf(cmdbuf, "%d 1", mail->Index);
       if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL))
       {
-         char buf[SIZE_LINE];
          char *tfname = "yamTOP.msg";
          char fname[SIZE_PATHFILE];
          FILE *f;
@@ -1580,61 +1729,13 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
          if((f = fopen(fname, "w")))
          {
             struct ExtendedMail *email;
-            int l = 0;
-            char line[SIZE_LINE];
-            char *bufptr;
             BOOL done = FALSE;
 
-            // get the first data the pop server returns after the TOP command
-            if(TR_Recv(buf, SIZE_LINE) <= 0) G->Error = TRUE;
+            // now we call a subfunction to receive data from the POP3 server
+            // and write it in the filehandle as long as there is no termination \r\n.\r\n
+            if(TR_RecvToFile(f, fname, NULL) > 0) done = TRUE;
 
-            // we get the message until we reach the end or an error
-            // or abort situation occurs.
-            while(!G->Error && !G->TR->Abort)
-            {
-               // now we iterate through the received string
-               // and strip out the '\r' character.
-               // we iterate through it because the strings we receive
-               // from the socket can be splitted somehow.
-               for(bufptr = buf; *bufptr; bufptr++)
-               {
-                  // lets strip out any '\r'
-                  if(*bufptr == '\r') continue;
-                  
-                  // write the actual char in the line buffer
-                  line[l++] = *bufptr;
-
-                  // if the line buffer is full lets write it to the file
-                  if(l == SIZE_LINE-1)
-                  {
-                     // add the termination 0 to the linebuffer first and set the counter to zero
-                     line[l] = '\0'; l = 0;
-
-                     // write the line to the file now
-                     if (fputs(line, f) == EOF) { ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), fname, NULL); break; }
-
-                     continue; // then we continue to the next character in the buffer
-                  }
-
-                  // if we end up here, then the buffer was not full
-                  // and we just have to check wheter this is the end of the line
-                  if(*bufptr != '\n') continue;
-
-                  // so, it`s the end of a line and now we check if this is the termination
-                  // line .CRLF and if so we exit without writing it to the file
-                  if(l == 2 && line[0] == '.' && line[1] == '\n') { done = TRUE; break; }
-
-                  // if it`s not the termination line we can write it out to the file
-                  line[l] = '\0'; l = 0;
-                  if(fputs(line, f) == EOF) { ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), fname, NULL); break; }
-               }
-
-               // if we received the term octet we can exit the while loop now
-               if (done) break;
-
-               // if not, we get another bunch of data and start over again.
-               if (TR_Recv(buf, SIZE_LINE) <= 0) break;
-            }
+            // close the filehandle now.
             fclose(f);
 
             // If we end up here because of an error, abort or the upper loop wasn`t finished
@@ -1666,9 +1767,10 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
                }
                else if(lline == -2) TR_ApplyRemoteFilters(mail);
 
-               DeleteFile(fname);
                MA_FreeEMailStruct(email);
             }
+
+            DeleteFile(fname);
          }
          else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), fname, NULL);
       }
@@ -2755,72 +2857,9 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
       sprintf(msgnum, "%d", number);
       if(TR_SendPOP3Cmd(POPCMD_RETR, msgnum, MSG_ER_BadResponse))
       {
-         int l = 0;
-         char buf[SIZE_LINE];
-         char line[SIZE_LINE], *bufptr;
-
-         // get the first data the pop server returns after the TOP command
-         if(TR_Recv(buf, SIZE_LINE) <= 0) return FALSE;
-
-         while (!G->Error && !G->TR->Abort)
-         {
-            // now we iterate through the received string
-            // and strip out the '\r' character.
-            // we iterate through it because the strings we receive
-            // from the socket can be splitted somehow.
-            for(bufptr = buf; *bufptr; bufptr++)
-            {
-               // lets strip out any '\r'
-               if(*bufptr == '\r') continue;
-
-               // write the actual char in the line buffer
-               line[l++] = *bufptr;
-
-               // if the line buffer is full lets write it to the file
-               if(l == SIZE_LINE-1)
-               {
-                  // update the transferstatus
-                  TR_TransStat_Update(ts, l+1);
-
-                  // add the termination 0 to the linebuffer first and set the counter to zero
-                  line[l] = '\0'; l = 0;
-
-                  // write the line to the file now
-                  if (fputs(line, f) == EOF) { ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), mfile, NULL); break; }
-
-                  continue; // then we continue to the next character in the buffer
-               }
-
-               // if we end up here, then the buffer was not full
-               // and we just have to check wheter this is the end of the line
-               if(*bufptr != '\n') continue;
-
-               // lets add the null-termination to the line
-               line[l] = '\0';
-
-               // update the transferstatus
-               TR_TransStat_Update(ts, l+1);
-
-               // so, it`s the end of a line and now we check if this is the termination
-               // line .CRLF and if so we exit without writing it to the file
-               if(line[0] == '.')
-               {
-                  if (line[1] == '\n') { done = TRUE; break; }
-                  else l = 1; // (RFC 1939) - the server handles "." as "..", so we only write "."
-               }
-               else l = 0;
-
-               // if it`s not the termination line we can write it out to the file
-               if(fputs(&line[l], f) == EOF) { ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), mfile, NULL); break; }
-               l = 0;
-            }
-
-            // if we received the term octet we can exit the while loop now
-            if (done) break;
-
-            // if not, we get another bunch of data and start over again.
-            if (TR_Recv(buf, SIZE_LINE) <= 0) break;
-         }
+         // now we call a subfunction to receive data from the POP3 server
+         // and write it in the filehandle as long as there is no termination \r\n.\r\n
+         if(TR_RecvToFile(f, msgfile, ts) > 0) done = TRUE;
       }
       fclose(f);
 
@@ -2844,7 +2883,9 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
          }
          return TRUE;
       }
+
       DeleteFile(msgfile);
+      SET_FLAG(infolder->Flags, FOFL_MODIFY); // we need to set the folder flags to modified so that the .index will be saved later.
    }
    else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), mfile, NULL);
 

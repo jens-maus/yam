@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-15  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: fixed serious bug within the POP3 receive routines where
+      a POP3 server that allowed transfers of binary data caused YAM to
+      hang under certain situations i.e. a transfered NUL (ASCII 0) caused
+      YAM to request too much data from the POP3 server and therefore
+      hanged YAM completly.
+
 2003-03-12  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c, YAM_RE.c, YAM_TR.c: fixed bug #433751 where the automatic
