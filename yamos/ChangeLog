@@ -7,6 +7,14 @@ $Source$
 
 2002-10-17  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c, YAM_FI.c: changed the DisplayHook of the Mail
+      Listview and FindWindowListview to be a NList_DisplayHook2
+      so that we are able to distingush between them. We actually
+      just use one Hook for both windows and this made it
+      necessary to be able to distingush for some reason, like
+      which column should be displayed in which window aso.
+      Also added the Received/Sent date column to the findwindow
+      as it seems to be of some use.
     * YAM_RE.c: reworked the Next/Prev Thread routines a bit and
       made them first search the folder of the refering mail we are
       searching from. If no followup could have been found in this

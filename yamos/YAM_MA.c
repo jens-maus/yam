@@ -2235,15 +2235,29 @@ MakeHook(MA_FindAddressHook, MA_FindAddressFunc);
 ///
 /// MA_LV_DspFunc
 /*** MA_LV_DspFunc - Message listview display hook ***/
-HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
+//HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
+HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 {
-   struct Folder *folder = FO_GetCurrentFolder();
+   struct Mail *entry;
+   char **array;
+   BOOL searchWinHook = FALSE;
 
-   if(!G->MA || !folder) return 0;
+   if(!msg) return 0;
+
+   // now we set our local variables to the DisplayMessage structure ones
+   entry = (struct Mail *)msg->entry;
+   array = msg->strings;
+
+   // now we check who is the parent of this DisplayHook
+   if(G->FI && obj == G->FI->GUI.LV_MAILS)
+   {
+      searchWinHook = TRUE;
+   }
+   else if(!G->MA) return 0;
 
    if(entry)
    {
-      if (folder)
+      if(entry->Folder)
       {
          static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL];
          struct Person *pe;
@@ -2259,18 +2273,20 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
          else if (isMultiPartMail(entry)) strcat(dispsta, "\033o[13]");
 
          // now we generate the proper string for the mailaddress
-         if(C->MessageCols & (1<<1))
+         if(C->MessageCols & (1<<1) || searchWinHook)
          {
             array[1] = dispfro;
             *dispfro = 0;
             if(isMultiRCPTMail(entry)) strcat(dispfro, "\033o[11]");
 
-            pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
-            if((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress))
+            if(((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) &&
+                (entry->Status == STATUS_SNT || entry->Status == STATUS_WFS || entry->Status == STATUS_HLD ||
+                 entry->Status == STATUS_ERR)) || (searchWinHook && isOutgoingFolder(entry->Folder)))
             {
               pe = &entry->To;
               strcat(dispfro, GetStr(MSG_MA_ToPrefix));
             }
+            else pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
 
 #ifndef DISABLE_ADDRESSBOOK_LOOKUP
 {
@@ -2293,23 +2309,31 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
          }
 
          // lets set all other fields now
-         if(C->MessageCols & (1<<2)) array[2] = AddrName((entry->ReplyTo));
+         if(!searchWinHook && C->MessageCols & (1<<2)) array[2] = AddrName((entry->ReplyTo));
 
          // then the Subject
          array[3] = entry->Subject;
 
          // we first copy the Date Received/sent because this would probably be not
          // set by all ppl and strcpy() is costy ;)
-         if(C->MessageCols & (1<<7) && entry->transDate.tv_secs > 0)
+         if((C->MessageCols & (1<<7) && entry->transDate.tv_secs > 0) || searchWinHook)
          {
             static char datestr[32];
             array[7] = strcpy(datestr, TimeVal2String(&entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
          }
          else array[7] = "";
 
-         if(C->MessageCols & (1<<4)) array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME);
+         if(C->MessageCols & (1<<4) || searchWinHook)
+         {
+            array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME);
+         }
 
-         if(C->MessageCols & (1<<5)) { array[5] = dispsiz; *dispsiz = 0; FormatSize(entry->Size, dispsiz); }
+         if(C->MessageCols & (1<<5) || searchWinHook)
+         {
+            array[5] = dispsiz;
+            *dispsiz = 0;
+            FormatSize(entry->Size, dispsiz);
+         }
 
          array[6] = entry->MailFile;
          array[8] = entry->Folder->Name;
@@ -2317,16 +2341,21 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
    }
    else
    {
+      struct Folder *folder = NULL;
+
+      // first we have to make sure that the mail window has a valid folder
+      if(!searchWinHook && !(folder = FO_GetCurrentFolder())) return 0;
+
       array[0] = GetStr(MSG_MA_TitleStatus);
 
-      // depending on the current folder we
+      // depending on the current folder and the parent object we
       // display different titles for different columns
-      if(isOutgoingFolder(folder))
+      if(!searchWinHook && isOutgoingFolder(folder))
       {
         array[1] = GetStr(MSG_To);
         array[7] = GetStr(MSG_DATE_SENT);
       }
-      else if(folder->Type == FT_CUSTOMMIXED || folder->Type == FT_DELETED)
+      else if(searchWinHook || folder->Type == FT_CUSTOMMIXED || folder->Type == FT_DELETED)
       {
         array[1] = GetStr(MSG_FROMTO);
         array[7] = GetStr(MSG_DATE_SNTRCVD);
@@ -3037,7 +3066,7 @@ struct MA_ClassData *MA_New(void)
                      MUIA_NList_DragType            , MUIV_NList_DragType_Default,
                      MUIA_NList_MultiSelect         , MUIV_NList_MultiSelect_Default,
                      MUIA_NList_CompareHook2        , &MA_LV_Cmp2Hook,
-                     MUIA_NList_DisplayHook         , &MA_LV_DspFuncHook,
+                     MUIA_NList_DisplayHook2        , &MA_LV_DspFuncHook,
                      MUIA_NList_AutoVisible         , TRUE,
                      MUIA_NList_Title               , TRUE,
                      MUIA_NList_TitleSeparator      , TRUE,
