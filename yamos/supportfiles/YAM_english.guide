@@ -676,9 +676,9 @@ Project/Check Version
 
 Fetches information about the newest version of YAM from the YAM homepage.
 Make sure that you are online before calling this function. YAM then tells
-you  whether there is an update for your version. The button [To Homepage]
-will then start an  @{" ARexx script " LINK "CO13" 0} which connects your browser to the YAM
-homepage.
+you  whether there  is  an update  for your  version.  The  button  [Visit
+Homepage]  will  then start an @{" ARexx script " LINK "CO13" 0} which connects your browser
+to the YAM homepage.
 
 
 Project/Show last message
