@@ -1,6 +1,6 @@
 @DATABASE YAM.guide
 @MASTER yamdev:YAM_e.guide
-@$VER: YAM.guide 2.3 (1.5.2001)
+@$VER: YAM.guide 2.3 (1.6.2001)
 @INDEX "Index"
 
 @NODE "Main" "YAM - English documentation"
@@ -10,8 +10,8 @@
               Y A M    (Yet Another Mailer)   VERSION 2.3
              =============================================@{ub}
 
-                        © 2000 by Marcel Beck
-
+                      © 1995-2000 by Marcel Beck
+                 © 2000-2001 by YAM Open Source Team
 
      @{" Introduction     " LINK "INTR" 0} - About YAM
      @{" Requirements     " LINK "REQS" 0} - System requirements and software needed
@@ -104,7 +104,7 @@ advertising are just a few of the possible applications of the filters.
 Support  for  @{"PGP" LINK "PGP" 0}  encryption  and signing of messages as well as read and
 receive authentication.
 
-built-in support  for  UUencode  and @{"MIME" LINK "MIME" 0} for sending and receiving binary
+Built-in support  for  UUencode  and @{"MIME" LINK "MIME" 0} for sending and receiving binary
 data and automatic recognition of over 20 datatypes.
 
 Event-sensitive starting of @{"macros" LINK "CO13" 0} and comprehensive @{"Arexx" LINK "REXX" 0} support.
@@ -2244,6 +2244,19 @@ If this option is set to 'Y', YAM jumps to the first new or unread message
 whenever you select a folder.
 
   Example:  JumpToNewMsg = N
+
+AskJumpUnread
+If  this  option  is  set to 'N', YAM won't ask if you want to jump to the
+next  folder  with unread messages, when at the last message and selecting
+'Next unread message' in the menu.
+
+  Example:  AskJumpUnread = N
+
+WarnSubject
+If  this  option  is  set  to 'N', YAM won't warn you if you try to send a
+message without a subject.
+
+  Example:  WarnSubject = N
 
 PrinterCheck
 YAM does some printer checking before printing a message. This test can be
@@ -4565,12 +4578,13 @@ have set up a home page in the world wide web:
 If  you  want to discuss YAM-related issues with other users, you can join
 the YAM mailing list.
 
-Just send an empty e-mail to YAMML-subscribe\@egroups.com
+Just send an empty e-mail to YAMML-subscribe\@yahoogroups.com
 
 You can send me suggestions, questions, criticism, bug reports etc. at:
 
                     support\@YAM.ch
                     http://www.YAM.ch/contact.html
+                    http://sourceforge.net/projects/yamos
                     http://marcel.buz.ch
 
 or failing that, by conventional mail at:
@@ -4585,8 +4599,20 @@ or failing that, by conventional mail at:
 
 CREDITS
 
-At  this  point I would like to thank the following people who contributed
-substantially to the development of YAM:
+The following YAM Open Source Team members contributed to YAM 2.3:
+
+Nicholai Benalal 
+Matthias Bethke
+Christian Hattemer
+Jens Langner
+Jacob Laursen
+Emmanuel Lesueur (MorphOS port)
+Gunther Nikl
+Jörg Strohmayer
+Dirk Stöcker
+
+Marcel Beck,  the  author  of  YAM 1.0 - 2.2,  would  like  to  thank  the
+following  people who contributed substantially to the development of YAM:
 
 Beta-testers:
 
@@ -4611,7 +4637,7 @@ Programmers:
 
         Stefan Stuntz        (MUI)
         Allan Odgaard        (TextEditor.mcc, BetterString.mcc)
-        Benny Kjaer Nielsen  (Toolbar.mcc)
+        Benny Kjær Nielsen   (Toolbar.mcc)
         Marcin Orlowski      (Flexcat)
         Gilles Masson        (NList.mcc)
         Klaus Melchior       (Listtree.mcc)
