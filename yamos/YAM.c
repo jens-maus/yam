@@ -75,7 +75,7 @@ BOOL yamFirst = TRUE, yamLast = FALSE;
 
 struct Global *G;
 
-///
+
 /// Timer Class
 struct TC_Data
 {
