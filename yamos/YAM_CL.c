@@ -52,6 +52,8 @@ struct MUI_CustomClass *CL_DDList;
 struct MUI_CustomClass *CL_MainWin;
 struct MUI_CustomClass *CL_PageList;
 
+
+/// BC_Dispatcher (BodyChunk)
 /*** BC_Dispatcher (BodyChunk) - Subclass of BodyChunk, can load images from files ***/
 DISPATCHERPROTO(BC_Dispatcher)
 {
@@ -121,6 +123,8 @@ DISPATCHERPROTO(BC_Dispatcher)
    return DoSuperMethodA(cl, obj, msg);
 }
 
+///
+/// WS_Dispatcher (Recipient String)
 /*** WS_Dispatcher (Recipient String) - Subclass of Betterstring, handles alias
      auto-completion, drag&drop from address book ***/
 DISPATCHERPROTO(WS_Dispatcher)
@@ -236,6 +240,8 @@ DISPATCHERPROTO(WS_Dispatcher)
 
 }
 
+///
+/// WL_Dispatcher (Attachment List)
 /*** WL_Dispatcher (Attachment List) - Subclass of List, adds Drag&Drop from message list ***/
 DISPATCHERPROTO(WL_Dispatcher)
 {
@@ -280,6 +286,8 @@ DISPATCHERPROTO(WL_Dispatcher)
    return DoSuperMethodA(cl, obj, msg);
 }
 
+///
+/// FL_Dispatcher (Folder NListtree)
 /*** FL_Dispatcher (Folder NListtree) - Subclass of NList, adds Drag&Drop from message list ***/
 DISPATCHERPROTO(FL_Dispatcher)
 {
@@ -330,6 +338,8 @@ DISPATCHERPROTO(FL_Dispatcher)
    return DoSuperMethodA(cl,obj,msg);
 }
 
+///
+/// ML_Dispatcher (Mail NListview)
 /*** ML_Dispatcher (Mail NListview) - Subclass of NList, adds ContextMenuBuild to Message List ***/
 DISPATCHERPROTO(ML_Dispatcher)
 {
@@ -348,6 +358,8 @@ DISPATCHERPROTO(ML_Dispatcher)
    return DoSuperMethodA(cl,obj,msg);
 }
 
+///
+/// EL_Dispatcher (Member List)
 /*** EL_Dispatcher (Member List) - Subclass of List, adds Drag&Drop from address book window ***/
 DISPATCHERPROTO(EL_Dispatcher)
 {
@@ -373,6 +385,8 @@ DISPATCHERPROTO(EL_Dispatcher)
    return DoSuperMethodA(cl,obj,msg);
 }
 
+///
+/// AL_Dispatcher (Address book NListtree)
 /*** AL_Dispatcher (Address book NListtree) -
      Subclass of Listtree, supports inline images and Drag&Drop from message list ***/
 DISPATCHERPROTO(AL_Dispatcher)
@@ -441,6 +455,9 @@ DISPATCHERPROTO(AL_Dispatcher)
    return DoSuperMethodA(cl,obj,msg);
 }
 
+///
+/// MW_Dispatcher (Main Window)
+
 struct MUIP_MainWindow_CloseWindow { ULONG MethodID; APTR Window; };
 
 /*** MW_Dispatcher (Main Window) - Subclass of Windows, used to dispose subwindows on exit ***/
@@ -459,6 +476,8 @@ DISPATCHERPROTO(MW_Dispatcher)
    return 0;
 }
 
+///
+/// TE_Dispatcher (Text Editor)
 /*** TE_Dispatcher (Text Editor) - Subclass of Texteditor, adds
      error requester, Drag&Drop capabilities and multi-color support ***/
 DISPATCHERPROTO(TE_Dispatcher)
@@ -521,6 +540,8 @@ DISPATCHERPROTO(TE_Dispatcher)
    return DoSuperMethodA(cl, obj, msg);
 }
 
+///
+/// PL_Dispatcher (Config Window Page List)
 /*** PL_Dispatcher (Config Window Page List) - Subclass of List, adds small images to configuration menu ***/
 DISPATCHERPROTO(PL_Dispatcher)
 {
@@ -577,6 +598,9 @@ DISPATCHERPROTO(PL_Dispatcher)
    return DoSuperMethodA(cl, obj, msg);
 }
 
+///
+
+/// ExitClasses()
 /*** ExitClasses - Remove custom MUI classes ***/
 void ExitClasses(void)
 {
@@ -592,6 +616,8 @@ void ExitClasses(void)
    if (CL_AttachList ) MUI_DeleteCustomClass(CL_AttachList );
 }
 
+///
+/// InitClasses()
 /*** InitClasses - Initialize custom MUI classes ***/
 BOOL InitClasses(void)
 {
@@ -609,3 +635,4 @@ BOOL InitClasses(void)
    return (BOOL)(CL_AttachList && CL_DDList && CL_DDString && CL_AddressList && CL_FolderList && CL_MailList &&
                  CL_BodyChunk && CL_TextEditor && CL_MainWin && CL_PageList);
 }
+///

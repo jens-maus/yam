@@ -387,3 +387,8 @@
       seems to get a hobby of me :-)
     * YAM_FO.c and YAM_EA.c are directly compilable now.
 
+2001-05-21  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * put back all fold/unfold statements (///) for our beloved GoldED users :)
+      This will break Dirks plan to remove all "//" comments, but I think that`s
+      acceptable. ;)

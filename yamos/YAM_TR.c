@@ -59,7 +59,6 @@ static void TR_CompleteMsgList(void);
 
 /// TR_IsOnline
 //  Checks if there's an online connection
-
 BOOL TR_IsOnline(void)
 {
    struct Library *socketbase;
@@ -85,6 +84,7 @@ BOOL TR_IsOnline(void)
    }
    return isonline;
 }
+
 ///
 /// TR_CloseTCPIP
 //  Closes bsdsocket library
@@ -93,6 +93,7 @@ void TR_CloseTCPIP(void)
    if (SocketBase) CloseLibrary(SocketBase);
    SocketBase = NULL;
 }
+
 ///
 /// TR_OpenTCPIP
 //  Opens bsdsocket.library
@@ -1690,6 +1691,8 @@ static void TR_NewMailAlert(void)
    if (C->NotifyType & NOTI_SOUND) PlaySound(C->NotifySound);
 }
 
+///
+/// TR_PreccessGETFunc
 /*** TR_ProcessGETFunc - Downloads messages from a POP3 server ***/
 HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 {
@@ -1772,6 +1775,7 @@ HOOKPROTONHNO(TR_PauseFunc, void, int *arg)
    TR_CompleteMsgList();
 }
 MakeStaticHook(TR_PauseHook, TR_PauseFunc);
+///
 
 /*** GUI ***/
 /// TR_LV_DspFunc

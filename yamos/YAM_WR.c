@@ -95,7 +95,7 @@ static char FailedAlias[SIZE_NAME];
 /**************************************************************************/
 
 /*** Translate aliases ***/
-
+/// WR_ResolveName
 /*** WR_ResolveName - Looks for an alias, email address or name in the address book ***/
 int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
 {
@@ -173,7 +173,6 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
    return 0;
 }
 
-
 ///
 /// WR_ExpandAddresses
 //  Expands aliases and names in a recipient field to valid e-mail addresses
@@ -202,6 +201,8 @@ char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single)
    return adr;
 }
 
+///
+/// WR_VerifyAutoFunc
 /*** WR_VerifyAutoFunc - Checks recipient field (user pressed return key) ***/
 HOOKPROTONHNO(WR_VerifyAutoFunc, void, int *arg)
 {
@@ -219,6 +220,8 @@ HOOKPROTONHNO(WR_VerifyAutoFunc, void, int *arg)
 }
 MakeHook(WR_VerifyAutoHook, WR_VerifyAutoFunc);
 
+///
+/// WR_VerifyManualFunc
 /*** WR_VerifyManualFunc - Checks and expands recipient field (user clicked gadget) ***/
 HOOKPROTONHNO(WR_VerifyManualFunc, void, int *arg)
 {
@@ -232,9 +235,10 @@ HOOKPROTONHNO(WR_VerifyManualFunc, void, int *arg)
    }
 }
 MakeHook(WR_VerifyManualHook, WR_VerifyManualFunc);
+///
 
 /*** Attachments list ***/
-
+/// WR_GetFileEntry
 /*** WR_GetFileEntry -Fills form with data from selected list entry ***/
 HOOKPROTONHNO(WR_GetFileEntry, void, int *arg)
 {
@@ -253,6 +257,8 @@ HOOKPROTONHNO(WR_GetFileEntry, void, int *arg)
 }
 MakeHook(WR_GetFileEntryHook, WR_GetFileEntry);
 
+///
+/// WR_PutFileEntry
 /*** WR_PutFileEntry - Fills form data into selected list entry ***/
 HOOKPROTONHNO(WR_PutFileEntry, void, int *arg)
 {
@@ -273,6 +279,8 @@ HOOKPROTONHNO(WR_PutFileEntry, void, int *arg)
 }
 MakeHook(WR_PutFileEntryHook, WR_PutFileEntry);
 
+///
+/// WR_AddFileToList
 /*** WR_AddFileToList - Adds a file to the attachment list, gets its size and type ***/
 BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 {
@@ -327,7 +335,6 @@ static char *GetDateTime(void)
    return dt;  
 }
 
-
 ///
 /// NewID
 //  Creates a unique id, used for Message-ID header field
@@ -342,7 +349,6 @@ static char *NewID(BOOL is_msgid)
    else          sprintf(idbuf, "%ld.%ld", FindTask(NULL), ++ctr);
    return idbuf;
 }
-
 
 ///
 /// WhichEncodingForFile
@@ -381,7 +387,6 @@ static enum Encoding WhichEncodingForFile(char *fname, char *ctype)
    return ENC_NONE;
 }
 
-
 ///
 /// NewPart
 //  Initializes a new message part
@@ -395,7 +400,6 @@ struct WritePart *NewPart(int winnum)
 //   p->Name = NULL; // redundant due to calloc() -msbethke
    return p;
 }
-
 
 ///
 /// BuildPartsList
@@ -964,6 +968,8 @@ static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
    fprintf(fh, "\n--%s--\n\n", boundary);
 }
 
+///
+/// SetDefaultSecurity
 static void SetDefaultSecurity(struct Compose *comp)
 {
    STRPTR CheckThese[3],buf;
@@ -1448,6 +1454,8 @@ void WR_Cleanup(int winnum)
    }
 }
 
+///
+/// WR_CancelFunc
 /*** WR_CancelFunc - User clicked the Cancel button ***/
 HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
 {
@@ -1472,6 +1480,8 @@ HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
 }
 MakeHook(WR_CancelHook, WR_CancelFunc);
 
+///
+/// WR_SaveAsFunc
 /*** WR_SaveAsFunc - Saves contents of internal editor to a file ***/
 HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
 {
@@ -1488,6 +1498,8 @@ HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
 }
 MakeHook(WR_SaveAsHook, WR_SaveAsFunc);
 
+///
+/// WR_Edit
 /*** WR_Edit - Launches external editor with message text ***/
 HOOKPROTONHNO(WR_Edit, void, int *arg)
 {
@@ -1509,6 +1521,8 @@ HOOKPROTONHNO(WR_Edit, void, int *arg)
 }
 MakeHook(WR_EditHook, WR_Edit);
 
+///
+/// WR_AddFileFunc
 /*** WR_AddFileFunc - Adds one or more files to the attachment list ***/
 HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
 {
@@ -1530,6 +1544,8 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
 }
 MakeHook(WR_AddFileHook, WR_AddFileFunc);
 
+///
+/// WR_AddArchiveFunc
 /*** WR_AddArchiveFunc - Creates an archive of one or more files and adds it to the attachment list ***/
 HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
 {
@@ -1600,6 +1616,8 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
 }
 MakeHook(WR_AddArchiveHook, WR_AddArchiveFunc);
 
+///
+/// WR_DisplayFile
 /*** WR_DisplayFile - Displays an attached file using a MIME viewer ***/
 HOOKPROTONHNO(WR_DisplayFile, void, int *arg)
 {
@@ -1610,6 +1628,8 @@ HOOKPROTONHNO(WR_DisplayFile, void, int *arg)
 }
 MakeHook(WR_DisplayFileHook, WR_DisplayFile);
 
+///
+/// WR_ChangeSignatureFunc
 /*** WR_ChangeSignatureFunc - Changes the current signature ***/
 HOOKPROTONHNO(WR_ChangeSignatureFunc, void, int *arg)
 {
@@ -1636,7 +1656,7 @@ HOOKPROTONHNO(WR_ChangeSignatureFunc, void, int *arg)
    }
 }
 MakeHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
-
+///
 
 /*** Menus ***/
 /// WR_TransformText
@@ -1681,6 +1701,8 @@ static char *WR_TransformText(char *source, int mode, char *qtext)
    return dest;
 }
 
+///
+/// WR_InsertSeparator
 /*** WR_InsertSeparator - Inserts a separator bar at the cursor position ***/
 HOOKPROTONHNO(WR_InsertSeparatorFunc, void, int *arg)
 {
@@ -1691,6 +1713,8 @@ HOOKPROTONHNO(WR_InsertSeparatorFunc, void, int *arg)
 }
 MakeHook(WR_InsertSeparatorHook, WR_InsertSeparatorFunc);
 
+///
+/// WR_EditorCmd
 /*** WR_EditorCmd - Inserts file or clipboard into editor ***/
 HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 {
@@ -1729,6 +1753,8 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 }
 MakeHook(WR_EditorCmdHook, WR_EditorCmd);
 
+///
+/// WR_AddClipboardFunc
 /*** WR_AddClipboardFunc - Adds contents of clipboard as attachment ***/
 HOOKPROTONHNO(WR_AddClipboardFunc, void, int *arg)
 {
@@ -1745,6 +1771,8 @@ HOOKPROTONHNO(WR_AddClipboardFunc, void, int *arg)
 }
 MakeHook(WR_AddClipboardHook, WR_AddClipboardFunc);
 
+///
+/// WR_AddPGPKeyFunc
 /*** WR_AddPGPKeyFunc - Adds ASCII version of user's public PGP key as attachment ***/
 HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
 {
@@ -1760,6 +1788,7 @@ HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
    else ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid, NULL);
 }
 MakeHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
+///
 
 /*** Open ***/
 /// WR_Open
@@ -1794,6 +1823,8 @@ int WR_Open(int winnum, BOOL bounce)
    return winnum;
 }
 
+///
+/// WR_SetupOldMail
 /*** WR_SetupOldMail - When editing a message, sets write window options to old values ***/
 void WR_SetupOldMail(int winnum)
 {
@@ -1822,6 +1853,8 @@ void WR_SetupOldMail(int winnum)
       }
 }
 
+///
+/// WR_UpdateTitleFunc
 /*** WR_UpdateTitleFunc - Shows cursor coordinates ***/
 HOOKPROTONHNO(WR_UpdateWTitleFunc, void, int *arg)
 {
@@ -1832,10 +1865,12 @@ HOOKPROTONHNO(WR_UpdateWTitleFunc, void, int *arg)
    set(wr->GUI.TX_POSI, MUIA_Text_Contents, wr->WTitle);
 }
 MakeHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
+///
 
 /*** Hooks ***/
 
-/*** WR_AppFunc - Handles Drag&Drop ***/
+/// WR_App
+/*** WR_App - Handles Drag&Drop ***/
 void WR_App(int winnum, struct AppMessage *amsg)
 {
    struct WBArg *ap;
@@ -1872,6 +1907,8 @@ void WR_App(int winnum, struct AppMessage *amsg)
    }
 }
 
+///
+/// WR_AppFunc
 HOOKPROTONHNO(WR_AppFunc, LONG, ULONG *arg)
 {
    WR_App((int)arg[1],  (struct AppMessage *)arg[0]);
@@ -1879,6 +1916,8 @@ HOOKPROTONHNO(WR_AppFunc, LONG, ULONG *arg)
 }
 MakeHook(WR_AppHook, WR_AppFunc);
 
+///
+/// WR_LV_ConFunc
 /*** WR_LV_ConFunc - Attachment listview construct hook ***/
 HOOKPROTONHNO(WR_LV_ConFunc, struct Attach *, struct Attach *attach)
 {
@@ -1888,6 +1927,8 @@ HOOKPROTONHNO(WR_LV_ConFunc, struct Attach *, struct Attach *attach)
 }
 MakeHook(WR_LV_ConFuncHook, WR_LV_ConFunc);
 
+///
+/// WR_LV_DspFunc
 /*** WR_LV_DspFunc - Attachment listview display hook ***/
 HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
 {

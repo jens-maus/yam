@@ -66,20 +66,14 @@ struct rxs_stemnode
    char *value;
 };
 
-
 extern struct ExecBase *SysBase;
 extern struct DosLibrary *DOSBase;
 extern struct RxsLib *RexxSysBase;
 
 void (*ARexxResultHook)( struct RexxHost *, struct RexxMsg * ) = NULL;
 
-
-
-void ReplyRexxCommand(
-   struct RexxMsg *rexxmessage,
-   long        primary,
-   long        secondary,
-   char        *result )
+/// ReplyRexxCommand
+void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary, char *result)
 {
    if( rexxmessage->rm_Action & RXFF_RESULT )
    {
@@ -117,7 +111,8 @@ void ReplyRexxCommand(
    ReplyMsg( (struct Message *) rexxmessage );
 }
 
-
+///
+/// FreeRexxCommand
 void FreeRexxCommand( struct RexxMsg *rexxmessage )
 {
    if( !rexxmessage->rm_Result1 && rexxmessage->rm_Result2 )
@@ -136,7 +131,8 @@ void FreeRexxCommand( struct RexxMsg *rexxmessage )
    DeleteRexxMsg( rexxmessage );
 }
 
-
+///
+/// CreateRexxCommand
 struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
 {
    struct RexxMsg *rexx_command_message;
@@ -161,7 +157,8 @@ struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
    return( rexx_command_message );
 }
 
-
+///
+/// CommandToRexx
 struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rexx_command_message )
 {
    struct MsgPort *rexxport;
@@ -182,7 +179,8 @@ struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rexx_comma
    return( rexx_command_message );
 }
 
-
+///
+/// SendRexxCommand
 struct RexxMsg *SendRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
 {
    struct RexxMsg *rcm;
@@ -193,7 +191,8 @@ struct RexxMsg *SendRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
       return NULL;
 }
 
-
+///
+/// CloseDownARexxHost
 void CloseDownARexxHost( struct RexxHost *host )
 {
    struct RexxMsg *rexxmsg;
@@ -239,7 +238,8 @@ void CloseDownARexxHost( struct RexxHost *host )
    FreeVec( host );
 }
 
-
+///
+/// SetupARexxHost
 struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
 {
    struct RexxHost *host;
@@ -293,9 +293,11 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    return( host );
 }
 
+///
 
 /* StateMachine für FindRXCommand() */
 
+/// scmp
 static char *scmp( char *inp, char *str )
 {
    while( *str && *inp )
@@ -306,6 +308,8 @@ static char *scmp( char *inp, char *str )
    return inp;
 }
 
+///
+/// find
 static int find( char *input )
 {
    struct arb_p_state *st = arb_p_state;
@@ -357,6 +361,8 @@ static int find( char *input )
    return st->cmd;
 }
 
+///
+/// FindRXCommand
 struct rxs_command *FindRXCommand( char *com )
 {
    int cmd;
@@ -369,7 +375,8 @@ struct rxs_command *FindRXCommand( char *com )
       return( rxs_commandlist + cmd );
 }
 
-
+///
+/// ParseRXCommand
 static struct rxs_command *ParseRXCommand( char **arg )
 {
    char com[256], *s, *t;
@@ -387,7 +394,8 @@ static struct rxs_command *ParseRXCommand( char **arg )
    return( FindRXCommand( com ) );
 }
 
-
+///
+/// CreateVAR
 static char *CreateVAR( struct rxs_stemnode *stem )
 {
    char *var;
@@ -415,7 +423,8 @@ static char *CreateVAR( struct rxs_stemnode *stem )
    return( var );
 }
 
-
+///
+/// new_stemnode
 static struct rxs_stemnode *new_stemnode( struct rxs_stemnode **first, struct rxs_stemnode **old )
 {
    struct rxs_stemnode *new;
@@ -440,7 +449,8 @@ static struct rxs_stemnode *new_stemnode( struct rxs_stemnode **first, struct rx
    return( new );
 }
 
-
+///
+/// free_stemlist
 static void free_stemlist( struct rxs_stemnode *first )
 {
    struct rxs_stemnode *next;
@@ -457,7 +467,8 @@ static void free_stemlist( struct rxs_stemnode *first )
    }
 }
 
-
+///
+/// StrDup
 char *StrDup( char *s )
 {
    char *t = AllocVec( strlen(s)+1, MEMF_ANY );
@@ -465,7 +476,8 @@ char *StrDup( char *s )
    return t;
 }
 
-
+///
+/// CreateSTEM
 static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray, char *stembase )
 {
    struct rxs_stemnode *first = NULL, *old = NULL, *new;
@@ -592,7 +604,8 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
    return( first );
 }
 
-
+///
+/// DoRXCommand
 void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
 {
    struct rxs_command *rxc = 0;
@@ -817,7 +830,8 @@ drc_cleanup:
    if( argb ) FreeVec( argb );
 }
 
-
+///
+/// ARexxDispatch
 void ARexxDispatch( struct RexxHost *host )
 {
    struct RexxMsg *rexxmsg;
@@ -866,4 +880,4 @@ void ARexxDispatch( struct RexxHost *host )
       }
    }
 }
-
+///

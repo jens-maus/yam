@@ -29,6 +29,7 @@
 #include "SDI_compiler.h"
 #include "YAM_md5.h"
 
+/// MD5Init
 void MD5Init(struct MD5Context *p)
 {
    /* Load magic initialization constants. */
@@ -41,6 +42,8 @@ void MD5Init(struct MD5Context *p)
    p->count[0] = 0;
    p->count[1] = 0;
 }
+
+///
 
 #define S11 7
 #define S12 12
@@ -59,6 +62,7 @@ void MD5Init(struct MD5Context *p)
 #define S43 15
 #define S44 21
 
+/// encode()
 /* Encodes input (unsigned long) into output (unsigned char). Assumes len is
    a multiple of 4. */
 INLINE void encode(unsigned char *output, unsigned long *input, unsigned long len)
@@ -74,6 +78,8 @@ INLINE void encode(unsigned char *output, unsigned long *input, unsigned long le
    }
 }
 
+///
+/// decode()
 /* Decodes input (unsigned char) into output (unsigned long). Assumes len is
    a multiple of 4. */
 INLINE void decode(unsigned long *output, unsigned char *input, unsigned long len)
@@ -82,14 +88,18 @@ INLINE void decode(unsigned long *output, unsigned char *input, unsigned long le
 
    for (i = 0, j = 0; j < len; i++, j += 4)
       output[i] = ((unsigned long)input[j]) | (((unsigned long)input[j + 1]) << 8) |
-	(((unsigned long)input[j + 2]) << 16) | (((unsigned long)input[j + 3]) << 24);
+  (((unsigned long)input[j + 2]) << 16) | (((unsigned long)input[j + 3]) << 24);
 }
 
+///
+/// rotate_left()
 INLINE unsigned int rotate_left(unsigned long x, unsigned long n)
 {
    return (x << n) | (x >> (32 - n));
 }
 
+///
+/// MD5_F/G/H/I
 /* F, G, H and I are basic MD5 functions. */
 
 INLINE unsigned int MD5_F(unsigned long x, unsigned long y, unsigned long z)
@@ -112,37 +122,41 @@ INLINE unsigned int MD5_I(unsigned long x, unsigned long y, unsigned long z)
    return y ^ (x | ~z);
 }
 
+///
+/// MD5_FF/GG/HH/II
 /* FF, GG, HH, and II transformations for rounds 1, 2, 3, and 4.
    Rotation is separate from addition to prevent recomputation. */
 
 INLINE void MD5_FF(unsigned long* a, unsigned long b, unsigned long c, unsigned long d, unsigned long x,
-			    unsigned long s, unsigned long ac)
+          unsigned long s, unsigned long ac)
 {
    *a += MD5_F(b, c, d) + x + ac;
    *a = rotate_left(*a, s) + b;
 }
 
 INLINE void MD5_GG(unsigned long* a, unsigned long b, unsigned long c, unsigned long d, unsigned long x,
-			    unsigned long s, unsigned long ac)
+          unsigned long s, unsigned long ac)
 {
    *a += MD5_G(b, c, d) + x + ac;
    *a = rotate_left(*a, s) + b;
 }
 
 INLINE void MD5_HH(unsigned long* a, unsigned long b, unsigned long c, unsigned long d, unsigned long x,
-			    unsigned long s, unsigned long ac)
+          unsigned long s, unsigned long ac)
 {
    *a += MD5_H(b, c, d) + x + ac;
    *a = rotate_left(*a, s) + b;
 }
 
 INLINE void MD5_II(unsigned long* a, unsigned long b, unsigned long c, unsigned long d, unsigned long x,
-			    unsigned long s, unsigned long ac)
+          unsigned long s, unsigned long ac)
 {
    *a += MD5_I(b, c, d) + x + ac;
    *a = rotate_left(*a, s) + b;
 }
 
+///
+/// transform()
 /* MD5 basic transformation. Transforms state based on block. */
 static void transform(struct MD5Context *p, unsigned char block[64])
 {
@@ -231,6 +245,8 @@ static void transform(struct MD5Context *p, unsigned char block[64])
    memset ( (unsigned char *) x, 0, sizeof(x));
 }
 
+///
+/// MD5Update()
 void MD5Update(struct MD5Context *p, unsigned char *input, unsigned int input_length)
 {
    unsigned long input_index, buffer_index;
@@ -256,8 +272,8 @@ void MD5Update(struct MD5Context *p, unsigned char *input, unsigned int input_le
 
       /* now, transform each 64-byte piece of the input, bypassing the buffer */
       for (input_index = buffer_space; input_index + 63 < input_length;
-	   input_index += 64)
-	 transform(p, input + input_index);
+     input_index += 64)
+   transform(p, input + input_index);
 
       buffer_index = 0;  /* so we can buffer remaining */
    }
@@ -268,6 +284,8 @@ void MD5Update(struct MD5Context *p, unsigned char *input, unsigned int input_le
    memcpy(p->buffer + buffer_index, input + input_index, input_length - input_index);
 }
 
+///
+/// MD5Final()
 void MD5Final(unsigned char digest[16], struct MD5Context *p)
 {
    static unsigned char PADDING[64]={
@@ -296,6 +314,8 @@ void MD5Final(unsigned char digest[16], struct MD5Context *p)
    memset(p->buffer, 0, sizeof(p->buffer));
 }
 
+///
+/// hmac_md5()
 void hmac_md5(unsigned char * text, int text_len, unsigned char *key, int key_len, unsigned char digest[16])
 /* text     pointer to data stream */
 /* text_len length of data stream */
@@ -356,3 +376,4 @@ void hmac_md5(unsigned char * text, int text_len, unsigned char *key, int key_le
     MD5Update(&context, digest, 16);     /* then results of 1st hash */
     MD5Final(digest, &context);          /* finish up 2nd pass */
 }
+///

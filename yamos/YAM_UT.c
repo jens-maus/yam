@@ -73,6 +73,7 @@ struct PathNode {
    BPTR dir;
 };
 
+/// CloneWorkbenchPath
 static BPTR CloneWorkbenchPath(struct WBStartup *wbmsg)
 {
    BPTR path = 0;
@@ -82,36 +83,36 @@ static BPTR CloneWorkbenchPath(struct WBStartup *wbmsg)
    {
       if (((LONG)wbmsg->sm_Message.mn_ReplyPort->mp_Flags & PF_ACTION) == PA_SIGNAL)
       {
-	 struct Process *wbproc = wbmsg->sm_Message.mn_ReplyPort->mp_SigTask;
-	 if (wbproc->pr_Task.tc_Node.ln_Type == NT_PROCESS)
-	 {
-	    struct CommandLineInterface *cli = BADDR(wbproc->pr_CLI);
-	    if (cli)
-	    {
-	       BPTR *p = &path;
-	       BPTR dir = cli->cli_CommandDir;
-	       while (dir)
-	       {
-		  BPTR dir2;
-		  struct FileLock *lock = BADDR(dir);
-		  struct PathNode *node;
-		  dir = lock->fl_Link;
-		  dir2 = DupLock(lock->fl_Key);
-		  if (!dir2)
-		     break;
-		  node = AllocVec(8, MEMF_PUBLIC);
-		  if (!node)
-		  {
-		     UnLock(dir2);
-		     break;
-		  }
-		  node->next = 0;
-		  node->dir = dir2;
-		  *p = MKBADDR(node);
-		  p = &node->next; 
-	       }
-	    }
-	 }
+   struct Process *wbproc = wbmsg->sm_Message.mn_ReplyPort->mp_SigTask;
+   if (wbproc->pr_Task.tc_Node.ln_Type == NT_PROCESS)
+   {
+      struct CommandLineInterface *cli = BADDR(wbproc->pr_CLI);
+      if (cli)
+      {
+         BPTR *p = &path;
+         BPTR dir = cli->cli_CommandDir;
+         while (dir)
+         {
+      BPTR dir2;
+      struct FileLock *lock = BADDR(dir);
+      struct PathNode *node;
+      dir = lock->fl_Link;
+      dir2 = DupLock(lock->fl_Key);
+      if (!dir2)
+         break;
+      node = AllocVec(8, MEMF_PUBLIC);
+      if (!node)
+      {
+         UnLock(dir2);
+         break;
+      }
+      node->next = 0;
+      node->dir = dir2;
+      *p = MKBADDR(node);
+      p = &node->next; 
+         }
+      }
+   }
       }
    }
    Permit();
@@ -119,6 +120,8 @@ static BPTR CloneWorkbenchPath(struct WBStartup *wbmsg)
    return path;
 }
 
+///
+/// FreeWorkbenchPath
 static void FreeWorkbenchPath(BPTR path)
 {
    while (path)
@@ -129,6 +132,7 @@ static void FreeWorkbenchPath(BPTR path)
       FreeVec(node);
    }
 }
+///
 
 /*** Requesters ***/
 /// StringRequest
@@ -3099,29 +3103,29 @@ MakeHook(putCharHook, putCharFunc);
 
 void SPrintF(char *outstr, char *fmtstr, ...)
 {
-	struct Hook hook;
+  struct Hook hook;
 #ifdef __PPC__
-	va_list ap;
-	ULONG arg[32];
-	int args = 0, i;
+  va_list ap;
+  ULONG arg[32];
+  int args = 0, i;
 
-	for (i=0; fmtstr[i] != '\0'; i++) {
-		if (fmtstr[i] == '%' && fmtstr[i+1] != '%') args++;
-	}
+  for (i=0; fmtstr[i] != '\0'; i++) {
+    if (fmtstr[i] == '%' && fmtstr[i+1] != '%') args++;
+  }
 
-	va_start(ap, fmtstr);
-	for (i=0; i<args; i++) {
-		arg[i] = va_arg(ap, ULONG);
-	}
-	va_end(ap);
+  va_start(ap, fmtstr);
+  for (i=0; i<args; i++) {
+    arg[i] = va_arg(ap, ULONG);
+  }
+  va_end(ap);
 #endif
 
-	InitHook(&hook, putCharHook, outstr);
+  InitHook(&hook, putCharHook, outstr);
 
 #ifdef __PPC__
-	FormatString(G->Locale, fmtstr, &arg[0], &hook);
+  FormatString(G->Locale, fmtstr, &arg[0], &hook);
 #else
-	FormatString(G->Locale, fmtstr, &fmtstr+1, &hook);
+  FormatString(G->Locale, fmtstr, &fmtstr+1, &hook);
 #endif
 }
 ///

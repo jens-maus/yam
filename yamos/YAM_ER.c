@@ -47,6 +47,7 @@ static struct ER_ClassData *ER_New(void);
  Module: Error window
 ***************************************************************************/
 
+/// ER_NewError
 /*** ER_NewError - Adds a new error message and displays it ***/
 void ER_NewError(char *error, char *arg1, char *arg2)
 {
@@ -82,6 +83,8 @@ void ER_NewError(char *error, char *arg1, char *arg2)
    if (G->MA) set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
 }
 
+///
+/// ER_SelectFunc
 /*** ER_SelectFunc - Displays an earlier error message ***/
 HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
 {
@@ -92,6 +95,8 @@ HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
 }
 MakeHook(ER_SelectHook, ER_SelectFunc);
 
+///
+/// ER_CloseFunc
 /*** ER_CloseFunc - Closes error window ***/
 HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
 {
@@ -105,6 +110,9 @@ HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
 }
 MakeHook(ER_CloseHook, ER_CloseFunc);
 
+///
+
+/// ER_New
 /*** ER_New - Creates error window ***/
 static struct ER_ClassData *ER_New(void)
 {
@@ -155,3 +163,4 @@ static struct ER_ClassData *ER_New(void)
    }
    return NULL;
 }
+///

@@ -1066,6 +1066,8 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    MA_ChangeSelectedFunc();
 }
 
+///
+/// MA_DeleteMessageFunc
 HOOKPROTONHNO(MA_DeleteMessageFunc, void, int *arg)
 {
    BOOL delatonce = arg[0] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
@@ -1198,6 +1200,8 @@ void MA_PopNow(int mode, int pop)
    TR_GetMailFromNextPOP(TRUE, pop, mode);
 }
 
+///
+/// MA_PopNowFunc
 HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
 {
    ULONG qual = (ULONG)arg[2];
@@ -1409,6 +1413,8 @@ BOOL MA_Send(int sendpos)
    return success;
 }
 
+///
+/// MA_SendFunc
 HOOKPROTONHNO(MA_SendFunc, void, int *arg)
 {
    MA_Send(arg[0]);
@@ -1435,6 +1441,8 @@ void MA_SetStatusTo(int status)
    }
 }
 
+///
+/// MA_SetStatusToFunc
 HOOKPROTONHNO(MA_SetStatusToFunc, void, int *arg)
 {
    MA_SetStatusTo(*arg);
@@ -1555,6 +1563,8 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
    return success;
 }
 
+///
+/// MA_ExportMessagesFunc
 HOOKPROTONHNO(MA_ExportMessagesFunc, void, int *arg)
 {
    MA_ExportMessages((BOOL)*arg, NULL, FALSE);
@@ -1588,6 +1598,8 @@ BOOL MA_ImportMessages(char *fname)
    return FALSE;
 }
 
+///
+/// MA_ImportMessagesFunc
 HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 {
    if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ImportMessages), 0, C->DetachDir, ""))
@@ -1855,6 +1867,7 @@ MakeHook(MA_CallRexxHook, MA_CallRexxFunc);
 
 /*** Hooks ***/
 
+/// PO_Window
 /*** PO_Window - Window hook for popup objects ***/
 HOOKPROTONH(PO_Window, void, Object *pop, Object *win)
 {
@@ -1862,6 +1875,8 @@ HOOKPROTONH(PO_Window, void, Object *pop, Object *win)
 }
 MakeHook(PO_WindowHook, PO_Window);
 
+///
+/// MA_LV_FConFunc
 /*** MA_LV_FConFunc - Folder listview construction hook ***/
 HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMessage *msg)
 {
@@ -1876,6 +1891,8 @@ HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMe
 }
 MakeHook(MA_LV_FConHook, MA_LV_FConFunc);
 
+///
+/// MA_LB_FDesFunc
 /*** MA_LV_FDesFunc - Folder listview destruction hook ***/
 HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
 {
@@ -1885,6 +1902,8 @@ HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
 }
 MakeHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 
+///
+/// MA_LV_DspFunc
 /*** MA_LV_DspFunc - Message listview display hook ***/
 HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
 {
@@ -2200,6 +2219,7 @@ void MA_MakeMAFormat(APTR lv)
 }
 
 ///
+
 /// MA_New
 //  Creates main window
 struct MA_ClassData *MA_New(void)

@@ -220,6 +220,8 @@ void AB_InsertAddress(APTR string, char *alias, char *name, char *address)
    }
 }
 
+///
+/// AB_FromAddrBook
 /*** AB_FromAddrBook - Inserts an address book entry into a recipient string ***/
 HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
 {
@@ -417,6 +419,8 @@ BOOL AB_SaveTree(char *fname)
    return FALSE;
 }
 
+///
+/// AB_EditFunc
 /*** AB_EditFunc - Modifies selected address book entry ***/
 HOOKPROTONHNONP(AB_EditFunc, void)
 {
@@ -430,6 +434,8 @@ HOOKPROTONHNONP(AB_EditFunc, void)
 }
 MakeHook(AB_EditHook, AB_EditFunc);
 
+///
+/// AB_DoubleClick
 /*** AB_DoubleClick - User double-clicked in the address book ***/
 HOOKPROTONHNONP(AB_DoubleClick, void)
 {
@@ -453,6 +459,8 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
 }
 MakeHook(AB_DoubleClickHook, AB_DoubleClick);
 
+///
+/// AB_Sort
 /*** AB_Sort - Sorts the address book ***/
 HOOKPROTONHNO(AB_Sort, void, int *arg)
 {
@@ -468,6 +476,8 @@ HOOKPROTONHNO(AB_Sort, void, int *arg)
 }
 MakeHook(AB_SortHook, AB_Sort);
 
+///
+/// AB_NewABookFunc
 /*** AB_NewABookFunc - Clears entire address book ***/
 HOOKPROTONHNONP(AB_NewABookFunc, void)
 {
@@ -476,6 +486,8 @@ HOOKPROTONHNONP(AB_NewABookFunc, void)
 }
 MakeHook(AB_NewABookHook, AB_NewABookFunc);
 
+///
+/// AB_OpenABookFunc
 /*** AB_OpenABookFunc - Loads selected address book ***/
 HOOKPROTONHNONP(AB_OpenABookFunc, void)
 {
@@ -487,6 +499,8 @@ HOOKPROTONHNONP(AB_OpenABookFunc, void)
 }
 MakeHook(AB_OpenABookHook, AB_OpenABookFunc);
 
+///
+/// AB_AppendABookFunc
 /*** AB_AppendABookFunc - Appends selected address book ***/
 HOOKPROTONHNONP(AB_AppendABookFunc, void)
 {
@@ -499,6 +513,8 @@ HOOKPROTONHNONP(AB_AppendABookFunc, void)
 }
 MakeHook(AB_AppendABookHook, AB_AppendABookFunc);
 
+///
+/// AB_SaveABookFunc
 /*** AB_SaveABookFunc - Saves address book using the default name ***/
 HOOKPROTONHNONP(AB_SaveABookFunc, void)
 {
@@ -509,6 +525,8 @@ HOOKPROTONHNONP(AB_SaveABookFunc, void)
 }
 MakeHook(AB_SaveABookHook, AB_SaveABookFunc);
 
+///
+/// AB_SaveABookAsFunc
 /*** AB_SaveABookAsFunc - Saves address book under a different name ***/
 HOOKPROTONHNONP(AB_SaveABookAsFunc, void)
 {
@@ -602,6 +620,8 @@ static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *pr
       else break;
 }
 
+///
+/// AB_PrintABookFunc
 /*** AB_PrintABookFunc - Prints the entire address book in compact or detailed format ***/
 HOOKPROTONHNONP(AB_PrintABookFunc, void)
 {
@@ -625,6 +645,8 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
 }
 MakeHook(AB_PrintABookHook, AB_PrintABookFunc);
 
+///
+/// AB_PrintFunc
 /*** AB_PrintFunc - Prints selected address book entry in detailed format ***/
 HOOKPROTONHNONP(AB_PrintFunc, void)
 {
@@ -646,6 +668,8 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
 }
 MakeHook(AB_PrintHook, AB_PrintFunc);
 
+///
+/// AB_AddEntryFunc
 /*** AB_AddEntryFunc - Add a new entry to the address book ***/
 HOOKPROTONHNO(AB_AddEntryFunc, void, int *arg)
 {
@@ -653,6 +677,8 @@ HOOKPROTONHNO(AB_AddEntryFunc, void, int *arg)
 }
 MakeHook(AB_AddEntryHook, AB_AddEntryFunc);
 
+///
+/// AB_DeleteFunc
 /*** AB_DeleteFunc - Deletes selected address book entry ***/
 HOOKPROTONHNONP(AB_DeleteFunc, void)
 {
@@ -661,6 +687,8 @@ HOOKPROTONHNONP(AB_DeleteFunc, void)
 }
 MakeHook(AB_DeleteHook, AB_DeleteFunc);
 
+///
+/// AB_DuplicateFunc
 /*** AB_DuplicateFunc - Duplicates selected address book entry ***/
 HOOKPROTONHNONP(AB_DuplicateFunc, void)
 {
@@ -741,6 +769,8 @@ BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, i
    return TRUE;
 }
 
+///
+/// AB_FindFunc
 /*** AB_FindFunc - Searches address book ***/
 HOOKPROTONHNONP(AB_FindFunc, void)
 {
@@ -755,6 +785,8 @@ HOOKPROTONHNONP(AB_FindFunc, void)
 }
 MakeHook(AB_FindHook, AB_FindFunc);
 
+///
+/// AB_OpenFunc
 /*** AB_OpenFunc - Open address book window ***/
 HOOKPROTONHNO(AB_OpenFunc, void, int *arg)
 {
@@ -778,6 +810,8 @@ HOOKPROTONHNO(AB_OpenFunc, void, int *arg)
 }
 MakeHook(AB_OpenHook, AB_OpenFunc);
 
+///
+/// AB_Close
 /*** AB_Close - Closes address book window ***/
 HOOKPROTONHNONP(AB_Close, void)
 {
@@ -792,6 +826,8 @@ HOOKPROTONHNONP(AB_Close, void)
 }
 MakeHook(AB_CloseHook, AB_Close);
 
+///
+/// AB_LV_ConFunc
 /*** AB_LV_ConFunc - Address book listview construction hook ***/
 HOOKPROTONHNO(AB_LV_ConFunc, struct ABEntry *, struct MUIP_NListtree_ConstructMessage *msg)
 {
@@ -809,6 +845,8 @@ HOOKPROTONHNO(AB_LV_ConFunc, struct ABEntry *, struct MUIP_NListtree_ConstructMe
 }
 MakeHook(AB_LV_ConFuncHook, AB_LV_ConFunc);
 
+///
+/// AB_LV_DesFunc
 /*** AB_LV_DesFunc - Address book listview destruction hook ***/
 HOOKPROTONHNO(AB_LV_DesFunc, long, struct MUIP_NListtree_DestructMessage *msg)
 {
@@ -829,6 +867,8 @@ HOOKPROTONHNO(AB_LV_DesFunc, long, struct MUIP_NListtree_DestructMessage *msg)
 }
 MakeHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
 
+///
+/// AB_LV_DspFunc
 /*** AB_LV_DspFunc - Address book listview display hook ***/
 HOOKPROTONO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 {
@@ -881,6 +921,8 @@ HOOKPROTONO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 }
 MakeHook(AB_LV_DspFuncHook, AB_LV_DspFunc);
 
+///
+/// AB_LV_CmpFunc
 /*** AB_LV_CmpFunc - Address book listview compare hook ***/
 HOOKPROTONHNO(AB_LV_CmpFunc, long, struct MUIP_NListtree_CompareMessage *msg)
 {
@@ -917,6 +959,7 @@ HOOKPROTONHNO(AB_LV_CmpFunc, long, struct MUIP_NListtree_CompareMessage *msg)
 }
 MakeHook(AB_LV_CmpFuncHook, AB_LV_CmpFunc);
 
+///
 /// AB_MakeABFormat
 //  Creates format definition for address book listview
 void AB_MakeABFormat(APTR lv)
@@ -934,6 +977,7 @@ void AB_MakeABFormat(APTR lv)
 }
 
 ///
+
 /// AB_New
 //  Creates address book window
 enum { AMEN_NEW,AMEN_OPEN,AMEN_APPEND,AMEN_SAVE,AMEN_SAVEAS,AMEN_PRINTA,
