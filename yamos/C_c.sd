@@ -1,0 +1,41 @@
+##stringtype C
+##shortstrings
+/****************************************************************
+   This file was created automatically by `FlexCat V1.3'
+****************************************************************/
+
+#include <clib/locale_protos.h>
+
+static long %b_Version = %v;
+static const STRPTR %b_BuiltInLanguage = (STRPTR)%l;
+struct FC_Type { long ID; char * Str; };
+const struct FC_Type _%i = { %d, %s };
+static struct Catalog *%b_Catalog = NULL;
+
+void Open%bCatalog(void)
+{
+	extern struct Library *LocaleBase;
+	extern void Close%bCatalog(void);
+
+	if (LocaleBase && !%b_Catalog)
+  	{
+     	%b_Catalog = OpenCatalog(NULL, (STRPTR)"%b.catalog", OC_BuiltInLanguage, %b_BuiltInLanguage,
+      	OC_Version, %b_Version, TAG_DONE);
+	}
+}
+
+void Close%bCatalog(void)
+{
+  	if (LocaleBase) CloseCatalog(%b_Catalog);
+  	%b_Catalog = NULL;
+}
+
+char *GetStr(APTR fcstr)
+{
+   char *defaultstr;
+   int strnum;
+
+   strnum = ((struct FC_Type *)fcstr)->ID;
+   defaultstr = ((struct FC_Type *)fcstr)->Str;
+   return %b_Catalog ? (char *)GetCatalogStr(%b_Catalog, strnum, (STRPTR)defaultstr) : defaultstr;
+}

@@ -1,0 +1,31 @@
+YAM 2.2 is hereby released as free software under the GNU General Public
+License. Please read this license (GPL.txt) and make sure you understand
+the terms and conditions of this license.
+
+YAM was compiled under SAS/C 6.58. You should find all required header
+files and non-standard link libraries in this archive. Nevertheless,
+here's the list of software packages used to create YAM:
+
+ARexxBox               http://us.aminet.net/pub/aminet/dev/misc/ARexxBox112.lha
+BetterString class     http://www.p2p-it.dk/duff/MCC_BetterString.LZX
+FlexCat                http://us.aminet.net/pub/aminet/dev/misc/FlexCat.lha
+Listtree class         http://www-student.etechnik.fh-aachen.de/~kmel/public/MCC_Listtree0_17.lha
+Miami SDK              http://http.nordicglobal.com/miami/MiamiSDK211.lha
+MUI Developer archive  http://us.aminet.net/pub/aminet/dev/mui/mui38dev.lha
+MUI User archive       http://us.aminet.net/pub/aminet/util/libs/mui38usr.lha
+NewReadArgs            http://us.aminet.net/pub/aminet/dev/c/nrdargs.lha
+NList(view) class      http://us.aminet.net/pub/aminet/dev/mui/MCC_NList0_89.lha
+OpenURL library        http://us.aminet.net/pub/aminet/comm/www/OpenURL30.lha
+TextEditor class       http://us.aminet.net/pub/aminet/dev/mui/MCC_TextEditor.lha
+Toolbar class          http://us.aminet.net/pub/aminet/dev/mui/MCC_Toolbar.lha
+WBPath                 http://us.aminet.net/pub/aminet/dev/src/wbpath.lha
+XPK Developer archive  http://us.aminet.net/pub/aminet/util/pack/xpk_Develop.lha
+XPK User archive       http://us.aminet.net/pub/aminet/util/pack/xpk_User.lha
+
+If you want to develop this program further, please register with SourceForge.net
+and notify me at mbeck@yam.ch. The homepage for the YAM OpenSource project is
+located at http://yamos.sourceforge.net
+
+
+Marcel Beck
+November 2000

@@ -1,0 +1,19 @@
+##stringtype C
+##shortstrings
+/****************************************************************
+   This file was created automatically by `FlexCat V1.3'
+****************************************************************/
+
+#ifndef %b_CAT_H
+#define %b_CAT_H
+#include <exec/types.h>
+#include <libraries/locale.h>
+
+extern void Open%bCatalog(void);
+extern void Close%bCatalog(void);
+extern char *GetStr(APTR);
+
+extern const APTR _%i;\n#define %i ((APTR) &_%i)
+
+#endif
+

@@ -1,0 +1,24 @@
+echo Compiling 68060 version...
+copy SCOPTIONS.0 SCOPTIONS
+echo >>SCOPTIONS "CPU=68060"
+delete #?.o quiet
+smake
+move YAM YAM.060
+
+echo Compiling 68040 version...
+copy SCOPTIONS.0 SCOPTIONS
+echo >>SCOPTIONS "CPU=68040"
+delete #?.o quiet
+smake
+move YAM YAM.040
+
+echo Compiling 68020 version...
+copy SCOPTIONS.0 SCOPTIONS
+echo >>SCOPTIONS "CPU=68020"
+delete #?.o quiet
+smake
+
+scompare -oYAM.060.pch YAM YAM.060
+scompare -oYAM.040.pch YAM YAM.040
+
+
