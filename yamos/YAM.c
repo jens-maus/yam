@@ -334,19 +334,24 @@ static BOOL ADSTnotify_start(void)
   if(ADSTdata.method != ADST_NONE)
   {
     // prepare the NotifyRequest structure
-    struct NotifyRequest *nr = &ADSTdata.nRequest;
+    BYTE signalAlloc;
 
-    nr->nr_Name  = (UBYTE *)ADSTfile[ADSTdata.method];
-    nr->nr_Flags = NRF_SEND_SIGNAL;
-
-    // prepare the nr_Signal now
-    nr->nr_stuff.nr_Signal.nr_Task      = FindTask(NULL);
-    nr->nr_stuff.nr_Signal.nr_SignalNum = AllocSignal(-1);
-
-    // if != -1 then we got a signal
-    if(nr->nr_stuff.nr_Signal.nr_SignalNum != -1)
+    if((signalAlloc = AllocSignal(-1)) >= 0)
     {
+      struct NotifyRequest *nr = &ADSTdata.nRequest;
+
+      nr->nr_Name  = (UBYTE *)ADSTfile[ADSTdata.method];
+      nr->nr_Flags = NRF_SEND_SIGNAL;
+
+      // prepare the nr_Signal now
+      nr->nr_stuff.nr_Signal.nr_Task      = FindTask(NULL);
+      nr->nr_stuff.nr_Signal.nr_SignalNum = signalAlloc;
+
       return StartNotify(nr);
+    }
+    else
+    {
+      memset(&ADSTdata, 0, sizeof(struct ADST_Data));
     }
   }
 
@@ -628,6 +633,8 @@ static void Terminate(void)
 {
    int i;
 
+   DB(kprintf("Terminate()\n");)
+
    while (PNum > 0)                        
       if (PPtr[PNum-1]) free(PPtr[--PNum]);
    
@@ -736,6 +743,8 @@ static void Terminate(void)
 
    free(C);
    free(G);
+
+   DB(kprintf("End of Terminate()\n");)
 }
 ///
 /// Abort
@@ -1327,6 +1336,8 @@ static int GetDST(BOOL update)
 /* This makes it possible to leave YAM without explicitely calling cleanup procedure */
 static void yam_exitfunc(void)
 {
+   DB(kprintf("yam_exitfunc()\n");)
+
    if(olddirlock != -1)
    {  Terminate();
       CurrentDir(olddirlock);
@@ -1339,6 +1350,8 @@ static void yam_exitfunc(void)
       CloseLibrary(IconBase);
    if(IntuitionBase)
       CloseLibrary((struct Library *) IntuitionBase);
+
+  DB(kprintf("end of yam_exitfunc()\n");)
 }
 
 ///
@@ -1530,6 +1543,17 @@ int main(int argc, char **argv)
       notsig[1] = 1UL << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
       notsig[2] = 1UL << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
 
+      #ifdef DEBUG
+      kprintf("YAM allocated signals:\n");
+      kprintf(" adstsig  = %08lx\n", adstsig);
+      kprintf(" timsig   = %08lx\n", timsig);
+      kprintf(" rexsig   = %08lx\n", rexsig);
+      kprintf(" appsig   = %08lx\n", appsig);
+      kprintf(" notsig[0]= %08lx\n", notsig[0]);
+      kprintf(" notsig[1]= %08lx\n", notsig[1]);
+      kprintf(" notsig[2]= %08lx\n", notsig[2]);
+      #endif
+
       // start the event loop
       while (!(ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))))
       {
@@ -1619,6 +1643,8 @@ int main(int argc, char **argv)
 
       // if the user really wants to exit, do it now as Terminate() is broken !
       if(ret == 1) exit(0);
+
+      DB(kprintf("Restart issued\n");)
 
       // prepare for restart
       Terminate();
