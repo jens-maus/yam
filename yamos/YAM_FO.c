@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -478,20 +478,33 @@ BOOL FO_LoadTree(char *fname)
                {
                   if (!FO_LoadConfig(&fo))
                   {
-                     if (!stricmp(FilePart(fo.Path), FolderNames[0])) fo.Type = FT_INCOMING;
-                     if (!stricmp(FilePart(fo.Path), FolderNames[1])) fo.Type = FT_OUTGOING;
-                     if (!stricmp(FilePart(fo.Path), FolderNames[2])) fo.Type = FT_SENT;
-                     if (!stricmp(FilePart(fo.Path), FolderNames[3])) fo.Type = FT_DELETED;
+                     char *folderpath = FilePart(fo.Path);
+
+                     // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
+                     if(stricmp(folderpath, FolderNames[0]) == 0)       fo.Type = FT_INCOMING;
+                     else if(!stricmp(folderpath, FolderNames[1]) == 0) fo.Type = FT_OUTGOING;
+                     else if(!stricmp(folderpath, FolderNames[2]) == 0) fo.Type = FT_SENT;
+                     else if(!stricmp(folderpath, FolderNames[3]) == 0) fo.Type = FT_DELETED;
 
                      // Save the config now because it could be changed in the meantime
                      FO_SaveConfig(&fo);
                   }
+
                   fo.SortIndex = i++;
                   fo.ImageIndex = j;
 
                   // Now we load the FolderImages if they exists
                   if(FO_LoadFolderImages(&fo)) j++;
-                  else fo.ImageIndex = -1;
+                  else
+                  {
+                    // we cannot find out if there is new/unread mail in the folder,
+                    // so we initialize the folder with the std ImageIndex.
+                    if(fo.Type == FT_INCOMING)      fo.ImageIndex = 2;
+                    else if(fo.Type == FT_OUTGOING) fo.ImageIndex = 4;
+                    else if(fo.Type == FT_DELETED)  fo.ImageIndex = 6;
+                    else if(fo.Type == FT_SENT)     fo.ImageIndex = 8;
+                    else fo.ImageIndex = -1; // or with -1 for a non std folder.
+                  }
 
                   // Now we add this folder to the folder listtree
                   if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
@@ -590,7 +603,8 @@ BOOL FO_LoadFolderImages(struct Folder *fo)
   char fname[SIZE_PATHFILE];
   APTR lv = G->MA->GUI.NL_FOLDERS;
 
-  if(!fo) return FALSE;
+  // first we make sure that valid data is underway.
+  if(!fo && fo->ImageIndex < MAXBCSTDIMAGES+1) return FALSE;
 
   MyStrCpy(fname, GetFolderDir(fo));
   AddPart(fname, ".fimage", sizeof(fname));
@@ -641,8 +655,6 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
   struct MUI_NListtree_TreeNode *tn, *tn_root, *tn_parent;
   APTR lv = G->MA->GUI.NL_FOLDERS;
   int i;
-
-  DB(kprintf("saving SubTree!\n");)
 
   // The root-Treenode is the subtree at the start
   tn_root = subtree;
@@ -712,8 +724,6 @@ BOOL FO_SaveTree(char *fname)
 {
    BOOL success = TRUE;
    FILE *fh;
-
-   DB(kprintf("saving YAM:.folders !!!\n");)
 
    if ((fh = fopen(fname, "w")))
    {
@@ -1030,8 +1040,13 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
    int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_NewFolder), GetStr(MSG_FO_NewFolderGads), GetStr(MSG_FO_NewFolderReq));
    static struct Folder folder;
 
+   // reset the folder struct and set some default values.
    memset(&folder, 0, sizeof(struct Folder));
-   folder.Sort[0] = 1; folder.Sort[1] = 3; folder.Type = FT_CUSTOM;
+   folder.Sort[0] = 1;
+   folder.Sort[1] = 3;
+   folder.Type = FT_CUSTOM;
+   folder.ImageIndex = -1;
+
    switch (mode)
    {
       case 0: return;
@@ -1044,15 +1059,26 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
 
       case 2:
       {
-         struct Folder *tmp_folder = FO_GetCurrentFolder();
+         struct Folder *currfolder = FO_GetCurrentFolder();
+         if(!currfolder) return;
 
-         if(!tmp_folder) return;
+         // as the user decided to use the settings from the current folder, wie copy
+         // the current one to our new one.
+         memcpy(&folder, currfolder, sizeof(struct Folder));
 
-         memcpy(&folder, FO_GetCurrentFolder(), sizeof(struct Folder));
          if (folder.Type == FT_GROUP) { FO_NewFolderGroupFunc(); return; }
          else if (folder.Type == FT_INCOMING || folder.Type == FT_DELETED) folder.Type = FT_CUSTOM;
          else if (folder.Type == FT_OUTGOING || folder.Type == FT_SENT) folder.Type = FT_CUSTOMSENT;
-         *folder.Path = 0;
+
+         // now that we have the correct folder type, we set some default values for the new
+         // folder
+         *folder.Path       = 0;
+         folder.BC_FImage   = NULL;
+         folder.FImage      = NULL;
+         folder.Messages    = NULL;
+         folder.ImageIndex  = -1;  // No Image for the folder by default.
+
+         // then we get the new name and finish our job.
          if (!FO_FoldernameRequest(folder.Path)) return;
          MyStrCpy(folder.Name, FilePart(folder.Path));
       }
@@ -1138,12 +1164,18 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
          if(folder->BC_FImage)
          {
             // Prepare the BC_GROUP for removing a child
-
             if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
             {
                DoMethod(G->MA->GUI.BC_GROUP, OM_REMMEMBER, folder->BC_FImage);
                DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
             }
+
+            // we make sure that the NList also doesn`t use the image in future anymore
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
+
+            // and last, but not least we free the BC object here, so that this Object is also gone
+            MUI_DisposeObject(folder->BC_FImage);
+            folder->BC_FImage = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
          }
       }
     }
@@ -1280,6 +1312,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
    else
    {
       memset(&folder, 0, sizeof(struct Folder));
+      folder.ImageIndex = -1;
+
       FO_PutFolder(&folder);
       if(isCryptedFolder(&folder) && !FO_EnterPassword(&folder)) CLEAR_FLAG(folder.XPKType, XPK_CRYPT);
       set(gui->WI, MUIA_Window_Open, FALSE);
@@ -1310,7 +1344,49 @@ HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
    switch (*arg)
    {
       case SO_SAVE:  FO_SaveTree(CreateFilename(".folders")); break;
-      case SO_RESET: FO_LoadTree(CreateFilename(".folders")); break;
+      case SO_RESET:
+      {
+        struct Folder **flist;
+
+        // before we reset/reload the foldertree we have to
+        // make sure everything is freed correctly.
+        if((flist = FO_CreateList()))
+        {
+          int i;
+
+          for(i=1; i <= (int)*flist; i++)
+          {
+            struct Folder *folder = flist[i];
+
+            if(!folder) break;
+
+            // we do not have to call FreeFolder manually, because the
+            // destructor of the Listtree will do this for us. But we
+            // have to free the FImage of the folder if it exists
+            if(folder->BC_FImage)
+            {
+              // Prepare the BC_GROUP for removing a child
+              if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
+              {
+                DoMethod(G->MA->GUI.BC_GROUP, OM_REMMEMBER, folder->BC_FImage);
+                DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
+              }
+
+              // we make sure that the NList also doesn`t use the image in future anymore
+              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, MUIF_NONE);
+
+              // and last, but not least we free the BC object here, so that this Object is also gone
+              MUI_DisposeObject(folder->BC_FImage);
+              folder->BC_FImage = NULL; // let`s set it to NULL so that the destructor doesn`t do the work again.
+            }
+          }
+
+          free(flist);
+        }
+
+        FO_LoadTree(CreateFilename(".folders"));
+      }
+      break;
    }
 }
 MakeHook(FO_SetOrderHook, FO_SetOrderFunc);

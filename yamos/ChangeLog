@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-09-29  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FO.c: fixed bug #589038 where on a folderlist reset,
+      the listtree didn`t show the foldericons afterwards and
+      didn`t correctly freed the previous images.
+    * YAM_FO.c: fixed bug where after a creation of a new folder,
+      YAM did always show the foldergroup icon in front of the new
+      folder.
+
 2002-09-28  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: fixed bug in the BusyText functions where YAM didn`t
@@ -13,8 +22,8 @@ $Source$
       a index rescan. That caused some corrupt listview display
       if the user scrolled around the listview if the rescan was
       still underway.
-    * YAM_RE.c: fixed bug where YAM didn`t switch to the correct
-      folder and highlighted the message if a SwitchMessage()
+    * YAM_RE.c: fixed bug #595017 where YAM didn`t switch to the
+      correct folder and highlighted the message if a SwitchMessage()
       (Next/Prev) was done in a readwindow with a mail whos
       folder wasn`t actually active.
     * YAM_MA.c: fixed flaw where YAM did loose the track of
