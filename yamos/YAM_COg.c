@@ -906,8 +906,8 @@ APTR CO_Page3(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_AMOVE    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
       DoMethod(data->GUI.CH_ADELETE  ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
       DoMethod(data->GUI.CH_ASKIP    ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.ST_ABOUNCE  ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(data->GUI.ST_AFORWARD ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
+      DoMethod(data->GUI.ST_ABOUNCE  ,MUIM_Notify,MUIA_String_BufferPos   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
+      DoMethod(data->GUI.ST_AFORWARD ,MUIM_Notify,MUIA_String_BufferPos   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
       DoMethod(data->GUI.ST_ARESPONSE,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
       DoMethod(data->GUI.ST_AEXECUTE ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
       DoMethod(data->GUI.ST_APLAY    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
