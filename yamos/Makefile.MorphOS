@@ -33,6 +33,7 @@ CC        = ppc-morphos-gcc
 STRIP     = ppc-morphos-strip
 OBJDUMP   = ppc-morphos-objdump
 RM        = rm -f
+CHMOD     = chmod
 CC68K     = m68k-amigaos-gcc
 STR68K    = strip
 CFLAGS68K = -nostdlib -DNAME=\"YAM\" -O -fomit-frame-pointer
@@ -84,10 +85,12 @@ all: $(TARGET) starter
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
 	$(STRIP) -o $@ $@.debug
+	$(CHMOD) a+x $@
 
 starter: starter.c
 	$(CC68K) $(CFLAGS68K) -o $@.debug $< -DNO_INLINE_STDARG
 	$(STR68K) -o $@ $@.debug
+	$(CHMOD) a+x $@
 
 dump:
 	-$(OBJDUMP) --section-headers --all-headers --reloc --disassemble-all $(TARGET).debug >$(TARGET).dump

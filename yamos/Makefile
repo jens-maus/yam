@@ -32,6 +32,7 @@ TARGET	= YAM
 CC	  = gcc
 STRIP = strip
 RM	  = rm -f
+CHMOD = chmod
 
 CPU      = -m68020
 CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
@@ -79,6 +80,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
 	$(STRIP) -o $@ $@.debug
+	$(CHMOD) a+x $@
 
 #
 
