@@ -49,12 +49,13 @@ void strsfn(const char *file, char *drive, char *path, char *node, char *ext)
   }
   end = p > file ? p - 1 : p;
 
-  if (path && end > p && end - p < FMSIZE)
-  {
-    memcpy(path, p, end - p);
-    path += end - p;
-  }
-
   if (path)
+  {
+    if (end > p && end - p < FMSIZE)
+    {
+      memcpy(path, p, end - p);
+      path += end - p;
+    }
     *path = '\0';
+  }
 }
