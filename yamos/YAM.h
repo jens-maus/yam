@@ -1335,7 +1335,6 @@ extern void MA_MakeMAFormat(APTR);
 extern SAVEDS ASM long MA_LV_DspFunc(REG(a0) struct Hook *, REG(a2) char **, REG(a1) struct Mail *);
 extern struct MA_ClassData *MA_New(void);
 
-extern void CO_NewPrefsFile(char *);
 extern BOOL CO_IsValid(void);
 extern struct Rule *CO_NewRule(void);
 extern struct POP3 *CO_NewPOP3(struct Config *, BOOL);
@@ -1350,7 +1349,6 @@ extern void CO_SetConfig(void);
 extern void CO_GetConfig(void);
 extern void CO_FreeConfig(struct Config *);
 extern SAVEDS ASM long CO_PL_DspFunc(REG(a0) struct Hook *, REG(a2) char **, REG(a1) struct PageList *);
-extern struct CO_ClassData *CO_New(void);
 extern APTR CO_Page0(struct CO_ClassData *), CO_Page1(struct CO_ClassData *), CO_Page2(struct CO_ClassData *), CO_Page3(struct CO_ClassData *), CO_Page4(struct CO_ClassData *), CO_Page5(struct CO_ClassData *), CO_Page6(struct CO_ClassData *), CO_Page7(struct CO_ClassData *);
 extern APTR CO_Page8(struct CO_ClassData *), CO_Page9(struct CO_ClassData *), CO_Page10(struct CO_ClassData *),CO_Page11(struct CO_ClassData *), CO_Page12(struct CO_ClassData *),CO_Page13(struct CO_ClassData *),CO_Page14(struct CO_ClassData *),CO_Page15(struct CO_ClassData *);
 
@@ -1395,8 +1393,6 @@ extern void EA_AddSingleMember(Object *, struct MUIS_Listtree_TreeNode *);
 extern STACKEXT void EA_AddMembers(Object *, struct MUIS_Listtree_TreeNode *);
 extern void EA_SetDefaultAlias(struct ABEntry *);
 extern void EA_SetPhoto(int, char *);
-extern int EA_Open(int);
-extern struct EA_ClassData *EA_New(int, int);
 
 extern void RE_DoMDN(int MDNtype, struct Mail *mail);
 extern struct Mail *RE_GetQuestion(long);
@@ -1431,7 +1427,6 @@ extern BOOL WriteOutMessage(struct Compose *);
 extern struct WritePart *NewPart(int);
 extern int WR_Open(int, BOOL);
 extern void WR_SetupOldMail(int);
-extern int WhichEncodingForFile(char *, char *);
 extern void FreePartsList(struct WritePart *);
 extern BOOL WR_AddFileToList(int, char *, char *, BOOL);
 extern char *WR_AutoSaveFile(int);
@@ -1439,7 +1434,6 @@ extern void WR_NewMail(int, int);
 extern void WR_Cleanup(int);
 extern void WR_App(int, struct AppMessage *);
 extern struct WR_ClassData *WR_New(int);
-extern struct WR_ClassData *WR_NewBounce(int);
 
 extern BOOL TR_IsOnline(void);
 extern BOOL TR_OpenTCPIP(void);
@@ -1477,11 +1471,7 @@ extern void FI_SearchGhost(struct SearchGroup *, BOOL disabled);
 extern APTR FI_ConstructSearchGroup(struct SearchGroup *, BOOL);
 extern BOOL MyMatch(BOOL, char *, char *);
 extern BOOL FI_PrepareSearch(struct Search *, int, BOOL, int, int, int, BOOL, char *, char *);
-extern BOOL FI_DoSearch(struct Search *, struct Mail *);
 extern BOOL FI_DoComplexSearch(struct Search *, int, struct Search *, struct Mail *);
-extern struct FI_ClassData *FI_New(void);
-
-extern struct DI_ClassData *DI_New(void);
 
 extern BOOL US_Login(char *, char *, char *, char *);
 extern struct User *US_GetCurrentUser(void);
