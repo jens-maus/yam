@@ -183,7 +183,7 @@ static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
 
    for (act += direction; act >= 0; act += direction)
    {
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, act, &mail, TAG_DONE);
+      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, act, &mail);
       if (!mail) break;
       if (!onlynew || (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
       {
@@ -222,7 +222,7 @@ static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
                      break;
 
                   MA_ChangeFolder(flist[i], TRUE);
-                  DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail, TAG_DONE);
+                  DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
                   if (!mail) break;
                   RE_ReadMessage(winnum, mail);
                   break;
@@ -495,6 +495,10 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    {
       return;
    }
+
+   // lets clean the previous mail out of the window if exists to make the
+   // window ready for the new message
+   RE_CleanupMessage(winnum);
 
    gui = &re->GUI;
    re->Mail = *mail;
@@ -1978,8 +1982,11 @@ void RE_CleanupMessage(int winnum)
    }
    re->FirstPart     = NULL;
    re->FirstReadDone = FALSE;
-   FinishUnpack(re->File);
 
+   // now we have to check whether there is a .unp (unpack) file and delete
+   // it acoordingly (we can`t use the FinishUnpack() function because the
+   // window still refers to the file which will be prevent the deletion.
+   if(strstr(re->File, ".unp")) DeleteFile(re->File);
 }
 ///
 /// RE_HandleMDNReport
@@ -2198,8 +2205,8 @@ static BOOL RE_LoadMessage(int winnum, int parsemode)
    char newfile[SIZE_PATHFILE], file[SIZE_FILE];
    struct Part *rp;
    int i;
+
    BusyText(GetStr(MSG_BusyReading), "");
-   RE_CleanupMessage(winnum);
 
    if (!StartUnpack(G->RE[winnum]->File, newfile, G->RE[winnum]->MailPtr->Folder))
    {
