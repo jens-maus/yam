@@ -28,7 +28,7 @@ struct rxs_command rxs_commandlist[] =
 	{ "ADDRSAVE", "FILENAME", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_addrsave, 1 },
 	{ "APPBUSY", "TEXT", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_appbusy, 1 },
 	{ "APPNOBUSY", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_appnobusy, 1 },
-	{ "FOLDERINFO", "FOLDER", "NUMBER/N,NAME,PATH,TOTAL/N,NEW/N,UNREAD/N,SIZE/N", RESINDEX(rxd_folderinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_folderinfo, 1 },
+	{ "FOLDERINFO", "FOLDER", "NUMBER/N,NAME,PATH,TOTAL/N,NEW/N,UNREAD/N,SIZE/N,TYPE/N", RESINDEX(rxd_folderinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_folderinfo, 1 },
 	{ "GETCONFIGINFO", "ITEM/A", "VALUE", RESINDEX(rxd_getconfiginfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_getconfiginfo, 1 },
 	{ "GETFOLDERINFO", "ITEM/A", "VALUE", RESINDEX(rxd_getfolderinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_getfolderinfo, 1 },
 	{ "GETMAILINFO", "ITEM/A", "VALUE", RESINDEX(rxd_getmailinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_getmailinfo, 1 },

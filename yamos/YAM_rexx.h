@@ -236,6 +236,7 @@ struct rxd_folderinfo
 		long *new;
 		long *unread;
 		long *size;
+		long *type;
 	} res;
 };
 

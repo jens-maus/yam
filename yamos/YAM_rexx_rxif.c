@@ -316,7 +316,7 @@ void rx_writeletter( struct RexxHost *host, struct rxd_writeletter **rxd, long a
          }
          else rd->rc = RETURN_ERROR;  else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -336,7 +336,7 @@ void rx_writeoptions( struct RexxHost *host, struct rxd_writeoptions **rxd, long
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin])
          {
@@ -350,7 +350,7 @@ void rx_writeoptions( struct RexxHost *host, struct rxd_writeoptions **rxd, long
          }
          else rd->rc = RETURN_ERROR;
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -370,11 +370,11 @@ void rx_writequeue( struct RexxHost *host, struct rxd_writequeue **rxd, long act
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          WR_NewMail(rd->arg.hold ? WRITE_HOLD : WRITE_QUEUE, G->ActiveWriteWin);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -394,11 +394,11 @@ void rx_writesend( struct RexxHost *host, struct rxd_writesend **rxd, long actio
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          WR_NewMail(WRITE_SEND, G->ActiveWriteWin);
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -419,7 +419,7 @@ void rx_mailwrite( struct RexxHost *host, struct rxd_mailwrite **rxd, long actio
       case RXIF_INIT:
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
-         
+
       case RXIF_ACTION:
          winnr = rd->arg.window ? *rd->arg.window : -1;
          rd->res.window = &G->ActiveWriteWin;
@@ -434,7 +434,7 @@ void rx_mailwrite( struct RexxHost *host, struct rxd_mailwrite **rxd, long actio
             else rd->rc = RETURN_ERROR;
          }
          break;
-      
+
       case RXIF_FREE:
          FreeVec( rd );
          break;
@@ -1110,6 +1110,7 @@ void rx_folderinfo( struct RexxHost *host, struct rxd_folderinfo **rxd, long act
             rd->res.new = (long *)&fo->New;
             rd->res.unread = (long *)&fo->Unread;
             rd->res.size = (long *)&fo->Size;
+            rd->res.type = (long *)&fo->Type;
          }
          else rd->rc = RETURN_ERROR;
          break;

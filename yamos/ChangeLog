@@ -89,3 +89,16 @@
       and some other minor changes to be able to compile with GCC again.
       SAS/C users with old, broken includes have to fix them now.
 
+2001-02-17  laursen <laursen@myself.com>
+
+    * Added TYPE/N (internal format) to the STEM that ARexx command
+      FOLDERINFO returns:
+      0 = normal
+      1 = incoming
+      2 = outgoing
+      3 = sent (built-in)
+      4 = deleted
+      5 = sent and received
+      6 = sent
+      Useful for ARexx scripts when deciding whether to show the "From:"
+      or "To:" header line.

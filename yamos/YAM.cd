@@ -1,4 +1,3 @@
-#language
 #version 5
 ;
 ; General
@@ -4247,7 +4246,8 @@ MSG_CO_DoQuote (//)
 Quote message
 ;
 MSG_HELP_CO_ST_ALTQUOTECHAR (//)
-String that should precede each line of\na quote inserted from non-email sources
+String that should precede each line of\n\
+a quote inserted from non-email sources
 ;
 MSG_EA_SelectPhoto_Title (//)
 Select portrait
