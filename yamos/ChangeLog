@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-01  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_AB.c, YAM_RE.c: also added the capslock (fix) to other
+      places like the addressbook and read window to allow the user
+      to still use his keys with a turned on capslock.
+
 2002-05-30  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM.c: fixed bug #556531. YAM will now also execute the
