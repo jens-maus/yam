@@ -271,8 +271,7 @@ static void RE_UpdateStatusGroup(int winnum)
 //  Creates a message disposition notification
 static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL sendnow)
 {
-   static char *MDNMessage[5] =
-   {
+   static const char *MDNMessage[5] = {
       "The message written on %s to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
       "The message written on %s to %s with subject \"%s\" has been sent somewhere %s, without being displayed to the user. The user may or may not see the message later.\n",
       "The message written on %s to %s with subject \"%s\" has been processed %s, without being displayed to the user. The user may or may not see the message later.\n",
