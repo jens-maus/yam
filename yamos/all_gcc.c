@@ -36,11 +36,3 @@
 #include "extrasrc/NewReadArgs.c"
 #include "extrasrc/stch_i.c"
 #include "extrasrc/dice.c"
-
-#ifdef __libnix__
-int __oslibversion = 0;
-#endif
-
-#ifdef __ixemul__
-struct WBStartup *_WBenchMsg;
-#endif
