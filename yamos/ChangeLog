@@ -1,3 +1,9 @@
+2002-04-23  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug in the mail listview display hook were it was possible that
+      the status flag wasn`t displayed/screwed because of a too long Address
+      column.
+
 2002-04-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed serious bug in hmac_md5() function were we replaced bcopy() with

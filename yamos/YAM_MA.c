@@ -2155,6 +2155,10 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
       if (folder)
       {
          static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL];
+         struct Person *pe;
+         STRPTR addr;
+
+         // lets choose the status icon for that mail
          sprintf(array[0] = dispsta, "\033o[%ld]", entry->Status);
          if (entry->Importance == 1) strcat(dispsta, "\033o[12]");
          if (entry->Flags & MFLAG_CRYPT) strcat(dispsta, "\033o[15]");
@@ -2162,37 +2166,38 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
          else if (entry->Flags & MFLAG_REPORT) strcat(dispsta, "\033o[14]");
          else if (entry->Flags & MFLAG_MULTIPART) strcat(dispsta, "\033o[13]");
 
+         // now we generate the proper string for the mailaddress
+         array[1] = dispfro;
+         *dispfro = 0;
+         if(entry->Flags & MFLAG_MULTIRCPT) strcat(dispfro, "\033o[11]");
+
+         pe = outbox ? &entry->To : &entry->From;
+         if((type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress))
+         {
+            pe = &entry->To;
+            strcat(dispfro, GetStr(MSG_MA_ToPrefix));
+         }
+
 #ifndef DISABLE_ADDRESSBOOK_LOOKUP
 {
-         struct Person *pe;
          struct MUI_NListtree_TreeNode *tn;
-         STRPTR multiple, to, addr;
-
-         multiple = entry->Flags & MFLAG_MULTIRCPT ? "\033o[11]" : "";
-         pe = outbox ? &entry->To : &entry->From;
-         to = (type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress) ? (pe = &entry->To, GetStr(MSG_MA_ToPrefix)) : "";
 
          set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &MA_FindAddressHook);
-         if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], 0))
+         if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE))
          {
             addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
          }
          else addr = AddrName((*pe));
 
-         sprintf(dispfro, "%s%s%s", multiple, to, addr);
-         array[1] = dispfro;
 }
 #else
-         array[1] = dispfro; *dispfro = 0;
-         if (entry->Flags & MFLAG_MULTIRCPT) strcat(dispfro, "\033o[11]");
-         pe = outbox ? &entry->To : &entry->From;
-         if (type == FT_CUSTOMMIXED || type == FT_DELETED) if (!stricmp(pe->Address, C->EmailAddress))
-         {
-            pe = &entry->To; strcat(dispfro, GetStr(MSG_MA_ToPrefix));
-         }
-         strncat(dispfro, AddrName((*pe)), SIZE_DEFAULT-strlen(dispfro)-1);
+         addr = AddrName((*pe));
 #endif
 
+         // lets put the string together
+         strncat(dispfro, addr, SIZE_DEFAULT-strlen(dispfro)-1);
+
+         // lets set all other fields now
          array[2] = AddrName((entry->ReplyTo));
          array[3] = entry->Subject;
          array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME);
@@ -2213,6 +2218,7 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
       array[6] = GetStr(MSG_Filename);
       array[7] = GetStr(MSG_Folder);
    }
+
    return 0;
 }
 MakeHook(MA_LV_DspFuncHook,MA_LV_DspFunc);
