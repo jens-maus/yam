@@ -5,10 +5,27 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-02  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_TR.c: fixed small flaw in the newly introduced TCP/IP
+      routines where we threw an error on the optional UIDL command
+      which is not supported by all types of POP3 servers.
+      There is still the flaw in YAM that if a POP3 server doesn`t
+      support either TOP or UIDL command, the "Avoid Duplicates"
+      option cannot somehow work and therefore we should inform the
+      user about it, but as this "Avoid Duplicates" option is a
+      general one for all POP3 servers in a list, we don`t bother now
+      and just skip over that tiny thing, as it wouldn`t really hurt
+      and otherwise it would take the user the possibility to have
+      POP3 servers in his list that doesn`t support that UIDL features
+      at all. We therefore should address this functionality to
+      be changed within the next release and put it configurable
+      for every POP3 server within the config.
+
 2002-07-01  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_TR.c: fixed many major flaws within the whole TCP/IP
-      routines as discussed in the DevML:
+      routines according to some ideas from Jörg:
       1) YAM didn`t make sure that it sent/received whole command
          lines and missused some RecvDat() calls which could have
          caused some weird behaviour if receiving/sending packets
@@ -25,6 +42,9 @@ $Source$
          general identifiers for all known SMTP/POP3 commands, which
          simplified many functions and makes it easier to identify
          problems or extend the functionality in future versions.
+      5) tried to improve the overall function API for all important
+         TCP functions, so that they are more descriptive and open
+         for future enhancements.
     * YAM_UT.c, YAM_utilities.h: replaced FreeStrBuf() function
       by a simple function macro for speed reasons.
 

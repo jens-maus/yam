@@ -1467,7 +1467,11 @@ static BOOL TR_GetUIDLonServer(void)
 {
    // issue the UDIL pop command to get a unique-id list
    // of all mail avaiable at a server
-   if(TR_SendPOP3Cmd(POPCMD_UIDL, NULL, MSG_ER_BadResponse))
+   //
+   // This command is optional within the RFC 1939 specification
+   // and therefore we don`t throw any error and just return
+   // with FALSE to signal that this server doesn`t support UIDL
+   if(TR_SendPOP3Cmd(POPCMD_UIDL, NULL, NULL))
    {
       char buf[SIZE_LINE];
 
@@ -1543,6 +1547,9 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
       char cmdbuf[SIZE_SMALL];
 
       // we issue a TOP command with a one line message body.
+      //
+      // This command is optional within the RFC 1939 specification
+      // and therefore we don`t throw any error
       sprintf(cmdbuf, "%d 1", mail->Index);
       if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL))
       {
@@ -1631,13 +1638,19 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
                strcpy(mail->Subject, email->Mail.Subject);
                strcpy(mail->MailFile, email->Mail.MailFile);
                mail->Date = email->Mail.Date;
-               if (lline == -1)
+
+               // if thie function was called with -1, then the POP3 server
+               // doesn`t have the UIDL command and we have to generate our
+               // own one by using the MsgID and the Serverstring for the POP3
+               // server.
+               if(lline == -1)
                {
                   char uidl[SIZE_DEFAULT+SIZE_HOST];
                   sprintf(uidl, "%s@%s", Trim(email->MsgID), C->P3[G->TR->POP_Nr]->Server);
                   mail->UIDL = AllocCopy(uidl, strlen(uidl)+1);
                }
-               if (lline == -2) TR_ApplyRemoteFilters(mail);
+               else if(lline == -2) TR_ApplyRemoteFilters(mail);
+
                DeleteFile(fname);
                MA_FreeEMailStruct(email);
             }
@@ -1658,6 +1671,9 @@ static void TR_GetUIDL(void)
    G->TR->UIDLloc = TR_GetUIDLonDisk();
    for (mail = G->TR->List; mail; mail = mail->Next)
    {
+      // if the server doesn`t support the UIDL command we
+      // use the TOP command and generate our own UIDL within
+      // the GetMessageDetails function
       if (!G->TR->supportUIDL) TR_GetMessageDetails(mail, -1);
       if (TR_FindUIDL(mail->UIDL)) { G->TR->Stats.DupSkipped++; mail->Status &= 2; }
    }
