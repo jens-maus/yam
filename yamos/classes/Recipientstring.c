@@ -359,7 +359,8 @@ OVERLOAD(MUIM_HandleEvent)
 	}
 	else if(imsg->Class == IDCMP_CHANGEWINDOW)
 	{
-		DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
+		// only if the matchwindow is open we advice the matchwindow to refresh it`s position.
+		if(xget(data->Matchwindow, MUIA_Window_Open))	DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
 	}
 
 	return result;

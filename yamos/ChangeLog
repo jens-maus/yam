@@ -7,6 +7,9 @@ $Source$
 
 2003-03-09  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/Addrmatchlist.c: fixed bug where multiple recipientstrings
+      within one window didn`t correctly refresh the addrmatchlist
+      position.
     * classes/Recipientstring.c: fixed bug where a recipientstring allowed
       to Advance to the next object even if the user entered a non-existent
       alias. Now the string should stay active and in addition to that

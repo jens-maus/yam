@@ -244,9 +244,16 @@ DECLARE(Open) // STRPTR str
 		nnset(data->Matchlist, MUIA_List_Active, MUIV_List_Active_Top);
 	}
 
-	/* should we open the popup list (if not already shown) */
-	if(!res || !xget(obj, MUIA_Window_Open))
-		set(obj, MUIA_Window_Open, res ? TRUE : FALSE);
+	// should we open the popup list (if not already shown)
+	if(!xget(obj, MUIA_Window_Open))
+	{
+		if(res)
+		{
+			DoMethod(obj, MUIM_Addrmatchlist_ChangeWindow); // refresh the position
+			set(obj, MUIA_Window_Open, TRUE);
+		}
+	}
+	else if(!res) set(obj, MUIA_Window_Open, FALSE);
 
 	set(data->Matchlist, MUIA_List_Quiet, FALSE);
 
