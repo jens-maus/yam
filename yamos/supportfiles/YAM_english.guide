@@ -3550,7 +3550,8 @@ toolbar.
           will add the first match in the dropdown list.  Both techniques
           can be combined.
 
-          [Alex, DON'T use the mouse to operate this list. Thank you.]
+          Please note that you cannot use the mouse to operate this
+          dropdown list.
 
      If YAM cannot find a name or alias you've inserted manually into
      the @{b}To:@{ub} field, you will get an error report as soon as you try to
