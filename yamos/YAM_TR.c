@@ -2758,6 +2758,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
       {
          struct ExtendedMail *email;
          struct Mail *mail = G->TR->List;
+         struct Mail *newmail = NULL;
          static char mfile[SIZE_MFILE];
          BOOL header = FALSE, body = FALSE;
          struct Folder *folder = G->TR->ImportBox;
@@ -2785,12 +2786,18 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                         // depending on the Status we have to set the transDate or not
                         if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTimeUTC(&email->Mail.transDate);
 
-                        AddMailToList((struct Mail *)email, folder);
+                        // add the mail to the folderlist now
+                        newmail = AddMailToList((struct Mail *)email, folder);
+
+                        // if this was a compressed/encrypted folder we need to pack the mail now
+                        if(folder->XPKType != XPK_OFF) RepackMailFile(newmail, -1, NULL);
+
                         MA_FreeEMailStruct(email);
                      }
                   }
                   mail = mail->Next;
                }
+
                header = TRUE; body = FALSE;
                if(hasTR_LOAD(mail))
                {
@@ -2816,6 +2823,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
             }
             if (header && !buffer[1]) { body = TRUE; header = FALSE; }
          }
+
          if (body && f)
          {
             fclose(f);
@@ -2826,7 +2834,12 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                // depending on the Status we have to set the transDate or not
                if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTimeUTC(&email->Mail.transDate);
 
-               AddMailToList((struct Mail *)email, folder);
+               // add the mail to the folderlist now
+               newmail = AddMailToList((struct Mail *)email, folder);
+
+               // if this was a compressed/encrypted folder we need to pack the mail now
+               if(folder->XPKType != XPK_OFF) RepackMailFile(newmail, -1, NULL);
+
                MA_FreeEMailStruct(email);
             }
          }

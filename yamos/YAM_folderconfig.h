@@ -70,15 +70,15 @@ enum SetOrder   { SO_SAVE=0, SO_RESET };
 enum LoadedMode { LM_UNLOAD=0, LM_FLUSHED, LM_VALID };
 
 // XPKType flags and macros
-#define XPK_OFF         0
-#define XPK_CRYPT       1
-#define XPK_COMPRESSED  2
+#define XPK_OFF         (0<<0)
+#define XPK_CRYPT       (1<<0)
+#define XPK_COMPRESSED  (1<<1)
 #define isCryptedFolder(folder)   (isFlagSet((folder)->XPKType, XPK_CRYPT))
 #define isComprFolder(folder)     (isFlagSet((folder)->XPKType, XPK_COMPRESSED))
 
 // flags and macros for the folder
-#define FOFL_MODIFY  1
-#define FOFL_FREEXS  2
+#define FOFL_MODIFY  (1<<0)
+#define FOFL_FREEXS  (1<<1)
 #define isModified(folder)        (isFlagSet((folder)->Flags, FOFL_MODIFY))
 #define isFreeAccess(folder)      (isFlagSet((folder)->Flags, FOFL_FREEXS))
 

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-05-24  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c, YAM_UT.c: fixed bug were a mail import to a compressed or
+      encrypted folder didn`t work as expected. YAM simply didn`t save the
+      mail compressed or encrypted, which caused some trouble later.
+
 2003-05-23  David Rey <tactica@gmx.net>
 
     * YAM_MA.c, YAM.cd: replaced MSG_MA_CROPREQUEST_GADS with MSG_YesNoReq2

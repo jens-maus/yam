@@ -2663,12 +2663,24 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 ///
 /// RepackMailFile
 //  (Re/Un)Compresses a message file
+//  Note: If dstxpk is -1 and passwd is NULL, then this function packs
+//        the current mail. It will assume it is plaintext and needs to be packed now
 BOOL RepackMailFile(struct Mail *mail, int dstxpk, char *passwd)
 {
    char *pmeth = NULL, srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
    struct Folder *folder = mail->Folder;
    int peff = 0, srcxpk = folder->XPKType;
    BOOL success = TRUE;
+
+   // if this function was called with dstxpk=-1 and passwd=NULL then
+   // we assume we need to pack the file from plain text to the currently
+   // selected pack method of the folder
+   if(dstxpk == -1 && passwd == NULL)
+   {
+      srcxpk = XPK_OFF;
+      dstxpk = folder->XPKType;
+      passwd = folder->Password;
+   }
 
    MA_GetIndex(folder);
    GetMailFile(srcbuf, folder, mail);
