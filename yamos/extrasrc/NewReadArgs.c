@@ -26,11 +26,11 @@
 #include <string.h>
 
 #ifdef DEBUG
-#define bug		Printf
-#define d(x)		(x)
+#define bug	Printf
+#define d(x)	x
 #else
 #define bug
-#define d(x)		;
+#define d(x)
 #endif
 
 //#define COMPILE_V39
@@ -77,20 +77,20 @@ static const STRPTR NRDArgsID = "NewReadArgs 37.4 © 1997-1999 by Stephan Rupprec
 static const STRPTR NRDArgsID = "NewReadArgs 39.4 © 1997-1999 by Stephan Rupprecht";
 #endif
 
-	d(bug("--- NewFreeArgs ---\n"));
+	d( bug("--- NewFreeArgs ---\n"); )
 	FreeArgs(rdargs->FreeArgs);
-	d(bug("FreeArgs( rdargs->FreeArgs )\n"));
+	d( bug("FreeArgs( rdargs->FreeArgs )\n"); )
 	if(rdargs->RDArgs)
 	{
 		FreeVec( rdargs->RDArgs->RDA_Source.CS_Buffer );
 		FreeDosObject(DOS_RDARGS, rdargs->RDArgs);
 	}
-	d(bug("FreeDosObject( DOS_RDARGS, rdargs->RDArgs )\n"));
+	d( bug("FreeDosObject( DOS_RDARGS, rdargs->RDArgs )\n"); )
 	if(rdargs->WinFH) 
 	{
 		SelectOutput(rdargs->OldOutput);
 		Close(SelectInput(rdargs->OldInput));
-		d(bug("SelectOutput( .. )\nClose( ... )\n"));
+		d( bug("SelectOutput( .. )\nClose( ... )\n"); )
 	}
 
 #ifndef COMPILE_V39
@@ -100,8 +100,8 @@ static const STRPTR NRDArgsID = "NewReadArgs 39.4 © 1997-1999 by Stephan Rupprec
 	if(rdargs->Pool)
 		DeletePool(rdargs->Pool);
 #endif
-	d(bug("memory freed\n"));
-	d(bug("--- EXIT ---\n"));
+	d( bug("memory freed\n"); )
+	d( bug("--- EXIT ---\n"); )
 }
 
 /****************************************************************************/
@@ -123,11 +123,13 @@ STATIC LONG IsArg( STRPTR template, STRPTR keyword)
 
 LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 {
+	#ifdef ICONGETA_RemapIcon
 	static const Tag icontags[] = {
 		ICONGETA_RemapIcon,FALSE, TAG_DONE
 	};
+	#endif
 
-	d(bug("--- NewReadArgs ---\n"));
+	d( bug("--- NewReadArgs ---\n"); )
 
 	nrdargs->RDArgs		=
 	nrdargs->FreeArgs	= NULL;
@@ -166,7 +168,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 				}
 				else if(*(ptr-1) == ',') MaxArgs++;
 			}
-			d(bug("Args: %ld\n", MaxArgs) );
+			d( bug("Args: %ld\n", MaxArgs); )
 			ptr = nrdargs->Template;
 
 			/*- how many file args? -*/
@@ -200,7 +202,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
 					if(FArgNum < FileArgs && FArgNum >= 0L)
 					{
-						d(bug("ICON: %s\n", wbarg->wa_Name));
+						d( bug("ICON: %s\n", wbarg->wa_Name); )
 
 						if(	NameFromLock(wbarg->wa_Lock, buf, sizeof(buf)) &&
 							AddPart(buf, wbarg->wa_Name, sizeof(buf))	)
@@ -232,9 +234,12 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 				olddir = CurrentDir(wbarg->wa_Lock);
 
 				/*- get tooltypes from .info file -*/
-				dobj = ( IconBase->lib_Version < 44L ) ?
-						GetDiskObject(wbarg->wa_Name) :
-						GetIconTagList(wbarg->wa_Name, (struct TagItem *)icontags);
+				dobj =
+#ifdef ICONGETA_RemapIcon
+					( IconBase->lib_Version >= 44L ) ?
+					GetIconTagList(wbarg->wa_Name, (struct TagItem *)icontags) :
+#endif
+					GetDiskObject(wbarg->wa_Name);
 
 				if( dobj )
 				{
@@ -249,7 +254,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 								STRPTR	src = *tarray;
 								LONG	i;
 
-								d(bug("tt: %s\n", *tarray));
+								d( bug("tt: %s\n", *tarray); )
 
 								/*- valid arg ? -*/
 								if((i = IsArg(ptr, src)) > -1)
@@ -366,7 +371,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 				*(ptr-1) = '\n';
 				*ptr = '\0'; // not really needed
 
-				d(bug("CS_Buffer: %s", nrdargs->RDArgs->RDA_Source.CS_Buffer));
+				d( bug("CS_Buffer: %s", nrdargs->RDArgs->RDA_Source.CS_Buffer); )
 			}
 			else
 			{
@@ -380,19 +385,19 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 		nrdargs->RDArgs->RDA_ExtHelp = nrdargs->ExtHelp;
 		if(!(nrdargs->FreeArgs = ReadArgs(nrdargs->Template, nrdargs->Parameters, nrdargs->RDArgs)))
 		{
-			d(bug("ReadArgs() error\n"));
+			d( bug("ReadArgs() error\n"); )
 			return(IoErr());
 		}
 
-		d(bug("ReadArgs() okay\n"));
+		d( bug("ReadArgs() okay\n"); )
 
 		/*- when started from wb, open window if requested -*/
 		if(ToolWindow && WBStartup)
 		{
-			d(bug("WINDOW has been defined\n"));
+			d( bug("WINDOW has been defined\n"); )
 			if((nrdargs->WinFH = Open(ToolWindow, MODE_READWRITE)))
 			{
-				d(bug("Opened WINDOW=%s\n", ToolWindow));
+				d( bug("Opened WINDOW=%s\n", ToolWindow); )
 				nrdargs->OldInput = SelectInput(nrdargs->WinFH);
 				nrdargs->OldOutput = SelectOutput(nrdargs->WinFH);
 			}
@@ -413,7 +418,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 	}
 	else return(ERROR_NO_FREE_STORE);
 
-	d(bug("--- EXIT ---\n"));
+	d( bug("--- EXIT ---\n"); )
 
 	return(RETURN_OK);
 }
