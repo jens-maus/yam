@@ -7,6 +7,14 @@ $Source$
 
 2002-06-02  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_MA.c: to be on the safe side with that ReturnID issues,
+      I increased the minimum ReturnID for the Menuitems to 100,
+      taking care of dynamic elements like the POP3 list.
+    * YAM_utilities.h: as it seems it wasn`t that wise to
+      call MUIM_Application_Input with a 0 as the signal address,
+      because it still prevented it from collecting returnIDs which
+      resulting in a non-working requester within the online-version
+      checking.
     * #?.c: removed a whole bunch of gcc warnings. Mainly some
       suggested paratheses and wrong format descriptions.
       Nothing really serious and cross-checked with SAS/C.
