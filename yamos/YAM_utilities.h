@@ -35,6 +35,7 @@
 #include <intuition/classusr.h>
 #include <mui/Toolbar_mcc.h>
 
+#include "SDI_compiler.h"
 #include "YAM_stringsizes.h"
 
 #define STR(x)  STR2(x)
@@ -246,7 +247,7 @@ void     DisplayAppIconStatistics(void);
 void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(char *file, char *newfile, struct Folder *folder);
-Object * DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...);
+Object * DoSuperNew(struct IClass *cl, Object *obj, ...) VARARGS68K;
 BOOL     DumpClipboard(FILE *out);
 BOOL     EditorToFile(Object *editor, char *file, struct TranslationTable *tt);
 char *   Encrypt(char *source);
@@ -329,7 +330,7 @@ int      SelectMessage(struct Mail *mail);
 void     SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, UWORD flags);
 char     ShortCut(char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
-void     SPrintF(char *outstr, char *fmtstr, ...);
+void     SPrintF(char *outstr, char *fmtstr, ...) VARARGS68K;
 char *   StartUnpack(char *file, char *newfile, struct Folder *folder);
 char *   stccat(char *a, char *b, int n);
 char *   StrBufCat(char *strbuf, char *source);

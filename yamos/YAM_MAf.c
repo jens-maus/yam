@@ -56,28 +56,44 @@
 #include "classes/Classes.h"
 
 /*
+** The following structures are used to build the
+** .index files of a folder.
+**
+** Alignment is very important here, because the
+** structures are saved RAW to a file.
+** Therefore we have to ensure that the alignment
+** will be the same for 68k and PPC.
+** That`s why we deal with the following #pragma
+** calls
+*/
+
+#if defined(__MORPHOS__)
+  #if defined(__GNUC__)
+    #pragma pack(2)
+  #elif defined(__VBCC__)
+    #pragma amiga-align
+  #endif
+#endif
+
+/*
 ** structure of the compressed mail
 **
 ** DO NOT CHANGE ALIGNMENT here or the .index
 ** files of a folder will be corrupt !
 **
-** We also use special ALIGN and PACKED defines here
-** to align the structure to the PPC, so that the .folder
-** file will be interchangeable between PPC<>68k
-** :see SDI_compiler.h
 */
 struct ComprMail
 {
    int    Flags;
    char   MailFile[SIZE_MFILE];
-   struct DateStamp ALIGN Date;
+   struct DateStamp Date;
    char   Status;
    char   Importance;
-   long ALIGN cMsgID;
-   long ALIGN cIRTMsgID;
-   long ALIGN Size;
-   int  ALIGN MoreBytes;
-} PACKED;
+   long   cMsgID;
+   long   cIRTMsgID;
+   long   Size;
+   int    MoreBytes;
+};
 
 /*
 ** structure of the Folder Index
@@ -85,10 +101,6 @@ struct ComprMail
 ** DO NOT CHANGE ALIGNMENT here or the .index
 ** files of a folder will be corrupt !
 **
-** We also use special ALIGN and PACKED defines here
-** to align the structure to the PPC, so that the .folder
-** file will be interchangeable between PPC<>68k
-** :see SDI_compiler.h
 */
 struct FIndex
 {
@@ -98,7 +110,15 @@ struct FIndex
    int   Unread;
    int   Size;
    long  reserved[2];
-} PACKED;
+};
+
+#if defined(__MORPHOS__)
+  #if defined(__GNUC__)
+    #pragma pack()
+  #elif defined(__VBCC__)
+    #pragma default-align
+  #endif
+#endif
 
 /* global variables */
 struct Data2D Header = { 0, 0, NULL };

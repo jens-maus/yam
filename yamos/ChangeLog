@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-16  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * reworked the handling of varargs functions within YAM to make
+      it compatible/compileable with MorphOS.
+      This should fix some crashes caused by misshandles vararg
+      functions under MorphOS.
+
 2002-06-12  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_MAf.c: fixed corrupt .index file WARNING for MorphOS.

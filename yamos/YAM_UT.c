@@ -2845,6 +2845,7 @@ Object *MakeAddressField(APTR *string, char *label, APTR help, int abmode, int w
    if ((obj = HGroup,
       GroupSpacing(1),
       Child, *string = RecipientstringObject,
+//      Child, *string = BetterStringObject,
          StringFrame,
          MUIA_CycleChain,                          TRUE,
          MUIA_String_AdvanceOnCR,                  TRUE,
@@ -2923,21 +2924,14 @@ void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int 
 ///
 /// DoSuperNew
 //  Calls parent NEW method within a subclass
-Object *DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
+Object *DoSuperNew(struct IClass *cl, Object *obj, ...)
 {
 #ifdef __MORPHOS__
-   ULONG tags[4 * 2];
-   va_list args;
-   // SVR4 varargs to Tags hack.
-   va_start(args, tag1);
-   tags[0] = tag1;
-   memcpy(tags + 1, args->reg_save_area + 3 * 4, 5 * 4);
-   tags[6] = TAG_MORE;
-   tags[7] = (ULONG)args->overflow_arg_area;
-   va_end(args);
-   return (Object *)DoSuperMethod(cl, obj, OM_NEW, tags, NULL);
+   va_list va;
+   va_start(va, obj);
+   return (Object *)DoSuperMethod(cl, obj, OM_NEW, va->overflow_arg_area, NULL);
 #else
-   return (Object *)DoSuperMethod(cl, obj, OM_NEW, &tag1, NULL);
+   return (Object *)DoSuperMethod(cl, obj, OM_NEW, (&obj+1), NULL);
 #endif
 }
 ///
@@ -4056,26 +4050,16 @@ MakeHook(putCharHook, putCharFunc);
 void SPrintF(char *outstr, char *fmtstr, ...)
 {
   struct Hook hook;
-#ifdef __PPC__
-  va_list ap;
-  ULONG arg[32];
-  int args = 0, i;
-
-  for (i=0; fmtstr[i] != '\0'; i++) {
-    if (fmtstr[i] == '%' && fmtstr[i+1] != '%') args++;
-  }
-
-  va_start(ap, fmtstr);
-  for (i=0; i<args; i++) {
-    arg[i] = va_arg(ap, ULONG);
-  }
-  va_end(ap);
-#endif
 
   InitHook(&hook, putCharHook, outstr);
 
-#ifdef __PPC__
-  FormatString(G->Locale, fmtstr, &arg[0], &hook);
+#if defined(__MORPHOS__)
+{
+  va_list va;
+  va_start(va, fmtstr);
+
+  FormatString(G->Locale, fmtstr, va->overflow_arg_area, &hook);
+}
 #else
   FormatString(G->Locale, fmtstr, &fmtstr+1, &hook);
 #endif
