@@ -7,6 +7,11 @@ $Source$
 
 2005-02-16  Gunther Nikl <gni@gecko.de>
 
+    * classes/AttachmentImage.c: wrap DB statement of else-case into {}.
+    * YAM_debug.h: revert previous change (NOP addition).
+
+2005-02-16  Gunther Nikl <gni@gecko.de>
+
     * Makefile: revert LDLIBS change.
     * classes/AttachmentImage.c: use non-varargs function.
     * classes/AttachmentGroup.c: use non-varargs functions and require v44
