@@ -1,0 +1,27 @@
+---------------------------------------------------------------------------
+               YAM 2.4p1 bugfix release - Installation notes
+---------------------------------------------------------------------------
+
+This is an incremental update that fixes some last minute bugs introduced
+in YAM 2.4. You need a complete YAM 2.4 installation (AmigaOS or MorphOS)
+for this update to be of any use to you.
+
+
+What's new since YAM 2.4?
+-------------------------
+Developer: Jens Langner (damato)
+
+- Fixed: failed to quote messages containing attachments (damato)
+- Fixed: the "Abbreviation" string gadget in the Glossary reset itself
+  to "- new -" every time the contents were deleted (damato)
+- Fixed: if AutoSave was disabled for the internal editor (AutoSave = 0),
+  it tried to delete an inexistant ".autosave0" file (damato)
+
+- Changed: added support for the DST variable created by Facts, making
+  SummerTimeGuard emulation obsolete (damato)
+
+
+A more detailed and recent history of changes can be viewed at
+
+http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/~checkout~/yamos/yamos/ChangeLog?rev=HEAD&content-type=text/plain&only_with_tag=BUGFIX_2_4
+
