@@ -4,20 +4,22 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.5 (02.03.2004)
+        Versionstring:  $VER: SDI_hook.h 1.6 (02.03.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler specific hook stuff
 
  1.0   21.06.02 : based on the work made for freeciv and YAM with
-        additional texts partly taken from YAM_hook.h changes made by Jens
-        Langner, largely reworked the mechanism
+                  additional texts partly taken from YAM_hook.h changes made
+                  by Jens Langner, largely reworked the mechanism
  1.1   07.10.02 : added HOOKPROTONP and HOOKPROTONONP requested by Jens
  1.2   18.10.02 : reverted to old MorphOS-method for GCC
  1.3   08.02.04 : modified to get it compatible to AmigaOS4
  1.4   17.02.04 : modified to get compatible to latest SDI_compiler.h changes
  1.5   02.03.04 : added UNUSED define to OS4 hook specification so that the
                   compiler can ignore some warnings.
+ 1.6   02.03.04 : added (APTR) casts to MorphOS prototype definition to
+                  reduce compiler warnings.
 */
 
 /*
@@ -131,19 +133,20 @@
     #include <emul/emulregs.h>
 
     #define HOOKPROTO(name, ret, obj, param) static ret name(void)           \
-      { struct Hook *hook = REG_A0; obj = REG_A2; param = REG_A1;
+      { struct Hook *hook = (APTR)REG_A0; obj = (APTR)REG_A2;                \
+        param = (APTR)REG_A1;
     #define HOOKPROTONO(name, ret, param) static ret name(void)              \
-      { struct Hook *hook = REG_A0; param = REG_A1;
+      { struct Hook *hook = (APTR)REG_A0; param = (APTR)REG_A1;
     #define HOOKPROTONP(name, ret, obj) static ret name(void)                \
-      { struct Hook *hook = REG_A0; obj = REG_A2;
+      { struct Hook *hook = (APTR)REG_A0; obj = (APTR)REG_A2;
     #define HOOKPROTONONP(name, ret) static ret name(void)                   \
-      { struct Hook *hook = REG_A0;
+      { struct Hook *hook = (APTR)REG_A0;
     #define HOOKPROTONH(name, ret, obj, param) static ret name(void)         \
-      { obj = REG_A2; param = REG_A1;
+      { obj = (APTR)REG_A2; param = (APTR)REG_A1;
     #define HOOKPROTONHNO(name, ret, param) static ret name(void)            \
-      { param = REG_A1;
+      { param = (APTR)REG_A1;
     #define HOOKPROTONHNP(name, ret, obj) static ret name(void)              \
-      { obj = REG_A2;
+      { obj = (APTR)REG_A2;
     #define HOOKPROTONHNONP(name, ret) static ret name(void) {
     #define MakeHook(hookname, funcname)                                     \
       } static const struct SDI_EmulLibEntry Gate_##funcname =               \
