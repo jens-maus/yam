@@ -3892,6 +3892,33 @@ ULONG ConvertKey(struct IntuiMessage *imsg)
    return code;
 }
 ///
+/// isChildOfGroup()
+// return TRUE if the supplied child object is part of the supplied group
+BOOL isChildOfGroup(Object *group, Object *child)
+{
+  struct List *child_list;
+  Object *curchild;
+  Object *cstate;
+
+  // get the child list of the group object
+  child_list = (struct List *)xget(group, MUIA_Group_ChildList);
+  if(child_list == NULL)
+    return FALSE;
+
+  // here we check wheter the child is part of the supplied group
+  cstate = (Object *)child_list->lh_Head;
+  while((curchild = NextObject(&cstate)))
+  {
+    if(curchild == child)
+    {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+///
 
 /**** BodyChunk ****/
 /// FreeBCImage

@@ -33,6 +33,9 @@
 /* CLASSDATA
 struct Data
 {
+  Object *windowGroup;
+  Object *imageGroup;
+  Object *textGroup;
 	Object *statusGauge;
 	Object *progressGauge;
 	Object *selectGroup;
@@ -57,6 +60,9 @@ OVERLOAD(OM_NEW)
 	struct Data *data;
 	char logopath[SIZE_PATHFILE];
 	char *compileInfo;
+  Object *windowGroup;
+  Object *imageGroup;
+  Object *textGroup;
 	Object *statusGauge;
 	Object *progressGauge;
 	Object *selectGroup;
@@ -74,9 +80,9 @@ OVERLOAD(OM_NEW)
 		MUIA_Window_SizeGadget,	FALSE,
 		MUIA_Window_LeftEdge,		MUIV_Window_LeftEdge_Centered,
 		MUIA_Window_TopEdge,		MUIV_Window_TopEdge_Centered,
-		WindowContents, VGroup,
+		WindowContents, windowGroup = VGroup,
 			MUIA_Background, MUII_GroupBack,
-			Child, HGroup,
+			Child, imageGroup = HGroup,
 				MUIA_Group_Spacing, 0,
 				Child, HSpace(0),
 				Child, BodychunkImageObject,
@@ -84,7 +90,7 @@ OVERLOAD(OM_NEW)
 				End,
 				Child, HSpace(0),
 			End,
-			Child, HCenter((VGroup,
+			Child, textGroup = HCenter((VGroup,
 				Child, CLabel(GetStr(MSG_Copyright1)),
 				Child, ColGroup(2),
 					Child, bt_gopage = TextObject,
@@ -110,26 +116,6 @@ OVERLOAD(OM_NEW)
 				MUIA_Gauge_InfoText, " ",
 				MUIA_Gauge_Horiz,    TRUE,
 			End,
-			Child, progressGauge = GaugeObject,
-				GaugeFrame,
-				MUIA_ShowMe,         FALSE,
-				MUIA_Gauge_InfoText, " ",
-				MUIA_Gauge_Horiz,    TRUE,
-			End,
-			Child, selectGroup = VGroup,
-				MUIA_ShowMe, FALSE,
-				Child, RectangleObject,
-					 MUIA_Rectangle_HBar, TRUE,
-					 MUIA_FixHeight, 8,
-				End,
-				Child, userGroup = VGroup,
-					Child, TextObject,
-						MUIA_Text_Contents, GetStr(MSG_UserLogin),
-						MUIA_Text_PreParse, MUIX_C,
-					End,
-				End,
-				Child, HVSpace,
-			End,
 		End,
 
 		TAG_MORE, (ULONG)inittags(msg))))
@@ -137,13 +123,44 @@ OVERLOAD(OM_NEW)
 		return 0;
 	}
 
-	if(!(data = (struct Data *)INST_DATA(cl,obj)))
-		return 0;
+  // create the progress Gauge separatly as we add/remove
+  // it manually
+  progressGauge = GaugeObject,
+	  GaugeFrame,
+		MUIA_Gauge_InfoText, " ",
+		MUIA_Gauge_Horiz,    TRUE,
+	End;
 
-	data->statusGauge = statusGauge;
+  // create the selectionGroup manually as we add/remove
+  // it manually later on
+	selectGroup = VGroup,
+  	Child, RectangleObject,
+			 MUIA_Rectangle_HBar, TRUE,
+			 MUIA_FixHeight, 8,
+		End,
+		Child, userGroup = VGroup,
+			Child, TextObject,
+				MUIA_Text_Contents, GetStr(MSG_UserLogin),
+				MUIA_Text_PreParse, MUIX_C,
+			End,
+		End,
+		Child, HVSpace,
+	End;
+
+	if(!(data = (struct Data *)INST_DATA(cl,obj)) ||
+     !progressGauge ||
+     !selectGroup)
+  {
+		return 0;
+  }
+
+	data->windowGroup   = windowGroup;
+	data->imageGroup    = imageGroup;
+	data->textGroup     = textGroup;
+	data->statusGauge   = statusGauge;
 	data->progressGauge = progressGauge;
-	data->selectGroup = selectGroup;
-	data->userGroup = userGroup;
+	data->selectGroup   = selectGroup;
+	data->userGroup     = userGroup;
 
 	DoMethod(G->App, OM_ADDMEMBER, obj);
 
@@ -152,6 +169,24 @@ OVERLOAD(OM_NEW)
 	set(obj, MUIA_Window_Activate, TRUE);
 
 	return (ULONG)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+	GETDATA;
+
+  // only remove the select and progressGauge if they are not
+  // already part of the mainwindow.
+  if(isChildOfGroup(data->windowGroup, data->progressGauge) == FALSE)
+    MUI_DisposeObject(data->progressGauge);
+
+  if(isChildOfGroup(data->windowGroup, data->selectGroup) == FALSE)
+    MUI_DisposeObject(data->selectGroup);
+
+	return DoSuperMethodA(cl, obj, msg);
+
 }
 
 ///
@@ -175,7 +210,15 @@ DECLARE(StatusChange) // char *txt, LONG percent
 	else
 		set(data->statusGauge, MUIA_Gauge_Current, msg->percent);
 
-	nnset(data->progressGauge, MUIA_ShowMe, FALSE);
+
+  // lets remove the progress Gauge from our splashwindow
+  if(isChildOfGroup(data->windowGroup, data->progressGauge) &&
+     DoMethod(data->windowGroup, MUIM_Group_InitChange))
+  {
+    DoMethod(data->windowGroup, OM_REMMEMBER, data->progressGauge);
+
+    DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+  }
 
 	DoMethod(G->App, MUIM_Application_InputBuffered);
 
@@ -197,7 +240,14 @@ DECLARE(ProgressChange) // char *txt, LONG percent, LONG max
 	if(msg->max >= 0)
 		set(data->progressGauge, MUIA_Gauge_Max, msg->max);
 
-	set(data->progressGauge, MUIA_ShowMe, TRUE);
+  // lets add the progress Gauge to our splashwindow now
+  if(isChildOfGroup(data->windowGroup, data->progressGauge) == FALSE &&
+     DoMethod(data->windowGroup, MUIM_Group_InitChange))
+  {
+    DoMethod(data->windowGroup, OM_ADDMEMBER, data->progressGauge);
+
+    DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+  }
 
 	DoMethod(G->App, MUIM_Application_InputBuffered);
 
@@ -210,6 +260,15 @@ DECLARE(SelectUser)
 {
 	GETDATA;
 	int user = -1;
+
+  // lets add the selectGroup to the window first as MUIA_ShowMe doesn't work
+  // correctly
+  if(isChildOfGroup(data->windowGroup, data->selectGroup) == FALSE &&
+     DoMethod(data->windowGroup, MUIM_Group_InitChange))
+  {
+    DoMethod(data->windowGroup, OM_ADDMEMBER, data->selectGroup);
+    DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+  }
 
 	if(DoMethod(data->userGroup, MUIM_Group_InitChange))
 	{
@@ -237,11 +296,6 @@ DECLARE(SelectUser)
 		DoMethod(data->userGroup, MUIM_Group_ExitChange);
 		set(data->statusGauge, MUIA_Gauge_InfoText, GetStr(MSG_US_WaitLogin));
 		
-		set(data->selectGroup, MUIA_ShowMe, TRUE);
-		SetAttrs(obj, MUIA_Window_ActiveObject,  button0,
-									MUIA_Window_DefaultObject, button0,
-						 TAG_DONE);
-
 		// make sure the window is open and not iconified
 		wasOpen = xget(obj, MUIA_Window_Open);
 		wasIconified = xget(G->App, MUIA_Application_Iconified);
@@ -251,7 +305,11 @@ DECLARE(SelectUser)
 
 		if(wasIconified)
 			set(G->App, MUIA_Application_Iconified, FALSE);
-		
+
+		SetAttrs(obj,	MUIA_Window_DefaultObject, button0,
+                  MUIA_Window_ActiveObject,  button0,
+						 TAG_DONE);
+
 		// make sure the window is at the front
 		DoMethod(obj, MUIM_Window_ToFront);
 
@@ -285,14 +343,21 @@ DECLARE(SelectUser)
 		if(wasIconified)
 			set(G->App, MUIA_Application_Iconified, TRUE);
 
-		set(data->selectGroup, MUIA_ShowMe, FALSE);
+		if(DoMethod(data->userGroup, MUIM_Group_InitChange))
+		{
+      // remove & dispose the group object
+		  DoMethod(data->userGroup, OM_REMMEMBER, group);
+		  MUI_DisposeObject(group);
+		
+      DoMethod(data->userGroup, MUIM_Group_ExitChange);
+	  }
+  }
 
-		DoMethod(data->userGroup, MUIM_Group_InitChange);
-		// remove & dispose the group object
-		DoMethod(data->userGroup, OM_REMMEMBER, group);
-		MUI_DisposeObject(group);
-		DoMethod(data->userGroup, MUIM_Group_ExitChange);
-	}
+  if(DoMethod(data->windowGroup, MUIM_Group_InitChange))
+  {
+    DoMethod(data->windowGroup, OM_REMMEMBER, data->selectGroup);
+    DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+  }
 
 	return user;
 }

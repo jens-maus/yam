@@ -7,6 +7,9 @@ $Source$
 
 2004-10-18  Jens Langner <Jens.Langner@light-speed.de>
 
+    * Splashwindow.c: replaced all MUIA_ShowMe usages by proper
+      MUIM_Group_Init/ExitChange calls to hopefully fix the window corruption
+      due to the dynamic adding/removing of objects.
     * YAM_MAf.c: reworked the index scanning routines a bit so that they
       will now ask the user if an unknown file in a folder directory should
       be considered a normal mailfile instead of just ignoring it. This

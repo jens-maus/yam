@@ -261,6 +261,7 @@ ULONG    CRC32(void *buffer, unsigned int count, ULONG crc);
 ULONG    CompressMsgID(char *msgid);
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 ULONG    ConvertKey(struct IntuiMessage *imsg);
+BOOL     isChildOfGroup(Object *group, Object *child);
 BOOL     CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh);
 BOOL     MoveFile(char *oldname, char *newname);
 char *   CreateFilename(const char * const file);
