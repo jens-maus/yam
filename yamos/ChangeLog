@@ -950,3 +950,10 @@
 
     * Changed code layout of the new classes files accordingly to the standard
       layout of YAM and added the fold/unfold marks.
+
+2001-07-29  Allan Odgaard <duff@diku.dk>
+
+    * Rewrote the eventhandler of the recipient string. The new code should be
+      much simpler and thus more transparent.
+      Some functionality still lack and it needs some finetuning (e.g.
+      multiple recipient support)...
