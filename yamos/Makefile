@@ -1,9 +1,10 @@
 
 OBJS= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
       YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o \
-      YAM_UT.o YAM_WR.o YAM_locale.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o YAM_md5.o
+      YAM_UT.o YAM_WR.o YAM_locale.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
+      YAM_md5.o
 
-EXTRA_OBJS= YAM_extra.o
+EXTRA_OBJS= all_morphos.o
 YAM: $(OBJS) $(EXTRA_OBJS)
 	gcc -noixemul -o YAM $(OBJS) $(EXTRA_OBJS) gg:lib/NewReadArgs.o -lxpkmaster -lmui -lopenurl -lamiga
 
@@ -12,7 +13,6 @@ starter: starter.c
 
 %.o: %.c
 	gcc -noixemul -O2 -mmultiple -mcpu=604e -c -DYAMVER="\"2.2\"" -D__YAM_VERDATE="\"7.4.2001\"" -D__YAM_VERDAYS=8497 $<
-
 
 YAM.o:     YAM.c     YAM.h YAM_locale.h
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_locale.h

@@ -4,29 +4,12 @@ OBJS= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
       YAM_UT.o YAM_WR.o YAM_locale.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
       YAM_md5.o
 
-#ifeq ($(shell uname), AmigaOS)
-
 EXTRA_OBJS= all_gcc.o
 YAM: $(OBJS) $(EXTRA_OBJS)
 	gcc -o YAM $(OBJS) $(EXTRA_OBJS) -lmui
 
 %.o: %.c
 	gcc -W -Wall -Iincludes -DNO_INLINE_STDARG -O2 -funsigned-char -c -DYAMVER="\"2.3-dev\"" -D__YAM_VERDATE="\"`date +%d.%m.%Y`\"" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" $<
-
-#else # MorphOS
-#
-#EXTRA_OBJS= YAM_extra.o YAM_gates.o
-#YAM: $(OBJS) $(EXTRA_OBJS)
-#	gcc -noixemul -o YAM $(OBJS) $(EXTRA_OBJS) gg:lib/NewReadArgs.o -lmui -lxpkmaster -lopenurl -lamiga
-#
-#starter: starter.c
-#	m68k-amigaos-gcc -o starter -O2 -nostlib -noixemul -DNAME="\"YAM\"" starter.c
-#
-#%.o: %.c
-#	gcc -noixemul -O2 -mmultiple -mcpu=604e -c -DYAMVER="\"2.2\"" -DYAMDATE="\"07.11.00\"" $<
-#
-#endif # AmigaOS
-
 
 YAM.o:     YAM.c     YAM.h YAM_locale.h
 YAM_AB.o:  YAM_AB.c  YAM.h YAM_locale.h
@@ -52,6 +35,7 @@ YAM_rexx.o     : YAM_rexx.c YAM_rexx.h
 YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_locale.h
 YAM_extra.o: YAM_extra.c YAM.h YAM_locale.h
+YAM_md5.o: YAM_md5.c
 
 YAM_locale.c: locale/YAM.cd
 	flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd

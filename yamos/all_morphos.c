@@ -25,27 +25,43 @@
 
 ***************************************************************************/
 
-#define ALL_IN_ONE
-#include "YAM.c"
-#include "YAM_AB.c"
-#include "YAM_CL.c"
-#include "YAM_CO.c"
-#include "YAM_COg.c"
-#include "YAM_COs.c"
-#include "YAM_DI.c"
-#include "YAM_EA.c"
-#include "YAM_ER.c"
-#include "YAM_FI.c"
-#include "YAM_FO.c"
-#include "YAM_MA.c"
-#include "YAM_MAf.c"
-#include "YAM_MI.c"
-#include "YAM_RE.c"
-#include "YAM_TR.c"
-#include "YAM_US.c"
-#include "YAM_UT.c"
-#include "YAM_WR.c"
-/*#include "YAM_locale.c"*/
-#include "YAM_rexx.c"
-#include "YAM_rexx_rxcl.c"
-#include "YAM_rexx_rxif.c"
+#include <string.h>
+#include <ctype.h>
+#define DoMethod _DoMethod
+#include <clib/alib_protos.h>
+#undef DoMethod
+#include "YAM.h"
+
+#include "extrasrc/astcsma.c"
+
+int max(int x, int y)
+{
+   return x > y ? x : y;
+}
+
+size_t StrLen(const char *str)
+{
+   return strlen(str);
+}
+
+ULONG DoMethod(void *obj,ULONG a1,ULONG a2,ULONG a3,ULONG a4,ULONG a5,ULONG a6,ULONG a7,
+ULONG a8,ULONG a9,ULONG a10,ULONG a11,ULONG a12,ULONG a13,ULONG a14,ULONG a15)
+{
+    ULONG t[15];
+    t[0]=a1;
+    t[1]=a2;
+    t[2]=a3;
+    t[3]=a4;
+    t[4]=a5;
+    t[5]=a6;
+    t[6]=a7;
+    t[7]=a8;
+    t[8]=a9;
+    t[9]=a10;
+    t[10]=a11;
+    t[11]=a12;
+    t[12]=a13;
+    t[13]=a14;
+    t[14]=a15;
+    return DoMethodA(obj,(Msg)t);
+}
