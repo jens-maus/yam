@@ -1,5 +1,8 @@
 2002-05-09  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_TR.c: fixed bug where we didn`t checked the result code
+      of a TR_SendCMTPCmd() call and therefore placed the mail in
+      the wrong folder on an error.
     * added a proper status message to the connecting process of
       the SMTP send commands. Now YAM will show a message that
       it is trying to connect to the SMTP server. Formerly

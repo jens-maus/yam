@@ -1794,7 +1794,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                   result = email->DelSend ? 2 : 1;
                   AppendLogVerbose(41, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size, "");
                 }
-                TR_SendSMTPCmd("\r\n.", NULL);
+                if(!TR_SendSMTPCmd("\r\n.", NULL)) result = 0;
               }
             }
             MA_FreeEMailStruct(email);
