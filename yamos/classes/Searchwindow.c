@@ -51,6 +51,8 @@ struct Data
 
 ULONG SearchwindowGetSize (VOID) { return sizeof(struct Data); }
 
+/* Overloaded Methods */
+/// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
 	struct Data *data;
@@ -95,6 +97,12 @@ OVERLOAD(OM_NEW)
 	return (ULONG)obj;
 }
 
+///
+
+/* Private Functions */
+
+/* Public Methods */
+/// DECLARE(Open)
 DECLARE(Open) // Object *texteditor
 {
 	GETDATA;
@@ -124,6 +132,8 @@ DECLARE(Open) // Object *texteditor
 	return 0;
 }
 
+///
+/// DECLARE(Close)
 DECLARE(Close)
 {
 	GETDATA;
@@ -135,6 +145,8 @@ DECLARE(Close)
 	return 0;
 }
 
+///
+/// DECLARE(Search)
 DECLARE(Search) // ULONG top
 {
 	GETDATA;
@@ -155,7 +167,12 @@ DECLARE(Search) // ULONG top
 	return 0;
 }
 
+///
+/// DECLARE(Next)
 DECLARE(Next)
 {
 	return DoMethod(obj, MUIM_Searchwindow_Search, FALSE);
 }
+
+///
+

@@ -945,3 +945,8 @@
       candidates exist for address completion. Some functionality is still
       pending (you can navigate the list with arrow up/down but return just
       does a DisplayBeep()) -- you need to define DUFF for this to work.
+
+2001-07-28  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * Changed code layout of the new classes files accordingly to the standard
+      layout of YAM and added the fold/unfold marks.

@@ -83,7 +83,7 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
             result = (char *) secondary;
          }
          
-         SetRexxVar( &rexxmessage->rm_Node, "RC2", result, strlen(result) );
+         SetRexxVar( (struct RexxMsg *)&rexxmessage->rm_Node, "RC2", result, strlen(result) );
          
          secondary = 0;
       }
@@ -727,7 +727,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
                for( rb = (char *) argarray[0]; *rb; ++rb )
                   *rb = toupper( *rb );
                
-               if( SetRexxVar( &rexxmsg->rm_Node,
+               if( SetRexxVar( (struct RexxMsg *)&rexxmsg->rm_Node,
                   *((char *)argarray[0]) ? (char *)argarray[0] : "RESULT",
                   result, strlen(result) ) )
                {
@@ -752,7 +752,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
             else
             {
                for( s = stem; s; s = s->succ )
-                  rc |= SetRexxVar( &rexxmsg->rm_Node, s->name, s->value, strlen(s->value) );
+                  rc |= SetRexxVar( (struct RexxMsg *)&rexxmsg->rm_Node, s->name, s->value, strlen(s->value) );
                
                if( rc )
                {
