@@ -87,7 +87,7 @@ const char * const yamverxmailer    = "YAM " __YAM_VERSION __YAM_DEVEL __YAM_BUI
                                       " AmigaOS E-mail Client (c) 2000-2005 by YAM Open Source Team - http://www.yam.ch/";
 const char * const yamcopyright     = __YAM_COPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;
-const unsigned long yamversiondays = __YAM_VERDAYS;
+const unsigned long yamversiondays  = __YAM_VERDAYS;
 
 #if defined(__GNUC__)
   #if defined(__GNUC_PATCHLEVEL__)
@@ -104,32 +104,30 @@ const unsigned long yamversiondays = __YAM_VERDAYS;
   #warning "unknown compiler specification"
 #endif
 
-// lets defined the AmigaOS4 style interfaces and library bases.
-// Please note that with OS4 all libraries bases are plain
-// struct Library ones per default
+/* no longer external visible, this is done by proto files! */
+struct Library* DataTypesBase = NULL;
+struct Library* GenesisBase   = NULL;
+struct Library* IconBase      = NULL;
+struct Library* IFFParseBase  = NULL;
+struct Library* IntuitionBase = NULL;
+struct Library* KeymapBase    = NULL;
+struct Library* LocaleBase    = NULL;
+struct Library* MiamiBase     = NULL;
+struct Library* MUIMasterBase = NULL;
+struct Library* OpenURLBase   = NULL;
+struct Library* RexxSysBase   = NULL;
+struct Library* SocketBase    = NULL;
+struct Library* UtilityBase   = NULL;
+struct Library* WorkbenchBase = NULL;
+struct Library* XpkBase       = NULL;
+struct Library* AmiSSLBase    = NULL;
+struct Device*  TimerBase     = NULL;
+struct Library* GfxBase       = NULL;
+struct Library* LayersBase    = NULL;
+struct Library* DiskfontBase  = NULL;
+
+/* AmigaOS4 style interfaces */
 #if defined(__amigaos4__)
-
-struct Library* DataTypesBase  = NULL;
-struct Library* GenesisBase    = NULL;
-struct Library* IconBase       = NULL;
-struct Library* IFFParseBase   = NULL;
-struct Library* IntuitionBase  = NULL;
-struct Library* KeymapBase     = NULL;
-struct Library* LocaleBase     = NULL;
-struct Library* MiamiBase      = NULL;
-struct Library* MUIMasterBase  = NULL;
-struct Library* OpenURLBase    = NULL;
-struct Library* RexxSysBase    = NULL;
-struct Library* SocketBase     = NULL;
-struct Library* UtilityBase    = NULL;
-struct Library* WorkbenchBase  = NULL;
-struct Library* XpkBase        = NULL;
-struct Library* AmiSSLBase     = NULL;
-struct Device*  TimerBase      = NULL;
-struct Library* GfxBase        = NULL;
-struct Library* LayersBase     = NULL;
-struct Library* DiskfontBase   = NULL;
-
 struct ExecIFace*       IExec         = NULL;
 struct DataTypesIFace*  IDataTypes    = NULL;
 struct GenesisIFace*    IGenesis      = NULL;
@@ -151,31 +149,6 @@ struct TimerIFace*      ITimer        = NULL;
 struct GraphicsIFace*   IGraphics     = NULL;
 struct LayersIFace*     ILayers       = NULL;
 struct DiskfontIFace*   IDiskfont     = NULL;
-
-#else
-
-/* no longer external visible, this is done by proto files! */
-struct Library *       DataTypesBase  = NULL;
-struct Library *       GenesisBase    = NULL;
-struct Library *       IconBase       = NULL;
-struct Library *       IFFParseBase   = NULL;
-struct IntuitionBase * IntuitionBase  = NULL;
-struct Library *       KeymapBase     = NULL;
-struct LocaleBase *    LocaleBase     = NULL;
-struct Library *       MiamiBase      = NULL;
-struct Library *       MUIMasterBase  = NULL;
-struct Library *       OpenURLBase    = NULL;
-struct RxsLib *        RexxSysBase    = NULL;
-struct Library *       SocketBase     = NULL;
-struct UtilityBase *   UtilityBase    = NULL;
-struct Library *       WorkbenchBase  = NULL;
-struct Library *       XpkBase        = NULL;
-struct Library *       AmiSSLBase     = NULL;
-struct Device *        TimerBase      = NULL;
-struct Library *       GfxBase        = NULL;
-struct Library *       LayersBase     = NULL;
-struct Library *       DiskfontBase   = NULL;
-
 #endif /* __amigaos4__ */
 
 struct WBStartup *WBmsg;
