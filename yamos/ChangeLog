@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-10  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_rexx.c: minor changed to the ReadArgs() calling mechanism of YAM's
+      ARexxPort implementation to conform a bit better to the documented
+      standard.
+
 2004-10-18  Jens Langner <Jens.Langner@light-speed.de>
 
     * Splashwindow.c: replaced all MUIA_ShowMe usages by proper

@@ -941,7 +941,8 @@ void rx_writeeditor( UNUSED struct RexxHost *host, struct rxd_writeeditor **rxd,
          if (G->WR[G->ActiveWriteWin])
          {
             ULONG p = DoMethod(G->WR[G->ActiveWriteWin]->GUI.TE_EDIT, MUIM_TextEditor_ARexxCmd, rd->arg.command);
-            switch (p)
+
+            switch(p)
             {
                case FALSE: rd->rc = RETURN_WARN; break;
                case TRUE:  break;

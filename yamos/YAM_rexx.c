@@ -48,6 +48,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "YAM_debug.h"
 #include "YAM_mime.h"
 #include "YAM_rexx.h"
 #include "YAM_rexx_rxcl.h"
@@ -243,6 +244,8 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    struct RexxHost *host;
    int ext = 0;
    
+   DB(kprintf("SetupARexxHost()\n");)
+
    if( !basename || !*basename )
       basename = RexxPortBaseName;
    
@@ -362,6 +365,8 @@ static int find( char *input )
 static struct rxs_command *FindRXCommand( char *com )
 {
    int cmd;
+
+   DB(kprintf("FindRXCommand: '%s'\n", com);)
    
    cmd = find( com );
    
@@ -386,7 +391,7 @@ static struct rxs_command *ParseRXCommand( char **arg )
    *t = '\0';
    while( *s == ' ' ) ++s;
    *arg = s;
-   
+
    return( FindRXCommand( com ) );
 }
 
@@ -626,6 +631,8 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    strcpy( argb, (char *) ARG0(rexxmsg) );
    strcat( argb, "\n" );
    arg = argb;
+
+   DB(kprintf("DoRXCommand: '%s'\n", arg);)
    
    if(!(rxc = ParseRXCommand( &arg )))
    {
@@ -651,7 +658,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       
       goto drc_cleanup;
    }
-   
+
    if(isFlagClear(rxc->flags, ARB_CF_ENABLED))
    {
       rc = -10;
@@ -693,8 +700,11 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       host->rdargs->RDA_Source.CS_CurChr = 0;
       host->rdargs->RDA_DAList = 0;
       host->rdargs->RDA_Buffer = NULL;
-      
-      if( !ReadArgs(cargstr, argarray, host->rdargs) )
+      host->rdargs->RDA_BufSiz = 0;
+      host->rdargs->RDA_ExtHelp = NULL;
+      host->rdargs->RDA_Flags = RDAF_NOPROMPT;
+
+      if(ReadArgs(cargstr, argarray, host->rdargs) == NULL)
       {
          rc = 10;
          rc2 = IoErr();
@@ -703,7 +713,6 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    }
    
    /* Funktion aufrufen */
-   
    (rxc->function)( host, (void **)(APTR)&array, RXIF_ACTION, rexxmsg );
    
    rc = array[0];
@@ -811,11 +820,13 @@ void ARexxDispatch( struct RexxHost *host )
 {
    struct RexxMsg *rexxmsg;
 
+   DB(kprintf("ARexxDispatch()\n");)
+
    while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)))
    {
       if( (rexxmsg->rm_Action & RXCODEMASK) != RXCOMM )
       {
-         /* No Rexx-Message */
+         // No Rexx-Message
          ReplyMsg( (struct Message *) rexxmsg );
       }
       else if( rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG )
@@ -824,10 +835,10 @@ void ARexxDispatch( struct RexxHost *host )
          
          if( org )
          {
-            /* Reply zu durchgereichter Msg */
+            // Reply to a forwarded Msg
             if( rexxmsg->rm_Result1 != 0 )
             {
-               /* Befehl unbekannt */
+               // command unknown
                ReplyRexxCommand( org, 20, ERROR_NOT_IMPLEMENTED, NULL );
             }
             else
@@ -837,7 +848,7 @@ void ARexxDispatch( struct RexxHost *host )
          }
          else
          {
-            /* Reply zu einem SendRexxCommand()-Call */
+            // reply to a SendRexxCommand()-Call
             if( ARexxResultHook )
                ARexxResultHook( host, rexxmsg );
          }
