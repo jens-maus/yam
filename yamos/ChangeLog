@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-17  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: fixed bug #715959 where a fast try to double start
+      YAM caused a small enforcer hit.
+
 2003-04-15  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: fixed bug #721608 where a return value of NULL

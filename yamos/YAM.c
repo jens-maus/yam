@@ -577,7 +577,7 @@ void PopUp(void)
 //  A second copy of YAM was started
 HOOKPROTONHNONP(DoublestartFunc, void)
 {
-   if (G->App && G->MA->GUI.WI) PopUp();
+   if(G->App && G->MA && G->MA->GUI.WI) PopUp();
 }
 MakeStaticHook(DoublestartHook, DoublestartFunc);
 ///
