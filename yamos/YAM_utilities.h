@@ -240,9 +240,7 @@ extern long           PNum;
 extern unsigned char  *PPtr[16];
 
 // only prototypes needed for AmigaOS
-#if defined(__amigaos4__)
-Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
-#elif !defined(__MORPHOS__)
+#if !defined(__MORPHOS__)
 Object * STDARGS DoSuperNew(struct IClass *cl, Object *obj, ...);
 #endif
 
@@ -381,7 +379,7 @@ char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
 BOOL     LoadParsers(void);
 void     SParse(char *);
-LONG STDARGS VARARGS68K YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
+LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
 APTR     WhichLV(struct Folder *folder);
 
 #endif /* YAM_UTILITIES_H */

@@ -3264,22 +3264,21 @@ void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int 
 ///
 /// DoSuperNew
 //  Calls parent NEW method within a subclass
-#if defined(__amigaos4__)
-Object * VARARGS68K DoSuperNew(struct IClass *cl, Object * obj, ...)
+#if !defined(__MORPHOS__)
+Object * STDARGS DoSuperNew(struct IClass *cl, Object *obj, ...)
 {
+#if defined(__amigaos4__)
   Object *rc;
   va_list args;
-  va_startlinear(args, obj);
 
+  va_startlinear(args, obj);
   rc = (Object *)DoSuperMethod(cl, obj, OM_NEW, va_getlinearva(args, ULONG), NULL);
   va_end(args);
 
   return rc;
-}
-#elif !defined(__MORPHOS__)
-Object * STDARGS DoSuperNew(struct IClass *cl, Object *obj, ...)
-{
+#else
   return (Object *)DoSuperMethod(cl, obj, OM_NEW, (&obj+1), NULL);
+#endif
 }
 #endif
 ///
