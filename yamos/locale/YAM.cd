@@ -1,6 +1,7 @@
 ;
 ; YAM.cd - YAM 2.4 catalog description file
-;
+; $Id$
+; 
 #version 5
 #language english
 ;
@@ -3754,11 +3755,11 @@ Couldn't open translation table '%s'\n\
 ; FILENAME
 ;
 MSG_ER_CantCreateFile (//)
-Can't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
+Couldn't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
 ; FILENAME
 ;
 MSG_ER_CantCreateDir (//)
-Can't create directory '%s'. Make sure that the volume isn't write-protected.
+Couldn't create directory '%s'. Make sure that the volume isn't write-protected.
 ; PATH
 ;
 MSG_ER_ErrorNoAlias (//)
@@ -3786,17 +3787,17 @@ MSG_ER_ErrorMaxFilters (//)
 Maximum number of filters reached! You can't add more filters.
 ;
 MSG_ER_CantOpenTempfile (//)
-Can't open temporary file '%s'. Check the path settings in the configuration.
+Couldn't open temporary file '%s'. Check the path settings in the configuration.
 ; FILENAME
 ;
 MSG_ER_CantCreateTempfile (//)
-Can't create temporary file. Reason: out of memory or invalid path specified in the configuration.
+Couldn't create temporary file. Reason: out of memory or invalid path specified in the configuration.
 ;
 MSG_ER_ErrorConsole (//)
-Can't open console window for script.
+Couldn't open console window for script.
 ;
 MSG_ER_ErrorARexxScript (//)
-Can't send ARexx command '%s'. Make sure that the script exists.
+Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
 MSG_ER_UnexpEOFB64 (//)
@@ -3810,7 +3811,7 @@ Invalid line length in UUencoded file: %lD. A defective UUencoder was used or th
 ; SIZE
 ;
 MSG_ER_CreateMailError (//)
-Can't create mail file. Reason: invalid folder directory or unsufficient diskspace.
+Couldn't create mail file. Reason: invalid folder directory or unsufficient diskspace.
 ;
 MSG_ER_UnknownEnc (//)
 Unknown MIME encoding: %s. YAM failed decoding a part of the message. Save the message to disk and try with a different decoder.
@@ -3824,13 +3825,13 @@ MSG_ER_MultipartEOF (//)
 Incomplete multipart message: unexpected end of file. The message seems to be truncated.
 ;
 MSG_ER_MIMEError (//)
-Can't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
+Couldn't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
 ;
 MSG_ER_MissingBoundary (//)
 Missing boundary in multipart message. The message seems to be truncated.
 ;
 MSG_ER_CantOpenFile (//)
-Can't read from file '%s'. The file doesn't seem to exist.
+Couldn't read from file '%s'. The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize (//)
@@ -3843,10 +3844,10 @@ HTML document '%s' not found. The file doesn't exist on the WWW server.
 ; FILENAME
 ;
 MSG_ER_SendHTTP (//)
-Can't send HTTP request. Requesting a document from the WWW server failed.
+Couldn't send HTTP request. Requesting a document from the WWW server failed.
 ;
 MSG_ER_ConnectHTTP (//)
-Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
+Couldn't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
 ; HOST
 ;
 MSG_ER_BadResponse (//)
@@ -3863,7 +3864,7 @@ Unknown SMTP server: '%s'. TCP/IP is off-line or the server address is invalid.
 ; HOST
 ;
 MSG_ER_CantConnect (//)
-Can't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
+Couldn't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
 ; HOST
 ;
 MSG_ER_NoAPOP (//)
@@ -3930,7 +3931,7 @@ Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
 ; RECIPIENT, ADDRESS
 ;
 MSG_ER_ErrorAppendKey (//)
-Can't append public PGP key %s. There was a problem extracting it from the PGP keyring.
+Couldn't append public PGP key %s. There was a problem extracting it from the PGP keyring.
 ; KEY_ID
 ;
 ; Module DI - Window
@@ -4816,7 +4817,7 @@ MSG_FO_NEWFGROUPREQ (//)
 Please enter a name for the new folder group:
 ;
 MSG_ER_CANTMOVEMAIL (//)
-Can't move mail '%s' to folder '%s' because a folder with that name doesn't exist. \
+Couldn't move mail '%s' to folder '%s' because a folder with that name doesn't exist. \
 Please check your Filters configuration.
 ; MAILFILE, FOLDERNAME
 ;
@@ -4939,22 +4940,22 @@ Import MIME viewers & types
 ;
 MSG_ER_TRANSFERMAIL (//)
 Couldn't transfer mail '%s' to folder '%s'.\n\
-Perhaps the file doesn't exist or it couldn't be copied for some reason.
+Either the file doesn't exist or it couldn't be copied for some reason.
 ; MAILFILE, FOLDERNAME
 MSG_ER_IMPORTMAIL (//)
-Couldn't import any mail out of file '%s'.\n\
+Couldn't import any mail from file '%s'.\n\
 Please make sure that this file really contains emails \
 in the standard MBOX format (separated by a single \
 "From " line).
 ; FILENAME
 MSG_ER_ADDRBOOKLOAD (//)
 Couldn't load address book from file '%s'.\n\
-The file doesn`t seem to exist or is unaccessible.
+Either the file doesn't exist or it couldn't be opened for some reason.
 ; FILENAME
 MSG_AB_NOYAMADDRBOOK (//)
-The file '%s' isn`t a valid YAM addressbook file.\n\
-Do you still want to process it as a file that contains\n\
-email addresses on separate lines ?
+The file '%s' isn't a valid YAM address book file.\n\
+Do you still want it to be processed as a file\n\
+containing email addresses on separate lines?
 ; FILENAME
 MSG_AB_NOYAMADDRBOOK_GADS (//)
 _Yes|*_No
@@ -4967,7 +4968,7 @@ Name of folder group:
 ;
 MSG_ER_UNUSABLEAMISSL (//)
 You have selected TLSv1/SSLv3 for this connection, but AmiSSL \
-couldn`t be initialized. Please check your AmiSSL installation \
+couldn't be initialized. Please check your AmiSSL installation \
 or disable TLS/SSL for this connection.
 ;
 MSG_NO_MCC (//)
@@ -4989,17 +4990,16 @@ MSG_RETRY_QUIT_GAD (//)
 Try again|Quit
 ;
 MSG_ER_NOSTARTTLS (//)
-The SMTP server you tried to connect to doesn`t support TLS/SSL, \
-but TLSv1/SSLv3 was enabled within the configuration. Please check \
-your server details and review the configuration details.
+The SMTP server you tried to connect to doesn't support TLS/SSL, \
+but TLSv1/SSLv3 was enabled in the configuration. Please check \
+your configuration.
 ;
 MSG_ER_NOAUTHUSERPASS (//)
-No Username or Password was specified for the SMTP-AUTH connection \
-YAM was trying to establish. Please check your configuration and \
-try again.
+No username or password was specified for the SMTP AUTH connection \
+YAM was trying to establish. Please check your configuration.
 ;
 MSG_ER_POPWELCOME (//)
-The POP server responsed with an error message during the welcome \
+The POP server replied with an error message during the welcome \
 procedure and the connection was terminated:\n\n%s\n
 ;
 MSG_CO_APPICON_LABEL (//)
