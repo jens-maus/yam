@@ -2560,9 +2560,7 @@ $Source$
       for INCOMING/OUTGOING and DELETED show be loaded and if there is new mail in the
       folder the image should change accordingly.
     * added a nice FolderInfoBar above the Listviews. Perhaps we have to make this
-      bar optional, but I think kewise
-
-fit in the layout if we are going to
+      bar optional, but I think it will fit in the layout if we are going to
       introduce TearOff.mcc in YAM.
     * changed FolderInfoBar refreshing. Now it should not flicker anymore and refreshing
       the main NList Mail List should be fast again.
@@ -2590,9 +2588,7 @@ fit in the layout if we are going to
     * fixed alternative folder image function. This feature was broken and if you
       placed an image in the folder directory ".fimage" to was loaded incorrect.
       This should work now and if you have such an image file placed in the folder
-      directory kewise
-
-override the standard image that is loaded by YAM.
+      directory it will override the standard image that is loaded by YAM.
     * added a separate Error-Requester to screem out that an standard image file
       couldn`t be loaded.
     * added separate "supportfiles/Icons/std" directory at the cvs to place all the
@@ -2661,7 +2657,7 @@ override the standard image that is loaded by YAM.
 
 2001-05-22  Christian Hattemer <krille@users.sourceforge.net>
 
-    * Fixed Enforcer Hkewihen searching by status (Bug #423880)
+    * Fixed Enforcer Hit when searching by status (Bug #423880)
 
 2001-05-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
@@ -2682,7 +2678,7 @@ override the standard image that is loaded by YAM.
       YAM_ER.c, YAM_DI.c, YAM_US.c and YAM_md5.c compile without old.h
     * And modifications I do during cleanup:
     * remove clear and bzero, replace them by memset
-    * remove stccpy and replace kewby MyStrCpy (which is an easy define)
+    * remove stccpy and replace it by MyStrCpy (which is an easy define)
     * changed all "struct Object *" to "Object *"
     * Start using enum types wherever necessary. This will improve error checking.
       All enums get names now and these are used in structures and prototypes.
@@ -2716,7 +2712,7 @@ override the standard image that is loaded by YAM.
     * gen_includes.pl will be obsoleted by proper structures. If alignment cannot
       be reached by rearranging the stuff, pad bytes maybe added.
     * added lots of header files, added 2 new directories, moved files
-    * Later necessary renames (ihen BETA is rejoined):
+    * Later necessary renames (when BETA is rejoined):
       YAM_DI.c --> YAM_glossarydisplay.c
       YAM_WR.c --> YAM_write.c
       YAM_FO.c --> YAM_folderconfig.c
@@ -2838,12 +2834,12 @@ override the standard image that is loaded by YAM.
 
 2001-05-01  Jacob Laursen <laursen@myself.com>
 
-    * Removed enforcer hits ihen trying to spawn a second instance of YAM
+    * Removed enforcer hits when trying to spawn a second instance of YAM
       while the first one is starting up.
 
 2001-04-30  Jacob Laursen <laursen@myself.com>
 
-    * Fixed a nasty crash bug ihen loading corrupted indices.  Left some
+    * Fixed a nasty crash bug when loading corrupted indices.  Left some
       debug info in there, since I lost the corrupted index during the
       tests.
 
@@ -2883,7 +2879,7 @@ override the standard image that is loaded by YAM.
 
 2001-03-20  Matthias Bethke <Matthias.Bethke@gmx.net>
 
-    * Fixed enforcer hits ihen listing a PGP keyring with very long UID
+    * Fixed enforcer hits when listing a PGP keyring with very long UID
       lines.
 
 2001-03-19  Christian Hattemer <krille@users.sourceforge.net>
@@ -2982,7 +2978,7 @@ override the standard image that is loaded by YAM.
 
 2001-02-01  Jacob Laursen <laursen@myself.com>
 
-    * Removed enforcer hits ihen encountering message headers with
+    * Removed enforcer hits when encountering message headers with
       non-terminated MIME-encoded text (i.e. during a folder rescan).
 
 2001-01-29  Jacob Laursen <laursen@myself.com>
@@ -2997,7 +2993,7 @@ override the standard image that is loaded by YAM.
 
 2000-12-21  Jacob Laursen <laursen@myself.com>
 
-    * Fixed a very nasty bug ihen using the ARexx command MAILWRITE with
+    * Fixed a very nasty bug when using the ARexx command MAILWRITE with
       the QUIET switch.
 
     * YAM would try to send mails using SMTP AUTH when a username was
@@ -3038,7 +3034,7 @@ override the standard image that is loaded by YAM.
 
     * SAS/C fixes. Now compiles again, also without V44 includes.
 
-    * Removed enforcer hits ihen creating new messages.
+    * Removed enforcer hits when creating new messages.
 
     * YAM.cd: Set max. length of commodity description to 39 characters.
 
