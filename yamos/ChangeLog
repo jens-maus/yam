@@ -1,5 +1,6 @@
 2001-09-03  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * added missing localization to the newfoldergroup requester.
     * fixed bug #433745 where YAM was not displaying the check.info
       icon anymore.
     * fixed bug #433751 that caused flickering of the AppIcon after

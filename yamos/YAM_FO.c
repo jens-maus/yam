@@ -899,7 +899,7 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
    memset(&folder, 0, sizeof(struct Folder));
    folder.Type = FT_GROUP;
 
-   if (StringRequest(folder.Name, SIZE_NAME, GetStr(MSG_MA_NewSeparator), GetStr(MSG_FO_NewSepReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
+   if(StringRequest(folder.Name, SIZE_NAME, GetStr(MSG_FO_NEWFGROUP), GetStr(MSG_FO_NEWFGROUPREQ), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
    {
       long tnflags = (TNF_LIST | TNF_OPEN);
 

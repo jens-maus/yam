@@ -4805,3 +4805,9 @@ MSG_FOLDER_NONSEL (//)
 ;
 MSG_MAIL_NONSEL (//)
 (non selected)
+;
+MSG_FO_NEWFGROUP (//)
+New folder group...
+;
+MSG_FO_NEWFGROUPREQ (//)
+Enter name of new folder group please:
