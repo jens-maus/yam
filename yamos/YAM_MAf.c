@@ -226,10 +226,14 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                memset(&mail, 0, sizeof(struct Mail));               
                if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
                {
-                  DB(kprintf("error while loading ComprMail struct from .index file\n");)
-                  if(feof(fh) == 0)
+                  // check if we are here because of an error or EOF
+                  if(ferror(fh) != 0 || feof(fh) == 0)
+                  {
+                    DB(kprintf("error while loading ComprMail struct from .index file\n");)
                     error = TRUE;
+                  }
 
+                  // if we end up here it is just a EOF and no error.
                   break;
                }
 

@@ -7,6 +7,8 @@ $Source$
 
 2003-11-15  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c: enhanced the error checking functions within
+      the index loading routines a bit.
     * YAM_CO.c: once again enhanced the gadgets enable/disable
       functionality of the filter action gadgets.
 
