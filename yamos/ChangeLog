@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: reworked the PlaySound() function to not use any
+      temporary signals to get noticed when the sound is finished
+      with playing. This should fixed the reported lock ups which
+      sometimes happens if another audio channel is currently in
+      use. In addition, YAM plays the sound now totally asyncron,
+      which means the GUI doesn`t go to sleep while the sound is
+      playing.
+
 2004-01-11  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: modified the error checking routines of the POP3

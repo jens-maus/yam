@@ -752,6 +752,10 @@ static void Terminate(void)
    // stop the AutoDST notify
    ADSTnotify_stop();
 
+   // check if we have an allocated NewMailSound_Obj and dispose it.
+   if(G->NewMailSound_Obj)
+    DisposeDTObject(G->NewMailSound_Obj);
+
    FreeStrBuf(G->AY_AboutText);
 
    if (G->HideIcon) FreeDiskObject(G->HideIcon);

@@ -3779,39 +3779,31 @@ BOOL CheckPrinter(void)
 //  Plays a sound file using datatypes
 void PlaySound(char *filename)
 {
-   if (DataTypesBase)
-   {
-      Object *sound = NewDTObject(filename, DTA_GroupID, GID_SOUND, SDTA_Volume, 64, SDTA_Cycles, 1, TAG_DONE);
-      if (sound)
-      {
-         BYTE s = AllocSignal(-1);
-         if (s >= 0)
-         {
-            struct dtTrigger Play = { DTM_TRIGGER, NULL, STM_PLAY, NULL };
-            ULONG sig = (UBYTE)s;
+  if(DataTypesBase)
+  {
+    // if we previously created a sound object
+    // lets dispose it first.
+    if(G->NewMailSound_Obj)
+      DisposeDTObject(G->NewMailSound_Obj);
 
-            if (SetDTAttrs(sound, NULL, NULL, SDTA_SignalTask, FindTask(NULL), SDTA_SignalBit, 1L<<sig, TAG_END) == 2)
-            {
-               DoDTMethodA(sound, NULL, NULL, (Msg)&Play);
-               Wait(1L<<sig);
-            }
-            else
-            {
-               ULONG length = 0, period = 394, cycles = 1, frequency, seconds;
+    // create the new datatype object
+    if((G->NewMailSound_Obj = NewDTObject(filename,
+	  		DTA_GroupID, GID_SOUND,
+		  	TAG_DONE)))
+  	{
+      // create a datatype trigger
+	  	struct dtTrigger dtt;
 
-               GetDTAttrs(sound, SDTA_SampleLength, &length, SDTA_Period, &period, SDTA_Cycles, &cycles, TAG_END);
-               if (length > 131072) length = 131072;
-               frequency = (ULONG)(SysBase->ex_EClockFrequency * 5) / period;
-               seconds = (length * cycles) / frequency + 1;
+  		// Fill the trigger
+	  	dtt.MethodID     = DTM_TRIGGER;
+		  dtt.dtt_GInfo    = NULL;
+  		dtt.dtt_Function = STM_PLAY;
+	  	dtt.dtt_Data     = NULL;
 
-               DoDTMethodA(sound, NULL, NULL, (Msg)&Play);
-               Delay(seconds * 50);
-            }
-            FreeSignal((LONG)s);
-         }
-         DisposeDTObject(sound);
-      }
-   }
+  		// Play the sound by calling DoDTMethodA()
+      DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (Msg)&dtt);
+	  }
+  }
 }
 ///
 /// MatchExtension

@@ -54,6 +54,7 @@ struct Global
    APTR                     AY_List;
    APTR                     AY_AboutText;
    APTR                     WI_SEARCH;
+   Object *                 NewMailSound_Obj;
    char *                   ER_Message[MAXERR];
    struct DiskObject *      HideIcon;
    struct AppIcon *         AppIcon;
