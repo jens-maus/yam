@@ -5,6 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-04  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug wher on a FollowUp with Next/Prev Thread
+      YAM didn`t correctly changed the folder and sometimes showed
+      weird data.
+
+2002-10-01  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c: dropped the idea of resorting the listview on
+      a mailstatus change within a sorted by status listview
+      again. It seems that ppl just lost track of the messageview
+      somehow.
+
 2002-09-29  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_rexx_rxif.c, YAM_FO.c, YAM_UT.c: fixed bug #596302

@@ -158,8 +158,9 @@ HOOKPROTONHNO(RE_Follow, void, int *arg)
 
       if(!folder) return;
 
-      // lets make this folder active
-      FO_SetCurrentFolder(folder);
+      // we have to make sure that the folder where the message will be showed
+      // from is active and ready to display the mail
+      MA_ChangeFolder(folder, TRUE);
 
       mi = GetMailInfo(fmail);
       set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
