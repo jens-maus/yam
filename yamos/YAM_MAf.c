@@ -969,7 +969,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                SET_FLAG(ok, 1);
                SParse(value);
                ExtractAddress(value, &pe);
-               mail->From =  pe;
+               mail->From = pe;
             }
             else if (!stricmp(field, "reply-to"))
             {
@@ -1145,9 +1145,13 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
          // otherwise it could be some weird data in the Comment string
          if(statstr[2] && statstr[14] == '\0')
          {
+            // we need a buffer for the base64decoding
+            // or we risk to let our mail structure to get overwritten.
+            char buf[sizeof(struct timeval)+1]; // +1 because the b64decode does set a NUL byte
+
             // lets decode the base64 encoded timestring directly
             // into the mail->transDate timeval structure
-            if(base64decode((char *)&mail->transDate, &statstr[2], 12*sizeof(char)) <= 0)
+            if(base64decode(&buf[0], &statstr[2], 12) <= 0)
             {
               DB(kprintf("WARNING: failure in decoding the encoded date in mailfile: '%s'\n", mail->MailFile);)
 
@@ -1156,6 +1160,12 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
               // recognizes to rewrite the comment with a valid string.
               mail->transDate.tv_micro = 0;
               mail->transDate.tv_secs  = 0;
+            }
+            else
+            {
+              // everything seems to worked so lets copy the binary data in our
+              // transDate structure
+              memcpy(&mail->transDate, &buf[0], sizeof(struct timeval));
             }
          }
       }
@@ -1181,6 +1191,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
       mail->Size = FileSize(fullfile);
 
       FinishUnpack(fullfile);
+
       return email;
    }
 

@@ -7,6 +7,12 @@ $Source$
 
 2003-12-14  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c: fixed a recently introduced bug where the use of
+      the new base64decode() function while decoding the transfer
+      date from a file comment caused the mail structure to get
+      overwritten. The new base64decode() routine does always
+      set a final NUL-byte, so we had to use a larger buffer for
+      the decoding.
     * YAM_UT.c, YAM_utilities.h: replaced the more or less
       short isSpace(), isGraph() and isAlNum() functions by
       macros which should perform a bit better.
