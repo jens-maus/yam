@@ -5199,6 +5199,7 @@ Color used for displaying clickable URL links
 ;
 MSG_FO_FOLDEREXISTS (//)
 A file or directory with the given folder path already exists.\n\
+\n\
 Do you really want to proceed?
 ;
 MSG_FO_FOLDERMOVE (//)
@@ -5272,4 +5273,12 @@ MSG_CO_TZone13 (//)
 MSG_HELP_CO_ST_INFOBARTXT (//)
 Text that should be displayed\n\
 in the status bar
+;
+MSG_MA_CROPREQUEST (//)
+All attachments from the selected mails will be cropped.\n\
+\n\
+Do you really want to proceed?
+;
+MSG_MA_CROPREQUEST_GADS (//)
+_Yes|*_No
 ;

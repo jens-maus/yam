@@ -1329,7 +1329,7 @@ HOOKPROTONHNO(RE_RemoveAttachFunc, void, int *arg)
 {
    struct Mail *mail = G->RE[*arg]->MailPtr;
    struct MailInfo *mi;
-   MA_RemoveAttach(mail);
+   MA_RemoveAttach(mail, TRUE);
    if ((mi = GetMailInfo(mail))->Pos >= 0)
    {
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);

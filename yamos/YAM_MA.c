@@ -1102,13 +1102,20 @@ int MA_NewReply(struct Mail **mlist, int flags)
 ///
 /// MA_RemoveAttach
 //  Removes attachments from a message
-void MA_RemoveAttach(struct Mail *mail)
+void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 {
    struct Part *part;
    int f;
    FILE *out, *in;
    char *cmsg, buf[SIZE_LINE], fname[SIZE_PATHFILE], tfname[SIZE_PATHFILE];
    struct Folder *fo = mail->Folder;
+
+   // if we need to warn the user of this operation we put up a requester
+   // before we go on
+   if(warning && MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_CROPREQUEST_GADS), GetStr(MSG_MA_CROPREQUEST)) == 0)
+   {
+     return;
+   }
 
    sprintf(tfname, "%s.tmp", GetMailFile(fname, NULL, mail));
    RE_InitPrivateRC(mail, PM_ALL);
@@ -1153,13 +1160,20 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
    struct Mail **mlist;
    int i;
 
+   // we need to warn the user of this operation we put up a requester
+   // before we go on
+   if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_CROPREQUEST_GADS), GetStr(MSG_MA_CROPREQUEST)) == 0)
+   {
+      return;
+   }
+
    if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
    {
       int selected = (int)*mlist;
       BusyGauge(GetStr(MSG_BusyRemovingAtt), "", selected);
       for (i = 0; i < selected; i++)
       {
-         MA_RemoveAttach(mlist[i+2]);
+         MA_RemoveAttach(mlist[i+2], FALSE);
          BusySet(i+1);
       }
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_All);

@@ -215,7 +215,7 @@ int   MA_NewMessage(int mode, int flags);
 int   MA_NewNew(struct Mail *mail, int flags);
 int   MA_NewReply(struct Mail **mlist, int flags);
 void  MA_PopNow(int mode, int pop);
-void  MA_RemoveAttach(struct Mail *mail);
+void  MA_RemoveAttach(struct Mail *mail, BOOL warning);
 BOOL  MA_Send(enum SendMode sendpos);
 BOOL  MA_SendMList(struct Mail **mlist);
 void  MA_SetMailStatus(struct Mail *mail, enum MailStatus stat);
