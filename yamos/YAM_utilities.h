@@ -112,17 +112,17 @@ struct NewToolbarEntry
 };
 
 // misc defines
-#define PGPLOGFILE    "T:PGP.log"
-#define NOERRORS      16
-#define KEEPLOG       32
+#define PGPLOGFILE          "T:PGP.log"
+#define NOERRORS            (1<<4)
+#define KEEPLOG             (1<<5)
 #define hasNoErrorsFlag(v)  (isFlagSet((v), NOERRORS))
 #define hasKeepLogFlag(v)   (isFlagSet((v), KEEPLOG))
 
 // RequesterMode flags & macros
-#define REQF_NONE        0
-#define REQF_SAVEMODE    1
-#define REQF_MULTISELECT 2
-#define REQF_DRAWERSONLY 4
+#define REQF_NONE             0
+#define REQF_SAVEMODE         (1<<0)
+#define REQF_MULTISELECT      (1<<1)
+#define REQF_DRAWERSONLY      (1<<2)
 #define hasSaveModeFlag(v)    (isFlagSet((v), REQF_SAVEMODE))
 #define hasMultiSelectFlag(v) (isFlagSet((v), REQF_MULTISELECT))
 #define hasDrawersOnlyFlag(v) (isFlagSet((v), REQF_DRAWERSONLY))

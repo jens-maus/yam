@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-05  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c, YAM_MAf.c, YAM_main.h, YAM_rexx_rxif.c: fixed bug #697407
+      where the whole volatile/permanent flag functionality was broken.
+      Reworked the whole mechanism and in addition to a better design,
+      the MAILINFO arexx command also takes respect of the new marked
+      message flag now.
+
 2003-03-04  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: reworked own YAMMUIRequest() function a bit to work more

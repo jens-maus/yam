@@ -68,6 +68,8 @@ struct Rule;
 #define MFLAG_SENDMDN     (1<<6)
 #define MFLAG_NOFOLDER    (1<<7)
 #define MFLAG_MARK        (1<<8)
+#define MFLAG_PERFIELD        9  // reserve 3 bits of the flags for the permanent flag section
+#define MFLAG_VOLFIELD        12 // reserve 3 bits of the flags for the volatile flag section
 #define isMultiRCPTMail(mail)   (isFlagSet((mail)->Flags, MFLAG_MULTIRCPT))
 #define isMultiPartMail(mail)   (isFlagSet((mail)->Flags, MFLAG_MULTIPART))
 #define isReportMail(mail)      (isFlagSet((mail)->Flags, MFLAG_REPORT))
@@ -77,6 +79,10 @@ struct Rule;
 #define isSendMDNMail(mail)     (isFlagSet((mail)->Flags, MFLAG_SENDMDN))
 #define isVirtualMail(mail)     (isFlagSet((mail)->Flags, MFLAG_NOFOLDER))
 #define isMarkedMail(mail)      (isFlagSet((mail)->Flags, MFLAG_MARK))
+#define setPERValue(mail, val)  (mail)->Flags = ((mail)->Flags & ~(7<<MFLAG_PERFIELD)) | ((val) << MFLAG_PERFIELD)
+#define setVOLValue(mail, val)  (mail)->Flags = ((mail)->Flags & ~(7<<MFLAG_VOLFIELD)) | ((val) << MFLAG_VOLFIELD)
+#define getPERValue(mail)       (((mail)->Flags & (7<<MFLAG_PERFIELD)) >> MFLAG_PERFIELD)
+#define getVOLValue(mail)       (((mail)->Flags & (7<<MFLAG_VOLFIELD)) >> MFLAG_VOLFIELD)
 
 enum ApplyMode { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE,
    APPLY_RX_ALL, APPLY_RX

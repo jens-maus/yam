@@ -242,12 +242,25 @@ void MA_SetMailStatus(struct Mail *mail, enum MailStatus status)
 //  Sets the correct comment of a mail file STATUS + transferDate
 BOOL MA_SetMailComment(struct Mail *mail)
 {
+   int perFlag = getPERValue(mail);
    char commentStr[15]; // it "should" be not greater than 15 bytes!
 
    // lets first copy the actual status of that mail into
    // the start of the commentStr
    commentStr[0] = *Status[mail->Status];
-   commentStr[1] = isMarkedMail(mail) ? 'M' : ' '; // if this mail was "marked"
+
+   // then we use the second char of the commentStr for the flags
+   // the permanent flag has to go here aswell as the marked flag
+   if(isMarkedMail(mail))
+   {
+      commentStr[1] = 'M'+perFlag;
+   }
+   else
+   {
+      commentStr[1] = perFlag ? '0'+perFlag : ' ';
+   }
+
+   // and we have to null terminate the string now
    commentStr[2] = '\0';
 
    // then we check if this mail has a valid timeval and then attach

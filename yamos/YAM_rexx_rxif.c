@@ -817,8 +817,8 @@ void rx_mailinfo( struct RexxHost *host, struct rxd_mailinfo **rxd, long action,
          {
             struct Person *pe = GetReturnAddress(mail);
 
-            pf = (mail->Flags & 0x0700) >> 8;
-            vf = (mail->Flags & 0x3800) >> 11;
+            pf = getPERValue(mail);
+            vf = getVOLValue(mail);
             GetMailFile(rd->rd.res.filename = rd->filename, folder, mail);
             rd->rd.res.index = &rd->active;
             rd->rd.res.status = Status[mail->Status];
@@ -829,9 +829,16 @@ void rx_mailinfo( struct RexxHost *host, struct rxd_mailinfo **rxd, long action,
             rd->rd.res.subject = mail->Subject;
             rd->rd.res.size = &mail->Size;
             rd->rd.res.msgid = &mail->cMsgID;
-            sprintf(rd->rd.res.flags = rd->flags, "%c%c%c%c%c-%c%c",
-               isMultiRCPTMail(mail)?'M':'-', isMultiPartMail(mail)?'A':'-', isReportMail(mail)?'R':'-',
-               isCryptedMail(mail)?'C':'-', isSignedMail(mail)?'S':'-', pf?pf+'0':'-', vf?vf+'0':'-');
+            sprintf(rd->rd.res.flags = rd->flags, "%c%c%c%c%c-%c%c%c",
+                      isMultiRCPTMail(mail) ? 'M' : '-',
+                      isMultiPartMail(mail) ? 'A' : '-',
+                      isReportMail(mail)    ? 'R' : '-',
+                      isCryptedMail(mail)   ? 'C' : '-',
+                      isSignedMail(mail)    ? 'S' : '-',
+                      pf ? pf+'0' : '-',
+                      vf ? vf+'0' : '-',
+                      isMarkedMail(mail)    ? 'M' : '-'
+                   );
          }
          else rd->rd.rc = RETURN_ERROR;
          break;
@@ -1226,8 +1233,9 @@ void rx_screentofront( struct RexxHost *host, struct rxd_screentofront **rxd, lo
 void rx_setflag( struct RexxHost *host, struct rxd_setflag **rxd, long action, struct RexxMsg *rexxmsg )
 {
    struct rxd_setflag *rd = *rxd;
-   int flag;
+   int value;
    struct Mail *mail;
+
    switch( action )
    {
       case RXIF_INIT:
@@ -1235,28 +1243,35 @@ void rx_setflag( struct RexxHost *host, struct rxd_setflag **rxd, long action, s
          break;
          
       case RXIF_ACTION:
+      {
          if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
          {
-            if (rd->arg.vol) { if ((flag = *rd->arg.vol) >= 0 && flag < 8)
-               mail->Flags = (mail->Flags&0xC7FF) | (flag<<11);
-               
-            else rd->rc = RETURN_ERROR;
-            }
-            if (rd->arg.per)
+            if(rd->arg.vol)
             {
-              if ((flag = *rd->arg.per) >= 0 && flag < 8)
+              if((value = *rd->arg.vol) >= 0 && value < 8)
               {
-               if (flag != ((mail->Flags&0x0700)>>8))
-               {
-                  mail->Flags = (mail->Flags&0xF8FF) | (flag<<8);
-                  MA_SetMailStatus(mail, mail->Status|0x100);
-               }
+                setVOLValue(mail, value);
+              }
+              else rd->rc = RETURN_ERROR;
+            }
+
+            if(rd->arg.per)
+            {
+              if((value = *rd->arg.per) >= 0 && value < 8)
+              {
+                if(value != getPERValue(mail))
+                {
+                  setPERValue(mail, value);
+
+                  MA_SetMailComment(mail);
+                }
               }
               else rd->rc = RETURN_ERROR;
             }
          }
          else rd->rc = RETURN_WARN;
-         break;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );

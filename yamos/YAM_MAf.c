@@ -225,7 +225,8 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                strcpy(mail.ReplyTo.Address, GetNextLine(NULL));
                strcpy(mail.ReplyTo.RealName, GetNextLine(NULL));
                mail.Folder = folder;
-               mail.Flags = (cmail.Flags&0x7ff);
+               mail.Flags = cmail.Flags;
+               setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn`t loaded
                strcpy(mail.MailFile, cmail.MailFile);
                mail.Date = cmail.Date;
                mail.transDate = cmail.transDate;
@@ -290,7 +291,10 @@ BOOL MA_SaveIndex(struct Folder *folder)
          mail->From.Address, mail->From.RealName,
          mail->To.Address, mail->To.RealName,
          mail->ReplyTo.Address, mail->ReplyTo.RealName);
+
       cmail.Flags = mail->Flags;
+      setVOLValue(&cmail, 0);  // we have to make sure that the volatile flag field isn`t saved
+
       strcpy(cmail.MailFile, mail->MailFile);
       cmail.Date = mail->Date;
       cmail.transDate = mail->transDate;
@@ -999,8 +1003,20 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
          }
 
          // now we check if second char is present and if we set the mailfag
-         // as "marked"
-         if(statstr[1] && statstr[1] == 'M') SET_FLAG(mail->Flags, MFLAG_MARK);
+         // as "marked" and the arexx permanent flag
+         if(statstr[1] && statstr[1] != ' ')
+         {
+            // we have to check for the permanent flag also.
+            if(statstr[1] >= 'M' && statstr[1] <= 'M'+7)
+            {
+              setPERValue(mail, statstr[1]-'M');
+              SET_FLAG(mail->Flags, MFLAG_MARK);
+            }
+            else if(statstr[1] >= '1' && statstr[1] <= '7')
+            {
+              setPERValue(mail, statstr[1]-'1'+1);
+            }
+         }
 
          // now we check if this comment also has the transfer Date included
          // we only take the string if it is exactly 12bytes long or
