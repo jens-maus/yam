@@ -43,7 +43,6 @@ int stch_i(const char *s,int *res);
 #define FESIZE 32
 
 extern long getft(const char *);
-extern int mkdir(const char *);
 
 /*
 ** <sys/commwben.h>

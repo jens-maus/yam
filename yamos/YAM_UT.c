@@ -1106,7 +1106,15 @@ BOOL CreateDirectory(char *dir)
 {
    int t = FileType(dir);
    if (t == 2) return TRUE;
-   if (t == 0) if (!mkdir(dir)) return TRUE;
+   if (t == 0)
+   {
+      BPTR fl = CreateDir((STRPTR)dir);
+      if (fl)
+      {
+         UnLock(fl);
+         return TRUE;
+      }
+   }
    if (G->MA) ER_NewError(GetStr(MSG_ER_CantCreateDir), dir, NULL);
    return FALSE;
 }

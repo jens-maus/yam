@@ -1,7 +1,6 @@
 #include "extrasrc/md5.c"
 #include "extrasrc/astcsma.c"
 #include "extrasrc/getft.c"
-#include "extrasrc/mkdir.c"
 #include "extrasrc/stccpy.c"
 #include "extrasrc/stcgfe.c"
 #include "extrasrc/stcgfn.c"
