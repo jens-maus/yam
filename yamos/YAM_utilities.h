@@ -40,7 +40,6 @@
 enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
   DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT };
 
-
 enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
   ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_FOLDER };
 
@@ -104,6 +103,8 @@ struct Data2D
 #define ATTREQ_SAVE   1
 #define ATTREQ_PRINT  2
 #define ATTREQ_MULTI  32
+
+#define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
