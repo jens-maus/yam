@@ -64,7 +64,8 @@ enum SetOrder { SO_SAVE, SO_RESET };
 
 struct Folder
 {
-   APTR            FImage;
+   APTR            BC_FImage;
+   struct BodyChunkData *   FImage;
    struct Mail *   Messages;
    ULONG           Flags;
    int             MLSignature;
@@ -82,6 +83,7 @@ struct Folder
    int             LoadedMode;
    int             SortIndex;
    int             Open;
+   int             ImageIndex;
 
    enum FolderType Type;
 
@@ -110,7 +112,7 @@ struct Folder * FO_GetFolderRexx(char *arg, int *pos);
 int             FO_GetFolderPosition(struct Folder *findfo);
 BOOL            FO_LoadConfig(struct Folder *fo);
 BOOL            FO_LoadTree(char *fname);
-BOOL            FO_LoadTreeImage(struct Folder *fo);
+BOOL            FO_LoadFolderImages(struct Folder *fo);
 struct Folder * FO_NewFolder(enum FolderType type, char *path, char *name);
 void            FO_SaveConfig(struct Folder *fo);
 BOOL            FO_SaveTree(char *fname);

@@ -423,6 +423,7 @@
     * YAM reads the Content-Disposition: of a multipart message now. If a name of
       a part could not be found in the Content-Type: field we get it from the
       Disposition field now. (i.e. mails with attachments from ELM behave like this)
+      [ this fixes the reported bug #285 from Holger J.]
     * fixed today introduced bug. Now the AppIcon Label text gets saved & loaded
       correctly
     * a user can now select all folders that should be included in the AppIcon
@@ -452,3 +453,25 @@
    * YAM_FO.c, YAM_MAf.c, YAM_RE.c: use "YAM_debug.h"
    * YAM_UT.c: lame fix for a MUI header problem with GCC
    * YAM_md5.c: removed non-breaking spaces
+
+2001-06-02  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added support to load standard images for the standard INCOMING/OUTGOING/SENT
+      and DELETED folder. The images must have the name "folder_incoming" a.s.o.
+      at the PROGDIR:Icons/ directory to get loaded.
+    * fixed alternative folder image function. This feature was broken and if you
+      placed an image in the folder directory ".fimage" to was loaded incorrect.
+      This should work now and if you have such an image file placed in the folder
+      directory it will override the standard image that is loaded by YAM.
+    * added a separate Error-Requester to screem out that an standard image file
+      couldn`t be loaded.
+    * added separate "supportfiles/Icons/std" directory at the cvs to place all the
+      standard images+icons that should be included in the main YAM archive.
+
+2001-06-03  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed recently introduced enforcerhit in the parsing of content-disposition
+      parts
+    * fixed LoadBCImage function where something went wrong with the stcpfn()
+      function
+    * added folder images from Philip A. Vedovatti to std images.

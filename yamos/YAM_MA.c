@@ -2376,8 +2376,9 @@ struct MA_ClassData *MA_New(void)
                   End,
                   Child, HSpace(0),
                End),
-            Child, HGroup,
+            Child, data->GUI.BC_GROUP = HGroup,
                MUIA_ShowMe, FALSE,
+               // Create the status flag image objects
                Child, data->GUI.BC_STAT[ 0] = MakeStatusFlag("status_unread"),
                Child, data->GUI.BC_STAT[ 1] = MakeStatusFlag("status_old"),
                Child, data->GUI.BC_STAT[ 2] = MakeStatusFlag("status_forward"),
@@ -2395,6 +2396,11 @@ struct MA_ClassData *MA_New(void)
                Child, data->GUI.BC_STAT[14] = MakeStatusFlag("status_report"),
                Child, data->GUI.BC_STAT[15] = MakeStatusFlag("status_crypt"),
                Child, data->GUI.BC_STAT[16] = MakeStatusFlag("status_signed"),
+               // Create the default folder image objects
+               Child, data->GUI.BC_FOLDER[0] = MakeFolderImage("folder_incoming"),
+               Child, data->GUI.BC_FOLDER[1] = MakeFolderImage("folder_outgoing"),
+               Child, data->GUI.BC_FOLDER[2] = MakeFolderImage("folder_sent"),
+               Child, data->GUI.BC_FOLDER[3] = MakeFolderImage("folder_deleted"),
                Child, data->GUI.ST_LAYOUT = StringObject,
                   MUIA_ObjectID, MAKE_ID('S','T','L','A'),
                   MUIA_String_MaxLen, SIZE_DEFAULT,
@@ -2467,8 +2473,13 @@ struct MA_ClassData *MA_New(void)
          MA_MakeFOFormat(data->GUI.NL_FOLDERS);
          MA_MakeMAFormat(data->GUI.NL_MAILS);
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         for (i = 0; i < MAXIMAGES; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, 0);
-         DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_STAT[15], 0, 0);
+
+         // define the StatusFlag images that should be used
+         for (i = 0; i < 17; i++) DoMethod(data->GUI.NL_MAILS, MUIM_NList_UseImage, data->GUI.BC_STAT[i], i, 0, TAG_DONE);
+
+         // Define the Images the FolderListtree that can be used
+         for (i = 0; i < MAXBCSTDIMAGES; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, 0, TAG_DONE);
+
          set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.LV_MAILS);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUT     ,G->AY_Win,3,MUIM_Set                ,MUIA_Window_Open,TRUE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_VERSION   ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_CheckVersionHook);

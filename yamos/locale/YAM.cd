@@ -4706,3 +4706,8 @@ AppIcon Stats
 MSG_HELP_FO_CH_STATS (//)
 Select if you want the statistics of\n\
 this folder be displayed at the AppIcon.
+;
+MSG_ERROR_IMGLOAD (//)
+The image file\n\
+\eb%s\en\n\
+couldn`t be loaded.

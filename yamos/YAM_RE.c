@@ -1380,9 +1380,9 @@ void RE_ParseContentParameters(struct Part *rp)
 //  Parses parameters of Content-Disposition header field
 void RE_ParseContentDispositionParameters(struct Part *rp)
 {
-   char *s, *t, *eq, *ct = rp->ContentDisposition;
+   char *s, *t, *eq, *cd = rp->ContentDisposition;
 
-   s = strchr(ct, ';');
+   s = strchr(cd, ';');
    if (!s) return;
    *s++ = 0;
    do {
@@ -1453,7 +1453,7 @@ BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
         // at the moment we read the content-disposition only if a Part-Name was
         // not specified before. If we want to read more from a content-disposition
         // later we have to change this behaviour
-        if(!(rp->CParName[0]))
+        if(!(rp->CParName))
         {
           rp->ContentDisposition = StrBufCpy(rp->ContentDisposition, p = stpblk(&s[20]));
           while (TRUE)

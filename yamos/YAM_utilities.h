@@ -149,6 +149,7 @@ Object * MakePassString(char *label);
 Object * MakePGPKeyList(APTR *st, BOOL secret, char *label);
 Object * MakePicture(char *fname);
 Object * MakeStatusFlag(char *fname);
+Object * MakeFolderImage(char *fname);
 Object * MakeString(int maxlen, char *label);
 int      MatchNoCase(char *string, char *match);
 BOOL     MatchTT(char *charset, struct TranslationTable *tt, BOOL in);

@@ -34,6 +34,7 @@
 #include <dos/doshunks.h>
 #include <dos/dostags.h>
 #include <exec/execbase.h>
+#include <exec/memory.h>
 #include <libraries/asl.h>
 /*
 ** the next include is required to make GCC working:
@@ -2053,7 +2054,9 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
       if (xpk)
       {
          char nfile[SIZE_FILE];
-         stcgfn(nfile, file); sprintf(&nfile[strlen(nfile)], "_%08lx.unp", folder);
+
+         sprintf(nfile, "%s_%08lx.unp", FilePart(file), folder);
+
          strmfp(newfile, C->TempDir, nfile);
          if (FileSize(newfile) < 0) if (!UncompressMailFile(file, newfile, folder ? folder->Password : "")) return NULL;
       }
@@ -2366,6 +2369,17 @@ Object *MakeStatusFlag(char *fname)
    End;
 }
 ///
+/// MakeFolderImage
+//  Creates a MUI object for a folder image
+Object *MakeFolderImage(char *fname)
+{
+   return NewObject(CL_BodyChunk->mcc_Class,NULL,
+      MUIA_Bodychunk_File, fname,
+      MUIA_Bodychunk_UseOld, TRUE,
+      MUIA_Bitmap_Transparent, 0,
+   End;
+}
+///
 /// MakeNumeric
 //  Creates a MUI numeric slider
 Object *MakeNumeric(int min, int max, BOOL percent)
@@ -2606,8 +2620,12 @@ void FreeBCImage(struct BodyChunkData *bcd)
 struct BodyChunkData *GetBCImage(char *fname)
 {
    int i;
+
    for (i = 0; i < MAXIMAGES; i++)
-      if (G->BImage[i]) if (!strcmp(G->BImage[i]->File, fname)) return G->BImage[i];
+   {
+      if (G->BImage[i] && strcmp(G->BImage[i]->File, fname) == NULL) return G->BImage[i];
+   }
+
    return NULL;
 }
 ///
@@ -2669,7 +2687,7 @@ struct BodyChunkData *LoadBCImage(char *fname)
                                        bcd->Depth = bmhd->bmh_Depth;
                                        bcd->Compression = bmhd->bmh_Compression;
                                        bcd->Masking = bmhd->bmh_Masking;
-                                       stcgfn(bcd->File, fname);
+                                       strcpy(bcd->File, FilePart(fname));
                                     }
                                  }
                               }

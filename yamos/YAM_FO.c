@@ -301,6 +301,7 @@ struct Folder *FO_NewFolder(enum FolderType type, char *path, char *name)
    folder->Sort[0] = 1;
    folder->Sort[1] = 3;
    folder->Type = type;
+   folder->ImageIndex = -1;
    MyStrCpy(folder->Path, path);
    MyStrCpy(folder->Name, name);
    if (CreateDirectory(GetFolderDir(folder))) return folder;
@@ -313,18 +314,32 @@ struct Folder *FO_NewFolder(enum FolderType type, char *path, char *name)
 //  frees all resources previously allocated on creation time of the folder
 BOOL FO_FreeFolder(struct Folder *folder)
 {
-   if(!folder) return FALSE;
+  if(!folder) return FALSE;
 
-   // remove the image of this folder from the objectlist at the application
-   if(!folder->FImage) MUI_DisposeObject(folder->FImage);
+  // remove the image of this folder from the objectlist at the application
+  if(folder->BC_FImage)
+  {
+    // remove the bodychunk object from the nlist
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, 0, TAG_DONE);
 
-   // if we still have mails in the folder we have to clear the list
-   if(folder->Messages) ClearMailList(folder, TRUE);
+    // Prepare the BC_GROUP for removing a child
+    if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
+    {
+      DoMethod(G->MA->GUI.BC_GROUP, OM_REMMEMBER, folder->BC_FImage);
+      DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
+    }
+  }
 
-   // now it`s time to deallocate the folder itself
-   free(folder);
+  // free the Bodychunk
+  if(folder->FImage) FreeBCImage(folder->FImage);
 
-   return TRUE;
+  // if we still have mails in the folder we have to clear the list
+  if(folder->Messages) ClearMailList(folder, TRUE);
+
+  // now it`s time to deallocate the folder itself
+  free(folder);
+
+  return TRUE;
 }
 
 ///
@@ -356,7 +371,7 @@ BOOL FO_LoadTree(char *fname)
    static struct Folder fo;
    BOOL success = FALSE;
    char buffer[SIZE_LARGE];
-   int nested = 0, i = 0;
+   int nested = 0, i = 0, j = MAXBCSTDIMAGES+1;
    FILE *fh;
    APTR lv = G->MA->GUI.NL_FOLDERS;
    struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
@@ -391,6 +406,10 @@ BOOL FO_LoadTree(char *fname)
                      FO_SaveConfig(&fo);
                   }
                   fo.SortIndex = i++;
+                  fo.ImageIndex = j;
+
+                  // Now we load the FolderImages if they exists
+                  if(FO_LoadFolderImages(&fo)) j++;
 
                   // Now we add this folder to the folder listtree
                   if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, 0, TAG_DONE)))
@@ -464,31 +483,51 @@ BOOL FO_LoadTree(char *fname)
 }
 
 ///
-/// FO_LoadTreeImage
-//  Loads the image for the folder that should be displayed in the listtree
-BOOL FO_LoadTreeImage(struct Folder *fo)
+/// FO_LoadFolderImages
+//  Loads the images for the folder that should be displayed in the NListtree
+BOOL FO_LoadFolderImages(struct Folder *fo)
 {
-   char fname[SIZE_PATHFILE];
-   APTR lv = G->MA->GUI.NL_FOLDERS;
+  char fname[SIZE_PATHFILE];
+  APTR lv = G->MA->GUI.NL_FOLDERS;
 
-   if(!fo) return FALSE;
+  if(!fo) return FALSE;
 
-   MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".fimage", sizeof(fname));
+  MyStrCpy(fname, GetFolderDir(fo));
+  AddPart(fname, ".fimage", sizeof(fname));
 
-   fo->FImage = NewObject(CL_BodyChunk->mcc_Class, NULL,
-      MUIA_Bodychunk_File,     fname,
-      MUIA_Bodychunk_UseOld,   FALSE,
-      MUIA_Bitmap_Transparent, 0,
-   End;
+  fo->FImage = LoadBCImage(fname);
+  if(!fo->FImage) return FALSE;
 
-   if(!fo->FImage) return FALSE;
+  fo->BC_FImage = BodychunkObject,
+                    MUIA_FixWidth,             fo->FImage->Width,
+                    MUIA_FixHeight,            fo->FImage->Height,
+                    MUIA_Bitmap_Width,         fo->FImage->Width,
+                    MUIA_Bitmap_Height,        fo->FImage->Height,
+                    MUIA_Bitmap_SourceColors,  fo->FImage->Colors,
+                    MUIA_Bodychunk_Depth,      fo->FImage->Depth,
+                    MUIA_Bodychunk_Body,       fo->FImage->Body,
+                    MUIA_Bodychunk_Compression,fo->FImage->Compression,
+                    MUIA_Bodychunk_Masking,    fo->FImage->Masking,
+                    MUIA_Bitmap_Transparent,   0,
+                    MUIA_InnerBottom,          0,
+                    MUIA_InnerLeft,            0,
+                    MUIA_InnerRight,           0,
+                    MUIA_InnerTop,             0,
+                  End;
 
-   DB( kprintf("Loaded TreeImage: %s - %lx - %ld\n", fo->Name, fo->FImage, fo->SortIndex+1); )
+  if(!fo->BC_FImage) return FALSE;
 
-   // Now we say that this image could be used by this Listtree
-   DoMethod(lv, MUIM_NList_UseImage, fo->FImage, fo->SortIndex+1, 0);
+  // Prepare the BC_GROUP for adding a new child
+  if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
+  {
+    DoMethod(G->MA->GUI.BC_GROUP, OM_ADDMEMBER, fo->BC_FImage);
+    DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
+  }
 
-   return TRUE;
+  // Now we say that this image could be used by this Listtree
+  DoMethod(lv, MUIM_NList_UseImage, fo->BC_FImage, fo->ImageIndex, 0, TAG_DONE);
+
+  return TRUE;
 }
 
 ///

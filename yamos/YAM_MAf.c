@@ -337,8 +337,6 @@ void MA_ChangeFolder(struct Folder *folder)
    if (folder->Type == FT_GROUP) folderopen = FALSE;
    else if (!MA_GetIndex(folder)) folderopen = FALSE;
 
-   if(!folder->FImage) FO_LoadTreeImage(folder); // experimental !!!
-
    if (folderopen)
    {
       MA_SetSortFlag();
@@ -835,8 +833,12 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 
         default:
         {
-          if (entry->FImage) sprintf(msg->Array[0] = dispfold, "\033o[%d]", entry->SortIndex+1);
-          else strcpy(msg->Array[0] = dispfold, "");
+          if (entry->BC_FImage) sprintf(msg->Array[0] = dispfold, "\033o[%d] ", entry->ImageIndex);
+          else if(entry->Type == FT_INCOMING) strcpy(msg->Array[0] = dispfold, "\033o[0] ");
+          else if(entry->Type == FT_OUTGOING) strcpy(msg->Array[0] = dispfold, "\033o[1] ");
+          else if(entry->Type == FT_SENT)     strcpy(msg->Array[0] = dispfold, "\033o[2] ");
+          else if(entry->Type == FT_DELETED)  strcpy(msg->Array[0] = dispfold, "\033o[3] ");
+          else strcpy(msg->Array[0] = dispfold, " ");
 
           if (strlen(entry->Name) > 0) strcat(dispfold, entry->Name);
           else sprintf(dispfold, "(%s)", FilePart(entry->Path));

@@ -57,6 +57,10 @@
 
 #include <dos/rdargs.h>
 
+#ifdef DEBUG
+#include <clib/debug_protos.h>
+#endif
+
 #include "YAM_rexx.h"
 
 struct rxs_stemnode
@@ -153,7 +157,7 @@ struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
    rexx_command_message->rm_Action = RXCOMM | RXFF_RESULT;
    rexx_command_message->rm_Stdin  = fh;
    rexx_command_message->rm_Stdout = fh;
-   
+
    return( rexx_command_message );
 }
 
@@ -162,7 +166,7 @@ struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
 struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rexx_command_message )
 {
    struct MsgPort *rexxport;
-   
+
    Forbid();
 
    if( (rexxport = FindPort(RXSDIR)) == NULL )
@@ -176,6 +180,7 @@ struct RexxMsg *CommandToRexx( struct RexxHost *host, struct RexxMsg *rexx_comma
    Permit();
    
    ++host->replies;
+
    return( rexx_command_message );
 }
 
@@ -840,7 +845,7 @@ void ARexxDispatch( struct RexxHost *host )
    {
       if( (rexxmsg->rm_Action & RXCODEMASK) != RXCOMM )
       {
-         /* Keine Rexx-Message */
+         /* No Rexx-Message */
          ReplyMsg( (struct Message *) rexxmsg );
       }
       else if( rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG )

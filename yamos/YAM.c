@@ -682,11 +682,13 @@ void Initialise(BOOL hidden)
    static char iconfile[SIZE_PATHFILE];
    char iconpath[SIZE_PATH];
    char *icnames[MAXICONS] = { "empty", "old", "new", "check" };
-   char *imnames[MAXIMAGES] = { "status_unread", "status_old", "status_forward",
-      "status_reply", "status_waitsend", "status_error", "status_hold",
-      "status_sent", "status_new", "status_delete", "status_download",
-      "status_group", "status_urgent", "status_attach", "status_report",
-      "status_crypt", "status_signed" };
+   char *imnames[MAXIMAGES] = { "status_unread",  "status_old",     "status_forward", "status_reply",
+                                "status_waitsend","status_error",   "status_hold",    "status_sent",
+                                "status_new",     "status_delete",  "status_download","status_group",
+                                "status_urgent",  "status_attach",  "status_report",  "status_crypt",
+                                "status_signed",  "folder_incoming","folder_outgoing","folder_sent",
+                                "folder_deleted"
+                              };
    int i;
 
    DateStamp(&G->StartDate);
@@ -700,7 +702,7 @@ void Initialise(BOOL hidden)
    WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
    KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
    IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
-   RexxSysBase = (struct RxsLib *)InitLib("rexxsyslib.library", 36, 0, TRUE, FALSE);
+   RexxSysBase = (struct RxsLib *)InitLib(RXSNAME, 36, 0, TRUE, FALSE);
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
 
    // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
@@ -736,6 +738,8 @@ void Initialise(BOOL hidden)
       strmfp(iconfile, iconpath, icnames[i]);
       G->DiskObj[i] = GetDiskObject(iconfile);
    }
+
+   // load the standard images now
    for (i = 0; i < MAXIMAGES; i++)
    {
       strmfp(iconfile, iconpath, imnames[i]);

@@ -69,7 +69,9 @@ DISPATCHERPROTO(BC_Dispatcher)
    switch (msg->MethodID)
    {
       case OM_NEW:
+      {
          tags = ((struct opSet *)msg)->ops_AttrList;
+
          obj = (Object *)DoSuperNew(cl, obj,
             MUIA_FixWidth, 16,
             MUIA_FixHeight, 16,
@@ -78,6 +80,7 @@ DISPATCHERPROTO(BC_Dispatcher)
             MUIA_InnerRight, 0,
             MUIA_InnerTop, 0,
             TAG_MORE, tags);
+
          if (obj)
          {
             char fname[SIZE_PATHFILE];
@@ -96,10 +99,11 @@ DISPATCHERPROTO(BC_Dispatcher)
                      break;
                }
             }
+
             if (*fname)
             {
                if (useold) data->BCD = GetBCImage(fname);
-                      else data->BCD = LoadBCImage(fname);
+               else data->BCD = LoadBCImage(fname);
 
                if (data->BCD)
                {
@@ -114,16 +118,25 @@ DISPATCHERPROTO(BC_Dispatcher)
                   set(obj, MUIA_Bodychunk_Masking,    data->BCD->Masking);
                   set(obj, MUIA_UserData,             useold);
                }
-               else return 0;
+               else
+               {
+                  // Popup a Error-Requester
+                  MUI_Request(G->App, NULL, 0, GetStr(MSG_ErrorStartup), GetStr(MSG_Quit), GetStr(MSG_ERROR_IMGLOAD), fname);
+                  return 0;
+               }
             }
          }
          return (ULONG)obj;
+      }
+      break;
 
       case OM_DISPOSE:
+      {
          data = INST_DATA(cl,obj);
          get(obj, MUIA_UserData, &useold);
          if (!useold) FreeBCImage(data->BCD);
-         break;
+      }
+      break;
    }
    return DoSuperMethodA(cl, obj, msg);
 }
