@@ -7,6 +7,11 @@ $Source$
 
 2002-06-26  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_TR.c: fixed another flaw in the POP3 implementation of YAM
+      where YAM didn`t check the statuscode of the welcome message of
+      the POP3 server it was connecting to. Now YAM should pop up
+      a proper error message with terminating the connection
+      accordingly.
     * YAM_TR.c: fixed a small TCP/IP flaw within the APOP functions
       where YAM ignored the APOP identified supplied within the
       welcomemessage of the pop server. Now YAM should throw a

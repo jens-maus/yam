@@ -964,6 +964,15 @@ static int TR_ConnectPOP(int guilevel)
       }
       *buf = 0;
 
+      // before we can go on we have to check whether the
+      // welcome message is ok or states that the server is somehow offline
+      if(!strncmp(welcomemsg, "-ERR", 4))
+      {
+        ER_NewError(GetStr(MSG_ER_POPWELCOME), welcomemsg, NULL);
+        BusyEnd;
+        return -1;
+      }
+
       // If the user selected STLS support we have to first send the command
       // to start TLS negotiation (RFC 2595)
       if(!TR_SendPopCmd(buf, "STLS", NULL, POPCMD_WAITEOL)) { BusyEnd; return -1; }
@@ -1000,6 +1009,15 @@ static int TR_ConnectPOP(int guilevel)
         welcomemsg = StrBufCat(welcomemsg, buf);
       }
       *buf = 0;
+
+      // before we can go on we have to check whether the
+      // welcome message is ok or states that the server is somehow offline
+      if(!strncmp(welcomemsg, "-ERR", 4))
+      {
+        ER_NewError(GetStr(MSG_ER_POPWELCOME), welcomemsg, NULL);
+        BusyEnd;
+        return -1;
+      }
    }
 
    if (!*passwd)
@@ -1012,6 +1030,8 @@ static int TR_ConnectPOP(int guilevel)
       }
    }
 
+   // if the user has selected APOP for that POP3 host
+   // we have to process it now
    if (C->P3[pop]->UseAPOP)
    {
       struct MD5Context context;
