@@ -2956,8 +2956,8 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
          array[8] = entry->Folder->Name;
 
          // depending on the mail status we set the font to bold or plain
-         if(hasStatusNew(entry) || hasStatusUnread(entry))
-           msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = "\033b";
+         if(hasStatusUnread(entry) || hasStatusNew(entry))
+           msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = MUIX_B;
       }
    }
    else
