@@ -1908,7 +1908,7 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
     kprintf("  Name.......: [%s]\n", rp->Name);
     kprintf("  ContentType: [%s]\n", rp->ContentType);
     kprintf("  Filename...: [%s]\n", rp->Filename);
-    kprintf("  Size.......: %d\n", rp->Size);
+    kprintf("  Size.......: %ld\n", rp->Size);
     kprintf("  Nextptr....: %lx\n", rp->Next);
     kprintf("  Prevptr....: %lx\n", rp->Prev);
   }
@@ -2356,7 +2356,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
          if (mode != RIM_READ && part->Nr > PART_LETTER) break;
          if (mode == RIM_READ && (part->Nr > PART_LETTER || !dodisp))
          {
-            *buffer = 0; sprintf(buffer, "%s\033p[7]%d: %s\033p[0]\n%s%s:%s %s   %s%s:%s %ld %s\n", tsb, part->Nr, part->Name, bo, GetStr(MSG_RE_ContentType), pl, DescribeCT(part->ContentType), bo, GetStr(MSG_Size), pl, part->Size, GetStr(MSG_Bytes));
+            *buffer = 0; sprintf(buffer, "%s\033p[7]%d: %s\033p[0]\n%s%s:%s %s   %s%s:%s %s%ld %s\n", tsb, part->Nr, part->Name, bo, GetStr(MSG_RE_ContentType), pl, DescribeCT(part->ContentType), bo, GetStr(MSG_Size), pl, part->Decoded ? "" : "~", part->Size, GetStr(MSG_Bytes));
             if (*buffer) cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
             *buffer = 0; if (*part->Description) sprintf(&buffer[strlen(buffer)], "%s%s:%s %s\n", bo, GetStr(MSG_RE_Description), pl, part->Description);
             if (dodisp) { strcat(buffer, sb); strcat(buffer, "\n"); }

@@ -7,6 +7,11 @@ $Source$
 
 2002-07-08  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_RE.c: Undecoded message part sizes will now also be shown
+      directly within the Readwindow with the ~ sign, like within
+      the attachment window. This should make it more clear that the
+      size of the message part isn`t known yet and that this is just
+      a approximation.
     * YAM_rexx_rxif.c: changed the INFO arexx command to
       require the ITEM attribute and return an error as stated
       in the arexx documentation. This fixes bug #555127
