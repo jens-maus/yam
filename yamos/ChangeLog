@@ -382,3 +382,11 @@
     * smakefile: smake clean no longer fails when the directory
       was already clean
 
+2002-10-01  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_RE.c: Don't try to use PGP if it's not installed
+    * YAM_RE.c: In "Short Headers" mode show the headers in the
+      order in which they appear in the selection pattern.
+      Currently this works only with 'normal' selection patterns,
+      e.g. (From|To|Date)
+
