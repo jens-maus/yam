@@ -268,9 +268,8 @@ MakeStaticHook(DI_LV_DesFuncHook, DI_LV_DesFunc);
 //  Creates glossary window
 static struct DI_ClassData *DI_New(void)
 {
-   struct DI_ClassData *data;
-
-   if (data = calloc(1, sizeof(struct DI_ClassData)))
+   struct DI_ClassData *data = calloc(1, sizeof(struct DI_ClassData));
+   if (data)
    {
       data->GUI.SL_EDIT = ScrollbarObject, End;
       data->GUI.WI = WindowObject,
