@@ -370,12 +370,12 @@ char *   StrBufCat(char *strbuf, char *source);
 char *   StrBufCpy(char *strbuf, char *source);
 char *   AppendToBuffer(char *buf, int *wptr, int *len, char *add);
 int      StringRequest(char *string, int size, char *title, char *body,
-         char *yestext, char *alttext, char *notext, BOOL secret, APTR parent);
+                       char *yestext, char *alttext, char *notext, BOOL secret, APTR parent);
 char *   StripUnderscore(char *label);
 char *   stristr(const char *a, const char *b);
 char *   strtok_r(char **s, char *brk);
 char *   SWSSearch(char *str1, char*str2);
-BOOL     TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder);
+int      TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder);
 char *   Trim(char *s);
 char *   TrimEnd(char *s);
 char *   TrimStart(char *s);

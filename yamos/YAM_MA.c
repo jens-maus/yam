@@ -376,7 +376,7 @@ static struct Mail **MA_CreateFullList(struct Folder *fo, BOOL onlyNew)
       mlist[1] = (struct Mail *)2;
       for (selected = 2, mail = fo->Messages; mail; mail = mail->Next)
       {
-         // only if we want ALL or this is just a new mail we add it to our list
+         // only if we want ALL or this is just a îew mail we add it to our list
          if(!onlyNew || hasStatusNew(mail))
          {
             mlist[selected] = mail;
@@ -486,21 +486,33 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, int pos, struct Folder 
    struct Mail cmail = *mail;
    char mfile[SIZE_MFILE];
    APTR lv;
+   int result;
 
    strcpy(mfile, mail->MailFile);
-   if (TransferMailFile(copyit, mail, to))
+
+   if((result = TransferMailFile(copyit, mail, to)) >= 0)
    {
       strcpy(cmail.MailFile, mail->MailFile);
-      if (copyit) AppendLogVerbose(25, GetStr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
-             else AppendLogVerbose(23, GetStr(MSG_LOG_MovingVerbose),  AddrName(mail->From), mail->Subject, from->Name, to->Name);
-      if (copyit) strcpy(mail->MailFile, mfile);
+
+      if(copyit)
+      {
+        AppendLogVerbose(25, GetStr(MSG_LOG_CopyingVerbose), AddrName(mail->From), mail->Subject, from->Name, to->Name);
+
+        strcpy(mail->MailFile, mfile);
+      }
       else
       {
-         if ((lv = WhichLV(from))) DoMethod(lv, MUIM_NList_Remove, pos);
-         RemoveMailFromList(mail);
+        AppendLogVerbose(23, GetStr(MSG_LOG_MovingVerbose),  AddrName(mail->From), mail->Subject, from->Name, to->Name);
+
+        if((lv = WhichLV(from)))
+           DoMethod(lv, MUIM_NList_Remove, pos);
+
+        RemoveMailFromList(mail);
       }
+
       mail = AddMailToList(&cmail, to);
-      if ((lv = WhichLV(to))) DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
+      if((lv = WhichLV(to)))
+        DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
 
       // check the status flags and set the mail statues to queued if the mail was copied into
       // the outgoing folder
@@ -511,7 +523,20 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, int pos, struct Folder 
 
       return mail;
    }
-   else ER_NewError(GetStr(MSG_ER_TRANSFERMAIL), mail->MailFile, to->Name);
+   else
+   {
+      DB(kprintf("MA_MoveCopySingle error: %ld\n", result);)
+
+      switch(result)
+      {
+        case -2:
+          ER_NewError(GetStr(MSG_ER_XPKUSAGE), mail->MailFile, NULL);
+        break;
+
+        default:
+          ER_NewError(GetStr(MSG_ER_TRANSFERMAIL), mail->MailFile, to->Name);
+      }
+   }
 
    return NULL;
 }

@@ -3085,21 +3085,37 @@ static BOOL GetPackMethod(int xpktype, char **method, int *eff)
 //  Shrinks a message file
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
 {
-   if (!XpkBase) return FALSE;
-   return (BOOL)!XpkPackTags(XPK_InName, src, XPK_OutName, dst, XPK_Password, passwd, XPK_PackMethod, method, XPK_PackMode, eff, TAG_DONE);
+   DB(kprintf("CompressMailFile: %08lx - [%s] -> [%s] - [%s] - [%s] - %ld\n", XpkBase, src, dst, passwd, method, eff);)
+
+   if(!XpkBase)
+     return FALSE;
+
+   return (BOOL)!XpkPackTags(XPK_InName,      src,
+                             XPK_OutName,     dst,
+                             XPK_Password,    passwd,
+                             XPK_PackMethod,  method,
+                             XPK_PackMode,    eff,
+                             TAG_DONE);
 }
 ///
 /// UncompressMailFile
 //  Expands a compressed message file
 static BOOL UncompressMailFile(char *src, char *dst, char *passwd)
 {
-   if (!XpkBase) return FALSE;
-   return (BOOL)!XpkUnpackTags(XPK_InName, src, XPK_OutName, dst, XPK_Password, passwd, TAG_DONE);
+   DB(kprintf("UncompressMailFile: %08lx - [%s] -> [%s] - [%s]\n", XpkBase, src, dst, passwd);)
+
+   if(!XpkBase)
+      return FALSE;
+
+   return (BOOL)!XpkUnpackTags(XPK_InName,    src,
+                               XPK_OutName,   dst,
+                               XPK_Password,  passwd,
+                               TAG_DONE);
 }
 ///
 /// TransferMailFile
 //  Copies or moves a message file, handles compression
-BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
+int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 {
    char *pmeth;
    char srcbuf[SIZE_PATHFILE];
@@ -3115,15 +3131,15 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    BOOL needuncomp;
    BOOL needcomp;
    BOOL done = FALSE;
-   BOOL success = FALSE;
+   int success = 0;
 
    DB(kprintf("TransferMailFile: [%s] to [%s]\n", mail->MailFile, GetFolderDir(dstfolder));)
 
    if(!MA_GetIndex(srcfolder))
-     return FALSE;
+     return 0;
 
    if(!MA_GetIndex(dstfolder))
-     return FALSE;
+     return 0;
 
    one2one = (srcxpk == dstxpk) && (srcxpk != 3);
    needuncomp = srcxpk > 1;
@@ -3145,7 +3161,7 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
      do
      {
        if(mCounter < 1 || mCounter >= 999)
-         return FALSE;
+         return 0;
 
        mCounter++;
 
@@ -3163,7 +3179,7 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    }
 
    if(one2one && !copyit && (done = MoveFile(srcbuf, dstbuf)))
-     success = TRUE;
+     success = 1;
 
    if(!done)
    {
@@ -3174,9 +3190,9 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           if(one2one)
           {
             if(!copyit)
-              success = MoveFile(srcbuf, dstbuf);
+              success = MoveFile(srcbuf, dstbuf) ? 1 : -1;
             else
-              success = CopyFile(dstbuf, 0, srcbuf, 0);
+              success = CopyFile(dstbuf, 0, srcbuf, 0) ? 1 : -1;
 
             copyit = TRUE;
           }
@@ -3186,35 +3202,35 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 
             if(UncompressMailFile(srcbuf, tf->Filename, srcpw))
             {
-              success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff);
+              success = CompressMailFile(tf->Filename, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
               CloseTempFile(tf);
             }
           }
         }
         else
         {
-          success = UncompressMailFile(srcbuf, dstbuf, srcpw);
+          success = UncompressMailFile(srcbuf, dstbuf, srcpw) ? 1 : -2;
         }
       }
       else
       {
         if(needcomp)
         {
-          success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff);
+          success = CompressMailFile(srcbuf, dstbuf, dstpw, pmeth, peff) ? 1 : -2;
         }
         else
         {
           if(!copyit)
-            success = MoveFile(srcbuf, dstbuf);
+            success = MoveFile(srcbuf, dstbuf) ? 1 : -1;
           else
-            success = CopyFile(dstbuf, 0, srcbuf, 0);
+            success = CopyFile(dstbuf, 0, srcbuf, 0) ? 1 : -1;
 
           copyit = TRUE;
         }
       }
 
-      if(success)
-        MA_UpdateMailFile(mail);
+      if(success > 0)
+        success = MA_UpdateMailFile(mail) ? 1 : -3;
    }
 
    return success;

@@ -5377,3 +5377,10 @@ Please check if the folder directory has enough space and has proper write \
 access.
 ; FILENAME, FOLDER
 ;
+MSG_ER_XPKUSAGE (//)
+An error occurred while trying to compress/uncompress the file '%s' via XPK.\n\
+\n\
+Please check your XPK installation and the associated compression settings \
+in the YAM configuration.
+; FILENAME
+;
