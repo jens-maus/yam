@@ -325,7 +325,7 @@ BOOL AY_New(BOOL hidden)
             											                  "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
                        												      "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
 					                          						    "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
-                                                    "\0338popupmenu.library (Henrik Isaksson)\n\n");
+                                                    "\0338popupmenu.library\0332 (Henrik Isaksson)\n\n");
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
 
