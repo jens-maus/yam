@@ -2139,8 +2139,9 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                            sigptr = NULL;
                            break;
                         }
-                        if(strncmp(sigptr+1,"-- ",3) == 0)                    // check for sig separator
-                        {
+
+                        if(strncmp(sigptr+1, "-- \n", 4) == 0)                // check for sig separator
+                        {                                                     // per definition it is a "-- " on a single line
                            sigptr++;
                            break;
                         }

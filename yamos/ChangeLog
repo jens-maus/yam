@@ -1,3 +1,8 @@
+2001-10-18  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed a tiny bug in the StripSignature routines were it could
+      have happened that a signature doesn`t get stripped.
+
 2001-10-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed another bug in the ML support were it happened that on a

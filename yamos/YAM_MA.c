@@ -935,6 +935,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
          }
          MA_InsertIntroText(out, mlistad ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
          fclose(out);
+
+         // now we add the configured signature to the reply
          WR_AddSignature(G->WR_Filename[winnum], mlistad ? folder->MLSignature: -1);
 
          /* If this is a reply to a mail belonging to a mailing list,
@@ -949,7 +951,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
          MA_EditorNotification(winnum);
          set(wr->GUI.WI, MUIA_Window_ActiveObject, wr->GUI.TE_EDIT);
          if (C->LaunchAlways && !quiet) DoMethod(G->App, MUIM_CallHook, &WR_EditHook, winnum);
-      } else doabort = TRUE;
+      }
+      else doabort = TRUE;
    }
    if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
 
