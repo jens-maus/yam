@@ -111,9 +111,11 @@ extern "C" {
 /*
  * Internet address (a structure for historical reasons)
  */
+#if !defined(_UNISTD_H)
 struct in_addr {
 	ULONG s_addr;
 };
+#endif
 
 /*
  * Definitions of bits in internet address integers.
