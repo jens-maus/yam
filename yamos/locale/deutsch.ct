@@ -5528,7 +5528,7 @@ Oberfläche wird geöffnet...
 ; Opening GUI...
 ;
 MSG_ERR_OPENLIB
-Fehler beim Öffnen von '%s', Version V%lu.%lu
+Fehler beim Öffnen von '%s', Version v%lu.%lu
 ; Can't open '%s', version v%lu.%lu
 ;
 MSG_CO_CONTEXTMENU
