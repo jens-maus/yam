@@ -39,7 +39,6 @@
 #include <proto/pm.h>
 #include <proto/utility.h>
 
-#include "old.h"
 #include "extra.h"
 #include "YAM.h"
 #include "YAM_config.h"

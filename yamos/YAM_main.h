@@ -33,6 +33,32 @@
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
 
+#define ANYBOX NULL
+
+#define MFLAG_MULTIRCPT   1
+#define MFLAG_MULTIPART   2
+#define MFLAG_REPORT      4
+#define MFLAG_CRYPT       8
+#define MFLAG_SIGNED     16
+#define MFLAG_SENDERINFO 32
+#define MFLAG_SENDMDN    64
+#define MFLAG_NOFOLDER  128
+#define Virtual(mail)   (((mail)->Flags&MFLAG_NOFOLDER) == MFLAG_NOFOLDER)
+
+enum ApplyMode { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE,
+   APPLY_RX_ALL, APPLY_RX
+};
+
+enum NewMode {
+   NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC
+};
+
+#define NEWF_QUIET        1
+#define NEWF_REP_NOQUOTE  2
+#define NEWF_REP_PRIVATE  4
+#define NEWF_REP_MLIST    8
+#define NEWF_FWD_NOATTACH 16
+
 enum Macro {
    MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,
    MACRO_MEN6, MACRO_MEN7, MACRO_MEN8, MACRO_MEN9, MACRO_STARTUP, MACRO_QUIT,
@@ -112,7 +138,7 @@ extern struct Hook MA_SetMessageInfoHook;
 extern struct Hook PO_WindowHook;
 extern struct Hook MA_FolderKeyHook;
 
-int   MA_AllocRules(struct Search **search, int mode);
+int   MA_AllocRules(struct Search **search, enum ApplyMode mode);
 void  MA_ChangeSubject(struct Mail *mail, char *subj);
 void  MA_ChangeTransfer(BOOL on);
 struct Mail **MA_CreateMarkedList(APTR lv);

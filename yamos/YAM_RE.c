@@ -41,7 +41,6 @@
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 
-#include "old.h"
 #include "extra.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -60,6 +59,14 @@
 #include "YAM_read.h"
 #include "YAM_write.h"
 #include "YAM_utilities.h"
+
+#define PGPE_MIME     1
+#define PGPE_OLD      2
+#define PGPS_MIME     1
+#define PGPS_OLD      2
+#define PGPS_BADSIG   4
+#define PGPS_ADDRESS  8
+#define PGPS_CHECKED 16
 
 /* local protos */
 static BOOL RE_LoadMessage(int winnum, int parsemode);
@@ -2001,7 +2008,7 @@ static struct Part *RE_GetPart(int winnum, int partnr)
 ///
 /// RE_InitPrivateRC
 //  Allocates resources for background message parsing
-void RE_InitPrivateRC(struct Mail *mail, int parsemode)
+void RE_InitPrivateRC(struct Mail *mail, enum ParseMode parsemode)
 {
    G->RE[4] = calloc(1,sizeof(struct RE_ClassData));
    G->RE[4]->Mail = *mail;
@@ -2049,7 +2056,7 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
 ///
 /// RE_ReadInMessage
 //  Reads a message into the display buffer
-char *RE_ReadInMessage(int winnum, int mode)
+char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 {
    struct RE_ClassData *re = G->RE[winnum];
    struct Part *part, *uup = NULL, *last, *first = re->FirstPart;
@@ -2454,7 +2461,7 @@ static void RE_DisplayMessage(int winnum)
    struct RE_GUIData *gui = &(G->RE[winnum]->GUI);
    struct Person *from = &G->RE[winnum]->Mail.From;
    struct ABEntry *ab = NULL, abtmpl;
-   int hits = 0;
+   int hits;
 
    if (cmsg = RE_ReadInMessage(winnum, RIM_READ))
    {
@@ -2543,7 +2550,7 @@ static void RE_DisplayMessage(int winnum)
 static void RE_ClickedOnMessage(char *address)
 {
    struct ABEntry *ab = NULL;
-   int l, win, hits = 0;
+   int l, win, hits;
    char *p, *gads, buf[SIZE_LARGE], *body = NULL, *subject = NULL;
 
    if (l = strlen(address)) if (strchr(".?!", address[--l])) address[l] = 0;

@@ -43,7 +43,6 @@
 #include <rexx/storage.h>
 #include <rexx/rxslib.h>
 
-#include "old.h"
 #include "extra.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"

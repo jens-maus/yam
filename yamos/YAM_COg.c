@@ -67,7 +67,7 @@ HOOKPROTONH(PO_List2TextFunc, void, Object *list, Object *text)
    DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &selection);
    if (selection) if (strcmp(selection, GetStr(MSG_MA_Cancel))) set(text, MUIA_Text_Contents, selection);
 }
-MakeHook(PO_List2TextHook, PO_List2TextFunc);
+MakeStaticHook(PO_List2TextHook, PO_List2TextFunc);
 
 ///
 /// CO_LV_TDspFunc
@@ -77,7 +77,7 @@ HOOKPROTONH(CO_LV_TDspFunc, long, char **array, struct TranslationTable *entry)
    array[0] = entry->Name;
    return 0;
 }
-MakeHook(CO_LV_TDspHook,CO_LV_TDspFunc);
+MakeStaticHook(CO_LV_TDspHook,CO_LV_TDspFunc);
 
 ///
 /// CO_LV_TConFunc
@@ -88,7 +88,7 @@ HOOKPROTONHNO(CO_LV_TConFunc, struct TranslationTable *, struct TranslationTable
    memcpy(entry, tt, sizeof(struct TranslationTable));
    return entry;
 }
-MakeHook(CO_LV_TConHook, CO_LV_TConFunc);
+MakeStaticHook(CO_LV_TConHook, CO_LV_TConFunc);
 
 ///
 /// CO_LV_RxDspFunc
@@ -117,7 +117,7 @@ HOOKPROTONH(CO_LV_RxDspFunc, long, char **array, int num)
    }
    return 0;
 }
-MakeHook(CO_LV_RxDspHook,CO_LV_RxDspFunc);
+MakeStaticHook(CO_LV_RxDspHook,CO_LV_RxDspFunc);
 
 ///
 /// PO_HandleXPKFunc
@@ -128,12 +128,12 @@ HOOKPROTONH(PO_HandleXPKFunc, void, APTR pop, APTR text)
    DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
    if (entry) set(text, MUIA_Text_Contents, entry);
 }
-MakeHook(PO_HandleXPKHook, PO_HandleXPKFunc);
+MakeStaticHook(PO_HandleXPKHook, PO_HandleXPKFunc);
 
 ///
 /// MakeXPKPop
 //  Creates a popup list of available XPK sublibraries
-APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
+static APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
 {
    APTR lv, po;
 
@@ -184,12 +184,12 @@ HOOKPROTONH(PO_HandleTrans, void, APTR pop, APTR string)
    DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
    if (entry) setstring(string, entry->File);
 }
-MakeHook(PO_HandleTransHook, PO_HandleTrans);
+MakeStaticHook(PO_HandleTransHook, PO_HandleTrans);
 
 ///
 /// MakeTransPop
 //  Creates a popup list of available translation tables
-APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
+static APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
 {
    APTR lv, po;
 
@@ -250,7 +250,7 @@ HOOKPROTONH(PO_HandleVar, void, APTR pop, APTR string)
       DoMethod(string, MUIM_BetterString_Insert, buf, MUIV_BetterString_Insert_BufferPos);
    }
 }
-MakeHook(PO_HandleVarHook, PO_HandleVar);
+MakeStaticHook(PO_HandleVarHook, PO_HandleVar);
 
 ///
 /// MakeVarPop
@@ -365,7 +365,7 @@ HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
 {
    PlaySound(GetMUIStringPtr((Object *)arg[0]));
 }
-MakeHook(CO_PlaySoundHook,CO_PlaySoundFunc);
+MakeStaticHook(CO_PlaySoundHook,CO_PlaySoundFunc);
 ///
 
 /*** Pages ***/

@@ -54,7 +54,6 @@
 #include <proto/utility.h>
 #include <workbench/workbench.h>
 
-#include "old.h"
 #include "extra.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -121,7 +120,7 @@ static char FailedAlias[SIZE_ADDRESS];
 /*** WR_ResolveName - Looks for an alias, email address or name in the address book ***/
 int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
 {
-  int hits = 0, retcode;
+  int hits, retcode;
   struct ABEntry *ab = NULL;
 
   MyStrCpy(FailedAlias, name);
@@ -1283,7 +1282,7 @@ char *WR_AutoSaveFile(int winnr)
 /*** Buttons ***/
 /// WR_NewMail
 //  Validates write window options and generates a new message
-void WR_NewMail(int mode, int winnum)
+void WR_NewMail(enum WriteMode mode, int winnum)
 {
    struct Compose comp;
    char *addr, *er;
@@ -1682,7 +1681,7 @@ MakeStaticHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
 /*** Menus ***/
 /// WR_TransformText
 //  Inserts or pastes text as plain, ROT13 or quoted
-static char *WR_TransformText(char *source, int mode, char *qtext)
+static char *WR_TransformText(char *source, enum TransformMode mode, char *qtext)
 {
    FILE *fp;
    char *dest = NULL;
@@ -1739,7 +1738,8 @@ MakeStaticHook(WR_InsertSeparatorHook, WR_InsertSeparatorFunc);
 /*** WR_EditorCmd - Inserts file or clipboard into editor ***/
 HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 {
-   int cmd = arg[0], winnum = arg[1];
+   enum TransformMode cmd = arg[0];
+   int winnum = arg[1];
    char *text, *quotetext, filename[SIZE_PATHFILE];
    struct TempFile *tf;
    struct WR_ClassData *wr = G->WR[winnum];

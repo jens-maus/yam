@@ -40,8 +40,8 @@
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 
-#include "old.h"
 #include "YAM.h"
+#include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
@@ -52,9 +52,22 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_md5.h"
+#include "YAM_mime.h"
 
 static void TR_NewMailAlert(void);
 static void TR_CompleteMsgList(void);
+
+struct TransStat
+{
+   int  Msgs_Tot;
+   int  Msgs_Done;
+   long Size_Tot;
+   long Size_Done;
+   long Size_Curr;
+   long Delay;
+   long Clock_Start;
+   long Clock_Last;
+};
 
 #define POPCMD_WAITEOL 1
 #define POPCMD_NOERROR 2
@@ -938,8 +951,6 @@ static ULONG GetReturnCode(void)
 #define AUTH_DIGEST_MD5 2
 #define AUTH_LOGIN      4
 #define AUTH_PLAIN      8
-void encode64(char *s, char *d, int len);
-char *decode64 (char *dest, char *src, char *srcmax);
 static BOOL TR_ConnectESMTP(void)
 {
    int len,rc=0;

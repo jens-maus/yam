@@ -222,8 +222,8 @@ static BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
 int FO_GetFolderPosition(struct Folder *findfo)
 {
    int i;
-   struct Folder *fo = NULL;
-   struct MUI_NListtree_TreeNode *tn = NULL;
+   struct Folder *fo;
+   struct MUI_NListtree_TreeNode *tn;
 
    for (i = 0;;i++)
    {

@@ -252,7 +252,7 @@ HOOKPROTONHNONP(US_DelFunc, void)
    }
    DoMethod(lv, MUIM_NList_Remove, i);
 }
-MakeHook(US_DelHook, US_DelFunc);
+MakeStaticHook(US_DelHook, US_DelFunc);
 
 ///
 /// US_AddFunc
@@ -272,7 +272,7 @@ HOOKPROTONHNONP(US_AddFunc, void)
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_USER);
    }
 }
-MakeHook(US_AddHook, US_AddFunc);
+MakeStaticHook(US_AddHook, US_AddFunc);
 
 ///
 /// US_SaveUserList
@@ -345,7 +345,7 @@ HOOKPROTONHNONP(US_CloseFunc, void)
     DisposeModulePush(&G->US);
   }
 }
-MakeHook(US_CloseHook, US_CloseFunc);
+MakeStaticHook(US_CloseHook, US_CloseFunc);
 
 ///
 /// US_GetUSEntryFunc
@@ -381,7 +381,7 @@ HOOKPROTONHNONP(US_GetUSEntryFunc, void)
    }
    else DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->ST_USER, gui->ST_PASSWD, gui->PO_MAILDIR, gui->CH_USEDICT, gui->CH_USEADDR, gui->CH_ROOT, gui->CH_CLONE, gui->BT_DEL, NULL);
 }
-MakeHook(US_GetUSEntryHook,US_GetUSEntryFunc);
+MakeStaticHook(US_GetUSEntryHook,US_GetUSEntryFunc);
 
 ///
 /// US_PutUSEntryFunc
@@ -404,7 +404,7 @@ HOOKPROTONHNONP(US_PutUSEntryFunc, void)
       DoMethod(gui->LV_USERS, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
    }
 }
-MakeHook(US_PutUSEntryHook,US_PutUSEntryFunc);
+MakeStaticHook(US_PutUSEntryHook,US_PutUSEntryFunc);
 ///
 
 /*** GUI ***/
@@ -416,7 +416,7 @@ HOOKPROTONHNO(US_LV_ConFunc, struct User *, struct User *user)
    *entry = *user;
    return entry;
 }
-MakeHook(US_LV_ConHook, US_LV_ConFunc);
+MakeStaticHook(US_LV_ConHook, US_LV_ConFunc);
 
 ///
 /// US_LV_DspFunc
@@ -436,7 +436,7 @@ HOOKPROTONH(US_LV_DspFunc, long, char **array, struct User *entry)
    }
    return 0;
 }
-MakeHook(US_LV_DspHook,US_LV_DspFunc);
+MakeStaticHook(US_LV_DspHook,US_LV_DspFunc);
 
 ///
 /// US_New

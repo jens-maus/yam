@@ -68,6 +68,8 @@ struct EA_ClassData  /* address book entry window */
    char               PhotoName[SIZE_PATHFILE];
 };
 
+#define AddrName(abentry) ((abentry).RealName[0]?(abentry).RealName:(abentry).Address)
+
 enum ABEntry_Type { AET_USER=0, AET_LIST, AET_GROUP };
 
 struct ABEntry

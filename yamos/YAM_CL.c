@@ -37,7 +37,6 @@
 #include <proto/pm.h>
 #include <proto/utility.h>
 
-#include "old.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -57,9 +56,19 @@
  Private MUI classes
 ***************************************************************************/
 
+#define MUIM_GoActive                0x8042491a
+#define MUIM_GoInactive              0x80422c0c
+
+struct DumData { long dummy; };
+
 struct WS_Data
 {
    struct MUI_EventHandlerNode ehnode;
+};
+
+struct BC_Data
+{
+   struct BodyChunkData *BCD;
 };
 
 /*** Definitions ***/

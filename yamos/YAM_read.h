@@ -33,6 +33,14 @@
 #include "YAM_mainFolder.h"
 #include "YAM_write.h"
 
+#define MDN_TYPEMASK  0x0F
+#define MDN_AUTOACT   0x10
+#define MDN_AUTOSEND  0x20
+
+enum MDNType { MDN_IGNORE=0, MDN_DENY, MDN_READ, MDN_DISP, MDN_PROC, MDN_DELE };
+enum ParseMode { PM_ALL, PM_TEXTS, PM_NONE };
+enum ReadInMode { RIM_QUIET, RIM_READ, RIM_EDIT, RIM_QUOTE, RIM_PRINT };
+
 struct RE_GUIData
 {
    APTR WI;
@@ -67,7 +75,7 @@ struct RE_ClassData  /* read window */
    struct TempFile  *TempFile;
    FILE             *Fh;
    struct Part      *FirstPart;
-   int               ParseMode;
+   enum ParseMode    ParseMode;
    int               Header;
    int               SenderInfo;
    int               LastDirection;
@@ -124,10 +132,10 @@ void  RE_DisplayMIME(char *fname, char *ctype);
 BOOL  RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi);
 BOOL  RE_Export(int winnum, char *source, char *dest, char *name, int nr, BOOL force, BOOL overwrite, char *ctype);
 void  RE_FreePrivateRC(void);
-void  RE_InitPrivateRC(struct Mail *mail, int parsemode);
+void  RE_InitPrivateRC(struct Mail *mail, enum ParseMode parsemode);
 int   RE_Open(int winnum, BOOL real);
 void STACKEXT RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhitespace, char *ptr);
-char *RE_ReadInMessage(int winnum, int mode);
+char *RE_ReadInMessage(int winnum, enum ReadInMode mode);
 void  RE_ReadMessage(int winnum, struct Mail *mail);
 void  RE_SaveAll(int winnum, char *path);
 void  RE_SaveDisplay(int winnum, FILE *fh);

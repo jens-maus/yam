@@ -50,6 +50,25 @@ struct Person
    char RealName[SIZE_REALNAME];
 };
 
+struct ExpandTextData
+{
+   char *            OS_Name;
+   char *            OS_Address;
+   char *            OM_Subject;
+   struct DateStamp *OM_Date;
+   char *            OM_MessageID;
+   char *            R_Name;
+   char *            R_Address;
+   char *            HeaderFile;
+};
+
+struct MailInfo
+{
+   int   Pos;
+   BOOL  Display;
+   char *FName;
+};
+
 struct TempFile
 {
    FILE *FP;
@@ -75,10 +94,19 @@ struct Data2D
    char **Data;
 };
 
-#define BusyEnd Busy("", NULL, 0, 0)
+#define PGPLOGFILE    "T:PGP.log"
+#define OUT_NIL       ((BPTR)1)
+#define NOERRORS      16
+#define KEEPLOG       32
+#define BusyEnd       Busy("", NULL, 0, 0)
 
-extern int         BusyLevel;
-extern struct Hook GeneralDesHook;
+#define ATTREQ_DISP   0
+#define ATTREQ_SAVE   1
+#define ATTREQ_PRINT  2
+#define ATTREQ_MULTI  32
+
+extern int            BusyLevel;
+extern struct Hook    GeneralDesHook;
 
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 APTR     AllocCopy(APTR source, int size);

@@ -86,9 +86,6 @@ BOOL   AB_LoadTree(char *fname, BOOL append, BOOL sorted);
 void   AB_MakeABFormat(APTR lv);
 struct AB_ClassData *AB_New(void);
 BOOL   AB_SaveTree(char *fname);
-int AB_SearchEntry(char *text, int mode, struct ABEntry **ab);
-
-//int STACKEXT AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *text, int mode,
-//       int *hits, struct MUI_NListtree_TreeNode **lasthit);
+int    AB_SearchEntry(char *text, int mode, struct ABEntry **ab);
 
 #endif /* YAM_ADDRESSBOOK_H */

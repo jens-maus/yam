@@ -38,7 +38,6 @@
 #include <proto/muimaster.h>
 #include <proto/pm.h>
 
-#include "old.h"
 #include "extra.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -57,6 +56,12 @@
 
 struct Config *C;
 struct Config *CE;
+
+struct PageList
+{
+   int  Offset;
+   APTR PageLabel;
+};
 
 /* local protos */
 static void CO_NewPrefsFile(char*);
@@ -930,7 +935,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
          else ER_NewError(GetStr(MSG_ER_CantOpenFile), fname, NULL);
       }
 }
-MakeHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);
+MakeStaticHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);
 
 ///
 /// CO_EditSignatFunc
@@ -968,7 +973,7 @@ HOOKPROTONHNONP(CO_OpenConfig, void)
       G->CO->UpdateAll = TRUE;
    }
 }
-MakeHook(CO_OpenConfigHook, CO_OpenConfig);
+MakeStaticHook(CO_OpenConfigHook, CO_OpenConfig);
 
 ///
 /// CO_SaveConfigAs
@@ -985,7 +990,7 @@ HOOKPROTONHNONP(CO_SaveConfigAs, void)
       CO_SaveConfig(CE, cname);
    }
 }
-MakeHook(CO_SaveConfigAsHook, CO_SaveConfigAs);
+MakeStaticHook(CO_SaveConfigAsHook, CO_SaveConfigAs);
 
 ///
 /// CO_Restore
@@ -996,7 +1001,7 @@ HOOKPROTONHNONP(CO_Restore, void)
    CO_CopyConfig(CE, C);
    CO_SetConfig();
 }
-MakeHook(CO_RestoreHook,CO_Restore);
+MakeStaticHook(CO_RestoreHook,CO_Restore);
 
 ///
 /// CO_LastSaved
@@ -1007,7 +1012,7 @@ HOOKPROTONHNONP(CO_LastSaved, void)
    CO_SetConfig();
    G->CO->UpdateAll = TRUE;
 }
-MakeHook(CO_LastSavedHook,CO_LastSaved);
+MakeStaticHook(CO_LastSavedHook,CO_LastSaved);
 
 ///
 /// CO_ResetToDefaultFunc
@@ -1018,7 +1023,7 @@ HOOKPROTONHNO(CO_ResetToDefaultFunc, void, int *arg)
    else CO_SetDefaults(CE, G->CO->VisiblePage);
    CO_SetConfig();
 }
-MakeHook(CO_ResetToDefaultHook,CO_ResetToDefaultFunc);
+MakeStaticHook(CO_ResetToDefaultHook,CO_ResetToDefaultFunc);
 
 ///
 /// CO_BuildPage
@@ -1072,7 +1077,7 @@ HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
    }
    set(gui->WI, MUIA_Window_Sleep, FALSE);
 }
-MakeHook(CO_ChangePageHook,CO_ChangePageFunc);
+MakeStaticHook(CO_ChangePageHook,CO_ChangePageFunc);
 
 ///
 /// CO_CloseFunc
@@ -1092,7 +1097,7 @@ HOOKPROTONHNO(CO_CloseFunc, void, int *arg)
 
    DisposeModulePush(&G->CO);
 }
-MakeHook(CO_CloseHook,CO_CloseFunc);
+MakeStaticHook(CO_CloseHook,CO_CloseFunc);
 
 ///
 /// CO_OpenFunc

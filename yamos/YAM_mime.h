@@ -42,16 +42,18 @@ struct TranslationTable
    char  DestCharset[SIZE_NAME];
 };
 
-BOOL DoesNeedPortableNewlines(char *ctype);
-void from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines);
-void from64txt(char *src, char *dst, struct TranslationTable *tt);
-void fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
-void fromuue(FILE *infp, FILE *outfp);
-void fromuuetxt(char **txt, FILE *outfp);
-void fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt);
-void fromqptxt(char *src, char *dst, struct TranslationTable *tt);
-void to64(FILE *infile, FILE *outfile, BOOL PortableNewlines);
-void toqp(FILE *infile, FILE *outfile);
-void touue(FILE *in, FILE *out);
+char *decode64 (char *dest, char *src, char *srcmax);
+BOOL  DoesNeedPortableNewlines(char *ctype);
+void  encode64(char *s, char *d, int len);
+void  from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines);
+void  from64txt(char *src, char *dst, struct TranslationTable *tt);
+void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
+void  fromuue(FILE *infp, FILE *outfp);
+void  fromuuetxt(char **txt, FILE *outfp);
+void  fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt);
+void  fromqptxt(char *src, char *dst, struct TranslationTable *tt);
+void  to64(FILE *infile, FILE *outfile, BOOL PortableNewlines);
+void  toqp(FILE *infile, FILE *outfile);
+void  touue(FILE *in, FILE *out);
 
 #endif /* YAM_MIME_H */

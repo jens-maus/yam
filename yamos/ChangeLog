@@ -667,3 +667,14 @@
 
     * Removed "give up after 20 lines" signature strip "feature".
       (Bug #432034)
+
+2001-06-17  Dirk Stöcker <stoecker@epost.de>
+
+    * Moved __USE_SYSBASE from YAM_UT.c to smakefile (where it really belongs to).
+    * Changed YAM_global.c stack stuff. This needs to be completed.
+    * Made some more stuff static.
+    * Moved last old.h stuff, old.h got obsolete now. First reordering step
+      finished.
+    * smakefile reflects the correct dependencies now. Please addapt this for
+      other makefiles as well.
+

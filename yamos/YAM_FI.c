@@ -38,7 +38,6 @@
 #include <proto/muimaster.h>
 #include <proto/utility.h>
 
-#include "old.h"
 #include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
@@ -234,7 +233,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 ///
 /// FI_IsFastSearch
 //  Checks if quick search is available for selected header field
-static int FI_IsFastSearch(char *field)
+static enum FastSearch FI_IsFastSearch(char *field)
 {
    if (!stricmp(field, "from"))     return FS_FROM;
    if (!stricmp(field, "to"))       return FS_TO;
@@ -448,7 +447,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    set(gui->BT_SELECT, MUIA_Disabled, !fndmsg);
    set(gui->BT_READ, MUIA_Disabled, !fndmsg);
 }
-MakeHook(FI_SearchHook,FI_SearchFunc);
+MakeStaticHook(FI_SearchHook,FI_SearchFunc);
 
 ///
 /// FI_ToRuleFunc
@@ -483,7 +482,7 @@ HOOKPROTONHNONP(FI_ToRuleFunc, void)
    }
    else ER_NewError(GetStr(MSG_ER_ErrorMaxFilters), NULL, NULL);
 }
-MakeHook(FI_ToRuleHook,FI_ToRuleFunc);
+MakeStaticHook(FI_ToRuleHook,FI_ToRuleFunc);
 
 ///
 /// FI_Open
@@ -546,7 +545,7 @@ HOOKPROTONHNO(FI_SearchOptFunc, void, ULONG *arg)
    set(gdata->PG_SRCHOPT, MUIA_Group_ActivePage, Mode2Group[mode]);
    FI_SearchGhost(gdata, FALSE);
 }
-MakeHook(FI_SearchOptHook, FI_SearchOptFunc);
+MakeStaticHook(FI_SearchOptHook, FI_SearchOptFunc);
 
 ///
 /// FI_EditFileFunc
@@ -560,7 +559,7 @@ HOOKPROTONHNO(FI_EditFileFunc, void, int *arg)
       ExecuteCommand(buffer, TRUE, OUT_NIL);
    }
 }
-MakeHook(FI_EditFileHook,FI_EditFileFunc);
+MakeStaticHook(FI_EditFileHook,FI_EditFileFunc);
 
 ///
 /// FI_ConstructSearchGroup
@@ -711,7 +710,7 @@ HOOKPROTONHNONP(FI_SwitchFunc, void)
       set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
    }
 }
-MakeHook(FI_SwitchHook, FI_SwitchFunc);
+MakeStaticHook(FI_SwitchHook, FI_SwitchFunc);
 
 ///
 /// FI_ReadFunc
@@ -730,7 +729,7 @@ HOOKPROTONHNONP(FI_ReadFunc, void)
       }
    }
 }
-MakeHook(FI_ReadHook, FI_ReadFunc);
+MakeStaticHook(FI_ReadHook, FI_ReadFunc);
 
 ///
 /// FI_SelectFunc
@@ -753,7 +752,7 @@ HOOKPROTONHNONP(FI_SelectFunc, void)
       }
    }
 }
-MakeHook(FI_SelectHook, FI_SelectFunc);
+MakeStaticHook(FI_SelectHook, FI_SelectFunc);
 
 ///
 /// FI_Close
@@ -762,7 +761,7 @@ HOOKPROTONHNONP(FI_Close, void)
 {
    DisposeModulePush(&G->FI);
 }
-MakeHook(FI_CloseHook, FI_Close);
+MakeStaticHook(FI_CloseHook, FI_Close);
 ///
 
 /*** GUI ***/
@@ -776,7 +775,7 @@ HOOKPROTONHNP(FI_PO_InitRuleListFunc, long, Object *pop)
       DoMethod(pop, MUIM_List_InsertSingle, C->RU[i], MUIV_List_Insert_Bottom);
    return TRUE;
 }
-MakeHook(FI_PO_InitRuleListHook, FI_PO_InitRuleListFunc);
+MakeStaticHook(FI_PO_InitRuleListHook, FI_PO_InitRuleListFunc);
 
 ///
 /// FI_PO_FromRuleFunc
@@ -800,7 +799,7 @@ HOOKPROTONHNP(FI_PO_FromRuleFunc, void, Object *pop)
       if (grp->CH_SUBSTR[g]  ) setcheckmark(grp->CH_SUBSTR[g],  rule->Substring[0]);
    }
 }
-MakeHook(FI_PO_FromRuleHook, FI_PO_FromRuleFunc);
+MakeStaticHook(FI_PO_FromRuleHook, FI_PO_FromRuleFunc);
 
 ///
 /// FI_New

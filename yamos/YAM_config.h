@@ -300,6 +300,9 @@ struct RxHook
 #define NOTI_SOUND   2
 #define NOTI_CMD     4
 
+enum PrintMethod {PRINTMETHOD_DUMPRAW, PRINTMETHOD_LATEX, PRINTMETHOD_POSTSCRIPT};
+/* PS not yet implemented */
+
 /*** Configuration main structure ***/
 struct Config
 {
@@ -336,7 +339,7 @@ struct Config
    int   WriteIndexes;
    int   AutoSave;
    int   HideGUIElements;
-   int   PrintMethod;
+   enum PrintMethod PrintMethod;
    int   StackSize;
    int   SizeFormat;
 

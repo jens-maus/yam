@@ -93,7 +93,7 @@ HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
    set(G->ER->GUI.BT_PREV, MUIA_Disabled, value == 1);
    set(G->ER->GUI.LV_ERROR, MUIA_Floattext_Text, G->ER_Message[value-1]);
 }
-MakeHook(ER_SelectHook, ER_SelectFunc);
+MakeStaticHook(ER_SelectHook, ER_SelectFunc);
 
 ///
 /// ER_CloseFunc
@@ -108,7 +108,7 @@ HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
    }
    DisposeModulePush(&G->ER);
 }
-MakeHook(ER_CloseHook, ER_CloseFunc);
+MakeStaticHook(ER_CloseHook, ER_CloseFunc);
 
 ///
 

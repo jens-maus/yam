@@ -46,4 +46,14 @@ extern char *             yamversionstring;
 extern char *             yamversiondate;
 extern unsigned long      yamversiondays;
 
+enum ContTypeEntry {
+   CT_TX_PLAIN=0, CT_TX_HTML, CT_TX_GUIDE,
+   CT_AP_OCTET, CT_AP_PS, CT_AP_RTF, CT_AP_LHA, CT_AP_LZX, CT_AP_ZIP,
+   CT_AP_AEXE, CT_AP_SCRIPT, CT_AP_REXX,
+   CT_IM_JPG, CT_IM_GIF, CT_IM_PNG, CT_IM_TIFF, CT_IM_ILBM,
+   CT_AU_AU, CT_AU_8SVX, CT_AU_WAV,
+   CT_VI_MPG, CT_VI_MOV, CT_VI_ANIM, CT_VI_AVI,
+   CT_ME_EMAIL
+};
+
 #endif /* YAM_GLOBAL_H */

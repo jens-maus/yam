@@ -65,6 +65,8 @@ struct FI_ClassData  /* find window */
    long              Abort;
 };
 
+enum FastSearch { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
+
 struct Search
 {
    char *          Pattern;
@@ -74,7 +76,7 @@ struct Search
    int             PersMode;
    int             Compare;
    int             Status;
-   int             Fast;
+   enum FastSearch Fast;
    BOOL            CaseSens;
    BOOL            SubString;
    char            Match[SIZE_PATTERN+4];

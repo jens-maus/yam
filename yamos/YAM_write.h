@@ -105,6 +105,13 @@ struct Attach
    char Description[SIZE_DEFAULT];
 };
 
+enum TransformMode {
+   ED_OPEN, ED_INSERT, ED_INSQUOT, ED_INSALTQUOT, ED_INSROT13, ED_PASQUOT, ED_PASALTQUOT,
+   ED_PASROT13
+};
+
+enum WriteMode { WRITE_HOLD, WRITE_SEND, WRITE_QUEUE };
+
 enum Encoding { ENC_NONE, ENC_QP, ENC_B64, ENC_UUE, ENC_BIN, ENC_8BIT, ENC_FORM };
 
 struct WritePart
@@ -162,7 +169,7 @@ void  WR_App(int winnum, struct AppMessage *amsg);
 char *WR_AutoSaveFile(int winnr);
 void  WR_Cleanup(int winnum);
 char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single);
-void  WR_NewMail(int mode, int winnum);
+void  WR_NewMail(enum WriteMode mode, int winnum);
 int   WR_Open(int winnum, BOOL bounce);
 int   WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists);
 void  WR_SetupOldMail(int winnum);

@@ -58,6 +58,8 @@ struct Mail
    char             MailFile[SIZE_MFILE];
 };
 
+enum ReceiptType { RCPT_TYPE_ALL, RCPT_TYPE_READ };
+
 struct ExtendedMail
 {
    struct Mail      Mail;
@@ -71,7 +73,7 @@ struct ExtendedMail
    int              NoBCC;
    int              Signature;
    int              Security;
-   int              ReceiptType;
+   enum ReceiptType ReceiptType;
    BOOL             DelSend;
    BOOL             RetRcpt;
    struct Person    ReceiptTo;

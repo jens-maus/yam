@@ -45,7 +45,6 @@
 #include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
-#define __USE_SYSBASE
 #include <proto/exec.h>
 #include <proto/datatypes.h>
 #include <proto/dos.h>
@@ -60,7 +59,6 @@
 #include <proto/xpkmaster.h>
 #include <workbench/startup.h>
 
-#include "old.h"
 #include "YAM.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
@@ -74,6 +72,14 @@
 #include "YAM_mime.h"
 #include "YAM_read.h"
 #include "YAM_utilities.h"
+
+#define CRYPTBYTE       164
+#define MUIA_Dtpic_Name 0x80423d72
+
+struct UniversalClassData
+{
+   struct UniversalGUIData { APTR WI; } GUI;
+};
 
 int BusyLevel = 0;
 
@@ -2953,7 +2959,7 @@ void DisplayStatistics(struct Folder *fo)
 {
    int pos;
    struct Mail *mail;
-   struct MUI_NListtree_TreeNode *tn = NULL;
+   struct MUI_NListtree_TreeNode *tn;
    struct Folder *actfo = FO_GetCurrentFolder();
 
    // If the parsed argument is NULL we want to show the statistics from the actual folder
@@ -2992,7 +2998,7 @@ void DisplayStatistics(struct Folder *fo)
    // Recalc the number of messages of the folder group
    if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, 0, TAG_DONE))
    {
-      struct MUI_NListtree_TreeNode *tn_parent = NULL;
+      struct MUI_NListtree_TreeNode *tn_parent;
 
       // Now get the parent of the treenode
       if(tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE))
@@ -3009,8 +3015,8 @@ void DisplayStatistics(struct Folder *fo)
             // Now we scan every child of the parent and count the mails
             for(i=0;;i++)
             {
-               struct MUI_NListtree_TreeNode *tn_child = NULL;
-               struct Folder *fo_child = NULL;
+               struct MUI_NListtree_TreeNode *tn_child;
+               struct Folder *fo_child;
 
                tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, 0, TAG_DONE);
                if(!tn_child) break;

@@ -46,13 +46,12 @@ char * yamversionstring = "$VER: YAM 2.4 (" __YAM_VERDATE ")" CPU " devel";
 char * yamversiondate = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;
 
-#ifdef __STORMGCC__
-  __near long __stacksize = 32768;
-#else
+#if defined(__SASC)
   __near long __stack = 32768;
+  __near long __buffsize = 8192;
+#elif defined(__VBCC__) /* starting with VBCC 0.8 release */
+  long __stack = 32768;
 #endif
-__near long __buffsize = 8192;
-__near long __MemPoolPuddleSize = 16384;
 
 struct WBStartup *WBmsg;
 

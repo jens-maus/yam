@@ -72,8 +72,6 @@
  Module: Root
 ***************************************************************************/
 
-BOOL yamFirst = TRUE, yamLast = FALSE;
-
 struct Global *G;
 
 // Timer Class
@@ -81,11 +79,13 @@ struct TC_Data
 {
    struct MsgPort     *port;
    struct timerequest *req;
-} TCData = { NULL,NULL };
+};
+
+static struct TC_Data TCData = { NULL,NULL };
 
 /// TC_Start
 //  Start a one second delay
-void TC_Start(void)
+static void TC_Start(void)
 {
    TCData.req->tr_node.io_Command = TR_ADDREQUEST;
    TCData.req->tr_time.tv_secs    = 1;
@@ -96,7 +96,7 @@ void TC_Start(void)
 ///
 /// TC_Exit
 //  Frees timer resources
-void TC_Exit(void)
+static void TC_Exit(void)
 {
    if (TCData.port)
    {
@@ -117,7 +117,7 @@ void TC_Exit(void)
 ///
 /// TC_Init
 //  Initializes timer resources
-BOOL TC_Init(void)
+static BOOL TC_Init(void)
 {
    if ((TCData.port = CreateMsgPort()))
       if ((TCData.req = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest))))
@@ -129,7 +129,7 @@ BOOL TC_Init(void)
 ///
 /// TC_ActiveEditor
 //  Returns TRUE if the internal editor is currently being used
-BOOL TC_ActiveEditor(int wrwin)
+static BOOL TC_ActiveEditor(int wrwin)
 {
    if (G->WR[wrwin])
    {
@@ -143,7 +143,7 @@ BOOL TC_ActiveEditor(int wrwin)
 ///
 /// TC_Dispatcher
 //  Dispatcher for timer class (called once every second)
-void TC_Dispatcher(void)
+static void TC_Dispatcher(void)
 {
    if (CheckIO(&TCData.req->tr_node))
    {
@@ -176,7 +176,7 @@ void TC_Dispatcher(void)
 ///
 /// AY_PrintStatus
 //  Shows progress of program initialization
-void AY_PrintStatus(char *txt, int percent)
+static void AY_PrintStatus(char *txt, int percent)
 {
    set(G->AY_Text, MUIA_Gauge_InfoText, txt);
    set(G->AY_Text, MUIA_Gauge_Current, percent);
@@ -194,7 +194,7 @@ HOOKPROTONHNONP(AY_SendMailFunc, void)
       set(G->WR[wrwin]->GUI.WI, MUIA_Window_ActiveObject, G->WR[wrwin]->GUI.ST_SUBJECT);
    }
 }
-MakeHook(AY_SendMailHook, AY_SendMailFunc);
+MakeStaticHook(AY_SendMailHook, AY_SendMailFunc);
 ///
 /// AY_GoPageFunc
 //  User clicked homepage URL in About window
@@ -202,11 +202,11 @@ HOOKPROTONHNONP(AY_GoPageFunc, void)
 {
    GotoURL("http://www.yam.ch/");
 }
-MakeHook(AY_GoPageHook, AY_GoPageFunc);
+MakeStaticHook(AY_GoPageHook, AY_GoPageFunc);
 ///
 /// AY_New
 //  Creates About window
-BOOL AY_New(BOOL hidden)
+static BOOL AY_New(BOOL hidden)
 {
    char logopath[SIZE_PATHFILE];
    APTR ft_text, bt_sendmail, bt_gopage;
@@ -339,11 +339,11 @@ HOOKPROTONHNONP(DoublestartFunc, void)
 {
    if (G->App && G->MA->GUI.WI) PopUp();
 }
-MakeHook(DoublestartHook, DoublestartFunc);
+MakeStaticHook(DoublestartHook, DoublestartFunc);
 ///
 /// StayInProg
 //  Makes sure that the user really wants to quit the program
-BOOL StayInProg(void)
+static BOOL StayInProg(void)
 {
    BOOL req = FALSE;
    int i, fq;
@@ -364,7 +364,7 @@ BOOL StayInProg(void)
 ///
 /// Root_GlobalDispatcher
 //  Processes return value of MUI_Application_NewInput
-BOOL Root_GlobalDispatcher(ULONG app_input)
+static BOOL Root_GlobalDispatcher(ULONG app_input)
 {
    switch (app_input)
    {
@@ -379,7 +379,7 @@ BOOL Root_GlobalDispatcher(ULONG app_input)
 ///
 /// Root_New
 //  Creates MUI application
-BOOL Root_New(BOOL hidden)
+static BOOL Root_New(BOOL hidden)
 {
 #define MUIA_Application_UsedClasses 0x8042e9a7
    static char *classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListview.mcc", NULL };
@@ -408,7 +408,7 @@ BOOL Root_New(BOOL hidden)
 
 /// Terminate
 //  Deallocates used memory and MUI modules and terminates
-void Terminate(void)
+static void Terminate(BOOL last)
 {
    int i;
 
@@ -514,12 +514,12 @@ void Terminate(void)
    free(C);
    free(G);
 
-   if (yamLast) exit(0);
+   if(last) exit(0);
 }
 ///
 /// Abort
 //  Shows error requester, then terminates the program
-void Abort(char *error)
+static void Abort(char *error)
 {
    if (error)
    {
@@ -543,13 +543,12 @@ void Abort(char *error)
       }
       else puts(error);
    }
-   yamLast = TRUE;
-   Terminate();
+   Terminate(TRUE);
 }
 ///
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
-BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
+static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 {
    Object *obj;
    BOOL success = FALSE;
@@ -581,7 +580,7 @@ BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 ///
 /// InitLib
 //  Opens a library
-struct Library *InitLib(char *libname, int version, int revision, BOOL required, BOOL close)
+static struct Library *InitLib(char *libname, int version, int revision, BOOL required, BOOL close)
 {
    struct Library *lib = OpenLibrary(libname, version);
    if (lib && revision) if (lib->lib_Version == version && lib->lib_Revision < revision) { CloseLibrary(lib); lib = NULL; }
@@ -609,7 +608,7 @@ void SetupAppIcons(void)
 ///
 /// Initialise2
 //  Phase 2 of program initialization (after user logs in)
-void Initialise2(BOOL hidden)
+static void Initialise2(BOOL hidden)
 {
    BOOL newfolders = FALSE;
    int i;
@@ -664,7 +663,7 @@ void Initialise2(BOOL hidden)
 ///
 /// Initialise
 //  Phase 1 of program initialization (before user logs in)
-void Initialise(BOOL hidden)
+static void Initialise(BOOL hidden)
 {
    static char iconfile[SIZE_PATHFILE];
    char iconpath[SIZE_PATH];
@@ -747,7 +746,7 @@ void Initialise(BOOL hidden)
 ///
 /// SendWaitingMail
 //  Sends pending mail on startup
-void SendWaitingMail(void)
+static void SendWaitingMail(void)
 {
    struct Mail *mail;
    BOOL doit = TRUE;
@@ -772,7 +771,7 @@ void SendWaitingMail(void)
 ///
 /// DoStartup
 //  Performs different checks/cleanup operations on startup
-void DoStartup(BOOL nocheck, BOOL hide)
+static void DoStartup(BOOL nocheck, BOOL hide)
 {
 
    if (C->CleanupOnStartup) DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
@@ -798,7 +797,7 @@ void DoStartup(BOOL nocheck, BOOL hide)
 ///
 /// Login
 //  Allows automatical login for AmiTCP-Genesis users
-void Login(char *user, char *password, char *maildir, char *prefsfile)
+static void Login(char *user, char *password, char *maildir, char *prefsfile)
 {
    struct genUser *guser;
    BOOL terminate = FALSE, loggedin = FALSE;
@@ -818,7 +817,7 @@ void Login(char *user, char *password, char *maildir, char *prefsfile)
 ///
 /// GetDST
 //  Checks if daylight saving time is active
-int GetDST(void)
+static int GetDST(void)
 {
    int i;
    char *dst;
@@ -847,6 +846,7 @@ void STACKEXT main(int argc, char **argv)
 void main(int argc, char **argv)
 #endif
 {
+   BOOL yamFirst = TRUE;
    struct NewRDArgs nrda;
    struct { char  *user;
             char  *password;
@@ -1015,17 +1015,18 @@ void main(int argc, char **argv)
       if (C->CleanupOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
       if (C->RemoveOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
 
-      if (ret == 1)
+      if(ret == 1)
       {
-         yamLast = TRUE;
          AppendLog(99, GetStr(MSG_LOG_Terminated), "", "", "", "");
          MA_StartMacro(MACRO_QUIT, NULL);
          CurrentDir(oldcdirlock);
          UnLock(yamlock);
          NewFreeArgs(&nrda);
+         FreeData2D(&Header);
+         Terminate(TRUE);
       }
       FreeData2D(&Header);
-      Terminate();
+      Terminate(FALSE);
    }
 }
 ///

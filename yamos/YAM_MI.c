@@ -78,7 +78,6 @@ static char index_hex[128] = {
 
 static BOOL InNewline = FALSE;
 static BOOL CRpending = FALSE;
-BOOL *NeedsPortableNewlines;
 ///
 
 /// nextcharin

@@ -43,7 +43,6 @@
 #include <proto/utility.h>
 #include <rexx/storage.h>
 
-#include "old.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
@@ -414,7 +413,7 @@ HOOKPROTONHNO(MA_ReadMessage, void, int *arg)
       }
    }
 }
-MakeHook(MA_ReadMessageHook, MA_ReadMessage);
+MakeStaticHook(MA_ReadMessageHook, MA_ReadMessage);
 
 ///
 /// AppendRcpt
@@ -963,7 +962,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
       BusyEnd;
    }
 }
-MakeHook(MA_RemoveAttachHook, MA_RemoveAttachFunc);
+MakeStaticHook(MA_RemoveAttachHook, MA_RemoveAttachFunc);
 
 ///
 /// MA_SaveAttachFunc
@@ -992,7 +991,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
       free(mlist);
    }
 }
-MakeHook(MA_SaveAttachHook, MA_SaveAttachFunc);
+MakeStaticHook(MA_SaveAttachHook, MA_SaveAttachFunc);
 
 ///
 /// MA_SavePrintFunc
@@ -1028,7 +1027,7 @@ HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
       free(mlist);
    }
 }
-MakeHook(MA_SavePrintHook, MA_SavePrintFunc);
+MakeStaticHook(MA_SavePrintHook, MA_SavePrintFunc);
 
 ///
 /// MA_NewMessage
@@ -1068,7 +1067,7 @@ HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
    if (mode == NEW_REPLY && qual & IEQUALIFIER_CONTROL) flags = NEWF_REP_NOQUOTE;
    MA_NewMessage(mode, flags);
 }
-MakeHook(MA_NewMessageHook, MA_NewMessageFunc);
+MakeStaticHook(MA_NewMessageHook, MA_NewMessageFunc);
 
 ///
 /// MA_DeleteMessage
@@ -1131,7 +1130,7 @@ HOOKPROTONHNO(MA_DeleteMessageFunc, void, int *arg)
    if (arg[1]) return; // Toolbar qualifier bug work-around
    MA_DeleteMessage(delatonce, FALSE);
 }
-MakeHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
+MakeStaticHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
 
 ///
 /// MA_DelKey
@@ -1146,7 +1145,7 @@ HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
    else
       MA_DeleteMessage(arg[0], FALSE);
 }
-MakeHook(MA_DelKeyHook, MA_DelKeyFunc);
+MakeStaticHook(MA_DelKeyHook, MA_DelKeyFunc);
 
 ///
 /// MA_GetAddressSelect
@@ -1244,7 +1243,7 @@ HOOKPROTONHNONP(MA_GetAddressFunc, void)
       free(mlist);
    }
 }
-MakeHook(MA_GetAddressHook, MA_GetAddressFunc);
+MakeStaticHook(MA_GetAddressHook, MA_GetAddressFunc);
 
 ///
 /// MA_PopNow
@@ -1266,13 +1265,13 @@ HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
    if (qual & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) G->TR_Exchange = TRUE;
    MA_PopNow(arg[0],arg[1]);
 }
-MakeHook(MA_PopNowHook, MA_PopNowFunc);
+MakeStaticHook(MA_PopNowHook, MA_PopNowFunc);
 ///
 
 /*** Sub-button functions ***/
 /// MA_AllocRules
 //  Allocates and initializes search structures for filters
-int MA_AllocRules(struct Search **search, int mode)
+int MA_AllocRules(struct Search **search, enum ApplyMode mode)
 {
    int scnt = 0, i, j, stat;
    struct Rule *rule;
@@ -1374,7 +1373,8 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
 {
    struct Mail *mail, **mlist = NULL;
    struct Folder *folder;
-   int m, i, mode = arg[0], scnt, matches = 0, minselected = (arg[1] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
+   int m, i, scnt, matches = 0, minselected = (arg[1] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
+   enum ApplyMode mode = arg[0];
    struct Search *search[2*MAXRU];
    APTR lv = G->MA->GUI.NL_MAILS;
    char buf[SIZE_LARGE];
@@ -1504,16 +1504,7 @@ HOOKPROTONHNO(MA_SetStatusToFunc, void, int *arg)
 {
    MA_SetStatusTo(*arg);
 }
-MakeHook(MA_SetStatusToHook, MA_SetStatusToFunc);
-
-///
-/// MA_SelectAllFunc
-//  Selects all messages
-HOOKPROTONHNONP(MA_SelectAllFunc, void)
-{
-   DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
-}
-MakeHook(MA_SelectAllHook, MA_SelectAllFunc);
+MakeStaticHook(MA_SetStatusToHook, MA_SetStatusToFunc);
 
 ///
 /// MA_DeleteOldFunc
@@ -1626,7 +1617,7 @@ HOOKPROTONHNO(MA_ExportMessagesFunc, void, int *arg)
 {
    MA_ExportMessages((BOOL)*arg, NULL, FALSE);
 }
-MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
+MakeStaticHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 
 ///
 /// MA_ImportMessages
@@ -1666,7 +1657,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
       MA_ImportMessages(inname);
    }
 }
-MakeHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
+MakeStaticHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 
 ///
 /// MA_MoveMessageFunc
@@ -1677,7 +1668,7 @@ HOOKPROTONHNONP(MA_MoveMessageFunc, void)
    if ((dst = FolderRequest(GetStr(MSG_MA_MoveMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_MoveGad), GetStr(MSG_Cancel), src, G->MA->GUI.WI)))
       MA_MoveCopy(NULL, src, dst, FALSE);
 }
-MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
+MakeStaticHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 
 ///
 /// MA_CopyMessageFunc
@@ -1688,7 +1679,7 @@ HOOKPROTONHNONP(MA_CopyMessageFunc, void)
    if ((dst = FolderRequest(GetStr(MSG_MA_CopyMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_CopyGad), GetStr(MSG_Cancel), NULL, G->MA->GUI.WI)))
       MA_MoveCopy(NULL, src, dst, TRUE);
 }
-MakeHook(MA_CopyMessageHook, MA_CopyMessageFunc);
+MakeStaticHook(MA_CopyMessageHook, MA_CopyMessageFunc);
 
 ///
 /// MA_ChangeSubject
@@ -1769,7 +1760,7 @@ HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
    DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
    DisplayStatistics(NULL);
 }
-MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
+MakeStaticHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 
 ///
 /// MA_AboutMUIFunc
@@ -1784,7 +1775,7 @@ HOOKPROTONHNONP(MA_AboutMUIFunc, void)
    End;
    if (muiwin) SafeOpenWindow(muiwin); else DisplayBeep(0);
 }
-MakeHook(MA_AboutMUIHook, MA_AboutMUIFunc);
+MakeStaticHook(MA_AboutMUIHook, MA_AboutMUIFunc);
 
 ///
 /// MA_CheckVersionFunc
@@ -1821,7 +1812,7 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
    }
    else ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL);
 }
-MakeHook(MA_CheckVersionHook, MA_CheckVersionFunc);
+MakeStaticHook(MA_CheckVersionHook, MA_CheckVersionFunc);
 
 ///
 /// MA_ShowErrorsFunc
@@ -1830,7 +1821,7 @@ HOOKPROTONHNONP(MA_ShowErrorsFunc, void)
 {
    ER_NewError(NULL, NULL, NULL);
 }
-MakeHook(MA_ShowErrorsHook, MA_ShowErrorsFunc);
+MakeStaticHook(MA_ShowErrorsHook, MA_ShowErrorsFunc);
 
 ///
 /// MA_StartMacro
@@ -1919,7 +1910,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
       }
    }
 }
-MakeHook(MA_CallRexxHook, MA_CallRexxFunc);
+MakeStaticHook(MA_CallRexxHook, MA_CallRexxFunc);
 ///
 
 /*** Hooks ***/
@@ -1946,7 +1937,7 @@ HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMe
 
    return(entry);
 }
-MakeHook(MA_LV_FConHook, MA_LV_FConFunc);
+MakeStaticHook(MA_LV_FConHook, MA_LV_FConFunc);
 
 ///
 /// MA_LV_FDesFunc
@@ -1957,7 +1948,7 @@ HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
    if(msg->UserData) FO_FreeFolder(msg->UserData);
    return(0);
 }
-MakeHook(MA_LV_FDesHook, MA_LV_FDesFunc);
+MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 
 ///
 /// MA_LV_DspFunc
@@ -2101,7 +2092,7 @@ HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct MUIP_NListtree_CompareMes
 
    return cmp;
 }
-MakeHook(MA_LV_FCmp2Hook, MA_LV_FCmp2Func);
+MakeStaticHook(MA_LV_FCmp2Hook, MA_LV_FCmp2Func);
 ///
 /// MA_FolderKeyFunc
 //  If the user pressed 0-9 we jump to folder 1-10

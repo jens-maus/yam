@@ -72,7 +72,7 @@ static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode*, FILE*, int);
 //  Searches an entry by alias and activates it
 APTR AB_GotoEntry(char *alias)
 {
-   struct MUI_NListtree_TreeNode *tn = NULL;
+   struct MUI_NListtree_TreeNode *tn;
 
    if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, alias, 0, TAG_DONE))
    {
@@ -155,11 +155,11 @@ void AB_CheckBirthdates(void)
 //  it will break if there is more then one entry
 int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
 {
-  struct MUI_NListtree_TreeNode *tn = NULL;
-  struct ABEntry *ab_found = NULL;
+  struct MUI_NListtree_TreeNode *tn;
+  struct ABEntry *ab_found;
   int i;
   int hits = 0;
-  BOOL found;
+  BOOL found = 0;
   int tl = strlen(text);
 
   for(i=0; hits < 2; i++, found=FALSE)
@@ -297,7 +297,7 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
       }
    }
 }
-MakeHook(AB_FromAddrBookHook, AB_FromAddrBook);
+MakeStaticHook(AB_FromAddrBookHook, AB_FromAddrBook);
 
 ///
 /// AB_LoadTree
@@ -479,7 +479,7 @@ HOOKPROTONHNONP(AB_EditFunc, void)
       if (winnum >= 0) EA_Setup(winnum, ab);
    }
 }
-MakeHook(AB_EditHook, AB_EditFunc);
+MakeStaticHook(AB_EditHook, AB_EditFunc);
 
 ///
 /// AB_DoubleClick
@@ -504,7 +504,7 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
    }
    AB_EditFunc();
 }
-MakeHook(AB_DoubleClickHook, AB_DoubleClick);
+MakeStaticHook(AB_DoubleClickHook, AB_DoubleClick);
 
 ///
 /// AB_Sort
@@ -521,7 +521,7 @@ HOOKPROTONHNO(AB_Sort, void, int *arg)
       G->AB->Modified = TRUE;
    }
 }
-MakeHook(AB_SortHook, AB_Sort);
+MakeStaticHook(AB_SortHook, AB_Sort);
 
 ///
 /// AB_NewABookFunc
@@ -531,7 +531,7 @@ HOOKPROTONHNONP(AB_NewABookFunc, void)
    DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_All, 0, TAG_DONE);
    G->AB->Modified = FALSE;
 }
-MakeHook(AB_NewABookHook, AB_NewABookFunc);
+MakeStaticHook(AB_NewABookHook, AB_NewABookFunc);
 
 ///
 /// AB_OpenABookFunc
@@ -544,7 +544,7 @@ HOOKPROTONHNONP(AB_OpenABookFunc, void)
       AB_LoadTree(G->AB_Filename, FALSE, FALSE);
    }
 }
-MakeHook(AB_OpenABookHook, AB_OpenABookFunc);
+MakeStaticHook(AB_OpenABookHook, AB_OpenABookFunc);
 
 ///
 /// AB_AppendABookFunc
@@ -558,7 +558,7 @@ HOOKPROTONHNONP(AB_AppendABookFunc, void)
       AB_LoadTree(aname, TRUE, FALSE);
    }
 }
-MakeHook(AB_AppendABookHook, AB_AppendABookFunc);
+MakeStaticHook(AB_AppendABookHook, AB_AppendABookFunc);
 
 ///
 /// AB_SaveABookFunc
@@ -583,7 +583,7 @@ HOOKPROTONHNONP(AB_SaveABookAsFunc, void)
       AB_SaveABookFunc();
    }
 }
-MakeHook(AB_SaveABookAsHook, AB_SaveABookAsFunc);
+MakeStaticHook(AB_SaveABookAsHook, AB_SaveABookAsFunc);
 
 ///
 /// AB_PrintField
@@ -690,7 +690,7 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
       BusyEnd;
    }
 }
-MakeHook(AB_PrintABookHook, AB_PrintABookFunc);
+MakeStaticHook(AB_PrintABookHook, AB_PrintABookFunc);
 
 ///
 /// AB_PrintFunc
@@ -713,7 +713,7 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
       }
    }
 }
-MakeHook(AB_PrintHook, AB_PrintFunc);
+MakeStaticHook(AB_PrintHook, AB_PrintFunc);
 
 ///
 /// AB_AddEntryFunc
@@ -722,7 +722,7 @@ HOOKPROTONHNO(AB_AddEntryFunc, void, int *arg)
 {
    EA_Init(*arg, NULL);
 }
-MakeHook(AB_AddEntryHook, AB_AddEntryFunc);
+MakeStaticHook(AB_AddEntryHook, AB_AddEntryFunc);
 
 ///
 /// AB_DeleteFunc
@@ -760,7 +760,7 @@ HOOKPROTONHNONP(AB_DuplicateFunc, void)
       }
    }
 }
-MakeHook(AB_DuplicateHook, AB_DuplicateFunc);
+MakeStaticHook(AB_DuplicateHook, AB_DuplicateFunc);
 
 ///
 /// AB_FindEntry (rec)
@@ -830,7 +830,7 @@ HOOKPROTONHNONP(AB_FindFunc, void)
       if (!G->AB->Hits) MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_OkayReq), GetStr(MSG_AB_NoneFound));
    }
 }
-MakeHook(AB_FindHook, AB_FindFunc);
+MakeStaticHook(AB_FindHook, AB_FindFunc);
 
 ///
 /// AB_OpenFunc
@@ -871,7 +871,7 @@ HOOKPROTONHNONP(AB_Close, void)
    }
    set(G->AB->GUI.WI, MUIA_Window_Open, FALSE);
 }
-MakeHook(AB_CloseHook, AB_Close);
+MakeStaticHook(AB_CloseHook, AB_Close);
 
 ///
 /// AB_LV_ConFunc
@@ -890,7 +890,7 @@ HOOKPROTONHNO(AB_LV_ConFunc, struct ABEntry *, struct MUIP_NListtree_ConstructMe
 
    return entry;
 }
-MakeHook(AB_LV_ConFuncHook, AB_LV_ConFunc);
+MakeStaticHook(AB_LV_ConFuncHook, AB_LV_ConFunc);
 
 ///
 /// AB_LV_DesFunc
@@ -912,7 +912,7 @@ HOOKPROTONHNO(AB_LV_DesFunc, long, struct MUIP_NListtree_DestructMessage *msg)
 
    return 0;
 }
-MakeHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
+MakeStaticHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
 
 ///
 /// AB_LV_DspFunc
@@ -1010,7 +1010,7 @@ HOOKPROTONHNO(AB_LV_CmpFunc, long, struct MUIP_NListtree_CompareMessage *msg)
    }
    return Stricmp(ab1->Alias, ab2->Alias);
 }
-MakeHook(AB_LV_CmpFuncHook, AB_LV_CmpFunc);
+MakeStaticHook(AB_LV_CmpFuncHook, AB_LV_CmpFunc);
 
 ///
 /// AB_MakeABFormat

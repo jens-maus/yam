@@ -157,7 +157,7 @@ HOOKPROTONHNONP(DI_CloseFunc, void)
    G->Weights[5] = GetMUI(G->DI->GUI.GR_TEXT, MUIA_HorizWeight);
    DisposeModulePush(&G->DI);
 }
-MakeHook(DI_CloseHook, DI_CloseFunc);
+MakeStaticHook(DI_CloseHook, DI_CloseFunc);
 
 ///
 /// DI_PasteFunc
@@ -170,7 +170,7 @@ HOOKPROTONHNONP(DI_PasteFunc, void)
    DoMethod(G->WR[G->DI->WrWin]->GUI.TE_EDIT, MUIM_TextEditor_InsertText, entry->Text);
    DI_CloseFunc();
 }
-MakeHook(DI_PasteHook, DI_PasteFunc);
+MakeStaticHook(DI_PasteHook, DI_PasteFunc);
 
 ///
 /// DI_DeleteFunc
@@ -181,7 +181,7 @@ HOOKPROTONHNONP(DI_DeleteFunc, void)
     G->DI->OldEntry = NULL;
     DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_Remove, MUIV_List_Remove_Active);
 }
-MakeHook(DI_DeleteHook, DI_DeleteFunc);
+MakeStaticHook(DI_DeleteHook, DI_DeleteFunc);
 
 ///
 /// DI_DisplayFunc
@@ -198,7 +198,7 @@ HOOKPROTONHNONP(DI_DisplayFunc, void)
    nnset(gui->TE_EDIT, MUIA_TextEditor_Contents, entry ? entry->Text : "");
    G->DI->OldEntry = entry;
 }
-MakeHook(DI_DisplayHook, DI_DisplayFunc);
+MakeStaticHook(DI_DisplayHook, DI_DisplayFunc);
 
 ///
 /// DI_ModifyFunc
@@ -220,7 +220,7 @@ HOOKPROTONHNO(DI_ModifyFunc, void, int *arg)
    }
    set(G->DI->GUI.WI, MUIA_Window_ActiveObject, G->DI->GUI.ST_ALIAS);
 }
-MakeHook(DI_ModifyHook, DI_ModifyFunc);
+MakeStaticHook(DI_ModifyHook, DI_ModifyFunc);
 
 ///
 /// DI_OpenFunc
@@ -250,7 +250,7 @@ HOOKPROTONHNO(DI_LV_ConFunc, struct Dict *, struct Dict *dict)
    memcpy(entry, dict, sizeof(struct Dict));
    return entry;
 }
-MakeHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
+MakeStaticHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 
 ///
 /// DI_LV_DesFunc
@@ -261,7 +261,7 @@ HOOKPROTONHNO(DI_LV_DesFunc, long, struct Dict *entry)
    free(entry);
    return 0;
 }
-MakeHook(DI_LV_DesFuncHook, DI_LV_DesFunc);
+MakeStaticHook(DI_LV_DesFuncHook, DI_LV_DesFunc);
 
 ///
 /// DI_New
