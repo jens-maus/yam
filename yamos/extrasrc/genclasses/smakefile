@@ -29,56 +29,22 @@ TARGET = GenClasses
 
 # Programs
 
-CC  = sc
-CP  = copy
-RM  = delete quiet
+CC = sc nover
+RM = delete quiet
 
-# Compiler/Linker flags
-
-CPU      = 68020
-WARN     = WARN=ALL
-OPTFLAGS = STRIPDEBUG OPT OPTSIZE OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL\
-           OPTGO OPTLOOP OPTPEEP #OPTSCHED
-DEBUG    = NOSTRIPDEBUG NOOPT DEF DEBUG DEBUG=LINE
-CFLAGS   = STRICT RESOPT NOVER DATA=NEAR CODE=FAR NOSTKCHK STRINGMERGE\
-           IDLEN=60 ERRORREXX INCLUDEDIR=includes INCLUDEDIR=classes \
-           DEF=_STRICT_ANSI CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
-LNKFLAGS = RESOPT NOVER LINK SMALLCODE SMALLDATA UTILLIB LIB lib:debug.lib\
-           NOICONS "LINKOPT=MAP $(TARGET).map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"\
-           NOCHECKABORT $(OPTFLAGS) $(DEBUG)
-
-# Objects
+#
 
 OBJS = gc.o lists.o
 
 #
 
-default: $(TARGET)
+$(TARGET): $(OBJS)
+  @$(CC) LINK FROM $(OBJS) TO $@
 
-# Default rule
-
-.c.o:
-  @echo "*e[32mCompiling $*.c*e[0m"
-  @$(CC) $(CFLAGS) $<
+clean:
+  -$(RM) $(TARGET) $(OBJS) GenClasses.lnk GenClasses.map
 
 #
 
-$(TARGET): $(OBJS)
-  @echo "*e[32mLinking $**e[0m"
-  @$(CC) $(LNKFLAGS) TO $@ WITH <<
-  $(OBJS)
-  <
-
-clean:
-  -$(RM) $(OBJS) GenClasses.lnk GenClasses.map
-
-cleanall: clean
-  -$(RM) $(TARGET)
-
-#######################################
-
-gc.o: gc.c gc.h lists.c lists.h
-
-lists.o: lists.c lists.h gc.c gc.h
-
-#######################################
+gc.o: gc.c gc.h lists.h
+lists.o: lists.c lists.h
