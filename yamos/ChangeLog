@@ -572,6 +572,9 @@
 2001-06-15  Jacob Laursen <laursen@myself.com>
 
     * Removed information bar, since it was redundant.
+
+    * Removed error messages when unable to load images.
+
     * Last year digit was missing in error window - fixed! (Bug #431947)
 
 2001-06-16  Jens Langner <Jens.Langner@htw-dresden.de>
@@ -598,3 +601,5 @@
 
     * Re-added uniconify behaviour when attempting to start a second instance
       of YAM (without enforcer hits).
+
+    * Corrected 'Check version' date.
