@@ -1133,8 +1133,9 @@ int main(int argc, char **argv)
    BOOL yamFirst = TRUE;
    BPTR progdir;
 
-#ifndef NO_DEVWARNING
+#if !defined(NO_DEVWARNING) && !defined(RELEASE)
 
+   if(!getenv("I_KNOW_YAM_IS_UNDER_DEVELOPMENT"))
    {
      struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
      char *reqtxt = "This is a *internal* developer version and\n"
