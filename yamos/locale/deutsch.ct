@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.6 (21.06.2002)
+## version $VER: YAM.catalog 5.7 (07.10.2002)
 ## codeset 0
 ;
 MSG_Folder
@@ -2308,7 +2308,7 @@ Wie oft wollen Sie auf neue Post prüfen?\n(Geben Sie 0 oder keinen Wert ein,\num
 ; How frequently do you want to check for new mail?\n(enter 0 or no value to disable this feature)?
 ;
 MSG_HELP_CO_CH_DLLARGE
-Lade große Nachrichten beim automatischen Postholen,\nselbst wenn sie die oben angegeben Größe überschreiten
+Lade große Nachrichten beim automatischen Postholen,\nselbst wenn sie die oben angegebene Größe überschreiten
 ; When automatically checking for new mail,\ndownload large messages even if they are\nlarger than the size specified above
 ;
 MSG_HELP_CO_CH_NOTIREQ
