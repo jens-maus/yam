@@ -465,13 +465,11 @@ MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 ///
 /// MA_FLContextMenuBuild
 // If the user chooses a item out of the ContextMenu we have to process it.
-enum { CMN_EDITF=1, CMN_DELETEF, CMN_INDEX, CMN_NEWF, CMN_NEWFG, CMN_SNAPS, CMN_RELOAD };
+enum { CMN_EDITF=10, CMN_DELETEF, CMN_INDEX, CMN_NEWF, CMN_NEWFG, CMN_SNAPS, CMN_RELOAD };
 
 ULONG MA_FLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_ContextMenuBuild *msg)
 {
   struct FL_Data *data = (struct FL_Data *)INST_DATA(cl,obj);
-
-  Object *context_menu;
   struct MUI_NListtree_TestPos_Result r;
   struct MUI_NListtree_TreeNode *tn;
   struct Folder *folder = NULL;
@@ -480,7 +478,33 @@ ULONG MA_FLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_Co
   BOOL disable_edit     = FALSE;
   BOOL disable_update   = FALSE;
 
-  if(msg->ontop) return NULL; // The default NList Menu should be returned
+  // dispose the old context_menu if it still exists
+  if(data->context_menu)
+  {
+    MUI_DisposeObject(data->context_menu);
+    data->context_menu = NULL;
+  }
+
+  // if this was a RMB click on the titlebar we create our own special menu
+  if(msg->ontop)
+  {
+  	data->context_menu = MenustripObject,
+	  	Child, MenuObjectT(GetStr(MSG_MA_CTX_FOLDERLIST)),
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Folder), MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<0)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Total),  MUIA_UserData, 2, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<1)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Unread), MUIA_UserData, 3, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<2)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_New),    MUIA_UserData, 4, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<3)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Size),   MUIA_UserData, 5, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<4)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+  			Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_THIS), MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
+	  		Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_THIS), MUIA_UserData, MUIV_NList_Menu_DefOrder_This, End,
+			  Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
+			End,
+		End;
+
+    return (ULONG)data->context_menu;
+  }
 
   // Now lets find out which entry is under the mouse pointer
   DoMethod(gui->NL_FOLDERS, MUIM_NListtree_TestPos, msg->mx, msg->my, &r);
@@ -516,7 +540,7 @@ ULONG MA_FLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_Co
   }
 
   // We create the ContextMenu now
-  context_menu = MenustripObject,
+  data->context_menu = MenustripObject,
     Child, MenuObjectT(folder ? FolderName(folder) : GetStr(MSG_FOLDER_NONSEL)),
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_EDIT),           MUIA_Menuitem_Enabled, !disable_edit,   MUIA_UserData, CMN_EDITF,   End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_DELETE),         MUIA_Menuitem_Enabled, !disable_delete, MUIA_UserData, CMN_DELETEF, End,
@@ -530,9 +554,7 @@ ULONG MA_FLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_Co
     End,
   End;
 
-  data->context_menu = context_menu;
-
-  return (ULONG)context_menu;
+  return (ULONG)data->context_menu;
 }
 
 ///
@@ -542,6 +564,23 @@ ULONG MA_FLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_Context
 {
   switch(xget(msg->item, MUIA_UserData))
   {
+    // if the user selected a TitleContextMenu item
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    {
+      ULONG col = xget(msg->item, MUIA_UserData)-1;
+
+      if(isFlagSet(C->FolderCols, (1<<col))) CLEAR_FLAG(C->FolderCols, (1<<col));
+      else                                   SET_FLAG(C->FolderCols, (1<<col));
+
+      MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
+    }
+    break;
+
+    // or other item out of the FolderListContextMenu
     case CMN_EDITF:   { DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);          } break;
     case CMN_DELETEF: { DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook);        } break;
     case CMN_INDEX:   { DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook);         } break;

@@ -228,7 +228,6 @@ DISPATCHERPROTO(FL_Dispatcher)
 
         // make sure that our context menus are also disposed
 	      if(data->context_menu) MUI_DisposeObject(data->context_menu);
-	      if(data->title_menu)   MUI_DisposeObject(data->title_menu);
       }
       break;
 
@@ -332,7 +331,6 @@ DISPATCHERPROTO(ML_Dispatcher)
 
       // make sure that our context menus are also disposed
 	    if(data->context_menu) MUI_DisposeObject(data->context_menu);
-	    if(data->title_menu)   MUI_DisposeObject(data->title_menu);
     }
     break;
 

@@ -88,7 +88,6 @@ struct ExtendedMail
 struct FL_Data
 {
    Object *context_menu;
-   Object *title_menu;
 };
 
 extern struct Data2D Header;

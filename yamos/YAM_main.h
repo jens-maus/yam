@@ -170,7 +170,6 @@ struct MA_ClassData  /* main window */
 struct ML_Data
 {
    Object *context_menu;
-   Object *title_menu;
 };
 
 

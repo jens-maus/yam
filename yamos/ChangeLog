@@ -7,6 +7,9 @@ $Source$
 
 2003-02-18  Jens Langner <Jens.Langner@light-speed.de>
 
+    * added seperate contextmenu for the titlebar of the MailList and
+      FolderList. Now a user can directly enable/disable columns by
+      using the RMB in front of the NList titlebar.
     * replaced the popupmenu.library based contextmenus with better
       integrateable MUI based contextmenus. This allows to separate the
       contextmenu in two different areas - one for the title and one

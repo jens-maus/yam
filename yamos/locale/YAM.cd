@@ -5059,3 +5059,21 @@ MSG_MA_TOUNMARKED (//)
 MSG_RE_SETMARKED (//)
 Set status to marked
 ;
+MSG_MA_CTX_DEFWIDTH_THIS (//)
+Default Width: this
+;
+MSG_MA_CTX_DEFWIDTH_ALL (//)
+Default Width: all
+;
+MSG_MA_CTX_DEFORDER_THIS (//)
+Default Order: this
+;
+MSG_MA_CTX_DEFORDER_ALL (//)
+Default Order: all
+;
+MSG_MA_CTX_MAILLIST (//)
+MailListview Settings
+;
+MSG_MA_CTX_FOLDERLIST (//)
+FolderList Settings
+;

@@ -2736,8 +2736,6 @@ void MA_SetupDynamicMenus(void)
 ULONG MA_MLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_ContextMenuBuild *msg)
 {
   struct ML_Data *data = (struct ML_Data *)INST_DATA(cl,obj);
-
-  Object *context_menu;
   static char menutitle[SIZE_DEFAULT];
   struct MUI_NList_TestPos_Result res;
   struct Mail *mail = NULL;
@@ -2746,16 +2744,38 @@ ULONG MA_MLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_Co
   BOOL isOutBox = isOutgoingFolder(fo);
   BOOL beingedited = FALSE, hasattach = FALSE;
 
-  if(msg->ontop) return NULL; // The default NList Menu should be returned
-
-  if(!fo) return(0);
-
   // dispose the old context_menu if it still exists
   if(data->context_menu)
   {
     MUI_DisposeObject(data->context_menu);
     data->context_menu = NULL;
   }
+
+  // if this was a RMB click on the titlebar we create our own special menu
+  if(msg->ontop)
+  {
+  	data->context_menu = MenustripObject,
+	  	Child, MenuObjectT(GetStr(MSG_MA_CTX_MAILLIST)),
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Status),         MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<0)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_SenderRecpt),    MUIA_UserData, 2, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<1)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_ReturnAddress),  MUIA_UserData, 3, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<2)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Subject),        MUIA_UserData, 4, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<3)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MessageDate),    MUIA_UserData, 5, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<4)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Size),           MUIA_UserData, 6, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<5)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Filename),       MUIA_UserData, 7, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<6)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_CO_DATE_SNTRCVD),MUIA_UserData, 8, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<7)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+  			Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_THIS), MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
+	  		Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
+		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_THIS), MUIA_UserData, MUIV_NList_Menu_DefOrder_This, End,
+			  Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
+			End,
+		End;
+
+    return (ULONG)data->context_menu;
+  }
+
+  if(!fo) return(0);
 
   // Now lets find out which entry is under the mouse pointer
   DoMethod(gui->NL_MAILS, MUIM_NList_TestPos, msg->mx, msg->my, &res);
@@ -2794,7 +2814,7 @@ ULONG MA_MLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_Co
     strcpy(menutitle, GetStr(MSG_MAIL_NONSEL));
   }
 
-  context_menu = MenustripObject,
+  data->context_menu = MenustripObject,
     Child, MenuObjectT(menutitle),
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_MRead),        MUIA_Menuitem_Enabled, mail,               MUIA_UserData, MMEN_READ,       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_EDIT),    MUIA_Menuitem_Enabled, mail && isOutBox && !beingedited,   MUIA_UserData, MMEN_EDIT,       End,
@@ -2834,9 +2854,7 @@ ULONG MA_MLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_Co
       End,
     End;
 
-  data->context_menu = context_menu;
-
-  return (ULONG)context_menu;
+  return (ULONG)data->context_menu;
 }
 
 ///
@@ -2848,6 +2866,26 @@ ULONG MA_MLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_Context
 
   switch(xget(msg->item, MUIA_UserData))
 	{
+    // if the user selected a TitleContextMenu item
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    {
+      ULONG col = xget(msg->item, MUIA_UserData)-1;
+
+      if(isFlagSet(C->MessageCols, (1<<col))) CLEAR_FLAG(C->MessageCols, (1<<col));
+      else                                    SET_FLAG(C->MessageCols, (1<<col));
+
+      MA_MakeMAFormat(G->MA->GUI.NL_MAILS);
+    }
+    break;
+
+    // or other item out of the MailListContextMenu
     case MMEN_READ:       DoMethod(G->App, MUIM_CallHook, &MA_ReadMessageHook); break;
     case MMEN_EDIT:       DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_EDIT,    0,   FALSE); break;
     case MMEN_REPLY:      DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_REPLY,   0,   FALSE); break;
