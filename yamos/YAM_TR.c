@@ -1328,7 +1328,7 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
 //  Gets header from a message stored on the POP3 server
 static void TR_GetMessageDetails(struct Mail *mail, int lline)
 {
-   if (!*mail->From.Address)
+   if(!*mail->From.Address && !G->TR->Abort && !G->Error)
    {
       char buf[SIZE_LINE], cmdbuf[SIZE_SMALL], *tfname = "yamTOP.tmp";
       sprintf(cmdbuf, "%d 1", mail->Index);
@@ -1345,7 +1345,10 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
             BOOL done = FALSE;
 
             if ((bufptr = strstr(buf, "\r\n"))) bufptr += 2;
-            while (!G->Error && !G->TR->Abort)
+
+            // we get the message until we reach the end or an error
+            // or abort situation occurs.
+            while(!G->Error && !G->TR->Abort)
             {
                for (; *bufptr; bufptr++)
                {
@@ -1365,6 +1368,15 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
                bufptr = buf;
             }
             fclose(f);
+
+            // If we end up here because of an error or abort
+            // we exit immediatly with deleting the temp file also.
+            if(G->Error || G->TR->Abort)
+            {
+               DeleteFile(fname);
+               return;
+            }
+
             if ((email = MA_ExamineMail(NULL, tfname, NULL, TRUE)))
             {
                mail->From    = email->Mail.From;
@@ -1411,7 +1423,7 @@ static void TR_DisconnectPOP(void)
    char buf[SIZE_LINE];
 
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Disconnecting));
-   if (!G->TR->Abort) TR_SendPopCmd(buf, "QUIT", NULL, POPCMD_WAITEOL);
+   if(!G->Error) TR_SendPopCmd(buf, "QUIT", NULL, POPCMD_WAITEOL);
    TR_Disconnect();
 }
 
@@ -1686,7 +1698,7 @@ static int TR_ConnectESMTP(void)
 static void TR_DisconnectSMTP(void)
 {
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Disconnecting));
-   if (!G->TR->Abort) TR_SendSMTPCmd("QUIT", NULL);
+   if (!G->Error) TR_SendSMTPCmd("QUIT", NULL);
    TR_Disconnect();
 }
 ///
@@ -2222,10 +2234,24 @@ MakeHook(TR_ProcessIMPORTHook, TR_ProcessIMPORTFunc);
 //  Aborts a POP3 download
 HOOKPROTONHNONP(TR_AbortGETFunc, void)
 {
+   // first set the Abort variable so that other can benefit from it
+   G->TR->Abort = TRUE;
+
    MA_FreeRules(G->TR->Search, G->TR->Scnt);
-   TR_AbortnClose();
+   TR_DisconnectPOP();
+
+   // Normally we would call AbortnClose() here but this would
+   // Dispose G->TR, which we really don`t want at this stage because
+   // other functions in parallel can still refer to it
+   TR_Cleanup();
+   MA_ChangeTransfer(TRUE);
+
    TR_CloseTCPIP();
    G->TR->Checking = FALSE;
+
+   // close the window now, because now it`s safe to close it.
+   set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
+   DisposeModulePush(&G->TR);
 
    DisplayStatistics((struct Folder *)-1, TRUE);
 }
@@ -2390,6 +2416,15 @@ static void TR_CompleteMsgList(void)
    struct TR_ClassData *tr = G->TR;
    struct Mail *mail = tr->GMD_Mail;
 
+   // first we have to set the notifies to the default values.
+   // this is needed so that if we get mail from more than one POP3 at a line this
+   // abort stuff works out
+   set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, FALSE);
+   DoMethod(tr->GUI.BT_START, MUIM_KillNotify, MUIA_Pressed);
+   DoMethod(tr->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Start));
+   DoMethod(tr->GUI.BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
+   DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Abort));
+
    if (C->PreSelection < 3) while (mail && !tr->Abort)
    {
       if (tr->Pause) return;
@@ -2397,6 +2432,7 @@ static void TR_CompleteMsgList(void)
       if (C->PreSelection != 1 || mail->Size >= C->WarnSize*1024) TR_GetMessageDetails(mail, tr->GMD_Line++);
       mail = mail->Next;
    }
+
    set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
    DoMethod(tr->GUI.BT_START, MUIM_KillNotify, MUIA_Pressed);
    DoMethod(tr->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_ProcessGETHook);

@@ -7,6 +7,16 @@ $Source$
 
 2002-06-27  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_TR.c: fixed some design bugs within the TCP/IP stuff.
+      We didn`t issue a QUIT command to either the POP3 or SMTP
+      server on a abort. Also fixed some enforcer hits that occured
+      on aborting of transfers. This whole abort functionality
+      should perform a bit better now, even if it`s implementation
+      is very bad ans have to be rewritten within the next release.
+    * YAM.c: fixed a big flaw in the mail transfer routines
+      where YAM didn`t take respect of a preselection window if
+      a automatic mailcheck was selected within the Start/Finish
+      section of the Config. This should fix the bugreport #555673
     * YAM.c, YAM_rexx_rxif.c: the WRITE#? and READ#? rexx commands
       were often missunderstood to work on the actual windows that
       are opened by the gui. But for these commands to work properly
