@@ -57,7 +57,7 @@ static BOOL FO_MoveFolderDir(struct Folder*, struct Folder*);
 static BOOL FO_EnterPassword(struct Folder*);
 static BOOL FO_FoldernameRequest(char*);
 static struct FO_ClassData *FO_New(void);
-static BOOL FO_GetFolderByType_cmp(struct Folder*, int*);
+static BOOL FO_GetFolderByType_cmp(struct Folder*, enum FolderType*);
 static BOOL FO_GetFolderByName_cmp(struct Folder*, char*);
 static struct Folder *FO_GetFolderByAttribute(BOOL(*)(struct Folder*,void*), void*, int*);
 static BOOL FO_SaveSubTree(FILE *, struct MUI_NListtree_TreeNode *);
@@ -1035,7 +1035,7 @@ MakeStaticHook(FO_SaveHook, FO_SaveFunc);
 ///
 /// FO_SetOrderFunc
 //  Saves or resets folder order
-HOOKPROTONHNO(FO_SetOrderFunc, void, enum SortOrder *arg)
+HOOKPROTONHNO(FO_SetOrderFunc, void, enum SetOrder *arg)
 {
    switch (*arg)
    {
