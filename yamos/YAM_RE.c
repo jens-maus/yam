@@ -24,6 +24,12 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL void RE_PrintFile(char*,struct Part*);
+LOCAL char **Init_ISO8859_to_LaTeX_Tab(char*);
+LOCAL char *ISO8859_to_LaTeX(char*);
+
+
 /***************************************************************************
  Module: Read
 ***************************************************************************/
@@ -610,28 +616,192 @@ SAVEDS ASM void RE_PrintFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Part *part;
-   FILE *prt;
+   struct TempFile *prttmp;
 
    if (part = AttachRequest(GetStr(MSG_RE_PrintMsg), GetStr(MSG_RE_SelectPrintPart), GetStr(MSG_RE_PrintGad), GetStr(MSG_Cancel), winnum, ATTREQ_PRINT|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
-   {
+	   {
       if (C->PrinterCheck) if (!CheckPrinter()) return;
       Busy(GetStr(MSG_BusyDecPrinting), "", 0, 0);
       for (; part; part = part->NextSelected) switch (part->Nr)
       {
-         case -2: CopyFile("PRT:", 0, G->RE[winnum]->File, 0);
+         case -2: RE_PrintFile(G->RE[winnum]->File,part);
                   break;
-         case -1: if (prt = fopen("PRT:","w"))
+         case -1: if (prttmp = OpenTempFile("w"))
                   {
-                     RE_SaveDisplay(winnum, prt);
-                     fclose(prt);
+                     RE_SaveDisplay(winnum, prttmp->FP);
+							fclose(prttmp->FP);
+							prttmp->FP = NULL;
+							RE_PrintFile(prttmp->Filename,part);
+                     CloseTempFile(prttmp);
                   }
                   break;
-         default: CopyFile("PRT:", 0, part->Filename, 0);
+         default: RE_PrintFile(part->Filename,part);
       }
       BusyEnd;
    }
 }
 MakeHook(RE_PrintHook, RE_PrintFunc);
+
+///
+/// RE_PrintFile
+//  Prints a file. Currently it is just dumped to PRT:, more sophisticated
+//  printing methods to come
+LOCAL void RE_PrintFile(char *filename, struct Part *part)
+{
+	if(1)
+	{
+		CopyFile("PRT:", 0, filename, 0);
+	} else
+	{
+	struct TempFile *texfile;
+	
+		if((texfile = OpenTempFile("w")))
+		{
+			if(CopyFile(NULL,texfile->FP,"YAM:.texheader",NULL))
+			{
+			char *ts1,*ts2;
+
+				if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
+				{
+					if(1 == part->Nr)
+					{
+					int i,j;
+					char Attrib[SIZE_DEFAULT];
+					char *p;
+
+						for(i=0; i<Header.Used; i++)
+						{
+							p = Header.Data[i];
+							if(NULL != strchr(p,':'))
+							{
+								for(j=0; p[j] != ':' && j < sizeof(Attrib); j++) Attrib[j] = p[j];
+								Attrib[j++] = ':';
+								Attrib[j++] = '\0';
+								ts1 = StrBufCat(ts1,"\\NewLabWidth{");
+								ts1 = StrBufCat(ts1,Attrib);
+								ts1 = StrBufCat(ts1,"}\n");
+								ts2 = StrBufCat(ts2,Attrib);
+								ts2 = StrBufCat(ts2," &");
+								ts2 = StrBufCat(ts2,p+j-1);
+								ts2 = StrBufCat(ts2,"\\\\\n");
+							} else KPrintf("RE_PrintFile(): strange header line %s\n",p);
+						}
+						fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n",
+									ts1,
+									"\\begin{document}\n\n"
+									"\\setlength{\\tabcolsep}{3.0pt}\n"
+									"\\setlength{\\TabRestWidth}{\\linewidth}\n"
+									"\\addtolength{\\TabRestWidth}{-\\tabcolsep}\n"
+									"\\addtolength{\\TabRestWidth}{-\\LabelWidth}\n\n"
+									"\\begin{tabular}"
+									"{@{}>{\\PBS\\raggedleft\\hspace{0pt}\\bf}p{\\LabelWidth}"
+									">{\\PBS\\raggedright\\hspace{0pt}}p{\\TabRestWidth}}\n\n",
+									ts2,
+									"\\end{tabular}\n"
+									"\\hrule\n"
+									"\\bigskip\n"
+									"\\input{Texts:TeXdocs/Experimental/email.text}\n"
+									"\\end{document}\n");
+					} else
+					{
+						KPrintf("RE_PrintFile(): no headers for this part\n");
+					}
+				}
+				if(ts1) FreeStrBuf(ts1);
+				if(ts2) FreeStrBuf(ts2);
+			} else KPrintf("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n");
+			CloseTempFile(texfile);
+		} else KPrintf("RE_PrintFile(): can't open temp TeX file\n");
+	}
+}
+
+///
+// ISO8859_to_LaTeX
+// Takes a string in ISO-8859 charset and converts it to a equivalent
+// string in LaTeX notation. Free the result with FreeStrBuf() after use
+LOCAL char *ISO8859_to_LaTeX(char *s)
+{
+char *result=NULL;
+char **CVTab;
+
+	if(CVTab = Init_ISO8859_to_LaTeX_Tab("YAM:.latex-chartab"))
+	{
+	int ResLen;
+	char *p;
+
+		for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
+			ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
+
+		KPrintf("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen);
+
+		if(result = AllocStrBuf(ResLen+1))
+		{
+		char *q = result;
+			for(p=s,ResLen=0; *p; p++)	// map input string
+			{
+				if(CVTab[*p] == NULL)
+					*q++ = *p;
+				else
+				{
+					strcpy(q,CVTab[*p]);
+					while(*q++) ;
+				}
+			}
+		}
+	}
+	return result;
+}
+
+///
+// Init_ISO8859_to_LaTeX_Tab
+// Takes a filename for a ISO->LaTeX mapping table and returns a table for
+// mapping ISO/ASCII codes to strings
+LOCAL char **Init_ISO8859_to_LaTeX_Tab(char *TabFileName)
+{
+int TabSize;
+char **CVTab, *TabFile;
+BOOL success=FALSE;
+
+	if(-1 != (TabSize = FileSize(TabFileName)))
+	{
+	BPTR fh;
+		if(fh = Open(TabFileName,MODE_OLDFILE))
+		{
+			if(CVTab = AllocVec(TabSize+1+256*sizeof(char*),MEMF_ANY | MEMF_CLEAR))
+			{
+				TabFile = (char*)(CVTab+256*sizeof(char*));
+				if(Read(fh,TabFile,TabSize) == TabSize)
+				{
+				char *tok, c=0;
+					TabFile[TabSize] = '\0';
+					tok = strtok(TabFile," \t\n");
+					while(NULL != tok)
+					{
+						if(!c)
+						{
+							if(tok[1]) KPrintf("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n");
+							else c = tok[0];
+						} else
+						{
+							CVTab[c] = tok;
+							KPrintf("LaTeX mapping: '%c' -> '%s'\n",c,tok);
+							c = '\0';
+						}
+					}
+					success = TRUE;
+				}
+				if(!success)
+				{
+					FreeMem(CVTab,TabSize);
+					CVTab = NULL;
+				}
+			}
+			Close(fh);
+		}
+	}
+	return CVTab;
+}
+
 ///
 /// RE_SaveFunc
 //  Saves the current message or an attachment to disk
