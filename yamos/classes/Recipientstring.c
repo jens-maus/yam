@@ -153,6 +153,7 @@ OVERLOAD(MUIM_Setup)
 		data->ehnode.ehn_Events	  = IDCMP_RAWKEY | IDCMP_CHANGEWINDOW;
 		return TRUE;
 	}
+
 	return FALSE;
 }
 ///
@@ -422,7 +423,7 @@ DECLARE(Resolve) // ULONG flags
 			DB(kprintf("token: '%s'\n", s);)
 
 			// if the resolve string is empty we skip it and go on
-			if(!s[0] || strlen(s) == 0)
+			if(!s[0])
 			{
 				tmp=NULL;
 				continue;
@@ -444,7 +445,7 @@ DECLARE(Resolve) // ULONG flags
 				DB(kprintf("Found match: %s\n", s);)
 
 				// Now we have to check if there exists another entry in the AB with this string
-				if(nexttn == NULL || DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode) == NULL)
+				if(!nexttn || !DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode))
 				{
 					if(entry->Type == AET_USER) /* it's a normal person */
 					{
@@ -461,7 +462,7 @@ DECLARE(Resolve) // ULONG flags
 								while((lf = strchr(members, '\n')))
 									lf[0] = ',';
 
-								DB(kprintf("Found list: »%s«\n", entry->Members);)
+								DB(kprintf("Found list: »%s«\n", members);)
 								DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
 								free(members);
 
@@ -527,7 +528,7 @@ DECLARE(Resolve) // ULONG flags
 
 	} while(list_expansion && max_list_nesting-- > 0);
 
-	return (ULONG)(res ? xget(obj, MUIA_String_Contents) : NULL);
+	return (res ? xget(obj, MUIA_String_Contents) : 0);
 }
 ///
 
