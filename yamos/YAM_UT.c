@@ -207,7 +207,7 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
       ErrReq.es_TextFormat   = reqtxt;
       ErrReq.es_GadgetFormat = gadgets;
 
-      result = EasyRequest(NULL, &ErrReq, NULL, reqtxt);
+      result = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
     }
 
     return result;

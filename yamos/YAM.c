@@ -594,7 +594,7 @@ static void Abort(APTR formatnum, ...)
          ErrReq.es_TextFormat   = error;
          ErrReq.es_GadgetFormat = (char *)GetStr(MSG_Quit);
 
-         EasyRequest(NULL, &ErrReq, NULL, error);
+         EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
       }
       else
         puts(error);
@@ -1134,27 +1134,24 @@ int main(int argc, char **argv)
 
    if(!getenv("I_KNOW_YAM_IS_UNDER_DEVELOPMENT"))
    {
+     struct Library *IntuitionBase;
      struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
-     char *reqtxt = "This is a *internal* developer version and\n"
-                    "not recommended for public usage.\n"
-                    "Please note that it may contain bugs that could\n"
-                    "lead to any loss of data and that no support for\n"
-                    "this version is available in any form.\n\n"
-                    "So if your are unsure, please reconsider to wait\n"
-                    "for a official release!";
 
      ErrReq.es_Title        = "YAM Developer Version Warning";
-     ErrReq.es_TextFormat   = reqtxt;
+     ErrReq.es_TextFormat   = "This is a *internal* developer version and\n"
+                              "not recommended for public usage.\n"
+                              "Please note that it may contain bugs that could\n"
+                              "lead to any loss of data and that no support for\n"
+                              "this version is available in any form.\n\n"
+                              "So if your are unsure, please reconsider to wait\n"
+                              "for a official release!";
      ErrReq.es_GadgetFormat = "Go on|Exit";
 
-     if((IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 36)))
+     if((IntuitionBase = OpenLibrary("intuition.library", 36)))
      {
-        BOOL cont = TRUE;
+       LONG cont = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
 
-        if(EasyRequest(NULL, &ErrReq, NULL, reqtxt) == 0)
-          cont = FALSE;
-
-       CloseLibrary((struct Library *)IntuitionBase);
+       CloseLibrary(IntuitionBase);
 
        if(!cont) exit(0);
      }
