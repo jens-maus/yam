@@ -559,11 +559,8 @@ void Initialise(BOOL hidden)
 
    DateStamp(&G->StartDate);
    UtilityBase = (struct UtilityBase *)InitLib("utility.library", 36, 0, TRUE, FALSE);
-   IntuitionBase = (struct IntuitionBase *) InitLib("intuition.library", 36, 0, TRUE, FALSE);
    KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
    IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
-   IconBase = InitLib("icon.library", 36, 0, TRUE, FALSE);
-   WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
    if (LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE)) G->Locale = OpenLocale(NULL);
    OpenYAMCatalog();
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
@@ -694,6 +691,10 @@ void main(int argc, char **argv)
    struct User *user;
    BPTR progdirlock, yamlock, oldcdirlock;
 
+   IntuitionBase = (struct IntuitionBase *) InitLib("intuition.library", 36, 0, TRUE, FALSE);
+   IconBase = InitLib("icon.library", 36, 0, TRUE, FALSE);
+   WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
+
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
    nrda.ExtHelp = NULL;
    nrda.Window = NULL;
@@ -704,6 +705,9 @@ void main(int argc, char **argv)
    {
       PrintFault(err, "YAM");
       NewFreeArgs(&nrda);
+      if (WorkbenchBase) CloseLibrary(WorkbenchBase);
+      if (IconBase) CloseLibrary(IconBase);
+      if (IntuitionBase) CloseLibrary((struct Library *) IntuitionBase);
       exit(5); 
    }
    if (progdirlock = GetProgramDir())

@@ -102,3 +102,6 @@
       6 = sent
       Useful for ARexx scripts when deciding whether to show the "From:"
       or "To:" header line.
+
+    * Fixed wbstart-crash, which was introduced with the removal of
+      the library auto-open.
