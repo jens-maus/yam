@@ -783,7 +783,7 @@ l'index sera reconstituer depuis le disque dur.
 @{U}Dossier/Importer...@{UU}
 
    Permet d'importer des données de courriers électroniques venant d'une
-autre application. Le fichier doit être au format UUCP, comme la plupart des
+autre application. Le fichier doit être au format MBOX, comme la plupart des
 logiciels de courriers le propose, tels que AmiPOP ou les clients IMAP. Ces
 fichiers peuvent contenir un ou plusieurs messages, qui seront identifiés
 par les lignes d'en-tête « From: » et « Date ».

@@ -4944,6 +4944,6 @@ Perhaps the file doesn't exist or it couldn't be copied for some reason.
 MSG_ER_IMPORTMAIL (//)
 Couldn't import any mail out of file '%s'.\n\
 Please make sure that this file really contains emails \
-in the standard UUCP format (separated by a single \
+in the standard MBOX format (separated by a single \
 "From " line).
 ; FILENAME

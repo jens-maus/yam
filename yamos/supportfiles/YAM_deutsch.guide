@@ -774,7 +774,7 @@ eines Postfachs wird der Index wieder von der Festplatte geladen.
 @{u}Postfach/Importieren@{uu}
 
    Erlaubt den Import einer Maildatei, die von einer anderen Anwendung
-erzeugt wurde. Die Datei muss im Standard UUCP-Mailbox-Format vorliegen, wie
+erzeugt wurde. Die Datei muss im Standard MBOX-Mailbox-Format vorliegen, wie
 sie von den meisten externen Mail-Dienstprogrammen wie z.B. AmiPOP oder
 IMAP-Clients erzeugt werden. Eine solche Maildatei besteht aus einer oder
 mehreren Nachrichten, die jeweils durch die Kopfzeilen 'From:' und 'Date'

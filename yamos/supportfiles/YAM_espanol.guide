@@ -860,7 +860,7 @@ Si posteriormente se realiza alguna operación en una de estas carpetas, el
 Carpeta/Importar...
 
    Permite importar un fichero de correo creado por otra aplicación. Éste
-deberá seguir el formato de buzón UUCP estándar, como el generado por
+deberá seguir el formato de buzón MBOX estándar, como el generado por
 clientes de servidores de correo tales como AmiPOP o por clientes IMAP.
 Estos ficheros pueden contener varios mensajes, que se identifican por
 sus cabeceras "From:" y "Date:".
@@ -950,7 +950,7 @@ Mensaje/Guardar...
 
    Guarda el texto (y las cabeceras) de uno o más mensajes, creando un
 fichero distinto para cada mensaje. Si quiere guardar los mensajes en su
-formato original (UUCP), utilice @{" Carpeta/Exportar... " link "MAM2" 0}.
+formato original (MBOX), utilice @{" Carpeta/Exportar... " link "MAM2" 0}.
 
 
 Mensaje/Anexos  » Guardar

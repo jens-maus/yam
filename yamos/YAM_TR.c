@@ -759,7 +759,7 @@ static void TR_AddMessageHeader(int *count, int size, char *tfname)
 }
 ///
 /// TR_GetMessageList_IMPORT
-//  Collects messages from a UUCP mailbox file
+//  Collects messages from a MBOX mailbox file
 BOOL TR_GetMessageList_IMPORT(FILE *fh)
 {
    BOOL body = FALSE;
@@ -1663,7 +1663,7 @@ static BOOL TR_ApplySentFilters(struct Mail *mail)
 
 /*** EXPORT ***/
 /// TR_ProcessEXPORT
-//  Saves a list of messages to a UUCP mailbox file
+//  Saves a list of messages to a MBOX mailbox file
 BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 {
    BOOL success = FALSE;
@@ -1933,7 +1933,7 @@ HOOKPROTONHNONP(TR_AbortIMPORTFunc, void)
 MakeStaticHook(TR_AbortIMPORTHook, TR_AbortIMPORTFunc);
 ///
 /// TR_ProcessIMPORTFunc
-//  Imports messages from a UUCP mailbox file
+//  Imports messages from a MBOX mailbox file
 HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 {
    struct TransStat ts;

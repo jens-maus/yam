@@ -703,7 +703,7 @@ in un secondo tempo, l'indice viene di nuovo caricato dall'hard disk.
 
 @{u}Cartella/Importa@{uu}
    Permette di importare un file di posta creato con un altro programma. Il
-file deve essere nel formato standard UUCP, come quello generato da client
+file deve essere nel formato standard MBOX, come quello generato da client
 esterni per i server di posta come AmiPOP o da client IMAP. Questi file
 possono contenere diversi messaggi che sono identificati dalla loro intestazione
 'Da: INDIRIZZO DATA'.
@@ -767,7 +767,7 @@ stampante.
 @{u}Messaggio/Salva@{uu}
    Salva il testo (e le intestazioni) di uno o più messaggi, creando un file
 separato per ogni messaggio. Se volete salvare i messaggi nel loro formato
-originario (UUCP), usate @{"Cartella/Esporta" link "MAM2" 0}.
+originario (MBOX), usate @{"Cartella/Esporta" link "MAM2" 0}.
 
 @{u}Messaggio/Allegati@{uu} » Salva...
    Salva i file allegati ad uno o a più messaggi in una directory di vostra

@@ -655,7 +655,7 @@ teh map, se kazalène datoteke ponovno nalo¾ijo s trdega diska.
 
 @{u}Mapa/Uvozi...@{uu}
    Omogoèi uvoz po¹tne datoteke, ustvarjene z drugimi programi. Datoteka mora
-ustrezati standardnemu UUCP po¹tnemu formatu. Ta format uporabljajo drugi
+ustrezati standardnemu MBOX po¹tnemu formatu. Ta format uporabljajo drugi
 odjemalci za po¹tne-stre¾nike, kot sta npr. AmiPOP in IMAP. Po¹tna datoteka
 lahko vsebuje veè sporoèil, ki so enolièno doloèena z vrsticami 'From: NASLOV
 DATUM' v njihovih glavah.
@@ -716,7 +716,7 @@ takoj¹nji izbris s trdega diska, neglede na stanje nastavitev.
 @{u}Sporoèilo/Shrani...@{uu}
    Shrani besedilo (in glave) enega ali veè sporoèil in pri tem za vsako
 sporoèilo ustvari posebno datoteko. Èe ¾elite shraniti sporoèilo v njihovem
-prvotnem formatu (UUCP), izberite menijski element @{"Mapa/Izvozi" link "MAM2" 0}.
+prvotnem formatu (MBOX), izberite menijski element @{"Mapa/Izvozi" link "MAM2" 0}.
 
 @{u}Sporoèilo/Priloge@{uu} » Shrani...
    Shrani prilo¾ene datoteke enega ali veè sporoèil v predal po va¹i izbiri.

@@ -1746,7 +1746,7 @@ MakeHook(MA_RescanIndexHook, MA_RescanIndexFunc);
 
 ///
 /// MA_ExportMessages
-//  Saves messages to a UUCP mailbox file
+//  Saves messages to a MBOX mailbox file
 BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 {
    BOOL success = FALSE;
@@ -1792,7 +1792,7 @@ MakeStaticHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 
 ///
 /// MA_ImportMessages
-//  Imports messages from a UUCP mailbox file
+//  Imports messages from a MBOX mailbox file
 BOOL MA_ImportMessages(char *fname)
 {
    BOOL result = FALSE;

@@ -733,7 +733,7 @@ folderów, jego indeks zostanie odczytywany z dysku twardego.
 Folder/Importuj...
 
 Pozwala zaimportowaê plik pocztowy stworzony przez inny program.  Plik  taki
-musi  byê  w  standardowym  formacie  UUCP,  jak  np. pliki generowane przez
+musi  byê  w  standardowym  formacie  MBOX,  jak  np. pliki generowane przez
 programy bëdâce klientami  pocztowymi  (np.  AmiPOP  lub  IMAP).  Plik  moûe
 zawieraê kilka wiadomoôci, które rozpoznawane sâ przez pola nagîówka "From:"
 oraz "Date".
@@ -818,7 +818,7 @@ Wiadomoôê/Zapisz
 
 Zapisuje  tekst  (i  nagîówki) wiadomoôci, tworzâc oddzielny plik dla kaûdej
 z  wiadomoôci.   Gdybyô  chciaî  zapisaê  wiadomoôê w jej oryginalnej formie
-(UUCP), skorzystaj z @{"Folder/Eksportuj" LINK "MAM2" 0}.
+(MBOX), skorzystaj z @{"Folder/Eksportuj" LINK "MAM2" 0}.
 
 
 Wiadomoôê/Zaîâczniki » Zapisz
