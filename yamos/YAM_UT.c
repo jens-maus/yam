@@ -334,7 +334,7 @@ LONG STDARGS VARARGS68K YAMMUIRequest(APTR app, APTR win, LONG flags, char *titl
 
         DoMethod(BT_TEMP, MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, i+1);
         if(active) { set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_TEMP); active = FALSE; }
-			}
+      }
 
       // write back what we took.
       if(next) *(next-1) = '|';
@@ -358,7 +358,7 @@ LONG STDARGS VARARGS68K YAMMUIRequest(APTR app, APTR win, LONG flags, char *titl
 
       // bail out if a button was hit
       if(ret > 0 && ret < num_gads) { result = ret; break; }
-			if(ret == num_gads)           { result = 0;   break; }
+      if(ret == num_gads)           { result = 0;   break; }
 
       if(signals) Wait(signals);
     }
@@ -731,7 +731,7 @@ char *TrimStart(char *s)
 {
    while (*s && ISpace(*s)) ++s;
    return s;
-}       
+}
 ///
 /// TrimEnd
 //  Removes trailing spaces
@@ -753,8 +753,7 @@ char *Trim(char *s)
       while (e >= s && ISpace(*e)) *e-- = 0;
    }
    return s;
-}       
-
+}
 ///
 /// SParse
 //  Translate string with parsers
@@ -763,48 +762,48 @@ void SParse(char *s)
    long ctr[16], n, Nmax, NGlob = 0, max, mid;
    unsigned char *tptr, *p = NULL, *tp, la, lb;
    BOOL gr = 0, lr = 0;
-            
+
    if (!s || !PNum || !G->CO_AutoTranslateIn) return;
 
    while (*s)
    {
-      for (n = 0; n != PNum; n++) ctr[n] = 0; 
+      for (n = 0; n != PNum; n++) ctr[n] = 0;
 
       tp = s;
 
       do
       {
          Nmax = 0;
-         mid = max = -466725766; 
+         mid = max = -466725766;
 
-         for (n = 0; n != PNum; n++)      
-         { 
-            tptr = PPtr[n]; 
+         for (n = 0; n != PNum; n++)
+         {
+            tptr = PPtr[n];
             la = 0;
             p = tp;
- 
+
             do
             {
                lb = (*p++) ^ 128;
                if ( !((la | lb) & 128) ) ctr[n] += (signed char)tptr[(la << 7) + lb];
                la = lb;
             }
-            while ((*p) && (*p) != 0x0a); 
+            while ((*p) && (*p) != 0x0a);
 
             if (max < ctr[n])
-            {   
+            {
                mid = max;
                max = ctr[n];
-               Nmax = n; 
+               Nmax = n;
             }
 
          }
 
          if (*p == 0x0a) p++;
 
-         tp = p;        
+         tp = p;
 
-         if ((max >= 500) && ((max-mid) >=1000)) 
+         if ((max >= 500) && ((max-mid) >=1000))
          {
             lr = gr = 1;
             NGlob = Nmax;
@@ -813,22 +812,21 @@ void SParse(char *s)
       }
       while ((*p) && (!gr));
 
-      if (gr || ((!(*p)) && lr)) Nmax = NGlob; 
+      if (gr || ((!(*p)) && lr)) Nmax = NGlob;
 
       tptr = PPtr[Nmax] + 16384;
 
       do
       {
-         *s = tptr[(unsigned char)*s]; 
+         *s = tptr[(unsigned char)*s];
          s++;
       }
-      while (s != (char*)p); 
+      while (s != (char*)p);
 
-      if (*p == 0x0a) gr = 0; 
+      if (*p == 0x0a) gr = 0;
    }
 }
-
-/// 
+///
 /// LoadParsers
 //  Load a parser tables into memory
 BOOL LoadParsers(void)
@@ -839,7 +837,7 @@ BOOL LoadParsers(void)
    FILE *fp;
    BPTR lock;
    BOOL result = TRUE;
-   
+
    if(PNum) return TRUE;
 
    strmfp(dir, G->ProgDir, "parsers");
@@ -1074,7 +1072,7 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
    if (!fgets(buffer, bufsize, fh)) return NULL;
    if ((ptr = strpbrk(buffer, "\r\n"))) *ptr = 0;
    return buffer;
-}       
+}
 ///
 /// FileInfo
 //  Gets size, protection bits and type of a file/directory
@@ -1219,34 +1217,34 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
 //  returns the string length of the next word
 static int Word_Length(const char *buf)
 {
-	unsigned char c;
-	int len = 0;
+  unsigned char c;
+  int len = 0;
 
-	while((c = *buf))
-	{
-		if(isspace(c))
-		{
-			if(c == '\n' || c == '\r')
+  while((c = *buf))
+  {
+    if(isspace(c))
+    {
+      if(c == '\n' || c == '\r')
         return 0;
 
-			len++;
-		}
+      len++;
+    }
     else break;
 
-		buf++;
-	}
+    buf++;
+  }
 
 
-	while((c = *buf))
-	{
-		if(isspace(c) || c == '\0')
+  while((c = *buf))
+  {
+    if(isspace(c) || c == '\0')
       break;
 
-		len++;
-		buf++;
-	}
+    len++;
+    buf++;
+  }
 
-	return len;
+  return len;
 }
 ///
 /// Quoting_Chars
@@ -1257,33 +1255,33 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
 {
   unsigned char c;
   BOOL quote_found = FALSE;
-	int i=0;
-	int last_bracket = 0;
+  int i=0;
+  int last_bracket = 0;
   int skip_chars = 0;
   int pre_spaces = 0;
 
   (*post_spaces) = 0;
 
-	while((c = *text++) && i < len-1)
-	{
-		if(c == '>')
-		{
+  while((c = *text++) && i < len-1)
+  {
+    if(c == '>')
+    {
       if(pre_spaces > 0)
         break;
 
-			last_bracket = i+1;
+      last_bracket = i+1;
 
       quote_found = TRUE;
-		}
+    }
     else
-		{
-			if(c == '\n')
+    {
+      if(c == '\n')
         break;
 
-			if(c != ' ' && (quote_found == TRUE || pre_spaces > 0))
+      if(c != ' ' && (quote_found == TRUE || pre_spaces > 0))
         break;
 
-			if(c == ' ')
+      if(c == ' ')
       {
         if(quote_found == TRUE)
         {
@@ -1298,12 +1296,12 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
         else break;
       }
       else skip_chars++;
-		}
+    }
 
-		buf[i++] = c;
-	}
+    buf[i++] = c;
+  }
 
-	buf[last_bracket] = '\0';
+  buf[last_bracket] = '\0';
 
   // if we got some spaces before anything else,
   // we put the amount of found pre_spaces in the post_spaces variable
@@ -1325,27 +1323,27 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
 void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
 {
   // make sure the output file handle is valid
-	if(out)
-	{
-  	static char temp_buf[128];
-	  int temp_len;
-		BOOL newline = TRUE;
-		BOOL wrapped = FALSE; // needed to implement automatic wordwrap while quoting
+  if(out)
+  {
+    static char temp_buf[128];
+    int temp_len;
+    BOOL newline = TRUE;
+    BOOL wrapped = FALSE; // needed to implement automatic wordwrap while quoting
     BOOL lastwasspace = FALSE;
     int skip_on_next_newline = 0;
-		int line_len = 0;
+    int line_len = 0;
     int skip_chars;
     int post_spaces = 0;
 
     // find out how many quoting chars the next line has
     skip_chars = Quoting_Chars(temp_buf, sizeof(temp_buf), src, &post_spaces);
-		temp_len = strlen(temp_buf) - skip_chars;
+    temp_len = strlen(temp_buf) - skip_chars;
     src += skip_chars;
     len -= skip_chars;
 
-		while(len > 0)
-		{
-			char c = *src;
+    while(len > 0)
+    {
+      char c = *src;
 
       // break out if we received a NUL byte, because this
       // should really never happen
@@ -1353,54 +1351,54 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
         break;
 
       // skip any LF
-			if(c == '\r')
-			{
-				src++;
-				len--;
-				continue;
-			}
+      if(c == '\r')
+      {
+        src++;
+        len--;
+        continue;
+      }
 
       // on a CR (newline)
-			if(c == '\n')
-			{
-				src++;
-				len--;
+      if(c == '\n')
+      {
+        src++;
+        len--;
 
         // find out how many quoting chars the next line has
-				skip_chars = Quoting_Chars(temp_buf, sizeof(temp_buf), src, &post_spaces);
+        skip_chars = Quoting_Chars(temp_buf, sizeof(temp_buf), src, &post_spaces);
         src += (skip_chars + skip_on_next_newline);
         len -= (skip_chars + skip_on_next_newline);
         skip_on_next_newline = 0;
 
-				if(temp_len == (strlen(temp_buf)-skip_chars) && wrapped)
-				{
-					// the text has been wrapped previously and the quoting chars
-					// are the same like the previous line, so the following text
-					// probably belongs to the same paragraph
+        if(temp_len == (strlen(temp_buf)-skip_chars) && wrapped)
+        {
+          // the text has been wrapped previously and the quoting chars
+          // are the same like the previous line, so the following text
+          // probably belongs to the same paragraph
 
-					len -= temp_len; // skip the quoting chars
-					src += temp_len;
-					wrapped = FALSE;
+          len -= temp_len; // skip the quoting chars
+          src += temp_len;
+          wrapped = FALSE;
 
           // check wheter the next char will be a newline or not, because
           // a newline indicates a new empty line, so there is no need to
           // cat something together at all
           if(*src != '\n')
           {
-  					// add a space to if this was the first quoting
-	  				if(temp_len == 0 || (*src != ' ' && lastwasspace == FALSE))
-		  			{
-			  			fputc(' ', out);
-				  		line_len++;
+            // add a space to if this was the first quoting
+            if(temp_len == 0 || (*src != ' ' && lastwasspace == FALSE))
+            {
+              fputc(' ', out);
+              line_len++;
               lastwasspace = TRUE;
-  					}
+            }
 
-	  				continue;
+            continue;
           }
-				}
+        }
 
-				temp_len = strlen(temp_buf)-skip_chars;
-				wrapped = FALSE;
+        temp_len = strlen(temp_buf)-skip_chars;
+        wrapped = FALSE;
 
         // check wheter this line would be zero or not and if so we
         // have to care about if the user wants to also quote empty lines
@@ -1408,40 +1406,40 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
           fputs(prefix, out);
 
         // then put a newline in our file
-				fputc('\n', out);
-				newline = TRUE;
+        fputc('\n', out);
+        newline = TRUE;
         lastwasspace = FALSE;
 
-				line_len = 0;
+        line_len = 0;
 
-				continue;
-			}
+        continue;
+      }
 
-			if(newline)
-			{
-				if(c == '>')
+      if(newline)
+      {
+        if(c == '>')
         {
           fputs(prefix, out);
           line_len+=strlen(prefix);
         }
-				else
+        else
         {
           fputs(prefix, out);
           fputc(' ', out);
           line_len+=strlen(prefix)+1;
         }
-				
+
         newline = FALSE;
-			}
+      }
 
       // we check wheter this char was a whitespace
       // or not and if so we set the lastwasspace flag and we also check if
       // we are near the end of the line so that we have to initiate a word wrap
-			if((lastwasspace = isspace(c)) && line_len + Word_Length(src) >= line_max)
-			{
+      if((lastwasspace = isspace(c)) && line_len + Word_Length(src) >= line_max)
+      {
         char *indent;
 
-				src++;
+        src++;
         len--;
 
         // output a newline to start a new line
@@ -1450,8 +1448,8 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
         // reset line_len
         line_len = 0;
 
-				fputs(prefix, out);
-				line_len += strlen(prefix);
+        fputs(prefix, out);
+        line_len += strlen(prefix);
 
         if(strlen(temp_buf))
         {
@@ -1486,22 +1484,22 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
           }
         }
 
-				wrapped = TRUE; // indicates that a word has been wrapped manually
-				continue;
-			}
+        wrapped = TRUE; // indicates that a word has been wrapped manually
+        continue;
+      }
 
-			fputc(c, out);
-			line_len++;
+      fputc(c, out);
+      line_len++;
 
-			src++;
-			len--;
-		}
+      src++;
+      len--;
+    }
 
     // check wheter we finished the quoting with
     // a newline or otherwise the followed signature won`t fit correctly
     if(newline == FALSE)
       fputc('\n', out);
-	}
+  }
 }
 ///
 /// SimpleWordWrap
@@ -1516,7 +1514,7 @@ void SimpleWordWrap(char *filename, int wrapsize)
 
       while (Read(fh, &ch, 1))
       {
-         if (p-sol > wrapsize && lsp >= 0) 
+         if (p-sol > wrapsize && lsp >= 0)
          {
             ch = '\n';
             Seek(fh, (LONG)lsp-p-1, OFFSET_CURRENT);
@@ -1845,7 +1843,7 @@ struct MailInfo *GetMailInfo(struct Mail *smail)
 {
    static struct MailInfo mi;
    int i;
-   
+
    mi.Display = (smail->Folder == FO_GetCurrentFolder());
    mi.Pos = -1;
    mi.FName = GetMailFile(NULL, smail->Folder, smail);
@@ -1940,7 +1938,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
 {
    char buf[SIZE_ADDRESS], *p, *p2, *dst = AllocStrBuf(SIZE_DEFAULT);
    struct DateStamp adate;
-  
+
    for (; *src; src++)
       if (*src == '\\')
       {
@@ -1998,7 +1996,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
          dst = StrBufCat(dst, chr);
       }
    return dst;
-}              
+}
 ///
 /// DescribeCT
 //  Returns description of a content type
@@ -2940,7 +2938,7 @@ MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 /// PO_ListPublicKeys
 //  Lists keys of public PGP keyring in a popup window
 HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
-{  
+{
    APTR secret;
    char buf[SIZE_LARGE], *str, p;
    int retc, keys = 0;
@@ -3047,12 +3045,12 @@ Object *MakeButton(char *txt)
 //  Creates a MUI checkmark object
 Object *MakeCheck(char *label)
 {
-   return 
+   return
    ImageObject,
       ImageButtonFrame,
       MUIA_InputMode   , MUIV_InputMode_Toggle,
-      MUIA_Image_Spec  , MUII_CheckMark, 
-      MUIA_Background  , MUII_ButtonBack, 
+      MUIA_Image_Spec  , MUII_CheckMark,
+      MUIA_Background  , MUII_ButtonBack,
       MUIA_ShowSelState, FALSE,
       MUIA_ControlChar , ShortCut(label),
       MUIA_CycleChain  , 1,
@@ -3063,7 +3061,7 @@ Object *MakeCheck(char *label)
 //  Creates a labelled MUI checkmark object
 Object *MakeCheckGroup(Object **check, char *label)
 {
-   return 
+   return
    HGroup,
       Child, *check = MakeCheck(label),
       Child, Label1(label),
@@ -3398,7 +3396,7 @@ void SaveLayout(BOOL permanent)
 
       DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
 
-		  pr->pr_WindowPtr = oldWindowPtr; // restore the old windowPtr
+      pr->pr_WindowPtr = oldWindowPtr; // restore the old windowPtr
    }
 }
 ///
@@ -3761,7 +3759,12 @@ void DisplayAppIconStatistics(void)
   if (G->DiskObj[mode])
   {
     struct DiskObject *dobj=G->DiskObj[mode];
-    G->AppIcon = AddAppIconA(0, 0, apptit, G->AppPort, (BPTR)NULL, dobj, NULL);
+    // NOTE:
+    // 1.) Using the VARARGS version is better for GCC/68k and it doesn't
+    //     hurt other compilers
+    // 2.) Using "zero" as lock parameter avoids a header compatibility
+    //     issue (old: "struct FileLock *"; new: "BPTR")
+    G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, TAG_DONE);
   }
 }
 
@@ -3922,22 +3925,21 @@ void PlaySound(char *filename)
       DisposeDTObject(G->NewMailSound_Obj);
 
     // create the new datatype object
-    if((G->NewMailSound_Obj = NewDTObject(filename,
-	  		DTA_GroupID, GID_SOUND,
-		  	TAG_DONE)))
-  	{
+    G->NewMailSound_Obj = NewDTObject(filename,DTA_GroupID,GID_SOUND,TAG_DONE);
+    if(G->NewMailSound_Obj)
+    {
       // create a datatype trigger
-	  	struct dtTrigger dtt;
+      struct dtTrigger dtt;
 
-  		// Fill the trigger
-	  	dtt.MethodID     = DTM_TRIGGER;
-		  dtt.dtt_GInfo    = NULL;
-  		dtt.dtt_Function = STM_PLAY;
-	  	dtt.dtt_Data     = NULL;
+      // Fill the trigger
+      dtt.MethodID     = DTM_TRIGGER;
+      dtt.dtt_GInfo    = NULL;
+      dtt.dtt_Function = STM_PLAY;
+      dtt.dtt_Data     = NULL;
 
-  		// Play the sound by calling DoDTMethodA()
+      // Play the sound by calling DoDTMethodA()
       DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (Msg)&dtt);
-	  }
+    }
   }
 }
 ///
