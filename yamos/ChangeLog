@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-08-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug where the temporary unpack files weren`t
+      deleted if the message was just switched within the same
+      read window.
+    * YAM_UT.c: fixed bug where it could have happened that
+      YAM deleted the temporary unpack files (.unp) too early
+      which resulted in some missbehaviour. For instance it was
+      impossible to display the raw message part of a message
+      that was located within a compressed folder.
+
 2002-07-20  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: reworked the FormatSize() function once more to
