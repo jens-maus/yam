@@ -45,6 +45,8 @@ struct TranslationTable
 // base64 encoding/decoding routines
 int base64encode(char *to, const unsigned char *from, unsigned int len);
 int base64decode(char *to, const unsigned char *from, unsigned int len);
+long base64decode_file(FILE *in, FILE *out,
+                       struct TranslationTable *tt, BOOL convCRLF);
 
 // rfc2047 decoding routines
 int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
@@ -52,7 +54,6 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
 
 
 BOOL  DoesNeedPortableNewlines(char *ctype);
-void  from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines);
 void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
 void  fromuue(FILE *infp, FILE *outfp);
 void  fromuuetxt(char **txt, FILE *outfp);

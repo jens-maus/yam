@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_locale.h"
 #include "YAM_mime.h"
@@ -91,6 +92,7 @@ static BOOL InNewline = FALSE;
 static BOOL CRpending = FALSE;
 ///
 
+/*** BASE64 encode/decode routines ***/
 /// base64encode
 // optimized base64 encoding function returning the length of the
 // encoded string.
@@ -208,6 +210,109 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
 }
 
 ///
+/// base64decode_file
+//  Decodes a file in base64 format. Takes care of an eventually specified translation
+//  table as well as a CRLF->LF translation for printable text. It reads in the base64
+//  strings line by line from the in file stream, decodes it and writes out the
+//  decoded data with fwrite() to the out stream. It returns the total bytes of
+//  written (decoded) data.
+long base64decode_file(FILE *in, FILE *out,
+                       struct TranslationTable *tt, BOOL convCRLF)
+{
+  char lineBuf[SIZE_LINE]; // normally a line of a rfc822 encoded mailfile shouldn`t be longer
+  BOOL success = FALSE;
+  long decodedChars = 0;
+
+  // lets try to read in the data from the file line by
+  // line until EOF or error
+  while(fgets(lineBuf, SIZE_LINE-1, in))
+  {
+    char *ptr;
+    long outLength;
+
+    // lets eliminate an eventually existing "\r" or "\n"
+    if((ptr = strpbrk(lineBuf, "\r\n")))
+      *ptr = '\0';
+
+    // check if there IS anything to decode or not
+    if(lineBuf[0] == '\0')
+      continue;
+
+    // now we decode the string and see if it was sucessfull
+    if((outLength = base64decode(lineBuf, lineBuf, strlen(lineBuf))) <= 0)
+    {
+      success = FALSE;
+      ER_NewError(GetStr(MSG_ER_UnexpEOFB64), NULL, NULL);
+      break;
+    }
+
+    // if we got a translation table or need to convert a CRLF we have to parse through
+    // the decoded string again and convert some chars.
+    if(tt || convCRLF)
+    {
+      long r, w;
+
+      DB(kprintf("len: %ld\n", outLength);)
+      for(r=0, w=0; r < outLength; r++)
+      {
+        // check if this is a CRLF
+        if(convCRLF && lineBuf[r] == '\r' &&
+           outLength-r > 1 && lineBuf[r+1] == '\n')
+        {
+          // if so, skip the \r
+          continue;
+        }
+        else if(tt)
+        {
+          // if not, convert the char
+          lineBuf[w] = tt->Table[(UBYTE)lineBuf[r]];
+
+          // increase the write counter
+          ++w;
+        }
+        else
+        {
+          // if not translation table is given lets copy
+          // the plain character
+          lineBuf[w] = lineBuf[r];
+
+          // increase the write counter
+          ++w;
+        }
+      }
+
+      // make sure we reduce outLength to the
+      // number of "overjumped" chars.
+      outLength -= (w-r);
+    }
+
+    // now that we got the string decoded we write it into
+    // our file
+    if(fwrite(lineBuf, 1, (size_t)outLength, out) != outLength)
+    {
+      success = FALSE;
+      break;
+    }
+
+    // increase the decodedChars counter
+    decodedChars += outLength;
+    success = TRUE;
+  }
+
+  if(success &&
+     ((feof(in) == 0 && ferror(in) != 0) ||
+     ferror(out) != 0))
+  {
+    success = FALSE;
+  }
+
+  if(success)
+    return decodedChars;
+  else
+    return -1;
+}
+
+///
 
 /// nextcharin
 //  Reads next byte from a text files, handles CRLF line breaks
@@ -304,6 +409,7 @@ static void almostputc(int c, FILE *outfile, struct TranslationTable *tt, BOOL P
 }
 
 ///
+
 /// from64
 //  Decodes a file in base64 format
 void from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines)
@@ -347,6 +453,8 @@ void from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL Porta
 }
 
 ///
+
+/*** Quoted-Printable encode/decode routines ***/
 /// toqp
 //  Encodes a file using quoted-printable format
 void toqp(FILE *infile, FILE *outfile)
@@ -489,7 +597,7 @@ BOOL DoesNeedPortableNewlines(char *ctype)
 }
 ///
 
-/*** UU encode/decode stuff ***/
+/*** UU encode/decode routines ***/
 /// uueget
 //  Decodes four UU encoded bytes
 static void uueget(char *ptr, FILE *outfp, int n)

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-12-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c, YAM_RE.c: rewrote the base64 file decoding routines
+      to use the new base64decode() implementation. This should not
+      only increase the base64 MIME decoding a bit, it should also
+      increase the security if something went wrong during the
+      decoding phase.
+
 2003-12-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c: fixed a recently introduced bug where the use of

@@ -1835,9 +1835,10 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
 ///
 /// RE_DecodeStream
 //  Decodes contents of a part
-static void RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
+static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 {
    struct TranslationTable *tt = NULL;
+   BOOL decodeResult = FALSE;
 
    if(rp->Nr == PART_LETTER && rp->Printable &&
       G->TTin && G->TTin->SourceCharset
@@ -1859,14 +1860,55 @@ static void RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       }
    }
 
-   switch (rp->EncodingCode)
+   // lets check if we got some encoding here and
+   // if so we have to decode it immediatly
+   switch(rp->EncodingCode)
    {
-      case ENC_B64:  from64  (in, out, tt, DoesNeedPortableNewlines(rp->ContentType)); break;
-      case ENC_QP:   fromqp  (in, out, tt); break;
-      case ENC_FORM: fromform(in, out, tt); break;
-      case ENC_UUE:  fromuue (in, out); RE_ConsumeRestOfPart(in, NULL, NULL, NULL); break;
-      default:       RE_ConsumeRestOfPart(in, out, tt, NULL);
+      // process a base64 decoding.
+      case ENC_B64:
+      {
+        long decoded = base64decode_file(in, out, tt, rp->Printable);
+        DB(kprintf("base64 decoded %ld bytes of part %ld.\n", decoded, rp->Nr);)
+
+        if(decoded > 0)
+          decodeResult = TRUE;
+      }
+      break;
+
+      // process a Quoted-Printable decoding
+      case ENC_QP:
+      {
+        fromqp(in, out, tt);
+
+        decodeResult = TRUE;
+      }
+      break;
+
+      // process UU-Encoded decoding
+      case ENC_UUE:
+      {
+        fromuue (in, out);
+        if(RE_ConsumeRestOfPart(in, NULL, NULL, NULL))
+          decodeResult = TRUE;
+      }
+      break;
+
+      // process URL encoded decoding
+      case ENC_FORM:
+      {
+        fromform(in, out, tt);
+
+        decodeResult = TRUE;
+      }
+      break;
+
+      default:
+      {
+        decodeResult = RE_ConsumeRestOfPart(in, out, tt, NULL);
+      }
    }
+
+   return decodeResult;
 }
 ///
 /// RE_OpenNewPart
@@ -2173,13 +2215,20 @@ BOOL RE_DecodePart(struct Part *rp)
          strmfp(buf, C->TempDir, file);
          if ((out = fopen(buf, "w")))
          {
-            RE_DecodeStream(rp, in, out);
+            BOOL decodeResult = RE_DecodeStream(rp, in, out);
+
+            // close the streams first.
             fclose(out);
             fclose(in);
-            DeleteFile(rp->Filename);
-            strcpy(rp->Filename, buf);
-            rp->Decoded = TRUE;
-            RE_SetPartInfo(rp);
+
+            // check if we were successfull in decoding the data.
+            if(decodeResult)
+            {
+              DeleteFile(rp->Filename);
+              strcpy(rp->Filename, buf);
+              rp->Decoded = TRUE;
+              RE_SetPartInfo(rp);
+            }
          }
          else if((out = fopen(buf, "r")))
          {
