@@ -1,4 +1,11 @@
-2002-02-16  Gunther Nikl <gni@gecko.de>
+2002-02-21  Gunther Nikl <gni@gecko.de>
+
+    * extrasrc/genclasses: updated for new headername convention
+    * classes/Addrmatchlist.c,classes/InfoBar.c,classes/Recipientstring.c,
+      classes/Searchwindow.c,classes/YAM.c: adapt includes for new naming
+      convention
+
+2002-02-20  Gunther Nikl <gni@gecko.de>
 
     * libraries/pm.h: fixed GCC warnings about anonymous unions
     * proto/amissl.h: added support for different compilers
