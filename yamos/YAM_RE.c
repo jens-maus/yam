@@ -1935,19 +1935,36 @@ static BOOL RE_SaveThisPart(struct Part *rp)
 static void RE_SetPartInfo(struct Part *rp)
 {
    int size = rp->Size = FileSize(rp->Filename);
-   if (!rp->Decoded && rp->Nr) switch (rp->EncodingCode)
+
+   // let`s calculate the partsize on a undecoded part, if not a common part
+   if(!rp->Decoded && rp->Nr > 0)
    {
-      case ENC_UUE: case ENC_B64: rp->Size = (100*size)/136; break;
-      case ENC_QP:                rp->Size = (100*size)/106; break;
+      switch (rp->EncodingCode)
+      {
+        case ENC_UUE: case ENC_B64: rp->Size = (100*size)/136; break;
+        case ENC_QP:                rp->Size = (100*size)/106; break;
+      }
    }
-   if (!*rp->Name && rp->CParName) { stccpy(rp->Name, rp->CParName, SIZE_FILE); UnquoteString(rp->Name, FALSE); }
+
+   // if this part hasn`t got any name, we place the CParName as the normal name
+   if (!*rp->Name && rp->CParName)
+   {
+      stccpy(rp->Name, rp->CParName, SIZE_FILE);
+      UnquoteString(rp->Name, FALSE);
+   }
+
+   // let`s set if this is a printable (readable part)
+   rp->Printable = !strnicmp(rp->ContentType, "text", 4) || rp->Nr == PART_RAW;
 
    // lets set the comments of the partfiles
-   if(rp->Nr == PART_RAW)         SetComment(rp->Filename, GetStr(MSG_RE_Header));
-   else if(rp->Nr == PART_LETTER) SetComment(rp->Filename, GetStr(MSG_RE_Letter));
-   else SetComment(rp->Filename, *rp->Description ? rp->Description : rp->Name);
-
-   rp->Printable = !strnicmp(rp->ContentType, "text", 4) || rp->Nr == PART_RAW;
+   if(rp->Nr == PART_RAW)                          SetComment(rp->Filename, GetStr(MSG_RE_Header));
+   else if(rp->Nr == PART_LETTER && rp->Printable) SetComment(rp->Filename, GetStr(MSG_RE_Letter));
+   else
+   {
+      // if this is not a printable LETTER part or a RAW part we
+      // write another comment
+      SetComment(rp->Filename, *rp->Description ? rp->Description : (*rp->Name ? rp->Name : rp->ContentType));
+   }
 }
 ///
 /// RE_ParseMessage
@@ -2340,7 +2357,7 @@ static void RE_LoadMessagePart(int winnum, struct Part *part)
           {
             G->RE[winnum]->PGPKey = TRUE;
           }
-          else if(rp->Nr <= PART_LETTER || (rp->Printable && C->DisplayAllTexts))
+          else if(rp->Nr < PART_LETTER || (rp->Printable && (rp->Nr == PART_LETTER || C->DisplayAllTexts)))
           {
             RE_DecodePart(rp);
           }
@@ -2581,7 +2598,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
       for (part = first->Next; part; part = part->Next)
       {
-         BOOL dodisp = (part->Nr <= PART_LETTER || (C->DisplayAllTexts && part->Printable && part->Decoded));
+         BOOL dodisp = (part->Nr < PART_LETTER || (part->Printable && (part->Nr == PART_LETTER || (C->DisplayAllTexts && part->Decoded))));
 
          prewptr = wptr;
 

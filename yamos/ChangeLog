@@ -7,6 +7,12 @@ $Source$
 
 2002-10-26  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: fixed bug #625377 where YAM displayed the
+      first message part of a mail even if it were recognized as
+      a non printable part. Remember, only the first part in
+      a message will be considered the "real" message if it
+      is in a printable format, if not it is recognized as
+      an attachment.
     * YAM_RE.c, YAM_MA.c: fixed a possible buffer overrun
       in the DisplayHook of the Attachment requester.
       Also fixed a possible problem with attachments which
