@@ -1227,7 +1227,7 @@ void MyAddTail(struct Mail **list, struct Mail *new)
 void MyAddHead(struct Mail **list, struct Mail *new)
 {
    new->Next = *list;
-	*list = new;
+   *list = new;
 }
 ///
 /// MyRemove
@@ -1942,11 +1942,15 @@ void DisplayMailList(struct Folder *fo, APTR lv)
       int i = 0;
 
       Busy(GetStr(MSG_BusyDisplayingList), "", 0, 0);
-      for (work = fo->Messages; work; work = work->Next) array[i++] = work;
-      set(lv, MUIA_NList_Quiet, TRUE);
+      for (work = fo->Messages; work; work = work->Next)
+      {
+         array[i++] = work;
+      }
+
+      // We do not encapsulate this Clear&Insert with a NList_Quiet because
+      // this will speed up the Insert with about 3-4 seconds for ~6000 items
       DoMethod(lv, MUIM_NList_Clear, TAG_DONE);
       DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted, TAG_DONE);
-      set(lv, MUIA_NList_Quiet, FALSE);
 
       free(array);
       BusyEnd;

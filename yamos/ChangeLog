@@ -906,3 +906,9 @@
     * The 'search' function of the write window now works. There's only one
       search window (in the global structure) which should probably also be
       used if anyone adds search to the readwindow.
+
+2001-07-20  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * removed MUIA_NList_Quiet calls in DisplayMailList YAM_UT.c because
+      this will speed up the insertion of items for 3-4 seconds with ~6000
+      items. (This is a strange behaviour of the NList class itself)
