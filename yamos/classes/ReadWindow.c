@@ -282,15 +282,15 @@ OVERLOAD(OM_NEW)
 		// copy back the data stored in our temporarly struct Data
 		memcpy(data, tmpData, sizeof(struct Data));
 
+		// place this newly created window to the readMailData structure aswell
+		rmData->readWindow = obj;
+
 		// set the MUIA_UserData attribute to our readMailData struct
 		// as we might need it later on
 		set(obj, MUIA_UserData, rmData);
 
 		// Add the window to the application object
 		DoMethod(G->App, OM_ADDMEMBER, obj);
-
-		// place this newly created window to the readMailData structure aswell
-		rmData->readWindow = obj;
 
 		// set some Notifies and stuff
 		set(obj, MUIA_Window_DefaultObject, data->readMailGroup);
@@ -341,8 +341,8 @@ OVERLOAD(OM_NEW)
 		DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_NewMail, NEW_REPLY, MUIV_Toolbar_Qualifier);
 		DoMethod(data->windowToolbar, MUIM_Toolbar_Notify,12, MUIV_Toolbar_Notify_Pressed, FALSE, obj, 3, MUIM_ReadWindow_NewMail, NEW_FORWARD, MUIV_Toolbar_Qualifier);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, obj, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-		DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock del", 				obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
-		DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock shift del",		obj, 2, MUIM_ReadWindow_DeleteMailRequest, IEQUALIFIER_LSHIFT);
+		DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock del", 								obj, 2, MUIM_ReadWindow_DeleteMailRequest, 0);
+		DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-capslock shift del",						obj, 2, MUIM_ReadWindow_DeleteMailRequest, IEQUALIFIER_LSHIFT);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock space", 			data->readMailGroup, 2, MUIM_TextEditor_ARexxCmd, "Next Page");
 		DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock backspace", 	data->readMailGroup, 2, MUIM_TextEditor_ARexxCmd, "Previous Page");
 		DoMethod(obj, MUIM_Notify, MUIA_Window_InputEvent, "-repeat -capslock left", 				obj, 3, MUIM_ReadWindow_SwitchMail, -1, 0);
