@@ -1256,39 +1256,46 @@ static int Word_Length(const char *buf)
 static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
 {
   unsigned char c;
-  int new_color = 0;
+  BOOL quote_found = FALSE;
 	int i=0;
 	int last_bracket = 0;
   int skip_chars = 0;
+  int pre_spaces = 0;
+
   (*post_spaces) = 0;
 
 	while((c = *text++) && i < len-1)
 	{
 		if(c == '>')
 		{
+      if(pre_spaces > 0)
+        break;
+
 			last_bracket = i+1;
 
-			if(new_color == 1)
-        new_color = 2;
-			else
-        new_color = 1;
+      quote_found = TRUE;
 		}
     else
 		{
 			if(c == '\n')
         break;
 
-			if(c != ' ' && (new_color == 1 || new_color == 2))
+			if(c != ' ' && (quote_found == TRUE || pre_spaces > 0))
         break;
 
 			if(c == ' ')
       {
-        if(new_color == 0)
-          break;
-
-        // if we end up here we can count the number of spaces
-        // after the quoting characters
-        (*post_spaces)++;
+        if(quote_found == TRUE)
+        {
+          // if we end up here we can count the number of spaces
+          // after the quoting characters
+          (*post_spaces)++;
+        }
+        else if(skip_chars == 0)
+        {
+          pre_spaces++;
+        }
+        else break;
       }
       else skip_chars++;
 		}
@@ -1297,6 +1304,12 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
 	}
 
 	buf[last_bracket] = '\0';
+
+  // if we got some spaces before anything else,
+  // we put the amount of found pre_spaces in the post_spaces variable
+  // instead
+  if(pre_spaces > 0)
+    (*post_spaces) = pre_spaces;
 
   // return the number of skipped chars before
   // any quote char was found.
@@ -1319,6 +1332,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
 		BOOL newline = TRUE;
 		BOOL wrapped = FALSE; // needed to implement automatic wordwrap while quoting
     BOOL lastwasspace = FALSE;
+    int skip_on_next_newline = 0;
 		int line_len = 0;
     int skip_chars;
     int post_spaces = 0;
@@ -1354,8 +1368,9 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
 
         // find out how many quoting chars the next line has
 				skip_chars = Quoting_Chars(temp_buf, sizeof(temp_buf), src, &post_spaces);
-        src += skip_chars;
-        len -= skip_chars;
+        src += (skip_chars + skip_on_next_newline);
+        len -= (skip_chars + skip_on_next_newline);
+        skip_on_next_newline = 0;
 
 				if(temp_len == (strlen(temp_buf)-skip_chars) && wrapped)
 				{
@@ -1424,6 +1439,8 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
       // we are near the end of the line so that we have to initiate a word wrap
 			if((lastwasspace = isspace(c)) && line_len + Word_Length(src) >= line_max)
 			{
+        char *indent;
+
 				src++;
         len--;
 
@@ -1440,21 +1457,33 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
         {
           fputs(temp_buf+skip_chars, out);
           line_len += strlen(temp_buf)-skip_chars;
-
-          // first reset the lastwasspace flag
           lastwasspace = FALSE;
-
-				  while(post_spaces--)
-          {
-            fputc(' ', out);
-            line_len++;
-            lastwasspace = TRUE;
-          }
         }
         else
         {
           fputc(' ', out);
           line_len++;
+          lastwasspace = TRUE;
+        }
+
+        // lets check the indention of the next line
+        if((indent = strchr(src, '\n')) && ++indent != '\0')
+        {
+          int pre_spaces;
+
+          Quoting_Chars(temp_buf, sizeof(temp_buf), indent, &pre_spaces);
+
+          skip_on_next_newline = pre_spaces;
+
+          if(pre_spaces == 0)
+            pre_spaces += post_spaces;
+
+          while(pre_spaces--)
+          {
+            fputc(' ', out);
+            line_len++;
+            lastwasspace = TRUE;
+          }
         }
 
 				wrapped = TRUE; // indicates that a word has been wrapped manually

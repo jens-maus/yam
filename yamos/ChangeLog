@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-31  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: enhanced the text quoting routines once more. Now
+      they also take care of indentions and should work more
+      accurate now.
+
 2004-01-24  Jens Langner <Jens.Langner@light-speed.de>
 
     * OS4: some more modifications to get YAM working on AmigaOS4.
