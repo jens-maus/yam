@@ -322,20 +322,21 @@ static void FI_GenerateListPatterns(struct Search *search)
       // make sure the pattern list is successfully freed
       FreeSearchPatternList(search);
 
-      while (GetLine(fh, buf, SIZE_PATTERN))
+      while (GetLine(fh, buf, sizeof(buf)))
       {
-         if(*buf)
+         if(buf[0])
          {
             struct SearchPatternNode *newNode;
 
-            if (search->CaseSens) ParsePattern      (buf, pattern, SIZE_PATTERN*2+2);
-            else                  ParsePatternNoCase(buf, pattern, SIZE_PATTERN*2+2);
+            if (search->CaseSens) ParsePattern      (buf, pattern, sizeof(pattern));
+            else                  ParsePatternNoCase(buf, pattern, sizeof(pattern));
 
             // put the pattern in our search pattern list
-            if((newNode = calloc(1, sizeof(struct SearchPatternNode))))
+            newNode = malloc(sizeof(struct SearchPatternNode));
+            if(newNode != NULL)
             {
-              strncpy(newNode->pattern, pattern, SIZE_PATTERN*2+2);
-              newNode->pattern[SIZE_PATTERN*2+2] = '\0';
+              strncpy(newNode->pattern, pattern, sizeof(newNode->pattern));
+              newNode->pattern[sizeof(newNode->pattern)] = '\0';
 
               // add the pattern to our list
               AddTail((struct List *)&search->patternList, (struct Node *)newNode);
