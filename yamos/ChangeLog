@@ -966,3 +966,84 @@
       a message is going to edit.
     * WR_WriteUserInfo() now takes respect of the alternative selected From:
       address of the folder the mail was created in.
+
+2001-07-30  Allan Odgaard <duff@diku.dk>
+
+    * Addressbook popup gadget is no longer in cyclechain as you can popup the
+      book with the standard MUI popup key (defaults to ctrl-p) -- I really
+      would prefer to turn it into a real Popstring gadget, but currently the
+      hook to open the address book require both global and local info etc.
+    * Each change of the recipient string will result in an attempt of
+      completing the address which is in front of the cursor. Earlier e.g.
+      deleting a character wouldn't.
+    * The recipient class now has a tag for "allow multiple recipients". This
+      is enabled for the From and Reply-To strings (which it wasn't earlier).
+    * The recipient class has a method to resolve the names entered. The
+      MakeRecipients() function setup a notify on MUIA_String_Acknowledge to
+      call this method.
+    * When resolving a list then it will recursively continue to expand
+      members of this list so one can have a list of lists. Though this is
+      currently limited to 5 recursions.
+    * The 'resolve' gadget has been removed (since it happens on return anyway
+      in the writewindow) and thus the 'focus on return' scheme has been
+      removed entirely.
+    * There's now a popup list when YAM attempts to complete what the user is
+      typing in a recipient string. It contain 3 columns for alias, real name
+      and address. The entire string of the column which match what the user
+      is entering is in bold, though limited to SIZE_ADDRESS characters due
+      to the static display hook buffer. The list is sorted accodring to which
+      field match and secondly alphabetically.
+    * Using arrow up/down when the popup list is open immidiately change the
+      contents of the string gadget and pressing return will act as if the
+      popup wasn't shown (i.e. it will be interpreted by the gadget, so
+      MUIA_String_Acknowledge will go high).
+    * As with the old class one can enter a comma while text is marked (during
+      a completion) and the comma will be inserted behind the marked text
+      instead of overwriting it.
+    * The alias, real name and address stringgadgets of the addressbook (new
+      user, new list and new group windows) no longer accept comma as a valid
+      character.
+    * The stringgadget for entering list members (in the list window of the
+      addressbook) is now a Recipientstring. It doesn't auto-transform on
+      return (since often you want the alias in the list, so that a change to
+      the address of this alias will also affect the list). Also, it currently
+      lack the addressbook gadget. This is only because I was lazy when I
+      added it... we could just cut'n'paste the code from MakeRecipient(), but
+      I want this Recipientstring to instead be a popuplist which handle the
+      addressbook itself.
+    * Put the Okay gadget in the (stupid) subject warning requester as default
+      (didn't I already do that?).
+    * Trim() now accepts a NULL pointer (returns NULL).
+    * Added a STR() define to YAM_utilities.h. This transforms a define into a
+      string. This is useful e.g. if you do sprintf and want to limit the
+      string length to that of a define. E.g. in the AB_PrettyPrint() function
+      I do the following:
+         static TEXT buf[SIZE_REALNAME + SIZE_ADDRESS + 4];
+         sprintf(buf, "%." STR(SIZE_REALNAME) "s <%." STR(SIZE_ADDRESS) "s>",
+            e->RealName, e->Address);
+    * Added DUFF define to smakefile -- I'll soon remove the define, but my
+      code has made a lot of functions obsolete and I'm going to wait a little
+      before I start to remove all this code (which is currently marked by an
+      #ifndef DUFF).
+
+««« Some bugs/flaws which remain: »»»
+
+    * ADDRRESOLVE arexx command is currently broken. Reason is that I have
+      retired the WR_Resolve() function which this command require. Suggested
+      solution is that the command simply create a Recipientstring objectc,
+      set the alias as contents in this object and calls the
+      MUIM_Recipientstring_Transform method.
+    * When typing the last character of an alias (while the popup list is
+      open) then the popup list won't close. Reason being that the
+      Recipientstring class doesn't notice that the string change (user
+      overwrites last marked character with same character).
+    * There's currently no warning requester when one of the recipient strings
+      can't resolve the names (but a DisplayBeep(NULL) and a
+      "DB(kprintf();)").
+    * When using a list in the To gadget then the From and Reply-To fields
+      won't be changed to that setup in the addressbook. Reason: this was
+      really a hack before IMHO (testing various pointers to figure if and
+      where to set the new strings). Also, some problems arise if letter is
+      sent to multiple lists. Suggested solution would be to introduce
+      two tags which tell the recipientstring object which object(s) it should
+      propagate the (new) From and Reply-To addresses.

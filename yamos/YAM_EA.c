@@ -47,6 +47,7 @@
 #include "YAM_locale.h"
 #include "YAM_transfer.h"
 #include "YAM_utilities.h"
+#include "classes/Classes.h"
 
 /* local protos */
 static void EA_SetPhoto(int winnum, char *fname);
@@ -561,6 +562,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
             End; 
             if (group) 
             {
+            	DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_REALNAME, data->GUI.ST_ADDRESS, NULL);
                set(data->GUI.BT_LOADPHOTO, MUIA_Disabled, !*C->GalleryDir);
                SetHelp(data->GUI.ST_REALNAME   ,MSG_HELP_EA_ST_REALNAME   );
                SetHelp(data->GUI.ST_ADDRESS    ,MSG_HELP_EA_ST_ADDRESS    );
@@ -591,7 +593,9 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,GetStr(MSG_EA_Alias)),
                Child, Label2(GetStr(MSG_EA_Description)),
                Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,GetStr(MSG_EA_Description)),
-            End; break;
+            End;
+           	set(data->GUI.ST_ALIAS, MUIA_String_Reject, ",");
+            break;
          case AET_LIST: group = HGroup,
                MUIA_Group_SameWidth, TRUE,
                Child, VGroup,
@@ -619,7 +623,11 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                         MUIA_List_DestructHook ,MUIV_List_DestructHook_String,
                      End,
                   End,
-                  Child, data->GUI.ST_MEMBER = MakeString(SIZE_ADDRESS,""),
+                  Child, data->GUI.ST_MEMBER = RecipientstringObject, //MakeString(SIZE_ADDRESS,""),
+					      StringFrame,
+					      MUIA_String_MaxLen     , SIZE_ADDRESS,
+					      MUIA_String_AdvanceOnCR, TRUE,
+					      End,
                   Child, ColGroup(3), GroupSpacing(0),
                      Child, data->GUI.BT_ADD = MakeButton(GetStr(MSG_Add)),
                      Child, data->GUI.BT_DEL = MakeButton(GetStr(MSG_Del)),
@@ -629,6 +637,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
             End; 
             if (group)
             {
+            	DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_ADDRESS, data->GUI.ST_REALNAME, NULL);
                SetHelp(data->GUI.ST_ALIAS   ,MSG_HELP_EA_ST_ALIAS      );
                SetHelp(data->GUI.ST_COMMENT ,MSG_HELP_EA_ST_DESCRIPTION);
                SetHelp(data->GUI.ST_REALNAME,MSG_HELP_EA_ST_REALNAME_L );

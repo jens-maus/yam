@@ -76,6 +76,7 @@ extern struct Hook AB_LV_DspFuncHook;
 extern struct Hook AB_OpenHook;
 extern struct Hook AB_SaveABookHook;
 
+STRPTR AB_PrettyPrintAddress (struct ABEntry *e);
 void   AB_CheckBirthdates(void);
 char * AB_CompleteAlias(char *text);
 long   AB_CompressBD(char *datestr);

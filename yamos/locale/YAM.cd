@@ -4754,7 +4754,7 @@ Would you like to be warned if you\n\
 leave the subject line blank?
 ;
 MSG_WR_OKAYCANCELREQ (//)
-_Okay|_Cancel
+*Okay|Cancel
 ;
 MSG_WR_NOSUBJECTREQ (//)
 The subject is missing, continue anyway?

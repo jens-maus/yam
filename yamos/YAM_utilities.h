@@ -37,6 +37,9 @@
 
 #include "YAM_stringsizes.h"
 
+#define STR(x)  STR2(x)
+#define STR2(x) #x
+
 #ifndef YAM_FOLDERCONFIG_H
 struct Folder;
 #endif
@@ -152,7 +155,7 @@ void     DisplayStatistics(struct Folder *fo);
 void     DisposeModulePush(void *module);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(char *file, char *newfile, struct Folder *folder);
-ULONG    DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...);
+Object * DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...);
 BOOL     DumpClipboard(FILE *out);
 BOOL     EditorToFile(Object *editor, char *file, struct TranslationTable *tt);
 char *   Encrypt(char *source);

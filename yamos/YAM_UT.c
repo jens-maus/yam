@@ -516,9 +516,12 @@ char *TrimEnd(char *s)
 //  Removes leading and trailing spaces
 char *Trim(char *s)
 {
-   char *e = s+strlen(s)-1;
-   while (*s && ISpace(*s)) ++s;
-   while (e >= s && ISpace(*e)) *e-- = 0;
+   if(s)
+   {
+      char *e = s+strlen(s)-1;
+      while (*s && ISpace(*s)) ++s;
+      while (e >= s && ISpace(*e)) *e-- = 0;
+   }
    return s;
 }       
 ///
@@ -2528,7 +2531,7 @@ void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int 
 ///
 /// DoSuperNew
 //  Calls parent NEW method within a subclass
-ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
+Object *DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
 {
 #ifdef __MORPHOS__
    ULONG tags[4 * 2];
@@ -2540,9 +2543,9 @@ ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
    tags[6] = TAG_MORE;
    tags[7] = (ULONG)args->overflow_arg_area;
    va_end(args);
-   return DoSuperMethod(cl, obj, OM_NEW, tags, NULL);
+   return (Object *)DoSuperMethod(cl, obj, OM_NEW, tags, NULL);
 #else
-   return DoSuperMethod(cl, obj, OM_NEW, &tag1, NULL);
+   return (Object *)DoSuperMethod(cl, obj, OM_NEW, &tag1, NULL);
 #endif
 }
 ///

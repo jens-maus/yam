@@ -1,33 +1,6 @@
 #ifndef CLASSES_CLASSES_H
 #define CLASSES_CLASSES_H
 
-/***************************************************************************
-
- YAM - Yet Another Mailer
- Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
-
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
- YAM Official Support Site :  http://www.yam.ch
- YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
-
- $Id$
-
-***************************************************************************/
-
 /*****************************************************************************
 **
 ** rootclass
@@ -43,10 +16,15 @@
 **                    MUIM_Setup
 **                    MUIM_GoActive
 **                    MUIM_GoInactive
-**                    MUIM_HandleEvent
-**                    ShowMatches
 **                    MUIM_DragQuery
 **                    MUIM_DragDrop
+**                    OM_GET
+**                    MUIM_Popstring_Open
+**                    AddRecipient
+**                    Transform
+**                    RecipientStart
+**                    MUIM_HandleEvent
+**                    ShowMatches
 **
 ** Searchwindow    -- Window where user inputs search string and options.
 **
@@ -75,6 +53,9 @@
 #ifndef MUIM_GoInactive
 #define MUIM_GoInactive              0x80422c0c
 #endif
+#ifndef MUIA_String_Popup
+#define MUIA_String_Popup            0x80420d71
+#endif
 
 #define inittags(msg) (((struct opSet *)msg)->ops_AttrList)
 #define GETDATA struct Data *data = (struct Data *)INST_DATA(cl,obj)
@@ -94,8 +75,29 @@ VOID YAM_CleanupClasses (VOID);
 
 #define MUIC_Recipientstring "YAM_Recipientstring"
 
+#define MUIM_Recipientstring_AddRecipient     0xAE0000CBUL
+#define MUIM_Recipientstring_Transform        0xAE007B5AUL
+#define MUIM_Recipientstring_RecipientStart   0xAE004D2EUL
 #define MUIM_Recipientstring_ShowMatches      0xAE006D64UL
 
+#define MUIA_Recipientstring_MultipleRecipients 0xAE005A79UL
+#define MUIA_Recipientstring_Popup            0xAE003126UL
+
+struct MUIP_Recipientstring_AddRecipient
+{
+	ULONG methodID;
+	STRPTR address;
+};
+
+struct MUIP_Recipientstring_Transform
+{
+	ULONG methodID;
+};
+
+struct MUIP_Recipientstring_RecipientStart
+{
+	ULONG methodID;
+};
 
 struct MUIP_Recipientstring_ShowMatches
 {
@@ -106,7 +108,6 @@ struct MUIP_Recipientstring_ShowMatches
 #define RecipientstringObject YAM_NewObject(MUIC_Recipientstring
 
 ULONG RecipientstringGetSize (VOID);
-
 /* -------------------- */
 /* --- Searchwindow --- */
 /* -------------------- */
@@ -150,10 +151,15 @@ ULONG m_Recipientstring_OM_DISPOSE(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_MUIM_Setup(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_MUIM_GoActive(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_MUIM_GoInactive(struct IClass *cl, Object *obj, Msg msg);
-ULONG m_Recipientstring_MUIM_HandleEvent(struct IClass *cl, Object *obj, Msg msg);
-ULONG m_Recipientstring_ShowMatches(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_ShowMatches *msg);
 ULONG m_Recipientstring_MUIM_DragQuery(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_MUIM_DragDrop(struct IClass *cl, Object *obj, Msg msg);
+ULONG m_Recipientstring_OM_GET(struct IClass *cl, Object *obj, Msg msg);
+ULONG m_Recipientstring_MUIM_Popstring_Open(struct IClass *cl, Object *obj, Msg msg);
+ULONG m_Recipientstring_AddRecipient(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_AddRecipient *msg);
+ULONG m_Recipientstring_Transform(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_Transform *msg);
+ULONG m_Recipientstring_RecipientStart(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_RecipientStart *msg);
+ULONG m_Recipientstring_MUIM_HandleEvent(struct IClass *cl, Object *obj, Msg msg);
+ULONG m_Recipientstring_ShowMatches(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_ShowMatches *msg);
 ULONG m_Searchwindow_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Searchwindow_Open(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Open *msg);
 ULONG m_Searchwindow_Close(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Close *msg);

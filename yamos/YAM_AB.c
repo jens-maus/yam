@@ -55,6 +55,7 @@
 #include "YAM_main.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
+#include "classes/Classes.h"
 
 /* local protos */
 static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode*, long);
@@ -68,6 +69,13 @@ static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode*, FILE*, int);
 /***************************************************************************
  Module: Address book
 ***************************************************************************/
+
+STRPTR AB_PrettyPrintAddress (struct ABEntry *e)
+{
+	static TEXT buf[SIZE_REALNAME + SIZE_ADDRESS + 4];
+	sprintf(buf, "%." STR(SIZE_REALNAME) "s <%." STR(SIZE_ADDRESS) "s>", e->RealName, e->Address);
+	return buf;
+}
 
 /// AB_GotoEntry
 //  Searches an entry by alias and activates it
@@ -288,7 +296,11 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
             case ABM_FROM:    string = G->WR[winnum]->GUI.ST_FROM; break;
             default: string = (APTR)*arg;
          }
+#ifdef DUFF
+			DoMethod(string, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
+#else
          AB_InsertAddress(string, addr->Alias, addr->RealName, "");
+#endif
       }
    }
 }

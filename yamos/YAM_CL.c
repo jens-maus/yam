@@ -104,7 +104,7 @@ DISPATCHERPROTO(BC_Dispatcher)
       {
          tags = ((struct opSet *)msg)->ops_AttrList;
 
-         obj = (Object *)DoSuperNew(cl, obj,
+         obj = DoSuperNew(cl, obj,
             MUIA_FixWidth, 16,
             MUIA_FixHeight, 16,
             MUIA_InnerBottom, 0,
@@ -186,7 +186,7 @@ DISPATCHERPROTO(WS_Dispatcher)
    {
       case OM_NEW:
       {
-         result = DoSuperNew(cl, obj, StringFrame, MUIA_CycleChain, 1, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
+         result = (ULONG)DoSuperNew(cl, obj, StringFrame, MUIA_CycleChain, 1, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
       }
       break;
 
@@ -375,7 +375,7 @@ DISPATCHERPROTO(WL_Dispatcher)
    switch (msg->MethodID)
    {
       case OM_NEW:
-         return DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
+         return (ULONG)DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
       case MUIM_Setup:
          if (!DoSuperMethodA(cl, obj, msg)) return FALSE;
          MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
@@ -585,10 +585,14 @@ DISPATCHERPROTO(TE_Dispatcher)
                struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
                if (ab->Type != AET_GROUP)
                {
+#ifdef DUFF
+                  DoMethod(obj, MUIM_TextEditor_InsertText, AB_PrettyPrintAddress(ab), MUIV_TextEditor_InsertText_Cursor);
+#else
                   char *adr = AllocStrBuf(SIZE_DEFAULT);
                   WR_ResolveName(-1, ab->Alias, &adr, FALSE, TRUE);
                   DoMethod(obj, MUIM_TextEditor_InsertText, adr, MUIV_TextEditor_InsertText_Cursor);
                   FreeStrBuf(adr);
+#endif
                }
             }
          }
@@ -887,7 +891,7 @@ DISPATCHERPROTO(PL_Dispatcher)
    switch (msg->MethodID)
    {
       case OM_NEW:
-         obj = (Object *)DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
+         obj = DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
          if (obj)
          {
             struct PL_Data *data = INST_DATA(cl,obj);

@@ -58,7 +58,7 @@ OVERLOAD(OM_NEW)
 	struct Data *data;
 	Object *string, *case_sensitive, *search, *top, *cancel;
 
-	if (!(obj = (Object *)DoSuperNew(cl, obj,
+	if (!(obj = DoSuperNew(cl, obj,
 
 		MUIA_Window_Title, GetStr(MSG_SEARCHWINDOW_TITLE),
 		WindowContents, VGroup,

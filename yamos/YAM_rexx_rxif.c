@@ -1468,11 +1468,13 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
          
+#ifndef DUFF
       case RXIF_ACTION:
          rd->rd.res.recpt = rd->string = AllocStrBuf(80);
          if (WR_ResolveName(-1, rd->rd.arg.alias, &(rd->string), FALSE, TRUE)) rd->rd.rc = RETURN_WARN;
          break;
-      
+#endif
+
       case RXIF_FREE:
          FreeStrBuf(rd->string);
          FreeVec( rd );
