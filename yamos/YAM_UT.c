@@ -1483,12 +1483,15 @@ struct TempFile *OpenTempFile(char *mode)
    struct TempFile *tf;
    if ((tf = calloc(1, sizeof(struct TempFile))))
    {
-      char buf[SIZE_SMALL];
-      sprintf(buf, "YAM.%d.tmp", ++count);
+      char buf[SIZE_FILE];
+      sprintf(buf, "YAMt%lx-%d.tmp", (LONG)FindTask(NULL), ++count);
       strmfp(tf->Filename, C->TempDir, buf);
       if (!mode) return tf;
       if ((tf->FP = fopen(tf->Filename, mode))) return tf;
+
+      // on error we free everything
       free(tf);
+      count--;
    }
    return NULL;
 }
