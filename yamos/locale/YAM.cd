@@ -690,7 +690,7 @@ MSG_MA_Project (//)
 Project
 ;
 MSG_MA_About (//)
-About...
+About YAM
 ; This is the title of the about window, not the menu item.
 ;
 MSG_MA_AboutMUI (//)
@@ -713,7 +713,7 @@ MSG_MA_Quit (//)
 Q\000Quit
 ;
 MSG_MA_NewFolder (//)
-New folder...
+New folder
 ; This is the title of the new folder window, not the menu item.
 ;
 MSG_MA_NewSeparator (//)
@@ -828,15 +828,15 @@ MSG_MA_Settings (//)
 Settings
 ;
 MSG_MA_MAddrBook (//)
-Address Book...
+Address Book
 ; This is the title of the address book window, not the menu item.
 ;
 MSG_MA_MConfig (//)
-Configuration...
+Configuration
 ; This is the title of the configuration window, not the menu item.
 ;
 MSG_MA_MUsers (//)
-Users...
+Users
 ;
 ; Module MA - Bubblehelp
 ;
@@ -3733,7 +3733,7 @@ as soon as possible
 ; Module ER - Window
 ;
 MSG_ER_ErrorMessages (//)
-Error messages:
+Error messages
 ;
 MSG_ER_PrevError (//)
 _Previous error
@@ -4646,7 +4646,7 @@ MSG_ABOUT_OKAY_GAD (//)
 ;
 MSG_FOLDER_NEWFOLDERGROUP (//)
 New folder group...
-;This is the Intuition menu item, not the one in the pop-up menu
+;This is the pulldown menu item, not the one in the pop-up menu
 MSG_FOLDER_SNAPSHOT (//)
 Snapshot tree
 ;
