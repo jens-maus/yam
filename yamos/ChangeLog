@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-24  Christian Hattemer <krille@users.sourceforge.net>
+
+    * smakefile: Fix overlong command lines and wrong YAM_locale.h
+      dependency. The latter caused all sources using localized strings to
+      be rebuilt every time.
+      Also added stuff to create objdir only when neccesary.
+    * YAM_utilities.h: Add intuition proto to fix SAS/C build.
+
 2005-02-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_WR.c: slightly updated MIME warning message to suggest Thunderbird for
