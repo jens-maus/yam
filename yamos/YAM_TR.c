@@ -1078,7 +1078,11 @@ static int TR_Connect(char *host, int port)
 
   if(C->SocketOptions.SendTimeOut > -1)
   {
-    struct timeval tv = { C->SocketOptions.SendTimeOut, 0 };
+    struct timeval tv;
+
+    tv.tv_secs  = C->SocketOptions.SendTimeOut;
+    tv.tv_micro = 0;
+
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct timeval)) == -1)
     {
       DB(kprintf("setsockopt(SO_SNDTIMEO) error\n"));
@@ -1088,7 +1092,11 @@ static int TR_Connect(char *host, int port)
 
   if(C->SocketOptions.RecvTimeOut > -1)
   {
-    struct timeval tv = { C->SocketOptions.RecvTimeOut, 0 };
+    struct timeval tv;
+
+    tv.tv_secs  = C->SocketOptions.RecvTimeOut;
+    tv.tv_micro = 0;
+
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval)) == -1)
     {
       DB(kprintf("setsockopt(SO_RCVTIMEO) error\n"));
@@ -1134,7 +1142,7 @@ static int TR_Connect(char *host, int port)
   // because a hostname can have more than one IP in h_addr_list[]
   for(i=0; hostaddr->h_addr_list[i]; i++)
   {
-    memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr_list[i], hostaddr->h_length);
+    memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr_list[i], (size_t)hostaddr->h_length);
 
     if(connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1)
     {
@@ -1431,7 +1439,7 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
     again:
 
       if(G->TR_UseTLS) read_cnt = SSL_read(ssl, read_buf, C->TRBufferSize);
-      else             read_cnt = recv(socket, read_buf, C->TRBufferSize, 0);
+      else             read_cnt = recv(socket, read_buf, (LONG)C->TRBufferSize, 0);
 
       if(read_cnt < 0)
       {

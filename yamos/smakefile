@@ -121,7 +121,7 @@ OBJS = \
 
 #
 
-all: $(OBJDIR) classinfo YAM_locale.c YAM_mail_lex.c $(TARGET)
+all: note $(OBJDIR) classinfo YAM_locale.c YAM_mail_lex.c $(TARGET)
 
 # make the object directories
 $(OBJDIR):
@@ -150,6 +150,10 @@ $(TARGET): $(OBJS)
   @$(CC) $(LNKFLAGS) TO $@ WITH <<
   $(OBJS)
   <
+
+note:
+  @echo "*e[33mNOTE: SAS/C compilation has been considered obsolete.*e[0m"
+  @echo "*e[33m      So, if this compile breaks, don`t complain!*e[0m"
 
 #
 

@@ -219,7 +219,7 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
   if(len > 0)
   {
     // return -len to signal a short count
-    return -len;
+    return -(int)len;
   }
 
   return top - to;
@@ -884,6 +884,7 @@ static int rfc2047_decode_int(const char *text,
   while(text && *text)
   {
     p=text;
+
     if(text[0] != '=' || text[1] != '?')
     {
       while(*text)
@@ -899,7 +900,7 @@ static int rfc2047_decode_int(const char *text,
 
       if(text > p && !had_last_word)
       {
-        rc = (*func)(p, text-p, 0, 0, arg);
+        rc = (*func)(p, (unsigned int)(text-p), 0, 0, arg);
         if(rc) return (rc);
       }
 
@@ -996,7 +997,7 @@ static int rfc2047_decode_int(const char *text,
     // if no error occurred we are going to call the callback function
     if(unknown_enc == 1)
     {
-      rc = (*func)(p, text-p, 0, 0, arg);
+      rc = (*func)(p, (unsigned int)(text-p), 0, 0, arg);
       unknown_enc = 0; // clear it immediatly
     }
     else

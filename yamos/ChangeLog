@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-03-16  Jens Langner <Jens.Langner@light-speed.de>
+
+    * all: fixed a bunch of SAS/C dependent compiler warnings which
+      stopped YAM from compiling out-of-the-box.
+      Please note that a compilation with the old SAS/C compiler
+      is considered obsolete now. That means that future compilations
+      will be based on the gcc compiler builds. As a consequence,
+      future SAS/C compatibility will not ensured anymore. So this
+      is probably the last SAS/C compatibility change. This means
+      that if future versions will not build with SAS/C we are not
+      going to dig our heads deeper into those SAS/C dependent stuff.
+      So please move to gcc compilation if you are compiling YAM from
+      source.
+
 2004-03-09  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_global.c: moved the compiler information specification

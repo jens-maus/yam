@@ -39,6 +39,9 @@
 #ifndef _NETINET_TCP_H
 #include <netinet/tcp.h>
 #endif
+#ifndef _SYS_TYPES_H
+#include <sys/types.h>
+#endif
 #ifndef _SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
