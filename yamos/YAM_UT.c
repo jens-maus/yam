@@ -671,14 +671,6 @@ BOOL MatchNoCase(char *string, char *match)
    return result;
 }
 ///
-/// CompNoCase
-//  Case insensitive string comparison
-static BOOL CompNoCase(const char *a, const char *b, int l)
-{
-   for (; l; l--, a++, b++) if (toupper(*a) != toupper(*b)) return FALSE;
-   return TRUE;
-}
-///
 /// MatchTT
 //  Checks if charset matches a translation table
 BOOL MatchTT(char *charset, struct TranslationTable *tt, BOOL in)
@@ -920,8 +912,7 @@ char *stccat(char *a, char *b, int n)
 char *stristr(const char *a, const char *b)
 {
    int l = strlen(b);
-
-   for (; *a; a++) if (CompNoCase(a, b, l)) return (char *)a;
+   for (; *a; a++) if(strnicmp(a, b, l) == 0) return (char *)a;
    return NULL;
 }
 ///
