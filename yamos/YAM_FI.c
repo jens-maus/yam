@@ -346,7 +346,7 @@ BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *sear
 ///
 /// FI_SearchFunc
 //  Starts the search and shows progress
-SAVEDS void FI_SearchFunc(void)
+void SAVEDS FI_SearchFunc(void)
 {
    int pg, sfonum = 0, fnr, id, i, fndmsg = 0, totmsg = 0, progress = 0;
    struct FI_GUIData *gui = &G->FI->GUI;
@@ -415,7 +415,7 @@ MakeHook(FI_SearchHook,FI_SearchFunc);
 ///
 /// FI_ToRuleFunc
 //  Creates a filter from the current search options
-SAVEDS void FI_ToRuleFunc(void)
+void SAVEDS FI_ToRuleFunc(void)
 {
    int ch, i, r = -1;
 
@@ -450,7 +450,7 @@ MakeHook(FI_ToRuleHook,FI_ToRuleFunc);
 ///
 /// FI_Open
 //  Opens find window
-SAVEDS void FI_Open(void)
+void SAVEDS FI_Open(void)
 {
    int i, j, apos = 0;
    struct Folder **flist, *folder;
@@ -498,7 +498,7 @@ void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled)
 ///
 /// FI_SearchOptFunc
 //  Selects correct form for search mode
-SAVEDS ASM void FI_SearchOptFunc(REG(a1,ULONG *arg))
+void SAVEDS ASM FI_SearchOptFunc(REG(a1,ULONG *arg))
 {
    struct SearchGroup *gdata = (struct SearchGroup *)arg[0];
    int mode = GetMUICycle(gdata->CY_MODE);
@@ -510,7 +510,7 @@ MakeHook(FI_SearchOptHook, FI_SearchOptFunc);
 ///
 /// FI_EditFileFunc
 //  Edits pattern list in text editor
-SAVEDS ASM void FI_EditFileFunc(REG(a1,int *arg))
+void SAVEDS ASM FI_EditFileFunc(REG(a1,int *arg))
 {
    if (*C->Editor)
    {
@@ -658,7 +658,7 @@ APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote)
 ///
 /// FI_SwitchFunc
 //  Sets active folder according to the selected message in the results window
-SAVEDS void FI_SwitchFunc(void)
+void SAVEDS FI_SwitchFunc(void)
 {
    struct Mail *mail;
    struct MailInfo *mi;
@@ -675,7 +675,7 @@ MakeHook(FI_SwitchHook, FI_SwitchFunc);
 ///
 /// FI_ReadFunc
 //  Reads a message listed in the results window
-SAVEDS void FI_ReadFunc(void)
+void SAVEDS FI_ReadFunc(void)
 {
    struct Mail *mail;
    int winnum;
@@ -690,7 +690,7 @@ MakeHook(FI_ReadHook, FI_ReadFunc);
 ///
 /// FI_SelectFunc
 //  Selects matching messages in the main message list
-SAVEDS void FI_SelectFunc(void)
+void SAVEDS FI_SelectFunc(void)
 {
    int i;
    struct Folder *folder = FO_GetCurrentFolder();
@@ -713,7 +713,7 @@ MakeHook(FI_SelectHook, FI_SelectFunc);
 ///
 /// FI_Close
 //  Closes find window
-SAVEDS void FI_Close(void)
+void SAVEDS FI_Close(void)
 {
    DisposeModulePush(&G->FI);
 }
@@ -723,7 +723,7 @@ MakeHook(FI_CloseHook, FI_Close);
 /*** GUI ***/
 /// FI_PO_InitRuleListFunc
 //  Creates a popup list of configured filters
-SAVEDS ASM long FI_PO_InitRuleListFunc(REG(a2,Object *pop))
+long SAVEDS ASM FI_PO_InitRuleListFunc(REG(a2,Object *pop))
 {  
    int i;
    DoMethod(pop, MUIM_List_Clear);
@@ -736,7 +736,7 @@ MakeHook(FI_PO_InitRuleListHook, FI_PO_InitRuleListFunc);
 ///
 /// FI_PO_FromRuleFunc
 //  Gets search options from selected filter
-SAVEDS ASM void FI_PO_FromRuleFunc(REG(a2,Object *pop))
+void SAVEDS ASM FI_PO_FromRuleFunc(REG(a2,Object *pop))
 {
    struct Rule *rule;
    DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &rule);

@@ -41,7 +41,7 @@ LOCAL BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, in
 LOCAL BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 LOCAL char *IdentifyFileDT(char *fname);
-SAVEDS ASM void putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale));
+void SAVEDS ASM putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale));
 
 
 /*** Requesters ***/
@@ -155,7 +155,7 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
             case 1:
                get(lv_folder, MUIA_List_Active, &act);
                DoMethod(lv_folder, MUIM_List_GetEntry, act, &fname);
-               if (folder = FO_GetFolderByName(fname, NULL)) lastactive = act;
+               if ((folder = FO_GetFolderByName(fname, NULL))) lastactive = act;
                break;
             case 3: folder = NULL; break;
          }
@@ -249,7 +249,7 @@ void InfoWindow(char *title, char *body, char *oktext, APTR parent)
 {
    APTR bt_okay, wi_iw;
 
-   if (wi_iw = WindowObject,
+   if ((wi_iw = WindowObject,
          MUIA_Window_Title, title,
          MUIA_Window_RefWindow, parent,
          MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
@@ -263,7 +263,7 @@ void InfoWindow(char *title, char *body, char *oktext, APTR parent)
             End,
             Child, HCenter(bt_okay = MakeButton(oktext)),
          End,
-      End)
+      End))
    {
       DoMethod(G->App, OM_ADDMEMBER, wi_iw);
       DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, parent, 2, MUIM_MainWindow_CloseWindow, wi_iw);
@@ -362,7 +362,7 @@ char *GetNextLine(char *p1)
    static char *begin;
    char *p2;
    if (p1) begin = p1;
-   if (p1 = strchr(p2 = begin, '\n')) { *p1 = 0; begin = ++p1; }
+   if ((p1 = strchr(p2 = begin, '\n'))) { *p1 = 0; begin = ++p1; }
    return p2;
 }
 ///
@@ -531,7 +531,7 @@ char *AllocData2D(struct Data2D *data, int initsize)
 APTR AllocCopy(APTR source, int size)
 {
    APTR dest;
-   if (dest = malloc(size)) memcpy(dest, source, size);
+   if ((dest = malloc(size))) memcpy(dest, source, size);
    return dest;
 }
 ///
@@ -576,7 +576,7 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
    char *ptr;
    clear(buffer, bufsize);
    if (!fgets(buffer, bufsize, fh)) return NULL;
-   if (ptr = strpbrk(buffer, "\r\n")) *ptr = 0;
+   if ((ptr = strpbrk(buffer, "\r\n"))) *ptr = 0;
    return buffer;
 }       
 ///
@@ -587,7 +587,7 @@ BOOL FileInfo(char *filename, int *size, long *bits, long *type)
    struct FileInfoBlock *fib;
    BPTR lock;
 
-   if (lock = Lock((STRPTR)filename,ACCESS_READ))
+   if ((lock = Lock((STRPTR)filename,ACCESS_READ)))
    {
       fib = AllocDosObject(DOS_FIB, NULL);
       Examine(lock, fib);
@@ -639,9 +639,9 @@ BOOL RenameFile(char *oldname, char *newname)
    struct FileInfoBlock *fib;
    BPTR lock;
    if (!Rename(oldname, newname)) return FALSE;
-   if(fib = AllocDosObject(DOS_FIB,NULL))
+   if((fib = AllocDosObject(DOS_FIB,NULL)))
 	{
-	   if (lock = Lock(newname, ACCESS_READ))
+	   if ((lock = Lock(newname, ACCESS_READ)))
    	{
 	      Examine(lock, fib); UnLock(lock);
    	   SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE));
@@ -664,7 +664,7 @@ BOOL CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh)
       char buf[SIZE_LARGE];
       int len;
       success = TRUE;
-      while (len = fread(buf, 1, SIZE_LARGE, sourfh))
+      while ((len = fread(buf, 1, SIZE_LARGE, sourfh)))
          if (fwrite(buf, 1, len, destfh) != len) { success = FALSE; break; }
    }
    if (dest && destfh) fclose(destfh);
@@ -680,9 +680,9 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
    char buf[SIZE_LINE];
    FILE *infh, *outfh;
 
-   if (infh = fopen(in, "r"))
+   if ((infh = fopen(in, "r")))
    {
-      if (outfh = fopen(out, "w"))
+      if ((outfh = fopen(out, "w")))
       {
          while (GetLine(infh, buf, SIZE_LINE)) fprintf(outfh, "%s%s\n", buf, to?"\r":"");
          success = TRUE;
@@ -737,7 +737,7 @@ LOCAL char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
    char c, word[SIZE_LARGE], *p;
    BOOL dented = FALSE;
 
-   while (lword = GetWord(&start, word, SIZE_LARGE))
+   while ((lword = GetWord(&start, word, SIZE_LARGE)))
    {
       if ((c = word[lword-1]) == '\n')  word[--lword] = '\0';
       if (!lword);
@@ -869,7 +869,7 @@ void QuoteWordWrap(char *rptr, int lmax, char *prefix, char *firstprefix, FILE *
 void SimpleWordWrap(char *filename, int wrapsize)
 {
    BPTR fh;
-   if (fh = Open((STRPTR)filename, MODE_OLDFILE))
+   if ((fh = Open((STRPTR)filename, MODE_OLDFILE)))
    {
       char ch;
       int p = 0, lsp = -1, sol = 0;
@@ -923,13 +923,13 @@ struct TempFile *OpenTempFile(char *mode)
 {
    static int count = 0;
    struct TempFile *tf;
-   if (tf = calloc(1, sizeof(struct TempFile)))
+   if ((tf = calloc(1, sizeof(struct TempFile))))
    {
       char buf[SIZE_SMALL];
       sprintf(buf, "YAM.%ld.tmp", ++count);
       strmfp(tf->Filename, C->TempDir, buf);
       if (!mode) return tf;
-      if (tf->FP = fopen(tf->Filename, mode)) return tf;
+      if ((tf->FP = fopen(tf->Filename, mode))) return tf;
       free(tf);
    }
    return NULL;
@@ -959,9 +959,9 @@ BOOL DumpClipboard(FILE *out)
    UBYTE  readbuf[SIZE_DEFAULT];
    BOOL   success = FALSE;
 
-   if (iff = AllocIFF())
+   if ((iff = AllocIFF()))
    {
-      if (iff->iff_Stream = (ULONG)OpenClipboard(PRIMARY_CLIP))
+      if ((iff->iff_Stream = (ULONG)OpenClipboard(PRIMARY_CLIP)))
       {
          InitIFFasClip(iff);
          if (!OpenIFF(iff, IFFF_READ))
@@ -1016,7 +1016,7 @@ void DeleteMailDir(char *dir, BOOL isroot)
    char fname[SIZE_PATHFILE], *filename, dirname[SIZE_PATHFILE];
 
    fib = AllocDosObject(DOS_FIB,NULL);
-   if (lock = Lock(dir, ACCESS_READ))
+   if ((lock = Lock(dir, ACCESS_READ)))
    {
       strcpy(dirname, dir);
       Examine(lock, fib);
@@ -1054,9 +1054,9 @@ LOCAL char *FileToBuffer(char *file)
    int size = FileSize(file);
    FILE *fh;
 
-   if (size >= 0) if (text = calloc(size+1,1))
+   if (size >= 0) if ((text = calloc(size+1,1)))
    {
-      if (fh = fopen(file, "r"))
+      if ((fh = fopen(file, "r")))
       {
          fread(text, 1, size, fh);
          fclose(fh);
@@ -1205,7 +1205,7 @@ void ExtractAddress(char *line, struct Person *pe)
    strcpy(save, line);
    pe->Address[0] = pe->RealName[0] = 0;
    while (ISpace(*p)) p++;
-   if (ra[0] = MyStrChr(p,'<')) if (ra[1] = MyStrChr(ra[0],'>'))
+   if ((ra[0] = MyStrChr(p,'<'))) if ((ra[1] = MyStrChr(ra[0],'>')))
    {
       *ra[0]++ = 0; *ra[1] = 0;
       for (ra[2] = p, ra[3] = ra[0]-2; ISpace(*ra[3]) && ra[3] >= ra[2]; ra[3]--) *ra[3] = 0;
@@ -1214,7 +1214,7 @@ void ExtractAddress(char *line, struct Person *pe)
    if (!found)
    {
       for (ra[1] = ra[0] = p; *ra[1] && *ra[1] != '\t' && *ra[1] != ' ' && *ra[1] != ','; ra[1]++);
-      if (ra[2] = MyStrChr(ra[1],'(')) if (ra[3] = MyStrChr(ra[2],')'))
+      if ((ra[2] = MyStrChr(ra[1],'('))) if ((ra[3] = MyStrChr(ra[2],')')))
       {
          ra[2]++; *ra[3]-- = 0;
          found = TRUE;
@@ -1266,7 +1266,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
          {
             case 'n': dst = StrBufCat(dst, etd->OS_Name); break;
             case 'f': stccpy(buf, etd->OS_Name, SIZE_ADDRESS);
-                      if (p = strchr(buf, ',')) p = Trim(++p);
+                      if ((p = strchr(buf, ','))) p = Trim(++p);
                       else { for (p = buf; *p && *p != ' '; p++); *p = 0; p = buf; }
                       dst = StrBufCat(dst, p); break;
             case 's': dst = StrBufCat(dst, etd->OM_Subject); break;
@@ -1277,7 +1277,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
             case 'm': dst = StrBufCat(dst, etd->OM_MessageID); break;
             case 'r': dst = StrBufCat(dst, etd->R_Name); break;
             case 'v': strcpy(buf, etd->R_Name);
-                      if (p = strchr(buf, ',')) p = Trim(++p);
+                      if ((p = strchr(buf, ','))) p = Trim(++p);
                       else { for (p = buf; *p && *p != ' '; p++); *p = 0; p = buf; }
                       dst = StrBufCat(dst, p); break;
             case 'a': dst = StrBufCat(dst, etd->R_Address); break;
@@ -1291,7 +1291,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
                          if (p[-1] == ' ') { *p2++ = *p; break; }
                       *p2 = 0;
                       dst = StrBufCat(dst, buf); break;
-            case 'h': if (p = FileToBuffer(etd->HeaderFile))
+            case 'h': if ((p = FileToBuffer(etd->HeaderFile)))
                       {
                          dst = StrBufCat(dst, p); free(p);
                       }
@@ -1428,9 +1428,9 @@ struct DateStamp *ScanDate(char *date)
    static struct DateTime dt;
    struct DateStamp *ds = &dt.dat_Stamp;
 
-   if (p = strchr(date, ',')) p++; else p = date;
+   if ((p = strchr(date, ','))) p++; else p = date;
    while (*p && ISpace(*p)) p++;
-   while (p = strtok(p, " \t"))
+   while ((p = strtok(p, " \t")))
    {
       switch (count)
       {
@@ -1505,7 +1505,7 @@ void DisplayMailList(struct Folder *fo, APTR lv)
 {
    struct Mail *work, **array;
 
-   if (array = (struct Mail **)calloc(fo->Total+1,sizeof(struct Mail *)))
+   if ((array = (struct Mail **)calloc(fo->Total+1,sizeof(struct Mail *))))
    {
       int i = 0;
       Busy(GetStr(MSG_BusyDisplayingList), "", 0, 0);
@@ -1612,7 +1612,7 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    GetPackMethod(dstxpk, &pmeth, &peff);
    GetMailFile(srcbuf, srcfolder, mail);
    strcpy(dstbuf, MA_NewMailFile(dstfolder, mail->MailFile, atoi(mail->MailFile)));
-   if (one2one && !copyit) if (done = RenameFile(srcbuf, dstbuf)) success = TRUE;
+   if (one2one && !copyit) if ((done = RenameFile(srcbuf, dstbuf))) success = TRUE;
    if (!done)
    {
       if (needuncomp)
@@ -1656,19 +1656,19 @@ BOOL RepackMailFile(struct Mail *mail, int dstxpk, char *passwd)
    {
       case  0: case  5: case 10: case 15:
       case  1: case  4:                   return TRUE;
-      case  2: case  3: case  6: case  7: if (success = CompressMailFile(srcbuf, dstbuf, passwd, pmeth, peff))
+      case  2: case  3: case  6: case  7: if ((success = CompressMailFile(srcbuf, dstbuf, passwd, pmeth, peff)))
                                           {
                                              DeleteFile(srcbuf);
                                              success = RenameFile(dstbuf, srcbuf);
                                           }
                                           break;
-      case  8: case 9:  case 12: case 13: if (success = UncompressMailFile(srcbuf, dstbuf, folder->Password))
+      case  8: case 9:  case 12: case 13: if ((success = UncompressMailFile(srcbuf, dstbuf, folder->Password)))
                                           {
                                              DeleteFile(srcbuf);
                                              success = RenameFile(dstbuf, srcbuf);
                                           }
                                           break;
-      case 11: case 14:                   if (success = UncompressMailFile(srcbuf, dstbuf, folder->Password))
+      case 11: case 14:                   if ((success = UncompressMailFile(srcbuf, dstbuf, folder->Password)))
                                           {
                                              success = CompressMailFile(dstbuf, srcbuf, passwd, pmeth, peff);
                                              DeleteFile(dstbuf);
@@ -1698,7 +1698,7 @@ char *StartUnpack(char *file, char *newfile, struct Folder *folder)
 {
    FILE *fh;
    BOOL xpk = FALSE;
-   if (fh = fopen(file, "r"))
+   if ((fh = fopen(file, "r")))
    {
       if (fgetc(fh) == 'X') if (fgetc(fh) == 'P') if (fgetc(fh) == 'K') xpk = TRUE;
       fclose(fh);
@@ -1766,7 +1766,7 @@ BOOL FileToEditor(char *file, struct Object *editor)
 /*** Hooks ***/
 /// GeneralDesFunc
 //  General purpose destruction hook
-SAVEDS ASM long GeneralDesFunc(REG(a1,void *entry))
+long SAVEDS ASM GeneralDesFunc(REG(a1,void *entry))
 {
    free(entry);
    return 0;
@@ -1775,7 +1775,7 @@ MakeHook(GeneralDesHook, GeneralDesFunc);
 ///
 /// PO_SetPublicKey
 //  Copies public PGP key from list to string gadget
-SAVEDS ASM void PO_SetPublicKey(REG(a1,APTR string), REG(a2,APTR pop))
+void SAVEDS ASM PO_SetPublicKey(REG(a1,APTR string), REG(a2,APTR pop))
 {
    char *var, buf[SIZE_SMALL];
 
@@ -1791,7 +1791,7 @@ MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 ///
 /// PO_ListPublicKeys
 //  Lists keys of public PGP keyring in a popup window
-SAVEDS ASM long PO_ListPublicKeys(REG(a1,APTR string), REG(a2,APTR pop))
+long SAVEDS ASM PO_ListPublicKeys(REG(a1,APTR string), REG(a2,APTR pop))
 {  
    BOOL secret;
    char buf[SIZE_LARGE], *str, p;
@@ -1812,7 +1812,7 @@ SAVEDS ASM long PO_ListPublicKeys(REG(a1,APTR string), REG(a2,APTR pop))
       }
       retc = PGPCommand("pgp", buf, KEEPLOG);
    }
-   if (!retc) if (fp = fopen(PGPLOGFILE, "r"))
+   if (!retc) if ((fp = fopen(PGPLOGFILE, "r")))
    {
       get(string, MUIA_String_Contents, &str);
       DoMethod(pop, MUIM_List_Clear);
@@ -1978,7 +1978,7 @@ Object *MakePGPKeyList(APTR *st, BOOL secret, char *label)
 {
    APTR po, lv;
 
-   if (po = PopobjectObject,
+   if ((po = PopobjectObject,
          MUIA_Popstring_String, *st = MakeString(SIZE_DEFAULT, label),
          MUIA_Popstring_Button, PopButton(MUII_PopUp),
          MUIA_Popobject_StrObjHook, &PO_ListPublicKeysHook,
@@ -1993,7 +1993,7 @@ Object *MakePGPKeyList(APTR *st, BOOL secret, char *label)
                MUIA_List_DestructHook, MUIV_List_DestructHook_String,
             End,
          End,
-      End)
+      End))
       DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
    return po;
 }
@@ -2193,7 +2193,7 @@ void DisposeModule(void *modptr)
       *module = NULL;
    }
 }
-SAVEDS ASM void DisposeModuleFunc(REG(a1,void **arg))
+void SAVEDS ASM DisposeModuleFunc(REG(a1,void **arg))
 {
    DisposeModule(arg[0]);
 }
@@ -2268,11 +2268,11 @@ struct BodyChunkData *LoadBCImage(char *fname)
    struct ContextNode *cn;
    struct BodyChunkData *bcd;
 
-   if (bcd = calloc(1,sizeof(struct BodyChunkData)))
+   if ((bcd = calloc(1,sizeof(struct BodyChunkData))))
    {
-      if (iff = AllocIFF())
+      if ((iff = AllocIFF()))
       {
-         if (iff->iff_Stream = Open(fname, MODE_OLDFILE))
+         if ((iff->iff_Stream = Open(fname, MODE_OLDFILE)))
          {
             InitIFFasDOS(iff);
             if (!OpenIFF(iff, IFFF_READ))
@@ -2293,7 +2293,7 @@ struct BodyChunkData *LoadBCImage(char *fname)
                             !StopOnExit(iff, ID_ILBM, ID_FORM) &&
                             !ParseIFF  (iff, IFFPARSE_SCAN))
                         {
-                           if (sp = FindProp(iff, ID_ILBM, ID_CMAP))
+                           if ((sp = FindProp(iff, ID_ILBM, ID_CMAP)))
                            {
                               bcd->Colors = calloc(sp->sp_Size,sizeof(ULONG));
                               for (i = 0; i < sp->sp_Size; i++)
@@ -2302,13 +2302,13 @@ struct BodyChunkData *LoadBCImage(char *fname)
                                  bcd->Colors[i] = (c<<24)|(c<<16)|(c<<8)|c;
                               }
                            }
-                           if (sp = FindProp(iff,ID_ILBM,ID_BMHD))
+                           if ((sp = FindProp(iff,ID_ILBM,ID_BMHD)))
                            {
                               bmhd = (struct BitMapHeader *)sp->sp_Data;
                               if (bmhd->bmh_Compression == cmpNone || bmhd->bmh_Compression==cmpByteRun1)
                               {
                                  size = CurrentChunk(iff)->cn_Size;
-                                 if (bcd->Body = calloc(size,1))
+                                 if ((bcd->Body = calloc(size,1)))
                                  {
                                     if (ReadChunkBytes(iff, bcd->Body, size) == size)
                                     {
@@ -2375,9 +2375,9 @@ int PGPCommand(char *progname, char *options, int flags)
    int error = -1;
    char command[SIZE_LARGE];
 
-	if (fhi = Open("NIL:", MODE_OLDFILE))
+	if ((fhi = Open("NIL:", MODE_OLDFILE)))
 	{
-	   if (fho = Open("NIL:", MODE_NEWFILE))
+	   if ((fho = Open("NIL:", MODE_NEWFILE)))
    	{
 	      Busy(GetStr(MSG_BusyPGPrunning), "", 0, 0);
 	      strmfp(command, C->PGPCmdPath, progname);
@@ -2410,7 +2410,7 @@ LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, voi
    }
    else strcpy(filename, "YAM.log");
    strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
-   if (fh = fopen(logfile, "a"))
+   if ((fh = fopen(logfile, "a")))
    {
       fprintf(fh, "%s [%02ld] ", DateStamp2String(NULL, DSS_DATETIME), id);
       fprintf(fh, text, a1, a2, a3, a4);
@@ -2514,10 +2514,10 @@ BOOL CheckPrinter(void)
    long  _PrinterDeviceUnit = 0;
    char *error = NULL;
 
-   if (PrintPort = CreateMsgPort())
+   if ((PrintPort = CreateMsgPort()))
    {
       PrintPort->mp_Node.ln_Name = "YAM PrintPort";
-      if (PrintIO = CreateIORequest(PrintPort, sizeof(struct IOStdReq)))
+      if ((PrintIO = CreateIORequest(PrintPort, sizeof(struct IOStdReq))))
       {
          if (!(OpenDevice((STRPTR)_PrinterDeviceName, _PrinterDeviceUnit, (struct IORequest *)PrintIO, 0)))
          {
@@ -2550,7 +2550,7 @@ void PlaySound(char *filename)
       struct dtTrigger Play = { DTM_TRIGGER, NULL, STM_PLAY, NULL };
       Object *sound;
       BYTE sig;
-      if (sound = NewDTObject((APTR)filename, DTA_GroupID, GID_SOUND, SDTA_Volume, 64, SDTA_Cycles, 1, TAG_DONE))
+      if ((sound = NewDTObject((APTR)filename, DTA_GroupID, GID_SOUND, SDTA_Volume, 64, SDTA_Cycles, 1, TAG_DONE)))
       {
          if ((sig = AllocSignal(-1)) >= 0)
          {
@@ -2580,7 +2580,7 @@ void PlaySound(char *filename)
 //  Matches a file extension against a list of extension
 BOOL MatchExtension(char *fileext, char *extlist)
 {
-   while (extlist = strtok(extlist, " "))
+   while ((extlist = strtok(extlist, " ")))
    {
       if (!stricmp(extlist, fileext)) return TRUE;
       extlist = NULL;
@@ -2598,10 +2598,10 @@ LOCAL char *IdentifyFileDT(char *fname)
    if (DataTypesBase)
    {
       BPTR lock;
-      if (lock = Lock(fname, ACCESS_READ))
+      if ((lock = Lock(fname, ACCESS_READ)))
       {
          struct DataType *dtn;
-         if (dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL))
+         if ((dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL)))
          {
             struct DataTypeHeader *dth = dtn->dtn_Header;
             switch (dth->dth_GroupID)
@@ -2633,7 +2633,7 @@ char *IdentifyFile(char *fname)
    long bits = FileProtection(fname);
    FILE *fh;
 
-   if (fh = fopen(fname, "r"))
+   if ((fh = fopen(fname, "r")))
    {
       int i, len;
       char buffer[SIZE_LARGE], *ext;
@@ -2641,7 +2641,7 @@ char *IdentifyFile(char *fname)
       len = fread(buffer, 1, SIZE_LARGE-1, fh);
       buffer[len] = 0;
       fclose(fh);
-      if (ext = strrchr(fname, '.')) ++ext; else ext = "--";
+      if ((ext = strrchr(fname, '.'))) ++ext; else ext = "--";
       if (!stricmp(ext, "htm") || !stricmp(ext, "html"))
          ctype = ContType[CT_TX_HTML];
       else if (!strnicmp(buffer, "@database", 9) || !stricmp(ext, "guide"))
@@ -2712,7 +2712,7 @@ BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
    if (*tt) free(*tt);
    if (!*file) return FALSE;
    if (!(*tt = calloc(1,sizeof(struct TranslationTable)))) return FALSE;
-   if (fp = fopen(file, "r"))
+   if ((fp = fopen(file, "r")))
    {
       UBYTE buf[SIZE_DEFAULT], *p;
       int i;
@@ -2722,7 +2722,7 @@ BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
       if (!strncmp(buf, "YCT1", 4))
       {
          fgets((*tt)->Name, SIZE_DEFAULT, fp);
-         if (p = strchr((*tt)->Name,'\n')) *p = 0;
+         if ((p = strchr((*tt)->Name,'\n'))) *p = 0;
          while (fgets(buf, SIZE_DEFAULT, fp))
             if (!strnicmp(buf, "from", 4)) stccpy((*tt)->SourceCharset, Trim(&buf[5]), SIZE_CTYPE);
             else if  (!strnicmp(buf, "to", 2)) stccpy((*tt)->DestCharset, Trim(&buf[3]), SIZE_CTYPE);
@@ -2788,7 +2788,7 @@ void GotoURL(char *url)
       sprintf(newurl, "%c%s%c", '"', url, '"');
       MA_StartMacro(MACRO_URL, newurl);
    }
-   else if (OpenURLBase = OpenLibrary("openurl.library", 1))
+   else if ((OpenURLBase = OpenLibrary("openurl.library", 1)))
    {
       URL_Open(url, TAG_DONE);
       CloseLibrary(OpenURLBase);
@@ -2900,7 +2900,7 @@ void SPrintF(char *outstr, char *fmtstr, ...)
 ///
 /// putChar
 //  Hook used by FormatString()
-SAVEDS ASM void putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale))
+void SAVEDS ASM putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale))
 {
 	char **tmp;
 

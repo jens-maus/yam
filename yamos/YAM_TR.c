@@ -33,10 +33,16 @@
 
 /// TR_IsOnline
 //  Checks if there's an online connection
+#ifdef __STORM__
+extern struct Library *GenesisBase;
+struct Library *MiamiBase, *SoBase;
+#endif
 BOOL TR_IsOnline(void)
 {
    BOOL isonline = FALSE;
+#ifndef __STORM__
    struct Library *MiamiBase, *GenesisBase, *SoBase;
+#endif
 
    if (C->IsOnlineCheck)
    {
@@ -125,7 +131,8 @@ int TR_RecvDat(char *recvdata)                   /* success? */
    DoMethod(G->App,MUIM_Application_InputBuffered);
    if (G->TR_Socket == SMTP_NO_SOCKET) return 0;
    len = Recv(G->TR_Socket, (STRPTR)recvdata, SIZE_LINE-1, 0);
-   recvdata[len] = '\0';
+   if (len <= 0) recvdata[0]=0;
+   else recvdata[len] = '\0';
    if (G->TR_Debug) printf("SERVER: %s", recvdata);
    return len;
 }
@@ -249,9 +256,16 @@ BOOL TR_SendPopCmd(char *buf, char *cmdtext, char *parmtext, int flags)
    if (!parmtext || !*parmtext) sprintf(cmdbuf, "%s\r\n", cmdtext);
    else sprintf(cmdbuf, "%s %s\r\n", cmdtext, parmtext);
    if (!TR_SendDat(cmdbuf)) return FALSE;
-   if (!(len = TR_RecvDat(buf))) return FALSE;
+   len = TR_RecvDat(buf);
+   if (len <= 0)  return FALSE;
    if (flags & POPCMD_WAITEOL)
-      while (buf[len-1] != '\n') if (ln = TR_RecvDat(&buf[len])) len += ln; else return FALSE;
+   {
+      while (buf[len-1] != '\n')
+      {
+         ln = TR_RecvDat(&buf[len]);
+         if (ln > 0) len += ln; else return FALSE;
+      }
+   }
    if (!strncmp(buf, "-ERR", 4))
    {
       if (!(flags & POPCMD_NOERROR)) ER_NewError(GetStr(MSG_ER_BadResponse), cmdtext, buf);
@@ -290,7 +304,7 @@ int TR_ConnectPOP(int guilevel)
    }
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
 
-   if (!TR_RecvDat(buf)) return -1;
+   if (TR_RecvDat(buf) <= 0) return -1;
    if (!*passwd)
    {
       sprintf(buf, GetStr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
@@ -304,7 +318,7 @@ int TR_ConnectPOP(int guilevel)
 
       while (!strstr(buf, "\n"))
       {
-         if (!TR_RecvDat(buf)) return -1;
+         if (TR_RecvDat(buf) <= 0) return -1;
          welcomemsg = StrBufCat(welcomemsg, buf);
       }
       *buf = 0;
@@ -327,7 +341,7 @@ int TR_ConnectPOP(int guilevel)
    }
    else
    {
-      while (!strstr(buf, "\n")) if (!TR_RecvDat(buf)) return -1;
+      while (!strstr(buf, "\n")) if (TR_RecvDat(buf) <= 0) return -1;
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendUserID));
       if (!TR_SendPopCmd(buf, "USER", C->P3[pop]->User, POPCMD_WAITEOL)) return -1;
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendPassword));
@@ -652,7 +666,7 @@ void TR_DisconnectPOP(void)
 //  Downloads and filters mail from a POP3 account
 void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 {
-   extern SAVEDS void TR_ProcessGETFunc(void);
+   extern void SAVEDS TR_ProcessGETFunc(void);
    struct Mail *mail;
    static int laststats;
    int msgs, pop = singlepop;
@@ -770,7 +784,7 @@ BOOL TR_SendSMTPCmd(char *cmdtext, char *parmtext)
    }
    else *buffer = 0;
    if (!TR_SendDat(buffer)) return FALSE;
-   if (!(len = TR_RecvDat(buffer))) return FALSE;
+   if ((len = TR_RecvDat(buffer)) <= 0) return FALSE;
    switch (atoi(buffer))
    {
       case 211: case 214: case 220: case 221: 
@@ -778,8 +792,8 @@ BOOL TR_SendSMTPCmd(char *cmdtext, char *parmtext)
       default:  ER_NewError(GetStr(MSG_ER_BadResponse), cmdtext, buffer); return FALSE;
    }
    cont = buffer[3];
-   while (buffer[len-1] != '\n') if (!(len = TR_RecvDat(buffer))) return FALSE;
-   if (cont == '-') while (buffer[len-1] != '\n') if (!(len = TR_RecvDat(buffer))) break;
+   while (buffer[len-1] != '\n') if ((len = TR_RecvDat(buffer)) <= 0) return FALSE;
+   if (cont == '-') while (buffer[len-1] != '\n') if ((len = TR_RecvDat(buffer)) <= 0) break;
    return TRUE;
 }
 ///
@@ -1091,7 +1105,7 @@ void TR_DisconnectSMTP(void)
 ///
 /// TR_ChangeStatusFunc
 //  Changes status of selected messages
-SAVEDS ASM void TR_ChangeStatusFunc(REG(a1,int *arg))
+void SAVEDS ASM TR_ChangeStatusFunc(REG(a1,int *arg))
 {
    int id = MUIV_NList_NextSelected_Start;
    struct Mail *mail;
@@ -1454,7 +1468,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 /*** IMPORT ***/
 /// TR_AbortIMPORTFunc
 //  Aborts import process
-SAVEDS void TR_AbortIMPORTFunc(void)
+void SAVEDS TR_AbortIMPORTFunc(void)
 {
    TR_AbortnClose();
 }
@@ -1462,7 +1476,7 @@ MakeHook(TR_AbortIMPORTHook, TR_AbortIMPORTFunc);
 ///
 /// TR_ProcessIMPORTFunc
 //  Imports messages from a UUCP mailbox file
-SAVEDS void TR_ProcessIMPORTFunc(void)
+void SAVEDS TR_ProcessIMPORTFunc(void)
 {
    struct TransStat ts;
    FILE *fh, *f = NULL;
@@ -1539,7 +1553,7 @@ MakeHook(TR_ProcessIMPORTHook, TR_ProcessIMPORTFunc);
 /*** GET ***/
 /// TR_AbortGETFunc
 //  Aborts a POP3 download
-SAVEDS void TR_AbortGETFunc(void)
+void SAVEDS TR_AbortGETFunc(void)
 {
    MA_FreeRules(G->TR->Search, G->TR->Scnt);
    TR_AbortnClose();
@@ -1651,7 +1665,7 @@ void TR_NewMailAlert(void)
 ///
 /// TR_ProcessGETFunc
 //  Downloads messages from a POP3 server
-SAVEDS void TR_ProcessGETFunc(void)
+void SAVEDS TR_ProcessGETFunc(void)
 {
    struct TransStat ts;
    struct Mail *mail;
@@ -1686,7 +1700,7 @@ MakeHook(TR_ProcessGETHook, TR_ProcessGETFunc);
 ///
 /// TR_GetMessageInfoFunc
 //  Requests message header of a message selected by the user
-SAVEDS void TR_GetMessageInfoFunc(void)
+void SAVEDS TR_GetMessageInfoFunc(void)
 {
    int line;
    struct Mail *mail;
@@ -1720,7 +1734,7 @@ void TR_CompleteMsgList()
 ///
 /// TR_PauseFunc
 //  Pauses or resumes message download
-SAVEDS ASM void TR_PauseFunc(REG(a1,int *arg))
+void SAVEDS ASM TR_PauseFunc(REG(a1,int *arg))
 {
    BOOL pause = *arg;
 
@@ -1736,7 +1750,7 @@ MakeHook(TR_PauseHook, TR_PauseFunc);
 /*** GUI ***/
 /// TR_LV_DspFunc
 //  Message listview display hook
-SAVEDS ASM long TR_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct Mail *entry))
+long SAVEDS ASM TR_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct Mail *entry))
 {
    if (entry)
    {

@@ -77,7 +77,7 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
    struct Person pe;
 
    ExtractAddress(name, &pe);
-   if (pe.Address[0]) if (p = strchr(pe.Address, '@')) // is it an address?
+   if (pe.Address[0]) if ((p = strchr(pe.Address, '@'))) // is it an address?
    {
       if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
       if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
@@ -119,10 +119,10 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
       case AET_GROUP:
          if (nolists) return 4;
          for (i=0; ; i++)
-            if (tn2 = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, tn, i, MUIV_Listtree_GetEntry_Flags_SameLevel))
+            if ((tn2 = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, tn, i, MUIV_Listtree_GetEntry_Flags_SameLevel)))
             {
                struct ABEntry *ab2 = tn2->tn_User;
-               if (retcode = WR_ResolveName(winnum, ab2->Alias, adrstr, nolists)) return retcode;
+               if ((retcode = WR_ResolveName(winnum, ab2->Alias, adrstr, nolists))) return retcode;
             }
             else break;
          break;
@@ -143,8 +143,8 @@ char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single)
    while (source)
    {
       if (!*source) break;
-      if (next = MyStrChr(source, ',')) *next++ = 0;
-      if (err = WR_ResolveName(winnum, Trim(source), &adr, single))
+      if ((next = MyStrChr(source, ','))) *next++ = 0;
+      if ((err = WR_ResolveName(winnum, Trim(source), &adr, single)))
       {
          if (err == 2 && !quiet) ER_NewError(GetStr(MSG_ER_AliasNotFound), FailedAlias, NULL);
          if (err == 3 && !quiet) ER_NewError(GetStr(MSG_ER_AmbiguousAlias), FailedAlias, NULL);
@@ -163,12 +163,12 @@ char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single)
 ///
 /// WR_VerifyAutoFunc
 //  Checks recipient field (user pressed return key)
-SAVEDS ASM void WR_VerifyAutoFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_VerifyAutoFunc(REG(a1,int *arg))
 {
    APTR str = (APTR)arg[0], next = str;
    char *value, *adr;
    get(str, MUIA_String_Contents, &value);
-   if (adr = WR_ExpandAddresses(arg[1], value, TRUE, arg[2]))
+   if ((adr = WR_ExpandAddresses(arg[1], value, TRUE, arg[2])))
    {
       FreeStrBuf(adr);
       get(str, MUIA_UserData, &next);
@@ -182,12 +182,12 @@ MakeHook(WR_VerifyAutoHook, WR_VerifyAutoFunc);
 ///
 /// WR_VerifyManualFunc
 //  Checks and expands recipient field (user clicked gadget)
-SAVEDS ASM void WR_VerifyManualFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_VerifyManualFunc(REG(a1,int *arg))
 {
    APTR object = (APTR)arg[0];
    char *value, *adr;
    get(object, MUIA_String_Contents, &value);
-   if (adr = WR_ExpandAddresses(arg[1], value, FALSE, arg[2]))
+   if ((adr = WR_ExpandAddresses(arg[1], value, FALSE, arg[2])))
    {
       setstring(object, adr);
       FreeStrBuf(adr);
@@ -200,7 +200,7 @@ MakeHook(WR_VerifyManualHook, WR_VerifyManualFunc);
 /*** Attachments list ***/
 /// WR_GetFileEntry
 //  Fills form with data from selected list entry
-SAVEDS ASM void WR_GetFileEntry(REG(a1,int *arg))
+void SAVEDS ASM WR_GetFileEntry(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Attach *attach = NULL;
@@ -221,7 +221,7 @@ MakeHook(WR_GetFileEntryHook, WR_GetFileEntry);
 ///
 /// WR_PutFileEntry
 //  Fills form data into selected list entry
-SAVEDS ASM void WR_PutFileEntry(REG(a1,int *arg))
+void SAVEDS ASM WR_PutFileEntry(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Attach *attach = NULL;
@@ -293,7 +293,7 @@ LOCAL char *GetDateTime(void)
 
    Amiga2Date(GetDateStamp(), &cd);
    sprintf(dt, "%s, %02ld %s %ld %02ld:%02ld:%02ld", wdays[cd.wday], cd.mday, months[cd.month-1], cd.year, cd.hour, cd.min, cd.sec);
-   if (tz = GetTZ()) { strcat(dt, " "); strcat(dt, tz); }
+   if ((tz = GetTZ())) { strcat(dt, " "); strcat(dt, tz); }
    return dt;  
 }
 
@@ -447,7 +447,7 @@ LOCAL void HeaderFputs(char *s, FILE *fh)
    char *firstnonascii, *wordstart;
 
    if (!s) return;
-   while (firstnonascii = firstbad(s))
+   while ((firstnonascii = firstbad(s)))
    {
       for (wordstart = firstnonascii; wordstart >= s; wordstart--) if (ISpace(*wordstart)) break;
       while (s <= wordstart) { fputc(WR_CharOut(*s), fh); ++s; }
@@ -483,9 +483,9 @@ LOCAL void EmitRcptField(FILE *fh, char *body)
    while (part)
    {
       if (!*part) break;
-      if (next = MyStrChr(part, ',')) *next++ = 0;
+      if ((next = MyStrChr(part, ','))) *next++ = 0;
       HeaderFputs(Trim(part), fh);
-      if (part = next) fputs(",\n\t", fh);
+      if ((part = next)) fputs(",\n\t", fh);
    }
    free(bodycpy);
 } 
@@ -538,7 +538,7 @@ LOCAL void WriteCtypeNicely(FILE *fh, char *ct)
    char *semi, *slash, *eq, *s;
 
    for (s = ct; *s; ++s) if (*s == '\n') *s = ' ';
-   if (semi = (char *)index(ct, ';')) *semi = '\0';
+   if ((semi = (char *)index(ct, ';'))) *semi = '\0';
    slash = (char *)index(ct, '/');
    fputs(ct, fh);
    if (!slash) fputs("/unknown", fh);
@@ -546,8 +546,8 @@ LOCAL void WriteCtypeNicely(FILE *fh, char *ct)
    {
       ct = semi + 1;
       *semi = ';';
-      if (semi = (char *) index(ct, ';')) *semi = '\0';
-      if (eq = (char *) index(ct, '=')) *eq = '\0';
+      if ((semi = (char *) index(ct, ';'))) *semi = '\0';
+      if ((eq = (char *) index(ct, '='))) *eq = '\0';
       fputs(";\n\t", fh);
       while (ISpace(*ct)) ++ct;
       fputs(ct, fh);
@@ -572,7 +572,7 @@ LOCAL void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
    WriteCtypeNicely(fh, part->ContentType);
    if (!strncmp(part->ContentType, "text/", 5) && (part->EncType != ENC_NONE || part->TTable))
       fprintf(fh, "; charset=%s", part->TTable ? part->TTable->DestCharset : C->LocalCharset);
-   if (p = part->Name) if (*p) 
+   if ((p = part->Name)) if (*p) 
    {
       fputs("; name=\"", fh);
       HeaderFputs(p, fh);
@@ -593,7 +593,7 @@ LOCAL void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
          case ENC_BIN:  fputs("binary\n", fh); break;
       }
    }
-   if (p = part->Description) if (*p) EmitHeader(fh, "Content-Description", p);
+   if ((p = part->Description)) if (*p) EmitHeader(fh, "Content-Description", p);
 }
 
 ///
@@ -645,7 +645,7 @@ LOCAL void EncodePart(FILE *ofh, struct WritePart *part)
 {
    FILE *ifh;
 
-   if (ifh = fopen(part->Filename, "r"))
+   if ((ifh = fopen(part->Filename, "r")))
    {
       int size;
       switch (part->EncType) 
@@ -675,9 +675,9 @@ LOCAL BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
    FILE *in, *out;
    BOOL success = FALSE;
 
-   if (in = fopen(source, "r"))
+   if ((in = fopen(source, "r")))
    {
-      if (out = fopen(hashfile, "w"))
+      if ((out = fopen(hashfile, "w")))
       {
          fpos = 0; fwrite(&fpos, sizeof(long), 1, out);
          while (fgets(buffer, SIZE_LARGE, in))
@@ -703,9 +703,9 @@ LOCAL void WR_AddTagline(FILE *fh_mail)
    {
       sprintf(hashfile, "%s.hsh", C->TagsFile);
       if (getft(C->TagsFile) > getft(hashfile)) WR_CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
-      if (fh_tag = fopen(C->TagsFile, "r"))
+      if ((fh_tag = fopen(C->TagsFile, "r")))
       {
-         if (fh_hash = fopen(hashfile, "r"))
+         if ((fh_hash = fopen(hashfile, "r")))
          {
             fseek(fh_hash, 0, SEEK_END); hsize = ftell(fh_hash);
             if ((hsize = hsize/sizeof(long)) > 1)
@@ -733,7 +733,7 @@ LOCAL void WR_WriteSignature(FILE *out, int signat)
 {
    FILE *in;
    int ch;
-   if (in = fopen(CreateFilename(SigNames[signat]), "r"))
+   if ((in = fopen(CreateFilename(SigNames[signat]), "r")))
    {
       fputs("-- \n", out);
       while ((ch = fgetc(in)) != EOF)
@@ -762,14 +762,14 @@ void WR_AddSignature(char *mailfile, int signat)
    if (signat == -1) 
    {
       signat = C->UseSignature ? 1 : 0;
-      if (fh_mail = fopen(mailfile, "r"))
+      if ((fh_mail = fopen(mailfile, "r")))
       {
          fseek(fh_mail, -1, SEEK_END);
          addline = fgetc(fh_mail) != '\n';
          fclose(fh_mail);
       }
    }
-   if (fh_mail = fopen(mailfile, "a"))
+   if ((fh_mail = fopen(mailfile, "a")))
    {
       if (addline) fputc('\n', fh_mail);
       if (signat) WR_WriteSignature(fh_mail, signat-1);
@@ -819,7 +819,7 @@ LOCAL char *WR_GetPGPIds(char *source, char *ids)
    for (; source; source = next)
    {
       if (!*source) break;
-      if (next = MyStrChr(source, ',')) *next++ = 0;
+      if ((next = MyStrChr(source, ','))) *next++ = 0;
       ExtractAddress(source, &pe);
       if (!(pid = WR_GetPGPId(&pe)))
       {
@@ -839,7 +839,7 @@ LOCAL char *WR_GetPGPIds(char *source, char *ids)
 LOCAL BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 {
    FILE *oldfh;
-   if (oldfh = fopen(GetMailFile(NULL, NULL, comp->OrigMail), "r"))
+   if ((oldfh = fopen(GetMailFile(NULL, NULL, comp->OrigMail), "r")))
    {
       BOOL infield = FALSE, inbody = FALSE;
       char buf[SIZE_LINE];
@@ -867,7 +867,7 @@ LOCAL BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 LOCAL BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 {
    FILE *oldfh;
-   if (oldfh = fopen(GetMailFile(NULL, NULL, comp->OrigMail), "r"))
+   if ((oldfh = fopen(GetMailFile(NULL, NULL, comp->OrigMail), "r")))
    {
       BOOL infield = FALSE;
       char buf[SIZE_LINE];
@@ -950,16 +950,16 @@ BOOL FirstAddr=TRUE;
 	{
 		if(CheckThese[i] == NULL) continue;		// skip empty fields
 		// copy string as strtok() will modify it
-		if(buf = strdup(CheckThese[i]))
+		if((buf = (STRPTR)strdup(CheckThese[i])))
 		{
 		int hits = 0, currsec;
 		STRPTR in=buf,s,t;
 		struct MUIS_Listtree_TreeNode *tn;
 
 			// loop through comma-separated addresses in string
-			while(s = strtok_r(&in,","))
+			while((s = strtok_r((char **)&in,",")))
 			{
-				while(t = strtok_r(&s," ()<>"))
+				while((t = strtok_r((char **)&s," ()<>")))
 					if(strchr(t,'@')) break;
 
 				if(!t) continue; // can't find address for this entry - shouldn't happen
@@ -1016,7 +1016,7 @@ LOCAL BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
       }
    }
    tf2 = OpenTempFile(NULL);
-   if (tf = OpenTempFile("w"))
+   if ((tf = OpenTempFile("w")))
    {
       WriteContentTypeAndEncoding(tf->FP, firstpart);
       fputc('\n', tf->FP);
@@ -1122,7 +1122,7 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
                struct WritePart *tpart = comp->FirstPart; // save parts list so we're able to recover from a calloc() error
 
                // replace with single new part
-               if(comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart)))
+               if((comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart))))
                {
                   comp->FirstPart->EncType = tpart->EncType;          // reuse encoding
                   FreePartsList(tpart);                               // free old parts list
@@ -1301,7 +1301,7 @@ void WR_NewMail(int mode, int winnum)
       fclose(comp.FH);
       if (!done) { DeleteFile(GetMailFile(NULL, outfolder, &mail)); goto skip; }
       if (wr->Mode != NEW_BOUNCE) EndNotify(&G->WR_NRequest[winnum]);
-      if (email = MA_ExamineMail(outfolder, mail.MailFile, Status[stat], FALSE))
+      if ((email = MA_ExamineMail(outfolder, mail.MailFile, Status[stat], FALSE)))
       {
          new = AddMailToList((struct Mail *)email, outfolder);
          MA_FreeEMailStruct(email);
@@ -1371,7 +1371,7 @@ skip:
    BusyEnd;
 }
 
-SAVEDS ASM void WR_NewMailFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_NewMailFunc(REG(a1,int *arg))
 {
    WR_NewMail(arg[0], arg[1]);
 }
@@ -1400,7 +1400,7 @@ void WR_Cleanup(int winnum)
 ///
 /// WR_CancelFunc
 //  User clicked the Cancel button
-SAVEDS ASM void WR_CancelFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_CancelFunc(REG(a1,int *arg))
 {
    int haschanged, winnum = *arg;
    if (G->WR[winnum]->Mode != NEW_BOUNCE)
@@ -1426,7 +1426,7 @@ MakeHook(WR_CancelHook, WR_CancelFunc);
 ///
 /// WR_SaveAsFunc
 //  Saves contents of internal editor to a file
-SAVEDS ASM void WR_SaveAsFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_SaveAsFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
@@ -1444,7 +1444,7 @@ MakeHook(WR_SaveAsHook, WR_SaveAsFunc);
 ///
 /// WR_Edit
 //  Launches external editor with message text
-SAVEDS ASM void WR_Edit(REG(a1,int *arg))
+void SAVEDS ASM WR_Edit(REG(a1,int *arg))
 {
    int winnum = *arg;
    long winopen;
@@ -1467,7 +1467,7 @@ MakeHook(WR_EditHook, WR_Edit);
 ///
 /// WR_AddFileFunc
 //  Adds one or more files to the attachment list
-SAVEDS ASM void WR_AddFileFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_AddFileFunc(REG(a1,int *arg))
 {
    int i, winnum = *arg;
    char filename[SIZE_PATHFILE];
@@ -1490,7 +1490,7 @@ MakeHook(WR_AddFileHook, WR_AddFileFunc);
 ///
 /// WR_AddArchiveFunc
 //  Creates an archive of one or more files and adds it to the attachment list
-SAVEDS ASM void WR_AddArchiveFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_AddArchiveFunc(REG(a1,int *arg))
 {
    int i, winnum = *arg;
    static char chr[2] = { 0,0 };
@@ -1506,7 +1506,7 @@ SAVEDS ASM void WR_AddArchiveFunc(REG(a1,int *arg))
       if (!StringRequest(arcname, SIZE_FILE, GetStr(MSG_WR_CreateArc), GetStr(MSG_WR_CreateArcReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->WR[winnum]->GUI.WI)) return;
       strmfp(filename, C->TempDir, arcname);
       sprintf(arcpath, strchr(filename, ' ') ? "\"%s\"" : "%s", filename);
-      if (strstr(C->PackerCommand, "%l")) if (tf = OpenTempFile("w"))
+      if (strstr(C->PackerCommand, "%l")) if ((tf = OpenTempFile("w")))
       {
          for (i = 0; i < ar->fr_NumArgs; i++)
          {
@@ -1562,7 +1562,7 @@ MakeHook(WR_AddArchiveHook, WR_AddArchiveFunc);
 ///
 /// WR_DisplayFile
 //  Displays an attached file using a MIME viewer
-SAVEDS ASM void WR_DisplayFile(REG(a1,int *arg))
+void SAVEDS ASM WR_DisplayFile(REG(a1,int *arg))
 {
    struct Attach *attach = NULL;
 
@@ -1574,19 +1574,19 @@ MakeHook(WR_DisplayFileHook, WR_DisplayFile);
 ///
 /// WR_ChangeSignatureFunc
 //  Changes the current signature
-SAVEDS ASM void WR_ChangeSignatureFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_ChangeSignatureFunc(REG(a1,int *arg))
 {
    struct TempFile *tf;
    int signat = arg[0], winnum = arg[1];
    char buffer[SIZE_LINE];
    FILE *in, *out;
 
-   if (tf = OpenTempFile(NULL))
+   if ((tf = OpenTempFile(NULL)))
    {
       EditorToFile(G->WR[winnum]->GUI.TE_EDIT, tf->Filename, NULL);
-      if (in = fopen(tf->Filename, "r"))
+      if ((in = fopen(tf->Filename, "r")))
       {
-         if (out = fopen(G->WR_Filename[winnum], "w"))
+         if ((out = fopen(G->WR_Filename[winnum], "w")))
          {
             while (fgets(buffer, SIZE_LINE, in))
                if (strcmp(buffer, "-- \n")) fputs(buffer, out); else break;
@@ -1615,9 +1615,9 @@ LOCAL char *WR_TransformText(char *source, int mode, char *qtext)
    {
       size += SIZE_DEFAULT;
       if (quote) size += size/20*qtextlen;
-      if (dest = calloc(size, 1))
+      if ((dest = calloc(size, 1)))
       {
-         if (fp = fopen(source, "r"))
+         if ((fp = fopen(source, "r")))
          {
             while ((ch = fgetc(fp)) != EOF)
             {
@@ -1647,7 +1647,7 @@ LOCAL char *WR_TransformText(char *source, int mode, char *qtext)
 ///
 /// WR_InsertSeparator
 //  Inserts a separator bar at the cursor position
-SAVEDS ASM void WR_InsertSeparatorFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_InsertSeparatorFunc(REG(a1,int *arg))
 {
    APTR ed = G->WR[arg[1]]->GUI.TE_EDIT;
    set(ed, MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain);
@@ -1659,7 +1659,7 @@ MakeHook(WR_InsertSeparatorHook, WR_InsertSeparatorFunc);
 ///
 /// WR_EditorCmd
 //  Inserts file or clipboard into editor
-SAVEDS ASM void WR_EditorCmd(REG(a1,int *arg))
+void SAVEDS ASM WR_EditorCmd(REG(a1,int *arg))
 {
    int cmd = arg[0], winnum = arg[1];
    char *text, *quotetext, filename[SIZE_PATHFILE];
@@ -1699,7 +1699,7 @@ MakeHook(WR_EditorCmdHook, WR_EditorCmd);
 ///
 /// WR_AddClipboardFunc
 //  Adds contents of clipboard as attachment
-SAVEDS ASM void WR_AddClipboardFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_AddClipboardFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct TempFile *tf = OpenTempFile("w");
@@ -1717,7 +1717,7 @@ MakeHook(WR_AddClipboardHook, WR_AddClipboardFunc);
 ///
 /// WR_AddPGPKeyFunc
 //  Adds ASCII version of user's public PGP key as attachment
-SAVEDS ASM void WR_AddPGPKeyFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_AddPGPKeyFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    char *myid = *C->MyPGPID ? C->MyPGPID : C->EmailAddress;
@@ -1796,7 +1796,7 @@ void WR_SetupOldMail(int winnum)
 ///
 /// WR_UpdateTitleFunc
 //  Shows cursor coordinates
-SAVEDS ASM void WR_UpdateWTitleFunc(REG(a1,int *arg))
+void SAVEDS ASM WR_UpdateWTitleFunc(REG(a1,int *arg))
 {
    struct WR_ClassData *wr = G->WR[*arg];
    APTR ed = wr->GUI.TE_EDIT;
@@ -1827,7 +1827,7 @@ void WR_App(int winnum, struct AppMessage *amsg)
          FILE *fh;
          int len, j, notascii = 0;
          char buffer[SIZE_LARGE];
-         if (fh = fopen(buf, "r"))
+         if ((fh = fopen(buf, "r")))
          {
             len = fread(buffer, 1, SIZE_LARGE-1, fh);
             buffer[len] = 0;
@@ -1846,7 +1846,7 @@ void WR_App(int winnum, struct AppMessage *amsg)
    }
 }
 
-SAVEDS ASM LONG WR_AppFunc(REG(a1,ULONG *arg))
+LONG SAVEDS ASM WR_AppFunc(REG(a1,ULONG *arg))
 {
    WR_App((int)arg[1],  (struct AppMessage *)arg[0]);
    return 0;
@@ -1856,7 +1856,7 @@ MakeHook(WR_AppHook, WR_AppFunc);
 ///
 /// WR_LV_ConFunc
 //  Attachment listview construct hook
-SAVEDS ASM struct Attach *WR_LV_ConFunc(REG(a1,struct Attach *attach))
+struct Attach * SAVEDS ASM WR_LV_ConFunc(REG(a1,struct Attach *attach))
 {
    struct Attach *entry = malloc(sizeof(struct Attach));
    *entry = *attach;
@@ -1867,7 +1867,7 @@ MakeHook(WR_LV_ConFuncHook, WR_LV_ConFunc);
 ///
 /// WR_LV_DspFunc
 //  Attachment listview display hook
-SAVEDS ASM long WR_LV_DspFunc(REG(a2,char **array), REG(a1,struct Attach *entry))
+long SAVEDS ASM WR_LV_DspFunc(REG(a2,char **array), REG(a1,struct Attach *entry))
 {
    static char dispsz[SIZE_SMALL];
    if (entry)
@@ -1914,7 +1914,7 @@ LOCAL void WR_SharedSetup(struct WR_ClassData *data, int winnum)
 LOCAL APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti)
 {
    APTR obj, bt_ver, bt_adr;
-   if (obj = HGroup,
+   if ((obj = HGroup,
       GroupSpacing(1),
       Child, *string = NewObject(CL_DDString->mcc_Class, NULL,
          MUIA_ControlChar, ShortCut(label),
@@ -1922,7 +1922,7 @@ LOCAL APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, in
       End,
       Child, bt_ver = PopButton(MUII_ArrowLeft),
       Child, bt_adr = PopButton(MUII_PopUp),
-   End)
+   End))
    {
       set(bt_ver, MUIA_CycleChain, TRUE);
       set(bt_adr, MUIA_CycleChain, TRUE);
@@ -1953,7 +1953,7 @@ struct WR_ClassData *WR_New(int winnum)
 {
    struct WR_ClassData *data;
 
-   if (data = calloc(1,sizeof(struct WR_ClassData)))
+   if ((data = calloc(1,sizeof(struct WR_ClassData))))
    {
       static char *rtitles[4]={NULL}, *encoding[3], *security[SEC_MAXDUMMY+1], *priority[4], *signat[5];
       static char *emoticons[4] = { ":-)", ":-|", ":-(", ";-)" };
@@ -2372,7 +2372,7 @@ LOCAL struct WR_ClassData *WR_NewBounce(int winnum)
 {
    struct WR_ClassData *data;
 
-   if (data = calloc(1,sizeof(struct WR_ClassData)))
+   if ((data = calloc(1,sizeof(struct WR_ClassData))))
    {
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_WR_BounceWT),

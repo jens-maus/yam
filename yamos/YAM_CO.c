@@ -63,7 +63,7 @@ struct Rule *CO_NewRule(void)
 ///
 /// CO_AddRule
 //  Adds a new entry to the rule list
-SAVEDS void CO_AddRule(void)
+void SAVEDS CO_AddRule(void)
 {
    int i, m, s;
    for (i = 0; i < MAXRU; i++)
@@ -89,7 +89,7 @@ MakeHook(CO_AddRuleHook,CO_AddRule);
 ///
 /// CO_DelRule
 //  Deletes an entry from the rule list
-SAVEDS void CO_DelRule(void)
+void SAVEDS CO_DelRule(void)
 {
    int i, p;
    get(G->CO->GUI.LV_RULES, MUIA_List_Active, &p);
@@ -139,7 +139,7 @@ void CO_RuleGhost(struct CO_GUIData *gui, struct Rule *ru)
 ///
 /// CO_GetRUEntry
 //  Fills form with data from selected list entry
-SAVEDS void CO_GetRUEntry(void)
+void SAVEDS CO_GetRUEntry(void)
 {
    struct Rule *rule = NULL;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -190,7 +190,7 @@ MakeHook(CO_GetRUEntryHook,CO_GetRUEntry);
 ///
 /// CO_PutRUEntry
 //  Fills form data into selected list entry
-SAVEDS void CO_PutRUEntry(void)
+void SAVEDS CO_PutRUEntry(void)
 {
    struct Rule *rule = NULL;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -244,7 +244,7 @@ MakeHook(CO_PutRUEntryHook,CO_PutRUEntry);
 ///
 /// CO_RemoteToggleFunc
 //  Enables/disables GUI elements for remote filters
-SAVEDS ASM void CO_RemoteToggleFunc(REG(a1,int *arg))
+void SAVEDS ASM CO_RemoteToggleFunc(REG(a1,int *arg))
 {
    BOOL rm = *arg;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -298,7 +298,7 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
 ///
 /// CO_AddPOP3
 //  Adds a new entry to the POP3 account list
-SAVEDS void CO_AddPOP3(void)
+void SAVEDS CO_AddPOP3(void)
 {
    int i;
    for (i = 0; i < MAXP3; i++)
@@ -316,7 +316,7 @@ MakeHook(CO_AddPOP3Hook,CO_AddPOP3);
 ///
 /// CO_DelPOP3
 //  Deletes an entry from the POP3 account list
-SAVEDS void CO_DelPOP3(void)
+void SAVEDS CO_DelPOP3(void)
 {
    int i, p, e;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -335,7 +335,7 @@ MakeHook(CO_DelPOP3Hook,CO_DelPOP3);
 ///
 /// CO_GetP3Entry
 //  Fills form with data from selected list entry
-SAVEDS void CO_GetP3Entry(void)
+void SAVEDS CO_GetP3Entry(void)
 {
    int e;
    struct POP3 *pop3 = NULL;
@@ -360,7 +360,7 @@ MakeHook(CO_GetP3EntryHook,CO_GetP3Entry);
 ///
 /// CO_PutP3Entry
 //  Fills form data into selected list entry
-SAVEDS void CO_PutP3Entry(void)
+void SAVEDS CO_PutP3Entry(void)
 {
    struct POP3 *pop3 = NULL;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -385,7 +385,7 @@ MakeHook(CO_PutP3EntryHook,CO_PutP3Entry);
 ///
 /// CO_GetDefaultPOPFunc
 //  Sets values of first POP3 account
-SAVEDS void CO_GetDefaultPOPFunc(void)
+void SAVEDS CO_GetDefaultPOPFunc(void)
 {
    struct POP3 *pop3 = CE->P3[0];
 
@@ -413,7 +413,7 @@ struct MimeView *CO_NewMimeView(void)
 ///
 /// CO_AddMimeView
 //  Adds a new entry to the MIME viewer list
-SAVEDS void CO_AddMimeView(void)
+void SAVEDS CO_AddMimeView(void)
 {
    struct CO_GUIData *gui = &G->CO->GUI;
    int i;
@@ -432,7 +432,7 @@ MakeHook(CO_AddMimeViewHook,CO_AddMimeView);
 ///
 /// CO_DelMimeView
 //  Deletes an entry from the MIME viewer list
-SAVEDS void CO_DelMimeView(void)
+void SAVEDS CO_DelMimeView(void)
 {
    int i, p;
    get(G->CO->GUI.LV_MIME, MUIA_List_Active, &p);
@@ -448,7 +448,7 @@ MakeHook(CO_DelMimeViewHook,CO_DelMimeView);
 ///
 /// CO_GetMVEntry
 //  Fills form with data from selected list entry
-SAVEDS void CO_GetMVEntry(void)
+void SAVEDS CO_GetMVEntry(void)
 {
    struct MimeView *mv = NULL;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -470,7 +470,7 @@ MakeHook(CO_GetMVEntryHook,CO_GetMVEntry);
 ///
 /// CO_PutMVEntry
 //  Fills form data into selected list entry
-SAVEDS void CO_PutMVEntry(void)
+void SAVEDS CO_PutMVEntry(void)
 {
    struct MimeView *mv = NULL;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -490,7 +490,7 @@ MakeHook(CO_PutMVEntryHook,CO_PutMVEntry);
 /**** ARexx Hooks ****/
 /// CO_GetRXEntry
 //  Fills form with data from selected list entry
-SAVEDS void CO_GetRXEntry(void)
+void SAVEDS CO_GetRXEntry(void)
 {
    int act;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -510,7 +510,7 @@ MakeHook(CO_GetRXEntryHook,CO_GetRXEntry);
 ///
 /// CO_PutRXEntry
 //  Fills form data into selected list entry
-SAVEDS void CO_PutRXEntry(void)
+void SAVEDS CO_PutRXEntry(void)
 {
    int act;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -801,7 +801,7 @@ void CO_Validate(struct Config *co, BOOL update)
 ///
 /// CO_ImportCTypes
 //  Imports MIME viewers from a MIME.prefs file
-SAVEDS void CO_ImportCTypesFunc(void)
+void SAVEDS CO_ImportCTypesFunc(void)
 {
    int mode;
 
@@ -888,7 +888,7 @@ MakeHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);
 ///
 /// CO_EditSignatFunc
 //  Edits the signature file
-SAVEDS ASM void CO_EditSignatFunc(REG(a1,int *arg))
+void SAVEDS ASM CO_EditSignatFunc(REG(a1,int *arg))
 {
    int sig = GetMUICycle(G->CO->GUI.CY_SIGNAT), modified;
    char buffer[SIZE_COMMAND+SIZE_PATHFILE];
@@ -910,7 +910,7 @@ MakeHook(CO_EditSignatHook,CO_EditSignatFunc);
 ///
 /// CO_OpenConfig
 //  Opens a different configuration file
-SAVEDS void CO_OpenConfig(void)
+void SAVEDS CO_OpenConfig(void)
 {
    if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_Open), 0, G->MA_MailDir, ""))
    {
@@ -926,7 +926,7 @@ MakeHook(CO_OpenConfigHook, CO_OpenConfig);
 ///
 /// CO_SaveConfigAs
 //  Saves configuration to a file using an alternative name
-SAVEDS void CO_SaveConfigAs(void)
+void SAVEDS CO_SaveConfigAs(void)
 {
    if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_SaveAs), 1, G->MA_MailDir, ""))
    {
@@ -943,7 +943,7 @@ MakeHook(CO_SaveConfigAsHook, CO_SaveConfigAs);
 ///
 /// CO_Restore
 //  Makes all changes undone
-SAVEDS void CO_Restore(void)
+void SAVEDS CO_Restore(void)
 {                    
    CO_FreeConfig(CE);
    CO_CopyConfig(CE, C);
@@ -954,7 +954,7 @@ MakeHook(CO_RestoreHook,CO_Restore);
 ///
 /// CO_LastSaved
 //  Reloads configuration from file
-SAVEDS void CO_LastSaved(void)
+void SAVEDS CO_LastSaved(void)
 {
    CO_LoadConfig(CE, G->CO_PrefsFile, NULL);
    CO_SetConfig();
@@ -965,7 +965,7 @@ MakeHook(CO_LastSavedHook,CO_LastSaved);
 ///
 /// CO_ResetToDefaultFunc
 //  Resets configuration (or a part of it)
-SAVEDS ASM void CO_ResetToDefaultFunc(REG(a1,int *arg))
+void SAVEDS ASM CO_ResetToDefaultFunc(REG(a1,int *arg))
 {
    if (*arg) { CO_SetDefaults(CE, -1); G->CO->UpdateAll = TRUE; }
    else CO_SetDefaults(CE, G->CO->VisiblePage);
@@ -1001,7 +1001,7 @@ LOCAL APTR CO_BuildPage(struct CO_ClassData *data, int page)
 ///
 /// CO_ChangePageFunc
 //  Selects a different section of the configuration
-SAVEDS ASM void CO_ChangePageFunc(REG(a1,int *arg))
+void SAVEDS ASM CO_ChangePageFunc(REG(a1,int *arg))
 {
    struct CO_GUIData *gui = &G->CO->GUI;
    if (*arg < 0 || *arg >= MAXCPAGES) return;
@@ -1028,7 +1028,7 @@ MakeHook(CO_ChangePageHook,CO_ChangePageFunc);
 ///
 /// CO_CloseFunc
 //  Closes configuration window
-SAVEDS ASM void CO_CloseFunc(REG(a1,int *arg))
+void SAVEDS ASM CO_CloseFunc(REG(a1,int *arg))
 {
    if (*arg >= 1)
    {
@@ -1046,7 +1046,7 @@ MakeHook(CO_CloseHook,CO_CloseFunc);
 ///
 /// CO_OpenFunc
 //  Opens configuration window
-SAVEDS void CO_OpenFunc(void)
+void SAVEDS CO_OpenFunc(void)
 {
    if (!G->CO)
    {
@@ -1065,11 +1065,11 @@ MakeHook(CO_OpenHook,CO_OpenFunc);
 
 /// CO_PL_DspFunc
 //  Section listview displayhook
-SAVEDS ASM long CO_PL_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct PageList *entry))
+long SAVEDS ASM CO_PL_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct PageList *entry))
 {
    static char page[SIZE_DEFAULT];
    struct PL_Data *data = (APTR)hook->h_Data;
-   sprintf(array[0] = page, "\033O[%08lx] %s", data->Image[entry->Offset], GetStr(entry->Label));
+   sprintf(array[0] = page, "\033O[%08lx] %s", data->Image[entry->Offset], GetStr(entry->PageLabel));
    return 0;
 }
 
@@ -1334,21 +1334,21 @@ LOCAL struct CO_ClassData *CO_New(void)
       int i;
       for (i = 0; i < MAXCPAGES; i++) { page[i].Offset = i; pages[i] = &page[i]; }
       pages[i] = NULL;
-      page[ 0].Label = MSG_CO_CrdFirstSteps;
-      page[ 1].Label = MSG_CO_CrdTCPIP;
-      page[ 2].Label = MSG_CO_CrdNewMail;
-      page[ 3].Label = MSG_CO_CrdFilters;
-      page[ 4].Label = MSG_CO_CrdRead;
-      page[ 5].Label = MSG_CO_CrdWrite;
-      page[ 6].Label = MSG_CO_CrdReply;
-      page[ 7].Label = MSG_CO_CrdSignature;
-      page[ 8].Label = MSG_CO_CrdLists;
-      page[ 9].Label = MSG_CO_CrdSecurity;
-      page[10].Label = MSG_CO_CrdStartQuit;
-      page[11].Label = MSG_CO_CrdMIME;
-      page[12].Label = MSG_CO_CrdABook;
-      page[13].Label = MSG_CO_CrdScripts;
-      page[14].Label = MSG_CO_CrdMixed;
+      page[ 0].PageLabel = MSG_CO_CrdFirstSteps;
+      page[ 1].PageLabel = MSG_CO_CrdTCPIP;
+      page[ 2].PageLabel = MSG_CO_CrdNewMail;
+      page[ 3].PageLabel = MSG_CO_CrdFilters;
+      page[ 4].PageLabel = MSG_CO_CrdRead;
+      page[ 5].PageLabel = MSG_CO_CrdWrite;
+      page[ 6].PageLabel = MSG_CO_CrdReply;
+      page[ 7].PageLabel = MSG_CO_CrdSignature;
+      page[ 8].PageLabel = MSG_CO_CrdLists;
+      page[ 9].PageLabel = MSG_CO_CrdSecurity;
+      page[10].PageLabel = MSG_CO_CrdStartQuit;
+      page[11].PageLabel = MSG_CO_CrdMIME;
+      page[12].PageLabel = MSG_CO_CrdABook;
+      page[13].PageLabel = MSG_CO_CrdScripts;
+      page[14].PageLabel = MSG_CO_CrdMixed;
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_MA_MConfig),
          MUIA_HelpNode,"CO_W",

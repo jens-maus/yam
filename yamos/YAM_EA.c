@@ -130,7 +130,7 @@ STACKEXT void EA_AddMembers(Object *obj, struct MUIS_Listtree_TreeNode *list)
 ///
 /// EA_GetEntry
 //  Fills string gadget with data from selected list entry
-SAVEDS ASM void EA_GetEntry(REG(a1,int *arg))
+void SAVEDS ASM EA_GetEntry(REG(a1,int *arg))
 {
    int winnum = *arg;
    char *entry = NULL;
@@ -142,7 +142,7 @@ MakeHook(EA_GetEntryHook, EA_GetEntry);
 ///
 /// EA_PutEntry
 //  Updates selected list entry
-SAVEDS ASM void EA_PutEntry(REG(a1,int *arg))
+void SAVEDS ASM EA_PutEntry(REG(a1,int *arg))
 {
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
    extern struct Hook EA_AddHook;
@@ -227,7 +227,7 @@ void EA_SetDefaultAlias(struct ABEntry *ab)
 /*** Buttons ***/
 /// EA_Okay
 //  Saves changes to the edited entry in the address book
-SAVEDS ASM void EA_Okay(REG(a1,int *arg))
+void SAVEDS ASM EA_Okay(REG(a1,int *arg))
 {
    static struct ABEntry newaddr;
    struct ABEntry *addr;
@@ -306,7 +306,7 @@ MakeHook(EA_OkayHook, EA_Okay);
 ///
 /// EA_AddFunc
 //  Adds a new entry to the member list
-SAVEDS ASM void EA_AddFunc(REG(a1,int *arg))
+void SAVEDS ASM EA_AddFunc(REG(a1,int *arg))
 {
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
    char *buf;
@@ -344,7 +344,7 @@ void EA_SetPhoto(int winnum, char *fname)
 ///
 /// EA_SelectPhotoFunc
 //  Lets user select an image file to be used as portrait
-SAVEDS ASM void EA_SelectPhotoFunc(REG(a1,int *arg))
+void SAVEDS ASM EA_SelectPhotoFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
 
@@ -359,7 +359,7 @@ MakeHook(EA_SelectPhotoHook, EA_SelectPhotoFunc);
 ///
 /// EA_DownloadPhotoFunc
 //  Downloads a portrait from the YAM user gallery
-SAVEDS ASM void EA_DownloadPhotoFunc(REG(a1,int *arg))
+void SAVEDS ASM EA_DownloadPhotoFunc(REG(a1,int *arg))
 {
    int winnum = *arg, c;
    struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
@@ -412,7 +412,7 @@ MakeHook(EA_DownloadPhotoHook, EA_DownloadPhotoFunc);
 ///
 /// EA_HomepageFunc
 //  Launches a browser to view the homepage of the person
-SAVEDS ASM void EA_HomepageFunc(REG(a1,int *arg))
+void SAVEDS ASM EA_HomepageFunc(REG(a1,int *arg))
 {
    char *url;
    get(G->EA[*arg]->GUI.ST_HOMEPAGE, MUIA_String_Contents, &url);
@@ -434,7 +434,7 @@ LOCAL int EA_Open(int type)
 ///
 /// EA_CloseFunc
 //  Closes address book entry window
-SAVEDS ASM void EA_CloseFunc(REG(a1,int *arg))
+void SAVEDS ASM EA_CloseFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    DisposeModulePush(&G->EA[winnum]);

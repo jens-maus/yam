@@ -77,7 +77,7 @@ void MA_ChangeTransfer(BOOL on)
 ///
 /// MA_ChangeSelectedFunc
 //  User selected some message(s) in the message list
-SAVEDS void MA_ChangeSelectedFunc(void)
+void SAVEDS MA_ChangeSelectedFunc(void)
 {
    struct MA_GUIData *gui = &G->MA->GUI;
    struct Folder *fo = FO_GetCurrentFolder();
@@ -88,7 +88,7 @@ SAVEDS void MA_ChangeSelectedFunc(void)
    if (!fo) return;
    type = fo->Type;
    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-   if (active = (mail != NULL)) if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
+   if ((active = (mail != NULL))) if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
    for (i = 0; i < MAXWR; i++) if (mail && G->WR[i]) if (G->WR[i]->Mail == mail) beingedited = TRUE;
    if (!mail) if (!GetMUI(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
    DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
@@ -112,7 +112,7 @@ MakeHook(MA_ChangeSelectedHook, MA_ChangeSelectedFunc);
 ///
 /// MA_SetMessageInfoFunc
 //  Builds help bubble for message list
-SAVEDS void MA_SetMessageInfoFunc(void)
+void SAVEDS MA_SetMessageInfoFunc(void)
 {
    static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
    char *sh = NULL;
@@ -125,7 +125,7 @@ MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
 ///
 /// MA_SetFolderInfoFunc
 //  Builds help bubble for folder list
-SAVEDS void MA_SetFolderInfoFunc(void)
+void SAVEDS MA_SetFolderInfoFunc(void)
 {
    static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
    char *sh = NULL;
@@ -163,7 +163,7 @@ void MA_SetMailStatus(struct Mail *mail, int stat)
    int pf;
 
    strcpy(statstr, Status[stat&0xFF]);
-   if (pf = ((mail->Flags & 0x0700) >> 8)) sprintf(statstr+1, "%c", pf+'0');
+   if ((pf = ((mail->Flags & 0x0700) >> 8))) sprintf(statstr+1, "%c", pf+'0');
    if (stat != mail->Status)
    {
       mail->Status = stat&0xFF;
@@ -183,7 +183,7 @@ LOCAL struct Mail **MA_CreateFullList(struct Folder *fo)
    int selected = fo->Total;
    struct Mail *mail, **mlist = NULL;
 
-   if (selected) if (mlist = calloc(selected+2, sizeof(struct Mail *)))
+   if (selected) if ((mlist = calloc(selected+2, sizeof(struct Mail *))))
    {
       mlist[0] = (struct Mail *)selected;
       mlist[1] = (struct Mail *)2;
@@ -204,7 +204,7 @@ struct Mail **MA_CreateMarkedList(APTR lv)
    DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
    if (selected)
    {
-      if (mlist = calloc(selected+2, sizeof(struct Mail *)))
+      if ((mlist = calloc(selected+2, sizeof(struct Mail *))))
       {
          mlist[0] = (struct Mail *)selected;
          mlist[1] = (struct Mail *)1;
@@ -221,7 +221,7 @@ struct Mail **MA_CreateMarkedList(APTR lv)
    else
    {
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-      if (mail) if (mlist = calloc(3, sizeof(struct Mail *)))
+      if (mail) if ((mlist = calloc(3, sizeof(struct Mail *))))
       {
          get(G->MA->GUI.NL_MAILS, MUIA_NList_Active, &id);
          mail->Position = id;
@@ -266,11 +266,11 @@ LOCAL struct Mail *MA_MoveCopySingle(struct Mail *mail, int pos, struct Folder *
       if (copyit) strcpy(mail->MailFile, mfile);
       else
       {
-         if (lv = WhichLV(from)) DoMethod(lv, MUIM_NList_Remove, pos);
+         if ((lv = WhichLV(from))) DoMethod(lv, MUIM_NList_Remove, pos);
          RemoveMailFromList(mail);
       }
       mail = AddMailToList(&cmail, to);
-      if (lv = WhichLV(to)) DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
+      if ((lv = WhichLV(to))) DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
       if (mail->Status == STATUS_SNT && to->Type == FT_OUTGOING) MA_SetMailStatus(mail, STATUS_WFS);
       return mail;
    }
@@ -295,7 +295,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
       mi = GetMailInfo(mail);
       MA_MoveCopySingle(mail, mi->Pos, frombox, tobox, copyit);
    }
-   else if (mlist = MA_CreateMarkedList(lv))
+   else if ((mlist = MA_CreateMarkedList(lv)))
    {
       selected = (int)*mlist;
       set(lv, MUIA_NList_Quiet, TRUE);
@@ -327,7 +327,7 @@ LOCAL void MA_UpdateStatus(void)
    struct Mail *mail;
    struct Folder **flist;
 
-   if (flist = FO_CreateList())
+   if ((flist = FO_CreateList()))
    {
       for (i = 1; i <= (int)*flist; i++) if (!OUTGOING(flist[i]->Type)) if (flist[i]->LoadedMode == 2)
       {
@@ -344,13 +344,13 @@ LOCAL void MA_UpdateStatus(void)
 /*** Main button functions ***/
 /// MA_ReadMessage
 //  Loads active message into a read window
-SAVEDS ASM void MA_ReadMessage(REG(a1,int *arg))
+void SAVEDS ASM MA_ReadMessage(REG(a1,int *arg))
 {
    static int lastwin = 0;
    struct Mail *mail;
    int i, winnum;
 
-   if (mail = MA_GetActiveMail(ANYBOX, NULL, NULL))
+   if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
    {
       for (i = 0; i < MAXRE; i++) if (G->RE[i]) if (mail == G->RE[i]->MailPtr)
       {
@@ -466,7 +466,7 @@ int MA_NewNew(struct Mail *mail, int flags)
    /* First check if the basic configuration is okay, then open write window */
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
-      if (out = fopen(G->WR_Filename[winnum], "w"))
+      if ((out = fopen(G->WR_Filename[winnum], "w")))
       {
          wr = G->WR[winnum];
          wr->Mode = NEW_NEW;
@@ -508,7 +508,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
    for (i = 0; i < MAXWR; i++) if (G->WR[i]) if (G->WR[i]->Mail == mail) { DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront); return -1; }
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
-      if (out = fopen(G->WR_Filename[winnum], "w"))
+      if ((out = fopen(G->WR_Filename[winnum], "w")))
       {
          wr = G->WR[winnum];
          wr->Mode = NEW_EDIT;
@@ -602,13 +602,13 @@ int MA_NewForward(struct Mail **mlist, int flags)
 
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
-      if (out = fopen(G->WR_Filename[winnum], "w"))
+      if ((out = fopen(G->WR_Filename[winnum], "w")))
       {
          wr = G->WR[winnum];
          wr->Mode = NEW_FORWARD;
          wr->MList = memcpy(malloc(mlen), mlist, mlen);
          rsub = AllocStrBuf(SIZE_SUBJECT);
-         qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), MA_CmpDate);
+         qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
          MA_InsertIntroText(out, C->NewIntro, NULL);
          for (i = 0; i < (int)mlist[0]; i++)
          {
@@ -673,7 +673,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
-      if (out = fopen(G->WR_Filename[winnum], "w"))
+      if ((out = fopen(G->WR_Filename[winnum], "w")))
       {
          wr = G->WR[winnum];
          wr->Mode = NEW_REPLY;
@@ -681,7 +681,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
          rto = AllocStrBuf(SIZE_ADDRESS);
          rcc = AllocStrBuf(SIZE_ADDRESS);
          rsub = AllocStrBuf(SIZE_SUBJECT);
-         qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), MA_CmpDate);
+         qsort(&mlist[2], (int)mlist[0], sizeof(struct Mail *), (int (*)(const void *, const void *))MA_CmpDate);
          for (j = 0; j < (int)mlist[0]; j++)
          {
             mail = mlist[j+2];
@@ -704,7 +704,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
             {
                if (folder->Type == FT_INCOMING)
                {
-                  if (flist = FO_CreateList())
+                  if ((flist = FO_CreateList()))
                   {
                      for (i = 1; i <= (int)*flist; i++) if (flist[i]->MLPattern[0]) if (MatchNoCase(tofld, flist[i]->MLPattern)) {
                         mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : tofld;
@@ -821,10 +821,10 @@ void MA_RemoveAttach(struct Mail *mail)
    sprintf(tfname, "%s.tmp", GetMailFile(fname, NULL, mail));
    RE_InitPrivateRC(mail, PM_ALL);
    cmsg = RE_ReadInMessage(4, RIM_QUIET);
-   if (part = G->RE[4]->FirstPart->Next) if (part->Next)
-      if (out = fopen(tfname, "w"))
+   if ((part = G->RE[4]->FirstPart->Next)) if (part->Next)
+      if ((out = fopen(tfname, "w")))
       {
-         if (in = fopen(G->RE[4]->FirstPart->Filename, "r"))
+         if ((in = fopen(G->RE[4]->FirstPart->Filename, "r")))
          {
             BOOL infield = FALSE, inbody = FALSE;
             while (fgets(buf, SIZE_LINE, in))
@@ -856,12 +856,12 @@ void MA_RemoveAttach(struct Mail *mail)
 ///
 /// MA_RemoveAttachFunc
 //  Removes attachments from selected messages
-SAVEDS void MA_RemoveAttachFunc(void)
+void SAVEDS MA_RemoveAttachFunc(void)
 {
    struct Mail **mlist;
    int i;
 
-   if (mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS))
+   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
    {
       int selected = (int)*mlist;
       Busy(GetStr(MSG_BusyRemovingAtt), "", 0, selected);
@@ -881,23 +881,23 @@ MakeHook(MA_RemoveAttachHook, MA_RemoveAttachFunc);
 ///
 /// MA_SaveAttachFunc
 //  Saves all attachments of selected messages to disk
-SAVEDS void MA_SaveAttachFunc(void)
+void SAVEDS MA_SaveAttachFunc(void)
 {
    struct Mail **mlist, *mail;
    struct Part *part;
    char *cmsg;
    int i;
 
-   if (mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS))
+   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
    {
       if (ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), 5, C->DetachDir, ""))
          for (i = 0; i < (int)*mlist; i++)
          {
             RE_InitPrivateRC(mail = mlist[i+2], PM_ALL);
-            if (cmsg = RE_ReadInMessage(4, RIM_QUIET))
+            if ((cmsg = RE_ReadInMessage(4, RIM_QUIET)))
             {
                free(cmsg);
-               if (part = G->RE[4]->FirstPart->Next) if (part->Next)
+               if ((part = G->RE[4]->FirstPart->Next)) if (part->Next)
                   RE_SaveAll(4, G->ASLReq[ASL_DETACH]->fr_Drawer);
             }
             RE_FreePrivateRC();
@@ -910,7 +910,7 @@ MakeHook(MA_SaveAttachHook, MA_SaveAttachFunc);
 ///
 /// MA_SavePrintFunc
 //  Prints selected messages
-SAVEDS ASM void MA_SavePrintFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_SavePrintFunc(REG(a1,int *arg))
 {
    BOOL doprint = *arg != 0;
    struct TempFile *tf;
@@ -919,14 +919,14 @@ SAVEDS ASM void MA_SavePrintFunc(REG(a1,int *arg))
    int i;
 
    if (doprint && C->PrinterCheck) if (!CheckPrinter()) return;
-   if (mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS))
+   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
    {
       for (i = 0; i < (int)*mlist; i++)
       {
          RE_InitPrivateRC(mlist[i+2], PM_TEXTS);
-         if (cmsg = RE_ReadInMessage(4, RIM_READ))
+         if ((cmsg = RE_ReadInMessage(4, RIM_READ)))
          {
-            if (tf = OpenTempFile("w"))
+            if ((tf = OpenTempFile("w")))
             {
                fputs(cmsg, tf->FP);
                fclose(tf->FP); tf->FP = NULL;
@@ -954,20 +954,20 @@ int MA_NewMessage(int mode, int flags)
    {
       case NEW_NEW:     winnr = MA_NewNew(NULL, flags);
                         break;
-      case NEW_EDIT:    if (mail = MA_GetActiveMail(ANYBOX, NULL, NULL)) winnr = MA_NewEdit(mail, flags);
+      case NEW_EDIT:    if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewEdit(mail, flags);
                         break;
-      case NEW_BOUNCE:  if (mail = MA_GetActiveMail(ANYBOX, NULL, NULL)) winnr = MA_NewBounce(mail, flags);
+      case NEW_BOUNCE:  if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewBounce(mail, flags);
                         break;
-      case NEW_FORWARD: if (mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)) winnr = MA_NewForward(mlist, flags);
+      case NEW_FORWARD: if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS))) winnr = MA_NewForward(mlist, flags);
                         break;
-      case NEW_REPLY:   if (mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)) winnr = MA_NewReply(mlist, flags);
+      case NEW_REPLY:   if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS))) winnr = MA_NewReply(mlist, flags);
                         break;
    }
    if (mlist) free(mlist);
    return winnr;
 }
 
-SAVEDS ASM void MA_NewMessageFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_NewMessageFunc(REG(a1,int *arg))
 {
    int mode = arg[0], flags = 0;
    ULONG qual = arg[1];
@@ -1034,7 +1034,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    MA_ChangeSelectedFunc();
 }
 
-SAVEDS ASM void MA_DeleteMessageFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_DeleteMessageFunc(REG(a1,int *arg))
 {
    BOOL delatonce = arg[0] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
    if (arg[1]) return; // Toolbar qualifier bug work-around
@@ -1045,7 +1045,7 @@ MakeHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
 ///
 /// MA_DelKey
 //  User pressed DEL key
-SAVEDS ASM void MA_DelKeyFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_DelKeyFunc(REG(a1,int *arg))
 {
    APTR obj;
    get(G->MA->GUI.WI, MUIA_Window_ActiveObject, &obj);
@@ -1126,7 +1126,7 @@ void MA_GetAddress(struct Mail **mlist)
                if (outgoing)
                {
                   DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(mlist[i]->To)), MUIV_List_Insert_Bottom);
-                  if (mlist[i]->Flags & MFLAG_MULTIRCPT) if (email = MA_ExamineMail(mlist[i]->Folder, mlist[i]->MailFile, NULL, TRUE))
+                  if ((mlist[i]->Flags & MFLAG_MULTIRCPT)) if ((email = MA_ExamineMail(mlist[i]->Folder, mlist[i]->MailFile, NULL, TRUE)))
                   {
                      for (j = 0; j < email->NoSTo; j++) DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->STo[j])), MUIV_List_Insert_Bottom);
                      for (j = 0; j < email->NoCC; j++) DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->CC[j])), MUIV_List_Insert_Bottom);
@@ -1142,7 +1142,7 @@ void MA_GetAddress(struct Mail **mlist)
 ///
 /// MA_GetAddressFunc
 //  Stores addresses from selected messages to the address book
-SAVEDS void MA_GetAddressFunc(void)
+void SAVEDS MA_GetAddressFunc(void)
 {
    struct Mail **mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS);
    if (mlist)
@@ -1164,7 +1164,7 @@ void MA_PopNow(int mode, int pop)
    TR_GetMailFromNextPOP(TRUE, pop, mode);
 }
 
-SAVEDS ASM void MA_PopNowFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_PopNowFunc(REG(a1,int *arg))
 {
    ULONG qual = (ULONG)arg[2];
    if (arg[3]) return; // Toolbar qualifier bug work-around
@@ -1182,7 +1182,7 @@ int MA_AllocRules(struct Search **search, int mode)
    int scnt = 0, i, j, stat;
    struct Rule *rule;
 
-   for (i = 0; i < MAXRU; i++) if (rule = C->RU[i])
+   for (i = 0; i < MAXRU; i++) if ((rule = C->RU[i]))
    {
       if (mode == APPLY_AUTO && !rule->ApplyToNew) continue;
       if (mode == APPLY_USER && !rule->ApplyOnReq) continue;
@@ -1255,7 +1255,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
    {
       PlaySound(rule->PlaySound);
    }
-   if ((rule->Actions & 32) == 32) if (fo = FO_GetFolderByName(rule->MoveTo, NULL)) if (mail->Folder != fo)  // Move
+   if ((rule->Actions & 32) == 32) if ((fo = FO_GetFolderByName(rule->MoveTo, NULL))) if (mail->Folder != fo)  // Move
    {
       G->RRs.Moved++;
       if (fo->LoadedMode != 2 && (fo->XPKType&1)) fo->Flags |= FOFL_FREEXS;
@@ -1275,7 +1275,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
 ///
 /// MA_ApplyRulesFunc
 //  Apply filters
-SAVEDS ASM void MA_ApplyRulesFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_ApplyRulesFunc(REG(a1,int *arg))
 {
    struct Mail *mail, **mlist = NULL;
    struct Folder *folder;
@@ -1293,9 +1293,9 @@ SAVEDS ASM void MA_ApplyRulesFunc(REG(a1,int *arg))
    }
    clear(&G->RRs, sizeof(struct RuleResult));
    set(lv, MUIA_NList_Quiet, TRUE); G->AppIconQuiet = TRUE;
-   if (scnt = MA_AllocRules(search, mode))
+   if ((scnt = MA_AllocRules(search, mode)))
    {
-      if (mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL) if (mlist = MA_CreateMarkedList(lv)) if ((int)mlist[0] < minselected) { free(mlist); mlist = NULL; }
+      if (mode == APPLY_USER || mode == APPLY_RX || mode == APPLY_RX_ALL) if ((mlist = MA_CreateMarkedList(lv))) if ((int)mlist[0] < minselected) { free(mlist); mlist = NULL; }
       if (!mlist) mlist = MA_CreateFullList(folder);
       if (mlist)
       {
@@ -1342,7 +1342,7 @@ BOOL MA_SendMList(struct Mail **mlist)
    MA_StartMacro(MACRO_PRESEND, NULL);
    if (TR_OpenTCPIP())
    {
-      if (CO_IsValid()) if (G->TR = TR_New(TR_SEND))
+      if (CO_IsValid()) if ((G->TR = TR_New(TR_SEND)))
       {
          if (SafeOpenWindow(G->TR->GUI.WI)) success = TR_ProcessSEND(mlist);
          else { MA_ChangeTransfer(TRUE); DisposeModulePush(&G->TR); }
@@ -1366,7 +1366,7 @@ BOOL MA_Send(int sendpos)
    {
       MA_ChangeFolder(FO_GetFolderByType(FT_OUTGOING, NULL));
       if (sendpos == SEND_ALL) DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
-      if (mlist = MA_CreateMarkedList(lv))
+      if ((mlist = MA_CreateMarkedList(lv)))
       {
          success = MA_SendMList(mlist);
          free(mlist);
@@ -1375,7 +1375,7 @@ BOOL MA_Send(int sendpos)
    return success;
 }
 
-SAVEDS ASM void MA_SendFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_SendFunc(REG(a1,int *arg))
 {
    MA_Send(arg[0]);
 }
@@ -1390,7 +1390,7 @@ void MA_SetStatusTo(int status)
    APTR lv = G->MA->GUI.NL_MAILS;
    struct Mail **mlist;
 
-   if (mlist = MA_CreateMarkedList(lv))
+   if ((mlist = MA_CreateMarkedList(lv)))
    {
       int i;
       set(lv, MUIA_NList_Quiet, TRUE);
@@ -1401,7 +1401,7 @@ void MA_SetStatusTo(int status)
    }
 }
 
-SAVEDS ASM void MA_SetStatusToFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_SetStatusToFunc(REG(a1,int *arg))
 {
    MA_SetStatusTo(*arg);
 }
@@ -1410,7 +1410,7 @@ MakeHook(MA_SetStatusToHook, MA_SetStatusToFunc);
 ///
 /// MA_SelectAllFunc
 //  Selects all messages
-SAVEDS void MA_SelectAllFunc(void)
+void SAVEDS MA_SelectAllFunc(void)
 {
    DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
 }
@@ -1419,7 +1419,7 @@ MakeHook(MA_SelectAllHook, MA_SelectAllFunc);
 ///
 /// MA_DeleteOldFunc
 //  Deletes old messages
-SAVEDS void MA_DeleteOldFunc(void)
+void SAVEDS MA_DeleteOldFunc(void)
 {
    struct Folder **flist;
    struct DateStamp today;
@@ -1429,7 +1429,7 @@ SAVEDS void MA_DeleteOldFunc(void)
 
    Busy(GetStr(MSG_BusyDeletingOld), "", 0, 0);
    DateStamp(&today); today_days = today.ds_Days;
-   if (flist = FO_CreateList())
+   if ((flist = FO_CreateList()))
    {
       for (f = 1; f <= (int)*flist; f++) if (flist[f]->MaxAge) if (MA_GetIndex(flist[f]))
          for (mail = flist[f]->Messages; mail; mail = next)
@@ -1449,7 +1449,7 @@ MakeHook(MA_DeleteOldHook, MA_DeleteOldFunc);
 ///
 /// MA_DeleteDeletedFunc
 //  Removes messages from 'deleted' folder
-SAVEDS void MA_DeleteDeletedFunc(void)
+void SAVEDS MA_DeleteDeletedFunc(void)
 {       
    int i = 0;
    struct Mail *mail;
@@ -1474,7 +1474,7 @@ MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
 ///
 /// MA_RescanIndexFunc
 //  Updates index of current folder
-SAVEDS void MA_RescanIndexFunc(void)
+void SAVEDS MA_RescanIndexFunc(void)
 {
    struct Folder *folder = FO_GetCurrentFolder();
 
@@ -1509,7 +1509,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
             }
          }
       }
-      if (filename) if (G->TR = TR_New(TR_EXPORT))
+      if (filename) if ((G->TR = TR_New(TR_EXPORT)))
       {
          if (SafeOpenWindow(G->TR->GUI.WI)) success = TR_ProcessEXPORT(filename, mlist, append);
          else {  MA_ChangeTransfer(TRUE); DisposeModulePush(&G->TR); }
@@ -1519,7 +1519,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
    return success;
 }
 
-SAVEDS ASM void MA_ExportMessagesFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_ExportMessagesFunc(REG(a1,int *arg))
 {
    MA_ExportMessages((BOOL)*arg, NULL, FALSE);
 }
@@ -1532,9 +1532,9 @@ BOOL MA_ImportMessages(char *fname)
 {
    FILE *fh;
 
-   if (fh = fopen(fname, "r"))
+   if ((fh = fopen(fname, "r")))
    {
-      if (G->TR = TR_New(TR_IMPORT))
+      if ((G->TR = TR_New(TR_IMPORT)))
       {
          stccpy(G->TR->ImportFile, fname, SIZE_PATHFILE);
          TR_SetWinTitle(TRUE, FilePart(fname));
@@ -1552,7 +1552,7 @@ BOOL MA_ImportMessages(char *fname)
    return FALSE;
 }
 
-SAVEDS void MA_ImportMessagesFunc(void)
+void SAVEDS MA_ImportMessagesFunc(void)
 {
    if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ImportMessages), 0, C->DetachDir, ""))
    {
@@ -1566,10 +1566,10 @@ MakeHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 ///
 /// MA_MoveMessageFunc
 //  Moves selected messages to a user specified folder
-SAVEDS void MA_MoveMessageFunc(void)
+void SAVEDS MA_MoveMessageFunc(void)
 {
    struct Folder *src = FO_GetCurrentFolder(), *dst;
-   if (dst = FolderRequest(GetStr(MSG_MA_MoveMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_MoveGad), GetStr(MSG_Cancel), src, G->MA->GUI.WI))
+   if ((dst = FolderRequest(GetStr(MSG_MA_MoveMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_MoveGad), GetStr(MSG_Cancel), src, G->MA->GUI.WI)))
       MA_MoveCopy(NULL, src, dst, FALSE);
 }
 MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
@@ -1577,10 +1577,10 @@ MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 ///
 /// MA_CopyMessageFunc
 //  Copies selected messages to a user specified folder
-SAVEDS void MA_CopyMessageFunc(void)
+void SAVEDS MA_CopyMessageFunc(void)
 {
    struct Folder *src = FO_GetCurrentFolder(), *dst;
-   if (dst = FolderRequest(GetStr(MSG_MA_CopyMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_CopyGad), GetStr(MSG_Cancel), NULL, G->MA->GUI.WI))
+   if ((dst = FolderRequest(GetStr(MSG_MA_CopyMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_CopyGad), GetStr(MSG_Cancel), NULL, G->MA->GUI.WI)))
       MA_MoveCopy(NULL, src, dst, TRUE);
 }
 MakeHook(MA_CopyMessageHook, MA_CopyMessageFunc);
@@ -1598,9 +1598,9 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
    if (!strcmp(subj, mail->Subject)) return;
    if (!StartUnpack(oldfile = GetMailFile(NULL, NULL, mail), fullfile, fo)) return;
    strmfp(newfile, GetFolderDir(fo), "00000.tmp");
-   if (newfh = fopen(newfile, "w"))
+   if ((newfh = fopen(newfile, "w")))
    {
-      if (oldfh = fopen(fullfile, "r"))
+      if ((oldfh = fopen(fullfile, "r")))
       {
          BOOL infield = FALSE, inbody = FALSE, hasorigsubj = FALSE;
          while (fgets(buf, SIZE_LINE, oldfh))
@@ -1636,7 +1636,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
 ///
 /// MA_ChangeSubjectFunc
 //  Changes subject of selected messages
-SAVEDS void MA_ChangeSubjectFunc(void)
+void SAVEDS MA_ChangeSubjectFunc(void)
 {
    struct Mail **mlist, *mail;
    int i, selected;
@@ -1669,7 +1669,7 @@ MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 ///
 /// MA_AboutMUIFunc
 //  Displays 'About MUI' window
-SAVEDS void MA_AboutMUIFunc(void)
+void SAVEDS MA_AboutMUIFunc(void)
 {
    static APTR muiwin = NULL;
 
@@ -1684,7 +1684,7 @@ MakeHook(MA_AboutMUIHook, MA_AboutMUIFunc);
 ///
 /// MA_CheckVersionFunc
 //  Checks YAM homepage for new program versions
-SAVEDS void MA_CheckVersionFunc(void)
+void SAVEDS MA_CheckVersionFunc(void)
 {
    struct TempFile *tf;
    int mon, day, year;
@@ -1699,7 +1699,7 @@ SAVEDS void MA_CheckVersionFunc(void)
       tf = OpenTempFile(NULL);
       if (TR_DownloadURL(C->SupportSite, "files/", "version", tf->Filename))
       {
-         if (tf->FP = fopen(tf->Filename,"r"))
+         if ((tf->FP = fopen(tf->Filename,"r")))
          {
             fscanf(tf->FP, "%ld.%ld.%ld", &day, &mon, &year);
             GetLine(tf->FP, newver, SIZE_SMALL);
@@ -1721,7 +1721,7 @@ MakeHook(MA_CheckVersionHook, MA_CheckVersionFunc);
 ///
 /// MA_ShowErrorsFunc
 //  Opens error message window
-SAVEDS void MA_ShowErrorsFunc(void)
+void SAVEDS MA_ShowErrorsFunc(void)
 {
    ER_NewError(NULL, NULL, NULL);
 }
@@ -1767,7 +1767,7 @@ BOOL MA_StartMacro(int num, char *param)
          do
          {
             WaitPort(G->RexxHost->port);
-            while (rm = (struct RexxMsg *)GetMsg(G->RexxHost->port))
+            while ((rm = (struct RexxMsg *)GetMsg(G->RexxHost->port)))
             {
                if ((rm->rm_Action & RXCODEMASK) != RXCOMM) ReplyMsg((struct Message *)rm);
                else if (rm->rm_Node.mn_Node.ln_Type == NT_REPLYMSG)
@@ -1796,7 +1796,7 @@ BOOL MA_StartMacro(int num, char *param)
 ///
 /// MA_CallRexxFunc
 //  Launches a script from the ARexx menu
-SAVEDS ASM void MA_CallRexxFunc(REG(a1,int *arg))
+void SAVEDS ASM MA_CallRexxFunc(REG(a1,int *arg))
 {
    char scname[SIZE_COMMAND];
    int script = *arg;
@@ -1820,7 +1820,7 @@ MakeHook(MA_CallRexxHook, MA_CallRexxFunc);
 /*** Hooks ***/
 /// PO_Window
 //  Window hook for popup objects
-SAVEDS ASM void PO_Window(REG(a2,Object *pop), REG(a1,Object *win))
+void SAVEDS ASM PO_Window(REG(a2,Object *pop), REG(a1,Object *win))
 {
    set(win, MUIA_Window_DefaultObject, pop);
 }
@@ -1829,7 +1829,7 @@ MakeHook(PO_WindowHook, PO_Window);
 ///
 /// MA_LV_FConFunc
 //  Folder listview construction hook
-SAVEDS ASM struct Folder *MA_LV_FConFunc(REG(a1,struct Folder *fo))
+struct Folder * SAVEDS ASM MA_LV_FConFunc(REG(a1,struct Folder *fo))
 {
    struct Folder *entry = malloc(sizeof(struct Folder));
    memcpy(entry, fo, sizeof(struct Folder));
@@ -1840,13 +1840,13 @@ MakeHook(MA_LV_FConHook, MA_LV_FConFunc);
 ///
 /// MA_LV_DspFunc
 //  Message listview display hook
-SAVEDS ASM long MA_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct Mail *entry))
+long SAVEDS ASM MA_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct Mail *entry))
 {
    BOOL outbox;
    struct Folder *folder = NULL;
    int type = 0;
 
-  if (G->MA) if (folder = FO_GetCurrentFolder()) type = folder->Type;
+  if (G->MA) if ((folder = FO_GetCurrentFolder())) type = folder->Type;
    outbox = OUTGOING(type);
    if (entry)
    {
@@ -1900,8 +1900,8 @@ LOCAL char *MA_GetRealSubject(char *sub)
    char *p, *pend = &sub[strlen(sub)];
    if (strlen(sub) < 3) return sub;
    if (sub[2] == ':' && !sub[3]) return "";
-   if (sub[0] == '[') if (p = strchr(sub, ']')) if (p < pend-3 && p < &sub[20]) return MA_GetRealSubject(p+2);
-   if (strchr(":[({", sub[2])) if (p = strchr(sub, ':')) return MA_GetRealSubject(TrimStart(++p));
+   if (sub[0] == '[') if ((p = strchr(sub, ']'))) if (p < pend-3 && p < &sub[20]) return MA_GetRealSubject(p+2);
+   if (strchr(":[({", sub[2])) if ((p = strchr(sub, ':'))) return MA_GetRealSubject(TrimStart(++p));
    return sub;
 }
 
@@ -1934,7 +1934,7 @@ LOCAL int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, int column)
 ///
 /// MA_LV_Cmp2Func
 //  Message listview sort hook
-SAVEDS ASM long MA_LV_Cmp2Func(REG(a1,struct NList_CompareMessage *ncm), REG(a2,Object *obj))
+long SAVEDS ASM MA_LV_Cmp2Func(REG(a1,struct NList_CompareMessage *ncm), REG(a2,Object *obj))
 {
    struct Mail *entry1 = (struct Mail *)ncm->entry1;
    struct Mail *entry2 = (struct Mail *)ncm->entry2;
@@ -1955,7 +1955,7 @@ MakeHook(MA_LV_Cmp2Hook, MA_LV_Cmp2Func);
 ///
 /// MA_LV_FCmp2Func
 //  Folder listview sort hook
-SAVEDS ASM long MA_LV_FCmp2Func(REG(a1,struct NList_CompareMessage *ncm), REG(a2,Object *obj))
+long SAVEDS ASM MA_LV_FCmp2Func(REG(a1,struct NList_CompareMessage *ncm), REG(a2,Object *obj))
 {
    struct Folder *entry1 = (struct Folder *)ncm->entry1;
    struct Folder *entry2 = (struct Folder *)ncm->entry2;
@@ -2039,7 +2039,7 @@ struct MA_ClassData *MA_New(void)
 {
    struct MA_ClassData *data;
   
-   if (data = calloc(1,sizeof(struct MA_ClassData)))
+   if ((data = calloc(1,sizeof(struct MA_ClassData))))
    {
       APTR tb_butt[18] = { MSG_MA_TBRead,MSG_MA_TBEdit,MSG_MA_TBMove,MSG_MA_TBDelete,MSG_MA_TBGetAddr,MSG_Space,
                            MSG_MA_TBWrite,MSG_MA_TBReply,MSG_MA_TBForward,MSG_Space,
@@ -2053,7 +2053,7 @@ struct MA_ClassData *MA_New(void)
       char *key = "-repeat 0", *username = C->RealName;
       struct User *user;
       for (i = 0; i < 18; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
-      if (user = US_GetCurrentUser()) username = user->Name;
+      if ((user = US_GetCurrentUser())) username = user->Name;
       sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), __YAM_VERSION, username);
       data->GUI.MS_MAIN = MenustripObject,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),

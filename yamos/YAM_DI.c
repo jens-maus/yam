@@ -128,7 +128,7 @@ LOCAL int DI_Load(void)
 ///
 /// DI_CloseFunc
 //  Closes glossary window
-SAVEDS void DI_CloseFunc(void)
+void SAVEDS DI_CloseFunc(void)
 {
    DI_FinishEdit();
    if (G->DI->Modified) DI_Save();
@@ -141,7 +141,7 @@ MakeHook(DI_CloseHook, DI_CloseFunc);
 ///
 /// DI_PasteFunc
 //  Pastes text of selected glossary entry into the internal editors
-SAVEDS void DI_PasteFunc(void)
+void SAVEDS DI_PasteFunc(void)
 {
    struct Dict *entry;
    DI_FinishEdit();
@@ -154,7 +154,7 @@ MakeHook(DI_PasteHook, DI_PasteFunc);
 ///
 /// DI_DeleteFunc
 //  Removes selected entry from the glossary
-SAVEDS void DI_DeleteFunc(void)
+void SAVEDS DI_DeleteFunc(void)
 {
     G->DI->Modified = TRUE;
     G->DI->OldEntry = NULL;
@@ -165,7 +165,7 @@ MakeHook(DI_DeleteHook, DI_DeleteFunc);
 ///
 /// DI_DisplayFunc
 //  Displays selected glossary entry
-SAVEDS void DI_DisplayFunc(void)
+void SAVEDS DI_DisplayFunc(void)
 {
    struct DI_GUIData *gui = &G->DI->GUI;
    struct Dict *entry;
@@ -182,7 +182,7 @@ MakeHook(DI_DisplayHook, DI_DisplayFunc);
 ///
 /// DI_ModifyFunc
 //  Saves changed glossary item
-SAVEDS ASM void DI_ModifyFunc(REG(a1,int *arg))
+void SAVEDS ASM DI_ModifyFunc(REG(a1,int *arg))
 {
    struct Dict new;
 
@@ -204,7 +204,7 @@ MakeHook(DI_ModifyHook, DI_ModifyFunc);
 ///
 /// DI_OpenFunc
 //  Opens glossary window
-SAVEDS ASM void DI_OpenFunc(REG(a1,int *arg))
+void SAVEDS ASM DI_OpenFunc(REG(a1,int *arg))
 {
    if (!G->DI)
    {
@@ -220,7 +220,7 @@ MakeHook(DI_OpenHook, DI_OpenFunc);
 /*** GUI ***/
 /// DI_LV_ConFunc
 //  Glossary listview construction hook
-SAVEDS ASM struct Dict *DI_LV_ConFunc(REG(a1,struct Dict *dict))
+struct Dict * SAVEDS ASM DI_LV_ConFunc(REG(a1,struct Dict *dict))
 {
    struct Dict *entry = malloc(sizeof(struct Dict));
    memcpy(entry, dict, sizeof(struct Dict));
@@ -231,7 +231,7 @@ MakeHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 ///
 /// DI_LV_DesFunc
 //  Glossary listview destruction hook
-SAVEDS ASM long DI_LV_DesFunc(REG(a1,struct Dict *entry))
+long SAVEDS ASM DI_LV_DesFunc(REG(a1,struct Dict *entry))
 {
    if (entry->Text) FreeStrBuf(entry->Text);
    free(entry);

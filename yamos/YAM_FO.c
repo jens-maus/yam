@@ -584,7 +584,7 @@ void FO_PutFolder(struct Folder *folder)
 ///
 /// FO_NewSeparatorFunc
 //  Creates a new separator
-SAVEDS void FO_NewSeparatorFunc(void)
+void SAVEDS FO_NewSeparatorFunc(void)
 {
    struct Folder folder;
    clear(&folder, sizeof(struct Folder));
@@ -602,7 +602,7 @@ MakeHook(FO_NewSeparatorHook, FO_NewSeparatorFunc);
 ///
 /// FO_NewFolderFunc
 //  Creates a new folder
-SAVEDS void FO_NewFolderFunc(void)
+void SAVEDS FO_NewFolderFunc(void)
 {
    int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_NewFolder), GetStr(MSG_FO_NewFolderGads), GetStr(MSG_FO_NewFolderReq));
    static struct Folder folder;
@@ -640,7 +640,7 @@ MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
 ///
 /// FO_EditFolderFunc
 //  Opens folder window to edit the settings of the active folder
-SAVEDS void FO_EditFolderFunc(void)
+void SAVEDS FO_EditFolderFunc(void)
 {
    struct Folder *folder = FO_GetCurrentFolder();
    if (folder->Type == FT_SEPARATOR)
@@ -663,7 +663,7 @@ MakeHook(FO_EditFolderHook, FO_EditFolderFunc);
 ///
 /// FO_DeleteFolderFunc
 //  Removes the active folder
-SAVEDS void FO_DeleteFolderFunc(void)
+void SAVEDS FO_DeleteFolderFunc(void)
 {
    APTR lv = G->MA->GUI.NL_FOLDERS;
    struct Folder *f, *folder = FO_GetCurrentFolder();
@@ -696,7 +696,7 @@ MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
 ///
 /// FO_MoveFunc
 //  Asks user for the new destination
-SAVEDS void FO_MoveFunc(void)
+void SAVEDS FO_MoveFunc(void)
 {
    char path[SIZE_PATH];
    GetMUIText(path, G->FO->GUI.TX_FPATH);
@@ -707,7 +707,7 @@ MakeHook(FO_MoveHook, FO_MoveFunc);
 ///
 /// FO_CloseFunc
 //  Closes folder configuration window
-SAVEDS void FO_CloseFunc(void)
+void SAVEDS FO_CloseFunc(void)
 {
    DisposeModulePush(&G->FO);
 }
@@ -716,7 +716,7 @@ MakeHook(FO_CloseHook, FO_CloseFunc);
 ///
 /// FO_SaveFunc
 //  Saves modified folder configuration
-SAVEDS void FO_SaveFunc(void)
+void SAVEDS FO_SaveFunc(void)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
    APTR lv = G->MA->GUI.NL_FOLDERS;
@@ -793,7 +793,7 @@ MakeHook(FO_SaveHook, FO_SaveFunc);
 ///
 /// FO_SetOrderFunc
 //  Saves or resets folder order
-SAVEDS ASM void FO_SetOrderFunc(REG(a1,int *arg))
+void SAVEDS ASM FO_SetOrderFunc(REG(a1,int *arg))
 {
    switch (*arg)
    {

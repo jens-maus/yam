@@ -209,7 +209,7 @@ void AB_InsertAddress(APTR string, char *alias, char *name, char *address)
 ///
 /// AB_FromAddrBook
 //  Inserts an address book entry into a recipient string
-SAVEDS ASM void AB_FromAddrBook(REG(a1,ULONG *arg))
+void SAVEDS ASM AB_FromAddrBook(REG(a1,ULONG *arg))
 {
    APTR string;
    struct MUIS_Listtree_TreeNode *active;
@@ -405,7 +405,7 @@ BOOL AB_SaveTree(char *fname)
 ///
 /// AB_DoubleClick
 //  User double-clicked in the address book
-SAVEDS void AB_DoubleClick(void)
+void SAVEDS AB_DoubleClick(void)
 {
    extern void AB_EditFunc(void);
 
@@ -432,7 +432,7 @@ MakeHook(AB_DoubleClickHook, AB_DoubleClick);
 
 /// AB_Sort
 //  Sorts the address book
-SAVEDS ASM void AB_Sort(REG(a1,int *arg))
+void SAVEDS ASM AB_Sort(REG(a1,int *arg))
 {
    char fname[SIZE_PATHFILE];
    strmfp(fname, C->TempDir, ".addressbook.tmp");
@@ -449,7 +449,7 @@ MakeHook(AB_SortHook, AB_Sort);
 ///
 /// AB_NewABookFunc
 //  Clears entire address book
-SAVEDS void AB_NewABookFunc(void)
+void SAVEDS AB_NewABookFunc(void)
 {
    DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_Remove, MUIV_Listtree_Remove_ListNode_Root, MUIV_Listtree_Remove_TreeNode_All, 0);
    G->AB->Modified = FALSE;
@@ -459,7 +459,7 @@ MakeHook(AB_NewABookHook, AB_NewABookFunc);
 ///
 /// AB_OpenABookFunc
 //  Loads selected address book
-SAVEDS void AB_OpenABookFunc(void)
+void SAVEDS AB_OpenABookFunc(void)
 {
    if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Open), 0, G->MA_MailDir, ""))
    {
@@ -472,7 +472,7 @@ MakeHook(AB_OpenABookHook, AB_OpenABookFunc);
 ///
 /// AB_AppendABookFunc
 //  Appends selected address book
-SAVEDS void AB_AppendABookFunc(void)
+void SAVEDS AB_AppendABookFunc(void)
 {
    if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Append), 0, G->MA_MailDir, ""))
    {
@@ -486,7 +486,7 @@ MakeHook(AB_AppendABookHook, AB_AppendABookFunc);
 ///
 /// AB_SaveABookFunc
 //  Saves address book using the default name
-SAVEDS void AB_SaveABookFunc(void)
+void SAVEDS AB_SaveABookFunc(void)
 {
    Busy(GetStr(MSG_BusySavingAB), G->AB_Filename, 0, 0);
    AB_SaveTree(G->AB_Filename);
@@ -498,7 +498,7 @@ MakeHook(AB_SaveABookHook, AB_SaveABookFunc);
 ///
 /// AB_SaveABookAsFunc
 //  Saves address book under a different name
-SAVEDS void AB_SaveABookAsFunc(void)
+void SAVEDS AB_SaveABookAsFunc(void)
 {
    if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_SaveAs), 1, G->MA_MailDir, ""))
    {
@@ -593,7 +593,7 @@ LOCAL STACKEXT void AB_PrintLevel(struct MUIS_Listtree_TreeNode *list, FILE *prt
 ///
 /// AB_PrintABookFunc
 //  Prints the entire address book in compact or detailed format
-SAVEDS void AB_PrintABookFunc(void)
+void SAVEDS AB_PrintABookFunc(void)
 {
    FILE *prt;
    int mode = MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_Print), GetStr(MSG_AB_PrintReqGads), GetStr(MSG_AB_PrintReq));
@@ -618,7 +618,7 @@ MakeHook(AB_PrintABookHook, AB_PrintABookFunc);
 ///
 /// AB_PrintFunc
 //  Prints selected address book entry in detailed format
-SAVEDS void AB_PrintFunc(void)
+void SAVEDS AB_PrintFunc(void)
 {
    FILE *prt;
    struct MUIS_Listtree_TreeNode *tn;
@@ -641,7 +641,7 @@ MakeHook(AB_PrintHook, AB_PrintFunc);
 ///
 /// AB_AddEntryFunc
 //  Add a new entry to the address book
-SAVEDS ASM void AB_AddEntryFunc(REG(a1,int *arg))
+void SAVEDS ASM AB_AddEntryFunc(REG(a1,int *arg))
 {
    EA_Init(*arg, NULL);
 }
@@ -650,7 +650,7 @@ MakeHook(AB_AddEntryHook, AB_AddEntryFunc);
 ///
 /// AB_EditFunc
 //  Modifies selected address book entry
-SAVEDS void AB_EditFunc(void)
+void SAVEDS AB_EditFunc(void)
 {
    struct MUIS_Listtree_TreeNode *tn;
    if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0))
@@ -665,7 +665,7 @@ MakeHook(AB_EditHook, AB_EditFunc);
 ///
 /// AB_DeleteFunc
 //  Deletes selected address book entry
-SAVEDS void AB_DeleteFunc(void)
+void SAVEDS AB_DeleteFunc(void)
 {
    DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_Remove, NULL, MUIV_Listtree_Remove_TreeNode_Active, 0);
    G->AB->Modified = TRUE;
@@ -675,7 +675,7 @@ MakeHook(AB_DeleteHook, AB_DeleteFunc);
 ///
 /// AB_DuplicateFunc
 //  Duplicates selected address book entry
-SAVEDS void AB_DuplicateFunc(void)
+void SAVEDS AB_DuplicateFunc(void)
 {
    struct MUIS_Listtree_TreeNode *tn;
    if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0))
@@ -757,7 +757,7 @@ STACKEXT BOOL AB_FindEntry(struct MUIS_Listtree_TreeNode *list, char *pattern, i
 ///
 /// AB_FindFunc
 //  Searches address book
-SAVEDS void AB_FindFunc(void)
+void SAVEDS AB_FindFunc(void)
 {
    static char pattern[SIZE_PATTERN] = { 0 };
 
@@ -773,7 +773,7 @@ MakeHook(AB_FindHook, AB_FindFunc);
 
 /// AB_OpenFunc
 //  Open address book window
-SAVEDS ASM void AB_OpenFunc(REG(a1,int *arg))
+void SAVEDS ASM AB_OpenFunc(REG(a1,int *arg))
 {
    struct AB_ClassData *ab = G->AB;
    char *md = "";
@@ -798,7 +798,7 @@ MakeHook(AB_OpenHook, AB_OpenFunc);
 ///
 /// AB_Close
 //  Closes address book window
-SAVEDS void AB_Close(void)
+void SAVEDS AB_Close(void)
 {
    if (G->AB->Modified) switch (MUI_Request(G->App, G->AB->GUI.WI, 0, NULL, GetStr(MSG_AB_ModifiedGads), GetStr(MSG_AB_Modified)))
    {
@@ -814,7 +814,7 @@ MakeHook(AB_CloseHook, AB_Close);
 
 /// AB_LV_ConFunc
 //  Address book listview construction hook
-SAVEDS ASM struct ABEntry *AB_LV_ConFunc(REG(a1,struct ABEntry *addr))
+struct ABEntry * SAVEDS ASM AB_LV_ConFunc(REG(a1,struct ABEntry *addr))
 {
    struct ABEntry *entry = malloc(sizeof(struct ABEntry));
    if (entry)
@@ -829,7 +829,7 @@ MakeHook(AB_LV_ConFuncHook, AB_LV_ConFunc);
 ///
 /// AB_LV_DesFunc
 //  Address book listview destruction hook
-SAVEDS ASM long AB_LV_DesFunc(REG(a1,struct ABEntry *entry))
+long SAVEDS ASM AB_LV_DesFunc(REG(a1,struct ABEntry *entry))
 {
    if (entry->Members) free(entry->Members);
    free(entry);
@@ -840,7 +840,7 @@ MakeHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
 ///
 /// AB_LV_DspFunc
 //  Address book listview display hook
-SAVEDS ASM long AB_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct MUIS_Listtree_TreeNode *node))
+long SAVEDS ASM AB_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct MUIS_Listtree_TreeNode *node))
 {
    static char dispal[SIZE_DEFAULT], dispco[SIZE_DEFAULT+8];
    struct AL_Data *data = (APTR)hook->h_Data;
@@ -893,7 +893,7 @@ MakeHook(AB_LV_DspFuncHook, AB_LV_DspFunc);
 ///
 /// AB_LV_CmpFunc
 //  Address book listview sort hook
-SAVEDS ASM long AB_LV_CmpFunc(REG(a2,struct MUIS_Listtree_TreeNode *entry1), REG(a1,struct MUIS_Listtree_TreeNode *entry2))
+long SAVEDS ASM AB_LV_CmpFunc(REG(a2,struct MUIS_Listtree_TreeNode *entry1), REG(a1,struct MUIS_Listtree_TreeNode *entry2))
 {
    char *n1, *n2;
    struct ABEntry *ab1 = (struct ABEntry *)entry1->tn_User,
