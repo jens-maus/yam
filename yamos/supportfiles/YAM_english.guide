@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (19.02.2003)
+@$VER: YAM.guide 2.4 (20.02.2003)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -9488,9 +9488,10 @@ Tips & tricks
 *************
 
 
- @{" Snapshotting the window positions and sizes     " link "TIP0"}
- @{" Avoiding context menus from getting on your way " link "TIP1"}
- @{" Moving YAM to another partition or directory    " link "TIP2"}
+ @{" Snapshotting the window positions and sizes      " link "TIP0"}
+ @{" Avoiding context menus from getting on your way  " link "TIP1"}
+ @{" Moving YAM to another partition or directory     " link "TIP2"}
+ @{" Avoiding a index rescan after a .index copy/move " link "TIP3"}
 
 @endnode
 
@@ -9533,7 +9534,7 @@ ContextMenu = Never.  Save your MUI settings and you're done.
 @endnode
 
 @node "TIP2" "Moving YAM to another partition or directory"
-@next "TIP0"
+@next "TIP3"
 @prev "TIP1"
 @toc "TIPS"
 
@@ -9568,6 +9569,25 @@ requiring four steps:
    Finally, if you can run YAM again in the new place and all seems
 to work fine, deleting YAM and all its files from the old place should
 be a safe operation now.
+
+@endnode
+
+@node "TIP3" "Avoiding a index rescan after a .index copy/move"
+@next "TIP0"
+@prev "TIP1"
+@toc "TIPS"
+
+Avoiding a index rescan after a .index copy/move
+------------------------------------------------
+
+   If you keep backups of your .index files somewhere and want to restore a
+.index file in a folder that hasn`t changed since the backup or you want to
+transfer a whole folder to another YAM installation and don`t want YAM to start
+a complete index rescan at the next time you start it.
+
+Then make sure that the modification date of the folder`s .index file is more
+recent than the date of the directory, or otherwise YAM will rescan the whole
+folder at the next start.
 
 @endnode
 
