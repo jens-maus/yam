@@ -7,6 +7,9 @@ $Source$
 
 2005-02-20  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MI.c: fixed bug where the source charset specification was used
+      in the RFC2047 encoding routines, instead of the destination charset
+      which fixes bug #1107821
     * YAM.c: the "mark new mail as unread" upon startup feature did still
       calculate the amount of unread/new mails slightly incorrect.
     * classes/ReadWindow.c, misc: fixed bug where YAM wasn't able to save the

@@ -1661,8 +1661,8 @@ int rfc2047_encode_file(FILE *fh, const char *str,
 
                 // as we splitted an encoded-word we have to start the next
                 // line with a proper encoded-word start again.
-                if(tt && tt->SourceCharset)
-                  move_start = sprintf(encode_buf, "=?%s?Q?", tt->SourceCharset);
+                if(tt && tt->DestCharset && tt->DestCharset[0])
+                  move_start = sprintf(encode_buf, "=?%s?Q?", tt->DestCharset);
                 else
                   move_start = sprintf(encode_buf, "=?ISO-8859-1?Q?");
 
@@ -1740,8 +1740,8 @@ int rfc2047_encode_file(FILE *fh, const char *str,
           // before we place encoded data in our encode buffer we have to
           // place the "=?charset?Q?" string at the beginning because here
           // the encoding starts
-          if(tt && tt->SourceCharset)
-            ebp += sprintf(ebp, "=?%s?Q?", tt->SourceCharset);
+          if(tt && tt->DestCharset && tt->DestCharset[0])
+            ebp += sprintf(ebp, "=?%s?Q?", tt->DestCharset);
           else
             ebp += sprintf(ebp, "=?ISO-8859-1?Q?");
         }
