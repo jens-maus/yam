@@ -36,7 +36,7 @@
   #define HOOKPROTO(name, ret, obj, param) static ret name(void) { struct Hook *hook = REG_A0; obj = REG_A2; param = REG_A1;
   #define HOOKPROTONO(name, ret, param) static ret name(void) { struct Hook *hook = REG_A0; param = REG_A1;
   #define HOOKPROTONH(name, ret, obj, param) static ret name(void) { obj = REG_A2; param = REG_A1;
-  #define HOOKPROTONH(name, ret, param) static ret name(void) { param = REG_A1;
+  #define HOOKPROTONHNO(name, ret, param) static ret name(void) { param = REG_A1;
   #define HOOKPROTONHNP(name, ret, obj) static ret name(void) { obj = REG_A2;
   #define HOOKPROTONHNONP(name, ret) static ret name(void) {
   #define DISPATCHERPROTO(name) \
