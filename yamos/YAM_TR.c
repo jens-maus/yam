@@ -1402,7 +1402,7 @@ static BOOL TR_GetMessageList_GET(void)
          if(index > 0 && (newMail = calloc(1, sizeof(struct Mail))))
          {
             int mode;
-            static const int mode2status[16] = { TRF_LOAD, TRF_LOAD, (TRF_LOAD&TRF_DELETE),
+            static const int mode2status[16] = { TRF_LOAD, TRF_LOAD, (TRF_LOAD|TRF_DELETE),
                                                  (TRF_LOAD|TRF_DELETE), TRF_LOAD, TRF_LOAD,
                                                  (TRF_LOAD|TRF_DELETE), (TRF_LOAD|TRF_DELETE),
                                                  TRF_NONE, TRF_LOAD, TRF_NONE, (TRF_LOAD|TRF_DELETE),
