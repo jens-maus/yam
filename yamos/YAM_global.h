@@ -40,6 +40,7 @@ extern char *             Status[9];
 extern struct WBStartup * WBmsg;
 extern char *             wdays[7];
 extern char *             yamversion;
+extern char *             yamversionver;
 extern char *             yamversionstring;
 extern char *             yamversiondate;
 extern unsigned long      yamversiondays;

@@ -41,9 +41,20 @@
 #endif
 
 /* the version stuff */
-char * yamversion     = "YAM 2.4-dev" CPU;
-char * yamversionstring = "$VER: YAM 2.4 (" __YAM_VERDATE ")" CPU " dev";
-char * yamversiondate = __YAM_VERDATE;
+
+#define __YAM_VERSION "2.4"
+#define __YAM_DEVEL   1
+
+#if __YAM_DEVEL
+char * yamversion       = "YAM " __YAM_VERSION "-dev" CPU;
+char * yamversionver    = __YAM_VERSION "-dev" CPU;
+char * yamversionstring = "$VER: YAM " __YAM_VERSION " (" __YAM_VERDATE ")" CPU " dev";
+#else
+char * yamversion       = "YAM " __YAM_VERSION CPU;
+char * yamversionver    = __YAM_VERSION CPU;
+char * yamversionstring = "$VER: YAM " __YAM_VERSION " (" __YAM_VERDATE ")" CPU;
+#endif
+char * yamversiondate   = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;
 
 #if defined(__SASC)
