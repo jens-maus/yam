@@ -1,3 +1,8 @@
+2002-02-22  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed smakefile accordingly to new genclasses changes.
+      Now YAM should be compileable with SAS/C again.
+
 2002-02-21  Gunther Nikl <gni@gecko.de>
 
     * YAM_FI.c/FI_SearchPatternInBody: fix typo

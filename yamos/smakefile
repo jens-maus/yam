@@ -245,19 +245,19 @@ YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
 
 #######################################
 
-classes/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist.h \
+classes/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
   YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
-classes/Searchwindow.o: classes/Searchwindow.c classes/Searchwindow.h YAM.h \
+classes/Searchwindow.o: classes/Searchwindow.c classes/Searchwindow_cl.h YAM.h \
   YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h \
   YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
-classes/Recipientstring.o: classes/Recipientstring.c classes/Recipientstring.h \
+classes/Recipientstring.o: classes/Recipientstring.c classes/Recipientstring_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
   YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
-classes/InfoBar.o: classes/InfoBar.c classes/InfoBar.h \
+classes/InfoBar.o: classes/InfoBar.c classes/InfoBar_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
   YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
@@ -265,7 +265,7 @@ classes/Classes.o: classes/Classes.c classes/Classes.h YAM.h YAM_addressbook.h \
   YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
-classes/YAM.o: classes/YAM.c classes/YAM.h YAM.h YAM_addressbook.h \
+classes/YAM.o: classes/YAM.c classes/YAM_cl.h YAM.h YAM_addressbook.h \
   YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
