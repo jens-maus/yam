@@ -38,7 +38,6 @@
 /* local */
 static void uueget(char*, FILE*, int);
 static BOOL gettxtline(char*, int, char**);
-static BOOL getline(char*, int, FILE*);
 
 static int rfc2047_decode_int(const char *text,
                               int (*func)(const char *, unsigned int, const char *, const char *, void *),
@@ -92,7 +91,9 @@ static const unsigned char index_hex[128] =
 #define UUENC_IWIDTH 45                     // number of unencoded input chars
 #define UUENC_OWIDTH (UUENC_IWIDTH*8/6)     // number of final output chars after encoding
 #define UUENC_IBUF   (UUENC_IWIDTH*100)     // bytes to use as a uucode input encoding buffer
-#define UUENC_OBUF   ((UUENC_OWIDTH+3)*80)  // bytes to use as a uucode output encoding buffer
+#define UUENC_OBUF   ((UUENC_OWIDTH+4)*80)  // bytes to use as a uucode output encoding buffer
+#define UUDEC_IBUF   UUENC_OBUF             // bytes to use as a uucode input decoding buffer
+#define UUDEC_OBUF   UUENC_IBUF             // bytes to use as a uucode output decoding buffer
 #define UUDEC_BUF    4096                   // bytes to use as a uucode file decoding buffer
 #define UUMAX_CHAR   64                     // the maximum value of a char to hit c + 32 = 96
 
@@ -156,7 +157,7 @@ enum {
 #define CHARS_LWSP     " \t\n\r"           // linear whitespace chars
 #define CHARS_TSPECIAL "()<>@,;:\\\"/[]?="
 #define CHARS_SPECIAL  "()<>@,;:\\\".[]"
-#define CHARS_CSPECIAL "()\\\r"            // not in comments
+#define CHARS_CSPECIAL "()\\\r"            // not in commeîts
 #define CHARS_DSPECIAL "[]\\\r \t"         // not in domains
 #define CHARS_ESPECIAL "()<>@,;:\"/[]?.=_" // encoded word specials (rfc2047 5.1)
 #define CHARS_PSPECIAL "!*+-/=_"           // encoded phrase specials (rfc2047 5.3)
@@ -989,7 +990,7 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
 
       // let us now check if our outbuffer is filled up so that we can write
       // out the data to our out stream.
-      if(optr-outbuffer >= QPENC_BUF)
+      if(optr-outbuffer >= QPDEC_BUF)
       {
         size_t todo = optr-outbuffer;
 
@@ -1189,7 +1190,8 @@ long uuencode_file(FILE *in, FILE *out)
         encoded_chars += 4;
 
         // put out a checksum char aswell and a finalizing newline
-        *optr++ = UUENCODE_CHAR((c1+c2)%UUMAX_CHAR);
+        checksum += (c1+c2) % UUMAX_CHAR;
+        *optr++ = UUENCODE_CHAR(checksum);
         *optr++ = '\n';
       }
 
@@ -1216,6 +1218,305 @@ long uuencode_file(FILE *in, FILE *out)
 
   DB(kprintf("finished uuencode_file(): %ld\n", encoded_chars);)
   return encoded_chars;
+}
+
+///
+/// uudecode_file()
+// Decode a UUencoded file using separate input/output buffers to speed up
+// processing. It also takes respect of eventually existing checksums and
+// tries to validate the UUencoded file to conform to the BSD standard or
+// otherwise return an error/warning by returning negative values.
+long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
+{
+  unsigned char inbuffer[UUDEC_IBUF+1]; // we read out data in ~4500 byte chunks
+  unsigned char outbuffer[UUDEC_OBUF+1];// the output buffer
+  unsigned char *iptr;
+  unsigned char *optr = outbuffer;
+  size_t read;
+  size_t next_unget = 0;
+  long decoded = 0;
+  int line_len = 0;
+  int result = 0;
+  int checksum = 0;
+  BOOL eof_reached = FALSE;
+
+  DB(kprintf("uudecode_file()\n");)
+
+  // before we start with our decoding we have to search for
+  // the starting "begin XXX" line
+  do
+  {
+    if(fgets(inbuffer, UUDEC_IBUF, in) != 0)
+    {
+      // check if this line start with "begin " and if so
+      // break out and continue decoding the real data
+      if(strncmp(inbuffer, "begin ", 6) == 0)
+        break;
+    }
+    else if(feof(in) != 0)
+      return -2; // -2 means "no UUcode start found"
+    else
+      return -1; // -1 means unexpected error
+  }
+  while(TRUE);
+
+  // start decoding the "real" data.
+  while(eof_reached == FALSE)
+  {
+    // do a binary read of a multiple of UUDEC_IBUF
+    read = fread(&inbuffer[next_unget], sizeof(char), UUDEC_IBUF-next_unget, in);
+
+    // on a short item count we check for a potential
+    // error and return immediatly.
+    if(read != UUDEC_IBUF-next_unget)
+    {
+      if(feof(in) != 0)
+      {
+        DB(kprintf("EOF file at %ld\n", ftell(in));)
+
+        eof_reached = TRUE; // we found an EOF
+
+        // if the last read was zero we can exit immediatly
+        if(read == 0 && next_unget == 0)
+          break;
+      }
+      else
+      {
+        DB(kprintf("error on reading data!\n");)
+
+        // an error occurred, lets return -1
+        return -1;
+      }
+    }
+
+    // increase/reset the counters
+    read += next_unget;
+    next_unget = 0;
+
+    // now that we have read in our buffer we have to parse through
+    // it and decode all chars according to the uudecoding rules
+    // of the UUcode encoding.
+    iptr = inbuffer;
+
+    while(read)
+    {
+      if(line_len == 0)
+      {
+        unsigned char c = *iptr++;
+        read--;
+
+        // skip whitespaces on a fresh line
+        while(is_lwsp(c) && read)
+        {
+          c = *iptr++;
+          read--;
+        }
+
+        // if the line length counter is zero we haven't read the
+        // first byte to check how long the line is going to be
+        line_len = UUDECODE_CHAR(c);
+        if(line_len == 0)
+        {
+          unsigned char *cptr;
+
+          // lets check whether this is just the sign that we
+          // are at the end of our data or if it is an error
+          if(*iptr == '\n' ||
+            (*iptr == '`' && *(iptr+1) == '\n'))
+          {
+            // ok, we seem to have found the ending ' on a UUcode
+            // line, so lets check if we have the finalizing "end"
+            if(*iptr == '`')
+            {
+              iptr += 2;
+              read -= 2;
+            }
+            else
+            {
+              iptr++;
+              read--;
+            }
+
+            // check if there is enough space
+            if(read < 3 && eof_reached == FALSE)
+            {
+              // copy back the rest of the stuff
+              memcpy(inbuffer, iptr, read);
+
+              // do a small binary read
+              read += fread(&inbuffer[read], sizeof(char), 3-read, in);
+
+              iptr = inbuffer;
+            }
+
+            // set the checkpointer
+            cptr = iptr;
+
+            // check again
+            if(read < 3 || strncmp(cptr, "end", 3) != 0)
+            {
+              // if we end up here then there isn't enough
+              // data left for checking the finalizing "end"
+              // or we just didn't find it, but somehow we were
+              // able to decode all our data, so lets just drop
+              // the user a warning
+              result = -6; // -6 means "no end tag"
+            }
+
+            // set eof to let the outer loop terminate
+            eof_reached = TRUE;
+            break;
+          }
+          else
+          {
+            DB(kprintf("error: invalid length ID\n");)
+
+            result = -3; // -3 means "invalid length ID"
+          }
+        }
+
+        // clear our checksum
+        checksum = 0;
+      }
+      else
+      {
+        while(line_len && read/4 > 0)
+        {
+          int tempsum;
+          unsigned char c;
+          unsigned char c1 = UUDECODE_CHAR(*iptr++);
+          unsigned char c2 = UUDECODE_CHAR(*iptr++);
+          unsigned char c3 = UUDECODE_CHAR(*iptr++);
+          unsigned char c4 = UUDECODE_CHAR(*iptr++);
+
+          // now that we have our input chars we can
+          // decode them to our output buffer directly
+          tempsum = c = c1 << 2 | c2 >> 4;
+          *optr++ = tt ? tt->Table[(UBYTE)c] : c;
+          line_len--;
+          decoded++;
+
+          if(line_len)
+          {
+            tempsum += c = c2 << 4 | c3 >> 2;
+            *optr++ = tt ? tt->Table[(UBYTE)c] : c;
+            line_len--;
+            decoded++;
+
+            if(line_len)
+            {
+              tempsum += c = c3 << 6 | c4;
+              *optr++ = tt ? tt->Table[(UBYTE)c] : c;
+              line_len--;
+              decoded++;
+            }
+          }
+
+          // calculate the checksum aswell
+          checksum += tempsum % UUMAX_CHAR;
+
+          // decrease the read counter
+          read -= 4;
+        }
+
+        // let us now check if our outbuffer is filled up so that we can write
+        // out the data to our out stream.
+        if(optr-outbuffer >= UUDEC_OBUF)
+        {
+          size_t todo = optr-outbuffer;
+
+          // now we do a binary write of the data
+          if(fwrite(outbuffer, 1, todo, out) != todo)
+          {
+            DB(kprintf("error on writing data!\n");)
+            // an error must have occurred.
+            return -1;
+          }
+
+          // now reset the outbuffer and stuff
+          optr = outbuffer;
+        }
+
+        // if line_len == 0 then we probably read through
+        // our expected end of the line, so lets check if
+        // the next char is either a newline or another
+        // uuencoded char, which could be the checksum
+        // of our input char
+        if(line_len == 0)
+        {
+          unsigned char last = *iptr;
+
+          if(last == '\n')
+          {
+            // there seems to be no checksum on this line
+            // so lets go on without checking it.
+            iptr++;
+            read--;
+          }
+          else if(last > ' ' && last <= '`' &&
+                  *(iptr+1) == '\n')
+          {
+            // check if our calculated checksum is
+            // identical to the last char found
+            if(UUENCODE_CHAR(checksum) != last)
+            {
+              DB(kprintf("wrong checksum: %ld:%ld != %ld\n", checksum, UUENCODE_CHAR(checksum), last);)
+
+              // the checksum seems to be wrong
+              // so lets signal it on exiting this
+              // function
+              result = -4; // -4 means "wrong checksum"
+            }
+
+            iptr += 2;
+            read -= 2;
+          }
+          else
+          {
+            DB(kprintf("error: no newline or no checksum found at end\n");)
+
+            // something serious must have happend
+            // as either the last char isn't a newline
+            // or a checksum is wrong, so lets exit with
+            // an error immediatly
+            return -5; // -5 means corrupted UUcode string found
+          }
+        }
+        else if(read > 0)
+        {
+          //kprintf("next line_len: %ld %ld\n", line_len, read);
+
+          // ok, there isn't enough studd in the input buffer
+          // so we break out here and parse the stuff on
+          // the next iteration
+          next_unget = read;
+          memcpy(inbuffer, iptr, next_unget);
+
+          break;
+        }
+      }
+    }
+  }
+
+  // check if there is something in the outbuffer that
+  // hasn't been written out yet
+  if(optr-outbuffer > 0)
+  {
+    size_t todo = optr-outbuffer;
+
+    // now we do a binary write of the data
+    if(fwrite(outbuffer, 1, todo, out) != todo)
+    {
+      DB(kprintf("error on writing data!\n");)
+      // an error must have occurred.
+      return -1;
+    }
+  }
+
+  // on success lets return the number of decoded
+  // chars
+  DB(kprintf("finished uudecode_file(): %ld\n", decoded);)
+  return result == 0 ? decoded : result;
 }
 
 ///
@@ -1281,69 +1582,6 @@ void fromuuetxt(char **txt, FILE *outfp)
    while (TRUE)
    {
       if (gettxtline(buf, sizeof(buf), txt))
-      {
-         ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
-         return;
-      }
-      else if (!strncmp(buf, "end", 5)) break;
-      else if (*buf == '\0') continue;
-      else
-      {
-         int length = (*buf - ' ');
-         if (*buf == '`') length = 0;
-         if (length < 0 || length > 63)
-            ER_NewError(GetStr(MSG_ER_InvalidLength), (char *)length, NULL);
-         else
-         {
-            char *ptr = buf + 1;
-            while (length > 0) { uueget(ptr, outfp, length); length -= 3; ptr += 4; }
-         }
-      }
-   }
-}
-
-///
-/// getline
-//  Reads next line from a UU encoded file
-static BOOL getline(char *buf, int size, FILE *fp)
-{
-   int c;
-   char *ptr = buf;
-
-   for (c = 0; c < size; ++c)buf[c] = ' ';
-   do
-   {
-      if ((c = fgetc(fp)) == -1) {*ptr = '\0'; return (BOOL)(ptr == buf); }
-      else if (c == '\n' || c == '\r') { *ptr = '\0'; return FALSE; }
-      // Emm: I guess the following line was meant to process quoted
-      // mails, but it causes file corruption when the '>' is really
-      // part of the uuencoding (usually, this happens for the last
-      // line).
-      //else if (ptr == buf && c == '>') continue;
-      else if (size > 0) { *ptr++ = c; size--; }
-   } while (TRUE);
-   return FALSE;
-}
-
-///
-/// fromuue
-//  Decodes a file in UUE format
-void fromuue(FILE *infp, FILE *outfp)
-{
-   char buf[SIZE_LINE];
-
-   while (TRUE)
-   {
-      if (getline(buf, sizeof(buf), infp))
-      {
-         ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
-         return;
-      }
-      if (!strncmp(buf, "begin", 5)) break;
-   }
-   while (TRUE)
-   {
-      if (getline(buf, sizeof(buf), infp))
       {
          ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
          return;

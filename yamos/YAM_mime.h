@@ -55,6 +55,7 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt);
 
 // uucode encoding/decoding routines
 long uuencode_file(FILE *in, FILE *out);
+long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt);
 
 // rfc2047 decoding routines
 int rfc2047_encode_file(FILE *fh, const char *str,
@@ -64,7 +65,6 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
 
 // the OLD MIME routines which we are going to replace step-by-step
 void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
-void  fromuue(FILE *infp, FILE *outfp);
 void  fromuuetxt(char **txt, FILE *outfp);
 
 #endif /* YAM_MIME_H */

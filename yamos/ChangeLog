@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-07-31  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c: rewrote the last major MIME routine (UU decoding)
+      from scratch. By using the same approach like for the other
+      rewritten MIME encoding/decoding routines, the decoding of
+      UUcode attachments seems to be dramatically faster now (~3MB
+      in less than a second compared to 6 seconds previously). So
+      the MIME encoding/decoding routines seem to be working very
+      instantly now. However, there are still two minor routines
+      missing which we will address during the next few days. Then
+      we can move on to other parts that require our attention.
+
 2004-07-29  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c: rewrote the UU MIME encoding routines from scratch.

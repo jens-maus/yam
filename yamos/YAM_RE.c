@@ -1907,12 +1907,16 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             case -3:
             {
               ER_NewError(GetStr(MSG_ER_QPDEC_WARN), rp->Filename, NULL);
+
+              decodeResult = TRUE; // allow to save the resulting file
             }
             break;
 
             case -4:
             {
               ER_NewError(GetStr(MSG_ER_QPDEC_CHAR), rp->Filename, NULL);
+
+              decodeResult = TRUE; // allow to save the resulting file
             }
             break;
 
@@ -1926,9 +1930,62 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       // process UU-Encoded decoding
       case ENC_UUE:
       {
-        fromuue (in, out);
-        if(RE_ConsumeRestOfPart(in, NULL, NULL, NULL))
+        long decoded = uudecode_file(in, out, tt);
+        DB(kprintf("UU decoded %ld chars of part %ld.\n", decoded, rp->Nr);)
+
+        if(decoded >= 0 &&
+           RE_ConsumeRestOfPart(in, NULL, NULL, NULL))
+        {
           decodeResult = TRUE;
+        }
+        else
+        {
+          switch(decoded)
+          {
+            case -1:
+            {
+              ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
+            }
+            break;
+
+            case -2:
+            {
+              ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "begin");
+            }
+            break;
+
+            case -3:
+            {
+              ER_NewError(GetStr(MSG_ER_InvalidLength), 0, NULL);
+            }
+            break;
+
+            case -4:
+            {
+              ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), rp->Filename, NULL);
+
+              decodeResult = TRUE; // allow to save the resulting file
+            }
+            break;
+
+            case -5:
+            {
+              ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), rp->Filename, NULL);
+            }
+            break;
+
+            case -6:
+            {
+              ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "end");
+
+              decodeResult = TRUE; // allow to save the resulting file
+            }
+            break;
+
+            default:
+              ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
+          }
+        }
       }
       break;
 

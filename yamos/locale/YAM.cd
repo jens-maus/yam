@@ -5338,3 +5338,23 @@ Some not allowed characters have been spotted during the quoted-printable \
 decoding of file '%s' and where therefore removed during the decoding.
 ; FILENAME
 ;
+MSG_ER_UUDEC_TAGMISS (//)
+While trying to UUdecode file '%s', YAM wasn't able to find the required \
+'%s' tag as proposed by the UUcode standard.
+; FILENAME, TAG
+;
+MSG_ER_UUDEC_CHECKSUM (//)
+While trying to UUdecode file '%s', YAM has found that some embeeded \
+checksums were invalid and therefore suggests to check that the resulting \
+file isn't corrupted.\n\
+\n\
+A defective UUencoder was used or the message is truncated.
+; FILENAME
+;
+MSG_ER_UUDEC_CORRUPT (//)
+While trying to UUdecode file '%s', YAM has found that the UUencoded part \
+seems to be corrupt. \n\
+\n\
+A defective UUencoder was used or the message is truncated.
+; FILENAME
+;
