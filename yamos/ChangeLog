@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-03-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c: slightly adapted YAM to be somehow more compliant to RFC 2046 in
+      which unknown/unsupproted multipart subtypes should be treated as
+      "multipart/mixed" parts. This should in fact fix problems with not correctly
+      recognized "multipart/related" mails.
+
 2005-03-02  Gunther Nikl <gni@gecko.de>
 
     * YAM_utilities.h (xget): Replaced INLINE xget with a statement

@@ -1368,16 +1368,25 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
            {
              p += 10;
 
-             if(!strnicmp(p, "mixed", 5))
+             // we do specify the multipart content-type in
+             // accordance to RFC 2046/RFC2387
+             if(!strnicmp(p, "mixed", 5))             // RFC 2046 (5.1.3)
                SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
-             else if(!strnicmp(p, "report", 6))
-               SET_FLAG(mail->mflags, MFLAG_MP_REPORT);
-             else if(!strnicmp(p, "encrypted", 9))
-               SET_FLAG(mail->mflags, MFLAG_MP_CRYPT);
-             else if(!strnicmp(p, "signed", 6))
-               SET_FLAG(mail->mflags, MFLAG_MP_SIGNED);
-             else if(!strnicmp(p, "alternative", 11))
+             else if(!strnicmp(p, "alternative", 11)) // RFC 2046 (5.1.4)
                SET_FLAG(mail->mflags, MFLAG_MP_ALTERN);
+             else if(!strnicmp(p, "report", 6))       // RFC 3462
+               SET_FLAG(mail->mflags, MFLAG_MP_REPORT);
+             else if(!strnicmp(p, "encrypted", 9))    // RFC 1847 (2.2)
+               SET_FLAG(mail->mflags, MFLAG_MP_CRYPT);
+             else if(!strnicmp(p, "signed", 6))       // RFC 1847 (2.1)
+               SET_FLAG(mail->mflags, MFLAG_MP_SIGNED);
+             else
+             {
+               // "mixed" is the primary subtype and in fact RFC 2046 (5.1.7)
+               // suggests to fall back to mixed if a MIME subtype is unknown
+               // to a MIME parser, which we do here now.
+               SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+             }
            }
          }
          else if(!stricmp(field, "x-senderinfo"))
