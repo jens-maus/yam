@@ -119,7 +119,11 @@ struct CO_GUIData
    APTR CY_SENDERINFO;
    APTR CY_SIGSEPLINE;
    APTR CA_COLTEXT;
+   APTR CA_COL1QUOT;
    APTR CA_COL2QUOT;
+   APTR CA_COL3QUOT;
+   APTR CA_COL4QUOT;
+   APTR CA_COLURL;
    APTR CH_FIXFEDIT;
    APTR CH_ALLTEXTS;
    APTR CH_MULTIWIN;
@@ -421,7 +425,11 @@ struct Config
 	 BOOL	 AutomaticTranslationIn;
 
    struct MUI_PenSpec ColoredText;
+   struct MUI_PenSpec Color1stLevel;
    struct MUI_PenSpec Color2ndLevel;
+   struct MUI_PenSpec Color3rdLevel;
+   struct MUI_PenSpec Color4thLevel;
+   struct MUI_PenSpec ColorURL;
    struct RxHook      RX[MAXRX];
 
    char  RealName[SIZE_REALNAME];
