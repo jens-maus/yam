@@ -283,7 +283,6 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
 					if(version > 3)
 					{
 						addr.DefSecurity = atoi(Trim(GetLine(fh, buffer, SIZE_LARGE)));
-						DB(KPrintf("Read DefSecurity from address book: %d\n",addr.DefSecurity));
 					}
                do if (!strcmp(buffer, "@ENDUSER")) break;
                while (GetLine(fh, buffer, SIZE_LARGE));
