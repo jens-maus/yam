@@ -28,3 +28,9 @@
     * Set max. length of commodity description to 39 characters.
 
     * Added sprintf() replacement with Locale support.
+
+2000-12-18  laursen <laursen@myself.com>
+
+    * Using ARexx commands MAILWRITE and MAILSEND, while YAM is iconified
+      and the external editor is configured to be spawned always, would
+      throw enforcer hits. Fixed.

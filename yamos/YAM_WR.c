@@ -1111,54 +1111,54 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
    if (comp->Mode == NEW_SAVEDEC) if (!WR_SaveDec(fh, comp)) return FALSE; else goto mimebody;
    if (!firstpart) return FALSE;
 
-	// encrypted multipart message requested?
+   // encrypted multipart message requested?
    if (firstpart->Next && comp->Security > SEC_NONE  && comp->Security <= SEC_BOTH)
    {
-	struct Compose tcomp;
-	FILE *tfh;
+      struct Compose tcomp;
+      FILE *tfh;
 
-			if((tf = OpenTempFile(NULL)) && (tfh = fopen(tf->Filename,"w")))
-			{
-				memcpy(&tcomp,comp,sizeof(tcomp));	// clone struct Compose
-				tcomp.FH = tfh;							// set new filehandle
-				tcomp.Security = SEC_NONE;				// temp msg gets attachments and no security
+         if((tf = OpenTempFile(NULL)) && (tfh = fopen(tf->Filename,"w")))
+         {
+            memcpy(&tcomp,comp,sizeof(tcomp));   // clone struct Compose
+            tcomp.FH = tfh;                      // set new filehandle
+            tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
 
-				// clear a few other fields to avoid redundancies
-				tcomp.MailCC = tcomp.MailBCC = tcomp.ExtHeader = NULL;
-				tcomp.Receipt = tcomp.Importance = 0;
-				tcomp.DelSend = tcomp.UserInfo = FALSE;
+            // clear a few other fields to avoid redundancies
+            tcomp.MailCC = tcomp.MailBCC = tcomp.ExtHeader = NULL;
+            tcomp.Receipt = tcomp.Importance = 0;
+            tcomp.DelSend = tcomp.UserInfo = FALSE;
 
-				if(WriteOutMessage(&tcomp))			// recurse!
-				{
-				struct WritePart *tpart = comp->FirstPart; // save parts list so we're able to recover from a calloc() error
+            if(WriteOutMessage(&tcomp))    // recurse!
+            {
+               struct WritePart *tpart = comp->FirstPart; // save parts list so we're able to recover from a calloc() error
 
-					// replace with single new part
-   				if(comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart)))
-					{
-						comp->FirstPart->EncType = tpart->EncType;			// reuse encoding
-	   				FreePartsList(tpart);										// free old parts list
-						comp->FirstPart->ContentType = "message/rfc822";	// the only part is an email message
-						comp->FirstPart->Filename = tf->Filename;				// set filename to tempfile
-						comp->Signature = 0;											// only use sig in enclosed mail
-					} else
-					{
-						// no errormsg here - the window probably won't open anyway...
-						DisplayBeep(NULL);
-						comp->FirstPart = tpart;			// just restore old parts list
-						comp->Security = 0;					// switch off security
-						// we'll most likely get more errors further down :(
-					}
-				} else
-				{
-					ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
-					comp->Security = 0;
-				}
-				fclose(tfh);
-			} else
-			{
-				ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
-				comp->Security = 0;
-			}
+               // replace with single new part
+               if(comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart)))
+               {
+                  comp->FirstPart->EncType = tpart->EncType;          // reuse encoding
+                  FreePartsList(tpart);                               // free old parts list
+                  comp->FirstPart->ContentType = "message/rfc822";    // the only part is an email message
+                  comp->FirstPart->Filename = tf->Filename;           // set filename to tempfile
+                  comp->Signature = 0;                                // only use sig in enclosed mail
+               } else
+               {
+                  // no errormsg here - the window probably won't open anyway...
+                  DisplayBeep(NULL);
+                  comp->FirstPart = tpart;     // just restore old parts list
+                  comp->Security = 0;          // switch off security
+                  // we'll most likely get more errors further down :(
+               }
+         } else
+         {
+            ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
+            comp->Security = 0;
+         }
+         fclose(tfh);
+         } else
+         {
+            ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
+            comp->Security = 0;
+         }
    }
    *options = 0;
    if (comp->DelSend) strcat(options, ",delsent");
@@ -1182,31 +1182,32 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
    if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
    if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
    if (comp->ExtHeader) WR_EmitExtHeader(fh, comp);
+
 mimebody:
    fputs("MIME-Version: 1.0\n", fh);
    sprintf(boundary, "BOUNDARY.%s", NewID(False));
    if (comp->ReportType > 0)
    {
-		WR_ComposeReport(fh, comp, boundary);
-		success = TRUE;
-	} else if (comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
-	{
-		success = WR_ComposePGP(fh, comp, boundary);
-	} else if (firstpart->Next)
-	{
-		WR_ComposeMulti(fh, comp, boundary);
-		success = TRUE;
-	} else
+      WR_ComposeReport(fh, comp, boundary);
+      success = TRUE;
+   } else if (comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
+   {
+      success = WR_ComposePGP(fh, comp, boundary);
+   } else if (firstpart->Next)
+   {
+      WR_ComposeMulti(fh, comp, boundary);
+      success = TRUE;
+   } else
    {
       WriteContentTypeAndEncoding(fh, firstpart);
       if (comp->Security == SEC_SENDANON && comp->OldSecurity != SEC_SENDANON)
-			WR_Anonymize(fh, comp->MailTo);
+         WR_Anonymize(fh, comp->MailTo);
       fputs("\n", fh);
       EncodePart(fh, firstpart);
 		success = TRUE;
    }
-	CloseTempFile(tf);
-	return success;
+   CloseTempFile(tf);
+   return success;
 }
 
 ///
@@ -1235,8 +1236,12 @@ void WR_NewMail(int mode, int winnum)
    struct WR_ClassData *wr = G->WR[winnum];
    struct WR_GUIData *gui = &wr->GUI;
    struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
+   long winopen;
 
-   set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+   get(G->WR[winnum]->GUI.WI, MUIA_Window_Open, &winopen);
+   if (winopen) set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
+   /* Workaround for a MUI bug */
+
    clear(&mail, sizeof(struct Mail));
    clear(&comp, sizeof(struct Compose));
    mlist[0] = (struct Mail *)1; mlist[1] = NULL;
@@ -1453,10 +1458,16 @@ MakeHook(WR_SaveAsHook, WR_SaveAsFunc);
 SAVEDS ASM void WR_Edit(REG(a1,int *arg))
 {
    int winnum = *arg;
+   long winopen;
+
    if (*(C->Editor))
    {
       char buffer[SIZE_COMMAND+SIZE_PATHFILE];
-      set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
+
+      get(G->WR[winnum]->GUI.WI, MUIA_Window_Open, &winopen);
+      if (winopen) set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
+      /* Workaround for a MUI bug */
+
       EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum], NULL);
       sprintf(buffer,"%s \"%s\"", C->Editor, G->WR_Filename[winnum]);
       ExecuteCommand(buffer, TRUE, OUT_NIL);
