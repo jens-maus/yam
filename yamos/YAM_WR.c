@@ -52,6 +52,7 @@ LOCAL BOOL WR_Bounce(FILE*, struct Compose*);
 LOCAL BOOL WR_SaveDec(FILE*, struct Compose*);
 LOCAL void WR_EmitExtHeader(FILE*, struct Compose*);
 LOCAL void WR_ComposeReport(FILE*, struct Compose*, char*);
+LOCAL void SetDefaultSecurity(struct Compose*);
 LOCAL BOOL WR_ComposePGP(FILE*, struct Compose*, char*);
 LOCAL char *WR_TransformText(char*, int, char*);
 LOCAL void WR_SharedSetup(struct WR_ClassData*, int);
@@ -935,6 +936,57 @@ LOCAL void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
    fprintf(fh, "\n--%s--\n\n", boundary);
 }
 
+LOCAL void SetDefaultSecurity(struct Compose *comp)
+{
+STRPTR CheckThese[3],buf;
+int i, Security=0;
+BOOL FirstAddr=TRUE;
+
+	/* collect address pointers for easier iteration */
+	CheckThese[0] = comp->MailTo;
+	CheckThese[1] = comp->MailCC;
+	CheckThese[2] = comp->MailBCC;
+
+	/* go through all addresses */
+	for(i=0; i<3; i++)
+	{
+		if(CheckThese[i] == NULL) continue;		// skip empty fields
+		DB(KPrintf("SetDefaultSecurity(): checking address field: '%s'\n",CheckThese[i])); 
+		// copy string as strtok() will modify it
+		if(buf = strdup(CheckThese[i]))
+		{
+		int hits,currsec;
+		STRPTR s;
+		struct MUIS_Listtree_TreeNode *tn;
+
+			// loop through comma-separated addresses in string
+			s = strtok(buf,",");
+			while(s)
+			{
+				DB(KPrintf("SetDefaultSecurity(): looking for user '%s'\n",s)); 
+				AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, s, ASM_REALNAME|ASM_ADDRESS|ASM_COMPLETE, &hits, &tn);
+				if(hits == 0) currsec = 0;		// entry not in address book -> no security
+				else currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;	// else get default
+				if(currsec != Security)
+				{
+					if(FirstAddr)		// first address' setting is always used
+					{
+						FirstAddr = FALSE;
+						Security = currsec;
+					} else				// conflict: two addresses have different defaults
+					{
+						DB(KPrintf("SetDefaultSecurity(): conflicting security for address '%s': %ld\n",s,currsec));
+						Security = 0;	// disable
+					}
+				}
+				s = strtok(NULL,",");
+			}
+			free(buf);
+		}
+	}
+	comp->Security = Security;		// FIXME: consider user's manual changes before setting defaults!
+}
+
 ///
 /// WR_ComposePGP
 //  Creates a signed and/or encrypted PGP/MIME message
@@ -1036,33 +1088,6 @@ FILE *fh = comp->FH;
 struct WritePart *firstpart = comp->FirstPart;
 char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
    
-	DB(KPrintf("WriteOutMessage() starting\n"
-"\tMailTo     = '%s'\n"
-"\tMailCC     = '%s'\n"
-"\tMailBCC    = '%s'\n"
-"\tFrom       = '%s'\n"
-"\tReplyTo    = '%s'\n"
-"\tRealName   = '%s'\n"
-"\tSubject    = '%s'\n"
-"\tExtHeader  = '%s'\n"
-"\tIRTMsgID   = '%s'\n"
-"\tMode       = %ld\n"
-"\tImportance = %ld\n"
-"\tSignature  = %ld\n"
-"\tSecurity   = %ld\n"
-"\tOldSecurity= %ld\n"
-"\tReceipt    = %ld\n"
-"\tReportType = %ld\n"
-"\tDelSend    = %s\n"
-"\tUserInfo   = %s\n"
-"\tFirstPart  = $%08lx\n"
-"\tOrigMail   = $%08lx\n",
-	comp->MailTo,comp->MailCC,comp->MailBCC,comp->From,comp->ReplyTo,comp->RealName,
-	comp->Subject,comp->ExtHeader,comp->IRTMsgID,comp->Mode,comp->Importance,
-	comp->Signature,comp->Security,comp-> OldSecurity,comp->Receipt,comp->ReportType,
-	comp->DelSend?"TRUE":"FALSE",comp->UserInfo?"TRUE":"FALSE",
-	comp->FirstPart,comp->OrigMail));
-
    if (comp->Mode == NEW_BOUNCE)
    {
       if (comp->DelSend) EmitHeader(fh, "X-YAM-Options", "delsent");
@@ -1242,6 +1267,9 @@ void WR_NewMail(int mode, int winnum)
       comp.FirstPart = BuildPartsList(winnum);
       comp.FirstPart->TTable = G->TTout;
    }
+
+//	SetDefaultSecurity(&comp);
+
    if (wr->Mode == NEW_EDIT)
    {
       struct Mail *edmail = wr->Mail;
