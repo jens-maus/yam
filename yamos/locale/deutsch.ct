@@ -1,5 +1,5 @@
 ## chunk AUTH Dirk Neubauer, Horst Schumann [ATO]
-## version $VER: YAM.catalog 5.10 (24.05.2003)
+## version $VER: YAM.catalog 5.11 (17.01.2004)
 ## language deutsch
 ## codeset 0
 ;
@@ -247,7 +247,10 @@ Verzeichnis
 ; Module Root
 ;
 MSG_Copyright1
-Open Source E-Mail Software für den Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2004 YAM Open Source Team
+Open Source E-Mail Software für den Amiga\n\
+\n\
+Copyright (c) 1995-2000 Marcel Beck\n\
+Copyright (c) 2000-2004 YAM Open Source Team
 ; Open Source E-mail package for the Amiga\n\
 ; \n\
 ; Copyright © 1995-2000 Marcel Beck\n\
@@ -6810,4 +6813,18 @@ Möchten Sie wirklich fortfahren?
 MSG_YesNoReq2
 _Ja|*_Nein
 ;_Yes|*_No
+;
+MSG_HELP_FO_ST_HELLOTEXT
+Text, welcher am Anfang einer\n\
+neuen Nachricht eingefügt wird
+;
+MSG_HELP_FO_ST_BYETEXT
+Text, welcher am Ende einer\n\
+neuen Nachricht eingefügt wird
+;
+MSG_FO_Welcome
+Be_grüssung
+;
+MSG_FO_Greetings
+_Verabschiedung
 ;
