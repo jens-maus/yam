@@ -479,7 +479,7 @@ LOCAL void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *e
    sbuf = ExpandText(C->QuoteText, etd);
    stccpy(wr->QuoteText, TrimEnd(sbuf), SIZE_DEFAULT);
    FreeStrBuf(sbuf);
-	stccpy(wr->AltQuoteText, C->AltQuoteText, SIZE_SMALL);
+   stccpy(wr->AltQuoteText, C->AltQuoteText, SIZE_SMALL);
 }
 
 ///
@@ -546,9 +546,9 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
    FILE *out;
    char *cmsg, *sbuf;
 
-	// return if mail is already being written/edited
+   // return if mail is already being written/edited
    for (i = 0; i < MAXWR; i++) if (G->WR[i] && G->WR[i]->Mail == mail) { DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront); return -1; }
-	// check if necessary settings fror writing are OK and open new window
+   // check if necessary settings for writing are OK and open new window
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
       if ((out = fopen(G->WR_Filename[winnum], "w")))
@@ -754,10 +754,10 @@ int MA_NewReply(struct Mail **mlist, int flags)
             // is a mailing list we have to do some operation
             if (folder)
             {
-						   char tofld[SIZE_LARGE], fromfld[SIZE_LARGE];
+               char tofld[SIZE_LARGE], fromfld[SIZE_LARGE];
 
-	    	       strcpy(tofld, BuildAddrName2(&mail->To));
-  		         strcpy(fromfld, BuildAddrName2(&mail->From));
+               strcpy(tofld, BuildAddrName2(&mail->To));
+               strcpy(fromfld, BuildAddrName2(&mail->From));
 
                // if the mail we are going to reply resides in the incoming folder
                // we have to check all other folders first.
