@@ -7,6 +7,11 @@ $Source$
 
 2005-02-28  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/Recipientstring.c: fixed a long standing bug #746811 in the
+      recipientstring handling code where upon usage of the backspace key one
+      character was deleted too much out of the betterstring object. Also fixed
+      another bug where replacing one recipient out of a whole recipient list
+      did clear the whole string instead of just replacing the single entry.
     * classes/Recipientstring.c: slightly restructured/cleaned up.
     * YAM_FI.c, YAM_MAf.c, ReadMailGroup.c: replaced all v45+ only NewMinList()
       usages by NewList() equivalents.

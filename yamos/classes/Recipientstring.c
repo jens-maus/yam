@@ -371,39 +371,70 @@ OVERLOAD(MUIM_HandleEvent)
 			}
 			break;
 
-			case IECODE_BACKSPACE:
-				DoMethod(obj, MUIM_BetterString_ClearSelected);
-			/* continue */
-
 			default:
 			{
-				STRPTR old, new;
-				STRPTR new_address = NULL;
+				BOOL changed = FALSE;
+				long select_size;
 
-				if(xget(obj, MUIA_BetterString_SelectSize) != 0 && ConvertKey(imsg) == ',')
-					set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
-
-				old = strdup((STRPTR)xget(obj, MUIA_String_Contents));
-
-				// call the SuperMethod and set the result (Eat or non-eat) to our result
-				result = DoSuperMethodA(cl, obj, msg);
-				new = (STRPTR)xget(obj, MUIA_String_Contents);
-
-				if(strcmp(old, new)) /* if contents changed, check if something matches */
-					new_address = (STRPTR)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Open, DoMethod(obj, MUIM_Recipientstring_CurrentRecipient));
-
-				free(old);
-
-				if(new_address) /* this is the complete address of what the user is typing, so let's insert it (marked) */
+				// check if some text is actually selected
+				if((select_size = xget(obj, MUIA_BetterString_SelectSize)) != 0)
 				{
-					LONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
-					LONG pos = xget(obj, MUIA_String_BufferPos);
+					if(imsg->Code == IECODE_BACKSPACE)
+					{
+						// now we do check wheter everything until the end was selected
+						long pos = xget(obj, MUIA_String_BufferPos)+select_size;
+						char *content = (char *)xget(obj, MUIA_String_Contents);
 
-					DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
+						if(content && (content[pos] == '\0' || content[pos] == ','))
+							DoMethod(obj, MUIM_BetterString_ClearSelected);
 
-					SetAttrs(obj, MUIA_String_BufferPos, pos,
-												MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
-												TAG_DONE);
+						changed = TRUE;
+					}
+					else if(ConvertKey(imsg) == ',')
+						set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
+				}
+
+				// if we do not have an early change result we
+				// do have to evaluate the superMethod call
+				if(changed == FALSE)
+				{
+					char *old;
+					char *new;
+
+					// now we get a temporary copy of our string contents, call the supermethod
+					// and compare if something has changed or not
+					old = strdup((char *)xget(obj, MUIA_String_Contents));
+					result = DoSuperMethodA(cl, obj, msg);
+					new = (char *)xget(obj, MUIA_String_Contents);
+
+					// check if the content changed
+					if(strcmp(old, new) != 0)
+						changed = TRUE;
+
+					// free our temporary buffer
+					free(old);
+				}
+				else
+					result = DoSuperMethodA(cl, obj, msg);
+			
+				// if the content changed we do get the current recipient
+				if(changed)
+				{
+					char *cur_rcpt = (char *)DoMethod(obj, MUIM_Recipientstring_CurrentRecipient);
+					char *new_address;
+
+					if(cur_rcpt &&
+						 (new_address = (char *)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Open, cur_rcpt)))
+					{
+						long start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+						long pos = xget(obj, MUIA_String_BufferPos);
+
+						DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
+
+						SetAttrs(obj, MUIA_String_BufferPos, pos,
+													MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
+													TAG_DONE);
+					}
 				}
 			}
 			break;
@@ -412,7 +443,8 @@ OVERLOAD(MUIM_HandleEvent)
 	else if(imsg->Class == IDCMP_CHANGEWINDOW)
 	{
 		// only if the matchwindow is open we advice the matchwindow to refresh it`s position.
-		if(xget(data->Matchwindow, MUIA_Window_Open))	DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
+		if(xget(data->Matchwindow, MUIA_Window_Open))	
+			DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
 	}
 
 	return result;
@@ -635,28 +667,42 @@ DECLARE(CurrentRecipient)
 	buf = (STRPTR)xget(obj, MUIA_String_Contents);
 	pos = xget(obj, MUIA_String_BufferPos);
 
-	if((buf[pos] == '\0' || buf[pos] == ',') && (data->CurrentRecipient = strdup(&buf[DoMethod(obj, MUIM_Recipientstring_RecipientStart)])) && (end = strchr(data->CurrentRecipient, ',')))
+	if((buf[pos] == '\0' || buf[pos] == ',') &&
+		 (data->CurrentRecipient = strdup(&buf[DoMethod(obj, MUIM_Recipientstring_RecipientStart)])) &&
+		 (end = strchr(data->CurrentRecipient, ',')))
+	{
 		end[0] = '\0';
+	}
 
 	return (ULONG)data->CurrentRecipient;
 }
 ///
 /// DECLARE(ReplaceSelected)
-DECLARE(ReplaceSelected) // STRPTR address
+DECLARE(ReplaceSelected) // char *address
 {
-	LONG start, pos;
-	STRPTR old, new_address = msg->address;
+	char *new_address = msg->address;
+	char *old;
+	char *ptr;
+	long start;
+	long pos;
+	long len;
 
 	// we first have to clear the selected area
 	DoMethod(obj, MUIM_BetterString_ClearSelected);
 
 	start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
-	old = (STRPTR)xget(obj, MUIA_String_Contents);
+	old = (char *)xget(obj, MUIA_String_Contents);
+	
+	// try to find out the length of our current recipient
+	if((ptr = strchr(&old[start], ',')))
+		len = ptr-(&old[start]);
+	else
+		len = strlen(&old[start]);
 
-	if(Strnicmp(new_address, &old[start], (LONG)strlen(&old[start])) != 0)
+	if(Strnicmp(new_address, &old[start], len) != 0)
 	{
 		SetAttrs(obj, MUIA_String_BufferPos, start,
-									MUIA_BetterString_SelectSize, strlen(&old[start]),
+									MUIA_BetterString_SelectSize, len,
 									TAG_DONE);
 
 		DoMethod(obj, MUIM_BetterString_ClearSelected);
