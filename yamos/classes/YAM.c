@@ -378,7 +378,7 @@ OVERLOAD(OM_DISPOSE)
 	struct EMailCacheNode *node;
 
 	// lets free the EMailCache List ourself in here, to make it a bit cleaner.
-	while(node = (struct EMailCacheNode *)RemHead(&data->EMailCache))
+	while((node = (struct EMailCacheNode *)RemHead(&data->EMailCache)))
 	{
 		free(node);
 	}

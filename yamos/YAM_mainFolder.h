@@ -28,6 +28,7 @@
 
 ***************************************************************************/
 
+#include "YAM_folderconfig.h"
 #include "YAM_utilities.h"
 
 enum MailStatus { STATUS_UNR, STATUS_OLD, STATUS_FWD, STATUS_RPD, STATUS_WFS,
@@ -97,7 +98,7 @@ ULONG  MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg);
 BOOL   MA_JumpToNewMsg(VOID);
 void   MA_FreeEMailStruct(struct ExtendedMail *email);
 BOOL   MA_GetIndex(struct Folder *folder);
-int    MA_LoadIndex(struct Folder *folder, BOOL full);
+enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full);
 void   MA_MakeFOFormat(APTR lv);
 char * MA_NewMailFile(struct Folder *folder, char *mailfile, int daynumber);
 BOOL   MA_PromptFolderPassword(struct Folder *fo, APTR win);
