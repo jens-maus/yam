@@ -236,18 +236,18 @@ Hardware
 Software
 --------
 
-   * AmigaOS 3.0 or higher
+   * AmigaOS 3.0 (Kickstart v39) or higher
    * @{" MUI " link "MUI"} 3.8 or higher
    * 3rd party MUI custom classes:
 
-        - BetterString
-            http://www.top-house.dk/~nr8/AmigaArchives/MCC_BetterString.LZX
+        - BetterString 11.6+
+            http://us.aminet.net/pub/aminet/dev/mui/MCC_Betterstring.lha
         - NList 20.104+
             http://home.t-online.de/home/sebauer/MCC_NList.lha
         - NListtree 18.12+
             http://home.t-online.de/home/sebauer/MCC_NListtree.lha
-        - TextEditor
-            http://www.top-house.dk/~nr8/AmigaArchives/MCC_TextEditor.LZX
+        - TextEditor 15.9+
+            http://us.aminet.net/pub/aminet/dev/mui/MCC_TextEditor.lha
         - Toolbar 15.8+
             http://us.aminet.net/pub/aminet/dev/mui/MCC_Toolbar.lha
 
