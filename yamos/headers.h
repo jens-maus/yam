@@ -56,7 +56,6 @@
 #include <libraries/openurl.h>
 #include <libraries/genesis.h>
 #include <libraries/cmanager.h>
-#include <mui/NFloattext_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
