@@ -2909,7 +2909,6 @@ Object *MakeAddressField(APTR *string, char *label, APTR help, int abmode, int w
    if ((obj = HGroup,
       GroupSpacing(1),
       Child, *string = RecipientstringObject,
-//      Child, *string = BetterStringObject,
          StringFrame,
          MUIA_CycleChain,                          TRUE,
          MUIA_String_AdvanceOnCR,                  TRUE,
