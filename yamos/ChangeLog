@@ -8,14 +8,8 @@ $Source$
 2005-02-16  Gunther Nikl <gni@gecko.de>
 
     * classes/AttachmentImage.c: replace calloc() with malloc().
-
-2005-02-16  Gunther Nikl <gni@gecko.de>
-
     * classes/AttachmentImage.c: wrap DB statement of else-case into {}.
     * YAM_debug.h: revert previous change (NOP addition).
-
-2005-02-16  Gunther Nikl <gni@gecko.de>
-
     * Makefile: revert LDLIBS change.
     * classes/AttachmentImage.c: use non-varargs function.
     * classes/AttachmentGroup.c: use non-varargs functions and require v44
@@ -24,6 +18,7 @@ $Source$
       (these should be in amiga.lib but ...)
 
 2005-02-16  Alexey Ivanov <AmiS@amiga.org.ru>
+
     * ReadMailGroup, misc: added 'image only' mode to show sender image in
       read window with out other sender infos.
 
