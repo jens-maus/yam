@@ -365,13 +365,19 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 /*0*/          if (!stricmp(buffer, "RealName"))       stccpy(co->RealName, value, SIZE_REALNAME);
                if (!stricmp(buffer, "EmailAddress"))   stccpy(co->EmailAddress, value, SIZE_ADDRESS);
 
-               /* If Locale is present, don't use the timezone from the config */
-               if (G->Locale) {
-                  CloseLocale(G->Locale);
-                  G->Locale = OpenLocale(NULL);
-                  co->TimeZone = -G->Locale->loc_GMTOffset/60;
+               if (!stricmp(buffer, "TimeZone"))
+               {
+	               /* If Locale is present, don't use the timezone from the config */
+  	             if (G->Locale)
+                 {
+    	              CloseLocale(G->Locale);
+      	            G->Locale = OpenLocale(NULL);
+        	          co->TimeZone = -G->Locale->loc_GMTOffset/60;
+          	     }else
+                 {
+               	 		co->TimeZone = atoi(value);
+								 }
                }
-               else if (!stricmp(buffer, "TimeZone")) co->TimeZone = atoi(value);
 
                if (!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
 /*1*/          if (!stricmp(buffer, "SMTP-Server"))    stccpy(co->SMTP_Server, value, SIZE_HOST);
@@ -741,15 +747,9 @@ void CO_SetConfig(void)
    switch (G->CO->VisiblePage)
    {
       case 0:
-         setstring   (gui->ST_REALNAME  ,CE->RealName);
-         setstring   (gui->ST_EMAIL     ,CE->EmailAddress);
-         /* If Locale is present, re-read the timezone setting and use it */
-         if (G->Locale) {
-            CloseLocale(G->Locale);
-            G->Locale = OpenLocale(NULL);
-            setcycle(gui->CY_TZONE, -G->Locale->loc_GMTOffset/60+12);
-         }
-         else setcycle(gui->CY_TZONE, CE->TimeZone+12);
+         setstring(gui->ST_REALNAME  ,CE->RealName);
+         setstring(gui->ST_EMAIL     ,CE->EmailAddress);
+         setcycle(gui->CY_TZONE, CE->TimeZone+12);
          setcheckmark(gui->CH_DLSAVING  ,CE->DaylightSaving);
          nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
          nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);

@@ -1342,9 +1342,10 @@ char *DateStamp2String(struct DateStamp *date, int mode)
    struct DateTime dt;
    struct DateStamp dsnow;
    long beat;
-   int tz;
 
+   // if this argument is not set we get the actual time
    if (!date) date = DateStamp(&dsnow);
+
    clear(&dt, sizeof(struct DateTime));
    dt.dat_Stamp   = *date;
    dt.dat_Format  = FORMAT_DOS;
@@ -1354,26 +1355,72 @@ char *DateStamp2String(struct DateStamp *date, int mode)
    dt.dat_StrDay  = (STRPTR)daystr;
    DateToStr(&dt);
 
-   /* If Locale is present, don't use the timezone from the config */
-   if (G->Locale) {
-      CloseLocale(G->Locale);
-      G->Locale = OpenLocale(NULL);
-      tz = -G->Locale->loc_GMTOffset/60;
-   }
-   else tz = C->TimeZone;
-   beat = (((date->ds_Minute-60*tz+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
-
+   // strip spaces a.s.o.
    s = Trim(datestr);
+
    switch (mode)
    {
-      case DSS_UNIXDATE:   sprintf(resstr, "%s %s %02ld %s %ld\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(s)-1], atoi(&s[3]), timestr, 1900+atoi(&s[6])); break;
-      case DSS_DATETIME:   timestr[5] = 0; sprintf(resstr, "%s %s", s, timestr); break;
-      case DSS_DATEBEAT:   sprintf(resstr, "%s @%03ld", s, beat); break;
-      case DSS_USDATETIME: sprintf(resstr, "%s %s", s, timestr); break;
-      case DSS_WEEKDAY:    strcpy(resstr, daystr); break;
-      case DSS_DATE:       strcpy(resstr, s); break;
-      case DSS_TIME:       strcpy(resstr, timestr); break;
-      case DSS_BEAT:       sprintf(resstr, "@%03ld", beat); break;
+      case DSS_UNIXDATE:
+      {
+        int y = atoi(&s[6]);
+
+   			// this is a Y2K patch
+        // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
+   			if (date->ds_Days < 8035) y += 1900;
+        else y += 2000;
+
+      	sprintf(resstr, "%s %s %02ld %s %ld\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(s)-1], atoi(&s[3]), timestr, y);
+      }
+      break;
+
+      case DSS_DATETIME:
+      {
+      	timestr[5] = 0;
+        sprintf(resstr, "%s %s", s, timestr);
+      }
+      break;
+
+      case DSS_DATEBEAT:
+      {
+			  // calculate the beat time
+   			beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+
+      	sprintf(resstr, "%s @%03ld", s, beat);
+      }
+    	break;
+
+      case DSS_USDATETIME:
+      {
+      	sprintf(resstr, "%s %s", s, timestr);
+      }
+      break;
+
+      case DSS_WEEKDAY:
+      {
+      	strcpy(resstr, daystr);
+      }
+      break;
+
+      case DSS_DATE:
+      {
+      	strcpy(resstr, s);
+      }
+      break;
+
+      case DSS_TIME:
+      {
+      	strcpy(resstr, timestr);
+      }
+      break;
+
+      case DSS_BEAT:
+      {
+			  // calculate the beat time
+   			beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+
+      	sprintf(resstr, "@%03ld", beat);
+      }
+      break;
    }
    return resstr;
 }
@@ -1393,8 +1440,16 @@ long DateStamp2Long(struct DateStamp *date)
    dt.dat_Format  = FORMAT_USA;
    dt.dat_StrDate = (STRPTR)datestr;
    DateToStr(&dt); s = Trim(datestr);
-   if ((y = atoi(&s[6])) < 78) y += 100;
-   return (100*atoi(&s[3])+atoi(s))*10000+y+1900;
+
+	 // get the year
+	 y = atoi(&s[6]);
+
+	 // this is a Y2K patch
+   // if less then 8035 days has passed since 1.1.1978 then we are in the 20th century
+   if (date->ds_Days < 8035) y += 1900;
+   else y += 2000;
+
+   return((100*atoi(&s[3])+atoi(s))*10000+y);
 }
 ///
 /// GetTZ

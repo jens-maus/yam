@@ -272,3 +272,12 @@
     * Fixed mailing list stuff again. Now Shift/Alt-Reply should behave like
       before.
 
+2001-05-11  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * Fixed Y2K bug in DateStamp2String() function. Now Daterequests to UNIXTIME
+      should perform accurate. -> fixes the export email function
+
+    * Removed some unneeded GetLocale calls for getting the TimeZone. Getting the
+      actual TimeZone is only needed once YAM is started. This changes should also
+      improved the MailListview a little bit because The DisplayHook was calling
+      such GetLocale calls everytime.
