@@ -368,7 +368,7 @@ static void TC_Dispatcher(enum TimerIO tio)
 
             // update the readMailGroup of the main window.
             if(mail)
-              DoMethod(gui->MN_MAILPREVIEW, MUIM_ReadMailGroup_ReadMail, mail);
+              DoMethod(gui->MN_MAILPREVIEW, MUIM_ReadMailGroup_ReadMail, mail, FALSE);
           }
         }
         break;

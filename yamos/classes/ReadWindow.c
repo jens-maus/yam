@@ -429,6 +429,13 @@ DECLARE(ReadMail) // struct Mail *mail
 	{
 		struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 
+		// if the title of the window is empty, we can assume that no previous mail was
+		// displayed in this readwindow, so we can set the mailTextObject of the readmailgroup
+		// as the active object so that the user can browse through the mailtext immediatley after
+		// opening the window
+		if(data->title[0] == '\0')
+			DoMethod(data->readMailGroup, MUIM_ReadMailGroup_ActivateMailText);
+
 		// set the title of the readWindow now
 		if(C->MultipleWindows == TRUE ||
 			 rmData == G->ActiveRexxRMData)

@@ -866,4 +866,19 @@ DECLARE(SaveDecryptedMail)
 }
 
 ///
+/// DECLARE(ActivateMailText)
+//  sets the mailTextObject as the active object of the window
+DECLARE(ActivateMailText)
+{
+	GETDATA;
+	struct ReadMailData *rmData = data->readMailData;
+
+	if(rmData->readWindow)
+		set(rmData->readWindow, MUIA_Window_DefaultObject, data->mailTextObject);
+
+	return 0;
+}
+
+///
+
 

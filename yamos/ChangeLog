@@ -7,6 +7,8 @@ $Source$
 
 2005-01-26  Jens Langner <Jens.Langner@light-speed.de>
 
+    * ReadWindow.c, ReadMailGroup.c: the mailtextedit object will again be
+      the default object if a new read window is created.
     * YAM_stringsizes.h: slightly modified the string sizes for the filename
       and path buffers again.
     * ReadMailGroup.c, YAM_UT.c: fixed a minor bug in the user image display
