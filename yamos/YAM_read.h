@@ -49,6 +49,7 @@
 enum MDNType    { MDN_IGNORE=0, MDN_DENY, MDN_READ, MDN_DISP, MDN_PROC, MDN_DELE };
 enum ParseMode  { PM_ALL, PM_TEXTS, PM_NONE };
 enum ReadInMode { RIM_QUIET, RIM_READ, RIM_EDIT, RIM_QUOTE, RIM_PRINT };
+enum HeaderMode { HM_NOHEADER, HM_SHORTHEADER, HM_FULLHEADER };
 
 struct RE_GUIData
 {
@@ -85,7 +86,7 @@ struct RE_ClassData  /* read window */
    FILE             *Fh;
    struct Part      *FirstPart;
    enum ParseMode    ParseMode;
-   int               Header;
+   enum HeaderMode   Header;
    int               SenderInfo;
    int               LastDirection;
    int               PGPSigned;
