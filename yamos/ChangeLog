@@ -534,3 +534,8 @@
     * made a lot of stuff static to YAM_RE.c, removed obsolete hook
     * changes smakefile to use $(CC) instead of slink
 
+2001-06-12  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed alignment Problem in "struct ComprMail" which causes the corruption of
+      the old .index files from older 2.x versions. Now we should be compatible again.
+

@@ -54,20 +54,32 @@
 #include "YAM_rexx.h"
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
-        
+
+/*
+** structure of the compressed mail
+**
+** DO NOT CHANGE ALIGNMENT here or the .index
+** files of a folder will be corrupt !
+*/
 struct ComprMail
 {
-   long   cMsgID;
-   long   cIRTMsgID;
-   long   Size;
    int    Flags;
-   int    MoreBytes;
+   char   MailFile[SIZE_MFILE];
    struct DateStamp Date;
    char   Status;
    char   Importance;
-   char   MailFile[SIZE_MFILE];
+   long   cMsgID;
+   long   cIRTMsgID;
+   long   Size;
+   int    MoreBytes;
 };
 
+/*
+** structure of the Folder Index
+**
+** DO NOT CHANGE ALIGNMENT here or the .index
+** files of a folder will be corrupt !
+*/
 struct FIndex
 {
    ULONG ID;

@@ -46,6 +46,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_global.h"
 #include "YAM_hook.h"
@@ -154,6 +155,8 @@ STACKEXT int AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *text, int
 {
    struct MUI_NListtree_TreeNode *tn;
    int i;
+
+//   DB( kprintf("AB_SearchEntry: [%s]\n", text); )
 
    if (*text) for (i=0; ; i++)
       if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel, TAG_DONE))
@@ -284,7 +287,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
    int len, nested = 0;
 
    G->AB->Modified = append;
-   if (!append) DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_All, 0, TAG_DONE);
+   if (!append) DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_Clear, NULL, 0, TAG_DONE);
 
    parent[nested] = MUIV_NListtree_Insert_ListNode_Root;
    if (fh = fopen(fname, "r"))
