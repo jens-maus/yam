@@ -1084,3 +1084,11 @@
       Still one flaw:
       1)if the window is moved while the popuplist ist open, then the popuplist
         will not move it`s position in sync with the window.
+
+2001-08-02  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added a MUIA_Recipientstring_NoResolve attribute to the recipientstring
+      class. If this attribute is set to TRUE the recipientstring is not going
+      to perform a resolving on the entered string, what means in fact that it
+      will not transform it with a realname or something else.
+    * fixed some bugs recently introduced to the recipientstring class.

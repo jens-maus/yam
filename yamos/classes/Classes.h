@@ -140,9 +140,11 @@ ULONG SearchwindowGetSize (VOID);
 #define MUIA_Recipientstring_FromString            0xAE00D557UL
 #define MUIA_Recipientstring_ReplyToString         0xAE006744UL
 #define MUIA_Recipientstring_Popup                 0xAE003126UL
+#define MUIA_Recipientstring_NoResolve             0xAE007528UL
 
-#define MUIV_Recipientstring_Resolve_NoRealName    1
-#define MUIV_Recipientstring_Resolve_NoValids      2
+// Flags for MUIM_Recipientstring_Resolve
+#define MUIF_Recipientstring_Resolve_NoRealName    (1 << 0)
+#define MUIF_Recipientstring_Resolve_NoValids      (1 << 1)
 
 struct MUIP_Recipientstring_AddRecipient
 {

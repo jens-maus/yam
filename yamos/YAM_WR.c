@@ -1320,7 +1320,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 	mlist[1] = NULL;
 
 	// get the contents of the TO: String gadget and check if it is valid
-	addr = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+	addr = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
    if(!addr)
    {
       ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_TO, MUIA_String_Contents), NULL);
@@ -1363,7 +1363,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 	if (wr->Mode != NEW_BOUNCE)
 	{
       // now we check the From gadget and raise an error if is invalid
-      addr = (STRPTR)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+      addr = (STRPTR)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
       if(!addr)
       {
          ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_FROM, MUIA_String_Contents), NULL);
@@ -1386,7 +1386,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       else comp.From = addr;
 
       // then we check the CC string gadget
-      addr = (STRPTR)DoMethod(gui->ST_CC,	MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+      addr = (STRPTR)DoMethod(gui->ST_CC,	MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
       if(!addr)
       {
          ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_CC, MUIA_String_Contents), NULL);
@@ -1397,7 +1397,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       else if(addr[0]) comp.MailCC = addr;
 
       // then we check the BCC string gadget
-      addr = (STRPTR)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+      addr = (STRPTR)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
       if(!addr)
       {
          ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_BCC, MUIA_String_Contents), NULL);
@@ -1408,7 +1408,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       else if(addr[0]) comp.MailBCC = addr;
 
       // then we check the ReplyTo string gadget
-      addr = (STRPTR)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+      addr = (STRPTR)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
       if(!addr)
       {
          ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_REPLYTO, MUIA_String_Contents), NULL);

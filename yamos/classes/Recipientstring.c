@@ -53,6 +53,7 @@ struct Data
 	Object *Matchwindow, *Matchlist;
 	Object *From, *ReplyTo; /* used when resolving a list address */
 	BOOL MultipleRecipients;
+   BOOL NoResolve;
 };
 
 ULONG RecipientstringGetSize (VOID) { return sizeof(struct Data); }
@@ -74,6 +75,7 @@ OVERLOAD(OM_NEW)
 		{
 			switch(tag->ti_Tag)
 			{
+   			ATTR(NoResolve)          : data->NoResolve = tag->ti_Data          ; break;
 				ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
 				ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
 				ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
@@ -124,6 +126,7 @@ OVERLOAD(OM_SET)
 	{
 		switch(tag->ti_Tag)
 		{
+			ATTR(NoResolve)          : data->NoResolve = tag->ti_Data          ; break;
 			ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
 			ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
 			ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
@@ -231,24 +234,20 @@ OVERLOAD(MUIM_HandleEvent)
 		{
          case IECODE_RETURN:
          {
-            // first we call the super method
-            DoSuperMethodA(cl, obj, msg);
+            if(data->NoResolve) return(DoSuperMethodA(cl, obj, msg));
 
             if((imsg->Qualifier & IEQUALIFIER_RSHIFT) || (imsg->Qualifier & IEQUALIFIER_LSHIFT))
             {
-               if(DoMethod(obj, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoRealName))
-               {
-                  // SHIFT+RETURN will not automatically change the active object to the next string gadget
-                  // so we have to go two steps (ok, this is not the best was, but easier then saving the
-                  // next object in MUIA_UserData or something like this.
-                  set(_win(obj), MUIA_Window_ActiveObject, obj);
-                  set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
-               }
+               DoMethod(obj, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoRealName);
             }
             else
             {
                DoMethod(obj, MUIM_Recipientstring_Resolve, 0);
             }
+
+            set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+
+            result = MUI_EventHandlerRC_Eat;
          }
          break;
 
@@ -414,9 +413,9 @@ DECLARE(AddRecipient) // STRPTR address
 	return 0;
 }
 ///
-/// DECLARE(Transform)
+/// DECLARE(Resolve)
 /* resolve all addresses */
-DECLARE(Resolve) // BOOL wrname
+DECLARE(Resolve) // ULONG flags
 {
 	GETDATA;
 	BOOL list_expansion;
@@ -424,10 +423,11 @@ DECLARE(Resolve) // BOOL wrname
 	STRPTR s, contents, tmp;
    BOOL res = TRUE;
    BOOL wrname = TRUE, checkvalids = TRUE;
+   int int_flag = 0;
 
    // Lets check the flags first
-   if(msg->flags & MUIV_Recipientstring_Resolve_NoRealName) wrname      = FALSE;
-   if(msg->flags & MUIV_Recipientstring_Resolve_NoValids)   checkvalids = FALSE;
+   if(msg->flags & MUIF_Recipientstring_Resolve_NoRealName) wrname      = FALSE;
+   if(msg->flags & MUIF_Recipientstring_Resolve_NoValids)   checkvalids = FALSE;
 
 	set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 
@@ -448,9 +448,7 @@ DECLARE(Resolve) // BOOL wrname
          if(checkvalids == FALSE && (tmp = strchr(s, '@')))
          {
 		   	DB(kprintf("Valid address found.. will not resolve it: %s\n", s);)
-			   DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-   			if(tmp[1] == '\0') /* email address lacks domain... */
-	   		   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
+            int_flag = 1;
          }
          else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, 0)) /* entry found in address book */
 			{
@@ -498,25 +496,30 @@ DECLARE(Resolve) // BOOL wrname
                res = FALSE;
 				}
 			}
-			else
-			{
-				DB(kprintf("Entry not found: %s\n", s);)
+			else int_flag = 2;
 
-   		   if(tmp = strchr(s, '@')) /* entry seems to be an email address */
-	   	   {
-		   	   DB(kprintf("Email address: %s\n", s);)
-			      DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-   			   if(tmp[1] == '\0') /* email address lacks domain... */
-	   			   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
+         // Lets check the flags now
+			if(int_flag == 1 || (int_flag == 2 && (tmp = strchr(s, '@'))))
+         {
+		      DB(kprintf("Email address: %s\n", s);)
+			   DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+
+            /* email address lacks domain... */
+   			if(tmp[1] == '\0')
+            {
+	   		   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
 		      }
-            else
-				{
-               DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-               set(_win(obj), MUIA_Window_ActiveObject, obj);
-				   DisplayBeep(NULL);
-               res = FALSE;
-            }
 			}
+         else if(int_flag == 2)
+         {
+            DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+            set(_win(obj), MUIA_Window_ActiveObject, obj);
+            DisplayBeep(NULL);
+            res = FALSE;
+         }
+
+         // reset the values
+         int_flag = 0;
 			tmp = NULL;
 		}
 		free(contents);
