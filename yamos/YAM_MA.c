@@ -511,8 +511,8 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
       // update our Statistics
       if(!quiet)
       {
-        DisplayStatistics(mail->Folder, FALSE); // don`t update the appicon
-        DisplayStatistics(delfolder, TRUE);     // but update the appicon now.
+        DisplayStatistics(delfolder, FALSE);  // don`t update the appicon
+        DisplayStatistics(NULL, FALSE);       // but update it now.
       }
    }
 }
