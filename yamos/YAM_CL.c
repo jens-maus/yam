@@ -441,13 +441,21 @@ DISPATCHERPROTO(TE_Dispatcher)
       case MUIM_Show:
       {
          G->EdColMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
-         G->EdColMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
+         G->EdColMap[7] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color1stLevel, 0);
+         G->EdColMap[8] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color2ndLevel, 0);
+         G->EdColMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
+         G->EdColMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
+         G->EdColMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
          break;
       }
       case MUIM_Hide:
       {
          if (G->EdColMap[6] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[6]);
          if (G->EdColMap[7] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[7]);
+         if (G->EdColMap[8] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[8]);
+         if (G->EdColMap[9] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[9]);
+         if (G->EdColMap[10] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[10]);
+         if (G->EdColMap[11] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[11]);
          break;
       }
    }
