@@ -1,0 +1,21 @@
+Short:    Prolite style DOpus toolbar images
+Author:   Trevor Morris <tmorris@fundy.net>
+
+==========================================================================
+
+This archive contains all supported imagery for YAM2 in the 16 color
+Prolite palette (developed by Eric van Velthooveen (eric@stack.nl) -
+see his lovely hopepage at www.stack.nl/~eric/prowb.html).
+
+In order to use the enclosed "icons," you will require a palette-
+locking utility such as FullPalette (available on aminet) or
+MWB-deamon. See Eric van Velthooveen's page for the correct palette
+values (or you can convert the icons to NewIcons). However, you won't
+need a color-locking util to use the toolbars and other imagery.
+
+If you encounter any problems, please do not hesitate to contact me...
+other than that, enjoy :-)
+
+Cheers,
+Trevor Morris
+tmorris@fundy.net
