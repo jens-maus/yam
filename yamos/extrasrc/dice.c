@@ -1,5 +1,13 @@
 #if defined(_DCC) || defined(__VBCC__) || defined(NO_INLINE_STDARG)
 
+#include <proto/wb.h>
+BOOL WorkbenchControl(STRPTR name, ...)
+{ return WorkbenchControlA(name,(struct TagItem *)(&name+1)); }
+
+#include <proto/icon.h>
+struct DiskObject *GetIconTags(CONST_STRPTR name, ... )
+{ return GetIconTagList(name, (struct TagItem *)(&name+1)); }
+
 #include <proto/xpkmaster.h>
 LONG XpkQueryTags(ULONG tag, ...)
 { return XpkQuery((struct TagItem *)&tag); }
