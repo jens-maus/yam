@@ -790,7 +790,7 @@ BOOL MA_ReadHeader(FILE *fh)
 
     // we read out the whole header line by line and
     // concatenate lines that are belonging together.
-    while((GetLine(fh, buffer, SIZE_LINE) && ++linesread && buffer[0]) ||
+    while((GetLine(fh, buffer, SIZE_LINE) && (++linesread, buffer[0])) ||
           (finished == FALSE && (finished = TRUE)))
     {
       BOOL linestart = TRUE;
