@@ -1477,7 +1477,7 @@ char *GetMailFile(char *string, struct Folder *folder, struct Mail *mail)
    static char buffer[SIZE_PATHFILE];
    if (!folder && mail) folder = mail->Folder;
    if (!string) string = buffer;
-   strmfp(string, folder == NULL ? C->TempDir : GetFolderDir(folder), mail->MailFile);
+   strmfp(string, (folder == NULL || folder == (struct Folder *)-1) ? C->TempDir : GetFolderDir(folder), mail->MailFile);
    return string;
 }
 ///

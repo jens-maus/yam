@@ -96,7 +96,7 @@ void  TR_Cleanup(void);
 void  TR_CloseTCPIP(void);
 BOOL  TR_DownloadURL(char *url0, char *url1, char *url2, char *filename);
 void  TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel);
-void  TR_GetMessageList_IMPORT(FILE *fh);
+BOOL  TR_GetMessageList_IMPORT(FILE *fh);
 BOOL  TR_IsOnline(void);
 struct TR_ClassData *TR_New(enum TransferType TRmode);
 BOOL  TR_OpenTCPIP(void);

@@ -1,3 +1,11 @@
+2002-04-30  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added a error message to the import mail function to tell the user
+      that a selected file doesn`t contain any mails.
+    * fixed bug in GetMailFile() utility functions where a -1 assignment
+      to a folder wasn`t checked. This fixes a bug in the import mail
+      handling as well as in other places.
+
 2002-04-29  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * reverted the fix #508202 because as it pointed out this wasn`t

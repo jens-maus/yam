@@ -727,6 +727,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
       }
       else rewind(fh);
    }
+
    if (fh)
    {
       MA_ReadHeader(fh);

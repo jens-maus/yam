@@ -755,19 +755,21 @@ static void TR_AddMessageHeader(int *count, int size, char *tfname)
         mail->Status  = 1;
         mail->Index   = ++(*count);
         mail->Size    = size;
-        MA_FreeEMailStruct(email);
         MyAddTail(&(G->TR->List), mail);
       }
+      MA_FreeEMailStruct(email);
    }
 }
 ///
 /// TR_GetMessageList_IMPORT
 //  Collects messages from a UUCP mailbox file
-void TR_GetMessageList_IMPORT(FILE *fh)
+BOOL TR_GetMessageList_IMPORT(FILE *fh)
 {
    BOOL body = FALSE;
    int c = 0, size = 0;
-   char buffer[SIZE_LINE], *ptr, *tfname = "yamIMP.tmp", fname[SIZE_PATHFILE];
+   char *tfname = "yamIMP.tmp";
+   char buffer[SIZE_LINE], *ptr;
+   char fname[SIZE_PATHFILE];
    FILE *f = NULL;
 
    strmfp(fname, C->TempDir, tfname);
@@ -779,7 +781,11 @@ void TR_GetMessageList_IMPORT(FILE *fh)
       if (ptr = strpbrk(buffer, "\r\n")) *ptr = 0;
       if (!f && !strncmp(buffer, "From ", 5))
       {
-         if (body) { TR_AddMessageHeader(&c, size, tfname); DeleteFile(fname); }
+         if (body)
+         {
+            TR_AddMessageHeader(&c, size, tfname);
+            DeleteFile(fname);
+         }
          if (!(f = fopen(fname, "w"))) break;
          size = 0; body = FALSE;
       }
@@ -793,8 +799,17 @@ void TR_GetMessageList_IMPORT(FILE *fh)
          }
       }
    }
-   if (body) { TR_AddMessageHeader(&c, size, tfname); DeleteFile(fname); }
+
+   if(body)
+   {
+      TR_AddMessageHeader(&c, size, tfname);
+      DeleteFile(fname);
+   }
    TR_DisplayMailList(FALSE);
+
+   if(c > 0) return TRUE;
+
+   return FALSE;
 }
 ///
 /// TR_GetMessageList_GET

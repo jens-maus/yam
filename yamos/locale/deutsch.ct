@@ -4384,7 +4384,7 @@ Fehlermeldungen
 ; Error messages
 ;
 MSG_ER_PrevError
-_Vorderer Fehler
+_Vorheriger Fehler
 ; _Previous error
 ;
 MSG_ER_NextError
@@ -5774,4 +5774,17 @@ Hilft beim Erkennen fremdartiger Zeichensätze.\nHauptsächlich für Benutzer kyril
 MSG_CO_IMPORTMIMETITLE
 Import MIME Anzeiger & Typen
 ; Import MIME viewers & types
+;
+MSG_ER_TRANSFERMAIL
+Konnte Nachricht '%s' nicht zu Ordner '%s' transferieren.\n\
+Die Datei existiert eventuell nicht oder konnte nicht \
+kopiert werden.
+; MAILFILE, FOLDERNAME
+;
+MSG_ER_IMPORTMAIL
+Konnte keine Nachrichten aus der Datei '%s' importieren.\n\
+Bitte stellen Sie sicher, dass diese Datei wirklich Nachrichten \
+im standard MBOX Format enthält (getrennt durch einzelne "From " \
+Zeilen).
+; FILENAME
 ;

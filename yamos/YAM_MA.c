@@ -1795,10 +1795,11 @@ MakeStaticHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 //  Imports messages from a UUCP mailbox file
 BOOL MA_ImportMessages(char *fname)
 {
+   BOOL result = FALSE;
    struct Folder *actfo = FO_GetCurrentFolder();
    FILE *fh;
 
-   if(!actfo) return(FALSE);
+   if(!actfo) return FALSE;
 
    if ((fh = fopen(fname, "r")))
    {
@@ -1808,17 +1809,19 @@ BOOL MA_ImportMessages(char *fname)
          TR_SetWinTitle(TRUE, FilePart(fname));
          G->TR->ImportBox = actfo;
 
-         if (SafeOpenWindow(G->TR->GUI.WI))
+         if(TR_GetMessageList_IMPORT(fh) && SafeOpenWindow(G->TR->GUI.WI))
          {
-            TR_GetMessageList_IMPORT(fh);
-            fclose(fh);
-            return TRUE;
+            result = TRUE;
          }
-         else { MA_ChangeTransfer(TRUE); DisposeModulePush(&G->TR); }
+         else
+         {
+            MA_ChangeTransfer(TRUE);
+            DisposeModulePush(&G->TR);
+         }
       }
       fclose(fh);
    }
-   return FALSE;
+   return result;
 }
 
 ///
@@ -1829,7 +1832,10 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
    {
       char inname[SIZE_PATHFILE];
       strmfp(inname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
-      MA_ImportMessages(inname);
+      if(!MA_ImportMessages(inname))
+      {
+        ER_NewError(GetStr(MSG_ER_IMPORTMAIL), inname, NULL);
+      }
    }
 }
 MakeStaticHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
