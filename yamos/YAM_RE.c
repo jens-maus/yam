@@ -2051,19 +2051,35 @@ static char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
 static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
 {
    static const char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#()";
-   static const char *protocols[7] = {
+   static const char *protocols[7] =
+   {
      "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:"
    };
+
    char *foundurl = NULL, *p;
    int i;
 
-   if (p = strchr(line, ':')) for (i = 0; i < 7; i++) if (foundurl = stristr(line, protocols[i])) break;
+   if (p = strchr(line, ':'))
+   {
+      for (i = 0; i < 7; i++)
+      {
+        if (foundurl = stristr(line, protocols[i]))
+          break;
+      }
+   }
+
    if (!foundurl) return FALSE;
-   for (i = 0; foundurl[i] && strchr(legalchars, foundurl[i]) && i < SIZE_URL-1; i++) url[i] = foundurl[i];
+
+   for (i = 0; foundurl[i] && strchr(legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
+   {
+      url[i] = foundurl[i];
+   }
+
    if (strchr(".?!", url[i-1])) --i;
    url[i] = 0;
    if (urlptr) *urlptr = foundurl;
    if (rest) *rest = &foundurl[i];
+
    return TRUE;
 }
 ///
@@ -2623,13 +2639,21 @@ HOOKPROTONH(RE_DoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
    static char url[SIZE_URL];
 
    DoMethod(G->App, MUIM_Application_InputBuffered);
+
    while (pos && !ISpace(line[pos-1]) && line[pos-1] != '<') pos--;
    surl = &line[pos];
-   for (p = url; !ISpace(line[pos]) && line[pos] != '>' && line[pos] != '\n' && line[pos] && p-url < SIZE_URL; pos++) *p++ = line[pos];
+
+   for (p = url; !ISpace(line[pos]) && line[pos] != '>' && line[pos] != '\n' && line[pos] && p-url < SIZE_URL; pos++)
+   {
+      *p++ = line[pos];
+   }
    *p = 0;
+
    if (RE_ExtractURL(surl, url, NULL, NULL))
+   {
       if (!strnicmp(url, "mailto:", 7)) RE_ClickedOnMessage(&url[7]);
       else GotoURL(url);
+   }
    else if (strchr(url, '@')) RE_ClickedOnMessage(url);
    else if (isdigit(line[0]) && (line[1] == ':' || line[2] == ':'))
    {
@@ -2641,6 +2665,7 @@ HOOKPROTONH(RE_DoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
       RE_DisplayMIME(part->Filename, part->ContentType);
    }
    else return FALSE;
+
    return TRUE;
 }
 MakeStaticHook(RE_DoubleClickHook, RE_DoubleClickFunc);
@@ -2986,7 +3011,7 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SFULL           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,5);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_WRAPH           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,6);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_TSTYLE          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,7);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_FFONT           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,8);
+//         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_FFONT           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,8);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,-1,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,1,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 2, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,-1,winnum);
