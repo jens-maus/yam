@@ -4988,3 +4988,13 @@ close all MUI programs and try again.
 MSG_RETRY_QUIT_GAD (//)
 Try again|Quit
 ;
+MSG_ER_NOSTARTTLS (//)
+The SMTP server you tried to connect to doesn`t support TLS/SSL, \
+but TLSv1/SSLv3 was enabled within the configuration. Please check \
+your server details and review the configuration details.
+;
+MSG_ER_NOAUTHUSERPASS (//)
+No Username or Password was specified for the SMTP-AUTH connection \
+YAM was trying to establish. Please check your configuration and \
+try again.
+;

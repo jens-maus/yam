@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-26  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_TR.c, YAM.cd: fixed some flaws in the ESMTP handling where
+      we issued a STARTTLS command without checking previously if the
+      mailer supports it or not. Also enhanced the whole ESMTP handling
+      a bit, so that we can use SMTP Server extension in future easier.
+      Also added some more detailed error messages to inform the user
+      that a Server doesn`t support a particular selected extension.
+
 2002-06-25  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM.c, YAM_TR.c: fixed missbehaviours with MUIA_Window_Activate
