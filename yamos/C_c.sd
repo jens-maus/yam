@@ -26,6 +26,7 @@ void Open%bCatalog(void)
 
 void Close%bCatalog(void)
 {
+	extern struct Library *LocaleBase;
   	if (LocaleBase) CloseCatalog(%b_Catalog);
   	%b_Catalog = NULL;
 }
