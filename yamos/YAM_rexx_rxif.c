@@ -56,6 +56,7 @@
 #include "YAM_read.h"
 #include "YAM_rexx_rxcl.h"
 #include "YAM_write.h"
+#include "classes/Classes.h"
 
 /** REXX Commands **/
 
@@ -1468,12 +1469,27 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
          *rxd = AllocVec( sizeof *rd, MEMF_CLEAR );
          break;
          
-#ifndef DUFF
       case RXIF_ACTION:
+#ifdef DUFF
+		{
+			Object *str = RecipientstringObject, MUIA_String_Contents, rd->rd.arg.alias, End;
+			STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Transform);
+			if(res)
+			{
+	         rd->rd.res.recpt = rd->string = AllocStrBuf(strlen(res)+1);
+	         strcpy(rd->string, res);
+			}
+			else
+			{
+				rd->rd.rc = RETURN_WARN;
+			}
+			MUI_DisposeObject(str);
+		}
+#else
          rd->rd.res.recpt = rd->string = AllocStrBuf(80);
          if (WR_ResolveName(-1, rd->rd.arg.alias, &(rd->string), FALSE, TRUE)) rd->rd.rc = RETURN_WARN;
-         break;
 #endif
+         break;
 
       case RXIF_FREE:
          FreeStrBuf(rd->string);

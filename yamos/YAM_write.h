@@ -80,7 +80,6 @@ struct WR_ClassData  /* write window */
 
    struct Mail *     Mail;
    struct Mail **    MList;
-   struct ABEntry *  ListEntry;
 
    int               Mode;
    int               OldSecurity;

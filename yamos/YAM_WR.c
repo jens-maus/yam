@@ -1354,7 +1354,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 	comp.Mode = wr->Mode;
 	comp.OrigMail = wr->Mail;
 	comp.OldSecurity = wr->OldSecurity;
-	wr->ListEntry = NULL;
+//	wr->ListEntry = NULL;
 //	if (*addr) if (!(comp.MailTo = WR_ExpandAddresses(winnum, addr, FALSE, FALSE, FALSE))) goto skip;
 	comp.MailTo = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Transform);
 
@@ -1375,12 +1375,12 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 		if (*addr) if (!(comp.ReplyTo = WR_ExpandAddresses(winnum, addr, FALSE, TRUE, FALSE))) goto skip;
 */
 		get(gui->ST_EXTHEADER, MUIA_String_Contents, &comp.ExtHeader);
-		if (wr->ListEntry)
+/*		if (wr->ListEntry)
 		{
 			if (wr->ListEntry->Address[0]) comp.ReplyTo = StrBufCpy(NULL, wr->ListEntry->Address);
 			if (wr->ListEntry->RealName[0]) comp.From = StrBufCpy(comp.From, BuildAddrName(C->EmailAddress, wr->ListEntry->RealName));
 		}
-		if (wr->MsgID[0]) comp.IRTMsgID = wr->MsgID;
+*/		if (wr->MsgID[0]) comp.IRTMsgID = wr->MsgID;
 		comp.Importance = 1-GetMUICycle(gui->CY_IMPORTANCE);
 		if (GetMUICheck(gui->CH_RECEIPT)) comp.Receipt |= 1;
 		if (GetMUICheck(gui->CH_DISPNOTI)) comp.Receipt |= 2;
@@ -2391,6 +2391,8 @@ static struct WR_ClassData *WR_New(int winnum)
 			SetAttrs(data->GUI.ST_TO,
 //					  MUIA_Recipientstring_FocusOnCr, data->GUI.ST_SUBJECT,
 					  MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
+					  MUIA_Recipientstring_FromString, data->GUI.ST_FROM,
+					  MUIA_Recipientstring_ReplyToString, data->GUI.ST_REPLYTO,
 					  TAG_DONE);
 			SetAttrs(data->GUI.ST_SUBJECT,
 					  MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,

@@ -13,6 +13,7 @@
 **                    Implements:
 **                    OM_NEW
 **                    OM_DISPOSE
+**                    OM_SET
 **                    MUIM_Setup
 **                    MUIM_GoActive
 **                    MUIM_GoInactive
@@ -81,6 +82,8 @@ VOID YAM_CleanupClasses (VOID);
 #define MUIM_Recipientstring_ShowMatches      0xAE006D64UL
 
 #define MUIA_Recipientstring_MultipleRecipients 0xAE005A79UL
+#define MUIA_Recipientstring_FromString       0xAE00D557UL
+#define MUIA_Recipientstring_ReplyToString    0xAE006744UL
 #define MUIA_Recipientstring_Popup            0xAE003126UL
 
 struct MUIP_Recipientstring_AddRecipient
@@ -102,7 +105,6 @@ struct MUIP_Recipientstring_RecipientStart
 struct MUIP_Recipientstring_ShowMatches
 {
 	ULONG methodID;
-	STRPTR address;
 };
 
 #define RecipientstringObject YAM_NewObject(MUIC_Recipientstring
@@ -148,6 +150,7 @@ struct MUIP_Searchwindow_Next
 ULONG SearchwindowGetSize (VOID);
 ULONG m_Recipientstring_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_OM_DISPOSE(struct IClass *cl, Object *obj, Msg msg);
+ULONG m_Recipientstring_OM_SET(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_MUIM_Setup(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_MUIM_GoActive(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_MUIM_GoInactive(struct IClass *cl, Object *obj, Msg msg);

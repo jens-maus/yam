@@ -1032,22 +1032,22 @@
 
 ««« Some bugs/flaws which remain: »»»
 
-    * ADDRRESOLVE arexx command is currently broken. Reason is that I have
-      retired the WR_Resolve() function which this command require. Suggested
-      solution is that the command simply create a Recipientstring objectc,
-      set the alias as contents in this object and calls the
-      MUIM_Recipientstring_Transform method.
-    * When typing the last character of an alias (while the popup list is
-      open) then the popup list won't close. Reason being that the
-      Recipientstring class doesn't notice that the string change (user
-      overwrites last marked character with same character).
-    * There's currently no warning requester when one of the recipient strings
-      can't resolve the names (but a DisplayBeep(NULL) and a
-      "DB(kprintf();)").
-    * When using a list in the To gadget then the From and Reply-To fields
-      won't be changed to that setup in the addressbook. Reason: this was
-      really a hack before IMHO (testing various pointers to figure if and
-      where to set the new strings). Also, some problems arise if letter is
-      sent to multiple lists. Suggested solution would be to introduce
-      two tags which tell the recipientstring object which object(s) it should
-      propagate the (new) From and Reply-To addresses.
+[FIXED] ADDRRESOLVE arexx command is currently broken. Reason is that I have
+        retired the WR_Resolve() function which this command require. Suggested
+        solution is that the command simply create a Recipientstring objectc,
+        set the alias as contents in this object and calls the
+        MUIM_Recipientstring_Transform method.
+[FIXED] When using a list in the To gadget then the From and Reply-To fields
+        won't be changed to that setup in the addressbook. Reason: this was
+        really a hack before IMHO (testing various pointers to figure if and
+        where to set the new strings). Also, some problems arise if letter is
+        sent to multiple lists. Suggested solution would be to introduce
+        two tags which tell the recipientstring object which object(s) it should
+        propagate the (new) From and Reply-To addresses.
+      * When typing the last character of an alias (while the popup list is
+        open) then the popup list won't close. Reason being that the
+        Recipientstring class doesn't notice that the string change (user
+        overwrites last marked character with same character).
+      * There's currently no warning requester when one of the recipient strings
+        can't resolve the names (but a DisplayBeep(NULL) and a
+        "DB(kprintf();)").

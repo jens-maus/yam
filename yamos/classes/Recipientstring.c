@@ -52,6 +52,7 @@ struct Data
 {
 	struct MUI_EventHandlerNode ehnode;
 	Object *Matchwindow, *Matchlist;
+	Object *From, *ReplyTo; /* used when resolving a list address */
 	BOOL MultipleRecipients;
 };
 
@@ -74,7 +75,9 @@ OVERLOAD(OM_NEW)
 		{
 			switch(tag->ti_Tag)
 			{
-				ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data         ; break;
+				ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
+				ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
+				ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
 			}
 		}
 
@@ -101,6 +104,24 @@ OVERLOAD(OM_DISPOSE)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
+
+OVERLOAD(OM_SET)
+{
+	GETDATA;
+
+	struct TagItem *tags = inittags(msg), *tag;
+	while((tag = NextTagItem(&tags)))
+	{
+		switch(tag->ti_Tag)
+		{
+			ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
+			ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
+			ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
+		}
+	}
+
+	return DoSuperMethodA(cl, obj, msg);
+}
 
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
@@ -314,6 +335,9 @@ DECLARE(Transform)
 						DB(kprintf("Found list: »%s«\n", entry->Members);)
 						DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
 						free(members);
+
+						if(entry->RealName[0])	set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
+						if(entry->Address[0])	set(data->ReplyTo, MUIA_String_Contents, entry->Address);
 
 						list_expansion = TRUE;
 					}

@@ -72,8 +72,13 @@ static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode*, FILE*, int);
 
 STRPTR AB_PrettyPrintAddress (struct ABEntry *e)
 {
+	return AB_PrettyPrintAddress2(e->RealName, e->Address);
+}
+
+STRPTR AB_PrettyPrintAddress2 (STRPTR realname, STRPTR address)
+{
 	static TEXT buf[SIZE_REALNAME + SIZE_ADDRESS + 4];
-	sprintf(buf, "%." STR(SIZE_REALNAME) "s <%." STR(SIZE_ADDRESS) "s>", e->RealName, e->Address);
+	sprintf(buf, "%." STR(SIZE_REALNAME) "s <%." STR(SIZE_ADDRESS) "s>", realname, address);
 	return buf;
 }
 
