@@ -45,8 +45,11 @@ char *GetStr(APTR fcstr)
 {
   char *defaultstr = ((struct FC_Type *)fcstr)->Str;
 
-  if (LocaleBase)
+  if(LocaleBase)
+  {
     return (char *)GetCatalogStr(%b_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
+  }
+
   return defaultstr;
 }
 ///
@@ -69,11 +72,15 @@ void Close%bCatalog(void)
 /// Open%bCatalog(void)
 void Open%bCatalog(void)
 {
-  static const Tag tags[] = {
-    OC_BuiltInLanguage,(Tag)%l, OC_Version,%v, TAG_DONE
-  };
+  static const struct TagItem tags[] = {
+                                         { OC_BuiltInLanguage, (ULONG)%l },
+                                         { OC_Version,         %v },
+                                         { TAG_DONE,           0  }
+                                       };
 
   if (LocaleBase && !%b_Catalog)
-    %b_Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)tags);
+  {
+    %b_Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)&tags[0]);
+  }
 }
 ///
