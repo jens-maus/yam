@@ -26,23 +26,18 @@
 #include "YAM_loc.h"
 
 /// Defines
-#ifdef __PPC__
-#define CPU " [PPC]"
+#if defined __PPC__
+	#define CPU " [PPC]"
+#elsif defined _M68060
+	#define CPU " [060]"
+#elsif defined _M68040
+	#define CPU " [040]"
+#elsif defined _M68020
+	#define CPU " [020]"
 #else
-#ifdef _M68060
-#define CPU " [060]"
-#else
-#ifdef _M68040
-#define CPU " [040]"
-#else
-#ifdef _M68020
-#define CPU " [020]"
-#else
-#define CPU ""
+	#define CPU ""
 #endif
-#endif
-#endif
-#endif
+
 /* extern define YAMVER && YAMDATE */
 #define __VERSION__ YAMVER CPU
 #define __VERDATE__ YAMDATE
@@ -107,19 +102,19 @@
 
 #ifdef __MORPHOS__
 
-#define MakeHook(hookname, funcname) \
-    extern struct EmulLibEntry Gate_##funcname; \
-    struct Hook hookname = { {NULL, NULL}, (void*)&Gate_##funcname, NULL, NULL }
-#define InitHook(hook, funcname, data) ((hook)->h_Entry = (void*)&Gate_##funcname, (hook)->h_Data = (APTR)(data))
-#define ENTRY(func)	  (void*)&Gate_##func
+	#define MakeHook(hookname, funcname) \
+   	 extern struct EmulLibEntry Gate_##funcname; \
+	    struct Hook hookname = { {NULL, NULL}, (void*)&Gate_##funcname, NULL, NULL }
+	#define InitHook(hook, funcname, data) ((hook)->h_Entry = (void*)&Gate_##funcname, (hook)->h_Data = (APTR)(data))
+	#define ENTRY(func)	  (void*)&Gate_##func
 
-#define REG(x)
-#define ASM
-#define SAVEDS
-#define STACKEXT
-#define __stdargs
-#define __regargs
-#define __near
+	#define REG(x)
+	#define ASM
+	#define SAVEDS
+	#define STACKEXT
+	#define __stdargs
+	#define __regargs
+	#define __near
 
 #else /* __MORPHOS__ */
 
@@ -128,19 +123,19 @@
 #define ENTRY(func)	  func
 
 #ifdef _DCC
-#define REG(x) __ ## x
-#define ASM
-#define SAVEDS __geta4
-#define STACKEXT __stkcheck
-#define __stdargs __stkargs
-#define F_OK 0
-#define FNSIZE 108
-#define _OSERR IoErr()
+	#define REG(x) __ ## x
+	#define ASM
+	#define SAVEDS __geta4
+	#define STACKEXT __stkcheck
+	#define __stdargs __stkargs
+	#define F_OK 0
+	#define FNSIZE 108
+	#define _OSERR IoErr()
 #else
-#define REG(x) register __ ## x
-#define ASM    __asm
-#define SAVEDS __saveds
-#define STACKEXT __stackext
+	#define REG(x) register __ ## x
+	#define ASM    __asm
+	#define SAVEDS __saveds
+	#define STACKEXT __stackext
 #endif
 
 #endif /* __MORPHOS__ */
@@ -217,6 +212,7 @@
 
 BPTR __stdargs cloneWorkbenchPath(struct ExecBase *, struct DosLibrary *, struct WBStartup *);
 void __stdargs freeWorkbenchPath(struct ExecBase *, struct DosLibrary *, BPTR);
+
 ///
 /// MD5.lib Interface
 typedef unsigned char *POINTER;
@@ -233,17 +229,17 @@ typedef struct
 void MD5Init (MD5_CTX *);
 void MD5Update (MD5_CTX *, unsigned char *, unsigned int);
 void MD5Final (unsigned char [16], MD5_CTX *);
+
 ///
 /// bsdsocket.library Interface
-
 #ifdef __GNUC__
-#ifdef MORPHOS
-#include <ppcinline/socket.h>
+	#ifdef MORPHOS
+		#include <ppcinline/socket.h>
+	#else
+		#include <inline/socket.h>
+	#endif
 #else
-#include <inline/socket.h>
-#endif
-#else
-#include <proto/socket.h>
+	#include <proto/socket.h>
 #endif
 
 #include <netdb.h>
@@ -254,9 +250,13 @@ void MD5Final (unsigned char [16], MD5_CTX *);
 #include <netinet/in.h>
 #include <bsdsocket/socketbasetags.h>
 #include <errno.h>
+#ifdef __SASC
+	#undef EAGAIN
+	#include <sys/errno.h>	/* SAS/C's errno.h doesn't define EINPROGRESS
+#endif
 #include <time.h>
 
-#define SMTP_NO_SOCKET -1
+#define SMTP_NO_SOCKET (-1)
 
 /* To be deleted - all socket functions should be called by their real name */
 #define Socket 	socket
@@ -1486,17 +1486,17 @@ extern BOOL InitClasses(void);
 extern void ExitClasses(void);
 
 #ifdef __MORPHOS__
-extern struct EmulLibEntry HookEntry;
-extern struct EmulLibEntry Gate_WL_Dispatcher;
-extern struct EmulLibEntry Gate_EL_Dispatcher;
-extern struct EmulLibEntry Gate_WS_Dispatcher;
-extern struct EmulLibEntry Gate_AL_Dispatcher;
-extern struct EmulLibEntry Gate_FL_Dispatcher;
-extern struct EmulLibEntry Gate_BC_Dispatcher;
-extern struct EmulLibEntry Gate_TE_Dispatcher;
-extern struct EmulLibEntry Gate_MW_Dispatcher;
-extern struct EmulLibEntry Gate_PL_Dispatcher;
-extern struct EmulLibEntry Gate_AB_LV_DspFunc;
-extern struct EmulLibEntry Gate_CO_PL_DspFunc;
+	extern struct EmulLibEntry HookEntry;
+	extern struct EmulLibEntry Gate_WL_Dispatcher;
+	extern struct EmulLibEntry Gate_EL_Dispatcher;
+	extern struct EmulLibEntry Gate_WS_Dispatcher;
+	extern struct EmulLibEntry Gate_AL_Dispatcher;
+	extern struct EmulLibEntry Gate_FL_Dispatcher;
+	extern struct EmulLibEntry Gate_BC_Dispatcher;
+	extern struct EmulLibEntry Gate_TE_Dispatcher;
+	extern struct EmulLibEntry Gate_MW_Dispatcher;
+	extern struct EmulLibEntry Gate_PL_Dispatcher;
+	extern struct EmulLibEntry Gate_AB_LV_DspFunc;
+	extern struct EmulLibEntry Gate_CO_PL_DspFunc;
 #endif
 ///
