@@ -3782,8 +3782,10 @@ HOOKPROTONH(RE_LV_AttachDspFunc, long, char **array, struct Part *entry)
 
       if(entry->Size > 0)
       {
+        array[2] = dispsz;
+
         if(entry->Decoded)
-          FormatSize(entry->Size, array[2] = dispsz);
+          FormatSize(entry->Size, dispsz);
         else
         {
           dispsz[0] = '~';
