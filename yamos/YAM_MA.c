@@ -656,8 +656,11 @@ int MA_NewNew(struct Mail *mail, int flags)
          }
 
          MA_SetupQuoteString(wr, NULL, NULL);
-         MA_InsertIntroText(out, C->NewIntro, NULL);
-         MA_InsertIntroText(out, C->Greetings, NULL);
+
+         if(folder->WriteIntro[0]) MA_InsertIntroText(out, folder->WriteIntro, NULL);
+         else MA_InsertIntroText(out, C->NewIntro, NULL);
+         if(folder->WriteGreetings[0]) MA_InsertIntroText(out, folder->WriteGreetings, NULL);
+         else MA_InsertIntroText(out, C->Greetings, NULL);
          fclose(out);
 
          // add a signature to the mail depending on the selected signature for this list

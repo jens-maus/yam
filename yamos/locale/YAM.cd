@@ -5282,3 +5282,17 @@ Do you really want to proceed?
 MSG_YesNoReq2 (//)
 _Yes|*_No
 ;
+MSG_HELP_FO_ST_HELLOTEXT (//)
+Text to insert at the\n\
+top of a new message
+;
+MSG_HELP_FO_ST_BYETEXT (//)
+Text to insert at the\n\
+bottom of a new message
+;
+MSG_FO_Welcome (//)
+_Welcome phrase
+;
+MSG_FO_Greetings (//)
+C_losing phrase
+;

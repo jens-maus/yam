@@ -309,6 +309,8 @@ BOOL FO_LoadConfig(struct Folder *fo)
                else if(!stricmp(buffer, "MLAddress"))    MyStrCpy(fo->MLAddress, value);
                else if(!stricmp(buffer, "MLPattern"))    MyStrCpy(fo->MLPattern, value);
                else if(!stricmp(buffer, "MLSignature"))  fo->MLSignature = atoi(value);
+							 else if(!stricmp(buffer, "WriteIntro"))     MyStrCpy(fo->WriteIntro, value);
+							 else if(!stricmp(buffer, "WriteGreetings")) MyStrCpy(fo->WriteGreetings, value);
             }
          }
          success = TRUE;
@@ -368,6 +370,8 @@ BOOL FO_SaveConfig(struct Folder *fo)
       fprintf(fh, "MLPattern   = %s\n",  fo->MLPattern);
       fprintf(fh, "MLAddress   = %s\n",  fo->MLAddress);
       fprintf(fh, "MLSignature = %d\n",  fo->MLSignature);
+      fprintf(fh, "WriteIntro  = %s\n",  fo->WriteIntro);
+      fprintf(fh, "WriteGreetings = %s\n",  fo->WriteGreetings);
       fclose(fh);
 
       MyStrCpy(fname, GetFolderDir(fo));
@@ -871,6 +875,15 @@ static void FO_GetFolder(struct Folder *folder)
    set(gui->CH_STATS,       MUIA_Selected, folder->Stats);
    set(gui->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
 
+
+   SetAttrs(gui->ST_HELLOTEXT,
+            MUIA_String_Contents, folder->WriteIntro,
+            TAG_DONE);
+
+   SetAttrs(gui->ST_BYETEXT,
+            MUIA_String_Contents, folder->WriteGreetings,
+            TAG_DONE);
+
    // for ML-Support
    SetAttrs(gui->CH_MLSUPPORT,
             MUIA_Selected, isdefault ? FALSE : folder->MLSupport,
@@ -934,6 +947,10 @@ static void FO_PutFolder(struct Folder *folder)
 
    folder->Stats = GetMUICheck(gui->CH_STATS);
    folder->MLSupport = GetMUICheck(gui->CH_MLSUPPORT);
+
+   GetMUIString(folder->WriteIntro,       gui->ST_HELLOTEXT);
+   GetMUIString(folder->WriteGreetings,   gui->ST_BYETEXT);
+
    GetMUIString(folder->MLPattern,        gui->ST_MLPATTERN);
    GetMUIString(folder->MLAddress,        gui->ST_MLADDRESS);
    GetMUIString(folder->MLFromAddress,    gui->ST_MLFROMADDRESS);
@@ -1246,6 +1263,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
          strcpy(oldfolder->Path, folder.Path);
       }
 
+      strcpy(oldfolder->WriteIntro,       folder.WriteIntro);
+      strcpy(oldfolder->WriteGreetings,   folder.WriteGreetings);
       strcpy(oldfolder->MLFromAddress,    folder.MLFromAddress);
       strcpy(oldfolder->MLReplyToAddress, folder.MLReplyToAddress);
       strcpy(oldfolder->MLAddress,        folder.MLAddress);
@@ -1575,6 +1594,10 @@ static struct FO_ClassData *FO_New(void)
                   Child, data->GUI.CH_REVERSE[1] = MakeCheck(GetStr(MSG_FO_Reverse)),
                   Child, LLabel1(GetStr(MSG_FO_Reverse)),
                End,
+               Child, Label2(GetStr(MSG_FO_Welcome)),
+               Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,GetStr(MSG_FO_Welcome)),
+               Child, Label2(GetStr(MSG_FO_Greetings)),
+               Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,GetStr(MSG_FO_Greetings)),
                Child, Label1(GetStr(MSG_FO_DSTATS)),
                Child, HGroup,
                 Child, data->GUI.CH_STATS = MakeCheck(GetStr(MSG_FO_DSTATS)),
@@ -1627,6 +1650,8 @@ static struct FO_ClassData *FO_New(void)
          SetHelp(data->GUI.CH_STATS,            MSG_HELP_FO_CH_STATS            );
          SetHelp(data->GUI.CH_MLSUPPORT,        MSG_HELP_FO_CH_MLSUPPORT        );
          SetHelp(data->GUI.BT_AUTODETECT,       MSG_HELP_FO_BT_AUTODETECT       );
+         SetHelp(data->GUI.ST_HELLOTEXT,        MSG_HELP_FO_ST_HELLOTEXT        );
+         SetHelp(data->GUI.ST_BYETEXT,          MSG_HELP_FO_ST_BYETEXT          );
 
          DoMethod(data->GUI.BT_OKAY,        MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_SaveHook);
          DoMethod(data->GUI.BT_CANCEL,      MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-12-29  Alexey Ivanov <amis@amiga.org.ru>
+
+    * YAM_FO.c, YAM_MA.c, YAM_folderconfig.h added custom
+      WriteIntro and WriteGreetings phrases for every folder.
+
 2003-12-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c, YAM_Cog.c: fixed the MakeInteger() function to

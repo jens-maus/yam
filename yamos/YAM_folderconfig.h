@@ -50,6 +50,8 @@ struct FO_GUIData
    APTR BT_AUTODETECT;
    APTR BT_OKAY;
    APTR BT_CANCEL;
+   APTR ST_HELLOTEXT;
+   APTR ST_BYETEXT;
 };
 
 struct FO_ClassData  /* folder configuration window */
@@ -111,11 +113,14 @@ struct Folder
 
    char            Name[SIZE_NAME];
    char            Path[SIZE_PATH];
-   char            Password[SIZE_USERID];   
+   char            Password[SIZE_USERID];
    char            MLPattern[SIZE_PATTERN];
    char            MLAddress[SIZE_ADDRESS];
    char            MLFromAddress[SIZE_ADDRESS];
    char            MLReplyToAddress[SIZE_ADDRESS];
+
+   char            WriteIntro[SIZE_INTRO];
+   char            WriteGreetings[SIZE_INTRO];
 
    BOOL            MLSupport;
 };
