@@ -153,19 +153,19 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
   char *top = to;
   int x, y;
 
-  while(len >= 4)
-  {
+	while(len >= 4)
+	{
     len--;
     x = *fromp++;
-    if(x > 127 || (x = index_64[x]) == 255)
+		if(x > 127 || (x = index_64[x]) == 255)
     {
-      return 0;
+			return 0;
     }
 
     if(len < 0 || (y = *fromp++) == 0 ||
        y > 127 || (y = index_64[y]) == 255)
     {
-      return 0;
+			return 0;
     }
 
     len--;
@@ -176,18 +176,18 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
       len--;
       if((x = *fromp++) == '=')
       {
-        if((len > 0 && *fromp++ != '=') || *fromp != 0)
+	  		if((len > 0 && *fromp++ != '=') || *fromp != 0)
         {
-          return 0;
+  				return 0;
         }
 
         len--;
       }
       else
       {
-        if(x > 127 || (x = index_64[x]) == 255)
+		  	if(x > 127 || (x = index_64[x]) == 255)
         {
-          return 0;
+			  	return 0;
         }
 
         *top++ = (y << 4) | (x >> 2);
@@ -196,16 +196,16 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
           len--;
           if ((y = *fromp++) == '=')
           {
-            if(*fromp != 0)
+		  	  	if(*fromp != 0)
             {
               return 0;
             }
-          }
-          else
+  		  	}
+  	  		else
           {
-            if (y > 127 || (y = index_64[y]) == 255)
+		  	  	if (y > 127 || (y = index_64[y]) == 255)
             {
-              return 0;
+			  	  	return 0;
             }
 
             *top++ = (x << 6) | y;
@@ -213,16 +213,16 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
         }
       }
     }
-  }
+	}
 
-  *top = 0;
+	*top = 0;
   if(len > 0)
   {
     // return -len to signal a short count
     return -len;
   }
 
-  return top - to;
+	return top - to;
 }
 
 ///
@@ -239,14 +239,14 @@ long base64decode_file(FILE *in, FILE *out,
   char decBuf[SIZE_LINE/4+1]; // the decode buffer just have to be 1/4 of the lineBuf length.
   BOOL success = FALSE;
   long decodedChars = 0;
-  int shortCount = 0;
+  int  shortCount = 0;
 
   // lets try to read in the data from the file line by
   // line until EOF or error
-  while(fgets(&lineBuf[shortCount], SIZE_LINE, in))
+  while(fgets(lineBuf+shortCount, SIZE_LINE, in))
   {
     char *ptr;
-    int outLength;
+    long outLength;
 
     // lets eliminate an eventually existing "\r" or "\n"
     if((ptr = strpbrk(lineBuf, "\r\n")))
@@ -269,12 +269,12 @@ long base64decode_file(FILE *in, FILE *out,
       // them in front of our next iteration.
       if(outLength < 0)
       {
-        size_t lineLen = strlen(lineBuf);
+        long lineLen = strlen(lineBuf);
         shortCount = -outLength;
         outLength = strlen(decBuf);
 
         // move the short count chars to the start of lineBuf
-        memmove(lineBuf, &lineBuf[lineLen-shortCount], shortCount);
+        memmove(lineBuf, lineBuf+lineLen-shortCount, shortCount);
       }
       else
       {
@@ -288,13 +288,15 @@ long base64decode_file(FILE *in, FILE *out,
     // the decoded string again and convert some chars.
     if(tt || convCRLF)
     {
-      long r, w;
+      long r;
+      char *rc = decBuf;
+      char *wc = decBuf;
 
-      for(r=0, w=0; r < outLength; r++)
+      for(r=0; r < outLength; r++, rc++)
       {
         // check if this is a CRLF
-        if(convCRLF && decBuf[r] == '\r' &&
-           outLength-r > 1 && decBuf[r+1] == '\n')
+        if(convCRLF && *rc == '\r' &&
+           outLength-r > 1 && *(rc+1) == '\n')
         {
           // if so, skip the \r
           continue;
@@ -302,25 +304,25 @@ long base64decode_file(FILE *in, FILE *out,
         else if(tt)
         {
           // if not, convert the char
-          lineBuf[w] = tt->Table[(UBYTE)decBuf[r]];
+          *wc = tt->Table[(UBYTE)*rc];
 
           // increase the write counter
-          ++w;
+          wc++;
         }
         else
         {
           // if no translation table is given lets copy
           // the plain character
-          decBuf[w] = decBuf[r];
+          *wc = *rc;
 
           // increase the write counter
-          ++w;
+          wc++;
         }
       }
 
-      // make sure we reduce outLength to the
+      // make sure we reduce outLength by the
       // number of "overjumped" chars.
-      outLength -= (w-r);
+      outLength -= (rc-wc);
     }
 
     // now that we got the string decoded we write it into

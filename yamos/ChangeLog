@@ -5,10 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-02-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c: fixed recently introduced bug in base64decode_file()
+      routines and changed alogrithm to use pointer-arithmetic instead
+      of direct array access methods.
+
 2004-02-21  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c, YAM_RE.c, YAM_UT.c: fixed a bug in the
-      base64encode_file() routines where the routines where unable
+      base64decode_file() routines where the routines where unable
       to deal with base64 encoded strings that weren`t a multiple
       of 4.
     * YAM.c, YAM_TR.c, YAM_UT.c: retired the YAM_compat.h header in
