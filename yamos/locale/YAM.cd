@@ -5151,9 +5151,8 @@ MSG_RETRY_QUIT_GAD (//)
 Try again|Quit
 ;
 MSG_ER_NOSTARTTLS (//)
-The SMTP server you tried to connect to doesn`t support TLS/SSL,\
-but TLSv1/SSLv3 was enabled in the configuration. Please check\
-your configuration.
+Your SMTP server doesn't support TLS/SSL. \
+Please disable this option in your YAM configuration.
 ;
 MSG_ER_NOAUTHUSERPASS (//)
 No user name or password was specified for the SMTP AUTH connection \
