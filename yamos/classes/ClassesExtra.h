@@ -34,6 +34,7 @@
 #include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+#include <proto/timer.h>
 #include <proto/utility.h>
 #include <libraries/iffparse.h>
 #include <libraries/mui.h>

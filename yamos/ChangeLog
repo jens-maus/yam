@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-07-24  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FI.c, InfoBar.c: modified all major gauge displays to only 
+      refresh themself in respect to a maximum given refresh time
+      - twice a second. This has for example the result that on fast
+      machines the message find mechanism is dramatically faster now,
+      because YAM doesn't have to refresh the gauge all the time.
+
 2004-07-19  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c, YAM_WR.c: completly rewrote the RFC2047 MIME encoding

@@ -42,6 +42,7 @@ struct Data
 	Object *GA_LABEL;
 	struct BodyChunkData *actualImage;
 	struct Folder *actualFolder;
+	struct timeval last_gaugemove;
 };
 */
 
@@ -251,7 +252,27 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
 	}
 	else
 	{
-		set(data->GA_INFO, MUIA_Gauge_Current, msg->perc);
+		struct timeval now;
+
+		// then we update the gauge, but we take also care of not refreshing
+		// it too often or otherwise it slows down the whole search process.
+		GetSysTime(&now);
+		if(-CmpTime(&now, &data->last_gaugemove) > 0)
+		{
+			struct timeval delta;
+
+			// how much time has passed exactly?
+			memcpy(&delta, &now, sizeof(struct timeval));
+			SubTime(&delta, &data->last_gaugemove);
+
+			// update the display at least twice a second
+			if(delta.tv_secs > 0 || delta.tv_micro > 250000)
+			{
+				set(data->GA_INFO, MUIA_Gauge_Current, msg->perc);
+				memcpy(&data->last_gaugemove, &now, sizeof(struct timeval));
+			}
+		}
+		
 		set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
 	}
 

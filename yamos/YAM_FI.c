@@ -36,6 +36,7 @@
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+#include <proto/timer.h>
 #include <proto/utility.h>
 
 #include "extra.h"
@@ -468,6 +469,8 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    APTR ga = gui->GA_PROGRESS;
    struct SearchGroup *gdata = &gui->GR_SEARCH;
    struct Search search;
+   struct timeval now;
+   struct timeval last;
 
    // by default we don`t dispose on end
    G->FI->DisposeOnEnd = FALSE;
@@ -518,19 +521,53 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
 
    set(gui->GR_PAGE, MUIA_Group_ActivePage, 1);
 
+   memset(&last, 0, sizeof(struct timeval));
+
    for (i = 0; i < sfonum && !G->FI->Abort; i++)
    {
       for (mail = sfo[i]->Messages; mail && !G->FI->Abort; mail = mail->Next)
       {
-         DoMethod(G->App,MUIM_Application_InputBuffered);
-         if (FI_DoSearch(&search, mail))
+         if(FI_DoSearch(&search, mail))
          {
             DoMethod(gui->LV_MAILS, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
             fndmsg++;
          }
-         set(ga, MUIA_Gauge_Current, ++progress);
+
+         // increase the progress counter
+         progress++;
+
+         // then we update the gauge, but we take also care of not refreshing
+         // it too often or otherwise it slows down the whole search process.
+         GetSysTime(&now);
+         if(-CmpTime(&now, &last) > 0)
+         {
+            struct timeval delta;
+
+            // how much time has passed exactly?
+            memcpy(&delta, &now, sizeof(struct timeval));
+            SubTime(&delta, &last);
+
+            // update the display at least twice a second
+            if(delta.tv_secs > 0 || delta.tv_micro > 250000)
+            {
+              set(ga, MUIA_Gauge_Current, progress);
+
+              // signal the application to update now
+              DoMethod(G->App, MUIM_Application_InputBuffered);
+
+              memcpy(&last, &now, sizeof(struct timeval));
+            }
+
+         }
       }
    }
+
+   // to let the gauge move to 100% lets increase it accordingly.
+   set(ga, MUIA_Gauge_Current, progress);
+
+   // signal the application to update now
+   DoMethod(G->App, MUIM_Application_InputBuffered);
+
    FreeData2D(&(search.List));
    free(sfo);
    set(gui->GR_PAGE, MUIA_Group_ActivePage, 0);
