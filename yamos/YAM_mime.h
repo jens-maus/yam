@@ -53,7 +53,6 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
 
 BOOL  DoesNeedPortableNewlines(char *ctype);
 void  from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines);
-void  from64txt(char *src, char *dst, struct TranslationTable *tt);
 void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
 void  fromuue(FILE *infp, FILE *outfp);
 void  fromuuetxt(char **txt, FILE *outfp);

@@ -7,6 +7,9 @@ $Source$
 
 2003-12-14  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MI.c: removed obsolete from64txt() base64 decoding
+      routine. The functionality is now fully covered by the
+      new rfc2047 and base64decoding routines.
     * YAM_MAf.c, YAM_MI.c, YAM_RE.c: YAM wasn`t at all RFC 2047
       compliant and the decoding routines RE_ProcessHeader where
       way to crippled and recursive. I totally reworked the RFC

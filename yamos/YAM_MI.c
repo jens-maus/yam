@@ -304,36 +304,6 @@ static void almostputc(int c, FILE *outfile, struct TranslationTable *tt, BOOL P
 }
 
 ///
-/// from64txt
-//  Decodes a string in base64 format
-void from64txt(char *src, char *dst, struct TranslationTable *tt)
-{
-   int c1, c2, c3, c4;
-   UBYTE c;
-
-   while ((c1 = (int)*src++))
-   {
-      if (ISpace((char)c1)) continue;
-      do { c2 = (int)*src++; } while (c2 && ISpace((char)c2));
-      do { c3 = (int)*src++; } while (c3 && ISpace((char)c3));
-      do { c4 = (int)*src++; } while (c4 && ISpace((char)c4));
-      if (!c2 || !c3 || !c4) return;
-      c1 = char64(c1); c2 = char64(c2); c = (UBYTE)((c1<<2) | ((c2&0x30)>>4));
-      *dst++ = tt ? (char)tt->Table[c] : (char)c;
-      if (c3 != '=') 
-      {
-         c3 = char64(c3); c = (UBYTE)(((c2&0XF) << 4) | ((c3&0x3C) >> 2));
-         *dst++ = tt ? (char)tt->Table[c] : (char)c;
-         if (c4 != '=') 
-         {
-            c4 = char64(c4); c = (UBYTE)(((c3&0x03) <<6) | c4);
-            *dst++ = tt ? (char)tt->Table[c] : (char)c;
-         }
-      }
-   }
-}
-
-///
 /// from64
 //  Decodes a file in base64 format
 void from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines)
