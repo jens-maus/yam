@@ -1,0 +1,23 @@
+CFLAGS = -DYAMVER="2.3-dev" -DYAMDATE="09.12.2000" -020 -mC -mD -Iincludes -//
+
+OBJS= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
+      YAM_ER.o YAM_FI.o YAM_FO.o YAM_MA.o YAM_MAf.o YAM_MI.o YAM_RE.o YAM_TR.o YAM_US.o \
+      YAM_WR.o YAM_loc.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
+      md5.o hmac_md5.o dice.o
+
+SRCS= $(OBJS:"*.o":"*.c")
+
+
+YAM: YAM.h $(OBJS) YAM_UT.o
+   dcc $(CFLAGS) -o YAM $(OBJS) YAM_UT.o lib/wbpath.o lib/NewReadArgs.o -LMUI:Developer/C/DLib -lmui
+   xcopy YAM YAM:YAMos
+
+$(OBJS)  : $(SRCS)
+         dcc $(CFLAGS) -mi -o %(left) -c %(right)
+
+YAM_UT.o : YAM_UT.c
+         dcc $(CFLAGS) -o %(left) -c %(right)
+
+YAM.h: YAM.h.in
+   copy YAM.h.in YAM.h
+
