@@ -1219,6 +1219,14 @@ void MyAddTail(struct Mail **list, struct Mail *new)
    mail->Next = new;
 }
 ///
+/// MyAddHead
+//  Adds a message to a message list
+void MyAddHead(struct Mail **list, struct Mail *new)
+{
+   new->Next = *list;
+	*list = new;
+}
+///
 /// MyRemove
 //  Removes a message from a message list
 void MyRemove(struct Mail **list, struct Mail *rem)
@@ -1950,7 +1958,8 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
    {
       *new = *mail;
       new->Folder = folder;
-      MyAddTail(&(folder->Messages), new);
+//    MyAddTail(&(folder->Messages), new);
+      MyAddHead(&(folder->Messages), new);
       folder->Total++;
       folder->Size += mail->Size;
       if (mail->Status == STATUS_NEW) { folder->New++; folder->Unread++; }

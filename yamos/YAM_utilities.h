@@ -210,6 +210,7 @@ Object * MakeFolderImage(char *fname);
 Object * MakeString(int maxlen, char *label);
 int      MatchNoCase(char *string, char *match);
 BOOL     MatchTT(char *charset, struct TranslationTable *tt, BOOL in);
+void     MyAddHead(struct Mail **list, struct Mail *new);
 void     MyAddTail(struct Mail **list, struct Mail *new);
 char *   MyStrChr(const char *s, int c);
 struct TempFile *OpenTempFile(char *mode);

@@ -840,3 +840,10 @@
       in smakefile, as it does not yet compile (remove # in CLASSES line
       to enable again)
 
+2001-06-25  Allan Odgaard <duff@diku.dk>
+
+    * Added MyAddHead() function to YAM_UT.c.
+    * When reading folder contents messages are now added to the head of the
+      list rather than the tail. This makes reading large folder index much
+      faster (since AddTail is O(n)), however NList layout is still required,
+      so it's still painfully slow...
