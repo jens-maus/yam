@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-03-30  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c: in analogy to the new base64 encoding routines I
+      again reworked the base64 decoding routines and introduced a
+      seperate I/O buffer. By using this buffer it was possible to
+      increase the overall performance of the decoding by ~300%.
+      Aside from this great speed up, the decoding should be much
+      more afer and accurate than before.
+
 2004-03-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_AB.c: correctly fixed the DoubleClick and OpenFunc Hooks

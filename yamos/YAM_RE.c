@@ -1875,6 +1875,8 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
         if(decoded > 0)
           decodeResult = TRUE;
+        else
+          ER_NewError(GetStr(MSG_ER_UnexpEOFB64), NULL, NULL);
       }
       break;
 

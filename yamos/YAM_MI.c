@@ -82,8 +82,11 @@ static const char index_hex[128] =
 };
 
 // some defines that can be usefull
-#define B64_LINELEN   72  // number of characters before the b64encode_file()
-                          // issues a newline
+#define B64_LINELEN   72    // number of characters before the b64encode_file()
+                            // issues a newline
+#define B64DEC_BUF    4096  // bytes to use as a file decoding buffer
+#define B64ENC_BUF    4095  // bytes to use as a file encoding buffer (must be a multiple of 3)
+
 #define hexchar(c)    (((c) > 127) ? -1 : index_hex[(c)])
 #define SUMSIZE       64
 #define ENC(c)        ((c) ? ((c) & 077) + ' ': '`')
@@ -147,7 +150,10 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
 /// base64decode
 // optimized base64 decoding function returning the length of the
 // decoded string or 0 on an occurred error or a minus integer as
-// an indicator of a short count in the encoded string
+// an indicator of a short count in the encoded string. The source
+// string doesn`t have to be NUL-terminated and only 'len' characters
+// are going to be decoded. The decoding also stops as soon as the
+// ending padding '==' or '=' characters are found.
 int base64decode(char *to, const unsigned char *from, unsigned int len)
 {
   unsigned char *fromp = (unsigned char *)from;
@@ -163,7 +169,7 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
       return 0;
     }
 
-    if((y = *fromp++) == 0 ||
+    if((y = *fromp++) == '\0' ||
        y > 127 || (y = index_64[y]) == 255)
     {
       return 0;
@@ -177,12 +183,16 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
       len--;
       if((x = *fromp++) == '=')
       {
-        if((len > 0 && *fromp++ != '=') || *fromp != 0)
+        if((len > 0 && *fromp++ != '='))
         {
           return 0;
         }
 
         len--;
+
+        // we received the padding string
+        // lets break out here
+        break;
       }
       else
       {
@@ -197,10 +207,9 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
           len--;
           if ((y = *fromp++) == '=')
           {
-            if(*fromp != 0)
-            {
-              return 0;
-            }
+            // we received the padding string
+            // lets break out here
+            break;
           }
           else
           {
@@ -236,15 +245,17 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
 //  file.
 long base64encode_file(FILE *in, FILE *out, BOOL convLF)
 {
-  char inbuffer[8192];  // we use a buffer of 8192 bytes here because we read out
-                        // data in 4095 byte chunks out of file 'in' and as we
-                        // probably need to convert each LF in a CRLF we have to
-                        // have a buffer with a maximum of 8190 bytes available.
-                        // those 2 bytes are to be safe. :)
-  char outbuffer[11066];// if we read in a maximum of 8190 bytes we will get out
-                        // a base64 encoded string with a maximum of 11064 bytes
-                        // but normally the routines shouldn`t occupy more than
-                        // ~5600 bytes.
+  char inbuffer[B64ENC_BUF*2+2];  // we use a buffer of 8192 bytes here because we read out
+                                  // data in 4095 byte chunks out of file 'in' and as we
+                                  // probably need to convert each LF into a CRLF we have to
+                                  // have a buffer with a maximum space of 8190 bytes.
+                                  // the other 2 bytes are to be safe. :)
+  char outbuffer[B64ENC_BUF*3];   // if we read in a maximum of 8190 bytes we will get out
+                                  // a base64 encoded string with a maximum of 11064 bytes
+                                  // but normally the routines shouldn`t occupy more than
+                                  // ~5600 bytes because we normally won`t have tons of LF`s
+                                  // in there. But by allocating BUF*3 we should be on the safe
+                                  // side.
 
   char *optr;
   BOOL eof_reached = FALSE;
@@ -266,13 +277,13 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
       memmove(inbuffer, &inbuffer[read], next_unget);
 
     // read in 4095 byte chunks
-    read = fread(&inbuffer[0]+next_unget, 1, 4095-next_unget, in);
+    read = fread(&inbuffer[0]+next_unget, 1, B64ENC_BUF-next_unget, in);
     read += next_unget;
     next_unget = 0;
 
     // on a short item count we check for a potential
     // error and return immediatly.
-    if(read != 4095)
+    if(read != B64ENC_BUF)
     {
       if(feof(in) != 0)
       {
@@ -298,7 +309,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
     // them to \r\n before the base64 encoding.
     if(convLF)
     {
-      char convbuffer[8192];
+      char convbuffer[B64ENC_BUF*2+2];
       char *sptr = convbuffer;
       char *dptr = inbuffer;
       long toconvert = read;
@@ -423,53 +434,107 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
 long base64decode_file(FILE *in, FILE *out,
                        struct TranslationTable *tt, BOOL convCRLF)
 {
-  char lineBuf[SIZE_LINE+4];  // normally a line of a rfc822 encoded mailfile shouldn`t be longer
-  char decBuf[SIZE_LINE/4+1]; // the decode buffer just have to be 1/4 of the lineBuf length.
-  BOOL success = FALSE;
+  char inbuffer[B64DEC_BUF+1];
+  char outbuffer[B64DEC_BUF/2+5];
+  char ungetbuf[3];
   long decodedChars = 0;
-  int  shortCount = 0;
+  int next_unget = 0;
+  BOOL eof_reached = FALSE;
 
-  // lets try to read in the data from the file line by
-  // line until EOF or error
-  while(fgets(lineBuf+shortCount, SIZE_LINE, in))
+  DB(kprintf("base64decode_file(): %ld %ld\n", convCRLF, tt);)
+
+  while(eof_reached == FALSE)
   {
-    char *ptr;
     int outLength;
+    char *sptr;
+    char *dptr;
+    size_t read;
+    size_t todo;
 
-    // lets eliminate an eventually existing "\r" or "\n"
-    if((ptr = strpbrk(lineBuf, "\r\n")))
-      *ptr = '\0';
+    // if we do have some unget chars lets copy them first at the
+    // beginning of the inbuffer
+    if(next_unget > 0)
+      memcpy(inbuffer, ungetbuf, next_unget);
 
-    // check if there IS anything to decode or not
-    if(lineBuf[0] == '\0')
-      continue;
+    // do a binary read of ~4096 chunks
+    read = fread(&inbuffer[next_unget], sizeof(char), B64DEC_BUF-next_unget, in);
+    read += next_unget;
+    next_unget = 0;
 
-    // clear the shortCount
-    shortCount = 0;
-
-    // now we decode the string and see if it was sucessfull
-    if((outLength = base64decode(decBuf, lineBuf, strlen(lineBuf))) <= 0)
+    // on a short item count we check for a potential
+    // error and return immediatly.
+    if(read != B64DEC_BUF)
     {
-      DB(kprintf("base64decode() returned %ld\n", outLength);)
-
-      // if the base64decode() function signaled us a short count
-      // we have to save the chars until the short count and add
-      // them in front of our next iteration.
-      if(outLength < 0)
+      if(feof(in) != 0)
       {
-        size_t lineLen = strlen(lineBuf);
-        shortCount = -outLength;
-        outLength = strlen(decBuf);
+        DB(kprintf("EOF file at %ld\n", ftell(in));)
 
-        // move the short count chars to the start of lineBuf
-        memmove(lineBuf, lineBuf+lineLen-shortCount, shortCount);
+        eof_reached = TRUE; // we found an EOF
+
+        // if the last read was zero we can exit immediatly
+        if(read == 0)
+          break;
       }
       else
       {
-        success = FALSE;
-        ER_NewError(GetStr(MSG_ER_UnexpEOFB64), NULL, NULL);
-        break;
+        DB(kprintf("error on reading data!\n");)
+
+        // an error occurred, lets return -1
+        return -1;
       }
+    }
+
+    // now that we have read 4096 bytes into our buffer
+    // we have to iterate through this buffer and "eliminate"
+    // white spaces which aren`t normally part of base64 encoded
+    // string and can be safely skipped without
+    // corrupting the decoded file.
+    sptr = inbuffer;
+    dptr = inbuffer;
+    todo = read;
+
+    while(todo > 0)
+    {
+      if(!isspace(*sptr))
+      {
+        *dptr = *sptr;
+        dptr++;
+      }
+      else read--;
+
+      sptr++;
+      todo--;
+    }
+
+    // before we going to decode the string we have to make sure
+    // that the encoded string is a multiple of 4 as 4 encoded
+    // base64 chars will get out 2 unencoded ones.
+    next_unget = read % 4;
+    if(next_unget > 0)
+    {
+      if(eof_reached == FALSE)
+      {
+        read -= next_unget;
+        memcpy(ungetbuf, &inbuffer[read], next_unget);
+      }
+      else
+      {
+        // on an EOF we shouldn`t have any unget chars
+        return -1;
+      }
+    }
+
+    // now that we have a whitespace free somewhat base64 encoded
+    // string, we can call the base64decode() function to finally
+    // decode the string
+    if(read <= 0 ||
+       (outLength = base64decode(outbuffer, inbuffer, read)) <= 0)
+    {
+      DB(kprintf("error on decoding: %ld %ld\n", read, outLength);)
+
+      // it should not happen that we face a shortCount
+      // or error
+      return -1;
     }
 
     // if we got a translation table or need to convert a CRLF we have to parse through
@@ -477,8 +542,8 @@ long base64decode_file(FILE *in, FILE *out,
     if(tt || convCRLF)
     {
       long r;
-      char *rc = decBuf;
-      char *wc = decBuf;
+      char *rc = outbuffer;
+      char *wc = outbuffer;
 
       for(r=0; r < outLength; r++, rc++)
       {
@@ -515,30 +580,20 @@ long base64decode_file(FILE *in, FILE *out,
 
     // now that we got the string decoded we write it into
     // our file
-    if(fwrite(decBuf, 1, (size_t)outLength, out) != (size_t)outLength)
+    if(fwrite(outbuffer, sizeof(char), (size_t)outLength, out) != (size_t)outLength)
     {
-      success = FALSE;
-      break;
+      DB(kprintf("error on writing data!\n");)
+
+      // an error occurred while writing...
+      return -1;
     }
 
     // increase the decodedChars counter
     decodedChars += outLength;
-    success = TRUE;
   }
 
-  // finally check if no error occurred and that no
-  // shortCount was found at the end, otherwise the
-  // encoded string was not completly decoded.
-  if(success && (shortCount ||
-     (feof(in) == 0 && ferror(in) != 0) || ferror(out) != 0))
-  {
-    success = FALSE;
-  }
-
-  if(success)
-    return decodedChars;
-  else
-    return -1;
+  DB(kprintf("finished base64decode_file(): %ld\n", decodedChars);)
+  return decodedChars;
 }
 
 ///
