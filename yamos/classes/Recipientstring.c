@@ -357,8 +357,8 @@ DECLARE(Resolve) // ULONG flags
 	BOOL list_expansion;
 	LONG max_list_nesting = 5;
 	STRPTR s, contents, tmp;
-   BOOL res = TRUE;
-   BOOL withrealname = TRUE, checkvalids = TRUE;
+  BOOL res = TRUE;
+  BOOL withrealname = TRUE, checkvalids = TRUE;
 
    // Lets check the flags first
    if(msg->flags & MUIF_Recipientstring_Resolve_NoFullName) withrealname= FALSE;
@@ -391,48 +391,60 @@ DECLARE(Resolve) // ULONG flags
       }
       else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE)) /* entry found in address book */
 			{
+        struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
 				struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
 				DB(kprintf("Found match: %s\n", s);)
 
-				if(entry->Type == AET_USER) /* it's a normal person */
-				{
-					DB(kprintf("\tPlain user: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
-					DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
-				}
-				else if(entry->Type == AET_LIST) /* it's a list of persons */
-				{
-					if(data->MultipleRecipients)
-					{
-						STRPTR members, lf;
-						if(members = strdup(entry->Members))
-						{
-							while(lf = strchr(members, '\n'))
-							   lf[0] = ',';
+        // Now we have to check if there exists another entry in the AB with this string
+        if(nexttn == NULL || DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, nexttn, s, MUIV_NListtree_FindUserData_Flag_StartNode) == NULL)
+  			{
+        	if(entry->Type == AET_USER) /* it's a normal person */
+				  {
+					  DB(kprintf("\tPlain user: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
+  					DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
+	  			}
+		  		else if(entry->Type == AET_LIST) /* it's a list of persons */
+			  	{
+				  	if(data->MultipleRecipients)
+					  {
+  						STRPTR members, lf;
+	  					if(members = strdup(entry->Members))
+		  				{
+			  				while(lf = strchr(members, '\n'))
+				  			   lf[0] = ',';
 
-							DB(kprintf("Found list: »%s«\n", entry->Members);)
-							DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
-							free(members);
+					  		DB(kprintf("Found list: »%s«\n", entry->Members);)
+						  	DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
+							  free(members);
 
-							if(entry->RealName[0])	set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
-							if(entry->Address[0])	set(data->ReplyTo, MUIA_String_Contents, entry->Address);
+  							if(entry->RealName[0])	set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
+	  						if(entry->Address[0])	set(data->ReplyTo, MUIA_String_Contents, entry->Address);
 
-							list_expansion = TRUE;
-						}
-					}
-					else
-					{
-						D(DBF_ERROR, ("String doesn't allow multiple recipients\n"))
-						DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-                  res = FALSE;
-					}
-				}
-				else /* it's unknown... */
-				{
-					D(DBF_ERROR, ("Found matching entry in address book with unknown type: %ld", entry->Type))
-					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-               set(_win(obj), MUIA_Window_ActiveObject, obj);
-               res = FALSE;
-				}
+		  					list_expansion = TRUE;
+			  			}
+				  	}
+					  else
+  					{
+	  					D(DBF_ERROR, ("String doesn't allow multiple recipients\n"))
+		  				DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+              res = FALSE;
+				  	}
+				  }
+  				else /* it's unknown... */
+	  			{
+		  			D(DBF_ERROR, ("Found matching entry in address book with unknown type: %ld", entry->Type))
+			  		DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+            set(_win(obj), MUIA_Window_ActiveObject, obj);
+            res = FALSE;
+  				}
+        }
+        else
+        {
+		  	  D(DBF_ERROR, ("Found more than one matching entry in address book!\n"))
+			    DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+          set(_win(obj), MUIA_Window_ActiveObject, obj);
+          res = FALSE;
+        }
 			}
 			else
 			{
@@ -441,19 +453,19 @@ DECLARE(Resolve) // ULONG flags
    		   if(tmp = strchr(s, '@')) /* entry seems to be an email address */
 	   	   {
 		   	   DB(kprintf("Email address: %s\n", s);)
-			      DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+			     DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 
                /* email address lacks domain... */
    			   if(tmp[1] == '\0')
 	   			   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
-		      }
-            else
-				{
-					D(DBF_ERROR, ("No entry found in addressbook for alias: %s", s))
-               DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-               set(_win(obj), MUIA_Window_ActiveObject, obj);
-               res = FALSE;
-            }
+         }
+         else
+				 {
+				    D(DBF_ERROR, ("No entry found in addressbook for alias: %s", s))
+            DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+            set(_win(obj), MUIA_Window_ActiveObject, obj);
+            res = FALSE;
+         }
 			}
 
 			tmp = NULL;

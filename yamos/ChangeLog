@@ -1,5 +1,8 @@
 2001-10-28  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * if more than one entry for a recipientstring is found in the
+      addressbook the Resolve routines doesn`t just take the first
+      one for resolving, they now stop resolving it.
     * fixed a little flaw in the recipientstring class where it
       wasn`t possible to select the correct recipient if more
       than one entry with the same realname was found in the
