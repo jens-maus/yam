@@ -219,7 +219,7 @@ LONG YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, c
     MUIA_Window_CloseGadget,  FALSE,
     MUIA_Window_SizeGadget,   FALSE,
     WindowContents, VGroup,
-       MUIA_Background, MUII_FILLSHINE,
+       MUIA_Background,       MUII_RequesterBack,
        Child, HGroup,
           Child, TX_REQTEXT = TextObject,
             TextFrame,
