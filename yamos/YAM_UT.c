@@ -42,6 +42,7 @@
 
 #include "YAM.h"
 #include "YAM_classes.h"
+#include "YAM_config.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
@@ -981,7 +982,7 @@ void SimpleWordWrap(char *filename, int wrapsize)
 ///
 /// ReqFile
 //  Puts up a file requester
-int ReqFile(int num, Object *win, char *title, int mode, char *drawer, char *file)
+int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file)
 {   
    static BOOL init[MAXASL] = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE };
    static char *pattern[MAXASL] =  { "#?.addressbook#?", "#?.config#?", NULL, NULL, "#?.(yam|rexx)", "#?.(gif|jpg|jpeg|png|iff|ilbm)", NULL, NULL };

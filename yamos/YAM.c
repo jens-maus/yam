@@ -29,6 +29,7 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
+#include "YAM_config.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"

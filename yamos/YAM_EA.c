@@ -25,14 +25,28 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
+#include <clib/alib_protos.h>
+#include <libraries/asl.h>
+#include <libraries/iffparse.h>
+#include <proto/dos.h>
+#include <proto/muimaster.h>
+
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_classes.h"
+#include "YAM_config.h"
+#include "YAM_error.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
+#include "YAM_transfer.h"
 #include "YAM_utilities.h"
 
 /* local protos */
+static void EA_SetPhoto(int winnum, char *fname);
 static int EA_Open(int);
 static struct EA_ClassData *EA_New(int, int);
 
@@ -43,7 +57,7 @@ static struct EA_ClassData *EA_New(int, int);
 /*** Init & Open ***/
 /// EA_Init
 //  Creates and opens an address book entry window
-int EA_Init(int type, struct MUI_NListtree_TreeNode *tn)
+int EA_Init(enum ABEntry_Type type, struct MUI_NListtree_TreeNode *tn)
 {
    struct EA_ClassData *ea;
    int winnum;
@@ -80,7 +94,8 @@ void EA_Setup(int winnum, struct ABEntry *ab)
                        setstring(gui->ST_STREET, ab->Street);
                        setstring(gui->ST_CITY, ab->City);
                        setstring(gui->ST_COUNTRY, ab->Country);
-                       nnsetstring(gui->ST_PGPKEY, ab->PGPId); // avoid triggering notification to "default security" cycle
+                       nnset(gui->ST_PGPKEY,MUIA_String_Contents,ab->PGPId);
+                       /* avoid triggering notification to "default security" cycle */
                        setcycle(gui->CY_DEFSECURITY,ab->DefSecurity);
                        setstring(gui->ST_HOMEPAGE, ab->Homepage);
                        setstring(gui->ST_COMMENT, ab->Comment);
@@ -145,7 +160,24 @@ HOOKPROTONHNO(EA_GetEntry, void, int *arg)
    DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
    if (entry) nnset(G->EA[winnum]->GUI.ST_MEMBER, MUIA_String_Contents, entry);
 }
-MakeHook(EA_GetEntryHook, EA_GetEntry);
+MakeStaticHook(EA_GetEntryHook, EA_GetEntry);
+
+/*** EA_AddFunc - Adds a new entry to the member list ***/
+HOOKPROTONHNO(EA_AddFunc, void, int *arg)
+{
+   struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
+   char *buf;
+   
+   get(gui->ST_MEMBER, MUIA_String_Contents, &buf);
+   if (*buf) 
+   {
+      DoMethod(gui->LV_MEMBER, MUIM_List_InsertSingle, buf, MUIV_List_Insert_Bottom);
+      nnset(gui->LV_MEMBER, MUIA_List_Active, MUIV_List_Active_Off);
+      setstring(gui->ST_MEMBER, "");
+   }
+   set(gui->WI, MUIA_Window_ActiveObject, gui->ST_MEMBER);
+}
+MakeStaticHook(EA_AddHook, EA_AddFunc);
 
 ///
 /// EA_PutEntry
@@ -153,7 +185,6 @@ MakeHook(EA_GetEntryHook, EA_GetEntry);
 HOOKPROTONHNO(EA_PutEntry, void, int *arg)
 {
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
-   extern struct Hook EA_AddHook;
    char *buf;
    int active;
    
@@ -166,7 +197,7 @@ HOOKPROTONHNO(EA_PutEntry, void, int *arg)
       DoMethod(gui->LV_MEMBER, MUIM_List_Remove, active+1);
    }
 }
-MakeHook(EA_PutEntryHook, EA_PutEntry);
+MakeStaticHook(EA_PutEntryHook, EA_PutEntry);
 
 ///
 /// EA_InsertBelowActive
@@ -217,7 +248,7 @@ void EA_SetDefaultAlias(struct ABEntry *ab)
 {
    char *p = ab->Alias, *ln;
 
-   clear(p, SIZE_NAME);
+   memset(p, 0, SIZE_NAME);
    if (*ab->RealName)
    {
       if (ln = strrchr(ab->RealName, ' '))
@@ -245,7 +276,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
    struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
    BOOL old = G->EA[winnum]->EditNode != NULL;
 
-   clear(&newaddr, sizeof(struct ABEntry));
+   memset(&newaddr, 0, sizeof(struct ABEntry));
    if (G->EA[winnum]->Type)
    {
       get(gui->ST_ALIAS, MUIA_String_Contents, &str);
@@ -309,31 +340,12 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
    else AppendLogVerbose(71, GetStr(MSG_LOG_NewAddress), addr->Alias, "", "", "");
    DisposeModulePush(&G->EA[winnum]);
 }
-MakeHook(EA_OkayHook, EA_Okay);
-
-///
-/// EA_AddFunc
-//  Adds a new entry to the member list
-HOOKPROTONHNO(EA_AddFunc, void, int *arg)
-{
-   struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
-   char *buf;
-   
-   get(gui->ST_MEMBER, MUIA_String_Contents, &buf);
-   if (*buf) 
-   {
-      DoMethod(gui->LV_MEMBER, MUIM_List_InsertSingle, buf, MUIV_List_Insert_Bottom);
-      nnset(gui->LV_MEMBER, MUIA_List_Active, MUIV_List_Active_Off);
-      setstring(gui->ST_MEMBER, "");
-   }
-   set(gui->WI, MUIA_Window_ActiveObject, gui->ST_MEMBER);
-}
-MakeHook(EA_AddHook, EA_AddFunc);
+MakeStaticHook(EA_OkayHook, EA_Okay);
 
 ///
 /// EA_SetPhoto
 //  Updates the portrait image
-void EA_SetPhoto(int winnum, char *fname)
+static void EA_SetPhoto(int winnum, char *fname)
 {
    struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
 
@@ -362,7 +374,7 @@ HOOKPROTONHNO(EA_SelectPhotoFunc, void, int *arg)
       EA_SetPhoto(winnum, NULL);
    }
 }
-MakeHook(EA_SelectPhotoHook, EA_SelectPhotoFunc);
+MakeStaticHook(EA_SelectPhotoHook, EA_SelectPhotoFunc);
 
 ///
 /// EA_DownloadPhotoFunc
@@ -415,7 +427,7 @@ HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
       else ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL);
    }
 }
-MakeHook(EA_DownloadPhotoHook, EA_DownloadPhotoFunc);
+MakeStaticHook(EA_DownloadPhotoHook, EA_DownloadPhotoFunc);
 
 ///
 /// EA_HomepageFunc
@@ -426,7 +438,7 @@ HOOKPROTONHNO(EA_HomepageFunc, void, int *arg)
    get(G->EA[*arg]->GUI.ST_HOMEPAGE, MUIA_String_Contents, &url);
    if (*url) GotoURL(url);
 }
-MakeHook(EA_HomepageHook, EA_HomepageFunc);
+MakeStaticHook(EA_HomepageHook, EA_HomepageFunc);
 
 ///
 /// EA_Open
@@ -447,7 +459,7 @@ HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
    int winnum = *arg;
    DisposeModulePush(&G->EA[winnum]);
 }
-MakeHook(EA_CloseHook, EA_CloseFunc);
+MakeStaticHook(EA_CloseHook, EA_CloseFunc);
 ///
 
 /*** GUI ***/

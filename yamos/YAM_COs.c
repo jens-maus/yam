@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_folderconfig.h"
 
 /* local protos */

@@ -32,6 +32,42 @@
 
 #include "YAM_stringsizes.h"
 
+struct EA_GUIData
+{
+   APTR WI;
+   APTR ST_ALIAS;
+   APTR ST_REALNAME;
+   APTR ST_ADDRESS;
+   APTR ST_COMMENT;
+   APTR ST_PHONE;
+   APTR ST_STREET;
+   APTR ST_CITY;
+   APTR ST_COUNTRY;
+   APTR ST_PGPKEY;
+   APTR CY_DEFSECURITY;
+   APTR ST_HOMEPAGE;
+   APTR ST_BIRTHDAY;
+   APTR GR_PHOTO;
+   APTR BC_PHOTO;
+   APTR BT_SELECTPHOTO;
+   APTR BT_LOADPHOTO;
+   APTR LV_MEMBER;
+   APTR ST_MEMBER;
+   APTR BT_ADD;
+   APTR BT_DEL;
+   APTR BT_OKAY;
+   APTR BT_CANCEL;
+};
+
+struct EA_ClassData  /* address book entry window */
+{
+   struct EA_GUIData              GUI;
+   struct MUI_NListtree_TreeNode *EditNode;
+   int                            Type;
+   int                            EntryPos;
+   char                           PhotoName[SIZE_PATHFILE];
+};
+
 enum ABEntry_Type { AET_USER=0, AET_LIST, AET_GROUP };
 
 struct ABEntry
@@ -54,6 +90,12 @@ struct ABEntry
    char Photo[SIZE_PATHFILE];
 };
 
+void   EA_AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn);
 void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list);
+void   EA_FixAlias(struct ABEntry *ab, BOOL excludemyself);
+int    EA_Init(enum ABEntry_Type type, struct MUI_NListtree_TreeNode *tn);
+void   EA_InsertBelowActive(struct ABEntry *addr, int flags);
+void   EA_SetDefaultAlias(struct ABEntry *ab);
+void   EA_Setup(int winnum, struct ABEntry *ab);
 
 #endif /* YAM_ADDRESSBOOKENTRY_H */

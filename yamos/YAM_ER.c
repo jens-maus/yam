@@ -33,6 +33,7 @@
 #include <proto/muimaster.h>
 
 #include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_hook.h"
 #include "YAM_main.h"

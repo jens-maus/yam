@@ -43,6 +43,7 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
+#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
@@ -965,59 +966,69 @@ static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
 
 static void SetDefaultSecurity(struct Compose *comp)
 {
-STRPTR CheckThese[3],buf;
-int i, Security=0;
-BOOL FirstAddr=TRUE;
+   STRPTR CheckThese[3],buf;
+   int i;
+   enum Security security=0;
+   BOOL FirstAddr=TRUE;
 
-  /* collect address pointers for easier iteration */
-  CheckThese[0] = comp->MailTo;
-  CheckThese[1] = comp->MailCC;
-  CheckThese[2] = comp->MailBCC;
+   /* collect address pointers for easier iteration */
+   CheckThese[0] = comp->MailTo;
+   CheckThese[1] = comp->MailCC;
+   CheckThese[2] = comp->MailBCC;
 
-  /* go through all addresses */
-  for(i=0; i<3; i++)
-  {
-    if(CheckThese[i] == NULL) continue;    // skip empty fields
-    // copy string as strtok() will modify it
-    if((buf = (STRPTR)strdup(CheckThese[i])))
-    {
-    int hits = 0, currsec;
-    STRPTR in=buf,s,t;
-    struct MUI_NListtree_TreeNode *tn;
-
-      // loop through comma-separated addresses in string
-      while((s = strtok_r((char **)&in,",")))
+   /* go through all addresses */
+   for(i=0; i<3; i++)
+   {
+      if(CheckThese[i] == NULL) continue;  /* skip empty fields */
+      /* copy string as strtok() will modify it */
+      if((buf = (STRPTR)strdup(CheckThese[i])))
       {
-        while((t = strtok_r((char **)&s," ()<>")))
-          if(strchr(t,'@')) break;
+         int hits = 0;
+         enum Security currsec;
+         STRPTR in=buf,s,t;
+         struct MUI_NListtree_TreeNode *tn;
 
-        if(!t) continue; // can't find address for this entry - shouldn't happen
+         /* loop through comma-separated addresses in string */
+         while((s = strtok_r((char **)&in,",")))
+         {
+            while((t = strtok_r((char **)&s," ()<>")))
+            {
+               if(strchr(t,'@'))
+                  break;
+            }
 
-        if(AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
-          currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;  // get default from entry
-        else
-          currsec = 0;    // entry not in address book -> no security
+            if(!t)
+               continue; /* can't find address for this entry - shouldn't happen */
 
-        if(currsec != Security)
-        {
-          if(FirstAddr)    // first address' setting is always used
-          {
-            FirstAddr = FALSE;
-            Security = currsec;  // assume as default
-          } else            // conflict: two addresses have different defaults
-          {
-            Security = MUI_RequestA(G->App, NULL, 0, NULL, GetStr(MSG_WR_DefSecurityConflictGads),
-                            GetStr(MSG_WR_DefSecurityConflict),NULL);
-            if(SEC_NONE == Security) Security = SEC_MAXDUMMY-1;  // correct 1..N numbering of requester buttons
-            else Security--;
-            break;  // terminate recipient loop
-          }
-        }
+            if(AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, t,
+            ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
+               currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity; /* get default from entry */
+            else
+               currsec = 0;    /* entry not in address book -> no security */
+
+            if(currsec != security)
+            {
+               if(FirstAddr)    /* first address' setting is always used */
+               {
+                  FirstAddr = FALSE;
+                  security = currsec;  /* assume as default */
+               }
+               else             /* conflict: two addresses have different defaults */
+               {
+                  security = MUI_RequestA(G->App, NULL, 0, NULL, GetStr(MSG_WR_DefSecurityConflictGads),
+                             GetStr(MSG_WR_DefSecurityConflict),NULL);
+                  if(security == SEC_NONE)
+                     security = SEC_MAXDUMMY-1;  /* correct 1..N numbering of requester buttons */
+                  else
+                     security--;
+                  break;  /* terminate recipient loop */
+               }
+            }
+         }
+         free(buf);
       }
-      free(buf);
-    }
-  }
-  comp->Security = Security;
+   }
+   comp->Security = security;
 }
 
 ///
@@ -1025,7 +1036,7 @@ BOOL FirstAddr=TRUE;
 //  Creates a signed and/or encrypted PGP/MIME message
 static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
 {
-   int sec = comp->Security;
+   enum Security sec = comp->Security;
    BOOL success = FALSE;
    struct WritePart pgppart, *firstpart = comp->FirstPart;
    char *ids = AllocStrBuf(SIZE_DEFAULT), pgpfile[SIZE_PATHFILE], options[SIZE_LARGE];

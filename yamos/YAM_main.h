@@ -82,8 +82,13 @@ struct MA_ClassData  /* main window */
    char WinTitle[SIZE_DEFAULT];
 };
 
+extern struct Hook MA_ApplyRulesHook;
 extern struct Hook MA_ChangeSelectedHook;
 extern struct Hook MA_SetFolderInfoHook;
 extern struct Hook MA_SetMessageInfoHook;
+
+int  MA_AllocRules(struct Search **search, int mode);
+void MA_FreeRules(struct Search **search, int scnt);
+BOOL MA_StartMacro(int num, char *param);
 
 #endif /* YAM_MAIN_H */

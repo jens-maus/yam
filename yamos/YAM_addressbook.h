@@ -69,9 +69,11 @@ extern struct Hook AB_SaveABookHook;
 extern struct Hook AB_LV_DspFuncHook;
 extern struct Hook AB_DeleteHook;
 
-int STACKEXT AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *text, int mode,
-   int *hits, struct MUI_NListtree_TreeNode **lasthit);
+long   AB_CompressBD(char *datestr);
+char * AB_ExpandBD(long date);
 BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, int mode,
-   char **result);
+       char **result);
+int STACKEXT AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *text, int mode,
+       int *hits, struct MUI_NListtree_TreeNode **lasthit);
 
 #endif /* YAM_ADDRESSBOOK_H */

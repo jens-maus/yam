@@ -199,7 +199,6 @@ struct sockaddr_in {
 #define DBGP DBG Delay(100);
 #define clear(p,l) memset((p), 0, (l));
 
-#define nnsetstring(obj,s) nnset((obj),MUIA_String_Contents,(s))
 
 #define MUIA_Bodychunk_File          0x80002501
 #define MUIA_Bodychunk_UseOld        0x80002502
@@ -217,8 +216,6 @@ struct sockaddr_in {
 
 #define MSG_Space ((APTR)1)
 #define OUT_NIL ((BPTR)1)
-#define POPCMD_WAITEOL 1
-#define POPCMD_NOERROR 2
 #define MFLAG_MULTIRCPT   1
 #define MFLAG_MULTIPART   2
 #define MFLAG_REPORT      4
@@ -259,18 +256,6 @@ struct sockaddr_in {
 #define PRINTMETHOD_LATEX      (1)
 #define PRINTMETHOD_POSTSCRIPT (2)	// not yet implemented
 
-///
-/// Configuration sub-structures
-struct POP3
-{
-   char  Account[SIZE_USERID+SIZE_HOST];
-   char  Server[SIZE_HOST];
-   char  User[SIZE_USERID];
-   char  Password[SIZE_USERID];
-   BOOL  Enabled;
-   BOOL  UseAPOP;
-   BOOL  DeleteOnServer;
-};
 
 struct MimeView
 {
@@ -355,30 +340,6 @@ struct TempFile
 {
    char Filename[SIZE_PATHFILE];
    FILE *FP;
-};
-
-struct Compose
-{
-   FILE *FH;
-   char *MailTo;
-   char *MailCC;
-   char *MailBCC;
-   char *From;
-   char *ReplyTo;
-   char *RealName;
-   char *Subject;
-   char *ExtHeader;
-   char *IRTMsgID;
-   int  Mode;
-   int  Importance;
-   int  Signature;
-   int  Security, OldSecurity;
-   int  Receipt;
-   int  ReportType;
-   BOOL DelSend;
-   BOOL UserInfo;
-   struct WritePart *FirstPart;
-   struct Mail *OrigMail;
 };
 
 struct TransStat
@@ -472,52 +433,6 @@ struct CO_ClassData  /* configuration window */
    BOOL UpdateAll;
 };
 
-struct EA_ClassData  /* address book entry window */
-{
-   struct EA_GUIData
-   {
-      APTR WI;
-      APTR ST_ALIAS, ST_REALNAME, ST_ADDRESS, ST_COMMENT, ST_PHONE, ST_STREET, ST_CITY, ST_COUNTRY, ST_PGPKEY, CY_DEFSECURITY;
-      APTR ST_HOMEPAGE, ST_BIRTHDAY, GR_PHOTO, BC_PHOTO, BT_SELECTPHOTO, BT_LOADPHOTO;
-      APTR LV_MEMBER, ST_MEMBER, BT_ADD, BT_DEL;
-      APTR BT_OKAY, BT_CANCEL;
-   } GUI;
-   int  Type;
-   int  EntryPos;
-   char PhotoName[SIZE_PATHFILE];
-   struct MUI_NListtree_TreeNode *EditNode;
-};
-
-struct TR_ClassData  /* transfer window */
-{
-   struct TR_GUIData
-   {
-      APTR  WI;
-      APTR  GR_LIST, GR_PAGE, LV_MAILS, BT_PAUSE, BT_RESUME, BT_QUIT, BT_START;
-      APTR  TX_STATS, TX_STATUS, GA_COUNT, GA_BYTES, BT_ABORT;
-      char *ST_STATUS;
-   } GUI;
-   struct Mail       *List;
-   struct Mail       *GMD_Mail;
-   struct Search     *Search[2*MAXRU];
-   struct DownloadResult Stats;
-   int                Scnt;
-   BOOL               Checking;
-   char              *UIDLloc;
-   BOOL               supportUIDL;
-   int                GMD_Line;
-   long               Abort, Pause, Start;
-   int                GUIlevel;
-   int                POP_Nr;
-   BOOL               SinglePOP;
-   struct Folder     *ImportBox;
-   char               WTitle[SIZE_DEFAULT];
-   char               ImportFile[SIZE_PATHFILE];
-   char               CountLabel[SIZE_DEFAULT];
-   char               BytesLabel[SIZE_DEFAULT];
-   char               StatsLabel[SIZE_DEFAULT];
-};
-
 struct FI_ClassData  /* find window */
 {
    struct FI_GUIData
@@ -586,13 +501,11 @@ enum { PA_LOAD, PA_DELETE, PA_SKIP,
 enum { SEND_ALL=-2, SEND_ACTIVE, NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC,
        POP_USER, POP_START, POP_TIMED, POP_REXX, APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE,
        APPLY_RX_ALL, APPLY_RX, WRITE_HOLD, WRITE_SEND, WRITE_QUEUE, RIM_QUIET, RIM_READ, RIM_EDIT,
-       RIM_QUOTE, RIM_PRINT, TR_IMPORT,TR_EXPORT,TR_GET,TR_SEND, RCPT_TYPE_ALL, RCPT_TYPE_READ,
+       RIM_QUOTE, RIM_PRINT, RCPT_TYPE_ALL, RCPT_TYPE_READ,
        ABF_USER, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEEMAIL,
        SO_SAVE, SO_RESET };
 
 enum { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
-
-enum { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH, ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_FOLDER };
 
 enum { MDN_IGNORE=0, MDN_DENY, MDN_READ, MDN_DISP, MDN_PROC, MDN_DELE };
 
@@ -601,11 +514,6 @@ enum { MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,
        MACRO_PREGET, MACRO_POSTGET, MACRO_NEWMSG, MACRO_PRESEND, MACRO_POSTSEND,
        MACRO_READ, MACRO_PREWRITE, MACRO_POSTWRITE, MACRO_URL };
 
-/* if you add anything here, check the following places for potential changes:
- * YAM_MAf.c:MA_ExamineMail() (X-YAM-options handling)
- * YAM:WR.c:WriteOutMessage() (PGP multipart stuff); WR_New() (GUI elements, menus)
- */
-enum { SEC_NONE=0, SEC_SIGN, SEC_ENCRYPT, SEC_BOTH, SEC_SENDANON, SEC_DEFAULTS, SEC_MAXDUMMY };
 ///
 /// Declaration of external variables
 extern struct Config *CE;
@@ -847,15 +755,6 @@ extern BOOL AB_SaveTree(char *);
 extern void AB_MakeABFormat(APTR);
 extern struct AB_ClassData *AB_New(void);
 
-extern int EA_Init(int, struct MUI_NListtree_TreeNode *);
-extern void EA_Setup(int, struct ABEntry *);
-extern void EA_InsertBelowActive(struct ABEntry *, int);
-extern void EA_FixAlias(struct ABEntry *, BOOL);
-extern void EA_SetDefaultAlias(struct ABEntry *);
-extern void EA_AddSingleMember(Object *, struct MUI_NListtree_TreeNode *);
-extern void EA_SetDefaultAlias(struct ABEntry *);
-extern void EA_SetPhoto(int, char *);
-
 extern BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi);
 extern struct Mail *RE_GetQuestion(long);
 extern struct Mail *RE_GetAnswer(long);
@@ -892,34 +791,6 @@ extern void WR_NewMail(int, int);
 extern void WR_Cleanup(int);
 extern void WR_App(int, struct AppMessage *);
 extern struct WR_ClassData *WR_New(int);
-
-extern BOOL TR_IsOnline(void);
-extern BOOL TR_OpenTCPIP(void);
-extern void TR_CloseTCPIP(void);
-extern void TR_Cleanup(void);
-extern BOOL TR_DownloadURL(char *, char *, char *, char *filename);
-extern BOOL TR_SendPopCmd(char *, char *, char *, int);
-extern int  TR_RecvDat(char *);
-extern BOOL TR_SendSMTPCmd(char *, char *);
-extern BOOL TR_SendDat(char *);
-extern void TR_SetWinTitle(BOOL, char *);
-extern int TR_Connect(char *, int);
-extern void TR_Disconnect(void);
-extern int  TR_ConnectPOP(int);
-extern void TR_DisplayMailList(BOOL);
-extern void TR_GetMessageList_IMPORT(FILE *);
-extern BOOL TR_GetMessageList_GET(int);
-extern void TR_GetMailFromNextPOP(BOOL, int, int);
-extern BOOL TR_ProcessSEND(struct Mail **);
-extern BOOL TR_ProcessEXPORT(char *, struct Mail **, BOOL);
-extern void TR_GetUIDL(void);
-extern void TR_GetMessageDetails(struct Mail *, int);
-extern int TR_CheckMessage(int, int, int);
-extern void TR_CompleteMsgList(void);
-extern void TR_DisconnectPOP(void);
-extern void TR_NewMailAlert(void);
-extern void TR_Open(void);
-extern struct TR_ClassData *TR_New(int);
 
 extern void ER_NewError(char *, char *, char *);
 

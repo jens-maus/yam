@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_config.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
@@ -571,7 +572,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
    static struct Person pe;
    struct Mail *mail = (struct Mail *)&email;
    char *p, fullfile[SIZE_PATHFILE];
-   int ok, i, j;
+   int ok, i;
    struct DateStamp *foundDate = NULL;
    FILE *fh;
 
@@ -705,9 +706,15 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             {
                if (!stricmp(field, "x-yam-options"))
                {
+                  enum Security sec;
+
                   if (strstr(value, "delsent")) email.DelSend = TRUE;
                   if (p = strstr(value, "sigfile")) email.Signature = p[7]-'0'+1;
-                  for (j = SEC_SIGN; j <= SEC_SENDANON; j++) if (strstr(value, SecCodes[j])) email.Security = j;
+                  for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
+                  {
+                    if(strstr(value, SecCodes[sec]))
+                      email.Security = sec;
+                  }
                }
                if (!strnicmp(field, "x-yam-header-", 13))
                {

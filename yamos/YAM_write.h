@@ -119,4 +119,35 @@ struct WritePart
    enum Encoding            EncType;
 };
 
+/* if you add anything here, check the following places for potential changes:
+ * YAM_MAf.c:MA_ExamineMail() (X-YAM-options handling)
+ * YAM:WR.c:WriteOutMessage() (PGP multipart stuff); WR_New() (GUI elements, menus)
+ */
+enum Security { SEC_NONE=0, SEC_SIGN, SEC_ENCRYPT, SEC_BOTH, SEC_SENDANON, SEC_DEFAULTS, SEC_MAXDUMMY };
+
+struct Compose
+{
+   FILE *             FH;
+   char *             MailTo;
+   char *             MailCC;
+   char *             MailBCC;
+   char *             From;
+   char *             ReplyTo;
+   char *             RealName;
+   char *             Subject;
+   char *             ExtHeader;
+   char *             IRTMsgID;
+   struct WritePart * FirstPart;
+   struct Mail *      OrigMail;
+   int                Mode;
+   int                Importance;
+   int                Receipt;
+   int                ReportType;
+   int                Signature;
+   BOOL               DelSend;
+   BOOL               UserInfo;
+   enum Security      Security;
+   enum Security      OldSecurity;
+};
+
 #endif /* YAM_WRITE_H */

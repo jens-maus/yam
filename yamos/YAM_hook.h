@@ -31,30 +31,14 @@
 #include "SDI_compiler.h"
 
 #ifdef __MORPHOS__
-  #define HOOKPROTO(name, ret, obj, param) \
-    static ret name(struct Hook *hook, obj, param); \
-    static ret Trampoline_##name(void) { return name((struct Hook *) REG_A0, (obj) REG_A2, (param) REG_A1); } \
-    static ret name(struct Hook *hook, obj, param)
-  #define HOOKPROTONO(name, ret, param) \
-    static ret name(struct Hook *hook, param); \
-    static ret Trampoline_##name(void) { return name((struct Hook *) REG_A0, (param) REG_A1); } \
-    static ret name(struct Hook *hook, param)
-  #define HOOKPROTONH(name, ret, obj, param) \
-    static ret name(obj, param); \
-    static ret Trampoline_##name(void) { return name((obj) REG_A2, (param) REG_A1); } \
-    static ret name(obj, param)
-  #define HOOKPROTONHNO(name, ret, param) \
-    static ret name(param); \
-    static ret Trampoline_##name(void) { return name((param) REG_A1); } \
-    static ret name(param)
-  #define HOOKPROTONHNP(name, ret, obj) \
-    static ret name(obj); \
-    static ret Trampoline_##name(void) { return name((obj) REG_A2); } \
-    static ret name(obj)
-  #define HOOKPROTONHNONP(name, ret) \
-    static ret name(void); \
-    static ret Trampoline_##name(void) { return name(); } \
-    static ret name(void)
+  "#include <emul/emulinterface.h>"
+  "#include <emul/emulregs.h>"
+  #define HOOKPROTO(name, ret, obj, param) static ret name(void) { struct Hook *hook = REG_A0; obj = REG_A2; param = REG_A1;
+  #define HOOKPROTONO(name, ret, param) static ret name(void) { struct Hook *hook = REG_A0; param = REG_A1;
+  #define HOOKPROTONH(name, ret, obj, param) static ret name(void) { obj = REG_A2; param = REG_A1;
+  #define HOOKPROTONH(name, ret, param) static ret name(void) { param = REG_A1;
+  #define HOOKPROTONHNP(name, ret, obj) static ret name(void) { obj = REG_A2;
+  #define HOOKPROTONHNONP(name, ret) static ret name(void) {
   #define DISPATCHERPROTO(name) \
     struct IClass; \
     static ULONG name(struct IClass * cl, Object * obj, Msg msg); \
@@ -63,10 +47,10 @@
     static ULONG name(struct IClass * cl, Object * obj, Msg msg)
 
   #define MakeHook(hookname, funcname) \
-    static const struct EmulLibEntry Gate_##funcname = { TRAP_LIBNR, 0, (void(*)())Trampoline_##funcname }; \
+    } static const struct EmulLibEntry Gate_##funcname = { TRAP_LIBNR, 0, (void(*)()) funcname }; \
     struct Hook hookname = { {NULL, NULL}, (void*)&Gate_##funcname, NULL, NULL }
   #define MakeStaticHook(hookname, funcname) \
-    static const struct EmulLibEntry Gate_##funcname = { TRAP_LIBNR, 0, (void(*)())Trampoline_##funcname }; \
+    } static const struct EmulLibEntry Gate_##funcname = { TRAP_LIBNR, 0, (void(*)()) funcname }; \
     static struct Hook hookname = { {NULL, NULL}, (void*)&Gate_##funcname, NULL, NULL }
   #define ENTRY(func) (void*)&Gate_##func
 #else

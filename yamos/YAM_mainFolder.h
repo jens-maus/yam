@@ -76,4 +76,7 @@ struct ExtendedMail
    char             IRTMsgID[SIZE_MSGID];
 };
 
+struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *statstr, BOOL deep);
+void   MA_FreeEMailStruct(struct ExtendedMail *email);
+
 #endif /* YAM_MAINFOLDER_H */

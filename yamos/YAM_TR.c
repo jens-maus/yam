@@ -25,13 +25,31 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
+#include <clib/alib_protos.h>
+#include <mui/NList_mcc.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
+#include <proto/miami.h>
+
 #include "YAM.h"
+#include "YAM_config.h"
+#include "YAM_error.h"
+#include "YAM_find.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_md5.h"
+
+static void TR_NewMailAlert(void);
+static void TR_CompleteMsgList(void);
+
+#define POPCMD_WAITEOL 1
+#define POPCMD_NOERROR 2
 
 /***************************************************************************
  Module: Transfer
@@ -87,7 +105,7 @@ BOOL TR_OpenTCPIP(void)
 ///
 /// TR_Disconnect
 //  Terminates a connection
-void TR_Disconnect(void)
+static void TR_Disconnect(void)
 {
    if (G->TR_Socket != SMTP_NO_SOCKET)
    {
@@ -99,7 +117,7 @@ void TR_Disconnect(void)
 ///
 /// TR_Connect
 //  Connects to a internet service
-int TR_Connect(char *host, int port)
+static int TR_Connect(char *host, int port)
 {
    struct hostent *hostaddr;
 
@@ -129,7 +147,7 @@ int TR_Connect(char *host, int port)
 ///
 /// TR_RecvDat
 //  Receives data from a TCP/IP connection
-int TR_RecvDat(char *recvdata)                   /* success? */
+static int TR_RecvDat(char *recvdata)                   /* success? */
 {
    int len;
 
@@ -144,7 +162,7 @@ int TR_RecvDat(char *recvdata)                   /* success? */
 ///
 /// TR_SendDat
 //  Sends data through a TCP/IP connection
-BOOL TR_SendDat(char *senddata)                  /* success? */
+static BOOL TR_SendDat(char *senddata)                  /* success? */
 {
    DoMethod(G->App,MUIM_Application_InputBuffered);
    if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
@@ -252,7 +270,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
 /*** POP3 routines ***/
 /// TR_SendPopCmd
 //  Sends a command to the POP3 server
-BOOL TR_SendPopCmd(char *buf, char *cmdtext, char *parmtext, int flags)
+static BOOL TR_SendPopCmd(char *buf, char *cmdtext, char *parmtext, int flags)
 {
    char cmdbuf[SIZE_COMMAND];
    int len, ln;
@@ -281,7 +299,7 @@ BOOL TR_SendPopCmd(char *buf, char *cmdtext, char *parmtext, int flags)
 ///
 /// TR_ConnectPOP
 //  Connects to a POP3 mail server
-int TR_ConnectPOP(int guilevel)
+static int TR_ConnectPOP(int guilevel)
 {     
    char passwd[SIZE_PASSWORD], host[SIZE_HOST], buf[SIZE_LINE], *p;
    int err, pop = G->TR->POP_Nr, msgs, port = 110;
@@ -361,7 +379,7 @@ int TR_ConnectPOP(int guilevel)
 ///
 /// TR_DisplayMailList
 //  Displays a list of messages ready for download
-void TR_DisplayMailList(BOOL largeonly)
+static void TR_DisplayMailList(BOOL largeonly)
 {
    struct Mail *mail;
    APTR lv = G->TR->GUI.LV_MAILS;
@@ -378,7 +396,7 @@ void TR_DisplayMailList(BOOL largeonly)
 ///
 /// TR_AddMessageHeader
 //  Parses downloaded message header
-void TR_AddMessageHeader(int *count, int size, char *tfname)
+static void TR_AddMessageHeader(int *count, int size, char *tfname)
 {
    struct Mail *mail;
    struct ExtendedMail *email;
@@ -434,7 +452,7 @@ void TR_GetMessageList_IMPORT(FILE *fh)
 ///
 /// TR_GetMessageList_GET
 //  Collects messages waiting on a POP3 server
-BOOL TR_GetMessageList_GET(int maxmsgs)
+static BOOL TR_GetMessageList_GET(int maxmsgs)
 {
    char buf[SIZE_LINE];
 
@@ -481,7 +499,7 @@ BOOL TR_GetMessageList_GET(int maxmsgs)
 ///
 /// TR_AppendUIDL
 //  Appends a UIDL to the .uidl file
-void TR_AppendUIDL(char *uidl)
+static void TR_AppendUIDL(char *uidl)
 {
    FILE *fh;
    if (fh = fopen(CreateFilename(".uidl"), "a"))
@@ -493,7 +511,7 @@ void TR_AppendUIDL(char *uidl)
 ///
 /// TR_FindUIDL
 //  Searches UIDL list for a given UIDL
-BOOL TR_FindUIDL(char *uidl)
+static BOOL TR_FindUIDL(char *uidl)
 {
    int l = strlen(uidl);
    char *p = G->TR->UIDLloc;
@@ -507,7 +525,7 @@ BOOL TR_FindUIDL(char *uidl)
 ///
 /// TR_GetUIDLonDisk
 //  Loads local UIDL list from disk
-char *TR_GetUIDLonDisk(void)
+static char *TR_GetUIDLonDisk(void)
 {
    FILE *fh;
    char *text = NULL, *file = CreateFilename(".uidl");
@@ -525,7 +543,7 @@ char *TR_GetUIDLonDisk(void)
 ///
 /// TR_GetUIDLonServer
 //  Gets remote UIDL list from the POP3 server
-BOOL TR_GetUIDLonServer(void)
+static BOOL TR_GetUIDLonServer(void)
 {
    char buf[SIZE_LINE];
 
@@ -561,7 +579,7 @@ BOOL TR_GetUIDLonServer(void)
 ///
 /// TR_ApplyRemoteFilters
 //  Applies remote filters to a message
-void TR_ApplyRemoteFilters(struct Mail *mail)
+static void TR_ApplyRemoteFilters(struct Mail *mail)
 {
    int i;
 
@@ -578,7 +596,7 @@ void TR_ApplyRemoteFilters(struct Mail *mail)
 ///
 /// TR_GetMessageDetails
 //  Gets header from a message stored on the POP3 server
-void TR_GetMessageDetails(struct Mail *mail, int lline)
+static void TR_GetMessageDetails(struct Mail *mail, int lline)
 {
    if (!*mail->From.Address)
    {
@@ -644,7 +662,7 @@ void TR_GetMessageDetails(struct Mail *mail, int lline)
 ///
 /// TR_GetUIDL
 //  Filters out duplicate messages
-void TR_GetUIDL(void)
+static void TR_GetUIDL(void)
 {
    struct Mail *mail;
    G->TR->supportUIDL = TR_GetUIDLonServer();
@@ -658,7 +676,7 @@ void TR_GetUIDL(void)
 ///
 /// TR_DisconnectPOP
 //  Terminates a POP3 session
-void TR_DisconnectPOP(void)
+static void TR_DisconnectPOP(void)
 {
    char buf[SIZE_LINE];
 
@@ -775,7 +793,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 /*** SMTP routines ***/
 /// TR_SendSMTPCmd
 //  Sends a command to the SMTP server
-BOOL TR_SendSMTPCmd(char *cmdtext, char *parmtext)
+static BOOL TR_SendSMTPCmd(char *cmdtext, char *parmtext)
 {
    int len;
    static char buffer[SIZE_LINE];
@@ -804,7 +822,7 @@ BOOL TR_SendSMTPCmd(char *cmdtext, char *parmtext)
 ///
 /// TR_ConnectSMTP
 //  Connects to a SMTP mail server
-BOOL TR_ConnectSMTP(void)
+static BOOL TR_ConnectSMTP(void)
 {
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
    if (!TR_SendSMTPCmd(NULL, NULL)) return FALSE;
@@ -899,7 +917,7 @@ static ULONG GetReturnCode(void)
 #define AUTH_PLAIN      8
 void encode64(char *s, char *d, int len);
 char *decode64 (char *dest, char *src, char *srcmax);
-BOOL TR_ConnectESMTP(void)
+static BOOL TR_ConnectESMTP(void)
 {
    int len,rc;
    char buffer[SIZE_LINE];
@@ -1105,7 +1123,7 @@ BOOL TR_ConnectESMTP(void)
 ///
 /// TR_DisconnectSMTP
 //  Terminates a SMTP session
-void TR_DisconnectSMTP(void)
+static void TR_DisconnectSMTP(void)
 {
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Disconnecting));
    if (!G->TR->Abort) TR_SendSMTPCmd("QUIT", NULL);
@@ -1127,11 +1145,11 @@ HOOKPROTONHNO(TR_ChangeStatusFunc, void, int *arg)
       DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, id);
    }
 }
-MakeHook(TR_ChangeStatusHook, TR_ChangeStatusFunc);
+MakeStaticHook(TR_ChangeStatusHook, TR_ChangeStatusFunc);
 ///
 /// TR_GetSeconds
 //  Gets current date and time in seconds
-long TR_GetSeconds(void)
+static long TR_GetSeconds(void)
 {
    struct DateStamp ds;
    DateStamp(&ds);
@@ -1140,7 +1158,7 @@ long TR_GetSeconds(void)
 ///
 /// TR_TransStat_Init
 //  Initializes transfer statistics
-void TR_TransStat_Init(struct TransStat *ts)
+static void TR_TransStat_Init(struct TransStat *ts)
 {
    struct Mail *mail;
 
@@ -1159,7 +1177,7 @@ void TR_TransStat_Init(struct TransStat *ts)
 ///
 /// TR_TransStat_Start
 //  Resets statistics display
-void TR_TransStat_Start(struct TransStat *ts)
+static void TR_TransStat_Start(struct TransStat *ts)
 {
    ts->Msgs_Done = ts->Size_Done = 0;
    SPrintF(G->TR->CountLabel, GetStr(MSG_TR_MessageGauge), "%ld", ts->Msgs_Tot);
@@ -1170,7 +1188,7 @@ void TR_TransStat_Start(struct TransStat *ts)
 ///
 /// TR_TransStat_NextMsg
 //  Updates statistics display for next message
-void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, int size, char *status)
+static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, int size, char *status)
 {
    ts->Size_Curr = 0;
    ts->Clock_Last = 0;
@@ -1191,7 +1209,7 @@ void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, int size
 ///
 /// TR_TransStat_Update
 //  Updates statistics display for next block of data
-void TR_TransStat_Update(struct TransStat *ts, int size_incr)
+static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 {
    long clock;
    int speed = 0, remclock = 0;
@@ -1236,7 +1254,7 @@ void TR_Cleanup(void)
 ///
 /// TR_AbortnClose
 //  Aborts a transfer
-void TR_AbortnClose(void)
+static void TR_AbortnClose(void)
 {
    set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
    TR_Cleanup();
@@ -1246,7 +1264,7 @@ void TR_AbortnClose(void)
 ///
 /// TR_ApplySentFilters
 //  Applies filters to a sent message
-BOOL TR_ApplySentFilters(struct Mail *mail)
+static BOOL TR_ApplySentFilters(struct Mail *mail)
 {
    int i;
    for (i = 0; i < G->TR->Scnt; i++)
@@ -1319,7 +1337,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 /*** SEND ***/
 /// TR_SendMessage
 //  Sends a single message
-int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
+static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 {
    int result = 0;
    struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
@@ -1481,7 +1499,7 @@ HOOKPROTONHNONP(TR_AbortIMPORTFunc, void)
 {
    TR_AbortnClose();
 }
-MakeHook(TR_AbortIMPORTHook, TR_AbortIMPORTFunc);
+MakeStaticHook(TR_AbortIMPORTHook, TR_AbortIMPORTFunc);
 ///
 /// TR_ProcessIMPORTFunc
 //  Imports messages from a UUCP mailbox file
@@ -1569,18 +1587,18 @@ HOOKPROTONHNONP(TR_AbortGETFunc, void)
    TR_CloseTCPIP();
    G->TR->Checking = FALSE; DisplayStatistics((struct Folder *)-1);
 }
-MakeHook(TR_AbortGETHook, TR_AbortGETFunc);
+MakeStaticHook(TR_AbortGETHook, TR_AbortGETFunc);
 ///
 /// TR_LoadMessage
 //  Retrieves a message from the POP3 server
-BOOL TR_LoadMessage(struct TransStat *ts, int number)
+static BOOL TR_LoadMessage(struct TransStat *ts, int number)
 {
    static char mfile[SIZE_MFILE];
    struct Folder *infolder = FO_GetFolderByType(FT_INCOMING, NULL);
    char msgnum[SIZE_SMALL], buf[SIZE_LINE], msgfile[SIZE_PATHFILE];
    FILE *f;
 
-   stccpy(msgfile, MA_NewMailFile(infolder, mfile, 0), SIZE_PATHFILE);
+   MyStrCpy(msgfile, MA_NewMailFile(infolder, mfile, 0));
    if (f = fopen(msgfile, "w"))
    {
       sprintf(msgnum, "%ld", number);
@@ -1638,7 +1656,7 @@ BOOL TR_LoadMessage(struct TransStat *ts, int number)
 ///
 /// TR_DeleteMessage
 //  Deletes a message on the POP3 server
-void TR_DeleteMessage(int number)
+static void TR_DeleteMessage(int number)
 {
    char msgnum[SIZE_SMALL], buf[SIZE_LINE];
 
@@ -1649,7 +1667,7 @@ void TR_DeleteMessage(int number)
 ///
 /// TR_NewMailAlert
 //  Notifies user when new mail is available
-void TR_NewMailAlert(void)
+static void TR_NewMailAlert(void)
 {
    struct DownloadResult *stats = &G->TR->Stats;
 
@@ -1717,11 +1735,11 @@ HOOKPROTONHNONP(TR_GetMessageInfoFunc, void)
    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, line, &mail);
    TR_GetMessageDetails(mail, line);
 }
-MakeHook(TR_GetMessageInfoHook, TR_GetMessageInfoFunc);
+MakeStaticHook(TR_GetMessageInfoHook, TR_GetMessageInfoFunc);
 ///
 /// TR_CompleteMsgList
 //  Gets details for messages on server
-void TR_CompleteMsgList()
+static void TR_CompleteMsgList(void)
 {
    struct TR_ClassData *tr = G->TR;
    struct Mail *mail = tr->GMD_Mail;
@@ -1753,7 +1771,7 @@ HOOKPROTONHNO(TR_PauseFunc, void, int *arg)
    G->TR->Pause = FALSE;
    TR_CompleteMsgList();
 }
-MakeHook(TR_PauseHook, TR_PauseFunc);
+MakeStaticHook(TR_PauseHook, TR_PauseFunc);
 
 /*** GUI ***/
 /// TR_LV_DspFunc
@@ -1770,10 +1788,14 @@ HOOKPROTO(TR_LV_DspFunc, long, char **array, struct Mail *entry)
       if (entry->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);
       array[1] = dispsiz; *dispsiz = 0;
       FormatSize(entry->Size, dispsiz);
-      stccpy(array[2] = dispfro, AddrName((*pe)), SIZE_DEFAULT);
+      array[2] = dispfro;
+      MyStrCpy(dispfro, AddrName((*pe)));
       array[3] = entry->Subject;
       array[4] = dispdate; *dispdate = 0;
-      if (entry->Date.ds_Days) stccpy(dispdate, DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME), 32);
+      if(entry->Date.ds_Days)
+      {
+        MyStrCpy(dispdate, DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
+      }
    }
    else
    {
@@ -1786,7 +1808,7 @@ HOOKPROTO(TR_LV_DspFunc, long, char **array, struct Mail *entry)
    }
    return 0;
 }
-MakeHook(TR_LV_DspFuncHook,TR_LV_DspFunc);
+MakeStaticHook(TR_LV_DspFuncHook,TR_LV_DspFunc);
 ///
 /// TR_New
 //  Creates transfer window

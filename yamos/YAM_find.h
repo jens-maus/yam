@@ -28,4 +28,6 @@
 
 ***************************************************************************/
 
+BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail);
+
 #endif /* YAM_FIND_H */

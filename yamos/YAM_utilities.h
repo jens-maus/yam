@@ -36,6 +36,10 @@
 enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
   DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT };
 
+
+enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
+  ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_FOLDER };
+
 struct Person
 {       
    char Address[SIZE_ADDRESS];
@@ -46,12 +50,15 @@ struct Person
 
 extern struct Hook GeneralDesHook;
 
+APTR     AllocCopy(APTR source, int size);
 char *   AllocStrBuf(long initlen);
+void     AppendLogNormal(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 void     AppendLogVerbose(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 char *   BuildAddrName(char *address, char *name);
 char *   BuildAddrName2(struct Person *pe);
 void     Busy(char *text, char *parameter, int cur, int max);
 BOOL     CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh);
+char *   CreateFilename(char *file);
 BOOL     CreateDirectory(char *dir);
 char *   DateStamp2String(struct DateStamp *date, enum DateStampType mode);
 void     DeleteMailDir(char *dir, BOOL isroot);
@@ -60,21 +67,30 @@ void     DisposeModulePush(void *module);
 void     DisposeModule(void *modptr);
 char *   Encrypt(char *source);
 void     ExtractAddress(char *line, struct Person *pe);
+int      FileSize(char *filename);
 int      FileType(char *filename);
 void     FreeStrBuf(char *strbuf);
 time_t   GetDateStamp(void);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
 int      GetMUI(Object *obj, int attr);
 BOOL     GetMUICheck(Object *obj);
+int      GetMUICycle(Object *obj);
 void     GetMUIString(char *a, Object *obj);
 int      GetSimpleID(void);
 char *   GetTZ(void);
+void     GotoURL(char *url);
 char *   IdentifyFile(char *fname);
+BOOL     isAlNum(int c);
+char *   itoa(int val);
 Object * MakeButton(char *txt);
 Object * MakeCheckGroup(Object **check, char *label);
 Object * MakePassString(char *label);
+Object * MakePGPKeyList(APTR *st, BOOL secret, char *label);
+Object * MakePicture(char *fname);
 Object * MakeString(int maxlen, char *label);
+void     MyAddTail(struct Mail **list, struct Mail *new);
 char *   MyStrChr(char *s, int c);
+int      ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file);
 BOOL     SafeOpenWindow(Object *obj);
 void     SetHelp(APTR object, APTR strnum);
 void     SPrintF(char *outstr, char *fmtstr, ...);

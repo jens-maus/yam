@@ -28,6 +28,10 @@
 
 ***************************************************************************/
 
+#include <stdio.h>
+
+enum TransferType {TR_IMPORT,TR_EXPORT,TR_GET,TR_SEND};
+
 struct DownloadResult
 {
    long Downloaded;
@@ -37,7 +41,65 @@ struct DownloadResult
    BOOL Error;
 };
 
+struct TR_GUIData
+{
+   APTR WI;
+   APTR GR_LIST;
+   APTR GR_PAGE;
+   APTR LV_MAILS;
+   APTR BT_PAUSE;
+   APTR BT_RESUME;
+   APTR BT_QUIT;
+   APTR BT_START;
+   APTR TX_STATS;
+   APTR TX_STATUS;
+   APTR GA_COUNT;
+   APTR GA_BYTES;
+   APTR BT_ABORT;
+   char *ST_STATUS;
+};
+
+struct TR_ClassData  /* transfer window */
+{
+   struct TR_GUIData     GUI;
+   struct Mail *         List;
+   struct Mail *         GMD_Mail;
+   struct Search *       Search[2*MAXRU];
+   struct Folder *       ImportBox;
+   char *                UIDLloc;
+
+   long                  Abort;
+   long                  Pause;
+   long                  Start;
+   int                   Scnt;
+   int                   GMD_Line;
+   int                   GUIlevel;
+   int                   POP_Nr;
+   BOOL                  SinglePOP;
+   BOOL                  Checking;
+   BOOL                  supportUIDL;
+   struct DownloadResult Stats;
+
+   char                  WTitle[SIZE_DEFAULT];
+   char                  ImportFile[SIZE_PATHFILE];
+   char                  CountLabel[SIZE_DEFAULT];
+   char                  BytesLabel[SIZE_DEFAULT];
+   char                  StatsLabel[SIZE_DEFAULT];
+};
+
 extern struct Hook TR_ProcessGETHook;
 extern struct Hook TR_ProcessIMPORTHook;
+
+void  TR_Cleanup(void);
+void  TR_CloseTCPIP(void);
+BOOL  TR_DownloadURL(char *url0, char *url1, char *url2, char *filename);
+void  TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel);
+void  TR_GetMessageList_IMPORT(FILE *fh);
+BOOL  TR_IsOnline(void);
+struct TR_ClassData *TR_New(enum TransferType TRmode);
+BOOL  TR_OpenTCPIP(void);
+BOOL  TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append);
+BOOL  TR_ProcessSEND(struct Mail **mlist);
+void  TR_SetWinTitle(BOOL from, char *host);
 
 #endif /* YAM_TRANSFER_H */
