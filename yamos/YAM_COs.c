@@ -355,7 +355,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   if (!stricmp(buffer, "DeleteOnExit"))   co->RemoveAtOnce = !(co->RemoveOnQuit = Txt2Bool(value));
                   if (!strnicmp(buffer, "Folder", 6) && oldfolders)
                   {
-                     static int sortconv[4] = { -1, 1, 3, 5 };
+                     static const int sortconv[4] = { -1, 1, 3, 5 };
                      int j = atoi(&buffer[6]), type;
                      if (!ofo) ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
                      if (j >= 3) for (j = 4; j < 100; j++) if (!ofo[j]) break;
