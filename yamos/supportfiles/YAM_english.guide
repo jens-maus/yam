@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (11.04.2003)
+@$VER: YAM.guide 2.4 (13.04.2003)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -9914,7 +9914,7 @@ Tips & tricks
  @{" Moving YAM to another partition or directory     " link "TIP2"}
  @{" Avoiding excessive disk trashing on startup      " link "TIP3"}
  @{" Using Mailing list support settings properly     " link "TIP4"}
- @{" Setting Daylight Savings time properly (AutoDST) " line "TIP5"}
+ @{" Setting Daylight Savings time properly (AutoDST) " link "TIP5"}
 
 @endnode
 
@@ -10131,13 +10131,14 @@ variables which are normally generated/modified by such AutoDST tools:
 
    3) ENV:IXGMTOFFSET
       ixemul specific gmtoffset variable that is used/modified by the
-			ixtimezone tools of the geekgadgets package.
+      ixtimezone tools of the geekgadgets package.
 
    If YAM was able to find one of these three environment variables it
 will automatically adjust the Daylight Savings setting of the configuration
 and disable the possibility to switch DST manually within YAM. Please note
-that if such a AutoDST variant was found, YAM will also poll every hour
-for a DST change, so that you don't have to restart YAM.
+that if such a AutoDST variant was found, YAM will automatically be
+notified if the enviroment variable changes i.e. because of a DST switch,
+so you don't have to restart YAM.
 
    So if you want to get rid of all this manual DST back/forward setting
 all year, simply install one of the above (or similar) AutoDST system and
