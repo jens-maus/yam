@@ -1308,12 +1308,12 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
 	if(out)
 	{
   	static char temp_buf[128];
-	  int temp_len = 0;
+	  int temp_len;
 		BOOL newline = TRUE;
 		BOOL wrapped = FALSE; // needed to implement automatic wordwrap while quoting
     BOOL lastwasspace = FALSE;
 		int line_len = 0;
-    int skip_chars = 0;
+    int skip_chars;
     int post_spaces = 0;
 
     // find out how many quoting chars the next line has
