@@ -7,7 +7,7 @@ archives which must be unpacked into the same directory before installation.
 
 YAM24.lha        YAM 2.4 basic installation for 68020 processors or better,
                  includes English manual
-YAM24cpu.lha     Executables optimized for 68040 and 68060 processors
+YAM24cpu.lha     Diff for 68040 and 68060 processors
 YAM24mos.lha     YAM 2.4 MorphOS executables for PPC support.
 YAM24loc.lha     Foreign language support (catalogs and manuals)
 YAM24con.lha     Additional graphics, ARexx scripts, etc.
@@ -33,8 +33,10 @@ YAM Open Source homepage at http://yamos.sourceforge.net/
 
 What's new since YAM 2.3p1?
 ---------------------------
-Developers..: Alexey Ivanov       (AmiS)
-(alphabetic)  Allan Odgaard       (duff)
+Developers (in alphabetical order):
+
+              Alexey Ivanov       (AmiS)
+              Allan Odgaard       (duff)
               Christian Hattemer  (krille)
               David Rey           (tactica)
               Dirk Stöcker        (gizmo)
@@ -44,15 +46,13 @@ Developers..: Alexey Ivanov       (AmiS)
               Karoly Balogh       (charlie)
 
 - Fixed: no more Enforcer hits on exit (damato)
-- Fixed: didn't really disconnect from the server if an STMP AUTH
-  request failed (damato)
 - Fixed: if SMTP AUTH failed, the response gotten from the server was
-  never reported to the user (damato)
+  never reported to the user, and the connection remained alive (damato)
 - Fixed: if a host had 2 different IPs in the DNS and the first one
   was down, it would never try to connect to the second one and just
   threw an error message (damato)
-- Fixed: aborting a mail transfer could throw Enforcer hits; we didn't
-  even issue a QUIT command (damato)
+- Fixed: aborting a mail transfer could throw Enforcer hits, and no
+  QUIT command was sent (damato)
 - Fixed: potential crash if the Edit window was opened from a Read window
   and the Read window was closed before clicking Send now/Send later/Hold
   (krille)
@@ -65,7 +65,7 @@ Developers..: Alexey Ivanov       (AmiS)
   letting the user toy around with the list and break havoc (damato)
 - Fixed: several problems with the handling of temporary files, using
   now an additional serial ID and a smarter access mechanism (damato)
-- Fixed: several problems with trying to open an inexistant mail file,
+- Fixed: several problems when trying to open an inexistant mail file,
   returning now a proper error message (damato)
 - Fixed: an error on sending could make sent email to end up in the
   wrong folder (damato)
@@ -93,6 +93,8 @@ Developers..: Alexey Ivanov       (AmiS)
 - Fixed: INFO SCREEN would return an empty string if YAM was iconified
   (damato)
 - Fixed: MAILCHECK didn't set <STEM>ONSERVER correctly (damato)
+- Fixed: MAILINFO broke in 2.3p1 and would omit the folder name part in
+  <STEM>FILENAME if an INDEX was supplied (damato)
 - Fixed: neither MAILREAD or MAILWRITE could really activate windows
   in the GUI (damato)
 - Fixed: MAILWRITE accepted bad WINDOW values (damato)
@@ -160,12 +162,12 @@ Developers..: Alexey Ivanov       (AmiS)
 - Fixed: the duplicated "shift right" menu shortcut in the Read window
   is now gone (tactica)
 
-- Changed: The routines for the text highlighting mechanisms were exchanged
-  with a more intelligent flex environment which makes it highlight
-  certain text areas more accurate.
-- Changed: All elementary TCP/IP routines were completly rewritten and
-  tuned up to use separate transfer buffers which should especially speed up
-  transfers on low connection speeds (damato)
+- Changed: replaced TextEditor.mcc style routines in the Read window
+  with a more intelligent flex environment to make highlighting more
+  accurate and fix the crashes with some HTML mail (damato)
+- Changed: rewritten all the elementary TCP/IP routines to use separate
+  transfer buffers, which should speed up transfers over slow connections
+  (damato)
 - Changed: "Program startup" & "Program termination" macros are also
   executed on Restart (damato)
 - Changed: windows are now navigable no matter what's the status of
@@ -176,7 +178,7 @@ Developers..: Alexey Ivanov       (AmiS)
   characters in recipient string gadgets (laursen)
 - Changed: if PGP is not found, it won't be used at all instead of
   putting up a "PGP signature key is not correct" warning every time
-  (krille)
+  a PGP signed message is opened (krille)
 - Changed: dates in the mail listview and other areas are now displayed
   using Locale settings (damato)
 - Changed: will also honour the hidden JumpToNewMsg option wrt newly
@@ -185,6 +187,7 @@ Developers..: Alexey Ivanov       (AmiS)
   date by default (damato)
 - Changed: personal sender info will only be displayed if only one
   matching Real Name is found in the address book (damato)
+- Changed: simplified the folder creation process (damato)
 - Changed: removed the %h variable from the popup list for the Open and
   Close phrases, since it doesn't make much sense there (damato)
 - Changed: string gadgets for email addresses and real names are now
@@ -214,8 +217,9 @@ Developers..: Alexey Ivanov       (AmiS)
 - Changed: CTRL-C will now break the application, while CTRL-D will
   restart it immediately (damato)
 - Changed: updated default remailer address (damato)
-- Changed: now requires NList.mcc 20.104 and NListtree.mcc 18.12 as
-  the bare minimum (damato)
+- Changed: now requires NList.mcc 20.104, NListtree.mcc 18.12 and
+  Toolbar.mcc 15.8 as the bare minimum; imagepool.library has been
+  rendered obsolete (damato)
 
 - Added: hierarchical folder list - folders can now be arranged into
   groups, and nested at the user's discretion (damato)
@@ -224,18 +228,22 @@ Developers..: Alexey Ivanov       (AmiS)
 - Added: email address cache, making it possible to "remember" the last
   N used recipients if they don't appear in the address book (laursen,
   duff, damato)
-- Added: optional pop-up menus for the folder & message lists, using
-  popupmenu.library (damato)
-- Added: automatic codepage detection and translation, mainly for
-  cyrillic users though (AmiS)
-- Added: reworked status bar, customizable from Configuration/Lists (damato)
-- Added: automatic detection of the suitable mailing list support settings
-  (damato)
 - Added: more powerful recipient string gadgets, resolving aliases/
   real names/email addresses "on the fly" as they are found in the
-  address book (duff)
+  address book or the email cache (duff)
+- Added: optional pop-up menus for the folder & message lists (damato)
+- Added: automatic codepage detection and translation, mainly for
+  cyrillic users though (AmiS)
+- Added: reworked status bar, customizable in the Lists configuration
+  (damato)
+- Added: automatic detection of the suitable mailing list support settings
+  (damato)
 - Added: search function in the Write window (duff)
 - Added: the format of size values can be chosen now (damato)
 - Added: individual appicon stats for folders (damato)
 - Added: user-definable appicon label (damato)
 - Added: hidden option "JumpToIncoming" (damato)
+- Added: deleting a block of text with RAmiga-Del automatically inserts
+  a "[...]" marker (damato)
+- Added: built-in mouse wheel support (damato)
+- Added: new "Marked" status (damato)
