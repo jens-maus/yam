@@ -25,12 +25,14 @@
 
 ***************************************************************************/
 
+#include <stddef.h>
+
 #include <rexx/storage.h>
 
 #include "YAM_rexx_rxif.h"
 #include "YAM_rexx_rxcl.h"
 
-#define RESINDEX(stype) (((long) &((struct stype *)0)->res) / sizeof(long))
+#define RESINDEX(stype) (((long)offsetof(struct stype,res)) / sizeof(long))
 
 struct rxs_command rxs_commandlist[] =
 {
