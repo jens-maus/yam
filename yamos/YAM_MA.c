@@ -473,6 +473,7 @@ int MA_NewNew(struct Mail *mail, int flags)
          else if (folder && folder->Type != FT_INCOMING) {
             if (folder->MLAddress[0]) setstring(wr->GUI.ST_TO, folder->MLAddress);
             if (folder->MLFromAddress[0]) setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
+            if (folder->MLReplyToAddress[0]) setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
          }
          MA_SetupQuoteString(wr, NULL, NULL);
          MA_InsertIntroText(out, C->NewIntro, NULL);

@@ -258,12 +258,12 @@ int TR_ConnectPOP(int guilevel)
    strcpy(passwd, C->P3[pop]->Password);
    strcpy(host, C->P3[pop]->Server);
    if (C->TransferWindow == 2 || (C->TransferWindow == 1 && (guilevel == POP_START || guilevel == POP_USER)))
-	{
+   {
 	LONG wstate;
 
 		get(G->TR->GUI.WI, MUIA_Window_Open, &wstate);				// avoid MUIA_Window_Open's side effect of
 		if(!wstate) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);	// activating the window if it was already open
-	}
+   }
    set(G->TR->GUI.TX_STATUS  , MUIA_Text_Contents,GetStr(MSG_TR_Connecting));
    if (p = strchr(host, ':')) { *p = 0; port = atoi(++p); }
    TR_SetWinTitle(TRUE, host);
