@@ -1106,6 +1106,11 @@ enum { MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,
        MACRO_PREGET, MACRO_POSTGET, MACRO_NEWMSG, MACRO_PRESEND, MACRO_POSTSEND,
        MACRO_READ, MACRO_PREWRITE, MACRO_POSTWRITE, MACRO_URL };
 
+/* if you add anything here, check the following places for potential changes:
+ * YAM_MAf.c:MA_ExamineMail() (X-YAM-options handling)
+ * YAM:WR.c:WriteOutMessage() (PGP multipart stuff); WR_New() (GUI elements, menus)
+ */
+enum { SEC_NONE=0, SEC_SIGN, SEC_ENCRYPT, SEC_BOTH, SEC_SENDANON, SEC_DEFAULTS, SEC_MAXDUMMY };
 ///
 /// Declaration of external variables
 __near extern struct Library *LocaleBase;
