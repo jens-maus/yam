@@ -1,3 +1,10 @@
+2002-01-21  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * the listview in the find window will be sorted by date by
+      default now. This makes more sense then sorting by filename
+      like it did before.
+    * updated the X-Mailer header to reflect 2002.
+
 2002-01-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed bug in the listview display of the glossary. Now YAM

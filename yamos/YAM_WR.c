@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -1108,7 +1108,7 @@ BOOL WriteOutMessage(struct Compose *comp)
    if (comp->Receipt & 1) EmitHeader(fh, "Return-Receipt-To", rcptto);
    if (comp->Receipt & 2) EmitHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
-   fprintf(fh, "X-Mailer: %s AmigaOS E-mail Client (c) 2000-2001 by YAM Open Source Team - http://www.yam.ch/\n", yamversion);
+	 fprintf(fh, "X-Mailer: %s AmigaOS E-mail Client (c) 2000-2002 by YAM Open Source Team - http://www.yam.ch/\n", yamversion);
    if (comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
    if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
    if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -441,7 +441,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
          DoMethod(G->App,MUIM_Application_InputBuffered);
          if (FI_DoSearch(&search, mail))
          {
-            DoMethod(gui->LV_MAILS, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Bottom);
+						DoMethod(gui->LV_MAILS, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
             fndmsg++;
          }
          set(ga, MUIA_Gauge_Current, ++progress);
@@ -917,6 +917,10 @@ static struct FI_ClassData *FI_New(void)
          DoMethod(data->GUI.LV_MAILS ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&FI_ReadHook);
          DoMethod(data->GUI.BT_READ  ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FI_ReadHook);
          DoMethod(data->GUI.WI       ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application,2,MUIM_CallHook,&FI_CloseHook);
+
+				 // Lets have the Listview sorted by Reverse Date by default
+				 set(data->GUI.LV_MAILS, MUIA_NList_SortType, (4 | MUIV_NList_SortTypeAdd_2Values));
+
          return data;
       }
       free(data);
