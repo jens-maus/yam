@@ -2,7 +2,7 @@
 #
 # YAM - Yet Another Mailer
 # Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
-# Copyright (C) 2000-2001 by YAM Open Source Team
+# Copyright (C) 2000-2002 by YAM Open Source Team
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,15 +29,16 @@ TARGET	= YAM
 
 #
 
-CC	= gcc
-RM	= rm -f
+CC	  = gcc
+STRIP = strip
+RM	  = rm -f
 
 CPU      = -m68020
 CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 WARN     = -Wall
 OPTFLAGS = -O2
 DEBUG    = -DDEBUG -g -O0
-CFLAGS   = -I./includes -I./ -c $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
+CFLAGS   = -noixemul -I./includes -I./ -c $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
 LDFLAGS  = -noixemul -mstackextend
 LDLIBS   = -lmui -ldebug
 
@@ -76,12 +77,13 @@ all: $(TARGET)
 #
 
 $(TARGET): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
+	$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
+	$(STRIP) -o $@ $@.debug
 
 #
 
 clean:
-	-$(RM) $(TARGET) $(OBJS) YAM_locale.?
+	-$(RM) $(TARGET) $(TARGET).debug $(OBJS) YAM_locale.?
 
 #######################################
 
