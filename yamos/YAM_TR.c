@@ -161,7 +161,7 @@ BOOL TR_StartTLS(VOID)
     return FALSE;
   }
 
-  if (!(SSL_set_fd(ssl, G->TR_Socket)))
+  if (!(SSL_set_fd(ssl, (int)G->TR_Socket)))
   {
     DB(kprintf("SSL_set_fd() error !\n");)
     return FALSE;
@@ -442,7 +442,7 @@ static BOOL TR_SendDat(char *senddata)                  /* success? */
    }
    else
    {
-     if (Send(G->TR_Socket, (STRPTR)senddata, strlen(senddata), 0) != -1) return TRUE;
+     if (Send(G->TR_Socket, (STRPTR)senddata, (LONG)strlen(senddata), 0) != -1) return TRUE;
    }
 
    return FALSE;
@@ -526,7 +526,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
             if (out = fopen(filename, "w"))
             {
                ++bufptr;
-               fwrite(bufptr, len-(bufptr-buf), 1, out);
+               fwrite(bufptr, (size_t)(len-(bufptr-buf)), 1, out);
                while ((len = TR_RecvDat(buf)) > 0) fwrite(buf, len, 1, out);
                fclose(out);
                success = TRUE;
@@ -1081,7 +1081,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       TR_CloseTCPIP();
       set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
       MA_FreeRules(G->TR->Search, G->TR->Scnt);
-      MA_StartMacro(MACRO_POSTGET, itoa(G->TR->Stats.Downloaded));
+      MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
 
       DoMethod(G->App, MUIM_CallHook, &MA_ApplyRulesHook, APPLY_AUTO, 0, FALSE);
 
@@ -1287,7 +1287,7 @@ static BOOL TR_ConnectESMTP(void)
    char buffer[SIZE_LINE];
    char challenge[SIZE_LINE];
    UBYTE ESMTPAuth=0;
-   int SMTPSocket=G->TR_Socket;
+   LONG SMTPSocket=G->TR_Socket;
 
    if(!G->TR_UseTLS)
    {
@@ -1559,7 +1559,7 @@ static void TR_TransStat_Start(struct TransStat *ts)
 ///
 /// TR_TransStat_NextMsg
 //  Updates statistics display for next message
-static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, int size, char *status)
+static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, LONG size, char *status)
 {
    ts->Size_Curr = 0;
    ts->Clock_Last = 0;

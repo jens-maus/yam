@@ -621,7 +621,7 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 ///
 /// InitLib
 //  Opens a library
-static APTR InitLib(char *libname, int version, int revision, BOOL required, BOOL close)
+static APTR InitLib(STRPTR libname, ULONG version, int revision, BOOL required, BOOL close)
 {
    struct Library *lib = OpenLibrary(libname, version);
 
@@ -804,7 +804,7 @@ static void Initialise(BOOL hidden)
       G->WR_NRequest[i].nr_Name = (UBYTE *)G->WR_Filename[i];
       G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
    }
-   srand(GetDateStamp());
+   srand((unsigned int)GetDateStamp());
    AY_PrintStatus(GetStr(MSG_LoadingGFX), 20);
    strmfp(iconfile, G->ProgDir, "YAM");
    if ((G->HideIcon=GetDiskObject(iconfile)))
@@ -972,7 +972,7 @@ int main(int argc, char **argv)
    nrda.PrgToolTypesOnly = FALSE;
    if ((err = NewReadArgs(WBmsg, &nrda)))
    {
-      PrintFault(err, "YAM");
+      PrintFault((LONG)err, "YAM");
       exit(5);
    }
 
@@ -985,20 +985,21 @@ int main(int argc, char **argv)
       G = calloc(1, sizeof(struct Global));
       C = calloc(1, sizeof(struct Config));
       NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
-      if(!args.maildir)
-        strcpy(G->MA_MailDir, G->ProgDir);
+
+      if(!args.maildir) strcpy(G->MA_MailDir, G->ProgDir);
       args.hide = -args.hide;
       args.nocheck = -args.nocheck;
       G->TR_Debug = -args.debug;
       G->TR_Allow = TRUE;
       G->CO_DST = GetDST();
+
       if(yamFirst)
       {
          Object *root, *grp, *bt_okay;
 
-         Initialise(args.hide);
+         Initialise((BOOL)args.hide);
          Login(args.user, args.password, args.maildir, args.prefsfile);
-         Initialise2(args.hide);
+         Initialise2((BOOL)args.hide);
 
          grp = HGroup,
             Child, RectangleObject, End,
@@ -1021,7 +1022,7 @@ int main(int argc, char **argv)
          DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
          AppendLog(0, GetStr(MSG_LOG_Started), "", "", "", "");
          MA_StartMacro(MACRO_STARTUP, NULL);
-         DoStartup(args.nocheck, args.hide);
+         DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
          if (args.mailto || args.letter || args.subject || args.attach) if ((wrwin = MA_NewNew(NULL, 0)) >= 0)
          {
             if (args.mailto) setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);

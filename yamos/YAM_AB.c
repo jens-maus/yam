@@ -181,7 +181,7 @@ int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
   int hits = 0;
   BOOL found = FALSE;
   int mode_type = mode&ASM_TYPEMASK;
-  int tl = strlen(text);
+  LONG tl = strlen(text);
 
   // we scan until we are at the end of the list or
   // if we found more then one matching entry

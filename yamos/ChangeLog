@@ -1,3 +1,9 @@
+2002-05-06  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * got rid of the SAS/C portability warnings #120 by modifying
+      the code a bit. Now #120 warnings are turned on in the
+      smakefile also.
+
 2002-05-02  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed bug #551543 where we didn`t check for a NULL pointer in

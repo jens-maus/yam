@@ -4,7 +4,7 @@
  Copyright (C) 2001 by Andrew Bell <mechanismx@lineone.net>
 
  Contributed to the YAM Open Source Team as a special version
- Copyright (C) 2001 by YAM Open Source Team
+ Copyright (C) 2001-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -48,6 +48,8 @@
  *
  * History
  * -------
+ * 0.7 - added cast to CreateCustomClass call to get rid of #120 Warnings
+ *
  * 0.6 - generated headernames now end with _cl.h to avoid name clashes
  *
  * 0.5 - fixed mass of enforcer hits
@@ -98,7 +100,7 @@
  *
  */
 
-char *verstr = "0.6";
+char *verstr = "0.7";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -602,7 +604,7 @@ void gen_gpl( FILE *fp )
   "\n"
   " YAM - Yet Another Mailer\n"
   " Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>\n"
-  " Copyright (C) 2000-2001 by YAM Open Source Team\n"
+  " Copyright (C) 2000-2002 by YAM Open Source Team\n"
   "\n"
   " This program is free software; you can redistribute it and/or modify\n"
   " it under the terms of the GNU General Public License as published by\n"
@@ -653,7 +655,7 @@ void gen_supportroutines( FILE *fp )
 "  for (i = 0; i < NUMBEROFCLASSES; i++)\n"
 "  {\n"
 "    struct MUI_CustomClass *superMCC = MCCInfo[i].SuperMCC == -1 ? NULL : %sClasses[MCCInfo[i].SuperMCC];\n"
-"    %sClasses[i] = MUI_CreateCustomClass(NULL, MCCInfo[i].SuperClass, superMCC, MCCInfo[i].GetSize(), MCCInfo[i].Dispatcher);\n"
+"    %sClasses[i] = MUI_CreateCustomClass(NULL, MCCInfo[i].SuperClass, superMCC, (int)MCCInfo[i].GetSize(), MCCInfo[i].Dispatcher);\n"
 "    if (!%sClasses[i])\n"
 "    {\n"
 "      %s_CleanupClasses();\n"
@@ -1143,7 +1145,7 @@ int main( int argc, char *argv[] )
 	struct list classlist;
 
 	list_init(&classlist);
-  printf("GenClasses v%s by Andrew Bell\n\n", verstr);
+  printf("GenClasses v%s by Andrew Bell <mechanismx@lineone.net>\n\n", verstr);
 
 	if (!doargs(argc, argv)) return 0;
 

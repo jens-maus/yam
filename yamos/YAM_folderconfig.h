@@ -76,6 +76,7 @@ struct Folder
    struct BodyChunkData *   FImage;
    struct Mail *   Messages;
    ULONG           Flags;
+   LONG            Size;
    int             MLSignature;
    int             XPKType;
    int             Total;
@@ -83,7 +84,6 @@ struct Folder
    int             Unread;
    int             Sent;
    int             Deleted;
-   int             Size;
    int             Sort[2];
    int             Stats;
    int             MaxAge;

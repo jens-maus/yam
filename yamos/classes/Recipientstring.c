@@ -277,7 +277,7 @@ OVERLOAD(MUIM_HandleEvent)
 					start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
 					old = (STRPTR)xget(obj, MUIA_String_Contents);
 
-					if(Strnicmp(new_address, &old[start], strlen(&old[start])) != 0)
+					if(Strnicmp(new_address, &old[start], (LONG)strlen(&old[start])) != 0)
 					{
 						SetAttrs(obj, MUIA_String_BufferPos, start,
 							MUIA_BetterString_SelectSize, strlen(&old[start]),

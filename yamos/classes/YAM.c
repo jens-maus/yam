@@ -125,7 +125,7 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 // tries to find all matching addressbook entries and add them to the list
 VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *root)
 {
-	int tl = strlen(text);
+	LONG tl = strlen(text);
 	struct MUI_NListtree_TreeNode *tn;
 
   // Now we try to find matches in the Addressbook Listtree
@@ -209,7 +209,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 		if(C->EmailCache > 0 && !IsListEmpty(&data->EMailCache))
 		{
 			int i;
-			int tl = strlen(msg->matchText);
+			LONG tl = strlen(msg->matchText);
 			struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
 
 			for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; i++, node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
@@ -244,7 +244,7 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
 	if(msg->matchText && msg->matchText[0] != '\0')
 	{
 		int i, matches = 0;
-		int tl = strlen(msg->matchText);
+		LONG tl = strlen(msg->matchText);
 		struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
 		struct ABEntry *foundentry = NULL;
 

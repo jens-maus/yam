@@ -613,7 +613,7 @@ static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
       {
          fpos = 0; fwrite(&fpos, sizeof(long), 1, out);
          while (fgets(buffer, SIZE_LARGE, in))
-            if (!strncmp(buffer, sep, l)) { fpos = ftell(in); fwrite(&fpos, sizeof(long), 1, out); }
+            if (!strncmp(buffer, sep, (size_t)l)) { fpos = ftell(in); fwrite(&fpos, sizeof(long), 1, out); }
          success = TRUE;
          fclose(out);
       }

@@ -78,7 +78,7 @@ static void MA_SetupQuoteString(struct WR_ClassData*, struct ExpandTextData*, st
 static int MA_CheckWriteWindow(int);
 static struct Person *MA_GetAddressSelect(struct Mail*);
 static char *MA_GetRealSubject(char*);
-static int MA_MailCompare(struct Mail*, struct Mail*, int);
+static int MA_MailCompare(struct Mail*, struct Mail*, LONG col);
 
 /***************************************************************************
  Module: Main
@@ -2248,7 +2248,7 @@ static char *MA_GetRealSubject(char *sub)
 ///
 /// MA_MailCompare
 //  Compares two messages
-static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, int column)
+static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
 {
   switch (column)
   {
@@ -2336,12 +2336,12 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, int column)
 ///
 /// MA_LV_Cmp2Func
 //  Message listview sort hook
-HOOKPROTONH(MA_LV_Cmp2Func, long, Object *obj, struct NList_CompareMessage *ncm)
+HOOKPROTONH(MA_LV_Cmp2Func, LONG, Object *obj, struct NList_CompareMessage *ncm)
 {
    struct Mail *entry1 = (struct Mail *)ncm->entry1;
    struct Mail *entry2 = (struct Mail *)ncm->entry2;
-   long col1 = ncm->sort_type & MUIV_NList_TitleMark_ColMask;
-   long col2 = ncm->sort_type2 & MUIV_NList_TitleMark2_ColMask;
+   LONG col1 = ncm->sort_type & MUIV_NList_TitleMark_ColMask;
+   LONG col2 = ncm->sort_type2 & MUIV_NList_TitleMark2_ColMask;
    int cmp;
 
    if (ncm->sort_type == MUIV_NList_SortType_None) return 0;

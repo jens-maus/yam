@@ -754,7 +754,7 @@ int Index(char *str, char chr)
 //  Allocates a dynamic buffer
 char *AllocStrBuf(long initlen)
 {
-   char *strbuf = calloc(initlen+4,1);
+   char *strbuf = calloc((size_t)initlen+4, sizeof(char));
    if (strbuf)
    {
       *((long *)strbuf) = initlen;
@@ -780,7 +780,7 @@ char *StrBufCpy(char *strbuf, char *source)
    char *newstrbuf;
 
    if (!strbuf)
-     if (NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
+     if (NULL == (strbuf = AllocStrBuf((LONG)strlen(source)+1))) return NULL;
    oldlen = *((long *)(strbuf-sizeof(long)));
    newstrbuf = strbuf;
    for (newlen = oldlen; newlen <= strlen(source); newlen += SIZE_DEFAULT);
@@ -801,7 +801,7 @@ char *StrBufCat(char *strbuf, char *source)
    char *newstrbuf;
 
    if (!strbuf)
-     if (NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
+     if (NULL == (strbuf = AllocStrBuf((LONG)strlen(source)+1))) return NULL;
    oldlen = *((long *)(strbuf-sizeof(long)));
    newstrbuf = strbuf;
    for (newlen = oldlen; newlen <= strlen(strbuf)+strlen(source); newlen += SIZE_DEFAULT);
@@ -830,7 +830,7 @@ void FreeData2D(struct Data2D *data)
 ///
 /// AllocData2D
 //  Allocates dynamic two-dimensional array
-char *AllocData2D(struct Data2D *data, int initsize)
+char *AllocData2D(struct Data2D *data, LONG initsize)
 {
    if (data->Used >= data->Allocated)
    {
@@ -1166,7 +1166,7 @@ void QuoteWordWrap(char *rptr, int lmax, char *prefix, char *firstprefix, FILE *
       pe = rptr;
       if (lsm > lmax)
       {
-         char *buf = calloc(1, 2*(pe-ps+2));
+         char *buf = calloc((size_t)(2*(pe-ps+2)), sizeof(char));
          if (buf)
          {
            if (*quot)
@@ -1205,7 +1205,7 @@ void SimpleWordWrap(char *filename, int wrapsize)
          if (p-sol > wrapsize && lsp >= 0) 
          {
             ch = '\n';
-            Seek(fh, lsp-p-1, OFFSET_CURRENT);
+            Seek(fh, (LONG)lsp-p-1, OFFSET_CURRENT);
             p = lsp;
             Write(fh, &ch, 1);
          }
@@ -1306,7 +1306,7 @@ BOOL DumpClipboard(FILE *out)
                {
                   success = TRUE;
                   while ((rlen = ReadChunkBytes(iff, readbuf, SIZE_DEFAULT)) > 0)
-                     fwrite(readbuf, 1, rlen, out);
+                     fwrite(readbuf, 1, (size_t)rlen, out);
                }
             }
             CloseIFF(iff);
@@ -1913,8 +1913,7 @@ struct DateStamp *ScanDate(char *date)
 ///
 /// FormatSize
 //  Displays large numbers using group separators
-
-void FormatSize(int size, char *buffer)
+void FormatSize(LONG size, char *buffer)
 {
   // get the GroupSeparator string
   char *gs = G->Locale ? (char *)G->Locale->loc_GroupSeparator : ".";
@@ -2508,7 +2507,7 @@ char ShortCut(char *label)
    char *ptr = strchr(label, '_');
 
    if (!ptr) return 0;
-   return (char)ToLower(*++ptr);
+   return (char)ToLower((ULONG)(*++ptr));
 }
 
 ///
@@ -2971,7 +2970,7 @@ struct BodyChunkData *LoadBCImage(char *fname)
                         {
                            if ((sp = FindProp(iff, ID_ILBM, ID_CMAP)))
                            {
-                              bcd->Colors = calloc(sp->sp_Size,sizeof(ULONG));
+                              bcd->Colors = calloc((size_t)sp->sp_Size, sizeof(ULONG));
                               for (i = 0; i < sp->sp_Size; i++)
                               {
                                  UBYTE c = ((UBYTE *)sp->sp_Data)[i];
@@ -2986,7 +2985,7 @@ struct BodyChunkData *LoadBCImage(char *fname)
                                  size = CurrentChunk(iff)->cn_Size;
                                  if ((bcd->Body = calloc(size,1)))
                                  {
-                                    if (ReadChunkBytes(iff, bcd->Body, size) == size)
+                                    if (ReadChunkBytes(iff, bcd->Body, (LONG)size) == size)
                                     {
                                        bcd->Width  = bmhd->bmh_Width;
                                        bcd->Height = bmhd->bmh_Height;
@@ -3401,7 +3400,7 @@ void PlaySound(char *filename)
             if (SetDTAttrs(sound, NULL, NULL, SDTA_SignalTask, FindTask(NULL), SDTA_SignalBit, 1<<sig, TAG_END) == 2)
             {
                DoDTMethodA(sound, NULL, NULL, (Msg)&Play);
-               Wait(1<<sig);
+               Wait((ULONG)1<<sig);
             }
             else
             {
@@ -3415,7 +3414,7 @@ void PlaySound(char *filename)
                DoDTMethodA(sound, NULL, NULL, (Msg)&Play);
                Delay(seconds * 50);
             }
-            FreeSignal(sig);
+            FreeSignal((ULONG)sig);
          }
          DisposeDTObject(sound);
       }

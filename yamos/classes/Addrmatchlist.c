@@ -165,7 +165,7 @@ DECLARE(ChangeWindow)
 	if(xget(obj, MUIA_Window_Open))
 	{
 		struct Window *win = (struct Window *)xget(obj, MUIA_Window_Window);
-		ChangeWindowBox(win, left, top, _width(data->String), win->Height);
+		ChangeWindowBox(win, left, top, (LONG)_width(data->String), (LONG)win->Height);
 	}
 	else
 	{

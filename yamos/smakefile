@@ -2,7 +2,7 @@
 #
 # YAM - Yet Another Mailer
 # Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
-# Copyright (C) 2000-2001 by YAM Open Source Team
+# Copyright (C) 2000-2002 by YAM Open Source Team
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,13 +40,13 @@ CPU      = 68020
 CDEFS    = `rx "say 'DEF __YAM_VERDATE=' || '22'x ||\
   right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) ||\
   '22'x || ' DEF __YAM_VERDAYS=' || date('I')"`
-WARN     = WARN=ALL IGNORE=51,61,120,148,165,178,212,306
+WARN     = WARN=ALL IGNORE=51,61,148,165,178,212,306
 OPTFLAGS = STRIPDEBUG OPT OPTSIZE OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL\
   OPTGO OPTLOOP OPTPEEP #OPTSCHED
 DEBUG    = NOSTRIPDEBUG NOOPT DEF=DEBUG DEBUG=LINE
 CFLAGS   = RESOPT NOVER PARM=R DATA=NEAR CODE=FAR NOSTKCHK STRINGMERGE\
   IDLEN=60 ERRORREXX INCLUDEDIR=includes INCLUDEDIR=classes \
-  DEF=__USE_SYSBASE CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
+  DEF=__USE_SYSBASE UTILLIB CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
 LNKFLAGS = RESOPT NOVER LINK SMALLCODE SMALLDATA UTILLIB LIB lib:debug.lib\
   NOICONS "LINKOPT=MAP $(TARGET).map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"\
   NOCHECKABORT $(OPTFLAGS) $(DEBUG)
@@ -59,7 +59,6 @@ LNKFLAGS = RESOPT NOVER LINK SMALLCODE SMALLDATA UTILLIB LIB lib:debug.lib\
 # ignored warnings are:
 #  51 C++ comment detected                                 -- we agreed to use them
 #  61 undefined struct/union tag "tag-name"                -- in include files
-# 120 Integral type mismatch: possible portability problem -- should be used somewhen
 # 148 use of incomplete struct/union/enum tag "name"       -- in include files
 # 165 use of narrow type in prototype                      -- very unlikely portability problem
 # 178 indirect call without indirection operator           -- only old-style support

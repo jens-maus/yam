@@ -212,7 +212,7 @@ void rx_writeto( struct RexxHost *host, struct rxd_writeto **rxd, long action, s
          break;
          
       case RXIF_ACTION:
-         if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_TO, rd->arg.address, rd->arg.add);
+         if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_TO, rd->arg.address, (BOOL)rd->arg.add);
          else rd->rc = RETURN_ERROR;
          break;
       
@@ -235,7 +235,7 @@ void rx_writecc( struct RexxHost *host, struct rxd_writecc **rxd, long action, s
          break;
          
       case RXIF_ACTION:
-         if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_CC, rd->arg.address, rd->arg.add);
+         if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_CC, rd->arg.address, (BOOL)rd->arg.add);
          else rd->rc = RETURN_ERROR;
          break;
       
@@ -258,7 +258,7 @@ void rx_writebcc( struct RexxHost *host, struct rxd_writebcc **rxd, long action,
          break;
          
       case RXIF_ACTION:
-         if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_BCC, rd->arg.address, rd->arg.add);
+         if (G->WR[G->ActiveWriteWin]) InsertAddresses(G->WR[G->ActiveWriteWin]->GUI.ST_BCC, rd->arg.address, (BOOL)rd->arg.add);
          else rd->rc = RETURN_ERROR;
          break;
       
@@ -283,7 +283,7 @@ void rx_writeattach( struct RexxHost *host, struct rxd_writeattach **rxd, long a
       case RXIF_ACTION:
          if (access(rd->arg.file,F_OK) == 0 && G->WR[G->ActiveWriteWin])
          {
-            WR_AddFileToList(G->ActiveWriteWin, rd->arg.file, NULL, FALSE);
+            WR_AddFileToList((int)G->ActiveWriteWin, rd->arg.file, NULL, FALSE);
             if (rd->arg.desc)    setstring(G->WR[G->ActiveWriteWin]->GUI.ST_DESC, rd->arg.desc);
             if (rd->arg.encmode) setmutex (G->WR[G->ActiveWriteWin]->GUI.RA_ENCODING, !strnicmp(rd->arg.encmode, "uu", 2) ? 1 : 0);
             if (rd->arg.ctype)   setstring(G->WR[G->ActiveWriteWin]->GUI.ST_CTYPE, rd->arg.ctype);
@@ -369,7 +369,7 @@ void rx_writequeue( struct RexxHost *host, struct rxd_writequeue **rxd, long act
          break;
 
       case RXIF_ACTION:
-         if(G->WR[G->ActiveWriteWin]) WR_NewMail(rd->arg.hold ? WRITE_HOLD : WRITE_QUEUE, G->ActiveWriteWin);
+         if(G->WR[G->ActiveWriteWin]) WR_NewMail(rd->arg.hold ? WRITE_HOLD : WRITE_QUEUE, (int)G->ActiveWriteWin);
          else rd->rc = RETURN_ERROR;
          break;
 
@@ -392,7 +392,7 @@ void rx_writesend( struct RexxHost *host, struct rxd_writesend **rxd, long actio
          break;
 
       case RXIF_ACTION:
-         if(G->WR[G->ActiveWriteWin]) WR_NewMail(WRITE_SEND, G->ActiveWriteWin);
+         if(G->WR[G->ActiveWriteWin]) WR_NewMail(WRITE_SEND, (int)G->ActiveWriteWin);
          else rd->rc = RETURN_ERROR;
          break;
 
@@ -621,7 +621,7 @@ void rx_maildelete( struct RexxHost *host, struct rxd_maildelete **rxd, long act
          break;
          
       case RXIF_ACTION:
-         MA_DeleteMessage(rd->arg.atonce, rd->arg.force);
+         MA_DeleteMessage((BOOL)rd->arg.atonce, (BOOL)rd->arg.force);
          break;
       
       case RXIF_FREE:
@@ -705,7 +705,7 @@ void rx_mailexport( struct RexxHost *host, struct rxd_mailexport **rxd, long act
          break;
          
       case RXIF_ACTION:
-         if (!MA_ExportMessages(rd->arg.all, rd->arg.filename, rd->arg.append)) rd->rc = RETURN_ERROR;
+         if (!MA_ExportMessages((BOOL)rd->arg.all, rd->arg.filename, (BOOL)rd->arg.append)) rd->rc = RETURN_ERROR;
          break;
       
       case RXIF_FREE:
@@ -1320,14 +1320,14 @@ void rx_readsave( struct RexxHost *host, struct rxd_readsave **rxd, long action,
                      if (RE_DecodePart(part))
                      {
                         strmfp(file, C->DetachDir, part->Name);
-                        success = RE_Export(G->ActiveReadWin, part->Filename, rd->arg.filename ? rd->arg.filename : "", part->Name, part->Nr, TRUE, rd->arg.overwrite, part->ContentType);
+                        success = RE_Export((int)G->ActiveReadWin, part->Filename, rd->arg.filename ? rd->arg.filename : "", part->Name, part->Nr, TRUE, (BOOL)rd->arg.overwrite, part->ContentType);
                      }
             }
             else if (tf = OpenTempFile("w"))
             {
-               RE_SaveDisplay(G->ActiveReadWin, tf->FP);
+               RE_SaveDisplay((int)G->ActiveReadWin, tf->FP);
                fclose(tf->FP); tf->FP = NULL;
-               success = RE_Export(G->ActiveReadWin, tf->Filename, rd->arg.filename ? rd->arg.filename : "", "", 0, TRUE, rd->arg.overwrite, ContType[CT_TX_PLAIN]);
+               success = RE_Export((int)G->ActiveReadWin, tf->Filename, rd->arg.filename ? rd->arg.filename : "", "", 0, TRUE, (BOOL)rd->arg.overwrite, ContType[CT_TX_PLAIN]);
                CloseTempFile(tf);
             }
          if (!success) rd->rc = RETURN_ERROR;
@@ -1365,7 +1365,7 @@ void rx_readprint( struct RexxHost *host, struct rxd_readprint **rxd, long actio
             }
             else if (prt = fopen("PRT:","w"))
             {
-               RE_SaveDisplay(G->ActiveReadWin, prt);
+               RE_SaveDisplay((int)G->ActiveReadWin, prt);
                fclose(prt);
                success = TRUE;
             }
@@ -1527,7 +1527,7 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
 			STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, 0);
 			if(strcmp(rd->rd.arg.alias, res)) /* did the string change ? */
 			{
-				if(rd->rd.res.recpt = rd->string = AllocStrBuf(strlen(res)+1))
+				if(rd->rd.res.recpt = rd->string = AllocStrBuf((LONG)strlen(res)+1))
 					strcpy(rd->string, res);
 			}
 			else
@@ -1906,7 +1906,7 @@ void rx_requeststring( struct RexxHost *host, struct rxd_requeststring **rxd, lo
       case RXIF_ACTION:
          reqtext = AllocReqText(rd->rd.arg.body);
          if (rd->rd.arg.string) stccpy(rd->string, rd->rd.arg.string, SIZE_DEFAULT);
-         rd->rd.rc = !StringRequest(rd->string, SIZE_DEFAULT, NULL, reqtext, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), rd->rd.arg.secret, G->MA->GUI.WI);
+         rd->rd.rc = !StringRequest(rd->string, SIZE_DEFAULT, NULL, reqtext, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), (BOOL)rd->rd.arg.secret, G->MA->GUI.WI);
          rd->rd.res.string = rd->string;
          free(reqtext);
          break;

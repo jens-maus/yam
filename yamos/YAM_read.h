@@ -114,8 +114,8 @@ struct Part
    char *        CParDesc;
    char *        CParRType;
    char *        CParCSet;
+   LONG          Size;
    int           MaxHeaderLen;
-   int           Size;
    int           Nr;
    int           Win;
    BOOL          HasHeaders;

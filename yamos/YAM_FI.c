@@ -222,7 +222,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 
             if(*search->Field)
             {
-               if(Strnicmp(line, search->Field, strlen(search->Field)) != 0) continue;
+               if(Strnicmp(line, search->Field, (LONG)strlen(search->Field)) != 0) continue;
                else rptr = Trim(&line[strlen(search->Field)+1]);
             }
 

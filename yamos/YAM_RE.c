@@ -2352,12 +2352,12 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
          {
             if (fh = fopen(part->Filename, "r"))
             {       
-               if (msg = calloc(part->Size+3,1))
+               if (msg = calloc((size_t)(part->Size+3), sizeof(char)))
                {
                char *sigptr = 0;
 
                   *msg = '\n';
-                  fread(msg+1, 1, part->Size, fh);
+                  fread(msg+1, 1, (size_t)(part->Size), fh);
                   rptr = msg+1;
 
                   // find signature first if it should be stripped
@@ -2442,7 +2442,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                               while (*ptr && *ptr != '\n') ptr++;
                            }
                            while (*ptr && *ptr != '\n') ptr++; eolptr = ptr++;
-                           fwrite(rptr, 1, ptr-rptr, tf->FP);
+                           fwrite(rptr, 1, (size_t)(ptr-rptr), tf->FP);
                            fclose(tf->FP); tf->FP = NULL;
                            DB( kprintf("RE_ReadInMessage(): decrypting\n"); )
 

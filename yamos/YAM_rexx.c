@@ -71,7 +71,7 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
       if( primary == 0 )
       {
          secondary = result
-            ? (long) CreateArgstring( result, strlen(result) )
+            ? (long) CreateArgstring( result, (ULONG)strlen(result) )
             : (long) NULL;
       }
       else
@@ -89,7 +89,7 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
             result = (char *) secondary;
          }
          
-         SetRexxVar( REXXMSG(rexxmessage), "RC2", result, strlen(result) );
+         SetRexxVar( REXXMSG(rexxmessage), "RC2", result, (LONG)strlen(result) );
          
          secondary = 0;
       }
@@ -135,7 +135,7 @@ static struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPT
    }
 
    if( (rexx_command_message->rm_Args[0] =
-      CreateArgstring(buff,strlen(buff))) == NULL )
+      CreateArgstring(buff, (ULONG)strlen(buff))) == NULL )
    {
       DeleteRexxMsg(rexx_command_message);
       return( NULL );
@@ -460,7 +460,7 @@ static void free_stemlist( struct rxs_stemnode *first )
 /// StrDup
 static char *StrDup( char *s )
 {
-   char *t = AllocVec( strlen(s)+1, MEMF_ANY );
+   char *t = AllocVec( (ULONG)strlen(s)+1, MEMF_ANY );
    if( t ) strcpy( t, s );
    return t;
 }
@@ -608,7 +608,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    long rc=20, rc2;
    char *result = NULL;
    
-   if( !(argb = AllocVec(strlen((char *) ARG0(rexxmsg)) + 2, MEMF_ANY)) )
+   if( !(argb = AllocVec((ULONG)strlen((char *) ARG0(rexxmsg)) + 2, MEMF_ANY)) )
    {
       rc2 = ERROR_NO_FREE_STORE;
       goto drc_cleanup;
@@ -655,7 +655,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    /* Speicher für Argumente etc. holen */
    
    (rxc->function)( host, (void **) &array, RXIF_INIT, rexxmsg );
-   cargstr = AllocVec( rxc->args ? 15+strlen(rxc->args) : 15, MEMF_ANY );
+   cargstr = AllocVec((ULONG)(rxc->args ? 15+strlen(rxc->args) : 15), MEMF_ANY );
    
    if( !array || !cargstr )
    {
@@ -732,7 +732,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
                
                if( SetRexxVar( REXXMSG(rexxmsg),
                   *((char *)argarray[0]) ? (char *)argarray[0] : "RESULT",
-                  result, strlen(result) ) )
+                  result, (LONG)strlen(result) ) )
                {
                   rc = -10;
                   rc2 = (long) "Unable to set Rexx variable";
@@ -755,7 +755,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
             else
             {
                for( s = stem; s; s = s->succ )
-                  rc |= SetRexxVar( REXXMSG(rexxmsg), s->name, s->value, strlen(s->value) );
+                  rc |= SetRexxVar( REXXMSG(rexxmsg), s->name, s->value, (LONG)strlen(s->value) );
                
                if( rc )
                {

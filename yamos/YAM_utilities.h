@@ -144,7 +144,7 @@ extern unsigned char  *PPtr[16];
 
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 APTR     AllocCopy(APTR source, int size);
-char *   AllocData2D(struct Data2D *data, int initsize);
+char *   AllocData2D(struct Data2D *data, LONG initsize);
 char *   AllocReqText(char *s);
 char *   AllocStrBuf(long initlen);
 void     AppendLog(int id, char *text, void *a1, void *a2, void *a3, void *a4);
@@ -186,7 +186,7 @@ int      FileType(char *filename);
 void     FinishUnpack(char *file);
 struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext,
          struct Folder *exclude, APTR parent);
-void     FormatSize(int size, char *buffer);
+void     FormatSize(LONG size, char *buffer);
 void     FreeBCImage(struct BodyChunkData *bcd);
 void     FreeData2D(struct Data2D *data);
 void     FreeStrBuf(char *strbuf);

@@ -52,6 +52,7 @@ struct Global
    APTR                     AY_Group;
    APTR                     AY_List;
    APTR                     AY_AboutText;
+   APTR                     WI_SEARCH;
    char *                   ER_Message[MAXERR];
    struct DiskObject *      HideIcon;
    struct AppIcon *         AppIcon;
@@ -75,18 +76,17 @@ struct Global
    struct FO_ClassData *    FO;
    struct DI_ClassData *    DI;
    struct US_ClassData *    US;
-   APTR                     WI_SEARCH;
 
-   long                     EdColMap[9];
-   long                     Weights[6];
-   long                     ActiveReadWin;
-   long                     ActiveWriteWin;
+   LONG                     EdColMap[9];
+   LONG                     Weights[6];
+   LONG                     ActiveReadWin;
+   LONG                     ActiveWriteWin;
+   LONG                     TR_Socket;
 
    int                      GM_Count;
    int                      SI_Count;
    int                      PGPVersion;
    int                      CO_DST;
-   int                      TR_Socket;
    int                      ER_NumErr;
 
    BOOL                     Error;
