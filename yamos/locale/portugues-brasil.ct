@@ -873,7 +873,7 @@ MSG_CO_AltRepPatternDef
 MSG_CO_ForwardIntroDef
 *** Início da mensagem encaminhada ***\\\\n\
 \\\\n\
-Data: %d %t\\\\n\
+Data: %c\\\\n\
 De: %n <%e>\\\\n\
 Assunto: %s\\\\n\
 \\\\n\
@@ -898,7 +898,7 @@ MSG_CO_MLRepHelloDef
  
 ;
 MSG_CO_MLRepIntroDef
-Em %d, %n escreveu:\\\\n\
+Em %c, %n escreveu:\\\\n\
 
 ;
 MSG_CO_MLRepByeDef

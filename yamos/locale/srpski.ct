@@ -1289,10 +1289,10 @@ MSG_CO_AltRepPatternDef
 ; 
 ;
 MSG_CO_ForwardIntroDef
-*** Poàetak prosleâene poruke ***\\\\n\\\\nDatum: %d %t\\\\nOd: %n <%e>\\\\nTema: %s\\\\n\\\\n--- Prosleâena poruka sledi ---\\\\n\\\\n
+*** Poàetak prosleâene poruke ***\\\\n\\\\nDatum: %c\\\\nOd: %n <%e>\\\\nTema: %s\\\\n\\\\n--- Prosleâena poruka sledi ---\\\\n\\\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
-; Date: %d %t\\\\n\
+; Date: %c\\\\n\
 ; From: %n <%e>\\\\n\
 ; Subject: %s\\\\n\
 ; \\\\n\
@@ -1320,8 +1320,8 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-Dana %d, %n je napisao(la):\\\\n
-; On %d, %n wrote:\\\\n
+Dana %c, %n je napisao(la):\\\\n
+; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
 Pozdravi

@@ -1297,7 +1297,7 @@ MSG_CO_AltRepPatternDef
 MSG_CO_ForwardIntroDef
 *** Begin of forwarded message ***\\\\n\
 \\\\n\
-Date: %d %t\\\\n\
+Date: %c\\\\n\
 From: %n <%e>\\\\n\
 Subject: %s\\\\n\
 \\\\n\
@@ -1305,7 +1305,7 @@ Subject: %s\\\\n\
 \\\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
-; Date: %d %t\\\\n\
+; Date: %c\\\\n\
 ; From: %n <%e>\\\\n\
 ; Subject: %s\\\\n\
 ; \\\\n\
@@ -1333,8 +1333,8 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-On %d, %n wrote:\\\\n
-; On %d, %n wrote:\\\\n
+On %c, %n wrote:\\\\n
+; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
 Saygýlar

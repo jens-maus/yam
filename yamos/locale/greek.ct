@@ -1090,8 +1090,8 @@ MSG_CO_AltRepPatternDef
 ;MSG_CO_AltRepPatternDef (//)
 ;
 MSG_CO_ForwardIntroDef
-*** Αρχή προωθημένου μηνύματος ***\\\\n\\\\nΗμερομηνία: %d %t\\\\nΑπό: %n <%e>\\\\nΘέμα: %s\\\\n\\\\n--- Ακολουθεί το προωθημένο μήνυμα ---\\\\n\\\\n
-;*** Begin of forwarded message ***\\\\n\\\\nDate: %d %t\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n
+*** Αρχή προωθημένου μηνύματος ***\\\\n\\\\nΗμερομηνία: %c\\\\nΑπό: %n <%e>\\\\nΘέμα: %s\\\\n\\\\n--- Ακολουθεί το προωθημένο μήνυμα ---\\\\n\\\\n
+;*** Begin of forwarded message ***\\\\n\\\\nDate: %c\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n
 ;
 MSG_CO_ForwardFinishDef
 *** Τέλος προωθημένου μηνύματος ***\\\\n
@@ -1114,8 +1114,8 @@ MSG_CO_MLRepHelloDef
 ;MSG_CO_MLRepHelloDef (//)
 ;
 MSG_CO_MLRepIntroDef
-Στις %d,ο %n έγραψε:\\\\n
-;On %d, %n wrote:\\\\n
+Στις %c,ο %n έγραψε:\\\\n
+;On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
 Χαιρετισμούς

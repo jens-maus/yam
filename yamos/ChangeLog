@@ -7,6 +7,11 @@ $Source$
 
 2005-02-20  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_WR.c, YAM_CO.c, YAM_COg.c, YAM_MA.c, misc: added two new expansion
+      patterns "%c" and "%z" for the  reply/forward mail quotation operations.
+      While %z will just print out the timezone in a common format (+0000),
+      the %c pattern will print out the whole RFC2822 conform date&time string
+      of the original mail header.
     * YAM_RE.c: fixed bug #1109409 and #1144691 where YAM did issue a
       MUI_DisposeObject() on a read window directly instead of using
       MUIM_Application_PushMethod which caused crashes under certain

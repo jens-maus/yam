@@ -1280,7 +1280,7 @@ MSG_CO_AltRepPatternDef
 MSG_CO_ForwardIntroDef
 *** Begin of forwarded message ***\\\\n\
 \\\\n\
-Date: %d %t\\\\n\
+Date: %c\\\\n\
 From: %n <%e>\\\\n\
 Subject: %s\\\\n\\\\n\
 --- Forwarded message follows ---\\\\n\
@@ -1288,7 +1288,7 @@ Subject: %s\\\\n\\\\n\
 
 ;*** Begin of forwarded message ***\\\
 ;\\\
-;Date: %d %t\\\
+;Date: %c\\\
 ;From: %n <%e>\\\
 ;Subject: %s\\\
 ;\\\
@@ -1316,8 +1316,8 @@ MSG_CO_MLRepHelloDef
 
 ;
 MSG_CO_MLRepIntroDef
-On %d, %n wrote:\\\\n
-;On %d, %n wrote:\\\
+On %c, %n wrote:\\\\n
+;On %c, %n wrote:\\\
 ;
 ;
 MSG_CO_MLRepByeDef

@@ -1207,8 +1207,8 @@ MSG_CO_AltRepPatternDef
 ; 
 ;
 MSG_CO_ForwardIntroDef
-*** V‰litetty viest alkaa ***\\\\n\\\\nP‰iv‰ys: %d %t\\\\nL‰hett‰j‰: %n <%e>\\\\nAihe: %s\\\\n\\\\n--- V‰litetty viesti alkaa ---\\\\n\\\\n
-; *** Begin of forwarded message ***\\\\n\\\\nDate: %d %t\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n
+*** V‰litetty viest alkaa ***\\\\n\\\\nP‰iv‰ys: %c\\\\nL‰hett‰j‰: %n <%e>\\\\nAihe: %s\\\\n\\\\n--- V‰litetty viesti alkaa ---\\\\n\\\\n
+; *** Begin of forwarded message ***\\\\n\\\\nDate: %c\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n
 ;
 MSG_CO_ForwardFinishDef
 *** V‰litetty viesti p‰‰ttyy ***\\\\n
@@ -1231,8 +1231,8 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-%d, %n kirjoitti:\\\\n
-; On %d, %n wrote:\\\\n
+%c, %n kirjoitti:\\\\n
+; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
 Terveisin

@@ -123,7 +123,7 @@ static void MA_ValidateStatus(struct Folder*);
 static char *MA_IndexFileName(struct Folder*);
 static BOOL MA_DetectUUE(FILE*);
 static void MA_GetRecipients(char*, struct Person**, int*);
-static struct DateStamp *MA_ScanDate(char *date);
+static BOOL MA_ScanDate(struct Mail *mail, const char *date);
 static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder);
 
 /***************************************************************************
@@ -1131,7 +1131,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
    char *p;
    char fullfile[SIZE_PATHFILE];
    int ok, i;
-   struct DateStamp *foundDate = NULL;
+   BOOL dateFound = FALSE;
    FILE *fh;
 
    // first we generate a new ExtendedMail buffer
@@ -1262,7 +1262,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
             }
             else if (!stricmp(field, "date"))
             {
-               foundDate = MA_ScanDate(value);
+               dateFound = MA_ScanDate(mail, value);
             }
             else if (!stricmp(field, "importance"))
             {
@@ -1440,39 +1440,40 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
         }
       }
 
-      // if we found the Date in the mail itself and it was convertable we
-      // copy it out of the foundDate struct
-      if(foundDate)
+      // if we didn't find a Date: header we take the transfered date (if found)
+      if(dateFound == FALSE)
       {
-        memcpy(&mail->Date, foundDate, sizeof(struct DateStamp));
-      }
-      else if(mail->transDate.tv_secs > 0) // if not we take the transfered Date (if found)
-      {
-        // convert the UTC transDate to a UTC mail Date
-        TimeVal2DateStamp(&mail->transDate, &mail->Date, TZC_NONE);
-      }
-      else
-      {
-        BPTR lock;
-
-        // and as a fallback we take the date of the mail file
-        if((lock = Lock(mail->MailFile, ACCESS_READ)))
+        if(mail->transDate.tv_secs > 0)
         {
-          struct FileInfoBlock *fib;
+          // convert the UTC transDate to a UTC mail Date
+          TimeVal2DateStamp(&mail->transDate, &mail->Date, TZC_NONE);
+        }
+        else
+        {
+          BPTR lock;
 
-          if((fib = AllocDosObject(DOS_FIB, NULL)))
+          // and as a fallback we take the date of the mail file
+          if((lock = Lock(mail->MailFile, ACCESS_READ)))
           {
-            if(Examine(lock, fib))
+            struct FileInfoBlock *fib;
+
+            if((fib = AllocDosObject(DOS_FIB, NULL)))
             {
-              memcpy(&mail->Date, &fib->fib_Date, sizeof(struct DateStamp));
-              DateStampTZConvert(&mail->Date, TZC_UTC);
+              if(Examine(lock, fib))
+              {
+                memcpy(&mail->Date, &fib->fib_Date, sizeof(struct DateStamp));
+                DateStampTZConvert(&mail->Date, TZC_UTC);
+              }
+
+              FreeDosObject(DOS_FIB, fib);
             }
 
-            FreeDosObject(DOS_FIB, fib);
+            UnLock(lock);
           }
-
-          UnLock(lock);
         }
+
+        // set the timeZone to our local one
+        mail->tzone = C->TimeZone;
       }
 
       // lets calculate the mailSize out of the FileSize() function
@@ -1753,26 +1754,30 @@ BOOL MA_ScanMailBox(struct Folder *folder)
 ///
 /// MA_ScanDate
 //  Converts textual date header into datestamp format
-static struct DateStamp *MA_ScanDate(char *date)
+static BOOL MA_ScanDate(struct Mail *mail, const char *date)
 {
    int count = 0, day = 0, mon = 0, year = 0, hour = 0, min = 0, sec = 0;
    char *tzone = "", *p, tdate[SIZE_SMALL], ttime[SIZE_SMALL];
-   static struct DateTime dt;
+   struct DateTime dt;
    struct DateStamp *ds = &dt.dat_Stamp;
 
-   if((p = strchr(date, ','))) p++;
-   else p = date;
+   if((p = strchr(date, ',')))
+     p++;
+   else
+     p = (char *)date;
 
-   while(*p && isspace(*p)) p++;
+   while(*p && isspace(*p))
+     p++;
 
    while((p = strtok(p, " \t")))
    {
-      switch (count)
+      switch(count)
       {
          // get the day
          case 0:
          {
-            if(!isdigit(*p) || (day = atoi(p)) > 31) return NULL;
+            if(!isdigit(*p) || (day = atoi(p)) > 31)
+              return FALSE;
          }
          break;
 
@@ -1783,7 +1788,9 @@ static struct DateStamp *MA_ScanDate(char *date)
             {
               if(strnicmp(p, months[mon-1], 3) == 0) break;
             }
-            if(mon > 12) return NULL;
+
+            if(mon > 12)
+              return FALSE;
          }
          break;
 
@@ -1797,9 +1804,13 @@ static struct DateStamp *MA_ScanDate(char *date)
          // get the time values
          case 3:
          {
-            if(sscanf(p, "%d:%d:%d", &hour, &min, &sec) == 3) ;
-            else if (sscanf (p, "%d:%d", &hour, &min) == 2) sec = 0;
-            else return NULL;
+            if(sscanf(p, "%d:%d:%d", &hour, &min, &sec) != 3)
+            {
+              if(sscanf (p, "%d:%d", &hour, &min) == 2)
+                sec = 0;
+              else
+                return FALSE;
+            }
          }
          break;
 
@@ -1827,17 +1838,24 @@ static struct DateStamp *MA_ScanDate(char *date)
    dt.dat_Flags   = 0;
    dt.dat_StrDate = (STRPTR)tdate;
    dt.dat_StrTime = (STRPTR)ttime;
-   if(!StrToDate(&dt)) return NULL;
+   if(!StrToDate(&dt))
+     return FALSE;
+
+   // save the timezone
+   mail->tzone = TZtoMinutes(tzone);
 
    // bring the date in relation to UTC
-   ds->ds_Minute -= TZtoMinutes(tzone);
+   ds->ds_Minute -= mail->tzone;
 
    // we need to check the datestamp variable that it is still in it`s borders
    // after the UTC correction
    while(ds->ds_Minute < 0)     { ds->ds_Minute += 1440; ds->ds_Days--; }
    while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
 
-   return ds;
+   // now we do copy the datestamp stuff over the one from our mail
+   memcpy(&mail->Date, ds, sizeof(struct DateStamp));
+
+   return TRUE;
 }
 ///
 

@@ -1260,7 +1260,7 @@ MSG_CO_AltRepPatternDef
 MSG_CO_ForwardIntroDef
 *** Start på videresendt besked ***\\\\n\
 \\\\n\
-Dato: %d %t\\\\n\
+Dato: %c\\\\n\
 Fra: %n <%e>\\\\n\
 Emne: %s\\\\n\
 \\\\n\
@@ -1268,7 +1268,7 @@ Emne: %s\\\\n\
 \\\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
-; Date: %d %t\\\\n\
+; Date: %c\\\\n\
 ; From: %n <%e>\\\\n\
 ; Subject: %s\\\\n\
 ; \\\\n\
@@ -1296,8 +1296,8 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-Den %d skrev %n:\\\\n
-; On %d, %n wrote:\\\\n
+Den %c skrev %n:\\\\n
+; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
 Hilsen

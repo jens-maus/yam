@@ -1238,7 +1238,7 @@ MSG_CO_AltRepPatternDef
 ;
 MSG_CO_ForwardIntroDef
 *** Detta är ett vidarebefordrat brev ***\\\\n\
-Datum: %d %t\\\\n\
+Datum: %c\\\\n\
 Från: %n <%e>\\\\n\
 Ärende: %s\\\\n\
 \\\\n\
@@ -1246,7 +1246,7 @@ Från: %n <%e>\\\\n\
 \\\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
-; Date: %d %t\\\\n\
+; Date: %c\\\\n\
 ; From: %n <%e>\\\\n\
 ; Subject: %s\\\\n\
 ; \\\\n\
@@ -1274,8 +1274,8 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-Den %d skrev %n:\\\\n
-; On %d, %n wrote:\\\\n
+Den %c skrev %n:\\\\n
+; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
 Hälsningar

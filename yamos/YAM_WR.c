@@ -203,11 +203,7 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 static char *GetDateTime(void)
 {
    static char dt[SIZE_DEFAULT];
-   struct ClockData cd;
-
-   Amiga2Date(GetDateStamp(), &cd);
-   sprintf(dt, "%s, %02d %s %d %02d:%02d:%02d %s", wdays[cd.wday], cd.mday, months[cd.month-1], cd.year, cd.hour, cd.min, cd.sec, C->TimeZoneStr);
-
+   DateStamp2RFCString(dt, NULL, C->TimeZone + (C->DaylightSaving ? 60 : 0), FALSE);
    return dt;
 }
 

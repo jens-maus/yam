@@ -1253,7 +1253,7 @@ MSG_CO_AltRepPatternDef
 MSG_CO_ForwardIntroDef
 *** zaçátek pêedané zprávy ***\\\\n\
 \\\\n\
-Datum: %d %t\\\\n\
+Datum: %c\\\\n\
 Odesílatel: %n <%e>\\\\n\
 Pêedmët: %s\\\\n\
 \\\\n\
@@ -1261,7 +1261,7 @@ Pêedmët: %s\\\\n\
 \\\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
-; Date: %d %t\\\\n\
+; Date: %c\\\\n\
 ; From: %n <%e>\\\\n\
 ; Subject: %s\\\\n\
 ; \\\\n\
@@ -1289,7 +1289,7 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-Dne %d %f %n napsal:\\\\n
+Dne %c, %n napsal:\\\\n
 ; On %d, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef

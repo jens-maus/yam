@@ -943,7 +943,7 @@ MSG_CO_AltRepPatternDef (//)
 MSG_CO_ForwardIntroDef (//)
 *** Begin of forwarded message ***\\\\n\
 \\\\n\
-Date: %d %t\\\\n\
+Date: %c\\\\n\
 From: %n <%e>\\\\n\
 Subject: %s\\\\n\
 \\\\n\
@@ -966,7 +966,7 @@ MSG_CO_MLRepHelloDef (//)
 
 ;
 MSG_CO_MLRepIntroDef (//)
-On %d, %n wrote:\\\\n
+On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef (//)
 Regards
@@ -5484,4 +5484,10 @@ How do you want to proceed?
 ; LOCALCHARSET, SYSCHARSET
 MSG_CO_CHARSETWARN_BT (//)
 *_Change|Ignore _always|_Ignore
+;
+MSG_CO_SenderRFCDateTime (//)
+%c  Original sender: RFC2822 Date&Time
+;
+MSG_CO_SenderTimeZone (//)
+%z  Original sender: TimeZone (+0000)
 ;

@@ -960,12 +960,6 @@ void CO_Validate(struct Config *co, BOOL update)
    // lets check the DaylightSaving stuff now
    if(G->CO_DST) co->DaylightSaving = G->CO_DST==2;
 
-   // lets generate the TimeZoneStr string now
-   if(co->TimeZone >= 0)
-     sprintf(co->TimeZoneStr, "+%02d%02d", (co->TimeZone + (co->DaylightSaving ? 60 : 0))/60, co->TimeZone%60);
-   else
-     sprintf(co->TimeZoneStr, "-%02d%02d", -(co->TimeZone + (co->DaylightSaving ? 60 : 0))/60, -(co->TimeZone%60));
-
    G->PGPVersion = CO_DetectPGP(co);
 
    // prepare the temporary directory

@@ -338,8 +338,10 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, char 
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderFirstname), MUIV_List_Insert_Bottom);
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderAddress), MUIV_List_Insert_Bottom);
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderSubject), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderRFCDateTime), MUIV_List_Insert_Bottom);
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDate), MUIV_List_Insert_Bottom);
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderTime), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderTimeZone), MUIV_List_Insert_Bottom);
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDOW), MUIV_List_Insert_Bottom);
             DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderMsgID), MUIV_List_Insert_Bottom);
 

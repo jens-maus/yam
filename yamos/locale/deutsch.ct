@@ -1207,7 +1207,7 @@ Hallo,\\n
 ; Hello,\\\\n
 ;
 MSG_CO_AltRepIntroDef
-Am %d schrieben Sie:
+Am %c schrieben Sie:
 ; 
 ;
 MSG_CO_AltRepPatternDef
@@ -1215,10 +1215,10 @@ MSG_CO_AltRepPatternDef
 ; 
 ;
 MSG_CO_ForwardIntroDef
-*** Start der weitergeleiteten Nachricht ***\\n\\nDatum: %d %t\\nVon: %n <%e>\\nBetreff: %s\\n\\n--- Weitergeleitete Nachricht folgt ---\\n\\n
+*** Start der weitergeleiteten Nachricht ***\\n\\nDatum: %c\\nVon: %n <%e>\\nBetreff: %s\\n\\n--- Weitergeleitete Nachricht folgt ---\\n\\n
 ; *** Begin of forwarded message ***\\\\n\
 ; \\\\n\
-; Date: %d %t\\\\n\
+; Date: %c\\\\n\
 ; From: %n <%e>\\\\n\
 ; Subject: %s\\\\n\
 ; \\\\n\
@@ -1246,8 +1246,8 @@ MSG_CO_MLRepHelloDef
 ; 
 ;
 MSG_CO_MLRepIntroDef
-Am %d schrieb %n:\\n
-; On %d, %n wrote:\\\\n
+Am %c schrieb %n:\\n
+; On %c, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
 Gruss

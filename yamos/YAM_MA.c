@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -914,8 +914,10 @@ static void MA_SetupQuoteString(struct WR_ClassData *wr, struct ExpandTextData *
    etd->OS_Address   = mail ? mail->From.Address : "";
    etd->OM_Subject   = mail ? mail->Subject : "";
    etd->OM_Date      = mail ? &(mail->Date) : &(G->StartDate);
+   etd->OM_TimeZone  = mail ? mail->tzone : C->TimeZone;
    etd->R_Name       = "";
    etd->R_Address    = "";
+
    sbuf = ExpandText(C->QuoteText, etd);
    stccpy(wr->QuoteText, TrimEnd(sbuf), SIZE_DEFAULT);
    FreeStrBuf(sbuf);
@@ -1176,9 +1178,11 @@ int MA_NewForward(struct Mail **mlist, int flags)
             }
 
             MA_SetupQuoteString(wr, &etd, mail);
+            etd.OM_TimeZone = email->Mail.tzone;
             etd.OM_MessageID = email->MsgID;
             etd.R_Name = *mail->To.RealName ? mail->To.RealName : mail->To.Address;
             etd.R_Address = mail->To.Address;
+
             if (*mail->Subject)
             {
                sprintf(buffer, "%s (fwd)", mail->Subject);
@@ -1277,6 +1281,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
             }
 
             MA_SetupQuoteString(wr, &etd, mail);
+            etd.OM_TimeZone = email->Mail.tzone;
             etd.OM_MessageID = email->MsgID;
 
             // If this mail already have a subject we are going to add a "Re:" to it.

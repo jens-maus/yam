@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ struct ExpandTextData
    char *            OS_Address;
    char *            OM_Subject;
    struct DateStamp *OM_Date;
+   int               OM_TimeZone;
    char *            OM_MessageID;
    char *            R_Name;
    char *            R_Address;
@@ -288,6 +289,7 @@ void     TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum 
 void     DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZConvert tzc);
 BOOL     TimeVal2String(char *dst, const struct timeval *tv, enum DateStampType mode, enum TZConvert tzc);
 BOOL     DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc);
+BOOL     DateStamp2RFCString(char *dst, struct DateStamp *date, int timeZone, BOOL convert);
 char *   Decrypt(char *source);
 BOOL     DeleteMailDir(char *dir, BOOL isroot);
 char *   DescribeCT(char *ct);

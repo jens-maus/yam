@@ -2365,10 +2365,27 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
             }
             break;
 
+            case 'z':
+            {
+              char tzone[6];
+              int convertedTimeZone = (etd->OM_TimeZone/60)*100 + (etd->OM_TimeZone%60);
+              sprintf(tzone, "%+05d", convertedTimeZone);
+              dst = StrBufCat(dst, tzone);
+            }
+            break;
+
             case 'w':
             {
               char datstr[64];
               DateStamp2String(datstr, etd->OM_Date, DSS_WEEKDAY, TZC_NONE);
+              dst = StrBufCat(dst, datstr);
+            }
+            break;
+
+            case 'c':
+            {
+              char datstr[64];
+              DateStamp2RFCString(datstr, etd->OM_Date, etd->OM_TimeZone, TRUE);
               dst = StrBufCat(dst, datstr);
             }
             break;
@@ -2653,6 +2670,54 @@ BOOL DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType mode
    }
 
    return TRUE;
+}
+///
+/// DateStamp2RFCString()
+BOOL DateStamp2RFCString(char *dst, struct DateStamp *date, int timeZone, BOOL convert)
+{
+  struct DateStamp curDateStamp;
+  struct ClockData cd;
+  time_t seconds;
+  int convertedTimeZone = (timeZone/60)*100 + (timeZone%60);
+
+  // if date == NULL we get the current time/date
+  if(date == NULL)
+    DateStamp(&curDateStamp);
+  else
+    memcpy(&curDateStamp, date, sizeof(struct DateStamp));
+
+  // point at curDateStamp
+  date = &curDateStamp;
+
+  // if the user wants to convert the datestamp we have to make sure we
+  // substract/add the timeZone
+  if(convert)
+  {
+    date->ds_Minute += timeZone;
+
+    // we need to check the datestamp variable that it is still in it`s borders
+    // after adjustment
+    while(date->ds_Minute < 0)     { date->ds_Minute += 1440; date->ds_Days--; }
+    while(date->ds_Minute >= 1440) { date->ds_Minute -= 1440; date->ds_Days++; }
+  }
+
+  // lets form the seconds now for the Amiga2Date function
+  seconds = (date->ds_Days*24*60*60 + date->ds_Minute*60 + date->ds_Tick/TICKS_PER_SECOND);
+
+  // use utility's Amiga2Date for calculating the correct date/time
+  Amiga2Date(seconds, &cd);
+
+  // use sprintf to format the RFC2822 conforming datetime string.
+  sprintf(dst, "%s, %02d %s %d %02d:%02d:%02d %+05d", wdays[cd.wday],
+                                                      cd.mday,
+                                                      months[cd.month-1],
+                                                      cd.year,
+                                                      cd.hour,
+                                                      cd.min,
+                                                      cd.sec,
+                                                      convertedTimeZone);
+
+  return TRUE;
 }
 ///
 /// DateStamp2Long
