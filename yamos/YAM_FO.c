@@ -52,6 +52,7 @@
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
+#include "classes/ClassesExtra.h"
 
 /* local protos */
 static void FO_XPKUpdateFolder(struct Folder*, int);
@@ -1016,7 +1017,10 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
     case FT_CUSTOMSENT:
     case FT_CUSTOMMIXED:
     {
-      if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ConfirmDelete))))
+      // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
+      char *err = GetStr(MSG_CO_ConfirmDelete);
+
+      if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), err)))
       {
          DeleteMailDir(GetFolderDir(folder), FALSE);
          ClearMailList(folder, TRUE);
@@ -1045,10 +1049,13 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       // check if the active treenode is a list and if it is empty
       // we have to do this like the following because there is no other way to
       // get known if the active entry has subentries.
-      if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, 0)))
+      if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE)))
       {
+         // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
+         char *err = GetStr(MSG_FO_GROUP_CONFDEL);
+
          // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-         if(delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_GROUP_CONFDEL)))
+         if(delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), err))
          {
             struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 
@@ -1058,8 +1065,8 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
             {
                tn_sub_next = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_sub, MUIV_NListtree_GetEntry_Position_Next, MUIV_NListtree_GetEntry_Flag_SameLevel);
 
-               // move entry to the root of the group
-               DoMethod(lv, MUIM_NListtree_Move, tn_group, tn_sub, MUIV_NListtree_Move_NewListNode_Active, MUIV_NListtree_Move_NewTreeNode_Tail, 0);
+               // move entry to the parent of the group
+               DoMethod(lv, MUIM_NListtree_Move, tn_group, tn_sub, MUIV_NListtree_Move_NewListNode_Active, MUIV_NListtree_Move_NewTreeNode_Tail, MUIF_NONE);
 
                tn_sub = tn_sub_next;
             }
@@ -1075,7 +1082,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
   if(delete_folder)
   {
      // remove the entry from the listtree now
-     DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, 0);
+     DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
 
      // Save the Tree to the folder config now
      FO_SaveTree(CreateFilename(".folders"));
