@@ -29,6 +29,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef LATTICE
+#undef toupper
+#endif
+
 #include <dos/rdargs.h>
 
 #include "YAM_rexx.h"
