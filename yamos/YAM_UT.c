@@ -1448,10 +1448,14 @@ void SimpleWordWrap(char *filename, int wrapsize)
 //  Puts up a file requester
 int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file)
 {
-   static const char *pattern[MAXASL] = {
-     "#?.addressbook#?", "#?.config#?", NULL, NULL, "#?.(yam|rexx)", "#?.(gif|jpg|jpeg|png|iff|ilbm)", NULL, NULL
+   // the following arrays depend on the ReqFileType enumeration
+   static const char *pattern[MAXASL] =
+   {
+     "#?.addressbook#?", "#?.config#?", NULL, "~(#?.info)", "#?.(yam|rexx)", "#?.(gif|jpg|jpeg|png|iff|ilbm)", NULL, NULL
    };
-   static BOOL init[MAXASL] = {
+
+   static BOOL init[MAXASL] =
+   {
      FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
    };
    char *postext = hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load);
@@ -1460,6 +1464,7 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
 
    get(win, MUIA_Window_Window, &truewin);
    if (!init[num]) { init[num] = TRUE; skip = 0; }
+
    return MUI_AslRequestTags( G->ASLReq[num],
                               ASLFR_Window,        truewin,
                               ASLFR_TitleText,     title,

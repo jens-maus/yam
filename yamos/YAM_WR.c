@@ -1585,12 +1585,12 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
    {
       if (!ar->fr_NumArgs)
       {
-         strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
+         strmfp(filename, ar->fr_Drawer, ar->fr_File);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
       else for (i = 0; i < ar->fr_NumArgs; i++)
       {
-         strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_ArgList[i].wa_Name);
+         strmfp(filename, ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
    }
