@@ -25,6 +25,7 @@
 
 ***************************************************************************/
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -72,6 +73,24 @@
 ***************************************************************************/
 
 struct Global *G;
+static struct NewRDArgs nrda;
+BPTR olddirlock = 0xFFFFFFFF; /* 0xFFFFFFFF is an unset indicator */
+
+struct Args {
+   char  *user;
+   char  *password;
+   char  *maildir;
+   char  *prefsfile;
+   LONG   nocheck;
+   LONG   hide;
+   LONG   debug;
+   char  *mailto;
+   char  *subject;
+   char  *letter;
+   char **attach;
+};
+
+/**************************************************************************/
 
 // Timer Class
 struct TC_Data
@@ -409,7 +428,7 @@ static BOOL Root_New(BOOL hidden)
 
 /// Terminate
 //  Deallocates used memory and MUI modules and terminates
-static void Terminate(BOOL last)
+static void Terminate(void)
 {
    int i;
 
@@ -509,33 +528,30 @@ static void Terminate(BOOL last)
    CloseYAMCatalog();
    if (G->Locale) CloseLocale(G->Locale);
    if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
-   if (IconBase) CloseLibrary(IconBase);
-   if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
-   if (UtilityBase) CloseLibrary((struct Library *)UtilityBase);
 
    free(C);
    free(G);
-
-   if(last) exit(0);
 }
 ///
 /// Abort
 //  Shows error requester, then terminates the program
-static void Abort(char *error)
+static void Abort(APTR formatnum, ...)
 {
-   if (error)
+   va_list a;
+   static char error[SIZE_DEFAULT];
+
+   va_start(a, formatnum);
+   if(formatnum)
    {
-      if (MUIMasterBase) {
+      vsprintf(error, GetStr(formatnum), a);
+
+      if(MUIMasterBase)
+      {
          MUI_Request(G->App ? G->App : NULL, NULL, 0, GetStr(MSG_ErrorStartup), GetStr(MSG_Quit), error);
       }
-      else if (IntuitionBase) {
-         struct EasyStruct ErrReq = {
-            sizeof (struct EasyStruct),
-            0,
-            NULL,
-            NULL,
-            NULL
-         };
+      else if(IntuitionBase)
+      {
+         struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
 
          ErrReq.es_Title        = (char *)GetStr(MSG_ErrorStartup);
          ErrReq.es_TextFormat   = error;
@@ -543,9 +559,11 @@ static void Abort(char *error)
 
          EasyRequest(NULL, &ErrReq, NULL, error);
       }
-      else puts(error);
+      else
+        puts(error);
    }
-   Terminate(TRUE);
+   va_end(a);
+   exit(5);
 }
 ///
 /// CheckMCC
@@ -571,11 +589,8 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
       MUI_DisposeObject(obj);
    }
 
-   if (!success && req) {
-      static char errorlib[SIZE_DEFAULT];
-      sprintf(errorlib, GetStr(MSG_ERR_OPENLIB), name, minver, minrev);
-      Abort(errorlib);
-   }
+   if(!success && req)
+      Abort(MSG_ERR_OPENLIB, name, minver, minrev);
 
    return success;
 }
@@ -585,14 +600,17 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 static struct Library *InitLib(char *libname, int version, int revision, BOOL required, BOOL close)
 {
    struct Library *lib = OpenLibrary(libname, version);
-   if (lib && revision) if (lib->lib_Version == version && lib->lib_Revision < revision) { CloseLibrary(lib); lib = NULL; }
-   if (!lib && required)
+   if(lib && revision)
    {
-      static char errorlib[SIZE_DEFAULT];
-      sprintf(errorlib, GetStr(MSG_ERR_OPENLIB), libname, version, revision);
-      Abort(errorlib);
+      if(lib->lib_Version == version && lib->lib_Revision < revision)
+      {
+         CloseLibrary(lib); lib = NULL;
+      }
    }
-   if (lib && close) CloseLibrary(lib);
+   if(!lib && required)
+      Abort(MSG_ERR_OPENLIB, libname, version, revision);
+   if(lib && close)
+      CloseLibrary(lib);
    return lib;
 }
 ///
@@ -621,7 +639,8 @@ static void Initialise2(BOOL hidden)
    CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
    CO_Validate(C, FALSE);
    AY_PrintStatus(GetStr(MSG_CreatingGUI), 40);
-   if (!(G->MA = MA_New()) || !(G->AB = AB_New())) Abort(GetStr(MSG_ErrorMuiApp));
+   if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
+      Abort(MSG_ErrorMuiApp);
    MA_SetupDynamicMenus();
    CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
    SetupAppIcons();
@@ -656,7 +675,8 @@ static void Initialise2(BOOL hidden)
    MA_ChangeFolder(FO_GetFolderByType(FT_INCOMING, NULL), TRUE);
    AY_PrintStatus(GetStr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
-   if (!(G->RexxHost = SetupARexxHost("YAM", NULL))) Abort(GetStr(MSG_ErrorARexx));
+   if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))
+      Abort(MSG_ErrorARexx);
    AY_PrintStatus(GetStr(MSG_OPENGUI), 100);
    set(G->MA->GUI.WI, MUIA_Window_Open, !hidden);
    set(G->AY_Win, MUIA_Window_Open, FALSE);
@@ -713,17 +733,19 @@ static void Initialise(BOOL hidden)
    // buggy
    CheckMCC(MUIC_NListtree, 18, 7, TRUE);
 
-   if (!InitClasses()) Abort(GetStr(MSG_ErrorClasses));
-   if (!Root_New(hidden)) Abort(FindPort("YAM") ? NULL : GetStr(MSG_ErrorMuiApp));
+   if(!InitClasses())
+      Abort(MSG_ErrorClasses);
+   if(!Root_New(hidden))
+      Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
 
    AY_PrintStatus(GetStr(MSG_InitLibs), 10);
    XpkBase = InitLib(XPKNAME, 0, 0, FALSE, FALSE);
    if ((DataTypesBase = InitLib("datatypes.library", 39, 0, FALSE, FALSE)))
       if (CheckMCC("Dtpic.mui", 0, 0, FALSE)) G->DtpicSupported = TRUE;
-   if (!TC_Init()) Abort(GetStr(MSG_ErrorTimer));
+   if (!TC_Init()) Abort(MSG_ErrorTimer);
    for (i = 0; i < MAXASL; i++)
       if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,
-         TAG_END))) Abort(GetStr(MSG_ErrorAslStruct));
+         TAG_END))) Abort(MSG_ErrorAslStruct);
    G->AppPort = CreateMsgPort();
    for (i = 0; i < 3; i++)
    {
@@ -819,7 +841,8 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
       CloseLibrary(GenesisBase);
    }
    if (!loggedin && !terminate) terminate = !US_Login(user, password, maildir, prefsfile);
-   if (terminate) Abort(NULL);
+   if(terminate)
+     exit(5);
 }
 ///
 /// GetDST
@@ -845,36 +868,45 @@ static int GetDST(void)
 }
 ///
 
+
+/* This makes it possible to leave YAM without explicitely calling cleanup procedure */
+static void yam_exitfunc(void)
+{
+   Terminate();
+   if(olddirlock != 0xFFFFFFFF)
+      CurrentDir(olddirlock);
+   if(nrda.Template)
+      NewFreeArgs(&nrda);
+   if(UtilityBase)
+      CloseLibrary((struct Library *)UtilityBase);
+   if(IconBase)
+      CloseLibrary(IconBase);
+   if(IntuitionBase)
+      CloseLibrary((struct Library *) IntuitionBase);
+}
+
 /// Main
 //  Program entry point, main loop
 int main(int argc, char **argv)
 {
-   struct NewRDArgs nrda;
-   struct { char  *user;
-            char  *password;
-            char  *maildir;
-            char  *prefsfile;
-            LONG   nocheck;
-            LONG   hide;
-            LONG   debug;
-            char  *mailto;
-            char  *subject;
-            char  *letter;
-            char **attach;
-          } args = { NULL, NULL, NULL, NULL, FALSE, FALSE, FALSE, NULL, NULL, NULL, NULL };
+   struct Args args;
    int wrwin, err, ret;
-   char **sptr, progdir[SIZE_PATH];
+   char **sptr;
    ULONG signals, appsigs, timsigs, notsigs0, notsigs1, notsigs2, rexsigs;
    struct Message *msg;
    struct User *user;
-   BPTR progdirlock, yamlock, oldcdirlock;
    BOOL yamFirst = TRUE;
+   BPTR progdir;
+
+   atexit(yam_exitfunc); /* we need to free the stuff on exit()! */
+
+   memset(&args, 0, sizeof(struct Args));
 
    WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
-   UtilityBase = (struct UtilityBase *)InitLib("utility.library", 36, 0, TRUE, FALSE);
    IntuitionBase = (struct IntuitionBase *)InitLib("intuition.library", 36, 0, TRUE, FALSE);
    IconBase = InitLib("icon.library", 36, 0, TRUE, FALSE);
+   UtilityBase = (struct UtilityBase *)InitLib("utility.library", 36, 0, TRUE, FALSE);
 
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
    nrda.ExtHelp = NULL;
@@ -885,32 +917,26 @@ int main(int argc, char **argv)
    if ((err = NewReadArgs(WBmsg, &nrda)))
    {
       PrintFault(err, "YAM");
-      NewFreeArgs(&nrda);
-      if (IconBase) CloseLibrary(IconBase);
-      if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
-      if (UtilityBase) CloseLibrary((struct Library *)UtilityBase);
       exit(5);
    }
-   if ((progdirlock = GetProgramDir()))
-      NameFromLock(progdirlock, progdir, SIZE_PATH);
-   else
-   {
-      strcpy(progdir, "YAM:");
-      SetProgramDir(Lock(progdir, ACCESS_READ));
-   }
-   yamlock = Lock(progdir, ACCESS_READ);
-   oldcdirlock = CurrentDir(yamlock);
-   while (1)
+
+   if(!(progdir = GetProgramDir())) /* security only, can happen for residents only */
+      exit(5);
+   olddirlock = CurrentDir(progdir);
+
+   for(;;)
    {
       G = calloc(1, sizeof(struct Global));
       C = calloc(1, sizeof(struct Config));
-      strcpy(G->ProgDir, progdir);
-      if (!args.maildir) strcpy(G->MA_MailDir, progdir);
-      args.hide = -args.hide; args.nocheck = -args.nocheck;
+      NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
+      if(!args.maildir)
+        strcpy(G->MA_MailDir, G->ProgDir);
+      args.hide = -args.hide;
+      args.nocheck = -args.nocheck;
       G->TR_Debug = -args.debug;
       G->TR_Allow = TRUE;
       G->CO_DST = GetDST();
-      if (yamFirst)
+      if(yamFirst)
       {
          Object *root, *grp, *bt_okay;
 
@@ -1022,14 +1048,11 @@ int main(int argc, char **argv)
       {
          AppendLog(99, GetStr(MSG_LOG_Terminated), "", "", "", "");
          MA_StartMacro(MACRO_QUIT, NULL);
-         CurrentDir(oldcdirlock);
-         UnLock(yamlock);
-         NewFreeArgs(&nrda);
          FreeData2D(&Header);
-         Terminate(TRUE);
+         exit(0);
       }
       FreeData2D(&Header);
-      Terminate(FALSE);
+      Terminate();
    }
    /* not reached */
    return 0;
