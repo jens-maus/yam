@@ -1637,7 +1637,8 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
          newmail = AddMailToList(&email->Mail, folder);
 
          // if this was a compressed/encrypted folder we need to pack the mail now
-         if(folder->XPKType != XPK_OFF) RepackMailFile(newmail, -1, NULL);
+         if(folder->Mode > FM_SIMPLE)
+            RepackMailFile(newmail, -1, NULL);
 
          if (FO_GetCurrentFolder() == folder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
          MA_FreeEMailStruct(email);

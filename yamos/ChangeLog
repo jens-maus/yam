@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * misc: fixed bug #1052533 where mail couldn't be move to a simple
+      password protected folder. Also reworked the whole folder mode
+      handling during this fix and renamed the "XPKType" parameter of
+      folder configurations to "Mode" and replaced the internal flag
+      handling with a more proper enum variable for handling the folder
+      modes (normal/simple/compressed/crypted).
+
 2004-11-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_main.h: fixed bug #1062983 which didn't clear the Error flag

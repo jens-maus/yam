@@ -71,12 +71,14 @@ enum SetOrder   { SO_SAVE=0, SO_RESET };
 // LoadedMode enum (if folder index is valid/flushed or unloaded)
 enum LoadedMode { LM_UNLOAD=0, LM_FLUSHED, LM_VALID };
 
-// XPKType flags and macros
-#define XPK_OFF         (0<<0)
-#define XPK_CRYPT       (1<<0)
-#define XPK_COMPRESSED  (1<<1)
-#define isCryptedFolder(folder)   (isFlagSet((folder)->XPKType, XPK_CRYPT))
-#define isComprFolder(folder)     (isFlagSet((folder)->XPKType, XPK_COMPRESSED))
+// Folder modes
+enum FolderMode { FM_NORMAL=0,  // normal folder
+                  FM_SIMPLE,    // simple protected folder with PW
+                  FM_XPKCOMP,   // XPK compressed folder
+                  FM_XPKCRYPT   // XPK compressed+crypted folder
+                };
+#define isProtectedFolder(folder) (((folder)->Mode == FM_SIMPLE || (folder)->Mode == FM_XPKCRYPT))
+#define isXPKFolder(folder)       (((folder)->Mode == FM_XPKCOMP || (folder)->Mode == FM_XPKCRYPT))
 
 // flags and macros for the folder
 #define FOFL_MODIFY  (1<<0)
@@ -106,8 +108,8 @@ struct Folder
    int             SortIndex;
    int             Open;
    int             ImageIndex;
-   int             XPKType;
 
+   enum FolderMode Mode;
    enum FolderType Type;
    enum LoadedMode LoadedMode;
 

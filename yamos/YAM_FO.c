@@ -57,14 +57,13 @@
 #include "classes/ClassesExtra.h"
 
 /* local protos */
-static void FO_XPKUpdateFolder(struct Folder*, int);
-static BOOL FO_MoveFolderDir(struct Folder*, struct Folder*);
-static BOOL FO_EnterPassword(struct Folder*);
+static BOOL FO_MoveFolderDir(struct Folder *dst, struct Folder *src);
+static BOOL FO_EnterPassword(struct Folder *fo);
 static struct FO_ClassData *FO_New(void);
-static BOOL FO_GetFolderByType_cmp(struct Folder*, enum FolderType*);
-static BOOL FO_GetFolderByName_cmp(struct Folder*, char*);
-static struct Folder *FO_GetFolderByAttribute(BOOL(*)(struct Folder*,void*), void*, int*);
-static BOOL FO_SaveSubTree(FILE *, struct MUI_NListtree_TreeNode *);
+static BOOL FO_GetFolderByType_cmp(struct Folder *fo, enum FolderType *type);
+static BOOL FO_GetFolderByName_cmp(struct Folder *fo, char *name);
+static struct Folder *FO_GetFolderByAttribute(BOOL(*)(struct Folder *fo, void *), void *, int *);
+static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *tn);
 
 /***************************************************************************
  Module: Folder Configuration
@@ -297,7 +296,8 @@ BOOL FO_LoadConfig(struct Folder *fo)
                else if(!stricmp(buffer, "MaxAge"))       fo->MaxAge = atoi(value);
                else if(!stricmp(buffer, "Password"))     MyStrCpy(fo->Password, Decrypt(value));
                else if(!stricmp(buffer, "Type"))         fo->Type = atoi(value);
-               else if(!stricmp(buffer, "XPKType"))      fo->XPKType = atoi(value);
+               else if(!stricmp(buffer, "XPKType"))      fo->Mode = atoi(value); // valid < v2.4
+               else if(!stricmp(buffer, "Mode"))         fo->Mode = atoi(value);
                else if(!stricmp(buffer, "Sort1"))        fo->Sort[0] = atoi(value);
                else if(!stricmp(buffer, "Sort2"))        fo->Sort[1] = atoi(value);
                else if(!stricmp(buffer, "Stats"))        { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
@@ -353,12 +353,12 @@ BOOL FO_SaveConfig(struct Folder *fo)
    {
       struct DateStamp ds;
 
-      fprintf(fh, "YFC1 - YAM Folder Configuration\n");
+      fprintf(fh, "YFC2 - YAM Folder Configuration\n");
       fprintf(fh, "Name        = %s\n",  fo->Name);
       fprintf(fh, "MaxAge      = %d\n",  fo->MaxAge);
       fprintf(fh, "Password    = %s\n",  Encrypt(fo->Password));
       fprintf(fh, "Type        = %d\n",  fo->Type);
-      fprintf(fh, "XPKType     = %d\n",  fo->XPKType);
+      fprintf(fh, "Mode        = %d\n",  fo->Mode);
       fprintf(fh, "Sort1       = %d\n",  fo->Sort[0]);
       fprintf(fh, "Sort2       = %d\n",  fo->Sort[1]);
       fprintf(fh, "Stats       = %s\n",  Bool2Txt(fo->Stats));
@@ -765,25 +765,6 @@ BOOL FO_SaveTree(char *fname)
 }
 
 ///
-/// FO_XPKUpdateFolder
-//  Updates compression mode for a folder
-static void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
-{
-   if (fo->XPKType != oldtype)
-   {
-      struct Mail *mail;
-      int i;
-      BusyGauge(GetStr(MSG_BusyUncompressingFO), "", fo->Total);
-      for (i = 0, mail = fo->Messages; mail; mail = mail->Next, i++)
-      {
-         BusySet(i+1);
-         RepackMailFile(mail, fo->XPKType, fo->Password);
-      }
-      BusyEnd();
-   }
-}
-
-///
 /// FO_MoveFolderDir
 //  Moves a folder to a new directory
 static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
@@ -803,7 +784,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
       GetMailFile(srcbuf, oldfo, mail);
 
       if(MoveFile(srcbuf, dstbuf))
-        RepackMailFile(mail, fo->XPKType, fo->Password);
+        RepackMailFile(mail, fo->Mode, fo->Password);
       else
         success = FALSE;
    }
@@ -863,7 +844,7 @@ static void FO_GetFolder(struct Folder *folder)
                             MUIA_Disabled,     isdefault,
                             TAG_DONE);
 
-   SetAttrs(gui->CY_FMODE,  MUIA_Cycle_Active, folder->XPKType,
+   SetAttrs(gui->CY_FMODE,  MUIA_Cycle_Active, folder->Mode,
                             MUIA_Disabled,     isdefault,
                             TAG_DONE);
 
@@ -937,7 +918,7 @@ static void FO_PutFolder(struct Folder *folder)
    if (!isdefault)
    {
       folder->Type = cycle2type[GetMUICycle(gui->CY_FTYPE)];
-      folder->XPKType = GetMUICycle(gui->CY_FMODE);
+      folder->Mode = GetMUICycle(gui->CY_FMODE);
    }
    for (i = 0; i < 2; i++)
    {
@@ -1281,27 +1262,48 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       oldfolder->MLSupport = folder.MLSupport;
       if (!xget(gui->CY_FTYPE, MUIA_Disabled))
       {
-         int oldxpk = oldfolder->XPKType;
-         int newxpk = folder.XPKType;
+         enum FolderMode oldmode = oldfolder->Mode;
+         enum FolderMode newmode = folder.Mode;
          BOOL changed = TRUE;
 
-         if(oldxpk == newxpk || (newxpk > XPK_CRYPT && !XpkBase)) changed = FALSE;
-         else if(!isCryptedFolder(&folder) && isCryptedFolder(oldfolder) && oldfolder->LoadedMode != LM_VALID)
+         if(oldmode == newmode || (newmode > FM_SIMPLE && !XpkBase))
+         {
+            changed = FALSE;
+         }
+         else if(!isProtectedFolder(&folder) && isProtectedFolder(oldfolder) &&
+                 oldfolder->LoadedMode != LM_VALID)
          {
             if(!(changed = MA_PromptFolderPassword(&folder, gui->WI))) return;
          }
-         else if(isCryptedFolder(&folder) && !isCryptedFolder(oldfolder))
+         else if(isProtectedFolder(&folder) && !isProtectedFolder(oldfolder))
          {
             if(!(changed = FO_EnterPassword(&folder))) return;
          }
 
-         if(isCryptedFolder(&folder) && isCryptedFolder(oldfolder)) strcpy(folder.Password, oldfolder->Password);
+         if(isProtectedFolder(&folder) && isProtectedFolder(oldfolder))
+            strcpy(folder.Password, oldfolder->Password);
 
          if(changed)
          {
-            if(!isCryptedFolder(&folder)) *folder.Password = 0;
-            FO_XPKUpdateFolder(&folder, oldxpk);
-            oldfolder->XPKType = newxpk;
+            if(!isProtectedFolder(&folder))
+              *folder.Password = 0;
+
+            if(folder.Mode != oldmode)
+            {
+              struct Mail *mail;
+              int i;
+
+              BusyGauge(GetStr(MSG_BusyUncompressingFO), "", folder.Total);
+              for(i = 0, mail = folder.Messages; mail; mail = mail->Next, i++)
+              {
+                BusySet(i+1);
+                RepackMailFile(mail, folder.Mode, folder.Password);
+              }
+              BusyEnd();
+
+              oldfolder->Mode = newmode;
+            }
+
             strcpy(oldfolder->Password, folder.Password);
          }
          oldfolder->Type = folder.Type;
@@ -1340,7 +1342,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       // only if the user want to proceed we go on.
       if(result)
       {
-        if(isCryptedFolder(&folder) && FO_EnterPassword(&folder) == FALSE) return;
+        if(isProtectedFolder(&folder) && FO_EnterPassword(&folder) == FALSE)
+          return;
 
         if(CreateDirectory(GetFolderDir(&folder)))
         {

@@ -987,7 +987,7 @@ static void Initialise2(void)
 
       if((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING ||
           folder->Type == FT_DELETED || C->LoadAllFolders) &&
-          !isCryptedFolder(folder))
+          !isProtectedFolder(folder))
       {
         MA_GetIndex(folder);
       }

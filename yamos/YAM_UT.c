@@ -102,7 +102,7 @@ unsigned char *PPtr[16];
 static int  Word_Length(const char *buf);
 static int  Quoting_Chars(char *buf, int len, char *text, int *post_spaces);
 static char *FileToBuffer(char *file);
-static BOOL GetPackMethod(int xpktype, char **method, int *eff);
+static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff);
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
 static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
@@ -3074,11 +3074,29 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
 ///
 /// GetPackMethod
 //  Returns packer type and efficiency
-static BOOL GetPackMethod(int xpktype, char **method, int *eff)
+static BOOL GetPackMethod(enum FolderMode fMode, char **method, int *eff)
 {
-   if (xpktype == 2) { *method = C->XPKPack; *eff = C->XPKPackEff; return TRUE; }
-   if (xpktype == 3) { *method = C->XPKPackEncrypt; *eff = C->XPKPackEncryptEff; return TRUE; }
-   return FALSE;
+   BOOL result = TRUE;
+
+   switch(fMode)
+   {
+      case FM_XPKCOMP:
+        *method = C->XPKPack;
+        *eff = C->XPKPackEff;
+      break;
+
+      case FM_XPKCRYPT:
+        *method = C->XPKPackEncrypt;
+        *eff = C->XPKPackEncryptEff;
+      break;
+
+      default:
+        *method = NULL;
+        *eff = 0;
+        result = FALSE;
+   }
+
+   return result;
 }
 ///
 /// CompressMailFile
@@ -3123,13 +3141,13 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    char dstFileName[SIZE_MFILE];
    struct Folder *srcfolder = mail->Folder;
    int peff = 0;
-   int srcxpk = srcfolder->XPKType;
-   int dstxpk = dstfolder->XPKType;
+   enum FolderMode srcMode = srcfolder->Mode;
+   enum FolderMode dstMode = dstfolder->Mode;
    char *srcpw = srcfolder->Password;
    char *dstpw = dstfolder->Password;
    int success = 0;
 
-   DB(kprintf("TransferMailFile: [%s]->[%s]\n", mail->MailFile, GetFolderDir(dstfolder));)
+   DB(kprintf("TransferMailFile: %d->%d [%s]->[%s]\n", srcMode, dstMode, mail->MailFile, GetFolderDir(dstfolder));)
 
    if(!MA_GetIndex(srcfolder))
      return 0;
@@ -3138,7 +3156,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
      return 0;
 
    // get some information we require
-   GetPackMethod(dstxpk, &pmeth, &peff);
+   GetPackMethod(dstMode, &pmeth, &peff);
    GetMailFile(srcbuf, srcfolder, mail);
 
    // check if we can just take the exactly same filename in the destination
@@ -3175,16 +3193,17 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    // now that we have the source and destination filename
    // we can go and do the file operation depending on some data we
    // acquired earlier
-   if(srcxpk == dstxpk && !isCryptedFolder(srcfolder))
+   if((srcMode == dstMode && srcfolder->Mode <= FM_SIMPLE) ||
+      (srcfolder->Mode <= FM_SIMPLE && dstfolder->Mode <= FM_SIMPLE))
    {
       if(copyit)
          success = CopyFile(dstbuf, 0, srcbuf, 0) ? 1 : -1;
       else
          success = MoveFile(srcbuf, dstbuf) ? 1 : -1;
    }
-   else if(isComprFolder(srcfolder))
+   else if(isXPKFolder(srcfolder))
    {
-      if(!isComprFolder(dstfolder))
+      if(!isXPKFolder(dstfolder))
       {
          // if we end up here the source folder is a compressed folder but the
          // destination one not. so lets uncompress it
@@ -3224,7 +3243,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    }
    else
    {
-      if(isComprFolder(dstfolder))
+      if(isXPKFolder(dstfolder))
       {
          // here the source folder is not compressed, but the destination one
          // so we compress the file in the destionation folder now
@@ -3248,51 +3267,84 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 ///
 /// RepackMailFile
 //  (Re/Un)Compresses a message file
-//  Note: If dstxpk is -1 and passwd is NULL, then this function packs
+//  Note: If dstMode is -1 and passwd is NULL, then this function packs
 //        the current mail. It will assume it is plaintext and needs to be packed now
-BOOL RepackMailFile(struct Mail *mail, int dstxpk, char *passwd)
+BOOL RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd)
 {
    char *pmeth = NULL, srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
    struct Folder *folder = mail->Folder;
-   int peff = 0, srcxpk = folder->XPKType;
-   BOOL success = TRUE;
+   int peff = 0;
+   enum FolderMode srcMode = folder->Mode;
+   BOOL success = FALSE;
+
+   DB(kprintf("RepackMailFile: ");)
 
    // if this function was called with dstxpk=-1 and passwd=NULL then
    // we assume we need to pack the file from plain text to the currently
    // selected pack method of the folder
-   if(dstxpk == -1 && passwd == NULL)
+   if((LONG)dstMode == -1 && passwd == NULL)
    {
-      srcxpk = XPK_OFF;
-      dstxpk = folder->XPKType;
-      passwd = folder->Password;
+      srcMode = FM_NORMAL;
+      dstMode = folder->Mode;
+      passwd  = folder->Password;
    }
 
    MA_GetIndex(folder);
    GetMailFile(srcbuf, folder, mail);
-   GetPackMethod(dstxpk, &pmeth, &peff);
+   GetPackMethod(dstMode, &pmeth, &peff);
    sprintf(dstbuf, "%s.tmp", srcbuf);
-   switch (4*srcxpk+dstxpk)
+
+   DB(kprintf("[%s] - ", srcbuf);)
+
+   if((srcMode == dstMode && srcMode <= FM_SIMPLE) ||
+      (srcMode <= FM_SIMPLE && dstMode <= FM_SIMPLE))
    {
-      case  0: case  5: case 10: case 15:
-      case  1: case  4:                   return TRUE;
-      case  2: case  3: case  6: case  7: if ((success = CompressMailFile(srcbuf, dstbuf, passwd, pmeth, peff)))
-                                          {
-                                             DeleteFile(srcbuf);
-                                             success = RenameFile(dstbuf, srcbuf);
-                                          }
-                                          break;
-      case  8: case 9:  case 12: case 13: if ((success = UncompressMailFile(srcbuf, dstbuf, folder->Password)))
-                                          {
-                                             DeleteFile(srcbuf);
-                                             success = RenameFile(dstbuf, srcbuf);
-                                          }
-                                          break;
-      case 11: case 14:                   if ((success = UncompressMailFile(srcbuf, dstbuf, folder->Password)))
-                                          {
-                                             success = CompressMailFile(dstbuf, srcbuf, passwd, pmeth, peff);
-                                             DeleteFile(dstbuf);
-                                          }
-                                          break;
+      // the FolderModes are the same so lets do nothing
+      success = TRUE;
+
+      DB(kprintf("repack not required.\n");)
+   }
+   else if(srcMode > FM_SIMPLE)
+   {
+      if(dstMode <= FM_SIMPLE)
+      {
+         DB(kprintf("uncompressing\n");)
+
+         // if we end up here the source folder is a compressed folder so we
+         // have to just uncompress the file
+         if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
+            DeleteFile(srcbuf))
+         {
+            success = RenameFile(dstbuf, srcbuf);
+         }
+      }
+      else
+      {
+         // if we end up here, the source folder is a compressed+crypted one and
+         // the destination mode also
+         DB(kprintf("uncompressing/recompress\n");)
+
+         if(UncompressMailFile(srcbuf, dstbuf, folder->Password) &&
+            CompressMailFile(dstbuf, srcbuf, passwd, pmeth, peff))
+         {
+           success = DeleteFile(dstbuf);
+         }
+      }
+   }
+   else
+   {
+      if(dstMode > FM_SIMPLE)
+      {
+         DB(kprintf("compressing\n");)
+
+         // here the source folder is not compressed, but the destination mode
+         // signals to compress it
+         if(CompressMailFile(srcbuf, dstbuf, passwd, pmeth, peff) &&
+            DeleteFile(srcbuf))
+         {
+            success = RenameFile(dstbuf, srcbuf);
+         }
+      }
    }
 
    MA_UpdateMailFile(mail);
@@ -3306,10 +3358,16 @@ BOOL DoPack(char *file, char *newfile, struct Folder *folder)
    char *pmeth = NULL;
    int peff = 0;
 
-   GetPackMethod(folder->XPKType, &pmeth, &peff);
-   if (!CompressMailFile(file, newfile, folder->Password, pmeth, peff)) return FALSE;
-   DeleteFile(file);
-   return TRUE;
+   if(GetPackMethod(folder->Mode, &pmeth, &peff))
+   {
+     if(CompressMailFile(file, newfile, folder->Password, pmeth, peff) &&
+        DeleteFile(file))
+     {
+        return TRUE;
+     }
+   }
+
+   return FALSE;
 }
 ///
 /// StartUnpack

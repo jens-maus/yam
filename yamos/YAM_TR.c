@@ -3442,7 +3442,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                         newmail = AddMailToList((struct Mail *)email, folder);
 
                         // if this was a compressed/encrypted folder we need to pack the mail now
-                        if(folder->XPKType != XPK_OFF)
+                        if(folder->Mode > FM_SIMPLE)
                           RepackMailFile(newmail, -1, NULL);
 
                         MA_FreeEMailStruct(email);
@@ -3540,7 +3540,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                newmail = AddMailToList((struct Mail *)email, folder);
 
                // if this was a compressed/encrypted folder we need to pack the mail now
-               if(folder->XPKType != XPK_OFF)
+               if(folder->Mode > FM_SIMPLE)
                  RepackMailFile(newmail, -1, NULL);
 
                MA_FreeEMailStruct(email);

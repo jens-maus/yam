@@ -1406,7 +1406,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
          CLEAR_FLAG(mail->mflags, MFLAG_MULTIPART);
          DeleteFile(fname);
 
-         if(fo->XPKType > 1)
+         if(fo->Mode > FM_SIMPLE)
            DoPack(tfname, fname, mail->Folder);
          else
            RenameFile(tfname, fname);
@@ -1909,7 +1909,9 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
       if (mail->Folder != fo)
       {
         G->RRs.Moved++;
-        if(fo->LoadedMode != LM_VALID && isCryptedFolder(fo)) SET_FLAG(fo->Flags, FOFL_FREEXS);
+        if(fo->LoadedMode != LM_VALID && isProtectedFolder(fo))
+          SET_FLAG(fo->Flags, FOFL_FREEXS);
+
         MA_MoveCopy(mail, mail->Folder, fo, FALSE);
         return FALSE;
       }
@@ -2398,7 +2400,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       mail->Subject[SIZE_SUBJECT-1] = '\0';
       MA_ExpireIndex(fo);
 
-      if(fo->XPKType > 1)
+      if(fo->Mode > FM_SIMPLE)
         DoPack(newfile, oldfile, fo);
       else
         RenameFile(newfile, oldfile);

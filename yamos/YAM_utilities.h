@@ -36,6 +36,7 @@
 #include <mui/Toolbar_mcc.h>
 
 #include "SDI_compiler.h"
+#include "YAM_folderconfig.h"
 #include "YAM_stringsizes.h"
 
 #define STR(x)  STR2(x)
@@ -357,7 +358,7 @@ void     PlaySound(char *filename);
 void     Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix);
 void     RemoveMailFromList(struct Mail *mail);
 BOOL     RenameFile(char *oldname, char *newname);
-BOOL     RepackMailFile(struct Mail *mail, int dstxpk, char *passwd);
+BOOL     RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd);
 int      ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file);
 BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);

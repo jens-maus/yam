@@ -894,10 +894,11 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 
    // we need to analyze if the folder we are reading this mail from
    // is encrypted or compressed and then first unpacking it to a temporary file
-   if(comp->OrigMail->Folder->XPKType != XPK_OFF)
+   if(isXPKFolder(comp->OrigMail->Folder))
    {
       // so, this mail seems to be packed, so we need to unpack it to a temporary file
-      if(StartUnpack(mailfile, unpFile, comp->OrigMail->Folder) && stricmp(mailfile, unpFile) != 0)
+      if(StartUnpack(mailfile, unpFile, comp->OrigMail->Folder) &&
+         stricmp(mailfile, unpFile) != 0)
       {
         xpkPacked = TRUE;
       }

@@ -379,8 +379,11 @@ BOOL MA_GetIndex(struct Folder *folder)
 
    if (folder->LoadedMode != LM_VALID)
    {
-      if(isCryptedFolder(folder) && *folder->Password && !MA_PromptFolderPassword(folder, G->MA->GUI.WI))
+      if(isProtectedFolder(folder) && *folder->Password &&
+         !MA_PromptFolderPassword(folder, G->MA->GUI.WI))
+      {
         return FALSE;
+      }
 
       // load the index file
       folder->LoadedMode = MA_LoadIndex(folder, TRUE);
@@ -1865,13 +1868,18 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 
         default:
         {
-          if(entry->ImageIndex >= 0) sprintf(msg->Array[0] = dispfold, "\033o[%d] ", entry->ImageIndex);
-          else strcpy(msg->Array[0] = dispfold, " ");
+          if(entry->ImageIndex >= 0)
+            sprintf(msg->Array[0] = dispfold, "\033o[%d] ", entry->ImageIndex);
+          else
+            strcpy(msg->Array[0] = dispfold, " ");
 
-          if (entry->Name[0]) strcat(dispfold, entry->Name);
-          else sprintf(dispfold, "(%s)", FilePart(entry->Path));
+          if(entry->Name[0])
+            strcat(dispfold, entry->Name);
+          else
+            sprintf(dispfold, "(%s)", FilePart(entry->Path));
 
-          if(isCryptedFolder(entry)) sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCFOLDERIMG);
+          if(isProtectedFolder(entry))
+            sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCFOLDERIMG);
 
           if(entry->LoadedMode != LM_UNLOAD)
           {
