@@ -2,7 +2,6 @@
 
     * YAM_rexx_rxif.c: fixed bug #555126 where the USERINFO arexx
       command also counted folder groups as real folders.
-      strings for the Edit Folder group String requester.
     * YAM_FO.c, YAM.cd: fixed bug #555123 by adding new localization
       strings for the Edit Folder group String requester.
     * YAM_rexx_rxif.c: fixed bug #555117 where using the NEWMAILFILE
