@@ -5,7 +5,7 @@
 
         Name:           SDI_hook.h
         Versionstring:  $VER: SDI_hook.h 1.7 (04.07.2004)
-        Author:         SDI
+        Author:         SDI & Jens Langner
         Distribution:   PD
         Description:    defines to hide compiler specific hook stuff
 
@@ -33,6 +33,7 @@
 ** above history list and indicate that the change was not made by myself
 ** (e.g. add your name or nick name).
 **
+** Jens Langner <Jens.Langner@light-speed.de> and
 ** Dirk Stöcker <stoecker@epost.de>
 */
 

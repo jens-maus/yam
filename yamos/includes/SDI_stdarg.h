@@ -5,7 +5,7 @@
 
         Name:           SDI_stdarg.h
         Versionstring:  $VER: SDI_stdarg.h 1.0 (05.07.2004)
-        Author:         SDI
+        Author:         Jens Langner
         Distribution:   PD
         Description:    defines to hide OS specific variable arguments
                         function definitions

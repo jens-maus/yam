@@ -4,8 +4,8 @@
 /* Includeheader
 
         Name:           SDI_lib.h
-        Versionstring:  $VER: SDI_lib.h 1.3 (04.07.2004)
-        Author:         SDI
+        Versionstring:  $VER: SDI_lib.h 1.4 (05.10.2004)
+        Author:         Jens Langner
         Distribution:   PD
         Description:    defines to hide OS specific library function definitions
 
@@ -20,6 +20,7 @@
                   statement in the 68k LIBPROTOVA() macro so that no registers
                   can be used in there (which should be the default).
  1.3   04.07.04 : added empty LIBFUNC define for MorphOS which was missing.
+ 1.4   05.10.04 : added missing LIBFUNC call to OS3/MOS interface
 
 */
 
@@ -135,7 +136,7 @@
     #define LIBPROTO(name, ret, ...)                                         \
       ret LIBFUNC name(__VA_ARGS__)
     #define LIBPROTOVA(name, ret, ...)                                       \
-      ret STDARGS name(__VA_ARGS__)
+      ret LIBFUNC STDARGS name(__VA_ARGS__)
   #endif
   #define LFUNC_FAS(name) name
   #define LFUNC_VAS(name)
