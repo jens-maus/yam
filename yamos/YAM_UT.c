@@ -105,6 +105,7 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
 static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 static char *IdentifyFileDT(char *fname);
+static int  BuildCRCTable(void);
 
 struct PathNode
 {
@@ -1750,13 +1751,14 @@ void ExtractAddress(char *line, struct Person *pe)
 }
 ///
 /// CompressMsgID
-//  Creates a compressed version of the message ID
-int CompressMsgID(char *msgid)
+//  Creates a crc32 checksum of the MsgID, so that it can be used later
+//  for the follow-up algorithms aso.
+ULONG CompressMsgID(char *msgid)
 {
-   int i = 0, compr = 0;
-   char *ptr = msgid;
-   while (*ptr) compr += ++i*123*(*ptr++);
-   return compr;
+  // if the MsgID is valid we calculate the CRC32 checksum and as it
+  // consists only of one cycle through the crc function we call it
+  // with -1
+  return msgid && *msgid ? CRC32(msgid, strlen(msgid), -1L) : 0;
 }
 ///
 /// ExpandText
@@ -4048,6 +4050,79 @@ abort:
   if(Ind) free(Ind);
 
   return success ? &(Z[lz]) : NULL;
+}
+
+///
+/// BuildCRCTable()
+//  Initialize the CRC calculation table
+static unsigned long *CRCTable;	// Table constructed for fast lookup.
+
+#define CRC32_POLYNOMIAL	0xEDB88320L
+
+static int BuildCRCTable(void)
+{
+	int i, j;
+	unsigned long crc;
+
+  // lets alloc the buffer for the CRC Table first
+	CRCTable = malloc(256 * sizeof(unsigned long));
+	if (CRCTable == NULL)
+	{
+		return -1L;
+	}
+
+  // calculate the default CRC Table
+	for (i = 0; i <= 255; i++)
+	{
+		crc = i;
+
+		for (j = 8; j > 0; j--)
+    {
+			if (crc & 1) crc = (crc >> 1) ^ CRC32_POLYNOMIAL;
+			else 				 crc >>= 1;
+    }
+		CRCTable[i] = crc;
+	}
+
+	return 0;
+}
+
+void FreeCRCTable(void)
+{
+  if(CRCTable) free(CRCTable);
+}
+
+///
+/// CRC32()
+//  Function that calculates a 32bit crc checksum for a provided buffer.
+//  See http://www.4d.com/ACIDOC/CMU/CMU79909.HTM for more information about
+//  the CRC32 algorithm.
+//  This implementation allows the usage of more than one persistant calls of
+//  the crc32 function. This allows to calculate a valid crc32 checksum over
+//  an unlimited amount of buffers.
+ULONG CRC32(void *buffer, unsigned int count, ULONG crc)
+{
+	ULONG temp1, temp2;
+	static int firsttime = 1;
+	unsigned char *p = (unsigned char *)buffer;
+
+  // if this function is used for the first time we
+  // have to build the CRC Table first.
+	if (firsttime)
+	{
+		if (BuildCRCTable() != 0) return -1;
+		firsttime = 0;
+	}
+
+  // we calculate the crc32 now.
+	while (count-- != 0)
+	{
+		temp1 = (crc >> 8) & 0x00FFFFFFL;
+		temp2 = CRCTable[((int)crc ^ *p++) & 0xFF];
+		crc = temp1 ^ temp2;
+	}
+
+	return crc;
 }
 
 ///

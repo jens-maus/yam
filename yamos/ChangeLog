@@ -7,6 +7,16 @@ $Source$
 
 2002-10-04  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c: replaced rudimentary ComprMsgID() algorithm with
+      a more unique CRC32 checksum algorithm to give the Next/Prev
+      Thread function more power in finding the correct follow-up
+      Message. This fixes some problems where YAM did find the
+      incorrect message on a Next/Prev Thread.
+      NOTE: Please note that because of this different checksum
+      calculation routines, all index files of the folders have to
+      be recalculated. That`s why the .index ID was increased to
+      "YIN4" so that next time you open your folders YAM should
+      automatically renew the index file.
     * YAM_RE.c: fixed bug wher on a FollowUp with Next/Prev Thread
       YAM didn`t correctly changed the folder and sometimes showed
       weird data.

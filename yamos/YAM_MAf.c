@@ -84,15 +84,15 @@
 */
 struct ComprMail
 {
-   int    Flags;
-   char   MailFile[SIZE_MFILE];
+   int              Flags;
+   char             MailFile[SIZE_MFILE];
    struct DateStamp Date;
-   char   Status;
-   char   Importance;
-   long   cMsgID;
-   long   cIRTMsgID;
-   long   Size;
-   int    MoreBytes;
+   char             Status;
+   char             Importance;
+   unsigned long    cMsgID;
+   unsigned long    cIRTMsgID;
+   long             Size;
+   int              MoreBytes;
 };
 
 /*
@@ -197,7 +197,7 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
 
       BusyText(GetStr(MSG_BusyLoadingIndex), folder->Name);
       fread(&fi, sizeof(struct FIndex), 1, fh);
-      if (fi.ID == MAKE_ID('Y','I','N','3'))
+      if (fi.ID == MAKE_ID('Y','I','N','4'))
       {
          folder->Total  = fi.Total;
          folder->New    = fi.New;
@@ -287,7 +287,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
    // lets prepare the Folder Index struct and write it out
    // we clear it first, so that the reserved field is also 0
    memset(&fi, 0, sizeof(struct FIndex));
-   fi.ID = MAKE_ID('Y','I','N','3');
+   fi.ID = MAKE_ID('Y','I','N','4');
    fi.Total = folder->Total; fi.New = folder->New; fi.Unread = folder->Unread; fi.Size = folder->Size;
    fwrite(&fi, sizeof(struct FIndex), 1, fh);
 
