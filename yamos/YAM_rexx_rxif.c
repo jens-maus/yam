@@ -2085,9 +2085,8 @@ void rx_addrdelete( struct RexxHost *host, struct rxd_addrdelete **rxd, long act
          break;
          
       case RXIF_ACTION:
-         if (!AB_GotoEntry(rd->arg.alias)) rd->rc = RETURN_WARN;
-         if (!rd->rc)
-            CallHookPkt(&AB_DeleteHook, 0, 0);
+         AB_GotoEntry(rd->arg.alias);
+         CallHookPkt(&AB_DeleteHook, 0, 0);
          break;
       
       case RXIF_FREE:
