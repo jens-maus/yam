@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: fixed bug #724394 where a opened bounce window caused
+      some enforcer hits upon a AUTOSAVE timerequest. YAM didn`t
+      take respect of the fact that a bounce window isn`t a full
+      write window and therefore tried to access it in a wrong
+      fashion.
+
 2003-04-17  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c: fixed bug #720377 where the folderlist update

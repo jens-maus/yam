@@ -322,7 +322,7 @@ static void TC_Dispatcher(enum TimerIO tio)
 
           for(i=0; i < MAXWR; i++)
           {
-            if(G->WR[i])
+            if(G->WR[i] && G->WR[i]->Mode != NEW_BOUNCE)
             {
               EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
               G->WR[i]->AS_Done = TRUE;
