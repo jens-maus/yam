@@ -7,6 +7,9 @@ $Source$
 
 2005-02-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c: fixed bug #681110 where an CC: or BCC: header still triggered
+      the mail to show up as a multiple receipient mail even if it contained
+      no real receipient at all.
     * classes/Addrmatchlist.c: fixed bug #805686 where SetAttr() was used on
       some window tags while the window was open and therefore caused that
       the adrrmatchwindow did not always follow the main window positions.

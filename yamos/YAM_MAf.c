@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -1134,6 +1134,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
    BOOL dateFound = FALSE;
    FILE *fh;
 
+   DB(kprintf("MA_ExamineMail: [%s]\n", file);)
+
    // first we generate a new ExtendedMail buffer
    if(!(email = calloc(1, sizeof(struct ExtendedMail))))
      return NULL;
@@ -1227,22 +1229,50 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
                   mail->To = pe;
                   if (p)
                   {
-                    SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-                    if (deep && !email->NoSTo) MA_GetRecipients(p, &(email->STo), &(email->NoSTo));
+                    if(deep)
+                    {
+                      if(email->NoSTo == 0)
+                        MA_GetRecipients(p, &(email->STo), &(email->NoSTo));
+
+                      if(email->NoSTo > 0)
+                        SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+                    }
+                    else if(strlen(p) >= 7) // minimum rcpts size "a@bc.de"
+                      SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
                   }
                }
             }
             else if (!stricmp(field, "cc"))
             {
-               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-               if(deep && !email->NoCC)
-                 MA_GetRecipients(value, &(email->CC), &(email->NoCC));
+               if(deep)
+               {
+                 if(email->NoCC == 0)
+                 {
+                   SParse(value);
+                   MA_GetRecipients(value, &(email->CC), &(email->NoCC));
+                 }
+
+                 if(email->NoCC > 0)
+                   SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+               }
+               else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
+                 SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
             }
             else if (!stricmp(field, "bcc"))
             {
-               SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
-               if(deep && !email->NoBCC)
-                 MA_GetRecipients(value, &(email->BCC), &(email->NoBCC));
+               if(deep)
+               {
+                 if(email->NoBCC == 0)
+                 {
+                   SParse(value);
+                   MA_GetRecipients(value, &(email->BCC), &(email->NoBCC));
+                 }
+
+                 if(email->NoBCC > 0)
+                   SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
+               }
+               else if(strlen(value) >= 7) // minimum rcpts size "a@bc.de"
+                 SET_FLAG(mail->mflags, MFLAG_MULTIRCPT);
             }
             else if (!stricmp(field, "subject"))
             {
