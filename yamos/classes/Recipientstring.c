@@ -473,14 +473,14 @@ DECLARE(Resolve) // ULONG flags
 						}
 						else
 						{
-							D(DBF_ERROR, ("String doesn't allow multiple recipients\n"))
+							DB( D(DBF_ERROR, ("String doesn't allow multiple recipients\n")) )
 							DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 							res = FALSE;
 						}
 					}
 					else /* it's unknown... */
 					{
-						D(DBF_ERROR, ("Found matching entry in address book with unknown type: %ld", entry->Type))
+						DB( D(DBF_ERROR, ("Found matching entry in address book with unknown type: %ld", entry->Type)) )
 						DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 						if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
 						res = FALSE;
@@ -488,7 +488,7 @@ DECLARE(Resolve) // ULONG flags
 				}
 				else
 				{
-					D(DBF_ERROR, ("Found more than one matching entry in address book!\n"))
+					DB( D(DBF_ERROR, ("Found more than one matching entry in address book!\n")) )
 					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 					if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
 					res = FALSE;
@@ -514,7 +514,7 @@ DECLARE(Resolve) // ULONG flags
 				}
 				else
 				{
-					D(DBF_ERROR, ("No entry found in addressbook for alias: %s", s))
+					DB( D(DBF_ERROR, ("No entry found in addressbook for alias: %s", s)) )
 					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 					if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
 					res = FALSE;

@@ -74,14 +74,14 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
 			}
 			else
 			{
-				D(DBF_ERROR, ("Error with '%s', parsing line:\n%s", name, line))
+				DB( D(DBF_ERROR, ("Error with '%s', parsing line:\n%s", name, line)) )
 			}
 		}
 		Close(fh);
 	}
 	else
 	{
-		D(DBF_ERROR, ("Error opening file '%s' for reading", name))
+		DB( D(DBF_ERROR, ("Error opening file '%s' for reading", name)) )
 	}
 }
 
@@ -117,7 +117,7 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 	}
 	else
 	{
-		D(DBF_ERROR, ("Error opening file '%s' for writing", name))
+		DB( D(DBF_ERROR, ("Error opening file '%s' for writing", name)) )
 	}
 }
 
