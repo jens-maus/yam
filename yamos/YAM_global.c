@@ -48,8 +48,8 @@
 
 /* the version stuff */
 
-#define __YAM_VERSION "2.4"
-#define __YAM_DEVEL   ""
+#define __YAM_VERSION "2.4p1"
+#define __YAM_DEVEL   "-dev"
 
 char * yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
 char * yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
