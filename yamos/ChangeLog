@@ -420,4 +420,6 @@
     * added option to define the AppIcon Label that should be displayed. Now a
       User can configurate the string that should be displayed below the AppIcon
       by reconfigurating it in the configuration window (Misc)
-
+    * YAM reads the Content-Disposition: of a multipart message now. If a name of
+      a part could not be found in the Content-Type: field we get it from the
+      Disposition field now. (i.e. mails with attachments from ELM behave like this)

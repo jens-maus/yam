@@ -92,6 +92,7 @@ struct Part
    struct Part * Next;
    struct Part * NextSelected;
    char *        ContentType;
+   char *        ContentDisposition;
    char *        JunkParameter;
    char *        CParName;
    char *        CParBndr;
