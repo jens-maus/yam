@@ -2140,7 +2140,9 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
 
          set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
          if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], 0))
-              addr = ((struct ABEntry *)tn->tn_User)->RealName;
+         {
+            addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
+         }
          else addr = AddrName((*pe));
 
          sprintf(dispfro, "%s%s%s", multiple, to, addr);
