@@ -1,7 +1,8 @@
 /***************************************************************************
 
  YAM - Yet Another Mailer
- Copyright (C) 2000  Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2001 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -188,10 +189,11 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
             MUIA_CycleChain, 1,
             MUIA_NListview_NList, NListObject,
                InputListFrame,
-               MUIA_NList_DoubleClick, TRUE,
-               MUIA_NList_MultiSelect, (mode&ATTREQ_MULTI) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
-               MUIA_NList_DisplayHook, &RE_LV_AttachDspFuncHook,
-               MUIA_NList_Format, "BAR,BAR,",
+               MUIA_NList_Title, 			 	TRUE,
+               MUIA_NList_DoubleClick, 	TRUE,
+               MUIA_NList_MultiSelect, 	(mode&ATTREQ_MULTI) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
+               MUIA_NList_DisplayHook, 	&RE_LV_AttachDspFuncHook,
+               MUIA_NList_Format, 			"BAR,BAR,",
             End,
          End,
          Child, ColGroup(3),
@@ -2966,3 +2968,4 @@ void SPrintF(char *outstr, char *fmtstr, ...)
 	FormatString(G->Locale, fmtstr, &fmtstr+1, &hook);
 #endif
 }
+///

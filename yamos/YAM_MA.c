@@ -1,7 +1,8 @@
 /***************************************************************************
 
  YAM - Yet Another Mailer
- Copyright (C) 2000  Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2001 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -674,7 +675,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
    FILE *out;
    char *mlistad = NULL, buffer[SIZE_LARGE];
    char *cmsg, *rfrom = NULL, *rrepto = NULL, *rto = NULL, *rcc = NULL, *rsub = NULL;
-   char *domain, *tofld;
+   char *domain;
 
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
@@ -704,15 +705,20 @@ int MA_NewReply(struct Mail **mlist, int flags)
                }
             }
             if (!multi) strcpy(wr->MsgID, email->MsgID);
-            tofld = BuildAddrName2(&mail->To);
+
             if (folder)
             {
+						   char tofld[SIZE_LARGE], fromfld[SIZE_LARGE];
+
+	    	       strcpy(tofld, BuildAddrName2(&mail->To));
+  		         strcpy(fromfld, BuildAddrName2(&mail->From));
+
                if (folder->Type == FT_INCOMING)
                {
                   if ((flist = FO_CreateList()))
                   {
                      for (i = 1; i <= (int)*flist; i++) if (flist[i]->MLPattern[0]) if (MatchNoCase(tofld, flist[i]->MLPattern)) {
-                        mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : tofld;
+                        mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : fromfld;
                         if (flist[i]->MLFromAddress[0])    rfrom  = flist[i]->MLFromAddress;
                         if (flist[i]->MLReplyToAddress[0]) rrepto = flist[i]->MLReplyToAddress;
                         break;
@@ -721,7 +727,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                   }
                }
                else if (folder->MLPattern[0]) if (MatchNoCase(tofld, folder->MLPattern)) {
-                  mlistad = folder->MLAddress[0] ? folder->MLAddress : tofld;
+                  mlistad = folder->MLAddress[0] ? folder->MLAddress : fromfld;
                   if (folder->MLFromAddress[0])    rfrom  = folder->MLFromAddress;
                   if (folder->MLReplyToAddress[0]) rrepto = folder->MLReplyToAddress;
                }
@@ -734,7 +740,6 @@ int MA_NewReply(struct Mail **mlist, int flags)
                   if (*rto) rto = StrBufCat(rto, ", ");
                   rto = StrBufCat(rto, mlistad);
                }
-               goto cont_repl;
             }
             if (mail->Flags & MFLAG_MULTIRCPT)
                if (!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ReplyReqOpt), GetStr(MSG_MA_ReplyReq))))
@@ -755,7 +760,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                      case 0: MA_FreeEMailStruct(email); doabort = TRUE; fclose(out); goto abort_repl;
                   }
                }
-               rto = AppendRcpt(rto, repto, FALSE);
+               if(!(folder->MLAddress[0])) rto = AppendRcpt(rto, repto, FALSE);
             }
             else
             {
@@ -764,7 +769,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                for (i = 0; i < email->NoSTo; i++) rto = AppendRcpt(rto, &email->STo[i], TRUE);
                for (i = 0; i < email->NoCC; i++) rcc = AppendRcpt(rcc, &email->CC[i], TRUE);
             }
-cont_repl:  etd.R_Name = repto->RealName;
+						etd.R_Name = repto->RealName;
             etd.R_Address = repto->Address;
             altpat = FALSE;
             if (!(domain = strchr(repto->Address,'@'))) domain = strchr(C->EmailAddress,'@');
@@ -785,7 +790,7 @@ cont_repl:  etd.R_Name = repto->RealName;
          }
          MA_InsertIntroText(out, mlistad ? C->MLReplyBye : (altpat ? C->AltReplyBye: C->ReplyBye), &etd);
          fclose(out);
-         WR_AddSignature(G->WR_Filename[winnum], -1);
+         WR_AddSignature(G->WR_Filename[winnum], mlistad ? folder->MLSignature: -1);
 
          /* If this is a reply to a mail belonging to a mailing list,
             set the "From:" and "Reply-To:" addresses accordingly */

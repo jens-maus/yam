@@ -239,3 +239,20 @@
       if reverse sorting is used in one of the sort criteria.
       This is needed for the above feature.
 
+2001-05-08  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * Did some cosmetic changes to the About window
+
+    * Modified Copyright string in About window and also in every source
+      file
+
+    * NListview & NList.mcc will be used now in the Attachment part of
+      the write window
+
+    * Added Title to the window that lists each part of a message.
+
+    * Fixed behaviour of Mailing List feature for every folder. Now the
+      correct From/To etc. should be set if To: Pattern is used
+
+    * Added Signature selection to Mailinglist feature. Now you can select
+      a different signature for every mailing list.

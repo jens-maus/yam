@@ -1,7 +1,8 @@
 /***************************************************************************
 
  YAM - Yet Another Mailer
- Copyright (C) 2000  Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2001 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -551,7 +552,7 @@ void ExitClasses(void)
 //  Initialize custom MUI classes
 BOOL InitClasses(void)
 {
-	CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
+	CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
 	CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
 	CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
 	CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct AL_Data), ENTRY(AL_Dispatcher));

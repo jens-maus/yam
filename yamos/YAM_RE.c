@@ -1,7 +1,8 @@
 /***************************************************************************
 
  YAM - Yet Another Mailer
- Copyright (C) 2000  Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2001 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -2554,6 +2555,13 @@ SAVEDS ASM long RE_LV_AttachDspFunc(REG(a2,char **array), REG(a1,struct Part *en
       sprintf(array[1] = dispna, *entry->Name ? entry->Name : DescribeCT(entry->ContentType));
       if (entry->Size) sprintf(array[2] = dispsz, "%s%ld", entry->Decoded ? "" : "~", entry->Size);
    }
+   else
+   {
+   		array[0] = "#";
+      array[1] = GetStr(MSG_ATTACH_PART);
+      array[2] = GetStr(MSG_Size);
+   }
+
    return 0;
 }
 MakeHook(RE_LV_AttachDspFuncHook,RE_LV_AttachDspFunc);

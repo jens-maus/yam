@@ -1,7 +1,8 @@
 /***************************************************************************
 
  YAM - Yet Another Mailer
- Copyright (C) 2000  Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2001 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -2146,17 +2147,17 @@ struct WR_ClassData *WR_New(int winnum)
                End,
                Child, VGroup, /* Attachments */
                   MUIA_HelpNode, "WR01",
-                  Child, ListviewObject,
+                  Child, NListviewObject,
                      MUIA_CycleChain, 1,
                      MUIA_Listview_DragType, 1,
-                     MUIA_Listview_List,data->GUI.LV_ATTACH = NewObject(CL_AttachList->mcc_Class,NULL,
+                     MUIA_NListview_NList,		 data->GUI.LV_ATTACH = NewObject(CL_AttachList->mcc_Class,NULL,
                         InputListFrame,
-                        MUIA_List_DragSortable ,TRUE,
-                        MUIA_List_Format       ,"D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
-                        MUIA_List_Title        ,TRUE,
-                        MUIA_List_ConstructHook,&WR_LV_ConFuncHook,
-                        MUIA_List_DestructHook ,&GeneralDesHook,
-                        MUIA_List_DisplayHook  ,&WR_LV_DspFuncHook, 
+                        MUIA_NList_DragSortable ,TRUE,
+                        MUIA_NList_Format       ,"D=8 BAR,P=\033r D=8 BAR,D=8 BAR,P=\033c D=8 BAR,",
+                        MUIA_NList_Title        ,TRUE,
+                        MUIA_NList_ConstructHook,&WR_LV_ConFuncHook,
+                        MUIA_NList_DestructHook ,&GeneralDesHook,
+                        MUIA_NList_DisplayHook  ,&WR_LV_DspFuncHook,
                      End,
                   End,
                   Child, ColGroup(4),

@@ -183,7 +183,7 @@ Directory
 ;
 MSG_Copyright1 (//)
 OpenSource Email package for the Amiga\n\
-Copyright © 1995-2001 Marcel Beck
+Copyright © 1995-2000 Marcel Beck
 ;
 MSG_Version (//)
 Version:
@@ -4622,3 +4622,10 @@ MSG_MA_ABookModifiedGad (//)
 MSG_APPICON_STATS (//)
 N:%lD U:%lD T:%lD
 ; COUNT, COUNT, COUNT
+MSG_ABOUT_Copyright1 (//)
+OpenSource eMail package for the Amiga\n\
+Copyright © 1995-2000 Marcel Beck\n\
+Copyright © 2000-2001 YAM Open Source Team
+;
+MSG_ATTACH_PART (//)
+Part
