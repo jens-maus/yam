@@ -73,6 +73,7 @@
 #include "YAM_mime.h"
 #include "YAM_read.h"
 #include "YAM_utilities.h"
+#include "classes/ClassesExtra.h"
 
 #define CRYPTBYTE       164
 #define MUIA_Dtpic_Name 0x80423d72
@@ -3056,7 +3057,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
    }
 
    // Now lets redraw the folderentry in the listtree
-   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, pos, MUIV_NListtree_Redraw_Flag_Nr, TAG_DONE);
+   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, pos, MUIV_NListtree_Redraw_Flag_Nr);
 
    if (fo == actfo)
    {
@@ -3065,12 +3066,12 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
    }
 
    // Recalc the number of messages of the folder group
-   if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, 0, TAG_DONE))
+   if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, MUIF_NONE))
    {
       struct MUI_NListtree_TreeNode *tn_parent;
 
       // Now get the parent of the treenode
-      if(tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE))
+      if(tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE))
       {
          // fo_parent is NULL then it`s ROOT and we have to skip here
          struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
@@ -3087,7 +3088,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
                struct MUI_NListtree_TreeNode *tn_child;
                struct Folder *fo_child;
 
-               tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, 0, TAG_DONE);
+               tn_child = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn_parent, i, MUIF_NONE);
                if(!tn_child) break;
 
                fo_child = (struct Folder *)tn_child->tn_User;
@@ -3099,7 +3100,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
                fo_parent->Deleted   += fo_child->Deleted;
             }
 
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn_parent, 0, TAG_DONE);
+            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn_parent, MUIF_NONE);
          }
       }
    }

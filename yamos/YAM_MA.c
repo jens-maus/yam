@@ -341,7 +341,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
    struct MailInfo *mi;
    struct Mail **mlist;
    int i, pos, selected = 0;
-  
+
    if (frombox == tobox && !copyit) return;
    if (!(lv = WhichLV(frombox)) && !mail) return;
    if (mail)

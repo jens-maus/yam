@@ -207,7 +207,6 @@ DISPATCHERPROTO(FL_Dispatcher)
    struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
    struct Folder *srcfolder, *dstfolder;
    struct MUI_NListtree_TreeNode *tn_src, *tn_dst;
-   int pos = 0;
 
    switch (msg->MethodID)
    {
@@ -222,10 +221,7 @@ DISPATCHERPROTO(FL_Dispatcher)
          // if a folder is dragged on a folder we break here and the SuperClass should handle the msg
          if (dq->obj == obj) break;
 
-         // if this is a drag&drop from one folder to another we get the source and dest
-         get(obj, MUIA_NList_DropMark, &pos);
-
-         tn_dst = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, 0, TAG_DONE);
+         tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget);
          if(!tn_dst) return 0;
          dstfolder = tn_dst->tn_User;
 

@@ -228,7 +228,7 @@ int FO_GetFolderPosition(struct Folder *findfo)
 
    for (i = 0;;i++)
    {
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0 , TAG_DONE);
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0);
       if (!tn || !tn->tn_User) return(-1);
  
       fo = tn->tn_User;
