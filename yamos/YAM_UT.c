@@ -3784,7 +3784,7 @@ void PlaySound(char *filename)
                DoDTMethodA(sound, NULL, NULL, (Msg)&Play);
                Delay(seconds * 50);
             }
-            FreeSignal(sig);
+            FreeSignal((LONG)s);
          }
          DisposeDTObject(sound);
       }
