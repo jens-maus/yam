@@ -578,6 +578,11 @@ long base64decode_file(FILE *in, FILE *out,
       todo--;
     }
 
+    // if we end up with read == 0 we had only spaces in our
+    // source string, so lets skip to the next iteration
+    if(read == 0)
+      continue;
+
     // before we going to decode the string we have to make sure
     // that the encoded string is a multiple of 4 as 4 encoded
     // base64 chars will get out 2 unencoded ones.

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-10-18  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c: fixed another bug in the base64 file decoding routines where
+      attachments with lots of whitespaces caused YAM to through an error
+      message instead of simply skipping them.
+
 2004-10-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: simplifies the copy/move routines in the TransferMailFile()
