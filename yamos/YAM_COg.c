@@ -53,8 +53,11 @@
 #include "YAM_mime.h"
 #include "YAM_utilities.h"
 
+enum VarPopMode { VPM_FORWARD=0, VPM_REPLYHELLO, VPM_REPLYINTRO, VPM_REPLYBYE,
+                  VPM_QUOTE, VPM_ARCHIVE, VPM_MAILSTATS };
+
 /* local protos */
-static APTR MakeVarPop(APTR*, int, int, char*);
+static APTR MakeVarPop(APTR *, enum VarPopMode, int, char *);
 static APTR MakePhraseGroup(APTR*, APTR*, APTR*, char*, char*);
 static Object *MakeStaticCheck(void);
 
@@ -272,7 +275,7 @@ MakeStaticHook(PO_HandleVarHook, PO_HandleVar);
 ///
 /// MakeVarPop
 //  Creates a popup list containing variables and descriptions for phrases etc.
-static APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
+static APTR MakeVarPop(APTR *string, enum VarPopMode mode, int size, char *shortcut)
 {
    APTR lv, po;
 
@@ -292,34 +295,56 @@ static APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
    {
       switch (mode)
       {
-         case 0:
-         case 1:  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_LineBreak), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptName:MSG_CO_ORecptName), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptFirstname:MSG_CO_ORecptFirstname), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptAddress:MSG_CO_ORecptAddress), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderName), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderFirstname), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderAddress), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderSubject), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDate), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderTime), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDOW), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderMsgID), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_CompleteHeader), MUIV_List_Insert_Bottom);
-                  break;
-         case 2:  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderInitials), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_Sender2Initials), MUIV_List_Insert_Bottom);
-                  break;
-         case 3:  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveName), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFiles), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFilelist), MUIV_List_Insert_Bottom);
-                  break;
-         case 4:  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_NEWMSGS), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_UNREADMSGS), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_TOTALMSGS), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_DELMSGS), MUIV_List_Insert_Bottom);
-                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SENTMSGS), MUIV_List_Insert_Bottom);
-                  break;
+         case VPM_FORWARD:
+         case VPM_REPLYHELLO:
+         case VPM_REPLYINTRO:
+         case VPM_REPLYBYE:
+         {
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_LineBreak), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptName:MSG_CO_ORecptName), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptFirstname:MSG_CO_ORecptFirstname), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(mode?MSG_CO_RecptAddress:MSG_CO_ORecptAddress), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderName), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderFirstname), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderAddress), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderSubject), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDate), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderTime), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderDOW), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderMsgID), MUIV_List_Insert_Bottom);
+
+            // depending on the mode we have the "CompleteHeader" feature or not.
+            if(mode == VPM_FORWARD || mode == VPM_REPLYINTRO)
+            {
+              DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_CompleteHeader), MUIV_List_Insert_Bottom);
+            }
+         }
+         break;
+
+         case VPM_QUOTE:
+         {
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SenderInitials), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_Sender2Initials), MUIV_List_Insert_Bottom);
+         }
+         break;
+
+         case VPM_ARCHIVE:
+         {
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveName), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFiles), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFilelist), MUIV_List_Insert_Bottom);
+         }
+         break;
+
+         case VPM_MAILSTATS:
+         {
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_NEWMSGS), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_UNREADMSGS), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_TOTALMSGS), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_DELMSGS), MUIV_List_Insert_Bottom);
+            DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SENTMSGS), MUIV_List_Insert_Bottom);
+         }
+         break;
       }
       DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
    }
@@ -347,9 +372,9 @@ static APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, ch
             MUIA_Weight, 0,
          End,
          Child, pgrp = PageGroup,
-            Child, MakeVarPop(hello, 1, SIZE_INTRO, ""),
-            Child, MakeVarPop(intro, 1, SIZE_INTRO, ""),
-            Child, MakeVarPop(bye, 1, SIZE_INTRO, ""),
+            Child, MakeVarPop(hello, VPM_REPLYHELLO, SIZE_INTRO, ""),
+            Child, MakeVarPop(intro, VPM_REPLYINTRO, SIZE_INTRO, ""),
+            Child, MakeVarPop(bye,   VPM_REPLYBYE,   SIZE_INTRO, ""),
          End,
          MUIA_ShortHelp, help,
       End))
@@ -1015,9 +1040,9 @@ APTR CO_Page6(struct CO_ClassData *data)
          Child, HVSpace,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_Forwarding)),
             Child, Label2(GetStr(MSG_CO_FwdInit)),
-            Child, MakeVarPop(&data->GUI.ST_FWDSTART, 0, SIZE_INTRO, GetStr(MSG_CO_FwdInit)),
+            Child, MakeVarPop(&data->GUI.ST_FWDSTART, VPM_FORWARD, SIZE_INTRO, GetStr(MSG_CO_FwdInit)),
             Child, Label2(GetStr(MSG_CO_FwdFinish)),
-            Child, MakeVarPop(&data->GUI.ST_FWDEND, 0, SIZE_INTRO, GetStr(MSG_CO_FwdFinish)),
+            Child, MakeVarPop(&data->GUI.ST_FWDEND, VPM_FORWARD, SIZE_INTRO, GetStr(MSG_CO_FwdFinish)),
          End,
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_Replying)),
             Child, ColGroup(2),
@@ -1030,7 +1055,7 @@ APTR CO_Page6(struct CO_ClassData *data)
                Child, Label2(GetStr(MSG_CO_MLRepInit)),
                Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, GetStr(MSG_CO_MLRepInit), GetStr(MSG_HELP_CO_ST_MREPLYTEXT)),
                Child, Label2(GetStr(MSG_CO_QuoteMail)),
-               Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, 2, SIZE_SMALL, GetStr(MSG_CO_QuoteMail)),
+               Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, VPM_QUOTE, SIZE_SMALL, GetStr(MSG_CO_QuoteMail)),
                Child, Label2(GetStr(MSG_CO_AltQuote)),
                Child, data->GUI.ST_ALTQUOTECHAR = MakeString(SIZE_SMALL, GetStr(MSG_CO_AltQuote)),
             End,
@@ -1199,7 +1224,7 @@ APTR CO_Page8(struct CO_ClassData *data)
            Child, Label1(GetStr(MSG_CO_INFOBARPOS)),
            Child, data->GUI.CY_INFOBAR = MakeCycle(infob, GetStr(MSG_CO_INFOBARPOS)),
            Child, Label2(GetStr(MSG_CO_FOLDERLABEL)),
-           Child, MakeVarPop(&data->GUI.ST_INFOBARTXT, 4, SIZE_DEFAULT, ""),
+           Child, MakeVarPop(&data->GUI.ST_INFOBARTXT, VPM_MAILSTATS, SIZE_DEFAULT, ""),
          End,
          Child, HVSpace,
       End))
@@ -1576,7 +1601,7 @@ APTR CO_Page14(struct CO_ClassData *data)
                End,
                Child, HGroup,
                 Child, Label2(GetStr(MSG_CO_APPICONTEXT)),
-                Child, MakeVarPop(&data->GUI.ST_APPICON, 4, SIZE_DEFAULT/2, ""),
+                Child, MakeVarPop(&data->GUI.ST_APPICON, VPM_MAILSTATS, SIZE_DEFAULT/2, ""),
                End,
                Child, MakeCheckGroup((Object **)&data->GUI.CH_CLGADGET, GetStr(MSG_CO_CloseGadget)),
             End,
@@ -1620,7 +1645,7 @@ APTR CO_Page14(struct CO_ClassData *data)
                   Child, MakeXPKPop(&data->GUI.TX_ENCPACK, TRUE, TRUE),
                   Child, data->GUI.NB_ENCPACK = MakeNumeric(0,100,TRUE),
                   Child, HSpace(8),
-                  Child, MakeVarPop(&data->GUI.ST_ARCHIVER, 3, SIZE_COMMAND, GetStr(MSG_CO_Archiver)),
+                  Child, MakeVarPop(&data->GUI.ST_ARCHIVER, VPM_ARCHIVE, SIZE_COMMAND, GetStr(MSG_CO_Archiver)),
                End,
             End,
             Child, HVSpace,

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-18  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_COg.c: fixed bug #624953 where YAM did provide
+      the %h variable option for the reply texts in the
+      configuration window where this feature isn`t quite
+      possible or reasonable.
+
 2002-10-17  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c, YAM_FI.c: changed the DisplayHook of the Mail
