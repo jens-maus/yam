@@ -1,0 +1,8 @@
+*.o
+*.gst
+*.info
+*.lnk
+*.map
+YAM
+YAM_locale.c
+YAM_locale.h
