@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.85 (19.04.2003) (c) Mariusz Danilewicz <mandi@interia.pl>
+## version $VER: YAM.catalog 5.86 (29.05.2003) (c) Mariusz Danilewicz <mandi@interia.pl>
 ## language polski
 ## codeset 0
 ;
@@ -7255,4 +7255,16 @@ Tekst, który bëdzie wyôwietalny\n\
 w linii statusowej.
 ; Text that should be displayed\n\
 ; in the status bar
+;
+MSG_MA_CROPREQUEST
+Wszystkie zaîâczniki z wybranych wiadomoôci zostanâ usuniëte.\n\
+\n\
+Czy na pewno chcesz kontynuowaê?
+; All attachments of the selected mails will be cropped.\n\
+; \n\
+; Do you really want to proceed?
+;
+MSG_YesNoReq2
+_Tak|*_Nie
+; _Yes|*_No
 ;
