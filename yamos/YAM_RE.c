@@ -2740,6 +2740,8 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData)
   struct Part *part;
   struct Part *next;
 
+  DB(kprintf("CleanupReadMailData()\n");)
+
   if(rmData->readWindow)
   {
     // make sure the window is really closed
@@ -2773,7 +2775,6 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData)
   if(strstr(rmData->readFile, ".unp"))
     DeleteFile(rmData->readFile);
 
-
   // if the rmData carries a virtual mail we have to clear it
   // aswell
   if(rmData->mail &&
@@ -2781,6 +2782,8 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData)
   {
     free(rmData->mail);
     CloseTempFile(rmData->tempFile);
+
+    rmData->mail = NULL;
   }
 
   // clean up the read window now
