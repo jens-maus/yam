@@ -3223,10 +3223,10 @@ char *IdentifyFile(char *fname)
       }
       if (!*ctype)
       {
-         int notascii = 0;
+         int c, notascii = 0;
          for (i = 0; i < len; i++)
-            if ((int)buffer[i] < 32 || (int)buffer[i] > 127)
-               if (buffer[i] != '\t' && buffer[i] != '\n') notascii++;
+            if (c=(int)buffer[i],c < 32 || c > 127)
+               if (c != '\t' && c != '\n') notascii++;
          if (notascii < len/10) ctype =  ContType[(bits&FIBF_SCRIPT) ? CT_AP_SCRIPT : CT_TX_PLAIN];
          else ctype = IdentifyFileDT(fname);
       }
