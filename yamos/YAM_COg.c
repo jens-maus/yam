@@ -1414,11 +1414,10 @@ APTR CO_Page12(struct CO_ClassData *data)
 APTR CO_Page13(struct CO_ClassData *data)
 {
    APTR grp;
-   static char *stype[3];
-   int i;
-   stype[0] = "ARexx";
-   stype[1] = "AmigaDOS";
-   stype[2] = 0;
+   static char *stype[3] = {
+     "ARexx", "AmigaDOS", NULL
+   };
+
    if (grp = VGroup, GroupFrameT(GetStr(MSG_MA_Scripts)),
          MUIA_HelpNode, "CO13",
          Child, data->GUI.LV_REXX = ListviewObject,
@@ -1447,6 +1446,7 @@ APTR CO_Page13(struct CO_ClassData *data)
          End,
       End)
    {
+      int i;
       for (i = 1; i <= MAXRX; i++) DoMethod(data->GUI.LV_REXX, MUIM_List_InsertSingle, i, MUIV_List_Insert_Bottom);
       SetHelp(data->GUI.ST_RXNAME    ,MSG_HELP_CO_ST_RXNAME    );
       SetHelp(data->GUI.ST_SCRIPT    ,MSG_HELP_CO_ST_SCRIPT    );
@@ -1476,6 +1476,7 @@ APTR CO_Page14(struct CO_ClassData *data)
    dispnot[4] = NULL;
    empty[0] = empty[1] = empty[2] = empty[3] = "";
    empty[4] = NULL;
+
    if (grp = ScrollgroupObject,
          MUIA_HelpNode, "CO14",
          MUIA_Scrollgroup_FreeHoriz, FALSE,
