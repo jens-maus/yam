@@ -738,7 +738,7 @@
     * YAM_FI.c: (FI_New) likewise
     * YAM_FO.c: (FO_GetFolder,FO_PutFolder) added const qualifier
       (FO_New) fixed GCC warning
-    * YAM_MA.c: (MA_GetSortType.MA_MailCompare,MA_SetupDynamicMenus,MA_MakeMAFormat)
+    * YAM_MA.c: (MA_GetSortType,MA_MailCompare,MA_SetupDynamicMenus,MA_MakeMAFormat)
       added const qualifier
       (MA_New) likewise, fixed GCC warning
     * YAM_MAf.c: (MA_MakeFOFormat) added const qualifier
@@ -774,12 +774,12 @@
 
 2001-06-20  Gunther Nikl <gni@gecko.de>
 
-    * (makeall.ados) changed "move" to "rename"
-    * (smakefile) changed CFLAGS handling, changed LINK statement
-    * (Makefile, Makefile.m68k-AmigaOS) restruc
-    * (starter.c) cleanup
+    * makeall.ados: replaced "move" with "rename"
+    * smakefile: changed CFLAGS handling, changed LINK statement
+    * Makefile, Makefile.m68k-AmigaOS: restructured
+    * starter.c: cleanup
 
-2001-06-120  Dirk Stöcker <stoecker@epost.de>
+2001-06-20  Dirk Stöcker <stoecker@epost.de>
 
     * fixed smakefile: $< does NOT work, when there are 2 or more depencies
       in the header line! This only works, if the header files are never
@@ -787,3 +787,41 @@
     * Also adding $(CDEFS) before RESOPT was not that clever at all.
     * makeall.dos now uses the stuff Gunther introduced
 
+2001-06-22  Gunther Nikl <gni@gecko.de>
+
+    * smakefile: added OPTCOMPLEXITY=5 OPTDEPTH=3 to OPTFLAGS,
+      created LNKFLAGS
+    * makeall.ados: removed MAP file renaming since smakefile already
+      creates the "correct" one, fixed scompare statements
+    * Makefile, Makefile.m68k-AmigaOS: removed "-c" from $(CDEFS)
+    * YAM_RE.c: (RE_SendMDN) added const qualifier
+    * YAM_COg.c: (CO_Page7) fix formatting
+    * YAM_COs.c: (CO_Save) likewise
+    * YAM_UT.c: (CloneWorkbenchPath) likewise
+    * YAM_WR.c: (MIMewarn,PGPwarn) likewise
+
+2001-06-22  Gunther Nikl <gni@gecko.de>
+
+    * YAM_AB.c,YAM_CL.c,YAM_CO.c,YAM_COg.c,YAM_COs.c,YAM_EA.c,YAM_FI.c,
+      YAM_MA.c,YAM_RE.c,YAM_TR.c,YAM_US.c,YAM_UT.c,YAM_WR.c,
+      YAM_rexx_rxif.c: added missing "extra.h", fixed double inclusion
+      and corrected its usage
+
+2001-06-22  Gunther Nikl <gni@gecko.de>
+
+    * YAM_read.h: (struct RE_GUIData) fixed wrong toolbar array size,
+      was off by one since at least YAMos 2.2 ...
+    * YAM_utilities.h: added ARRAY_SIZE define
+    * YAM_AB.c (AB_New): use it
+    * YAM_EA.c (EA_New): likewise
+    * YAM_MA.c (MA_New): likewise
+    * YAM_RE.c (RE_New): likewise
+    * YAM_WR.c (Wr_New): likewise
+
+2001-06-22  Gunther Nikl <gni@gecko.de>
+
+    * YAM_utilities.h: added "struct NewToolbarEntry"
+    * YAM_AB.c (AB_New): merged tb_butt[] and tb_help[] using that struct
+    * YAM_MA.c (MA_New): likewise
+    * YAM_RE.c (RE_New): likewise
+    * YAM_WR.c (Wr_New): likewise
