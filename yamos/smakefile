@@ -94,7 +94,11 @@ $(TARGET): $(OBJS)
 
 clean: # leaves final YAM exe
   -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.c YAM_locale.h
-#  -$(RM) classes/BuildClassInfo classes/BuildClassInfo.info classes/BuildClassInfo.lnk classes/BuildClassInfo.o classes/Classes.c classes/Classes.h
+  -$(RM) classes/Classes.c classes/Classes.h
+  @execute <<
+    cd extrasrc/genclasses
+    smake -s clean
+  <
 
 cleanall: clean
   -$(RM) $(TARGET)
@@ -102,17 +106,20 @@ cleanall: clean
 copy:
   $(CP) $(TARGET) YAM:
 
-classes/BuildClassInfo: classes/BuildClassInfo.o
-  @echo "*e[32mMaking $@ tool...*e[0m"
-  @$(CC) classes/BuildClassInfo.c link
-
-ClassInfo: classes/BuildClassInfo
-  @echo "*e[32mMaking $@...*e[0m"
-  @classes/BuildClassInfo scan classes/
-
 #######################################
 
-classes/BuildClassInfo.o: classes/BuildClassInfo.c
+GenClasses: extrasrc/genclasses/gc.c extrasrc/genclasses/gc.h extrasrc/genclasses/lists.c extrasrc/genclasses/lists.h
+  @echo "*e[32mMaking $@ tool...*e[0m"
+  @execute <<
+    cd extrasrc/genclasses
+    smake -s
+  <
+
+ClassInfo:
+  @echo "*e[32mMaking $@...*e[0m"
+  @extrasrc/genclasses/GenClasses classes -b$(TARGET) -gpl -storm -iClassesExtra.h
+
+#######################################
 
 YAM.o: YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
   YAM_config.h YAM_configFile.h YAM_debug.h YAM_find.h YAM_folderconfig.h \
@@ -232,18 +239,30 @@ all_sas.o: all_sas.c extrasrc/NewReadArgs.c
 
 YAM_locale.c: YAM_locale.h
 YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
-  flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+  @echo "*e[32mConverting Catalog with flexcat*e[0m"
+  @flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
 
 #######################################
 
-classes/Searchwindow.o: classes/Searchwindow.c YAM.h YAM_addressbook.h \
-  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
-  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+classes/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist.h \
+  YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
+  YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
-classes/Recipientstring.o: classes/Recipientstring.c YAM.h YAM_addressbook.h \
-  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
-  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+classes/Searchwindow.o: classes/Searchwindow.c classes/Searchwindow.h YAM.h \
+  YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h \
+  YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+classes/Recipientstring.o: classes/Recipientstring.c classes/Recipientstring.h \
+  YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
+  YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
 
 classes/Classes.o: classes/Classes.c classes/Classes.h YAM.h YAM_addressbook.h \
   YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
-  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h classes/Classes.h
+  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+classes/YAM.o: classes/YAM.c classes/YAM.h YAM.h YAM_addressbook.h \
+  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
+  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+#######################################
+
