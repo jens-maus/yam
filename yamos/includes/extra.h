@@ -10,6 +10,12 @@
 
 #ifdef _DCC
    #include <fcntl.h>
+   #define index(a,b) strchr(a,b)
+   #define isascii(c) (((c)&0xff)<127)
+   #define _OSERR IoErr()
+   extern struct Library *WorkbenchBase;
+   extern struct Library *KeymapBase;
+   extern void dice_closelibs(void);
 #else
    #include <unistd.h>
 #endif
@@ -26,8 +32,6 @@ extern char *stpblk(const char *);
 extern void strmfp(char *, const char *, const char *);
 extern void strsfn(const char *, char *, char *, char *, char *);
 #ifdef _DCC
-#define index(a,b) strchr(a,b)
-#define isascii(c) (((c)&0xff)<127)
 int stch_i(const char *s,int *res);
 #endif
 
@@ -46,6 +50,9 @@ extern int mkdir(const char *);
 ** <sys/commwben.h>
 */
 
+#ifdef _DCC
+#define _WBenchMsg _WBMsg
+#endif
 extern struct WBStartup *_WBenchMsg;
 
 #endif /* __SASC */

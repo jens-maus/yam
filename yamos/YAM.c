@@ -656,13 +656,6 @@ int GetDST(void)
 }
 ///
 
-#ifdef _DCC
-extern struct WBStartup *_WBMsg;
-#define _WBenchMsg _WBMsg
-extern struct Library *WorkbenchBase;
-extern struct Library *KeymapBase;
-extern void dice_closelibs(void);
-#endif
 /// Main
 //  Program entry point, main loop
 void main(int argc, char **argv)

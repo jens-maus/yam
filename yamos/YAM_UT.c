@@ -2700,10 +2700,6 @@ BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
    free(*tt); *tt = NULL;
    return FALSE;
 }
-#ifdef _DCC
-extern struct WBStartup *_WBMsg;
-#define _WBenchMsg _WBMsg
-#endif
 ///
 /// ExecuteCommand
 //  Executes a DOS command
