@@ -108,7 +108,7 @@ $(TARGET): $(OBJS)
 
 clean: # leaves final YAM exe
   -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.c YAM_locale.h
-  -$(RM) $(CLASSDIR)/Classes.c $(CLASSDIR)/Classes.h
+  -$(RM) $(CLASSDIR)/Classes.c $(CLASSDIR)/Classes.h $(CLASSDIR)/*_cl.h
   @execute <<
     cd $(EXTSRC)/genclasses
     smake -s clean
