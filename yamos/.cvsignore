@@ -6,9 +6,11 @@
 *.map
 *.debug
 *.dump
+*.tmp
 starter
 YAM
 YAM.amigaos
 YAM.morphos
 YAM_locale.c
 YAM_locale.h
+YAM_mail_lex.c
