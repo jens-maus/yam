@@ -3,6 +3,7 @@
 #ifndef PROTO_GENESIS_H
 #define PROTO_GENESIS_H
 
+#include <libraries/genesis.h>
 #include <clib/genesis_protos.h>
 
 #ifdef __GNUC__

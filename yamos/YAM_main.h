@@ -33,6 +33,10 @@
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
 
+#ifndef YAM_CONFIG_H
+struct Rule;
+#endif
+
 #define ANYBOX NULL
 
 #define MFLAG_MULTIRCPT   1

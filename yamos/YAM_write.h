@@ -32,6 +32,10 @@
 
 #include "YAM_stringsizes.h"
 
+#ifndef WORKBENCH_WORKBENCH_H
+struct AppMessage;
+#endif
+
 struct WR_GUIData
 {
    APTR WI;

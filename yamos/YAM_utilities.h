@@ -37,6 +37,10 @@
 
 #include "YAM_stringsizes.h"
 
+#ifndef YAM_FOLDERCONFIG_H
+struct Folder;
+#endif
+
 enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
   DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT };
 

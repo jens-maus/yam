@@ -32,6 +32,10 @@
 
 #include "YAM_stringsizes.h"
 
+#ifndef NLISTTREE_MCC_H
+struct MUI_NListtree_TreeNode;
+#endif
+
 struct EA_GUIData
 {
    APTR WI;
