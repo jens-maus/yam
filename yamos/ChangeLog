@@ -7,6 +7,9 @@ $Source$
 
 2004-07-24  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MI.c: fixed another minor bug in the RFC2047 decoding
+      routines which caused encoded-words not to be decoded if they
+      were embeeded in RFC822 style comments delimited by ( and ).
     * YAM_FI.c, InfoBar.c: modified all major gauge displays to only 
       refresh themself in respect to a maximum given refresh time
       - twice a second. This has for example the result that on fast

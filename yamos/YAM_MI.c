@@ -46,7 +46,7 @@ static int rfc2047_decode_int(const char *text,
                               void *arg);
 static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *chset,
                                 const char *lang, void *arg);
-static char *rfc2047_search_quote(const char **ptr);
+INLINE char *rfc2047_search_quote(const char **ptr);
 
 
 /***************************************************************************
@@ -1391,6 +1391,28 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
   return 0;
 }
 ///
+/// rfc2047_search_quote()
+//
+INLINE char *rfc2047_search_quote(const char **ptr)
+{
+  const char *p = *ptr;
+  size_t l;
+  char *s;
+
+  while(**ptr && **ptr != '?')
+    ++(*ptr);
+
+  l = *ptr - p;
+  if((s = malloc(l + 1)) != NULL)
+  {
+    memcpy(s, p, l);
+    s[l] = 0;
+  }
+
+  return (s);
+}
+
+///
 /// rfc2047_decode_int()
 // This is the main rcf2047 decoding function. It receives rfc2047-encoded
 // text, and a callback function.  The callback function is repeatedly
@@ -1423,7 +1445,7 @@ static int rfc2047_decode_int(const char *text,
       while(*text)
       {
         if(*text == '=' && *(text+1) == '?' &&
-           (text == start || is_lwsp(*(text-1))))
+           (text == start || is_lwsp(*(text-1)) || *(text-1) == '('))
         {
           break;
         }
@@ -1556,28 +1578,6 @@ static int rfc2047_decode_int(const char *text,
   }
 
   return result;
-}
-
-///
-/// rfc2047_search_quote()
-//
-static char *rfc2047_search_quote(const char **ptr)
-{
-  const char *p = *ptr;
-  size_t l;
-  char *s;
-
-  while(**ptr && **ptr != '?')
-    ++(*ptr);
-
-  l = *ptr - p;
-  if((s = malloc(l + 1)) != NULL)
-  {
-    memcpy(s, p, l);
-    s[l] = 0;
-  }
-
-  return (s);
 }
 
 ///
