@@ -4622,3 +4622,7 @@ MSG_MA_ABookModifiedGad (//)
 MSG_APPICON_STATS (//)
 N:%lD U:%lD T:%lD
 ; COUNT, COUNT, COUNT
+MSG_NTREE_ERROR (//)
+You have installed v%lD.%lD of NListtree.mcc but the addressbook needs at least v18.0 to work properly\n\
+Please install the latest NListtree.mcc and install it in your MUI classes folder.
+; COUNT, COUNT
