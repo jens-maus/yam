@@ -2948,6 +2948,8 @@ static void RE_DisplayMessage(int winnum)
    struct ABEntry *ab = NULL, abtmpl;
    int hits;
 
+   BusyText(GetStr(MSG_BusyDisplaying), "");
+
    if ((cmsg = RE_ReadInMessage(winnum, RIM_READ)))
    {
       dispheader = (G->RE[winnum]->Header != HM_NOHEADER);
@@ -3057,6 +3059,8 @@ static void RE_DisplayMessage(int winnum)
       if(!G->RE[winnum]->NoTextstyles) free(body);
       free(cmsg);
    }
+
+   BusyEnd;
 }
 ///
 /// RE_ClickedOnMessage
