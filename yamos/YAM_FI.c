@@ -809,9 +809,8 @@ MakeStaticHook(FI_PO_FromRuleHook, FI_PO_FromRuleFunc);
 //  Creates find window
 static struct FI_ClassData *FI_New(void)
 {
-   struct FI_ClassData *data;
-
-   if (data = calloc(1,sizeof(struct FI_ClassData)))
+   struct FI_ClassData *data = calloc(1, sizeof(struct FI_ClassData));
+   if (data)
    {
       APTR bt_search, bt_abort, lv_fromrule, bt_torule, po_fromrule, bt_all;
       data->GUI.WI = WindowObject,
