@@ -5,12 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2001-11-21  Gunther Nikl <gni@gecko.de>
+
+    * includes/clib/socket_protos.h: usage of sys/types.h removed
+    * YAM_UT.c/CRC32: replaced dynamic CRCTable with a static const one
+    * YAM_utilities.h: removed prototype for FreeCRCTable
+    * YAM.c/Terminate: removed FreeCRCTable call
+    * smakefile: corrected CFLAGS and LNKFLAGS
+
 2001-11-13  Gunther Nikl <gni@gecko.de>
 
-   * YAM.c: wrap SetupDebug() into DB()
-   * classes/YAM.c, classes/Recipientstring.c: use DB wrapper
-   * YAM_FO.c, YAM_RE.c: no stray ";" dueto DB statements
-   * Debug.h: remove empty D/SetupDebug definitions
+    * YAM.c: wrap SetupDebug() into DB()
+    * classes/YAM.c, classes/Recipientstring.c: use DB wrapper
+    * YAM_FO.c, YAM_RE.c: no stray ";" dueto DB statements
+    * Debug.h: remove empty D/SetupDebug definitions
 
 2001-11-13  Gunther Nikl <gni@gecko.de>
 
@@ -184,7 +192,7 @@ $Source$
       be recalculated. That`s why the .index ID was increased to
       "YIN4" so that next time you open your folders YAM should
       automatically renew the index file.
-    * YAM_RE.c: fixed bug wher on a FollowUp with Next/Prev Thread
+    * YAM_RE.c: fixed bug where on a FollowUp with Next/Prev Thread
       YAM didn`t correctly changed the folder and sometimes showed
       weird data.
 
