@@ -189,6 +189,7 @@ struct Config
    char  SupportSite[SIZE_HOST];
    char  LocalCharset[SIZE_CTYPE];
    char  IOCInterface[SIZE_SMALL];
+   char  AppIconText[SIZE_COMMAND];
 };
 
 extern struct Hook CO_PL_DspFuncHook;

@@ -711,6 +711,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    else /* Finish previous connection */
    {
       struct POP3 *p = C->P3[G->TR->POP_Nr];
+
       TR_DisconnectPOP();
       TR_Cleanup();
       AppendLogNormal(30, GetStr(MSG_LOG_Retrieving), (void *)(G->TR->Stats.Downloaded-laststats), p->User, p->Server, "");
@@ -719,14 +720,18 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    }
    if (!G->TR->SinglePOP) for (pop = ++G->TR->POP_Nr; pop < MAXP3; pop++)
                              if (C->P3[pop]) if (C->P3[pop]->Enabled) break;
+
    if (pop == MAXP3) /* Finish last connection */
    {
       TR_CloseTCPIP();
       set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
       MA_FreeRules(G->TR->Search, G->TR->Scnt);
       MA_StartMacro(MACRO_POSTGET, itoa(G->TR->Stats.Downloaded));
+
       DoMethod(G->App, MUIM_CallHook, &MA_ApplyRulesHook, APPLY_AUTO, 0, FALSE);
-      G->TR->Checking = FALSE; DisplayStatistics((struct Folder *)-1);
+
+      G->TR->Checking = FALSE;
+      DisplayStatistics((struct Folder *)-1);
       TR_NewMailAlert();
       MA_ChangeTransfer(TRUE);
       DisposeModulePush(&G->TR);
@@ -734,9 +739,13 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       {
          G->TR_Exchange = FALSE;
          DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
+
       }
+
+
       return;
    }
+
    G->TR->POP_Nr = pop;
    G->TR_Allow = G->TR->Abort = G->Error = FALSE;
    if ((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)    // connection succeeded
@@ -787,6 +796,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       }
    }
    else G->TR->Stats.Error = TRUE;
+
    TR_GetMailFromNextPOP(FALSE, 0, 0);
 }
 ///

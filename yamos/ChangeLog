@@ -414,3 +414,10 @@
     * fixed bug in the alignment of POP3 struct. The listview of the POP3 accounts
       didn`t show up the accounts anymore. Perhaps here we have to use a separate
       displayhook if this realignment causes trouble with MorphOS.
+
+2001-05-24  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added option to define the AppIcon Label that should be displayed. Now a
+      User can configurate the string that should be displayed below the AppIcon
+      by reconfigurating it in the configuration window (Misc)
+

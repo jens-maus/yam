@@ -713,8 +713,9 @@ void CO_SetDefaults(struct Config *co, int page)
    if (page == 14 || page < 0)
    {
       strcpy(co->TempDir, "T:");
-      strcpy(co->PackerCommand,"LhA -a -m -i%l a \"%a\"");
+      strcpy(co->PackerCommand, "LhA -a -m -i%l a \"%a\"");
       co->IconPositionX = co->IconPositionY = 0;
+      strcpy(co->AppIconText, "New: %n Total: %t");
       co->IconifyOnQuit = co->RemoveAtOnce = FALSE;
       co->Confirm = co->SaveSent = co->SendMDNAtOnce = TRUE;
       co->ConfirmDelete = 2;

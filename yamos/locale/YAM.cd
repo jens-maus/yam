@@ -4677,3 +4677,25 @@ SMTP AUTH user here.
 MSG_HELP_CO_ST_SMTPAUTHPASS (//)
 Enter the password of the\n\
 SMTP AUTH user here.
+;
+MSG_HELP_CO_ST_APPICON (//)
+Enter text that should be displayed\n\
+as the text of the AppIcon.
+;
+MSG_CO_APPICONTEXT (//)
+AppIcon Label
+;
+MSG_CO_NEWMSGS (//)
+%n  New Messages
+;
+MSG_CO_UNREADMSGS (//)
+%u  Unread Messages
+;
+MSG_CO_TOTALMSGS (//)
+%t  Total Messages
+;
+MSG_CO_DELMSGS (//)
+%d  Deleted Messages
+;
+MSG_CO_SENTMSGS (//)
+%s  Sent Messages

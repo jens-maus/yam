@@ -2859,11 +2859,37 @@ void DisplayStatistics(struct Folder *fo)
    {
      if (check || fo->New != G->NewMsgs || fo->Unread != G->UnrMsgs || fo->Total != G->TotMsgs)
      {
+       char *src;
+       char dst[10];
+
        // we set the mode accordingly to the status of the folder (new/check/old)
        int mode = fo->Total ? (fo->New ? 2 : 1) : 0;
 
        if (G->TR && G->TR->Checking) mode = 3;
-       SPrintF(apptit, GetStr(MSG_APPICON_STATS), fo->New, fo->Unread, fo->Total);
+
+       // clear AppIcon Label first before we create it new
+       apptit[0] = '\0';
+
+       // Lets create the label of the AppIcon now
+       for (src = C->AppIconText; *src; src++)
+       {
+         if (*src == '%')
+         {
+            switch (*++src)
+            {
+              case '%': strcpy(dst, "%");                break;
+              case 'n': sprintf(dst, "%ld", fo->New);    break;
+              case 'u': sprintf(dst, "%ld", fo->Unread); break;
+              case 't': sprintf(dst, "%ld", fo->Total);  break;
+            }
+         }
+         else
+         {
+            sprintf(dst, "%c", *src);
+         }
+
+         strcat(apptit, dst);
+       }
 
        // We first have to remove the appicon before we can change it
        if (G->AppIcon)
@@ -2945,10 +2971,12 @@ void PlaySound(char *filename)
             else
             {
                ULONG length = 0, period = 394, cycles = 1, frequency, seconds;
+
                GetDTAttrs(sound, SDTA_SampleLength, &length, SDTA_Period, &period, SDTA_Cycles, &cycles, TAG_END);
                if (length > 131072) length = 131072;
                frequency = (ULONG)(SysBase->ex_EClockFrequency * 5) / period;
                seconds = (length * cycles) / frequency + 1;
+
                DoDTMethodA(sound, NULL, NULL, (Msg)&Play);
                Delay(seconds * 50);
             }

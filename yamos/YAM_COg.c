@@ -278,7 +278,12 @@ static APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
                   DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFiles), MUIV_List_Insert_Bottom);
                   DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_ArchiveFilelist), MUIV_List_Insert_Bottom);
                   break;
-
+         case 4:  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_NEWMSGS), MUIV_List_Insert_Bottom);
+                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_UNREADMSGS), MUIV_List_Insert_Bottom);
+                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_TOTALMSGS), MUIV_List_Insert_Bottom);
+//                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_DELMSGS), MUIV_List_Insert_Bottom);
+//                  DoMethod(lv, MUIM_List_InsertSingle, GetStr(MSG_CO_SENTMSGS), MUIV_List_Insert_Bottom);
+                  break;
       }
       DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
    }
@@ -1459,6 +1464,10 @@ APTR CO_Page14(struct CO_ClassData *data)
                   Child, Label2("_Y"),
                   Child, data->GUI.ST_APPY = MakeInteger(5,"_Y"),
                End,
+               Child, HGroup,
+                Child, Label2(GetStr(MSG_CO_APPICONTEXT)),
+                Child, MakeVarPop(&data->GUI.ST_APPICON, 4, SIZE_DEFAULT/2, ""),
+               End,
                Child, MakeCheckGroup((Object **)&data->GUI.CH_CLGADGET, GetStr(MSG_CO_CloseGadget)),
             End,
             Child, VGroup, GroupFrameT(GetStr(MSG_CO_SaveDelete)),
@@ -1526,6 +1535,7 @@ APTR CO_Page14(struct CO_ClassData *data)
       SetHelp(data->GUI.NB_ENCPACK   ,MSG_HELP_CO_NB_ENCPACK   );
       SetHelp(data->GUI.NB_PACKER    ,MSG_HELP_CO_NB_ENCPACK   );
       SetHelp(data->GUI.ST_ARCHIVER  ,MSG_HELP_CO_ST_ARCHIVER  );
+      SetHelp(data->GUI.ST_APPICON   ,MSG_HELP_CO_ST_APPICON   );
    }
    return grp;
 }

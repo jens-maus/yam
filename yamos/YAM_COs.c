@@ -486,6 +486,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "MessageCols"))    co->MessageCols = atoi(value);
                if (!stricmp(buffer, "FixedFontList"))  co->FixedFontList = Txt2Bool(value);
                if (!stricmp(buffer, "SwatchBeat"))     co->SwatchBeat = Txt2Bool(value);
+               if (!stricmp(buffer, "SizeFormat"))     co->SizeFormat = atoi(value);
 /*9*/          if (!stricmp(buffer, "PGPCmdPath"))     stccpy(co->PGPCmdPath, value, SIZE_PATH);
                if (!stricmp(buffer, "MyPGPID"))        stccpy(co->MyPGPID, value, SIZE_DEFAULT);
                if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
@@ -567,7 +568,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
                if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
                if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
-/*15*/         if (!stricmp(buffer, "SizeFormat"))     co->SizeFormat = atoi(value);
             }
          }
          fclose(fh);
@@ -737,6 +737,7 @@ void CO_GetConfig(void)
          CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
          CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
          GetMUIString(CE->PackerCommand       ,gui->ST_ARCHIVER);
+         GetMUIString(CE->AppIconText         ,gui->ST_APPICON);
          break;
    }
 }
@@ -913,6 +914,7 @@ void CO_SetConfig(void)
          setslider   (gui->NB_PACKER    ,CE->XPKPackEff);
          setslider   (gui->NB_ENCPACK   ,CE->XPKPackEncryptEff);
          setstring   (gui->ST_ARCHIVER  ,CE->PackerCommand);
+         setstring   (gui->ST_APPICON   ,CE->AppIconText);
          break;
    }
 }
