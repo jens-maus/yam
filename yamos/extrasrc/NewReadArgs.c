@@ -27,7 +27,9 @@
 
 #include "YAM_debug.h"
 
-//#define COMPILE_V39
+#if defined(__amigaos4__)
+  #define COMPILE_V39
+#endif
 
 /****************************************************************************/
 
