@@ -1,3 +1,8 @@
+2001-10-28  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * Parts in a multipart mail will now be displayed colored to
+      indicate that they are clickable.
+
 2001-10-27  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM now also brings all windows to the front if the AppIcon

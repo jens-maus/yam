@@ -2122,7 +2122,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
          if (mode != RIM_READ && part->Nr > 1) break;
          if (mode == RIM_READ && (part->Nr > 1 || !dodisp))
          {
-            *buffer = 0; sprintf(buffer, "%s%ld: %s\n%s%s:%s %s   %s%s:%s %ld %s\n", tsb, part->Nr, part->Name, bo, GetStr(MSG_RE_ContentType), pl, DescribeCT(part->ContentType), bo, GetStr(MSG_Size), pl, part->Size, GetStr(MSG_Bytes));
+            *buffer = 0; sprintf(buffer, "%s\033p[7]%ld: %s\033p[0]\n%s%s:%s %s   %s%s:%s %ld %s\n", tsb, part->Nr, part->Name, bo, GetStr(MSG_RE_ContentType), pl, DescribeCT(part->ContentType), bo, GetStr(MSG_Size), pl, part->Size, GetStr(MSG_Bytes));
             if (*buffer) cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
             *buffer = 0; if (*part->Description) sprintf(&buffer[strlen(buffer)], "%s%s:%s %s\n", bo, GetStr(MSG_RE_Description), pl, part->Description);
             if (dodisp) { strcat(buffer, sb); strcat(buffer, "\n"); }
