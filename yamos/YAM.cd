@@ -4610,3 +4610,9 @@ is: \eb%s\en\n\
 Change to this folder and continue\n\
 with reading there?
 ;
+MSG_WR_NoSubjectReqGad (//)
+*_Set Subject|_Continue without Subject
+;
+MSG_NoSubjectReq (//)
+Warning: Subject is empty
+;

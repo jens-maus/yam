@@ -1227,8 +1227,8 @@ void WR_NewMail(int mode, int winnum)
    struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
    long winopen;
 
-   get(G->WR[winnum]->GUI.WI, MUIA_Window_Open, &winopen);
-   if (winopen) set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
+   get(gui->WI, MUIA_Window_Open, &winopen);
+   if (winopen) set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
    /* Workaround for a MUI bug */
 
    clear(&mail, sizeof(struct Mail));
@@ -1238,8 +1238,16 @@ void WR_NewMail(int mode, int winnum)
    er = GetStr(MSG_WR_ErrorNoRcpt);
    if (!*addr) if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), er)) mode = WRITE_HOLD;
       else return;
-   Busy(GetStr(MSG_BusyComposing), "", 0, 0);
    get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
+   if (*comp.Subject == '\0')
+   {
+      if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoSubjectReqGad), GetStr(MSG_NoSubjectReq)))
+      {
+         set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
+         return;
+      }
+   }
+   Busy(GetStr(MSG_BusyComposing), "", 0, 0);
    comp.Mode = wr->Mode;
    comp.OrigMail = wr->Mail;
    comp.OldSecurity = wr->OldSecurity;
@@ -1270,7 +1278,7 @@ void WR_NewMail(int mode, int winnum)
 			SetDefaultSecurity(&comp);
       comp.DelSend = GetMUICheck(gui->CH_DELSEND);
       comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
-      get(G->WR[winnum]->GUI.LV_ATTACH, MUIA_List_Entries, &att);
+      get(gui->LV_ATTACH, MUIA_List_Entries, &att);
       EditorToFile(gui->TE_EDIT, G->WR_Filename[winnum], G->TTout);
       comp.FirstPart = BuildPartsList(winnum);
       comp.FirstPart->TTable = G->TTout;

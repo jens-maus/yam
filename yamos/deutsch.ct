@@ -260,14 +260,12 @@ Kompiliert am:
 MSG_Copyright2
 Dieses Programm ist freie Software; Sie können es unter den Bedingungen der GNU General Public License weitergeben und/oder modifizieren. Mehr Informationen dazu in der beiliegenden Dokumentation.\n\
 
-; This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n\
-; 
+; This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
 ;
 MSG_UsedSoftware
 Dieses Programm verwendet folgende Fremdsoftware:\n\
 
-; This application uses the following third party software:\n\
-; 
+; This application uses the following third party software:\n
 ;
 MSG_WebSite
 Aktuelle Informationen über YAM finden Sie auf der YAM Support Site unter \e5http://www.yam.ch/
@@ -696,8 +694,7 @@ MSG_MA_AttachRemoved
 _Die folgenden Anlagen wurden manuell entfernt:_\n\
 
 ; \n\
-; _The following attachments have been removed manually:_\n\
-; 
+; _The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq
 Bitte bestätigen Sie...
@@ -710,14 +707,12 @@ Bitte bestätigen Sie die Löschung.
 MSG_MA_1Selected
 Eine Nachricht ausgewählt.\n\
 
-; One message selected.\n\
-; 
+; One message selected.\n
 ;
 MSG_MA_xSelected
 %ld Nachrichten ausgewählt.\n\
 
-; %lD messages selected.\n\
-; 
+; %lD messages selected.\n
 ; COUNT
 ;
 MSG_MA_ConfirmFilter
@@ -1240,8 +1235,7 @@ MSG_CO_ImportMIMEGads
 MSG_CO_NewIntroDef
 Hallo,\\n\
 
-; Hello,\\\\n\
-; 
+; Hello,\\\\n
 ;
 MSG_CO_AltRepIntroDef
 Am %d schriebst Du:
@@ -1268,14 +1262,12 @@ Betreff: %s\\n\
 ; Subject: %s\\\\n\
 ; \\\\n\
 ; --- Forwarded message follows ---\\\\n\
-; \\\\n\
-; 
+; \\\\n
 ;
 MSG_CO_ForwardFinishDef
 *** Ende der weitergeleiteten Nachricht ***\\n\
 
-; *** End of forwarded message ***\\\\n\
-; 
+; *** End of forwarded message ***\\\\n
 ;
 MSG_CO_GreetingsDef
 Mit freundlichen Grüssen
@@ -1297,8 +1289,7 @@ MSG_CO_MLRepHelloDef
 MSG_CO_MLRepIntroDef
 Am %d schrieb %n:\\n\
 
-; On %d, %n wrote:\\\\n\
-; 
+; On %d, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef
 Gruss
@@ -3912,8 +3903,7 @@ Signatur in Ordnung
 MSG_RE_SigFrom
  von\n\
 
-;  from\n\
-; 
+;  from\n
 ;
 MSG_RE_SigCheck
 Prüfe PGP-Signatur
@@ -3996,8 +3986,7 @@ Dies ist keine Garantie dafür, daß der Inhalt gelesen oder verstanden wurde.\n\
 ; The message\n\
 ; %s\n\
 ; has been displayed.\n\
-; This is no guarantee that the content has been read or understood.\n\
-; 
+; This is no guarantee that the content has been read or understood.\n
 ;
 MSG_RE_MDNprocessed
 Die Nachricht\n\
@@ -4010,8 +3999,7 @@ Nachricht unter Umständen zu einem späteren Zeitpunkt lesen.\n\
 ; %s\n\
 ; has been processed%s,\n\
 ; without being displayed to the user. The user may or may not see\n\
-; the message later.\n\
-; 
+; the message later.\n
 ;
 MSG_RE_MDNdispatched
 Die Nachricht\n\
@@ -4024,8 +4012,7 @@ Nachricht unter Umständen zu einem späteren Zeitpunkt lesen.\n\
 ; %s\n\
 ; has been sent somewhere%s,\n\
 ; without being displayed to the user. The user may or may not see\n\
-; the message later.\n\
-; 
+; the message later.\n
 ;
 MSG_RE_MDNdeleted
 Die Nachricht\n\
@@ -4039,8 +4026,7 @@ und lesen.\n\
 ; %s\n\
 ; has been deleted%s.\n\
 ; The recipient may or may not have seen the message. The recipient\n\
-; may \"undelete\" the message at a later time and read the message.\n\
-; 
+; may \"undelete\" the message at a later time and read the message.\n
 ;
 MSG_RE_MDNdenied
 Der Empfänger der Nachricht\n\
@@ -4049,8 +4035,7 @@ möchte Sie nicht über deren Status informieren.\n\
 
 ; The recipient of the message\n\
 ; %s\n\
-; doesn't wish to inform you about the disposition of that message.\n\
-; 
+; doesn't wish to inform you about the disposition of that message.\n
 ;
 MSG_RE_MDNunknown
 Die Nachricht\n\
@@ -4059,8 +4044,7 @@ Die Nachricht\n\
 
 ; The message\n\
 ; %s\n\
-; has been %s%s.\n\
-; 
+; has been %s%s.\n
 ;
 MSG_RE_PGPNotAllowed
 >PGP Fehler<\n\
@@ -4072,13 +4056,11 @@ wurde für jemand anderen verschlüsselt.\n\
 ; >PGP Error<\n\
 ; \n\
 ; You're not allowed to view this PGP encrypted message. Either your PGP software\n\
-; isn't configured properly, or the message was encrypted for someone else.\n\
-; 
+; isn't configured properly, or the message was encrypted for someone else.\n
 ;
 MSG_RE_MsgReadOnly
 Diese Nachricht kann nur von %s gelesen werden
-; The message can only be read by %s\n\
-; 
+; The message can only be read by %s\n
 ; RECIPIENT
 ;
 MSG_RE_AddSender
@@ -5058,8 +5040,7 @@ MSG_TR_NewMailReq
 ; \n\
 ; %3ld messages downloaded,\n\
 ; %3ld left on server\n\
-; %3ld duplicates skipped\n\
-; 
+; %3ld duplicates skipped\n
 ; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FilterStats
@@ -6380,4 +6361,12 @@ das lesen fortsetzen?
 ; is: \eb%s\en\n\
 ; Change to this folder and continue\n\
 ; with reading there?
+;
+MSG_WR_NoSubjectReqGad
+*_Betreff setzen|_Weiter ohne Betreff
+; *_Set Subject|_Continue without Subject
+;
+MSG_NoSubjectReq
+Warnung: Der Betreff ist leer
+; Warning: Subject is empty
 ;

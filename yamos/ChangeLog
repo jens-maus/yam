@@ -168,3 +168,6 @@
     * Workaround for the 'crash on editwindow close' bug added
       (YAM_UT.c/DisposeModule()).
 
+2001-03-13  Christian Hattemer <krille@users.sourceforge.net>
+
+    * Added a warning when a mail without subject is going to be sent.
