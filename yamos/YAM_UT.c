@@ -2255,7 +2255,6 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
    {
       *new = *mail;
       new->Folder = folder;
-//    MyAddTail(&(folder->Messages), new);
       MyAddHead(&(folder->Messages), new);
       folder->Total++;
       folder->Size += mail->Size;
