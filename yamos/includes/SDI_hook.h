@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.2 (18.10.2002)
+        Versionstring:  $VER: SDI_hook.h 1.3 (08.02.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler specific hook stuff
@@ -14,6 +14,7 @@
         Langner, largely reworked the mechanism
  1.1   07.10.02 : added HOOKPROTONP and HOOKPROTONONP requested by Jens
  1.2   18.10.02 : reverted to old MorphOS-method for GCC
+ 1.3   08.02.04 : modified to get it compatible to AmigaOS4
 */
 
 /*
@@ -73,6 +74,23 @@
 */
 
 #if !defined(__MORPHOS__) || !defined(__GNUC__)
+  #if defined(__amigaos4__)
+  #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM(ret)            \
+    name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
+  #define HOOKPROTONO(name, ret, param) static SAVEDS ASM(ret)               \
+    name(REG(a0, struct Hook *hook), REG(a2, APTR obj), REG(a1, param))
+  #define HOOKPROTONP(name, ret, obj) static SAVEDS ASM(ret)                 \
+    name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, APTR param))
+  #define HOOKPROTONONP(name, ret) static SAVEDS ASM(ret)                    \
+    name(REG(a0, struct Hook *hook), REG(a2, APTR obj,), REG(a1, APTR param))
+  #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ASM(ret)          \
+    name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
+  #define HOOKPROTONHNO(name, ret, param) static SAVEDS ASM(ret)             \
+    name(REG(a0, struct Hook *hook), REG(a2, APTR obj), REG(a1, param))
+  #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM(ret)               \
+    name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, APTR param))
+  #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
+  #else
   #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM(ret)            \
     name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
   #define HOOKPROTONO(name, ret, param) static SAVEDS ASM(ret)               \
@@ -88,6 +106,7 @@
   #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM(ret)               \
     name(REG(a2, obj))
   #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
+  #endif
 #endif
 
 #ifdef __MORPHOS__
@@ -162,7 +181,6 @@
   #define DISPATCHERPROTO(name) static SAVEDS ASM(ULONG) name(REG(a0,        \
     struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
   #define ENTRY(func) (APTR)func
-
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
     (HOOKFUNC)funcname, NULL, NULL}
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
@@ -170,6 +188,6 @@
 #endif
 
 #define InitHook(hook, orighook, data) ((hook)->h_Entry = (orighook).h_Entry,\
-  (hook)->h_Data = (APTR)(data))
+  (hook)->h_SubEntry = (orighook).h_SubEntry,(hook)->h_Data = (APTR)(data))
 
 #endif /* SDI_HOOK_H */

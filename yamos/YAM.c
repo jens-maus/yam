@@ -818,7 +818,8 @@ static void Terminate(void)
 
    // close the catalog and locale now
    CloseYAMCatalog();
-   if(G->Locale)      CloseLocale(G->Locale);
+   if(G->Locale)
+     CloseLocale(G->Locale);
 
    #if defined(__amigaos4__)
    CloseLib(LocaleBase, ILocale);
@@ -880,8 +881,8 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 
    DB(kprintf("CheckMCC: %s ", name);)
 
-   for(;;) {
-
+   for(;;)
+   {
      // First we attempt to acquire the version and revision through MUI
      Object *obj = MUI_NewObject(name, TAG_DONE);
      if (obj)
@@ -1116,6 +1117,7 @@ static void Initialise2(void)
       for (i = 0; i < 100; i++) if (oldfolders[i]) DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
       newfolders = TRUE;
    }
+
    if (oldfolders) { for (i = 0; oldfolders[i]; i++) free(oldfolders[i]); free(oldfolders); }
    if (!FO_GetFolderByType(FT_INCOMING,NULL)) newfolders |= FO_CreateFolder(FT_INCOMING, FolderNames[0], GetStr(MSG_MA_Incoming));
    if (!FO_GetFolderByType(FT_OUTGOING,NULL)) newfolders |= FO_CreateFolder(FT_OUTGOING, FolderNames[1], GetStr(MSG_MA_Outgoing));

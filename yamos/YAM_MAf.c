@@ -1394,7 +1394,10 @@ MakeHook(PO_InitFolderListHook, PO_InitFolderList);
 //  Folder listview display hook
 HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 {
-   if (msg != NULL && msg->TreeNode != NULL)
+   if(msg == NULL)
+    return 0;
+
+   if(msg->TreeNode != NULL)
    {
       static char dispfold[SIZE_DEFAULT], disptot[SIZE_SMALL], dispunr[SIZE_SMALL], dispnew[SIZE_SMALL], dispsiz[SIZE_SMALL];
 
@@ -1441,6 +1444,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
       msg->Array[3] = GetStr(MSG_New);
       msg->Array[4] = GetStr(MSG_Size);
    }
+
    return 0;
 }
 MakeHook(MA_LV_FDspFuncHook,MA_LV_FDspFunc);

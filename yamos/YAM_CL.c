@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -75,15 +75,15 @@ struct TE_Data
 };
 
 /*** Definitions ***/
-struct MUI_CustomClass *CL_TextEditor;
-struct MUI_CustomClass *CL_BodyChunk;
-struct MUI_CustomClass *CL_FolderList;
-struct MUI_CustomClass *CL_MailList;
-struct MUI_CustomClass *CL_AddressList;
-struct MUI_CustomClass *CL_AttachList;
-struct MUI_CustomClass *CL_DDList;
-struct MUI_CustomClass *CL_MainWin;
-struct MUI_CustomClass *CL_PageList;
+struct MUI_CustomClass *CL_TextEditor   = NULL;
+struct MUI_CustomClass *CL_BodyChunk    = NULL;
+struct MUI_CustomClass *CL_FolderList   = NULL;
+struct MUI_CustomClass *CL_MailList     = NULL;
+struct MUI_CustomClass *CL_AddressList  = NULL;
+struct MUI_CustomClass *CL_AttachList   = NULL;
+struct MUI_CustomClass *CL_DDList       = NULL;
+struct MUI_CustomClass *CL_MainWin      = NULL;
+struct MUI_CustomClass *CL_PageList     = NULL;
 
 /// BC_Dispatcher (BodyChunk)
 /*** BC_Dispatcher (BodyChunk) - Subclass of BodyChunk, can load images from files ***/
@@ -421,9 +421,12 @@ DISPATCHERPROTO(MW_Dispatcher)
 {
    if (msg->MethodID == MUIM_MainWindow_CloseWindow)
    {
-      APTR app, win = ((struct MUIP_MainWindow_CloseWindow *)msg)->Window;
+      Object *app;
+      APTR win = ((struct MUIP_MainWindow_CloseWindow *)msg)->Window;
+
       set(win, MUIA_Window_Open, FALSE);
-      get(win, MUIA_ApplicationObject, &app);
+      app = xget(win, MUIA_ApplicationObject);
+
       DoMethod(app, OM_REMMEMBER, win);
       MUI_DisposeObject(win);
    }
@@ -923,19 +926,110 @@ DISPATCHERPROTO(PL_Dispatcher)
 
 ///
 
+/// CreateMCC()
+// Wrapper function to create a MUI custom class
+static struct MUI_CustomClass *CreateMCC(STRPTR supername, struct MUI_CustomClass *supermcc, int instDataSize, APTR dispatcher)
+{
+	struct MUI_CustomClass *cl;
+
+  #if defined(__amigaos4__) && defined(WITH_ASMSTUB)
+	extern ULONG muiDispatcherEntry(void);
+
+	if((cl = MUI_CreateCustomClass(NULL, supername, supermcc, instDataSize, &muiDispatcherEntry)))
+	{
+		cl->mcc_Class->cl_UserData = (ULONG)dispatcher;
+	}
+  #else
+	cl = MUI_CreateCustomClass(NULL, supername, supermcc, instDataSize, dispatcher);
+  #endif
+	return cl;
+}
+
+#if defined(__amigaos4__) && defined(WITH_ASMSTUB)
+#warning "ASMSTUB enabled - please remove as soon as OS4 is fixed to work with crosscalls in MUI."
+#if #cpu (powerpc)
+// Let us use the Assembler muiDispatcherEntry function
+// as long as AmigaOS4 can`t handle the MUI dispatchers correctly.
+__asm__
+("
+    .globl  muiDispatcherEntry
+	  .type   muiDispatcherEntry, @function
+
+    .section .data
+
+  muiDispatcherEntry:
+	  .short     0x4ef8                /* JMP.w */
+	  .short     0                     /* Indicate switch */
+	  .short     1                     /* Trap type */
+	  .long      muiDispatcherEntryPPC
+	  /* Register mapping */
+	  .byte      4
+	  .byte      1,60
+	  .byte      3,32
+	  .byte	     4,40
+	  .byte	     5,36
+	  .align	   4
+
+		.section .text
+	  .align     2
+
+  muiDispatcherEntryPPC:
+	  addi       r12, r1, -16        /* Calculate stackframe size */
+		rlwinm     r12, r12, 0, 0, 27  /* Align it */
+		stw        r1, 0(r12)          /* Store backchain pointer */
+		mr         r1, r12             /* Set real stack pointer */
+
+		stw		     r11,12(r1)          /* Store Enter68kQuick vector */
+
+		lwz		     r12,36(r3)          /* Get the cl_Userdata */
+		mtlr	     r12
+		blrl
+
+		lwz		     r11,12(r1)
+		mtlr	     r11
+
+		lwz        r1, 0(r1)           /* Cleanup stack frame */
+
+		blrl							             /* Return to emulation */
+		.long      muiHookExit
+		.byte      0                   /* Flags */
+		.byte      2                   /* Two registers (a7 and d0) */
+		.byte      1                   /* Map r1 */
+		.byte      60                  /* to A7 */
+		.byte      3                   /* Map r3 */
+		.byte      0                   /* to D0 */
+		.align     4
+		.section .data
+
+  muiHookExit:
+    .short     0x4e75              /* RTS */
+");
+#else
+ #error "no ASM for 68k OS4 required"
+#endif
+#endif
+
+///
 /// ExitClasses()
 /*** ExitClasses - Remove custom MUI classes ***/
 void ExitClasses(void)
 {
-   if (CL_PageList   ) MUI_DeleteCustomClass(CL_PageList   );
-   if (CL_MainWin    ) MUI_DeleteCustomClass(CL_MainWin    );
-   if (CL_TextEditor ) MUI_DeleteCustomClass(CL_TextEditor );
-   if (CL_BodyChunk  ) MUI_DeleteCustomClass(CL_BodyChunk  );
-   if (CL_MailList   ) MUI_DeleteCustomClass(CL_MailList   );
-   if (CL_FolderList ) MUI_DeleteCustomClass(CL_FolderList );
-   if (CL_AddressList) MUI_DeleteCustomClass(CL_AddressList);
-   if (CL_DDList     ) MUI_DeleteCustomClass(CL_DDList     );
-   if (CL_AttachList ) MUI_DeleteCustomClass(CL_AttachList );
+  if(CL_PageList)    { MUI_DeleteCustomClass(CL_PageList);     CL_PageList     = NULL; }
+  if(CL_MainWin)     { MUI_DeleteCustomClass(CL_MainWin);      CL_MainWin      = NULL; }
+  if(CL_TextEditor)  { MUI_DeleteCustomClass(CL_TextEditor);   CL_TextEditor   = NULL; }
+  if(CL_BodyChunk)   { MUI_DeleteCustomClass(CL_BodyChunk);    CL_BodyChunk    = NULL; }
+  if(CL_MailList)    { MUI_DeleteCustomClass(CL_MailList);     CL_MailList     = NULL; }
+  if(CL_FolderList)  { MUI_DeleteCustomClass(CL_FolderList);   CL_FolderList   = NULL; }
+  if(CL_AddressList) { MUI_DeleteCustomClass(CL_AddressList);  CL_AddressList  = NULL; }
+  if(CL_DDList)      { MUI_DeleteCustomClass(CL_DDList);       CL_DDList       = NULL; }
+  if(CL_AttachList)  { MUI_DeleteCustomClass(CL_AttachList);   CL_AttachList   = NULL; }
+
+  #if defined(__amigaos4__)
+  #warning "OS4 specific work-around still there!"
+  // this seems to work around an OS4 specific bug, but why??? remove it and YAM
+  // will crash on exit.. because of an invalid return jump? mhh?!?
+  DebugPrintF("");
+  #endif
 }
 
 ///
@@ -943,17 +1037,19 @@ void ExitClasses(void)
 /*** InitClasses - Initialize custom MUI classes ***/
 BOOL InitClasses(void)
 {
-   CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
-   CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
-   CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(AL_Dispatcher));
-   CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct FL_Data), ENTRY(FL_Dispatcher));
-   CL_MailList    = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct ML_Data), ENTRY(ML_Dispatcher));
-   CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));
-   CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct TE_Data), ENTRY(TE_Dispatcher));
-   CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));
-   CL_PageList    = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher));
+  if((CL_AttachList   = CreateMCC(MUIC_NList,     NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher))))
+  if((CL_DDList       = CreateMCC(MUIC_NListtree, NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher))))
+  if((CL_AddressList  = CreateMCC(MUIC_NListtree, NULL, sizeof(struct DumData), ENTRY(AL_Dispatcher))))
+  if((CL_FolderList   = CreateMCC(MUIC_NListtree, NULL, sizeof(struct FL_Data), ENTRY(FL_Dispatcher))))
+  if((CL_MailList     = CreateMCC(MUIC_NList,     NULL, sizeof(struct ML_Data), ENTRY(ML_Dispatcher))))
+  if((CL_BodyChunk    = CreateMCC(MUIC_Bodychunk, NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher))))
+  if((CL_TextEditor   = CreateMCC(MUIC_TextEditor,NULL, sizeof(struct TE_Data), ENTRY(TE_Dispatcher))))
+  if((CL_MainWin      = CreateMCC(MUIC_Window,    NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher))))
+  if((CL_PageList     = CreateMCC(MUIC_List,      NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher))))
+  {
+    return TRUE;
+  }
 
-   return (BOOL)(CL_AttachList && CL_DDList && CL_AddressList && CL_FolderList && CL_MailList &&
-                 CL_BodyChunk && CL_TextEditor && CL_MainWin && CL_PageList);
+  return FALSE;
 }
 ///

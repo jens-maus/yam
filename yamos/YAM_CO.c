@@ -651,9 +651,13 @@ static int CO_DetectPGP(struct Config *co)
 void CO_FreeConfig(struct Config *co)
 {
    int i;
-   for (i = 0; i < MAXP3; i++) if (co->P3[i]) free(co->P3[i]);
-   for (i = 0; i < MAXRU; i++) if (co->RU[i]) free(co->RU[i]);
-   for (i = 0; i < MAXMV; i++) if (co->MV[i]) free(co->MV[i]);
+
+   // free all config elements
+   for(i = 0; i < MAXP3; i++) { if(co->P3[i]) free(co->P3[i]); }
+   for(i = 0; i < MAXRU; i++) { if(co->RU[i]) free(co->RU[i]); }
+   for(i = 0; i < MAXMV; i++) { if(co->MV[i]) free(co->MV[i]); }
+
+   // clear the config.
    memset(co, 0, sizeof(struct Config));
 }  
 

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -1374,13 +1374,19 @@ MakeStaticHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
 //  User pressed DEL key
 HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
 {
-   APTR obj;
-   get(G->MA->GUI.WI, MUIA_Window_ActiveObject, &obj);
-   if (!obj || obj == MUIV_Window_ActiveObject_None) get(G->MA->GUI.WI, MUIA_Window_DefaultObject, &obj);
-   if (obj == G->MA->GUI.LV_FOLDERS)
+   Object *actobj = xget(G->MA->GUI.WI, MUIA_Window_ActiveObject);
+
+   if(!actobj || actobj == MUIV_Window_ActiveObject_None)
+    actobj = xget(G->MA->GUI.WI, MUIA_Window_DefaultObject);
+
+   if(actobj == G->MA->GUI.LV_FOLDERS)
+   {
       CallHookPkt(&FO_DeleteFolderHook, 0, 0);
+   }
    else
+   {
       MA_DeleteMessage(arg[0], FALSE);
+   }
 }
 MakeStaticHook(MA_DelKeyHook, MA_DelKeyFunc);
 

@@ -29,6 +29,8 @@
     - DISPATCHERPROTO macro should be included in generated source.
     - DECLARE param parser should allow normal C style comments to be used
       too.
+    - removed special muiDispatcherEntry handling as soon as OS4 can manage
+      cross hook calls from PPC<>68k.
 
 ***************************************************************************/
 
@@ -48,6 +50,10 @@
  *
  * History
  * -------
+ * 0.12 - added special AmigaOS4 only dependent muiDispatcherEntry wrapper
+ *        dispatcher call. This should be only temporarly here and will be
+ *        removed as soon as AmigaOS4 allows full PPC->68k cross hook calls.
+ *
  * 0.11 - added AmigaOS4 support to the vararg _NewObject() function.
  *
  * 0.10 - fixed CleanupClasses to deal with NULL classes
@@ -108,7 +114,7 @@
  *
  */
 
-char *verstr = "0.11";
+char *verstr = "0.12";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -676,12 +682,20 @@ void gen_supportroutines( FILE *fp )
 "  for (i = 0; i < NUMBEROFCLASSES; i++)\n"
 "  {\n"
 "    struct MUI_CustomClass *superMCC = MCCInfo[i].SuperMCC == -1 ? NULL : %sClasses[MCCInfo[i].SuperMCC];\n"
+"    #if defined(__amigaos4__) && defined(WITH_ASMSTUB)\n"
+"    extern ULONG muiDispatcherEntry(void);\n"
+"    %sClasses[i] = MUI_CreateCustomClass(NULL, MCCInfo[i].SuperClass, superMCC, (int)MCCInfo[i].GetSize(), &muiDispatcherEntry);\n"
+"    #else\n"
 "    %sClasses[i] = MUI_CreateCustomClass(NULL, MCCInfo[i].SuperClass, superMCC, (int)MCCInfo[i].GetSize(), MCCInfo[i].Dispatcher);\n"
-"    if (!%sClasses[i])\n"
+"    #endif\n"
+"    if(!%sClasses[i])\n"
 "    {\n"
 "      %s_CleanupClasses();\n"
 "      return 0;\n"
 "    }\n"
+"    #if defined(__amigaos4__)\n"
+"    %sClasses[i]->mcc_Class->cl_UserData = (ULONG)MCCInfo[i].Dispatcher;\n"
+"    #endif\n"
 "  }\n"
 "  return 1;\n"
 "}\n"
@@ -710,7 +724,7 @@ void gen_supportroutines( FILE *fp )
 	arg_storm ? "/// "                : "",	
 	arg_storm ? bn                    : "",	
 	arg_storm ? "_SetupClasses()\n"   : "",
-	bn, bn, bn, bn, bn, bn, bn,
+	bn, bn, bn, bn, bn, bn, bn, bn, bn,
 	arg_storm ? "///\n"               : "",	
 
 	arg_storm ? "/// "                : "",	

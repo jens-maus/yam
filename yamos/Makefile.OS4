@@ -38,13 +38,13 @@ FC        = flexcat
 OBJDUMP   = ppc-amigaos-objdump
 
 CPU      = -mcpu=604e
-CPUFLAGS = -mmultiple
+CPUFLAGS = -mmultiple -Wa,-mregnames
 CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 WARN     = -Wall
 OPTFLAGS = -O2 -fomit-frame-pointer -fstrength-reduce -funroll-loops
 DEBUG    = -DDEBUG -g3 -O0
 REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
-CFLAGS   = -pipe -I./ -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ $(REDEFINE) -c
+CFLAGS   = -pipe -I. -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ -DWITH_ASMSTUB $(REDEFINE) -c
 LDFLAGS  = $(CPU)
 LDLIBS   =
 
@@ -80,14 +80,16 @@ all: $(TARGET)
 #
 
 %.o.elf: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	@echo "Compiling $<"
+	@$(CC) $(CFLAGS) $< -o $@
 
 #
 
 $(TARGET):  $(OBJS)
-	$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
-	$(STRIP) -o $@ $@.debug
-	$(CHMOD) a+x $@
+	@echo "Linking $@"
+	@$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
+	@$(STRIP) -o $@ $@.debug
+	@$(CHMOD) a+x $@
 
 dump:
 	-$(OBJDUMP) --section-headers --all-headers --reloc --disassemble-all $(TARGET).debug > $(TARGET).dump
@@ -110,7 +112,8 @@ YAM.o.elf:	YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
 	YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
 	YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
 	YAM_userlist.h YAM_utilities.h YAM_write.h
-	$(CC) $(CDEFS) $(DEVFLAGS) $(CFLAGS) $< -o $@
+	@echo "Compiling $<"
+	@$(CC) $(CDEFS) $(DEVFLAGS) $(CFLAGS) $< -o $@
 
 YAM_AB.o.elf: YAM_AB.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h YAM_global.h \
@@ -163,7 +166,8 @@ YAM_FO.o.elf: YAM_FO.c YAM.h YAM_classes.h YAM_debug.h YAM_error.h \
 	YAM_userlist.h YAM_utilities.h
 
 YAM_global.o.elf: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
-	$(CC) $(CDEFS) $(CFLAGS) $< -o $@
+	@echo "Compiling $<"
+	@$(CC) $(CDEFS) $(CFLAGS) $< -o $@
 
 YAM_MA.o.elf: YAM_MA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
@@ -183,7 +187,8 @@ YAM_MI.o.elf: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes.h \
 
 YAM_mail_lex.o.elf: YAM_mail_lex.c
 YAM_mail_lex.c: YAM_mail_lex.l YAM_mail_lex.h
-	$(FLEX) -Cem -i -t YAM_mail_lex.l > $@
+	@echo "Generating lexer $<"
+	@$(FLEX) -Cem -i -t YAM_mail_lex.l > $@
 
 YAM_RE.o.elf: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
@@ -229,7 +234,8 @@ all_gcc.o.elf: all_gcc.c extrasrc/astcsma.c extrasrc/getft.c extrasrc/stccpy.c \
 
 YAM_locale.h: YAM_locale.c
 YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
-	$(FC) locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+	@echo "Generating locale file $@"
+	@$(FC) locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
 
 ## CLASS DEPENDENCIES #################
 

@@ -46,7 +46,7 @@ CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%
 WARN     = -Wall
 OPTFLAGS = -O2 -fomit-frame-pointer -fstrength-reduce -funroll-loops
 DEBUG    = -DDEBUG -g3 -O0
-CFLAGS   = -noixemul -pipe -I./ -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
+CFLAGS   = -noixemul -pipe -I. -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS  = -noixemul $(CPU)
 LDLIBS   = -ldebug -lxpk -lamissl
 

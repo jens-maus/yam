@@ -5,8 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-02-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * OS4: final changes to get a first working native PPC version
+      for AmigaOS4. Now it at least seems to popup the GUI and
+      doesn't crash on exit anymore. Let's see if it also works
+      reliable for others now.
+
 2004-02-12  Alexey Ivanov <amis@amiga.org.ru>
-....*.MOS: generate correct ppcinline. Change makefile for MorphOS.
+
+    * MOS: generate correct ppcinline. Change makefile for MorphOS.
 
 2004-01-31  Jens Langner <Jens.Langner@light-speed.de>
 
