@@ -54,7 +54,7 @@ char *GetFolderInfo(struct Folder *folder)
 	static char bartxt[SIZE_DEFAULT/2];
 
 	// clear the bar text first
-	strcpy(bartxt, "");
+	bartxt[0] = '\0';
 
 	// Lets create the label of the AppIcon now
 	for (src = C->InfoBarText; *src; src++)
@@ -136,7 +136,7 @@ OVERLOAD(OM_NEW)
 
 		TAG_MORE, inittags(msg))))
 
-	return 0;
+		return 0;
 
 	data = (struct Data *)INST_DATA(cl,obj);
 
@@ -244,8 +244,8 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
 		SetAttrs(data->GA_INFO,
 			MUIA_Gauge_InfoText,  infoText,
 			MUIA_Gauge_Current,   msg->perc,
-			MUIA_Gauge_Max,       msg->max
-		);
+			MUIA_Gauge_Max,       msg->max,
+		TAG_DONE);
 
 		set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
 	}
