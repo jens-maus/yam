@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-03-02  Gunther Nikl <gni@gecko.de>
+
+    * YAM_utilities.h (xget): Replaced INLINE xget with a statement
+      expression to avoid including <proto/intuition.h> here.
+      This xget "inline" should go to a better place probably using again
+      INLINE then.
+    * YAM_global.c: Unify library base declarations.
+    * YAM_TR.c (TR_OpenTCPIP): Don't compare "TRUE" against NULL pointer.
+
 2005-03-01  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_COg.c: fixed bug #798798 where upon using the recipient string
