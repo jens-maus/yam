@@ -452,9 +452,11 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
         {
           todo = B64_LINELEN;
         }
-        else todo = towrite;
+        else
+          todo = towrite;
       }
-      else todo = missing_chars;
+      else
+        todo = towrite < missing_chars ? towrite : missing_chars;
 
       // now we do a binary write of the data
       if(fwrite(optr, 1, todo, out) != todo)

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-10-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c: fixed a minor bug in the base64 encoding routines where it
+      could have happened that YAM wrote too much encoded data at the end
+      of a file and therefore produced mails with corrupted attachments
+
 2004-10-08  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c, misc: reworked DateStamp2String() function to not work
