@@ -7,6 +7,9 @@ $Source$
 
 2002-07-19  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_rexx_rxif.c: fixed bug where the SHOW arexx command
+      didn`t work as expected directly after a start of YAM with
+      the HIDE option.
     * classes/YAM.c: fixed bug #583098 where the emailcache
       didn`t seem to work correctly as it should. Somehow it didn`t
       add new entries to the file, and if then not to the

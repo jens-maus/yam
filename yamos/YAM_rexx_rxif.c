@@ -71,8 +71,11 @@ void rx_show( struct RexxHost *host, struct rxd_show **rxd, long action, struct 
          break;
          
       case RXIF_ACTION:
-         set(G->App, MUIA_Application_Iconified, FALSE);
-         break;
+      {
+         // lets signal the application to uniconify and open the windows
+         PopUp();
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );
