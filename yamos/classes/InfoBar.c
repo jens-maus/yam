@@ -100,11 +100,6 @@ OVERLOAD(OM_NEW)
 		TextFrame,
 		MUIA_Background,    MUII_TextBack,
 		MUIA_Group_Horiz,   TRUE,
-		MUIA_InnerTop,      2,
-		MUIA_InnerBottom,   2,
-		MUIA_InnerLeft,     2,
-		MUIA_InnerRight,    2,
-
 		Child, HGroup,
 			Child, folderString = TextObject,
 				MUIA_HorizWeight,   0,
@@ -113,6 +108,7 @@ OVERLOAD(OM_NEW)
 			End,
 
 			Child, folderInfoStr = TextObject,
+        MUIA_Font,          MUIV_Font_Tiny,
 				MUIA_Text_PreParse, "\033l",
 			End,
 	    End,

@@ -1399,7 +1399,6 @@ static struct FO_ClassData *FO_New(void)
                   MUIA_HorizWeight,   0,
                   MUIA_Background,    MUII_ButtonBack,
                   MUIA_InputMode,     MUIV_InputMode_RelVerify,
-                  MUIA_Font,          MUIV_Font_Tiny,
                   MUIA_Text_Contents, GetStr(MSG_FO_AUTODETECT),
                 End,
                End,

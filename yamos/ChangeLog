@@ -1,3 +1,9 @@
+2001-12-03  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * removed the tiny font from the Autodetect button in the folder
+      configuration following the MUI Styleguide.
+    * reapplied the tiny font in the info bar.
+
 2001-11-25  AmiS <amis@amiga.org.ru>
 
     * Added "Codepage Autodetect/Translation" option.
