@@ -277,7 +277,7 @@ BOOL AY_New(BOOL hidden)
          End)),
          Child, G->AY_Group = PageGroup,
             Child, ft_text = FloattextObject,
-            	GroupFrame,
+              GroupFrame,
             End,
             Child, ScrollgroupObject,
                MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -286,8 +286,8 @@ BOOL AY_New(BOOL hidden)
                   Child, G->AY_List = VGroup,
                      Child, TextObject,
                         MUIA_Text_Contents, GetStr(MSG_UserLogin),
-                        MUIA_Background,		MUII_TextBack,
-                        MUIA_Frame,					MUIV_Frame_Text,
+                        MUIA_Background,    MUII_TextBack,
+                        MUIA_Frame,         MUIV_Frame_Text,
                         MUIA_Text_PreParse, MUIX_C MUIX_PH,
                      End,
                   End,
@@ -301,8 +301,8 @@ BOOL AY_New(BOOL hidden)
             MUIA_Gauge_Horiz, TRUE,
          End,
          Child, G->AY_Button = TextObject,
-         	 MUIA_ShowMe,				 FALSE,
-	         MUIA_Text_Contents, GetStr(MSG_CO_PhraseClose),
+           MUIA_ShowMe,        FALSE,
+           MUIA_Text_Contents, GetStr(MSG_CO_PhraseClose),
            MUIA_Background,    MUII_ButtonBack,
            MUIA_Frame,         MUIV_Frame_Button,
            MUIA_InputMode,     MUIV_InputMode_RelVerify,
@@ -315,17 +315,17 @@ BOOL AY_New(BOOL hidden)
    /* if the WindowObject could be created */
    if (G->AY_Win)
    {
-    	/* now we create the about text */
+      /* now we create the about text */
       G->AY_AboutText = AllocStrBuf(SIZE_LARGE);
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_Copyright2));
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_UsedSoftware));
-      G->AY_AboutText = StrBufCat(G->AY_AboutText, 	"\0338Magic User Interface\0332 (Stefan Stuntz)\n"
-                     						        						"\0338TextEditor.mcc, BetterString.mcc\0332 (Allan Odgaard)\n"
-												                            "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
-            											                  "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
-                       												      "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
-					                          						    "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
-                                                    "\0338popupmenu.library\0332 (Henrik Isaksson)\n\n");
+      G->AY_AboutText = StrBufCat(G->AY_AboutText, "\0338Magic User Interface\0332 (Stefan Stuntz)\n"
+                                                   "\0338TextEditor.mcc, BetterString.mcc\0332 (Allan Odgaard)\n"
+                                                   "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
+                                                   "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
+                                                   "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
+                                                   "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
+                                                   "\0338popupmenu.library\0332 (Henrik Isaksson)\n\n");
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
 
@@ -335,7 +335,7 @@ BOOL AY_New(BOOL hidden)
       DoMethod(G->AY_Win  ,MUIM_Notify,MUIA_Window_CloseRequest,TRUE ,G->AY_Win              ,3,MUIM_Set,MUIA_Window_Open, FALSE);
 
       // If the close button will be pressed we close the window
-      DoMethod(G->AY_Button,  MUIM_Notify, MUIA_Pressed, FALSE,	G->AY_Win, 3, MUIM_Set, MUIA_Window_Open, FALSE, TAG_DONE);
+      DoMethod(G->AY_Button,  MUIM_Notify, MUIA_Pressed, FALSE, G->AY_Win, 3, MUIM_Set, MUIA_Window_Open, FALSE, TAG_DONE);
 
       set(G->AY_Win, MUIA_Window_Open, !hidden);
 
@@ -435,7 +435,7 @@ BOOL Root_New(BOOL hidden)
 void Terminate(void)
 {
    int i;
- 	 struct Folder **flist;
+   struct Folder **flist;
 
    if (G->CO) { CO_FreeConfig(CE); free(CE); DisposeModule(&G->CO); }
    for (i = 0; i < MAXEA; i++) DisposeModule(&G->EA[i]);
@@ -628,7 +628,7 @@ void Initialise2(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 75);
    for (i = 0; ; i++)
    {
-    	struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIV_NListtree_GetEntry_Flag_Visible, TAG_DONE);
+      struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIV_NListtree_GetEntry_Flag_Visible, TAG_DONE);
       if (!tn) break;
       folder = tn->tn_User;
       if (!folder) break;
@@ -645,7 +645,7 @@ void Initialise2(BOOL hidden)
    set(G->MA->GUI.WI, MUIA_Window_Open, !hidden);
    set(G->AY_Win, MUIA_Window_Open, FALSE);
    set(G->AY_Text, MUIA_ShowMe, FALSE);
-	 set(G->AY_Button, MUIA_ShowMe, TRUE);
+   set(G->AY_Button, MUIA_ShowMe, TRUE);
 }
 ///
 /// Initialise
@@ -677,7 +677,7 @@ void Initialise(BOOL hidden)
 #endif
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
 
-	 // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
+   // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
    PopupMenuBase = (struct PopupMenuBase *)InitLib(POPUPMENU_NAME, 9, 0, FALSE, FALSE);
 
    /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
@@ -974,4 +974,3 @@ void main(int argc, char **argv)
    }
 }
 ///
-
