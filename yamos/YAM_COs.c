@@ -232,7 +232,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "TranslationIn    = %s\n", co->TranslationIn);
       fprintf(fh, "AutoTranslationIn= %s\n", Bool2Txt(co->AutomaticTranslationIn));
       fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
-      fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelay);
+      fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
 
       fprintf(fh, "\n[Write]\n");
       fprintf(fh, "ReplyTo          = %s\n", co->ReplyTo);
@@ -589,6 +589,21 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "TranslationIn"))  stccpy(co->TranslationIn, value, SIZE_PATHFILE);
                else if (!stricmp(buffer, "AutoTranslationIn"))co->AutomaticTranslationIn = Txt2Bool(value);
                else if (!stricmp(buffer, "EmbeddedReadPane"))    co->EmbeddedReadPane = Txt2Bool(value);
+               else if (!stricmp(buffer, "StatusChangeDelay"))
+               {
+                 int delay = atoi(value);
+
+                 if(delay < 0)
+                 {
+                   co->StatusChangeDelay = -1*delay;
+                   co->StatusChangeDelayOn = FALSE;
+                 }
+                 else
+                 {
+                   co->StatusChangeDelay = delay;
+                   co->StatusChangeDelayOn = TRUE;
+                 }
+               }
 /*5*/          else if (!stricmp(buffer, "ReplyTo"))        stccpy(co->ReplyTo,  value, SIZE_ADDRESS);
                else if (!stricmp(buffer, "Organization"))   stccpy(co->Organization, value, SIZE_DEFAULT);
                else if (!stricmp(buffer, "ExtraHeaders"))   stccpy(co->ExtraHeaders, value, SIZE_LARGE);
