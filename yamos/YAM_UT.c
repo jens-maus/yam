@@ -923,27 +923,25 @@ char *MyStrChr(const char *s, int c)
 ///
 /// AllocStrBuf
 //  Allocates a dynamic buffer
-char *AllocStrBuf(long initlen)
+char *AllocStrBuf(size_t initlen)
 {
-   char *strbuf = calloc((size_t)initlen+4, sizeof(char));
-   if (strbuf)
-   {
-      *((long *)strbuf) = initlen;
-      return &strbuf[4];
-   }
-   return NULL;
+   size_t *strbuf = calloc(initlen+sizeof(size_t), sizeof(char));
+   if (!strbuf)
+     return NULL;
+   *strbuf++ = initlen;
+   return (char *)strbuf;
 }
 ///
 /// StrBufCpy
 //  Fills a dynamic buffer
 char *StrBufCpy(char *strbuf, char *source)
 {
-   long oldlen, newlen;
+   size_t oldlen, newlen;
    char *newstrbuf;
 
    if (!strbuf)
-     if (NULL == (strbuf = AllocStrBuf((LONG)strlen(source)+1))) return NULL;
-   oldlen = *((long *)(strbuf-sizeof(long)));
+     if (NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
+   oldlen = ((size_t *)strbuf)[-1];
    newstrbuf = strbuf;
    for (newlen = oldlen; newlen <= strlen(source); newlen += SIZE_DEFAULT);
    if (newlen != oldlen)
@@ -959,12 +957,12 @@ char *StrBufCpy(char *strbuf, char *source)
 //  String concatenation using a dynamic buffer
 char *StrBufCat(char *strbuf, char *source)
 {
-   long oldlen, newlen;
+   size_t oldlen, newlen;
    char *newstrbuf;
 
    if (!strbuf)
-     if (NULL == (strbuf = AllocStrBuf((LONG)strlen(source)+1))) return NULL;
-   oldlen = *((long *)(strbuf-sizeof(long)));
+     if (NULL == (strbuf = AllocStrBuf(strlen(source)+1))) return NULL;
+   oldlen = ((size_t *)strbuf)[-1];
    newstrbuf = strbuf;
    for (newlen = oldlen; newlen <= strlen(strbuf)+strlen(source); newlen += SIZE_DEFAULT);
    if (newlen != oldlen)
