@@ -1257,7 +1257,7 @@ void WR_NewMail(int mode, int winnum)
    if (!*addr) if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), er)) mode = WRITE_HOLD;
       else return;
    get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
-   if (*comp.Subject == '\0')
+   if (wr->Mode != NEW_BOUNCE && *comp.Subject == '\0')
    {
       if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoSubjectReqGad), GetStr(MSG_NoSubjectReq)))
       {
