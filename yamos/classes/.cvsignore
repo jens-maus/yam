@@ -1,4 +1,5 @@
+*.o
+*.o.elf
+*_cl.h
 Classes.c
 Classes.h
-*_cl.h
-
