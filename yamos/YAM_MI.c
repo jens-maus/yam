@@ -38,7 +38,6 @@
 /* local */
 static int nextcharin(FILE*, BOOL);
 static void output64chunk(int, int, int, int, FILE*);
-static void almostputc(int, FILE*, struct TranslationTable*, BOOL);
 static void uueget(char*, FILE*, int);
 static BOOL gettxtline(char*, int, char**);
 static BOOL getline(char*, int, FILE*);
@@ -387,69 +386,6 @@ void to64(FILE *infile, FILE *outfile, BOOL PortableNewlines)
       if (ct > 71) { fputc('\n', outfile); ct = 0; }
    }
    if (ct) fputc('\n', outfile);
-}
-
-///
-/// almostputc
-//  Writes a bytes, handles line breaks and translation tables
-static void almostputc(int c, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines)
-{
-   if (tt) c = (int)tt->Table[(UBYTE)c];
-   if (CRpending) 
-   {
-      if (c == 10) { fputc('\n', outfile); CRpending = FALSE; }
-      else
-      {
-         fputc(13, outfile);
-         if (c != 13) { fputc(c, outfile); CRpending = FALSE; }
-      }
-   } 
-   else 
-      if (PortableNewlines && c == 13) CRpending = TRUE; else fputc(c, outfile);
-}
-
-///
-
-/// from64
-//  Decodes a file in base64 format
-void from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines)
-{
-   int c1, c2, c3, c4;
-   BOOL DataDone = FALSE;
-
-   CRpending = FALSE;
-   while ((c1 = fgetc(infile)) != -1) 
-   {
-      if (ISpace((char)c1)) continue;
-      if (DataDone) continue;
-      do { c2 = fgetc(infile); } while (c2 != -1 && ISpace((char)c2));
-      do { c3 = fgetc(infile); } while (c3 != -1 && ISpace((char)c3));
-      do { c4 = fgetc(infile); } while (c4 != -1 && ISpace((char)c4));
-      if (c2 == -1 || c3 == -1 || c4 == -1) 
-      {
-         ER_NewError(GetStr(MSG_ER_UnexpEOFB64), NULL, NULL);
-         return;
-      }
-      if (c1 == '=' || c2 == '=') { DataDone = TRUE; continue; }
-      c1 = char64(c1);
-      c2 = char64(c2);
-      almostputc(((c1<<2) | ((c2&0x30)>>4)), outfile, tt, PortableNewlines);
-      if (c3 == '=') 
-         DataDone = TRUE;
-      else 
-      {
-         c3 = char64(c3);
-         almostputc((((c2&0XF) << 4) | ((c3&0x3C) >> 2)), outfile, tt, PortableNewlines);
-         if (c4 == '=') 
-            DataDone = 1;
-         else  
-         {
-            c4 = char64(c4);
-            almostputc((((c3&0x03) <<6) | c4), outfile, tt, PortableNewlines);
-         }
-      }
-   }
-   if (CRpending) fputc(13, outfile);
 }
 
 ///
