@@ -3296,14 +3296,18 @@ static void RE_DisplayMessage(int winnum, BOOL update)
 
       // before we can put the message body into the TextEditor, we have to preparse the text and
       // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
-      // more powerful with that.
-      if(!G->RE[winnum]->NoTextstyles) body = ParseEmailText(body);
+      // more powerful this way.
+      if(!G->RE[winnum]->NoTextstyles)
+        body = ParseEmailText(body);
 
       SetAttrs(gui->TE_TEXT, MUIA_TextEditor_FixedFont,  G->RE[winnum]->FixedFont,
                              MUIA_TextEditor_Contents,   body,
                              TAG_DONE);
 
-      if(!G->RE[winnum]->NoTextstyles) free(body);
+      // free the parsed text afterwards as the texteditor has copied it anyway.
+      if(!G->RE[winnum]->NoTextstyles)
+        free(body);
+
       free(cmsg);
    }
 
