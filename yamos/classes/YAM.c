@@ -177,9 +177,8 @@ BOOL FindABPerson(struct Person *person, struct MUI_NListtree_TreeNode *root)
 		{
 			struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
 
-			if((person->RealName[0] ? !Stricmp(entry->RealName, person->RealName) : TRUE) &&
-         !Stricmp(entry->Address, person->Address)
-        )
+			// If the email matches a entry in the AB we already can return here with TRUE
+			if(Stricmp(entry->Address, person->Address) == 0)
       {
         return TRUE;
       }
@@ -322,7 +321,7 @@ DECLARE(AddToEmailCache) // struct Person *person
         strcpy(entry->RealName, msg->person->RealName);
         strcpy(entry->Address, msg->person->Address);
 
-        Insert(&data->EMailCache, (struct Node *)newnode, ((struct Node *)node)->ln_Pred);
+				Insert(&data->EMailCache, (struct Node *)newnode, ((struct Node *)node)->ln_Pred->ln_Pred);
       }
     }
 
