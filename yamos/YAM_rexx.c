@@ -53,6 +53,10 @@
 #define inline
 #endif
 
+#ifdef _DCC
+#define inline
+#endif
+
 #include <dos/rdargs.h>
 
 #include "YAM_rexx.h"

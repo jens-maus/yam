@@ -12,9 +12,13 @@
 #ifdef __MORPHOS__
 #include <unistd.h>
 #else
+#ifndef _DCC
 #include <error.h>
 #endif
+#endif
+#ifndef _DCC
 #include <dos.h>
+#endif
 #include <exec/memory.h>
 #include <exec/execbase.h>
 #include <dos/datetime.h>

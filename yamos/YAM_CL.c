@@ -110,7 +110,7 @@ SAVEDS ASM ULONG BC_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
 //  Subclass of Betterstring, handles alias auto-completion, drag&drop from address book
 SAVEDS ASM ULONG WS_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) Msg msg)
 {
-   ULONG result = NULL;
+   ULONG result = 0;
    UBYTE code;
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
    struct WS_Data *data = (struct WS_Data *)INST_DATA(cl,obj);
