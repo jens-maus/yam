@@ -83,7 +83,7 @@
 /* local protos */
 static BOOL RE_LoadMessage(int winnum, int parsemode);
 static struct RE_ClassData *RE_New(int winnum, BOOL real);
-static void RE_DisplayMessage(int winnum);
+static void RE_DisplayMessage(int winnum, BOOL update);
 static void RE_PrintFile(char*,struct Part*);
 static void RE_PrintLaTeX(char*,struct Part*);
 static void RE_GetSigFromLog(int winnum, char *decrFor);
@@ -608,7 +608,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
 
    if(RE_LoadMessage(winnum, PM_ALL))
    {
-      RE_DisplayMessage(winnum);
+      RE_DisplayMessage(winnum, FALSE);
       set(gui->MI_EXTKEY, MUIA_Menuitem_Enabled, re->PGPKey);
       set(gui->MI_CHKSIG, MUIA_Menuitem_Enabled, hasPGPSOldFlag(re));
       set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && hasPGPEMimeFlag(re));
@@ -3061,7 +3061,7 @@ static BOOL RE_DownloadPhoto(APTR win, char *url, struct ABEntry *ab)
 ///
 /// RE_DisplayMessage
 //  Shows message header and body in read window
-static void RE_DisplayMessage(int winnum)
+static void RE_DisplayMessage(int winnum, BOOL update)
 {
    char *cmsg, *body;
    BOOL dispheader;
@@ -3135,11 +3135,14 @@ static void RE_DisplayMessage(int winnum)
          if (ab)
          {
             RE_UpdateSenderInfo(ab, &abtmpl);
-            if (!*ab->Photo && *abtmpl.Photo && *C->GalleryDir) RE_DownloadPhoto(gui->WI, abtmpl.Photo, ab);
+            if(!update && C->AddToAddrbook > 0 && !*ab->Photo && *abtmpl.Photo && *C->GalleryDir)
+            {
+              RE_DownloadPhoto(gui->WI, abtmpl.Photo, ab);
+            }
          }
          else
          {
-            if ((ab = RE_AddToAddrbook(gui->WI, &abtmpl)))
+            if(!update && C->AddToAddrbook > 0 && (ab = RE_AddToAddrbook(gui->WI, &abtmpl)))
             {
                if (*abtmpl.Photo && *C->GalleryDir) RE_DownloadPhoto(gui->WI, abtmpl.Photo, ab);
             }
@@ -3379,7 +3382,7 @@ HOOKPROTONHNO(RE_ShowEnvFunc, void, int *arg)
       case 8:  get(re->GUI.MI_FFONT, MUIA_Menuitem_Checked, &opt);
                re->FixedFont = opt; break;
    }
-   RE_DisplayMessage(winnum);
+   RE_DisplayMessage(winnum, TRUE);
    set(re->GUI.SL_TEXT, MUIA_Prop_First, lev);
 }
 MakeStaticHook(RE_ShowEnvHook, RE_ShowEnvFunc);
