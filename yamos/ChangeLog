@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-04  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: reworked the whole SMTP AUTH routines to work
+      more accurate according to their respectify RFC. This should
+      also hopefully fix the newly introduced problems with the
+      PLAIN and LOGIN authentification.
+      During the tests on all authentification methods I also
+      realized that the whole DIGEST-MD5 auth implementation seems
+      to be broken by design. This really requires a complete
+      rework as the current implementation doesn`t work at all like
+      it should.
+
 2003-12-29  Alexey Ivanov <amis@amiga.org.ru>
 
     * YAM_FO.c, YAM_MA.c, YAM_folderconfig.h added custom

@@ -425,6 +425,8 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
    if(hasCRAM_MD5_Auth(ServerFlags)) // SMTP AUTH CRAM-MD5
    {
+      DB(kprintf("processing AUTH CRAM-MD5:\n");)
+
       // send the AUTH command and get the response back
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_CRAM_MD5, NULL, MSG_ER_BadResponse)))
       {
@@ -445,16 +447,22 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         if(chalRet)
           *chalRet = '\0'; // strip it
 
+        DB(kprintf("received CRAM-MD5 challenge: `%s`\n", challenge);)
+
         // lets base64 decode it
         if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
           return FALSE;
 
+        DB(kprintf("decoded  CRAM-MD5 challenge: `%s`\n", challenge);)
+
         // compose the md5 challenge
         hmac_md5(challenge, strlen(challenge), password, strlen(password), (char *)digest);
-        sprintf(buf, "%s %08lx%08lx%08lx%08lx\0\0", login, digest[0], digest[1], digest[2], digest[3]);
+        sprintf(buf, "%s %08lx%08lx%08lx%08lx", login, digest[0], digest[1], digest[2], digest[3]);
 
+        DB(kprintf("prepared CRAM-MD5 reponse..: `%s`\n", buf);)
         // lets base64 encode the md5 challenge for the answer
         base64encode(buffer, buf, strlen(buf));
+        DB(kprintf("encoded  CRAM-MD5 reponse..: `%s`\n", buffer);)
         strcat(buffer, "\r\n");
 
         // now we send the SMTP AUTH response
@@ -468,12 +476,13 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         else rc = SMTP_ACTION_OK;
       }
    }
-   else if(hasDIGEST_MD5_Auth(ServerFlags)) // SMTP AUTH DIGEST-MD5
+   else if(hasDIGEST_MD5_Auth(ServerFlags)) // SMTP AUTH DIGEST-MD5 (RFC 2831)
    {
+      DB(kprintf("processing AUTH DIGEST-MD5:\n");)
+
       // send the AUTH command and get the response back
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_DIGEST_MD5, NULL, MSG_ER_BadResponse)))
       {
-        int len;
         ULONG digest[4];
         struct MD5Context context;
         char *chalRet;
@@ -489,18 +498,29 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         if(chalRet)
           *chalRet = '\0'; // strip it
 
+        DB(kprintf("received DIGEST-MD5 challenge: `%s`\n", challenge);)
         // lets base64 decode it
         if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
           return FALSE;
+        DB(kprintf("decoded  DIGEST-MD5 challenge: `%s`\n", challenge);)
+
+        // lets now analyze the challenge string provided by the server.
+        // RFC 2831 clearly states that it have to have a "md5-sess"
+        // identifier.
+        // TODO...
 
         strcat(challenge, C->SMTP_AUTH_Pass);
         MD5Init(&context);
         MD5Update(&context, challenge, strlen(challenge));
         MD5Final((UBYTE *)digest, &context);
 
-        len = sprintf(challenge,"%s %08lx%08lx%08lx%08lx%c%c", C->SMTP_AUTH_User,
-                      digest[0], digest[1], digest[2], digest[3], 0, 0);
-        base64encode(buffer, challenge, len-2);
+        // form up the challenge to authenticate according to RFC 2831
+        sprintf(challenge,"username=%s %08lx%08lx%08lx%08lx", C->SMTP_AUTH_User,
+                digest[0], digest[1], digest[2], digest[3]);
+
+        DB(kprintf("prepared challenge answer....: `%s`\n", challenge);)
+        base64encode(buffer, challenge, strlen(challenge));
+        DB(kprintf("encoded  challenge answer....: `%s`\n", buffer);)
         strcat(buffer,"\r\n");
 
         // now we send the SMTP AUTH response
@@ -516,28 +536,36 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
    }
    else if(hasLOGIN_Auth(ServerFlags))  // SMTP AUTH LOGIN
    {
+      DB(kprintf("processing AUTH LOGIN:\n");)
+
       // send the AUTH command
-      if(TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, MSG_ER_BadResponse))
+      if((resp = TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, MSG_ER_BadResponse)))
       {
-         int len = sprintf(challenge,"%s\0\0", C->SMTP_AUTH_User);
-         base64encode(buffer, challenge, len-2);
+         // prepare the username challenge
+         DB(kprintf("prepared AUTH LOGIN challenge: `%s`\n", C->SMTP_AUTH_User);)
+         base64encode(buffer, C->SMTP_AUTH_User, strlen(C->SMTP_AUTH_User));
+         DB(kprintf("encoded  AUTH LOGIN challenge: `%s`\n", buffer);)
          strcat(buffer,"\r\n");
 
          // now we send the SMTP AUTH response (UserName)
          if(TR_WriteLine(buffer) <= 0) return FALSE;
 
          // get the server response and see if it was valid
-         if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0 && (rc = getResponseCode(buffer)) == 334)
+         if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
+            && (rc = getResponseCode(buffer)) == 334)
          {
-            int len = sprintf(challenge,"%s\0\0", C->SMTP_AUTH_Pass);
-            base64encode(buffer, challenge, len-2);
+            // prepare the password challenge
+            DB(kprintf("prepared AUTH LOGIN challenge: `%s`\n", C->SMTP_AUTH_Pass);)
+            base64encode(buffer, C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
+            DB(kprintf("encoded  AUTH LOGIN challenge: `%s`\n", buffer);)
             strcat(buffer,"\r\n");
 
             // now lets send the Password
             if(TR_WriteLine(buffer) <= 0) return FALSE;
 
             // get the server response and see if it was valid
-            if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0 && (rc = getResponseCode(buffer)) == 235 )
+            if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0
+               && (rc = getResponseCode(buffer)) == 235)
             {
                rc = SMTP_ACTION_OK;
             }
@@ -549,28 +577,39 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
          }
       }
    }
-   else if(hasPLAIN_Auth(ServerFlags))  // SMTP AUTH PLAIN
+   else if(hasPLAIN_Auth(ServerFlags))  // SMTP AUTH PLAIN (RFC 2595)
    {
-      // send the AUTH command
-      if(TR_SendSMTPCmd(ESMTP_AUTH_PLAIN, NULL, MSG_ER_BadResponse))
+      int len=0;
+
+      DB(kprintf("processing AUTH PLAIN:\n");)
+
+      // The AUTH PLAIN command string is a single command string, so we go
+      // and prepare the challenge first
+      // According to RFC 2595 this string consists of three parts:
+      // "[authorize-id] \0 authenticate-id \0 password"
+      // where we can left out the first one
+
+      // we don`t have a "authorize-id" so we set the first char to \0
+      challenge[len++] = '\0';
+      len += sprintf(challenge+len, "%s", C->SMTP_AUTH_User)+1; // authenticate-id
+      len += sprintf(challenge+len, "%s", C->SMTP_AUTH_Pass);   // password
+
+      // now we base64 encode this string and send it to the server
+      base64encode(buffer, challenge, len);
+
+      // lets now form up the AUTH PLAIN command we are going to send
+      // to the SMTP server for authorization purposes:
+      sprintf(challenge, "%s %s\r\n", SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
+
+      // now we send the SMTP AUTH command (UserName+Password)
+      if(TR_WriteLine(challenge) <= 0) return FALSE;
+
+      // get the server response and see if it was valid
+      if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
       {
-         int len = 0;
-         challenge[len++] = 0;
-         len += sprintf(challenge+len,"%s", C->SMTP_AUTH_User)+1;
-         len += sprintf(challenge+len,"%s", C->SMTP_AUTH_Pass);
-         base64encode(buffer, challenge, len);
-         strcat(buffer,"\r\n");
-
-         // now we send the SMTP AUTH response (UserName+Password)
-         if(TR_WriteLine(buffer) <= 0) return FALSE;
-
-         // get the server response and see if it was valid
-         if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) <= 0 || (rc = getResponseCode(buffer)) != 235)
-         {
-            ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
-         }
-         else rc = SMTP_ACTION_OK;
+        ER_NewError(GetStr(MSG_ER_BadResponse), (char *)SMTPcmd[ESMTP_AUTH_PLAIN], buffer);
       }
+      else rc = SMTP_ACTION_OK;
    }
    else
    {
@@ -578,6 +617,8 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       // exit with an error
       ER_NewError(GetStr(MSG_ER_NO_SMTP_AUTH), C->SMTP_Server, NULL);
    }
+
+   DB(kprintf("Server responded with %ld\n", rc);)
 
    return (BOOL)(rc == SMTP_ACTION_OK);
 }
