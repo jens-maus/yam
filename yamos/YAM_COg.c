@@ -581,48 +581,52 @@ APTR CO_Page2(struct CO_ClassData *data)
    if ((grp = VGroup,
          MUIA_HelpNode, "CO02",
          Child, HVSpace,
-         Child, VGroup, GroupFrameT(GetStr(MSG_CO_Download)),
-            Child, ColGroup(6),
-               Child, Label1(GetStr(MSG_CO_PreSelect)),
+         Child, HGroup, GroupFrameT(GetStr(MSG_CO_Download)),
+            Child, ColGroup(2),
+
+               Child, Label(GetStr(MSG_CO_PreSelect)),
                Child, data->GUI.CY_MSGSELECT = MakeCycle(mpsopt, GetStr(MSG_CO_PreSelect)),
-               Child, HSpace(8),
-               Child, Label1(GetStr(MSG_CO_WarnSize1)),
-               Child, data->GUI.ST_WARNSIZE = MakeInteger(5, GetStr(MSG_CO_WarnSize1)),
-               Child, Label2(GetStr(MSG_CO_WarnSize2)),
-               Child, LLabel1(GetStr(MSG_CO_TransferWin)),
+
+               Child, Label(GetStr(MSG_CO_TransferWin)),
                Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, GetStr(MSG_CO_TransferWin)),
-               Child, HSpace(0),
-               Child, HSpace(0),
-               Child, HSpace(0),
+ 
+               Child, Label(GetStr(MSG_CO_WarnSize1)),
+               Child, HGroup,
+                  Child, data->GUI.ST_WARNSIZE = MakeInteger(6, GetStr(MSG_CO_WarnSize1)),
+                  Child, LLabel(GetStr(MSG_CO_WarnSize2)),
+               End,
             End,
-            Child, HGroup,
+
+            Child, HSpace(0),
+
+            Child, ColGroup(2),
+               Child, Label2(GetStr(MSG_CO_AvoidDuplicates)),
                Child, data->GUI.CH_AVOIDDUP = MakeCheck(GetStr(MSG_CO_AvoidDuplicates)),
-               Child, LLabel1(GetStr(MSG_CO_AvoidDuplicates)),
-               Child, HSpace(0),
+               Child, Label2(GetStr(MSG_CO_UpdateStatus)),
                Child, data->GUI.CH_UPDSTAT = MakeCheck(GetStr(MSG_CO_UpdateStatus)),
-               Child, LLabel1(GetStr(MSG_CO_UpdateStatus)),
             End,
+
          End,
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_AutoOperation)),
             Child, HGroup,
-               Child, Label2(GetStr(MSG_CO_CheckMail)),
+               Child, Label(GetStr(MSG_CO_CheckMail)),
                Child, data->GUI.NM_INTERVAL = NumericbuttonObject,
                  MUIA_CycleChain,      1,
                  MUIA_Numeric_Min,     0,
                  MUIA_Numeric_Max,     240,
                  MUIA_Numeric_Default, 5,
                End,
-               Child, Label2(GetStr(MSG_CO_Minutes)),
+               Child, Label(GetStr(MSG_CO_Minutes)),
                Child, HSpace(0),
             End,
             Child, MakeCheckGroup((Object **)&data->GUI.CH_DLLARGE, GetStr(MSG_CO_DownloadLarge)),
          End,
          Child, ColGroup(3), GroupFrameT(GetStr(MSG_CO_Notification)),
             Child, data->GUI.CH_NOTIREQ = MakeCheck(GetStr(MSG_CO_NotiReq)),
-            Child, LLabel1(GetStr(MSG_CO_NotiReq)),
+            Child, LLabel(GetStr(MSG_CO_NotiReq)),
             Child, HSpace(0),
             Child, data->GUI.CH_NOTISOUND = MakeCheck(GetStr(MSG_CO_NotiSound)),
-            Child, LLabel2(GetStr(MSG_CO_NotiSound)),
+            Child, LLabel(GetStr(MSG_CO_NotiSound)),
             Child, HGroup,
                MUIA_Group_HorizSpacing, 0,
                Child, pa_notisound = PopaslObject,
@@ -633,7 +637,7 @@ APTR CO_Page2(struct CO_ClassData *data)
                Child, bt_notisound = PopButton(MUII_TapePlay),
             End,
             Child, data->GUI.CH_NOTICMD = MakeCheck(GetStr(MSG_CO_NotiCommand)),
-            Child, LLabel2(GetStr(MSG_CO_NotiCommand)),
+            Child, LLabel(GetStr(MSG_CO_NotiCommand)),
             Child, pa_noticmd = PopaslObject,
                MUIA_Popasl_Type     ,0,
                MUIA_Popstring_String,data->GUI.ST_NOTICMD = MakeString(SIZE_COMMAND,""),
@@ -659,13 +663,6 @@ APTR CO_Page2(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
       DoMethod(data->GUI.CH_NOTISOUND,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,bt_notisound           ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
       DoMethod(data->GUI.CH_NOTICMD  ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,pa_noticmd             ,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
-
-      // let us now make sure the preselection cycle-gadget automatically ghosts the string gadget if not needed
-      nnset(data->GUI.ST_WARNSIZE, MUIA_Disabled, TRUE);
-      DoMethod(data->GUI.CY_MSGSELECT, MUIM_Notify, MUIA_Cycle_Active, 0, data->GUI.ST_WARNSIZE, 3, MUIM_Set, MUIA_Disabled, TRUE);
-      DoMethod(data->GUI.CY_MSGSELECT, MUIM_Notify, MUIA_Cycle_Active, 1, data->GUI.ST_WARNSIZE, 3, MUIM_Set, MUIA_Disabled, FALSE);
-      DoMethod(data->GUI.CY_MSGSELECT, MUIM_Notify, MUIA_Cycle_Active, 2, data->GUI.ST_WARNSIZE, 3, MUIM_Set, MUIA_Disabled, TRUE);
-      DoMethod(data->GUI.CY_MSGSELECT, MUIM_Notify, MUIA_Cycle_Active, 3, data->GUI.ST_WARNSIZE, 3, MUIM_Set, MUIA_Disabled, FALSE);
    }
    return grp;
 }

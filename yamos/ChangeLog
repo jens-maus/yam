@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_COg.c: changed Layout of NewMail/Download MUI group
+      a bit and disabled the automatic ghosting of the WarnSize
+      gadget to make more clear that this WarnSize is not only
+      dependend to the Preselection gadget.
+
 2002-10-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c, YAM_FI.c, YAM_UT.c: changed all DateTime FORMAT_DOS
