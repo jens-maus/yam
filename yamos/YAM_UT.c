@@ -931,15 +931,6 @@ char *AllocStrBuf(long initlen)
    return NULL;
 }
 ///
-/// FreeStrBuf
-//  Frees a dynamic buffer
-void FreeStrBuf(char *strbuf)
-{
-   if(!strbuf)
-     return;
-   free(strbuf-4);
-}
-///
 /// StrBufCpy
 //  Fills a dynamic buffer
 char *StrBufCpy(char *strbuf, char *source)
@@ -991,7 +982,12 @@ char *StrBufCat(char *strbuf, char *source)
 //  Frees dynamic two-dimensional array
 void FreeData2D(struct Data2D *data)
 {
-   while (data->Used) FreeStrBuf(data->Data[--data->Used]);
+   while(data->Used)
+   {
+      data->Used--;
+      FreeStrBuf(data->Data[data->Used]);
+   }
+
    if (data->Allocated) free(data->Data);
    data->Data = NULL; data->Allocated = 0;
 }
