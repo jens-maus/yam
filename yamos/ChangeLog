@@ -390,3 +390,9 @@
       Currently this works only with 'normal' selection patterns,
       e.g. (From|To|Date)
 
+2002-11-19  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_WR.c: Fixed missing MUIA_UserData in the "Redo" menu item,
+      which caused crashes with non-SAS/C compiled versions (patch
+      from MAIN)
+
