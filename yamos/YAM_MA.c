@@ -1704,7 +1704,7 @@ SAVEDS void MA_CheckVersionFunc(void)
             fscanf(tf->FP, "%ld.%ld.%ld", &day, &mon, &year);
             GetLine(tf->FP, newver, SIZE_SMALL);
             currver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
-            sprintf(buf, GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year, __VERSION__, __VERDATE__,
+            sprintf(buf, GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year, __YAM_VERSION, __YAM_VERDATE,
                currver > thisver ? GetStr(MSG_MA_NewVersion) : GetStr(MSG_MA_NoNewVersion));
             if (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_CheckVersion), GetStr(MSG_MA_VersionReqOpt), buf)) GotoURL(C->SupportSite);
          }
@@ -2054,7 +2054,7 @@ struct MA_ClassData *MA_New(void)
       struct User *user;
       for (i = 0; i < 18; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
       if (user = US_GetCurrentUser()) username = user->Name;
-      sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), __VERSION__, username);
+      sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), __YAM_VERSION, username);
       data->GUI.MS_MAIN = MenustripObject,
          MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Project),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_PROJECT_ABOUT), MMEN_ABOUT),

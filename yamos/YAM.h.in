@@ -39,8 +39,8 @@
 #endif
 
 /* extern define YAMVER && YAMDATE */
-#define __VERSION__ YAMVER CPU
-#define __VERDATE__ YAMDATE
+#define __YAM_VERSION YAMVER CPU
+#define __YAM_VERDATE YAMDATE
 
 #define ANYBOX NULL
 

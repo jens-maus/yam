@@ -188,7 +188,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
          sprintf(buf, "GET http://%s:%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, port, path, url);
       }
       else sprintf(buf, "GET http://%s/%s HTTP/1.0\r\nHost: http://%s\r\n", url, path, url);
-      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: YAM %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), __VERSION__);
+      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: YAM %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), __YAM_VERSION);
 */
       if (noproxy) sprintf(buf, "GET /%s HTTP/1.0\r\nHost: %s\r\n", path, host);
       else if (port = strchr(url, ':'))
@@ -197,7 +197,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
          sprintf(buf, "GET http://%s:%s/%s HTTP/1.0\r\nHost: %s\r\n", url, port, path, url);
       }
       else sprintf(buf, "GET http://%s/%s HTTP/1.0\r\nHost: %s\r\n", url, path, url);
-      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: YAM %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), __VERSION__);
+      sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: YAM %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), __YAM_VERSION);
       if (TR_SendDat(buf))
       {
          len = TR_RecvDat(buf);

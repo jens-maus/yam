@@ -267,7 +267,7 @@ void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL s
          struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, "", TRUE);
          p2->ContentType = "message/disposition-notification";
          p2->Filename = tf2->Filename;
-         sprintf(buf, "%s (YAM %s)", C->SMTP_Domain, __VERSION__);
+         sprintf(buf, "%s (YAM %s)", C->SMTP_Domain, __YAM_VERSION);
          EmitHeader(tf2->FP, "Reporting-UA", buf);
          if (*email->OriginalRcpt.Address)
          {
