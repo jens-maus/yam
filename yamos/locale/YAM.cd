@@ -210,7 +210,7 @@ MSG_UserLogin (//)
 Click your name to login
 ;
 MSG_AppDescription (//39)
-SMTP/POP3 Client & Mailer for AmiTCP
+SMTP/POP3 Client & Mailer for AmigaOS
 ;
 MSG_ErrorStartup (//)
 Error during startup

@@ -1,6 +1,6 @@
-## chunk AUTH Dirk Neubauer, Horst Schumann [ATO]
+## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.5 (05.01.2002)
+## version $VER: YAM.catalog 5.6 (01.05.2002)
 ## codeset 0
 ;
 MSG_Folder
@@ -188,7 +188,7 @@ Name
 ; Name
 ;
 MSG_Email
-E-Mail-Adresse
+E-Mail Adresse
 ; Email address
 ;
 MSG_Address
@@ -240,7 +240,7 @@ Verzeichnis
 ; Directory
 ;
 MSG_Copyright1
-OpenSource E-Mail-Software für den Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2002 YAM Open Source Team
+Open Source E-Mail Software für den Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2002 YAM Open Source Team
 ; Open Source E-mail package for the Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2002 YAM Open Source Team
 ;
 MSG_Version
@@ -260,7 +260,7 @@ MSG_UsedSoftware
 ; \nThis application uses the following third party software:\n
 ;
 MSG_WebSite
-Aktuelle Informationen über YAM finden Sie auf der YAM Support Site unter \e5http://www.yam.ch
+Aktuelle Informationen über YAM finden Sie auf der YAM Support Site unter \e5http://www.yam.ch/
 ; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
 ;
 MSG_UserLogin
@@ -268,8 +268,8 @@ Klicken Sie auf Ihren Namen um sich anzumelden
 ; Click your name to login
 ;
 MSG_AppDescription
-SMTP/POP3 Client & Mailer für AmiTCP
-; SMTP/POP3 Client & Mailer for AmiTCP
+SMTP/POP3 Client & Mailer für AmigaOS
+; SMTP/POP3 Client & Mailer for AmigaOS
 ;#SET (//39)
 MSG_ErrorStartup
 Fehler beim Programmstart
@@ -416,19 +416,19 @@ MPEG Videofilm
 ; MPEG video stream
 ;
 MSG_CTvideoquicktime
-Apple QuickTime Videofilm
+Apple QuickTime Video
 ; Apple QuickTime video
 ;
 MSG_CTvideoanim
-Amiga IFF-Anim Videofilm
+Amiga IFF-Anim Video
 ; Amiga IFF-ANIM video
 ;
 MSG_CTvideomsvideo
-Microsoft AVI Videofilm
+Microsoft AVI Video
 ; Microsoft AVI video
 ;
 MSG_CTmessagerfc822
-E-Mail-Nachricht
+E-Mail Nachricht
 ; E-mail message
 ;
 MSG_LOG_Started
@@ -564,7 +564,7 @@ Laden
 ; Load
 ;
 MSG_UT_PGPPassReq
-Bitte geben Sie Ihr PGP-Passwort ein:
+Bitte geben Sie Ihr PGP Passwort ein:
 ; Please enter your PGP pass phrase:
 ;
 MSG_UT_AppStats
@@ -692,7 +692,7 @@ Status
 ; Status
 ;
 MSG_MA_Scripts
-Skripts
+Skripte
 ; Scripts
 ;
 MSG_MA_ExecuteScript
@@ -768,7 +768,7 @@ _Antwort
 ; _Reply
 ;
 MSG_MA_TBForward
-_Weiter
+_Weiterl.
 ; For_ward
 ;
 MSG_MA_TBGetMail
@@ -780,7 +780,7 @@ _Senden
 ; _Send
 ;
 MSG_MA_TBFilter
-_Filter
+_Filtern
 ; F_ilter
 ;
 MSG_MA_TBFind
@@ -1000,7 +1000,7 @@ Ausgewählte Nachricht ändern
 ; Modify the\nselected message
 ;
 MSG_HELP_MA_BT_MOVE
-Ausgewählte Nachricht(en) in\n ein anderes Postfach verschieben
+Ausgewählte Nachricht(en) in\nein anderes Postfach verschieben
 ; Move selected message(s)\nto another folder
 ;
 MSG_HELP_MA_BT_DELETE
@@ -1064,11 +1064,11 @@ Alle Nachrichten in diesem Postfach gehen verloren!\nWollen Sie es wirklich lösc
 ; All messages in this folder will be lost!\nDo you really want to delete it?
 ;
 MSG_CO_InvalidConf
-Ungültige Konfiguration (Mailserver oder\nE-Mail-Adresse fehlt)\n\nBitte diese Angaben ergänzen und nochmals versuchen!
+Ungültige Konfiguration (fehlender Hostname\n oder E-Mail Adresse)\n\nBitte diese Angaben korrigieren!
 ; Invalid configuration (missing hostname\n or email address)\n\nPlease fill in these fields and try again!
 ;
 MSG_CO_ImportMIMEReq
-Einstellungen importieren aus...
+Einstellungen importieren von...
 ; Import settings from...
 ;
 MSG_CO_ImportMIMEGads
@@ -1384,11 +1384,11 @@ Voller _Name
 ; _Real name
 ;
 MSG_CO_EmailAddress
-_E-Mail-Adresse
+_E-Mail Adresse
 ; _Email address
 ;
 MSG_CO_POPServer
-POP_3-Server
+POP_3 Server
 ; POP_3 server
 ;
 MSG_CO_Password
@@ -1440,7 +1440,7 @@ _Einloggen mittels APOP
 ; _Login using APOP
 ;
 MSG_CO_PSNever
-nie
+niemals
 ; never
 ;
 MSG_CO_PSLarge
@@ -1488,7 +1488,7 @@ Status a_ktualisieren
 ; Update m_essage status
 ;
 MSG_CO_WarnSize1
-Ma_ximal
+Grössen_limit
 ; Size _limit
 ;
 MSG_CO_WarnSize2
@@ -1696,7 +1696,7 @@ Alle _Texte
 ; Display _all texts
 ;
 MSG_CO_FixedFontEdit
-S_chrift f.Breite
+S_chrift fester Breite
 ; Use _fixed font
 ;
 MSG_CO_MimeViewers
@@ -1744,7 +1744,7 @@ Brief
 ; Message body
 ;
 MSG_CO_Welcome
-Be_grüßung
+Be_grüssung
 ; Welcome _phrase
 ;
 MSG_CO_Greetings
@@ -1864,7 +1864,7 @@ Im _externen Editor bearbeiten
 ; _Edit in external editor
 ;
 MSG_CO_InsertTag
-_Zufälliges Cookie einfügen
+_Zufälliges Zitat einfügen
 ; Insert _random tagline
 ;
 MSG_CO_InsertENV
@@ -1872,15 +1872,15 @@ EN_V:Signature einfügen
 ; Insert E_NV:Signature
 ;
 MSG_CO_Taglines
-Cookies
+Zitate
 ; Taglines
 ;
 MSG_CO_TaglineFile
-Cookie-_Datei
+Zitat_datei
 ; Tagline _file
 ;
 MSG_CO_TaglineSep
-Cookie-_Trennlinie
+Zitat_trennlinie
 ; T_agline separator
 ;
 MSG_CO_FixedFontList
@@ -1904,7 +1904,7 @@ ausführlich
 ; verbose
 ;
 MSG_CO_PGPExe
-_PGP-Pfad
+_PGP Verzeichnis
 ; P_GP's directory
 ;
 MSG_CO_PGPKey
@@ -1984,7 +1984,7 @@ Gelöschte Post entfernen
 ; Remove deleted mail
 ;
 MSG_CO_ATABnever
-nie
+niemals
 ; never
 ;
 MSG_CO_ATABask
@@ -2120,7 +2120,7 @@ A_rchivierer
 ; _Archiver
 ;
 MSG_CO_ScriptMenu
-'Skripts' Menüeintrag %ld
+'Skripte' Menüeintrag %ld
 ; 'Scripts' menu entry %ld
 ;
 MSG_CO_ScriptStartup
@@ -2216,7 +2216,7 @@ Nach Postfächern suchen
 ; Scan for folders
 ;
 MSG_CO_ImportMIME
-MIME-Einstellungen importieren
+MIME Einstellungen importieren
 ; Import MIME viewers & types...
 ;
 MSG_HELP_CO_ST_REALNAME
@@ -2224,7 +2224,7 @@ Ihr vollständiger Name\n(Vorname Nachname)
 ; Your full name\n(first name last name)
 ;
 MSG_HELP_CO_ST_EMAIL
-Ihre E-Mail-Adresse
+Ihre E-Mail Adresse
 ; Your email address.
 ;
 MSG_HELP_CO_ST_POPHOST
@@ -2236,7 +2236,7 @@ Passwort für den Zugriff\nauf den Postserver
 ; Password to access\nthe mail server
 ;
 MSG_HELP_CO_CY_TZONE
-Wählen Sie die Zeitzone\nIhres momentanen Standorts
+Wählen Sie die Zeitzone\nIhres momentanen Standortes
 ; Select the timezone of\nyour current location
 ;
 MSG_HELP_CO_CH_DLSAVING
