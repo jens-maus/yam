@@ -58,8 +58,6 @@ Developer: Jens Langner (damato)
   would create a folder protected with an empty password (damato)
 - Fixed: the "Export..." item in the popup menu would export the whole
   folder contents (damato)
-- Fixed: a direct mail import to a compressed/encrypted folder didn`t
-  let YAM save this imported mails as compressed or encrypted (damato)
 - Fixed: the "check signature" menuitem in the read window was sometimes
   disabled even if the mail had a signature to check. (damato)
 - Fixed: the "save decrypted message" menuitem within the read window
