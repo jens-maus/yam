@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-08  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_WR.c: reverted the Hotkeys for the Menushortcuts of
+      the write window back to use CommandStrings, so that they
+      will not interfere with the same hotkeys for other gadgets.
+
 2002-07-05  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_UT.c, YAM_FO.c: reworked the whole "Autodetect"
