@@ -70,6 +70,10 @@ enum ReadInMode { RIM_QUIET, RIM_READ, RIM_EDIT, RIM_QUOTE, RIM_PRINT };
 enum HeaderMode { HM_NOHEADER, HM_SHORTHEADER, HM_FULLHEADER };
 enum SInfoMode  { SIM_OFF, SIM_DATA, SIM_ALL, SIM_IMAGE };
 
+// for our temporary filename generation we need a get a unique pointer on
+// each readmaildata usage
+#define readMailDataID(rmData) ((rmData)->readMailGroup ? (ULONG)(rmData)->readMailGroup : ((rmData)->readWindow ? (ULONG)(rmData)->readWindow : (ULONG)(rmData)->mail))
+
 // ReadMailData structure which carries all necessary information
 // during the read mail process. It is used while opening a read
 // window, view a mail in the preview section or even scanning

@@ -1272,7 +1272,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     newPart->Boundary = StrBufCpy(newPart->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
 
     newPart->rmData = rmData;
-    sprintf(file, "YAMr%08lx-p%d.txt", rmData->readWindow ? (ULONG)rmData->readWindow : (ULONG)rmData->mail, newPart->Nr);
+    sprintf(file, "YAMr%08lx-p%d.txt", readMailDataID(rmData), newPart->Nr);
     strmfp(newPart->Filename, C->TempDir, file);
 
     if((fp = fopen(newPart->Filename, "w")))
@@ -1614,7 +1614,7 @@ BOOL RE_DecodePart(struct Part *rp)
            *ext = 0; // if the file extension is longer than 10 chars lets use "tmp"
 
          // lets generate the destination file name for the decoded part
-         sprintf(file, "YAMm%08lx-p%d.%s", rp->rmData->readWindow ? (ULONG)rp->rmData->readWindow : (ULONG)rp->rmData->mail, rp->Nr, *ext ? ext : "tmp");
+         sprintf(file, "YAMm%08lx-p%d.%s", readMailDataID(rp->rmData), rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
 
          // now open the stream and decode it afterwards.
@@ -1731,7 +1731,7 @@ static void RE_HandleMDNReport(struct Part *frp)
     else
       type = MDNtype;
 
-    sprintf(file, "YAMm%08lx-p%d.txt", rp[0]->rmData->readWindow ? (ULONG)rp[0]->rmData->readWindow : (ULONG)rp[0]->rmData->mail, rp[0]->Nr);
+    sprintf(file, "YAMm%08lx-p%d.txt", readMailDataID(rp[0]->rmData), rp[0]->Nr);
     strmfp(buf, C->TempDir, file);
 
     if((out = fopen(buf, "w")))
@@ -1996,7 +1996,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
         char file[SIZE_FILE];
 
         part->Nr = i;
-        sprintf(file, "YAMm%08lx-p%d%s", rmData->readWindow ? (ULONG)rmData->readWindow : (ULONG)rmData->mail, i, strchr(part->Filename, '.'));
+        sprintf(file, "YAMm%08lx-p%d%s", readMailDataID(rmData), i, strchr(part->Filename, '.'));
         strmfp(tmpFile, C->TempDir, file);
 
         RenameFile(part->Filename, tmpFile);
