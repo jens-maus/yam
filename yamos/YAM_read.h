@@ -65,7 +65,7 @@ struct RE_GUIData
    APTR BC_PHOTO;
    APTR LV_INFO;
    APTR BO_BALANCE;
-   struct MUIP_Toolbar_Description TB_TOOLBAR[13];
+   struct MUIP_Toolbar_Description TB_TOOLBAR[14];
 };
 
 struct RE_ClassData  /* read window */
