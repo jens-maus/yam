@@ -5361,11 +5361,18 @@ A defective UUencoder was used or the message is truncated.
 MSG_FI_StatMarked (//)
 Marked
 ;
-MSG_MA_CONVERTREQUEST (//)
+MSG_MA_CREQUEST_OLDFILE (//)
 YAM has found file '%s' in folder '%s' to be an old mailfile normally\n\
 used in YAM versions prior to the current version.\n\
 \n\
 Do you want to convert this file to the new format?
+; FILENAME, FOLDER
+;
+MSG_MA_CREQUEST_UNKNOWN (//)
+YAM has found an unknown file '%s' in the folder directory of folder '%s'.\n\
+\n\
+Do you want to import it as a normal mailfile?
+; FILENAME, FOLDER
 ;
 MSG_MA_YESNOTOALL (//)
 *_Yes|Y_es to all|_No|N_o to all
@@ -5383,4 +5390,10 @@ An error occurred while trying to compress/uncompress the file '%s' via XPK.\n\
 Please check your XPK installation and the associated compression settings \
 in the YAM configuration.
 ; FILENAME
+;
+MSG_MA_CREQ_OLDFILE_TITLE (//)
+Mailfile in old format found
+;
+MSG_MA_CREQ_UNKNOWN_TITLE (//)
+Unknown file in folder directory found
 ;

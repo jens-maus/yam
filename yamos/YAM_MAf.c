@@ -894,7 +894,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 //  folder and also writes it into the mailfile parameter
 char *MA_NewMailFile(struct Folder *folder, char *mailfile)
 {
-  static char fullpath[SIZE_PATHFILE];
+  static char fullpath[SIZE_PATHFILE+1];
   char dateFilePart[12+1];
   char newFileName[SIZE_MFILE];
   char *folderDir = GetFolderDir(folder);
@@ -1501,8 +1501,10 @@ BOOL MA_ScanMailBox(struct Folder *folder)
 
       if((eabuffer = malloc(SIZE_EXALLBUF)))
       {
-        BOOL convertAll = FALSE;
-        BOOL skipAll = FALSE;
+        BOOL convertAllOld = FALSE;
+        BOOL skipAllOld = FALSE;
+        BOOL convertAllUnknown = FALSE;
+        BOOL skipAllUnknown = FALSE;
 
         do
         {
@@ -1530,6 +1532,7 @@ BOOL MA_ScanMailBox(struct Folder *folder)
             if(isFile(ead->ed_Type))
             {
               // check wheter the filename is a valid mailfilename
+              char fbuf[SIZE_PATHFILE+1];
               char *fname = ead->ed_Name;
               BOOL validMailFile = isValidMailFile(fname);
 
@@ -1571,27 +1574,89 @@ BOOL MA_ScanMailBox(struct Folder *folder)
                   DB(kprintf("  found < v2.5 style mailfile: %s\n", fname);)
 
                   // lets ask if the user wants to convert the file or not
-                  if(!convertAll && !skipAll)
+                  if(!convertAllOld && !skipAllOld)
                   {
-                    res = MUI_Request(G->App, NULL, 0, folder->Name,
+                    res = MUI_Request(G->App, NULL, 0,
+                                      GetStr(MSG_MA_CREQ_OLDFILE_TITLE),
                                       GetStr(MSG_MA_YESNOTOALL),
-                                      GetStr(MSG_MA_CONVERTREQUEST),
+                                      GetStr(MSG_MA_CREQUEST_OLDFILE),
                                       fname, folder->Name);
 
                     // if the user has clicked on Yes or YesToAll then
                     // set the flags accordingly
                     if(res == 0)
-                      skipAll = TRUE;
+                      skipAllOld = TRUE;
                     else if(res == 1)
                       convertOnce = TRUE;
                     else if(res == 2)
-                      convertAll = TRUE;
+                      convertAllOld = TRUE;
                   }
 
-                  if(convertAll || convertOnce)
+                  if(convertAllOld || convertOnce)
                   {
                     // now we finally convert the file to a new style mail file
                     if((fname = MA_ConvertOldMailFile(fname, folder)) == NULL)
+                    {
+                      // if there occurred any error we skip to the next file.
+                      ER_NewError(GetStr(MSG_ER_CONVERTMFILE), fname, folder->Name);
+                      continue;
+                    }
+                  }
+                  else continue;
+                }
+                else if(fname[0] != '.')
+                {
+                  // to make it as convienent as possible for a user we also allow
+                  // to copy mail files to a folder directory without having to take
+                  // care that they have the correct filename.
+                  int res;
+                  BOOL convertOnce = FALSE;
+
+                  DB(kprintf("  found unknown file: %s\n", fname);)
+
+                  // lets ask if the user wants to convert the file or not
+                  if(!convertAllUnknown && !skipAllUnknown)
+                  {
+                    res = MUI_Request(G->App, NULL, 0,
+                                      GetStr(MSG_MA_CREQ_UNKNOWN_TITLE),
+                                      GetStr(MSG_MA_YESNOTOALL),
+                                      GetStr(MSG_MA_CREQUEST_UNKNOWN),
+                                      fname, folder->Name);
+
+                    // if the user has clicked on Yes or YesToAll then
+                    // set the flags accordingly
+                    if(res == 0)
+                      skipAllUnknown = TRUE;
+                    else if(res == 1)
+                      convertOnce = TRUE;
+                    else if(res == 2)
+                      convertAllUnknown = TRUE;
+                  }
+
+                  if(convertAllUnknown || convertOnce)
+                  {
+                    // now it is our job to get a new mailfile name and replace the old one
+                    char oldfile[SIZE_PATHFILE+1];
+                    char *newfile;
+
+                    strncpy(oldfile, GetFolderDir(folder), SIZE_PATHFILE);
+                    oldfile[SIZE_PATHFILE] = '\0';
+                    AddPart(oldfile, fname, SIZE_PATHFILE);
+
+                    if((newfile = MA_NewMailFile(folder, fbuf)))
+                    {
+                      if(Rename(oldfile, newfile))
+                      {
+                        fname = fbuf;
+                      }
+                      else
+                      {
+                        // if there occurred any error we skip to the next file.
+                        ER_NewError(GetStr(MSG_ER_CONVERTMFILE), fname, folder->Name);
+                        continue;
+                      }
+                    }
+                    else
                     {
                       // if there occurred any error we skip to the next file.
                       ER_NewError(GetStr(MSG_ER_CONVERTMFILE), fname, folder->Name);

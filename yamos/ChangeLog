@@ -7,6 +7,12 @@ $Source$
 
 2004-10-18  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c: reworked the index scanning routines a bit so that they
+      will now ask the user if an unknown file in a folder directory should
+      be considered a normal mailfile instead of just ignoring it. This
+      makes it a bit handier for people wanting to quickly copy a mailfile
+      to a folder directory without having to explicitly use the import
+      functionality of YAM.
     * YAM_MI.c: fixed another bug in the base64 file decoding routines where
       attachments with lots of whitespaces caused YAM to through an error
       message instead of simply skipping them.
