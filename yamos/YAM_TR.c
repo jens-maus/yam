@@ -2195,14 +2195,14 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       APTR gr_sel, gr_proc, gr_win;
       BOOL fullwin = (TRmode == TR_GET || TRmode == TR_IMPORT);
 
-      gr_proc = ColGroup(2), GroupFrameT(GetStr(MSG_TR_Status)),
-         Child, data->GUI.TX_STATS = TextObject,
-            MUIA_Text_Contents, GetStr(MSG_TR_TransferStats0),
-            MUIA_Background,MUII_TextBack,
+			gr_proc = ColGroup(2), GroupFrameT(GetStr(MSG_TR_Status)),
+				 Child, data->GUI.TX_STATS = TextObject,
+						MUIA_Text_Contents, GetStr(MSG_TR_TransferStats0),
+						MUIA_Background,MUII_TextBack,
             MUIA_Frame     ,MUIV_Frame_Text,
             MUIA_Text_PreParse, MUIX_C,
-         End,
-         Child, VGroup,
+				 End,
+				 Child, VGroup,
             Child, data->GUI.GA_COUNT = GaugeObject,
                GaugeFrame,
                MUIA_Gauge_Horiz   ,TRUE,
@@ -2213,8 +2213,8 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
                MUIA_Gauge_Horiz   ,TRUE,
                MUIA_Gauge_InfoText,GetStr(MSG_TR_BytesGauge0),
             End,
-         End,
-         Child, data->GUI.TX_STATUS = TextObject,
+				 End,
+				 Child, data->GUI.TX_STATUS = TextObject,
             MUIA_Background,MUII_TextBack,
             MUIA_Frame     ,MUIV_Frame_Text,
          End,
@@ -2269,14 +2269,22 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
             End,
          End;
       }
-      else gr_win = gr_proc;
+			else
+			{
+				gr_win = 	VGroup,
+										MUIA_Frame, MUIV_Frame_None,
+										Child, gr_proc,
+									End;
+			}
+
       data->GUI.WI = WindowObject,
-         MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode-TR_IMPORT),
+				 MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode),
          MUIA_Window_CloseGadget, FALSE,
          MUIA_Window_Activate, (TRmode == TR_IMPORT || TRmode == TR_EXPORT),
          MUIA_HelpNode, "TR_W",
-         WindowContents, gr_win,
+				 WindowContents, gr_win,
       End;
+
       if (data->GUI.WI)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
