@@ -32,12 +32,9 @@ TARGET	= YAM
 CC	= gcc
 RM	= rm -f
 CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
-CFLAGS	= -noixemul -O2 -mmultiple -mcpu=604e -c
-LDFLAGS	= -noixemul
-LDLIBS	= gg:lib/NewReadArgs.o -lmui -lopenurl -lxpkmaster -lamiga
-
-CC68K	  = m68k-amigaos-gcc
-CFLAGS68K = -nostdlib -DNAME=\"$(TARGET)\" -O -fomit-frame-pointer
+CFLAGS	= -I./includes -c
+LDFLAGS	= -noixemul -mstackextend
+LDLIBS	= -lmui
 
 #
 
@@ -46,24 +43,21 @@ OBJS	= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
 	  YAM_md5.o YAM_MI.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
 	  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o $(EXTRA)
 
-EXTRA	= all_morphos.o
+EXTRA	= all_gcc.o
 
 #
 
-all: $(TARGET) starter
+all: $(TARGET)
 
 #
 
 .c.o:
-	$(CC) $(CFLAGS) $<
+	$(CC) $(CFLAGS) $< -DNO_INLINE_STDARG
 
 #
 
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
-
-starter: starter.c
-	$(CC68K) $(CFLAGS68K) -o $@ $<
 
 clean:
 	-$(RM) $(TARGET) $(OBJS) YAM_locale.?
