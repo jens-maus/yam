@@ -1,26 +1,7 @@
-## version $VER: YAM.catalog 5.82 (07.06.2001) ATO-Fr
+## version $VER: yam.catalog 5.84 (19.10.2001) ATO-Fr
 ## language français
 ## codeset 0
 ;
-; ----------------------------------------------------------------------
-; History:
-;
-; 5.81 (3.6.2001)
-;
-; Initial version
-;
-;
-; 5.82 (7.6.2001)
-;
-; - QA by David Rey
-;
-; - Changed the shortcuts in MSG_CO_Name, MSG_FO_FolderMode and
-;   MSG_CO_ApplyToNew to avoid a clash
-;
-; - Added the shortcuts to the now officially updated MSG_CO_Server,
-;   MSG_CO_AltQuote & MSG_CO_DoQuote
-;
-; ----------------------------------------------------------------------
 ;
 ; YAM 2.3 catalog description
 ; $Id$
@@ -614,7 +595,7 @@ Document(s) joint(s) « %s » du message « %s » du dossier « %s » sauvé(s)
 ; FILENAME, MAILFILE, FOLDER
 ;
 MSG_LOG_CroppingAtt
-Le/Les documents joints du message « %s » du dossier « %s » supprimés
+Document(s) joint(s) du message « %s » du dossier « %s » supprimé(s)
 ; Cropped attachment(s) of message '%s' in folder '%s'
 ; MAILFILE, FOLDER
 ;
@@ -639,7 +620,7 @@ Entrez votre phrase secrète PGP :
 ; Please enter your PGP pass phrase:
 ;
 MSG_UT_AppStats
-Nouveaux:%ld Total:%ld
+
 ; 
 ; Replaced by MSG_APPICON_STATS
 ;
@@ -910,7 +891,7 @@ _Répondre
 ; _Reply
 ;
 MSG_MA_TBForward
-_Suivre
+_Retrans.
 ; For_ward
 ;
 MSG_MA_TBGetMail
@@ -1055,8 +1036,8 @@ D\000Lire
 ; D\000Read
 ;
 MSG_MA_MEdit
-Éditer
-; Edit
+Éditer...
+; Edit...
 ;
 MSG_MA_MDelete
 Effacer
@@ -1083,7 +1064,7 @@ Répondre...
 ; Reply...
 ;
 MSG_MA_MForward
-Faire suivre...
+Retransmettre...
 ; Forward...
 ;
 MSG_MA_MBounce
@@ -1606,7 +1587,7 @@ Envoi (SMTP)
 ;
 MSG_CO_Server
 Ser_veur
-; Server
+; Ser_ver
 ;
 MSG_CO_Domain
 Do_maine
@@ -1717,7 +1698,7 @@ _Requête
 ; _Requester
 ;
 MSG_CO_NotiSound
-S_on
+So_n
 ; S_ound
 ;
 MSG_CO_NotiCommand
@@ -1761,7 +1742,7 @@ Appliquer sur nou_veaux messages
 ; A_pply to new mail
 ;
 MSG_CO_ApplyToSent
-Appliquer à _l'expédition
+Appliquer à l'e_xpédition
 ; Apply to sent _mail
 ;
 MSG_CO_ApplyOnReq
@@ -1865,7 +1846,7 @@ Formatage du te_xte
 ; Use te_xtstyles
 ;
 MSG_CO_Header
-_En-tête
+En_-tête
 ; _Header
 ;
 MSG_CO_SenderInfo
@@ -1901,7 +1882,7 @@ Programmes MIME
 ; MIME viewers
 ;
 MSG_CO_MimeType
-_Type du fichier
+T_ype du fichier
 ; Attachment _type
 ;
 MSG_CO_MimeCmd
@@ -1925,7 +1906,7 @@ Message d'en-tête
 ; Message header
 ;
 MSG_CO_ReplyTo
-_Répondre à
+Répondre _à
 ; _Reply to
 ;
 MSG_CO_Organization
@@ -2017,23 +1998,23 @@ Sur ces _domaines
 ; Use with these _domains
 ;
 MSG_CO_MLRepInit
-_Listes de discussion
+_Listes de discussions
 ; _Mailing list reply phrase
 ;
 MSG_CO_QuoteMail
-_Citer les messages avec
+Citation _interne avec
 ; _Quote message using
 ;
 MSG_CO_QuoteEmpty
-Citer li_gnes vides
+Citer les li_gnes vides
 ; Quote _empty lines
 ;
 MSG_CO_VerifyAddress
-_Vérifier destinataire(s)
+_Vérifier les destinataires
 ; _Verify recipient address
 ;
 MSG_CO_StripSignature
-E_nlever signature
+E_nlever la signature
 ; Stri_p signature
 ;
 MSG_CO_DefSig
@@ -2125,7 +2106,7 @@ Champ d'en_-tête
 ; _Header field
 ;
 MSG_CO_Logfiles
-Fichiers évènements
+Fichiers des évènements
 ; Logfiles
 ;
 MSG_CO_LogPath
@@ -2133,7 +2114,7 @@ C_hemin
 ; _Path
 ;
 MSG_CO_LogSplit
-Découper _fichier évènements
+Découper le _fichier d'évènements
 ; Split _logfile
 ;
 MSG_CO_LogMode
@@ -2254,18 +2235,18 @@ Position _X
 ;
 MSG_CO_CloseGadget
 _Gadget de fermeture pour icônifier le programme
-; Close_gadget iconifies program
+; Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete
 Sauver/effacer les messages
 ; Save/delete messages
 ;
 MSG_CO_ConfirmDelPart1
-Confirmer la su_ppression de
+Co_nfirmer la suppression de
 ; Confirm _deletion of
 ;
 MSG_CO_ConfirmDelPart2
-messages, ou plus
+message(s), ou plus
 ; or more messages
 ;
 MSG_CO_Remove
@@ -2297,7 +2278,7 @@ Trace du message
 ; Message tracking
 ;
 MSG_CO_SendAtOnce
-_Envoyer immédiatement
+Envo_yer immédiatement
 ; Send at _once
 ;
 MSG_CO_XPK
@@ -2370,7 +2351,7 @@ Sc_ript
 ; Sc_ript
 ;
 MSG_CO_OpenConsole
-_Ouvre une fenêtre de suivi
+Ouvre une _fenêtre de suivi
 ; _Open console window
 ;
 MSG_CO_WaitTerm
@@ -2833,7 +2814,7 @@ de chaque nouveau message
 MSG_HELP_CO_ST_OUTTRANS
 Utilise cette conversion de caractères\n\
 pour les nouveaux messages
-; Apply this characterset translation\n\
+; Apply this character set translation\n\
 ; on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP
@@ -2900,7 +2881,7 @@ l'en-tête de réponse alternative
 ;
 MSG_HELP_CO_ST_MREPLYTEXT
 Utilise ce texte en réponse à\n\
-un message de liste de discussion.
+un message de liste de discussions.
 ; Use these texts in replies to\n\
 ; messages from a mailing list.
 ;
@@ -2954,7 +2935,7 @@ MSG_HELP_CO_BT_INSENV
 Insère le caractère de contrôle pour\n\
 positionner la signature d'environnement
 ; Insert control code for the\n\
-; enviromental variable SIGNATURE
+; environment variable SIGNATURE
 ;
 MSG_HELP_CO_ST_TAGFILE
 Fichier contenant les citations
@@ -3104,7 +3085,7 @@ Les nouvelles entrées dans l'annuaire\n\
 seront ajoutées dans ce groupe.\n\
 (Ce groupe sera créé dès la première entrée)
 ; Add new address book entries to this group (it\n\
-; will be created if it doesn't already exist)
+; will be created if it doesn't exist yet)
 ;
 MSG_HELP_CO_ST_TEMPDIR
 Répertoire des fichiers temporaires
@@ -3132,7 +3113,7 @@ MSG_HELP_CO_CH_CLGADGET
 Yam doit-il s'icônifier en cliquant\n\
 sur le gadget « fermeture » ?
 ; Do you want YAM to iconify when\n\
-; you hit the closegadget?
+; you hit the close gadget?
 ;
 MSG_HELP_CO_CH_CONFIRM
 Voulez-vous confirmer la\n\
@@ -3147,7 +3128,7 @@ de cette quantité de messages
 ; display the confirmation requester
 ;
 MSG_HELP_CO_CH_REMOVE
-Supprime les messages immédiatement\n\
+Supprime les messages immédiatement,\n\
 sans passer par le dossier « Effacés »
 ; Delete messages instantly, don't\n\
 ; move them to the trash folder
@@ -3193,7 +3174,7 @@ MSG_HELP_CO_CH_SEND_MDN
 Essaie d'envoyer l'accusé de réception\n\
 ou la notification dès sa création.
 ; Try to send the disposition notification\n\
-; as soon it has been generated
+; as soon as it is generated
 ;
 MSG_HELP_CO_TX_ENCPACK
 Bibliothèque XPK utilisée pour\n\
@@ -3271,7 +3252,7 @@ Voulez-vous lui envoyer un message ?
 ; NAME, AGE
 ;
 MSG_AB_BirthdayReminder
-Pense bête (anniversaire)
+Pense-bête (anniversaire)
 ; Birthday Reminder
 ;
 MSG_AB_HappyBirthday
@@ -3650,7 +3631,7 @@ Pa_ge d'accueil
 ;
 MSG_EA_SnailMail
 Adresse postale
-; S_nail mail
+; Snail mail
 ;
 MSG_EA_Street
 R_ue
@@ -3863,7 +3844,7 @@ MSG_RE_MDNGads3
 MSG_RE_MDNReq
 L'expéditeur de ce message demande un accusé de réception (MDN).\n\
 Que voulez-vous faire ?
-; The sender of this message request a disposition notification (MDN).\n\
+; The sender of this message requests a disposition notification (MDN).\n\
 ; What do you want to do?
 ;
 MSG_RE_SaveMessage
@@ -4274,7 +4255,7 @@ MSG_HELP_RE_BT_QUESTION
 Affiche le message auquel\n\
 il a été répondu\n\
 (Thème précédent)
-; Show the message which\n\
+; Show the message that\n\
 ; is being answered here\n\
 ; (go back in thread)
 ;
@@ -4340,11 +4321,13 @@ Ajouter _le(s) destinataire(s) plus tard|*_Annuler
 ; _Add recipient later|*_Cancel
 ;
 MSG_WR_PGPMIMEconflict
-Le MIME/PGP n'accèpte pas les documents joints : la signature et le chiffrement ont été désactivés.
+Le MIME/PGP n'accepte pas les documents joints :\n\
+la signature et le chiffrement ont été désactivés.
 ; PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
 ;
 MSG_WR_DiscardChanges
-Voulez-vous vraiment perdre toutes les modifications apportées à ce message ?
+Voulez-vous vraiment perdre toutes les modifications\n\
+apportées à ce message ?
 ; Do you really want to discard all modifications to this message?
 ;
 MSG_WR_DiscardChangesGad
@@ -4587,7 +4570,7 @@ Italique
 ; Italic
 ;
 MSG_WR_TBUnderlined
-Souligne
+Souligné
 ; ULined
 ;
 MSG_WR_TBColored
@@ -4614,7 +4597,7 @@ Citation
 ;
 MSG_WR_ROT13
 Codé ROT 13
-; ROT13 encrypted
+; ROT13 encoded
 ;
 MSG_WR_LaunchEd
 Ouvrir éditeur
@@ -4638,7 +4621,7 @@ Coller
 ;
 MSG_WR_PasteAs
 Coller en
-; PasteAs
+; Paste as
 ;
 MSG_WR_MUndo
 Défaire
@@ -4665,7 +4648,7 @@ Italique
 ; Italic
 ;
 MSG_WR_Underlined
-Souligner
+Souligné
 ; Underlined
 ;
 MSG_WR_Colored
@@ -4772,7 +4755,7 @@ pour modifier le message
 ;
 MSG_HELP_WR_BT_LOAD
 Insère un texte à la position du curseur
-; Insert textfile at cursor position
+; Insert text file at cursor position
 ;
 MSG_HELP_WR_BT_CUT
 Coupe le texte sélectionné vers le presse-papiers
@@ -4836,7 +4819,7 @@ le document joint sélectionné
 ;
 MSG_HELP_WR_RA_ENCODING
 Codage à utiliser pour le document joint sélectionné.\n\
-N'utilisez UUencode uniquement si le destinataire\n\
+N'utilisez UUencode, uniquement si le destinataire\n\
 n'a pas de gestionnaire de courriers compatible MIME.
 ; Type of encoding used for the selected attachment.\n\
 ; Use UUencode only if the recipient hasn't got\n\
@@ -5088,12 +5071,12 @@ Charge le courrier...
 ;
 MSG_TR_MailTransferFrom
 Rapatrie le courrier de %s
-; Transfer mail from %s
+; Mail transfer from %s
 ; HOST
 ;
 MSG_TR_MailTransferTo
 Transfère le courrier vers %s
-; Transfer mail to %s
+; Mail transfer to %s
 ; HOST
 ;
 MSG_TR_MsgInFile
@@ -5234,8 +5217,10 @@ La date de naissance n'est pas au bon format. Il faut utiliser JJ-MMM-AAAA. (Nom
 ; Date of birth is in wrong format. The correct format is DD-MMM-YYYY (month names in English).
 ;
 MSG_ER_NotInGallery
-Je ne trouve pas cette personne dans la galerie des utilisateurs de YAM. Soit elle n'est pas dans la galerie soit son nom ou son adresse est erroné.
-; Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or her name or address is misspelled.
+Je ne trouve pas cette personne dans la galerie des utilisateurs de YAM. \
+Soit elle n'est pas dans la galerie soit son nom ou son adresse est erroné.
+; Couldn't find this person in the YAM user gallery. Either the person \
+; doesn't exist in the database or his/her name or address is mispelt.
 ;
 MSG_ER_NoTCP
 Pas de couche TCP/IP détectée ! Une pile internet compatible « bsdsocket » doit-être démarrée avant d'utiliser cette fonction.
@@ -5313,7 +5298,7 @@ Ofset manquant dans ce message multi-partie. Le message doit être tronqué.
 ;
 MSG_ER_CantOpenFile
 Impossible de lire le fichier « %s ». Ce fichier ne semble pas exister.
-; Can't read from file '%s'. The file doesn't seem to exists.
+; Can't read from file '%s'. The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize
@@ -5330,7 +5315,7 @@ Le document HTML « %s » n'a pas été trouvé. Le fichier n'existe pas sur le serve
 ; FILENAME
 ;
 MSG_ER_SendHTTP
-Ne peut pas envoyer la requête HTTP. La demande au serveur WWW a échouée.
+Ne peut pas envoyer la requête HTTP. La demande au serveur WWW a échoué.
 ; Can't send HTTP request. Requesting a document from the WWW server failed.
 ;
 MSG_ER_ConnectHTTP
@@ -5693,7 +5678,7 @@ dans la fenêtre principale
 MSG_HELP_FI_BT_READ
 Affiche le contenu des messages\n\
 sélectionnés dans la liste
-; Display selected message/nfrom the list above
+; Display selected message\nfrom the list above
 ;
 MSG_HELP_FI_BT_ABORT
 Interrompt la recherche
@@ -5714,7 +5699,7 @@ MSG_HELP_FI_RA_ADRMODE
 Choisissez si la recherche doit s'effectuer\n\
 dans le champ de l'adresse ou du nom (en-tête).
 ; Choose whether you want to search in the\n\
-; address or realname part of the field
+; address or real name part of the field
 ;
 MSG_HELP_FI_CY_STATUS
 Compare avec ce statut de message
@@ -5808,7 +5793,7 @@ Mot de _passe
 ;
 MSG_US_SuperVisor
 Privilèges _super-utilisateur
-; _Supervisor privileges
+; _Supervisor priviledges
 ;
 MSG_US_AddUser
 _Ajouter utilisateur
@@ -5862,7 +5847,7 @@ pour la création d'un nouveau compte
 ;
 MSG_HELP_US_BT_ADD
 Crée un nouveau compte
-; Create the new account
+; Create a new account
 ;
 MSG_HELP_US_BT_DEL
 Supprime le compte sélectionné
@@ -5878,7 +5863,7 @@ Nom optionnel pour le séparateur
 MSG_FO_NewFolderReq
 Quel type de nouveau dossier voulez-vous créer ?\n\
 Choisir « Existant » si le répertoire existe\n\
-déjà sur votre disque
+déjà sur votre disque.
 ; What settings do you want to use for the new folder?\n\
 ; Select 'Existing directory' if the folder already exists\n\
 ; on your disk
@@ -5956,7 +5941,7 @@ Mo_de
 ;
 MSG_FO_SortBy
 T_rier par
-; S_ort by
+; _Sort by
 ;
 MSG_FO_ThenBy
 P_uis
@@ -5967,7 +5952,7 @@ Inv.
 ; Rev
 ;
 MSG_FO_MLSupport
-Liste de discussion
+Liste de discussions
 ; Mailing list support
 ;
 MSG_FO_ToPattern
@@ -6014,27 +5999,27 @@ MSG_HELP_FO_CY_SORT0
 Méthode de trie à utiliser pour\n\
 classer les messages de ce dossier
 ; Primary sorting order of the\n\
-; message in this folder
+; messages in this folder
 ;
 MSG_HELP_FO_CY_SORT1
 Trie de deuxième ordre sur\n\
 les messages de ce dossier
 ; Secondary sorting order of the\n\
-; message in this folder
+; messages in this folder
 ;
 MSG_HELP_FO_CH_REVERSE
 Inverse le trie
 ; Reversed sorting
 ;
 MSG_HELP_FO_ST_MLPATTERN
-Un message appartient à une liste de discussion\n\
+Un message appartient à une liste de discussions\n\
 si le champ « À: » correspond à ce motif
 ; A message belongs to a mailing list\n\
 ; if the To: field matches this pattern
 ;
 MSG_HELP_FO_ST_MLADDRESS
 Utilise cette adresse pour répondre\n\
-à un message d'une liste de discussion
+à un message d'une liste de discussions
 ; Use this recipient address for\n\
 ; a reply to a mailing list message
 ;
@@ -6147,7 +6132,8 @@ Décode et affiche...
 ; ADDED AFTER 13-MAR-1999
 ;
 MSG_RE_FollowThreadReq
-Afin de suivre le thème, YAM doit charger tous les indices.\nCeci peut prendre du temps. Voulez-vous poursuivre ?
+Afin de suivre le thème, YAM doit charger tous les indices.\n\
+Ceci peut prendre du temps. Voulez-vous poursuivre ?
 ; In order to follow the thread, YAM has to load all indices.\n\
 ; This may be time consuming. Do you want to continue?
 ;
@@ -6178,8 +6164,8 @@ Nouveau séparateur...
 ; New separator...
 ;
 MSG_FOLDER_EDIT
-Éditer
-; Edit
+Éditer...
+; Edit...
 ;
 MSG_FOLDER_DELETE
 Effacer
@@ -6194,8 +6180,8 @@ Exporter...
 ; Export...
 ;
 MSG_MESSAGE_EDIT
-E\000Éditer
-; E\000Edit
+E\000Éditer...
+; E\000Edit...
 ;
 MSG_MESSAGE_MOVE
 M\000Déplacer...
@@ -6206,16 +6192,16 @@ Copier...
 ; Copy...
 ;
 MSG_MESSAGE_PRINT
-P\000Imprimer...
-; P\000Print...
+P\000Imprimer
+; P\000Print
 ;
 MSG_MESSAGE_SAVE
-V\000Sauver
+V\000Sauver...
 ; V\000Save...
 ;
 MSG_MESSAGE_SAVEATT
 T\000Sauver...
-; T\000Save
+; T\000Save...
 ;
 MSG_MESSAGE_CROP
 O\000Supprimer
@@ -6234,7 +6220,7 @@ R\000Répondre...
 ; R\000Reply...
 ;
 MSG_MESSAGE_FORWARD
-W\000Faire suivre...
+W\000Retransmettre...
 ; W\000Forward...
 ;
 MSG_MESSAGE_BOUNCE
@@ -6271,8 +6257,8 @@ De : adresse
 ;
 MSG_HELP_FO_ST_MLFROMADDRESS
 Utilise cette adresse d'expédition pour poster\n\
-un nouveau courrier sur une liste de discussion.
-; Use this from address when posting\n\
+un nouveau courrier sur une liste de discussions.
+; Use this From: address when posting\n\
 ; new mails to the list
 ;
 MSG_FO_ReplyToAddress
@@ -6281,8 +6267,8 @@ Répondre à : adresse
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS
 Utilise cette adresse de réponse pour poster\n\
-un nouveau courrier sur une liste de discussion.
-; Use this reply-to address when posting\n\
+un nouveau courrier sur une liste de discussions.
+; Use this Reply-To: address when posting\n\
 ; new mails to the list
 ;
 MSG_RE_MDNGads4
@@ -6291,7 +6277,7 @@ MSG_RE_MDNGads4
 ;
 MSG_EA_DefSecurity
 Sé_curité
-; Se_curity
+; Sec_urity
 ;
 MSG_HELP_MA_CY_DEFSECURITY
 Sécurité par défaut pour envoyer\n\
@@ -6301,7 +6287,7 @@ un courrier à cette personne
 ;
 MSG_WR_DefSecurityConflict
 Le destinataire de ce courrier a des réglages de sécurité\n\
-par défaut différents. Quelle type de sécurité choisir ?
+par défaut différents. Quel type de sécurité choisir ?
 ; The recipients of this mail have different default\n\
 ; security settings. What kind of security do you want?
 ;
@@ -6315,7 +6301,7 @@ Défaut
 ;
 MSG_ER_PGPMultipart
 Erreur durant la création d'un message PGP multipartie. Désactivation des fonctions de chiffrage et de signature !
-; Error creating multipart PGP message. Encryption/signing disabled!
+; Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont
 Police fixe
@@ -6327,15 +6313,15 @@ Le serveur ESMTP %s ne gère pas le SMTP AUTH !
 ;
 MSG_CO_UseSMTPAUTH
 Utiliser SMTP AUT_H
-; Use SMTP _AUTH
+; Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser
 I_D utilisateur
-; _User ID
+; Us_er ID
 ;
 MSG_CO_SMTPPass
 M_ot de passe
-; Pa_ssword
+; Passwo_rd
 ;
 MSG_CO_Del
 Supprimer
@@ -6346,20 +6332,20 @@ Mettre statut à non-lu
 ; Set status to unread
 ;
 MSG_WR_AltQuoted
-Citation alternée
+Citation externe
 ; Alternate Quoted
 ;
 MSG_CO_AltQuote
-Citation e_xterne utilisant
-; Quote external using
+Citation e_xterne avec
+; Quote e_xternal using
 ;
 MSG_CO_DoQuote
 Citer le _message
-; Quote message
+; Qu_ote message
 ;
 MSG_HELP_CO_ST_ALTQUOTECHAR
 Chaîne de caractères devant précéder chaque ligne\n\
-citée d'une source autre qu'un courrier électronique
+citée, d'une source autre qu'un courrier électronique
 ; String that should precede each line of\n\
 ; a quote inserted from non-email sources
 ;
@@ -6390,15 +6376,13 @@ MSG_MA_ABookModifiedGad
 ; *_Save now|_Quit without saving
 ;
 MSG_APPICON_STATS
-N:%lD U:%lD T:%lD
+Nv:%lD Nl:%lD T:%lD
 ; N:%lD U:%lD T:%lD
-;
 ; COUNT, COUNT, COUNT
 ;
 MSG_ATTACH_NO
 N°
 ; No.
-;
 ;
 MSG_ATTACH_PART
 Partie
@@ -6407,4 +6391,3 @@ Partie
 MSG_ABOUT_OKAY_GAD
 Ok
 ; OK
-;
