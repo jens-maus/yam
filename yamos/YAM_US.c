@@ -52,7 +52,6 @@
 /* local protos */
 static void US_SaveUsers(void);
 static void US_LoadUsers(void);
-static BOOL US_PromptForPassword(struct User*, APTR);
 static BOOL US_SaveUserList(void);
 static struct US_ClassData *US_New(BOOL);
 
@@ -158,20 +157,6 @@ static void US_LoadUsers(void)
 }
 
 ///
-/// US_PromptForPassword
-//  User login: asks for user password
-static BOOL US_PromptForPassword(struct User *u, APTR win)
-{
-   char passwd[SIZE_PASSWORD];
-
-   do {
-      *passwd = 0;
-      if (!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_US_WaitLogin), GetStr(MSG_US_EnterPassword), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, win)) return FALSE;
-   } while (strcmp(passwd, u->Password));
-   return TRUE;
-}
-
-///
 /// US_Login
 //  User login: puts up user list and waits for a selection
 BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
@@ -228,7 +213,7 @@ BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
       if(password)
         loggedin = (!strcmp(password, u->Password) || *password == '\01');
       else
-        loggedin = US_PromptForPassword(u, G->SplashWinObject);
+        loggedin = DoMethod(G->SplashWinObject, MUIM_Splashwindow_PasswordRequest, u);
    }
 
    return loggedin;

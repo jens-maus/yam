@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-04-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * Splashwindow.c, YAM_US.c: moved the authentication request for password
+      protected users to the Splashwindow instead of using a separate requester.
+      This does not only integrate the startup process a bit better, but also fixes
+      a crash bug that occurred when using a StringRequest() during startup.
+    * YAM_UT.c, misc: replaced all MUIM_Application_Input usages by proper NewInput
+      usages which should work a bit more efficent regarding to the MUI documentation.
+      Also checked all NewInput usages that they are used correctly as per MUI
+      documentation.
+
 2005-03-30  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed a very strange bug (perhaps a GCC3 bug?) that caused menu items
