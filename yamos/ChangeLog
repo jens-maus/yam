@@ -7,6 +7,9 @@ $Source$
 
 2005-02-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_WR.c: slightly updated MIME warning message to suggest Thunderbird for
+      all platforms in favour of i.e. Eudora, because it might be better to
+      suggest another GPL flavoured client that is quite common ;)
     * YAM_RE.c: forgot to clear the PGP signed/encrypted flags of a readmaildata
       structure in the CleanupReadMailData() function which caused that even no
       PGP mails got scanned for a signature upon mail switching.

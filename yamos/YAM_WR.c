@@ -966,9 +966,8 @@ static const char *MIMEwarn =
   "support MIME. Some parts of this message will be readable as plain text.\n"
   "To see the rest, you will need to upgrade your mail reader. Following are\n"
   "some URLs where you can find MIME-capable mail programs for common platforms:\n\n"
-  "  Amiga............: YAM          http://www.yam.ch/\n"
-  "  Unix.............: Metamail     ftp://thumper.bellcore.com/pub/nsb/\n"
-  "  Windows/Macintosh: Eudora       http://www.eudora.com/\n\n"
+  "  AmigaOS...........: YAM          http://www.yam.ch/\n"
+  "  Unix/MacOS/Windows: Thunderbird  http://www.mozilla.org/products/thunderbird/\n"
   "General info about MIME can be found at:\n\n"
   "http://www.faqs.org/faqs/mail/mime-faq/\n\n";
 static const char *PGPwarn  =
