@@ -7,8 +7,8 @@ $Source$
 
 2005-03-01  Jens Langner <Jens.Langner@light-speed.de>
 
-    * YAM_COg.c: fixed bug #798798 where the upon using the recipient string
-      features of the forward/bounce string objects of the filters, there content
+    * YAM_COg.c: fixed bug #798798 where upon using the recipient string
+      features of the forward/bounce string objects on the filters, their content
       wasn't actually saved at all due to an incorrect MUI notification.
     * YAM_WR.c: fixed bug #834213 where a stored mail in the sent folder could
       not be edited and "send later" as expected.
