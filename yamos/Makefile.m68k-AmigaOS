@@ -14,7 +14,7 @@ YAM.h: YAM.h.in
 	cp YAM.h.in YAM.h
 
 %.o: %.c
-	gcc -Iincludes -DNO_INLINE_STDARG -noixemul -O2 -funsigned-char -c -DYAMVER="\"2.3-dev\"" -DYAMDATE="\"`date +%d.%m.%Y`\"" $<
+	gcc -W -Wall -Iincludes -DNO_INLINE_STDARG -noixemul -O2 -funsigned-char -c -DYAMVER="\"2.3-dev\"" -DYAMDATE="\"`date +%d.%m.%Y`\"" $<
 
 #else # MorphOS
 #
