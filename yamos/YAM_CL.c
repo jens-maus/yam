@@ -154,8 +154,8 @@ DISPATCHERPROTO(BC_Dispatcher)
 }
 
 ///
-/// WL_Dispatcher (Attachment List)
-/*** WL_Dispatcher (Attachment List) - Subclass of List, adds Drag&Drop from message list ***/
+/// WL_Dispatcher (Attachment NList)
+/*** WL_Dispatcher (Attachment NList) - Subclass of NList, adds Drag&Drop from message list ***/
 DISPATCHERPROTO(WL_Dispatcher)
 {
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
@@ -190,7 +190,7 @@ DISPATCHERPROTO(WL_Dispatcher)
                strcpy(attach.ContentType, "message/rfc822");
                attach.Size = mail->Size;
                attach.IsMIME = TRUE;
-               DoMethod(obj, MUIM_List_InsertSingle, &attach, MUIV_List_Insert_Bottom);
+               DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
             }
             return 0;
          }
@@ -206,8 +206,6 @@ DISPATCHERPROTO(FL_Dispatcher)
 {
    struct Folder *srcfolder, *dstfolder;
    struct MUI_NListtree_TreeNode *tn_src, *tn_dst;
-
-//   DB(if(msg->MethodID != 0x9d510090) kprintf("%lx\n", msg->MethodID);)
 
    switch (msg->MethodID)
    {

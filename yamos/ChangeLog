@@ -7,6 +7,11 @@ $Source$
 
 2002-07-04  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_WR.c, YAM_CL.c: even if the Attachment NList is
+      inherented from List.mui, it seems much clearer to use
+      NList tags for all operations on this list. So now
+      the attachment list will use NList tags when ever
+      possible.
     * YAM_WR.c: fixed bug #555122 where we forgot to delete
       temporary files if an attachment that has been added to
       the attachment list of the write window was deleted

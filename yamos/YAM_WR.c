@@ -123,7 +123,7 @@ HOOKPROTONHNO(WR_GetFileEntry, void, int *arg)
    struct Attach *attach = NULL;
    struct WR_GUIData *gui = &G->WR[winnum]->GUI;
 
-   DoMethod(gui->LV_ATTACH, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &attach);
+   DoMethod(gui->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, attach ? FALSE : TRUE, gui->RA_ENCODING, gui->ST_CTYPE, gui->ST_DESC, gui->BT_DEL, gui->BT_DISPLAY, NULL);
    if (attach)
    {
@@ -144,14 +144,14 @@ HOOKPROTONHNO(WR_PutFileEntry, void, int *arg)
    struct WR_GUIData *gui = &G->WR[winnum]->GUI;
    int ismime;
 
-   DoMethod(gui->LV_ATTACH, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &attach);
+   DoMethod(gui->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
    if (attach)
    {
       get(gui->RA_ENCODING, MUIA_Radio_Active, &ismime);
       attach->IsMIME = ismime == 0;
       GetMUIString(attach->ContentType, gui->ST_CTYPE);
       GetMUIString(attach->Description, gui->ST_DESC);
-      DoMethod(gui->LV_ATTACH, MUIM_List_Redraw, MUIV_List_Redraw_Active);
+      DoMethod(gui->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
    }
 }
 MakeStaticHook(WR_PutFileEntryHook, WR_PutFileEntry);
@@ -197,8 +197,8 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
       MyStrCpy(attach.ContentType, ctype);
       nnset(gui->ST_CTYPE, MUIA_String_Contents, attach.ContentType);
       nnset(gui->ST_DESC, MUIA_String_Contents, attach.Description);
-      DoMethod(gui->LV_ATTACH, MUIM_List_InsertSingle, &attach, MUIV_List_Insert_Bottom);
-      set(gui->LV_ATTACH, MUIA_List_Active, MUIV_List_Active_Bottom);
+      DoMethod(gui->LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+      set(gui->LV_ATTACH, MUIA_NList_Active, MUIV_NList_Active_Bottom);
       return TRUE;
    }
    return FALSE;
@@ -301,7 +301,7 @@ static struct WritePart *BuildPartsList(int winnum)
    p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
    for (i = 0; ; i++)
    {
-      DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_List_GetEntry, i, &att);
+      DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
       if (!att) break;
       p->Next = np = NewPart(winnum); p = np;
       p->ContentType = att->ContentType;
@@ -1308,7 +1308,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
          SetDefaultSecurity(&comp);
       comp.DelSend = GetMUICheck(gui->CH_DELSEND);
       comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
-      get(gui->LV_ATTACH, MUIA_List_Entries, &att);
+      att = xget(gui->LV_ATTACH, MUIA_NList_Entries);
       EditorToFile(gui->TE_EDIT, G->WR_Filename[winnum], G->TTout);
       comp.FirstPart = BuildPartsList(winnum);
       comp.FirstPart->TTable = G->TTout;
@@ -1458,7 +1458,7 @@ void WR_Cleanup(int winnum)
       DeleteFile(G->WR_Filename[winnum]);
       for (i = 0; ; i++)
       {
-         DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_List_GetEntry, i, &att);
+         DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
          if (!att) break;
          if (att->IsTemp) DeleteFile(att->FilePath);
       }
@@ -1636,7 +1636,7 @@ HOOKPROTONHNO(WR_DisplayFile, void, int *arg)
 {
    struct Attach *attach = NULL;
 
-   DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &attach);
+   DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
    if (attach) RE_DisplayMIME(attach->FilePath, attach->ContentType);
 }
 MakeStaticHook(WR_DisplayFileHook, WR_DisplayFile);
@@ -1896,7 +1896,7 @@ void WR_SetupOldMail(int winnum)
          *part->Filename = 0;
          MyStrCpy(attach.ContentType, part->ContentType);
          MyStrCpy(attach.Description, part->Description);
-         DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_List_InsertSingle, &attach, MUIV_List_Insert_Bottom);
+         DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
          BusyEnd;
       }
 }
@@ -2431,7 +2431,7 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.BT_ADDPACK ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddArchiveHook,winnum);
          DoMethod(data->GUI.BT_DEL     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DeleteFileHook,winnum);
          DoMethod(data->GUI.BT_DISPLAY ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DisplayFileHook,winnum);
-         DoMethod(data->GUI.LV_ATTACH  ,MUIM_Notify,MUIA_List_Active         ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_GetFileEntryHook,winnum);
+         DoMethod(data->GUI.LV_ATTACH  ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_GetFileEntryHook,winnum);
          DoMethod(data->GUI.RA_ENCODING,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
          DoMethod(data->GUI.ST_CTYPE   ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
          DoMethod(data->GUI.ST_DESC    ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
