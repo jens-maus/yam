@@ -2985,7 +2985,7 @@ void DisplayAppIconStatistics(void)
   if (G->DiskObj[mode])
   {
     struct DiskObject *dobj=G->DiskObj[mode];
-    G->AppIcon = AddAppIconA(0, 0, (STRPTR)apptit, G->AppPort, NULL, dobj, NULL);
+    G->AppIcon = AddAppIcon(0, 0, (STRPTR)apptit, G->AppPort, NULL, dobj, TAG_DONE);
   }
 }
 
@@ -3040,10 +3040,10 @@ void DisplayStatistics(struct Folder *fo)
       // Now get the parent of the treenode
       if(tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE))
       {
-         // If tn_parent->tn_User is NULL then it`s ROOT and we have to skip here
-         if(tn_parent->tn_User)
+         // fo_parent is NULL then it`s ROOT and we have to skip here
+         struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
+         if(fo_parent)
          {
-            struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
             int i;
 
             // clear the parent mailvariables first
