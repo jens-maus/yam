@@ -1582,13 +1582,13 @@ MSG_CO_ReMailerLine (//)
 _Header field
 ;
 MSG_CO_Logfiles (//)
-Logfiles
+Log files
 ;
 MSG_CO_LogPath (//)
 _Path
 ;
 MSG_CO_LogSplit (//)
-Split _logfile
+Split _log file
 ;
 MSG_CO_LogMode (//)
 _Mode
@@ -2220,10 +2220,10 @@ Insert this line at the top of your\n\
 message if it is sent via remailer
 ;
 MSG_HELP_CO_ST_LOGFILE (//)
-Path where the logfiles will be saved
+Path where the log files will be saved
 ;
 MSG_HELP_CO_CH_SPLITLOG (//)
-Start a new logfile every month
+Start a new log file every month
 ;
 MSG_HELP_CO_CY_LOGMODE (//)
 Select type of logging
