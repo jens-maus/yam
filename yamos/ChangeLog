@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-07-08  David Rey <tactica@gmx.net>
+
+    * YAM_global.c: replaced the copyright symbol with "(C)" to be
+      friendlier with charsets where this symbol is not available
+    * classes/YAM.c: likewise
+    * locale/YAM.cd: likewise
+
 2003-07-04  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: applied a patch for the mail export functions of YAM which

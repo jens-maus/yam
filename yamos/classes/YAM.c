@@ -347,7 +347,7 @@ OVERLOAD(OM_NEW)
 		MUIA_Application_Base,           "YAM",
 		MUIA_Application_Title,          "YAM",
 		MUIA_Application_Version,        yamversionstring,
-		MUIA_Application_Copyright,      "Copyright © 2000-2003 YAM Open Source Team",
+		MUIA_Application_Copyright,      "Copyright (C) 2000-2003 YAM Open Source Team",
 		MUIA_Application_Description,    GetStr(MSG_APP_DESCRIPTION),
 		MUIA_Application_UseRexx,        FALSE,
 		MUIA_Application_SingleTask,     !getenv("MultipleYAM"),

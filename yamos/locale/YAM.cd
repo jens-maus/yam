@@ -190,8 +190,8 @@ Directory
 MSG_Copyright1 (//)
 Open Source E-mail package for the Amiga\n\
 \n\
-Copyright © 1995-2000 Marcel Beck\n\
-Copyright © 2000-2003 YAM Open Source Team
+Copyright (C) 1995-2000 Marcel Beck\n\
+Copyright (C) 2000-2003 YAM Open Source Team
 ;
 MSG_Version (//)
 Version:
