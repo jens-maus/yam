@@ -54,8 +54,9 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
 	NewList(list);
 	if((fh = Open(name, MODE_OLDFILE)))
 	{
+		int i=0;
 		TEXT line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
-		while(FGets(fh, line, sizeof(line)))
+		while(FGets(fh, line, sizeof(line)) && i++ < 100) // we limit the reading to a maximum of 100 so that this code can`t read endlessly
 		{
 			STRPTR addr, end;
 			struct EMailCacheNode *node;
@@ -276,7 +277,9 @@ DECLARE(AddToEmailCache) // struct Person *person
 {
 	GETDATA;
 
-	if(C->EmailCache == 0) return -1;
+	// if the emailcache feature is turned off or
+	// the supplied person doesn`t have a address, lets exit immediatly
+	if(C->EmailCache == 0 || !msg->person->Address[0]) return -1;
 
 	// We first check the Addressbook if this Person already exists in the AB and if
 	// so we cancel this whole operation.
@@ -288,7 +291,7 @@ DECLARE(AddToEmailCache) // struct Person *person
 
 		// Ok, it doesn`t exists in the AB, now lets check the cache list
 		// itself
-		for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+		for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; i++, node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
 		{
 			struct ABEntry *entry = &node->ecn_Person;
 
@@ -318,7 +321,8 @@ DECLARE(AddToEmailCache) // struct Person *person
 				strcpy(entry->RealName, msg->person->RealName);
 				strcpy(entry->Address, msg->person->Address);
 
-				Insert(&data->EMailCache, (struct Node *)newnode, ((struct Node *)node)->ln_Pred->ln_Pred);
+				// we always add new items to the top because this is a FILO
+				AddHead(&data->EMailCache, (struct Node *)newnode);
 			}
 		}
 
@@ -370,7 +374,17 @@ OVERLOAD(OM_NEW)
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
 {
-//	GETDATA;
+	GETDATA;
+	struct EMailCacheNode *node;
+
+	// lets free the EMailCache List ourself in here, to make it a bit cleaner.
+	while(node = (struct EMailCacheNode *)RemHead(&data->EMailCache))
+	{
+		free(node);
+	}
+
+	// then we call the supermethod to let
+	// MUI free the rest for us.
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///

@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-19  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/YAM.c: fixed bug #583098 where the emailcache
+      didn`t seem to work correctly as it should. Somehow it didn`t
+      add new entries to the file, and if then not to the
+      correct position. Now it should always add new entries to
+      the top of the list like a FILO.
+      Also added some security check to the load function of the
+      emailcache so that it will not read more lines than 100. In
+      addition now YAM will also correctly free the whole list on
+      exit.
+
 2002-07-18  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: fixed behaviour of the transfer status of the
