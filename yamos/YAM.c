@@ -1017,6 +1017,8 @@ int main(int argc, char **argv)
 
    for(;;)
    {
+      Object *root, *grp, *bt_okay;
+
       G = calloc(1, sizeof(struct Global));
       C = calloc(1, sizeof(struct Config));
       NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
@@ -1030,53 +1032,59 @@ int main(int argc, char **argv)
 
       if(yamFirst)
       {
-         Object *root, *grp, *bt_okay;
-
          Initialise((BOOL)args.hide);
          Login(args.user, args.password, args.maildir, args.prefsfile);
          Initialise2((BOOL)args.hide);
-
-         grp = HGroup,
-            Child, RectangleObject, End,
-            Child, bt_okay = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
-            Child, RectangleObject, End,
-         End;
-
-         get(G->AY_Win, MUIA_Window_RootObject, &root);
-         if(root && grp && DoMethod(root, MUIM_Group_InitChange))
-         {
-            DoMethod(root, OM_ADDMEMBER, grp);
-            DoMethod(root, MUIM_Group_ExitChange);
-            DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-            SetAttrs(G->AY_Win,
-               MUIA_Window_Activate, TRUE,
-               MUIA_Window_DefaultObject, bt_okay,
-               TAG_DONE);
-         }
-
-         DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
-         AppendLog(0, GetStr(MSG_LOG_Started), "", "", "", "");
-         MA_StartMacro(MACRO_STARTUP, NULL);
-         DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
-         if (args.mailto || args.letter || args.subject || args.attach) if ((wrwin = MA_NewNew(NULL, 0)) >= 0)
-         {
-            if (args.mailto) setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
-            if (args.subject) setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
-            if (args.letter) FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT);
-            if (args.attach) for (sptr = args.attach; *sptr; sptr++)
-               if (FileSize(*sptr) >= 0) WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
-         }
-         yamFirst = FALSE;
       }
       else
       {
          Initialise(FALSE);
          Login(NULL, NULL, NULL, NULL);
          Initialise2(FALSE);
-         DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
-         AppendLog(0, GetStr(MSG_LOG_Started), "", "", "", "");
-         MA_StartMacro(MACRO_STARTUP, NULL);
       }
+
+      grp = HGroup,
+        Child, RectangleObject, End,
+        Child, bt_okay = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
+        Child, RectangleObject, End,
+      End;
+
+      get(G->AY_Win, MUIA_Window_RootObject, &root);
+      if(root && grp && DoMethod(root, MUIM_Group_InitChange))
+      {
+        DoMethod(root, OM_ADDMEMBER, grp);
+        DoMethod(root, MUIM_Group_ExitChange);
+        DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+        SetAttrs(G->AY_Win,
+          MUIA_Window_Activate, TRUE,
+          MUIA_Window_DefaultObject, bt_okay,
+          TAG_DONE);
+      }
+
+      DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
+      AppendLog(0, GetStr(MSG_LOG_Started), "", "", "", "");
+      MA_StartMacro(MACRO_STARTUP, NULL);
+
+      if(yamFirst)
+      {
+        DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
+        if (args.mailto || args.letter || args.subject || args.attach) if ((wrwin = MA_NewNew(NULL, 0)) >= 0)
+        {
+          if (args.mailto) setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
+          if (args.subject) setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
+          if (args.letter) FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT);
+          if (args.attach)
+          {
+            for (sptr = args.attach; *sptr; sptr++)
+            {
+              if (FileSize(*sptr) >= 0) WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
+            }
+          }
+        }
+
+        yamFirst = FALSE;
+      }
+
       user = US_GetCurrentUser();
       AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name, "", "", "");
       AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir, "");
