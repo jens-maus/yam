@@ -18,8 +18,8 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
- YAM Official Support Site :  http://www.yam.ch
- YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+ YAM Official Support Site :  http://www.yam.ch/
+ YAM Open Source project   :  http://sourceforge.net/projects/yamos/
 
  $Id$
 
@@ -1215,7 +1215,7 @@ BOOL WriteOutMessage(struct Compose *comp)
    if (comp->Receipt & 1) EmitHeader(fh, "Return-Receipt-To", rcptto);
    if (comp->Receipt & 2) EmitHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
-   fprintf(fh, "X-Mailer: YAM %s AmigaOS eMail Client (c) 2000-2001 by YAM Open Source Team - http://www.yam.ch/\n", __YAM_VERSION);
+   fprintf(fh, "X-Mailer: YAM %s AmigaOS E-mail Client (c) 2000-2001 by YAM Open Source Team - http://www.yam.ch/\n", __YAM_VERSION);
    if (comp->UserInfo) WR_WriteUserInfo(fh);
    if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
    if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
