@@ -446,3 +446,9 @@
 
     * replaced MD5 calculation by PD variant
 
+2001-06-01  Gunther Nikl <gni@gecko.de>
+
+   * created YAM_debug.h with stuff taken from old.h/YAM.h
+   * YAM_FO.c, YAM_MAf.c, YAM_RE.c: use "YAM_debug.h"
+   * YAM_UT.c: lame fix for a MUI header problem with GCC
+   * YAM_md5.c: removed non-breaking spaces
