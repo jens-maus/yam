@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (20.02.2003)
+@$VER: YAM.guide 2.4 (04.03.2003)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -1559,9 +1559,13 @@ bottom of the list.
 
      The search pattern may contain @{" AmigaDOS wildcards " link "DOSW"} such as @{b}?@{ub}, @{b}#?@{ub},
      @{b}(a|b)@{ub} or @{b}[abc]@{ub}.  Please note that the search pattern @{b}[YAM]#?@{ub} will
-     filter all messages beginning with Y, A or M.  For filtering mails
-     coming from a mailing list (for example, a mailing list related to
-     YAM), you'd better use the search pattern @{b}#?YAM#?@{ub} or have the
+     filter all messages beginning with Y, A or M because the characters [
+     and ] are special characters within AmigaDOS patterns. Therefore
+     filtering mails coming from a mailing list (for example, a mailing
+     list related to YAM) and the subject always begins with [YAM] you
+     need to enter @{b}'[YAM']#?@{ub} as the filtering pattern including
+     the special ' escape characters.
+     Or you'd better use the search pattern @{b}#?YAM#?@{ub} or have the
      filter compare the @{b}Reply-To:@{ub} field with the address of the
      mailing list.
 
@@ -5026,12 +5030,16 @@ Finding messages - Search criteria
      as used for names in a telephone directory, so James < Jim and 12
      < 2.
 
-     The search pattern may contain AmigaDOS @{" wildcards " link "DOSW"} such as @{b}?@{ub}, @{b}#?@{ub},
+     The search pattern may contain @{" AmigaDOS wildcards " link "DOSW"} such as @{b}?@{ub}, @{b}#?@{ub},
      @{b}(a|b)@{ub} or @{b}[abc]@{ub}.  Please note that the search pattern @{b}[YAM]#?@{ub} will
-     match any message beginning with Y, A or M.  To filter email coming
-     from a mailing list (for example, a mailing list related to YAM),
-     you should use the search pattern @{b}#?YAM#?@{ub} or, even better, have
-     the filter compare the @{b}Reply-To@{ub} field with the address of the
+     filter all messages beginning with Y, A or M because the characters [
+     and ] are special characters within AmigaDOS patterns. Therefore
+     filtering mails coming from a mailing list (for example, a mailing
+     list related to YAM) and the subject always begins with [YAM] you
+     need to enter @{b}'[YAM']#?@{ub} as the filtering pattern including
+     the special ' escape characters.
+     Or you'd better use the search pattern @{b}#?YAM#?@{ub} or have the
+     filter compare the @{b}Reply-To:@{ub} field with the address of the
      mailing list.
 
      Example:  = YAM 1.3.#?
@@ -9704,6 +9712,12 @@ searches.  The special wildcard characters are listed below.
       enclose the whole expression in round brackets:
       e.g.  (#?YAM#?|#?MUI#?) finds strings including either "YAM" or
       "MUI".
+
+  '   The quote character neutralizes the special meaning of a
+      special character.  Here are some examples:
+      - '#'? matches only the literal string "#?"
+      - '?(A|B|%)'# matches the literal strings "?#", "?A#", "?B#"
+      - '[Mailinglist'] matches the literal string "[Mailinglist]"
 
 @{b}   WARNING!@{ub} It's not as easy as it looks!  For example, let's
 construct a filter that will find references to YAM or YAM2, but will
