@@ -607,7 +607,6 @@ Check single account
 ;
 MSG_MA_FolderInfo (//)
 \ebCurrent folder\en\n\
-\n\
 Name: %s\n\
 Path: %s\n\
 Size: %lD bytes\n\
@@ -616,7 +615,6 @@ Messages: %lD (%lD new, %lD unread)
 ;
 MSG_MA_MessageInfo (//)
 \ebCurrent message\en\n\
-\n\
 From: %s <%s>\n\
 To: %s <%s>\n\
 Subject: %s\n\
@@ -2154,7 +2152,7 @@ for empty lines?
 ;
 MSG_HELP_CO_CH_COMPADDR (//)
 Let the user select the desired recipient address if\n\
-the 'From' and 'Reply-To' addresses are different
+the 'From:' and 'Reply-To:' addresses are different
 ;
 MSG_HELP_CO_CH_STRIPSIG (//)
 Don't quote signature\n\
@@ -2415,7 +2413,6 @@ Alias
 ;
 MSG_AB_FoundEntry (//)
 Found matching entry!\n\
-\n\
 Alias: \eb%s\en\n\
 Name: \eb%s\en
 ; ALIAS, NAME
@@ -2972,9 +2969,7 @@ The message can only be read by %s\n
 ;
 MSG_RE_AddSender (//)
 Do you want to add the sender\n\
-\n\
 \eb%s\en\n\
-\n\
 to your address book?
 ; SENDER
 ;
