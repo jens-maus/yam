@@ -4639,7 +4639,7 @@ MSG_ATTACH_PART (//)
 Part
 ;
 MSG_ABOUT_OKAY_GAD (//)
-\33bOkay
+\033bOkay
 ;
 ; ADDED AFTER 15-MAR-2001
 ;
