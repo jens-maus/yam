@@ -66,7 +66,7 @@ struct FI_GUIData
 struct FI_ClassData  /* find window */
 {
    struct FI_GUIData GUI;
-   BOOL              Abort;
+   LONG              Abort;
    BOOL              SearchActive;
    BOOL              DisposeOnEnd;
 };

@@ -471,6 +471,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    // by default we don`t dispose on end
    G->FI->DisposeOnEnd = FALSE;
    G->FI->SearchActive = TRUE;
+   G->FI->Abort        = FALSE;
 
    set(gui->WI, MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_None);
    set(gui->BT_SELECT, MUIA_Disabled, TRUE);
@@ -510,7 +511,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
                 TAG_DONE);
 
    set(gui->GR_PAGE, MUIA_Group_ActivePage, 1);
-   G->FI->Abort = FALSE;
+
    for (i = 0; i < sfonum && !G->FI->Abort; i++)
    {
       for (mail = sfo[i]->Messages; mail && !G->FI->Abort; mail = mail->Next)
