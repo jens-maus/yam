@@ -205,8 +205,8 @@
     * replaced Listtree.mcc with NListtree.mcc of Carsten Scholling
     * fixed some minor bugs in the addressbook code
     * added CVS $id tags to every source file for better revision control
-    * changed AppIcon to also show the unread messages of the INCOMING folder
-      (this is a feature I was searching for a long time :)
+    * changed AppIcon to also show the unread messages of the INCOMING
+      folder (this is a feature I was searching for a long time :)
     * did some small cosmetic changes to the code
 
 2001-04-26  Jacob Laursen <laursen@myself.com>
@@ -261,26 +261,36 @@
 
     * Reverted back from NFloattext.mcc to Floattext.mcc in about window
 
-    * If you enter an alias in a address field and press return the alias or
-      realname will be resolved and the complete e-mail address string will
-      be printed in the field now.
+    * If you enter an alias in a address field and press return the alias
+      or realname will be resolved and the complete e-mail address string
+      will be printed in the field now.
 
-    * Added eMail resolving to the address field functions so that also while
-      entering a eMail address YAM will try to resolve it from the addressbook.
-      The resolve & expand ording will be Alias->RealName->eMail.
+    * Added eMail resolving to the address field functions so that also
+      while entering a eMail address YAM will try to resolve it from the
+      addressbook. The resolve & expand ording will be
+      Alias->RealName->eMail.
 
-    * Fixed mailing list stuff again. Now Shift/Alt-Reply should behave like
-      before.
+    * Fixed mailing list stuff again. Now Shift/Alt-Reply should behave
+      like before.
 
 2001-05-11  Jens Langner <Jens.Langner@htw-dresden.de>
 
-    * Fixed Y2K bug in DateStamp2String() function. Now Daterequests to UNIXTIME
-      should perform accurate. -> fixes the export email function
+    * Fixed Y2K bug in DateStamp2String() function. Now Daterequests to
+      UNIXTIME should perform accurate. -> fixes the export email function
 
-    * Removed some unneeded GetLocale calls for getting the TimeZone. Getting the
-      actual TimeZone is only needed once YAM is started. This changes should also
-      improved the MailListview a little bit because The DisplayHook was calling
-      such GetLocale calls everytime.
+    * Removed some unneeded GetLocale calls for getting the TimeZone.
+      Getting the actual TimeZone is only needed once YAM is started. This
+      changes should also improved the MailListview a little bit because
+      The DisplayHook was calling such GetLocale calls everytime.
+
+2001-05-14  Jacob Laursen <laursen@myself.com>
+
+    * Added two hidden configuration items:
+      - AskJumpUnread: if set to 'N', YAM will not suggest to jump to the
+        next folder with unread mails.
+      - WarnSubject: if set to 'N', YAM will not display the empty
+        subject line warning.
+      Both defaults to 'Y'.
 
 2001-05-14  Jens Langner <Jens.Langner@htw-dresden.de>
 
@@ -393,6 +403,10 @@
       This will break Dirks plan to remove all "//" comments, but I think that`s
       acceptable. ;)
 
+2001-05-22  Christian Hattemer <krille@users.sourceforge.net>
+
+    * Fixed Enforcer Hit when searching by status (Bug #423880)
+
 2001-05-22  Gunther Nikl <gni@gecko.de>
 
     * converted _WBenchMsg to WBmsg initialised from argv
@@ -495,6 +509,11 @@
     * changed FolderInfoBar refreshing. Now it should not flicker anymore and refreshing
       the main NList Mail List should be fast again.
 
+2001-06-06  Jacob Laursen <laursen@myself.com>
+
+    * 'Folder/Check single account' menu is no longer trashed after
+      clicking 'Use' in the configuration window. (Bug #425212).
+
 2001-06-06  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * v18.7 of NListtree.mcc is now required because all earlier version seems to be too
@@ -538,4 +557,4 @@
 
     * fixed alignment Problem in "struct ComprMail" which causes the corruption of
       the old .index files from older 2.x versions. Now we should be compatible again.
-
+    * merge the differences from RELEASE 2.3 branch to actual MAIN branch

@@ -413,7 +413,10 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
    }
    if (!totmsg) { free(sfo); return; }
    get(gdata->PG_SRCHOPT, MUIA_Group_ActivePage, &pg);
-   get(gdata->ST_MATCH[pg], MUIA_String_Contents, &match);
+   if (pg != 3) /* Page 3 (Status) has no ST_MATCH */
+      get(gdata->ST_MATCH[pg], MUIA_String_Contents, &match);
+   else
+      match = "";
    get(gdata->ST_FIELD, MUIA_String_Contents, &field);
    FI_PrepareSearch(&search, GetMUICycle(gdata->CY_MODE),
       GetMUICheck(gdata->CH_CASESENS[pg]), GetMUIRadio(gdata->RA_ADRMODE),

@@ -256,8 +256,9 @@ BOOL AY_New(BOOL hidden)
              End,
          End)),
          Child, G->AY_Group = PageGroup,
-            Child, ft_text = FloattextObject,
-              GroupFrame,
+            Child, ListviewObject,
+               MUIA_Listview_Input, FALSE,
+               MUIA_Listview_List, ft_text = FloattextObject, ReadListFrame, End,
             End,
             Child, ScrollgroupObject,
                MUIA_Scrollgroup_FreeHoriz, FALSE,
@@ -282,7 +283,7 @@ BOOL AY_New(BOOL hidden)
          End,
          Child, G->AY_Button = TextObject,
            MUIA_ShowMe,        FALSE,
-           MUIA_Text_Contents, GetStr(MSG_CO_PhraseClose),
+           MUIA_Text_Contents, GetStr(MSG_ABOUT_OKAY_GAD),
            MUIA_Background,    MUII_ButtonBack,
            MUIA_Frame,         MUIV_Frame_Button,
            MUIA_InputMode,     MUIV_InputMode_RelVerify,
@@ -310,12 +311,12 @@ BOOL AY_New(BOOL hidden)
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
 
       DoMethod(G->App, OM_ADDMEMBER, G->AY_Win);
-      DoMethod(bt_sendmail,MUIM_Notify,MUIA_Pressed,            FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&AY_SendMailHook);
-      DoMethod(bt_gopage  ,MUIM_Notify,MUIA_Pressed,            FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&AY_GoPageHook);
-      DoMethod(G->AY_Win  ,MUIM_Notify,MUIA_Window_CloseRequest,TRUE ,G->AY_Win              ,3,MUIM_Set,MUIA_Window_Open, FALSE);
+      DoMethod(bt_sendmail, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_SendMailHook);
+      DoMethod(bt_gopage  , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_GoPageHook);
+      DoMethod(G->AY_Win  , MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->AY_Win, 3, MUIM_Set,MUIA_Window_Open, FALSE);
 
       // If the close button will be pressed we close the window
-      DoMethod(G->AY_Button,  MUIM_Notify, MUIA_Pressed, FALSE, G->AY_Win, 3, MUIM_Set, MUIA_Window_Open, FALSE, TAG_DONE);
+      DoMethod(G->AY_Button, MUIM_Notify, MUIA_Pressed, FALSE, G->AY_Win, 3, MUIM_Set, MUIA_Window_Open, FALSE, TAG_DONE);
 
       set(G->AY_Win, MUIA_Window_Open, !hidden);
 

@@ -380,6 +380,8 @@ struct Config
    BOOL  PrinterCheck;
    BOOL  IsOnlineCheck;
    BOOL  ConfirmOnQuit;
+   BOOL  AskJumpUnread;
+   BOOL  WarnSubject;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color2ndLevel;

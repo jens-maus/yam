@@ -171,7 +171,7 @@ static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
    // mails and change to there if the user wants
    if (onlynew)
    {
-      if (!getenv("DoNotBotherMe"))
+      if (C->AskJumpUnread)
       {
          struct Folder **flist;
 
@@ -724,72 +724,77 @@ static void RE_PrintFile(char *filename, struct Part *part)
 
 static void RE_PrintLaTeX(char *filename, struct Part *part)
 {
-struct TempFile *texfile;
+  struct TempFile *texfile;
 
-   if((texfile = OpenTempFile("w")))
-   {
-      if(CopyFile(NULL,texfile->FP,"YAM:.texheader",NULL))
-      {
+  if((texfile = OpenTempFile("w")))
+  {
+    if(CopyFile(NULL,texfile->FP,"YAM:.texheader",NULL))
+    {
       char *ts1,*ts2 = 0;
 
-         if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
-         {
-            if(1 == part->Nr)
-            {
-            int i,j;
-            char Attrib[SIZE_DEFAULT];
-            char *p,*printcmd;
-            const char PrintScript[] = "YAM:Scripts/LaTeX-print";
+      if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
+      {
+        if(1 == part->Nr)
+        {
+          int i,j;
+          char Attrib[SIZE_DEFAULT];
+          char *p,*printcmd;
+          const char PrintScript[] = "YAM:Scripts/LaTeX-print";
 
-               for(i=0; i<Header.Used; i++)
-               {
-                  p = Header.Data[i];
-                  if(NULL != strchr(p,':'))
-                  {
-                     for(j=0; p[j] != ':' && j < sizeof(Attrib); j++) Attrib[j] = p[j];
-                     Attrib[j++] = ':';
-                     Attrib[j++] = '\0';
-                     ts1 = StrBufCat(ts1,"\\NewLabWidth{");
-                     ts1 = StrBufCat(ts1,Attrib);
-                     ts1 = StrBufCat(ts1,"}\n");
-                     ts2 = StrBufCat(ts2,Attrib);
-                     ts2 = StrBufCat(ts2," &");
-                     ts2 = StrBufCat(ts2,p+j-1);
-                     ts2 = StrBufCat(ts2,"\\\\\n");
-                  } DB( else kprintf("RE_PrintFile(): strange header line %s\n",p); )
-               }
-               fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n\\input{%s}\n\\end{document}\n",
-                        ts1,
-                        "\\begin{document}\n\n"
-                        "\\setlength{\\tabcolsep}{3.0pt}\n"
-                        "\\setlength{\\TabRestWidth}{\\linewidth}\n"
-                        "\\addtolength{\\TabRestWidth}{-\\tabcolsep}\n"
-                        "\\addtolength{\\TabRestWidth}{-\\LabelWidth}\n\n"
-                        "\\begin{tabular}"
-                        "{@{}>{\\PBS\\raggedleft\\hspace{0pt}\\bf}p{\\LabelWidth}"
-                        ">{\\PBS\\raggedright\\hspace{0pt}}p{\\TabRestWidth}}\n\n",
-                        ts2,
-                        "\\end{tabular}\n"
-                        "\\hrule\n"
-                        "\\bigskip\n",
-                        filename);
-               fclose(texfile->FP);
-               texfile->FP = NULL;
-               if(printcmd = malloc(sizeof(PrintScript)+strlen(texfile->Filename)+1))
-               {
-                  strcpy(printcmd,PrintScript);
-                  strcat(printcmd," ");
-                  strcat(printcmd,texfile->Filename);
-                  system(printcmd);
-                  free(printcmd);
-               } else DisplayBeep(NULL);
-            } DB( else kprintf("RE_PrintFile(): no headers for this part\n"); )
-         }
-         if(ts1) FreeStrBuf(ts1);
-         if(ts2) FreeStrBuf(ts2);
-      } DB( else kprintf("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n"); )
-      CloseTempFile(texfile);
-   } DB( else kprintf("RE_PrintFile(): can't open temp TeX file\n"); )
+          for(i=0; i<Header.Used; i++)
+          {
+            p = Header.Data[i];
+            if(NULL != strchr(p,':'))
+            {
+              for(j=0; p[j] != ':' && j < sizeof(Attrib); j++) Attrib[j] = p[j];
+              Attrib[j++] = ':';
+              Attrib[j++] = '\0';
+              ts1 = StrBufCat(ts1,"\\NewLabWidth{");
+              ts1 = StrBufCat(ts1,Attrib);
+              ts1 = StrBufCat(ts1,"}\n");
+              ts2 = StrBufCat(ts2,Attrib);
+              ts2 = StrBufCat(ts2," &");
+              ts2 = StrBufCat(ts2,p+j-1);
+              ts2 = StrBufCat(ts2,"\\\\\n");
+            } DB( else kprintf("RE_PrintFile(): strange header line %s\n",p); )
+          }
+
+          fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n\\input{%s}\n\\end{document}\n",
+                  ts1,
+                  "\\begin{document}\n\n"
+                  "\\setlength{\\tabcolsep}{3.0pt}\n"
+                  "\\setlength{\\TabRestWidth}{\\linewidth}\n"
+                  "\\addtolength{\\TabRestWidth}{-\\tabcolsep}\n"
+                  "\\addtolength{\\TabRestWidth}{-\\LabelWidth}\n\n"
+                  "\\begin{tabular}"
+                  "{@{}>{\\PBS\\raggedleft\\hspace{0pt}\\bf}p{\\LabelWidth}"
+                  ">{\\PBS\\raggedright\\hspace{0pt}}p{\\TabRestWidth}}\n\n",
+                  ts2,
+                  "\\end{tabular}\n"
+                  "\\hrule\n"
+                  "\\bigskip\n",
+                  filename);
+
+          fclose(texfile->FP);
+          texfile->FP = NULL;
+
+          if(printcmd = malloc(sizeof(PrintScript)+strlen(texfile->Filename)+1))
+          {
+            strcpy(printcmd,PrintScript);
+            strcat(printcmd," ");
+            strcat(printcmd,texfile->Filename);
+            system(printcmd);
+            free(printcmd);
+          } else DisplayBeep(NULL);
+        } DB( else kprintf("RE_PrintFile(): no headers for this part\n"); )
+      }
+      if(ts1) FreeStrBuf(ts1);
+      if(ts2) FreeStrBuf(ts2);
+    } DB( else kprintf("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n"); )
+
+    CloseTempFile(texfile);
+
+  } DB( else kprintf("RE_PrintFile(): can't open temp TeX file\n"); )
 }
 
 
@@ -800,35 +805,38 @@ struct TempFile *texfile;
 // string in LaTeX notation. Free the result with FreeStrBuf() after use
 static char *ISO8859_to_LaTeX(char *s)
 {
-char *result=NULL;
-char **CVTab;
+  char *result=NULL;
+  char **CVTab;
 
-   if(CVTab = Init_ISO8859_to_LaTeX_Tab("YAM:.latex-chartab"))
-   {
-   int ResLen;
-   char *p;
+  if(CVTab = Init_ISO8859_to_LaTeX_Tab("YAM:.latex-chartab"))
+  {
+    int ResLen;
+    char *p;
 
-      for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
-         ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
+    for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
+    {
+      ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
+    }
 
-      DB( kprintf("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen); )
+    DB( kprintf("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen); )
 
-      if(result = AllocStrBuf(ResLen+1))
-      {
+    if(result = AllocStrBuf(ResLen+1))
+    {
       char *q = result;
-         for(p=s,ResLen=0; *p; p++)   // map input string
-         {
-            if(CVTab[*p] == NULL)
-               *q++ = *p;
-            else
-            {
-               strcpy(q,CVTab[*p]);
-               while(*q++) ;
-            }
-         }
+
+      for(p=s,ResLen=0; *p; p++)   // map input string
+      {
+
+        if(CVTab[*p] == NULL) *q++ = *p;
+        else
+        {
+          strcpy(q,CVTab[*p]);
+          while(*q++) ;
+        }
       }
-   }
-   return result;
+    }
+  }
+  return result;
 }
 ///
 
@@ -838,48 +846,54 @@ char **CVTab;
 // mapping ISO/ASCII codes to strings
 static char **Init_ISO8859_to_LaTeX_Tab(char *TabFileName)
 {
-int TabSize;
-char **CVTab, *TabFile;
-BOOL success=FALSE;
+  int TabSize;
+  char **CVTab, *TabFile;
+  BOOL success=FALSE;
 
-   if(-1 != (TabSize = FileSize(TabFileName)))
-   {
-   BPTR fh;
-      if(fh = Open(TabFileName,MODE_OLDFILE))
+  if(-1 != (TabSize = FileSize(TabFileName)))
+  {
+    BPTR fh;
+
+    if(fh = Open(TabFileName,MODE_OLDFILE))
+    {
+      if(CVTab = AllocVec(TabSize+1+256*sizeof(char*), MEMF_ANY|MEMF_CLEAR))
       {
-         if(CVTab = AllocVec(TabSize+1+256*sizeof(char*),MEMF_ANY | MEMF_CLEAR))
-         {
-            TabFile = (char*)(CVTab+256*sizeof(char*));
-            if(Read(fh,TabFile,TabSize) == TabSize)
+        TabFile = (char*)(CVTab+256*sizeof(char*));
+
+        if(Read(fh,TabFile,TabSize) == TabSize)
+        {
+          char *tok, c=0;
+
+          TabFile[TabSize] = '\0';
+          tok = strtok(TabFile," \t\n");
+
+          while(NULL != tok)
+          {
+            if(!c)
             {
-            char *tok, c=0;
-               TabFile[TabSize] = '\0';
-               tok = strtok(TabFile," \t\n");
-               while(NULL != tok)
-               {
-                  if(!c)
-                  {
-                     if(tok[1]) { DB( kprintf("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n"); ) }
-                     else c = tok[0];
-                  } else
-                  {
-                     CVTab[c] = tok;
-                     DB( kprintf("LaTeX mapping: '%c' -> '%s'\n",c,tok); )
-                     c = '\0';
-                  }
-               }
-               success = TRUE;
+              if(tok[1]) DB(kprintf("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n"));
+              else c = tok[0];
             }
-            if(!success)
+            else
             {
-               FreeMem(CVTab,TabSize);
-               CVTab = NULL;
+              CVTab[c] = tok;
+              DB(kprintf("LaTeX mapping: '%c' -> '%s'\n",c,tok));
+              c = '\0';
             }
-         }
-         Close(fh);
+          }
+          success = TRUE;
+        }
+
+        if(!success)
+        {
+          FreeVec(CVTab);
+          CVTab = NULL;
+        }
       }
-   }
-   return CVTab;
+      Close(fh);
+    }
+  }
+  return CVTab; // and who one will free this Vector ????
 }
 #endif
 ///
@@ -2779,7 +2793,7 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, data->GUI.MI_WRAPH = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_WrapHeader), MUIA_Menuitem_Shortcut,"H", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->WrapHeader, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_WRAPH, End,
                MUIA_Family_Child, data->GUI.MI_TSTYLE = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_Textstyles), MUIA_Menuitem_Shortcut,"T", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,!data->NoTextstyles, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_TSTYLE, End,
-               MUIA_Family_Child, data->GUI.MI_FFONT = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FixedFont), MUIA_Menuitem_Shortcut,"F", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->FixedFont, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_FFONT, End,
+//             MUIA_Family_Child, data->GUI.MI_FFONT = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FixedFont), MUIA_Menuitem_Shortcut,"F", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->FixedFont, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_FFONT, End,
             End,
          End,
          WindowContents, VGroup,

@@ -2141,22 +2141,53 @@ void MA_SetupDynamicMenus(void)
    int i;
    static char *shortcuts[10] = { "0","1","2","3","4","5","6","7","8","9" };
 
-   if (G->MA->GUI.MN_REXX) DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Remove, G->MA->GUI.MN_REXX);
-   G->MA->GUI.MN_REXX = MenuObject, MUIA_Menu_Title, GetStr(MSG_MA_Scripts),
-            MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_ExecuteScript), MUIA_Menuitem_Shortcut,".", MUIA_UserData,MMEN_SCRIPT, End,
-            MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
-         End;
+   /* Scripts menu */
+
+   if (G->MA->GUI.MN_REXX)
+      DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_Remove, G->MA->GUI.MN_REXX);
+
+   G->MA->GUI.MN_REXX = MenuObject,
+      MUIA_Menu_Title, GetStr(MSG_MA_Scripts),
+      MUIA_Family_Child, MenuitemObject,
+         MUIA_Menuitem_Title, GetStr(MSG_MA_ExecuteScript),
+         MUIA_Menuitem_Shortcut, ".", MUIA_UserData, MMEN_SCRIPT,
+         End,
+      MUIA_Family_Child, MenuitemObject,
+         MUIA_Menuitem_Title, NM_BARLABEL,
+         End,
+      End;
+
    for (i = 0; i < 10; i++) if (C->RX[i].Script[0])
-      DoMethod(G->MA->GUI.MN_REXX, MUIM_Family_AddTail, MenuitemObject, MUIA_Menuitem_Title,C->RX[i].Name, MUIA_Menuitem_Shortcut,shortcuts[i], MUIA_UserData,MMEN_MACRO+i, End);
+      DoMethod(G->MA->GUI.MN_REXX, MUIM_Family_AddTail, MenuitemObject,
+         MUIA_Menuitem_Title, C->RX[i].Name,
+         MUIA_Menuitem_Shortcut, shortcuts[i],
+         MUIA_UserData, MMEN_MACRO+i, End);
+
    DoMethod(G->MA->GUI.MS_MAIN, MUIM_Family_AddTail, G->MA->GUI.MN_REXX);
-   if (G->MA->GUI.MI_CSINGLE)  DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CSINGLE);
-   G->MA->GUI.MI_CSINGLE = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_CheckSingle), End;
+
+   /* 'Folder/Check single account' menu */
+
+   if (G->MA->GUI.MI_CSINGLE)
+      DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_Remove, G->MA->GUI.MI_CSINGLE);
+
+   G->MA->GUI.MI_CSINGLE = MenuitemObject,
+      MUIA_Menuitem_Title, GetStr(MSG_MA_CheckSingle),
+      End;
+
    for (i = 0; i < MAXP3; i++) if (C->P3[i])
    {
       sprintf(C->P3[i]->Account, "%s@%s", C->P3[i]->User, C->P3[i]->Server);
-      DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, MenuitemObject, MUIA_Menuitem_Title,C->P3[i]->Account, MUIA_UserData,MMEN_POPHOST+i, End);
+
+      /* Warning: Small memory leak here, each time this function is called,
+                  since the strdup()'ed string doesn't get free()'d anywhere,
+                  before program exit. The Menuitem class does *not* have a
+                  private buffer for the string!
+      */
+
+      DoMethod(G->MA->GUI.MI_CSINGLE, MUIM_Family_AddTail, MenuitemObject, MUIA_Menuitem_Title, strdup(C->P3[i]->Account), MUIA_UserData,MMEN_POPHOST+i, End, TAG_DONE);
+
    }
-   DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_AddTail, G->MA->GUI.MI_CSINGLE);
+   DoMethod(G->MA->GUI.MN_FOLDER, MUIM_Family_AddTail, G->MA->GUI.MI_CSINGLE, TAG_DONE);
 }
 
 ///

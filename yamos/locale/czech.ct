@@ -1,0 +1,6217 @@
+## version $VER: YAM.catalog 5.4 (07.06.2001) © Vit Sindlar, ATO-CZ
+## language czech
+## codeset 0
+;
+; ----------------------------------------------------------------------
+; History:
+;
+; 5.3 (3.6.2001)
+;
+; Initial version
+;
+;
+; 5.4 (7.6.2001)
+;
+; - QA by David Rey
+;
+; - Added the missing \n in MSG_Copyright1
+;
+; - Fixed the duplicated shortcut in Configuration/Misc
+;
+; - Added the shortcuts to the now officially updated MSG_CO_Server,
+;   MSG_CO_AltQuote & MSG_CO_DoQuote strings
+;
+; ----------------------------------------------------------------------
+;
+; YAM 2.3 catalog description
+; $Id$
+;
+;
+; General
+;
+MSG_Folder
+Sloùka
+; Folder
+;
+MSG_Message
+Zpráva
+; Message
+;
+MSG_Attachments
+Pêílohy
+; Attachments
+;
+MSG_Options
+Moùnosti
+; Options
+;
+MSG_Add
+Pêid_at
+; _New
+;
+MSG_Del
+Odeb_rat
+; _Delete
+;
+MSG_New
+Nová
+; New
+;
+MSG_Open
+Otevêít...
+; Open...
+;
+MSG_Append
+Pêipojit...
+; Append...
+;
+MSG_Save
+Uloùit
+; Save
+;
+MSG_SaveAs
+Uloùit jako...
+; Save as...
+;
+MSG_Print
+Tisknout...
+; Print...
+;
+MSG_Edit
+Upravit...
+; Edit...
+;
+MSG_Display
+Zobrazit
+; Display
+;
+MSG_Filter
+Filtrovat
+; Filter
+;
+MSG_Process
+Zpracovat
+; Process
+;
+MSG_Okay
+_Ok
+; _Okay
+;
+MSG_Use
+_Pouùít
+; _Use
+;
+MSG_Cancel
+_Zruîit
+; _Cancel
+;
+MSG_Yes
+_Ano
+; _Yes
+;
+MSG_No
+_Ne
+; _No
+;
+MSG_OkayReq
+* _Ok 
+; *_Okay
+;
+MSG_OkayCancelReq
+* _Ok | _Zruîit 
+; *_Okay|_Cancel
+;
+MSG_YesNoReq
+* _Ano | _Ne 
+; *_Yes|_No
+;
+MSG_ErrorReq
+Chyba
+; Error
+;
+MSG_NewEntry
+- nový -
+; - new -
+;
+MSG_Unnamed
+nepojmenovaný
+; unnamed
+;
+MSG_Bytes
+bajtû
+; bytes
+;
+MSG_Date
+Datum
+; Date
+;
+MSG_Sender
+Odesílatel
+; Sender
+;
+MSG_Recipient
+Pêíjemce
+; Recipient
+;
+MSG_Subject
+Pêedmët
+; Subject
+;
+MSG_Size
+Velikost
+; Size
+;
+MSG_Status
+Stav
+; Status
+;
+MSG_FolderList
+Seznam sloùek
+; Folder list
+;
+MSG_MessageList
+Seznam zpráv
+; Message list
+;
+MSG_Realname
+Skuteçné jméno
+; Real name
+;
+MSG_Filename
+Název souboru
+; Filename
+;
+MSG_Alias
+Alias
+; Alias
+;
+MSG_Description
+Krátký popis
+; Description
+;
+MSG_DOB
+Datum narození
+; Date of birth
+;
+MSG_City
+Mësto
+; City
+;
+MSG_Country
+Zemë
+; Country
+;
+MSG_Street
+Ulice
+; Street
+;
+MSG_Phone
+Telefon
+; Phone
+;
+MSG_Name
+Jméno
+; Name
+;
+MSG_Email
+E-mail
+; Email address
+;
+MSG_Address
+Adresa
+; Address
+;
+MSG_ReturnAddress
+Zpáteçní adresa
+; Return address
+;
+MSG_SenderRecpt
+Odesílatel/pêíjemce
+; Sender/recipient
+;
+MSG_MessageDate
+Datum zprávy
+; Message date
+;
+MSG_Unread
+Neçtených
+; Unread
+;
+MSG_Total
+Celkem
+; Total
+;
+MSG_From
+Od
+; From
+;
+MSG_To
+Komu
+; To
+;
+MSG_Default
+základní
+; default
+;
+MSG_Columns
+Sloupce
+; Columns
+;
+MSG_Path
+Cesta
+; Path
+;
+MSG_Directory
+Adresáê
+; Directory
+;
+; Module Root
+;
+MSG_Copyright1
+Volnë îiêitelný E-mail klient pro Amigu\n\n\
+Copyright © 1995-2000 Marcel Beck\n\
+Copyright © 2000-2001 YAM Open Source Team
+; Open Source E-mail package for the Amiga\n\
+; \n\
+; Copyright © 1995-2000 Marcel Beck\n\
+; Copyright © 2000-2001 YAM Open Source Team
+;
+MSG_Version
+Verze:
+; Version:
+;
+MSG_CompilationDate
+Datum kompilace:
+; Compilation date:
+;
+MSG_Copyright2
+Tento program je volnë îiêitelný software; mûùete ho distribuovat nebo modifikovat na základë pravidel GNU Public License. Dalîí podrobnosti naleznete v manuálu.\n
+; This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
+;
+MSG_UsedSoftware
+\nJe pouùit následující software od jiných autorû:\n
+; \nThis application uses the following third party software:\n
+;
+MSG_WebSite
+Nejnovëjîí informace o programu YAM naleznete na jeho domovské stránce \e5http://www.yam.ch
+; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
+;
+MSG_UserLogin
+Pêihlaîte se kliknutím na své jméno
+; Click your name to login
+;
+MSG_AppDescription
+Poîtovní program a SMTP/POP3 klient
+; SMTP/POP3 Client & Mailer for AmiTCP
+;
+MSG_ErrorStartup
+Nastala chyba bëhem spouîtëní
+; Error during startup
+;
+MSG_Quit
+Ukonçit
+; Quit
+;
+MSG_ErrorLib
+Nelze otevêít knihovnu %s, verze %ld
+; Can't open library '%s', version %ld
+;LIBRARY_NAME, LIBRARY_VERSION
+;
+MSG_LoadingConfig
+Naçítání konfigurace...
+; Loading configuration...
+;
+MSG_CreatingGUI
+Vytváêení uùivatelského rozhraní...
+; Creating user interface...
+;
+MSG_ErrorMuiApp
+Nelze vytvoêit program
+; Can't create application
+;
+MSG_RebuildIndices
+Obnovení indexû sloùek...
+; Rebuilding folders' indices...
+;
+MSG_LoadingFolders
+Naçítání obsahu sloùek...
+; Loading folders...
+;
+MSG_LoadingABook
+Naçítání seznamu adres...
+; Loading address book...
+;
+MSG_InitLibs
+Inicializace knihoven a têíd...
+; Initialising libraries and classes...
+;
+MSG_ErrorClasses
+Nelze vytvoêit vlastní têídy MUI
+; Can't create MUI custom classes
+;
+MSG_ErrorAslStruct
+Nelze alokovat strukturu ASL
+; Can't allocate ASL structure
+;
+MSG_ErrorTimer
+Nelze otevêít timer.device
+; Can't open timer.device
+;
+MSG_ErrorARexx
+Nelze vytvoêit ARexxový port
+; Can't create ARexx port
+;
+MSG_LoadingGFX
+Naçítání grafiky...
+; Loading graphics...
+;
+MSG_SendStartReq
+Sloùka pro odchozí zprávy obsahuje neodeslanou poîtu.\n\
+Chcete tyto zprávy odeslat právë teð?
+; The outgoing folder contains unsent mail.\n\
+; Do you want to send these messages now?
+;
+MSG_QuitYAMReq
+Opravdu chcete ukonçit YAM?
+; Do you really want to quit YAM?
+;
+MSG_CTtextplain
+prostý text
+; plain text
+;
+MSG_CTtexthtml
+dokument HTML
+; HTML document
+;
+MSG_CTtextaguide
+dokument AmigaGuide
+; AmigaGuide document
+;
+MSG_CTapplicationoctetstream
+binární soubor
+; binary file
+;
+MSG_CTapplicationpostscript
+dokument Postscript
+; Postscript document
+;
+MSG_CTapplicationrtf
+dokument RTF
+; Rich Text Format
+;
+MSG_CTapplicationlha
+archív LhA
+; LhA archive
+;
+MSG_CTapplicationlzx
+archív LZX
+; LZX archive
+;
+MSG_CTapplicationzip
+archív ZIP
+; ZIP archive
+;
+MSG_CTapplicationamigaexe
+spustitelný soubor
+; Amiga executable
+;
+MSG_CTimagejpeg
+obrázek JPEG/JFIF
+; JPEG/JFIF picture
+;
+MSG_CTimagegif
+obrázek GIF
+; GIF picture
+;
+MSG_CTimagepng
+obrázek PNG
+; PNG picture
+;
+MSG_CTimagetiff
+obrázek TIFF
+; TIFF picture
+;
+MSG_CTimageilbm
+obrázek IFF-ILBM
+; Amiga IFF-ILBM picture
+;
+MSG_CTaudiobasic
+zvuk (UNIX)
+; UNIX audio file
+;
+MSG_CTaudio8svx
+zvuk IFF-8SVX
+; Amiga IFF-8SVX audio
+;
+MSG_CTaudiowav
+zvuk WAVE
+; Microsoft WAV audio
+;
+MSG_CTvideompeg
+video MPEG
+; MPEG video stream
+;
+MSG_CTvideoquicktime
+video QuickTime
+; Apple QuickTime video
+;
+MSG_CTvideoanim
+animace IFF-ANIM
+; Amiga IFF-ANIM video
+;
+MSG_CTvideomsvideo
+video AVI
+; Microsoft AVI video
+;
+MSG_CTmessagerfc822
+poîtovní zpráva
+; E-mail message
+;
+; Logfile entries
+;
+MSG_LOG_Started
+YAM spuîtën
+; YAM started
+;
+MSG_LOG_Terminated
+YAM ukonçen
+; YAM terminated
+;
+MSG_LOG_LoggedIn
+Pêihláîen uùivatel "%s"
+; Logged in as user '%s'
+; USER_NAME
+;
+MSG_LOG_LoggedInVerbose
+Pêihláîen uùivatel "%s", pouùita konfigurace "%s" a poîtovní adresáê "%s"
+; Logged in as '%s', using configuration '%s' and mail directory '%s'
+; USER_NAME, CONFIG_FILE, FOLDER_PATH
+;
+MSG_LOG_Deleting
+Smazáno %ld zpráv(a) ze sloùky '%s'
+; Deleted %ld message(s) in folder '%s'
+; COUNT, FOLDER
+;
+MSG_LOG_DeletingVerbose
+Smazána zpráva od '%s' nazvaná '%s' ze sloùky '%s'
+; Deleted message from '%s' about '%s' in folder '%s'
+; SENDER, SUBJECT, FOLDER
+;
+MSG_LOG_Moving
+Pêesunuto %ld zpráv ze sloùky '%s' do sloùky '%s'
+; Moved %ld message(s) from folder '%s' to '%s'
+; COUNT, FOLDER, FOLDER
+;
+MSG_LOG_MovingVerbose
+Pêesunuta zpráva od '%s' nazvaná '%s' ze sloùky '%s' do '%s'
+; Moved message from '%s' about '%s' from folder '%s' to '%s'
+; SENDER, SUBJECT, FOLDER, FOLDER
+;
+MSG_LOG_Copying
+Zkopírováno %ld zpráv ze sloùky '%s' do sloùky '%s'
+; Copied %ld message(s) from folder '%s' to '%s'
+; COUNT, FOLDER, FOLDER
+;
+MSG_LOG_CopyingVerbose
+Zkopírována zpráva od '%s' nazvaná '%s' ze sloùky '%s' do '%s'
+; Copied message from '%s' about '%s' from folder '%s' to '%s'
+; SENDER, SUBJECT, FOLDER, FOLDER
+;
+MSG_LOG_ConnectPOP
+Pêihláîení k úçtu '%s@%s' pomocí POP3: %ld zpráv ke stáhnutí
+; Logged in on POP3 account '%s@%s': %ld messages waiting
+; USER_ID, HOST, COUNT
+;
+MSG_LOG_RetrievingVerbose
+Stáhnuta zpráva od '%s', nazvaná '%s' (%ld bajtû)
+; Retrieved message from '%s' about '%s' (%ld bytes)
+; SENDER, SUBJECT, SIZE
+;
+MSG_LOG_Retrieving
+Stáhnutých zpráv: %ld; POP3 úçet '%s@%s'
+; Retrieved %ld message(s) from POP3 account '%s@%s'
+; COUNT, USER_ID, HOST
+;
+MSG_LOG_ConnectSMTP
+Navázáno spojení k SMTP serveru '%s'
+; Connected to SMTP server '%s'
+; HOST
+;
+MSG_LOG_SendingVerbose
+Odeslána zpráva pro '%s' nazvaná '%s' (%ld bajtû)
+; Sent message to '%s' about '%s' (%ld bytes)
+; RECIPIENT, SUBJECT, SIZE
+;
+MSG_LOG_Sending
+Odeslaných zpráv: %ld; SMTP server '%s'
+; Sent %ld message(s) using SMTP server '%s'
+; COUNT, HOST
+;
+MSG_LOG_Editing
+Upravována zpráva od '%s' pro '%s' nazvaná '%s'
+; Edited message from '%s' to '%s' about '%s'
+; SENDER, RECIPIENT, SUBJECT
+;
+MSG_LOG_Creating
+Napsána nová zpráva pro '%s' nazvaná '%s', poçet pêíloh: %ld
+; Wrote new message for '%s' about '%s', including %ld attachment(s)
+; RECIPIENT, SUBJECT, COUNT
+;
+MSG_LOG_Replying
+Odeslána odpovëð na zprávu od '%s' nazvanou '%s'
+; Replied message from '%s' about '%s'
+; SENDER, SUBJECT
+;
+MSG_LOG_Bouncing
+Pêedána beze zmëny zpráva od '%s' nazvaná '%s' a urçená pro '%s'
+; Bounced message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_LOG_Forwarding
+Pêedána zpráva od '%s' nazvaná '%s' a urçená pro '%s'
+; Forwarded message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_LOG_Filtering
+Odfiltrováno %ld zpráv ze sloùky '%s': %ld odpovídá zadaným kritériím
+; Filtered %ld message(s) in folder '%s': %ld match(es)
+; COUNT, FOLDER, COUNT
+;
+MSG_LOG_SavingConfig
+Uloùen konfiguraçní soubor s názvem '%s'
+; Saved configuration file '%s'
+; CONFIG_FILE
+;
+MSG_LOG_SavingABook
+Uloùen seznam adres s názvem '%s'
+; Saved address book '%s'
+; FILENAME
+;
+MSG_LOG_SavingUsers
+Uloùena uùivatelská konfigurace
+; Saved user configuration
+;
+MSG_LOG_NewAddress
+Pêidána poloùka '%s' do seznamu adres
+; Added address book entry '%s'
+; ALIAS
+;
+MSG_LOG_Importing
+Importováno %ld zpráv ze souboru '%s' do sloùky '%s'
+; Imported %ld message(s) from file '%s' into folder '%s'
+; COUNT, FILENAME, FOLDER
+;
+MSG_LOG_Exporting
+Exportováno %ld zpráv ze sloùky '%s' do souboru '%s'
+; Exported %ld message(s) from folder '%s' to file '%s'
+; COUNT, FOLDER, FILENAME
+;
+MSG_LOG_SavingAtt
+Uloùen pêiloùený soubor '%s' patêící ke zprávë '%s' ze sloùky '%s'
+; Saved attachment '%s' of message '%s' in folder '%s'
+; FILENAME, MAILFILE, FOLDER
+;
+MSG_LOG_CroppingAtt
+Odstranëny pêílohy zprávy '%s' ze sloùky '%s'
+; Cropped attachment(s) of message '%s' in folder '%s'
+; MAILFILE, FOLDER
+;
+MSG_LOG_ChangingSubject
+Zmënën pêedmët '%s' zprávy '%s' ze sloùky '%s' do '%s'
+; Changed subject '%s' of message '%s' in folder '%s' to '%s'
+; SUBJECT, MAILFILE, FOLDER, SUBJECT
+;
+;
+; Module UT - Procedures
+;
+MSG_UT_Save
+Uloùit
+; Save
+;
+MSG_UT_Load
+Naçíst
+; Load
+;
+MSG_UT_PGPPassReq
+Zadejte prosím heslo pro PGP:
+; Please enter your PGP pass phrase:
+;
+MSG_UT_AppStats
+
+; 
+; Replaced by MSG_APPICON_STATS
+;
+MSG_UT_NoPrinter
+Tiskárna není zapnuta nebo je ve stavu offline!
+; No printer or printer offline!
+;
+MSG_UT_NoPaper
+Tiskárnë doîel papír!
+; Out of paper!
+;
+; Module MA - Procedures
+;
+MSG_MA_GetFolderPass
+Sloùka '%s' je chránëna heslem.\n\
+Zadejte prosím poùadované heslo:
+; Folder '%s' is a protected folder.\n\
+; Please enter the password to unlock it:
+; FOLDER
+;
+MSG_MA_LatestVersion
+Poslední verze: %s (%2ld.%02ld.%ld)\n\
+Vaîe verze: %s (%s)\n\n\
+%s
+; Latest version: %s (%2ld.%02ld.%ld)\n\
+; This version: %s (%s)\n\
+; \n\
+; %s
+; VERSION_NUMBER, DAY, MONTH, YEAR, VERSION_NUMBER, DATE, TEXT
+;
+MSG_MA_NewVersion
+\e8Na stránce programu YAM je dostupná nová verze!
+; \e8A new version is available at the YAM homepage!
+;
+MSG_MA_NoNewVersion
+Pouùíváte nejaktuálnëjîí verzi.
+; You're already using the latest version.
+;
+MSG_MA_VersionReqOpt
+ Na_vîtívit stránku |* _Zruîit 
+; _Visit homepage|*_Cancel
+;
+MSG_MA_ReplyReq
+Zvolená zpráva má více pêíjemcû.\n\
+Chcete odeslat odpovëð...
+; The selected message has multiple recipients.\n\
+; Do you want to send the reply...
+;
+MSG_MA_ReplyReqOpt
+* ...na adresu \n\
+ ode_sílatele | ...odesílateli \n\
+ _a vîem pêíjemcûm | ..._pouze \n\
+ pêíjemcûm | _Zruîit 
+; *...to the\n\
+; _sender|...to the sender and\n\
+; _all recipients|...to the\n\
+; _recipients|_Cancel
+;
+MSG_MA_CompareReq
+Adresa odesílatele (From) je <%s>,\n\
+ale zpáteçní (Reply-To) je <%s>.\n\
+Kterou z adres chcete pouùít?
+; Sender address (From) is <%s>, but\n\
+; return address (Reply-To) is <%s>.\n\
+; Which address do you want to use?
+; ADDRESS, ADDRESS
+;
+MSG_MA_Compare3ReqOpt
+ _Odesílatel |* Z_páteçní | O_bë adresy | _Zruîit 
+; _From|*_Reply-To|_Both|_Cancel
+;
+MSG_MA_Compare2ReqOpt
+ _Odesílatel |* Z_páteçní | _Zruîit 
+; _From|*_Reply-To|_Cancel
+;
+MSG_MA_AttachRemoved
+\n_Následující pêílohy byly ruçnë odstranëny:_\n
+; \n\
+; _The following attachments have been removed manually:_\n
+;
+MSG_MA_ConfirmReq
+Potvrðte, prosím...
+; Please confirm...
+;
+MSG_MA_ConfirmDel
+Potvrðte smazání, prosím.
+; Please confirm deletion.
+;
+MSG_MA_1Selected
+Poçet zvolených zpráv: 1\n
+; One message selected.\n
+;
+MSG_MA_xSelected
+Poçet zvolených zpráv: %lD\n
+; %lD messages selected.\n
+; COUNT
+;
+MSG_MA_ConfirmFilter
+Chcete filtrovat vîechny zprávy\n\
+ve sloùce '%s'?
+; Is it okay to filter all the messages\n\
+; in the folder '%s'?
+; FOLDER
+;
+MSG_MA_FilterStats
+Výsledky filtrování:\n\
+%3ld zpráv zjiîtëno,\n\
+%3ld pêedáno,\n\
+%3ld archivováno,\n\
+%3ld smazáno
+; Filtering done:\n\
+; %3ld messages checked,\n\
+; %3ld forwarded,\n\
+; %3ld archived,\n\
+; %3ld deleted
+; COUNT, COUNT, COUNT, COUNT
+;
+MSG_MA_ExportAppendReq
+Výstupní soubor jiù existuje. Chcete ho\n\
+pêepsat nebo pêipojit aktuální zprávy?
+; The output file already exists. Do you want\n\
+; to overwrite it or append the messages?
+;
+MSG_MA_ExportAppendOpts
+* _Pêepsat | Pê_ipojit | _Zruîit 
+; *_Overwrite|_Append|_Cancel
+;
+MSG_MA_MoveMsg
+Pêesun zpráv
+; Move message(s)
+;
+MSG_MA_MoveMsgReq
+Zvolte prosím cílovou sloùku:
+; Please select a destination folder:
+;
+MSG_MA_MoveGad
+_Pêesunout
+; _Move
+;
+MSG_MA_CopyMsg
+Kopírovat zprávu(y)
+; Copy message(s)
+;
+MSG_MA_CopyGad
+_Kopírovat
+; Cop_y
+;
+MSG_MA_ChangeSubjReq
+Zadejte prosím nový pêedmët zprávy:
+; Enter a new subject:
+;
+MSG_MA_All
+Vîe
+; All
+;
+MSG_MA_Cancel
+\ebZruîit
+; \ebCancel
+;
+MSG_MA_TitleStatus
+Stav
+; Status
+;
+MSG_MA_Scripts
+Skripty
+; Scripts
+;
+MSG_MA_ExecuteScript
+Provést skript...
+; Execute script...
+;
+MSG_MA_CheckSingle
+Stáhnout poîtu z
+; Check single account
+;
+MSG_MA_FolderInfo
+\ebAktuální sloùka\en\n\
+Název: %s\n\
+Cesta: %s\n\
+Velikost: %lD bajtû\n\
+Zpráv: %lD (%lD nových, %lD neçtených)
+; \ebCurrent folder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %lD bytes\n\
+; Messages: %lD (%lD new, %lD unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MA_MessageInfo
+\ebAktuální zpráva\en\n\
+Od: %s <%s>\n\
+Komu: %s <%s>\n\
+Pêedmët: %s\n\
+Datum: %s\n\
+Název souboru: %s\n\
+Velikost: %lD bajtû
+; \ebCurrent message\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %lD bytes
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_MA_WinTitle
+Amiga YAM %s - uùivatel: %s
+; Amiga YAM %s  -  User: %s
+; VERSION, NAME
+;
+MSG_MA_ToPrefix
+\ebKomu: \en
+; \ebTo: \en
+;
+; Module MA - Window
+;
+MSG_MA_Incoming
+Pêíchozí
+; Incoming
+;
+MSG_MA_Outgoing
+Odchozí
+; Outgoing
+;
+MSG_MA_Sent
+Odeslané
+; Sent
+;
+MSG_MA_Deleted
+Smazané
+; Deleted
+;
+MSG_MA_Archived
+Archivované
+; Archived
+;
+; Module MA - Toolbar
+;
+MSG_MA_TBRead
+_Pêeçíst
+; Rea_d
+;
+MSG_MA_TBEdit
+Up_ravit
+; _Edit
+;
+MSG_MA_TBMove
+Pêes_unout
+; _Move
+;
+MSG_MA_TBDelete
+S_mazat
+; De_lete
+;
+MSG_MA_TBGetAddr
+_Do adres
+; Ge_tAdd
+;
+MSG_MA_TBWrite
+_Nová
+; _New
+;
+MSG_MA_TBReply
+_Odpovëdët
+; _Reply
+;
+MSG_MA_TBForward
+Pê_edat
+; For_ward
+;
+MSG_MA_TBGetMail
+S_táhnout
+; _Get
+;
+MSG_MA_TBSendAll
+Ode_slat
+; _Send
+;
+MSG_MA_TBFilter
+F_iltrovat
+; F_ilter
+;
+MSG_MA_TBFind
+_Hledat
+; _Find
+;
+MSG_MA_TBAddrBook
+_Adresáê
+; _Addr
+;
+MSG_MA_TBConfig
+Nasta_vit
+; _Config
+;
+; Module MA - Menus
+;
+MSG_MA_Project
+Projekt
+; Project
+;
+MSG_MA_About
+O programu...
+; About...
+; This is the title of the about window, not the menu item.
+;
+MSG_MA_AboutMUI
+O rozhraní MUI...
+; About MUI...
+;
+MSG_MA_CheckVersion
+Zjistit verzi
+; Check version
+; This is the title of the check version window, not the menu item.
+;
+MSG_MA_LastErrors
+Zopakovat hláîení
+; Show last message
+;
+MSG_MA_Restart
+Restartovat
+; Restart
+;
+MSG_MA_Hide
+H\000Skrýt
+; H\000Hide
+;
+MSG_MA_Quit
+Q\000Ukonçit
+; Q\000Quit
+;
+MSG_MA_NewFolder
+Nová sloùka...
+; New folder...
+; This is the title of the new folder window, not the menu item.
+;
+MSG_MA_NewSeparator
+Nový oddëlovaç...
+; New separator...
+;
+MSG_MA_SortOrder
+Êazení
+; Order
+;
+MSG_MA_OSave
+Uloùit
+; Save
+;
+MSG_MA_Reset
+Pûvodní
+; Reset
+;
+MSG_MA_Select
+Zvolit
+; Select
+;
+MSG_MA_SelectAll
+L\000Vîe
+; L\000All
+;
+MSG_MA_SelectNone
+Nic
+; None
+;
+MSG_MA_SelectToggle
+Inverznë
+; Toggle
+;
+MSG_MA_MSearch
+F\000Hledat...
+; F\000Search...
+;
+MSG_MA_MFilter
+I\000Filtrovat
+; I\000Filter
+;
+MSG_MA_RemoveDeleted
+Z\000Vysypat koî
+; Z\000Empty trash
+;
+MSG_MA_UpdateIndex
+U\000Aktualizovat index
+; U\000Update index
+;
+MSG_MA_FlushIndices
+Vyprázdnit indexy
+; Flush indices
+;
+MSG_MA_ExportMessages
+Exportovat...
+; Export...
+;
+MSG_MA_ImportMessages
+Importovat...
+; Import...
+;
+MSG_MA_MSendAll
+S\000Odeslat poîtu
+; S\000Send queued mail
+;
+MSG_MA_Exchange
+X\000Vyêídit poîtu
+; X\000Exchange mail
+;
+MSG_MA_MGetMail
+G\000Stáhnout poîtu
+; G\000Get new mail
+;
+MSG_MA_MRead
+D\000Pêeçíst
+; D\000Read
+;
+MSG_MA_MEdit
+Upravit
+; Edit
+;
+MSG_MA_MDelete
+Smazat
+; Delete
+;
+MSG_MA_MMove
+Pêesunout...
+; Move...
+;
+MSG_MA_MCopy
+Zkopírovat...
+; Copy...
+;
+MSG_MA_Save
+Uloùit...
+; Save...
+;
+MSG_MA_Crop
+Odstranit
+; Crop
+;
+MSG_MA_MReply
+Odpovëdët...
+; Reply...
+;
+MSG_MA_MForward
+Pêedat...
+; Forward...
+;
+MSG_MA_MBounce
+Pêedat beze zmëny...
+; Bounce...
+;
+MSG_MA_MGetAddress
+Uloùit adresu...
+; Save address...
+;
+MSG_MA_SetStatus
+Zmënit stav
+; Set status to
+;
+MSG_MA_ToUnread
+[\000neçtená
+; [\000Unread
+;
+MSG_MA_ToRead
+]\000pêeçtená
+; ]\000Read
+;
+MSG_MA_ToHold
+{\000pozastavená
+; {\000Hold
+;
+MSG_MA_ToQueued
+}\000ve frontë
+; }\000Queued
+;
+MSG_MA_ChangeSubj
+Zmënit pêedmët...
+; Change subject...
+;
+MSG_MA_MSend
+Odeslat
+; Send
+;
+MSG_MA_Settings
+Nastavení
+; Settings
+;
+MSG_MA_MAddrBook
+Adresáê...
+; Address Book...
+; This is the title of the address book window, not the menu item.
+;
+MSG_MA_MConfig
+Konfigurace...
+; Configuration...
+; This is the title of the configuration window, not the menu item.
+;
+MSG_MA_MUsers
+Uùivatelé...
+; Users...
+;
+; Module MA - Bubblehelp
+;
+MSG_HELP_MA_BT_READ
+Zobrazení obsahu zvolené zprávy
+; Display contents of\n\
+; selected message
+;
+MSG_HELP_MA_BT_EDIT
+Uprava zvolené zprávy
+; Modify the\n\
+; selected message
+;
+MSG_HELP_MA_BT_MOVE
+Pêesunutí zvolené zprávy do jiné sloùky
+; Move selected message(s)\n\
+; to another folder
+;
+MSG_HELP_MA_BT_DELETE
+Smazání zvolené(zvolených) zprávy
+; Delete selected message(s)
+;
+MSG_HELP_MA_BT_GETADDRESS
+Pêidání adresy odesílatele do seznamu adres
+; Save sender's address\n\
+; in your address book
+;
+MSG_HELP_MA_BT_WRITE
+Sestavení nové zprávy
+; Compose a new message
+;
+MSG_HELP_MA_BT_REPLY
+Odpovëð na zvolenou zprávu
+; Reply to selected message
+;
+MSG_HELP_MA_BT_FORWARD
+Pêedání zvolené zprávy dalîím pêíjemcûm
+; Forward selected message\n\
+; to another recipient
+;
+MSG_HELP_MA_BT_POPNOW
+Pêipojení a stáhnutí nových zpráv\n\
+z poîtovního serveru
+; Connect to the mail server\n\
+; and download new messages
+;
+MSG_HELP_MA_BT_SENDALL
+Odeslání zpráv ve frontë ze sloùky 'odchozí'
+; Send queued messages\n\
+; in the outgoing folder
+;
+MSG_HELP_MA_BT_FILTER
+Aplikace filtrû na vîechny zprávy\n\
+v aktuální sloùce
+; Apply filters to all\n\
+; messages in this folder
+;
+MSG_HELP_MA_BT_SEARCH
+Prohledání obsahu sloùek
+; Search your mail folders
+;
+MSG_HELP_MA_BT_ABOOK
+Otevêení adresáêe, tj. seznamu adres
+; Open the address book
+;
+MSG_HELP_MA_BT_CONFIG
+Otevêení okna s nastavením programu YAM
+; Modify YAM's preferences
+;
+;
+; Module CO - Procedures
+;
+MSG_CO_SelectDir
+Zvolte prosím adresáê pro novou sloùku:
+; Please select a directory for the new folder:
+;
+MSG_CO_ChangeFolderPass
+Zadejte nové heslo pro aktuální sloùku:
+; Enter a new password for this folder:
+;
+MSG_CO_RetypePass
+A nyní zvolené heslo zadejte znovu:
+; Please re-type the password:
+;
+MSG_CO_ConfirmDelete
+Vîechny zprávy v aktuální sloùce budou\n\
+ztraceny! Opravdu ji chcete smazat?
+; All messages in this folder will be lost!\n\
+; Do you really want to delete it?
+;
+MSG_CO_InvalidConf
+Neplatné nastavení (chybí jméno hostitele\n\
+nebo elektronická adresa).\n\n\
+Doplñte prosím potêebné údaje a zkuste znovu!
+; Invalid configuration (missing hostname\n\
+;  or email address)\n\
+; \n\
+; Please fill in these fields and try again!
+;
+MSG_CO_ImportMIMEReq
+Nastavení importovat z...
+; Import settings from...
+;
+MSG_CO_ImportMIMEGads
+* _MIME.prefs | m_ailcap | m_ime.types | _Zruîit 
+; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
+;
+MSG_CO_NewIntroDef
+Zdravím,\\n
+; Hello,\\\\n
+;
+MSG_CO_AltRepIntroDef
+
+; 
+;
+MSG_CO_AltRepPatternDef
+
+; 
+;
+MSG_CO_ForwardIntroDef
+*** zaçátek pêedané zprávy ***\\n\
+\\n\
+Datum: %d %t\\n\
+Odesílatel: %n <%e>\\n\
+Pêedmët: %s\\n\
+\\n\
+--- následuje pêedaná zpráva ---\\n\
+\\n
+; *** Begin of forwarded message ***\\\\n\
+; \\\\n\
+; Date: %d %t\\\\n\
+; From: %n <%e>\\\\n\
+; Subject: %s\\\\n\
+; \\\\n\
+; --- Forwarded message follows ---\\\\n\
+; \\\\n
+;
+MSG_CO_ForwardFinishDef
+*** konec pêedané zprávy ***\\n
+; *** End of forwarded message ***\\\\n
+;
+MSG_CO_GreetingsDef
+S pozdravem
+; Kind regards
+;
+MSG_CO_AltRepHelloDef
+
+; 
+;
+MSG_CO_AltRepByeDef
+
+; 
+;
+MSG_CO_MLRepHelloDef
+
+; 
+;
+MSG_CO_MLRepIntroDef
+Dne %d %f %n napsal:\\n
+; On %d, %n wrote:\\\\n
+;
+MSG_CO_MLRepByeDef
+S pozdravem
+; Regards
+;
+MSG_CO_LineBreak
+\\n  nový êádek
+; \\\\n\
+;   Line break
+;
+MSG_CO_SenderName
+%n  pûvodní odesílatel: pêíjmení
+; %n  Original sender: Name
+;
+MSG_CO_SenderFirstname
+%f  pûvodní odesílatel: jméno
+; %f  Original sender: First name
+;
+MSG_CO_SenderAddress
+%e  pûvodní odesílatel: adresa
+; %e  Original sender: Address
+;
+MSG_CO_SenderSubject
+%s  pûvodní zpráva: pêedmët
+; %s  Original message: Subject
+;
+MSG_CO_SenderDate
+%d  pûvodní zpráva: datum
+; %d  Original message: Date
+;
+MSG_CO_SenderTime
+%t  pûvodní zpráva: ças
+; %t  Original message: Time
+;
+MSG_CO_SenderDOW
+%w  pûvodní zpráva: den v týdnu
+; %w  Original message: Day of week
+;
+MSG_CO_SenderMsgID
+%m  pûvodní zpráva: çíslo zprávy
+; %m  Original message: Message ID
+;
+MSG_CO_SenderInitials
+%n  pûvodní odesílatel: iniciály
+; %i  Original sender: Initials
+;
+MSG_CO_Sender2Initials
+%j  pûvodní odesílatel: dvojí iniciály
+; %j  Original sender: Two initials
+;
+MSG_CO_RecptName
+%r  pêíjemce: pêíjmení
+; %r  Recipient: Name
+;
+MSG_CO_RecptFirstname
+%v  pêíjemce: jméno
+; %v  Recipient: First name
+;
+MSG_CO_RecptAddress
+%a  pêíjemce: adresa
+; %a  Recipient: Address
+;
+MSG_CO_ORecptName
+%r  pûvodní pêíjemce: pêíjmení
+; %r  Original recipient: Name
+;
+MSG_CO_ORecptFirstname
+%v  pûvodní pêíjemce: jméno
+; %v  Original recipient: First name
+;
+MSG_CO_ORecptAddress
+%a  pûvodní pêíjemce: adresa
+; %a  Original recipient: Address
+;
+MSG_CO_CompleteHeader
+%h  celá hlaviçka
+; %h  Complete header
+;
+MSG_CO_ArchiveName
+%a  název archívu
+; %a  Filename of archive
+;
+MSG_CO_ArchiveFiles
+%f  soubory k archivování
+; %f  Files to be archived
+;
+MSG_CO_ArchiveFilelist
+%l  seznam souborû
+; %l  List containing filenames
+;
+; Module CO - Window
+;
+MSG_CO_CrdFirstSteps
+První kroky
+; First steps
+;
+MSG_CO_CrdTCPIP
+TCP/IP
+; TCP/IP
+;
+MSG_CO_CrdNewMail
+Nová poîta
+; New mail
+;
+MSG_CO_CrdFilters
+Filtry
+; Filters
+;
+MSG_CO_CrdRead
+Çtení zpráv
+; Read
+;
+MSG_CO_CrdWrite
+Psaní zpráv
+; Write
+;
+MSG_CO_CrdReply
+Odpovëdi
+; Reply
+;
+MSG_CO_CrdSignature
+Podpis
+; Signature
+;
+MSG_CO_CrdLists
+Seznamy
+; Lists
+;
+MSG_CO_CrdMIME
+MIME
+; MIME
+;
+MSG_CO_CrdSecurity
+Zabezpeçení
+; Security
+;
+MSG_CO_CrdMixed
+Ostatní
+; Miscellaneous
+;
+MSG_CO_CrdScripts
+ARexx
+; ARexx
+;
+MSG_CO_CrdStartQuit
+Akce
+; Start/Quit
+;
+MSG_CO_CrdABook
+Adresáê
+; Address book
+;
+MSG_CO_Save
+_Uloùit
+; _Save
+;
+MSG_CO_Use
+_Pouùít
+; _Use
+;
+MSG_CO_Cancel
+_Zruîit
+; _Cancel
+;
+MSG_CO_TZoneM12
+GMT-12  Kwajalein Islands
+; GMT-12  Kwajalein Islands
+;
+MSG_CO_TZoneM11
+GMT-11  Midway Islands, Samoa
+; GMT-11  Midway Islands, Samoa
+;
+MSG_CO_TZoneM10
+; GMT-10  Honolulu, Tahiti
+; GMT-10  Honolulu, Tahiti
+;
+MSG_CO_TZoneM9
+GMT-9   Anchorage
+; GMT-9   Anchorage
+;
+MSG_CO_TZoneM8
+GMT-8   Los Angeles, San Francisco (PDT)
+; GMT-8   Los Angeles, San Francisco (PDT)
+;
+MSG_CO_TZoneM7
+GMT-7   Calgary, Denver, Phoenix (MDT)
+; GMT-7   Calgary, Denver, Phoenix (MDT)
+;
+MSG_CO_TZoneM6
+GMT-6   Chicago, Dallas, Mexico City (CMT)
+; GMT-6   Chicago, Dallas, Mexico City (CMT)
+;
+MSG_CO_TZoneM5
+GMT-5   Lima, Miami, Montreal, New York (EST)
+; GMT-5   Lima, Miami, Montreal, New York (EST)
+;
+MSG_CO_TZoneM4
+GMT-4   Caracas, Santiago, Thule (ADT)
+; GMT-4   Caracas, Santiago, Thule (ADT)
+;
+MSG_CO_TZoneM3
+GMT-3   Buenos Aires, Rio de Janeiro
+; GMT-3   Buenos Aires, Rio de Janeiro
+;
+MSG_CO_TZoneM2
+GMT-2   Brazil East
+; GMT-2   Brazil East
+;
+MSG_CO_TZoneM1
+GMT-1   Azores
+; GMT-1   Azores
+;
+MSG_CO_TZone0
+GMT     Dublin, Lisbon, London (GMT)
+; GMT     Dublin, Lisbon, London (GMT)
+;
+MSG_CO_TZone1
+GMT+1   Prague, Berlin, Paris, Oslo (MET)
+; GMT+1   Berlin, Paris, Madrid, Oslo (MET)
+;
+MSG_CO_TZone2
+GMT+2   Athens, Cairo, Helsinki (EET)
+; GMT+2   Athens, Cairo, Helsinki (EET)
+;
+MSG_CO_TZone3
+GMT+3   Baghdad, Kuwait, Moscow, Nairobi
+; GMT+3   Baghdad, Kuwait, Moscow, Nairobi
+;
+MSG_CO_TZone4
+GMT+4   Dubai, Port Louis, Victoria
+; GMT+4   Dubai, Port Louis, Victoria
+;
+MSG_CO_TZone5
+GMT+5   Islamabad, Karachi
+; GMT+5   Islamabad, Karachi
+;
+MSG_CO_TZone6
+GMT+6   Alma-Ata, Dhaka, Tashkent
+; GMT+6   Alma-Ata, Dhaka, Tashkent
+;
+MSG_CO_TZone7
+GMT+7   Bangkok, Hanoi, Phnom Penh
+; GMT+7   Bangkok, Hanoi, Phnom Penh
+;
+MSG_CO_TZone8
+GMT+8   Hong Kong, Shanghai, Singapore (PST)
+; GMT+8   Hong Kong, Shanghai, Singapore (PST)
+;
+MSG_CO_TZone9
+GMT+9   Osaka, Seoul, Tokyo
+; GMT+9   Osaka, Seoul, Tokyo
+;
+MSG_CO_TZone10
+GMT+10  Melbourne, Sydney, Vladivostok
+; GMT+10  Melbourne, Sydney, Vladivostok
+;
+MSG_CO_TZone11
+GMT+11  New Caldonia
+; GMT+11  New Caldonia
+;
+MSG_CO_TZone12
+GMT+12  Auckland, Wellington
+; GMT+12  Auckland, Wellington
+;
+MSG_CO_MinConfig
+Minimální konfigurace
+; Minimal configuration
+;
+MSG_CO_RealName
+_Skuteçné jméno
+; _Real name
+;
+MSG_CO_EmailAddress
+_E-mail
+; _Email address
+;
+MSG_CO_POPServer
+POP_3 server
+; POP_3 server
+;
+MSG_CO_Password
+_Heslo
+; _Password
+;
+MSG_CO_TimeZone
+Çasové pásmo
+; Time zone
+;
+MSG_CO_DaylightSaving
+Pêizpûsobit pro ç_asovou zónu
+; _Add adjustment for daylight saving time
+;
+MSG_CO_SendMail
+Odesílání poîty (SMTP)
+; Send mail (SMTP)
+;
+MSG_CO_Server
+S_erver
+; Server
+;
+MSG_CO_Domain
+Do_ména
+; Do_main
+;
+MSG_CO_Allow8bit
+SMTP server propustí _8bitové ASCII
+; SMTP server allows _8bit
+;
+MSG_CO_ReceiveMail
+Pêíjem poîty (POP3)
+; Receive mail (POP3)
+;
+MSG_CO_POPUserID
+Uù_ivatel
+; User _ID
+;
+MSG_CO_POPActive
+A_ktivní
+; _Active
+;
+MSG_CO_DeleteServerMail
+Smazat p_oîtu ze serveru
+; Delete mail _on server
+;
+MSG_CO_UseAPOP
+Pêih_lásit se pomocí APOP
+; _Login using APOP
+;
+MSG_CO_PSNever
+nikdy
+; never
+;
+MSG_CO_PSLarge
+velkých zpráv
+; large messages
+;
+MSG_CO_PSAlways
+vùdy
+; always
+;
+MSG_CO_PSAlwaysFast
+vùdy, pouze velikosti
+; always, only sizes
+;
+MSG_CO_TWNever
+vùdy skrýt
+; hide always
+;
+MSG_CO_TWAuto
+automaticky
+; automatic
+;
+MSG_CO_TWAlways
+vùdy zobrazit
+; show always
+;
+MSG_CO_Download
+Stahování poîty
+; Download
+;
+MSG_CO_AvoidDuplicates
+Nest_ahovat duplicitní
+; _Avoid duplicates
+;
+MSG_CO_TransferWin
+Pêeno_sové okno
+; _Transfer window
+;
+MSG_CO_PreSelect
+Okno pro vý_bër
+; _Pre-selection
+;
+MSG_CO_UpdateStatus
+Aktual_izovat stav zpráv
+; Update m_essage status
+;
+MSG_CO_WarnSize1
+Maximá_lnë
+; Size _limit
+;
+MSG_CO_WarnSize2
+kB
+; kB
+;
+MSG_CO_AutoOperation
+Automatické operace
+; Automatic operation
+;
+MSG_CO_CheckMail
+Sta_hovat poîtu kaùdých
+; Chec_k for new mail every
+;
+MSG_CO_Minutes
+minut
+; minutes
+;
+MSG_CO_DownloadLarge
+S_tahovat velké zprávy
+; _Download large messages
+;
+MSG_CO_Notification
+Upozornëní na novou poîtu
+; Notification
+;
+MSG_CO_NotiReq
+Okno s upozo_rnëním
+; _Requester
+;
+MSG_CO_NotiSound
+Z_vuk
+; S_ound
+;
+MSG_CO_NotiCommand
+Pêí_kaz
+; Co_mmand
+;
+MSG_CO_Name
+Náz_ev
+; N_ame
+;
+MSG_CO_CTNone
+nekombinovat
+; don't combine
+;
+MSG_CO_CTAnd
+a (AND)
+; and
+;
+MSG_CO_CTOr
+nebo (OR)
+; or
+;
+MSG_CO_CTXor
+exkl. nebo (EX OR)
+; exclusive or
+;
+MSG_CO_Comparison
+Porovnání
+; Comparison
+;
+MSG_CO_Action
+Akce
+; Action
+;
+MSG_CO_Remote
+Aplikovat pêed _stáhnutím poîty
+; Remote _filter
+;
+MSG_CO_ApplyToNew
+Ap_likovat na novou poîtu
+; A_pply to new mail
+;
+MSG_CO_ApplyToSent
+Apl_ikovat na odeslanou poîtu
+; Apply to sent _mail
+;
+MSG_CO_ApplyOnReq
+Apli_kovat na poùádání
+; Apply on _request
+;
+MSG_CO_ActionBounce
+Pêedat _beze zmëny
+; _Bounce
+;
+MSG_CO_ActionForward
+Pê_edat
+; _Forward
+;
+MSG_CO_ActionReply
+O_dpovëdët
+; _Reply
+;
+MSG_CO_ActionExecute
+Pro_vést
+; _Execute
+;
+MSG_CO_ActionPlay
+Pêe_hrát zvuk
+; _Play sound
+;
+MSG_CO_ActionMove
+Pêesunou_t
+; _Move
+;
+MSG_CO_ActionDelete
+S_mazat
+; De_lete
+;
+MSG_CO_ActionSkip
+Nestah_ovat
+; D_on't download
+;
+MSG_CO_HeadNone
+nic
+; none
+;
+MSG_CO_HeadShort
+zvolené çásti
+; selected
+;
+MSG_CO_HeadFull
+vîe
+; full
+;
+MSG_CO_SINone
+nic
+; none
+;
+MSG_CO_SIFields
+pouze údaje
+; data only
+;
+MSG_CO_SIAll
+údaje a obrázek
+; data and image
+;
+MSG_CO_SLBlank
+prázdný êádek
+; blank line
+;
+MSG_CO_SLDash
+dvë pomlçky
+; two dashes
+;
+MSG_CO_SLBar
+oddëlovaç
+; separator bar
+;
+MSG_CO_SLSkip
+bez podpisu
+; no signature
+;
+MSG_CO_HeaderLayout
+Vzhled hlaviçky
+; Header layout
+;
+MSG_CO_BodyLayout
+Vzhled zprávy
+; Message body layout
+;
+MSG_CO_OtherOptions
+Ostatní moùnosti
+; Other options
+;
+MSG_CO_WrapHeader
+Zalo_mit údaje v hlaviçce
+; _Wrap header
+;
+MSG_CO_OldQuotes
+Pû_vodní text
+; Old _quotes
+;
+MSG_CO_UseTextstyles
+Pouùít te_xtové styly
+; Use te_xtstyles
+;
+MSG_CO_Header
+V _hlaviçce zobrazit
+; _Header
+;
+MSG_CO_SenderInfo
+_Informace o odesílateli
+; Sender _info
+;
+MSG_CO_SignatureSep
+_Oddëlovaç
+; Separate si_g.
+;
+MSG_CO_ColoredText
+_Barevný text
+; C_olored text
+;
+MSG_CO_MultiReadWin
+Více oke_n
+; _Multiple windows
+;
+MSG_CO_CharsetTrans
+_Konverze kódování
+; Charset _translation
+;
+MSG_CO_DisplayAll
+Zobr_azit vîechny texty
+; Display _all texts
+;
+MSG_CO_FixedFontEdit
+Pouùít _fixní font
+; Use _fixed font
+;
+MSG_CO_MimeViewers
+Prohlíùecí programy
+; MIME viewers
+;
+MSG_CO_MimeType
+_Typ pêílohy
+; Attachment _type
+;
+MSG_CO_MimeCmd
+Proh_líùeç
+; _Viewer
+;
+MSG_CO_Extension
+Pêíp_ona
+; E_xtension
+;
+MSG_CO_DefaultViewer
+Zá_kladní prohlíùeç
+; De_fault viewer
+;
+MSG_CO_IdentifyBin
+Rozpoznat b_inární pêílohy
+; _Identify binary attachments
+;
+MSG_CO_MessageHeader
+Hlaviçka zprávy
+; Message header
+;
+MSG_CO_ReplyTo
+Zpáteçní ad_resa
+; _Reply to
+;
+MSG_CO_Organization
+Název _organizace
+; _Organization
+;
+MSG_CO_ExtraHeaders
+_Dodateçné poloùky
+; E_xtra headers
+;
+MSG_CO_MessageBody
+Tëlo zprávy
+; Message body
+;
+MSG_CO_Welcome
+U_vítací fráze
+; Welcome _phrase
+;
+MSG_CO_Greetings
+Uko_nçovací fráze
+; Closing p_hrase
+;
+MSG_CO_Editor
+Editor
+; Editor
+;
+MSG_CO_WordWrap
+Za_lamovat na
+; _Word wrap
+;
+MSG_CO_EWOff
+vypnuto
+; off
+;
+MSG_CO_EWAsYouType
+pêi psaní
+; as you type
+;
+MSG_CO_EWBeforeSend
+pêed odesláním
+; before sending
+;
+MSG_CO_ExternalEditor
+_Externí editor
+; _External editor
+;
+MSG_CO_Launch
+_Spustit okamùitë
+; _Launch immediately
+;
+MSG_CO_PhraseOpen
+Pozdrav
+; Open
+;
+MSG_CO_PhraseIntro
+Uvození
+; Intro
+;
+MSG_CO_PhraseClose
+Ukonçení
+; Close
+;
+MSG_CO_Forwarding
+Pêedání zprávy
+; Forwarding
+;
+MSG_CO_FwdInit
+Poçáteçní _fráze
+; _Initial phrase
+;
+MSG_CO_FwdFinish
+Ukonçovací f_ráze
+; _Terminating phrase
+;
+MSG_CO_Replying
+Odpovëð na zprávu
+; Replying
+;
+MSG_CO_RepInit
+Zá_kladní odpovëð
+; Default _reply phrase
+;
+MSG_CO_AltRepInit
+_Alternativní odpovëð
+; _Alternative reply phrase
+;
+MSG_CO_AltRepPat
+Pro tyto _domény
+; Use with these _domains
+;
+MSG_CO_MLRepInit
+Odpovëð pro rozesílací sezna_m
+; _Mailing list reply phrase
+;
+MSG_CO_QuoteMail
+Zprávu _odsadit pomocí
+; _Quote message using
+;
+MSG_CO_QuoteEmpty
+Od_sadit i prázdné êádky
+; Quote _empty lines
+;
+MSG_CO_VerifyAddress
+O_vëêit adresu pêíjemce
+; _Verify recipient address
+;
+MSG_CO_StripSignature
+Ods_tranit podpis
+; Stri_p signature
+;
+MSG_CO_DefSig
+Základní podpis
+; Default signature
+;
+MSG_CO_AltSig1
+Alt. podpis ç.1
+; Alt. signature #1
+;
+MSG_CO_AltSig2
+Alt. podpis ç.2
+; Alt. signature #2
+;
+MSG_CO_Signature
+Podpis
+; Signature
+;
+MSG_CO_UseSig
+Pouùít podp_is
+; Use s_ignature
+;
+MSG_CO_EditSig
+Upravit v externím _editoru
+; _Edit in external editor
+;
+MSG_CO_InsertTag
+Vloùit _citáty (náhodnë)
+; Insert _random tagline
+;
+MSG_CO_InsertENV
+Vloùit podpis z E_NV:Signature
+; Insert E_NV:Signature
+;
+MSG_CO_Taglines
+Citáty
+; Taglines
+;
+MSG_CO_TaglineFile
+Sou_bor s citáty
+; Tagline _file
+;
+MSG_CO_TaglineSep
+Oddëlov_aç citátû
+; T_agline separator
+;
+MSG_CO_FixedFontList
+Pouùít _fixní font
+; Use _fixed font
+;
+MSG_CO_SwatchBeat
+Ças v jednotkách Swatch _Beats
+; Time in Swatch _Beats
+;
+MSG_CO_LogNone
+Ùádný
+; none
+;
+MSG_CO_LogNormal
+Normální
+; normal
+;
+MSG_CO_LogVerbose
+Podrobný
+; verbose
+;
+MSG_CO_PGPExe
+Cesta k P_GP
+; P_GP's directory
+;
+MSG_CO_PGPKey
+Çíslo PGP _klíçe
+; Your PGP key _ID
+;
+MSG_CO_EncryptToSelf
+Zaîifrovat do s_ebe
+; _Encrypt to self
+;
+MSG_CO_AnonMail
+Anonymní poîta
+; Anonymous mail
+;
+MSG_CO_ReMailer
+Serve_r
+; _Re-Mailer
+;
+MSG_CO_ReMailerLine
+_Hlaviçka
+; _Header field
+;
+MSG_CO_Logfiles
+Záznamové soubory
+; Logfiles
+;
+MSG_CO_LogPath
+_Cesta
+; _Path
+;
+MSG_CO_LogSplit
+Rozdë_lit záznam
+; Split _logfile
+;
+MSG_CO_LogMode
+_Mód
+; _Mode
+;
+MSG_CO_LogAllEvents
+Z_aznamenat vîe
+; Log _all events
+;
+MSG_CO_OnStartup
+Pêi spuîtëní programu
+; On program startup
+;
+MSG_CO_LoadAll
+Naçíst vîechny sloùky
+; Load all folders
+;
+MSG_CO_MarkNew
+Oznaçit nové zprávy jako neçtené
+; Mark new mail as unread
+;
+MSG_CO_SendStart
+Odeslat poîtu ve sloùce 'odchozí'
+; Send mail in outgoing queue
+;
+MSG_CO_PopStart
+Stáhnout novou poîtu
+; Download new mail
+;
+MSG_CO_CheckDOB
+Zjistit data narození
+; Check birthdates
+;
+MSG_CO_OnTermination
+Pêi ukonçení programu
+; On program termination
+;
+MSG_CO_DeleteOld
+Smazat starou poîtu
+; Delete old mail
+;
+MSG_CO_RemoveDel
+Odstranit zprávy ve sloùce 'smazané'
+; Remove deleted mail
+;
+MSG_CO_ATABnever
+Nikdy
+; never
+;
+MSG_CO_ATABask
+Na dotaz
+; ask before
+;
+MSG_CO_ATABinfoask
+Pokud jsou informace, dotázat se
+; if info available; ask
+;
+MSG_CO_ATABinfo
+Pokud jsou informace
+; if info available
+;
+MSG_CO_ATABalways
+Vùdy
+; always
+;
+MSG_CO_InfoExc
+Výmëna osobních údajû
+; Personal data exchange
+;
+MSG_CO_Gallery
+Ul_oùit fotografie do
+; Save _photos in
+;
+MSG_CO_MyURL
+UR_L vaîí fotografie
+; UR_L of your picture
+;
+MSG_CO_AddToAddrbook
+Uloùi_t adresu odesílatele
+; Sa_ve sender's address
+;
+MSG_CO_ProxyServer
+_HTTP Proxy server
+; _HTTP Proxy server
+;
+MSG_CO_NewGroup
+S_kupina pro nové poloùky
+; _Group for new entries
+;
+MSG_CO_AddInfo
+Pêid_at osobní údaje
+; _Add personal info
+;
+MSG_CO_Paths
+Cesty pro soubory
+; Paths
+;
+MSG_CO_Detach
+D_ekódovat do
+; D_ecode files to
+;
+MSG_CO_Attach
+Pêílo_hy z
+; _Attach files from
+;
+MSG_CO_TempDir
+Adr_esáê pro doçasné soubory
+; Directory for _tempfiles
+;
+MSG_CO_AppIcon
+Aplikaçní ikona poîtovní schránky
+; Mailbox status AppIcon
+;
+MSG_CO_PositionX
+Pozice _X
+; Position _X
+;
+MSG_CO_CloseGadget
+Zavírací tlaçítko ikoni_fikuje program
+; Close_gadget iconifies program
+;
+MSG_CO_SaveDelete
+Uloùení/smazání zpráv
+; Save/delete messages
+;
+MSG_CO_ConfirmDelPart1
+Potvrdit _smazání
+; Confirm _deletion of
+;
+MSG_CO_ConfirmDelPart2
+nebo více zpráv
+; or more messages
+;
+MSG_CO_Remove
+Odst_ranit zprávy okamùitë
+; _Remove messages immediately
+;
+MSG_CO_SaveSent
+Uloùit odeslané zprá_vy
+; Sa_ve sent messages
+;
+MSG_CO_DispIgnore
+Ignorovat
+; Ignore
+;
+MSG_CO_DispDeny
+Autom. odmítnout
+; Autodeny
+;
+MSG_CO_DispAsk
+Dotázat se
+; Ask user
+;
+MSG_CO_DispAccept
+Pêijmout
+; Accept
+;
+MSG_CO_MDN
+Sledované zprávy
+; Message tracking
+;
+MSG_CO_SendAtOnce
+_Odeslat ihned
+; Send at _once
+;
+MSG_CO_XPK
+Nastavení pro XPK/LhA
+; XPK/LhA settings
+;
+MSG_CO_XPKPack
+Pakova_t pomocí
+; _Packer
+;
+MSG_CO_XPKPackEnc
+Pa_kovat/îifrovat
+; Pac_k/protect
+;
+MSG_CO_Archiver
+_Archivovat programem
+; _Archiver
+;
+MSG_CO_ScriptMenu
+Poloùka ç.%ld menu 'Skripty'
+; 'Scripts' menu entry %ld
+; COUNT
+;
+MSG_CO_ScriptStartup
+Pêi spuîtëní programu
+; Program startup
+;
+MSG_CO_ScriptTerminate
+Pêi ukonçení programu
+; Program termination
+;
+MSG_CO_ScriptPreGetMail
+Pêed stáhnutím poîty
+; Before getting mail
+;
+MSG_CO_ScriptPostGetMail
+Po stáhnutí poîty
+; After getting mail
+;
+MSG_CO_ScriptNewMsg
+S kaùdou novou zprávou
+; With each new message
+;
+MSG_CO_ScriptPreSendMail
+Pêed odesláním poîty
+; Before sending mail
+;
+MSG_CO_ScriptPostSendMail
+Po odeslání poîty
+; After sending mail
+;
+MSG_CO_ScriptReadMsg
+Pêi çtení zprávy
+; When reading a message
+;
+MSG_CO_ScriptPreWriteMsg
+Pêed napsáním zprávy
+; Before writing a message
+;
+MSG_CO_ScriptPostWriteMsg
+Po napsání zprávy
+; After writing a message
+;
+MSG_CO_ScriptClickURL
+Pêi dvojkliku na URL
+; When double-clicking an URL
+;
+MSG_CO_Script
+Sk_ript
+; Sc_ript
+;
+MSG_CO_OpenConsole
+_Otevêít konzolu
+; _Open console window
+;
+MSG_CO_WaitTerm
+Çe_kat na ukonçení
+; _Wait for termination
+;
+; Module CO - Menus
+;
+MSG_CO_Open
+Otevêít...
+; Open...
+;
+MSG_CO_SaveAs
+Uloùit jako...
+; Save as...
+;
+MSG_CO_Edit
+Úpravy
+; Edit
+;
+MSG_CO_ResetDefaults
+Základní nastavení
+; Reset to defaults
+;
+MSG_CO_ResetAll
+Základní nastavení vîem
+; Reset all settings
+;
+MSG_CO_LastSaved
+Naposledy uloùené
+; Last saved
+;
+MSG_CO_Restore
+Obnovit pêedchozí
+; Restore
+;
+MSG_CO_Extras
+Doplñky
+; Extras
+;
+MSG_CO_ScanForFolders
+Vyhledat sloùky
+; Scan for folders
+;
+MSG_CO_ImportMIME
+Importovat nastavení MIME...
+; Import MIME viewers & types...
+;
+; Module CO - Bubblehelp
+;
+MSG_HELP_CO_ST_REALNAME
+Vaîe celé jméno (jméno a pêíjmení)
+; Your full name\n\
+; (first name last name)
+;
+MSG_HELP_CO_ST_EMAIL
+Elektronická adresa
+; Your email address.
+;
+MSG_HELP_CO_ST_POPHOST
+Adresa POP3 serveru, ze kterého stahujete\n\
+poîtu. Ponecháte-li toto pole prázdné, bude\n\
+pouùita adresa SMTP serveru.
+; Address of the POP3 server to receive mail.\n\
+; If you leave this field empty, the address\n\
+;  of the SMTP server is used.
+;
+MSG_HELP_CO_ST_PASSWD
+Heslo pro poîtovní server
+; Password to access\n\
+; the mail server
+;
+MSG_HELP_CO_CY_TZONE
+Nastavení çasové zóny
+; Select the timezone of\n\
+; your current location
+;
+MSG_HELP_CO_CH_DLSAVING
+Provedení potêebných úprav pêi pêechodu\n\
+na letní ças
+; Adjust the timezone during daylight\n\
+; saving time (summer time)
+;
+MSG_HELP_CO_ST_SMTPHOST
+Adresa SMTP serveru k odeslání poîty.\n\
+Ponecháte-li toto pole prázdné, bude\n\
+pouùita adresa POP3 serveru.
+; Address of the SMTP server to send mail.\n\
+; If you leave this field empty,\n\
+; the address of the POP3 server is used.
+;
+MSG_HELP_CO_ST_DOMAIN
+Hostitelské jméno Amigy. Zmëñte pokud\n\
+dochází k chybám pêi pouùití pêíkazû HELO.
+; The hostname of your Amiga. Change this\n\
+; field if the HELO commands fails.
+;
+MSG_HELP_CO_CH_SMTP8BIT
+Bez konverze obsahu zpráv do 7bitového\n\
+ASCII. Pouùijte pouze tehdy, podporuje-li\n\
+SMTP server pêenos 8bitového ASCII!\n\
+V opaçném pêípadë budou zprávy poruîeny.
+; Don't convert messages to 7bit for transfer.\n\
+; Only use this option if your\n\
+; SMTP server supports 8bit transfers!\n\
+; Otherwise your messages will get corrupted.
+;
+MSG_HELP_CO_LV_POP3
+Seznam POP3 serverû
+; List of POP3 hosts
+;
+MSG_HELP_CO_BT_PADD
+Pêidání nového POP3 serveru do seznamu
+; Add a new POP3 host to the list
+;
+MSG_HELP_CO_BT_PDEL
+Odstranëní zvoleného POP3 serveru ze seznamu
+; Remove selected POP3 host from the list
+;
+MSG_HELP_CO_ST_POPUSERID
+Uùivatelské jméno pro pêihláîení k POP3\n\
+serveru. Ponecháte-li toto pole prázdné,\n\
+bude pouùita první çást e-mailu.
+; User name to log into the POP3 server.\n\
+; If you leave this field empty, the user-ID\n\
+; will be extracted from your email address.
+;
+MSG_HELP_CO_CH_DELETE
+Po stáhnutí poîty na serveru zprávy smaùe
+; Delete messages from\n\
+; mail server after\n\
+; downloading
+;
+MSG_HELP_CO_CH_USEAPOP
+Zabezpeçené pêihláîení k serveru pomocí\n\
+ovëêení APOP
+; Login using APOP authentication
+;
+MSG_HELP_CO_CH_POPENABLED
+Pêi stahování poîty pouùije aktivní server
+; Connect to this server\n\
+; when checking for new mail
+;
+MSG_HELP_CO_CH_AVOIDDUP
+Nesmaùete-li starou poîtu ze serveru,\n\
+pouùijte tuto moùnost k zamezení\n\
+duplicitních zpráv.
+; If you don't delete old mail\n\
+; on the server, use this option to\n\
+; avoid duplicate messages.
+;
+MSG_HELP_CO_CH_TRANSWIN
+Bëhem stahování poîty zobrazí okno s prûbëhem
+; Show progress window during mail transfers
+;
+MSG_HELP_CO_CY_MSGSELECT
+Povolíte-li tuto moùnost, bude zobrazen\n\
+obsah POP3 schránky na serveru a vy si budete\n\
+moci zvolit zprávy, které chcete stáhnout
+; Enable this option to show the contents of the POP3 mailbox\n\
+; and allow selection of the messages to be downloaded
+;
+MSG_HELP_CO_CH_UPDSTAT
+Pêed stáhnutím nové poîty oznaçí nové\n\
+zprávy ve sloùce pêíchozí jako neçtené
+; Mark new messages in the incoming folder\n\
+; as unread before downloading new mail
+;
+MSG_HELP_CO_ST_WARNSIZE
+Zprávy, jejichù velikost pêesahuje zde\n\
+urçený limit, budou oznaçeny jako 'velké'
+; Messages which exceed this\n\
+; threshold rank as 'large'
+;
+MSG_HELP_CO_ST_INTERVAL
+Jak çasto chcete stahovat novou poîtu?\n\
+(funkci zakáùete zadáním hodnoty 0\n\
+nebo ponecháte-li pole prázdné)
+; How frequently do you want to check for new mail?\n\
+; (enter 0 or no value to disable this feature)?
+;
+MSG_HELP_CO_CH_DLLARGE
+Pêi automatickém vybírání nové poîty budou\n\
+stáhnuty i zprávy pêesahující limit urçený výîe.
+; When automatically checking for new mail,\n\
+; download large messages even if they are\n\
+; larger than the size specified above
+;
+MSG_HELP_CO_CH_NOTIREQ
+Upozornëní na novou poîtu bude realizováno\n\
+requesterem
+; Show a requester\n\
+; when you get new mail
+;
+MSG_HELP_CO_ST_NOTICMD
+Program, který chcete spustit pêi stahování\n\
+nové poîty
+; The program you want to\n\
+; execute when you get new mail
+;
+MSG_HELP_CO_ST_NOTISOUND
+Zvuk, který chcete pêehrát pêi stahování\n\
+nové poîty
+; The sound file you want to play\n\
+; when you get new mail
+;
+MSG_HELP_CO_LV_RULES
+Seznam filtrû
+; List of filters
+;
+MSG_HELP_CO_ST_RNAME
+Název filtru
+; Filter name
+;
+MSG_HELP_CO_CH_REMOTE
+Aplikuje filtr jeîtë pêed stáhnutím zprávy
+; Apply this filter before downloading a message
+;
+MSG_HELP_CO_CH_APPLYNEW
+Aplikuje filtr na vîechny nové zprávy
+; Apply this filter to new messages
+;
+MSG_HELP_CO_CH_APPLYSENT
+Aplikuje filtr na odeslané zprávy
+; Apply this filter to sent messages
+;
+MSG_HELP_CO_CH_APPLYREQ
+Aplikuje filtr aù ho aktivujete ruçnë
+; Apply this filter when you activate\n\
+; the filter function manually
+;
+MSG_HELP_CO_CY_COMBINE
+Umoùní pro aktuální filtr zkombinovat\n\
+dvë kritéria
+; How to combine the two\n\
+; search keys for this filter
+;
+MSG_HELP_CO_CH_ABOUNCE
+Zprávy vyhovující kritériím\npêedá jiné osobë beze zmëny
+; Bounce matching messages to another person
+;
+MSG_HELP_CO_ST_ABOUNCE
+Adresa osoby, které má být\nbeze zmëny pêedána daná zpráva
+; Email address of the person that gets the bounced messages
+;
+MSG_HELP_CO_CH_AFORWARD
+Zprávy vyhovující kritériím\npêedá jiné osobë
+; Forward matching messages to another person
+;
+MSG_HELP_CO_ST_AFORWARD
+Adresa osoby, které má být\npêedána daná zpráva
+; Email address of the person that gets the forwarded messages
+;
+MSG_HELP_CO_CH_ARESPONSE
+Odeslání automatické odpovëdi\nna kaùdou zprávu vyhovující\nkritériím
+; Send an automatic reply for each matching message
+;
+MSG_HELP_CO_ST_ARESPONSE
+Textový soubor, který obsahuje odpovëð
+; Text file that contains the response
+;
+MSG_HELP_CO_CH_AEXECUTE
+Provedení pêíkazu pro kaùdou zprávu\nvyhovující kritériím
+; Execute a command for each matching message
+;
+MSG_HELP_CO_ST_AEXECUTE
+Pêíkaz, který bude vykonán. Cesta zprávy\nvyhovující kritériím je vloùena jako argument
+; Command to execute. The path of the matching\n\
+; message is passed as an argument.
+;
+MSG_HELP_CO_CH_APLAY
+Pêehrání zvuku pro kaùdou zprávu\nvyhovující kritériím
+; Plays a sound file for\n\
+; each matching message
+;
+MSG_HELP_CO_ST_APLAY
+Zvuk, který bude pêehrán
+; Sound file to play
+;
+MSG_HELP_CO_CH_AMOVE
+Pêesunutí vyhovující zprávy\ndo jiné sloùky
+; Move matching messages to a different folder
+;
+MSG_HELP_CO_PO_MOVETO
+Cílová sloùka
+; Destination folder
+;
+MSG_HELP_CO_CH_ADELETE
+Smazání vyhovujících zpráv
+; Delete matching messages
+;
+MSG_HELP_CO_CH_ASKIP
+Zákaz stahování vyhovujících zpráv
+; Don't download matching messages
+;
+MSG_HELP_CO_BT_RADD
+Pêidání nového filtru
+; Add a new filter
+;
+MSG_HELP_CO_BT_RDEL
+Odstranëní zvoleného filtru
+; Remove selected filter
+;
+MSG_HELP_CO_CA_COL2QUOT
+Úprava barvy odsazeného pûvodního\ntextu zprávy
+; Adjust the color used for displaying old quotes
+;
+MSG_HELP_CO_CH_WRAPHEAD
+Roùloùení dlouhé hlaviçky do více êádkû
+; Display long headers on multiple lines
+;
+MSG_HELP_CO_CH_TEXTSTYLES
+Interpretace znakû / * _ a # jako êídicích\nkódû pro textové styly
+; Interpret / * _ and # as\n\
+; control codes for textstyles
+;
+MSG_HELP_CO_CY_HEADER
+Jak chcete zobrazit hlaviçku zprávy\nv oknë se çtenou zprávou?
+; How do you want to\n\
+; display the message header\n\
+; in the Read window?
+;
+MSG_HELP_CO_ST_HEADERS
+Zde zadejte îablonu AmigaDOSu, podle\nkteré chcete zobrazit, je-li vybrána\nmoùnost 'zvolené çásti'.\nZákladní nastavení je (Od|Komu|Datum|Pêedmët)
+; Specify an AmigaDOS pattern to\n\
+; choose the headers in SELECTED format.\n\
+; Default is (From|To|Date|Subject)
+;
+MSG_HELP_CO_CY_SENDERINFO
+Informace o odesílateli, které budou\nzobrazeny (pokud jsou dostupné) v oknë\nse çtenou zprávou
+; Information about the sender to display\n\
+; in the read window (if available)
+;
+MSG_HELP_CO_CY_SIGSEPLINE
+Typ oddëlovaçe pro podpis
+; Type of the signature\n\
+; separation line
+;
+MSG_HELP_CO_ST_INTRANS
+Konverze zpráv do zvoleného kódování\npêi çtení
+; Apply this character set translation\n\
+; when reading messages
+;
+MSG_HELP_CO_CH_ALLTEXTS
+Zobrazení vîech textových pêíloh zprávy,\nkterá je sloùena z více çástí
+; Display all textual parts\n\
+; of a multipart message
+;
+MSG_HELP_CO_CH_MULTIWIN
+Otevêení nového okna pro kaùdou novou zprávu
+; Open a new read window\n\
+; for each selected message
+;
+MSG_HELP_CO_CA_COLTEXT
+Zmëna barvy 'barevného' textu v oknë\nse çtenou zprávou a v editoru
+; Adjust the color of 'colored' text used\n\
+; in the read window and the editor
+;
+MSG_HELP_CO_CH_FIXFEDIT
+Zobrazení zpráv pomocí fixního fontu
+; Display messages using\n\
+; a fixed-width font
+;
+MSG_HELP_CO_ST_CTYPE
+Na základë tohoto typu pêílohy je\naktivován pêísluîný prohlíùeç
+; MIME viewer is activated\n\
+; by this attachment type
+;
+MSG_HELP_CO_ST_COMMAND
+Cesta a pêípadný volitelný argument\npro prohlíùeç. Data vloùíte pomocí\nargumentu %s.
+; Path and optional arguments of\n\
+; the viewer command. Use %s to\n\
+; insert the datafile.
+;
+MSG_HELP_CO_BT_MADD
+Pêidání nového typu MIME
+; Add a new MIME viewer
+;
+MSG_HELP_CO_BT_MDEL
+Odstranëní zvoleného typu MIME
+; Remove selected MIME viewer
+;
+MSG_HELP_CO_ST_EXTENS
+Pêípony souboru, podle kterých lze\nidentifikovat daný typ souboru
+; Filename extensions used by this file type
+;
+MSG_HELP_CO_ST_DEFVIEWER
+Program, který bude pouùit k zobrazení\nneznámého typu souboru
+; Program used to displaying\n\
+; attachments of unknown type
+;
+MSG_HELP_CO_CH_IDENTBIN
+Jeîtë pêed pouùitím základního prohlíùeçe\nse pokusí rozpoznat typ souboru 
+; Try to identify the file type\n\
+; before using the default viewer
+;
+MSG_HELP_CO_ST_REPLYTO
+Zde zadejte zpáteçní adresu, liîí-li se\nod vaîeho bëùného E-mailu
+; Enter the default return address, if\n\
+; it differs from your email address.
+;
+MSG_HELP_CO_ST_ORGAN
+Název firmy nebo institutu
+; The name of your\n\
+; company or institute
+;
+MSG_HELP_CO_ST_EXTHEADER
+Dodateçná hlaviçka, která bude\npêidána ke kaùdé odchozí zprávë
+; Additional message header(s) that will\n\
+; be added to every outgoing message
+;
+MSG_HELP_CO_ST_HELLOTEXT
+Text, který bude pêidán\nna zaçátek zprávy
+; Text to insert at the\n\
+; top of a new message
+;
+MSG_HELP_CO_ST_BYETEXT
+Text, který bude pêidán\nna konec zprávy
+; Text to insert at the\n\
+; bottom of a new message
+;
+MSG_HELP_CO_ST_OUTTRANS
+Konverze zpráv do zvoleného kódování\npêi odesílání
+; Apply this characterset translation\n\
+; on new messages
+;
+MSG_HELP_CO_ST_EDWRAP
+Zalamování textu zprávy na hodnotu,\nkterou zde zadáte
+; Word-wrap message text\n\
+; at this column
+;
+MSG_HELP_CO_CH_AUTOBREAK
+Automatický pêechod na nový êádek\npêi psaní nové zprávy
+; Insert real line breaks\n\
+; while entering a message
+;
+MSG_HELP_CO_CY_EDWRAP
+Chcete-li zalamovat text okamùitë pêi psaní,\nvyberte moùnost 'pêi psaní'
+; Select 'as you type' to insert linebreak\n\
+; codes while you're typing the message
+;
+MSG_HELP_CO_CH_LAUNCH
+Pêi psaní nové zprávy spustí\nautomaticky externí editor
+; Launch the external editor\n\
+; when you start a new message
+;
+MSG_HELP_CO_ST_EDITOR
+Název a cesta k vaîemu oblíbenému\ntextovému editoru
+; Filename of your\n\
+; favorite text editor
+;
+MSG_HELP_CO_ST_FWDSTART
+Text, který uvozuje pêedávanou zprávu. Promënnou\ndoplníte klinutím na tlaçítko vpravo.
+; Text used to introduce a forwarded message.\n\
+; Use the button at the right side to insert a variable.
+;
+MSG_HELP_CO_ST_FWDEND
+Text, který zakonçuje pêedávanou\nzprávu
+; Text to insert at the\n\
+; end a forwarded message.
+;
+MSG_HELP_CO_ST_REPLYTEXT
+Text, který je standardnë pouùit pêi odpovëdích.\nPromënnou doplníte klinutím na tlaçítko vpravo.
+; Texts used in replies to messages.\n\
+; Use the button at the right side to insert a variable.
+;
+MSG_HELP_CO_ST_AREPLYTEXT
+Text, který bude pouùit pro odpovëdi na zprávy\nuùivatelû z domény urçené níùe.
+; Use these texts in replies to messages\n\
+; if the pattern below matches the recipient address.
+;
+MSG_HELP_CO_ST_AREPLYPAT
+Îablona AmigaDOSu, kterou urçíte pro které\ndomény má být pouùita alternativní odpovëð
+; AmigaDOS pattern that triggers\n\
+; the alternative reply headers
+;
+MSG_HELP_CO_ST_MREPLYTEXT
+Text, který bude pouùit pro odpovëdi\nna zprávy z rozesílacích seznamû
+; Use these texts in replies to\n\
+; messages from a mailing list.
+;
+MSG_HELP_CO_CH_QUOTE
+Má být pêi odpovëdích text odsazen?
+; Quote original\n\
+; message in reply?
+;
+MSG_HELP_CO_ST_REPLYCHAR
+Êetëzec, který by mël pêedcházet kaùdý\n\
+êádek odsazené zprávy. Promënnou\n\
+doplníte klinutím na tlaçítko vpravo.
+; String that should precede each line of\n\
+; the quoted message. Use the button at\n\
+; the right side to insert a variable.
+;
+MSG_HELP_CO_CH_QUOTEEMPTY
+Chcete odsadit i prázdné êádky?
+; Insert quote character(s) for empty lines?
+;
+MSG_HELP_CO_CH_COMPADDR
+Volba odesílatele, jsou-li adresy v polích\n'Od' a 'Zpáteçní adresa' rozdílné
+; Let the user select the desired recipient address\n\
+; if the From and Reply-To addresses are different
+;
+MSG_HELP_CO_CH_STRIPSIG
+Podpis pûvodní zprávy nebude odsazován
+; Don't quote signature\n\
+; of original message
+;
+MSG_HELP_CO_CY_SIGNAT
+Zde zvolíte podpis, který chcete upravit
+; Select signature to edit
+;
+MSG_HELP_CO_BT_EDITSIG
+Chcete upravit podpis v externím editoru?
+; Modify your signature\n\
+; using the editor
+;
+MSG_HELP_CO_BT_INSTAG
+Vloùení êídicího znaku pro náhodnë\nuvádëné citáty
+; Insert control code for random taglines
+;
+MSG_HELP_CO_BT_INSENV
+Vloùení êídicího znaku pro podpis, kterým\nje promënná ENV:Signature
+; Insert control code for the\n\
+; enviromental variable SIGNATURE
+;
+MSG_HELP_CO_ST_TAGFILE
+Databáze, která obsahuje citáty
+; Database containing taglines (\"cookies\")
+;
+MSG_HELP_CO_ST_TAGSEP
+Znak nebo êetëzec, který slouùí\nk oddëlení citátû v databázi
+; Character or string used to separate\n\
+; the taglines in the database
+;
+MSG_HELP_CO_CG_FO
+Sloupce zobrazené v seznamu sloùek
+; Columns displayed in the folder list
+;
+MSG_HELP_CO_CG_MA
+Sloupce zobrazené v seznamu zpráv
+; Columns displayed in the message list
+;
+MSG_HELP_CO_CG_AB
+Sloupce zobrazené v adresáêi
+; Columns displayed in the address book
+;
+MSG_HELP_CO_CH_FIXFLIST
+Zobrazení seznamu poloùek pomocí\nfixního fontu
+; Display list entries\n\
+; using a fixed-width font
+;
+MSG_HELP_CO_CH_BEAT
+Zobrazení çasu v tzv. Swatch Beats,\nnových jednotkách çasu
+; Display time in Swatch Beats, the\n\
+; revolutionary new unit of time
+;
+MSG_HELP_CO_ST_PGPCMD
+Adresáê, ve kterém se nachází PGP
+; Directory where the PGP\n\
+; executable can be found
+;
+MSG_HELP_CO_ST_MYPGPID
+Çíslo PGP klíçe, který bude pouùit\nk podepsání zpráv
+; The ID of your PGP key that's\n\
+; used to sign messages
+;
+MSG_HELP_CO_CH_ENCSELF
+Zaîifrování nových zpráv veêejným\nklíçem, takùe odeslané zprávy lze\nstále pêeçíst nebo upravit
+; Encrypt new messages with your public key,\n\
+; so you can still read or edit sent messages
+;
+MSG_HELP_CO_ST_REMAILER
+E-mailová adresa sluùby, která bude\npouùita k odeslání anonymní zprávy
+; Email address of the remailer service\n\
+; used to send anonymous mail
+;
+MSG_HELP_CO_ST_FIRSTLINE
+Tento êádek bude vloùen zaçátek zprávy\npêi anonymním odeslání
+; Insert this line at the top of your\n\
+; message if it is sent via remailer
+;
+MSG_HELP_CO_ST_LOGFILE
+Cesta, kam budou uloùeny soubory se záznamem
+; Path where the logfiles will be saved
+;
+MSG_HELP_CO_CH_SPLITLOG
+Nový záznam kaùdý mësíc
+; Start a new logfile every month
+;
+MSG_HELP_CO_CY_LOGMODE
+Volba typu záznamu
+; Select type of logging
+;
+MSG_HELP_CO_CH_LOGALL
+Zakáùete-li tuto moùnost, budou\nzaznamenány pouze pêenosy zpráv
+; Disable this option to log mail transfers only
+;
+MSG_HELP_CO_CH_LOADALL
+Naçtení indexu vîech sloùek
+; Load index files of all folders
+;
+MSG_HELP_CO_CH_MARKNEW
+Zmëna stavu nových zpráv na neçtené
+; Change status of new messages to unread
+;
+MSG_HELP_CO_CH_SEND
+Odeslání zpráv ve frontë
+; Send queued messages
+;
+MSG_HELP_CO_CH_POPSTART
+Stahování nové poîty
+; Check for mail
+;
+MSG_HELP_CO_CH_CHECKBD
+Procházení adresáêe a pêi zjiîtëní nëçích\nnarozenin vás upozorní
+; Check the address book and open a reminder\n\
+; if it's a person's birthday
+;
+MSG_HELP_CO_CH_DELETEOLD
+Smazání zpráv, které jsou ve sloùce déle\nneù stanovená doba (viz nastavení sloùky)
+; Delete messages that exceed the maximum\n\
+; age (see folder configuration)
+;
+MSG_HELP_CO_CH_REMOVEDEL
+Odstranëní zpráv ze sloùky 'smazané'
+; Empty trash folder
+;
+MSG_HELP_CO_ST_GALLDIR
+Adresáê, ve kterém jsou uloùeny\nfotografie uùivatelû
+; Directory to save the\n\
+; pictures of your correspondents
+;
+MSG_HELP_CO_ST_PHOTOURL
+WWW adresa daného portrétu
+; WWW address of your portrait image
+;
+MSG_HELP_CO_CY_ATAB
+Chcete v adresáêi automaticky pêi çtení\nzprávy vytvoêit poloùku pro odesílatele? 
+; Automatically create an address book entry\n\
+; for the sender when your read his/her message?
+;
+MSG_HELP_CO_ST_PROXY
+Adresa a pêípadnë çíslo portu HTTP\nproxy serveru (základní port je 80)\nToto pole mûùete ponechat prázdné
+; Address and optional port number of your\n\
+; HTTP proxy server (default port is 80)\n\
+; You may leave this field empty.
+;
+MSG_HELP_CO_ST_NEWGROUP
+Pêidání nových poloùek adresáêe do této\nskupiny (bude vytvoêena, pokud jeîtë\nneexistuje)
+; Add new address book entries to this group (it\n\
+; will be created if it doesn't already exist)
+;
+MSG_HELP_CO_ST_TEMPDIR
+Adresáê k uloùení doçasných souborû
+; Directory to store\n\
+; temporary files
+;
+MSG_HELP_CO_ST_DETACHDIR
+Základní adresáê k uloùení souborû
+; Directory to save\n\
+; attached files to
+;
+MSG_HELP_CO_ST_ATTACHDIR
+Základní adresáê s pêílohami
+; Default source directory\n\
+; for attachments
+;
+MSG_HELP_CO_ST_APP
+Pozice aplikaçní ikony poîtovní\nschránky (v pixelech)
+; Position of the mailbox\n\
+; AppIcon in pixels
+;
+MSG_HELP_CO_CH_CLGADGET
+Chcete, aby byl YAM ikonifikován\npêi zmáçknutí zavíracího tlaçítka?
+; Do you want YAM to iconify when\n\
+; you hit the closegadget?
+;
+MSG_HELP_CO_CH_CONFIRM
+Chcete potvrdit smazání zpráv?
+; Do you want to confirm\n\
+; deletion of messages?
+;
+MSG_HELP_CO_NB_CONFIRMDEL
+Od kolika zvolených zpráv chcete\npotvrdit smazání?
+; Minimum number of messages to\n\
+; display the confirmation requester
+;
+MSG_HELP_CO_CH_REMOVE
+Smazání zpráv okamùitë bez pêesunu\ndo sloùky 'smazané'
+; Delete messages instantly, don't\n\
+; move them to the trash folder
+;
+MSG_HELP_CO_CH_SAVESENT
+Uloùení odeslaných zpráv do sloùky 'odeslané'
+; Save sent messages in the Sent folder
+;
+MSG_HELP_CO_RA_MDN_DISP
+Pokud je to vyùadováno, odeîle pêi çtení\nzprávy upozornëní odesílateli
+; When reading a message, send a\n\
+; disposition notification to the\n\
+; sender if requested
+;
+MSG_HELP_CO_RA_MDN_PROC
+Pokud je to vyùadováno, odeîle pêi pêedání\nzprávy upozornëní odesílateli
+; When forwarding a message, send a\n\
+; disposition notification to the\n\
+; sender if requested
+;
+MSG_HELP_CO_RA_MDN_DELE
+Pokud je to vyùadováno, odeîle pêi smazání\nzprávy upozornëní odesílateli
+; When deleting a message, send a\n\
+; disposition notification to the\n\
+; sender if requested
+;
+MSG_HELP_CO_RA_MDN_RULE
+Pokud je to vyùadováno, odeîle pêi smazání\nnebo pêedání zprávy pomocí filtrû upozornëní\nodesílateli
+; When deleting or forwarding a message using\n\
+; filters, send a disposition notification to the sender\n\
+; if requested
+;
+MSG_HELP_CO_CH_SEND_MDN
+Pokus o odeslání upozornëní okamùitë\nbez uloùení do sloùky 'odchozí'
+; Try to send the disposition notification\n\
+; as soon it has been generated
+;
+MSG_HELP_CO_TX_ENCPACK
+Knihovna XPK k zaîifrování a spakování\nobsahu sloùek
+; XPK library used to protect\n\
+; and compress folders
+;
+MSG_HELP_CO_TX_PACKER
+Knihovna XPK pouùitá ke spakování\nobsahu sloùek
+; XPK library used to\n\
+; compress folders
+;
+MSG_HELP_CO_NB_ENCPACK
+Úçinnost pakovaçe. 100 % znamená\nnejvyîîí úçinnost, ale zároveñ\nnejpomalejîí pakování
+; Efficiency of this packer\n\
+; 100% is best, but slowest
+;
+MSG_HELP_CO_ST_ARCHIVER
+Program pro archivaci a pêísluîné\nargumenty, které budou pouùity\nke kompresi pêíloh
+; Archiver command and options used\n\
+; to create compressed attachments
+;
+MSG_HELP_CO_ST_RXNAME
+Popis daného skriptu v menu 'Skripty'
+; Description of the script\n\
+; in the 'Scripts' menu
+;
+MSG_HELP_CO_ST_SCRIPT
+Název skriptu
+; Filename of the script
+;
+MSG_HELP_CO_CY_ISADOS
+Typ skriptu (ARexx nebo AmigaDOS)
+; Type of the script\n\
+; (ARexx or AmigaDOS)
+;
+MSG_HELP_CO_CH_CONSOLE
+Otevêení okna konzoly pro vstup a výstup skriptu
+; Open a console window to allow input\n\
+; and output from the script
+;
+MSG_HELP_CO_CH_WAITTERM
+Synchronní spouîtëní skriptû
+; Don't run the script asynchronously
+;
+MSG_HELP_CO_BT_SAVE
+Uloùení aktuálního nastavení
+; Save current settings
+;
+MSG_HELP_CO_BT_USE
+Pouùití aktuálního nastavení
+; Use current settings
+;
+MSG_HELP_CO_BT_CANCEL
+Zavêení konfiguraçního okna, pouùití\n\
+pûvodního nastavení
+; Close configuration\n\
+; window and use old\n\
+; settings
+;
+; Module AB - Routines
+;
+MSG_AB_BirthdayReq
+Dnes má %s %ld. narozeniny!\n\
+Chcete odeslat blahopêání?
+; Today, %s reaches age %ld!\n\
+; Do you want to send a greetings card?
+; NAME, AGE
+;
+MSG_AB_BirthdayReminder
+Pêipomínka narozenin
+; Birthday Reminder
+;
+MSG_AB_HappyBirthday
+Vîechno nejlepîí k narozeninám!
+; Happy birthday!
+;
+MSG_AB_PersonAlias
+Alias (osoba)
+; Alias (PERSON)
+;
+MSG_AB_ListAlias
+Alias (seznam)
+; Alias (LIST)
+;
+MSG_AB_GroupAlias
+Alias (skupina)
+; Alias (GROUP)
+;
+MSG_AB_PrintReqGads
+ D_louhý | _Krátký | _Zruîit 
+; _Long format|_Short format|_Cancel
+;
+MSG_AB_PrintReq
+Vyberte prosím formát tisku
+; Select print format:
+;
+MSG_AB_AliasFld
+Alias
+; Alias
+;
+MSG_AB_FoundEntry
+Byla nalezena odpovídající poloùka!\n\
+Alias: %s\n\
+Jméno: %s
+; Found matching entry!\n\
+; Alias: %s\n\
+; Name: %s
+; ALIAS, NAME
+;
+MSG_AB_FindEntry
+Vyhledávání poloùky
+; Find Entry
+;
+MSG_AB_FindEntryReq
+Pomocí tohoto modulu YAM vyhledá zadaný text v polích alias,\n\
+jméno, adresa, popis, ulice, mësto nebo zemë. Zadejte prosím\n\
+poùadovanou îablonu (masky AmigaDOSu jsou podporovány):
+; This module finds a given text in the alias, name, address,\n\
+; description, street, city or country fields. Please enter\n\
+; the search pattern (AmigaDOS wildchars are supported):
+;
+MSG_AB_StartSearch
+_Hledat
+; _Start search
+;
+MSG_AB_FoundEntryGads
+ _Dalîí | Up_ravit | _Zruîit 
+; _Next hit|_Edit hit|_Cancel
+;
+MSG_AB_NoneFound
+Nebyla nalezena odpovídající poloùka!
+; No matching entries found!
+;
+MSG_AB_Modified
+Obsah adresáêe byl zmënën!
+; Address book has been modified!
+;
+MSG_AB_ModifiedGads
+* _Uloùit | _Pouùít | Z_avêít | _Zruîit 
+; *_Save|_Use|_Discard changes|_Cancel
+;
+; Module AB - Hooks
+;
+MSG_AB_TitleAlias
+\e8Alias
+; \e8Alias
+;
+MSG_AB_TitleName
+\e8Jméno
+; \e8Name
+;
+MSG_AB_TitleDescription
+\e8Popis
+; \e8Description
+;
+MSG_AB_TitleAddress
+\e8Adresa
+; \e8Address
+;
+MSG_AB_TitleStreet
+\e8Ulice
+; \e8Street
+;
+MSG_AB_TitleCity
+\e8Mësto
+; \e8City
+;
+MSG_AB_TitleCountry
+\e8Zemë
+; \e8Country
+;
+MSG_AB_TitlePhone
+\e8Telefon
+; \e8Phone
+;
+MSG_AB_TitleBirthDate
+\e8Datum narození
+; \e8Birth date
+;
+MSG_AB_TitlePGPId
+\e8Çíslo PGP klíçe
+; \e8PGP Id
+;
+MSG_AB_TitleHomepage
+\e8Domovská stránka
+; \e8Homepage
+;
+; Module AB - Window
+;
+MSG_AB_MIFind
+Hledat...
+; Find...
+;
+MSG_AB_Entry
+Poloùka
+; Entry
+;
+MSG_AB_AddUser
+Nová osoba...
+; New person...
+;
+MSG_AB_AddGroup
+Nová skupina...
+; New group...
+;
+MSG_AB_AddList
+Nový seznam...
+; New distribution list...
+;
+MSG_AB_Duplicate
+Duplikovat
+; Duplicate
+;
+MSG_AB_MIPrint
+Tisknout
+; Print
+;
+MSG_AB_MIDelete
+Smazat
+; Delete
+;
+MSG_AB_Sort
+Têídëní
+; Sort
+;
+MSG_AB_SortByAlias
+Podle aliasu
+; By alias
+;
+MSG_AB_SortByName
+Podle pêíjmení
+; By last name
+;
+MSG_AB_SortByFirstname
+Podle jména
+; By first name
+;
+MSG_AB_SortByDesc
+Podle popisu
+; By description
+;
+MSG_AB_SortByAddress
+Podle adresy
+; By address
+;
+MSG_AB_View
+Zobrazení
+; View
+;
+MSG_AB_Fold
+Rozbalit vîe
+; Fold all
+;
+MSG_AB_Unfold
+Sbalit vîe
+; Unfold all
+;
+; Module AB - Toolbar
+;
+MSG_AB_TBSave
+_Uloùit
+; _Save
+;
+MSG_AB_TBFind
+_Hledat
+; _Find
+;
+MSG_AB_TBNewUser
+_Osoba
+; _Person
+;
+MSG_AB_TBNewList
+_Seznam
+; _List
+;
+MSG_AB_TBNewGroup
+S_kupina
+; _Group
+;
+MSG_AB_TBEdit
+Up_ravit
+; _Edit
+;
+MSG_AB_TBDelete
+S_mazat
+; _Delete
+;
+MSG_AB_TBPrint
+Tisk_nout
+; P_rint
+;
+MSG_AB_TBOpenTree
+Ro_zbalit
+; _Unfold
+;
+MSG_AB_TBCloseTree
+Sb_alit
+; F_old
+;
+; Module AB - Bubblehelp
+;
+MSG_HELP_AB_BT_SAVE
+Uloùení provedených zmën
+; Save current changes
+;
+MSG_HELP_AB_BT_SEARCH
+Vyhledání poloùky v adresáêi
+; Find an entry in\n\
+; the address book
+;
+MSG_HELP_AB_BT_ADDUSER
+Pêidání nové poloùky do adresáêe
+; Add a new person to\n\
+; your address book
+;
+MSG_HELP_AB_BT_ADDGROUP
+Pêidání nové skupiny do adresáêe
+; Add a new group (directory)\n\
+; to your address book
+;
+MSG_HELP_AB_BT_ADDMLIST
+Pêidání nového rozesílacího seznamu\n\
+do adresáêe
+; Add a new distribution list\n\
+; to your address book
+;
+MSG_HELP_AB_BT_EDIT
+Úprava vybrané poloùky
+; Modify selected\n\
+; entry
+;
+MSG_HELP_AB_BT_DELETE
+Smazání vybrané poloùky z adresáêe
+; Delete selected entry\n\
+; from your address book
+;
+MSG_HELP_AB_BT_PRINT
+Vytiîtëní vybrané poloùky
+; Print selected entry
+;
+MSG_HELP_AB_BT_OPEN
+Zobrazení (rozbalení) vîech poloùek adresáêe
+; Display all entries in\n\
+; the address book
+;
+MSG_HELP_AB_BT_CLOSE
+Zobrazení pouze koêenových poloùek adresáêe
+; Only display root entries\n\
+; in the address book
+;
+MSG_HELP_AB_BT_TO
+Urçení hlavního pêíjemce sestavované zprávy
+; Set primary recipient(s)\n\
+; for new message
+;
+MSG_HELP_AB_BT_CC
+Urçení pêíjemce kopie sestavované zprávy
+; Set secondary recipient(s)\n\
+; for new message
+;
+MSG_HELP_AB_BT_BCC
+Urçení pêíjemce skryté kopie sestavované zprávy
+; Set blind copy recipient(s)\n\
+; for new message
+;
+; Module CL
+;
+MSG_CL_ErrorEmptyCB
+Schránka je prázdná.
+; The clipboard is empty.
+;
+MSG_CL_ErrorNotFTXT
+Schránka neobsahuje ùádný text.
+; The clipboard does not contain text.
+;
+MSG_CL_ErrorNoArea
+Nebyl oznaçen ùádný text.
+; No area marked.
+;
+MSG_CL_ErrorNoRedo
+Nebylo nic vráceno zpët, tedy akci nelze provést.
+; Nothing to redo.
+;
+MSG_CL_ErrorNoUndo
+Zpët nelze nic vrátit.
+; Nothing to undo.
+;
+MSG_CL_ErrorNoUndoMem
+Nedostatek pamëti, obsah zásobníku pro funkci\n\
+'vrátit zpët' bude vymazán.
+; There is not enough memory\n\
+; to keep the undo buffer.\n\
+; \n\
+; The undo buffer is lost.
+;
+; Module EA - Procedures
+;
+MSG_EA_EditUser
+Úprava údajû o osobë
+; Edit person
+;
+MSG_EA_EditList
+Úprava údajû o seznamu
+; Edit distribution list
+;
+MSG_EA_EditGroup
+Úprava údajû o skupinë
+; Edit group
+;
+; Module EA - Window
+;
+MSG_EA_ElectronicMail
+Elektronická adresa
+; Electronic mail
+;
+MSG_EA_Alias
+Al_ias
+; _Alias
+;
+MSG_EA_RealName
+_Skuteçné jméno
+; _Real name
+;
+MSG_EA_EmailAddress
+E-_mail
+; E_mail address
+;
+MSG_EA_PGPId
+Çíslo PGP _klíçe
+; PGP _key ID
+;
+MSG_EA_Homepage
+_Domovská stránka
+; _Homepage
+;
+MSG_EA_SnailMail
+Klasická adresa
+; S_nail mail
+;
+MSG_EA_Street
+_Ulice
+; _Street
+;
+MSG_EA_City
+Mësto/_PSÇ
+; C_ity/ZIP
+;
+MSG_EA_Country
+Stát_/zemë
+; S_tate/Country
+;
+MSG_EA_Phone
+Tele_fon
+; _Phone number(s)
+;
+MSG_EA_Miscellaneous
+Ostatní
+; Miscellaneous
+;
+MSG_EA_Description
+Krá_tký popis
+; D_escription
+;
+MSG_EA_DOB
+Datum _narození
+; Date of _birth
+;
+MSG_EA_Portrait
+Fotografie
+; Portrait
+;
+MSG_EA_SelectPhoto
+_Lokální...
+; Se_lect
+;
+MSG_EA_LoadPhoto
+Z_e sítë...
+; _Download
+;
+MSG_EA_ReturnAddress
+Zpáteçní a_dresa
+; _Return address
+;
+MSG_EA_MLName
+Název sezna_mu
+; _Mailing list name
+;
+MSG_EA_Members
+Seznam osob
+; Members
+;
+MSG_EA_Sort
+_Setêídit
+; _Sort
+;
+; Module EA - Bubblehelp
+;
+MSG_HELP_EA_ST_ALIAS
+Alias (napê. pêezdívka nebo zkratka) dané osoby
+; Identity (e.g. nickname or\n\
+; abbreviation) of this entry
+;
+MSG_HELP_EA_ST_DESCRIPTION
+Poznámka k dané poloùce
+; Comment for this entry
+;
+MSG_HELP_EA_ST_REALNAME
+Celé jméno dané osoby (jméno a pêíjmení)
+; Full name of this entry\n\
+; (first name last name)
+;
+MSG_HELP_EA_ST_ADDRESS
+Elektronická adresa dané osoby
+; Internet address\n\
+; of this entry
+;
+MSG_HELP_EA_ST_PGPKEY
+Hexadecimální çíslo PGP klíçe dané osoby
+; Hexadecimal ID of this\n\
+; person's public PGP key
+;
+MSG_HELP_EA_ST_HOMEPAGE
+URL domovské stránky dané osoby. Chcete-li\n\
+stránku zobrazit v prohlíùeçi, kliknëte\n\
+na tlaçítko na pravé stranë.
+; URL of the homepage of this person.\n\
+; Click the button on the right side\n\
+; to load the page into your browser.
+;
+MSG_HELP_EA_ST_STREET
+Poîtovní adresa: jméno ulice a çíslo domu
+; Postal address:\n\
+; Street name and number
+;
+MSG_HELP_EA_ST_CITY
+Poîtovní adresa: mësto a PSÇ
+; Postal address:\n\
+; City and postal code
+;
+MSG_HELP_EA_ST_COUNTRY
+Poîtovní adresa: zemë a pêípadnë stát
+; Postal address:\n\
+; State and/or country
+;
+MSG_HELP_EA_ST_PHONE
+Telefonní a faxová çísla
+; Phone and/or FAX number(s)
+;
+MSG_HELP_EA_ST_BIRTHDAY
+Datum narození: formát DD-MMM-RRRR
+; Date of birth\n\
+; Use AmigaDOS format,\n\
+; e.g. 10-Jan-1950
+;
+MSG_HELP_EA_BC_PHOTO
+Fotografie dané osoby
+; Portrait picture of this person
+;
+MSG_HELP_EA_BT_SELECTPHOTO
+Obrázek uloùený lokálnë na disku\n\
+(naçítání pomocí datatypû)
+; Select a picture file from disk\n\
+; (image datatypes supported)
+;
+MSG_HELP_EA_BT_LOADPHOTO
+Stáhne obrázek z galerie uùivatelû programu YAM
+; Download a picture of the person\n\
+; from the YAM User Gallery
+;
+MSG_HELP_EA_ST_REALNAME_L
+Úplný název rozesílacího seznamu\n\
+(bude pouùit v poli Komu:)
+; Full name of this distribution list\n\
+; (will be used in To: field)
+;
+MSG_HELP_EA_ST_ADDRESS_L
+Adresa pro odpovëð pêi odesílání zprávy\n\
+do seznamu
+; Return address to use when\n\
+; sending a message to this list
+;
+MSG_HELP_EA_LV_MEMBERS
+Úçastníci rozesílacího seznamu
+; Members of this distribution list
+;
+MSG_HELP_EA_ST_MEMBER
+Adresa (a jméno) nebo alias osoby
+; Address (and name) or\n\
+; alias of a member
+;
+MSG_HELP_EA_BT_ADD
+Pêidá do seznamu novou osobu
+; Add a new member\n\
+; to the list
+;
+MSG_HELP_EA_BT_DEL
+Odstraní ze seznamu zvolenou osobu
+; Remove selected member\n\
+; from the list
+;
+MSG_HELP_EA_BT_SORT
+Abecednë setêídí seznam osob
+; Sort member list alphabetically
+;
+MSG_HELP_EA_BT_OKAY
+Pouùije provedené zmëny
+; Accept this entry
+;
+MSG_HELP_EA_BT_CANCEL
+Zruîí provedené zmëny
+; Discard changes
+;
+; Module RE - Procedures
+;
+MSG_RE_MDNGads1
+ Pouùít \n\
+ a odeslat pozdëji | Nepouùít \n\
+ a odeslat pozdëji 
+; Accept and\n\
+; send later|Deny and\n\
+; send later
+;
+MSG_RE_MDNGads2
+| Pouùít \n\
+ a odeslat okamùitë | Nepouùít \n\
+ a odeslat okamùitë 
+; |Accept and\n\
+; send now|Deny and\n\
+; send now
+;
+MSG_RE_MDNGads3
+| Ignorovat 
+; |Ignore
+;
+MSG_RE_MDNReq
+Odesílatel zprávy by rád vëdël, jak bylo se\n\
+zprávou naloùeno (MDN). Co chcete udëlat?
+; The sender of this message request a disposition notification (MDN).\n\
+; What do you want to do?
+;
+MSG_RE_SaveMessage
+Uloùení zprávy
+; Save message...
+;
+MSG_RE_Overwrite
+Soubor '%s' jiù existuje.\n\
+Opravdu ho chcete pêepsat?
+; File '%s' already exists.\n\
+; Do you want to overwrite it?
+; FILENAME
+;
+MSG_RE_PrintMsg
+Tisk zprávy
+; Print message
+;
+MSG_RE_SelectPrintPart
+Zvolte çásti zprávy, které chcete vytisknout
+; Select part to print:
+;
+MSG_RE_PrintGad
+Tisknout
+; Print
+;
+MSG_RE_SelectSavePart
+Zvolte çásti zprávy, které chcete uloùit
+; Select part to save:
+;
+MSG_RE_SaveGad
+Uloùit
+; Save
+;
+MSG_RE_DisplayMsg
+Zobrazení zprávy
+; Display message
+;
+MSG_RE_SelectDisplayPart
+Zvolte çásti zprávy, které chcete zobrazit
+; Select part to display:
+;
+MSG_RE_DisplayGad
+Zobrazit
+; Display
+;
+MSG_RE_BadSig
+UPOZORNËNÍ: neplatný podpis
+; WARNING: Bad signature
+;
+MSG_RE_GoodSig
+Platný podpis
+; Good signature
+;
+MSG_RE_SigFrom
+ od\n
+;  from\n
+;
+MSG_RE_SigCheck
+Zkontrolovat PGP podpis
+; Check PGP signature
+;
+MSG_RE_SaveDecGads
+* Z_achovat | Nah_radit | _Zruîit 
+; *_Keep|_Replace|_Cancel
+;
+MSG_RE_SaveDecReq
+Co chcete udëlat s pûvodní zaîifrovanou zprávou?
+; What do you want to do with\n\
+; original (encrypted) message?
+;
+MSG_RE_Header
+Hlaviçka
+; Header
+;
+MSG_RE_Letter
+Zpráva
+; Letter
+;
+MSG_RE_MDNFrom
+\nOd:
+; \n\
+; From:
+;
+MSG_RE_MDNTo
+\nKomu:
+; \n\
+; To:
+;
+MSG_RE_MDNSubject
+\nPêedmët:
+; \n\
+; Subject:
+;
+MSG_RE_MDNMessageID
+\nID zprávy:
+; \n\
+; Message-ID:
+;
+MSG_RE_MDNDate
+\nDatum:
+; \n\
+; Date:
+;
+MSG_RE_MDNOrigRecpt
+\nPûvodní pêíjemce:
+; \n\
+; Original recipient:
+;
+MSG_RE_MDNFinalRecpt
+\nKoneçný pêíjemce:
+; \n\
+; Final recipient:
+;
+MSG_RE_MDNmanual
+ na základë pêíkazu uùivatele
+;  in response to a user command
+;
+MSG_RE_MDNauto
+ automaticky
+;  automatically
+;
+MSG_RE_MDNdisplay
+Zpráva\n\
+%s\n\
+byla zobrazena.\n\
+To ovîem neznamená, ùe obsah byl pêeçten nebo pochopen.\n
+; The message\n\
+; %s\n\
+; has been displayed.\n\
+; This is no guarantee that the content has been read or understood.\n
+;
+MSG_RE_MDNprocessed
+Zpráva\n\
+%s\n\
+byla zpracována %s,\n\
+ale nezobrazena uùivatelem. To lze samozêejmë udëlat pozdëji.
+; The message\n\
+; %s\n\
+; has been processed%s,\n\
+; without being displayed to the user. The user may or may not see\n\
+; the message later.\n
+;
+MSG_RE_MDNdispatched
+Zpráva\n\
+%s\n\
+byla odeslána %s,\n\
+ale nezobrazena uùivatelem. To lze samozêejmë udëlat pozdëji.
+; The message\n\
+; %s\n\
+; has been sent somewhere%s,\n\
+; without being displayed to the user. The user may or may not see\n\
+; the message later.\n
+;
+MSG_RE_MDNdeleted
+Zpráva\n\
+%s\n\
+byla smazána %s.\n\
+Pêíjemce ji mohl, ale nemusel çíst. Pozdëji ji lze\n\
+\"obnovit\" a pêeçíst.\n
+; The message\n\
+; %s\n\
+; has been deleted%s.\n\
+; The recipient may or may not have seen the message. The recipient\n\
+; may \"undelete\" the message at a later time and read the message.\n
+;
+MSG_RE_MDNdenied
+Pêíjemce zprávy\n\
+%s\n\
+si nepêeje informovat o tom, jak se zprávou naloùil.\n
+; The recipient of the message\n\
+; %s\n\
+; doesn't wish to inform you about the disposition of that message.\n
+;
+MSG_RE_MDNunknown
+Zpráva\n\
+%s\n\
+byla %s%s.\n
+; The message\n\
+; %s\n\
+; has been %s%s.\n
+;
+MSG_RE_PGPNotAllowed
+>Chyba PGP<\n\
+\n\
+Nemáte oprávnëní tuto zprávu zobrazit. Buð není správnë nakonfigurováno\n\
+PGP nebo byla zpráva zaîifrována a tudíù urçena nëkomu jinému.\n
+; >PGP Error<\n\
+; \n\
+; You're not allowed to view this PGP encrypted message. Either your PGP software\n\
+; isn't configured properly, or the message was encrypted for someone else.\n
+;
+MSG_RE_MsgReadOnly
+Zprávu si mûùe pêeçíst pouze %s\n
+; The message can only be read by %s\n
+; RECIPIENT
+;
+MSG_RE_AddSender
+Chcete pêidat odesílatele\n\
+%s\n\
+do adresáêe?
+; Do you want to add the sender\n\
+; %s\n\
+; to your address book?
+; SENDER
+;
+MSG_RE_NewGroupTitle
+Automaticky pêidaná osoba
+; Automatically added entries
+;
+MSG_RE_DownloadPhotoReq
+Chcete stáhnout fotografii odesílatele a pêidat\n\
+ji do osobní galerie? (musíte být pêipojení do sítë\n\
+a kliknout na tlaçítko Ok)
+; Do you want to download the photo of the sender\n\
+; and add it to your personal gallery?\n\
+; (You must be online before clicking the OKAY button)
+;
+MSG_RE_ContentType
+Typ pêílohy
+; Content-Type
+;
+MSG_RE_Description
+Poznámka
+; Description
+;
+MSG_RE_UUencodedFile
+Soubor kódovaný v UU
+; UUencoded file
+;
+MSG_RE_SelectAddressReq
+Zvolená adresa: %s\nCo chcete udëlat?
+; Selected address: %s\n\
+; What do you want to do?
+; ADDRESS
+;
+MSG_RE_SelectAddressEdit
+* _Napsat zprávu | Up_ravit údaje | _Zruîit 
+; *_Write message|_Edit entry|_Cancel
+;
+MSG_RE_SelectAddressAdd
+* _Napsat zprávu | Pêid_at poloùku | _Zruîit 
+; *_Write message|_Add entry|_Cancel
+;
+; Module RE - Hooks
+;
+MSG_RE_Original
+çistý formát
+; Raw format
+;
+MSG_RE_AllTexts
+zobrazený text
+; Displayed text
+;
+; Module RE - Menus
+;
+MSG_RE_MDisplay
+Zobrazit...
+; Display...
+;
+MSG_RE_SaveAll
+Uloùit vîe...
+; Save all...
+;
+MSG_RE_Navigation
+Navigace
+; Navigation
+;
+MSG_RE_MNext
+Dalîí zpráva
+; Next message
+;
+MSG_RE_MPrev
+Pêedchozí zpráva
+; Previous message
+;
+MSG_RE_MURNext
+Dalîí neçtená zpráva
+; Next unread message
+;
+MSG_RE_MURPrev
+Pêedchozí neçtená zpráva
+; Previous unread message
+;
+MSG_RE_MNextTh
+Dalîí zpráva v diskusi
+; Next message in thread
+;
+MSG_RE_MPrevTh
+Pêedchozí zpráva v diskusi
+; Previous message in thread
+;
+MSG_RE_ExtractKey
+Rozbalit veêejný(é) klíç(e)
+; Extract public key(s)
+;
+MSG_RE_SaveDecrypted
+Uloùit deîifrovanou zprávu
+; Save decrypted message
+;
+MSG_RE_NoHeaders
+Bez hlaviçky
+; No headers
+;
+MSG_RE_ShortHeaders
+Krátká hlaviçka
+; Short headers
+;
+MSG_RE_FullHeaders
+Plná hlaviçka
+; Full headers
+;
+MSG_RE_NoSInfo
+Ùádné informace
+; No sender info
+;
+MSG_RE_SInfo
+Pouze údaje
+; Data fields only
+;
+MSG_RE_SInfoImage
+Údaje a fotografie
+; Data and image
+;
+MSG_RE_WrapHeader
+Zalomit hlaviçky
+; Wrap headers
+;
+MSG_RE_Textstyles
+Textové styly
+; Textstyles
+;
+; Module RE - Toolbar
+;
+MSG_RE_TBPrev
+_Pêedchozí
+; _Prev
+;
+MSG_RE_TBNext
+_Dalîí
+; _Next
+;
+MSG_RE_TBPrevTh
+Pû_vodní
+; Prev_Thr
+;
+MSG_RE_TBNextTh
+_Návazná
+; NextT_hr
+;
+MSG_RE_TBDisplay
+Zo_brazit
+; _Display
+;
+MSG_RE_TBSave
+_Uloùit
+; _Save
+;
+MSG_RE_TBPrint
+T_isknout
+; Pr_int
+;
+MSG_RE_TBDelete
+S_mazat
+; De_lete
+;
+MSG_RE_TBMove
+Pêe_sunout
+; _Move
+;
+MSG_RE_TBReply
+_Odpovëdët
+; _Reply
+;
+MSG_RE_TBForward
+Pê_edat
+; For_ward
+;
+; Module RE - Bubblehelp
+;
+MSG_HELP_RE_BT_PREVIOUS
+Zobrazí obsah pêedchozí zprávy
+; Display contents of\n\
+; the previous message
+;
+MSG_HELP_RE_BT_NEXT
+Zobrazí obsah dalîí zprávy
+; Display contents of\n\
+; the next message
+;
+MSG_HELP_RE_BT_QUESTION
+Zobrazí obsah pûvodní zprávy, na kterou\n\
+právë vidíte odpovëð (pêedchozí v diskusi)
+; Show the message which\n\
+; is being answered here\n\
+; (go back in thread)
+;
+MSG_HELP_RE_BT_ANSWER
+Zobrazí odpovëð na danou zprávu (návaznou\n\
+v diskusi)
+; Show the reply\n\
+; to this message\n\
+; (follow thread)
+;
+MSG_HELP_RE_BT_DISPLAY
+K zobrazení dané çásti zprávy pouùije\n\
+nastavený prohlíùeç MIME
+; Use a configured MIME\n\
+; viewer to display a\n\
+; part of this message
+;
+MSG_HELP_RE_BT_EXPORT
+Uloùí zobrazenou zprávu nebo její çást na disk
+; Save displayed message or\n\
+; a part of it to disk
+;
+MSG_HELP_RE_BT_PRINT
+Vytiskne zprávu na tiskárnë
+; Send this message\n\
+; to the printer
+;
+MSG_HELP_RE_BT_MOVE
+Pêesune zprávu do jiné sloùky a zobrazí dalîí
+; Move this message to another folder\n\
+; and display the next one
+;
+MSG_HELP_RE_BT_DELETE
+Smaùe aktuální zprávu a zobrazí dalîí
+; Delete this message and\n\
+; display the next one
+;
+MSG_HELP_RE_BT_REPLY
+Odpoví na aktuální zprávu
+; Reply to this\n\
+; message
+;
+MSG_HELP_RE_BT_FORWARD
+Pêedá aktuální zprávu
+; Forward this\n\
+; message
+;
+; Module WR - Procedures
+;
+MSG_WR_ErrorNoRcpt
+Zpráva je neúplná: není zadána adresa pêíjemce!
+; Mail is incomplete: No recipient!
+;
+MSG_WR_NoRcptReqGad
+ Pêid_at pozdëji |* _Zruîit 
+; _Add recipient later|*_Cancel
+;
+MSG_WR_PGPMIMEconflict
+PGP/MIME nepodporují pêílohy: podepsání çi îifrování není moùné.
+; PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
+;
+MSG_WR_DiscardChanges
+Opravdu chcete ztratit vîechny provedené úpravy?
+; Do you really want to discard all modifications to this message?
+;
+MSG_WR_DiscardChangesGad
+* _Odeslat pozdëji | Z_tratit | _Zruîit 
+; *_Send later|_Discard|_Cancel
+;
+MSG_WR_SaveTextAs
+Uloùte text
+; Save text as...
+;
+MSG_WR_AddFile
+Zvolte soubor jako pêílohu
+; Select file(s) to attach...
+;
+MSG_WR_CreateArc
+Vytvoêit archív
+; Create archive
+;
+MSG_WR_CreateArcReq
+Zadejte prosím název nového archívu
+; Please enter a filename\n\
+; for the new archive
+;
+MSG_WR_InsertFile
+Vloùit soubor...
+; Insert file...
+;
+; Module WR - Hooks
+;
+MSG_WR_TitleFile
+\e8Název souboru
+; \e8File name
+;
+MSG_WR_TitleSize
+\e8Velikost
+; \e8Size
+;
+MSG_WR_TitleContents
+\e8Obsah
+; \e8Contents
+;
+MSG_WR_TitleEncoding
+\e8Kód.
+; \e8Enc.
+;
+MSG_WR_TitleDescription
+\e8Popis
+; \e8Description
+;
+; Module WR - Window
+;
+MSG_WR_SecNone
+Ùádné
+; None
+;
+MSG_WR_SecSign
+Podepsat
+; Sign
+;
+MSG_WR_SecEncrypt
+Zaîifrovat
+; Encrypt
+;
+MSG_WR_SecBoth
+Podepsat a zaîifrovat
+; Sign and encrypt
+;
+MSG_WR_SecAnon
+Odeslat anonymnë
+; Send anonymously
+;
+MSG_WR_ImpHigh
+Vysoká
+; High
+;
+MSG_WR_ImpNormal
+Bëùná
+; Normal
+;
+MSG_WR_ImpLow
+Nízká
+; Low
+;
+MSG_WR_NoSig
+Ùádný
+; None
+;
+MSG_WR_DefSig
+Základní
+; Default
+;
+MSG_WR_AltSig1
+Alternativní ç.1
+; Alt. #1
+;
+MSG_WR_AltSig2
+Alternativní ç.2
+; Alt. #2
+;
+MSG_WR_WriteWT
+Psaní zprávy
+; Write message
+;
+MSG_WR_Subject
+Pêe_dmët
+; Sub_ject
+;
+MSG_WR_To
+_Komu
+; _To
+;
+MSG_WR_Add
+Pêid_at soubor(y)
+; _Add file(s)
+;
+MSG_WR_AddPack
+Zabalit a _pêidat
+; _Pack & add
+;
+MSG_WR_Display
+Zobraz_it
+; D_isplay
+;
+MSG_WR_Encoding
+Kódování
+; Encoding
+;
+MSG_WR_ContentType
+Typ _MIME
+; _MIME type
+;
+MSG_WR_Description
+P_opis
+; D_escription
+;
+MSG_WR_CopyTo
+K_opie pro
+; C_opies to
+;
+MSG_WR_BlindCopyTo
+S_krytá kopie pro
+; Hidde_n copies to
+;
+MSG_WR_From
+Adr_esa odesílatele
+; _From
+;
+MSG_WR_ReplyTo
+Zpáteç_ní adresa
+; Reply _to
+;
+MSG_WR_ExtraHeaders
+Dod_ateçná hlaviçka
+; _Additional header
+;
+MSG_WR_SendOpt
+Moùnosti odeslání
+; Send Options
+;
+MSG_WR_DelSend
+Smazat po o_deslání
+; _Delete after sending
+;
+MSG_WR_Receipt
+Potv_rdit pêíjem
+; _Return receipt
+;
+MSG_WR_GetMDN
+Sledovat zprá_vu
+; Track _message
+;
+MSG_WR_AddInfo
+_Pêidat osobní údaje
+; Add _personal info
+;
+MSG_WR_Importance
+Dûleù_itost
+; _Importance
+;
+MSG_WR_Signature
+Podpis
+; Signature
+;
+MSG_WR_Security
+Zabezpeçení
+; Security
+;
+MSG_WR_ToQueue
+Odes_lat pozdëji
+; Send _later
+;
+MSG_WR_Send
+Ode_slat ihned
+; _Send now
+;
+MSG_WR_Hold
+Pozas_tavit
+; _Hold
+;
+MSG_WR_BounceWT
+Pêedání zprávy beze zmëny
+; Bounce message
+;
+MSG_WR_BounceTo
+_Komu
+; Bounce _to
+;
+; Module WR - Toolbar
+;
+MSG_WR_TBEditor
+Editor
+; Editor
+;
+MSG_WR_TBInsert
+Pêipojit
+; Insert
+;
+MSG_WR_TBCut
+Vystêihnout
+; Cut
+;
+MSG_WR_TBCopy
+Kopírovat
+; Copy
+;
+MSG_WR_TBPaste
+Vloùit
+; Paste
+;
+MSG_WR_TBUndo
+Zpët
+; Undo
+;
+MSG_WR_TBBold
+Tuçný
+; Bold
+;
+MSG_WR_TBItalic
+Kurzíva
+; Italic
+;
+MSG_WR_TBUnderlined
+Podtrùený
+; ULined
+;
+MSG_WR_TBColored
+Barevný
+; Colored
+;
+; Module WR - Menus
+;
+MSG_WR_Text
+Text
+; Text
+;
+MSG_WR_InsertAs
+Pêipojit jako
+; Insert as
+;
+MSG_WR_Plain
+Obyçejný text
+; Plain
+;
+MSG_WR_Quoted
+Odsazený text
+; Quoted
+;
+MSG_WR_ROT13
+Zaîifrovaný ROT13
+; ROT13 encrypted
+;
+MSG_WR_LaunchEd
+Spustit editor
+; Launch editor
+;
+MSG_WR_Edit
+Úpravy
+; Edit
+;
+MSG_WR_MCut
+Vystêihnout
+; Cut
+;
+MSG_WR_MCopy
+Kopírovat
+; Copy
+;
+MSG_WR_MPaste
+Vloùit
+; Paste
+;
+MSG_WR_PasteAs
+Vloùit jako
+; PasteAs
+;
+MSG_WR_MUndo
+Zpët
+; Undo
+;
+MSG_WR_Redo
+Znovu
+; Redo
+;
+MSG_WR_Dictionary
+Glosáê...
+; Glossary
+;
+MSG_WR_Textstyle
+Textový styl
+; Textstyle
+;
+MSG_WR_Bold
+Tuçný
+; Bold
+;
+MSG_WR_Italic
+Kurzíva
+; Italic
+;
+MSG_WR_Underlined
+Podtrùený
+; Underlined
+;
+MSG_WR_Colored
+Barevný
+; Alternative color
+;
+MSG_WR_Separators
+Oddëlovaç
+; Separators
+;
+MSG_WR_Thin
+Tenký
+; Thin
+;
+MSG_WR_Thick
+Tlustý
+; Thick
+;
+MSG_WR_Emoticons
+Znak emocí
+; Emoticons
+;
+MSG_WR_Happy
+Úsmëv
+; Happy
+;
+MSG_WR_Indifferent
+Lhostejnost
+; Indifferent
+;
+MSG_WR_Sad
+Smutek/zlost
+; Sad/angry
+;
+MSG_WR_Ironic
+Ironie
+; Ironic
+;
+MSG_WR_SpellCheck
+Kontrolovat
+; Type and spell
+;
+MSG_WR_MAddFile
+Pêidat soubor...
+; Add file...
+;
+MSG_WR_AddCB
+Pêidat obsah schránky
+; Add clipboard
+;
+MSG_WR_AddKey
+Pêidat klíç PGP
+; Add PGP key
+;
+MSG_WR_MDelSend
+Smazat po odeslání
+; Delete after sending
+;
+MSG_WR_MReceipt
+Potvrdit pêíjem
+; Return receipt
+;
+MSG_WR_MGetMDN
+Sledovat zprávu
+; Track message
+;
+MSG_WR_MAddInfo
+Pêidat osobní informace
+; Add personal information
+;
+MSG_WR_MImportance
+Dûleùitost
+; Importance
+;
+; Module WR - Bubblehelp
+;
+MSG_HELP_WR_ST_TO
+Adresa (a jméno) nebo alias hlavního pêíjemce
+; Address (and name) or alias\n\
+; of the primary recipient(s)
+;
+MSG_HELP_WR_BT_VER
+Ovëêení adresy pêíjemce: nalezne e-mail\n\
+pro zadaný alias nebo jméno
+; Verify recipient: find email\n\
+; address for alias or name
+;
+MSG_HELP_WR_BT_ADR
+Volba pêíjemce z adresáêe
+; Select recipient from\n\
+; the address book
+;
+MSG_HELP_WR_ST_SUBJECT
+Krátký popis zprávy
+; Subject of your message
+;
+MSG_HELP_WR_BT_EDITOR
+K úpravë textu zprávy vyvolá externí editor
+; Use external editor to\n\
+;  modify the message text
+;
+MSG_HELP_WR_BT_LOAD
+Vloùí textový soubor od pozice kurzoru
+; Insert textfile at cursor position
+;
+MSG_HELP_WR_BT_CUT
+Vystêihne oznaçený text do schránky
+; Cut marked text to the clipboard
+;
+MSG_HELP_WR_BT_COPY
+Zkopíruje oznaçený text do schránky
+; Copy marked text to the clipboard
+;
+MSG_HELP_WR_BT_PASTE
+Vloùí obsah schránky od pozice kurzoru
+; Insert clipboard contents\n\
+; at cursor position
+;
+MSG_HELP_WR_BT_UNDO
+Vrátí aktuální zmëny textu do pûvodního stavu
+; Undo recent changes to the text
+;
+MSG_HELP_WR_BT_BOLD
+Oznaçený text zobrazí tuçným fontem
+; Use bold typeface for marked text
+;
+MSG_HELP_WR_BT_ITALIC
+Oznaçený text zobrazí kurzívou
+; Use italic typeface for marked text
+;
+MSG_HELP_WR_BT_UNDERL
+Oznaçený text podtrhne
+; Underline marked text
+;
+MSG_HELP_WR_BT_COLOR
+Oznaçený text obarví
+; Color marked text
+;
+MSG_HELP_WR_BT_ADD
+Pêidá soubor do seznamu pêíloh
+; Add an attachment\n\
+; to the list
+;
+MSG_HELP_WR_BT_ADDPACK
+Vytvoêí archív z nëkolika souborû a pêidá\n\
+jej do seznamu pêíloh
+; Create an archive from\n\
+; several files and add it\n\
+; as attachment to the list
+;
+MSG_HELP_WR_BT_DEL
+Odstraní zvolenou pêílohu ze seznamu
+; Remove selected attachment\n\
+; from the list
+;
+MSG_HELP_WR_BT_DISPLAY
+Zobrazí zvolenou pêílohu pomocí nastaveného\n\
+prohlíùeçe MIME
+; Use a configured MIME viewer\n\
+; to display this attachment
+;
+MSG_HELP_WR_RA_ENCODING
+Metoda kódování pouùitá pro zvolenou\n\
+pêílohu. UUencode pouùívejte tehdy,\n\
+nemá-li pêíjemce poîtovní program\n\
+s podporou MIME.
+; Type of encoding used for the selected attachment.\n\
+; Use UUencode only if the recipient hasn't got\n\
+; a MIME compliant mailer.
+;
+MSG_HELP_WR_ST_CTYPE
+Typ MIME pro zvolenou pêílohu. Pokud je\n\
+to moùné, pouùijte nëkterý z typû uvedených\n\
+v seznamu.
+; MIME type for the selected attachment.\n\
+; Whenever possible, use one from the popup list.
+;
+MSG_HELP_WR_ST_DESC
+Volitelný popis pro zvolenou pêílohu.
+; Optional description for\n\
+; the selected attachment
+;
+MSG_HELP_WR_ST_CC
+Zde zadejte pêíjemce, kterému chcete odeslat\n\
+kopii zprávy
+; Address (and name) or alias\n\
+; of the secondary recipient(s)
+;
+MSG_HELP_WR_ST_BCC
+Zde zadejte pêíjemce, kterému chcete odeslat\n\
+skrytou kopii
+; Send a blind carbon copy of the\n\
+; message to this recipient
+;
+MSG_HELP_WR_ST_EXTHEADER
+Dodateçná hlaviçka zprávy, která bude\n\
+pêidána ke zprávë
+; Additional message header(s) that\n\
+; will be added to the message
+;
+MSG_HELP_WR_ST_FROM
+Obsah pole Odesílatel (adresa a jméno\n\
+osoby, která napsala\ndanou zprávu)
+; Contents of From header field\n\
+; (address and name of the person\n\
+; who's writing this letter)
+;
+MSG_HELP_WR_ST_REPLYTO
+Zpáteçní adresa pro danou zprávu
+; Return address\n\
+; for this letter
+;
+MSG_HELP_WR_CH_DELSEND
+Zpráva nebude uloùena do sloùky 'odeslané'
+; Don't store this message\n\
+; in the Sent folder
+;
+MSG_HELP_WR_CH_RECEIPT
+Toto tlaçítko zaîkrtnëte, chcete-li obdrùet\n\
+oznámení o úspëîném doruçení zprávy
+; Get a notification on\n\
+; successful delivery
+;
+MSG_HELP_WR_CH_DISPNOTI
+Toto tlaçítko zaîkrtnëte, chcete-li obdrùet\n\
+oznámení o pêeçtení çi zpracování zprávy\n\
+pêíjemcem
+; Get a notification if the recipient\n\
+; reads or processes the message
+;
+MSG_HELP_WR_CH_ADDINFO
+Zaîkrtnete-li toto tlaçítko, bude ke zprávë\n\
+pêidána hlaviçka s vaîimi údaji z adresáêe
+; Create header fields containing data\n\
+; from your personal address book entry
+;
+MSG_HELP_WR_CY_IMPORTANCE
+Nastaví prioritu zprávy
+; Set the priority\n\
+; of this message
+;
+MSG_HELP_WR_RA_SIGNATURE
+Zde zvolte podpis, který chcete pêipojit\n\
+k aktuální zprávë
+; Which signature do you want\n\
+; to append to this letter?
+;
+MSG_HELP_WR_RA_SECURITY
+Zvolte jednu z moùností zabezpeçení. Ke zprávë\n\
+lze pêipojit podpis PGP, lze ji zaîifrovat\n\
+nebo odeslat anonymnë.
+; Select the one of these security options\n\
+; to send your message PGP-signed, encrypted\n\
+; or anonymously
+;
+MSG_HELP_WR_BT_HOLD
+Zkopíruje vytvoêenou zprávu do sloùky 'odchozí'\n\
+a zmëní její stav na POZASTAVENÁ
+; Copy the created message to\n\
+; the outgoing mail folder\n\
+; and set its status to HOLD
+;
+MSG_HELP_WR_BT_QUEUE
+Zkopíruje vytvoêenou zprávu do sloùky 'odchozí'
+; Copy the created message to\n\
+; the outgoing mail folder
+;
+MSG_HELP_WR_BT_SEND
+Zkopíruje vytvoêenou zprávu do sloùky 'odchozí'\n\
+a ihned ji\nodeîle
+; Copy the created message to\n\
+; the outgoing mail folder\n\
+; and send it immediately
+;
+MSG_HELP_WR_BT_CANCEL
+Zruîí vytváêení zprávy
+; Discard the\n\
+; created message
+;
+; Module TR - Procedures
+;
+MSG_TR_Connecting
+Navazování spojení s poîtovním serverem...
+; Connecting to mail server...
+;
+MSG_TR_WaitWelcome
+Spojení navázáno, je oçekávána uvítací zpráva...
+; Connected, awaiting welcome message...
+;
+MSG_TR_PopLoginReq
+Zadejte heslo serveru POP3 pro úçet\n\
+%s@%s
+; Please enter your POP3 password\n\
+; for account %s@%s
+; USER_ID, HOST
+;
+MSG_TR_PopLogin
+Pêihláîení k serveru POP3
+; POP3 login
+;
+MSG_TR_SendAPOPLogin
+Odesílání pêihlaîovacích informací APOP...
+; Sending APOP login information...
+;
+MSG_TR_SendUserID
+Odesílání ID uùivatele...
+; Sending user ID...
+;
+MSG_TR_SendPassword
+Odesílání hesla...
+; Sending password...
+;
+MSG_TR_GetStats
+Naçítání statistiky...
+; Getting statistics...
+;
+MSG_TR_Disconnecting
+Ukonçování spojení...
+; Disconnecting...
+;
+MSG_TR_ApplyFilters
+Aplikování filtrû na serveru...
+; Applying remote filters...
+;
+MSG_TR_SendHello
+Odesílání 'Hello'...
+; Sending 'Hello'...
+;
+MSG_TR_MessageGauge
+%s z %ld zpráv
+; Message %s of %ld
+; COUNT, COUNT
+;
+MSG_TR_SizeGauge
+%%ld z %ld bajtû
+; %%ld of %ld bytes
+; SIZE, SIZE
+;
+MSG_TR_TransferStats
+Pêeneseno %lD z %lD kB rychlostí %lD cps.\n\
+Zbývající ças: %lD min. %ld s.
+; %lD of %lD kB transmitted at %lD cps\n\
+; Remaining time: %lD min %ld sec
+; SIZE, SIZE, SPEED, MINS, SECS
+;
+MSG_TR_Exporting
+Exportování zprávy...
+; Exporting message...
+;
+MSG_TR_Sending
+Odesílání zprávy...
+; Sending message...
+;
+MSG_TR_Importing
+Importování zprávy...
+; Importing message...
+;
+MSG_TR_DeletingServerMail
+Probíhá mazání poîty na serveru...
+; Deleting mail on server...
+;
+MSG_TR_NewMailReq
+\e8Máte novou poîtu!\e2\n\
+\n\
+Stáhnutých zpráv: %3ld\n\
+Ponechaných zpráv na serveru: %3ld\n\
+Pêeskoçených duplicitních zpráv: %3ld\n
+; \e8You have new mail!\e2\n\
+; \n\
+; %3ld messages downloaded,\n\
+; %3ld left on server\n\
+; %3ld duplicates skipped\n
+; COUNT, COUNT, COUNT, COUNT
+;
+MSG_TR_FilterStats
+\n\
+Filtrování dokonçeno:\n\
+Zkontrolováno zpráv: %3ld\n\
+Pêesmërováno zpráv: %3ld\n\
+Pêedáno dále zpráv: %3ld\n\
+Automaticky zodpovëzeno zpráv: %3ld\n\
+Vykonáno pêíkazû: %3ld\n\
+Pêesunuto zpráv: %3ld\n\
+Smazáno zpráv: %3ld
+; \n\
+; Filtering done:\n\
+; %3ld messages checked,\n\
+; %3ld redirected,\n\
+; %3ld forwarded,\n\
+; %3ld auto-replied,\n\
+; %3ld command activated,\n\
+; %3ld moved,\n\
+; %3ld deleted
+; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_TR_NewMail
+Nová poîta
+; New Mail
+;
+MSG_TR_Downloading
+Stahování zpráv...
+; Downloading message...
+;
+;
+; Module TR - Window
+;
+MSG_TR_MailTransferFrom
+Pêenos poîty z %s
+; Transfer mail from %s
+; HOST
+;
+MSG_TR_MailTransferTo
+Pêenos poîty na %s
+; Transfer mail to %s
+; HOST
+;
+MSG_TR_MsgInFile
+Zprávy v souboru
+; Messages in file
+;
+MSG_TR_MsgOnServer
+Zprávy na serveru
+; Messages on server
+;
+MSG_TR_Control
+Kontrola
+; Control
+;
+MSG_TR_All
+_Vîe
+; A_ll
+;
+MSG_TR_DownloadOnly
+Pouze stá_hnout
+; _Download only
+;
+MSG_TR_Leave
+Po_nechat
+; L_eave
+;
+MSG_TR_Pause
+_Pozastavit
+; _Pause
+;
+MSG_TR_Clear
+Vy_mazat
+; _Clear
+;
+MSG_TR_DeleteOnly
+P_ouze smazat
+; Delete _only
+;
+MSG_TR_DownloadDelete
+S_táhnout a smazat
+; Do_wnload & delete
+;
+MSG_TR_Resume
+Pok_raçovat
+; _Resume
+;
+MSG_TR_Start
+_Spustit
+; _Start
+;
+MSG_TR_Status
+Stav
+; Status
+;
+MSG_TR_Abort
+Pê_eruîit
+; _Abort
+;
+MSG_TR_TransferStats0
+Pêeneseno 0 kB rychlostí 0 cps.\n\
+Zbývající ças: 0 min. 0 sek.
+;   0 of   0 kB transmitted at    0 cps\n\
+; Remaining time:  0 min  0 sec
+;
+MSG_TR_BytesGauge0
+0 z 0 bajtû
+;    0 of    0 bytes
+;
+MSG_TR_MessageGauge0
+0 zpráv
+; Message  0 of  0
+;
+; Module TR - Bubblehelp
+;
+MSG_HELP_TR_TX_STATUS
+Aktuální stav pêenosu poîty.
+; Current state\n\
+; of mail transfer
+;
+MSG_HELP_TR_BT_ABORT
+Pêeruîí pêenos poîty jakmile to bude moùné.
+; Abort mail transfer\n\
+; as soon as possible
+;
+; Module ER - Window
+;
+MSG_ER_ErrorMessages
+Chybové zprávy:
+; Error messages:
+;
+MSG_ER_PrevError
+_Pêedchozí chyba
+; _Previous error
+;
+MSG_ER_NextError
+_Dalîí chyba
+; _Next error
+;
+MSG_ER_Clear
+_Smazat chybové zprávy
+; _Delete messages
+;
+MSG_ER_Close
+_Zavêít okno
+; _Close window
+;
+; Module ER - Error Messages
+;
+MSG_ER_ErrorTTable
+Nelze otevêít pêevodní tabulku '%s'.\n\
+(buð neexistuje nebo je pouùit neplatný formát)
+; Couldn't open translation table '%s'\n\
+; (non existent or wrong format).
+; FILENAME
+;
+MSG_ER_CantCreateFile
+Nelze zapisovat do souboru '%s'. Pêesvëdçte se, ùe zadaná cesta existuje a zaêízení není chránëno proti zápisu.
+; Can't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
+; FILENAME
+;
+MSG_ER_CantCreateDir
+Nelze vytvoêit adresáê '%s'. Pêesvëdçte se, ùe zaêízení není chránëno proti zápisu.
+; Can't create directory '%s'. Make sure that the volume isn't write-protected.
+; PATH
+;
+MSG_ER_ErrorNoAlias
+K rozpoznání této poloùky je nutné zadat alias!
+; You must specify an alias to identify this entry!
+;
+MSG_ER_ErrorNoAddress
+Pro tuto poloùku je nutné zadat adresu!
+; You must specify an address for this entry!
+;
+MSG_ER_ErrorDOBformat
+Formát data narození je neplatný. Správný formát data je: DD-MMM-RRRR (názvy mësícû v angliçtinë)
+; Date of birth is in wrong format. The correct format is DD-MMM-YYYY (month names in English).
+;
+MSG_ER_NotInGallery
+Osoba nebyla nalezena v galerii uùivatelû programu YAM. Osoba buð není uvedena v databázi nebo je chybnë zadáno jméno çi adresa.
+; Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or her name or address is misspelled.
+;
+MSG_ER_NoTCP
+Není spuîtëna podpora protokolu TCP/IP! Pêed pouùitím této funkce je nutné nejdêíve spustit software kompatibilní s bsdsocket.library.
+; No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
+;
+MSG_ER_ErrorDateFormat
+Neplatný formát data a çasu.\n\
+Datum je nutné zadat ve formátu AmigaDOSu.\n\
+Pêíklad: %s
+; Invalid date/time format.\n\
+; The date has to be in AmigaDOS format.\n\
+; Example: %s
+; DATE
+;
+MSG_ER_ErrorMaxFilters
+Je zadán maximální poçet filtrû! Dalîí filtry nelze pêidat.
+; Maximum number of filters reached! You can't add more filters.
+;
+MSG_ER_CantOpenTempfile
+Nelze otevêít doçasný soubor '%s'. Zkontrolujte nastavení cesty v souboru nastavení.
+; Can't open temporary file '%s'. Check the path settings in the configuration.
+; FILENAME
+;
+MSG_ER_CantCreateTempfile
+Nelze vytvoêit doçasný soubor. Dûvod: nedostatek pamëti nebo chybnë zadaná cesta v souboru nastavení.
+; Can't create temporary file. Reason: out of memory or invalid path specified in the configuration.
+;
+MSG_ER_ErrorConsole
+Nelze otevêít okno konzoly pro skript.
+; Can't open console window for script.
+;
+MSG_ER_ErrorARexxScript
+Nelze odeslat ARexxový pêíkaz '%s'. Pêesvëdçte se, zda skript existuje.
+; Can't send ARexx command '%s'. Make sure that the script exists.
+; REXX_COMMAND
+;
+MSG_ER_UnexpEOFB64
+Neoçekávaný konec souboru bëhem dekódování souboru v kodování base64. Zpráva je zêejmë zkrácena.
+; Unexpected EOF while decoding a BASE64 encoded file. The message seems to be truncated.
+;
+MSG_ER_UnexpEOFUU
+Neoçekávaný konec souboru bëhem dekódování souboru v kodování UUencode. Zpráva je zêejmë zkrácena.
+; Unexpected EOF while decoding a UUencoded file. The message seems to be truncated.
+;
+MSG_ER_InvalidLength
+Chybná délka êádku v souboru zakódovaném ve formátu UUencode: %lD. Byl pouùit vadný UUencode program nebo je zpráva zkrácena.
+; Invalid line length in UUencoded file: %lD. A defective UUencoder was used or the message is truncated.
+; SIZE
+;
+MSG_ER_CreateMailError
+Nelze vytvoêit poîtovní zprávu. Dûvod: neplatná sloùka nebo nedostatek místa na disku.
+; Can't create mail file. Reason: invalid folder directory or unsufficient diskspace.
+;
+MSG_ER_UnknownEnc
+Neznámé kódování MIME: %s. Program YAM nedokáùe dekódovat çást zprávy. Uloùte zprávu na disk a pouùijte jiný dekódovací program.
+; Unknown MIME encoding: %s. YAM failed decoding a part of the message. Save the message to disk and try with a different decoder.
+; ENCODING_TYPE
+;
+MSG_ER_UnknownHeaderEnc
+Neznámé kódování záhlaví: %s. Program YAM nedokáùe správnë zobrazit podrobnosti záhlaví zprávy.
+; Unknown header encoding: %s. YAM cannot display a particular message header correctly.
+; ENCODING_TYPE
+;
+MSG_ER_MultipartEOF
+Neúplná vícesouborová zpráva: neoçekávaný konec souboru. Zpráva je zêejmë zkrácena.
+; Incomplete multipart message: unexpected end of file. The message seems to be truncated.
+;
+MSG_ER_MIMEError
+Zprávu v MIME nelze zpracovat. Buð obsahuje nekorektnë vytvoêené çásti MIME, je prázdná nebo oêezaná.
+; Can't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
+;
+MSG_ER_MissingBoundary
+Chybí ohraniçení zprávy sloùené z více çástí. Pravdëpodobnë je oêezaná.
+; Missing boundary in multipart message. The message seems to be truncated.
+;
+MSG_ER_CantOpenFile
+Nelze çíst ze souboru '%s'. Soubor pravdëpodobnë chybí.
+; Can't read from file '%s'. The file doesn't seem to exists.
+; FILENAME
+;
+MSG_ER_UUSize
+Velikost po dekódování [%lD] neodpovídá pûvodní velikosti [%lD]. Buð byl pouùit vadný UU kodér nebo je zpráva oêezaná.
+; Decoded size [%lD] does not\n\
+; match original size [%lD]. A defective UUencoder was used or the message is truncated.
+; SIZE, SIZE
+;
+MSG_ER_DocNotFound
+HTML dokument '%s' nebyl nalezen. Daný soubor na WWW serveru chybí.
+; HTML document '%s' not found. The file doesn't exist on the WWW server.
+; FILENAME
+;
+MSG_ER_SendHTTP
+Nelze odeslat HTTP poùadavek. Chyba pêi pokusu o stáhnutí dokumentu z WWW serveru.
+; Can't send HTTP request. Requesting a document from the WWW server failed.
+;
+MSG_ER_ConnectHTTP
+Nelze se pêipojit k WWW serveru '%s'. Moùné dûvody: TCP/IP je offline, neplatná adresa, server neodpovídá nebo nepodporuje HTTP poùadavky.
+; Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
+; HOST
+;
+MSG_ER_BadResponse
+Neplatná odezva na pêíkaz %s: %s.\n\
+Poîtovní server nezná daný pêíkaz a ohlásil chybu.
+; Bad %s command response: %s.\n\
+; The mail server couldn't execute the command and replied with the error message.
+; COMMAND, TEXT
+;
+MSG_ER_UnknownPOP
+Neznámý POP3 server: '%s'. Buð není aktivní protokol TCP/IP nebo je neplatná adresa serveru.
+; Unknown POP3 server: '%s'. TCP/IP is off-line or the server address is invalid.
+; HOST
+;
+MSG_ER_UnknownSMTP
+Neznámý SMTP server: '%s'. Buð není aktivní protokol TCP/IP nebo je neplatná adresa serveru.
+; Unknown SMTP server: '%s'. TCP/IP is off-line or the server address is invalid.
+; HOST
+;
+MSG_ER_CantConnect
+Nelze navázat spojení s '%s'. Poîtovní server neodpovídá nebo nepodporuje protokoly POP3/SMTP.
+; Can't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
+; HOST
+;
+MSG_ER_NoAPOP
+Tento POP3 server nepodporuje metodu ovëêení APOP. Vypnëte APOP v konfiguraçním oknë programu YAM.
+; Your POP3 server doesn't support APOP. Disable the APOP option in your YAM configuration.
+;
+MSG_ER_ErrorWriteMailfile
+Chyba pêi zápisu zprávy: %s.\n\
+Nepodaêilo se zapsat zprávu na disk. Není\n\
+zaplnën harddisk?
+; Write error on mail file: %s.\n\
+; YAM can't save the message to disk, maybe you're out of diskspace.
+; FILENAME
+;
+MSG_ER_ConnectionBroken
+Chyba spojení TCP/IP, pravdëpodobnë 'spadla' linka.
+; TCP/IP connection broken, probably due to a carrier drop.
+;
+MSG_ER_InvalidAddress
+Adresa '%s' je neplatná. Server SMTP nepêijal danou adresu. Zkontrolujte, zda neobsahuje neplatné znaky.
+; Invalid address '%s'. The SMTP server didn't accept the address. Check for illegal characters.
+; ADDRESS
+;
+MSG_ER_ErrorReadMailfile
+Chyba pêi çtení zprávy: %s.\n\
+Soubor sice existuje, ale pêesto nastala chyba\n\
+pêi çtení.
+; Read error on mail file: %s.\n\
+; The file exists, but there was an error while reading the file.
+; FILENAME
+;
+MSG_ER_UserRemoved
+Adresáê '%s' nebyl nalezen!\n\
+Uùivatel %s byl odstranën.
+; Directory '%s' not found!\n\
+; User %s has been removed.
+; PATH
+;
+MSG_ER_MissingDirectory
+Pro nového uùivatele je nutno urçit adresáê!
+; You must specify a directory for the new user!
+;
+MSG_ER_MissingName
+Pro nového uùivatele je nutno urçit jméno!
+; You must specify a name for the new user!
+;
+MSG_ER_NoPublicKeys
+Nebyly nalezeny ùádné veêejné PGP klíçe. Zkontrolujte, zda máte nainstalovaný balík PGP a pêísluînë nakonfigurovaný YAM.
+; No public PGP keys found. Make sure that PGP is installed and the required settings are made in the configuration of YAM.
+;
+MSG_ER_PGPreturnsError
+Následující pêíkaz PGP vrátil chybu: '%s'\n\
+Zkontrolujte soubor %s.
+; The following PGP command returned with an error: '%s'\n\
+; Check the file %s for a diagnosis.
+; COMMAND, FILENAME
+;
+MSG_ER_PGPnotfound
+Nelze provést pêíkaz PGP. Zkontrolujte, jestli\n\
+%s existuje.
+; Couldn't execute PGP command.\n\
+; Check if %s exists.
+; FILENAME
+;
+MSG_ER_InvalidAlias
+Neplatný alias: %s. V tomto poli není povoleno více adres najednou.
+; Invalid alias: %s. Multiple addresses are not allowed in this field.
+; ALIAS
+;
+MSG_ER_AliasNotFound
+Neznámý alias nebo jméno: %s. V adresáêi nelze nalézt e-mail tohoto pêíjemce. Zkontrolujte prosím zadaný êetëzec.
+; Unknown alias or name: %s. YAM couldn't find the email address of this recipient in the address book. Please verify the spelling.
+; ALIAS
+;
+MSG_ER_AmbiguousAlias
+Existuje více záznamû pro %s. V adresáêi existuje pro toto jméno více neù jedna poloùka. Odstrañte prosím duplicitní poloùky nebo zmëñte aliasy.
+; Ambiguous alias or name: %s. There is more than one entry with this name in the address book. Please remove duplicate entries or use unique aliases.
+; ALIAS
+;
+MSG_ER_ErrorAddrDontFit
+Pêíliî mnoho adres najednou do tohoto pole pro êetëzec. Pouùijte prosím rozesílací seznam.
+; Addresses don't fit in string gadget. Use a distribution list to avoid this problem.
+;
+MSG_ER_ErrorNoPGPId
+Pro '%s' z adresáêe nelze nalézt çíslo PGP klíçe, nyní YAM zkouîí '%s'.
+; Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
+; RECIPIENT, ADDRESS
+;
+MSG_ER_ErrorAppendKey
+Nelze pêipojit veêejný PGP klíç %s. Nastal problém pêi jeho hledání na krouùku s klíçi PGP.
+; Can't append public PGP key %s. There was a problem extracting it from the PGP keyring.
+; KEY_ID
+;
+; Module DI - Window
+;
+MSG_DI_Alias
+Zkr_atka
+; _Abbreviation
+;
+MSG_DI_New
+_Nový
+; _New
+;
+MSG_DI_AddSelect
+_Pêidat oznaçené
+; Add _selection
+;
+MSG_DI_Delete
+_Smazat
+; _Delete
+;
+MSG_DI_Paste
+_Vloùit
+; _Paste
+;
+; Module DI - Bubblehelp
+;
+MSG_HELP_DI_LV_ENTRIES
+Seznam dostupných zkratek
+; List of available abbreviations
+;
+MSG_HELP_DI_ST_ALIAS
+Zkratka zvolené poloùky
+; Abbreviation of selected entry
+;
+MSG_HELP_DI_BT_NEW
+Pêidá do glosáêe novou zkratku
+; Add a new abbreviation\n\
+; to the glossary
+;
+MSG_HELP_DI_BT_ADDSELECT
+Vytvoêí novou poloùku na základë textu\n\
+oznaçeného v editoru
+; Create a new entry based on\n\
+; the marked text in the editor
+;
+MSG_HELP_DI_BT_DELETE
+Odstraní zvolenou poloùku
+; Remove selected entry
+;
+MSG_HELP_DI_BT_PASTE
+Vloùí zvolenou poloùku na aktuální pozici\n\
+v textovém editoru
+; Insert selected entry at the current\n\
+; position in the text editor
+;
+; Module FI - Procedures
+;
+MSG_FI_GaugeText
+%%ld z %lD zpráv
+; %%ld of %lD messages
+; COUNT, COUNT
+;
+MSG_FI_AddFilter
+Pêidat filtr
+; Add filter
+;
+MSG_FI_AddFilterReq
+Zadejte název nového filtru.
+; Enter a name for the new filter
+;
+; Module FI - Window
+;
+MSG_FI_StatNew
+nová/neçtená
+; New/Unread
+;
+MSG_FI_StatRead
+pêeçtená
+; Read
+;
+MSG_FI_StatForwarded
+pêedaná
+; Forwarded
+;
+MSG_FI_StatReplied
+odpovëzená
+; Replied
+;
+MSG_FI_StatQueued
+ve frontë
+; Queued
+;
+MSG_FI_StatFailed
+chyba pêi odeslání
+; Send failed
+;
+MSG_FI_StatHold
+pozastavená
+; On hold
+;
+MSG_FI_StatSent
+odeslaná
+; Sent
+;
+MSG_FI_FromField
+pole \ebOd\en
+; \ebFrom\en field
+;
+MSG_FI_ToField
+pole \ebKomu\en
+; \ebTo\en field
+;
+MSG_FI_CCField
+pole \ebCC\en
+; \ebCC\en field
+;
+MSG_FI_ReplyToField
+pole \ebZpáteçní adresa\en
+; \ebReply-To\en field
+;
+MSG_FI_SubjectField
+pole \ebPêedmët\en
+; \ebSubject\en field
+;
+MSG_FI_DateField
+pole \ebDatum\en
+; \ebDate\en field
+;
+MSG_FI_OtherField
+dalîí pole
+; Other field:
+;
+MSG_FI_MessageSize
+velikost zprávy
+; Message size
+;
+MSG_FI_MessageHeader
+hlaviçka zprávy
+; Message header
+;
+MSG_FI_MessageBody
+tëlo zprávy
+; Message body
+;
+MSG_FI_WholeMessage
+celá zpráva
+; Whole message
+;
+MSG_FI_SearchIn
+Prohledat
+; Search in
+;
+MSG_FI_CaseSensitive
+Rozliîovat malá/VELKÁ
+; Case sensitive
+;
+MSG_FI_SubString
+Rozîíêit hledání (#?)
+; Substring search
+;
+; Module FI - Window
+;
+MSG_FI_FindMessages
+Hledání ve zprávách
+; Find Messages
+;
+MSG_FI_AllFolders
+_Ve vîech
+; _everywhere
+;
+MSG_FI_FindIn
+Hledat v
+; Find in
+;
+MSG_FI_FindWhat
+Hledat co
+; Find what
+;
+MSG_FI_UseFilter
+Po_uùít existující filtr
+; _Use filter settings
+;
+MSG_FI_AddAsFilter
+Pêidat do sez_namu filtrû
+; Add as _new filter
+;
+MSG_FI_Results
+Výsledek hledání
+; Results
+;
+MSG_FI_StartSearch
+Zaçít _hledat
+; _Start search
+;
+MSG_FI_SelectMatched
+Zvolit _odpovídající
+; Select _matched
+;
+MSG_FI_ReadMessage
+_Pêeçíst zprávu
+; _Read message
+;
+MSG_FI_Abort
+Pê_eruîit
+; _Abort
+;
+; Module FI - Bubblehelp
+;
+MSG_HELP_FI_LV_FOLDERS
+Zvolte jednu nebo více sloùek, které\n\
+chcete prohledat
+; Select one or more\n\
+; folders to search in
+;
+MSG_HELP_FI_BT_ALL
+Zahrne do prohledávání vîechny sloùky
+; Include all folders in your search
+;
+MSG_HELP_FI_PO_FROMRULE
+Pêevezme kritérium pro hledání z jiù\n\
+vytvoêeného filtru
+; Get search criteria\n\
+; from a filter
+;
+MSG_HELP_FI_BT_TORULE
+Vytvoêí ze zadaného kritéria nový filtr\n\
+a pêidá do seznamu
+; Create a new filter from\n\
+; these search criteria
+;
+MSG_HELP_FI_BT_SEARCH
+Spustí prohledávání a zobrazí výsledek v seznamu
+; Start the search and display\n\
+; the results in the list above
+;
+MSG_HELP_FI_BT_SELECT
+V hlavním oknë zvolí zprávy vyhovující kritériím
+; Select matching messages\n\
+; in the main window
+;
+MSG_HELP_FI_BT_READ
+Zobrazí zvolenou zprávu ze seznamu
+; Display selected message/nfrom the list above
+;
+MSG_HELP_FI_BT_ABORT
+Zastaví hledání
+; Stop searching
+;
+MSG_HELP_FI_CY_MODE
+Pole nebo çást zprávy, která je souçástí\n\
+kritéria pro hledání
+; Field or message part that\n\
+; should match the pattern
+;
+MSG_HELP_FI_ST_FIELD
+Název çásti hlaviçky, které mají být prohledány
+; Name of header field to search in
+;
+MSG_HELP_FI_RA_ADRMODE
+Zde zvolíte, zda se mají v dané çásti\n\
+hlaviçky prohledat jména nebo adresy
+; Choose whether you want to search in the\n\
+; address or realname part of the field
+;
+MSG_HELP_FI_CY_STATUS
+Stav zpráv, které mají být prohledány
+; Message status to match
+;
+MSG_HELP_FI_ST_MATCH
+Îablona k prohledávání (masky AmigaDOSu\n\
+jsou podporovány)
+; Search pattern (AmigaDOS\n\
+; wildchars are supported)
+;
+MSG_HELP_FI_CH_CASESENS
+Mají být pêi prohledávání rozliîována malá\n\
+a VELKÁ písmena?
+; Should the search\n\
+; be case sensitive?
+;
+MSG_HELP_FI_CH_SUBSTR
+Povolí rozîíêení prohledávání (pouùitím masky #?)
+; Enable partial string search
+;
+MSG_HELP_FI_CY_COMP
+Typ porovnání. Zvolíte-li <>, budou nalezeny\n\
+vîechny zprávy nevyhovující danému kritériu,\n\
+IN umoùní pouùít externí soubor s vëtîím\n\
+mnoùstvím îablon
+; Type of comparison. Select <> to get all messages that\n\
+; don't match the pattern, IN to use a file of patterns
+;
+; Module US - Routines
+;
+MSG_US_EnterPassword
+Zadejte prosím své heslo
+; Please enter your password
+;
+MSG_US_TitleUserName
+Uùivatel
+; User name
+;
+MSG_US_TitleMailDir
+Adresáê s poîtou
+; Mail directory
+;
+MSG_US_WaitLogin
+Çekání na pêihláîení uùivatele...
+; Waiting for user login...
+;
+MSG_US_RemoveReq
+Vîechny zprávy, sloùky a konfiguraçní soubory\n\
+patêící tomuto uùivateli budou ztraceny!\n\
+Opravdu chcete daného uùivatele odstranit?
+; All messages, folders and configuration\n\
+; files belonging to this user will be lost!\n\
+; Do you really want to remove the user?
+;
+MSG_US_RemoveReqGads
+* _Ok | Z_achovat soubory | _Zruîit 
+; *_Okay|_Keep files|_Cancel
+;
+MSG_US_ErrorNoDirectory
+Adresáê s poîtou nebyl nalezen.\n\
+Chcete ho vytvoêit?
+; Mail directory not found.\n\
+; Do you want to create it?
+;
+; Module US - Window
+;
+MSG_US_UserName
+_Uùivatel
+; _User name
+;
+MSG_US_MailDirectory
+A_dresáê s poîtou
+; _Mail directory
+;
+MSG_US_GlobalAddrBook
+Pouùít adresáê glo_bálnë
+; Use global address _book
+;
+MSG_US_GlobalDict
+Pouùít glosáê _globálnë
+; Use global _glossary
+;
+MSG_US_CopyConfig
+Zk_opírovat konfiguraci aktuálního uùivatele
+; C_opy configuration from current user
+;
+MSG_US_Password
+_Heslo
+; _Password
+;
+MSG_US_SuperVisor
+Nastavit práva su_pervizora
+; _Supervisor privileges
+;
+MSG_US_AddUser
+Pêid_at uùivatele
+; _Add user
+;
+MSG_US_DelUser
+_Smazat uùivatele
+; _Delete user
+;
+; Module US - Bubblehelp
+;
+MSG_HELP_US_ST_USER
+Jméno nového uùivatele programu YAM
+; Name of the new YAM user
+;
+MSG_HELP_US_ST_MAILDIR
+Adresáê, do kterého budou uloùeny sloùky\n\
+a konfiguraçní soubory nového úçtu
+; Directory to store the\n\
+; folders and config files\n\
+; of the new user account
+;
+MSG_HELP_US_CH_USEADDR
+Nastaví sdílení adresáêe s ostatními
+; Share address book\n\
+; with other users
+;
+MSG_HELP_US_CH_USEDICT
+Nastaví sdílení glosáêe mezi uùivateli
+; Share glossary\n\
+; with other users
+;
+MSG_HELP_US_ST_PASSWD
+Heslo potêebné k pêihláîení uùivatele
+; Password required for this user to login
+;
+MSG_HELP_US_CH_ROOT
+Nastavením této volby dáte uùivateli moùnost\n\
+pêidávat nebo mazat dalîí uùivatele
+; Enable this option if the user\n\
+; may add or remove other users
+;
+MSG_HELP_US_CH_CLONE
+Pouùije aktuální konfiguraci jako základ\n\
+pêi vytváêení nového úçtu
+; Use current configuration as\n\
+; default for the new account
+;
+MSG_HELP_US_BT_ADD
+Vytvoêí nový úçet
+; Create the new account
+;
+MSG_HELP_US_BT_DEL
+Odstraní zvolený úçet
+; Remove selected account
+;
+;
+; Module FO - Routines
+;
+MSG_FO_NewSepReq
+Zde lze (volitelnë) zadat popis pro oddëlovaç
+; Optional label for the separator
+;
+MSG_FO_NewFolderReq
+Jaký druh nastavení chcete pouùít pro novou sloùku?\n\
+Pokud uù adresáê existuje, zvolte 'Existující adresáê'.
+; What settings do you want to use for the new folder?\n\
+; Select 'Existing directory' if the folder already exists\n\
+; on your disk
+;
+MSG_FO_NewFolderGads
+* _Interní nastavení | Pod_le aktuálního | _Existující adresáê | _Zruîit 
+; *_Internal defaults|_Like current|_Existing directory|_Cancel
+;
+MSG_FO_SelectDir
+Zvolte adresáê
+; Select directory...
+;
+;
+; Module FO - Window
+;
+MSG_FO_MessageDate
+Datum zprávy
+; Message date
+;
+MSG_FO_DateRecvd
+Pêijato dne
+; Date received
+;
+MSG_FO_FMNormal
+normální
+; normal
+;
+MSG_FO_FMSimple
+jednoduchá ochrana
+; simple protection
+;
+MSG_FO_FMPack
+komprimované
+; compressed
+;
+MSG_FO_FMEncPack
+komprimované s heslem
+; compressed with password
+;
+MSG_FO_FTRcvdMail
+pêijaté
+; received mail
+;
+MSG_FO_FTSentMail
+odeslané
+; sent mail
+;
+MSG_FO_FTBothMail
+pêijaté a odeslané
+; received and sent
+;
+MSG_FO_FTSeparate
+oddëlovaç
+; separator
+;
+MSG_FO_EditFolder
+Nastavení sloùky
+; Folder settings
+;
+MSG_FO_Properties
+Vlastnosti sloùky
+; Properties
+;
+MSG_FO_MaxAge
+Ma_x. doba
+; Ma_x. age
+;
+MSG_FO_FolderType
+T_yp
+; T_ype
+;
+MSG_FO_FolderMode
+_Mód
+; _Mode
+;
+MSG_FO_SortBy
+Setêídit _dle
+; S_ort by
+;
+MSG_FO_ThenBy
+Po_tom dle
+; T_hen by
+;
+MSG_FO_Reverse
+Opaçnë
+; Rev
+;
+MSG_FO_MLSupport
+Podpora rozesílacího seznamu
+; Mailing list support
+;
+MSG_FO_ToPattern
+_Komu: îablona
+; To: _pattern
+;
+MSG_FO_ToAddress
+Kom_u: adresa
+; _To: address
+;
+; Module FO - Bubblehelp
+;
+MSG_HELP_FO_ST_FNAME
+Název sloùky
+; Folder name
+;
+MSG_HELP_FO_TX_FPATH
+Adresáê, ve kterém jsou uloùeny zprávy\n\
+zvolené sloùky
+; Directory where the messages of\n\
+; the selected folder are stored
+;
+MSG_HELP_FO_ST_MAXAGE
+Po takto zadané dobë (dny) budou staré\n\
+zprávy automaticky smazány. Zadáním 0\n\
+nebo ùádné hodnoty tuto vlastnost zakáùete.
+; Old messages will automatically\n\
+; be deleted after this time (in days).\n\
+; Enter 0 or no value to disable this feature.
+;
+MSG_HELP_FO_CY_FTYPE
+Typ vlastní sloùky (pêijaté/odeslané/oboje)
+; Type of custom archive folder\n\
+; (in/out/both)
+;
+MSG_HELP_FO_CY_FMODE
+Sloùky lze chránit heslem nebo komprimovat\n\
+pomocí XPK
+; Folders can be password-protected\n\
+; and/or compressed using XPK
+;
+MSG_HELP_FO_CY_SORT0
+Primární metoda têídëní zpráv v dané sloùce
+; Primary sorting order of the\n\
+; message in this folder
+;
+MSG_HELP_FO_CY_SORT1
+Sekundární metoda têídëní zpráv v dané sloùce
+; Secondary sorting order of the\n\
+; message in this folder
+;
+MSG_HELP_FO_CH_REVERSE
+Setêídí zprávy opaçnë
+; Reversed sorting
+;
+MSG_HELP_FO_ST_MLPATTERN
+Pokud vyhovuje adresa v poli 'Komu:'\n\
+zadané îablonë, bude zpráva brána\n\
+jako pocházející z rozesílacího seznamu
+; A message belongs to a mailing list\n\
+; if the To: field matches this pattern
+;
+MSG_HELP_FO_ST_MLADDRESS
+Tato adresa bude pouùita k odpovëdím\n\
+do rozesílacího seznamu
+; Use this recipient address for\n\
+; a reply to a mailing list message
+;
+;
+; BUSY messages
+;
+MSG_BusySavingAB
+Ukládání adresáêe '%s'...
+; Saving address book '%s'...
+; FILENAME
+;
+MSG_BusyPrintingAB
+Probíhá tisk adresáêe...
+; Printing address book...
+;
+MSG_BusySavingDI
+Ukládání glosáêe...
+; Saving glossary...
+;
+MSG_BusyLoadingDI
+Naçítání glosáêe...
+; Loading glossary...
+;
+MSG_BusyDownloadingPic
+Stahování fotografie (%s)...
+; Downloading portrait of %s...
+; NAME
+;
+MSG_BusyUncompressingFO
+(De)komprimování sloùek...
+; (De)compressing folders...
+;
+MSG_BusyMoving
+Probíhá pêesun nebo kopírování %s zpráv(y)...
+; Moving/copying %s messages...
+; COUNT
+;
+MSG_BusyRemovingAtt
+Probíhá odstrañování pêíloh(y)...
+; Removing attachments...
+;
+MSG_BusyDeleting
+Probíhá mazání %s zpráv(y)...
+; Deleting %s message(s)...
+; COUNT
+;
+MSG_BusyFiltering
+Aplikování filtrû...
+; Applying filters...
+;
+MSG_BusyDeletingOld
+Probíhá mazání staré poîty...
+; Deleting old mail...
+;
+MSG_BusyEmptyingTrash
+Odstrañování smazané poîty...
+; Emptying trash folder...
+;
+MSG_BusyGettingVerInfo
+Stahování informací o aktualizaci...
+; Getting update information...
+;
+MSG_BusyLoadingIndex
+Naçítání indexu sloùky '%s'...
+; Loading index of folder '%s'...
+; FOLDER
+;
+MSG_BusySavingIndex
+Ukládání indexu sloùky '%s'...
+; Saving index of folder '%s'...
+; FOLDER
+;
+MSG_BusyScanning
+Prohledávání adresáêe ve sloùce '%s'...
+; Scanning directory of folder '%s'...
+; FOLDER
+;
+MSG_BusyReading
+Naçítání zprávy...
+; Reading message...
+;
+MSG_BusyDisplaying
+Zobrazování zprávy...
+; Displaying message...
+;
+MSG_BusyDisplayingList
+Zobrazování zpráv...
+; Displaying messages...
+;
+MSG_BusyPGPrunning
+Pouùití PGP...
+; PGP operation...
+;
+MSG_BusyComposing
+Vytváêení zprávy...
+; Composing message...
+;
+MSG_BusyDecPrinting
+Dekódování a tisk...
+; Decoding/printing...
+;
+MSG_BusyDecSaving
+Dekódování a uloùení...
+; Decoding/saving...
+;
+MSG_BusyDecDisplaying
+Dekódování a zobrazení...
+; Decoding/displaying...
+;
+; ADDED AFTER 13-MAR-1999
+;
+MSG_RE_FollowThreadReq
+Pokud chcete sledovat dané téma, YAM musí\n\
+naçíst vîechny indexy. Tato operace mûùe\n\
+být çasovë nároçná. Chcete pokraçovat?
+; In order to follow the thread, YAM has to load all indices.\n\
+; This may be time consuming. Do you want to continue?
+;
+MSG_CTapplicationadosscript
+standardní skript
+; AmigaDOS script
+;
+MSG_CTapplicationrexx
+rexxový skript
+; Rexx script
+;
+; ADDED AFTER 04-DEC-2000
+;
+MSG_PROJECT_ABOUT
+?\000O programu...
+; ?\000About...
+;
+MSG_PROJECT_CHECKVERSION
+Zjistit verzi
+; Check version
+;
+MSG_FOLDER_NEWFOLDER
+Nová sloùka...
+; New folder...
+;
+MSG_FOLDER_NEWSEPARATOR
+Nový oddëlovaç...
+; New separator...
+;
+MSG_FOLDER_EDIT
+Upravit
+; Edit
+;
+MSG_FOLDER_DELETE
+Smazat
+; Delete
+;
+MSG_FOLDER_IMPORT
+Importovat...
+; Import...
+;
+MSG_FOLDER_EXPORT
+Exportovat...
+; Export...
+;
+MSG_MESSAGE_EDIT
+E\000Upravit
+; E\000Edit
+;
+MSG_MESSAGE_MOVE
+M\000Pêesunout...
+; M\000Move...
+;
+MSG_MESSAGE_COPY
+Zkopírovat...
+; Copy...
+;
+MSG_MESSAGE_PRINT
+P\000Tisknout...
+; P\000Print...
+;
+MSG_MESSAGE_SAVE
+V\000Uloùit
+; V\000Save...
+;
+MSG_MESSAGE_SAVEATT
+T\000Uloùit...
+; T\000Save
+;
+MSG_MESSAGE_CROP
+O\000Odstranit
+; O\000Crop
+;
+MSG_MESSAGE_EXPORT
+Exportovat...
+; Export...
+;
+MSG_MESSAGE_NEW
+N\000Nová
+; N\000New
+;
+MSG_MESSAGE_REPLY
+R\000Odpovëdët...
+; R\000Reply...
+;
+MSG_MESSAGE_FORWARD
+W\000Pêedat...
+; W\000Forward...
+;
+MSG_MESSAGE_BOUNCE
+B\000Pêedat beze zmëny...
+; B\000Bounce...
+;
+MSG_MESSAGE_GETADDRESS
+J\000Uloùit adresu...
+; J\000Save address...
+;
+MSG_MESSAGE_CHANGESUBJECT
+Zmënit pêedmët...
+; Change subject...
+;
+MSG_SETTINGS_ADDRESSBOOK
+A\000Adresáê...
+; A\000Address Book...
+;
+MSG_SETTINGS_CONFIG
+K\000Konfigurace...
+; K\000Configuration...
+;
+MSG_SETTINGS_USERS
+Uùivatelé...
+; Users...
+;
+MSG_SETTINGS_MUI
+Konfigurace MUI...
+; MUI...
+;
+MSG_FO_FromAddress
+Adresa odesílatele
+; From: address
+;
+MSG_HELP_FO_ST_MLFROMADDRESS
+Pêi odesílání pêíspëvkû do rozesílacího\n\
+seznamu nastaví vaîi adresu podle toho,\n\
+co máte uvedeno v poli \"Adresa odesílatele\"
+; Use this from address when posting\n\
+; new mails to the list
+;
+MSG_FO_ReplyToAddress
+Zpáteçní adresa
+; Reply-To: address
+;
+MSG_HELP_FO_ST_MLREPLYTOADDRESS
+Pêi odesílání pêíspëvkû do rozesílacího\n\
+seznamu nastaví vaîi adresu podle toho,\n\
+co máte uvedeno v poli \"Zpáteçní adresa\"
+; Use this reply-to address when posting\n\
+; new mails to the list
+;
+MSG_RE_MDNGads4
+|Ignorovat vîe
+; |Ignore all
+;
+MSG_EA_DefSecurity
+Dru_h zabezpeçení
+; Se_curity
+;
+MSG_HELP_MA_CY_DEFSECURITY
+Standardní druh zabezpeçení pouùívaný\n\
+pêi komunikaci s konkrétním çlovëkem
+; Default security for sending\n\
+; mail to this person
+;
+MSG_WR_DefSecurityConflict
+Pêíjemci této zprávy mají rûzné výchozí nastavení\n\
+zabezpeçení komunikace. Který druh chcete pouùít?
+; The recipients of this mail have different default\n\
+; security settings. What kind of security do you want?
+;
+MSG_WR_DefSecurityConflictGads
+*Ùád_né|Podep_sat|_Zaîifrovat|O_boje|Odeslat _anonymnë
+; *_None|_Sign|_Encrypt|_Both|Send _anonymously
+;
+MSG_WR_SecDefaults
+Výchozí
+; Default
+;
+MSG_ER_PGPMultipart
+Chyba pêi vytváêení zprávy sloùené z více çástí a îifrované pomocí PGP. Obsah nebude ani zaîifrován ani podepsán.
+; Error creating multipart PGP message. Encryption/signing disabled!
+;
+MSG_RE_FixedFont
+Fixní font
+; Fixed font
+;
+MSG_ER_NO_SMTP_AUTH
+ESMTP server %s nepodporuje SMTP AUTH!
+; ESMTP Server %s doesn't support SMTP AUTH!
+;
+MSG_CO_UseSMTPAUTH
+Pouùít SM_TP AUTH
+; Use SMTP _AUTH
+;
+MSG_CO_SMTPUser
+Uùi_vatel
+; _User ID
+;
+MSG_CO_SMTPPass
+He_slo
+; Pa_ssword
+;
+MSG_CO_Del
+Smazat
+; Delete
+;
+MSG_RE_SetUnread
+Zmënit na neçtenou
+; Set status to unread
+;
+MSG_WR_AltQuoted
+Jinak odsazený text
+; Alternate Quoted
+;
+MSG_CO_AltQuote
+E_xterní text odsadit pomocí
+; Quote external using
+;
+MSG_CO_DoQuote
+Odsad_it zprávy
+; Quote message
+;
+MSG_HELP_CO_ST_ALTQUOTECHAR
+Êetëzec, který by mël pêedcházet kaùdý\n\
+êádek odsazeného textu vloùeného externë.
+; String that should precede each line of\n\
+; a quote inserted from non-email sources
+;
+MSG_EA_SelectPhoto_Title
+Zvolte fotografii
+; Select portrait
+;
+MSG_RE_MoveNextFolderReq
+Dalîí sloùka s neçtenými zprávami:\n\
+\eb%s\en\n\
+Chcete do této sloùky pêejít a\n\
+pokraçovat ve çtení?
+; The next folder with unread messages\n\
+; is: \eb%s\en\n\
+; Change to this folder and continue\n\
+; with reading there?
+;
+MSG_WR_NoSubjectReqGad
+*_Zadat pêedmët|_Ponechat prázdný
+; *_Set subject|_Continue without subject
+;
+MSG_NoSubjectReq
+Upozornëní: Není vyplnëno pole Pêedmët
+; Warning: Subject is empty
+;
+MSG_MA_ABookModifiedGad
+*_Uloùit|U_konçit
+; *_Save now|_Quit without saving
+;
+MSG_APPICON_STATS
+N:%lD U:%lD T:%lD
+; N:%lD U:%lD T:%lD
+;
+; COUNT, COUNT, COUNT
+;
+MSG_ATTACH_NO
+ç.
+; No.
+;
+MSG_ATTACH_PART
+Pêíloha
+; Part
+;
+MSG_ABOUT_OKAY_GAD
+Ok
+; OK
+;

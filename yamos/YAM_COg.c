@@ -966,7 +966,7 @@ APTR CO_Page6(struct CO_ClassData *data)
                Child, Label2(GetStr(MSG_CO_MLRepInit)),
                Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, GetStr(MSG_CO_MLRepInit), GetStr(MSG_HELP_CO_ST_MREPLYTEXT)),
                Child, Label2(GetStr(MSG_CO_QuoteMail)),
-               Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, 2, SIZE_SMALL, ""),
+               Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, 2, SIZE_SMALL, GetStr(MSG_CO_QuoteMail)),
                Child, Label2(GetStr(MSG_CO_AltQuote)),
                Child, data->GUI.ST_ALTQUOTECHAR = MakeString(SIZE_SMALL, GetStr(MSG_CO_AltQuote)),
             End,

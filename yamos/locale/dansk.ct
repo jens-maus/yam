@@ -1,0 +1,6396 @@
+## version $VER: YAM.catalog 5.4 (06.06.2001)
+## language dansk
+## codeset 0
+;
+;
+; YAM 2.3 catalog description
+; $Id$
+;
+;#version 5
+;
+; General
+;
+MSG_Folder
+Mappe
+; Folder
+;
+MSG_Message
+Besked
+; Message
+;
+MSG_Attachments
+Bilag
+; Attachments
+;
+MSG_Options
+Valgmuligheder
+; Options
+;
+MSG_Add
+_Tilføje
+; _New
+;
+MSG_Del
+_Slette
+; _Delete
+;
+MSG_New
+Ny...
+; New
+;
+MSG_Open
+Åbne...
+; Open...
+;
+MSG_Append
+Tilføje...
+; Append...
+;
+MSG_Save
+Gemme
+; Save
+;
+MSG_SaveAs
+Gemme som...
+; Save as...
+;
+MSG_Print
+Udskrive...
+; Print...
+;
+MSG_Edit
+Redigere...
+; Edit...
+;
+MSG_Display
+Vist
+; Display
+;
+MSG_Filter
+Filtreret
+; Filter
+;
+MSG_Process
+Behandlet
+; Process
+;
+MSG_Okay
+_OK
+; _Okay
+;
+MSG_Use
+_Benytte
+; _Use
+;
+MSG_Cancel
+_Annullere
+; _Cancel
+;
+MSG_Yes
+_Ja
+; _Yes
+;
+MSG_No
+_Nej
+; _No
+;
+MSG_OkayReq
+*_OK
+; *_Okay
+;
+MSG_OkayCancelReq
+*_OK|_Fortryde
+; *_Okay|_Cancel
+;
+MSG_YesNoReq
+*_Ja|_Nej
+; *_Yes|_No
+;
+MSG_ErrorReq
+Fejl
+; Error
+;
+MSG_NewEntry
+- ny -
+; - new -
+;
+MSG_Unnamed
+uden navn
+; unnamed
+;
+MSG_Bytes
+tegn
+; bytes
+;
+MSG_Date
+Dato
+; Date
+;
+MSG_Sender
+Afsender
+; Sender
+;
+MSG_Recipient
+Modtager
+; Recipient
+;
+MSG_Subject
+Emne
+; Subject
+;
+MSG_Size
+Størrelse
+; Size
+;
+MSG_Status
+Status
+; Status
+;
+MSG_FolderList
+Mappeliste
+; Folder list
+;
+MSG_MessageList
+Beskedliste
+; Message list
+;
+MSG_Realname
+Rigtigt navn
+; Real name
+;
+MSG_Filename
+Filnavn
+; Filename
+;
+MSG_Alias
+Alias
+; Alias
+;
+MSG_Description
+Beskrivelse
+; Description
+;
+MSG_DOB
+Fødselsdato
+; Date of birth
+;
+MSG_City
+By
+; City
+;
+MSG_Country
+Land
+; Country
+;
+MSG_Street
+Gade/vej
+; Street
+;
+MSG_Phone
+Telefon
+; Phone
+;
+MSG_Name
+Navn
+; Name
+;
+MSG_Email
+E-postadresse
+; Email address
+;
+MSG_Address
+Adresse
+; Address
+;
+MSG_ReturnAddress
+Returadresse
+; Return address
+;
+MSG_SenderRecpt
+Afsender/modtager
+; Sender/recipient
+;
+MSG_MessageDate
+Beskeddato
+; Message date
+;
+MSG_Unread
+Ikke læst
+; Unread
+;
+MSG_Total
+I alt
+; Total
+;
+MSG_From
+Fra
+; From
+;
+MSG_To
+Til
+; To
+;
+MSG_Default
+standard
+; default
+;
+MSG_Columns
+Kolonner
+; Columns
+;
+MSG_Path
+Sti
+; Path
+;
+MSG_Directory
+Katalog
+; Directory
+;
+; Module Root
+;
+MSG_Copyright1
+Open Source-e-postpakke til Amiga\n\
+\n\
+Copyright © 1995-2000 Marcel Beck\n\
+Copyright © 2000-2001 YAM Open Source Team
+; Open Source E-mail package for the Amiga\n\
+; \n\
+; Copyright © 1995-2000 Marcel Beck\n\
+; Copyright © 2000-2001 YAM Open Source Team
+;
+MSG_Version
+Version:
+; Version:
+;
+MSG_CompilationDate
+Kompileringsdato:
+; Compilation date:
+;
+MSG_Copyright2
+Dette program er fri software; du er velkommen til at distribuere og/eller modificere det i henhold til vilkårene i GNU Public License. Yderligere detaljer findes i de vedlagte dokumenter.\n
+; This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
+;
+MSG_UsedSoftware
+\nDenne applikation benytter følgende tredjepartssoftware:\n
+; \nThis application uses the following third party software:\n
+;
+MSG_WebSite
+De seneste nyheder om YAM findes på YAM-supportsiderne \e5http://www.yam.ch
+; The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
+;
+MSG_UserLogin
+Klik på dit navn for at logge ind.
+; Click your name to login
+;
+MSG_AppDescription
+E-postprogram til AmiTCP med SMTP/POP3
+; SMTP/POP3 Client & Mailer for AmiTCP
+;
+MSG_ErrorStartup
+Fejl under programstart
+; Error during startup
+;
+MSG_Quit
+Afslutte
+; Quit
+;
+MSG_ErrorLib
+Kan ikke åbne biblioteket '%s', version %ld.
+; Can't open library '%s', version %ld
+;LIBRARY_NAME, LIBRARY_VERSION
+;
+MSG_LoadingConfig
+Indlæser opsætningsfil...
+; Loading configuration...
+;
+MSG_CreatingGUI
+Opretter brugergrænseflade...
+; Creating user interface...
+;
+MSG_ErrorMuiApp
+Kan ikke oprette applikation.
+; Can't create application
+;
+MSG_RebuildIndices
+Gendanner mappernes indekser...
+; Rebuilding folders' indices...
+;
+MSG_LoadingFolders
+Indlæser mapper...
+; Loading folders...
+;
+MSG_LoadingABook
+Indlæser adressebog...
+; Loading address book...
+;
+MSG_InitLibs
+Klargør biblioteker og klasser...
+; Initialising libraries and classes...
+;
+MSG_ErrorClasses
+Kan ikke oprette MUI-klasser.
+; Can't create MUI custom classes
+;
+MSG_ErrorAslStruct
+Kan ikke allokere ASL-struktur.
+; Can't allocate ASL structure
+;
+MSG_ErrorTimer
+Kan ikke åbne timer.device.
+; Can't open timer.device
+;
+MSG_ErrorARexx
+Kan ikke oprette ARexx-port.
+; Can't create ARexx port
+;
+MSG_LoadingGFX
+Indlæser grafik...
+; Loading graphics...
+;
+MSG_SendStartReq
+Udbakken indeholder post som ikke er sendt.\n\
+Vil du sende disse beskeder nu?
+; The outgoing folder contains unsent mail.\n\
+; Do you want to send these messages now?
+;
+MSG_QuitYAMReq
+Vil du virkelig afslutte YAM?
+; Do you really want to quit YAM?
+;
+MSG_CTtextplain
+normal tekst
+; plain text
+;
+MSG_CTtexthtml
+HTML-dokument
+; HTML document
+;
+MSG_CTtextaguide
+AmigaGuide-dokument
+; AmigaGuide document
+;
+MSG_CTapplicationoctetstream
+binær fil
+; binary file
+;
+MSG_CTapplicationpostscript
+Postscript-dokument
+; Postscript document
+;
+MSG_CTapplicationrtf
+RTF-format
+; Rich Text Format
+;
+MSG_CTapplicationlha
+LhA-arkiv
+; LhA archive
+;
+MSG_CTapplicationlzx
+LZX-arkiv
+; LZX archive
+;
+MSG_CTapplicationzip
+ZIP-arkiv
+; ZIP archive
+;
+MSG_CTapplicationamigaexe
+Udførbart Amiga-program
+; Amiga executable
+;
+MSG_CTimagejpeg
+JPEG/JFIF-billede
+; JPEG/JFIF picture
+;
+MSG_CTimagegif
+GIF-billede
+; GIF picture
+;
+MSG_CTimagepng
+PNG-billede
+; PNG picture
+;
+MSG_CTimagetiff
+TIFF-billede
+; TIFF picture
+;
+MSG_CTimageilbm
+Amiga IFF-ILBM-billede
+; Amiga IFF-ILBM picture
+;
+MSG_CTaudiobasic
+UNIX-lydklip
+; UNIX audio file
+;
+MSG_CTaudio8svx
+Amiga IFF-8SVX-lydklip
+; Amiga IFF-8SVX audio
+;
+MSG_CTaudiowav
+Microsoft WAV-lydklip
+; Microsoft WAV audio
+;
+MSG_CTvideompeg
+MPEG-videoklip
+; MPEG video stream
+;
+MSG_CTvideoquicktime
+Apple QuickTime-videoklip
+; Apple QuickTime video
+;
+MSG_CTvideoanim
+Amiga IFF-ANIM-videoklip
+; Amiga IFF-ANIM video
+;
+MSG_CTvideomsvideo
+Microsoft AVI-videoklip
+; Microsoft AVI video
+;
+MSG_CTmessagerfc822
+E-postbesked
+; E-mail message
+;
+; Logfile entries
+;
+MSG_LOG_Started
+YAM startet
+; YAM started
+;
+MSG_LOG_Terminated
+YAM afbrudt
+; YAM terminated
+;
+MSG_LOG_LoggedIn
+Logget ind som bruger '%s'
+; Logged in as user '%s'
+; USER_NAME
+;
+MSG_LOG_LoggedInVerbose
+Logget ind som '%s', benytter opsætningsfilen '%s' og postkataloget '%s'
+; Logged in as '%s', using configuration '%s' and mail directory '%s'
+; USER_NAME, CONFIG_FILE, FOLDER_PATH
+;
+MSG_LOG_Deleting
+%ld besked(er) i mappe '%s' slettet
+; Deleted %ld message(s) in folder '%s'
+; COUNT, FOLDER
+;
+MSG_LOG_DeletingVerbose
+Besked fra '%s' om '%s' i mappen '%s' slettet
+; Deleted message from '%s' about '%s' in folder '%s'
+; SENDER, SUBJECT, FOLDER
+;
+MSG_LOG_Moving
+%ld besked(er) flyttet fra mappe '%s' til '%s'
+; Moved %ld message(s) from folder '%s' to '%s'
+; COUNT, FOLDER, FOLDER
+;
+MSG_LOG_MovingVerbose
+Besked fra '%s' om '%s' flyttet fra mappe '%s' til '%s'
+; Moved message from '%s' about '%s' from folder '%s' to '%s'
+; SENDER, SUBJECT, FOLDER, FOLDER
+;
+MSG_LOG_Copying
+%ld besked(er) kopieret fra mappe '%s' til '%s'
+; Copied %ld message(s) from folder '%s' to '%s'
+; COUNT, FOLDER, FOLDER
+;
+MSG_LOG_CopyingVerbose
+Besked fra '%s' om '%s' kopieret fra mappe '%s' til '%s'
+; Copied message from '%s' about '%s' from folder '%s' to '%s'
+; SENDER, SUBJECT, FOLDER, FOLDER
+;
+MSG_LOG_ConnectPOP
+Logget ind på POP3-konto '%s@%s': %ld ventende beskeder
+; Logged in on POP3 account '%s@%s': %ld messages waiting
+; USER_ID, HOST, COUNT
+;
+MSG_LOG_RetrievingVerbose
+Besked modtaget fra '%s' om '%s' (%ld tegn)
+; Retrieved message from '%s' about '%s' (%ld bytes)
+; SENDER, SUBJECT, SIZE
+;
+MSG_LOG_Retrieving
+%ld besked(er) modtaget fra POP3-kontoen '%s@%s'
+; Retrieved %ld message(s) from POP3 account '%s@%s'
+; COUNT, USER_ID, HOST
+;
+MSG_LOG_ConnectSMTP
+Forbundet til SMTP-server '%s'
+; Connected to SMTP server '%s'
+; HOST
+;
+MSG_LOG_SendingVerbose
+Besked sendt til '%s' om '%s' (%ld tegn)
+; Sent message to '%s' about '%s' (%ld bytes)
+; RECIPIENT, SUBJECT, SIZE
+;
+MSG_LOG_Sending
+%ld besked(er) sendt via SMTP-serveren '%s'
+; Sent %ld message(s) using SMTP server '%s'
+; COUNT, HOST
+;
+MSG_LOG_Editing
+Besked fra '%s' til '%s' om '%s' redigeret
+; Edited message from '%s' to '%s' about '%s'
+; SENDER, RECIPIENT, SUBJECT
+;
+MSG_LOG_Creating
+Ny besked til '%s' om '%s' oprettet, inklusive %ld bilag
+; Wrote new message for '%s' about '%s', including %ld attachment(s)
+; RECIPIENT, SUBJECT, COUNT
+;
+MSG_LOG_Replying
+Besked fra '%s' om '%s' besvaret
+; Replied message from '%s' about '%s'
+; SENDER, SUBJECT
+;
+MSG_LOG_Bouncing
+Besked fra '%s' om '%s' omdirigeret til '%s'
+; Bounced message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_LOG_Forwarding
+Besked fra '%s' om '%s' videresendt til '%s'
+; Forwarded message from '%s' about '%s' to '%s'
+; SENDER, SUBJECT, RECIPIENT
+;
+MSG_LOG_Filtering
+%ld besked(er) i mappe '%s' filtreret: %ld passede
+; Filtered %ld message(s) in folder '%s': %ld match(es)
+; COUNT, FOLDER, COUNT
+;
+MSG_LOG_SavingConfig
+Opsætningen gemt i filen '%s'
+; Saved configuration file '%s'
+; CONFIG_FILE
+;
+MSG_LOG_SavingABook
+Adressebogen gemt i '%s'
+; Saved address book '%s'
+; FILENAME
+;
+MSG_LOG_SavingUsers
+Brugerlisten gemt
+; Saved user configuration
+;
+MSG_LOG_NewAddress
+Adressebogsposten '%s' tilføjet
+; Added address book entry '%s'
+; ALIAS
+;
+MSG_LOG_Importing
+%ld besked(er) importeret fra filen '%s' til mappen '%s'
+; Imported %ld message(s) from file '%s' into folder '%s'
+; COUNT, FILENAME, FOLDER
+;
+MSG_LOG_Exporting
+%ld besked(er) eksporteret fra mappen '%s' til filen '%s'
+; Exported %ld message(s) from folder '%s' to file '%s'
+; COUNT, FOLDER, FILENAME
+;
+MSG_LOG_SavingAtt
+Bilaget '%s' fra beskeden '%s' i mappen '%s' gemt
+; Saved attachment '%s' of message '%s' in folder '%s'
+; FILENAME, MAILFILE, FOLDER
+;
+MSG_LOG_CroppingAtt
+Bilag(ene) i beskeden '%s' i mappen '%s' fjernet
+; Cropped attachment(s) of message '%s' in folder '%s'
+; MAILFILE, FOLDER
+;
+MSG_LOG_ChangingSubject
+Emnet '%s' på beskeden '%s' i mappen '%s' ændret til '%s'
+; Changed subject '%s' of message '%s' in folder '%s' to '%s'
+; SUBJECT, MAILFILE, FOLDER, SUBJECT
+;
+;
+; Module UT - Procedures
+;
+MSG_UT_Save
+Gemme
+; Save
+;
+MSG_UT_Load
+Indlæse
+; Load
+;
+MSG_UT_PGPPassReq
+Angiv din PGP-adgangstekst:
+; Please enter your PGP pass phrase:
+;
+MSG_UT_AppStats
+
+; 
+; Replaced by MSG_APPICON_STATS
+;
+MSG_UT_NoPrinter
+Der er ingen printer, eller den er offline.
+; No printer or printer offline!
+;
+MSG_UT_NoPaper
+Der er ikke mere papir i printeren.
+; Out of paper!
+;
+; Module MA - Procedures
+;
+MSG_MA_GetFolderPass
+Mappen '%s' er en beskyttet mappe.\n\
+Angiv kodeordet for at låse den op:
+; Folder '%s' is a protected folder.\n\
+; Please enter the password to unlock it:
+; FOLDER
+;
+MSG_MA_LatestVersion
+Seneste version: %s (%2ld.%02ld.%ld)\n\
+Denne version: %s (%s)\n\
+\n\
+%s
+; Latest version: %s (%2ld.%02ld.%ld)\n\
+; This version: %s (%s)\n\
+; \n\
+; %s
+; VERSION_NUMBER, DAY, MONTH, YEAR, VERSION_NUMBER, DATE, TEXT
+;
+MSG_MA_NewVersion
+\e8En ny version kan hentes på YAMs hjemmeside.
+; \e8A new version is available at the YAM homepage!
+;
+MSG_MA_NoNewVersion
+Du benytter allerede den nyeste version
+; You're already using the latest version.
+;
+MSG_MA_VersionReqOpt
+_Besøge hjemmeside|*_Afbryde
+; _Visit homepage|*_Cancel
+;
+MSG_MA_ReplyReq
+Den markerede besked har flere modtagere.\n\
+Vil du sende svaret...
+; The selected message has multiple recipients.\n\
+; Do you want to send the reply...
+;
+MSG_MA_ReplyReqOpt
+*...til\n\
+af_senderen|...til afsenderen og\n\
+a_lle modtagerne|...til\n\
+_modtagerne|_Afbryde
+; *...to the\n\
+; _sender|...to the sender and\n\
+; _all recipients|...to the\n\
+; _recipients|_Cancel
+;
+MSG_MA_CompareReq
+Afsenderens adresse (From) er <%s>, men\n\
+returadressen (Reply-To) er <%s>.\n\
+Hvilken adresse vil du bruge?
+; Sender address (From) is <%s>, but\n\
+; return address (Reply-To) is <%s>.\n\
+; Which address do you want to use?
+; ADDRESS, ADDRESS
+;
+MSG_MA_Compare3ReqOpt
+_From|*_Reply-To|_Begge|_Afbryde
+; _From|*_Reply-To|_Both|_Cancel
+;
+MSG_MA_Compare2ReqOpt
+_From|*_Reply-To|_Afbryde
+; _From|*_Reply-To|_Cancel
+;
+MSG_MA_AttachRemoved
+\n_Følgende bilag er blevet fjernet manuelt:_\n
+; \n\
+; _The following attachments have been removed manually:_\n
+;
+MSG_MA_ConfirmReq
+Godkend venligst...
+; Please confirm...
+;
+MSG_MA_ConfirmDel
+Godkend sletning.
+; Please confirm deletion.
+;
+MSG_MA_1Selected
+En besked er markeret.\n
+; One message selected.\n
+;
+MSG_MA_xSelected
+%lD beskeder er markeret.\n
+; %lD messages selected.\n
+; COUNT
+;
+MSG_MA_ConfirmFilter
+Er det i orden at filtrere alle beskeder\n\
+i mappen '%s'?
+; Is it okay to filter all the messages\n\
+; in the folder '%s'?
+; FOLDER
+;
+MSG_MA_FilterStats
+Filtrering udført:\n\
+%3ld beskeder undersøgt\n\
+%3ld videresendt\n\
+%3ld arkiveret\n\
+%3ld slettet
+; Filtering done:\n\
+; %3ld messages checked,\n\
+; %3ld forwarded,\n\
+; %3ld archived,\n\
+; %3ld deleted
+; COUNT, COUNT, COUNT, COUNT
+;
+MSG_MA_ExportAppendReq
+Filen som du vil gemme i, eksisterer allerede. Vil\n\
+du overskrive den eller tilføje beskederne til den?
+; The output file already exists. Do you want\n\
+; to overwrite it or append the messages?
+;
+MSG_MA_ExportAppendOpts
+*_Overskrive|_Tilføje|_Annullere
+; *_Overwrite|_Append|_Cancel
+;
+MSG_MA_MoveMsg
+Flytte besked(er)
+; Move message(s)
+;
+MSG_MA_MoveMsgReq
+Vælg en mappe at flytte til:
+; Please select a destination folder:
+;
+MSG_MA_MoveGad
+_Flytte
+; _Move
+;
+MSG_MA_CopyMsg
+Kopiere besked(er)
+; Copy message(s)
+;
+MSG_MA_CopyGad
+_Kopiere
+; Cop_y
+;
+MSG_MA_ChangeSubjReq
+Angiv et nyt emne:
+; Enter a new subject:
+;
+MSG_MA_All
+Alle
+; All
+;
+MSG_MA_Cancel
+\ebAnnullere
+; \ebCancel
+;
+MSG_MA_TitleStatus
+Status
+; Status
+;
+MSG_MA_Scripts
+ARexx-makroer
+; Scripts
+;
+MSG_MA_ExecuteScript
+Udføre ARexx-makro...
+; Execute script...
+;
+MSG_MA_CheckSingle
+Undersøge en konto
+; Check single account
+;
+MSG_MA_FolderInfo
+\ebAktuel mappe\en\n\
+Navn: %s\n\
+Katalog: %s\n\
+Størrelse: %lD tegn\n\
+Beskeder: %lD (%lD nye, %lD ulæste)
+; \ebCurrent folder\en\n\
+; Name: %s\n\
+; Path: %s\n\
+; Size: %lD bytes\n\
+; Messages: %lD (%lD new, %lD unread)
+; NAME, PATH, SIZE, COUNT, COUNT, COUNT
+;
+MSG_MA_MessageInfo
+\ebAktuel besked\en\n\
+Fra: %s <%s>\n\
+Til: %s <%s>\n\
+Emne: %s\n\
+Dato: %s\n\
+Filnavn: %s\n\
+Størrelse: %lD tegn
+; \ebCurrent message\en\n\
+; From: %s <%s>\n\
+; To: %s <%s>\n\
+; Subject: %s\n\
+; Date: %s\n\
+; Filename: %s\n\
+; Size: %lD bytes
+; NAME, ADDRESS, NAME, ADDRESS, SUBJECT, DATE, FILENAME, SIZE
+;
+MSG_MA_WinTitle
+Amiga YAM %s  -  Bruger: %s
+; Amiga YAM %s  -  User: %s
+; VERSION, NAME
+;
+MSG_MA_ToPrefix
+\ebTil: \en
+; \ebTo: \en
+;
+; Module MA - Window
+;
+MSG_MA_Incoming
+Indbakke
+; Incoming
+;
+MSG_MA_Outgoing
+Udbakke
+; Outgoing
+;
+MSG_MA_Sent
+Sendt
+; Sent
+;
+MSG_MA_Deleted
+Slettet
+; Deleted
+;
+MSG_MA_Archived
+Arkiveret
+; Archived
+;
+; Module MA - Toolbar
+;
+MSG_MA_TBRead
+_Læse
+; Rea_d
+;
+MSG_MA_TBEdit
+_Redig.
+; _Edit
+;
+MSG_MA_TBMove
+_Flytte
+; _Move
+;
+MSG_MA_TBDelete
+Sle_tte
+; De_lete
+;
+MSG_MA_TBGetAddr
+Not. a_dr.
+; Ge_tAdd
+;
+MSG_MA_TBWrite
+_Ny besk.
+; _New
+;
+MSG_MA_TBReply
+_Svare
+; _Reply
+;
+MSG_MA_TBForward
+_Videres.
+; For_ward
+;
+MSG_MA_TBGetMail
+_Hente
+; _Get
+;
+MSG_MA_TBSendAll
+S_ende
+; _Send
+;
+MSG_MA_TBFilter
+F_iltrere
+; F_ilter
+;
+MSG_MA_TBFind
+S_øge
+; _Find
+;
+MSG_MA_TBAddrBook
+_Adr.bog
+; _Addr
+;
+MSG_MA_TBConfig
+_Opsætn.
+; _Config
+;
+; Module MA - Menus
+;
+MSG_MA_Project
+Projekt
+; Project
+;
+MSG_MA_About
+Om...
+; About...
+; This is the title of the about window, not the menu item.
+;
+MSG_MA_AboutMUI
+Om MUI...
+; About MUI...
+;
+MSG_MA_CheckVersion
+Undersøge version
+; Check version
+; This is the title of the check version window, not the menu item.
+;
+MSG_MA_LastErrors
+Vise seneste fejlmeddelelse
+; Show last message
+;
+MSG_MA_Restart
+Genstarte
+; Restart
+;
+MSG_MA_Hide
+H\000Skjule
+; H\000Hide
+;
+MSG_MA_Quit
+Q\000Afslutte
+; Q\000Quit
+;
+MSG_MA_NewFolder
+Ny mappe...
+; New folder...
+; This is the title of the new folder window, not the menu item.
+;
+MSG_MA_NewSeparator
+Ny skillelinie...
+; New separator...
+;
+MSG_MA_SortOrder
+Rækkefølge
+; Order
+;
+MSG_MA_OSave
+Gemme
+; Save
+;
+MSG_MA_Reset
+Nulstille
+; Reset
+;
+MSG_MA_Select
+Vælge
+; Select
+;
+MSG_MA_SelectAll
+L\000Alle
+; L\000All
+;
+MSG_MA_SelectNone
+Ingen
+; None
+;
+MSG_MA_SelectToggle
+Skifte
+; Toggle
+;
+MSG_MA_MSearch
+F\000Søge...
+; F\000Search...
+;
+MSG_MA_MFilter
+I\000Filtrere
+; I\000Filter
+;
+MSG_MA_RemoveDeleted
+Z\000Fjerne slettede
+; Z\000Empty trash
+;
+MSG_MA_UpdateIndex
+U\000Opdatere indeks
+; U\000Update index
+;
+MSG_MA_FlushIndices
+Slette indekser
+; Flush indices
+;
+MSG_MA_ExportMessages
+Eksportere...
+; Export...
+;
+MSG_MA_ImportMessages
+Importere...
+; Import...
+;
+MSG_MA_MSendAll
+S\000Sende post fra udbakken
+; S\000Send queued mail
+;
+MSG_MA_Exchange
+X\000Udveksle post
+; X\000Exchange mail
+;
+MSG_MA_MGetMail
+G\000Hente ny post
+; G\000Get new mail
+;
+MSG_MA_MRead
+D\000Læse
+; D\000Read
+;
+MSG_MA_MEdit
+Redigere...
+; Edit
+;
+MSG_MA_MDelete
+Slette
+; Delete
+;
+MSG_MA_MMove
+Flytte...
+; Move...
+;
+MSG_MA_MCopy
+Kopiere...
+; Copy...
+;
+MSG_MA_Save
+Gemme...
+; Save...
+;
+MSG_MA_Crop
+Fjerne bilag
+; Crop
+;
+MSG_MA_MReply
+Svare...
+; Reply...
+;
+MSG_MA_MForward
+Videresende...
+; Forward...
+;
+MSG_MA_MBounce
+Omdirigere...
+; Bounce...
+;
+MSG_MA_MGetAddress
+Gemme adresse...
+; Save address...
+;
+MSG_MA_SetStatus
+Sætte status til
+; Set status to
+;
+MSG_MA_ToUnread
+[\000Ulæst
+; [\000Unread
+;
+MSG_MA_ToRead
+]\000Læst
+; ]\000Read
+;
+MSG_MA_ToHold
+{\000Tilbageholdt
+; {\000Hold
+;
+MSG_MA_ToQueued
+}\000I udbakken
+; }\000Queued
+;
+MSG_MA_ChangeSubj
+Ændre emne...
+; Change subject...
+;
+MSG_MA_MSend
+Sende
+; Send
+;
+MSG_MA_Settings
+Indstillinger
+; Settings
+;
+MSG_MA_MAddrBook
+Adressebog
+; Address Book...
+; This is the title of the address book window, not the menu item.
+;
+MSG_MA_MConfig
+Opsætning...
+; Configuration...
+; This is the title of the configuration window, not the menu item.
+;
+MSG_MA_MUsers
+Brugere...
+; Users...
+;
+; Module MA - Bubblehelp
+;
+MSG_HELP_MA_BT_READ
+Viser indholdet af\n\
+den markerede besked.
+; Display contents of\n\
+; selected message
+;
+MSG_HELP_MA_BT_EDIT
+Giver dig mulighed\n\
+for at redigere den\n\
+markerede besked.
+; Modify the\n\
+; selected message
+;
+MSG_HELP_MA_BT_MOVE
+Flytter de(n) markerede besked(er)\n\
+til en anden mappe.
+; Move selected message(s)\n\
+; to another folder
+;
+MSG_HELP_MA_BT_DELETE
+Sletter de(n) markerede besked(er).
+; Delete selected message(s)
+;
+MSG_HELP_MA_BT_GETADDRESS
+Gemmer afsenderens adresse\n\
+i din adressebog.
+; Save sender's address\n\
+; in your address book
+;
+MSG_HELP_MA_BT_WRITE
+Opretter en ny besked.
+; Compose a new message
+;
+MSG_HELP_MA_BT_REPLY
+Svarer på den markerede besked.
+; Reply to selected message
+;
+MSG_HELP_MA_BT_FORWARD
+Videresender den markerede besked\n\
+til en anden modtager.
+; Forward selected message\n\
+; to another recipient
+;
+MSG_HELP_MA_BT_POPNOW
+Kobler op til postserveren\n\
+og henter nye beskeder.
+; Connect to the mail server\n\
+; and download new messages
+;
+MSG_HELP_MA_BT_SENDALL
+Sender beskeder fra\n\
+udbakken som er klar.
+; Send queued messages\n\
+; in the outgoing folder
+;
+MSG_HELP_MA_BT_FILTER
+Anvender filtrene på alle\n\
+beskeder i denne mappe.
+; Apply filters to all\n\
+; messages in this folder
+;
+MSG_HELP_MA_BT_SEARCH
+Søger i dine postmapper.
+; Search your mail folders
+;
+MSG_HELP_MA_BT_ABOOK
+Åbner adressebogen.
+; Open the address book
+;
+MSG_HELP_MA_BT_CONFIG
+Giver dig mulighed for at\n\
+ændre i YAMs opsætning.
+; Modify YAM's preferences
+;
+;
+; Module CO - Procedures
+;
+MSG_CO_SelectDir
+Vælg et katalog til den nye mappe:
+; Please select a directory for the new folder:
+;
+MSG_CO_ChangeFolderPass
+Angiv et nyt kodeord til denne mappe:
+; Enter a new password for this folder:
+;
+MSG_CO_RetypePass
+Indtast kodeordet igen:
+; Please re-type the password:
+;
+MSG_CO_ConfirmDelete
+Alle beskeder i denne mappe vil gå tabt.\n\
+Vil du virkelig slette den?
+; All messages in this folder will be lost!\n\
+; Do you really want to delete it?
+;
+MSG_CO_InvalidConf
+Ugyldige indstillinger (manglende værtsnavn\n\
+eller e-postadresse)\n\
+\n\
+Udfyld disse felter og prøv igen.
+; Invalid configuration (missing hostname\n\
+;  or email address)\n\
+; \n\
+; Please fill in these fields and try again!
+;
+MSG_CO_ImportMIMEReq
+Importere indstillinger fra...
+; Import settings from...
+;
+MSG_CO_ImportMIMEGads
+*_MIME.prefs|mai_lcap|m_ime.types|_Annullere
+; *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
+;
+MSG_CO_NewIntroDef
+Hej,\\\\n
+; Hello,\\\\n
+;
+MSG_CO_AltRepIntroDef
+
+; 
+;
+MSG_CO_AltRepPatternDef
+
+; 
+;
+MSG_CO_ForwardIntroDef
+*** Start på videresendt besked ***\\\\n\
+\\\\n\
+Dato: %d %t\\\\n\
+Fra: %n <%e>\\\\n\
+Emne: %s\\\\n\
+\\\\n\
+--- Videresendt besked følger ---\\\\n\
+\\\\n
+; *** Begin of forwarded message ***\\\\n\
+; \\\\n\
+; Date: %d %t\\\\n\
+; From: %n <%e>\\\\n\
+; Subject: %s\\\\n\
+; \\\\n\
+; --- Forwarded message follows ---\\\\n\
+; \\\\n
+;
+MSG_CO_ForwardFinishDef
+*** Slut på videresendt besked ***\\\\n
+; *** End of forwarded message ***\\\\n
+;
+MSG_CO_GreetingsDef
+Venlig hilsen
+; Kind regards
+;
+MSG_CO_AltRepHelloDef
+
+; 
+;
+MSG_CO_AltRepByeDef
+
+; 
+;
+MSG_CO_MLRepHelloDef
+
+; 
+;
+MSG_CO_MLRepIntroDef
+Den %d skrev %n:\\\\n
+; On %d, %n wrote:\\\\n
+;
+MSG_CO_MLRepByeDef
+Hilsen
+; Regards
+;
+MSG_CO_LineBreak
+\\n  Linieskift
+; \\\\n\
+;   Line break
+;
+MSG_CO_SenderName
+%n  Oprindelig afsender: navn
+; %n  Original sender: Name
+;
+MSG_CO_SenderFirstname
+%f  Oprindelig afsender: fornavn
+; %f  Original sender: First name
+;
+MSG_CO_SenderAddress
+%e  Oprindelig afsender: adresse
+; %e  Original sender: Address
+;
+MSG_CO_SenderSubject
+%s  Oprindelig besked: emne
+; %s  Original message: Subject
+;
+MSG_CO_SenderDate
+%d  Oprindelig besked: dato
+; %d  Original message: Date
+;
+MSG_CO_SenderTime
+%t  Oprindelig besked: klokkeslæt
+; %t  Original message: Time
+;
+MSG_CO_SenderDOW
+%w  Oprindelig besked: ugedag
+; %w  Original message: Day of week
+;
+MSG_CO_SenderMsgID
+%m  Oprindelig besked: besked-ID
+; %m  Original message: Message ID
+;
+MSG_CO_SenderInitials
+%i  Oprindelig afsender: initialer
+; %i  Original sender: Initials
+;
+MSG_CO_Sender2Initials
+%j  Oprindelig afsender: to initialer
+; %j  Original sender: Two initials
+;
+MSG_CO_RecptName
+%r  Modtager: navn
+; %r  Recipient: Name
+;
+MSG_CO_RecptFirstname
+%v  Modtager: fornavn
+; %v  Recipient: First name
+;
+MSG_CO_RecptAddress
+%a  Modtager: adresse
+; %a  Recipient: Address
+;
+MSG_CO_ORecptName
+%r  Oprindelig modtager: navn
+; %r  Original recipient: Name
+;
+MSG_CO_ORecptFirstname
+%v  Oprindelig modtager: fornavn
+; %v  Original recipient: First name
+;
+MSG_CO_ORecptAddress
+%a  Oprindelig modtager: adresse
+; %a  Original recipient: Address
+;
+MSG_CO_CompleteHeader
+%h  Hele beskedhovedet
+; %h  Complete header
+;
+MSG_CO_ArchiveName
+%a  Arkivets filnavn
+; %a  Filename of archive
+;
+MSG_CO_ArchiveFiles
+%f  Filer som skal arkiveres
+; %f  Files to be archived
+;
+MSG_CO_ArchiveFilelist
+%l  Liste som indeholder filnavne
+; %l  List containing filenames
+;
+; Module CO - Window
+;
+MSG_CO_CrdFirstSteps
+Første trin
+; First steps
+;
+MSG_CO_CrdTCPIP
+TCP/IP
+; TCP/IP
+;
+MSG_CO_CrdNewMail
+Ny post
+; New mail
+;
+MSG_CO_CrdFilters
+Filtre
+; Filters
+;
+MSG_CO_CrdRead
+Læsning
+; Read
+;
+MSG_CO_CrdWrite
+Skrivning
+; Write
+;
+MSG_CO_CrdReply
+Besvarelse
+; Reply
+;
+MSG_CO_CrdSignature
+Signatur
+; Signature
+;
+MSG_CO_CrdLists
+Lister
+; Lists
+;
+MSG_CO_CrdMIME
+MIME
+; MIME
+;
+MSG_CO_CrdSecurity
+Sikkerhed
+; Security
+;
+MSG_CO_CrdMixed
+Diverse
+; Miscellaneous
+;
+MSG_CO_CrdScripts
+ARexx
+; ARexx
+;
+MSG_CO_CrdStartQuit
+Start/afslutning
+; Start/Quit
+;
+MSG_CO_CrdABook
+Adressebog
+; Address book
+;
+MSG_CO_Save
+_Gemme
+; _Save
+;
+MSG_CO_Use
+_Benytte
+; _Use
+;
+MSG_CO_Cancel
+_Fortryde
+; _Cancel
+;
+MSG_CO_TZoneM12
+GMT-12  Kwajalein-øerne
+; GMT-12  Kwajalein Islands
+;
+MSG_CO_TZoneM11
+GMT-11  Midway-øerne, Samoa
+; GMT-11  Midway Islands, Samoa
+;
+MSG_CO_TZoneM10
+GMT-10  Honolulu, Tahiti
+; GMT-10  Honolulu, Tahiti
+;
+MSG_CO_TZoneM9
+GMT-9   Anchorage
+; GMT-9   Anchorage
+;
+MSG_CO_TZoneM8
+GMT-8   Los Angeles, San Francisco (PDT)
+; GMT-8   Los Angeles, San Francisco (PDT)
+;
+MSG_CO_TZoneM7
+GMT-7   Calgary, Denver, Phoenix (MDT)
+; GMT-7   Calgary, Denver, Phoenix (MDT)
+;
+MSG_CO_TZoneM6
+GMT-6   Chicago, Dallas, Mexico City (CMT)
+; GMT-6   Chicago, Dallas, Mexico City (CMT)
+;
+MSG_CO_TZoneM5
+GMT-5   Lima, Miami, Montreal, New York (EST)
+; GMT-5   Lima, Miami, Montreal, New York (EST)
+;
+MSG_CO_TZoneM4
+GMT-4   Caracas, Santiago, Thule (ADT)
+; GMT-4   Caracas, Santiago, Thule (ADT)
+;
+MSG_CO_TZoneM3
+GMT-3   Buenos Aires, Rio de Janeiro
+; GMT-3   Buenos Aires, Rio de Janeiro
+;
+MSG_CO_TZoneM2
+GMT-2   Østbrasilien
+; GMT-2   Brazil East
+;
+MSG_CO_TZoneM1
+GMT-1   Azorerne
+; GMT-1   Azores
+;
+MSG_CO_TZone0
+GMT     Dublin, Lissabon, London (GMT)
+; GMT     Dublin, Lisbon, London (GMT)
+;
+MSG_CO_TZone1
+GMT+1   Berlin, Paris, Madrid, Oslo (MET)
+; GMT+1   Berlin, Paris, Madrid, Oslo (MET)
+;
+MSG_CO_TZone2
+GMT+2   Athen, Cairo, Helsinki (EET)
+; GMT+2   Athens, Cairo, Helsinki (EET)
+;
+MSG_CO_TZone3
+GMT+3   Baghdad, Kuwait, Moskva, Nairobi
+; GMT+3   Baghdad, Kuwait, Moscow, Nairobi
+;
+MSG_CO_TZone4
+GMT+4   Dubai, Port Louis, Victoria
+; GMT+4   Dubai, Port Louis, Victoria
+;
+MSG_CO_TZone5
+GMT+5   Islamabad, Karachi
+; GMT+5   Islamabad, Karachi
+;
+MSG_CO_TZone6
+GMT+6   Alma-Ata, Dacca, Tashkent
+; GMT+6   Alma-Ata, Dhaka, Tashkent
+;
+MSG_CO_TZone7
+GMT+7   Bangkok, Hanoi, Phnom Penh
+; GMT+7   Bangkok, Hanoi, Phnom Penh
+;
+MSG_CO_TZone8
+GMT+8   Hong Kong, Shanghai, Singapore (PST)
+; GMT+8   Hong Kong, Shanghai, Singapore (PST)
+;
+MSG_CO_TZone9
+GMT+9   Osaka, Seoul, Tokyo
+; GMT+9   Osaka, Seoul, Tokyo
+;
+MSG_CO_TZone10
+GMT+10  Melbourne, Sydney, Vladivostok
+; GMT+10  Melbourne, Sydney, Vladivostok
+;
+MSG_CO_TZone11
+GMT+11  Ny Caledonien
+; GMT+11  New Caldonia
+;
+MSG_CO_TZone12
+GMT+12  Auckland, Wellington
+; GMT+12  Auckland, Wellington
+;
+MSG_CO_MinConfig
+Grundopsætning
+; Minimal configuration
+;
+MSG_CO_RealName
+_Rigtigt navn
+; _Real name
+;
+MSG_CO_EmailAddress
+_E-postadresse
+; _Email address
+;
+MSG_CO_POPServer
+_POP3-server
+; POP_3 server
+;
+MSG_CO_Password
+K_odeord
+; _Password
+;
+MSG_CO_TimeZone
+Tidszone
+; Time zone
+;
+MSG_CO_DaylightSaving
+_Justere for sommertid
+; _Add adjustment for daylight saving time
+;
+MSG_CO_SendMail
+Postafsendelse (SMTP)
+; Send mail (SMTP)
+;
+MSG_CO_Server
+Server
+; Server
+;
+MSG_CO_Domain
+_Domæne
+; Do_main
+;
+MSG_CO_Allow8bit
+SMTP-server tillader _8 bit-tegn
+; SMTP server allows _8bit
+;
+MSG_CO_ReceiveMail
+Postmodtagelse (POP3)
+; Receive mail (POP3)
+;
+MSG_CO_POPUserID
+B_ruger-ID
+; User _ID
+;
+MSG_CO_POPActive
+Akt_iv
+; _Active
+;
+MSG_CO_DeleteServerMail
+Sl_ette post på server
+; Delete mail _on server
+;
+MSG_CO_UseAPOP
+_Logge ind med APOP
+; _Login using APOP
+;
+MSG_CO_PSNever
+aldrig
+; never
+;
+MSG_CO_PSLarge
+store beskeder
+; large messages
+;
+MSG_CO_PSAlways
+altid
+; always
+;
+MSG_CO_PSAlwaysFast
+altid, kun størrelser
+; always, only sizes
+;
+MSG_CO_TWNever
+altid skjule
+; hide always
+;
+MSG_CO_TWAuto
+automatisk
+; automatic
+;
+MSG_CO_TWAlways
+altid vise
+; show always
+;
+MSG_CO_Download
+Hente
+; Download
+;
+MSG_CO_AvoidDuplicates
+_Undgå dubletter
+; _Avoid duplicates
+;
+MSG_CO_TransferWin
+_Overførselsvindue
+; _Transfer window
+;
+MSG_CO_PreSelect
+Vise _valgliste
+; _Pre-selection
+;
+MSG_CO_UpdateStatus
+O_pdatere beskedstatus
+; Update m_essage status
+;
+MSG_CO_WarnSize1
+_Stor: over
+; Size _limit
+;
+MSG_CO_WarnSize2
+kB
+; kB
+;
+MSG_CO_AutoOperation
+Automatisk funktion
+; Automatic operation
+;
+MSG_CO_CheckMail
+_Tjekke for ny post hvert
+; Chec_k for new mail every
+;
+MSG_CO_Minutes
+minut
+; minutes
+;
+MSG_CO_DownloadLarge
+_Hente store beskeder
+; _Download large messages
+;
+MSG_CO_Notification
+Signalering
+; Notification
+;
+MSG_CO_NotiReq
+_Dialogboks
+; _Requester
+;
+MSG_CO_NotiSound
+_Lydklip
+; S_ound
+;
+MSG_CO_NotiCommand
+_Kommando
+; Co_mmand
+;
+MSG_CO_Name
+_Navn
+; N_ame
+;
+MSG_CO_CTNone
+ikke kombinere
+; don't combine
+;
+MSG_CO_CTAnd
+og
+; and
+;
+MSG_CO_CTOr
+eller
+; or
+;
+MSG_CO_CTXor
+eksklusivt eller
+; exclusive or
+;
+MSG_CO_Comparison
+Sammenligning
+; Comparison
+;
+MSG_CO_Action
+Handling
+; Action
+;
+MSG_CO_Remote
+Filtrere _inden hentning
+; Remote _filter
+;
+MSG_CO_ApplyToNew
+Filtrere n_y post
+; A_pply to new mail
+;
+MSG_CO_ApplyToSent
+Filtrere sen_dt post
+; Apply to sent _mail
+;
+MSG_CO_ApplyOnReq
+Kun filtrere på k_ommando
+; Apply on _request
+;
+MSG_CO_ActionBounce
+_Omdirigere
+; _Bounce
+;
+MSG_CO_ActionForward
+V_ideresende
+; _Forward
+;
+MSG_CO_ActionReply
+Sv_are
+; _Reply
+;
+MSG_CO_ActionExecute
+_Udføre
+; _Execute
+;
+MSG_CO_ActionPlay
+S_pille lydklip
+; _Play sound
+;
+MSG_CO_ActionMove
+Fl_ytte
+; _Move
+;
+MSG_CO_ActionDelete
+S_lette
+; De_lete
+;
+MSG_CO_ActionSkip
+U_ndlade hentning
+; D_on't download
+;
+MSG_CO_HeadNone
+intet
+; none
+;
+MSG_CO_HeadShort
+udvalgte felter
+; selected
+;
+MSG_CO_HeadFull
+alle felter
+; full
+;
+MSG_CO_SINone
+ingen
+; none
+;
+MSG_CO_SIFields
+kun oplysninger
+; data only
+;
+MSG_CO_SIAll
+oplysninger og billede
+; data and image
+;
+MSG_CO_SLBlank
+tom linie
+; blank line
+;
+MSG_CO_SLDash
+to streger
+; two dashes
+;
+MSG_CO_SLBar
+skillelinie
+; separator bar
+;
+MSG_CO_SLSkip
+ingen signatur
+; no signature
+;
+MSG_CO_HeaderLayout
+Beskedhoved-layout
+; Header layout
+;
+MSG_CO_BodyLayout
+Beskedkrop-layout
+; Message body layout
+;
+MSG_CO_OtherOptions
+Andre valgmuligheder
+; Other options
+;
+MSG_CO_WrapHeader
+_Ombryde beskedhoved
+; _Wrap header
+;
+MSG_CO_OldQuotes
+Ga_mle citater
+; Old _quotes
+;
+MSG_CO_UseTextstyles
+Benytte _skriftvarianter
+; Use te_xtstyles
+;
+MSG_CO_Header
+B_eskedhoved
+; _Header
+;
+MSG_CO_SenderInfo
+Opl. om _afs.
+; Sender _info
+;
+MSG_CO_SignatureSep
+S_ign.adsk.
+; Separate si_g.
+;
+MSG_CO_ColoredText
+Far_vet tekst
+; C_olored text
+;
+MSG_CO_MultiReadWin
+F_lere vinduer
+; _Multiple windows
+;
+MSG_CO_CharsetTrans
+_Tegnsætskonv.
+; Charset _translation
+;
+MSG_CO_DisplayAll
+Vise al te_kst
+; Display _all texts
+;
+MSG_CO_FixedFontEdit
+Be_n. skriftsn. m. fast br.
+; Use _fixed font
+;
+MSG_CO_MimeViewers
+MIME-fremvisere
+; MIME viewers
+;
+MSG_CO_MimeType
+Bilagst_ype
+; Attachment _type
+;
+MSG_CO_MimeCmd
+F_remviser
+; _Viewer
+;
+MSG_CO_Extension
+F_ilnavnsendelser
+; E_xtension
+;
+MSG_CO_DefaultViewer
+St_andardfremviser
+; De_fault viewer
+;
+MSG_CO_IdentifyBin
+G_enkende binære bilag
+; _Identify binary attachments
+;
+MSG_CO_MessageHeader
+Beskedhoved
+; Message header
+;
+MSG_CO_ReplyTo
+_Returadresse
+; _Reply to
+;
+MSG_CO_Organization
+Orga_nisation
+; _Organization
+;
+MSG_CO_ExtraHeaders
+E_kstra beskedhovedfelter
+; E_xtra headers
+;
+MSG_CO_MessageBody
+Beskedkrop
+; Message body
+;
+MSG_CO_Welcome
+_Indledende tekst
+; Welcome _phrase
+;
+MSG_CO_Greetings
+_Afsluttende tekst
+; Closing p_hrase
+;
+MSG_CO_Editor
+Redigering
+; Editor
+;
+MSG_CO_WordWrap
+_Ombrydning
+; _Word wrap
+;
+MSG_CO_EWOff
+slået fra
+; off
+;
+MSG_CO_EWAsYouType
+mens du skriver
+; as you type
+;
+MSG_CO_EWBeforeSend
+før afsendelse
+; before sending
+;
+MSG_CO_ExternalEditor
+_Eksternt program
+; _External editor
+;
+MSG_CO_Launch
+_Starte straks
+; _Launch immediately
+;
+MSG_CO_PhraseOpen
+Hilsen
+; Open
+;
+MSG_CO_PhraseIntro
+Indledning
+; Intro
+;
+MSG_CO_PhraseClose
+Afslutning
+; Close
+;
+MSG_CO_Forwarding
+Videresendelse
+; Forwarding
+;
+MSG_CO_FwdInit
+_Indledende tekst
+; _Initial phrase
+;
+MSG_CO_FwdFinish
+_Afsluttende tekst
+; _Terminating phrase
+;
+MSG_CO_Replying
+Besvarelse
+; Replying
+;
+MSG_CO_RepInit
+_Normale svartekster
+; Default _reply phrase
+;
+MSG_CO_AltRepInit
+A_lternative svartekster
+; _Alternative reply phrase
+;
+MSG_CO_AltRepPat
+Benytte til disse _domæner
+; Use with these _domains
+;
+MSG_CO_MLRepInit
+_Postliste-svartekster
+; _Mailing list reply phrase
+;
+MSG_CO_QuoteMail
+Markere _citater med
+; _Quote message using
+;
+MSG_CO_QuoteEmpty
+Citere t_omme linier
+; Quote _empty lines
+;
+MSG_CO_VerifyAddress
+T_jekke modtageradresse
+; _Verify recipient address
+;
+MSG_CO_StripSignature
+_Udelade signatur
+; Stri_p signature
+;
+MSG_CO_DefSig
+Standardsignatur
+; Default signature
+;
+MSG_CO_AltSig1
+Alt. signatur 1
+; Alt. signature #1
+;
+MSG_CO_AltSig2
+Alt. signatur 2
+; Alt. signature #2
+;
+MSG_CO_Signature
+Signatur
+; Signature
+;
+MSG_CO_UseSig
+Benytte _signatur
+; Use s_ignature
+;
+MSG_CO_EditSig
+_Redigere i eksternt program
+; _Edit in external editor
+;
+MSG_CO_InsertTag
+Indsætte _tilfældigt guldkorn
+; Insert _random tagline
+;
+MSG_CO_InsertENV
+Indsætte _ENV:Signature
+; Insert E_NV:Signature
+;
+MSG_CO_Taglines
+Guldkorn
+; Taglines
+;
+MSG_CO_TaglineFile
+Gu_ldkornsfil
+; Tagline _file
+;
+MSG_CO_TaglineSep
+Guldk_ornsadskillelse
+; T_agline separator
+;
+MSG_CO_FixedFontList
+Benytte skriftsnit med f_ast bredde
+; Use _fixed font
+;
+MSG_CO_SwatchBeat
+Klokkeslæt i _Swatch-slag
+; Time in Swatch _Beats
+;
+MSG_CO_LogNone
+ingen
+; none
+;
+MSG_CO_LogNormal
+normal
+; normal
+;
+MSG_CO_LogVerbose
+udvidet
+; verbose
+;
+MSG_CO_PGPExe
+Sti til _PGP
+; P_GP's directory
+;
+MSG_CO_PGPKey
+Din nøgle-_ID til PGP
+; Your PGP key _ID
+;
+MSG_CO_EncryptToSelf
+Kr_yptere også til dig selv
+; _Encrypt to self
+;
+MSG_CO_AnonMail
+Anonym post
+; Anonymous mail
+;
+MSG_CO_ReMailer
+_Omforsendelsesserver
+; _Re-Mailer
+;
+MSG_CO_ReMailerLine
+Bes_kedhovedfelt
+; _Header field
+;
+MSG_CO_Logfiles
+Logfiler
+; Logfiles
+;
+MSG_CO_LogPath
+_Sti
+; _Path
+;
+MSG_CO_LogSplit
+Op_dele logfil
+; Split _logfile
+;
+MSG_CO_LogMode
+_Modus
+; _Mode
+;
+MSG_CO_LogAllEvents
+_Logge alle hændelser
+; Log _all events
+;
+MSG_CO_OnStartup
+Ved programstart
+; On program startup
+;
+MSG_CO_LoadAll
+Indlæse alle mapper
+; Load all folders
+;
+MSG_CO_MarkNew
+Markere ny post som ulæst
+; Mark new mail as unread
+;
+MSG_CO_SendStart
+Sende post i udbakken
+; Send mail in outgoing queue
+;
+MSG_CO_PopStart
+Hente ny post
+; Download new mail
+;
+MSG_CO_CheckDOB
+Tjekke fødselsdage
+; Check birthdates
+;
+MSG_CO_OnTermination
+Ved programafslutning
+; On program termination
+;
+MSG_CO_DeleteOld
+Slette gammel post
+; Delete old mail
+;
+MSG_CO_RemoveDel
+Fjerne slettet post
+; Remove deleted mail
+;
+MSG_CO_ATABnever
+aldrig
+; never
+;
+MSG_CO_ATABask
+bede om godkendelse først
+; ask before
+;
+MSG_CO_ATABinfoask
+hvis oplysninger sendt med; spørge
+; if info available; ask
+;
+MSG_CO_ATABinfo
+hvis oplysninger sendt med
+; if info available
+;
+MSG_CO_ATABalways
+altid
+; always
+;
+MSG_CO_InfoExc
+Udveksling af personoplysninger
+; Personal data exchange
+;
+MSG_CO_Gallery
+Gemme b_illeder i
+; Save _photos in
+;
+MSG_CO_MyURL
+_URL til dit billede
+; UR_L of your picture
+;
+MSG_CO_AddToAddrbook
+G_emme afsenderens adresse
+; Sa_ve sender's address
+;
+MSG_CO_ProxyServer
+_HTTP-proxyserver
+; _HTTP Proxy server
+;
+MSG_CO_NewGroup
+G_ruppe til nye poster
+; _Group for new entries
+;
+MSG_CO_AddInfo
+_Tilføje personoplysninger
+; _Add personal info
+;
+MSG_CO_Paths
+Stier
+; Paths
+;
+MSG_CO_Detach
+Gemme af_kodede filer i
+; D_ecode files to
+;
+MSG_CO_Attach
+_Vedhæfte filer fra
+; _Attach files from
+;
+MSG_CO_TempDir
+Katalog til _midlertidige filer
+; Directory for _tempfiles
+;
+MSG_CO_AppIcon
+AppIkon til postkasse-status
+; Mailbox status AppIcon
+;
+MSG_CO_PositionX
+_X-koordinat
+; Position _X
+;
+MSG_CO_CloseGadget
+_Lukkeknap ikonificerer program
+; Close_gadget iconifies program
+;
+MSG_CO_SaveDelete
+Gemning og sletning af beskeder
+; Save/delete messages
+;
+MSG_CO_ConfirmDelPart1
+G_odkende sletning af
+; Confirm _deletion of
+;
+MSG_CO_ConfirmDelPart2
+eller flere beskeder
+; or more messages
+;
+MSG_CO_Remove
+_Slette beskeder straks
+; _Remove messages immediately
+;
+MSG_CO_SaveSent
+G_emme sendte beskeder
+; Sa_ve sent messages
+;
+MSG_CO_DispIgnore
+Ignorere
+; Ignore
+;
+MSG_CO_DispDeny
+Automatisk nægte
+; Autodeny
+;
+MSG_CO_DispAsk
+Spørge bruger
+; Ask user
+;
+MSG_CO_DispAccept
+Acceptere
+; Accept
+;
+MSG_CO_MDN
+Beskedsporing
+; Message tracking
+;
+MSG_CO_SendAtOnce
+Sende str_aks
+; Send at _once
+;
+MSG_CO_XPK
+XPK- og LhA-indstillinger
+; XPK/LhA settings
+;
+MSG_CO_XPKPack
+_Pakning med
+; _Packer
+;
+MSG_CO_XPKPackEnc
+_Kodet pakning med
+; Pac_k/protect
+;
+MSG_CO_Archiver
+A_rkiveringsprogram
+; _Archiver
+;
+MSG_CO_ScriptMenu
+Punkt %ld i menuen 'Makroer'
+; 'Scripts' menu entry %ld
+; COUNT
+;
+MSG_CO_ScriptStartup
+Programstart
+; Program startup
+;
+MSG_CO_ScriptTerminate
+Programafslutning
+; Program termination
+;
+MSG_CO_ScriptPreGetMail
+Før hentning af post
+; Before getting mail
+;
+MSG_CO_ScriptPostGetMail
+Efter hentning af post
+; After getting mail
+;
+MSG_CO_ScriptNewMsg
+For hver ny besked
+; With each new message
+;
+MSG_CO_ScriptPreSendMail
+Før afsendelse af post
+; Before sending mail
+;
+MSG_CO_ScriptPostSendMail
+Efter afsendelse af post
+; After sending mail
+;
+MSG_CO_ScriptReadMsg
+Ved læsning af besked
+; When reading a message
+;
+MSG_CO_ScriptPreWriteMsg
+Før skrivning af besked
+; Before writing a message
+;
+MSG_CO_ScriptPostWriteMsg
+Efter skrivning af besked
+; After writing a message
+;
+MSG_CO_ScriptClickURL
+Ved dobbeltklik på en URL
+; When double-clicking an URL
+;
+MSG_CO_Script
+_Makro
+; Sc_ript
+;
+MSG_CO_OpenConsole
+_Åbne konsolvindue
+; _Open console window
+;
+MSG_CO_WaitTerm
+_Vente på afslutning
+; _Wait for termination
+;
+; Module CO - Menus
+;
+MSG_CO_Open
+Åbne...
+; Open...
+;
+MSG_CO_SaveAs
+Gemme som...
+; Save as...
+;
+MSG_CO_Edit
+Redigering
+; Edit
+;
+MSG_CO_ResetDefaults
+Sætte til standardværdier
+; Reset to defaults
+;
+MSG_CO_ResetAll
+Nulstille alle indstillinger
+; Reset all settings
+;
+MSG_CO_LastSaved
+Sidst gemte
+; Last saved
+;
+MSG_CO_Restore
+Genskabe
+; Restore
+;
+MSG_CO_Extras
+Ekstra
+; Extras
+;
+MSG_CO_ScanForFolders
+Søge efter mapper
+; Scan for folders
+;
+MSG_CO_ImportMIME
+Importere MIME-fremvisere og -typer...
+; Import MIME viewers & types...
+;
+; Module CO - Bubblehelp
+;
+MSG_HELP_CO_ST_REALNAME
+Dit fulde navn\n\
+(fornavn efternavn)
+; Your full name\n\
+; (first name last name)
+;
+MSG_HELP_CO_ST_EMAIL
+Din e-postadresse
+; Your email address.
+;
+MSG_HELP_CO_ST_POPHOST
+Adressen på POP3-serveren hvorfra du henter post.\n\
+Hvis du lader dette felt stå tomt,\n\
+benyttes SMTP-serverens adresse.
+; Address of the POP3 server to receive mail.\n\
+; If you leave this field empty, the address\n\
+;  of the SMTP server is used.
+;
+MSG_HELP_CO_ST_PASSWD
+Kodeord for at tilgå\n\
+postserveren
+; Password to access\n\
+; the mail server
+;
+MSG_HELP_CO_CY_TZONE
+Vælg tidszonen hvori du\n\
+befinder dig.
+; Select the timezone of\n\
+; your current location
+;
+MSG_HELP_CO_CH_DLSAVING
+Justerer tidszonen\n\
+under sommertid.
+; Adjust the timezone during daylight\n\
+; saving time (summer time)
+;
+MSG_HELP_CO_ST_SMTPHOST
+Adressen på SMTP-serveren hvortil du sender post.\n\
+Hvis du lader dette felt stå tomt,\n\
+benyttes POP3-serverens adresse.
+; Address of the SMTP server to send mail.\n\
+; If you leave this field empty,\n\
+; the address of the POP3 server is used.
+;
+MSG_HELP_CO_ST_DOMAIN
+Værtsnavnet på din Amiga. Ret dette felt\n\
+hvis HELO-kommandoen mislykkes.
+; The hostname of your Amiga. Change this\n\
+; field if the HELO commands fails.
+;
+MSG_HELP_CO_CH_SMTP8BIT
+Undlader at konvertere beskeder til 7 bit-tegn\n\
+før afsendelse. Brug kun denne indstilling hvis\n\
+din SMTP-server understøtter 8 bit-overførsler.\n\
+Ellers vil dine beskeder blive ødelagt.
+; Don't convert messages to 7bit for transfer.\n\
+; Only use this option if your\n\
+; SMTP server supports 8bit transfers!\n\
+; Otherwise your messages will get corrupted.
+;
+MSG_HELP_CO_LV_POP3
+Liste over POP3-servere
+; List of POP3 hosts
+;
+MSG_HELP_CO_BT_PADD
+Føjer en ny POP3-server til listen.
+; Add a new POP3 host to the list
+;
+MSG_HELP_CO_BT_PDEL
+Fjerner den markerede POP3-server fra listen.
+; Remove selected POP3 host from the list
+;
+MSG_HELP_CO_ST_POPUSERID
+Brugernavn for at logge ind på POP3-serveren.\n\
+Hvis du lader dette felt stå tomt,\n\
+benyttes bruger-ID'en fra din e-postadresse.
+; User name to log into the POP3 server.\n\
+; If you leave this field empty, the user-ID\n\
+; will be extracted from your email address.
+;
+MSG_HELP_CO_CH_DELETE
+Sletter beskeder fra\n\
+postserveren efter\n\
+hentning.
+; Delete messages from\n\
+; mail server after\n\
+; downloading
+;
+MSG_HELP_CO_CH_USEAPOP
+Logger ind med\n\
+APOP-protokollen.
+; Login using APOP authentication
+;
+MSG_HELP_CO_CH_POPENABLED
+Forbinder til denne server\n\
+for at se efter ny post.
+; Connect to this server\n\
+; when checking for new mail
+;
+MSG_HELP_CO_CH_AVOIDDUP
+Hvis du ikke sletter gammel post\n\
+på serveren, så brug denne indstilling for\n\
+at undgå flere kopier af beskederne.
+; If you don't delete old mail\n\
+; on the server, use this option to\n\
+; avoid duplicate messages.
+;
+MSG_HELP_CO_CH_TRANSWIN
+Viser et statusvindue under postoverførsel.
+; Show progress window during mail transfers
+;
+MSG_HELP_CO_CY_MSGSELECT
+Slå denne indstilling til for at se indholdet af POP3-postkassen\n\
+og give mulighed for at vælge hvilke beskeder der skal hentes.
+; Enable this option to show the contents of the POP3 mailbox\n\
+; and allow selection of the messages to be downloaded
+;
+MSG_HELP_CO_CH_UPDSTAT
+Markerer nye beskeder i indbakken som\n\
+ulæste før der hentes ny post.
+; Mark new messages in the incoming folder\n\
+; as unread before downloading new mail
+;
+MSG_HELP_CO_ST_WARNSIZE
+Beskeder som overskrider denne\n\
+grænse, betragtes som 'store'.
+; Messages which exceed this\n\
+; threshold rank as 'large'
+;
+MSG_HELP_CO_ST_INTERVAL
+Hvor ofte vil du have undersøgt om der er kommet post?\n\
+(Indtast 0 eller lad feltet stå tomt\n\
+for at slå denne funktion fra.)
+; How frequently do you want to check for new mail?\n\
+; (enter 0 or no value to disable this feature)?
+;
+MSG_HELP_CO_CH_DLLARGE
+Når der automatisk ses efter ny post,\n\
+hentes store beskeder selv om de er\n\
+større end angivet ovenfor.
+; When automatically checking for new mail,\n\
+; download large messages even if they are\n\
+; larger than the size specified above
+;
+MSG_HELP_CO_CH_NOTIREQ
+Viser en dialogboks\n\
+når du får ny post.
+; Show a requester\n\
+; when you get new mail
+;
+MSG_HELP_CO_ST_NOTICMD
+Programmet du vil have\n\
+udført, når du får ny post.
+; The program you want to\n\
+; execute when you get new mail
+;
+MSG_HELP_CO_ST_NOTISOUND
+Lydfilen du vil have afspillet,\n\
+når du får ny post.
+; The sound file you want to play\n\
+; when you get new mail
+;
+MSG_HELP_CO_LV_RULES
+Liste over filtre
+; List of filters
+;
+MSG_HELP_CO_ST_RNAME
+Filternavn
+; Filter name
+;
+MSG_HELP_CO_CH_REMOTE
+Anvender dette filter før beskeden hentes.
+; Apply this filter before downloading a message
+;
+MSG_HELP_CO_CH_APPLYNEW
+Anvender dette filter på nye beskeder.
+; Apply this filter to new messages
+;
+MSG_HELP_CO_CH_APPLYSENT
+Anvender dette filter på sendte beskeder.
+; Apply this filter to sent messages
+;
+MSG_HELP_CO_CH_APPLYREQ
+Anvender dette filter når du aktiverer\n\
+filterfunktionen manuelt.
+; Apply this filter when you activate\n\
+; the filter function manually
+;
+MSG_HELP_CO_CY_COMBINE
+Hvordan de to søgekriterier for\n\
+dette filter skal kombineres.
+; How to combine the two\n\
+; search keys for this filter
+;
+MSG_HELP_CO_CH_ABOUNCE
+Omdirigerer passende beskeder til en anden person.
+; Bounce matching messages to another person
+;
+MSG_HELP_CO_ST_ABOUNCE
+E-postadressen på personen som skal modtage de omdirigerede beskeder.
+; Email address of the person that gets the bounced messages
+;
+MSG_HELP_CO_CH_AFORWARD
+Videresender passende beskeder til en anden person.
+; Forward matching messages to another person
+;
+MSG_HELP_CO_ST_AFORWARD
+E-postadresse på personen som skal modtage de videresendte beskeder.
+; Email address of the person that gets the forwarded messages
+;
+MSG_HELP_CO_CH_ARESPONSE
+Sender et automatisk svar på hver passende besked.
+; Send an automatic reply for each matching message
+;
+MSG_HELP_CO_ST_ARESPONSE
+Tekstfil som indeholder svaret.
+; Text file that contains the response
+;
+MSG_HELP_CO_CH_AEXECUTE
+Udfører en kommando for hver passende besked.
+; Execute a command for each matching message
+;
+MSG_HELP_CO_ST_AEXECUTE
+Kommandoen der skal udføres. Stien til den\n\
+passende besked gives med som argument.
+; Command to execute. The path of the matching\n\
+; message is passed as an argument.
+;
+MSG_HELP_CO_CH_APLAY
+Afspiller en lydfil for\n\
+hver passende besked.
+; Plays a sound file for\n\
+; each matching message
+;
+MSG_HELP_CO_ST_APLAY
+Lydfil der skal afspilles.
+; Sound file to play
+;
+MSG_HELP_CO_CH_AMOVE
+Flytter passende beskeder til en anden mappe.
+; Move matching messages to a different folder
+;
+MSG_HELP_CO_PO_MOVETO
+Mappe som beskederne skal flyttes til.
+; Destination folder
+;
+MSG_HELP_CO_CH_ADELETE
+Sletter passende beskeder.
+; Delete matching messages
+;
+MSG_HELP_CO_CH_ASKIP
+Undlader at hente passende beskeder.
+; Don't download matching messages
+;
+MSG_HELP_CO_BT_RADD
+Tilføjer et nyt filter.
+; Add a new filter
+;
+MSG_HELP_CO_BT_RDEL
+Fjerner det markerede filter.
+; Remove selected filter
+;
+MSG_HELP_CO_CA_COL2QUOT
+Ændrer farven der bruges til gamle citater.
+; Adjust the color used for displaying old quotes
+;
+MSG_HELP_CO_CH_WRAPHEAD
+Viser lange beskedhovedfelter over flere linier.
+; Display long headers on multiple lines
+;
+MSG_HELP_CO_CH_TEXTSTYLES
+Fortolker /, *, _ og # som\n\
+kontrolkoder til skriftvarianter.
+; Interpret / * _ and # as\n\
+; control codes for textstyles
+;
+MSG_HELP_CO_CY_HEADER
+Hvordan vil du have\n\
+beskedhovedet vist i\n\
+læsningsvinduet?
+; How do you want to\n\
+; display the message header\n\
+; in the Read window?
+;
+MSG_HELP_CO_ST_HEADERS
+Angiv et AmigaDOS-mønster for at\n\
+vælge beskedhovedfelterne til formatet UDVALGTE.\n\
+Standard er (From|To|Date|Subject)
+; Specify an AmigaDOS pattern to\n\
+; choose the headers in SELECTED format.\n\
+; Default is (From|To|Date|Subject)
+;
+MSG_HELP_CO_CY_SENDERINFO
+Oplysninger om afsenderen der skal vises\n\
+i læsningsvinduet (hvis de haves).
+; Information about the sender to display\n\
+; in the read window (if available)
+;
+MSG_HELP_CO_CY_SIGSEPLINE
+Typen af skillelinie\n\
+mod signaturen.
+; Type of the signature\n\
+; separation line
+;
+MSG_HELP_CO_ST_INTRANS
+Anvender denne tegnsætskonvertering\n\
+når beskeder fremvises.
+; Apply this character set translation\n\
+; when reading messages
+;
+MSG_HELP_CO_CH_ALLTEXTS
+Viser alle tekstdele i en\n\
+besked med flere dele.
+; Display all textual parts\n\
+; of a multipart message
+;
+MSG_HELP_CO_CH_MULTIWIN
+Åbner et nyt læsningsvindue\n\
+for hver markerede besked.
+; Open a new read window\n\
+; for each selected message
+;
+MSG_HELP_CO_CA_COLTEXT
+Ændrer farven som bruges til 'farvet' tekst\n\
+i læsnings- og redigeringsvinduerne.
+; Adjust the color of 'colored' text used\n\
+; in the read window and the editor
+;
+MSG_HELP_CO_CH_FIXFEDIT
+Viser beskeder med et\n\
+skriftsnit med fast bredde.
+; Display messages using\n\
+; a fixed-width font
+;
+MSG_HELP_CO_ST_CTYPE
+MIME-fremviseren aktiveres\n\
+af denne bilagstype.
+; MIME viewer is activated\n\
+; by this attachment type
+;
+MSG_HELP_CO_ST_COMMAND
+Sti og valgfrie argumenter til\n\
+fremviserkommandoen. Brug %s for\n\
+at indsætte bilagsfilens navn.
+; Path and optional arguments of\n\
+; the viewer command. Use %s to\n\
+; insert the datafile.
+;
+MSG_HELP_CO_BT_MADD
+Tilføjer en ny MIME-fremviser.
+; Add a new MIME viewer
+;
+MSG_HELP_CO_BT_MDEL
+Fjerner den markerede\n\
+MIME-fremviser fra listen.
+; Remove selected MIME viewer
+;
+MSG_HELP_CO_ST_EXTENS
+Filnavnsendelser der benyttes af denne filtype.
+; Filename extensions used by this file type
+;
+MSG_HELP_CO_ST_DEFVIEWER
+Program der benyttes til at\n\
+fremvise bilag af ukendt type.
+; Program used to displaying\n\
+; attachments of unknown type
+;
+MSG_HELP_CO_CH_IDENTBIN
+Forsøger at identificere filtypen\n\
+før standardfremviseren bruges.
+; Try to identify the file type\n\
+; before using the default viewer
+;
+MSG_HELP_CO_ST_REPLYTO
+Angiv standard-returadressen hvis den\n\
+ikke er den samme som din e-postadresse.
+; Enter the default return address, if\n\
+; it differs from your email address.
+;
+MSG_HELP_CO_ST_ORGAN
+Navnet på dit firma\n\
+eller institut.
+; The name of your\n\
+; company or institute
+;
+MSG_HELP_CO_ST_EXTHEADER
+Ekstra beskedhovedfelt(er) som bliver\n\
+tilføjet til hver udgående besked.
+; Additional message header(s) that will\n\
+; be added to every outgoing message
+;
+MSG_HELP_CO_ST_HELLOTEXT
+Tekst som skal indsættes i\n\
+starten af en ny besked.
+; Text to insert at the\n\
+; top of a new message
+;
+MSG_HELP_CO_ST_BYETEXT
+Tekst som skal indsættes i\n\
+bunden af en ny besked.
+; Text to insert at the\n\
+; bottom of a new message
+;
+MSG_HELP_CO_ST_OUTTRANS
+Anvender denne tegnsætskonvertering\n\
+på nye beskeder.
+; Apply this characterset translation\n\
+; on new messages
+;
+MSG_HELP_CO_ST_EDWRAP
+Ombryder beskedtekst ved\n\
+denne tekstkolonne.
+; Word-wrap message text\n\
+; at this column
+;
+MSG_HELP_CO_CH_AUTOBREAK
+Indsætter rigtige linieskift\n\
+mens beskeden skrives.
+; Insert real line breaks\n\
+; while entering a message
+;
+MSG_HELP_CO_CY_EDWRAP
+Vælg 'mens du skriver' for at indsætte\n\
+linieskift mens du skriver beskeden.
+; Select 'as you type' to insert linebreak\n\
+; codes while you're typing the message
+;
+MSG_HELP_CO_CH_LAUNCH
+Starter det eksterne redigeringsprogram\n\
+så snart du opretter en ny besked.
+; Launch the external editor\n\
+; when you start a new message
+;
+MSG_HELP_CO_ST_EDITOR
+Filnavnet på dit foretrukne\n\
+tekstredigeringsprogram.
+; Filename of your\n\
+; favorite text editor
+;
+MSG_HELP_CO_ST_FWDSTART
+Tekst som skal bruges til at indlede en\n\
+videresendt besked. Brug knappen til\n\
+højre for at indsætte en variabel.
+; Text used to introduce a forwarded message.\n\
+; Use the button at the right side to insert a variable.
+;
+MSG_HELP_CO_ST_FWDEND
+Tekst som skal sættes under\n\
+en videresendt besked.
+; Text to insert at the\n\
+; end a forwarded message.
+;
+MSG_HELP_CO_ST_REPLYTEXT
+Tekster som skal bruges i svar på beskeder.\n\
+Brug knappen til højre for at indsætte en variabel.
+; Texts used in replies to messages.\n\
+; Use the button at the right side to insert a variable.
+;
+MSG_HELP_CO_ST_AREPLYTEXT
+Bruger disse tekstdele i svar til\n\
+beskeder hvis mønsteret nedenfor\n\
+passer på modtageradressen.
+; Use these texts in replies to messages\n\
+; if the pattern below matches the recipient address.
+;
+MSG_HELP_CO_ST_AREPLYPAT
+AmigaDOS-mønster som aktiverer\n\
+de alternative svar-tekster.
+; AmigaDOS pattern that triggers\n\
+; the alternative reply headers
+;
+MSG_HELP_CO_ST_MREPLYTEXT
+Bruger disse tekstdele i svar\n\
+til beskeder fra en postliste.
+; Use these texts in replies to\n\
+; messages from a mailing list.
+;
+MSG_HELP_CO_CH_QUOTE
+Citere oprindelig\n\
+besked i svaret?
+; Quote original\n\
+; message in reply?
+;
+MSG_HELP_CO_ST_REPLYCHAR
+Tegnfølge som skal foranstilles\n\
+hver linie i den citerede besked.\n\
+Brug knappen til højre for at\n\
+indsætte en variabel.
+; String that should precede each line of\n\
+; the quoted message. Use the button at\n\
+; the right side to insert a variable.
+;
+MSG_HELP_CO_CH_QUOTEEMPTY
+Indsætte citationstegn ved tomme linier?
+; Insert quote character(s) for empty lines?
+;
+MSG_HELP_CO_CH_COMPADDR
+Lader brugeren vælge den ønskede\n\
+modtageradresse hvis afsender- og\n\
+returadresserne er forskellige.
+; Let the user select the desired recipient address\n\
+; if the From and Reply-To addresses are different
+;
+MSG_HELP_CO_CH_STRIPSIG
+Undlader at citere signaturen\n\
+fra den oprindelige besked.
+; Don't quote signature\n\
+; of original message
+;
+MSG_HELP_CO_CY_SIGNAT
+Vælger signaturen der skal redigeres.
+; Select signature to edit
+;
+MSG_HELP_CO_BT_EDITSIG
+Redigerer din signatur\n\
+i redigeringsprogrammet.
+; Modify your signature\n\
+; using the editor
+;
+MSG_HELP_CO_BT_INSTAG
+Indsætter styrekode\n\
+for tilfældige guldkorn.
+; Insert control code for random taglines
+;
+MSG_HELP_CO_BT_INSENV
+Indsætter styrekode for\n\
+systemvariablen SIGNATURE.
+; Insert control code for the\n\
+; enviromental variable SIGNATURE
+;
+MSG_HELP_CO_ST_TAGFILE
+Database som indeholder guldkorn\n\
+(\"taglines\" eller \"cookies\").
+; Database containing taglines (\"cookies\")
+;
+MSG_HELP_CO_ST_TAGSEP
+Tegn eller tegnfølge som benyttes til\n\
+at adskille guldkornene i databasen.
+; Character or string used to separate\n\
+; the taglines in the database
+;
+MSG_HELP_CO_CG_FO
+Kolonner der skal vises i mappelisten.
+; Columns displayed in the folder list
+;
+MSG_HELP_CO_CG_MA
+Kolonner der skal vises i beskedlisten.
+; Columns displayed in the message list
+;
+MSG_HELP_CO_CG_AB
+Kolonner der skal vises i adressebogen.
+; Columns displayed in the address book
+;
+MSG_HELP_CO_CH_FIXFLIST
+Viser listeposterne med et\n\
+skriftsnit med fast bredde.
+; Display list entries\n\
+; using a fixed-width font
+;
+MSG_HELP_CO_CH_BEAT
+Viser klokken i Swatch-slag, den\n\
+revolutionerende nye tidsenhed.
+; Display time in Swatch Beats, the\n\
+; revolutionary new unit of time
+;
+MSG_HELP_CO_ST_PGPCMD
+Kataloget hvori PGP-programmet findes.
+; Directory where the PGP\n\
+; executable can be found
+;
+MSG_HELP_CO_ST_MYPGPID
+ID'en på din PGP-nøgle som bruges\n\
+til at underskrive beskeder.
+; The ID of your PGP key that's\n\
+; used to sign messages
+;
+MSG_HELP_CO_CH_ENCSELF
+Krypterer nye beskeder med din offentlige\n\
+nøgle, så du stadig selv kan læse eller\n\
+redigere sendte beskeder.
+; Encrypt new messages with your public key,\n\
+; so you can still read or edit sent messages
+;
+MSG_HELP_CO_ST_REMAILER
+E-postadresse på omforsendelses-tjenesten\n\
+som bruges til at sende anonym post.
+; Email address of the remailer service\n\
+; used to send anonymous mail
+;
+MSG_HELP_CO_ST_FIRSTLINE
+Indsætter denne linie i starten af din besked\n\
+hvis den sendes via omforsendelses-serveren.
+; Insert this line at the top of your\n\
+; message if it is sent via remailer
+;
+MSG_HELP_CO_ST_LOGFILE
+Katalog hvori log-\n\
+filerne gemmes.
+; Path where the logfiles will be saved
+;
+MSG_HELP_CO_CH_SPLITLOG
+Begynder på en ny logfil hver måned.
+; Start a new logfile every month
+;
+MSG_HELP_CO_CY_LOGMODE
+Vælger typen af logning.
+; Select type of logging
+;
+MSG_HELP_CO_CH_LOGALL
+Slå denne indstilling fra for\n\
+kun at logge postoverførsler.
+; Disable this option to log mail transfers only
+;
+MSG_HELP_CO_CH_LOADALL
+Indlæser alle mappers indeksfiler.
+; Load index files of all folders
+;
+MSG_HELP_CO_CH_MARKNEW
+Ændrer nye beskeders status til ulæst.
+; Change status of new messages to unread
+;
+MSG_HELP_CO_CH_SEND
+Sender beskederne som er klar.
+; Send queued messages
+;
+MSG_HELP_CO_CH_POPSTART
+Ser efter ny post.
+; Check for mail
+;
+MSG_HELP_CO_CH_CHECKBD
+Kigger i adressebogen og viser en\n\
+påmindelse hvis det er en persons fødselsdag.
+; Check the address book and open a reminder\n\
+; if it's a person's birthday
+;
+MSG_HELP_CO_CH_DELETEOLD
+Sletter beskeder som overskrider\n\
+den højest tilladte alder (se\n\
+mappe-indstillingerne).
+; Delete messages that exceed the maximum\n\
+; age (see folder configuration)
+;
+MSG_HELP_CO_CH_REMOVEDEL
+Tømmer affalds-mappen.
+; Empty trash folder
+;
+MSG_HELP_CO_ST_GALLDIR
+Kataloget hvori billederne af dem du\n\
+korresponderer med, skal gemmes.
+; Directory to save the\n\
+; pictures of your correspondents
+;
+MSG_HELP_CO_ST_PHOTOURL
+Dit portrætbilledes WWW-adresse.
+; WWW address of your portrait image
+;
+MSG_HELP_CO_CY_ATAB
+Automatisk oprette en adressebogspost for\n\
+afsenderen når du læser hans/hendes besked?
+; Automatically create an address book entry\n\
+; for the sender when your read his/her message?
+;
+MSG_HELP_CO_ST_PROXY
+Adresse og evt. portnummer på din\n\
+HTTP-proxy-server (standardporten er 80).\n\
+Du kan godt lade dette felt stå tomt.
+; Address and optional port number of your\n\
+; HTTP proxy server (default port is 80)\n\
+; You may leave this field empty.
+;
+MSG_HELP_CO_ST_NEWGROUP
+Anbringer nye adressebogsposter\n\
+i denne gruppe (den oprettes\n\
+hvis den ikke allerede findes).
+; Add new address book entries to this group (it\n\
+; will be created if it doesn't already exist)
+;
+MSG_HELP_CO_ST_TEMPDIR
+Katalog hvori midlertidige\n\
+filer skal lægges.
+; Directory to store\n\
+; temporary files
+;
+MSG_HELP_CO_ST_DETACHDIR
+Katalog hvori\n\
+bilag skal gemmes.
+; Directory to save\n\
+; attached files to
+;
+MSG_HELP_CO_ST_ATTACHDIR
+Katalog som normalt skal\n\
+benyttes til at indlæse bilag fra.
+; Default source directory\n\
+; for attachments
+;
+MSG_HELP_CO_ST_APP
+Placeringen af postkasse-\n\
+AppIkonet i pixels.
+; Position of the mailbox\n\
+; AppIcon in pixels
+;
+MSG_HELP_CO_CH_CLGADGET
+Vil du have YAM ikonificeret når\n\
+du benytter vinduets lukkeknap?
+; Do you want YAM to iconify when\n\
+; you hit the closegadget?
+;
+MSG_HELP_CO_CH_CONFIRM
+Vil du godkende før\n\
+sletning af beskeder?
+; Do you want to confirm\n\
+; deletion of messages?
+;
+MSG_HELP_CO_NB_CONFIRMDEL
+Det mindste antal beskeder\n\
+der skal til for at vise\n\
+godkendelsesboksen.
+; Minimum number of messages to\n\
+; display the confirmation requester
+;
+MSG_HELP_CO_CH_REMOVE
+Sletter beskeder med det\n\
+samme, i stedet for at\n\
+flytte dem til affalds-mappen.
+; Delete messages instantly, don't\n\
+; move them to the trash folder
+;
+MSG_HELP_CO_CH_SAVESENT
+Gemmer sendte beskeder i mappen Sendt.
+; Save sent messages in the Sent folder
+;
+MSG_HELP_CO_RA_MDN_DISP
+Sender en behandlingsmelding\n\
+til afsenderen når du læser\n\
+en besked der beder om det.
+; When reading a message, send a\n\
+; disposition notification to the\n\
+; sender if requested
+;
+MSG_HELP_CO_RA_MDN_PROC
+Sender en behandlingsmelding\n\
+til afsenderen når du videresender\n\
+en besked der beder om det.
+; When forwarding a message, send a\n\
+; disposition notification to the\n\
+; sender if requested
+;
+MSG_HELP_CO_RA_MDN_DELE
+Sender en behandlingsmelding\n\
+til afsenderen når du sletter\n\
+en besked der beder om det.
+; When deleting a message, send a\n\
+; disposition notification to the\n\
+; sender if requested
+;
+MSG_HELP_CO_RA_MDN_RULE
+Sender en behandlingsmelding\n\
+til afsenderen når du vha.\n\
+filtre sletter eller\n\
+videresender en besked der\n\
+beder om det.
+; When deleting or forwarding a message using\n\
+; filters, send a disposition notification to the sender\n\
+; if requested
+;
+MSG_HELP_CO_CH_SEND_MDN
+Forsøger at sende behandlings-\n\
+meldingen så snart den er oprettet.
+; Try to send the disposition notification\n\
+; as soon it has been generated
+;
+MSG_HELP_CO_TX_ENCPACK
+XPK-bibliotek som bruges til\n\
+at beskytte og komprimere mapper.
+; XPK library used to protect\n\
+; and compress folders
+;
+MSG_HELP_CO_TX_PACKER
+XPK-bibliotek som bruges\n\
+til at komprimere mapper.
+; XPK library used to\n\
+; compress folders
+;
+MSG_HELP_CO_NB_ENCPACK
+Pakkerens effektivitet.\n\
+100% er bedst, men langsomst.
+; Efficiency of this packer\n\
+; 100% is best, but slowest
+;
+MSG_HELP_CO_ST_ARCHIVER
+Arkiveringskommando med evt. argumenter der\n\
+benyttes til at oprette komprimerede bilag.
+; Archiver command and options used\n\
+; to create compressed attachments
+;
+MSG_HELP_CO_ST_RXNAME
+Beskrivelse af makroen\n\
+i menuen 'Makroer'
+; Description of the script\n\
+; in the 'Scripts' menu
+;
+MSG_HELP_CO_ST_SCRIPT
+Makroens filnavn
+; Filename of the script
+;
+MSG_HELP_CO_CY_ISADOS
+Makroens type\n\
+(ARexx eller AmigaDOS)
+; Type of the script\n\
+; (ARexx or AmigaDOS)
+;
+MSG_HELP_CO_CH_CONSOLE
+Åbner et konsolvindue for\n\
+at muliggøre ind- og uddata\n\
+til og fra makroen.
+; Open a console window to allow input\n\
+; and output from the script
+;
+MSG_HELP_CO_CH_WAITTERM
+Undlader at køre makroen asynkront.
+; Don't run the script asynchronously
+;
+MSG_HELP_CO_BT_SAVE
+Gemmer den aktuelle opsætning.
+; Save current settings
+;
+MSG_HELP_CO_BT_USE
+Tager den aktuelle\n\
+opsætning i brug.
+; Use current settings
+;
+MSG_HELP_CO_BT_CANCEL
+Lukker opsætningsvinduet\n\
+og går tilbage til den\n\
+gamle opsætning.
+; Close configuration\n\
+; window and use old\n\
+; settings
+;
+; Module AB - Routines
+;
+MSG_AB_BirthdayReq
+%s fylder %ld år i dag.\n\
+Vil du sende en lykønskning?
+; Today, %s reaches age %ld!\n\
+; Do you want to send a greetings card?
+; NAME, AGE
+;
+MSG_AB_BirthdayReminder
+Fødselsdagspåmindelse.
+; Birthday Reminder
+;
+MSG_AB_HappyBirthday
+Tillykke med fødselsdagen!
+; Happy birthday!
+;
+MSG_AB_PersonAlias
+Alias (PERSON)
+; Alias (PERSON)
+;
+MSG_AB_ListAlias
+Alias (LISTE)
+; Alias (LIST)
+;
+MSG_AB_GroupAlias
+Alias (GRUPPE)
+; Alias (GROUP)
+;
+MSG_AB_PrintReqGads
+_Langt format|_Kort format|_Annullere
+; _Long format|_Short format|_Cancel
+;
+MSG_AB_PrintReq
+Vælg udskriftsformatet:
+; Select print format:
+;
+MSG_AB_AliasFld
+Alias
+; Alias
+;
+MSG_AB_FoundEntry
+Fandt en passende post.\n\
+Alias: %s\n\
+Navn: %s
+; Found matching entry!\n\
+; Alias: %s\n\
+; Name: %s
+; ALIAS, NAME
+;
+MSG_AB_FindEntry
+Finde post
+; Find Entry
+;
+MSG_AB_FindEntryReq
+Dette modul søger efter en given tekst i felterne\n\
+alias, navn, adresse, beskrivelse, gade, by og land.\n\
+Angiv søgemønsteret (AmigaDOS-jokertegn kan bruges):
+; This module finds a given text in the alias, name, address,\n\
+; description, street, city or country fields. Please enter\n\
+; the search pattern (AmigaDOS wildchars are supported):
+;
+MSG_AB_StartSearch
+_Påbegynde søgning
+; _Start search
+;
+MSG_AB_FoundEntryGads
+_Næste passende post|_Redigere post|_Afbryde
+; _Next hit|_Edit hit|_Cancel
+;
+MSG_AB_NoneFound
+Der var ingen poster der passede.
+; No matching entries found!
+;
+MSG_AB_Modified
+Adressebogen er blevet ændret.
+; Address book has been modified!
+;
+MSG_AB_ModifiedGads
+*_Gemme|_Benytte|_Kassere ændringer|_Fortryde
+; *_Save|_Use|_Discard changes|_Cancel
+;
+; Module AB - Hooks
+;
+MSG_AB_TitleAlias
+\e8Alias
+; \e8Alias
+;
+MSG_AB_TitleName
+\e8Navn
+; \e8Name
+;
+MSG_AB_TitleDescription
+\e8Beskrivelse
+; \e8Description
+;
+MSG_AB_TitleAddress
+\e8Adresse
+; \e8Address
+;
+MSG_AB_TitleStreet
+\e8Vej/gade
+; \e8Street
+;
+MSG_AB_TitleCity
+\e8By
+; \e8City
+;
+MSG_AB_TitleCountry
+\e8Land
+; \e8Country
+;
+MSG_AB_TitlePhone
+\e8Telefon
+; \e8Phone
+;
+MSG_AB_TitleBirthDate
+\e8Fødselsdag
+; \e8Birth date
+;
+MSG_AB_TitlePGPId
+\e8PGP-ID
+; \e8PGP Id
+;
+MSG_AB_TitleHomepage
+\e8Hjemmeside
+; \e8Homepage
+;
+; Module AB - Window
+;
+MSG_AB_MIFind
+Søge...
+; Find...
+;
+MSG_AB_Entry
+Listepost
+; Entry
+;
+MSG_AB_AddUser
+Ny person...
+; New person...
+;
+MSG_AB_AddGroup
+Ny gruppe...
+; New group...
+;
+MSG_AB_AddList
+Ny distributionsliste...
+; New distribution list...
+;
+MSG_AB_Duplicate
+Kopiere
+; Duplicate
+;
+MSG_AB_MIPrint
+Udskrive
+; Print
+;
+MSG_AB_MIDelete
+Slette
+; Delete
+;
+MSG_AB_Sort
+Sortering
+; Sort
+;
+MSG_AB_SortByAlias
+Efter alias
+; By alias
+;
+MSG_AB_SortByName
+Efter efternavn
+; By last name
+;
+MSG_AB_SortByFirstname
+Efter fornavn
+; By first name
+;
+MSG_AB_SortByDesc
+Efter beskrivelse
+; By description
+;
+MSG_AB_SortByAddress
+Efter adresse
+; By address
+;
+MSG_AB_View
+Fremvisning
+; View
+;
+MSG_AB_Fold
+Sammenfolde alle
+; Fold all
+;
+MSG_AB_Unfold
+Udfolde alle
+; Unfold all
+;
+; Module AB - Toolbar
+;
+MSG_AB_TBSave
+_Gemme
+; _Save
+;
+MSG_AB_TBFind
+_Søge
+; _Find
+;
+MSG_AB_TBNewUser
+_Person
+; _Person
+;
+MSG_AB_TBNewList
+_Liste
+; _List
+;
+MSG_AB_TBNewGroup
+G_ruppe
+; _Group
+;
+MSG_AB_TBEdit
+Red_ig.
+; _Edit
+;
+MSG_AB_TBDelete
+Sl_ette
+; _Delete
+;
+MSG_AB_TBPrint
+U_dskrive
+; P_rint
+;
+MSG_AB_TBOpenTree
+_Udfolde
+; _Unfold
+;
+MSG_AB_TBCloseTree
+_Folde
+; F_old
+;
+; Module AB - Bubblehelp
+;
+MSG_HELP_AB_BT_SAVE
+Gemmer aktuelle ændringer.
+; Save current changes
+;
+MSG_HELP_AB_BT_SEARCH
+Søger efter en post\n\
+i adressebogen.
+; Find an entry in\n\
+; the address book
+;
+MSG_HELP_AB_BT_ADDUSER
+Indsætter en ny person\n\
+i din adressebog.
+; Add a new person to\n\
+; your address book
+;
+MSG_HELP_AB_BT_ADDGROUP
+Indsætter en ny gruppe\n\
+i din adressebog.
+; Add a new group (directory)\n\
+; to your address book
+;
+MSG_HELP_AB_BT_ADDMLIST
+Indsætter en ny distributions-\n\
+liste i din adressebog.
+; Add a new distribution list\n\
+; to your address book
+;
+MSG_HELP_AB_BT_EDIT
+Giver dig mulighed for\n\
+at ændre den markerede post.
+; Modify selected\n\
+; entry
+;
+MSG_HELP_AB_BT_DELETE
+Sletter den markerede post\n\
+fra din adressebog.
+; Delete selected entry\n\
+; from your address book
+;
+MSG_HELP_AB_BT_PRINT
+Udskriver den markerede post.
+; Print selected entry
+;
+MSG_HELP_AB_BT_OPEN
+Viser alle poster\n\
+i adressebogen.
+; Display all entries in\n\
+; the address book
+;
+MSG_HELP_AB_BT_CLOSE
+Viser kun rodposter\n\
+i adressebogen.
+; Only display root entries\n\
+; in the address book
+;
+MSG_HELP_AB_BT_TO
+Vælger primær(e) modtager(e)\n\
+for ny besked.
+; Set primary recipient(s)\n\
+; for new message
+;
+MSG_HELP_AB_BT_CC
+Vælger sekundær(e) modtager(e)\n\
+for ny besked.
+; Set secondary recipient(s)\n\
+; for new message
+;
+MSG_HELP_AB_BT_BCC
+Vælger blindkopimodtager(e)\n\
+for ny besked.
+; Set blind copy recipient(s)\n\
+; for new message
+;
+; Module CL
+;
+MSG_CL_ErrorEmptyCB
+Udklipsholderen er tom.
+; The clipboard is empty.
+;
+MSG_CL_ErrorNotFTXT
+Udklipsholderen indeholder ikke tekst.
+; The clipboard does not contain text.
+;
+MSG_CL_ErrorNoArea
+Der er ikke markeret noget område.
+; No area marked.
+;
+MSG_CL_ErrorNoRedo
+Intet at genskabe.
+; Nothing to redo.
+;
+MSG_CL_ErrorNoUndo
+Intet at fortryde.
+; Nothing to undo.
+;
+MSG_CL_ErrorNoUndoMem
+Der er ikke nok hukommelse\n\
+til at opretholde fortrydelseslisten.\n\
+\n\
+Fortrydelseslisten er gået tabt.
+; There is not enough memory\n\
+; to keep the undo buffer.\n\
+; \n\
+; The undo buffer is lost.
+;
+; Module EA - Procedures
+;
+MSG_EA_EditUser
+Redigere person
+; Edit person
+;
+MSG_EA_EditList
+Redigere distributionsliste
+; Edit distribution list
+;
+MSG_EA_EditGroup
+Redigere gruppe
+; Edit group
+;
+; Module EA - Window
+;
+MSG_EA_ElectronicMail
+Elektronisk post
+; Electronic mail
+;
+MSG_EA_Alias
+A_lias
+; _Alias
+;
+MSG_EA_RealName
+_Rigtigt navn
+; _Real name
+;
+MSG_EA_EmailAddress
+_E-postadresse
+; E_mail address
+;
+MSG_EA_PGPId
+Nøgle-ID til _PGP
+; PGP _key ID
+;
+MSG_EA_Homepage
+_Hjemmeside
+; _Homepage
+;
+MSG_EA_SnailMail
+Almindelig post
+; S_nail mail
+;
+MSG_EA_Street
+_Gade/vej
+; _Street
+;
+MSG_EA_City
+Postnu_mmer/by
+; C_ity/ZIP
+;
+MSG_EA_Country
+Del_stat/land
+; S_tate/Country
+;
+MSG_EA_Phone
+_Tlf.-nr.
+; _Phone number(s)
+;
+MSG_EA_Miscellaneous
+Diverse
+; Miscellaneous
+;
+MSG_EA_Description
+_Beskrivelse
+; D_escription
+;
+MSG_EA_DOB
+_Fødselsdato
+; Date of _birth
+;
+MSG_EA_Portrait
+Portræt
+; Portrait
+;
+MSG_EA_SelectPhoto
+_Vælge
+; Se_lect
+;
+MSG_EA_LoadPhoto
+He_nte
+; _Download
+;
+MSG_EA_ReturnAddress
+_Returadresse
+; _Return address
+;
+MSG_EA_MLName
+_Postlistenavn
+; _Mailing list name
+;
+MSG_EA_Members
+Medlemmer
+; Members
+;
+MSG_EA_Sort
+Sort_ere
+; _Sort
+;
+; Module EA - Bubblehelp
+;
+MSG_HELP_EA_ST_ALIAS
+Identifikation (fx øgenavn\n\
+eller forkortelse) for denne post.
+; Identity (e.g. nickname or\n\
+; abbreviation) of this entry
+;
+MSG_HELP_EA_ST_DESCRIPTION
+Kommentar til denne post.
+; Comment for this entry
+;
+MSG_HELP_EA_ST_REALNAME
+Fulde navn for denne post\n\
+(fornavn efternavn).
+; Full name of this entry\n\
+; (first name last name)
+;
+MSG_HELP_EA_ST_ADDRESS
+Internet-adresse\n\
+for denne post.
+; Internet address\n\
+; of this entry
+;
+MSG_HELP_EA_ST_PGPKEY
+Hexadecimal ID for denne\n\
+persons offentlige PGP-nøgle.
+; Hexadecimal ID of this\n\
+; person's public PGP key
+;
+MSG_HELP_EA_ST_HOMEPAGE
+URL for denne persons hjemmeside.\n\
+Klik på knappen til højre for at\n\
+hente siden ind i din browser.
+; URL of the homepage of this person.\n\
+; Click the button on the right side\n\
+; to load the page into your browser.
+;
+MSG_HELP_EA_ST_STREET
+Postadresse:\n\
+Gadenavn og husnummer.
+; Postal address:\n\
+; Street name and number
+;
+MSG_HELP_EA_ST_CITY
+Postadresse:\n\
+Postnummer og by.
+; Postal address:\n\
+; City and postal code
+;
+MSG_HELP_EA_ST_COUNTRY
+Postadresse:\n\
+Delstat og/eller land.
+; Postal address:\n\
+; State and/or country
+;
+MSG_HELP_EA_ST_PHONE
+Telefon- og/eller fax-nummer/-numre.
+; Phone and/or FAX number(s)
+;
+MSG_HELP_EA_ST_BIRTHDAY
+Fødselsdato\n\
+Brug AmigaDOS-format,\n\
+fx 10-Jan-1950.
+; Date of birth\n\
+; Use AmigaDOS format,\n\
+; e.g. 10-Jan-1950
+;
+MSG_HELP_EA_BC_PHOTO
+Portrætbillede af denne person.
+; Portrait picture of this person
+;
+MSG_HELP_EA_BT_SELECTPHOTO
+Vælger en billedfil fra disk\n\
+(billeddatatyper understøttes).
+; Select a picture file from disk\n\
+; (image datatypes supported)
+;
+MSG_HELP_EA_BT_LOADPHOTO
+Henter et billede af personen\n\
+fra YAM-brugergalleriet.
+; Download a picture of the person\n\
+; from the YAM User Gallery
+;
+MSG_HELP_EA_ST_REALNAME_L
+Fulde navn på distributionslisten\n\
+(bliver brugt i modtageradressen).
+; Full name of this distribution list\n\
+; (will be used in To: field)
+;
+MSG_HELP_EA_ST_ADDRESS_L
+Returadresse der skal benyttes når der\n\
+sendes en besked til denne liste.
+; Return address to use when\n\
+; sending a message to this list
+;
+MSG_HELP_EA_LV_MEMBERS
+Medlemmer af denne distributionsliste.
+; Members of this distribution list
+;
+MSG_HELP_EA_ST_MEMBER
+Adresse (og navn) eller\n\
+alias på et medlem.
+; Address (and name) or\n\
+; alias of a member
+;
+MSG_HELP_EA_BT_ADD
+Indsætter et nyt\n\
+medlem i listen.
+; Add a new member\n\
+; to the list
+;
+MSG_HELP_EA_BT_DEL
+Fjerner det markerede\n\
+medlem fra listen.
+; Remove selected member\n\
+; from the list
+;
+MSG_HELP_EA_BT_SORT
+Sorterer medlemslisten alfabetisk.
+; Sort member list alphabetically
+;
+MSG_HELP_EA_BT_OKAY
+Godkender denne post.
+; Accept this entry
+;
+MSG_HELP_EA_BT_CANCEL
+Forkaster ændringer.
+; Discard changes
+;
+; Module RE - Procedures
+;
+MSG_RE_MDNGads1
+Acceptere og\n\
+sende senere|Afslå og\n\
+sende afslag senere
+; Accept and\n\
+; send later|Deny and\n\
+; send later
+;
+MSG_RE_MDNGads2
+|Acceptere og\n\
+sende nu|Afslå og\n\
+sende afslag nu
+; |Accept and\n\
+; send now|Deny and\n\
+; send now
+;
+MSG_RE_MDNGads3
+|Ignorere
+; |Ignore
+;
+MSG_RE_MDNReq
+Afsenderen af denne besked har bedt om en\n\
+behandlingsmelding (MDN). Hvordan vil du reagere?
+; The sender of this message request a disposition notification (MDN).\n\
+; What do you want to do?
+;
+MSG_RE_SaveMessage
+Gemme besked...
+; Save message...
+;
+MSG_RE_Overwrite
+Filen '%s' eksisterer allerede.\n\
+Vil du overskrive den?
+; File '%s' already exists.\n\
+; Do you want to overwrite it?
+; FILENAME
+;
+MSG_RE_PrintMsg
+Udskrive besked
+; Print message
+;
+MSG_RE_SelectPrintPart
+Vælg hvilken del der skal udskrives:
+; Select part to print:
+;
+MSG_RE_PrintGad
+Udskrive
+; Print
+;
+MSG_RE_SelectSavePart
+Vælg hvilken del der skal gemmes:
+; Select part to save:
+;
+MSG_RE_SaveGad
+Gemme
+; Save
+;
+MSG_RE_DisplayMsg
+Fremvise besked
+; Display message
+;
+MSG_RE_SelectDisplayPart
+Vælg hvilken del der skal fremvises:
+; Select part to display:
+;
+MSG_RE_DisplayGad
+Fremvise
+; Display
+;
+MSG_RE_BadSig
+ADVARSEL: Ugyldig underskrift
+; WARNING: Bad signature
+;
+MSG_RE_GoodSig
+Gyldig underskrift
+; Good signature
+;
+MSG_RE_SigFrom
+ fra\n
+;  from\n
+;
+MSG_RE_SigCheck
+Tjekke PGP-underskrift
+; Check PGP signature
+;
+MSG_RE_SaveDecGads
+*_Beholde|_Erstatte|_Annullere
+; *_Keep|_Replace|_Cancel
+;
+MSG_RE_SaveDecReq
+Hvad vil du gøre med den\n\
+oprindelige (krypterede) besked?
+; What do you want to do with\n\
+; original (encrypted) message?
+;
+MSG_RE_Header
+Beskedhoved
+; Header
+;
+MSG_RE_Letter
+Besked
+; Letter
+;
+MSG_RE_MDNFrom
+\n\
+Fra:
+; \n\
+; From:
+;
+MSG_RE_MDNTo
+\n\
+Til:
+; \n\
+; To:
+;
+MSG_RE_MDNSubject
+\n\
+Emne:
+; \n\
+; Subject:
+;
+MSG_RE_MDNMessageID
+\n\
+Besked-ID:
+; \n\
+; Message-ID:
+;
+MSG_RE_MDNDate
+\n\
+Dato:
+; \n\
+; Date:
+;
+MSG_RE_MDNOrigRecpt
+\n\
+Oprindelig modtager:
+; \n\
+; Original recipient:
+;
+MSG_RE_MDNFinalRecpt
+\n\
+Endelig modtager:
+; \n\
+; Final recipient:
+;
+MSG_RE_MDNmanual
+ som svar på en brugerkommando
+;  in response to a user command
+;
+MSG_RE_MDNauto
+ automatisk
+;  automatically
+;
+MSG_RE_MDNdisplay
+Beskeden\n\
+%s\n\
+er blevet fremvist.\n\
+Dette er ikke nogen garanti for at\n\
+indholdet er blevet læst eller forstået.\n
+; The message\n\
+; %s\n\
+; has been displayed.\n\
+; This is no guarantee that the content has been read or understood.\n
+;
+MSG_RE_MDNprocessed
+Beskeden\n\
+%s\n\
+er blevet behandlet%s\n\
+uden at være blevet vist for brugeren.\n\
+Brugeren ser ikke nødvendigvis beskeden senere.\n
+; The message\n\
+; %s\n\
+; has been processed%s,\n\
+; without being displayed to the user. The user may or may not see\n\
+; the message later.\n
+;
+MSG_RE_MDNdispatched
+Beskeden\n\
+%s\n\
+er blevet sendt videre%s\n\
+uden at være blevet vist for brugeren.\n\
+Brugeren ser ikke nødvendigvis beskeden senere.\n
+; The message\n\
+; %s\n\
+; has been sent somewhere%s,\n\
+; without being displayed to the user. The user may or may not see\n\
+; the message later.\n
+;
+MSG_RE_MDNdeleted
+Beskeden\n\
+%s\n\
+er blevet slettet%s.\n\
+Modtageren har ikke nødvendigvis set beskeden.\n\
+Modtageren kan evt. senere "gendanne"\n\
+beskeden og læse den.\n
+; The message\n\
+; %s\n\
+; has been deleted%s.\n\
+; The recipient may or may not have seen the message. The recipient\n\
+; may \"undelete\" the message at a later time and read the message.\n
+;
+MSG_RE_MDNdenied
+Modtageren af beskeden\n\
+%s\n\
+ønsker ikke at informere dig om behandlingen af beskeden.\n
+; The recipient of the message\n\
+; %s\n\
+; doesn't wish to inform you about the disposition of that message.\n
+;
+MSG_RE_MDNunknown
+Beskeden\n\
+%s\n\
+er blevet %s%s.\n
+; The message\n\
+; %s\n\
+; has been %s%s.\n
+;
+MSG_RE_PGPNotAllowed
+>PGP-fejl<\n\
+\n\
+Du har ikke lov til at se denne PGP-krypterede besked.\n\
+Enten er din PGP-software ikke indstillet korrekt,\n\
+eller også er beskeden krypteret til en anden.\n
+; >PGP Error<\n\
+; \n\
+; You're not allowed to view this PGP encrypted message. Either your PGP software\n\
+; isn't configured properly, or the message was encrypted for someone else.\n
+;
+MSG_RE_MsgReadOnly
+Beskeden kan kun læses af %s\n
+; The message can only be read by %s\n
+; RECIPIENT
+;
+MSG_RE_AddSender
+Vil du indsætte afsenderen,\n\
+%s,\n\
+i din adressebog?
+; Do you want to add the sender\n\
+; %s\n\
+; to your address book?
+; SENDER
+;
+MSG_RE_NewGroupTitle
+Automatisk tilføjede poster
+; Automatically added entries
+;
+MSG_RE_DownloadPhotoReq
+Vil du hente et billede af afsenderen\n\
+og indsætte det i dit personlige galleri?\n\
+(Du skal være koblet op før du klikker på OK-knappen.)
+; Do you want to download the photo of the sender\n\
+; and add it to your personal gallery?\n\
+; (You must be online before clicking the OKAY button)
+;
+MSG_RE_ContentType
+Indholdstype
+; Content-Type
+;
+MSG_RE_Description
+Beskrivelse
+; Description
+;
+MSG_RE_UUencodedFile
+UU-kodet fil
+; UUencoded file
+;
+MSG_RE_SelectAddressReq
+Markeret adresse: %s\n\
+Hvad vil du gøre?
+; Selected address: %s\n\
+; What do you want to do?
+; ADDRESS
+;
+MSG_RE_SelectAddressEdit
+*_Skrive besked|_Redigere listepost|_Afbryde
+; *_Write message|_Edit entry|_Cancel
+;
+MSG_RE_SelectAddressAdd
+*_Skrive besked|_Indsætte listepost|_Afbryde
+; *_Write message|_Add entry|_Cancel
+;
+; Module RE - Hooks
+;
+MSG_RE_Original
+Oprindeligt format
+; Raw format
+;
+MSG_RE_AllTexts
+Fremvist tekst
+; Displayed text
+;
+; Module RE - Menus
+;
+MSG_RE_MDisplay
+Fremvise...
+; Display...
+;
+MSG_RE_SaveAll
+Gemme alt...
+; Save all...
+;
+MSG_RE_Navigation
+Navigering
+; Navigation
+;
+MSG_RE_MNext
+Næste besked
+; Next message
+;
+MSG_RE_MPrev
+Forrige besked
+; Previous message
+;
+MSG_RE_MURNext
+Næste ulæste besked
+; Next unread message
+;
+MSG_RE_MURPrev
+Forrige ulæste besked
+; Previous unread message
+;
+MSG_RE_MNextTh
+Næste besked i tråden
+; Next message in thread
+;
+MSG_RE_MPrevTh
+Forrige besked i tråden
+; Previous message in thread
+;
+MSG_RE_ExtractKey
+Uddrage offentlig(e) nøgle(r)
+; Extract public key(s)
+;
+MSG_RE_SaveDecrypted
+Gemme afkrypteret besked
+; Save decrypted message
+;
+MSG_RE_NoHeaders
+Intet beskedhoved
+; No headers
+;
+MSG_RE_ShortHeaders
+Udvalgte beskedhovedfelter
+; Short headers
+;
+MSG_RE_FullHeaders
+Komplet beskedhoved
+; Full headers
+;
+MSG_RE_NoSInfo
+Ingen afsenderoplysninger
+; No sender info
+;
+MSG_RE_SInfo
+Kun oplysninger
+; Data fields only
+;
+MSG_RE_SInfoImage
+Oplysninger og billede
+; Data and image
+;
+MSG_RE_WrapHeader
+Ombryde beskedhovedfelter
+; Wrap headers
+;
+MSG_RE_Textstyles
+Skriftvarianter
+; Textstyles
+;
+; Module RE - Toolbar
+;
+MSG_RE_TBPrev
+_Forr.
+; _Prev
+;
+MSG_RE_TBNext
+_Næste
+; _Next
+;
+MSG_RE_TBPrevTh
+Forr._Tr
+; Prev_Thr
+;
+MSG_RE_TBNextTh
+NæsteT_r
+; NextT_hr
+;
+MSG_RE_TBDisplay
+Fr_emvise
+; _Display
+;
+MSG_RE_TBSave
+_Gemme
+; _Save
+;
+MSG_RE_TBPrint
+_Udskrive
+; Pr_int
+;
+MSG_RE_TBDelete
+_Slette
+; De_lete
+;
+MSG_RE_TBMove
+F_lytte
+; _Move
+;
+MSG_RE_TBReply
+Sv_are
+; _Reply
+;
+MSG_RE_TBForward
+_Videres.
+; For_ward
+;
+; Module RE - Bubblehelp
+;
+MSG_HELP_RE_BT_PREVIOUS
+Viser indholdet af\n\
+den forrige besked.
+; Display contents of\n\
+; the previous message
+;
+MSG_HELP_RE_BT_NEXT
+Viser indholdet af\n\
+den næste besked.
+; Display contents of\n\
+; the next message
+;
+MSG_HELP_RE_BT_QUESTION
+Viser beskeden som der\n\
+bliver svaret på her\n\
+(går tilbage i tråden).
+; Show the message which\n\
+; is being answered here\n\
+; (go back in thread)
+;
+MSG_HELP_RE_BT_ANSWER
+Viser svaret på\n\
+denne besked\n\
+(følger tråden).
+; Show the reply\n\
+; to this message\n\
+; (follow thread)
+;
+MSG_HELP_RE_BT_DISPLAY
+Benytter en indstillet\n\
+MIME-fremviser til at\n\
+vise en del af denne besked.
+; Use a configured MIME\n\
+; viewer to display a\n\
+; part of this message
+;
+MSG_HELP_RE_BT_EXPORT
+Gemmer den besked som vises,\n\
+eller en del af den, på disk.
+; Save displayed message or\n\
+; a part of it to disk
+;
+MSG_HELP_RE_BT_PRINT
+Sender denne besked\n\
+til printeren.
+; Send this message\n\
+; to the printer
+;
+MSG_HELP_RE_BT_MOVE
+Flytter denne besked til en anden\n\
+mappe og viser den næste besked.
+; Move this message to another folder\n\
+; and display the next one
+;
+MSG_HELP_RE_BT_DELETE
+Sletter denne besked\n\
+og viser den næste.
+; Delete this message and\n\
+; display the next one
+;
+MSG_HELP_RE_BT_REPLY
+Svarer på denne besked.
+; Reply to this\n\
+; message
+;
+MSG_HELP_RE_BT_FORWARD
+Videresender denne besked.
+; Forward this\n\
+; message
+;
+; Module WR - Procedures
+;
+MSG_WR_ErrorNoRcpt
+Beskeden er ufuldstændig:\n\
+modtager mangler.
+; Mail is incomplete: No recipient!
+;
+MSG_WR_NoRcptReqGad
+_Føje modtager til senere|*_Annullere
+; _Add recipient later|*_Cancel
+;
+MSG_WR_PGPMIMEconflict
+PGP/MIME understøtter ikke bilag: underskrift/kryptering er slået fra.
+; PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
+;
+MSG_WR_DiscardChanges
+Vil du virkelig kassere alle ændringer i denne besked?
+; Do you really want to discard all modifications to this message?
+;
+MSG_WR_DiscardChangesGad
+*_Sende senere|_Kassere|_Afbryde
+; *_Send later|_Discard|_Cancel
+;
+MSG_WR_SaveTextAs
+Gemme tekst som...
+; Save text as...
+;
+MSG_WR_AddFile
+Vælg fil(er) at vedhæfte...
+; Select file(s) to attach...
+;
+MSG_WR_CreateArc
+Oprette arkiv
+; Create archive
+;
+MSG_WR_CreateArcReq
+Angiv et filnavn\n\
+til det nye arkiv.
+; Please enter a filename\n\
+; for the new archive
+;
+MSG_WR_InsertFile
+Indsætte fil...
+; Insert file...
+;
+; Module WR - Hooks
+;
+MSG_WR_TitleFile
+\e8Filnavn
+; \e8File name
+;
+MSG_WR_TitleSize
+\e8Størrelse
+; \e8Size
+;
+MSG_WR_TitleContents
+\e8Indhold
+; \e8Contents
+;
+MSG_WR_TitleEncoding
+\e8Kodning
+; \e8Enc.
+;
+MSG_WR_TitleDescription
+\e8Beskrivelse
+; \e8Description
+;
+; Module WR - Window
+;
+MSG_WR_SecNone
+Ingen
+; None
+;
+MSG_WR_SecSign
+Underskrive
+; Sign
+;
+MSG_WR_SecEncrypt
+Kryptere
+; Encrypt
+;
+MSG_WR_SecBoth
+Underskrive og kryptere
+; Sign and encrypt
+;
+MSG_WR_SecAnon
+Sende anonymt
+; Send anonymously
+;
+MSG_WR_ImpHigh
+Høj
+; High
+;
+MSG_WR_ImpNormal
+Normal
+; Normal
+;
+MSG_WR_ImpLow
+Lav
+; Low
+;
+MSG_WR_NoSig
+Ingen
+; None
+;
+MSG_WR_DefSig
+Standard
+; Default
+;
+MSG_WR_AltSig1
+Alt. 1
+; Alt. #1
+;
+MSG_WR_AltSig2
+Alt. 2
+; Alt. #2
+;
+MSG_WR_WriteWT
+Skrive besked
+; Write message
+;
+MSG_WR_Subject
+_Emne
+; Sub_ject
+;
+MSG_WR_To
+T_il
+; _To
+;
+MSG_WR_Add
+T_ilføje fil(er)
+; _Add file(s)
+;
+MSG_WR_AddPack
+_Pakke og tilføje
+; _Pack & add
+;
+MSG_WR_Display
+_Fremvise
+; D_isplay
+;
+MSG_WR_Encoding
+Kodning
+; Encoding
+;
+MSG_WR_ContentType
+_MIME-type
+; _MIME type
+;
+MSG_WR_Description
+_Beskrivelse
+; D_escription
+;
+MSG_WR_CopyTo
+_Kopi til
+; C_opies to
+;
+MSG_WR_BlindCopyTo
+_Blindkopi til
+; Hidde_n copies to
+;
+MSG_WR_From
+_Fra
+; _From
+;
+MSG_WR_ReplyTo
+_Returadresse
+; Reply _to
+;
+MSG_WR_ExtraHeaders
+_Yderligere beskedhoveder
+; _Additional header
+;
+MSG_WR_SendOpt
+Afsendelsesindstillinger
+; Send Options
+;
+MSG_WR_DelSend
+S_lette efter afsendelse
+; _Delete after sending
+;
+MSG_WR_Receipt
+B_estille modtagelseskvittering
+; _Return receipt
+;
+MSG_WR_GetMDN
+Be_stille behandlingsmeldinger
+; Track _message
+;
+MSG_WR_AddInfo
+Tilf_øje personoplysninger
+; Add _personal info
+;
+MSG_WR_Importance
+_Vigtighed
+; _Importance
+;
+MSG_WR_Signature
+Signatur
+; Signature
+;
+MSG_WR_Security
+Sikkerhed
+; Security
+;
+MSG_WR_ToQueue
+Læ_gge i udbakke
+; Send _later
+;
+MSG_WR_Send
+Sende _nu
+; _Send now
+;
+MSG_WR_Hold
+_Tilbageholde
+; _Hold
+;
+MSG_WR_BounceWT
+Omdirigere besked
+; Bounce message
+;
+MSG_WR_BounceTo
+Omdirigere _til
+; Bounce _to
+;
+; Module WR - Toolbar
+;
+MSG_WR_TBEditor
+Ekst. prg.
+; Editor
+;
+MSG_WR_TBInsert
+Indføje
+; Insert
+;
+MSG_WR_TBCut
+Klippe
+; Cut
+;
+MSG_WR_TBCopy
+Kopiere
+; Copy
+;
+MSG_WR_TBPaste
+Indsætte
+; Paste
+;
+MSG_WR_TBUndo
+Fortryde
+; Undo
+;
+MSG_WR_TBBold
+Fed
+; Bold
+;
+MSG_WR_TBItalic
+Kursiv
+; Italic
+;
+MSG_WR_TBUnderlined
+Unders.
+; ULined
+;
+MSG_WR_TBColored
+Farvet
+; Colored
+;
+; Module WR - Menus
+;
+MSG_WR_Text
+Tekst
+; Text
+;
+MSG_WR_InsertAs
+Indsætte som
+; Insert as
+;
+MSG_WR_Plain
+Normal
+; Plain
+;
+MSG_WR_Quoted
+Citeret
+; Quoted
+;
+MSG_WR_ROT13
+ROT13-krypteret
+; ROT13 encrypted
+;
+MSG_WR_LaunchEd
+Starte redigeringsprogram
+; Launch editor
+;
+MSG_WR_Edit
+Redigering
+; Edit
+;
+MSG_WR_MCut
+Klippe
+; Cut
+;
+MSG_WR_MCopy
+Kopiere
+; Copy
+;
+MSG_WR_MPaste
+Indsætte
+; Paste
+;
+MSG_WR_PasteAs
+Indsætte som
+; PasteAs
+;
+MSG_WR_MUndo
+Fortryde
+; Undo
+;
+MSG_WR_Redo
+Gendanne
+; Redo
+;
+MSG_WR_Dictionary
+Ordliste
+; Glossary
+;
+MSG_WR_Textstyle
+Skriftvariant
+; Textstyle
+;
+MSG_WR_Bold
+Fed
+; Bold
+;
+MSG_WR_Italic
+Kursiv
+; Italic
+;
+MSG_WR_Underlined
+Understreget
+; Underlined
+;
+MSG_WR_Colored
+Alternativ farve
+; Alternative color
+;
+MSG_WR_Separators
+Skillelinier
+; Separators
+;
+MSG_WR_Thin
+Mager
+; Thin
+;
+MSG_WR_Thick
+Fed
+; Thick
+;
+MSG_WR_Emoticons
+Humøransigter
+; Emoticons
+;
+MSG_WR_Happy
+Glad
+; Happy
+;
+MSG_WR_Indifferent
+Uanfægtet
+; Indifferent
+;
+MSG_WR_Sad
+Bedrøvet/vred
+; Sad/angry
+;
+MSG_WR_Ironic
+Ironisk
+; Ironic
+;
+MSG_WR_SpellCheck
+Skriv-og-ret
+; Type and spell
+;
+MSG_WR_MAddFile
+Tilføje fil...
+; Add file...
+;
+MSG_WR_AddCB
+Tilføje fra udklipsholder
+; Add clipboard
+;
+MSG_WR_AddKey
+Tilføje PGP-nøgle
+; Add PGP key
+;
+MSG_WR_MDelSend
+Slette efter afsendelse
+; Delete after sending
+;
+MSG_WR_MReceipt
+Bestille modtagelseskvittering
+; Return receipt
+;
+MSG_WR_MGetMDN
+Bestille behandlingsmeldinger
+; Track message
+;
+MSG_WR_MAddInfo
+Tilføje personoplysninger
+; Add personal information
+;
+MSG_WR_MImportance
+Vigtighed
+; Importance
+;
+; Module WR - Bubblehelp
+;
+MSG_HELP_WR_ST_TO
+Adresse (og navn) eller alias\n\
+på de(n) primære modtager(e)
+; Address (and name) or alias\n\
+; of the primary recipient(s)
+;
+MSG_HELP_WR_BT_VER
+Tjekke modtager: finder e-post-\n\
+adressen til aliaset eller navnet.
+; Verify recipient: find email\n\
+; address for alias or name
+;
+MSG_HELP_WR_BT_ADR
+Giver dig mulighed for at vælge\n\
+modtageren i adressebogen.
+; Select recipient from\n\
+; the address book
+;
+MSG_HELP_WR_ST_SUBJECT
+Emnet for din besked
+; Subject of your message
+;
+MSG_HELP_WR_BT_EDITOR
+Starter et eksternt program til\n\
+redigering af beskedteksten.
+; Use external editor to\n\
+;  modify the message text
+;
+MSG_HELP_WR_BT_LOAD
+Indsætter en tekstfil\n\
+på markørens position.
+; Insert textfile at cursor position
+;
+MSG_HELP_WR_BT_CUT
+Klipper den markerede tekst ud\n\
+og lægger den i udklipsholderen.
+; Cut marked text to the clipboard
+;
+MSG_HELP_WR_BT_COPY
+Kopierer den markerede\n\
+tekst til udklipsholderen.
+; Copy marked text to the clipboard
+;
+MSG_HELP_WR_BT_PASTE
+Indsætter indholdet af udklips-\n\
+holderen ved markørens position.
+; Insert clipboard contents\n\
+; at cursor position
+;
+MSG_HELP_WR_BT_UNDO
+Ophæver virkningen af de\n\
+seneste ændringer i teksten.
+; Undo recent changes to the text
+;
+MSG_HELP_WR_BT_BOLD
+Benytter fed skrift til\n\
+den markerede tekst.
+; Use bold typeface for marked text
+;
+MSG_HELP_WR_BT_ITALIC
+Benytter kursiv skrift\n\
+til den markerede tekst.
+; Use italic typeface for marked text
+;
+MSG_HELP_WR_BT_UNDERL
+Understreger den markerede tekst.
+; Underline marked text
+;
+MSG_HELP_WR_BT_COLOR
+Benytter farve til den markerede tekst.
+; Color marked text
+;
+MSG_HELP_WR_BT_ADD
+Føjer et bilag\n\
+til bilagslisten.
+; Add an attachment\n\
+; to the list
+;
+MSG_HELP_WR_BT_ADDPACK
+Opretter et arkiv ud fra\n\
+flere filer og føjer det\n\
+til bilagslisten.
+; Create an archive from\n\
+; several files and add it\n\
+; as attachment to the list
+;
+MSG_HELP_WR_BT_DEL
+Fjerner det markerede\n\
+bilag fra listen.
+; Remove selected attachment\n\
+; from the list
+;
+MSG_HELP_WR_BT_DISPLAY
+Benytter en indstillet MIME-fremviser\n\
+til at vise dette bilag.
+; Use a configured MIME viewer\n\
+; to display this attachment
+;
+MSG_HELP_WR_RA_ENCODING
+Typen af kodning der bruges til det markerede bilag.\n\
+Brug kun UU-kodning hvis modtagerens\n\
+e-postprogram ikke understøtter MIME.
+; Type of encoding used for the selected attachment.\n\
+; Use UUencode only if the recipient hasn't got\n\
+; a MIME compliant mailer.
+;
+MSG_HELP_WR_ST_CTYPE
+MIME-type til det markerede bilag.\n\
+Så vidt muligt bør man bruge\n\
+én fra duk-op-listen.
+; MIME type for the selected attachment.\n\
+; Whenever possible, use one from the popup list.
+;
+MSG_HELP_WR_ST_DESC
+Frivillig beskrivelse\n\
+af det markerede bilag
+; Optional description for\n\
+; the selected attachment
+;
+MSG_HELP_WR_ST_CC
+Adresse (og navn) eller alias\n\
+på de(n) sekundære modtager(e)
+; Address (and name) or alias\n\
+; of the secondary recipient(s)
+;
+MSG_HELP_WR_ST_BCC
+Der bliver sendt en blindkopi af\n\
+beskeden til denne/disse modtager(e).
+; Send a blind carbon copy of the\n\
+; message to this recipient
+;
+MSG_HELP_WR_ST_EXTHEADER
+Yderligere beskedhoved(er) som\n\
+vil blive føjet til beskeden.
+; Additional message header(s) that\n\
+; will be added to the message
+;
+MSG_HELP_WR_ST_FROM
+Indholdet af Fra-beskedhovedfeltet\n\
+(adresse og navn på personen som\n\
+skriver denne besked)
+; Contents of From header field\n\
+; (address and name of the person\n\
+; who's writing this letter)
+;
+MSG_HELP_WR_ST_REPLYTO
+Returadresse for\n\
+denne besked
+; Return address\n\
+; for this letter
+;
+MSG_HELP_WR_CH_DELSEND
+Undlader at gemme denne\n\
+besked i mappen Sendt.
+; Don't store this message\n\
+; in the Sent folder
+;
+MSG_HELP_WR_CH_RECEIPT
+Anmoder om en kvittering\n\
+ved korrekt aflevering af\n\
+beskeden hos modtageren.
+; Get a notification on\n\
+; successful delivery
+;
+MSG_HELP_WR_CH_DISPNOTI
+Anmoder om en kvittering når modtageren\n\
+læser eller behandler beskeden.
+; Get a notification if the recipient\n\
+; reads or processes the message
+;
+MSG_HELP_WR_CH_ADDINFO
+Opretter beskedhovedfelter med person-\n\
+oplysninger fra din egen adressebogspost.
+; Create header fields containing data\n\
+; from your personal address book entry
+;
+MSG_HELP_WR_CY_IMPORTANCE
+Sætter prioriteten\n\
+på denne besked.
+; Set the priority\n\
+; of this message
+;
+MSG_HELP_WR_RA_SIGNATURE
+Hvilken signatur vil du have\n\
+føjet til denne besked?
+; Which signature do you want\n\
+; to append to this letter?
+;
+MSG_HELP_WR_RA_SECURITY
+Vælg en af disse sikkerhedsmuligheder\n\
+for at sende din besked PGP-underskrevet,\n\
+krypteret eller anonymt.
+; Select the one of these security options\n\
+; to send your message PGP-signed, encrypted\n\
+; or anonymously
+;
+MSG_HELP_WR_BT_HOLD
+Kopierer den oprettede besked\n\
+til udbakken og sætter\n\
+dens status til TILBAGEHOLDT.
+; Copy the created message to\n\
+; the outgoing mail folder\n\
+; and set its status to HOLD
+;
+MSG_HELP_WR_BT_QUEUE
+Kopierer den oprettede\n\
+besked til udbakken.
+; Copy the created message to\n\
+; the outgoing mail folder
+;
+MSG_HELP_WR_BT_SEND
+Kopierer den oprettede\n\
+besked til udbakken\n\
+og sender den straks.
+; Copy the created message to\n\
+; the outgoing mail folder\n\
+; and send it immediately
+;
+MSG_HELP_WR_BT_CANCEL
+Kasserer den\n\
+oprettede besked.
+; Discard the\n\
+; created message
+;
+; Module TR - Procedures
+;
+MSG_TR_Connecting
+Forbinder til postserver...
+; Connecting to mail server...
+;
+MSG_TR_WaitWelcome
+Forbundet, afventer velkomstbesked...
+; Connected, awaiting welcome message...
+;
+MSG_TR_PopLoginReq
+Angiv dit POP3-kodeord\n\
+til kontoen %s@%s.
+; Please enter your POP3 password\n\
+; for account %s@%s
+; USER_ID, HOST
+;
+MSG_TR_PopLogin
+POP3-indlogning
+; POP3 login
+;
+MSG_TR_SendAPOPLogin
+Sender APOP-indlogningsoplysninger...
+; Sending APOP login information...
+;
+MSG_TR_SendUserID
+Sender bruger-ID...
+; Sending user ID...
+;
+MSG_TR_SendPassword
+Sender kodeord...
+; Sending password...
+;
+MSG_TR_GetStats
+Henter statistik...
+; Getting statistics...
+;
+MSG_TR_Disconnecting
+Afbryder forbindelsen...
+; Disconnecting...
+;
+MSG_TR_ApplyFilters
+Anvender filtre før hentning...
+; Applying remote filters...
+;
+MSG_TR_SendHello
+Sender 'Hello'...
+; Sending 'Hello'...
+;
+MSG_TR_MessageGauge
+Besked %s af %ld
+; Message %s of %ld
+; COUNT, COUNT
+;
+MSG_TR_SizeGauge
+%%ld af %ld tegn
+; %%ld of %ld bytes
+; SIZE, SIZE
+;
+MSG_TR_TransferStats
+%lD af %lD kB overført ved %lD cps.\n\
+Resterende tid: %lD min. %ld sek.
+; %lD of %lD kB transmitted at %lD cps\n\
+; Remaining time: %lD min %ld sec
+; SIZE, SIZE, SPEED, MINS, SECS
+;
+MSG_TR_Exporting
+Eksporterer besked...
+; Exporting message...
+;
+MSG_TR_Sending
+Sender besked...
+; Sending message...
+;
+MSG_TR_Importing
+Importerer besked...
+; Importing message...
+;
+MSG_TR_DeletingServerMail
+Sletter post på serveren...
+; Deleting mail on server...
+;
+MSG_TR_NewMailReq
+\e8Du har fået ny post.\e2\n\
+\n\
+%3ld beskeder hentet\n\
+%3ld efterladt på serveren\n\
+%3ld dubletter sprunget over\n
+; \e8You have new mail!\e2\n\
+; \n\
+; %3ld messages downloaded,\n\
+; %3ld left on server\n\
+; %3ld duplicates skipped\n
+; COUNT, COUNT, COUNT, COUNT
+;
+MSG_TR_FilterStats
+\n\
+Filtrering udført:\n\
+%3ld beskeder undersøgt\n\
+%3ld omdirigeret\n\
+%3ld videresendt\n\
+%3ld automatisk besvaret\n\
+%3ld aktiveret kommando\n\
+%3ld flyttet\n\
+%3ld slettet
+; \n\
+; Filtering done:\n\
+; %3ld messages checked,\n\
+; %3ld redirected,\n\
+; %3ld forwarded,\n\
+; %3ld auto-replied,\n\
+; %3ld command activated,\n\
+; %3ld moved,\n\
+; %3ld deleted
+; COUNT, COUNT, COUNT, COUNT, COUNT, COUNT, COUNT
+;
+MSG_TR_NewMail
+Ny post
+; New Mail
+;
+MSG_TR_Downloading
+Henter besked...
+; Downloading message...
+;
+;
+; Module TR - Window
+;
+MSG_TR_MailTransferFrom
+Overfører post fra %s
+; Transfer mail from %s
+; HOST
+;
+MSG_TR_MailTransferTo
+Overfører post til %s
+; Transfer mail to %s
+; HOST
+;
+MSG_TR_MsgInFile
+Beskeder i fil
+; Messages in file
+;
+MSG_TR_MsgOnServer
+Beskeder på server
+; Messages on server
+;
+MSG_TR_Control
+Styring
+; Control
+;
+MSG_TR_All
+A_lle
+; A_ll
+;
+MSG_TR_DownloadOnly
+_Kun hente
+; _Download only
+;
+MSG_TR_Leave
+_Efterlade
+; L_eave
+;
+MSG_TR_Pause
+_Pause
+; _Pause
+;
+MSG_TR_Clear
+_Ingen
+; _Clear
+;
+MSG_TR_DeleteOnly
+Kun _slette
+; Delete _only
+;
+MSG_TR_DownloadDelete
+_Hente og slette
+; Do_wnload & delete
+;
+MSG_TR_Resume
+_Genoptage
+; _Resume
+;
+MSG_TR_Start
+_Begynde
+; _Start
+;
+MSG_TR_Status
+Status
+; Status
+;
+MSG_TR_Abort
+_Annullere
+; _Abort
+;
+MSG_TR_TransferStats0
+  0 af   0 kB overført med    0 cps.\n\
+Resterende tid:  0 min.  0 sek.
+;   0 of   0 kB transmitted at    0 cps\n\
+; Remaining time:  0 min  0 sec
+;
+MSG_TR_BytesGauge0
+   0 af    0 tegn
+;    0 of    0 bytes
+;
+MSG_TR_MessageGauge0
+Besked 0 af 0
+; Message  0 of  0
+;
+; Module TR - Bubblehelp
+;
+MSG_HELP_TR_TX_STATUS
+Den aktuelle status\n\
+for beskedoverførslen
+; Current state\n\
+; of mail transfer
+;
+MSG_HELP_TR_BT_ABORT
+Afbryder beskedoverførslen\n\
+så snart det er muligt.
+; Abort mail transfer\n\
+; as soon as possible
+;
+; Module ER - Window
+;
+MSG_ER_ErrorMessages
+Fejlmeddelelser:
+; Error messages:
+;
+MSG_ER_PrevError
+_Forrige fejl
+; _Previous error
+;
+MSG_ER_NextError
+_Næste fejl
+; _Next error
+;
+MSG_ER_Clear
+_Slette meddelelser
+; _Delete messages
+;
+MSG_ER_Close
+_Lukke vindue
+; _Close window
+;
+; Module ER - Error Messages
+;
+MSG_ER_ErrorTTable
+Kunne ikke åbne konverteringstabellen '%s'\n\
+(findes ikke eller har et forkert format).
+; Couldn't open translation table '%s'\n\
+; (non existent or wrong format).
+; FILENAME
+;
+MSG_ER_CantCreateFile
+Kan ikke skrive i filen '%s'. Tjek venligst at stien findes og at disken ikke er skrivebeskyttet.
+; Can't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
+; FILENAME
+;
+MSG_ER_CantCreateDir
+Kan ikke oprette kataloget '%s'. Tjek venligst at disken ikke er skrivebeskyttet.
+; Can't create directory '%s'. Make sure that the volume isn't write-protected.
+; PATH
+;
+MSG_ER_ErrorNoAlias
+Du skal angive et alias til identifikation af denne post.
+; You must specify an alias to identify this entry!
+;
+MSG_ER_ErrorNoAddress
+Du skal angive en adresse til denne post.
+; You must specify an address for this entry!
+;
+MSG_ER_ErrorDOBformat
+Fødselsdatoen er i et forkert format. Det korrekte format er DD-MMM-ÅÅÅÅ (månedsnavne på engelsk).
+; Date of birth is in wrong format. The correct format is DD-MMM-YYYY (month names in English).
+;
+MSG_ER_NotInGallery
+Kunne ikke finde denne person i YAM-brugergalleriet. Enten findes personen ikke i databasen, eller også er navnet eller adressen stavet forkert.
+; Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or her name or address is misspelled.
+;
+MSG_ER_NoTCP
+Du har ingen TCP/IP-stak kørende. Før du kan benytte denne funktion, skal du have startet en Internet-protokolstak som er kompatibel med bsdsocket.library.
+; No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
+;
+MSG_ER_ErrorDateFormat
+Ugyldigt format på dato/klokkeslæt.\n\
+Datoen skal angives i AmigaDOS-format.\n\
+Eksempel: %s
+; Invalid date/time format.\n\
+; The date has to be in AmigaDOS format.\n\
+; Example: %s
+; DATE
+;
+MSG_ER_ErrorMaxFilters
+Det maksimale antal filtre er nået. Du kan ikke tilføje flere filtre.
+; Maximum number of filters reached! You can't add more filters.
+;
+MSG_ER_CantOpenTempfile
+Kan ikke åbne den midlertidige fil '%s'. Tjek sti-indstillingerne i opsætningen.
+; Can't open temporary file '%s'. Check the path settings in the configuration.
+; FILENAME
+;
+MSG_ER_CantCreateTempfile
+Kan ikke oprette en midlertidig fil. Årsag: ikke nok hukommelse eller ugyldig sti angivet i opsætningen.
+; Can't create temporary file. Reason: out of memory or invalid path specified in the configuration.
+;
+MSG_ER_ErrorConsole
+Kan ikke åbne konsolvindue til makro.
+; Can't open console window for script.
+;
+MSG_ER_ErrorARexxScript
+Kan ikke sende ARexx-kommando '%s'. Undersøg om makroen findes.
+; Can't send ARexx command '%s'. Make sure that the script exists.
+; REXX_COMMAND
+;
+MSG_ER_UnexpEOFB64
+Uventet filafslutning under afkodning af en BASE64-kodet fil. Beskeden er tilsyneladende blevet skåret over.
+; Unexpected EOF while decoding a BASE64 encoded file. The message seems to be truncated.
+;
+MSG_ER_UnexpEOFUU
+Uventet filafslutning under afkodning af en UU-kodet fil. Beskeden er tilsyneladende blevet skåret over.
+; Unexpected EOF while decoding a UUencoded file. The message seems to be truncated.
+;
+MSG_ER_InvalidLength
+Ugyldig linielængde i UU-kodet fil: %lD. En defekt UU-koder er blevet brugt, eller også er beskeden blevet skåret over.
+; Invalid line length in UUencoded file: %lD. A defective UUencoder was used or the message is truncated.
+; SIZE
+;
+MSG_ER_CreateMailError
+Kan ikke oprette beskedfil. Årsag: ugyldigt mappe-katalog eller for lidt plads på disken.
+; Can't create mail file. Reason: invalid folder directory or unsufficient diskspace.
+;
+MSG_ER_UnknownEnc
+Ukendt MIME-kodning: %s. YAM kunne ikke afkode en af beskedens dele. Gem beskeden på disk og prøv med en anden dekoder.
+; Unknown MIME encoding: %s. YAM failed decoding a part of the message. Save the message to disk and try with a different decoder.
+; ENCODING_TYPE
+;
+MSG_ER_UnknownHeaderEnc
+Ukendt beskedhovedkodning: %s. YAM kan ikke vise et bestemt beskedhovedfelt korrekt.
+; Unknown header encoding: %s. YAM cannot display a particular message header correctly.
+; ENCODING_TYPE
+;
+MSG_ER_MultipartEOF
+Ufuldstændig flerdelt besked: uventet filafslutning. Beskeden er tilsyneladende blevet skåret over.
+; Incomplete multipart message: unexpected end of file. The message seems to be truncated.
+;
+MSG_ER_MIMEError
+Kan ikke uddrage MIME-besked. Beskeden indeholder forkert udformede MIME-dele, den er tom eller den er blevet skåret over.
+; Can't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
+;
+MSG_ER_MissingBoundary
+Manglende afgrænsning i flerdelt besked. Beskeden er tilsyneladende blevet afkortet.
+; Missing boundary in multipart message. The message seems to be truncated.
+;
+MSG_ER_CantOpenFile
+Kan ikke læse fra filen '%s'. Filen eksisterer tilsyneladende ikke.
+; Can't read from file '%s'. The file doesn't seem to exists.
+; FILENAME
+;
+MSG_ER_UUSize
+Afkodet størrelse [%lD] passer ikke\n\
+med oprindelig størrelse [%lD]. En defekt UU-koder er blevet brugt, eller også er beskeden blevet skåret over.
+; Decoded size [%lD] does not\n\
+; match original size [%lD]. A defective UUencoder was used or the message is truncated.
+; SIZE, SIZE
+;
+MSG_ER_DocNotFound
+HTML-dokumentet '%s' blev ikke fundet. Filen eksisterer ikke på WWW-serveren.
+; HTML document '%s' not found. The file doesn't exist on the WWW server.
+; FILENAME
+;
+MSG_ER_SendHTTP
+Kan ikke sende HTTP-forespørgsel. Forespørgsel efter et dokument fra WWW-serveren mislykkedes.
+; Can't send HTTP request. Requesting a document from the WWW server failed.
+;
+MSG_ER_ConnectHTTP
+Kan ikke få forbindelse til WWW-serveren '%s'. Mulige årsager: TCP/IP nedkoblet, ugyldig adresse, server er p.t. nede eller understøtter ikke HTTP-forespørgsler.
+; Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
+; HOST
+;
+MSG_ER_BadResponse
+Negativt svar på %s-kommando: %s.\n\
+Postserveren kunne ikke udføre kommandoen og svarede med en fejlmeddelelse.
+; Bad %s command response: %s.\n\
+; The mail server couldn't execute the command and replied with the error message.
+; COMMAND, TEXT
+;
+MSG_ER_UnknownPOP
+Ukendt POP3-server: '%s'. TCP/IP er nedkoblet, eller serveradressen er ugyldig.
+; Unknown POP3 server: '%s'. TCP/IP is off-line or the server address is invalid.
+; HOST
+;
+MSG_ER_UnknownSMTP
+Ukendt SMTP-server: '%s'. TCP/IP er nedkoblet, eller serveradressen er ugyldig.
+; Unknown SMTP server: '%s'. TCP/IP is off-line or the server address is invalid.
+; HOST
+;
+MSG_ER_CantConnect
+Kan ikke få forbindelse til '%s'. Postserveren er p.t. nede eller understøtter ikke POP3-/SMTP-protokoller.
+; Can't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
+; HOST
+;
+MSG_ER_NoAPOP
+Din POP3-server understøtter ikke APOP. Slå APOP fra i din YAM-opsætning.
+; Your POP3 server doesn't support APOP. Disable the APOP option in your YAM configuration.
+;
+MSG_ER_ErrorWriteMailfile
+Fejl ved skrivning af beskedfil: %s.\n\
+YAM kan ikke gemme beskeden på disk, måske er du løbet tør for diskplads.
+; Write error on mail file: %s.\n\
+; YAM can't save the message to disk, maybe you're out of diskspace.
+; FILENAME
+;
+MSG_ER_ConnectionBroken
+TCP/IP-forbindelsen blev afbrudt, sandsynligvis fordi modem-forbindelsen forsvandt.
+; TCP/IP connection broken, probably due to a carrier drop.
+;
+MSG_ER_InvalidAddress
+Ugyldig adresse '%s'. SMTP-serveren accepterede ikke adressen. Undersøg om der er ugyldige tegn i den.
+; Invalid address '%s'. The SMTP server didn't accept the address. Check for illegal characters.
+; ADDRESS
+;
+MSG_ER_ErrorReadMailfile
+Fejl ved læsning af beskedfil: %s.\n\
+Filen eksisterer, men der opstod en fejl under læsning af den.
+; Read error on mail file: %s.\n\
+; The file exists, but there was an error while reading the file.
+; FILENAME
+;
+MSG_ER_UserRemoved
+Kataloget '%s' blev ikke fundet.\n\
+Brugeren %s er blevet fjernet.
+; Directory '%s' not found!\n\
+; User %s has been removed.
+; PATH
+;
+MSG_ER_MissingDirectory
+Du skal angive et katalog til den nye bruger.
+; You must specify a directory for the new user!
+;
+MSG_ER_MissingName
+Du skal angive et navn på den nye bruger.
+; You must specify a name for the new user!
+;
+MSG_ER_NoPublicKeys
+Ingen offentlige PGP-nøgler blev fundet. Undersøg om PGP er installeret og de nødvendige indstillinger er foretaget i YAMs opsætning.
+; No public PGP keys found. Make sure that PGP is installed and the required settings are made in the configuration of YAM.
+;
+MSG_ER_PGPreturnsError
+Følgende PGP-kommando returnerede med en fejl: '%s'\n\
+Se i filen %s efter en diagnose.
+; The following PGP command returned with an error: '%s'\n\
+; Check the file %s for a diagnosis.
+; COMMAND, FILENAME
+;
+MSG_ER_PGPnotfound
+Kunne ikke udføre PGP-kommandoen.\n\
+Undersøg om %s eksisterer.
+; Couldn't execute PGP command.\n\
+; Check if %s exists.
+; FILENAME
+;
+MSG_ER_InvalidAlias
+Ugyldigt alias: %s. Der tillades ikke mere end én adresse i dette felt.
+; Invalid alias: %s. Multiple addresses are not allowed in this field.
+; ALIAS
+;
+MSG_ER_AliasNotFound
+Ukendt alias eller navn: %s. YAM kunne ikke finde e-postadressen på denne modtager i adressebogen. Undersøg om der er stavefejl.
+; Unknown alias or name: %s. YAM couldn't find the email address of this recipient in the address book. Please verify the spelling.
+; ALIAS
+;
+MSG_ER_AmbiguousAlias
+Tvetydigt alias eller navn: %s. Der er mere end én post med dette navn i adressebogen. Fjern dubletposter eller brug unikke aliaser.
+; Ambiguous alias or name: %s. There is more than one entry with this name in the address book. Please remove duplicate entries or use unique aliases.
+; ALIAS
+;
+MSG_ER_ErrorAddrDontFit
+Der er ikke plads til adresserne i strengfeltet. Brug en distributionsliste for at undgå dette problem.
+; Addresses don't fit in string gadget. Use a distribution list to avoid this problem.
+;
+MSG_ER_ErrorNoPGPId
+Kunne ikke finde PGP-ID'en for '%s' i adressebogen, forsøger nu med '%s'.
+; Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
+; RECIPIENT, ADDRESS
+;
+MSG_ER_ErrorAppendKey
+Kan ikke tilføje den offentlige PGP-nøgle %s. Der opstod et problem med at uddrage den fra PGP-nøgleringen.
+; Can't append public PGP key %s. There was a problem extracting it from the PGP keyring.
+; KEY_ID
+;
+; Module DI - Window
+;
+MSG_DI_Alias
+_Forkortelse
+; _Abbreviation
+;
+MSG_DI_New
+_Ny
+; _New
+;
+MSG_DI_AddSelect
+_Tilføje det markerede
+; Add _selection
+;
+MSG_DI_Delete
+_Slette
+; _Delete
+;
+MSG_DI_Paste
+_Indsætte
+; _Paste
+;
+; Module DI - Bubblehelp
+;
+MSG_HELP_DI_LV_ENTRIES
+Liste over tilgængelige forkortelser
+; List of available abbreviations
+;
+MSG_HELP_DI_ST_ALIAS
+Forkortelse for den markerede post
+; Abbreviation of selected entry
+;
+MSG_HELP_DI_BT_NEW
+Føjer en ny forkortelse\n\
+til ordlisten.
+; Add a new abbreviation\n\
+; to the glossary
+;
+MSG_HELP_DI_BT_ADDSELECT
+Opretter en ny post baseret på den\n\
+markerede tekst i redigeringsprogrammet.
+; Create a new entry based on\n\
+; the marked text in the editor
+;
+MSG_HELP_DI_BT_DELETE
+Fjerner den markerede post.
+; Remove selected entry
+;
+MSG_HELP_DI_BT_PASTE
+Indsætter den markerede post ved den\n\
+aktuelle position i redigeringsprogrammet.
+; Insert selected entry at the current\n\
+; position in the text editor
+;
+; Module FI - Procedures
+;
+MSG_FI_GaugeText
+%%ld af %lD beskeder
+; %%ld of %lD messages
+; COUNT, COUNT
+;
+MSG_FI_AddFilter
+Tilføje filter
+; Add filter
+;
+MSG_FI_AddFilterReq
+Angiv et navn til det nye filter.
+; Enter a name for the new filter
+;
+; Module FI - Window
+;
+MSG_FI_StatNew
+Ny/ulæst
+; New/Unread
+;
+MSG_FI_StatRead
+Læst
+; Read
+;
+MSG_FI_StatForwarded
+Videresendt
+; Forwarded
+;
+MSG_FI_StatReplied
+Besvaret
+; Replied
+;
+MSG_FI_StatQueued
+I udbakke
+; Queued
+;
+MSG_FI_StatFailed
+Afsendelse mislykkedes
+; Send failed
+;
+MSG_FI_StatHold
+Tilbageholdt
+; On hold
+;
+MSG_FI_StatSent
+Sendt
+; Sent
+;
+MSG_FI_FromField
+\ebFra\en-felt
+; \ebFrom\en field
+;
+MSG_FI_ToField
+\ebTil\en-felt
+; \ebTo\en field
+;
+MSG_FI_CCField
+\ebCC\en-felt
+; \ebCC\en field
+;
+MSG_FI_ReplyToField
+\ebReturadresse\en-felt
+; \ebReply-To\en field
+;
+MSG_FI_SubjectField
+\ebEmne\en-felt
+; \ebSubject\en field
+;
+MSG_FI_DateField
+\ebDato\en-felt
+; \ebDate\en field
+;
+MSG_FI_OtherField
+Andet felt:
+; Other field:
+;
+MSG_FI_MessageSize
+Beskedstørrelse
+; Message size
+;
+MSG_FI_MessageHeader
+Beskedhoved
+; Message header
+;
+MSG_FI_MessageBody
+Beskedkrop
+; Message body
+;
+MSG_FI_WholeMessage
+Hele beskeden
+; Whole message
+;
+MSG_FI_SearchIn
+Søge i
+; Search in
+;
+MSG_FI_CaseSensitive
+Forskel store/små
+; Case sensitive
+;
+MSG_FI_SubString
+Søgning efter delstreng
+; Substring search
+;
+; Module FI - Window
+;
+MSG_FI_FindMessages
+Søge efter beskeder
+; Find Messages
+;
+MSG_FI_AllFolders
+_Overalt
+; _everywhere
+;
+MSG_FI_FindIn
+Søge i
+; Find in
+;
+MSG_FI_FindWhat
+Søge efter hvad
+; Find what
+;
+MSG_FI_UseFilter
+_Benytte filterindstillinger
+; _Use filter settings
+;
+MSG_FI_AddAsFilter
+_Tilføje som nyt filter
+; Add as _new filter
+;
+MSG_FI_Results
+Resultater
+; Results
+;
+MSG_FI_StartSearch
+_Påbegynde søgning
+; _Start search
+;
+MSG_FI_SelectMatched
+_Vælge fundne
+; Select _matched
+;
+MSG_FI_ReadMessage
+_Læse besked
+; _Read message
+;
+MSG_FI_Abort
+_Annullere
+; _Abort
+;
+; Module FI - Bubblehelp
+;
+MSG_HELP_FI_LV_FOLDERS
+Vælg en eller flere\n\
+mapper at søge i.
+; Select one or more\n\
+; folders to search in
+;
+MSG_HELP_FI_BT_ALL
+Inkluderer alle mapper\n\
+i din søgning.
+; Include all folders in your search
+;
+MSG_HELP_FI_PO_FROMRULE
+Benytter søgekriterier fra et\n\
+filter i YAM-indstillingerne.
+; Get search criteria\n\
+; from a filter
+;
+MSG_HELP_FI_BT_TORULE
+Opretter et nyt filter ud\n\
+fra disse søgekriterier.
+; Create a new filter from\n\
+; these search criteria
+;
+MSG_HELP_FI_BT_SEARCH
+Påbegynder søgningen og viser\n\
+resultatet i listen ovenfor.
+; Start the search and display\n\
+; the results in the list above
+;
+MSG_HELP_FI_BT_SELECT
+Vælger de fundne beskeder\n\
+i hovedvinduet.
+; Select matching messages\n\
+; in the main window
+;
+MSG_HELP_FI_BT_READ
+Viser den markerede post\n\
+fra listen ovenfor.
+; Display selected message/nfrom the list above
+;
+MSG_HELP_FI_BT_ABORT
+Afbryder søgningen.
+; Stop searching
+;
+MSG_HELP_FI_CY_MODE
+Felt eller besked-del som\n\
+skal passe med mønsteret.
+; Field or message part that\n\
+; should match the pattern
+;
+MSG_HELP_FI_ST_FIELD
+Navnet på beskedhovedfeltet\n\
+som der skal søges i.
+; Name of header field to search in
+;
+MSG_HELP_FI_RA_ADRMODE
+Vælg om du vil søge i feltets\n\
+adresse- eller navnedel.
+; Choose whether you want to search in the\n\
+; address or realname part of the field
+;
+MSG_HELP_FI_CY_STATUS
+Status som beskeden skal have.
+; Message status to match
+;
+MSG_HELP_FI_ST_MATCH
+Søgemønster (AmigaDOS-\n\
+jokere understøttes).
+; Search pattern (AmigaDOS\n\
+; wildchars are supported)
+;
+MSG_HELP_FI_CH_CASESENS
+Skal søgningen gøre forskel\n\
+på store og små bogstaver?
+; Should the search\n\
+; be case sensitive?
+;
+MSG_HELP_FI_CH_SUBSTR
+Gør søgninger generiske\n\
+så også delstrenge passer.
+; Enable partial string search
+;
+MSG_HELP_FI_CY_COMP
+Sammenligningstypen. Vælg <> for at få alle beskeder som ikke\n\
+passer på mønsteret, IN for at benytte en fil indeholdende mønstre.
+; Type of comparison. Select <> to get all messages that\n\
+; don't match the pattern, IN to use a file of patterns
+;
+; Module US - Routines
+;
+MSG_US_EnterPassword
+Angiv dit kodeord.
+; Please enter your password
+;
+MSG_US_TitleUserName
+Brugernavn
+; User name
+;
+MSG_US_TitleMailDir
+Beskedkatalog
+; Mail directory
+;
+MSG_US_WaitLogin
+Venter på bruger-indlogning...
+; Waiting for user login...
+;
+MSG_US_RemoveReq
+Alle beskeder, mapper og opsætningsfiler\n\
+som hører under denne bruger, vil gå tabt.\n\
+Vil du virkelig fjerne brugeren?
+; All messages, folders and configuration\n\
+; files belonging to this user will be lost!\n\
+; Do you really want to remove the user?
+;
+MSG_US_RemoveReqGads
+*_OK|_Beholde filer|_Annullere
+; *_Okay|_Keep files|_Cancel
+;
+MSG_US_ErrorNoDirectory
+Beskedkatalog ikke fundet.\n\
+Vil du oprette det?
+; Mail directory not found.\n\
+; Do you want to create it?
+;
+; Module US - Window
+;
+MSG_US_UserName
+_Brugernavn
+; _User name
+;
+MSG_US_MailDirectory
+B_eskedkatalog
+; _Mail directory
+;
+MSG_US_GlobalAddrBook
+Be_nytte global adressebog
+; Use global address _book
+;
+MSG_US_GlobalDict
+Benytte global _ordliste
+; Use global _glossary
+;
+MSG_US_CopyConfig
+_Kopiere indstillinger fra aktuel bruger
+; C_opy configuration from current user
+;
+MSG_US_Password
+Ko_deord
+; _Password
+;
+MSG_US_SuperVisor
+Ad_ministrator-privilegier
+; _Supervisor privileges
+;
+MSG_US_AddUser
+_Tilføje bruger
+; _Add user
+;
+MSG_US_DelUser
+_Slette bruger
+; _Delete user
+;
+; Module US - Bubblehelp
+;
+MSG_HELP_US_ST_USER
+Navnet på den nye YAM-bruger
+; Name of the new YAM user
+;
+MSG_HELP_US_ST_MAILDIR
+Kataloget hvori den nye\n\
+brugerkontos mapper og\n\
+opsætningsfiler skal ligge.
+; Directory to store the\n\
+; folders and config files\n\
+; of the new user account
+;
+MSG_HELP_US_CH_USEADDR
+Skal adressebogen deles\n\
+med andre brugere?
+; Share address book\n\
+; with other users
+;
+MSG_HELP_US_CH_USEDICT
+Skal ordlisten deles\n\
+med andre brugere?
+; Share glossary\n\
+; with other users
+;
+MSG_HELP_US_ST_PASSWD
+Kodeordet som denne bruger\n\
+skal bruge for at logge ind.
+; Password required for this user to login
+;
+MSG_HELP_US_CH_ROOT
+Slå denne indstilling til hvis brugeren\n\
+må tilføje og fjerne andre brugere.
+; Enable this option if the user\n\
+; may add or remove other users
+;
+MSG_HELP_US_CH_CLONE
+Skal de aktuelle indstillinger benyttes\n\
+som standard til den nye konto?
+; Use current configuration as\n\
+; default for the new account
+;
+MSG_HELP_US_BT_ADD
+Opretter den nye konto.
+; Create the new account
+;
+MSG_HELP_US_BT_DEL
+Fjerner den markerede konto.
+; Remove selected account
+;
+;
+; Module FO - Routines
+;
+MSG_FO_NewSepReq
+Valgfri etiket til skillelinien
+; Optional label for the separator
+;
+MSG_FO_NewFolderReq
+Hvilke indstillinger vil du bruge til den nye mappe?\n\
+Vælg 'Eksisterende katalog' hvis mappen allerede\n\
+findes på din disk.
+; What settings do you want to use for the new folder?\n\
+; Select 'Existing directory' if the folder already exists\n\
+; on your disk
+;
+MSG_FO_NewFolderGads
+*_Intern standard|_Som aktuelle|_Eksisterende katalog|_Annullere
+; *_Internal defaults|_Like current|_Existing directory|_Cancel
+;
+MSG_FO_SelectDir
+Vælg katalog...
+; Select directory...
+;
+;
+; Module FO - Window
+;
+MSG_FO_MessageDate
+Beskeddato
+; Message date
+;
+MSG_FO_DateRecvd
+Modtagelsesdato
+; Date received
+;
+MSG_FO_FMNormal
+normal
+; normal
+;
+MSG_FO_FMSimple
+simpel beskyttelse
+; simple protection
+;
+MSG_FO_FMPack
+komprimeret
+; compressed
+;
+MSG_FO_FMEncPack
+komprimeret med kodeord
+; compressed with password
+;
+MSG_FO_FTRcvdMail
+modtaget post
+; received mail
+;
+MSG_FO_FTSentMail
+sendt post
+; sent mail
+;
+MSG_FO_FTBothMail
+modtaget og sendt
+; received and sent
+;
+MSG_FO_FTSeparate
+skillelinie
+; separator
+;
+MSG_FO_EditFolder
+Mappe-indstillinger
+; Folder settings
+;
+MSG_FO_Properties
+Egenskaber
+; Properties
+;
+MSG_FO_MaxAge
+_Max-alder
+; Ma_x. age
+;
+MSG_FO_FolderType
+_Type
+; T_ype
+;
+MSG_FO_FolderMode
+Mod_us
+; _Mode
+;
+MSG_FO_SortBy
+_Sortere efter
+; S_ort by
+;
+MSG_FO_ThenBy
+s_å efter
+; T_hen by
+;
+MSG_FO_Reverse
+Omv.
+; Rev
+;
+MSG_FO_MLSupport
+Postliste-understøttelse
+; Mailing list support
+;
+MSG_FO_ToPattern
+Til-m_ønster
+; To: _pattern
+;
+MSG_FO_ToAddress
+Til-a_dresse
+; _To: address
+;
+; Module FO - Bubblehelp
+;
+MSG_HELP_FO_ST_FNAME
+Navnet på mappen
+; Folder name
+;
+MSG_HELP_FO_TX_FPATH
+Katalog hvori beskederne i den\n\
+markerede mappe opbevares.
+; Directory where the messages of\n\
+; the selected folder are stored
+;
+MSG_HELP_FO_ST_MAXAGE
+Gamle beskeder vil automatisk blive\n\
+slettet efter dette antal dage.\n\
+Angiv 0 eller lad feltet stå tomt\n\
+for at slå denne funktion fra.
+; Old messages will automatically\n\
+; be deleted after this time (in days).\n\
+; Enter 0 or no value to disable this feature.
+;
+MSG_HELP_FO_CY_FTYPE
+Typen af brugerdefineret arkivmappe\n\
+(ind/ud/begge)
+; Type of custom archive folder\n\
+; (in/out/both)
+;
+MSG_HELP_FO_CY_FMODE
+Mapper kan beskyttes med et kodeord\n\
+og/eller komprimeres med XPK.
+; Folders can be password-protected\n\
+; and/or compressed using XPK
+;
+MSG_HELP_FO_CY_SORT0
+Primær rækkefølge til sortering\n\
+af beskederne i denne mappe
+; Primary sorting order of the\n\
+; message in this folder
+;
+MSG_HELP_FO_CY_SORT1
+Sekundær rækkefølge til sortering\n\
+af beskederne i denne mappe
+; Secondary sorting order of the\n\
+; message in this folder
+;
+MSG_HELP_FO_CH_REVERSE
+Omvendt sortering
+; Reversed sorting
+;
+MSG_HELP_FO_ST_MLPATTERN
+En besked hører til en postliste hvis\n\
+modtageradressen passer på dette mønster.
+; A message belongs to a mailing list\n\
+; if the To: field matches this pattern
+;
+MSG_HELP_FO_ST_MLADDRESS
+Denne modtageradresse benyttes\n\
+til svar på en postliste-besked.
+; Use this recipient address for\n\
+; a reply to a mailing list message
+;
+;
+; BUSY messages
+;
+MSG_BusySavingAB
+Gemmer adressebogen '%s'...
+; Saving address book '%s'...
+; FILENAME
+;
+MSG_BusyPrintingAB
+Udskriver adressebogen...
+; Printing address book...
+;
+MSG_BusySavingDI
+Gemmer ordliste...
+; Saving glossary...
+;
+MSG_BusyLoadingDI
+Indlæser ordliste...
+; Loading glossary...
+;
+MSG_BusyDownloadingPic
+Henter portræt af %s...
+; Downloading portrait of %s...
+; NAME
+;
+MSG_BusyUncompressingFO
+(De)komprimerer mapper...
+; (De)compressing folders...
+;
+MSG_BusyMoving
+Flytter/kopierer %s beskeder...
+; Moving/copying %s messages...
+; COUNT
+;
+MSG_BusyRemovingAtt
+Fjerner bilag...
+; Removing attachments...
+;
+MSG_BusyDeleting
+Sletter %s besked(er)...
+; Deleting %s message(s)...
+; COUNT
+;
+MSG_BusyFiltering
+Anvender filtre...
+; Applying filters...
+;
+MSG_BusyDeletingOld
+Sletter gammel post...
+; Deleting old mail...
+;
+MSG_BusyEmptyingTrash
+Tømmer affaldsmappe...
+; Emptying trash folder...
+;
+MSG_BusyGettingVerInfo
+Henter opdateringsoplysninger...
+; Getting update information...
+;
+MSG_BusyLoadingIndex
+Indlæser indeks til mappen '%s'...
+; Loading index of folder '%s'...
+; FOLDER
+;
+MSG_BusySavingIndex
+Gemmer indeks til mappen '%s'...
+; Saving index of folder '%s'...
+; FOLDER
+;
+MSG_BusyScanning
+Gennemsøger kataloget for mappen '%s'...
+; Scanning directory of folder '%s'...
+; FOLDER
+;
+MSG_BusyReading
+Indlæser besked...
+; Reading message...
+;
+MSG_BusyDisplaying
+Fremviser besked...
+; Displaying message...
+;
+MSG_BusyDisplayingList
+Opbygger beskedliste...
+; Displaying messages...
+;
+MSG_BusyPGPrunning
+PGP-handling...
+; PGP operation...
+;
+MSG_BusyComposing
+Opretter ny besked...
+; Composing message...
+;
+MSG_BusyDecPrinting
+Afkoder/udskriver...
+; Decoding/printing...
+;
+MSG_BusyDecSaving
+Afkoder/gemmer...
+; Decoding/saving...
+;
+MSG_BusyDecDisplaying
+Afkoder/fremviser...
+; Decoding/displaying...
+;
+; ADDED AFTER 13-MAR-1999
+;
+MSG_RE_FollowThreadReq
+For at følge denne tråd skal YAM indlæse alle indekser.\n\
+Dette kan være tidskrævende. Vil du fortsætte?
+; In order to follow the thread, YAM has to load all indices.\n\
+; This may be time consuming. Do you want to continue?
+;
+MSG_CTapplicationadosscript
+AmigaDOS-kommandofil
+; AmigaDOS script
+;
+MSG_CTapplicationrexx
+ARexx-program
+; Rexx script
+;
+; ADDED AFTER 04-DEC-2000
+;
+MSG_PROJECT_ABOUT
+?\000Om...
+; ?\000About...
+;
+MSG_PROJECT_CHECKVERSION
+Undersøge version
+; Check version
+;
+MSG_FOLDER_NEWFOLDER
+Ny mappe...
+; New folder...
+;
+MSG_FOLDER_NEWSEPARATOR
+Ny skillelinie...
+; New separator...
+;
+MSG_FOLDER_EDIT
+Indstillinger
+; Edit
+;
+MSG_FOLDER_DELETE
+Slette
+; Delete
+;
+MSG_FOLDER_IMPORT
+Importere...
+; Import...
+;
+MSG_FOLDER_EXPORT
+Eksportere...
+; Export...
+;
+MSG_MESSAGE_EDIT
+E\000Redigere...
+; E\000Edit
+;
+MSG_MESSAGE_MOVE
+M\000Flytte...
+; M\000Move...
+;
+MSG_MESSAGE_COPY
+Kopiere...
+; Copy...
+;
+MSG_MESSAGE_PRINT
+P\000Udskrive...
+; P\000Print...
+;
+MSG_MESSAGE_SAVE
+V\000Gemme
+; V\000Save...
+;
+MSG_MESSAGE_SAVEATT
+T\000Gemme...
+; T\000Save
+;
+MSG_MESSAGE_CROP
+O\000Fjerne bilag
+; O\000Crop
+;
+MSG_MESSAGE_EXPORT
+Eksportere...
+; Export...
+;
+MSG_MESSAGE_NEW
+N\000Ny...
+; N\000New
+;
+MSG_MESSAGE_REPLY
+R\000Svare...
+; R\000Reply...
+;
+MSG_MESSAGE_FORWARD
+W\000Videresende...
+; W\000Forward...
+;
+MSG_MESSAGE_BOUNCE
+B\000Omdirigere...
+; B\000Bounce...
+;
+MSG_MESSAGE_GETADDRESS
+J\000Gemme adresse...
+; J\000Save address...
+;
+MSG_MESSAGE_CHANGESUBJECT
+Ændre emne...
+; Change subject...
+;
+MSG_SETTINGS_ADDRESSBOOK
+A\000Adressebog
+; A\000Address Book...
+;
+MSG_SETTINGS_CONFIG
+K\000Opsætning...
+; K\000Configuration...
+;
+MSG_SETTINGS_USERS
+Brugere...
+; Users...
+;
+MSG_SETTINGS_MUI
+MUI...
+; MUI...
+;
+MSG_FO_FromAddress
+Fra-adresse
+; From: address
+;
+MSG_HELP_FO_ST_MLFROMADDRESS
+Afsenderadressen der skal benyttes\n\
+i nye indlæg til listen
+; Use this from address when posting\n\
+; new mails to the list
+;
+MSG_FO_ReplyToAddress
+Svare til-adresse
+; Reply-To: address
+;
+MSG_HELP_FO_ST_MLREPLYTOADDRESS
+Svare til-adressen der skal benyttes\n\
+i nye indlæg til listen
+; Use this reply-to address when posting\n\
+; new mails to the list
+;
+MSG_RE_MDNGads4
+|Ignorere alle
+; |Ignore all
+;
+MSG_EA_DefSecurity
+Si_kkerhed
+; Se_curity
+;
+MSG_HELP_MA_CY_DEFSECURITY
+Standard-sikkerhedsniveauet ved\n\
+afsendelse af post til denne person
+; Default security for sending\n\
+; mail to this person
+;
+MSG_WR_DefSecurityConflict
+Modtagerne af denne besked har forskellige standard-\n\
+sikkerhedsindstillinger. Hvilken type sikkerhed vil du have?
+; The recipients of this mail have different default\n\
+; security settings. What kind of security do you want?
+;
+MSG_WR_DefSecurityConflictGads
+*_Ingen|_Signering|_Kryptering|_Begge|_Anonym afsendelse
+; *_None|_Sign|_Encrypt|_Both|Send _anonymously
+;
+MSG_WR_SecDefaults
+Standard
+; Default
+;
+MSG_ER_PGPMultipart
+Fejl ved oprettelse af PGP-besked i flere dele. Kryptering/signering deaktiveret.
+; Error creating multipart PGP message. Encryption/signing disabled!
+;
+MSG_RE_FixedFont
+Skrift med fast bredde
+; Fixed font
+;
+MSG_ER_NO_SMTP_AUTH
+ESMTP-serveren %s understøtter ikke SMTP AUTH.
+; ESMTP Server %s doesn't support SMTP AUTH!
+;
+MSG_CO_UseSMTPAUTH
+Benytte SMTP _AUTH
+; Use SMTP _AUTH
+;
+MSG_CO_SMTPUser
+Br_uger-ID
+; _User ID
+;
+MSG_CO_SMTPPass
+_Kodeord
+; Pa_ssword
+;
+MSG_CO_Del
+Slette
+; Delete
+;
+MSG_RE_SetUnread
+Sætte status til ulæst
+; Set status to unread
+;
+MSG_WR_AltQuoted
+Alternativt citeret
+; Alternate Quoted
+;
+MSG_CO_AltQuote
+Markere eksterne citater med
+; Quote external using
+;
+MSG_CO_DoQuote
+Citere besked
+; Quote message
+;
+MSG_HELP_CO_ST_ALTQUOTECHAR
+Tegnfølge som skal foranstilles hver linie\n\
+i citater fra andre kilder end e-post
+; String that should precede each line of\n\
+; a quote inserted from non-email sources
+;
+MSG_EA_SelectPhoto_Title
+Vælg portræt
+; Select portrait
+;
+MSG_RE_MoveNextFolderReq
+Den næste mappe med ulæste beskeder\n\
+er: \eb%s\en\n\
+Vil du skifte til denne mappe og\n\
+fortsætte læsningen der?
+; The next folder with unread messages\n\
+; is: \eb%s\en\n\
+; Change to this folder and continue\n\
+; with reading there?
+;
+MSG_WR_NoSubjectReqGad
+*_Indtaste emne|_Fortsætte uden emne
+; *_Set subject|_Continue without subject
+;
+MSG_NoSubjectReq
+Advarsel: Emnefeltet er tomt
+; Warning: Subject is empty
+;
+MSG_MA_ABookModifiedGad
+*_Gemme nu|_Afslutte uden at gemme
+; *_Save now|_Quit without saving
+;
+MSG_APPICON_STATS
+N:%lD U:%lD I:%lD
+; N:%lD U:%lD T:%lD
+;
+; COUNT, COUNT, COUNT
+;
+MSG_ATTACH_NO
+Nr.
+; No.
+;
+MSG_ATTACH_PART
+Indhold
+; Part
+;
+MSG_ABOUT_OKAY_GAD
+OK
+; OK
+;
