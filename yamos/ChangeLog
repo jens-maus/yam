@@ -7,6 +7,10 @@ $Source$
 
 2002-06-08  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_MA.c: fixed bug #557522 where on a reply with a selected
+      mailing list folder YAM wasn`t inserting the correct
+      signature at all. Now it should insert the correct one
+      depending on the mailing list variables of the folder.
     * YAM_FO.c: fixed a small, but nasty bug within the Folderimage
       allocation routines that stopped YAM somehow to show up the
       GUI if the user had just enabled one column of the Folder
