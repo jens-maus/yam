@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-04-06  Jens Langner <Jens.Langner@light-speed.de>
+
+    * ReadMailGroup.c: fixed a possible crash bug where an already used read window or
+      group object wasn't correctly cleared upon initialization of a new mail. This
+      should fix some crashes that may have occurred on mails with attachments where
+      the attachmentgroup still referred to some mail part pointer which in fact
+      where already freed upon the redisplay of the mail (bug #1170937).
+    * YAM_RE.c, YAM_UT.c, AttachmentGroup.c: added some more debug output to different
+      areas which in fact should make the new readwindow/attachmentgroup stuff more
+      debugable.
+
 2005-04-04  Jens Langner <Jens.Langner@light-speed.de>
 
     * Debug.c,h: reworked the whole debug output management in YAM and replaced it
