@@ -324,11 +324,10 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
    FILE *fh;
    int len, nested = 0;
 
-   if (fh = fopen(fname, "r"))
-   {
-      parent[nested] = MUIV_NListtree_Insert_ListNode_Root;
+   parent[nested] = MUIV_NListtree_Insert_ListNode_Root;
 
-      GetLine(fh, buffer, SIZE_LARGE);
+   if((fh = fopen(fname, "r")) && GetLine(fh, buffer, SIZE_LARGE))
+   {
       if (!strncmp(buffer,"YAB",3))
       {
          int version = buffer[3]-'0';
@@ -440,6 +439,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
    else
    {
       ER_NewError(GetStr(MSG_ER_ADDRBOOKLOAD), fname, NULL);
+      if(fh) fclose(fh);
       return FALSE;
    }
 
