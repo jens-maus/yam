@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.6 (02.05.2002)
+## version $VER: YAM.catalog 5.6 (22.05.2002)
 ## codeset 0
 ;
 MSG_Folder
@@ -5787,4 +5787,32 @@ Bitte stellen Sie sicher, dass diese Datei wirklich Nachrichten \
 im standard MBOX Format enthält (getrennt durch einzelne "From " \
 Zeilen).
 ; FILENAME
+;
+MSG_ER_ADDRBOOKLOAD (//)
+Konnte Addressbuch von Datei '%s' nicht laden.\n\
+Die Datei scheint nicht zu existieren oder ein\n\
+Zugriff ist nicht möglich.
+; FILENAME
+;
+MSG_AB_NOYAMADDRBOOK (//)
+Die Datei '%s' ist keine YAM Addressbuchdatei.\n\
+Möchten Sie trotzdem diese Datei als eine durch Zeilenumbruch\n\
+getrennte Addressbuchdatei laden ?
+; FILENAME
+;
+MSG_AB_NOYAMADDRBOOK_GADS (//)
+_Ja|*_Nein
+;
+MSG_FO_EDIT_FGROUP (//)
+Postfachgruppeneinstellungen
+;
+MSG_FO_EDIT_FGROUPREQ (//)
+Name der Postfachgruppe:
+;
+MSG_ERR_OPENMCC (//)
+Konnte version v%lu.lu der MUI '%s' Klasse nicht finden.\n\
+Zwecks Kompatibilitätsgründen ist es notwendig das mindestens\n\
+diese version mit YAM benutzt wird. Bitte stellen Sie\n\
+sicher das diese bei Ihnen installiert ist.
+;MCC_VERSION, MCC_REVISION, MCC_NAME
 ;
