@@ -39,6 +39,7 @@
     #include "YAM_utilities.h"
 
     #define YY_NEVER_INTERACTIVE 1
+    #define YY_NO_INPUT 1
 %}
 
 NOTBLANK   [^[:blank:]\r\n()<>\[\]*.\"]
@@ -46,10 +47,10 @@ NOTBLANKAT [^[:blank:]\r\n()<>\[\]*.@\"]
 INITIALS   [[:alpha:][:blank:]]
 
 %%
-^"<sb>"                {return tSB ;}
-^"<tsb>"               {return tTSB;}
-^({INITIALS}{0,3}">")+ {return tCITE;}
-^"-- \n"               {return tSIGNATURE;}
+^"<sb>"                             {return tSB ;}
+^"<tsb>"                            {return tTSB;}
+^([[:blank:]]*{INITIALS}{0,3}">")+  {return tCITE;}
+^"-- \n"                            {return tSIGNATURE;}
 
 " "  {return tSPACE      ;}
 "  " {return tDOUBLESPACE;}
@@ -79,7 +80,6 @@ INITIALS   [[:alpha:][:blank:]]
 "news:"({NOTBLANK}|[.])*                                                          {return tNEWS      ;}
 ({NOTBLANKAT}|".")+"@"({NOTBLANKAT}+".")+{NOTBLANKAT}{2,4}                        {return tEMAIL     ;}
 ("www"|"ftp")"."{NOTBLANK}{3,}({NOTBLANK}|".")*"."{NOTBLANK}{2,4}"/"?{NOTBLANK}*  {return tURL       ;}
-[^[:space:]\.()<>&\n*/_]+                                                         {return tNORMALTEXT;}
 .                                                                                 {return tNORMALTEXT;}
 
 %%
