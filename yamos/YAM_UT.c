@@ -28,6 +28,25 @@
  Utilities
 ***************************************************************************/
 
+/* local protos */
+LOCAL int GetWord(char **rptr, char *wbuf, int max);
+LOCAL char *ReflowParagraph(char *start, char *end, int lmax, char *dest);
+LOCAL char *RemoveQuoteString(char *start, char *end, char *quot, char *dest);
+LOCAL char *InsertQuoteString(char *start, char *quote, FILE *out);
+LOCAL void SaveParagraph(char *start, char *end, char *prefix, FILE *out);
+LOCAL char *FileToBuffer(char *file);
+LOCAL int TZtoMinutes(char *tzone);
+LOCAL BOOL GetPackMethod(int xpktype, char **method, int *eff);
+LOCAL BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
+LOCAL BOOL UncompressMailFile(char *src, char *dst, char *passwd);
+LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
+LOCAL char *IdentifyFileDT(char *fname);
+/* hook functions */
+LOCAL SAVEDS ASM long GeneralDesFunc(REG(a1) void *entry);
+LOCAL SAVEDS ASM void PO_SetPublicKey(REG(a1) APTR string, REG(a2) APTR pop);
+LOCAL SAVEDS ASM long PO_ListPublicKeys(REG(a1) APTR string, REG(a2) APTR pop);
+
+
 /*** Requesters ***/
 /// StringRequest
 //  Puts up a string requester
@@ -617,13 +636,15 @@ BOOL RenameFile(char *oldname, char *newname)
    struct FileInfoBlock *fib;
    BPTR lock;
    if (!Rename(oldname, newname)) return FALSE;
-   fib = AllocDosObject(DOS_FIB,NULL);
-   if (lock = Lock(newname, ACCESS_READ))
-   {
-      Examine(lock, fib); UnLock(lock);
-      SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE));
-   }
-   FreeDosObject(DOS_FIB,fib);
+   if(fib = AllocDosObject(DOS_FIB,NULL))
+	{
+	   if (lock = Lock(newname, ACCESS_READ))
+   	{
+	      Examine(lock, fib); UnLock(lock);
+   	   SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE));
+	   }
+	   FreeDosObject(DOS_FIB,fib);
+	} else return FALSE;
    return TRUE;
 }
 ///
@@ -671,7 +692,7 @@ BOOL ConvertCRLF(char *in, char *out, BOOL to)
 ///
 /// GetWord
 //  Word-wrapping algorithm: gets next word
-int GetWord(char **rptr, char *wbuf, int max)
+LOCAL int GetWord(char **rptr, char *wbuf, int max)
 {
    int c, i = 0;
    static int nonblanks = 0;
@@ -707,7 +728,7 @@ int GetWord(char **rptr, char *wbuf, int max)
 ///
 /// ReflowParagraph
 //  Word-wrapping algorithm: process a paragraph
-char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
+LOCAL char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
 {
    int lword, lline = 0;
    char c, word[SIZE_LARGE], *p;
@@ -742,7 +763,7 @@ char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
 ///
 /// RemoveQuoteString
 //  Removes reply prefix
-char *RemoveQuoteString(char *start, char *end, char *quot, char *dest)
+LOCAL char *RemoveQuoteString(char *start, char *end, char *quot, char *dest)
 {
    while (start <= end)
    {
@@ -756,7 +777,7 @@ char *RemoveQuoteString(char *start, char *end, char *quot, char *dest)
 ///
 /// InsertQuoteString
 //  Inserts reply prefix
-char *InsertQuoteString(char *start, char *quote, FILE *out)
+LOCAL char *InsertQuoteString(char *start, char *quote, FILE *out)
 {
    if ((*start != '\n' || C->QuoteEmptyLines) && strncmp(start, "<sb>", 4) && strncmp(start, "<tsb>", 5))
    {
@@ -776,7 +797,7 @@ char *InsertQuoteString(char *start, char *quote, FILE *out)
 ///
 /// SaveParagraph
 //  Writes a paragraph and inserts reply prefixes
-void SaveParagraph(char *start, char *end, char *prefix, FILE *out)
+LOCAL void SaveParagraph(char *start, char *end, char *prefix, FILE *out)
 {
    while (start <= end)
    {
@@ -1024,7 +1045,7 @@ void DeleteMailDir(char *dir, BOOL isroot)
 ///
 /// FileToBuffer
 //  Reads a complete file into memory
-char *FileToBuffer(char *file)
+LOCAL char *FileToBuffer(char *file)
 {
    char *text;
    int size = FileSize(file);
@@ -1354,7 +1375,7 @@ char *GetTZ(void)
 ///
 /// TZtoMinutes
 //  Converts time zone into a numeric offset
-int TZtoMinutes(char *tzone)
+LOCAL int TZtoMinutes(char *tzone)
 {
    int i, tzcorr = 0;
    static struct TimeZones { char *TZname; int TZcorr; }
@@ -1525,7 +1546,7 @@ void ClearMailList(struct Folder *folder, BOOL resetstats)
 ///
 /// GetPackMethod
 //  Returns packer type and efficiency
-BOOL GetPackMethod(int xpktype, char **method, int *eff)
+LOCAL BOOL GetPackMethod(int xpktype, char **method, int *eff)
 {
    if (xpktype == 2) { *method = C->XPKPack; *eff = C->XPKPackEff; return TRUE; }
    if (xpktype == 3) { *method = C->XPKPackEncrypt; *eff = C->XPKPackEncryptEff; return TRUE; }
@@ -1534,7 +1555,7 @@ BOOL GetPackMethod(int xpktype, char **method, int *eff)
 ///
 /// CompressMailFile
 //  Shrinks a message file
-BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
+LOCAL BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
 {
    int err;
    if (!XpkBase) return FALSE;
@@ -1544,7 +1565,7 @@ BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
 ///
 /// UncompressMailFile
 //  Expands a compressed message file
-BOOL UncompressMailFile(char *src, char *dst, char *passwd)
+LOCAL BOOL UncompressMailFile(char *src, char *dst, char *passwd)
 {
    if (!XpkBase) return FALSE;
    return (BOOL)(!XpkUnpackTags(XPK_InName, src, XPK_OutName, dst, XPK_Password, passwd, TAG_DONE));
@@ -1723,7 +1744,7 @@ BOOL FileToEditor(char *file, struct Object *editor)
 /*** Hooks ***/
 /// GeneralDesFunc
 //  General purpose destruction hook
-SAVEDS ASM long GeneralDesFunc(REG(a1) void *entry)
+LOCAL SAVEDS ASM long GeneralDesFunc(REG(a1) void *entry)
 {
    free(entry);
    return 0;
@@ -1732,7 +1753,7 @@ MakeHook(GeneralDesHook, GeneralDesFunc);
 ///
 /// PO_SetPublicKey
 //  Copies public PGP key from list to string gadget
-SAVEDS ASM void PO_SetPublicKey(REG(a1) APTR string, REG(a2) APTR pop)
+LOCAL SAVEDS ASM void PO_SetPublicKey(REG(a1) APTR string, REG(a2) APTR pop)
 {
    char *var, buf[SIZE_SMALL];
 
@@ -1748,7 +1769,7 @@ MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 ///
 /// PO_ListPublicKeys
 //  Lists keys of public PGP keyring in a popup window
-SAVEDS ASM long PO_ListPublicKeys(REG(a1) APTR string, REG(a2) APTR pop)
+LOCAL SAVEDS ASM long PO_ListPublicKeys(REG(a1) APTR string, REG(a2) APTR pop)
 {  
    BOOL secret;
    char buf[SIZE_LARGE], *str, p;
@@ -1821,10 +1842,12 @@ char ShortCut(char *label)
    sc = ToLower(*++ptr);
    return sc;
 }
+
+/*********** Function isn't used anywhere! -msbethke **************
 ///
 /// RemoveCut
 //  Removes shortcut character from text label
-char *RemoveCut(char *label)
+LOCAL char *RemoveCut(char *label)
 {
    static char lab[SIZE_DEFAULT], *p;
 
@@ -1832,6 +1855,8 @@ char *RemoveCut(char *label)
    *p = 0;
    return lab;
 }
+*/
+
 ///
 /// SetHelp
 //  Sets bubble help of a MUI object
@@ -2035,81 +2060,65 @@ ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
 //  Gets an attribute value from a MUI object
 int GetMUI(struct Object *obj,int attr)
 {
-   int b;
+   LONG b;
    get(obj,attr,&b);
-   return b;
+   return (int)b;
 }
 ///
 /// GetMUIStringPtr
 //  Returns a pointer to the value of a MUI string object
 char *GetMUIStringPtr(struct Object *obj)
 {
-   char *b;
-   get(obj,MUIA_String_Contents,&b);
-   return b;
+	return (char*)GetMUI(obj,MUIA_String_Contents);
 }
 ///
 /// GetMUIString
 //  Returns the value of a MUI string object
 void GetMUIString(char *a,struct Object *obj)
 {
-   char *b;
-   get(obj,MUIA_String_Contents,&b);
-   strcpy(a,b);
+   strcpy(a,(char*)GetMUI(obj,MUIA_String_Contents));
 }
 ///
 /// GetMUIText
 //  Returns the value of a MUI text object
 void GetMUIText(char *a,struct Object *obj)
 {
-   char *b;
-   get(obj,MUIA_Text_Contents,&b);
-   strcpy(a,b);
+   strcpy(a,(char*)GetMUI(obj,MUIA_Text_Contents));
 }
 ///
 /// GetMUIInteger
 //  Returns the numeric value of a MUI string object
 int GetMUIInteger(struct Object *obj)
 {
-   char *b;
-   get(obj,MUIA_String_Contents,&b);
-   return atoi(b);
+   return GetMUI(obj,MUIA_String_Integer);
 }
 ///
 /// GetMUICheck
 //  Returns the value of a MUI checkmark object
 BOOL GetMUICheck(struct Object *obj)
 {
-   long b;         
-   get(obj, MUIA_Selected, &b);
-   return (BOOL)b;
+   return (BOOL)GetMUI(obj, MUIA_Selected);
 }
 ///
 /// GetMUICycle
 //  Returns the value of a MUI cycle object
 int GetMUICycle(struct Object *obj)
 {
-   long b;         
-   get(obj, MUIA_Cycle_Active, &b);
-   return (int)b;
+   return GetMUI(obj, MUIA_Cycle_Active);
 }
 ///
 /// GetMUIRadio
 //  Returns the value of a MUI radio object
 int GetMUIRadio(struct Object *obj)
 {
-   long b;         
-   get(obj, MUIA_Radio_Active, &b);
-   return (int)b;
+   return GetMUI(obj, MUIA_Radio_Active);
 }
 ///
 /// GetMUINumer
 //  Returns the value of a MUI numeric slider
 int GetMUINumer(struct Object *obj)
 {
-   long b;         
-   get(obj, MUIA_Numeric_Value, &b);
-   return (int)b;
+   return GetMUI(obj, MUIA_Numeric_Value);
 }
 ///
 /// SafeOpenWindow
@@ -2322,19 +2331,23 @@ void PGPClearPassPhrase(BOOL force)
 //  Launches a PGP command
 int PGPCommand(char *progname, char *options, int flags)
 {
-   BPTR fh;
+   BPTR fhi,fho;
    int error = -1;
    char command[SIZE_LARGE];
 
-   if (fh = Open("NIL:", MODE_READWRITE))
-   {
-      Busy(GetStr(MSG_BusyPGPrunning), "", 0, 0);
-      strmfp(command, C->PGPCmdPath, progname);
-      strcat(command, " >" PGPLOGFILE " ");
-      strcat(command, options);
-      error = SystemTags(command, SYS_Input, fh, SYS_Output, fh, NP_StackSize, C->StackSize, TAG_DONE);
-      Close(fh);
-      BusyEnd;
+	if (fhi = Open("NIL:", MODE_OLDFILE))
+	{
+	   if (fho = Open("NIL:", MODE_NEWFILE))
+   	{
+	      Busy(GetStr(MSG_BusyPGPrunning), "", 0, 0);
+	      strmfp(command, C->PGPCmdPath, progname);
+	      strcat(command, " >" PGPLOGFILE " ");
+	      strcat(command, options);
+	      error = SystemTags(command, SYS_Input, fhi, SYS_Output, fho, NP_StackSize, C->StackSize, TAG_DONE);
+	      Close(fho);
+	      BusyEnd;
+		}
+		Close(fhi);
    }
    if (error > 0 && !(flags & NOERRORS)) ER_NewError(GetStr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
    if (error < 0) ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath, NULL);
@@ -2344,7 +2357,7 @@ int PGPCommand(char *progname, char *options, int flags)
 ///
 /// AppendToLogfile
 //  Appends a line to the logfile
-void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4)
+LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4)
 {
    FILE *fh;
    char logfile[SIZE_PATHFILE], filename[SIZE_FILE];
@@ -2531,7 +2544,7 @@ BOOL MatchExtension(char *fileext, char *extlist)
 ///
 /// IdentifyFileDT
 //  Detects the file type using datatypes.library
-char *IdentifyFileDT(char *fname)
+LOCAL char *IdentifyFileDT(char *fname)
 {
    static char ctype[SIZE_CTYPE], *type = NULL;
    struct Library *DataTypesBase = OpenLibrary("datatypes.library", 39);
