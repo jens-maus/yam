@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.7 (18.10.2002)
+## version $VER: YAM.catalog 5.7 (07.01.2003)
 ## codeset 0
 ;
 MSG_Folder
@@ -240,8 +240,8 @@ Verzeichnis
 ; Directory
 ;
 MSG_Copyright1
-Open Source E-Mail Software für den Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2002 YAM Open Source Team
-; Open Source E-mail package for the Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2002 YAM Open Source Team
+Open Source E-Mail Software für den Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2003 YAM Open Source Team
+; Open Source E-mail package for the Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2003 YAM Open Source Team
 ;
 MSG_Version
 Version:
