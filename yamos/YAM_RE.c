@@ -1742,9 +1742,37 @@ char *RE_ReadInMessage(int winnum, int mode)
             {       
                if (msg = calloc(part->Size+3,1))
                {
+               char *sigptr;
+
                   *msg = '\n';
                   fread(msg+1, 1, part->Size, fh);
                   rptr = msg+1;
+
+                  // find signature first if it should be stripped
+                  if (mode == RIM_QUOTE && C->StripSignature)
+                  {
+                  int lines=21;
+
+                     sigptr = msg + part->Size;
+                     while(sigptr > msg)
+                     {
+                        sigptr--;
+                        while((sigptr > msg) && (*sigptr != '\n')) sigptr--;  // step back to previous line
+                        if((!--lines) || (sigptr <= msg+1))                   // abort after 20 lines or if at msg start
+                        {
+                           sigptr = NULL;
+                           break;
+                        }
+                        if(strncmp(sigptr+1,"-- ",3) == 0)                    // check for sig separator
+                        {
+                           sigptr++;
+                           break;
+                        }
+                     }
+//                   if(sigptr) DB(KPrintf("Found sig separator %ld lines from end\n",20-lines));
+//                   else DB(KPrintf("No sig found\n"));
+                  }
+
                   while (*rptr)
                   {
                      for (eolptr = rptr; *eolptr && *eolptr != '\n'; eolptr++); *eolptr = 0;
@@ -1821,7 +1849,7 @@ char *RE_ReadInMessage(int winnum, int mode)
                      }
 /* signature */      if (!strcmp(rptr, "-- "))
                      {
-                        if (mode == RIM_QUOTE && C->StripSignature) break;
+                        if (mode == RIM_QUOTE && C->StripSignature && (rptr == sigptr)) break;
                         else if (mode == RIM_READ)
                         {
                            if (C->SigSepLine == 1) cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
