@@ -1057,3 +1057,8 @@
       source.
     * Fixed ADDRRESOLVE arexx command further. Btw: this command would earlier
       (YAM 2.2) return a random string on failure.
+
+2001-08-01  Gunther Nikl <gni@gecko.de>
+
+    * YAM_rexx.c (global): added REXXMSG macro to hide annoying NDK difference
+      (ReplyRexxCommand, DoRXCommand): use it
