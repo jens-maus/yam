@@ -2395,8 +2395,7 @@ void RE_CleanupMessage(int winnum)
       FreeStrBuf(part->ContentDisposition);
       free(part);
    }
-   re->FirstPart     = NULL;
-   re->FirstReadDone = FALSE;
+   re->FirstPart = NULL;
 
    // now we have to check whether there is a .unp (unpack) file and delete
    // it acoordingly (we can`t use the FinishUnpack() function because the
@@ -2882,61 +2881,168 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
               {
                 // strip null bytes that are in between the start and end of stream
                 // here we simply exchange it by a space
-                if(*eolptr == '\0') *eolptr = ' ';
+                if(*eolptr == '\0')
+                  *eolptr = ' ';
               }
-              *eolptr = '\0';
+              *eolptr = '\0'; // terminate the string
 
-/* UUenc */   if(!strncmp(rptr, "begin ", 6) && isdigit((int)rptr[6]))
+              // now that we have a full line we can check for inline stuff
+              // like inline uuencode/pgp sections
+/* UUenc */   if(strncmp(rptr, "begin ", 6) == 0 &&
+                 rptr[6] >= '0' && rptr[6] <= '7' &&
+                 rptr[7] >= '0' && rptr[7] <= '7' &&
+                 rptr[8] >= '0' && rptr[8] <= '7')
               {
-                if(!re->FirstReadDone)
+                FILE *outfh;
+                char *nameptr = NULL;
+
+                DB(kprintf("inline UUencoded passage found!\n");)
+
+                // now we have to get the filename off the 'begin' line
+                // so that we can put our new part together
+                if(rptr[9] == ' ' && rptr[10] != '\0')
+                  nameptr = &rptr[10];
+
+                // find the currently last part of the message to where we attach
+                // the new part now
+                for(last = first; last->Next; last = last->Next);
+
+                // then create the new part to which we will put our uudecoded
+                // data
+                if((outfh = RE_OpenNewPart(winnum, &uup, last, first)))
                 {
-                  FILE *ufh;
-                  ptr = &rptr[6];
+                  char *endptr = rptr+strlen(rptr)+1;
+                  long old_pos;
 
-                  while (!ISpace(*ptr)) ptr++;
-                  ptr = stpblk(ptr);
-                  for (last = first; last->Next; last = last->Next);
+                  // prepare our part META data and fake the new part as being
+                  // a application/octet-stream part as we don't know if it
+                  // is some text or something else.
+                  uup->ContentType = StrBufCpy(uup->ContentType, "application/octet-stream");
+                  strcpy(uup->Description, GetStr(MSG_RE_UUencodedFile));
+                  if(nameptr)
+                    stccpy(uup->Name, nameptr, SIZE_FILE);
 
-                  if((ufh = RE_OpenNewPart(winnum, &uup, last, first)))
+                  // save the old position of our input file position so that
+                  // we can set it back later on
+                  old_pos = ftell(fh);
+
+                  // then let us seek to the position where we found the starting
+                  // "begin" indicator
+                  if(old_pos >= 0 &&
+                     fseek(fh, rptr-msg-1, SEEK_SET) == 0)
                   {
-                    uup->ContentType = StrBufCpy(uup->ContentType, "application/octet-stream");
-                    strcpy(uup->Description, GetStr(MSG_RE_UUencodedFile));
-                    stccpy(uup->Name, ptr, SIZE_FILE);
-                    fromuuetxt(&rptr, ufh);
-                    fclose(ufh);
+                    // now that we are on the correct position, we
+                    // call the uudecoding function accordingly.
+                    long decoded = uudecode_file(fh, outfh, NULL); // no translation table
+                    DB(kprintf("UU decoded %ld chars of part %ld.\n", decoded, uup->Nr);)
 
-                    uup->Decoded = TRUE;
-                    RE_SetPartInfo(uup);
-                    eolptr = rptr-1;
-                    ptr = rptr;
+                    if(decoded >= 0)
+                      uup->Decoded = TRUE;
+                    else
+                    {
+                      switch(decoded)
+                      {
+                        case -1:
+                        {
+                          ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
+                        }
+                        break;
+
+                        case -2:
+                        {
+                          ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "begin");
+                        }
+                        break;
+
+                        case -3:
+                        {
+                          ER_NewError(GetStr(MSG_ER_InvalidLength), 0, NULL);
+                        }
+                        break;
+
+                        case -4:
+                        {
+                          ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), uup->Filename, NULL);
+
+                          uup->Decoded = TRUE; // allow to save the resulting file
+                        }
+                        break;
+
+                        case -5:
+                        {
+                          ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), uup->Filename, NULL);
+                        }
+                        break;
+
+                        case -6:
+                        {
+                          ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
+
+                          uup->Decoded = TRUE; // allow to save the resulting file
+                        }
+                        break;
+
+                        default:
+                          ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
+                      }
+                    }
                   }
-                  else ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
-                }
-                else
-                {
-                  for(ptr=eolptr+1; *ptr; ptr++)
+
+                  // set back the old position to the filehandle
+                  fseek(fh, old_pos, SEEK_SET);
+
+                  // close our part filehandle
+                  fclose(outfh);
+
+                  // refresh the partinfo
+                  RE_SetPartInfo(uup);
+
+                  // if everything was fine we try to find the end marker
+                  if(uup->Decoded)
                   {
-                    if(!strncmp(ptr, "end", 3)) break;
+                    // unfortunatly we have to find our ending "end" line now
+                    // with an expensive string function. But this shouldn't be
+                    // a problem as inline uuencoded parts are very rare today.
+                    while((endptr = strstr(endptr, "\nend")))
+                    {
+                      endptr += 4; // point to the char after end
 
-                    while(*ptr && *ptr != '\n') ptr++;
+                      // skip eventually existing whitespaces
+                      while(*endptr == ' ')
+                        endptr++;
+
+                      // now check if the terminating char is a newline or not
+                      if(*endptr == '\n')
+                        break;
+                    }
+
+                    // check if we found the terminating "end" line or not
+                    if(endptr)
+                    {
+                      // then starting from the next line there should be the "size" line
+                      if(*(++endptr) && strncmp(endptr, "size ", 5) == 0)
+                      {
+                        int expsize = atoi(&endptr[5]);
+
+                        if(uup->Size != expsize)
+                          ER_NewError(GetStr(MSG_ER_UUSize), (char *)uup->Size, (char *)expsize);
+                      }
+                    }
+                    else
+                    {
+                      ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), uup->Filename, "end");
+                      endptr = rptr;
+                    }
                   }
+                  else endptr = rptr;
 
-                  while(*ptr && *ptr != '\n') ptr++;
+                  // find the end of the line
+                  for(eolptr = endptr; *eolptr && *eolptr != '\n'; eolptr++);
 
-                  eolptr = ptr++;
+                  // terminate the end
+                  *eolptr = '\0';
                 }
-
-                if(!strncmp(ptr, "size", 4))
-                {
-                  if(!re->FirstReadDone)
-                  {
-                    int expsize = atoi(&ptr[5]);
-                    if (uup->Size != expsize) ER_NewError(GetStr(MSG_ER_UUSize), (char *)uup->Size, (char *)expsize);
-                  }
-
-                  for (eolptr = ptr; *eolptr && *eolptr!='\n'; eolptr++);
-                  *eolptr = 0;
-                }
+                else ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
               }
 /* PGP msg */ else if(!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
               {
@@ -3058,8 +3164,8 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
       SParse(cmsg + prewptr);
     }
 
-    re->FirstReadDone = TRUE;
-    if(mode != RIM_QUIET) BusyEnd;
+    if(mode != RIM_QUIET)
+      BusyEnd;
   }
 
   return cmsg;

@@ -65,6 +65,5 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
 
 // the OLD MIME routines which we are going to replace step-by-step
 void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
-void  fromuuetxt(char **txt, FILE *outfp);
 
 #endif /* YAM_MIME_H */

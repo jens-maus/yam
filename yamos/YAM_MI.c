@@ -36,9 +36,6 @@
 #include "YAM_utilities.h"
 
 /* local */
-static void uueget(char*, FILE*, int);
-static BOOL gettxtline(char*, int, char**);
-
 static int rfc2047_decode_int(const char *text,
                               int (*func)(const char *, unsigned int, const char *, const char *, void *),
                               void *arg);
@@ -1517,90 +1514,6 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
   // chars
   DB(kprintf("finished uudecode_file(): %ld\n", decoded);)
   return result == 0 ? decoded : result;
-}
-
-///
-/// uueget
-//  Decodes four UU encoded bytes
-static void uueget(char *ptr, FILE *outfp, int n)
-{
-   int c1, c2, c3;
-   unsigned char p0, p1, p2, p3;
-
-   p0 = (ptr[0] - ' ') & 0x3F;
-   p1 = (ptr[1] - ' ') & 0x3F;
-   p2 = (ptr[2] - ' ') & 0x3F;
-   p3 = (ptr[3] - ' ') & 0x3F;
-   c1 = p0 << 2 | p1 >> 4;
-   c2 = p1 << 4 | p2 >> 2;
-   c3 = p2 << 6 | p3;
-   if (n >= 1) fputc(c1, outfp);
-   if (n >= 2) fputc(c2, outfp);
-   if (n >= 3) fputc(c3, outfp);
-}
-
-///
-/// gettxtline
-//  Reads next line of UU encoded string
-static BOOL gettxtline(char *buf, int size, char **rptr)
-{
-   int c;
-   char *ptr = buf;
-
-   for (c = 0; c < size; ++c)buf[c] = ' ';
-   do
-   {
-      c = (int)**rptr; (*rptr)++;
-      if (!c) { *ptr = '\0'; return (BOOL)(ptr == buf); }
-      else if (c == '\n' || c == '\r') { *ptr = '\0'; return FALSE; }
-      // Emm: I guess the following line was meant to process quoted
-      // mails, but it causes file corruption when the '>' is really
-      // part of the uuencoding (usually, this happens for the last
-      // line).
-      //else if (ptr == buf && c == '>') continue;
-      else if (size > 0) { *ptr++ = c; size--; }
-   } while (TRUE);
-   return FALSE;
-}
-
-///
-/// fromuuetxt
-//  Decodes a string in UUE format
-void fromuuetxt(char **txt, FILE *outfp)
-{
-   char buf[SIZE_LINE];
-
-   while (TRUE)
-   {
-      if (gettxtline(buf, sizeof(buf), txt))
-      {
-         ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
-         return;
-      }
-      if (!strncmp(buf, "begin", 5)) break;
-   }
-   while (TRUE)
-   {
-      if (gettxtline(buf, sizeof(buf), txt))
-      {
-         ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
-         return;
-      }
-      else if (!strncmp(buf, "end", 5)) break;
-      else if (*buf == '\0') continue;
-      else
-      {
-         int length = (*buf - ' ');
-         if (*buf == '`') length = 0;
-         if (length < 0 || length > 63)
-            ER_NewError(GetStr(MSG_ER_InvalidLength), (char *)length, NULL);
-         else
-         {
-            char *ptr = buf + 1;
-            while (length > 0) { uueget(ptr, outfp, length); length -= 3; ptr += 4; }
-         }
-      }
-   }
 }
 
 ///

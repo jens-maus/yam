@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-08-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c, YAM_MI.c: rewrote the inline based UUdecoding
+      recognition/processing to use the new optimized UUdecoding
+      routines instead of the old unbuffered ones. Dropped the
+      old routines accordingly.
+
 2004-07-31  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c: rewrote the last major MIME routine (UU decoding)

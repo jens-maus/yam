@@ -91,7 +91,6 @@ struct RE_ClassData  /* read window */
    int               LastDirection;
    int               PGPSigned;
    int               PGPEncrypted;
-   BOOL              FirstReadDone;
    BOOL              NoTextstyles;
    BOOL              WrapHeader;
    BOOL              FixedFont;
