@@ -495,9 +495,6 @@ static void Terminate(BOOL last)
    CO_FreeConfig(C);
    ExitClasses();
 
-   CloseYAMCatalog();
-   if (G->Locale) CloseLocale(G->Locale);
-
    if (DataTypesBase) CloseLibrary(DataTypesBase);
    if (XpkBase)       CloseLibrary(XpkBase);
    if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
@@ -506,6 +503,8 @@ static void Terminate(BOOL last)
    if (IFFParseBase) CloseLibrary(IFFParseBase);
    if (KeymapBase) CloseLibrary(KeymapBase);
    if (WorkbenchBase) CloseLibrary(WorkbenchBase);
+   CloseYAMCatalog();
+   if (G->Locale) CloseLocale(G->Locale);
    if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
    if (IconBase) CloseLibrary(IconBase);
    if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
@@ -840,13 +839,8 @@ static int GetDST(void)
 
 /// Main
 //  Program entry point, main loop
-#ifdef __GNUC__
-void STACKEXT main(int argc, char **argv)
-#else
-void main(int argc, char **argv)
-#endif
+int main(int argc, char **argv)
 {
-   BOOL yamFirst = TRUE;
    struct NewRDArgs nrda;
    struct { char  *user;
             char  *password;
@@ -866,6 +860,7 @@ void main(int argc, char **argv)
    struct Message *msg;
    struct User *user;
    BPTR progdirlock, yamlock, oldcdirlock;
+   BOOL yamFirst = TRUE;
 
    WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
@@ -1028,5 +1023,7 @@ void main(int argc, char **argv)
       FreeData2D(&Header);
       Terminate(FALSE);
    }
+   /* not reached */
+   return 0;
 }
 ///
