@@ -46,6 +46,8 @@ struct Data
 	Object *mailBodyGroup;
 	Object *mailTextObject;
 	Object *textEditScrollbar;
+
+	BOOL hasContent;
 };
 */
 
@@ -305,9 +307,13 @@ OVERLOAD(OM_DISPOSE)
 {
 	GETDATA;
 
-	// Remove our readWindowNode and free it afterwards
-	Remove((struct Node *)data->readMailData);
-	free(data->readMailData);
+	if(data->readMailData)
+	{
+		// Remove our readWindowNode and free it afterwards
+		Remove((struct Node *)data->readMailData);
+		free(data->readMailData);
+		data->readMailData = NULL;
+	}
 
 	return DoSuperMethodA(cl, obj, msg);
 }
@@ -354,25 +360,28 @@ DECLARE(Clear)
 {
 	GETDATA;
 
-	// clear all relevant GUI elements
-	DoMethod(data->headerList, MUIM_NList_Clear);
-	set(data->mailTextObject, MUIA_TextEditor_Contents, "");
-
-	// cleanup the SenderImage field as well
-	if(DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
+	if(data->hasContent)
 	{
-		if(data->senderImage)
+		// clear all relevant GUI elements
+		DoMethod(data->headerList, MUIM_NList_Clear);
+		set(data->mailTextObject, MUIA_TextEditor_Contents, "");
+
+		// cleanup the SenderImage field as well
+		if(DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
 		{
-			DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
-			MUI_DisposeObject(data->senderImage);
+			if(data->senderImage)
+			{
+				DoMethod(data->senderImageGroup, OM_REMMEMBER, data->senderImage);
+				MUI_DisposeObject(data->senderImage);
+			}
+
+			data->senderImage = NULL;
+
+			DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
 		}
 
-		data->senderImage = NULL;
-
-		DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
+		set(data->senderImageGroup, MUIA_ShowMe, FALSE);
 	}
-
-	set(data->senderImageGroup, MUIA_ShowMe, FALSE);
 
 	return 0;
 }
@@ -674,6 +683,9 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 			ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
 		}
 	}
+
+	// make sure we know that there is some content
+	data->hasContent = TRUE;
 
 	return result;
 }
