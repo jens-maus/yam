@@ -45,6 +45,14 @@
 #define ASM_GROUP    32
 #define ASM_COMPLETE 64
 
+#define isAliasSearch(mode)     (isFlagSet((mode), ASM_ALIAS))
+#define isRealNameSearch(mode)  (isFlagSet((mode), ASM_REALNAME))
+#define isAddressSearch(mode)   (isFlagSet((mode), ASM_ADDRESS))
+#define isUserSearch(mode)      (isFlagSet((mode), ASM_USER))
+#define isListSearch(mode)      (isFlagSet((mode), ASM_LIST))
+#define isGroupSearch(mode)     (isFlagSet((mode), ASM_GROUP))
+#define isCompleteSearch(mode)  (isFlagSet((mode), ASM_COMPLETE))
+
 enum AddressbookMode { ABM_EDIT, ABM_TO, ABM_CC, ABM_BCC, ABM_REPLYTO, ABM_FROM };
 
 enum AddressbookFind { ABF_USER, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEEMAIL };

@@ -306,13 +306,21 @@ struct RxHook
    char  Script[SIZE_PATHFILE];
 };
 
+// flags for hiding GUI elements
 #define HIDE_INFO    1
 #define HIDE_XY      2
 #define HIDE_TBAR    4
+#define hasHideInfoFlag(f)    (isFlagSet((f), HIDE_INFO))
+#define hasHideXYFlag(f)      (isFlagSet((f), HIDE_XY))
+#define hasHideToolBarFlag(f) (isFlagSet((f), HIDE_TBAR))
 
-#define NOTI_REQ     1
-#define NOTI_SOUND   2
-#define NOTI_CMD     4
+// notify flags for the notifiying method for new messages
+#define NOTIFY_REQ     1
+#define NOTIFY_SOUND   2
+#define NOTIFY_CMD     4
+#define hasRequesterNotify(f) (isFlagSet((f), NOTIFY_REQ))
+#define hasSoundNotify(f)     (isFlagSet((f), NOTIFY_SOUND))
+#define hasCommandNotify(f)   (isFlagSet((f), NOTIFY_CMD))
 
 enum PrintMethod {PRINTMETHOD_DUMPRAW, PRINTMETHOD_LATEX, PRINTMETHOD_POSTSCRIPT};
 /* PS not yet implemented */

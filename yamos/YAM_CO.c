@@ -201,14 +201,14 @@ HOOKPROTONHNONP(CO_GetRUEntry, void)
       nnset(gui->CH_APPLYSENT,MUIA_Selected, rule->ApplyToSent);
       nnset(gui->CH_APPLYREQ, MUIA_Selected, rule->ApplyOnReq);
       nnset(gui->CY_COMBINE[rm],MUIA_Cycle_Active, rule->Combine);
-      nnset(gui->CH_ABOUNCE,   MUIA_Selected, (rule->Actions & RULE_BOUNCE)    == RULE_BOUNCE);
-      nnset(gui->CH_AFORWARD,  MUIA_Selected, (rule->Actions & RULE_FORWARD)   == RULE_FORWARD);
-      nnset(gui->CH_ARESPONSE, MUIA_Selected, (rule->Actions & RULE_REPLY)     == RULE_REPLY);
-      nnset(gui->CH_AEXECUTE,  MUIA_Selected, (rule->Actions & RULE_EXECUTE)   == RULE_EXECUTE);
-      nnset(gui->CH_APLAY,     MUIA_Selected, (rule->Actions & RULE_PLAYSOUND) == RULE_PLAYSOUND);
-      nnset(gui->CH_AMOVE,     MUIA_Selected, (rule->Actions & RULE_MOVE)      == RULE_MOVE);
-      nnset(gui->CH_ADELETE,   MUIA_Selected, (rule->Actions & RULE_DELETE)    == RULE_DELETE);
-      nnset(gui->CH_ASKIP,     MUIA_Selected, (rule->Actions & RULE_SKIP)      == RULE_SKIP);
+      nnset(gui->CH_ABOUNCE,   MUIA_Selected, hasBounceAction(rule));
+      nnset(gui->CH_AFORWARD,  MUIA_Selected, hasForwardAction(rule));
+      nnset(gui->CH_ARESPONSE, MUIA_Selected, hasReplyAction(rule));
+      nnset(gui->CH_AEXECUTE,  MUIA_Selected, hasExecuteAction(rule));
+      nnset(gui->CH_APLAY,     MUIA_Selected, hasPlaySoundAction(rule));
+      nnset(gui->CH_AMOVE,     MUIA_Selected, hasMoveAction(rule));
+      nnset(gui->CH_ADELETE,   MUIA_Selected, hasDeleteAction(rule));
+      nnset(gui->CH_ASKIP,     MUIA_Selected, hasSkipMsgAction(rule));
       nnset(gui->ST_ABOUNCE   ,MUIA_String_Contents, rule->BounceTo);
       nnset(gui->ST_AFORWARD  ,MUIA_String_Contents, rule->ForwardTo);
       nnset(gui->ST_ARESPONSE ,MUIA_String_Contents, rule->ReplyFile);
@@ -255,14 +255,14 @@ HOOKPROTONHNONP(CO_PutRUEntry, void)
       rule->ApplyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
       rule->Combine     = GetMUICycle(gui->CY_COMBINE[rm]);
       rule->Actions = 0;
-      if (GetMUICheck(gui->CH_ABOUNCE))    rule->Actions |= RULE_BOUNCE;
-      if (GetMUICheck(gui->CH_AFORWARD))   rule->Actions |= RULE_FORWARD;
-      if (GetMUICheck(gui->CH_ARESPONSE))  rule->Actions |= RULE_REPLY;
-      if (GetMUICheck(gui->CH_AEXECUTE))   rule->Actions |= RULE_EXECUTE;
-      if (GetMUICheck(gui->CH_APLAY))      rule->Actions |= RULE_PLAYSOUND;
-      if (GetMUICheck(gui->CH_AMOVE))      rule->Actions |= RULE_MOVE;
-      if (GetMUICheck(gui->CH_ADELETE))    rule->Actions |= RULE_DELETE;
-      if (GetMUICheck(gui->CH_ASKIP))      rule->Actions |= RULE_SKIP;
+      if (GetMUICheck(gui->CH_ABOUNCE))    SET_FLAG(rule->Actions, RULE_BOUNCE);
+      if (GetMUICheck(gui->CH_AFORWARD))   SET_FLAG(rule->Actions, RULE_FORWARD);
+      if (GetMUICheck(gui->CH_ARESPONSE))  SET_FLAG(rule->Actions, RULE_REPLY);
+      if (GetMUICheck(gui->CH_AEXECUTE))   SET_FLAG(rule->Actions, RULE_EXECUTE);
+      if (GetMUICheck(gui->CH_APLAY))      SET_FLAG(rule->Actions, RULE_PLAYSOUND);
+      if (GetMUICheck(gui->CH_AMOVE))      SET_FLAG(rule->Actions, RULE_MOVE);
+      if (GetMUICheck(gui->CH_ADELETE))    SET_FLAG(rule->Actions, RULE_DELETE);
+      if (GetMUICheck(gui->CH_ASKIP))      SET_FLAG(rule->Actions, RULE_SKIPMSG);
       GetMUIString(rule->BounceTo,   gui->ST_ABOUNCE);
       GetMUIString(rule->ForwardTo , gui->ST_AFORWARD);
       GetMUIString(rule->ReplyFile , gui->ST_ARESPONSE);
@@ -924,7 +924,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
    int mode;
 
    if (mode = MUI_Request(G->App, G->CO->GUI.WI, 0, GetStr(MSG_CO_ImportMIME), GetStr(MSG_CO_ImportMIMEGads), GetStr(MSG_CO_ImportMIMEReq)))
-      if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_IMPORTMIMETITLE), 0, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types"))))
+      if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types"))))
       {
          char buffer[SIZE_LARGE], fname[SIZE_PATHFILE], *p, *p2;
          struct MimeView *mv;
@@ -1030,7 +1030,7 @@ MakeHook(CO_EditSignatHook,CO_EditSignatFunc);
 //  Opens a different configuration file
 HOOKPROTONHNONP(CO_OpenConfig, void)
 {
-   if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_Open), 0, G->MA_MailDir, ""))
+   if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_Open), REQF_NONE, G->MA_MailDir, ""))
    {
       char cname[SIZE_PATHFILE];
       strmfp(cname, G->ASLReq[ASL_CONFIG]->fr_Drawer, G->ASLReq[ASL_CONFIG]->fr_File);
@@ -1046,7 +1046,7 @@ MakeStaticHook(CO_OpenConfigHook, CO_OpenConfig);
 //  Saves configuration to a file using an alternative name
 HOOKPROTONHNONP(CO_SaveConfigAs, void)
 {
-   if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_SaveAs), 1, G->MA_MailDir, ""))
+   if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_SaveAs), REQF_SAVEMODE, G->MA_MailDir, ""))
    {
       char cname[SIZE_PATHFILE];
       strmfp(cname, G->ASLReq[ASL_CONFIG]->fr_Drawer, G->ASLReq[ASL_CONFIG]->fr_File);

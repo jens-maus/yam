@@ -811,8 +811,8 @@ void rx_mailinfo( struct RexxHost *host, struct rxd_mailinfo **rxd, long action,
             rd->rd.res.size = &mail->Size;
             rd->rd.res.msgid = &mail->cMsgID;
             sprintf(rd->rd.res.flags = rd->flags, "%c%c%c%c%c-%c%c",
-               (mail->Flags&MFLAG_MULTIRCPT)?'M':'-', (mail->Flags&MFLAG_MULTIPART)?'A':'-', (mail->Flags&MFLAG_REPORT)?'R':'-',
-               (mail->Flags&MFLAG_CRYPT)?'C':'-', (mail->Flags&MFLAG_SIGNED)?'S':'-', pf?pf+'0':'-', vf?vf+'0':'-');
+               isMultiRCPTMail(mail)?'M':'-', isMultiPartMail(mail)?'A':'-', isReportMail(mail)?'R':'-',
+               isCryptedMail(mail)?'C':'-', isSignedMail(mail)?'S':'-', pf?pf+'0':'-', vf?vf+'0':'-');
          }
          else rd->rd.rc = RETURN_ERROR;
          break;

@@ -147,8 +147,8 @@ DECLARE(Search) // ULONG top
 	if((get(data->Searchstring, MUIA_String_Contents, &string), string) && string[0] != '\0' && data->Texteditor)
 	{
 		ULONG flags = 0;
-		if(msg->top)             flags |= MUIF_TextEditor_Search_FromTop;
-		if(data->CaseSensitive)  flags |= MUIF_TextEditor_Search_CaseSensitive;
+		if(msg->top)             SET_FLAG(flags, MUIF_TextEditor_Search_FromTop);
+		if(data->CaseSensitive)  SET_FLAG(flags, MUIF_TextEditor_Search_CaseSensitive);
 		if(!DoMethod(data->Texteditor, MUIM_TextEditor_Search, string, flags))
 			MUI_Request(_app(obj), parent, 0L, GetStr(MSG_SEARCHNOTFOUND_TITLE), GetStr(MSG_SEARCHNOTFOUND_BUTTON), GetStr(MSG_SEARCHNOTFOUND_MSG), string);
 	}

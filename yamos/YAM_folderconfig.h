@@ -59,16 +59,28 @@ struct FO_ClassData  /* folder configuration window */
    struct Folder *   EditFolder;
 };
 
-#define OUTGOING(type)      (type == FT_OUTGOING || type == FT_SENT || type == FT_CUSTOMSENT)
-#define CUSTOMFOLDER(type)  (type == FT_CUSTOM || type == FT_CUSTOMSENT || type == FT_CUSTOMMIXED)
-
+// Foldertype macros
 enum FolderType { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT_GROUP, FT_CUSTOMSENT, FT_CUSTOMMIXED };
+#define isOutgoingFolder(folder)  ((folder)->Type == FT_OUTGOING || (folder)->Type == FT_SENT || (folder)->Type == FT_CUSTOMSENT)
+#define isCustomFolder(folder)    ((folder)->Type == FT_CUSTOM || (folder)->Type == FT_CUSTOMSENT || (folder)->Type == FT_CUSTOMMIXED)
+
+// SetOrder enum
 enum SetOrder   { SO_SAVE=0, SO_RESET };
 
-#define FolderName(fo) ((fo) ? (fo)->Name : "?")
+// XPKType flags and macros
+#define XPK_OFF         0
+#define XPK_CRYPT       1
+#define XPK_COMPRESSED  2
+#define isCryptedFolder(folder)   (isFlagSet((folder)->XPKType, XPK_CRYPT))
+#define isComprFolder(folder)     (isFlagSet((folder)->XPKType, XPK_COMPRESSED))
 
+// flags and macros for the folder
 #define FOFL_MODIFY  1
 #define FOFL_FREEXS  2
+#define isModified(folder)        (isFlagSet((folder)->Flags, FOFL_MODIFY))
+#define isFreeAccess(folder)      (isFlagSet((folder)->Flags, FOFL_FREEXS))
+
+#define FolderName(fo) ((fo) ? (fo)->Name : "?")
 
 struct Folder
 {
@@ -78,7 +90,6 @@ struct Folder
    ULONG           Flags;
    LONG            Size;
    int             MLSignature;
-   int             XPKType;
    int             Total;
    int             New;
    int             Unread;
@@ -92,6 +103,7 @@ struct Folder
    int             SortIndex;
    int             Open;
    int             ImageIndex;
+   int             XPKType;
 
    enum FolderType Type;
 

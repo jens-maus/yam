@@ -385,7 +385,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                      p = strchr(p2 = &p[2], ';'); *p++ = 0;
                      stccpy(ru->MoveTo, p2, SIZE_NAME);
                      stccpy(ru->ForwardTo, p, SIZE_ADDRESS);
-                     if (*ru->ForwardTo) ru->Actions |= RULE_FORWARD;
+                     if (*ru->ForwardTo) SET_FLAG(ru->Actions, RULE_FORWARD);
                   }
                   if (!strnicmp(buffer, "MimeViewer", 10))
                   {
@@ -672,9 +672,9 @@ void CO_GetConfig(void)
          CE->WarnSize          = GetMUIInteger(gui->ST_WARNSIZE);
          CE->CheckMailDelay    = GetMUINumer  (gui->NM_INTERVAL);
          CE->DownloadLarge     = GetMUICheck  (gui->CH_DLLARGE);
-         CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ) ? NOTI_REQ : 0)
-                               + (GetMUICheck(gui->CH_NOTISOUND) ? NOTI_SOUND : 0)
-                               + (GetMUICheck(gui->CH_NOTICMD) ? NOTI_CMD : 0);
+         CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ)   ? NOTIFY_REQ   : 0)
+                               + (GetMUICheck(gui->CH_NOTISOUND) ? NOTIFY_SOUND : 0)
+                               + (GetMUICheck(gui->CH_NOTICMD)   ? NOTIFY_CMD   : 0);
          GetMUIString(CE->NotifySound         ,gui->ST_NOTISOUND);
          GetMUIString(CE->NotifyCommand       ,gui->ST_NOTICMD);
          break;
@@ -853,9 +853,9 @@ void CO_SetConfig(void)
          set(gui->ST_WARNSIZE, MUIA_String_Integer, CE->WarnSize);
          set(gui->NM_INTERVAL, MUIA_Numeric_Value,  CE->CheckMailDelay);
          setcheckmark(gui->CH_DLLARGE   ,CE->DownloadLarge);
-         setcheckmark(gui->CH_NOTIREQ   ,(CE->NotifyType&NOTI_REQ)!=0);
-         setcheckmark(gui->CH_NOTISOUND ,(CE->NotifyType&NOTI_SOUND)!=0);
-         setcheckmark(gui->CH_NOTICMD   ,(CE->NotifyType&NOTI_CMD)!=0);
+         setcheckmark(gui->CH_NOTIREQ   , hasRequesterNotify(CE->NotifyType));
+         setcheckmark(gui->CH_NOTISOUND , hasSoundNotify(CE->NotifyType));
+         setcheckmark(gui->CH_NOTICMD   , hasCommandNotify(CE->NotifyType));
          setstring   (gui->ST_NOTISOUND ,CE->NotifySound);
          setstring   (gui->ST_NOTICMD   ,CE->NotifyCommand);
          break;

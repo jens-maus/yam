@@ -319,7 +319,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
             InputListFrame,
             MUIA_NList_Title,       TRUE,
             MUIA_NList_DoubleClick, TRUE,
-            MUIA_NList_MultiSelect, (mode&ATTREQ_MULTI) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
+            MUIA_NList_MultiSelect, isMultiReq(mode) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
             MUIA_NList_DisplayHook, &RE_LV_AttachDspFuncHook,
             MUIA_NList_Format,      "BAR,BAR,",
           End,
@@ -345,7 +345,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Bottom);
 
     // if this AttachRequest isn`t a DISPLAY request we show all the option to select the text we actually see
-    if((mode&0xF) != ATTREQ_DISP)
+    if(!isDisplayReq(mode))
     {
       spart[1].Nr = PART_ALLTEXT;
       strcpy(spart[1].Name, GetStr(MSG_RE_AllTexts));
@@ -357,7 +357,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     // now we process the mail and pick every part out to the NListview
     for(part = G->RE[winnum]->FirstPart->Next; part; part = part->Next)
     {
-      if((mode&0xF) != ATTREQ_PRINT || part->Printable)
+      if(!isPrintReq(mode) || part->Printable)
       {
         DoMethod(lv_attach, MUIM_NList_InsertSingle, part, MUIV_NList_Insert_Bottom);
       }
@@ -674,7 +674,7 @@ BOOL LoadParsers(void)
               {
                 fread(PPtr[PNum], 1, 16640, fp);
 
-                if (fib->fib_Protection & FIBF_PURE)
+                if(isFlagSet(fib->fib_Protection, FIBF_PURE))
                 {
                   temp = PPtr[PNum];
                   PPtr[PNum] = PPtr[0];
@@ -1227,7 +1227,7 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
    static BOOL init[MAXASL] = {
      FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
    };
-   char *postext = (mode & 1)==1 ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load);
+   char *postext = hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load);
    int skip = *file ? 1 : 2;
    struct Window *truewin;
 
@@ -1238,9 +1238,9 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
                               ASLFR_TitleText,     title,
                               ASLFR_PositiveText,  postext,
                               ASLFR_InitialFile,   file,
-                              ASLFR_DoSaveMode,    (mode & 1)==1,
-                              ASLFR_DoMultiSelect, (mode & 2)==2,
-                              ASLFR_DrawersOnly,   (mode & 4)==4,
+                              ASLFR_DoSaveMode,    hasSaveModeFlag(mode),
+                              ASLFR_DoMultiSelect, hasMultiSelectFlag(mode),
+                              ASLFR_DrawersOnly,   hasDrawersOnlyFlag(mode),
                               ASLFR_DoPatterns,    pattern[num] != NULL,
                               skip ? TAG_DONE : ASLFR_InitialDrawer, drawer,
                               ASLFR_InitialPattern, pattern[num] ? pattern[num] : "#?",
@@ -1358,7 +1358,7 @@ void DeleteMailDir(char *dir, BOOL isroot)
           {
             strmfp(fname, dir, fib->fib_FileName);
             filename = FilePart(fname);
-            isdir = fib->fib_DirEntryType > 0;
+            isdir = isDrawer(fib);
             cont = (ExNext(lock,fib) && IoErr() != ERROR_NO_MORE_ENTRIES);
             if (isroot)
             {
@@ -2098,7 +2098,7 @@ void FormatSize(LONG size, char *buffer)
 BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
 {
    struct Mail *work;
-   if (Virtual(mailptr)) return TRUE;
+   if (isVirtualMail(mailptr)) return TRUE;
    if (!folder) folder = mailptr->Folder;
    for (work = folder->Messages; work; work = work->Next) if (work == mailptr) return TRUE;
    return FALSE;
@@ -3078,9 +3078,9 @@ int PGPCommand(char *progname, char *options, int flags)
       }
       Close(fhi);
    }
-   if (error > 0 && !(flags & NOERRORS)) ER_NewError(GetStr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
+   if (error > 0 && !hasNoErrorsFlag(flags)) ER_NewError(GetStr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
    if (error < 0) ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath, NULL);
-   if (!error && !(flags & KEEPLOG)) DeleteFile(PGPLOGFILE);
+   if (!error && !hasKeepLogFlag(flags)) DeleteFile(PGPLOGFILE);
    return error;
 }
 ///

@@ -33,9 +33,12 @@
 #include "YAM_mainFolder.h"
 #include "YAM_write.h"
 
+// flags & macros for MDN (message disposition notification)
 #define MDN_TYPEMASK  0x0F
 #define MDN_AUTOACT   0x10
 #define MDN_AUTOSEND  0x20
+#define isAutoActMDN(v)   (isFlagSet((v), MDN_AUTOACT))
+#define isAutoSendMDN(v)  (isFlagSet((v), MDN_AUTOSEND))
 
 // special defines for Part Types
 #define PART_ORIGINAL -2

@@ -196,23 +196,23 @@ int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
 
     // now we check if this entry is one of the not wished entry types
     // and then we skip it.
-    if(ab_found->Type == AET_USER  && !(mode & ASM_USER))  continue;
-    if(ab_found->Type == AET_LIST  && !(mode & ASM_LIST))  continue;
-    if(ab_found->Type == AET_GROUP && !(mode & ASM_GROUP)) continue;
+    if(ab_found->Type == AET_USER  && !isUserSearch(mode))  continue;
+    if(ab_found->Type == AET_LIST  && !isListSearch(mode))  continue;
+    if(ab_found->Type == AET_GROUP && !isGroupSearch(mode)) continue;
 
-    if(mode&ASM_COMPLETE)
+    if(isCompleteSearch(mode))
     {
       // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
-      if(mode_type&ASM_ALIAS)          found = !Strnicmp(ab_found->Alias,    text, tl);
-      else if(mode_type&ASM_REALNAME)  found = !Strnicmp(ab_found->RealName, text, tl);
-      else if(mode_type&ASM_ADDRESS)   found = !Strnicmp(ab_found->Address,  text, tl);
+      if(isAliasSearch(mode_type))          found = !Strnicmp(ab_found->Alias,    text, tl);
+      else if(isRealNameSearch(mode_type))  found = !Strnicmp(ab_found->RealName, text, tl);
+      else if(isAddressSearch(mode_type))   found = !Strnicmp(ab_found->Address,  text, tl);
     }
     else
     {
       // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
-      if(mode_type&ASM_ALIAS)          found = !Stricmp(ab_found->Alias,    text);
-      else if(mode_type&ASM_REALNAME)  found = !Stricmp(ab_found->RealName, text);
-      else if(mode_type&ASM_ADDRESS)   found = !Stricmp(ab_found->Address,  text);
+      if(isAliasSearch(mode_type))          found = !Stricmp(ab_found->Alias,    text);
+      else if(isRealNameSearch(mode_type))  found = !Stricmp(ab_found->RealName, text);
+      else if(isAddressSearch(mode_type))   found = !Stricmp(ab_found->Address,  text);
     }
 
     if(found)
@@ -552,7 +552,7 @@ MakeStaticHook(AB_NewABookHook, AB_NewABookFunc);
 /*** AB_OpenABookFunc - Loads selected address book ***/
 HOOKPROTONHNONP(AB_OpenABookFunc, void)
 {
-   if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Open), 0, G->MA_MailDir, ""))
+   if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Open), REQF_NONE, G->MA_MailDir, ""))
    {
       strmfp(G->AB_Filename, G->ASLReq[ASL_ABOOK]->fr_Drawer, G->ASLReq[ASL_ABOOK]->fr_File);
       AB_LoadTree(G->AB_Filename, FALSE, FALSE);
@@ -565,7 +565,7 @@ MakeStaticHook(AB_OpenABookHook, AB_OpenABookFunc);
 /*** AB_AppendABookFunc - Appends selected address book ***/
 HOOKPROTONHNONP(AB_AppendABookFunc, void)
 {
-   if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Append), 0, G->MA_MailDir, ""))
+   if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_Append), REQF_NONE, G->MA_MailDir, ""))
    {
       char aname[SIZE_PATHFILE];
       strmfp(aname, G->ASLReq[ASL_ABOOK]->fr_Drawer, G->ASLReq[ASL_ABOOK]->fr_File);
@@ -591,7 +591,7 @@ MakeHook(AB_SaveABookHook, AB_SaveABookFunc);
 /*** AB_SaveABookAsFunc - Saves address book under a different name ***/
 HOOKPROTONHNONP(AB_SaveABookAsFunc, void)
 {
-   if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_SaveAs), 1, G->MA_MailDir, ""))
+   if (ReqFile(ASL_ABOOK,G->AB->GUI.WI, GetStr(MSG_SaveAs), REQF_SAVEMODE, G->MA_MailDir, ""))
    {
       strmfp(G->AB_Filename, G->ASLReq[ASL_ABOOK]->fr_Drawer, G->ASLReq[ASL_ABOOK]->fr_File);
       AB_SaveABookFunc();
@@ -1119,7 +1119,7 @@ struct AB_ClassData *AB_New(void)
          End,
          MUIA_Window_ID,MAKE_ID('B','O','O','K'),
          WindowContents, VGroup,
-            Child, C->HideGUIElements & HIDE_TBAR ?
+            Child, hasHideToolBarFlag(C->HideGUIElements) ?
                (HGroup,
                   MUIA_HelpNode, "AB_B",
                   Child, data->GUI.BT_TO  = MakeButton("_To:"),

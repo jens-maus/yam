@@ -37,7 +37,8 @@
 struct Rule;
 #endif
 
-// lets define all the Rule->Actions flags
+// lets define all the Rule->Actions flags and
+// define some flag macros for them
 #define RULE_BOUNCE       1
 #define RULE_FORWARD      2
 #define RULE_REPLY        4
@@ -45,10 +46,19 @@ struct Rule;
 #define RULE_PLAYSOUND   16
 #define RULE_MOVE        32
 #define RULE_DELETE      64
-#define RULE_SKIP       128
+#define RULE_SKIPMSG    128
+#define hasBounceAction(rule)     (isFlagSet((rule)->Actions, RULE_BOUNCE))
+#define hasForwardAction(rule)    (isFlagSet((rule)->Actions, RULE_FORWARD))
+#define hasReplyAction(rule)      (isFlagSet((rule)->Actions, RULE_REPLY))
+#define hasExecuteAction(rule)    (isFlagSet((rule)->Actions, RULE_EXECUTE))
+#define hasPlaySoundAction(rule)  (isFlagSet((rule)->Actions, RULE_PLAYSOUND))
+#define hasMoveAction(rule)       (isFlagSet((rule)->Actions, RULE_MOVE))
+#define hasDeleteAction(rule)     (isFlagSet((rule)->Actions, RULE_DELETE))
+#define hasSkipMsgAction(rule)    (isFlagSet((rule)->Actions, RULE_SKIPMSG))
 
 #define ANYBOX NULL
 
+// possible flags for a mail
 #define MFLAG_MULTIRCPT   1
 #define MFLAG_MULTIPART   2
 #define MFLAG_REPORT      4
@@ -57,7 +67,14 @@ struct Rule;
 #define MFLAG_SENDERINFO 32
 #define MFLAG_SENDMDN    64
 #define MFLAG_NOFOLDER  128
-#define Virtual(mail)   (((mail)->Flags&MFLAG_NOFOLDER) == MFLAG_NOFOLDER)
+#define isMultiRCPTMail(mail)   (isFlagSet((mail)->Flags, MFLAG_MULTIRCPT))
+#define isMultiPartMail(mail)   (isFlagSet((mail)->Flags, MFLAG_MULTIPART))
+#define isReportMail(mail)      (isFlagSet((mail)->Flags, MFLAG_REPORT))
+#define isCryptedMail(mail)     (isFlagSet((mail)->Flags, MFLAG_CRYPT))
+#define isSignedMail(mail)      (isFlagSet((mail)->Flags, MFLAG_SIGNED))
+#define isSenderInfoMail(mail)  (isFlagSet((mail)->Flags, MFLAG_SENDERINFO))
+#define isSendMDNMail(mail)     (isFlagSet((mail)->Flags, MFLAG_SENDMDN))
+#define isVirtualMail(mail)     (isFlagSet((mail)->Flags, MFLAG_NOFOLDER))
 
 enum ApplyMode { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE,
    APPLY_RX_ALL, APPLY_RX
@@ -67,11 +84,17 @@ enum NewMode {
    NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC
 };
 
+// flags and macros for creating new mails
 #define NEWF_QUIET        1
 #define NEWF_REP_NOQUOTE  2
 #define NEWF_REP_PRIVATE  4
 #define NEWF_REP_MLIST    8
 #define NEWF_FWD_NOATTACH 16
+#define hasQuietFlag(v)         (isFlagSet((v), NEWF_QUIET))
+#define hasNoQuoteFlag(v)       (isFlagSet((v), NEWF_REP_NOQUOTE))
+#define hasPrivateFlag(v)       (isFlagSet((v), NEWF_REP_PRIVATE))
+#define hasMListFlag(v)         (isFlagSet((v), NEWF_REP_MLIST))
+#define hasNoAttachFlag(v)      (isFlagSet((v), NEWF_FWD_NOATTACH))
 
 enum Macro {
    MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,

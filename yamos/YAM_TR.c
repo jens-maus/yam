@@ -73,8 +73,11 @@ struct TransStat
    long Clock_Last;
 };
 
+// POP command flags & macros
 #define POPCMD_WAITEOL 1
 #define POPCMD_NOERROR 2
+#define hasWaitEOLFlag(v)   (isFlagSet((v), POPCMD_WAITEOL))
+#define hasNoErrorFlag(v)   (isFlagSet((v), POPCMD_NOERROR))
 
 /**************************************************************************/
 // TLS/SSL related variables
@@ -557,7 +560,7 @@ static BOOL TR_SendPopCmd(char *buf, char *cmdtext, char *parmtext, int flags)
    if (!TR_SendDat(cmdbuf)) return FALSE;
    len = TR_RecvDat(buf);
    if (len <= 0)  return FALSE;
-   if (flags & POPCMD_WAITEOL)
+   if(hasWaitEOLFlag(flags))
    {
       while (buf[len-1] != '\n')
       {
@@ -567,7 +570,7 @@ static BOOL TR_SendPopCmd(char *buf, char *cmdtext, char *parmtext, int flags)
    }
    if (!strncmp(buf, "-ERR", 4))
    {
-      if (!(flags & POPCMD_NOERROR)) ER_NewError(GetStr(MSG_ER_BadResponse), cmdtext, buf);
+      if(!hasNoErrorFlag(flags)) ER_NewError(GetStr(MSG_ER_BadResponse), cmdtext, buf);
       return FALSE;
    }
    return TRUE;
@@ -947,10 +950,15 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
     if (FI_DoComplexSearch(G->TR->Search[i], G->TR->Search[i]->Rule->Combine, G->TR->Search[i+MAXRU], mail))
     {
       struct Rule *rule = G->TR->Search[i]->Rule;
-      if (rule->Actions & RULE_EXECUTE && *rule->ExecuteCmd) ExecuteCommand(rule->ExecuteCmd, FALSE, OUT_DOS);
-      if (rule->Actions & RULE_PLAYSOUND && *rule->PlaySound) PlaySound(rule->PlaySound);
-      if (rule->Actions & RULE_DELETE) mail->Status |= 2; else mail->Status &= ~2;
-      if (rule->Actions & RULE_SKIP) mail->Status &= ~1; else mail->Status |= 1;
+      if(hasExecuteAction(rule) && *rule->ExecuteCmd) ExecuteCommand(rule->ExecuteCmd, FALSE, OUT_DOS);
+      if(hasPlaySoundAction(rule) && *rule->PlaySound) PlaySound(rule->PlaySound);
+
+      if(hasDeleteAction(rule)) SET_FLAG(mail->Status, 2);
+      else CLEAR_FLAG(mail->Status, 2);
+
+      if(hasSkipMsgAction(rule)) CLEAR_FLAG(mail->Status, 1);
+      else SET_FLAG(mail->Status, 1);
+
       return;
     }
    }
@@ -1285,10 +1293,16 @@ static int ReadLine(LONG Socket, char *buf, LONG len)
 
 #define SMTP_SERVICE_NOT_AVAILABLE 421
 #define SMTP_ACTION_OK             250
+
+// authentification flags & macros
 #define AUTH_CRAM_MD5   1
 #define AUTH_DIGEST_MD5 2
 #define AUTH_LOGIN      4
 #define AUTH_PLAIN      8
+#define hasCRAM_MD5_Auth(v)   (isFlagSet((v), AUTH_CRAM_MD5))
+#define hasDIGEST_MD5_Auth(v) (isFlagSet((v), AUTH_DIGEST_MD5))
+#define hasLOGIN_Auth(v)      (isFlagSet((v), AUTH_LOGIN))
+#define hasPLAIN_Auth(v)      (isFlagSet((v), AUTH_PLAIN))
 
 static BOOL TR_ConnectESMTP(void)
 {
@@ -1322,10 +1336,10 @@ static BOOL TR_ConnectESMTP(void)
       if(!(ReadLine(SMTPSocket, buffer, SIZE_LINE))) return FALSE;
       if (strnicmp(buffer+4, "AUTH", 4) == 0) /* SMTP AUTH */
       {
-         if (NULL != strstr(buffer+9,"CRAM-MD5")) ESMTPAuth|=AUTH_CRAM_MD5;
-         if (NULL != strstr(buffer+9,"DIGEST-MD5")) ESMTPAuth|=AUTH_DIGEST_MD5;
-         if (NULL != strstr(buffer+9,"PLAIN")) ESMTPAuth|=AUTH_PLAIN;
-         if (NULL != strstr(buffer+9,"LOGIN")) ESMTPAuth|=AUTH_LOGIN;
+         if (NULL != strstr(buffer+9,"CRAM-MD5"))   SET_FLAG(ESMTPAuth, AUTH_CRAM_MD5);
+         if (NULL != strstr(buffer+9,"DIGEST-MD5")) SET_FLAG(ESMTPAuth, AUTH_DIGEST_MD5);
+         if (NULL != strstr(buffer+9,"PLAIN"))      SET_FLAG(ESMTPAuth, AUTH_PLAIN);
+         if (NULL != strstr(buffer+9,"LOGIN"))      SET_FLAG(ESMTPAuth, AUTH_LOGIN);
       }
    }
 
@@ -1337,7 +1351,7 @@ static BOOL TR_ConnectESMTP(void)
 
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SENDAUTH));
 
-   if(ESMTPAuth & AUTH_CRAM_MD5) /* js_umsrfc SMTP AUTH */
+   if(hasCRAM_MD5_Auth(ESMTPAuth)) /* js_umsrfc SMTP AUTH */
    {
       /* Send AUTH command */
       if(!(TR_SendDat("AUTH CRAM-MD5\r\n"))) return FALSE;
@@ -1380,7 +1394,7 @@ static BOOL TR_ConnectESMTP(void)
         rc = SMTP_SERVICE_NOT_AVAILABLE;
       }
    }
-   else if(ESMTPAuth & AUTH_DIGEST_MD5)
+   else if(hasDIGEST_MD5_Auth(ESMTPAuth))
    {
       /* Send AUTH command */
       if(!(TR_SendDat("AUTH DIGEST-MD5\r\n"))) return FALSE;
@@ -1422,7 +1436,7 @@ static BOOL TR_ConnectESMTP(void)
         rc = SMTP_SERVICE_NOT_AVAILABLE;
       }
    }
-   else if(ESMTPAuth & AUTH_LOGIN)
+   else if(hasLOGIN_Auth(ESMTPAuth))
    {
       /* Send AUTH command */
       if(!(TR_SendDat("AUTH LOGIN\r\n"))) return FALSE;
@@ -1465,7 +1479,7 @@ static BOOL TR_ConnectESMTP(void)
          rc = SMTP_SERVICE_NOT_AVAILABLE;
       }
    }
-   else if(ESMTPAuth & AUTH_PLAIN)
+   else if(hasPLAIN_Auth(ESMTPAuth))
    {
       /* Send AUTH command */
       if(!(TR_SendDat("AUTH PLAIN\r\n"))) return FALSE;
@@ -2112,7 +2126,7 @@ static void TR_NewMailAlert(void)
 
    memcpy(&G->LastDL, stats, sizeof(struct DownloadResult));
    if (!stats->Downloaded) return;
-   if ((C->NotifyType & NOTI_REQ) && G->TR->GUIlevel != POP_REXX)
+   if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
    {
       int iconified;
       static char buffer[SIZE_LARGE];
@@ -2125,8 +2139,8 @@ static void TR_NewMailAlert(void)
          rr->Checked, rr->Bounced, rr->Forwarded, rr->Replied, rr->Executed, rr->Moved, rr->Deleted);
       InfoWindow(GetStr(MSG_TR_NewMail), buffer, GetStr(MSG_Okay), G->MA->GUI.WI);
    }
-   if (C->NotifyType & NOTI_CMD)   ExecuteCommand(C->NotifyCommand, FALSE, OUT_DOS);
-   if (C->NotifyType & NOTI_SOUND) PlaySound(C->NotifySound);
+   if(hasCommandNotify(C->NotifyType)) ExecuteCommand(C->NotifyCommand, FALSE, OUT_DOS);
+   if(hasSoundNotify(C->NotifyType))   PlaySound(C->NotifySound);
 }
 
 ///

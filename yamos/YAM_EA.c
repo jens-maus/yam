@@ -151,7 +151,7 @@ void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
    
    for (i=0; ; i++)
       if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel))
-         if (tn->tn_Flags & TNF_LIST) EA_AddMembers(obj, tn);
+         if (isFlagSet(tn->tn_Flags, TNF_LIST)) EA_AddMembers(obj, tn);
          else EA_AddSingleMember(obj, tn);
       else break;
 }
@@ -380,7 +380,7 @@ HOOKPROTONHNO(EA_SelectPhotoFunc, void, int *arg)
 {
    int winnum = *arg;
 
-   if (ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, GetStr(MSG_EA_SelectPhoto_Title), 0, C->GalleryDir, ""))
+   if (ReqFile(ASL_PHOTO,G->EA[winnum]->GUI.WI, GetStr(MSG_EA_SelectPhoto_Title), REQF_NONE, C->GalleryDir, ""))
    {
       strmfp(G->EA[winnum]->PhotoName, G->ASLReq[ASL_PHOTO]->fr_Drawer, G->ASLReq[ASL_PHOTO]->fr_File);
       EA_SetPhoto(winnum, NULL);

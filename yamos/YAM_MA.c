@@ -134,13 +134,13 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    type = fo->Type;
    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
    fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
-   if ((active = (mail != NULL))) if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
+   if ((active = (mail != NULL)) && isMultiPartMail(mail)) hasattach = TRUE;
    for (i = 0; i < MAXWR; i++) if (mail && G->WR[i]) if (G->WR[i]->Mail == mail) beingedited = TRUE;
 // if (!mail) if (!xget(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
    DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
    if (gui->TO_TOOLBAR)
    {
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !OUTGOING(type) || beingedited);
+      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || beingedited);
       DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, !active);
       DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active && !selected, 2,3,4,7,8, -1);
    }
@@ -148,9 +148,9 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
       gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_REPLY, gui->MI_FORWARD, gui->MI_STATUS,
       gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_CHSUBJ, NULL);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, gui->MI_BOUNCE, NULL);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && OUTGOING(type) && !beingedited, gui->MI_EDIT, NULL);
+   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && isOutgoingFolder(fo) && !beingedited, gui->MI_EDIT, NULL);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, type == FT_OUTGOING && (active || selected), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !OUTGOING(type) && (active || selected) , gui->MI_TOREAD, gui->MI_TOUNREAD, NULL);
+   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isOutgoingFolder(fo) && (active || selected) , gui->MI_TOREAD, gui->MI_TOUNREAD, NULL);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || selected), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
 }
 MakeHook(MA_ChangeSelectedHook, MA_ChangeSelectedFunc);
@@ -392,7 +392,7 @@ static void MA_UpdateStatus(void)
    {
       for(i = 1; i <= (int)*flist; i++)
       {
-        if(!OUTGOING(flist[i]->Type) && flist[i]->LoadedMode == 2)
+        if(!isOutgoingFolder(flist[i]) && flist[i]->LoadedMode == 2)
         {
           BOOL updated = FALSE;
 
@@ -538,7 +538,7 @@ static int MA_CheckWriteWindow(int winnum)
 //  Creates a new, empty message
 int MA_NewNew(struct Mail *mail, int flags)
 {
-   BOOL quiet = flags & NEWF_QUIET;
+   BOOL quiet = hasQuietFlag(flags);
    struct Folder *folder = FO_GetCurrentFolder();
    int winnum = -1;
    struct WR_ClassData *wr;
@@ -589,7 +589,7 @@ int MA_NewNew(struct Mail *mail, int flags)
 //  Edits a message
 int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
 {
-   BOOL quiet = flags & NEWF_QUIET;
+   BOOL quiet = hasQuietFlag(flags);
    int i, winnum = -1;
    struct Folder *folder;
    struct WR_ClassData *wr;
@@ -628,7 +628,7 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
          setstring(wr->GUI.ST_FROM, BuildAddrName2(&mail->From));
          setstring(wr->GUI.ST_REPLYTO, BuildAddrName2(&mail->ReplyTo));
          sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->To));
-         if (mail->Flags & MFLAG_MULTIRCPT)
+         if(isMultiRCPTMail(mail))
          {
             *sbuf = 0;
             sbuf = MA_AppendRcpt(sbuf, &mail->To, FALSE);
@@ -647,7 +647,7 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
          setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
          setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
          setcheckmark(wr->GUI.CH_DISPNOTI, email->ReceiptType == RCPT_TYPE_ALL);
-         setcheckmark(wr->GUI.CH_ADDINFO, (mail->Flags&MFLAG_SENDERINFO) == MFLAG_SENDERINFO);
+         setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
          setcycle(wr->GUI.CY_IMPORTANCE, 1-mail->Importance);
          setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
          setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
@@ -676,7 +676,7 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
 //  Bounces a message
 int MA_NewBounce(struct Mail *mail, int flags)
 {
-   BOOL quiet = flags & NEWF_QUIET;
+   BOOL quiet = hasQuietFlag(flags);
    int winnum = -1;
    struct WR_ClassData *wr;
 
@@ -697,7 +697,7 @@ int MA_NewBounce(struct Mail *mail, int flags)
 //  Forwards a list of messages
 int MA_NewForward(struct Mail **mlist, int flags)
 {
-   BOOL quiet = flags & NEWF_QUIET;
+   BOOL quiet = hasQuietFlag(flags);
    char buffer[SIZE_LARGE];
    int i, winnum = -1, mlen = (2+(int)mlist[0])*sizeof(struct Mail *);
    struct WR_ClassData *wr;
@@ -751,7 +751,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
             fputs(cmsg, out);
             free(cmsg);
             MA_InsertIntroText(out, C->ForwardFinish, &etd);
-            if (!(flags & NEWF_FWD_NOATTACH)) WR_SetupOldMail(winnum);
+            if(!hasNoAttachFlag(flags)) WR_SetupOldMail(winnum);
             RE_FreePrivateRC();
          }
          MA_InsertIntroText(out, C->Greetings, NULL);
@@ -782,7 +782,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
 int MA_NewReply(struct Mail **mlist, int flags)
 {
    int j, i, repmode = 1, winnum = -1, mlen = (2+(int)mlist[0])*sizeof(struct Mail *);
-   BOOL doabort = FALSE, multi = (int)mlist[0] > 1, altpat = FALSE, quiet = flags & NEWF_QUIET;
+   BOOL doabort = FALSE, multi = (int)mlist[0] > 1, altpat = FALSE, quiet = hasQuietFlag(flags);
    struct WR_ClassData *wr;
    struct Mail *mail;
    struct ExtendedMail *email;
@@ -879,7 +879,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                }
             }
 
-            if(mlistad && !(flags & (NEWF_REP_PRIVATE|NEWF_REP_MLIST)))
+            if(mlistad && !hasPrivateFlag(flags) && !hasMListFlag(flags))
             {
                ExtractAddress(mlistad, repto = &rtml);
                if (!strstr(rto, mlistad))
@@ -891,7 +891,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
             else repto = GetReturnAddress(mail);
 
             // If this mail is a standard (non-ML) mail and the user hasn`t pressed shift
-            if (mail->Flags & MFLAG_MULTIRCPT && !(flags & (NEWF_REP_PRIVATE|NEWF_REP_MLIST)))
+            if(isMultiRCPTMail(mail) && !hasPrivateFlag(flags) && !hasMListFlag(flags))
             {
               if (!(repmode = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ReplyReqOpt), GetStr(MSG_MA_ReplyReq))))
               {
@@ -907,8 +907,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
             if (repmode == 1)
             {
-               if (flags & NEWF_REP_PRIVATE) repto = &mail->From;
-               else if ((flags & NEWF_REP_MLIST) || mlistad) ; // do nothing
+               if(hasPrivateFlag(flags)) repto = &mail->From;
+               else if(hasMListFlag(flags) || mlistad) ; // do nothing
                else if (C->CompareAddress && *mail->ReplyTo.Address && stricmp(mail->From.Address, mail->ReplyTo.Address))
                {
                   sprintf(buffer, GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
@@ -960,7 +960,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
             if (!(domain = strchr(repto->Address,'@'))) domain = strchr(C->EmailAddress,'@');
             if (*C->AltReplyPattern) if (MatchNoCase(domain, C->AltReplyPattern)) altpat = TRUE;
             if (!j) MA_InsertIntroText(out, mlistad ? C->MLReplyHello : (altpat ? C->AltReplyHello : C->ReplyHello), &etd);
-            if (C->QuoteMessage && !(flags & NEWF_REP_NOQUOTE))
+            if(C->QuoteMessage && !hasNoQuoteFlag(flags))
             {
                if (j) fputs("\n", out);
                RE_InitPrivateRC(mail, PM_TEXTS);
@@ -1041,7 +1041,7 @@ void MA_RemoveAttach(struct Mail *mail)
             fprintf(out, "%s (%ld %s, %s)\n", part->Name ? part->Name : GetStr(MSG_Unnamed), part->Size, GetStr(MSG_Bytes), part->ContentType);
          fclose(out);
          f = FileSize(tfname); fo->Size += f - mail->Size; mail->Size = f;
-         mail->Flags &= ~MFLAG_MULTIPART;
+         CLEAR_FLAG(mail->Flags, MFLAG_MULTIPART);
          DeleteFile(fname);
          if (fo->XPKType > 1) DoPack(tfname, fname, mail->Folder);
          else RenameFile(tfname, fname);
@@ -1089,7 +1089,7 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
 
    if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
    {
-      if (ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), 5, C->DetachDir, ""))
+      if (ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
          for (i = 0; i < (int)*mlist; i++)
          {
             RE_InitPrivateRC(mail = mlist[i+2], PM_ALL);
@@ -1172,12 +1172,15 @@ HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
 {
    int mode = arg[0], flags = 0;
    ULONG qual = arg[1];
+
    if (arg[2]) return; // Toolbar qualifier bug work-around
-   if (mode == NEW_FORWARD && qual & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) mode = NEW_BOUNCE;
-   if (mode == NEW_FORWARD && qual & IEQUALIFIER_CONTROL) flags = NEWF_FWD_NOATTACH;
-   if (mode == NEW_REPLY && qual & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) flags = NEWF_REP_PRIVATE;
-   if (mode == NEW_REPLY && qual & (IEQUALIFIER_LALT|IEQUALIFIER_RALT)) flags = NEWF_REP_MLIST;
-   if (mode == NEW_REPLY && qual & IEQUALIFIER_CONTROL) flags = NEWF_REP_NOQUOTE;
+
+   if (mode == NEW_FORWARD &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) mode = NEW_BOUNCE;
+   if (mode == NEW_FORWARD && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_FWD_NOATTACH);
+   if (mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) SET_FLAG(flags, NEWF_REP_PRIVATE);
+   if (mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))     SET_FLAG(flags, NEWF_REP_MLIST);
+   if (mode == NEW_REPLY   && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_REP_NOQUOTE);
+
    MA_NewMessage(mode, flags);
 }
 MakeStaticHook(MA_NewMessageHook, MA_NewMessageFunc);
@@ -1215,7 +1218,10 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    for (i = 0; i < selected; i++)
    {
       mail = mlist[i+2];
-      if (mail->Flags & MFLAG_SENDMDN) if ((mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) && !ignoreall) ignoreall = RE_DoMDN(MDN_DELE, mail, TRUE);
+      if(isSendMDNMail(mail))
+      {
+        if ((mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) && !ignoreall) ignoreall = RE_DoMDN(MDN_DELE, mail, TRUE);
+      }
       if (delatonce) MA_DeleteSingle(mail, TRUE);
       else
       {
@@ -1242,7 +1248,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
 /// MA_DeleteMessageFunc
 HOOKPROTONHNO(MA_DeleteMessageFunc, void, int *arg)
 {
-   BOOL delatonce = arg[0] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
+   BOOL delatonce = hasFlag(arg[0], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
    if (arg[1]) return; // Toolbar qualifier bug work-around
    MA_DeleteMessage(delatonce, FALSE);
 }
@@ -1290,12 +1296,12 @@ void MA_GetAddress(struct Mail **mlist)
 {
    int i, j, winnum, num = (int)mlist[0], mode = AET_USER;
    struct Folder *folder = mlist[2]->Folder;
-   BOOL outgoing = folder ? OUTGOING(folder->Type) : FALSE;
+   BOOL outgoing = folder ? isOutgoingFolder(folder) : FALSE;
    struct ExtendedMail *email;
 
    if (num == 1)
    {
-      if (outgoing && mlist[2]->Flags & MFLAG_MULTIRCPT) mode = AET_LIST;
+      if (outgoing && isMultiRCPTMail(mlist[2])) mode = AET_LIST;
    }
    else mode = AET_LIST;
    if (C->UseCManager)
@@ -1334,7 +1340,7 @@ void MA_GetAddress(struct Mail **mlist)
                if (outgoing)
                {
                   DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(mlist[i]->To)), MUIV_List_Insert_Bottom);
-                  if ((mlist[i]->Flags & MFLAG_MULTIRCPT)) if ((email = MA_ExamineMail(mlist[i]->Folder, mlist[i]->MailFile, NULL, TRUE)))
+                  if(isMultiRCPTMail(mlist[i]) && (email = MA_ExamineMail(mlist[i]->Folder, mlist[i]->MailFile, NULL, TRUE)))
                   {
                      for (j = 0; j < email->NoSTo; j++) DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->STo[j])), MUIV_List_Insert_Bottom);
                      for (j = 0; j < email->NoCC; j++) DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->CC[j])), MUIV_List_Insert_Bottom);
@@ -1381,7 +1387,7 @@ HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
 {
    ULONG qual = (ULONG)arg[2];
    if (arg[3]) return; // Toolbar qualifier bug work-around
-   if (qual & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) G->TR_Exchange = TRUE;
+   if (hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) G->TR_Exchange = TRUE;
    MA_PopNow(arg[0],arg[1]);
 }
 MakeStaticHook(MA_PopNowHook, MA_PopNowFunc);
@@ -1444,7 +1450,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   mlist[0] = (struct Mail *)1; mlist[1] = NULL; mlist[2] = mail;
 
   // Bounce Action
-  if ((rule->Actions & RULE_BOUNCE) == RULE_BOUNCE && !rule->Remote && *rule->BounceTo)
+  if(hasBounceAction(rule) && !rule->Remote && *rule->BounceTo)
   {
     G->RRs.Bounced++;
     MA_NewBounce(mail, TRUE);
@@ -1453,7 +1459,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // Forward Action
-  if ((rule->Actions & RULE_FORWARD) == RULE_FORWARD && !rule->Remote && *rule->ForwardTo)
+  if(hasForwardAction(rule) && !rule->Remote && *rule->ForwardTo)
   {
     G->RRs.Forwarded++;
     MA_NewForward(mlist, TRUE);
@@ -1462,7 +1468,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // Reply Action
-  if ((rule->Actions & RULE_REPLY) == RULE_REPLY && !rule->Remote && *rule->ReplyFile)
+  if(hasReplyAction(rule) && !rule->Remote && *rule->ReplyFile)
   {
     MA_NewReply(mlist, TRUE);
     FileToEditor(rule->ReplyFile, G->WR[2]->GUI.TE_EDIT);
@@ -1471,7 +1477,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // Execute Action
-  if ((rule->Actions & RULE_EXECUTE) == RULE_EXECUTE && *rule->ExecuteCmd)
+  if(hasExecuteAction(rule) && *rule->ExecuteCmd)
   {
     char buf[SIZE_COMMAND+SIZE_PATHFILE];
     sprintf(buf, "%s %s", rule->ExecuteCmd, GetMailFile(NULL, NULL, mail));
@@ -1480,20 +1486,20 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // PlaySound Action
-  if ((rule->Actions & RULE_PLAYSOUND) == RULE_PLAYSOUND && *rule->PlaySound)
+  if(hasPlaySoundAction(rule) && *rule->PlaySound)
   {
     PlaySound(rule->PlaySound);
   }
 
   // Move Action
-  if ((rule->Actions & RULE_MOVE) == RULE_MOVE && !rule->Remote)
+  if(hasMoveAction(rule) && !rule->Remote)
   {
     if((fo = FO_GetFolderByName(rule->MoveTo, NULL)))
     {
       if (mail->Folder != fo)
       {
         G->RRs.Moved++;
-        if (fo->LoadedMode != 2 && (fo->XPKType&1)) fo->Flags |= FOFL_FREEXS;
+        if(fo->LoadedMode != 2 && isCryptedFolder(fo)) SET_FLAG(fo->Flags, FOFL_FREEXS);
         MA_MoveCopy(mail, mail->Folder, fo, FALSE);
         return FALSE;
       }
@@ -1502,10 +1508,15 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   }
 
   // Delete Action
-  if ((rule->Actions & RULE_DELETE) == RULE_DELETE)
+  if(hasDeleteAction(rule))
   {
     G->RRs.Deleted++;
-    if (mail->Flags & MFLAG_SENDMDN) if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
+
+    if(isSendMDNMail(mail) && (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
+    {
+      RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
+    }
+
     MA_DeleteSingle(mail, FALSE);
     return FALSE;
   }
@@ -1520,7 +1531,7 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
 {
    struct Mail *mail, **mlist = NULL;
    struct Folder *folder;
-   int m, i, scnt, matches = 0, minselected = (arg[1] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
+   int m, i, scnt, matches = 0, minselected = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) ? 1 : 2;
    enum ApplyMode mode = arg[0];
    struct Search *search[2*MAXRU];
    APTR lv = G->MA->GUI.NL_MAILS;
@@ -1771,7 +1782,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 
    if (mlist)
    {
-      if (!filename) if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ExportMessages), 1, C->DetachDir, ""))
+      if (!filename) if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ExportMessages), REQF_SAVEMODE, C->DetachDir, ""))
       {
          strmfp(filename = outname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
          if (FileExists(filename))
@@ -1842,7 +1853,7 @@ BOOL MA_ImportMessages(char *fname)
 /// MA_ImportMessagesFunc
 HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 {
-   if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ImportMessages), 0, C->DetachDir, ""))
+   if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ImportMessages), REQF_NONE, C->DetachDir, ""))
    {
       char inname[SIZE_PATHFILE];
       strmfp(inname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
@@ -2104,7 +2115,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
    else
    {
       strmfp(scname, G->ProgDir, "rexx");
-      if (ReqFile(ASL_REXX, G->MA->GUI.WI, GetStr(MSG_MA_ExecuteScript), 0, scname, ""))
+      if (ReqFile(ASL_REXX, G->MA->GUI.WI, GetStr(MSG_MA_ExecuteScript), REQF_NONE, scname, ""))
       {
          strmfp(scname, G->ASLReq[ASL_REXX]->fr_Drawer, G->ASLReq[ASL_REXX]->fr_File);
          SendRexxCommand(G->RexxHost, scname, 0);
@@ -2172,7 +2183,7 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
    if (G->MA && (folder = FO_GetCurrentFolder())) type = folder->Type;
    else return 0;
 
-   outbox = OUTGOING(type);
+   outbox = isOutgoingFolder(folder);
    if (entry)
    {
       if (folder)
@@ -2183,16 +2194,17 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
 
          // lets choose the status icon for that mail
          sprintf(array[0] = dispsta, "\033o[%ld]", entry->Status);
-         if (entry->Importance == 1) strcat(dispsta, "\033o[12]");
-         if (entry->Flags & MFLAG_CRYPT) strcat(dispsta, "\033o[15]");
-         else if (entry->Flags & MFLAG_SIGNED) strcat(dispsta, "\033o[16]");
-         else if (entry->Flags & MFLAG_REPORT) strcat(dispsta, "\033o[14]");
-         else if (entry->Flags & MFLAG_MULTIPART) strcat(dispsta, "\033o[13]");
+
+         if (entry->Importance == 1)      strcat(dispsta, "\033o[12]");
+         if (isCryptedMail(entry))        strcat(dispsta, "\033o[15]");
+         else if (isSignedMail(entry))    strcat(dispsta, "\033o[16]");
+         else if (isReportMail(entry))    strcat(dispsta, "\033o[14]");
+         else if (isMultiPartMail(entry)) strcat(dispsta, "\033o[13]");
 
          // now we generate the proper string for the mailaddress
          array[1] = dispfro;
          *dispfro = 0;
-         if(entry->Flags & MFLAG_MULTIRCPT) strcat(dispfro, "\033o[11]");
+         if(isMultiRCPTMail(entry)) strcat(dispfro, "\033o[11]");
 
          pe = outbox ? &entry->To : &entry->From;
          if((type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress))
@@ -2276,16 +2288,16 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
       int status2 = mapvalue[entry2->Status];
 
       // add the importance & other status flags of that mails
-      status1 += (entry1->Importance == 1) ? 16 : 0;
-      status2 += (entry2->Importance == 1) ? 16 : 0;
-      status1 += (entry1->Flags & MFLAG_CRYPT) ? 8 : 0;
-      status2 += (entry2->Flags & MFLAG_CRYPT) ? 8 : 0;
-      status1 += (entry1->Flags & MFLAG_SIGNED) ? 4 : 0;
-      status2 += (entry2->Flags & MFLAG_SIGNED) ? 4 : 0;
-      status1 += (entry1->Flags & MFLAG_REPORT) ? 2 : 0;
-      status2 += (entry2->Flags & MFLAG_REPORT) ? 2 : 0;
-      status1 += (entry1->Flags & MFLAG_MULTIPART) ? 1 : 0;
-      status2 += (entry2->Flags & MFLAG_MULTIPART) ? 1 : 0;
+      status1 += (entry1->Importance == 1)  ? 16 : 0;
+      status2 += (entry2->Importance == 1)  ? 16 : 0;
+      status1 += isCryptedMail(entry1)      ?  8 : 0;
+      status2 += isCryptedMail(entry2)      ?  8 : 0;
+      status1 += isSignedMail(entry1)       ?  4 : 0;
+      status2 += isSignedMail(entry2)       ?  4 : 0;
+      status1 += isReportMail(entry1)       ?  2 : 0;
+      status2 += isReportMail(entry2)       ?  2 : 0;
+      status1 += isMultiPartMail(entry1)    ?  1 : 0;
+      status2 += isMultiPartMail(entry2)    ?  1 : 0;
 
       return -(status1)+(status2);
     }
@@ -2293,7 +2305,7 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
 
     case 1:
     {
-      if (OUTGOING(entry1->Folder->Type))
+      if(isOutgoingFolder(entry1->Folder))
       {
         return stricmp(*entry1->To.RealName ? entry1->To.RealName : entry1->To.Address,
                        *entry2->To.RealName ? entry2->To.RealName : entry2->To.Address);
@@ -2412,7 +2424,7 @@ HOOKPROTONHNO(MA_FolderKeyFunc, void, int *idx)
     tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
     if(!tn) return;
 
-    if(tn->tn_Flags & TNF_LIST) count++;
+    if(isFlagSet(tn->tn_Flags, TNF_LIST)) count++;
   }
 
   // Force that the list is open at this entry
@@ -2514,7 +2526,7 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
   struct Window *win;
   struct MA_GUIData *gui = &G->MA->GUI;
   struct Folder *fo = FO_GetCurrentFolder();
-  BOOL isOutBox = OUTGOING(fo->Type);
+  BOOL isOutBox = isOutgoingFolder(fo);
   BOOL beingedited = FALSE, hasattach = FALSE;
   BOOL nomail = FALSE;
   ULONG  ret;
@@ -2540,7 +2552,7 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
 
     fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
 
-    if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
+    if(isMultiPartMail(mail)) hasattach = TRUE;
 
     for (i = 0; i < MAXWR; i++)
     {
@@ -2834,7 +2846,7 @@ struct MA_ClassData *MA_New(void)
          MUIA_Window_ID, MAKE_ID('M','A','I','N'),
          MUIA_Window_Menustrip, data->GUI.MS_MAIN,
          WindowContents, data->GUI.GR_MAIN = VGroup,
-            Child, data->GUI.GR_TOP = (C->HideGUIElements & HIDE_TBAR) ?
+            Child, data->GUI.GR_TOP = hasHideToolBarFlag(C->HideGUIElements) ?
                VSpace(1) :
                (HGroupV,
                   MUIA_HelpNode, "MA02",

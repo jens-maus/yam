@@ -1,3 +1,15 @@
+2002-05-15  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * accordingly to recent discussions in the dev-ML I added some
+      general flag handling macros to YAM_utilities.h and spread
+      them all over the sources. With this macros flag handling
+      should be simplified a bit and hopefully they will also reduce
+      the risk of handling flags incorrect.
+      In addition to that general flag macros every flag itself has
+      now some kinda "check-macro" where the current state can be
+      checked by accessing it`s is/has macro which always returns
+      TRUE or FALSE accordingly to the actual state.
+
 2002-05-10  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * added #define vars for the rule actions in YAM_main.h and

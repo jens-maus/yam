@@ -160,6 +160,12 @@ struct Compose
    enum Security      OldSecurity;
 };
 
+// flags & macros for the Receipt management
+#define RCPT_RETURN 1
+#define RCPT_MDN    2
+#define hasReturnRcptFlag(v)   (isFlagSet((v)->Receipt, RCPT_RETURN))
+#define hasMDNRcptFlag(v)      (isFlagSet((v)->Receipt, RCPT_MDN))
+
 extern struct Hook WR_EditHook;
 extern struct Hook WR_NewMailHook;
 

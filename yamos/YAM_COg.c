@@ -166,8 +166,8 @@ static APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
             if (!XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE))
             {
                BOOL suits = TRUE;
-               if (encrypt && !(xpi.xpi_Flags&XPKIF_ENCRYPTION)) suits = FALSE;
-               if (pack && !(xpi.xpi_Flags&0x3f)) suits = FALSE;
+               if (encrypt && isFlagClear(xpi.xpi_Flags, XPKIF_ENCRYPTION)) suits = FALSE;
+               if (pack && isFlagClear(xpi.xpi_Flags, 0x3f)) suits = FALSE;
                if (suits) DoMethod(lv, MUIM_List_InsertSingle, xpl.xpl_Packer[i], MUIV_List_Insert_Sorted);
             }
          }

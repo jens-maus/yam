@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@
 
 #include "YAM_rexx.h"
 #include "YAM_rexx_rxcl.h"
+#include "YAM_utilities.h"
 
 #define RexxPortBaseName "YAM"
 #define RexxMsgExtension "YAM"
@@ -66,7 +67,7 @@ static void (*ARexxResultHook)( struct RexxHost *, struct RexxMsg * ) = NULL;
 /// ReplyRexxCommand
 void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary, char *result)
 {
-   if( rexxmessage->rm_Action & RXFF_RESULT )
+   if(isFlagSet(rexxmessage->rm_Action, RXFF_RESULT))
    {
       if( primary == 0 )
       {
@@ -222,7 +223,7 @@ void CloseDownARexxHost( struct RexxHost *host )
       while( rexxmsg = (struct RexxMsg *) GetMsg(host->port) )
          ReplyRexxCommand( rexxmsg, -20, (long) "Host closing down", NULL );
       
-      if( !(host->flags & ARB_HF_USRMSGPORT) )
+      if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
          DeleteMsgPort( host->port );
    }
    
@@ -247,7 +248,7 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    
    if( (host->port = usrport) )
    {
-      host->flags |= ARB_HF_USRMSGPORT;
+      SET_FLAG(host->flags, ARB_HF_USRMSGPORT);
    }
    else if( !(host->port = CreateMsgPort()) )
    {
@@ -272,7 +273,7 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    if( !(host->rdargs = AllocDosObject(DOS_RDARGS, NULL)) )
    {
       RemPort( host->port );
-      if( !(host->flags & ARB_HF_USRMSGPORT) ) DeleteMsgPort( host->port );
+      if(isFlagClear(host->flags, ARB_HF_USRMSGPORT)) DeleteMsgPort( host->port );
       FreeVec( host );
       return NULL;
    }
@@ -645,7 +646,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       goto drc_cleanup;
    }
    
-   if( !(rxc->flags & ARB_CF_ENABLED) )
+   if(isFlagClear(rxc->flags, ARB_CF_ENABLED))
    {
       rc = -10;
       rc2 = (long) "Command disabled";

@@ -128,9 +128,9 @@ static void US_LoadUsers(void)
                else
                {
                   int flags = atoi(Trim(GetLine(fh, buffer, SIZE_LARGE)));
-                  u->Limited = (flags&4) == 4;
-                  u->UseAddr = (flags&2) == 2;
-                  u->UseDict = (flags&1) == 1;
+                  u->Limited = isFlagSet(flags, 4);
+                  u->UseAddr = isFlagSet(flags, 2);
+                  u->UseDict = isFlagSet(flags, 1);
                   if (!u->Limited) hasmanager = TRUE;
                   if (ver >= 2) MyStrCpy(u->Password, Decrypt(GetLine(fh, buffer, SIZE_LARGE)));
                   u->ID = GetSimpleID();

@@ -106,9 +106,21 @@ struct NewToolbarEntry
    APTR help;
 };
 
+// misc defines
 #define PGPLOGFILE    "T:PGP.log"
 #define NOERRORS      16
 #define KEEPLOG       32
+#define hasNoErrorsFlag(v)  (isFlagSet((v), NOERRORS))
+#define hasKeepLogFlag(v)   (isFlagSet((v), KEEPLOG))
+
+// RequesterMode flags & macros
+#define REQF_NONE        0
+#define REQF_SAVEMODE    1
+#define REQF_MULTISELECT 2
+#define REQF_DRAWERSONLY 4
+#define hasSaveModeFlag(v)    (isFlagSet((v), REQF_SAVEMODE))
+#define hasMultiSelectFlag(v) (isFlagSet((v), REQF_MULTISELECT))
+#define hasDrawersOnlyFlag(v) (isFlagSet((v), REQF_DRAWERSONLY))
 
 // special Macros for the Busy Handling of the InfoBar.
 #define BUSYLEVEL             5
@@ -120,12 +132,31 @@ struct NewToolbarEntry
 #define OUT_DOS       ((BPTR)0)
 #define OUT_NIL       ((BPTR)1)
 
+// attachment requester flags & macros
 #define ATTREQ_DISP   0
 #define ATTREQ_SAVE   1
 #define ATTREQ_PRINT  2
 #define ATTREQ_MULTI  32
+#define isDisplayReq(v)   (isFlagSet((v), ATTREQ_DISP))
+#define isSaveReq(v)      (isFlagSet((v), ATTREQ_SAVE))
+#define isPrintReq(v)     (isFlagSet((v), ATTREQ_PRINT))
+#define isMultiReq(v)     (isFlagSet((v), ATTREQ_MULTI))
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
+
+// special flagging macros
+#define isFlagSet(v,f)	    (((v) & (f)) == (f))  // return TRUE if the flag is set
+#define hasFlag(v,f)        (((v) & (f)) != 0)    // return TRUE if one of the flags in f is set in v
+#define isFlagClear(v,f)	  (((v) & (f)) == 0)    // return TRUE if flag f is not set in v
+#define SET_FLAG(v,f)		    ((v) |= (f))          // set the flag f in v
+#define CLEAR_FLAG(v,f)		  ((v) &= ~(f))         // clear the flag f in v
+#define MASK_FLAG(v,f)      ((v) &= (f))          // mask the variable v with flag f bitwise
+
+// some fileinfoblock handling macros
+#define isFile(fib)	   ((fib)->fib_DirEntryType < 0)
+#define isDrawer(fib)	 ((fib)->fib_DirEntryType >= 0 && \
+							         (fib)->fib_DirEntryType != ST_SOFTLINK && \
+							         (fib)->fib_DirEntryType != ST_LINKDIR)
 
 // function macros
 #define ISpace(ch)            ((BOOL)((ch) == ' ' || ((ch) >= 9 && (ch) <= 13)))

@@ -1114,8 +1114,8 @@ BOOL WriteOutMessage(struct Compose *comp)
    fprintf(fh, "Message-ID: <%s>\n", NewID(TRUE));
    if (comp->IRTMsgID) EmitHeader(fh, "In-Reply-To", comp->IRTMsgID);
    rcptto = comp->ReplyTo ? comp->ReplyTo : (comp->From ? comp->From : C->EmailAddress);
-   if (comp->Receipt & 1) EmitHeader(fh, "Return-Receipt-To", rcptto);
-   if (comp->Receipt & 2) EmitHeader(fh, "Disposition-Notification-To", rcptto);
+   if (hasReturnRcptFlag(comp)) EmitHeader(fh, "Return-Receipt-To", rcptto);
+   if (hasMDNRcptFlag(comp)) EmitHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
    fprintf(fh, "X-Mailer: %s AmigaOS E-mail Client (c) 2000-2002 by YAM Open Source Team - http://www.yam.ch/\n", yamversion);
    if (comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
@@ -1290,8 +1290,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       get(gui->ST_EXTHEADER, MUIA_String_Contents, &comp.ExtHeader);
       if (wr->MsgID[0]) comp.IRTMsgID = wr->MsgID;
       comp.Importance = 1-GetMUICycle(gui->CY_IMPORTANCE);
-      if (GetMUICheck(gui->CH_RECEIPT)) comp.Receipt |= 1;
-      if (GetMUICheck(gui->CH_DISPNOTI)) comp.Receipt |= 2;
+      if (GetMUICheck(gui->CH_RECEIPT)) SET_FLAG(comp.Receipt, RCPT_RETURN);
+      if (GetMUICheck(gui->CH_DISPNOTI)) SET_FLAG(comp.Receipt, RCPT_MDN);
       comp.Signature = GetMUIRadio(gui->RA_SIGNATURE);
       if((comp.Security = GetMUIRadio(gui->RA_SECURITY)) == SEC_DEFAULTS)
          SetDefaultSecurity(&comp);
@@ -1346,7 +1346,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
             DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &new->To);
 
             // if this mail has more than one recipient we have to add the others too
-            if(new->Flags & MFLAG_MULTIRCPT)
+            if(isMultiRCPTMail(new))
             {
               int j;
 
@@ -1374,12 +1374,12 @@ void WR_NewMail(enum WriteMode mode, int winnum)
          for (i = 0; i < (int)ml[0]; i++)
          {
             m = ml[i+2];
-            if (!Virtual(m)) if (m->Folder->Type != FT_OUTGOING && m->Folder->Type != FT_SENT)
+            if (!isVirtualMail(m)) if (m->Folder->Type != FT_OUTGOING && m->Folder->Type != FT_SENT)
             {
                if (m->Status == STATUS_NEW || m->Status == STATUS_UNR)
                {
                   int mdntype = wr->Mode == NEW_REPLY ? MDN_DISP : MDN_PROC;
-                  if (winnum == 2) mdntype |= MDN_AUTOACT;
+                  if (winnum == 2) SET_FLAG(mdntype, MDN_AUTOACT);
                   RE_DoMDN(mdntype, m, FALSE);
                }
                switch (wr->Mode)
@@ -1487,7 +1487,7 @@ HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
 {
    int winnum = *arg;
    set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
-   if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_SaveTextAs), 1, C->AttachDir, ""))
+   if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_SaveTextAs), REQF_SAVEMODE, C->AttachDir, ""))
    {
       char filename[SIZE_PATHFILE];
       strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
@@ -1530,7 +1530,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
    char filename[SIZE_PATHFILE];
    struct FileRequester *ar = G->ASLReq[ASL_ATTACH];
 
-   if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), 2, C->AttachDir, ""))
+   if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, ""))
       if (!ar->fr_NumArgs)
       {
          strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
@@ -1556,7 +1556,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
    struct FileRequester *ar = G->ASLReq[ASL_ATTACH];
    BPTR olddir, filedir;
 
-   if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), 2, C->AttachDir, ""))
+   if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, ""))
    {
       strsfn(ar->fr_ArgList[0].wa_Name, NULL, NULL, arcname, NULL);
       if (!*arcname) strsfn(ar->fr_ArgList[0].wa_Name, NULL, NULL, NULL, arcname);
@@ -1733,7 +1733,7 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
       case ED_INSALTQUOT:
       case ED_INSROT13:
       case ED_OPEN:
-         if (!ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), 0, C->AttachDir, "")) return;
+         if (!ReqFile(ASL_ATTACH, wr->GUI.WI, GetStr(MSG_WR_InsertFile), REQF_NONE, C->AttachDir, "")) return;
          strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
          text = WR_TransformText(filename, cmd, quotetext);
          break;
@@ -2155,7 +2155,7 @@ static struct WR_ClassData *WR_New(int winnum)
                      Child, Label(GetStr(MSG_WR_Subject)),
                      Child, data->GUI.ST_SUBJECT = MakeString(SIZE_SUBJECT,GetStr(MSG_WR_Subject)),
                   End,
-                  Child, (C->HideGUIElements & HIDE_TBAR) ?
+                  Child, hasHideToolBarFlag(C->HideGUIElements) ?
                      (RectangleObject, MUIA_ShowMe, FALSE, End) :
                      (HGroup, GroupSpacing(0),
                         Child, HGroupV,
@@ -2170,7 +2170,7 @@ static struct WR_ClassData *WR_New(int winnum)
                            End,
                            Child, HSpace(0),
                         End,
-                        Child, (C->HideGUIElements & HIDE_XY) ?
+                        Child, hasHideXYFlag(C->HideGUIElements) ?
                            HSpace(1) :
                            (VCenter((data->GUI.TX_POSI = TextObject,
                               TextFrame,

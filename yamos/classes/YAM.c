@@ -133,7 +133,7 @@ VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode 
 
   for(;tn;)
 	{
-		if(tn->tn_Flags & TNF_LIST) /* it's a sublist */
+		if(isFlagSet(tn->tn_Flags, TNF_LIST)) /* it's a sublist */
 		{
 			FindAllABMatches(text, list, tn);
 		}
@@ -169,7 +169,7 @@ BOOL FindABPerson(struct Person *person, struct MUI_NListtree_TreeNode *root)
 
 	for(;tn;)
 	{
-		if(tn->tn_Flags & TNF_LIST) /* it's a sublist */
+		if(isFlagSet(tn->tn_Flags, TNF_LIST)) /* it's a sublist */
 		{
 			if(FindABPerson(person, tn)) return TRUE;
 		}

@@ -133,14 +133,14 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
          break;
       case FS_TO:
          if (FI_MatchPerson(search, &mail->To)) found = TRUE;
-         if (mail->Flags & MFLAG_MULTIRCPT) if (email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE))
+         if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE)))
          {
             for (j = 0; j < email->NoSTo; j++) if (FI_MatchPerson(search, &email->STo[j])) found = TRUE;
             MA_FreeEMailStruct(email);
          }
          break;
       case FS_CC:
-         if (mail->Flags & MFLAG_MULTIRCPT) if (email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE))
+         if(isMultiRCPTMail(mail) && (email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE)))
          {
             for (j = 0; j < email->NoCC; j++)  if (FI_MatchPerson(search, &email->CC[j])) found = TRUE;
             MA_FreeEMailStruct(email);

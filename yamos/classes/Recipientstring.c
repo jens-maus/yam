@@ -46,6 +46,10 @@ struct Data
 #define MUIF_Recipientstring_Resolve_NoFullName  (1 << 0) // do not resolve with fullname "Mister X <misterx@mister.com>"
 #define MUIF_Recipientstring_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
 #define MUIF_Recipientstring_Resolve_NoCache     (1 << 2) // do not resolve addresses out of the eMailCache
+
+#define hasNoFullNameFlag(v)	(isFlagSet((v), MUIF_Recipientstring_Resolve_NoFullName))
+#define hasNoValidFlag(v)			(isFlagSet((v), MUIF_Recipientstring_Resolve_NoValid))
+#define hasNoCacheFlag(v)			(isFlagSet((v), MUIF_Recipientstring_Resolve_NoCache))
 */
 
 
@@ -195,7 +199,7 @@ OVERLOAD(MUIM_DragQuery)
 		struct MUI_NListtree_TreeNode *active;
 		if(active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active))
 		{
-			if(!(active->tn_Flags & TNF_LIST))
+			if(isFlagClear(active->tn_Flags, TNF_LIST))
 				result = MUIV_DragQuery_Accept;
 		}
 	}
@@ -211,7 +215,7 @@ OVERLOAD(MUIM_DragDrop)
 	{
 		struct Mail *mail;
 		DoMethod(d->obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-		if(OUTGOING(mail->Folder->Type))
+		if(isOutgoingFolder(mail->Folder))
 				AB_InsertAddress(obj, "", mail->To.RealName,   mail->To.Address);
 		else	AB_InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
 	}
@@ -252,7 +256,7 @@ OVERLOAD(MUIM_HandleEvent)
 			{
 				if(data->ResolveOnCR)
 				{
-					DoMethod(obj, MUIM_Recipientstring_Resolve, imsg->Qualifier & (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE);
+					DoMethod(obj, MUIM_Recipientstring_Resolve, hasFlag(imsg->Qualifier, (IEQUALIFIER_RSHIFT | IEQUALIFIER_LSHIFT)) ? MUIF_Recipientstring_Resolve_NoFullName : MUIF_NONE);
 
 					// If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
 					if(xget(obj, MUIA_String_AdvanceOnCR))
@@ -394,9 +398,9 @@ DECLARE(Resolve) // ULONG flags
 	BOOL quiet = muiRenderInfo(obj) == NULL ? TRUE : FALSE; // if this object doesn`t have a renderinfo we are quiet
 
 	// Lets check the flags first
-	if(msg->flags & MUIF_Recipientstring_Resolve_NoFullName) withrealname= FALSE;
-	if(msg->flags & MUIF_Recipientstring_Resolve_NoValid)    checkvalids = FALSE;
-	if(msg->flags & MUIF_Recipientstring_Resolve_NoCache)    withcache   = FALSE;
+	if(hasNoFullNameFlag(msg->flags)) withrealname= FALSE;
+	if(hasNoValidFlag(msg->flags))    checkvalids = FALSE;
+	if(hasNoCacheFlag(msg->flags))    withcache   = FALSE;
 
 	set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 

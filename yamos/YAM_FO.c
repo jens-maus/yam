@@ -300,9 +300,9 @@ BOOL FO_LoadConfig(struct Folder *fo)
             }
          }
 
-         // check for the non custom folder
+         // check for non custom folder
          // and set some values which shouldn`t be changed
-         if(!CUSTOMFOLDER(fo->Type))
+         if(!isCustomFolder(fo))
          {
            fo->MLSignature  = -1;
            fo->MLSupport    = FALSE;
@@ -342,7 +342,8 @@ void FO_SaveConfig(struct Folder *fo)
       fprintf(fh, "MLSignature = %ld\n", fo->MLSignature);
       fclose(fh);
       MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".index", sizeof(fname));
-      if (!(fo->Flags&FOFL_MODIFY)) SetFileDate(fname, DateStamp(&ds));
+
+      if(!isModified(fo)) SetFileDate(fname, DateStamp(&ds));
    }
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
 }
@@ -493,7 +494,7 @@ BOOL FO_LoadTree(char *fname)
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
                if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
                {
-                  tnflags |= TNF_NOSIGN;
+                  SET_FLAG(tnflags, TNF_NOSIGN);
                }
 
                if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
@@ -519,7 +520,7 @@ BOOL FO_LoadTree(char *fname)
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
                if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
                {
-                  tnflags |= TNF_NOSIGN;
+                  SET_FLAG(tnflags, TNF_NOSIGN);
                }
 
                // now we are going to add this treenode to the list
@@ -659,7 +660,7 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
       {
         case FT_GROUP:
         {
-          fprintf(fh, "@GROUP %s\n%ld\n", fo->Name, tn->tn_Flags & TNF_OPEN ? 1 : 0);
+          fprintf(fh, "@GROUP %s\n%ld\n", fo->Name, isFlagSet(tn->tn_Flags, TNF_OPEN));
 
           // Now we recursively save this subtree first
           success = FO_SaveSubTree(fh, tn);
@@ -878,7 +879,7 @@ static BOOL FO_FoldernameRequest(char *string)
 static void FO_GetFolder(struct Folder *folder, BOOL existing)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
-   BOOL isdefault = !CUSTOMFOLDER(folder->Type);
+   BOOL isdefault = !isCustomFolder(folder);
    static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, -1 };
    int i;
 
@@ -938,7 +939,7 @@ static void FO_GetFolder(struct Folder *folder, BOOL existing)
 static void FO_PutFolder(struct Folder *folder)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
-   BOOL isdefault = !CUSTOMFOLDER(folder->Type);
+   BOOL isdefault = !isCustomFolder(folder);
    static const int cycle2type[3] = { FT_CUSTOM, FT_CUSTOMSENT, FT_CUSTOMMIXED };
    int i;
 
@@ -981,7 +982,7 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
       // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
       if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
       {
-        tnflags |= TNF_NOSIGN;
+        SET_FLAG(tnflags, TNF_NOSIGN);
       }
 
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
@@ -1029,7 +1030,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
 
       case 3:
       {
-         if (!ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), 4, G->MA_MailDir, "")) return;
+         if (!ReqFile(ASL_FOLDER, G->MA->GUI.WI, GetStr(MSG_FO_SelectDir), REQF_DRAWERSONLY, G->MA_MailDir, "")) return;
          MyStrCpy(folder.Path, G->ASLReq[ASL_FOLDER]->fr_Drawer);
          FO_LoadConfig(&folder);
       }
@@ -1221,15 +1222,20 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       oldfolder->MLSupport = folder.MLSupport;
       if (!xget(gui->CY_FTYPE, MUIA_Disabled))
       {
-         int oldxpk = oldfolder->XPKType, newxpk = folder.XPKType;
+         int oldxpk = oldfolder->XPKType;
+         int newxpk = folder.XPKType;
          BOOL changed = TRUE;
-         if (oldxpk == newxpk || (newxpk > 1 && !XpkBase)) changed = FALSE;
-         else if (!(newxpk&1) && (oldxpk&1) && oldfolder->LoadedMode != 2) changed = MA_PromptFolderPassword(&folder, gui->WI);
-         else if ((newxpk&1) && !(oldxpk&1)) changed = FO_EnterPassword(&folder);
-         if ((newxpk&1) && (oldxpk&1)) strcpy(folder.Password, oldfolder->Password);
-         if (changed)
+
+         // FIXME: Something seems to be wrong here !!
+         if(oldxpk == newxpk || (newxpk > XPK_CRYPT && !XpkBase)) changed = FALSE;
+         else if(!isCryptedFolder(&folder) && isCryptedFolder(oldfolder) && oldfolder->LoadedMode != 2) changed = MA_PromptFolderPassword(&folder, gui->WI);
+         else if(isCryptedFolder(&folder) && !isCryptedFolder(oldfolder)) changed = FO_EnterPassword(&folder);
+
+         if(isCryptedFolder(&folder) && isCryptedFolder(oldfolder)) strcpy(folder.Password, oldfolder->Password);
+
+         if(changed)
          {
-            if (!(newxpk&1)) *folder.Password = 0;
+            if(!isCryptedFolder(&folder)) *folder.Password = 0;
             FO_XPKUpdateFolder(&folder, oldxpk);
             oldfolder->XPKType = newxpk;
             strcpy(oldfolder->Password, folder.Password);
@@ -1245,7 +1251,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
    {
       memset(&folder, 0, sizeof(struct Folder));
       FO_PutFolder(&folder);
-      if (folder.XPKType&1) if (!FO_EnterPassword(&folder)) folder.XPKType &= ~1;
+      if(isCryptedFolder(&folder) && !FO_EnterPassword(&folder)) CLEAR_FLAG(folder.XPKType, XPK_CRYPT);
       set(gui->WI, MUIA_Window_Open, FALSE);
       if (CreateDirectory(GetFolderDir(&folder)))
       {

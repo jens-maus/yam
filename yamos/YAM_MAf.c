@@ -112,7 +112,7 @@ BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
    char passwd[SIZE_PASSWORD], prompt[SIZE_LARGE];
    struct User *user = US_GetCurrentUser();
 
-   if (fo->Flags&FOFL_FREEXS) return TRUE;
+   if (isFreeAccess(fo)) return TRUE;
    if (!Stricmp(fo->Password, user->Password)) return TRUE;
    sprintf(prompt, GetStr(MSG_MA_GetFolderPass), fo->Name);
    do {
@@ -222,7 +222,7 @@ If/when this is enabled, remove the "else".
             }
             else {
                indexloaded++;
-               folder->Flags &= ~FOFL_MODIFY;
+               CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
             }
          }
       }
@@ -275,7 +275,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
       fwrite(buf, 1, cmail.MoreBytes, fh);
    }
    fclose(fh);
-   folder->Flags &= ~FOFL_MODIFY;
+   CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
    BusyEnd;
    return TRUE;
 }
@@ -289,7 +289,7 @@ BOOL MA_GetIndex(struct Folder *folder)
    if (folder->Type == FT_GROUP) return FALSE;
    if (folder->LoadedMode != 2)
    {
-      if (*folder->Password && (folder->XPKType&1))
+      if(isCryptedFolder(folder) && *folder->Password)
          if (!MA_PromptFolderPassword(folder, G->MA->GUI.WI)) return FALSE;
       if (!MA_LoadIndex(folder, TRUE))
       {
@@ -307,8 +307,9 @@ BOOL MA_GetIndex(struct Folder *folder)
 //  Invalidates a folder index
 void MA_ExpireIndex(struct Folder *folder)
 {
-   if (!(folder->Flags&FOFL_MODIFY)) DeleteFile(MA_IndexFileName(folder));
-   folder->Flags |= FOFL_MODIFY;
+   if(!isModified(folder)) DeleteFile(MA_IndexFileName(folder));
+
+   SET_FLAG(folder->Flags, FOFL_MODIFY);
 }
 
 ///
@@ -334,7 +335,7 @@ void MA_UpdateIndexes(BOOL initial)
          }
          else
          {
-            if (flist[i]->LoadedMode == 2 && (flist[i]->Flags&FOFL_MODIFY)) MA_SaveIndex(flist[i]);
+            if (flist[i]->LoadedMode == 2 && isModified(flist[i])) MA_SaveIndex(flist[i]);
          }
       free(flist);
    }
@@ -356,12 +357,12 @@ void MA_FlushIndexes(BOOL all)
       {
          fo = flist[i];
 
-         if ((fo->Type == FT_SENT || fo->Type == FT_CUSTOM || fo->Type == FT_CUSTOMSENT) && fo != actfo  && fo->LoadedMode == 2 && (all || (fo->Flags&FOFL_FREEXS)))
+         if ((fo->Type == FT_SENT || fo->Type == FT_CUSTOM || fo->Type == FT_CUSTOMSENT) && fo != actfo  && fo->LoadedMode == 2 && (all || isFreeAccess(fo)))
          {
-            if (fo->Flags&FOFL_MODIFY) MA_SaveIndex(fo);
+            if(isModified(fo)) MA_SaveIndex(fo);
             ClearMailList(fo, FALSE);
             fo->LoadedMode = 1;
-            fo->Flags &= ~FOFL_FREEXS;
+            CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
          }
       }
       free(flist);
@@ -741,14 +742,14 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             *value++ = 0;
             if (!stricmp(field, "from"))
             {
-               ok |= 1;
+               SET_FLAG(ok, 1);
                SParse(value);
                ExtractAddress(value, &pe);
                mail->From =  pe;
             }
             if (!stricmp(field, "reply-to"))
             {
-               ok |= 8;
+               SET_FLAG(ok, 8);
                SParse(value);
                ExtractAddress(value, &pe);
                mail->ReplyTo = pe;
@@ -763,7 +764,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                ExtractAddress(value, &pe);
                email.ReceiptTo = pe;
                email.ReceiptType = RCPT_TYPE_ALL;
-               mail->Flags |= MFLAG_SENDMDN;
+               SET_FLAG(mail->Flags, MFLAG_SENDMDN);
             }
             if (!stricmp(field, "return-view-to"))
             {
@@ -777,30 +778,30 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             }
             if (!stricmp(field, "to") && !(ok & 2))
             {
-               ok |= 2;
+               SET_FLAG(ok, 2);
                SParse(value);
                if (p = MyStrChr(value, ',')) *p++ = 0;
                ExtractAddress(value, &pe);
                mail->To = pe;
                if (p)
                {
-                  mail->Flags |= MFLAG_MULTIRCPT;
+                  SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
                   if (deep && !email.NoSTo) MA_GetRecipients(p, &(email.STo), &(email.NoSTo));
                }
             }
             if (!stricmp(field, "cc"))
             {
-               mail->Flags |= MFLAG_MULTIRCPT;
+               SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
                if (deep && !email.NoCC) MA_GetRecipients(value, &(email.CC), &(email.NoCC));
             }
             if (!stricmp(field, "bcc"))
             {
-               mail->Flags |= MFLAG_MULTIRCPT;
+               SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
                if (deep && !email.NoBCC) MA_GetRecipients(value, &(email.BCC), &(email.NoBCC));
             }
             if (!stricmp(field, "subject"))
             {
-               ok |= 4;
+               SET_FLAG(ok, 4);
                SParse(value);
                stccpy(mail->Subject, Trim(value), SIZE_SUBJECT);
             }
@@ -833,14 +834,14 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             if (!stricmp(field, "content-type"))
             {
                p = Trim(value);
-               if (!strnicmp(p, "multipart/mixed", 15)) mail->Flags |= MFLAG_MULTIPART;
-               if (!strnicmp(p, "multipart/report", 16)) mail->Flags |= MFLAG_REPORT;
-               if (!strnicmp(p, "multipart/encrypted", 19)) mail->Flags |= MFLAG_CRYPT;
-               if (!strnicmp(p, "multipart/signed", 16)) mail->Flags |= MFLAG_SIGNED;
+               if (!strnicmp(p, "multipart/mixed", 15))     SET_FLAG(mail->Flags, MFLAG_MULTIPART);
+               if (!strnicmp(p, "multipart/report", 16))    SET_FLAG(mail->Flags, MFLAG_REPORT);
+               if (!strnicmp(p, "multipart/encrypted", 19)) SET_FLAG(mail->Flags, MFLAG_CRYPT);
+               if (!strnicmp(p, "multipart/signed", 16))    SET_FLAG(mail->Flags, MFLAG_SIGNED);
             }
             if (!stricmp(field, "x-senderinfo"))
             {
-               mail->Flags |= MFLAG_SENDERINFO;
+               SET_FLAG(mail->Flags, MFLAG_SENDERINFO);
                if (deep) email.SenderInfo = StrBufCpy(email.SenderInfo, value);
             }
             if (deep)
@@ -867,14 +868,13 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
       }
 
       // if now the mail is still not MULTIPART we have to check for uuencoded attachments
-      if(!(mail->Flags & MFLAG_MULTIPART))
+      if(!isMultiPartMail(mail))
       {
-         if (MA_DetectUUE(fh)) mail->Flags |= MFLAG_MULTIPART;
+         if (MA_DetectUUE(fh)) SET_FLAG(mail->Flags, MFLAG_MULTIPART);
       }
 
       // And now we close the Mailfile
       fclose(fh);
-
 
       FreeData2D(&Header);
       if ((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address)) strcpy(mail->ReplyTo.RealName, mail->From.RealName);
@@ -980,7 +980,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
       {
         case FT_GROUP:
         {
-          sprintf(msg->Array[0] = dispfold, "\033o[%d] %s", (msg->TreeNode->tn_Flags & TNF_OPEN) ? 1 : 0, entry->Name);
+          sprintf(msg->Array[0] = dispfold, "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? 1 : 0), entry->Name);
           msg->Preparse[0] = (entry->New+entry->Unread) ? (MUIX_B MUIX_PH) : MUIX_PH;
         }
         break;
@@ -1010,7 +1010,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
           if (strlen(entry->Name) > 0) strcat(dispfold, entry->Name);
           else sprintf(dispfold, "(%s)", FilePart(entry->Path));
 
-          if (entry->XPKType&1) sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCSTDIMAGES);
+          if(isCryptedFolder(entry)) sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCSTDIMAGES);
 
           if (entry->LoadedMode)
           {

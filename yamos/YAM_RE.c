@@ -60,6 +60,7 @@
 #include "YAM_write.h"
 #include "YAM_utilities.h"
 
+// PGP flags & macros
 #define PGPE_MIME     1
 #define PGPE_OLD      2
 #define PGPS_MIME     1
@@ -67,6 +68,13 @@
 #define PGPS_BADSIG   4
 #define PGPS_ADDRESS  8
 #define PGPS_CHECKED 16
+#define hasPGPEMimeFlag(v)     (isFlagSet((v)->PGPEncrypted, PGPE_MIME))
+#define hasPGPEOldFlag(v)      (isFlagSet((v)->PGPEncrypted, PGPE_OLD))
+#define hasPGPSMimeFlag(v)     (isFlagSet((v)->PGPSigned, PGPS_MIME))
+#define hasPGPSOldFlag(v)      (isFlagSet((v)->PGPSigned, PGPS_OLD))
+#define hasPGPSBadSigFlag(v)   (isFlagSet((v)->PGPSigned, PGPS_BADSIG))
+#define hasPGPSAddressFlag(v)  (isFlagSet((v)->PGPSigned, PGPS_ADDRESS))
+#define hasPGPSCheckedFlag(v)  (isFlagSet((v)->PGPSigned, PGPS_CHECKED))
 
 /* local protos */
 static BOOL RE_LoadMessage(int winnum, int parsemode);
@@ -236,7 +244,7 @@ static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
 //  Goes to next or previous (new) message in list
 HOOKPROTONHNO(RE_PrevNext, void, int *arg)
 {  
-   BOOL onlynew = arg[1] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
+   BOOL onlynew = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
    if (arg[3]) return; // Toolbar qualifier bug work-around
    RE_SwitchMessage(arg[2], arg[0], onlynew);
 }
@@ -274,10 +282,10 @@ static void RE_UpdateStatusGroup(int winnum)
    set(gui->GR_STATUS[0], MUIA_Group_ActivePage, 1+mail->Status);
 
    // Now we check for the other statuses of the mail
-   if(mail->Flags & MFLAG_CRYPT)          status = 1;
-   else if(mail->Flags & MFLAG_SIGNED)    status = 2;
-   else if(mail->Flags & MFLAG_REPORT)    status = 3;
-   else if(mail->Flags & MFLAG_MULTIPART) status = 4;
+   if(isCryptedMail(mail))        status = 1;
+   else if(isSignedMail(mail))    status = 2;
+   else if(isReportMail(mail))    status = 3;
+   else if(isMultiPartMail(mail)) status = 4;
    set(gui->GR_STATUS[1], MUIA_Group_ActivePage, status);
 
    set(gui->GR_STATUS[2], MUIA_Group_ActivePage, mail->Importance == 1 ? 1 : 0);
@@ -303,9 +311,9 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
    {
       char *date = DateStamp2String(&mail->Date, DSS_DATETIME), *rcpt = BuildAddrName2(&mail->To), *subj = mail->Subject;
       p1->Filename = tf1->Filename;
-      mode = (MDNtype&MDN_AUTOACT) ? "automatically" : "in response to a user command";
-      strcpy(disp, (MDNtype&MDN_AUTOACT) ? "automatic-action/" : "manual-action/");
-      strcat(disp, (MDNtype&MDN_AUTOSEND) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
+      mode = isAutoActMDN(MDNtype) ? "automatically" : "in response to a user command";
+      strcpy(disp, isAutoActMDN(MDNtype) ? "automatic-action/" : "manual-action/");
+      strcat(disp, isAutoSendMDN(MDNtype) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
       switch (MDNtype & MDN_TYPEMASK)
       {
          case MDN_READ: strcat(disp, "displayed");  fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj); break;
@@ -428,7 +436,7 @@ BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi)
                        case 2: MDNtype = MDN_DENY; break;
                     }
                     break;
-            case 3: if (MDNtype != MDN_IGNORE) MDNtype |= MDN_AUTOSEND; break;
+            case 3: if (MDNtype != MDN_IGNORE) SET_FLAG(MDNtype, MDN_AUTOSEND); break;
           }
           if (MDNtype != MDN_IGNORE) RE_SendMDN(MDNtype, mail, &email->ReceiptTo, sendnow);
         }
@@ -444,7 +452,7 @@ HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
 {
    struct RE_ClassData *re = G->RE[arg[1]];
 
-   if ((re->PGPSigned & PGPS_OLD) && !(re->PGPSigned & PGPS_CHECKED))
+   if(hasPGPSOldFlag(re) && !hasPGPSCheckedFlag(re))
    {
       int error;
       char fullfile[SIZE_PATHFILE], options[SIZE_LARGE];
@@ -453,14 +461,15 @@ HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
       error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
       FinishUnpack(fullfile);
       DeleteFile("T:PGP.tmp");
-      if (error > 0) re->PGPSigned |= PGPS_BADSIG;
+      if (error > 0) SET_FLAG(re->PGPSigned, PGPS_BADSIG);
       if (error >= 0) RE_GetSigFromLog(arg[1], NULL); else return;
    }
-   if ((re->PGPSigned & PGPS_BADSIG) || arg[0])
+
+   if(hasPGPSBadSigFlag(re) || arg[0])
    {
       char buffer[SIZE_LARGE];
-      strcpy(buffer, (re->PGPSigned & PGPS_BADSIG) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig));
-      if (re->PGPSigned & PGPS_ADDRESS) { strcat(buffer, GetStr(MSG_RE_SigFrom)); strcat(buffer, re->Signature); }
+      strcpy(buffer, hasPGPSBadSigFlag(re) ? GetStr(MSG_RE_BadSig) : GetStr(MSG_RE_GoodSig));
+      if(hasPGPSAddressFlag(re)) { strcat(buffer, GetStr(MSG_RE_SigFrom)); strcat(buffer, re->Signature); }
       MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SigCheck), GetStr(MSG_Okay), buffer);
    }
 }
@@ -474,8 +483,9 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    struct RE_ClassData *re = G->RE[winnum];
    struct RE_GUIData *gui;
    struct Folder **flist, *folder = mail->Folder;
-   BOOL real = !Virtual(mail);
-   BOOL out = real ? OUTGOING(folder->Type) : FALSE, allloaded = TRUE;
+   BOOL real = !isVirtualMail(mail);
+   BOOL out = real ? isOutgoingFolder(folder) : FALSE;
+   BOOL allloaded = TRUE;
 
    /* Check if the window is still open,
     * needed for the "update readwindow after writewindow close" feature
@@ -540,7 +550,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
       RE_DisplayMessage(winnum);
       set(gui->MI_EXTKEY, MUIA_Menuitem_Enabled, re->PGPKey);
       set(gui->MI_CHKSIG, MUIA_Menuitem_Enabled, re->PGPSigned > 0);
-      set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && (re->PGPEncrypted&PGPE_MIME) > 0);
+      set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && hasPGPEMimeFlag(re));
       RE_UpdateStatusGroup(winnum);
       MA_StartMacro(MACRO_READ, itoa(winnum));
       if (real && (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
@@ -643,7 +653,7 @@ BOOL RE_Export(int winnum, char *source, char *dest, char *name, int nr, BOOL fo
       else if (nr) sprintf(buffer2, "%s-%ld", G->RE[winnum]->Mail.MailFile, nr);
       else strcpy(buffer2, RE_SuggestName(&(G->RE[winnum]->Mail)));
       if (force) strmfp(dest = buffer, C->DetachDir, buffer2);
-      else if (ReqFile(ASL_DETACH, win, GetStr(MSG_RE_SaveMessage), 1, C->DetachDir, buffer2))
+      else if (ReqFile(ASL_DETACH, win, GetStr(MSG_RE_SaveMessage), REQF_SAVEMODE, C->DetachDir, buffer2))
          strmfp(dest = buffer, G->ASLReq[ASL_DETACH]->fr_Drawer, G->ASLReq[ASL_DETACH]->fr_File);
       else return FALSE;
    }
@@ -716,7 +726,7 @@ MakeStaticHook(RE_CopyHook, RE_CopyFunc);
 //  Deletes the current message
 HOOKPROTONHNO(RE_DeleteFunc, void, int *arg)
 {
-   BOOL delatonce = arg[0] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
+   BOOL delatonce = hasFlag(arg[0], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
    int pos, winnum = arg[1];
    struct Folder *folder = G->RE[winnum]->Mail.Folder, *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
    struct Mail *mail = G->RE[winnum]->MailPtr;
@@ -1056,7 +1066,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
       mail->Reference = NULL;
       mail->Folder    = NULL;
       mail->UIDL      = NULL;
-      mail->Flags     |= MFLAG_NOFOLDER;
+      SET_FLAG(mail->Flags, MFLAG_NOFOLDER);
 
       MA_FreeEMailStruct(email);
 
@@ -1154,7 +1164,7 @@ void RE_SaveAll(int winnum, char *path)
 HOOKPROTONHNO(RE_SaveAllFunc, void, int *arg)
 {
    struct Part *part = G->RE[*arg]->FirstPart->Next;
-   if (part) if (part->Next) if (ReqFile(ASL_DETACH, G->RE[*arg]->GUI.WI, GetStr(MSG_RE_SaveMessage), 5, C->DetachDir, ""))
+   if (part) if (part->Next) if (ReqFile(ASL_DETACH, G->RE[*arg]->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
    {
       BusyText(GetStr(MSG_BusyDecSaving), "");
       RE_SaveAll(*arg, G->ASLReq[ASL_DETACH]->fr_Drawer);
@@ -1188,12 +1198,13 @@ HOOKPROTONHNO(RE_NewFunc, void, int *arg)
    ULONG qual = arg[1];
    struct Mail *mail = G->RE[winnum]->MailPtr, *mlist[3] = { (struct Mail *)1, NULL, NULL };
    if (arg[3]) return; // Toolbar qualifier bug work-around
-   if (mode == NEW_FORWARD && qual & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) mode = NEW_BOUNCE;
-   if (mode == NEW_FORWARD && qual & IEQUALIFIER_CONTROL) flags = NEWF_FWD_NOATTACH;
-   if (mode == NEW_REPLY && qual & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT)) flags = NEWF_REP_PRIVATE;
-   if (mode == NEW_REPLY && qual & (IEQUALIFIER_LALT|IEQUALIFIER_RALT)) flags = NEWF_REP_MLIST;
-   if (mode == NEW_REPLY && qual & IEQUALIFIER_CONTROL) flags = NEWF_REP_NOQUOTE;
+   if (mode == NEW_FORWARD &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) mode = NEW_BOUNCE;
+   if (mode == NEW_FORWARD && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_FWD_NOATTACH);
+   if (mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT))) SET_FLAG(flags, NEWF_REP_PRIVATE);
+   if (mode == NEW_REPLY   &&   hasFlag(qual, (IEQUALIFIER_LALT|IEQUALIFIER_RALT)))     SET_FLAG(flags, NEWF_REP_MLIST);
+   if (mode == NEW_REPLY   && isFlagSet(qual, IEQUALIFIER_CONTROL))                     SET_FLAG(flags, NEWF_REP_NOQUOTE);
    mlist[2] = mail;
+
    if (MailExists(mail, NULL)) switch (mode)
    {
       case NEW_NEW:     MA_NewNew(mail, flags); break;
@@ -1306,12 +1317,12 @@ static void RE_GetSigFromLog(int winnum, char *decrFor)
          if (!sigDone)
          {
             if (!strnicmp(buffer, "good signature", 14)) sigDone = TRUE;
-            if (!strnicmp(buffer, "bad signature", 13)) { re->PGPSigned |= PGPS_BADSIG; sigDone = TRUE; }
+            if (!strnicmp(buffer, "bad signature", 13)) { SET_FLAG(re->PGPSigned, PGPS_BADSIG); sigDone = TRUE; }
             if (sigDone)
             {
                if (G->PGPVersion == 5) { GetLine(fh, buffer, SIZE_LARGE); GetLine(fh, buffer, SIZE_LARGE); }
-               if (RE_GetAddressFromLog(buffer, re->Signature)) re->PGPSigned |= PGPS_ADDRESS;
-               re->PGPSigned |= PGPS_CHECKED;
+               if (RE_GetAddressFromLog(buffer, re->Signature)) SET_FLAG(re->PGPSigned, PGPS_ADDRESS);
+               SET_FLAG(re->PGPSigned, PGPS_CHECKED);
             }
          }
       }
@@ -2048,11 +2059,11 @@ static void RE_HandleSignedMessage(struct Part *frp)
          int error;
          struct TempFile *tf = OpenTempFile(NULL);
          char options[SIZE_LARGE];
-         G->RE[frp->Win]->PGPSigned |= PGPS_MIME;
+         SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_MIME);
          ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
          sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f", rp[1]->Filename, tf->Filename);
          error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
-         if (error > 0) G->RE[frp->Win]->PGPSigned |= PGPS_BADSIG;
+         if (error > 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_BADSIG);
          if (error >= 0) RE_GetSigFromLog(frp->Win, NULL);
          tf->FP = NULL; CloseTempFile(tf);
       }
@@ -2109,9 +2120,9 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
    {
       if (!RE_DecryptPGP(frp->Win, rp[1]->Filename))
       {
-         G->RE[frp->Win]->PGPSigned |= PGPS_OLD;
+         SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_OLD);
       }
-      G->RE[frp->Win]->PGPEncrypted |= PGPE_MIME;
+      SET_FLAG(G->RE[frp->Win]->PGPEncrypted, PGPE_MIME);
       if (ConvertCRLF(rp[1]->Filename, rp[0]->Filename, FALSE)) if (in = fopen(rp[0]->Filename, "r"))
       {
          rp[0]->ContentType = StrBufCpy(rp[0]->ContentType, "text/plain");
@@ -2448,12 +2459,13 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
                            if (!RE_DecryptPGP(winnum, tf->Filename))
                            {
-                              re->PGPSigned |= PGPS_OLD;
+                              SET_FLAG(re->PGPSigned, PGPS_OLD);
+
                               // make sure that the mail is flaged as signed
-                              if(!(re->MailPtr->Flags & MFLAG_SIGNED))
+                              if(!isSignedMail(re->MailPtr))
                               {
-                                re->MailPtr->Flags |= MFLAG_SIGNED;
-                                re->MailPtr->Folder->Flags |= FOFL_MODIFY;  // flag folder as modified
+                                SET_FLAG(re->MailPtr->Flags, MFLAG_SIGNED);
+                                SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                               }
                            }
 
@@ -2471,12 +2483,13 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                            CloseTempFile(tf);
                         }
 
-                        re->PGPEncrypted |= PGPE_OLD;
+                        SET_FLAG(re->PGPEncrypted, PGPE_OLD);
+
                         // make sure that mail is flagged as crypted
-                        if(!(re->MailPtr->Flags & MFLAG_CRYPT))
+                        if(!isCryptedMail(re->MailPtr))
                         {
-                          re->MailPtr->Flags |= MFLAG_CRYPT;
-                          re->MailPtr->Folder->Flags |= FOFL_MODIFY;  // flag folder as modified
+                          SET_FLAG(re->MailPtr->Flags, MFLAG_CRYPT);
+                          SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
                         }
 
                         DB( kprintf("RE_ReadInMessage(): done with decryption\n"); )
@@ -2513,7 +2526,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                         }
                      }
                      if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31)) re->PGPKey = TRUE;
-                     if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29)) re->PGPSigned |= PGPS_OLD;
+                     if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29)) SET_FLAG(re->PGPSigned, PGPS_OLD);
                      cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
                      cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
 rim_cont:
@@ -2556,7 +2569,8 @@ static void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
    memset(ab, 0, sizeof(struct ABEntry));
    stccpy(ab->Address, mail->From.Address, SIZE_ADDRESS);
    stccpy(ab->RealName, mail->From.RealName, SIZE_REALNAME);
-   if (mail->Flags & MFLAG_SENDERINFO)
+
+   if(isSenderInfoMail(mail))
    {
       if(email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE))
       {
@@ -2979,7 +2993,7 @@ HOOKPROTONHNO(RE_CloseFunc, void, int *arg)
    struct RE_ClassData *re = G->RE[winnum];
 
    RE_CleanupMessage(winnum);
-   if (Virtual(re->MailPtr))
+   if(isVirtualMail(re->MailPtr))
    {
       free(re->MailPtr);
       CloseTempFile(re->TempFile);
@@ -3118,7 +3132,7 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
             End,
          End,
          WindowContents, VGroup,
-            Child, (C->HideGUIElements & HIDE_TBAR) ?
+            Child, hasHideToolBarFlag(C->HideGUIElements) ?
                (RectangleObject, MUIA_ShowMe, FALSE, End) :
                (HGroup, GroupSpacing(0),
                   Child, HGroupV,

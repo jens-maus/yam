@@ -332,7 +332,7 @@ DISPATCHERPROTO(EL_Dispatcher)
          if (d->obj == obj) break;
          if (d->obj == G->AB->GUI.LV_ADDRESSES && d->obj != obj)
             if (active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active))
-               if (active->tn_Flags & TNF_LIST) EA_AddMembers(obj, active);
+               if (isFlagSet(active->tn_Flags, TNF_LIST)) EA_AddMembers(obj, active);
                else EA_AddSingleMember(obj, active);
          return 0;
    }

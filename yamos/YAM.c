@@ -713,7 +713,7 @@ static void Initialise2(BOOL hidden)
       if (!tn) break;
       folder = tn->tn_User;
       if (!folder) break;
-      if ((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING || folder->Type == FT_DELETED || C->LoadAllFolders) && !(folder->XPKType&1)) MA_GetIndex(folder);
+      if ((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING || folder->Type == FT_DELETED || C->LoadAllFolders) && !isCryptedFolder(folder)) MA_GetIndex(folder);
       else if (folder->Type != FT_GROUP) folder->LoadedMode = MA_LoadIndex(folder, FALSE);
       DoMethod(G->App, MUIM_Application_InputBuffered);
    }
