@@ -190,19 +190,21 @@ static void TC_Dispatcher(void)
          }
       if (++G->GM_Count >= C->CheckMailDelay*60 && C->CheckMailDelay)
       {
-         for (i = 0; i < MAXWR; i++) if (G->WR[i]) break;
+         for (i = 0; i < MAXWR && !G->WR[i]; i++)
+            ;
          if (i == MAXWR && !G->CO)
          {
             MA_PopNow(POP_TIMED,-1);
             G->GM_Count = 0;
          }
       }
-      for (i = 0; i < MAXWR; i++) if (G->WR[i]) if (++G->WR[i]->AS_Count >= C->AutoSave && C->AutoSave)
-      {
-         EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
-         G->WR[i]->AS_Count = 0;
-         G->WR[i]->AS_Done = TRUE;
-      }
+      for (i = 0; i < MAXWR; i++)
+         if (G->WR[i] && ++G->WR[i]->AS_Count >= C->AutoSave && C->AutoSave)
+         {
+            EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
+            G->WR[i]->AS_Count = 0;
+            G->WR[i]->AS_Done = TRUE;
+         }
       TC_Start();
    }
 }
@@ -526,7 +528,7 @@ static void Terminate(void)
       if (G->ASLReq[i])
          MUI_FreeAslRequest(G->ASLReq[i]);
 
-   for (i = 0; i < MAXWR+1; i++)
+   for (i = 0; i <= MAXWR; i++)
       if (G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port)
          DeleteMsgPort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
 
@@ -938,7 +940,7 @@ static void Initialise(BOOL hidden)
       if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,
          TAG_END))) Abort(MSG_ErrorAslStruct);
    G->AppPort = CreateMsgPort();
-   for (i = 0; i < MAXWR+1; i++)
+   for (i = 0; i <= MAXWR; i++)
    {
       G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort();
       G->WR_NRequest[i].nr_Name = (UBYTE *)G->WR_Filename[i];
@@ -1303,7 +1305,7 @@ int main(int argc, char **argv)
                   ReplyMsg(&apmsg->am_Message);
                }
             }
-            for(i = 0; i < MAXWR+1; i++)
+            for(i = 0; i <= MAXWR; i++)
                if (signals & notsig[i])
                {
                   while ((msg = GetMsg(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port))) ReplyMsg(msg);
