@@ -157,7 +157,7 @@ enum {
 ///
 
 /*** BASE64 encode/decode routines (RFC 2045) ***/
-/// base64encode
+/// base64encode()
 // optimized base64 encoding function returning the length of the
 // encoded string.
 int base64encode(char *to, const unsigned char *from, unsigned int len)
@@ -210,7 +210,7 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
 }
 
 ///
-/// base64decode
+/// base64decode()
 // optimized base64 decoding function returning the length of the
 // decoded string or 0 on an occurred error or a minus integer as
 // an indicator of a short count in the encoded string. The source
@@ -299,7 +299,7 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
 }
 
 ///
-/// base64encode_file
+/// base64encode_file()
 //  Encodes a file in base64 format. It reads in a file from a supplied FILE*
 //  pointer stepwise by filling up a buffer, encoding it and writing it down
 //  as soon as it reached the length of 72 characters. This makes sure the
@@ -488,7 +488,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
 }
 
 ///
-/// base64decode_file
+/// base64decode_file()
 //  Decodes a file in base64 format. Takes care of an eventually specified translation
 //  table as well as a CRLF->LF translation for printable text. It reads in the base64
 //  strings line by line from the in file stream, decodes it and writes out the
@@ -1027,6 +1027,8 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
 }
 
 ///
+
+/*** URL decoding routines ***/
 /// fromform
 //  Converts an url-encoded file into plain text
 void fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt)
@@ -1050,24 +1052,6 @@ void fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt)
          default : fputc(tt ? (unsigned int)tt->Table[(UBYTE)c] : c, outfile); break;
       }
    }
-}
-
-///
-/// fromqptxt
-//  Decodes a string in quoted-printable format
-void fromqptxt(char *src, char *dst, struct TranslationTable *tt)
-{
-   unsigned int c1, c2;
-   UBYTE c;
-
-   while ((c1 = *src++))
-      if (c1 == '=')
-      {
-         c1 = *src++; c2 = *src++;
-         c1 = hexchar(c1); c2 = hexchar(c2); c = (UBYTE)(c1<<4 | c2);
-         *dst++ = tt ? (char)tt->Table[c] : (char)c;
-      }
-      else *dst++ = tt ? (char)tt->Table[(UBYTE)c1] : (char)c1;
 }
 
 ///

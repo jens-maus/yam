@@ -63,7 +63,6 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
 void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
 void  fromuue(FILE *infp, FILE *outfp);
 void  fromuuetxt(char **txt, FILE *outfp);
-void  fromqptxt(char *src, char *dst, struct TranslationTable *tt);
 void  touue(FILE *in, FILE *out);
 
 #endif /* YAM_MIME_H */
