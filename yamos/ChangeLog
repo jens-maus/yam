@@ -5,9 +5,23 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-02-21  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c, YAM_RE.c, YAM_UT.c: fixed a bug in the
+      base64encode_file() routines where the routines where unable
+      to deal with base64 encoded strings that weren`t a multiple
+      of 4.
+    * YAM.c, YAM_TR.c, YAM_UT.c: retired the YAM_compat.h header in
+      favour of some preprocessor macro sets. Sorry Gunther, but your
+      intention to use the DCE feature of the compiler is a bit unwanted
+      here. It makes it impossible to compile a debug version of YAM
+      because if the optimizer of the compiler is disabled, the unused
+      parts of YAM produce a unresolve symbols error on linking. And IMHO
+      it is anyway a better solution to use preprocessor macros here.
+
 2004-02-20  Gunther Nikl <gni@gecko.de>
 
-    * YAM_comapt.h: OS4 compatibility header.
+    * YAM_compat.h: OS4 compatibility header.
     * YAM.c, YAM_TR.c, YAM_UT.c: Use it.
 
 2004-02-15  Jens Langner <Jens.Langner@light-speed.de>
