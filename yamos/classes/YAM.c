@@ -337,13 +337,17 @@ DECLARE(AddToEmailCache) // struct Person *person
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-	static STRPTR Classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListview.mcc", NULL };
+	// prepare a string pointer array with all the
+	// names of the used classes within. This array is only usefull if MUI v20
+	// is used and the user wants to alter the MUI settings of the application
+	const static STRPTR Classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "NListtree.mcc", "NList.mcc", "NListviews.mcc", NULL };
+
 	if((obj = (Object *)DoSuperNew(cl, obj,
 		MUIA_Application_Author,         "YAM Open Source Team",
 		MUIA_Application_Base,           "YAM",
 		MUIA_Application_Title,          "YAM",
 		MUIA_Application_Version,        yamversionstring,
-		MUIA_Application_Copyright,      "Copyright © 2000-2002 YAM Open Source Team",
+		MUIA_Application_Copyright,      "Copyright © 2000-2003 YAM Open Source Team",
 		MUIA_Application_Description,    GetStr(MSG_APP_DESCRIPTION),
 		MUIA_Application_UseRexx,        FALSE,
 		MUIA_Application_SingleTask,     !getenv("MultipleYAM"),

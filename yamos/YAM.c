@@ -911,6 +911,12 @@ static void Initialise(BOOL hidden)
    // Lets check for the correct Toolbar.mcc version
    CheckMCC(MUIC_Toolbar, 15, 6, TRUE);
 
+   // Lets check for the correct TextEditor.mcc version
+   CheckMCC(MUIC_TextEditor, 15, 9, TRUE);
+
+   // Lets check for the correct BetterString.mcc version
+   CheckMCC(MUIC_BetterString, 11, 6, TRUE);
+
    // we have to have at least v20.104 of NList.mcc to get YAM working without risking
    // to have it buggy - so we make it a requirement.
    CheckMCC(MUIC_NList, 20, 104, TRUE);
