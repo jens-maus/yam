@@ -162,19 +162,11 @@ DECLARE(ChangeWindow)
 	ULONG left = xget(_win(data->String), MUIA_Window_LeftEdge) + _left(data->String);
 	ULONG top = xget(_win(data->String), MUIA_Window_TopEdge) + _bottom(data->String) + 1;
 
-	if(xget(obj, MUIA_Window_Open))
-	{
-		struct Window *win = (struct Window *)xget(obj, MUIA_Window_Window);
-		ChangeWindowBox(win, left, top, (LONG)_width(data->String), (LONG)win->Height);
-	}
-	else
-	{
-		SetAttrs(obj,
-			MUIA_Window_LeftEdge,   left,
-			MUIA_Window_TopEdge,    top,
-			MUIA_Window_Width,      _width(data->String),
-			TAG_DONE);
-	}
+	SetAttrs(obj,
+		MUIA_Window_LeftEdge,   left,
+		MUIA_Window_TopEdge,    top,
+		MUIA_Window_Width,      _width(data->String),
+		TAG_DONE);
 
 	return 0;
 }

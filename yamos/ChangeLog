@@ -7,6 +7,9 @@ $Source$
 
 2003-02-13  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/Addrmatchlist.c: if the window that the addrmatchlist was
+      displayed in had been moved while the matchlist was open, the next
+      time it opened at the wrong position.
     * YAM_CL.c: added Wheelmouse support to own TextEditor subclass. As
       the original TextEditor doesn`t support the newmouse
       NM_WHEEL_UP/DOWN codes, YAM catches this codes on it`s own now and
