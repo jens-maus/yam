@@ -1,6 +1,3 @@
-#ifndef YAM_CLASSES_H
-#define YAM_CLASSES_H
-
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -26,28 +23,53 @@
 
  $Id$
 
+ Superclass:  MUIC_NListtree
+ Description: NListtree class of the addressbook
+
 ***************************************************************************/
 
-#include "YAM_stringsizes.h"
+#include "AddrBookListtree_cl.h"
 
-struct PL_Data
-{ 
-   struct Hook DisplayHook;
-   Object *    Object[MAXCPAGES];
-   APTR        Image[MAXCPAGES];
+/* CLASSDATA
+struct Data
+{
+	short dummy;
 };
+*/
 
-#define MUIA_Bodychunk_File          0x80002501    // [I..]
-#define MUIA_Bodychunk_UseOld        0x80002502    // [I..]
+/* Overloaded Methods */
+/// OVERLOAD(MUIM_DragQuery)
+OVERLOAD(MUIM_DragQuery)
+{
+	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
-extern struct MUI_CustomClass *CL_AttachList;
-extern struct MUI_CustomClass *CL_BodyChunk;
-extern struct MUI_CustomClass *CL_DDList;
-extern struct MUI_CustomClass *CL_FolderList;
-extern struct MUI_CustomClass *CL_MailList;
-extern struct MUI_CustomClass *CL_PageList;
+	if(d->obj == G->MA->GUI.NL_MAILS)
+		return MUIV_DragQuery_Accept;
 
-void ExitClasses(void);
-BOOL InitClasses(void);
+	return DoSuperMethodA(cl,obj,msg);
+}
 
-#endif /* YAM_CLASSES_H */
+///
+/// OVERLOAD(MUIM_DragDrop)
+OVERLOAD(MUIM_DragDrop)
+{
+	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
+
+	if(d->obj == G->MA->GUI.NL_MAILS)
+	{
+		struct Mail **mlist = MA_CreateMarkedList(d->obj, FALSE);
+		if(mlist)
+		{
+			MA_GetAddress(mlist);
+			free(mlist);
+		}
+	}
+
+	return DoSuperMethodA(cl,obj,msg);
+}
+
+///
+
+/* Private Functions */
+
+/* Public Methods */

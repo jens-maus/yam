@@ -72,7 +72,6 @@ struct BC_Data
 struct MUI_CustomClass *CL_BodyChunk    = NULL;
 struct MUI_CustomClass *CL_FolderList   = NULL;
 struct MUI_CustomClass *CL_MailList     = NULL;
-struct MUI_CustomClass *CL_AddressList  = NULL;
 struct MUI_CustomClass *CL_AttachList   = NULL;
 struct MUI_CustomClass *CL_DDList       = NULL;
 struct MUI_CustomClass *CL_PageList     = NULL;
@@ -370,36 +369,6 @@ DISPATCHERPROTO(EL_Dispatcher)
             }
          return 0;
    }
-   return DoSuperMethodA(cl,obj,msg);
-}
-
-///
-/// AL_Dispatcher (Address book NListtree)
-/*** AL_Dispatcher (Address book NListtree) -
-     Subclass of Listtree, supports inline images and Drag&Drop from message list ***/
-DISPATCHERPROTO(AL_Dispatcher)
-{
-   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-
-   switch (msg->MethodID)
-   {
-      case MUIM_DragQuery:
-      {
-         if (d->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
-      }
-      break;
-
-      case MUIM_DragDrop:
-      {
-        if (d->obj == G->MA->GUI.NL_MAILS)
-        {
-          struct Mail **mlist = MA_CreateMarkedList(d->obj, FALSE);
-          if (mlist) { MA_GetAddress(mlist); free(mlist); }
-        }
-      }
-      break;
-   }
-
    return DoSuperMethodA(cl,obj,msg);
 }
 
@@ -725,7 +694,6 @@ void ExitClasses(void)
   if(CL_BodyChunk)   { MUI_DeleteCustomClass(CL_BodyChunk);    CL_BodyChunk    = NULL; }
   if(CL_MailList)    { MUI_DeleteCustomClass(CL_MailList);     CL_MailList     = NULL; }
   if(CL_FolderList)  { MUI_DeleteCustomClass(CL_FolderList);   CL_FolderList   = NULL; }
-  if(CL_AddressList) { MUI_DeleteCustomClass(CL_AddressList);  CL_AddressList  = NULL; }
   if(CL_DDList)      { MUI_DeleteCustomClass(CL_DDList);       CL_DDList       = NULL; }
   if(CL_AttachList)  { MUI_DeleteCustomClass(CL_AttachList);   CL_AttachList   = NULL; }
 }
@@ -737,7 +705,6 @@ BOOL InitClasses(void)
 {
   if((CL_AttachList   = CreateMCC(MUIC_NList,     NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher))))
   if((CL_DDList       = CreateMCC(MUIC_NListtree, NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher))))
-  if((CL_AddressList  = CreateMCC(MUIC_NListtree, NULL, sizeof(struct DumData), ENTRY(AL_Dispatcher))))
   if((CL_FolderList   = CreateMCC(MUIC_NListtree, NULL, sizeof(struct FL_Data), ENTRY(FL_Dispatcher))))
   if((CL_MailList     = CreateMCC(MUIC_NList,     NULL, sizeof(struct ML_Data), ENTRY(ML_Dispatcher))))
   if((CL_BodyChunk    = CreateMCC(MUIC_Bodychunk, NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher))))

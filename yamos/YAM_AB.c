@@ -1185,7 +1185,7 @@ struct AB_ClassData *AB_New(void)
             Child, list = NListviewObject,
                MUIA_CycleChain,         TRUE,
                MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
-               MUIA_NListview_NList,    data->GUI.LV_ADDRESSES = NewObject(CL_AddressList->mcc_Class, NULL,
+               MUIA_NListview_NList,    data->GUI.LV_ADDRESSES = AddrBookListtreeObject,
                   InputListFrame,
                   MUIA_NListtree_CompareHook,     &AB_LV_CmpFuncHook,
                   MUIA_NListtree_DragDropSort,    TRUE,
