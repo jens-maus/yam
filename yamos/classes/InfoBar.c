@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "InfoBar.h"
+#include "InfoBar_cl.h"
 
 /* CLASSDATA
 struct Data

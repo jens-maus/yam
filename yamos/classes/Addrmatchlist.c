@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "Addrmatchlist.h"
+#include "Addrmatchlist_cl.h"
 
 /* CLASSDATA
 struct Data

@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "Recipientstring.h"
+#include "Recipientstring_cl.h"
 
 /* CLASSDATA
 struct Data

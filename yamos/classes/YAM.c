@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "classes/YAM.h"
+#include "YAM_cl.h"
 
 #define EMAILCACHENAME "PROGDIR:.emailcache"
 

@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "Searchwindow.h"
+#include "Searchwindow_cl.h"
 
 /* CLASSDATA
 struct Data
