@@ -249,7 +249,6 @@ long base64decode_file(FILE *in, FILE *out,
     {
       long r, w;
 
-      DB(kprintf("len: %ld\n", outLength);)
       for(r=0, w=0; r < outLength; r++)
       {
         // check if this is a CRLF
