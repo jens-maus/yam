@@ -632,7 +632,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 {
   char dateFilePart[13];  // the base64 encoded date part occupies 12+1 bytes
   char statusFilePart[4]; // we only need 3+1 bytes for the status flags here
-  char oldFilePath[SIZE_PATHFILE];
+  char oldFilePath[SIZE_PATHFILE+1];
   char *statusPartPtr = statusFilePart;
   char *comment;
   char *ptr;
@@ -645,6 +645,8 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   // construct the full path of the old filename
   // and get the file comment
   strncpy(oldFilePath, GetFolderDir(folder), SIZE_PATHFILE);
+  oldFilePath[SIZE_PATHFILE] = '\0';
+
   if(AddPart(oldFilePath, filename, SIZE_PATHFILE) == 0 ||
      (comment = FileComment(oldFilePath)) == NULL)
   {
@@ -760,7 +762,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   do
   {
     static char newFileName[SIZE_MFILE];
-    char newFilePath[SIZE_PATHFILE];
+    char newFilePath[SIZE_PATHFILE+1];
 
     // ok, now we should have all main parts of the new filename, so we
     // can concatenate it to one new filename and try to rename the old
@@ -770,6 +772,8 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     // so, now we should be finished with finding the new filename of the mail file.
     // lets try to rename it with the dos.library's Rename() function
     strncpy(newFilePath, GetFolderDir(folder), SIZE_PATHFILE);
+    newFilePath[SIZE_PATHFILE] = '\0';
+
     if(AddPart(newFilePath, newFileName, SIZE_PATHFILE) == 0)
     {
       result = NULL;
@@ -854,6 +858,8 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       sprintf(newFileName, "%s.%03d,%s", dateFilePart, ++mailCounter, statusFilePart);
 
       strncpy(newFilePath, GetFolderDir(folder), SIZE_PATHFILE);
+      newFilePath[SIZE_PATHFILE] = '\0';
+
       if(AddPart(newFilePath, newFileName, SIZE_PATHFILE) == 0)
       {
         result = NULL;
@@ -1326,6 +1332,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       // the transfer date at the start of the name and for the set status
       // flags at the end of it.
       strncpy(dateFilePart, mail->MailFile, 12);
+      dateFilePart[12] = '\0';
 
       // make sure there is no "-" in the base64 encoded part as we just mapped
       // the not allowed "/" to "-" to make it possible to use base64 for
@@ -1627,8 +1634,9 @@ BOOL MA_ScanMailBox(struct Folder *folder)
               }
               else
               {
-                char path[SIZE_PATHFILE];
+                char path[SIZE_PATHFILE+1];
                 strncpy(path, GetFolderDir(folder), SIZE_PATHFILE);
+                path[SIZE_PATHFILE] = '\0';
                 AddPart(path, fname, SIZE_PATHFILE);
                 DeleteFile(path);
               }

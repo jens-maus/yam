@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-10-08  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c, YAM_FI.c: fixed some buffer overflows which were caused by
+      some unterminated strncpy() usages and resulted in messages showing
+      a size of -1.
+
 2004-09-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c, YAM_TR.c: introduced new MoveFile() function which allows
