@@ -2304,7 +2304,7 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
       {
         // now we move back from the @ until the start of the address, so that we can find out
         // from where this URL starts
-        for(i=0, foundurl=p; p && strchr(EML_legalchars, *p); p--)
+        for(foundurl=p; p && strchr(EML_legalchars, *p); p--)
         {
           foundurl = p;
           if(p == line) break;
@@ -2950,39 +2950,67 @@ static void RE_ClickedOnMessage(char *address)
 //  Handles double-clicks on an URL
 HOOKPROTONH(RE_DoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
 {
-   int pos = clickmsg->ClickPosition;
-   char *line = clickmsg->LineContents, *p, *surl;
-   static char url[SIZE_URL];
+   char *p;
+   BOOL result = FALSE;
+
+   DB(kprintf("DoubleClick: %ld - [%s]\n", clickmsg->ClickPosition, clickmsg->LineContents);)
 
    DoMethod(G->App, MUIM_Application_InputBuffered);
 
-   while (pos && !ISpace(line[pos-1]) && line[pos-1] != '<') pos--;
-   surl = &line[pos];
+   // for safety reasons
+   if(!clickmsg->LineContents) return FALSE;
 
-   for (p = url; !ISpace(line[pos]) && line[pos] != '>' && line[pos] != '\n' && line[pos] && p-url < SIZE_URL; pos++)
+   // if the user clicked on space we skip the following
+   // analysis of a URL and just check if it was an attachment the user clicked at
+   if(!ISpace(clickmsg->LineContents[clickmsg->ClickPosition]))
    {
-      *p++ = line[pos];
-   }
-   *p = 0;
+      int pos = clickmsg->ClickPosition;
+      char *line, *surl;
+      static char url[SIZE_URL];
 
-   if (RE_ExtractURL(surl, url, NULL, NULL))
-   {
-      if (!strnicmp(url, "mailto:", 7)) RE_ClickedOnMessage(&url[7]);
-      else if(strchr(url, ':') == NULL && strchr(url, '@')) RE_ClickedOnMessage(url);
-      else GotoURL(url);
-   }
-   else if (isdigit(line[0]) && ((line[1] == ':' && line[2] == ' ') || (line[2] == ':' && line[3] == ' ')))
-   {
-      int pnr = atoi(line), winnum;
-      struct Part *part;
-      get(_win(obj), MUIA_UserData, &winnum);
-      part = RE_GetPart(winnum, pnr);
-      RE_DecodePart(part);
-      RE_DisplayMIME(part->Filename, part->ContentType);
-   }
-   else return FALSE;
+      // then we make a copy of the LineContents
+      if(!(line = StrBufCpy(NULL, clickmsg->LineContents))) return FALSE;
 
-   return TRUE;
+      // find the beginning of the word we clicked at
+      surl = &line[pos];
+      while(surl != &line[0] && !ISpace(*(surl-1))) surl--;
+
+      // now find the end of the word the user clicked at
+      p = &line[pos];
+      while(p+1 != &line[strlen(line)] && !ISpace(*(p+1))) p++;
+      *(++p) = '\0';
+
+      if(RE_ExtractURL(surl, url, NULL, NULL))
+      {
+         if (!strnicmp(url, "mailto:", 7)) RE_ClickedOnMessage(&url[7]);
+         else if(strchr(url, ':') == NULL && strchr(url, '@')) RE_ClickedOnMessage(url);
+         else GotoURL(url);
+
+         result = TRUE;
+      }
+
+      FreeStrBuf(line);
+   }
+
+   // if we still don`t have a result here we can exit immediatly
+   if(result == FALSE)
+   {
+      p = clickmsg->LineContents;
+      if(isdigit(p[0]) && ((p[1] == ':' && p[2] == ' ') || (p[2] == ':' && p[3] == ' ')))
+      {
+        struct Part *part = RE_GetPart((int)xget(_win(obj), MUIA_UserData), atoi(p));
+
+        if(part)
+        {
+          RE_DecodePart(part);
+          RE_DisplayMIME(part->Filename, part->ContentType);
+
+          result = TRUE;
+        }
+      }
+   }
+
+   return result;
 }
 MakeStaticHook(RE_DoubleClickHook, RE_DoubleClickFunc);
 ///

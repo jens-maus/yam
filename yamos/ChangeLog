@@ -7,6 +7,11 @@ $Source$
 
 2002-07-09  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_RE.c: reworked the DoubleClickFunc of the Readwindow
+      a bit to make it work more precise on the word the user
+      really has double clicked on. This will make it possible
+      for the user to double lick on two URL in the same line
+      with having two separate actions to occur.
     * YAM_RE.c: Made the ExtractURL code within the ReadMessage
       functions a bit safer and also added normal email addresses
       to the recognition also. Now normal email addresses without
