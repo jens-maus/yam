@@ -40,12 +40,15 @@ Developers (in alphabetical order):
               Christian Hattemer  (krille)
               David Rey           (tactica)
               Dirk Stöcker        (gizmo)
+              Gunther Nikl        (gnikl)
               Jacob Laursen       (laursen)
               Jens Langner        (damato)
               Jörg Strohmayer     (joergs)
               Karoly Balogh       (charlie)
 
 - Fixed: no more Enforcer hits on exit (damato)
+- Fixed: no more Enforcer hits when selecting an user other than the
+  default (damato)
 - Fixed: if SMTP AUTH failed, the response gotten from the server was
   never reported to the user, and the connection remained alive (damato)
 - Fixed: if a host had 2 different IPs in the DNS and the first one
