@@ -4,7 +4,7 @@
 /* Includeheader
 
 	Name:           SDI_compiler.h
-	Versionstring:	$VER: SDI_compiler.h 1.8 (12.06.2002)
+	Versionstring:	$VER: SDI_compiler.h 1.7 (16.06.2002)
 	Author:         SDI
 	Distribution:   PD
 	Description:    defines to hide compiler stuff
@@ -15,8 +15,7 @@
  1.4   30.03.00 : fixed SAVEDS for VBCC
  1.5   29.07.00 : added #undef statements (needed e.g. for AmiTCP together with vbcc)
  1.6   19.05.01 : added STACKEXT and Dice stuff
- 1.7   09.06.02 : added #ifdef check for __stackext as the cross-gcc of morphos doesn`t support stackext
- 1.8   12.06.02 : added ALIGN and PACKED for PPC (MorphOS) support
+ 1.7   16.06.01 : added MorphOS specials and VARARGS68K
 */
 
 #ifdef ASM
@@ -68,10 +67,19 @@
 #elif defined(__GNUC__)
   #define REG(reg,arg) arg __asm(#reg)
   #define LREG(reg,arg) register REG(reg,arg)
+
+  /*
+  ** Don`t use __stackext for the MorphOS version
+  ** because we anyway don`t have a libnix ppc with stackext
+  ** Also we define a VARARGS68K define here to specify
+  ** functions that should work with that special attribute
+  ** of the MOS gcc compiler for varargs68k handling.
+  */
   #if defined(__MORPHOS__)
-    #define ALIGN __attribute__((aligned(2)))
-    #define PACKED __attribute__((packed))
+    #define STACKEXT
+    #define VARARGS68K  __attribute__((varargs68k))
   #endif
+
 #elif defined(_DCC)
   #define REG(reg,arg) __ ## reg arg
   #define STACKEXT __stkcheck
@@ -106,17 +114,10 @@
   #define STDARGS __stdargs
 #endif
 #if !defined(STACKEXT)
-  #if defined(__stackext)         // the cross-gcc of morphos doesn`t support __stackext somehow :/
-    #define STACKEXT __stackext
-  #else
-    #define STACKEXT
-  #endif
+  #define STACKEXT __stackext
 #endif
-#if !defined(ALIGN)
-  #define ALIGN
-#endif
-#if !defined(PACKED)
-  #define PACKED
+#if !defined(VARARGS68K)
+  #define VARARGS68K
 #endif
 
 #endif /* SDI_COMPILER_H */
