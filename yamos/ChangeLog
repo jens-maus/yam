@@ -1062,3 +1062,4 @@
 
     * YAM_rexx.c (global): added REXXMSG macro to hide annoying NDK difference
       (ReplyRexxCommand, DoRXCommand): use it
+    * YAM_rexx.c: small cleanups
