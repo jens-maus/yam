@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.6 (01.05.2002)
+## version $VER: YAM.catalog 5.6 (02.05.2002)
 ## codeset 0
 ;
 MSG_Folder
@@ -60,7 +60,7 @@ Anzeigen
 ; Display
 ;
 MSG_Filter
-Filter
+Filtern
 ; Filter
 ;
 MSG_Process
@@ -1892,7 +1892,7 @@ _Zeit in Swatch Beats
 ; Time in Swatch _Beats
 ;
 MSG_CO_LogNone
-keines
+ausgeschaltet
 ; none
 ;
 MSG_CO_LogNormal
