@@ -4210,18 +4210,15 @@ MakeHook(putCharHook, putCharFunc);
 void STDARGS SPrintF(char *outstr, char *fmtstr, ...)
 {
   struct Hook hook;
+  va_list args;
 
   InitHook(&hook, putCharHook, outstr);
-
+  va_start(args, fmtstr);
 #if defined(__MORPHOS__)
-{
-  va_list va;
-  va_start(va, fmtstr);
-
-  FormatString(G->Locale, fmtstr, va->overflow_arg_area, &hook);
-}
+  FormatString(G->Locale, fmtstr, args->overflow_arg_area, &hook);
 #else
-  FormatString(G->Locale, fmtstr, &fmtstr+1, &hook);
+  FormatString(G->Locale, fmtstr, args, &hook);
 #endif
+  va_end(va);
 }
 ///
