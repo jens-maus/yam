@@ -953,39 +953,48 @@ void MA_ScanMailBox(struct Folder *folder)
 
    BusyText(GetStr(MSG_BusyScanning), folder->Name);
    ClearMailList(folder, TRUE);
-   if ((fib = AllocDosObject(DOS_FIB,NULL)))
-   {
-      if((lock = Lock(GetFolderDir(folder), ACCESS_READ)))
-      {
-        if(Examine(lock, fib))
-        {
-          while (ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
-          {
-            DoMethod(G->App,MUIM_Application_InputBuffered);
-            if (IsValidMailFile(fib->fib_FileName))
-            {
-              if (fib->fib_Size)
-              {
-                if ((mail = MA_ExamineMail(folder,fib->fib_FileName,fib->fib_Comment,FALSE)))
-                {
-                  AddMailToList((struct Mail *)mail, folder);
-                  MA_FreeEMailStruct(mail);
-                }
 
-              }
-              else
+   if((lock = Lock(GetFolderDir(folder), ACCESS_READ)))
+   {
+      if((fib = AllocDosObject(DOS_FIB, NULL)))
+      {
+          if(Examine(lock, fib) != DOSFALSE && ExNext(lock, fib) != DOSFALSE)
+          {
+            BOOL finish = FALSE;
+
+            while(!finish)
+            {
+              struct FileInfoBlock fib_copy = *fib;
+
+              // lets get the next fib immediatly, because the the file for this fib
+              // can be immediatly deleted somehow and then we loose the dirtree.
+              // So we somehow "prescan" this dir with this method.
+              if(ExNext(lock, fib) == DOSFALSE) finish = TRUE;
+
+              DoMethod(G->App,MUIM_Application_InputBuffered);
+              if(isFile(&fib_copy) && IsValidMailFile(fib_copy.fib_FileName))
               {
-                char path[SIZE_PATHFILE];
-                NameFromLock(lock, path, SIZE_PATHFILE);
-                AddPart(path, fib->fib_FileName, SIZE_PATHFILE);
-                DeleteFile(path);
+                if(fib_copy.fib_Size)
+                {
+                  if((mail = MA_ExamineMail(folder, fib_copy.fib_FileName, fib_copy.fib_Comment,FALSE)))
+                  {
+                    AddMailToList((struct Mail *)mail, folder);
+                    MA_FreeEMailStruct(mail);
+                  }
+                }
+                else
+                {
+                  char path[SIZE_PATHFILE];
+                  NameFromLock(lock, path, SIZE_PATHFILE);
+                  AddPart(path, fib_copy.fib_FileName, SIZE_PATHFILE);
+                  DeleteFile(path);
+                }
               }
             }
           }
-        }
-        UnLock(lock);
+          FreeDosObject(DOS_FIB, fib);
       }
-      FreeDosObject(DOS_FIB,fib);
+      UnLock(lock);
    }
    BusyEnd;
 }
