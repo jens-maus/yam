@@ -28,14 +28,14 @@
 TARGET	= YAM.os3
 
 # Programs
-CC	= gcc
-STRIP	= strip
-RM	= rm -f
-RMDIR	= rm -rf
+CC    = m68k-amigaos-gcc
+STRIP	= m68k-amigaos-strip
+RM    = rm -f
+RMDIR = rm -rf
 MKDIR	= mkdir
-CHMOD	= chmod
-FLEX	= flex
-FC	= flexcat
+CHMOD = chmod
+FLEX  = flex
+FC    = flexcat
 
 # Directories
 PREFIX    = .
@@ -46,14 +46,14 @@ GENCLASSES= $(EXTRASRC)/genclasses
 OBJDIR    = .obj_os3
 
 # Compiler/Linker flags
-CPU	= -m68020-60 -msoft-float
-CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
-WARN	= -Wall
+CPU     = -m68020-60 -msoft-float
+CDEFS   = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
+WARN    = -Wall
 OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel -funroll-loops
-DEBUG	= -DDEBUG -g3 -O0
+DEBUG   = -DDEBUG -g3 -O0
 CFLAGS  = -I. -I./includes -DNO_INLINE_STDARG $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS = -noixemul -mstackextend -fbaserel $(CPU)
-LDLIBS  = -ldebug -lmui -lm
+LDLIBS  = -lm -ldebug -lmui
 
 # Special flags
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
