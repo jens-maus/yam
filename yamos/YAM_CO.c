@@ -1014,11 +1014,17 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 
    get(ed, MUIA_TextEditor_HasChanged, &modified);
    if (modified) EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]), NULL);
-   if (*arg && *(CE->Editor))
+
+   if(*arg)
    {
-      sprintf(buffer,"%s \"%s\"", CE->Editor, CreateFilename(SigNames[sig]));
-      ExecuteCommand(buffer, FALSE, OUT_NIL);
-   } else return;
+      if(*(CE->Editor))
+      {
+        sprintf(buffer,"%s \"%s\"", CE->Editor, CreateFilename(SigNames[sig]));
+        ExecuteCommand(buffer, FALSE, OUT_NIL);
+      }
+      else return;
+   }
+
    if (!FileToEditor(CreateFilename(SigNames[sig]), ed)) DoMethod(ed, MUIM_TextEditor_ClearText);
    set(ed, MUIA_TextEditor_HasChanged, FALSE);
    G->CO->LastSig = sig;

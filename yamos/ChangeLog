@@ -1,3 +1,8 @@
+2002-05-21  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_CO.c: fixed bug #556527 where the signature cyclegadget
+      didn`t work anymore because of a incorrect return.
+
 2002-05-19  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_AB.c: added a more sophisticated error handling to the
