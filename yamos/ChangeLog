@@ -7,6 +7,9 @@ $Source$
 
 2004-03-08  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_global.c: changed version string CPU information to
+      place a simple [68k] string to the $VER: string if YAM was
+      compiled with either the -m68020-40 or -m68020-60 option.
     * added support for specifying socket options in the .config
       file within the hidden section. Per default no additional
       socket options are specified, so the TCP/IP stack defaults

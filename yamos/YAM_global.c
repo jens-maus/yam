@@ -36,6 +36,8 @@
   #else
     #define CPU " [PPC]"
   #endif
+#elif defined(__mc68040) && defined(__mc68020) /* triggered by -m68020-40 and -m68020-60 */
+  #define CPU " [68k]"
 #elif defined(_M68060) || defined(__M68060) || defined(__mc68060)
   #define CPU " [060]"
 #elif defined(_M68040) || defined(__M68040) || defined(__mc68040)
@@ -44,8 +46,10 @@
   #define CPU " [030]"
 #elif defined(_M68020) || defined(__M68020) || defined(__mc68020)
   #define CPU " [020]"
+#elif defined(_M68000) || defined(__M68000) || defined(__mc68000)
+  #define CPU " [000]"
 #else
-  #define CPU ""
+  #error "Unknown CPU model - check compiler defines"
 #endif
 
 /* the version stuff */
