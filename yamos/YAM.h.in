@@ -1203,6 +1203,7 @@ extern BOOL MatchExtension(char *, char *);
 extern char *IdentifyFile(char *);
 extern void InsertAddresses(APTR, char **, BOOL);
 extern char *AllocReqText(char *);
+extern void SPrintF(char *outstr, char *fmtstr, ...);
 extern void PopUp(void);
 extern void AppendLog(int, char *, void *, void *, void *, void *);
 extern void AppendLogNormal(int, char *, void *, void *, void *, void *);

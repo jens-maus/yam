@@ -41,6 +41,7 @@ LOCAL BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, in
 LOCAL BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 LOCAL char *IdentifyFileDT(char *fname);
+SAVEDS ASM void putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale));
 
 
 /*** Requesters ***/
@@ -2821,3 +2822,44 @@ char *AllocReqText(char *s)
    return reqtext;
 }
 ///
+
+/// SPrintF
+//  sprintf() replacement with Locale support
+void SPrintF(char *outstr, char *fmtstr, ...)
+{
+	struct Hook hook;
+#ifdef __PPC__
+	va_list ap;
+	ULONG arg[32];
+	int args = 0, i;
+
+	for (i=0; fmtstr[i] != '\0'; i++) {
+		if (fmtstr[i] == '%' && fmtstr[i+1] != '%') args++;
+	}
+
+	va_start(ap, fmtstr);
+	for (i=0; i<args; i++) {
+		arg[i] = va_arg(ap, ULONG);
+	}
+	va_end(ap);
+#endif
+
+	InitHook(&hook, putChar, outstr);
+
+#ifdef __PPC__
+	FormatString(G->Locale, fmtstr, &arg[0], &hook);
+#else
+	FormatString(G->Locale, fmtstr, &fmtstr+1, &hook);
+#endif
+}
+
+/// putChar
+//  Hook used by FormatString()
+SAVEDS ASM void putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale))
+{
+	char **tmp;
+
+	((char *)hook->h_Data)[0] = c;
+	tmp = (char **)(&hook->h_Data);
+	(*tmp)++;
+}

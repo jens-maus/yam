@@ -550,7 +550,7 @@ void Initialise(BOOL hidden)
    int i;
 
    DateStamp(&G->StartDate);
-   if (LocaleBase = InitLib("locale.library", 38, 0, FALSE, FALSE)) G->Locale = OpenLocale(NULL);
+   if (LocaleBase = InitLib("locale.library", 38, 0, TRUE, FALSE)) G->Locale = OpenLocale(NULL);
    OpenYAMCatalog();
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);

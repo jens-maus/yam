@@ -3,12 +3,8 @@
     * Enforcer hits when doing: rx "address 'YAM';info"
       (without arguments) Fixed!
 
-2000-12-06  laursen <laursen@myself.com>
-
     * Added "From:" address to folder options. Useful when using
       different e-mail addresses on different mailing lists.
-
-2000-12-06  laursen <laursen@myself.com>
 
     * When deleting a bunch of mails, and one with Disposition
       Notification pops up - new option: Ignore all
@@ -26,3 +22,9 @@
 2000-12-17  laursen <laursen@myself.com>
 
     * SAS/C fixes. Now compiles again, also without V44 includes.
+
+    * Removed enforcer hits when creating new messages.
+
+    * Set max. length of commodity description to 39 characters.
+
+    * Added sprintf() replacement with Locale support.
