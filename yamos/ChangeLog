@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-01  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FO.c: removed the extra Foldername Requester as it caused more
+      confusion concerning the Path and Directory settings of a folder.
+      Now the user can directly specify the correct folder path within
+      the general folder configuration. Also enhanced Warning requesters
+      concerning the existance of a folder. Now it should be more intuitive
+      to change/set a foldername and path. This also fixed bug #571768.
+
 2003-01-31  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_CL.c: YAM will now insert the famous multilinedelete replacement

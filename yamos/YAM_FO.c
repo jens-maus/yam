@@ -62,7 +62,6 @@ static void FO_XPKUpdateFolder(struct Folder*, int);
 static BOOL FO_Move(char*, char*);
 static BOOL FO_MoveFolderDir(struct Folder*, struct Folder*);
 static BOOL FO_EnterPassword(struct Folder*);
-static BOOL FO_FoldernameRequest(char*);
 static struct FO_ClassData *FO_New(void);
 static BOOL FO_GetFolderByType_cmp(struct Folder*, enum FolderType*);
 static BOOL FO_GetFolderByName_cmp(struct Folder*, char*);
@@ -820,106 +819,9 @@ static BOOL FO_EnterPassword(struct Folder *fo)
 }
 
 ///
-/// FO_FoldernameRequest
-//  Asks user for a folder name and path
-static BOOL FO_FoldernameRequest(char *string)
-{
-   char *path;
-   APTR bt_okay, bt_cancel, wi, st_pa, st_di;
-   int ret_code = -1;
-
-   wi = WindowObject,
-      MUIA_Window_Title, GetStr(MSG_Folder),
-      MUIA_Window_RefWindow, G->MA->GUI.WI,
-      MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
-      MUIA_Window_TopEdge, MUIV_Window_TopEdge_Centered,
-      MUIA_Window_ID, MAKE_ID('N','F','R','Q'),
-      WindowContents, VGroup,
-         Child, VGroup,
-            GroupFrame,
-            MUIA_Background, MUII_GroupBack,
-            Child, LLabel(GetStr(MSG_CO_SelectDir)),
-            Child, ColGroup(2),
-               Child, Label2(GetStr(MSG_Path)),
-               Child, PopaslObject,
-                  MUIA_Popasl_Type, ASL_FileRequest,
-                  MUIA_Popstring_String, st_pa = MakeString(SIZE_PATH, ""),
-                  MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
-                  ASLFR_DrawersOnly, TRUE,
-               End,
-               Child, Label2(GetStr(MSG_Directory)),
-               Child, st_di = MakeString(SIZE_FILE, ""),
-            End,
-         End,
-         Child, ColGroup(2),
-            Child, bt_okay = MakeButton(GetStr(MSG_Okay)),
-            Child, bt_cancel = MakeButton(GetStr(MSG_Cancel)),
-         End,
-      End,
-   End;
-   if (wi)
-   {
-      setstring(st_pa, G->MA_MailDir);
-      setstring(st_di, string);
-      set(st_di, MUIA_String_Reject, " \";:/#?(|)");
-      set(wi, MUIA_Window_ActiveObject, st_di);
-      set(G->App, MUIA_Application_Sleep, TRUE);
-      DoMethod(G->App, OM_ADDMEMBER, wi);
-      DoMethod(bt_okay  , MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
-      DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
-      DoMethod(st_di, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
-      DoMethod(wi, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
-
-      // lets collect the waiting returnIDs now
-      COLLECT_RETURNIDS;
-
-      if (!SafeOpenWindow(wi)) ret_code = 0;
-
-      while (ret_code == -1)
-      {
-         ULONG signals;
-         switch (DoMethod(G->App, MUIM_Application_Input, &signals))
-         {
-            case 1:
-            {
-              if (*((STRPTR)xget(st_di, MUIA_String_Contents))) ret_code = 1;
-            }
-            break;
-
-            case 3:
-            {
-              ret_code = 0;
-            }
-            break;
-         }
-         if (ret_code == -1 && signals) Wait(signals);
-      }
-
-      // now lets reissue the collected returnIDs again
-      REISSUE_RETURNIDS;
-
-      path = (STRPTR)xget(st_pa, MUIA_String_Contents);
-
-      if (ret_code > 0)
-      {
-         if (!stricmp(path, G->MA_MailDir)) GetMUIString(string, st_di);
-         else
-         {
-           strncpy(string, path, SIZE_PATH);
-           AddPart(string, (STRPTR)xget(st_di, MUIA_String_Contents), SIZE_PATH);
-         }
-      }
-
-      DoMethod(G->App, OM_REMMEMBER, wi);
-      set(G->App, MUIA_Application_Sleep, FALSE);
-   }
-   return (BOOL)ret_code;
-}
-
-///
 /// FO_GetFolder
 //  Fills form with data from folder structure
-static void FO_GetFolder(struct Folder *folder, BOOL existing)
+static void FO_GetFolder(struct Folder *folder)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
    BOOL isdefault = !isCustomFolder(folder);
@@ -927,10 +829,16 @@ static void FO_GetFolder(struct Folder *folder, BOOL existing)
    int i;
 
    set(gui->ST_FNAME,  MUIA_String_Contents, folder->Name);
-   set(gui->TX_FPATH,  MUIA_Text_Contents, folder->Path);
-   set(gui->NM_MAXAGE, MUIA_Numeric_Value, folder->MaxAge);
-   set(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type]);
-   set(gui->CY_FMODE,  MUIA_Cycle_Active, folder->XPKType);
+   set(gui->ST_FPATH,  MUIA_String_Contents, folder->Path);
+   set(gui->NM_MAXAGE, MUIA_Numeric_Value,   folder->MaxAge);
+
+   SetAttrs(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type],
+                            MUIA_Disabled,     isdefault,
+                            TAG_DONE);
+
+   SetAttrs(gui->CY_FMODE,  MUIA_Cycle_Active, folder->XPKType,
+                            MUIA_Disabled,     isdefault,
+                            TAG_DONE);
 
    for (i = 0; i < 2; i++)
    {
@@ -939,9 +847,6 @@ static void FO_GetFolder(struct Folder *folder, BOOL existing)
    }
 
    set(gui->CH_STATS,       MUIA_Selected, folder->Stats);
-   set(gui->CY_FTYPE,       MUIA_Disabled, isdefault);
-   set(gui->CY_FMODE,       MUIA_Disabled, isdefault || existing);
-   set(gui->BT_MOVE,        MUIA_Disabled, existing);
    set(gui->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
 
    // for ML-Support
@@ -987,7 +892,12 @@ static void FO_PutFolder(struct Folder *folder)
    int i;
 
    GetMUIString(folder->Name, gui->ST_FNAME);
-   GetMUIText(folder->Path, gui->TX_FPATH);
+   GetMUIString(folder->Path, gui->ST_FPATH);
+
+   // we have to correct the folder path because we shouldn`t allow a last / in the
+   // path
+   if(folder->Path[strlen(folder->Path)-1] == '/') folder->Path[strlen(folder->Path)-1] = '\0';
+
    folder->MaxAge = GetMUINumer(gui->NM_MAXAGE);
    if (!isdefault)
    {
@@ -1052,14 +962,7 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
 
    switch (mode)
    {
-      case 0: return;
-      case 1:
-      {
-         if (!FO_FoldernameRequest(folder.Path)) return;
-         MyStrCpy(folder.Name, FilePart(folder.Path));
-      }
-      break;
-
+      case 1: break;
       case 2:
       {
          struct Folder *currfolder = FO_GetCurrentFolder();
@@ -1076,14 +979,11 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
          // now that we have the correct folder type, we set some default values for the new
          // folder
          *folder.Path       = 0;
+         *folder.Name       = 0;
          folder.BC_FImage   = NULL;
          folder.FImage      = NULL;
          folder.Messages    = NULL;
          folder.ImageIndex  = -1;  // No Image for the folder by default.
-
-         // then we get the new name and finish our job.
-         if (!FO_FoldernameRequest(folder.Path)) return;
-         MyStrCpy(folder.Name, FilePart(folder.Path));
       }
       break;
 
@@ -1094,13 +994,20 @@ HOOKPROTONHNONP(FO_NewFolderFunc, void)
          FO_LoadConfig(&folder);
       }
       break;
+
+      default:
+      {
+        return;
+      }
    }
+
    if (!G->FO)
    {
       if (!(G->FO = FO_New())) return;
       if (!SafeOpenWindow(G->FO->GUI.WI)) { DisposeModulePush(&G->FO); return; }
    }
-   FO_GetFolder(&folder, mode==3);
+
+   FO_GetFolder(&folder);
 }
 MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
 
@@ -1131,7 +1038,7 @@ HOOKPROTONHNONP(FO_EditFolderFunc, void)
         if (!(G->FO = FO_New())) return;
         if (!SafeOpenWindow(G->FO->GUI.WI)) { DisposeModulePush(&G->FO); return; }
       }
-      FO_GetFolder(G->FO->EditFolder = folder, FALSE);
+      FO_GetFolder(G->FO->EditFolder = folder);
     }
   }
 }
@@ -1234,17 +1141,6 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
 
 ///
-/// FO_MoveFunc
-//  Asks user for the new destination
-HOOKPROTONHNONP(FO_MoveFunc, void)
-{
-   char path[SIZE_PATH];
-   GetMUIText(path, G->FO->GUI.TX_FPATH);
-   if (FO_FoldernameRequest(path)) set(G->FO->GUI.TX_FPATH, MUIA_Text_Contents, path);
-}
-MakeStaticHook(FO_MoveHook, FO_MoveFunc);
-
-///
 /// FO_CloseFunc
 //  Closes folder configuration window
 HOOKPROTONHNONP(FO_CloseFunc, void)
@@ -1263,18 +1159,71 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
    struct Folder folder, *oldfolder = G->FO->EditFolder;
    BOOL success = FALSE;
 
-   if (oldfolder)
+   // if this is a edit folder request we separate here.
+   if(oldfolder)
    {
       memcpy(&folder, oldfolder, sizeof(struct Folder));
       FO_PutFolder(&folder);
-      if (stricmp(oldfolder->Path, folder.Path))
+
+      // check if something has changed and if not we immediatly exit here
+      if(memcmp(&folder, oldfolder, sizeof(struct Folder)) == 0)
       {
-         if (Rename(oldfolder->Path, folder.Path)) strcpy(oldfolder->Path, folder.Path);
-         else
-            if (CreateDirectory(GetFolderDir(&folder))) if (FO_MoveFolderDir(&folder, oldfolder))
-               strcpy(oldfolder->Path, folder.Path);
+        DisposeModulePush(&G->FO);
+        return;
       }
+
+      // lets first check for a valid folder name
+      // if the foldername is empty or it was changed and the new name already exists it`s invalid
+      if(*folder.Name == NULL || (stricmp(oldfolder->Name, folder.Name) && FO_GetFolderByName(folder.Name, NULL)))
+      {
+        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERNAMEINVALID));
+        return;
+      }
+
       strcpy(oldfolder->Name, folder.Name);
+
+      // if the folderpath string has changed
+      if(stricmp(oldfolder->Path, folder.Path) != 0)
+      {
+         char realpath_old[SIZE_PATH];
+         char realpath_new[SIZE_PATH];
+
+         // lets get the real pathes so that we can compare them later on
+         strcpy(realpath_old, GetRealPath(oldfolder->Path));
+         strcpy(realpath_new, GetRealPath(folder.Path));
+
+         // then let`s check if the realPathes (after lock/unlock) is also different
+         if(stricmp(realpath_old, realpath_new) != 0)
+         {
+           int result;
+
+           // check if the new folder already exists or not.
+           if(FileInfo(folder.Path, NULL, NULL, NULL))
+           {
+              result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_FOLDEREXISTS));
+           }
+           else
+           {
+              result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_FOLDERMOVE));
+           }
+
+           // If the user really want to proceed
+           if(result)
+           {
+              if(Rename(oldfolder->Path, folder.Path) == FALSE)
+              {
+                if(!(CreateDirectory(GetFolderDir(&folder)) && FO_MoveFolderDir(&folder, oldfolder)))
+                {
+                  return;
+                }
+              }
+           }
+           else return;
+         }
+
+         strcpy(oldfolder->Path, folder.Path);
+      }
+
       strcpy(oldfolder->MLFromAddress,    folder.MLFromAddress);
       strcpy(oldfolder->MLReplyToAddress, folder.MLReplyToAddress);
       strcpy(oldfolder->MLAddress,        folder.MLAddress);
@@ -1312,20 +1261,49 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       FO_SaveConfig(&folder);
       success = TRUE;
    }
-   else
+   else // if not then a new folder should be generated
    {
+      int result;
       memset(&folder, 0, sizeof(struct Folder));
       folder.ImageIndex = -1;
 
       FO_PutFolder(&folder);
-      if(isCryptedFolder(&folder) && !FO_EnterPassword(&folder)) CLEAR_FLAG(folder.XPKType, XPK_CRYPT);
-      set(gui->WI, MUIA_Window_Open, FALSE);
-      if (CreateDirectory(GetFolderDir(&folder)))
+
+      // lets first check for a valid folder name
+      // if the foldername is empty or the new name already exists it`s invalid
+      if(*folder.Name == NULL || FO_GetFolderByName(folder.Name, NULL))
       {
-         DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
-         FO_SaveConfig(&folder);
-         success = TRUE;
+        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERNAMEINVALID));
+        return;
       }
+
+      // lets check if entered folder path is valid or not
+      if(*folder.Path == NULL)
+      {
+        MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_FO_FOLDERPATHINVALID));
+        return;
+      }
+      else if(FileInfo(folder.Path, NULL, NULL, NULL)) // check if something with folder.Path already exists
+      {
+        result = MUI_Request(G->App, G->FO->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_FOLDEREXISTS));
+      }
+      else result = TRUE;
+
+      // only if the user want to proceed we go on.
+      if(result)
+      {
+        if(isCryptedFolder(&folder) && !FO_EnterPassword(&folder)) CLEAR_FLAG(folder.XPKType, XPK_CRYPT);
+        if(CreateDirectory(GetFolderDir(&folder)))
+        {
+          DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+          FO_SaveConfig(&folder);
+          success = TRUE;
+        }
+        else return;
+
+        set(gui->WI, MUIA_Window_Open, FALSE);
+      }
+      else return;
    }
    if (success)
    {
@@ -1534,13 +1512,11 @@ static struct FO_ClassData *FO_New(void)
                Child, Label2(GetStr(MSG_CO_Name)),
                Child, data->GUI.ST_FNAME = MakeString(SIZE_NAME,GetStr(MSG_CO_Name)),
                Child, Label2(GetStr(MSG_Path)),
-               Child, HGroup,
-                  MUIA_Group_HorizSpacing, 0,
-                  Child, data->GUI.TX_FPATH = TextObject,
-                    MUIA_Background, MUII_TextBack,
-                    MUIA_Frame, MUIV_Frame_Text,
-                  End,
-                  Child, data->GUI.BT_MOVE = PopButton(MUII_PopDrawer),
+               Child, PopaslObject,
+                  MUIA_Popasl_Type, ASL_FileRequest,
+                  MUIA_Popstring_String, data->GUI.ST_FPATH = MakeString(SIZE_PATH, ""),
+                  MUIA_Popstring_Button, PopButton(MUII_PopDrawer),
+                  ASLFR_DrawersOnly, TRUE,
                End,
                Child, Label2(GetStr(MSG_FO_MaxAge)),
                Child, HGroup,
@@ -1609,8 +1585,11 @@ static struct FO_ClassData *FO_New(void)
       if (data->GUI.WI)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
+
+         set(data->GUI.ST_FPATH, MUIA_String_Reject, " \";#?(|)");
+
          SetHelp(data->GUI.ST_FNAME,            MSG_HELP_FO_ST_FNAME            );
-         SetHelp(data->GUI.TX_FPATH,            MSG_HELP_FO_TX_FPATH            );
+         SetHelp(data->GUI.ST_FPATH,            MSG_HELP_FO_TX_FPATH            );
          SetHelp(data->GUI.NM_MAXAGE,           MSG_HELP_FO_ST_MAXAGE           );
          SetHelp(data->GUI.CY_FMODE,            MSG_HELP_FO_CY_FMODE            );
          SetHelp(data->GUI.CY_FTYPE,            MSG_HELP_FO_CY_FTYPE            );
@@ -1624,7 +1603,6 @@ static struct FO_ClassData *FO_New(void)
          SetHelp(data->GUI.CH_MLSUPPORT,        MSG_HELP_FO_CH_MLSUPPORT        );
          SetHelp(data->GUI.BT_AUTODETECT,       MSG_HELP_FO_BT_AUTODETECT       );
 
-         DoMethod(data->GUI.BT_MOVE,        MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_MoveHook);
          DoMethod(data->GUI.BT_OKAY,        MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_SaveHook);
          DoMethod(data->GUI.BT_CANCEL,      MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_CloseHook);
          DoMethod(data->GUI.BT_AUTODETECT,  MUIM_Notify, MUIA_Pressed,            FALSE,  MUIV_Notify_Application, 2,  MUIM_CallHook,  &FO_MLAutoDetectHook);

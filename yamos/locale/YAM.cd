@@ -5035,3 +5035,18 @@ URL color
 MSG_HELP_CO_CA_COLURL (//)
 Adjust the color used for displaying clickable URL links
 ;
+MSG_FO_FOLDEREXISTS (//)
+A file or directory with the given folder path already exists.\n\
+Do you really want to proceed?
+;
+MSG_FO_FOLDERMOVE (//)
+Do you really want to move the folder to another path?
+;
+MSG_FO_FOLDERNAMEINVALID (//)
+The specified folder name is empty or already exists.\n\
+Please enter a valid folder name before you proceed.
+;
+MSG_FO_FOLDERPATHINVALID (//)
+You haven`t specified a path for the new folder.\n\
+Please enter a valid path for the folder before you proceed.
+;
