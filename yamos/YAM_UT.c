@@ -2519,9 +2519,12 @@ BOOL CheckPrinter(void)
             PrintIO->io_Command = PRD_QUERY;
             PrintIO->io_Data = &Result;
             DoIO((struct IORequest *)PrintIO);
-            if (((Result>>8) & 3) == 0) error = NULL;
-            else if ((Result>>8) & 01) error = GetStr(MSG_UT_NoPaper);
-            else error = GetStr(MSG_UT_NoPrinter);
+				if(PrintIO->io_Actual == 1)		// parallel port printer?
+				{
+	            if (((Result>>8) & 3) == 0) error = NULL;							// no error
+   	         else if ((Result>>8) & 01) error = GetStr(MSG_UT_NoPaper);	// /POUT asserted
+      	      else error = GetStr(MSG_UT_NoPrinter);								// /BUSY (hopefully no RingIndicator interference)
+				} else error = NULL;					// can't determine status of serial printers
             CloseDevice((struct IORequest *)PrintIO);
          }
          DeleteIORequest((struct IORequest *)PrintIO);
