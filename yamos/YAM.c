@@ -508,19 +508,17 @@ void Terminate(void)
    ExitClasses();
    if (DataTypesBase) CloseLibrary(DataTypesBase);
    if (XpkBase)       CloseLibrary(XpkBase);
+   if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
    if (MUIMasterBase) CloseLibrary(MUIMasterBase);
+   if (RexxSysBase) CloseLibrary(RexxSysBase);
+   if (IFFParseBase) CloseLibrary(IFFParseBase);
+   if (KeymapBase) CloseLibrary(KeymapBase);
+   if (WorkbenchBase) CloseLibrary(WorkbenchBase);
    CloseYAMCatalog();
    if (G->Locale) CloseLocale(G->Locale);
    if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
-   if (WorkbenchBase) CloseLibrary(WorkbenchBase);
    if (IconBase) CloseLibrary(IconBase);
-   if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
-#ifdef __ixemul__
-   if (RexxSysBase) CloseLibrary(RexxSysBase);
-#endif
-   if (IFFParseBase) CloseLibrary(IFFParseBase);
-   if (KeymapBase) CloseLibrary(KeymapBase);
-   if (IntuitionBase) CloseLibrary((struct Library *) IntuitionBase);
+   if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
    if (UtilityBase) CloseLibrary((struct Library *)UtilityBase);
    free(C); free(G);
    if (yamLast) exit(0);
@@ -690,15 +688,14 @@ void Initialise(BOOL hidden)
 
    /* First open locale.library, so we can display a translated error requester
       in case some of the other libraries can't be opened. */
-   if ((LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE))) G->Locale = OpenLocale(NULL);
+   if ((LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE)))
+     G->Locale = OpenLocale(NULL);
    OpenYAMCatalog();
 
-   UtilityBase = (struct UtilityBase *)InitLib("utility.library", 36, 0, TRUE, FALSE);
+   WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
    KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
    IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
-#ifdef __ixemul__
    RexxSysBase = InitLib("rexxsyslib.library", 36, 0, TRUE, FALSE);
-#endif
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
 
    // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
@@ -853,9 +850,9 @@ void main(int argc, char **argv)
 
    WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
-   IntuitionBase = (struct IntuitionBase *) InitLib("intuition.library", 36, 0, TRUE, FALSE);
+   UtilityBase = (struct UtilityBase *)InitLib("utility.library", 36, 0, TRUE, FALSE);
+   IntuitionBase = (struct IntuitionBase *)InitLib("intuition.library", 36, 0, TRUE, FALSE);
    IconBase = InitLib("icon.library", 36, 0, TRUE, FALSE);
-   WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
 
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
    nrda.ExtHelp = NULL;
@@ -867,9 +864,9 @@ void main(int argc, char **argv)
    {
       PrintFault(err, "YAM");
       NewFreeArgs(&nrda);
-      if (WorkbenchBase) CloseLibrary(WorkbenchBase);
       if (IconBase) CloseLibrary(IconBase);
-      if (IntuitionBase) CloseLibrary((struct Library *) IntuitionBase);
+      if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
+      if (UtilityBase) CloseLibrary((struct Library *)UtilityBase);
       exit(5);
    }
    if ((progdirlock = GetProgramDir()))
