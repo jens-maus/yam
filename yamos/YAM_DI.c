@@ -153,8 +153,8 @@ HOOKPROTONHNONP(DI_CloseFunc, void)
 {
    DI_FinishEdit();
    if (G->DI->Modified) DI_Save();
-   G->Weights[4] = GetMUI(G->DI->GUI.GR_LIST, MUIA_HorizWeight);
-   G->Weights[5] = GetMUI(G->DI->GUI.GR_TEXT, MUIA_HorizWeight);
+   G->Weights[4] = xget(G->DI->GUI.GR_LIST, MUIA_HorizWeight);
+   G->Weights[5] = xget(G->DI->GUI.GR_TEXT, MUIA_HorizWeight);
    DisposeModulePush(&G->DI);
 }
 MakeStaticHook(DI_CloseHook, DI_CloseFunc);

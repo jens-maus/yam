@@ -477,8 +477,8 @@ static void Terminate(void)
    if (G->MA)
    {
       MA_UpdateIndexes(FALSE);
-      G->Weights[0] = GetMUI(G->MA->GUI.LV_FOLDERS, MUIA_HorizWeight);
-      G->Weights[1] = GetMUI(G->MA->GUI.LV_MAILS,   MUIA_HorizWeight);
+      G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS, MUIA_HorizWeight);
+      G->Weights[1] = xget(G->MA->GUI.LV_MAILS,   MUIA_HorizWeight);
       SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
    }

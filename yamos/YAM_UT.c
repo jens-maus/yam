@@ -85,7 +85,7 @@ struct UniversalClassData
 int BusyLevel = 0;
 
 /***************************************************************************
- Module: Utilities
+ Utilities
 ***************************************************************************/
 
 /* local protos */
@@ -2549,11 +2549,11 @@ Object *DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
 #endif
 }
 ///
-/// GetMUI
+/// xget()
 //  Gets an attribute value from a MUI object
-LONG GetMUI(Object *obj, ULONG attr)
+ULONG xget(Object *obj, ULONG attr)
 {
-   LONG b;
+   ULONG b;
 
    get(obj, attr, &b);
    return b;
@@ -2563,56 +2563,56 @@ LONG GetMUI(Object *obj, ULONG attr)
 //  Returns a pointer to the value of a MUI string object
 char *GetMUIStringPtr(Object *obj)
 {
-   return (char*)GetMUI(obj,MUIA_String_Contents);
+   return (char*)xget(obj,MUIA_String_Contents);
 }
 ///
 /// GetMUIString
 //  Returns the value of a MUI string object
 void GetMUIString(char *a,Object *obj)
 {
-   strcpy(a,(char*)GetMUI(obj,MUIA_String_Contents));
+   strcpy(a,(char*)xget(obj,MUIA_String_Contents));
 }
 ///
 /// GetMUIText
 //  Returns the value of a MUI text object
 void GetMUIText(char *a,Object *obj)
 {
-   strcpy(a,(char*)GetMUI(obj,MUIA_Text_Contents));
+   strcpy(a,(char*)xget(obj,MUIA_Text_Contents));
 }
 ///
 /// GetMUIInteger
 //  Returns the numeric value of a MUI string object
 int GetMUIInteger(Object *obj)
 {
-   return GetMUI(obj,MUIA_String_Integer);
+   return (int)xget(obj,MUIA_String_Integer);
 }
 ///
 /// GetMUICheck
 //  Returns the value of a MUI checkmark object
 BOOL GetMUICheck(Object *obj)
 {
-   return (BOOL)GetMUI(obj, MUIA_Selected);
+   return (BOOL)xget(obj, MUIA_Selected);
 }
 ///
 /// GetMUICycle
 //  Returns the value of a MUI cycle object
 int GetMUICycle(Object *obj)
 {
-   return GetMUI(obj, MUIA_Cycle_Active);
+   return (int)xget(obj, MUIA_Cycle_Active);
 }
 ///
 /// GetMUIRadio
 //  Returns the value of a MUI radio object
 int GetMUIRadio(Object *obj)
 {
-   return GetMUI(obj, MUIA_Radio_Active);
+   return (int)xget(obj, MUIA_Radio_Active);
 }
 ///
 /// GetMUINumer
 //  Returns the value of a MUI numeric slider
 int GetMUINumer(Object *obj)
 {
-   return GetMUI(obj, MUIA_Numeric_Value);
+   return (int)xget(obj, MUIA_Numeric_Value);
 }
 ///
 /// SafeOpenWindow

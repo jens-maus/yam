@@ -58,10 +58,8 @@
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
-#include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
-#include "YAM_utilities.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 
@@ -140,11 +138,10 @@ ULONG SearchwindowGetSize (VOID);
 #define MUIA_Recipientstring_FromString            0xAE00D557UL
 #define MUIA_Recipientstring_ReplyToString         0xAE006744UL
 #define MUIA_Recipientstring_Popup                 0xAE003126UL
-#define MUIA_Recipientstring_NoResolve             0xAE007528UL
+#define MUIA_Recipientstring_ResolveOnCR           0xAE007528UL
 
-// Flags for MUIM_Recipientstring_Resolve
-#define MUIF_Recipientstring_Resolve_NoRealName    (1 << 0)
-#define MUIF_Recipientstring_Resolve_NoValids      (1 << 1)
+#define MUIF_Recipientstring_Resolve_NoFullName    (1 << 0)
+#define MUIF_Recipientstring_Resolve_NoValid       (1 << 1)
 
 struct MUIP_Recipientstring_AddRecipient
 {

@@ -449,7 +449,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       set(gui->NL_MAILS, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
 
       // if there is still no entry active in the NList we make the first one active
-      if(GetMUI(gui->NL_MAILS, MUIA_NList_Active) == MUIV_NList_Active_Off)
+      if(xget(gui->NL_MAILS, MUIA_NList_Active) == MUIV_NList_Active_Off)
       {
         set(gui->NL_MAILS, MUIA_NList_Active, MUIV_NList_Active_Top);
       }

@@ -40,6 +40,11 @@
 #define MUIA_List_CursorType					  0x8042c53e /* V4  is. LONG */
 #define MUIV_List_CursorType_Bar 1
 
+/* EXPORT
+#define MUIF_Recipientstring_Resolve_NoFullName  (1 << 0) // do not resolve with fullname "Mister X <misterx@mister.com>"
+#define MUIF_Recipientstring_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
+*/
+
 struct CustomABEntry
 {
 	LONG MatchField;
@@ -53,7 +58,7 @@ struct Data
 	Object *Matchwindow, *Matchlist;
 	Object *From, *ReplyTo; /* used when resolving a list address */
 	BOOL MultipleRecipients;
-   BOOL NoResolve;
+   BOOL ResolveOnCR;
 };
 
 ULONG RecipientstringGetSize (VOID) { return sizeof(struct Data); }
@@ -62,16 +67,20 @@ ULONG RecipientstringGetSize (VOID) { return sizeof(struct Data); }
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-	if(obj = DoSuperMethodA(cl, obj, msg))
+	if(obj = (Object *)DoSuperMethodA(cl, obj, msg))
 	{
 		GETDATA;
 
 		struct TagItem *tags = inittags(msg), *tag;
+
+      // init the Attributes with defaults
+      data->ResolveOnCR = TRUE;
+
 		while((tag = NextTagItem(&tags)))
 		{
 			switch(tag->ti_Tag)
 			{
-   			ATTR(NoResolve)          : data->NoResolve = tag->ti_Data          ; break;
+   			ATTR(ResolveOnCR)        : data->ResolveOnCR = tag->ti_Data        ; break;
 				ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
 				ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
 				ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
@@ -122,7 +131,7 @@ OVERLOAD(OM_SET)
 	{
 		switch(tag->ti_Tag)
 		{
-			ATTR(NoResolve)          : data->NoResolve = tag->ti_Data          ; break;
+			ATTR(ResolveOnCR)        : data->ResolveOnCR = tag->ti_Data        ; break;
 			ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
 			ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
 			ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
@@ -175,7 +184,7 @@ OVERLOAD(MUIM_DragQuery)
 	else if (d->obj == G->AB->GUI.LV_ADDRESSES)
 	{
 		struct MUI_NListtree_TreeNode *active;
-		if(active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active))
+		if(active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active))
 		{
 			if (!(active->tn_Flags & TNF_LIST))
 			{
@@ -199,7 +208,7 @@ OVERLOAD(MUIM_DragDrop)
 	}
 	else if (d->obj == G->AB->GUI.LV_ADDRESSES)
 	{
-		struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active);
+		struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active);
 		struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
 		AB_InsertAddress(obj, addr->Alias, addr->RealName, "");
 	}
@@ -230,20 +239,22 @@ OVERLOAD(MUIM_HandleEvent)
 		{
          case IECODE_RETURN:
          {
-            if(data->NoResolve) return(DoSuperMethodA(cl, obj, msg));
-
-            if((imsg->Qualifier & IEQUALIFIER_RSHIFT) || (imsg->Qualifier & IEQUALIFIER_LSHIFT))
+            if(data->ResolveOnCR)
             {
-               DoMethod(obj, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoRealName);
-            }
-            else
-            {
-               DoMethod(obj, MUIM_Recipientstring_Resolve, 0);
-            }
+               if((imsg->Qualifier & IEQUALIFIER_RSHIFT) || (imsg->Qualifier & IEQUALIFIER_LSHIFT))
+               {
+                  DoMethod(obj, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoFullName);
+               }
+               else
+               {
+                  DoMethod(obj, MUIM_Recipientstring_Resolve, 0);
+               }
 
-            set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+               // If the MUIA_String_AdvanceOnCR is TRUE we have to set the next object active in the window
+               if(xget(obj, MUIA_String_AdvanceOnCR)) set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
 
-            result = MUI_EventHandlerRC_Eat;
+               result = MUI_EventHandlerRC_Eat;
+            }
          }
          break;
 
@@ -251,14 +262,14 @@ OVERLOAD(MUIM_HandleEvent)
 			case IECODE_UP:
 			case IECODE_DOWN:
 			{
-				if(GetMUI(data->Matchwindow, MUIA_Window_Open))
+				if(xget(data->Matchwindow, MUIA_Window_Open))
 				{
 					struct CustomABEntry *entry;
-					if(GetMUI(data->Matchlist, MUIA_List_Active) != MUIV_List_Active_Off)
+					if(xget(data->Matchlist, MUIA_List_Active) != MUIV_List_Active_Off)
 							set(data->Matchlist, MUIA_List_Active, imsg->Code == IECODE_UP ? MUIV_List_Active_Up     : MUIV_List_Active_Down);
 					else	set(data->Matchlist, MUIA_List_Active, imsg->Code == IECODE_UP ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
 
-					DoMethod(data->Matchlist, MUIM_List_GetEntry, GetMUI(data->Matchlist, MUIA_List_Active), &entry);
+					DoMethod(data->Matchlist, MUIM_List_GetEntry, xget(data->Matchlist, MUIA_List_Active), &entry);
 					new_address = entry->MatchString;
 
 					DoMethod(obj, MUIM_BetterString_ClearSelected);
@@ -276,7 +287,7 @@ OVERLOAD(MUIM_HandleEvent)
 			{
 				STRPTR old, new;
 
-				if(GetMUI(obj, MUIA_BetterString_SelectSize) != 0 && ConvertKey(imsg) == ',')
+				if(xget(obj, MUIA_BetterString_SelectSize) != 0 && ConvertKey(imsg) == ',')
 					set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
 
 				get(obj, MUIA_String_Contents, &old);
@@ -347,11 +358,7 @@ MakeStaticHook(CompareHook, CompareFunc);
 /// FindAddressHook()
 HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
-	struct ABEntry *entry;
-
-   if(!msg) return(NULL);
-   entry = (struct ABEntry *)msg->UserData;
-
+	struct ABEntry *entry = (struct ABEntry *)msg->UserData;
 	return (!Stricmp(msg->User, entry->Alias) || !Stricmp(msg->User, entry->RealName) || !Stricmp(msg->User, entry->Address)) ? 0 : ~0;
 }
 MakeStaticHook(FindAddressHook, FindAddressFunc);
@@ -418,12 +425,12 @@ DECLARE(Resolve) // ULONG flags
 	LONG max_list_nesting = 5;
 	STRPTR s, contents, tmp;
    BOOL res = TRUE;
-   BOOL wrname = TRUE, checkvalids = TRUE;
+   BOOL withrealname = TRUE, checkvalids = TRUE;
    int int_flag = 0;
 
    // Lets check the flags first
-   if(msg->flags & MUIF_Recipientstring_Resolve_NoRealName) wrname      = FALSE;
-   if(msg->flags & MUIF_Recipientstring_Resolve_NoValids)   checkvalids = FALSE;
+   if(msg->flags & MUIF_Recipientstring_Resolve_NoFullName) withrealname= FALSE;
+   if(msg->flags & MUIF_Recipientstring_Resolve_NoValid)    checkvalids = FALSE;
 
 	set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 
@@ -453,7 +460,7 @@ DECLARE(Resolve) // ULONG flags
 				if(entry->Type == AET_USER) /* it's a normal person */
 				{
 					DB(kprintf("\tPlain user: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
-					DoMethod(obj, MUIM_Recipientstring_AddRecipient, wrname ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
+					DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
 				}
 				else if(entry->Type == AET_LIST) /* it's a list of persons */
 				{
@@ -522,9 +529,7 @@ DECLARE(Resolve) // ULONG flags
 
 	} while(list_expansion && max_list_nesting-- > 0);
 
-   contents = (STRPTR)GetMUI(obj, MUIA_String_Contents);
-
-	return((ULONG)(res ? contents : NULL));
+	return((ULONG)(res ? xget(obj, MUIA_String_Contents) : NULL));
 }
 ///
 /// DECALRE(RecipientStart)
@@ -585,9 +590,10 @@ DECLARE(ShowMatches)
 	get(_win(obj), MUIA_Window_LeftEdge, &left);
 
    // now set the dimesions every time because they could have been changed.
-   set(data->Matchwindow, MUIA_Window_TopEdge, top + _bottom(obj) + 1);
-   set(data->Matchwindow, MUIA_Window_LeftEdge, left + _left(obj));
-   set(data->Matchwindow, MUIA_Window_Width, _width(obj));
+	SetAttrs(data->Matchwindow,   MUIA_Window_TopEdge,    top + _bottom(obj) + 1,
+                                 MUIA_Window_LeftEdge,   left + _left(obj),
+                                 MUIA_Window_Width,      _width(obj),
+                                 TAG_DONE);
 
 	/* we need to isolate the recipient currently being entered when the string contain several */
 	set(data->Matchlist, MUIA_List_Quiet, TRUE);

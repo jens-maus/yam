@@ -1092,6 +1092,19 @@
       to perform a resolving on the entered string, what means in fact that it
       will not transform it with a realname or something else.
     * fixed some bugs recently introduced to the recipientstring class.
+    * the recipient string class now only set the focus on the next object
+      if the MUIA_String_AdvanceOnCR is set.
+    * renamed the MUIA_Recipientstring_Resolve_NoResolve to _ResolveOnCR
+      accordingly to some discussions.
+    * renamed GetMUI() function to xget() because this is a more "standard"
+      name for this function.
+    * the ShowMatches() method of the recipient string class is now using
+      SetAttrs() for setting the list position.
+    * added EXPORT statement for the MUIF_ flags to the recipient string class
+      to allow the autogen tool to take care about this.
+    * removed obsolete DD_String class stuff including WR_ResolveName() and
+      WR_ExpandAddresses()
+    * modified smakefile to reflect every dependency for the classes.
 
 2001-08-02  Allan Odgaard <duff@diku.dk>
 

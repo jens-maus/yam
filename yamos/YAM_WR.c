@@ -115,149 +115,6 @@ static struct WR_ClassData *WR_New(int winnum);
 
 /**************************************************************************/
 
-#ifndef DUFF
-static char FailedAlias[SIZE_ADDRESS];
-
-/*** Translate aliases ***/
-/// WR_ResolveName
-/*** WR_ResolveName - Looks for an alias, email address or name in the address book ***/
-int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists, BOOL withrname)
-{
-  int hits, retcode;
-  struct ABEntry *ab = NULL;
-  int searchtypes = ASM_USER;
-
-  if(!nolists) searchtypes |= ASM_LIST;
-
-  MyStrCpy(FailedAlias, name);
-
-  if((hits = AB_SearchEntry(name, ASM_ALIAS|searchtypes, &ab)) != 1)
-  {
-    if((hits = AB_SearchEntry(name, ASM_REALNAME|searchtypes, &ab)) != 1)
-    {
-      if((hits = AB_SearchEntry(name, ASM_ADDRESS|searchtypes, &ab)) == 0)
-      {
-        // is the entered string already a valid email ?
-        if (strchr(name, '@'))
-        {
-          char *p = NULL;
-          struct Person pe;
-
-          ExtractAddress(name, &pe);
-
-          if (pe.Address[0]) p = strchr(pe.Address, '@'); // is it an email address?
-
-          if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
-          if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
-
-          // If we want to complete it with realname we have to build a correct addressstring first
-          if(withrname) *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
-          else          *adrstr = StrBufCat(*adrstr, pe.Address);
-
-          return 0; // if it is an email we return without an error because finding an entry for an email isn`t a must
-        }
-        else return 2;
-      }
-    }
-  }
-
-  // if we found more than one entry we return with error 3
-  if (hits > 1) return 3;
-
-  switch (ab->Type)
-  {
-    case AET_USER:
-    {
-      if(**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
-
-      // If we want to complete it with realname we have to build a correct addressstring first
-      if(withrname) *adrstr = StrBufCat(*adrstr, BuildAddrName(ab->Address, ab->RealName));
-      else          *adrstr = StrBufCat(*adrstr, ab->Address);
-    }
-    break;
-
-    case AET_LIST:
-    {
-      if (nolists) return 4;
-      if (winnum >= 0 && (ab->Address[0] || ab->RealName[0]) && !G->WR[winnum]->ListEntry) G->WR[winnum]->ListEntry = ab;
-
-      if (ab->Members)
-      {
-        char *ptr;
-
-        for (ptr = ab->Members; *ptr; ptr++)
-        {
-          char *nptr = strchr(ptr, '\n');
-
-          if (nptr) *nptr = 0;
-          else break;
-
-          retcode = WR_ResolveName(winnum, ptr, adrstr, nolists, withrname);
-          *nptr = '\n'; ptr = nptr;
-          if (retcode) return retcode;
-        }
-      }
-    }
-    break;
-   }
-
-   return 0;
-}
-
-///
-/// WR_ExpandAddresses
-//  Expands aliases and names in a recipient field to valid e-mail addresses
-char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single, BOOL withrname)
-{
-   char *source, *buffer = malloc(strlen(src)+1), *next, *adr = AllocStrBuf(SIZE_DEFAULT);
-   int err;
-
-   strcpy(source = buffer, src);
-   while (source)
-   {
-      if (!*source) break;
-      if ((next = MyStrChr(source, ','))) *next++ = 0;
-
-      // if the source should be resolved without realname and it is already a valid email
-      // we just skip the resolving
-      if(!withrname && strchr(source, '@'))
-      {
-         if (*adr) adr = StrBufCat(adr, ", ");
-         adr = StrBufCat(adr, source);
-      }
-      else if ((err = WR_ResolveName(winnum, Trim(source), &adr, single, withrname)))
-      {
-         if (err == 2 && !quiet) ER_NewError(GetStr(MSG_ER_AliasNotFound), FailedAlias, NULL);
-         if (err == 3 && !quiet) ER_NewError(GetStr(MSG_ER_AmbiguousAlias), FailedAlias, NULL);
-         if (err == 4 && !quiet) ER_NewError(GetStr(MSG_ER_InvalidAlias), FailedAlias, NULL);
-         FreeStrBuf(adr); adr = NULL;
-         break;
-      }
-      if (single) break;
-      source = next;
-   }
-   free(buffer);
-   return adr;
-}
-
-///
-/// WR_VerifyManualFunc
-/*** WR_VerifyManualFunc - Checks and expands recipient field (user clicked gadget) ***/
-HOOKPROTONHNO(WR_VerifyManualFunc, void, int *arg)
-{
-   APTR object = (APTR)arg[0];
-   char *value, *adr;
-   get(object, MUIA_String_Contents, &value);
-   if ((adr = WR_ExpandAddresses(arg[1], value, FALSE, arg[2], TRUE)))
-   {
-      setstring(object, adr);
-      FreeStrBuf(adr);
-   }
-}
-MakeStaticHook(WR_VerifyManualHook, WR_VerifyManualFunc);
-///
-#endif
-
 /*** Attachments list ***/
 /// WR_GetFileEntry
 /*** WR_GetFileEntry -Fills form with data from selected list entry ***/
@@ -1311,7 +1168,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    long winopen;
 
    get(gui->WI, MUIA_Window_Open, &winopen);
-   if (winopen) set(gui->RG_PAGE, MUIA_Group_ActivePage, GetMUI(gui->RG_PAGE, MUIA_Group_ActivePage));
+   if (winopen) set(gui->RG_PAGE, MUIA_Group_ActivePage, xget(gui->RG_PAGE, MUIA_Group_ActivePage));
    /* Workaround for a MUI bug */
 
    memset(&mail, 0, sizeof(struct Mail));
@@ -1320,10 +1177,10 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    mlist[1] = NULL;
 
    // get the contents of the TO: String gadget and check if it is valid
-   addr = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
+   addr = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
    if(!addr)
    {
-      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_TO, MUIA_String_Contents), NULL);
+      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents), NULL);
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
       return;
@@ -1363,10 +1220,10 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    if (wr->Mode != NEW_BOUNCE)
    {
       // now we check the From gadget and raise an error if is invalid
-      addr = (STRPTR)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
+      addr = (STRPTR)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
       if(!addr)
       {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_FROM, MUIA_String_Contents), NULL);
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_FROM, MUIA_String_Contents), NULL);
          set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
          return;
@@ -1386,10 +1243,10 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       else comp.From = addr;
 
       // then we check the CC string gadget
-      addr = (STRPTR)DoMethod(gui->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
+      addr = (STRPTR)DoMethod(gui->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
       if(!addr)
       {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_CC, MUIA_String_Contents), NULL);
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_CC, MUIA_String_Contents), NULL);
          set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CC);
          return;
@@ -1397,10 +1254,10 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       else if(addr[0]) comp.MailCC = addr;
 
       // then we check the BCC string gadget
-      addr = (STRPTR)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
+      addr = (STRPTR)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
       if(!addr)
       {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_BCC, MUIA_String_Contents), NULL);
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_BCC, MUIA_String_Contents), NULL);
          set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_BCC);
          return;
@@ -1408,10 +1265,10 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       else if(addr[0]) comp.MailBCC = addr;
 
       // then we check the ReplyTo string gadget
-      addr = (STRPTR)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValids);
+      addr = (STRPTR)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
       if(!addr)
       {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_REPLYTO, MUIA_String_Contents), NULL);
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_REPLYTO, MUIA_String_Contents), NULL);
          set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_REPLYTO);
          return;
@@ -1978,7 +1835,7 @@ HOOKPROTONHNO(WR_UpdateWTitleFunc, void, int *arg)
    struct WR_ClassData *wr = G->WR[*arg];
    APTR ed = wr->GUI.TE_EDIT;
 
-   sprintf(wr->WTitle, "%03ld\n%03ld", GetMUI(ed,MUIA_TextEditor_CursorY)+1, GetMUI(ed,MUIA_TextEditor_CursorX)+1);
+   sprintf(wr->WTitle, "%03ld\n%03ld", xget(ed,MUIA_TextEditor_CursorY)+1, xget(ed,MUIA_TextEditor_CursorX)+1);
    set(wr->GUI.TX_POSI, MUIA_Text_Contents, wr->WTitle);
 }
 MakeStaticHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
@@ -2097,30 +1954,20 @@ static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, i
    APTR obj, bt_adr;
    if ((obj = HGroup,
       GroupSpacing(1),
-#ifdef DUFF
       Child, *string = RecipientstringObject,
          StringFrame,
          MUIA_CycleChain,                          TRUE,
          MUIA_String_AdvanceOnCR,                  TRUE,
          MUIA_Recipientstring_MultipleRecipients,  allowmulti,
-#else
-      Child, *string = NewObject(CL_DDString->mcc_Class, NULL,
-         MUIA_UserData, allowmulti,
-#endif
          MUIA_ControlChar, ShortCut(label),
       End,
       Child, bt_adr = PopButton(MUII_PopUp),
    End))
    {
-//    set(bt_ver, MUIA_CycleChain, TRUE);
-//    set(bt_adr, MUIA_CycleChain, TRUE);
       SetHelp(*string,help);
-//    SetHelp(bt_ver, MSG_HELP_WR_BT_VER);
       SetHelp(bt_adr, MSG_HELP_WR_BT_ADR);
-//    DoMethod(bt_ver, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_CallHook, &WR_VerifyManualHook, *string, winnum, !allowmulti, TAG_DONE);
       DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
       DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
-//    DoMethod(*string, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_Recipientstring_Resolve);
    }
    return obj;
 }

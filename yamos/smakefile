@@ -45,7 +45,7 @@ OPTFLAGS = STRIPDEBUG OPT OPTSIZE OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL\
 DEBUG    = NOSTRIPDEBUG NOOPT DEF DEBUG DEBUG=LINE
 CFLAGS   = RESOPT NOVER PARM=R DATA=NEAR CODE=FAR NOSTKCHK STRINGMERGE\
   IDLEN=60 ERRORREXX INCLUDEDIR=includes INCLUDEDIR=classes \
-  DEF=__USE_SYSBASE CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) DEF=DUFF
+  DEF=__USE_SYSBASE CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
 LNKFLAGS = RESOPT NOVER LINK SMALLCODE SMALLDATA UTILLIB LIB lib:debug.lib\
   NOICONS "LINKOPT=MAP $(TARGET).map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"\
   NOCHECKABORT $(OPTFLAGS) $(DEBUG)
@@ -236,6 +236,14 @@ YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
 
 #######################################
 
-classes/Searchwindow.o: classes/Searchwindow.c YAM.h YAM_locale.h \
-  YAM_utilities.h
+classes/Searchwindow.o: classes/Searchwindow.c YAM.h YAM_addressbook.h \
+  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
+  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h classes/Classes.h
 
+classes/Recipientstring.o: classes/Recipientstring.c YAM.h YAM_addressbook.h \
+  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
+  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h classes/Classes.h
+
+classes/Classes.o: classes/Classes.c classes/Classes.h YAM.h YAM_addressbook.h \
+  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
+  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h classes/Classes.h

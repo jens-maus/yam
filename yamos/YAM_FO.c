@@ -461,7 +461,7 @@ BOOL FO_LoadTree(char *fname)
                fo.SortIndex = i++;
 
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-               if(GetMUI(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && GetMUI(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
+               if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
                {
                   tnflags |= TNF_NOSIGN;
                }
@@ -487,7 +487,7 @@ BOOL FO_LoadTree(char *fname)
                }
 
                // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-               if(GetMUI(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && GetMUI(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
+               if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
                {
                   tnflags |= TNF_NOSIGN;
                }
@@ -902,7 +902,7 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
       long tnflags = (TNF_LIST | TNF_OPEN);
 
       // Now we check if the foldergroup image was loaded and if not we enable the standard NListtree image
-      if(GetMUI(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && GetMUI(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
+      if(xget(G->MA->GUI.BC_FOLDER[0], MUIA_Bodychunk_Body) != NULL && xget(G->MA->GUI.BC_FOLDER[1], MUIA_Bodychunk_Body) != NULL)
       {
         tnflags |= TNF_NOSIGN;
       }
@@ -1093,7 +1093,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       oldfolder->Sort[1] = folder.Sort[1];
       oldfolder->Stats   = folder.Stats;
       oldfolder->MaxAge  = folder.MaxAge;
-      if (!GetMUI(gui->CY_FTYPE, MUIA_Disabled))
+      if (!xget(gui->CY_FTYPE, MUIA_Disabled))
       {
          int oldxpk = oldfolder->XPKType, newxpk = folder.XPKType;
          BOOL changed = TRUE;

@@ -223,7 +223,7 @@ void EA_InsertBelowActive(struct ABEntry *addr, int flags)
   }
   else
   {
-    list = (struct MUI_NListtree_TreeNode *)GetMUI(lt, MUIA_NListtree_ActiveList);
+    list = (struct MUI_NListtree_TreeNode *)xget(lt, MUIA_NListtree_ActiveList);
   }
 
   // now we insert the node in the list accordingly and set it active automatically
@@ -625,9 +625,9 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                   End,
                   Child, data->GUI.ST_MEMBER = RecipientstringObject,
 					      StringFrame,
-                     MUIA_CycleChain               , TRUE,
-					      MUIA_String_MaxLen            , SIZE_ADDRESS,
-                     MUIA_Recipientstring_NoResolve, TRUE,
+                     MUIA_CycleChain,                    TRUE,
+					      MUIA_String_MaxLen,                 SIZE_ADDRESS,
+                     MUIA_Recipientstring_ResolveOnCR,   FALSE,
 					      End,
                   Child, ColGroup(3), GroupSpacing(0),
                      Child, data->GUI.BT_ADD = MakeButton(GetStr(MSG_Add)),

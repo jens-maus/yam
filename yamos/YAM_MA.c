@@ -132,10 +132,10 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
 
    type = fo->Type;
    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-   fo->LastActive = GetMUI(gui->NL_MAILS, MUIA_NList_Active);
+   fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
    if ((active = (mail != NULL))) if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
    for (i = 0; i < MAXWR; i++) if (mail && G->WR[i]) if (G->WR[i]->Mail == mail) beingedited = TRUE;
-// if (!mail) if (!GetMUI(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
+// if (!mail) if (!xget(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
    DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
    if (gui->TO_TOOLBAR)
    {
@@ -2252,7 +2252,7 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
 
   if(!mail) return(0);
 
-  fo->LastActive = GetMUI(gui->NL_MAILS, MUIA_NList_Active);
+  fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
 
   if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
   for (i = 0; i < MAXWR; i++) if (G->WR[i] && G->WR[i]->Mail == mail) beingedited = TRUE;

@@ -1230,7 +1230,7 @@ static void TR_TransStat_NextMsg(struct TransStat *ts, int index, int listpos, i
    ts->Size_Curr = 0;
    ts->Clock_Last = 0;
    ts->Delay = 0;
-   if (!GetMUI(G->TR->GUI.WI, MUIA_Window_Open)) return;
+   if (!xget(G->TR->GUI.WI, MUIA_Window_Open)) return;
    else if (size <    2500) ts->Delay = 256;
    else if (size <   25000) ts->Delay = 512;
    else if (size <  250000) ts->Delay = 1024;

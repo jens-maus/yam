@@ -287,7 +287,7 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
    APTR string;
    struct MUI_NListtree_TreeNode *active;
 
-   if (active = (struct MUI_NListtree_TreeNode *)GetMUI(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+   if (active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
    {
       int winnum = G->AB->WrWin;
       struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
@@ -305,11 +305,7 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
             case ABM_FROM:    string = G->WR[winnum]->GUI.ST_FROM; break;
             default: string = (APTR)*arg;
          }
-#ifdef DUFF
 			DoMethod(string, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
-#else
-         AB_InsertAddress(string, addr->Alias, addr->RealName, "");
-#endif
       }
    }
 }
@@ -488,7 +484,7 @@ BOOL AB_SaveTree(char *fname)
 HOOKPROTONHNONP(AB_EditFunc, void)
 {
    struct MUI_NListtree_TreeNode *tn;
-   if (tn = (struct MUI_NListtree_TreeNode *)GetMUI(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+   if (tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
    {
       struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
       int winnum = EA_Init(ab->Type, ab);
@@ -714,7 +710,7 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
 {
    FILE *prt;
    struct MUI_NListtree_TreeNode *tn;
-   if (tn = (struct MUI_NListtree_TreeNode *)GetMUI(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+   if (tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
    {
       if (C->PrinterCheck) if (!CheckPrinter()) return;
       if (prt = fopen("PRT:", "w"))
@@ -755,7 +751,7 @@ MakeHook(AB_DeleteHook, AB_DeleteFunc);
 HOOKPROTONHNONP(AB_DuplicateFunc, void)
 {
    struct MUI_NListtree_TreeNode *tn;
-   if (tn = (struct MUI_NListtree_TreeNode *)GetMUI(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+   if (tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
    {
       struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
       int winnum = EA_Init(ab->Type, NULL);

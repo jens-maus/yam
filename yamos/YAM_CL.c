@@ -57,19 +57,7 @@
  Module: Private MUI classes
 ***************************************************************************/
 
-#ifndef DUFF
-#define MUIM_GoActive                0x8042491a
-#define MUIM_GoInactive              0x80422c0c
-#endif
-
 struct DumData { long dummy; };
-
-#ifndef DUFF
-struct WS_Data
-{
-   struct MUI_EventHandlerNode ehnode;
-};
-#endif
 
 struct BC_Data
 {
@@ -83,9 +71,6 @@ struct MUI_CustomClass *CL_FolderList;
 struct MUI_CustomClass *CL_MailList;
 struct MUI_CustomClass *CL_AddressList;
 struct MUI_CustomClass *CL_AttachList;
-#ifndef DUFF
-struct MUI_CustomClass *CL_DDString;
-#endif
 struct MUI_CustomClass *CL_DDList;
 struct MUI_CustomClass *CL_MainWin;
 struct MUI_CustomClass *CL_PageList;
@@ -168,203 +153,6 @@ DISPATCHERPROTO(BC_Dispatcher)
    return DoSuperMethodA(cl, obj, msg);
 }
 
-#ifndef DUFF
-///
-/// WS_Dispatcher (Recipient String)
-/*** WS_Dispatcher (Recipient String) - Subclass of Betterstring, handles alias
-     auto-completion, drag&drop from address book ***/
-DISPATCHERPROTO(WS_Dispatcher)
-{
-   ULONG result = 0;
-   UBYTE code;
-   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-   struct WS_Data *data = (struct WS_Data *)INST_DATA(cl,obj);
-   struct MUI_NListtree_TreeNode *active;
-   struct MUIP_HandleEvent *hmsg;
-   
-   switch(msg->MethodID)
-   {
-      case OM_NEW:
-      {
-         result = (ULONG)DoSuperNew(cl, obj, StringFrame, MUIA_CycleChain, 1, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
-      }
-      break;
-
-      case MUIM_Setup:
-      {
-         if(DoSuperMethodA(cl, obj, msg))
-         {
-            data->ehnode.ehn_Priority = 1;
-            data->ehnode.ehn_Flags    = 0;
-            data->ehnode.ehn_Object   = obj;
-            data->ehnode.ehn_Class    = cl;
-            data->ehnode.ehn_Events   = IDCMP_RAWKEY;
-            result = TRUE;
-         }
-      }
-      break;
-
-      case MUIM_GoActive:
-      {
-         DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-         result = DoSuperMethodA(cl, obj, msg);
-
-      }
-      break;
-
-      case MUIM_GoInactive:
-      {
-         DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
-         set(obj, MUIA_BetterString_SelectSize, 0);
-         result = DoSuperMethodA(cl, obj, msg);
-      }
-      break;
-
-      case MUIM_HandleEvent:
-      {
-         hmsg = (struct MUIP_HandleEvent *)msg;
-         if (hmsg->imsg && hmsg->imsg->Class == IDCMP_RAWKEY)
-         {
-            char *contents, *newcontents, *completed = NULL, *comma;
-            int pos, allowmulti;
-            APTR next = obj;
-
-            // If RETURN was pressed
-            if(hmsg->imsg->Code == 68)
-            {
-               // we expand the entered string with realname if SHIFT was not pressed also
-               BOOL withrname = !((hmsg->imsg->Qualifier & IEQUALIFIER_RSHIFT) || (hmsg->imsg->Qualifier & IEQUALIFIER_LSHIFT));
-
-               // If RETURN was pressed WITH SHIFT we expand the adress WITHOUT realname
-               DoSuperMethodA(cl, obj, msg);
-               get(obj, MUIA_String_Contents, &contents);
-               get(obj, MUIA_UserData, &allowmulti);
-               if (completed = WR_ExpandAddresses(-1, contents, FALSE, !allowmulti, withrname))
-               {
-                  setstring(obj, completed);
-                  FreeStrBuf(completed);
-                  get(obj, MUIA_UserData, &next);
-               }
-               else DisplayBeep(0);
-
-               if(next) set(_win(next), MUIA_Window_ActiveObject, next);
-
-               result = MUI_EventHandlerRC_Eat;
-            }
-            else if(hmsg->imsg->Code == 95 && (hmsg->imsg->Qualifier & IEQUALIFIER_CONTROL))
-            {
-               // If CTRL+HELP is pressed we expand the entered string with the addressbook
-               DoSuperMethodA(cl, obj, msg);
-               get(obj, MUIA_String_Contents, &contents);
-               get(obj, MUIA_UserData, &allowmulti);
-               if (completed = WR_ExpandAddresses(-1, contents, FALSE, !allowmulti, TRUE))
-               {
-                  setstring(obj, completed);
-                  FreeStrBuf(completed);
-               }
-               result = MUI_EventHandlerRC_Eat;
-            }
-            else
-            {
-               ULONG select_size = 0;
-               get(obj, MUIA_BetterString_SelectSize, &select_size);
-
-               // Clear all marked text if BACKSPACE (65) is pressed
-               if (hmsg->imsg->Code == 65) DoMethod(obj, MUIM_BetterString_ClearSelected, TAG_DONE);
-
-               // Convert the RAWKEY with MapRawKey() to a real keycode
-               code = ConvertKey(hmsg->imsg);
-
-               if (code == ',' && select_size != 0)
-               {
-                  // if the comma was pressed then we jump to the end of the string an continue
-                  set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
-                  DoSuperMethodA(cl, obj, msg);
-                  result = MUI_EventHandlerRC_Eat;
-               }
-               else if ((((code >= 32 && code <= 126) || code >= 160) && !(hmsg->imsg->Qualifier & IEQUALIFIER_RCOMMAND)) || (code && hmsg->imsg->Qualifier & IEQUALIFIER_CONTROL))
-               {
-                  // if the pressed key is a REAL key and NOT pressed with right AMIGA
-                  // or pressed with control then...
-
-                  DoSuperMethodA(cl, obj, msg);
-                  get(obj, MUIA_String_Contents, &contents);
-                  get(obj, MUIA_String_BufferPos, &pos);
-
-                  // we only try to complete the Alias if the entered string is
-                  // at least 2 characters hough
-                  if(strlen(contents) > 1)
-                  {
-                     // if there is a comma in the entered string we only try to
-                     // complete the right sight of the last comma
-                     if (comma = strrchr(contents,','))
-                     {
-                        while (*++comma == ' '); // skip any space between the comma and the real string
-                        if (strlen(comma) > 1) completed = AB_CompleteAlias(comma);
-                     }
-                     else completed = AB_CompleteAlias(contents);
-
-                     if (completed)
-                     {
-                        newcontents = malloc(strlen(contents)+strlen(completed)+1);
-                        strcpy(newcontents, contents);
-                        strcpy(&newcontents[pos], completed);
-                        SetAttrs(obj, MUIA_String_Contents,newcontents, MUIA_String_BufferPos,pos, MUIA_BetterString_SelectSize,strlen(newcontents)-pos, TAG_DONE);
-                        free(newcontents);
-                     }
-                  }
-                  result = MUI_EventHandlerRC_Eat;
-               }
-            }
-         }
-      }
-      break;
-
-      case MUIM_DragQuery:
-      {
-         result = MUIV_DragQuery_Refuse;
-         if (d->obj == G->MA->GUI.NL_MAILS) result = MUIV_DragQuery_Accept;
-         else if (d->obj == G->AB->GUI.LV_ADDRESSES)
-         {
-            if(active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active))
-            {
-               if (!(active->tn_Flags & TNF_LIST))
-               {
-                  result = MUIV_DragQuery_Accept;
-               }
-            }
-         }
-      }
-      break;
-
-      case MUIM_DragDrop:
-      {
-         if (d->obj == G->MA->GUI.NL_MAILS)
-         {
-            struct Mail *mail;
-            DoMethod(d->obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-            if (OUTGOING(mail->Folder->Type)) AB_InsertAddress(obj, "", mail->To.RealName, mail->To.Address);
-            else AB_InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
-         }
-         else if (d->obj == G->AB->GUI.LV_ADDRESSES)
-         {
-            struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active);
-            struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
-            AB_InsertAddress(obj, addr->Alias, addr->RealName, "");
-         }
-      }
-      break;
-
-      default:
-      {
-         result = DoSuperMethodA(cl, obj, msg);
-      }
-      break;
-   }
-   return result;
-}
-#endif
-
 ///
 /// WL_Dispatcher (Attachment List)
 /*** WL_Dispatcher (Attachment List) - Subclass of List, adds Drag&Drop from message list ***/
@@ -441,7 +229,7 @@ DISPATCHERPROTO(FL_Dispatcher)
          if(!tn_dst) return 0;
          dstfolder = tn_dst->tn_User;
 
-         tn_src = (struct MUI_NListtree_TreeNode *)GetMUI(obj, MUIA_NListtree_Active);
+         tn_src = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active);
          if(!tn_src) return 0;
          srcfolder = tn_src->tn_User;
 
@@ -496,13 +284,13 @@ DISPATCHERPROTO(EL_Dispatcher)
       case MUIM_DragQuery:
          if (d->obj == obj) break;
          if (d->obj == G->AB->GUI.LV_ADDRESSES && d->obj != obj)
-            if (active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active))
+            if (active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active))
                if (!((struct ABEntry *)(active->tn_User))->Members) return MUIV_DragQuery_Accept;
          return MUIV_DragQuery_Refuse;
       case MUIM_DragDrop:
          if (d->obj == obj) break;
          if (d->obj == G->AB->GUI.LV_ADDRESSES && d->obj != obj)
-            if (active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active))
+            if (active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active))
                if (active->tn_Flags & TNF_LIST) EA_AddMembers(obj, active);
                else EA_AddSingleMember(obj, active);
          return 0;
@@ -580,19 +368,12 @@ DISPATCHERPROTO(TE_Dispatcher)
          if (drop_msg->obj == G->AB->GUI.LV_ADDRESSES)
          {
             struct MUI_NListtree_TreeNode *tn;
-            if (tn = (struct MUI_NListtree_TreeNode *)GetMUI(drop_msg->obj, MUIA_NListtree_Active))
+            if (tn = (struct MUI_NListtree_TreeNode *)xget(drop_msg->obj, MUIA_NListtree_Active))
             {
                struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
                if (ab->Type != AET_GROUP)
                {
-#ifdef DUFF
                   DoMethod(obj, MUIM_TextEditor_InsertText, AB_PrettyPrintAddress(ab), MUIV_TextEditor_InsertText_Cursor);
-#else
-                  char *adr = AllocStrBuf(SIZE_DEFAULT);
-                  WR_ResolveName(-1, ab->Alias, &adr, FALSE, TRUE);
-                  DoMethod(obj, MUIM_TextEditor_InsertText, adr, MUIV_TextEditor_InsertText_Cursor);
-                  FreeStrBuf(adr);
-#endif
                }
             }
          }
@@ -945,9 +726,6 @@ void ExitClasses(void)
    if (CL_MailList   ) MUI_DeleteCustomClass(CL_MailList   );
    if (CL_FolderList ) MUI_DeleteCustomClass(CL_FolderList );
    if (CL_AddressList) MUI_DeleteCustomClass(CL_AddressList);
-#ifndef DUFF
-   if (CL_DDString   ) MUI_DeleteCustomClass(CL_DDString   );
-#endif
    if (CL_DDList     ) MUI_DeleteCustomClass(CL_DDList     );
    if (CL_AttachList ) MUI_DeleteCustomClass(CL_AttachList );
 }
@@ -959,9 +737,6 @@ BOOL InitClasses(void)
 {
    CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
    CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
-#ifndef DUFF
-   CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
-#endif
    CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(AL_Dispatcher));
    CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
    CL_MailList    = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(ML_Dispatcher));
@@ -969,10 +744,6 @@ BOOL InitClasses(void)
    CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct DumData), ENTRY(TE_Dispatcher));
    CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));
    CL_PageList    = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher));
-
-#ifndef DUFF
-	if(!CL_DDString) return FALSE;
-#endif
 
    return (BOOL)(CL_AttachList && CL_DDList && CL_AddressList && CL_FolderList && CL_MailList &&
                  CL_BodyChunk && CL_TextEditor && CL_MainWin && CL_PageList);

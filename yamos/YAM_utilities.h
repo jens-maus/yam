@@ -179,7 +179,7 @@ char *   GetFolderDir(struct Folder *fo);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
 char *   GetMailFile(char *string, struct Folder *folder, struct Mail *mail);
 struct MailInfo *GetMailInfo(struct Mail *smail);
-LONG     GetMUI(Object *obj, ULONG attr);
+ULONG    xget(Object *obj, ULONG attr);
 BOOL     GetMUICheck(Object *obj);
 int      GetMUICycle(Object *obj);
 int      GetMUIInteger(Object *obj);

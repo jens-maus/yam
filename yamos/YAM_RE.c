@@ -2713,8 +2713,8 @@ HOOKPROTONHNO(RE_CloseFunc, void, int *arg)
       free(re->MailPtr);
       CloseTempFile(re->TempFile);
    }
-   G->Weights[2] = GetMUI(re->GUI.GR_HEAD, MUIA_VertWeight);
-   G->Weights[3] = GetMUI(re->GUI.GR_BODY, MUIA_VertWeight);
+   G->Weights[2] = xget(re->GUI.GR_HEAD, MUIA_VertWeight);
+   G->Weights[3] = xget(re->GUI.GR_BODY, MUIA_VertWeight);
    DisposeModulePush(&G->RE[winnum]);
 }
 MakeHook(RE_CloseHook, RE_CloseFunc);

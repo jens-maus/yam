@@ -1470,7 +1470,6 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
          break;
          
       case RXIF_ACTION:
-#ifdef DUFF
 		{
 			Object *str = RecipientstringObject, MUIA_String_Contents, rd->rd.arg.alias, End;
 			STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, 0);
@@ -1485,11 +1484,7 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
 			}
 			MUI_DisposeObject(str);
 		}
-#else
-         rd->rd.res.recpt = rd->string = AllocStrBuf(80);
-         if (WR_ResolveName(-1, rd->rd.arg.alias, &(rd->string), FALSE, TRUE)) rd->rd.rc = RETURN_WARN;
-#endif
-         break;
+      break;
 
       case RXIF_FREE:
          FreeStrBuf(rd->string);
@@ -1946,7 +1941,7 @@ void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action,
          
       case RXIF_ACTION:
       {
-         if(tn = (struct MUI_NListtree_TreeNode *)GetMUI(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+         if(tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
          {
             struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
             if (rd->arg.alias)    stccpy(ab->Alias, rd->arg.alias, SIZE_NAME);
