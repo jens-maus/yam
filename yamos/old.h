@@ -81,7 +81,6 @@
 #ifdef __MORPHOS__
 #undef DoSuperMethod
 #define DoSuperMethod(cl,obj,a,b,c) ({ LONG m[] = { (LONG)(a), (LONG)(b), (LONG)(c) }; DoSuperMethodA(cl,obj,(Msg)m); })
-#define KPrintF dprintf
 
 /*MorphOS standard netincludes don't have these*/
 
@@ -122,18 +121,6 @@ struct sockaddr_in {
 
 #else
 #include <clib/locale_protos.h>
-#endif
-
-#if (defined DEBUG) || (defined _MGST)
-  #include "clib/debug_protos.h"
-#endif
-
-#if (defined DEBUG)
-  #define DB(x) x
-  #define DBpr(x) (KPrintF("YAM: %s",x))
-#else
-  #define DB(x)
-  #define DBpr(x)
 #endif
 
 /// Defines
