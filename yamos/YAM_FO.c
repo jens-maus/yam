@@ -295,20 +295,20 @@ BOOL FO_LoadConfig(struct Folder *fo)
             for (p = buffer; *p && !ISpace(*p); p++); *p = 0;
             if (*buffer && value)
             {
-               if (!stricmp(buffer, "Name"))        MyStrCpy(fo->Name, value);
-               if (!stricmp(buffer, "MaxAge"))      fo->MaxAge = atoi(value);
-               if (!stricmp(buffer, "Password"))    MyStrCpy(fo->Password, Decrypt(value));
-               if (!stricmp(buffer, "Type"))        fo->Type = atoi(value);
-               if (!stricmp(buffer, "XPKType"))     fo->XPKType = atoi(value);
-               if (!stricmp(buffer, "Sort1"))       fo->Sort[0] = atoi(value);
-               if (!stricmp(buffer, "Sort2"))       fo->Sort[1] = atoi(value);
-               if (!stricmp(buffer, "Stats"))     { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
-               if (!stricmp(buffer, "MLSupport"))   fo->MLSupport = Txt2Bool(value);
-               if (!stricmp(buffer, "MLFromAddr"))  MyStrCpy(fo->MLFromAddress,value);
-               if (!stricmp(buffer, "MLRepToAddr")) MyStrCpy(fo->MLReplyToAddress, value);
-               if (!stricmp(buffer, "MLAddress"))   MyStrCpy(fo->MLAddress, value);
-               if (!stricmp(buffer, "MLPattern"))   MyStrCpy(fo->MLPattern, value);
-               if (!stricmp(buffer, "MLSignature")) fo->MLSignature = atoi(value);
+               if(!stricmp(buffer, "Name"))              MyStrCpy(fo->Name, value);
+               else if(!stricmp(buffer, "MaxAge"))       fo->MaxAge = atoi(value);
+               else if(!stricmp(buffer, "Password"))     MyStrCpy(fo->Password, Decrypt(value));
+               else if(!stricmp(buffer, "Type"))         fo->Type = atoi(value);
+               else if(!stricmp(buffer, "XPKType"))      fo->XPKType = atoi(value);
+               else if(!stricmp(buffer, "Sort1"))        fo->Sort[0] = atoi(value);
+               else if(!stricmp(buffer, "Sort2"))        fo->Sort[1] = atoi(value);
+               else if(!stricmp(buffer, "Stats"))        { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
+               else if(!stricmp(buffer, "MLSupport"))    fo->MLSupport = Txt2Bool(value);
+               else if(!stricmp(buffer, "MLFromAddr"))   MyStrCpy(fo->MLFromAddress,value);
+               else if(!stricmp(buffer, "MLRepToAddr"))  MyStrCpy(fo->MLReplyToAddress, value);
+               else if(!stricmp(buffer, "MLAddress"))    MyStrCpy(fo->MLAddress, value);
+               else if(!stricmp(buffer, "MLPattern"))    MyStrCpy(fo->MLPattern, value);
+               else if(!stricmp(buffer, "MLSignature"))  fo->MLSignature = atoi(value);
             }
          }
          success = TRUE;
@@ -489,7 +489,8 @@ BOOL FO_LoadTree(char *fname)
             if (!strncmp(buffer, "@FOLDER", 7))
             {
                fo.Type = FT_CUSTOM;
-               fo.Sort[0] = 1; fo.Sort[1] = 3;
+               fo.Sort[0] = 1;
+               fo.Sort[1] = 3;
                MyStrCpy(fo.Name, Trim(&buffer[8]));
                MyStrCpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))));
 
@@ -500,10 +501,10 @@ BOOL FO_LoadTree(char *fname)
                      char *folderpath = FilePart(fo.Path);
 
                      // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
-                     if(stricmp(folderpath, FolderNames[0]) == 0)       fo.Type = FT_INCOMING;
-                     else if(!stricmp(folderpath, FolderNames[1]) == 0) fo.Type = FT_OUTGOING;
-                     else if(!stricmp(folderpath, FolderNames[2]) == 0) fo.Type = FT_SENT;
-                     else if(!stricmp(folderpath, FolderNames[3]) == 0) fo.Type = FT_DELETED;
+                     if(stricmp(folderpath, FolderNames[0]) == 0)      fo.Type = FT_INCOMING;
+                     else if(stricmp(folderpath, FolderNames[1]) == 0) fo.Type = FT_OUTGOING;
+                     else if(stricmp(folderpath, FolderNames[2]) == 0) fo.Type = FT_SENT;
+                     else if(stricmp(folderpath, FolderNames[3]) == 0) fo.Type = FT_DELETED;
 
                      // Save the config now because it could be changed in the meantime
                      if(!FO_SaveConfig(&fo))

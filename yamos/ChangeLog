@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-05-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FO.c: fixed bug in the folder config loading routines where YAM
+      always created a "outgoing" folder if the folder directory was missing
+      while starting up.
+
 2003-05-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_CO.c, YAM_COs.c, YAM_UT.c: as many people were confused by the
