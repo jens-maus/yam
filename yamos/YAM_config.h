@@ -423,6 +423,7 @@ struct Config
    BOOL  FolderCntMenu;
    BOOL  MessageCntMenu;
 	 BOOL	 AutomaticTranslationIn;
+   BOOL  AutoColumnResize;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

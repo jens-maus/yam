@@ -295,20 +295,20 @@ BOOL FO_LoadConfig(struct Folder *fo)
             for (p = buffer; *p && !ISpace(*p); p++); *p = 0;
             if (*buffer && value)
             {
-               if (!stricmp(buffer, "Name"))        MyStrCpy(fo->Name, value);
-               if (!stricmp(buffer, "MaxAge"))      fo->MaxAge = atoi(value);
-               if (!stricmp(buffer, "Password"))    MyStrCpy(fo->Password, Decrypt(value));
-               if (!stricmp(buffer, "Type"))        fo->Type = atoi(value);
-               if (!stricmp(buffer, "XPKType"))     fo->XPKType = atoi(value);
-               if (!stricmp(buffer, "Sort1"))       fo->Sort[0] = atoi(value);
-               if (!stricmp(buffer, "Sort2"))       fo->Sort[1] = atoi(value);
-               if (!stricmp(buffer, "Stats"))     { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
-               if (!stricmp(buffer, "MLSupport"))   fo->MLSupport = Txt2Bool(value);
-               if (!stricmp(buffer, "MLFromAddr"))  MyStrCpy(fo->MLFromAddress,value);
-               if (!stricmp(buffer, "MLRepToAddr")) MyStrCpy(fo->MLReplyToAddress, value);
-               if (!stricmp(buffer, "MLAddress"))   MyStrCpy(fo->MLAddress, value);
-               if (!stricmp(buffer, "MLPattern"))   MyStrCpy(fo->MLPattern, value);
-               if (!stricmp(buffer, "MLSignature")) fo->MLSignature = atoi(value);
+               if(!stricmp(buffer, "Name"))              MyStrCpy(fo->Name, value);
+               else if(!stricmp(buffer, "MaxAge"))       fo->MaxAge = atoi(value);
+               else if(!stricmp(buffer, "Password"))     MyStrCpy(fo->Password, Decrypt(value));
+               else if(!stricmp(buffer, "Type"))         fo->Type = atoi(value);
+               else if(!stricmp(buffer, "XPKType"))      fo->XPKType = atoi(value);
+               else if(!stricmp(buffer, "Sort1"))        fo->Sort[0] = atoi(value);
+               else if(!stricmp(buffer, "Sort2"))        fo->Sort[1] = atoi(value);
+               else if(!stricmp(buffer, "Stats"))        { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
+               else if(!stricmp(buffer, "MLSupport"))    fo->MLSupport = Txt2Bool(value);
+               else if(!stricmp(buffer, "MLFromAddr"))   MyStrCpy(fo->MLFromAddress,value);
+               else if(!stricmp(buffer, "MLRepToAddr"))  MyStrCpy(fo->MLReplyToAddress, value);
+               else if(!stricmp(buffer, "MLAddress"))    MyStrCpy(fo->MLAddress, value);
+               else if(!stricmp(buffer, "MLPattern"))    MyStrCpy(fo->MLPattern, value);
+               else if(!stricmp(buffer, "MLSignature"))  fo->MLSignature = atoi(value);
             }
          }
          success = TRUE;
@@ -489,7 +489,8 @@ BOOL FO_LoadTree(char *fname)
             if (!strncmp(buffer, "@FOLDER", 7))
             {
                fo.Type = FT_CUSTOM;
-               fo.Sort[0] = 1; fo.Sort[1] = 3;
+               fo.Sort[0] = 1;
+               fo.Sort[1] = 3;
                MyStrCpy(fo.Name, Trim(&buffer[8]));
                MyStrCpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))));
 
@@ -500,10 +501,10 @@ BOOL FO_LoadTree(char *fname)
                      char *folderpath = FilePart(fo.Path);
 
                      // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
-                     if(stricmp(folderpath, FolderNames[0]) == 0)       fo.Type = FT_INCOMING;
-                     else if(!stricmp(folderpath, FolderNames[1]) == 0) fo.Type = FT_OUTGOING;
-                     else if(!stricmp(folderpath, FolderNames[2]) == 0) fo.Type = FT_SENT;
-                     else if(!stricmp(folderpath, FolderNames[3]) == 0) fo.Type = FT_DELETED;
+                     if(stricmp(folderpath, FolderNames[0]) == 0)      fo.Type = FT_INCOMING;
+                     else if(stricmp(folderpath, FolderNames[1]) == 0) fo.Type = FT_OUTGOING;
+                     else if(stricmp(folderpath, FolderNames[2]) == 0) fo.Type = FT_SENT;
+                     else if(stricmp(folderpath, FolderNames[3]) == 0) fo.Type = FT_DELETED;
 
                      // Save the config now because it could be changed in the meantime
                      if(!FO_SaveConfig(&fo))
@@ -1261,10 +1262,15 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
          int newxpk = folder.XPKType;
          BOOL changed = TRUE;
 
-         // FIXME: Something seems to be wrong here !!
          if(oldxpk == newxpk || (newxpk > XPK_CRYPT && !XpkBase)) changed = FALSE;
-         else if(!isCryptedFolder(&folder) && isCryptedFolder(oldfolder) && oldfolder->LoadedMode != LM_VALID) changed = MA_PromptFolderPassword(&folder, gui->WI);
-         else if(isCryptedFolder(&folder) && !isCryptedFolder(oldfolder)) changed = FO_EnterPassword(&folder);
+         else if(!isCryptedFolder(&folder) && isCryptedFolder(oldfolder) && oldfolder->LoadedMode != LM_VALID)
+         {
+            if(!(changed = MA_PromptFolderPassword(&folder, gui->WI))) return;
+         }
+         else if(isCryptedFolder(&folder) && !isCryptedFolder(oldfolder))
+         {
+            if(!(changed = FO_EnterPassword(&folder))) return;
+         }
 
          if(isCryptedFolder(&folder) && isCryptedFolder(oldfolder)) strcpy(folder.Password, oldfolder->Password);
 
@@ -1277,8 +1283,6 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
          }
          oldfolder->Type = folder.Type;
       }
-      set(gui->WI, MUIA_Window_Open, FALSE);
-      DoMethod(lv, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
 
       if(FO_SaveConfig(&folder)) success = TRUE;
    }
@@ -1313,29 +1317,32 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       // only if the user want to proceed we go on.
       if(result)
       {
-        if(isCryptedFolder(&folder) && !FO_EnterPassword(&folder)) CLEAR_FLAG(folder.XPKType, XPK_CRYPT);
+        if(isCryptedFolder(&folder) && FO_EnterPassword(&folder) == FALSE) return;
+
         if(CreateDirectory(GetFolderDir(&folder)))
         {
           if(FO_SaveConfig(&folder))
           {
             DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+            oldfolder = &folder;
             success = TRUE;
           }
         }
         else return;
-
-        set(gui->WI, MUIA_Window_Open, FALSE);
       }
       else return;
    }
 
+   set(gui->WI, MUIA_Window_Open, FALSE);
+
    if (success)
    {
       MA_SetSortFlag();
+      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_Title);
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort);
       MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL), FALSE);
       FO_SaveTree(CreateFilename(".folders"));
-      DisplayStatistics(&folder, TRUE);
+      DisplayStatistics(oldfolder, TRUE);
    }
    DisposeModulePush(&G->FO);
 }

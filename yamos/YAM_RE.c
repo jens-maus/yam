@@ -204,7 +204,7 @@ static struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL ask
 HOOKPROTONHNO(RE_Follow, void, int *arg)
 {  
    int direction = arg[0], winnum = arg[1];
-   struct Mail *fmail = NULL;
+   struct Mail *fmail;
 
    // depending on the direction we get the Question or Answer to the current Message
    fmail = RE_GetThread(&G->RE[winnum]->Mail, direction <= 0 ? FALSE : TRUE, TRUE, winnum);
@@ -526,7 +526,7 @@ HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
    // Don't try to use PGP if it's not installed
    if (G->PGPVersion == 0) return;
 
-   if(hasPGPSOldFlag(re) && !hasPGPSCheckedFlag(re))
+   if((hasPGPSOldFlag(re) || hasPGPSMimeFlag(re)) && !hasPGPSCheckedFlag(re))
    {
       int error;
       char fullfile[SIZE_PATHFILE], options[SIZE_LARGE];
@@ -610,15 +610,15 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    {
       RE_DisplayMessage(winnum, FALSE);
       set(gui->MI_EXTKEY, MUIA_Menuitem_Enabled, re->PGPKey);
-      set(gui->MI_CHKSIG, MUIA_Menuitem_Enabled, hasPGPSOldFlag(re));
-      set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && hasPGPEMimeFlag(re));
+      set(gui->MI_CHKSIG, MUIA_Menuitem_Enabled, hasPGPSOldFlag(re) || hasPGPSMimeFlag(re));
+      set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && (hasPGPEMimeFlag(re) || hasPGPEOldFlag(re)));
       RE_UpdateStatusGroup(winnum);
       MA_StartMacro(MACRO_READ, itoa(winnum));
       if (real && (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR))
       {
          MA_SetMailStatus(mail, STATUS_OLD);
          DisplayStatistics(folder, TRUE);
-         if(hasPGPSOldFlag(re) && !hasPGPSCheckedFlag(re))
+         if((hasPGPSOldFlag(re) || hasPGPSMimeFlag(re)) && !hasPGPSCheckedFlag(re))
          {
             DoMethod(G->App, MUIM_CallHook, &RE_CheckSignatureHook, FALSE, winnum);
          }
@@ -1131,6 +1131,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
     struct ExtendedMail *email;
     struct TempFile *tf = OpenTempFile(NULL);
     CopyFile(tf->Filename, NULL, fname, NULL);
+
     if ((email = MA_ExamineMail(NULL, FilePart(tf->Filename), NULL, TRUE)))
     {
       mail = calloc(1, sizeof(struct Mail));
@@ -1328,7 +1329,7 @@ HOOKPROTONHNO(RE_RemoveAttachFunc, void, int *arg)
 {
    struct Mail *mail = G->RE[*arg]->MailPtr;
    struct MailInfo *mi;
-   MA_RemoveAttach(mail);
+   MA_RemoveAttach(mail, TRUE);
    if ((mi = GetMailInfo(mail))->Pos >= 0)
    {
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
@@ -1489,7 +1490,9 @@ static void RE_GetSigFromLog(int winnum, char *decrFor)
             {
                if (G->PGPVersion == 5) { GetLine(fh, buffer, SIZE_LARGE); GetLine(fh, buffer, SIZE_LARGE); }
                if (RE_GetAddressFromLog(buffer, re->Signature)) SET_FLAG(re->PGPSigned, PGPS_ADDRESS);
+
                SET_FLAG(re->PGPSigned, PGPS_CHECKED);
+               break;
             }
          }
       }
@@ -1513,10 +1516,11 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
 
    if (!(choice = MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SaveDecrypted), GetStr(MSG_RE_SaveDecGads), GetStr(MSG_RE_SaveDecReq)))) return;
    memset(&comp, 0, sizeof(struct Compose));
+
    if ((comp.FH = fopen(MA_NewMailFile(folder, mfile, 0), "w")))
    {
       struct ExtendedMail *email;
-      struct Mail *new;
+
       comp.Mode = NEW_SAVEDEC;
       comp.OrigMail = re->MailPtr;
       comp.FirstPart = p1 = NewPart(2);
@@ -1524,21 +1528,27 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
       WriteOutMessage(&comp);
       FreePartsList(p1);
       fclose(comp.FH);
+
       if ((email = MA_ExamineMail(folder, mfile, NULL, TRUE)))
       {
+         struct Mail *newmail;
+
          // lets set some values depending on the original message
          email->Mail.Status = re->MailPtr->Status;
          memcpy(&email->Mail.transDate, &re->MailPtr->transDate, sizeof(struct timeval));
 
          // add the mail to the folder now
-         new = AddMailToList(&email->Mail, folder);
+         newmail = AddMailToList(&email->Mail, folder);
 
-         if (FO_GetCurrentFolder() == folder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
+         // if this was a compressed/encrypted folder we need to pack the mail now
+         if(folder->XPKType != XPK_OFF) RepackMailFile(newmail, -1, NULL);
+
+         if (FO_GetCurrentFolder() == folder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
          MA_FreeEMailStruct(email);
          if (choice == 2)
          {
             MA_DeleteSingle(re->MailPtr, FALSE, FALSE);
-            RE_ReadMessage(*arg, new);
+            RE_ReadMessage(*arg, newmail);
          }
       }
       else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
@@ -1828,7 +1838,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
 {
    char c = 0, buf[SIZE_LINE];
    int blen = 0;
-   long cpos;
+   long cpos = 0;
    BOOL cempty = TRUE;
 
    if(!in) return FALSE;
@@ -1938,7 +1948,7 @@ static FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, st
       }
       strcpy((*new)->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
       (*new)->Win = winnum;
-      sprintf(file, "YAMr%lx-w%dp%d.txt", G->RE[winnum]->MailPtr, winnum, (*new)->Nr);
+      sprintf(file, "YAMr%08lx-w%dp%d.txt", G->RE[winnum]->MailPtr, winnum, (*new)->Nr);
       strmfp((*new)->Filename, C->TempDir, file);
       if ((fp = fopen((*new)->Filename, "w"))) return fp;
       free(*new);
@@ -1955,37 +1965,42 @@ static void RE_UndoPart(struct Part *rp)
    // lets delete the file first so that we can cleanly "undo" the part
    DeleteFile(rp->Filename);
 
-   // if we remove a part from the part list we have to take
-   // care of the part index number aswell. So all following
-   // parts have to be descreased somehow by one.
-   //
-   // p2->p3->p4->p5
-   while(trp->Next)
+   // we only iterate through our partlist if there is
+   // a next item, if not we can simply relink it
+   if(trp->Next)
    {
-      // use the next element as the current trp
-      trp = trp->Next;
+      // if we remove a part from the part list we have to take
+      // care of the part index number aswell. So all following
+      // parts have to be descreased somehow by one.
+      //
+      // p2->p3->p4->p5
+      do
+      {
+        // use the next element as the current trp
+        trp = trp->Next;
 
-      // decrease the part number aswell
-      trp->Nr--;
+        // decrease the part number aswell
+        trp->Nr--;
 
-      // Now we also have to rename the temporary filename also
-      Rename(trp->Filename, trp->Prev->Filename);
-   }
+        // Now we also have to rename the temporary filename also
+        Rename(trp->Filename, trp->Prev->Filename);
 
-   // now go from the end to the start again and copy
-   // the filenames strings as we couldn`t do that in the previous
-   // loop also
-   //
-   // p5->p4->p3->p2
-   while(trp->Prev)
-   {
-      // iterate backwards
-      trp = trp->Prev;
+      } while(trp->Next);
 
-      // now copy the
-      strcpy(trp->Next->Filename, trp->Filename);
+      // now go from the end to the start again and copy
+      // the filenames strings as we couldn`t do that in the previous
+      // loop also
+      //
+      // p5->p4->p3->p2
+      do
+      {
+        // iterate backwards
+        trp = trp->Prev;
 
-      if(trp == rp) break;
+        // now copy the filename string
+        strcpy(trp->Next->Filename, trp->Filename);
+
+      } while(trp->Prev && trp != rp);
    }
 
    // relink the partlist
@@ -2208,7 +2223,7 @@ BOOL RE_DecodePart(struct Part *rp)
          if (rp->HasHeaders) while (GetLine(in, buf, SIZE_LINE)) if (!*buf) break;
          stcgfe(ext, rp->Name);
          if (strlen(ext) > 10) *ext = 0;
-         sprintf(file, "YAMm%lx-w%dp%d.%s", G->RE[rp->Win]->MailPtr, rp->Win, rp->Nr, *ext ? ext : "tmp");
+         sprintf(file, "YAMm%08lx-w%dp%d.%s", G->RE[rp->Win]->MailPtr, rp->Win, rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
          if ((out = fopen(buf, "w")))
          {
@@ -2306,7 +2321,7 @@ static void RE_HandleMDNReport(struct Part *frp)
       if (!strnicmp(MDNtype, "manual-action", 13)) mode = GetStr(MSG_RE_MDNmanual);
       if (!strnicmp(MDNtype, "automatic-action", 16)) mode = GetStr(MSG_RE_MDNauto);
       if ((type = strchr(MDNtype, ';'))) type = Trim(++type); else type = MDNtype;
-      sprintf(file, "YAMm%lx-w%dp%d.txt", G->RE[rp[0]->Win]->MailPtr, rp[0]->Win, rp[0]->Nr);
+      sprintf(file, "YAMm%08lx-w%dp%d.txt", G->RE[rp[0]->Win]->MailPtr, rp[0]->Win, rp[0]->Nr);
       strmfp(buf, C->TempDir, file);
       if ((out = fopen(buf, "w")))
       {
@@ -2341,7 +2356,10 @@ static void RE_HandleSignedMessage(struct Part *frp)
          int error;
          struct TempFile *tf = OpenTempFile(NULL);
          char options[SIZE_LARGE];
+
+         // flag the mail as having a PGP signature within the MIME encoding
          SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_MIME);
+
          ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
          sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
          error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
@@ -2417,7 +2435,7 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
       {
          FILE *in;
 
-         if(decryptResult == 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_OLD);
+         if(decryptResult == 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_MIME);
          SET_FLAG(G->RE[frp->Win]->PGPEncrypted, PGPE_MIME);
 
          // if DecryptPGP() returns with 0 everything worked perfectly and we can
@@ -2531,7 +2549,7 @@ static BOOL RE_LoadMessage(int winnum, int parsemode)
         if (rp->Nr != i)
         {
           rp->Nr = i;
-          sprintf(file, "YAMm%lx-w%dp%d%s", G->RE[winnum]->MailPtr, winnum, i, strchr(rp->Filename,'.'));
+          sprintf(file, "YAMm%08lx-w%dp%d%s", G->RE[winnum]->MailPtr, winnum, i, strchr(rp->Filename,'.'));
           strmfp(newfile, C->TempDir, file);
 
           RenameFile(rp->Filename, newfile);
@@ -2780,6 +2798,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
                   if(RE_DecryptPGP(winnum, tf->Filename) == 0)
                   {
+                    // flag the mail as having a inline PGP signature
                     SET_FLAG(re->PGPSigned, PGPS_OLD);
 
                     // make sure that the mail is flaged as signed
@@ -2805,6 +2824,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                   CloseTempFile(tf);
                 }
 
+                // flag the mail as being inline PGP encrypted
                 SET_FLAG(re->PGPEncrypted, PGPE_OLD);
 
                 // make sure that mail is flagged as crypted
@@ -2844,6 +2864,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
               }
               else if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29))
               {
+                // flag the mail as having a inline PGP signature
                 SET_FLAG(re->PGPSigned, PGPS_OLD);
 
                 if(!isSignedMail(re->MailPtr))

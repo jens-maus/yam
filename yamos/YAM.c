@@ -110,8 +110,8 @@ static struct TC_Data
 } TCData;
 
 // AutoDST related variables
-enum ADSTmethod { ADST_NONE=0, ADST_SETDST, ADST_SGUARD, ADST_IXGMT };
-static const char *ADSTfile[] = { "", "ENV:TZONE", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
+enum ADSTmethod { ADST_NONE=0, ADST_SETDST, ADST_FACTS, ADST_SGUARD, ADST_IXGMT };
+static const char *ADSTfile[] = { "", "ENV:TZONE", "ENV:FACTS/DST", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
 static struct ADST_Data
 {
   struct NotifyRequest nRequest;
@@ -585,23 +585,28 @@ MakeStaticHook(DoublestartHook, DoublestartFunc);
 //  Makes sure that the user really wants to quit the program
 static BOOL StayInProg(void)
 {
-   int i, fq;
+   int i;
+   BOOL req = FALSE;
 
    if (G->AB->Modified)
    {
+     // make sure the application is uniconified before we popup the requester
+     nnset(G->App, MUIA_Application_Iconified, FALSE);
+
      if (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ABookModifiedGad), GetStr(MSG_AB_Modified)))
        CallHookPkt(&AB_SaveABookHook, 0, 0);
    }
 
-   get(G->App, MUIA_Application_ForceQuit, &fq);
-   if (!fq)
+   for(i=0; i < MAXEA && !req; i++) if(G->EA[i]) req = TRUE;
+   for(i=0; i < MAXWR && !req; i++) if(G->WR[i]) req = TRUE;
+
+   if(req || G->CO || C->ConfirmOnQuit)
    {
-     BOOL req = FALSE;
-     for (i = 0; i < 4; i++) if (G->EA[i]) req = TRUE;
-     for (i = 0; i < 2; i++) if (G->WR[i]) req = TRUE;
-     if (req || G->CO || C->ConfirmOnQuit)
-       if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq)))
-         return TRUE;
+     // make sure the application is uniconified before we popup the requester
+     nnset(G->App, MUIA_Application_Iconified, FALSE);
+
+     if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq)))
+       return TRUE;
    }
 
    return FALSE;
@@ -609,17 +614,43 @@ static BOOL StayInProg(void)
 ///
 /// Root_GlobalDispatcher
 //  Processes return value of MUI_Application_NewInput
-static BOOL Root_GlobalDispatcher(ULONG app_input)
+static int Root_GlobalDispatcher(ULONG app_input)
 {
+   int ret = 0;
+
    switch (app_input)
    {
-      case MUIV_Application_ReturnID_Quit: return (BOOL)!StayInProg();
-      case ID_CLOSEALL: if (!C->IconifyOnQuit) return (BOOL)!StayInProg();
-                        set(G->App, MUIA_Application_Iconified, TRUE); break;
-      case ID_RESTART:  return 2;
-      case ID_ICONIFY:  MA_UpdateIndexes(FALSE); break;
+      case MUIV_Application_ReturnID_Quit:
+      {
+        if(!xget(G->App, MUIA_Application_ForceQuit))
+        {
+          ret = (int)!StayInProg();
+        }
+        else ret = 1;
+      }
+      break;
+
+      case ID_CLOSEALL:
+      {
+        if(!C->IconifyOnQuit) ret = (int)!StayInProg();
+        set(G->App, MUIA_Application_Iconified, TRUE);
+      }
+      break;
+
+      case ID_RESTART:
+      {
+        ret = 2;
+      }
+      break;
+
+      case ID_ICONIFY:
+      {
+        MA_UpdateIndexes(FALSE);
+      }
+      break;
    }
-   return FALSE;
+
+   return ret;
 }
 ///
 /// Root_New
@@ -930,7 +961,7 @@ void SetupAppIcons(void)
 ///
 /// Initialise2
 //  Phase 2 of program initialization (after user logs in)
-static void Initialise2(BOOL hidden)
+static void Initialise2(void)
 {
    BOOL newfolders = FALSE;
    int i;
@@ -1053,9 +1084,11 @@ static void Initialise2(BOOL hidden)
 
    // only activate the main window if the about window is activ
    // and open it immediatly
+   // we always start YAM with Window_Open TRUE or else YAM the hide
+   // functionality doesn`t work as expected.
    SetAttrs(G->MA->GUI.WI,
             MUIA_Window_Activate, xget(G->AY_Win, MUIA_Window_Activate),
-            MUIA_Window_Open,     !hidden,
+            MUIA_Window_Open,     TRUE,
             TAG_DONE);
 
    set(G->AY_Win, MUIA_Window_Open, FALSE);
@@ -1281,7 +1314,7 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
 //  return 0 if no DST system was found - 1 if no DST is set and 3 if set
 static int GetDST(BOOL update)
 {
-   char buffer[SIZE_SMALL];
+   char buffer[50];
    char *tmp;
    int result = 0;
 
@@ -1291,14 +1324,15 @@ static int GetDST(BOOL update)
    /* lets check the DaylightSaving stuff now
     * we check in the following order:
     * 1. SetDST (ENV:TZONE)
-    * 2. SummertimeGuard (ENV:SUMMERTIME)
-    * 3. ixemul (ENV:IXGMTOFFSET)
+    * 2. FACTS (ENV:FACTS/DST)
+    * 3. SummertimeGuard (ENV:SUMMERTIME)
+    * 4. ixemul (ENV:IXGMTOFFSET)
     */
 
    // SetDST saves the DST settings in the TZONE env-variable which
    // is a bit more complex than the others, so we need to do some advance parsing
    if((!update || ADSTdata.method == ADST_SETDST)
-      && GetVar(&ADSTfile[ADST_SETDST][4], buffer, SIZE_SMALL, 0) >= 3)
+      && GetVar(&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
    {
       int i;
 
@@ -1315,24 +1349,36 @@ static int GetDST(BOOL update)
       ADSTdata.method = ADST_SETDST;
    }
 
+   // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
+   // Hex 00 or 01 to indicate the DST value.
+   if((!update || ADSTdata.method == ADST_FACTS) && result == 0
+      && GetVar(&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
+   {
+      ADSTdata.method = ADST_FACTS;
+
+      if(buffer[0] == 0x01)       return 2;
+      else if(buffer[0] == 0x00)  return 1;
+   }
+
    // SummerTimeGuard sets the last string to "YES" if DST is actually active
    if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
-      && GetVar(&ADSTfile[ADST_SGUARD][4], buffer, SIZE_SMALL, 0) > 3 && (tmp = strrchr(buffer, ':')))
+      && GetVar(&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
    {
+      ADSTdata.method = ADST_SGUARD;
+
       if(tmp[1] == 'Y')       return 2;
       else if(tmp[1] == 'N')  return 1;
-
-      ADSTdata.method = ADST_SGUARD;
    }
 
    // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
    // DST is actually active.
    if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
-      && GetVar(&ADSTfile[ADST_IXGMT][4], buffer, SIZE_SMALL, 0) >= 4)
+      && GetVar(&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
    {
       ADSTdata.method = ADST_IXGMT;
 
-      return buffer[4] ? 2 : 1;
+      if(buffer[4] == 0x01)       return 2;
+      else if(buffer[4] == 0x00)  return 1;
    }
 
    if(!update && result == 0) ADSTdata.method = ADST_NONE;
@@ -1481,13 +1527,13 @@ int main(int argc, char **argv)
       {
          Initialise((BOOL)args.hide);
          Login(args.user, args.password, args.maildir, args.prefsfile);
-         Initialise2((BOOL)args.hide);
+         Initialise2();
       }
       else
       {
          Initialise(FALSE);
          Login(NULL, NULL, NULL, NULL);
-         Initialise2(FALSE);
+         Initialise2();
       }
 
       grp = HGroup,

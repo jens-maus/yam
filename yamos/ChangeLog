@@ -5,6 +5,138 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+#### YAM 2.4p1 RELEASE ####################################################
+
+2003-05-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c, YAM_WR.c: fixed a bug in the save routines for decrypting
+      PGP messages. Previously YAM was not correctly saving a decrypted PGP
+      message to a compressed folder.
+    * YAM_RE.c: fixed bug in PGP signed routines where YAM didn`t give the
+      user the possibility to check the signature even if the message was
+      correctly signed.
+
+2003-05-24  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c, YAM_UT.c: fixed bug were a mail import to a compressed or
+      encrypted folder didn`t work as expected. YAM simply didn`t save the
+      mail compressed or encrypted, which caused some trouble later.
+
+2003-05-23  David Rey <tactica@gmx.net>
+
+    * YAM_MA.c, YAM.cd: replaced MSG_MA_CROPREQUEST_GADS with MSG_YesNoReq2
+      to avoid reinventing the wheel every time. MSG_AB_NOYAMADDRBOOK_GADS
+      should also be dropped in YAM2.5+ in favour of the new string.
+
+2003-05-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: fixed bug #730474 where YAM didn`t uniconfiy the application
+      via a created MUI appicon if the HIDE option was used upon the
+      startup.
+    * YAM.c: fixed bug #727871 where it wasn`t possible to quit YAM while
+      it was iconified and a confirmation requester need to pop up. Now
+      YAM will automatically uniconify to request the user to answer to
+      this requester before quitting. Only a "QUIT FORCE" arexx command will
+      exit YAM the hard way and skipping all further user input while
+      quitting.
+
+2003-05-21  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_rexx_rxif.c: fixed bug where the FOLDERINFO arexx command
+      returned the wrong identifier for a "sent and received" folder
+      type. Now FOLDERINFO will return the exact same id value for each
+      folder like it is saved in the .fconfig file.
+    * YAM_MA.c, YAM_RE.c, YAM_main.h, YAM.cd: added a warning requester to
+      the attachment crop routines because otherwise people could loose
+      attachments if they used that option on accident.
+
+2003-05-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FO.c: fixed bug #739139 where YAM didn`t refresh the mail listview
+      upon a folder type change. Also the refresh was done slightly wrong
+      which should be fixed now.
+    * YAM_FO.c: fixed bug #729366 where YAM ignored the Cancel button of the
+      password entry window while creating/changing a folder.
+    * YAM_FO.c: fixed bug in the folder config loading routines where YAM
+      always created a "outgoing" folder if the folder directory was missing
+      while starting up.
+
+2003-05-16  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c, YAM_COs.c, YAM_UT.c: as many people were confused by the
+      fact that YAM 2.4 wasn`t automatically resizing the main listview
+      columns anymore, a new hidden option "AutoColumnResize" to the .config
+      file has been introduced.
+      By default this variable will be set to Yes, to stop confusing people
+      with the non autoresizing feature of YAM 2.4+. So, all those people out
+      there whining about a slow folder switching if they have >1000 mails
+      in their folders should now explicitly modify their .config file and
+      use "AutoColumnResize = N" to stop YAM from using the autoresizing
+      feature of NList which significantly slows down a NList refresh.
+      Following that, those people should also know that they need to have
+      their columns fixed if AutoColumResize is set to No.
+    * YAM_UT.c: YAM will now suppress any DOS requester from popping up while
+      trying to save the MUI object information to the ENVARC:mui/YAM.cfg file
+      upon the exit of YAM. This should prevent people from whining about the
+      fact that YAM wants to save the whole object information while quiting.
+      Please note that YAM doesn`t only save the NList column widths in that file,
+      but also saves information like the object weights informationm which is
+      quite important for the layout manager of MUI.
+
+2003-05-11  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: the ASL_ATTACH filerequesters will now show a "~(#?.info)"
+      pattern as default to make living with them a bit easier ;)
+    * YAM_TR.c: fixed bug in MBOX export function where YAM didn`t correctly
+      export & import file depending on the "mboxrd" specification found at
+      http://www.qmail.org/man/man5/mbox.html
+
+2003-05-06  Jens Langner <Jens.Langner@light-speed.de>
+
+    * fixed the temporary filename generation once more to generate real
+      unique files depending on the YAM instance that is currently running
+      and also fixed a bug where a tempfilename from OpenTempFile()
+      shouldn`t be longer than SIZE_MFILE.
+
+2003-05-04  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c: fixed bug in Popupmenu routines where the use of
+      the "Export Message" item caused YAM to export all messages
+      instead of just the selected one.
+    * YAM_CO.c: fixed flaw in temporary filename specification for
+      a new write window. Multiple instances of YAM used the same
+      tempfile names for each write window and therefore interfered
+      each other.
+    * YAM_UT.c: fixed flaw within temporary file generation where we
+      didn`t take in consideration that two YAM instances could
+      use the same temporary files and therefore cause some trouble.
+
+2003-04-29  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_WR.c: fixed bug #729651 where YAM tried to delete a .autosave*
+      file even if AutoSave=0 was set in the configuration.
+
+2003-04-28  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: to make the whole AutoDST mechanism a bit more stable and
+      also useable I reworked/fixed the whole GetDST() again.
+      Also GetDST() now directly supports the ENV:FACTS/DST env variable
+      to check for the current DST mode. So running FACTS with SummerTime
+      emulation is not required anymore.
+    * YAM.c: fixed bug in AutoDST recognition where YAM didn`t correctly
+      recognize the SUMMERTIME environment variable because it provided
+      a way too short buffer to GetVar().
+
+2003-04-27  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_DI.c: fixed bug #728040 where the abbreviation string gadget
+      was always reset to "-new-" even if the user didn`t confirm with
+      pressing return.
+    * YAM_RE.c: fixed bug #728162 where YAM didn`t quote any mail text
+      upon a reply if the mail in question had an multipart attachment.
+
+#### YAM 2.4 RELEASE ######################################################
+
 2003-04-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed a serious bug in the RE_UndoPart() function

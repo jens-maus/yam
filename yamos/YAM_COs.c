@@ -384,6 +384,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
       fprintf(fh, "StackSize        = %d\n", co->StackSize);
       fprintf(fh, "PrintMethod      = %d\n", co->PrintMethod);
+      fprintf(fh, "AutoColumnResize = %s\n", Bool2Txt(co->AutoColumnResize));
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
    }
@@ -698,6 +699,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
                else if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
                else if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
+               else if (!stricmp(buffer, "AutoColumnResize")) co->AutoColumnResize = Txt2Bool(value);
             }
          }
          fclose(fh);

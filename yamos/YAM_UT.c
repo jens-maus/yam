@@ -101,7 +101,7 @@ unsigned char *PPtr[16];
 /* local protos */
 static int GetWord(char **rptr, char *wbuf, int max);
 static char *ReflowParagraph(char *start, char *end, int lmax, char *dest);
-static char *RemoveQuoteString(char *start, char *end, char *quot, char *dest);
+static void RemoveQuoteString(char *start, char *end, char *quot, char *dest);
 static char *InsertQuoteString(char *start, char *quote, FILE *out);
 static void SaveParagraph(char *start, char *end, char *prefix, FILE *out);
 static char *FileToBuffer(char *file);
@@ -1316,16 +1316,17 @@ static char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
 ///
 /// RemoveQuoteString
 //  Removes reply prefix
-static char *RemoveQuoteString(char *start, char *end, char *quot, char *dest)
+static void RemoveQuoteString(char *start, char *end, char *quot, char *dest)
 {
+   int quotlen = strlen(quot);
+
    while (start <= end)
    {
-      if (!strncmp(start, quot, strlen(quot))) start += strlen(quot);
+      if (!strncmp(start, quot, quotlen)) start += quotlen;
       while (*start && *start != '\n') *dest++ = *start++;
       if (*start) *dest++ = *start++;
    }
-   *(dest--) = 0;
-   return dest;
+   *dest = '\0'; // null-terminate
 }
 ///
 /// InsertQuoteString
@@ -1448,10 +1449,14 @@ void SimpleWordWrap(char *filename, int wrapsize)
 //  Puts up a file requester
 int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file)
 {
-   static const char *pattern[MAXASL] = {
-     "#?.addressbook#?", "#?.config#?", NULL, NULL, "#?.(yam|rexx)", "#?.(gif|jpg|jpeg|png|iff|ilbm)", NULL, NULL
+   // the following arrays depend on the ReqFileType enumeration
+   static const char *pattern[MAXASL] =
+   {
+     "#?.addressbook#?", "#?.config#?", NULL, "~(#?.info)", "#?.(yam|rexx)", "#?.(gif|jpg|jpeg|png|iff|ilbm)", NULL, NULL
    };
-   static BOOL init[MAXASL] = {
+
+   static BOOL init[MAXASL] =
+   {
      FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
    };
    char *postext = hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load);
@@ -1460,6 +1465,7 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
 
    get(win, MUIA_Window_Window, &truewin);
    if (!init[num]) { init[num] = TRUE; skip = 0; }
+
    return MUI_AslRequestTags( G->ASLReq[num],
                               ASLFR_Window,        truewin,
                               ASLFR_TitleText,     title,
@@ -1483,12 +1489,24 @@ struct TempFile *OpenTempFile(char *mode)
    struct TempFile *tf;
    if ((tf = calloc(1, sizeof(struct TempFile))))
    {
-      char buf[SIZE_SMALL];
-      sprintf(buf, "YAM.%d.tmp", ++count);
+      // the tempfile MUST be SIZE_MFILE long because we
+      // also use this tempfile routine for showing temporary mails which
+      // conform to SIZE_MFILE
+      char buf[SIZE_MFILE];
+
+      // now format our temporary filename according to our Application data
+      // this format tries to make the temporary filename kinda unique.
+      sprintf(buf, "YAMt%d%02d.tmp", G->RexxHost->portnumber, ++count);
+
+      // now add the temporary path to the filename
       strmfp(tf->Filename, C->TempDir, buf);
+
       if (!mode) return tf;
       if ((tf->FP = fopen(tf->Filename, mode))) return tf;
+
+      // on error we free everything
       free(tf);
+      count--;
    }
    return NULL;
 }
@@ -2489,7 +2507,8 @@ void DisplayMailList(struct Folder *fo, APTR lv)
       // We do not encapsulate this Clear&Insert with a NList_Quiet because
       // this will speed up the Insert with about 3-4 seconds for ~6000 items
       DoMethod(lv, MUIM_NList_Clear);
-      DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted, MUIV_NList_Insert_Flag_Raw);
+      DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted,
+                   C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
 
       free(array);
       BusyEnd;
@@ -2645,12 +2664,24 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
 ///
 /// RepackMailFile
 //  (Re/Un)Compresses a message file
+//  Note: If dstxpk is -1 and passwd is NULL, then this function packs
+//        the current mail. It will assume it is plaintext and needs to be packed now
 BOOL RepackMailFile(struct Mail *mail, int dstxpk, char *passwd)
 {
    char *pmeth = NULL, srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
    struct Folder *folder = mail->Folder;
    int peff = 0, srcxpk = folder->XPKType;
    BOOL success = TRUE;
+
+   // if this function was called with dstxpk=-1 and passwd=NULL then
+   // we assume we need to pack the file from plain text to the currently
+   // selected pack method of the folder
+   if(dstxpk == -1 && passwd == NULL)
+   {
+      srcxpk = XPK_OFF;
+      dstxpk = folder->XPKType;
+      passwd = folder->Password;
+   }
 
    MA_GetIndex(folder);
    GetMailFile(srcbuf, folder, mail);
@@ -3249,7 +3280,22 @@ void SaveLayout(BOOL permanent)
    sprintf(buf, "%ld %ld %ld %ld %ld %ld", G->Weights[0], G->Weights[1], G->Weights[2], G->Weights[3], G->Weights[4], G->Weights[5]);
    setstring(G->MA->GUI.ST_LAYOUT, buf);
    DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
-   if (permanent) DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
+
+   // if we want to save to ENVARC:
+   if(permanent)
+   {
+      struct Process *pr = (struct Process *)FindTask(NULL);
+      APTR oldWindowPtr = pr->pr_WindowPtr;
+
+      // this is for the people out there having their SYS: partition locked and whining about
+      // YAM popping up a error requester upon the exit - so it`s their fault now if
+      // the MUI objects aren`t saved correctly.
+      pr->pr_WindowPtr = (APTR)-1;
+
+      DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENVARC);
+
+		  pr->pr_WindowPtr = oldWindowPtr; // restore the old windowPtr
+   }
 }
 ///
 /// ConvertKey
@@ -3413,6 +3459,8 @@ int PGPCommand(char *progname, char *options, int flags)
    BPTR fhi,fho;
    int error = -1;
    char command[SIZE_LARGE];
+
+   DB(kprintf("PGPCommand: [%s] [%s] - %ld\n", progname, options, flags);)
 
    if ((fhi = Open("NIL:", MODE_OLDFILE)))
    {
@@ -3626,10 +3674,9 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
      fo = FO_GetFolderByType(FT_INCOMING, NULL);
    }
 
-   //DB(kprintf("DisplayStatistics: [%s] %ld\n", fo->Name, updateAppIcon);)
-
    // Get Position of Folder
    pos = FO_GetFolderPosition(fo, TRUE);
+   if(pos < 0) return;
 
    // Now we recount the amount of Messages of this Folder
    for (mail = fo->Messages, fo->Unread = fo->New = fo->Total = fo->Sent = fo->Deleted = 0; mail; mail = mail->Next)

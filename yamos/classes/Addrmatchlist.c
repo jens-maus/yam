@@ -266,7 +266,7 @@ DECLARE(ActiveChange) // LONG active
 {
 	GETDATA;
 	struct CustomABEntry *entry;
-	STRPTR res = NULL;
+	STRPTR res;
 
 	if(msg->active < 0) return 0;
 

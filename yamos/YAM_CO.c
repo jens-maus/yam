@@ -833,6 +833,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->LocalCharset, "iso-8859-1");
       co->PrintMethod = PRINTMETHOD_DUMPRAW;
       co->StackSize = 40000;
+      co->AutoColumnResize = TRUE;
    }
 }
 
@@ -884,10 +885,19 @@ void CO_Validate(struct Config *co, BOOL update)
    else                  sprintf(co->TimeZoneStr, "-%02d%02d", -(co->TimeZone + (co->DaylightSaving ? 60 : 0))/60, -(co->TimeZone%60));
 
    G->PGPVersion = CO_DetectPGP(co);
+
+   // prepare the temporary directory
    CreateDirectory(co->TempDir);
-   strmfp(G->WR_Filename[0], co->TempDir, "NewLetter.yam");
-   strmfp(G->WR_Filename[1], co->TempDir, "NewLetter.1.yam");
-   strmfp(G->WR_Filename[2], co->TempDir, "NewLetter.2.yam");
+
+   // then prepare the temporary filenames for the write windows
+   for(i=0; i <= MAXWR; i++)
+   {
+      char filename[SIZE_FILE];
+
+      sprintf(filename, "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
+      strmfp(G->WR_Filename[i], co->TempDir, filename);
+   }
+
    LoadTranslationTable(&(G->TTin), co->AutomaticTranslationIn?NULL:co->TranslationIn);
    G->CO_AutoTranslateIn = co->AutomaticTranslationIn;
    LoadTranslationTable(&(G->TTout), co->TranslationOut);

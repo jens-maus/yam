@@ -85,7 +85,7 @@ struct MailInfo
 struct TempFile
 {
    FILE *FP;
-   char  Filename[SIZE_PATHFILE];
+   char  Filename[SIZE_PATH+SIZE_MFILE];
 };
 
 struct BodyChunkData
@@ -211,11 +211,11 @@ struct NewToolbarEntry
 // function macros
 #define ISpace(ch)            ((BOOL)((ch) == ' ' || ((ch) >= 9 && (ch) <= 13)))
 #define FileExists(f)         FileInfo(f, NULL, NULL, NULL)
-#define MyAddHead(l,m)        { (m)->Next = *(l); *(l) = (m); }
+#define MyAddHead(l,m)        (m)->Next = *(l), *(l) = (m)
 #define BuildAddrName2(p)     BuildAddrName((p)->Address, (p)->RealName)
 #define SetHelp(o,str)        set(o, MUIA_ShortHelp, GetStr(str))
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
-#define MyStrCpy(a,b)         { strncpy((a),(b), sizeof(a)); (a)[sizeof(a)-1] = 0; }
+#define MyStrCpy(a,b)         strncpy((a),(b), sizeof(a)), (a)[sizeof(a)-1] = 0
 #define FreeStrBuf(str)       ((str) ? free(((char *)(str))-sizeof(size_t)) : (void)0)
 
 extern int            BusyLevel;

@@ -65,17 +65,19 @@ static void DI_FinishEdit(void)
    get(gui->TE_EDIT, MUIA_TextEditor_HasChanged, &modified);
    if (modified && G->DI->OldEntry)
    {
+      struct Dict new;
       char *edtext = (char *)DoMethod((Object *)gui->TE_EDIT, MUIM_TextEditor_ExportText);
-      if (*edtext)
-      {
-         struct Dict new;
-         new.Text = StrBufCpy(NULL, edtext);
-         GetMUIString(new.Alias, gui->ST_ALIAS);
-         if (!*new.Alias) strcpy(new.Alias, GetStr(MSG_NewEntry));
-         FreeStrBuf(G->DI->OldEntry->Text);
-         *(G->DI->OldEntry) = new;
-         DoMethod(gui->LV_ENTRIES, MUIM_List_Redraw, MUIV_List_Redraw_All);
-      }
+
+      new.Text = StrBufCpy(NULL, edtext ? edtext : "");
+      if(G->DI->OldEntry->Text) FreeStrBuf(G->DI->OldEntry->Text);
+
+      GetMUIString(new.Alias, gui->ST_ALIAS);
+      if (!*new.Alias) strcpy(new.Alias, GetStr(MSG_NewEntry));
+
+      *(G->DI->OldEntry) = new;
+
+      DoMethod(gui->LV_ENTRIES, MUIM_List_Redraw, MUIV_List_Redraw_All);
+
       G->DI->Modified = TRUE;
       FreeVec(edtext);
    }
@@ -332,13 +334,13 @@ static struct DI_ClassData *DI_New(void)
          SetHelp(data->GUI.BT_DELETE,    MSG_HELP_DI_BT_DELETE);
          SetHelp(data->GUI.BT_PASTE,     MSG_HELP_DI_BT_PASTE);
          DoMethod(data->GUI.ST_ALIAS    ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,data->GUI.TE_EDIT      ,3,MUIM_Set,MUIA_TextEditor_HasChanged,TRUE);
-         DoMethod(data->GUI.ST_ALIAS    ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&DI_DisplayHook,0);
+         DoMethod(data->GUI.ST_ALIAS    ,MUIM_Notify,MUIA_String_Acknowledge  ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&DI_DisplayHook);
          DoMethod(data->GUI.BT_NEW      ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_ModifyHook,0);
          DoMethod(data->GUI.BT_ADDSELECT,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_ModifyHook,1);
          DoMethod(data->GUI.BT_DELETE   ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_DeleteHook,0);
          DoMethod(data->GUI.BT_PASTE    ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_PasteHook,0);
          DoMethod(data->GUI.LV_ENTRIES  ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_PasteHook,0);
-         DoMethod(data->GUI.LV_ENTRIES  ,MUIM_Notify,MUIA_List_Active         ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&DI_DisplayHook,0);
+         DoMethod(data->GUI.LV_ENTRIES  ,MUIM_Notify,MUIA_List_Active         ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&DI_DisplayHook);
          DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_CloseHook,0);
          return data;
       }

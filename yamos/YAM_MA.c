@@ -1102,13 +1102,20 @@ int MA_NewReply(struct Mail **mlist, int flags)
 ///
 /// MA_RemoveAttach
 //  Removes attachments from a message
-void MA_RemoveAttach(struct Mail *mail)
+void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 {
    struct Part *part;
    int f;
    FILE *out, *in;
    char *cmsg, buf[SIZE_LINE], fname[SIZE_PATHFILE], tfname[SIZE_PATHFILE];
    struct Folder *fo = mail->Folder;
+
+   // if we need to warn the user of this operation we put up a requester
+   // before we go on
+   if(warning && MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) == 0)
+   {
+     return;
+   }
 
    sprintf(tfname, "%s.tmp", GetMailFile(fname, NULL, mail));
    RE_InitPrivateRC(mail, PM_ALL);
@@ -1153,13 +1160,20 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
    struct Mail **mlist;
    int i;
 
+   // we need to warn the user of this operation we put up a requester
+   // before we go on
+   if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) == 0)
+   {
+      return;
+   }
+
    if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
    {
       int selected = (int)*mlist;
       BusyGauge(GetStr(MSG_BusyRemovingAtt), "", selected);
       for (i = 0; i < selected; i++)
       {
-         MA_RemoveAttach(mlist[i+2]);
+         MA_RemoveAttach(mlist[i+2], FALSE);
          BusySet(i+1);
       }
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
@@ -2977,7 +2991,7 @@ ULONG MA_MLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_Context
     case MMEN_SAVE:       DoMethod(G->App, MUIM_CallHook, &MA_SavePrintHook,      FALSE); break;
     case MMEN_DETACH:     DoMethod(G->App, MUIM_CallHook, &MA_SaveAttachHook); break;
     case MMEN_CROP:       DoMethod(G->App, MUIM_CallHook, &MA_RemoveAttachHook); break;
-    case MMEN_EXPMSG:     DoMethod(G->App, MUIM_CallHook, &MA_ExportMessagesHook); break;
+    case MMEN_EXPMSG:     DoMethod(G->App, MUIM_CallHook, &MA_ExportMessagesHook, FALSE); break;
     case MMEN_NEW:        DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_NEW,  0); break;
     case MMEN_SELALL:     DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On,     NULL); break;
     case MMEN_SELNONE:    DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off,    NULL); break;

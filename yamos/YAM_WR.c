@@ -641,10 +641,10 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 //  Creates an index table for a database file
 static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
 {
+   int result = FALSE;
    char buffer[SIZE_LARGE];
    long fpos, l = strlen(sep);
    FILE *in, *out;
-   BOOL success = FALSE;
 
    if ((in = fopen(source, "r")))
    {
@@ -653,12 +653,14 @@ static BOOL WR_CreateHashTable(char *source, char *hashfile, char *sep)
          fpos = 0; fwrite(&fpos, sizeof(long), 1, out);
          while (fgets(buffer, SIZE_LARGE, in))
             if (!strncmp(buffer, sep, (size_t)l)) { fpos = ftell(in); fwrite(&fpos, sizeof(long), 1, out); }
-         success = TRUE;
+
+         result = TRUE;
          fclose(out);
       }
       fclose(in);
    }
-   return success;
+
+   return (BOOL)result;
 }
 
 ///
@@ -851,7 +853,24 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 {
    FILE *oldfh;
-   if ((oldfh = fopen(GetMailFile(NULL, NULL, comp->OrigMail), "r")))
+   char *mailfile = GetMailFile(NULL, NULL, comp->OrigMail);
+   char unpFile[SIZE_PATHFILE];
+   BOOL xpkPacked = FALSE;
+   BOOL result = FALSE;
+
+   // we need to analyze if the folder we are reading this mail from
+   // is encrypted or compressed and then first unpacking it to a temporary file
+   if(comp->OrigMail->Folder->XPKType != XPK_OFF)
+   {
+      // so, this mail seems to be packed, so we need to unpack it to a temporary file
+      if(StartUnpack(mailfile, unpFile, comp->OrigMail->Folder) && stricmp(mailfile, unpFile) != 0)
+      {
+        xpkPacked = TRUE;
+      }
+      else return FALSE;
+   }
+
+   if ((oldfh = fopen(xpkPacked ? unpFile : mailfile, "r")))
    {
       BOOL infield = FALSE;
       char buf[SIZE_LINE];
@@ -864,9 +883,14 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
          if (!infield) fputs(buf, fh);
       }
       fclose(oldfh);
-      return TRUE;
+
+      result = TRUE;
    }
-   return FALSE;
+
+   // if we temporary unpacked the file we delete it now
+   if(xpkPacked) DeleteFile(unpFile);
+
+   return result;
 }
 
 ///
@@ -1473,7 +1497,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       set(gui->WI, MUIA_Window_Open, FALSE);
       mlist[2] = new; MA_SendMList(mlist);
    }
-   DeleteFile(WR_AutoSaveFile(winnum));
+   if(C->AutoSave > 0) DeleteFile(WR_AutoSaveFile(winnum));
    DisposeModulePush(&G->WR[winnum]);
    DisplayStatistics(outfolder, TRUE);
 }
@@ -1585,12 +1609,12 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
    {
       if (!ar->fr_NumArgs)
       {
-         strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
+         strmfp(filename, ar->fr_Drawer, ar->fr_File);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
       else for (i = 0; i < ar->fr_NumArgs; i++)
       {
-         strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_ArgList[i].wa_Name);
+         strmfp(filename, ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
    }

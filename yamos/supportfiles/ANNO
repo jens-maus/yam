@@ -1,4 +1,4 @@
-YAM 2.4 AVAILABLE FOR DOWNLOAD
+YAM 2.4p1 AVAILABLE FOR DOWNLOAD
 
 
 TITLE
@@ -8,7 +8,7 @@ TITLE
 
 VERSION
 
-     2.4
+     2.4p1
 
 
 AUTHOR
@@ -53,76 +53,42 @@ DESCRIPTION
 
 NEW FEATURES
 
-     * Hierarchical folder list - folders can now be arranged into
-       groups, and nested at the user's discretion
+     YAM 2.4p1 is an incremental update for 2.4 and requires a previous
+     complete YAM 2.4 installation. The following changes and bugfixes
+     have been done:
 
-     * SMTP & POP3 TLS1/SSL3 support for stunnel servers, using
-       AmiSSL.library
-
-     * Email address cache, making it possible to "remember" the last
-       N used recipients if they don't appear in the address book
-
-     * More powerful recipient string gadgets, resolving aliases,
-       real names and email addresses "on the fly" as they are found
-       in the address book or the email cache
-
-     * Optional pop-up menus in the folder & message lists
-
-     * Automatic codepage detection and translation, specially meant
-       for cyrillic users.
-
-     * Reworked status bar
-
-     * Automatically finds the suitable mailing list support settings
-
-     * Extended support for mailto: links
-
-     * Search function in the Write window
-
-     * Customizable size format and localized unit display
-
-     * Individual appicon stats for folders, with an user-definable
-       label
-
-     * New hidden option "JumpToIncoming"
-
-     * Deleting a block of text with RAmiga-Del automatically inserts
-       a "[...]" marker
-
-     * Built-in mouse wheel support
-
-     * New "marked" status
-
-     * "application/pdf" is now in the built-in list of MIME types
-
-     * Extended documentation
+     - Fixed: failed to quote messages containing attachments (damato)
+     - Fixed: the "Abbreviation" string gadget in the Glossary reset
+       itself to "- new -" every time the contents were deleted (damato)
+     - Fixed: if AutoSave was disabled for the internal editor
+       (AutoSave = 0), it tried to delete an inexistant ".autosave0"
+       file (damato)    
+     - Changed: added support for the DST variable created by Facts,
+       making SummerTimeGuard emulation obsolete (damato)
 
 
 SPECIAL REQUIREMENTS
 
+     * YAM 2.4 (AmigaOS or MorphOS)
      * AmigaOS V39+, MC68020+, MUI3.8+ and the latest BetterString,
        NList, NListtree, TextEditor & Toolbar classes (included)
 
 
 AVAILABILITY
 
-     YAM 2.4 is now available for download at the YAMOS homepage:
+     YAM 2.4p1 is now available for download at the YAMOS homepage:
 
               http://sourceforge.net/projects/yamos/
 
 
 DIRECTORY
 
-     /pub/aminet/comm/mail  (hopefully soon comm/yam :-)
+     /pub/aminet/comm/yam
 
 
 FILE NAMES
 
-     YAM24.lha      Main archive - basic 020 binary and English guide
-     YAM24cpu.lha   Diffs for 040/060 processors and the GPatch utility
-     YAM24loc.lha   Foreign language support files: catalogs & guides
-     YAM24con.lha   Additional graphics, ARexx scripts, etc.
-     YAM24mos.lha   MorphOS binary, includes starter
+     YAM24p1.lha
 
 
 OTHER
@@ -159,4 +125,4 @@ For the YAMOS team,
 
 -- 
 David Rey
-david @ saug . org
+david@saug.org
