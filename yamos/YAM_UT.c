@@ -110,11 +110,13 @@ static char *IdentifyFileDT(char *fname);
 static void TimeValTZConvert(struct timeval *tv, enum TZConvert tzc);
 static void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc);
 
+#ifndef __amigaos4__
 struct PathNode
 {
-   BPTR next;
-   BPTR dir;
+   BPTR pn_Next;
+   BPTR pn_Lock;
 };
+#endif
 
 /// CloneWorkbenchPath
 static BPTR CloneWorkbenchPath(struct WBStartup *wbmsg)
@@ -152,10 +154,10 @@ static BPTR CloneWorkbenchPath(struct WBStartup *wbmsg)
                      UnLock(dir2);
                      break;
                   }
-                  node->next = 0;
-                  node->dir = dir2;
+                  node->pn_Next = 0;
+                  node->pn_Lock = dir2;
                   *p = MKBADDR(node);
-                  p = &node->next;
+                  p = &node->pn_Next;
                }
             }
          }
@@ -173,8 +175,8 @@ static void FreeWorkbenchPath(BPTR path)
    while (path)
    {
       struct PathNode *node = BADDR(path);
-      path = node->next;
-      UnLock(node->dir);
+      path = node->pn_Next;
+      UnLock(node->pn_Lock);
       FreeVec(node);
    }
 }

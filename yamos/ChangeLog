@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-21  Jens Langner <Jens.Langner@light-speed.de>
+
+    * OS4: more adaptions to the includes and some sources to get
+      more AmigaOS4 compatible.
+
 2004-01-18  Jens Langner <Jens.Langner@light-speed.de>
 
     * Makefile.OS4: added first version of AmigaOS4 aware makefile.
