@@ -10,7 +10,6 @@
 
 #ifdef _DCC
    #include <fcntl.h>
-   #define index(a,b) strchr(a,b)
    #define isascii(c) (((c)&0xff)<127)
    extern struct Library *WorkbenchBase;
    extern struct Library *KeymapBase;
@@ -18,10 +17,13 @@
 #elif defined(__STORM__)
    #define isascii(c) (((c)&0xff)<127)
    #define F_OK    0
-   char *index(const char *s, int c);
 #else
    #include <unistd.h>
 #endif
+
+/*
+** <error.h>
+*/
 
 #define _OSERR IoErr()
 
