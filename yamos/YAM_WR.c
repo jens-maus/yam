@@ -955,7 +955,7 @@ BOOL FirstAddr=TRUE;
 		// copy string as strtok() will modify it
 		if(buf = strdup(CheckThese[i]))
 		{
-		int hits,currsec;
+		int hits = 0, currsec;
 		STRPTR in=buf,s,t;
 		struct MUIS_Listtree_TreeNode *tn;
 
