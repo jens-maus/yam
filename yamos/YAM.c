@@ -591,13 +591,13 @@ static void Abort(APTR formatnum, ...)
 }
 ///
 /// FlushLibrary
-/// Flushes a library
+// Flushes a library
 static VOID FlushLibrary(STRPTR name)
 {
 	struct Library *result;
 
 	Forbid();
-	if (result = (struct Library *)FindName(&SysBase->LibList, name))
+	if ((result = (struct Library *)FindName(&SysBase->LibList, name)))
 		RemLibrary(result);
 	Permit();
 }
