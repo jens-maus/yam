@@ -223,10 +223,15 @@ OVERLOAD(MUIM_Setup)
 				def = "audio";
 			else if(!strnicmp(mailPart->ContentType, "text", 4))
 			{
-				if(!strnicmp((mailPart->ContentType)+5, "html", 4))
-					def = "html";
-				else if(!strnicmp((mailPart->ContentType)+5, "plain", 5))
-					def = "ascii";
+				if(strlen(mailPart->ContentType) > 5)
+				{
+					if(!strnicmp((mailPart->ContentType)+5, "html", 4))
+						def = "html";
+					else if(!strnicmp((mailPart->ContentType)+5, "plain", 5))
+						def = "ascii";
+					else
+						def = "text";
+				}
 				else
 					def = "text";
 			}
