@@ -7,13 +7,16 @@ $Source$
 
 2005-03-01  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: fixed bug where upon replying/forwarding based on a virtual mail
+      didn't work as expected because the FreePrivateRMData() call did free all
+      data, even the virtual mail during the reply/forward phase.
     * YAM_RE.c, YAM_read.h: unfortunatly I had to touch the unique ReadMailData
       ID generation code for creating temporary files once again as it still
       was not as unique as expected when dealing with private ReadMailData.
       However, now we have that generation code in one single macro which
       could be quickly adapted if it is still not unique enough :)
     * YAM_RE.c: fixed bug where an attached "message/rfc822" part could not
-      be opened because a CleanupReadMailData() called cleaned up the virtual
+      be opened because a CleanupReadMailData() call cleaned up the virtual
       mail directly before trying to display it in an own read window.
 
 2005-02-28  Jens Langner <Jens.Langner@light-speed.de>

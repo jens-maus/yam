@@ -2857,7 +2857,7 @@ struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode)
 //  Frees resources used by background message parsing
 void FreePrivateRMData(struct ReadMailData *rmData)
 {
-  if(CleanupReadMailData(rmData, TRUE))
+  if(CleanupReadMailData(rmData, FALSE))
     free(rmData);
 }
 ///
