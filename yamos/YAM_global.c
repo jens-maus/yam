@@ -29,6 +29,28 @@
 #include "YAM_locale.h"
 #include "YAM_utilities.h"
 
+// some platform/compiler dependent stack definitions.
+const char * yam_stack = "$STACK:65536";      // Shell v45 and later
+#if defined(__amigaos4__)
+  long __stack_size = 65536;             // set the minimum startup stack for clib2
+  long __default_pool_size = 128*1024;   // set the pool & puddle size for the
+  long __default_puddle_size = 32*1024;  // AllocPool() functions to something more reasonable.
+#elif defined(__SASC) || defined(__GNUC__)
+  #if defined(__libnix__) || defined(__SASC)
+  /* GCC (libnix) supports the same as SAS/C! */
+  long __stack = 65536;
+  long __buffsize = 8192;
+  long _MSTEP = 16384;
+  #else
+  long __stack_size = 65536;    // set the minimum startup stack for clib2
+  #endif
+#elif defined(__VBCC__) /* starting with VBCC 0.8 release */
+  long __stack = 65536;
+#else
+  #error "initial stack specification failed"
+#endif
+
+/* the version stuff */
 #if defined(__PPC__)
   #if defined(__amigaos4__)
     #define CPU " [OS4/PPC]"
@@ -51,7 +73,6 @@
   #error "Unsupported CPU model - check compiler defines"
 #endif
 
-/* the version stuff */
 #define __YAM_VERSION   "2.5"
 #define __YAM_DEVEL     "-dev"
 #ifndef __YAM_BUILDID
@@ -82,29 +103,6 @@ const unsigned long yamversiondays = __YAM_VERDAYS;
   const char * const yamcompiler = " (unknown)";
   #warning "unknown compiler specification"
 #endif
-
-// some platform/compiler dependent stack definitions.
-const char * yam_stack = "$STACK:65536";      // used by Shell v45 and later
-#if defined(__amigaos4__)
-  long __stack_size = 65536;             // set the minimum startup stack for clib2
-  long __default_pool_size = 128*1024;   // set the pool & puddle size for the
-  long __default_puddle_size = 32*1024;  // AllocPool() functions to something more reasonable.
-#elif defined(__SASC) || defined(__GNUC__)
-  #if defined(__libnix__) || defined(__SASC)
-  /* GCC (libnix) supports the same as SAS/C! */
-  long __stack = 65536;
-  long __buffsize = 8192;
-  long _MSTEP = 16384;
-  #else
-  long __stack_size = 65536;    // set the minimum startup stack for clib2
-  #endif
-#elif defined(__VBCC__) /* starting with VBCC 0.8 release */
-  long __stack = 65536;
-#else
-  #error "initial stack specification failed"
-#endif
-
-struct WBStartup *WBmsg;
 
 // lets defined the AmigaOS4 style interfaces and library bases.
 // Please note that with OS4 all libraries bases are plain
@@ -179,6 +177,8 @@ struct Library *       LayersBase     = NULL;
 struct Library *       DiskfontBase   = NULL;
 
 #endif /* __amigaos4__ */
+
+struct WBStartup *WBmsg;
 
 const char* const SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
 const char* const FolderNames[4] = { "incoming", "outgoing", "sent", "deleted" };
