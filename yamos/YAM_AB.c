@@ -235,7 +235,7 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
    APTR string;
    struct MUI_NListtree_TreeNode *active;
 
-   if (active = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_GetEntry, NULL, MUIV_NListtree_GetEntry_Position_Active, 0), TAG_DONE)
+   if (active = (struct MUI_NListtree_TreeNode *)GetMUI(G->AB->GUI.LV_ADRESSES, MUIA_NListtree_Active))
    {
       int winnum = G->AB->WrWin;
       struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
@@ -879,7 +879,7 @@ MakeHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
 /*** AB_LV_DspFunc - Address book listview display hook ***/
 HOOKPROTONO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 {
-   static char dispal[SIZE_DEFAULT], dispco[SIZE_DEFAULT+8];
+   static char dispal[SIZE_DEFAULT];
 
    if (msg && msg->TreeNode)
    {

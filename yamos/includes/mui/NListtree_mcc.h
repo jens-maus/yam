@@ -176,6 +176,8 @@ struct MUI_NListtree_TestPos_Result {
 #define MUIM_NListtree_CopyToClip                           0xfec81119  // *** Copy an entry or part to the clipboard.
 #define MUIM_NListtree_FindUserData                         0xfec8111a  // *** Find a node upon user data.
 #define MUIM_NListtree_Clear                                0xfec8111b  // *** Clear complete tree.
+#define MUIM_NListtree_DropType                             0xfec8111e  // ***
+#define MUIM_NListtree_DropDraw                             0xfec8111f  // ***
 
 
 /*** Method structs ***/
@@ -373,6 +375,22 @@ struct MUIP_NListtree_CopyToClip {
     LONG Unit;
 };
 
+
+struct  MUIP_NListtree_DropType {
+    ULONG MethodID;
+    LONG *Pos;
+    LONG *Type;
+    LONG MinX, MaxX, MinY, MaxY;
+    LONG MouseX, MouseY;
+};
+
+
+struct  MUIP_NListtree_DropDraw {
+    ULONG MethodID;
+    LONG Pos;
+    LONG Type;
+    LONG MinX, MaxX, MinY, MaxY;
+};
 
 
 /*** Special method values ***/

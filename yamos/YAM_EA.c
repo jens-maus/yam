@@ -204,23 +204,24 @@ MakeStaticHook(EA_PutEntryHook, EA_PutEntry);
 //  Inserts an entry into the address book tree
 void EA_InsertBelowActive(struct ABEntry *addr, int flags)
 {
-   APTR lt = G->AB->GUI.LV_ADRESSES;
-   struct MUI_NListtree_TreeNode *node, *list, *res;
-   get(lt, MUIA_NListtree_Active, &node);
-   if (node == MUIV_NListtree_Active_Off)
-   {
-      res = (struct MUI_NListtree_TreeNode *)DoMethod(lt, MUIM_NListtree_Insert, addr->Alias, addr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, flags);
-   }
-   else
-   {
-      list = (struct MUI_NListtree_TreeNode *)DoMethod(lt, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Active, MUIV_NListtree_GetEntry_Position_Parent, 0);
-      res = (struct MUI_NListtree_TreeNode *)DoMethod(lt, MUIM_NListtree_Insert, addr->Alias, addr, list, node, flags);
-   }
-/*
-   
-   ULONG pred = DoMethod(lt, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Active, MUIV_NListtree_GetEntry_Position_Active, 0);
-*/
-   if (res) set(lt, MUIA_NListtree_Active, res);
+  APTR lt = G->AB->GUI.LV_ADRESSES;
+  struct MUI_NListtree_TreeNode *node, *list;
+
+  // get the active node
+  get(lt, MUIA_NListtree_Active, &node);
+
+  if (node == MUIV_NListtree_Active_Off)
+  {
+    list = MUIV_NListtree_Insert_ListNode_Root;
+    node = (struct MUI_NListtree_TreeNode *)MUIV_NListtree_Insert_PrevNode_Sorted;
+  }
+  else
+  {
+    list = (struct MUI_NListtree_TreeNode *)GetMUI(lt, MUIA_NListtree_ActiveList);
+  }
+
+  // now we insert the node in the list accordingly and set it active automatically
+  DoMethod(lt, MUIM_NListtree_Insert, addr->Alias, addr, list, node, (flags | MUIV_NListtree_Insert_Flag_Active), TAG_DONE);
 }
 
 ///
@@ -467,7 +468,7 @@ MakeStaticHook(EA_CloseHook, EA_CloseFunc);
 //  Creates address book entry window
 static struct EA_ClassData *EA_New(int winnum, int type)
 {
-struct EA_ClassData *data;
+   struct EA_ClassData *data;
 
    if (data = calloc(1,sizeof(struct EA_ClassData)))
    {

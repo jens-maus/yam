@@ -100,6 +100,7 @@ extern struct Hook MA_SendHook;
 extern struct Hook MA_SetFolderInfoHook;
 extern struct Hook MA_SetMessageInfoHook;
 extern struct Hook PO_WindowHook;
+extern struct Hook MA_FolderKeyHook;
 
 int  MA_AllocRules(struct Search **search, int mode);
 void MA_FreeRules(struct Search **search, int scnt);

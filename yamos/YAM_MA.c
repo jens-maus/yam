@@ -2081,6 +2081,32 @@ HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct MUIP_NListtree_CompareMes
 }
 MakeHook(MA_LV_FCmp2Hook, MA_LV_FCmp2Func);
 ///
+/// MA_FolderKeyFunc
+//  If the user pressed 0-9 we jump to folder 1-10
+HOOKPROTONHNO(MA_FolderKeyFunc, void, int *idx)
+{
+  struct MUI_NListtree_TreeNode *tn = NULL;
+  int i, count = idx[0];
+
+  // we get the first entry and if it`s a LIST we have to get the next one
+  // and so on, until we have a real entry for that key or we set nothing active
+  for(i=0; i <= count; i++)
+  {
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0, TAG_DONE);
+    if(!tn) return;
+
+    if(tn->tn_Flags & TNF_LIST) count++;
+  }
+
+  // Force that the list is open at this entry
+  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, 0, TAG_DONE);
+
+  // Now set this treenode activ
+  set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
+}
+MakeHook(MA_FolderKeyHook, MA_FolderKeyFunc);
+
+///
 
 /*** GUI ***/
 enum { MMEN_ABOUT=1,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HIDE,MMEN_QUIT,
@@ -2586,10 +2612,12 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat del" ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_DelKeyHook,FALSE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift del" ,MUIV_Notify_Application  ,4,MUIM_CallHook      ,&MA_DelKeyHook,TRUE);
          DoMethod(G->App                   ,MUIM_Notify,MUIA_Application_Iconified,FALSE        ,data->GUI.WI             ,3,MUIM_Set                 ,MUIA_Window_Open,TRUE);
+
+         // Define Notifies for ShortcutFolderKeys
          for (i = 0; i < 10; i++)
          {
             key[8] = '0'+i;
-            DoMethod(data->GUI.WI, MUIM_Notify,MUIA_Window_InputEvent, key, data->GUI.NL_FOLDERS, 3, MUIM_Set, MUIA_NListtree_Active, i);
+            DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_FolderKeyHook, i, TAG_DONE);
          }
          return data;
       }

@@ -511,3 +511,14 @@
     * now YAM doesn`t require the PROGDIR:Icons/* images anymore. This "feature" was
       added accidently and now it should only print a warning message to the
       Errorwindow of YAM.
+
+2001-06-09  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed folder shortcut keys "0-9" to have a fast jump to a folder.
+      Folder groups are excluded here and will be overjumped. Also a folded tree will
+      be unfolded if the user press a number where the tree was folded.
+    * reworked and optimized some code in the addressbook code.
+    * fixed addressbook entry selection bug. If a new mail was created and the user
+      doubleclicked a entry in the addressbook to get the name in the addressfield
+      YAM was not coping this address.
+
