@@ -5,6 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-12  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: changed array MUIM_NList_Insert call to use the newly
+      introduced MUIV_NList_Insert_Flag_Raw flag. This flag allows to
+      insert data into a NList without reevaluating the NList`s column
+      width on each insert operation and therefore speeds up the insertion.
+      This new flag is only available if NList.mcc v20.109 or higher is
+      used. If a lower version is used, YAM will simply display the mail
+      listview with the old speed :)
+      Tests have shown that together with this new flag it is possible to
+      insert ~8000 elements in around 1-2 sec. instead of 8-9 seconds
+      previously.
+
 2003-02-04  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed bug #678206 where YAM did strip the signature separator

@@ -1,17 +1,13 @@
 /*
-  NList.mcc (c) Copyright 1996-1997 by Gilles Masson
-  Registered MUI class, Serial Num: 1d51     0x9d510030 to 0x9d5100A0 / 0x9d5100C0 to 0x9d5100FF
-  *** use only YOUR OWN Serial Number for your public custom class ***
-  NList_mcc.h
+**  NList.mcc (c) Copyright 1996-2003 by Gilles Masson, C.Scholling, P.Gruchala, S.Bauer and J.Langner
+**
+**  Registered MUI class, Serial Num: 1d51     0x9d510030 to 0x9d5100A0 / 0x9d5100C0 to 0x9d5100FF
+**  *** use only YOUR OWN Serial Number for your public custom class ***
+**
+**  $Id$
+**
+**  NList_mcc.h
 */
-
-
-/* MUI Prop and Scroller classes stuff which is still not in libraries/mui.h  (in MUI3.8) */
-/* it gives to the prop object it's increment value */
-#ifndef MUIA_Prop_DeltaFactor
-#define MUIA_Prop_DeltaFactor 0x80427C5E
-#endif
-
 
 #ifndef MUI_NList_MCC_H
 #define MUI_NList_MCC_H
@@ -21,6 +17,13 @@
 #endif
 
 #include "amiga-align.h"
+
+/* MUI Prop and Scroller classes stuff which is still not in libraries/mui.h  (in MUI3.8) */
+/* it gives to the prop object it's increment value */
+#ifndef MUIA_Prop_DeltaFactor
+#define MUIA_Prop_DeltaFactor 0x80427C5E
+#endif
+
 
 #define MUIC_NList "NList.mcc"
 #define NListObject MUI_NewObject(MUIC_NList
@@ -190,6 +193,7 @@
 #define MUIV_NList_Insert_Active         -1
 #define MUIV_NList_Insert_Sorted         -2
 #define MUIV_NList_Insert_Bottom         -3
+#define MUIV_NList_Insert_Flag_Raw       (1<<0)
 
 #define MUIV_NList_Remove_First           0
 #define MUIV_NList_Remove_Active         -1
@@ -210,6 +214,7 @@
 #define MUIV_NList_Redraw_Active         -1
 #define MUIV_NList_Redraw_All            -2
 #define MUIV_NList_Redraw_Title          -3
+#define MUIV_NList_Redraw_VisibleCols    -5
 
 #define MUIV_NList_Move_Top               0
 #define MUIV_NList_Move_Active           -1
@@ -358,6 +363,7 @@
 
 #define	MUIV_NList_SelectChange_Flag_Multi (1 << 0)
 
+#define MUIV_NList_UseImage_All         (-1)
 
 /* Structs */
 
@@ -475,12 +481,16 @@ struct MUI_NList_GetSelectInfo
 #define MUIM_NList_Sort3              0x9d510095 /* GM */
 #define MUIM_NList_GetPos             0x9d510096 /* GM */
 #define MUIM_NList_SelectChange       0x9d5100A0 /* GM */
+#define MUIM_NList_Construct          0x9d5100A1 /* GM */
+#define MUIM_NList_Destruct           0x9d5100A2 /* GM */
+#define MUIM_NList_Compare            0x9d5100A3 /* GM */
+#define MUIM_NList_Display            0x9d5100A4 /* GM */
 struct  MUIP_NList_Clear              { ULONG MethodID; };
 struct  MUIP_NList_CreateImage        { ULONG MethodID; Object *obj; ULONG flags; };
 struct  MUIP_NList_DeleteImage        { ULONG MethodID; APTR listimg; };
 struct  MUIP_NList_Exchange           { ULONG MethodID; LONG pos1; LONG pos2; };
 struct  MUIP_NList_GetEntry           { ULONG MethodID; LONG pos; APTR *entry; };
-struct  MUIP_NList_Insert             { ULONG MethodID; APTR *entries; LONG count; LONG pos; };
+struct  MUIP_NList_Insert             { ULONG MethodID; APTR *entries; LONG count; LONG pos; ULONG flags; };
 struct  MUIP_NList_InsertSingle       { ULONG MethodID; APTR entry; LONG pos; };
 struct  MUIP_NList_Jump               { ULONG MethodID; LONG pos; };
 struct  MUIP_NList_Move               { ULONG MethodID; LONG from; LONG to; };
@@ -493,7 +503,7 @@ struct  MUIP_NList_TestPos            { ULONG MethodID; LONG x; LONG y; struct M
 struct  MUIP_NList_CopyToClip         { ULONG MethodID; LONG pos; ULONG clipnum; APTR *entries; struct Hook *hook; };
 struct  MUIP_NList_UseImage           { ULONG MethodID; Object *obj; LONG imgnum; ULONG flags; };
 struct  MUIP_NList_ReplaceSingle      { ULONG MethodID; APTR entry; LONG pos; LONG wrapcol; LONG align; };
-struct  MUIP_NList_InsertWrap         { ULONG MethodID; APTR *entries; LONG count; LONG pos; LONG wrapcol; LONG align; };
+struct  MUIP_NList_InsertWrap         { ULONG MethodID; APTR *entries; LONG count; LONG pos; LONG wrapcol; LONG align; ULONG flags; };
 struct  MUIP_NList_InsertSingleWrap   { ULONG MethodID; APTR entry; LONG pos; LONG wrapcol; LONG align; };
 struct  MUIP_NList_GetEntryInfo       { ULONG MethodID; struct MUI_NList_GetEntryInfo *res; };
 struct  MUIP_NList_QueryBeginning     { ULONG MethodID; };
@@ -514,7 +524,10 @@ struct  MUIP_NList_SetColumnCol       { ULONG MethodID; LONG column; LONG col; }
 struct  MUIP_NList_Sort3              { ULONG MethodID; LONG sort_type; LONG sort_type_add; LONG which; };
 struct  MUIP_NList_GetPos             { ULONG MethodID; APTR entry; LONG *pos; };
 struct  MUIP_NList_SelectChange       { ULONG MethodID; LONG pos; LONG state; ULONG flags; };
-
+struct  MUIP_NList_Construct          { ULONG MethodID; APTR entry; APTR pool; };
+struct  MUIP_NList_Destruct           { ULONG MethodID; APTR entry; APTR pool; };
+struct  MUIP_NList_Compare            { ULONG MethodID; APTR entry1; APTR entry2; LONG sort_type1; LONG sort_type2; };
+struct  MUIP_NList_Display            { ULONG MethodID; APTR entry; LONG entry_pos; STRPTR *strings; STRPTR *preparses; };
 
 #define DISPLAY_ARRAY_MAX 64
 
@@ -584,4 +597,3 @@ struct NList_CopyColumnToClipMessage
 #include "default-align.h"
 
 #endif /* MUI_NList_MCC_H */
-
