@@ -1,3 +1,15 @@
+2002-05-17  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_UT.c, YAM_utilities.h: added a wrapper function to
+      implement a MUI_Request() in a secure way. Also added a
+      wrapper #define for MUI_Request() to automatically use
+      the new YAMMUIRequest() function.
+    * YAM_FO.c, YAM_US.c, YAM_UT.c, YAM_utilities.h:
+      introduced some special macros COLLECT_RETURNIDS and
+      REISSUE_RETURNIDS to handle some problems with overlapping
+      ReturnID values at the usage time of MUIM_Notifys with
+      MenuActions.
+
 2002-05-15  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_AB.c: fixed bug #555112 where we cleared the Listtree before

@@ -158,6 +158,46 @@ struct NewToolbarEntry
 							         (fib)->fib_DirEntryType != ST_SOFTLINK && \
 							         (fib)->fib_DirEntryType != ST_LINKDIR)
 
+/* ReturnID collecting macros
+** every COLLECT_ have to be finished with a REISSUE_
+**
+** Example:
+**
+** COLLECT_RETURNIDS;
+**
+** while(running)
+** {
+**    ULONG signals;
+**    switch (DoMethod(G->App, MUIM_Application_Input, &signals))
+**    {
+**        case ID_PLAY:
+**           PlaySound();
+**           break;
+**
+**        case ID_CANCEL:
+**        case MUIV_Application_ReturnID_Quit:
+**           running = FALSE;
+**           break;
+**    }
+**
+**    if (running && signals) Wait(signals);
+** }
+**
+** REISSUE_RETURNIDS;
+*/
+#define COLLECT_SIZE 32
+#define COLLECT_RETURNIDS { \
+                            ULONG returnID[COLLECT_SIZE], csize = COLLECT_SIZE, rpos = COLLECT_SIZE, userData; \
+                            while(csize && (userData = DoMethod(G->App, MUIM_Application_Input, 0))) \
+                              returnID[--csize] = userData
+
+#define REISSUE_RETURNIDS   while(rpos > csize) \
+                              DoMethod(G->App, MUIM_Application_ReturnID, returnID[--rpos]); \
+                          }
+
+// Wrapper define to be able to use the standard call of MUI_Request
+#define MUI_Request YAMMUIRequest
+
 // function macros
 #define ISpace(ch)            ((BOOL)((ch) == ' ' || ((ch) >= 9 && (ch) <= 13)))
 #define FileExists(f)         FileInfo(f, NULL, NULL, NULL)
@@ -303,6 +343,7 @@ char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
 BOOL     LoadParsers(void);
 void     SParse(char *);
+LONG     YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
 APTR     WhichLV(struct Folder *folder);
 
 #endif /* YAM_UTILITIES_H */

@@ -175,6 +175,25 @@ static void FreeWorkbenchPath(BPTR path)
 ///
 
 /*** Requesters ***/
+/// YAMMUIRequest
+//  Own -secure- wrapper implementation of MUI_Request with collecting and reissueing ReturnIDs
+LONG YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
+{
+  LONG result = 0;
+
+  // lets collect the waiting returnIDs now
+  COLLECT_RETURNIDS;
+
+#undef MUI_Request
+  result = MUI_Request(app, win, flags, title, gadgets, format, &format+1);
+#define MUI_Request YAMMUIRequest
+
+  // now lets reissue the collected returnIDs again
+  REISSUE_RETURNIDS;
+
+  return result;
+}
+///
 /// StringRequest
 //  Puts up a string requester
 int StringRequest(char *string, int size, char *title, char *body, char *yestext, char *alttext, char *notext, BOOL secret, APTR parent)
@@ -211,6 +230,10 @@ int StringRequest(char *string, int size, char *title, char *body, char *yestext
    DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
    DoMethod(st_in, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
    DoMethod(wi_sr, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
+
+   // lets collect the waiting returnIDs now
+   COLLECT_RETURNIDS;
+
    if (!SafeOpenWindow(wi_sr)) ret_code = 0;
    else while (ret_code == -1)
    {
@@ -223,6 +246,10 @@ int StringRequest(char *string, int size, char *title, char *body, char *yestext
       }
       if (ret_code == -1 && signals) Wait(signals);
    }
+
+   // now lets reissue the collected returnIDs again
+   REISSUE_RETURNIDS;
+
    if (ret_code > 0) GetMUIString(string, st_in);
    DoMethod(G->App, OM_REMMEMBER, wi_sr);
    set(G->App, MUIA_Application_Sleep, FALSE);
@@ -276,6 +303,10 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
       DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
       DoMethod(lv_folder, MUIM_Notify, MUIA_Listview_DoubleClick, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
       DoMethod(wi_fr, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
+
+      // lets collect the waiting returnIDs now
+      COLLECT_RETURNIDS;
+
       if (!SafeOpenWindow(wi_fr)) folder = NULL;
       else while (folder == (struct Folder *)-1)
       {
@@ -291,6 +322,10 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
          }
          if (folder == (struct Folder *)-1 && signals) Wait(signals);
       }
+
+      // now lets reissue the collected returnIDs again
+      REISSUE_RETURNIDS;
+
       DoMethod(G->App, OM_REMMEMBER, wi_fr);
       set(G->App, MUIA_Application_Sleep, FALSE);
    }
@@ -372,6 +407,9 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     DoMethod(lv_attach, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
     DoMethod(wi_ar, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
 
+    // lets collect the waiting returnIDs now
+    COLLECT_RETURNIDS;
+
     // we open the window now and listen for some events.
     if (!SafeOpenWindow(wi_ar)) retpart = NULL;
     else while (retpart == (struct Part *)-1)
@@ -409,6 +447,9 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
       }
       if (retpart == (struct Part *)-1 && signals) Wait(signals);
     }
+
+    // now lets reissue the collected returnIDs again
+    REISSUE_RETURNIDS;
 
     DoMethod(G->App, OM_REMMEMBER, wi_ar);
     set(G->App, MUIA_Application_Sleep, FALSE);
