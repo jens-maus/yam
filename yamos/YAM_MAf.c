@@ -381,45 +381,47 @@ MakeHook(MA_FlushIndexHook, MA_FlushIndexFunc);
 //  Changes to another folder
 void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 {
-   BOOL folderopen = TRUE;
-   struct Folder *actfo = FO_GetCurrentFolder();
-   struct MA_GUIData *gui = &G->MA->GUI;
+  struct Folder *actfo = FO_GetCurrentFolder();
+  struct MA_GUIData *gui = &G->MA->GUI;
 
-   if(!actfo) return;
+  if(!actfo) return;
 
-   set(gui->NL_MAILS, MUIA_ShortHelp, NULL);
+  set(gui->NL_MAILS, MUIA_ShortHelp, NULL);
 
-   if(!folder) folder = actfo;
-   else if(actfo == folder) return;
-   else if(set_active) FO_SetCurrentFolder(folder);
+  if(!folder) folder = actfo;
+  else if(actfo == folder) return;
+  else if(set_active) FO_SetCurrentFolder(folder);
 
-   if (folder->Type == FT_GROUP) folderopen = FALSE;
-   else if (!MA_GetIndex(folder)) folderopen = FALSE;
+  // if this folder should be disabled, lets do it now
+  if(folder->Type == FT_GROUP || MA_GetIndex(folder) == NULL)
+  {
+    set(gui->LV_MAILS, MUIA_Disabled, TRUE);
+    DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
+  }
+  else
+  {
+    // set the SortFlag in the NList accordingly
+    MA_SetSortFlag();
 
-   if (folderopen)
-   {
-      // set the SortFlag in the NList accordingly
-      MA_SetSortFlag();
+    // Now we update the InfoBar accordingly
+    DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
 
-      // Now we update the InfoBar accordingly
-      DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
+    // Create the Mail List and display it
+    DisplayMailList(folder, gui->NL_MAILS);
 
-      // Create the Mail List and display it
-      DisplayMailList(folder, gui->NL_MAILS);
+    // now we have to assure that the folder is enabled
+    set(gui->LV_MAILS, MUIA_Disabled, FALSE);
 
-      // Now we jump to messages that are NEW
-      if(C->JumpToNewMsg) MA_JumpToNewMsg();
+    // Now we jump to messages that are NEW
+    if(C->JumpToNewMsg) MA_JumpToNewMsg();
+    else if(folder->LastActive >= 0) set(gui->NL_MAILS, MUIA_NList_Active, folder->LastActive);
 
-      // if there is still no entry active in the NList we make the first one active
-      if(xget(gui->NL_MAILS, MUIA_NList_Active) == MUIV_NList_Active_Off)
-      {
-        set(gui->NL_MAILS, MUIA_NList_Active, MUIV_NList_Active_Top);
-      }
-   }
-   else DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
-
-   // disable/reactivate the Listview with the mails in it
-   set(gui->LV_MAILS, MUIA_Disabled, !folderopen);
+    // if there is still no entry active in the NList we make the first one active
+    if(xget(gui->NL_MAILS, MUIA_NList_Active) == MUIV_NList_Active_Off)
+    {
+      set(gui->NL_MAILS, MUIA_NList_Active, MUIV_NList_Active_Top);
+    }
+  }
 }
 
 HOOKPROTONHNONP(MA_ChangeFolderFunc, void)

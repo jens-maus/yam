@@ -66,16 +66,18 @@ struct FI_ClassData  /* find window */
 };
 
 enum FastSearch { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
+enum SearchMode { SM_FROM=0, SM_TO, SM_CC, SM_REPLYTO, SM_SUBJECT, SM_DATE, SM_HEADLINE,
+                  SM_SIZE, SM_HEADER, SM_BODY, SM_WHOLE, SM_STATUS };
 
 struct Search
 {
    char *          Pattern;
    struct Rule *   Rule;
    long            Size;
-   int             Mode;
+   enum SearchMode Mode;
    int             PersMode;
    int             Compare;
-   int             Status;
+   enum MailStatus Status;
    enum FastSearch Fast;
    BOOL            CaseSens;
    BOOL            SubString;
@@ -91,8 +93,7 @@ extern int         Mode2Group[12];
 
 APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote);
 BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail);
-BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmode,
-     int compar, int stat, BOOL substr, char *match, char *field);
+BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, enum MailStatus compar, int stat, BOOL substr, char *match, char *field);
 void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled);
 
 #endif /* YAM_FIND_H */

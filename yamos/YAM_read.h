@@ -37,8 +37,12 @@
 #define MDN_AUTOACT   0x10
 #define MDN_AUTOSEND  0x20
 
-enum MDNType { MDN_IGNORE=0, MDN_DENY, MDN_READ, MDN_DISP, MDN_PROC, MDN_DELE };
-enum ParseMode { PM_ALL, PM_TEXTS, PM_NONE };
+// special defines for Part Types
+#define PART_ORIGINAL -2
+#define PART_ALLTEXT  -1
+
+enum MDNType    { MDN_IGNORE=0, MDN_DENY, MDN_READ, MDN_DISP, MDN_PROC, MDN_DELE };
+enum ParseMode  { PM_ALL, PM_TEXTS, PM_NONE };
 enum ReadInMode { RIM_QUIET, RIM_READ, RIM_EDIT, RIM_QUOTE, RIM_PRINT };
 
 struct RE_GUIData

@@ -1,3 +1,25 @@
+2002-04-14  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug # where YAM didn`t jump to a new message when a ghosted
+      folder was selected before.
+    * fixed another enforcer hit that occured on filtering mails by msgbody or
+      header.
+
+2002-04-13  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed occuring enforcer hits in the filter routing where YAM caused some
+      hits when you were filtering by message body. bug #528631
+    * fixed the Status flag sorting routine accordingly to bug #474525
+    * increased the max. string size for email adresses to 150 and for NAMES to 30
+      That should fix bug #460430 and #511259.
+    * fixed bug #456134 accordingly that it will only display the senderinfo if
+      there is only one person with that realname in the Addressbook.
+    * changed email string gadgets in Filter settings to use the ResolveString
+      string gadget.
+    * fixed bug in AttachRequest() function where it could happen that if the
+      user did 2 same attachment requests it returned a partlist that the user
+      hasn`t even selected. fixes bug #433800
+
 2002-04-11  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * did some minor cosmetic change to the send window accordingly

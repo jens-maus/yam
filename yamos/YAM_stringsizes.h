@@ -30,7 +30,7 @@
 
 #define SIZE_USERID     60
 #define SIZE_PASSWORD   80
-#define SIZE_ADDRESS   100
+#define SIZE_ADDRESS   150
 #define SIZE_HOST       80
 #define SIZE_REALNAME   40
 #define SIZE_SUBJECT   200
@@ -38,7 +38,7 @@
 #define SIZE_MFILE      12
 #define SIZE_COMMAND   120
 #define SIZE_CTYPE      40
-#define SIZE_NAME       20
+#define SIZE_NAME       30
 #define SIZE_PATH      120
 #define SIZE_FILE       32
 #define SIZE_SMALL      16

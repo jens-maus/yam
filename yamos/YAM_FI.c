@@ -186,15 +186,17 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 
    RE_InitPrivateRC(mail, PM_TEXTS);
    rptr = cmsg = RE_ReadInMessage(4, RIM_QUIET);
-   while (*rptr && !found && !G->FI->Abort)
+
+   while(*rptr && !found && (G->FI ? !G->FI->Abort : TRUE))
    {
-      DoMethod(G->App,MUIM_Application_InputBuffered);
       for (ptr = rptr; *ptr && *ptr != '\n'; ptr++); *ptr = 0;
       if (FI_MatchString(search, rptr)) found = TRUE;
       rptr = ++ptr;
    }
+
    free(cmsg);
    RE_FreePrivateRC();
+
    return found;
 }
 
@@ -216,7 +218,6 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 
          for(i = 0; i < Header.Used && !found; i++)
          {
-            DoMethod(G->App,MUIM_Application_InputBuffered);
             rptr = line = Header.Data[i];
 
             if(*search->Field)
@@ -273,7 +274,7 @@ static void FI_GenerateListPatterns(struct Search *search)
 ///
 /// FI_PrepareSearch
 //  Initializes Search structure
-BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmode, int compar, int stat, BOOL substr, char *match, char *field)
+BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, enum MailStatus stat, BOOL substr, char *match, char *field)
 {
    // return value of this function isn't used currently (21.03.2001)
    memset(search, 0, sizeof(struct Search));
@@ -287,39 +288,52 @@ BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmo
    stccpy(search->Field, field, SIZE_DEFAULT);
    search->Pattern = search->PatBuf;
    search->Fast = FS_NONE;
-   switch (mode)
+
+   switch(mode)
    {
-      case 0:  search->Fast = FS_FROM; break;
-      case 1:  search->Fast = FS_TO; break;
-      case 2:  search->Fast = FS_CC; break;
-      case 3:  search->Fast = FS_REPLYTO; break;
-      case 4:  search->Fast = FS_SUBJECT; break;
-      case 5:  search->Fast = FS_DATE; break;
-      case 6:  search->Fast = FI_IsFastSearch(field); break;
-      case 7:  search->Fast = FS_SIZE; break;
-      case 8: case 10: *search->Field = 0;
-   }
-   if (search->Fast == FS_DATE)
-   {
-      char *time;
-      search->DT.dat_Format = FORMAT_DOS;
-      search->DT.dat_StrDate = match;
-      search->DT.dat_StrTime = (time = strchr(match,' ')) ? time+1 : "00:00:00";
-      if (!StrToDate(&(search->DT)))
+      case SM_FROM:     search->Fast = FS_FROM; break;
+      case SM_TO:       search->Fast = FS_TO; break;
+      case SM_CC:       search->Fast = FS_CC; break;
+      case SM_REPLYTO:  search->Fast = FS_REPLYTO; break;
+      case SM_SUBJECT:  search->Fast = FS_SUBJECT; break;
+
+      case SM_DATE:
       {
-         ER_NewError(GetStr(MSG_ER_ErrorDateFormat), DateStamp2String(NULL,DSS_DATE), NULL);
-         return FALSE;
-      };
-      search->Pattern = (char *)&(search->DT.dat_Stamp);
+        char *time;
+        search->Fast = FS_DATE;
+        search->DT.dat_Format = FORMAT_DOS;
+        search->DT.dat_StrDate = match;
+        search->DT.dat_StrTime = (time = strchr(match,' ')) ? time+1 : "00:00:00";
+        if (!StrToDate(&(search->DT)))
+        {
+          ER_NewError(GetStr(MSG_ER_ErrorDateFormat), DateStamp2String(NULL,DSS_DATE), NULL);
+          return FALSE;
+        };
+        search->Pattern = (char *)&(search->DT.dat_Stamp);
+      }
+      break;
+
+      case SM_HEADLINE: search->Fast = FI_IsFastSearch(field); break;
+
+      case SM_SIZE:
+      {
+        search->Fast = FS_SIZE;
+        search->Size = atol(match);
+      }
+      break;
+
+      case SM_HEADER:   // continue
+      case SM_WHOLE:    *search->Field = 0;
    }
-   if (search->Fast == FS_SIZE)
-   {
-      search->Size = atol(match);
-   }
+
    if (compar == 4) FI_GenerateListPatterns(search);
-   else if (search->Fast != FS_DATE && search->Fast != FS_SIZE && mode != 11)
+   else if (search->Fast != FS_DATE && search->Fast != FS_SIZE && mode != SM_SIZE)
    {
-      if (substr || mode >= 8) FI_MakeSubstringPattern(search->Match);
+      if (substr || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
+      {
+        FI_MakeSubstringPattern(search->Match);
+      }
+
       if (casesens) ParsePattern      (search->Match, search->Pattern, SIZE_PATTERN);
       else          ParsePatternNoCase(search->Match, search->Pattern, SIZE_PATTERN);
    }
@@ -332,34 +346,63 @@ BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmo
 //  Checks if a message fulfills the search criteria
 static BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 {
-   BOOL found0, found = FALSE;
-   int comp_bak = search->Compare, mstat;
-   switch (search->Mode)
+   BOOL found0 = FALSE, found = FALSE;
+   int comp_bak = search->Compare;
+
+   switch(search->Mode)
    {
-      case 0: case 1: case 2: case 3: case 4: case 5: case 6:  case 7:
-         found = search->Fast == FS_NONE ? FI_SearchPatternInHeader(search, mail)
-                                         : FI_SearchPatternFast(search, mail);
-               break;
-      case 8:  search->Compare = 0;
-               found0 = FI_SearchPatternInHeader(search, mail);
-               search->Compare = comp_bak;
-               if (found0 == (search->Compare == 0)) found = TRUE;
-               break;
-      case 9:  search->Compare = 0;
-               found0 = FI_SearchPatternInBody(search, mail);
-               search->Compare = comp_bak;
-               if (found0 == (search->Compare == 0)) found = TRUE;
-               break;
-      case 10: search->Compare = 0;
-               if (!(found0 = FI_SearchPatternInHeader(search, mail)))
-               found0 = FI_SearchPatternInBody(search, mail);
-               search->Compare = comp_bak;
-               if (found0 == (search->Compare == 0)) found = TRUE;
-               break;
-      case 11: if ((mstat = mail->Status) == 8) mstat = 0; /* new=unread */
-               if ((search->Compare == 0 && search->Status == mstat) || (search->Compare == 1 && search->Status != mstat)) found = TRUE;
-               break;
+      case SM_FROM:
+      case SM_TO:
+      case SM_CC:
+      case SM_REPLYTO:
+      case SM_SUBJECT:
+      case SM_DATE:
+      case SM_HEADLINE:
+      case SM_SIZE:
+      {
+        // check wheter this is a fast search or not.
+        found = (search->Fast == FS_NONE) ? FI_SearchPatternInHeader(search, mail) : FI_SearchPatternFast(search, mail);
+      }
+      break;
+
+      case SM_HEADER:
+      {
+        search->Compare = 0;
+        found0 = FI_SearchPatternInHeader(search, mail);
+        search->Compare = comp_bak;
+        if (found0 == (search->Compare == 0)) found = TRUE;
+      }
+      break;
+
+      case SM_BODY:
+      {
+        search->Compare = 0;
+        found0 = FI_SearchPatternInBody(search, mail);
+        search->Compare = comp_bak;
+        if (found0 == (search->Compare == 0)) found = TRUE;
+      }
+      break;
+
+      case SM_WHOLE:
+      {
+        search->Compare = 0;
+        if (!(found0 = FI_SearchPatternInHeader(search, mail)))
+        found0 = FI_SearchPatternInBody(search, mail);
+        search->Compare = comp_bak;
+        if(found0 == (search->Compare == 0)) found = TRUE;
+      }
+      break;
+
+      case SM_STATUS:
+      {
+        enum MailStatus mstat;
+
+        if ((mstat = mail->Status) == STATUS_NEW) mstat = STATUS_UNR;
+        if ((search->Compare == 0 && search->Status == mstat) || (search->Compare == 1 && search->Status != mstat)) found = TRUE;
+      }
+      break;
    }
+
    return found;
 }
 
@@ -368,16 +411,37 @@ static BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 //  Does a complex search with two combined criteria
 BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail)
 {
-   BOOL found1;
-   found1 = FI_DoSearch(search1, mail);
-   switch (combine)
+   BOOL found1 = FI_DoSearch(search1, mail);
+
+   // lets check if there is another rule with which we have to combine the
+   // first search
+   switch(combine)
    {
-      case 0: return found1;
-      case 1: if (found1) return TRUE;
-              return FI_DoSearch(search2, mail);
-      case 2: if (!found1) return FALSE;
-              return FI_DoSearch(search2, mail);
-      case 3: return (BOOL)(found1 != FI_DoSearch(search2, mail));
+      case 0:
+      {
+        return found1;
+      }
+      break;
+
+      case 1:
+      {
+        if (found1) return TRUE;
+        else        return FI_DoSearch(search2, mail);
+      }
+      break;
+
+      case 2:
+      {
+        if (!found1) return FALSE;
+        else         return FI_DoSearch(search2, mail);
+      }
+      break;
+
+      case 3:
+      {
+        return (BOOL)(found1 != FI_DoSearch(search2, mail));
+      }
+      break;
    }
 
    return FALSE;

@@ -1426,8 +1426,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   if ((rule->Actions & 8) == 8) if (*rule->ExecuteCmd)
   {
     char buf[SIZE_COMMAND+SIZE_PATHFILE];
-    strcpy(buf, rule->ExecuteCmd); strcat(buf, " ");
-    strcat(buf, GetMailFile(NULL, NULL, mail));
+    sprintf(buf, "%s %s", rule->ExecuteCmd, GetMailFile(NULL, NULL, mail));
     ExecuteCommand(buf, FALSE, OUT_DOS);
     G->RRs.Executed++;
   }
@@ -2200,26 +2199,84 @@ static char *MA_GetRealSubject(char *sub)
 //  Compares two messages
 static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, int column)
 {
-   static const int values[9] = { 50, 35, 30, 25, 45, 60, 40, 20, 55 };
+  switch (column)
+  {
+    case 0:
+    {
+      // lets calculate each value
+      int status1 = 200-(entry1->Status*5);
+      int status2 = 200-(entry2->Status*5);
 
-   switch (column)
-   {
-      case 0: return -(values[entry1->Status]+entry1->Importance)+(values[entry2->Status]+entry2->Importance);
-      case 1: if (OUTGOING(entry1->Folder->Type))
-                 return stricmp(*entry1->To.RealName ? entry1->To.RealName : entry1->To.Address,
-                                *entry2->To.RealName ? entry2->To.RealName : entry2->To.Address);
-              else
-                 return stricmp(*entry1->From.RealName ? entry1->From.RealName : entry1->From.Address,
-                                *entry2->From.RealName ? entry2->From.RealName : entry2->From.Address);
-      case 2: return stricmp(*entry1->ReplyTo.RealName ? entry1->ReplyTo.RealName : entry1->ReplyTo.Address,
-                             *entry2->ReplyTo.RealName ? entry2->ReplyTo.RealName : entry2->ReplyTo.Address);
-      case 3: return stricmp(MA_GetRealSubject(entry1->Subject), MA_GetRealSubject(entry2->Subject));
-      case 4: return CompareDates(&entry2->Date, &entry1->Date);
-      case 5: return entry1->Size-entry2->Size;
-      case 6: return strcmp(entry1->MailFile, entry2->MailFile);
-      case 7: return stricmp(entry1->Folder->Name, entry2->Folder->Name);
-   }
-   return 0;
+      // add the importance of that mail
+      status1 += (entry1->Importance == 1) ? 20 : 0;
+      status2 += (entry2->Importance == 1) ? 20 : 0;
+      status1 += (entry1->Flags & MFLAG_CRYPT) ? 10 : 0;
+      status2 += (entry2->Flags & MFLAG_CRYPT) ? 10 : 0;
+      status1 += (entry1->Flags & MFLAG_SIGNED) ? 5 : 0;
+      status2 += (entry2->Flags & MFLAG_SIGNED) ? 5 : 0;
+      status1 += (entry1->Flags & MFLAG_REPORT) ? 3 : 0;
+      status2 += (entry2->Flags & MFLAG_REPORT) ? 3 : 0;
+      status1 += (entry1->Flags & MFLAG_MULTIPART) ? 1 : 0;
+      status2 += (entry2->Flags & MFLAG_MULTIPART) ? 1 : 0;
+
+      return -(status1)+(status2);
+    }
+    break;
+
+    case 1:
+    {
+      if (OUTGOING(entry1->Folder->Type))
+      {
+        return stricmp(*entry1->To.RealName ? entry1->To.RealName : entry1->To.Address,
+                       *entry2->To.RealName ? entry2->To.RealName : entry2->To.Address);
+      }
+      else
+      {
+        return stricmp(*entry1->From.RealName ? entry1->From.RealName : entry1->From.Address,
+                       *entry2->From.RealName ? entry2->From.RealName : entry2->From.Address);
+      }
+    }
+    break;
+
+    case 2:
+    {
+      return stricmp(*entry1->ReplyTo.RealName ? entry1->ReplyTo.RealName : entry1->ReplyTo.Address,
+                     *entry2->ReplyTo.RealName ? entry2->ReplyTo.RealName : entry2->ReplyTo.Address);
+    }
+    break;
+
+    case 3:
+    {
+      return stricmp(MA_GetRealSubject(entry1->Subject), MA_GetRealSubject(entry2->Subject));
+    }
+    break;
+
+    case 4:
+    {
+      return CompareDates(&entry2->Date, &entry1->Date);
+    }
+    break;
+
+    case 5:
+    {
+      return entry1->Size-entry2->Size;
+    }
+    break;
+
+    case 6:
+    {
+      return strcmp(entry1->MailFile, entry2->MailFile);
+    }
+    break;
+
+    case 7:
+    {
+      return stricmp(entry1->Folder->Name, entry2->Folder->Name);
+    }
+    break;
+  }
+
+  return 0;
 }
 
 ///
@@ -2236,6 +2293,7 @@ HOOKPROTONH(MA_LV_Cmp2Func, long, Object *obj, struct NList_CompareMessage *ncm)
    if (ncm->sort_type == MUIV_NList_SortType_None) return 0;
    if (ncm->sort_type & MUIV_NList_TitleMark_TypeMask) cmp = MA_MailCompare(entry2, entry1, col1);
    else                                                cmp = MA_MailCompare(entry1, entry2, col1);
+
    if (cmp || col1 == col2) return cmp;
    if (ncm->sort_type2 & MUIV_NList_TitleMark2_TypeMask) cmp = MA_MailCompare(entry2, entry1, col2);
    else                                                  cmp = MA_MailCompare(entry1, entry2, col2);

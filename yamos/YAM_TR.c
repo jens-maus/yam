@@ -890,14 +890,17 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
 {
    int i;
 
-   for (i = 0; i < G->TR->Scnt; i++) if (FI_DoComplexSearch(G->TR->Search[i], G->TR->Search[i]->Rule->Combine, G->TR->Search[i+MAXRU], mail))
+   for (i = 0; i < G->TR->Scnt; i++)
    {
+    if (FI_DoComplexSearch(G->TR->Search[i], G->TR->Search[i]->Rule->Combine, G->TR->Search[i+MAXRU], mail))
+    {
       struct Rule *rule = G->TR->Search[i]->Rule;
-      if (rule->Actions &   8) if (*rule->ExecuteCmd) ExecuteCommand(rule->ExecuteCmd, FALSE, OUT_DOS);
-      if (rule->Actions &  16) if (*rule->PlaySound) PlaySound(rule->PlaySound);
+      if (rule->Actions &   8 && *rule->ExecuteCmd) ExecuteCommand(rule->ExecuteCmd, FALSE, OUT_DOS);
+      if (rule->Actions &  16 && *rule->PlaySound) PlaySound(rule->PlaySound);
       if (rule->Actions &  64) mail->Status |= 2; else mail->Status &= ~2;
       if (rule->Actions & 128) mail->Status &= ~1; else mail->Status |= 1;
       return;
+    }
    }
 }
 ///

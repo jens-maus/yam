@@ -1008,7 +1008,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 
    get(ed, MUIA_TextEditor_HasChanged, &modified);
    if (modified) EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]), NULL);
-   if (*arg) if (*(CE->Editor))
+   if (*arg && *(CE->Editor))
    {
       sprintf(buffer,"%s \"%s\"", CE->Editor, CreateFilename(SigNames[sig]));
       ExecuteCommand(buffer, FALSE, OUT_NIL);

@@ -104,7 +104,8 @@ static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 static char *IdentifyFileDT(char *fname);
 
-struct PathNode {
+struct PathNode
+{
    BPTR next;
    BPTR dir;
 };
@@ -300,77 +301,119 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
 //  Allows user to select a message part (attachment) from a list
 struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext, int winnum, int mode, APTR parent)
 {
-   struct Part *retpart = (struct Part *)-1, *part, *prevpart = 0;
-   APTR bt_okay, bt_cancel, wi_ar, lv_attach;
+  struct Part *retpart = (struct Part *)-1, *part;
+  APTR bt_okay, bt_cancel, wi_ar, lv_attach;
 
-   wi_ar = WindowObject,
-      MUIA_Window_Title, title ? title : "YAM",
-      MUIA_Window_RefWindow, parent,
-      MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
-      MUIA_Window_TopEdge, MUIV_Window_TopEdge_Centered,
-      MUIA_Window_ID, MAKE_ID('A','R','E','Q'),
-      WindowContents, VGroup,
-         Child, LLabel(body),
-         Child, lv_attach = NListviewObject,
-            MUIA_CycleChain, 1,
-            MUIA_NListview_NList, NListObject,
-               InputListFrame,
-               MUIA_NList_Title,       TRUE,
-               MUIA_NList_DoubleClick, TRUE,
-               MUIA_NList_MultiSelect, (mode&ATTREQ_MULTI) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
-               MUIA_NList_DisplayHook, &RE_LV_AttachDspFuncHook,
-               MUIA_NList_Format,      "BAR,BAR,",
-            End,
-         End,
-         Child, ColGroup(3),
-            Child, bt_okay = MakeButton(yestext),
-            Child, HSpace(0),
-            Child, bt_cancel = MakeButton(notext),
-         End,
+  // lets create the AttachSelection window now
+  wi_ar = WindowObject,
+    MUIA_Window_Title,      title ? title : "YAM",
+    MUIA_Window_RefWindow,  parent,
+    MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
+    MUIA_Window_TopEdge,    MUIV_Window_TopEdge_Centered,
+    MUIA_Window_ID,         MAKE_ID('A','R','E','Q'),
+    WindowContents, VGroup,
+      Child, LLabel(body),
+        Child, lv_attach = NListviewObject,
+          MUIA_CycleChain,      1,
+          MUIA_NListview_NList, NListObject,
+            InputListFrame,
+            MUIA_NList_Title,       TRUE,
+            MUIA_NList_DoubleClick, TRUE,
+            MUIA_NList_MultiSelect, (mode&ATTREQ_MULTI) ? MUIV_NList_MultiSelect_Default : MUIV_NList_MultiSelect_None,
+            MUIA_NList_DisplayHook, &RE_LV_AttachDspFuncHook,
+            MUIA_NList_Format,      "BAR,BAR,",
+          End,
+        End,
+        Child, ColGroup(3),
+          Child, bt_okay = MakeButton(yestext),
+          Child, HSpace(0),
+          Child, bt_cancel = MakeButton(notext),
+        End,
       End,
-   End;
-   if (wi_ar)
-   {
-      static struct Part spart[2];
-      spart[0].Nr = -2; strcpy(spart[0].Name, GetStr(MSG_RE_Original)); spart[0].Size = G->RE[winnum]->Mail.Size; spart[0].Decoded = TRUE;
-      spart[1].Nr = -1; strcpy(spart[1].Name, GetStr(MSG_RE_AllTexts)); spart[1].Size = 0;
-      DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Bottom);
-      if ((mode&0xF) != ATTREQ_DISP) DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[1], MUIV_NList_Insert_Bottom);
-      for (part = G->RE[winnum]->FirstPart->Next; part; part = part->Next)
-         if ((mode&0xF) != ATTREQ_PRINT || part->Printable) DoMethod(lv_attach, MUIM_NList_InsertSingle, part, MUIV_NList_Insert_Bottom);
-//      set(lv_attach, MUIA_NList_Active, 1);
-      set(wi_ar, MUIA_Window_ActiveObject, lv_attach);
-      set(G->App, MUIA_Application_Sleep, TRUE);
-      DoMethod(G->App, OM_ADDMEMBER, wi_ar);
-      DoMethod(bt_okay  , MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
-      DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
-      DoMethod(lv_attach, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
-      DoMethod(wi_ar, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
-      if (!SafeOpenWindow(wi_ar)) retpart = NULL;
-      else  while (retpart == (struct Part *)-1)
+    End;
+
+  // if creation of window was successfull
+  if(wi_ar)
+  {
+    // lets create the static parts of the Attachrequest entries in the NList
+    static struct Part spart[2];
+    spart[0].Nr = PART_ORIGINAL;
+    strcpy(spart[0].Name, GetStr(MSG_RE_Original));
+    spart[0].Size = G->RE[winnum]->Mail.Size;
+    spart[0].Decoded = TRUE;
+
+    DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Bottom);
+
+    // if this AttachRequest isn`t a DISPLAY request we show all the option to select the text we actually see
+    if((mode&0xF) != ATTREQ_DISP)
+    {
+      spart[1].Nr = PART_ALLTEXT;
+      strcpy(spart[1].Name, GetStr(MSG_RE_AllTexts));
+      spart[1].Size = 0;
+
+      DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[1], MUIV_NList_Insert_Bottom);
+    }
+
+    // now we process the mail and pick every part out to the NListview
+    for(part = G->RE[winnum]->FirstPart->Next; part; part = part->Next)
+    {
+      if((mode&0xF) != ATTREQ_PRINT || part->Printable)
       {
-         ULONG signals;
-         int id;
-         switch (DoMethod(G->App, MUIM_Application_Input, &signals))
-         {
-            case 1:
-               for (id = MUIV_NList_NextSelected_Start;; prevpart = part)
-               {
-                  DoMethod(lv_attach, MUIM_NList_NextSelected, &id);
-                  if (id == MUIV_NList_NextSelected_End) break;
-                  DoMethod(lv_attach, MUIM_NList_GetEntry, id, &part);
-                  if (retpart == (struct Part *)-1) retpart = part;
-                  else prevpart->NextSelected = part;
-               }
-               break;
-            case 3: retpart = NULL; break;
-         }
-         if (retpart == (struct Part *)-1 && signals) Wait(signals);
+        DoMethod(lv_attach, MUIM_NList_InsertSingle, part, MUIV_NList_Insert_Bottom);
       }
-      DoMethod(G->App, OM_REMMEMBER, wi_ar);
-      set(G->App, MUIA_Application_Sleep, FALSE);
-   }
-   return retpart;
+    }
+
+    // now lets create all other window dependencies (this have to be multithreaded later)
+    set(wi_ar, MUIA_Window_ActiveObject, lv_attach);
+    set(G->App, MUIA_Application_Sleep, TRUE);
+    DoMethod(G->App, OM_ADDMEMBER, wi_ar);
+    DoMethod(bt_okay  , MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
+    DoMethod(lv_attach, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
+    DoMethod(wi_ar, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
+
+    // we open the window now and listen for some events.
+    if (!SafeOpenWindow(wi_ar)) retpart = NULL;
+    else while (retpart == (struct Part *)-1)
+    {
+      ULONG signals;
+      switch(DoMethod(G->App, MUIM_Application_Input, &signals))
+      {
+        case 1:
+        {
+          struct Part *prevpart;
+          LONG id;
+
+          // now we pass through every selected entry and add it to the next part.
+          for(id = MUIV_NList_NextSelected_Start;; prevpart = part)
+          {
+            DoMethod(lv_attach, MUIM_NList_NextSelected, &id);
+            if(id == MUIV_NList_NextSelected_End) break;
+
+            DoMethod(lv_attach, MUIM_NList_GetEntry, id, &part);
+
+            // we have to set NextSelected to NULL first
+            part->NextSelected = NULL;
+
+            if(retpart == (struct Part *)-1) retpart = part;
+            else prevpart->NextSelected = part;
+          }
+        }
+        break;
+
+        case 3:
+        {
+          retpart = NULL;
+        }
+        break;
+      }
+      if (retpart == (struct Part *)-1 && signals) Wait(signals);
+    }
+
+    DoMethod(G->App, OM_REMMEMBER, wi_ar);
+    set(G->App, MUIA_Application_Sleep, FALSE);
+  }
+  return retpart;
 }
 ///
 /// InfoWindow
@@ -3575,6 +3618,9 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
    }
    else ret = SystemTags(cmd, SYS_Input,in, SYS_Output,out, NP_StackSize,C->StackSize, SYS_Asynch,asynch, TAG_DONE);
    if (ret == -1 && asynch && outdef) { Close(out); Close(in); }
+
+   DB(kprintf("ret: %ld\n", ret);)
+
    return (BOOL)(!ret);
 }
 ///

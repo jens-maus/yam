@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -931,30 +931,45 @@ static char **Init_ISO8859_to_LaTeX_Tab(char *TabFileName)
 //  Saves the current message or an attachment to disk
 HOOKPROTONHNO(RE_SaveFunc, void, int *arg)
 {
-   int winnum = *arg;
-   struct Part *part;
-   struct TempFile *tf;
+  int winnum = *arg;
+  struct Part *part;
+  struct TempFile *tf;
 
-   if (part = AttachRequest(GetStr(MSG_RE_SaveMessage), GetStr(MSG_RE_SelectSavePart), GetStr(MSG_RE_SaveGad), GetStr(MSG_Cancel), winnum, ATTREQ_SAVE|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
-   {
-      BusyText(GetStr(MSG_BusyDecSaving), "");
-      for (; part; part = part->NextSelected) switch (part->Nr)
+  if (part = AttachRequest(GetStr(MSG_RE_SaveMessage), GetStr(MSG_RE_SelectSavePart), GetStr(MSG_RE_SaveGad), GetStr(MSG_Cancel), winnum, ATTREQ_SAVE|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
+  {
+    BusyText(GetStr(MSG_BusyDecSaving), "");
+    for (; part; part = part->NextSelected)
+    {
+      switch (part->Nr)
       {
-         case -2: RE_Export(winnum, G->RE[winnum]->File, "", "", 0, FALSE, FALSE, ContType[CT_ME_EMAIL]);
-                  break;
-         case -1: if (tf = OpenTempFile("w"))
-                  {
-                     RE_SaveDisplay(winnum, tf->FP);
-                     fclose(tf->FP); tf->FP = NULL;
-                     RE_Export(winnum, tf->Filename, "", "", 0, FALSE, FALSE, ContType[CT_TX_PLAIN]);
-                     CloseTempFile(tf);
-                  }
-                  break;
-         default: RE_DecodePart(part);
-                  RE_Export(winnum, part->Filename, "", part->Name, part->Nr, FALSE, FALSE, part->ContentType);
+        case PART_ORIGINAL:
+        {
+          RE_Export(winnum, G->RE[winnum]->File, "", "", 0, FALSE, FALSE, ContType[CT_ME_EMAIL]);
+        }
+        break;
+
+        case PART_ALLTEXT:
+        {
+          if (tf = OpenTempFile("w"))
+          {
+            RE_SaveDisplay(winnum, tf->FP);
+            fclose(tf->FP);
+            tf->FP = NULL;
+            RE_Export(winnum, tf->Filename, "", "", 0, FALSE, FALSE, ContType[CT_TX_PLAIN]);
+            CloseTempFile(tf);
+          }
+        }
+        break;
+
+        default:
+        {
+          RE_DecodePart(part);
+          RE_Export(winnum, part->Filename, "", part->Name, part->Nr, FALSE, FALSE, part->ContentType);
+        }
       }
-      BusyEnd;
-   }
+    }
+    BusyEnd;
+  }
 }
 MakeStaticHook(RE_SaveHook, RE_SaveFunc);
 ///
@@ -1023,7 +1038,7 @@ HOOKPROTONHNO(RE_DisplayFunc, void, int *arg)
       for (; part; part = part->NextSelected)
       {
          RE_DecodePart(part);
-         if (part->Nr == -2) RE_DisplayMIME(G->RE[winnum]->File, "text/plain");
+         if (part->Nr == PART_ORIGINAL) RE_DisplayMIME(G->RE[winnum]->File, "text/plain");
          else RE_DisplayMIME(part->Filename, part->ContentType);
       }
       BusyEnd;
@@ -2306,7 +2321,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                      cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
 rim_cont:
                      rptr = eolptr+1;
-                     if (mode == RIM_QUIET) DoMethod(G->App,MUIM_Application_InputBuffered);
+                     //if (mode == RIM_QUIET) DoMethod(G->App,MUIM_Application_InputBuffered); // causes enforcer hit with filtering!
                   }
                   free(msg);
                }
@@ -2577,7 +2592,7 @@ static void RE_DisplayMessage(int winnum)
       }
       if (G->RE[winnum]->SenderInfo)
       {
-         if (hits || ab->Type == 1) RE_AddSenderInfo(winnum, ab);
+         if (hits == 1 || ab->Type == AET_LIST) RE_AddSenderInfo(winnum, ab);
          if (G->RE[winnum]->SenderInfo == 2) if (DoMethod(gui->GR_PHOTO, MUIM_Group_InitChange))
          {
             char photopath[SIZE_PATHFILE];

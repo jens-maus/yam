@@ -712,10 +712,10 @@ APTR CO_Page3(struct CO_ClassData *data)
                Child, ColGroup(3),
                   Child, data->GUI.CH_ABOUNCE = MakeCheck(GetStr(MSG_CO_ActionBounce)),
                   Child, LLabel2(GetStr(MSG_CO_ActionBounce)),
-                  Child, data->GUI.ST_ABOUNCE = MakeString(SIZE_ADDRESS, ""),
+                  Child, MakeAddressField(&data->GUI.ST_ABOUNCE, GetStr(MSG_CO_ActionBounce), MSG_HELP_CO_ST_ABOUNCE, ABM_EDIT, -1, FALSE),
                   Child, data->GUI.CH_AFORWARD = MakeCheck(GetStr(MSG_CO_ActionForward)),
                   Child, LLabel2(GetStr(MSG_CO_ActionForward)),
-                  Child, data->GUI.ST_AFORWARD = MakeString(SIZE_ADDRESS, ""),
+                  Child, MakeAddressField(&data->GUI.ST_AFORWARD, GetStr(MSG_CO_ActionForward), MSG_HELP_CO_ST_AFORWARD, ABM_EDIT, -1, FALSE),
                   Child, data->GUI.CH_ARESPONSE = MakeCheck(GetStr(MSG_CO_ActionReply)),
                   Child, LLabel2(GetStr(MSG_CO_ActionReply)),
                   Child, po_response = PopaslObject,
@@ -770,9 +770,7 @@ APTR CO_Page3(struct CO_ClassData *data)
       SetHelp(data->GUI.CY_COMBINE[0],MSG_HELP_CO_CY_COMBINE   );
       SetHelp(data->GUI.CY_COMBINE[1],MSG_HELP_CO_CY_COMBINE   );
       SetHelp(data->GUI.CH_ABOUNCE   ,MSG_HELP_CO_CH_ABOUNCE   );
-      SetHelp(data->GUI.ST_ABOUNCE   ,MSG_HELP_CO_ST_ABOUNCE   );
       SetHelp(data->GUI.CH_AFORWARD  ,MSG_HELP_CO_CH_AFORWARD  );
-      SetHelp(data->GUI.ST_AFORWARD  ,MSG_HELP_CO_ST_AFORWARD  );
       SetHelp(data->GUI.CH_ARESPONSE ,MSG_HELP_CO_CH_ARESPONSE );
       SetHelp(data->GUI.ST_ARESPONSE ,MSG_HELP_CO_ST_ARESPONSE );
       SetHelp(data->GUI.CH_AEXECUTE  ,MSG_HELP_CO_CH_AEXECUTE  );
