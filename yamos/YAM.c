@@ -130,8 +130,7 @@ void TC_Start(enum TimerIO tio, int seconds)
     TCData.timerIO[tio]->tr_time.tv_micro   = 0;
 
     DB(kprintf("Queueing timerIO[%ld] in %ld seconds\n", tio, seconds);)
-
-    SendIO((struct IORequest *)TCData.timerIO[tio]);
+    SendIO(&TCData.timerIO[tio]->tr_node);
   }
 }
 
@@ -140,13 +139,17 @@ void TC_Start(enum TimerIO tio, int seconds)
 //  Stop a currently running TimerIO request
 void TC_Stop(enum TimerIO tio)
 {
-  struct IORequest *ioreq = (struct IORequest *)TCData.timerIO[tio];
+  struct IORequest *ioreq = &TCData.timerIO[tio]->tr_node;
 
-  if(CheckIO(ioreq) == 0) AbortIO(ioreq);
+  // check if we have a already issued ioreq running
+  if(ioreq && ioreq->io_Command != 0)
+  {
+    if(CheckIO(ioreq) == NULL) AbortIO(ioreq);
 
-  WaitIO(ioreq);
+    WaitIO(ioreq);
 
-  DB(kprintf("Stopped timerIO[%ld]\n", tio);)
+    DB(kprintf("Stopped timerIO[%ld]\n", tio);)
+  }
 }
 
 ///
@@ -158,28 +161,36 @@ static void TC_Exit(void)
   if(TCData.timerIO[0] != NULL)
   {
     int i;
+    struct IORequest *ioreq;
 
     // first make sure every TimerIO is stoppped
-    for(i=0; i < TIO_NUM && TCData.timerIO[i]; i++)
+    for(i=0; i < TIO_NUM; i++)
     {
-      struct IORequest *ioreq = (struct IORequest *)TCData.timerIO[i];
+      ioreq  = &TCData.timerIO[i]->tr_node;
 
-      if(CheckIO(ioreq) == 0) AbortIO(ioreq);
+      // check if we have a already issued ioreq running
+      if(ioreq && ioreq->io_Command != 0)
+      {
+        if(CheckIO(ioreq) == NULL) AbortIO(ioreq);
 
-      WaitIO(ioreq);
+        WaitIO(ioreq);
+      }
     }
 
     // then close the device
     if(TCData.timerIO[0]->tr_node.io_Device != NULL)
-      CloseDevice((struct IORequest *)TCData.timerIO[0]);
+      CloseDevice(&TCData.timerIO[0]->tr_node);
 
     // and then we delete the IO requests
-    for(i=0; i < TIO_NUM && TCData.timerIO[i]; i++)
+    for(i=0; i < TIO_NUM; i++)
     {
-      if(i==0) DeleteIORequest((struct IORequest *)TCData.timerIO[i]);
-      else     free(TCData.timerIO[i]);
+      if((ioreq = &TCData.timerIO[i]->tr_node))
+      {
+        if(i==0) DeleteIORequest(ioreq);
+        else     free(ioreq);
 
-      TCData.timerIO[i] = NULL;
+        TCData.timerIO[i] = NULL;
+      }
     }
   }
 
@@ -206,7 +217,7 @@ static BOOL TC_Init(void)
     if(TCData.timerIO[0] = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest)))
     {
       // then open the device
-      if(!OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)TCData.timerIO[0], 0L))
+      if(!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timerIO[0]->tr_node, 0L))
       {
         int i;
 
@@ -251,12 +262,12 @@ static void TC_Dispatcher(enum TimerIO tio)
 {
    // if the IORequest isn`t ready yet we don`t wait
    // or else we get perhaps into a deadlock
-   if(CheckIO((struct IORequest *)TCData.timerIO[tio]))
+   if(CheckIO(&TCData.timerIO[tio]->tr_node))
    {
       int i;
 
       // then wait&remove the IORequest
-      WaitIO((struct IORequest *)TCData.timerIO[tio]);
+      WaitIO(&TCData.timerIO[tio]->tr_node);
 
       // now dispatch between the differnent timerIOs
       switch(tio)
@@ -1527,9 +1538,9 @@ int main(int argc, char **argv)
       AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir, "");
 
       // start our TimerIO requests for different purposes (writeindexes/mailcheck/autosave)
-      if(C->WriteIndexes)   TC_Start(TIO_WRINDEX,   C->WriteIndexes);
-      if(C->CheckMailDelay) TC_Start(TIO_CHECKMAIL, C->CheckMailDelay*60);
-      if(C->AutoSave)       TC_Start(TIO_AUTOSAVE,  C->AutoSave);
+      TC_Start(TIO_WRINDEX,   C->WriteIndexes);
+      TC_Start(TIO_CHECKMAIL, C->CheckMailDelay*60);
+      TC_Start(TIO_AUTOSAVE,  C->AutoSave);
 
       // Now start the NotifyRequest for the AutoDST file
       if(ADSTnotify_start()) adstsig = 1UL << ADSTdata.nRequest.nr_stuff.nr_Signal.nr_SignalNum;

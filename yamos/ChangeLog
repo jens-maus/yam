@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: fixed enforcer hit upon exit, where a not previously
+      issued timerequest caused some trouble. Now everyting should
+      work smoothy again.
+
 2003-04-12  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: added NotifyRequest mechanism to the AutoDST feature. Now
