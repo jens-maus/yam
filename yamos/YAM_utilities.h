@@ -231,10 +231,6 @@ struct NewToolbarEntry
 #define isAlNum(c)            ((BOOL)(G->Locale ? (IsAlNum(G->Locale, (ULONG)(c)) != 0) : (isalnum((c)) != 0)))
 #define isValidMailFile(file) (!(strlen(file) < 17 || file[12] != '.' || file[16] != ',' || !isdigit(file[13])))
 
-#if !defined(isascii)
-  #define isascii(c) ((unsigned)(c) < 0x80)
-#endif
-
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
 extern struct Hook    DisposeModuleHook;
