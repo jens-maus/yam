@@ -189,7 +189,7 @@ static BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
    while (*rptr && !found && !G->FI->Abort)
    {
       DoMethod(G->App,MUIM_Application_InputBuffered);
-      for (ptr = rptr; *ptr && *ptr != '\n'; *ptr++); *ptr = 0;
+      for (ptr = rptr; *ptr && *ptr != '\n'; ptr++); *ptr = 0;
       if (FI_MatchString(search, rptr)) found = TRUE;
       rptr = ++ptr;
    }

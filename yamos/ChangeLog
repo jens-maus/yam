@@ -1,5 +1,10 @@
 2002-02-21  Gunther Nikl <gni@gecko.de>
 
+    * YAM_FI.c/FI_SearchPatternInBody: fix typo
+    * YAM_MI.c/outdec: fix GCC warnings
+
+2002-02-21  Gunther Nikl <gni@gecko.de>
+
     * extrasrc/genclasses: updated for new headername convention
     * classes/Addrmatchlist.c,classes/InfoBar.c,classes/Recipientstring.c,
       classes/Searchwindow.c,classes/YAM.c: adapt includes for new naming
