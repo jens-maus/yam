@@ -139,3 +139,15 @@
     * Changed compiler options to avoid linker warning.
 
     * Changed default CPU target in SAS/C makefile to 68020.
+
+2001-03-07  Matthias Bethke <Matthias.Bethke@gmx.net>
+
+    * Fixed: CheckPrinter() assumed printer on parallel port when
+      interpreting printer.device status bits
+
+2001-03-08  Matthias Bethke <Matthias.Bethke@gmx.net>
+
+    * Fixed: potential NULL pointer referenced in StrBufCat() and
+      StrBufCpy()
+
+    * Started to improve the printing system (see RE_PrintFile())
