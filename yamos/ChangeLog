@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-28  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: bumped minimum version for NList.mcc to v20.111 or otherwise
+      we will confuse people using different versions and noticing speed
+      differences.
+
 2003-03-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c, YAM_RE.c: fixed bug #706760 where upon a read of a

@@ -929,9 +929,9 @@ static void Initialise(BOOL hidden)
    // Lets check for the correct BetterString.mcc version
    CheckMCC(MUIC_BetterString, 11, 6, TRUE);
 
-   // we have to have at least v20.104 of NList.mcc to get YAM working without risking
-   // to have it buggy - so we make it a requirement.
-   CheckMCC(MUIC_NList, 20, 104, TRUE);
+   // we have to have at least v20.111 of NList.mcc to get YAM working without risking
+   // to have it buggy - so we make it a requirement. And also 111 is the fastest one ATM.
+   CheckMCC(MUIC_NList, 20, 111, TRUE);
 
    // we make v18.12 the minimum requirement for YAM because earlier versions are
    // buggy
