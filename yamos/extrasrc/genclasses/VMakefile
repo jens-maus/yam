@@ -1,0 +1,13 @@
+
+CC = vc
+CCOPTS = -DEMULATE_DIRENT
+
+GenClasses : gc.o lists.o
+	$(CC) gc.o lists.o -o GenClasses $(CCOPTS)
+
+gc.o : gc.c gc.h
+	$(CC) -c gc.c -o gc.o $(CCOPTS)
+
+lists.o : lists.c lists.h
+	$(CC) -c lists.c -o lists.o $(CCOPTS)
+
