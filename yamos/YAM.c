@@ -907,7 +907,7 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
          {
            struct Library *result;
            Forbid();
-           if ((result = (struct Library *)FindName(&SysBase->LibList, name)))
+           if ((result = (struct Library *)FindName(&((struct ExecBase *)SysBase)->LibList, name)))
              RemLibrary(result);
            Permit();
            flush = FALSE;
