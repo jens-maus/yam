@@ -1133,6 +1133,10 @@ SAVEDS ASM void RE_CheckSignatureFunc(REG(a1,int *arg))
 {
    struct RE_ClassData *re = G->RE[arg[1]];
 
+   // Don't try to use PGP if it's not installed
+   if (G->PGPVersion == 0)
+      return;
+
    if ((re->PGPSigned & PGPS_OLD) && !(re->PGPSigned & PGPS_CHECKED))
    {
       int error;
@@ -1813,7 +1817,7 @@ void RE_HandleSignedMessage(struct Part *frp)
 
    if (rp[0] = frp->Next)
    {
-      if (*C->PGPCmdPath && (rp[1] = rp[0]->Next))
+      if (G->PGPVersion && (rp[1] = rp[0]->Next))
       {
          int error;
          struct TempFile *tf = OpenTempFile(NULL);
