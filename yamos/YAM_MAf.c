@@ -69,13 +69,7 @@
 ** calls
 */
 
-#if defined(__MORPHOS__)
-  #if defined(__GNUC__)
-    #pragma pack(2)
-  #elif defined(__VBCC__)
-    #pragma amiga-align
-  #endif
-#endif
+#include "amiga-align.h"
 
 /*
 ** structure of the compressed mail
@@ -115,13 +109,7 @@ struct FIndex
    long  reserved[2];
 };
 
-#if defined(__MORPHOS__)
-  #if defined(__GNUC__)
-    #pragma pack()
-  #elif defined(__VBCC__)
-    #pragma default-align
-  #endif
-#endif
+#include "default-align.h"
 
 /* global variables */
 struct Data2D Header = { 0, 0, NULL };
