@@ -1281,7 +1281,7 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
 //  return 0 if no DST system was found - 1 if no DST is set and 3 if set
 static int GetDST(BOOL update)
 {
-   char buffer[SIZE_SMALL];
+   char buffer[50];
    char *tmp;
    int result = 0;
 
@@ -1298,7 +1298,7 @@ static int GetDST(BOOL update)
    // SetDST saves the DST settings in the TZONE env-variable which
    // is a bit more complex than the others, so we need to do some advance parsing
    if((!update || ADSTdata.method == ADST_SETDST)
-      && GetVar(&ADSTfile[ADST_SETDST][4], buffer, SIZE_SMALL, 0) >= 3)
+      && GetVar(&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
    {
       int i;
 
@@ -1317,7 +1317,7 @@ static int GetDST(BOOL update)
 
    // SummerTimeGuard sets the last string to "YES" if DST is actually active
    if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
-      && GetVar(&ADSTfile[ADST_SGUARD][4], buffer, SIZE_SMALL, 0) > 3 && (tmp = strrchr(buffer, ':')))
+      && GetVar(&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
    {
       if(tmp[1] == 'Y')       return 2;
       else if(tmp[1] == 'N')  return 1;
@@ -1328,7 +1328,7 @@ static int GetDST(BOOL update)
    // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
    // DST is actually active.
    if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
-      && GetVar(&ADSTfile[ADST_IXGMT][4], buffer, SIZE_SMALL, 0) >= 4)
+      && GetVar(&ADSTfile[ADST_IXGMT][4], buffer, 50, 0) >= 4)
    {
       ADSTdata.method = ADST_IXGMT;
 

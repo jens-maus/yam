@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-28  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: fixed bug in AutoDST recognition where YAM didn`t correctly
+      recognize the SUMMERTIME environment variable because it provided
+      a way to short buffer to GetVar().
+
 2003-04-27  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_DI.c: fixed bug #728040 where the abbreviation string gadget
