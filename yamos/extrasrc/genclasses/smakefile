@@ -1,0 +1,84 @@
+#/***************************************************************************
+#
+# YAM - Yet Another Mailer
+# Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+# Copyright (C) 2000-2001 by YAM Open Source Team
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# YAM Official Support Site :  http://www.yam.ch
+# YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+#
+# $Id$
+#
+#***************************************************************************/
+
+TARGET = GenClasses
+
+# Programs
+
+CC  = sc
+CP  = copy
+RM  = delete quiet
+
+# Compiler/Linker flags
+
+CPU      = 68020
+WARN     = WARN=ALL
+OPTFLAGS = STRIPDEBUG OPT OPTSIZE OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL\
+           OPTGO OPTLOOP OPTPEEP #OPTSCHED
+DEBUG    = NOSTRIPDEBUG NOOPT DEF DEBUG DEBUG=LINE
+CFLAGS   = STRICT RESOPT NOVER DATA=NEAR CODE=NEAR NOSTKCHK STRINGMERGE\
+           IDLEN=60 ERRORREXX INCLUDEDIR=includes INCLUDEDIR=classes \
+           DEF=_STRICT_ANSI CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
+LNKFLAGS = RESOPT NOVER LINK SMALLCODE SMALLDATA UTILLIB LIB lib:debug.lib\
+           NOICONS "LINKOPT=MAP $(TARGET).map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"\
+           NOCHECKABORT $(OPTFLAGS) $(DEBUG)
+
+# Objects
+
+OBJS = gc.o lists.o
+
+#
+
+default: $(TARGET)
+
+# Default rule
+
+.c.o:
+  @echo "*e[32mCompiling $*.c*e[0m"
+  @$(CC) $(CFLAGS) $<
+
+#
+
+$(TARGET): $(OBJS)
+  @echo "*e[32mLinking $**e[0m"
+  @$(CC) $(LNKFLAGS) TO $@ WITH <<
+  $(OBJS)
+  <
+
+clean:
+  -$(RM) $(OBJS) GenClasses.lnk GenClasses.map
+
+cleanall: clean
+  -$(RM) $(TARGET)
+
+#######################################
+
+gc.o: gc.c gc.h lists.c lists.h
+
+lists.o: lists.c lists.h gc.c gc.h
+
+#######################################
