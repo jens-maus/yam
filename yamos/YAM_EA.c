@@ -478,9 +478,8 @@ MakeStaticHook(EA_CloseHook, EA_CloseFunc);
 //  Creates address book entry window
 static struct EA_ClassData *EA_New(int winnum, int type)
 {
-   struct EA_ClassData *data;
-
-   if (data = calloc(1,sizeof(struct EA_ClassData)))
+   struct EA_ClassData *data = calloc(1, sizeof(struct EA_ClassData));
+   if (data)
    {
       static STRPTR SecurityCycleEntries[6] = {NULL};
       APTR group = NULL, bt_homepage, bt_sort;
