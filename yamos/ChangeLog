@@ -11,6 +11,10 @@ $Source$
       where YAM didn`t correctly undo a specific part and put the
       wrong filename string in previous moved parts. This caused
       that some multipart attachments weren`t accessable.
+    * YAM.c: replaced calloc()/free() calls for the TimerIO requests
+      with better conforming AllocMem()/FreeMem() calls, because
+      TimerIO requests need to be MEMF_PUBLIC allocated according to
+      Gunther.
 
 2003-04-22  Jens Langner <Jens.Langner@light-speed.de>
 

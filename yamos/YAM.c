@@ -187,7 +187,7 @@ static void TC_Exit(void)
       if((ioreq = &TCData.timerIO[i]->tr_node))
       {
         if(i==0) DeleteIORequest(ioreq);
-        else     free(ioreq);
+        else     FreeMem(ioreq, sizeof(struct timerequest));
 
         TCData.timerIO[i] = NULL;
       }
@@ -227,7 +227,7 @@ static BOOL TC_Init(void)
         // create our other TimerIOs now
         for(i=1; i < TIO_NUM; i++)
         {
-          if(!(TCData.timerIO[i] = calloc(1, sizeof(struct timerequest)))) return FALSE;
+          if(!(TCData.timerIO[i] = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC|MEMF_CLEAR))) return FALSE;
 
           // then copy the data of our timerIO[0] to the other ones
           memcpy(TCData.timerIO[i], TCData.timerIO[0], sizeof(struct timerequest));
