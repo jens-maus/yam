@@ -7,6 +7,9 @@ $Source$
 
 2002-07-05  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_MA.c: the "Show last message" menuitem will now
+      be disabled by default after a startup of YAM if there
+      are no pending errors somehow.
     * YAM_ER.c: fixed bug #431550 where the activation of
       the error window via the Menuitem "Show last message"
       caused a actual transfer to abort. Also enhanced
