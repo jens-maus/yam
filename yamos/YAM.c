@@ -1064,10 +1064,7 @@ static void Initialise2(void)
         // read upon start we go through our folders and make sure they show
         // no "new" mail, even if their .index file is not fully loaded
         if(C->UpdateNewMail && folder->LoadedMode == LM_FLUSHED)
-        {
-          folder->Unread = folder->New;
           folder->New = 0;
-        }
       }
 
       // if this folder hasn`t got any own folder image in the folder
