@@ -64,7 +64,7 @@ unsigned long yamversiondays = __YAM_VERDAYS;
   static const STRPTR Stack  = "$STACK:65536\n";
   long __default_pool_size   = 128*1024; // set the pool & puddle size for the
   long __default_puddle_size = 32*1024;  // AllocPool() functions to something more reasonable.
-#elif defined(__SASC) || (defined(__GNUC__) && defined(__libnix__))
+#elif defined(__SASC) || defined(__GNUC__)
   /* GCC (libnix) supports the same as SAS/C! */
   long __stack = 65536;
   long __buffsize = 8192;
