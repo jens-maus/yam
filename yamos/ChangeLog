@@ -1,3 +1,9 @@
+2002-04-28  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed some possible errors with not checking the result of Examine()
+      all over at different places. Now this functions should really perform
+      a bit more secure on this.
+
 2002-04-23  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed bug in the mail listview display hook were it was possible that

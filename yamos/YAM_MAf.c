@@ -896,32 +896,40 @@ void MA_ScanMailBox(struct Folder *folder)
 
    BusyText(GetStr(MSG_BusyScanning), folder->Name);
    ClearMailList(folder, TRUE);
-   if ((fib = AllocDosObject(DOS_FIB,NULL)) && (lock = Lock(GetFolderDir(folder), ACCESS_READ)))
+   if ((fib = AllocDosObject(DOS_FIB,NULL)))
    {
-      Examine(lock, fib);
-      while (ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
+      if((lock = Lock(GetFolderDir(folder), ACCESS_READ)))
       {
-         DoMethod(G->App,MUIM_Application_InputBuffered);
-         if (IsValidMailFile(fib->fib_FileName))
-            if (fib->fib_Size)
+        if(Examine(lock, fib))
+        {
+          while (ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
+          {
+            DoMethod(G->App,MUIM_Application_InputBuffered);
+            if (IsValidMailFile(fib->fib_FileName))
             {
-               if (mail = MA_ExamineMail(folder,fib->fib_FileName,fib->fib_Comment,FALSE))
-               {
+              if (fib->fib_Size)
+              {
+                if (mail = MA_ExamineMail(folder,fib->fib_FileName,fib->fib_Comment,FALSE))
+                {
                   AddMailToList((struct Mail *)mail, folder);
                   MA_FreeEMailStruct(mail);
-               }
+                }
+
+              }
+              else
+              {
+                char path[SIZE_PATHFILE];
+                NameFromLock(lock, path, SIZE_PATHFILE);
+                AddPart(path, fib->fib_FileName, SIZE_PATHFILE);
+                DeleteFile(path);
+              }
             }
-            else
-            {
-               char path[SIZE_PATHFILE];
-               NameFromLock(lock, path, SIZE_PATHFILE);
-               AddPart(path, fib->fib_FileName, SIZE_PATHFILE);
-               DeleteFile(path);
-            }
+          }
+        }
+        UnLock(lock);
       }
-      UnLock(lock);
+      FreeDosObject(DOS_FIB,fib);
    }
-   FreeDosObject(DOS_FIB,fib);
    BusyEnd;
 }
 ///

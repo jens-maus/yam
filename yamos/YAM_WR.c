@@ -170,13 +170,22 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 
    if (!filename) return FALSE;
    memset(&attach, 0, sizeof(struct Attach));
-   if (!(lock = Lock(filename, ACCESS_READ))) return FALSE;
-   fib = AllocDosObject(DOS_FIB, NULL);
-   Examine(lock, fib);
-   attach.Size = fib->fib_Size;
-   MyStrCpy(attach.Description, fib->fib_Comment);
-   FreeDosObject(DOS_FIB, fib);
-   UnLock(lock);
+
+   if((lock = Lock((STRPTR)filename,ACCESS_READ)))
+   {
+      if((fib = AllocDosObject(DOS_FIB, NULL)))
+      {
+        if(Examine(lock, fib))
+        {
+          attach.Size = fib->fib_Size;
+          MyStrCpy(attach.Description, fib->fib_Comment);
+        }
+        FreeDosObject(DOS_FIB, fib);
+      }
+      UnLock(lock);
+   }
+   else return FALSE;
+
    ctype = IdentifyFile(filename);
    if (*ctype)
    {  

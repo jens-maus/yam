@@ -216,24 +216,29 @@ static APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
       BPTR lock;
 
       strmfp(dir, G->ProgDir, "charsets");
-      if ((fib = AllocDosObject(DOS_FIB,NULL)) && (lock = Lock(dir, ACCESS_READ)))
+      if((fib = AllocDosObject(DOS_FIB,NULL)))
       {
-         Examine(lock, fib);
-         while (ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
-         {
-            struct TranslationTable *tt = NULL;
-
-            strmfp(file, dir, fib->fib_FileName);
-            if (LoadTranslationTable(&tt, file))
+        if(lock = Lock(dir, ACCESS_READ))
+        {
+          if(Examine(lock, fib))
+          {
+            while (ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
             {
-               if ((output && *tt->DestCharset) || (!output && *tt->SourceCharset))
+              struct TranslationTable *tt = NULL;
+
+              strmfp(file, dir, fib->fib_FileName);
+              if (LoadTranslationTable(&tt, file))
+              {
+                if ((output && *tt->DestCharset) || (!output && *tt->SourceCharset))
                   DoMethod(lv, MUIM_List_InsertSingle, tt, MUIV_List_Insert_Bottom);
-               free(tt);
+                free(tt);
+              }
             }
-         }
-         UnLock(lock);
+          }
+          UnLock(lock);
+        }
+        FreeDosObject(DOS_FIB,fib);
       }
-      FreeDosObject(DOS_FIB,fib);
       DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
    }
    return po;

@@ -659,43 +659,55 @@ BOOL LoadParsers(void)
    struct FileInfoBlock *fib;
    FILE *fp;
    BPTR lock;
-   BOOL result = 1;
+   BOOL result = TRUE;
    
-   if(PNum) return 1;
-   
+   if(PNum) return TRUE;
+
    strmfp(dir, G->ProgDir, "parsers");
-   fib = AllocDosObject(DOS_FIB,NULL);
-      if (lock = Lock(dir, ACCESS_READ))
+
+   if((lock = Lock((STRPTR)dir, ACCESS_READ)))
    {
-      Examine(lock, fib);
-      while ((PNum < 16) && ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
+      if((fib = AllocDosObject(DOS_FIB, NULL)))
       {
-         strmfp(file, dir, fib->fib_FileName);
+        if(Examine(lock, fib))
+        {
+          while ((PNum < 16) && ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
+          {
+            strmfp(file, dir, fib->fib_FileName);
 
-         if ((fp = fopen(file, "rb")))                 
-         {
-            if (PPtr[PNum] = calloc(1, 16640))
+            if ((fp = fopen(file, "rb")))
             {
-               fread(PPtr[PNum], 1, 16640, fp);
+              if (PPtr[PNum] = calloc(1, 16640))
+              {
+                fread(PPtr[PNum], 1, 16640, fp);
 
-               if (fib->fib_Protection & FIBF_PURE)
-               { 
-                  temp = PPtr[PNum];    
-                  PPtr[PNum] = PPtr[0]; 
+                if (fib->fib_Protection & FIBF_PURE)
+                {
+                  temp = PPtr[PNum];
+                  PPtr[PNum] = PPtr[0];
                   PPtr[0] = temp;
-               }
+                }
 
-               PNum++;
+                PNum++;
 
+              }
+              else result = FALSE;
+
+              fclose(fp);
             }
-            else result = 0;
-               
-            fclose(fp);
-         }
+            else result = FALSE;
+          }
+        }
+        else result = FALSE;
+
+        FreeDosObject(DOS_FIB, fib);
       }
+      else result = FALSE;
+
       UnLock(lock);
    }
-   FreeDosObject(DOS_FIB,fib);
+   else result = FALSE;
+
    return result;
 }
 
@@ -894,23 +906,26 @@ char *GetLine(FILE *fh, char *buffer, int bufsize)
 //  Gets size, protection bits and type of a file/directory
 BOOL FileInfo(char *filename, int *size, long *bits, long *type)
 {
-   struct FileInfoBlock *fib;
-   BPTR lock;
+  struct FileInfoBlock *fib;
+  BPTR lock;
+  BOOL result = FALSE;
 
-   if ((lock = Lock((STRPTR)filename,ACCESS_READ)))
-   {
-      if ((fib = AllocDosObject(DOS_FIB, NULL)))
+  if((lock = Lock((STRPTR)filename,ACCESS_READ)))
+  {
+    if((fib = AllocDosObject(DOS_FIB, NULL)))
+    {
+      if(Examine(lock, fib))
       {
-        Examine(lock, fib);
         if (size) *size = fib->fib_Size;
         if (bits) *bits = fib->fib_Protection;
         if (type) *type = fib->fib_DirEntryType;
-        FreeDosObject(DOS_FIB, fib);
+        result = TRUE;
       }
-      UnLock(lock);
-      return TRUE;
-   }
-   return FALSE;
+      FreeDosObject(DOS_FIB, fib);
+    }
+    UnLock(lock);
+  }
+  return result;
 }
 ///
 /// FileSize
@@ -950,19 +965,27 @@ BOOL RenameFile(char *oldname, char *newname)
 {
    struct FileInfoBlock *fib;
    BPTR lock;
+   BOOL result = FALSE;
 
-   if (!Rename(oldname, newname)) return FALSE;
+   if(!Rename(oldname, newname)) return FALSE;
+
    if((fib = AllocDosObject(DOS_FIB,NULL)))
    {
-      if ((lock = Lock(newname, ACCESS_READ)))
+      if((lock = Lock(newname, ACCESS_READ)))
       {
-         Examine(lock, fib); UnLock(lock);
-         SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE));
+         if(Examine(lock, fib))
+         {
+            UnLock(lock);
+            if(SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE)))
+            {
+              result = TRUE;
+            }
+         }
+         else UnLock(lock);
       }
       FreeDosObject(DOS_FIB,fib);
-      return TRUE;
    }
-   return FALSE;
+   return result;
 }
 ///
 /// CopyFile
@@ -1337,34 +1360,39 @@ void DeleteMailDir(char *dir, BOOL isroot)
    BOOL cont, isdir;
    BPTR lock;
 
-   if ((fib = AllocDosObject(DOS_FIB,NULL)) && (lock = Lock(dir, ACCESS_READ)))
+   if((fib = AllocDosObject(DOS_FIB,NULL)))
    {
-      strcpy(dirname, dir);
-      Examine(lock, fib);
-      cont = (ExNext(lock,fib) && IoErr() != ERROR_NO_MORE_ENTRIES);
-      while (cont)
+      if((lock = Lock(dir, ACCESS_READ)))
       {
-         strmfp(fname, dir, fib->fib_FileName);
-         filename = FilePart(fname);
-         isdir = fib->fib_DirEntryType > 0;
-         cont = (ExNext(lock,fib) && IoErr() != ERROR_NO_MORE_ENTRIES);
-         if (isroot)
-         {
-            if (isdir)
+        strcpy(dirname, dir);
+        if(Examine(lock, fib))
+        {
+          cont = (ExNext(lock,fib) && IoErr() != ERROR_NO_MORE_ENTRIES);
+          while (cont)
+          {
+            strmfp(fname, dir, fib->fib_FileName);
+            filename = FilePart(fname);
+            isdir = fib->fib_DirEntryType > 0;
+            cont = (ExNext(lock,fib) && IoErr() != ERROR_NO_MORE_ENTRIES);
+            if (isroot)
             {
-               if (IsFolderDir(fname)) DeleteMailDir(fname, FALSE);
+              if (isdir)
+              {
+                if (IsFolderDir(fname)) DeleteMailDir(fname, FALSE);
+              }
+              else
+              {
+                if (!stricmp(filename, ".config") || !stricmp(filename, ".glossary") || !stricmp(filename, ".addressbook")) DeleteFile(fname);
+              }
             }
-            else
-            {
-               if (!stricmp(filename, ".config") || !stricmp(filename, ".glossary") || !stricmp(filename, ".addressbook")) DeleteFile(fname);
-            }
-         }
-         else if (!isdir) if (!stricmp(filename, ".fconfig") || !stricmp(filename, ".index") || IsValidMailFile(filename)) DeleteFile(fname);
+            else if (!isdir) if (!stricmp(filename, ".fconfig") || !stricmp(filename, ".index") || IsValidMailFile(filename)) DeleteFile(fname);
+          }
+        }
+        UnLock(lock);
+        DeleteFile(dirname);
       }
-      UnLock(lock);
-      DeleteFile(dirname);
+      FreeDosObject(DOS_FIB,fib);
    }
-   FreeDosObject(DOS_FIB,fib);
 }
 ///
 /// FileToBuffer
