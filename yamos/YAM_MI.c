@@ -69,16 +69,16 @@ static const unsigned char index_64[128] =
    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,255,255,255,255,255
 };
 
-static const char index_hex[128] =
+static const unsigned char index_hex[128] =
 {
-  -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
-  -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
-  -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
-   0, 1, 2, 3,  4, 5, 6, 7,  8, 9,-1,-1, -1,-1,-1,-1,
-  -1,10,11,12, 13,14,15,-1, -1,-1,-1,-1, -1,-1,-1,-1,
-  -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
-  -1,10,11,12, 13,14,15,-1, -1,-1,-1,-1, -1,-1,-1,-1,
-  -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1
+  255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+  255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+  255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+   0,   1,  2,  3,  4,  5,  6, 7,   8,  9,255,255,255,255,255,255,
+  255, 10, 11, 12, 13, 14, 15,255,255,255,255,255,255,255,255,255,
+  255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+  255, 10, 11, 12, 13, 14, 15,255,255,255,255,255,255,255,255,255,
+  255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255
 };
 
 // some defines that can be usefull
@@ -88,9 +88,10 @@ static const char index_hex[128] =
 
 #define QP_LINELEN  76    // number of chars before qpencode_file() issues a CRLF
 #define QPENC_BUF   4096  // bytes to use as a quoted-printable file encoding buffer
+#define QPDEC_BUF   4096  // bytes to use as a quoted-printable file decoding buffer
 
-#define hexchar(c)    (((c) > 127) ? -1 : index_hex[(c)])
 #define SUMSIZE       64
+#define hexchar(c)    index_hex[(c) & 0x7F]
 #define ENC(c)        ((c) ? ((c) & 077) + ' ': '`')
 
 // The following table and macros were taken from the GMIME project`s CVS
@@ -316,7 +317,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
                                   // a base64 encoded string with a maximum of 11064 bytes
                                   // but normally the routines shouldn`t occupy more than
                                   // ~5600 bytes because we normally won`t have tons of LF`s
-                                  // in there. But by allocating BUF*3 we should be on the safe
+                                  // in there. But by alloãating BUF*3 we should be on the safe
                                   // side.
 
   char *optr;
@@ -500,7 +501,7 @@ long base64decode_file(FILE *in, FILE *out,
   char outbuffer[B64DEC_BUF/4*3];
   char ungetbuf[3];
   long decodedChars = 0;
-  int next_unget = 0;
+  size_t next_unget = 0;
   BOOL eof_reached = FALSE;
 
   DB(kprintf("base64decode_file(): %ld %ld\n", convCRLF, tt);)
@@ -520,12 +521,10 @@ long base64decode_file(FILE *in, FILE *out,
 
     // do a binary read of ~4096 chunks
     read = fread(&inbuffer[next_unget], sizeof(char), B64DEC_BUF-next_unget, in);
-    read += next_unget;
-    next_unget = 0;
 
     // on a short item count we check for a potential
     // error and return immediatly.
-    if(read != B64DEC_BUF)
+    if(read != B64DEC_BUF-next_unget)
     {
       if(feof(in) != 0)
       {
@@ -534,7 +533,7 @@ long base64decode_file(FILE *in, FILE *out,
         eof_reached = TRUE; // we found an EOF
 
         // if the last read was zero we can exit immediatly
-        if(read == 0)
+        if(read == 0 && next_unget == 0)
           break;
       }
       else
@@ -545,6 +544,10 @@ long base64decode_file(FILE *in, FILE *out,
         return -1;
       }
     }
+
+    // increase/reset the counters
+    read += next_unget;
+    next_unget = 0;
 
     // now that we have read 4096 bytes into our buffer
     // we have to iterate through this buffer and "eliminate"
@@ -839,6 +842,191 @@ long qpencode_file(FILE *in, FILE *out)
 }
 
 ///
+/// qpdecode_file()
+// Decodes a whole file using the quoted-printable format defined in
+// RFC 2045 (page 19)
+long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
+{
+  unsigned char inbuffer[QPDEC_BUF+1]; // lets use a 4096 byte large input buffer
+  unsigned char outbuffer[QPDEC_BUF+1];// to speed things up we use the same amount
+                                       // of memory for an output buffer as the
+                                       // decoded string can't be larger than
+                                       // the encoded one.
+
+  unsigned char *iptr;
+  unsigned char *optr = outbuffer;
+  unsigned char c;
+  size_t read;
+  size_t next_unget = 0;
+  long decoded = 0;
+  int result = 0;
+  BOOL eof_reached = FALSE;
+
+  DB(kprintf("qpdecode_file()\n");)
+
+  while(eof_reached == FALSE)
+  {
+    // do a binary read of ~4096 chunks
+    read = fread(&inbuffer[next_unget], sizeof(char), QPDEC_BUF-next_unget, in);
+
+    // on a short item count we check for a potential
+    // error and return immediatly.
+    if(read != QPDEC_BUF-next_unget)
+    {
+      if(feof(in) != 0)
+      {
+        DB(kprintf("EOF file at %ld\n", ftell(in));)
+
+        eof_reached = TRUE; // we found an EOF
+
+        // if the last read was zero we can exit immediatly
+        if(read == 0 && next_unget == 0)
+          break;
+      }
+      else
+      {
+        DB(kprintf("error on reading data!\n");)
+
+        // an error occurred, lets return -1
+        return -1;
+      }
+    }
+
+    // increase/reset the counters
+    read += next_unget;
+    next_unget = 0;
+
+    // now that we have read in our buffer we have to parse through
+    // it and decode eventually existing quoted printable encoded
+    // chunks. The routines also analyze the data and returns an
+    // error if non quoted-printable safe data is found, however
+    // it still tries to decode the data until the end. This fail-safe
+    // behaviour is suggested in RFC 2045 on page 22.
+    iptr = inbuffer;
+
+    while(read)
+    {
+      c = *iptr++;
+      read--;
+
+      if(c == '=')
+      {
+        // check if the next char is a newline so that
+        // we can skip the current =
+        if(read && *iptr == '\n')
+        {
+          // skip the newline..
+          iptr++;
+          read--;
+
+          continue;
+        }
+
+        // a '=' is the sign that a encoded string is following, so
+        // let us check if we have enough space in our input buffer
+        // and then decode it accordingly
+        if(read >= 2)
+        {
+          char c1 = hexchar(*iptr);
+          char c2 = hexchar(*(iptr+1));
+
+          // so we have enough space, lets decode it, but let us
+          // check if the two chars are really hexadecimal chars
+          if(c1 != 255 && c2 != 255)
+          {
+            *optr++ = tt ? tt->Table[(UBYTE)(c1<<4 | c2)] : c1<<4 | c2;
+
+            // increase the counters
+            iptr += 2;
+            read -= 2;
+
+            // count the decoded chars
+            decoded++;
+          }
+          else
+          {
+            // as suggested by RFC 2045 we keep the =XX sequence
+            // and report a warning later to the user
+            *optr++ = c;
+            *optr++ = *iptr++;
+            *optr++ = *iptr++;
+            read -= 2;
+            result = -3; // indicate a "decoding warning"
+          }
+        }
+        else
+        {
+          // ok, there isn't enough space in the input buffer
+          // so we break out here and parse the stuff on
+          // the next iteration
+          next_unget = read+1;
+          memcpy(inbuffer, iptr-1, next_unget);
+
+          break;
+        }
+      }
+      else if(!isascii(c) ||
+              (is_ctrl(c) && c != '\t' && c != '\n' &&
+               c == '\r' && *iptr != '\n'))
+      {
+        // we found some not allowed char, so lets ignore it
+        // but warn the user
+        result = -4; // indicate a "unallowed control chars" warning
+      }
+      else
+      {
+        // the current char seems to be a normal
+        // char, so lets output it
+        *optr++ = tt ? tt->Table[(UBYTE)c] : c;
+      }
+
+      // let us now check if our outbuffer is filled up so that we can write
+      // out the data to our out stream.
+      if(optr-outbuffer >= QPENC_BUF)
+      {
+        size_t todo = optr-outbuffer;
+
+        // now we do a binary write of the data
+        if(fwrite(outbuffer, 1, todo, out) != todo)
+        {
+          DB(kprintf("error on writing data!\n");)
+          // an error must have occurred.
+          return -1;
+        }
+
+        // now reset the outbuffer and stuff
+        optr = outbuffer;
+      }
+    }
+  }
+
+  // check if there is something in the outbuffer that
+  // hasn't been written out yet
+  if(optr-outbuffer > 0)
+  {
+    size_t todo = optr-outbuffer;
+
+    // now we do a binary write of the data
+    if(fwrite(outbuffer, 1, todo, out) != todo)
+    {
+      DB(kprintf("error on writing data!\n");)
+      // an error must have occurred.
+      return -1;
+    }
+  }
+
+  // if we end up here and read > 0 then the decoding wasn't finished
+  // and we have to return an error
+  if(read > 0)
+    return -2; // -2 means "unfinished decoding"
+
+  // on success lets return the number of decoded
+  // chars
+  DB(kprintf("finished qpdecode_file(): %ld\n", decoded);)
+  return result == 0 ? decoded : result;
+}
+
+///
 /// fromform
 //  Converts an url-encoded file into plain text
 void fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt)
@@ -880,34 +1068,6 @@ void fromqptxt(char *src, char *dst, struct TranslationTable *tt)
          *dst++ = tt ? (char)tt->Table[c] : (char)c;
       }
       else *dst++ = tt ? (char)tt->Table[(UBYTE)c1] : (char)c1;
-}
-
-///
-/// fromqp
-//  Decodes a file in quoted-printable format
-void fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt)
-{
-   unsigned int c1, c2;
-   BOOL neednewline = FALSE;
-
-   while ((c1 = fgetc(infile)) != (unsigned int)-1)
-   {
-      if (neednewline) { fputc('\n', outfile); neednewline = FALSE; };
-      if (c1 == '=')
-      {
-         c1 = fgetc(infile);
-         if (c1 != '\n')
-         {
-            c2 = fgetc(infile);
-            c1 = hexchar(c1);
-            c2 = hexchar(c2);
-            fputc(tt ? (unsigned int)tt->Table[(UBYTE)(c1<<4 | c2)] : c1<<4 | c2, outfile);
-         }
-      }
-      else if (c1 == '\n') neednewline = TRUE;
-      else fputc(tt ? (unsigned int)tt->Table[(UBYTE)c1] : c1, outfile);
-   }
-   if (neednewline) fputc('\n', outfile);
 }
 
 ///

@@ -7,6 +7,11 @@ $Source$
 
 2004-07-25  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MI.c, YAM_RE.c: also rewrote the quoted-printable decoding
+      routines from scratch and reimplemented everything according to
+      RFC 2045. Also this new routines have full input and output
+      buffers now which increases the decoding performance on large
+      files dramatically.
     * YAM_MI.c, YAM_WR.c: completly rewritten and optimized the
       RFC 2045 quoted-printable MIME encoding routines from scratch.
       The encoding is now done fully buffered which results in a

@@ -5313,3 +5313,23 @@ An unexpected error occurred while trying to encode the file \
 '%s' with the quoted-printable file encoding routines.
 ; FILENAME
 ;
+MSG_ER_QPDEC_FILEIO (//)
+A file input/output error occurred during decoding of the quoted \
+printable encoded file '%s'.
+;
+MSG_ER_QPDEC_UNEXP (//)
+An unexpected error occurred while trying to decode the file \
+'%s' with the quoted-printable file decoding routines.
+; FILENAME
+;
+MSG_ER_QPDEC_WARN (//)
+During the quoted-printable decoding of file '%s', some broken \
+control sequences where found and kept undecoded in the resulting \
+data stream.
+; FILENAME
+;
+MSG_ER_QPDEC_CHAR (//)
+Some not allowed characters have been spotted during the quoted-printable \
+decoding of file '%s' and where therefore removed during the decoding.
+; FILENAME
+;

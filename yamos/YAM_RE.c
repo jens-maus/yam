@@ -1883,9 +1883,43 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       // process a Quoted-Printable decoding
       case ENC_QP:
       {
-        fromqp(in, out, tt);
+        long decoded = qpdecode_file(in, out, tt);
+        DB(kprintf("quoted-printable decoded %ld chars of part %ld.\n", decoded, rp->Nr);)
 
-        decodeResult = TRUE;
+        if(decoded >= 0)
+          decodeResult = TRUE;
+        else
+        {
+          switch(decoded)
+          {
+            case -1:
+            {
+              ER_NewError(GetStr(MSG_ER_QPDEC_FILEIO), rp->Filename, NULL);
+            }
+            break;
+
+            case -2:
+            {
+              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename, NULL);
+            }
+            break;
+
+            case -3:
+            {
+              ER_NewError(GetStr(MSG_ER_QPDEC_WARN), rp->Filename, NULL);
+            }
+            break;
+
+            case -4:
+            {
+              ER_NewError(GetStr(MSG_ER_QPDEC_CHAR), rp->Filename, NULL);
+            }
+            break;
+
+            default:
+              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename, NULL);
+          }
+        }
       }
       break;
 

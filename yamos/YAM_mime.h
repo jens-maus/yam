@@ -51,6 +51,7 @@ long base64decode_file(FILE *in, FILE *out,
 
 // quoted-printable encoding/decoding routines
 long qpencode_file(FILE *in, FILE *out);
+long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt);
 
 // rfc2047 decoding routines
 int rfc2047_encode_file(FILE *fh, const char *str,
@@ -62,7 +63,6 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
 void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
 void  fromuue(FILE *infp, FILE *outfp);
 void  fromuuetxt(char **txt, FILE *outfp);
-void  fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt);
 void  fromqptxt(char *src, char *dst, struct TranslationTable *tt);
 void  touue(FILE *in, FILE *out);
 
