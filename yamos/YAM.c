@@ -73,13 +73,14 @@
 ***************************************************************************/
 
 struct Global *G;
+
 static struct NewRDArgs nrda;
-BPTR olddirlock = 0xFFFFFFFF; /* 0xFFFFFFFF is an unset indicator */
+static BPTR olddirlock = -1; /* -1 is an unset indicator */
 
 struct Args {
    char  *user;
-   char  *password;
-   char  *maildir;
+   char  *password;
+   char  *maildir;
    char  *prefsfile;
    LONG   nocheck;
    LONG   hide;
@@ -756,7 +757,7 @@ static void Initialise(BOOL hidden)
    srand(GetDateStamp());
    AY_PrintStatus(GetStr(MSG_LoadingGFX), 20);
    strmfp(iconfile, G->ProgDir, "YAM");
-   if (G->HideIcon=GetDiskObject(iconfile))
+   if ((G->HideIcon=GetDiskObject(iconfile)))
       set(G->App, MUIA_Application_DiskObject, G->HideIcon);
    strmfp(iconpath, G->ProgDir, "Icons");
    for (i = 0; i < MAXICONS; i++)
@@ -873,7 +874,7 @@ static int GetDST(void)
 static void yam_exitfunc(void)
 {
    Terminate();
-   if(olddirlock != 0xFFFFFFFF)
+   if(olddirlock != -1)
       CurrentDir(olddirlock);
    if(nrda.Template)
       NewFreeArgs(&nrda);
