@@ -375,4 +375,10 @@
     * deutsch.ct: resolved hotkey conflict between security cycle
       and description string in the Addressbook Entry window
 
+2002-02-06  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_RE.c: Changed "Set status to unread" hotkey to "+" to
+      match the hotkey in the main window
+    * smakefile: smake clean no longer fails when the directory
+      was already clean
 
