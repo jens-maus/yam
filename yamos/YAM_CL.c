@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <clib/alib_protos.h>
 #include <mui/BetterString_mcc.h>
@@ -556,19 +557,28 @@ DISPATCHERPROTO(TE_Dispatcher)
           {
             // MouseWheel events are only possible if the mouse is above the
             // object
-
-            if(imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT)
+            if(imsg->Code == NM_WHEEL_UP   || imsg->Code == NM_WHEEL_LEFT ||
+               imsg->Code == NM_WHEEL_DOWN || imsg->Code == NM_WHEEL_RIGHT)
             {
-              if(data->slider) DoMethod(data->slider, MUIM_Prop_Increase, -1);
+              LONG visible = xget(obj, MUIA_TextEditor_Prop_Visible);
+
+							if(visible > 0)
+							{
+                // we scroll 1/6 of the displayed text by default
+  							LONG delta = ((((float)visible)/6.0)+0.5); // round the value
+
+                // make sure that we scroll at least 1 line
+								if(delta < 1) delta = 1;
+                
+								if(imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT)
+                {
+                  DoMethod(data->slider, MUIM_Prop_Decrease, delta);
+                }
+								else DoMethod(data->slider, MUIM_Prop_Increase, delta);
+							}
 
               return MUI_EventHandlerRC_Eat;
 					  }
-            else if(imsg->Code == NM_WHEEL_DOWN || imsg->Code == NM_WHEEL_RIGHT)
-            {
-              if(data->slider) DoMethod(data->slider, MUIM_Prop_Increase, 1);
-
-              return MUI_EventHandlerRC_Eat;
-            }
           }
         }
       }
