@@ -14,6 +14,8 @@ $Source$
       required to be separated because of the previously existed 2 rules limitation.
       Now the whole filter/rule managment should be totally unlimited in size and
       amount like it should have been for ages.
+    * YAM_COg.c, YAM_CO.c, ConfigPageList.c: modified main configuration window to use
+      a NListview instead of a plain MUI Listview for the config page view.
 
 2005-03-18  Jens Langner <Jens.Langner@light-speed.de>
 
