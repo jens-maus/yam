@@ -24,6 +24,13 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL void US_SaveUsers(void);
+LOCAL void US_LoadUsers(void);
+LOCAL BOOL US_PromptForPassword(struct User*, APTR);
+LOCAL BOOL US_SaveUserList(void);
+LOCAL struct US_ClassData *US_New(BOOL);
+
 /***************************************************************************
  Module: User list
 ***************************************************************************/
@@ -37,10 +44,11 @@ struct User *US_GetCurrentUser(void)
    for (i = 0; i < G->Users.Num; i++) if (G->Users.User[i].ID == G->Users.CurrentID) u = &G->Users.User[i];
    return u;
 }
+
 ///
 /// US_SaveUsers
 //  Saves user database to .users
-void US_SaveUsers(void)
+LOCAL void US_SaveUsers(void)
 {
    FILE *fh;
    char *fname = "PROGDIR:.users";
@@ -62,10 +70,11 @@ void US_SaveUsers(void)
    }
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
 }
+
 ///
 /// US_LoadUsers
 //  Loads user database from .users
-void US_LoadUsers(void)
+LOCAL void US_LoadUsers(void)
 {
    BOOL save = FALSE;
    FILE *fh;
@@ -122,10 +131,11 @@ void US_LoadUsers(void)
    }
    if (save) US_SaveUsers();
 }
+
 ///
 /// US_PromptForPassword
 //  User login: asks for user password
-BOOL US_PromptForPassword(struct User *u, APTR win)
+LOCAL BOOL US_PromptForPassword(struct User *u, APTR win)
 {
    char passwd[SIZE_PASSWORD];
 
@@ -135,6 +145,7 @@ BOOL US_PromptForPassword(struct User *u, APTR win)
    } while (strcmp(passwd, u->Password));
    return TRUE;
 }
+
 ///
 /// US_Login
 //  User login: puts up user list and waits for a selection
@@ -201,6 +212,7 @@ BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
       else loggedin = US_PromptForPassword(u, G->AY_Win);
    return loggedin;
 }
+
 ///
 /// US_DelFunc
 //  Removes a user from the user database
@@ -219,6 +231,7 @@ SAVEDS void US_DelFunc(void)
    DoMethod(lv, MUIM_NList_Remove, i);
 }
 MakeHook(US_DelHook, US_DelFunc);
+
 ///
 /// US_AddFunc
 //  Adds a new user to the user database
@@ -238,10 +251,11 @@ SAVEDS void US_AddFunc(void)
    }
 }
 MakeHook(US_AddHook, US_AddFunc);
+
 ///
 /// US_SaveUserList
 //  Initializes configuration files for new users and saves the user database
-BOOL US_SaveUserList(void)
+LOCAL BOOL US_SaveUserList(void)
 {
    int i;
 
@@ -279,6 +293,7 @@ BOOL US_SaveUserList(void)
    US_SaveUsers();
    return TRUE;
 }
+
 ///
 /// US_OpenFunc
 //  Opens and initializes user list window
@@ -297,6 +312,7 @@ SAVEDS void US_OpenFunc(void)
    }
 }
 MakeHook(US_OpenHook, US_OpenFunc);
+
 ///
 /// US_CloseFunc
 //  Closes user list window
@@ -305,6 +321,7 @@ SAVEDS void US_CloseFunc(void)
    if (US_SaveUserList()) DisposeModulePush(&G->US);
 }
 MakeHook(US_CloseHook, US_CloseFunc);
+
 ///
 /// US_GetUSEntryFunc
 //  Fills form with data from selected list entry
@@ -341,6 +358,7 @@ SAVEDS void US_GetUSEntryFunc(void)
    else DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, gui->ST_USER, gui->ST_PASSWD, gui->PO_MAILDIR, gui->CH_USEDICT, gui->CH_USEADDR, gui->CH_ROOT, gui->CH_CLONE, gui->BT_DEL, NULL);
 }
 MakeHook(US_GetUSEntryHook,US_GetUSEntryFunc);
+
 ///
 /// US_PutUSEntryFunc
 //  Fills form data into selected list entry
@@ -375,6 +393,7 @@ SAVEDS ASM struct User *US_LV_ConFunc(REG(a1) struct User *user)
    return entry;
 }
 MakeHook(US_LV_ConHook, US_LV_ConFunc);
+
 ///
 /// US_LV_DspFunc
 //  User listview display hook
@@ -394,10 +413,11 @@ SAVEDS ASM long US_LV_DspFunc(REG(a2) char **array, REG(a1) struct User *entry)
    return 0;
 }
 MakeHook(US_LV_DspHook,US_LV_DspFunc);
+
 ///
 /// US_New
 //  Creates user list window
-struct US_ClassData *US_New(BOOL supervisor)
+LOCAL struct US_ClassData *US_New(BOOL supervisor)
 {
    struct US_ClassData *data;
 

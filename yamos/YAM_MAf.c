@@ -25,6 +25,12 @@
 #include "YAM.h"
 #include "YAM_rexx.h"
 
+/* local protos */
+LOCAL void MA_ValidateStatus(struct Folder*);
+LOCAL char *MA_IndexFileName(struct Folder*);
+LOCAL BOOL MA_DetectUUE(FILE*);
+LOCAL void MA_GetRecipients(char*, struct Person**, int*);
+
 /***************************************************************************
  Module: Main - Folder handling
 ***************************************************************************/
@@ -47,10 +53,11 @@ BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
    } while (Stricmp(passwd, fo->Password));
    return TRUE;
 }
+
 ///
 /// MA_ValidateStatus
 //  Avoids invalid status values
-void MA_ValidateStatus(struct Folder *folder)
+LOCAL void MA_ValidateStatus(struct Folder *folder)
 {
    struct Mail *mail;
 
@@ -60,16 +67,18 @@ void MA_ValidateStatus(struct Folder *folder)
          else if (folder->Type == FT_SENT) MA_SetMailStatus(mail, STATUS_SNT);
          else if (C->UpdateNewMail) MA_SetMailStatus(mail, STATUS_UNR);
 }
+
 ///
 /// MA_IndexFileName
 //  Returns file name of folder index
-char *MA_IndexFileName(struct Folder *folder)
+LOCAL char *MA_IndexFileName(struct Folder *folder)
 {
    static char buffer[SIZE_PATHFILE];
    strcpy(buffer, GetFolderDir(folder));
    AddPart(buffer, ".index", SIZE_PATHFILE);
    return buffer;
 }
+
 ///
 /// MA_LoadIndex
 //  Loads a folder index from disk
@@ -125,6 +134,7 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
    }
    return indexloaded;
 }
+
 ///
 /// MA_SaveIndex
 //  Saves a folder index to disk
@@ -166,6 +176,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
    BusyEnd;
    return TRUE;
 }
+
 ///
 /// MA_GetIndex
 //  Opens/unlocks a folder
@@ -187,6 +198,7 @@ BOOL MA_GetIndex(struct Folder *folder)
    }
    return TRUE;
 }
+
 ///
 /// MA_ExpireIndex
 //  Invalidates a folder index
@@ -195,6 +207,7 @@ void MA_ExpireIndex(struct Folder *folder)
    if (!(folder->Flags&FOFL_MODIFY)) DeleteFile(MA_IndexFileName(folder));
    folder->Flags |= FOFL_MODIFY;
 }
+
 ///
 /// MA_UpdateIndexes
 //  Updates indices of all folders
@@ -223,6 +236,7 @@ void MA_UpdateIndexes(BOOL initial)
       free(flist);
    }
 }
+
 ///
 /// MA_FlushIndexes
 //  Removes loaded folder indices from memory and closes folders
@@ -248,6 +262,7 @@ void MA_FlushIndexes(BOOL all)
       DoMethod(G->MA->GUI.LV_FOLDERS, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
    }
 }
+
 SAVEDS void MA_FlushIndexFunc(void)
 {
    MA_FlushIndexes(TRUE);
@@ -292,6 +307,7 @@ void MA_ChangeFolder(struct Folder *folder)
       lastfolder = folder;
    }
 }
+
 SAVEDS void MA_ChangeFolderFunc(void)
 {
    struct Folder *folder = FO_GetCurrentFolder();
@@ -323,10 +339,11 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile, int daynumber)
    } while (access(buffer,F_OK) == 0);
    return buffer;
 }
+
 ///
 /// MA_DetectUUE
 //  Checks if message contains an uuencoded file
-BOOL MA_DetectUUE(FILE *fh)
+LOCAL BOOL MA_DetectUUE(FILE *fh)
 {
    char *buffer;
    BOOL found = FALSE;
@@ -338,6 +355,7 @@ BOOL MA_DetectUUE(FILE *fh)
    free(buffer);
    return found;
 }
+
 ///
 /// MA_ReadHeader
 //  Reads header lines of a message into memory
@@ -370,6 +388,7 @@ BOOL MA_ReadHeader(FILE *fh)
    free(buffer); free(head);
    return success;
 }  
+
 ///
 /// MA_FreeEMailStruct
 //  Frees an extended email structure
@@ -382,10 +401,11 @@ void MA_FreeEMailStruct(struct ExtendedMail *email)
    if (email->NoBCC)    free(email->BCC);
    clear(email, sizeof(struct ExtendedMail));
 }
+
 ///
 /// MA_GetRecipients
 //  Extracts recipients from a header field
-void MA_GetRecipients(char *h, struct Person **per, int *percnt)
+LOCAL void MA_GetRecipients(char *h, struct Person **per, int *percnt)
 {
    int cnt;
    char *p = h, *next;
@@ -406,6 +426,7 @@ void MA_GetRecipients(char *h, struct Person **per, int *percnt)
       }
    }
 }
+
 ///
 /// MA_ExamineMail
 //  Parses the header lines of a message and fills email structure
@@ -576,6 +597,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
    FinishUnpack(fullfile);
    return NULL;
 }
+
 ///
 /// MA_ScanMailBox
 //  Scans for message files in a folder directory
@@ -637,6 +659,7 @@ SAVEDS ASM long PO_InitFolderList(REG(a2) Object *pop)
    return TRUE;
 }
 MakeHook(PO_InitFolderListHook, PO_InitFolderList);
+
 ///
 /// MA_LV_FDspFunc
 //  Folder listview display hook
@@ -675,6 +698,7 @@ SAVEDS ASM long MA_LV_FDspFunc(REG(a2) char **array, REG(a1) struct Folder *entr
    return 0;
 }
 MakeHook(MA_LV_FDspFuncHook,MA_LV_FDspFunc);
+
 ///
 /// MA_MakeFOFormat
 //  Creates format definition for folder listview
