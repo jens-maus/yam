@@ -7,6 +7,8 @@ $Source$
 
 2003-03-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed bug #697501 where the "Set status to" context menu
+      items weren`t correctly disabled anymore.
     * YAM_MA.c, YAM_MAf.c, YAM_main.h, YAM_rexx_rxif.c: fixed bug #697407
       where the whole volatile/permanent flag functionality was broken.
       Reworked the whole mechanism and in addition to a better design,
