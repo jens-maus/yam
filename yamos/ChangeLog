@@ -7,6 +7,8 @@ $Source$
 
 2003-03-08  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: fixed bug #555698 where a missing .folders file caused some
+      enforcer hits because a folder wasn`t actually selected as active.
     * classes/Recipientstring.c: added workaround for buggy Betterstring.mcc
       behaviour. Betterstring.mcc`s OM_GET method is broken and doesn`t
       return the correct MUIA_String_AdvanceOnCR value. Therefore we catch

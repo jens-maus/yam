@@ -786,7 +786,12 @@ static void Initialise2(BOOL hidden)
    if (!FO_GetFolderByType(FT_OUTGOING,NULL)) newfolders |= FO_CreateFolder(FT_OUTGOING, FolderNames[1], GetStr(MSG_MA_Outgoing));
    if (!FO_GetFolderByType(FT_SENT    ,NULL)) newfolders |= FO_CreateFolder(FT_SENT    , FolderNames[2], GetStr(MSG_MA_Sent));
    if (!FO_GetFolderByType(FT_DELETED ,NULL)) newfolders |= FO_CreateFolder(FT_DELETED , FolderNames[3], GetStr(MSG_MA_Deleted));
-   if (newfolders) FO_SaveTree(CreateFilename(".folders"));
+   if (newfolders)
+   {
+      set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, MUIV_NListtree_Active_FirstVisible);
+      FO_SaveTree(CreateFilename(".folders"));
+   }
+
    AY_PrintStatus(GetStr(MSG_RebuildIndices), 60);
    MA_UpdateIndexes(TRUE);
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 75);
