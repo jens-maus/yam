@@ -65,7 +65,7 @@
 #define MAXCPAGES 15
 #define MAXEA 4
 #define MAXRE 4
-#define MAXWR 2
+#define MAXWR 2 /* BEWARE: Don't change this value - it's hardcoded many places! */
 
 #define SIZE_USERID     60
 #define SIZE_PASSWORD   80
@@ -945,7 +945,7 @@ struct Global
    struct EA_ClassData  *EA[MAXEA];
    struct RE_ClassData  *RE[MAXRE+1];
    struct WR_ClassData  *WR[MAXWR+1];
-   struct NotifyRequest  WR_NRequest[MAXWR];
+   struct NotifyRequest  WR_NRequest[MAXWR+1];
    char                  WR_Filename[3][SIZE_PATHFILE];
    BOOL                  TR_Debug;
    BOOL                  TR_Allow;

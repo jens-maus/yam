@@ -1738,7 +1738,19 @@ MakeHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
 //  Initializes a write window
 int WR_Open(int winnum, BOOL bounce)
 {
+   /* winnum:
+      -1 - a new window should be opened
+       2 - window should be opened in "quiet mode"
+
+      G->WR[0]: 1st possible window.
+      G->WR[1]: 2nd possible window.
+      G->WR[2]: Quiet window (last).
+   */
+
+   /* Find first un-used window and set winnum accordingly (or return -1
+      if they are all taken). */
    if (winnum == -1) if (G->WR[winnum = 0]) if (G->WR[winnum = 1]) return -1;
+
    G->WR[winnum] = bounce ? WR_NewBounce(winnum) : WR_New(winnum);
    if (!G->WR[winnum]) return -1;
    if (!bounce)
@@ -1945,7 +1957,7 @@ struct WR_ClassData *WR_New(int winnum)
    {
       static char *rtitles[4]={NULL}, *encoding[3], *security[SEC_MAXDUMMY+1], *priority[4], *signat[5];
       static char *emoticons[4] = { ":-)", ":-|", ":-(", ";-)" };
-		APTR sec_menus[SEC_MAXDUMMY];
+      APTR sec_menus[SEC_MAXDUMMY];
       APTR mi_copy, mi_cut, mi_redo, mi_undo, mi_bold, mi_italic, mi_underl, mi_color;
       APTR strip, mi_autospell, mi_delsend, mi_receipt, mi_dispnoti, mi_addinfo;
       APTR slider = ScrollbarObject, End;

@@ -462,6 +462,7 @@ int MA_NewNew(struct Mail *mail, int flags)
    struct WR_ClassData *wr;
    FILE *out;
 
+   /* First check if the basic configuration is okay, then open write window */
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
       if (out = fopen(G->WR_Filename[winnum], "w"))

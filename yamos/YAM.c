@@ -422,7 +422,7 @@ void Terminate(void)
    if (G->TTin) free(G->TTin);
    if (G->TTout) free(G->TTout);
    for (i = 0; i < MAXASL; i++) if (G->ASLReq[i]) MUI_FreeAslRequest(G->ASLReq[i]);
-   for (i = 0; i < MAXWR; i++) if (G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port) DeletePort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+   for (i = 0; i < MAXWR+1; i++) if (G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port) DeletePort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
    if (G->AppIcon) RemoveAppIcon(G->AppIcon);
    if (G->AppPort) DeletePort(G->AppPort);
    if (G->RexxHost) CloseDownARexxHost(G->RexxHost);
@@ -567,7 +567,7 @@ void Initialise(BOOL hidden)
       if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,
          TAG_END))) Abort(GetStr(MSG_ErrorAslStruct));
    G->AppPort = CreatePort(NULL, 0);
-   for (i = 0; i < 2; i++)
+   for (i = 0; i < 3; i++)
    {
       G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreatePort(NULL, 0);
       G->WR_NRequest[i].nr_Name = (UBYTE *)G->WR_Filename[i];
@@ -677,7 +677,7 @@ void main(int argc, char **argv)
           } args = { NULL, NULL, NULL, NULL, FALSE, FALSE, FALSE, NULL, NULL, NULL, NULL };
    int wrwin, err, ret;
    char **sptr, progdir[SIZE_PATH];
-   ULONG signals, appsigs, timsigs, notsigs0, notsigs1, rexsigs;
+   ULONG signals, appsigs, timsigs, notsigs0, notsigs1, notsigs2, rexsigs;
    struct Message *msg;
    struct User *user;
    BPTR progdirlock, yamlock, oldcdirlock;
@@ -748,6 +748,7 @@ void main(int argc, char **argv)
       timsigs  = 1<<TCData.port->mp_SigBit;
       notsigs0 = 1<<G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
       notsigs1 = 1<<G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
+      notsigs2 = 1<<G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
       rexsigs  = 1<<G->RexxHost->port->mp_SigBit;
       while (!(ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))))
       {
@@ -787,6 +788,11 @@ void main(int argc, char **argv)
             {
                while (msg = GetMsg(G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port)) ReplyMsg(msg);
                if (G->WR[1]) FileToEditor(G->WR_Filename[1], G->WR[1]->GUI.TE_EDIT);
+            }
+            if (signals & notsigs2)
+            {
+               while (msg = GetMsg(G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port)) ReplyMsg(msg);
+               if (G->WR[2]) FileToEditor(G->WR_Filename[2], G->WR[2]->GUI.TE_EDIT);
             }
          }
       }

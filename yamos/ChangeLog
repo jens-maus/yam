@@ -58,3 +58,8 @@
 2000-12-20  Jörg Strohmayer <joergs@users.sourceforge.net>
 
     * Added SMTP AUTH to config GUI.
+
+2000-12-21  laursen <laursen@myself.com>
+
+    * Fixed a very nasty bug when using the ARexx command MAILWRITE with
+      the QUIET switch.
