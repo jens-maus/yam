@@ -28,4 +28,28 @@
 
 ***************************************************************************/
 
+#include "YAM_stringsizes.h"
+
+struct User
+{
+   int  ID;
+
+   BOOL Limited;
+   BOOL UseAddr;
+   BOOL UseDict;
+   BOOL Clone;
+   BOOL IsNew;
+
+   char Name[SIZE_NAME];
+   char Password[SIZE_USERID];
+   char MailDir[SIZE_PATH];
+};
+ 
+struct Users
+{
+   int         Num;
+   int         CurrentID;
+   struct User User[MAXUSERS];
+};
+
 #endif /* YAM_USERLIST_H */

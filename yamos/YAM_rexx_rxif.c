@@ -38,9 +38,11 @@
 #include <proto/dos.h>
 #include <proto/rexxsyslib.h>
 
-#include "YAM_addressbook.h"
-#include "YAM_rexx.h"
 #include "YAM.h"
+#include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
+#include "YAM_rexx.h"
+#include "YAM_write.h"
 
 void rx_show( struct RexxHost *host, struct rxd_show **rxd, long action, struct RexxMsg *rexxmsg )
 {
@@ -588,7 +590,8 @@ void rx_mailimport( struct RexxHost *host, struct rxd_mailimport **rxd, long act
          
       case RXIF_ACTION:
          if (!MA_ImportMessages(rd->arg.filename)) rd->rc = RETURN_ERROR;
-         else if (!rd->arg.wait) TR_ProcessIMPORTFunc();
+         else if(!rd->arg.wait)
+           CallHookPkt(&TR_ProcessIMPORTHook, 0, 0);
          break;
       
       case RXIF_FREE:
@@ -1827,7 +1830,8 @@ void rx_addrdelete( struct RexxHost *host, struct rxd_addrdelete **rxd, long act
          
       case RXIF_ACTION:
          if (!AB_GotoEntry(rd->arg.alias)) rd->rc = RETURN_WARN;
-         if (!rd->rc) AB_DeleteFunc();
+         if (!rd->rc)
+            CallHookPkt(&AB_DeleteHook, 0, 0);
          break;
       
       case RXIF_FREE:

@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_hook.h"
 
 /* local protos */
 LOCAL struct ER_ClassData *ER_New(void);
@@ -75,7 +76,7 @@ void ER_NewError(char *error, char *arg1, char *arg2)
 ///
 /// ER_SelectFunc
 //  Displays an earlier error message
-void SAVEDS ASM ER_SelectFunc(REG(a1,int *arg))
+HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
 {
    int value = *arg;
    set(G->ER->GUI.BT_NEXT, MUIA_Disabled, value == G->ER_NumErr);
@@ -87,7 +88,7 @@ MakeHook(ER_SelectHook, ER_SelectFunc);
 ///
 /// ER_CloseFunc
 //  Closes error window
-void SAVEDS ASM ER_CloseFunc(REG(a1,int *arg))
+HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
 {
    set(G->ER->GUI.WI, MUIA_Window_Open, FALSE);
    if (*arg)

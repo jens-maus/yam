@@ -28,49 +28,15 @@
 
 ***************************************************************************/
 
-#include <libraries/mui.h>
+#include <dos/notify.h>
 #include <exec/types.h>
+#include <libraries/mui.h>
+#include <proto/socket.h>
 
-#define SIZE_USERID     60
-#define SIZE_PASSWORD   80
-#define SIZE_ADDRESS   100
-#define SIZE_HOST       80
-#define SIZE_REALNAME   40
-#define SIZE_SUBJECT   200
-#define SIZE_MSGID      80
-#define SIZE_MFILE      12
-#define SIZE_COMMAND   120
-#define SIZE_CTYPE      40
-#define SIZE_NAME       20
-#define SIZE_PATH      120
-#define SIZE_FILE       32
-#define SIZE_SMALL      16
-#define SIZE_DEFAULT    80
-#define SIZE_LARGE     512
-#define SIZE_LINE     1001
-#define SIZE_RCPTS    4096
-#define SIZE_INTRO     200
-#define SIZE_PATTERN   160
-#define SIZE_PATHFILE  (SIZE_PATH+SIZE_FILE)
-#define SIZE_URL       (SIZE_HOST+SIZE_PATHFILE)
-
-#define MAXP3           16
-#define MAXRU          100
-#define MAXMV          100
-#define MAXRX           21
-
-#define MAXICONS         4
-#define MAXIMAGES       17
-#define MAXASL           8
-#define MAXERR          50
-#define MAXUSERS        16
-#define MAXCTYPE        25
-#define MAXCPAGES       15
-#define MAXEA            4
-#define MAXRE            4
-#define MAXWR            2 /* BEWARE: Don't change this value - it's hardcoded many places! */
-
-#define my_strcpy(a,b) { strncpy(a,b,sizeof(a)); a[sizeof(a)-1] = 0; }
+#include "YAM_rexx_rxif.h"   /* struct RuleResult */
+#include "YAM_stringsizes.h"
+#include "YAM_transfer.h"    /* struct DownloadResult */
+#include "YAM_userlist.h"    /* struct Users */
 
 /**************************************************************************/
 
@@ -225,9 +191,85 @@ struct Config
    char  IOCInterface[SIZE_SMALL];
 };
 
+/*** Global Structure ***/
+struct Global 
+{
+   /* pointers first */
+   APTR                     App;
+   APTR                     AY_Win;
+   APTR                     AY_Text;
+   APTR                     AY_Group;
+   APTR                     AY_List;
+   APTR                     AY_Button;
+   APTR                     AY_AboutText;
+   char *                   ER_Message[MAXERR];
+   struct AppIcon *         AppIcon;
+   struct MsgPort *         AppPort;
+   struct RexxHost *        RexxHost;
+   struct DiskObject *      DiskObj[MAXICONS];
+   struct BodyChunkData *   BImage[MAXIMAGES];
+   struct FileRequester *   ASLReq[MAXASL];
+   struct Locale *          Locale;
+   struct TranslationTable *TTin;
+   struct TranslationTable *TTout;
+   struct MA_ClassData *    MA;
+   struct CO_ClassData *    CO;
+   struct AB_ClassData *    AB;
+   struct EA_ClassData *    EA[MAXEA];
+   struct RE_ClassData *    RE[MAXRE+1];
+   struct WR_ClassData *    WR[MAXWR+1];
+   struct TR_ClassData *    TR;
+   struct ER_ClassData *    ER;
+   struct FI_ClassData *    FI;
+   struct FO_ClassData *    FO;
+   struct DI_ClassData *    DI;
+   struct US_ClassData *    US;
+
+   long                     EdColMap[9];
+   long                     Weights[6];
+   long                     ActiveReadWin;
+   long                     ActiveWriteWin;
+
+   int                      TotMsgs;
+   int                      UnrMsgs;
+   int                      NewMsgs;
+   int                      GM_Count;
+   int                      SI_Count;
+   int                      PGPVersion;
+   int                      CO_DST;
+   int                      TR_Socket;
+   int                      ER_NumErr;
+
+   BOOL                     Error;
+   BOOL                     PGP5;
+   BOOL                     DtpicSupported;
+   BOOL                     AppIconQuiet;
+   BOOL                     PGPPassVolatile;
+   BOOL                     CO_Valid;
+   BOOL                     TR_Debug;
+   BOOL                     TR_Allow;
+   BOOL                     TR_Exchange;
+
+   struct DateStamp         StartDate;
+   struct Users             Users;
+   struct RuleResult        RRs;
+   struct DownloadResult    LastDL;
+   struct NotifyRequest     WR_NRequest[MAXWR+1];
+   struct sockaddr_in       TR_INetSocketAddr;
+
+   char                     ProgDir[SIZE_PATH];
+   char                     PGPPassPhrase[SIZE_DEFAULT];
+   char                     MA_MailDir[SIZE_PATH];
+   char                     AB_Filename[SIZE_PATHFILE];
+   char                     CO_PrefsFile[SIZE_PATHFILE];
+   char                     WR_Filename[3][SIZE_PATHFILE];
+   char                     DI_Filename[SIZE_PATHFILE];
+};
+
 /**************************************************************************/
 
 extern struct Config *C;
+extern struct Global *G;
 
 /**************************************************************************/
 

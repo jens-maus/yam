@@ -25,5 +25,4 @@
 
 ***************************************************************************/
 
-#include "extrasrc/wbpath.c"
 #include "extrasrc/NewReadArgs.c"

@@ -26,7 +26,11 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_addressbookEntry.h"
+#include "YAM_folderconfig.h"
+#include "YAM_hook.h"
 #include "YAM_rexx.h"
+#include "YAM_write.h"
 
 /* local protos */
 LOCAL ULONG MA_GetSortType(int);
@@ -80,7 +84,7 @@ void MA_ChangeTransfer(BOOL on)
 ///
 /// MA_ChangeSelectedFunc
 //  User selected some message(s) in the message list
-void SAVEDS MA_ChangeSelectedFunc(void)
+HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
 {
    struct MA_GUIData *gui = &G->MA->GUI;
    struct Folder *fo = FO_GetCurrentFolder();
@@ -116,7 +120,7 @@ MakeHook(MA_ChangeSelectedHook, MA_ChangeSelectedFunc);
 ///
 /// MA_SetMessageInfoFunc
 //  Builds help bubble for message list
-void SAVEDS MA_SetMessageInfoFunc(void)
+HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
 {
    static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
    char *sh = NULL;
@@ -129,7 +133,7 @@ MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
 ///
 /// MA_SetFolderInfoFunc
 //  Builds help bubble for folder list
-void SAVEDS MA_SetFolderInfoFunc(void)
+HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
 {
    static char buffer[SIZE_DEFAULT+SIZE_NAME+SIZE_PATH];
    char *sh = NULL;
@@ -348,7 +352,7 @@ LOCAL void MA_UpdateStatus(void)
 /*** Main button functions ***/
 /// MA_ReadMessage
 //  Loads active message into a read window
-void SAVEDS ASM MA_ReadMessage(REG(a1,int *arg))
+HOOKPROTONHNO(MA_ReadMessage, void, int *arg)
 {
    static int lastwin = 0;
    struct Mail *mail;
@@ -878,7 +882,7 @@ void MA_RemoveAttach(struct Mail *mail)
 ///
 /// MA_RemoveAttachFunc
 //  Removes attachments from selected messages
-void SAVEDS MA_RemoveAttachFunc(void)
+HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
 {
    struct Mail **mlist;
    int i;
@@ -903,7 +907,7 @@ MakeHook(MA_RemoveAttachHook, MA_RemoveAttachFunc);
 ///
 /// MA_SaveAttachFunc
 //  Saves all attachments of selected messages to disk
-void SAVEDS MA_SaveAttachFunc(void)
+HOOKPROTONHNONP(MA_SaveAttachFunc, void)
 {
    struct Mail **mlist, *mail;
    struct Part *part;
@@ -932,7 +936,7 @@ MakeHook(MA_SaveAttachHook, MA_SaveAttachFunc);
 ///
 /// MA_SavePrintFunc
 //  Prints selected messages
-void SAVEDS ASM MA_SavePrintFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_SavePrintFunc, void, int *arg)
 {
    BOOL doprint = *arg != 0;
    struct TempFile *tf;
@@ -989,7 +993,7 @@ int MA_NewMessage(int mode, int flags)
    return winnr;
 }
 
-void SAVEDS ASM MA_NewMessageFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_NewMessageFunc, void, int *arg)
 {
    int mode = arg[0], flags = 0;
    ULONG qual = arg[1];
@@ -1056,7 +1060,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    MA_ChangeSelectedFunc();
 }
 
-void SAVEDS ASM MA_DeleteMessageFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_DeleteMessageFunc, void, int *arg)
 {
    BOOL delatonce = arg[0] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
    if (arg[1]) return; // Toolbar qualifier bug work-around
@@ -1067,13 +1071,15 @@ MakeHook(MA_DeleteMessageHook, MA_DeleteMessageFunc);
 ///
 /// MA_DelKey
 //  User pressed DEL key
-void SAVEDS ASM MA_DelKeyFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_DelKeyFunc, void, int *arg)
 {
    APTR obj;
    get(G->MA->GUI.WI, MUIA_Window_ActiveObject, &obj);
    if (!obj || obj == MUIV_Window_ActiveObject_None) get(G->MA->GUI.WI, MUIA_Window_DefaultObject, &obj);
-   if (obj == G->MA->GUI.LV_FOLDERS) FO_DeleteFolderFunc();
-   else MA_DeleteMessage(arg[0], FALSE);
+   if (obj == G->MA->GUI.LV_FOLDERS)
+      CallHookPkt(&FO_DeleteFolderHook, 0, 0);
+   else
+      MA_DeleteMessage(arg[0], FALSE);
 }
 MakeHook(MA_DelKeyHook, MA_DelKeyFunc);
 
@@ -1164,7 +1170,7 @@ void MA_GetAddress(struct Mail **mlist)
 ///
 /// MA_GetAddressFunc
 //  Stores addresses from selected messages to the address book
-void SAVEDS MA_GetAddressFunc(void)
+HOOKPROTONHNONP(MA_GetAddressFunc, void)
 {
    struct Mail **mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS);
    if (mlist)
@@ -1186,7 +1192,7 @@ void MA_PopNow(int mode, int pop)
    TR_GetMailFromNextPOP(TRUE, pop, mode);
 }
 
-void SAVEDS ASM MA_PopNowFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_PopNowFunc, void, int *arg)
 {
    ULONG qual = (ULONG)arg[2];
    if (arg[3]) return; // Toolbar qualifier bug work-around
@@ -1297,7 +1303,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
 ///
 /// MA_ApplyRulesFunc
 //  Apply filters
-void SAVEDS ASM MA_ApplyRulesFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
 {
    struct Mail *mail, **mlist = NULL;
    struct Folder *folder;
@@ -1397,7 +1403,7 @@ BOOL MA_Send(int sendpos)
    return success;
 }
 
-void SAVEDS ASM MA_SendFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_SendFunc, void, int *arg)
 {
    MA_Send(arg[0]);
 }
@@ -1423,7 +1429,7 @@ void MA_SetStatusTo(int status)
    }
 }
 
-void SAVEDS ASM MA_SetStatusToFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_SetStatusToFunc, void, int *arg)
 {
    MA_SetStatusTo(*arg);
 }
@@ -1432,7 +1438,7 @@ MakeHook(MA_SetStatusToHook, MA_SetStatusToFunc);
 ///
 /// MA_SelectAllFunc
 //  Selects all messages
-void SAVEDS MA_SelectAllFunc(void)
+HOOKPROTONHNONP(MA_SelectAllFunc, void)
 {
    DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
 }
@@ -1441,7 +1447,7 @@ MakeHook(MA_SelectAllHook, MA_SelectAllFunc);
 ///
 /// MA_DeleteOldFunc
 //  Deletes old messages
-void SAVEDS MA_DeleteOldFunc(void)
+HOOKPROTONHNONP(MA_DeleteOldFunc, void)
 {
    struct Folder **flist;
    struct DateStamp today;
@@ -1471,7 +1477,7 @@ MakeHook(MA_DeleteOldHook, MA_DeleteOldFunc);
 ///
 /// MA_DeleteDeletedFunc
 //  Removes messages from 'deleted' folder
-void SAVEDS MA_DeleteDeletedFunc(void)
+HOOKPROTONHNONP(MA_DeleteDeletedFunc, void)
 {       
    int i = 0;
    struct Mail *mail;
@@ -1496,7 +1502,7 @@ MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
 ///
 /// MA_RescanIndexFunc
 //  Updates index of current folder
-void SAVEDS MA_RescanIndexFunc(void)
+HOOKPROTONHNONP(MA_RescanIndexFunc, void)
 {
    struct Folder *folder = FO_GetCurrentFolder();
 
@@ -1541,7 +1547,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
    return success;
 }
 
-void SAVEDS ASM MA_ExportMessagesFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_ExportMessagesFunc, void, int *arg)
 {
    MA_ExportMessages((BOOL)*arg, NULL, FALSE);
 }
@@ -1574,7 +1580,7 @@ BOOL MA_ImportMessages(char *fname)
    return FALSE;
 }
 
-void SAVEDS MA_ImportMessagesFunc(void)
+HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 {
    if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ImportMessages), 0, C->DetachDir, ""))
    {
@@ -1588,7 +1594,7 @@ MakeHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 ///
 /// MA_MoveMessageFunc
 //  Moves selected messages to a user specified folder
-void SAVEDS MA_MoveMessageFunc(void)
+HOOKPROTONHNONP(MA_MoveMessageFunc, void)
 {
    struct Folder *src = FO_GetCurrentFolder(), *dst;
    if ((dst = FolderRequest(GetStr(MSG_MA_MoveMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_MoveGad), GetStr(MSG_Cancel), src, G->MA->GUI.WI)))
@@ -1599,7 +1605,7 @@ MakeHook(MA_MoveMessageHook, MA_MoveMessageFunc);
 ///
 /// MA_CopyMessageFunc
 //  Copies selected messages to a user specified folder
-void SAVEDS MA_CopyMessageFunc(void)
+HOOKPROTONHNONP(MA_CopyMessageFunc, void)
 {
    struct Folder *src = FO_GetCurrentFolder(), *dst;
    if ((dst = FolderRequest(GetStr(MSG_MA_CopyMsg), GetStr(MSG_MA_MoveMsgReq), GetStr(MSG_MA_CopyGad), GetStr(MSG_Cancel), NULL, G->MA->GUI.WI)))
@@ -1658,7 +1664,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
 ///
 /// MA_ChangeSubjectFunc
 //  Changes subject of selected messages
-void SAVEDS MA_ChangeSubjectFunc(void)
+HOOKPROTONHNONP(MA_ChangeSubjectFunc, void)
 {
    struct Mail **mlist, *mail;
    int i, selected;
@@ -1691,7 +1697,7 @@ MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 ///
 /// MA_AboutMUIFunc
 //  Displays 'About MUI' window
-void SAVEDS MA_AboutMUIFunc(void)
+HOOKPROTONHNONP(MA_AboutMUIFunc, void)
 {
    static APTR muiwin = NULL;
 
@@ -1706,7 +1712,7 @@ MakeHook(MA_AboutMUIHook, MA_AboutMUIFunc);
 ///
 /// MA_CheckVersionFunc
 //  Checks YAM homepage for new program versions
-void SAVEDS MA_CheckVersionFunc(void)
+HOOKPROTONHNONP(MA_CheckVersionFunc, void)
 {
    struct TempFile *tf;
    int mon, day, year;
@@ -1743,7 +1749,7 @@ MakeHook(MA_CheckVersionHook, MA_CheckVersionFunc);
 ///
 /// MA_ShowErrorsFunc
 //  Opens error message window
-void SAVEDS MA_ShowErrorsFunc(void)
+HOOKPROTONHNONP(MA_ShowErrorsFunc, void)
 {
    ER_NewError(NULL, NULL, NULL);
 }
@@ -1818,7 +1824,7 @@ BOOL MA_StartMacro(int num, char *param)
 ///
 /// MA_CallRexxFunc
 //  Launches a script from the ARexx menu
-void SAVEDS ASM MA_CallRexxFunc(REG(a1,int *arg))
+HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
 {
    char scname[SIZE_COMMAND];
    int script = *arg;
@@ -1840,18 +1846,16 @@ MakeHook(MA_CallRexxHook, MA_CallRexxFunc);
 ///
 
 /*** Hooks ***/
-/// PO_Window
-//  Window hook for popup objects
-void SAVEDS ASM PO_Window(REG(a2,Object *pop), REG(a1,Object *win))
+
+/*** PO_Window - Window hook for popup objects ***/
+HOOKPROTONH(PO_Window, void, Object *pop, Object *win)
 {
    set(win, MUIA_Window_DefaultObject, pop);
 }
 MakeHook(PO_WindowHook, PO_Window);
 
-///
-/// MA_LV_FConFunc
-//  Folder listview construction hook
-struct Folder * SAVEDS ASM MA_LV_FConFunc(REG(a1, struct MUIP_NListtree_ConstructMessage *msg))
+/*** MA_LV_FConFunc - Folder listview construction hook ***/
+HOOKPROTONHNO(MA_LV_FConFunc, struct Folder *, struct MUIP_NListtree_ConstructMessage *msg)
 {
    struct Folder *entry;
 
@@ -1864,10 +1868,8 @@ struct Folder * SAVEDS ASM MA_LV_FConFunc(REG(a1, struct MUIP_NListtree_Construc
 }
 MakeHook(MA_LV_FConHook, MA_LV_FConFunc);
 
-///
-/// MA_LV_FDesFunc
-//  Folder listview destruction hook
-LONG SAVEDS ASM MA_LV_FDesFunc(REG(a1, struct MUIP_NListtree_DestructMessage *msg))
+/*** MA_LV_FDesFunc - Folder listview destruction hook ***/
+HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
 {
    if(!msg) return(-1);
    FO_FreeFolder(msg->UserData);
@@ -1875,10 +1877,8 @@ LONG SAVEDS ASM MA_LV_FDesFunc(REG(a1, struct MUIP_NListtree_DestructMessage *ms
 }
 MakeHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 
-///
-/// MA_LV_DspFunc
-//  Message listview display hook
-long SAVEDS ASM MA_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct Mail *entry))
+/*** MA_LV_DspFunc - Message listview display hook ***/
+HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
 {
    BOOL outbox;
    struct Folder *folder = NULL;
@@ -1974,7 +1974,7 @@ LOCAL int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, int column)
 ///
 /// MA_LV_Cmp2Func
 //  Message listview sort hook
-long SAVEDS ASM MA_LV_Cmp2Func(REG(a1,struct NList_CompareMessage *ncm), REG(a2,Object *obj))
+HOOKPROTONH(MA_LV_Cmp2Func, long, Object *obj, struct NList_CompareMessage *ncm)
 {
    struct Mail *entry1 = (struct Mail *)ncm->entry1;
    struct Mail *entry2 = (struct Mail *)ncm->entry2;
@@ -1995,7 +1995,7 @@ MakeHook(MA_LV_Cmp2Hook, MA_LV_Cmp2Func);
 ///
 /// MA_LV_FCmp2Func
 //  Folder listview sort hook
-long SAVEDS ASM MA_LV_FCmp2Func(REG(a1,struct NList_CompareMessage *ncm), REG(a2,Object *obj))
+HOOKPROTONH(MA_LV_FCmp2Func, long, Object *obj, struct NList_CompareMessage *ncm)
 {
    struct Folder *entry1 = (struct Folder *)ncm->entry1;
    struct Folder *entry2 = (struct Folder *)ncm->entry2;

@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_hook.h"
 #include "YAM_md5.h"
 
 /***************************************************************************
@@ -665,12 +666,12 @@ void TR_DisconnectPOP(void)
    if (!G->TR->Abort) TR_SendPopCmd(buf, "QUIT", NULL, POPCMD_WAITEOL);
    TR_Disconnect();
 }
+
 ///
 /// TR_GetMailFromNextPOP
 //  Downloads and filters mail from a POP3 account
 void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 {
-   extern void SAVEDS TR_ProcessGETFunc(void);
    struct Mail *mail;
    static int laststats;
    int msgs, pop = singlepop;
@@ -760,7 +761,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
             }
             else
             {
-               TR_ProcessGETFunc();
+               CallHookPkt(&TR_ProcessGETHook, 0, 0);
             }
             return;
          }
@@ -1113,7 +1114,7 @@ void TR_DisconnectSMTP(void)
 ///
 /// TR_ChangeStatusFunc
 //  Changes status of selected messages
-void SAVEDS ASM TR_ChangeStatusFunc(REG(a1,int *arg))
+HOOKPROTONHNO(TR_ChangeStatusFunc, void, int *arg)
 {
    int id = MUIV_NList_NextSelected_Start;
    struct Mail *mail;
@@ -1476,7 +1477,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 /*** IMPORT ***/
 /// TR_AbortIMPORTFunc
 //  Aborts import process
-void SAVEDS TR_AbortIMPORTFunc(void)
+HOOKPROTONHNONP(TR_AbortIMPORTFunc, void)
 {
    TR_AbortnClose();
 }
@@ -1484,7 +1485,7 @@ MakeHook(TR_AbortIMPORTHook, TR_AbortIMPORTFunc);
 ///
 /// TR_ProcessIMPORTFunc
 //  Imports messages from a UUCP mailbox file
-void SAVEDS TR_ProcessIMPORTFunc(void)
+HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 {
    struct TransStat ts;
    FILE *fh, *f = NULL;
@@ -1561,7 +1562,7 @@ MakeHook(TR_ProcessIMPORTHook, TR_ProcessIMPORTFunc);
 /*** GET ***/
 /// TR_AbortGETFunc
 //  Aborts a POP3 download
-void SAVEDS TR_AbortGETFunc(void)
+HOOKPROTONHNONP(TR_AbortGETFunc, void)
 {
    MA_FreeRules(G->TR->Search, G->TR->Scnt);
    TR_AbortnClose();
@@ -1670,10 +1671,9 @@ void TR_NewMailAlert(void)
    if (C->NotifyType & NOTI_CMD)   ExecuteCommand(C->NotifyCommand, FALSE, NULL);
    if (C->NotifyType & NOTI_SOUND) PlaySound(C->NotifySound);
 }
-///
-/// TR_ProcessGETFunc
-//  Downloads messages from a POP3 server
-void SAVEDS TR_ProcessGETFunc(void)
+
+/*** TR_ProcessGETFunc - Downloads messages from a POP3 server ***/
+HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 {
    struct TransStat ts;
    struct Mail *mail;
@@ -1705,10 +1705,11 @@ void SAVEDS TR_ProcessGETFunc(void)
    TR_GetMailFromNextPOP(FALSE, 0, 0);
 }
 MakeHook(TR_ProcessGETHook, TR_ProcessGETFunc);
+
 ///
 /// TR_GetMessageInfoFunc
 //  Requests message header of a message selected by the user
-void SAVEDS TR_GetMessageInfoFunc(void)
+HOOKPROTONHNONP(TR_GetMessageInfoFunc, void)
 {
    int line;
    struct Mail *mail;
@@ -1742,7 +1743,7 @@ void TR_CompleteMsgList()
 ///
 /// TR_PauseFunc
 //  Pauses or resumes message download
-void SAVEDS ASM TR_PauseFunc(REG(a1,int *arg))
+HOOKPROTONHNO(TR_PauseFunc, void, int *arg)
 {
    BOOL pause = *arg;
 
@@ -1753,12 +1754,11 @@ void SAVEDS ASM TR_PauseFunc(REG(a1,int *arg))
    TR_CompleteMsgList();
 }
 MakeHook(TR_PauseHook, TR_PauseFunc);
-///
 
 /*** GUI ***/
 /// TR_LV_DspFunc
 //  Message listview display hook
-long SAVEDS ASM TR_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct Mail *entry))
+HOOKPROTO(TR_LV_DspFunc, long, char **array, struct Mail *entry)
 {
    if (entry)
    {

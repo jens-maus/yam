@@ -28,4 +28,6 @@
 
 ***************************************************************************/
 
+extern struct Hook CO_PL_DspFuncHook;
+
 #endif /* YAM_CONFIG_H */

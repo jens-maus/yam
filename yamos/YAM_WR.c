@@ -30,12 +30,18 @@
 ***************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include <clib/alib_protos.h>
 #include <mui/NListtree_mcc.h>
+#include <proto/dos.h>
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
+#include "YAM_error.h"
+#include "YAM_hook.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 #include "YAM_locale.h"
@@ -80,17 +86,17 @@ static char FailedAlias[SIZE_NAME];
 /**************************************************************************/
 
 /*** Translate aliases ***/
-/// WR_ResolveName
-//  Looks for an alias, email address or name in the address book
+
+/*** WR_ResolveName - Looks for an alias, email address or name in the address book ***/
 int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
 {
    int hits = 0, i, retcode;
    struct ABEntry *ab;
    struct MUI_NListtree_TreeNode *tn, *tn2;
 
-   my_strcpy(FailedAlias, name);
+   MyStrCpy(FailedAlias, name);
    AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
-   if (hits > 1) return 3; // multiple matches
+   if (hits > 1) return 3; /* multiple matches */
    if (!hits)
    {
       AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
@@ -187,11 +193,8 @@ char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single)
    return adr;
 }
 
-
-///
-/// WR_VerifyAutoFunc
-//  Checks recipient field (user pressed return key)
-void SAVEDS ASM WR_VerifyAutoFunc(REG(a1,int *arg))
+/*** WR_VerifyAutoFunc - Checks recipient field (user pressed return key) ***/
+HOOKPROTONHNO(WR_VerifyAutoFunc, void, int *arg)
 {
    APTR str = (APTR)arg[0], next = str;
    char *value, *adr;
@@ -207,11 +210,8 @@ void SAVEDS ASM WR_VerifyAutoFunc(REG(a1,int *arg))
 }
 MakeHook(WR_VerifyAutoHook, WR_VerifyAutoFunc);
 
-
-///
-/// WR_VerifyManualFunc
-//  Checks and expands recipient field (user clicked gadget)
-void SAVEDS ASM WR_VerifyManualFunc(REG(a1,int *arg))
+/*** WR_VerifyManualFunc - Checks and expands recipient field (user clicked gadget) ***/
+HOOKPROTONHNO(WR_VerifyManualFunc, void, int *arg)
 {
    APTR object = (APTR)arg[0];
    char *value, *adr;
@@ -223,13 +223,11 @@ void SAVEDS ASM WR_VerifyManualFunc(REG(a1,int *arg))
    }
 }
 MakeHook(WR_VerifyManualHook, WR_VerifyManualFunc);
-///
-
 
 /*** Attachments list ***/
-/// WR_GetFileEntry
-//  Fills form with data from selected list entry
-void SAVEDS ASM WR_GetFileEntry(REG(a1,int *arg))
+
+/*** WR_GetFileEntry -Fills form with data from selected list entry ***/
+HOOKPROTONHNO(WR_GetFileEntry, void, int *arg)
 {
    int winnum = *arg;
    struct Attach *attach = NULL;
@@ -246,11 +244,8 @@ void SAVEDS ASM WR_GetFileEntry(REG(a1,int *arg))
 }
 MakeHook(WR_GetFileEntryHook, WR_GetFileEntry);
 
-
-///
-/// WR_PutFileEntry
-//  Fills form data into selected list entry
-void SAVEDS ASM WR_PutFileEntry(REG(a1,int *arg))
+/*** WR_PutFileEntry - Fills form data into selected list entry ***/
+HOOKPROTONHNO(WR_PutFileEntry, void, int *arg)
 {
    int winnum = *arg;
    struct Attach *attach = NULL;
@@ -269,10 +264,7 @@ void SAVEDS ASM WR_PutFileEntry(REG(a1,int *arg))
 }
 MakeHook(WR_PutFileEntryHook, WR_PutFileEntry);
 
-
-///
-/// WR_AddFileToList
-//  Adds a file to the attachment list, gets its size and type
+/*** WR_AddFileToList - Adds a file to the attachment list, gets its size and type ***/
 BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 {
    static struct Attach attach;
@@ -283,23 +275,23 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
    BPTR lock;
 
    if (!filename) return FALSE;
-   clear(&attach, sizeof(struct Attach));
+   memset(&attach, 0, sizeof(struct Attach));
    if (!(lock = Lock(filename, ACCESS_READ))) return FALSE;
    fib = AllocDosObject(DOS_FIB, NULL);
    Examine(lock, fib);
    attach.Size = fib->fib_Size;
-   my_strcpy(attach.Description, fib->fib_Comment);
+   MyStrCpy(attach.Description, fib->fib_Comment);
    FreeDosObject(DOS_FIB, fib);
    UnLock(lock);
    ctype = IdentifyFile(filename);
    if (*ctype)
    {  
-      my_strcpy(attach.FilePath, filename); 
-      my_strcpy(attach.Name, name ? name : (char *)FilePart(filename));
+      MyStrCpy(attach.FilePath, filename); 
+      MyStrCpy(attach.Name, name ? name : (char *)FilePart(filename));
       get(gui->RA_ENCODING, MUIA_Radio_Active, &encoding);
       attach.IsMIME = encoding == 0;
       attach.IsTemp = istemp;
-      my_strcpy(attach.ContentType, ctype);
+      MyStrCpy(attach.ContentType, ctype);
       nnset(gui->ST_CTYPE, MUIA_String_Contents, attach.ContentType);
       nnset(gui->ST_DESC, MUIA_String_Contents, attach.Description);
       DoMethod(gui->LV_ATTACH, MUIM_List_InsertSingle, &attach, MUIV_List_Insert_Bottom);
@@ -1129,7 +1121,7 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
    if (comp->Mode == NEW_SAVEDEC) if (!WR_SaveDec(fh, comp)) return FALSE; else goto mimebody;
    if (!firstpart) return FALSE;
 
-   // encrypted multipart message requested?
+   /* encrypted multipart message requested? */
    if (firstpart->Next && comp->Security > SEC_NONE  && comp->Security <= SEC_BOTH)
    {
       struct Compose tcomp;
@@ -1141,30 +1133,30 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
          tcomp.FH = tfh;                      // set new filehandle
          tcomp.Security = SEC_NONE;           // temp msg gets attachments and no security
 
-         // clear a few other fields to avoid redundancies
+         /* clear a few other fields to avoid redundancies */
          tcomp.MailCC = tcomp.MailBCC = tcomp.ExtHeader = NULL;
          tcomp.Receipt = tcomp.Importance = 0;
          tcomp.DelSend = tcomp.UserInfo = FALSE;
 
-         if(WriteOutMessage(&tcomp))    // recurse!
+         if(WriteOutMessage(&tcomp))    /* recurse! */
          {
-            struct WritePart *tpart = comp->FirstPart; // save parts list so we're able to recover from a calloc() error
+            struct WritePart *tpart = comp->FirstPart; /* save parts list so we're able to recover from a calloc() error */
 
-            // replace with single new part
+            /* replace with single new part */
             if((comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart))))
             {
-               comp->FirstPart->EncType = tpart->EncType;          // reuse encoding
-               FreePartsList(tpart);                               // free old parts list
-               comp->FirstPart->ContentType = "message/rfc822";    // the only part is an email message
-               comp->FirstPart->Filename = tf->Filename;           // set filename to tempfile
-               comp->Signature = 0;                                // only use sig in enclosed mail
+               comp->FirstPart->EncType = tpart->EncType;          /* reuse encoding */
+               FreePartsList(tpart);                               /* free old parts list */
+               comp->FirstPart->ContentType = "message/rfc822";    /* the only part is an email message */
+               comp->FirstPart->Filename = tf->Filename;           /* set filename to tempfile */
+               comp->Signature = 0;                                /* only use sig in enclosed mail */
             } else
             {
-               // no errormsg here - the window probably won't open anyway...
+               /* no errormsg here - the window probably won't open anyway... */
                DisplayBeep(NULL);
-               comp->FirstPart = tpart;     // just restore old parts list
-               comp->Security = 0;          // switch off security
-               // we'll most likely get more errors further down :(
+               comp->FirstPart = tpart;     /* just restore old parts list */
+               comp->Security = 0;          /* switch off security */
+               /* we'll most likely get more errors further down :( */
             }
          } else
          {
@@ -1261,8 +1253,8 @@ void WR_NewMail(int mode, int winnum)
    if (winopen) set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
    /* Workaround for a MUI bug */
 
-   clear(&mail, sizeof(struct Mail));
-   clear(&comp, sizeof(struct Compose));
+   memset(&mail, 0, sizeof(struct Mail));
+   memset(&comp, 0, sizeof(struct Compose));
    mlist[0] = (struct Mail *)1; mlist[1] = NULL;
    get(gui->ST_TO, MUIA_String_Contents, &addr);
    er = GetStr(MSG_WR_ErrorNoRcpt);
@@ -1321,7 +1313,7 @@ void WR_NewMail(int mode, int winnum)
       if (MailExists(edmail, NULL))
       {
          comp.FH = fopen(GetMailFile(NULL, outfolder, edmail), "w");
-         my_strcpy(mail.MailFile, edmail->MailFile);
+         MyStrCpy(mail.MailFile, edmail->MailFile);
       }
       else
       {
@@ -1410,7 +1402,7 @@ skip:
    BusyEnd;
 }
 
-void SAVEDS ASM WR_NewMailFunc(REG(a1,int *arg))
+HOOKPROTONHNO(WR_NewMailFunc, void, int *arg)
 {
    WR_NewMail(arg[0], arg[1]);
 }
@@ -1436,10 +1428,8 @@ void WR_Cleanup(int winnum)
    }
 }
 
-///
-/// WR_CancelFunc
-//  User clicked the Cancel button
-void SAVEDS ASM WR_CancelFunc(REG(a1,int *arg))
+/*** WR_CancelFunc - User clicked the Cancel button ***/
+HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
 {
    int haschanged, winnum = *arg;
    if (G->WR[winnum]->Mode != NEW_BOUNCE)
@@ -1462,10 +1452,8 @@ void SAVEDS ASM WR_CancelFunc(REG(a1,int *arg))
 }
 MakeHook(WR_CancelHook, WR_CancelFunc);
 
-///
-/// WR_SaveAsFunc
-//  Saves contents of internal editor to a file
-void SAVEDS ASM WR_SaveAsFunc(REG(a1,int *arg))
+/*** WR_SaveAsFunc - Saves contents of internal editor to a file ***/
+HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
 {
    int winnum = *arg;
    set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
@@ -1480,10 +1468,8 @@ void SAVEDS ASM WR_SaveAsFunc(REG(a1,int *arg))
 }
 MakeHook(WR_SaveAsHook, WR_SaveAsFunc);
 
-///
-/// WR_Edit
-//  Launches external editor with message text
-void SAVEDS ASM WR_Edit(REG(a1,int *arg))
+/*** WR_Edit - Launches external editor with message text ***/
+HOOKPROTONHNO(WR_Edit, void, int *arg)
 {
    int winnum = *arg;
    long winopen;
@@ -1503,10 +1489,8 @@ void SAVEDS ASM WR_Edit(REG(a1,int *arg))
 }
 MakeHook(WR_EditHook, WR_Edit);
 
-///
-/// WR_AddFileFunc
-//  Adds one or more files to the attachment list
-void SAVEDS ASM WR_AddFileFunc(REG(a1,int *arg))
+/*** WR_AddFileFunc - Adds one or more files to the attachment list ***/
+HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
 {
    int i, winnum = *arg;
    char filename[SIZE_PATHFILE];
@@ -1526,10 +1510,8 @@ void SAVEDS ASM WR_AddFileFunc(REG(a1,int *arg))
 }
 MakeHook(WR_AddFileHook, WR_AddFileFunc);
 
-///
-/// WR_AddArchiveFunc
-//  Creates an archive of one or more files and adds it to the attachment list
-void SAVEDS ASM WR_AddArchiveFunc(REG(a1,int *arg))
+/*** WR_AddArchiveFunc - Creates an archive of one or more files and adds it to the attachment list ***/
+HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
 {
    int i, winnum = *arg;
    static char chr[2] = { 0,0 };
@@ -1582,7 +1564,7 @@ void SAVEDS ASM WR_AddArchiveFunc(REG(a1,int *arg))
       CurrentDir(olddir); UnLock(filedir);
       FreeStrBuf(dst);
       CloseTempFile(tf);
-      my_strcpy(filename, arcpath);
+      MyStrCpy(filename, arcpath);
       if (FileSize(filename) == -1)
       {
          sprintf(filename, "%s.lha", arcpath);
@@ -1598,10 +1580,8 @@ void SAVEDS ASM WR_AddArchiveFunc(REG(a1,int *arg))
 }
 MakeHook(WR_AddArchiveHook, WR_AddArchiveFunc);
 
-///
-/// WR_DisplayFile
-//  Displays an attached file using a MIME viewer
-void SAVEDS ASM WR_DisplayFile(REG(a1,int *arg))
+/*** WR_DisplayFile - Displays an attached file using a MIME viewer ***/
+HOOKPROTONHNO(WR_DisplayFile, void, int *arg)
 {
    struct Attach *attach = NULL;
 
@@ -1610,10 +1590,8 @@ void SAVEDS ASM WR_DisplayFile(REG(a1,int *arg))
 }
 MakeHook(WR_DisplayFileHook, WR_DisplayFile);
 
-///
-/// WR_ChangeSignatureFunc
-//  Changes the current signature
-void SAVEDS ASM WR_ChangeSignatureFunc(REG(a1,int *arg))
+/*** WR_ChangeSignatureFunc - Changes the current signature ***/
+HOOKPROTONHNO(WR_ChangeSignatureFunc, void, int *arg)
 {
    struct TempFile *tf;
    int signat = arg[0], winnum = arg[1];
@@ -1638,7 +1616,7 @@ void SAVEDS ASM WR_ChangeSignatureFunc(REG(a1,int *arg))
    }
 }
 MakeHook(WR_ChangeSignatureHook, WR_ChangeSignatureFunc);
-///
+
 
 /*** Menus ***/
 /// WR_TransformText
@@ -1683,10 +1661,8 @@ static char *WR_TransformText(char *source, int mode, char *qtext)
    return dest;
 }
 
-///
-/// WR_InsertSeparator
-//  Inserts a separator bar at the cursor position
-void SAVEDS ASM WR_InsertSeparatorFunc(REG(a1,int *arg))
+/*** WR_InsertSeparator - Inserts a separator bar at the cursor position ***/
+HOOKPROTONHNO(WR_InsertSeparatorFunc, void, int *arg)
 {
    APTR ed = G->WR[arg[1]]->GUI.TE_EDIT;
    set(ed, MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain);
@@ -1695,10 +1671,8 @@ void SAVEDS ASM WR_InsertSeparatorFunc(REG(a1,int *arg))
 }
 MakeHook(WR_InsertSeparatorHook, WR_InsertSeparatorFunc);
 
-///
-/// WR_EditorCmd
-//  Inserts file or clipboard into editor
-void SAVEDS ASM WR_EditorCmd(REG(a1,int *arg))
+/*** WR_EditorCmd - Inserts file or clipboard into editor ***/
+HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 {
    int cmd = arg[0], winnum = arg[1];
    char *text, *quotetext, filename[SIZE_PATHFILE];
@@ -1735,10 +1709,8 @@ void SAVEDS ASM WR_EditorCmd(REG(a1,int *arg))
 }
 MakeHook(WR_EditorCmdHook, WR_EditorCmd);
 
-///
-/// WR_AddClipboardFunc
-//  Adds contents of clipboard as attachment
-void SAVEDS ASM WR_AddClipboardFunc(REG(a1,int *arg))
+/*** WR_AddClipboardFunc - Adds contents of clipboard as attachment ***/
+HOOKPROTONHNO(WR_AddClipboardFunc, void, int *arg)
 {
    int winnum = *arg;
    struct TempFile *tf = OpenTempFile("w");
@@ -1753,10 +1725,8 @@ void SAVEDS ASM WR_AddClipboardFunc(REG(a1,int *arg))
 }
 MakeHook(WR_AddClipboardHook, WR_AddClipboardFunc);
 
-///
-/// WR_AddPGPKeyFunc
-//  Adds ASCII version of user's public PGP key as attachment
-void SAVEDS ASM WR_AddPGPKeyFunc(REG(a1,int *arg))
+/*** WR_AddPGPKeyFunc - Adds ASCII version of user's public PGP key as attachment ***/
+HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
 {
    int winnum = *arg;
    char *myid = *C->MyPGPID ? C->MyPGPID : C->EmailAddress;
@@ -1770,7 +1740,6 @@ void SAVEDS ASM WR_AddPGPKeyFunc(REG(a1,int *arg))
    else ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid, NULL);
 }
 MakeHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
-///
 
 /*** Open ***/
 /// WR_Open
@@ -1805,9 +1774,7 @@ int WR_Open(int winnum, BOOL bounce)
    return winnum;
 }
 
-///
-/// WR_SetupOldMail
-//  When editing a message, sets write window options to old values
+/*** WR_SetupOldMail - When editing a message, sets write window options to old values ***/
 void WR_SetupOldMail(int winnum)
 {
    static struct Attach attach;
@@ -1818,27 +1785,25 @@ void WR_SetupOldMail(int winnum)
       {
          Busy(GetStr(MSG_BusyDecSaving), "", 0, 0);
          RE_DecodePart(part);
-         clear(&attach, sizeof(struct Attach));
+         memset(&attach, 0, sizeof(struct Attach));
          attach.Size = part->Size;
          attach.IsMIME = part->EncodingCode != ENC_UUE;
          attach.IsTemp = TRUE;
          if(part->Name)
          {
-           my_strcpy(attach.Name, part->Name);
+           MyStrCpy(attach.Name, part->Name);
          }
-         my_strcpy(attach.FilePath, part->Filename);
+         MyStrCpy(attach.FilePath, part->Filename);
          *part->Filename = 0;
-         my_strcpy(attach.ContentType, part->ContentType);
-         my_strcpy(attach.Description, part->Description);
+         MyStrCpy(attach.ContentType, part->ContentType);
+         MyStrCpy(attach.Description, part->Description);
          DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_List_InsertSingle, &attach, MUIV_List_Insert_Bottom);
          BusyEnd;
       }
 }
 
-///
-/// WR_UpdateTitleFunc
-//  Shows cursor coordinates
-void SAVEDS ASM WR_UpdateWTitleFunc(REG(a1,int *arg))
+/*** WR_UpdateTitleFunc - Shows cursor coordinates ***/
+HOOKPROTONHNO(WR_UpdateWTitleFunc, void, int *arg)
 {
    struct WR_ClassData *wr = G->WR[*arg];
    APTR ed = wr->GUI.TE_EDIT;
@@ -1847,11 +1812,10 @@ void SAVEDS ASM WR_UpdateWTitleFunc(REG(a1,int *arg))
    set(wr->GUI.TX_POSI, MUIA_Text_Contents, wr->WTitle);
 }
 MakeHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
-///
 
 /*** Hooks ***/
-/// WR_AppFunc
-//  Handles Drag&Drop
+
+/*** WR_AppFunc - Handles Drag&Drop ***/
 void WR_App(int winnum, struct AppMessage *amsg)
 {
    struct WBArg *ap;
@@ -1888,17 +1852,15 @@ void WR_App(int winnum, struct AppMessage *amsg)
    }
 }
 
-LONG SAVEDS ASM WR_AppFunc(REG(a1,ULONG *arg))
+HOOKPROTONHNO(WR_AppFunc, LONG, ULONG *arg)
 {
    WR_App((int)arg[1],  (struct AppMessage *)arg[0]);
    return 0;
 }
 MakeHook(WR_AppHook, WR_AppFunc);
 
-///
-/// WR_LV_ConFunc
-//  Attachment listview construct hook
-struct Attach * SAVEDS ASM WR_LV_ConFunc(REG(a1,struct Attach *attach))
+/*** WR_LV_ConFunc - Attachment listview construct hook ***/
+HOOKPROTONHNO(WR_LV_ConFunc, struct Attach *, struct Attach *attach)
 {
    struct Attach *entry = malloc(sizeof(struct Attach));
    *entry = *attach;
@@ -1906,10 +1868,8 @@ struct Attach * SAVEDS ASM WR_LV_ConFunc(REG(a1,struct Attach *attach))
 }
 MakeHook(WR_LV_ConFuncHook, WR_LV_ConFunc);
 
-///
-/// WR_LV_DspFunc
-//  Attachment listview display hook
-long SAVEDS ASM WR_LV_DspFunc(REG(a2,char **array), REG(a1,struct Attach *entry))
+/*** WR_LV_DspFunc - Attachment listview display hook ***/
+HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
 {
    static char dispsz[SIZE_SMALL];
    if (entry)

@@ -28,4 +28,68 @@
 
 ***************************************************************************/
 
+#include <mui/Toolbar_mcc.h>
+
+#include "YAM_stringsizes.h"
+
+struct WR_GUIData
+{
+   APTR WI;
+   APTR RG_PAGE;
+   APTR ST_TO;
+   APTR ST_SUBJECT;
+   APTR TX_POSI;
+   APTR TE_EDIT;
+   APTR TO_TOOLBAR;
+   APTR LV_ATTACH;
+   APTR BT_ADD;
+   APTR BT_ADDPACK;
+   APTR BT_DEL;
+   APTR BT_DISPLAY;
+   APTR RA_ENCODING;
+   APTR CY_CTYPE;
+   APTR ST_CTYPE;
+   APTR ST_DESC;
+   APTR ST_CC;
+   APTR ST_BCC;
+   APTR ST_FROM;
+   APTR ST_REPLYTO;
+   APTR ST_EXTHEADER;
+   APTR CH_DELSEND;
+   APTR CH_RECEIPT;
+   APTR CH_DISPNOTI;
+   APTR CH_ADDINFO;
+   APTR CY_IMPORTANCE;
+   APTR RA_SECURITY;
+   APTR CH_DEFSECURITY;
+   APTR RA_SIGNATURE;
+   APTR BT_HOLD;
+   APTR BT_QUEUE;
+   APTR BT_SEND;
+   APTR BT_CANCEL;
+   struct MUIP_Toolbar_Description TB_TOOLBAR[13];
+};
+
+struct WR_ClassData  /* write window */
+{
+   struct WR_GUIData GUI;
+
+   struct Mail *     Mail;
+   struct Mail **    MList;
+   struct ABEntry *  ListEntry;
+
+/*   int               WindowNr; seems to be unused */
+   int               Mode;
+   int               OldSecurity;
+   int               AS_Count;
+   int               ReadwinNum; /* winnum of the read window the editor was invoked from, or -1 */
+
+   BOOL              Bounce;
+   BOOL              AS_Done;
+   char              MsgID[SIZE_MSGID];
+   char              QuoteText[SIZE_DEFAULT];
+   char              AltQuoteText[SIZE_SMALL]; /* no variable substitution -> SIZE_SMALL! */
+   char              WTitle[SIZE_DEFAULT];
+};
+
 #endif /* YAM_WRITE_H */

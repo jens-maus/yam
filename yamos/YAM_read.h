@@ -28,4 +28,8 @@
 
 ***************************************************************************/
 
+#include "SDI_compiler.h"
+
+void STACKEXT RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhitespace, char *ptr);
+
 #endif /* YAM_READ_H */

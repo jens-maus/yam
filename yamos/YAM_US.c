@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_hook.h"
 
 /* local protos */
 LOCAL void US_SaveUsers(void);
@@ -219,7 +220,7 @@ BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
 ///
 /// US_DelFunc
 //  Removes a user from the user database
-void SAVEDS US_DelFunc(void)
+HOOKPROTONHNONP(US_DelFunc, void)
 {
    int i, m;
    struct User *user;
@@ -238,7 +239,7 @@ MakeHook(US_DelHook, US_DelFunc);
 ///
 /// US_AddFunc
 //  Adds a new user to the user database
-void SAVEDS US_AddFunc(void)
+HOOKPROTONHNONP(US_AddFunc, void)
 {
    struct US_GUIData *gui = &G->US->GUI;
    struct User user;
@@ -300,7 +301,7 @@ LOCAL BOOL US_SaveUserList(void)
 ///
 /// US_OpenFunc
 //  Opens and initializes user list window
-void SAVEDS US_OpenFunc(void)
+HOOKPROTONHNONP(US_OpenFunc, void)
 {
    if (!G->US)
    {
@@ -319,7 +320,7 @@ MakeHook(US_OpenHook, US_OpenFunc);
 ///
 /// US_CloseFunc
 //  Closes user list window
-void SAVEDS US_CloseFunc(void)
+HOOKPROTONHNONP(US_CloseFunc, void)
 {
    if (US_SaveUserList()) DisposeModulePush(&G->US);
 }
@@ -328,7 +329,7 @@ MakeHook(US_CloseHook, US_CloseFunc);
 ///
 /// US_GetUSEntryFunc
 //  Fills form with data from selected list entry
-void SAVEDS US_GetUSEntryFunc(void)
+HOOKPROTONHNONP(US_GetUSEntryFunc, void)
 {
    struct User *user;
    struct US_GUIData *gui = &G->US->GUI;
@@ -364,7 +365,7 @@ MakeHook(US_GetUSEntryHook,US_GetUSEntryFunc);
 ///
 /// US_PutUSEntryFunc
 //  Fills form data into selected list entry
-void SAVEDS US_PutUSEntryFunc(void)
+HOOKPROTONHNONP(US_PutUSEntryFunc, void)
 {
    struct User *user = NULL;
    struct US_GUIData *gui = &G->US->GUI;
@@ -388,7 +389,7 @@ MakeHook(US_PutUSEntryHook,US_PutUSEntryFunc);
 /*** GUI ***/
 /// US_LV_ConFunc
 //  User listview construction hook
-struct User * SAVEDS ASM US_LV_ConFunc(REG(a1,struct User *user))
+HOOKPROTONHNO(US_LV_ConFunc, struct User *, struct User *user)
 {
    struct User *entry = malloc(sizeof(struct User));
    *entry = *user;
@@ -399,7 +400,7 @@ MakeHook(US_LV_ConHook, US_LV_ConFunc);
 ///
 /// US_LV_DspFunc
 //  User listview display hook
-long SAVEDS ASM US_LV_DspFunc(REG(a2,char **array), REG(a1,struct User *entry))
+HOOKPROTONH(US_LV_DspFunc, long, char **array, struct User *entry)
 {
    if (entry)
    {

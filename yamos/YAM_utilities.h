@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#include "YAM.h"
+#include "YAM_stringsizes.h"
 
 struct Person
 {       
@@ -36,6 +36,16 @@ struct Person
    char RealName[SIZE_REALNAME];
 };
 
-void ExtractAddress(char *line, struct Person *pe);
+char * AllocStrBuf(long initlen);
+char * BuildAddrName(char *address, char *name);
+char * BuildAddrName2(struct Person *pe);
+void   ExtractAddress(char *line, struct Person *pe);
+void   FreeStrBuf(char *strbuf);
+char * MyStrChr(char *s, int c);
+char * StrBufCat(char *strbuf, char *source);
+char * Trim(char *s);
+
+#define MyStrCpy(a,b) { strncpy(a,b,sizeof(a)); a[sizeof(a)-1] = 0; }
+
 
 #endif /* YAM_UTILITIES_H */

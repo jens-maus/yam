@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_hook.h"
 
 /* local protos */
 LOCAL APTR MakeVarPop(APTR*, int, int, char*);
@@ -40,7 +41,7 @@ LOCAL Object *MakeStaticCheck(void);
 /*** Hooks ***/
 /// PO_List2TextFunc
 //  Copies listview selection to text gadget
-void SAVEDS ASM PO_List2TextFunc(REG(a2,Object *list), REG(a1,Object *text))
+HOOKPROTONH(PO_List2TextFunc, void, Object *list, Object *text)
 {
    char *selection;
    DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &selection);
@@ -51,7 +52,7 @@ MakeHook(PO_List2TextHook, PO_List2TextFunc);
 ///
 /// CO_LV_TDspFunc
 //  Translation table listview display hook
-long SAVEDS ASM CO_LV_TDspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct TranslationTable *entry))
+HOOKPROTONH(CO_LV_TDspFunc, long, char **array, struct TranslationTable *entry)
 {
    array[0] = entry->Name;
    return 0;
@@ -61,7 +62,7 @@ MakeHook(CO_LV_TDspHook,CO_LV_TDspFunc);
 ///
 /// CO_LV_TConFunc
 //  Translation table listview construction hook
-struct TranslationTable * SAVEDS ASM CO_LV_TConFunc(REG(a1,struct TranslationTable *tt))
+HOOKPROTONHNO(CO_LV_TConFunc, struct TranslationTable *, struct TranslationTable *tt)
 {
    struct TranslationTable *entry = malloc(sizeof(struct TranslationTable));
    memcpy(entry, tt, sizeof(struct TranslationTable));
@@ -72,7 +73,7 @@ MakeHook(CO_LV_TConHook, CO_LV_TConFunc);
 ///
 /// CO_LV_RxDspFunc
 //  ARexx listview display hook
-long SAVEDS ASM CO_LV_RxDspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,int num))
+HOOKPROTONH(CO_LV_RxDspFunc, long, char **array, int num)
 {
    static char rexxoptm[SIZE_DEFAULT];
    int scr = num-1;
@@ -101,7 +102,7 @@ MakeHook(CO_LV_RxDspHook,CO_LV_RxDspFunc);
 ///
 /// PO_HandleXPKFunc
 //  Copies XPK sublibrary id from list to string gadget
-void SAVEDS ASM PO_HandleXPKFunc(REG(a1,APTR text), REG(a2,APTR pop))
+HOOKPROTONH(PO_HandleXPKFunc, void, APTR pop, APTR text)
 {
    char *entry;
    DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
@@ -157,7 +158,7 @@ APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
 ///
 /// PO_HandleTrans
 //  Copies filename of selected translation table to the string gadget
-void SAVEDS ASM PO_HandleTrans(REG(a1,APTR string), REG(a2,APTR pop))
+HOOKPROTONH(PO_HandleTrans, void, APTR pop, APTR string)
 {
    struct TranslationTable *entry;
    DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
@@ -218,7 +219,7 @@ APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
 ///
 /// PO_HandleVar
 //  Pastes an entry from variable listview into string gadget
-void SAVEDS ASM PO_HandleVar(REG(a1,APTR string), REG(a2,APTR pop))
+HOOKPROTONH(PO_HandleVar, void, APTR pop, APTR string)
 {
    char *var, buf[3];
 
@@ -335,7 +336,7 @@ LOCAL Object *MakeStaticCheck(void)
 ///
 /// CO_PlaySoundFunc
 //  Plays sound file referred by the string gadget
-void SAVEDS ASM CO_PlaySoundFunc(REG(a1,int *arg))
+HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
 {
    PlaySound(GetMUIStringPtr((struct Object *)arg[0]));
 }

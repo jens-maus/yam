@@ -28,4 +28,15 @@
 
 ***************************************************************************/
 
+struct RuleResult
+{
+   long Checked;
+   long Bounced;
+   long Forwarded;
+   long Replied;
+   long Executed;
+   long Moved;
+   long Deleted;
+};
+
 #endif /* YAM_REXX_RXIF_H */

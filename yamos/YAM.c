@@ -28,9 +28,12 @@
 #include <proto/exec.h>
 
 #include "YAM.h"
+#include "YAM_addressbook.h"
+#include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_rexx.h"
+#include "YAM_write.h"
 
 /***************************************************************************
  Module: Root
@@ -200,7 +203,7 @@ void AY_PrintStatus(char *txt, int percent)
 ///
 /// AY_SendMailFunc
 //  User clicked e-mail URL in About window
-void SAVEDS AY_SendMailFunc(void)
+HOOKPROTONHNONP(AY_SendMailFunc, void)
 {
    int wrwin;
    if (G->MA) if ((wrwin = MA_NewNew(NULL, 0)) >= 0)
@@ -213,7 +216,7 @@ MakeHook(AY_SendMailHook, AY_SendMailFunc);
 ///
 /// AY_GoPageFunc
 //  User clicked homepage URL in About window
-void SAVEDS AY_GoPageFunc(void)
+HOOKPROTONHNONP(AY_GoPageFunc, void)
 {
    GotoURL("http://www.yam.ch/");
 }
@@ -361,7 +364,7 @@ void PopUp(void)
 ///
 /// DoublestartHook
 //  A second copy of YAM was started
-void SAVEDS DoublestartFunc(void)
+HOOKPROTONHNONP(DoublestartFunc, void)
 {
 //   PopUp();
 //   ^^^^^^^^ Crap! If we want to popup the other (running) YAM,
@@ -379,7 +382,7 @@ BOOL StayInProg(void)
    if (G->AB->Modified)
    {
       if (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ABookModifiedGad), GetStr(MSG_AB_Modified)))
-         AB_SaveABookFunc();
+         CallHookPkt(&AB_SaveABookHook, 0, 0);
    }
    if (G->CO || C->ConfirmOnQuit) req = TRUE;
    for (i = 0; i < 4; i++) if (G->EA[i]) req = TRUE;
@@ -610,7 +613,7 @@ void Initialise2(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_CreatingGUI), 40);
    if (!(G->MA = MA_New()) || !(G->AB = AB_New())) Abort(GetStr(MSG_ErrorMuiApp));
    MA_SetupDynamicMenus();
-   MA_ChangeSelectedFunc();
+   CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
    SetupAppIcons();
    LoadLayout();
    set(G->MA->GUI.LV_FOLDERS, MUIA_HorizWeight, G->Weights[0]);

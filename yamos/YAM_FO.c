@@ -26,6 +26,7 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_hook.h"
 
 /* local protos */
 LOCAL void FO_XPKUpdateFolder(struct Folder*, int);
@@ -773,7 +774,7 @@ void FO_PutFolder(struct Folder *folder)
 ///
 /// FO_NewFolderGroupFunc
 //  Creates a new separator
-void SAVEDS FO_NewFolderGroupFunc(void)
+HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
 {
    struct Folder folder;
    clear(&folder, sizeof(struct Folder));
@@ -788,7 +789,7 @@ MakeHook(FO_NewFolderGroupHook, FO_NewFolderGroupFunc);
 ///
 /// FO_NewFolderFunc
 //  Creates a new folder
-void SAVEDS FO_NewFolderFunc(void)
+HOOKPROTONHNONP(FO_NewFolderFunc, void)
 {
    int mode = MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_NewFolder), GetStr(MSG_FO_NewFolderGads), GetStr(MSG_FO_NewFolderReq));
    static struct Folder folder;
@@ -826,7 +827,7 @@ MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
 ///
 /// FO_EditFolderFunc
 //  Opens folder window to edit the settings of the active folder
-void SAVEDS FO_EditFolderFunc(void)
+HOOKPROTONHNONP(FO_EditFolderFunc, void)
 {
   struct Folder *folder = FO_GetCurrentFolder();
 
@@ -855,7 +856,7 @@ MakeHook(FO_EditFolderHook, FO_EditFolderFunc);
 ///
 /// FO_DeleteFolderFunc
 //  Removes the active folder
-void SAVEDS FO_DeleteFolderFunc(void)
+HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 {
    APTR lv = G->MA->GUI.NL_FOLDERS;
    struct Folder *f, *folder = FO_GetCurrentFolder();
@@ -892,7 +893,7 @@ MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
 ///
 /// FO_MoveFunc
 //  Asks user for the new destination
-void SAVEDS FO_MoveFunc(void)
+HOOKPROTONHNONP(FO_MoveFunc, void)
 {
    char path[SIZE_PATH];
    GetMUIText(path, G->FO->GUI.TX_FPATH);
@@ -903,7 +904,7 @@ MakeHook(FO_MoveHook, FO_MoveFunc);
 ///
 /// FO_CloseFunc
 //  Closes folder configuration window
-void SAVEDS FO_CloseFunc(void)
+HOOKPROTONHNONP(FO_CloseFunc, void)
 {
    DisposeModulePush(&G->FO);
 }
@@ -912,7 +913,7 @@ MakeHook(FO_CloseHook, FO_CloseFunc);
 ///
 /// FO_SaveFunc
 //  Saves modified folder configuration
-void SAVEDS FO_SaveFunc(void)
+HOOKPROTONHNONP(FO_SaveFunc, void)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
    APTR lv = G->MA->GUI.NL_FOLDERS;
@@ -990,7 +991,7 @@ MakeHook(FO_SaveHook, FO_SaveFunc);
 ///
 /// FO_SetOrderFunc
 //  Saves or resets folder order
-void SAVEDS ASM FO_SetOrderFunc(REG(a1,int *arg))
+HOOKPROTONHNO(FO_SetOrderFunc, void, int *arg)
 {
    switch (*arg)
    {

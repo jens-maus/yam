@@ -28,7 +28,10 @@
 
 ***************************************************************************/
 
-#include "compiler.h"
+#include <mui/Toolbar_mcc.h>
+
+#include "SDI_compiler.h"
+#include "YAM_stringsizes.h"
 
 #define ASM_ALIAS    0
 #define ASM_REALNAME 1
@@ -39,7 +42,35 @@
 #define ASM_GROUP    32
 #define ASM_COMPLETE 64
 
+struct AB_GUIData
+{
+   APTR WI;
+   APTR TO_TOOLBAR;
+   APTR LV_ADRESSES;
+   APTR BT_TO;
+   APTR BT_CC;
+   APTR BT_BCC;
+   struct MUIP_Toolbar_Description TB_TOOLBAR[13];
+};
+ 
+struct AB_ClassData  /* address book window */
+{
+   struct AB_GUIData GUI;
+   int  Hits;
+   int  Mode;
+   int  SortBy;
+   int  WrWin;
+   BOOL Modified;
+   char WTitle[SIZE_DEFAULT];
+};
+
+extern struct Hook AB_SaveABookHook;
+extern struct Hook AB_LV_DspFuncHook;
+extern struct Hook AB_DeleteHook;
+
 int STACKEXT AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *text, int mode,
    int *hits, struct MUI_NListtree_TreeNode **lasthit);
+BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, int mode,
+   char **result);
 
 #endif /* YAM_ADDRESSBOOK_H */

@@ -347,3 +347,17 @@
     * also still undone, but the makefiles should be joined in major parts!
     * NOTE: The makefiles are to be reworked totally, especially the dependencies
 
+2001-05-19  Dirk Stöcker <stoecker@epost.de>
+
+    * started second step of cleanup
+    * replaced compiler.h by SDI_compiler.h (please don't mind Gunther, but it is
+      better structured and also reflects you original design better (e.g. ASM))
+    * added HOOKPROTO in YAM_hook.h and started to use it everwhere. SDI_compiler.h
+      is thus nearly used from YAM_hook.h only (HOOKPROTO taken from freeciv).
+    * gen_gates will no longer work, but I think this can be replaced by the
+      HOOKPROTO definitions directly.
+    * moved wbpath.c into YAM_UT.h
+    * the header files are still not complete, but much more :-)
+    * compiling with SAS will get faster gaian, when old.h is away. Maybe also the
+      optimizing problem will disappear then?
+

@@ -1,3 +1,42 @@
+#if defined(__SASC)
+  #if !defined(_M68060)
+    #if !defined(_M68040)
+      #if !defined(_M68030) && !defined(_M68020)
+         #define __mc68000__
+      #else
+        #define __mc68020__
+      #endif
+    #else
+      #define __mc68040__
+    #endif
+  #else
+    #define __mc68060__
+  #endif
+  #if defined(_M68881)
+    #define __HAVE_68881__
+  #endif
+#endif
+
+#if defined(__mc68020__) || defined(__mc68030__) || defined(__mc68040__) || defined(__mc68060__)
+  #define PLAIN(x)
+  #define REQUIRES_68020(x) ((x & AFF_68020) == 0)
+#else
+  #define REQUIRES_68020(x) (0)
+  #define PLAIN(x) x
+#endif
+
+/*
+** stacksize definitions
+*/
+
+/* we need to resolve the __near problem directly instead modifiing compiler.h */
+
+#ifdef __STORMGCC__
+  #define __YAM_STACK __stacksize
+#else
+  #define __YAM_STACK __stack
+#endif
+
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,7 +101,6 @@
 #include <proto/pm.h>
 #include <clib/macros.h>
 #include <NewReadArgs.h>
-#include <compiler.h>
 #include <extra.h>
 
 
@@ -163,35 +201,6 @@ struct sockaddr_in {
 #define DBGP DBG Delay(100);
 #define clear(p,l) memset((p), 0, (l));
 
-#ifdef __MORPHOS__
-
-	#define MakeHook(hookname, funcname) \
-   	 extern struct EmulLibEntry Gate_##funcname; \
-	    struct Hook hookname = { {NULL, NULL}, (void*)&Gate_##funcname, NULL, NULL }
-	#define InitHook(hook, funcname, data) ((hook)->h_Entry = (void*)&Gate_##funcname, (hook)->h_Data = (APTR)(data))
-	#define ENTRY(func)	  (void*)&Gate_##func
-
-	#define REG(reg,arg) arg
-	#define ASM
-	#define SAVEDS
-	#define STACKEXT
-	#define __stdargs
-	#define __regargs
-	#define __near
-
-#else /* __MORPHOS__ */
-
-#if defined(__VBCC__) || defined(__STORM__)
-#define MakeHook(hookname, funcname) struct Hook hookname = { {NULL, NULL}, (void *)HookEntry, (void *)funcname, NULL }
-#define InitHook(hook, funcname, data) ((hook)->h_Entry = (void *)HookEntry, (hook)->h_SubEntry = (void *)funcname, (hook)->h_Data = (APTR)(data))
-#else
-#define MakeHook(hookname, funcname) struct Hook hookname = { {NULL, NULL}, (void *)funcname, NULL, NULL }
-#define InitHook(hook, funcname, data) ((hook)->h_Entry = (void *)funcname, (hook)->h_Data = (APTR)(data))
-#endif
-#define ENTRY(func)	  func
-
-#endif /* __MORPHOS__ */
-
 #define LOCAL static
 #define nnsetstring(obj,s) nnset((obj),MUIA_String_Contents,(s))
 
@@ -253,14 +262,6 @@ struct sockaddr_in {
 #define PRINTMETHOD_DUMPRAW    (0)
 #define PRINTMETHOD_LATEX      (1)
 #define PRINTMETHOD_POSTSCRIPT (2)	// not yet implemented
-
-///
-/// WBPath.o Interface
-#define CloneWorkbenchPath(sm) cloneWorkbenchPath(SysBase, DOSBase, sm)
-#define FreeWorkbenchPath(path) freeWorkbenchPath(SysBase, DOSBase, path)
-
-BPTR STDARGS cloneWorkbenchPath(struct ExecBase *, struct DosLibrary *, struct WBStartup *);
-void STDARGS freeWorkbenchPath(struct ExecBase *, struct DosLibrary *, BPTR);
 
 ///
 /// Configuration sub-structures
@@ -351,42 +352,12 @@ struct Column
 };
 ///
 /// Miscellaneous structures
-struct RuleResult
-{
-   long Checked;
-   long Bounced, Forwarded, Replied, Executed, Moved, Deleted;
-};
-
-struct DownloadResult
-{
-   BOOL Error;
-   long Downloaded, OnServer, DupSkipped, Deleted;
-};
 
 struct Data2D
 {
    int Allocated;
    int Used;
    char **Data;
-};
-
-struct ABEntry
-{
-   char Address[SIZE_ADDRESS];
-   char RealName[SIZE_REALNAME];
-   char Comment[SIZE_DEFAULT];
-   char Alias[SIZE_NAME];
-   char Phone[SIZE_DEFAULT];
-   char Street[SIZE_DEFAULT];
-   char City[SIZE_DEFAULT];
-   char Country[SIZE_DEFAULT];
-   char Homepage[SIZE_URL];
-   long BirthDay;
-   char PGPId[SIZE_ADDRESS];
-   char Photo[SIZE_PATHFILE];
-   char *Members;
-   int  Type;
-   int  DefSecurity;
 };
 
 struct MailInfo
@@ -533,19 +504,6 @@ struct Dict
    char *Text;
 };
 
-struct Users
-{
-   int Num, CurrentID;
-   struct User
-   {
-      char Name[SIZE_NAME];
-      char Password[SIZE_USERID];
-      char MailDir[SIZE_PATH];
-      BOOL Limited, UseAddr, UseDict, Clone, IsNew;
-      int ID;
-   } User[MAXUSERS];
-};
-
 struct Search
 {
    int  Mode, PersMode, Compare, Status, Fast;
@@ -669,23 +627,6 @@ struct EA_ClassData  /* address book entry window */
    struct MUI_NListtree_TreeNode *EditNode;
 };
 
-struct AB_ClassData  /* address book window */
-{
-   struct AB_GUIData
-   {
-      APTR WI;
-      APTR TO_TOOLBAR, LV_ADRESSES;
-      APTR BT_TO, BT_CC, BT_BCC;
-      struct MUIP_Toolbar_Description TB_TOOLBAR[13];
-   } GUI;
-   BOOL Modified;
-   int  Hits;
-   int  Mode;
-   int  SortBy;
-   char WTitle[SIZE_DEFAULT];
-   int  WrWin;
-};
-
 struct RE_ClassData  /* read window */
 {
    struct RE_GUIData
@@ -713,37 +654,6 @@ struct RE_ClassData  /* read window */
    int               PGPSigned, PGPEncrypted;
    char              Signature[SIZE_ADDRESS];
    char              WTitle[SIZE_DEFAULT];
-};
-
-struct WR_ClassData  /* write window */
-{
-   struct WR_GUIData
-   {
-      APTR WI;
-      APTR RG_PAGE;
-      APTR ST_TO, ST_SUBJECT;
-      APTR TX_POSI, TE_EDIT, TO_TOOLBAR;
-      APTR LV_ATTACH;
-      APTR BT_ADD, BT_ADDPACK, BT_DEL, BT_DISPLAY;
-      APTR RA_ENCODING, CY_CTYPE, ST_CTYPE, ST_DESC;
-      APTR ST_CC, ST_BCC, ST_FROM, ST_REPLYTO, ST_EXTHEADER, CH_DELSEND, CH_RECEIPT, CH_DISPNOTI, CH_ADDINFO, CY_IMPORTANCE;
-		APTR RA_SECURITY, CH_DEFSECURITY, RA_SIGNATURE;
-      APTR BT_HOLD, BT_QUEUE, BT_SEND, BT_CANCEL;
-      struct MUIP_Toolbar_Description TB_TOOLBAR[13];
-   } GUI;
-   int                  WindowNr; // seems to be unused
-   BOOL                 Bounce;
-   struct Mail         *Mail, **MList;
-   struct ABEntry      *ListEntry;
-   int                  Mode;
-   int                  OldSecurity;
-   int                  AS_Count;
-   BOOL                 AS_Done;
-   char                 MsgID[SIZE_MSGID];
-   char                 QuoteText[SIZE_DEFAULT];
-   char                 AltQuoteText[SIZE_SMALL];	// no variable substitution -> SIZE_SMALL!
-   char                 WTitle[SIZE_DEFAULT];
-   int                  ReadwinNum; // winnum of the read window the editor was invoked from, or -1
 };
 
 struct TR_ClassData  /* transfer window */
@@ -826,67 +736,6 @@ struct UniversalClassData
    struct UniversalGUIData { APTR WI; } GUI;
 };
 ///
-/// Global Structure
-struct Global 
-{
-   BOOL                  Error;
-   BOOL                  PGP5;
-   BOOL                  DtpicSupported;
-   APTR                  App;
-   struct AppIcon       *AppIcon;
-   struct MsgPort       *AppPort;
-   struct RexxHost      *RexxHost;
-   struct DiskObject    *DiskObj[MAXICONS];
-   struct BodyChunkData *BImage[MAXIMAGES];
-   struct FileRequester *ASLReq[MAXASL];
-   struct Locale        *Locale;
-   struct DateStamp      StartDate;
-   int                   TotMsgs;
-   int									 UnrMsgs;
-   int                   NewMsgs;
-   BOOL                  AppIconQuiet;
-   int                   GM_Count, SI_Count;
-   char                  ProgDir[SIZE_PATH];
-   struct Users          Users;
-   int                   PGPVersion;
-   char                  PGPPassPhrase[SIZE_DEFAULT];
-   BOOL                  PGPPassVolatile;
-   long                  EdColMap[9];
-   long                  Weights[6];
-   struct TranslationTable *TTin, *TTout;
-   struct RuleResult      RRs;
-   struct DownloadResult  LastDL;
-   char                  MA_MailDir[SIZE_PATH];
-   struct MA_ClassData  *MA;
-   char                  CO_PrefsFile[SIZE_PATHFILE];
-   BOOL                  CO_Valid;
-   int                   CO_DST;
-   struct CO_ClassData  *CO;
-   char                  AB_Filename[SIZE_PATHFILE];
-   struct AB_ClassData  *AB;
-   struct EA_ClassData  *EA[MAXEA];
-   struct RE_ClassData  *RE[MAXRE+1];
-   struct WR_ClassData  *WR[MAXWR+1];
-   struct NotifyRequest  WR_NRequest[MAXWR+1];
-   char                  WR_Filename[3][SIZE_PATHFILE];
-   BOOL                  TR_Debug;
-   BOOL                  TR_Allow;
-   BOOL                  TR_Exchange;
-   int                   TR_Socket;
-   struct sockaddr_in    TR_INetSocketAddr;
-   struct TR_ClassData  *TR;
-   struct ER_ClassData  *ER;
-   char                 *ER_Message[MAXERR];
-   int                   ER_NumErr;
-   struct FI_ClassData  *FI;
-   struct FO_ClassData  *FO;
-   char                  DI_Filename[SIZE_PATHFILE];
-   struct DI_ClassData  *DI;
-   struct US_ClassData  *US;
-   APTR                  AY_Win, AY_Text, AY_Group, AY_List, AY_Button, AY_AboutText;
-   long                  ActiveReadWin, ActiveWriteWin;
-};
-///
 /// MUI internal custom classes data
 struct DumData { long dummy; };
 
@@ -936,7 +785,6 @@ enum { PA_LOAD, PA_DELETE, PA_SKIP,
        ED_OPEN, ED_INSERT, ED_INSQUOT, ED_INSALTQUOT, ED_INSROT13, ED_PASQUOT, ED_PASALTQUOT, ED_PASROT13,
        DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME, DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT};
 
-enum { AET_USER=0, AET_LIST, AET_GROUP };
 
 enum { SEND_ALL=-2, SEND_ACTIVE, NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC,
        POP_USER, POP_START, POP_TIMED, POP_REXX, APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE,
@@ -974,8 +822,7 @@ extern struct ExecBase *SysBase;
 extern struct IntuitionBase *IntuitionBase;
 extern struct DosLibrary *DOSBase;
 extern struct UtilityBase *UtilityBase;
-extern struct Global *G;
-extern struct Config *C, *CE;
+extern struct Config *CE;
 extern struct Hook AB_FromAddrBookHook;
 extern struct Hook MA_ChangeSelectedHook, MA_ChangeFolderHook, MA_SendHook, MA_RescanIndexHook, MA_FlushIndexHook, MA_ApplyRulesHook, MA_DeleteDeletedHook, MA_DeleteOldHook;
 extern struct Hook MA_LV_Cmp2Hook, MA_LV_FCmp2Hook, MA_LV_DspFuncHook, MA_LV_FDspFuncHook;
@@ -1162,9 +1009,6 @@ extern void MA_FreeEMailStruct(struct ExtendedMail *);
 extern void MA_ScanMailBox(struct Folder *);
 extern void MA_ChangeFolder(struct Folder *);
 extern ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg);
-extern void SAVEDS MA_ChangeSelectedFunc(void);
-extern void SAVEDS MA_SetMessageInfoFunc(void);
-extern void SAVEDS MA_SetFolderInfoFunc(void);
 extern struct Mail **MA_CreateMarkedList(APTR);
 extern void MA_ChangeTransfer(BOOL);
 extern int MA_NewNew(struct Mail *, int);
@@ -1194,7 +1038,6 @@ extern void MA_SetupDynamicMenus(void);
 extern int MA_CmpFunc(struct Mail **, struct Mail **);
 extern void MA_MakeFOFormat(APTR);
 extern void MA_MakeMAFormat(APTR);
-extern long SAVEDS ASM MA_LV_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct Mail *));
 extern struct MA_ClassData *MA_New(void);
 
 extern BOOL CO_IsValid(void);
@@ -1210,16 +1053,12 @@ extern void CO_Validate(struct Config *, BOOL);
 extern void CO_SetConfig(void);
 extern void CO_GetConfig(void);
 extern void CO_FreeConfig(struct Config *);
-extern long SAVEDS ASM CO_PL_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct PageList *));
-extern APTR CO_Page0(struct CO_ClassData *), CO_Page1(struct CO_ClassData *), CO_Page2(struct CO_ClassData *), CO_Page3(struct CO_ClassData *), CO_Page4(struct CO_ClassData *), CO_Page5(struct CO_ClassData *), CO_Page6(struct CO_ClassData *), CO_Page7(struct CO_ClassData *);
-extern APTR CO_Page8(struct CO_ClassData *), CO_Page9(struct CO_ClassData *), CO_Page10(struct CO_ClassData *),CO_Page11(struct CO_ClassData *), CO_Page12(struct CO_ClassData *),CO_Page13(struct CO_ClassData *),CO_Page14(struct CO_ClassData *),CO_Page15(struct CO_ClassData *);
 
 extern struct Folder **FO_CreateList(void);
 extern struct Folder *FO_GetCurrentFolder(void);
 extern struct Folder *FO_GetFolderRexx(char *, int *);
 extern struct Folder *FO_GetFolderByName(char *, int *);
 extern struct Folder *FO_GetFolderByType(int, int *);
-extern void SAVEDS FO_DeleteFolderFunc(void);
 extern BOOL FO_LoadConfig(struct Folder *);
 extern void FO_SaveConfig(struct Folder *);
 
@@ -1239,11 +1078,7 @@ extern long AB_CompressBD(char *datestr);
 extern void AB_CheckBirthdates(void);
 extern BOOL AB_LoadTree(char *, BOOL, BOOL);
 extern BOOL AB_SaveTree(char *);
-extern void SAVEDS AB_SaveABookFunc(void);
-extern void SAVEDS AB_DeleteFunc(void);
-extern STACKEXT BOOL AB_FindEntry(struct MUI_NListtree_TreeNode *, char *, int mode, char **);
 extern void AB_MakeABFormat(APTR);
-extern long SAVEDS ASM AB_LV_DspFunc(REG(a0, struct Hook *), REG(a1, struct MUIP_NListtree_DisplayMessage *));
 extern struct AB_ClassData *AB_New(void);
 
 extern int EA_Init(int, struct MUI_NListtree_TreeNode *);
@@ -1252,7 +1087,6 @@ extern void EA_InsertBelowActive(struct ABEntry *, int);
 extern void EA_FixAlias(struct ABEntry *, BOOL);
 extern void EA_SetDefaultAlias(struct ABEntry *);
 extern void EA_AddSingleMember(Object *, struct MUI_NListtree_TreeNode *);
-extern STACKEXT void EA_AddMembers(Object *, struct MUI_NListtree_TreeNode *);
 extern void EA_SetDefaultAlias(struct ABEntry *);
 extern void EA_SetPhoto(int, char *);
 
@@ -1260,7 +1094,6 @@ extern BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi);
 extern struct Mail *RE_GetQuestion(long);
 extern struct Mail *RE_GetAnswer(long);
 extern BOOL RE_DecodePart(struct Part *);
-extern STACKEXT void RE_ProcessHeader(char *, char *, BOOL, char *);
 extern void RE_CleanupMessage(int);
 extern BOOL RE_LoadMessage(int, int);
 extern char *RE_ReadInMessage(int, int);
@@ -1281,9 +1114,6 @@ extern char *WR_ExpandAddresses(int, char *, BOOL, BOOL);
 extern void WR_AddSignature(char *, int);
 extern void WR_OpenWin(int);
 extern void WR_FromAddrBook(struct Object *);
-extern void SAVEDS ASM WR_GetFileEntry(REG(a1,int *));
-extern void SAVEDS ASM WR_PutFileEntry(REG(a1,int *));
-extern void SAVEDS ASM WR_Edit(REG(a1,int *));
 extern void EmitHeader(FILE *, char *, char *);
 extern BOOL WriteOutMessage(struct Compose *);
 extern struct WritePart *NewPart(int);
@@ -1316,7 +1146,6 @@ extern BOOL TR_GetMessageList_GET(int);
 extern void TR_GetMailFromNextPOP(BOOL, int, int);
 extern BOOL TR_ProcessSEND(struct Mail **);
 extern BOOL TR_ProcessEXPORT(char *, struct Mail **, BOOL);
-extern void SAVEDS TR_ProcessIMPORTFunc(void);
 extern void TR_GetUIDL(void);
 extern void TR_GetMessageDetails(struct Mail *, int);
 extern int TR_CheckMessage(int, int, int);

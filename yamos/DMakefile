@@ -31,7 +31,7 @@ $(OBJS4): $(SRCS4)
 YAM_locale.h: locale/YAM.cd
 	flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
 
-YAM.m: YAM.h headers.h YAM_locale.h includes/dice.h includes/compiler.h \
+YAM.m: YAM.h headers.h YAM_locale.h includes/dice.h includes/SDI_compiler.h \
 	includes/extra.h
 	Delete %(left)
 
@@ -39,7 +39,7 @@ diceobjs: diceobjs
 	Makedir %(left)
 
 $(OBJS1) $(OBJS2) $(OBJS3) $(OBJS4):: YAM.h headers.h YAM_locale.h \
-	includes/dice.h includes/compiler.h includes/extra.h
+	includes/dice.h includes/SDI_compiler.h includes/extra.h
 
 diceobjs/all_dice.o:: extrasrc/md5.c extrasrc/astcsma.c extrasrc/getft.c \
 	extrasrc/stccpy.c extrasrc/stcgfe.c extrasrc/stcgfn.c \

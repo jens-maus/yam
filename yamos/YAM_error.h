@@ -28,4 +28,6 @@
 
 ***************************************************************************/
 
+void ER_NewError(char *error, char *arg1, char *arg2);
+
 #endif /* YAM_ERROR_H */

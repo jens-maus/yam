@@ -25,7 +25,13 @@
 
 ***************************************************************************/
 
+#include <workbench/startup.h>
+#include <proto/exec.h>
+#include <proto/dos.h>
+
 #include "YAM.h"
+#include "YAM_hook.h"
+#include "YAM_main.h"
 
 /***************************************************************************
  Utilities
@@ -44,8 +50,68 @@ LOCAL BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, in
 LOCAL BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 LOCAL char *IdentifyFileDT(char *fname);
-void SAVEDS ASM putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale));
 
+struct PathNode {
+   BPTR next;
+   BPTR dir;
+};
+
+static BPTR CloneWorkbenchPath(struct WBStartup *wbmsg)
+{
+   BPTR path = 0;
+
+   Forbid();
+   if (wbmsg->sm_Message.mn_ReplyPort)
+   {
+      if (((LONG)wbmsg->sm_Message.mn_ReplyPort->mp_Flags & PF_ACTION) == PA_SIGNAL)
+      {
+	 struct Process *wbproc = wbmsg->sm_Message.mn_ReplyPort->mp_SigTask;
+	 if (wbproc->pr_Task.tc_Node.ln_Type == NT_PROCESS)
+	 {
+	    struct CommandLineInterface *cli = BADDR(wbproc->pr_CLI);
+	    if (cli)
+	    {
+	       BPTR *p = &path;
+	       BPTR dir = cli->cli_CommandDir;
+	       while (dir)
+	       {
+		  BPTR dir2;
+		  struct FileLock *lock = BADDR(dir);
+		  struct PathNode *node;
+		  dir = lock->fl_Link;
+		  dir2 = DupLock(lock->fl_Key);
+		  if (!dir2)
+		     break;
+		  node = AllocVec(8, MEMF_PUBLIC);
+		  if (!node)
+		  {
+		     UnLock(dir2);
+		     break;
+		  }
+		  node->next = 0;
+		  node->dir = dir2;
+		  *p = MKBADDR(node);
+		  p = &node->next; 
+	       }
+	    }
+	 }
+      }
+   }
+   Permit();
+
+   return path;
+}
+
+static void FreeWorkbenchPath(BPTR path)
+{
+   while (path)
+   {
+      struct PathNode *node = BADDR(path);
+      path = node->next;
+      UnLock(node->dir);
+      FreeVec(node);
+   }
+}
 
 /*** Requesters ***/
 /// StringRequest
@@ -1845,7 +1911,7 @@ BOOL FileToEditor(char *file, struct Object *editor)
 /*** Hooks ***/
 /// GeneralDesFunc
 //  General purpose destruction hook
-long SAVEDS ASM GeneralDesFunc(REG(a1,void *entry))
+HOOKPROTONHNO(GeneralDesFunc, long, void *entry)
 {
    free(entry);
    return 0;
@@ -1854,7 +1920,7 @@ MakeHook(GeneralDesHook, GeneralDesFunc);
 ///
 /// PO_SetPublicKey
 //  Copies public PGP key from list to string gadget
-void SAVEDS ASM PO_SetPublicKey(REG(a1,APTR string), REG(a2,APTR pop))
+HOOKPROTONH(PO_SetPublicKey, void, APTR pop, APTR string)
 {
    char *var, buf[SIZE_SMALL];
 
@@ -1870,7 +1936,7 @@ MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 ///
 /// PO_ListPublicKeys
 //  Lists keys of public PGP keyring in a popup window
-long SAVEDS ASM PO_ListPublicKeys(REG(a1,APTR string), REG(a2,APTR pop))
+HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
 {  
    BOOL secret;
    char buf[SIZE_LARGE], *str, p;
@@ -2275,7 +2341,7 @@ void DisposeModule(void *modptr)
       *module = NULL;
    }
 }
-void SAVEDS ASM DisposeModuleFunc(REG(a1,void **arg))
+HOOKPROTONHNO(DisposeModuleFunc, void, void **arg)
 {
    DisposeModule(arg[0]);
 }
@@ -2596,8 +2662,8 @@ void DisplayStatistics(struct Folder *fo)
 
    if (fo == actfo)
    {
-      MA_SetMessageInfoFunc();
-      MA_SetFolderInfoFunc();
+      CallHookPkt(&MA_SetMessageInfoHook, 0, 0);
+      CallHookPkt(&MA_SetFolderInfoHook, 0, 0);
    }
 
    // if the folder that statistic has changed is the incoming folder we also have to change the AppIcon accordingly
@@ -2999,7 +3065,7 @@ char *AllocReqText(char *s)
 
 /// putCharFunc
 //  Hook used by FormatString()
-void SAVEDS ASM putCharFunc(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale))
+HOOKPROTO(putCharFunc, void, struct Locale *locale, char c)
 {
   char **tmp;
 
@@ -3032,7 +3098,7 @@ void SPrintF(char *outstr, char *fmtstr, ...)
 	va_end(ap);
 #endif
 
-	InitHook(&hook, putCharFunc, outstr);
+	InitHook(&hook, putCharHook, outstr);
 
 #ifdef __PPC__
 	FormatString(G->Locale, fmtstr, &arg[0], &hook);

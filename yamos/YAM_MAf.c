@@ -26,6 +26,8 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_hook.h"
+#include "YAM_read.h"
 #include "YAM_rexx.h"
 
 /* local protos */
@@ -294,7 +296,7 @@ void MA_FlushIndexes(BOOL all)
    }
 }
 
-void SAVEDS MA_FlushIndexFunc(void)
+HOOKPROTONHNONP(MA_FlushIndexFunc, void)
 {
    MA_FlushIndexes(TRUE);
 }
@@ -372,7 +374,7 @@ void MA_ChangeFolder(struct Folder *folder)
    set(gui->LV_MAILS, MUIA_Disabled, !folderopen);
 }
 
-void SAVEDS MA_ChangeFolderFunc(void)
+HOOKPROTONHNONP(MA_ChangeFolderFunc, void)
 {
    MA_ChangeFolder(NULL);
 }
@@ -772,7 +774,7 @@ void MA_ScanMailBox(struct Folder *folder)
 /*** Hooks ***/
 /// PO_InitFolderList
 //  Creates a popup list of all folders
-long SAVEDS ASM PO_InitFolderList(REG(a2,Object *pop))
+HOOKPROTONHNP(PO_InitFolderList, long, Object *pop)
 {  
    int i;
    struct Folder **flist;
@@ -792,7 +794,7 @@ MakeHook(PO_InitFolderListHook, PO_InitFolderList);
 ///
 /// MA_LV_FDspFunc
 //  Folder listview display hook
-long SAVEDS ASM MA_LV_FDspFunc(REG(a1, struct MUIP_NListtree_DisplayMessage *msg))
+HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 {
    if (msg != NULL && msg->TreeNode != NULL)
    {

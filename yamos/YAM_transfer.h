@@ -28,4 +28,16 @@
 
 ***************************************************************************/
 
+struct DownloadResult
+{
+   long Downloaded;
+   long OnServer;
+   long DupSkipped;
+   long Deleted;
+   BOOL Error;
+};
+
+extern struct Hook TR_ProcessGETHook;
+extern struct Hook TR_ProcessIMPORTHook;
+
 #endif /* YAM_TRANSFER_H */

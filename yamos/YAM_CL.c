@@ -26,12 +26,16 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
+#include "YAM_config.h"
+#include "YAM_hook.h"
 
 /***************************************************************************
  Private MUI classes
 ***************************************************************************/
 
-/// Definitions
+/*** Definitions ***/
 struct MUI_CustomClass *CL_TextEditor;
 struct MUI_CustomClass *CL_BodyChunk;
 struct MUI_CustomClass *CL_FolderList;
@@ -42,10 +46,9 @@ struct MUI_CustomClass *CL_DDString;
 struct MUI_CustomClass *CL_DDList;
 struct MUI_CustomClass *CL_MainWin;
 struct MUI_CustomClass *CL_PageList;
-///
-/// BC_Dispatcher (BodyChunk)
-//  Subclass of BodyChunk, can load images from files
-ULONG SAVEDS ASM BC_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+
+/*** BC_Dispatcher (BodyChunk) - Subclass of BodyChunk, can load images from files ***/
+DISPATCHERPROTO(BC_Dispatcher)
 {
    struct BC_Data *data;
    struct TagItem *tags, *tag;
@@ -112,10 +115,10 @@ ULONG SAVEDS ASM BC_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    }
    return DoSuperMethodA(cl, obj, msg);
 }
-///
-/// WS_Dispatcher (Recipient String)
-//  Subclass of Betterstring, handles alias auto-completion, drag&drop from address book
-ULONG SAVEDS ASM WS_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+
+/*** WS_Dispatcher (Recipient String) - Subclass of Betterstring, handles alias
+     auto-completion, drag&drop from address book ***/
+DISPATCHERPROTO(WS_Dispatcher)
 {
    ULONG result = 0;
    UBYTE code;
@@ -227,10 +230,9 @@ ULONG SAVEDS ASM WS_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    return result;
 
 }
-///
-/// WL_Dispatcher (Attachment List)
-//  Subclass of List, adds Drag&Drop from message list
-ULONG SAVEDS ASM WL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+
+/*** WL_Dispatcher (Attachment List) - Subclass of List, adds Drag&Drop from message list ***/
+DISPATCHERPROTO(WL_Dispatcher)
 {
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
@@ -272,10 +274,9 @@ ULONG SAVEDS ASM WL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    }
    return DoSuperMethodA(cl, obj, msg);
 }
-///
-/// FL_Dispatcher (Folder NListtree)
-//  Subclass of NList, adds Drag&Drop from message list
-ULONG SAVEDS ASM FL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+
+/*** FL_Dispatcher (Folder NListtree) - Subclass of NList, adds Drag&Drop from message list ***/
+DISPATCHERPROTO(FL_Dispatcher)
 {
    struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
    struct Folder *srcfolder, *dstfolder;
@@ -323,10 +324,9 @@ ULONG SAVEDS ASM FL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 
    return DoSuperMethodA(cl,obj,msg);
 }
-///
-/// ML_Dispatcher (Mail NListview)
-//  Subclass of NList, adds ContextMenuBuild to Message List
-ULONG SAVEDS ASM ML_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+
+/*** ML_Dispatcher (Mail NListview) - Subclass of NList, adds ContextMenuBuild to Message List ***/
+DISPATCHERPROTO(ML_Dispatcher)
 {
    switch (msg->MethodID)
    {
@@ -342,10 +342,9 @@ ULONG SAVEDS ASM ML_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 
    return DoSuperMethodA(cl,obj,msg);
 }
-///
-/// EL_Dispatcher (Member List)
-//  Subclass of List, adds Drag&Drop from address book window
-ULONG SAVEDS ASM EL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+
+/*** EL_Dispatcher (Member List) - Subclass of List, adds Drag&Drop from address book window ***/
+DISPATCHERPROTO(EL_Dispatcher)
 {
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
    struct MUI_NListtree_TreeNode *active;
@@ -368,10 +367,10 @@ ULONG SAVEDS ASM EL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    }
    return DoSuperMethodA(cl,obj,msg);
 }
-///
-/// AL_Dispatcher (Address book NListtree)
-//  Subclass of Listtree, supports inline images and Drag&Drop from message list
-ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+
+/*** AL_Dispatcher (Address book NListtree) -
+     Subclass of Listtree, supports inline images and Drag&Drop from message list ***/
+DISPATCHERPROTO(AL_Dispatcher)
 {
    struct AL_Data *data;
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
@@ -385,7 +384,7 @@ ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          if (obj)
          {
             struct AL_Data *data = INST_DATA(cl, obj);
-            InitHook(&data->DisplayHook, AB_LV_DspFunc, data);
+            InitHook(&data->DisplayHook, AB_LV_DspFuncHook, data);
             set(obj, MUIA_NListtree_DisplayHook, &data->DisplayHook);
 
          }
@@ -436,11 +435,11 @@ ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 
    return DoSuperMethodA(cl,obj,msg);
 }
-///
-/// MW_Dispatcher (Main Window)
-//  Subclass of Windows, used to dispose subwindows on exit
+
 struct MUIP_MainWindow_CloseWindow { ULONG MethodID; APTR Window; };
-ULONG SAVEDS ASM MW_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+
+/*** MW_Dispatcher (Main Window) - Subclass of Windows, used to dispose subwindows on exit ***/
+DISPATCHERPROTO(MW_Dispatcher)
 {
    if (msg->MethodID == MUIM_MainWindow_CloseWindow)
    {
@@ -454,10 +453,10 @@ ULONG SAVEDS ASM MW_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 
    return 0;
 }
-///
-/// TE_Dispatcher (Text Editor)
-//  Subclass of Texteditor, adds error requester, Drag&Drop capabilities and multi-color support
-ULONG SAVEDS ASM TE_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,struct MUIP_TextEditor_HandleError *msg))
+
+/*** TE_Dispatcher (Text Editor) - Subclass of Texteditor, adds
+     error requester, Drag&Drop capabilities and multi-color support ***/
+DISPATCHERPROTO(TE_Dispatcher)
 {
    switch (msg->MethodID)
    {
@@ -489,7 +488,7 @@ ULONG SAVEDS ASM TE_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
       case MUIM_TextEditor_HandleError:
       {
          char *errortxt = NULL;
-         switch (msg->errorcode)
+         switch(((struct MUIP_TextEditor_HandleError *)msg)->errorcode)
          {
             case Error_ClipboardIsEmpty:  errortxt = GetStr(MSG_CL_ErrorEmptyCB); break;
             case Error_ClipboardIsNotFTXT:errortxt = GetStr(MSG_CL_ErrorNotFTXT); break;
@@ -514,12 +513,11 @@ ULONG SAVEDS ASM TE_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          break;
       }
    }
-   return DoSuperMethodA(cl, obj, (Msg)msg);
+   return DoSuperMethodA(cl, obj, msg);
 }
-///
-/// PL_Dispatcher (Config Window Page List)
-//  Subclass of List, adds small images to configuration menu
-ULONG SAVEDS ASM PL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
+
+/*** PL_Dispatcher (Config Window Page List) - Subclass of List, adds small images to configuration menu ***/
+DISPATCHERPROTO(PL_Dispatcher)
 {
    extern UBYTE PL_IconBody[MAXCPAGES][240];
    const ULONG PL_Colors[24] = {
@@ -537,7 +535,7 @@ ULONG SAVEDS ASM PL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          if (obj)
          {
             struct PL_Data *data = INST_DATA(cl,obj);
-            InitHook(&data->DisplayHook, CO_PL_DspFunc, data);
+            InitHook(&data->DisplayHook, CO_PL_DspFuncHook, data);
             set(obj, MUIA_List_DisplayHook, &data->DisplayHook);
          }
          return (ULONG)obj;
@@ -573,10 +571,8 @@ ULONG SAVEDS ASM PL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    }
    return DoSuperMethodA(cl, obj, msg);
 }
-///
 
-/// ExitClasses
-//  Remove custom MUI classes
+/*** ExitClasses - Remove custom MUI classes ***/
 void ExitClasses(void)
 {
    if (CL_PageList   ) MUI_DeleteCustomClass(CL_PageList   );
@@ -590,9 +586,8 @@ void ExitClasses(void)
    if (CL_DDList     ) MUI_DeleteCustomClass(CL_DDList     );
    if (CL_AttachList ) MUI_DeleteCustomClass(CL_AttachList );
 }
-///
-/// InitClasses
-//  Initialize custom MUI classes
+
+/*** InitClasses - Initialize custom MUI classes ***/
 BOOL InitClasses(void)
 {
    CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
@@ -609,4 +604,3 @@ BOOL InitClasses(void)
    return (BOOL)(CL_AttachList && CL_DDList && CL_DDString && CL_AddressList && CL_FolderList && CL_MailList &&
                  CL_BodyChunk && CL_TextEditor && CL_MainWin && CL_PageList);
 }
-///

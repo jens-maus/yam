@@ -26,7 +26,7 @@
 ***************************************************************************/
 
 #include <string.h>
-#include "compiler.h"
+#include "SDI_compiler.h"
 #include "YAM_md5.h"
 
 void MD5Init(struct MD5Context *p)

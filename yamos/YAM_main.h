@@ -28,4 +28,8 @@
 
 ***************************************************************************/
 
+extern struct Hook MA_ChangeSelectedHook;
+extern struct Hook MA_SetFolderInfoHook;
+extern struct Hook MA_SetMessageInfoHook;
+
 #endif /* YAM_MAIN_H */

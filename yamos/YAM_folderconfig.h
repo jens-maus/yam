@@ -28,4 +28,6 @@
 
 ***************************************************************************/
 
+extern struct Hook FO_DeleteFolderHook;
+
 #endif /* YAM_FOLDERCONFIG_H */

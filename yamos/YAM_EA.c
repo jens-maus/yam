@@ -27,6 +27,8 @@
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
+#include "YAM_addressbookEntry.h"
+#include "YAM_hook.h"
 
 /* local protos */
 static int EA_Open(int);
@@ -119,7 +121,7 @@ void EA_AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn)
 ///
 /// EA_AddMembers (rec)
 //  Adds an entire group to the member list by Drag&Drop
-STACKEXT void EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
+void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
 {
    struct MUI_NListtree_TreeNode *tn;
    int i;
@@ -134,7 +136,7 @@ STACKEXT void EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
 ///
 /// EA_GetEntry
 //  Fills string gadget with data from selected list entry
-void SAVEDS ASM EA_GetEntry(REG(a1,int *arg))
+HOOKPROTONHNO(EA_GetEntry, void, int *arg)
 {
    int winnum = *arg;
    char *entry = NULL;
@@ -146,7 +148,7 @@ MakeHook(EA_GetEntryHook, EA_GetEntry);
 ///
 /// EA_PutEntry
 //  Updates selected list entry
-void SAVEDS ASM EA_PutEntry(REG(a1,int *arg))
+HOOKPROTONHNO(EA_PutEntry, void, int *arg)
 {
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
    extern struct Hook EA_AddHook;
@@ -231,7 +233,7 @@ void EA_SetDefaultAlias(struct ABEntry *ab)
 /*** Buttons ***/
 /// EA_Okay
 //  Saves changes to the edited entry in the address book
-void SAVEDS ASM EA_Okay(REG(a1,int *arg))
+HOOKPROTONHNO(EA_Okay, void, int *arg)
 {
    static struct ABEntry newaddr;
    struct ABEntry *addr;
@@ -310,7 +312,7 @@ MakeHook(EA_OkayHook, EA_Okay);
 ///
 /// EA_AddFunc
 //  Adds a new entry to the member list
-void SAVEDS ASM EA_AddFunc(REG(a1,int *arg))
+HOOKPROTONHNO(EA_AddFunc, void, int *arg)
 {
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
    char *buf;
@@ -348,7 +350,7 @@ void EA_SetPhoto(int winnum, char *fname)
 ///
 /// EA_SelectPhotoFunc
 //  Lets user select an image file to be used as portrait
-void SAVEDS ASM EA_SelectPhotoFunc(REG(a1,int *arg))
+HOOKPROTONHNO(EA_SelectPhotoFunc, void, int *arg)
 {
    int winnum = *arg;
 
@@ -363,7 +365,7 @@ MakeHook(EA_SelectPhotoHook, EA_SelectPhotoFunc);
 ///
 /// EA_DownloadPhotoFunc
 //  Downloads a portrait from the YAM user gallery
-void SAVEDS ASM EA_DownloadPhotoFunc(REG(a1,int *arg))
+HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
 {
    int winnum = *arg, c;
    struct EA_GUIData *gui = &(G->EA[winnum]->GUI);
@@ -416,7 +418,7 @@ MakeHook(EA_DownloadPhotoHook, EA_DownloadPhotoFunc);
 ///
 /// EA_HomepageFunc
 //  Launches a browser to view the homepage of the person
-void SAVEDS ASM EA_HomepageFunc(REG(a1,int *arg))
+HOOKPROTONHNO(EA_HomepageFunc, void, int *arg)
 {
    char *url;
    get(G->EA[*arg]->GUI.ST_HOMEPAGE, MUIA_String_Contents, &url);
@@ -438,7 +440,7 @@ static int EA_Open(int type)
 ///
 /// EA_CloseFunc
 //  Closes address book entry window
-void SAVEDS ASM EA_CloseFunc(REG(a1,int *arg))
+HOOKPROTONHNO(EA_CloseFunc, void, int *arg)
 {
    int winnum = *arg;
    DisposeModulePush(&G->EA[winnum]);
