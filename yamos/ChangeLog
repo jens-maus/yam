@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-09-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c, YAM_UT.c: reworked the .index loading routines a bit
+      to make them a bit more robust against not enough memory conditions
+      or errors while loading the index files.
+
 2003-08-29  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: fixed the BusyText display while transfering data

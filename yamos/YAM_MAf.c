@@ -155,13 +155,25 @@ static void MA_ValidateStatus(struct Folder *folder)
 {
    struct Mail *mail;
 
-   for (mail = folder->Messages; mail; mail = mail->Next)
-      if (mail->Status == STATUS_NEW)
+   if(C->UpdateNewMail            ||
+      folder->Type == FT_OUTGOING ||
+      folder->Type == FT_SENT
+     )
+   {
+      DB(kprintf("Validating status for folder %s\n", folder->Name);)
+
+      for (mail = folder->Messages; mail; mail = mail->Next)
       {
-         if (folder->Type == FT_OUTGOING) MA_SetMailStatus(mail, STATUS_WFS);
-         else if (folder->Type == FT_SENT) MA_SetMailStatus(mail, STATUS_SNT);
-         else if (C->UpdateNewMail) MA_SetMailStatus(mail, STATUS_UNR);
+        DB(kprintf("mail: %lx - %lx - %s - [%s]\n", mail, mail->Next, mail->MailFile, mail->Subject);)
+
+        if (mail->Status == STATUS_NEW)
+        {
+          if (folder->Type == FT_OUTGOING)   MA_SetMailStatus(mail, STATUS_WFS);
+          else if (folder->Type == FT_SENT)  MA_SetMailStatus(mail, STATUS_SNT);
+          else                               MA_SetMailStatus(mail, STATUS_UNR);
+        }
       }
+   }
 }
 
 ///
@@ -184,6 +196,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
    enum LoadedMode indexloaded = LM_UNLOAD;
    char buf[SIZE_LARGE];
    BOOL corrupt = FALSE;
+   BOOL error = FALSE;
 
    DB( kprintf("Loading index for folder %s\n", folder->Name); )
 
@@ -192,8 +205,9 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
       struct FIndex fi;
 
       BusyText(GetStr(MSG_BusyLoadingIndex), folder->Name);
-      fread(&fi, sizeof(struct FIndex), 1, fh);
-      if(fi.ID == FINDEX_VER)
+      if(fread(&fi, sizeof(struct FIndex), 1, fh) == 1 &&
+         fi.ID == FINDEX_VER
+        )
       {
          folder->Total  = fi.Total;
          folder->New    = fi.New;
@@ -204,24 +218,36 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
          if (full)
          {
             ClearMailList(folder, TRUE);
-            for (;;)
+            for(;;)
             {
                struct Mail mail;
                struct ComprMail cmail;
                memset(&mail, 0, sizeof(struct Mail));               
-               if (fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1) break;
-
-               if (cmail.MoreBytes > SIZE_LARGE)
+               if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
                {
-                  fpos_t pos;
+                  DB(kprintf("error while loading ComprMail struct from .index file\n");)
+                  if(feof(fh) == 0)
+                    error = TRUE;
+
+                  break;
+               }
+
+               if(cmail.MoreBytes > SIZE_LARGE)
+               {
                   printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.MailFile, cmail.MoreBytes);
-                  if (!fgetpos(fh, &pos)) printf("File position: %ld\n", pos);
+                  printf("File position: %ld\n", ftell(fh));
 
                   corrupt = TRUE;
                   break;
                }
 
-               fread(buf, 1, cmail.MoreBytes, fh);
+               if(fread(buf, cmail.MoreBytes, 1, fh) != 1)
+               {
+                 DB(kprintf("fread error while reading index file\n");)
+                 error = TRUE;
+                 break;
+               }
+
                strcpy(mail.Subject, GetNextLine(buf));
                strcpy(mail.From.Address, GetNextLine(NULL));
                strcpy(mail.From.RealName, GetNextLine(NULL));
@@ -240,12 +266,41 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                mail.cMsgID = cmail.cMsgID;
                mail.cIRTMsgID = cmail.cIRTMsgID;
                mail.Size = cmail.Size;
-               AddMailToList(&mail, folder);
+
+               // finally add the new mail structure to our mail list
+               if(AddMailToList(&mail, folder) == NULL)
+               {
+                 DB(kprintf("AddMailToList returned NULL!\n");)
+                 error = TRUE;
+                 break;
+               }
             }
          }
       }
+      else
+      {
+        DB(kprintf("error while loading struct FIndex from .index file\n");)
+        error = TRUE;
+      }
+
+      if(!error && ferror(fh) == 1)
+        error = TRUE;
+
       BusyEnd;
       fclose(fh);
+   }
+   else
+   {
+     DB(kprintf("error while opening .index file\n");)
+     error = TRUE;
+   }
+
+   if(error)
+   {
+     DB(kprintf("an error occurred while trying to load the index file '%s'\n", MA_IndexFileName(folder));)
+     ClearMailList(folder, TRUE);
+
+     return LM_UNLOAD;
    }
 
    if(corrupt || indexloaded == LM_UNLOAD)
@@ -330,25 +385,30 @@ BOOL MA_GetIndex(struct Folder *folder)
       if(isCryptedFolder(folder) && *folder->Password && !MA_PromptFolderPassword(folder, G->MA->GUI.WI))
         return FALSE;
 
+      // load the index file
       folder->LoadedMode = MA_LoadIndex(folder, TRUE);
-      MA_ValidateStatus(folder);
 
       // we need to refresh the entry in the folder listtree this folder belongs to
       // but only if there is a GUI already!
-      if(folder->LoadedMode == LM_VALID && G->MA)
+      if(folder->LoadedMode == LM_VALID)
       {
-        struct MUI_NListtree_TreeNode *tn;
-        int i;
+        MA_ValidateStatus(folder);
 
-        for(i=0;;i++)
+        if(G->MA)
         {
-          tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIV_NListtree_GetEntry_Flag_Visible);
-          if(!tn) break;
+          struct MUI_NListtree_TreeNode *tn;
+          int i;
 
-          if(tn->tn_User == folder)
+          for(i=0;;i++)
           {
-            DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, i, MUIV_NListtree_Redraw_Flag_Nr);
-            break;
+            tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIV_NListtree_GetEntry_Flag_Visible);
+            if(!tn) break;
+
+            if(tn->tn_User == folder)
+            {
+              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, i, MUIV_NListtree_Redraw_Flag_Nr);
+              break;
+            }
           }
         }
       }

@@ -211,7 +211,6 @@ struct NewToolbarEntry
 // function macros
 #define ISpace(ch)            ((BOOL)((ch) == ' ' || ((ch) >= 9 && (ch) <= 13)))
 #define FileExists(f)         FileInfo(f, NULL, NULL, NULL)
-#define MyAddHead(l,m)        (m)->Next = *(l), *(l) = (m)
 #define BuildAddrName2(p)     BuildAddrName((p)->Address, (p)->RealName)
 #define SetHelp(o,str)        set(o, MUIA_ShortHelp, GetStr(str))
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)

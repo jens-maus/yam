@@ -2525,9 +2525,14 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
    struct Mail *new = malloc(sizeof(struct Mail));
    if (new)
    {
-      *new = *mail;
+      memcpy(new, mail, sizeof(struct Mail));
       new->Folder = folder;
-      MyAddHead(&(folder->Messages), new);
+
+      // lets add the new Message to our message list
+      new->Next = folder->Messages;
+      folder->Messages = new;
+
+      // lets summarize the stats
       folder->Total++;
       folder->Size += mail->Size;
       if (mail->Status == STATUS_NEW) { folder->New++; folder->Unread++; }
