@@ -721,7 +721,7 @@ STACKEXT BOOL AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, i
    int i;
    
    for (i=0; ; i++)
-      if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel))
+      if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, list, i, 0))
       {
          struct ABEntry *ab = tn->tn_User;
          if (ab->Type == AET_GROUP)
@@ -938,14 +938,25 @@ MakeHook(AB_LV_DspFuncHook, AB_LV_DspFunc);
 
 ///
 /// AB_LV_CmpFunc
-//  Address book listview sort hook
-/*
-long SAVEDS ASM AB_LV_CmpFunc(REG(a2,struct MUI_NListtree_TreeNode *entry1), REG(a1,struct MUI_NListtree_TreeNode *entry2))
+//  Address book listview compare hook
+long SAVEDS ASM AB_LV_CmpFunc(REG(a1, struct MUIP_NListtree_CompareMessage *msg))
 {
+   struct MUI_NListtree_TreeNode *entry1, *entry2;
+   struct ABEntry *ab1, *ab2;
    char *n1, *n2;
-   struct ABEntry *ab1 = (struct ABEntry *)entry1->tn_User,
-                  *ab2 = (struct ABEntry *)entry2->tn_User;
    int cmp;
+
+   if(!msg) return 0;
+
+   // now we get the entries
+   entry1 = msg->TreeNode1;
+   entry2 = msg->TreeNode2;
+   if(!entry1 || !entry2) return 0;
+
+   ab1 = (struct ABEntry *)entry1->tn_User;
+   ab2 = (struct ABEntry *)entry2->tn_User;
+   if(!ab1 || !ab2) return 0;
+
    switch (G->AB->SortBy)
    {
       case 1: if (!(n1 = strrchr(ab1->RealName,' '))) n1 = ab1->RealName;
@@ -962,7 +973,6 @@ long SAVEDS ASM AB_LV_CmpFunc(REG(a2,struct MUI_NListtree_TreeNode *entry1), REG
    return Stricmp(ab1->Alias, ab2->Alias);
 }
 MakeHook(AB_LV_CmpFuncHook, AB_LV_CmpFunc);
-*/
 ///
 
 /// AB_MakeABFormat
@@ -1082,7 +1092,7 @@ struct AB_ClassData *AB_New(void)
                MUIA_Listview_DragType, 	MUIV_Listview_DragType_Immediate,
                MUIA_NListview_NList,		data->GUI.LV_ADRESSES = NewObject(CL_AddressList->mcc_Class, NULL,
                   InputListFrame,
-                  //MUIA_NListtree_SortHook,				&AB_LV_CmpFuncHook,
+                  MUIA_NListtree_CompareHook,			&AB_LV_CmpFuncHook,
                   MUIA_NListtree_DragDropSort,		TRUE,
                   MUIA_NListtree_Title,						TRUE,
                   MUIA_NListtree_ConstructHook,		&AB_LV_ConFuncHook,
