@@ -25,42 +25,36 @@
 #include <proto/dos.h>
 #include <string.h>
 
-#ifdef DEBUG
-#include "Debug.h"
-#define bug kprintf
-#define d(x)  x
-#else
-#define bug
-#define d(x)
-#endif
+#include "YAM_debug.h"
 
 //#define COMPILE_V39
 
 /****************************************************************************/
 
 /*- NEWRDARGS STRUCTURE -*/
-struct NewRDArgs {
-// initialize these fields before calling NewReadArgs() !!!
-  STRPTR     Template;   // ReadArgs() template
-  STRPTR     ExtHelp;  // ExtHelp string
-  STRPTR     Window;   // workbench window -> eg. "CON:////Test"
-  LONG    *Parameters;   // where to store the data
-  LONG     FileParameter;  // -1 = none, 0 = all
-  LONG     PrgToolTypesOnly;
+struct NewRDArgs
+{
+  // initialize these fields before calling NewReadArgs() !!!
+  STRPTR Template;      // ReadArgs() template
+  STRPTR ExtHelp;       // ExtHelp string
+  STRPTR Window;        // workbench window -> eg. "CON:////Test"
+  LONG *Parameters;     // where to store the data
+  LONG FileParameter;   // -1 = none, 0 = all
+  LONG PrgToolTypesOnly;
 
 // private data section
-  struct RDArgs *RDArgs;  // RDArgs we give to ReadArgs()
+  struct RDArgs *RDArgs;    // RDArgs we give to ReadArgs()
   struct RDArgs *FreeArgs;  // RDArgs we get from ReadArgs()
 
-#ifdef COMPILE_V39
-  APTR     Pool;
-#else
+  #ifdef COMPILE_V39
+  APTR Pool;
+  #else
   struct Remember *Remember;  // the memory we`ve allocated
-#endif
+  #endif
 
-  BPTR     WinFH;   // i/o window stream
-  BPTR     OldInput;  // old i/o streams
-  BPTR     OldOutput;
+  BPTR WinFH;     // i/o window stream
+  BPTR OldInput;  // old i/o streams
+  BPTR OldOutput;
 };
 
 /****************************************************************************/
@@ -72,31 +66,31 @@ LONG NewReadArgs(struct WBStartup *, struct NewRDArgs *);
 
 void NewFreeArgs(struct NewRDArgs *rdargs)
 {
-  d( bug("--- NewFreeArgs ---\n"); )
+  DB(kprintf("--- NewFreeArgs ---\n");)
   FreeArgs(rdargs->FreeArgs);
-  d( bug("FreeArgs( rdargs->FreeArgs )\n"); )
+  DB(kprintf("FreeArgs( rdargs->FreeArgs )\n");)
   if(rdargs->RDArgs)
   {
     FreeVec( rdargs->RDArgs->RDA_Source.CS_Buffer );
     FreeDosObject(DOS_RDARGS, rdargs->RDArgs);
   }
-  d( bug("FreeDosObject( DOS_RDARGS, rdargs->RDArgs )\n"); )
+  DB(kprintf("FreeDosObject( DOS_RDARGS, rdargs->RDArgs )\n");)
   if(rdargs->WinFH) 
   {
     SelectOutput(rdargs->OldOutput);
     Close(SelectInput(rdargs->OldInput));
-    d( bug("SelectOutput( .. )\nClose( ... )\n"); )
+    DB(kprintf("SelectOutput( .. )\nClose( ... )\n");)
   }
 
-#ifndef COMPILE_V39
+  #ifndef COMPILE_V39
   if(rdargs->Remember)
     FreeRemember(&rdargs->Remember, TRUE);
-#else
+  #else
   if(rdargs->Pool)
     DeletePool(rdargs->Pool);
-#endif
-  d( bug("memory freed\n"); )
-  d( bug("--- EXIT ---\n"); )
+  #endif
+  DB(kprintf("memory freed\n");)
+  DB(kprintf("--- EXIT ---\n");)
 }
 
 /****************************************************************************/
@@ -124,32 +118,37 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
   };
   #endif
 
-  d( bug("--- NewReadArgs ---\n"); )
+  DB(kprintf("--- NewReadArgs ---\n");)
 
   nrdargs->RDArgs   =
   nrdargs->FreeArgs = NULL;
   nrdargs->WinFH    = 0;
-#ifndef COMPILE_V39
+  #ifndef COMPILE_V39
   nrdargs->Remember = NULL;
-#else
+  #else
   nrdargs->Pool   = NULL;
-#endif
+  #endif
 
   if((nrdargs->RDArgs = (struct RDArgs *)AllocDosObject(DOS_RDARGS, NULL)))
   {
-#ifndef COMPILE_V39
+    #ifndef COMPILE_V39
     struct Remember **remember = &nrdargs->Remember;
-#else
-    APTR      pool = NULL;
-#endif
-    STRPTR  ToolWindow = nrdargs->Window;
+    #else
+    APTR pool = NULL;
+    #endif
+    STRPTR ToolWindow = nrdargs->Window;
 
     if(WBStartup)
     {
-      struct WBArg  *wbarg;
-      STRPTR      *Args, ptr;
-      LONG      MaxArgs = 1, *ArgLen, num = WBStartup->sm_NumArgs,
-              FileArgs = nrdargs->FileParameter, FArgNum = -1L, MultiArg = -1L;
+      struct WBArg *wbarg;
+      STRPTR *Args;
+      STRPTR ptr;
+      LONG MaxArgs = 1;
+      LONG *ArgLen;
+      LONG num = WBStartup->sm_NumArgs;
+      LONG FileArgs = nrdargs->FileParameter;
+      LONG FArgNum = -1L;
+      LONG MultiArg = -1L;
 
       if(!(ptr = nrdargs->Template))
         return(ERROR_BAD_TEMPLATE);
@@ -157,35 +156,37 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       /*- count max number of args -*/
       while(*ptr)
       {
-        if( *ptr++ == '/' && *ptr == 'M' ) {
+        if(*ptr++ == '/' && *ptr == 'M' )
+        {
           MultiArg = MaxArgs-1L;
           ptr++;
         }
-        else if(*(ptr-1) == ',') MaxArgs++;
+        else if(*(ptr-1) == ',')
+          MaxArgs++;
       }
-      d( bug("Args: %ld\n", MaxArgs); )
+      DB(kprintf("Args: %ld\n", MaxArgs);)
       ptr = nrdargs->Template;
 
       /*- how many file args? -*/
       FileArgs = (FileArgs > num) ? num : ((FileArgs == -1) ? 0L : num);
       MaxArgs += FileArgs;
 
-#ifndef COMPILE_V39
+      #ifndef COMPILE_V39
       if(!(Args = AllocRemember(remember, MaxArgs*sizeof(STRPTR)*2, MEMF_ANY|MEMF_CLEAR)))
         return(ERROR_NO_FREE_STORE);
-#else
+      #else
       if(!(pool = nrdargs->Pool = CreatePool(MEMF_ANY, 1024, 1024)) || !(Args = AllocPooled(pool, MaxArgs*sizeof(STRPTR)*2)))
         return(ERROR_NO_FREE_STORE);
 
       for(num = 0L; num < (MaxArgs*2); num++)
         Args[num] = 0L;
-#endif
+      #endif
 
       ArgLen = (LONG *)&Args[MaxArgs];
 
-      for(  wbarg = WBStartup->sm_ArgList, num = 0L;
+      for(wbarg = WBStartup->sm_ArgList, num = 0L;
           num < WBStartup->sm_NumArgs;
-          num++, wbarg++  )
+          num++, wbarg++)
       {
         struct DiskObject *dobj;
         BPTR      olddir;
@@ -193,22 +194,22 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
         /*- get file-names if requested -*/
         if(FileArgs)
         {
-          TEXT  buf[300];
+          TEXT buf[300];
 
           if(FArgNum < FileArgs && FArgNum >= 0L)
           {
-            d( bug("ICON: %s\n", wbarg->wa_Name); )
+            DB(kprintf("ICON: %s\n", wbarg->wa_Name);)
 
             if( NameFromLock(wbarg->wa_Lock, buf, sizeof(buf)) &&
               AddPart(buf, wbarg->wa_Name, sizeof(buf)) )
             {
               STRPTR  dst;
               LONG  len = strlen(buf) + 2L;
-#ifndef COMPILE_V39
+              #ifndef COMPILE_V39
               if((Args[FArgNum] = dst = AllocRemember(remember, len, MEMF_ANY)))
-#else
+              #else
               if((Args[FArgNum] = dst = AllocPooled(pool, len)))
-#endif
+              #endif
               {
                 CopyMem(buf, (dst+1), len-2L);
                 *dst = dst[len-1] = '"';
@@ -230,42 +231,42 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
         /*- get tooltypes from .info file -*/
         dobj =
-#ifdef ICONGETA_RemapIcon
+        #ifdef ICONGETA_RemapIcon
           (((struct Library *)IconBase)->lib_Version >= 44L) ?
           GetIconTagList(wbarg->wa_Name, (struct TagItem *)icontags) :
-#endif
+        #endif
           GetDiskObject(wbarg->wa_Name);
 
-        if( dobj )
+        if(dobj)
         {
-          if(dobj->do_Type == WBTOOL || dobj->do_Type == WBPROJECT)
+          if(dobj->do_ToolTypes && (dobj->do_Type == WBTOOL || dobj->do_Type == WBPROJECT))
           {
-            STRPTR  *tarray = (STRPTR *)dobj->do_ToolTypes;
+            STRPTR *tarray = (STRPTR *)dobj->do_ToolTypes;
 
             while(*tarray)
             {
               if(**tarray != '(')
               {
-                STRPTR  src = *tarray;
-                LONG  i;
+                STRPTR src = *tarray;
+                LONG i;
 
-                d( bug("tt: %s\n", *tarray); )
+                DB(kprintf("tt: %s\n", *tarray);)
 
                 /*- valid arg ? -*/
                 if((i = IsArg(ptr, src)) > -1)
                 {
-                  STRPTR  dst;
-                  LONG  len;
+                  STRPTR dst;
+                  LONG len;
 
                   i += FileArgs;
 
                   if( ArgLen[i] == 0L || (i-FileArgs) != MultiArg )
                   {
-#ifndef COMPILE_V39
+                    #ifndef COMPILE_V39
                     if((Args[i] = dst = AllocRemember(remember, (len = strlen(src))+2L, MEMF_ANY)))
-#else
+                    #else
                     if((Args[i] = dst = AllocPooled(pool, (len = strlen(src))+2L)))
-#endif
+                    #endif
                     {
                       /*- copy arg -*/
                       while(*src)
@@ -279,20 +280,21 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
 
                       ArgLen[i] = len;
                     }
-                    else return(ERROR_NO_FREE_STORE);
+                    else
+                      return(ERROR_NO_FREE_STORE);
                   }
                   else
                   {
-                    while( *src && *src++ != '=' );
+                    while(*src && *src++ != '=' );
 
                     len = strlen( src ) + 1 + ArgLen[i];
-#ifndef COMPILE_V39
+                    #ifndef COMPILE_V39
                     if( (dst = AllocRemember(remember, len+2, MEMF_ANY)) )
-#else
+                    #else
                     if( (dst = AllocPooled(pool, len+2)) )
-#endif
+                    #endif
                     {
-                      BOOL  quotes = FALSE;
+                      BOOL quotes = FALSE;
                       UBYTE c;
 
                       CopyMem( Args[i], dst, len );
@@ -300,16 +302,18 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                       dst += ArgLen[i];
                       *dst++ = ' ';
 
-                      if( *src != '"' ) {
+                      if(*src != '"')
+                      {
                         quotes = TRUE;
                         *dst++ = '"';
                         len += 2;
                       }
 
-                      while( c = *src++,c )
+                      while(c = *src++,c)
                         *dst++ = c;
 
-                      if( quotes ) *dst = '"';
+                      if(quotes)
+                        *dst = '"';
 
                       ArgLen[i] = len;
                     }
@@ -320,14 +324,15 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
                 {
                   if((i = strlen(src)-6L) > 1L)
                   {
-#ifndef COMPILE_V39
+                    #ifndef COMPILE_V39
                     if((ToolWindow = AllocRemember(remember, i, MEMF_ANY)))
-#else
+                    #else
                     if((ToolWindow = AllocPooled(pool, i)))
-#endif
+                    #endif
                       CopyMem((src+7L), ToolWindow, i);
                   }
-                  else ToolWindow = "CON:";
+                  else
+                    ToolWindow = "CON:";
                 }
               }
 
@@ -366,7 +371,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
         *(ptr-1) = '\n';
         *ptr = '\0'; // not really needed
 
-        d( bug("CS_Buffer: %s", nrdargs->RDArgs->RDA_Source.CS_Buffer); )
+        DB(kprintf("CS_Buffer: %s", nrdargs->RDArgs->RDA_Source.CS_Buffer);)
       }
       else
       {
@@ -380,40 +385,43 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
     nrdargs->RDArgs->RDA_ExtHelp = nrdargs->ExtHelp;
     if(!(nrdargs->FreeArgs = ReadArgs(nrdargs->Template, nrdargs->Parameters, nrdargs->RDArgs)))
     {
-      d( bug("ReadArgs() error\n"); )
+      DB(kprintf("ReadArgs() error\n");)
       return(IoErr());
     }
 
-    d( bug("ReadArgs() okay\n"); )
+    DB(kprintf("ReadArgs() okay\n");)
 
     /*- when started from wb, open window if requested -*/
     if(ToolWindow && WBStartup)
     {
-      d( bug("WINDOW has been defined\n"); )
+      DB(kprintf("WINDOW has been defined\n");)
       if((nrdargs->WinFH = Open(ToolWindow, MODE_READWRITE)))
       {
-        d( bug("Opened WINDOW=%s\n", ToolWindow); )
+        DB(kprintf("Opened WINDOW=%s\n", ToolWindow);)
         nrdargs->OldInput = SelectInput(nrdargs->WinFH);
         nrdargs->OldOutput = SelectOutput(nrdargs->WinFH);
       }
       else return(IoErr());
     }
 
-#ifdef COMPILE_V39
-    if( pool ) {
+    #ifdef COMPILE_V39
+    if(pool)
+    {
       DeletePool( pool );
       nrdargs->Pool = NULL;
     }
-#else
-    if( *remember ) {
+    #else
+    if(*remember)
+    {
       FreeRemember( remember, TRUE );
       nrdargs->Remember = NULL;
     }
-#endif
+    #endif
   }
-  else return(ERROR_NO_FREE_STORE);
+  else
+    return(ERROR_NO_FREE_STORE);
 
-  d( bug("--- EXIT ---\n"); )
+  DB(kprintf("--- EXIT ---\n");)
 
   return(RETURN_OK);
 }

@@ -7,6 +7,9 @@ $Source$
 
 2004-09-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * extrasrc/NewReadArgs.c: fixed bug in NewReadArgs() function where
+      tooltype-less icons like the PNG icons of PowerIcons caused a
+      basepage access if used as the application icon of YAM.
     * YAM_MI.c: slightly modified the RFC 2047 decoding to recognize
       also encoded-words which are surrounded by " chars as more than
       one emailer out there seems to encode such words. However, please
