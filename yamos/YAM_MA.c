@@ -69,7 +69,7 @@ static ULONG MA_GetSortType(int);
 static struct Mail **MA_CreateFullList(struct Folder*);
 static struct Mail *MA_MoveCopySingle(struct Mail*, int, struct Folder*, struct Folder*, BOOL);
 static void MA_UpdateStatus(void);
-static char *AppendRcpt(char*, struct Person*, BOOL);
+static char *MA_AppendRcpt(char*, struct Person*, BOOL);
 static int MA_CmpDate(struct Mail**, struct Mail**);
 static void MA_InsertIntroText(FILE*, char*, struct ExpandTextData*);
 static void MA_EditorNotification(int);
@@ -427,9 +427,9 @@ HOOKPROTONHNO(MA_ReadMessage, void, int *arg)
 MakeStaticHook(MA_ReadMessageHook, MA_ReadMessage);
 
 ///
-/// AppendRcpt
+/// MA_AppendRcpt
 //  Appends a recipient address to a string
-static char *AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
+static char *MA_AppendRcpt(char *sbuf, struct Person *pe, BOOL excludeme)
 {
    char *ins;
    if (strchr(pe->Address,'@'))
@@ -600,14 +600,14 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
          if (mail->Flags & MFLAG_MULTIRCPT)
          {
             *sbuf = 0;
-            sbuf = AppendRcpt(sbuf, &mail->To, FALSE);
-            for (i = 0; i < email->NoSTo; i++) sbuf = AppendRcpt(sbuf, &email->STo[i], FALSE);
+            sbuf = MA_AppendRcpt(sbuf, &mail->To, FALSE);
+            for (i = 0; i < email->NoSTo; i++) sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
             setstring(wr->GUI.ST_TO, sbuf);
             *sbuf = 0;
-            for (i = 0; i < email->NoCC; i++) sbuf = AppendRcpt(sbuf, &email->CC[i], FALSE);
+            for (i = 0; i < email->NoCC; i++) sbuf = MA_AppendRcpt(sbuf, &email->CC[i], FALSE);
             setstring(wr->GUI.ST_CC, sbuf);
             *sbuf = 0;
-            for (i = 0; i < email->NoBCC; i++) sbuf = AppendRcpt(sbuf, &email->BCC[i], FALSE);
+            for (i = 0; i < email->NoBCC; i++) sbuf = MA_AppendRcpt(sbuf, &email->BCC[i], FALSE);
             setstring(wr->GUI.ST_BCC, sbuf);
          }
          else setstring(wr->GUI.ST_TO, sbuf);
@@ -841,20 +841,20 @@ int MA_NewReply(struct Mail **mlist, int flags)
                   sprintf(buffer, GetStr(MSG_MA_CompareReq), mail->From.Address, mail->ReplyTo.Address);
                   switch (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_Compare3ReqOpt), buffer))
                   {
-                     case 3: rcc = AppendRcpt(rcc, &mail->From, FALSE);
+                     case 3: rcc = MA_AppendRcpt(rcc, &mail->From, FALSE);
                      case 2: repto = &mail->ReplyTo; break;
                      case 1: repto = &mail->From; break;
                      case 0: MA_FreeEMailStruct(email); doabort = TRUE; fclose(out); goto abort_repl;
                   }
                }
-               rto = AppendRcpt(rto, repto, FALSE);
+               rto = MA_AppendRcpt(rto, repto, FALSE);
             }
             else
             {
-               if (repmode == 2) rto = AppendRcpt(rto, GetReturnAddress(mail), FALSE);
-               rto = AppendRcpt(rto, &mail->To, TRUE);
-               for (i = 0; i < email->NoSTo; i++) rto = AppendRcpt(rto, &email->STo[i], TRUE);
-               for (i = 0; i < email->NoCC; i++) rcc = AppendRcpt(rcc, &email->CC[i], TRUE);
+               if (repmode == 2) rto = MA_AppendRcpt(rto, GetReturnAddress(mail), FALSE);
+               rto = MA_AppendRcpt(rto, &mail->To, TRUE);
+               for (i = 0; i < email->NoSTo; i++) rto = MA_AppendRcpt(rto, &email->STo[i], TRUE);
+               for (i = 0; i < email->NoCC; i++) rcc = MA_AppendRcpt(rcc, &email->CC[i], TRUE);
             }
 
             etd.R_Name = repto->RealName;

@@ -619,11 +619,21 @@ static BOOL MA_DetectUUE(FILE *fh)
 {
    char *buffer;
    BOOL found = FALSE;
-   int i;
 
    buffer = calloc(SIZE_LINE,1);
-   for (i = 0; GetLine(fh, buffer, SIZE_LINE) && !found && i < 30; i++)
-      if (!strncmp(buffer, "begin ", 6) && isdigit((int)buffer[6])) found = TRUE;
+
+   // Now we process the whole mailfile and check if there is any line that
+   // starts with "begin xxx"
+   while(GetLine(fh, buffer, SIZE_LINE))
+   {
+      // lets check for digit first because this will throw out many others first
+      if(isdigit((int)buffer[6]) && strncmp(buffer, "begin ", 6) == 0)
+      {
+         found = TRUE;
+         break;
+      }
+   }
+
    free(buffer);
    return found;
 }
@@ -729,8 +739,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
    if (fh)
    {
       MA_ReadHeader(fh);
-      if (MA_DetectUUE(fh)) mail->Flags |= MFLAG_MULTIPART;
-      fclose(fh);
+
+      // Now we process the read header to set all flags accordingly
       for (ok=i=0; i < Header.Used; i++)
       {
          char *value, *field = Header.Data[i];
@@ -859,6 +869,17 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             }
          }
       }
+
+      // if now the mail is still not MULTIPART we have to check for uuencoded attachments
+      if(!(mail->Flags & MFLAG_MULTIPART))
+      {
+         if (MA_DetectUUE(fh)) mail->Flags |= MFLAG_MULTIPART;
+      }
+
+      // And now we close the Mailfile
+      fclose(fh);
+
+
       FreeData2D(&Header);
       if ((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address)) strcpy(mail->ReplyTo.RealName, mail->From.RealName);
       mail->Date.ds_Days   = foundDate ? foundDate->ds_Days   : atol(mail->MailFile);

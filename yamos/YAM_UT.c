@@ -1051,7 +1051,6 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
       ASLFR_TitleText, title,
       ASLFR_PositiveText, postext,
       ASLFR_InitialFile, file,
-      ASLFR_DoSaveMode, (mode & 1)==1,
       ASLFR_DoMultiSelect, (mode & 2)==2,
       ASLFR_DrawersOnly, (mode & 4)==4,
       ASLFR_DoPatterns, pattern[num] != NULL,

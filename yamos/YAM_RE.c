@@ -260,10 +260,18 @@ static void RE_UpdateStatusGroup(int winnum)
    struct RE_ClassData *re = G->RE[winnum];
    struct RE_GUIData *gui = &re->GUI;
    struct Mail *mail = re->MailPtr;
+   int    status = 0;
 
    set(gui->GR_STATUS[0], MUIA_Group_ActivePage, 1+mail->Status);
-   set(gui->GR_STATUS[1], MUIA_Group_ActivePage, re->PGPEncrypted ? 1 : 0);
-   set(gui->GR_STATUS[2], MUIA_Group_ActivePage, re->PGPSigned ? 1 : 0);
+
+   // Now we check for the other statuses of the mail
+   if(mail->Flags & MFLAG_CRYPT)          status = 1;
+   else if(mail->Flags & MFLAG_SIGNED)    status = 2;
+   else if(mail->Flags & MFLAG_REPORT)    status = 3;
+   else if(mail->Flags & MFLAG_MULTIPART) status = 4;
+   set(gui->GR_STATUS[1], MUIA_Group_ActivePage, status);
+
+   set(gui->GR_STATUS[2], MUIA_Group_ActivePage, mail->Importance == 1 ? 1 : 0);
 }
 ///
 /// RE_SendMDN
@@ -846,9 +854,7 @@ static char *ISO8859_to_LaTeX(char *s)
   return result;
 }
 ///
-
-///
-// Init_ISO8859_to_LaTeX_Tab
+/// Init_ISO8859_to_LaTeX_Tab
 // Takes a filename for a ISO->LaTeX mapping table and returns a table for
 // mapping ISO/ASCII codes to strings
 static char **Init_ISO8859_to_LaTeX_Tab(char *TabFileName)
@@ -2745,11 +2751,6 @@ MakeStaticHook(RE_LV_HDspHook,RE_LV_HDspFunc);
 ///
 /// RE_New
 //  Creates a read window
-static APTR RE_LEDGroup(char *filename)
-{
-   return PageGroup, Child, HSpace(0), Child, MakeStatusFlag(filename), End;
-}
-
 static struct RE_ClassData *RE_New(int winnum, BOOL real)
 {
    struct RE_ClassData *data = calloc(1, sizeof(struct RE_ClassData));
@@ -2842,7 +2843,7 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, data->GUI.MI_WRAPH = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_WrapHeader), MUIA_Menuitem_Shortcut,"H", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->WrapHeader, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_WRAPH, End,
                MUIA_Family_Child, data->GUI.MI_TSTYLE = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_Textstyles), MUIA_Menuitem_Shortcut,"T", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,!data->NoTextstyles, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_TSTYLE, End,
-//             MUIA_Family_Child, data->GUI.MI_FFONT = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FixedFont), MUIA_Menuitem_Shortcut,"F", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->FixedFont, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_FFONT, End,
+               //MUIA_Family_Child, data->GUI.MI_FFONT = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FixedFont), MUIA_Menuitem_Shortcut,"F", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->FixedFont, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_FFONT, End,
             End,
          End,
          WindowContents, VGroup,
@@ -2882,8 +2883,17 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                            Child, MakeStatusFlag("status_sent"),
                            Child, MakeStatusFlag("status_new"),
                         End,
-                        Child, data->GUI.GR_STATUS[1] = RE_LEDGroup("status_crypt"),
-                        Child, data->GUI.GR_STATUS[2] = RE_LEDGroup("status_signed"),
+                        Child, data->GUI.GR_STATUS[1] = PageGroup,
+                           Child, HSpace(0),
+                           Child, MakeStatusFlag("status_crypt"),
+                           Child, MakeStatusFlag("status_signed"),
+                           Child, MakeStatusFlag("status_report"),
+                           Child, MakeStatusFlag("status_attach"),
+                        End,
+                        Child, data->GUI.GR_STATUS[2] = PageGroup,
+                           Child, HSpace(0),
+                           Child, MakeStatusFlag("status_urgent"),
+                        End,
                      End,
                      Child, VSpace(0),
                   End,

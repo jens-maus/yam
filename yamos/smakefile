@@ -29,9 +29,9 @@ TARGET = YAM
 
 # Programs
 
-CC = sc
-CP = copy
-RM = delete quiet
+CC  = sc
+CP  = copy
+RM  = delete quiet
 
 # Compiler/Linker flags
 

@@ -912,3 +912,17 @@
     * removed MUIA_NList_Quiet calls in DisplayMailList YAM_UT.c because
       this will speed up the insertion of items for 3-4 seconds with ~6000
       items. (This is a strange behaviour of the NList class itself)
+
+2001-07-22  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * change MA_ExamineMail() to only check for uuencoded attachments if the
+      header itself doesn`t tell us that this mail in a MULTIPART mail.
+      This should speed up the "update index" as well as the download of mail
+      a bit.
+      Also removed the maximum check of the first 30 lines for a UUE check
+      of a mail.
+    * added missing status_flags to the Status Group of the read window. Now
+      it should show all statuses accordingly to the message status
+    * removed ASLFR_DoSaveMode Tag from AslRequest call, because this will
+      bring up an ugly black ASL Requester and we anyway set the "Save" text
+      explicitly to the requester.
