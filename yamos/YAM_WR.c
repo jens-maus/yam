@@ -970,19 +970,21 @@ static void WR_EmitExtHeader(FILE *fh, struct Compose *comp)
 ///
 /// WR_ComposeReport
 //  Assembles the parts of a message disposition notification
-static const char *MIMEwarn = "Warning: This is a message in MIME format. Your mail reader does not\n"
-                             "support MIME. Some parts of this message will be readable as plain text.\n"
-                             "To see the rest, you will need to upgrade your mail reader. Following are\n"
-                             "some URLs where you can find MIME-capable mail programs for common platforms:\n\n"
-                             "  Amiga............: YAM          http://www.yam.ch/\n"
-                             "  Unix.............: Metamail     ftp://ftp.bellcore.com/nsb/\n"
-                             "  Windows/Macintosh: Eudora       http://www.qualcomm.com/\n\n"
-                             "General info about MIME can be found at:\n\n"
-                             "http://www.cis.ohio-state.edu/hypertext/faq/usenet/mail/mime-faq/top.html\n\n";
-static const char *PGPwarn  = "The following body part contains a PGP encrypted message. Either your\n"
-                             "mail reader doesn't support MIME/PGP as specified in RFC 2015, or\n"
-                             "the message was encrypted for someone else. To read the encrypted\n"
-                             "message, run the next body part through Pretty Good Privacy.\n\n";
+static const char *MIMEwarn =
+  "Warning: This is a message in MIME format. Your mail reader does not\n"
+  "support MIME. Some parts of this message will be readable as plain text.\n"
+  "To see the rest, you will need to upgrade your mail reader. Following are\n"
+  "some URLs where you can find MIME-capable mail programs for common platforms:\n\n"
+  "  Amiga............: YAM          http://www.yam.ch/\n"
+  "  Unix.............: Metamail     ftp://ftp.bellcore.com/nsb/\n"
+  "  Windows/Macintosh: Eudora       http://www.qualcomm.com/\n\n"
+  "General info about MIME can be found at:\n\n"
+  "http://www.cis.ohio-state.edu/hypertext/faq/usenet/mail/mime-faq/top.html\n\n";
+static const char *PGPwarn  =
+  "The following body part contains a PGP encrypted message. Either your\n"
+  "mail reader doesn't support MIME/PGP as specified in RFC 2015, or\n"
+  "the message was encrypted for someone else. To read the encrypted\n"
+  "message, run the next body part through Pretty Good Privacy.\n\n";
 static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
 {
    struct WritePart *p;

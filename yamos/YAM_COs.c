@@ -75,7 +75,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
 {
    FILE *fh;
    int i;
-   
+
    if (fh = fopen(fname, "w"))
    {
       fprintf(fh, "YCO3 - YAM Configuration\n");
@@ -93,13 +93,13 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SMTP-AUTH-Pass   = %s\n", Encrypt(co->SMTP_AUTH_Pass));
       for (i = 0; i < MAXP3; i++) if (co->P3[i])
       {
-      struct POP3 *p3 = co->P3[i];
-      fprintf(fh, "POP%02ld.Server     = %s\n", i, p3->Server);
-      fprintf(fh, "POP%02ld.User       = %s\n", i, p3->User);
-      fprintf(fh, "POP%02ld.Password   = %s\n", i, Encrypt(p3->Password));
-      fprintf(fh, "POP%02ld.Enabled    = %s\n", i, Bool2Txt(p3->Enabled));
-      fprintf(fh, "POP%02ld.UseAPOP    = %s\n", i, Bool2Txt(p3->UseAPOP));
-      fprintf(fh, "POP%02ld.Delete     = %s\n", i, Bool2Txt(p3->DeleteOnServer));
+         struct POP3 *p3 = co->P3[i];
+         fprintf(fh, "POP%02ld.Server     = %s\n", i, p3->Server);
+         fprintf(fh, "POP%02ld.User       = %s\n", i, p3->User);
+         fprintf(fh, "POP%02ld.Password   = %s\n", i, Encrypt(p3->Password));
+         fprintf(fh, "POP%02ld.Enabled    = %s\n", i, Bool2Txt(p3->Enabled));
+         fprintf(fh, "POP%02ld.UseAPOP    = %s\n", i, Bool2Txt(p3->UseAPOP));
+         fprintf(fh, "POP%02ld.Delete     = %s\n", i, Bool2Txt(p3->DeleteOnServer));
       }
       fprintf(fh, "\n[New mail]\n");
       fprintf(fh, "AvoidDuplicates  = %s\n", Bool2Txt(co->AvoidDuplicates));
@@ -115,37 +115,37 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "\n[Filters]\n");
       for (i = 0; i < MAXRU; i++) if (co->RU[i])
       {
-      struct Rule *ru = co->RU[i];
-      fprintf(fh, "FI%02ld.Name        = %s\n", i, ru->Name);
-      fprintf(fh, "FI%02ld.Remote      = %s\n", i, Bool2Txt(ru->Remote));
-      fprintf(fh, "FI%02ld.ApplyToNew  = %s\n", i, Bool2Txt(ru->ApplyToNew));
-      fprintf(fh, "FI%02ld.ApplyToSent = %s\n", i, Bool2Txt(ru->ApplyToSent));
-      fprintf(fh, "FI%02ld.ApplyOnReq  = %s\n", i, Bool2Txt(ru->ApplyOnReq));
-      fprintf(fh, "FI%02ld.Field       = %ld\n", i, ru->Field[0]);
-      fprintf(fh, "FI%02ld.SubField    = %ld\n", i, ru->SubField[0]);
-      fprintf(fh, "FI%02ld.CustomField = %s\n", i, ru->CustomField[0]);
-      fprintf(fh, "FI%02ld.Comparison  = %ld\n", i, ru->Comparison[0]);
-      fprintf(fh, "FI%02ld.Match       = %s\n", i, ru->Match[0]);
-      fprintf(fh, "FI%02ld.CaseSens    = %s\n", i, Bool2Txt(ru->CaseSens[0]));
-      fprintf(fh, "FI%02ld.Substring   = %s\n", i, Bool2Txt(ru->Substring[0]));
-      fprintf(fh, "FI%02ld.Combine     = %ld\n", i, ru->Combine);
-      if (ru->Combine)
-      {
-         fprintf(fh, "FI%02ld.Field2      = %ld\n", i, ru->Field[1]);
-         fprintf(fh, "FI%02ld.SubField2   = %ld\n", i, ru->SubField[1]);
-         fprintf(fh, "FI%02ld.CustomField2= %s\n", i, ru->CustomField[1]);
-         fprintf(fh, "FI%02ld.Comparison2 = %ld\n", i, ru->Comparison[1]);
-         fprintf(fh, "FI%02ld.Match2      = %s\n", i, ru->Match[1]);
-         fprintf(fh, "FI%02ld.CaseSens2   = %s\n", i, Bool2Txt(ru->CaseSens[1]));
-         fprintf(fh, "FI%02ld.Substring2  = %s\n", i, Bool2Txt(ru->Substring[1]));
-      }
-      fprintf(fh, "FI%02ld.Actions     = %ld\n", i, ru->Actions);
-      fprintf(fh, "FI%02ld.BounceTo    = %s\n", i, ru->BounceTo);
-      fprintf(fh, "FI%02ld.ForwardTo   = %s\n", i, ru->ForwardTo);
-      fprintf(fh, "FI%02ld.ReplyFile   = %s\n", i, ru->ReplyFile);
-      fprintf(fh, "FI%02ld.ExecuteCmd  = %s\n", i, ru->ExecuteCmd);
-      fprintf(fh, "FI%02ld.PlaySound   = %s\n", i, ru->PlaySound);
-      fprintf(fh, "FI%02ld.MoveTo      = %s\n", i, ru->MoveTo);
+         struct Rule *ru = co->RU[i];
+         fprintf(fh, "FI%02ld.Name        = %s\n", i, ru->Name);
+         fprintf(fh, "FI%02ld.Remote      = %s\n", i, Bool2Txt(ru->Remote));
+         fprintf(fh, "FI%02ld.ApplyToNew  = %s\n", i, Bool2Txt(ru->ApplyToNew));
+         fprintf(fh, "FI%02ld.ApplyToSent = %s\n", i, Bool2Txt(ru->ApplyToSent));
+         fprintf(fh, "FI%02ld.ApplyOnReq  = %s\n", i, Bool2Txt(ru->ApplyOnReq));
+         fprintf(fh, "FI%02ld.Field       = %ld\n", i, ru->Field[0]);
+         fprintf(fh, "FI%02ld.SubField    = %ld\n", i, ru->SubField[0]);
+         fprintf(fh, "FI%02ld.CustomField = %s\n", i, ru->CustomField[0]);
+         fprintf(fh, "FI%02ld.Comparison  = %ld\n", i, ru->Comparison[0]);
+         fprintf(fh, "FI%02ld.Match       = %s\n", i, ru->Match[0]);
+         fprintf(fh, "FI%02ld.CaseSens    = %s\n", i, Bool2Txt(ru->CaseSens[0]));
+         fprintf(fh, "FI%02ld.Substring   = %s\n", i, Bool2Txt(ru->Substring[0]));
+         fprintf(fh, "FI%02ld.Combine     = %ld\n", i, ru->Combine);
+         if (ru->Combine)
+         {
+            fprintf(fh, "FI%02ld.Field2      = %ld\n", i, ru->Field[1]);
+            fprintf(fh, "FI%02ld.SubField2   = %ld\n", i, ru->SubField[1]);
+            fprintf(fh, "FI%02ld.CustomField2= %s\n", i, ru->CustomField[1]);
+            fprintf(fh, "FI%02ld.Comparison2 = %ld\n", i, ru->Comparison[1]);
+            fprintf(fh, "FI%02ld.Match2      = %s\n", i, ru->Match[1]);
+            fprintf(fh, "FI%02ld.CaseSens2   = %s\n", i, Bool2Txt(ru->CaseSens[1]));
+            fprintf(fh, "FI%02ld.Substring2  = %s\n", i, Bool2Txt(ru->Substring[1]));
+         }
+         fprintf(fh, "FI%02ld.Actions     = %ld\n", i, ru->Actions);
+         fprintf(fh, "FI%02ld.BounceTo    = %s\n", i, ru->BounceTo);
+         fprintf(fh, "FI%02ld.ForwardTo   = %s\n", i, ru->ForwardTo);
+         fprintf(fh, "FI%02ld.ReplyFile   = %s\n", i, ru->ReplyFile);
+         fprintf(fh, "FI%02ld.ExecuteCmd  = %s\n", i, ru->ExecuteCmd);
+         fprintf(fh, "FI%02ld.PlaySound   = %s\n", i, ru->PlaySound);
+         fprintf(fh, "FI%02ld.MoveTo      = %s\n", i, ru->MoveTo);
       }
       fprintf(fh, "\n[Read]\n");
       fprintf(fh, "ShowHeader       = %ld\n", co->ShowHeader);
@@ -228,9 +228,9 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "\n[MIME]\n");
       for (i = 0; i < MAXMV; i++) if (co->MV[i])
       {
-      fprintf(fh, "MV%02ld.ContentType = %s\n", i, co->MV[i]->ContentType);
-      fprintf(fh, "MV%02ld.Extension   = %s\n", i, co->MV[i]->Extension);
-      fprintf(fh, "MV%02ld.Command     = %s\n", i, co->MV[i]->Command);
+         fprintf(fh, "MV%02ld.ContentType = %s\n", i, co->MV[i]->ContentType);
+         fprintf(fh, "MV%02ld.Extension   = %s\n", i, co->MV[i]->Extension);
+         fprintf(fh, "MV%02ld.Command     = %s\n", i, co->MV[i]->Command);
       }
       fprintf(fh, "IdentifyBin      = %s\n", Bool2Txt(co->IdentifyBin));
       fprintf(fh, "DetachDir        = %s\n", co->DetachDir);
@@ -246,11 +246,12 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "\n[Scripts]\n");
       for (i = 0; i < MAXRX; i++)
       {
-      if (i < 10) fprintf(fh, "Rexx%02ld.Name      = %s\n", i, co->RX[i].Name);
-      fprintf(fh, "Rexx%02ld.Script    = %s\n", i, co->RX[i].Script);
-      fprintf(fh, "Rexx%02ld.IsAmigaDOS= %s\n", i, Bool2Txt(co->RX[i].IsAmigaDOS));
-      fprintf(fh, "Rexx%02ld.UseConsole= %s\n", i, Bool2Txt(co->RX[i].UseConsole));
-      fprintf(fh, "Rexx%02ld.WaitTerm  = %s\n", i, Bool2Txt(co->RX[i].WaitTerm));
+         if (i < 10)
+           fprintf(fh, "Rexx%02ld.Name      = %s\n", i, co->RX[i].Name);
+         fprintf(fh, "Rexx%02ld.Script    = %s\n", i, co->RX[i].Script);
+         fprintf(fh, "Rexx%02ld.IsAmigaDOS= %s\n", i, Bool2Txt(co->RX[i].IsAmigaDOS));
+         fprintf(fh, "Rexx%02ld.UseConsole= %s\n", i, Bool2Txt(co->RX[i].UseConsole));
+         fprintf(fh, "Rexx%02ld.WaitTerm  = %s\n", i, Bool2Txt(co->RX[i].WaitTerm));
       }
       fprintf(fh, "\n[Mixed]\n");
       fprintf(fh, "TempDir          = %s\n", co->TempDir);
