@@ -621,20 +621,51 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 
    if ((ifh = fopen(part->Filename, "r")))
    {
-      int size;
       switch (part->EncType)
       {
-         case ENC_B64: to64(ifh, ofh, DoesNeedPortableNewlines(part->ContentType));
-                       break;
-         case ENC_QP:  toqp(ifh, ofh);
-                       break;
-         case ENC_UUE: size = FileSize(part->Filename);
-                       fprintf(ofh, "begin 644 %s\n", *part->Name ? part->Name : (char *)FilePart(part->Filename));
-                       touue(ifh, ofh);
-                       fprintf(ofh, "end\nsize %d\n", size);
-                       break;
-         default:      CopyFile(NULL, ofh, NULL, ifh);
+         case ENC_B64:
+         {
+            BOOL convLF = FALSE;
+
+            // let us first check if we need to convert single LF to
+            // CRLF to be somewhat portable.
+            if(!strnicmp(part->ContentType, "text", 4)    ||
+               !strnicmp(part->ContentType, "message", 7) ||
+               !strnicmp(part->ContentType, "multipart", 9))
+            {
+              convLF = TRUE;
+            }
+
+            // then start base64 encoding the whole file.
+            if(base64encode_file(ifh, ofh, convLF) <= 0)
+            {
+              ER_NewError(GetStr(MSG_ER_B64FILEENCODE), part->Filename, NULL);
+            }
+         }
+         break;
+
+         case ENC_QP:
+         {
+            toqp(ifh, ofh);
+         }
+         break;
+
+         case ENC_UUE:
+         {
+            int size = FileSize(part->Filename);
+
+            fprintf(ofh, "begin 644 %s\n", *part->Name ? part->Name : (char *)FilePart(part->Filename));
+            touue(ifh, ofh);
+            fprintf(ofh, "end\nsize %d\n", size);
+         }
+         break;
+
+         default:
+         {
+            CopyFile(NULL, ofh, NULL, ifh);
+         }
       }
+
       fclose(ifh);
    }
 }

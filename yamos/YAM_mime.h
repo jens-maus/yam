@@ -45,6 +45,7 @@ struct TranslationTable
 // base64 encoding/decoding routines
 int base64encode(char *to, const unsigned char *from, unsigned int len);
 int base64decode(char *to, const unsigned char *from, unsigned int len);
+long base64encode_file(FILE *in, FILE *out, BOOL convLF);
 long base64decode_file(FILE *in, FILE *out,
                        struct TranslationTable *tt, BOOL convCRLF);
 
@@ -52,14 +53,12 @@ long base64decode_file(FILE *in, FILE *out,
 int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
                    struct TranslationTable *tt);
 
-
-BOOL  DoesNeedPortableNewlines(char *ctype);
+// the OLD MIME routines which we are going to replace step-by-step
 void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
 void  fromuue(FILE *infp, FILE *outfp);
 void  fromuuetxt(char **txt, FILE *outfp);
 void  fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt);
 void  fromqptxt(char *src, char *dst, struct TranslationTable *tt);
-void  to64(FILE *infile, FILE *outfile, BOOL PortableNewlines);
 void  toqp(FILE *infile, FILE *outfile);
 void  touue(FILE *in, FILE *out);
 

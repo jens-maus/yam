@@ -36,8 +36,6 @@
 #include "YAM_utilities.h"
 
 /* local */
-static int nextcharin(FILE*, BOOL);
-static void output64chunk(int, int, int, int, FILE*);
 static void uueget(char*, FILE*, int);
 static BOOL gettxtline(char*, int, char**);
 static BOOL getline(char*, int, FILE*);
@@ -83,11 +81,13 @@ static const char index_hex[128] =
   -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1
 };
 
-#define hexchar(c)  (((c) > 127) ? -1 : index_hex[(c)])
-#define SUMSIZE     64
-#define ENC(c)      ((c) ? ((c) & 077) + ' ': '`')
+// some defines that can be usefull
+#define B64_LINELEN   72  // number of characters before the b64encode_file()
+                          // issues a newline
+#define hexchar(c)    (((c) > 127) ? -1 : index_hex[(c)])
+#define SUMSIZE       64
+#define ENC(c)        ((c) ? ((c) & 077) + ' ': '`')
 
-static BOOL InNewline = FALSE;
 ///
 
 /*** BASE64 encode/decode routines ***/
@@ -138,6 +138,7 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
     else *top++ = '=';
     *top++ = '=';
   }
+
   *top = 0;
   return top - to;
 }
@@ -223,6 +224,193 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
   }
 
   return top - to;
+}
+
+///
+/// base64encode_file
+//  Encodes a file in base64 format. It reads in a file from a supplied FILE*
+//  pointer stepwise by filling up a buffer, encoding it and writing it down
+//  as soon as it reached the length of 72 characters. This makes sure the
+//  base64 encoded parts can be embeded into an RFC822 compliant mail
+//  It returns the total number of encoded characters written to the destination
+//  file.
+long base64encode_file(FILE *in, FILE *out, BOOL convLF)
+{
+  char inbuffer[8192];  // we use a buffer of 8192 bytes here because we read out
+                        // data in 4095 byte chunks out of file 'in' and as we
+                        // probably need to convert each LF in a CRLF we have to
+                        // have a buffer with a maximum of 8190 bytes available.
+                        // those 2 bytes are to be safe. :)
+  char outbuffer[11066];// if we read in a maximum of 8190 bytes we will get out
+                        // a base64 encoded string with a maximum of 11064 bytes
+                        // but normally the routines shouldn`t occupy more than
+                        // ~5600 bytes.
+
+  char *optr;
+  BOOL eof_reached = FALSE;
+  int next_unget = 0;
+  int missing_chars = 0;
+  int sumencoded = 0;
+  int towrite;
+  int encoded;
+  size_t read = 0;
+
+  DB(kprintf("base64encode_file(): %ld\n", convLF);)
+
+  while(eof_reached == FALSE)
+  {
+    // before we go on with reading in more data we move
+    // the last next_unget characters of inbuffer to the start
+    // of inbuffer
+    if(next_unget > 0)
+      memmove(inbuffer, &inbuffer[read], next_unget);
+
+    // read in 4095 byte chunks
+    read = fread(&inbuffer[0]+next_unget, 1, 4095-next_unget, in);
+    read += next_unget;
+    next_unget = 0;
+
+    // on a short item count we check for a potential
+    // error and return immediatly.
+    if(read != 4095)
+    {
+      if(feof(in) != 0)
+      {
+        DB(kprintf("EOF file at %ld\n", ftell(in));)
+
+        eof_reached = TRUE; // we found an EOF
+
+        // if the last read was zero we can exit immediatly
+        if(read == 0)
+          break;
+      }
+      else
+      {
+        DB(kprintf("error on reading data!\n");)
+
+        // an error occurred, lets return -1
+        return -1;
+      }
+    }
+
+    // now we check wheter the user want to convert each LF into a CRLF
+    // and if so we need to parse the whole read bytes for \n and convert
+    // them to \r\n before the base64 encoding.
+    if(convLF)
+    {
+      char convbuffer[8192];
+      char *sptr = convbuffer;
+      char *dptr = inbuffer;
+      long toconvert = read;
+      long converted = 0;
+
+      // lets fill the convbuffer with the data
+      // of inbuffer first
+      memcpy(convbuffer, inbuffer, toconvert);
+
+      while(toconvert--)
+      {
+        if(*sptr == '\n')
+        {
+          // now write a \r first
+          *dptr = '\r';
+          dptr++;
+
+          converted++;
+        }
+
+        // copy the current character;
+        *dptr = *sptr;
+
+        // increase the pointers
+        dptr++;
+        sptr++;
+      }
+
+      // increase the read counter
+      read += converted;
+
+      // now that we have converted something we have to
+      // make sure that read is still a multiple of 3 if this
+      // isn`t an EOF run.
+      if(eof_reached == FALSE)
+      {
+        // lets check how many chars we have to skip and move
+        // back later
+        next_unget = read % 3;
+        read -= next_unget;
+      }
+    }
+
+    // now everything should be prepared so that we can call the
+    // base64 encoding routine and let it convert our inbuffer to
+    // the apropiate outbuffer
+    encoded = base64encode(outbuffer, inbuffer, read);
+    sumencoded += encoded;
+
+    // if the base64encoding routine returns <= 0 then there is obviously
+    // something wrong
+    if(encoded <= 0)
+    {
+      DB(kprintf("error on encoding data!\n");)
+      return -1;
+    }
+
+    // now that we seem to have everything encoded we write out
+    // the encoded sting in 72 character long chunks followed by
+    // a newline
+    optr = outbuffer;
+    towrite = encoded;
+
+    while(towrite > 0)
+    {
+      size_t todo;
+
+      // how many chars should be written?
+      if(missing_chars == 0)
+      {
+        if(towrite >= B64_LINELEN)
+        {
+          todo = B64_LINELEN;
+        }
+        else todo = towrite;
+      }
+      else todo = missing_chars;
+
+      // now we do a binary write of the data
+      if(fwrite(optr, 1, todo, out) != todo)
+      {
+        DB(kprintf("error on writing data!\n");)
+        // an error must have occurred.
+        return -1;
+      }
+
+      // lets modify our counters
+      towrite -= todo;
+      optr += todo;
+
+      // then we have to check wheter we have written
+      // a full 72 char long line or not and if so we can attach
+      // a newline.
+      if(missing_chars == 0 &&
+         todo < B64_LINELEN && eof_reached == FALSE)
+      {
+        // if we end up here we don`t write any newline,
+        // but we remember how many characters we are
+        // going to write in advance next time.
+        missing_chars = B64_LINELEN-todo;
+      }
+      else if(fputc('\n', out) == EOF)
+      {
+        DB(kprintf("error on writing newline\n");)
+        return -1;
+      }
+      else missing_chars = 0;
+    }
+  }
+
+  DB(kprintf("finished base64encode_file(): %ld\n", sumencoded);)
+  return sumencoded;
 }
 
 ///
@@ -351,83 +539,6 @@ long base64decode_file(FILE *in, FILE *out,
     return decodedChars;
   else
     return -1;
-}
-
-///
-
-/// nextcharin
-//  Reads next byte from a text files, handles CRLF line breaks
-static int nextcharin(FILE *infile, BOOL PortableNewlines)
-{
-   int c;
-
-   if (!PortableNewlines) return fgetc(infile);
-   if (InNewline) { InNewline = FALSE; return 10; }    /***BUG***/
-   c = fgetc(infile);
-   if (c == '\n') { InNewline = TRUE; return 13; }
-   return c;
-}
-
-///
-/// output64chunk
-//  Writes three bytes in base64 format
-static void output64chunk(int c1, int c2, int c3, int pads, FILE *outfile)
-{
-   fputc(basis_64[c1>>2], outfile);
-   fputc(basis_64[((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4)], outfile);
-   switch(pads)
-   {
-      case 0 :
-         fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
-         fputc(basis_64[c3 & 0x3F], outfile);
-         break;
-      case 2 :
-         fputs("==", outfile);
-         break;
-      default :
-         fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
-         fputc('=', outfile);
-   }
-/*
-   if (pads == 2)
-   {
-      fputs("==", outfile);
-   }
-   else if (pads)
-   {
-      fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
-      fputc('=', outfile);
-   }
-   else
-   {
-      fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
-      fputc(basis_64[c3 & 0x3F], outfile);
-   }
-*/
-}
-
-///
-/// to64
-//  Encodes a file using base64 format
-void to64(FILE *infile, FILE *outfile, BOOL PortableNewlines)
-{
-   int c1, c2, c3, ct=0;
-   InNewline = 0;
-   while ((c1 = nextcharin(infile, PortableNewlines)) != -1)
-   {
-      c2 = nextcharin(infile, PortableNewlines);
-      if (c2 == -1)
-         output64chunk(c1, 0, 0, 2, outfile);
-      else
-      {
-         c3 = nextcharin(infile, PortableNewlines);
-         if (c3 == -1) output64chunk(c1, c2, 0, 1, outfile);
-         else          output64chunk(c1, c2, c3, 0, outfile);
-      }
-      ct += 4;
-      if (ct > 71) { fputc('\n', outfile); ct = 0; }
-   }
-   if (ct) fputc('\n', outfile);
 }
 
 ///
@@ -563,16 +674,6 @@ void fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt)
    if (neednewline) fputc('\n', outfile);
 }
 
-///
-/// DoesNeedPortableNewlines
-//  Checks if line breaks must be portable (CRLF)
-BOOL DoesNeedPortableNewlines(char *ctype)
-{
-   if (!strnicmp(ctype, "text", 4)) return TRUE;
-   if (!strnicmp(ctype, "message", 7)) return TRUE;
-   if (!strnicmp(ctype, "multipart", 9)) return TRUE;
-   return FALSE;
-}
 ///
 
 /*** UU encode/decode routines ***/
