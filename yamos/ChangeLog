@@ -7,6 +7,11 @@ $Source$
 
 2005-02-17  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_utilities.h: reverted the evaluation of the return value of GetAttr()
+      as part of our xget() inline function. It seems that with some attributes
+      (e.g. MUIA_Selected) MUI always returns FALSE. However, setting b=0
+      right before the GetAttr() call should catch cases in which the attribute
+      really doesn't exist.
     * AttachmentGroup.c: fixed a bug where upon a mail switching the
       image object weren't cleaned up correctly which caused YAM to crash if
       it was brought back from an iconify state.

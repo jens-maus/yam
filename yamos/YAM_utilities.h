@@ -405,7 +405,14 @@ APTR     WhichLV(struct Folder *folder);
 INLINE ULONG xget(Object *obj, const ULONG attr)
 {
   ULONG b = 0;
-  return get(obj, attr, &b) ? b : 0;
+
+  // please note that we do not evaluate the return value of GetAttr()
+  // as some attributes (e.g. MUIA_Selected) always return FALSE, even
+  // when they are supported by the object. But setting b=0 right before
+  // the GetAttr() should catch the case when attr doesn't exist at all
+  GetAttr(attr, obj, &b);
+
+  return b;
 }
 ///
 
