@@ -1,10 +1,10 @@
 @database YAM.guide
-@$VER: YAM.guide 2.4 (29.03.2003)
+@$VER: YAM.guide 2.4 (22.04.2003)
 
 /***************************************************************************
 
  YAM - Yet Another Mailer
- Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck\@yam.ch>
  Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
@@ -41,21 +41,17 @@
                  © 2000-2003 del equipo YAM Open Source
 
 
+
   @{" Información legal        " link "COPY"}  - Asuntos legales
   @{" Si es su primera vez...  " link "BEGI"}  - Requerimientos, instalación
   @{" ¿Correo electrónico...?  " link "MAIL"}  - Introducción al correo electrónico
 
   @{" Configuración            " link "CO_W"}  - Cómo ajustar YAM a sus necesidades
-  @{" Ventanas                 " link "WI_W"}  - El interfaz, los menús
-  @{" El listín de direcciones " link "AB_W"}  - Su libreta de direcciones útiles
-  @{" Transferencias de correo " link "TR_W"}  - Recepción y envío de mensajes
-  @{" Búsqueda                 " link "FI_W"}  - Cómo hallar un mensaje concreto
-  @{" Usuarios                 " link "US_W"}  - Definición de varios usuarios
-
+  @{" Ventanas                 " link "WI_W"}  - Las principales ventanas de YAM
   @{" Referencia               " link "RF_W"}  - Interfaz ARexx, formatos de fichero
+
   @{" Consejos y trucos        " link "TIPS"}  - Algunos consejos útiles
   @{" Problemas conocidos      " link "PROB"}  - Algunas cosas que debería saber
-
   @{" Soporte                  " link "INFO"}  - Algunos enlaces interesantes
   @{" El futuro                " link "PLAN"}  - Mejoras planeadas
   @{" Gracias a...             " link "CRED"}  - Los que apoyaron el desarrollo de YAM 2.4
@@ -83,7 +79,7 @@ la publica la Free Software Foundation, ya sea en su segunda versión o
 Este programa se distribuye con la esperanza de que resulte útil,
 pero SIN NINGÚN TIPO DE GARANTÍA, incluyendo la garantía implícita
 de COMERCIABILIDAD o APROPIABILIDAD PARA NINGÚN PROPÓSITO EN PARTICULAR.
-Véase la @{" Licencia Pública General de GNU " link "GPL.txt/main"} para más información.
+Véase la Licencia Pública General de GNU para más información.
 
 Junto con este programa debería haber recibido una copia de la Licencia
 Pública General de GNU; de no ser así, escriba a la Free Software Foundation,
@@ -116,7 +112,7 @@ Introducción
 ============
 
 
-   YAM (Yet Another Mailer) le permite enviar y recibir @{" correo electrónico " link "MAIL" 0}
+   YAM (Yet Another Mailer) le permite enviar y recibir @{" correo electrónico " link "MAIL"}
 a través de Internet, así como archivar los mensajes en su Amiga.
 
    Tuve la idea de crear YAM en 1995, cuando probé por primera vez el
@@ -144,58 +140,59 @@ Noviembre de 2000
 Características de YAM
 ======================
 
-* Sencilla @{" instalación " link "INST"} y @{" configuración " link "TUTO" 0}, que sólo requieren unos pocos
+* Sencilla @{" instalación " link "INST"} y @{" configuración " link "TUTO"}, que sólo requieren unos pocos
   minutos.
 
 * Se maneja fácilmente mediante botones, menús, el teclado y el
-  @{" arrastre de objetos " link "Drag" 0}.
+  @{" arrastre de objetos " link "Drag"}.
 
 * Ayuda en línea sensible al contexto, mediante burbujas de ayuda y
-  documentación AmigaGuide.
+  documentación AmigaGuide®.
 
-* Posibilidad de definir hasta 16 @{" usuarios " link "US_W" 0} diferentes, cada uno de los
+* Posibilidad de definir hasta 16 @{" usuarios " link "US_W"} diferentes, cada uno de los
   cuales puede disponer de sus propias carpetas y configuración personal.
 
 * Número ilimitado de @{" carpetas definidas por el usuario " link "FO_W"}, que pueden estar
   comprimidas, protegerse mediante una contraseña y clasificarse por
   grupos.
 
-* Su @{" Listín de direcciones " link "AB_W"} está organizado jerárquicamente y permite definir
-  grupos y listas de distribución, así como descripciones completas para cada
-  elemento.
+* Su @{" listín de direcciones " link "AB_W"} está organizado jerárquicamente y permite
+  definir grupos y listas de distribución, así como descripciones completas
+  para cada elemento.
 
 * El usuario puede personalizar el interfaz, gracias a @{" MUI " link "MUI"}.
 
-* Es posible elegir entre iconos al estilo MagicWorkbench y @{" Newicons " link "NEWI"}.
+* Es posible elegir entre iconos al estilo MagicWorkbench, ProLite,
+  @{" Newicons " link "NEWI"} y GlowIcons.
 
 * El cliente @{" POP3 " link "PROT"} integrado puede comprobar hasta 16 cuentas de
   correo en una sola conexión y permite pre-seleccionar los mensajes a
   recoger.
 
 * Los mensajes se pueden escribir y responder sin estar conectado, y
-  enviarlos más tarde al servidor de correo utilizando el cliente @{" SMTP " link "PROT" 0}
+  enviarlos más tarde al servidor de correo utilizando el cliente @{" SMTP " link "PROT"}
   incorporado.
 
 * Potente @{" editor de texto " link "EDIT"} para la escritura de mensajes, que admite
   estilos de letra, @{" glosario " link "DI_W"} y la posibilidad de definir un corrector
   ortográfico.
 
-* Dispone de @{" funciones de búsqueda " link "FI_W" 0} de fácil uso, hasta el punto de que
+* Dispone de @{" funciones de búsqueda " link "FI_W"} de fácil uso, hasta el punto de que
   podrá buscar el texto que quiera en todos los mensajes de una sola pasada.
 
-* Clasificación automática del correo por medio de hasta 100 @{" filtros " link "CO03" 0} que le
-  permitirán agrupar los mensajes, generar respuestas automáticas, borrar
+* Clasificación automática del correo por medio de hasta 100 @{" filtros " link "CO03"} que
+  le permitirán agrupar los mensajes, generar respuestas automáticas, borrar
   los mensajes publicitarios y mucho más.
 
-* Soporte para el firmado y encriptación de mensajes por medio de @{" PGP " link "PGP" 0},
+* Soporte para la firma y encriptación de mensajes por medio de @{" PGP " link "PGP"},
   así como para autentificar y leer los mensajes recibidos de esta forma.
 
-* Soporte integrado para UUencode y @{" MIME " link "MIME" 0} para el envío y recepción
+* Soporte integrado para UUencode y @{" MIME " link "MIME"} para el envío y recepción
   de información binaria, incluyendo el reconocimiento automático de más
   de 20 tipos de ficheros.
 
-* Ejecución automática de @{" macros " link "CO13" 0} al producirse determinados eventos,
-  amplio repertorio de comandos @{" ARexx " link "REXX" 0}.
+* Ejecución automática de @{" macros " link "CO13"} al producirse determinados eventos,
+  amplio repertorio de comandos @{" ARexx " link "REXX"}.
 
 * Soporte para conexiones seguras vía POP3/SMTP mediante los protocolos
   TLSv1/SSLv3, gracias a AmiSSL.library.
@@ -223,28 +220,29 @@ Equipo
 Software
 --------
 
-   * AmigaOS 3.0 o superior
+   * AmigaOS 3.0 (Kickstart V39) o superior
    * @{" MUI " link "MUI"} 3.8 o superior
    * Clases MUI de terceros:
 
-
-        - BetterString
-            http://www.top-house.dk/~nr8/AmigaArchives/MCC_BetterString.LZX
-        - NList 20.104+
+        - BetterString 11.6+
+            http://us.aminet.net/pub/aminet/dev/mui/MCC_BetterString.lha
+        - NList 20.111+
             http://home.t-online.de/home/sebauer/MCC_NList.lha
         - NListtree 18.12+
             http://home.t-online.de/home/sebauer/MCC_NListtree.lha
-        - TextEditor
-            http://www.top-house.dk/~nr8/AmigaArchives/MCC_TextEditor.LZX
+        - TextEditor 15.9+
+            http://us.aminet.net/pub/aminet/dev/mui/MCC_TextEditor.lha
         - Toolbar 15.8+
             http://us.aminet.net/pub/aminet/dev/mui/MCC_Toolbar.lha
 
    * Pila AmiTCP/IP o compatible (AmiTCP, Miami[DX], TermiteTCP, RoadShow)
    * opcional: módulo XPK para la compresión de mensajes
    * opcional: PGP 2.6 ó 5.0 para la encriptación y firma de mensajes
-   * opcional: AmiSSL para conexiones seguras TLSv1/SSLv3 sobre SMTP/POP
+   * opcional: AmiSSL v1 para conexiones seguras TLSv1/SSLv3 sobre SMTP/POP
    * opcional: archivador para la compresión de anexos, por ejemplo LhA
    * opcional: programa corrector ortográfico, por ejemplo AlphaSpell
+   * opcional: herramienta para el reajuste automático del horario de
+     verano, por ejemplo SetDST o SummerTimeGuard
 
 @endnode
 
@@ -310,7 +308,7 @@ quiere usarla, siga estos pasos:
 - Añada una orden a su fichero @{b}s:User-startup@{ub} que asigne @{b}YAM:@{ub} al directorio
   que ha creado para YAM 2.4, por ejemplo
 
-          1:> assign YAM: Work:Internet/YAM
+          1.> assign YAM: Work:Internet/YAM
 
 - Si dispone de un procesador 68040 ó 68060, posiblemente desee utilizar
   una versión de YAM optimizada para estos procesadores.  Para ello sólo
@@ -320,7 +318,7 @@ quiere usarla, siga estos pasos:
   020 y convertirlo en un ejecutable optimizado para 040 ó 060.  Use la
   siguiente orden para crear un binario para 040:
 
-          1:> GPatch YAM:YAM  <senda/>YAM.gpatch  DIRECT
+          1.> GPatch YAM:YAM  <senda/>YAM.gpatch  DIRECT
 
   Si en cambio lo que le interesa es usar un YAM optimizado para el '060,
   use esta orden:
@@ -343,16 +341,16 @@ Instalación manual en MorphOS
   instalada manualmente o utilizando el instalador) como "YAM.amigaos"
   (¡pero no renombre el icono!):
 
-          1:> rename YAM:YAM as YAM:YAM.amigaos
+          1.> rename YAM:YAM as YAM:YAM.amigaos
 
 - Copie el binario "YAM.morphos" del archivo "YAM24mos.lha" a su
   directorio YAM:
 
-          1:> copy YAM.morphos YAM:
+          1.> copy YAM.morphos YAM:
 
 - Copie el ejecutable "YAM.starter" como "YAM" a su directorio YAM:
 
-          1:> copy YAM.starter YAM:YAM
+          1.> copy YAM.starter YAM:YAM
 
    A partir de ese momento puede lanzar YAM de la forma acostumbrada
 (desde el CLI o el Workbench). La versión 68k o PPC será seleccionada
@@ -388,7 +386,7 @@ este capítulo.
 
     A modo de ejemplo, usaremos la configuración para un usuario ficticio
     llamado "Miguel Cervantes" que vive en España.  Su dirección de correo
-    electrónico sería "mcervantes@example.com" y la dirección de su servidor
+    electrónico sería "mcervantes\@example.com" y la dirección de su servidor
     de correo sería "mail.example.com".  Su contraseña sería "sancho".
 
  2. Ejecute YAM pulsando dos veces su icono.  Una vez que la ventana de
@@ -403,7 +401,7 @@ este capítulo.
     de correo.  Siguiendo con nuestro ejemplo, esta información sería:
 
                Nombre real:            Miguel Cervantes
-               Dirección electrónica:  mcervantes@example.com
+               Dirección electrónica:  mcervantes\@example.com
                Servidor POP3:          mail.example.com
                Contraseña:             sancho
                Zona horaria:           GMT
@@ -433,7 +431,7 @@ este capítulo.
     la ventana principal.  Pulse el botón "Nuevo" (el sexto por la
     izquierda) o elija "Nuevo" en el menú "Mensaje".  La ventana de
     edición se abrirá.  Inserte la dirección de correo electrónico del
-    destinatario en el campo "Para", por ejemplo "mcervantes@example.com"
+    destinatario en el campo "Para", por ejemplo "mcervantes\@example.com"
     (normalmente pondría la dirección de otra persona, pero ahora mismo
     lo que quiere es probar el programa, así que ponga su propia
     dirección).  Inserte dos o tres palabras para indicar de qué va
@@ -544,7 +542,7 @@ errores causados por problemas en la transmisión.  Algunos de los campos
 más importantes se explican en el siguiente ejemplo.
 
 
-  Return-Path: <just@zfn.uni-bremen.de>
+  Return-Path: <just\@zfn.uni-bremen.de>
 
    Este campo es añadido por el servidor de correo del destinatario y
 contiene la dirección de correo electrónico del remitente para permitir
@@ -566,12 +564,12 @@ dónde.  Esto le permite a uno reconstruir problemas de transmisión que
 puedan haber afectado al mensaje en su ruta.
 
 
-  From: Christian Just <just@example.net>
+  From: Christian Just <just\@example.net>
 
    La dirección de correo electrónico y el nombre real del remitente.
 
 
-  Reply-To: just@example.org
+  Reply-To: just\@example.org
 
    La dirección a la que debería enviarse cualquier respuesta a este
 mensaje.  Esta dirección se utiliza si el mensaje ha sido despachado
@@ -582,11 +580,11 @@ un campo "Reply-To:", las respuestas van a la dirección dada en el
 campo "From:".
 
 
-  To: "Marcel Beck (Yet another Mailer-autor)" <mbeck@example.com>
+  To: "Marcel Beck (Yet another Mailer-autor)" <mbeck\@example.com>
 
    La dirección del destinatario, pudiendo darse nombres adicionales,
 separados por comas.  Este campo puede contener tan sólo la dirección
-en el formato "nombre@dominio", o bien ésta puede ir precedida de un
+en el formato "nombre\@dominio", o bien ésta puede ir precedida de un
 comentario adicional, como puede ser el nombre del remitente; en tal
 caso, la dirección deberá ir delimitada por corchetes angulados.
 
@@ -599,14 +597,14 @@ al Meridiano de Greenwich (GMT).  En este caso, los primeros dos dígitos
 indican las horas de diferencia, y los dos siguientes, los minutos.
 
 
-  Message-ID: <yam7296.1549.122414920@zfn.uni-bremen.de>
+  Message-ID: <yam7296.1549.122414920\@zfn.uni-bremen.de>
 
    Un identificador único, creado automáticamente al efectuarse el despacho.
 Gracias a este identificador es posible cancelar sin temor a equivocación
 un mensaje en concreto.
 
 
-  In-Reply-To: <yam7296.263.121102896@mail.access.ch>
+  In-Reply-To: <yam7296.263.121102896\@mail.access.ch>
 
    Una referencia precisa al mensaje que se está contestando, como es su
 IDentificador de mensaje ("Message-ID").
@@ -631,7 +629,7 @@ Emplear un Asunto claro e informativo es un detalle de buen estilo
    Estos campos indican que el mensaje está confeccionado en formato MIME.
 En este ejemplo, el mensaje contiene texto simple que emplea el juego
 de caracteres ISO-Latin-1, y los caracteres que no pueden representarse
-usando 7 bits se codifican como @{" citables-imprimibles " link "MIME"}.
+usando 7 bits se codifican como @{" citados-imprimibles " link "MIME"}.
 
 @endnode
 
@@ -881,7 +879,7 @@ Instalación de PGP 2.6.x
     variable de entorno "PGPPath" de forma que apunte a PGP:bin de
     forma permanente.  Por ejemplo,
 
-     1:> SetENV PGPPath SAVE Work:PGP/bin
+     1.> SetENV PGPPath SAVE Work:PGP/bin
 
  4. En el apartado "Seguridad" de la configuración, haga que la "Senda
     de PGP" apunte al directorio donde se encuentra el ejecutable PGP,
@@ -938,7 +936,7 @@ Instalación de PGP 5.0i
     variable de entorno "PGPPath" de forma que apunte a PGP:bin de
     forma permanente.  Por ejemplo,
 
-     1:> SetENV PGPPath SAVE Work:PGP/bin
+     1.> SetENV PGPPath SAVE Work:PGP/bin
 
  4. En el apartado "Seguridad" de la configuración, haga que la "Senda
     de PGP" apunte al directorio donde se encuentra el ejecutable PGP,
@@ -1069,6 +1067,7 @@ Nociones básicas - "normas de etiqueta" en el correo electrónico
 Configuración
 *************
 
+
    YAM dispone de un gran número de opciones, que pueden ajustarse en
 la ventana de configuración.  Las opciones del programa se encuentran
 repartidas a lo largo de 15 apartados, que puede seleccionar pulsando
@@ -1086,7 +1085,7 @@ dispone de tres menús.
  @{" Escritura        " link "CO05"}   - Cabeceras, saludos, opciones del editor
  @{" Responder        " link "CO06"}   - Opciones para la respuesta de mensajes
  @{" Firma            " link "CO07"}   - Firmas... ¡y coletillas!
- @{" Listas           " link "CO08"}   - Columnas de las listas, menús de contexto
+ @{" Listas           " link "CO08"}   - Columnas, unidad de medida, menús de contexto
  @{" Seguridad        " link "CO09"}   - Encriptación con @{" PGP " link "PGP"} y uso de re-expedidores
  @{" Inicio/Salida    " link "CO10"}   - Operaciones a realizar al inicio y a la salida
  @{" MIME             " link "CO11"}   - Visores @{" MIME " link "MIME"} para los anexos
@@ -1138,9 +1137,9 @@ poder poder trabajar.
 
 @{b}Dirección electrónica@{ub}
      Su dirección de correo electrónico, que consiste en dos partes:
-     <nombredeusuario>@<dominio>.
+     <nombredeusuario>\@<dominio>.
 
-     Ejemplo:  mcervantes@example.com
+     Ejemplo:  mcervantes\@example.com
 
 
 @{b}Servidor POP3@{ub}
@@ -1172,22 +1171,13 @@ poder poder trabajar.
      parte de la fecha del mensaje e indica la diferencia entre la
      hora local y la Hora del Meridiano de Greenwich (GMT).
 
-     Ejemplos:  GMT+1 (caso de España en el horario de invierno)
-                GMT   (para el Reino Unido)
-                GMT-5 (horario Este de los EE.UU., por ej. Nueva York)
+     Ejemplos:  GMT+01:00 (caso de España en el horario de invierno)
+                GMT 00:00 (para el Reino Unido)
+                GMT-05:00 (horario Este de los EE.UU., por ej. Nueva York)
 
      Normalmente YAM obtendrá la información de zona horaria de las
      preferencias del sistema establecidas con el editor Locale, así
-     que este selector permanecerá desactivado.  Sin embargo, en caso
-     de que la diferencia horaria fuese un valor especial (por ejemplo,
-     una diferencia de media hora), éste podría indicarse en la variable
-     de entorno @{b}YAM_TZ@{ub}.  Por ejemplo,
-
-             SetENV YAM_TZ SAVE 1030
-
-     indicaría que su hora local está 10 horas y 30 minutos por delante
-     del meridiano de Greenwich, o lo que es lo mismo, que se encuentra
-     usted a la altura de Adelaida, en Australia.
+     que este selector permanecerá desactivado.
 
 
 @{b}Horario de verano@{ub}
@@ -1195,7 +1185,12 @@ poder poder trabajar.
      Al hacerlo, se añadirá una hora al valor de la zona horaria.
 
      YAM tendrá en cuenta automáticamente este factor si está instalada
-     la utilidad SummertimeGuard.
+     la utilidad @{b}SummertimeGuard@{ub}.  Además, a partir de su versión 2.4,
+     YAM también reconoce las variables de entorno TZONE e IXGMTOFFSET
+     generadas por las utilidades @{b}SetDST@{ub} e @{b}ixtimezone@{ub} (GeekGadgets),
+     respectivamente; si YAM encuentra alguna de ellas, se ocupará por
+     sí solo de ajustar convenientemente el horario de verano cuando
+     llegue el momento, y esta opción permanecerá desactivada.
 
 @endnode
 
@@ -1285,11 +1280,11 @@ así como definir cuentas POP3 adicionales.
 
 ---- Recibir correo (POP3) ---------------------------------------------
 
-   Aparte del servidor POP3 primario definido en el apartado
-@{" Primeros Pasos " link "CO00" 0}, puede especificar aquí hasta 15 cuentas de correo
+   Aparte de la cuenta POP3 primaria definida en el apartado
+@{" Primeros Pasos " link "CO00"}, puede especificar aquí hasta 15 cuentas de correo
 adicionales; los nombres aparecen en la lista de la izquierda y al
 pulsar un nombre se muestran los detalles en la parte derecha.
-Recuerde que la cuenta puede ser del mismo usuario en un servidor
+Recuerde que las cuentas pueden ser del mismo usuario en un servidor
 diferente, o de otro usuario en el mismo servidor; en cualquier caso,
 podrá comprobar si hay correo nuevo con sólo una pulsación del ratón.
 Pulse [Nuevo] para insertar la información necesaria para una nueva
@@ -1643,7 +1638,7 @@ filtros que borren o muevan mensajes.
 @{b}Dirección/Nombre@{ub}
      Si hace que el filtro busque en una cabecera que contiene una
      dirección de correo electrónico, debe indicar si la búsqueda se
-     efectuará sobre la dirección (por ej., "mcervantes@example.com")
+     efectuará sobre la dirección (por ej., "@{b}mcervantes\@example.com@{ub}")
      o bien con el nombre del autor (por ejemplo, "Miguel Cervantes").
 
 
@@ -1679,7 +1674,7 @@ filtros que borren o muevan mensajes.
      La dirección de correo electrónico del nuevo destinatario deberá
      indicarse en el campo de texto situado al lado de la casilla. 
 
-     Ejemplo:  mcervantes@example.net
+     Ejemplo:  mcervantes\@example.net
 
 
 @{b}Reenviar@{ub}
@@ -1889,7 +1884,7 @@ Configuración - Escritura
      la ventana del listín de direcciones, y entonces arrastrar una
      ficha del listín y dejarla caer sobre este campo.
 
-     Ejemplo:  mcervantes@example.net
+     Ejemplo:  mcervantes\@example.net
 
 
 @{b}Organización@{ub}
@@ -1956,7 +1951,7 @@ Configuración - Escritura
      para asegurar que ninguna línea tenga más caracteres que el número
      indicado en este apartado.  También puede hacer que YAM inserte
      cortes de línea mientras escribe, o bien que lo haga cuando se
-     vaya a enviar el mensaje.  La opción "mientras escribe" hace que
+     vaya a enviar el mensaje;  la opción "@{b}mientras escribe@{ub}" hace que
      el editor interno inserte códigos de salto de línea mientras está
      escribiendo el mensaje, evitando así sorpresas desagradables cuando
      el texto se formatea una vez grabado en disco para su posterior
@@ -2129,7 +2124,7 @@ Configuración - Responder
 @endnode
 
 @node "CO07" "Configuración - Firma"
-@node "CO08"
+@next "CO08"
 @prev "CO06"
 @toc "CO_W"
 
@@ -2203,6 +2198,10 @@ Configuración - Listas
 @{b}Lista de carpetas, Lista de Mensajes@{ub}
      Elija qué datos quiere que aparezcan en cada una de estas listas.
 
+     A partir de YAM 2.4, también puede controlar aquí el uso de
+     menús de contexto tanto para la lista de carpetas como para
+     la de mensajes.
+
 
 ---- General -----------------------------------------------------------
 
@@ -2260,10 +2259,12 @@ Configuración - Seguridad
      YAM utiliza el famoso (algunos incluso dirían "notable") programa
      @{b}PGP@{ub} ("Pretty Good Privacy") de Philip Zimmermann para la
      encriptación, desencriptación y la "firma" digital de los
-     mensajes.  Por favor, instale PGP tal como se indica en el
-     manual de PGP e inserte aquí la senda completa del directorio
-     donde se encuentra el ejecutable PGP.  YAM reconoce de forma
-     automática si está usando la versión 2.6 o la 5.x. 
+     mensajes.
+
+     Por favor, instale PGP tal como se indica en el manual de PGP e
+     inserte aquí la senda completa del directorio donde se encuentra
+     el ejecutable PGP.  YAM reconoce de forma automática si está
+     usando la versión 2.6 o la 5.x. 
 
      Ejemplo:  Work:Programas/PGP/bin/
 
@@ -2296,10 +2297,14 @@ Configuración - Seguridad
      re-expedidor, éste borrará toda la información de la cabecera
      del mensaje que pudiera ser usada para identificar al remitente
      original, haciendo luego llegar el mensaje al destinatario final.
+     Además, en este caso YAM desactivará automáticamente el envío
+     de cualquier tipo de información personal en el mensaje, tanto
+     en las cabeceras como en forma de firma.
+
      Encontrará direcciones de servicios de re-expedición utilizando
      "remailer" en un buscador de Internet. 
 
-     Ejemplo:  Remailer <remailer@example.com>
+     Ejemplo:  Remailer <remailer\@example.com>
 
 
 @{b}Campo de cabecera@{ub}
@@ -2319,8 +2324,8 @@ Configuración - Seguridad
 ---- Ficheros de registro ----------------------------------------------
 
 @{b}Senda@{ub}
-     Lugar donde YAM guardará los ficheros de registro.  El formato de
-     los ficheros de registro se explica en la @{" Referencia " link "RFLO"}.
+     Lugar donde YAM guardará los ficheros de registro.  El formato
+     de los ficheros de registro se explica en la @{" Referencia " link "RFLO"}.
 
 
 @{b}Dividir registro@{ub}
@@ -2447,6 +2452,12 @@ usar MultiView para leer imágenes o sonidos, o para tipos de ficheros
 no soportados por los datatypes.  Pulse [Nuevo] para seleccionar un
 visor o use [Borrar] para borrar una selección.
 
+   Además, los nuevos tipos de ficheros que defina aquí serán también
+tenidos en cuenta al escribir nuevos mensajes.  Por ejemplo, si define
+un nuevo tipo "application/pgs" para los ficheros que terminen en ".pgs",
+YAM utilizará automáticamente este tipo MIME cuando añada a sus mensajes
+ficheros con esta extensión.
+
 
 @{b}Tipo de anexo@{ub}
      Es el tipo concreto de anexo y se corresponde con el campo
@@ -2468,8 +2479,8 @@ visor o use [Borrar] para borrar una selección.
 
 @{b}Visor@{ub}
      Elija aquí el programa que le gustaría usar para ver el anexo.
-     No olvide insertar @{b}%s@{ub} en la línea de comando, que será
-     sustituido con el nombre del fichero.
+     No olvide insertar una @{b}"%s"@{ub} en la línea de comando, que será
+     sustituida con el nombre del fichero.
 
      Ejemplo:  TOOLS:Gfx/ViewJPG "%s"
 
@@ -2696,7 +2707,7 @@ Configuración - Varios
      Active esta opción para que YAM guarde en la carpeta "Enviados"
      todos los mensajes que vaya enviando.  También puede guardarlos
      individualmente cada vez que envíe un mensaje, utilizando el
-     apartado de opciones de la @{" ventana de escritura " link "WR02" 0}. 
+     apartado de opciones de la @{" ventana de escritura " link "WR02"}. 
 
 
 ---- Seguimiento de mensajes -------------------------------------------
@@ -2970,7 +2981,7 @@ Configuración - Menús
 @endnode
 
 @node "WI_W" "Ventanas"
-@next "AB_W"
+@next "RF_W"
 @prev "CO_W"
 @toc "Main"
 
@@ -2978,15 +2989,21 @@ Ventanas
 ********
 
 
-  @{" Ventana principal " link "MA_W"}  - Cómo recibir correo, enviarlo, copiarlo...
-  @{" Escritura         " link "WR_W"}  - Escritura de mensajes
-  @{" Lectura           " link "RE_W"}  - Lectura de mensajes
+  @{" Ventana principal        " link "MA_W"}  - Cómo recibir correo, enviarlo, copiarlo...
+  @{" Escritura                " link "WR_W"}  - Escritura de mensajes
+  @{" Lectura                  " link "RE_W"}  - Lectura de mensajes
+  @{" Preferencias de carpeta  " link "FO_W"}  - Edición de carpetas
+  @{" El listín de direcciones " link "AB_W"}  - Su libreta de direcciones útiles
+  @{" Transferencias de correo " link "TR_W"}  - Recepción y envío de mensajes
+  @{" Búsqueda                 " link "FI_W"}  - Cómo hallar un mensaje concreto
+  @{" Usuarios                 " link "US_W"}  - Definición de varios usuarios
+
 
 @endnode
 
 @node "MA_W" "Ventana principal"
 @next "WR_W"
-@prev "RE_W"
+@prev "US_W"
 @toc "WI_W"
 
 Ventana principal
@@ -2996,22 +3013,22 @@ Ventana principal
    La ventana principal de YAM tiene la siguiente presentación:
 
 
-    Barra de menús:
+   Barra de menús:
 
-    @{" Proyecto " link "MAM1"} @{" Carpeta " link "MAM2"} @{" Mensaje " link "MAM3"} @{" Preferencias " link "MAM4"} @{" Scripts " link "MAM5"}
+   @{" Proyecto " link "MAM1"} @{" Carpeta " link "MAM2"} @{" Mensaje " link "MAM3"} @{" Preferencias " link "MAM4"} @{" Scripts " link "MAM5"}
 
-   .--------------------------------------------------------.
-   |              @{" Barra de herramientas " link "MA02"}                  |
-   |--------------------------------------------------------|
-   |                   Barra de estado                      |
-   |--------------------------------------------------------|
-   |                  |                                     |
-   |                  |         @{" Lista de mensajes " link "MA01"}        |
-   |@{"Lista de carpetas" link "MA00"}|                                     |
-   |                  |      Aquí aparece el contenido      |
-   |                  |      de la carpeta seleccionada     |
-   |                  |                                     |
-   `------------------^-------------------------------------'
+  .--------------------------------------------------------.
+  |              @{" Barra de herramientas " link "MA02"}                  |
+  |--------------------------------------------------------|
+  |                   Barra de estado                      |
+  |--------------------------------------------------------|
+  |                  |                                     |
+  |                  |         @{" Lista de mensajes " link "MA01"}        |
+  |@{"Lista de carpetas" link "MA00"}|                                     |
+  |                  |      Aquí aparece el contenido      |
+  |                  |      de la carpeta seleccionada     |
+  |                  |                                     |
+  `------------------^-------------------------------------'
 
 @endnode
 
@@ -3039,7 +3056,7 @@ Ventana principal - lista de carpetas
 @{b}Enviados@{ub}
      Aquí puede ver los mensajes que ya ha enviado.  Los mensajes son
      trasladados a este buzón (desde el buzón "Salientes") una vez que
-     son enviados.  De nuevo, puede usar los @{" filtros " link "CO03" 0} para trasladarlos
+     son enviados.  De nuevo, puede usar los @{" filtros " link "CO03"} para trasladarlos
      a otras carpetas.
 
 @{b}Borrados@{ub}
@@ -3056,11 +3073,13 @@ clasificar sus carpetas por grupos.
    La lista de carpetas puede tener hasta cinco columnas: nombre de la
 carpeta, número de mensajes en ella -total, nuevos o no leídos-, así
 como el tamaño de la misma.  Aparecerán unas u otras dependiendo de
-cómo haya definido el apartado @{" Listas " link "CO08" 0} de la configuración.
-Puede ajustar la anchura de las columnas arrastrando con el ratón
-las líneas finas que separan los encabezamientos de las columnas,
-en la parte superior de la lista.  El orden de las columnas puede
-modificarse moviendo los encabezamientos con el ratón.
+cómo haya definido el apartado @{" listas " link "CO08"} de la configuración,
+aunque también puede activar o desactivar ciertas columnas temporalmente
+usando el menú de contexto (pulse con el botón derecho del ratón sobre
+el encabezamiento de la lista).  Puede ajustar la anchura de las columnas
+arrastrando con el ratón las líneas finas que separan los encabezamientos
+de las columnas.  El orden de las columnas puede modificarse arrastrando
+los encabezamientos con el ratón.
 
    Puede reordenar las carpetas utilizando la técnica @{" Arrastrar y soltar " link "Drag"}.
 
@@ -3104,11 +3123,15 @@ Ventana principal - lista de mensajes
 
 
    La lista de mensajes puede tener hasta ocho columnas, dependiendo
-de la configuración de las @{" Listas " link "CO08"}.
+de la configuración de las @{" listas " link "CO08"}.  También puede utilizar el
+menú de contexto (pulse con el botón derecho del ratón sobre los
+encabezamientos) para activar o desactivar temporalmente ciertas
+columnas.
+
 
 @{b}Estado del mensaje@{ub}
-     Un icono que muestra el @{" estado " link "MA0S"} del mensaje (nuevo, no leído,
-     leído, etc.).
+     Uno o más iconos que muestran el @{" estado " link "MA0S"} del mensaje (nuevo,
+     no leído, leído, etc.).
 
 @{b}Remitente/Destinatario@{ub}
      Dirección de correo electrónico (o en su caso, el nombre) del
@@ -3125,7 +3148,7 @@ de la configuración de las @{" Listas " link "CO08"}.
 @{b}Fecha@{ub}
      La fecha de envío del mensaje, calculada según el horario local
      (el de Ud.).  Para que funcione, tanto usted como el remitente
-     deben tener definida correctamente su @{" zona horaria " link "CO00" 0}, y el reloj
+     deben tener definida correctamente su @{" zona horaria " link "CO00"}, y el reloj
      del sistema debe estar ajustado correctamente en ambos lados.
 
 @{b}Fichero@{ub}
@@ -3148,7 +3171,7 @@ de la configuración de las @{" Listas " link "CO08"}.
    La anchura de las columnas puede ajustarse arrastrando con el ratón
 las líneas finas que separan los encabezamientos de las columnas en la
 propia lista de mensajes.  El orden de las columnas puede modificarse
-moviendo los encabezamientos de las mismas.
+arrastrando lateralmente los encabezamientos de las mismas.
 
    Una pequeña flecha en uno de los encabezamientos indica cómo están
 ordenados los mensajes.  Una pulsación en el encabezamiento de una
@@ -3159,7 +3182,7 @@ flecha (segundo criterio de ordenación), mantenga pulsada la tecla
 <Mayúsculas> mientras pulsa en el encabezamiento de la columna.
 
    Estos cambios son sólo temporales; si quiere hacerlos permanentes,
-deberá realizarlos en el apartado de @{" configuración de carpetas " link "FO_W" 0}.
+deberá realizarlos en el apartado de @{" configuración de carpetas " link "FO_W"}.
 
    Si mantiene el puntero del ratón quieto sobre la lista durante unos
 segundos, se abrirá una burbuja de ayuda con información respecto al
@@ -3170,7 +3193,7 @@ con el contenido del mensaje correspondiente.  Puede usar el ratón para
 trasladar mensajes a otra carpeta.  Pulse en un mensaje y arrastre el
 ratón hacia arriba o abajo (manteniendo pulsado el botón izquierdo)
 para marcar un grupo de mensajes.  A continuación y sin soltar el
-botón, @{" arrastre " LINK "Drag" 0} el grupo marcado hacia la izquierda, hasta llevarlos
+botón, @{" arrastre " LINK "Drag"} el grupo marcado hacia la izquierda, hasta llevarlos
 a la lista de carpetas, y suéltelos sobre la carpeta deseada.
 
 @endnode
@@ -3182,6 +3205,16 @@ a la lista de carpetas, y suéltelos sobre la carpeta deseada.
 
 Iconos de estado
 ****************
+
+
+   YAM utiliza varios iconos para mostrar el estado de los mensajes.
+Aparte de los iconos que indican las condiciones básicas como leído,
+no leído, saliente y enviado, también encontrará algunos otros iconos
+que indican ciertas banderas también muy importantes, como por ejemplo
+nuevo, importante, firmado con PGP, etc.  La forma en la que se muestra
+esta información de estado depende del juego de iconos que se haya
+instalado; éstos son los valores por omisión al utilizar el estilo
+clásico MagicWB:
 
 
  Estado del mensaje               Icono
@@ -3314,7 +3347,7 @@ Ventana principal - Menú Proyecto
      que se encuentra en la página web de YAM.  Asegúrese de que
      está conectado a Internet antes de usar esta opción.  YAM le
      informará si hay una actualización para su versión.  El botón
-     [Visitar página Web] ejecutará un @{" script ARexx " link "CO13" 0} que conectará
+     [Visitar página Web] ejecutará un @{" script ARexx " link "CO13"} que conectará
      su navegador con la página web de YAM.
 
 
@@ -3359,7 +3392,7 @@ Ventana principal - Menú Carpeta
      y quiere utilizarlo, elija "Directorio existente".  Puede crear una
      nueva carpeta usando los "valores internos" de YAM o bien copiando
      los valores de la carpeta que se encuentra seleccionada ("Igual que
-     ésta").  A continuación se abrirá un @{" panel de configuración " link "FO_W" 0} donde
+     ésta").  A continuación se abrirá un @{" panel de configuración " link "FO_W"} donde
      podrá modificar las propiedades de la nueva carpeta.
 
 
@@ -3372,7 +3405,7 @@ Ventana principal - Menú Carpeta
 
 
 @{b}Carpeta/Editar@{ub}
-     Abre un @{" panel de configuración " link "FO_W" 0} donde podrá modificar las
+     Abre un @{" panel de configuración " link "FO_W"} donde podrá modificar las
      propiedades de la carpeta que está seleccionada.  En caso de haber
      seleccionado un grupo, lo único que podrá cambiar aquí será su
      nombre.
@@ -3507,8 +3540,9 @@ Ventana principal - Menú Mensaje
 
 @{b}Mensaje/Guardar...@{ub}
      Guarda el texto (y las cabeceras) de uno o más mensajes, creando
-     un fichero distinto para cada mensaje.  Si quiere guardar los
-     mensajes en su formato original (MBOX), utilice @{" Carpeta/Exportar " link "MAM2"}.
+     un fichero distinto para cada mensaje.  Si lo que realmente quiere
+     es guardar todos los mensajes de la carpeta en un único fichero en
+     formato MBOX, utilice la opción @{" Carpeta/Exportar " link "MAM2"}.
 
 
 @{b}Mensaje/Anexos  » Guardar@{ub}
@@ -3611,7 +3645,7 @@ Ventana principal - Menú Preferencias
 
 
 @{b}Preferencias/Configuración...@{ub}
-     Abre la @{" ventana de configuración " link "CO_W" 0}, donde puede modificar la
+     Abre la @{" ventana de configuración " link "CO_W"}, donde puede modificar la
      configuración de YAM.
 
 
@@ -3682,7 +3716,8 @@ dispone de tres apartados, presentados tal como se muestra abajo.
 
    La barra de menús es la misma para cada apartado:
 
-  @{" Texto " link "WRM1"} @{" Editar " link "WRM2"} @{" Anexos " link "WRM3"} @{" Opciones " link "WR02"}
+
+   @{" Texto " link "WRM1"} @{" Editar " link "WRM2"} @{" Anexos " link "WRM3"} @{" Opciones " link "WR02"}
 
   .-----------------------. .-------------------. .---------------------.
   |     @{"  Mensaje  " link "WR00"}      |  |    @{" Anexos " link "WR01"}      | |    @{"  Opciones  " link "WR02"}    |
@@ -3787,9 +3822,7 @@ cabecera y una barra de herramientas.
           teclear el alias, nombre o dirección de correo electrónico
           del destinatario que le interesa en el campo @{b}Para:@{ub}, con
           lo cual aparecerá un listado instantáneo con las posibles
-          coincidencias presentes en el listín; de este modo, sólo
-          tiene que usar las teclas del cursor e <Intro> o el propio
-          ratón para elegir el destinatario que le interesa.
+          coincidencias presentes en el listín.
 
           <Mayúsculas + Intro> añade sólo la dirección del destinatario
           prescindiendo de su nombre, mientras que <Intro> sin elegir
@@ -3804,7 +3837,7 @@ cabecera y una barra de herramientas.
      correctamente, o simplemente utilice uno de los métodos de
      selección mencionados arriba.
 
-     Ejemplo:  mcervantes, jefe@trabajo.porqueyo.com
+     Ejemplo:  mcervantes, jefe\@trabajo.porqueyo.com
 
 
 @{b}Asunto@{ub}
@@ -4038,10 +4071,10 @@ Opciones de envío
 
 @{b}Importancia@{ub}
      Seleccione aquí la importancia del mensaje para el destinatario.
-     Los mensajes de gran importancia se mostrarán con un signo de
-     exclamación en la línea de estado y serán colocados en primer
-     lugar por la ordenación automática de correo.  La importancia
-     se indica en la cabecera @{b}Importance:@{ub}.
+     Normalmente los mensajes de gran importancia se mostrarán con un
+     signo de exclamación en la línea de estado y serán colocados en
+     primer lugar por la ordenación automática de correo.  El grado
+     de importancia del mensaje se indica en la cabecera @{b}Importance:@{ub}.
 
 
 Firma
@@ -4128,7 +4161,7 @@ Ventana de escritura - Menú "Texto"
 @{b}Texto/Invocar editor@{ub}
      Esta opción le permite escribir su mensaje con su editor favorito,
      definido en la configuración de @{" Escritura " link "CO05"}. Tenga en cuenta que
-     algunas funciones, como los estilos de texto y el @{" Glosario " link "DI_W" 0},
+     algunas funciones, como los estilos de texto y el @{" Glosario " link "DI_W"},
      podrían funcionar correctamente sólo al utilizar el editor
      interno.  Siempre que grabe el texto en el editor externo, el
      texto del editor interno se actualizará, gracias a la forma en
@@ -4369,7 +4402,7 @@ Función de los botones
 @endnode
 
 @node "RE_W" "Ventana de lectura"
-@next "MA_W"
+@next "FO_W"
 @prev "WR_W"
 @toc "WI_W"
 
@@ -4383,25 +4416,25 @@ podrá abrir hasta cuatro ventanas a la vez.  La ventana se presenta de la
 forma siguiente:
 
 
-  Barra de menús
+   Barra de menús
 
-  @{" Mensaje " link "REM1"}  @{" Navegación " link "REM2"}  @{" PGP " link "REM3"}  @{" Preferencias " link "REM4"}
+   @{" Mensaje " link "REM1"}  @{" Navegación " link "REM2"}  @{" PGP " link "REM3"}  @{" Preferencias " link "REM4"}
 
- .-------------------------------------------------. .---------.
- |           @{" Barra de herramientas " link "RE_B"}              | |@{" estado " link "MA0S"}|
- |_________________________________________________| |_________|
-  _____________________________________________________________
- |                                                             |
- |                  Cabeceras del mensaje                      |
- |_____________________________________________________________| Puede
-  _____________________________________________________________ <--
- |                                                             | pulsar y
- |                                                             | arrastrar
- |                                                             | la línea
- |                   Cuerpo del mensaje                        | divisora
- |                                                             |
- |                                                             |
- `-------------------------------------------------------------'
+  .-------------------------------------------------. .---------.
+  |           @{" Barra de herramientas " link "RE_B"}              | |@{" estado " link "MA0S"}|
+  |_________________________________________________| |_________|
+   _____________________________________________________________
+  |                                                             |
+  |                  Cabeceras del mensaje                      |
+  |_____________________________________________________________| Puede
+   _____________________________________________________________ <--
+  |                                                             | pulsar y
+  |                                                             | arrastrar
+  |                                                             | la línea
+  |                   Cuerpo del mensaje                        | divisora
+  |                                                             |
+  |                                                             |
+  `-------------------------------------------------------------'
 
 
 Estado del mensaje
@@ -4417,10 +4450,10 @@ Cabeceras
 
    La cantidad de información acerca del mensaje que se muestra en la
 lista de @{" cabeceras " link "HEAD"} se define en la @{" configuración " link "CO04"}, pero puede
-modificarse (temporalmente) con el menú @{" Preferencias " link "REM4"}.  Si quiere copiar
-alguna de las líneas al portapapeles, pulse y arrastre con el ratón para
-destacar las líneas.  La operación de copia es instantánea y el color
-de destaque desaparece inmediatamente.
+modificarse (temporalmente) con el menú @{" Preferencias " link "REM4"}.  Si quiere
+copiar alguna de las líneas al portapapeles, pulse y arrastre con el
+ratón para destacar las líneas.  La operación de copia es instantánea
+y el color de destaque desaparece inmediatamente.
 
 
 Cuerpo del mensaje
@@ -4757,29 +4790,199 @@ adicionales:
 
 @endnode
 
+@node "FO_W" "Configuración de carpetas"
+@next "AB_W"
+@prev "RE_W"
+@toc "WI_W"
+
+Configuración de carpetas
+*************************
+
+
+   Aparte de las cuatro carpetas "Entrantes", "Salientes", "Enviados"
+y "Borrados", puede crear cualquier número de carpetas adicionales,
+en este caso "definidas por el usuario".  Estas carpetas son útiles,
+por ejemplo, para archivar los mensajes recibidos y/o enviados, así
+como para gestionar listas de correo.
+
+   Siempre que cree una nueva carpeta o edite una ya existente, se
+abrirá una ventana de configuración con las siguientes opciones:
+
+
+@{b}Nombre@{ub}
+     El nombre de la carpeta, que aparecerá en la lista de carpetas
+     de la ventana principal. 
+
+     Ejemplo:  Lista YAM
+
+
+@{b}Senda@{ub}
+     Se trata del lugar donde se guardarán los mensajes, el fichero
+     @{b}.fconfig@{ub} y el fichero @{b}.index@{ub} de esta carpeta.  Normalmente es
+     un subdirectorio dentro del directorio básico de las carpetas,
+     pero puede indicar cualquier otro lugar, como por ejemplo una
+     partición distinta de su disco duro. 
+
+     Ejemplo:  YAM_ml
+
+
+@{b}Vida máx.@{ub}
+     Si lo desea, puede hacer que YAM borre automáticamente los
+     mensajes que lleven en su Amiga un tiempo determinado.  Para
+     ello, arrastre el deslizador para elegir un valor distinto de
+     cero (que será el tiempo máximo que permanecerán archivados los
+     mensajes, en número de @{b}días@{ub}).  A continuación diríjase al apartado
+     "Inicio/Salida" de la configuración y active la opción "Borrar
+     correo viejo".
+
+     @{b}NOTA:@{ub} Los mensajes "nuevos" o "no leídos" no se borrarán
+     automáticamente. 
+
+
+@{b}Tipo@{ub}
+     Aquí puede determinar si la carpeta es para correo entrante y/o
+     enviado.  Esto influye en los encabezamientos de las columnas y
+     determina el nombre de qué persona se muestra en la lista de
+     mensajes.
+
+
+@{b}Modo@{ub}
+     Las carpetas pueden protegerse con una contraseña y/o comprimirse
+     si es necesario.  Dispone de los siguientes modos: 
+
+     normal                       sin protección por contraseña ni
+                                  compresión
+                                  + rápido
+                                  - no hay protección para su correo
+                                    frente a otras personas que accedan
+                                    a su Amiga
+
+     protección simple            protección simple por contraseña, sin
+                                  compresión
+                                  + rápido
+                                  - su correo queda protegido sólo dentro
+                                    de YAM
+
+     comprimido                   compresión XPK sin protección por
+                                  contraseña
+                                  + ahorra espacio en disco duro
+                                  - lento, sin protección para su correo
+
+     comprimido y con contraseña  compresión XPK y protección por contraseña
+                                  + ahorra espacio en disco duro, buena
+                                    protección
+                                  - lento
+
+     Para la compresión es necesario el paquete XPK.  Este software no
+     se incluye en el archivo de YAM, pero puede conseguirse de forma
+     gratuita (en Aminet, por ejemplo).  En el apartado @{" Varios " link "CO14"}
+     encontrará la configuración de la librería de compresión.
+
+
+@{b}Ordenar por@{ub}
+     Aquí puede indicar el criterio primario de ordenación de los
+     mensajes de la carpeta  activa.  Puede hacer que los mensajes
+     se ordenen por fecha de creación, fecha de envío/recepción,
+     remitente, destinatario, asunto, tamaño o estado.  De acuerdo
+     con el estado del mensaje, los mensajes se ordenarán de la
+     forma siguiente:
+
+       nuevo > no leído > leído > respondido > reenviado
+       error en el envío > retenido  >  pendiente de envío > enviado
+
+     También hay una serie de banderas que se tienen en cuenta:
+
+       1. importante
+       2. marcado
+       3. encriptado con PGP
+       4. firmado con PGP
+       5. informe de estado
+       6. contiene anexos
+
+     Con la opción "Inv" puede invertir el sentido de la ordenación
+     (por ejemplo, Z->A en lugar de A->Z).
+
+
+@{b}Después por@{ub}
+     Aquí puede indicar el criterio secundario de ordenación de los
+     mensajes de la carpeta.  Por ejemplo, si en principio los mensajes
+     se ordenaron por asunto, los mensajes con el mismo asunto podrían
+     ordenarse después por fecha o autor empleando este segundo criterio.
+
+
+@{b}Estadísticas@{ub}
+     Active esta opción si desea que las estadísticas de esta carpeta
+     se cuenten también en el icono de aplicación que YAM suele mostrar
+     en la pantalla del Workbench.  Por omisión, el icono de aplicación
+     sólo muestra las estadísticas de la carpeta "Entrantes".
+
+     La información que aparece bajo el icono de aplicación depende de
+     la etiqueta definida en el apartado @{" Varios " link "CO14"} de la configuración.
+
+
+@{b}Soporte para lista de correo@{ub}
+     No todos los servidores de listas de correo ajustan correctamente
+     el campo "Reply-To:" (dirección de retorno) con la dirección
+     correcta (que debería ser la dirección de la lista de correo).
+     En estos casos, YAM puede ayudarle.
+
+     Cuando responda a un mensaje que se encuentra en esta carpeta, YAM
+     comprobará si la información del campo "Para:" del mensaje original
+     responde a la plantilla indicada en el campo "@{b}Plantilla Para:@{ub}"; en
+     caso afirmativo, será la dirección que se indique en el campo
+     "@{b}Remitir a:@{ub}" la que se insertará como dirección de destino, en
+     lugar de la dirección del destinatario indicada en el mensaje
+     original.
+
+     Además, si indica una "@{b}Dirección From:@{ub}", esta dirección sustituirá
+     a su dirección "From:" habitual al escribir a la lista de correo.
+     Esto resulta útil cuando se utilizan distintas direcciones "From:"
+     en varias listas de correo, o simplemente se quiere evitar recibir
+     correo no solicitado ("SPAM").
+
+     También puede indicar una "@{b}Dirección Reply-To:@{ub}" en caso de que el
+     software que gestiona la lista de correo no se encargue de esto.
+
+     Al pulsar el botón "@{b}Autodetectar@{ub}", YAM intentará adivinar por usted
+     qué "@{b}(Plantilla) Para:@{ub}" y qué dirección "@{b}Remitir a:@{ub}" debería
+     utilizarse con los mensajes de esta carpeta, analizando para ello
+     los primeros cinco mensajes presentes en ella empleando el algoritmo
+     Smith & Waterman para buscar parecidos entre cadenas de texto.  Esto
+     debería facilitarle la tarea de encontrar la plantilla correcta para
+     la lista de correo.
+
+     Por último, puede elegir la firma que debería utilizarse por omisión
+     al responder o escribir nuevos mensajes a esta lista de correo.
+
+     En la sección de @{" Consejos y trucos " link "TIP4"} encontrará algunos ejemplos
+     prácticos de cómo beneficiarse de las opciones de soporte para
+     listas de correo.
+
+@endnode
+
 @node "AB_W" "Listín de direcciones"
 @next "TR_W"
-@prev "WI_W"
-@toc "Main"
+@prev "FO_W"
+@toc "WI_W"
 
 Listín de direcciones
 *********************
 
 
-    @{" barra de menús " link "AB_M"}
+   @{" Barra de menús " link "AB_M"}
 
-   .----------------------------------------------------------------.
-   |                     @{" barra de herramientas " link "AB_B"}                   |
-   |________________________________________________________________|
+  .----------------------------------------------------------------.
+  |                     @{" Barra de herramientas " link "AB_B"}                   |
+  |________________________________________________________________|
 
-   .----------------------------------------------------------------.
-   | Alias    |    Nombre    |   Descripción   |      Dirección     |
-   |----------|--------------|-----------------|--------------------|
-   |jr        | Juan Ramón   | amigo           | jramon\@encasa.de   |
-   |          |              |                 |                    |
-   |          |              |                 |                    |
-   |          |              |                 |                    |
-   `----------------------------------------------------------------'
+  .----------------------------------------------------------------.
+  | Alias    |    Nombre    |   Descripción   |      Dirección     |
+  |----------|--------------|-----------------|--------------------|
+  |jr        | Juan Ramón   | amigo           | jramon\@encasa.de   |
+  |          |              |                 |                    |
+  |          |              |                 |                    |
+  |          |              |                 |                    |
+  `----------------------------------------------------------------'
 
 
    Por omisión la @{" lista " link "CO12"} muestra estas cuatro columnas, aunque por
@@ -4914,10 +5117,24 @@ Listín de direcciones - Menús
      Abre un listín ya existente en su disco duro, que sustituirá al
      que se encuentra residente en RAM. 
 
+     Si intenta abrir un fichero que aparenta no ser un listín válido
+     de YAM, se le ofrecerá la posibilidad de cargarlo como si fuera
+     una lista de direcciones de correo, con una dirección por línea.
+     Las líneas pueden tener el formato
+
+       <dirección\@example.com> Nombre real
+
+     o bien
+
+       <dirección\@example.net>
+
+     puesto que los nombres son opcionales.  YAM creará automáticamente
+     un nuevo alias para cada elemento.
+
 
 @{b}Listín/Añadir...@{ub}
      Añade al listín actualmente presente en RAM el contenido de otro
-     listín de su disco duro. 
+     listín de su disco duro.  Vea también la opción anterior.
 
 
 @{b}Listín/Guardar@{ub}
@@ -5017,7 +5234,7 @@ PERSONA
      La dirección en Internet que se debe utilizar para enviar correo
      electrónico a esta persona.
 
-     Ejemplo:  jr@example.com
+     Ejemplo:  jr\@example.com
 
 
 @{b}ID de clave PGP@{ub}
@@ -5135,7 +5352,7 @@ LISTA
      ventana del listín de direcciones, y arrastre hasta este campo
      una ficha del listín.
 
-     Ejemplo:  discusiones@example.net
+     Ejemplo:  discusiones\@example.net
 
 
 @{b}Nombre de lista de correo@{ub}
@@ -5166,7 +5383,7 @@ En este caso, sólo son aplicables los campos Alias y Descripción.
 @node "TR_W" "Transferencias de correo"
 @next "FI_W"
 @prev "AB_W"
-@toc "Main"
+@toc "WI_W"
 
 Transferencias de correo
 ************************
@@ -5176,15 +5393,18 @@ Transferencias de correo
 de transferencia que le da cierto control sobre la operación.
 
    Si está activada la pre-selección, YAM mostrará una lista con los
-mensajes que puede recoger.  Los mensajes que exceden el tamaño máximo
-predefinido aparecen en caracteres de color blanco.  Pueden aparecer
-dos símbolos de estado al lado del mensaje: una pequeña papelera
-significa que el mensaje se borrará del servidor, mientras que el
-icono del disquete indica que el mensaje se almacenará en su Amiga.
-Por tanto, existen las siguientes posibilidades:
+mensajes que puede importar o recoger.  Dependiendo de la configuración,
+los mensajes que excedan el tamaño máximo predefinido pueden ser los
+únicos que aparezcan en la lista, para hacerle más fácil decidir qué
+hacer con ellos sin tener que navegar por una lista demasiado larga.
+
+   Pueden aparecer dos símbolos de estado al lado del mensaje: una
+pequeña papelera significa que el mensaje se borrará del servidor,
+mientras que el icono del disco indica que el mensaje se almacenará
+en su Amiga.  Por tanto, existen las siguientes posibilidades:
 
 
- Papelera   Disquete    Operación
+ Papelera    Disco      Operación
  -----------------------------------------------------------------------
     sí         sí       El mensaje se recogerá y a continuación se
                         borrará del servidor.
@@ -5232,11 +5452,15 @@ Función de los botones
      en todos los mensajes seleccionados -> ¡no descargar, sino borrar
      del servidor! 
 
+     Este botón no está disponible al importar correo de un fichero.
+
 
 @{b}Pausa/Continuar@{ub}
      Mientras se muestra la lista de pre-selección, YAM va cargando los
      detalles de los mensajes (se leen sus cabeceras en el servidor).
      El botón [Pausa] detiene temporalmente este proceso. 
+
+     Este botón no está disponible al importar correo de un fichero.
 
 
 @{b}Iniciar@{ub}
@@ -5269,7 +5493,7 @@ o bien interrumpir la conexión desde su pila TCP/IP.
 @node "FI_W" "Búsqueda de mensajes"
 @next "US_W"
 @prev "TR_W"
-@toc "Main"
+@toc "WI_W"
 
 Búsqueda de mensajes
 ********************
@@ -5386,7 +5610,7 @@ Búsqueda de mensajes - Criterio de búsqueda
      Si quiere buscar en una línea de cabecera que contiene una
      dirección de correo electrónico, puede indicar aquí si la
      plantilla de búsqueda examinará la dirección (por ejemplo,
-     @{b}mcervantes@example.com@{ub}) o bien el nombre del autor (por
+     @{b}mcervantes\@example.com@{ub}) o bien el nombre del autor (por
      ejemplo, @{b}Miguel Cervantes@{ub}).
 
 
@@ -5403,9 +5627,9 @@ Búsqueda de mensajes - Criterio de búsqueda
 @endnode
 
 @node "US_W" "Administración de usuarios"
-@next "RF_W"
+@next "MA_W"
 @prev "FI_W"
-@toc "Main"
+@toc "WI_W"
 
 Administración de usuarios
 **************************
@@ -5444,17 +5668,17 @@ ventana de Usuarios.
 
 @{b}Usar listín global@{ub}
      Active esta opción si el usuario no va a utilizar un listín
-     personal de direcciones.  En tal caso, el listín será compartido
-     con el resto de usuarios; el fichero se guardará en el directorio
-     raíz del programa y no en el directorio raíz propio de este
-     usuario.
+     personal de direcciones; en tal caso, el listín será compartido
+     al menos con el usuario por omisión, y el fichero se guardará en el
+     directorio raíz del programa, en lugar de hacerlo en el directorio
+     raíz propio de este usuario.
 
 
 @{b}Usar glosario global@{ub}
      Active esta opción si el usuario no va a tener un glosario propio
-     sino que va a compartir uno con los demás usuarios.  El fichero
-     se guardará en el directorio raíz del programa y no en el
-     directorio raíz particular de este usuario.
+     sino que va a compartir uno con al menos el usuario por omisión.
+     En este caso, el fichero se guardará en el directorio raíz del
+     programa y no en el directorio raíz particular de este usuario.
 
 
 @{b}Privilegios de Supervisor@{ub}
@@ -5479,6 +5703,8 @@ ventana de Usuarios.
 @endnode
 
 @node "Drag" "Arrastrar y soltar"
+@next "Drag"
+@prev "Drag"
 
 Arrastrar y soltar
 ******************
@@ -5523,19 +5749,19 @@ el botón.
 
 @node "RF_W" "Referencia"
 @next "TIPS"
-@prev "US_W"
+@prev "WI_W"
 @toc "Main"
 
 Referencia
 **********
 
 
- @{" Opciones ded inicio        " link "RF00"}  - Tipos de herramienta y opciones de shell
+ @{" Opciones de  inicio        " link "RF00"}  - Tipos de herramienta y opciones de shell
  @{" Interfaz ARexx             " link "RF01"}  - Controlar YAM desde otros programas
  @{" Estructura de ficheros     " link "RF02"}  - Cómo está organizada la distribución
  @{" Almacenamiento de mensajes " link "RF03"}  - Cómo se organiza el correo
  @{" Manejo de iconos           " link "RF04"}  - Añadir o cambiar los iconos
- @{" Formatos de fichero        " link "RF05"}  - Formatos varios de fichero
+ @{" Formatos de fichero        " link "RF05"}  - Formatos de ficheros varios
 
 @endnode
 
@@ -5602,7 +5828,7 @@ desde el shell o el Workbench (tipos de herramienta).
      encargará de buscar allí.  Utilice comas para separar cada uno
      de los destinatarios que indique.
 
-     Ejemplo:  MAILTO="Marcel Beck, damato, mama@example.org"
+     Ejemplo:  MAILTO="Marcel Beck, damato, mama\@example.org"
 
 
 @{b}SUBJECT=<asunto>@{ub}
@@ -5619,7 +5845,7 @@ desde el shell o el Workbench (tipos de herramienta).
 
 
      Ejemplos:  YAM USER Tomás PASSWORD secreto HIDE
-                YAM NOCHECK MAILTO "yam@freelists.org, YAMOS-dev, Pepe Gómez"
+                YAM NOCHECK MAILTO "yam\@freelists.org, YAMOS-dev, Pepe Gómez"
                 SUBJECT "Informe de fallos" ATTACH "ram:depuración.txt"
 
 @endnode
@@ -5635,7 +5861,7 @@ Referencia - Interfaz ARexx
 
    Con la ayuda de scripts ARexx, puede añadir nuevas funciones a YAM,
 o bien hacerle realizar ciertas cosas de forma automática.  YAM ofrece
-una serie de comandos (listados en este manual @{" por nombre " link "REXX"} y
+una serie de comandos (organizados en este manual @{" por nombre " link "REXX"} y
 @{" por función " link "REXL"}) que puede invocar desde el puerto ARexx @{b}YAM@{ub}.  Estos
 comandos se explican detalladamente a lo largo de los siguientes
 capítulos siguiendo este formato:
@@ -5963,7 +6189,7 @@ ADDRDELETE
 
 @{b}RESULTADOS@{ub}
      RC se pone a 5 si ALIAS no existe o si no se indicó ninguno y no
-     hay nada que borrar.
+     hay nada que borrar (porque la ventana del listín está cerrada).
 
 @{b}NOTAS@{ub}
      Si ALIAS corresponde a un grupo o lista de distribución, su
@@ -5980,7 +6206,7 @@ ADDRDELETE
 @{b}FALLOS@{ub}
      La falta de una comprobación para un puntero NULL hacía que el
      comando produjese impactos de Enforcer si no se indicaba alias
-     alguno.  Esto fue corregido en la V2.4.
+     alguno.  Corregido en YAM 2.4.
 
 @{b}VÉASE TAMBIÉN@{ub}
 
@@ -6041,11 +6267,11 @@ ADDREDIT
 
          /* Elegir una ficha */
 
-         ADDRGOTO YAM
+         ADDRGOTO YAM_ml
  
          /* Editar esta ficha */
 
-         'ADDREDIT EMAIL "yam@freelists.org" COMMENT "Donde hay que estar"'
+         'ADDREDIT EMAIL "yam\@freelists.org" COMMENT "Donde hay que estar"'
 
          /* Elegir una lista de distribución */
 
@@ -6057,12 +6283,14 @@ ADDREDIT
 
          /* Añadir un par de miembros */
 
-         ADDREDIT MEMBER 'curros@example.com' MEMBER 'pepe@example.net' ADD
+         ADDREDIT MEMBER 'curros\@example.com' MEMBER 'pepe\@example.net' ADD
 
 @{b}FALLOS@{ub}
      Aunque se elija una persona o un grupo, MEMBER [ADD] devuelve 0.
 
-     No existe una verdadera comprobación de errores...[...]
+     Introducir información sin sentido como fecha de nacimiento o
+     editar una lista de distribución producía impactos de Enforcer;
+     esto fue corregido en la versión 2.4.
 
 @{b}VÉASE TAMBIÉN@{ub}
 
@@ -6118,7 +6346,7 @@ ADDRFIND
 
          /* Encontrar todos los alias que usan un cierto proveedor */
 
-         ADDRFIND PATTERN '#?@saug.org' STEM st. EMAILONLY
+         ADDRFIND PATTERN '#?\@saug.org' STEM st. EMAILONLY
 
          /* Listar resultados */
 
@@ -6155,7 +6383,8 @@ ADDRGOTO
 
 @{b}FUNCIÓN@{ub}
      Este comando simplemente cambia la ficha actual del listín
-     según el alias que se indique.
+     según el alias que se indique.  La ventana del listín se
+     actualiza para que la nueva ficha resulte visible.
 
 @{b}ENTRADAS@{ub}
      ALIAS/A   - alias de la nueva ficha actual
@@ -6217,6 +6446,9 @@ ADDRINFO
      <STEM>MEMBERS.NR    - el miembro N si la ficha es en realidad una
                            lista de distribución, donde NR es un número
                            entre 0 y N-1
+
+     RC se pone a 10 si el alias indicado no existe, o si no se indicó
+     ninguno.
 
 @{b}NOTAS@{ub}
      Los campos cuya información no está disponible se devuelven
@@ -6283,7 +6515,7 @@ ADDRLOAD
 @{b}RESULTADOS@{ub}
      RC se pone a 10 si el fichero indicado no se puede abrir.
 
-     A partir de la V2.4, esta condición también hace que se abra
+     A partir de YAM 2.4, esta condición también hace que se abra
      un requester de error.
 
 @{b}NOTAS@{ub}
@@ -6296,14 +6528,17 @@ ADDRLOAD
      que se le indique: si el fichero no es reconocido como un listín
      válido, se abrirá un requester ofreciendo al usuario la posibilidad
      de cargar el fichero asumiendo que se trata de una lista de
-     direcciones de correo en el formato
+     direcciones de correo donde cada línea puede usar el formato
 
-        <dirección> <nombre>
-        <dirección> <nombre>
-        ...
+        <dirección\@example.com> Nombre real
 
-     en lugar de simplemente cargar el fichero a ciegas.  El comando
-     no retornará hasta que el requester se haya satisfecho.
+     o bien
+
+        dirección\@example.com
+
+     puesto que los nombres son opcionales.  YAM creará automáticamente
+     alias para las nuevas fichas, y el comando no retornará hasta que
+     el requester se haya satisfecho.
 
 @{b}EJEMPLO@{ub}
          /* Cargar un listín del disco */
@@ -6332,15 +6567,17 @@ ADDRNEW
 
 @{b}FUNCIÓN@{ub}
      Crea una nueva ficha en el listín de direcciones y la inserta
-     debajo de la ficha actual.
+     debajo de la ficha actual.  Si la ventana del listín no ha
+     sido abierta todavía durante esta sesión, la nueva ficha se
+     añadirá a continuación de la primera.
 
 @{b}ENTRADAS@{ub}
      VAR/K    - variable donde se almacenará el alias de la ficha
                 resultante
      STEM/K   - nombre base usado para el STEM donde se almacenará el
                 alias de la ficha resultante
-     TYPE     - tipo de ficha, puede ser G (grupo), L (lista de distribución)
-                o P (persona, el valor por omisión)
+     TYPE     - tipo de ficha, puede ser G (grupo), L (lista de
+                distribución) o P (persona, el valor por omisión)
      ALIAS    - alias para la nueva ficha
      NAME     - nombre real para la nueva ficha
      EMAIL    - dirección electrónica para la nueva ficha
@@ -6351,18 +6588,24 @@ ADDRNEW
 
 @{b}NOTAS@{ub}
      Debe indicarse alguno de los parámetros ALIAS, NAME o EMAIL.
+     Los tipos de ficha no válidos son simplemente ignorados.
 
      Si el alias indicado ya existe, se usará otro distinto que se
      construirá tomando la cadena indicada y añadiéndole un número,
-     hasta obtener un alias único.  La limitación de tamaño de esta
+     hasta obtener un alias único.  La limitación de tamaño para esta
      cadena se tendrá en cuenta automáticamente.
 
      Si no se indica ningún alias, se creará uno automáticamente
      utilizando una versión reducida de los argumentos NAME o EMAIL;
      por ejemplo, "José Luis Feliciano" se convertiría en "J_Feliciano",
-     mientras que "Jose" sería el resultado de indicar "Jose@example.com"
+     mientras que "Jose" sería el resultado de indicar "Jose\@example.com"
      como único parámetro.  La regla mencionada arriba también se aplica
      en este caso.
+
+     Si la ventana del listín no está abierta en el momento en el que se
+     añade la nueva ficha, la operación no será contabilizada como un
+     cambio en el listín, con lo cual no recibirá aviso alguno si luego
+     intenta salir de YAM sin grabar el listín en disco.
 
      Si bien se admite usar espacios en los alias, esto es algo que se
      desaconseja hacer.
@@ -6400,22 +6643,28 @@ ADDRRESOLVE
      VAR/K,STEM/K,ALIAS/A
 
 @{b}FUNCIÓN@{ub}
-     Este comando intentará resolver un alias o un nombre para devolver
-     la correspondiente dirección o direcciones de correo.
+     Intenta resolver un alias o un nombre para devolver la
+     correspondiente dirección o direcciones de correo.  El
+     comando puede resolver tanto personas sueltas como listas
+     de distribución.
 
 @{b}ENTRADAS@{ub}
      VAR/K     - variable donde se almacenará el nombre y/o la
                  dirección o direcciones de correo de las fichas
                  aludidas
      STEM/K    - nombre base usado para el STEM donde se almacenará
-                 el nombre del destinatario resultante
+                 el nombre y/o dirección o direcciones de los
+                 destinatarios resultantes
      ALIAS/A   - alias o nombre a resolver
 
 @{b}RESULTADOS@{ub}
-     VAR         - nombre y/o dirección o direcciones de las fichas
-                   que coinciden
-     <STEM>RECPT - nombre y/o dirección o direcciones de las fichas
-                   que coinciden
+     VAR         - nombre y/o dirección o direcciones aludidas por la
+                   ficha indicada
+     <STEM>RECPT - nombre y/o dirección o direcciones aludidas por la
+                   ficha indicada
+
+     RC se pone a 5 si el nombre o alias indicado no se ha podido
+     resolver.
 
 @{b}NOTAS@{ub}
 
@@ -6423,9 +6672,10 @@ ADDRRESOLVE
 
 @{b}FALLOS@{ub}
      AddrResolve solía producir la caída total del sistema si no podía
-     resolver el alias o nombre indicado.  Esto fue corregido en la V2.4.
+     resolver el alias o nombre indicado.  Esto fue corregido en YAM 2.4.
 
 @{b}VÉASE TAMBIÉN@{ub}
+     @{" ADDRFIND " link "RX_ADDRFIND"}
 
 @endnode
 
@@ -6444,8 +6694,7 @@ ADDRSAVE
      FILENAME
 
 @{b}FUNCIÓN@{ub}
-     Este comando intentará guardar el listín de direcciones en un
-     determinado fichero.
+     Intenta guardar el listín de direcciones en un determinado fichero.
 
 @{b}ENTRADAS@{ub}
      FILENAME   - senda completa del fichero donde se guardará el listín;
@@ -6486,13 +6735,15 @@ APPBUSY
 
 @{b}ENTRADAS@{ub}
      TEXT   - opcional, un breve texto que mostrar en la barra de estado
-              mientras YAM permanece en estado ocupado
+              mientras YAM permanece en estado ocupado; la longitud
+              máxima del texto mostrable dependerá de la anchura de
+              los caracteres a visualizar
 
 @{b}RESULTADOS@{ub}
      RC se pondrá a 1 si YAM ya estaba ocupado.
 
 @{b}NOTAS@{ub}
-     La V2.4 introdujo el concepto de "niveles de ocupación", lo que
+     YAM 2.4 introdujo el concepto de "niveles de ocupación", lo que
      significa que el comando tiene ahora un efecto acumulativo: si
      se llama a AppBusy varias veces seguidas, deberá hacerse el
      mismo número de llamadas a AppNoBusy para que la aplicación
@@ -6541,7 +6792,7 @@ APPNOBUSY
      RC se pone a 1 si YAM está todavía ocupado.
 
 @{b}NOTAS@{ub}
-     La V2.4 introdujo el concepto de "niveles de ocupación", lo que
+     YAM 2.4 introdujo el concepto de "niveles de ocupación", lo que
      significa que si @{" APPBUSY " link "RX_APPBUSY"} fue llamado varias veces seguidas,
      deberá hacerse el mismo número de llamadas a AppNoBusy para que
      la aplicación de vuelva a su estado normal.
@@ -6669,7 +6920,7 @@ GETCONFIGINFO
      <STEM>VALUE - información devuelta por el comando
 
 @{b}NOTAS@{ub}
-     Este comando fue superado por USERINFO en V2.0+.  No lo utilice
+     Este comando fue superado por @{" USERINFO " link "RX_USERINFO"} en V2.0+.  No lo utilice
      en nuevos scripts.
 
 @{b}EJEMPLO@{ub}
@@ -6733,8 +6984,8 @@ GETFOLDERINFO
      <STEM>VALUE - información devuelta por el comando
 
 @{b}NOTAS@{ub}
-     Este comando fue superado por FOLDERINFO en la V2.0+.  No lo utilice
-     en nuevos scripts.
+     Este comando fue superado por @{" FOLDERINFO " link "RX_FOLDERINFO"} en la V2.0+.  No lo
+     utilice en nuevos scripts.
 
 @{b}EJEMPLO@{ub}
          /* Activar códigos de resultados */
@@ -6786,7 +7037,7 @@ GETMAILINFO
                 información devuelta  (V2.0)
      ITEM/A   - elemento del que obtener información, puede ser
 
-                   ACT(IVE)    - número (0 = primer mensaje de la carpeta)
+                   ACT(IVE)    - posición (0 = primer mensaje de la carpeta)
                    STA(TUS)    - estado del mensaje, los posibles valores son
 
                                     N   - nuevo
@@ -6813,7 +7064,7 @@ GETMAILINFO
      <STEM>VALUE - información devuelta por el comando
 
 @{b}NOTAS@{ub}
-     Este comando fue superado por MAILINFO en la V2.0+.  No lo utilice
+     Este comando fue superado por @{" MAILINFO " link "RX_MAILINFO"} en la V2.0+.  No lo utilice
      en nuevos scripts.
 
 @{b}EJEMPLO@{ub}
@@ -6902,8 +7153,8 @@ GETSELECTED
          END
 
 @{b}FALLOS@{ub}
-     <stem>num.count no se inicializaba en el caso de las carpetas vacías.
-     Esto fue corregido en la V2.4.
+     <STEM>NUM.COUNT no se inicializaba en el caso de las carpetas vacías.
+     Esto fue corregido en YAM 2.4.
 
 @{b}VÉASE TAMBIÉN@{ub}
 
@@ -6961,9 +7212,10 @@ GETURL
             WHEN c = 5 THEN SAY 'No hay una pila TCP/IP corriendo.'
             WHEN c > 5 THEN SAY 'Error.'
             OTHERWISE SAY 'Fichero descargado satisfactoriamente.'
-            END
+         END
 
 @{b}FALLOS@{ub}
+     El comando es interrumpido bruscamente si se envía o recibe correo.
 
 @{b}VÉASE TAMBIÉN@{ub}
 
@@ -7073,7 +7325,7 @@ INFO
      argumento alguno; esto fue corregido en la V2.3.
 
      El comando no devolvía ningún nombre de pantalla cuando YAM
-     estaba iconificado; esto fue corregido en la V2.4 para devolver
+     estaba iconificado; esto fue corregido en YAM 2.4 para devolver
      el nombre de la pantalla pública por omisión.
 
 @{b}VÉASE TAMBIÉN@{ub}
@@ -7112,7 +7364,7 @@ ISONLINE
      Por lo tanto, este comando sólo resulta útil al utilizar la
      preselección de correo (en cuyo caso devolverá 1 después de
      transferir todas las cabeceras y estar a la espera de recibir
-     un orden del usuario) hasta que se implante la funcionalidad
+     una orden del usuario) hasta que se implante la funcionalidad
      que haga posible varios hilos simultáneos de ejecución.
 
 @{b}EJEMPLO@{ub}
@@ -7189,7 +7441,7 @@ MAILARCHIVE
      RC se pone a 10 si la carpeta indicada no existe.
 
 @{b}NOTAS@{ub}
-     Superado por MAILMOVE en la V2.0+.  No lo utilice en nuevos scripts.
+     Superado por @{" MAILMOVE " link "RX_MAILMOVE"} en la V2.0+.  No lo utilice en nuevos scripts.
 
 @{b}EJEMPLO@{ub}
          /* Mover los mensajes seleccionados a la carpeta Archivo */
@@ -7242,7 +7494,7 @@ MAILBOUNCE
          /* Desviar el mensaje actual en segundo plano */
 
          MAILBOUNCE QUIET
-         WRITETO 'jose@example.com' 'mars'
+         WRITETO 'jose\@example.com' 'mars'
          WRITESEND
 
 @{b}FALLOS@{ub}
@@ -7275,6 +7527,8 @@ MAILCHANGESUBJECT
 @{b}RESULTADOS@{ub}
 
 @{b}NOTAS@{ub}
+     Si la cadena dada supera los 199 caracteres, simplemente será
+     truncada.
 
 @{b}EJEMPLO@{ub}
      /* Cambiar el asunto de los mensajes seleccionados */
@@ -7282,7 +7536,11 @@ MAILCHANGESUBJECT
      'MAILCHANGESUBJECT "Éste es el nuevo asunto"'
 
 @{b}FALLOS@{ub}
-     MAILCHANGESUBJECT no comprueba [...]
+     El comando no comprobaba que la cadena no superase la longitud
+     máxima permitida, causando un rebosamiento de buffer que llegaba
+     a afectar al propio comentario del fichero en disco que contenía
+     el mensaje cuando se producía esta situación.  Corregido en YAM
+     2.4.
 
 @{b}VÉASE TAMBIÉN@{ub}
 
@@ -7307,8 +7565,8 @@ MAILCHECK
      ellas en caso de no indicar ninguna.
 
 @{b}ENTRADAS@{ub}
-     VAR/K      - variable alternativa en la que almacenar el número de
-                  la ventana creada en lugar de hacerlo en RESULT  (V2.0)
+     VAR/K      - variable alternativa en la que almacenar el resultado
+                  en lugar de hacerlo en RESULT  (V2.0)
      STEM/K     - nombre base usado para los STEMs donse se almacenará
                   la información devuelta  (V2.0)
      POP/K/N    - cuenta POP3 de la que descargar el correo (V2.0),
@@ -7327,10 +7585,9 @@ MAILCHECK
      <STEM>DELETED    - número de mensajes borrados en el servidor
 
      En la V1.x, RC siempre se ponía a 0.  Sin embargo, a partir de la
-     V2.0, RC se pone a 5 si la pila TCP/IP no está en línea o si no
-     se ha encontrado ningún mensaje en el servidor.
+     V2.0, RC se pone a 5 si la pila TCP/IP no está en línea.
 
-     Del mismo modo, en la V1.x. RESULT se ajustaba de acuerdo al número
+     Del mismo modo, en la V1.x RESULT se ajustaba de acuerdo al número
      de mensajes descargados, o a -1 si no se podía conectar con el
      servidor de correo.
 
@@ -7358,9 +7615,9 @@ MAILCHECK
          SAY 'Borrados del servidor:     'st.deleted
 
 @{b}FALLOS@{ub}
-     [...]
-     Currently <stem>onserver simply returns the number of messages
-     found in the server.
+     RC se ponía a 5 si no se encontraba ningún mensaje nuevo en la
+     cuenta, y <STEM>ONSERVER simplemente devolvía el número de mensajes
+     hallados en ella.  Ambos fallos fueron corregidos en YAM 2.4.
 
 @{b}VÉASE TAMBIÉN@{ub}
 
@@ -7428,8 +7685,8 @@ MAILDELETE
 
 @{b}ENTRADAS@{ub}
      ATONCE/S   - borrar los mensajes seleccionados inmediatamente,
-                  sin trasladarlos primero a la carpeta "Borrados"  (V2.0)
-     FORCE/S    - saltar cualquier requester de confirmación  (V2.0)
+                  en lugar de trasladarlos a la carpeta "Borrados"  (V2.0)
+     FORCE/S    - saltarse cualquier requester de confirmación  (V2.0)
 
 @{b}RESULTADOS@{ub}
 
@@ -7470,8 +7727,7 @@ MAILEDIT
                  de la ventana creada en lugar de hacerlo en RESULT
      STEM/K    - nombre base usado para el STEM donde se almacenará
                  la información devuelta
-     QUIET/S   - forzar la ventana de escritura a permanecer oculta
-                 (V2.1)
+     QUIET/S   - forzar la ventana a permanecer oculta  (V2.1)
 
 @{b}RESULTADOS@{ub}
      VAR          - información devuelta por el comando
@@ -7662,8 +7918,7 @@ MAILFORWARD
                  en lugar de RESULT  (V2.0)
      STEM/K    - nombre base usado para el STEM donde se almacenará el
                  número de la ventana creada  (V2.0)
-     QUIET/S   - forzar la ventana de escritura a permanecer oculta
-                 (V2.1)
+     QUIET/S   - forzar la ventana a permanecer oculta  (V2.1)
 
 @{b}RESULTADOS@{ub}
      VAR          - información devuelta por el comando
@@ -7679,7 +7934,7 @@ MAILFORWARD
          /* Reenviar en segundo plano los mensajes seleccionados */
 
          MAILFORWARD QUIET
-         WRITETO 'jose@example.com'
+         WRITETO 'jose\@example.com'
          WRITESEND
 
 @{b}FALLOS@{ub}
@@ -7811,7 +8066,7 @@ MAILINFO
      en la carpeta.
 
 @{b}NOTAS@{ub}
-     A partir de la V2.4, <STEM>MSGID devuelve un valor hexadecimal.
+     A partir de YAM 2.4, <STEM>MSGID devuelve un valor hexadecimal.
 
 @{b}EJEMPLO@{ub}
          /* Activar códigos de resultados */
@@ -7836,7 +8091,7 @@ MAILINFO
             WHEN status = 'W' THEN status = 'Listo para enviar'
             WHEN status = 'H' THEN status = 'Retenido'
             OTHERWISE status = 'Envío fallido'
-            END
+         END
          SAY 'Estado:      'status
          SAY 'De:          'st.from
          SAY 'Para:        'st.to
@@ -7849,9 +8104,9 @@ MAILINFO
          SAY 'Message-ID:  'st.msgid
 
 @{b}FALLOS@{ub}
-     En la V2.3p1, <stem>FILENAME omitía la parte del nombre de la
+     En la V2.3p1, <STEM>FILENAME omitía la parte del nombre de la
      carpeta cuando no se indicaba un índice.  Esto fue corregido en
-     la V2.4.
+     YAM 2.4.
 
 @{b}VÉASE TAMBIÉN@{ub}
      @{" SETFLAG " link "RX_SETFLAG"}
@@ -7955,7 +8210,7 @@ MAILREAD
 
 @{b}FALLOS@{ub}
      El parámetro WINDOW nunca tuvo efecto alguno a la vista; esto fue
-     corregido en la V2.4.
+     corregido en YAM 2.4.
 
 @{b}VÉASE TAMBIÉN@{ub}
      @{" READCLOSE " link "RX_READCLOSE"}
@@ -7996,6 +8251,10 @@ MAILREPLY
      porque la carpeta está vacía.
 
 @{b}NOTAS@{ub}
+     Dependiendo de la configuración, puede aparecer un requester para
+     solicitar al usuario que elija por ejemplo la dirección a la que
+     contestar; el comando no retornará hasta que la ventana de
+     escritura se abra finalmente.
 
 @{b}EJEMPLO@{ub}
 
@@ -8069,8 +8328,14 @@ MAILSENDALL
 @{b}ENTRADAS@{ub}
 
 @{b}RESULTADOS@{ub}
-     RC se pone a 5 si el sistema no está en línea o si no hay ningún
-     mensaje listo para enviar.  (V???)
+     En la V1.x, RC siempre se ponía a 0.  Sin embargo, a partir
+     de YAM 2.0 RC se pone a 5 si el sistema no está en línea o si
+     no hay ningún mensaje listo para enviar.
+
+     Del mismo modo, en la V1.x RESULT devolvía el número de mensajes
+     enviados, o -1 si se producía un fallo en la conexión con el
+     servidor de correo.  A partir de YAM 2.0, RESULT no llega a
+     inicializarse siquiera.
 
 @{b}NOTAS@{ub}
 
@@ -8078,7 +8343,7 @@ MAILSENDALL
 
 @{b}FALLOS@{ub}
      No se daba aviso alguno en caso de haber un problema con el envío.
-     Esto fue corregido en la V???.
+     Esto fue corregido en la V2.0.
 
 @{b}VÉASE TAMBIÉN@{ub}
 
@@ -8101,6 +8366,10 @@ MAILSTATUS
 
 @{b}FUNCIÓN@{ub}
      Cambia el estado de los mensajes seleccionados.
+
+     Sólo los estados básicos "leído", "no leído", "retenido" y "listo
+     para enviar" se ven afectados por el comando; las banderas
+     adicionales ("marcado", "importante", etc.) permanecen intactas.
 
 @{b}ENTRADAS@{ub}
      STATUS/A   - puede ser uno de
@@ -8243,14 +8512,14 @@ MAILWRITE
          /* Editar la primera ventana de escritura */
 
          MAILWRITE WINDOW win1
-         WRITETO jefe@example.com
+         WRITETO jefe\@example.com
          'WRITESUBJECT "No creo que pueda ir hoy a trabajar"'
          WRITELETTER 'work:excusas.txt'
 
          /* Editar la segunda ventana de escritura */
 
          MAILWRITE WINDOW win2
-         WRITETO peggy@example.org
+         WRITETO peggy\@example.org
          'WRITESUBJECT "Estoy muy liado en el trabajo, llegaré tarde"'
 
          /* Poner el primer mensaje en la cola de salida */
@@ -8261,8 +8530,8 @@ MAILWRITE
          /* Iniciar un nuevo mensaje usando una ventana oculta */
 
          MAILWRITE STEM st. QUIET
-         win3 = st.window   /* sólo para ser completos */
-         WRITETO ventas@example.com
+         win3 = st.window
+         WRITETO ventas\@example.com
          'WRITESUBJECT "Dos con Mozzarella + un montón de cocacola"'
          WRITELETTER 'dh5:priv/direccion_Linda.txt'
 
@@ -8317,10 +8586,11 @@ NEWMAILFILE
                 ninguno, se utilizará la carpeta actual
 
 @{b}RESULTADOS@{ub}
-     VAR            - información devuelta por el comando
+     VAR            - nombre del fichero devuelto, con senda
      <STEM>FILENAME - nombre del fichero devuelto, con senda
 
-     RC se pone a 10 si la carpeta indicada no existe.
+     RC se pone a 10 si la carpeta indicada no existe o si en realidad
+     es un grupo el que está actualmente seleccionado.
 
 @{b}NOTAS@{ub}
      El comando funciona a base de intentar acceder al primer fichero de
@@ -8355,7 +8625,7 @@ QUIT
      Hace que la aplicación abandone el sistema.
 
 @{b}ENTRADAS@{ub}
-     FORCE/S   - saltar cualquier requester de confirmación, excepto
+     FORCE/S   - saltarse cualquier requester de confirmación, excepto
                  en el caso de haber habido cambios en el listín de
                  direcciones usando el interfaz gráfico
 
@@ -8399,9 +8669,9 @@ READCLOSE
 
 @{b}FALLOS@{ub}
      El comando solía actuar a ciegas sobre la primera ventana de
-     lectura abierta en un momento dado; esto se cambió en la V2.4
-     para requerir primero que el comando @{" MAILREAD " link "RX_MAILREAD"} marque una ventana
-     explícitamente como "activa".
+     lectura abierta en un momento dado; esto se cambió en YAM 2.4
+     para requerir primero que el comando @{" MAILREAD " link "RX_MAILREAD"} marque una
+     ventana explícitamente como "activa".
 
 @{b}VÉASE TAMBIÉN@{ub}
      @{" MAILREAD " link "RX_MAILREAD"}
@@ -8486,7 +8756,7 @@ READINFO
 
 @{b}FALLOS@{ub}
      El comando solía actuar a ciegas sobre la primera ventana de lectura
-     abierta en un momento dado; esto se cambió en la V2.4 para requerir
+     abierta en un momento dado; esto se cambió en YAM 2.4 para requerir
      el uso de @{" MAILREAD " link "RX_MAILREAD"} para marcar explícitamente una ventana como
      "activa".
 
@@ -8543,7 +8813,7 @@ READPRINT
 
 @{b}FALLOS@{ub}
      El comando solía actuar a ciegas sobre la primera ventana de lectura
-     abierta en un momento dado; esto se cambió en la V2.4 para requerir
+     abierta en un momento dado; esto se cambió en YAM 2.4 para requerir
      previamente el uso de @{" MAILREAD " link "RX_MAILREAD"} para marcar de forma explícita una
      ventana como "activa".
 
@@ -8604,7 +8874,7 @@ READSAVE
 
 @{b}FALLOS@{ub}
      El comando solía actuar a ciegas sobre la primera ventana de lectura
-     abierta en un momento dado; esto se cambió en la V2.4 para requerir
+     abierta en un momento dado; esto se cambió en YAM 2.4 para requerir
      previamente el uso de @{" MAILREAD " link "RX_MAILREAD"} para marcar de forma explícita una
      ventana como "activa".
 
@@ -8963,7 +9233,8 @@ SETMAIL
 @{b}FUNCIÓN@{ub}
      Elige el mensaje actual por su posición en la lista de mensajes.
      La lista se actualiza si es necesario para hacer visible el nuevo
-     mensaje actual.
+     mensaje actual, y todos los mensajes que pudieran estar seleccionados
+     quedan deseleccionados.
 
 @{b}ENTRADAS@{ub}
      NUM/N/A   - posición ocupada por el mensaje en la lista, puede ser
@@ -9132,7 +9403,8 @@ WRITEATTACH
      de escritura como "activa" por medio de @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTAS@{ub}
-     El tipo de codificación por omisión es Base64 (MIME).
+     Por omisión, los ficheros binarios se codifican en Base64 (MIME),
+     mientras que los ficheros de texto son UUcodificados.
 
      El tipo de contenido por omisión se decide tras explorar la
      lista integrada de tipos MIME y a continuación los tipos MIME
@@ -9144,10 +9416,6 @@ WRITEATTACH
      Si no se puede encontrar ningún tipo MIME apropiado ni tampoco
      se ha indicado explícitamente el tipo de contenido a utilizar,
      YAM recurrirá a "application/octet-stream".
-
-     Jamás use tipos MIME no estandarizados al enviar correo a través
-     de Internet, de lo contrario se arriesga a que la información se
-     corrompa en algún punto del camino.
 
 @{b}EJEMPLO@{ub}
          /* Añadir un fichero */
@@ -9199,7 +9467,7 @@ WRITEBCC
          /* Añade algunos destinatarios BCC a un mensaje */
 
          MAILWRITE WINDOW 0      /* Activar la ventana de escritura */
-         'WRITEBCC "George Bush" "jose_perez" "carolina@example.com" ADD'
+         'WRITEBCC "George Bush" "jose_perez" "carolina\@example.com" ADD'
 
 @{b}FALLOS@{ub}
 
@@ -9243,7 +9511,7 @@ WRITECC
          /* Añadir algunos destinatarios CC a un mensaje */
 
          MAILWRITE WINDOW 0      /* Activar la ventana de escritura */
-         'WRITECC "George Bush" "jose_perez" "carolina@example.com" ADD'
+         'WRITECC "George Bush" "jose_perez" "carolina\@example.com" ADD'
 
 @{b}FALLOS@{ub}
 
@@ -9332,7 +9600,7 @@ WRITEEDITOR
          /* Editar la ventana de escritura */
 
          MAILWRITE WINDOW win
-         WRITETO jefe@example.com
+         WRITETO jefe\@example.com
          'WRITESUBJECT "No creo que pueda ir hoy a trabajar"'
 
          /* Limpiar el editor */
@@ -9375,7 +9643,8 @@ WRITEFROM
 
 @{b}RESULTADOS@{ub}
      RC se pone a 10 si no se ha designado previamente ninguna ventana
-     de escritura como "activa" por medio de @{" MAILWRITE " link "RX_MAILWRITE"}.
+     de escritura como "activa" por medio de @{" MAILWRITE " link "RX_MAILWRITE"} o si se
+     intenta indicar más de un remitente.
 
 @{b}NOTAS@{ub}
 
@@ -9468,7 +9737,7 @@ WRITEMAILTO
          /* Definir los destinatarios primarios de un mensaje */
 
          MAILWRITE WINDOW 0      /* Activar la ventana de escritura */
-         'WRITEMAILTO "George Bush" "jose" "carolina@example.com"'
+         'WRITEMAILTO "George Bush" "jose" "carolina\@example.com"'
 
 @{b}FALLOS@{ub}
 
@@ -9509,8 +9778,8 @@ WRITEOPTIONS
      SIG/N          - firma a utilizar, los valores posibles son
 
                          0 - sin firma
-                         1 - valor por omisión tomado de la configuración
-                             de firmas (valor por omisión)
+                         1 - valor por omisión tomado de la
+                             configuración de firmas
                          2 - firma alternativa número 1
                          3 - firma alternativa número 2
 
@@ -9530,7 +9799,11 @@ WRITEOPTIONS
      de escritura como "activa" por medio de @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTAS@{ub}
-     Los valores por omisión se toman de la configuración del programa.
+     Los valores por omisión se toman de la configuración del programa;
+     la firma usada por omisión puede variar dependiendo de si el
+     soporte para listas de correo está o no activado en la carpeta
+     actual.
+
      Si se elige el envío anónimo, la información personal y las firmas
      se anulan automáticamente.
 
@@ -9579,7 +9852,7 @@ WRITEQUEUE
          /* Escribir un nuevo mensaje */
 
          MAILWRITE
-         WRITETO jefe@example.com
+         WRITETO jefe\@example.com
          'WRITESUBJECT "No creo que pueda ir hoy a trabajar"'
          WRITELETTER 'work:excusas.txt'
          WRITEQUEUE
@@ -9624,7 +9897,7 @@ WRITEREPLYTO
          /* Definir dirección de retorno */
 
          MAILWRITE WINDOW 0      /* Activar la ventana de escritura */
-         WRITEREPLYTO jose@example.net
+         WRITEREPLYTO jose\@example.net
 
 @{b}FALLOS@{ub}
 
@@ -9661,7 +9934,7 @@ WRITESEND
          /* Escribir y enviar un nuevo mensaje */
 
          MAILWRITE
-         WRITETO jefe@example.com
+         WRITETO jefe\@example.com
          'WRITESUBJECT "¡Lo siento, pero hoy estoy enfermo!"'
          WRITELETTER 'work:excusas.txt'
          WRITESEND
@@ -9735,7 +10008,7 @@ WRITETO
 
 @{b}ENTRADAS@{ub}
      ADDRESS/A/M   - lista de nombres/direcciones/alias
-     ADD/S         - impide que la nueva información sustituya a
+     ADD/S         - impedir que la nueva información sustituya a
                      la ya presente en el campo "Para", si la hay
 
 @{b}RESULTADOS@{ub}
@@ -9748,7 +10021,7 @@ WRITETO
          /* Definir los destinatarios primarios de un nuevo mensaje */
 
          MAILWRITE WINDOW 0      /* Activar la ventana de escritura */
-         'WRITETO "George Bush" "jose" "carolina@example.com"'
+         'WRITETO "George Bush" "jose" "carolina\@example.com"'
 
 @{b}FALLOS@{ub}
 
@@ -9866,19 +10139,25 @@ old.info@{ub}
      Son los @{" iconos de estado " link "MA0S"} que muestra YAM para representar el
      estado de los mensajes.
 
+     El icono "status_mark" usado cuando los mensajes son "marcados"
+     es especial: si no está presente, YAM marcará lo mensajes mostrando
+     el remitente o destinatario en negrita.
+
 
 @{b}folder_#?@{ub} (V2.4)
-     Se trata de las imágenes utilizadas por omisión delante de los
-     nombres de las carpetas en la lista de carpetas.  La distribución
-     estándar de YAM 2.4 incluye imágenes para las carpetas básicas,
-     esto es, Entrantes, Borrados, Salientes y Enviados.  Las imágenes
-     con el sufijo "_new" se usan automáticamente cuando hay correo
-     nuevo o sin leer en la carpeta.
+     Se trata de los iconos utilizados por omisión delante de los
+     nombres de las carpetas básicas "Entrantes", "Borrados",
+     "Salientes" y "Enviados".  Las imágenes con el sufijo "_new"
+     se usan automáticamente cuando hay correo nuevo o sin leer en
+     la carpeta.
 
-     Una imagen ".fimage" en el directorio de una carpeta tiene
-     prioridad sobre la imagen usada por omisión.
+     Los iconos "folder_fold" y "folder_unfold" son especiales: son
+     los utilizados en los grupos.
 
-     Todas ellas no deben sobrepasar los 16*16 pixels.
+     Un icono ".fimage" en el directorio de una carpeta tiene
+     prioridad sobre la imagen usada por omisión.  Ésta es también
+     la única forma de hacer que aparezcan iconos delante de las
+     carpetas adicionales creadas por el usuario.
 
 @endnode
 
@@ -9891,14 +10170,15 @@ Referencia - Formatos de fichero varios
 =======================================
 
 
- @{" El fichero .addressbook  " link "RFAB"}
- @{" El fichero .emailcache   " link "RFCA"}
- @{" El fichero .folders      " link "RFFO"}
- @{" El fichero .glossary     " link "RFGL"}
- @{" El fichero .uidl         " link "RFUI"}
- @{" El fichero .users        " link "RFUS"}
- @{" Los ficheros de charsets " link "RFCH"}
- @{" El fichero de registro   " link "RFLO"}
+ @{" El fichero .addressbook  " link "RFAB"}  - Formato del fichero ".addressbook"
+ @{" El fichero .emailcache   " link "RFCA"}  - Formato del fichero ".emailcache"
+ @{" El fichero .fconfig      " link "RFFC"}  - Formato de los ficheros ".fconfig"
+ @{" El fichero .folders      " link "RFFO"}  - Formato del ficheros ".folders"
+ @{" El fichero .glossary     " link "RFGL"}  - Formato del fichero ".glossary"
+ @{" El fichero .uidl         " link "RFUI"}  - Formato del fichero ".uidl"
+ @{" El fichero .users        " link "RFUS"}  - Formato del fichero ".users"
+ @{" Los ficheros de charsets " link "RFCH"}  - Formato de las tablas de conversión de caracteres
+ @{" El fichero de registro   " link "RFLO"}  - Formato de los ficheros de registro
 
 @endnode
 
@@ -9910,10 +10190,59 @@ Referencia - Formatos de fichero varios
 El fichero .addressbook
 -----------------------
 
+   Este fichero de texto refleja la estructura jerárquica del listín
+de direcciones empleando este formato general:
+
+
+    YAB4 - YAM Addressbook                          - Identificador
+    \@GROUP alias  ·································
+    descripción                                   ·
+    \@USER alias     -------------.                ·
+    dirección electrónica        |                ·
+    nombre real                  |                ·
+    descripción                  |                ·
+    número de teléfono           |                ·
+    calle y número               |                ·
+    ciudad y código postal        > Persona       ·
+    país                         |                ·
+    ID de clave PGP              |                ·
+    fecha de nacimiento          |                ·
+    retrato                      |                 · GRUPO
+    página web                   |                ·
+    seguridad por omisión        |                ·
+    \@ENDUSER        -------------'                ·
+    \@LIST alias     »»»»»»»»»»»»»                 ·
+    dirección de retorno         v                ·
+    nombre de la lista           v                ·
+    descripción                  v                ·
+    miembro #1                    » LISTA         ·
+    miembro #2                   ^                ·
+    ...                          ^                ·
+    miembro #n                   ^                ·
+                                 ^                ·
+    \@ENDLIST        »»»»»»»»»»»»»                 ·
+    \@ENDGROUP     ·································
+
+
+   La definición de grupos, listas y personas comienza con \@GROUP <alias>,
+\@LIST <alias> y \@USER <alias> y termina con \@ENDGROUP, \@ENDLIST y
+\@ENDUSER, respectivamente.  Los grupos pueden incluir listas, y las
+listas pueden incluir miembros.  Tanto listas como personas pueden
+aparecer fuera de los grupos.  Los miembros de una lista pueden ser
+una serie de alias, direcciones o parejas completas del tipo "nombre real
+<dirección>".
+
+   En lo que concierne al interfaz gráfico, un grupo puede arrastrarse
+y soltarse sobre una lista de distribución y viceversa para que su lista
+de destinatarios se añada a la lista.  Se presta atención para evitar
+bucles infinitos - por ejemplo, si se toma un grupo que contiene una lista
+y se le deja caer sobre la misma lista, sólo las fichas que haya en el
+grupo que no pertenecieran ya a esa lista serán añadidas a ella.
+
 @endnode
 
 @node "RFCA" "El fichero .emailcache"
-@next "RFFO"
+@next "RFFC"
 @prev "RFAB"
 @toc "RF05"
 
@@ -9939,13 +10268,136 @@ el caché.
 
 @endnode
 
+@node "RFFC" "El fichero .fconfig"
+@next "RFFO"
+@prev "RFCA"
+@toc "RF05"
+
+El fichero .fconfig
+-------------------
+
+   Este fichero de texto está presente en cada carpeta, y contiene los
+ajustes que están en vigor en ella, dispuestos en este formato:
+
+
+    YFC1 - YAM Folder Configuration
+    Name        = nombre_de_la_carpeta
+    MaxAge      = vida_máxima
+    Password    = contraseña
+    Type        = tipo_de_carpeta
+    XPKType     = número_de_tipo
+    Sort1       = orden_primario
+    Sort2       = orden_secundario
+    Stats       = Y|N
+    MLSupport   = Y|N
+    MLFromAddr  = dirección_From
+    MLRepToAddr = dirección_ReplyTo
+    MLPattern   = patrón_lista_de_correo
+    MLAddress   = dirección_lista_de_correo
+    MLSignature = número_de_firma
+
+
+donde
+
+   - @{b}Name@{ub} es el nombre de la carpeta, tal como aparece en la lista de
+     carpetas
+
+   - @{b}MaxAge@{ub} es el número de días que se conservarán los mensajes en la
+     carpeta antes de borrarlos automáticamente; un 0 desactiva esta
+     función (véase @{" Configuración/Inicio/Salida " link "CO10"})
+
+   - @{b}Password@{ub} es la contraseña de acceso necesaria para acceder a esta
+     carpeta, en un formato codificado
+
+   - @{b}Type@{ub} es un número que hace referencia al tipo de carpeta del que
+     se trata (que normalmente debería ser 0 para las carpetas creadas
+     por el usuario - véase la documentación del comando @{" FOLDERINFO " link "RX_FOLDERINFO"})
+
+   - @{b}XPKType@{ub} indica el modo XPK utilizado en la carpeta:
+
+        0 = ninguno
+        1 = protección simple (con contraseña)
+        2 = comprimido
+        3 = comprimido con contraseña
+
+   - @{b}Sort1@{ub} se refiere al criterio primario de ordenación utilizado en la
+     carpeta, de forma negativa en caso de que el orden esté invertido:
+
+        1 = Fecha
+        2 = Fecha de recepción
+        3 = Remitente
+        4 = Destinatario
+        5 = Asunto
+        6 = Tamaño
+        7 = Estado
+
+   - @{b}Sort2@{ub} es lo mismo que Sort1, pero aplicado al criterio secundario
+     de ordenación
+
+   - @{b}Stats@{ub} puede ser Y ó N dependiendo de si están o no activadas las
+     estadísticas para esta carpeta
+
+   - @{b}MLSupport@{ub} puede ser Y ó N dependiendo de si están o no activadas
+     las funciones de soporte para lista de correo
+
+   - @{b}MLFromAddr@{ub} muestra el contenido del campo "Dirección From:"
+
+   - @{b}MLRepToAddr@{ub} muestra el contenido del campo "Dirección Reply-To:"
+
+   - @{b}MLPattern@{ub} muestra el contenido del campo "(Plantilla) Para:"
+
+   - @{b}MLAddress@{ub} muestra el contenido del campo "Remitir a:"
+
+   - @{b}MLSignature@{ub} indica la firma utilizada por omisión al escribir
+     nuevos mensajes a esta lista de correo:
+
+        0 = ninguna
+        1 = firma por omisión, es decir, "YAM:.signature"
+        2 = firma alternativa #1
+        3 = firma alternativa #2
+
+@endnode
+
 @node "RFFO" "El fichero .folders"
 @next "RFGL"
-@prev "RFCA"
+@prev "RFFC"
 @toc "RF05"
 
 El fichero .folders
 -------------------
+
+   Este fichero de texto utiliza una estructura jerárquica que sigue este
+formato general:
+
+
+    YFO1 - YAM Folders                              - Identificador
+    \@FOLDER nombre  ------------------.
+    directorio                          > Carpeta
+    \@ENDFOLDER      ------------------'
+    \@GROUP nombre            ································
+    estado                                                  ·
+    \@FOLDER nombre  ------------------.                     ·
+    directorio                         > Carpeta            ·
+    \@ENDFOLDER      ------------------'                     ·
+    \@GROUP nombre            ······················         ·
+    estado                                        ·         ·
+    \@FOLDER nombre  ------------------.           ·          · GRUPO
+    directorio                         > Carpeta  ·         ·
+    \@ENDFOLDER      ------------------'            · GRUPO  ·
+    \@FOLDER nombre  ------------------.           ·         ·
+    directorio                         > Carpeta  ·         ·
+    \@ENDFOLDER      ------------------'           ·         ·
+    \@ENDGROUP                ······················         ·
+    \@ENDGROUP                ································
+
+
+   donde <estado> puede ser 0 ó 1, significando éste último que el
+grupo está desplegado, es decir, que se están mostrando sus contenidos.
+Las carpetas pueden existir tanto dentro como fuera de los grupos, y
+los grupos pueden anidarse.
+
+   El estado de toda la jerarquía se guarda en disco siempre que se
+utiliza la opción de menú @{" Carpeta/Orden/Guardar " link "MAM2"}.
 
 @endnode
 
@@ -9957,6 +10409,19 @@ El fichero .folders
 El fichero .glossary
 --------------------
 
+   Este fichero contiene una lista de las definiciones existentes en el
+@{" glosario " link "DI_W"} empleando este formato:
+
+
+    YDI1 - YAM Dictionary
+    \@ENTRY abreviatura
+    contenido
+    \@ENDENTRY
+    \@ENTRY abreviatura
+    contenido
+    \@ENDENTRY
+    ...
+
 @endnode
 
 @node "RFUI" "El fichero .uidl"
@@ -9966,6 +10431,42 @@ El fichero .glossary
 
 El fichero .uidl
 ----------------
+
+   Si está activada la opción "Evitar duplicados" en el apartado
+@{" Configuración/Correo nuevo " link "CO02"}, YAM utilizará el comando UIDL del
+protocolo POP3 al conectar con su servidor POP3 para de esta forma
+obtener un @{b}L@{ub}istado de @{b}ID@{ub}entificadores @{b}Ú@{ub}nicos de los mensajes
+presentes en su cuenta de correo.  El servidor POP3 es responsable
+de asignar un IDentificador único a cada mensaje, e insertarlo en
+una cabecera "X-UIDL:".
+
+   Si el servidor no soporta el comando UIDL, YAM recurrirá al comando
+TOP e intentará usar para este fin la cabecera "Message-ID:"; si esto
+tampoco surte efecto, se producirá un error.
+
+   El Listado de IDentificadores Únicos recibido desde el servidor se
+compara entonces con el contenido del fichero "PROGDIR:.uidl".  Si el
+fichero no existe todavía, se creará en ese momento; se trata de un
+sencillo fichero de texto con un IDentificador por línea usando el
+formato <ID>\@<servidor POP3>, es decir, por ejemplo
+
+    9685\@mail.saug.org
+    9686\@mail.saug.org
+    9687\@mail.saug.org
+    9688\@mail.saug.org
+    (k5"!N1!"!RkI"!YT4"!\@pop.wanadoo.es
+    9689\@mail.saug.org
+    9690\@mail.saug.org
+    9691\@mail.saug.org
+    9692\@mail.saug.org
+
+
+   Siempre que se encuentre un ID ya presente en el fichero
+"PROGDIR:.uidl", el mensaje correspondiente será considerado
+como un duplicado, y por tanto se evitará descargarlo.  Los nuevos
+IDs que todavía no figuren en el fichero "PROGDIR:.uidl" se irán
+añadiendo a él a medida que los mensajes correspondientes se hayan
+descargado con éxito.
 
 @endnode
 
@@ -9980,17 +10481,17 @@ El fichero .users
    Este fichero contiene una lista de los usuarios que pueden acceder
 y usar YAM.  YAM mantiene este fichero por sí sólo, así que usted no
 debería normalmente necesitar editarlo manualmente a no ser que esté
-trasladando YAM a otro lugar de su disco duro.
+@{" trasladando YAM " link "TIP2"} a otro lugar de su disco duro.
 
    El fichero utiliza el siguiente formato:
 
 
        Primera línea:   YUS2 - YAM Users
-       Segunda línea:   @USER <nombre de usuario>
+       Segunda línea:   \@USER <nombre de usuario>
        Tercera línea:   directorio de correo de este usuario, p.ej. Comm:YAM
         Cuarta línea:   número
-        Quinta línea:   contraseña encriptada, si la hay
-         Sexta línea:   @ENDUSER
+        Quinta línea:   contraseña codificada, si la hay
+         Sexta línea:   \@ENDUSER
    Siguientes líneas:   siguiente definición de usuario, hasta 16
 
 
@@ -10004,7 +10505,7 @@ combinando los siguientes elementos:
 
 
    Por tanto, "3" significaría que el usuario disfruta de privilegios
-de Supervisor y comparte tanto el listín como el glosario con algún
+de supervisor y comparte tanto el listín como el glosario con algún
 otro usuario.  Éste es el valor por omisión al crear un nuevo usuario.
 
 @endnode
@@ -10090,8 +10591,8 @@ elegido "Registrar todos los eventos" en las @{" opciones de seguridad " link "C
 25 - Copia del mensaje de 'remitente' de asunto 'asunto' de la carpeta
      'carpeta' a 'carpeta'
 26 - Filtrado de N mensaje(s) de la carpeta 'carpeta': N coincidencia(s)
-30 - Recepción de N mensaje(s) de la cuenta POP3 'ID_de_usuario@servidor'
-31 - Conexión con cuenta POP3 'ID_de_usuario@servidor': N mensaje(s) en
+30 - Recepción de N mensaje(s) de la cuenta POP3 'ID_de_usuario\@servidor'
+31 - Conexión con cuenta POP3 'ID_de_usuario\@servidor': N mensaje(s) en
      espera
 32 - Recepción de mensaje de 'remitente' de asunto 'asunto' (N bytes)
 40 - Envío de N mensaje(s) usando el servidor SMTP 'servidor'
@@ -10125,16 +10626,17 @@ Consejos y trucos
 *****************
 
 
- @{" Congelar la posición y tamaño de las ventanas    " link "TIP0"}
- @{" Evitar que los menús de contexto sean un estorbo " link "TIP1"}
- @{" Trasladar YAM a otra partición o directorio      " link "TIP2"}
- @{" Evitar demasiado trasiego del disco al arrancar  " link "TIP3"}
+ @{" Congelar la posición y tamaño de las ventanas       " link "TIP0"}
+ @{" Evitar que los menús de contexto sean un estorbo    " link "TIP1"}
+ @{" Trasladar YAM a otra partición o directorio         " link "TIP2"}
+ @{" Evitar demasiado trasiego del disco al arrancar     " link "TIP3"}
+ @{" Usar las funciones de soporte para listas de correo " link "TIP4"}
 
 @endnode
 
 @node "TIP0" "Congelar la posición y tamaño de las ventanas"
 @next "TIP1"
-@prev "TIP3"
+@prev "TIP4"
 @toc "TIPS"
 
 Congelar la posición y tamaño de las ventanas
@@ -10199,7 +10701,7 @@ procedimiento sencillo que sólo consiste en cuatro pasos:
      impedirá la pérdida de la información de estado de su correo
      (mensajes leídos, nuevos, etc).
 
-  3. Apunte su asignación YAM: para que apunte al nuevo destino.
+  3. Modifique su asignación YAM: para que apunte al nuevo destino.
      Debería hacer un "assign YAM: <senda>" en una ventana shell y
      a continuación modificar esta orden en su fichero s:User-startup.
 
@@ -10216,7 +10718,7 @@ YAM y todos sus ficheros sin preocuparse por nada.
 @endnode
 
 @node "TIP3" "Evitar demasiado trasiego del disco al arrancar"
-@next "TIP0"
+@next "TIP4"
 @prev "TIP2"
 @toc "TIPS"
 
@@ -10255,6 +10757,90 @@ directorio son:
 
 @endnode
 
+@node "TIP4" "Usar las funciones de soporte para listas de correo"
+@next "TIP0"
+@prev "TIP3"
+@toc "TIPS"
+
+Usar las funciones de soporte para listas de correo
+---------------------------------------------------
+
+   YAM le ofrece una serie de funciones pensadas para ayudarle a
+la hora de enviar y recibir mensajes de listas de correo que no
+ajustan el campo "Reply-To:" correctamente o que requieren algún
+tipo de manejo especial.  A partir de YAM 2.4, la selección de la
+firma por omisión también es parte de estas funciones.
+
+   Lo primero que debería hacer es indicar la dirección de la lista
+de correo en cuestión en forma de patrón en el campo @{b}(Plantilla) Para:@{ub},
+por ejemplo "#?milista\@example.net#?" (sin las comillas, naturalmente).
+De este modo, estas funciones entrarán en funcionamiento siempre que
+escriba un nuevo mensaje o responda a uno mientras ésta es la carpeta
+actual.
+
+   Una vez dado ese primer paso, veamos algunos ejemplos que demuestran
+cómo puede aprovechar las ventajas de estas funciones.
+
+
+   a) Quiero usar una firma determinada al escribir a cierta lista
+      de correo.
+
+   Simplemente elija la firma en cuestión utilizando el botón situado
+   en la parte inferior de la ventana.  Los nuevos mensajes que escriba
+   mientras ésta es la carpeta actual siempre usarán esta firma, aún en
+   el caso de que el uso de firmas esté desactivado en el apartado
+   @{" Configuración/Firma " link "CO07"}.
+
+   Para que sus respuestas utilicen automáticamente esta firma aunque
+   no sea ésta la carpeta actual, necesitará rellenar el campo siguiente
+   con la dirección de la lista de correo.
+
+
+   b) El servidor de la lista de correo no ajusta adecuadamente el campo
+      "Reply-To:", con lo cual mis respuestas terminan yendo a parar al
+      remitente original.
+
+   Simplemente indique la dirección de la lista de correo en el campo
+   @{b}Remitir a:@{ub}.  De esta forma, todas sus respuestas irán dirigidas
+   por omisión a este lugar, sin importar en qué carpeta se encuentra
+   en ese momento; recuerde que todavía sigue pudiendo forzar una respuesta
+   privada con <Mayúsculas> + [Responder].
+
+   Los nuevos mensajes que escriba mientras ésta es la carpeta actual
+   también irán dirigidos por omisión a esta dirección.
+
+   Tenga en cuenta que las frases de saludo y despedida utilizadas en
+   estos mensajes serán las frases para listas de correo definidas en
+   @{" Configuración/Responder " link "CO06"}.
+
+
+   c) Necesito escribir a algunos otros destinos al enviar mensajes a
+      una determinada lista de correo.
+
+   No hay problema, simplemente añada esas direcciones en el campo
+   @{b}Remitir a:@{ub}, y todas ellas serán también situadas en la cabecera
+   "To:" de su mensaje.  De esta forma es muy sencillo tener a otras
+   personas al día sobre algún tema en particular, como resulta a
+   veces necesario al escribir a ciertas listas de correo relacionadas
+   con el desarrollo de software, por ejemplo.
+
+
+   d) Quiero usar una dirección "From:" y/o "Reply-To:" específicas
+      al escribir a cierta lista de correo.
+
+   Simplemente inserte esas direcciones en los campos @{b}Dirección From:@{ub}
+   y @{b}Dirección Reply-To:@{ub}, respectivamente.  Estas direcciones serán
+   utilizadas automáticamente en las respuestas a mensajes cuya
+   dirección "To:" sea aludida por la @{b}(Plantilla) Para:@{ub}, así como
+   en los nuevos mensajes que escriba mientras se encuentra en esta
+   carpeta.
+
+   Tenga encuenta que estos campos sólo admiten una dirección.  Además,
+   algunos servidores de correo rehúsan transmitir mensajes que no
+   procedan de su propio dominio.
+
+@endnode
+
 @node "PROB" "Problemas conocidos"
 @next "INFO"
 @prev "TIPS"
@@ -10264,11 +10850,11 @@ Problemas conocidos
 *******************
 
 
-   Este capítulo menciona algunos problemas que no están estrictamente
-relacionados con YAM y que por tanto no pueden ser solventados por el
-equipo YAM Open Source.  Vea también el capítulo que se dedica a los
-@{" informes de fallos " link "INF2"} para informarse sobre los fallos reportados sobre
-el propio YAM.
+   Este capítulo menciona algunos problemas que en su mayoría no están
+estrictamente relacionados con YAM y que por tanto no pueden ser
+solventados por el equipo YAM Open Source.  Vea también el capítulo
+que se dedica a los @{" informes de fallos " link "INF2"} para informarse sobre los
+fallos reportados sobre el propio YAM.
 
 
 El medidor de la ventana de transferencia no se actualiza correctamente
@@ -10321,7 +10907,7 @@ como parte del URL.
 
    Los paréntesis sí se admiten en los URLs sin necesidad de
 codificarlos, lo cual de nuevo hace totalmente desaconsejable
-usar "()" para delimitar URLs.  Le aconsejamos que utilice los
+usar "()" para delimitar URLs.  Le sugerimos que utilice los
 signos "<" y ">" para este propósito.
 
 
@@ -10333,6 +10919,24 @@ usando una tecla modificadora
 la que se basa el editor interno, y su código fuente se ha perdido.
 Estamos considerando una posible solución para una futura versión
 de YAM.
+
+
+YAM se bloquea totalmente cuando las imágenes de las barras de
+herramientas están mezcladas y elijo "Fail" en el requester generado
+por la clase Toolbar.mcc
+--------------------------------------------------------------------
+
+   Fallo de Toolbar.mcc.  Este problema desaparecerá en la próxima
+versión de YAM, donde Toolbar.mcc será sustituida por una clase
+mucho más moderna y en desarrollo activo.
+
+
+La presentación de la ventana de preferencias se corrompe al reducir
+su tamaño
+--------------------------------------------------------------------
+
+   Sí, estamos al tanto del problema y lo solucionaremos en una
+futura versión.
 
 @endnode
 
@@ -10348,7 +10952,7 @@ de los comodines:
 
 
    ?   Alude a cualquier carácter (uno solamente),
-       lo que significa que Y?M alude a YAM, YUM, Y@M, etc.
+       lo que significa que Y?M alude a YAM, YUM, Y\@M, etc.
 
    #   Alude a cero o más instancias del siguiente elemento,
        lo que significa que Y#AM alude a YM, YAM, YAAM, YAAAM, etc.
@@ -10431,11 +11035,11 @@ Soporte
 *******
 
 
- @{" YAM en la World Wide Web " link "INF0"}  - Dónde encontrar más información de YAM en la web
+ @{" YAM en la World Wide Web " link "INF0"}  - Dónde encontrar más información sobre YAM en la web
  @{" Listas de correo         " link "INF1"}  - ¡Únase a la comunidad de YAM!
  @{" Informes de fallos       " link "INF2"}  - Cómo informar de fallos
  @{" Peticiones de mejoras    " link "INF3"}  - Cómo hacer llegar su voz
- @{" Peticiones de cambios    " link "INF4"}  - Cómo conseguir que se cambiealgo en YAM
+ @{" Peticiones de cambios    " link "INF4"}  - Cómo conseguir que se cambie algo en YAM
  @{" Repositorio CVS          " link "INF5"}  - Cómo obtener la fuente actual
 
 @endnode
@@ -10476,7 +11080,7 @@ Soporte - listas de correo
    Si quiere hablar de asuntos relacionados con YAM con otros usuarios
 o ser informado puntualmente de la publicación de nuevas versiones,
 no dude en unirse a la lista de correo para los usuarios de YAM.
-Para suscribirse, envíe un mensaje a <yam-request@freelists.org>
+Para suscribirse, envíe un mensaje a <yam-request\@freelists.org>
 con el asunto "subscribe" (sin las comillas).  Alternativamente,
 puede usar su página web en http://www.freelists.org/list/yam o
 echar un vistazo al archivo en http://www.freelists.org/archives/yam
@@ -10486,14 +11090,14 @@ echar un vistazo al archivo en http://www.freelists.org/archives/yam
 
    Si le interesa contribuir al desarrollo de YAM, le invitamos a
 que se suscriba a la lista de correo YAMos-dev.  Para ello sólo tiene
-que enviar un mensaje a <yamos-dev-request@freelists.org> con el
+que enviar un mensaje a <yamos-dev-request\@freelists.org> con el
 asunto "subscribe" (sin las comillas).  Si lo prefiere puede usar
 su página web en http://www.freelists.org/list/yamos-dev o echar
 un vistazo al archivo en http://www.freelists.org/archives/yamos-dev
 
    Por favor, tenga en cuenta que las suscripciones a YAMos-dev no
 se aceptan a menos que se ponga antes en contacto con su administrador
-en david@saug.org o con alguno de los actuales miembros del equipo de
+en david\@saug.org o con alguno de los actuales miembros del equipo de
 desarrollo para hacernos saber cómo desea contribuir al proyecto.
 
 @endnode
@@ -10598,9 +11202,9 @@ Soporte - peticiones de cambios
 cambiase, y ni un informe de fallo ni una petición de mejora son
 idóneos para esto.
 
-   Para este fin están las @{i}peticiones de cambios@{ui}. No tiene más que
-visitar http://sourceforge.net/tracker/?atid=464455&group_id=13560&func=browse
-y añadir su petición de cambio.
+   Para este fin están las @{i}peticiones de cambios@{ui}.  Diríjase a
+http://sourceforge.net/tracker/?atid=464455&group_id=13560&func=browse
+e inserte su petición.
 
 @endnode
 
@@ -10617,12 +11221,12 @@ Soporte - repositorio CVS
 cualquiera puede acceder a él mediante CVS anónimo (pserver).  Para
 empezar, posiblemente necesite identificarse en el servidor con
 
-     cvs -d:pserver:anonymous@cvs.yamos.sf.net:/cvsroot/yamos login
+     cvs -d:pserver:anonymous\@cvs.yamos.sf.net:/cvsroot/yamos login
 
 pulsando <Intro> cuando se le pida una contraseña.  A continuación
 puede descargar todo el proyecto con
 
-     cvs -d:pserver:anonymous@cvs.yamos.sf.net:/cvsroot/yamos checkout .
+     cvs -d:pserver:anonymous\@cvs.yamos.sf.net:/cvsroot/yamos checkout .
 
    Si quiere disponer de acceso de escritura y contribuir al proyecto,
 por favor, suscríbase a la @{" lista de correo para desarrolladores de YAMOS " link "INF1"}
@@ -10642,13 +11246,15 @@ Planes para el futuro
    Algunas de las cosas que posiblemente se hagan realidad en futuras
 versiones de YAM son:
 
-   - Soporte para mensajes en formato HTML
+   - Soporte para mensajes en formato HTML (sólo lectura)
 
    - Menús de contexto definibles por el usuario
 
    - Barras de herramientas definibles por el usuario
 
    - Soporte para el protocolo IMAP-4
+
+   - Funcionalidad LDAP, sustituyendo al antiguo listín de direcciones
 
    - Transferencia asíncrona de correo (multi-hilo interno)
 
@@ -10667,31 +11273,46 @@ Créditos
 
    YAM 2.4 es el fruto del trabajo de (por orden alfabético):
 
-      Alexey Ivanov <amis@amiga.org.ru>
-      Allan Odgaard <duff@diku.dk>
-      Christian Hattemer <krille@users.sourceforge.net>
-      Dirk Stöcker <stoecker@epost.de>
-      Giles Burdett <layabouts@the-giant-sofa.demon.co.uk>
-      Gunther Nikl <gni@gecko.de>
-      Jacob Laursen <laursen@myself.com>
-      Jens Langner <Jens.Langner@light-speed.de>
-      Jörg Strohmayer <nospam@gmx.de>
-      Karoly Balogh <charlie@scenergy.dfmk.hu>
+      Alexey Ivanov <amis\@amiga.org.ru>
+      Allan Odgaard <duff\@diku.dk>
+      Christian Hattemer <krille\@users.sourceforge.net>
+      Dirk Stöcker <stoecker\@epost.de>
+      Giles Burdett <layabouts\@the-giant-sofa.demon.co.uk>
+      Gunther Nikl <gni\@gecko.de>
+      Jacob Laursen <laursen\@myself.com>
+      Jens Langner <Jens.Langner\@light-speed.de>
+      Jörg Strohmayer <nospam\@gmx.de>
+      Karoly Balogh <charlie\@scenergy.dfmk.hu>
 
 
    Programadores
 
-      Stefan Stuntz        (MUI)
-      Allan Odgaard        (TextEditor.mcc, BetterString.mcc)
-      Benny Kjær Nielsen   (Toolbar.mcc)
-      Marcin Orlowski      (Flexcat)
+      Stefan Stuntz           (MUI)
+      Allan Odgaard           (TextEditor.mcc, BetterString.mcc)
+      Benny Kjær Nielsen      (Toolbar.mcc)
+      Marcin Orlowski         (Flexcat)
       Gilles Masson,
       Carsten Scholling,
-      P. Gruchala,
+      Przemyslaw Gruchala,
       Sebastian Bauer
-      y Jens Langner       (NList.mcc)
-      Carsten Scholling    (NListtree.mcc)
-      Andrija Antonijevic  (Librería AmiSSL)
+      y Jens Langner          (NList.mcc, NListview.mcc)
+      Carsten Scholling       (NListtree.mcc)
+      Andrija Antonijevic     (Librería AmiSSL)
+      Urban Dominik Mueller,
+      Bryan Ford,
+      Christian Schneider,
+      Christian von Roques
+      y Dirk Stöcker          (XPK)
+      Stephan Rupprecht       (NewReadArgs)
+      Andrew Bell             (GenClasses)
+      Emmanuel Lesueur        (Herramienta de arranque para MorphOS)
+      Ralf Gruner             (GPatch)
+      Troels Walsted Hansen   (OpenURL)
+      Alessandro Zumo         (Estándar NewMouse)
+      Holger Kruse            (Miami)
+      NSDi                    (AmiTCP/Genesis)
+      Ron Rivest
+      y Colin Plumb           (Soporte para el algoritmo MD5)
 
 
    Idea original
@@ -10709,14 +11330,14 @@ Créditos
       Michael Trebilcock
 
 
-   Iconos de las carpetas
+   Iconos de las carpetas estándar
 
-      Philip A. Vedovatti <vedovatti@u.washington.edu>
+      Philip A. Vedovatti <vedovatti\@u.washington.edu>
 
 
-   Títulos, cajas de herramientas e iconos de estado
+   Iconos MagicWB
 
-      Roman Patzner
+      Pavel Narozny, Roman Patzner
 
 
    NewIcons
@@ -10724,9 +11345,15 @@ Créditos
       Ash Thomas
 
 
-   GPatch
+   Iconos ProLite
 
-      Ralf Gruner
+      Eric van Velthooveen, Trevor Morris
+
+
+   GlowIcons
+
+      Thomas Peterseim  <http://mitglied.lycos.de/IconDesigner/>
+      Martin Merz       <http://www.masonicons.de/>
 
 
    Probadores de las versiones 1.0 - 2.2 de YAM
@@ -10781,8 +11408,8 @@ MUI) y permanezcan con las mismas dimensiones.  El texto ya no es
 necesario (se supone que los iconos sustituyen al texto), y ahora
 tienen un aspecto muy profesional.
 
- Correo electrónico:  ash@absurd.demon.co.uk
- URL:                 http://www.absurd.demon.co.uk »
+         Correo electrónico:  ash\@absurd.demon.co.uk
+         URL:                 http://www.absurd.demon.co.uk »
 
 @endnode
 
@@ -10819,7 +11446,7 @@ versión más reciente) en su BBS local o en discos de dominio público.
 
                               Stefan Stuntz
                          Eduard-Spranger-Straße 7
-                              80935 München
+                              80935 Munich
                                  ALEMANIA
 
 
@@ -10830,328 +11457,393 @@ versión más reciente) en su BBS local o en discos de dominio público.
 
 @endnode
 
-@node "FO_W" "Configuración de carpetas"
-
-Configuración de carpetas
-*************************
-
-   Aparte de las cuatro carpetas "Entrantes", "Salientes", "Enviados"
-y "Borrados", puede crear cualquier número de carpetas adicionales,
-en este caso "definidas por el usuario".  Estas carpetas son útiles,
-por ejemplo, para archivar los mensajes recibidos y/o enviados, así
-como para gestionar listas de correo.
-
-
-@{b}Nombre@{ub}
-     El nombre de la carpeta, que aparecerá en la lista de carpetas
-     de la ventana principal. 
-
-     Ejemplo:  Lista YAM
-
-
-@{b}Senda@{ub}
-     Se trata del lugar donde se guardarán los mensajes, el fichero
-     @{b}.fconfig@{ub} y el fichero @{b}.index@{ub} de esta carpeta.  Normalmente es
-     un subdirectorio dentro del directorio básico de las carpetas,
-     pero puede indicar cualquier otro lugar, como por ejemplo una
-     partición distinta de su disco duro. 
-
-     Ejemplo:  YAM_ml
-
-
-@{b}Vida máx.@{ub}
-     Si lo desea, puede hacer que YAM borre automáticamente los
-     mensajes que lleven en su Amiga un tiempo determinado.  Para
-     ello, arrastre el deslizador para elegir un valor distinto de
-     cero (que será el tiempo máximo que permanecerán archivados los
-     mensajes, en número de @{b}DÍAS@{ub}).  A continuación diríjase al apartado
-     "Inicio/Salida" de la configuración y active la opción "Borrar
-     correo viejo".
-
-     NOTA: los mensajes "nuevos" o "no leídos" no se borrarán
-     automáticamente. 
-
-
-@{b}Tipo@{ub}
-     Aquí puede determinar si la carpeta es para correo entrante y/o
-     enviado.  Esto influye en los encabezamientos de las columnas y
-     determina el nombre de qué persona se muestra en la lista de
-     mensajes.
-
-
-@{b}Modo@{ub}
-     Las carpetas pueden protegerse con una contraseña y/o comprimirse
-     si es necesario.  Dispone de los siguientes modos: 
-
-     normal                       sin protección por contraseña ni
-                                  compresión
-                                  + rápido
-                                  - no hay protección para su correo
-                                    frente a otras personas que accedan
-                                    a su Amiga
-
-     protección simple            protección simple por contraseña, sin
-                                  compresión
-                                  + rápido
-                                  - su correo queda protegido sólo dentro
-                                    de YAM
-
-     comprimido                   compresión XPK sin protección por
-                                  contraseña
-                                  + ahorra espacio en disco duro
-                                  - lento, sin protección para su correo
-
-     comprimido y con contraseña  compresión XPK y protección por contraseña
-                                  + ahorra espacio en disco duro, buena
-                                    protección
-                                  - lento
-
-     Para la compresión es necesario el paquete XPK.  Este software no
-     se incluye en el archivo de YAM, pero puede conseguirse de forma
-     gratuita (en Aminet, por ejemplo).  En el apartado @{" Varios " link "CO14"}
-     encontrará la configuración de la librería de compresión.
-
-
-@{b}Ordenar por@{ub}
-     Aquí puede indicar el criterio primario de ordenación de los
-     mensajes de la carpeta  activa.  Puede hacer que los mensajes
-     se ordenen por fecha de creación, fecha de envío/recepción,
-     remitente, destinatario, asunto, tamaño o estado.  De acuerdo
-     con el estado del mensaje, los mensajes se ordenarán de la
-     forma siguiente:
-
-       nuevo > no leído > leído > respondido > reenviado
-       error en el envío > protegido  >  pendiente de envío > enviado
-
-     También hay una serie de banderas que se tienen en cuenta:
-
-       1. importante
-       2. marcado
-       3. encriptado con PGP
-       4. firmado con PGP
-       5. informe de estado
-       6. contiene anexos
-
-     Con la opción "Inv" puede invertir el sentido de la ordenación
-     (por ejemplo, Z->A en lugar de A->Z).
-
-
-@{b}Después por@{ub}
-     Aquí puede indicar el criterio secundario de ordenación de los
-     mensajes de la carpeta.  Por ejemplo, si en principio los mensajes
-     se ordenaron por asunto, los mensajes con el mismo asunto podrían
-     ordenarse después por fecha o autor empleando este segundo criterio.
-
-
-@{b}Estadísticas@{ub}
-     Active esta opción si desea que las estadísticas de esta carpeta
-     se cuenten también en el icono de aplicación que YAM suele mostrar
-     en la pantalla del Workbench.  Por omisión, el icono de aplicación
-     sólo muestra las estadísticas de la carpeta "Entrantes".
-
-     La información que aparece bajo el icono de aplicación depende de
-     la etiqueta definida en el apartado @{" Varios " link "CO14"} de la configuración.
-
-
-@{b}Soporte para lista de correo@{ub}
-     No todos los servidores de listas de correo ajustan correctamente
-     el campo "Reply-To:" (dirección de retorno) con la dirección correcta (que
-debería ser la dirección de la lista de correo). En estos casos, YAM puede
-ayudarle.
-
-   Cuando responda a un mensaje que se encuentra en esta carpeta, YAM
-comprobará si la información del campo "Para:" del mensaje original
-responde a la plantilla indicada en el campo "Plantilla Para:"; en caso
-afirmativo, será la dirección que se indique en el campo "Remitir a:"
-la que se insertará como dirección de destino, en lugar de la dirección
-del destinatario indicada en el mensaje original.
-
-   Además, si indica una "Dirección From:", esta dirección sustituirá
-a su dirección "From:" habitual al escribir a la lista de correo. Esto
-resulta útil cuando se utilizan distintas direcciones "From:" en varias
-listas de correo, o simplemente se quiere evitar recibir correo no
-solicitado ("SPAM").
-
-   También puede indicar una "Dirección Reply-To:" en caso de que el
-software que gestiona la lista de correo no se encargue de esto.
-
-   Por último, el botón "Autodetectar" intentará adivinar por usted qué
-"(Plantilla) Para:" y qué dirección "Remitir a:" debería utilizarse con
-los mensajes de esta carpeta, analizando para ellos los primeros cinco
-mensajes presentes en ella empleando el algoritmo Smith & Waterman para
-buscar parecidos entre cadenas de texto. Esto debería facilitarle la
-tarea de encontrar la plantilla correcta para la lista de correo.
-
-
-Firma
-
-   Aquí puede elegir la firma que debería usarse por omisión al responder
-a mensajes procedentes de esta lista de correo, o más exactamente aquéllos
-cuya dirección "Para:" coincida con la plantilla dada en "(Plantilla) Para:".
-
-@endnode
-
 @NODE INDEX "Índice"
 @{CODE}
 
    A...
 
-   @{"ARexx, Interfaz" link REXX}
-   @{"ARexx, Lista de comandos" link REXL}
-   @{"Arrastrar y soltar" link DRAG}
+   @{" Actualizaciones, Comprobar si hay " link "MAM1"}
+   @{" ADDRDELETE, Comando ARexx " link "RX_ADDRDELETE"}
+   @{" ADDREDIT, Comando ARexx " link "RX_ADDREDIT"}
+   @{" ADDRFIND, Comando ARexx " link "RX_ADDRFIND"}
+   @{" ADDRGOTO, Comando ARexx " link "RX_ADDRGOTO"}
+   @{" ADDRINFO, Comando ARexx " link "RX_ADDRINFO"}
+   @{" ADDRLOAD, Comando ARexx " link "RX_ADDRLOAD"}
+   @{" ADDRNEW, Comando ARexx " link "RX_ADDRNEW"}
+   @{" ADDRRESOLVE, Comando ARexx " link "RX_ADDRRESOLVE"}
+   @{" ADDRSAVE, Comando ARexx " link "RX_ADDRSAVE"}
+   @{" Anonimización, Usar un servicio de " link "CO09"}
+   @{" APPBUSY, Comando ARexx " link "RX_APPBUSY"}
+   @{" APPNOBUSY, Comando ARexx " link "RX_APPNOBUSY"}
+   @{" Archivador, Definir uno para comprimir ficheros anexos " link "CO14"}
+   @{" ARexx, El interfaz " link "REXX"}
+   @{" ARexx, Lista de comandos ordenados por función " link "REXL"}
+   @{" Arrastrar y soltar " link "DRAG"}
+   @{" Asunto, Avisar cuando se deja en blanco " link "CO05"}
+   @{" ATTACH, Tipo de herramienta " link "RF00"}
+   @{" Autores " link "CRED"}
+   @{" Avisar cuando se deja el asunto en blanco " link "CO05"}
 
 
    B...
 
-   @{"Búsqueda de mensajes" link FI_W}
-   @{"Búsqueda de mensajes - Criterio de búsqueda" link FI_K}
+   @{" Barra de estado " link "CO08"}
+   @{" Base64, MIME " link "MIME"}
+   @{" Bienvenida, Frase de " link "CO05"}
+   @{" Borrado de X mensajes, Confirmar " link "CO14"}
+   @{" Borrar mensajes inmediatamente " link "CO14"}
+   @{" Búsqueda de mensajes " link "FI_W"}
+   @{" Búsqueda de mensajes - Criterio de búsqueda " link "FI_K"}
 
 
    C...
 
-   @{"Cabecera de mensaje, Creación de una" link HEAD}
-   @{"Carpetas, Configuración de las" link FO_W}
-   @{"Configuración" link CO_W}
-   @{"Configuración - ARexx" link CO13}
-   @{"Configuración - Correo nuevo" link CO02}
-   @{"Configuración - Escritura" link CO05}
-   @{"Configuración - Filtros" link CO03}
-   @{"Configuración - Firma" link CO07}
-   @{"Configuración - Inicio/Salida" link CO10}
-   @{"Configuración - Lectura" link CO04}
-   @{"Configuración - Listas" link CO08}
-   @{"Configuración - Listín" link CO12}
-   @{"Configuración - Menús" link CO_M}
-   @{"Configuración - MIME" link CO11}
-   @{"Configuración - Opciones ocultas" link CO_H}
-   @{"Configuración - Primeros pasos" link CO00}
-   @{"Configuración - Responder" link CO06}
-   @{"Configuración - Seguridad" link CO09}
-   @{"Configuración - TCP/IP" link CO01}
-   @{"Configuración - Varios" link CO14}
-   @{"Consejos y trucos" link TIPS}
-   @{"Correo electrónico, Nociones básicas, Qué es el" link MAIL}
-   @{"Créditos" link CRED}
+   @{" Cabecera de mensaje, Creación de una " link "HEAD"}
+   @{" Cabeceras adicionales " link "CO05"}
+   @{" Cabeceras, Elegir cuántas se muestran " link "CO04"}
+   @{" Cabeceras, Qué es eso " link "HEAD"} 
+   @{" Caché de direcciones/mensajes " link "CO05"}
+   @{" Cambios, Peticiones de " link "INF4"}
+   @{" Caracteres, Conversión automática de juegos de " link "CO04"}
+   @{" Caracteres, Conversión al escribir mensajes " link "CO05"}
+   @{" Carpeta, Exportar una " link "MAM2"}
+   @{" Carpeta, Preferencias de " link "FO_W"}
+   @{" Cierre, Definir el funcionamiento del botón de " link "CO14"}
+   @{" Cierre, Frase de " link "CO05"}
+   @{" Citado-Imprimible, MIME " link "MIME"}
+   @{" Citar líneas en blanco " link "CO06"}
+   @{" Citar mensaje " link "CO06"}
+   @{" Citas previas " link "CO04"}
+   @{" Coletillas " link "CO07"} 
+   @{" Color de URLs " link "CO04"}
+   @{" Coloreado, Texto " link "CO04"}
+   @{" Comandos ARexx " link "REXX"}
+   @{" Cómo puedo cambiar los iconos " link "RF04"}
+   @{" Cómo se archiva el correo " link "RF03"}
+   @{" Comodines " link "DOSW"}
+   @{" Configuración" link CO_W}
+   @{" Configuración - ARexx " link "CO13"}
+   @{" Configuración - Correo nuevo" link CO02}
+   @{" Configuración - Escritura " link "CO05"}
+   @{" Configuración - Filtros " link "CO03"}
+   @{" Configuración - Firma " link "CO07"}
+   @{" Configuración - Inicio/Salida " link "CO10"}
+   @{" Configuración - Lectura " link "CO04"}
+   @{" Configuración - Listas " link "CO08"}
+   @{" Configuración - Listín " link "CO12"}
+   @{" Configuración - Menús " link "CO_M"}
+   @{" Configuración - MIME " link "CO11"}
+   @{" Configuración - Opciones ocultas " link "CO_H"}
+   @{" Configuración - Primeros pasos " link "CO00"}
+   @{" Configuración - Responder " link "CO06"}
+   @{" Configuración - Seguridad " link "CO09"}
+   @{" Configuración - TCP/IP " link "CO01"}
+   @{" Configuración - Varios " link "CO14"}
+   @{" Confirmar borrado de X mensajes " link "CO14"}
+   @{" Consejos y trucos " link "TIPS"}
+   @{" Contexto, Menús de " link "CO08"}
+   @{" Correo, Comprobación automática del " link "CO02"}
+   @{" Correo electrónico, Nociones básicas, Qué es el " link "MAIL"}
+   @{" Corte de palabras " link "CO05"}
+   @{" Créditos " link "CRED"}
+   @{" Cuentas, Definir múltiples POP3 " link "CO01"}
+   @{" CVS, Repositorio " link "INF5"}
 
 
    D...
 
-   @{"Direcciones, Introducción de" link EA_W}
+   @{" DEBUG, Tipo de herramienta " link "RF00"}
+   @{" Direcciones, Introducción de " link "EA_W"}
+   @{" Directorio para ficheros temporales " link "CO14"}
+   @{" Duplicados, Evitar " link "CO02"}
 
 
    E...
 
-   @{"Editor, Características del" link EDIT}
-   @{"Etiqueta en el correo electrónico, Nociones básicas" link NETI}
+   @{" Editor, Características del " link "EDIT"}
+   @{" Encontrar mensajes " link "FI_W"}
+   @{" Enlaces útiles " link "INFO"}
+   @{" Estado, Barra de " link "CO08"}
+   @{" Estado, Iconos de " link "MA0S"}
+   @{" Estilos de texto " link "CO04"}
+   @{" Estructura de ficheros " link "RF02"}
+   @{" Enviados, Guardar los mensajes, Configuración " link "CO14"}
+   @{" Etiqueta en el correo electrónico, Nociones básicas " link "NETI"}
+   @{" Evitar duplicados " link "CO02"}
+   @{" Exportar una carpeta " link "MAM2"}
+   @{" Externo, Editor " link "CO05"}
+   @{" Extra, Definir cabeceras por omisión " link "CO05"}
 
 
    F...
 
-   @{"Futuro, Planes para el" link PLAN}
+   @{" Fallos, Informes de " link "INF2"}
+   @{" Ficheros de registro " link "CO09"}
+   @{" Ficheros temporales, Directorio para " link "CO14"}
+   @{" Filtros remotos " link "CO03"}
+   @{" Filtros, Configuración " link "CO03"}
+   @{" Firma por omisión " link "CO07"}
+   @{" Firmas, Cómo se muestran " link "CO04"}
+   @{" Firmas, Usar " link "CO07"}
+   @{" FOLDERINFO, Comando ARexx " link "RX_FOLDERINFO"}
+   @{" Formato de tamaños " link "CO08"}
+   @{" Formatos de fichero " link "RF05"}
+   @{" Frases de saludo y despedida " link "CO05"}
+   @{" Fuente, Cómo obtener la " link "INF5"}
+   @{" Función, Lista de comandos ARexx ordenados por " link "REXL"}
+   @{" Futuro, Planes para el " link "PLAN"}
 
 
    G...
 
-   @{"Glosario, El" link DI_W}
+   @{" GETFOLDERINFO, Comando ARexx " link "RX_GETFOLDERINFO"}
+   @{" GETSELECTED, Comando ARexx " link "RX_GETSELECTED"}
+   @{" GETURL, Comando ARexx " link "RX_GETURL"}
+   @{" Glosario, El " link "DI_W"}
+   @{" GPL " link "COPY"}
+   @{" Guardar los mensajes enviados, Configuración " link "CO14"}
+
+
+   H...
+
+   @{" HELP, Comando ARexx " link "RX_HELP"}
+   @{" HIDE, Comando ARexx " link "RX_HIDE"}
+   @{" HIDE, Tipo de herramienta " link "RF00"}
+   @{" Horaria, Definición de la zona " link "CO00"}
+   @{" Horario de verano " link "CO00"}
+   @{" HTTP, Proxy, Configuración " link "CO12"}
 
 
    I...
 
-   @{"Iconos de estado" link MA0S}
-   @{"Información acerca de YAM, Más" link INFO}
-   @{"Información técnica" link TECH}
-   @{"Inicio rápido" link TUTO}
-   @{"Inicio, Opciones de" link OPTI}
-   @{"Instalación" link INST}
-   @{"Introducción" link INTR}
+   @{" Icono de aplicación, Definir la posición y etiqueta del " link "CO14"}
+   @{" Iconos de estado " link "MA0S"}
+   @{" Iconos, Cómo puedo cambiarlos " link "RF04"}
+   @{" Importar correo " link "MAM2"}
+   @{" INFO, Comando ARexx " link "RX_INFO"}
+   @{" Información acerca de YAM, Más " link "INFO"}
+   @{" Inicio rápido " link "TUTO"}
+   @{" Inmediatamente, Borrar mensajes " link "CO14"}
+   @{" Instalación " link "INST"}
+   @{" Interno, El editor " link "EDIT"}
+   @{" Introducción " link "INTR"}
+   @{" ISONLINE, Comando ARexx " link "RX_ISONLINE"}
+
+
+   K...
+
+   @{" Killfiles " link "CO03"}
 
 
    L...
 
-   @{"Legales, Cuestiones" link COPY}
-   @{"Listín de direcciones" link AB_W}
-   @{"Listín de direcciones - Barra de herramientas" link AB_B}
-   @{"Listín de direcciones - Menús" link AB_M}
+   @{" Lectura, Múltiples ventanas de " link "CO04"}
+   @{" Legales, Cuestiones " link "COPY"}
+   @{" LETTER, Tipo de herramienta " link "RF00"}
+   @{" Límite, Tamaño de mensaje " link "CO02"}
+   @{" Lista de carpetas, Ventana principal " link "MA00"}
+   @{" Listín de direcciones " link "AB_W"}
+   @{" Listín de direcciones, Configuración " link "CO12"}
+   @{" Listín de direcciones - Barra de herramientas " link "AB_B"}
+   @{" Listín de direcciones - Menús " link "AB_M"}
+   @{" LISTSELECT, Comando ARexx " link "RX_LISTSELECT"}
 
 
    M...
 
-   @{"MIME, Nociones básicas" link MIME}
-   @{"MUI" link MUI}
+   @{" MAILARCHIVE, Comando ARexx " link "RX_MAILARCHIVE"}
+   @{" MAILBOUNCE, Comando ARexx " link "RX_MAILBOUNCE"}
+   @{" MAILCHANGESUBJECT, Comando ARexx " link "RX_MAILCHANGESUBJECT"}
+   @{" MAILCHECK, Comando ARexx " link "RX_MAILCHECK"}
+   @{" MAILCOPY, Comando ARexx " link "RX_MAILCOPY"}
+   @{" MAILDELETE, Comando ARexx " link "RX_MAILDELETE"}
+   @{" MAILDIR, Tipo de herramienta " link "RF00"}
+   @{" MAILEDIT, Comando ARexx " link "RX_MAILEDIT"}
+   @{" MAILEXPORT, Comando ARexx " link "RX_MAILEXPORT"}
+   @{" MAILFILTER, Comando ARexx " link "RX_MAILFILTER"}
+   @{" MAILFORWARD, Comando ARexx " link "RX_MAILFORWARD"}
+   @{" MAILIMPORT, Comando ARexx " link "RX_MAILIMPORT"}
+   @{" MAILINFO, Comando ARexx " link "RX_MAILINFO"}
+   @{" MAILMOVE, Comando ARexx " link "RX_MAILMOVE"}
+   @{" MAILREAD, Comando ARexx " link "RX_MAILREAD"}
+   @{" MAILREPLY, Comando ARexx " link "RX_MAILREPLY"}
+   @{" MAILSEND, Comando ARexx " link "RX_MAILSEND"}
+   @{" MAILSENDALL, Comando ARexx " link "RX_MAILSENDALL"}
+   @{" MAILSTATUS, Comando ARexx " link "RX_MAILSTATUS"}
+   @{" MAILTO, Tipo de herramienta " link "RF00"}
+   @{" MAILUPDATE, Comando ARexx " link "RX_MAILUPDATE"}
+   @{" MAILWRITE, Comando ARexx " link "RX_MAILWRITE"}
+   @{" Mejoras, Peticiones de " link "INF3"}
+   @{" Mensajes, Preselección de " link "CO02"}
+   @{" Menús de contexto " link "CO08"}
+   @{" MIME, Nociones básicas " link "MIME"}
+   @{" MIME, Visores " link "CO11"}
+   @{" MUI " link "MUI"}
+   @{" Múltiples ventanas de lectura " link "CO04"}
 
 
    N...
 
-   @{"NewIcons" link NEWI}
+   @{" NewIcons " link "NEWI"}
+   @{" NEWMAILFILE, Comando ARexx " link "RX_NEWMAILFILE"}
+   @{" NOCHECK, Tipo de herramienta " link "RF00"}
+   @{" Notificación " link "CO02"}
+   @{" ¿Nuevo usuario de YAM? " link "BEGI"}
+
+
+   O...
+
+   @{" Opciones de inicio " link "RF00"}
+   @{" Organización, Definir la cabecera " link "CO05"}
 
 
    P...
 
-   @{"Patrones y comodines AmigaDOS" link DOSW}
-   @{"PGP, Nociones básicas, Encriptación con" link PGP}
-   @{"Protocolos de correo, Nociones básicas" link PROT}
+   @{" PASSWORD, Tipo de herramienta " link "RF00"}
+   @{" Patrones y comodines AmigaDOS " link "DOSW"}
+   @{" Personal, Intercambio de información " link "CO12"}
+   @{" PGP, Nociones básicas, Encriptación con " link "PGP"}
+   @{" PGP 2.6.x, Instalación de " link "PGP0"}
+   @{" PGP 5.0i, Instalación de " link "PGP1"}
+   @{" POP3, Definir múltiples cuentas " link "CO01"}
+   @{" PREFSFILE, Tipo de herramienta " link "RF00"}
+   @{" Preselección de mensajes " link "CO02"}
+   @{" Problemas conocidos " link "PROB"}
+   @{" Protocolos de correo, Nociones básicas " link "PROT"}
+   @{" Proxy HTTP, Configuración " link "CO12"}
+   @{" Pulsaciones Swatch, Unidad de medida temporal " link "CO08"}
+
+
+   Q...
+
+   @{" QUIT, Comando ARexx " link "RX_QUIT"}
 
 
    R...
 
-   @{"Requerimientos" link REQS}
+   @{" READCLOSE, Comando ARexx " link "RX_READCLOSE"}
+   @{" READINFO, Comando ARexx " link "RX_READINFO"}
+   @{" READPRINT, Comando ARexx " link "RX_READPRINT"}
+   @{" READSAVE, Comando ARexx " link "RX_READSAVE"}
+   @{" Reenvíos, Preferencias de " link "CO06"}
+   @{" Re-expedición, Usar un servicio de " link "CO09"}
+   @{" Referencia " link "RF_W"}
+   @{" Registro, Ficheros de " link "CO09"}
+   @{" Remotos, Filtros " link "CO03"}
+   @{" Reply-To:, Dirección " link "CO05"}
+   @{" Repositorio CVS " link "INF5"}
+   @{" Requerimientos " link "REQS"}
+   @{" REQUEST, Comando ARexx " link "RX_REQUEST"}
+   @{" REQUESTFOLDER, Comando ARexx " link "RX_REQUESTFOLDER"}
+   @{" REQUESTSTRING, Comando ARexx " link "RX_REQUESTSTRING"}
+
+
+   S...
+
+   @{" SCREENTOBACK, Comando ARexx " link "RX_SCREENTOBACK"}
+   @{" SCREENTOFRONT, Comando ARexx " link "RX_SCREENTOFRONT"}
+   @{" Scripts ARexx lanzados por eventos " link "CO13"}
+   @{" Scripts, Uso de ARexx " link "CO13"}
+   @{" Seguimiento de mensajes " link "CO14"}
+   @{" SETFLAG, Comando ARexx " link "RX_SETFLAG"}
+   @{" SETFOLDER, Comando ARexx " link "RX_SETFOLDER"}
+   @{" SETMAIL, Comando ARexx " link "RX_SETMAIL"}
+   @{" SETMAILFILE, Comando ARexx " link "RX_SETMAILFILE"}
+   @{" SHOW, Comando ARexx " link "RX_SHOW"}
+   @{" SIGNATURE, Variable de entorno " link "CO07"}
+   @{" SMTP AUTH " link "CO01"}
+   @{" SMTP, Servidor " link "CO01"}
+   @{" Soporte al usuario " link "INFO"}
+   @{" Soporte para listas de correo " link "INF1"}
+   @{" Soporte para listas de correo, Ejemplos del " link "TIP4"}
+   @{" SSLv3, Ajustes de seguridad POP3 " link "CO01"}
+   @{" STLS, Ajustes de seguridad POP3 " link "CO01"}
+   @{" SUBJECT, Tipo de herramienta " link "RF00"}
+   @{" Swatch, Pulsaciones, Unidad de medida temporal " link "CO08"}
 
 
    T...
 
-   @{"Transferencias de correo" link TR_W}
+   @{" Temporales, Directorio para ficheros " link "CO14"}
+   @{" Texto coloreado " link "CO04"}
+   @{" Texto, Estilos de " link "CO04"}
+   @{" Tipos de herramienta " link "RF00"}
+   @{" TLSv1/SSLv3, Ajustes de seguridad POP3 " link "CO01"}
+   @{" Tranferencia, Ventana de " link "CO02"}
+   @{" Transferencias de correo " link "TR_W"}
 
 
    U...
 
-   @{"Usuarios" link US_W}
+   @{" Unidad de los tamaños " link "CO08"}
+   @{" URLs, Color de " link "CO04"}
+   @{" USER, Tipo de herramienta " link "RF00"}
+   @{" USERINFO, Comando ARexx " link "RX_USERINFO"}
+   @{" Usuarios " link "US_W"}
+   @{" UUcodificación, MIME " link "MIME"}
 
 
    V...
 
-   @{"Ventana de escritura" link WR_W}
-   @{"Ventana de escritura - Anexos" link WR01}
-   @{"Ventana de escritura - Mensaje" link WR00}
-   @{"Ventana de escritura - Menú Anexos" link WRM3}
-   @{"Ventana de escritura - Menú Editar" link WRM2}
-   @{"Ventana de escritura - Menú Texto" link WRM1}
-   @{"Ventana de escritura - Opciones" link WR02}
+   @{" Ventana de escritura " link "WR_W"}
+   @{" Ventana de escritura - Anexos " link "WR01"}
+   @{" Ventana de escritura - Mensaje " link "WR00"}
+   @{" Ventana de escritura - Menú Anexos " link "WRM3"}
+   @{" Ventana de escritura - Menú Editar " link "WRM2"}
+   @{" Ventana de escritura - Menú Texto " link "WRM1"}
+   @{" Ventana de escritura - Opciones " link "WR02"}
+   @{" Ventana de lectura " link "RE_W"}
+   @{" Ventana de lectura - Barra de herramientas " link "RE_B"}
+   @{" Ventana de lectura - Menú Mensaje " link "REM1"}
+   @{" Ventana de lectura - Menú Navegación " link "REM2"}
+   @{" Ventana de lectura - Menú PGP " link "REM3"}
+   @{" Ventana de lectura - Menú Preferencias " link "REM4"}
+   @{" Ventanas de lectura, Múltiples " link "CO04"}
+   @{" Ventana principal " link "MA_W"}
+   @{" Ventana principal - barra de herramientas " link "MA02"}
+   @{" Ventana principal - lista de carpetas " link "MA00"}
+   @{" Ventana principal - lista de mensajes " link "MA01"}
+   @{" Ventana principal - Menú Carpeta " link "MAM2"}
+   @{" Ventana principal - Menú Scripts " link "MAM5"}
+   @{" Ventana principal - Menú Mensaje " link "MAM3"}
+   @{" Ventana principal - Menú Preferencias " link "MAM4"}
+   @{" Ventana principal - Menú Proyecto " link "MAM1"}
+   @{" Visores MIME, Definición de " link "CO11"}
 
-   @{"Ventana de lectura" link RE_W}
-   @{"Ventana de lectura - Barra de herramientas" link RE_B}
-   @{"Ventana de lectura - Menú Mensaje" link REM1}
-   @{"Ventana de lectura - Menú Navegación" link REM2}
-   @{"Ventana de lectura - Menú PGP" link REM3}
-   @{"Ventana de lectura - Menú Preferencias" link REM4}
 
-   @{"Ventana principal" link MA_W}
-   @{"Ventana principal - barra de herramientas" link MA02}
-   @{"Ventana principal - lista de carpetas" link MA00}
-   @{"Ventana principal - lista de mensajes" link MA01}
-   @{"Ventana principal - Menú Carpeta" link MAM2}
-   @{"Ventana principal - Menú Scripts" link MAM5}
-   @{"Ventana principal - Menú Mensaje" link MAM3}
-   @{"Ventana principal - Menú Preferencias" link MAM4}
-   @{"Ventana principal - Menú Proyecto" link MAM1}
+   W...
+
+   @{" WRITEATTACH, Comando ARexx " link "RX_WRITEATTACH"}
+   @{" WRITEBCC, Comando ARexx " link "RX_WRITEBCC"}
+   @{" WRITECC, Comando ARexx " link "RX_WRITECC"}
+   @{" WRITEEDITOR, Comando ARexx " link "RX_WRITEEDITOR"}
+   @{" WRITEFROM, Comando ARexx " link "RX_WRITEFROM"}
+   @{" WRITELETTER, Comando ARexx " link "RX_WRITELETTER"}
+   @{" WRITEMAILTO, Comando ARexx " link "RX_WRITEMAILTO"}
+   @{" WRITEOPTIONS, Comando ARexx " link "RX_WRITEOPTIONS"}
+   @{" WRITEQUEUE, Comando ARexx " link "RX_WRITEQUEUE"}
+   @{" WRITEREPLYTO, Comando ARexx " link "RX_WRITEREPLYTO"}
+   @{" WRITESEND, Comando ARexx " link "RX_WRITESEND"}
+   @{" WRITESUBJECT, Comando ARexx " link "RX_WRITESUBJECT"}
+   @{" WRITETO, Comando ARexx " link "RX_WRITETO"}
+
+
+   X...
+
+   @{" XPK, Definir compresor y eficiencia " link "CO14"}
+   @{" XPK, Activación para comprimir y proteger carpetas " link "FO_W"}
 
 
    Y...
 
-   @{"YAM - Documentación en castellano" link MAIN}
+   @{" YAM en la World Wide Web " link "INF0"}
+   @{" YAM - Documentación en castellano " link "MAIN"}
+   @{" YAMOS, El equipo " link "CRED"}
+
+
+   Z...
+
+   @{" Zona horaria, Configuración " link "CO00"}
 
 @{BODY}
 @ENDNODE
-
-
-
-  @{" Editor                   " link "EDIT"}  - Acerca del editor interno
-
-  @{" Opciones de inicio       " link "OPTI"}  - Tipos de herramienta y opciones de Shell
-  @{" Interfaz ARexx           " link "REXX"}  - Cómo controlar YAM desde otros programas
-  @{" Información técnica      " link "TECH"}  - Cómo archiva YAM los mensajes
-  @{" Cabeceras                " link "HEAD"}  - Estructura de una cabecera de correo
-  @{" Protocolos de correo     " link "PROT"}  - Información acerca de SMTP y POP3
-  @{" ¿Qué es MIME?            " link "MIME"}  - Acerca de MIME
-  @{" PGP                      " link "PGP"}  - Encriptación con claves públicas
-  @{" Normas de etiqueta       " link "NETI"}  - Cómo caer bien entre sus amigos
-
