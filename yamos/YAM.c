@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <libraries/genesis.h>
@@ -325,10 +324,11 @@ static BOOL AY_New(BOOL hidden)
       G->AY_AboutText = StrBufCat(G->AY_AboutText, "\0338Magic User Interface\0332 (Stefan Stuntz)\n"
                                                    "\0338TextEditor.mcc, BetterString.mcc\0332 (Allan Odgaard)\n"
                                                    "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
-                                                   "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
                                                    "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
+                                                   "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
                                                    "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
-                                                   "\0338popupmenu.library\0332 (Henrik Isaksson)\n\n");
+                                                   "\0338popupmenu.library\0332 (Henrik Isaksson)\n"
+                                                   "\0338amissl.library\0332 (Andrija Antonijevic)\n\n");
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
 
@@ -619,6 +619,7 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 static struct Library *InitLib(char *libname, int version, int revision, BOOL required, BOOL close)
 {
    struct Library *lib = OpenLibrary(libname, version);
+
    if(lib && revision)
    {
       if(lib->lib_Version == version && lib->lib_Revision < revision)
@@ -626,10 +627,10 @@ static struct Library *InitLib(char *libname, int version, int revision, BOOL re
          CloseLibrary(lib); lib = NULL;
       }
    }
-   if(!lib && required)
-      Abort(MSG_ERR_OPENLIB, libname, version, revision);
-   if(lib && close)
-      CloseLibrary(lib);
+
+   if(!lib && required) Abort(MSG_ERR_OPENLIB, libname, version, revision);
+   if(lib && close) CloseLibrary(lib);
+
    return lib;
 }
 ///
@@ -753,7 +754,11 @@ static void Initialise(BOOL hidden)
    // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
    PopupMenuBase = (struct PopupMenuBase *)InitLib(POPUPMENU_NAME, 9, 0, FALSE, FALSE);
 
-	SetupDebug();
+   // Check if the amissl.library is installed with the correct version
+   // so that we can use it later
+   if(InitLib("amissl.library", 1, 0, FALSE, TRUE)) G->TR_UseableTLS = TRUE;
+
+   SetupDebug();
 
    /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);

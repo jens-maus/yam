@@ -98,6 +98,8 @@ struct Global
    BOOL                     TR_Debug;
    BOOL                     TR_Allow;
    BOOL                     TR_Exchange;
+   BOOL                     TR_UseableTLS;
+   BOOL                     TR_UseTLS;
 
    struct DateStamp         StartDate;
    struct Users             Users;

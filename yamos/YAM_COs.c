@@ -87,6 +87,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SMTP-Server      = %s\n", co->SMTP_Server);
       fprintf(fh, "SMTP-Domain      = %s\n", co->SMTP_Domain);
       fprintf(fh, "Allow8bit        = %s\n", Bool2Txt(co->Allow8bit));
+      fprintf(fh, "Use-SMTP-TLS     = %s\n", Bool2Txt(co->Use_SMTP_TLS));
       fprintf(fh, "Use-SMTP-AUTH    = %s\n", Bool2Txt(co->Use_SMTP_AUTH));
       fprintf(fh, "SMTP-AUTH-User   = %s\n", co->SMTP_AUTH_User);
       fprintf(fh, "SMTP-AUTH-Pass   = %s\n", Encrypt(co->SMTP_AUTH_Pass));
@@ -94,9 +95,11 @@ void CO_SaveConfig(struct Config *co, char *fname)
       {
          struct POP3 *p3 = co->P3[i];
          fprintf(fh, "POP%02ld.Server     = %s\n", i, p3->Server);
+         fprintf(fh, "POP%02ld.Port       = %ld\n", i, p3->Port);
          fprintf(fh, "POP%02ld.User       = %s\n", i, p3->User);
          fprintf(fh, "POP%02ld.Password   = %s\n", i, Encrypt(p3->Password));
          fprintf(fh, "POP%02ld.Enabled    = %s\n", i, Bool2Txt(p3->Enabled));
+         fprintf(fh, "POP%02ld.SSLMode    = %ld\n", i, p3->SSLMode);
          fprintf(fh, "POP%02ld.UseAPOP    = %s\n", i, Bool2Txt(p3->UseAPOP));
          fprintf(fh, "POP%02ld.Delete     = %s\n", i, Bool2Txt(p3->DeleteOnServer));
       }
@@ -423,8 +426,10 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
                if (!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
 /*1*/          if (!stricmp(buffer, "SMTP-Server"))    stccpy(co->SMTP_Server, value, SIZE_HOST);
+               if (!stricmp(buffer, "SMTP-Port"))      co->SMTP_Port = atoi(value);
                if (!stricmp(buffer, "SMTP-Domain"))    stccpy(co->SMTP_Domain, value, SIZE_HOST);
                if (!stricmp(buffer, "Allow8bit"))      co->Allow8bit = Txt2Bool(value);
+               if (!stricmp(buffer, "Use-SMTP-TLS"))   co->Use_SMTP_TLS = Txt2Bool(value);
                if (!stricmp(buffer, "Use-SMTP-AUTH"))  co->Use_SMTP_AUTH = Txt2Bool(value);
                if (!stricmp(buffer, "SMTP-AUTH-User")) stccpy(co->SMTP_AUTH_User, value, SIZE_USERID);
                if (!stricmp(buffer, "SMTP-AUTH-Pass")) stccpy(co->SMTP_AUTH_Pass, Decrypt(value), SIZE_USERID);
@@ -435,9 +440,11 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   p = &buffer[6];
                   if (!p3) p3 = co->P3[j] = CO_NewPOP3(co, FALSE);
                   if (!stricmp(p, "Server"))    stccpy(p3->Server, value, SIZE_HOST);
+                  if (!stricmp(p, "Port"))      p3->Port = atoi(value);
                   if (!stricmp(p, "Password"))  stccpy(p3->Password, Decrypt(value), SIZE_PASSWORD);
                   if (!stricmp(p, "User"))      stccpy(p3->User, value, SIZE_USERID);
                   if (!stricmp(p, "Enabled"))   p3->Enabled = Txt2Bool(value);
+                  if (!stricmp(p, "SSLMode"))   p3->SSLMode = atoi(value);
                   if (!stricmp(p, "UseAPOP"))   p3->UseAPOP = Txt2Bool(value);
                   if (!stricmp(p, "Delete"))    p3->DeleteOnServer = Txt2Bool(value);
                }
@@ -644,8 +651,10 @@ void CO_GetConfig(void)
          break;
       case 1:
          GetMUIString(CE->SMTP_Server     ,gui->ST_SMTPHOST);
+         CE->SMTP_Port = GetMUIInteger(gui->ST_SMTPPORT);
          GetMUIString(CE->SMTP_Domain     ,gui->ST_DOMAIN);
          CE->Allow8bit         = GetMUICheck  (gui->CH_SMTP8BIT);
+         CE->Use_SMTP_TLS      = GetMUICheck  (gui->CH_SMTPTLS);
          CE->Use_SMTP_AUTH     = GetMUICheck  (gui->CH_USESMTPAUTH);
          GetMUIString(CE->SMTP_AUTH_User  ,gui->ST_SMTPAUTHUSER);
          GetMUIString(CE->SMTP_AUTH_Pass  ,gui->ST_SMTPAUTHPASS);
@@ -815,8 +824,11 @@ void CO_SetConfig(void)
          break;
       case 1:
          setstring   (gui->ST_SMTPHOST  ,CE->SMTP_Server);
+         set(gui->ST_SMTPPORT, MUIA_String_Integer, CE->SMTP_Port);
          setstring   (gui->ST_DOMAIN    ,CE->SMTP_Domain);
          setcheckmark(gui->CH_SMTP8BIT  ,CE->Allow8bit);
+         setcheckmark(gui->CH_SMTPTLS   ,CE->Use_SMTP_TLS);
+         set(gui->CH_SMTPTLS, MUIA_Disabled, !G->TR_UseableTLS);
          setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
          setstring   (gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
          setstring   (gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);

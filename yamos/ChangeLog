@@ -1,3 +1,22 @@
+2001-11-15  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added SMTP SSL/TLS support through AmiSSL accordingly to
+      (RFC 2487)
+    * fixed bug in the SMTP routines where it happened that
+      if a SMTP AUTH request wasn`t succesfull we forgot to
+      disconnect from the server.
+    * fixed a bug in the SMTP AUTH routines where the server response
+      wasn`t displayed to the user on a authentication failure.
+    * made some cosmetic code changes to the SMTP AUTH part.
+    * added possibility to explicitly specify the POP3 and SMTP Port
+      in a string gadget in the configuration.
+    * added POP3 SSL/TLS support for stunnel servers (port 995) and
+      also POP3-server that supports the STLS command set like
+      suggested in (RFC 2595)
+    * implemented optional TLS/SSL support by using AmiSSL library
+      from Andrija Antonijevic, which is a public AmigaOS port
+      of OpenSSL (RFC 2246)
+
 2001-11-10  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed a security flaw in YAM where it was possible that a user

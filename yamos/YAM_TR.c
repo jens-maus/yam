@@ -39,11 +39,13 @@
 #include <proto/miami.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>
+#include <proto/amissl.h>
 
 #include "extra.h"
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_config.h"
+#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_find.h"
 #include "YAM_folderconfig.h"
@@ -73,12 +75,177 @@ struct TransStat
 #define POPCMD_WAITEOL 1
 #define POPCMD_NOERROR 2
 
+/**************************************************************************/
+// TLS/SSL related variables
+
+struct Library *AmiSSLBase = NULL;
+
+static SSL_METHOD *method;
+static SSL_CTX *ctx;
+static SSL *ssl;
+
 /***************************************************************************
  Module: Transfer
 ***************************************************************************/
 
-/*** General connecting/disconnecting & transfer ***/
+/*** TLS/SSL routines ***/
+/// TR_InitTLS()
+// Initialize the SSL/TLS session accordingly
+BOOL TR_InitTLS(VOID)
+{
+  char tmp[256];
+  char *CAfile = NULL;
+  char *CApath = NULL;
 
+  // lets initialize the library first and load the error strings
+  SSL_library_init();
+  SSL_load_error_strings();
+
+  // We have to feed the random number generator first
+  DB(kprintf("Seeding random number generator...\n");)
+  sprintf(tmp, "%lx%lx", (unsigned long)time((time_t *)0), (unsigned long)FindTask(NULL));
+  RAND_seed(tmp, strlen(tmp));
+
+	if (!(method = SSLv23_client_method()))
+  {
+    DB(kprintf("SSLv23_client_method() error !\n");)
+    return FALSE;
+  }
+
+	if (!(ctx = SSL_CTX_new(method)))
+  {
+	  DB(kprintf("Can't create SSL_CTX object !\n");)
+    return FALSE;
+  }
+
+  // In future we can give the user the ability to specify his own CA locations
+  // in the application instead of using the default ones.
+	if (CAfile || CApath)
+  {
+		DB(kprintf("CAfile = %s, CApath = %s\n", CAfile ? CAfile : "none", CApath ? CApath : "none");)
+		if ((!SSL_CTX_load_verify_locations(ctx, CAfile, CApath)))
+    {
+		  DB(kprintf("Error setting default verify locations !\n");)
+      return FALSE;
+    }
+	}
+	else
+  {
+    if((!SSL_CTX_set_default_verify_paths(ctx)))
+    {
+		  DB(kprintf("Error setting default verify locations !\n");)
+      return FALSE;
+    }
+  }
+
+	if (!(SSL_CTX_set_cipher_list(ctx, "DEFAULT")))
+  {
+	  DB(kprintf("SSL_CTX_set_cipher_list() error !\n");)
+    return FALSE;
+  }
+
+	SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, 0);
+
+  return TRUE;
+}
+
+///
+/// TR_StartTLS()
+// function that starts & initializes the TLS/SSL session
+BOOL TR_StartTLS(VOID)
+{
+	DB(kprintf("Initializing TLS/SSL session...\n");)
+
+	if (!(ssl = SSL_new(ctx)))
+  {
+		DB(kprintf("Can't create a new SSL structure for a connection !\n");)
+    return FALSE;
+  }
+
+	if (!(SSL_set_fd(ssl, G->TR_Socket)))
+	{
+    DB(kprintf("SSL_set_fd() error !\n");)
+    return FALSE;
+  }
+
+	if ((SSL_connect(ssl)) <= 0)
+  {
+		DB(kprintf("TLS/SSL handshake error !\n");)
+    return FALSE;
+  }
+
+	// Certificate info
+  // only for debug reasons
+#ifdef DEBUG
+  {
+    char *x509buf;
+    SSL_CIPHER *cipher;
+    X509 *server_cert;
+    cipher = SSL_get_current_cipher(ssl);
+
+		if (cipher)
+    {
+			DB(kprintf("%s connection using %s\n", SSL_CIPHER_get_version(cipher), SSL_get_cipher(ssl));)
+    }
+
+		if (!(server_cert = SSL_get_peer_certificate(ssl)))
+    {
+		  DB(kprintf("SSL_get_peer_certificate() error !\n");)
+    }
+
+		DB(kprintf("Server public key is %d bits\n", EVP_PKEY_bits(X509_get_pubkey(server_cert)));)
+
+    #define X509BUFSIZE 4096
+
+    x509buf = (char *)malloc(X509BUFSIZE);
+    memset(x509buf, 0, X509BUFSIZE);
+
+    DB(kprintf("Server certificate:\n");)
+
+		if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
+    {
+      DB(kprintf("X509_NAME_oneline...[subject] error !\n");)
+    }
+		DB(kprintf("subject: %s\n", x509buf);)
+
+		if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
+    {
+      DB(kprintf("X509_NAME_oneline...[issuer] error !\n");)
+    }
+		DB(kprintf("issuer:  %s\n", x509buf);)
+
+    if(x509buf)     free(x509buf);
+    if(server_cert) X509_free(server_cert);
+	}
+#endif
+
+	return TRUE;
+}
+
+///
+/// TR_EndTLS()
+// function that stops all TLS context
+VOID TR_EndTLS(VOID)
+{
+  DB(kprintf("TR_EndTLS()!\n");)
+
+  if(ssl)
+  {
+    SSL_shutdown(ssl);
+		SSL_free(ssl);
+    ssl = NULL;
+	}
+	
+  if(ctx)
+  {
+    SSL_CTX_free(ctx);
+    ctx = NULL;
+	}
+}
+
+///
+
+/*** General connecting/disconnecting & transfer ***/
 /// TR_IsOnline
 //  Checks if there's an online connection
 BOOL TR_IsOnline(void)
@@ -112,8 +279,18 @@ BOOL TR_IsOnline(void)
 //  Closes bsdsocket library
 void TR_CloseTCPIP(void)
 {
-   if (SocketBase) CloseLibrary(SocketBase);
-   SocketBase = NULL;
+  if(AmiSSLBase)
+  {
+	  CleanupAmiSSL(TAG_DONE);
+	  CloseLibrary(AmiSSLBase);
+	  AmiSSLBase = NULL;
+  }
+
+  if(SocketBase)
+  {
+    CloseLibrary(SocketBase);
+    SocketBase = NULL;
+  }
 }
 
 ///
@@ -121,10 +298,36 @@ void TR_CloseTCPIP(void)
 //  Opens bsdsocket.library
 BOOL TR_OpenTCPIP(void)
 {
-   if (!TR_IsOnline()) return FALSE;
-   if (!SocketBase) SocketBase = OpenLibrary("bsdsocket.library", 2L);
-   return (BOOL)(SocketBase != NULL);
+  if(!TR_IsOnline()) return FALSE;
+  if(!SocketBase) SocketBase = OpenLibrary("bsdsocket.library", 2L);
+
+  // Now we have to check for TLS/SSL support
+  if(G->TR_UseableTLS && SocketBase && !AmiSSLBase)
+  {
+    if((AmiSSLBase = OpenLibrary("amissl.library", 1L)))
+    {
+	    if(InitAmiSSL(AmiSSL_Version,     AmiSSL_CurrentVersion,
+			  	          AmiSSL_Revision,    AmiSSL_CurrentRevision,
+				  	        AmiSSL_SocketBase,  SocketBase,
+					          /*	AmiSSL_VersionOverride, TRUE,*/ /* If you insist */
+					          TAG_DONE) != 0)
+      {
+	  		CloseLibrary(AmiSSLBase);
+		  	AmiSSLBase = NULL;
+  		}
+	  }
+
+    if(!AmiSSLBase)
+    {
+      ER_NewError(GetStr(MSG_ER_INITAMISSL), NULL, NULL);
+
+      G->TR_UseableTLS = G->TR_UseTLS = FALSE;
+    }
+	}
+
+  return (BOOL)(SocketBase != NULL);
 }
+
 ///
 /// TR_Disconnect
 //  Terminates a connection
@@ -132,6 +335,12 @@ static void TR_Disconnect(void)
 {
    if (G->TR_Socket != SMTP_NO_SOCKET)
    {
+      if(G->TR_UseTLS)
+      {
+        TR_EndTLS();
+        G->TR_UseTLS = FALSE;
+      }
+
       Shutdown(G->TR_Socket, 2);
       CloseSocket(G->TR_Socket);
       G->TR_Socket = SMTP_NO_SOCKET;
@@ -176,7 +385,16 @@ static int TR_RecvDat(char *recvdata)                   /* success? */
 
    DoMethod(G->App,MUIM_Application_InputBuffered, TAG_DONE);
    if (G->TR_Socket == SMTP_NO_SOCKET) return 0;
-   len = Recv(G->TR_Socket, (STRPTR)recvdata, SIZE_LINE-1, 0);
+
+   if(G->TR_UseTLS)
+   {
+      len = SSL_read(ssl, (STRPTR)recvdata, SIZE_LINE-1);
+   }
+   else
+   {
+      len = Recv(G->TR_Socket, (STRPTR)recvdata, SIZE_LINE-1, 0);
+   }
+
    if (len <= 0) recvdata[0]=0;
    else recvdata[len] = '\0';
    if (G->TR_Debug) printf("SERVER: %s", recvdata);
@@ -191,7 +409,16 @@ static BOOL TR_SendDat(char *senddata)                  /* success? */
    if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
    if (!senddata) return TRUE;
    if (G->TR_Debug) printf("CLIENT: %s", senddata);
-   if (Send(G->TR_Socket, (STRPTR)senddata, strlen(senddata), 0) != -1) return TRUE;
+
+   if(G->TR_UseTLS)
+   {
+      if(SSL_write(ssl, (STRPTR)senddata, strlen(senddata)) != -1) return TRUE;
+   }
+   else
+   {
+     if (Send(G->TR_Socket, (STRPTR)senddata, strlen(senddata), 0) != -1) return TRUE;
+   }
+
    return FALSE;
 }
 ///
@@ -325,10 +552,13 @@ static BOOL TR_SendPopCmd(char *buf, char *cmdtext, char *parmtext, int flags)
 static int TR_ConnectPOP(int guilevel)
 {     
    char passwd[SIZE_PASSWORD], host[SIZE_HOST], buf[SIZE_LINE], *p;
-   int err, pop = G->TR->POP_Nr, msgs, port = 110;
+   char *welcomemsg = NULL;
+   int err, pop = G->TR->POP_Nr, msgs;
+   int port = C->P3[pop]->Port;
 
    strcpy(passwd, C->P3[pop]->Password);
    strcpy(host, C->P3[pop]->Server);
+
    if (C->TransferWindow == 2 || (C->TransferWindow == 1 && (guilevel == POP_START || guilevel == POP_USER)))
    {
       LONG wstate;
@@ -337,8 +567,13 @@ static int TR_ConnectPOP(int guilevel)
       if(!wstate) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);   // activating the window if it was already open
    }
    set(G->TR->GUI.TX_STATUS  , MUIA_Text_Contents,GetStr(MSG_TR_Connecting));
+
+   // If the hostname has a explicit :xxxxx port statement at the end we
+   // take this one, even if its not needed anymore.
    if (p = strchr(host, ':')) { *p = 0; port = atoi(++p); }
+
    TR_SetWinTitle(TRUE, host);
+
    if (err = TR_Connect(host, port))
    {
       if (guilevel == POP_USER) switch (err)
@@ -348,26 +583,74 @@ static int TR_ConnectPOP(int guilevel)
       }
       return -1;
    }
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
 
-   if (TR_RecvDat(buf) <= 0) return -1;
+   // If this connection should be a STLS like connection we have to get the welcome
+   // message now and then send the STLS command to start TLS negotiation
+   if(G->TR_UseableTLS && C->P3[pop]->SSLMode == P3SSL_STLS)
+   {
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
+
+      if(TR_RecvDat(buf) <= 0) return -1;
+      welcomemsg = StrBufCpy(NULL, buf);
+
+      // in STLS mode we get a welcome message and we have to get it out first
+      while (!strstr(buf, "\n"))
+      {
+        if(TR_RecvDat(buf) <= 0) return -1;
+        welcomemsg = StrBufCat(welcomemsg, buf);
+      }
+      *buf = 0;
+
+      // If the user selected STLS support we have to first send the command
+      // to start TLS negotiation (RFC 2595)
+      if(!TR_SendPopCmd(buf, "STLS", NULL, POPCMD_WAITEOL)) return -1;
+   }
+
+   // Here start the TLS/SSL Connection stuff
+   if(G->TR_UseableTLS && C->P3[pop]->SSLMode != P3SSL_OFF)
+   {
+     set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_INITTLS));
+
+     // Now we have to Initialize and Start the TLS stuff if requested
+     if(TR_InitTLS() && TR_StartTLS())
+     {
+        G->TR_UseTLS = TRUE;
+     }
+     else
+     {
+        ER_NewError(GetStr(MSG_ER_INITTLS), host, NULL);
+        return -1;
+     }
+   }
+   else G->TR_UseTLS = FALSE;
+
+   // If this was a connection on a stunnel on port 995 or a non-ssl connection
+   // we have to get the welcome message now
+   if(!G->TR_UseableTLS || C->P3[pop]->SSLMode != P3SSL_STLS)
+   {
+      if(TR_RecvDat(buf) <= 0) return -1;
+      welcomemsg = StrBufCpy(NULL, buf);
+
+      while (!strstr(buf, "\n"))
+      {
+        if (TR_RecvDat(buf) <= 0) return -1;
+        welcomemsg = StrBufCat(welcomemsg, buf);
+      }
+      *buf = 0;
+   }
+
    if (!*passwd)
    {
       sprintf(buf, GetStr(MSG_TR_PopLoginReq), C->P3[pop]->User, host);
       if (!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_TR_PopLogin), buf, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->TR->GUI.WI)) return -1;
    }
+
    if (C->P3[pop]->UseAPOP)
    {
       struct MD5Context context;
-      UBYTE digest[16], *welcomemsg = StrBufCpy(NULL, buf);
+      UBYTE digest[16];
       int i, j;
 
-      while (!strstr(buf, "\n"))
-      {
-         if (TR_RecvDat(buf) <= 0) return -1;
-         welcomemsg = StrBufCat(welcomemsg, buf);
-      }
-      *buf = 0;
       if (p = strchr(welcomemsg, '<'))
       {
          strcpy(buf, p);
@@ -375,7 +658,6 @@ static int TR_ConnectPOP(int guilevel)
       }
       else ER_NewError(GetStr(MSG_ER_NoAPOP), NULL, NULL);
       strcat(buf, passwd);
-      FreeStrBuf(welcomemsg);
       MD5Init(&context);
       MD5Update(&context, buf, strlen(buf));
       MD5Final(digest, &context);
@@ -387,12 +669,14 @@ static int TR_ConnectPOP(int guilevel)
    }
    else
    {
-      while (!strstr(buf, "\n")) if (TR_RecvDat(buf) <= 0) return -1;
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendUserID));
       if (!TR_SendPopCmd(buf, "USER", C->P3[pop]->User, POPCMD_WAITEOL)) return -1;
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SendPassword));
       if (!TR_SendPopCmd(buf, "PASS", passwd, POPCMD_WAITEOL)) return -1;
    }
+
+   if(welcomemsg) FreeStrBuf(welcomemsg);
+
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_GetStats));
    if (!TR_SendPopCmd(buf, "STAT", NULL, POPCMD_WAITEOL)) return -1;
    sscanf(&buf[4], "%ld", &msgs);
@@ -863,11 +1147,16 @@ static BOOL TR_SendSMTPCmd(char *cmdtext, char *parmtext)
 //  Connects to a SMTP mail server
 static BOOL TR_ConnectSMTP(void)
 {
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
-   if (!TR_SendSMTPCmd(NULL, NULL)) return FALSE;
-   set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, GetStr(MSG_TR_SendHello));
-   if (!TR_SendSMTPCmd("HELO", C->SMTP_Domain)) return FALSE;
-   return TRUE;
+  if(!G->TR_UseTLS)
+  {
+    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
+    if (!TR_SendSMTPCmd(NULL, NULL)) return FALSE;
+  }
+
+  set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, GetStr(MSG_TR_SendHello));
+  if (!TR_SendSMTPCmd("HELO", C->SMTP_Domain)) return FALSE;
+
+  return TRUE;
 }
 ///
 /// TR_ConnectESMTP
@@ -875,85 +1164,74 @@ static BOOL TR_ConnectSMTP(void)
 /* umsrfc ReadLine() */
 /*
  * Read one line from client. The buffer may hold a maximum of "len"
- * characters including string terminator. The routine returns FALSE
- * when the connection to the client was lost during reading the line.
- * The buffer will always contain a valid C string after the call.
+ * characters including string terminator. The routine returns the return
+ * code if available or 0 when the connection to the client was lost
+ * during reading the line. The buffer will always contain a valid C
+ * string after the call.
 .*/
-static BOOL ReadLine(LONG Socket, char *buf, LONG len)
+static int ReadLine(LONG Socket, char *buf, LONG len)
 {
- char *p = buf;
+  char *p = buf;
 
-   DoMethod(G->App,MUIM_Application_InputBuffered);
-   if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
- /* Is enough space left in buffer to read more characters? */
- while (--len > 0) {
+  DoMethod(G->App,MUIM_Application_InputBuffered);
+  if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
 
-  /* Yes, read one character from socket */
-  if (Recv(Socket, p, 1, 0) <= 0) {
+  /* Is enough space left in buffer to read more characters? */
+  while (--len > 0)
+  {
+    /* Yes, read one character from socket */
+    if(G->TR_UseTLS)
+    {
+      if(SSL_read(ssl, p, 1) <= 0)
+      {
+        len = -1;
+        break;
+      }
+    }
+    else
+    {
+      if (Recv(Socket, p, 1, 0) <= 0)
+      {
+        /* Error or end of input reached */
+        len = -1;
 
-   /* Error or end of input reached */
-   len = -1;
+        /* Leave loop */
+        break;
+      }
+    }
 
-   /* Leave loop */
-   break;
+    /* End of line reached? */
+    if (*p == '\n')
+    {
+      /* Yes, strip CR if line end was marked by CRLF */
+      if ((p != buf) && (*(p - 1) == '\r')) p--;
+
+      /* Leave loop */
+      break;
+
+    }
+    else
+    {
+      /* No, normal character */
+      p++;
+    }
   }
 
-  /* End of line reached? */
-  if (*p == '\n') {
+  /* Add string terminator */
+  *p = '\0';
 
-   /* Yes, strip CR if line end was marked by CRLF */
-   if ((p != buf) && (*(p - 1) == '\r')) p--;
+  if (G->TR_Debug) printf("SERVER: %s\n", buf);
 
-   /* Leave loop */
-   break;
-
-  } else
-   /* No, normal character */
-   p++;
- }
-
- /* Add string terminator */
- *p = '\0';
-
-   if (G->TR_Debug) printf("SERVER: %s\n", buf);
- return (BOOL)(len >= 0);
+  return (len >= 0) ? strtol(buf, &p, 10) : 0;
 }
+
 #define SMTP_SERVICE_NOT_AVAILABLE 421
 #define SMTP_ACTION_OK             250
-/* Read answer from server */
-static ULONG GetReturnCode(void)
-{
- ULONG rc;
- char *p;
-   char buffer[SIZE_LINE];
-
- /* Read multiple lines from server */
- do {
-
-  /* Read line from server */
-  if (ReadLine(G->TR_Socket, buffer, SIZE_LINE)) {
-
-   /* Convert number */
-   rc = strtol(buffer, &p, 10);
-
-  } else {
-   /* Error! */
-   rc = SMTP_SERVICE_NOT_AVAILABLE;
-
-   /* Leave loop */
-   break;
-  }
-
-  /* Multiple line reply? */
- } while (*p != ' ');
-
- return(rc);
-}
-
 #define AUTH_CRAM_MD5   1
 #define AUTH_DIGEST_MD5 2
 #define AUTH_LOGIN      4
 #define AUTH_PLAIN      8
+
 static BOOL TR_ConnectESMTP(void)
 {
    int len,rc=0;
@@ -962,19 +1240,25 @@ static BOOL TR_ConnectESMTP(void)
    UBYTE ESMTPAuth=0;
    int SMTPSocket=G->TR_Socket;
 
-   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
-   if (!TR_SendSMTPCmd(NULL, NULL)) return FALSE;
+   if(!G->TR_UseTLS)
+   {
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
+      if (!TR_SendSMTPCmd(NULL, NULL)) return FALSE;
+   }
+
    set(G->TR->GUI.TX_STATUS,MUIA_Text_Contents, GetStr(MSG_TR_SendHello));
 
    if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
    sprintf(buffer, "EHLO %s\r\n", C->SMTP_Domain);
    if (!TR_SendDat(buffer)) return FALSE;
    if(!(ReadLine(SMTPSocket, buffer, SIZE_LINE))) return FALSE;
+
    if(SMTP_ACTION_OK!=atoi(buffer))
    {
       ER_NewError(GetStr(MSG_ER_BadResponse), "EHLO", buffer);
       return FALSE;
    }
+
    while (buffer[3] == '-')
    {
       if(!(ReadLine(SMTPSocket, buffer, SIZE_LINE))) return FALSE;
@@ -993,143 +1277,146 @@ static BOOL TR_ConnectESMTP(void)
       return FALSE;
    }
 
+   set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_SENDAUTH));
+
    if(ESMTPAuth & AUTH_CRAM_MD5) /* js_umsrfc SMTP AUTH */
    {
       /* Send AUTH command */
       if(!(TR_SendDat("AUTH CRAM-MD5\r\n"))) return FALSE;
   
-      if (ReadLine(SMTPSocket, buffer, SIZE_LINE))
+      /* Get return code. */
+      if(ReadLine(SMTPSocket, buffer, SIZE_LINE) == 334)
       {
-         char *p;
+        unsigned char digest[16];
+        int i;
   
-         /* Get return code. */
-         if ((rc=strtol(buffer, &p, 10)) == 334 )
-         {
-            unsigned char digest[16];
-            int i;
+        strncpy(challenge, &buffer[4], 511);
+        challenge[511]=0;
+        decode64(challenge, challenge, challenge+strlen(challenge));
   
-            strncpy(challenge,p+1,511); challenge[511]=0;
-            decode64(challenge,challenge,challenge+strlen(challenge));
-  
-            hmac_md5(challenge,strlen(challenge),C->SMTP_AUTH_Pass,strlen(C->SMTP_AUTH_Pass),digest);
+        hmac_md5(challenge, strlen(challenge), C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass), digest);
 
-            len=sprintf(challenge,"%s ", C->SMTP_AUTH_User);
-            for(i = 0; i < 16; ++i)
-              len += sprintf(challenge+len, "%02x", digest[i]);
-            challenge[len] = 0;
-            challenge[len+1] = 0;
-            challenge[len+2] = 0;
-            encode64(challenge,buffer,len);
-            strcat(buffer,"\r\n");
-  
-            /* Send AUTH response */
-            if(!(TR_SendDat(buffer))) return FALSE;
+        len=sprintf(challenge,"%s ", C->SMTP_AUTH_User);
 
-            if (ReadLine(SMTPSocket, buffer, SIZE_LINE))
-            {
-               /* Get return code. */
-               if ((rc=strtol(buffer, &p, 10)) != 235 )
-               {
-                  ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH CRAM-MD5", buffer);
-                  rc = SMTP_SERVICE_NOT_AVAILABLE;
-               } else rc = SMTP_ACTION_OK;
-            } else rc = SMTP_SERVICE_NOT_AVAILABLE;
-         } else {
-            ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH CRAM-MD5", buffer);
-            rc = SMTP_SERVICE_NOT_AVAILABLE;
-         }
-      } else rc = SMTP_SERVICE_NOT_AVAILABLE;
-   } else if(ESMTPAuth & AUTH_DIGEST_MD5)
+        for(i = 0; i < 16; ++i)
+        {
+          len += sprintf(challenge+len, "%02x", digest[i]);
+        }
+        challenge[len] = 0;
+        challenge[len+1] = 0;
+        challenge[len+2] = 0;
+        encode64(challenge,buffer,len);
+        strcat(buffer,"\r\n");
+  
+        /* Send AUTH response */
+        if(!(TR_SendDat(buffer))) return FALSE;
+
+        /* Get return code. */
+        if(ReadLine(SMTPSocket, buffer, SIZE_LINE) != 235 )
+        {
+          ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH CRAM-MD5", buffer);
+          rc = SMTP_SERVICE_NOT_AVAILABLE;
+        }
+        else rc = SMTP_ACTION_OK;
+      }
+      else
+      {
+        ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH CRAM-MD5", buffer);
+        rc = SMTP_SERVICE_NOT_AVAILABLE;
+      }
+   }
+   else if(ESMTPAuth & AUTH_DIGEST_MD5)
    {
       /* Send AUTH command */
       if(!(TR_SendDat("AUTH DIGEST-MD5\r\n"))) return FALSE;
   
-      if (ReadLine(SMTPSocket, buffer, SIZE_LINE))
+      /* Get return code. */
+      if(ReadLine(SMTPSocket, buffer, SIZE_LINE) == 334)
       {
-         char *p;
+        ULONG digest[4];
+        struct MD5Context context;
   
-         /* Get return code. */
-         if ((rc=strtol(buffer, &p, 10)) == 334 )
-         {
-            ULONG digest[4];
-            struct MD5Context context;
+        strncpy(challenge, &buffer[4], 511);
+        challenge[511]=0;
+        decode64(challenge, challenge, challenge+strlen(challenge));
   
-            strncpy(challenge,p+1,511); challenge[511]=0;
-            decode64(challenge,challenge,challenge+strlen(challenge));
-  
-            strcat(challenge,C->SMTP_AUTH_Pass);
-            MD5Init(&context);
-            MD5Update(&context, challenge, strlen(challenge));
-            MD5Final((UBYTE *)digest, &context);
+        strcat(challenge, C->SMTP_AUTH_Pass);
+        MD5Init(&context);
+        MD5Update(&context, challenge, strlen(challenge));
+        MD5Final((UBYTE *)digest, &context);
 
-            len=sprintf(challenge,"%s %08lx%08lx%08lx%08lx%c%c",C->SMTP_AUTH_User,
-                        digest[0],digest[1],digest[2],digest[3],0,0)-2;
-            encode64(challenge,buffer,len);
-            strcat(buffer,"\r\n");
+        len=sprintf(challenge,"%s %08lx%08lx%08lx%08lx%c%c",C->SMTP_AUTH_User,
+                    digest[0],digest[1],digest[2],digest[3],0,0)-2;
+        encode64(challenge,buffer,len);
+        strcat(buffer,"\r\n");
   
-            /* Send AUTH response */
-            if(!(TR_SendDat(buffer))) return FALSE;
+        /* Send AUTH response */
+        if(!(TR_SendDat(buffer))) return FALSE;
   
-            if (ReadLine(SMTPSocket, buffer, SIZE_LINE))
-            {
-               /* Get return code. */
-               if ((rc=strtol(buffer, &p, 10)) != 235 )
-               {
-                  ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH DIGEST-MD5", buffer);
-                  rc = SMTP_SERVICE_NOT_AVAILABLE;
-               } else rc = SMTP_ACTION_OK;
-            } else rc = SMTP_SERVICE_NOT_AVAILABLE;
-         } else {
-            ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH DIGEST-MD5", buffer);
-            rc = SMTP_SERVICE_NOT_AVAILABLE;
-         }
-      } else rc = SMTP_SERVICE_NOT_AVAILABLE;
-   } else if(ESMTPAuth & AUTH_LOGIN)
+        /* Get return code. */
+        if(ReadLine(SMTPSocket, buffer, SIZE_LINE) != 235)
+        {
+          ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH DIGEST-MD5", buffer);
+          rc = SMTP_SERVICE_NOT_AVAILABLE;
+        }
+        else rc = SMTP_ACTION_OK;
+      }
+      else
+      {
+        ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH DIGEST-MD5", buffer);
+        rc = SMTP_SERVICE_NOT_AVAILABLE;
+      }
+   }
+   else if(ESMTPAuth & AUTH_LOGIN)
    {
       /* Send AUTH command */
       if(!(TR_SendDat("AUTH LOGIN\r\n"))) return FALSE;
+
       /* Get return code */
-      rc = GetReturnCode();
-  
-      if (rc == 334)
+      if(ReadLine(SMTPSocket, buffer, SIZE_LINE) == 334)
       {
          len=sprintf(challenge,"%s%c%c",C->SMTP_AUTH_User,0,0)-2;
          encode64(challenge,buffer,len);
          strcat(buffer,"\r\n");
          /* Send AUTH response Username: */
          if(!(TR_SendDat(buffer))) return FALSE;
+
          /* Get return code */
-         rc = GetReturnCode();
-         if (rc == 334)
+         if(ReadLine(SMTPSocket, buffer, SIZE_LINE) == 334)
          {
             len=sprintf(challenge,"%s%c%c",C->SMTP_AUTH_Pass,0,0)-2;
             encode64(challenge,buffer,len);
             strcat(buffer,"\r\n");
             /* Send AUTH response Password: */
             if(!(TR_SendDat(buffer))) return FALSE;
+
             /* Get return code */
-            rc = GetReturnCode();
-            if (rc != 235 )
+            if(ReadLine(SMTPSocket, buffer, SIZE_LINE) != 235 )
             {
                ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
                rc = SMTP_SERVICE_NOT_AVAILABLE;
-            } else rc = SMTP_ACTION_OK;
-         } else {
+            }
+            else rc = SMTP_ACTION_OK;
+         }
+         else
+         {
             ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
             rc = SMTP_SERVICE_NOT_AVAILABLE;
          }
-      } else {
+      }
+      else
+      {
          ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
          rc = SMTP_SERVICE_NOT_AVAILABLE;
       }
-   } else if(ESMTPAuth & AUTH_PLAIN)
+   }
+   else if(ESMTPAuth & AUTH_PLAIN)
    {
       /* Send AUTH command */
       if(!(TR_SendDat("AUTH PLAIN\r\n"))) return FALSE;
+
       /* Get return code */
-      rc = GetReturnCode();
-  
-      if (rc == 334)
+      if(ReadLine(SMTPSocket, buffer, SIZE_LINE) == 334)
       {
          len=0;
          challenge[len++]=0;
@@ -1140,22 +1427,23 @@ static BOOL TR_ConnectESMTP(void)
          strcat(buffer,"\r\n");
          /* Send AUTH response */
          if(!(TR_SendDat(buffer))) return FALSE;
+
          /* Get return code */
-         rc = GetReturnCode();
-  
-         if (rc != 235 )
+         if(ReadLine(SMTPSocket, buffer, SIZE_LINE) != 235)
          {
             ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
             rc = SMTP_SERVICE_NOT_AVAILABLE;
-         } else rc = SMTP_ACTION_OK;
-      } else {
+         }
+         else rc = SMTP_ACTION_OK;
+      }
+      else
+      {
          ER_NewError(GetStr(MSG_ER_BadResponse), "AUTH LOGIN", buffer);
          rc = SMTP_SERVICE_NOT_AVAILABLE;
       }
    }
 
-   if(SMTP_ACTION_OK==rc) return TRUE;
-   return FALSE;
+   return (BOOL)(rc == SMTP_ACTION_OK);
 }
 ///
 /// TR_DisconnectSMTP
@@ -1281,7 +1569,7 @@ void TR_Cleanup(void)
 {
    struct Mail *work, *next;
 
-   if (G->TR->GUI.LV_MAILS) DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear, TAG_DONE);
+   if (G->TR->GUI.LV_MAILS) DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
 
    for (work = G->TR->List; work; work = next)
    {
@@ -1463,7 +1751,8 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 BOOL TR_ProcessSEND(struct Mail **mlist)
 {
    struct TransStat ts;
-   int c, i, port = 25, err;
+   int c, i, err;
+   int port = C->SMTP_Port;
    struct Mail *mail, *new;
    struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
    struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
@@ -1493,12 +1782,40 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       TR_TransStat_Init(&ts);
       TR_TransStat_Start(&ts);
       strcpy(host, C->SMTP_Server);
+
+      // If the hostname has a explicit :xxxxx port statement at the end we
+      // take this one, even if its not needed anymore.
       if (p = strchr(host, ':')) { *p = 0; port = atoi(++p); }
+
       TR_SetWinTitle(FALSE, host);
 
       if (!(err = TR_Connect(host, port)))
       {
          BOOL connected;
+
+         // Now we have to check whether the user has selected SSL/TLS
+         // and then we have to initiate the STARTTLS command followed by the TLS negotiation
+         if(G->TR_UseableTLS && C->Use_SMTP_TLS)
+         {
+           set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
+           if(!TR_SendSMTPCmd(NULL, NULL)) return FALSE; // This is needed to skip the welcome msg
+
+           set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_INITTLS));
+
+           // Now we initiate the STARTTLS command (RFC 2487)
+           if(!TR_SendSMTPCmd("STARTTLS", NULL)) return FALSE;
+
+           if(TR_InitTLS() && TR_StartTLS())
+           {
+              G->TR_UseTLS = TRUE;
+           }
+           else
+           {
+              ER_NewError(GetStr(MSG_ER_INITTLS), host, NULL);
+              return FALSE;
+           }
+         }
+         else G->TR_UseTLS = FALSE;
 
          if (C->Use_SMTP_AUTH && C->SMTP_AUTH_User[0]) connected=TR_ConnectESMTP();
          else connected=TR_ConnectSMTP();
@@ -1525,9 +1842,9 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                           if (TR_ApplySentFilters(mail->Reference)) MA_DeleteSingle(mail->Reference, FALSE);
                }
             }
-            TR_DisconnectSMTP();
             AppendLogNormal(40, GetStr(MSG_LOG_Sending), (void *)c, host, "", "");
          }
+         TR_DisconnectSMTP();
       }
       else switch (err)
       {

@@ -53,8 +53,10 @@ struct CO_GUIData
    APTR CY_TZONE;
    APTR CH_DLSAVING;
    APTR ST_SMTPHOST;
+   APTR ST_SMTPPORT;
    APTR ST_DOMAIN;
    APTR CH_SMTP8BIT;
+   APTR CH_SMTPTLS;
    APTR CH_USESMTPAUTH;
    APTR ST_SMTPAUTHUSER;
    APTR ST_SMTPAUTHPASS;
@@ -63,10 +65,13 @@ struct CO_GUIData
    APTR BT_PADD;
    APTR BT_PDEL;
    APTR ST_POPHOST;
+   APTR ST_POPPORT;
    APTR ST_POPUSERID;
    APTR ST_PASSWD;
    APTR CH_DELETE;
    APTR CH_USEAPOP;
+   APTR CH_POP3SSL;
+   APTR CH_USESTLS;
    APTR CH_POPENABLED;
    APTR CH_AVOIDDUP;
    APTR CY_MSGSELECT;
@@ -241,13 +246,19 @@ struct CO_ClassData  /* configuration window */
    BOOL UpdateAll;
 };
 
+#define P3SSL_OFF    0
+#define P3SSL_SSL    1
+#define P3SSL_STLS   2
+
 struct POP3
 {
    char  Account[SIZE_USERID+SIZE_HOST];
    char  Server[SIZE_HOST];
+   int   Port;
    char  User[SIZE_USERID];
    char  Password[SIZE_USERID];
    BOOL  Enabled;
+   int   SSLMode;
    BOOL  UseAPOP;
    BOOL  DeleteOnServer;
 };
@@ -346,9 +357,11 @@ struct Config
    int   SizeFormat;
    int   InfoBar;
    int   EmailCache;
+   int   SMTP_Port;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
+   BOOL  Use_SMTP_TLS;
    BOOL  Use_SMTP_AUTH;
    BOOL  AvoidDuplicates;
    BOOL  UpdateStatus;

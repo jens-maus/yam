@@ -4875,3 +4875,53 @@ Here you can select the amount of a separate cache\n\
 for emails which will be used in recipient strings.\n\
 Select 0 mails to disable this feature.
 ;
+MSG_CO_USESMTPTLS (//)
+Use SMTP SSL/TLS
+;
+MSG_HELP_CO_CH_USESMTPTLS (//)
+A SSL/TLS secure connection will be established between\n\
+the SMTP server and YAM to send emails.\n\
+If this checkbox is ghosted AmiSSL support is not available.
+;
+MSG_CO_POP3SSL (//)
+Use POP3 SSL/TLS
+;
+MSG_HELP_CO_CH_POP3SSL (//)
+If checked, YAM is going to connect via SSL/TLS to the POP3\n\
+server on the POP3-SSL 995 port and transfers mail from there.\n\
+If this checkbox is ghosted AmiSSL support is not available.
+;
+MSG_CO_USESTLS (//)
+with STLS
+;
+MSG_HELP_CO_CH_USESTLS (//)
+If checked, the POP3 server supports STLS and is running on the\n\
+standard 110 POP3 port like a non SSL server.
+;
+MSG_CO_ST_SMTPPORT (//)
+Port
+;
+MSG_HELP_CO_ST_SMTPPORT (//)
+Here you can explictly specify the port the SMTP\n\
+server is running at. (default: 25)
+;
+MSG_CO_ST_POPPORT (//)
+Port
+;
+MSG_HELP_CO_ST_POPPORT (//)
+Here you can explictly specify the port the POP3\n\
+server is running at. (default: 110)
+;
+MSG_TR_INITTLS (//)
+Initializing TLS/SSL session...
+;
+MSG_ER_INITAMISSL (//)
+Couldn`t init amissl.library. Disabled TLS/SSL support completly.\
+Please check your AmiSSL installation and restart YAM.
+;
+MSG_ER_INITTLS (//)
+Couldn`t initialize TLS/SSL session for %s
+;
+MSG_TR_SENDAUTH (//)
+Sending SMTP AUTH request...
+;

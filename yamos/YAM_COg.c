@@ -451,10 +451,13 @@ APTR CO_Page1(struct CO_ClassData *data)
                   Child, ColGroup(2),
                      Child, Label2(GetStr(MSG_CO_Server)),
                      Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST,GetStr(MSG_CO_Server)),
+                     Child, Label2(GetStr(MSG_CO_ST_SMTPPORT)),
+                     Child, data->GUI.ST_SMTPPORT = MakeInteger(5, GetStr(MSG_CO_ST_SMTPPORT)),
                      Child, Label2(GetStr(MSG_CO_Domain)),
                      Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,GetStr(MSG_CO_Domain)),
                   End,
                   Child, MakeCheckGroup((Object **)&data->GUI.CH_SMTP8BIT, GetStr(MSG_CO_Allow8bit)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_SMTPTLS, GetStr(MSG_CO_USESMTPTLS)),
                End,
                Child, VGroup,
                   Child, authgrp=ColGroup(2),
@@ -464,6 +467,7 @@ APTR CO_Page1(struct CO_ClassData *data)
                      Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(GetStr(MSG_CO_SMTPPass)),
                   End,
                   Child, MakeCheckGroup((Object **)&data->GUI.CH_USESMTPAUTH, GetStr(MSG_CO_UseSMTPAUTH)),
+                  Child, VSpace(0),
                End,
             End,
          End,
@@ -480,12 +484,18 @@ APTR CO_Page1(struct CO_ClassData *data)
                   Child, ColGroup(2),
                      Child, Label2(GetStr(MSG_CO_POPServer)),
                      Child, data->GUI.ST_POPHOST = MakeString(SIZE_HOST,GetStr(MSG_CO_POPServer)),
+                     Child, Label2(GetStr(MSG_CO_ST_POPPORT)),
+                     Child, data->GUI.ST_POPPORT = MakeInteger(5, GetStr(MSG_CO_ST_POPPORT)),
                      Child, Label2(GetStr(MSG_CO_POPUserID)),
                      Child, data->GUI.ST_POPUSERID = MakeString(SIZE_USERID,GetStr(MSG_CO_POPUserID)),
                      Child, Label2(GetStr(MSG_CO_Password)),
                      Child, data->GUI.ST_PASSWD = MakePassString(GetStr(MSG_CO_Password)),
                   End,
                   Child, MakeCheckGroup((Object **)&data->GUI.CH_POPENABLED, GetStr(MSG_CO_POPActive)),
+                  Child, HGroup,
+                    Child, MakeCheckGroup((Object **)&data->GUI.CH_POP3SSL, GetStr(MSG_CO_POP3SSL)),
+                    Child, MakeCheckGroup((Object **)&data->GUI.CH_USESTLS, GetStr(MSG_CO_USESTLS)),
+                  End,
                   Child, MakeCheckGroup((Object **)&data->GUI.CH_USEAPOP, GetStr(MSG_CO_UseAPOP)),
                   Child, MakeCheckGroup((Object **)&data->GUI.CH_DELETE, GetStr(MSG_CO_DeleteServerMail)),
                End,
@@ -499,6 +509,7 @@ APTR CO_Page1(struct CO_ClassData *data)
       End)
    {
       SetHelp(data->GUI.ST_SMTPHOST    ,MSG_HELP_CO_ST_SMTPHOST     );
+      SetHelp(data->GUI.ST_SMTPPORT    ,MSG_HELP_CO_ST_SMTPPORT     );
       SetHelp(data->GUI.ST_DOMAIN      ,MSG_HELP_CO_ST_DOMAIN       );
       SetHelp(data->GUI.CH_SMTP8BIT    ,MSG_HELP_CO_CH_SMTP8BIT     );
       SetHelp(data->GUI.CH_USESMTPAUTH ,MSG_HELP_CO_CH_USESMTPAUTH  );
@@ -508,23 +519,31 @@ APTR CO_Page1(struct CO_ClassData *data)
       SetHelp(data->GUI.BT_PADD        ,MSG_HELP_CO_BT_PADD         );
       SetHelp(data->GUI.BT_PDEL        ,MSG_HELP_CO_BT_PDEL         );
       SetHelp(data->GUI.ST_POPHOST     ,MSG_HELP_CO_ST_POPHOST      );
+      SetHelp(data->GUI.ST_POPPORT     ,MSG_HELP_CO_ST_POPPORT      );
       SetHelp(data->GUI.ST_POPUSERID   ,MSG_HELP_CO_ST_POPUSERID    );
       SetHelp(data->GUI.ST_PASSWD      ,MSG_HELP_CO_ST_PASSWD       );
       SetHelp(data->GUI.CH_DELETE      ,MSG_HELP_CO_CH_DELETE       );
       SetHelp(data->GUI.CH_USEAPOP     ,MSG_HELP_CO_CH_USEAPOP      );
       SetHelp(data->GUI.CH_POPENABLED  ,MSG_HELP_CO_CH_POPENABLED   );
-      DoMethod(grp,MUIM_MultiSet,MUIA_Disabled,TRUE,data->GUI.GR_POP3,
-               data->GUI.BT_PDEL, authgrp, NULL);
+      SetHelp(data->GUI.CH_SMTPTLS     ,MSG_HELP_CO_CH_USESMTPTLS   );
+      SetHelp(data->GUI.CH_POP3SSL     ,MSG_HELP_CO_CH_POP3SSL      );
+      SetHelp(data->GUI.CH_USESTLS     ,MSG_HELP_CO_CH_USESTLS      );
+
+      DoMethod(grp, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.GR_POP3, data->GUI.BT_PDEL, authgrp, NULL);
       DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
       DoMethod(data->GUI.ST_POPHOST    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+      DoMethod(data->GUI.ST_POPPORT    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.ST_POPUSERID  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.ST_PASSWD     ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.CH_POPENABLED ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.CH_USEAPOP    ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+      DoMethod(data->GUI.CH_POP3SSL    ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
+      DoMethod(data->GUI.CH_USESTLS    ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.CH_DELETE     ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.BT_PADD       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_AddPOP3Hook,0);
       DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_DelPOP3Hook,0);
       DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,authgrp,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_POP3SSL    ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_USESTLS,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
    }
    return grp;
 }

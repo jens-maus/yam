@@ -331,6 +331,8 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
          strcpy(pop3->User, buffer);
          strcpy(pop3->Server, co->SMTP_Server);
       }
+
+      pop3->Port = 110;
       pop3->Enabled = TRUE;
       pop3->DeleteOnServer = TRUE;
    }
@@ -379,23 +381,29 @@ MakeHook(CO_DelPOP3Hook,CO_DelPOP3);
 //  Fills form with data from selected list entry
 HOOKPROTONHNONP(CO_GetP3Entry, void)
 {
-   int e;
    struct POP3 *pop3 = NULL;
    struct CO_GUIData *gui = &G->CO->GUI;
 
-   DoMethod(gui->LV_POP3, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &pop3, TAG_DONE);
+   DoMethod(gui->LV_POP3, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &pop3);
    if (pop3)
    {
       nnset(gui->ST_POPHOST,   MUIA_String_Contents, pop3->Server);
+      nnset(gui->ST_POPPORT,   MUIA_String_Integer,  pop3->Port);
       nnset(gui->ST_POPUSERID, MUIA_String_Contents, pop3->User);
       nnset(gui->ST_PASSWD,    MUIA_String_Contents, pop3->Password);
       nnset(gui->CH_POPENABLED,MUIA_Selected, pop3->Enabled);
+      nnset(gui->CH_POP3SSL,   MUIA_Selected, (pop3->SSLMode != P3SSL_OFF));
+      nnset(gui->CH_USESTLS,   MUIA_Selected, (pop3->SSLMode == P3SSL_STLS));
       nnset(gui->CH_USEAPOP,   MUIA_Selected, pop3->UseAPOP);
       nnset(gui->CH_DELETE,    MUIA_Selected, pop3->DeleteOnServer);
    }
-   get(gui->LV_POP3, MUIA_List_Entries, &e);
-   set(gui->GR_POP3, MUIA_Disabled, !pop3);
-   set(gui->BT_PDEL, MUIA_Disabled, !pop3 || e < 2);
+
+   if(xget(gui->GR_POP3, MUIA_Disabled) != !pop3) set(gui->GR_POP3, MUIA_Disabled, !pop3); // This is needed due to a bug in MUI
+   set(gui->BT_PDEL, MUIA_Disabled, !pop3 || xget(gui->LV_POP3, MUIA_List_Entries) < 2);
+
+   // we have to enabled/disable the SSL support accordingly
+   if(pop3) set(gui->CH_USESTLS, MUIA_Disabled, !G->TR_UseableTLS || (pop3->SSLMode == P3SSL_OFF));
+   set(gui->CH_POP3SSL, MUIA_Disabled, !G->TR_UseableTLS);
 }
 MakeHook(CO_GetP3EntryHook,CO_GetP3Entry);
 
@@ -407,8 +415,9 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
    struct POP3 *pop3 = NULL;
    struct CO_GUIData *gui = &G->CO->GUI;
    int p;
+   int new_ssl_mode;
 
-   get(gui->LV_POP3, MUIA_List_Active, &p);
+   p = xget(gui->LV_POP3, MUIA_List_Active);
    if (p != MUIV_List_Active_Off)
    {
       DoMethod(gui->LV_POP3, MUIM_List_GetEntry, p, &pop3);
@@ -419,6 +428,30 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
       pop3->UseAPOP        = GetMUICheck(gui->CH_USEAPOP);
       pop3->DeleteOnServer = GetMUICheck(gui->CH_DELETE);
       sprintf(pop3->Account, "%s@%s", pop3->User, pop3->Server);
+
+      if(GetMUICheck(gui->CH_POP3SSL))
+      {
+         new_ssl_mode = P3SSL_SSL;
+         if(GetMUICheck(gui->CH_USESTLS)) new_ssl_mode = P3SSL_STLS;
+      }
+      else new_ssl_mode = P3SSL_OFF;
+
+      if(pop3->SSLMode != new_ssl_mode)
+      {
+        if(new_ssl_mode == P3SSL_SSL)
+        {
+          set(gui->ST_POPPORT, MUIA_String_Integer, 995);
+        }
+        else
+        {
+          set(gui->ST_POPPORT, MUIA_String_Integer, 110);
+        }
+
+        pop3->SSLMode = new_ssl_mode;
+      }
+
+      pop3->Port = GetMUIInteger(gui->ST_POPPORT);
+
       DoMethod(gui->LV_POP3, MUIM_List_Redraw, p);
    }
 }
@@ -433,6 +466,7 @@ HOOKPROTONHNONP(CO_GetDefaultPOPFunc, void)
 
    if (!pop3) return;
    GetMUIString(pop3->Server, G->CO->GUI.ST_POPHOST0);
+   pop3->Port = 110;
    GetMUIString(pop3->Password, G->CO->GUI.ST_PASSWD0);
    sprintf(pop3->Account, "%s@%s", pop3->User, pop3->Server);
 }
@@ -620,7 +654,9 @@ void CO_SetDefaults(struct Config *co, int page)
    {
       for (i = 0; i < MAXP3; i++) { if (co->P3[i]) free(co->P3[i]); co->P3[i] = NULL; }
       *co->SMTP_Server = *co->SMTP_Domain = 0;
+      co->SMTP_Port = 25;
       co->Allow8bit = FALSE;
+      co->Use_SMTP_TLS = FALSE;
       co->Use_SMTP_AUTH = FALSE;
       *co->SMTP_AUTH_User = *co->SMTP_AUTH_Pass = 0;
       co->P3[0] = CO_NewPOP3(co, TRUE); co->P3[0]->DeleteOnServer = TRUE;
@@ -799,10 +835,13 @@ void CO_Validate(struct Config *co, BOOL update)
    char *p, buffer[SIZE_USERID];
    int i;
    if (!*co->SMTP_Server) strcpy(co->SMTP_Server, co->P3[0]->Server);
+   if (co->SMTP_Port == 0) co->SMTP_Port = 25;
    if (!*co->SMTP_Domain) { p = strchr(co->EmailAddress, '@'); strcpy(co->SMTP_Domain, p ? p+1 : ""); }
    for (i = 0; i < MAXP3; i++) if (co->P3[i])
    {
       if (!*co->P3[i]->Server) strcpy(co->P3[i]->Server, co->SMTP_Server);
+      if (co->P3[i]->Port == 0) co->P3[i]->Port = 110;
+
       if (!*co->P3[i]->User)
       {
          stccpy(buffer, co->EmailAddress, SIZE_USERID);
@@ -829,6 +868,7 @@ void CO_Validate(struct Config *co, BOOL update)
             break;
          case 1:
             setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
+            set(G->CO->GUI.ST_SMTPPORT, MUIA_String_Integer, co->SMTP_Port);
             setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
             setstring(G->CO->GUI.ST_SMTPAUTHUSER, co->SMTP_AUTH_User);
             setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
