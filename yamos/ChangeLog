@@ -5,7 +5,23 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
-2001-11-22  Gunther Nikl <gni@gecko.de>
+2002-11-22  Gunther Nikl <gni@gecko.de>
+
+    * YAM_MAf.c/FO_SetCurrentFolder: fix wrong NULL usage
+    * classes/Recipientstring.c: fix wrong NULL usage, drop superflous
+      strlen()
+    * classes/YAM.c: fix wrong NULL usage, changed casts in
+      EMailCacheNode handling
+    * includes/inline/amissl_protos.h: added
+    * includes/extra.h: add prototype for strdup (VBCC, STORM3)
+    * classes/ClassesExtra.h: add extra.h
+    * extrasrc/access.c, extrasrc/strdup.c: add
+    * all_vbcc.c, all_storm.c: use it
+    * all_gcc.c: disable runtime CTRL-C checking
+    * Makefile: fixes and cleanup
+    * VMakefile: updated
+
+2002-11-22  Gunther Nikl <gni@gecko.de>
 
     * includes/proto/amissl.h,includes/proto/genesis.h,includes/proto/miami.h,
       includes/proto/muimaster.h,includes/proto/openurl.h,includes/proto/pm.h,
@@ -14,7 +30,7 @@ $Source$
     * includes/clib/socket_protos.h: add define for htons if its missing
     * YAM.c/CheckMCC: reduced stack usage and simplified it
 
-2001-11-21  Gunther Nikl <gni@gecko.de>
+2002-11-21  Gunther Nikl <gni@gecko.de>
 
     * includes/clib/socket_protos.h: usage of sys/types.h removed
     * YAM_UT.c/CRC32: replaced dynamic CRCTable with a static const one
@@ -22,19 +38,19 @@ $Source$
     * YAM.c/Terminate: removed FreeCRCTable call
     * smakefile: corrected CFLAGS and LNKFLAGS
 
-2001-11-13  Gunther Nikl <gni@gecko.de>
+2002-11-13  Gunther Nikl <gni@gecko.de>
 
     * YAM.c: wrap SetupDebug() into DB()
     * classes/YAM.c, classes/Recipientstring.c: use DB wrapper
     * YAM_FO.c, YAM_RE.c: no stray ";" dueto DB statements
     * Debug.h: remove empty D/SetupDebug definitions
 
-2001-11-13  Gunther Nikl <gni@gecko.de>
+2002-11-13  Gunther Nikl <gni@gecko.de>
 
     * YAM.c: don't call Terminate() inside the exitfunc on a premature exit
     * YAM_MAf.c: use alignment headers
 
-2001-11-08  Gunther Nikl <gni@gecko.de>
+2002-11-08  Gunther Nikl <gni@gecko.de>
 
     * YAM.c: removed "struct Device *TimerBase"
     * YAM_global.c: added it here
