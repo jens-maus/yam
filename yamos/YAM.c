@@ -97,9 +97,6 @@ struct Args {
    char **attach;
 };
 
-long PNum = 0;
-unsigned char *PPtr[16];
-
 /**************************************************************************/
 
 // Timer Class
