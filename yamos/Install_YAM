@@ -1,0 +1,735 @@
+;
+; $VER: Installer script 1.3 for YAM 2.2 (28.10.00) © Marcel Beck
+; language support added by Sönke Tesch/ATO
+
+; /// Setting up
+(set #def_lang_English              0)
+(set #def_lang_Bosanski             1)
+(set #def_lang_Czech                2)
+(set #def_lang_Dansk                4)
+(set #def_lang_Deutsch              8)
+(set #def_lang_Espanol             16)
+(set #def_lang_Francais            32)
+(set #def_lang_Italiano            64)
+(set #def_lang_Magyar             128)
+(set #def_lang_Polski             256)
+(set #def_lang_Portugues          512)
+(set #def_lang_Portugues_Brasil  1024)
+(set #def_lang_Russian           2048)
+(set #def_lang_Slovensko         4096)
+(set #def_lang_Suomi             8192)
+(set #def_lang_Svenska          16384)
+
+(set #def_doc_English            0)
+(set #def_doc_Deutsch            1)
+(set #def_doc_Espanol            2)
+(set #def_doc_Francais           3)
+(set #def_doc_Italiano           4)
+(set #def_doc_Slovensko          5)
+; ///
+;----------------------------------------------------------------------------
+;/// ***** English
+(set #def_cat_lang #def_lang_English)
+(set #def_doc_lang #def_doc_English)
+(set #wrongOS  "YAM needs at least OS3.0 to run\n")
+(set #wrongMUI "YAM needs at least MUI3.8 to run\n")
+(set #wrongCPU "YAM needs at least a 68020 CPU to run\n")
+(set #proc_type "Select which version of YAM you would like to install:")
+(set #proc_help (cat "Here you can select which version of YAM to install "
+                     "depending on type of processor you own."))
+(set #proc_020 "Optimized for 68020/030")
+(set #proc_040 "Optimized for 68040")
+(set #proc_060 "Optimized for 68060")
+(set #YAM_dir  (cat "Choose YAM home directory\n"
+                    "(NO extra drawer will be created!)"))
+(set #lang_catalog (cat "Which catalog file do you want to install?\n"
+                        "(English language is built-in)"))
+(set #lang_manual "Select language for on-line AmigaGuide help")
+(set #icons_prompt "Which graphics do you want to install?\n")
+(set #icons_none "None")
+(set #assign_prompt (cat "YAM: assign should be added to your S:USER-STARTUP\n"
+                         "Do you mind?"))
+(set #assign_help (cat "When the Installer program asks if you want to place this "
+                       "assignment into your S:user-startup file, you should select "
+                       "the \"Proceed\" button; otherwise, the next time you boot up your "
+                       "machine, the program won't be able to find the necessary files "
+                       "and drawers it needs to run.\n"))
+(set #done_1   (cat "\nYAM has been succesfuly installed.\n\n"
+                    "Click the \"YAM\" icon in the\n"))
+(set #done_2        "\ndirectory to taste it.\n\nHave fun...")
+; ///
+; /// ***** Bosanski
+(IF (= @language "bosanski")
+(
+(set #def_cat_lang #def_lang_Bosanski)
+(set #wrongOS  "YAM zahtjeva minimalno OS3.0 da bi radio\n")
+(set #wrongMUI "YAM zahtjeva minimalno MUI3.8 da bi radio\n")
+(set #wrongCPU "YAM zahtjeva minimalno 68020 CPU da bi radio\n")
+(set #proc_type "Izaberi koju verziju YAM-a zelis instalirati:")
+(set #proc_help (cat "Ovdje mozes izabrati koju verziju YAM-a zelis instalirati "
+                     "u zavisnosti od procesora koji imas."))
+(set #proc_020 "Optimizirani za 68020/030")
+(set #proc_040 "Optimizirani za 68040")
+(set #proc_060 "Optimizirani za 68060")
+(set #YAM_dir  (cat "Izaberi YAM-ovu glavnu ladicu\n"
+                    "(nova ladica NECE biti stvorena!)"))
+(set #lang_catalog (cat "Koji katalog zelis instalirati?\n"
+                        "(Engleski jezik je ugradjen)"))
+(set #lang_manual "Izaberi verziju AmigaGuide pomoci")
+(set #icons_prompt "Koju grafiku zelis instalirati?\n")
+(set #assign_prompt (cat "Assign YAM: bi trebao biti dodan u S:USER-STARTUP\n"
+                         "Mogu li nastaviti?"))
+(set #assign_help (cat "Kada te Installer pita zelis li ubaciti ovaj assign "
+                       "u S:user-startup trebao bi pritisnuti dugme \"Nastavi\"; "
+                       "U suprotnom, slijedeci put kada ucitas Workbench, program "
+                       "nece biti u stanju da pronadje potrebne fileove i ladice.\n"))
+(set #done_1   (cat "\nYAM je uspjesno instaliran.\n\n"
+                    "Klikni \"YAM\" ikonu u ladici\n"))
+(set #done_2        "\nda ga isprobas.\n\nZabavi se...")
+)
+)
+; ///
+; /// ***** Czech
+(IF (= @language "czech")
+(
+(set #def_cat_lang #def_lang_Czech)
+(set #wrongOS  "YAM vyÚaduje ke spuÓtÅnÉ alespoÎ OS3.0\n")
+(set #wrongMUI "YAM vyÚaduje ke spuÓtÅnÉ alespoÎ MUI3.8\n")
+(set #wrongCPU "YAM vyÚaduje ke spuÓtÅnÉ alespoÎ procesor 68020\n")
+(set #proc_type "Select which version of YAM you would like to install:")
+(set #proc_help (cat "Here you can select which version of YAM to install "
+                     "depending on type of processor you own."))
+(set #proc_020 "Optimized for 68020/030")
+(set #proc_040 "Optimized for 68040")
+(set #proc_060 "Optimized for 68060")
+(set #YAM_dir  (cat "Zvolte domovskÙ adresÁÒ pro YAM\n"
+                    "(AdresÁÒ NEBUDE vytvoÒen!)"))
+(set #lang_catalog (cat "KterÙ z lokalizaÃnÉch katalogÊ chcete nainstalovat?\n"
+                        "(angliÃtinu pouÚÉvÁ program internÅ)"))
+(set #lang_manual "Zvolte jazyk, ve kter×m chcete nainstalovat nÁpovÅdu v AmigaGuide")
+(set #icons_prompt "Kterou sadu grafiky pro liÓty s tlaÃÉtky chcete nainstalovat?\n")
+(set #assign_prompt (cat "Do S:USER-STARTUP by mÅlo bÙt pÒidÁno pÒiÒazenÉ YAM:\n"
+                         "NemÁte proti tomu nÁmitky?"))
+(set #assign_help (cat "I kdyÚ zde mÁte volbu, zda pÒidat nebo nepÒidat toto pÒiÒazenÉ "
+                       "do S:user-startup, mÅli byste vÚdy zmÁÃknout tlaÃÉtko \"PokraÃovat\". "
+                       "V opaÃn×m pÒÉpadÅ YAM po restartu poÃÉtaÃe nenalezne soubory "
+                       "a adresÁÒe potÒebn× ke sprÁvn× funkci.\n"))
+(set #done_1   (cat "\nProgram YAM byl ÕspÅÓnÅ nainstalovÁn.\n\n"
+                    "KliknÅte na ikonu \"YAM\" v pÒÉsluÓn×m\n"))
+(set #done_2        "\nadresÁÒi a vyzkouÓejte.\n\nUÚijte si to...")
+)
+)
+; ///
+; /// ***** Dansk
+(IF (= @language "dansk")
+(
+(set #def_cat_lang #def_lang_Dansk)
+(set #wrongOS  "YAM kræver OS3.0 eller nyere\n")
+(set #wrongMUI "YAM kræver MUI3.8 eller nyere\n")
+(set #wrongCPU "YAM fungerer kun på en 68020-CPU eller bedre\n")
+(set #proc_type "Vælg venligst hvilken version af YAM du ønsker at installere:")
+(set #proc_help (cat "Her kan du vælge hvilken version af YAM du "
+                     "ønsker at installere. Valget bør være baseret "
+                     "på hvilken processor du har."))
+(set #proc_020 "Optimeret til 68020/030")
+(set #proc_040 "Optimeret til 68040")
+(set #proc_060 "Optimeret til 68060")  
+(set #YAM_dir  (cat"Vælg hvilket katalog YAM skal installeres i\n"
+                   "(der bliver IKKE oprettet noget underkatalog!)"))
+(set #lang_catalog (cat "Hvilke oversættelser vil du installere?\n"
+                        "(engelsk er indbygget)"))
+(set #lang_manual "Vælg sproget for den AmigaGuide-baserede online-hjælp")
+(set #icons_prompt "Hvilken slags grafik vil du installere?")
+(set #assign_prompt (cat "Der skal indsættes en \"Assign YAM:\" i S:USER-STARTUP.\n"
+                         "Er det i orden?"))
+(set #assign_help (cat "Når installationsprogrammet spørger om det må oprette denne "
+                       "tildeling i filen s:user-startup, bør du klikke på knappen "
+                       "\"Fortsætte\". Ellers kan YAM ikke finde de nødvendige filer "
+                       "og skuffer efter næste systemstart.\n"))
+(set #done_1   (cat "\nYAM blev installeret uden problemer.\n\n"
+                    "Klik på \"YAM\"-ikonet i skuffen\n"))
+(set #done_2        "\nfor at prøve det.\n\nGod fornøjelse!")
+)
+)
+; ///
+; /// ***** Deutsch
+(IF (= @language "deutsch")
+(
+(set #def_cat_lang #def_lang_Deutsch)
+(set #def_doc_lang #def_doc_Deutsch)
+(set #wrongOS  "YAM benötigt OS3.0 oder höher\n")
+(set #wrongMUI "YAM benötigt MUI3.8 oder höher\n")
+(set #wrongCPU "YAM läuft nur ab einer 68020 CPU\n")
+(set #proc_type "Welche YAM-Version wollen Sie installieren?")
+(set #proc_help (cat "Hier können Sie bestimmen, welche Version von YAM Sie installieren "
+                     "möchten; abhängig vom Typ Ihres Prozessors."))
+(set #proc_020 "Optimiert für 68020/030")
+(set #proc_040 "Optimiert für 68040")
+(set #proc_060 "Optimiert für 68060")
+(set #YAM_dir  (cat"Wählen Sie ein Verzeichnis für YAM\n"
+                   "(es wird KEIN eigenes Verzeichnis erstellt!)"))
+(set #lang_catalog (cat "Welche catalog-Datei wollen Sie installieren?\n"
+                        "(Englisch ist eingebaut)"))
+(set #lang_manual "Wählen Sie eine Sprache für die Online-AmigaGuide-Hilfe")
+(set #icons_prompt "Welche Grafiken wollen Sie installieren?")
+(set #icons_none "Keine")
+(set #assign_prompt (cat "In S:USER-STARTUP sollte ein Assign YAM: eingefügt werden.\n"
+                         "Sind Sie damit einverstanden?"))
+(set #assign_help (cat "Wenn Sie vom Installer gefragt werden, ob er diese Zuweisung "
+                       "in der Datei s:user-startup vornehmen darf, sollten Sie den "
+                       "Knopf \"Weiter\" drücken; andernfalls kann das Programm nach "
+                       "dem nächsten Booten die benötigten Dateien und Verzeichnisse "
+                       "nicht finden.\n"))
+(set #done_1   (cat "\nYAM wurde erfolgreich installiert.\n\n"
+                    "Klicken Sie auf das \"YAM\"-Icon im Verzeichnis\n"))
+(set #done_2        "\nund es kann losgehen.\n\nViel Spass!")
+)
+)
+; ///
+; /// ***** Español
+(IF (= @language "español")
+(
+(set #def_cat_lang #def_lang_Espanol)
+(set #def_doc_lang #def_doc_Espanol)
+(set #wrongOS  "YAM necesita como mínimo OS3.0 para funcionar\n")
+(set #wrongMUI "YAM necesita como mínimo MUI3.8 para funcionar\n")
+(set #wrongCPU "YAM necesita como mínimo una CPU 68020 para funcionar\n")
+(set #proc_type "Elija la versión de YAM que desea instalar:")
+(set #proc_help (cat "Seleccione la versión de YAM a instalar "
+                     "en función del procesador que posea."))
+(set #proc_020 "Optimizado para 68020/030")
+(set #proc_040 "Optimizado para 68040")
+(set #proc_060 "Optimizado para 68060")
+(set #YAM_dir  (cat "Escoja el directorio raiz para YAM\n"
+                    "(¡El directorio NO se creará!)"))
+(set #lang_catalog (cat "¿Qué idiomas (catálogos) quiere instalar?\n"
+                        "(El programa está diseñado en inglés)"))
+(set #lang_manual "Elija el idioma para la ayuda en-linea")
+(set #icons_prompt "¿Qué gráficos quiere instalar?\n")
+(set #icons_none "Ninguno")
+(set #assign_prompt (cat "Es necesario añadir la asignación YAM: al guión S:USER-STARTUP\n"
+                         "¿Está de acuerdo?"))
+(set #assign_help (cat "El programa de instalación pretende insertar esta asignación"
+                       "en su fichero S:User-Startup.   Debería seleccionar el botón"
+                       "\"Proceder\". De lo contrario, la próxima vez que arranque su  "
+                       "Amiga, el  programa no será capaz de encontrar los ficheros y"
+                       "directorios necesarios para su funcionamiento.\n"))
+(set #done_1   (cat "\nYAM se ha instalado satisfactoriamente.\n\n"
+                    "Pulse el icono de \"YAM\" en el directorio\n"))
+(set #done_2        "\npara saborearlo.\n\n¡Que lo disfrute!")
+)
+)
+; ///
+; /// ***** Français
+(IF (= @language "français")
+(
+(set #def_cat_lang #def_lang_Francais)
+(set #wrongOS  "YAM a besoin de l' OS3.0 minimum\n")
+(set #wrongMUI "YAM a besoin de MUI3.8 minimum\n")
+(set #wrongCPU "YAM a besoin d'un CPU 68020 minimum\n")
+(set #proc_type "Choisissez la version de YAM que vous voulez installer:")
+(set #proc_help (cat "Ici vous pouvez choisir la version de YAM à installer "
+                     "en fonction de votre type de micro-processeur."))
+(set #proc_020 "Optimisé pour 68020/030")
+(set #proc_040 "Optimisé pour 68040")
+(set #proc_060 "Optimisé pour 68060")
+(set #YAM_dir  (cat "Choisissez le répertoire d'installation de YAM\n"
+                    "(Il n'y aura pas de création de répertoire !)"))
+(set #lang_catalog (cat "Quel langage désirez-vous installer ?\n"
+                        "(L'anglais est intégré au programme)"))
+(set #lang_manual "Choisissez la langue de l'aide en ligne. (AmigaGuide)")
+(set #icons_prompt "Quel genre d'icônes et de boutons voulez-vous installer ?\n")
+(set #icons_none "Aucun")
+(set #assign_prompt (cat "l'assignation 'YAM:' devrait être ajoutée à S:USER-STARTUP\n"
+                         "Le souhaitez-vous ?"))
+(set #assign_help (cat "Le programme d'installation vous demande si vous voulez placer "
+                       "l'assignation dans votre fichier S:user-startup.\nYAM a besoin "
+                       "d'une assignation pour bien fonctionner. Vous devriez choisir "
+                       "le bouton \"Continuer\" ; sans quoi, la prochaine fois que vous demarrerez "
+                       "l'Amiga, le programme ne sera pas capable de trouver les fichiers et les "
+                       "répertoires nécessaires à son exécution.\n"))
+(set #done_1   (cat "\nYAM a été installé avec succès.\n\n"
+                    "Cliquez sur l'icône de \"YAM\" dans le répertoire\n"))
+(set #done_2        "\npour l'essayer.\n\nAmusez vous bien !!")
+)
+)
+; ///
+; /// ***** Italiano
+(if (= @language "italiano")
+(
+(set #def_cat_lang #def_lang_Italiano)
+(set #def_doc_lang #def_doc_Italiano)
+(set #wrongOS  "Yam necessita almeno dell'OS3.0 per funzionare\n")
+(set #wrongMUI "Yam necessita almeno della MUI3.8 per funzionare\n")
+(set #wrongCPU "Yam necessita almeno della CPU 68020 per funzionare\n")
+(set #proc_type "Scegli quale versione di YAM deve essere installata:")
+(set #proc_help (cat "Qui puoi scegliere quale versione di YAM deve essere installata"
+                     "a seconda del processore che possiedi."))
+(set #proc_020 "Ottimizzata per 68020/030")
+(set #proc_040 "Ottimizzata per 68040")
+(set #proc_060 "Ottimizzata per 68060")
+(set #YAM_dir  (cat "Scegli la directory dove risiede YAM\n"
+                    "(Nessun cassetto extra verrà creato!)"))
+(set #lang_catalog (cat "Quale catalogo vuoi installare?\n"
+                        "(L'inglese è interno al programma)"))
+(set #lang_manual "Seleziona la lingua per l'aiuto in linea")
+(set #icons_prompt "Quali immagini vuoi installare?\n")
+(set #icons_none "Nessuno")
+(set #assign_prompt (cat "L'assign YAM: dovrebbe essere aggiunto nella S:USER-STARTUP\n"
+                         "Lo aggiungo?"))
+(set #assign_help (cat "Quando l'installer chiede se vuoi porre questo "
+                       "assign nella tua S:user-startup dovresti selezionare "
+                       "il pulsante \"Procedi\"; altrimenti, la volta successiva che avvii "
+                       "il computer, il programma non sarà in grado di trovare i file necessari "
+                       "ed i cassetti di cui ha bisogno per funzionare.\n"))
+(set #done_1   (cat "\nYAM è stato installato con successo.\n\n"
+                    "Premete l'icona \"YAM\" nella\n"))
+(set #done_2        "\ndirectory per provarlo.\n\nBuon divertimento...")
+)
+)
+; ///
+; /// ***** Magyar
+(IF (= @language "magyar")
+(
+(set #def_cat_lang #def_lang_Magyar)
+)
+)
+; ///
+; /// ***** Polski
+(IF (= @language "polski")
+(
+(set #def_cat_lang #def_lang_Polski)
+(set #wrongOS  "YAM do uruchomienia wymaga systemu w wersji 3.0 lub wyûszej\n")
+(set #wrongMUI "YAM do uruchomienia wymaga MUI w wersji 3.8 lub wyûszej\n")
+(set #wrongCPU "YAM do uruchomienia wymaga procesura 68020 lub nowszego\n")
+(set #proc_type "Wybierz którâ wersjë YAMa chcesz zainstalowaê:")
+(set #proc_help (cat "Tu moûesz wybraê którâ wersjë YAMa chcesz zainstalowaê "
+                     "zaleûnie od typu procesora który posiadasz."))
+(set #proc_020 "Zoptymalizowanâ dla 68020/030")
+(set #proc_040 "Zoptymalizowanâ dla 68040")
+(set #proc_060 "Zoptymalizowanâ dla 68060")
+(set #YAM_dir  (cat "Wybierz katalog gdzie mam zainstalowaê YAMa\n"
+                    "(Dodatkowy katalog NIE zostanie stworzony!)"))
+(set #lang_catalog (cat "Który plik tîumaczenia chcesz zainstalowaê?\n"
+                        "(Jëzyk angielski jest wbudowany)"))
+(set #lang_manual "Wybierz jëzyk dla pomocy on-line")
+(set #icons_prompt "Które pliki graficzne chcesz zaistalowaê?\n")
+(set #assign_prompt (cat "Przypis YAM: powinien zostaê dodany do pliku S:USER-STARTUP\n"
+                         "Zgadzasz sië?"))
+(set #assign_help (cat "Kiedy Installer zapyta czy chceesz dodaê ten przypis "
+                       "do Twojego pliku S:user-startup, powinieneô wybraê "
+                       "przycisk \"Kontynuuj\"; w przeciwnym razie, po resecie komputera "
+                       "program nie bëdzie mógî znaleúê plików i katalogów "
+                       "wymaganych do uruchomienia.\n"))
+(set #done_1   (cat "\nYAM zostaî zainstalowany.\n\n"
+                    "Kliknij ikonë \"YAM\" w katalogu\n"))
+(set #done_2        "\naby go uruchomiê.\n\nMiîej zabawy...")
+)
+)
+; ///
+; /// ***** Português
+(IF (= @language "português")
+(
+(set #def_cat_lang #def_lang_Portugues)
+(set #wrongOS  "O YAM requer no mínimo o OS3.0\n")
+(set #wrongMUI "O YAM requer no mínimo o MUI3.8\n")
+(set #wrongCPU "O YAM requer no mínimo um CPU 68020\n")
+(set #proc_type "Seleccione a versão do YAM que deseja instalar:")
+(set #proc_help (cat "Dependendo do tipo de processador que está a usar, "
+                     "escolha aqui a versão do YAM a instalar."))
+(set #proc_020 "Optimizada para o 68020/030")
+(set #proc_040 "Optimizada para o 68040")
+(set #proc_060 "Optimizada para o 68060")
+(set #YAM_dir  (cat "Escolha o directório do YAM\n"
+                    "(NÃO será criada nenhuma gaveta adicional!)"))
+(set #lang_catalog (cat "Qual é o catálogo que deseja instalar?\n"
+                        "(O idioma inglês já está incluído)"))
+(set #lang_manual "Escolha o idioma para a ajuda on-line AmigaGuide")
+(set #icons_prompt "Que tipo de gráficos prefere instalar?\n")
+(set #icons_none "Nenhum")
+(set #assign_prompt (cat "O assign YAM: vai ser adicionado a S:USER-STARTUP\n"
+                         "Quer continuar?"))
+(set #assign_help (cat "Quando o Installer lhe perguntar se quer colocar este "
+                       "assign no seu ficheiro S:user-startup, é recomendável "
+                       "clicar em \"Continuar\", pois se não o fizer o YAM não "
+                       "vai conseguir encontrar os ficheiros e gavetas necessários "
+                       "para correr.\n"))
+(set #done_1   (cat "\nO YAM foi instalado com êxito.\n\n"
+                    "Para o usar, clique no ícone \"YAM\" que pode\n"))
+(set #done_2        "\nencontrar no directório do YAM.\n\nDivirta-se!")
+)
+)
+; ///
+; /// ***** Português-Brasil
+(IF (= @language "português-brasil")
+(
+(set #def_cat_lang #def_lang_Portugues-Brasil)
+(set #wrongOS  "O YAM necessita ao menos do OS3.0 para rodar\n")
+(set #wrongMUI "O YAM necessita ao menos da MUI3.8 para rodar\n")
+(set #wrongCPU "O YAM necessita ao menos de uma CPU 68020 para rodar\n")
+(set #proc_type "Selecione a versão do YAM que deseja instalar:")
+(set #proc_help (cat "Aqui você pode selecionar qual a versão do YAM a"
+                    "instalar dependendo do processador que possuir:"))
+(set #proc_020 "Otimizada para 68020/030")
+(set #proc_040 "Otimizada para 68040")
+(set #proc_060 "Otimizada para 68060")
+(set #YAM_dir  (cat"Escolha um diretório para o YAM\n"
+                   "(NENHUM diretório extra será criado!)"))
+(set #lang_catalog (cat "Qual o arquivo de catálogo deseja instalar?\n"
+                        "(O Inglês é embutido)"))
+(set #lang_manual "Escolha uma língua para a ajuda on-line AmigaGuide")
+(set #icons_prompt "Que tipo de gráficos deseja instalar?")
+(set #icons_none "Nenhum")
+(set #assign_prompt (cat "O assign YAM: deve ser adicionado a S:USER-STARTUP\n"
+                         "?"))
+(set #assign_help (cat "Quando o programa de instalação perguntar se você deseja incluir "
+                       "este ASSIGN em seu arquivo S:User-startup, você deve selecionar "
+                       "o botão \"Prosseguir\"; caso contrário, na próxima vez que você "
+                       "inicializar sua máquina, o programa não será capaz de encontrar "
+                       "os arquivos e diretórios que ele necessita para rodar.\n"))
+(set #done_1   (cat "\nO YAM foi instalado com sucesso.\n\n"
+                    "Clique no ícone \"YAM\" em seu diretório\n"))
+(set #done_2        "\npara experimentá-lo.\n\nDivirta-se!")
+)
+)
+; ///
+; /// ***** Russian
+(IF (= @language "russian")
+(
+(set #def_cat_lang #def_lang_Russian)
+(set #wrongOS  "Äëÿ çaïóñêa YAM'a íåîáõîäèìa êaê ìèíèìóì OS3.0\n")
+(set #wrongMUI "Äëÿ çaïóñêa YAM'a íåîáxîäèì êaê ìèíèìóì MUI3.8\n")
+(set #wrongCPU "Äëÿ çaïóñêa YAM'a íåîáxîäèì êaê ìèíèìóì 68020 CPU\n")
+(set #proc_type "Âûáåðèòå, êaêóþ âåðñèþ YAM âû õîòèòå ïðîèíñòaëèðîâaòü:")
+(set #proc_help (cat "Çäåñü âû ìîæåòå âûáðaòü âåðñèþ YAM'a äëÿ èíñòaëÿöèè "
+                     "îïòèìèçèðîâaííóþ ïîä ñîîòâåòñòâóþùèé ïðîöåññîð."))
+(set #proc_020 "Îïòèìèçèðîâaííóþ ïîä 68020/030")
+(set #proc_040 "Îïòèìèçèðîâaííóþ ïîä 68040")
+(set #proc_060 "Îïòèìèçèðîâaííóþ ïîä 68060")
+(set #YAM_dir (cat "Âûáåðèòå êaòaëîã äëÿ YAM'a\n"
+                   "(Äîïîëíèòåëüûé êaòaëîã ÍÅ ÁÓÄÅÒ ñîçäaí!)"))
+(set #lang_catalog (cat "Êaêóþ âåðñèþ ëîêaëèçaöèè âû õîòèòå ïðîèíñòaëèðîâaòü?\n"
+                        "(Aíãëèéñêèé ÿçûê âñòðîåí)"))
+(set #lang_manual "Âûáåðèòå ÿçûê äëÿ îí-ëaéíîâîé äîêóìåíòaöèè")
+(set #icons_prompt "Êaêîé íaáîð ãðaôèêè âû õîòèòå ïðîèíñòaëèðîâaòü?\n")
+(set #assign_prompt (cat "YAM: ïðèñâîåíèå áóäåò äîáaâëåíî â âaø S:USER-STARTUP\n"
+                         "Âû ñîãëañíû?"))
+(set #assign_help (cat "Êîãäa ïðîãðaììa èíñòaëÿöèè ñïðaøèâaåò âañ, õîòèòå ëè âû ïîìåñòèòü "
+                       "â âaø S:user-startup ôaéë, âû äîëæíû íaæaòü êíîïêó \"Ïðîäîëæèòü\"\n;"
+                       "â ïðîòèâíîì ñëó÷aå ïðè ñëåäóþùåì çaïóñêå ïðîãðaììa íå ñìîæåò "
+                       "íaéòè íåîáõîäèìûå ôaéëû è êaòaëîãè.\n"))
+(set #done_1 (cat "\nYAM áûë óñïåøíî ïðîèíñòaëèðîâaí.\n\n"
+                  "øåëêíèòåñü ía èêîíêó \"YAM\" äëÿ çaïóñêa\n"))
+(set #done_2 "\n\nÓäa÷è...")
+)
+)
+; ///
+; /// ***** Slovensko
+(IF (= @language "slovensko")
+(
+(set #def_cat_lang #def_lang_Slovensko)
+(set #def_doc_lang #def_doc_Slovensko)
+(set #wrongOS  "YAM za zagon potrebuje vsaj OS3.0\n")
+(set #wrongMUI "YAM za zagon potrebuje vsaj MUI3.8\n")
+(set #wrongCPU "YAM za zagon potrebuje vsaj CPE 68020\n")
+(set #proc_type "Izberite, katero razlièico YAMa bi radi namestili:")
+(set #proc_help (cat "Tu lahko izberete, katera razlièica YAMa bo name¹èena "
+                     "glede na tip procesorja, ki ga imate."))
+(set #proc_020 "Optimizirano za 68020/030")
+(set #proc_040 "Optimizirano za 68040")
+(set #proc_060 "Optimizirano za 68060")
+(set #YAM_dir  (cat "Izberite YAMov domaèi predal\n"
+                    "(Poseben predal NE bo ustvarjen!)"))
+(set #lang_catalog (cat "Kateri jezik kataloga ¾elite namestiti?\n"
+                        "(Angle¹ki jezik je vgrajen)"))
+(set #lang_manual "Izberite jezik za AmigaGuide pomoè v programu")
+(set #icons_prompt "Katero grafiko ¾elite namestiti?\n")
+(set #assign_prompt (cat "V va¹ S:USER-STARTUP bi morala biti dodana dodelitev YAM:\n"
+                         "Se s tem strinjate?"))
+(set #assign_help (cat "Ko vas program Installer vpra¹a, èe ¾elite dodati dodelitev "
+                       "v va¹o datoteko S:user-startup, izberite gumb \"Naprej\"; v "
+                       "nasprotnem primeru program ne bo mogel najti potrebnih datotek "
+                       "in predalov, ko boste naslednjiè zagnali raèunalnik.\n"))
+(set #done_1   (cat "\nYAM je bil uspe¹no name¹èen.\n\n"
+                    "Kliknite na ikono \"YAM\" v predalu\n"))
+(set #done_2        "\nin ga preizkusite.\n\nU¾ivajte...")
+)
+)
+; ///
+; /// ***** Suomi
+(if (= @language "suomi")
+(
+(set #def_cat_lang #def_lang_suomi)
+(set #wrongOS  "YAM tarvitsee toimiakseen vähintään OS3.0:n\n")
+(set #wrongMUI "YAM tarvitsee toimiakseen vähintään MUI3.8:n\n")
+(set #wrongCPU "YAM tarvitsee toimiakseen vähintään 68020-suorittimen\n")
+(set #proc_type "Valitse YAM-versio, jonka haluat asentaa:")
+(set #proc_help (cat "Tästä voit valita asennettavan YAM-version, "
+                     "joka riippuu tietokoneesi suorittimesta."))
+(set #proc_020 "Optimoitu 68020/030:lle")
+(set #proc_040 "Optimoitu 68040:lle")
+(set #proc_060 "Optimoitu 68060:lle")
+(set #YAM_dir  (cat "Valitse YAM-kotihakemisto\n"
+                    "(Hakemistoa EI tehdä automaattisesti!)"))
+(set #lang_catalog (cat "Minkä catalog-tiedoston haluat asentaa?\n"
+                        "(Englanti on sisäänrakennettu kieli)"))
+(set #lang_manual "Valitse ajon aikana nähtävän AmigaGuide-aputiedoston kieli")
+(set #icons_prompt "Mitkä grafiikat haluat asentaa?\n")
+(set #assign_prompt (cat "YAM:-assign pitäisi lisätä S:USER-STARTUP-tiedostoon\n"
+                         "Sopiiko?"))
+(set #assign_help (cat "Kun Installer-ohjelma kysyy, haluatko lisätä tämän "
+                       "assignin S:user-startup-tiedostoosi, sinun olisi valittava "
+                       "\"Jatka\"-nappi; muuten, kun seuraavan kerran käynnistät "
+                       "koneesi, ohjelma ei löydä tarvittavia tiedostoja, "
+                       "eikä hakemistoja, joita se tarvitsee toimiakseen.\n"))
+(set #done_1   (cat "\nYAM on asennettu onnistuneesti.\n\n"
+                    "Kilkkaa hakemistossa olevaa \"YAM\"-kuvaketta\n"))
+(set #done_2        "\nkäynnistääksesi sen.\n\nPidä hauskaa...")
+)
+)
+; ///
+; /// ***** Svenska
+(IF (= @language "svenska")
+(
+(set #def_cat_lang #def_lang_Svenska)
+(set #wrongOS  "YAM kräver OS3.0 eller senare\n")
+(set #wrongMUI "YAM kräver MUI3.8 eller senare\n")
+(set #wrongCPU "YAM kräver 68020 processor eller bättre\n")
+(set #proc_type "Välj version av YAM att installera:")
+(set #proc_help (cat "Här kan du välja vilken version av YAM som ska installeras "
+                     "beroende på vilken processor du har."))
+(set #proc_020 "Optimerad för 68020/030")
+(set #proc_040 "Optimerad för 68040")
+(set #proc_060 "Optimerad för 68060")
+(set #YAM_dir  (cat "Välj katalog att installera YAM i\n"
+                    "(någon underkatalog kommer INTE att skapas!)"))
+(set #lang_catalog (cat "Vilka språkkataloger vill du installera?\n"
+                        "(Engelska är inbyggt)"))
+(set #lang_manual "Välj språk för den AmigaGuide-baserade hjälpen")
+(set #icons_prompt "Vilken grafik vill du installera?\n")
+(set #assign_prompt (cat "\"Assign YAM:\" behöver adderas till S:USER-STARTUP\n"
+                         "Är det Ok?"))
+(set #assign_help (cat "När installationsprogrammet frågar efter att göra denna "
+                       "tilldelning i filen s:user-startup, bör du klicka på knappen "
+                       "\"Fortsätt\". Annars kan YAM inte hitta sina filer "
+                       "och kataloger efter nästa ombootning\n"))
+(set #done_1   (cat "\nYAM installerades utan problem\n\n"
+                    "Klicka på \"YAM\"-ikonen i katalogen\n"))
+(set #done_2        "\nför att pröva det.\n\nHa det så bra!")
+)
+)
+; ///
+
+;----------------------------------------------------------------------------
+; /// Checking environment
+(set OS_ver (getversion "exec.library" (resident)))
+(if (< OS_ver (* 39 65536)) (abort #wrongOS))
+
+(set MUI_ver (getversion "MUI:libs/muimaster.library"))
+(if (AND (< MUI_ver (* 19 65536)) (<> MUI_ver 0)) (abort #wrongMUI))
+
+(set cpu_type (database "cpu"))
+(if (< cpu_type "68020") (abort #wrongCPU))
+(set cpu 0)
+(if (= cpu_type "68040") (set cpu 1))
+(if (= cpu_type "68060") (set cpu 2))
+
+(set package_cpu (exists "/.package_cpu"))
+(set package_loc (exists "/.package_loc"))
+; ///
+; /// Let's ask user for anything
+(complete 0)
+
+(if (<> 0 (exists "YAM:" (noreq)))
+   (set YAM_def_dir (getassign "YAM"))
+   (set YAM_def_dir @default-dest)
+)
+(set YAM_dir
+   (askdir
+      (default YAM_def_dir)
+      (prompt  #YAM_dir)
+      (help    @askdir-help)
+   )
+)
+
+(complete 5)
+
+(if package_cpu
+   (set cpu
+      (askchoice
+         (prompt #proc_type)
+         (help #proc_help "\n" @askchoice-help)
+         (choices #proc_020 #proc_040 #proc_060)
+         (default cpu)
+      )
+   )
+   (set cpu 0)
+)
+
+(complete 10)
+
+(if package_loc
+   (set Catalog_lang
+      (askoptions
+         (prompt  #lang_catalog)
+         (help @askoptions-help)
+         (choices "Bosanski" "Czech" "Dansk" "Deutsch" "Español" "Français" "Italiano" "Magyar"
+                  "Polski" "Português" "Português (Brasil)" "Russian" "Slovensko" "Suomi" "Svenska"
+         )
+         (default #def_cat_lang)
+      )
+   )
+   (set Catalog_lang #def_lang_English)
+)
+
+(complete 15)
+
+(if package_loc
+   (set Docs_lang
+      (askchoice
+         (prompt  #lang_manual)
+         (help    @askchoice-help)
+         (choices "English (V2.2)" "Deutsch (V2.2)" "Español (V2.0)"
+                  "Français (V2.0)" "Italiano (V2.0)" "Slovensko (V2.0)")
+         (default #def_doc_lang)
+      )
+   )
+   (set Docs_lang #def_doc_English)
+)
+
+(complete 20)
+
+(run "C:Run <>NIL: SYS:Utilities/MultiView GfxPreview.iff")
+(set Icon_set
+   (askchoice
+      (prompt  #icons_prompt)
+      (help    @askchoice-help)
+      (choices "MagicWB" "ProLite" "NewIcons" #icons_none)
+      (default 0)
+   )
+)
+; ///
+; /// Here we go!
+(complete 30)
+
+(makedir YAM_dir (infos))
+(copyfiles (source "/YAM.info") (dest YAM_dir) (infos) (noposition) (help @copyfiles-help))
+(select cpu
+(copyfiles (source "/YAM") (dest YAM_dir) (help @copyfiles-help))
+(run (cat "/680x0/spatch -o" (tackon YAM_dir "YAM") " -p/680x0/YAM.040.pch /YAM"))
+(run (cat "/680x0/spatch -o" (tackon YAM_dir "YAM") " -p/680x0/YAM.060.pch /YAM"))
+)
+
+(complete 40)
+
+(if (not (exists (tackon YAM_dir ".taglines")))
+   (copyfiles (source "/.taglines") (dest YAM_dir) (help @copyfiles-help))
+)
+
+(if (> Catalog_lang 0)
+(
+   (set Cat_dir (tackon YAM_dir "Catalogs"))
+   (if (not (exists Cat_dir))  (makedir Cat_dir))
+   (if (bitand Catalog_lang #def_lang_Bosanski)         ((set lang "bosanski") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Czech)            ((set lang "czech") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Dansk)            ((set lang "dansk") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Deutsch)          ((set lang "deutsch") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Espanol)          ((set lang "español") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Francais)         ((set lang "français") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Italiano)         ((set lang "italiano") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Magyar)           ((set lang "magyar") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Polski)           ((set lang "polski") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Portugues)        ((set lang "português") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Portugues_Brasil) ((set lang "português-brasil") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Russian)          ((set lang "russian") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Slovensko)        ((set lang "slovensko") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Suomi)            ((set lang "suomi") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Svenska)          ((set lang "svenska") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+)
+)
+
+(complete 50)
+
+(if (= Docs_lang #def_doc_English  ) (copyfiles (source "/Docs/YAM_english.guide")   (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
+(if (= Docs_lang #def_doc_Deutsch  ) (copyfiles (source "/Docs/YAM_deutsch.guide")   (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
+(if (= Docs_lang #def_doc_Espanol  ) (copyfiles (source "/Docs/YAM_español.guide")   (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
+(if (= Docs_lang #def_doc_Francais ) (copyfiles (source "/Docs/YAM_français.guide")  (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
+(if (= Docs_lang #def_doc_Italiano ) (copyfiles (source "/Docs/YAM_italiano.guide")  (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
+(if (= Docs_lang #def_doc_Slovensko) (copyfiles (source "/Docs/YAM_slovensko.guide") (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
+(if (= Icon_set 2)
+   (copyfiles (source "/Contributions/Gfx/NewIcons/YAM.guide.info") (dest YAM_dir) (noposition) (help @copyfiles-help))
+)
+(copyfiles (source "/Readme First") (dest YAM_dir) (infos) (noposition))
+(copyfiles (source "/GPL.txt")      (dest YAM_dir) (noposition))
+
+(complete 60)
+
+(set Icons_dir (tackon YAM_dir "Icons"))
+(if (exists Icons_dir)
+   (if (<> Icon_set 3) (delete Icons_dir (all)))
+   (makedir Icons_dir)
+)
+(select Icon_set
+(
+   (copyfiles (source "/Icons.info") (dest YAM_dir) (noposition) (help @copyfiles-help))
+   (copyfiles (source "/Icons/") (dest Icons_dir) (all))
+)
+(
+   (copyfiles (source "/Contributions/Gfx/ProLite/Icons.info") (dest YAM_dir) (noposition) (help @copyfiles-help))
+   (copyfiles (source "/Contributions/Gfx/ProLite/Icons/") (dest Icons_dir) (all))
+)
+(
+   (copyfiles (source "/Contributions/Gfx/NewIcons/Icons.info") (dest YAM_dir) (noposition) (help @copyfiles-help))
+   (copyfiles (source "/Contributions/Gfx/NewIcons/Icons/") (dest Icons_dir) (all))
+)
+(set dummy 0)
+)
+
+(complete 70)
+
+(set Charset_dir (tackon YAM_dir "Charsets"))
+(if (not (exists Charset_dir)) (makedir Charset_dir))
+(copyfiles (source "/Charsets/") (dest Charset_dir) (all))
+(copyfiles (source "/Charsets.info") (dest YAM_dir) (noposition))
+
+(complete 75)
+
+(set ARexx_dir (tackon YAM_dir "Rexx"))
+(if (not (exists ARexx_dir)) (makedir ARexx_dir))
+(copyfiles (source "/Rexx/") (dest ARexx_dir) (all))
+(copyfiles (source "/Rexx.info") (dest YAM_dir) (noposition))
+
+(complete 80)
+
+(copylib (prompt "MUI - BetterString.mcc") (source "/MUI/BetterString.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - BetterString.mcp") (source "/MUI/BetterString.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - HotkeyString.mcc") (source "/MUI/HotkeyString.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - NListTree.mcc")    (source "/MUI/NListTree.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - NListTree.mcp")    (source "/MUI/NListTree.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - NFloattext.mcc")   (source "/MUI/NFloattext.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - NList.mcc")        (source "/MUI/NList.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - NListview.mcc")    (source "/MUI/NListview.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - NListviews.mcp")   (source "/MUI/NListviews.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - TextEditor.mcc")   (source "/MUI/TextEditor.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - TextEditor.mcp")   (source "/MUI/TextEditor.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - Toolbar.mcc")      (source "/MUI/Toolbar.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - Toolbar.mcp")      (source "/MUI/Toolbar.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "imagepool.library")      (source "/libs/imagepool.library") (dest "LIBS:") (confirm 2) (help @copylib-help))
+
+(complete 90)
+
+(startup "YAM - Amiga mailer © Marcel Beck"
+   (prompt #assign_prompt)
+   (help   #assign_help)
+   (command "C:Assign YAM: \"" YAM_dir "\"\n")
+)
+(makeassign "YAM" YAM_dir)
+
+(complete 100)
+
+(message #done_1 "\"" YAM_dir "\"" #done_2)
+
+; /// ********************
+;----------------------------------------------------------------------------
+(exit (QUIET))
+
