@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-08-24  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: reworked the Transfer Status routines once more to not only
+      speed up the overall processing time while exporting mails. YAM
+      will now update the TransferStatus only at a maximum of twice a
+      second at every operation using the Transfer window.
+      That increases now also the performance of the the POP3/SMTP transfers
+      especially with fast connections that would update the transfer
+      stats quite often. Tests have shown that this can decrease the
+      overall transfer time by a factor of ~1.6.
+
 2003-07-08  David Rey <tactica@gmx.net>
 
     * YAM_global.c: replaced the copyright symbol with "(C)" to be
