@@ -257,6 +257,30 @@ struct CustomEntry *CreateEntry (STRPTR name, STRPTR address)
 We use Amiga types. This is STRPTR for 'char *', TEXT for a single char, VOID
 for 'void' and APTR for 'void *'. See exec/types.h for more.
 
+Furthermore even though YAM currently is ANSI-C then one should always use
+proper types, so that we may later compile the project with a C++ compiler.
+
+This means that if you e.g. have an IntuiMessage pointer and need to supply it
+to ReplyMsg() then do it like this: ReplyMsg(&imsg->ExecMessage).
+
+For strings embedded in structures pass a pointer to first character, as this
+also serves as extra information to the person who read the source. For example:
+
+	struct Person
+	{
+		TEXT Address[SIZE_ADDRESS];
+		TEXT RealName[SIZE_REALNAME];
+	};
+
+	...
+
+	struct Person *pe = SomePerson();
+	printf("Letter came from %s\n", &pe->Address[0]);
+
+as opposed to:
+
+	printf("Letter came from %s\n", pe);
+
 /* -------------- */
 /* -- Taglists -- */
 /* -------------- */
@@ -275,3 +299,13 @@ which btw also contain a taglist example). Example:
 		MUIA_Window_TopEdge,    top,
 		MUIA_Window_Width,      _width(msg->other),
 		TAG_DONE);
+
+/* ------------------------ */
+/* -- ANSI-C vs. AmigaOS -- */
+/* ------------------------ */
+
+Generally use the ANSI-C functions like memcpy, malloc etc.
+
+The exception is when the Amiga versions handle locale specific things which
+the ANSI-C functions lack. As of this writing only ToUpper, ToLower, Stricmp
+and Strnicmp are cases where the Amiga versions should be used.
