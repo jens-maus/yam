@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-04  Gunther Nikl <gni@gecko.de>
+
+    * YAM.c: (TC_Dispatcher) reformat loops (no code change),
+      (Terminate,Initialise,main): use <= MAXWR, (SendWaitingMail): simplify
+    * YAM_UT.c: (SPrintF) use va_list for non-MorphOS case too
+
 2002-12-03  Gunther Nikl <gni@gecko.de>
 
     * YAM_UT.c/YAMMUIRequest: use do/while loop, correct type of return
@@ -17,7 +23,7 @@ $Source$
       into one loop, StayInProg: simplify
     * YAM_UT.c/PlaySound: fix warning #120 almost without a cast,
       LoadBCImage: fix and simplify
-    * YAM.c,YAM_DI.c,YAM_MAf.c,YAM_RE.c,YAM_TR.c: remove superflous test
+    * YAM.c,YAM_DI.c,YAM_MAf.c,YAM_RE.c,YAM_TR.c: remove superfluous test
       before FreeStrBuf()
     * YAM_utilities.h/FreeStrBuf: use sizeof() instead of hardcoded constant
 
@@ -60,7 +66,7 @@ $Source$
 2002-11-27  Gunther Nikl <gni@gecko.de>
 
     * YAM_MAf.c/FO_SetCurrentFolder: fix wrong NULL usage
-    * classes/Recipientstring.c: fix wrong NULL usage, drop superflous
+    * classes/Recipientstring.c: fix wrong NULL usage, drop superfluous
       strlen()
     * classes/YAM.c: fix wrong NULL usage, changed casts in
       EMailCacheNode handling
@@ -651,7 +657,7 @@ $Source$
       server on a abort. Also fixed some enforcer hits that occured
       on aborting of transfers. This whole abort functionality
       should perform a bit better now, even if it`s implementation
-      is very bad ans have to be rewritten within the next release.
+      is very bad and has to be rewritten within the next release.
     * YAM.c: fixed a big flaw in the mail transfer routines
       where YAM didn`t take respect of a preselection window if
       a automatic mailcheck was selected within the Start/Finish
@@ -715,7 +721,7 @@ $Source$
     * smakefile: changed SAS/C makefile to start the autogenerating
       tools automatically if something has changed. Also added
       directory variables to easily change them on compiletime.
-    * YAM.c, YAM:CO.c, YAM_COg.c, YAM_COs.c, YAM_MA.c, YAM_TR.c:
+    * YAM.c, YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_MA.c, YAM_TR.c:
       fixed a bug in the TLS/SSL recognition routines where it could
       have happen that a user selected SSL for a connection but the
       next time the amissl library is perhaps not available. In that
