@@ -87,6 +87,7 @@ struct UtilityBase *   UtilityBase = NULL;
 struct Library *       WorkbenchBase = NULL;
 struct Library *       XpkBase = NULL;
 struct Library *       AmiSSLBase = NULL;
+struct Device *        TimerBase = NULL;
 
 char *Status[9] = { "U","O","F","R","W","E","H","S","N" };
 char *SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
