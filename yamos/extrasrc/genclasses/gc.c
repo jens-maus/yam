@@ -48,6 +48,8 @@
  *
  * History
  * -------
+ * 0.6 - generated headernames now end with _cl.h to avoid name clashes
+ *
  * 0.5 - fixed mass of enforcer hits
  *     - fixed serious bug in list handling
  *
@@ -96,7 +98,7 @@
  *
  */
 
-char *verstr = "0.5";
+char *verstr = "0.6";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -946,7 +948,7 @@ long gen_classheaders( struct list *classlist )
 	{
 		char name[128], buf[128], *p;
 		char *cn = nextcd->name;
-		sprintf(name, "%s.h", cn);
+		sprintf(name, "%s_cl.h", cn);
 		myaddpart(arg_classdir, name, 255);
 		printf("Creating class header: %s\n", arg_classdir);
 		if (!(fp = fopen(arg_classdir, "w")))
@@ -1167,4 +1169,3 @@ int main( int argc, char *argv[] )
 	}
 	return 0;
 }
-

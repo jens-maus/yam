@@ -1,3 +1,8 @@
+2001-02-21  Gunther Nikl <gni@gecko.de>
+
+    * gc.c/gen_classheaders(): generated headername defaults to <name>_cl.h
+      to avoid potenntial name clashes
+
 2001-10-10  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed mass of enforcer hits
