@@ -1,5 +1,5 @@
 ## chunk AUTH Dirk Neubauer, Horst Schumann [ATO]
-## version $VER: YAM.catalog 5.12 (22.01.2005)
+## version $VER: YAM.catalog 5.13 (13.02.2005)
 ## language deutsch
 ## codeset 0
 ;
@@ -16,7 +16,7 @@ Nachricht
 ; Message
 ;
 MSG_Attachments
-Anlagen
+Anhänge
 ; Attachments
 ;
 MSG_Options
@@ -535,7 +535,7 @@ Nachricht von '%s' an '%s' über '%s' bearbeitet
 ; SENDER, RECIPIENT, SUBJECT
 ;
 MSG_LOG_Creating
-Neue Nachricht an '%s' über '%s' mit %ld Anlage(n) erstellt
+Neue Nachricht an '%s' über '%s' mit %ld Anhängen erstellt
 ; Wrote new message for '%s' about '%s', including %ld attachment(s)
 ; RECIPIENT, SUBJECT, COUNT
 ;
@@ -589,12 +589,12 @@ MSG_LOG_Exporting
 ; COUNT, FOLDER, FILENAME
 ;
 MSG_LOG_SavingAtt
-Anlage '%s' der Nachricht '%s' im Postfach '%s' gespeichert
+Anhang '%s' der Nachricht '%s' im Postfach '%s' gespeichert
 ; Saved attachment '%s' of message '%s' in folder '%s'
 ; FILENAME, MAILFILE, FOLDER
 ;
 MSG_LOG_CroppingAtt
-Anlage(n) der Nachricht '%s' im Postfach '%s' entfernt
+Anhänge der Nachricht '%s' im Postfach '%s' entfernt
 ; Cropped attachment(s) of message '%s' in folder '%s'
 ; MAILFILE, FOLDER
 ;
@@ -689,7 +689,7 @@ _From|*_Reply-To|_Abbrechen
 ; _From|*_Reply-To|_Cancel
 ;
 MSG_MA_AttachRemoved
-\n_Die folgenden Anlagen wurden manuell entfernt:_\n
+\n_Die folgenden Anhänge wurden manuell entfernt:_\n
 ; \n\
 ; _The following attachments have been removed manually:_\n
 ;
@@ -1207,7 +1207,7 @@ Hallo,\\n
 ; Hello,\\\\n
 ;
 MSG_CO_AltRepIntroDef
-Am %d schriebst Du:
+Am %d schrieben Sie:
 ; 
 ;
 MSG_CO_AltRepPatternDef
@@ -1842,7 +1842,7 @@ MIME-Anzeigeprogramme
 ; MIME viewers
 ;
 MSG_CO_MimeType
-Anlagent_yp
+Anhangt_yp
 ; Attachment _type
 ;
 MSG_CO_MimeCmd
@@ -1858,7 +1858,7 @@ S_tandardanzeigeprogramm
 ; De_fault viewer
 ;
 MSG_CO_IdentifyBin
-_Identifiziere binäre Anlagen
+_Identifiziere binäre Anhänge
 ; _Identify binary attachments
 ;
 MSG_CO_MessageHeader
@@ -2178,7 +2178,7 @@ Dateien speichern _unter
 ; D_ecode files to
 ;
 MSG_CO_Attach
-Dateianlagen _holen von
+Dateianhänge _holen von
 ; _Attach files from
 ;
 MSG_CO_TempDir
@@ -2661,12 +2661,12 @@ Nachrichten in einer Schriftart\nfester Breite anzeigen
 ; a fixed width font
 ;
 MSG_HELP_CO_ST_CTYPE
-MIME-Anzeigeprogramm, welches bei\ndiesem Anlagentyp aufgerufen wird
+MIME-Anzeigeprogramm, welches bei\ndiesem Anhangtyp aufgerufen wird
 ; MIME viewer is activated\n\
 ; by this attachment type
 ;
 MSG_HELP_CO_ST_COMMAND
-Pfad und optionale Paremeter des\nAnzeigeprogramms. Bei %s wird der\nDateiname der Anlage eingefügt.
+Pfad und optionale Paremeter des\nAnzeigeprogramms. Bei %s wird der\nDateiname des Anhangs eingefügt.
 ; Path and optional arguments of\n\
 ; the viewer command. Use %s to\n\
 ; insert the data file.
@@ -2685,7 +2685,7 @@ Dateinamenerweiterungen, die für\ndiesen Dateityp benutzt werden
 ; by this file type
 ;
 MSG_HELP_CO_ST_DEFVIEWER
-Programm, mit dem Anlagen unbe-\nkannten Typs angezeigt werden
+Programm, mit dem Anhänge unbe-\nkannten Typs angezeigt werden
 ; Program used to display\n\
 ; attachments of unknown type
 ;
@@ -2960,12 +2960,12 @@ Verzeichnis für Temporärdateien
 ; temporary files
 ;
 MSG_HELP_CO_ST_DETACHDIR
-In diesem Verzeichnis werden die Anlagen gespeichert
+In diesem Verzeichnis werden die Anhänge gespeichert
 ; Directory to save\n\
 ; attached files to
 ;
 MSG_HELP_CO_ST_ATTACHDIR
-Voreingestelltes Quellverzeichnis für Anlagen
+Voreingestelltes Quellverzeichnis für Anhänge
 ; Default source directory\n\
 ; for attachments
 ;
@@ -3043,7 +3043,7 @@ Effizienz dieses Packers\n100% ist die beste, aber langsamste
 ; 100% is best, but slowest
 ;
 MSG_HELP_CO_ST_ARCHIVER
-Archivpacker und Optionen für die\nErstellung von komprimierten Anlagen
+Archivpacker und Optionen für die\nErstellung von komprimierten Anhängen
 ; Archiver command and options used\n\
 ; to create compressed attachments
 ;
@@ -3850,7 +3850,7 @@ Wollen Sie das Foto des Absenders runterladen und\nin Ihre persönliche Galerie a
 ; (You must be online before clicking the OKAY button)
 ;
 MSG_RE_ContentType
-Inhaltstyp
+Content-Type
 ; Content-Type
 ;
 MSG_RE_Description
@@ -4038,13 +4038,13 @@ Antwort auf diese\nNachricht anzeigen\n(vorwärts im Thema)
 ; (follow thread)
 ;
 MSG_HELP_RE_BT_DISPLAY
-Einen Teil (Anlage) dieser Nachricht\nmit einem der konfigurierten\nMIME-Anzeigeprogramme anzeigen
+Einen Anhang dieser Nachricht\nmit einem der konfigurierten\nMIME-Anzeigeprogramme anzeigen
 ; Use a configured MIME\n\
 ; viewer to display a\n\
 ; part of this message
 ;
 MSG_HELP_RE_BT_EXPORT
-Sichtbare Nachricht oder ein Teil\n(Anlage) davon auf Disk speichern
+Sichtbare Nachricht oder ein Anhang\ndavon auf Disk speichern
 ; Save displayed message or\n\
 ; a part of it to disk
 ;
@@ -4086,7 +4086,7 @@ _Empfänger später hinzufügen|*_Abbrechen
 ;
 ; Obsolete
 MSG_WR_PGPMIMEconflict
-PGP/MIME unterstützt keine Anlagen: Signieren/Verschlüsseln wurde ausgeschaltet.
+PGP/MIME unterstützt keine Anhänge: Signieren/Verschlüsseln wurde ausgeschaltet.
 ; PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
 ;
 MSG_WR_DiscardChanges
@@ -4556,39 +4556,39 @@ Markierten Text farbig darstellen
 ; Color marked text
 ;
 MSG_HELP_WR_BT_ADD
-Eine Datei zur\nAnlagenliste hinzufügen
+Eine Datei zur\nAnhangliste hinzufügen
 ; Add an attachment\n\
 ; to the list
 ;
 MSG_HELP_WR_BT_ADDPACK
-Packt mehrere Dateien in\nein Archiv und fügt dieses\nzur Anlagenliste hinzu
+Packt mehrere Dateien in\nein Archiv und fügt dieses\nzur Anhangliste hinzu
 ; Create an archive from\n\
 ; several files and add it to\n\
 ; the list as an attachment
 ;
 MSG_HELP_WR_BT_DEL
-Ausgewählte Anlage von\nder Liste entfernen
+Ausgewählte Anhänge von\nder Liste entfernen
 ; Remove the selected\n\
 ; attachment from the list
 ;
 MSG_HELP_WR_BT_DISPLAY
-Ausgewählte Anlage mit einem\nMIME-Programm anzeigen lassen
+Ausgewählte Anhänge mit einem\nMIME-Programm anzeigen lassen
 ; Use a configured MIME viewer\n\
 ; to display this attachment
 ;
 MSG_HELP_WR_RA_ENCODING
-Gewünschtes Kodierungsverfahren für die ausgewählte Anlage.\nBenutzen Sie UUencode nur dann, wenn der Empfänger\nkeinen MIME-kompatiblen Mailer besitzt.
+Gewünschtes Kodierungsverfahren für den ausgewählten Anhang.\nBenutzen Sie UUencode nur dann, wenn der Empfänger\nkeinen MIME-kompatiblen Mailer besitzt.
 ; Type of encoding used for the selected attachment.\n\
 ; Select UUencode only if the recipient hasn't got\n\
 ; a MIME compliant mailer.
 ;
 MSG_HELP_WR_ST_CTYPE
-MIME-Typ für die ausgewählte Anlage.\nWenn immer möglich, verwenden Sie einen aus der Popup-Liste.
+MIME-Typ für den ausgewählten Anhang.\nWenn immer möglich, verwenden Sie einen aus der Popup-Liste.
 ; MIME type for the selected attachment.\n\
 ; Whenever possible, use one from the popup list.
 ;
 MSG_HELP_WR_ST_DESC
-Fakultative Beschreibung\nfür die ausgewählte Anlage
+Optionale Beschreibung\nfür den ausgewählten Anhang
 ; Optional description for\n\
 ; the selected attachment
 ;
@@ -5812,7 +5812,7 @@ Verschiebe/kopiere %s Nachrichten...
 ; COUNT
 ;
 MSG_BusyRemovingAtt
-Entferne Anlagen...
+Entferne Anhänge...
 ; Removing attachments...
 ;
 MSG_BusyDeleting
@@ -6827,4 +6827,180 @@ Be_grüssung
 ;
 MSG_FO_Greetings
 _Verabschiedung
+;
+MSG_ER_SOCKETOPTION
+Warnung: Die Socketoption '%s' konnte nicht gesetzt werden.\n\
+\n\
+Diese kann mitunter von ihrem laufenden TCP/IP stack nicht \
+unterstützt werden oder ist falsch in der Konfiguration angegeben.
+; OPTIONNAME
+;
+MSG_ER_B64FILEENCODE
+Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
+mit base64 zu kodieren.
+; FILENAME
+;
+MSG_ER_QPFILEENCODE
+Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
+mit quoted-printable zu kodieren.
+; FILENAME
+;
+MSG_ER_UUFILEENCODE
+Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
+mit UUcode zu kodieren.
+; FILENAME
+;
+MSG_ER_QPDEC_FILEIO
+Ein Ein/Ausgabefehler ist aufgetreten bei dem Versuch die Datei '%s' \
+mit quoted-printable zu dekodieren.
+;
+MSG_ER_QPDEC_UNEXP
+Ein unerwarteter Fehler trat bei dem Versuch die Datei '%s' \
+mit quoted-printable zu dekodieren.
+; FILENAME
+;
+MSG_ER_QPDEC_WARN
+Während des Dekodierens der quoted-printable Datei '%s' wurden \
+unerlaubte Kontrollsequenzen gefunden, die in der unkodierten Version \
+beibehalten wurden.
+; FILENAME
+;
+MSG_ER_QPDEC_CHAR
+Beim Dekodieren der quoted-printable Datei '%s' wurden unerlaubte \
+Zeichen gefunden und in der unkodierten Version entfernt.
+; FILENAME
+;
+MSG_ER_UUDEC_TAGMISS
+Während des Versuches die Datei '%s' mittels UUdecode zu dekodieren \
+konnte das im UUcode standard definierte Tag '%s' nicht gefunden werden.
+; FILENAME, TAG
+;
+MSG_ER_UUDEC_CHECKSUM
+Während des Dekodierens der UUcode datei '%s' hat YAM einige vorgeschriebene \
+Checksummen nicht verifizieren können. Es wird vorgeschlagen das sie die \
+erzeugte Datei auf Fehler hin überprüfen.\n\
+\n\
+Es wurde entweder ein defekter UUencoder verwendet oder die Nachricht \
+ist unvollständig.
+; FILENAME
+;
+MSG_ER_UUDEC_CORRUPT
+Während des Dekodierens der UUcode datei '%s' hat YAM festgestellt das der \
+kodierte Teil defekt zu sein scheint.\n\
+\n\
+Es wurde entweder ein defekter UUencoder verwendet oder die Nachricht \
+ist unvollständig.
+; FILENAME
+;
+MSG_FI_StatMarked
+Markiert
+;
+MSG_MA_CREQUEST_OLDFILE
+YAM hat die Datei '%s' im Postfach '%s' als eine Maildatei identifiziert\n\
+die mit einer Version vor dieser generiert wurde.\n\
+\n\
+Möchten Sie die Datei in das neue Mailformat konvertieren?
+; FILENAME, FOLDER
+;
+MSG_MA_CREQUEST_UNKNOWN
+YAM hat eine unbekannte Datei '%s' im Verzeichnis des Postfaches '%s' gefunden.\n\
+\n\
+Möchten Sie diese als normale Maildatei importieren?
+; FILENAME, FOLDER
+;
+MSG_MA_YESNOTOALL
+*_Ja|J_a, alle|_Nein|N_ein, keine
+;
+MSG_ER_CONVERTMFILE
+Ein Fehler ist bei der Konvertierung der Maildatei '%s' aus dem Postfach\n\
+'%s' aufgetreten.\n\
+\n\
+Bitte kontrollieren Sie das das Postfachverzeichnis genügend Speicherplatz \
+aufweisst und die Zugriffsrechte darauf stimmen.
+; FILENAME, FOLDER
+;
+MSG_ER_XPKUSAGE
+Ein Fehler ist bei dem Versuch aufgetreten die Datei '%s' mittels XPX\n\
+zu bearbeiten.\n\
+\n\
+Bitte kontrollieren Sie ihre XPK Installation und die dazugehörigen \
+Kompremierungseinstellung in der Konfiguration von YAM.
+; FILENAME
+;
+MSG_MA_CREQ_OLDFILE_TITLE
+Maildatei im alten Format gefunden
+;
+MSG_MA_CREQ_UNKNOWN_TITLE
+Unbekannte Datei im Postfachverzeichnis gefunden
+;
+MSG_CO_SMTPSECURE
+Sichere Verbindung verwenden:
+;
+MSG_CO_SMTPSECURE_NO
+Nie
+;
+MSG_CO_SMTPSECURE_TLS
+mittels TLSv1
+;
+MSG_CO_SMTPSECURE_SSL
+mittels SSLv3
+;
+MSG_HELP_CO_RA_SMTPSECURE
+Eine sichere TLSv1 oder SSLv3 Verbindung wird zwischen dem SMTP\n\
+server und YAM hergestellt um die zu versendeten Email verschlüsselt\n\
+zu übertragen.\n\
+Wenn diese Schaltsymbole nicht auswählbar sind, dann ist vermutlich\n\
+AmiSSL nicht korrekt installiert oder verfügbar.
+;
+MSG_CO_SHOWEMBEDDEDREADPANE
+Eingebettetes Nachrichten_objekt im Hauptfenster
+;
+MSG_HELP_CO_CH_EMBEDDEDREADPANE
+Aktiviert ein in das Hauptfenster eingebettetes Objekt\n\
+um dort Nachrichten direkt zu betrachten.
+;
+MSG_CO_SETSTATUSDELAYED1
+Markiere angezeigte Nachricht als gelesen erst nach
+;
+MSG_CO_SETSTATUSDELAYED2
+Sekunde(n)
+;
+MSG_HELP_CO_SETSTATUSDELAYED
+Beim umschalten oder darstellen von Nachrichten wird YAM erst\n\
+nach der angegebenen Anzahl von Sekunden die Nachricht als gelesen\n\
+markieren.
+;
+MSG_MA_ATTACHMENT
+Anhang
+;
+MSG_MA_ATTACHMENTS
+Anhänge:
+;
+MSG_MA_ATTACHMENTINFO
+\ebAnhang - MIME-Part #%lD\en\n\
+Name: %s\n\
+Beschreibung: %s\n\
+Content-Type: %s <%s>\n\
+Grösse: ~%lD Bytes
+; PART-NR, NAME, DESCRIPTION, CONTENT-TYPE, SIZE
+MSG_MA_ATTACHMENT_PART
+Anhang/MIME-Part #%lD
+;
+MSG_MA_ATTACHMENT_DISPLAY
+Anzeigen
+;
+MSG_MA_ATTACHMENT_SAVEAS
+Speichern als...
+;
+MSG_MA_ATTACHMENT_PRINT
+Drucken
+;
+MSG_MA_ATTACHMENT_SAVEALL
+Speichere alle...
+;
+MSG_MA_ATTACHMENT_SAVESEL
+Speichere ausgewählte...
+;
+MSG_MA_ATTACHMENT_CROPALL
+Alle Abschneiden
 ;
