@@ -7,6 +7,9 @@ $Source$
 
 2003-01-08  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed bug #658937 where a MAILSUBJECTCHANGE arexx command
+      did trash some memory if a subject larger than SIZE_SUBJECT has
+      been used.
     * YAM_rexx_rxif.c, YAM_TR.c: fixed bug #659733 where the MAILCHECK
       arexx command did set the <stem>.OnServer variable not correctly.
       Previously it was just set to the amount of mails before the

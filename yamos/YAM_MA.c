@@ -2000,7 +2000,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       fclose(newfh);
       f = FileSize(newfile); fo->Size += f - mail->Size; mail->Size = f;
       AppendLog(82, GetStr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
-      strcpy(mail->Subject, subj);
+      strncpy(mail->Subject, subj, SIZE_SUBJECT-1); // only copy a maximum of SIZE_SUBJECT or it will burn
       MA_ExpireIndex(fo);
       if (fo->XPKType > 1) DoPack(newfile, oldfile, fo);
       else RenameFile(newfile, oldfile);
