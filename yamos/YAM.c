@@ -110,8 +110,8 @@ static struct TC_Data
 } TCData;
 
 // AutoDST related variables
-enum ADSTmethod { ADST_NONE=0, ADST_SETDST, ADST_SGUARD, ADST_IXGMT };
-static const char *ADSTfile[] = { "", "ENV:TZONE", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
+enum ADSTmethod { ADST_NONE=0, ADST_SETDST, ADST_FACTS, ADST_SGUARD, ADST_IXGMT };
+static const char *ADSTfile[] = { "", "ENV:TZONE", "ENV:FACTS/DST", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
 static struct ADST_Data
 {
   struct NotifyRequest nRequest;
@@ -1291,8 +1291,9 @@ static int GetDST(BOOL update)
    /* lets check the DaylightSaving stuff now
     * we check in the following order:
     * 1. SetDST (ENV:TZONE)
-    * 2. SummertimeGuard (ENV:SUMMERTIME)
-    * 3. ixemul (ENV:IXGMTOFFSET)
+    * 2. FACTS (ENV:FACTS/DST)
+    * 3. SummertimeGuard (ENV:SUMMERTIME)
+    * 4. ixemul (ENV:IXGMTOFFSET)
     */
 
    // SetDST saves the DST settings in the TZONE env-variable which
@@ -1315,24 +1316,36 @@ static int GetDST(BOOL update)
       ADSTdata.method = ADST_SETDST;
    }
 
+   // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
+   // Hex 00 or 01 to indicate the DST value.
+   if((!update || ADSTdata.method == ADST_FACTS) && result == 0
+      && GetVar(&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
+   {
+      ADSTdata.method = ADST_FACTS;
+
+      if(buffer[0] == 0x01)       return 2;
+      else if(buffer[0] == 0x00)  return 1;
+   }
+
    // SummerTimeGuard sets the last string to "YES" if DST is actually active
    if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
       && GetVar(&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
    {
+      ADSTdata.method = ADST_SGUARD;
+
       if(tmp[1] == 'Y')       return 2;
       else if(tmp[1] == 'N')  return 1;
-
-      ADSTdata.method = ADST_SGUARD;
    }
 
    // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
    // DST is actually active.
    if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
-      && GetVar(&ADSTfile[ADST_IXGMT][4], buffer, 50, 0) >= 4)
+      && GetVar(&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
    {
       ADSTdata.method = ADST_IXGMT;
 
-      return buffer[4] ? 2 : 1;
+      if(buffer[4] == 0x01)       return 2;
+      else if(buffer[4] == 0x00)  return 1;
    }
 
    if(!update && result == 0) ADSTdata.method = ADST_NONE;

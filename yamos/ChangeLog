@@ -7,9 +7,14 @@ $Source$
 
 2003-04-28  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: to make the whole AutoDST mechanism a bit more stable and
+      also useable I reworked/fixed the whole GetDST() again.
+      Also GetDST() now directly supports the ENV:FACTS/DST env variable
+      to check for the current DST mode. So running FACTS with SummerTime
+      emulation is not required anymore.
     * YAM.c: fixed bug in AutoDST recognition where YAM didn`t correctly
       recognize the SUMMERTIME environment variable because it provided
-      a way to short buffer to GetVar().
+      a way too short buffer to GetVar().
 
 2003-04-27  Jens Langner <Jens.Langner@light-speed.de>
 
