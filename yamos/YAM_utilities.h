@@ -34,7 +34,6 @@
 #include <dos/dos.h>
 #include <intuition/classusr.h>
 #include <mui/Toolbar_mcc.h>
-#include <proto/intuition.h>
 
 #include "SDI_compiler.h"
 #include "YAM_folderconfig.h"
@@ -396,18 +395,14 @@ APTR     WhichLV(struct Folder *folder);
 
 /// xget()
 //  Gets an attribute value from a MUI object
-INLINE ULONG xget(Object *obj, const ULONG attr)
-{
-  ULONG b = 0;
-
+ULONG xget(Object *obj, const ULONG attr);
+#if defined(__GNUC__) || ((__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L))
   // please note that we do not evaluate the return value of GetAttr()
   // as some attributes (e.g. MUIA_Selected) always return FALSE, even
   // when they are supported by the object. But setting b=0 right before
   // the GetAttr() should catch the case when attr doesn't exist at all
-  GetAttr(attr, obj, &b);
-
-  return b;
-}
+  #define xget(OBJ, ATTR) ({ULONG b=0; GetAttr(ATTR, OBJ, &b); b;})
+#endif
 ///
 
 #endif /* YAM_UTILITIES_H */
