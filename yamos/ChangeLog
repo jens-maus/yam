@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-29  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_WR.c: fixed bug #729651 where YAM tried to delete a .autosave*
+      file even if AutoSave=0 was set in the configuration.
+
 2003-04-28  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: to make the whole AutoDST mechanism a bit more stable and

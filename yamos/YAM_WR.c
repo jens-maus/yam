@@ -1473,7 +1473,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       set(gui->WI, MUIA_Window_Open, FALSE);
       mlist[2] = new; MA_SendMList(mlist);
    }
-   DeleteFile(WR_AutoSaveFile(winnum));
+   if(C->AutoSave > 0) DeleteFile(WR_AutoSaveFile(winnum));
    DisposeModulePush(&G->WR[winnum]);
    DisplayStatistics(outfolder, TRUE);
 }
