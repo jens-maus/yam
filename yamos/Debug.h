@@ -58,11 +58,6 @@ BOOL TestDebugFlag (ULONG flag);
 		kprintf("\n");			\
 	}
 
-#else
-
-#define SetupDebug()
-#define D(flag, str) ;
-
 #endif
 
 #endif
