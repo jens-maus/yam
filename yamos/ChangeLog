@@ -5,16 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
-2005-02-28  Gunther Nikl <gni@gecko.de>
-
-    * includes/extra.h: Remove getft() prototype and unused access() stuff.
-    * VMakefile (all_vbcc.o): Removed extrasrc/access.c dependency.
-    * all_vbcc.c: Removed extrasrc/access.c from file list.
-    * all_dice.c: Removed DICE support. (DMakefile is already gone...)
-    * YAM_UT.c (FileExists): Simplify.
-
 2005-03-01  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_WR.c: fixed bug #834213 where a stored mail in the sent folder could
+      not be edited and "send later" as expected.
     * YAM_RE.c: fixed bug where upon replying/forwarding based on a virtual mail
       didn't work as expected because the FreePrivateRMData() call did free all
       data, even the virtual mail during the reply/forward phase.
@@ -26,6 +20,14 @@ $Source$
     * YAM_RE.c: fixed bug where an attached "message/rfc822" part could not
       be opened because a CleanupReadMailData() call cleaned up the virtual
       mail directly before trying to display it in an own read window.
+
+2005-03-01  Gunther Nikl <gni@gecko.de>
+
+    * includes/extra.h: Remove getft() prototype and unused access() stuff.
+    * VMakefile (all_vbcc.o): Removed extrasrc/access.c dependency.
+    * all_vbcc.c: Removed extrasrc/access.c from file list.
+    * all_dice.c: Removed DICE support. (DMakefile is already gone...)
+    * YAM_UT.c (FileExists): Simplify.
 
 2005-02-28  Jens Langner <Jens.Langner@light-speed.de>
 
