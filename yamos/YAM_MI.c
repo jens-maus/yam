@@ -89,15 +89,15 @@ static const unsigned char index_hex[128] =
 #define QPENC_BUF   4096  // bytes to use as a quoted-printable file encoding buffer
 #define QPDEC_BUF   4096  // bytes to use as a quoted-printable file decoding buffer
 
-#define UUENC_IWIDTH 45                   // number of unencoded input chars
-#define UUENC_OWIDTH (UUENC_IWIDTH*8/6)   // number of final output chars after encoding
-#define UUENC_IBUF   (UUENC_IWIDTH*100)   // bytes to use as a uucode input encoding buffer
-#define UUENC_OBUF   (UUENC_OWIDTH+3*80)  // bytes to use as a uucode output encoding buffer
-#define UUDEC_BUF    4096                 // bytes to use as a uucode file decoding buffer
-#define UUMAX_CHAR   64                   // the maximum value of a char to hit c + 32 = 96
+#define UUENC_IWIDTH 45                     // number of unencoded input chars
+#define UUENC_OWIDTH (UUENC_IWIDTH*8/6)     // number of final output chars after encoding
+#define UUENC_IBUF   (UUENC_IWIDTH*100)     // bytes to use as a uucode input encoding buffer
+#define UUENC_OBUF   ((UUENC_OWIDTH+3)*80)  // bytes to use as a uucode output encoding buffer
+#define UUDEC_BUF    4096                   // bytes to use as a uucode file decoding buffer
+#define UUMAX_CHAR   64                     // the maximum value of a char to hit c + 32 = 96
 
 #define UUENCODE_CHAR(c)  (((c) & 0x3F) ? ((c) & 0x3F) + ' ' : '`')
-#define	UUDECODE_CHAR(c)  (((c) - ' ') & 0x3F)
+#define UUDECODE_CHAR(c)  (((c) - ' ') & 0x3F)
 
 #define hexchar(c)    index_hex[(c) & 0x7F]
 
