@@ -3870,12 +3870,12 @@ char *SWSSearch(char *str1, char *str2)
   static char *Z = NULL;    // the destination string (result)
   int **L        = NULL;    // L matrix
   int **Ind      = NULL;    // Indicator matrix
-  char *X        = NULL;    // 1.string X
+  char *X;                  // 1.string X
   char *Y        = NULL;    // 2.string Y
   int lx;                   // length of X
   int ly;                   // length of Y
   int lz;                   // length of Z (maximum)
-  int i, j, k;
+  int i, j;
   BOOL gap = FALSE;
   BOOL success = FALSE;
 
@@ -3989,7 +3989,7 @@ char *SWSSearch(char *str1, char *str2)
   // char we take and which we delete
 
   Z[--lz] = '\0';
-  k = i = lx-1;
+  i = lx-1;
   j = ly-1;
 
   while(i >= 0 && j >= 0 && Ind[i][j] != DONE)

@@ -2385,7 +2385,7 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
    };
 
    char *foundurl = NULL, *p;
-   int i;
+   int i=0;
 
 //   DB(kprintf("ExtractURL: [%s]\n", line);)
 
@@ -2423,7 +2423,7 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
           if(*p == '@')
           {
             atcnt++;
-            if(atcnt > 1) { p++; break; }
+            if(atcnt > 1) break;
           }
 
           foundurl = p;

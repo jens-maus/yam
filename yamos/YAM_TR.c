@@ -822,7 +822,7 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
   static int read_cnt = 0;
   static char *read_buf = NULL;
   static char *read_ptr;
-  int fill_cnt = 0;
+  int fill_cnt;
 
   // if we don`t have a buffer yet, lets allocate own
   if(!read_buf && !(read_buf = calloc(1, SIZE_BUFSIZE*sizeof(char)))) return -1;
@@ -1631,7 +1631,6 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
 
                // if not, we get another bunch of data and start over again.
                if (TR_Recv(buf, SIZE_LINE) <= 0) break;
-               bufptr = buf;
             }
             fclose(f);
 
@@ -2762,7 +2761,6 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
 
             // if not, we get another bunch of data and start over again.
             if (TR_Recv(buf, SIZE_LINE) <= 0) break;
-            bufptr = buf;
          }
       }
       fclose(f);
