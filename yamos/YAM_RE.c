@@ -1708,6 +1708,7 @@ static void RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 static FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, struct Part *first)
 {
    FILE *fp;
+
    if (((*new) = calloc(1,sizeof(struct Part))))
    {
       char file[SIZE_FILE];
@@ -1739,11 +1740,33 @@ static FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, st
 //  Removes an entry from the message part list
 static void RE_UndoPart(struct Part *rp)
 {
+   struct Part *trp;
+
+   // lets delete the file first so that we can cleanly "undo" the part
    DeleteFile(rp->Filename);
+
+   // if we remove a part from the part list we have to take
+   // care of the part index number aswell. So all following
+   // parts have to be descreased somehow by one.
+   for(trp = rp->Next; trp; trp = trp->Next)
+   {
+      trp->Nr--;
+
+      // Now we also have to rename the temporary filename also
+      Rename(trp->Filename, trp->Prev->Filename);
+
+      // ej, and of course we have to change the name of the filename with
+      // the next step.
+      if(!trp->Next)      strcpy(trp->Filename, trp->Prev->Filename);
+      if(trp != rp->Next) strcpy(trp->Prev->Filename, trp->Prev->Prev->Filename);
+   }
+
    if (rp->Prev) rp->Prev->Next = rp->Next;
    if (rp->Next) rp->Next->Prev = rp->Prev;
    if (rp->ContentType) FreeStrBuf(rp->ContentType);
    if (rp->ContentDisposition) FreeStrBuf(rp->ContentDisposition);
+
+   // and last, but not least we free the part
    free(rp);
 }
 ///
@@ -1841,7 +1864,7 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
 
           while (!done)
           {
-            struct Part *prev = rp, *newrp;
+            struct Part *prev = rp;
             out = RE_OpenNewPart(winnum, &rp, prev, hrp);
 
             if(out == NULL) break;
@@ -1857,7 +1880,7 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
             {
               fclose(out);
 
-              if ((newrp = RE_ParseMessage(winnum, in, NULL, rp)))
+              if(RE_ParseMessage(winnum, in, NULL, rp))
               {
                 RE_UndoPart(rp);
                 done = RE_ConsumeRestOfPart(in, NULL, NULL, prev);
@@ -1901,6 +1924,7 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
   }
 
 #ifdef DEBUG
+if(fname)
 {
   struct Part *rp;
 
@@ -1908,7 +1932,7 @@ static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Pa
 
   for(rp = hrp; rp; rp = rp->Next)
   {
-    kprintf("Part[%lx]\n", rp);
+    kprintf("Part[%lx] - %ld\n", rp, rp->Nr);
     kprintf("  Name.......: [%s]\n", rp->Name);
     kprintf("  ContentType: [%s]\n", rp->ContentType);
     kprintf("  Filename...: [%s]\n", rp->Filename);

@@ -5,6 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-09-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug #598715 where YAM didn`t display the
+      letter part of a message if the user deselected "Display
+      All Texts" within the Read configuration and if the
+      message was a multiple MIME encoded message were we had
+      to "undo" some message parts because of different msg
+      boundaries. YAM wasn`t reorganizing the msg part numbers
+      on a UndoPart operation and therefore lost the sync of
+      the message parts somehow. This fix should perhaps also
+      automatically fix some other strange behaviour were some
+      MIME parts were undoed by YAM.
+
 2002-09-11  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_COg.c: fixed bug #600543 where YAM will now ghost the
