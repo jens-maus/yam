@@ -672,7 +672,7 @@ BOOL FO_SaveTree(char *fname)
    BOOL success = TRUE;
    FILE *fh;
 
-   kprintf("saving YAM:.folders !!!\n");
+   DB(kprintf("saving YAM:.folders !!!\n");)
 
    if (fh = fopen(fname, "w"))
    {
