@@ -66,10 +66,17 @@ INITIALS   [[:alpha:]]
 "_"  {return tUNDERSCORE ;}
 "#"  {return tHASH       ;}
 
-"*"[^[:blank:]\n*][^\n*]*[^[:blank:]\n*]"*"[[:blank:]\n,.!?:]                     {return tBOLD      ;}
-"/"[^[:blank:]\n/][^\n/]*[^[:blank:]\n/]"/"[[:blank:]\n,.!?:]                     {return tITALIC    ;}
-"_"[^[:blank:]\n_][^\n_]*[^[:blank:]\n_]"_"[[:blank:]\n,.!?:]                     {return tUNDERLINE ;}
-"#"[^[:blank:]\n#][^\n#]*[^[:blank:]\n#]"#"[[:blank:]\n,.!?:]                     {return tCOLORED   ;}
+[[:blank:]]"*"[^[:blank:]\n*]([^\n*]*[^[:blank:]\n*])?"*"[[:blank:]\n,.!?:]       |
+^"*"[^[:blank:]\n*]([^\n*]*[^[:blank:]\n*])?"*"[[:blank:]\n,.!?:]                 {return tBOLD      ;}
+
+[[:blank:]]"/"[^[:blank:]\n/]([^\n/]*[^[:blank:]\n/])?"/"[[:blank:]\n,.!?:]       |
+^"/"[^[:blank:]\n/]([^\n/]*[^[:blank:]\n/])?"/"[[:blank:]\n,.!?:]                 {return tITALIC    ;}
+
+[[:blank:]]"_"[^[:blank:]\n_]([^\n_]*[^[:blank:]\n_])?"_"[[:blank:]\n,.!?:]       |
+^"_"[^[:blank:]\n_]([^\n_]*[^[:blank:]\n_])?"_"[[:blank:]\n,.!?:]                 {return tUNDERLINE ;}
+
+[[:blank:]]"#"[^[:blank:]\n#?]([^\n#]*[^[:blank:]\n#])?"#"[[:blank:]\n,.!?:]      |
+^"#"[^[:blank:]\n#?]([^\n#]*[^[:blank:]\n#])?"#"[[:blank:]\n,.!?:]                {return tCOLORED   ;}
 
 "http://"({NOTBLANK}|[.])*{NOTEOR}                                                {return tHTTP      ;}
 "https://"({NOTBLANK}|[.])*{NOTEOR}                                               {return tHTTPS     ;}
@@ -89,6 +96,7 @@ INITIALS   [[:alpha:]]
 char *ParseEmailText(char *mailTxt)
 {
   char *cmsg = NULL;
+  char tmp[] = " ";
   int len, wptr=0;
   YY_BUFFER_STATE buffer;
   enum tokenType type;
@@ -140,6 +148,15 @@ char *ParseEmailText(char *mailTxt)
 
           case tBOLD:
           {
+            // first we check if we have to write something back
+            if(yytext[0] != '*')
+            {
+              tmp[0] = yytext[0];
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
+              yytext++;
+              yyleng--;
+            }
+
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033b");
             yytext[yyleng-2] = '\0';
             cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
@@ -150,6 +167,15 @@ char *ParseEmailText(char *mailTxt)
 
           case tITALIC:
           {
+            // first we check if we have to write something back
+            if(yytext[0] != '/')
+            {
+              tmp[0] = yytext[0];
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
+              yytext++;
+              yyleng--;
+            }
+
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033i");
             yytext[yyleng-2] = '\0';
             cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
@@ -160,6 +186,15 @@ char *ParseEmailText(char *mailTxt)
 
           case tUNDERLINE:
           {
+            // first we check if we have to write something back
+            if(yytext[0] != '_')
+            {
+              tmp[0] = yytext[0];
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
+              yytext++;
+              yyleng--;
+            }
+
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033u");
             yytext[yyleng-2] = '\0';
             cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
@@ -170,6 +205,15 @@ char *ParseEmailText(char *mailTxt)
 
           case tCOLORED:
           {
+            // first we check if we have to write something back
+            if(yytext[0] != '#')
+            {
+              tmp[0] = yytext[0];
+              cmsg = AppendToBuffer(cmsg, &wptr, &len, tmp);
+              yytext++;
+              yyleng--;
+            }
+
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[7]");
             yytext[yyleng-2] = '\0';
             cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);

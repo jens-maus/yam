@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-17  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_mail_lex.l: reworked the textstyle highlighting regular
+      expressions to work more accurate and also allow to stylish text
+      passages with only one character. That fixes bug #683385.
+
 2003-02-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l: fixed tiny bug in the text highlighting routines
