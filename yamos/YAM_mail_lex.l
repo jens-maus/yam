@@ -44,7 +44,7 @@
 
 NOTBLANK   [^[:blank:]\r\n()<>\[\]*.\"]
 NOTBLANKAT [^[:blank:]\r\n()<>\[\]*.@\"]
-INITIALS   [[:alpha:][:blank:]]
+INITIALS   [[:alpha:]]
 
 %%
 ^"<sb>"                             {return tSB ;}
