@@ -4998,3 +4998,7 @@ No Username or Password was specified for the SMTP-AUTH connection \
 YAM was trying to establish. Please check your configuration and \
 try again.
 ;
+MSG_ER_POPWELCOME (//)
+The POP server responsed with an error message during the welcome \
+procedure and the connection was terminated:\n\n%s\n
+;
