@@ -622,7 +622,7 @@ APTR CO_Page2(struct CO_ClassData *data)
 
                Child, Label(GetStr(MSG_CO_TransferWin)),
                Child, data->GUI.CY_TRANSWIN = MakeCycle(trwopt, GetStr(MSG_CO_TransferWin)),
- 
+
                Child, Label(GetStr(MSG_CO_WarnSize1)),
                Child, HGroup,
                   Child, data->GUI.ST_WARNSIZE = MakeInteger(5, GetStr(MSG_CO_WarnSize1)),

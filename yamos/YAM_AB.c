@@ -139,7 +139,7 @@ static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode *list
 {
   struct MUI_NListtree_TreeNode *tn;
   int wrwin, i;
-   
+
   for(i=0;;i++)
   {
     if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIF_NONE)))
@@ -459,7 +459,7 @@ static STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *li
    struct MUI_NListtree_TreeNode *tn;
    struct ABEntry *ab;
    int i;
-        
+
    for (i=0; ; i++)
       if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)))
       {
@@ -689,7 +689,7 @@ static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *pr
 {
    struct MUI_NListtree_TreeNode *tn;
    int i;
-   
+
    for (i=0; ; i++)
       if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)))
       {
@@ -777,7 +777,7 @@ HOOKPROTONHNONP(AB_DuplicateFunc, void)
    {
       struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
       int winnum = EA_Init(ab->Type, NULL);
-      if (winnum >= 0) 
+      if (winnum >= 0)
       {
          char buf[SIZE_NAME];
          int len;
@@ -803,7 +803,7 @@ BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, e
    APTR lv = G->AB->GUI.LV_ADDRESSES;
    struct MUI_NListtree_TreeNode *tn;
    int i;
-   
+
    for (i=0; ; i++)
       if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, list, i, MUIF_NONE)))
       {

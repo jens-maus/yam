@@ -223,7 +223,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
             {
                struct Mail mail;
                struct ComprMail cmail;
-               memset(&mail, 0, sizeof(struct Mail));               
+               memset(&mail, 0, sizeof(struct Mail));
                if(fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1)
                {
                   // check if we are here because of an error or EOF
@@ -572,20 +572,20 @@ ULONG MA_FLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_Co
   // if this was a RMB click on the titlebar we create our own special menu
   if(msg->ontop)
   {
-  	data->context_menu = MenustripObject,
-	  	Child, MenuObjectT(GetStr(MSG_MA_CTX_FOLDERLIST)),
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Folder), MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<0)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Total),  MUIA_UserData, 2, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<1)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Unread), MUIA_UserData, 3, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<2)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_New),    MUIA_UserData, 4, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<3)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Size),   MUIA_UserData, 5, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<4)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-  			Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_THIS), MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
-	  		Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_THIS), MUIA_UserData, MUIV_NList_Menu_DefOrder_This, End,
-			  Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_ALL),  MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
-			End,
-		End;
+    data->context_menu = MenustripObject,
+      Child, MenuObjectT(GetStr(MSG_MA_CTX_FOLDERLIST)),
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Folder), MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<0)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Total),  MUIA_UserData, 2, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<1)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Unread), MUIA_UserData, 3, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<2)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_New),    MUIA_UserData, 4, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<3)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Size),   MUIA_UserData, 5, MUIA_Menuitem_Checked, isFlagSet(C->FolderCols, (1<<4)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_THIS), MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_THIS), MUIA_UserData, MUIV_NList_Menu_DefOrder_This, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_ALL),  MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
+      End,
+    End;
 
     return (ULONG)data->context_menu;
   }
@@ -733,7 +733,7 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile, int daynumber)
    char mfile[SIZE_MFILE];
    struct Mail *mail;
    int cnt, mcnt = 0;
-   
+
    if (!mailfile) mailfile = mfile;
    if (!daynumber) { struct DateStamp ds; DateStamp(&ds); daynumber = ds.ds_Days; }
    MA_GetIndex(folder);
@@ -878,7 +878,7 @@ BOOL MA_ReadHeader(FILE *fh)
   if(!success) FreeData2D(&Header);
 
   return (BOOL)(success == TRUE || linesread == 1);
-}  
+}
 
 ///
 /// MA_FreeEMailStruct
@@ -1373,7 +1373,7 @@ static struct DateStamp *MA_ScanDate(char *date)
 /// PO_InitFolderList
 //  Creates a popup list of all folders
 HOOKPROTONHNP(PO_InitFolderList, long, Object *pop)
-{  
+{
    int i;
    struct Folder **flist;
 
@@ -1436,7 +1436,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
         }
       }
    }
-   else 
+   else
    {
       msg->Array[0] = GetStr(MSG_Folder);
       msg->Array[1] = GetStr(MSG_Total);

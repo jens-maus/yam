@@ -45,7 +45,7 @@ static int outdec(char*, FILE*);
 
 static int rfc2047_decode_int(const char *text,
                               int (*func)(const char *, int, const char *, const char *, void *),
-		                          void *arg);
+                              void *arg);
 static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
                                 const char *lang, void *arg);
 static char *rfc2047_search_quote(const char **ptr);
@@ -62,13 +62,13 @@ static const char basis_hex[] = "0123456789ABCDEF";
 static const unsigned char index_64[128] =
 {
   255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-	255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
-	255,255,255,255,255,255,255,255,255,255,255,62, 255,255,255,63,
-	52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 255,255,255,255,255,255,
-	255,0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14,
-	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 255,255,255,255,255,
-	255,26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-	41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 255,255,255,255,255
+  255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+  255,255,255,255,255,255,255,255,255,255,255,62, 255,255,255,63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 255,255,255,255,255,255,
+  255,0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 255,255,255,255,255,
+  255,26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 255,255,255,255,255
 };
 
 static const char index_hex[128] = {
@@ -147,63 +147,63 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
 // decoded string or -1 on an occurred error
 int base64decode(char *to, const unsigned char *from, unsigned int len)
 {
-	int x, y;
+  int x, y;
   char *fromp = (char*)from;
   char *top = to;
 
-	while(len > 0)
-	{
+  while(len > 0)
+  {
     len--;
     x = (unsigned char)(*fromp++);
-		if(x > 127 || (x = index_64[x]) == 255)
-			return -1;
+    if(x > 127 || (x = index_64[x]) == 255)
+      return -1;
 
     if(len < 0 || (y = (unsigned char)(*fromp++)) == 0 ||
        y > 127 || (y = index_64[y]) == 255)
     {
-			return -1;
+      return -1;
     }
 
     len--;
-		*top++ = (x << 2) | (y >> 4);
+    *top++ = (x << 2) | (y >> 4);
 
-		if(len > 0)
+    if(len > 0)
     {
       len--;
       if((x = (unsigned char)(*fromp++)) == '=')
       {
-	  		if((len > 0 && *fromp++ != '=') || *fromp != 0)
-  				return -1;
+        if((len > 0 && *fromp++ != '=') || *fromp != 0)
+          return -1;
 
         len--;
-	  	}
-  		else
+      }
+      else
       {
-		  	if (x > 127 || (x = index_64[x]) == 255)
-			  	return -1;
+        if (x > 127 || (x = index_64[x]) == 255)
+          return -1;
 
-  			*top++ = (y << 4) | (x >> 2);
+        *top++ = (y << 4) | (x >> 2);
         if(len > 0)
         {
           len--;
-  	  		if ((y = (unsigned char)(*fromp++)) == '=')
+          if ((y = (unsigned char)(*fromp++)) == '=')
           {
-		  	  	if(*fromp != 0) return -1;
-  		  	}
-  	  		else
+            if(*fromp != 0) return -1;
+          }
+          else
           {
-		  	  	if (y > 127 || (y = index_64[y]) == 255)
-			  	  	return -1;
+            if (y > 127 || (y = index_64[y]) == 255)
+              return -1;
 
-    				*top++ = (x << 6) | y;
-	    		}
+            *top++ = (x << 6) | y;
+          }
         }
-		  }
+      }
     }
-	}
-	*top = 0;
+  }
+  *top = 0;
   if(len != 0) return -1;
-	return top - to;
+  return top - to;
 }
 
 ///
@@ -344,16 +344,16 @@ static void output64chunk(int c1, int c2, int c3, int pads, FILE *outfile)
          fputc('=', outfile);
    }
 /*
-   if (pads == 2) 
+   if (pads == 2)
    {
       fputs("==", outfile);
-   } 
-   else if (pads) 
+   }
+   else if (pads)
    {
       fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
       fputc('=', outfile);
    }
-   else 
+   else
    {
       fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
       fputc(basis_64[c3 & 0x3F], outfile);
@@ -396,7 +396,7 @@ void toqp(FILE *infile, FILE *outfile)
 
    while ((c = fgetc(infile)) != -1)
    {
-      if ((c < 32 && (c != '\n' && c != '\t')) || (c == '=') || (c >= 127) || (ct == 0 && c == '.')) 
+      if ((c < 32 && (c != '\n' && c != '\t')) || (c == '=') || (c >= 127) || (ct == 0 && c == '.'))
       {
          fputc('=', outfile);
          fputc(basis_hex[c>>4], outfile);
@@ -404,31 +404,31 @@ void toqp(FILE *infile, FILE *outfile)
          ct += 3;
          prevc = 'A';
       }
-      else if (c == '\n') 
+      else if (c == '\n')
       {
-         if (prevc == ' ' || prevc == '\t') 
+         if (prevc == ' ' || prevc == '\t')
          {
             fputs("=\n", outfile);
          }
          fputc('\n', outfile);
          ct = 0;
          prevc = c;
-      } 
-      else 
+      }
+      else
       {
-         if (c == 'F' && prevc == '\n') 
+         if (c == 'F' && prevc == '\n')
          {
-            if ((c = fgetc(infile)) == 'r') 
-               if ((c = fgetc(infile)) == 'o') 
-                  if ((c = fgetc(infile)) == 'm') 
+            if ((c = fgetc(infile)) == 'r')
+               if ((c = fgetc(infile)) == 'o')
+                  if ((c = fgetc(infile)) == 'm')
                      if ((c = fgetc(infile)) == ' ') { fputs("=46rom", outfile);  ct += 6; }
                      else { fputs("From", outfile); ct += 4; }
                   else { fputs("Fro", outfile); ct += 3; }
                else { fputs("Fr", outfile); ct += 2; }
             else { fputc('F', outfile); ++ct; }
             ungetc(c, infile);
-            prevc = 'x'; 
-         } 
+            prevc = 'x';
+         }
          else
          {
             fputc(c, outfile);
@@ -436,7 +436,7 @@ void toqp(FILE *infile, FILE *outfile)
             prevc = c;
          }
       }
-      if (ct > 72) 
+      if (ct > 72)
       {
          fputs("=\n", outfile);
          ct = 0;
@@ -481,7 +481,7 @@ void fromqptxt(char *src, char *dst, struct TranslationTable *tt)
    UBYTE c;
 
    while ((c1 = *src++))
-      if (c1 == '=') 
+      if (c1 == '=')
       {
          c1 = *src++; c2 = *src++;
          c1 = hexchar(c1); c2 = hexchar(c2); c = (UBYTE)(c1<<4 | c2);
@@ -498,7 +498,7 @@ void fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt)
    unsigned int c1, c2;
    BOOL neednewline = FALSE;
 
-   while ((c1 = fgetc(infile)) != -1) 
+   while ((c1 = fgetc(infile)) != -1)
    {
       if (neednewline) { fputc('\n', outfile); neednewline = FALSE; };
       if (c1 == '=')
@@ -559,7 +559,7 @@ static BOOL gettxtline(char *buf, int size, char **rptr)
    char *ptr = buf;
 
    for (c = 0; c < size; ++c)buf[c] = ' ';
-   do 
+   do
    {
       c = (int)**rptr; (*rptr)++;
       if (!c) { *ptr = '\0'; return (BOOL)(ptr == buf); }
@@ -583,29 +583,29 @@ void fromuuetxt(char **txt, FILE *outfp)
 
    while (TRUE)
    {
-      if (gettxtline(buf, sizeof(buf), txt)) 
+      if (gettxtline(buf, sizeof(buf), txt))
       {
          ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
          return;
-      }        
+      }
       if (!strncmp(buf, "begin", 5)) break;
-   }  
-   while (TRUE) 
+   }
+   while (TRUE)
    {
-      if (gettxtline(buf, sizeof(buf), txt)) 
+      if (gettxtline(buf, sizeof(buf), txt))
       {
          ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
          return;
-      }        
+      }
       else if (!strncmp(buf, "end", 5)) break;
       else if (*buf == '\0') continue;
-      else 
+      else
       {
          int length = (*buf - ' ');
          if (*buf == '`') length = 0;
-         if (length < 0 || length > 63) 
+         if (length < 0 || length > 63)
             ER_NewError(GetStr(MSG_ER_InvalidLength), (char *)length, NULL);
-         else 
+         else
          {
             char *ptr = buf + 1;
             while (length > 0) { uueget(ptr, outfp, length); length -= 3; ptr += 4; }
@@ -623,7 +623,7 @@ static BOOL getline(char *buf, int size, FILE *fp)
    char *ptr = buf;
 
    for (c = 0; c < size; ++c)buf[c] = ' ';
-   do 
+   do
    {
       if ((c = fgetc(fp)) == -1) {*ptr = '\0'; return (BOOL)(ptr == buf); }
       else if (c == '\n' || c == '\r') { *ptr = '\0'; return FALSE; }
@@ -644,31 +644,31 @@ void fromuue(FILE *infp, FILE *outfp)
 {
    char buf[SIZE_LINE];
 
-   while (TRUE) 
+   while (TRUE)
    {
-      if (getline(buf, sizeof(buf), infp)) 
+      if (getline(buf, sizeof(buf), infp))
       {
          ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
          return;
-      }        
+      }
       if (!strncmp(buf, "begin", 5)) break;
-   }  
-   while (TRUE) 
+   }
+   while (TRUE)
    {
-      if (getline(buf, sizeof(buf), infp)) 
+      if (getline(buf, sizeof(buf), infp))
       {
          ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
          return;
-      }        
+      }
       else if (!strncmp(buf, "end", 5)) break;
       else if (*buf == '\0') continue;
-      else 
+      else
       {
          int length = (*buf - ' ');
          if (*buf == '`') length = 0;
-         if (length < 0 || length > 63) 
+         if (length < 0 || length > 63)
             ER_NewError(GetStr(MSG_ER_InvalidLength), (char *)length, NULL);
-         else 
+         else
          {
             char *ptr = buf + 1;
             while (length > 0) { uueget(ptr, outfp, length); length -= 3; ptr += 4; }
@@ -703,7 +703,7 @@ void touue(FILE *in, FILE *out)
    char buf[80];
    int i,n,checksum;
 
-   for (;;) 
+   for (;;)
    {
       n = fread(buf, 1, 45, in);
       fputc(ENC(n), out);
@@ -804,7 +804,7 @@ static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
   {
     // no translation table is available, so lets just
     // copy the decoded stuff in our destination pointer
-	  memcpy(info->dst, txt, len);
+    memcpy(info->dst, txt, len);
   }
 
   // increase the destination pointer so that the
@@ -826,11 +826,11 @@ static int rfc2047_dec_callback(const char *txt, int len, const char *chset,
 // failed).
 static int rfc2047_decode_int(const char *text,
                               int (*func)(const char *, int, const char *, const char *, void *),
-		                          void *arg)
+                              void *arg)
 {
-  int	rc, result=0;
+  int  rc, result=0;
   int unknown_enc=0;
-  int	had_last_word=0;
+  int  had_last_word=0;
   const char *p;
   char *chset, *lang;
   char *encoding;
@@ -843,15 +843,15 @@ static int rfc2047_decode_int(const char *text,
     {
       while(*text)
       {
-				if (text[0] == '=' && text[1] == '?')
+        if (text[0] == '=' && text[1] == '?')
           break;
-				
+
         if(!isspace((int)(unsigned char)*text))
           had_last_word=0;
 
         ++text;
       }
-			
+
       if(text > p && !had_last_word)
       {
         rc = (*func)(p, (int)(text-p), 0, 0, arg);
@@ -865,25 +865,25 @@ static int rfc2047_decode_int(const char *text,
     if((chset = rfc2047_search_quote(&text)) == 0)
       return -1;
 
-		if(*text) ++text;
+    if(*text) ++text;
     if((encoding = rfc2047_search_quote(&text)) == 0)
-		{
+    {
       free(chset);
       return -1;
     }
-		
+
     if(*text) ++text;
     if((enctext = rfc2047_search_quote(&text)) == 0)
-		{
+    {
       free(encoding);
       free(chset);
 
       return -1;
     }
-		
+
     if(*text == '?' && text[1] == '=')
       text += 2;
-	
+
     // now we check the encoding string.
     // q/Q defines to quoted-printable decoding
     // b/B defines to base64 encoding
@@ -903,7 +903,7 @@ static int rfc2047_decode_int(const char *text,
             int c;
 
             if(*q == '=' && q[1] && q[2])
-		  	  	{
+            {
               char *p1 = strchr(basis_hex, toupper((int)(unsigned char)q[1]));
               char *p2 = strchr(basis_hex, toupper((int)(unsigned char)q[2]));
 
@@ -914,7 +914,7 @@ static int rfc2047_decode_int(const char *text,
             }
 
             c = *q++;
-	  			  if(c == '_') c = ' ';
+            if(c == '_') c = ' ';
             *r++ = c ;
           }
           *r=0;
@@ -924,7 +924,7 @@ static int rfc2047_decode_int(const char *text,
         // we found a base64 encoded rfc2047 compliant string, so
         // lets decode it.
         case 'b':
-    		{
+        {
           int res = base64decode(enctext, enctext, strlen(enctext));
           if(res > 0)
             enctext[res] = '\0';
@@ -970,7 +970,7 @@ static int rfc2047_decode_int(const char *text,
     if(rc) return rc;
 
     // Ignore blanks between enc words
-		had_last_word=1;
+    had_last_word=1;
   }
 
   return result;
@@ -982,7 +982,7 @@ static int rfc2047_decode_int(const char *text,
 static char *rfc2047_search_quote(const char **ptr)
 {
   const char *p = *ptr;
-  char	*s;
+  char  *s;
 
   while(**ptr && **ptr != '?')
     ++(*ptr);

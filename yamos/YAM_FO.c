@@ -259,7 +259,7 @@ int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
    {
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
       if (!tn || !tn->tn_User) return(-1);
- 
+
       fo = tn->tn_User;
       if(!withGroups && fo->Type == FT_GROUP) j--;
       if (fo == findfo) return(j);
@@ -309,8 +309,8 @@ BOOL FO_LoadConfig(struct Folder *fo)
                else if(!stricmp(buffer, "MLAddress"))    MyStrCpy(fo->MLAddress, value);
                else if(!stricmp(buffer, "MLPattern"))    MyStrCpy(fo->MLPattern, value);
                else if(!stricmp(buffer, "MLSignature"))  fo->MLSignature = atoi(value);
-							 else if(!stricmp(buffer, "WriteIntro"))     MyStrCpy(fo->WriteIntro, value);
-							 else if(!stricmp(buffer, "WriteGreetings")) MyStrCpy(fo->WriteGreetings, value);
+               else if(!stricmp(buffer, "WriteIntro"))     MyStrCpy(fo->WriteIntro, value);
+               else if(!stricmp(buffer, "WriteGreetings")) MyStrCpy(fo->WriteGreetings, value);
             }
          }
          success = TRUE;
@@ -479,7 +479,7 @@ BOOL FO_LoadTree(char *fname)
    FILE *fh;
    APTR lv = G->MA->GUI.NL_FOLDERS;
    struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
-   
+
    if ((fh = fopen(fname, "r")))
    {
       GetLine(fh, buffer, sizeof(buffer));
@@ -874,7 +874,6 @@ static void FO_GetFolder(struct Folder *folder)
 
    set(gui->CH_STATS,       MUIA_Selected, folder->Stats);
    set(gui->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
-
 
    SetAttrs(gui->ST_HELLOTEXT,
             MUIA_String_Contents, folder->WriteIntro,

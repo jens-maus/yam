@@ -125,10 +125,10 @@ HOOKPROTONHNONP(CO_AddRule, void)
 
          // lets set the new string gadget active and select all text in there automatically to
          // be more handy to the user ;)
- 				 set(_win(G->CO->GUI.LV_RULES), MUIA_Window_ActiveObject, G->CO->GUI.ST_RNAME);
+         set(_win(G->CO->GUI.LV_RULES), MUIA_Window_ActiveObject, G->CO->GUI.ST_RNAME);
          set(G->CO->GUI.ST_RNAME, MUIA_BetterString_SelectSize, -((LONG)strlen(CE->RU[i]->Name)));
 
-         break; 
+         break;
       }
 }
 MakeHook(CO_AddRuleHook,CO_AddRule);
@@ -200,7 +200,7 @@ HOOKPROTONHNONP(CO_GetRUEntry, void)
 
    DoMethod(gui->LV_RULES, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &rule);
    if (rule)
-   {      
+   {
       int m, i, k, rm = rule->Remote ? 1 : 0;
       nnset(gui->ST_RNAME,    MUIA_String_Contents, rule->Name);
       nnset(gui->CH_REMOTE,   MUIA_Selected, rm);
@@ -256,7 +256,7 @@ HOOKPROTONHNONP(CO_PutRUEntry, void)
    if (rule)
    {
       int i, m, rm = GetMUICheck(gui->CH_REMOTE);
-      
+
       GetMUIString(rule->Name, gui->ST_RNAME);
       rule->Remote = rm == 1;
       rule->ApplyToNew  = GetMUICheck(gui->CH_APPLYNEW);
@@ -367,7 +367,7 @@ HOOKPROTONHNONP(CO_AddPOP3, void)
          DoMethod(G->CO->GUI.LV_POP3, MUIM_List_InsertSingle, CE->P3[i], MUIV_List_Insert_Bottom, TAG_DONE);
          set(G->CO->GUI.LV_POP3, MUIA_List_Active, i);
          set(G->CO->GUI.WI, MUIA_Window_ActiveObject, G->CO->GUI.ST_POPHOST);
-         break; 
+         break;
       }
 }
 MakeHook(CO_AddPOP3Hook,CO_AddPOP3);
@@ -520,7 +520,7 @@ HOOKPROTONHNONP(CO_AddMimeView, void)
          DoMethod(gui->LV_MIME, MUIM_List_InsertSingle, CE->MV[i], MUIV_List_Insert_Bottom);
          set(gui->LV_MIME, MUIA_List_Active, MUIV_List_Active_Bottom);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CTYPE);
-         break; 
+         break;
       }
 }
 MakeHook(CO_AddMimeViewHook,CO_AddMimeView);
@@ -659,7 +659,7 @@ void CO_FreeConfig(struct Config *co)
 
    // clear the config.
    memset(co, 0, sizeof(struct Config));
-}  
+}
 
 ///
 /// CO_SetDefaults
@@ -667,7 +667,7 @@ void CO_FreeConfig(struct Config *co)
 void CO_SetDefaults(struct Config *co, int page)
 {
    int i;
-   
+
    if (page == 0 || page < 0)
    {
       *co->RealName = *co->EmailAddress = 0;
@@ -761,7 +761,7 @@ void CO_SetDefaults(struct Config *co, int page)
    if (page == 8 || page < 0)
    {
       co->FolderCols = 1+2+16;
-      co->MessageCols = 1+2+8+16;      
+      co->MessageCols = 1+2+8+16;
       co->FixedFontList = C->SwatchBeat = FALSE;
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;
@@ -1123,7 +1123,7 @@ MakeStaticHook(CO_SaveConfigAsHook, CO_SaveConfigAs);
 /// CO_Restore
 //  Makes all changes undone
 HOOKPROTONHNONP(CO_Restore, void)
-{                    
+{
    CO_FreeConfig(CE);
    CO_CopyConfig(CE, C);
    CO_SetConfig();

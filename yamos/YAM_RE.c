@@ -202,7 +202,7 @@ static struct Mail *RE_GetThread(struct Mail *srcMail, BOOL nextThread, BOOL ask
 /// RE_Follow
 //  Follows a thread in either direction
 HOOKPROTONHNO(RE_Follow, void, int *arg)
-{  
+{
    int direction = arg[0], winnum = arg[1];
    struct Mail *fmail;
 
@@ -307,7 +307,7 @@ static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
 /// RE_PrevNext
 //  Goes to next or previous (new) message in list
 HOOKPROTONHNO(RE_PrevNext, void, int *arg)
-{  
+{
    BOOL onlynew = hasFlag(arg[1], (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
    RE_SwitchMessage(arg[2], arg[0], onlynew);
 }
@@ -684,7 +684,7 @@ void RE_SaveDisplay(int winnum, FILE *fh)
       }
       else fputc(*ptr, fh);
    }
-}  
+}
 
 ///
 /// RE_SuggestName
@@ -1575,12 +1575,12 @@ static char *ParamEnd(char *s)
 {
    BOOL inquotes = FALSE;
 
-   while (*s) 
+   while (*s)
    {
-      if (inquotes) 
+      if (inquotes)
       {
          if (*s == '"') inquotes = FALSE; else if (*s == '\\') ++s;
-      } 
+      }
       else if (*s == ';') return(s);
       else if (*s == '"') inquotes = TRUE;
       ++s;
@@ -1593,7 +1593,7 @@ static char *ParamEnd(char *s)
 static char *Cleanse(char *s)
 {
    char *tmp, *news;
-   
+
    news = s = stpblk(s);
    for (tmp=s; *tmp; ++tmp) if (isupper((int)*tmp)) *tmp = tolower((int)*tmp);
    while (tmp > news && *--tmp && ISpace(*tmp)) *tmp = 0;
@@ -1610,7 +1610,7 @@ static char *UnquoteString(char *s, BOOL new)
    ans = malloc(1+strlen(s));
    ++s;
    t = ans;
-   while (*s) 
+   while (*s)
    {
       if (*s == '\\') *t++ = *++s;
       else if (*s == '"') break;
@@ -1636,7 +1636,7 @@ static void RE_ParseContentParameters(struct Part *rp)
    do {
       if ((t = ParamEnd(s))) *t++ = 0;
       if (!(eq = strchr(s, '='))) rp->JunkParameter = Cleanse(s);
-      else 
+      else
       {
          *eq++ = 0;
          s = Cleanse(s); eq = stpblk(eq);
@@ -1677,7 +1677,7 @@ static void RE_ParseContentDispositionParameters(struct Part *rp)
          UnquoteString(eq, FALSE);
          if (!stricmp(s, "filename"))
          {
-						SParse(eq);
+            SParse(eq);
             rp->CParFileName = eq;
          }
       }
@@ -1712,7 +1712,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
       if (!strnicmp(s, "content-type:", 13))
       {
          rp->ContentType = StrBufCpy(rp->ContentType, p = stpblk(&s[13]));
-         while (TRUE) 
+         while (TRUE)
          {
             if (!(p = strchr(rp->ContentType, '/'))) break;
             if (ISpace(*(p-1)))     for (--p; *p; ++p) *p = *(p+1);
@@ -1741,11 +1741,11 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
          {
             ER_NewError(GetStr(MSG_ER_UnknownEnc), p, NULL);
          }
-      } 
+      }
       else if (!strnicmp(s, "content-description:", 20))
       {
          stccpy(rp->Description, stpblk(&s[20]), SIZE_DEFAULT);
-      } 
+      }
       else if (!strnicmp(s, "content-disposition:", 20))
       {
         // if we found a content-disposition field we have to parse it for
@@ -2212,7 +2212,7 @@ BOOL RE_DecodePart(struct Part *rp)
       if ((in = fopen(rp->Filename, "r")))
       {
          if (rp->HasHeaders) while (GetLine(in, buf, SIZE_LINE)) if (!*buf) break;
-				 stcgfe(ext, rp->Name);
+         stcgfe(ext, rp->Name);
          if (strlen(ext) > 10) *ext = 0;
          sprintf(file, "YAMm%08lx-w%dp%d.%s", (ULONG)G->RE[rp->Win]->MailPtr, rp->Win, rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
@@ -3032,7 +3032,7 @@ static struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
    BOOL doit = FALSE;
 
    switch (C->AddToAddrbook)
-   {        
+   {
       case 1: if (!templ->Type) break;
       case 2: sprintf(buf, GetStr(MSG_RE_AddSender), BuildAddrName(templ->Address, templ->RealName));
               doit = MUI_Request(G->App, win, 0, NULL, GetStr(MSG_YesNoReq), buf);
@@ -3109,7 +3109,7 @@ static BOOL RE_DownloadPhoto(APTR win, char *url, struct ABEntry *ab)
    BOOL success = FALSE, doit = FALSE;
 
    switch (C->AddToAddrbook)
-   {    
+   {
       case 1: case 2: doit = MUI_Request(G->App, win, 0, NULL, GetStr(MSG_OkayCancelReq), GetStr(MSG_RE_DownloadPhotoReq)); break;
       case 3: case 4: doit = TR_IsOnline();
    }

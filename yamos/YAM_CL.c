@@ -224,10 +224,10 @@ DISPATCHERPROTO(FL_Dispatcher)
       // we need to make sure that everything is disposed
       case OM_DISPOSE:
       {
-    	  struct FL_Data *data = (struct FL_Data *)INST_DATA(cl,obj);
+        struct FL_Data *data = (struct FL_Data *)INST_DATA(cl,obj);
 
         // make sure that our context menus are also disposed
-	      if(data->context_menu) MUI_DisposeObject(data->context_menu);
+        if(data->context_menu) MUI_DisposeObject(data->context_menu);
       }
       break;
 
@@ -327,10 +327,10 @@ DISPATCHERPROTO(ML_Dispatcher)
     // we need to make sure that everything is disposed
     case OM_DISPOSE:
     {
-    	struct ML_Data *data = (struct ML_Data *)INST_DATA(cl,obj);
+      struct ML_Data *data = (struct ML_Data *)INST_DATA(cl,obj);
 
       // make sure that our context menus are also disposed
-	    if(data->context_menu) MUI_DisposeObject(data->context_menu);
+      if(data->context_menu) MUI_DisposeObject(data->context_menu);
     }
     break;
 
@@ -447,21 +447,21 @@ DISPATCHERPROTO(TE_Dispatcher)
       // slider gadget so that we can send newmouse events later on.
       case OM_NEW:
       {
-      	if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
-      	{
+        if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
+        {
           struct TE_Data *data = INST_DATA(cl, obj);
-      		struct TagItem *tags = inittags(msg), *tag;
+          struct TagItem *tags = inittags(msg), *tag;
 
-		      while((tag = NextTagItem(&tags)))
-      		{
-			      switch(tag->ti_Tag)
-      			{
+          while((tag = NextTagItem(&tags)))
+          {
+            switch(tag->ti_Tag)
+            {
               case MUIA_TextEditor_Slider: data->slider = (Object *)tag->ti_Data; break;
-      			}
-		      }
+            }
+          }
         }
 
-	      return (ULONG)obj;
+        return (ULONG)obj;
       }
       break;
 
@@ -533,21 +533,21 @@ DISPATCHERPROTO(TE_Dispatcher)
       case MUIM_Setup:
       {
         struct TE_Data *data = INST_DATA(cl, obj);
-		    data->ehnode.ehn_Priority = 1;
-		    data->ehnode.ehn_Flags	  = 0;
-		    data->ehnode.ehn_Object	  = obj;
-		    data->ehnode.ehn_Class	  = cl;
-		    data->ehnode.ehn_Events	  = IDCMP_RAWKEY;
+        data->ehnode.ehn_Priority = 1;
+        data->ehnode.ehn_Flags    = 0;
+        data->ehnode.ehn_Object   = obj;
+        data->ehnode.ehn_Class    = cl;
+        data->ehnode.ehn_Events   = IDCMP_RAWKEY;
 
-      	DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-    	}
+        DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+      }
       break;
 
       // On a Cleanup we have to remove the EventHandler
       case MUIM_Cleanup:
       {
         struct TE_Data *data = INST_DATA(cl, obj);
-      	DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+        DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
       }
       break;
 
@@ -559,11 +559,11 @@ DISPATCHERPROTO(TE_Dispatcher)
         struct TE_Data *data = INST_DATA(cl, obj);
         struct IntuiMessage *imsg;
 
-	      if(!(imsg = ((struct MUIP_HandleEvent *)msg)->imsg)) break;
+        if(!(imsg = ((struct MUIP_HandleEvent *)msg)->imsg)) break;
 
-	      if(imsg->Class == IDCMP_RAWKEY)
-	      {
-		      if(imsg->Code == IECODE_DEL)
+        if(imsg->Class == IDCMP_RAWKEY)
+        {
+          if(imsg->Code == IECODE_DEL)
           {
             if(isFlagSet(imsg->Qualifier, IEQUALIFIER_RCOMMAND) && !xget(obj, MUIA_TextEditor_ReadOnly))
             {
@@ -595,23 +595,23 @@ DISPATCHERPROTO(TE_Dispatcher)
             {
               LONG visible = xget(obj, MUIA_TextEditor_Prop_Visible);
 
-							if(visible > 0)
-							{
+              if(visible > 0)
+              {
                 // we scroll 1/6 of the displayed text by default
-  							LONG delta = ((((float)visible)/6.0)+0.5); // round the value
+                LONG delta = ((((float)visible)/6.0)+0.5); // round the value
 
                 // make sure that we scroll at least 1 line
-								if(delta < 1) delta = 1;
-                
-								if(imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT)
+                if(delta < 1) delta = 1;
+
+                if(imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT)
                 {
                   DoMethod(data->slider, MUIM_Prop_Decrease, delta);
                 }
-								else DoMethod(data->slider, MUIM_Prop_Increase, delta);
-							}
+                else DoMethod(data->slider, MUIM_Prop_Increase, delta);
+              }
 
               return MUI_EventHandlerRC_Eat;
-					  }
+            }
           }
         }
       }
@@ -930,19 +930,19 @@ DISPATCHERPROTO(PL_Dispatcher)
 // Wrapper function to create a MUI custom class
 static struct MUI_CustomClass *CreateMCC(STRPTR supername, struct MUI_CustomClass *supermcc, int instDataSize, APTR dispatcher)
 {
-	struct MUI_CustomClass *cl;
+  struct MUI_CustomClass *cl;
 
   #if defined(__amigaos4__) && defined(WITH_ASMSTUB)
-	extern ULONG muiDispatcherEntry(void);
+  extern ULONG muiDispatcherEntry(void);
 
-	if((cl = MUI_CreateCustomClass(NULL, supername, supermcc, instDataSize, &muiDispatcherEntry)))
-	{
-		cl->mcc_Class->cl_UserData = (ULONG)dispatcher;
-	}
+  if((cl = MUI_CreateCustomClass(NULL, supername, supermcc, instDataSize, &muiDispatcherEntry)))
+  {
+    cl->mcc_Class->cl_UserData = (ULONG)dispatcher;
+  }
   #else
-	cl = MUI_CreateCustomClass(NULL, supername, supermcc, instDataSize, dispatcher);
+  cl = MUI_CreateCustomClass(NULL, supername, supermcc, instDataSize, dispatcher);
   #endif
-	return cl;
+  return cl;
 }
 
 #if defined(__amigaos4__) && defined(WITH_ASMSTUB)

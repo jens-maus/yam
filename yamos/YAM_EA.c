@@ -84,7 +84,7 @@ int EA_Init(enum ABEntry_Type type, struct ABEntry *ab)
    if (!SafeOpenWindow(ea->GUI.WI)) { DisposeModulePush(&G->EA[winnum]); return -1; }
    set(ea->GUI.WI, MUIA_Window_ActiveObject, ea->GUI.ST_ALIAS);
    return winnum;
-}       
+}
 
 ///
 /// EA_Setup
@@ -151,7 +151,7 @@ void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
 {
    struct MUI_NListtree_TreeNode *tn;
    int i;
-   
+
    for (i=0; ; i++)
       if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)))
          if (isFlagSet(tn->tn_Flags, TNF_LIST)) EA_AddMembers(obj, tn);
@@ -176,9 +176,9 @@ HOOKPROTONHNO(EA_AddFunc, void, int *arg)
 {
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
    char *buf;
-   
+
    get(gui->ST_MEMBER, MUIA_String_Contents, &buf);
-   if (*buf) 
+   if (*buf)
    {
       DoMethod(gui->LV_MEMBER, MUIM_List_InsertSingle, buf, MUIV_List_Insert_Bottom);
       nnset(gui->LV_MEMBER, MUIA_List_Active, MUIV_List_Active_Off);
@@ -196,7 +196,7 @@ HOOKPROTONHNO(EA_PutEntry, void, int *arg)
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
    char *buf;
    int active;
-   
+
    get(gui->LV_MEMBER, MUIA_List_Active, &active);
    if (active == MUIV_List_Active_Off) DoMethod(G->App, MUIM_CallHook, &EA_AddHook, *arg);
    else
@@ -563,8 +563,8 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                      Child, VSpace(0),
                   End,
                End,
-            End; 
-            if (group) 
+            End;
+            if (group)
             {
                DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_REALNAME, data->GUI.ST_ADDRESS, NULL);
                set(data->GUI.BT_LOADPHOTO, MUIA_Disabled, !*C->GalleryDir);
@@ -638,7 +638,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                      Child, bt_sort          = MakeButton(GetStr(MSG_EA_Sort)),
                   End,
                End,
-            End; 
+            End;
             if (group)
             {
                DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_ADDRESS, data->GUI.ST_REALNAME, NULL);

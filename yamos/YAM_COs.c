@@ -400,7 +400,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
    FILE *fh;
    char buffer[SIZE_LARGE];
    int version;
-   
+
    if ((fh = fopen(fname, "r")))
    {
       fgets(buffer, SIZE_LARGE, fh);

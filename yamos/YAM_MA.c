@@ -164,7 +164,7 @@ HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
 {
    static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
    char *sh = NULL;
-   struct Mail *mail = MA_GetActiveMail(NULL, NULL, NULL);   
+   struct Mail *mail = MA_GetActiveMail(NULL, NULL, NULL);
    if (mail) SPrintF(sh = buffer, GetStr(MSG_MA_MessageInfo), mail->From.RealName, mail->From.Address, mail->To.RealName, mail->To.Address, mail->Subject, DateStamp2String(&mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL), mail->MailFile, mail->Size);
    set(G->MA->GUI.NL_MAILS, MUIA_ShortHelp, sh);
 }
@@ -374,7 +374,7 @@ void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
    struct MailInfo *mi = GetMailInfo(mail);
 
    if (C->RemoveAtOnce || mail->Folder->Type == FT_DELETED || forceatonce)
-   {        
+   {
       AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mail->Folder->Name, "");
       DeleteFile(mi->FName);
       if (mi->Display) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Remove, mi->Pos);
@@ -1946,7 +1946,7 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
   }
 
   BusyEnd;
-}            
+}
 MakeHook(MA_DeleteDeletedHook, MA_DeleteDeletedFunc);
 
 ///
@@ -2326,7 +2326,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
    char scname[SIZE_COMMAND];
    int script = *arg;
    if (script >= 0)
-   {                 
+   {
       MA_StartMacro(MACRO_MEN0+script, NULL);
    }
    else
@@ -2846,23 +2846,23 @@ ULONG MA_MLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_Co
   // if this was a RMB click on the titlebar we create our own special menu
   if(msg->ontop)
   {
-  	data->context_menu = MenustripObject,
-	  	Child, MenuObjectT(GetStr(MSG_MA_CTX_MAILLIST)),
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Status),         MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<0)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_SenderRecpt),    MUIA_UserData, 2, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<1)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_ReturnAddress),  MUIA_UserData, 3, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<2)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Subject),        MUIA_UserData, 4, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<3)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MessageDate),    MUIA_UserData, 5, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<4)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Size),           MUIA_UserData, 6, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<5)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Filename),       MUIA_UserData, 7, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<6)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_CO_DATE_SNTRCVD),MUIA_UserData, 8, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<7)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
-  			Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_THIS), MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
-	  		Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
-		  	Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_THIS), MUIA_UserData, MUIV_NList_Menu_DefOrder_This, End,
-			  Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_ALL),  MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
-			End,
-		End;
+    data->context_menu = MenustripObject,
+      Child, MenuObjectT(GetStr(MSG_MA_CTX_MAILLIST)),
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Status),         MUIA_UserData, 1, MUIA_Menuitem_Enabled, FALSE, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<0)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_SenderRecpt),    MUIA_UserData, 2, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<1)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_ReturnAddress),  MUIA_UserData, 3, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<2)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Subject),        MUIA_UserData, 4, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<3)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MessageDate),    MUIA_UserData, 5, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<4)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Size),           MUIA_UserData, 6, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<5)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_Filename),       MUIA_UserData, 7, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<6)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_CO_DATE_SNTRCVD),MUIA_UserData, 8, MUIA_Menuitem_Checked, isFlagSet(C->MessageCols, (1<<7)), MUIA_Menuitem_Checkit, TRUE, MUIA_Menuitem_Toggle, TRUE, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_THIS), MUIA_UserData, MUIV_NList_Menu_DefWidth_This, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFWIDTH_ALL),  MUIA_UserData, MUIV_NList_Menu_DefWidth_All,  End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_THIS), MUIA_UserData, MUIV_NList_Menu_DefOrder_This, End,
+        Child, MenuitemObject, MUIA_Menuitem_Title, GetStr(MSG_MA_CTX_DEFORDER_ALL),  MUIA_UserData, MUIV_NList_Menu_DefOrder_All,  End,
+      End,
+    End;
 
     return (ULONG)data->context_menu;
   }
@@ -2957,7 +2957,7 @@ ULONG MA_MLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_Context
   struct MA_GUIData *gui = &G->MA->GUI;
 
   switch(xget(msg->item, MUIA_UserData))
-	{
+  {
     // if the user selected a TitleContextMenu item
     case 1:
     case 2:

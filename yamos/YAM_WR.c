@@ -189,8 +189,8 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 
    ctype = IdentifyFile(filename);
    if (*ctype)
-   {  
-      MyStrCpy(attach.FilePath, filename); 
+   {
+      MyStrCpy(attach.FilePath, filename);
       MyStrCpy(attach.Name, name ? name : (char *)FilePart(filename));
       get(gui->RA_ENCODING, MUIA_Radio_Active, &encoding);
       attach.IsMIME = encoding == 0;
@@ -203,7 +203,7 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
       return TRUE;
    }
    return FALSE;
-}  
+}
 ///
 
 /*** Compose Message ***/
@@ -217,7 +217,7 @@ static char *GetDateTime(void)
    Amiga2Date(GetDateStamp(), &cd);
    sprintf(dt, "%s, %02d %s %d %02d:%02d:%02d %s", wdays[cd.wday], cd.mday, months[cd.month-1], cd.year, cd.hour, cd.min, cd.sec, C->TimeZoneStr);
 
-   return dt;  
+   return dt;
 }
 
 ///
@@ -345,7 +345,7 @@ static struct WritePart *BuildPartsList(int winnum)
       p->Next = np = NewPart(winnum); p = np;
       p->ContentType = att->ContentType;
       p->Filename    = att->FilePath;
-      p->Description = att->Description;     
+      p->Description = att->Description;
       p->Name        = att->Name;
       p->IsTemp      = att->IsTemp;
       if (att->IsMIME) p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
@@ -462,7 +462,7 @@ static void EmitRcptHeader(FILE *fh, char *hdr, char *body)
    fprintf(fh, "%s: ", hdr);
    EmitRcptField(fh, body ? body : "");
    fputc('\n', fh);
-} 
+}
 
 ///
 /// FPutsQuoting
@@ -471,10 +471,10 @@ static void FPutsQuoting(char *s, FILE *fh)
 {
    char *end = s + strlen(s) - 1;
    while (ISpace(*end) && end > s) --end;
-   if (*s == '\"') 
+   if (*s == '\"')
    {
       fputc(*s, fh);
-      while (*++s) 
+      while (*++s)
       {
          if (*s == '\"') break;
          if (*s == '\\') { fputc(*s, fh); ++s; if (!*s) break; }
@@ -482,10 +482,10 @@ static void FPutsQuoting(char *s, FILE *fh)
       }
       fputc('\"', fh);
    }
-   else 
+   else
    {
       fputc('\"', fh); fputc(*s, fh);
-      while (*++s) 
+      while (*++s)
       {
          if (*s == '\"' || *s == '\\') fputc('\\', fh);
          fputc(*s, fh);
@@ -506,7 +506,7 @@ static void WriteCtypeNicely(FILE *fh, char *ct)
    slash = (char *)strchr(ct, '/');
    fputs(ct, fh);
    if (!slash) fputs("/unknown", fh);
-   while (semi) 
+   while (semi)
    {
       ct = semi + 1;
       *semi = ';';
@@ -515,7 +515,7 @@ static void WriteCtypeNicely(FILE *fh, char *ct)
       fputs(";\n\t", fh);
       while (ISpace(*ct)) ++ct;
       fputs(ct, fh);
-      if (eq) 
+      if (eq)
       {
          s = eq;
          fputc('=', fh);
@@ -536,7 +536,7 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
    WriteCtypeNicely(fh, part->ContentType);
    if (!strncmp(part->ContentType, "text/", 5) && (part->EncType != ENC_NONE || part->TTable))
       fprintf(fh, "; charset=%s", part->TTable ? part->TTable->DestCharset : C->LocalCharset);
-   if ((p = part->Name)) if (*p) 
+   if ((p = part->Name)) if (*p)
    {
       fputs("; name=\"", fh);
       HeaderFputs(p, fh);
@@ -623,7 +623,7 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
    if ((ifh = fopen(part->Filename, "r")))
    {
       int size;
-      switch (part->EncType) 
+      switch (part->EncType)
       {
          case ENC_B64: to64(ifh, ofh, DoesNeedPortableNewlines(part->ContentType));
                        break;
@@ -676,7 +676,7 @@ static void WR_AddTagline(FILE *fh_mail)
    char buf[SIZE_LARGE], hashfile[SIZE_PATHFILE];
    long fpos, hsize;
 
-   if (*C->TagsFile) 
+   if (*C->TagsFile)
    {
       sprintf(hashfile, "%s.hsh", C->TagsFile);
       if (getft(C->TagsFile) > getft(hashfile)) WR_CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
@@ -735,7 +735,7 @@ void WR_AddSignature(int winnum, int signat)
 {
    char *mailfile = G->WR_Filename[winnum];
 
-   if (signat == -1) 
+   if (signat == -1)
       signat = C->UseSignature ? 1 : 0;
 
    if (signat)
@@ -2061,9 +2061,9 @@ HOOKPROTONH(WR_LV_DspFunc, long, char **array, struct Attach *entry)
       array[3] = entry->IsMIME ? "MIME" : "UU";
       array[4] = entry->Description;
    }
-   else 
+   else
    {
-      array[0] = GetStr(MSG_WR_TitleFile); 
+      array[0] = GetStr(MSG_WR_TitleFile);
       array[1] = GetStr(MSG_WR_TitleSize);
       array[2] = GetStr(MSG_WR_TitleContents);
       array[3] = GetStr(MSG_WR_TitleEncoding);
@@ -2523,12 +2523,12 @@ static struct WR_ClassData *WR_New(int winnum)
             DoMethod(data->GUI.CY_IMPORTANCE,MUIM_Notify,MUIA_Cycle_Active     ,i              ,strip                  ,4,MUIM_SetUData,WMEN_IMPORT0+i,MUIA_Menuitem_Checked,TRUE);
             DoMethod(data->GUI.WI           ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_IMPORT0+i ,data->GUI.CY_IMPORTANCE,3,MUIM_Set     ,MUIA_Cycle_Active,i);
          }
-         for (i = 0; i < 4; i++) 
+         for (i = 0; i < 4; i++)
          {
             DoMethod(data->GUI.RA_SIGNATURE ,MUIM_Notify,MUIA_Radio_Active     ,i              ,strip                  ,4,MUIM_SetUData,WMEN_SIGN0+i,MUIA_Menuitem_Checked,TRUE);
             DoMethod(data->GUI.WI           ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SIGN0+i   ,data->GUI.RA_SIGNATURE ,3,MUIM_Set     ,MUIA_Radio_Active,i);
          }
-         for (i = SEC_NONE; i < SEC_MAXDUMMY; i++) 
+         for (i = SEC_NONE; i < SEC_MAXDUMMY; i++)
          {
             // connect menuitems -> radiobuttons
             DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SECUR0+i,data->GUI.RA_SECURITY,3,MUIM_Set        ,MUIA_Radio_Active    ,i);

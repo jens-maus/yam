@@ -118,7 +118,7 @@ static BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 
    switch (search->Fast)
    {
-      case FS_FROM: 
+      case FS_FROM:
          if (FI_MatchPerson(search, &mail->From)) found = TRUE;
          break;
       case FS_TO:
@@ -923,7 +923,7 @@ MakeStaticHook(FI_CloseHook, FI_Close);
 /// FI_PO_InitRuleListFunc
 //  Creates a popup list of configured filters
 HOOKPROTONHNP(FI_PO_InitRuleListFunc, long, Object *pop)
-{  
+{
    int i;
    DoMethod(pop, MUIM_List_Clear);
    for (i = 0; i < MAXRU; i++) if (C->RU[i])
@@ -939,7 +939,7 @@ HOOKPROTONHNP(FI_PO_FromRuleFunc, void, Object *pop)
 {
    struct Rule *rule;
    DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &rule);
-   if (rule) 
+   if (rule)
    {
       struct SearchGroup *grp = &(G->FI->GUI.GR_SEARCH);
       int i, g = Mode2Group[rule->Field[0]];

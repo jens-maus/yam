@@ -361,7 +361,7 @@ VOID TR_EndTLS(VOID)
     SSL_free(ssl);
     ssl = NULL;
   }
-  
+
   if(ctx)
   {
     SSL_CTX_free(ctx);
@@ -1480,7 +1480,6 @@ static int TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags)
 //  Downloads a file from the web using HTTP
 BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
 {
-   
    BOOL success = FALSE, done = FALSE, noproxy = !*C->ProxyServer;
    int l = 0, len, hport;
    char buf[SIZE_LINE], url[SIZE_URL], host[SIZE_HOST], *port, *path, line[SIZE_DEFAULT], *bufptr;
@@ -1607,7 +1606,7 @@ static char *TR_SendPOP3Cmd(enum POPCommand command, char *parmtext, APTR errorM
 /// TR_ConnectPOP
 //  Connects to a POP3 mail server
 static int TR_ConnectPOP(int guilevel)
-{     
+{
    char passwd[SIZE_PASSWORD], host[SIZE_HOST], buf[SIZE_LINE], *p;
    char *welcomemsg = NULL;
    int err, pop = G->TR->POP_Nr, msgs;
@@ -1823,7 +1822,7 @@ BOOL TR_GetMessageList_IMPORT(FILE *fh)
       {
          fputs(buffer, f); fputc('\n', f);
          if (!*buffer)
-         { 
+         {
             fclose(f); f = NULL;
             body = TRUE;
          }
@@ -2249,7 +2248,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                DoMethod(G->TR->GUI.WI, MUIM_Window_ToFront);
                // activate window only if main window activ
                set(G->TR->GUI.WI, MUIA_Window_Activate, xget(G->MA->GUI.WI, MUIA_Window_Activate));
-               
+
                set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 0);
                G->TR->GMD_Mail = G->TR->List;
                G->TR->GMD_Line = 0;
@@ -2643,7 +2642,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
    else if(size_incr == TS_SETMAX)
    {
      struct timeval now;
-     ULONG deltatime; 
+     ULONG deltatime;
      ULONG speed = 0;
      ULONG remclock = 0;
 
@@ -3196,9 +3195,9 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                   TR_TransStat_NextMsg(&ts, mail->Index, mail->Position, mail->Size, GetStr(MSG_TR_Importing));
                   f = fopen(MA_NewMailFile(folder, mfile, 0), "w");
                }
-            } 
+            }
             else if (f && (header || body))
-            { 
+            {
                char *tmp = buffer;
 
                // the mboxrd format specifies that we need to unquote any >From, >>From etc. occurance.
@@ -3495,7 +3494,6 @@ HOOKPROTO(TR_LV_DspFunc, long, char **array, struct Mail *entry)
       array[2] = GetStr(MSG_From);
       array[3] = GetStr(MSG_Subject);
       array[4] = GetStr(MSG_Date);
-      
    }
    return 0;
 }
@@ -3512,14 +3510,14 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       APTR gr_sel, gr_proc, gr_win;
       BOOL fullwin = (TRmode == TR_GET || TRmode == TR_IMPORT);
 
-			gr_proc = ColGroup(2), GroupFrameT(GetStr(MSG_TR_Status)),
-				 Child, data->GUI.TX_STATS = TextObject,
-						MUIA_Text_Contents, GetStr(MSG_TR_TransferStats0),
-						MUIA_Background,MUII_TextBack,
+      gr_proc = ColGroup(2), GroupFrameT(GetStr(MSG_TR_Status)),
+         Child, data->GUI.TX_STATS = TextObject,
+            MUIA_Text_Contents, GetStr(MSG_TR_TransferStats0),
+            MUIA_Background,MUII_TextBack,
             MUIA_Frame     ,MUIV_Frame_Text,
             MUIA_Text_PreParse, MUIX_C,
-				 End,
-				 Child, VGroup,
+         End,
+         Child, VGroup,
             Child, data->GUI.GA_COUNT = GaugeObject,
                GaugeFrame,
                MUIA_Gauge_Horiz   ,TRUE,
@@ -3530,8 +3528,8 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
                MUIA_Gauge_Horiz   ,TRUE,
                MUIA_Gauge_InfoText,GetStr(MSG_TR_BytesGauge0),
             End,
-				 End,
-				 Child, data->GUI.TX_STATUS = TextObject,
+         End,
+         Child, data->GUI.TX_STATUS = TextObject,
             MUIA_Background,MUII_TextBack,
             MUIA_Frame     ,MUIV_Frame_Text,
          End,
@@ -3586,20 +3584,19 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
             End,
          End;
       }
-			else
-			{
-				gr_win = 	VGroup,
-										MUIA_Frame, MUIV_Frame_None,
-										Child, gr_proc,
-									End;
-			}
+      else
+      {
+        gr_win = VGroup, MUIA_Frame, MUIV_Frame_None,
+           Child, gr_proc,
+        End;
+      }
 
       data->GUI.WI = WindowObject,
-				 MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode),
+         MUIA_Window_ID, MAKE_ID('T','R','A','0'+TRmode),
          MUIA_Window_CloseGadget, FALSE,
          MUIA_Window_Activate, (TRmode == TR_IMPORT || TRmode == TR_EXPORT),
          MUIA_HelpNode, "TR_W",
-				 WindowContents, gr_win,
+         WindowContents, gr_win,
       End;
 
       if (data->GUI.WI)
