@@ -4789,8 +4789,13 @@ MSG_SEARCHNOTFOUND_MSG (//)
 MSG_SEARCHNOTFOUND_BUTTON (//)
 Continue
 ;
-MSG_WR_ErrorNoSender (//)
+MSG_WR_ERRORNOSENDER (//)
 Mail is incomplete: No Sender!
 ;
-MSG_WR_NoSenderReqGad (//)
+MSG_WR_NOSENDERREQGAD (//)
 _Use default sender|*_Cancel
+;
+MSG_FO_GROUP_CONFDEL (//)
+This group contains subfolders which will be\n\
+moved to the parent folder on deletion!\n\
+Do you really want to delete this group ?

@@ -1,5 +1,13 @@
 2001-08-05  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * the delete folder menu item & context menu entry does not allow to remove
+      the incoming/deleted/sent/outgoing folder anymore. This was the standard
+      behaviour before the hierarchical folder system was added and was broken.
+      This fixes bug #445602 also.
+    * if a folder group is going to be deleted YAM will pop up a requester now
+      asking the user to confirm if it is not empty. If this folder group
+      contains any subfolders or another group, then this subentries will be
+      moved to the parent folder of the group first.
     * reverted changes to the resolve method of the recipientstring to reduce
       complexity of the code. (who requested this... guess?)
     * turned the ChangeLog upsidedown. Now the newest entry should always be

@@ -497,14 +497,14 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
   get(_win(gui->NL_FOLDERS), MUIA_Window_Window, &win);
   if(!win) return(0);
 
-  // Now we are going to add the MenuItems to this PopupMenu
-  if(folder->Type != FT_GROUP) tmp_dis = FALSE;
+  // Now we have to set the disabled flag if this is not a custom folder
+  if(folder->Type == FT_CUSTOM || folder->Type == FT_CUSTOMSENT || folder->Type == FT_CUSTOMMIXED || folder->Type == FT_GROUP) tmp_dis = FALSE;
 
   // We create the PopupMenu now
   pop_menu =   PMMenu(FolderName(folder)),
                  PMItem(GetStripStr(MSG_FOLDER_EDIT)),           PM_UserData, PMN_EDITF,     End,
-                 PMItem(GetStripStr(MSG_FOLDER_DELETE)),         PM_UserData, PMN_DELETEF,   End,
-                 PMItem(GetStripStr(MSG_MA_UpdateIndex)),        PM_Disabled, tmp_dis,       PM_UserData, PMN_INDEX, End,
+                 PMItem(GetStripStr(MSG_FOLDER_DELETE)),         PM_Disabled, tmp_dis,       PM_UserData, PMN_DELETEF,   End,
+                 PMItem(GetStripStr(MSG_MA_UpdateIndex)),        PM_Disabled, (folder->Type == FT_GROUP),       PM_UserData, PMN_INDEX, End,
                  PMBar, End,
                  PMItem(GetStripStr(MSG_FOLDER_NEWFOLDER)),      PM_UserData, PMN_NEWF,      End,
                  PMItem(GetStripStr(MSG_FOLDER_NEWFOLDERGROUP)), PM_UserData, PMN_NEWFG,     End,

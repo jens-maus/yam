@@ -897,6 +897,7 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
    struct Folder folder;
    memset(&folder, 0, sizeof(struct Folder));
    folder.Type = FT_GROUP;
+
    if (StringRequest(folder.Name, SIZE_NAME, GetStr(MSG_MA_NewSeparator), GetStr(MSG_FO_NewSepReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->MA->GUI.WI))
    {
       long tnflags = (TNF_LIST | TNF_OPEN);
@@ -907,7 +908,9 @@ HOOKPROTONHNONP(FO_NewFolderGroupFunc, void)
         tnflags |= TNF_NOSIGN;
       }
 
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags, TAG_DONE);
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags);
+
+      FO_SaveTree(CreateFilename(".folders"));
    }
 }
 MakeHook(FO_NewFolderGroupHook, FO_NewFolderGroupFunc);
@@ -1003,6 +1006,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
 {
   APTR lv = G->MA->GUI.NL_FOLDERS;
   struct Folder *folder = FO_GetCurrentFolder();
+  BOOL delete_folder = FALSE;
 
   if(!folder) return;
 
@@ -1012,33 +1016,70 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
     case FT_CUSTOMSENT:
     case FT_CUSTOMMIXED:
     {
-      if(!MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ConfirmDelete))) return;
+      if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_CO_ConfirmDelete))))
+      {
+         DeleteMailDir(GetFolderDir(folder), FALSE);
+         ClearMailList(folder, TRUE);
 
-      DeleteMailDir(GetFolderDir(folder), FALSE);
-      ClearMailList(folder, TRUE);
+         // Here we remove the Bodychunk Object from the BC_GROUP because the destructor
+         // of the Folder Listtree can`t do this without throwing enforcer hits
+         if(folder->BC_FImage)
+         {
+            // Prepare the BC_GROUP for removing a child
+
+            if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
+            {
+               DoMethod(G->MA->GUI.BC_GROUP, OM_REMMEMBER, folder->BC_FImage);
+               DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
+            }
+         }
+      }
+    }
+    break;
+
+    case FT_GROUP:
+    {
+      struct MUI_NListtree_TreeNode *tn_sub;
+      struct MUI_NListtree_TreeNode *tn_group = (struct MUI_NListtree_TreeNode *)xget(lv, MUIA_NListtree_Active);
+
+      // check if the active treenode is a list and if it is empty
+      // we have to do this like the following because there is no other way to
+      // get known if the active entry has subentries.
+      if((tn_sub = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_group, MUIV_NListtree_GetEntry_Position_Head, 0)))
+      {
+         // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
+         if(delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_FO_GROUP_CONFDEL)))
+         {
+            struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
+
+            set(lv, MUIA_NListtree_Quiet, TRUE);
+
+            while(tn_sub_next)
+            {
+               tn_sub_next = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, tn_sub, MUIV_NListtree_GetEntry_Position_Next, MUIV_NListtree_GetEntry_Flag_SameLevel);
+
+               // move entry to the root of the group
+               DoMethod(lv, MUIM_NListtree_Move, tn_group, tn_sub, MUIV_NListtree_Move_NewListNode_Active, MUIV_NListtree_Move_NewTreeNode_Tail, 0);
+
+               tn_sub = tn_sub_next;
+            }
+
+            set(lv, MUIA_NListtree_Quiet, FALSE);
+         }
+      }
+      else delete_folder = TRUE;
     }
     break;
   }
 
-  // Here we remove the Bodychunk Object from the BC_GROUP because the destructor
-  // of the Folder Listtree can`t do this without throwing enforcer hits
-  if(folder->BC_FImage)
+  if(delete_folder)
   {
-    // Prepare the BC_GROUP for removing a child
+     // remove the entry from the listtree now
+     DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, 0);
 
-    if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
-    {
-      DoMethod(G->MA->GUI.BC_GROUP, OM_REMMEMBER, folder->BC_FImage);
-      DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
-    }
+     // Save the Tree to the folder config now
+     FO_SaveTree(CreateFilename(".folders"));
   }
-
-  // remove the entry from the listtree now
-  DoMethod(lv, MUIM_NListtree_Remove, MUIV_NListtree_Remove_ListNode_Root, MUIV_NListtree_Remove_TreeNode_Active, 0, TAG_DONE);
-
-  // Save the Tree to the folder config now
-  FO_SaveTree(CreateFilename(".folders"));
-
 }
 MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
 

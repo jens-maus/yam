@@ -1231,13 +1231,13 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       else if(!addr[0])
       {
          // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
-         char *err = GetStr(MSG_WR_ErrorNoSender);
+         char *err = GetStr(MSG_WR_ERRORNOSENDER);
 
          // set the TO Field active and go back
          set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
 
-         if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoSenderReqGad), err))
+         if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NOSENDERREQGAD), err))
             return;
       }
       else comp.From = addr;
