@@ -591,8 +591,7 @@ MakeStaticHook(AB_SaveABookAsHook, AB_SaveABookAsFunc);
 //  Formats and prints a single field
 static void AB_PrintField(FILE *prt, char *fieldname, char *field)
 {
-   const char *format = "%-20.20s: %-50.50s\n";
-   if (*field) fprintf(prt, format, StripUnderscore(fieldname), field);
+   if (*field) fprintf(prt, "%-20.20s: %-50.50s\n", StripUnderscore(fieldname), field);
 }
 
 ///
@@ -600,7 +599,7 @@ static void AB_PrintField(FILE *prt, char *fieldname, char *field)
 //  Prints an address book entry in compact format
 static void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab)
 {
-   char types[3] = { 'P','L','G' };
+   static const char types[3] = { 'P','L','G' };
    fprintf(prt, "%c %-12.12s %-20.20s %-36.36s\n", types[ab->Type-AET_USER],
       ab->Alias, ab->RealName, ab->Type == AET_USER ? ab->Address : ab->Comment);
 }
@@ -1034,25 +1033,31 @@ void AB_MakeABFormat(APTR lv)
 
 /// AB_New
 //  Creates address book window
-enum { AMEN_NEW,AMEN_OPEN,AMEN_APPEND,AMEN_SAVE,AMEN_SAVEAS,AMEN_PRINTA,
-       AMEN_FIND,AMEN_NEWUSER,AMEN_NEWLIST,AMEN_NEWGROUP,AMEN_EDIT,
-       AMEN_DUPLICATE,AMEN_DELETE,AMEN_PRINTE,AMEN_SORTALIAS,
-       AMEN_SORTLNAME,AMEN_SORTFNAME,AMEN_SORTDESC,AMEN_SORTADDR,
-       AMEN_FOLD,AMEN_UNFOLD };
-
 struct AB_ClassData *AB_New(void)
 {
-   struct AB_ClassData *data;
-   APTR list;
-
-   if (data = calloc(1, sizeof(struct AB_ClassData)))
+   struct AB_ClassData *data = calloc(1, sizeof(struct AB_ClassData));
+   if (data)
    {
-      APTR tb_butt[13] = { MSG_AB_TBSave,MSG_AB_TBFind,MSG_Space,
-                           MSG_AB_TBNewUser,MSG_AB_TBNewList,MSG_AB_TBNewGroup,MSG_AB_TBEdit,MSG_AB_TBDelete,MSG_AB_TBPrint,MSG_Space,
-                           MSG_AB_TBOpenTree,MSG_AB_TBCloseTree,NULL };
-      APTR tb_help[13] = { MSG_HELP_AB_BT_SAVE,MSG_HELP_AB_BT_SEARCH,NULL,
-                           MSG_HELP_AB_BT_ADDUSER,MSG_HELP_AB_BT_ADDMLIST,MSG_HELP_AB_BT_ADDGROUP,MSG_HELP_AB_BT_EDIT,MSG_HELP_AB_BT_DELETE,MSG_HELP_AB_BT_PRINT,NULL,
-                           MSG_HELP_AB_BT_OPEN,MSG_HELP_AB_BT_CLOSE,NULL };
+      enum {
+        AMEN_NEW,AMEN_OPEN,AMEN_APPEND,AMEN_SAVE,AMEN_SAVEAS,AMEN_PRINTA,
+        AMEN_FIND,AMEN_NEWUSER,AMEN_NEWLIST,AMEN_NEWGROUP,AMEN_EDIT,
+        AMEN_DUPLICATE,AMEN_DELETE,AMEN_PRINTE,AMEN_SORTALIAS,
+        AMEN_SORTLNAME,AMEN_SORTFNAME,AMEN_SORTDESC,AMEN_SORTADDR,
+        AMEN_FOLD,AMEN_UNFOLD
+      };
+
+      static const APTR tb_butt[13] = {
+        MSG_AB_TBSave,MSG_AB_TBFind,MSG_Space,
+        MSG_AB_TBNewUser,MSG_AB_TBNewList,MSG_AB_TBNewGroup,MSG_AB_TBEdit,MSG_AB_TBDelete,MSG_AB_TBPrint,MSG_Space,
+        MSG_AB_TBOpenTree,MSG_AB_TBCloseTree,NULL
+      };
+      static const APTR tb_help[13] = {
+        MSG_HELP_AB_BT_SAVE,MSG_HELP_AB_BT_SEARCH,NULL,
+        MSG_HELP_AB_BT_ADDUSER,MSG_HELP_AB_BT_ADDMLIST,MSG_HELP_AB_BT_ADDGROUP,MSG_HELP_AB_BT_EDIT,MSG_HELP_AB_BT_DELETE,MSG_HELP_AB_BT_PRINT,NULL,
+        MSG_HELP_AB_BT_OPEN,MSG_HELP_AB_BT_CLOSE,NULL
+      };
+      APTR list;
+
       int i;
       for (i = 0; i < 13; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
       data->GUI.WI = WindowObject,
