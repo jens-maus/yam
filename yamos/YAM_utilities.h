@@ -266,6 +266,7 @@ ULONG    CompressMsgID(char *msgid);
 BOOL     ConvertCRLF(char *in, char *out, BOOL to);
 ULONG    ConvertKey(struct IntuiMessage *imsg);
 BOOL     CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh);
+BOOL     MoveFile(char *oldname, char *newname);
 char *   CreateFilename(const char * const file);
 BOOL     CreateDirectory(char *dir);
 long     DateStamp2Long(struct DateStamp *date);

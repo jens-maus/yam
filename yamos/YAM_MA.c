@@ -1366,8 +1366,11 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
          f = FileSize(tfname); fo->Size += f - mail->Size; mail->Size = f;
          CLEAR_FLAG(mail->mflags, MFLAG_MULTIPART);
          DeleteFile(fname);
-         if (fo->XPKType > 1) DoPack(tfname, fname, mail->Folder);
-         else RenameFile(tfname, fname);
+
+         if(fo->XPKType > 1)
+           DoPack(tfname, fname, mail->Folder);
+         else
+           RenameFile(tfname, fname);
 
          AppendLog(81, GetStr(MSG_LOG_CroppingAtt), mail->MailFile, mail->Folder->Name, "", "");
       }
@@ -2354,8 +2357,11 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       AppendLog(82, GetStr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
       strncpy(mail->Subject, subj, SIZE_SUBJECT-1); // only copy a maximum of SIZE_SUBJECT or it will burn
       MA_ExpireIndex(fo);
-      if (fo->XPKType > 1) DoPack(newfile, oldfile, fo);
-      else RenameFile(newfile, oldfile);
+
+      if(fo->XPKType > 1)
+        DoPack(newfile, oldfile, fo);
+      else
+        RenameFile(newfile, oldfile);
    }
    FinishUnpack(fullfile);
 }

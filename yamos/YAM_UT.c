@@ -1323,10 +1323,13 @@ BOOL CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh)
 {
    BOOL success = FALSE;
 
-   if (sour) sourfh = fopen(sour, "r");
-   if (sourfh && dest) destfh = fopen(dest, "w");
+   if(sour)
+     sourfh = fopen(sour, "r");
 
-   if (sourfh && destfh)
+   if(sourfh && dest)
+     destfh = fopen(dest, "w");
+
+   if(sourfh && destfh)
    {
       char buf[SIZE_LARGE];
       int len;
@@ -1340,13 +1343,37 @@ BOOL CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh)
       // if we arrived here because this was the eof of the sourcefile
       // and non of the two filehandles are in error state we can set
       // success to TRUE.
-      if(feof(sourfh) && !ferror(sourfh) && !ferror(destfh)) success = TRUE;
+      if(feof(sourfh) && !ferror(sourfh) && !ferror(destfh))
+        success = TRUE;
    }
 
-   if (dest && destfh) fclose(destfh);
-   if (sour && sourfh) fclose(sourfh);
+   if(dest && destfh)
+     fclose(destfh);
+
+   if(sour && sourfh)
+     fclose(sourfh);
 
    return success;
+}
+///
+/// MoveFile
+//  Moves a file (also from one partition to another)
+BOOL MoveFile(char *oldfile, char *newfile)
+{
+  // we first try to rename the file with a standard Rename()
+  // and if it doesn't work we do a raw copy
+  if(!RenameFile(oldfile, newfile))
+  {
+    // a normal rename didn't work, so lets copy the file
+    if(!CopyFile(newfile, 0, oldfile, 0) ||
+       !DeleteFile(oldfile))
+    {
+      // also a copy didn't work, so lets return an error
+      return FALSE;
+    }
+  }
+
+  return TRUE;
 }
 ///
 /// ConvertCRLF
@@ -3029,7 +3056,7 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
      strcpy(mail->MailFile, dstFileName);
    }
 
-   if(one2one && !copyit && (done = RenameFile(srcbuf, dstbuf)))
+   if(one2one && !copyit && (done = MoveFile(srcbuf, dstbuf)))
      success = TRUE;
 
    if(!done)
@@ -3041,7 +3068,7 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
           if(one2one)
           {
             if(!copyit)
-              success = RenameFile(srcbuf, dstbuf);
+              success = MoveFile(srcbuf, dstbuf);
             else
               success = CopyFile(dstbuf, 0, srcbuf, 0);
 
@@ -3072,16 +3099,13 @@ BOOL TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
         else
         {
           if(!copyit)
-            success = RenameFile(srcbuf, dstbuf);
+            success = MoveFile(srcbuf, dstbuf);
           else
             success = CopyFile(dstbuf, 0, srcbuf, 0);
 
           copyit = TRUE;
         }
       }
-
-      if(success && !copyit)
-        DeleteFile(srcbuf);
 
       if(success)
         MA_UpdateMailFile(mail);

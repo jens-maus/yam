@@ -58,7 +58,6 @@
 
 /* local protos */
 static void FO_XPKUpdateFolder(struct Folder*, int);
-static BOOL FO_Move(char*, char*);
 static BOOL FO_MoveFolderDir(struct Folder*, struct Folder*);
 static BOOL FO_EnterPassword(struct Folder*);
 static struct FO_ClassData *FO_New(void);
@@ -785,15 +784,6 @@ static void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
 }
 
 ///
-/// FO_Move
-//  Moves a folder directory to a new destination
-static BOOL FO_Move(char *srcbuf, char *dstbuf)
-{
-   if (!RenameFile(srcbuf, dstbuf)) if (!CopyFile(dstbuf, 0, srcbuf, 0)) return FALSE;
-   return TRUE;
-}
-
-///
 /// FO_MoveFolderDir
 //  Moves a folder to a new directory
 static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
@@ -805,24 +795,33 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    BusyGauge(GetStr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
    strcpy(srcbuf, GetFolderDir(oldfo));
    strcpy(dstbuf, GetFolderDir(fo));
-   for (i = 0, mail = fo->Messages; mail && success; mail = mail->Next, i++)
+
+   for(i = 0, mail = fo->Messages; mail && success; mail = mail->Next, i++)
    {
       BusySet(i+1);
       GetMailFile(dstbuf, fo, mail);
       GetMailFile(srcbuf, oldfo, mail);
-      if (!FO_Move(srcbuf, dstbuf)) success = FALSE;
-      else RepackMailFile(mail, fo->XPKType, fo->Password);
+
+      if(MoveFile(srcbuf, dstbuf))
+        RepackMailFile(mail, fo->XPKType, fo->Password);
+      else
+        success = FALSE;
    }
+
    if (success)
    {
       MyStrCpy(srcbuf, GetFolderDir(oldfo));
       AddPart(srcbuf, ".index", sizeof(srcbuf));
       MyStrCpy(dstbuf, GetFolderDir(fo));
       AddPart(dstbuf, ".index", sizeof(dstbuf));
-      FO_Move(srcbuf, dstbuf);
 
-      success = DeleteMailDir(GetFolderDir(oldfo), FALSE);
+      if(!MoveFile(srcbuf, dstbuf) ||
+         !DeleteMailDir(GetFolderDir(oldfo), FALSE))
+      {
+        success = FALSE;
+      }
    }
+
    BusyEnd();
    return success;
 }

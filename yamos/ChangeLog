@@ -7,6 +7,10 @@ $Source$
 
 2004-09-26  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c, YAM_TR.c: introduced new MoveFile() function which allows
+      to move a file from one partition to another and adapted the
+      TransferMailFile() function accordingly. Now folders don't have to
+      be stored on the same partition for being able to exchange mail files.
     * YAM_CO.c: fixed bug in the socket options configuration parsing
       routines where YAM didn't recognize an existing "SO_RCVTIMEO"
       option correctly.
