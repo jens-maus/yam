@@ -99,7 +99,7 @@ LONG recvmsg( LONG sock, struct msghdr *msg, LONG flags );
 LONG gethostname( STRPTR name, LONG namelen );
 ULONG gethostid( VOID );
 LONG SocketBaseTagList( struct TagItem *tags );
-LONG SocketBaseTags( ... );
+LONG SocketBaseTags( ULONG tag, ... );
 LONG GetSocketEvents( ULONG *event_ptr );
 /* Ten reserved slots for future expansion */
 /* Berkeley Packet Filter (Roadshow extensions start here) */
@@ -113,9 +113,9 @@ LONG bpf_ioctl( LONG channel, ULONG command, APTR buffer );
 LONG bpf_data_waiting( LONG channel );
 /* Route management */
 LONG AddRouteTagList( struct TagItem *tags );
-LONG AddRouteTags( ... );
+LONG AddRouteTags( ULONG tag, ... );
 LONG DeleteRouteTagList( struct TagItem *tags );
-LONG DeleteRouteTags( ... );
+LONG DeleteRouteTags( ULONG tag, ... );
 VOID FreeRouteInfo( struct rt_msghdr *buf );
 struct rt_msghdr *GetRouteInfo( LONG address_family, LONG flags );
 /* Interface management */
