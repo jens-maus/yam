@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-12-03  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_COg.c: changed MUIA_Listview_ScrollerPos of translation
+      table popup gadgets to carry a scrollbar at the right, instead
+      of forcing the user to use his keys to scroll around.
+      This was obvious the change AmiS wanted to achieve.
+    * YAM_WR.c: reverted AmiS`s changes which were nonsense.
+
 2003-11-27  AmiS <amis@amiga.org.ru>
 
     * YAM_WR.c: popup gadget of the translation table doesn`t support

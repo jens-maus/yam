@@ -213,7 +213,7 @@ static APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
       MUIA_Popobject_ObjStrHook, &PO_HandleTransHook,
       MUIA_Popobject_WindowHook, &PO_WindowHook,
       MUIA_Popobject_Object, lv = ListviewObject,
-         MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_None,
+         MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
          MUIA_Listview_List, ListObject,
             InputListFrame,
             MUIA_List_DisplayHook, &CO_LV_TDspHook,
