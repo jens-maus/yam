@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.6 (22.05.2002)
+## version $VER: YAM.catalog 5.6 (21.06.2002)
 ## codeset 0
 ;
 MSG_Folder
@@ -5815,4 +5815,10 @@ Zwecks Kompatibilitätsgründen ist es notwendig das mindestens\n\
 diese version mit YAM benutzt wird. Bitte stellen Sie\n\
 sicher das diese bei Ihnen installiert ist.
 ;MCC_VERSION, MCC_REVISION, MCC_NAME
+;
+MSG_ER_UNUSABLEAMISSL (//)
+Sie haben TLSv1/SSLv3 Unterstützung für diese Verbindung \
+ausgewählt, jedoch konnte AmiSSL nicht initialisiert werden. \
+Bitte überprüfen Sie ihre AmiSSL Installation oder schalten Sie \
+die TLS/SSL Unterstützung für diese Verbindung aus.
 ;
