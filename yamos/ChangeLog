@@ -360,4 +360,10 @@
 
     * Adapted smakefile from MAIN
 
+2001-11-14  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_RE.c: fixed crash when the edit window was opened from
+      a read window and the read window was closed before clicking
+      "Send Later", "Send Now" or "Hold" in the write window.
+      Fixes Bug #481316
 

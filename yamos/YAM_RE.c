@@ -393,6 +393,14 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    BOOL real = !Virtual(mail);
    BOOL out = real ? OUTGOING(folder->Type) : FALSE, allloaded = TRUE;
 
+   /* Check if the window is still open,
+    * needed for the "update readwindow after writewindow close" feature
+    */
+   if (re == NULL)
+   {
+      return;
+   }
+
    re->Mail = *mail;
    re->MailPtr = mail;
    re->PGPKey = FALSE;
