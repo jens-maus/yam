@@ -46,8 +46,8 @@
   #define DB(x) x
   #define DBG   kprintf("File %s, Func %s, Line %d\n",__FILE__,__FUNC__,__LINE__);
 #else
-  #define DB(x) ((void)0);
-  #define DBG   ((void)0);
+  #define DB(x)
+  #define DBG
 #endif
 
 #endif /* YAM_DEBUG_H */
