@@ -773,7 +773,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                     else if(strnicmp(tok, "SO_RCVTIMEO", 11) == 0)
                     {
                       char *p = strchr(tok, '=');
-                      if(p) co->SocketOptions.SendBuffer = atoi(p+1);
+                      if(p) co->SocketOptions.RecvTimeOut = atoi(p+1);
                     }
 
                     tok = strtok(NULL, " ");

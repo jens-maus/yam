@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-09-26  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c: fixed bug in the socket options configuration parsing
+      routines where YAM didn't recognize an existing "SO_RCVTIMEO"
+      option correctly.
+    
 2004-09-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_CL.c, YAM_classes.h: removed source files as all the old custom
