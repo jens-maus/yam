@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.6 for YAM 2.4p1 (1.05.2003) © 2001-2003 by YAM Open Source Team
+; $VER: Installer script 1.6 for YAM 2.4p1 (20.05.2003) © 2001-2003 by YAM Open Source Team
 ;
 ; $Id$
 
@@ -112,7 +112,7 @@
    (
       (set #wrongOS  "YAM necesita como mínimo el AmigaOS 3.0 para funcionar.\n")
       (set #wrongMUI "YAM necesita como mínimo MUI 3.8 para funcionar.\n")
-      (set #wrongCPU "YAM necesita como mínimo una CPU 68020 para funcionar\n")
+      (set #wrongCPU "YAM necesita como mínimo una CPU 68020 para funcionar.\n")
       (set #proc_type "Elija la versión de YAM que desea instalar:")
       (set #proc_help (cat "Seleccione la versión de YAM a instalar "
                            "en función del procesador que posea."))
@@ -120,7 +120,7 @@
       (set #proc_040 "Optimizado para 68040")
       (set #proc_060 "Optimizado para 68060")
       (set #proc_MOS "Optimizado para MorphOS/PPC")
-      (set #YAM_dir  "Escoja el directorio raiz para YAM")
+      (set #YAM_dir  "Elija el directorio raíz de YAM")
       (set #done_1   (cat "\nYAM se ha instalado satisfactoriamente.\n\n"
                           "Pulse el icono de \"YAM\" en el directorio\n"))
       (set #done_2        "\npara saborearlo.\n\n¡Que lo disfrute!")
@@ -156,8 +156,8 @@
       (set #wrongMUI "Yam necessita almeno della MUI3.8 per funzionare\n")
       (set #wrongCPU "Yam necessita almeno della CPU 68020 per funzionare\n")
       (set #proc_type "Scegli quale versione di YAM deve essere installata:")
-      (set #proc_help (cat "Qui puoi scegliere quale versione di YAM deve essere installata"
-                           "a seconda del processore che possiedi."))
+      (set #proc_help (cat "Qui puoi scegliere quale versione di YAM deve essere "
+                           "installata a seconda del processore che possiedi."))
       (set #proc_020 "Ottimizzata per 68020/030")
       (set #proc_040 "Ottimizzata per 68040")
       (set #proc_060 "Ottimizzata per 68060")
