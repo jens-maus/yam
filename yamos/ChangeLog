@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-11-16  Jens Langner <Jens.Langner@light-speed.de>
+
+    * Recipientstring.c: changed the OM_DISPOSE method to be a
+      MUIM_Cleanup method instead. This is necessary because the used
+      macro _app(obj) is per definition only allowed within the context
+      of MUIM_Setup/MUIM_Cleanup and could cause problems if used
+      elsewhere.
+
 2003-11-15  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c: enhanced the error checking functions within

@@ -85,22 +85,6 @@ OVERLOAD(OM_NEW)
 	return (ULONG)obj;
 }
 ///
-/// OVERLOAD(OM_DISPOSE)
-OVERLOAD(OM_DISPOSE)
-{
-	GETDATA;
-
-	if(data->Matchwindow)
-	{
-		DB(kprintf("Dispose addrlistpopup: %lx\n", data->Matchwindow);)
-		DoMethod(_app(obj), OM_REMMEMBER, data->Matchwindow);
-		MUI_DisposeObject(data->Matchwindow);
-	}
-
-	free(data->CurrentRecipient);
-	return DoSuperMethodA(cl, obj, msg);
-}
-///
 /// OVERLOAD(OM_GET)
 /* this is just so that we can notify the popup tag */
 OVERLOAD(OM_GET)
@@ -164,6 +148,22 @@ OVERLOAD(MUIM_Setup)
 	}
 
 	return FALSE;
+}
+///
+/// OVERLOAD(MUIM_Cleanup)
+OVERLOAD(MUIM_Cleanup)
+{
+	GETDATA;
+
+	if(data->Matchwindow)
+	{
+		DB(kprintf("Dispose addrlistpopup: %lx\n", data->Matchwindow);)
+		DoMethod(_app(obj), OM_REMMEMBER, data->Matchwindow);
+		MUI_DisposeObject(data->Matchwindow);
+	}
+
+	free(data->CurrentRecipient);
+	return DoSuperMethodA(cl, obj, msg);
 }
 ///
 /// OVERLOAD(MUIM_Show)
@@ -434,7 +434,9 @@ DECLARE(Resolve) // ULONG flags
 		get(obj, MUIA_String_Contents, &s);
 		if(!(contents = tmp = strdup(s)))
 			break;
-		set(obj, MUIA_String_Contents, NULL);
+
+		// clear the string gadget without notifing others
+		nnset(obj, MUIA_String_Contents, NULL);
 
 		DB(kprintf("Resolve this string: %s\n", tmp);)
 		while((s = Trim(rcptok(tmp, &quote)))) /* tokenize string and resolve each recipient */
@@ -547,6 +549,8 @@ DECLARE(Resolve) // ULONG flags
 
 	} while(list_expansion && max_list_nesting-- > 0);
 
+	kprintf("res: %ld\n", res);
+
 	return (res ? xget(obj, MUIA_String_Contents) : 0);
 }
 ///
@@ -558,7 +562,7 @@ DECLARE(AddRecipient) // STRPTR address
 	STRPTR contents;
 
 	if(!data->MultipleRecipients)
-		set(obj, MUIA_String_Contents, NULL);
+		nnset(obj, MUIA_String_Contents, NULL);
 
 	if(get(obj, MUIA_String_Contents, &contents), contents[0] != '\0')
 		DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
