@@ -199,3 +199,9 @@
 2001-04-07  Jacob Laursen <laursen@myself.com>
 
     * Nicer compilation date in About window ("7.4.2001" -> "07-Apr-01").
+
+2001-04-26  Jacob Laursen <laursen@myself.com>
+
+    * Added correct MCC version check.
+    * Library open errors will now always be displayed in a requester,
+      no matter if MUI is available. If possible, localized.

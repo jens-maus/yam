@@ -479,10 +479,61 @@ void Terminate(void)
 void Abort(char *error)
 {
    if (error)
-      if (MUIMasterBase) MUI_Request(G->App ? G->App : NULL, NULL, 0, GetStr(MSG_ErrorStartup), GetStr(MSG_Quit), error);
+   {
+      if (MUIMasterBase) {
+         MUI_Request(G->App ? G->App : NULL, NULL, 0, GetStr(MSG_ErrorStartup), GetStr(MSG_Quit), error);
+      }
+      else if (IntuitionBase) {
+         struct EasyStruct ErrReq = {
+            sizeof (struct EasyStruct),
+            0,
+            NULL,
+            NULL,
+            NULL
+         };
+
+         ErrReq.es_Title        = (char *)GetStr(MSG_ErrorStartup);
+         ErrReq.es_TextFormat   = error;
+         ErrReq.es_GadgetFormat = (char *)GetStr(MSG_Quit);
+
+         EasyRequest(NULL, &ErrReq, NULL, error);
+      }
       else puts(error);
+   }
    yamLast = TRUE;
    Terminate();
+}
+///
+/// CheckMCC
+//  Checks if a certain version of a MCC is available
+BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
+{
+   Object *obj;
+   BOOL success = FALSE;
+
+   obj = MUI_NewObject(name, TAG_DONE);
+   if (obj) {
+      ULONG tmp;
+      int ver, rev;
+
+      get(obj, MUIA_Version, &tmp);
+      ver = (int)tmp;
+      get(obj, MUIA_Revision, &tmp);
+      rev = (int)tmp;
+
+      if (ver > minver || (ver == minver && rev >= minrev)) {
+         success = TRUE;
+      }
+      MUI_DisposeObject(obj);
+   }
+
+   if (!success && req) {
+      static char errorlib[SIZE_DEFAULT];
+      sprintf(errorlib, GetStr(MSG_ErrorLib), name, minver);
+      Abort(errorlib);
+   }
+
+   return success;
 }
 ///
 /// InitLib
@@ -582,22 +633,29 @@ void Initialise(BOOL hidden)
    int i;
 
    DateStamp(&G->StartDate);
+
+   /* First open locale.library, so we can display a translated error requester
+      in case some of the other libraries can't be opened. */
+   if ((LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE))) G->Locale = OpenLocale(NULL);
+   OpenYAMCatalog();
+
    UtilityBase = (struct UtilityBase *)InitLib("utility.library", 36, 0, TRUE, FALSE);
    KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
    IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
 #ifdef __ixemul__
    RexxSysBase = InitLib("rexxsyslib.library", 36, 0, TRUE, FALSE);
 #endif
-   if ((LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE))) G->Locale = OpenLocale(NULL);
-   OpenYAMCatalog();
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
+
+   /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);
+
    if (!InitClasses()) Abort(GetStr(MSG_ErrorClasses));
    if (!Root_New(hidden)) Abort(FindPort("YAM") ? NULL : GetStr(MSG_ErrorMuiApp));
    AY_PrintStatus(GetStr(MSG_InitLibs), 10);
    XpkBase = InitLib(XPKNAME, 0, 0, FALSE, FALSE);
    if ((DataTypesBase = InitLib("datatypes.library", 39, 0, FALSE, FALSE)))
-      if (InitLib("mui/Dtpic.mui", 0, 0, FALSE, TRUE)) G->DtpicSupported = TRUE;
+      if (CheckMCC("Dtpic.mui", 0, 0, FALSE)) G->DtpicSupported = TRUE;
    if (!TC_Init()) Abort(GetStr(MSG_ErrorTimer));
    for (i = 0; i < MAXASL; i++)
       if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,
