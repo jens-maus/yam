@@ -932,7 +932,7 @@ static void Initialise(BOOL hidden)
       G->TR_UseableTLS = TRUE;
    }
 
-   SetupDebug();
+   DB( SetupDebug(); )
 
    // Lets check for the correct Toolbar.mcc version
    CheckMCC(MUIC_Toolbar, 15, 6, TRUE);
