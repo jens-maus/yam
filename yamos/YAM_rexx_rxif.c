@@ -310,12 +310,12 @@ void rx_writeletter( struct RexxHost *host, struct rxd_writeletter **rxd, long a
          break;
          
       case RXIF_ACTION:
-         if (G->WR[G->ActiveWriteWin]) if (CopyFile(G->WR_Filename[G->ActiveWriteWin], 0, rd->arg.file, 0))
+         if (G->WR[G->ActiveWriteWin] && CopyFile(G->WR_Filename[G->ActiveWriteWin], 0, rd->arg.file, 0))
          {
             if (C->UseSignature && !rd->arg.nosig) WR_AddSignature(G->WR_Filename[G->ActiveWriteWin], -1);
             FileToEditor(G->WR_Filename[G->ActiveWriteWin], G->WR[G->ActiveWriteWin]->GUI.TE_EDIT);
          }
-         else rd->rc = RETURN_ERROR;  else rd->rc = RETURN_ERROR;
+         else rd->rc = RETURN_ERROR;
          break;
 
       case RXIF_FREE:
@@ -369,7 +369,8 @@ void rx_writequeue( struct RexxHost *host, struct rxd_writequeue **rxd, long act
          break;
 
       case RXIF_ACTION:
-         WR_NewMail(rd->arg.hold ? WRITE_HOLD : WRITE_QUEUE, G->ActiveWriteWin);
+         if(G->WR[G->ActiveWriteWin]) WR_NewMail(rd->arg.hold ? WRITE_HOLD : WRITE_QUEUE, G->ActiveWriteWin);
+         else rd->rc = RETURN_ERROR;
          break;
 
       case RXIF_FREE:
@@ -391,7 +392,8 @@ void rx_writesend( struct RexxHost *host, struct rxd_writesend **rxd, long actio
          break;
 
       case RXIF_ACTION:
-         WR_NewMail(WRITE_SEND, G->ActiveWriteWin);
+         if(G->WR[G->ActiveWriteWin]) WR_NewMail(WRITE_SEND, G->ActiveWriteWin);
+         else rd->rc = RETURN_ERROR;
          break;
 
       case RXIF_FREE:
@@ -418,12 +420,29 @@ void rx_mailwrite( struct RexxHost *host, struct rxd_mailwrite **rxd, long actio
          rd->res.window = &G->ActiveWriteWin;
          if (winnr < 0)
          {
-            if ((winnr = MA_NewMessage(NEW_NEW, rd->arg.quiet?NEWF_QUIET:0)) >= 0) G->ActiveWriteWin = winnr;
+            if ((winnr = MA_NewMessage(NEW_NEW, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
+            {
+              G->ActiveWriteWin = winnr;
+              if(rd->arg.quiet == FALSE && G->WR[winnr])
+              {
+                set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+              }
+            }
             else rd->rc = RETURN_ERROR;
          }
          else
          {
-            if (winnr >= 0 && winnr <= 1) if (G->WR[winnr]) G->ActiveWriteWin = winnr;
+            if (winnr >= 0 && winnr <= 1)
+            {
+              if(G->WR[winnr])
+              {
+                G->ActiveWriteWin = winnr;
+                if(rd->arg.quiet == FALSE && G->WR[winnr])
+                {
+                  set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+                }
+              }else rd->rc = RETURN_WARN;
+            }
             else rd->rc = RETURN_ERROR;
          }
          break;
@@ -449,7 +468,14 @@ void rx_mailreply( struct RexxHost *host, struct rxd_mailreply **rxd, long actio
          
       case RXIF_ACTION:
          rd->res.window = &G->ActiveWriteWin;
-         if ((winnr = MA_NewMessage(NEW_REPLY, rd->arg.quiet?NEWF_QUIET:0)) >= 0) G->ActiveWriteWin = winnr;
+         if ((winnr = MA_NewMessage(NEW_REPLY, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
+         {
+            G->ActiveWriteWin = winnr;
+            if(rd->arg.quiet == FALSE && G->WR[winnr])
+            {
+              set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+            }
+         }
          else rd->rc = RETURN_ERROR;
          break;
       
@@ -475,7 +501,14 @@ void rx_mailforward( struct RexxHost *host, struct rxd_mailforward **rxd, long a
          
       case RXIF_ACTION:
          rd->res.window = &G->ActiveWriteWin;
-         if ((winnr = MA_NewMessage(NEW_FORWARD, rd->arg.quiet?NEWF_QUIET:0)) >= 0) G->ActiveWriteWin = winnr;
+         if ((winnr = MA_NewMessage(NEW_FORWARD, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
+         {
+            G->ActiveWriteWin = winnr;
+            if(rd->arg.quiet == FALSE && G->WR[winnr])
+            {
+              set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+            }
+         }
          else rd->rc = RETURN_ERROR;
          break;
       
@@ -1085,6 +1118,7 @@ void rx_writesubject( struct RexxHost *host, struct rxd_writesubject **rxd, long
          
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin]) setstring(G->WR[G->ActiveWriteWin]->GUI.ST_SUBJECT, rd->arg.subject);
+         else rd->rc = RETURN_ERROR;
          break;
       
       case RXIF_FREE:
@@ -1197,7 +1231,14 @@ void rx_mailedit( struct RexxHost *host, struct rxd_mailedit **rxd, long action,
          
       case RXIF_ACTION:
          rd->res.window = &G->ActiveWriteWin;
-         if ((winnr = MA_NewMessage(NEW_EDIT, rd->arg.quiet?NEWF_QUIET:0)) >= 0) G->ActiveWriteWin = winnr;
+         if ((winnr = MA_NewMessage(NEW_EDIT, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
+         {
+            G->ActiveWriteWin = winnr;
+            if(rd->arg.quiet == FALSE && G->WR[winnr])
+            {
+              set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+            }
+         }
          else rd->rc = RETURN_ERROR;
          break;
       
@@ -1348,7 +1389,14 @@ void rx_mailbounce( struct RexxHost *host, struct rxd_mailbounce **rxd, long act
          
       case RXIF_ACTION:
          rd->res.window = &G->ActiveWriteWin;
-         if ((winnr = MA_NewMessage(NEW_BOUNCE, rd->arg.quiet?NEWF_QUIET:0)) >= 0) G->ActiveWriteWin = winnr;
+         if ((winnr = MA_NewMessage(NEW_BOUNCE, rd->arg.quiet?NEWF_QUIET:0)) >= 0)
+         {
+            G->ActiveWriteWin = winnr;
+            if(rd->arg.quiet == FALSE && G->WR[winnr])
+            {
+              set(G->WR[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+            }
+         }
          else rd->rc = RETURN_ERROR;
          break;
       
@@ -1583,6 +1631,7 @@ void rx_listselect( struct RexxHost *host, struct rxd_listselect **rxd, long act
          
       case RXIF_ACTION:
          nl = G->MA->GUI.NL_MAILS;
+         set(nl, MUIA_NList_Active, MUIV_NList_Active_Off);
          switch (rd->arg.mode[0])
          {
             case 'a': case 'A': DoMethod(nl, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL); break;

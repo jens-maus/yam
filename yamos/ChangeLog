@@ -1,6 +1,17 @@
 2002-04-14  Jens Langner <Jens.Langner@htw-dresden.de>
 
-    * fixed bug # where YAM didn`t jump to a new message when a ghosted
+    * fixed behaviour of LISTSELECT arexx command to really select/deselect all
+      messages as described in the documentation. Fixes bug #508202
+    * fixed some possible bugs in the arexx interface were it could happen that
+      it did some harmful stuff with invalid ActiveWriteWindow values. Now these
+      situations just returns an RETURN_ERROR instead.
+    * the MAILWRITE command will now return a RETURN_WARN if the user tried to
+      send WINDOW value other than 0 or 1.
+    * changed behaviour of Arexx commands that will set a write window active.
+      If now the command is executed without QUIET, the window will really go
+      active. This should fix some confusion about this behaviour as well.
+      This should kill one bug of ticket #466021
+    * fixed bug #506533 where YAM didn`t jump to a new message when a ghosted
       folder was selected before.
     * fixed another enforcer hit that occured on filtering mails by msgbody or
       header.

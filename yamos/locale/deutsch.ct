@@ -5692,11 +5692,11 @@ MSG_FO_MAXAGEFMT
 ; %ld days
 ;
 MSG_CO_NB_EMAILCACHE
-Nachrichtenpuffer
+Adresspuffer
 ; Email cache
 ;
 MSG_CO_NB_EMAILCACHEFMT
-%ld Nachrichten
+%ld Addressen
 ; %ld mails
 ;
 MSG_HELP_CO_NB_EMAILCACHE
