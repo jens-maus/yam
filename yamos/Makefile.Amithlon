@@ -25,7 +25,7 @@
 #
 #***************************************************************************/
 
-TARGET	= YAM.morphos
+TARGET	= YAM.amithlon
 
 #
 
@@ -74,7 +74,7 @@ all: $(TARGET)
 #
 
 %.o.elf: %.c
-	$(CC) $(CFLAGS) $< -o $@ -DNO_PPCINLINE_STDARG
+	$(CC) $(CFLAGS) $< -o $@ -DNO_INLINE_STDARG
 
 #
 
