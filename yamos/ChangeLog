@@ -7,6 +7,7 @@ $Source$
 
 2005-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
+    * misc: replaced all isspace() usages by calls to our own ISpace() macro.
     * extrasrc/stpblk.c: replaced all stpblk() function usages by TrimStart() calls
       as these two function are totally redundant.
     * extrasrc/stcgfn.c: removed as not used anymore.

@@ -1479,7 +1479,7 @@ static int Word_Length(const char *buf)
 
   while((c = *buf))
   {
-    if(isspace(c))
+    if(ISpace(c))
     {
       if(c == '\n' || c == '\r')
         return 0;
@@ -1494,7 +1494,7 @@ static int Word_Length(const char *buf)
 
   while((c = *buf))
   {
-    if(isspace(c) || c == '\0')
+    if(ISpace(c) || c == '\0')
       break;
 
     len++;
@@ -1692,7 +1692,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
       // we check wheter this char was a whitespace
       // or not and if so we set the lastwasspace flag and we also check if
       // we are near the end of the line so that we have to initiate a word wrap
-      if((lastwasspace = isspace(c)) && line_len + Word_Length(src) >= line_max)
+      if((lastwasspace = ISpace(c)) && line_len + Word_Length(src) >= line_max)
       {
         char *indent;
 

@@ -407,7 +407,7 @@ static void HeaderFputs(char *s, FILE *fh)
    // in RFC 2047
    if(doEncoding ||
       ((c = strstr(s, "=?")) && isascii(*(c+1)) &&
-       (c == s || isspace(*(c-1))))) // to find stray =? strings
+       (c == s || ISpace(*(c-1))))) // to find stray =? strings
    {
       // now that we found out that the string contains non ASCII
       // characters, lets encode them accoding to RFC 2047
