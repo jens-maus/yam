@@ -46,6 +46,7 @@
 #include <datatypes/soundclass.h>
 #include <libraries/asl.h>
 #include <libraries/gadtools.h>
+#include <libraries/genesis.h>
 #include <libraries/cmanager.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/NList_mcc.h>
@@ -154,8 +155,6 @@ struct sockaddr_in {
 #define OUTGOING(type)    (type == FT_OUTGOING || type == FT_SENT || type == FT_CUSTOMSENT)
 #define Virtual(mail)     (((mail)->Flags&MFLAG_NOFOLDER) == MFLAG_NOFOLDER)
 
-#define DBG  printf("File %s, Func %s, Line %d\n",__FILE__,__FUNC__,__LINE__);
-#define DBGP DBG Delay(100);
 #define clear(p,l) memset((p), 0, (l));
 
 
