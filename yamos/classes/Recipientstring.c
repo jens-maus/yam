@@ -53,6 +53,47 @@ struct Data
 #define hasNoCacheFlag(v)			(isFlagSet((v), MUIF_Recipientstring_Resolve_NoCache))
 */
 
+/* Hooks */
+/// FindAddressHook
+HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
+{
+	struct ABEntry *entry = (struct ABEntry *)msg->UserData;
+	return ((entry->Type == AET_USER) || (entry->Type == AET_LIST)) && ((!Stricmp(msg->User, entry->Alias) || !Stricmp(msg->User, entry->RealName) || !Stricmp(msg->User, entry->Address))) ? 0 : ~0;
+}
+MakeStaticHook(FindAddressHook, FindAddressFunc);
+///
+
+/* Private Functions */
+/// rcptok()
+// Non-threadsafe strtok() alike recipient tokenizer.
+// "," is the hardcoded token. Ignored if surrounded by quotes ("").
+static char *rcptok(char *s, BOOL *quote)
+{
+	static char *p;
+
+	if (s)
+		p = s;
+	else
+		s = p;
+
+	if (!p || !*p)
+		return NULL;
+
+	while (*p)
+	{
+		if (*p == '"')
+			*quote ^= TRUE;
+		else if (*p == ',' && !*quote)
+		{
+			*p++ = '\0';
+			return s;
+		}
+		p++;
+	}
+
+	return s;
+}
+///
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
@@ -378,44 +419,7 @@ OVERLOAD(MUIM_HandleEvent)
 }
 ///
 
-HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
-{
-	struct ABEntry *entry = (struct ABEntry *)msg->UserData;
-	return ((entry->Type == AET_USER) || (entry->Type == AET_LIST)) && ((!Stricmp(msg->User, entry->Alias) || !Stricmp(msg->User, entry->RealName) || !Stricmp(msg->User, entry->Address))) ? 0 : ~0;
-}
-MakeStaticHook(FindAddressHook, FindAddressFunc);
-
-/// rcptok()
-// Non-threadsafe strtok() alike recipient tokenizer.
-// "," is the hardcoded token. Ignored if surrounded by quotes ("").
-STATIC STRPTR rcptok(STRPTR s, BOOL *quote)
-{
-	STATIC STRPTR p;
-
-	if (s)
-		p = s;
-	else
-		s = p;
-
-	if (!p || !*p)
-		return NULL;
-
-	while (*p)
-	{
-		if (*p == '"')
-			*quote ^= TRUE;
-		else if (*p == ',' && !*quote)
-		{
-			*p++ = '\0';
-			return s;
-		}
-		p++;
-	}
-
-	return s;
-}
-///
-
+/* Public Methods */
 /// DECLARE(Resolve)
 /* resolve all addresses */
 DECLARE(Resolve) // ULONG flags
