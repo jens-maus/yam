@@ -122,6 +122,12 @@ HOOKPROTONHNONP(CO_AddRule, void)
          }
          DoMethod(G->CO->GUI.LV_RULES, MUIM_List_InsertSingle, CE->RU[i], MUIV_List_Insert_Bottom);
          set(G->CO->GUI.LV_RULES, MUIA_List_Active, i);
+
+         // lets set the new string gadget active and select all text in there automatically to
+         // be more handy to the user ;)
+ 				 set(_win(G->CO->GUI.LV_RULES), MUIA_Window_ActiveObject, G->CO->GUI.ST_RNAME);
+         set(G->CO->GUI.ST_RNAME, MUIA_BetterString_SelectSize, -((LONG)strlen(CE->RU[i]->Name)));
+
          break; 
       }
 }
