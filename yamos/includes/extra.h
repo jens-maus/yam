@@ -1,5 +1,5 @@
-#ifndef _EXTRA_H
-#define _EXTRA_H
+#ifndef YAM_EXTRA_H
+#define YAM_EXTRA_H
 
 #ifdef __SASC
 
@@ -11,12 +11,9 @@
 #ifdef _DCC
    #include <fcntl.h>
    #define isascii(c) (((c)&0xff)<127)
-   extern struct Library *WorkbenchBase;
-   extern struct Library *KeymapBase;
-   extern void dice_closelibs(void);
 #elif defined(__STORM__)
+   #define F_OK 0
    #define isascii(c) (((c)&0xff)<127)
-   #define F_OK    0
 #else
    #include <unistd.h>
 #endif
@@ -38,7 +35,6 @@ extern int astcsma(const char *, const char *);
 extern char *stpblk(const char *);
 extern void strmfp(char *, const char *, const char *);
 extern void strsfn(const char *, char *, char *, char *, char *);
-int stch_i(const char *s,int *res);
 
 /*
 ** <dos.h>
@@ -52,4 +48,4 @@ extern long getft(const char *);
 
 #endif /* __SASC */
 
-#endif /* _EXTRA_H */
+#endif /* YAM_EXTRA_H */
