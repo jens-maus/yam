@@ -51,8 +51,8 @@ LNKFLAGS = RESOPT NOVER LINK NOSMALLCODE NOSMALLDATA UTILLIB LIB lib:scnb.lib,li
 .c.o:
 	$(CC) $(CFLAGS) $*.c
 
-.ct.catalog:
-	flexcat YAM.cd $*.ct CATALOG=Catalogs/$*/YAM.catalog FLUSH
+#.ct.catalog:
+#	flexcat YAM.cd $*.ct CATALOG=Catalogs/$*/YAM.catalog FLUSH
 
 
 # Targets & dependencies
