@@ -57,12 +57,13 @@ GENCLASSES = extrasrc/genclasses/GenClasses
 
 #
 
-OBJS	= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
-	  YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o YAM_MA.o YAM_MAf.o \
-	  YAM_md5.o YAM_MI.o YAM_mail_lex.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
-	  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o $(CLASSES) $(EXTRA) Debug.o
+OBJS	= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o\
+	  YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o YAM_MA.o YAM_MAf.o\
+	  YAM_md5.o YAM_MI.o YAM_mail_lex.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o\
+    YAM_rexx_rxif.o YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o $(CLASSES) $(EXTRA)\
+    Debug.o
 
-CLASSES = classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o \
+CLASSES = classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o\
 	  classes/Addrmatchlist.o classes/InfoBar.o classes/YAM.o
 
 EXTRA	= all_gcc.o
@@ -76,7 +77,7 @@ all: $(TARGET)
 .c.o:
 	$(CC) $(CFLAGS) $< -o $@ -DNO_INLINE_STDARG
 
-.l.o:
+.l.c:
 	$(FLEX) -Cfe -i -o$@ $<
 
 #
