@@ -1,5 +1,7 @@
 2001-10-27  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM now also brings all windows to the front if the AppIcon
+      is doubleclicked while the main window is open.
     * implemented match & save functions for new emailcache
       feature. Now YAM should save/move entries in the emailcache
       list to the corresponding file. This finally finishes the

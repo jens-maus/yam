@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <libraries/genesis.h>
@@ -347,11 +348,40 @@ static BOOL AY_New(BOOL hidden)
 //  Un-iconify YAM
 void PopUp(void)
 {
-   int winopen;
-   nnset(G->App, MUIA_Application_Iconified,FALSE);
-   get(G->MA->GUI.WI, MUIA_Window_Open, &winopen);
-   if (!winopen) set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
+   int winopen, i;
+
+   winopen = xget(G->MA->GUI.WI, MUIA_Window_Open);
+   nnset(G->App, MUIA_Application_Iconified, FALSE);
+   if(!xget(G->MA->GUI.WI, MUIA_Window_Open)) set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
    DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToFront);
+
+   if(winopen)
+   {
+     DoMethod(G->MA->GUI.WI, MUIM_Window_ToFront);
+     set(G->MA->GUI.WI, MUIA_Window_Activate, TRUE);
+
+     // Now we check if there is any read and write window open and bring it also
+     // to the front
+
+     for(i = 0; i < MAXRE; i++)
+     {
+       if(G->RE[i])
+       {
+         DoMethod(G->RE[i]->GUI.WI, MUIM_Window_ToFront);
+         set(G->RE[i]->GUI.WI, MUIA_Window_Activate, TRUE);
+       }
+     }
+
+     // Bring the write window to the front
+     for(i = 0; i < MAXWR; i++)
+     {
+       if(G->WR[i])
+       {
+         DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
+         set(G->WR[i]->GUI.WI, MUIA_Window_Activate, TRUE);
+       }
+     }
+   }
 }
 ///
 /// DoublestartHook
