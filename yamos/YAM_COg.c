@@ -749,6 +749,7 @@ APTR CO_Page3(struct CO_ClassData *data)
       DoMethod(bt_aplay              ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook, &CO_PlaySoundHook,data->GUI.ST_APLAY);
       DoMethod(data->GUI.TX_MOVETO   ,MUIM_Notify,MUIA_Text_Contents      ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
       DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.PO_MOVETO   ,2,MUIM_Popstring_Close,TRUE);
+      DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.CH_AMOVE    ,3,MUIM_Set,MUIA_Selected,TRUE);
       for (j = 0; j < 4; j++)
       {
          struct SearchGroup *sg = &(data->GUI.GR_SEARCH[j]);
