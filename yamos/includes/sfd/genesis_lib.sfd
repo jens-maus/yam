@@ -5,6 +5,7 @@
 ==bias 30
 ==public
 ==include <exec/types.h>
+==include <libraries/genesis.h>
 LONG GetFileSize(STRPTR last) (a0)
 BOOL ParseConfig(STRPTR par1, struct ParseConfig_Data * last) (a0,a1)
 BOOL ParseNext(struct ParseConfig_Data * last) (a0)

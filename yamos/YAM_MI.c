@@ -172,7 +172,7 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
       len--;
       if((x = (unsigned char)(*fromp++)) == '=')
       {
-	  		if(len > 0 && *fromp++ != '=' || *fromp != 0)
+	  		if((len > 0 && *fromp++ != '=') || *fromp != 0)
   				return -1;
 
         len--;

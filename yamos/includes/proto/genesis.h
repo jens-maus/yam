@@ -14,6 +14,9 @@
 #ifndef EXEC_TYPES_H
 #include <exec/types.h>
 #endif
+#ifndef LIBRARIES_GENESIS_H
+#include <libraries/genesis.h>
+#endif
 
 /****************************************************************************/
 

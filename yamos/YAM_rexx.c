@@ -56,6 +56,10 @@
 #define RexxPortBaseName "YAM"
 #define RexxMsgExtension "YAM"
 
+#if defined(__amigaos4__)
+#define SetRexxVar(msg, var, val, len)  SetRexxVarFromMsg((var), (val), (msg))
+#endif
+
 struct rxs_stemnode
 {
    struct rxs_stemnode *succ;

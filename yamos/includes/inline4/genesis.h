@@ -20,6 +20,9 @@
 #include <exec/interfaces.h>
 #endif
 
+#ifndef LIBRARIES_GENESIS_H
+#include <libraries/genesis.h>
+#endif
 
 /* Inline macros for Interface "main" */
 #define GetFileSize(last) IGenesis->GetFileSize(last) 

@@ -840,17 +840,46 @@ BOOL TR_IsOnline(void)
 
    if (C->IsOnlineCheck)
    {
-      if ((MiamiBase = OpenLibrary("miami.library", 10)))
+      #if defined(__amigaos4__)
+      if((MiamiBase = OpenLibrary("miami.library", 10)) &&
+         (IMiami = (APTR)GetInterface(MiamiBase, "main", 1L, NULL)))
+      #else
+      if((MiamiBase = OpenLibrary("miami.library", 10)))
+      #endif
       {
-         isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL); CloseLibrary(MiamiBase);
+         isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL);
+
+         #if defined(__amigaos4__)
+         DropInterface(IMiami);
+         IMiami = NULL;
+         #endif
+         CloseLibrary(MiamiBase);
+         MiamiBase = NULL;
+
          return isonline;
       }
-      else if ((GenesisBase = OpenLibrary("genesis.library", 1)))
+      #if defined(__amigaos4__)
+      else if((GenesisBase = OpenLibrary("genesis.library", 1)) &&
+              (IGenesis = (APTR)GetInterface(GenesisBase, "main", 1L, NULL)))
+      #else
+      else if((GenesisBase = OpenLibrary("genesis.library", 1)))
+      #endif
       {
-         isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0); CloseLibrary(GenesisBase);
+         isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0);
+
+         #if defined(__amigaos4__)
+         DropInterface(IGenesis);
+         IGenesis = NULL;
+         #endif
+         CloseLibrary(GenesisBase);
+         GenesisBase = NULL;
+
          return isonline;
       }
    }
+
+   // if no online check was selected, we just check wheter we
+   // can open the bsdsocket.library or not.
    if((socketbase = OpenLibrary("bsdsocket.library", 2L)))
    {
       isonline = TRUE;
@@ -881,8 +910,27 @@ void TR_CloseTCPIP(void)
 //  Opens bsdsocket.library
 BOOL TR_OpenTCPIP(void)
 {
-  if(!TR_IsOnline()) return FALSE;
-  if(!SocketBase) SocketBase = OpenLibrary("bsdsocket.library", 2L);
+  // first do an online check
+  if(!TR_IsOnline())
+    return FALSE;
+
+  // then open the bsdsocket.library and it`s OS4
+  // interface
+  if(!SocketBase)
+  {
+    if(!(SocketBase = OpenLibrary("bsdsocket.library", 2L)))
+      return FALSE;
+
+    #if defined(__amigaos4__)
+    if(!(ISocket = GetInterface(SocketBase, "main", 1L, NULL)))
+    {
+      CloseLibrary(SocketBase);
+      SocketBase = NULL;
+
+      return FALSE;
+    }
+    #endif
+  }
 
   // Now we have to check for TLS/SSL support
   if(G->TR_UseableTLS && AmiSSLBase && SocketBase)

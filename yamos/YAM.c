@@ -98,6 +98,14 @@ struct Args {
 
 /**************************************************************************/
 
+#if defined(__amigaos4__)
+static BOOL CloseLib(APTR libbase, APTR iFace);
+#else
+static BOOL CloseLib(APTR libbase);
+#endif
+
+/**************************************************************************/
+
 // the used number of timerIO requests (refer to YAM.h)
 #define TIO_NUM (3)
 
@@ -179,7 +187,15 @@ static void TC_Exit(void)
 
     // then close the device
     if(TCData.timerIO[0]->tr_node.io_Device != NULL)
+    {
+      // drop the OS4 Interface of the TimerBase
+      #if defined(__amigaos4__)
+      DropInterface(ITimer);
+      ITimer = NULL;
+      #endif
+
       CloseDevice(&TCData.timerIO[0]->tr_node);
+    }
 
     // and then we delete the IO requests
     for(i=0; i < TIO_NUM; i++)
@@ -223,6 +239,10 @@ static BOOL TC_Init(void)
 
         // needed to get GetSysTime() working
         TimerBase = (APTR)TCData.timerIO[0]->tr_node.io_Device;
+
+        #if defined(__amigaos4__)
+        ITimer = GetInterface(TimerBase, "main", 1L, NULL);
+        #endif
 
         // create our other TimerIOs now
         for(i=1; i < TIO_NUM; i++)
@@ -775,17 +795,36 @@ static void Terminate(void)
    YAM_CleanupClasses();
    ExitClasses();
 
-   if (DataTypesBase) CloseLibrary(DataTypesBase);
-   if (XpkBase)       CloseLibrary(XpkBase);
-   if (AmiSSLBase)    CloseLibrary(AmiSSLBase);
-   if (MUIMasterBase) CloseLibrary(MUIMasterBase);
-   if (RexxSysBase) CloseLibrary((struct Library *)RexxSysBase);
-   if (IFFParseBase) CloseLibrary(IFFParseBase);
-   if (KeymapBase) CloseLibrary(KeymapBase);
-   if (WorkbenchBase) CloseLibrary(WorkbenchBase);
+   // on OS4 we close the Interfaces now
+   #if defined(__amigaos4__)
+   CloseLib(DataTypesBase, IDataTypes);
+   CloseLib(XpkBase,       IXpk);
+   CloseLib(AmiSSLBase,    IAmiSSL);
+   CloseLib(MUIMasterBase, IMUIMaster);
+   CloseLib(RexxSysBase,   IRexxSys);
+   CloseLib(IFFParseBase,  IIFFParse);
+   CloseLib(KeymapBase,    IKeymap);
+   CloseLib(WorkbenchBase, IWorkbench);
+   #else
+   CloseLib(DataTypesBase);
+   CloseLib(XpkBase);
+   CloseLib(AmiSSLBase);
+   CloseLib(MUIMasterBase);
+   CloseLib(RexxSysBase);
+   CloseLib(IFFParseBase);
+   CloseLib(KeymapBase);
+   CloseLib(WorkbenchBase);
+   #endif
+
+   // close the catalog and locale now
    CloseYAMCatalog();
-   if (G->Locale) CloseLocale(G->Locale);
-   if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
+   if(G->Locale)      CloseLocale(G->Locale);
+
+   #if defined(__amigaos4__)
+   CloseLib(LocaleBase, ILocale);
+   #else
+   CloseLib(LocaleBase);
+   #endif
 
    free(C);
    free(G);
@@ -795,15 +834,24 @@ static void Terminate(void)
 ///
 /// Abort
 //  Shows error requester, then terminates the program
-static void Abort(APTR formatnum, ...)
+static VARARGS68K void Abort(APTR formatnum, ...)
 {
    va_list a;
    static char error[SIZE_LINE];
 
+   #if defined(__amigaos4__)
+   va_startlinear(a, formatnum);
+   #else
    va_start(a, formatnum);
+   #endif
+
    if(formatnum)
    {
+      #if defined(__amigaos4__)
+      vsprintf(error, GetStr(formatnum), va_getlinearva(a, void *));
+      #else
       vsprintf(error, GetStr(formatnum), a);
+      #endif
 
       if(MUIMasterBase && G && G->App)
       {
@@ -926,12 +974,15 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 }
 ///
 /// InitLib
-//  Opens a library
-static APTR InitLib(STRPTR libname, ULONG version, int revision, BOOL required, BOOL close)
+//  Opens a library & on OS4 also the main interface
+static APTR InitLib(STRPTR libname, APTR *libbase, ULONG version, int revision, BOOL required, BOOL close)
 {
-   struct Library *lib = OpenLibrary(libname, version);
+   struct Library *lib = *libbase;
 
-   if(lib && revision)
+   // open the library
+   lib = OpenLibrary(libname, version);
+
+   if(libbase && revision)
    {
       if(lib->lib_Version == version && lib->lib_Revision < revision)
       {
@@ -940,7 +991,8 @@ static APTR InitLib(STRPTR libname, ULONG version, int revision, BOOL required, 
       }
    }
 
-   if(!lib && required) Abort(MSG_ERR_OPENLIB, libname, version, revision);
+   if(!lib && required)
+     Abort(MSG_ERR_OPENLIB, libname, version, revision);
 
    if(lib && close)
    {
@@ -948,7 +1000,59 @@ static APTR InitLib(STRPTR libname, ULONG version, int revision, BOOL required, 
       lib = NULL;
    }
 
+   // if we end up here, we can open the OS4 base library interface
+   #if defined(__amigaos4__)
+   if(lib)
+   {
+     APTR iFace = NULL;
+
+     // get the "main" interface
+     iFace = GetInterface(lib, "main", 1L, NULL);
+
+     // if we weren`t able to obtain the main interface, lets close the library also
+     if(iFace == NULL)
+     {
+        DB(kprintf("GetInterface() for %s failed.\n", libname);)
+
+        CloseLibrary(lib);
+        lib = NULL;
+
+        if(required)
+          Abort(MSG_ERR_OPENLIB, libname, version, revision);
+     }
+
+     return iFace;
+   }
+
+   return NULL;
+   #else
    return lib;
+   #endif
+}
+///
+/// CloseLib
+//  Closes a library & on OS4 also the main interface
+#if defined(__amigaos4__)
+static BOOL CloseLib(APTR libbase, APTR iFace)
+#else
+static BOOL CloseLib(APTR libbase)
+#endif
+{
+   #if defined(__amigaos4__)
+   if(iFace)
+   {
+     DropInterface(iFace);
+   }
+   #endif
+
+   if(libbase)
+   {
+     CloseLibrary((struct Library *)libbase);
+
+     return TRUE;
+   }
+
+   return FALSE;
 }
 ///
 /// SetupAppIcons
@@ -1121,23 +1225,41 @@ static void Initialise(BOOL hidden)
 
    DateStamp(&G->StartDate);
 
-   /* First open locale.library, so we can display a translated error requester
-      in case some of the other libraries can't be opened. */
-   if ((LocaleBase = InitLib("locale.library", 38, 0, TRUE, FALSE)))
+   // First open locale.library, so we can display a translated error requester
+   // in case some of the other libraries can't be opened.
+   #if defined(__amigaos4__)
+   if((ILocale    = InitLib("locale.library", (APTR)&LocaleBase, 38, 0, TRUE, FALSE)))
+   #else
+   if((LocaleBase = InitLib("locale.library", (APTR)&LocaleBase, 38, 0, TRUE, FALSE)))
+   #endif
+   {
      G->Locale = OpenLocale(NULL);
+   }
 
    // Now load the catalog of YAM
    OpenYAMCatalog();
 
-   WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
-   KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
-   IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
-   RexxSysBase = InitLib(RXSNAME, 36, 0, TRUE, FALSE);
-   MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
+   #if defined(__amigaos4__)
+   IWorkbench     = InitLib("workbench.library", (APTR)&WorkbenchBase, 36, 0, TRUE, FALSE);
+   IKeymap        = InitLib("keymap.library",    (APTR)&KeymapBase,    36, 0, TRUE, FALSE);
+   IIFFParse      = InitLib("iffparse.library",  (APTR)&IFFParseBase,  36, 0, TRUE, FALSE);
+   IRexxSys       = InitLib(RXSNAME,             (APTR)&RexxSysBase,   36, 0, TRUE, FALSE);
+   IMUIMaster     = InitLib("muimaster.library", (APTR)&MUIMasterBase, 19, 0, TRUE, FALSE);
+   #else
+   WorkbenchBase  = InitLib("workbench.library", (APTR)&WorkbenchBase, 36, 0, TRUE, FALSE);
+   KeymapBase     = InitLib("keymap.library",    (APTR)&KeymapBase,    36, 0, TRUE, FALSE);
+   IFFParseBase   = InitLib("iffparse.library",  (APTR)&IFFParseBase,  36, 0, TRUE, FALSE);
+   RexxSysBase    = InitLib(RXSNAME,             (APTR)&RexxSysBase,   36, 0, TRUE, FALSE);
+   MUIMasterBase  = InitLib("muimaster.library", (APTR)&MUIMasterBase, 19, 0, TRUE, FALSE);
+   #endif
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
-   if((AmiSSLBase = InitLib("amissl.library", AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, FALSE, FALSE)))
+   #if defined(__amigaos4__)
+   if((IAmiSSL    = InitLib("amissl.library", (APTR)&AmiSSLBase, AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, FALSE, FALSE)))
+   #else
+   if((AmiSSLBase = InitLib("amissl.library", (APTR)&AmiSSLBase, AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, FALSE, FALSE)))
+   #endif
    {
       DB(kprintf("AmiSSL library found and enabled!\n");)
       G->TR_UseableTLS = TRUE;
@@ -1168,9 +1290,24 @@ static void Initialise(BOOL hidden)
       Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
 
    AY_PrintStatus(GetStr(MSG_InitLibs), 10);
-   XpkBase = InitLib(XPKNAME, 0, 0, FALSE, FALSE);
-   if ((DataTypesBase = InitLib("datatypes.library", 39, 0, FALSE, FALSE)))
-      if (CheckMCC("Dtpic.mui", 19, 0, FALSE)) G->DtpicSupported = TRUE;
+
+   #if defined(__amigaos4__)
+   IXpk    = InitLib(XPKNAME, (APTR)&XpkBase, 0, 0, FALSE, FALSE);
+   #else
+   XpkBase = InitLib(XPKNAME, (APTR)&XpkBase, 0, 0, FALSE, FALSE);
+   #endif
+
+   // open the datatypes.library v39
+   #if defined(__amigaos4__)
+   if((IDataTypes    = InitLib("datatypes.library", (APTR)&DataTypesBase, 39, 0, FALSE, FALSE)))
+   #else
+   if((DataTypesBase = InitLib("datatypes.library", (APTR)&DataTypesBase, 39, 0, FALSE, FALSE)))
+   #endif
+   {
+      if(CheckMCC("Dtpic.mui", 19, 0, FALSE))
+        G->DtpicSupported = TRUE;
+   }
+
    if (!TC_Init()) Abort(MSG_ErrorTimer);
    for (i = 0; i < MAXASL; i++)
       if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,
@@ -1299,16 +1436,26 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
    struct genUser *guser;
    BOOL terminate = FALSE, loggedin = FALSE;
 
-   if ((GenesisBase = OpenLibrary("genesis.library", 1)))
+   #if defined(__amigaos4__)
+   if((IGenesis    = InitLib("genesis.library", (APTR)&GenesisBase, 1, 0, FALSE, FALSE)))
+   #else
+   if((GenesisBase = InitLib("genesis.library", (APTR)&GenesisBase, 1, 0, FALSE, FALSE)))
+   #endif
    {
       if ((guser = GetGlobalUser()))
       {
          terminate = !(loggedin = US_Login(guser->us_name, "\01", maildir, prefsfile));
          FreeUser(guser);
       }
-      CloseLibrary(GenesisBase);
+
+      #if defined(__amigaos4__)
+      CloseLib(GenesisBase, IGenesis);
+      #else
+      CloseLib(GenesisBase);
+      #endif
    }
    if (!loggedin && !terminate) terminate = !US_Login(user, password, maildir, prefsfile);
+
    if(terminate)
      exit(5);
 }
@@ -1405,14 +1552,19 @@ static void yam_exitfunc(void)
    }
    if(nrda.Template)
       NewFreeArgs(&nrda);
-   if(UtilityBase)
-      CloseLibrary((struct Library *)UtilityBase);
-   if(IconBase)
-      CloseLibrary(IconBase);
-   if(IntuitionBase)
-      CloseLibrary((struct Library *) IntuitionBase);
 
-  DB(kprintf("end of yam_exitfunc()\n");)
+   // close some libraries now
+   #if defined(__amigaos4__)
+   CloseLib(UtilityBase,    IUtility);
+   CloseLib(IconBase,       IIcon);
+   CloseLib(IntuitionBase,  IIntuition);
+   #else
+   CloseLib(UtilityBase);
+   CloseLib(IconBase);
+   CloseLib(IntuitionBase);
+   #endif
+
+   DB(kprintf("end of yam_exitfunc()\n");)
 }
 
 ///
@@ -1425,16 +1577,30 @@ int main(int argc, char **argv)
    BPTR progdir;
    LONG err;
 
+   // obtain the MainInterface of Exec before anything else.
+   #ifdef __amigaos4__
+	 SysBase = *((struct Library **)4L);
+	 IExec = (struct ExecIFace *) ((struct ExecBase *)SysBase)->MainInterface;
+   #endif
+
 #if defined(DEVWARNING)
    {
-      struct Library *IntuitionBase;
-      struct Library *UtilityBase;
       struct DateStamp ds;
       BOOL goon = TRUE;
 
+      #if defined(__amigaos4__)
+      if((IntuitionBase = OpenLibrary("intuition.library", 36)) &&
+         (IIntuition = (APTR)GetInterface(IntuitionBase, "main", 1L, NULL)))
+      #else
       if((IntuitionBase = OpenLibrary("intuition.library", 36)))
+      #endif
       {
+        #if defined(__amigaos4__)
+        if((UtilityBase = OpenLibrary("utility.library", 36)) &&
+           (IUtility = (APTR)GetInterface(UtilityBase, "main", 1L, NULL)))
+        #else
         if((UtilityBase = OpenLibrary("utility.library", 36)))
+        #endif
         {
           struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
           DateStamp(&ds); // get actual time/date
@@ -1467,9 +1633,18 @@ int main(int argc, char **argv)
             if(!EasyRequestArgs(NULL, &ErrReq, NULL, NULL)) goon = FALSE;
           }
 
-          CloseLibrary(UtilityBase);
+          #if defined(__amigaos4__)
+          CloseLib(UtilityBase, IUtility);
+          #else
+          CloseLib(UtilityBase);
+          #endif
         }
-        CloseLibrary(IntuitionBase);
+
+        #if defined(__amigaos4__)
+        CloseLib(IntuitionBase, IIntuition);
+        #else
+        CloseLib(IntuitionBase);
+        #endif
      }
 
      if(!goon) exit(0);
@@ -1482,9 +1657,15 @@ int main(int argc, char **argv)
 
    WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
-   IntuitionBase = InitLib("intuition.library", 36, 0, TRUE, FALSE);
-   IconBase = InitLib("icon.library", 36, 0, TRUE, FALSE);
-   UtilityBase = InitLib("utility.library", 36, 0, TRUE, FALSE);
+   #if defined(__amigaos4__)
+   IIntuition    = InitLib("intuition.library", (APTR)&IntuitionBase, 36, 0, TRUE, FALSE);
+   IIcon         = InitLib("icon.library",      (APTR)&IconBase,      36, 0, TRUE, FALSE);
+   IUtility      = InitLib("utility.library",   (APTR)&UtilityBase,   36, 0, TRUE, FALSE);
+   #else
+   IntuitionBase = InitLib("intuition.library", (APTR)&IntuitionBase, 36, 0, TRUE, FALSE);
+   IconBase      = InitLib("icon.library",      (APTR)&IconBase,      36, 0, TRUE, FALSE);
+   UtilityBase   = InitLib("utility.library",   (APTR)&UtilityBase,   36, 0, TRUE, FALSE);
+   #endif
 
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
    nrda.ExtHelp = NULL;

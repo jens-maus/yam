@@ -186,7 +186,7 @@ static void FreeWorkbenchPath(BPTR path)
 /// YAMMUIRequest
 // Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
 // We also have a wrapper #define MUI_Request for calling that function instead.
-LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
+LONG STDARGS VARARGS68K YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
 {
   LONG result = -1;
   char reqtxt[SIZE_LINE];
@@ -195,8 +195,13 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
   va_list args;
 
   // lets create the requester text
+  #if defined(__amigaos4__)
+  va_startlinear(args, format);
+  vsprintf(reqtxt, format, va_getlinearva(args, void *));
+  #else
   va_start(args, format);
   vsprintf(reqtxt, format, args);
+  #endif
   va_end(args);
 
   // if the applicationpointer is NULL we fall back to a standard requester
@@ -4150,10 +4155,22 @@ void GotoURL(char *url)
       sprintf(newurl, "%c%s%c", '"', url, '"');
       MA_StartMacro(MACRO_URL, newurl);
    }
-   else if ((OpenURLBase = OpenLibrary("openurl.library", 1)))
+   #if defined(__amigaos4__)
+   else if((OpenURLBase = OpenLibrary("openurl.library", 1)) &&
+           (IOpenURL = GetInterface(OpenURLBase, "main", 1L, NULL)))
+   #else
+   else if((OpenURLBase = OpenLibrary("openurl.library", 1)))
+   #endif
    {
       URL_Open(url, TAG_DONE);
+
+      #if defined(__amigaos4__)
+      DropInterface(IOpenURL);
+      IOpenURL = NULL;
+      #endif
+
       CloseLibrary(OpenURLBase);
+      OpenURLBase = NULL;
    }
 }
 ///
@@ -4513,13 +4530,23 @@ void STDARGS SPrintF(char *outstr, char *fmtstr, ...)
   struct Hook hook;
   va_list args;
 
+  // initialize the hook
   InitHook(&hook, putCharHook, outstr);
+
+  #if defined(__amigaos4__)
+  va_startlinear(args, fmtstr);
+  #else
   va_start(args, fmtstr);
-#if defined(__MORPHOS__)
+  #endif
+
+  #if defined(__amigaos4__)
+  FormatString(G->Locale, fmtstr, va_getlinearva(args, void *), &hook);
+  #elif defined(__MORPHOS__)
   FormatString(G->Locale, fmtstr, args->overflow_arg_area, &hook);
-#else
+  #else
   FormatString(G->Locale, fmtstr, args, &hook);
-#endif
+  #endif
+
   va_end(args);
 }
 ///

@@ -20,6 +20,9 @@
 #include <exec/interfaces.h>
 #endif
 
+#ifndef LIBRARIES_SOCKET_H
+#include <libraries/socket.h>
+#endif
 
 /* Inline macros for Interface "main" */
 #define MiamiSysCtl(par1, par2, par3, par4, par5, last) IMiami->MiamiSysCtl(par1, par2, par3, par4, par5, last) 

@@ -5,6 +5,7 @@
 ==bias 30
 ==public
 ==include <exec/types.h>
+==include <libraries/socket.h>
 long MiamiSysCtl(long * par1, unsigned long par2, void * par3, unsigned long * par4,
 	void * par5, long last) (a0,d0,a1,a2,a3,d1)
 ==reserve 5

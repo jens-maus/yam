@@ -29,10 +29,12 @@
 #include "YAM_locale.h"
 
 #if defined(__PPC__)
-  #if defined(__MORPHOS__)
+  #if defined(__amigaos4__)
+    #define CPU " [OS4/PPC]"
+  #elif defined(__MORPHOS__)
     #define CPU " [MOS/PPC]"
   #else
-    #define CPU " [OS4/PPC]"
+    #define CPU " [PPC]"
   #endif
 #elif defined(_M68060) || defined(__M68060) || defined(__mc68060)
   #define CPU " [060]"
@@ -58,36 +60,64 @@ char * yamcopyright     = __YAM_COPYRIGHT;
 char * yamversiondate   = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;
 
-#if defined(__SASC) || defined(__GNUC__)
+#if defined(__amigaos4__)
+static const STRPTR Stack = "$STACK:65536\n";
+#elif defined(__SASC) || (defined(__GNUC__) && defined(__libnix__))
   /* GCC (libnix) supports the same as SAS/C! */
   long __stack = 65536;
   long __buffsize = 8192;
   long _MSTEP = 16384;
 #elif defined(__VBCC__) /* starting with VBCC 0.8 release */
   long __stack = 65536;
+#else
+  #error "initial stack specification failed"
 #endif
 
 struct WBStartup *WBmsg;
 
 /* no longer external visible, this is done by proto files! */
-struct Library *       CManagerBase = NULL;
-struct Library *       DataTypesBase = NULL;
-struct Library *       GenesisBase = NULL;
-struct Library *       IconBase = NULL;
-struct Library *       IFFParseBase = NULL;
-struct IntuitionBase * IntuitionBase = NULL;
-struct Library *       KeymapBase = NULL;
-struct LocaleBase *    LocaleBase = NULL;
-struct Library *       MiamiBase = NULL;
-struct Library *       MUIMasterBase = NULL;
-struct Library *       OpenURLBase = NULL;
-struct RxsLib *        RexxSysBase = NULL;
-struct Library *       SocketBase = NULL;
-struct UtilityBase *   UtilityBase = NULL;
-struct Library *       WorkbenchBase = NULL;
-struct Library *       XpkBase = NULL;
-struct Library *       AmiSSLBase = NULL;
-struct Device *        TimerBase = NULL;
+struct Library *       CManagerBase   = NULL;
+struct Library *       DataTypesBase  = NULL;
+struct Library *       GenesisBase    = NULL;
+struct Library *       IconBase       = NULL;
+struct Library *       IFFParseBase   = NULL;
+struct IntuitionBase * IntuitionBase  = NULL;
+struct Library *       KeymapBase     = NULL;
+struct LocaleBase *    LocaleBase     = NULL;
+struct Library *       MiamiBase      = NULL;
+struct Library *       MUIMasterBase  = NULL;
+struct Library *       OpenURLBase    = NULL;
+struct RxsLib *        RexxSysBase    = NULL;
+struct Library *       SocketBase     = NULL;
+struct UtilityBase *   UtilityBase    = NULL;
+struct Library *       WorkbenchBase  = NULL;
+struct Library *       XpkBase        = NULL;
+struct Library *       AmiSSLBase     = NULL;
+struct Device *        TimerBase      = NULL;
+
+// lets defined the AmigaOS4 style interfaces of
+// our used libraries
+#if defined(__amigaos4__)
+struct ExecIFace*       IExec         = NULL;
+struct CManagerIFace*   ICManager     = NULL;
+struct DataTypesIFace*  IDataTypes    = NULL;
+struct GenesisIFace*    IGenesis      = NULL;
+struct IconIFace*       IIcon         = NULL;
+struct IFFParseIFace*   IIFFParse     = NULL;
+struct IntuitionIFace*  IIntuition    = NULL;
+struct KeyMapIFace*     IKeymap       = NULL;
+struct LocaleIFace*     ILocale       = NULL;
+struct MiamiIFace*      IMiami        = NULL;
+struct MUIMasterIFace*  IMUIMaster    = NULL;
+struct OpenURLIFace*    IOpenURL      = NULL;
+struct RexxSysIFace*    IRexxSys      = NULL;
+struct SocketIFace*     ISocket       = NULL;
+struct UtilityIFace*    IUtility      = NULL;
+struct WorkbenchIFace*  IWorkbench    = NULL;
+struct XpkIFace*        IXpk          = NULL;
+struct AmiSSLIFace*     IAmiSSL       = NULL;
+struct TimerIFace*      ITimer        = NULL;
+#endif
 
 char *Status[9] = { "U","O","F","R","W","E","H","S","N" };
 char *SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };

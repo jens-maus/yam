@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * OS4: finally YAM compiles and links with the AmigaOS4
+      cross compiler and the standard SDK. Added the OS4 new
+      style GetInterface/DropInterfac calls throughout the whole
+      sources. Now it's time for some tests because there are surely
+      still some OS4 dependant problems we have to solve before
+      we can consider this OS4 port stable.
+
 2004-01-21  Jens Langner <Jens.Langner@light-speed.de>
 
     * OS4: more adaptions to the includes and some sources to get
