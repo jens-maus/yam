@@ -179,6 +179,8 @@ $(CLASSDIR)/Classes.h: $(GENCLASSES)/GenClasses $(CLASSDIR)/*.c
 	@printf '\033[33mGenerating class files...\033[0m\n'
 	@$(GENCLASSES)/GenClasses classes -bYAM -gpl -storm -iClassesExtra.h
 
+$(CLASSDIR)/Classes.c: $(CLASSDIR)/ClassesExtra.h
+
 $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h
 	@(cd $(GENCLASSES) && $(MAKE))
