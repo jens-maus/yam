@@ -1,5 +1,5 @@
 ## chunk AUTH Dirk Neubauer, Horst Schumann [ATO]
-## version $VER: YAM.catalog 5.9 (19.04.2003)
+## version $VER: YAM.catalog 5.10 (24.05.2003)
 ## language deutsch
 ## codeset 0
 ;
@@ -6692,7 +6692,9 @@ In dieser Farbe werden alle Verweise auf URLs\nim Lesefenster und im Editor darg
 ;
 MSG_FO_FOLDEREXISTS
 Eine Datei oder ein Verzeichnis mit dem angegebenen Pfad\n\
-existiert bereits. Möchten Sie wirklich fortfahren?
+existiert bereits.\n\
+\n\
+Möchten Sie wirklich fortfahren?
 ; A file or directory with the given folder path already exists.\n\
 ; Do you really want to proceed?
 ;
@@ -6702,12 +6704,14 @@ Möchten Sie wirklich das Verzeichnis dieses Postfaches verschieben?
 ;
 MSG_FO_FOLDERNAMEINVALID
 Es wurde kein Postfachname angegeben oder dieser existiert bereits.\n\
+\n\
 Bitte bestimmen Sie einen korrekten Postfachnamen.
 ; The specified folder name is empty or already exists.\n\
 ; Please enter a valid folder name before you proceed.
 ;
 MSG_FO_FOLDERPATHINVALID
 Sie haben kein Verzeichnis für das neue Postfach angegeben.\n\
+\n\
 Bitte geben Sie einen Pfad an bevor Sie fortfahren.
 ; You haven't specified a valid path for the new folder.
 ;
@@ -6794,4 +6798,16 @@ Text der in der Statusleiste angezeigt\n\
 werden soll.
 ; Text that should be displayed\n\
 ; in the status bar
+;
+MSG_MA_CROPREQUEST
+Alle Anhänge der ausgewählten Nachrichten werden entfernt.\n\
+\n\
+Möchten Sie wirklich fortfahren?
+; All attachments of the selected mails will be cropped.\n\
+; \n\
+; Do you really want to proceed?
+;
+MSG_YesNoReq2
+_Ja|*_Nein
+;_Yes|*_No
 ;
