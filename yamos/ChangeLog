@@ -7,6 +7,17 @@ $Source$
 
 2002-07-11  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_MA.c, YAM_MAf.c: changed the displayhook of the
+      folder listtree and mail listview to skip certain
+      operations if the user didn`t select any of the colums
+      where this operations will be performed. This should
+      slightly increase performance on that listviews.
+    * YAM_UT.c: fixed bug #579202 where we used the wrong
+      separator character for the precision sizes within the
+      mail listview.
+      Also fixed another bug within the FormatSize() function
+      where it didn`t format sizes correctly. Now it should work
+      as expected.
     * YAM_CO.c: fixed a small bug in the filter configuration
       page, where on a change from/to a Remote-Filter the
       Cycle gadget of the filter rule wasn`t notified and

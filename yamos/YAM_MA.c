@@ -2220,42 +2220,44 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
          else if (isMultiPartMail(entry)) strcat(dispsta, "\033o[13]");
 
          // now we generate the proper string for the mailaddress
-         array[1] = dispfro;
-         *dispfro = 0;
-         if(isMultiRCPTMail(entry)) strcat(dispfro, "\033o[11]");
-
-         pe = outbox ? &entry->To : &entry->From;
-         if((type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress))
+         if(C->MessageCols & (1<<1))
          {
-            pe = &entry->To;
-            strcat(dispfro, GetStr(MSG_MA_ToPrefix));
-         }
+            array[1] = dispfro;
+            *dispfro = 0;
+            if(isMultiRCPTMail(entry)) strcat(dispfro, "\033o[11]");
+
+            pe = outbox ? &entry->To : &entry->From;
+            if((type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress))
+            {
+              pe = &entry->To;
+              strcat(dispfro, GetStr(MSG_MA_ToPrefix));
+            }
 
 #ifndef DISABLE_ADDRESSBOOK_LOOKUP
 {
-         struct MUI_NListtree_TreeNode *tn;
+            struct MUI_NListtree_TreeNode *tn;
 
-         set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &MA_FindAddressHook);
-         if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)))
-         {
-            addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
-         }
-         else addr = AddrName((*pe));
+            set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &MA_FindAddressHook);
+            if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)))
+            {
+               addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
+            }
+            else addr = AddrName((*pe));
 
 }
 #else
-         addr = AddrName((*pe));
+            addr = AddrName((*pe));
 #endif
 
-         // lets put the string together
-         strncat(dispfro, addr, SIZE_DEFAULT-strlen(dispfro)-1);
+            // lets put the string together
+            strncat(dispfro, addr, SIZE_DEFAULT-strlen(dispfro)-1);
+         }
 
          // lets set all other fields now
-         array[2] = AddrName((entry->ReplyTo));
+         if(C->MessageCols & (1<<2)) array[2] = AddrName((entry->ReplyTo));
          array[3] = entry->Subject;
-         array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME);
-         array[5] = dispsiz; *dispsiz = 0;
-         FormatSize(entry->Size, dispsiz);
+         if(C->MessageCols & (1<<4)) array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME);
+         if(C->MessageCols & (1<<5)) { array[5] = dispsiz; *dispsiz = 0; FormatSize(entry->Size, dispsiz); }
          array[6] = entry->MailFile;
          array[7] = entry->Folder->Name;
       }
