@@ -972,7 +972,7 @@ BOOL CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh)
    BOOL success = FALSE;
 
    if (sour) sourfh = fopen(sour, "r");
-   if (dest) destfh = fopen(dest, "w");
+   if (sourfh && dest) destfh = fopen(dest, "w");
    if (sourfh && destfh)
    {
       char buf[SIZE_LARGE];

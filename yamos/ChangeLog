@@ -1,6 +1,11 @@
 2002-04-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
-    * fixed more possibly bug issues on the mailfile doesn`t exist fact
+    * fixed behaviour of status flag ordering again a bit. Now it should
+      really perform like stated within the documentation
+    * fixed another mailfile-doesn`t-exists bugs concerning mail copying
+      and transfering to another folder. Now YAM should throw proper
+      error messages instead.
+    * fixed more possibly bug issues on the mailfile-doesn`t-exist fact
       because the result code from MA_ExamineMail() wasn`t checked
       everywhere probably.
     * fixed bug #461926 by throwing an error requester now, informing the

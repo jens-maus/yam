@@ -2094,7 +2094,13 @@ static BOOL RE_LoadMessage(int winnum, int parsemode)
    int i;
    BusyText(GetStr(MSG_BusyReading), "");
    RE_CleanupMessage(winnum);
-   if (!StartUnpack(G->RE[winnum]->File, newfile, G->RE[winnum]->MailPtr->Folder)) return FALSE;
+
+   if (!StartUnpack(G->RE[winnum]->File, newfile, G->RE[winnum]->MailPtr->Folder))
+   {
+      BusyEnd;
+      return FALSE;
+   }
+
    strcpy(G->RE[winnum]->File, newfile);
    G->RE[winnum]->ParseMode = parsemode;
    if (rp = G->RE[winnum]->FirstPart = RE_ParseMessage(winnum, NULL, G->RE[winnum]->File, NULL))

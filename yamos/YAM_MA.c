@@ -333,6 +333,8 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, int pos, struct Folder 
       if (mail->Status == STATUS_SNT && to->Type == FT_OUTGOING) MA_SetMailStatus(mail, STATUS_WFS);
       return mail;
    }
+   else ER_NewError(GetStr(MSG_ER_TRANSFERMAIL), mail->MailFile, to->Name);
+
    return NULL;
 }
 
@@ -2237,19 +2239,22 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, int column)
   {
     case 0:
     {
-      // lets calculate each value
-      int status1 = 200-(entry1->Status*5);
-      int status2 = 200-(entry2->Status*5);
+      // this is the maparray that is depending on the enum MailStatus
+      static const int mapvalue[] = { 256, 128, 32, 64, 64, 256, 128, 32, 512, 0, 0, 0 };
 
-      // add the importance of that mail
-      status1 += (entry1->Importance == 1) ? 20 : 0;
-      status2 += (entry2->Importance == 1) ? 20 : 0;
-      status1 += (entry1->Flags & MFLAG_CRYPT) ? 10 : 0;
-      status2 += (entry2->Flags & MFLAG_CRYPT) ? 10 : 0;
-      status1 += (entry1->Flags & MFLAG_SIGNED) ? 5 : 0;
-      status2 += (entry2->Flags & MFLAG_SIGNED) ? 5 : 0;
-      status1 += (entry1->Flags & MFLAG_REPORT) ? 3 : 0;
-      status2 += (entry2->Flags & MFLAG_REPORT) ? 3 : 0;
+      // lets calculate each value
+      int status1 = mapvalue[entry1->Status];
+      int status2 = mapvalue[entry2->Status];
+
+      // add the importance & other status flags of that mails
+      status1 += (entry1->Importance == 1) ? 16 : 0;
+      status2 += (entry2->Importance == 1) ? 16 : 0;
+      status1 += (entry1->Flags & MFLAG_CRYPT) ? 8 : 0;
+      status2 += (entry2->Flags & MFLAG_CRYPT) ? 8 : 0;
+      status1 += (entry1->Flags & MFLAG_SIGNED) ? 4 : 0;
+      status2 += (entry2->Flags & MFLAG_SIGNED) ? 4 : 0;
+      status1 += (entry1->Flags & MFLAG_REPORT) ? 2 : 0;
+      status2 += (entry2->Flags & MFLAG_REPORT) ? 2 : 0;
       status1 += (entry1->Flags & MFLAG_MULTIPART) ? 1 : 0;
       status2 += (entry2->Flags & MFLAG_MULTIPART) ? 1 : 0;
 

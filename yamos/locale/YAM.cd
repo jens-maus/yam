@@ -4937,3 +4937,7 @@ Mainly for cyrillic users.
 MSG_CO_IMPORTMIMETITLE (//)
 Import MIME viewers & types
 ;
+MSG_ER_TRANSFERMAIL (//)
+Couldn`t transfer mail '%s' to folder '%s'.\n\
+Perhaps the file doesn`t exists or couldn`t be copied.
+; MAILFILE, FOLDERNAME
