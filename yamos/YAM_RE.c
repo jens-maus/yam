@@ -2690,37 +2690,57 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
           if((msg = calloc((size_t)(part->Size+3), sizeof(char))))
           {
             char *ptr, *rptr, *eolptr, *sigptr = 0;
+            int nread;
 
             *msg = '\n';
-            fread(msg+1, 1, (size_t)(part->Size), fh);
-            rptr = msg+1;
-
-            // find signature first if it should be stripped
-            if(mode == RIM_QUOTE && C->StripSignature)
+            nread = fread(msg+1, 1, (size_t)(part->Size), fh);
+            if(nread > 0 && nread == part->Size)
             {
-              sigptr = msg + part->Size;
-              while(sigptr > msg)
+              rptr = msg+1;
+
+              // find signature first if it should be stripped
+              if(mode == RIM_QUOTE && C->StripSignature)
               {
-                sigptr--;
-                while((sigptr > msg) && (*sigptr != '\n')) sigptr--;  // step back to previous line
-
-                if((sigptr <= msg+1))
+                sigptr = msg + part->Size;
+                while(sigptr > msg)
                 {
-                  sigptr = NULL;
-                  break;
-                }
+                  sigptr--;
+                  while((sigptr > msg) && (*sigptr != '\n')) sigptr--;  // step back to previous line
 
-                if(strncmp(sigptr+1, "-- \n", 4) == 0)                // check for sig separator
-                {                                                     // per definition it is a "-- " on a single line
-                  sigptr++;
-                  break;
+                  if((sigptr <= msg+1))
+                  {
+                    sigptr = NULL;
+                    break;
+                  }
+
+                  if(strncmp(sigptr+1, "-- \n", 4) == 0)                // check for sig separator
+                  {                                                     // per definition it is a "-- " on a single line
+                    sigptr++;
+                    break;
+                  }
                 }
               }
             }
-
-            while (*rptr)
+            else
             {
-              for(eolptr = rptr; *eolptr && *eolptr != '\n'; eolptr++); *eolptr = 0;
+              DB(kprintf("ERROR or short item count!!!\n");)
+              // an error or short item count has happend
+              free(msg);
+              return NULL;
+            }
+
+            // parse the message string
+            while(*rptr)
+            {
+              // lets get the first real line of the data and make sure to strip all
+              // NUL bytes because otherwise we are not able to show the text.
+              for(eolptr = rptr; *eolptr != '\n' && eolptr < msg+nread+1; eolptr++)
+              {
+                // strip null bytes that are in between the start and end of stream
+                // here we simply exchange it by a space
+                if(*eolptr == '\0') *eolptr = ' ';
+              }
+              *eolptr = '\0';
 
 /* UUenc */   if(!strncmp(rptr, "begin ", 6) && isdigit((int)rptr[6]))
               {
@@ -2743,7 +2763,8 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
                     uup->Decoded = TRUE;
                     RE_SetPartInfo(uup);
-                    eolptr = rptr-1; ptr = rptr;
+                    eolptr = rptr-1;
+                    ptr = rptr;
                   }
                   else ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
                 }
@@ -2768,8 +2789,8 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                     int expsize = atoi(&ptr[5]);
                     if (uup->Size != expsize) ER_NewError(GetStr(MSG_ER_UUSize), (char *)uup->Size, (char *)expsize);
                   }
-                  for (eolptr = ptr; *eolptr && *eolptr!='\n'; eolptr++);
 
+                  for (eolptr = ptr; *eolptr && *eolptr!='\n'; eolptr++);
                   *eolptr = 0;
                 }
               }
@@ -2882,6 +2903,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
               rptr = eolptr+1;
             }
+
             free(msg);
           }
 

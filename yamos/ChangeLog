@@ -5,14 +5,25 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-11-11  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug #834133 where a quote-printable encoded text
+      was stripped if it contained a "=00" which caused the displayed
+      text to contain a NUL byte.
+      Now YAM will automatically replace these NUL-bytes within a
+      displayable text by spaces, so that at least the text is correctly
+      showed.
+
 2003-10-03  AmiS <amis@amiga.org.ru>
-    * Debug.h, Makefile.MorphOS, YAM_debug.h, includes/extra.h: improved MorphOS
-      compilation.
+
+    * Debug.h, Makefile.MorphOS, YAM_debug.h, includes/extra.h:
+      improved MorphOS compilation.
 
 2003-09-28  AmiS <amis@amiga.org.ru>
+
     * YAM_RE.c: Added autodetection of russian codepages and
       converting names of attached files to system codepage during
-      saving them to disk. (Only only for Codepage Autodetect/Translation = On)
+      saving them to disk. (Only for Codepage Autodetect/Translation = On)
 
 2003-09-23  Jens Langner <Jens.Langner@light-speed.de>
 
