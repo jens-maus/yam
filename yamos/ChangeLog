@@ -7,6 +7,10 @@ $Source$
 
 2002-09-28  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: fixed bug where YAM didn`t switch to the correct
+      folder and highlighted the message if a SwitchMessage()
+      (Next/Prev) was done in a readwindow with a mail whos
+      folder wasn`t actually active.
     * YAM_MA.c: fixed flaw where YAM did loose the track of
       messages in a readwindow when the listview was sorted by
       status and the user wanted to use Next/Prev to read other

@@ -174,12 +174,19 @@ MakeStaticHook(RE_FollowHook, RE_Follow);
 static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
 {
    struct Mail *mail = G->RE[winnum]->MailPtr;
-   struct MailInfo *mi = GetMailInfo(mail);
-   int act = mi->Pos;
+   struct MailInfo *mi;
+   int act;
    struct Folder *CurrentFolder = mail->Folder;
 
    G->RE[winnum]->LastDirection = direction;
-   MA_ChangeFolder(CurrentFolder, FALSE);
+
+   // we have to make sure that the folder the next/prev mail will
+   // be showed from is active, that`s why we call ChangeFolder with TRUE.
+   MA_ChangeFolder(CurrentFolder, TRUE);
+
+   // after changing the folder we have to get the MailInfo (Position etc.)
+   mi = GetMailInfo(mail);
+   act = mi->Pos;
 
    for (act += direction; act >= 0; act += direction)
    {
