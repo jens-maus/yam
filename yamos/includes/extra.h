@@ -12,13 +12,14 @@
    #include <fcntl.h>
    #define index(a,b) strchr(a,b)
    #define isascii(c) (((c)&0xff)<127)
-   #define _OSERR IoErr()
    extern struct Library *WorkbenchBase;
    extern struct Library *KeymapBase;
    extern void dice_closelibs(void);
 #else
    #include <unistd.h>
 #endif
+
+#define _OSERR IoErr()
 
 /*
 ** <string.h>
@@ -31,9 +32,7 @@ extern int astcsma(const char *, const char *);
 extern char *stpblk(const char *);
 extern void strmfp(char *, const char *, const char *);
 extern void strsfn(const char *, char *, char *, char *, char *);
-#ifdef _DCC
 int stch_i(const char *s,int *res);
-#endif
 
 /*
 ** <dos.h>

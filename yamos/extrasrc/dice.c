@@ -1,5 +1,5 @@
-#include <pragmas/xpkmaster_pragmas.h>
-extern struct Library *XpkBase;
+#if defined(_DCC) || defined(NO_INLINE_STDARG)
+#include <proto/xpkmaster.h>
 LONG XpkQueryTags(ULONG tags, ...)
 {
    struct TagItems *_tags =(struct TagItems *)&tags;
@@ -19,14 +19,14 @@ LONG XpkUnpackTags(ULONG tags, ...)
 }
 
 
-extern struct Library *OpenURLBase;
-#include <clib/openurl_protos.h>
-#include <pragmas/openurl_pragmas.h>
+#include <proto/openurl.h>
 BOOL URL_Open(STRPTR str, ULONG tags, ...)
 {
    struct TagItems *_tags =(struct TagItems *)&tags;
    return URL_OpenA(str,_tags);
 }
+#endif
 
-
+#ifdef _DCC
 struct Library *KeymapBase;
+#endif
