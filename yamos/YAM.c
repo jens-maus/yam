@@ -109,6 +109,16 @@ static struct TC_Data
 
 } TCData;
 
+// AutoDST related variables
+enum ADSTmethod { ADST_NONE=0, ADST_SETDST, ADST_SGUARD, ADST_IXGMT };
+static const char *ADSTfile[] = { "", "ENV:TZONE", "ENV:SUMMERTIME", "ENV:IXGMTOFFSET" };
+static struct ADST_Data
+{
+  struct NotifyRequest nRequest;
+  enum ADSTmethod method;
+
+} ADSTdata;
+
 /// TC_Start
 //  Start a delay depending on the time specified
 void TC_Start(enum TimerIO tio, int seconds)
@@ -314,6 +324,46 @@ static void TC_Dispatcher(enum TimerIO tio)
         break;
       }
    }
+}
+
+///
+/// ADSTnotify_start
+//  AutoDST Notify start function
+static BOOL ADSTnotify_start(void)
+{
+  if(ADSTdata.method != ADST_NONE)
+  {
+    // prepare the NotifyRequest structure
+    struct NotifyRequest *nr = &ADSTdata.nRequest;
+
+    nr->nr_Name  = (UBYTE *)ADSTfile[ADSTdata.method];
+    nr->nr_Flags = NRF_SEND_SIGNAL;
+
+    // prepare the nr_Signal now
+    nr->nr_stuff.nr_Signal.nr_Task      = FindTask(NULL);
+    nr->nr_stuff.nr_Signal.nr_SignalNum = AllocSignal(-1);
+
+    // if != -1 then we got a signal
+    if(nr->nr_stuff.nr_Signal.nr_SignalNum != -1)
+    {
+      return StartNotify(nr);
+    }
+  }
+}
+
+///
+/// ADSTnotify_stop
+//  AutoDST Notify stop function
+static void ADSTnotify_stop(void)
+{
+  if(ADSTdata.method != ADST_NONE)
+  {
+    // stop the NotifyRequest
+    struct NotifyRequest *nr = &ADSTdata.nRequest;
+
+    EndNotify(nr);
+    FreeSignal((LONG)nr->nr_stuff.nr_Signal.nr_SignalNum);
+  }
 }
 
 ///
@@ -644,6 +694,9 @@ static void Terminate(void)
    if (G->RexxHost) CloseDownARexxHost(G->RexxHost);
 
    TC_Exit();
+
+   // stop the AutoDST notify
+   ADSTnotify_stop();
 
    FreeStrBuf(G->AY_AboutText);
 
@@ -1201,11 +1254,14 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
 /// GetDST
 //  Checks if daylight saving time is active
 //  return 0 if no DST system was found - 1 if no DST is set and 3 if set
-static int GetDST(void)
+static int GetDST(BOOL update)
 {
    char buffer[SIZE_SMALL];
    char *tmp;
    int result = 0;
+
+   // prepare the NotifyRequest structure
+   if(!update) memset(&ADSTdata, 0, sizeof(struct ADST_Data));
 
    /* lets check the DaylightSaving stuff now
     * we check in the following order:
@@ -1216,7 +1272,8 @@ static int GetDST(void)
 
    // SetDST saves the DST settings in the TZONE env-variable which
    // is a bit more complex than the others, so we need to do some advance parsing
-   if(GetVar("TZONE", buffer, SIZE_SMALL, 0) >= 3)
+   if((!update || ADSTdata.method == ADST_SETDST)
+      && GetVar(&ADSTfile[ADST_SETDST][4], buffer, SIZE_SMALL, 0) >= 3)
    {
       int i;
 
@@ -1229,21 +1286,31 @@ static int GetDST(void)
         }
         else if(isalpha(buffer[i])) result = 2; // if it is followed by a alphabetic sign we are in DST mode
       }
+
+      ADSTdata.method = ADST_SETDST;
    }
 
    // SummerTimeGuard sets the last string to "YES" if DST is actually active
-   if(result == 0 && GetVar("SUMMERTIME", buffer, SIZE_SMALL, 0) > 3 && (tmp = strrchr(buffer, ':')))
+   if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
+      && GetVar(&ADSTfile[ADST_SGUARD][4], buffer, SIZE_SMALL, 0) > 3 && (tmp = strrchr(buffer, ':')))
    {
       if(tmp[1] == 'Y')       return 2;
       else if(tmp[1] == 'N')  return 1;
+
+      ADSTdata.method = ADST_SGUARD;
    }
 
    // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
    // DST is actually active.
-   if(result == 0 && GetVar("IXGMTOFFSET", buffer, SIZE_SMALL, 0) >= 4)
+   if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
+      && GetVar(&ADSTfile[ADST_IXGMT][4], buffer, SIZE_SMALL, 0) >= 4)
    {
+      ADSTdata.method = ADST_IXGMT;
+
       return buffer[4] ? 2 : 1;
    }
+
+   if(!update && result == 0) ADSTdata.method = ADST_NONE;
 
    // No correctly installed AutoDST tool was found
    // so lets return zero.
@@ -1358,7 +1425,7 @@ int main(int argc, char **argv)
 
    for(yamFirst=TRUE;;)
    {
-      ULONG signals, timsig, rexsig, appsig, notsig[MAXWR+1], i;
+      ULONG signals, timsig, adstsig, rexsig, appsig, notsig[MAXWR+1], i;
       Object *root, *grp, *bt_okay;
       struct Message *msg;
       struct User *user;
@@ -1373,7 +1440,7 @@ int main(int argc, char **argv)
       args.nocheck = -args.nocheck;
       G->TR_Debug = -args.debug;
       G->TR_Allow = TRUE;
-      G->CO_DST = GetDST();
+      G->CO_DST = GetDST(FALSE);
 
       // We have to initialize the ActiveWin flags to -1, so than the
       // the arexx commands for the windows are reporting an error if
@@ -1446,17 +1513,24 @@ int main(int argc, char **argv)
       if(C->CheckMailDelay) TC_Start(TIO_CHECKMAIL, C->CheckMailDelay*60);
       if(C->AutoSave)       TC_Start(TIO_AUTOSAVE,  C->AutoSave);
 
-      timsig    = 1L << TCData.port->mp_SigBit;
-      rexsig    = 1L << G->RexxHost->port->mp_SigBit;
-      appsig    = 1L << G->AppPort->mp_SigBit;
-      notsig[0] = 1L << G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
-      notsig[1] = 1L << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
-      notsig[2] = 1L << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
+      // Now start the NotifyRequest for the AutoDST file
+      if(ADSTnotify_start()) adstsig = 1UL << ADSTdata.nRequest.nr_stuff.nr_Signal.nr_SignalNum;
+      else                   adstsig = 0;
+
+      // prepare the other signal bits
+      timsig    = 1UL << TCData.port->mp_SigBit;
+      rexsig    = 1UL << G->RexxHost->port->mp_SigBit;
+      appsig    = 1UL << G->AppPort->mp_SigBit;
+      notsig[0] = 1UL << G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
+      notsig[1] = 1UL << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
+      notsig[2] = 1UL << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
+
+      // start the event loop
       while (!(ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))))
       {
          if (signals)
          {
-            signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | notsig[0] | notsig[1] | notsig[2]);
+            signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | notsig[0] | notsig[1] | notsig[2] | adstsig);
             if (signals & SIGBREAKF_CTRL_C) { ret = 1; break; }
             if (signals & SIGBREAKF_CTRL_D) { ret = 0; break; }
             if (signals & SIGBREAKF_CTRL_F) PopUp();
@@ -1485,7 +1559,10 @@ int main(int argc, char **argv)
               }
             }
 
+            // check for a Arexx signal
             if (signals & rexsig) ARexxDispatch(G->RexxHost);
+
+            // check for a AppMessage signal
             if (signals & appsig)
             {
                struct AppMessage *apmsg;
@@ -1506,12 +1583,24 @@ int main(int argc, char **argv)
                   ReplyMsg(&apmsg->am_Message);
                }
             }
+
+            // check for the write window signals
             for(i = 0; i <= MAXWR; i++)
+            {
                if (signals & notsig[i])
                {
                   while ((msg = GetMsg(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port))) ReplyMsg(msg);
                   if (G->WR[i]) FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT);
                }
+            }
+
+            // check for the AutoDST signal
+            if(signals & adstsig)
+            {
+              // check the DST file and validate the configuration once more.
+              G->CO_DST = GetDST(TRUE);
+              CO_Validate(C, FALSE);
+            }
          }
       }
       if (C->SendOnQuit && !args.nocheck) if (TR_IsOnline()) SendWaitingMail();

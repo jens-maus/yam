@@ -7,6 +7,14 @@ $Source$
 
 2003-04-12  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: added NotifyRequest mechanism to the AutoDST feature. Now
+      YAM will automatically reparse a supported AutoDST environment
+      variable as soon as it will be changed. This makes it possible
+      to have a AutoDST system like "SetDST" running and as soon
+      as this system alters the env variable, YAM will recheck this
+      variable and change the DST settings accordingly. Now YAM should
+      really be timezone&DST compatible like it should have been since
+      ages ;)
     * YAM.c, YAM_CO.c: fixed the whole internal timerequest handling
       within YAM. Previously YAM did only use one single timerequest to
       handle the background management functions like automatic
