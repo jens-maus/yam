@@ -442,3 +442,7 @@
     * NOTE: YAM_UT.c should be splitted!
     * Maybe the global variables from YAM.c should move into new file YAM_global.c?
 
+2001-05-28  Dirk Stöcker <stoecker@epost.de>
+
+    * replaced MD5 calculation by PD variant
+
