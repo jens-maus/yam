@@ -1,14 +1,21 @@
+/* Automatically generated header! Do not edit! */
+
 #ifndef PROTO_AMISSL_H
 #define PROTO_AMISSL_H
 
-#ifndef EXEC_TYPES_H
-#include <exec/types.h>
-#endif
-#ifndef CLIB_AMISSL_PROTOS_H
 #include <clib/amissl_protos.h>
-#endif
 
+#ifdef __GNUC__
+#include <inline/amissl.h>
+#endif /* __GNUC__ */
+
+#ifdef __VBCC__
+#include <inline/amissl_protos.h>
+#endif /* __VBCC__ */
+
+#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
 #include <pragmas/amissl_pragmas.h>
+#endif
 
 #ifndef __NOLIBBASE__
 extern struct Library *AmiSSLBase;
