@@ -35,7 +35,7 @@
 #include <string.h>
 
 #if !defined(isascii)
-  #define isascii(c) (((c)&0xff)<127) /* shouldn't it be <= ? */
+  #define isascii(c) (((c)&0xff)<127)
 #endif
 
 #include <clib/alib_protos.h>
@@ -679,24 +679,28 @@ static void WR_WriteSignature(FILE *out, int signat)
 //  Adds a signature to the end of the file
 void WR_AddSignature(char *mailfile, int signat)
 {
-   FILE *fh_mail;
-   BOOL addline = FALSE;
-
    if (signat == -1) 
-   {
       signat = C->UseSignature ? 1 : 0;
+
+   if (signat)
+   {
+      FILE *fh_mail;
+      BOOL addline = FALSE;
+
       if ((fh_mail = fopen(mailfile, "r")))
       {
          fseek(fh_mail, -1, SEEK_END);
          addline = fgetc(fh_mail) != '\n';
          fclose(fh_mail);
       }
-   }
-   if ((fh_mail = fopen(mailfile, "a")))
-   {
-      if (addline) fputc('\n', fh_mail);
-      if (signat) WR_WriteSignature(fh_mail, signat-1);
-      fclose(fh_mail);
+      if ((fh_mail = fopen(mailfile, "a")))
+      {
+         if (addline)
+            fputc('\n', fh_mail);
+
+         WR_WriteSignature(fh_mail, signat-1);
+         fclose(fh_mail);
+      }
    }
 }
 
