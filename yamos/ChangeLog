@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-05-27  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_MA.c: YAM treats (SHIFT)+DEL keypresses with a turned on
+      CapsLock like without Capslock now. This should improve the
+      usability a bit, because it can happen quite often that a user
+      enables the caps lock errounously while typing around.
+
 2002-05-22  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM.c, YAM.cd: added a more descriptive error message about
