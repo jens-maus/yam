@@ -4938,12 +4938,12 @@ MSG_CO_IMPORTMIMETITLE (//)
 Import MIME viewers & types
 ;
 MSG_ER_TRANSFERMAIL (//)
-Couldn`t transfer mail '%s' to folder '%s'.\n\
-Perhaps the file doesn`t exists or couldn`t be copied.
+Couldn't transfer mail '%s' to folder '%s'.\n\
+Perhaps the file doesn't exist or it couldn't be copied for some reason.
 ; MAILFILE, FOLDERNAME
 MSG_ER_IMPORTMAIL (//)
-Couldn`t import any mail out of file '%s'.\n\
+Couldn't import any mail out of file '%s'.\n\
 Please make sure that this file really contains emails \
-in the standard MBOX format (separated by a single \
+in the standard UUCP format (separated by a single \
 "From " line).
 ; FILENAME
