@@ -1018,13 +1018,13 @@ static char **Init_ISO8859_to_LaTeX_Tab(char *TabFileName)
           {
             if(!c)
             {
-              if(tok[1]) DB(kprintf("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n"));
+              if(tok[1]) { DB(kprintf("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n");) }
               else c = tok[0];
             }
             else
             {
               CVTab[c] = tok;
-              DB(kprintf("LaTeX mapping: '%c' -> '%s'\n",c,tok));
+              DB(kprintf("LaTeX mapping: '%c' -> '%s'\n",c,tok);)
               c = '\0';
             }
           }

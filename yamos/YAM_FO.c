@@ -1416,7 +1416,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 
   for(i=0, mail=mail->Next; mail && i < SCANMSGS; i++, mail = mail->Next)
   {
-    DB(kprintf("SWS: [%s] [%s]\n", toPattern, mail->To.Address));
+    DB(kprintf("SWS: [%s] [%s]\n", toPattern, mail->To.Address);)
 
     // Analyze the ToAdress through the Smith&Waterman algorithm
     if(takePattern && (result = SWSSearch(toPattern, mail->To.Address)))
@@ -1476,7 +1476,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
     }
   }
 
-  DB(kprintf("ML-Pattern: [%s]\n", toPattern));
+  DB(kprintf("ML-Pattern: [%s]\n", toPattern);)
 
   // Now we set the new pattern & address values to the string gadgets
   setstring(G->FO->GUI.ST_MLPATTERN, takePattern && toPattern[0] ? toPattern : notRecog);
