@@ -307,6 +307,8 @@
 
     * Applied fix for trashed NListtree images.
 
+--------------------------------- 2.3 release -------------------------------
+
 2001-08-02  Jacob Laursen <laursen@myself.com>
 
     * Re-added uniconify behaviour when attempting to start a second instance
@@ -320,3 +322,12 @@
       tooltype is present, it'll override it.
 
     * Fixed problem with comments missing in the address book.
+
+2001-08-09  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_RE.c: increased length to search for signature
+    * YAM_WR.c: fixed crash when the address field contained a single "
+      Bug #433820; however the real problem is in
+      YAM_UT.c/ExtractAdress() which fails to extract
+      E-Mailaddress and Realname correctly in this case
+
