@@ -42,7 +42,7 @@ struct Mail *RE_GetQuestion(long irtid)
    struct Mail *mail;
    int b;
    
-   if (irtid) if ((flist = FO_CreateList()))
+   if (irtid) if (flist = FO_CreateList())
    {
      for (b = 1; b <= (int)*flist; b++) if (MA_GetIndex(flist[b]))
         for (mail = flist[b]->Messages; mail; mail = mail->Next)
@@ -60,7 +60,7 @@ struct Mail *RE_GetAnswer(long id)
    struct Mail *mail;
    int b;
    
-   if (id) if ((flist = FO_CreateList()))
+   if (id) if (flist = FO_CreateList())
    {
      for (b = 1; b <= (int)*flist; b++) if (MA_GetIndex(flist[b]))
          for (mail = flist[b]->Messages; mail; mail = mail->Next)
@@ -72,14 +72,14 @@ struct Mail *RE_GetAnswer(long id)
 ///
 /// RE_Follow
 //  Follows a thread in either direction
-void SAVEDS ASM RE_Follow(REG(a1,int *arg))
+SAVEDS ASM void RE_Follow(REG(a1,int *arg))
 {  
    int i, direction = arg[0], winnum = arg[1];
    struct Folder **flist;
    struct Mail *fmail = NULL;
    BOOL allloaded = TRUE;
 
-   if ((flist = FO_CreateList()))
+   if (flist = FO_CreateList())
    {
       for (i = 1; i < (int)*flist; i++) if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_SEPARATOR) allloaded = FALSE;
       free(flist);
@@ -136,7 +136,7 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
          return;
       }
 
-      if ((flist = FO_CreateList()))
+      if (flist = FO_CreateList())
       {
          int i;
 
@@ -179,7 +179,7 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
 ///
 /// RE_PrevNext
 //  Goes to next or previous (new) message in list
-void SAVEDS ASM RE_PrevNext(REG(a1,int *arg))
+SAVEDS ASM void RE_PrevNext(REG(a1,int *arg))
 {  
    BOOL onlynew = arg[1] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
    if (arg[3]) return; // Toolbar qualifier bug work-around
@@ -189,7 +189,7 @@ MakeHook(RE_PrevNextHook, RE_PrevNext);
 ///
 /// RE_PrevNextPageFunc
 //  Flips one page back or forth
-void SAVEDS ASM RE_PrevNextPageFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_PrevNextPageFunc(REG(a1,int *arg))
 {
    int direct = arg[0], winnum = arg[1], visible;
    struct RE_GUIData *gui = &G->RE[winnum]->GUI;
@@ -248,7 +248,7 @@ void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL s
    char buf[SIZE_LINE], disp[SIZE_DEFAULT], *mode;
    struct Compose comp;
 
-   if ((tf1 = OpenTempFile("w")))
+   if (tf1 = OpenTempFile("w"))
    {
       char *date = DateStamp2String(&mail->Date, DSS_DATETIME), *rcpt = BuildAddrName2(&mail->To), *subj = mail->Subject;
       p1->Filename = tf1->Filename;
@@ -266,7 +266,7 @@ void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL s
       fclose(tf1->FP); tf1->FP = NULL;
       SimpleWordWrap(tf1->Filename, 72);
       p2 = p1->Next = NewPart(2);
-      if ((tf2 = OpenTempFile("w")))
+      if (tf2 = OpenTempFile("w"))
       {
          char mfile[SIZE_MFILE];
          struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
@@ -286,7 +286,7 @@ void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL s
          EmitHeader(tf2->FP, "Disposition", disp);
          fclose(tf2->FP);  tf2->FP = NULL;
          p3 = p2->Next = NewPart(2);
-         if ((tf3 = OpenTempFile("w")))
+         if (tf3 = OpenTempFile("w"))
          {
             char fullfile[SIZE_PATHFILE];
             FILE *fh;
@@ -294,7 +294,7 @@ void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL s
             p3->Filename = tf3->Filename;
             if (StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
             {
-               if ((fh = fopen(fullfile, "r")))
+               if (fh = fopen(fullfile, "r"))
                {
                   while (fgets(buf, SIZE_LINE, fh)) if (*buf == '\n') break; else fputs(buf, tf3->FP);
                   fclose(fh);
@@ -307,13 +307,13 @@ void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL s
             comp.Subject = "Disposition Notification";
             comp.ReportType = 1;
             comp.FirstPart = p1;
-            if ((comp.FH = fopen(MA_NewMailFile(outfolder, mfile, 0), "w")))
+            if (comp.FH = fopen(MA_NewMailFile(outfolder, mfile, 0), "w"))
             {
                struct Mail *mlist[3];
                mlist[0] = (struct Mail *)1; mlist[2] = NULL;
                WriteOutMessage(&comp);
                fclose(comp.FH);
-               if ((email = MA_ExamineMail(outfolder, mfile, Status[STATUS_WFS], TRUE)))
+               if (email = MA_ExamineMail(outfolder, mfile, Status[STATUS_WFS], TRUE))
                {
                   mlist[2] = AddMailToList((struct Mail *)email, outfolder);
                   MA_FreeEMailStruct(email);
@@ -412,7 +412,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    }
    if (real)
    {
-      if ((flist = FO_CreateList()))
+      if (flist = FO_CreateList())
       {
          for (i = 1; i <= (int)*flist; i++) if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_SEPARATOR) allloaded = FALSE;
          free(flist);
@@ -545,7 +545,7 @@ BOOL RE_Export(int winnum, char *source, char *dest, char *name, int nr, BOOL fo
 ///
 /// RE_MoveFunc
 //  Moves the current message to another folder
-void SAVEDS ASM RE_MoveFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_MoveFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Folder *srcfolder = G->RE[winnum]->Mail.Folder;
@@ -566,7 +566,7 @@ MakeHook(RE_MoveHook, RE_MoveFunc);
 ///
 /// RE_CopyFunc
 //  Copies the current message to another folder
-void SAVEDS ASM RE_CopyFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_CopyFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Folder *srcfolder = G->RE[winnum]->Mail.Folder;
@@ -584,7 +584,7 @@ void SAVEDS ASM RE_CopyFunc(REG(a1,int *arg))
          {
             APTR lv;
             struct Mail *newmail = AddMailToList(mail, dstfolder);
-            if ((lv = WhichLV(dstfolder))) DoMethod(lv, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
+            if (lv = WhichLV(dstfolder)) DoMethod(lv, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
             MA_SetMailStatus(newmail, STATUS_OLD);
          }
    }
@@ -593,7 +593,7 @@ MakeHook(RE_CopyHook, RE_CopyFunc);
 ///
 /// RE_DeleteFunc
 //  Deletes the current message
-void SAVEDS ASM RE_DeleteFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_DeleteFunc(REG(a1,int *arg))
 {
    BOOL delatonce = arg[0] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
    int pos, winnum = arg[1];
@@ -612,21 +612,21 @@ MakeHook(RE_DeleteHook, RE_DeleteFunc);
 ///
 /// RE_PrintFunc
 //  Sends the current message or an attachment to the printer
-void SAVEDS ASM RE_PrintFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_PrintFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Part *part;
    struct TempFile *prttmp;
 
-   if ((part = AttachRequest(GetStr(MSG_RE_PrintMsg), GetStr(MSG_RE_SelectPrintPart), GetStr(MSG_RE_PrintGad), GetStr(MSG_Cancel), winnum, ATTREQ_PRINT|ATTREQ_MULTI, G->RE[winnum]->GUI.WI)))
-   {
+   if (part = AttachRequest(GetStr(MSG_RE_PrintMsg), GetStr(MSG_RE_SelectPrintPart), GetStr(MSG_RE_PrintGad), GetStr(MSG_Cancel), winnum, ATTREQ_PRINT|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
+	   {
       if (C->PrinterCheck) if (!CheckPrinter()) return;
       Busy(GetStr(MSG_BusyDecPrinting), "", 0, 0);
       for (; part; part = part->NextSelected) switch (part->Nr)
       {
          case -2: RE_PrintFile(G->RE[winnum]->File,part);
                   break;
-         case -1: if (( prttmp = OpenTempFile("w")))
+         case -1: if (prttmp = OpenTempFile("w"))
                   {
                      RE_SaveDisplay(winnum, prttmp->FP);
 							fclose(prttmp->FP);
@@ -644,8 +644,11 @@ MakeHook(RE_PrintHook, RE_PrintFunc);
 
 ///
 /// RE_PrintFile
-//  Prints a file. Currently it is just dumped to PRT:, more sophisticated
-//  printing methods to come
+//  Prints a file. Currently it is just dumped to PRT:
+//  To do for LaTeX printing:
+//  - remap characters in header to LaTeX notation
+//  - add options for latex/dviprint call
+//  - make header lines to print (and parts where to print headers) configurable
 LOCAL void RE_PrintFile(char *filename, struct Part *part)
 {
 	if(1)
@@ -702,6 +705,10 @@ LOCAL void RE_PrintFile(char *filename, struct Part *part)
 									"\\bigskip\n"
 									"\\input{Texts:TeXdocs/Experimental/email.text}\n"
 									"\\end{document}\n");
+						fclose(texfile->FP);
+						texfile->FP = NULL;
+						system("latex");
+						
 					} else
 					{
 						KPrintF("RE_PrintFile(): no headers for this part\n");
@@ -805,20 +812,20 @@ BOOL success=FALSE;
 ///
 /// RE_SaveFunc
 //  Saves the current message or an attachment to disk
-void SAVEDS ASM RE_SaveFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_SaveFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Part *part;
    struct TempFile *tf;
 
-   if ((part = AttachRequest(GetStr(MSG_RE_SaveMessage), GetStr(MSG_RE_SelectSavePart), GetStr(MSG_RE_SaveGad), GetStr(MSG_Cancel), winnum, ATTREQ_SAVE|ATTREQ_MULTI, G->RE[winnum]->GUI.WI)))
+   if (part = AttachRequest(GetStr(MSG_RE_SaveMessage), GetStr(MSG_RE_SelectSavePart), GetStr(MSG_RE_SaveGad), GetStr(MSG_Cancel), winnum, ATTREQ_SAVE|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
    {
       Busy(GetStr(MSG_BusyDecSaving), "", 0, 0);
       for (; part; part = part->NextSelected) switch (part->Nr)
       {
          case -2: RE_Export(winnum, G->RE[winnum]->File, "", "", 0, FALSE, FALSE, ContType[CT_ME_EMAIL]);
                   break;
-         case -1: if ((tf = OpenTempFile("w")))
+         case -1: if (tf = OpenTempFile("w"))
                   {
                      RE_SaveDisplay(winnum, tf->FP);
                      fclose(tf->FP); tf->FP = NULL;
@@ -851,7 +858,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
       struct ExtendedMail *email;
       struct TempFile *tf = OpenTempFile(NULL);
       CopyFile(tf->Filename, NULL, fname, NULL);
-      if ((email = MA_ExamineMail(NULL, FilePart(tf->Filename), "O", TRUE)))
+      if (email = MA_ExamineMail(NULL, FilePart(tf->Filename), "O", TRUE))
       {
          mail = malloc(sizeof(struct Mail));
          memcpy(mail, &email->Mail, sizeof(struct Mail));
@@ -885,12 +892,12 @@ void RE_DisplayMIME(char *fname, char *ctype)
 ///
 /// RE_DisplayFunc
 //  Shows message or attachments separately
-void SAVEDS ASM RE_DisplayFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_DisplayFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Part *part;
 
-   if ((part = AttachRequest(GetStr(MSG_RE_DisplayMsg), GetStr(MSG_RE_SelectDisplayPart), GetStr(MSG_RE_DisplayGad), GetStr(MSG_Cancel), winnum, ATTREQ_DISP|ATTREQ_MULTI, G->RE[winnum]->GUI.WI)))
+   if (part = AttachRequest(GetStr(MSG_RE_DisplayMsg), GetStr(MSG_RE_SelectDisplayPart), GetStr(MSG_RE_DisplayGad), GetStr(MSG_Cancel), winnum, ATTREQ_DISP|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
    {
       Busy(GetStr(MSG_BusyDecDisplaying), "", 0, 0);
       for (; part; part = part->NextSelected)
@@ -923,7 +930,7 @@ void RE_SaveAll(int winnum, char *path)
 ///
 /// RE_SaveAllFunc
 //  Asks user for a directory and saves all attachments there
-void SAVEDS ASM RE_SaveAllFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_SaveAllFunc(REG(a1,int *arg))
 {
    struct Part *part = G->RE[*arg]->FirstPart->Next;
    if (part) if (part->Next) if (ReqFile(ASL_DETACH, G->RE[*arg]->GUI.WI, GetStr(MSG_RE_SaveMessage), 5, C->DetachDir, ""))
@@ -937,7 +944,7 @@ MakeHook(RE_SaveAllHook, RE_SaveAllFunc);
 ///
 /// RE_RemoveAttachFunc
 //  Removes attachments from the current message
-void SAVEDS ASM RE_RemoveAttachFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_RemoveAttachFunc(REG(a1,int *arg))
 {
    struct Mail *mail = G->RE[*arg]->MailPtr;
    struct MailInfo *mi;
@@ -954,7 +961,7 @@ MakeHook(RE_RemoveAttachHook, RE_RemoveAttachFunc);
 ///
 /// RE_NewFunc
 //  Starts a new message based on the current one
-void SAVEDS ASM RE_NewFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_NewFunc(REG(a1,int *arg))
 {
    int mode = arg[0], winnum = arg[2], flags = 0;
    ULONG qual = arg[1];
@@ -979,7 +986,7 @@ MakeHook(RE_NewHook, RE_NewFunc);
 ///
 /// RE_GetAddressFunc
 //  Stores sender address of current message in the address book
-void SAVEDS ASM RE_GetAddressFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_GetAddressFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Folder *folder = G->RE[winnum]->Mail.Folder;
@@ -991,7 +998,7 @@ MakeHook(RE_GetAddressHook, RE_GetAddressFunc);
 ///
 /// RE_SetUnreadFunc
 //  Sets the status of the current mail to unread
-void SAVEDS ASM RE_SetUnreadFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_SetUnreadFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    MA_SetMailStatus(G->RE[winnum]->MailPtr, STATUS_UNR);
@@ -1002,7 +1009,7 @@ MakeHook(RE_SetUnreadHook, RE_SetUnreadFunc);
 ///
 /// RE_ChangeSubjectFunc
 //  Changes the subject of the current message
-void SAVEDS ASM RE_ChangeSubjectFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_ChangeSubjectFunc(REG(a1,int *arg))
 {
    char subj[SIZE_SUBJECT];
    int winnum = *arg;
@@ -1029,7 +1036,7 @@ MakeHook(RE_ChangeSubjectHook, RE_ChangeSubjectFunc);
 ///
 /// RE_ExtractKeyFunc
 //  Extracts public PGP key from the current message
-void SAVEDS ASM RE_ExtractKeyFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_ExtractKeyFunc(REG(a1,int *arg))
 {
    char fullfile[SIZE_PATHFILE], options[SIZE_PATHFILE];
    struct Mail *mail = G->RE[*arg]->MailPtr;
@@ -1045,10 +1052,10 @@ MakeHook(RE_ExtractKeyHook, RE_ExtractKeyFunc);
 //  Finds e-mail address in PGP output
 BOOL RE_GetAddressFromLog(char *buf, char *address)
 {
-   if ((buf = strchr(buf, 34)))
+   if (buf = strchr(buf, 34))
    {
       stccpy(address, ++buf, SIZE_ADDRESS);
-      if ((buf = strchr(address, 34))) *buf = 0;
+      if (buf = strchr(address, 34)) *buf = 0;
       return TRUE;
    }
    return FALSE;
@@ -1063,7 +1070,7 @@ void RE_GetSigFromLog(int winnum, char *decrFor)
    FILE *fh;
    char buffer[SIZE_LARGE];
 
-   if ((fh = fopen(PGPLOGFILE, "r")))
+   if (fh = fopen(PGPLOGFILE, "r"))
    {
       while (GetLine(fh, buffer, SIZE_LARGE))
       {
@@ -1094,7 +1101,7 @@ void RE_GetSigFromLog(int winnum, char *decrFor)
 ///
 /// RE_CheckSignatureFunc
 //  Checks validity of a PGP signed message
-void SAVEDS ASM RE_CheckSignatureFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_CheckSignatureFunc(REG(a1,int *arg))
 {
    struct RE_ClassData *re = G->RE[arg[1]];
 
@@ -1122,7 +1129,7 @@ MakeHook(RE_CheckSignatureHook, RE_CheckSignatureFunc);
 ///
 /// RE_SaveDecryptedFunc
 //  Saves decrypted version of a PGP message
-void SAVEDS ASM RE_SaveDecryptedFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_SaveDecryptedFunc(REG(a1,int *arg))
 {
    struct RE_ClassData *re = G->RE[*arg];
    struct WritePart *p1;
@@ -1133,7 +1140,7 @@ void SAVEDS ASM RE_SaveDecryptedFunc(REG(a1,int *arg))
 
    if (!(choice = MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SaveDecrypted), GetStr(MSG_RE_SaveDecGads), GetStr(MSG_RE_SaveDecReq)))) return;
    clear(&comp, sizeof(struct Compose));
-   if ((comp.FH = fopen(MA_NewMailFile(folder, mfile, 0), "w")))
+   if (comp.FH = fopen(MA_NewMailFile(folder, mfile, 0), "w"))
    {
       struct ExtendedMail *email;
       struct Mail *new;
@@ -1144,7 +1151,7 @@ void SAVEDS ASM RE_SaveDecryptedFunc(REG(a1,int *arg))
       WriteOutMessage(&comp);
       FreePartsList(p1);
       fclose(comp.FH);
-      if ((email = MA_ExamineMail(folder, mfile, Status[re->MailPtr->Status], TRUE)))
+      if (email = MA_ExamineMail(folder, mfile, Status[re->MailPtr->Status], TRUE))
       {
          new = AddMailToList((struct Mail *)email, folder);
          if (FO_GetCurrentFolder() == folder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
@@ -1308,7 +1315,7 @@ void RE_ParseContentParameters(struct Part *rp)
    if (!s) return;
    *s++ = 0;
    do {
-      if ((t = ParamEnd(s))) *t++ = 0;
+      if (t = ParamEnd(s)) *t++ = 0;
       if (!(eq = strchr(s, '='))) rp->JunkParameter = Cleanse(s);
       else 
       {
@@ -1435,7 +1442,7 @@ void RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, struct Part *first)
 {
    FILE *fp;
-   if (((*new) = calloc(1,sizeof(struct Part))))
+   if ((*new) = calloc(1,sizeof(struct Part)))
    {
       char file[SIZE_FILE];
       if (prev)
@@ -1456,7 +1463,7 @@ FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, struct Pa
       (*new)->Win = winnum;
       sprintf(file, "YAMraw-w%ldp%ld.txt", winnum, (*new)->Nr);
       strmfp((*new)->Filename, C->TempDir, file);
-      if ((fp = fopen((*new)->Filename, "w"))) return fp;
+      if (fp = fopen((*new)->Filename, "w")) return fp;
       free(*new);
    }
    return NULL;
@@ -1534,7 +1541,7 @@ struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Part *hrp
       FILE *out;
       struct Part *rp;
       char *boundary;
-      if (!hrp) if ((out = RE_OpenNewPart(winnum, &hrp, NULL, NULL)))
+      if (!hrp) if (out = RE_OpenNewPart(winnum, &hrp, NULL, NULL))
       {
          BOOL parse_ok = RE_ScanHeader(hrp, in, out, 0);
          fclose(out);
@@ -1562,7 +1569,7 @@ struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Part *hrp
                   if (!strnicmp(rp->ContentType, "multipart", 9))
                   {
                      fclose(out);
-                     if ((newrp = RE_ParseMessage(winnum, in, NULL, rp)))
+                     if (newrp = RE_ParseMessage(winnum, in, NULL, rp))
                      {
                         RE_UndoPart(rp);
                         done = RE_ConsumeRestOfPart(in, NULL, NULL, prev);
@@ -1586,7 +1593,7 @@ struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Part *hrp
                }
             }
          }
-         else if ((out = RE_OpenNewPart(winnum, &rp, hrp, hrp)))
+         else if (out = RE_OpenNewPart(winnum, &rp, hrp, hrp))
          {
             if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
             {
@@ -1613,14 +1620,14 @@ BOOL RE_DecodePart(struct Part *rp)
    {
       FILE *in, *out;
       char file[SIZE_FILE], buf[SIZE_LINE], ext[FNSIZE];
-      if ((in = fopen(rp->Filename, "r")))
+      if (in = fopen(rp->Filename, "r"))
       {
          if (rp->HasHeaders) while (GetLine(in, buf, SIZE_LINE)) if (!*buf) break;
          stcgfe(ext, rp->Name);
          if (strlen(ext) > 10) *ext = 0;
          sprintf(file, "YAMmsg-w%ldp%ld.%s", rp->Win, rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
-         if ((out = fopen(buf, "w")))
+         if (out = fopen(buf, "w"))
          {
             RE_DecodeStream(rp, in, out);
             fclose(out);
@@ -1666,7 +1673,7 @@ void RE_HandleMDNReport(struct Part *frp)
    int i, j;
    FILE *out, *fh;
 
-   if ((rp[0] = frp->Next)) if ((rp[1] = rp[0]->Next))
+   if (rp[0] = frp->Next) if (rp[1] = rp[0]->Next)
    {
       rp[2] = rp[1]->Next;
       msgdesc = AllocStrBuf(80);
@@ -1674,14 +1681,14 @@ void RE_HandleMDNReport(struct Part *frp)
       for (j = 1; j < (rp[2] ? 3 : 2); j++)
       {
          RE_DecodePart(rp[j]);
-         if ((fh = fopen(rp[j]->Filename, "r")))
+         if (fh = fopen(rp[j]->Filename, "r"))
          {
             MA_ReadHeader(fh);
             fclose(fh);
             for (i = 0; i < Header.Used; i++)
             {
                char *value, *field = Header.Data[i];
-               if ((value = strchr(field, ':')))
+               if (value = strchr(field, ':'))
                {
                   *value++ = 0;
                   if (!stricmp(field, "from")) msgdesc = StrBufCat(StrBufCat(msgdesc, GetStr(MSG_RE_MDNFrom)), value);
@@ -1700,10 +1707,10 @@ void RE_HandleMDNReport(struct Part *frp)
       msgdesc = StrBufCat(msgdesc, "\n");
       if (!strnicmp(MDNtype, "manual-action", 13)) mode = GetStr(MSG_RE_MDNmanual);
       if (!strnicmp(MDNtype, "automatic-action", 16)) mode = GetStr(MSG_RE_MDNauto);
-      if ((type = strchr(MDNtype, ';'))) type = Trim(++type); else type = MDNtype;
+      if (type = strchr(MDNtype, ';')) type = Trim(++type); else type = MDNtype;
       sprintf(file, "YAMmsg-w%ldp%ld.txt", rp[0]->Win, rp[0]->Nr);
       strmfp(buf, C->TempDir, file);
-      if ((out = fopen(buf, "w")))
+      if (out = fopen(buf, "w"))
       {
          if      (!stricmp(type, "displayed"))  fprintf(out, GetStr(MSG_RE_MDNdisplay), msgdesc);
          else if (!stricmp(type, "processed"))  fprintf(out, GetStr(MSG_RE_MDNprocessed), msgdesc, mode);
@@ -1729,7 +1736,7 @@ void RE_HandleSignedMessage(struct Part *frp)
 {
    struct Part *rp[2];
 
-   if ((rp[0] = frp->Next))
+   if (rp[0] = frp->Next)
    {
       if (*C->PGPCmdPath && (rp[1] = rp[0]->Next))
       {
@@ -1775,7 +1782,7 @@ int RE_DecryptPGP(int winnum, char *src)
       RE_GetSigFromLog(winnum, NULL);
    }
    PGPClearPassPhrase(error < 0 || error > 1);
-   if (error < 0 || error > 1) if ((fh = fopen(src, "w")))
+   if (error < 0 || error > 1) if (fh = fopen(src, "w"))
    {
       fprintf(fh, GetStr(MSG_RE_PGPNotAllowed));
       if (G->PGPVersion == 5 && *orcpt) fprintf(fh, GetStr(MSG_RE_MsgReadOnly), orcpt);
@@ -1790,14 +1797,14 @@ void RE_HandleEncryptedMessage(struct Part *frp)
 {
    struct Part *rp[2];
    FILE *in;
-   if (((rp[0] = frp->Next))) if ((rp[1] = rp[0]->Next))
+   if (rp[0] = frp->Next) if (rp[1] = rp[0]->Next)
    {
       if (!RE_DecryptPGP(frp->Win, rp[1]->Filename))
       {
          G->RE[frp->Win]->PGPSigned |= PGPS_OLD;
       }
       G->RE[frp->Win]->PGPEncrypted |= PGPE_MIME;
-      if (ConvertCRLF(rp[1]->Filename, rp[0]->Filename, FALSE)) if ((in = fopen(rp[0]->Filename, "r")))
+      if (ConvertCRLF(rp[1]->Filename, rp[0]->Filename, FALSE)) if (in = fopen(rp[0]->Filename, "r"))
       {
          rp[0]->ContentType = StrBufCpy(rp[0]->ContentType, "text/plain");
          rp[0]->Printable = TRUE; rp[0]->EncodingCode = ENC_NONE;
@@ -1851,7 +1858,7 @@ BOOL RE_LoadMessage(int winnum, int parsemode)
    if (!StartUnpack(G->RE[winnum]->File, newfile, G->RE[winnum]->MailPtr->Folder)) return FALSE;
    strcpy(G->RE[winnum]->File, newfile);
    G->RE[winnum]->ParseMode = parsemode;
-   if ((rp = G->RE[winnum]->FirstPart = RE_ParseMessage(winnum, NULL, G->RE[winnum]->File, NULL)))
+   if (rp = G->RE[winnum]->FirstPart = RE_ParseMessage(winnum, NULL, G->RE[winnum]->File, NULL))
    {
       RE_LoadMessagePart(winnum, rp);
       for (i = 0; rp; i++, rp = rp->Next) if (rp->Nr != i)
@@ -1914,7 +1921,7 @@ BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
    char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#";
    char *foundurl = NULL, *p;
    int i;
-   if ((p = strchr(line, ':'))) for (i = 0; i < 7; i++) if ((foundurl = stristr(line, protocols[i]))) break;
+   if (p = strchr(line, ':')) for (i = 0; i < 7; i++) if (foundurl = stristr(line, protocols[i])) break;
    if (!foundurl) return FALSE;
    for (i = 0; foundurl[i] && strchr(legalchars, foundurl[i]) && i < SIZE_URL-1; i++) url[i] = foundurl[i];
    if (strchr(".?!", url[i-1])) --i;
@@ -1941,12 +1948,12 @@ char *RE_ReadInMessage(int winnum, int mode)
       if (mode != RIM_READ && part->Nr && part->Nr != C->LetterPart) continue;
       if (part->Decoded || !part->Nr) totsize += part->Size; else totsize += 200;
    }
-   if ((cmsg = calloc(len=(totsize*3)/2,1)))
+   if (cmsg = calloc(len=(totsize*3)/2,1))
    {
       if (mode != RIM_QUIET) Busy(GetStr(MSG_BusyDisplaying), "", 0, 0);
       wptr = 0;
       if (mode == RIM_READ)
-         if ((fh = fopen(first->Filename, "r")))
+         if (fh = fopen(first->Filename, "r"))
          {
             int buflen = re->FirstPart->MaxHeaderLen+4;
             char *linebuf = malloc(buflen);
@@ -1970,9 +1977,9 @@ char *RE_ReadInMessage(int winnum, int mode)
          }
          if (dodisp)
          {
-            if ((fh = fopen(part->Filename, "r")))
+            if (fh = fopen(part->Filename, "r"))
             {       
-               if ((msg = calloc(part->Size+3,1)))
+               if (msg = calloc(part->Size+3,1))
                {
                char *sigptr;
 
@@ -2001,8 +2008,6 @@ char *RE_ReadInMessage(int winnum, int mode)
                            break;
                         }
                      }
-//                   if(sigptr) DB(KPrintF("Found sig separator %ld lines from end\n",20-lines));
-//                   else DB(KPrintF("No sig found\n"));
                   }
 
                   while (*rptr)
@@ -2017,7 +2022,7 @@ char *RE_ReadInMessage(int winnum, int mode)
                            while (!ISpace(*ptr)) ptr++;
                            ptr = stpblk(ptr);
                            for (last = first; last->Next; last = last->Next);
-                           if ((ufh = RE_OpenNewPart(winnum, &uup, last, first)))
+                           if (ufh = RE_OpenNewPart(winnum, &uup, last, first))
                            {
                               uup->ContentType = StrBufCpy(uup->ContentType, "application/octet-stream");
                               strcpy(uup->Description, GetStr(MSG_RE_UUencodedFile));
@@ -2053,7 +2058,7 @@ char *RE_ReadInMessage(int winnum, int mode)
 /* PGP message */    if (!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
                      {
                         struct TempFile *tf;
-                        if ((tf = OpenTempFile("w")))
+                        if (tf = OpenTempFile("w"))
                         {
                            *eolptr = '\n';
                            for (ptr=eolptr+1; *ptr; ptr++)
@@ -2065,7 +2070,7 @@ char *RE_ReadInMessage(int winnum, int mode)
                            fwrite(rptr, 1, ptr-rptr, tf->FP);
                            fclose(tf->FP); tf->FP = NULL;
                            if (!RE_DecryptPGP(winnum, tf->Filename)) re->PGPSigned |= PGPS_OLD;
-                           if ((tf->FP = fopen(tf->Filename, "r")))
+                           if (tf->FP = fopen(tf->Filename, "r"))
                            {
                               char buf2[SIZE_LARGE];
                               while (fgets(buf2, SIZE_LARGE, tf->FP))
@@ -2094,7 +2099,7 @@ char *RE_ReadInMessage(int winnum, int mode)
 /* URL */            if (!re->NoTextstyles && mode == RIM_READ) if (RE_ExtractURL(rptr, url, &urlptr, &ptr))
                      {
                         char *buf2, *p;
-                        if ((buf2 = calloc(SIZE_DEFAULT+(strlen(rptr)*3)/2,1)))
+                        if (buf2 = calloc(SIZE_DEFAULT+(strlen(rptr)*3)/2,1))
                         {
                            p = buf2;
                            do
@@ -2152,11 +2157,11 @@ void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
    if (mail->Flags & MFLAG_SENDERINFO)
    {
       email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE);
-      if ((s = strchr(email->SenderInfo, ';')))
+      if (s = strchr(email->SenderInfo, ';'))
       {
          *s++ = 0;
          do {
-            if ((t = ParamEnd(s))) *t++ = 0;
+            if (t = ParamEnd(s)) *t++ = 0;
             if (!(eq = strchr(s, '='))) Cleanse(s);
             else
             {
@@ -2326,7 +2331,7 @@ void RE_DisplayMessage(int winnum)
    struct ABEntry *ab = NULL, abtmpl;
    int hits = 0;
 
-   if ((cmsg = RE_ReadInMessage(winnum, RIM_READ)))
+   if (cmsg = RE_ReadInMessage(winnum, RIM_READ))
    {
       dispheader = G->RE[winnum]->Header != 0;
       set(gui->GR_HEAD, MUIA_ShowMe, dispheader);
@@ -2367,7 +2372,7 @@ void RE_DisplayMessage(int winnum)
          }
          else
          {
-            if ((ab = RE_AddToAddrbook(gui->WI, &abtmpl)))
+            if (ab = RE_AddToAddrbook(gui->WI, &abtmpl))
             {
                if (*abtmpl.Photo && *C->GalleryDir) RE_DownloadPhoto(gui->WI, abtmpl.Photo, ab);
             }
@@ -2411,7 +2416,7 @@ void RE_ClickedOnMessage(char *address)
    struct ABEntry *ab = NULL;
    int l, win, hits = 0;
    char *p, *gads, buf[SIZE_LARGE], *body = NULL, *subject = NULL;
-   if ((l = strlen(address))) if (strchr(".?!", address[--l])) address[l] = 0;
+   if (l = strlen(address)) if (strchr(".?!", address[--l])) address[l] = 0;
    for (p = strchr(address, '&'); p; p = strchr(p, '&'))
    {
       *p++ = 0;
@@ -2447,7 +2452,7 @@ void RE_ClickedOnMessage(char *address)
 ///
 /// RE_DoubleClickFunc
 //  Handles double-clicks on an URL
-BOOL SAVEDS ASM RE_DoubleClickFunc(REG(a1,struct ClickMessage *clickmsg), REG(a2,APTR obj))
+SAVEDS ASM BOOL RE_DoubleClickFunc(REG(a1,struct ClickMessage *clickmsg), REG(a2,APTR obj))
 {
    int pos = clickmsg->ClickPosition;
    char *line = clickmsg->LineContents, *p, *surl;
@@ -2478,7 +2483,7 @@ MakeHook(RE_DoubleClickHook, RE_DoubleClickFunc);
 ///
 /// RE_ShowEnvFunc
 //  Changes display options (header, textstyles, sender info)
-void SAVEDS ASM RE_ShowEnvFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_ShowEnvFunc(REG(a1,int *arg))
 {
    int lev, winnum = arg[0], mode = arg[1];
    struct RE_ClassData *re = G->RE[winnum];
@@ -2507,7 +2512,7 @@ MakeHook(RE_ShowEnvHook, RE_ShowEnvFunc);
 /*** GUI ***/
 /// RE_LV_AttachDspFunc
 //  Attachment listview display hook
-long SAVEDS ASM RE_LV_AttachDspFunc(REG(a2,char **array), REG(a1,struct Part *entry))
+SAVEDS ASM long RE_LV_AttachDspFunc(REG(a2,char **array), REG(a1,struct Part *entry))
 {
    if (entry)
    {
@@ -2523,7 +2528,7 @@ MakeHook(RE_LV_AttachDspFuncHook,RE_LV_AttachDspFunc);
 ///
 /// RE_CloseFunc
 //  Closes a read window
-void SAVEDS ASM RE_CloseFunc(REG(a1,int *arg))
+SAVEDS ASM void RE_CloseFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct RE_ClassData *re = G->RE[winnum];
@@ -2556,7 +2561,7 @@ int RE_Open(int winnum, BOOL real)
 ///
 /// RE_LV_HDspFunc
 //  Header listview display hook
-long SAVEDS ASM RE_LV_HDspFunc(REG(a2,char **array), REG(a1,char *entry))
+SAVEDS ASM long RE_LV_HDspFunc(REG(a2,char **array), REG(a1,char *entry))
 {
    static char hfield[40];
    char *cont = entry;
@@ -2585,7 +2590,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
 {
    struct RE_ClassData *data;
 
-   if ((data = calloc(1,sizeof(struct RE_ClassData))))
+   if (data = calloc(1,sizeof(struct RE_ClassData)))
    {
       APTR tb_butt[14] = { MSG_RE_TBPrev,MSG_RE_TBNext,MSG_RE_TBPrevTh,MSG_RE_TBNextTh,MSG_Space,
                            MSG_RE_TBDisplay,MSG_RE_TBSave,MSG_RE_TBPrint,MSG_Space,
