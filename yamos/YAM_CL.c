@@ -41,7 +41,7 @@ struct MUI_CustomClass *CL_PageList;
 ///
 /// BC_Dispatcher (BodyChunk)
 //  Subclass of BodyChunk, can load images from files
-SAVEDS ASM ULONG BC_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) Msg msg)
+SAVEDS ASM ULONG BC_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    struct BC_Data *data;
    struct TagItem *tags, *tag;
@@ -108,7 +108,7 @@ SAVEDS ASM ULONG BC_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
 ///
 /// WS_Dispatcher (Recipient String)
 //  Subclass of Betterstring, handles alias auto-completion, drag&drop from address book
-SAVEDS ASM ULONG WS_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) Msg msg)
+SAVEDS ASM ULONG WS_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    ULONG result = 0;
    UBYTE code;
@@ -223,7 +223,7 @@ SAVEDS ASM ULONG WS_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
 ///
 /// WL_Dispatcher (Attachment List)
 //  Subclass of List, adds Drag&Drop from message list
-SAVEDS ASM ULONG WL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) Msg msg)
+SAVEDS ASM ULONG WL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
@@ -268,7 +268,7 @@ SAVEDS ASM ULONG WL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
 ///
 /// FL_Dispatcher (Folder List)
 //  Subclass of NList, adds Drag&Drop from message list
-SAVEDS ASM ULONG FL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) Msg msg)
+SAVEDS ASM ULONG FL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
    struct MUIP_NList_DropType *dt = (struct MUIP_NList_DropType *)msg;
@@ -299,7 +299,7 @@ SAVEDS ASM ULONG FL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
 ///
 /// EL_Dispatcher (Member List)
 //  Subclass of List, adds Drag&Drop from address book window
-SAVEDS ASM ULONG EL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) Msg msg)
+SAVEDS ASM ULONG EL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
    struct MUIS_Listtree_TreeNode *active;
@@ -325,7 +325,7 @@ SAVEDS ASM ULONG EL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
 ///
 /// AL_Dispatcher (Address book Listtree)
 //  Subclass of Listtree, supports inline images and Drag&Drop from message list
-SAVEDS ASM ULONG AL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) Msg msg)
+SAVEDS ASM ULONG AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    struct AL_Data *data;
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
@@ -374,7 +374,7 @@ SAVEDS ASM ULONG AL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
 /// MW_Dispatcher (Main Window)
 //  Subclass of Windows, used to dispose subwindows on exit
 struct MUIP_MainWindow_CloseWindow { ULONG MethodID; APTR Window; };
-SAVEDS ASM ULONG MW_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) Msg msg)
+SAVEDS ASM ULONG MW_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    if (msg->MethodID == MUIM_MainWindow_CloseWindow)
    {
@@ -389,7 +389,7 @@ SAVEDS ASM ULONG MW_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
 ///
 /// TE_Dispatcher (Text Editor)
 //  Subclass of Texteditor, adds error requester, Drag&Drop capabilities and multi-color support
-SAVEDS ASM ULONG TE_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) struct MUIP_TextEditor_HandleError *msg)
+SAVEDS ASM ULONG TE_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,struct MUIP_TextEditor_HandleError *msg))
 {
    switch (msg->MethodID)
    {
@@ -451,7 +451,7 @@ SAVEDS ASM ULONG TE_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
 ///
 /// PL_Dispatcher (Config Window Page List)
 //  Subclass of List, adds small images to configuration menu
-SAVEDS ASM ULONG PL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, REG(a1) Msg msg)
+SAVEDS ASM ULONG PL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    extern UBYTE PL_IconBody[MAXCPAGES][240];
    const ULONG PL_Colors[24] = {

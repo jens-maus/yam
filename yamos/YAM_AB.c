@@ -209,7 +209,7 @@ void AB_InsertAddress(APTR string, char *alias, char *name, char *address)
 ///
 /// AB_FromAddrBook
 //  Inserts an address book entry into a recipient string
-SAVEDS ASM void AB_FromAddrBook(REG(a1) ULONG *arg)
+SAVEDS ASM void AB_FromAddrBook(REG(a1,ULONG *arg))
 {
    APTR string;
    struct MUIS_Listtree_TreeNode *active;
@@ -433,7 +433,7 @@ MakeHook(AB_DoubleClickHook, AB_DoubleClick);
 
 /// AB_Sort
 //  Sorts the address book
-SAVEDS ASM void AB_Sort(REG(a1) int *arg)
+SAVEDS ASM void AB_Sort(REG(a1,int *arg))
 {
    char fname[SIZE_PATHFILE];
    strmfp(fname, C->TempDir, ".addressbook.tmp");
@@ -642,7 +642,7 @@ MakeHook(AB_PrintHook, AB_PrintFunc);
 ///
 /// AB_AddEntryFunc
 //  Add a new entry to the address book
-SAVEDS ASM void AB_AddEntryFunc(REG(a1) int *arg)
+SAVEDS ASM void AB_AddEntryFunc(REG(a1,int *arg))
 {
    EA_Init(*arg, NULL);
 }
@@ -774,7 +774,7 @@ MakeHook(AB_FindHook, AB_FindFunc);
 
 /// AB_OpenFunc
 //  Open address book window
-SAVEDS ASM void AB_OpenFunc(REG(a1) int *arg)
+SAVEDS ASM void AB_OpenFunc(REG(a1,int *arg))
 {
    struct AB_ClassData *ab = G->AB;
    char *md = "";
@@ -815,7 +815,7 @@ MakeHook(AB_CloseHook, AB_Close);
 
 /// AB_LV_ConFunc
 //  Address book listview construction hook
-SAVEDS ASM struct ABEntry *AB_LV_ConFunc(REG(a1) struct ABEntry *addr)
+SAVEDS ASM struct ABEntry *AB_LV_ConFunc(REG(a1,struct ABEntry *addr))
 {
    struct ABEntry *entry = malloc(sizeof(struct ABEntry));
    if (entry)
@@ -830,7 +830,7 @@ MakeHook(AB_LV_ConFuncHook, AB_LV_ConFunc);
 ///
 /// AB_LV_DesFunc
 //  Address book listview destruction hook
-SAVEDS ASM long AB_LV_DesFunc(REG(a1) struct ABEntry *entry)
+SAVEDS ASM long AB_LV_DesFunc(REG(a1,struct ABEntry *entry))
 {
    if (entry->Members) free(entry->Members);
    free(entry);
@@ -841,7 +841,7 @@ MakeHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
 ///
 /// AB_LV_DspFunc
 //  Address book listview display hook
-SAVEDS ASM long AB_LV_DspFunc(REG(a0) struct Hook *hook, REG(a2) char **array, REG(a1) struct MUIS_Listtree_TreeNode *node)
+SAVEDS ASM long AB_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct MUIS_Listtree_TreeNode *node))
 {
    static char dispal[SIZE_DEFAULT], dispco[SIZE_DEFAULT+8];
    struct AL_Data *data = (APTR)hook->h_Data;
@@ -894,7 +894,7 @@ MakeHook(AB_LV_DspFuncHook, AB_LV_DspFunc);
 ///
 /// AB_LV_CmpFunc
 //  Address book listview sort hook
-SAVEDS ASM long AB_LV_CmpFunc(REG(a2) struct MUIS_Listtree_TreeNode *entry1, REG(a1) struct MUIS_Listtree_TreeNode *entry2)
+SAVEDS ASM long AB_LV_CmpFunc(REG(a2,struct MUIS_Listtree_TreeNode *entry1), REG(a1,struct MUIS_Listtree_TreeNode *entry2))
 {
    char *n1, *n2;
    struct ABEntry *ab1 = (struct ABEntry *)entry1->tn_User,

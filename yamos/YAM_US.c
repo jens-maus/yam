@@ -386,7 +386,7 @@ MakeHook(US_PutUSEntryHook,US_PutUSEntryFunc);
 /*** GUI ***/
 /// US_LV_ConFunc
 //  User listview construction hook
-SAVEDS ASM struct User *US_LV_ConFunc(REG(a1) struct User *user)
+SAVEDS ASM struct User *US_LV_ConFunc(REG(a1,struct User *user))
 {
    struct User *entry = malloc(sizeof(struct User));
    *entry = *user;
@@ -397,7 +397,7 @@ MakeHook(US_LV_ConHook, US_LV_ConFunc);
 ///
 /// US_LV_DspFunc
 //  User listview display hook
-SAVEDS ASM long US_LV_DspFunc(REG(a2) char **array, REG(a1) struct User *entry)
+SAVEDS ASM long US_LV_DspFunc(REG(a2,char **array), REG(a1,struct User *entry))
 {
    if (entry)
    {

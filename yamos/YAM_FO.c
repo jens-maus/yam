@@ -830,7 +830,7 @@ MakeHook(FO_SaveHook, FO_SaveFunc);
 ///
 /// FO_SetOrderFunc
 //  Saves or resets folder order
-SAVEDS ASM void FO_SetOrderFunc(REG(a1) int *arg)
+SAVEDS ASM void FO_SetOrderFunc(REG(a1,int *arg))
 {
    switch (*arg)
    {

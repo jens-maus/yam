@@ -108,7 +108,7 @@
 	#define InitHook(hook, funcname, data) ((hook)->h_Entry = (void*)&Gate_##funcname, (hook)->h_Data = (APTR)(data))
 	#define ENTRY(func)	  (void*)&Gate_##func
 
-	#define REG(x)
+	#define REG(reg,arg) arg
 	#define ASM
 	#define SAVEDS
 	#define STACKEXT
@@ -121,19 +121,6 @@
 #define MakeHook(hookname, funcname) struct Hook hookname = { {NULL, NULL}, (void *)funcname, NULL, NULL }
 #define InitHook(hook, funcname, data) ((hook)->h_Entry = (void *)funcname, (hook)->h_Data = (APTR)(data))
 #define ENTRY(func)	  func
-
-	#define SAVEDS __saveds
-#ifdef _DCC
-	#define REG(x) __ ## x
-	#define ASM
-	#define STACKEXT __stkcheck
-	#define __stdargs __stkargs
-	#define _OSERR IoErr()
-#else
-	#define REG(x) register __ ## x
-	#define ASM    __asm
-	#define STACKEXT __stackext
-#endif
 
 #endif /* __MORPHOS__ */
 
@@ -207,8 +194,8 @@
 #define CloneWorkbenchPath(sm) cloneWorkbenchPath(SysBase, DOSBase, sm)
 #define FreeWorkbenchPath(path) freeWorkbenchPath(SysBase, DOSBase, path)
 
-BPTR __stdargs cloneWorkbenchPath(struct ExecBase *, struct DosLibrary *, struct WBStartup *);
-void __stdargs freeWorkbenchPath(struct ExecBase *, struct DosLibrary *, BPTR);
+BPTR STDARGS cloneWorkbenchPath(struct ExecBase *, struct DosLibrary *, struct WBStartup *);
+void STDARGS freeWorkbenchPath(struct ExecBase *, struct DosLibrary *, BPTR);
 
 ///
 /// Configuration sub-structures
@@ -1276,7 +1263,7 @@ extern void MA_SetupDynamicMenus(void);
 extern int MA_CmpFunc(struct Mail **, struct Mail **);
 extern void MA_MakeFOFormat(APTR);
 extern void MA_MakeMAFormat(APTR);
-extern SAVEDS ASM long MA_LV_DspFunc(REG(a0) struct Hook *, REG(a2) char **, REG(a1) struct Mail *);
+extern SAVEDS ASM long MA_LV_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct Mail *));
 extern struct MA_ClassData *MA_New(void);
 
 extern BOOL CO_IsValid(void);
@@ -1292,7 +1279,7 @@ extern void CO_Validate(struct Config *, BOOL);
 extern void CO_SetConfig(void);
 extern void CO_GetConfig(void);
 extern void CO_FreeConfig(struct Config *);
-extern SAVEDS ASM long CO_PL_DspFunc(REG(a0) struct Hook *, REG(a2) char **, REG(a1) struct PageList *);
+extern SAVEDS ASM long CO_PL_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct PageList *));
 extern APTR CO_Page0(struct CO_ClassData *), CO_Page1(struct CO_ClassData *), CO_Page2(struct CO_ClassData *), CO_Page3(struct CO_ClassData *), CO_Page4(struct CO_ClassData *), CO_Page5(struct CO_ClassData *), CO_Page6(struct CO_ClassData *), CO_Page7(struct CO_ClassData *);
 extern APTR CO_Page8(struct CO_ClassData *), CO_Page9(struct CO_ClassData *), CO_Page10(struct CO_ClassData *),CO_Page11(struct CO_ClassData *), CO_Page12(struct CO_ClassData *),CO_Page13(struct CO_ClassData *),CO_Page14(struct CO_ClassData *),CO_Page15(struct CO_ClassData *);
 
@@ -1324,7 +1311,7 @@ extern SAVEDS void AB_SaveABookFunc(void);
 extern SAVEDS void AB_DeleteFunc(void);
 extern STACKEXT BOOL AB_FindEntry(struct MUIS_Listtree_TreeNode *, char *, int mode, char **);
 extern void AB_MakeABFormat(APTR);
-extern SAVEDS ASM long AB_LV_DspFunc(REG(a0) struct Hook *, REG(a2) char **, REG(a1) struct MUIS_Listtree_TreeNode *);
+extern SAVEDS ASM long AB_LV_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct MUIS_Listtree_TreeNode *));
 extern struct AB_ClassData *AB_New(void);
 
 extern int EA_Init(int, struct MUIS_Listtree_TreeNode *);
@@ -1362,9 +1349,9 @@ extern char *WR_ExpandAddresses(int, char *, BOOL, BOOL);
 extern void WR_AddSignature(char *, int);
 extern void WR_OpenWin(int);
 extern void WR_FromAddrBook(struct Object *);
-extern SAVEDS ASM void WR_GetFileEntry(REG(a1) int *);
-extern SAVEDS ASM void WR_PutFileEntry(REG(a1) int *);
-extern SAVEDS ASM void WR_Edit(REG(a1) int *);
+extern SAVEDS ASM void WR_GetFileEntry(REG(a1,int *));
+extern SAVEDS ASM void WR_PutFileEntry(REG(a1,int *));
+extern SAVEDS ASM void WR_Edit(REG(a1,int *));
 extern void EmitHeader(FILE *, char *, char *);
 extern BOOL WriteOutMessage(struct Compose *);
 extern struct WritePart *NewPart(int);

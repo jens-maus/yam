@@ -498,7 +498,7 @@ void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled)
 ///
 /// FI_SearchOptFunc
 //  Selects correct form for search mode
-SAVEDS ASM void FI_SearchOptFunc(REG(a1) ULONG *arg)
+SAVEDS ASM void FI_SearchOptFunc(REG(a1,ULONG *arg))
 {
    struct SearchGroup *gdata = (struct SearchGroup *)arg[0];
    int mode = GetMUICycle(gdata->CY_MODE);
@@ -510,7 +510,7 @@ MakeHook(FI_SearchOptHook, FI_SearchOptFunc);
 ///
 /// FI_EditFileFunc
 //  Edits pattern list in text editor
-SAVEDS ASM void FI_EditFileFunc(REG(a1) int *arg)
+SAVEDS ASM void FI_EditFileFunc(REG(a1,int *arg))
 {
    if (*C->Editor)
    {
@@ -723,7 +723,7 @@ MakeHook(FI_CloseHook, FI_Close);
 /*** GUI ***/
 /// FI_PO_InitRuleListFunc
 //  Creates a popup list of configured filters
-SAVEDS ASM long FI_PO_InitRuleListFunc(REG(a2) Object *pop)
+SAVEDS ASM long FI_PO_InitRuleListFunc(REG(a2,Object *pop))
 {  
    int i;
    DoMethod(pop, MUIM_List_Clear);
@@ -736,7 +736,7 @@ MakeHook(FI_PO_InitRuleListHook, FI_PO_InitRuleListFunc);
 ///
 /// FI_PO_FromRuleFunc
 //  Gets search options from selected filter
-SAVEDS ASM void FI_PO_FromRuleFunc(REG(a2) Object *pop)
+SAVEDS ASM void FI_PO_FromRuleFunc(REG(a2,Object *pop))
 {
    struct Rule *rule;
    DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &rule);

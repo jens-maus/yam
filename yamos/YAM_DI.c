@@ -182,7 +182,7 @@ MakeHook(DI_DisplayHook, DI_DisplayFunc);
 ///
 /// DI_ModifyFunc
 //  Saves changed glossary item
-SAVEDS ASM void DI_ModifyFunc(REG(a1) int *arg)
+SAVEDS ASM void DI_ModifyFunc(REG(a1,int *arg))
 {
    struct Dict new;
 
@@ -204,7 +204,7 @@ MakeHook(DI_ModifyHook, DI_ModifyFunc);
 ///
 /// DI_OpenFunc
 //  Opens glossary window
-SAVEDS ASM void DI_OpenFunc(REG(a1) int *arg)
+SAVEDS ASM void DI_OpenFunc(REG(a1,int *arg))
 {
    if (!G->DI)
    {
@@ -220,7 +220,7 @@ MakeHook(DI_OpenHook, DI_OpenFunc);
 /*** GUI ***/
 /// DI_LV_ConFunc
 //  Glossary listview construction hook
-SAVEDS ASM struct Dict *DI_LV_ConFunc(REG(a1) struct Dict *dict)
+SAVEDS ASM struct Dict *DI_LV_ConFunc(REG(a1,struct Dict *dict))
 {
    struct Dict *entry = malloc(sizeof(struct Dict));
    memcpy(entry, dict, sizeof(struct Dict));
@@ -231,7 +231,7 @@ MakeHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
 ///
 /// DI_LV_DesFunc
 //  Glossary listview destruction hook
-SAVEDS ASM long DI_LV_DesFunc(REG(a1) struct Dict *entry)
+SAVEDS ASM long DI_LV_DesFunc(REG(a1,struct Dict *entry))
 {
    if (entry->Text) FreeStrBuf(entry->Text);
    free(entry);

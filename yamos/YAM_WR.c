@@ -163,7 +163,7 @@ char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single)
 ///
 /// WR_VerifyAutoFunc
 //  Checks recipient field (user pressed return key)
-SAVEDS ASM void WR_VerifyAutoFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_VerifyAutoFunc(REG(a1,int *arg))
 {
    APTR str = (APTR)arg[0], next = str;
    char *value, *adr;
@@ -182,7 +182,7 @@ MakeHook(WR_VerifyAutoHook, WR_VerifyAutoFunc);
 ///
 /// WR_VerifyManualFunc
 //  Checks and expands recipient field (user clicked gadget)
-SAVEDS ASM void WR_VerifyManualFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_VerifyManualFunc(REG(a1,int *arg))
 {
    APTR object = (APTR)arg[0];
    char *value, *adr;
@@ -200,7 +200,7 @@ MakeHook(WR_VerifyManualHook, WR_VerifyManualFunc);
 /*** Attachments list ***/
 /// WR_GetFileEntry
 //  Fills form with data from selected list entry
-SAVEDS ASM void WR_GetFileEntry(REG(a1) int *arg)
+SAVEDS ASM void WR_GetFileEntry(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Attach *attach = NULL;
@@ -221,7 +221,7 @@ MakeHook(WR_GetFileEntryHook, WR_GetFileEntry);
 ///
 /// WR_PutFileEntry
 //  Fills form data into selected list entry
-SAVEDS ASM void WR_PutFileEntry(REG(a1) int *arg)
+SAVEDS ASM void WR_PutFileEntry(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Attach *attach = NULL;
@@ -1377,7 +1377,7 @@ skip:
    BusyEnd;
 }
 
-SAVEDS ASM void WR_NewMailFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_NewMailFunc(REG(a1,int *arg))
 {
    WR_NewMail(arg[0], arg[1]);
 }
@@ -1406,7 +1406,7 @@ void WR_Cleanup(int winnum)
 ///
 /// WR_CancelFunc
 //  User clicked the Cancel button
-SAVEDS ASM void WR_CancelFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_CancelFunc(REG(a1,int *arg))
 {
    int haschanged, winnum = *arg;
    if (G->WR[winnum]->Mode != NEW_BOUNCE)
@@ -1432,7 +1432,7 @@ MakeHook(WR_CancelHook, WR_CancelFunc);
 ///
 /// WR_SaveAsFunc
 //  Saves contents of internal editor to a file
-SAVEDS ASM void WR_SaveAsFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_SaveAsFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
@@ -1450,7 +1450,7 @@ MakeHook(WR_SaveAsHook, WR_SaveAsFunc);
 ///
 /// WR_Edit
 //  Launches external editor with message text
-SAVEDS ASM void WR_Edit(REG(a1) int *arg)
+SAVEDS ASM void WR_Edit(REG(a1,int *arg))
 {
    int winnum = *arg;
    if (*(C->Editor))
@@ -1467,7 +1467,7 @@ MakeHook(WR_EditHook, WR_Edit);
 ///
 /// WR_AddFileFunc
 //  Adds one or more files to the attachment list
-SAVEDS ASM void WR_AddFileFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_AddFileFunc(REG(a1,int *arg))
 {
    int i, winnum = *arg;
    char filename[SIZE_PATHFILE];
@@ -1490,7 +1490,7 @@ MakeHook(WR_AddFileHook, WR_AddFileFunc);
 ///
 /// WR_AddArchiveFunc
 //  Creates an archive of one or more files and adds it to the attachment list
-SAVEDS ASM void WR_AddArchiveFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_AddArchiveFunc(REG(a1,int *arg))
 {
    int i, winnum = *arg;
    static char chr[2] = { 0,0 };
@@ -1562,7 +1562,7 @@ MakeHook(WR_AddArchiveHook, WR_AddArchiveFunc);
 ///
 /// WR_DisplayFile
 //  Displays an attached file using a MIME viewer
-SAVEDS ASM void WR_DisplayFile(REG(a1) int *arg)
+SAVEDS ASM void WR_DisplayFile(REG(a1,int *arg))
 {
    struct Attach *attach = NULL;
 
@@ -1574,7 +1574,7 @@ MakeHook(WR_DisplayFileHook, WR_DisplayFile);
 ///
 /// WR_ChangeSignatureFunc
 //  Changes the current signature
-SAVEDS ASM void WR_ChangeSignatureFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_ChangeSignatureFunc(REG(a1,int *arg))
 {
    struct TempFile *tf;
    int signat = arg[0], winnum = arg[1];
@@ -1645,7 +1645,7 @@ LOCAL char *WR_TransformText(char *source, int mode, char *qtext)
 ///
 /// WR_InsertSeparator
 //  Inserts a separator bar at the cursor position
-SAVEDS ASM void WR_InsertSeparatorFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_InsertSeparatorFunc(REG(a1,int *arg))
 {
    APTR ed = G->WR[arg[1]]->GUI.TE_EDIT;
    set(ed, MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain);
@@ -1657,7 +1657,7 @@ MakeHook(WR_InsertSeparatorHook, WR_InsertSeparatorFunc);
 ///
 /// WR_EditorCmd
 //  Inserts file or clipboard into editor
-SAVEDS ASM void WR_EditorCmd(REG(a1) int *arg)
+SAVEDS ASM void WR_EditorCmd(REG(a1,int *arg))
 {
    int cmd = arg[0], winnum = arg[1];
    char *text, filename[SIZE_PATHFILE];
@@ -1690,7 +1690,7 @@ MakeHook(WR_EditorCmdHook, WR_EditorCmd);
 ///
 /// WR_AddClipboardFunc
 //  Adds contents of clipboard as attachment
-SAVEDS ASM void WR_AddClipboardFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_AddClipboardFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct TempFile *tf = OpenTempFile("w");
@@ -1708,7 +1708,7 @@ MakeHook(WR_AddClipboardHook, WR_AddClipboardFunc);
 ///
 /// WR_AddPGPKeyFunc
 //  Adds ASCII version of user's public PGP key as attachment
-SAVEDS ASM void WR_AddPGPKeyFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_AddPGPKeyFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    char *myid = *C->MyPGPID ? C->MyPGPID : C->EmailAddress;
@@ -1775,7 +1775,7 @@ void WR_SetupOldMail(int winnum)
 ///
 /// WR_UpdateTitleFunc
 //  Shows cursor coordinates
-SAVEDS ASM void WR_UpdateWTitleFunc(REG(a1) int *arg)
+SAVEDS ASM void WR_UpdateWTitleFunc(REG(a1,int *arg))
 {
    struct WR_ClassData *wr = G->WR[*arg];
    APTR ed = wr->GUI.TE_EDIT;
@@ -1825,7 +1825,7 @@ void WR_App(int winnum, struct AppMessage *amsg)
    }
 }
 
-SAVEDS ASM LONG WR_AppFunc(REG(a1) ULONG *arg)
+SAVEDS ASM LONG WR_AppFunc(REG(a1,ULONG *arg))
 {
    WR_App((int)arg[1],  (struct AppMessage *)arg[0]);
    return 0;
@@ -1835,7 +1835,7 @@ MakeHook(WR_AppHook, WR_AppFunc);
 ///
 /// WR_LV_ConFunc
 //  Attachment listview construct hook
-SAVEDS ASM struct Attach *WR_LV_ConFunc(REG(a1) struct Attach *attach)
+SAVEDS ASM struct Attach *WR_LV_ConFunc(REG(a1,struct Attach *attach))
 {
    struct Attach *entry = malloc(sizeof(struct Attach));
    *entry = *attach;
@@ -1846,7 +1846,7 @@ MakeHook(WR_LV_ConFuncHook, WR_LV_ConFunc);
 ///
 /// WR_LV_DspFunc
 //  Attachment listview display hook
-SAVEDS ASM long WR_LV_DspFunc(REG(a2) char **array, REG(a1) struct Attach *entry)
+SAVEDS ASM long WR_LV_DspFunc(REG(a2,char **array), REG(a1,struct Attach *entry))
 {
    static char dispsz[SIZE_SMALL];
    if (entry)

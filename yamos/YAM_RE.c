@@ -66,7 +66,7 @@ struct Mail *RE_GetAnswer(long id)
 ///
 /// RE_Follow
 //  Follows a thread in either direction
-SAVEDS ASM void RE_Follow(REG(a1) int *arg)
+SAVEDS ASM void RE_Follow(REG(a1,int *arg))
 {  
    int i, direction = arg[0], winnum = arg[1];
    struct Folder **flist;
@@ -122,7 +122,7 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
 ///
 /// RE_PrevNext
 //  Goes to next or previous (new) message in list
-SAVEDS ASM void RE_PrevNext(REG(a1) int *arg)
+SAVEDS ASM void RE_PrevNext(REG(a1,int *arg))
 {  
    BOOL onlynew = arg[1] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
    if (arg[3]) return; // Toolbar qualifier bug work-around
@@ -132,7 +132,7 @@ MakeHook(RE_PrevNextHook, RE_PrevNext);
 ///
 /// RE_PrevNextPageFunc
 //  Flips one page back or forth
-SAVEDS ASM void RE_PrevNextPageFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_PrevNextPageFunc(REG(a1,int *arg))
 {
    int direct = arg[0], winnum = arg[1], visible;
    struct RE_GUIData *gui = &G->RE[winnum]->GUI;
@@ -488,7 +488,7 @@ BOOL RE_Export(int winnum, char *source, char *dest, char *name, int nr, BOOL fo
 ///
 /// RE_MoveFunc
 //  Moves the current message to another folder
-SAVEDS ASM void RE_MoveFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_MoveFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Folder *srcfolder = G->RE[winnum]->Mail.Folder;
@@ -509,7 +509,7 @@ MakeHook(RE_MoveHook, RE_MoveFunc);
 ///
 /// RE_CopyFunc
 //  Copies the current message to another folder
-SAVEDS ASM void RE_CopyFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_CopyFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Folder *srcfolder = G->RE[winnum]->Mail.Folder;
@@ -536,7 +536,7 @@ MakeHook(RE_CopyHook, RE_CopyFunc);
 ///
 /// RE_DeleteFunc
 //  Deletes the current message
-SAVEDS ASM void RE_DeleteFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_DeleteFunc(REG(a1,int *arg))
 {
    BOOL delatonce = arg[0] & (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT);
    int pos, winnum = arg[1];
@@ -555,7 +555,7 @@ MakeHook(RE_DeleteHook, RE_DeleteFunc);
 ///
 /// RE_PrintFunc
 //  Sends the current message or an attachment to the printer
-SAVEDS ASM void RE_PrintFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_PrintFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Part *part;
@@ -584,7 +584,7 @@ MakeHook(RE_PrintHook, RE_PrintFunc);
 ///
 /// RE_SaveFunc
 //  Saves the current message or an attachment to disk
-SAVEDS ASM void RE_SaveFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_SaveFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Part *part;
@@ -664,7 +664,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
 ///
 /// RE_DisplayFunc
 //  Shows message or attachments separately
-SAVEDS ASM void RE_DisplayFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_DisplayFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Part *part;
@@ -702,7 +702,7 @@ void RE_SaveAll(int winnum, char *path)
 ///
 /// RE_SaveAllFunc
 //  Asks user for a directory and saves all attachments there
-SAVEDS ASM void RE_SaveAllFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_SaveAllFunc(REG(a1,int *arg))
 {
    struct Part *part = G->RE[*arg]->FirstPart->Next;
    if (part) if (part->Next) if (ReqFile(ASL_DETACH, G->RE[*arg]->GUI.WI, GetStr(MSG_RE_SaveMessage), 5, C->DetachDir, ""))
@@ -716,7 +716,7 @@ MakeHook(RE_SaveAllHook, RE_SaveAllFunc);
 ///
 /// RE_RemoveAttachFunc
 //  Removes attachments from the current message
-SAVEDS ASM void RE_RemoveAttachFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_RemoveAttachFunc(REG(a1,int *arg))
 {
    struct Mail *mail = G->RE[*arg]->MailPtr;
    struct MailInfo *mi;
@@ -733,7 +733,7 @@ MakeHook(RE_RemoveAttachHook, RE_RemoveAttachFunc);
 ///
 /// RE_NewFunc
 //  Starts a new message based on the current one
-SAVEDS ASM void RE_NewFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_NewFunc(REG(a1,int *arg))
 {
    int mode = arg[0], winnum = arg[2], flags = 0;
    ULONG qual = arg[1];
@@ -758,7 +758,7 @@ MakeHook(RE_NewHook, RE_NewFunc);
 ///
 /// RE_GetAddressFunc
 //  Stores sender address of current message in the address book
-SAVEDS ASM void RE_GetAddressFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_GetAddressFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct Folder *folder = G->RE[winnum]->Mail.Folder;
@@ -770,7 +770,7 @@ MakeHook(RE_GetAddressHook, RE_GetAddressFunc);
 ///
 /// RE_ChangeSubjectFunc
 //  Changes the subject of the current message
-SAVEDS ASM void RE_ChangeSubjectFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_ChangeSubjectFunc(REG(a1,int *arg))
 {
    char subj[SIZE_SUBJECT];
    int winnum = *arg;
@@ -797,7 +797,7 @@ MakeHook(RE_ChangeSubjectHook, RE_ChangeSubjectFunc);
 ///
 /// RE_ExtractKeyFunc
 //  Extracts public PGP key from the current message
-SAVEDS ASM void RE_ExtractKeyFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_ExtractKeyFunc(REG(a1,int *arg))
 {
    char fullfile[SIZE_PATHFILE], options[SIZE_PATHFILE];
    struct Mail *mail = G->RE[*arg]->MailPtr;
@@ -862,7 +862,7 @@ void RE_GetSigFromLog(int winnum, char *decrFor)
 ///
 /// RE_CheckSignatureFunc
 //  Checks validity of a PGP signed message
-SAVEDS ASM void RE_CheckSignatureFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_CheckSignatureFunc(REG(a1,int *arg))
 {
    struct RE_ClassData *re = G->RE[arg[1]];
 
@@ -890,7 +890,7 @@ MakeHook(RE_CheckSignatureHook, RE_CheckSignatureFunc);
 ///
 /// RE_SaveDecryptedFunc
 //  Saves decrypted version of a PGP message
-SAVEDS ASM void RE_SaveDecryptedFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_SaveDecryptedFunc(REG(a1,int *arg))
 {
    struct RE_ClassData *re = G->RE[*arg];
    struct WritePart *p1;
@@ -2182,7 +2182,7 @@ void RE_ClickedOnMessage(char *address)
 ///
 /// RE_DoubleClickFunc
 //  Handles double-clicks on an URL
-SAVEDS ASM BOOL RE_DoubleClickFunc(REG(a1) struct ClickMessage *clickmsg, REG(a2) APTR obj)
+SAVEDS ASM BOOL RE_DoubleClickFunc(REG(a1,struct ClickMessage *clickmsg), REG(a2,APTR obj))
 {
    int pos = clickmsg->ClickPosition;
    char *line = clickmsg->LineContents, *p, *surl;
@@ -2213,7 +2213,7 @@ MakeHook(RE_DoubleClickHook, RE_DoubleClickFunc);
 ///
 /// RE_ShowEnvFunc
 //  Changes display options (header, textstyles, sender info)
-SAVEDS ASM void RE_ShowEnvFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_ShowEnvFunc(REG(a1,int *arg))
 {
    int lev, winnum = arg[0], mode = arg[1];
    struct RE_ClassData *re = G->RE[winnum];
@@ -2240,7 +2240,7 @@ MakeHook(RE_ShowEnvHook, RE_ShowEnvFunc);
 /*** GUI ***/
 /// RE_LV_AttachDspFunc
 //  Attachment listview display hook
-SAVEDS ASM long RE_LV_AttachDspFunc(REG(a2) char **array, REG(a1) struct Part *entry)
+SAVEDS ASM long RE_LV_AttachDspFunc(REG(a2,char **array), REG(a1,struct Part *entry))
 {
    if (entry)
    {
@@ -2256,7 +2256,7 @@ MakeHook(RE_LV_AttachDspFuncHook,RE_LV_AttachDspFunc);
 ///
 /// RE_CloseFunc
 //  Closes a read window
-SAVEDS ASM void RE_CloseFunc(REG(a1) int *arg)
+SAVEDS ASM void RE_CloseFunc(REG(a1,int *arg))
 {
    int winnum = *arg;
    struct RE_ClassData *re = G->RE[winnum];
@@ -2289,7 +2289,7 @@ int RE_Open(int winnum, BOOL real)
 ///
 /// RE_LV_HDspFunc
 //  Header listview display hook
-SAVEDS ASM long RE_LV_HDspFunc(REG(a2) char **array, REG(a1) char *entry)
+SAVEDS ASM long RE_LV_HDspFunc(REG(a2,char **array), REG(a1,char *entry))
 {
    static char hfield[40];
    char *cont = entry;

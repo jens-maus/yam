@@ -244,7 +244,7 @@ MakeHook(CO_PutRUEntryHook,CO_PutRUEntry);
 ///
 /// CO_RemoteToggleFunc
 //  Enables/disables GUI elements for remote filters
-SAVEDS ASM void CO_RemoteToggleFunc(REG(a1) int *arg)
+SAVEDS ASM void CO_RemoteToggleFunc(REG(a1,int *arg))
 {
    BOOL rm = *arg;
    struct CO_GUIData *gui = &G->CO->GUI;
@@ -884,7 +884,7 @@ MakeHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);
 ///
 /// CO_EditSignatFunc
 //  Edits the signature file
-SAVEDS ASM void CO_EditSignatFunc(REG(a1) int *arg)
+SAVEDS ASM void CO_EditSignatFunc(REG(a1,int *arg))
 {
    int sig = GetMUICycle(G->CO->GUI.CY_SIGNAT), modified;
    char buffer[SIZE_COMMAND+SIZE_PATHFILE];
@@ -961,7 +961,7 @@ MakeHook(CO_LastSavedHook,CO_LastSaved);
 ///
 /// CO_ResetToDefaultFunc
 //  Resets configuration (or a part of it)
-SAVEDS ASM void CO_ResetToDefaultFunc(REG(a1) int *arg)
+SAVEDS ASM void CO_ResetToDefaultFunc(REG(a1,int *arg))
 {
    if (*arg) { CO_SetDefaults(CE, -1); G->CO->UpdateAll = TRUE; }
    else CO_SetDefaults(CE, G->CO->VisiblePage);
@@ -997,7 +997,7 @@ LOCAL APTR CO_BuildPage(struct CO_ClassData *data, int page)
 ///
 /// CO_ChangePageFunc
 //  Selects a different section of the configuration
-SAVEDS ASM void CO_ChangePageFunc(REG(a1) int *arg)
+SAVEDS ASM void CO_ChangePageFunc(REG(a1,int *arg))
 {
    struct CO_GUIData *gui = &G->CO->GUI;
    if (*arg < 0 || *arg >= MAXCPAGES) return;
@@ -1024,7 +1024,7 @@ MakeHook(CO_ChangePageHook,CO_ChangePageFunc);
 ///
 /// CO_CloseFunc
 //  Closes configuration window
-SAVEDS ASM void CO_CloseFunc(REG(a1) int *arg)
+SAVEDS ASM void CO_CloseFunc(REG(a1,int *arg))
 {
    if (*arg >= 1)
    {
@@ -1061,7 +1061,7 @@ MakeHook(CO_OpenHook,CO_OpenFunc);
 
 /// CO_PL_DspFunc
 //  Section listview displayhook
-SAVEDS ASM long CO_PL_DspFunc(REG(a0) struct Hook *hook, REG(a2) char **array, REG(a1) struct PageList *entry)
+SAVEDS ASM long CO_PL_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct PageList *entry))
 {
    static char page[SIZE_DEFAULT];
    struct PL_Data *data = (APTR)hook->h_Data;

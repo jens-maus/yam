@@ -1088,7 +1088,7 @@ void TR_DisconnectSMTP(void)
 ///
 /// TR_ChangeStatusFunc
 //  Changes status of selected messages
-SAVEDS ASM void TR_ChangeStatusFunc(REG(a1) int *arg)
+SAVEDS ASM void TR_ChangeStatusFunc(REG(a1,int *arg))
 {
    int id = MUIV_NList_NextSelected_Start;
    struct Mail *mail;
@@ -1717,7 +1717,7 @@ void TR_CompleteMsgList()
 ///
 /// TR_PauseFunc
 //  Pauses or resumes message download
-SAVEDS ASM void TR_PauseFunc(REG(a1) int *arg)
+SAVEDS ASM void TR_PauseFunc(REG(a1,int *arg))
 {
    BOOL pause = *arg;
 
@@ -1733,7 +1733,7 @@ MakeHook(TR_PauseHook, TR_PauseFunc);
 /*** GUI ***/
 /// TR_LV_DspFunc
 //  Message listview display hook
-SAVEDS ASM long TR_LV_DspFunc(REG(a0) struct Hook *hook, REG(a2) char **array, REG(a1) struct Mail *entry)
+SAVEDS ASM long TR_LV_DspFunc(REG(a0,struct Hook *hook), REG(a2,char **array), REG(a1,struct Mail *entry))
 {
    if (entry)
    {

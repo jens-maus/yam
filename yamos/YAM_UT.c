@@ -1740,7 +1740,7 @@ BOOL FileToEditor(char *file, struct Object *editor)
 /*** Hooks ***/
 /// GeneralDesFunc
 //  General purpose destruction hook
-SAVEDS ASM long GeneralDesFunc(REG(a1) void *entry)
+SAVEDS ASM long GeneralDesFunc(REG(a1,void *entry))
 {
    free(entry);
    return 0;
@@ -1749,7 +1749,7 @@ MakeHook(GeneralDesHook, GeneralDesFunc);
 ///
 /// PO_SetPublicKey
 //  Copies public PGP key from list to string gadget
-SAVEDS ASM void PO_SetPublicKey(REG(a1) APTR string, REG(a2) APTR pop)
+SAVEDS ASM void PO_SetPublicKey(REG(a1,APTR string), REG(a2,APTR pop))
 {
    char *var, buf[SIZE_SMALL];
 
@@ -1765,7 +1765,7 @@ MakeHook(PO_SetPublicKeyHook, PO_SetPublicKey);
 ///
 /// PO_ListPublicKeys
 //  Lists keys of public PGP keyring in a popup window
-SAVEDS ASM long PO_ListPublicKeys(REG(a1) APTR string, REG(a2) APTR pop)
+SAVEDS ASM long PO_ListPublicKeys(REG(a1,APTR string), REG(a2,APTR pop))
 {  
    BOOL secret;
    char buf[SIZE_LARGE], *str, p;
@@ -2149,7 +2149,7 @@ void DisposeModule(void *modptr)
       *module = NULL;
    }
 }
-SAVEDS ASM void DisposeModuleFunc(REG(a1) void **arg)
+SAVEDS ASM void DisposeModuleFunc(REG(a1,void **arg))
 {
    DisposeModule(arg[0]);
 }

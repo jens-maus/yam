@@ -643,7 +643,7 @@ void MA_ScanMailBox(struct Folder *folder)
 /*** Hooks ***/
 /// PO_InitFolderList
 //  Creates a popup list of all folders
-SAVEDS ASM long PO_InitFolderList(REG(a2) Object *pop)
+SAVEDS ASM long PO_InitFolderList(REG(a2,Object *pop))
 {  
    int i;
    struct Folder **flist;
@@ -663,7 +663,7 @@ MakeHook(PO_InitFolderListHook, PO_InitFolderList);
 ///
 /// MA_LV_FDspFunc
 //  Folder listview display hook
-SAVEDS ASM long MA_LV_FDspFunc(REG(a2) char **array, REG(a1) struct Folder *entry)
+SAVEDS ASM long MA_LV_FDspFunc(REG(a2,char **array), REG(a1,struct Folder *entry))
 {
    if (entry)
    {
