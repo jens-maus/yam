@@ -154,7 +154,7 @@ OVERLOAD(OM_NEW)
 
 		MUIA_Window_Title, 	"",
 		MUIA_HelpNode, 			"RE_W",
-		MUIA_Window_ID, 		MAKE_ID('R','E','A','D'),
+		MUIA_Window_ID, 		MAKE_ID('R','D','W',data->windowNumber),
 		MUIA_Window_Menustrip, MenustripObject,
 			MenuChild, MenuObject, MUIA_Menu_Title, GetStr(MSG_Message),
 				MenuChild, data->MI_EDIT = Menuitem(GetStr(MSG_MA_MEdit), "E", TRUE, FALSE, RMEN_EDIT),
@@ -267,6 +267,8 @@ OVERLOAD(OM_NEW)
 				End),
 				Child, VGroup,
 					Child, data->readMailGroup = ReadMailGroupObject,
+						MUIA_ReadMailGroup_HGVertWeight, G->Weights[10],
+						MUIA_ReadMailGroup_TGVertWeight, G->Weights[11],
 					End,
 				End,
 			End,
@@ -375,6 +377,22 @@ OVERLOAD(OM_GET)
 
 	return DoSuperMethodA(cl, obj, msg);
 }
+///
+/// OVERLOAD(MUIM_Window_Snapshot)
+OVERLOAD(MUIM_Window_Snapshot)
+{
+	GETDATA;
+
+	// on a snapshot request we save the weights of all our objects here.
+	G->Weights[10] = xget(data->readMailGroup, MUIA_ReadMailGroup_HGVertWeight);
+	G->Weights[11] = xget(data->readMailGroup, MUIA_ReadMailGroup_TGVertWeight);
+
+	// make sure the layout is saved
+	SaveLayout(TRUE);
+
+	return DoSuperMethodA(cl, obj, msg);
+}
+
 ///
 
 /* Private Functions */

@@ -659,7 +659,6 @@ static void Terminate(void)
    if (G->MA)
    {
       MA_UpdateIndexes(FALSE);
-      SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
    }
 

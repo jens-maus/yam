@@ -85,7 +85,7 @@ struct Global
    struct ReadMailData *    ActiveRexxRMData;
 
    LONG                     EdColMap[16];
-   LONG                     Weights[10];
+   LONG                     Weights[12];
    LONG                     TR_Socket;
 
    int                      PGPVersion;

@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/ReadWindow.c, misc: fixed bug where YAM wasn't able to save the
+      vertical weights of the headerlist and texteditor group anymore.
+      Also revised the way YAM will save the different weights of GUI elements.
+      Previously YAM did save the orientation of all GUI elements upon quiting
+      the application. Now YAM will only save these settings if the window
+      is "snapshotted" via the MUI window snapshot option. So if you want to
+      save either the GUI elements setup in the main or read window you have
+      to use the MUI snapshot option instead of having to quit the whole
+      application to make YAM save these settings.
+
 2005-02-19  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/AttachmentImage&Group.c: make YAM save the diskobject of an

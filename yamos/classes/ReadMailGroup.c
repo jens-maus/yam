@@ -178,6 +178,19 @@ OVERLOAD(OM_NEW)
 	struct Data *data;
 	struct Data *tmpData;
 	struct ReadMailData *rmData;
+	LONG hgVertWeight = 5;
+	LONG tgVertWeight = 100;
+
+	// get eventually set attributes first
+	struct TagItem *tags = inittags(msg), *tag;
+	while((tag = NextTagItem(&tags)))
+	{
+		switch(tag->ti_Tag)
+		{
+			ATTR(HGVertWeight) : hgVertWeight = tag->ti_Data; break;
+			ATTR(TGVertWeight) : tgVertWeight = tag->ti_Data; break;
+		}
+	}
 
 	// generate a temporar struct Data to which we store our data and
 	// copy it later on
@@ -204,7 +217,7 @@ OVERLOAD(OM_NEW)
 		GroupSpacing(1),
 		Child, data->headerGroup = HGroup,
 			GroupSpacing(0),
-			MUIA_VertWeight, 5,
+			MUIA_VertWeight, hgVertWeight,
 			MUIA_ShowMe,		 rmData->headerMode != HM_NOHEADER,
 			Child, NListviewObject,
 				MUIA_NListview_NList, data->headerList = NListObject,
@@ -235,6 +248,7 @@ OVERLOAD(OM_NEW)
 			MUIA_ShowMe, rmData->headerMode != HM_NOHEADER,
 		End,
 		Child, data->mailBodyGroup = HGroup,
+			MUIA_VertWeight, tgVertWeight,
 			GroupSpacing(0),
 			Child, data->mailTextObject = MailTextEditObject,
 				InputListFrame,

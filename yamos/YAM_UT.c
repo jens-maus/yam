@@ -3977,25 +3977,29 @@ void LoadLayout(void)
    char *ls;
    char *endptr;
 
+   DB(kprintf("LoadLayout\n");)
+
    // Load the application configuration from the ENV: directory.
    DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENV);
 
    // we encode the different weight factors which are embeeded in a dummy string
    // gadgets:
    //
-   // 0: Horizontal weight of left foldertree in main window.
-   // 1: Horizontal weight of right maillistview in main window.
-   // 2: Vertical weight of top headerlistview in read window
-   // 3: Vertical weight of bottom texteditor field in read window
-   // 4: Horizontal weight of listview group in the glossary window
-   // 5: Horizontal weight of text group in the glossary window
-   // 6: Vertical weight of top right maillistview group in main window.
-   // 7: Vertical weight of bottom right embedded read pane object in the main window.
-   // 8: Vertical weight of top object (headerlist) of the embedded read pane
-   // 9: Vertical weight of bottom object (texteditor) of the embedded read pane
+   // 0:  Horizontal weight of left foldertree in main window.
+   // 1:  Horizontal weight of right maillistview in main window.
+   // 2:  Vertical weight of top headerlistview in read window
+   // 3:  Vertical weight of bottom texteditor field in read window
+   // 4:  Horizontal weight of listview group in the glossary window
+   // 5:  Horizontal weight of text group in the glossary window
+   // 6:  Vertical weight of top right maillistview group in main window.
+   // 7:  Vertical weight of bottom right embedded read pane object in the main window.
+   // 8:  Vertical weight of top object (headerlist) of the embedded read pane
+   // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
+   // 10: Vertical weight of top object (headerlist) in a read window
+   // 11: Vertical weight of bottom object (texteditor) in a read window
 
    if(!*(ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents)))
-     ls = "30 100 25 100 30 100 25 100 5 100";
+     ls = "30 100 25 100 30 100 25 100 5 100 5 100";
 
    // lets get the numbers for each weight factor out of the contents
    // of the fake string gadget
@@ -4048,6 +4052,16 @@ void LoadLayout(void)
    if(!endptr || endptr == ls)
       G->Weights[9] = 100;
 
+   ls = endptr;
+   G->Weights[10] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[10] = 5;
+
+   ls = endptr;
+   G->Weights[11] = strtol(ls, &endptr, 10);
+   if(!endptr || endptr == ls)
+      G->Weights[11] = 100;
+
    // lets set the weight factors to the corresponding GUI elements now
    // if they exist
    set(G->MA->GUI.LV_FOLDERS,     MUIA_HorizWeight,                G->Weights[0]);
@@ -4061,51 +4075,43 @@ void LoadLayout(void)
                                               MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
                                               MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
    }
-
 }
 ///
 /// SaveLayout
 //  Saves column widths to ENV(ARC):MUI/YAM.cfg
 void SaveLayout(BOOL permanent)
 {
-   char buf[SIZE_DEFAULT];
+   char buf[SIZE_DEFAULT+1];
 
-   // get the weights according to their GUI elements
-   G->Weights[0] = xget(G->MA->GUI.LV_FOLDERS,      MUIA_HorizWeight);
-   G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW,     MUIA_HorizWeight);
-   G->Weights[6] = xget(G->MA->GUI.LV_MAILS,        MUIA_VertWeight);
-
-   // if the embedded read pane objects are currently active we save their weight values
-   if(C->EmbeddedReadPane)
-   {
-     G->Weights[7] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight);
-     G->Weights[8] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_HGVertWeight);
-     G->Weights[9] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_TGVertWeight);
-   }
+   DB(kprintf("SaveLayout: %ld\n", permanent);)
 
    // we encode the different weight factors which are embeeded in a dummy string
    // gadgets:
    //
-   // 0: Horizontal weight of left foldertree in main window.
-   // 1: Horizontal weight of right maillistview in main window.
-   // 2: Vertical weight of top headerlistview in read window
-   // 3: Vertical weight of bottom texteditor field in read window
-   // 4: Horizontal weight of listview group in the glossary window
-   // 5: Horizontal weight of text group in the glossary window
-   // 6: Vertical weight of top right maillistview group in main window.
-   // 7: Vertical weight of bottom right embedded read pane object in the main window.
-   // 8: Vertical weight of top object (headerlist) of the embedded read pane
-   // 9: Vertical weight of bottom object (texteditor) of the embedded read pane
-   sprintf(buf, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
-                                                           G->Weights[1],
-                                                           G->Weights[2],
-                                                           G->Weights[3],
-                                                           G->Weights[4],
-                                                           G->Weights[5],
-                                                           G->Weights[6],
-                                                           G->Weights[7],
-                                                           G->Weights[8],
-                                                           G->Weights[9]);
+   // 0:  Horizontal weight of left foldertree in main window.
+   // 1:  Horizontal weight of right maillistview in main window.
+   // 2:  Vertical weight of top headerlistview in read window
+   // 3:  Vertical weight of bottom texteditor field in read window
+   // 4:  Horizontal weight of listview group in the glossary window
+   // 5:  Horizontal weight of text group in the glossary window
+   // 6:  Vertical weight of top right maillistview group in main window.
+   // 7:  Vertical weight of bottom right embedded read pane object in the main window.
+   // 8:  Vertical weight of top object (headerlist) of the embedded read pane
+   // 9:  Vertical weight of bottom object (texteditor) of the embedded read pane
+   // 10: Vertical weight of top object (headerlist) in a read window
+   // 11: Vertical weight of bottom object (texteditor) in a read window
+   sprintf(buf, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
+                                                                   G->Weights[1],
+                                                                   G->Weights[2],
+                                                                   G->Weights[3],
+                                                                   G->Weights[4],
+                                                                   G->Weights[5],
+                                                                   G->Weights[6],
+                                                                   G->Weights[7],
+                                                                   G->Weights[8],
+                                                                   G->Weights[9],
+                                                                   G->Weights[10],
+                                                                   G->Weights[11]);
 
    setstring(G->MA->GUI.ST_LAYOUT, buf);
    DoMethod(G->App, MUIM_Application_Save, MUIV_Application_Save_ENV);
