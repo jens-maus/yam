@@ -833,6 +833,9 @@ static BOOL FO_FoldernameRequest(char *string)
       DoMethod(st_di, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
       DoMethod(wi, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->App, 2, MUIM_Application_ReturnID, 3);
 
+      // lets collect the waiting returnIDs now
+      COLLECT_RETURNIDS;
+
       if (!SafeOpenWindow(wi)) ret_code = 0;
 
       while (ret_code == -1)
@@ -854,6 +857,9 @@ static BOOL FO_FoldernameRequest(char *string)
          }
          if (ret_code == -1 && signals) Wait(signals);
       }
+
+      // now lets reissue the collected returnIDs again
+      REISSUE_RETURNIDS;
 
       path = (STRPTR)xget(st_pa, MUIA_String_Contents);
 

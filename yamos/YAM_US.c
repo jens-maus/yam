@@ -206,6 +206,10 @@ BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
             set(G->AY_Group, MUIA_Group_ActivePage, 1);
             set(G->AY_Win, MUIA_Window_ActiveObject, button0);
             set(G->AY_Win, MUIA_Window_Open, TRUE);
+
+            // lets collect the waiting returnIDs now
+            COLLECT_RETURNIDS;
+
             while (user == -1)
             {
                ULONG signals;
@@ -216,6 +220,10 @@ BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
                if ((i = DoMethod(G->App, MUIM_Application_Input, &signals)-ID_LOGIN) >= 0 && i < G->Users.Num) user = i;
                else if (signals) Wait(signals);
             }
+
+            // now lets reissue the collected returnIDs again
+            REISSUE_RETURNIDS;
+
             set(G->AY_Group, MUIA_Group_ActivePage, 0);
             DoMethod(G->AY_List, MUIM_Group_InitChange);
             DoMethod(G->AY_List, OM_REMMEMBER, group);
