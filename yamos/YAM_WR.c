@@ -1093,7 +1093,7 @@ BOOL WriteOutMessage(struct Compose *comp)
       if (comp->DelSend) EmitHeader(fh, "X-YAM-Options", "delsent");
       return WR_Bounce(fh, comp);
    }
-   if (comp->Mode == NEW_SAVEDEC)
+   else if (comp->Mode == NEW_SAVEDEC)
    {
       if (!WR_SaveDec(fh, comp)) return FALSE;
       else goto mimebody;
