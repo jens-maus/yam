@@ -51,6 +51,10 @@ struct addrinfo {
 struct sockaddr;
 struct addrinfo;
 
+#ifndef htons
+#define htons(x) (x)
+#endif
+
 #include "default-align.h"
 
 #include <exec/types.h>
