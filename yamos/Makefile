@@ -32,7 +32,7 @@ TARGET	= YAM
 CC	= gcc
 RM	= rm -f
 CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
-CFLAGS	= -I./includes -c
+CFLAGS	= -I./includes -I/include -I./ -c -Wall
 LDFLAGS	= -noixemul -mstackextend
 LDLIBS	= -lmui
 

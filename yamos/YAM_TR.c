@@ -1333,27 +1333,24 @@ static BOOL TR_ConnectESMTP(void)
       /* Get return code. */
       if(ReadLine(SMTPSocket, buffer, SIZE_LINE) == 334)
       {
-        unsigned char digest[16];
-        int i;
+        ULONG digest[4]; // 16 chars
+        char buf[512];
+
+        char *login = C->SMTP_AUTH_User;
+        char *password = C->SMTP_AUTH_Pass;
   
         strncpy(challenge, &buffer[4], 511);
         challenge[511]=0;
+
         decode64(challenge, challenge, challenge+strlen(challenge));
-  
-        hmac_md5(challenge, strlen(challenge), C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass), digest);
 
-        len=sprintf(challenge,"%s ", C->SMTP_AUTH_User);
+        hmac_md5(challenge, strlen(challenge), password, strlen(password), (char *)digest);
 
-        for(i = 0; i < 16; ++i)
-        {
-          len += sprintf(challenge+len, "%02x", digest[i]);
-        }
-        challenge[len] = 0;
-        challenge[len+1] = 0;
-        challenge[len+2] = 0;
-        encode64(challenge,buffer,len);
-        strcat(buffer,"\r\n");
-  
+        sprintf(buf, "%s %08lx%08lx%08lx%08lx%c%c", login, digest[0], digest[1], digest[2], digest[3], 0, 0);
+
+        encode64(buf, buffer, strlen(buf));
+        strcat(buffer, "\r\n");
+
         /* Send AUTH response */
         if(!(TR_SendDat(buffer))) return FALSE;
 

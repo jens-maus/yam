@@ -1,3 +1,10 @@
+2002-04-21  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed serious bug in hmac_md5() function were we replaced bcopy() with
+      memcpy() and overwritten the key string, because a bcopy() is per
+      define a memmove(). Now the CRAM-MD5 authentification with ESMTP
+      servers should work again.
+
 2002-04-19  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed a TCP/IP issue flaw within the TR_Connect() function were it could

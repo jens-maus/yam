@@ -35,12 +35,12 @@ struct MD5Context
   unsigned char buffer[64];
 };
 
-void MD5Init(struct MD5Context *);
-void MD5Update(struct MD5Context *, unsigned char *, unsigned int);
-void MD5Final(unsigned char [16], struct MD5Context *);
+void MD5Init(struct MD5Context *ctx);
+void MD5Update(struct MD5Context *ctx, unsigned char const *buf, unsigned len);
+void MD5Final(unsigned char digest[16], struct MD5Context *ctx);
+void MD5Transform(unsigned long buf[4], unsigned long const in[16]);
 
-void hmac_md5(unsigned char *text, int text_len, unsigned char *key, int key_len,
-unsigned char digest[16]);
+void hmac_md5(unsigned char *text, int text_len, unsigned char *key, int key_len, unsigned char digest[16]);
 
 #endif /* YAM_MD5_H */
 
