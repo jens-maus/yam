@@ -4450,7 +4450,7 @@ HOOKPROTO(putCharFunc, void, struct Locale *locale, int c)
   tmp = (char **)(&hook->h_Data);
   (*tmp)++;
 }
-MakeHook(putCharHook, putCharFunc);
+MakeStaticHook(putCharHook, putCharFunc);
 ///
 
 /// SPrintF
