@@ -3333,7 +3333,7 @@ struct MA_ClassData *MA_New(void)
                   MUIA_CycleChain, 1,
                   MUIA_HorizWeight, 30,
                   MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
-                  MUIA_NListview_NList, data->GUI.NL_FOLDERS = NewObject(CL_FolderList->mcc_Class,NULL,
+                  MUIA_NListview_NList, data->GUI.NL_FOLDERS = MainFolderListtreeObject,
                      InputListFrame,
 //                     MUIA_NList_MinColSortable      , 0,
 //                     MUIA_NList_TitleClick          , TRUE,

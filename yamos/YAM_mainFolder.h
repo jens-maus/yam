@@ -82,12 +82,6 @@ struct ExtendedMail
    char             IRTMsgID[SIZE_MSGID];
 };
 
-// FolderList class instance data
-struct FL_Data
-{
-   Object *context_menu;
-};
-
 extern struct Data2D Header;
 extern struct Hook   MA_ChangeFolderHook;
 extern struct Hook   MA_FlushIndexHook;
@@ -110,9 +104,5 @@ BOOL  MA_SaveIndex(struct Folder *folder);
 BOOL  MA_ScanMailBox(struct Folder *folder);
 void  MA_UpdateIndexes(BOOL initial);
 void  MA_UpdateInfoBar(struct Folder *);
-
-// real methods (will be separated later in own FL class
-ULONG MA_FLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_ContextMenuBuild *msg);
-ULONG MA_FLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_ContextMenuChoice *msg);
 
 #endif /* YAM_MAINFOLDER_H */

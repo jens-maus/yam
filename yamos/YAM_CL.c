@@ -70,7 +70,6 @@ struct BC_Data
 
 /*** Definitions ***/
 struct MUI_CustomClass *CL_BodyChunk    = NULL;
-struct MUI_CustomClass *CL_FolderList   = NULL;
 struct MUI_CustomClass *CL_AttachList   = NULL;
 struct MUI_CustomClass *CL_PageList     = NULL;
 
@@ -198,112 +197,6 @@ DISPATCHERPROTO(WL_Dispatcher)
          break;
    }
    return DoSuperMethodA(cl, obj, msg);
-}
-
-///
-/// FL_Dispatcher (Folder NListtree)
-/*** FL_Dispatcher (Folder NListtree) - Subclass of NList, adds Drag&Drop from message list ***/
-DISPATCHERPROTO(FL_Dispatcher)
-{
-   struct Folder *srcfolder, *dstfolder;
-   struct MUI_NListtree_TreeNode *tn_src, *tn_dst;
-
-   switch (msg->MethodID)
-   {
-      // we need to make sure that everything is disposed
-      case OM_DISPOSE:
-      {
-        struct FL_Data *data = (struct FL_Data *)INST_DATA(cl,obj);
-
-        // make sure that our context menus are also disposed
-        if(data->context_menu) MUI_DisposeObject(data->context_menu);
-      }
-      break;
-
-      // we catch MUIM_DragReport because we want to restrict some dragging for some special objects
-      case MUIM_DragReport:
-      {
-        struct MUIP_DragReport *dr = (struct MUIP_DragReport *)msg;
-        struct MUI_NListtree_TestPos_Result res;
-        struct MUI_NListtree_TreeNode *tn;
-
-        DoMethod(obj, MUIM_NListtree_TestPos, dr->x, dr->y, &res);
-
-        if((tn = res.tpr_TreeNode))
-        {
-          struct Folder *folder = (struct Folder *)tn->tn_User;
-
-          // If we drag a folder on a folder we reject it immediatly because only below or above
-          // is allowed
-          if(dr->obj == obj)
-          {
-            if(folder->Type != FT_GROUP && res.tpr_Type == MUIV_NListtree_TestPos_Result_Onto)
-            {
-              return(MUIV_DragReport_Abort);
-            }
-          }
-          else
-          {
-            // If we drag a mail onto a folder we allow only dragging on and not below or above
-            if(folder->Type == FT_GROUP || res.tpr_Type != MUIV_NListtree_TestPos_Result_Onto)
-            {
-              return(MUIV_DragReport_Abort);
-            }
-          }
-
-          // to rescue the dropping we call the SuperMethod now
-          return(DoSuperMethodA(cl, obj, msg));
-        }
-
-        return(MUIV_DragReport_Abort);
-
-      }
-      break;
-
-      case MUIM_DragQuery:
-      {
-         struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
-
-         if (dq->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
-      }
-      break;
-
-      case MUIM_DragDrop:
-      {
-         struct MUIP_DragDrop *dd = (struct MUIP_DragDrop *)msg;
-
-         // if a folder is dragged on a folder we break here and the SuperClass should handle the msg
-         if (dd->obj == obj) break;
-
-         tn_dst = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_DropTarget);
-         if(!tn_dst) return 0;
-         dstfolder = tn_dst->tn_User;
-
-         tn_src = (struct MUI_NListtree_TreeNode *)xget(obj, MUIA_NListtree_Active);
-         if(!tn_src) return 0;
-         srcfolder = tn_src->tn_User;
-
-         if (dstfolder->Type != FT_GROUP) MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE);
-         return 0;
-      }
-      break;
-
-      // we use the MUI internal methods to create a context menu
-      case MUIM_NList_ContextMenuBuild:
-      {
-        return MA_FLContextMenuBuild(cl, obj, (struct MUIP_NList_ContextMenuBuild *)msg);
-      }
-      break;
-
-      // If the user chooses a item out of the ContextMenu we have to process it.
-      case MUIM_ContextMenuChoice:
-      {
-        return MA_FLContextMenuChoice(cl, obj, (struct MUIP_ContextMenuChoice *)msg);
-      }
-      break;
-   }
-
-   return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
@@ -626,7 +519,6 @@ void ExitClasses(void)
 {
   if(CL_PageList)    { MUI_DeleteCustomClass(CL_PageList);     CL_PageList     = NULL; }
   if(CL_BodyChunk)   { MUI_DeleteCustomClass(CL_BodyChunk);    CL_BodyChunk    = NULL; }
-  if(CL_FolderList)  { MUI_DeleteCustomClass(CL_FolderList);   CL_FolderList   = NULL; }
   if(CL_AttachList)  { MUI_DeleteCustomClass(CL_AttachList);   CL_AttachList   = NULL; }
 }
 
@@ -636,7 +528,6 @@ void ExitClasses(void)
 BOOL InitClasses(void)
 {
   if((CL_AttachList   = CreateMCC(MUIC_NList,     NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher))))
-  if((CL_FolderList   = CreateMCC(MUIC_NListtree, NULL, sizeof(struct FL_Data), ENTRY(FL_Dispatcher))))
   if((CL_BodyChunk    = CreateMCC(MUIC_Bodychunk, NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher))))
   if((CL_PageList     = CreateMCC(MUIC_List,      NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher))))
   {
