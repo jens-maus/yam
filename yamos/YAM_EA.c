@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -137,10 +137,9 @@ void EA_Setup(int winnum, struct ABEntry *ab)
 //  Adds a single entry to the member list by Drag&Drop
 void EA_AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn)
 {
-   struct ABEntry *ab;
-   int dropmark;
-   ab = tn->tn_User;
-   get(obj, MUIA_List_DropMark, &dropmark);
+   struct ABEntry *ab = tn->tn_User;
+   int dropmark = xget(obj, MUIA_List_DropMark);
+
    DoMethod(obj, MUIM_List_InsertSingle, ab->Alias ? ab->Alias : ab->RealName, dropmark);
 }
 
@@ -175,9 +174,8 @@ MakeStaticHook(EA_GetEntryHook, EA_GetEntry);
 HOOKPROTONHNO(EA_AddFunc, void, int *arg)
 {
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
-   char *buf;
+   char *buf = (char *)xget(gui->ST_MEMBER, MUIA_String_Contents);
 
-   get(gui->ST_MEMBER, MUIA_String_Contents, &buf);
    if (*buf)
    {
       DoMethod(gui->LV_MEMBER, MUIM_List_InsertSingle, buf, MUIV_List_Insert_Bottom);
@@ -194,14 +192,16 @@ MakeStaticHook(EA_AddHook, EA_AddFunc);
 HOOKPROTONHNO(EA_PutEntry, void, int *arg)
 {
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
-   char *buf;
-   int active;
+   int active = xget(gui->LV_MEMBER, MUIA_List_Active);
 
-   get(gui->LV_MEMBER, MUIA_List_Active, &active);
-   if (active == MUIV_List_Active_Off) DoMethod(G->App, MUIM_CallHook, &EA_AddHook, *arg);
+   if(active == MUIV_List_Active_Off)
+   {
+      DoMethod(G->App, MUIM_CallHook, &EA_AddHook, *arg);
+   }
    else
    {
-      get(gui->ST_MEMBER, MUIA_String_Contents, &buf);
+      char *buf = (char *)xget(gui->ST_MEMBER, MUIA_String_Contents);
+
       DoMethod(gui->LV_MEMBER, MUIM_List_InsertSingle, buf, active);
       DoMethod(gui->LV_MEMBER, MUIM_List_Remove, active+1);
    }
@@ -217,8 +217,7 @@ void EA_InsertBelowActive(struct ABEntry *addr, int flags)
   struct MUI_NListtree_TreeNode *node, *list;
 
   // get the active node
-  get(lt, MUIA_NListtree_Active, &node);
-
+  node = (struct MUI_NListtree_TreeNode *)xget(lt, MUIA_NListtree_Active);
   if (node == MUIV_NListtree_Active_Off)
   {
     list = MUIV_NListtree_Insert_ListNode_Root;
@@ -294,16 +293,30 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
    memset(&newaddr, 0, sizeof(struct ABEntry));
    if (G->EA[winnum]->Type)
    {
-      get(gui->ST_ALIAS, MUIA_String_Contents, &str);
-      if (!*str) { ER_NewError(GetStr(MSG_ER_ErrorNoAlias), NULL, NULL); return; }
+      str = (char *)xget(gui->ST_ALIAS, MUIA_String_Contents);
+      if(!*str)
+      {
+        ER_NewError(GetStr(MSG_ER_ErrorNoAlias), NULL, NULL);
+        return;
+      }
    }
    else
    {
-      get(gui->ST_ADDRESS, MUIA_String_Contents, &str);
-      if (!*str) { ER_NewError(GetStr(MSG_ER_ErrorNoAddress), NULL, NULL); return; }
-      get(gui->ST_BIRTHDAY, MUIA_String_Contents, &str);
-      if (*str) if (!(bdate = AB_CompressBD(str))) { ER_NewError(GetStr(MSG_ER_ErrorDOBformat), NULL, NULL); return; }
+      str = (char *)xget(gui->ST_ADDRESS, MUIA_String_Contents);
+      if(!*str)
+      {
+        ER_NewError(GetStr(MSG_ER_ErrorNoAddress), NULL, NULL);
+        return;
+      }
+
+      str = (char *)xget(gui->ST_BIRTHDAY, MUIA_String_Contents);
+      if(*str && !(bdate = AB_CompressBD(str)))
+      {
+        ER_NewError(GetStr(MSG_ER_ErrorDOBformat), NULL, NULL);
+        return;
+      }
    }
+
    set(gui->WI, MUIA_Window_Open, FALSE);
    G->AB->Modified = TRUE;
    if (old) addr = G->EA[winnum]->ABEntry; else addr = &newaddr;
@@ -402,9 +415,9 @@ HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
    BOOL success = FALSE;
    FILE *db;
 
-   get(gui->ST_REALNAME, MUIA_String_Contents, &name);
-   get(gui->ST_ADDRESS, MUIA_String_Contents, &addr);
-   get(gui->ST_HOMEPAGE, MUIA_String_Contents, &homepage);
+   name = (char *)xget(gui->ST_REALNAME, MUIA_String_Contents);
+   addr = (char *)xget(gui->ST_ADDRESS, MUIA_String_Contents);
+   homepage = (char *)xget(gui->ST_HOMEPAGE, MUIA_String_Contents);
    if (*addr || *name)
    {
       strcpy(dbfile, name);
@@ -449,9 +462,11 @@ MakeStaticHook(EA_DownloadPhotoHook, EA_DownloadPhotoFunc);
 //  Launches a browser to view the homepage of the person
 HOOKPROTONHNO(EA_HomepageFunc, void, int *arg)
 {
-   char *url;
-   get(G->EA[*arg]->GUI.ST_HOMEPAGE, MUIA_String_Contents, &url);
-   if (*url) GotoURL(url);
+   char *url = (char *)xget(G->EA[*arg]->GUI.ST_HOMEPAGE, MUIA_String_Contents);
+   if(*url)
+   {
+      GotoURL(url);
+   }
 }
 MakeStaticHook(EA_HomepageHook, EA_HomepageFunc);
 

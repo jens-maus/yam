@@ -143,13 +143,13 @@ HOOKPROTONHNO(WR_PutFileEntry, void, int *arg)
    int winnum = *arg;
    struct Attach *attach = NULL;
    struct WR_GUIData *gui = &G->WR[winnum]->GUI;
-   int ismime;
 
    DoMethod(gui->LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
    if (attach)
    {
-      get(gui->RA_ENCODING, MUIA_Radio_Active, &ismime);
-      attach->IsMIME = ismime == 0;
+      int ismime = xget(gui->RA_ENCODING, MUIA_Radio_Active);
+
+      attach->IsMIME = (ismime == 0);
       GetMUIString(attach->ContentType, gui->ST_CTYPE);
       GetMUIString(attach->Description, gui->ST_DESC);
       DoMethod(gui->LV_ATTACH, MUIM_NList_Redraw, MUIV_NList_Redraw_Active);
@@ -166,7 +166,6 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
    struct FileInfoBlock *fib;
    struct WR_GUIData *gui = &G->WR[winnum]->GUI;
    char *ctype;
-   int encoding;
    BPTR lock;
 
    if (!filename) return FALSE;
@@ -190,11 +189,11 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
    ctype = IdentifyFile(filename);
    if (*ctype)
    {
+      int encoding = xget(gui->RA_ENCODING, MUIA_Radio_Active);
+      attach.IsMIME = (encoding == 0);
+      attach.IsTemp = istemp;
       MyStrCpy(attach.FilePath, filename);
       MyStrCpy(attach.Name, name ? name : (char *)FilePart(filename));
-      get(gui->RA_ENCODING, MUIA_Radio_Active, &encoding);
-      attach.IsMIME = encoding == 0;
-      attach.IsTemp = istemp;
       MyStrCpy(attach.ContentType, ctype);
       nnset(gui->ST_CTYPE, MUIA_String_Contents, attach.ContentType);
       nnset(gui->ST_DESC, MUIA_String_Contents, attach.Description);
@@ -1544,13 +1543,15 @@ void WR_Cleanup(int winnum)
 /*** WR_CancelFunc - User clicked the Cancel button ***/
 HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
 {
-   int haschanged, winnum = *arg;
+   int winnum = *arg;
+
    if (G->WR[winnum]->Mode != NEW_BOUNCE)
    {
       if (winnum < 2)
       {
-         get(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, &haschanged);
+         int haschanged = xget(G->WR[winnum]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged);
          if (haschanged)
+         {
             switch (MUI_Request(G->App, G->WR[winnum]->GUI.WI, 0, NULL, GetStr(MSG_WR_DiscardChangesGad), GetStr(MSG_WR_DiscardChanges)))
             {
                case 0: return;
@@ -1558,6 +1559,7 @@ HOOKPROTONHNO(WR_CancelFunc, void, int *arg)
                        return;
                case 2: break;
             }
+         }
       }
       WR_Cleanup(winnum);
    }
@@ -1995,7 +1997,7 @@ void WR_App(int winnum, struct AppMessage *amsg)
    int i, mode;
    char buf[SIZE_PATHFILE];
 
-   get(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, &mode);
+   mode = xget(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage);
    for (i = 0; i < amsg->am_NumArgs; i++)
    {
       ap = &amsg->am_ArgList[i];
@@ -2135,7 +2137,6 @@ static struct WR_ClassData *WR_New(int winnum)
       APTR mi_copy, mi_cut, mi_redo, mi_undo, mi_bold, mi_italic, mi_underl, mi_color;
       APTR strip, mi_autospell, mi_delsend, mi_receipt, mi_dispnoti, mi_addinfo;
       APTR slider = ScrollbarObject, End;
-      int spell;
       ULONG i;
 
       for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
@@ -2397,8 +2398,11 @@ static struct WR_ClassData *WR_New(int winnum)
             End,
          End,
       End;
+
       if (data->GUI.WI)
       {
+         int spell;
+
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
          SetAttrs(data->GUI.ST_TO,
                  MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
@@ -2409,7 +2413,7 @@ static struct WR_ClassData *WR_New(int winnum)
                  MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
                  MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT,
                  TAG_DONE);
-         get(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell, &spell);
+         spell = xget(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell);
          set(mi_autospell, MUIA_Menuitem_Checked, spell);
          set(data->GUI.CY_IMPORTANCE, MUIA_Cycle_Active, 1);
          DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->GUI.RA_ENCODING, data->GUI.ST_CTYPE, data->GUI.ST_DESC, data->GUI.BT_DEL, data->GUI.BT_DISPLAY, NULL);

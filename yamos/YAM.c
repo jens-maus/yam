@@ -254,8 +254,8 @@ static BOOL TC_ActiveEditor(int wrwin)
 {
    if (G->WR[wrwin])
    {
-      APTR ao;
-      get(G->WR[wrwin]->GUI.WI, MUIA_Window_ActiveObject, &ao);
+      APTR ao = (APTR)xget(G->WR[wrwin]->GUI.WI, MUIA_Window_ActiveObject);
+
       return (BOOL)(ao==G->WR[wrwin]->GUI.TE_EDIT);
    }
    return FALSE;
@@ -1306,7 +1306,8 @@ static void SendWaitingMail(void)
 
    MA_ChangeFolder(fo, TRUE);
 
-   get(G->App, MUIA_Application_Iconified, &hidden);
+   hidden = xget(G->App, MUIA_Application_Iconified);
+
    if (hidden || MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq)))
       MA_Send(SEND_ALL);
 }
@@ -1637,7 +1638,7 @@ int main(int argc, char **argv)
         Child, RectangleObject, End,
       End;
 
-      get(G->AY_Win, MUIA_Window_RootObject, &root);
+      root = (Object *)xget(G->AY_Win, MUIA_Window_RootObject);
       if(root && grp && DoMethod(root, MUIM_Group_InitChange))
       {
         DoMethod(root, OM_ADDMEMBER, grp);

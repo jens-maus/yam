@@ -30,6 +30,7 @@ TARGET	= YAM.os3
 # Programs
 CC	= m68k-amigaos-gcc
 STRIP	= m68k-amigaos-strip
+OBJDUMP = m68k-amigaos-objdump
 RM	= rm -f
 RMDIR	= rm -rf
 MKDIR	= mkdir
@@ -49,10 +50,10 @@ OBJDIR    = .obj_os3
 CPU	= -m68020-60 -msoft-float
 CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 WARN	= -W -Wall
-OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel -funroll-loops
+OPTFLAGS= -O3 -fomit-frame-pointer -funroll-loops -ftracer
 DEBUG	= -DDEBUG -g3 -O0
 CFLAGS  = -I. -I./includes -DNO_INLINE_STDARG $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
-LDFLAGS = -noixemul -mstackextend -fbaserel $(CPU)
+LDFLAGS = -noixemul -mstackextend $(CPU)
 LDLIBS  = -ldebug -lmui -lm
 
 # Special flags
@@ -134,6 +135,9 @@ $(TARGET): $(OBJS)
 	@$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
 	@$(STRIP) -o $@ $@.debug
 	@$(CHMOD) a+x $@
+
+dump:
+	-$(OBJDUMP) --section-headers --all-headers --reloc --disassemble-all $(TARGET).debug > $(TARGET).dump
 
 clean:
 	-$(RM) $(TARGET) $(TARGET).debug $(OBJS)

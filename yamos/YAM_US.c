@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -255,7 +255,8 @@ HOOKPROTONHNONP(US_DelFunc, void)
    int i, m;
    struct User *user;
    APTR lv = G->US->GUI.LV_USERS;
-   get(lv, MUIA_NList_Active, &i);
+
+   i = xget(lv, MUIA_NList_Active);
    DoMethod(lv, MUIM_NList_GetEntry, i, &user);
    if (*user->MailDir)
    {
@@ -273,8 +274,7 @@ HOOKPROTONHNONP(US_AddFunc, void)
 {
    struct US_GUIData *gui = &G->US->GUI;
    struct User user;
-   int n;
-   get(gui->LV_USERS, MUIA_NList_Entries, &n);
+   int n = xget(gui->LV_USERS, MUIA_NList_Entries);
    if (n < MAXUSERS-1)
    {
       memset(&user, 0, sizeof(struct User));
@@ -373,9 +373,8 @@ HOOKPROTONHNONP(US_GetUSEntryFunc, void)
    struct User *user;
    struct US_GUIData *gui = &G->US->GUI;
    BOOL notallowed, iscurrent, limited = !G->US->Supervisor;
-   int act;
+   int act = xget(gui->LV_USERS, MUIA_NList_Active);
 
-   get(gui->LV_USERS, MUIA_NList_Active, &act);
    if (act != MUIV_NList_Active_Off)
    {
       DoMethod(gui->LV_USERS, MUIM_NList_GetEntry, act, &user);

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2003 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -435,14 +435,14 @@ DECLARE(Resolve) // ULONG flags
 
 	set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 
-	do {
-
+	do
+	{
 		struct MUI_NListtree_TreeNode *tn;
 		struct ABEntry *entry;
 		BOOL quote = FALSE;
 
 		list_expansion = FALSE;
-		get(obj, MUIA_String_Contents, &s);
+		s = (STRPTR)xget(obj, MUIA_String_Contents);
 		if(!(contents = tmp = strdup(s)))
 			break;
 
@@ -576,7 +576,7 @@ DECLARE(AddRecipient) // STRPTR address
 	if(!data->MultipleRecipients)
 		nnset(obj, MUIA_String_Contents, NULL);
 
-	if(get(obj, MUIA_String_Contents, &contents), contents[0] != '\0')
+	if((contents = (STRPTR)xget(obj, MUIA_String_Contents)), contents[0] != '\0')
 		DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
 
 	DoMethod(obj, MUIM_BetterString_Insert, msg->address, MUIV_BetterString_Insert_EndOfString);
@@ -592,8 +592,9 @@ DECLARE(RecipientStart)
 	STRPTR buf;
 	ULONG pos, i;
 	BOOL quote = FALSE;
-	get(obj, MUIA_String_Contents, &buf);
-	get(obj, MUIA_String_BufferPos, &pos);
+
+	buf = (STRPTR)xget(obj, MUIA_String_Contents);
+	pos = xget(obj, MUIA_String_BufferPos);
 
 	for(i = 0; i < pos; i++)
 	{
@@ -627,8 +628,9 @@ DECLARE(CurrentRecipient)
 		data->CurrentRecipient = NULL;
 	}
 
-	get(obj, MUIA_String_Contents, &buf);
-	get(obj, MUIA_String_BufferPos, &pos);
+	buf = (STRPTR)xget(obj, MUIA_String_Contents);
+	pos = xget(obj, MUIA_String_BufferPos);
+
 	if((buf[pos] == '\0' || buf[pos] == ',') && (data->CurrentRecipient = strdup(&buf[DoMethod(obj, MUIM_Recipientstring_RecipientStart)])) && (end = strchr(data->CurrentRecipient, ',')))
 		end[0] = '\0';
 

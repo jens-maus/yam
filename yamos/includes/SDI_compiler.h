@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.15 (02.03.2004)
+        Versionstring:  $VER: SDI_compiler.h 1.16 (07.03.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler stuff
@@ -27,6 +27,7 @@
  1.14  02.03.04 : added UNUSED which can be used to specify a function parameter
                   or variable as "unused" which will not cause any compiler warning.
  1.15  02.03.04 : added special INLINE define for gcc > 3.0 version
+ 1.17  07.03.04 : changed INLINE definition of gcc <= 2.95.3 to be static aswell.
 */
 
 /*
@@ -132,7 +133,7 @@
   #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 0)
     #define INLINE static __inline __attribute__((always_inline))
   #else
-    #define INLINE __inline__
+    #define INLINE static __inline__
   #endif
   /* we have do distinguish between AmigaOS4 and MorphOS */
   #if defined(__amigaos4__)

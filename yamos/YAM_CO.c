@@ -138,12 +138,19 @@ MakeHook(CO_AddRuleHook,CO_AddRule);
 //  Deletes an entry from the rule list
 HOOKPROTONHNONP(CO_DelRule, void)
 {
-   int i, p;
-   get(G->CO->GUI.LV_RULES, MUIA_List_Active, &p);
-   if (p != MUIV_List_Active_Off)
+   int p = xget(G->CO->GUI.LV_RULES, MUIA_List_Active);
+
+   if(p != MUIV_List_Active_Off)
    {
+      int i;
+
       DoMethod(G->CO->GUI.LV_RULES, MUIM_List_Remove, p);
-      for (i = p+1; i < MAXRU; i++) CE->RU[i-1] = CE->RU[i];
+
+      for(i=p+1; i < MAXRU; i++)
+      {
+        CE->RU[i-1] = CE->RU[i];
+      }
+
       CE->RU[i-1] = 0;
    }
 }
@@ -255,7 +262,7 @@ HOOKPROTONHNONP(CO_PutRUEntry, void)
    DoMethod(gui->LV_RULES, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &rule);
    if (rule)
    {
-      int i, m, rm = GetMUICheck(gui->CH_REMOTE);
+      int i, rm = GetMUICheck(gui->CH_REMOTE);
 
       GetMUIString(rule->Name, gui->ST_RNAME);
       rule->Remote = rm == 1;
@@ -277,11 +284,15 @@ HOOKPROTONHNONP(CO_PutRUEntry, void)
       GetMUIString(rule->ReplyFile , gui->ST_ARESPONSE);
       GetMUIString(rule->ExecuteCmd, gui->ST_AEXECUTE);
       GetMUIString(rule->PlaySound,  gui->ST_APLAY);
-      get(gui->TX_MOVETO, MUIA_Text_Contents, &tx); strcpy(rule->MoveTo, tx);
+
+      tx = (char *)xget(gui->TX_MOVETO, MUIA_Text_Contents);
+      strcpy(rule->MoveTo, tx);
+
       for (i = 0; i < 2; i++)
       {
          struct SearchGroup *sg = &(gui->GR_SEARCH[i+2*rm]);
-         get(sg->PG_SRCHOPT, MUIA_Group_ActivePage, &m);
+         int m = xget(sg->PG_SRCHOPT, MUIA_Group_ActivePage);
+
          rule->Field[i]      = GetMUICycle(sg->CY_MODE);
          rule->SubField[i]   = GetMUIRadio(sg->RA_ADRMODE);
          GetMUIString(rule->CustomField[i], sg->ST_FIELD);
@@ -377,15 +388,21 @@ MakeHook(CO_AddPOP3Hook,CO_AddPOP3);
 //  Deletes an entry from the POP3 account list
 HOOKPROTONHNONP(CO_DelPOP3, void)
 {
-   int i, p, e;
    struct CO_GUIData *gui = &G->CO->GUI;
+   int p = xget(gui->LV_POP3, MUIA_List_Active);
+   int e = xget(gui->LV_POP3, MUIA_List_Entries);
 
-   get(gui->LV_POP3, MUIA_List_Active, &p);
-   get(gui->LV_POP3, MUIA_List_Entries, &e);
    if (p != MUIV_List_Active_Off && e > 1)
    {
+      int i;
+
       DoMethod(gui->LV_POP3, MUIM_List_Remove, p);
-      for (i = p+1; i < MAXP3; i++) CE->P3[i-1] = CE->P3[i];
+
+      for(i=p+1; i < MAXP3; i++)
+      {
+        CE->P3[i-1] = CE->P3[i];
+      }
+
       CE->P3[i-1] = NULL;
    }
 }
@@ -530,13 +547,20 @@ MakeHook(CO_AddMimeViewHook,CO_AddMimeView);
 //  Deletes an entry from the MIME viewer list
 HOOKPROTONHNONP(CO_DelMimeView, void)
 {
-   int i, p;
-   get(G->CO->GUI.LV_MIME, MUIA_List_Active, &p);
-   if (p != MUIV_List_Active_Off)
+   int p = xget(G->CO->GUI.LV_MIME, MUIA_List_Active);
+
+   if(p != MUIV_List_Active_Off)
    {
+      int i;
+
       DoMethod(G->CO->GUI.LV_MIME, MUIM_List_Remove, p);
-      for (i = p+1; i < MAXMV-1; i++) CE->MV[i] = CE->MV[i+1];
-      CE->MV[i] = 0;
+
+      for(i=p+1; i < MAXMV-1; i++)
+      {
+        CE->MV[i] = CE->MV[i+1];
+      }
+
+      CE->MV[i] = NULL;
    }
 }
 MakeHook(CO_DelMimeViewHook,CO_DelMimeView);
@@ -548,15 +572,13 @@ HOOKPROTONHNONP(CO_GetMVEntry, void)
 {
    struct MimeView *mv = NULL;
    struct CO_GUIData *gui = &G->CO->GUI;
-   int act = 0;
 
    DoMethod(gui->LV_MIME, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &mv);
-   if (mv)
+   if(mv)
    {
       nnset(gui->ST_CTYPE, MUIA_String_Contents, mv->ContentType);
       nnset(gui->ST_EXTENS, MUIA_String_Contents, mv->Extension);
       nnset(gui->ST_COMMAND, MUIA_String_Contents, mv->Command);
-      get(gui->LV_MIME, MUIA_List_Active, &act);
    }
    set(gui->GR_MIME, MUIA_Disabled, !mv);
    set(gui->BT_MDEL, MUIA_Disabled, !mv);
@@ -588,10 +610,10 @@ MakeHook(CO_PutMVEntryHook,CO_PutMVEntry);
 //  Fills form with data from selected list entry
 HOOKPROTONHNONP(CO_GetRXEntry, void)
 {
-   int act;
    struct CO_GUIData *gui = &G->CO->GUI;
    struct RxHook *rh;
-   get(gui->LV_REXX, MUIA_List_Active, &act);
+   int act = xget(gui->LV_REXX, MUIA_List_Active);
+
    rh = &(CE->RX[act]);
    nnset(gui->ST_RXNAME, MUIA_String_Contents, act < 10 ? rh->Name : "");
    nnset(gui->ST_SCRIPT, MUIA_String_Contents, rh->Script);
@@ -608,9 +630,9 @@ MakeHook(CO_GetRXEntryHook,CO_GetRXEntry);
 //  Fills form data into selected list entry
 HOOKPROTONHNONP(CO_PutRXEntry, void)
 {
-   int act;
    struct CO_GUIData *gui = &G->CO->GUI;
-   get(gui->LV_REXX, MUIA_List_Active, &act);
+   int act = xget(gui->LV_REXX, MUIA_List_Active);
+
    if (act != MUIV_List_Active_Off)
    {
       struct RxHook *rh = &(CE->RX[act]);
@@ -1063,12 +1085,16 @@ MakeStaticHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);
 //  Edits the signature file
 HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 {
-   int sig = GetMUICycle(G->CO->GUI.CY_SIGNAT), modified;
+   int sig = GetMUICycle(G->CO->GUI.CY_SIGNAT);
+   int modified;
    char buffer[SIZE_COMMAND+SIZE_PATHFILE];
    APTR ed = G->CO->GUI.TE_SIGEDIT;
 
-   get(ed, MUIA_TextEditor_HasChanged, &modified);
-   if (modified) EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]), NULL);
+   modified = xget(ed, MUIA_TextEditor_HasChanged);
+   if(modified)
+   {
+      EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]), NULL);
+   }
 
    if(*arg)
    {

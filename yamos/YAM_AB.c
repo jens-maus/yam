@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -260,11 +260,10 @@ char *AB_CompleteAlias(char *text)
 //  Adds a new recipient to a recipient field
 void AB_InsertAddress(APTR string, char *alias, char *name, char *address)
 {
-   char *p;
-   get(string, MUIA_UserData, &p);
+   char *p = (char *)xget(string, MUIA_UserData);
    if (p)
    {
-      get(string, MUIA_String_Contents, &p);
+      p = (char *)xget(string, MUIA_String_Contents);
       if (*p) DoMethod(string, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString, TAG_DONE);
    }
    else setstring(string, "");

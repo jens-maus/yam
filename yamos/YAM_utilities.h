@@ -305,7 +305,7 @@ char *   GetFolderDir(struct Folder *fo);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
 char *   GetMailFile(char *string, struct Folder *folder, struct Mail *mail);
 struct MailInfo *GetMailInfo(struct Mail *smail);
-ULONG    xget(Object *obj, ULONG attr);
+INLINE ULONG xget(Object *obj, ULONG attr);
 BOOL     GetMUICheck(Object *obj);
 int      GetMUICycle(Object *obj);
 int      GetMUIInteger(Object *obj);
@@ -381,5 +381,18 @@ BOOL     LoadParsers(void);
 void     SParse(char *);
 LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
 APTR     WhichLV(struct Folder *folder);
+
+// Here we define inline functions that should be inlined by
+// the compiler, if possible.
+
+/// xget()
+//  Gets an attribute value from a MUI object
+INLINE ULONG xget(Object *obj, ULONG attr)
+{
+   ULONG b = 0;
+   get(obj, attr, &b);
+   return b;
+}
+///
 
 #endif /* YAM_UTILITIES_H */

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2003 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -507,12 +507,12 @@ void fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt)
                    {
                       case '\n': fputs("\n ", outfile); break;
                       case '\r': break;
-                      default  : fputc(tt ? (int)tt->Table[(UBYTE)c] : c, outfile); break;
+                      default  : fputc(tt ? (unsigned int)tt->Table[(UBYTE)c] : c, outfile); break;
                    }
                    break;
          case '+': fputc(' ', outfile); break;
          case '=': fputs(" = ", outfile); break;
-         default : fputc(tt ? (int)tt->Table[(UBYTE)c] : c, outfile); break;
+         default : fputc(tt ? (unsigned int)tt->Table[(UBYTE)c] : c, outfile); break;
       }
    }
 }
@@ -554,11 +554,11 @@ void fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt)
             c2 = fgetc(infile);
             c1 = hexchar(c1);
             c2 = hexchar(c2);
-            fputc(tt ? (int)tt->Table[(UBYTE)(c1<<4 | c2)] : c1<<4 | c2, outfile);
+            fputc(tt ? (unsigned int)tt->Table[(UBYTE)(c1<<4 | c2)] : c1<<4 | c2, outfile);
          }
       }
       else if (c1 == '\n') neednewline = TRUE;
-      else fputc(tt ? (int)tt->Table[(UBYTE)c1] : c1, outfile);
+      else fputc(tt ? (unsigned int)tt->Table[(UBYTE)c1] : c1, outfile);
    }
    if (neednewline) fputc('\n', outfile);
 }

@@ -715,9 +715,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 //  Fills form data of current section with data from configuration structure
 void CO_GetConfig(void)
 {
+   int i;
    struct CO_GUIData *gui = &G->CO->GUI;
-   int i, modified;
-   struct MUI_PenSpec *ps;
 
    switch (G->CO->VisiblePage)
    {
@@ -760,12 +759,12 @@ void CO_GetConfig(void)
          GetMUIString(CE->ShortHeaders        ,gui->ST_HEADERS);
          CE->ShowSenderInfo    = GetMUICycle  (gui->CY_SENDERINFO);
          CE->SigSepLine        = GetMUICycle  (gui->CY_SIGSEPLINE);
-         get(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec, &ps); CE->ColoredText = *ps;
-         get(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec, &ps); CE->Color1stLevel = *ps;
-         get(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec, &ps); CE->Color2ndLevel = *ps;
-         get(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec, &ps); CE->Color3rdLevel = *ps;
-         get(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec, &ps); CE->Color4thLevel = *ps;
-         get(gui->CA_COLURL,   MUIA_Pendisplay_Spec, &ps); CE->ColorURL = *ps;
+         CE->ColoredText       = *(struct MUI_PenSpec *)xget(gui->CA_COLTEXT,  MUIA_Pendisplay_Spec);
+         CE->Color1stLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL1QUOT, MUIA_Pendisplay_Spec);
+         CE->Color2ndLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL2QUOT, MUIA_Pendisplay_Spec);
+         CE->Color3rdLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL3QUOT, MUIA_Pendisplay_Spec);
+         CE->Color4thLevel     = *(struct MUI_PenSpec *)xget(gui->CA_COL4QUOT, MUIA_Pendisplay_Spec);
+         CE->ColorURL          = *(struct MUI_PenSpec *)xget(gui->CA_COLURL,   MUIA_Pendisplay_Spec);
          CE->DisplayAllTexts   = GetMUICheck  (gui->CH_ALLTEXTS);
          CE->FixedFontEdit     = GetMUICheck  (gui->CH_FIXFEDIT);
          CE->WrapHeader        = GetMUICheck  (gui->CH_WRAPHEAD);
@@ -812,8 +811,8 @@ void CO_GetConfig(void)
          CE->UseSignature      = GetMUICheck  (gui->CH_USESIG);
          GetMUIString(CE->TagsFile            ,gui->ST_TAGFILE);
          GetMUIString(CE->TagsSeparator       ,gui->ST_TAGSEP);
-         get(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged, &modified);
-         if (modified) EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]), NULL);
+         if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged))
+            EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]), NULL);
          break;
       case 8:
          CE->FolderCols = 1; for (i = 1; i < FOCOLNUM; i++) if (GetMUICheck(gui->CH_FCOLS[i])) CE->FolderCols += (1<<i);

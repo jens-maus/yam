@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2003 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -3492,7 +3492,7 @@ HOOKPROTONHNO(RE_ShowEnvFunc, void, int *arg)
    struct RE_ClassData *re = G->RE[winnum];
    long opt;
 
-   get(re->GUI.SL_TEXT, MUIA_Prop_First, &lev);
+   lev = xget(re->GUI.SL_TEXT, MUIA_Prop_First);
    switch (mode)
    {
       case 0: case 1: case 2: re->Header = mode;

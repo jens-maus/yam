@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-03-07  Jens Langner <Jens.Langner@light-speed.de>
+
+    * all: fixed some more compiler warnings which occurred by
+      introducing the -W compiler option. Now xget() is defined
+      as an inline function and used everywhere throughout the
+      sources so that the type-punned gcc warnings of gcc3
+      disappear.
+
 2004-03-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * all: fixed some compiler warnings which are mainly caused by

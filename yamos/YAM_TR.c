@@ -3341,7 +3341,7 @@ static void TR_NewMailAlert(void)
       int iconified;
       static char buffer[SIZE_LARGE];
       struct RuleResult *rr = &G->RRs;
-      get(G->App, MUIA_Application_Iconified, &iconified);
+      iconified = xget(G->App, MUIA_Application_Iconified);
       if (iconified) { PopUp(); Delay(50L); }
       sprintf(buffer, GetStr(MSG_TR_NewMailReq),
          stats->Downloaded, stats->OnServer-stats->Deleted, stats->DupSkipped);
@@ -3399,7 +3399,7 @@ HOOKPROTONHNONP(TR_GetMessageInfoFunc, void)
 {
    int line;
    struct Mail *mail;
-   get(G->TR->GUI.LV_MAILS, MUIA_NList_Active, &line);
+   line = xget(G->TR->GUI.LV_MAILS, MUIA_NList_Active);
    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, line, &mail);
    TR_GetMessageDetails(mail, line);
 }

@@ -437,7 +437,6 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
 {
    static int lastactive;
    struct Folder **flist, *folder = (struct Folder *)-1;
-   int act, i;
    char *fname;
    APTR bt_okay, bt_cancel, wi_fr, lv_folder;
 
@@ -464,8 +463,11 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
          End,
       End,
    End;
+
    if (wi_fr)
    {
+      int i;
+
       flist = FO_CreateList();
       for (i = 1; i <= (int)*flist; i++) if (flist[i] != exclude) if (flist[i]->Type != FT_GROUP)
          DoMethod(lv_folder, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
@@ -489,11 +491,19 @@ struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notex
          switch (oo)
          {
             case 1:
-               get(lv_folder, MUIA_List_Active, &act);
-               DoMethod(lv_folder, MUIM_List_GetEntry, act, &fname);
-               if ((folder = FO_GetFolderByName(fname, NULL))) lastactive = act;
-               break;
-            case 3: folder = NULL; break;
+            {
+              int act = xget(lv_folder, MUIA_List_Active);
+              DoMethod(lv_folder, MUIM_List_GetEntry, act, &fname);
+              if((folder = FO_GetFolderByName(fname, NULL)))
+                lastactive = act;
+            }
+            break;
+
+            case 3:
+            {
+              folder = NULL;
+            }
+            break;
          }
          if (folder == (struct Folder *)-1 && signals) Wait(signals);
       }
@@ -1558,9 +1568,8 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
    };
    char *postext = hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load);
    int skip = *file ? 1 : 2;
-   struct Window *truewin;
+   struct Window *truewin = (struct Window *)xget(win, MUIA_Window_Window);
 
-   get(win, MUIA_Window_Window, &truewin);
    if (!init[num]) { init[num] = TRUE; skip = 0; }
 
    return MUI_AslRequestTags( G->ASLReq[num],
@@ -2957,9 +2966,11 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
    int retc, keys = 0;
    FILE *fp;
 
-   get(pop, MUIA_UserData, &str); secret = str;
+   secret = str = (char *)xget(pop, MUIA_UserData);
    if (G->PGPVersion == 5)
+   {
       retc = PGPCommand("pgpk", "-l +language=us", KEEPLOG);
+   }
    else
    {
       strcpy(buf, "-kv  ");
@@ -2971,10 +2982,12 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
       }
       retc = PGPCommand("pgp", buf, KEEPLOG);
    }
-   if (!retc) if ((fp = fopen(PGPLOGFILE, "r")))
+
+   if(!retc && (fp = fopen(PGPLOGFILE, "r")))
    {
-      get(string, MUIA_String_Contents, &str);
+      str = (char *)xget(string, MUIA_String_Contents);
       DoMethod(pop, MUIM_List_Clear);
+
       while (GetLine(fp, buf, sizeof(buf)))
       {
          char entry[SIZE_DEFAULT];
@@ -3286,15 +3299,6 @@ Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 }
 #endif
 ///
-/// xget()
-//  Gets an attribute value from a MUI object
-ULONG xget(Object *obj, ULONG attr)
-{
-   ULONG b = 0;
-   get(obj, attr, &b);
-   return b;
-}
-///
 /// GetMUIString
 //  Returns the value of a MUI string object
 void GetMUIString(char *a,Object *obj)
@@ -3350,8 +3354,8 @@ BOOL SafeOpenWindow(Object *obj)
 {
    int isopen, isicon;
    set(obj, MUIA_Window_Open, TRUE);
-   get(obj, MUIA_Window_Open, &isopen);
-   get(_app(obj), MUIA_Application_Iconified, &isicon);
+   isopen = xget(obj, MUIA_Window_Open);
+   isicon = xget(_app(obj), MUIA_Application_Iconified);
    if (isopen || isicon) return TRUE;
    DisplayBeep(0);
    return FALSE;
@@ -3956,7 +3960,7 @@ void PlaySound(char *filename)
       dtt.dtt_Data     = NULL;
 
       // Play the sound by calling DoDTMethodA()
-      DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (Msg)&dtt);
+      DoDTMethodA(G->NewMailSound_Obj, NULL, NULL, (APTR)&dtt);
     }
   }
 }
@@ -4543,11 +4547,13 @@ ULONG CRC32(void *buffer, unsigned int count, ULONG crc)
 //  Appends an array of addresses to a string gadget
 void InsertAddresses(APTR obj, char **addr, BOOL add)
 {
-   char *buf;
-   get(obj, MUIA_String_Contents, &buf);
+   char *buf = (char *)xget(obj, MUIA_String_Contents);
+
    if (*buf && add) DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
    else setstring(obj, "");
+
    DoMethod(obj, MUIM_BetterString_Insert, *addr, MUIV_BetterString_Insert_EndOfString);
+
    while (*++addr)
    {
       DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);

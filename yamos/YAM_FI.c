@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -493,12 +493,17 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       }
    }
    if (!totmsg) { free(sfo); return; }
-   get(gdata->PG_SRCHOPT, MUIA_Group_ActivePage, &pg);
+   pg = xget(gdata->PG_SRCHOPT, MUIA_Group_ActivePage);
    if (pg != 3) /* Page 3 (Status) has no ST_MATCH */
-      get(gdata->ST_MATCH[pg], MUIA_String_Contents, &match);
+   {
+      match = (char *)xget(gdata->ST_MATCH[pg], MUIA_String_Contents);
+   }
    else
+   {
       match = "";
-   get(gdata->ST_FIELD, MUIA_String_Contents, &field);
+   }
+
+   field = (char *)xget(gdata->ST_FIELD, MUIA_String_Contents);
    FI_PrepareSearch(&search, GetMUICycle(gdata->CY_MODE),
       GetMUICheck(gdata->CH_CASESENS[pg]), GetMUIRadio(gdata->RA_ADRMODE),
       GetMUICycle(gdata->CY_COMP[pg]), GetMUICycle(gdata->CY_STATUS),
@@ -556,8 +561,8 @@ HOOKPROTONHNONP(FI_ToRuleFunc, void)
          if ((C->RU[r] = CO_NewRule()))
          {
             struct SearchGroup *grp = &(G->FI->GUI.GR_SEARCH);
-            int g;
-            get(grp->PG_SRCHOPT, MUIA_Group_ActivePage, &g);
+            int g = xget(grp->PG_SRCHOPT, MUIA_Group_ActivePage);
+
             strcpy(C->RU[r]->Name, name);
             C->RU[r]->ApplyOnReq = C->RU[r]->ApplyToNew = TRUE;
             C->RU[r]->Field[0]      = GetMUICycle(grp->CY_MODE);
@@ -565,7 +570,8 @@ HOOKPROTONHNONP(FI_ToRuleFunc, void)
             GetMUIString(C->RU[r]->CustomField[0], grp->ST_FIELD);
             C->RU[r]->Comparison[0] = GetMUICycle(grp->CY_COMP[g]);
             if (grp->ST_MATCH[g]) GetMUIString(C->RU[r]->Match[0], grp->ST_MATCH[g]);
-                             else strcpy(C->RU[r]->Match[0], Status[GetMUICycle(grp->CY_STATUS)]);
+            else                  strcpy(C->RU[r]->Match[0], Status[GetMUICycle(grp->CY_STATUS)]);
+
             if (grp->CH_CASESENS[g]) C->RU[r]->CaseSens[0]  = GetMUICheck(grp->CH_CASESENS[g]);
             if (grp->CH_SUBSTR[g]  ) C->RU[r]->Substring[0] = GetMUICheck(grp->CH_SUBSTR[g]);
             if (ch == 1) CO_SaveConfig(C, G->CO_PrefsFile);

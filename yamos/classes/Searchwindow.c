@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ DECLARE(Open) // Object *texteditor
 
 	DoMethod(data->ParentWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 1, MUIM_Searchwindow_Close);
 
-	get(data->Searchstring, MUIA_String_Contents, &contents);
+	contents = (STRPTR)xget(data->Searchstring, MUIA_String_Contents);
 	SetAttrs(data->Searchstring,
 		MUIA_String_BufferPos, 0,
 		MUIA_BetterString_SelectSize, strlen(contents),
@@ -144,7 +144,7 @@ DECLARE(Search) // ULONG top
 
 	DoMethod(obj, MUIM_Searchwindow_Close);
 
-	if((get(data->Searchstring, MUIA_String_Contents, &string), string) && string[0] != '\0' && data->Texteditor)
+	if((string = (STRPTR)xget(data->Searchstring, MUIA_String_Contents), string) && string[0] != '\0' && data->Texteditor)
 	{
 		ULONG flags = 0;
 		if(msg->top)             SET_FLAG(flags, MUIF_TextEditor_Search_FromTop);

@@ -202,10 +202,11 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
    if(!folder) return(NULL);
 
    MA_GetIndex(folder);
-   get(G->MA->GUI.NL_MAILS, MUIA_NList_Active, &active);
+   active = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Active);
    if (active != MUIV_NList_Active_Off) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, active, &mail);
    if (folderp) *folderp = folder;
    if (activep) *activep = active;
+
    return mail;
 }
 
@@ -355,7 +356,7 @@ struct Mail **MA_CreateMarkedList(APTR lv, BOOL onlyNew)
       {
         if ((mlist = calloc(3, sizeof(struct Mail *))))
         {
-          get(G->MA->GUI.NL_MAILS, MUIA_NList_Active, &id);
+          id = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Active);
           mail->Position = id;
           mlist[0] = (struct Mail *)1;
           mlist[2] = mail;
