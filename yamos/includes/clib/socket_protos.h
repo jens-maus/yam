@@ -7,18 +7,16 @@
 #define AF_INET 2
 #define EINPROGRESS 36
 
-#include <sys/types.h>
-
 #include "amiga-align.h"
 
 struct in_addr {
-  u_long s_addr;
+  unsigned long s_addr;
 };
 
 struct sockaddr_in {
-  u_char sin_len;
-  u_char sin_family;
-  u_short sin_port;
+  unsigned char sin_len;
+  unsigned char sin_family;
+  unsigned short sin_port;
   struct in_addr sin_addr;
   char sin_zero[8];
 };
@@ -34,8 +32,8 @@ struct hostent {
 
 /*
 struct sockaddr {
-  u_char sa_len;
-  u_char sa_family;
+  unsigned char sa_len;
+  unsigned char sa_family;
   char sa_data[14];
 };
 
