@@ -622,7 +622,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       /* Msg an ARexx schicken, vielleicht existiert ein Skript */
       struct RexxMsg *rm;
       
-      if( rm = CreateRexxCommand(host, (char *) ARG0(rexxmsg), NULL) )
+      if( rm = CreateRexxCommand(host, (char *) ARG0(rexxmsg), 0) )
       {
          /* Original-Msg merken */
          rm->rm_Args[15] = (STRPTR) rexxmsg;
@@ -682,7 +682,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       host->rdargs->RDA_Source.CS_Buffer = arg;
       host->rdargs->RDA_Source.CS_Length = strlen(arg);
       host->rdargs->RDA_Source.CS_CurChr = 0;
-      host->rdargs->RDA_DAList = NULL;
+      host->rdargs->RDA_DAList = 0;
       host->rdargs->RDA_Buffer = NULL;
       
       if( !ReadArgs(cargstr, argarray, host->rdargs) )

@@ -1359,7 +1359,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
       char buf[SIZE_COMMAND+SIZE_PATHFILE];
       strcpy(buf, rule->ExecuteCmd); strcat(buf, " ");
       strcat(buf, GetMailFile(NULL, NULL, mail));
-      ExecuteCommand(buf, FALSE, NULL);
+      ExecuteCommand(buf, FALSE, OUT_DOS);
       G->RRs.Executed++;
    }
    if ((rule->Actions & 16) == 16) if (*rule->PlaySound)
@@ -1873,7 +1873,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
    if (C->RX[num].IsAmigaDOS)
    {
       Busy(" ", "", 0, 0);
-      ExecuteCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? NULL : OUT_NIL);
+      ExecuteCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_DOS : OUT_NIL);
       BusyEnd;
    }
    else
@@ -1941,7 +1941,7 @@ HOOKPROTONHNO(MA_CallRexxFunc, void, int *arg)
       if (ReqFile(ASL_REXX, G->MA->GUI.WI, GetStr(MSG_MA_ExecuteScript), 0, scname, ""))
       {
          strmfp(scname, G->ASLReq[ASL_REXX]->fr_Drawer, G->ASLReq[ASL_REXX]->fr_File);
-         SendRexxCommand(G->RexxHost, scname, NULL);
+         SendRexxCommand(G->RexxHost, scname, 0);
       }
    }
 }

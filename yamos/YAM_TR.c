@@ -95,7 +95,7 @@ BOOL TR_IsOnline(void)
       }
       else if (GenesisBase = OpenLibrary("genesis.library", 1))
       {
-         isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : NULL); CloseLibrary(GenesisBase);
+         isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0); CloseLibrary(GenesisBase);
          return isonline;
       }
    }
@@ -611,7 +611,7 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
    for (i = 0; i < G->TR->Scnt; i++) if (FI_DoComplexSearch(G->TR->Search[i], G->TR->Search[i]->Rule->Combine, G->TR->Search[i+MAXRU], mail))
    {
       struct Rule *rule = G->TR->Search[i]->Rule;
-      if (rule->Actions &   8) if (*rule->ExecuteCmd) ExecuteCommand(rule->ExecuteCmd, FALSE, NULL);
+      if (rule->Actions &   8) if (*rule->ExecuteCmd) ExecuteCommand(rule->ExecuteCmd, FALSE, OUT_DOS);
       if (rule->Actions &  16) if (*rule->PlaySound) PlaySound(rule->PlaySound);
       if (rule->Actions &  64) mail->Status |= 2; else mail->Status &= ~2;
       if (rule->Actions & 128) mail->Status &= ~1; else mail->Status |= 1;
@@ -1736,7 +1736,7 @@ static void TR_NewMailAlert(void)
          rr->Checked, rr->Bounced, rr->Forwarded, rr->Replied, rr->Executed, rr->Moved, rr->Deleted);
       InfoWindow(GetStr(MSG_TR_NewMail), buffer, GetStr(MSG_Okay), G->MA->GUI.WI);
    }
-   if (C->NotifyType & NOTI_CMD)   ExecuteCommand(C->NotifyCommand, FALSE, NULL);
+   if (C->NotifyType & NOTI_CMD)   ExecuteCommand(C->NotifyCommand, FALSE, OUT_DOS);
    if (C->NotifyType & NOTI_SOUND) PlaySound(C->NotifySound);
 }
 

@@ -2706,7 +2706,7 @@ struct BodyChunkData *GetBCImage(char *fname)
 
    for (i = 0; i < MAXIMAGES; i++)
    {
-      if (G->BImage[i] && strcmp(G->BImage[i]->File, fname) == NULL) return G->BImage[i];
+      if (G->BImage[i] && !strcmp(G->BImage[i]->File, fname)) return G->BImage[i];
    }
 
    return NULL;
@@ -3363,7 +3363,7 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
    int ret;
    switch (outdef)
    {
-      case NULL:    in = Input();out = Output(); break;
+      case OUT_DOS: in = Input(); out = Output(); break;
       case OUT_NIL: out = Open("NIL:", MODE_NEWFILE); in = Open("NIL:", MODE_OLDFILE); break;
       default:      out = outdef; in = Open("NIL:", MODE_OLDFILE); break;
    }
@@ -3478,7 +3478,7 @@ char *AllocReqText(char *s)
 
 /// putCharFunc
 //  Hook used by FormatString()
-HOOKPROTO(putCharFunc, void, struct Locale *locale, char c)
+HOOKPROTO(putCharFunc, void, struct Locale *locale, int c)
 {
   char **tmp;
 
