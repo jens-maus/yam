@@ -7,6 +7,10 @@ $Source$
 
 2005-02-20  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: fixed bug #1109409 and #1144691 where YAM did issue a
+      MUI_DisposeObject() on a read window directly instead of using
+      MUIM_Application_PushMethod which caused crashes under certain
+      circumstances.
     * YAM_CO.c, YAM_MI.c, misc: implemented a system default charset
       recognition method where YAM will try to check the configured charset
       of the system it is running on and compares it to the LocalCharset

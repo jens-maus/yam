@@ -2708,8 +2708,12 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
       // before we continue we make sure we connect a notify to the new window
       // so that we get informed if the window is closed and therefore can be
       // disposed
+      // However, please note that because we do kill the window upon closing it
+      // we have to use MUIM_Application_PushMethod instead of calling the ClosedReadWindowHook
+      // directly
       DoMethod(newReadWindow, MUIM_Notify, MUIA_Window_Open, FALSE,
-                              MUIV_Notify_Application, 3, MUIM_CallHook, &ClosedReadWindowHook, rmData);
+                              MUIV_Notify_Application, 6,
+                                MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &ClosedReadWindowHook, rmData);
 
       return rmData;
     }
@@ -2821,8 +2825,6 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
   {
     DoMethod(G->App, OM_REMMEMBER, rmData->readWindow);
     MUI_DisposeObject(rmData->readWindow);
-
-    rmData->readWindow = NULL;
   }
 
   return TRUE;
