@@ -2,7 +2,7 @@
 #
 # YAM - Yet Another Mailer
 # Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
-# Copyright (C) 2000-2002 by YAM Open Source Team
+# Copyright (C) 2000-2003 by YAM Open Source Team
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ STRIP     = ppc-morphos-strip
 OBJDUMP   = ppc-morphos-objdump
 RM        = rm -f
 CHMOD     = chmod
+FLEX      = flex
 CC68K     = m68k-amigaos-gcc
 STR68K    = strip
 CFLAGS68K = -nostdlib -DNAME=\"YAM\" -O -fomit-frame-pointer -fstrength-reduce
@@ -66,8 +67,8 @@ CLASSES = classes/Classes.o.elf classes/Recipientstring.o.elf classes/Searchwind
 
 OBJS	= YAM.o.elf YAM_AB.o.elf YAM_CL.o.elf YAM_CO.o.elf YAM_COg.o.elf YAM_COs.o.elf YAM_DI.o.elf YAM_EA.o.elf\
 	      YAM_ER.o.elf YAM_FI.o.elf YAM_FO.o.elf YAM_global.o.elf YAM_locale.o.elf YAM_MA.o.elf YAM_MAf.o.elf\
-	      YAM_md5.o.elf YAM_MI.o.elf YAM_RE.o.elf YAM_rexx.o.elf YAM_rexx_rxcl.o.elf YAM_rexx_rxif.o.elf\
-	      YAM_TR.o.elf YAM_US.o.elf YAM_UT.o.elf YAM_WR.o.elf $(EXTRA) $(CLASSES) Debug.o.elf
+	      YAM_md5.o.elf YAM_MI.o.elf YAM_mail_lex.o.elf YAM_RE.o.elf YAM_rexx.o.elf YAM_rexx_rxcl.o.elf\
+        YAM_rexx_rxif.o.elf YAM_TR.o.elf YAM_US.o.elf YAM_UT.o.elf YAM_WR.o.elf $(EXTRA) $(CLASSES) Debug.o.elf
 
 EXTRA	= all_gcc.o.elf
 
@@ -79,6 +80,9 @@ all: $(TARGET) starter
 
 %.o.elf: %.c
 	$(CC) $(CFLAGS) $< -o $@ -DNO_PPCINLINE_STDARG
+
+%.c: %.l
+	$(FLEX) -Cfe -i -o$@ $<
 
 #
 
@@ -182,6 +186,8 @@ YAM_md5.o.elf: YAM_md5.c YAM_md5.h
 
 YAM_MI.o.elf: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes.h \
 	YAM_utilities.h
+
+YAM_mail_lex.o.elf: YAM_mail_lex.l YAM_mail_lex.c YAM_mail_lex.h
 
 YAM_RE.o.elf: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \

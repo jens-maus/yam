@@ -2,7 +2,7 @@
 #
 # YAM - Yet Another Mailer
 # Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
-# Copyright (C) 2000-2002 by YAM Open Source Team
+# Copyright (C) 2000-2003 by YAM Open Source Team
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ CC	= gcc
 RM	= rm -f
 STRIP	= strip
 CHMOD	= chmod
+FLEX = flex
 FC	= flexcat
 
 CPU	= -m68020
@@ -58,7 +59,7 @@ GENCLASSES = extrasrc/genclasses/GenClasses
 
 OBJS	= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
 	  YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o YAM_MA.o YAM_MAf.o \
-	  YAM_md5.o YAM_MI.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
+	  YAM_md5.o YAM_MI.o YAM_mail_lex.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
 	  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o $(CLASSES) $(EXTRA) Debug.o
 
 CLASSES = classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o \
@@ -74,6 +75,9 @@ all: $(TARGET)
 
 .c.o:
 	$(CC) $(CFLAGS) $< -o $@ -DNO_INLINE_STDARG
+
+.l.o:
+	$(FLEX) -Cfe -i -o$@ $<
 
 #
 
@@ -169,6 +173,8 @@ YAM_md5.o: YAM_md5.c YAM_md5.h
 
 YAM_MI.o: YAM_MI.c YAM_error.h YAM_locale.h YAM_mime.h YAM_stringsizes.h \
 	YAM_utilities.h
+
+YAM_mail_lex.o: YAM_mail_lex.l YAM_mail_lex.c YAM_mail_lex.h
 
 YAM_RE.o: YAM_RE.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
