@@ -1113,7 +1113,16 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
          {
             // lets decode the base64 encoded timestring directly
             // into the mail->transDate timeval structure
-            from64txt(&statstr[2], (char *)&mail->transDate, NULL);
+            if(base64decode((char *)&mail->transDate, &statstr[2], 12*sizeof(char)) <= 0)
+            {
+              DB(kprintf("WARNING: failure in decoding the encoded date in mailfile: '%s'\n", mail->MailFile);)
+
+              // if we weren`t able to decode the base64 encoded comment string
+              // we have to validate the transDate so that the calling function
+              // recognizes to rewrite the comment with a valid string.
+              mail->transDate.tv_micro = 0;
+              mail->transDate.tv_secs  = 0;
+            }
          }
       }
 

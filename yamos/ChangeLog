@@ -7,6 +7,11 @@ $Source$
 
 2003-12-13  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c: replaced the from64txt() call by a call to the
+      new reworked base64decode() function. This allows to introduce
+      a more sophisticated failure checking and probably also leads
+      to a slightly increase of performance during index rescanning
+      of large folders.
     * YAM_MI.c: started reworking the MIME encoding routines.
       Optimized the base64 string encoding/decoding functions to
       be a bit faster and also provide a better interface for
