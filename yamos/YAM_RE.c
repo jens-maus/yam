@@ -2964,19 +2964,38 @@ static void RE_DisplayMessage(int winnum)
       // information in the header listview.
       while (*body)
       {
+         // if the first char in the line is a newline \n, then we found the start of
+         // the body and break here.
          if (*body == '\n') { body++; break; }
-         dispheader = (G->RE[winnum]->Header == HM_FULLHEADER);
-         if (G->RE[winnum]->Header == HM_SHORTHEADER)
+
+         if(G->RE[winnum]->Header == HM_SHORTHEADER)
          {
-            char header[SIZE_DEFAULT];
+            char headername[SIZE_DEFAULT];
             int i;
-            for (i = 0; !strchr("\n :", body[i]) && i < SIZE_DEFAULT-1; i++) header[i] = body[i];
-            header[i] = 0;
-            dispheader = MatchNoCase(header, C->ShortHeaders);
+
+            // we copy the headername from the mail as long as there is space and
+            // now interrupting character is found
+            for (i = 0; body[i] != ':' && body[i] != ' ' && body[i] != '\n' && i < SIZE_DEFAULT-1; i++)
+            {
+              headername[i] = body[i];
+            }
+            headername[i] = '\0'; // terminate with 0
+
+            // Now we check if this is a header the user wants to be displayed.
+            dispheader = MatchNoCase(headername, C->ShortHeaders);
          }
-         if (dispheader) DoMethod(gui->LV_HEAD, MUIM_NList_InsertSingleWrap, body, MUIV_NList_Insert_Bottom, G->RE[winnum]->WrapHeader ? WRAPCOL1 : NOWRAP, ALIGN_LEFT);
+         else dispheader = (G->RE[winnum]->Header == HM_FULLHEADER);
+
+         if(dispheader)
+         {
+            // we simply insert the whole thing from the actual body pointer
+            // because the ConstructHook_String of NList will anyway just copy until a \n, \r or \0
+            DoMethod(gui->LV_HEAD, MUIM_NList_InsertSingleWrap, body, MUIV_NList_Insert_Bottom, G->RE[winnum]->WrapHeader ? WRAPCOL1 : NOWRAP, ALIGN_LEFT);
+         }
+
+         // then we move forward until the end of the line
          while (*body && *body != '\n') body++;
-         if (*body) body++;
+         if (*body) body++; // if the end of the line isn`t a \0 we have to move on
       }
 
       if ((hits = AB_SearchEntry(from->Address, ASM_ADDRESS|ASM_USER, &ab)) == 0 && *from->RealName)
@@ -3278,10 +3297,14 @@ HOOKPROTONH(RE_LV_HDspFunc, long, char **array, char *entry)
    char *cont = entry;
    int i = 0;
 
-   memset(hfield, 0, 40);
+   // copy the headername into the static hfield to display it.
    while (*cont != ':' && *cont && i < 38) hfield[i++] = *cont++;
+   hfield[i] = '\0';
+
+   // set the array now so that the NList shows the correct values.
    array[0] = hfield;
    array[1] = stpblk(++cont);
+
    return 0;
 }
 MakeStaticHook(RE_LV_HDspHook,RE_LV_HDspFunc);
