@@ -29,19 +29,20 @@ TARGET	= YAM
 
 #
 
-CC	  = gcc
-STRIP = strip
-RM	  = rm -f
-CHMOD = chmod
+CC	= gcc
+RM	= rm -f
+STRIP	= strip
+CHMOD	= chmod
+FC	= flexcat
 
-CPU      = -m68020
-CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
-WARN     = -Wall
-OPTFLAGS = -O2 -fomit-frame-pointer -fstrength-reduce -fbaserel
-DEBUG    = -DDEBUG -g -O0
-CFLAGS   = -noixemul -I./includes -I./ -c $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
-LDFLAGS  = -noixemul -mstackextend -fbaserel
-LDLIBS   = -lmui -ldebug -lm
+CPU	= -m68020
+CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
+WARN	= -Wall
+OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel
+DEBUG	= -DDEBUG -g -O0
+CFLAGS	= -I. -I./includes $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
+LDFLAGS	= -noixemul -mstackextend -fbaserel
+LDLIBS	= -ldebug -lmui -lm
 
 # CPU and DEBUG can be defined outside, defaults to above
 # using e.g. "make DEBUG= CPU=-m68060" produces optimized non-debug 68060 version
@@ -50,19 +51,18 @@ LDLIBS   = -lmui -ldebug -lm
 #
 # ignored warnings are:
 # none - because we want to compile with -Wall all the time
-#
 
 GENCLASSES = extrasrc/genclasses/GenClasses
 
 #
 
-CLASSES = classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o\
-          classes/Addrmatchlist.o classes/InfoBar.o classes/YAM.o
-
 OBJS	= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
 	  YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o YAM_MA.o YAM_MAf.o \
 	  YAM_md5.o YAM_MI.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
-	  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o $(EXTRA) $(CLASSES) Debug.o
+	  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o $(CLASSES) $(EXTRA) Debug.o
+
+CLASSES = classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o \
+	  classes/Addrmatchlist.o classes/InfoBar.o classes/YAM.o
 
 EXTRA	= all_gcc.o
 
@@ -82,20 +82,18 @@ $(TARGET): $(OBJS)
 	$(STRIP) -o $@ $@.debug
 	$(CHMOD) a+x $@
 
-#
-
 clean:
-	-$(RM) $(TARGET) $(TARGET).debug $(OBJS) YAM_locale.?
+	-$(RM) $(TARGET) $(TARGET).debug $(OBJS) YAM_locale.? classes/Classes.? classes/*_cl.h
 
-#######################################
+## AUTOGEN TOOLS ######################
 
-genclasses: extrasrc/genclasses/gc.c extrasrc/genclasses/gc.h extrasrc/genclasses/lists.c extrasrc/genclasses/lists.h
-	@make -C extrasrc/genclasses
-
-classinfo:
+classinfo: genclasses
 	@$(GENCLASSES) classes -b$(TARGET) -gpl -storm -iClassesExtra.h
 
-#######################################
+genclasses: extrasrc/genclasses/gc.c extrasrc/genclasses/gc.h extrasrc/genclasses/lists.c extrasrc/genclasses/lists.h
+	@(cd extrasrc/genclasses && $(MAKE))
+
+## MAIN DEPENDENCIES ##################
 
 YAM.o:	YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
 	YAM_config.h YAM_configFile.h YAM_debug.h YAM_find.h YAM_folderconfig.h \
@@ -216,9 +214,9 @@ all_gcc.o: all_gcc.c extrasrc/astcsma.c extrasrc/getft.c extrasrc/stccpy.c \
 
 YAM_locale.h: YAM_locale.c
 YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
-	flexcat $< YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+	$(FC) locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
 
-#######################################
+## CLASS DEPENDENCIES #################
 
 classes/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
   YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
@@ -243,6 +241,3 @@ classes/Classes.o: classes/Classes.c classes/Classes.h YAM.h YAM_addressbook.h \
 classes/YAM.o: classes/YAM.c classes/YAM_cl.h YAM.h YAM_addressbook.h \
   YAM_config.h YAM_debug.h YAM_folderconfig.h includes/SDI_hook.h YAM_locale.h \
   YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
-
-#######################################
-
