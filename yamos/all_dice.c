@@ -34,7 +34,6 @@
 #include "extrasrc/strmfp.c"
 #include "extrasrc/strsfn.c"
 #include "extrasrc/NewReadArgs.c"
-#include "extrasrc/stch_i.c"
 #include "extrasrc/dice.c"
 
 void wbmain(struct WBStartup *wbs)
