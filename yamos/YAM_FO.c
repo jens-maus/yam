@@ -341,15 +341,18 @@ BOOL FO_LoadConfig(struct Folder *fo)
 ///
 /// FO_SaveConfig
 //  Saves folder configuration to .fconfig file
-void FO_SaveConfig(struct Folder *fo)
+BOOL FO_SaveConfig(struct Folder *fo)
 {
-   struct DateStamp ds;
    char fname[SIZE_PATHFILE];
    FILE *fh;
 
-   MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".fconfig", sizeof(fname));
+   MyStrCpy(fname, GetFolderDir(fo));
+   AddPart(fname, ".fconfig", sizeof(fname));
+
    if ((fh = fopen(fname, "w")))
    {
+      struct DateStamp ds;
+
       fprintf(fh, "YFC1 - YAM Folder Configuration\n");
       fprintf(fh, "Name        = %s\n",  fo->Name);
       fprintf(fh, "MaxAge      = %d\n",  fo->MaxAge);
@@ -366,11 +369,17 @@ void FO_SaveConfig(struct Folder *fo)
       fprintf(fh, "MLAddress   = %s\n",  fo->MLAddress);
       fprintf(fh, "MLSignature = %d\n",  fo->MLSignature);
       fclose(fh);
-      MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".index", sizeof(fname));
+
+      MyStrCpy(fname, GetFolderDir(fo));
+      AddPart(fname, ".index", sizeof(fname));
 
       if(!isModified(fo)) SetFileDate(fname, DateStamp(&ds));
+
+      return TRUE;
    }
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
+
+   return FALSE;
 }
 
 ///
@@ -434,15 +443,23 @@ BOOL FO_CreateFolder(enum FolderType type, char *path, char *name)
 
    if (folder)
    {
-      if(!(DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
+      if(DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, folder->Name, folder, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE))
       {
-        free(folder);
-        return FALSE;
+        if(FO_SaveConfig(folder))
+        {
+          // only if we reach here everything was fine and we can return TRUE
+          free(folder);
+          return TRUE;
+        }
+
+        // if we reach here the SaveConfig() returned FALSE and we need to remove the folder again
+        // from the listtree
+        DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Remove, MUIV_NListtree_Insert_ListNode_Root, folder);
       }
-      FO_SaveConfig(folder);
+
       free(folder);
-      return TRUE;
    }
+
    return FALSE;
 }
 
@@ -489,7 +506,11 @@ BOOL FO_LoadTree(char *fname)
                      else if(!stricmp(folderpath, FolderNames[3]) == 0) fo.Type = FT_DELETED;
 
                      // Save the config now because it could be changed in the meantime
-                     FO_SaveConfig(&fo);
+                     if(!FO_SaveConfig(&fo))
+                     {
+                        fclose(fh);
+                        return FALSE;
+                     }
                   }
 
                   fo.SortIndex = i++;
@@ -1258,8 +1279,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       }
       set(gui->WI, MUIA_Window_Open, FALSE);
       DoMethod(lv, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
-      FO_SaveConfig(&folder);
-      success = TRUE;
+
+      if(FO_SaveConfig(&folder)) success = TRUE;
    }
    else // if not then a new folder should be generated
    {
@@ -1295,9 +1316,11 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
         if(isCryptedFolder(&folder) && !FO_EnterPassword(&folder)) CLEAR_FLAG(folder.XPKType, XPK_CRYPT);
         if(CreateDirectory(GetFolderDir(&folder)))
         {
-          DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
-          FO_SaveConfig(&folder);
-          success = TRUE;
+          if(FO_SaveConfig(&folder))
+          {
+            DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+            success = TRUE;
+          }
         }
         else return;
 
@@ -1305,6 +1328,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
       }
       else return;
    }
+
    if (success)
    {
       MA_SetSortFlag();

@@ -7,6 +7,10 @@ $Source$
 
 2003-03-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_FO.c: the FO_SaveConfig() function didn`t return the success
+      status of the write operation which caused some troubles if
+      a write operation failed somehow. Now all usages of FO_SaveConfig()
+      should be more save.
     * YAM_CO.c: fixed bug #683672 where upon a reload of the default
       values within the TCP/IP configuration a enforcer hit was
       triggered.

@@ -139,7 +139,7 @@ BOOL            FO_LoadConfig(struct Folder *fo);
 BOOL            FO_LoadTree(char *fname);
 BOOL            FO_LoadFolderImages(struct Folder *fo);
 struct Folder * FO_NewFolder(enum FolderType type, char *path, char *name);
-void            FO_SaveConfig(struct Folder *fo);
+BOOL            FO_SaveConfig(struct Folder *fo);
 BOOL            FO_SaveTree(char *fname);
 
 #endif /* YAM_FOLDERCONFIG_H */
