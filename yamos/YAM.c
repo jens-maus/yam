@@ -133,7 +133,7 @@ static void TC_Exit(void)
          if (CheckIO(&TCData.req->tr_node)) return;
          AbortIO(&TCData.req->tr_node);
          WaitIO(&TCData.req->tr_node);
-         TimerBase = (struct Device *)(-1);
+         TimerBase = (APTR)-1;
          CloseDevice(&TCData.req->tr_node);
          DeleteIORequest(&TCData.req->tr_node);
       }
@@ -154,7 +154,7 @@ static BOOL TC_Init(void)
       {
          if (!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.req->tr_node, 0L))
          {
-           TimerBase = TCData.req->tr_node.io_Device;
+           TimerBase = (APTR)TCData.req->tr_node.io_Device;
            return TRUE;
          }
       }
@@ -725,7 +725,7 @@ static APTR InitLib(STRPTR libname, ULONG version, int revision, BOOL required, 
 void SetupAppIcons(void)
 {
    int i;
-   for (i = 0; i < 4; i++) if (G->DiskObj[i])
+   for (i = 0; i < MAXICONS; i++) if (G->DiskObj[i])
    {
       G->DiskObj[i]->do_CurrentX = C->IconPositionX;
       G->DiskObj[i]->do_CurrentY = C->IconPositionY;
