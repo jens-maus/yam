@@ -1,0 +1,229 @@
+---------------------------------------------------------------------------
+                     YAM 2.4 - Installation notes
+---------------------------------------------------------------------------
+
+To minimize download time, YAM 2.4 is distributed in four different LhA
+archives which must be unpacked into the same directory before installation.
+
+YAM24.lha        YAM 2.4 basic installation for 68020 processors or better,
+                 includes English manual
+YAM24cpu.lha     Executables optimized for 68040 and 68060 processors
+YAM24loc.lha     Foreign language support (catalogs and manuals)
+YAM24con.lha     Additional graphics, ARexx scripts, etc.
+
+
+YAM 1.3.x users
+---------------
+Before you start the installation script, it's strongly recommended that
+you create a backup of the old YAM directory including all folders and
+configuration files. Now you should install YAM 2.4 into your old YAM
+directory. YAM 2.4 will automatically convert configuration files from
+YAM 1.3.x into the new 2.x format.
+
+
+Source code
+-----------
+Due to lack of time and motivation Marcel gave up development of YAM.
+The sources have been released under the GNU General Public License
+at SourceForge.net. If you want to develop this program further or
+if you want to port it to a different operating system, visit the
+YAM Open Source homepage at http://yamos.sourceforge.net/
+
+
+What's new since YAM 2.3p1?
+---------------------------
+Developers: msbethke - Matthias Bethke
+            krille   - Christian Hattemer
+            damato   - Jens Langner
+            laursen  - Jacob Laursen
+            joergs   - Jörg Strohmayer
+            gizmo    - Dirk Stöcker
+            charlie  - Karoly Balogh
+            tactica  - David Rey
+
+- Fixed: no more Enforcer hits on exit (damato)
+- Fixed: YAM didn't really disconnect from the server if an STMP AUTH
+  request failed (damato)
+- Fixed: the response gotten from the server was never reported to the
+  user if SMTP AUTH failed (damato)
+- Fixed: if a host had 2 different IPs in the DNS and the first one
+  was down, YAM would never try to connect to the second one and just
+  threw an error message (damato)
+- Fixed: aborting a mail transfer could throw Enforcer hits; we didn't
+  even issue a QUIT command (damato)
+- Fixed: YAM could crash if the Edit window was opened from a Read window
+  and the Read window was closed before clicking Send now/Send later/Hold
+  (krille)
+- Fixed: YAM could get confused while re-selecting multiple parts of a
+  message (damato)
+- Fixed: the appearance of the message status flags could get corrupted
+  because of a too wide Address column (damato)
+- Fixed: at long last, sorting by status works as it should (damato)
+- Fixed: updating the folder index didn't clear the mail listview, thus
+  letting the user toy around with the list and break havoc (damato)
+- Fixed: several problems with the handling of temporary files, using
+  now an additional serial ID and a smarter access mechanism (damato)
+- Fixed: several problems with trying to open an inexistant mail file,
+  returning now a proper error message (damato)
+- Fixed: an error on sending could make sent email to end up in the
+  wrong folder (damato)
+- Fixed: potential crash in the message handling because YAM forgot to
+  close the output file on an error condition (damato)
+- Fixed: temporary unpack files (XPK) weren't deleted when switching
+  messages from within the Read window (damato)
+- Fixed: temporary unpack files were deleted too early, making it
+  impossible to e.g. display raw messages in compressed folders
+  (damato)
+- Fixed: the gauge in the mail transfer window would never reach 100%
+  (damato)
+- Fixed: enforced proper Write window parameters when dealing with ARexx
+  to avoid things going terribly wrong (damato)
+- Fixed: ADDRDELETE would throw Enforcer hits if no alias was provided
+  (damato)
+- Fixed: ADDREDIT couldn't edit/create distribution lists without
+  throwing Enforcer hits later (damato)
+- Fixed: ADDRRESOLVE was utterly broken and crashed the system right
+  away (damato)
+- Fixed: GETSELECTED wouldn't initialize <stem>num.count in empty folders
+  (damato)
+- Fixed: INFO SCREEN would return an empty string if YAM was iconified
+  (damato)
+- Fixed: MAILREAD couldn't really activate a Read window (damato)
+- Fixed: MAILWRITE couldn't really activate a Write window (damato)
+- Fixed: MAILWRITE accepted bad WINDOW values (damato)
+- Fixed: Enforcer hits when filtering by message body or headers (damato)
+- Fixed: remote filters could trigger actions that were not supposed to
+  (damato)
+- Fixed: Enforcer hits when clicking the [Filter] button or selecting
+  the address to send the reply to (damato)
+- Fixed: preselection didn't work at all if "Download new mail on startup"
+  was enabled (damato)
+- Fixed: no mail was downloaded automatically if "Download large messages"
+  was disabled (damato)
+- Fixed: it was possible to interrupt a mail transfer by using "Check
+  version" (damato)
+- Fixed: calling "Show last message" would disrupt the current mail transfer
+  and cause further calamities later on (damato)
+- Fixed: clicking the support URL <www.yam.ch> in the About window on
+  startup was rewarded with an Enforcer hit (damato)
+- Fixed: the results in the Search window could get out of sync with the
+  message list (damato)
+- Fixed: even if "Display all texts" was disabled, some operations in the
+  Read window could still trigger text parts to be displayed entirely
+  (damato)
+- Fixed: "Next/Previous message in thread" would fail most of the time;
+  replaced the rudimentary algorithm this code was based on with a more
+  advanced CRC32 checksum algorithm which in turn calls for an .index
+  revision update - yup, this *REQUIRES ALL INDICES TO BE UPDATED*, but
+  this also wins you the possibility of sorting messages by the date they
+  were received or sent, which has now been implemented for real, complete
+  with a suitable new "Date sent/received" sort criterion
+- Fixed: a gadget in the filter definition showed junk when switching
+  to a remote filter and viceversa (damato)
+- Fixed: YAM remembers again the last active message in a folder and jumps
+  to this message if the folder is selected again (damato)
+- Fixed: doesn't lose track anymore when Next/Previous message is selected
+  in the Read window and an unrelated folder is currently opened (damato)
+- Fixed: the address book listview won't be cleared anymore if YAM can't
+  open a new address book from disk (damato)
+- Fixed: variable signatures will also work now when forwarding or
+  writing a new mail in a folder belonging to a mailing list (damato)
+- Fixed: the title of the file requester for importing MIME viewers & types
+  was not localized (damato)
+- Fixed: the [Okay] button in the About window got lost on restart (damato)
+- Fixed: the keyboard shortcut for "Security" in the address book works,
+  now (krille)
+- Fixed: double clicking mailto: links does something useful again; as
+  an extra bonus, subject, CC and BCC fields are also correctly handled as
+  in mailto:a@b.c?subject=test&amp;cc=b@c.d , and two URLs can appear in
+  the same line without triggering side effects, hooray! :) (damato)
+- Fixed: temporary files for attachments cancelled in the Write window
+  were not deleted (damato)
+- Fixed: couldn't display raw messages stored in PROGDIR:folder (damato)
+- Fixed: will now take care of spaces in path names when calling MIME
+  viewers (damato)
+- Fixed: when dealing with subjects without a space after the [tag],
+  i.e. "Re: [list]subject", YAM would delete the first character in the
+  edited subject (charlie)
+- Fixed: problem with the "%" character in attachment filenames (damato)
+- Fixed: the "group for new entries" in the address book configuration
+  was never used (damato)
+- Fixed: two codes were used in the logfile for different purposes
+  (tactica)
+- Fixed: the duplicated "shift right" menu shortcut in the Read window
+  is now gone (tactica)
+
+- Changed: "Program startup" & "Program termination" macros are also
+  executed on Restart (damato)
+- Changed: windows are now navigable no matter what's the status of
+  the Caps Lock key (damato)
+- Changed: the POP3 and SMTP ports can now be specified in their own
+  gadgets (damato)
+- Changed: commas within double quotes are now accepted as valid
+  characters in recipient string gadgets (laursen)
+- Changed: if PGP is not found, it won't be used at all instead of
+  putting up a "PGP signature key is not correct" warning every time
+  (krille)
+- Changed: dates in the mail listview and other areas are now displayed
+  using Locale settings (damato)
+- Changed: YAM will also honour the hidden JumpToNewMsg option regarding
+  newly received messages (damato)
+- Changed: the listview in the Search window will now be sorted by
+  date by default (damato)
+- Changed: personal sender info will only be displayed if only one
+  matching Real Name is found in the address book (damato)
+- Changed: removed the %h variable from the popup list for the Open and
+  Close phrases, since it doesn't make much sense there (damato)
+- Changed: string gadgets for email addresses and real names are now
+  limited to 150 and 30 characters, respectively (damato)
+- Changed: when sorting messages by status, additional flags will be
+  taken into account, e.g. messages marked as "important" will be listed
+  first (damato)
+- Changed: trying to import email from a file that doesn't contain any
+  will now trigger an error message (damato)
+- Changed: updated the URLs given by the warning in MIME messages
+  (tactica)
+- Changed: email sending & automatic email downloads will also be notified
+  in the status bar (damato)
+- Changed: creating a new filter will now automatically select the Name
+  string gadget (damato)
+- Changed: trying to load an apparently invalid address book will now
+  put up a requester offering the user to load the file as a line
+  separated list of names and email addresses rather than blindly
+  loading whatever is thrown at it (damato)
+- Changed: made the GUI a bit less obstrusive at getting the focus
+  while the user is typing away elsewhere (damato)
+- Changed: "Show last message" remains ghosted now until there is actually
+  some message to show (damato)
+- Changed: sizes of uuencoded attachments are displayed with a "~" (tilde)
+  character in the Read window meaning this is just an approximation
+- Changed: email addresses in the usual a@b.c form are now clickable
+  just like mailto: links, and they are shown highlighted just like URLs
+- Changed: CTRL-C will now break the application, while CTRL-D will
+  restart it immediately (damato)
+- Changed: updated default remailer address (damato)
+- Changed: now requires NList.mcc 20.104 and NListtree.mcc 18.12 as
+  the bare minimum (damato)
+
+- Added: hierarchical folders - folders can now be arranged into groups,
+  and nested at the user's discretion (damato)
+- Added: SMTP & POP3 TLS1/SSL3 support for stunnel servers, using
+  AmiSSL.library (damato)
+- Added: email address cache - YAM can now "remember" the last N used
+  recipients if they don't appear in the address book (laursen, duff,
+  damato)
+- Added: optional pop-up menus for the folder & message lists, using
+  popupmenu.library (damato)
+- Added: automatic codepage detection and translation, mainly for
+  cyrillic users though (AmiS)
+- Added: reworked status bar, customizable from Configuration/Lists (damato)
+- Added: automatic detection of the suitable mailing list support settings
+  (damato)
+- Added: more powerful recipient string gadgets, resolving aliases/
+  real names/email addresses "on the fly" as they are found in the
+  address book (duff)
+- Added: Search function in the Write window (duff)
+- Added: the format of size values can be chosen now (damato)
+- Added: individual appicon stats for folders (damato)
+- Added: user-definable appicon label (damato)
+- Added: hidden option "JumpToIncoming" (damato)
