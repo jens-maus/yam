@@ -1642,6 +1642,25 @@ HOOKPROTONHNO(WR_DisplayFile, void, int *arg)
 MakeStaticHook(WR_DisplayFileHook, WR_DisplayFile);
 
 ///
+/// WR_DeleteFile
+// Deletes a file from the attachment list and the belonging temporary file
+HOOKPROTONHNO(WR_DeleteFile, void, int *arg)
+{
+   struct Attach *attach = NULL;
+
+   // first we get the active entry
+   DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &attach);
+   if(!attach) return;
+
+   // then we remove the active entry from the NList
+   DoMethod(G->WR[*arg]->GUI.LV_ATTACH, MUIM_NList_Remove, MUIV_NList_Remove_Active);
+
+   // delete the temporary file if exists
+   if(attach->IsTemp) DeleteFile(attach->FilePath);
+}
+MakeStaticHook(WR_DeleteFileHook, WR_DeleteFile);
+
+///
 /// WR_ChangeSignatureFunc
 /*** WR_ChangeSignatureFunc - Changes the current signature ***/
 HOOKPROTONHNO(WR_ChangeSignatureFunc, void, int *arg)
@@ -2410,8 +2429,8 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.ST_SUBJECT ,MUIM_Notify,MUIA_String_Acknowledge  ,MUIV_EveryTime,MUIV_Notify_Window     ,3,MUIM_Set        ,MUIA_Window_ActiveObject,data->GUI.TE_EDIT);
          DoMethod(data->GUI.BT_ADD     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddFileHook,winnum);
          DoMethod(data->GUI.BT_ADDPACK ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_AddArchiveHook,winnum);
-         DoMethod(data->GUI.BT_DEL     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,data->GUI.LV_ATTACH    ,2,MUIM_List_Remove,MUIV_List_Remove_Active);
-         DoMethod(data->GUI.BT_DISPLAY ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,data->GUI.LV_ATTACH    ,3,MUIM_CallHook   ,&WR_DisplayFileHook,winnum);
+         DoMethod(data->GUI.BT_DEL     ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DeleteFileHook,winnum);
+         DoMethod(data->GUI.BT_DISPLAY ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_DisplayFileHook,winnum);
          DoMethod(data->GUI.LV_ATTACH  ,MUIM_Notify,MUIA_List_Active         ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_GetFileEntryHook,winnum);
          DoMethod(data->GUI.RA_ENCODING,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
          DoMethod(data->GUI.ST_CTYPE   ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);

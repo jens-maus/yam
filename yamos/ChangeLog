@@ -7,6 +7,10 @@ $Source$
 
 2002-07-04  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_WR.c: fixed bug #555122 where we forgot to delete
+      temporary files if an attachment that has been added to
+      the attachment list of the write window was deleted
+      immediatly.
     * YAM_UT.c: made our own MUI_Request() replacement even more
       compatible with some information provided by Allan.
       Now the requester should also be useable with F-keys like
