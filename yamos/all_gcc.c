@@ -10,5 +10,7 @@
 #include "extrasrc/strsfn.c"
 #include "extrasrc/wbpath.c"
 #include "extrasrc/NewReadArgs.c"
+#include "extrasrc/stch_i.c"
+#include "extrasrc/dice.c"
 
 int __oslibversion = 0;
