@@ -346,6 +346,8 @@ DECLARE(Clear)
 {
 	GETDATA;
 
+	ENTER();
+
 	if(data->hasContent)
 	{
 		// clear all relevant GUI elements
@@ -377,6 +379,7 @@ DECLARE(Clear)
 
 	CleanupReadMailData(data->readMailData, FALSE);
 
+	RETURN(0);
 	return 0;
 }
 
@@ -391,10 +394,12 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 	char *cmsg;
 	BOOL result = FALSE; // error per default
 
+	ENTER();
+
 	// before we actually start loading data into our readmailGroup
 	// we have to make sure we didn't actually have something displayed
 	// which should get freed first
-	CleanupReadMailData(rmData, FALSE);
+	DoMethod(obj, MUIM_ReadMailGroup_Clear);
 
 	// set the passed mail as the current mail read by our ReadMailData
 	// structure
@@ -414,17 +419,45 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 			BOOL dispheader;
 			int hits;
 
+			// the first operation should be: check if the mail is a multipart mail and if so we tell
+			// our attachment group about it and read the partlist or otherwise a previously opened
+			// attachmentgroup may still hold some references to our already deleted parts
+			if(isMultiPartMail(mail))
+			{
+				if(DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_Refresh, rmData->firstPart) > 0)
+					set(data->attachmentGroup, MUIA_ShowMe, TRUE);
+				else
+				{
+					set(data->attachmentGroup, MUIA_ShowMe, FALSE);
+
+					// if this mail was/is a multipart mail but no part was
+					// actually added to our attachment group we can remove the
+					// multipart flag at all
+					if(isMP_MixedMail(mail))
+					{
+						struct MailInfo *mi = GetMailInfo(mail);
+
+						CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
+						SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+						DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
+					}
+				}
+			}
+			else
+				set(data->attachmentGroup, MUIA_ShowMe, FALSE);
+
+			// then we check wheter we should disable the headerList display
+			// or not.
 			dispheader = (rmData->headerMode != HM_NOHEADER);
 			set(data->headerGroup, MUIA_ShowMe, dispheader);
 			set(data->balanceObject, MUIA_ShowMe, dispheader);
-			DoMethod(data->headerList, MUIM_NList_Clear);
 		
 			set(data->headerList, MUIA_NList_Quiet, TRUE);
 			body = cmsg;
 
 			// we first go through the headerList of our first Part, which should in fact
 			// be the headerPart
-			if(rmData->firstPart && dispheader)
+			if(dispheader && rmData->firstPart && rmData->firstPart->headerList)
 			{
 				struct MinNode *curNode;
 
@@ -636,33 +669,6 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 
 			free(cmsg);
 
-			// then we check if the mail is a multipart mail and if so we tell our attachment group
-			// about it and read the partlist
-			if(isMultiPartMail(mail))
-			{
-				if(DoMethod(data->attachmentGroup, MUIM_AttachmentGroup_Refresh, rmData->firstPart) > 0)
-					set(data->attachmentGroup, MUIA_ShowMe, TRUE);
-				else
-				{
-					set(data->attachmentGroup, MUIA_ShowMe, FALSE);
-
-					// if this mail was/is a multipart mail but no part was
-					// actually added to our attachment group we can remove the
-					// multipart flag at all
-					if(isMP_MixedMail(mail))
-					{
-						struct MailInfo *mi = GetMailInfo(mail);
-						
-						CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
-						SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-						DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
-					}
-				}
-			}
-			else
-				set(data->attachmentGroup, MUIA_ShowMe, FALSE);
-
-
 			// start the macro
 			if(rmData->readWindow)
 				MA_StartMacro(MACRO_READ, itoa(xget(rmData->readWindow, MUIA_ReadWindow_Num)));
@@ -723,6 +729,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 	// make sure we know that there is some content
 	data->hasContent = TRUE;
 
+	RETURN(result);
 	return result;
 }
 
