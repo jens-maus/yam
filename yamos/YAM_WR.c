@@ -74,29 +74,43 @@ char FailedAlias[SIZE_NAME];
 int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
 {
    int hits = 0, i, retcode;
-   char *p;
    struct ABEntry *ab;
    struct MUI_NListtree_TreeNode *tn, *tn2;
-   struct Person pe;
 
-   ExtractAddress(name, &pe);
-   if (pe.Address[0]) if ((p = strchr(pe.Address, '@'))) // is it an address?
-   {
-      if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
-      if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
-      *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
-      return 0; // no error or warning
-   }
-   pe.Address[0] = 0;
    stccpy(FailedAlias, name, SIZE_NAME);
    AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
    if (hits > 1) return 3; // multiple matches
    if (!hits)
    {
       AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
-      if (hits > 1) return 3; else if (!hits) return 2;
+      if (hits > 1) return 3;
+      else if (!hits)
+      {
+	      AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
+				if (hits > 1) return 3;
+        else
+        {
+          if (!hits && strchr(name, '@'))
+	        {
+					  char *p = NULL;
+					  struct Person pe;
+
+					  ExtractAddress(name, &pe);
+
+					  if (pe.Address[0]) p = strchr(pe.Address, '@'); // is it an email address?
+
+			      if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
+			      if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
+		  	    *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
+        		return 0;	 // if it is an email we return without an error because finding an entry for an email isn`t a must
+	      	}
+          else if (!hits) return 2;
+        }
+      }
    }
+
    ab = tn->tn_User;
+
    switch (ab->Type)
    {
       case AET_USER:
@@ -173,6 +187,7 @@ void SAVEDS ASM WR_VerifyAutoFunc(REG(a1,int *arg))
    get(str, MUIA_String_Contents, &value);
    if ((adr = WR_ExpandAddresses(arg[1], value, TRUE, arg[2])))
    {
+      setstring(str, adr);
       FreeStrBuf(adr);
       get(str, MUIA_UserData, &next);
    }

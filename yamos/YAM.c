@@ -280,7 +280,7 @@ BOOL AY_New(BOOL hidden)
              End,
          End)),
          Child, G->AY_Group = PageGroup,
-						Child, ft_text = NFloattextObject,
+						Child, ft_text = FloattextObject,
             	GroupFrame,
             End,
             Child, ScrollgroupObject,
@@ -327,10 +327,10 @@ BOOL AY_New(BOOL hidden)
                      						        						"\0338TextEditor.mcc, BetterString.mcc\0332 (Allan Odgaard)\n"
 												                            "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
             											                  "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
-                       												      "\0338NList.mcc, NListview.mcc, NFloattext.mcc\0332 (Gilles Masson)\n"
+                       												      "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
 					                          						    "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n\n");
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
-      set(ft_text, MUIA_NFloattext_Text, G->AY_AboutText);
+      set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
 
       DoMethod(G->App, OM_ADDMEMBER, G->AY_Win);
       DoMethod(bt_sendmail,MUIM_Notify,MUIA_Pressed,            FALSE,MUIV_Notify_Application,2,MUIM_CallHook,&AY_SendMailHook);

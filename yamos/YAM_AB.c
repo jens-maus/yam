@@ -174,6 +174,11 @@ char *AB_CompleteAlias(char *text)
    {
       AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, text, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP|ASM_COMPLETE, &hits, &tn);
       if (hits == 1) compl = ((struct ABEntry *)(tn->tn_User))->RealName;
+      else if (!hits)
+      {
+	      AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, text, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_GROUP|ASM_COMPLETE, &hits, &tn);
+	      if (hits == 1) compl = ((struct ABEntry *)(tn->tn_User))->Address;
+      }
    }
    if (compl) return &compl[strlen(text)]; else return NULL;
 }

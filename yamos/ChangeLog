@@ -256,3 +256,16 @@
 
     * Added Signature selection to Mailinglist feature. Now you can select
       a different signature for every mailing list.
+
+2001-05-09  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * Reverted back from NFloattext.mcc to Floattext.mcc in about window
+
+    * If you enter an alias in a address field and press return the alias or
+      realname will be resolved and the complete e-mail address string will
+      be printed in the field now.
+
+    * Added eMail resolving to the address field functions so that also while
+      entering a eMail address YAM will try to resolve it from the addressbook.
+      The resolve & expand ording will be Alias->RealName->eMail.
+
