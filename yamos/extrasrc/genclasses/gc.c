@@ -4,7 +4,7 @@
  Copyright (C) 2001 by Andrew Bell <mechanismx@lineone.net>
 
  Contributed to the YAM Open Source Team as a special version
- Copyright (C) 2001-2002 by YAM Open Source Team
+ Copyright (C) 2001-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -48,6 +48,8 @@
  *
  * History
  * -------
+ * 0.11 - added AmigaOS4 support to the vararg _NewObject() function.
+ *
  * 0.10 - fixed CleanupClasses to deal with NULL classes
  *
  * 0.9 - fixed crash in processclasssrc()
@@ -106,7 +108,7 @@
  *
  */
 
-char *verstr = "0.10";
+char *verstr = "0.11";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -610,7 +612,7 @@ void gen_gpl( FILE *fp )
   "\n"
   " YAM - Yet Another Mailer\n"
   " Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>\n"
-  " Copyright (C) 2000-2002 by YAM Open Source Team\n"
+  " Copyright (C) 2000-2004 by YAM Open Source Team\n"
   "\n"
   " This program is free software; you can redistribute it and/or modify\n"
   " it under the terms of the GNU General Public License as published by\n"
@@ -639,20 +641,27 @@ void gen_supportroutines( FILE *fp )
 	char *bn = arg_basename;
 	fprintf(fp,
 "%s%s%s"
-"Object * STDARGS %s_NewObject(STRPTR class, ...)\n"
+"Object * STDARGS VARARGS68K %s_NewObject(STRPTR class, ...)\n"
 "{\n"
 "  long i;\n"
 "  for(i = 0; i < NUMBEROFCLASSES; i++)\n"
 "  {\n"
 "    if(!strcmp(MCCInfo[i].Name, class))\n"
 "    {\n"
-"#if defined(__MORPHOS__)\n"
-"			 va_list va;\n"
-"			 va_start(va, class);\n"
-"			 return NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)va->overflow_arg_area);\n"
-"#else\n"
-"			 return NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)(&class+1));\n"
-"#endif\n"
+"      va_list args;\n"
+"      Object *obj;\n"
+"      #if defined(__amigaos4__)\n"
+"      va_startlinear(args, class);\n"
+"      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)va_getlinearva(args, ULONG));\n"
+"      #elif defined(__MORPHOS__)\n"
+"      va_start(args, class);\n"
+"      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)args->overflow_arg_area);\n"
+"      #else\n"
+"      va_start(args, class);\n"
+"      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)args);\n"
+"      #endif\n"
+"      va_end(args);\n"
+"      return obj;\n"
 "    }\n"
 "  }\n"
 "  return NULL;\n"
@@ -695,7 +704,7 @@ void gen_supportroutines( FILE *fp )
 	arg_storm ? "/// "                : "",	
 	arg_storm ? bn                    : "",	
 	arg_storm ? "_NewObject()\n"      : "",
-	bn, bn, bn,
+	bn, bn, bn, bn,
 	arg_storm ? "///\n"               : "",	
 
 	arg_storm ? "/// "                : "",	
@@ -732,6 +741,7 @@ long gen_source( char *destfile, struct list *classlist )
 
 	gen_gpl(fp);
 	fprintf(fp, "\n /* " EDIT_WARNING " */\n\n"
+      "#include <stdarg.h>\n"
 		"#include <string.h>\n"
 		"#include \"Classes.h\"\n\n"
 		"struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n\n",
@@ -854,7 +864,7 @@ long gen_header( char *destfile, struct list *classlist )
 		"#define NUMBEROFCLASSES %ld\n"
 		"\n"
 		"extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n"
-		"Object * STDARGS %s_NewObject( STRPTR class, ... ) VARARGS68K;\n"
+		"Object * STDARGS VARARGS68K %s_NewObject(STRPTR class, ...);\n"
 		"long %s_SetupClasses( void );\n"
 		"void %s_CleanupClasses( void );\n"
 		"\n",

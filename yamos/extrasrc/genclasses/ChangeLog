@@ -1,3 +1,8 @@
+2004-01-24  Jens Langner <Jens.Langner@light-speed.de>
+
+    * added AmigaOS4 support. Now the _NewObject() varargs function
+      will take respect of the different varargs handling of AmigaOS4.
+
 2002-11-21  Gunther Nikl <gni@gecko.de>
 
     * gc.c/processclasssrc(): fixed NULL pointer crash
