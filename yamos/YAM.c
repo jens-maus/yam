@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <exec/execbase.h>
 #include <libraries/asl.h>
 #include <libraries/genesis.h>
 #include <libraries/pm.h>
