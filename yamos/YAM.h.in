@@ -1133,6 +1133,7 @@ extern BOOL CreateDirectory(char *);
 extern char *GetFolderDir(struct Folder *);
 extern char *GetMailFile(char *, struct Folder *, struct Mail *);
 extern void ExtractAddress(char *, struct Person *);
+extern time_t GetDateStamp(void);
 extern char *DateStamp2String(struct DateStamp *, int);
 extern long DateStamp2Long(struct DateStamp *);
 extern char *GetTZ(void);

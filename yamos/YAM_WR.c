@@ -288,13 +288,11 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
 LOCAL char *GetDateTime(void)
 {
    static char dt[SIZE_DEFAULT];
+   struct ClockData cd;
    char *tz;
-   time_t now;
-   struct tm tm;
 
-   time(&now);
-   tm = *(localtime(&now));
-   sprintf(dt, "%s, %02ld %s %ld %02ld:%02ld:%02ld", wdays[tm.tm_wday], tm.tm_mday, months[tm.tm_mon], tm.tm_year+1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
+   Amiga2Date(GetDateStamp(), &cd);
+   sprintf(dt, "%s, %02ld %s %ld %02ld:%02ld:%02ld", wdays[cd.wday], cd.mday, months[cd.month-1], cd.year, cd.hour, cd.min, cd.sec);
    if (tz = GetTZ()) { strcat(dt, " "); strcat(dt, tz); }
    return dt;  
 }

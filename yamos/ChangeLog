@@ -25,7 +25,7 @@
 
     * Removed enforcer hits when creating new messages.
 
-    * Set max. length of commodity description to 39 characters.
+    * YAM.cd: Set max. length of commodity description to 39 characters.
 
     * Added sprintf() replacement with Locale support.
 
@@ -34,3 +34,6 @@
     * Using ARexx commands MAILWRITE and MAILSEND, while YAM is iconified
       and the external editor is configured to be spawned always, would
       throw enforcer hits. Fixed.
+
+    * Got rid of the ANSI C time() function, which would access ENV:TZ
+      each time a log entry or new mail was to be written.

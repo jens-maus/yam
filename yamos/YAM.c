@@ -571,7 +571,7 @@ void Initialise(BOOL hidden)
       G->WR_NRequest[i].nr_Name = (UBYTE *)G->WR_Filename[i];
       G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
    }
-   srand(time(NULL));
+   srand(GetDateStamp());
    AY_PrintStatus(GetStr(MSG_LoadingGFX), 20);
    strmfp(iconpath, G->ProgDir, "Icons");
    for (i = 0; i < MAXICONS; i++)

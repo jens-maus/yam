@@ -1302,6 +1302,17 @@ char *DescribeCT(char *ct)
    return ct;
 }
 ///
+/// GetDateStamp
+//  Get number of seconds since 1/1-1978
+time_t GetDateStamp(void)
+{
+	struct DateStamp ds;
+	struct DateStamp *rds;
+
+	rds = DateStamp(&ds);
+	return (rds->ds_Days*24*60*60 + rds->ds_Minute*60 + rds->ds_Tick/TICKS_PER_SECOND);
+}
+///
 /// DateStamp2String
 //  Converts a datestamp to a string
 char *DateStamp2String(struct DateStamp *date, int mode)
@@ -2359,12 +2370,11 @@ LOCAL void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, voi
    FILE *fh;
    char logfile[SIZE_PATHFILE], filename[SIZE_FILE];
    if (!C->LogAllEvents && (id < 30 || id > 49)) return;
-   if (C->SplitLogfile) 
+   if (C->SplitLogfile)
    {
-      time_t now;
-      struct tm tm;
-      time(&now); tm = *(localtime(&now));
-      sprintf(filename, "YAM-%s%ld.log", months[tm.tm_mon], 1900+tm.tm_year);
+      struct ClockData cd;
+      Amiga2Date(GetDateStamp(), &cd);
+      sprintf(filename, "YAM-%s%ld.log", months[cd.month-1], cd.year);
    }
    else strcpy(filename, "YAM.log");
    strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
@@ -2752,7 +2762,7 @@ void GotoURL(char *url)
 ///
 
 /// strtok_r()
-/// Reentrant version of stdlib strtok()
+// Reentrant version of stdlib strtok()
 // Call like this:
 // char *next=input, *token, breakstring[]=", ";
 // do	{ token = strtok_r(&next,breakstring); /* ... */ } while(next);
@@ -2790,7 +2800,7 @@ char *p,*ret;
 
 	return ret;
 }
-
+///
 
 /*** REXX interface support ***/
 
@@ -2852,7 +2862,7 @@ void SPrintF(char *outstr, char *fmtstr, ...)
 	FormatString(G->Locale, fmtstr, &fmtstr+1, &hook);
 #endif
 }
-
+///
 /// putChar
 //  Hook used by FormatString()
 SAVEDS ASM void putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, struct Locale *locale))
@@ -2863,3 +2873,4 @@ SAVEDS ASM void putChar(REG(a0, struct Hook *hook), REG(a1, char c), REG(a2, str
 	tmp = (char **)(&hook->h_Data);
 	(*tmp)++;
 }
+///
