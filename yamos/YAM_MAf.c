@@ -896,8 +896,8 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
           if (!entry->BC_FImage)
           {
             if(entry->Type == FT_INCOMING)      entry->ImageIndex = new_mail ? 3 : 2;
-            else if(entry->Type == FT_OUTGOING) entry->ImageIndex = new_mail ? 5 : 4;
-            else if(entry->Type == FT_DELETED)  entry->ImageIndex = new_mail ? 7 : 6;
+            else if(entry->Type == FT_OUTGOING) entry->ImageIndex = (entry->Total > 0) ? 5 : 4;
+            else if(entry->Type == FT_DELETED)  entry->ImageIndex = (entry->Total > 0)? 7 : 6;
             else if(entry->Type == FT_SENT)     entry->ImageIndex = 8;
             else
             {

@@ -494,3 +494,10 @@
       introduce TearOff.mcc in YAM.
     * changed FolderInfoBar refreshing. Now it should not flicker anymore and refreshing
       the main NList Mail List should be fast again.
+
+2001-06-06  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * v18.7 of NListtree.mcc is now required because all earlier version seems to be too
+      buggy to allow them.
+    * The alternative images of the OUTGOING and DELETED folder will now be displayed if
+      there is any mail in the folders. This is a more natural behaviour.

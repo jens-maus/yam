@@ -705,7 +705,9 @@ void Initialise(BOOL hidden)
    /* We can't use CheckMCC() due to a bug in Toolbar.mcc! */
    InitLib("mui/Toolbar.mcc", 15, 6, TRUE, TRUE);
 
-   CheckMCC(MUIC_NListtree, 18, 0, TRUE);
+   // we make v18.7 the minimum requirement for YAM because earlier versions are
+   // buggy
+   CheckMCC(MUIC_NListtree, 18, 7, TRUE);
 
    if (!InitClasses()) Abort(GetStr(MSG_ErrorClasses));
    if (!Root_New(hidden)) Abort(FindPort("YAM") ? NULL : GetStr(MSG_ErrorMuiApp));
