@@ -78,8 +78,6 @@ struct TransStat
 /**************************************************************************/
 // TLS/SSL related variables
 
-struct Library *AmiSSLBase = NULL;
-
 static SSL_METHOD *method;
 static SSL_CTX *ctx;
 static SSL *ssl;
