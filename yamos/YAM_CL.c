@@ -20,6 +20,8 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
+ $Id$
+
 ***************************************************************************/
 
 #include "YAM.h"
@@ -114,7 +116,7 @@ ULONG SAVEDS ASM WS_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    UBYTE code;
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
    struct WS_Data *data = (struct WS_Data *)INST_DATA(cl,obj);
-   struct MUIS_Listtree_TreeNode *active;
+   struct MUI_NListtree_TreeNode *active;
    struct MUIP_HandleEvent *hmsg;
    
    switch(msg->MethodID)
@@ -195,7 +197,7 @@ ULONG SAVEDS ASM WS_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          result = MUIV_DragQuery_Refuse;
          if (d->obj == G->MA->GUI.NL_MAILS) result = MUIV_DragQuery_Accept;
          else if (d->obj == G->AB->GUI.LV_ADRESSES)
-            if (active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Listtree_GetEntry_Position_Active, 0))
+            if (active = (struct MUI_NListtree_TreeNode *)DoMethod(d->obj, MUIM_NListtree_GetEntry, NULL, MUIV_NListtree_GetEntry_Position_Active, 0))
                if (!(active->tn_Flags & TNF_LIST)) result = MUIV_DragQuery_Accept;
          break;
       case MUIM_DragDrop:
@@ -208,7 +210,7 @@ ULONG SAVEDS ASM WS_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          }
          else if (d->obj == G->AB->GUI.LV_ADRESSES)
          {
-            struct MUIS_Listtree_TreeNode *active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Listtree_GetEntry_Position_Active, 0);
+            struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)DoMethod(d->obj, MUIM_NListtree_GetEntry, NULL, MUIV_NListtree_GetEntry_Position_Active, 0);
             struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
             AB_InsertAddress(obj, addr->Alias, addr->RealName, "");
          }
@@ -302,20 +304,20 @@ ULONG SAVEDS ASM FL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 ULONG SAVEDS ASM EL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-   struct MUIS_Listtree_TreeNode *active;
+   struct MUI_NListtree_TreeNode *active;
 
    switch (msg->MethodID)
    {
       case MUIM_DragQuery:
          if (d->obj == obj) break;
          if (d->obj == G->AB->GUI.LV_ADRESSES && d->obj != obj)
-            if (active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Listtree_GetEntry_Position_Active, 0))
+            if (active = (struct MUI_NListtree_TreeNode *)DoMethod(d->obj, MUIM_NListtree_GetEntry, NULL, MUIV_NListtree_GetEntry_Position_Active, 0))
                if (!((struct ABEntry *)(active->tn_User))->Members) return MUIV_DragQuery_Accept;
          return MUIV_DragQuery_Refuse;
       case MUIM_DragDrop:
          if (d->obj == obj) break;
          if (d->obj == G->AB->GUI.LV_ADRESSES && d->obj != obj)
-            if (active = (struct MUIS_Listtree_TreeNode *)DoMethod(d->obj, MUIM_Listtree_GetEntry, NULL, MUIV_Listtree_GetEntry_Position_Active, 0))
+            if (active = (struct MUI_NListtree_TreeNode *)DoMethod(d->obj, MUIM_NListtree_GetEntry, NULL, MUIV_NListtree_GetEntry_Position_Active, 0))
                if (active->tn_Flags & TNF_LIST) EA_AddMembers(obj, active);
                else EA_AddSingleMember(obj, active);
          return 0;
@@ -333,15 +335,22 @@ ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    switch (msg->MethodID)
    {
       case OM_NEW:
+			{
          obj = (Object *)DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
+
          if (obj)
          {
             struct AL_Data *data = INST_DATA(cl, obj);
-	    InitHook(&data->DisplayHook, AB_LV_DspFunc, data);
-            set(obj, MUIA_Listtree_DisplayHook, &data->DisplayHook);
+	    			InitHook(&data->DisplayHook, AB_LV_DspFunc, data);
+            set(obj, MUIA_NListtree_DisplayHook, &data->DisplayHook);
+
          }
          return (ULONG)obj;
+      }
+    	break;
+
       case MUIM_Setup:
+ 			{
          if (!DoSuperMethodA(cl, obj, msg)) return FALSE;
          data = INST_DATA(cl, obj);
          data->Object = NewObject(CL_BodyChunk->mcc_Class,NULL,
@@ -352,22 +361,36 @@ ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          data->Image = (APTR)DoMethod(obj, MUIM_List_CreateImage, data->Object, 0);
          MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
          return TRUE;
+      }
+    	break;
+
       case MUIM_Cleanup: 
+			{
          data = INST_DATA(cl, obj);
          MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
          DoMethod(obj, MUIM_List_DeleteImage, data->Image);
          if (data->Object) MUI_DisposeObject(data->Object);
+      }
+    	break;
+
       case MUIM_DragQuery:
+			{
          if (d->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
-         break;
+
+			}
+      break;
+
       case MUIM_DragDrop:
-         if (d->obj == G->MA->GUI.NL_MAILS)
-         {
-            struct Mail **mlist = MA_CreateMarkedList(d->obj);
-            if (mlist) { MA_GetAddress(mlist); free(mlist); }
-         }
-         break;
+			{
+   			if (d->obj == G->MA->GUI.NL_MAILS)
+        {
+        	struct Mail **mlist = MA_CreateMarkedList(d->obj);
+          if (mlist) { MA_GetAddress(mlist); free(mlist); }
+        }
+    	}
+      break;
    }
+
    return DoSuperMethodA(cl,obj,msg);
 }
 ///
@@ -405,8 +428,8 @@ ULONG SAVEDS ASM TE_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
          if (drop_msg->obj == G->AB->GUI.LV_ADRESSES)
          {
-            struct MUIS_Listtree_TreeNode *tn;
-            if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(drop_msg->obj, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0))
+            struct MUI_NListtree_TreeNode *tn;
+            if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(drop_msg->obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Active, MUIV_NListtree_GetEntry_Position_Active, 0))
             {
                struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
                if (ab->Type != AET_GROUP)
@@ -531,7 +554,7 @@ BOOL InitClasses(void)
    CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
    CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
    CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
-   CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_Listtree     , NULL, sizeof(struct AL_Data), ENTRY(AL_Dispatcher));
+   CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct AL_Data), ENTRY(AL_Dispatcher));
    CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
    CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));
    CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct DumData), ENTRY(TE_Dispatcher));

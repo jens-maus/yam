@@ -20,6 +20,8 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
+ $Id$
+
 ***************************************************************************/
 
 #include "YAM.h"
@@ -875,7 +877,7 @@ void SAVEDS MA_RemoveAttachFunc(void)
       }
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
       MA_ChangeSelectedFunc();
-      DisplayStatistics(0);
+      DisplayStatistics(NULL);
       BusyEnd;
    }
 }
@@ -1665,7 +1667,7 @@ void SAVEDS MA_ChangeSubjectFunc(void)
    }
    free(mlist);
    DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-   DisplayStatistics(0);
+   DisplayStatistics(NULL);
 }
 MakeHook(MA_ChangeSubjectHook, MA_ChangeSubjectFunc);
 

@@ -183,7 +183,7 @@ Directory
 ;
 MSG_Copyright1 (//)
 OpenSource Email package for the Amiga\n\
-Copyright © 1995-2000 Marcel Beck
+Copyright © 1995-2001 Marcel Beck
 ;
 MSG_Version (//)
 Version:
@@ -195,7 +195,7 @@ MSG_Copyright2 (//)
 This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
 ;
 MSG_UsedSoftware (//)
-This application uses the following third party software:\n
+\nThis application uses the following third party software:\n
 ;
 MSG_WebSite (//)
 The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
@@ -464,8 +464,8 @@ MSG_UT_PGPPassReq (//)
 Please enter your PGP pass phrase:
 ;
 MSG_UT_AppStats (//)
-New:%lD Total:%lD
-; COUNT, COUNT
+N:%ld U:%ld T:%ld
+; COUNT, COUNT, COUNT
 ;
 MSG_UT_NoPrinter (//)
 No printer or printer offline!

@@ -245,9 +245,9 @@ Verzeichnis
 ;
 MSG_Copyright1
 OpenSource E-Mail-Software für den Amiga\n\
-Copyright © 1995-2000 Marcel Beck
+Copyright © 1995-2001 Marcel Beck
 ; OpenSource Email package for the Amiga\n\
-; Copyright © 1995-2000 Marcel Beck
+; Copyright © 1995-2001 Marcel Beck
 ;
 MSG_Version
 Version:
@@ -263,8 +263,7 @@ Dieses Programm ist freie Software; Sie können es unter den Bedingungen der GNU 
 ; This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
 ;
 MSG_UsedSoftware
-Dieses Programm verwendet folgende Fremdsoftware:\n\
-
+\nDieses Programm verwendet folgende Fremdsoftware:\n
 ; This application uses the following third party software:\n
 ;
 MSG_WebSite
@@ -612,9 +611,9 @@ Bitte geben Sie Ihr PGP-Paßwort ein:
 ; Please enter your PGP pass phrase:
 ;
 MSG_UT_AppStats
-Neu:%ld Gesamt:%ld
-; New:%lD Total:%lD
-; COUNT, COUNT
+N:%ld U:%ld G:%ld
+; N:%ld U:%ld T:%ld
+; COUNT, COUNT, COUNT
 ;
 MSG_UT_NoPrinter
 Kein Drucker oder Drucker offline!

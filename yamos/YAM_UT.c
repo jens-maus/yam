@@ -20,6 +20,8 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
+ $Id$
+
 ***************************************************************************/
 
 #include "YAM.h"
@@ -2496,32 +2498,63 @@ void Busy(char *text, char *parameter, int cur, int max)
 //  Calculates folder statistics and update mailbox status icon
 void DisplayStatistics(struct Folder *fo)
 {
-   struct Mail *mail;
-   BOOL check = FALSE;
-   struct Folder *actfo = FO_GetCurrentFolder();
-   static char apptit[SIZE_DEFAULT/2];
+	struct Mail *mail;
+	BOOL check = FALSE;
+	struct Folder *actfo = FO_GetCurrentFolder();
+	static char apptit[SIZE_DEFAULT/2];
 
-   if (!fo) fo = actfo;
-   if (fo == (struct Folder *)-1) { fo = FO_GetFolderByType(FT_INCOMING, NULL); check = TRUE; }
-   for (mail = fo->Messages, fo->Unread = fo->New = 0; mail; mail = mail->Next)
-   {
-      if (mail->Status == STATUS_NEW) { fo->New++; fo->Unread++; }
-      if (mail->Status == STATUS_UNR) fo->Unread++;
-   }
-   DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_Redraw, FO_GetFolderPosition(fo));
-   if (fo == actfo) { MA_SetMessageInfoFunc(); MA_SetFolderInfoFunc(); }
-   if (fo->Type == FT_INCOMING && !G->AppIconQuiet) if (check || fo->New != G->NewMsgs || fo->Total != G->TotMsgs)
-   {
+	// If the parsed argument is NULL we set want to show the statistics from the actual folder
+	if (!fo) fo = actfo;
+
+	if (fo == (struct Folder *)-1)
+  {
+  	fo = FO_GetFolderByType(FT_INCOMING, NULL);
+    check = TRUE;
+  }
+
+  for (mail = fo->Messages, fo->Unread = fo->New = 0; mail; mail = mail->Next)
+	{
+  	if (mail->Status == STATUS_NEW) { fo->New++; fo->Unread++; }
+    if (mail->Status == STATUS_UNR) fo->Unread++;
+  }
+
+	DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_Redraw, FO_GetFolderPosition(fo), TAG_DONE);
+
+  if (fo == actfo)
+  {
+  	MA_SetMessageInfoFunc();
+    MA_SetFolderInfoFunc();
+  }
+
+  // if the folder that statistic has changed is the incoming folder we also have to change the AppIcon accordingly
+  if (fo->Type == FT_INCOMING && !G->AppIconQuiet)
+  {
+  	if (check || fo->New != G->NewMsgs || fo->Unread != G->UnrMsgs || fo->Total != G->TotMsgs)
+  	{
+      // we set the mode accordingly to the status of the folder (new/check/old)
       int mode = fo->Total ? (fo->New ? 2 : 1) : 0;
-      if (G->TR) if (G->TR->Checking) mode = 3;
-      SPrintF(apptit, GetStr(MSG_UT_AppStats), fo->New, fo->Total);
-      if (G->AppIcon) { RemoveAppIcon(G->AppIcon); G->AppIcon = NULL; }
+
+      if (G->TR && G->TR->Checking) mode = 3;
+      sprintf(apptit, GetStr(MSG_UT_AppStats), fo->New, fo->Unread, fo->Total);
+
+      // We first have to remove the appicon before we can change it
+      if (G->AppIcon)
+      {
+      	RemoveAppIcon(G->AppIcon);
+        G->AppIcon = NULL;
+      }
+
+      // Now we create the new AppIcon and display it
       if (G->DiskObj[mode])
       {
          struct DiskObject *dobj=G->DiskObj[mode];
          G->AppIcon = AddAppIconA(0, 0, (STRPTR)apptit, G->AppPort, NULL, dobj, NULL);
       }
-      G->NewMsgs = fo->New; G->TotMsgs = fo->Total;
+
+      G->NewMsgs = fo->New;
+      G->UnrMsgs = fo->Unread;
+      G->TotMsgs = fo->Total;
+   	}
    }
 }
 ///

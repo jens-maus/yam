@@ -20,6 +20,8 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
+ $Id$
+
 ***************************************************************************/
 
 #include "YAM.h"
@@ -35,7 +37,7 @@ LOCAL struct EA_ClassData *EA_New(int, int);
 /*** Init & Open ***/
 /// EA_Init
 //  Creates and opens an address book entry window
-int EA_Init(int type, struct MUIS_Listtree_TreeNode *tn)
+int EA_Init(int type, struct MUI_NListtree_TreeNode *tn)
 {
    struct EA_ClassData *ea;
    int winnum;
@@ -103,7 +105,7 @@ void EA_Setup(int winnum, struct ABEntry *ab)
 /*** Private functions (member list) ***/
 /// EA_AddSingleMember
 //  Adds a single entry to the member list by Drag&Drop
-void EA_AddSingleMember(Object *obj, struct MUIS_Listtree_TreeNode *tn)
+void EA_AddSingleMember(Object *obj, struct MUI_NListtree_TreeNode *tn)
 {
    struct ABEntry *ab;
    int dropmark;
@@ -115,13 +117,13 @@ void EA_AddSingleMember(Object *obj, struct MUIS_Listtree_TreeNode *tn)
 ///
 /// EA_AddMembers (rec)
 //  Adds an entire group to the member list by Drag&Drop
-STACKEXT void EA_AddMembers(Object *obj, struct MUIS_Listtree_TreeNode *list)
+STACKEXT void EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
 {
-   struct MUIS_Listtree_TreeNode *tn;
+   struct MUI_NListtree_TreeNode *tn;
    int i;
    
    for (i=0; ; i++)
-      if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, list, i, MUIV_Listtree_GetEntry_Flags_SameLevel))
+      if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel))
          if (tn->tn_Flags & TNF_LIST) EA_AddMembers(obj, tn);
          else EA_AddSingleMember(obj, tn);
       else break;
@@ -166,22 +168,22 @@ MakeHook(EA_PutEntryHook, EA_PutEntry);
 void EA_InsertBelowActive(struct ABEntry *addr, int flags)
 {
    APTR lt = G->AB->GUI.LV_ADRESSES;
-   struct TreeNode *node, *list, *res;
-   get(lt, MUIA_Listtree_Active, &node);
-   if (node == MUIV_Listtree_Active_Off)
+   struct MUI_NListtree_TreeNode *node, *list, *res;
+   get(lt, MUIA_NListtree_Active, &node);
+   if (node == MUIV_NListtree_Active_Off)
    {
-      res = (struct TreeNode *)DoMethod(lt, MUIM_Listtree_Insert, addr->Alias, addr, MUIV_Listtree_Insert_ListNode_Root, MUIV_Listtree_Insert_PrevNode_Sorted, flags);
+      res = (struct MUI_NListtree_TreeNode *)DoMethod(lt, MUIM_NListtree_Insert, addr->Alias, addr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, flags);
    }
    else
    {
-      list = (struct TreeNode *)DoMethod(lt, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Parent, 0);
-      res = (struct TreeNode *)DoMethod(lt, MUIM_Listtree_Insert, addr->Alias, addr, list, node, flags);
+      list = (struct MUI_NListtree_TreeNode *)DoMethod(lt, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Active, MUIV_NListtree_GetEntry_Position_Parent, 0);
+      res = (struct MUI_NListtree_TreeNode *)DoMethod(lt, MUIM_NListtree_Insert, addr->Alias, addr, list, node, flags);
    }
 /*
    
-   ULONG pred = DoMethod(lt, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0);
+   ULONG pred = DoMethod(lt, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Active, MUIV_NListtree_GetEntry_Position_Active, 0);
 */
-   if (res) set(lt, MUIA_Listtree_Active, res);
+   if (res) set(lt, MUIA_NListtree_Active, res);
 }
 
 ///
@@ -191,9 +193,9 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
 {
    char alias[SIZE_NAME];
    int c = 1, l, hits = 0;
-   struct MUIS_Listtree_TreeNode *tn;
+   struct MUI_NListtree_TreeNode *tn;
    strcpy(alias, ab->Alias);
-   while (AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
+   while (AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
    {
       if (tn->tn_User == ab && excludemyself && hits == 1) break;
       if ((l = strlen(ab->Alias)) > SIZE_NAME-2) l = SIZE_NAME-2;

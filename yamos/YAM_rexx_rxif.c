@@ -1445,11 +1445,11 @@ void rx_addrfind( struct RexxHost *host, struct rxd_addrfind **rxd, long action,
          G->AB->Hits = 0;
          if (rd->arg.nameonly) mode = rd->arg.emailonly ? ABF_RX_NAMEEMAIL : ABF_RX_NAME;
                           else mode = rd->arg.emailonly ? ABF_RX_EMAIL     : ABF_RX;
-         AB_FindEntry(MUIV_Listtree_GetEntry_ListNode_Root, rd->arg.pattern, mode, NULL);
+         AB_FindEntry(MUIV_NListtree_GetEntry_ListNode_Root, rd->arg.pattern, mode, NULL);
          if (G->AB->Hits)
          {
             rd->res.alias = calloc(G->AB->Hits+1, sizeof(char *));
-            AB_FindEntry(MUIV_Listtree_GetEntry_ListNode_Root, rd->arg.pattern, mode, rd->res.alias);
+            AB_FindEntry(MUIV_NListtree_GetEntry_ListNode_Root, rd->arg.pattern, mode, rd->res.alias);
          }
          else rd->rc = RETURN_WARN;
          break;
@@ -1474,7 +1474,7 @@ void rx_addrinfo( struct RexxHost *host, struct rxd_addrinfo **rxd, long action,
    } *rd = (void *)*rxd;
    static char *types[3] = { "P","L","G"};
    char *ptr;
-   struct MUIS_Listtree_TreeNode *tn;
+   struct MUI_NListtree_TreeNode *tn;
    int i, hits;
    switch( action )
    {
@@ -1484,7 +1484,7 @@ void rx_addrinfo( struct RexxHost *host, struct rxd_addrinfo **rxd, long action,
          
       case RXIF_ACTION:
          hits = 0;
-         if (AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, rd->rd.arg.alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
+         if (AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, rd->rd.arg.alias, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn))
          {
             struct ABEntry *ab = (struct ABEntry *)tn->tn_User;
             rd->rd.res.type = types[ab->Type];
@@ -2023,7 +2023,7 @@ void rx_getselected( struct RexxHost *host, struct rxd_getselected **rxd, long a
 /// OK
 void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action, struct RexxMsg *rexxmsg )
 {
-   struct MUIS_Listtree_TreeNode *tn = NULL;
+   struct MUI_NListtree_TreeNode *tn = NULL;
    struct rxd_addredit *rd = *rxd;
 
    switch( action )
@@ -2033,7 +2033,7 @@ void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action,
          break;
          
       case RXIF_ACTION:
-         if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0))
+         if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Active, MUIV_NListtree_GetEntry_Position_Active, 0))
          {
             struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
             if (rd->arg.alias)    stccpy(ab->Alias, rd->arg.alias, SIZE_NAME);

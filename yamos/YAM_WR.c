@@ -20,6 +20,8 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
+ $Id$
+
 ***************************************************************************/
 
 #include "YAM.h"
@@ -73,7 +75,7 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
    int hits = 0, i, retcode;
    char *p;
    struct ABEntry *ab;
-   struct MUIS_Listtree_TreeNode *tn, *tn2;
+   struct MUI_NListtree_TreeNode *tn, *tn2;
    struct Person pe;
 
    ExtractAddress(name, &pe);
@@ -86,11 +88,11 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
    }
    pe.Address[0] = 0;
    stccpy(FailedAlias, name, SIZE_NAME);
-   AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
+   AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
    if (hits > 1) return 3; // multiple matches
    if (!hits)
    {
-      AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, name, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
+      AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, name, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP, &hits, &tn);
       if (hits > 1) return 3; else if (!hits) return 2;
    }
    ab = tn->tn_User;
@@ -119,7 +121,7 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
       case AET_GROUP:
          if (nolists) return 4;
          for (i=0; ; i++)
-            if ((tn2 = (struct MUIS_Listtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_GetEntry, tn, i, MUIV_Listtree_GetEntry_Flags_SameLevel)))
+            if ((tn2 = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_NListtree_GetEntry, tn, i, MUIV_NListtree_GetEntry_Flag_SameLevel, 0)))
             {
                struct ABEntry *ab2 = tn2->tn_User;
                if ((retcode = WR_ResolveName(winnum, ab2->Alias, adrstr, nolists))) return retcode;
@@ -616,9 +618,9 @@ LOCAL void WR_WriteUserInfo(FILE *fh)
 {
    int len = 15, hits = 0;
    struct ABEntry *ab = NULL;
-   struct MUIS_Listtree_TreeNode *tn;
+   struct MUI_NListtree_TreeNode *tn;
 
-   if (AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, C->EmailAddress, ASM_ADDRESS|ASM_USER, &hits, &tn))
+   if (AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, C->EmailAddress, ASM_ADDRESS|ASM_USER, &hits, &tn))
    {
       ab = tn->tn_User;
       if (ab->Type != AET_USER) ab = NULL;
@@ -800,9 +802,9 @@ LOCAL char *WR_GetPGPId(struct Person *pe)
 {
    int hits;
    char *pgpid = NULL;
-   struct MUIS_Listtree_TreeNode *tn;
-   if (!AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, pe->RealName, ASM_REALNAME|ASM_USER, &hits, &tn))
-        AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, pe->Address, ASM_ADDRESS|ASM_USER, &hits, &tn);
+   struct MUI_NListtree_TreeNode *tn;
+   if (!AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, pe->RealName, ASM_REALNAME|ASM_USER, &hits, &tn))
+        AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, pe->Address, ASM_ADDRESS|ASM_USER, &hits, &tn);
    if (hits && tn && tn->tn_User)
 		if (((struct ABEntry *)(tn->tn_User))->PGPId[0])
 			pgpid = ((struct ABEntry *)(tn->tn_User))->PGPId;
@@ -954,7 +956,7 @@ BOOL FirstAddr=TRUE;
 		{
 		int hits = 0, currsec;
 		STRPTR in=buf,s,t;
-		struct MUIS_Listtree_TreeNode *tn;
+		struct MUI_NListtree_TreeNode *tn;
 
 			// loop through comma-separated addresses in string
 			while((s = strtok_r((char **)&in,",")))
@@ -964,7 +966,7 @@ BOOL FirstAddr=TRUE;
 
 				if(!t) continue; // can't find address for this entry - shouldn't happen
 
-				if(AB_SearchEntry(MUIV_Listtree_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
+				if(AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
 					currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;	// get default from entry
 				else
 					currsec = 0;		// entry not in address book -> no security

@@ -20,6 +20,8 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
+ $Id$
+
 ***************************************************************************/
 
 #include "headers.h"
@@ -758,7 +760,7 @@ struct EA_ClassData  /* address book entry window */
    int  Type;
    int  EntryPos;
    char PhotoName[SIZE_PATHFILE];
-   struct MUIS_Listtree_TreeNode *EditNode;
+   struct MUI_NListtree_TreeNode *EditNode;
 };
 
 struct AB_ClassData  /* address book window */
@@ -934,6 +936,7 @@ struct Global
    struct Locale        *Locale;
    struct DateStamp      StartDate;
    int                   TotMsgs;
+   int									 UnrMsgs;
    int                   NewMsgs;
    BOOL                  AppIconQuiet;
    int                   GM_Count, SI_Count;
@@ -1324,23 +1327,23 @@ extern char *AB_CompleteAlias(char *);
 extern char *AB_ExpandBD(long date);
 extern long AB_CompressBD(char *datestr);
 extern void AB_CheckBirthdates(void);
-extern STACKEXT int AB_SearchEntry(struct MUIS_Listtree_TreeNode *list, char *, int, int *, struct  MUIS_Listtree_TreeNode **);
+extern STACKEXT int AB_SearchEntry(struct MUI_NListtree_TreeNode *list, char *, int, int *, struct  MUI_NListtree_TreeNode **);
 extern BOOL AB_LoadTree(char *, BOOL, BOOL);
 extern BOOL AB_SaveTree(char *);
 extern void SAVEDS AB_SaveABookFunc(void);
 extern void SAVEDS AB_DeleteFunc(void);
-extern STACKEXT BOOL AB_FindEntry(struct MUIS_Listtree_TreeNode *, char *, int mode, char **);
+extern STACKEXT BOOL AB_FindEntry(struct MUI_NListtree_TreeNode *, char *, int mode, char **);
 extern void AB_MakeABFormat(APTR);
-extern long SAVEDS ASM AB_LV_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct MUIS_Listtree_TreeNode *));
+extern long SAVEDS ASM AB_LV_DspFunc(REG(a0, struct Hook *), REG(a1, struct MUIP_NListtree_DisplayMessage *));
 extern struct AB_ClassData *AB_New(void);
 
-extern int EA_Init(int, struct MUIS_Listtree_TreeNode *);
+extern int EA_Init(int, struct MUI_NListtree_TreeNode *);
 extern void EA_Setup(int, struct ABEntry *);
 extern void EA_InsertBelowActive(struct ABEntry *, int);
 extern void EA_FixAlias(struct ABEntry *, BOOL);
 extern void EA_SetDefaultAlias(struct ABEntry *);
-extern void EA_AddSingleMember(Object *, struct MUIS_Listtree_TreeNode *);
-extern STACKEXT void EA_AddMembers(Object *, struct MUIS_Listtree_TreeNode *);
+extern void EA_AddSingleMember(Object *, struct MUI_NListtree_TreeNode *);
+extern STACKEXT void EA_AddMembers(Object *, struct MUI_NListtree_TreeNode *);
 extern void EA_SetDefaultAlias(struct ABEntry *);
 extern void EA_SetPhoto(int, char *);
 

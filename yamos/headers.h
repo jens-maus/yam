@@ -29,7 +29,7 @@
 #include <libraries/openurl.h>
 #include <libraries/genesis.h>
 #include <libraries/cmanager.h>
-#include <mui/Listtree_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
@@ -89,7 +89,7 @@
 
 #if (defined DEBUG)
 	#define DB(x) (x)
-	#define DBpr(x) (KPrintf("YAM: %s",x))
+	#define DBpr(x) (KPrintF("YAM: %s",x))
 #else
 	#define DB(x)
 	#define DBpr(x)
