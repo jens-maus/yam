@@ -2287,6 +2287,8 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
    char *foundurl = NULL, *p;
    int i;
 
+//   DB(kprintf("ExtractURL: [%s]\n", line);)
+
    if ((p = strchr(line, ':')))
    {
       for (i = 0; i < 7; i++)
@@ -2316,26 +2318,33 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
         // from where this URL starts
         for(foundurl=p; p && strchr(EML_legalchars, *p); p--)
         {
+          // lets see how many @ we have and break if we
+          // have more than one.
+          if(*p == '@')
+          {
+            atcnt++;
+            if(atcnt > 1) { p++; break; }
+          }
+
           foundurl = p;
           if(p == line) break;
         }
 
         // now we copy the address in the result array and try to validate the email
         // address also
-        for(i=0; foundurl[i] && strchr(EML_legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
+        for(i=0, atcnt=0; foundurl[i] && strchr(EML_legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
         {
           url[i] = foundurl[i];
 
           // check that we don`t have two @ signs or that there is nothing in front of the @
-          if(!result) continue;
-          else if(url[i] == '@')
+          if(url[i] == '@')
           {
-            atcnt++;
-            if(i == 0 || atcnt > 1) result = FALSE;
+            if(i == 0)      { result = FALSE; i++; break; }
+            if(++atcnt > 1) { result = FALSE; break;      }
           }
           else if(url[i] == '.') // count the dots in the address
           {
-            if(dotdis == 0) result = FALSE;         // if there was a dot before, this could not be a valid email
+            if(dotdis == 0) break;                // if there was a dot before, this could not be a valid email
             if(atcnt) { dotcnt++; dotdis = 0; };  // only count if we passed the @
           }
           else dotdis++;
@@ -2575,7 +2584,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                            goto rim_cont;
                         }
                      }
-/* URL */            if (!re->NoTextstyles && mode == RIM_READ) if (RE_ExtractURL(rptr, url, &urlptr, &ptr))
+/* URL */            if (!re->NoTextstyles && mode == RIM_READ && rptr[0] && RE_ExtractURL(rptr, url, &urlptr, &ptr))
                      {
                         char *buf2, *p;
                         if ((buf2 = calloc(SIZE_DEFAULT+(strlen(rptr)*3)/2,1)))
@@ -2586,7 +2595,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
                               while (rptr < urlptr) *p++ = *rptr++;
                               sprintf(p, "\033p[7]%s\033p[0]", url);
                               p = &buf2[strlen(buf2)]; rptr = ptr;
-                           } while (RE_ExtractURL(rptr, url, &urlptr, &ptr));
+                           } while (rptr[0] && RE_ExtractURL(rptr, url, &urlptr, &ptr));
                            strcpy(p, rptr); strcat(p, "\n");
                            cmsg = AppendToBuffer(cmsg, &wptr, &len, buf2);
                            free(buf2);
