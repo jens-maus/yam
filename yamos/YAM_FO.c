@@ -147,21 +147,44 @@ BOOL FO_SetCurrentFolder(struct Folder *fo)
 //  Finds a folder by its name, type or position
 struct Folder *FO_GetFolderRexx(char *arg, int *pos)
 {
-   int i, nr = 0;
+   int i, j, k = 0, nr = 0;
    struct Folder *fo = NULL, **flist;
    char *p = arg;
    BOOL numeric = TRUE;
 
    if (flist = FO_CreateList())
    {
+      // lets find out if the user wants to have the folder identified by it`s position
       while (*p) if (!isdigit((int)*p++)) numeric = FALSE;
-      if (numeric) if ((i = atoi(arg)) >= 0 && i < (int)*flist) if (flist[++i]->Type != FT_GROUP) nr = i;
+      if(numeric)
+      {
+        if((i = atoi(arg)) >= 0)
+        {
+          for(j = 1; j <= (int)*flist; j++)
+          {
+            // if the current one is a FT_GROUP we go to the next one until we find
+            // the correct one
+            if(flist[j]->Type != FT_GROUP)
+            {
+              if(k == i)
+              {
+                nr = j;
+                break;
+              }
+              k++;
+            }
+          }
+        }
+      }
+
+      // for string folder search
       if (!nr) for (i = 1; i <= (int)*flist; i++)
          if ((!Stricmp(arg, flist[i]->Name) && flist[i]->Type != FT_GROUP) ||
              (!stricmp(arg, "incoming")     && flist[i]->Type == FT_INCOMING) ||
              (!stricmp(arg, "outgoing")     && flist[i]->Type == FT_OUTGOING) ||
              (!stricmp(arg, "sent")         && flist[i]->Type == FT_SENT) ||
              (!stricmp(arg, "deleted")      && flist[i]->Type == FT_DELETED)) { nr = i; break; }
+
       if (nr)
       {
          fo = flist[nr];

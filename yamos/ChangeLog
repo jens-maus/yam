@@ -1,3 +1,8 @@
+2002-05-19  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_FO.c: the bug #555117 wasn`t completly fixed because
+      FO_GetFolderRexx() still counted groups as folders.
+
 2002-05-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_rexx_rxif.c: fixed bug #555126 where the USERINFO arexx
