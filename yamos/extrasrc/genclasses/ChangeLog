@@ -1,19 +1,25 @@
-2001-06-16  Jens Langner <Jens.Langner@htw-dresden.de>
+2002-11-21  Gunther Nikl <gni@gecko.de>
+
+    * gc.c/processclasssrc(): fixed NULL pointer crash
+    * gc.c: fixed generated CleanupClasses to deal with NULL classes
+    * Makefile, smakefile: simplify
+
+2002-06-16  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * added STDARGS define to _NewObject()
     * added MorphOS support. Now the _NewObject() varargs function
       will take respect of the different vararg handling of MorphOS.
 
-2001-05-31  Jens Langner <Jens.Langner@htw-dresden.de>
+2002-05-31  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * added gcc Makefile
 
-2001-05-06  Jens Langner <Jens.Langner@htw-dresden.de>
+2002-05-06  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * added a cast to the MUI_CreateCustomClass() call to get rid of the
       portability warnings #120 of SAS/C.
 
-2001-02-21  Gunther Nikl <gni@gecko.de>
+2002-02-21  Gunther Nikl <gni@gecko.de>
 
     * gc.c/gen_classheaders(): generated headername defaults to <name>_cl.h
       to avoid potenntial name clashes
