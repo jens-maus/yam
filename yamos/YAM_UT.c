@@ -2099,9 +2099,12 @@ struct DateStamp *ScanDate(char *date)
 void FormatSize(LONG size, char *buffer)
 {
   // get the GroupSeparator string
-  char *gs = G->Locale ? (char *)G->Locale->loc_GroupSeparator : ".";
+  char *dp = G->Locale ? (char *)G->Locale->loc_DecimalPoint   : ".";
+  char *gs = G->Locale ? (char *)G->Locale->loc_GroupSeparator : ",";
   char *p = &buffer[strlen(buffer)];
-  char buf[10];
+  static char buf[10];
+
+//  DB(kprintf("FormatSize: %ld\n", size);)
 
   // we check what SizeFormat the user has choosen
   switch(C->SizeFormat)
@@ -2117,27 +2120,24 @@ void FormatSize(LONG size, char *buffer)
     {
       if (size >= GB)
       {
-        sprintf(buf, "%ld", (size%GB)/MB);
+        sprintf(buf, "%03ld", (size%GB)/MB);
+        buf[1] = '\0';
 
-        if(strlen(buf) > 1) buf[1] = '\0';
-
-        sprintf(p, "%ld%s%s GB", size/GB, gs, buf);
+        sprintf(p, "%ld%s%s GB", size/GB, dp, buf);
       }
       else if (size >= MB)
       {
-        sprintf(buf, "%ld", (size%MB)/KB);
+        sprintf(buf, "%03ld", (size%MB)/KB);
+        buf[1] = '\0';
 
-        if(strlen(buf) > 1) buf[1] = '\0';
-
-        sprintf(p, "%ld%s%s MB", size/MB, gs, buf);
+        sprintf(p, "%ld%s%s MB", size/MB, dp, buf);
       }
       else if (size >= KB)
       {
-        sprintf(buf, "%ld", (size%KB));
+        sprintf(buf, "%03ld", (size%KB));
+        buf[1] = '\0';
 
-        if(strlen(buf) > 1) buf[1] = '\0';
-
-        sprintf(p, "%ld%s%s KB", size/KB, gs, buf);
+        sprintf(p, "%ld%s%s KB", size/KB, dp, buf);
       }
       else sprintf(p, "%ld B", size);
     }
@@ -2152,30 +2152,24 @@ void FormatSize(LONG size, char *buffer)
     {
       if (size >= GB)
       {
-        sprintf(buf, "%ld", (size%GB)/MB);
+        sprintf(buf, "%03ld", (size%GB)/MB);
+        buf[2] = '\0';
 
-        if(strlen(buf) > 2) buf[2] = '\0';
-        if(strlen(buf) < 2) buf[1] = '0';
-
-        sprintf(p, "%ld%s%s GB", size/GB, gs, buf);
+        sprintf(p, "%ld%s%s GB", size/GB, dp, buf);
       }
       else if (size >= MB)
       {
-        sprintf(buf, "%ld", (size%MB)/KB);
+        sprintf(buf, "%03ld", (size%MB)/KB);
+        buf[2] = '\0';
 
-        if(strlen(buf) > 2) buf[2] = '\0';
-        if(strlen(buf) < 2) buf[1] = '0';
-
-        sprintf(p, "%ld%s%s MB", size/MB, gs, buf);
+        sprintf(p, "%ld%s%s MB", size/MB, dp, buf);
       }
       else if (size >= KB)
       {
-        sprintf(buf, "%ld", (size%KB));
+        sprintf(buf, "%03ld", (size%KB));
+        buf[2] = '\0';
 
-        if(strlen(buf) > 2) buf[2] = '\0';
-        if(strlen(buf) < 2) buf[1] = '0';
-
-        sprintf(p, "%ld%s%s KB", size/KB, gs, buf);
+        sprintf(p, "%ld%s%s KB", size/KB, dp, buf);
       }
       else sprintf(p, "%ld B", size);
     }
@@ -2190,33 +2184,24 @@ void FormatSize(LONG size, char *buffer)
     {
       if (size >= GB)
       {
-        sprintf(buf, "%ld", (size%GB)/MB);
+        sprintf(buf, "%03ld", (size%GB)/MB);
+        buf[3] = '\0';
 
-        if(strlen(buf) > 3) buf[3] = '\0';
-        if(strlen(buf) < 3) buf[2] = '0';
-        if(strlen(buf) < 2) buf[1] = '0';
-
-        sprintf(p, "%ld%s%s GB", size/GB, gs, buf);
+        sprintf(p, "%ld%s%s GB", size/GB, dp, buf);
       }
       else if (size >= MB)
       {
-        sprintf(buf, "%ld", (size%MB)/KB);
+        sprintf(buf, "%03ld", (size%MB)/KB);
+        buf[3] = '\0';
 
-        if(strlen(buf) > 3) buf[3] = '\0';
-        if(strlen(buf) < 3) buf[2] = '0';
-        if(strlen(buf) < 2) buf[1] = '0';
-
-        sprintf(p, "%ld%s%s MB", size/MB, gs, buf);
+        sprintf(p, "%ld%s%s MB", size/MB, dp, buf);
       }
       else if (size >= KB)
       {
-        sprintf(buf, "%ld", (size%KB));
+        sprintf(buf, "%03ld", (size%KB));
+        buf[3] = '\0';
 
-        if(strlen(buf) > 3) buf[3] = '\0';
-        if(strlen(buf) < 3) buf[2] = '0';
-        if(strlen(buf) < 2) buf[1] = '0';
-
-        sprintf(p, "%ld%s%s KB", size/KB, gs, buf);
+        sprintf(p, "%ld%s%s KB", size/KB, dp, buf);
       }
       else sprintf(p, "%ld B", size);
     }
@@ -2231,30 +2216,24 @@ void FormatSize(LONG size, char *buffer)
     {
       if (size >= GB)
       {
-        sprintf(buf, "%ld", (size%GB)/MB);
+        sprintf(buf, "%03ld", (size%GB)/MB);
+        buf[3] = '\0';
 
-        if(strlen(buf) > 3) buf[3] = '\0';
-        if(strlen(buf) < 3) buf[2] = '0';
-        if(strlen(buf) < 2) buf[1] = '0';
-
-        sprintf(p, "%ld%s%s GB", size/GB, gs, buf);
+        sprintf(p, "%ld%s%s GB", size/GB, dp, buf);
       }
       else if (size >= MB)
       {
-        sprintf(buf, "%ld", (size%MB)/KB);
+        sprintf(buf, "%03ld", (size%MB)/KB);
+        buf[2] = '\0';
 
-        if(strlen(buf) > 2) buf[2] = '\0';
-        if(strlen(buf) < 2) buf[1] = '0';
-
-        sprintf(p, "%ld%s%s MB", size/MB, gs, buf);
+        sprintf(p, "%ld%s%s MB", size/MB, dp, buf);
       }
       else if (size >= KB)
       {
-        sprintf(buf, "%ld", (size%KB));
+        sprintf(buf, "%03ld", (size%KB));
+        buf[1] = '\0';
 
-        if(strlen(buf) > 1) buf[1] = '\0';
-
-        sprintf(p, "%ld%s%s KB", size/KB, gs, buf);
+        sprintf(p, "%ld%s%s KB", size/KB, dp, buf);
       }
       else sprintf(p, "%ld B", size);
     }
@@ -2263,7 +2242,7 @@ void FormatSize(LONG size, char *buffer)
     /*
     ** STANDARD mode
     ** This will result in the following output:
-    ** 1.234.567 (bytes)
+    ** 1,234,567 (bytes)
     */
     default:
     {
