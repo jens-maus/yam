@@ -89,7 +89,6 @@ struct Folder **FO_CreateList(void)
       for (i = 0; i < max; i++)
       {
         struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-
         if(!tn)
         {
           free(flist);
@@ -1401,21 +1400,25 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 {
   #define SCANMSGS  5
 
-  struct Folder *folder = G->FO->EditFolder;
-  struct Mail *mail = folder->Messages;
-  char *toPattern = mail->To.Address;
-  char *toAddress = mail->To.Address;
-  char *res = NULL;
-  char *result;
+  char *toPattern,*toAddress,*notRecog,*res=NULL;
+  BOOL takePattern=TRUE,takeAddress=TRUE;
+  struct Folder *folder;
+  struct Mail *mail;
   int i;
-  BOOL takePattern = TRUE;
-  BOOL takeAddress = TRUE;
-  char *notRecog = GetStr(MSG_FO_NOTRECOGNIZED);
 
-  if(!folder || !mail) return;
+  folder = G->FO->EditFolder;
+  if(!folder) return;
+
+  mail = folder->Messages;
+  if(!mail) return;
+
+  toPattern = mail->To.Address;
+  toAddress = mail->To.Address;
 
   for(i=0, mail=mail->Next; mail && i < SCANMSGS; i++, mail = mail->Next)
   {
+    char *result;
+
     DB(kprintf("SWS: [%s] [%s]\n", toPattern, mail->To.Address);)
 
     // Analyze the ToAdress through the Smith&Waterman algorithm
@@ -1479,6 +1482,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   DB(kprintf("ML-Pattern: [%s]\n", toPattern);)
 
   // Now we set the new pattern & address values to the string gadgets
+  notRecog = GetStr(MSG_FO_NOTRECOGNIZED);
   setstring(G->FO->GUI.ST_MLPATTERN, takePattern && toPattern[0] ? toPattern : notRecog);
   setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
 
