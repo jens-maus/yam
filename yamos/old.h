@@ -947,19 +947,3 @@ extern BOOL DoesNeedPortableNewlines(char *);
 
 extern BOOL InitClasses(void);
 extern void ExitClasses(void);
-
-#ifdef __MORPHOS__
-	extern struct EmulLibEntry HookEntry;
-	extern struct EmulLibEntry Gate_WL_Dispatcher;
-	extern struct EmulLibEntry Gate_EL_Dispatcher;
-	extern struct EmulLibEntry Gate_WS_Dispatcher;
-	extern struct EmulLibEntry Gate_AL_Dispatcher;
-	extern struct EmulLibEntry Gate_FL_Dispatcher;
-	extern struct EmulLibEntry Gate_ML_Dispatcher;
-	extern struct EmulLibEntry Gate_BC_Dispatcher;
-	extern struct EmulLibEntry Gate_TE_Dispatcher;
-	extern struct EmulLibEntry Gate_MW_Dispatcher;
-	extern struct EmulLibEntry Gate_PL_Dispatcher;
-	extern struct EmulLibEntry Gate_AB_LV_DspFunc;
-	extern struct EmulLibEntry Gate_CO_PL_DspFunc;
-#endif
