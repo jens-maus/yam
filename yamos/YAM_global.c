@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -106,6 +106,57 @@ static const char USED_VAR Stack[] = "$STACK:65536";
 
 struct WBStartup *WBmsg;
 
+// lets defined the AmigaOS4 style interfaces and library bases.
+// Please note that with OS4 all libraries bases are plain
+// struct Library ones per default
+#if defined(__amigaos4__)
+
+struct Library* CManagerBase   = NULL;
+struct Library* DataTypesBase  = NULL;
+struct Library* GenesisBase    = NULL;
+struct Library* IconBase       = NULL;
+struct Library* IFFParseBase   = NULL;
+struct Library* IntuitionBase  = NULL;
+struct Library* KeymapBase     = NULL;
+struct Library* LocaleBase     = NULL;
+struct Library* MiamiBase      = NULL;
+struct Library* MUIMasterBase  = NULL;
+struct Library* OpenURLBase    = NULL;
+struct Library* RexxSysBase    = NULL;
+struct Library* SocketBase     = NULL;
+struct Library* UtilityBase    = NULL;
+struct Library* WorkbenchBase  = NULL;
+struct Library* XpkBase        = NULL;
+struct Library* AmiSSLBase     = NULL;
+struct Device*  TimerBase      = NULL;
+struct Library* GfxBase        = NULL;
+struct Library* LayersBase     = NULL;
+struct Library* DiskfontBase   = NULL;
+
+struct ExecIFace*       IExec         = NULL;
+struct CManagerIFace*   ICManager     = NULL;
+struct DataTypesIFace*  IDataTypes    = NULL;
+struct GenesisIFace*    IGenesis      = NULL;
+struct IconIFace*       IIcon         = NULL;
+struct IFFParseIFace*   IIFFParse     = NULL;
+struct IntuitionIFace*  IIntuition    = NULL;
+struct KeyMapIFace*     IKeymap       = NULL;
+struct LocaleIFace*     ILocale       = NULL;
+struct MiamiIFace*      IMiami        = NULL;
+struct MUIMasterIFace*  IMUIMaster    = NULL;
+struct OpenURLIFace*    IOpenURL      = NULL;
+struct RexxSysIFace*    IRexxSys      = NULL;
+struct SocketIFace*     ISocket       = NULL;
+struct UtilityIFace*    IUtility      = NULL;
+struct WorkbenchIFace*  IWorkbench    = NULL;
+struct XpkIFace*        IXpk          = NULL;
+struct AmiSSLIFace*     IAmiSSL       = NULL;
+struct TimerIFace*      ITimer        = NULL;
+struct GraphicsIFace*   IGraphics     = NULL;
+struct LayersIFace*     ILayers       = NULL;
+struct DiskfontIFace*   IDiskfont     = NULL;
+#else
+
 /* no longer external visible, this is done by proto files! */
 struct Library *       CManagerBase   = NULL;
 struct Library *       DataTypesBase  = NULL;
@@ -129,32 +180,7 @@ struct Library *       GfxBase        = NULL;
 struct Library *       LayersBase     = NULL;
 struct Library *       DiskfontBase   = NULL;
 
-// lets defined the AmigaOS4 style interfaces of
-// our used libraries
-#if defined(__amigaos4__)
-struct ExecIFace*       IExec         = NULL;
-struct CManagerIFace*   ICManager     = NULL;
-struct DataTypesIFace*  IDataTypes    = NULL;
-struct GenesisIFace*    IGenesis      = NULL;
-struct IconIFace*       IIcon         = NULL;
-struct IFFParseIFace*   IIFFParse     = NULL;
-struct IntuitionIFace*  IIntuition    = NULL;
-struct KeyMapIFace*     IKeymap       = NULL;
-struct LocaleIFace*     ILocale       = NULL;
-struct MiamiIFace*      IMiami        = NULL;
-struct MUIMasterIFace*  IMUIMaster    = NULL;
-struct OpenURLIFace*    IOpenURL      = NULL;
-struct RexxSysIFace*    IRexxSys      = NULL;
-struct SocketIFace*     ISocket       = NULL;
-struct UtilityIFace*    IUtility      = NULL;
-struct WorkbenchIFace*  IWorkbench    = NULL;
-struct XpkIFace*        IXpk          = NULL;
-struct AmiSSLIFace*     IAmiSSL       = NULL;
-struct TimerIFace*      ITimer        = NULL;
-struct GraphicsIFace*   IGraphics     = NULL;
-struct LayersIFace*     ILayers       = NULL;
-struct DiskfontIFace*   IDiskfont     = NULL;
-#endif
+#endif /* __amigaos4__ */
 
 const char* const SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
 const char* const FolderNames[4] = { "incoming", "outgoing", "sent", "deleted" };

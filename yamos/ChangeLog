@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-24  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_global.c: fixed library base definitions by separating them due to
+      the different target platforms. The recent YAM_utilities.h change broke
+      the OS4 build due to an incorrect IntuitionBase definition.
+
 2005-02-24  Christian Hattemer <krille@users.sourceforge.net>
 
     * smakefile: Fix overlong command lines and wrong YAM_locale.h
