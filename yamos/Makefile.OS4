@@ -81,6 +81,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/AddrBookListtree.o \
 	$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
 	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/BodychunkImage.o \
 	$(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
 	$(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
 	$(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o \
@@ -305,6 +306,9 @@ $(OBJDIR)/all_gcc.o: all_gcc.c $(EXTRASRC)/astcsma.c $(EXTRASRC)/getft.c $(EXTRA
 	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/dice.c
 
 ## CLASS DEPENDENCIES #################
+
+$(OBJDIR)/$(CLASSDIR)/BodychunkImage.o: $(CLASSDIR)/BodychunkImage.c \
+	$(CLASSDIR)/BodychunkImage_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o: $(CLASSDIR)/WriteAttachmentList.c \
 	$(CLASSDIR)/WriteAttachmentList_cl.h

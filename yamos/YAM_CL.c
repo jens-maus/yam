@@ -61,98 +61,8 @@
  Module: Private MUI classes
 ***************************************************************************/
 
-struct DumData { long dummy; };
-
-struct BC_Data
-{
-   struct BodyChunkData *BCD;
-};
-
 /*** Definitions ***/
-struct MUI_CustomClass *CL_BodyChunk    = NULL;
 struct MUI_CustomClass *CL_PageList     = NULL;
-
-/// BC_Dispatcher (BodyChunk)
-/*** BC_Dispatcher (BodyChunk) - Subclass of BodyChunk, can load images from files ***/
-DISPATCHERPROTO(BC_Dispatcher)
-{
-   switch (msg->MethodID)
-   {
-      struct BC_Data *data;
-      ULONG useold;
-
-      case OM_NEW:
-      {
-         struct TagItem *tag, *tags = ((struct opSet *)msg)->ops_AttrList;
-
-         obj = DoSuperNew(cl, obj,
-            MUIA_FixWidth, 16,
-            MUIA_FixHeight, 16,
-            MUIA_InnerBottom, 0,
-            MUIA_InnerLeft, 0,
-            MUIA_InnerRight, 0,
-            MUIA_InnerTop, 0,
-            TAG_MORE, tags);
-
-         if (obj)
-         {
-            char fname[SIZE_PATHFILE];
-            useold = FALSE;
-            *fname = 0;
-            while ((tag = NextTagItem(&tags)))
-            {
-               switch (tag->ti_Tag)
-               {
-                  case MUIA_Bodychunk_UseOld:
-                     useold = (BOOL)tag->ti_Data;
-                     break;
-                  case MUIA_Bodychunk_File:
-                     if (tag->ti_Data) stccpy(fname, (char *)tag->ti_Data, SIZE_PATHFILE);
-                     break;
-               }
-            }
-
-            if (*fname)
-            {
-               struct BodyChunkData *BCD;
-               data = INST_DATA(cl,obj);
-               if (useold) BCD = GetBCImage(fname);
-               else BCD = LoadBCImage(fname);
-
-               if ((data->BCD=BCD))
-               {
-                  SetAttrs(obj,
-                    MUIA_FixWidth,              BCD->Width,
-                    MUIA_FixHeight,             BCD->Height,
-                    MUIA_Bitmap_Width,          BCD->Width,
-                    MUIA_Bitmap_Height,         BCD->Height,
-                    MUIA_Bitmap_SourceColors,   BCD->Colors,
-                    MUIA_Bodychunk_Depth,       BCD->Depth,
-                    MUIA_Bodychunk_Body,        BCD->Body,
-                    MUIA_Bodychunk_Compression, BCD->Compression,
-                    MUIA_Bodychunk_Masking,     BCD->Masking,
-                    MUIA_UserData,              useold,
-                  TAG_DONE);
-               }
-            }
-         }
-         return (ULONG)obj;
-      }
-      break;
-
-
-      case OM_DISPOSE:
-      {
-         data = INST_DATA(cl,obj);
-         get(obj, MUIA_UserData, &useold);
-         if (!useold && data->BCD) FreeBCImage(data->BCD);
-      }
-      break;
-   }
-   return DoSuperMethodA(cl, obj, msg);
-}
-
-///
 
 /// Images
 //  Images for section listview in ILBM/BODY format
@@ -471,7 +381,6 @@ static struct MUI_CustomClass *CreateMCC(STRPTR supername, struct MUI_CustomClas
 void ExitClasses(void)
 {
   if(CL_PageList)    { MUI_DeleteCustomClass(CL_PageList);     CL_PageList     = NULL; }
-  if(CL_BodyChunk)   { MUI_DeleteCustomClass(CL_BodyChunk);    CL_BodyChunk    = NULL; }
 }
 
 ///
@@ -479,7 +388,6 @@ void ExitClasses(void)
 /*** InitClasses - Initialize custom MUI classes ***/
 BOOL InitClasses(void)
 {
-  if((CL_BodyChunk    = CreateMCC(MUIC_Bodychunk, NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher))))
   if((CL_PageList     = CreateMCC(MUIC_List,      NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher))))
   {
     return TRUE;

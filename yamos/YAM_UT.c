@@ -3477,17 +3477,17 @@ Object *MakePicture(char *fname)
 {
    return G->DtpicSupported ?
       MUI_NewObject("Dtpic.mui", MUIA_Dtpic_Name, fname, End :
-      NewObject(CL_BodyChunk->mcc_Class,NULL, MUIA_Bodychunk_File, fname, End;
+      BodychunkImageObject, MUIA_BodychunkImage_File, fname, End;
 }
 ///
 /// MakeStatusFlag
 //  Creates a MUI object for status images
 Object *MakeStatusFlag(char *fname)
 {
-   return NewObject(CL_BodyChunk->mcc_Class,NULL,
-      MUIA_Bodychunk_File, fname,
-      MUIA_Bodychunk_UseOld, TRUE,
-      MUIA_Bitmap_Transparent, 0,
+   return BodychunkImageObject,
+      MUIA_BodychunkImage_File,      fname,
+      MUIA_BodychunkImage_UseCached, TRUE,
+      MUIA_Bitmap_Transparent,       0,
    End;
 }
 ///
@@ -3495,10 +3495,10 @@ Object *MakeStatusFlag(char *fname)
 //  Creates a MUI object for a folder image
 Object *MakeFolderImage(char *fname)
 {
-   return NewObject(CL_BodyChunk->mcc_Class,NULL,
-      MUIA_Bodychunk_File, fname,
-      MUIA_Bodychunk_UseOld, TRUE,
-      MUIA_Bitmap_Transparent, 0,
+   return BodychunkImageObject,
+      MUIA_BodychunkImage_File,      fname,
+      MUIA_BodychunkImage_UseCached, TRUE,
+      MUIA_Bitmap_Transparent,       0,
    End;
 }
 ///
