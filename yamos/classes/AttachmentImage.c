@@ -91,14 +91,16 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
 	{
 		if(ism->ism_Type == WBDRAWER)
 		{
-			if((msg->destName = calloc(1, strlen(ism->ism_Name)+1)))
+			msg->destName = malloc(strlen(ism->ism_Name)+1);
+			if(msg->destName)
 				strcpy(msg->destName, ism->ism_Name);
 
 			return ISMACTION_Select;
 		}
 		else if(ism->ism_Type == WBDISK)
 		{
-			if((msg->destName = calloc(1, strlen(ism->ism_Name)+2)))
+			msg->destName = malloc(strlen(ism->ism_Name)+2);
+			if(msg->destName)
 			{
 				strcpy(msg->destName, ism->ism_Name);
 				strcat(msg->destName, ":");
@@ -621,11 +623,9 @@ OVERLOAD(MUIM_DeleteDragImage)
 	if(WorkbenchBase->lib_Version >= 45)
 	{
 		struct Layer *l = WhichLayer(&_screen(obj)->LayerInfo, _screen(obj)->MouseX, _screen(obj)->MouseY);
-
 		if(l)
 		{
 			struct List *path_list;
-			
 			if(WorkbenchControl(NULL, WBCTRLA_GetOpenDrawerList, &path_list, TAG_DONE))
 			{
 				struct Hook hook;
@@ -649,11 +649,12 @@ OVERLOAD(MUIM_DeleteDragImage)
 
 				for(n = path_list->lh_Head; n->ln_Succ; n = n->ln_Succ)
 		    {
-					if((selMsg.drawer = calloc(1, strlen(n->ln_Name)+1)))
+		    	selMsg.drawer = malloc(strlen(n->ln_Name)+1);
+					if(selMsg.drawer)
 					{
 						strcpy(selMsg.drawer, n->ln_Name);
 
-						ChangeWorkbenchSelectionA(n->ln_Name, (struct Hook*)&hook, NULL);
+						ChangeWorkbenchSelectionA(selMsg.drawer, &hook, NULL);
 
 						if(selMsg.finish)
 						{
@@ -666,7 +667,8 @@ OVERLOAD(MUIM_DeleteDragImage)
 							{
 								int len = strlen(selMsg.destName) + strlen(selMsg.drawer) + 10;
 
-								if((data->dropPath = calloc(1, len)))
+								data->dropPath = malloc(len);
+								if(data->dropPath)
 								{
 									strcpy(data->dropPath, selMsg.drawer);
 									AddPart(data->dropPath, selMsg.destName, len);
@@ -690,7 +692,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 				{
 					selMsg.drawer = NULL;
 					
-					ChangeWorkbenchSelectionA(NULL, (struct Hook*)&hook, NULL);
+					ChangeWorkbenchSelectionA(NULL, &hook, NULL);
 					
 					if(selMsg.finish && selMsg.destName)
 						data->dropPath = selMsg.destName;
