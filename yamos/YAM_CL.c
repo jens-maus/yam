@@ -39,6 +39,7 @@
 
 #include "extra.h"
 #include "SDI_hook.h"
+#include "newmouse.h"
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -68,6 +69,7 @@ struct BC_Data
 
 struct TE_Data
 {
+   Object *slider;
    struct MUI_EventHandlerNode ehnode;
 };
 
@@ -405,10 +407,30 @@ DISPATCHERPROTO(MW_Dispatcher)
 // error requester, Drag&Drop capabilities and multi-color support
 DISPATCHERPROTO(TE_Dispatcher)
 {
-   struct TE_Data *data = INST_DATA(cl, obj);
-
    switch (msg->MethodID)
    {
+      // we catch the OM_NEW method to save a pointer to the correct
+      // slider gadget so that we can send newmouse events later on.
+      case OM_NEW:
+      {
+      	if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
+      	{
+          struct TE_Data *data = INST_DATA(cl, obj);
+      		struct TagItem *tags = inittags(msg), *tag;
+
+		      while((tag = NextTagItem(&tags)))
+      		{
+			      switch(tag->ti_Tag)
+      			{
+              case MUIA_TextEditor_Slider: data->slider = (Object *)tag->ti_Data; break;
+      			}
+		      }
+        }
+
+	      return (ULONG)obj;
+      }
+      break;
+
       case MUIM_DragQuery:
       {
          struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
@@ -476,25 +498,21 @@ DISPATCHERPROTO(TE_Dispatcher)
       // for adding it later on a GoActive Method call.
       case MUIM_Setup:
       {
+        struct TE_Data *data = INST_DATA(cl, obj);
 		    data->ehnode.ehn_Priority = 1;
 		    data->ehnode.ehn_Flags	  = 0;
 		    data->ehnode.ehn_Object	  = obj;
 		    data->ehnode.ehn_Class	  = cl;
 		    data->ehnode.ehn_Events	  = IDCMP_RAWKEY;
+
+      	DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
     	}
       break;
 
-      // The EventHandler should only get active if the TextEditor gadgets gets active.
-      case MUIM_GoActive:
+      // On a Cleanup we have to remove the EventHandler
+      case MUIM_Cleanup:
       {
-      	DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
-      }
-      break;
-
-      // As soon as the TextEditor gets inactive we remove the EventHandler for listing
-      // to RAWKEY events.
-      case MUIM_GoInactive:
-      {
+        struct TE_Data *data = INST_DATA(cl, obj);
       	DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
       }
       break;
@@ -504,29 +522,52 @@ DISPATCHERPROTO(TE_Dispatcher)
       // inserts the famous [...] substitution.
       case MUIM_HandleEvent:
       {
+        struct TE_Data *data = INST_DATA(cl, obj);
         struct IntuiMessage *imsg;
+
 	      if(!(imsg = ((struct MUIP_HandleEvent *)msg)->imsg)) break;
 
 	      if(imsg->Class == IDCMP_RAWKEY)
 	      {
-		      if(imsg->Code == IECODE_DEL && isFlagSet(imsg->Qualifier, IEQUALIFIER_RCOMMAND))
+		      if(imsg->Code == IECODE_DEL)
           {
-            ULONG ret;
-            ULONG x1, y1, x2, y2;
-
-            // let`s check first if a multiline block is marked or not
-            if(DoMethod(obj, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) && y2-y1 >= 1)
+            if(isFlagSet(imsg->Qualifier, IEQUALIFIER_RCOMMAND) && !xget(obj, MUIA_TextEditor_ReadOnly))
             {
-              // then we first clear the qualifier so that the real
-              // TextEditor HandleEvent method treats this imsg as a normal DEL pressed imsg
-              CLEAR_FLAG(imsg->Qualifier, IEQUALIFIER_RCOMMAND);
-              ret = DoSuperMethodA(cl, obj, msg);
+              ULONG ret;
+              ULONG x1, y1, x2, y2;
 
-              // Now that the marked text is cleared we can insert our great [...]
-              // snip text ;)
-              DoMethod(obj, MUIM_TextEditor_InsertText, "[...]\n", MUIV_TextEditor_InsertText_Cursor);
+              // let`s check first if a multiline block is marked or not
+              if(DoMethod(obj, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) && y2-y1 >= 1)
+              {
+                // then we first clear the qualifier so that the real
+                // TextEditor HandleEvent method treats this imsg as a normal DEL pressed imsg
+                CLEAR_FLAG(imsg->Qualifier, IEQUALIFIER_RCOMMAND);
+                ret = DoSuperMethodA(cl, obj, msg);
 
-              return ret;
+                // Now that the marked text is cleared we can insert our great [...]
+                // snip text ;)
+                DoMethod(obj, MUIM_TextEditor_InsertText, "[...]\n", MUIV_TextEditor_InsertText_Cursor);
+
+                return ret;
+              }
+            }
+          }
+          else if(PointInObject(obj, imsg->MouseX, imsg->MouseY))
+          {
+            // MouseWheel events are only possible if the mouse is above the
+            // object
+
+            if(imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT)
+            {
+              if(data->slider) DoMethod(data->slider, MUIM_Prop_Increase, -1);
+
+              return MUI_EventHandlerRC_Eat;
+					  }
+            else if(imsg->Code == NM_WHEEL_DOWN || imsg->Code == NM_WHEEL_RIGHT)
+            {
+              if(data->slider) DoMethod(data->slider, MUIM_Prop_Increase, 1);
+
+              return MUI_EventHandlerRC_Eat;
             }
           }
         }

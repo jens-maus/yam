@@ -189,14 +189,15 @@ DECLARE(Event) // struct IntuiMessage *imsg
 	if(xget(obj, MUIA_Window_Open))
 	{
 		struct CustomABEntry *entry;
+		struct IntuiMessage *imsg = msg->imsg;
 
 		if(xget(data->Matchlist, MUIA_List_Active) != MUIV_List_Active_Off)
 		{
-				set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Up     : MUIV_List_Active_Down);
+			set(data->Matchlist, MUIA_List_Active, (imsg->Code == IECODE_UP || imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT) ? MUIV_List_Active_Up     : MUIV_List_Active_Down);
 		}
 		else
 		{
-			set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
+			set(data->Matchlist, MUIA_List_Active, (imsg->Code == IECODE_UP || imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT) ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
 		}
 
 		DoMethod(data->Matchlist, MUIM_List_GetEntry, xget(data->Matchlist, MUIA_List_Active), &entry);

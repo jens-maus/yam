@@ -271,6 +271,10 @@ OVERLOAD(MUIM_HandleEvent)
 			/* keys are sent to the popup-list */
 			case IECODE_UP:
 			case IECODE_DOWN:
+			case NM_WHEEL_UP:
+			case NM_WHEEL_DOWN:
+			case NM_WHEEL_LEFT:
+			case NM_WHEEL_RIGHT:
 			{
 				if((new_address = (STRPTR)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg)))
 				{

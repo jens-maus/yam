@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CL.c: added Wheelmouse support to own TextEditor subclass. As
+      the original TextEditor doesn`t support the newmouse
+      NM_WHEEL_UP/DOWN codes, YAM catches this codes on it`s own now and
+      sends the slider the correct commands to scroll down/up.
+
 2003-02-12  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: changed array MUIM_NList_Insert call to use the newly

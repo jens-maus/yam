@@ -45,6 +45,7 @@
 #include "Debug.h"
 #include "extra.h"
 #include "SDI_hook.h"
+#include "newmouse.h"
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -83,5 +84,14 @@
 #define MUIV_List_CursorType_Bar 1
 
 enum { IECODE_RETURN = 68, IECODE_ESCAPE = 69, IECODE_HELP = 95, IECODE_BACKSPACE = 65, IECODE_DEL = 70, IECODE_UP = 76, IECODE_DOWN = 77 };
+
+// some usefull macros to check mouse positions
+#define BETWEEN(a,x,b)						((x)>=(a) && (x)<=(b))
+#define xPointInObject(obj,x)			BETWEEN(_left(obj),x,_right(obj))
+#define yPointInObject(obj,y)			BETWEEN(_top(obj),y,_bottom(obj))
+#define PointInObject(obj,x,y)		(xPointInObject(obj,x) && yPointInObject(obj,y))
+#define xPointInMyObject(obj,x)		BETWEEN(_mleft(obj),x,_mright(obj))
+#define yPointInMyObject(obj,y)		BETWEEN(_mtop(obj),y,_mbottom(obj))
+#define PointInMyObject(obj,x,y)	(xPointInMyObject(obj,x) && yPointInMyObject(obj,y))
 
 #endif
