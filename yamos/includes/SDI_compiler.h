@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.10 (18.10.2002)
+        Versionstring:  $VER: SDI_compiler.h 1.11 (09.11.2002)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler stuff
@@ -20,6 +20,7 @@
  1.8   21.09.02 : added MorphOS register stuff
  1.9   26.09.02 : added OFFSET macro. Thanks Frank Wille for suggestion
  1.10  18.10.02 : reverted to old MorphOS-method for GCC
+ 1.11  09.11.02 : added REGARGS define to MorphOS section
 */
 
 /*
@@ -119,6 +120,7 @@
   #if defined(__MORPHOS__)
     #define STDARGS
     #define STACKEXT
+    #define REGARGS
     #define VARARGS68K  __attribute__((varargs68k))
   #endif
 #elif defined(_DCC)
