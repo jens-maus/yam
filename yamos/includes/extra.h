@@ -15,17 +15,6 @@
 
 #else
 
-#ifdef _DCC
-  #include <fcntl.h>
-#elif defined(__GNUC__)
-  #include <unistd.h>
-#endif
-
-#ifndef F_OK
-  #define F_OK 0
-  int access(const char *, int);
-#endif
-
 /*
 ** <string.h>
 */
@@ -37,7 +26,7 @@ extern int stcgfe(char *, const char *);
 extern void strmfp(char *, const char *, const char *);
 extern void strsfn(const char *, char *, char *, char *, char *);
 
-#if defined(__VBCC__) || defined(__STORM__)
+#if defined(__VBCC__)
   extern char *strdup(const char *);
 #endif
 
@@ -48,8 +37,6 @@ extern void strsfn(const char *, char *, char *, char *, char *);
 #define FNSIZE 108
 #define FMSIZE 256
 #define FESIZE 32
-
-extern long getft(const char *);
 
 #endif /* __SASC */
 
