@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2001-11-08  Gunther Nikl <gni@gecko.de>
+
+    * YAM.c: removed "struct Device *TimerBase"
+    * YAM_global.c: added it here
+    * YAM_find.h: define FORMAT_DEF if its not defined
+
 2001-10-31  AmiS <amis@amiga.org.ru>
 
     * Added analyse "x-senderinfo" fields and and automatically
