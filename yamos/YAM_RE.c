@@ -2445,6 +2445,9 @@ void RE_DisplayMessage(int winnum)
          while (*body && *body != '\n') body++;
          if (*body) body++;
       }
+      if (G->RE[winnum]->Header == 1)
+         DoMethod(gui->LV_HEAD, MUIM_NList_Sort);
+
       if (!AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, from->Address, ASM_ADDRESS|ASM_USER, &hits, &tn) && *from->RealName)
            AB_SearchEntry(MUIV_NListtree_GetEntry_ListNode_Root, from->RealName, ASM_REALNAME|ASM_USER, &hits, &tn);
       if (hits) ab = tn->tn_User;
@@ -2672,6 +2675,36 @@ SAVEDS ASM long RE_LV_HDspFunc(REG(a2,char **array), REG(a1,char *entry))
 }
 MakeHook(RE_LV_HDspHook,RE_LV_HDspFunc);
 ///
+/// RE_LV_HCmpFunc
+//  Header listview compare hook
+SAVEDS ASM long RE_LV_HCmpFunc(REG(a1,char *entry1), REG(a2,char *entry2))
+{
+   int len1, len2;
+   char *header = C->ShortHeaders;
+
+   if (*header == '(')
+      header++;
+
+   len1 = strchr(entry1, ':') - entry1;
+   len2 = strchr(entry2, ':') - entry2;
+
+   while(header && *header)
+   {
+      if (strnicmp(header, entry1, len1) == 0)
+         return -1;
+
+      if (strnicmp(header, entry2, len2) == 0)
+         return 1;
+
+      header = strchr(header, '|');
+      if (header)
+         header++;
+   }
+
+   return 0;
+}
+MakeHook(RE_LV_HCmpHook,RE_LV_HCmpFunc);
+///
 /// RE_New
 //  Creates a read window
 enum {   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_SETUNREAD,RMEN_CHSUBJ,
@@ -2812,6 +2845,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
                         MUIA_NList_ConstructHook, MUIV_NList_ConstructHook_String,
                         MUIA_NList_DestructHook, MUIV_NList_DestructHook_String,
                         MUIA_NList_DisplayHook, &RE_LV_HDspHook,
+                        MUIA_NList_CompareHook, &RE_LV_HCmpHook,
                         MUIA_NList_Format, "P=\033r\0338 W=-1 MIW=-1,P=\033-",
                         MUIA_NList_Input, FALSE,
                         MUIA_NList_TypeSelect, MUIV_NList_TypeSelect_Char,
