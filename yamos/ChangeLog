@@ -1,5 +1,8 @@
 2002-05-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_MA.c: fixed bug #555116 where calling the RescanIndexHook
+      on a folder which isn`t really a real one (FT_GROUP) caused
+      the creation of a bogus .index file at PROGDIR:
     * YAM_rexx_rxif.c: fixed bug #555115 where the MAILREAD
       rexx command didn`t activate a readwindow as stated
       in the documentation.

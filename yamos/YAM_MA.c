@@ -1761,7 +1761,7 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
 {
    struct Folder *folder = FO_GetCurrentFolder();
 
-   if(!folder) return;
+   if(!folder || folder->Type == FT_GROUP) return;
 
    MA_ScanMailBox(folder);
    MA_SaveIndex(folder);
