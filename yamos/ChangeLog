@@ -7,6 +7,8 @@ $Source$
 
 2003-01-15  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed bug #667194 where a reply or forward of a "virtual"
+      mail caused an enforcer hit.
     * YAM_CO.c, YAM_COs.c, YAM_COg.c: added additional color selection
       gadgets for the 1st, 3rd and 4th level quotes. Now the user can select
       different colors for each quoting level. In addition to that also

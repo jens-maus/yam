@@ -798,7 +798,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
          fclose(out);
 
          // add a signature to the mail depending on the selected signature for this list
-         WR_AddSignature(winnum, mail->Folder->MLSupport ? mail->Folder->MLSignature: -1);
+         WR_AddSignature(winnum, (mail->Folder && mail->Folder->MLSupport) ? mail->Folder->MLSignature: -1);
 
          setstring(wr->GUI.ST_SUBJECT, rsub);
          FreeStrBuf(rsub);
@@ -1017,7 +1017,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
          fclose(out);
 
          // now we add the configured signature to the reply
-         WR_AddSignature(winnum, folder->MLSupport ? folder->MLSignature: -1);
+         WR_AddSignature(winnum, (folder && folder->MLSupport) ? folder->MLSignature: -1);
 
          /* If this is a reply to a mail belonging to a mailing list,
             set the "From:" and "Reply-To:" addresses accordingly */
