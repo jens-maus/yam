@@ -455,10 +455,10 @@ char *AllocStrBuf(long initlen)
 //  Frees a dynamic buffer
 void FreeStrBuf(char *strbuf)
 {
-   long len;
+//   long len;
 
    if (!strbuf) return;
-   len = *((long *)(strbuf-4));
+//   len = *((long *)(strbuf-4));
 //   FreeMem(strbuf-4, len+4);
    free(strbuf-4);
 }
