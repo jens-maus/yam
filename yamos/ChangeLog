@@ -7,6 +7,11 @@ $Source$
 
 2003-11-11  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: added "7-bit" and "8-bit" to the recognizable transfer
+      encoding strings as bugreport #771917 mentions cases where mail
+      clients seem to send mail with transfer encoding strings of that
+      type. However, even if "7-bit" and "8-bit" isn`t RFC 1521 compliant,
+      it doesn`t harm to recognize these acronyms.
     * YAM_RE.c: fixed bug #834133 where a quote-printable encoded text
       was stripped if it contained a "=00" which caused the displayed
       text to contain a NUL byte.
