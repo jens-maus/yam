@@ -160,3 +160,11 @@
 
     * Changed dynamic string functions in YAM_UT.c to use calloc()/free()
       instead of AllocMem()/FreeMem() and thus (hopefully) memory pools.
+
+2001-03-10  Jörg Strohmayer <joergs@users.sourceforge.net>
+
+    * Changes for GCC/ixemul.
+
+    * Workaround for the 'crash on editwindow close' bug added
+      (YAM_UT.c/DisposeModule()).
+

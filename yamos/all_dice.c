@@ -18,7 +18,7 @@ void wbmain(struct WBStartup *wbs)
 }
 
 #include <stdarg.h>
-int KPrintf(const char *format)
+int KPrintF(const char *format)
 {
    int n; va_list vl;
 

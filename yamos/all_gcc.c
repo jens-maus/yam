@@ -12,4 +12,14 @@
 #include "extrasrc/stch_i.c"
 #include "extrasrc/dice.c"
 
+#ifdef __libnix__
 int __oslibversion = 0;
+#endif
+
+#ifdef __ixemul__
+struct Library *IFFParseBase, *KeymapBase;
+struct UtilityBase *UtilityBase;
+struct RxsLib *RexxSysBase;
+
+struct WBStartup *_WBenchMsg;
+#endif

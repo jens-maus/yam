@@ -444,6 +444,9 @@ void Terminate(void)
    if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
    if (WorkbenchBase) CloseLibrary(WorkbenchBase);
    if (IconBase) CloseLibrary(IconBase);
+#ifdef __ixemul__
+   if (RexxSysBase) CloseLibrary(RexxSysBase);
+#endif
    if (IFFParseBase) CloseLibrary(IFFParseBase);
    if (KeymapBase) CloseLibrary(KeymapBase);
    if (IntuitionBase) CloseLibrary((struct Library *) IntuitionBase);
@@ -563,6 +566,9 @@ void Initialise(BOOL hidden)
    UtilityBase = (struct UtilityBase *)InitLib("utility.library", 36, 0, TRUE, FALSE);
    KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
    IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
+#ifdef __ixemul__
+   RexxSysBase = InitLib("rexxsyslib.library", 36, 0, TRUE, FALSE);
+#endif
    if ((LocaleBase = (struct LocaleBase *)InitLib("locale.library", 38, 0, TRUE, FALSE))) G->Locale = OpenLocale(NULL);
    OpenYAMCatalog();
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
@@ -711,6 +717,10 @@ void main(int argc, char **argv)
    IntuitionBase = (struct IntuitionBase *) InitLib("intuition.library", 36, 0, TRUE, FALSE);
    IconBase = InitLib("icon.library", 36, 0, TRUE, FALSE);
    WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
+
+#ifdef __ixemul__
+   if(0 == argc) _WBenchMsg=(struct WBStartup *)argv;
+#endif
 
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
    nrda.ExtHelp = NULL;

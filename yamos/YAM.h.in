@@ -28,11 +28,11 @@
 /// Defines
 #if defined __PPC__
 	#define CPU " [PPC]"
-#elsif defined _M68060
+#elif defined _M68060
 	#define CPU " [060]"
-#elsif defined _M68040
+#elif defined _M68040
 	#define CPU " [040]"
-#elsif defined _M68020
+#elif defined _M68020
 	#define CPU " [020]"
 #else
 	#define CPU ""

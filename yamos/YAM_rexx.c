@@ -228,7 +228,7 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    else if( !*basename )
       basename = RexxPortBaseName;
    
-   if( !(host = AllocVec(sizeof *host, MEMF_CLEAR)) )
+   if( !(host = AllocVec(sizeof(struct RexxHost), MEMF_CLEAR)) )
       return NULL;
    
    strcpy( host->portname, basename );

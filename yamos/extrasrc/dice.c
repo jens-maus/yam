@@ -17,8 +17,6 @@ LONG XpkUnpackTags(ULONG tags, ...)
    struct TagItems *_tags =(struct TagItems *)&tags;
    return XpkUnpack(_tags);
 }
-
-
 #include <proto/openurl.h>
 BOOL URL_Open(STRPTR str, ULONG tags, ...)
 {
@@ -26,6 +24,7 @@ BOOL URL_Open(STRPTR str, ULONG tags, ...)
    return URL_OpenA(str,_tags);
 }
 #endif
+
 
 #ifdef _DCC
 struct Library *KeymapBase;
