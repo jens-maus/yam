@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-07  Gunther Nikl <gni@gecko.de>
+
+    * classes/InfoBar.c/ShowGauge: fixed an ancient and serious bug in
+      SetAttrs() call - TAG_DONE was missing...
+      (Since SAS/C inlines such calls the problem was hidden. However,
+      with GCC a stub function is used and thus important additional data
+      is placed infront of the taglist [saved registers and return address]
+      which accidently gets "part" of the taglist causing havoc)
+
 2003-03-05  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_rexx_rxif.c: fixed bug in MAILINFO arexx command where the
