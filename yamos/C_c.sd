@@ -40,6 +40,7 @@ const struct FC_Type _%i = { %d, %s };
 static struct Catalog *%b_Catalog = NULL;
 
 /*** Catalog functions ***/
+/// GetStr()
 char *GetStr(APTR fcstr)
 {
   char *defaultstr = ((struct FC_Type *)fcstr)->Str;
