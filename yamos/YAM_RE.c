@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_locale.h"
+#include "YAM_mail_lex.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_mime.h"
@@ -576,7 +577,6 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    stccat(re->WTitle, mail->Subject, SIZE_DEFAULT);
    set(gui->WI, MUIA_Window_Title, re->WTitle);
    set(gui->MI_EDIT, MUIA_Menuitem_Enabled, out);
-   DoMethod(gui->TE_TEXT, MUIM_TextEditor_ClearText);
    if (gui->TO_TOOLBAR)
    {
       DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, real ? mi->Pos == 0 : TRUE);
@@ -2435,384 +2435,294 @@ void RE_FreePrivateRC(void)
    free(G->RE[4]);
 }
 ///
-/// AppendToBuffer
-//  Appends a string to a dynamic-length buffer
-static char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
-{
-   int nlen = *len, npos = (*wptr)+strlen(add);
-   while (npos >= nlen-1) nlen = (nlen*3)/2;
-   if (nlen != *len) buf = realloc(buf, *len = nlen);
-   while (*add) buf[(*wptr)++] = *add++;
-   return buf;
-}
-///
-/// RE_ExtractURL
-//  Extracts URL from a message line
-static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
-{
-   // some constant arrays for legal characters within a URL and
-   // within a email address
-   static const char *URL_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=;:*#()[]";
-   static const char *EML_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_-.";
-   static const char *protocols[7] =
-   {
-     "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:"
-   };
-
-   char *foundurl = NULL, *p;
-   int i=0;
-
-//   DB(kprintf("ExtractURL: [%s]\n", line);)
-
-   if ((p = strchr(line, ':')))
-   {
-      for (i = 0; i < 7; i++)
-      {
-        if ((foundurl = stristr(line, protocols[i])))
-          break;
-      }
-   }
-
-   // now we check if the line just contains a email address
-   if(!foundurl)
-   {
-      char *sp = line;
-      BOOL result = FALSE;
-
-      // we check the whole line for any valid email address in it.
-      while(!result && (p = strchr(sp, '@')))
-      {
-        int atcnt = 0;
-        int dotcnt = 0;
-        int dotdis = 1;
-
-        // by default we make the result TRUE
-        result = TRUE;
-
-        // now we move back from the @ until the start of the address, so that we can find out
-        // from where this URL starts
-        for(foundurl=p; p && strchr(EML_legalchars, *p); p--)
-        {
-          // lets see how many @ we have and break if we
-          // have more than one.
-          if(*p == '@')
-          {
-            atcnt++;
-            if(atcnt > 1) break;
-          }
-
-          foundurl = p;
-          if(p == line) break;
-        }
-
-        // now we copy the address in the result array and try to validate the email
-        // address also
-        for(i=0, atcnt=0; foundurl[i] && strchr(EML_legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
-        {
-          url[i] = foundurl[i];
-
-          // check that we don`t have two @ signs or that there is nothing in front of the @
-          if(url[i] == '@')
-          {
-            if(i == 0)      { result = FALSE; i++; break; }
-            if(++atcnt > 1) { result = FALSE; break;      }
-          }
-          else if(url[i] == '.') // count the dots in the address
-          {
-            if(dotdis == 0) break;                // if there was a dot before, this could not be a valid email
-            if(atcnt) { dotcnt++; dotdis = 0; };  // only count if we passed the @
-          }
-          else dotdis++;
-        }
-
-        // lets set sp to the next point were we stopped the analysis of this
-        sp = &foundurl[i];
-
-        // lets see if the last sign is a dot and if so reduce the counter
-        if(url[i-1] == '.') { dotcnt--; i--; };
-
-        // and last, but not least we validate the url as a email address again
-        // if there are no dots or the string is smaller than "a@b.cd" it obviously no email at all
-        if(dotcnt == 0 || i < 5) result = FALSE;
-      }
-
-      // if we still have not found a valid email we exit with FALSE
-      if(!result) return FALSE;
-   }
-   else
-   {
-      for(i=0; foundurl[i] && strchr(URL_legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
-      {
-        url[i] = foundurl[i];
-      }
-   }
-
-   // check if the last character is a sentence end sign
-   if (strchr(".?!", url[i-1])) --i;
-   url[i] = 0;
-
-   if (urlptr) *urlptr = foundurl;
-   if (rest) *rest = &foundurl[i];
-
-   return TRUE;
-}
-///
 /// RE_ReadInMessage
-//  Reads a message into the display buffer
+//  Reads a message into a dynamic buffer and returns this buffer.
+//  The text returned should *NOT* contain any MUI specific escape sequences, as
+//  we will later parse the buffer again before we put it into the texteditor. So no deeep lexical analysis
+//  are necessary here.
 char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 {
-   struct RE_ClassData *re = G->RE[winnum];
-   struct Part *part, *uup = NULL, *last, *first = re->FirstPart;
-   char buffer[SIZE_LARGE], *msg, *cmsg, *ptr, *rptr, *eolptr, url[SIZE_URL], *urlptr, *tsb, *sb, *bo, *pl;
-   int totsize, len, wptr, prewptr;
-   FILE *fh;
-   
-   DB( kprintf("RE_ReadInMessage(%ld,%ld)\n",winnum,mode); )
-   if (re->NoTextstyles) { tsb = "\033c\033[s:18]\033l"; sb = "\033[s:2]"; bo = "\033b"; pl = "\033n"; }
-   else { tsb = "<tsb>"; sb = "<sb>"; bo = "*"; pl = "*"; }
-   for (totsize = 1000, part = first; part; part = part->Next)
-   {
-      if (mode != RIM_READ && part->Nr && part->Nr != PART_LETTER) continue;
-      if (part->Decoded || !part->Nr) totsize += part->Size; else totsize += 200;
-   }
-   if ((cmsg = calloc(len=(totsize*3)/2,1)))
-   {
-      if (mode != RIM_QUIET) BusyText(GetStr(MSG_BusyDisplaying), "");
-      wptr = 0;
-      if (mode == RIM_READ)
+  struct RE_ClassData *re = G->RE[winnum];
+  struct Part *first, *last, *part, *uup = NULL;
+  char *cmsg;
+  int totsize, len;
+
+  DB(kprintf("RE_ReadInMessage\n");)
+
+  // save exit conditions
+  if(!re || !(first = re->FirstPart)) return NULL;
+
+  // first we precalucalte the size of the final buffer where the message text will be put in
+  for(totsize = 1000, part = first; part; part = part->Next)
+  {
+    if(mode != RIM_READ && part->Nr && part->Nr != PART_LETTER) continue;
+    if(part->Decoded || !part->Nr) totsize += part->Size;
+    else totsize += 200;
+  }
+
+  // then we generate our final buffer for the message
+  if((cmsg = calloc(len=(totsize*3)/2, sizeof(char))))
+  {
+    int wptr=0, prewptr;
+
+    // if this function wasn`t called with QUIET we place a BusyText into the Main Window
+    if (mode != RIM_QUIET) BusyText(GetStr(MSG_BusyDisplaying), "");
+
+    // then we copy the first part (which is the header of the mail
+    // into our final buffer because we don`t need to preparse it
+    // but only if we are in READ mode
+    if (mode == RIM_READ)
+    {
+      FILE *fh;
+
+      if((fh = fopen(first->Filename, "r")))
       {
-         if ((fh = fopen(first->Filename, "r")))
-         {
-            int buflen = re->FirstPart->MaxHeaderLen+4;
-            char *linebuf = malloc(buflen);
-            while (fgets(linebuf, buflen, fh))
-            {
-               SParse(linebuf);
-               cmsg = AppendToBuffer(cmsg, &wptr, &len, linebuf);
-            }            
-            free(linebuf);
-            fclose(fh);
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
-         }
+        int buflen = first->MaxHeaderLen+4;
+        char *linebuf = malloc(buflen);
+        while(fgets(linebuf, buflen, fh))
+        {
+          SParse(linebuf);
+          cmsg = AppendToBuffer(cmsg, &wptr, &len, linebuf);
+        }
+        free(linebuf);
+        fclose(fh);
+        cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+      }
+    }
+
+    // Now we check every part of the message if it will be displayed in the
+    // texteditor or not and if so we run the part through the lexer
+    for(part = first->Next; part; part = part->Next)
+    {
+      BOOL dodisp = (part->Nr < PART_LETTER || (part->Printable && (part->Nr == PART_LETTER || (C->DisplayAllTexts && part->Decoded))));
+
+      prewptr = wptr;
+
+      if (mode != RIM_READ && part->Nr > PART_LETTER) break;
+
+      // if we are in READ mode and other parts than the LETTER part
+      // shouldn`t be displayed in the texteditor, we drop a simple separator bar with info.
+      // This is used for attachments and here escape sequences are allowed as we don`t want them
+      // to get stripped if the user selects "NoTextStyles"
+      if (mode == RIM_READ && (part->Nr > PART_LETTER || !dodisp))
+      {
+        char buffer[SIZE_LARGE];
+
+        // lets generate the separator bar.
+        sprintf(buffer, "\033c\033[s:18]\033p[7]%d: %s\033p[0]\n\033l\033b%s:\033n %s   \033b%s:\033n %s%ld %s\n", part->Nr, part->Name, GetStr(MSG_RE_ContentType), DescribeCT(part->ContentType), GetStr(MSG_Size), part->Decoded ? "" : "~", part->Size, GetStr(MSG_Bytes));
+        cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
+
+        *buffer = 0;
+        if(*part->Description) sprintf(buffer, "\033b%s:\033n %s\n", GetStr(MSG_RE_Description), part->Description);
+        if(dodisp)
+        {
+          strcat(buffer, "\033[s:2]\n");
+        }
+        if(*buffer) cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
       }
 
-      for (part = first->Next; part; part = part->Next)
+      if(dodisp)
       {
-         BOOL dodisp = (part->Nr < PART_LETTER || (part->Printable && (part->Nr == PART_LETTER || (C->DisplayAllTexts && part->Decoded))));
+        FILE *fh;
 
-         prewptr = wptr;
+        if((fh = fopen(part->Filename, "r")))
+        {
+          char *msg;
 
-         if (mode != RIM_READ && part->Nr > PART_LETTER) break;
-         if (mode == RIM_READ && (part->Nr > PART_LETTER || !dodisp))
-         {
-            *buffer = 0; sprintf(buffer, "%s\033p[7]%d: %s\033p[0]\n%s%s:%s %s   %s%s:%s %s%ld %s\n", tsb, part->Nr, part->Name, bo, GetStr(MSG_RE_ContentType), pl, DescribeCT(part->ContentType), bo, GetStr(MSG_Size), pl, part->Decoded ? "" : "~", part->Size, GetStr(MSG_Bytes));
-            if (*buffer) cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
-            *buffer = 0; if (*part->Description) sprintf(&buffer[strlen(buffer)], "%s%s:%s %s\n", bo, GetStr(MSG_RE_Description), pl, part->Description);
-            if (dodisp) { strcat(buffer, sb); strcat(buffer, "\n"); }
-            if (*buffer) cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
-         }
-         if (dodisp)
-         {
-            if ((fh = fopen(part->Filename, "r")))
-            {       
-               if ((msg = calloc((size_t)(part->Size+3), sizeof(char))))
-               {
-               char *sigptr = 0;
+          if((msg = calloc((size_t)(part->Size+3), sizeof(char))))
+          {
+            char *ptr, *rptr, *eolptr, *sigptr = 0;
 
-                  *msg = '\n';
-                  fread(msg+1, 1, (size_t)(part->Size), fh);
-                  rptr = msg+1;
+            *msg = '\n';
+            fread(msg+1, 1, (size_t)(part->Size), fh);
+            rptr = msg+1;
 
-                  // find signature first if it should be stripped
-                  if (mode == RIM_QUOTE && C->StripSignature)
-                  {
-//                int lines=21;
+            // find signature first if it should be stripped
+            if(mode == RIM_QUOTE && C->StripSignature)
+            {
+              sigptr = msg + part->Size;
+              while(sigptr > msg)
+              {
+                sigptr--;
+                while((sigptr > msg) && (*sigptr != '\n')) sigptr--;  // step back to previous line
 
-                     sigptr = msg + part->Size;
-                     while(sigptr > msg)
-                     {
-                        sigptr--;
-                        while((sigptr > msg) && (*sigptr != '\n')) sigptr--;  // step back to previous line
-                        if(/*(!--lines) ||*/ (sigptr <= msg+1))                   // abort after 20 lines or if at msg start
-                        {
-                           sigptr = NULL;
-                           break;
-                        }
+                if((sigptr <= msg+1))
+                {
+                  sigptr = NULL;
+                  break;
+                }
 
-                        if(strncmp(sigptr+1, "-- \n", 4) == 0)                // check for sig separator
-                        {                                                     // per definition it is a "-- " on a single line
-                           sigptr++;
-                           break;
-                        }
-                     }
-                  }
-
-                  while (*rptr)
-                  {
-                     for (eolptr = rptr; *eolptr && *eolptr != '\n'; eolptr++); *eolptr = 0;
-/* UUencoded */      if (!strncmp(rptr, "begin ", 6) && isdigit((int)rptr[6]))
-                     {
-                        if (!re->FirstReadDone)
-                        {
-                           FILE *ufh;
-                           ptr = &rptr[6];
-                           while (!ISpace(*ptr)) ptr++;
-                           ptr = stpblk(ptr);
-                           for (last = first; last->Next; last = last->Next);
-                           if ((ufh = RE_OpenNewPart(winnum, &uup, last, first)))
-                           {
-                              uup->ContentType = StrBufCpy(uup->ContentType, "application/octet-stream");
-                              strcpy(uup->Description, GetStr(MSG_RE_UUencodedFile));
-                              stccpy(uup->Name, ptr, SIZE_FILE);
-                              fromuuetxt(&rptr, ufh);
-                              fclose(ufh);
-                              uup->Decoded = TRUE;
-                              RE_SetPartInfo(uup);
-                              eolptr = rptr-1; ptr = rptr;
-                           }
-                           else ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
-                        }
-                        else
-                        {
-                           for (ptr=eolptr+1; *ptr; ptr++)
-                           {
-                              if (!strncmp(ptr, "end", 3)) break;
-                              while (*ptr && *ptr != '\n') ptr++;
-                           }
-                           while (*ptr && *ptr != '\n') ptr++; eolptr = ptr++;
-                        }
-                        if (!strncmp(ptr, "size", 4))
-                        {
-                           if (!re->FirstReadDone)
-                           {
-                              int expsize = atoi(&ptr[5]);
-                              if (uup->Size != expsize) ER_NewError(GetStr(MSG_ER_UUSize), (char *)uup->Size, (char *)expsize);
-                           }
-                           for (eolptr = ptr; *eolptr && *eolptr!='\n'; eolptr++); *eolptr = 0;
-                        }
-                        goto rim_cont;
-                     }
-/* PGP message */    if (!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
-                     {
-                        struct TempFile *tf;
-                        DB( kprintf("RE_ReadInMessage(): encrypted message\n"); )
-                        if ((tf = OpenTempFile("w")))
-                        {
-                           *eolptr = '\n';
-                           for (ptr=eolptr+1; *ptr; ptr++)
-                           {
-                              if (!strncmp(ptr, "-----END PGP MESSAGE", 19)) break;
-                              while (*ptr && *ptr != '\n') ptr++;
-                           }
-                           while (*ptr && *ptr != '\n') ptr++; eolptr = ptr++;
-                           fwrite(rptr, 1, (size_t)(ptr-rptr), tf->FP);
-                           fclose(tf->FP); tf->FP = NULL;
-                           DB( kprintf("RE_ReadInMessage(): decrypting\n"); )
-
-                           if (!RE_DecryptPGP(winnum, tf->Filename))
-                           {
-                              SET_FLAG(re->PGPSigned, PGPS_OLD);
-
-                              // make sure that the mail is flaged as signed
-                              if(!isSignedMail(re->MailPtr))
-                              {
-                                SET_FLAG(re->MailPtr->Flags, MFLAG_SIGNED);
-                                SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-                              }
-                           }
-
-                           if ((tf->FP = fopen(tf->Filename, "r")))
-                           {
-                              char buf2[SIZE_LARGE];
-                              DB( kprintf("RE_ReadInMessage(): decrypted message follows\n"); )
-                              while (fgets(buf2, SIZE_LARGE, tf->FP))
-                              {
-                                 rptr = buf2;
-                                 DB( kprintf(buf2); )
-                                 cmsg = AppendToBuffer(cmsg, &wptr, &len, buf2);
-                              }
-                           }
-                           CloseTempFile(tf);
-                        }
-
-                        SET_FLAG(re->PGPEncrypted, PGPE_OLD);
-
-                        // make sure that mail is flagged as crypted
-                        if(!isCryptedMail(re->MailPtr))
-                        {
-                          SET_FLAG(re->MailPtr->Flags, MFLAG_CRYPT);
-                          SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-                        }
-
-                        DB( kprintf("RE_ReadInMessage(): done with decryption\n"); )
-                        goto rim_cont;
-                     }
-/* signature */      if (!strcmp(rptr, "-- "))
-                     {
-                        if (mode == RIM_QUOTE && C->StripSignature && (rptr == sigptr)) break;
-                        else if (mode == RIM_READ)
-                        {
-                           if (C->SigSepLine == 1) cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
-                           if (C->SigSepLine == 2) cmsg = AppendToBuffer(cmsg, &wptr, &len, sb);
-                           if (C->SigSepLine == 3) break;
-                           cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
-                           goto rim_cont;
-                        }
-                     }
-/* URL */            if (!re->NoTextstyles && mode == RIM_READ && rptr[0] && RE_ExtractURL(rptr, url, &urlptr, &ptr))
-                     {
-                        char *buf2, *p;
-                        if ((buf2 = calloc(SIZE_DEFAULT+(strlen(rptr)*3)/2,1)))
-                        {
-                           p = buf2;
-                           do
-                           {
-                              while (rptr < urlptr) *p++ = *rptr++;
-                              sprintf(p, "\033p[7]%s\033p[0]", url);
-                              p = &buf2[strlen(buf2)]; rptr = ptr;
-                           } while (rptr[0] && RE_ExtractURL(rptr, url, &urlptr, &ptr));
-                           strcpy(p, rptr); strcat(p, "\n");
-                           cmsg = AppendToBuffer(cmsg, &wptr, &len, buf2);
-                           free(buf2);
-                           goto rim_cont;
-                        }
-                     }
-
-                     // and last, but not least we check for some more PGP features.
-                     if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31)) re->PGPKey = TRUE;
-                     else if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29))
-                     {
-                        SET_FLAG(re->PGPSigned, PGPS_OLD);
-
-                        if(!isSignedMail(re->MailPtr))
-                        {
-                          SET_FLAG(re->MailPtr->Flags, MFLAG_SIGNED);
-                          SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-                        }
-
-                        goto rim_cont; // don`t put the PGP line into the TextEditor!
-                     }
-
-                     cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
-                     cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
-rim_cont:
-                     rptr = eolptr+1;
-                     //if (mode == RIM_QUIET) DoMethod(G->App,MUIM_Application_InputBuffered); // causes enforcer hit with filtering!
-                  }
-                  free(msg);
-               }
-               fclose(fh);
+                if(strncmp(sigptr+1, "-- \n", 4) == 0)                // check for sig separator
+                {                                                     // per definition it is a "-- " on a single line
+                  sigptr++;
+                  break;
+                }
+              }
             }
-         }
+
+            while (*rptr)
+            {
+              for(eolptr = rptr; *eolptr && *eolptr != '\n'; eolptr++); *eolptr = 0;
+
+/* UUenc */   if(!strncmp(rptr, "begin ", 6) && isdigit((int)rptr[6]))
+              {
+                if(!re->FirstReadDone)
+                {
+                  FILE *ufh;
+                  ptr = &rptr[6];
+
+                  while (!ISpace(*ptr)) ptr++;
+                  ptr = stpblk(ptr);
+                  for (last = first; last->Next; last = last->Next);
+
+                  if((ufh = RE_OpenNewPart(winnum, &uup, last, first)))
+                  {
+                    uup->ContentType = StrBufCpy(uup->ContentType, "application/octet-stream");
+                    strcpy(uup->Description, GetStr(MSG_RE_UUencodedFile));
+                    stccpy(uup->Name, ptr, SIZE_FILE);
+                    fromuuetxt(&rptr, ufh);
+                    fclose(ufh);
+
+                    uup->Decoded = TRUE;
+                    RE_SetPartInfo(uup);
+                    eolptr = rptr-1; ptr = rptr;
+                  }
+                  else ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
+                }
+                else
+                {
+                  for(ptr=eolptr+1; *ptr; ptr++)
+                  {
+                    if(!strncmp(ptr, "end", 3)) break;
+
+                    while(*ptr && *ptr != '\n') ptr++;
+                  }
+
+                  while(*ptr && *ptr != '\n') ptr++;
+
+                  eolptr = ptr++;
+                }
+
+                if(!strncmp(ptr, "size", 4))
+                {
+                  if(!re->FirstReadDone)
+                  {
+                    int expsize = atoi(&ptr[5]);
+                    if (uup->Size != expsize) ER_NewError(GetStr(MSG_ER_UUSize), (char *)uup->Size, (char *)expsize);
+                  }
+                  for (eolptr = ptr; *eolptr && *eolptr!='\n'; eolptr++);
+
+                  *eolptr = 0;
+                }
+              }
+/* PGP msg */ else if(!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
+              {
+                struct TempFile *tf;
+                DB( kprintf("RE_ReadInMessage(): encrypted message\n"); )
+
+                if((tf = OpenTempFile("w")))
+                {
+                  *eolptr = '\n';
+                  for(ptr=eolptr+1; *ptr; ptr++)
+                  {
+                    if(!strncmp(ptr, "-----END PGP MESSAGE", 19)) break;
+
+                    while (*ptr && *ptr != '\n') ptr++;
+                  }
+
+                  while (*ptr && *ptr != '\n') ptr++;
+
+                  eolptr = ptr++;
+                  fwrite(rptr, 1, (size_t)(ptr-rptr), tf->FP);
+                  fclose(tf->FP);
+                  tf->FP = NULL;
+
+                  DB( kprintf("RE_ReadInMessage(): decrypting\n"); )
+
+                  if(!RE_DecryptPGP(winnum, tf->Filename))
+                  {
+                    SET_FLAG(re->PGPSigned, PGPS_OLD);
+
+                    // make sure that the mail is flaged as signed
+                    if(!isSignedMail(re->MailPtr))
+                    {
+                      SET_FLAG(re->MailPtr->Flags, MFLAG_SIGNED);
+                      SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+                    }
+                  }
+
+                  if ((tf->FP = fopen(tf->Filename, "r")))
+                  {
+                    char buf2[SIZE_LARGE];
+                    DB( kprintf("RE_ReadInMessage(): decrypted message follows\n"); )
+
+                    while(fgets(buf2, SIZE_LARGE, tf->FP))
+                    {
+                      rptr = buf2;
+                      DB( kprintf(buf2); )
+                      cmsg = AppendToBuffer(cmsg, &wptr, &len, buf2);
+                    }
+                  }
+                  CloseTempFile(tf);
+                }
+
+                SET_FLAG(re->PGPEncrypted, PGPE_OLD);
+
+                // make sure that mail is flagged as crypted
+                if(!isCryptedMail(re->MailPtr))
+                {
+                  SET_FLAG(re->MailPtr->Flags, MFLAG_CRYPT);
+                  SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+                }
+
+                DB( kprintf("RE_ReadInMessage(): done with decryption\n"); )
+              }
+/* Signat. */ else if(!strcmp(rptr, "-- "))
+              {
+                if(mode == RIM_QUOTE && C->StripSignature && (rptr == sigptr)) break;
+                else if (mode == RIM_READ)
+                {
+                  if(C->SigSepLine == 1) cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                  if(C->SigSepLine == 2) cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
+                  if(C->SigSepLine == 3) break;
+
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+                }
+              }
+/* PGP sig */ else if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31)) re->PGPKey = TRUE;
+              else if (!strncmp(rptr, "-----BEGIN PGP SIGNED MESSAGE", 29))
+              {
+                SET_FLAG(re->PGPSigned, PGPS_OLD);
+
+                if(!isSignedMail(re->MailPtr))
+                {
+                  SET_FLAG(re->MailPtr->Flags, MFLAG_SIGNED);
+                  SET_FLAG(re->MailPtr->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+                }
+              }
+/* other */   else
+              {
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
+                cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+              }
+
+              rptr = eolptr+1;
+            }
+            free(msg);
+          }
+
+          fclose(fh);
+        }
+      }
 
       SParse(cmsg + prewptr);
+    }
 
-      }
-      re->FirstReadDone = TRUE;
-      if (mode != RIM_QUIET) BusyEnd;
-   }
-   DB( kprintf("RE_ReadInMessage() ends\n"); )
-   return cmsg;
+    re->FirstReadDone = TRUE;
+    if(mode != RIM_QUIET) BusyEnd;
+  }
+
+  return cmsg;
 }
 ///
 /// RE_AddExtraHeader
@@ -3124,10 +3034,17 @@ static void RE_DisplayMessage(int winnum)
       }
       set(gui->GR_INFO, MUIA_ShowMe, (G->RE[winnum]->SenderInfo == 2) && (gui->BC_PHOTO != NULL));
       set(gui->LV_HEAD, MUIA_NList_Quiet, FALSE);
-      set(gui->TE_TEXT, MUIA_TextEditor_ImportHook, G->RE[winnum]->NoTextstyles ? MUIV_TextEditor_ImportHook_Plain : MUIV_TextEditor_ImportHook_EMail);
-      set(gui->TE_TEXT, MUIA_TextEditor_FixedFont, G->RE[winnum]->FixedFont);
-      set(gui->TE_TEXT, MUIA_TextEditor_Contents, body);
 
+      // before we can put the message body into the TextEditor, we have to preparse the text and
+      // try to set some styles, as we don`t use the buggy ImportHooks of TextEditor anymore and are anyway
+      // more powerful with that.
+      if(!G->RE[winnum]->NoTextstyles) body = ParseEmailText(body);
+
+      SetAttrs(gui->TE_TEXT, MUIA_TextEditor_FixedFont,  G->RE[winnum]->FixedFont,
+                             MUIA_TextEditor_Contents,   body,
+                             TAG_DONE);
+
+      if(!G->RE[winnum]->NoTextstyles) free(body);
       free(cmsg);
    }
 }
@@ -3230,6 +3147,7 @@ HOOKPROTONH(RE_DoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
       int pos = clickmsg->ClickPosition;
       char *line, *surl;
       static char url[SIZE_URL];
+      enum tokenType type;
 
       // then we make a copy of the LineContents
       if(!(line = StrBufCpy(NULL, clickmsg->LineContents))) return FALSE;
@@ -3243,19 +3161,45 @@ HOOKPROTONH(RE_DoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
       while(p+1 != &line[strlen(line)] && !ISpace(*(p+1))) p++;
       *(++p) = '\0';
 
-      if(RE_ExtractURL(surl, url, NULL, NULL))
+      // now we start our quick lexical analysis to find a clickable element within
+      // the doubleclick area
+      if((type = ExtractURL(surl, url)))
       {
-         if (!strnicmp(url, "mailto:", 7)) RE_ClickedOnMessage(&url[7]);
-         else if(strchr(url, ':') == NULL && strchr(url, '@')) RE_ClickedOnMessage(url);
-         else GotoURL(url);
+        switch(type)
+        {
+          case tEMAIL:
+          {
+            RE_ClickedOnMessage(url);
+          }
+          break;
 
-         result = TRUE;
+          case tMAILTO:
+          {
+            RE_ClickedOnMessage(&url[7]);
+          }
+          break;
+
+          case tHTTP:
+          case tHTTPS:
+          case tFTP:
+          case tGOPHER:
+          case tTELNET:
+          case tNEWS:
+          case tURL:
+          {
+            GotoURL(url);
+          }
+          break;
+        }
+
+        result = TRUE;
       }
 
       FreeStrBuf(line);
    }
 
-   // if we still don`t have a result here we can exit immediatly
+   // if we still don`t have a result here we check if the user clicked on
+   // a attachment.
    if(result == FALSE)
    {
       p = clickmsg->LineContents;
@@ -3577,7 +3521,8 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                      MUIA_TextEditor_Slider, data->GUI.SL_TEXT,
                      MUIA_TextEditor_FixedFont, data->FixedFont,
                      MUIA_TextEditor_DoubleClickHook, &RE_DoubleClickHook,
-                     MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_EMail,
+//                     MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_EMail,
+                     MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain,
                      MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_Plain,
                      MUIA_TextEditor_ReadOnly, TRUE,
                      MUIA_TextEditor_ColorMap, G->EdColMap,
