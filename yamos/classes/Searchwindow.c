@@ -66,7 +66,11 @@ OVERLOAD(OM_NEW)
 				StringFrame,
 			End,
 
-			Child, MakeCheckGroup(&case_sensitive, GetStr(MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE)),
+			Child, HGroup,
+				Child, RectangleObject, End,
+				Child, MakeCheckGroup(&case_sensitive, GetStr(MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE)),
+				Child, RectangleObject, End,
+			End,
 
 			Child, HGroup,
 				Child, search = SimpleButton(GetStr(MSG_SEARCHWINDOW_BT_SEARCH)),

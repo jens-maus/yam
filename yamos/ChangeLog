@@ -924,6 +924,10 @@
     * added missing status_flags to the Status Group of the read window. Now
       it should show all statuses accordingly to the message status
 
+2001-07-24  Allan Odgaard <duff@diku.dk>
+
+    * Centered the checkmark (and label) in the search window.
+
 2001-07-26  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * removed possible enforcer hit in YAM_FO.c where the destructor of
