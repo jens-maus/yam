@@ -7,6 +7,13 @@ $Source$
 
 2001-11-13  Gunther Nikl <gni@gecko.de>
 
+   * YAM.c: wrap SetupDebug() into DB()
+   * classes/YAM.c, classes/Recipientstring.c: use DB wrapper
+   * YAM_FO.c, YAM_RE.c: no stray ";" dueto DB statements
+   * Debug.h: remove empty D/SetupDebug definitions
+
+2001-11-13  Gunther Nikl <gni@gecko.de>
+
     * YAM.c: don't call Terminate() inside the exitfunc on a premature exit
     * YAM_MAf.c: use alignment headers
 
