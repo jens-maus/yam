@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -1136,13 +1136,13 @@ int main(int argc, char **argv)
      struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
 
      ErrReq.es_Title        = "YAM Developer Version Warning";
-     ErrReq.es_TextFormat   = "This is a *internal* developer version and\n"
+     ErrReq.es_TextFormat   = "This is an *internal* developer version and\n"
                               "not recommended for public usage.\n"
-                              "Please note that it may contain bugs that could\n"
+                              "Please note that it may contain bugs that can\n"
                               "lead to any loss of data and that no support for\n"
                               "this version is available in any form.\n\n"
-                              "So if your are unsure, please reconsider to wait\n"
-                              "for a official release!";
+                              "So if you're unsure, please reconsider to wait\n"
+                              "for an official release!";
      ErrReq.es_GadgetFormat = "Go on|Exit";
 
      if((IntuitionBase = OpenLibrary("intuition.library", 36)))
