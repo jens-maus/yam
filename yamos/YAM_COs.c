@@ -175,6 +175,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "EdWrapMode       = %ld\n", co->EdWrapMode);
       fprintf(fh, "Editor           = %s\n", co->Editor);
       fprintf(fh, "LaunchAlways     = %s\n", Bool2Txt(co->LaunchAlways));
+      fprintf(fh, "EmailCache       = %ld\n", co->EmailCache);
 
       fprintf(fh, "\n[Reply/Forward]\n");
       fprintf(fh, "ReplyHello       = %s\n", co->ReplyHello);
@@ -500,6 +501,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "EdWrapMode"))     co->EdWrapMode = atoi(value);
                if (!stricmp(buffer, "Editor"))         stccpy(co->Editor, value, SIZE_PATHFILE);
                if (!stricmp(buffer, "LaunchAlways"))   co->LaunchAlways = Txt2Bool(value);
+               if (!stricmp(buffer, "EmailCache"))     co->EmailCache = atoi(value);
 /*6*/          if (!stricmp(buffer, "ReplyHello"))     stccpy(co->ReplyHello, value2, SIZE_INTRO);
                if (!stricmp(buffer, "ReplyIntro"))     stccpy(co->ReplyIntro, value2, SIZE_INTRO);
                if (!stricmp(buffer, "ReplyBye"))       stccpy(co->ReplyBye, value2, SIZE_INTRO);
@@ -654,7 +656,7 @@ void CO_GetConfig(void)
          CE->AvoidDuplicates   = GetMUICheck  (gui->CH_AVOIDDUP);
          CE->UpdateStatus      = GetMUICheck  (gui->CH_UPDSTAT);
          CE->WarnSize          = GetMUIInteger(gui->ST_WARNSIZE);
-         CE->CheckMailDelay    = GetMUIInteger(gui->ST_INTERVAL);
+         CE->CheckMailDelay    = GetMUINumer  (gui->NM_INTERVAL);
          CE->DownloadLarge     = GetMUICheck  (gui->CH_DLLARGE);
          CE->NotifyType        = (GetMUICheck(gui->CH_NOTIREQ) ? NOTI_REQ : 0)
                                + (GetMUICheck(gui->CH_NOTISOUND) ? NOTI_SOUND : 0)
@@ -691,6 +693,7 @@ void CO_GetConfig(void)
          CE->EdWrapMode        = GetMUICycle  (gui->CY_EDWRAP);
          GetMUIString(CE->Editor              ,gui->ST_EDITOR);
          CE->LaunchAlways      = GetMUICheck  (gui->CH_LAUNCH);
+         CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
          break;
       case 6:
          GetMUIString(CE->ReplyHello          ,gui->ST_REPLYHI);
@@ -830,7 +833,7 @@ void CO_SetConfig(void)
          setcycle    (gui->CY_TRANSWIN  ,CE->TransferWindow);
          setcheckmark(gui->CH_UPDSTAT   ,CE->UpdateStatus);
          set(gui->ST_WARNSIZE, MUIA_String_Integer, CE->WarnSize);
-         set(gui->ST_INTERVAL, MUIA_String_Integer, CE->CheckMailDelay);
+         set(gui->NM_INTERVAL, MUIA_Numeric_Value,  CE->CheckMailDelay);
          setcheckmark(gui->CH_DLLARGE   ,CE->DownloadLarge);
          setcheckmark(gui->CH_NOTIREQ   ,(CE->NotifyType&NOTI_REQ)!=0);
          setcheckmark(gui->CH_NOTISOUND ,(CE->NotifyType&NOTI_SOUND)!=0);
@@ -868,6 +871,7 @@ void CO_SetConfig(void)
          setcycle    (gui->CY_EDWRAP    ,CE->EdWrapMode);
          setstring   (gui->ST_EDITOR    ,CE->Editor);
          setcheckmark(gui->CH_LAUNCH    ,CE->LaunchAlways);
+         setslider   (gui->NB_EMAILCACHE,CE->EmailCache);
          break;
       case 6:
          setstring   (gui->ST_REPLYHI     ,CE->ReplyHello);

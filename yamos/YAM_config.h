@@ -73,7 +73,7 @@ struct CO_GUIData
    APTR CY_TRANSWIN;
    APTR CH_UPDSTAT;
    APTR ST_WARNSIZE;
-   APTR ST_INTERVAL;
+   APTR NM_INTERVAL;
    APTR CH_DLLARGE;
    APTR CH_NOTIREQ;
    APTR CH_NOTISOUND;
@@ -229,6 +229,7 @@ struct CO_GUIData
    APTR CY_INFOBAR;
    APTR ST_INFOBARTXT;
    APTR CH_WARNSUBJECT;
+   APTR NB_EMAILCACHE;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -344,6 +345,7 @@ struct Config
    int   StackSize;
    int   SizeFormat;
    int   InfoBar;
+   int   EmailCache;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;

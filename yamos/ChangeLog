@@ -1,3 +1,9 @@
+2001-10-26  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added config entry and GUI elements for upcoming emailcache
+      feature. Also reconfigured some GUI elements to use a
+      NumericbuttonObject.
+
 2001-10-25  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * added feature to try to automatically detect the mailinglist

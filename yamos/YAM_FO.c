@@ -866,11 +866,11 @@ static void FO_GetFolder(struct Folder *folder, BOOL existing)
    static const int type2cycle[9] = { FT_CUSTOM, FT_CUSTOM, FT_INCOMING, FT_INCOMING, FT_OUTGOING, -1, FT_INCOMING, FT_OUTGOING, -1 };
    int i;
 
-   set(gui->ST_FNAME, MUIA_String_Contents, folder->Name);
-   set(gui->TX_FPATH, MUIA_Text_Contents, folder->Path);
-   set(gui->ST_MAXAGE, MUIA_String_Integer, folder->MaxAge);
-   set(gui->CY_FTYPE, MUIA_Cycle_Active, type2cycle[folder->Type]);
-   set(gui->CY_FMODE, MUIA_Cycle_Active, folder->XPKType);
+   set(gui->ST_FNAME,  MUIA_String_Contents, folder->Name);
+   set(gui->TX_FPATH,  MUIA_Text_Contents, folder->Path);
+   set(gui->NM_MAXAGE, MUIA_Numeric_Value, folder->MaxAge);
+   set(gui->CY_FTYPE,  MUIA_Cycle_Active, type2cycle[folder->Type]);
+   set(gui->CY_FMODE,  MUIA_Cycle_Active, folder->XPKType);
 
    for (i = 0; i < 2; i++)
    {
@@ -928,7 +928,7 @@ static void FO_PutFolder(struct Folder *folder)
 
    GetMUIString(folder->Name, gui->ST_FNAME);
    GetMUIText(folder->Path, gui->TX_FPATH);
-   folder->MaxAge = GetMUIInteger(gui->ST_MAXAGE);
+   folder->MaxAge = GetMUINumer(gui->NM_MAXAGE);
    if (!isdefault)
    {
       folder->Type = cycle2type[GetMUICycle(gui->CY_FTYPE)];
@@ -1358,7 +1358,15 @@ static struct FO_ClassData *FO_New(void)
                   Child, data->GUI.BT_MOVE = PopButton(MUII_PopDrawer),
                End,
                Child, Label2(GetStr(MSG_FO_MaxAge)),
-               Child, data->GUI.ST_MAXAGE = MakeInteger(4,GetStr(MSG_FO_MaxAge)),
+               Child, HGroup,
+                  Child, data->GUI.NM_MAXAGE = NumericbuttonObject,
+                    MUIA_CycleChain,      1,
+                    MUIA_Numeric_Min,     0,
+                    MUIA_Numeric_Max,     730,
+                    MUIA_Numeric_Format,  GetStr(MSG_FO_MAXAGEFMT),
+                  End,
+                  Child, HSpace(0),
+               End,
                Child, Label1(GetStr(MSG_FO_FolderType)),
                Child, data->GUI.CY_FTYPE = MakeCycle(ftypes,GetStr(MSG_FO_FolderType)),
                Child, Label1(GetStr(MSG_FO_FolderMode)),
@@ -1419,7 +1427,7 @@ static struct FO_ClassData *FO_New(void)
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
          SetHelp(data->GUI.ST_FNAME,            MSG_HELP_FO_ST_FNAME            );
          SetHelp(data->GUI.TX_FPATH,            MSG_HELP_FO_TX_FPATH            );
-         SetHelp(data->GUI.ST_MAXAGE,           MSG_HELP_FO_ST_MAXAGE           );
+         SetHelp(data->GUI.NM_MAXAGE,           MSG_HELP_FO_ST_MAXAGE           );
          SetHelp(data->GUI.CY_FMODE,            MSG_HELP_FO_CY_FMODE            );
          SetHelp(data->GUI.CY_FTYPE,            MSG_HELP_FO_CY_FTYPE            );
          SetHelp(data->GUI.CY_SORT[0],          MSG_HELP_FO_CY_SORT0            );

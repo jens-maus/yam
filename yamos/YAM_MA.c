@@ -823,7 +823,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
                // we have to check all other folders first.
                if (folder->Type == FT_INCOMING)
                {
-                  struct Folder **flist = NULL;
+                  struct Folder **flist;
 
                   if ((flist = FO_CreateList()))
                   {

@@ -156,7 +156,7 @@ VOID FindAllMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *r
 {
 	int tl = strlen(text);
 	struct MUI_NListtree_TreeNode *tn;
-	for(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, 0);tn ;tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, 0))
+	for(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);tn ;tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE))
 	{
 		if(tn->tn_Flags & TNF_LIST) /* it's a sublist */
 		{
@@ -232,10 +232,11 @@ DECLARE(Open) // STRPTR str
 {
 	GETDATA;
 	STRPTR res = NULL;
-	LONG entries, state;
+	LONG entries;
 	struct CustomABEntry *entry;
 
-	DB(kprintf("Match this: %s\n", msg->str);)
+//	DB(kprintf("Match this: %s\n", msg->str);)
+	kprintf("Match this: %s\n", msg->str);
 
 	set(data->Matchlist, MUIA_List_Quiet, TRUE);
 	DoMethod(data->Matchlist, MUIM_List_Clear);
@@ -244,11 +245,12 @@ DECLARE(Open) // STRPTR str
 	set(data->Matchlist, MUIA_List_Quiet, FALSE);
 
 	/* is there more entries in the list and if only one, is it longer than what the user already typed... */
-	if((get(data->Matchlist, MUIA_List_Entries, &entries), entries > 0) && (DoMethod(data->Matchlist, MUIM_List_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
+  entries = xget(data->Matchlist, MUIA_List_Entries);
+	if(entries > 0 && (DoMethod(data->Matchlist, MUIM_List_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
 		res = entry->MatchString;
 
    /* should we open the popup list (if not already shown) */
-	if(!res || (get(obj, MUIA_Window_Open, &state), !state))
+	if(!res || !xget(obj, MUIA_Window_Open))
 		set(obj, MUIA_Window_Open, res ? TRUE : FALSE);
 
 	return (ULONG)res;

@@ -38,6 +38,7 @@
 
 #include "extra.h"
 #include "YAM.h"
+#include "YAM_addressbook.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_find.h"
@@ -571,7 +572,12 @@ APTR CO_Page2(struct CO_ClassData *data)
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_AutoOperation)),
             Child, HGroup,
                Child, Label2(GetStr(MSG_CO_CheckMail)),
-               Child, data->GUI.ST_INTERVAL = MakeInteger(4, GetStr(MSG_CO_CheckMail)),
+               Child, data->GUI.NM_INTERVAL = NumericbuttonObject,
+                 MUIA_CycleChain,      1,
+                 MUIA_Numeric_Min,     0,
+                 MUIA_Numeric_Max,     240,
+                 MUIA_Numeric_Default, 5,
+               End,
                Child, Label2(GetStr(MSG_CO_Minutes)),
                Child, HSpace(0),
             End,
@@ -608,7 +614,7 @@ APTR CO_Page2(struct CO_ClassData *data)
       SetHelp(data->GUI.CY_MSGSELECT ,MSG_HELP_CO_CY_MSGSELECT );
       SetHelp(data->GUI.CH_UPDSTAT   ,MSG_HELP_CO_CH_UPDSTAT   );
       SetHelp(data->GUI.ST_WARNSIZE  ,MSG_HELP_CO_ST_WARNSIZE  );
-      SetHelp(data->GUI.ST_INTERVAL  ,MSG_HELP_CO_ST_INTERVAL  );
+      SetHelp(data->GUI.NM_INTERVAL  ,MSG_HELP_CO_ST_INTERVAL  );
       SetHelp(data->GUI.CH_DLLARGE   ,MSG_HELP_CO_CH_DLLARGE   );
       SetHelp(data->GUI.CH_NOTIREQ   ,MSG_HELP_CO_CH_NOTIREQ   );
       SetHelp(data->GUI.ST_NOTICMD   ,MSG_HELP_CO_ST_NOTICMD   );
@@ -896,7 +902,7 @@ APTR CO_Page5(struct CO_ClassData *data)
          Child, HVSpace,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_MessageHeader)),
             Child, Label2(GetStr(MSG_CO_ReplyTo)),
-            Child, data->GUI.ST_REPLYTO  = MakeString(SIZE_ADDRESS,GetStr(MSG_CO_ReplyTo)),
+            Child, MakeAddressField(&data->GUI.ST_REPLYTO, GetStr(MSG_CO_ReplyTo), MSG_HELP_CO_ST_REPLYTO, ABM_TO, -1, FALSE),
             Child, Label2(GetStr(MSG_CO_Organization)),
             Child, data->GUI.ST_ORGAN = MakeString(SIZE_DEFAULT,GetStr(MSG_CO_Organization)),
             Child, Label2(GetStr(MSG_CO_ExtraHeaders)),
@@ -910,8 +916,6 @@ APTR CO_Page5(struct CO_ClassData *data)
                Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,GetStr(MSG_CO_Greetings)),
                Child, Label2(GetStr(MSG_CO_CharsetTrans)),
                Child, MakeTransPop(&data->GUI.ST_OUTTRANS, TRUE, GetStr(MSG_CO_CharsetTrans)),
-//               Child, Label2(GetStr(MSG_CO_WARNSUBJECT)),
-//               Child, data->GUI.CH_WARNSUBJECT = MakeCheck(GetStr(MSG_CO_WARNSUBJECT)),
             End,
             Child, MakeCheckGroup((Object **)&data->GUI.CH_WARNSUBJECT, GetStr(MSG_CO_WARNSUBJECT)),
          End,
@@ -927,6 +931,17 @@ APTR CO_Page5(struct CO_ClassData *data)
                   MUIA_Popstring_Button,PopButton(MUII_PopFile),
                End,
                Child, MakeCheckGroup((Object **)&data->GUI.CH_LAUNCH, GetStr(MSG_CO_Launch)),
+               Child, Label2(GetStr(MSG_CO_NB_EMAILCACHE)),
+               Child, HGroup,
+                Child, data->GUI.NB_EMAILCACHE = NumericbuttonObject,
+                  MUIA_Numeric_Min,     0,
+                  MUIA_Numeric_Max,     100,
+                  MUIA_Numeric_Format,  GetStr(MSG_CO_NB_EMAILCACHEFMT),
+                  MUIA_CycleChain, 1,
+                End,
+                Child, HSpace(0),
+               End,
+               Child, HSpace(0),
             End,
          End,
          Child, HVSpace,
@@ -943,7 +958,9 @@ APTR CO_Page5(struct CO_ClassData *data)
       SetHelp(data->GUI.CY_EDWRAP       ,MSG_HELP_CO_CY_EDWRAP      );
       SetHelp(data->GUI.ST_EDITOR       ,MSG_HELP_CO_ST_EDITOR      );
       SetHelp(data->GUI.CH_LAUNCH       ,MSG_HELP_CO_CH_LAUNCH      );
+      SetHelp(data->GUI.NB_EMAILCACHE   ,MSG_HELP_CO_NB_EMAILCACHE  );
    }
+
    return grp;
 }
 

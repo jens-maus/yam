@@ -663,6 +663,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->EdWrapMode = 2;
       strcpy(co->Editor, "C:Ed");
       co->LaunchAlways = FALSE;
+      co->EmailCache = 10;
    }
    if (page == 6 || page < 0)
    {

@@ -290,11 +290,10 @@ OVERLOAD(MUIM_HandleEvent)
 				if(xget(obj, MUIA_BetterString_SelectSize) != 0 && ConvertKey(imsg) == ',')
 					set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
 
-				get(obj, MUIA_String_Contents, &old);
-				old = strdup(old);
+				old = strdup((STRPTR)xget(obj, MUIA_String_Contents));
 
 				DoSuperMethodA(cl, obj, msg);
-				get(obj, MUIA_String_Contents, &new);
+				new = (STRPTR)xget(obj, MUIA_String_Contents);
 
 				if(strcmp(old, new)) /* if contents changed, check if something matches */
 					new_address = (STRPTR)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Open, DoMethod(obj, MUIM_Recipientstring_CurrentRecipient));
@@ -309,7 +308,7 @@ OVERLOAD(MUIM_HandleEvent)
 		if(new_address) /* this is the complete address of what the user is typing, so let's insert it (marked) */
 		{
 			LONG pos, start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);;
-			get(obj, MUIA_String_BufferPos, &pos);
+			pos = xget(obj, MUIA_String_BufferPos);
 
 			DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
 			SetAttrs(obj, MUIA_String_BufferPos, pos, MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start), TAG_DONE);

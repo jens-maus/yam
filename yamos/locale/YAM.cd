@@ -4859,5 +4859,19 @@ automatically by scanning the first 5 emails in the\n\
 folder.
 ;
 MSG_FO_NOTRECOGNIZED (//)
-Couldn`t be recognized, please check manually!
+Couldn`t be recognized!
+;
+MSG_FO_MAXAGEFMT (//)
+%ld days
+;
+MSG_CO_NB_EMAILCACHE (//)
+Email cache
+;
+MSG_CO_NB_EMAILCACHEFMT (//)
+%ld mails
+;
+MSG_HELP_CO_NB_EMAILCACHE (//)
+Here you can select the amount of a separate cache\n\
+for emails which will be used in recipients string.\n\
+Select 0 mails for disabling this feature.
 ;
