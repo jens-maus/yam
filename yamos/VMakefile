@@ -198,7 +198,7 @@ YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 
 all_vbcc.o: all_vbcc.c extrasrc/stccpy.c \
 	extrasrc/stcgfe.c extrasrc/strmfp.c extrasrc/strsfn.c \
-	extrasrc/NewReadArgs.c extrasrc/dice.c extrasrc/access.c extrasrc/strdup.c
+	extrasrc/NewReadArgs.c extrasrc/dice.c extrasrc/strdup.c
 
 YAM_locale.h: YAM_locale.c
 YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
