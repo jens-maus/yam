@@ -420,6 +420,7 @@ struct Data2D Header = { 0, 0, NULL };
 BOOL MA_ReadHeader(FILE *fh)
 {
    char *buffer, *ptr, *head;
+   char *ptr2;
    BOOL success = FALSE;
    char prevcharset[SIZE_DEFAULT];
 
@@ -432,6 +433,15 @@ BOOL MA_ReadHeader(FILE *fh)
       clear(head, SIZE_LINE);
       strcpy(prevcharset, "us-ascii");
       RE_ProcessHeader(prevcharset, buffer, TRUE, head);
+
+      // Now we have to process the head and strip out every Escape Sequence
+      // This is needed to make it impossible to execute commands in MUI
+      // elements with those escape sequences because it can be dangerous !
+      for(ptr2=head; *ptr2; ptr2++)
+      {
+        if(*ptr2 == 0x1b) *ptr2 = ' ';
+      }
+
       if ((buffer[0] == ' ' || buffer[0] == '\t') && Header.Used)
       {
          for (ptr = head; *ptr && ISpace(*ptr); ptr++);

@@ -20,7 +20,7 @@ OPTFLAGS   = NOOPT
 
 # Pre-build for release:
 DEBUG      = DEBUG=LINE
-YAMVERSION = "2.3"
+YAMVERSION = "2.3p1"
 
 # CPU is defined outside
 

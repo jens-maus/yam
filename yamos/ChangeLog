@@ -347,4 +347,13 @@
     * YAM_MA.c: fixed ML reply problem when the mail had no
       Reply-To header (patch from MAIN)
 
+2001-11-11  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * applied security hole fix where it was possible to send
+      mails with special escape sequences in the header that
+      executes real dos commands via some PIPES
+      (patch from MAIN)
+    * changed version string to "2.3p1" for the upcoming
+      release.
+
 
