@@ -83,7 +83,6 @@ struct WR_ClassData  /* write window */
 
    int               Mode;
    int               OldSecurity;
-   int               AS_Count;
    int               ReadwinNum; /* winnum of the read window the editor was invoked from, or -1 */
 
    BOOL              Bounce;

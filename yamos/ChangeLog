@@ -7,6 +7,19 @@ $Source$
 
 2003-04-12  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c, YAM_CO.c: fixed the whole internal timerequest handling
+      within YAM. Previously YAM did only use one single timerequest to
+      handle the background management functions like automatic
+      index saving, checking mail within a specified interval and auto
+      backuping text that is currently in edit mode. YAM always issued
+      a 1 second long timerequest and managed the mentioned methods by
+      counting the time in own iterator variables. This caused a lot of
+      overhead for the system and it is a much more cleaner approach to
+      generate a single timerequest for each of this automatic interval
+      methods. Now YAM will issue 3 different timerequests upon start
+      without polling the system each second. Hopefully this increased
+      the overall response because YAM doesn`t need to operate on a
+      signal each single second.
     * YAM.c: fixed and enhanced the AutoDST facility. Now YAM also takes
       respect of the ENV:TZONE variable created by SetDST. It`s not
       completly finished yet, as we need some notification mechanism

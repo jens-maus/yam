@@ -98,23 +98,45 @@ struct Args {
 
 /**************************************************************************/
 
+// the used number of timerIO requests (refer to YAM.h)
+#define TIO_NUM (3)
+
 // Timer Class
-struct TC_Data
+static struct TC_Data
 {
    struct MsgPort     *port;
-   struct timerequest *req;
-};
+   struct timerequest *timerIO[TIO_NUM]; // lets generate timerIO requests
 
-static struct TC_Data TCData = { NULL,NULL };
+} TCData;
 
 /// TC_Start
-//  Start a one second delay
-static void TC_Start(void)
+//  Start a delay depending on the time specified
+void TC_Start(enum TimerIO tio, int seconds)
 {
-   TCData.req->tr_node.io_Command = TR_ADDREQUEST;
-   TCData.req->tr_time.tv_secs    = 1;
-   TCData.req->tr_time.tv_micro   = 0;
-   SendIO(&TCData.req->tr_node);
+  if(seconds > 0)
+  {
+    TCData.timerIO[tio]->tr_node.io_Command = TR_ADDREQUEST;
+    TCData.timerIO[tio]->tr_time.tv_secs    = seconds;
+    TCData.timerIO[tio]->tr_time.tv_micro   = 0;
+
+    DB(kprintf("Queueing timerIO[%ld] in %ld seconds\n", tio, seconds);)
+
+    SendIO((struct IORequest *)TCData.timerIO[tio]);
+  }
+}
+
+///
+/// TC_Stop
+//  Stop a currently running TimerIO request
+void TC_Stop(enum TimerIO tio)
+{
+  struct IORequest *ioreq = (struct IORequest *)TCData.timerIO[tio];
+
+  if(CheckIO(ioreq) == 0) AbortIO(ioreq);
+
+  WaitIO(ioreq);
+
+  DB(kprintf("Stopped timerIO[%ld]\n", tio);)
 }
 
 ///
@@ -122,21 +144,41 @@ static void TC_Start(void)
 //  Frees timer resources
 static void TC_Exit(void)
 {
-   if (TCData.port)
-   {
-      if (TCData.req)
-      {
-         if (CheckIO(&TCData.req->tr_node)) return;
-         AbortIO(&TCData.req->tr_node);
-         WaitIO(&TCData.req->tr_node);
-         TimerBase = (APTR)-1;
-         CloseDevice(&TCData.req->tr_node);
-         DeleteIORequest(&TCData.req->tr_node);
-      }
-      DeleteMsgPort(TCData.port);
-   }
-   TCData.port = NULL;
-   TCData.req = NULL;
+  // first we abort & delete the IORequests
+  if(TCData.timerIO[0] != NULL)
+  {
+    int i;
+
+    // first make sure every TimerIO is stoppped
+    for(i=0; i < TIO_NUM && TCData.timerIO[i]; i++)
+    {
+      struct IORequest *ioreq = (struct IORequest *)TCData.timerIO[i];
+
+      if(CheckIO(ioreq) == 0) AbortIO(ioreq);
+
+      WaitIO(ioreq);
+    }
+
+    // then close the device
+    if(TCData.timerIO[0]->tr_node.io_Device != NULL)
+      CloseDevice((struct IORequest *)TCData.timerIO[0]);
+
+    // and then we delete the IO requests
+    for(i=0; i < TIO_NUM && TCData.timerIO[i]; i++)
+    {
+      if(i==0) DeleteIORequest((struct IORequest *)TCData.timerIO[i]);
+      else     free(TCData.timerIO[i]);
+
+      TCData.timerIO[i] = NULL;
+    }
+  }
+
+  // remove the MsgPort now.
+  if(TCData.port != NULL)
+  {
+    DeleteMsgPort(TCData.port);
+    TCData.port = NULL;
+  }
 }
 
 ///
@@ -144,18 +186,38 @@ static void TC_Exit(void)
 //  Initializes timer resources
 static BOOL TC_Init(void)
 {
-   if ((TCData.port = CreateMsgPort()))
-   {
-      if ((TCData.req = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest))))
+  // clear our static structure first
+  memset(&TCData, 0, sizeof(struct TC_Data));
+
+  // create message port
+  if((TCData.port = CreateMsgPort()))
+  {
+    // create the TimerIOs now
+    if(TCData.timerIO[0] = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest)))
+    {
+      // then open the device
+      if(!OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)TCData.timerIO[0], 0L))
       {
-         if (!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.req->tr_node, 0L))
-         {
-           TimerBase = (APTR)TCData.req->tr_node.io_Device;
-           return TRUE;
-         }
+        int i;
+
+        // needed to get GetSysTime() working
+        TimerBase = (APTR)TCData.timerIO[0]->tr_node.io_Device;
+
+        // create our other TimerIOs now
+        for(i=1; i < TIO_NUM; i++)
+        {
+          if(!(TCData.timerIO[i] = calloc(1, sizeof(struct timerequest)))) return FALSE;
+
+          // then copy the data of our timerIO[0] to the other ones
+          memcpy(TCData.timerIO[i], TCData.timerIO[0], sizeof(struct timerequest));
+        }
+
+        return TRUE;
       }
-   }
-   return FALSE;
+    }
+  }
+
+  return FALSE;
 }
 
 ///
@@ -174,63 +236,86 @@ static BOOL TC_ActiveEditor(int wrwin)
 
 ///
 /// TC_Dispatcher
-//  Dispatcher for timer class (called once every second)
-static void TC_Dispatcher(void)
+//  Dispatcher for timer class
+static void TC_Dispatcher(enum TimerIO tio)
 {
    // if the IORequest isn`t ready yet we don`t wait
    // or else we get perhaps into a deadlock
-   if(CheckIO(&TCData.req->tr_node))
+   if(CheckIO((struct IORequest *)TCData.timerIO[tio]))
    {
       int i;
 
       // then wait&remove the IORequest
-      WaitIO(&TCData.req->tr_node);
+      WaitIO((struct IORequest *)TCData.timerIO[tio]);
 
-      // check if we need to write the indexes back to disk.
-      if(C->WriteIndexes && ++G->SI_Count >= C->WriteIndexes)
+      // now dispatch between the differnent timerIOs
+      switch(tio)
       {
-         // only write the indexes if no Editor is actually in use
-         if(!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
-         {
-            MA_UpdateIndexes(FALSE);
-            G->SI_Count = 0;
-         }
-      }
-
-      // check if we need to check for new mail
-      if(C->CheckMailDelay && ++G->GM_Count >= C->CheckMailDelay*60)
-      {
-         // only if there is currently no write window open we
-         // check for new mail.
-         for(i=0; i < MAXWR && !G->WR[i]; i++) ;
-
-         // also the configuration window needs to be closed
-         // or we skip the pop operation
-         if(i == MAXWR && !G->CO)
-         {
-            MA_PopNow(POP_TIMED,-1);
-            G->GM_Count = 0;
-         }
-      }
-
-      // check wheter we have to autosave a editor
-      if(C->AutoSave)
-      {
-        for(i=0; i < MAXWR; i++)
+        // in case the WriteIndexes TimerIO request was triggered
+        // we first check if no Editor is currently active and
+        // if so we write the indexes.
+        case TIO_WRINDEX:
         {
-          if(G->WR[i] && ++G->WR[i]->AS_Count >= C->AutoSave)
-          {
-            EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
-            G->WR[i]->AS_Count = 0;
-            G->WR[i]->AS_Done = TRUE;
-          }
-        }
-      }
+          DB(kprintf("TIO_WRINDEX triggered at: %ld\n", time(NULL));)
 
-      // start another 1 second timer request
-      TC_Start();
+          // only write the indexes if no Editor is actually in use
+          if(!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
+          {
+            MA_UpdateIndexes(FALSE);
+          }
+
+          // restart timer now.
+          TC_Start(tio, C->WriteIndexes);
+        }
+        break;
+
+        // in case the checkMail timerIO request was triggered we
+        // need to check if no writewindow is currently in use and
+        // then check for new mail.
+        case TIO_CHECKMAIL:
+        {
+          DB(kprintf("TIO_CHECKMAIL triggered at: %ld\n", time(NULL));)
+
+          // only if there is currently no write window open we
+          // check for new mail.
+          for(i=0; i < MAXWR && !G->WR[i]; i++) ;
+
+          // also the configuration window needs to be closed
+          // or we skip the pop operation
+          if(i == MAXWR && !G->CO)
+          {
+            MA_PopNow(POP_TIMED,-1);
+          }
+
+          // restart timer now.
+          TC_Start(tio, C->CheckMailDelay*60);
+        }
+        break;
+
+        // and in case the AutoSave timerIO was triggered we check
+        // wheter there is really need to autosave the content of
+        // the currently used editors.
+        case TIO_AUTOSAVE:
+        {
+          DB(kprintf("TIO_AUTOSAVE triggered at: %ld\n", time(NULL));)
+
+          for(i=0; i < MAXWR; i++)
+          {
+            if(G->WR[i])
+            {
+              EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
+              G->WR[i]->AS_Done = TRUE;
+            }
+          }
+
+          // restart timer now
+          TC_Start(tio, C->AutoSave);
+        }
+        break;
+      }
    }
 }
+
 ///
 /// AY_PrintStatus
 //  Shows progress of program initialization
@@ -1355,7 +1440,12 @@ int main(int argc, char **argv)
       user = US_GetCurrentUser();
       AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name, "", "", "");
       AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir, "");
-      TC_Start();
+
+      // start our TimerIO requests for different purposes (writeindexes/mailcheck/autosave)
+      if(C->WriteIndexes)   TC_Start(TIO_WRINDEX,   C->WriteIndexes);
+      if(C->CheckMailDelay) TC_Start(TIO_CHECKMAIL, C->CheckMailDelay*60);
+      if(C->AutoSave)       TC_Start(TIO_AUTOSAVE,  C->AutoSave);
+
       timsig    = 1L << TCData.port->mp_SigBit;
       rexsig    = 1L << G->RexxHost->port->mp_SigBit;
       appsig    = 1L << G->AppPort->mp_SigBit;
@@ -1370,7 +1460,31 @@ int main(int argc, char **argv)
             if (signals & SIGBREAKF_CTRL_C) { ret = 1; break; }
             if (signals & SIGBREAKF_CTRL_D) { ret = 0; break; }
             if (signals & SIGBREAKF_CTRL_F) PopUp();
-            if (signals & timsig) TC_Dispatcher();
+
+            // check for a TimerIO event
+            if(signals & timsig)
+            {
+              int i;
+              struct timerequest *timeReq;
+
+              // check if we have a waiting message
+              while((timeReq = (struct timerequest *)GetMsg(TCData.port)))
+              {
+                for(i=0; i < TIO_NUM; i++)
+                {
+                  if(timeReq == TCData.timerIO[i])
+                  {
+                    // call the dispatcher with signalling which timerIO
+                    // this request caused
+                    TC_Dispatcher(i);
+                    break;
+                  }
+                }
+
+                // no ReplyMsg() needed
+              }
+            }
+
             if (signals & rexsig) ARexxDispatch(G->RexxHost);
             if (signals & appsig)
             {

@@ -893,6 +893,7 @@ void CO_SetConfig(void)
    struct CO_GUIData *gui = &G->CO->GUI;
    struct POP3 *pop3;
    int i;
+
    switch (G->CO->VisiblePage)
    {
       case 0:

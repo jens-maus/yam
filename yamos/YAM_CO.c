@@ -910,6 +910,14 @@ void CO_Validate(struct Config *co, BOOL update)
             break;
       }
       if (G->CO->Visited[1] || G->CO->Visited[13] || G->CO->UpdateAll) MA_SetupDynamicMenus();
+
+      if(G->CO->Visited[2] || G->CO->UpdateAll)
+      {
+        // requeue the timerequest for the CheckMailDelay
+        TC_Stop(TIO_CHECKMAIL);
+        TC_Start(TIO_CHECKMAIL, co->CheckMailDelay*60);
+      }
+
       if (G->CO->Visited[8] || G->CO->UpdateAll)
       {
          // First we set the NL_MAILS and NL_FOLDER Quiet

@@ -41,6 +41,7 @@
 /**************************************************************************/
 
 enum GlobalDispatcherJob { ID_CLOSEALL=1000, ID_RESTART, ID_ICONIFY, ID_LOGIN };
+enum TimerIO { TIO_WRINDEX=0, TIO_CHECKMAIL, TIO_AUTOSAVE };
 
 /*** Global Structure ***/
 struct Global 
@@ -81,8 +82,6 @@ struct Global
    LONG                     Weights[6];
    LONG                     TR_Socket;
 
-   int                      GM_Count;
-   int                      SI_Count;
    int                      PGPVersion;
    int                      CO_DST;
    int                      ER_NumErr;
@@ -120,6 +119,8 @@ struct Global
 
 extern struct Global *G;
 
+void TC_Start(enum TimerIO tio, int seconds);
+void TC_Stop(enum TimerIO tio);
 void PopUp(void);
 void SetupAppIcons(void);
 
