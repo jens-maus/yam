@@ -2149,6 +2149,7 @@ void rx_addrnew( struct RexxHost *host, struct rxd_addrnew **rxd, long action, s
       case RXIF_ACTION:
          memset(&addr, 0, sizeof(struct ABEntry));
          addr.Type = AET_USER;
+         addr.Members = "";
          if (rd->arg.type) if (tolower(*rd->arg.type) == 'g') addr.Type = AET_GROUP;
                       else if (tolower(*rd->arg.type) == 'l') addr.Type = AET_LIST;
          if (rd->arg.alias)    stccpy(addr.Alias, rd->arg.alias, SIZE_NAME);
