@@ -996,7 +996,7 @@ SAVEDS ASM void RE_NewFunc(REG(a1,int *arg))
    if (MailExists(mail, NULL)) switch (mode)
    {
       case NEW_NEW:     MA_NewNew(mail, flags); break;
-      case NEW_EDIT:    MA_NewEdit(mail, flags); break;
+      case NEW_EDIT:    MA_NewEdit(mail, flags, winnum); break;
       case NEW_BOUNCE:  MA_NewBounce(mail, flags); break;
       case NEW_FORWARD: MA_NewForward(mlist, flags); break;
       case NEW_REPLY:   MA_NewReply(mlist, flags); break;

@@ -789,7 +789,7 @@ struct RE_ClassData  /* read window */
       APTR GR_INFO, GR_PHOTO, BC_PHOTO, LV_INFO, BO_BALANCE;
       struct MUIP_Toolbar_Description TB_TOOLBAR[13];
    } GUI;
-   int               WindowNr;
+   int               WindowNr; // seems to be unused
    struct Mail       Mail;
    struct Mail      *MailPtr;
    struct TempFile  *TempFile;
@@ -824,7 +824,7 @@ struct WR_ClassData  /* write window */
       APTR BT_HOLD, BT_QUEUE, BT_SEND, BT_CANCEL;
       struct MUIP_Toolbar_Description TB_TOOLBAR[13];
    } GUI;
-   int                  WindowNr;
+   int                  WindowNr; // seems to be unused
    BOOL                 Bounce;
    struct Mail         *Mail, **MList;
    struct ABEntry      *ListEntry;
@@ -836,6 +836,7 @@ struct WR_ClassData  /* write window */
    char                 QuoteText[SIZE_DEFAULT];
    char                 AltQuoteText[SIZE_SMALL];	// no variable substitution -> SIZE_SMALL!
    char                 WTitle[SIZE_DEFAULT];
+   int                  ReadwinNum; // winnum of the read window the editor was invoked from, or -1
 };
 
 struct TR_ClassData  /* transfer window */
@@ -1258,7 +1259,7 @@ extern void SAVEDS MA_SetFolderInfoFunc(void);
 extern struct Mail **MA_CreateMarkedList(APTR);
 extern void MA_ChangeTransfer(BOOL);
 extern int MA_NewNew(struct Mail *, int);
-extern int MA_NewEdit(struct Mail *, int);
+extern int MA_NewEdit(struct Mail *, int, int);
 extern int MA_NewBounce(struct Mail *, int);
 extern int MA_NewForward(struct Mail **, int);
 extern int MA_NewReply(struct Mail **, int);

@@ -1321,6 +1321,7 @@ void WR_NewMail(int mode, int winnum)
             if (mi->Display) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Remove, mi->Pos);
             RemoveMailFromList(wr->Mail);
             wr->Mail = new;
+            if (wr->ReadwinNum != -1) RE_ReadMessage(wr->ReadwinNum, new);
          }
       }
       if (wr->Mode != NEW_NEW)

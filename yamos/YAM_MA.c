@@ -495,7 +495,7 @@ int MA_NewNew(struct Mail *mail, int flags)
 ///
 /// MA_NewEdit
 //  Edits a message
-int MA_NewEdit(struct Mail *mail, int flags)
+int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
 {
    BOOL quiet = flags & NEWF_QUIET;
    int i, winnum = -1;
@@ -505,7 +505,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
    FILE *out;
    char *cmsg, *sbuf;
 
-   for (i = 0; i < MAXWR; i++) if (G->WR[i]) if (G->WR[i]->Mail == mail) { DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront); return -1; }
+   for (i = 0; i < MAXWR; i++) if (G->WR[i] && G->WR[i]->Mail == mail) { DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront); return -1; }
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
       if ((out = fopen(G->WR_Filename[winnum], "w")))
@@ -513,6 +513,7 @@ int MA_NewEdit(struct Mail *mail, int flags)
          wr = G->WR[winnum];
          wr->Mode = NEW_EDIT;
          wr->Mail = mail;
+         wr->ReadwinNum = ReadwinNum;
          folder = mail->Folder;
          email = MA_ExamineMail(folder, mail->MailFile, NULL, TRUE);
          MA_SetupQuoteString(wr, NULL, mail);
@@ -954,7 +955,7 @@ int MA_NewMessage(int mode, int flags)
    {
       case NEW_NEW:     winnr = MA_NewNew(NULL, flags);
                         break;
-      case NEW_EDIT:    if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewEdit(mail, flags);
+      case NEW_EDIT:    if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewEdit(mail, flags, -1);
                         break;
       case NEW_BOUNCE:  if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL))) winnr = MA_NewBounce(mail, flags);
                         break;
