@@ -1,5 +1,8 @@
 2001-09-12  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed bug #432331 where it happened that, if no action was performed
+      at the start of YAM that caused the AppIcon to refresh, no AppIcon
+      was displayed at all.
     * fixed bug #459478 where MyStrCpy() was used with a string pointer
       while MyStrCpy() doesn`t accept string pointer, which will result in
       a broken string copy.

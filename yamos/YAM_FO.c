@@ -654,10 +654,6 @@ BOOL FO_SaveTree(char *fname)
    BOOL success = TRUE;
    FILE *fh;
 
-#ifdef DEBUG
-   kprintf("SaveTree!!!\n");
-#endif
-
    if (fh = fopen(fname, "w"))
    {
       fputs("YFO1 - YAM Folders\n", fh);

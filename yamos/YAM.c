@@ -794,6 +794,10 @@ static void SendWaitingMail(void)
 //  Performs different checks/cleanup operations on startup
 static void DoStartup(BOOL nocheck, BOOL hide)
 {
+   // Display the AppIcon now because if non of the below
+   // do it it could happen that no AppIcon will be displayed at all.
+   DisplayAppIconStatistics();
+
    if (C->CleanupOnStartup) DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
    if (C->RemoveOnStartup) DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
    if (C->CheckBirthdates && !nocheck && !hide) AB_CheckBirthdates();
@@ -803,14 +807,14 @@ static void DoStartup(BOOL nocheck, BOOL hide)
       {
          MA_PopNow(POP_START, -1);
          if (G->TR) DisposeModule(&G->TR);
-         DoMethod(G->App, MUIM_Application_InputBuffered, TAG_DONE);
+         DoMethod(G->App, MUIM_Application_InputBuffered);
       }
 
       if (C->SendOnStartup && !nocheck)
       {
          SendWaitingMail();
          if (G->TR) DisposeModule(&G->TR);
-         DoMethod(G->App, MUIM_Application_InputBuffered, TAG_DONE);
+         DoMethod(G->App, MUIM_Application_InputBuffered);
       }
    }
 }
