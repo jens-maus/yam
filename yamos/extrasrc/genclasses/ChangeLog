@@ -1,0 +1,5 @@
+2001-10-10  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed mass of enforcer hits
+    * fixed serious list handling problem where it happened that
+      GenClasses were interating out of the list.

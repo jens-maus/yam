@@ -4,6 +4,7 @@
  Copyright (C) 2001 by Andrew Bell <mechanismx@lineone.net>
 
  Contributed to the YAM Open Source Team as a special version
+ Copyright (C) 2001 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -47,6 +48,9 @@
  *
  * History
  * -------
+ * 0.5 - fixed mass of enforcer hits
+ *     - fixed serious bug in list handling
+ *
  * 0.4 - fixed bug in extra header inclusion and makefile argument
  *     - the collision array of the hash function will be alloced dynamically
  *       so that we still can compile genclasses with near data & code.
@@ -92,7 +96,7 @@
  *
  */
 
-char *verstr = "0.4";
+char *verstr = "0.5";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -183,8 +187,16 @@ DIR *readdir( DIR *de )
 char *skipwhitespaces( char *p ) /* Note: isspace() sucks... */
 {
 	char c;
-	while ((c = *p)) if (c == '\t' || c == '\r' || c == '\n' || c == ' ' || c == 0xa0)
-		++p; else return p;
+	while ((c = *p))
+  {
+    if (c == '\t' || c == '\r' || c == '\n' || c == ' ' || c == 0xa0)
+		{
+      ++p;
+    }
+    else break;
+  }
+
+  return p;
 }
 
 char *stralloc( char *str )
@@ -353,7 +365,7 @@ void add_exportblk( struct classdef *cd, char *textblk )
 	struct exportdef *ed;
 	if (!(ed = (struct exportdef *) calloc(1, sizeof(struct exportdef)))) return;
 	if (!(ed->exporttext = stralloc(textblk))) return;
-	list_saveitem(&cd->exportlist, NULL, ed);
+	list_saveitem(&cd->exportlist, ed->exporttext, ed);
 }
 
 void add_attr( struct classdef *cd, char *name )
@@ -389,12 +401,18 @@ struct classdef *processclasssrc( char *path )
 	list_init(&cd->declarelist);
 	list_init(&cd->attrlist);
 	list_init(&cd->exportlist);
+
 	if ((cd->name = stralloc(myfilepart(path))))
+  {
 		if ((p = strrchr(cd->name, '.'))) *p = 0;
+  }
+
 	while (fgets(line, 255, fp))
 	{
-		lineno++; p = skipwhitespaces(line);
+		lineno++;
+    p = skipwhitespaces(line);
 		if (!*p) continue;
+
 		/*printf("line number = %ld [%s]\n", lineno, p);*/
 		ob = cb = NULL;
 		/******** Scan line for keywords and extract the associated information... ********/
