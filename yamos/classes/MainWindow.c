@@ -1,6 +1,3 @@
-#ifndef YAM_CLASSES_H
-#define YAM_CLASSES_H
-
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -26,29 +23,35 @@
 
  $Id$
 
+ Superclass:  MUIC_Window
+ Description: Mainwindow class carrying all main GUI elements of YAM
+
 ***************************************************************************/
 
-#include "YAM_stringsizes.h"
+#include "MainWindow_cl.h"
 
-struct PL_Data
-{ 
-   struct Hook DisplayHook;
-   Object *    Object[MAXCPAGES];
-   APTR        Image[MAXCPAGES];
+/* CLASSDATA
+struct Data
+{
+	short dummy;
 };
+*/
 
-#define MUIA_Bodychunk_File          0x80002501    // [I..]
-#define MUIA_Bodychunk_UseOld        0x80002502    // [I..]
+/* Overloaded Methods */
 
-extern struct MUI_CustomClass *CL_AddressList;
-extern struct MUI_CustomClass *CL_AttachList;
-extern struct MUI_CustomClass *CL_BodyChunk;
-extern struct MUI_CustomClass *CL_DDList;
-extern struct MUI_CustomClass *CL_FolderList;
-extern struct MUI_CustomClass *CL_MailList;
-extern struct MUI_CustomClass *CL_PageList;
+/* Private Functions */
 
-void ExitClasses(void);
-BOOL InitClasses(void);
+/* Public Methods */
+/// DECLARE(DisposeSubWindow)
+// method that is used by modeless subwindows to get disposed upon
+// their close
+DECLARE(DisposeSubWindow) // Object *win
+{
+	set(msg->win, MUIA_Window_Open, FALSE);
+	DoMethod(G->App, OM_REMMEMBER, msg->win);
+	MUI_DisposeObject(msg->win);
 
-#endif /* YAM_CLASSES_H */
+	return 0;
+}
+
+///

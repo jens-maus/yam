@@ -666,16 +666,17 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
 }
 ///
 /// InfoWindow
-//  Displays a text in an own window
+//  Displays a text in an own modeless window
 void InfoWindow(char *title, char *body, char *oktext, APTR parent)
 {
-   APTR bt_okay, wi_iw;
+   Object *bt_okay;
+   Object *wi_iw;
 
-   if ((wi_iw = WindowObject,
-         MUIA_Window_Title, title,
+   if((wi_iw = WindowObject,
+         MUIA_Window_Title,     title,
          MUIA_Window_RefWindow, parent,
-         MUIA_Window_LeftEdge, MUIV_Window_LeftEdge_Centered,
-         MUIA_Window_TopEdge, MUIV_Window_TopEdge_Centered,
+         MUIA_Window_LeftEdge,  MUIV_Window_LeftEdge_Centered,
+         MUIA_Window_TopEdge,   MUIV_Window_TopEdge_Centered,
          WindowContents, VGroup,
             MUIA_Background, MUII_RequesterBack,
             Child, VGroup,
@@ -688,8 +689,8 @@ void InfoWindow(char *title, char *body, char *oktext, APTR parent)
       End))
    {
       DoMethod(G->App, OM_ADDMEMBER, wi_iw);
-      DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, parent, 2, MUIM_MainWindow_CloseWindow, wi_iw);
-      DoMethod(wi_iw  , MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, parent, 2, MUIM_MainWindow_CloseWindow, wi_iw);
+      DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, parent, 2, MUIM_MainWindow_DisposeSubWindow, wi_iw);
+      DoMethod(wi_iw  , MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Application, 5, MUIM_Application_PushMethod, parent, 2, MUIM_MainWindow_DisposeSubWindow, wi_iw);
       set(wi_iw, MUIA_Window_DefaultObject, bt_okay);
       set(wi_iw, MUIA_Window_Open, TRUE);
    }

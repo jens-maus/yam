@@ -3468,7 +3468,7 @@ struct MA_ClassData *MA_New(void)
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_SETTINGS_MUI), MMEN_MUI),
          End,
       End,
-      data->GUI.WI = NewObject(CL_MainWin->mcc_Class,NULL,
+      data->GUI.WI = MainWindowObject,
          MUIA_Window_Title, data->WinTitle,
          MUIA_HelpNode, "MA_W",
          MUIA_Window_ID, MAKE_ID('M','A','I','N'),

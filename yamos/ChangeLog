@@ -7,6 +7,11 @@ $Source$
 
 2004-09-23  Jens Langner <Jens.Langner@light-speed.de>
 
+    * MainWindow.c: moved CL_MainWindow custom class implementation to
+      the new classes system as the "MainWindow" class.
+    
+2004-09-23  Jens Langner <Jens.Langner@light-speed.de>
+
     * MailTextEdit.c: moved CL_TextEditor custom class implementation
       to the new classes system as "MailTextEdit".
 

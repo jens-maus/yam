@@ -75,7 +75,6 @@ struct MUI_CustomClass *CL_MailList     = NULL;
 struct MUI_CustomClass *CL_AddressList  = NULL;
 struct MUI_CustomClass *CL_AttachList   = NULL;
 struct MUI_CustomClass *CL_DDList       = NULL;
-struct MUI_CustomClass *CL_MainWin      = NULL;
 struct MUI_CustomClass *CL_PageList     = NULL;
 
 /// BC_Dispatcher (BodyChunk)
@@ -405,30 +404,6 @@ DISPATCHERPROTO(AL_Dispatcher)
 }
 
 ///
-/// MW_Dispatcher (Main Window)
-
-struct MUIP_MainWindow_CloseWindow { ULONG MethodID; APTR Window; };
-
-/*** MW_Dispatcher (Main Window) - Subclass of Windows, used to dispose subwindows on exit ***/
-DISPATCHERPROTO(MW_Dispatcher)
-{
-   if (msg->MethodID == MUIM_MainWindow_CloseWindow)
-   {
-      Object *app;
-      APTR win = ((struct MUIP_MainWindow_CloseWindow *)msg)->Window;
-
-      set(win, MUIA_Window_Open, FALSE);
-      app = (Object *)xget(win, MUIA_ApplicationObject);
-
-      DoMethod(app, OM_REMMEMBER, win);
-      MUI_DisposeObject(win);
-   }
-   else return DoSuperMethodA(cl, obj, (Msg)msg);
-
-   return 0;
-}
-
-///
 
 /// Images
 //  Images for section listview in ILBM/BODY format
@@ -747,7 +722,6 @@ static struct MUI_CustomClass *CreateMCC(STRPTR supername, struct MUI_CustomClas
 void ExitClasses(void)
 {
   if(CL_PageList)    { MUI_DeleteCustomClass(CL_PageList);     CL_PageList     = NULL; }
-  if(CL_MainWin)     { MUI_DeleteCustomClass(CL_MainWin);      CL_MainWin      = NULL; }
   if(CL_BodyChunk)   { MUI_DeleteCustomClass(CL_BodyChunk);    CL_BodyChunk    = NULL; }
   if(CL_MailList)    { MUI_DeleteCustomClass(CL_MailList);     CL_MailList     = NULL; }
   if(CL_FolderList)  { MUI_DeleteCustomClass(CL_FolderList);   CL_FolderList   = NULL; }
@@ -767,7 +741,6 @@ BOOL InitClasses(void)
   if((CL_FolderList   = CreateMCC(MUIC_NListtree, NULL, sizeof(struct FL_Data), ENTRY(FL_Dispatcher))))
   if((CL_MailList     = CreateMCC(MUIC_NList,     NULL, sizeof(struct ML_Data), ENTRY(ML_Dispatcher))))
   if((CL_BodyChunk    = CreateMCC(MUIC_Bodychunk, NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher))))
-  if((CL_MainWin      = CreateMCC(MUIC_Window,    NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher))))
   if((CL_PageList     = CreateMCC(MUIC_List,      NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher))))
   {
     return TRUE;
