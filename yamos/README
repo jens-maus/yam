@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -36,13 +36,11 @@ here's the list of software packages used to create YAM:
 ARexxBox               http://us.aminet.net/pub/aminet/dev/misc/ARexxBox112.lha
 BetterString class     http://www.p2p-it.dk/duff/MCC_BetterString.LZX
 FlexCat                http://us.aminet.net/pub/aminet/dev/misc/FlexCat.lha
-Listtree class         http://www-student.etechnik.fh-aachen.de/~kmel/public/MCC_Listtree0_17.lha
-NListtree class        http://www.aphaso.de/download/MCC_NListtree18.8.lha
 Miami SDK              http://http.nordicglobal.com/miami/MiamiSDK211.lha
 MUI Developer archive  http://us.aminet.net/pub/aminet/dev/mui/mui38dev.lha
 MUI User archive       http://us.aminet.net/pub/aminet/util/libs/mui38usr.lha
+NList#? MUI classes    http://home.t-online.de/home/sebauer/
 NewReadArgs            http://us.aminet.net/pub/aminet/dev/c/nrdargs.lha
-NList(view) class      http://www.aphaso.de/download/MCC_NList0_90.lha
 PopUpMenu library      http://www.boing.nu/scripts/download.pl?pm/pmuser.lha
 OpenURL library        http://us.aminet.net/pub/aminet/comm/www/OpenURL30.lha
 TextEditor class       http://us.aminet.net/pub/aminet/dev/mui/MCC_TextEditor.lha
