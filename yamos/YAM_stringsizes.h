@@ -48,6 +48,7 @@
 #define SIZE_RCPTS    4096
 #define SIZE_INTRO     200
 #define SIZE_PATTERN   160
+#define SIZE_BUFSIZE  4096  // receive and sendbuffer size for TCP/IP functions
 #define SIZE_PATHFILE  (SIZE_PATH+SIZE_FILE)
 #define SIZE_URL       (SIZE_HOST+SIZE_PATHFILE)
 
