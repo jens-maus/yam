@@ -29,6 +29,8 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_hook.h"
+#include "YAM_main.h"
+#include "YAM_utilities.h"
 #include "YAM_write.h"
 
 /* local protos */

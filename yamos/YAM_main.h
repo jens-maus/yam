@@ -28,6 +28,60 @@
 
 ***************************************************************************/
 
+#include <mui/Toolbar_mcc.h>
+
+struct MA_GUIData
+{
+   APTR WI;
+   APTR MN_FOLDER;
+   APTR MN_REXX;
+   APTR MS_MAIN;
+   APTR BC_STAT[17];
+   APTR ST_LAYOUT;
+   APTR MI_ERRORS;
+   APTR MI_CSINGLE;
+   APTR MI_IMPORT;
+   APTR MI_EXPORT;
+   APTR MI_SENDALL;
+   APTR MI_EXCHANGE;
+   APTR MI_GETMAIL;
+   APTR MI_READ;
+   APTR MI_EDIT;
+   APTR MI_MOVE;
+   APTR MI_COPY;
+   APTR MI_DELETE;
+   APTR MI_PRINT;
+   APTR MI_SAVE;
+   APTR MI_ATTACH;
+   APTR MI_SAVEATT;
+   APTR MI_REMATT;
+   APTR MI_EXPMSG;
+   APTR MI_REPLY;
+   APTR MI_FORWARD;
+   APTR MI_BOUNCE;
+   APTR MI_GETADDRESS;
+   APTR MI_STATUS;
+   APTR MI_TOREAD;
+   APTR MI_TOUNREAD;
+   APTR MI_TOHOLD;
+   APTR MI_TOQUEUED;
+   APTR MI_CHSUBJ;
+   APTR MI_SEND;
+   APTR LV_FOLDERS;
+   APTR NL_FOLDERS;
+   APTR LV_MAILS;
+   APTR NL_MAILS;
+   APTR TO_TOOLBAR;
+   APTR GA_INFO;
+   struct MUIP_Toolbar_Description TB_TOOLBAR[18];
+};
+
+struct MA_ClassData  /* main window */
+{
+   struct MA_GUIData GUI;
+   char WinTitle[SIZE_DEFAULT];
+};
+
 extern struct Hook MA_ChangeSelectedHook;
 extern struct Hook MA_SetFolderInfoHook;
 extern struct Hook MA_SetMessageInfoHook;

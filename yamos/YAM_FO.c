@@ -26,8 +26,11 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
+#include "YAM_main.h"
 #include "YAM_mainFolder.h"
 
 /* local protos */

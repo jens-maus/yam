@@ -29,6 +29,8 @@
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
+#include "YAM_utilities.h"
 
 /* local protos */
 static int EA_Open(int);

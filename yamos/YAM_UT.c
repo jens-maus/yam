@@ -981,7 +981,7 @@ void SimpleWordWrap(char *filename, int wrapsize)
 ///
 /// ReqFile
 //  Puts up a file requester
-int ReqFile(int num, struct Object *win, char *title, int mode, char *drawer, char *file)
+int ReqFile(int num, Object *win, char *title, int mode, char *drawer, char *file)
 {   
    static BOOL init[MAXASL] = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE };
    static char *pattern[MAXASL] =  { "#?.addressbook#?", "#?.config#?", NULL, NULL, "#?.(yam|rexx)", "#?.(gif|jpg|jpeg|png|iff|ilbm)", NULL, NULL };
@@ -1417,7 +1417,7 @@ time_t GetDateStamp(void)
 ///
 /// DateStamp2String
 //  Converts a datestamp to a string
-char *DateStamp2String(struct DateStamp *date, int mode)
+char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
 {
    static char resstr[32];
    char datestr[16], timestr[16], daystr[16];
@@ -1897,7 +1897,7 @@ BOOL IsValidMailFile(char *fname)
 /*** Editor related ***/
 /// EditorToFile
 //  Saves contents of a texteditor object to a file
-BOOL EditorToFile(struct Object *editor, char *file, struct TranslationTable *tt)
+BOOL EditorToFile(Object *editor, char *file, struct TranslationTable *tt)
 {
    char *text;
    UBYTE *p;
@@ -1914,7 +1914,7 @@ BOOL EditorToFile(struct Object *editor, char *file, struct TranslationTable *tt
 ///
 /// FileToEditor
 //  Loads a file into a texteditor object
-BOOL FileToEditor(char *file, struct Object *editor)
+BOOL FileToEditor(char *file, Object *editor)
 {
    char *text = FileToBuffer(file);
    if (!text) return FALSE;
@@ -2259,7 +2259,7 @@ ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
 ///
 /// GetMUI
 //  Gets an attribute value from a MUI object
-int GetMUI(struct Object *obj,int attr)
+int GetMUI(Object *obj,int attr)
 {
    LONG b;
    get(obj,attr,&b);
@@ -2268,63 +2268,63 @@ int GetMUI(struct Object *obj,int attr)
 ///
 /// GetMUIStringPtr
 //  Returns a pointer to the value of a MUI string object
-char *GetMUIStringPtr(struct Object *obj)
+char *GetMUIStringPtr(Object *obj)
 {
    return (char*)GetMUI(obj,MUIA_String_Contents);
 }
 ///
 /// GetMUIString
 //  Returns the value of a MUI string object
-void GetMUIString(char *a,struct Object *obj)
+void GetMUIString(char *a,Object *obj)
 {
    strcpy(a,(char*)GetMUI(obj,MUIA_String_Contents));
 }
 ///
 /// GetMUIText
 //  Returns the value of a MUI text object
-void GetMUIText(char *a,struct Object *obj)
+void GetMUIText(char *a,Object *obj)
 {
    strcpy(a,(char*)GetMUI(obj,MUIA_Text_Contents));
 }
 ///
 /// GetMUIInteger
 //  Returns the numeric value of a MUI string object
-int GetMUIInteger(struct Object *obj)
+int GetMUIInteger(Object *obj)
 {
    return GetMUI(obj,MUIA_String_Integer);
 }
 ///
 /// GetMUICheck
 //  Returns the value of a MUI checkmark object
-BOOL GetMUICheck(struct Object *obj)
+BOOL GetMUICheck(Object *obj)
 {
    return (BOOL)GetMUI(obj, MUIA_Selected);
 }
 ///
 /// GetMUICycle
 //  Returns the value of a MUI cycle object
-int GetMUICycle(struct Object *obj)
+int GetMUICycle(Object *obj)
 {
    return GetMUI(obj, MUIA_Cycle_Active);
 }
 ///
 /// GetMUIRadio
 //  Returns the value of a MUI radio object
-int GetMUIRadio(struct Object *obj)
+int GetMUIRadio(Object *obj)
 {
    return GetMUI(obj, MUIA_Radio_Active);
 }
 ///
 /// GetMUINumer
 //  Returns the value of a MUI numeric slider
-int GetMUINumer(struct Object *obj)
+int GetMUINumer(Object *obj)
 {
    return GetMUI(obj, MUIA_Numeric_Value);
 }
 ///
 /// SafeOpenWindow
 //  Tries to open a window
-BOOL SafeOpenWindow(struct Object *obj)
+BOOL SafeOpenWindow(Object *obj)
 {
    int isopen, isicon;
    set(obj, MUIA_Window_Open, TRUE);
@@ -2804,7 +2804,7 @@ BOOL MatchExtension(char *fileext, char *extlist)
 static char *IdentifyFileDT(char *fname)
 {
    static char ctype[SIZE_CTYPE], *type = NULL;
-   struct Library *DataTypesBase = OpenLibrary("datatypes.library", 39);
+
    strcpy(ctype, "application/octet-stream");
    if (DataTypesBase)
    {
@@ -2831,7 +2831,6 @@ static char *IdentifyFileDT(char *fname)
          }
          UnLock (lock);
       }
-      CloseLibrary(DataTypesBase);
    }
    return ctype;
 }

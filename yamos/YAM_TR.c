@@ -28,6 +28,8 @@
 #include "YAM.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
+#include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_md5.h"
 
@@ -39,16 +41,11 @@
 
 /// TR_IsOnline
 //  Checks if there's an online connection
-#ifdef __STORM__
-extern struct Library *GenesisBase;
-struct Library *MiamiBase, *SoBase;
-#endif
+
 BOOL TR_IsOnline(void)
 {
+   struct Library *socketbase;
    BOOL isonline = FALSE;
-#ifndef __STORM__
-   struct Library *MiamiBase, *GenesisBase, *SoBase;
-#endif
 
    if (C->IsOnlineCheck)
    {
@@ -63,9 +60,10 @@ BOOL TR_IsOnline(void)
          return isonline;
       }
    }
-   if (SoBase = OpenLibrary("bsdsocket.library", 2L))
+   if((socketbase = OpenLibrary("bsdsocket.library", 2L)))
    {
-      isonline = TRUE; CloseLibrary(SoBase);
+      isonline = TRUE;
+      CloseLibrary(socketbase);
    }
    return isonline;
 }

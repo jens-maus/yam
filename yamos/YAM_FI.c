@@ -26,8 +26,11 @@
 ***************************************************************************/
 
 #include "YAM.h"
+#include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
+#include "YAM_main.h"
 #include "YAM_mainFolder.h"
 #include "YAM_read.h"
 
@@ -529,7 +532,7 @@ HOOKPROTONHNO(FI_EditFileFunc, void, int *arg)
    if (*C->Editor)
    {
       char buffer[SIZE_COMMAND+SIZE_PATHFILE];
-      sprintf(buffer,"%s \"%s\"", C->Editor, GetMUIStringPtr((struct Object *)arg[0]));
+      sprintf(buffer,"%s \"%s\"", C->Editor, GetMUIStringPtr((Object *)arg[0]));
       ExecuteCommand(buffer, TRUE, OUT_NIL);
    }
 }

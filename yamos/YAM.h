@@ -40,6 +40,8 @@
 
 /**************************************************************************/
 
+enum GlobalDispatcherJob { ID_CLOSEALL=1000, ID_RESTART, ID_ICONIFY, ID_LOGIN };
+
 /*** RxHook structure ***/
 struct RxHook
 {

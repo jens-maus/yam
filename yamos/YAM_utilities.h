@@ -28,9 +28,13 @@
 
 ***************************************************************************/
 
+#include <stdio.h>
 #include <time.h>
 
 #include "YAM_stringsizes.h"
+
+enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
+  DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT };
 
 struct Person
 {       
@@ -38,24 +42,48 @@ struct Person
    char RealName[SIZE_REALNAME];
 };
 
+#define BusyEnd Busy("", NULL, 0, 0)
+
+extern struct Hook GeneralDesHook;
+
 char *   AllocStrBuf(long initlen);
+void     AppendLogVerbose(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 char *   BuildAddrName(char *address, char *name);
 char *   BuildAddrName2(struct Person *pe);
+void     Busy(char *text, char *parameter, int cur, int max);
+BOOL     CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh);
+BOOL     CreateDirectory(char *dir);
+char *   DateStamp2String(struct DateStamp *date, enum DateStampType mode);
+void     DeleteMailDir(char *dir, BOOL isroot);
+char *   Decrypt(char *source);
+void     DisposeModulePush(void *module);
+void     DisposeModule(void *modptr);
+char *   Encrypt(char *source);
 void     ExtractAddress(char *line, struct Person *pe);
+int      FileType(char *filename);
 void     FreeStrBuf(char *strbuf);
 time_t   GetDateStamp(void);
-void     GetMUIString(char *a, struct Object *obj);
+char *   GetLine(FILE *fh, char *buffer, int bufsize);
+int      GetMUI(Object *obj, int attr);
+BOOL     GetMUICheck(Object *obj);
+void     GetMUIString(char *a, Object *obj);
+int      GetSimpleID(void);
 char *   GetTZ(void);
 char *   IdentifyFile(char *fname);
 Object * MakeButton(char *txt);
+Object * MakeCheckGroup(Object **check, char *label);
 Object * MakePassString(char *label);
 Object * MakeString(int maxlen, char *label);
 char *   MyStrChr(char *s, int c);
-BOOL     SafeOpenWindow(struct Object *obj);
+BOOL     SafeOpenWindow(Object *obj);
+void     SetHelp(APTR object, APTR strnum);
+void     SPrintF(char *outstr, char *fmtstr, ...);
 char *   StrBufCat(char *strbuf, char *source);
+char *   StrBufCpy(char *strbuf, char *source);
+int      StringRequest(char *string, int size, char *title, char *body,
+         char *yestext, char *alttext, char *notext, BOOL secret, APTR parent);
 char *   Trim(char *s);
 
-#define MyStrCpy(a,b) { strncpy(a,b,sizeof(a)); a[sizeof(a)-1] = 0; }
-
+#define MyStrCpy(a,b) { strncpy((a),(b),sizeof(a)); (a)[sizeof(a)-1] = 0; }
 
 #endif /* YAM_UTILITIES_H */

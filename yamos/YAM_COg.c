@@ -338,7 +338,7 @@ static Object *MakeStaticCheck(void)
 //  Plays sound file referred by the string gadget
 HOOKPROTONHNO(CO_PlaySoundFunc, void, int *arg)
 {
-   PlaySound(GetMUIStringPtr((struct Object *)arg[0]));
+   PlaySound(GetMUIStringPtr((Object *)arg[0]));
 }
 MakeHook(CO_PlaySoundHook,CO_PlaySoundFunc);
 ///

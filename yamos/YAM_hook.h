@@ -55,7 +55,7 @@
     static ret name(void); \
     static ret Trampoline_##name(void) { return name(); } \
     static ret name(void)
-  #define DISPATCHERPROTO(name)
+  #define DISPATCHERPROTO(name) \
     struct IClass; \
     static ULONG name(struct IClass * cl, Object * obj, Msg msg); \
     static ULONG Trampoline_##name(void) { return name((struct IClass *) REG_A0, (Object *) REG_A2, (Msg) REG_A1); } \

@@ -318,7 +318,7 @@
       be reached by rearranging the stuff, pad bytes maybe added.
     * added lots of header files, added 2 new directories, moved files
     * Later necessary renames (when BETA is rejoined):
-      YAM_DI.c --> YAM_glossery.c
+      YAM_DI.c --> YAM_glossarydisplay.c
       YAM_WR.c --> YAM_write.c
       YAM_FO.c --> YAM_folderconfig.c
       YAM_MA.c --> YAM_main.c
@@ -360,4 +360,23 @@
     * the header files are still not complete, but much more :-)
     * compiling with SAS will get faster gaian, when old.h is away. Maybe also the
       optimizing problem will disappear then?
+
+2001-05-20  Dirk Stöcker <stoecker@epost.de>
+
+    * some more stuff. Now at least the files
+      YAM_ER.c, YAM_DI.c, YAM_US.c and YAM_md5.c compile without old.h
+    * And modifications I do during cleanup:
+    * remove clear and bzero, replace them by memset
+    * remove stccpy and replace it by MyStrCpy (which is an easy define)
+    * changed all "struct Object *" to "Object *"
+    * Start using enum types wherever necessary. This will improve error checking.
+      All enums get names now and these are used in structures and prototypes.
+    * I also started to remove the // comments and replace them by /*** xxx ***/
+      or /* xxx */. I hope everyone else will do this also at code-parts he works
+      on, so they will disappear very soon.
+    * All structure definitions get resorted and most important all elements get
+      seperate lines and type entries (Looks much better).
+    * Moved all library bases to YAM.c and made them all global. No other
+      declarations elsewhere (Maybe we should move these declarations to
+      YAM_globals.c as Gunther suggested).
 

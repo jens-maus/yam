@@ -1,5 +1,5 @@
-#ifndef YAM_GLOSSERY_H
-#define YAM_GLOSSERY_H
+#ifndef YAM_GLOSSARYDISPLAY_H
+#define YAM_GLOSSARYDISPLAY_H
 
 /***************************************************************************
 
@@ -28,4 +28,33 @@
 
 ***************************************************************************/
 
-#endif /* YAM_GLOSSERY_H */
+struct Dict
+{
+   char *Text;
+   char  Alias[SIZE_NAME];
+};
+
+struct DI_GUIData
+{
+   APTR WI;
+   APTR GR_LIST;
+   APTR GR_TEXT;
+   APTR LV_ENTRIES;
+   APTR ST_ALIAS;
+   APTR TE_EDIT;
+   APTR SL_EDIT;
+   APTR BT_NEW;
+   APTR BT_DELETE;
+   APTR BT_ADDSELECT;
+   APTR BT_PASTE;
+};
+
+struct DI_ClassData  /* glossary window */
+{
+   struct DI_GUIData GUI;
+   struct Dict *     OldEntry;
+   int               WrWin;
+   BOOL              Modified;
+};
+
+#endif /* YAM_GLOSSARYDISPLAY_H */

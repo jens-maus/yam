@@ -192,7 +192,6 @@ struct sockaddr_in {
 
 #define AddrName(abentry) ((abentry).RealName[0]?(abentry).RealName:(abentry).Address)
 #define FolderName(fo)    ((fo) ? (fo)->Name : "?")
-#define BusyEnd           Busy("", NULL, 0, 0)
 #define OUTGOING(type)    (type == FT_OUTGOING || type == FT_SENT || type == FT_CUSTOMSENT)
 #define Virtual(mail)     (((mail)->Flags&MFLAG_NOFOLDER) == MFLAG_NOFOLDER)
 
@@ -389,12 +388,6 @@ struct TransStat
    long Clock_Start, Clock_Last;
 };
 
-struct Dict
-{
-   char Alias[SIZE_NAME];
-   char *Text;
-};
-
 struct Search
 {
    int  Mode, PersMode, Compare, Status, Fast;
@@ -447,19 +440,6 @@ struct SearchGroup
 {
    APTR PG_SRCHOPT, CY_MODE, ST_FIELD, CY_COMP[5], ST_MATCH[5], BT_FILE[5], BT_EDIT[5];
    APTR RA_ADRMODE, CY_STATUS, CH_CASESENS[5], CH_SUBSTR[5];
-};
-
-struct MA_ClassData  /* main window */
-{
-   struct MA_GUIData
-   {
-      APTR WI, MN_FOLDER, MN_REXX, MS_MAIN, BC_STAT[17], ST_LAYOUT;
-      APTR MI_ERRORS, MI_CSINGLE, MI_IMPORT, MI_EXPORT, MI_SENDALL, MI_EXCHANGE, MI_GETMAIL, MI_READ, MI_EDIT, MI_MOVE, MI_COPY, MI_DELETE, MI_PRINT, MI_SAVE, MI_ATTACH, MI_SAVEATT, MI_REMATT, MI_EXPMSG;
-      APTR MI_REPLY, MI_FORWARD, MI_BOUNCE, MI_GETADDRESS, MI_STATUS, MI_TOREAD, MI_TOUNREAD, MI_TOHOLD, MI_TOQUEUED, MI_CHSUBJ, MI_SEND;
-      APTR LV_FOLDERS, NL_FOLDERS, LV_MAILS, NL_MAILS, TO_TOOLBAR, GA_INFO;
-      struct MUIP_Toolbar_Description TB_TOOLBAR[18];
-   } GUI;
-   char WinTitle[SIZE_DEFAULT];
 };
 
 struct CO_ClassData  /* configuration window */
@@ -538,15 +518,6 @@ struct TR_ClassData  /* transfer window */
    char               StatsLabel[SIZE_DEFAULT];
 };
 
-struct ER_ClassData  /* error window */
-{
-   struct ER_GUIData
-   {
-      APTR WI;
-      APTR LV_ERROR, BT_NEXT, NB_ERROR, BT_PREV;
-   } GUI;
-};
-
 struct FI_ClassData  /* find window */
 {
    struct FI_GUIData
@@ -557,30 +528,6 @@ struct FI_ClassData  /* find window */
       APTR LV_MAILS, GR_PAGE, GA_PROGRESS, BT_SELECT, BT_READ;
    } GUI;
   long Abort;
-};
-
-struct DI_ClassData  /* glossary window */
-{
-   struct DI_GUIData
-   {
-      APTR WI;
-      APTR GR_LIST, GR_TEXT, LV_ENTRIES, ST_ALIAS, TE_EDIT, SL_EDIT;
-      APTR BT_NEW, BT_DELETE, BT_ADDSELECT, BT_PASTE;
-   } GUI;
-   BOOL Modified;
-   struct Dict *OldEntry;
-   int  WrWin;
-};
-
-struct US_ClassData  /* user list window */
-{
-   struct US_GUIData
-   {
-      APTR WI;
-      APTR LV_USERS, BT_ADD, BT_DEL;
-      APTR PO_MAILDIR, ST_MAILDIR, ST_USER, ST_PASSWD, CH_USEDICT, CH_USEADDR, CH_CLONE, CH_ROOT;
-   } GUI;
-   BOOL Supervisor;
 };
 
 struct UniversalClassData
@@ -633,7 +580,7 @@ enum { PA_LOAD, PA_DELETE, PA_SKIP,
        PM_ALL, PM_TEXTS, PM_NONE,
        ABM_EDIT, ABM_TO, ABM_CC, ABM_BCC, ABM_REPLYTO, ABM_FROM,
        ED_OPEN, ED_INSERT, ED_INSQUOT, ED_INSALTQUOT, ED_INSROT13, ED_PASQUOT, ED_PASALTQUOT, ED_PASROT13,
-       DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME, DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT};
+};
 
 
 enum { SEND_ALL=-2, SEND_ACTIVE, NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC,
@@ -642,8 +589,6 @@ enum { SEND_ALL=-2, SEND_ACTIVE, NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NE
        RIM_QUOTE, RIM_PRINT, TR_IMPORT,TR_EXPORT,TR_GET,TR_SEND, RCPT_TYPE_ALL, RCPT_TYPE_READ,
        ABF_USER, ABF_RX, ABF_RX_NAME, ABF_RX_EMAIL, ABF_RX_NAMEEMAIL,
        SO_SAVE, SO_RESET };
-
-enum { ID_CLOSEALL=1000, ID_RESTART, ID_ICONIFY, ID_LOGIN };
 
 enum { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
 
@@ -663,13 +608,6 @@ enum { MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,
 enum { SEC_NONE=0, SEC_SIGN, SEC_ENCRYPT, SEC_BOTH, SEC_SENDANON, SEC_DEFAULTS, SEC_MAXDUMMY };
 ///
 /// Declaration of external variables
-extern struct Library *WorkbenchBase, *IconBase, *IFFParseBase, *KeymapBase;
-extern struct Library *DataTypesBase, *MUIMasterBase, *SocketBase, *XpkBase, *OpenURLBase, *CManagerBase;
-extern struct LocaleBase *LocaleBase;
-extern struct ExecBase *SysBase;
-extern struct IntuitionBase *IntuitionBase;
-extern struct DosLibrary *DOSBase;
-extern struct UtilityBase *UtilityBase;
 extern struct Config *CE;
 extern struct Hook AB_FromAddrBookHook;
 extern struct Hook MA_ChangeSelectedHook, MA_ChangeFolderHook, MA_SendHook, MA_RescanIndexHook, MA_FlushIndexHook, MA_ApplyRulesHook, MA_DeleteDeletedHook, MA_DeleteOldHook;
@@ -698,9 +636,6 @@ extern int Mode2Group[12];
 extern int BusyLevel;
 ///
 /// Function prototypes
-struct Object; /* Help gcc compiling. But 'Object' is actually not a struct.
-		  a proper fix would be to change all 'struct Object' to 'Object'
-		  below and in the .c files. */
 extern char *Protection2(void);
 extern int StringRequest(char *, int, char *, char *, char *, char *, char *, BOOL, APTR);
 extern struct Folder *FolderRequest(char *, char *, char *, char *, struct Folder *, APTR);
@@ -717,7 +652,7 @@ extern long FileProtection(char *);
 extern int FileType(char *);
 extern BOOL FileExists(char *);
 extern BOOL PFExists(char *, char *);
-extern int ReqFile(int, struct Object *, char *, int, char *, char *);
+extern int ReqFile(int, Object *, char *, int, char *, char *);
 extern struct TempFile *OpenTempFile(char *);
 extern void CloseTempFile(struct TempFile *);
 extern BOOL DumpClipboard(FILE *);
@@ -794,24 +729,24 @@ extern Object *MakeNumeric(int, int, BOOL);
 extern Object *MakeMenuitem(const UBYTE *str, ULONG ud);
 extern void SetupToolbar(struct MUIP_Toolbar_Description *, char *, char *, UWORD);
 extern void SetupMenu(int, struct NewMenu *, char *, char *, int);
-extern int GetMUI(struct Object *,int);
-extern char *GetMUIStringPtr(struct Object *);
-extern void GetMUIString(char *,struct Object *);
-extern void GetMUIText(char *,struct Object *);
-extern int GetMUIInteger(struct Object *);
-extern int GetMUINumer(struct Object *);
-extern BOOL GetMUICheck(struct Object *);
-extern int GetMUICycle(struct Object *);
-extern int GetMUIRadio(struct Object *);
-extern BOOL SafeOpenWindow(struct Object *);
+extern int GetMUI(Object *,int);
+extern char *GetMUIStringPtr(Object *);
+extern void GetMUIString(char *,Object *);
+extern void GetMUIText(char *,Object *);
+extern int GetMUIInteger(Object *);
+extern int GetMUINumer(Object *);
+extern BOOL GetMUICheck(Object *);
+extern int GetMUICycle(Object *);
+extern int GetMUIRadio(Object *);
+extern BOOL SafeOpenWindow(Object *);
 extern ULONG DoSuperNew(struct IClass *, Object *, ULONG,...);
 extern void SaveLayout(BOOL);
 extern void LoadLayout(void);
 extern ULONG ConvertKey(struct IntuiMessage *);
 extern void DisplayStatistics(struct Folder *);
 extern void SetupAppIcons(void);
-extern BOOL EditorToFile(struct Object *, char *, struct TranslationTable *);
-extern BOOL FileToEditor(char *, struct Object *);
+extern BOOL EditorToFile(Object *, char *, struct TranslationTable *);
+extern BOOL FileToEditor(char *, Object *);
 extern BOOL LoadTranslationTable(struct TranslationTable **, char *);
 extern int CompressMsgID(char *);
 extern BOOL RepackMailFile(struct Mail *, int, char *);
@@ -944,7 +879,7 @@ extern int WR_ResolveName(int, char *, char **, BOOL);
 extern char *WR_ExpandAddresses(int, char *, BOOL, BOOL);
 extern void WR_AddSignature(char *, int);
 extern void WR_OpenWin(int);
-extern void WR_FromAddrBook(struct Object *);
+extern void WR_FromAddrBook(Object *);
 extern void EmitHeader(FILE *, char *, char *);
 extern BOOL WriteOutMessage(struct Compose *);
 extern struct WritePart *NewPart(int);

@@ -42,9 +42,5 @@ int __oslibversion = 0;
 #endif
 
 #ifdef __ixemul__
-struct Library *IFFParseBase, *KeymapBase;
-struct UtilityBase *UtilityBase;
-struct RxsLib *RexxSysBase;
-
 struct WBStartup *_WBenchMsg;
 #endif

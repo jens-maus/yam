@@ -25,8 +25,23 @@
 
 ***************************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <clib/alib_protos.h>
+#include <libraries/asl.h>
+#include <libraries/iffparse.h>
+#include <mui/NListview_mcc.h>
+#include <proto/exec.h>
+#include <proto/muimaster.h>
+
 #include "YAM.h"
+#include "YAM_error.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
+#include "YAM_userlist.h"
+#include "YAM_utilities.h"
 
 /* local protos */
 static void US_SaveUsers(void);
@@ -83,7 +98,7 @@ static void US_LoadUsers(void)
    BOOL save = FALSE;
    FILE *fh;
    char buffer[SIZE_LARGE];
-   clear(&G->Users, sizeof(struct Users));
+   memset(&G->Users, 0, sizeof(struct Users));
    G->Users.Num = 0;
    if (fh = fopen("PROGDIR:.users", "r"))
    {
@@ -97,9 +112,9 @@ static void US_LoadUsers(void)
             if (!strncmp(buffer, "@USER", 5))
             {
                struct User *u = &G->Users.User[G->Users.Num];
-               stccpy(u->Name, Trim(&buffer[6]), SIZE_NAME);
-               stccpy(u->MailDir, Trim(GetLine(fh, buffer, SIZE_LARGE)), SIZE_PATH);
-               if (!*u->MailDir) { stccpy(u->MailDir, G->MA_MailDir, SIZE_PATH); save = TRUE; }
+               MyStrCpy(u->Name, Trim(&buffer[6]));
+               MyStrCpy(u->MailDir, Trim(GetLine(fh, buffer, SIZE_LARGE)));
+               if (!*u->MailDir) { MyStrCpy(u->MailDir, G->MA_MailDir); save = TRUE; }
                if (FileType(u->MailDir) != 2)
                {
                   ER_NewError(GetStr(MSG_ER_UserRemoved), u->MailDir, u->Name);
@@ -113,7 +128,7 @@ static void US_LoadUsers(void)
                   u->UseAddr = (flags&2) == 2;
                   u->UseDict = (flags&1) == 1;
                   if (!u->Limited) hasmanager = TRUE;
-                  if (ver >= 2) stccpy(u->Password, Decrypt(GetLine(fh, buffer, SIZE_LARGE)), SIZE_PASSWORD);
+                  if (ver >= 2) MyStrCpy(u->Password, Decrypt(GetLine(fh, buffer, SIZE_LARGE)));
                   u->ID = GetSimpleID();
                   G->Users.Num++;
                }
@@ -127,7 +142,7 @@ static void US_LoadUsers(void)
    if (!G->Users.Num)
    {
       struct User *u = &G->Users.User[0];
-      stccpy(u->MailDir, G->MA_MailDir, SIZE_PATH);
+      MyStrCpy(u->MailDir, G->MA_MailDir);
       u->UseAddr = u->UseDict = TRUE;
       u->ID = GetSimpleID();
       G->Users.Num = 1;
@@ -247,7 +262,7 @@ HOOKPROTONHNONP(US_AddFunc, void)
    get(gui->LV_USERS, MUIA_NList_Entries, &n);
    if (n < MAXUSERS-1)
    {
-      clear(&user, sizeof(struct User));
+      memset(&user, 0, sizeof(struct User));
       user.Limited = user.IsNew = TRUE;
       DoMethod(gui->LV_USERS, MUIM_NList_InsertSingle, &user, MUIV_NList_Insert_Bottom);
       set(gui->LV_USERS, MUIA_NList_Active, MUIV_NList_Active_Bottom);
@@ -308,7 +323,7 @@ HOOKPROTONHNONP(US_OpenFunc, void)
       int i;
       struct User *u;
       for (i = 0; i < G->Users.Num; i++) if (G->Users.User[i].ID == G->Users.CurrentID) u = &G->Users.User[i];
-      if (!*G->Users.User[0].Name) stccpy(G->Users.User[0].Name, C->RealName, SIZE_NAME);
+      if (!*G->Users.User[0].Name) MyStrCpy(G->Users.User[0].Name, C->RealName);
       if (!(G->US = US_New(!u->Limited))) return;
       if (!SafeOpenWindow(G->US->GUI.WI)) { DisposeModulePush(&G->US); return; }
       for (i = 0; i < G->Users.Num; i++) DoMethod(G->US->GUI.LV_USERS, MUIM_NList_InsertSingle, &G->Users.User[i], MUIV_NList_Insert_Bottom);

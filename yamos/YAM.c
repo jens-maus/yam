@@ -47,12 +47,24 @@ __near long __YAM_STACK = 32768;
 __near long __buffsize = 8192;
 __near long __MemPoolPuddleSize = 16384;
 
-struct Library *WorkbenchBase = NULL, *IconBase = NULL, *KeymapBase = NULL, *IFFParseBase = NULL;
-struct Library *DataTypesBase = NULL, *MUIMasterBase = NULL, *XpkBase = NULL;
-struct Library *OpenURLBase = NULL, *SocketBase = NULL, *CManagerBase = NULL;
-struct LocaleBase *LocaleBase = NULL;
-struct IntuitionBase *IntuitionBase = NULL;
-struct PopupMenuBase *PopupMenuBase = NULL;
+/* no longer external visible, this is done by proto files! */
+struct Library *       CManagerBase = NULL;
+struct Library *       DataTypesBase = NULL;
+struct Library *       GenesisBase = NULL;
+struct Library *       IconBase = NULL;
+struct Library *       IFFParseBase = NULL;
+struct IntuitionBase * IntuitionBase = NULL;
+struct Library *       KeymapBase = NULL;
+struct LocaleBase *    LocaleBase = NULL;
+struct Library *       MiamiBase = NULL;
+struct Library *       MUIMasterBase = NULL;
+struct Library *       OpenURLBase = NULL;
+struct PopupMenuBase * PopupMenuBase = NULL;
+struct RxsLib *        RexxSysBase;
+struct Library *       SocketBase = NULL;
+struct UtilityBase *   UtilityBase = NULL;
+struct Library *       WorkbenchBase = NULL;
+struct Library *       XpkBase = NULL;
 
 BOOL yamFirst = TRUE, yamLast = FALSE;
 
@@ -767,14 +779,8 @@ void DoStartup(BOOL nocheck, BOOL hide)
 ///
 /// Login
 //  Allows automatical login for AmiTCP-Genesis users
-#ifdef __STORM__
-struct Library *GenesisBase;
-#endif
 void Login(char *user, char *password, char *maildir, char *prefsfile)
 {
-#ifndef __STORM__
-   struct Library *GenesisBase;
-#endif
    struct genUser *guser;
    BOOL terminate = FALSE, loggedin = FALSE;
 

@@ -25,8 +25,19 @@
 
 ***************************************************************************/
 
+#include <stdlib.h>
+#include <string.h>
+
+#include <clib/alib_protos.h>
+#include <libraries/iffparse.h>
+#include <proto/muimaster.h>
+
 #include "YAM.h"
+#include "YAM_error.h"
 #include "YAM_hook.h"
+#include "YAM_main.h"
+#include "YAM_locale.h"
+#include "YAM_utilities.h"
 
 /* local protos */
 static struct ER_ClassData *ER_New(void);
@@ -35,8 +46,7 @@ static struct ER_ClassData *ER_New(void);
  Module: Error window
 ***************************************************************************/
 
-/// ER_NewError
-//  Adds a new error message and displays it
+/*** ER_NewError - Adds a new error message and displays it ***/
 void ER_NewError(char *error, char *arg1, char *arg2)
 {
    static char label[SIZE_SMALL];
@@ -59,8 +69,6 @@ void ER_NewError(char *error, char *arg1, char *arg2)
          for (--G->ER_NumErr, i = 1; i < G->ER_NumErr; i++) G->ER_Message[i-1] = G->ER_Message[i];
       }
       SPrintF(buf, error, arg1, arg2); strcat(buf, "\n\n(");
-//      strcat(buf, DateStamp2String(NULL, DSS_DATE)); strcat(buf, " ");
-//      strcat(buf, DateStamp2String(NULL, DSS_TIME)); strcat(buf, ")");
       strcat(buf, DateStamp2String(NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
       strcat(buf, ")");
       strcpy(G->ER_Message[G->ER_NumErr-1] = malloc(strlen(buf)+1), buf);
@@ -73,9 +81,7 @@ void ER_NewError(char *error, char *arg1, char *arg2)
    if (G->MA) set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
 }
 
-///
-/// ER_SelectFunc
-//  Displays an earlier error message
+/*** ER_SelectFunc - Displays an earlier error message ***/
 HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
 {
    int value = *arg;
@@ -85,9 +91,7 @@ HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
 }
 MakeHook(ER_SelectHook, ER_SelectFunc);
 
-///
-/// ER_CloseFunc
-//  Closes error window
+/*** ER_CloseFunc - Closes error window ***/
 HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
 {
    set(G->ER->GUI.WI, MUIA_Window_Open, FALSE);
@@ -99,11 +103,8 @@ HOOKPROTONHNO(ER_CloseFunc, void, int *arg)
    DisposeModulePush(&G->ER);
 }
 MakeHook(ER_CloseHook, ER_CloseFunc);
-///
 
-/*** GUI***/
-/// ER_New
-//  Creates error window
+/*** ER_New - Creates error window ***/
 static struct ER_ClassData *ER_New(void)
 {
    struct ER_ClassData *data;
@@ -153,4 +154,3 @@ static struct ER_ClassData *ER_New(void)
    }
    return NULL;
 }
-///

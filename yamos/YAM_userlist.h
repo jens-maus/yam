@@ -30,6 +30,28 @@
 
 #include "YAM_stringsizes.h"
 
+struct US_GUIData
+{
+   APTR WI;
+   APTR LV_USERS;
+   APTR BT_ADD;
+   APTR BT_DEL;
+   APTR PO_MAILDIR;
+   APTR ST_MAILDIR;
+   APTR ST_USER;
+   APTR ST_PASSWD;
+   APTR CH_USEDICT;
+   APTR CH_USEADDR;
+   APTR CH_CLONE;
+   APTR CH_ROOT;
+};
+
+struct US_ClassData  /* user list window */
+{
+   struct US_GUIData GUI;
+   BOOL              Supervisor;
+};
+
 struct User
 {
    int  ID;

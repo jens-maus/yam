@@ -30,4 +30,6 @@
 
 #define MUIM_MainWindow_CloseWindow  0x80002521
 
+extern struct MUI_CustomClass *CL_TextEditor;
+
 #endif /* YAM_CLASSES_H */

@@ -28,6 +28,20 @@
 
 ***************************************************************************/
 
+struct ER_GUIData
+{
+   APTR WI;
+   APTR LV_ERROR;
+   APTR BT_NEXT;
+   APTR NB_ERROR;
+   APTR BT_PREV;
+};
+
+struct ER_ClassData  /* error window */
+{
+   struct ER_GUIData GUI;
+};
+
 void ER_NewError(char *error, char *arg1, char *arg2);
 
 #endif /* YAM_ERROR_H */

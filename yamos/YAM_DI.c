@@ -25,8 +25,23 @@
 
 ***************************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <clib/alib_protos.h>
+#include <libraries/iffparse.h>
+#include <mui/TextEditor_mcc.h>
+#include <proto/exec.h>
+#include <proto/muimaster.h>
+
 #include "YAM.h"
+#include "YAM_classes.h"
+#include "YAM_error.h"
+#include "YAM_glossarydisplay.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
+#include "YAM_utilities.h"
 #include "YAM_write.h"
 
 /* local protos */
@@ -110,10 +125,10 @@ static int DI_Load(void)
          set(G->DI->GUI.LV_ENTRIES, MUIA_List_Quiet, TRUE);
          while (GetLine(fh, buffer, SIZE_LARGE))
          {
-            clear(&entry, sizeof(struct Dict));
+            memset(&entry, 0, sizeof(struct Dict));
             if (!strncmp(buffer, "@ENTRY", 6))
             {
-               stccpy(entry.Alias, Trim(&buffer[7]), SIZE_NAME);
+               MyStrCpy(entry.Alias, Trim(&buffer[7]));
                entry.Text = AllocStrBuf(80);
                while (fgets(buffer, SIZE_LARGE, fh))
                   if (p = strstr(buffer, "@ENDENTRY\n")) { *p = 0; entry.Text = StrBufCat(entry.Text, buffer); break; }

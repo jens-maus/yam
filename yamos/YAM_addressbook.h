@@ -28,6 +28,7 @@
 
 ***************************************************************************/
 
+#include <mui/NListtree_mcc.h>
 #include <mui/Toolbar_mcc.h>
 
 #include "SDI_compiler.h"
