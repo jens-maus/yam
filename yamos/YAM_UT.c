@@ -1914,8 +1914,8 @@ char *TimeVal2String(const struct timeval *tv, enum DateStampType mode)
 //  Converts a datestamp to a string
 char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
 {
-   static char resstr[2*LEN_DATSTRING]; // the maximum length for this should be 32 bytes
-   char datestr[LEN_DATSTRING], timestr[LEN_DATSTRING], daystr[LEN_DATSTRING];
+   static char resstr[64];                    // allocate enough space as OS3.1 is buggy here.
+   char datestr[32], timestr[32], daystr[32]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
    struct DateTime dt;
    struct DateStamp dsnow;
 
@@ -1929,6 +1929,11 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
    dt.dat_StrDate = datestr;
    dt.dat_StrTime = timestr;
    dt.dat_StrDay  = daystr;
+
+   // lets terminate the strings as OS 3.1 is strange
+   datestr[31] = '\0';
+   timestr[31] = '\0';
+   daystr[31]  = '\0';
 
    // lets convert the DateStamp now to a string
    if(DateToStr(&dt) == FALSE) return NULL;

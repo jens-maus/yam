@@ -2318,7 +2318,7 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
          // set by all ppl and strcpy() is costy ;)
          if((C->MessageCols & (1<<7) && entry->transDate.tv_secs > 0) || searchWinHook)
          {
-            static char datestr[2*LEN_DATSTRING]; // the maximum length for this should be 32 bytes
+            static char datestr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
             array[7] = strcpy(datestr, TimeVal2String(&entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
          }
          else array[7] = "";

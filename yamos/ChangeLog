@@ -5,6 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: YAM_UT.c, YAM_MA.c: had to remove the LEN_DATSTRING
+      from the allocations for the buffer of DateToStr() again
+      and extended those buffers to 32bytes each as OS3.1 doesn`t
+      seem to respect it anyhow, if used with FORMAT_DEF.
+      What happend was, that in case that a .country file was used
+      with returning date strings longer than LEN_DATSTRING,
+      OS3.1 just overwrote our own buffers and YAM ended up in weird
+      crashes. In fact this only happened with the standard
+      OS3.1 italia and portugal country files as those are the only
+      two that could return datestrings longer than LEN_DATESTRING.
+
 2002-10-21  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c, YAM_MA.c: changed buffer allocation

@@ -251,7 +251,7 @@ static BOOL AY_New(BOOL hidden)
    char logopath[SIZE_PATHFILE];
 	 APTR ft_text, bt_gopage;
    struct DateTime dt;
-   char datebuf[LEN_DATSTRING];
+   char datebuf[32]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
 
    dt.dat_Stamp.ds_Days   = yamversiondays;
    dt.dat_Stamp.ds_Minute = 0;
@@ -260,6 +260,7 @@ static BOOL AY_New(BOOL hidden)
    dt.dat_Flags   = 0L;
    dt.dat_StrDay  = NULL;
    dt.dat_StrDate = datebuf;
+   datebuf[31] = '\0';  // make sure that the string is really terminated.
    dt.dat_StrTime = NULL;
    DateToStr(&dt);
 
