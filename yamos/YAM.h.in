@@ -194,6 +194,11 @@
 #define NEWF_REP_PRIVATE  4
 #define NEWF_REP_MLIST    8
 #define NEWF_FWD_NOATTACH 16
+
+#define PRINTMETHOD_DUMPRAW    (0)
+#define PRINTMETHOD_LATEX      (1)
+#define PRINTMETHOD_POSTSCRIPT (2)	// not yet implemented
+
 ///
 /// WBPath.o Interface
 #define CloneWorkbenchPath(sm) cloneWorkbenchPath(SysBase, DOSBase, sm)
@@ -428,6 +433,7 @@ struct Config
    BOOL  IsOnlineCheck;
    char  IOCInterface[SIZE_SMALL];
    BOOL  ConfirmOnQuit;
+	int	PrintMethod;
    int   StackSize;
 };
 ///

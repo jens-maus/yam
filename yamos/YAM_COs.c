@@ -254,6 +254,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "HideGUIElements  = %ld\n", co->HideGUIElements);
       fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
       fprintf(fh, "StackSize        = %ld\n", co->StackSize);
+      fprintf(fh, "PrintMethod      = %ld\n", co->PrintMethod);
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
    }
@@ -545,6 +546,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "HideGUIElements")) co->HideGUIElements = atoi(value);
                if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
                if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
+               if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
             }
          }
          fclose(fh);
