@@ -5,6 +5,29 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * supportfiles/icons: Now the 16color Iconset is the new default set
+      for YAM. Moved the old and partly outdated 8colors images to std8col
+      subdirectory.
+    * YAM_RE.c: A mail that is actually displayed within the read window
+      can now easily be set to "marked" by using a new introduced readwindow
+      menu item.
+    * added an additional "marked" mail flag to YAM. Now it is possible to
+      set the status of a mail to "Marked" which causes YAM to set a
+      special flag to that mail. If a mail is then flagged as "marked",
+      YAM will try to highlight this certain mail within the Mail Listview.
+      If a new image file "status_mark" is present within the PROGDIR:Icons
+      directory, YAM will use this image within the Listview as an additional
+      status icon. If this new image file is missing, YAM will simply highlight
+      this message by displaying the Senders name with bold letters.
+      Also the Status sorting routines take respect of that new "marked" flag
+      now, which makes it possible to better sort that marked mails.
+      This new flag should make it possible for the user to highlight
+      certain mails for later reference, like it is common with other mail
+      programs. Please note that YAM will use the mailfile comment field to
+      save the flag informatin permanently, if the index needs to be rebuild.
+
 2003-02-01  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_FO.c: removed the extra Foldername Requester as it caused more
