@@ -2535,7 +2535,7 @@ void DisplayStatistics(struct Folder *fo)
       int mode = fo->Total ? (fo->New ? 2 : 1) : 0;
 
       if (G->TR && G->TR->Checking) mode = 3;
-      sprintf(apptit, GetStr(MSG_UT_AppStats), fo->New, fo->Unread, fo->Total);
+      SPrintF(apptit, GetStr(MSG_APPICON_STATS), fo->New, fo->Unread, fo->Total);
 
       // We first have to remove the appicon before we can change it
       if (G->AppIcon)

@@ -464,8 +464,8 @@ MSG_UT_PGPPassReq (//)
 Please enter your PGP pass phrase:
 ;
 MSG_UT_AppStats (//)
-N:%ld U:%ld T:%ld
-; COUNT, COUNT, COUNT
+
+; Replaced by MSG_APPICON_STATS
 ;
 MSG_UT_NoPrinter (//)
 No printer or printer offline!
@@ -4619,3 +4619,6 @@ Warning: Subject is empty
 MSG_MA_ABookModifiedGad (//)
 *_Save now|_Quit without saving
 ;
+MSG_APPICON_STATS (//)
+N:%lD U:%lD T:%lD
+; COUNT, COUNT, COUNT
