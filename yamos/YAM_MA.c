@@ -41,6 +41,7 @@
 #include <proto/muimaster.h>
 #include <proto/pm.h>
 #include <proto/utility.h>
+#include <rexx/storage.h>
 
 #include "old.h"
 #include "YAM.h"
