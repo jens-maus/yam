@@ -579,6 +579,8 @@ void CO_SetDefaults(struct Config *co, int page)
       for (i = 0; i < MAXP3; i++) { if (co->P3[i]) free(co->P3[i]); co->P3[i] = NULL; }
       *co->SMTP_Server = *co->SMTP_Domain = 0;
       co->Allow8bit = FALSE;
+      co->Use_SMTP_AUTH = FALSE;
+      *co->SMTP_AUTH_User = *co->SMTP_AUTH_Pass = 0;
       co->P3[0] = CO_NewPOP3(co, TRUE); co->P3[0]->DeleteOnServer = TRUE;
    }
    if (page == 2 || page < 0)
@@ -723,7 +725,6 @@ void CO_SetDefaults(struct Config *co, int page)
       co->HideGUIElements = 0;
       strcpy(co->LocalCharset, "iso-8859-1");
       co->StackSize = 40000;
-      *co->SMTP_AUTH_User=*co->SMTP_AUTH_Pass=0;
    }
 }
 
@@ -778,6 +779,8 @@ void CO_Validate(struct Config *co, BOOL update)
          case 1:
             setstring(G->CO->GUI.ST_SMTPHOST, co->SMTP_Server);
             setstring(G->CO->GUI.ST_DOMAIN, co->SMTP_Domain);
+            setstring(G->CO->GUI.ST_SMTPAUTHUSER, co->SMTP_AUTH_User);
+            setstring(G->CO->GUI.ST_SMTPAUTHPASS, co->SMTP_AUTH_Pass);
             DoMethod(G->CO->GUI.LV_POP3, MUIM_List_Redraw, MUIV_List_Redraw_All);
             break;
       }

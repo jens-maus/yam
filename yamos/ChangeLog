@@ -48,3 +48,8 @@
 2000-12-20  laursen <laursen@myself.com>
 
     * Finished slave work on menus in main window.
+
+2000-12-20  Jörg Strohmayer <joergs@users.sourceforge.net>
+
+    * Added SMTP AUTH to config GUI.
+
