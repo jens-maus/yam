@@ -59,7 +59,8 @@ static char *rfc2047_search_quote(const char **ptr);
 static const char basis_64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const char basis_hex[] = "0123456789ABCDEF";
 
-static const unsigned char index_64[128] = {
+static const unsigned char index_64[128] =
+{
   255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
   255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
   255,255,255,255,255,255,255,255,255,255,255, 62,255,255,255, 63,
@@ -70,7 +71,8 @@ static const unsigned char index_64[128] = {
    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,255,255,255,255,255
 };
 
-static const char index_hex[128] = {
+static const char index_hex[128] =
+{
   -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
   -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
   -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
@@ -143,24 +145,27 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
 ///
 /// base64decode
 // optimized base64 decoding function returning the length of the
-// decoded string or -1 on an occurred error
+// decoded string or 0 on an occurred error or a minus integer as
+// an indicator of a short count in the encoded string
 int base64decode(char *to, const unsigned char *from, unsigned int len)
 {
   unsigned char *fromp = (unsigned char *)from;
   char *top = to;
   int x, y;
 
-  while(len > 0)
-  {
+	while(len >= 4)
+	{
     len--;
     x = *fromp++;
-    if(x > 127 || (x = index_64[x]) == 255)
-      return -1;
+		if(x > 127 || (x = index_64[x]) == 255)
+    {
+			return 0;
+    }
 
     if(len < 0 || (y = *fromp++) == 0 ||
        y > 127 || (y = index_64[y]) == 255)
     {
-      return -1;
+			return 0;
     }
 
     len--;
@@ -171,15 +176,19 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
       len--;
       if((x = *fromp++) == '=')
       {
-        if((len > 0 && *fromp++ != '=') || *fromp != 0)
-          return -1;
+	  		if((len > 0 && *fromp++ != '=') || *fromp != 0)
+        {
+  				return 0;
+        }
 
         len--;
       }
       else
       {
-        if (x > 127 || (x = index_64[x]) == 255)
-          return -1;
+		  	if(x > 127 || (x = index_64[x]) == 255)
+        {
+			  	return 0;
+        }
 
         *top++ = (y << 4) | (x >> 2);
         if(len > 0)
@@ -187,22 +196,33 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
           len--;
           if ((y = *fromp++) == '=')
           {
-            if(*fromp != 0) return -1;
-          }
-          else
+		  	  	if(*fromp != 0)
+            {
+              return 0;
+            }
+  		  	}
+  	  		else
           {
-            if (y > 127 || (y = index_64[y]) == 255)
-              return -1;
+		  	  	if (y > 127 || (y = index_64[y]) == 255)
+            {
+			  	  	return 0;
+            }
 
             *top++ = (x << 6) | y;
           }
         }
       }
     }
+	}
+
+	*top = 0;
+  if(len > 0)
+  {
+    // return -len to signal a short count
+    return -len;
   }
-  *top = 0;
-  if(len != 0) return -1;
-  return top - to;
+
+	return top - to;
 }
 
 ///
@@ -215,13 +235,15 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
 long base64decode_file(FILE *in, FILE *out,
                        struct TranslationTable *tt, BOOL convCRLF)
 {
-  char lineBuf[SIZE_LINE]; // normally a line of a rfc822 encoded mailfile shouldn`t be longer
+  char lineBuf[SIZE_LINE+4];  // normally a line of a rfc822 encoded mailfile shouldn`t be longer
+  char decBuf[SIZE_LINE/4+1]; // the decode buffer just have to be 1/4 of the lineBuf length.
   BOOL success = FALSE;
   long decodedChars = 0;
+  int  shortCount = 0;
 
   // lets try to read in the data from the file line by
   // line until EOF or error
-  while(fgets(lineBuf, SIZE_LINE-1, in))
+  while(fgets(lineBuf+shortCount, SIZE_LINE, in))
   {
     char *ptr;
     long outLength;
@@ -234,12 +256,32 @@ long base64decode_file(FILE *in, FILE *out,
     if(lineBuf[0] == '\0')
       continue;
 
+    // clear the shortCount
+    shortCount = 0;
+
     // now we decode the string and see if it was sucessfull
-    if((outLength = base64decode(lineBuf, lineBuf, strlen(lineBuf))) <= 0)
+    if((outLength = base64decode(decBuf, lineBuf, strlen(lineBuf))) <= 0)
     {
-      success = FALSE;
-      ER_NewError(GetStr(MSG_ER_UnexpEOFB64), NULL, NULL);
-      break;
+      DB(kprintf("base64decode() returned %ld\n", outLength);)
+
+      // if the base64decode() function signaled us a short count
+      // we have to save the chars until the short count and add
+      // them in front of our next iteration.
+      if(outLength < 0)
+      {
+        long lineLen = strlen(lineBuf);
+        shortCount = -outLength;
+        outLength = strlen(decBuf);
+
+        // move the short count chars to the start of lineBuf
+        memmove(lineBuf, lineBuf+lineLen-shortCount, shortCount);
+      }
+      else
+      {
+        success = FALSE;
+        ER_NewError(GetStr(MSG_ER_UnexpEOFB64), NULL, NULL);
+        break;
+      }
     }
 
     // if we got a translation table or need to convert a CRLF we have to parse through
@@ -251,8 +293,8 @@ long base64decode_file(FILE *in, FILE *out,
       for(r=0, w=0; r < outLength; r++)
       {
         // check if this is a CRLF
-        if(convCRLF && lineBuf[r] == '\r' &&
-           outLength-r > 1 && lineBuf[r+1] == '\n')
+        if(convCRLF && decBuf[r] == '\r' &&
+           outLength-r > 1 && decBuf[r+1] == '\n')
         {
           // if so, skip the \r
           continue;
@@ -260,16 +302,16 @@ long base64decode_file(FILE *in, FILE *out,
         else if(tt)
         {
           // if not, convert the char
-          lineBuf[w] = tt->Table[(UBYTE)lineBuf[r]];
+          lineBuf[w] = tt->Table[(UBYTE)decBuf[r]];
 
           // increase the write counter
           ++w;
         }
         else
         {
-          // if not translation table is given lets copy
+          // if no translation table is given lets copy
           // the plain character
-          lineBuf[w] = lineBuf[r];
+          decBuf[w] = decBuf[r];
 
           // increase the write counter
           ++w;
@@ -283,7 +325,7 @@ long base64decode_file(FILE *in, FILE *out,
 
     // now that we got the string decoded we write it into
     // our file
-    if(fwrite(lineBuf, 1, (size_t)outLength, out) != outLength)
+    if(fwrite(decBuf, 1, (size_t)outLength, out) != outLength)
     {
       success = FALSE;
       break;
@@ -294,9 +336,11 @@ long base64decode_file(FILE *in, FILE *out,
     success = TRUE;
   }
 
-  if(success &&
-     ((feof(in) == 0 && ferror(in) != 0) ||
-     ferror(out) != 0))
+  // finally check if no error occurred and that no
+  // shortCount was found at the end, otherwise the
+  // encoded string was not completly decoded.
+  if(success && (shortCount ||
+     (feof(in) == 0 && ferror(in) != 0) || ferror(out) != 0))
   {
     success = FALSE;
   }
@@ -988,7 +1032,8 @@ static char *rfc2047_search_quote(const char **ptr)
     ++(*ptr);
 
   l = *ptr - p;
-  if((s = malloc(l + 1)) != NULL) {
+  if((s = malloc(l + 1)) != NULL)
+  {
     memcpy(s, p, l);
     s[l] = 0;
   }

@@ -2204,19 +2204,51 @@ if(fname)
 //  Decodes a single message part
 BOOL RE_DecodePart(struct Part *rp)
 {
-   if (!rp->Decoded)
+   // it only makes sense to go on here if
+   // the data wasn`t decoded before.
+   if(!rp->Decoded)
    {
       FILE *in, *out;
-      char file[SIZE_FILE], buf[SIZE_LINE], ext[FNSIZE];
+      char file[SIZE_FILE];
+      char buf[SIZE_LINE];
+      char ext[FNSIZE];
 
-      if ((in = fopen(rp->Filename, "r")))
+      if((in = fopen(rp->Filename, "r")))
       {
-         if (rp->HasHeaders) while (GetLine(in, buf, SIZE_LINE)) if (!*buf) break;
-         stcgfe(ext, rp->Name);
-         if (strlen(ext) > 10) *ext = 0;
+         // if this part has some headers, let`s skip them so that
+         // we just decode the raw data.
+         if(rp->HasHeaders)
+         {
+           while(GetLine(in, buf, SIZE_LINE))
+           {
+             // if we find an empty string it is a sign that
+             // by starting from the next line the encoded data
+             // should follow
+             if(*buf == '\0')
+              break;
+           }
+
+           // we only go on if we are not in an ferror() condition
+           // as we shouldn`t have a EOF or real error here.
+           if(ferror(in) || feof(in))
+           {
+             DB(kprintf("ferror() or feof() while parsing through PartHeader.\n");)
+             fclose(in);
+             return FALSE;
+           }
+         }
+
+         // get the file extension name
+				 stcgfe(ext, rp->Name);
+         if(strlen(ext) > 10)
+           *ext = 0; // if the file extension is longer than 10 chars lets use "tmp"
+
+         // lets generate the destination file name for the decoded part
          sprintf(file, "YAMm%08lx-w%dp%d.%s", (ULONG)G->RE[rp->Win]->MailPtr, rp->Win, rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
-         if ((out = fopen(buf, "w")))
+
+         // now open the stream and decode it afterwards.
+         if((out = fopen(buf, "w")))
          {
             BOOL decodeResult = RE_DecodeStream(rp, in, out);
 
@@ -2232,6 +2264,7 @@ BOOL RE_DecodePart(struct Part *rp)
               rp->Decoded = TRUE;
               RE_SetPartInfo(rp);
             }
+            else DeleteFile(buf); // delete the temporary file again.
          }
          else if((out = fopen(buf, "r")))
          {
@@ -2247,6 +2280,7 @@ BOOL RE_DecodePart(struct Part *rp)
          else fclose(in);
       }
    }
+
    return rp->Decoded;
 }
 ///
