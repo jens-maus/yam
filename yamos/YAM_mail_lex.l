@@ -134,7 +134,8 @@ char *ParseEmailText(char *mailTxt)
 
           case tSB:
           {
-            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
+            cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033c\033[s:2]");
+            centerActivated = TRUE;
           }
           break;
 
