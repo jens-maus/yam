@@ -7,6 +7,16 @@ $Source$
 
 2002-07-16  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM.c: added an additional check to the new CheckMCC
+      function that will allow also broken .mcc to pass the
+      test if the library version matches the one requested.
+      In the particular example Toolbar.mcc is broken which
+      will result in a a requester that requests the same
+      version that we were searching for.
+    * YAM_utilities.h: fixed bug #580966 where we lost the
+      "Displayed Text" option within the save and print
+      attachment requesters because of some screwed up
+      flags.
     * YAM.c, YAM_MA.c, YAM_MAf.c, YAM_TR.c, YAM_UT.c,
       classes/InfoBar.c: fixed bug #557910 where the status
       icon of the infobar wasn`t in sync with the one in the

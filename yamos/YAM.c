@@ -652,6 +652,11 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 					rev = base->lib_Revision;
 					CloseLibrary(base);
 
+          // we add some additional check here so that eventual broken .mcc also have
+          // a chance to pass this test (i.e. Toolbar.mcc is broken)
+    			if(ver > minver || (ver == minver && rev >= minrev))
+		        return TRUE;
+
 					if (OpenCnt > 1)
 					{
 						if (req && (retry = MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_IN_USE), name, minver, minrev, ver, rev)))
