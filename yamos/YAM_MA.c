@@ -470,7 +470,10 @@ int MA_NewNew(struct Mail *mail, int flags)
          wr->Mode = NEW_NEW;
          wr->Mail = mail;
          if (mail) setstring(wr->GUI.ST_TO, BuildAddrName2(GetReturnAddress(mail)));
-         else if (folder) if (folder->MLAddress[0] && folder->Type != FT_INCOMING) setstring(wr->GUI.ST_TO, folder->MLAddress);
+         else if (folder && folder->Type != FT_INCOMING) {
+            if (folder->MLAddress[0]) setstring(wr->GUI.ST_TO, folder->MLAddress);
+            if (folder->MLFromAddress[0]) setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
+         }
          MA_SetupQuoteString(wr, NULL, NULL);
          MA_InsertIntroText(out, C->NewIntro, NULL);
          MA_InsertIntroText(out, C->Greetings, NULL);

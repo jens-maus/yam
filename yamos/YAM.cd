@@ -4095,3 +4095,11 @@ AmigaDOS script
 MSG_CTapplicationrexx (//)
 Rexx script
 ;
+; ADDED AFTER 04-DEC-2000
+;
+MSG_FO_FromAddress (//)
+From: address
+;
+MSG_HELP_FO_ST_MLFROMADDRESS (//)
+Use this from address when posting\n\
+new mails to the list

@@ -314,6 +314,7 @@ struct Folder
    char  Password[SIZE_USERID];   
    char  MLPattern[SIZE_PATTERN];
    char  MLAddress[SIZE_ADDRESS];
+   char  MLFromAddress[SIZE_ADDRESS];
    int   Type, XPKType;
    int   Total, New, Unread;
    int   Size;
@@ -816,7 +817,7 @@ struct FO_ClassData  /* folder configuration window */
    struct FO_GUIData
    {
       APTR WI;
-      APTR ST_FNAME, TX_FPATH, BT_MOVE, ST_MAXAGE, CY_FMODE, CY_FTYPE, CY_SORT[2], CH_REVERSE[2], ST_MLPATTERN, ST_MLADDRESS;
+      APTR ST_FNAME, TX_FPATH, BT_MOVE, ST_MAXAGE, CY_FMODE, CY_FTYPE, CY_SORT[2], CH_REVERSE[2], ST_MLPATTERN, ST_MLFROMADDRESS, ST_MLADDRESS;
    } GUI;
    struct Folder *EditFolder;
 };

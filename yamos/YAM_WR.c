@@ -1087,7 +1087,7 @@ struct TempFile *tf=NULL;
 FILE *fh = comp->FH;
 struct WritePart *firstpart = comp->FirstPart;
 char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
-   
+
    if (comp->Mode == NEW_BOUNCE)
    {
       if (comp->DelSend) EmitHeader(fh, "X-YAM-Options", "delsent");

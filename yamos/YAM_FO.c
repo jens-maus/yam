@@ -225,8 +225,9 @@ BOOL FO_LoadConfig(struct Folder *fo)
                if (!stricmp(buffer, "XPKType"))  fo->XPKType = atoi(value);
                if (!stricmp(buffer, "Sort1"))    fo->Sort[0] = atoi(value);
                if (!stricmp(buffer, "Sort2"))    fo->Sort[1] = atoi(value);
-               if (!stricmp(buffer, "MLAddress"))stccpy(fo->MLAddress, value, SIZE_ADDRESS);
-               if (!stricmp(buffer, "MLPattern"))stccpy(fo->MLPattern, value, SIZE_PATTERN);
+               if (!stricmp(buffer, "MLFromAddr")) stccpy(fo->MLFromAddress, value, SIZE_ADDRESS);
+               if (!stricmp(buffer, "MLAddress"))  stccpy(fo->MLAddress,     value, SIZE_ADDRESS);
+               if (!stricmp(buffer, "MLPattern"))  stccpy(fo->MLPattern,     value, SIZE_PATTERN);
             }
          }
          success = TRUE;
@@ -256,6 +257,7 @@ void FO_SaveConfig(struct Folder *fo)
       fprintf(fh, "XPKType     = %ld\n", fo->XPKType);
       fprintf(fh, "Sort1       = %ld\n", fo->Sort[0]);
       fprintf(fh, "Sort2       = %ld\n", fo->Sort[1]);
+      fprintf(fh, "MLFromAddr  = %s\n", fo->MLFromAddress);
       fprintf(fh, "MLPattern   = %s\n", fo->MLPattern);
       fprintf(fh, "MLAddress   = %s\n", fo->MLAddress);
       fclose(fh);
@@ -576,8 +578,9 @@ void FO_GetFolder(struct Folder *folder, BOOL existing)
       set(gui->CY_SORT[i], MUIA_Cycle_Active, ABS(folder->Sort[i])-1);
       set(gui->CH_REVERSE[i], MUIA_Selected, folder->Sort[i] < 0);
    }
-   set(gui->ST_MLADDRESS, MUIA_String_Contents, folder->MLAddress);
-   set(gui->ST_MLPATTERN, MUIA_String_Contents, folder->MLPattern);
+   set(gui->ST_MLADDRESS,     MUIA_String_Contents, folder->MLAddress);
+   set(gui->ST_MLPATTERN,     MUIA_String_Contents, folder->MLPattern);
+   set(gui->ST_MLFROMADDRESS, MUIA_String_Contents, folder->MLFromAddress);
    set(gui->CY_FTYPE, MUIA_Disabled, isdefault);
    set(gui->CY_FMODE, MUIA_Disabled, isdefault || existing);
    set(gui->BT_MOVE, MUIA_Disabled, existing);
@@ -606,8 +609,9 @@ void FO_PutFolder(struct Folder *folder)
       folder->Sort[i] = GetMUICycle(gui->CY_SORT[i])+1;
       if (GetMUICheck(gui->CH_REVERSE[i])) folder->Sort[i] = -folder->Sort[i];
    }
-   GetMUIString(folder->MLPattern, gui->ST_MLPATTERN);
-   GetMUIString(folder->MLAddress, gui->ST_MLADDRESS);
+   GetMUIString(folder->MLPattern,     gui->ST_MLPATTERN);
+   GetMUIString(folder->MLAddress,     gui->ST_MLADDRESS);
+   GetMUIString(folder->MLFromAddress, gui->ST_MLFROMADDRESS);
 }
 
 ///
@@ -764,8 +768,9 @@ SAVEDS void FO_SaveFunc(void)
                strcpy(oldfolder->Path, folder.Path);
       }
       strcpy(oldfolder->Name, folder.Name);
-      strcpy(oldfolder->MLAddress, folder.MLAddress);
-      strcpy(oldfolder->MLPattern, folder.MLPattern);
+      strcpy(oldfolder->MLFromAddress, folder.MLFromAddress);
+      strcpy(oldfolder->MLAddress,     folder.MLAddress);
+      strcpy(oldfolder->MLPattern,     folder.MLPattern);
       oldfolder->Sort[0] = folder.Sort[0];
       oldfolder->Sort[1] = folder.Sort[1];
       oldfolder->MaxAge  = folder.MaxAge;
@@ -896,6 +901,8 @@ LOCAL struct FO_ClassData *FO_New(void)
                Child, data->GUI.ST_MLPATTERN = MakeString(SIZE_PATTERN,GetStr(MSG_FO_ToPattern)),
                Child, Label2(GetStr(MSG_FO_ToAddress)),
                Child, data->GUI.ST_MLADDRESS = MakeString(SIZE_ADDRESS,GetStr(MSG_FO_ToAddress)),
+               Child, Label2(GetStr(MSG_FO_FromAddress)),
+               Child, data->GUI.ST_MLFROMADDRESS = MakeString(SIZE_ADDRESS,GetStr(MSG_FO_FromAddress)),
             End,
             Child, ColGroup(3),
                Child, bt_okay = MakeButton(GetStr(MSG_Okay)),
@@ -907,17 +914,18 @@ LOCAL struct FO_ClassData *FO_New(void)
       if (data->GUI.WI)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         SetHelp(data->GUI.ST_FNAME     ,MSG_HELP_FO_ST_FNAME     );
-         SetHelp(data->GUI.TX_FPATH     ,MSG_HELP_FO_TX_FPATH     );
-         SetHelp(data->GUI.ST_MAXAGE    ,MSG_HELP_FO_ST_MAXAGE    );
-         SetHelp(data->GUI.CY_FMODE     ,MSG_HELP_FO_CY_FMODE     );
-         SetHelp(data->GUI.CY_FTYPE     ,MSG_HELP_FO_CY_FTYPE     );
-         SetHelp(data->GUI.CY_SORT[0]   ,MSG_HELP_FO_CY_SORT0     );
-         SetHelp(data->GUI.CY_SORT[1]   ,MSG_HELP_FO_CY_SORT1     );
-         SetHelp(data->GUI.CH_REVERSE[0],MSG_HELP_FO_CH_REVERSE   );
-         SetHelp(data->GUI.CH_REVERSE[1],MSG_HELP_FO_CH_REVERSE   );
-         SetHelp(data->GUI.ST_MLPATTERN ,MSG_HELP_FO_ST_MLPATTERN );
-         SetHelp(data->GUI.ST_MLADDRESS ,MSG_HELP_FO_ST_MLADDRESS );
+         SetHelp(data->GUI.ST_FNAME,         MSG_HELP_FO_ST_FNAME     );
+         SetHelp(data->GUI.TX_FPATH,         MSG_HELP_FO_TX_FPATH     );
+         SetHelp(data->GUI.ST_MAXAGE,        MSG_HELP_FO_ST_MAXAGE    );
+         SetHelp(data->GUI.CY_FMODE,         MSG_HELP_FO_CY_FMODE     );
+         SetHelp(data->GUI.CY_FTYPE,         MSG_HELP_FO_CY_FTYPE     );
+         SetHelp(data->GUI.CY_SORT[0],       MSG_HELP_FO_CY_SORT0     );
+         SetHelp(data->GUI.CY_SORT[1],       MSG_HELP_FO_CY_SORT1     );
+         SetHelp(data->GUI.CH_REVERSE[0],    MSG_HELP_FO_CH_REVERSE   );
+         SetHelp(data->GUI.CH_REVERSE[1],    MSG_HELP_FO_CH_REVERSE   );
+         SetHelp(data->GUI.ST_MLPATTERN,     MSG_HELP_FO_ST_MLPATTERN );
+         SetHelp(data->GUI.ST_MLADDRESS,     MSG_HELP_FO_ST_MLADDRESS );
+         SetHelp(data->GUI.ST_MLFROMADDRESS, MSG_HELP_FO_ST_MLFROMADDRESS );
          DoMethod(data->GUI.BT_MOVE  ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FO_MoveHook);
          DoMethod(bt_okay            ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FO_SaveHook);
          DoMethod(bt_cancel          ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FO_CloseHook);

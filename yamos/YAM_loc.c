@@ -1305,6 +1305,9 @@ const struct FC_Type _MSG_BusyDecDisplaying = { 1294, "Decoding/displaying..." }
 const struct FC_Type _MSG_RE_FollowThreadReq = { 1295, "In order to follow the thread, YAM has to load all indices.\nThis may be time consuming. Do you want to continue?" };
 const struct FC_Type _MSG_CTapplicationadosscript = { 1296, "AmigaDOS script" };
 const struct FC_Type _MSG_CTapplicationrexx = { 1297, "Rexx script" };
+const struct FC_Type _MSG_FO_FromAddress = { 1298, "From: address" };
+const struct FC_Type _MSG_HELP_FO_ST_MLFROMADDRESS = { 1299, "Use this from address when posting\n"\
+	"new mails to the list" };
 static struct Catalog *YAM_Catalog = NULL;
 
 void OpenYAMCatalog(void)
@@ -1321,7 +1324,6 @@ void OpenYAMCatalog(void)
 
 void CloseYAMCatalog(void)
 {
-	extern struct Library *LocaleBase;
   	if (LocaleBase) CloseCatalog(YAM_Catalog);
   	YAM_Catalog = NULL;
 }

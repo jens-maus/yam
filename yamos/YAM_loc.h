@@ -2607,6 +2607,10 @@ extern const APTR _MSG_CTapplicationadosscript;
 #define MSG_CTapplicationadosscript ((APTR) &_MSG_CTapplicationadosscript)
 extern const APTR _MSG_CTapplicationrexx;
 #define MSG_CTapplicationrexx ((APTR) &_MSG_CTapplicationrexx)
+extern const APTR _MSG_FO_FromAddress;
+#define MSG_FO_FromAddress ((APTR) &_MSG_FO_FromAddress)
+extern const APTR _MSG_HELP_FO_ST_MLFROMADDRESS;
+#define MSG_HELP_FO_ST_MLFROMADDRESS ((APTR) &_MSG_HELP_FO_ST_MLFROMADDRESS)
 
 #endif
 

@@ -827,7 +827,7 @@ static BOOL ReadLine(LONG Socket, char *buf, LONG len)
  *p = '\0';
 
    if (G->TR_Debug) printf("SERVER: %s\n", buf);
- return(len >= 0);
+ return (BOOL)(len >= 0);
 }
 #define SMTP_SERVICE_NOT_AVAILABLE 421
 #define SMTP_ACTION_OK             250
