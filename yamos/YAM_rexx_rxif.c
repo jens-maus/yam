@@ -182,13 +182,24 @@ void rx_info( struct RexxHost *host, struct rxd_info **rxd, long action, struct 
          else if (!stricmp(key, "screen"))
          {
             struct Screen *screen;
-            struct Node *pubs;
-            struct List *pubscreens = LockPubScreenList();
-            rd->res.value = "";
+            rd->res.value = "Workbench";
             get(G->MA->GUI.WI, MUIA_Window_Screen, &screen);
-            for (pubs = pubscreens->lh_Head; pubs->ln_Succ; pubs = pubs->ln_Succ)
-               if (((struct PubScreenNode *)pubs)->psn_Screen == screen) rd->res.value = pubs->ln_Name;
-            UnlockPubScreenList();
+            if(screen)
+            {
+              struct Node *pubs;
+              struct List *pubscreens = LockPubScreenList();
+
+              for(pubs = pubscreens->lh_Head; pubs->ln_Succ; pubs = pubs->ln_Succ)
+              {
+                if(((struct PubScreenNode *)pubs)->psn_Screen == screen)
+                {
+                  rd->res.value = pubs->ln_Name;
+                  break;
+                }
+              }
+
+              UnlockPubScreenList();
+            }
          }
          else rd->rc = RETURN_ERROR;
          break;

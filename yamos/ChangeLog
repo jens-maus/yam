@@ -1,5 +1,8 @@
 2002-05-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_rexx_rxif.c: fixed bug #555128 where YAM didn`t return
+      the default screenname "Workbench" on issueing a INFO screen
+      rexx command, if it was iconified.
     * YAM_CO.c: fixed bug #556527 where the signature cyclegadget
       didn`t work anymore because of a incorrect return.
 
