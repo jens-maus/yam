@@ -127,7 +127,7 @@ struct Rule;
 #define setStatusToNew(mail)        MA_ChangeMailStatus(mail, SFLAG_NEW, SFLAG_NONE)
 #define setStatusToQueued(mail)     MA_ChangeMailStatus(mail, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT)
 #define setStatusToHold(mail)       MA_ChangeMailStatus(mail, SFLAG_HOLD|SFLAG_READ, SFLAG_NONE)
-#define setStatusToSent(mail)       MA_ChangeMailStatus(mail, SFLAG_SENT|SFLAG_READ, SFLAG_QUEUED|SFLAG_HOLD)
+#define setStatusToSent(mail)       MA_ChangeMailStatus(mail, SFLAG_SENT|SFLAG_READ, SFLAG_QUEUED|SFLAG_HOLD|SFLAG_ERROR)
 #define setStatusToDeleted(mail)    MA_ChangeMailStatus(mail, SFLAG_DELETED, SFLAG_NONE)
 #define setStatusToMarked(mail)     MA_ChangeMailStatus(mail, SFLAG_MARKED, SFLAG_NONE)
 #define setStatusToError(mail)      MA_ChangeMailStatus(mail, SFLAG_ERROR, SFLAG_NONE)

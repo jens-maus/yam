@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_main.h: fixed bug #1062983 which didn't clear the Error flag
+      of a mail upon a successfull sent operation.
+
 2004-11-12  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed bug in the message disposition notification reply
