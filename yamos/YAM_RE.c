@@ -26,6 +26,7 @@
 
 /* local protos */
 LOCAL void RE_PrintFile(char*,struct Part*);
+LOCAL void RE_PrintLaTeX(char*,struct Part*);
 LOCAL char **Init_ISO8859_to_LaTeX_Tab(char*);
 LOCAL char *ISO8859_to_LaTeX(char*);
 
@@ -647,80 +648,100 @@ MakeHook(RE_PrintHook, RE_PrintFunc);
 //  Prints a file. Currently it is just dumped to PRT:
 //  To do for LaTeX printing:
 //  - remap characters in header to LaTeX notation
-//  - add options for latex/dviprint call
 //  - make header lines to print (and parts where to print headers) configurable
 LOCAL void RE_PrintFile(char *filename, struct Part *part)
 {
-	if(1)
+	switch(C->PrintMethod)
 	{
-		CopyFile("PRT:", 0, filename, 0);
-	} else
-	{
-	struct TempFile *texfile;
-	
-		if((texfile = OpenTempFile("w")))
-		{
-			if(CopyFile(NULL,texfile->FP,"YAM:.texheader",NULL))
-			{
-			char *ts1,*ts2;
-
-				if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
-				{
-					if(1 == part->Nr)
-					{
-					int i,j;
-					char Attrib[SIZE_DEFAULT];
-					char *p;
-
-						for(i=0; i<Header.Used; i++)
-						{
-							p = Header.Data[i];
-							if(NULL != strchr(p,':'))
-							{
-								for(j=0; p[j] != ':' && j < sizeof(Attrib); j++) Attrib[j] = p[j];
-								Attrib[j++] = ':';
-								Attrib[j++] = '\0';
-								ts1 = StrBufCat(ts1,"\\NewLabWidth{");
-								ts1 = StrBufCat(ts1,Attrib);
-								ts1 = StrBufCat(ts1,"}\n");
-								ts2 = StrBufCat(ts2,Attrib);
-								ts2 = StrBufCat(ts2," &");
-								ts2 = StrBufCat(ts2,p+j-1);
-								ts2 = StrBufCat(ts2,"\\\\\n");
-							} else KPrintF("RE_PrintFile(): strange header line %s\n",p);
-						}
-						fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n",
-									ts1,
-									"\\begin{document}\n\n"
-									"\\setlength{\\tabcolsep}{3.0pt}\n"
-									"\\setlength{\\TabRestWidth}{\\linewidth}\n"
-									"\\addtolength{\\TabRestWidth}{-\\tabcolsep}\n"
-									"\\addtolength{\\TabRestWidth}{-\\LabelWidth}\n\n"
-									"\\begin{tabular}"
-									"{@{}>{\\PBS\\raggedleft\\hspace{0pt}\\bf}p{\\LabelWidth}"
-									">{\\PBS\\raggedright\\hspace{0pt}}p{\\TabRestWidth}}\n\n",
-									ts2,
-									"\\end{tabular}\n"
-									"\\hrule\n"
-									"\\bigskip\n"
-									"\\input{Texts:TeXdocs/Experimental/email.text}\n"
-									"\\end{document}\n");
-						fclose(texfile->FP);
-						texfile->FP = NULL;
-						system("latex");
-						
-					} else
-					{
-						KPrintF("RE_PrintFile(): no headers for this part\n");
-					}
-				}
-				if(ts1) FreeStrBuf(ts1);
-				if(ts2) FreeStrBuf(ts2);
-			} else KPrintF("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n");
-			CloseTempFile(texfile);
-		} else KPrintF("RE_PrintFile(): can't open temp TeX file\n");
+		case PRINTMETHOD_DUMPRAW :
+			CopyFile("PRT:", 0, filename, 0);
+			break;
+		case PRINTMETHOD_LATEX :
+			RE_PrintLaTeX(filename,part);
+			break;
+		case PRINTMETHOD_POSTSCRIPT :
+		default:
+			MUI_Request(G->App, NULL, 0, "YAM Error", "OK",
+							"Printing method #%ld is not implemented!\n"
+							"Use 0 for raw printer dump, 1 for LaTeX",C->PrintMethod);
+			break;
 	}
 }
+
+LOCAL void RE_PrintLaTeX(char *filename, struct Part *part)
+{
+struct TempFile *texfile;
+
+	if((texfile = OpenTempFile("w")))
+	{
+		if(CopyFile(NULL,texfile->FP,"YAM:.texheader",NULL))
+		{
+		char *ts1,*ts2;
+
+			if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
+			{
+				if(1 == part->Nr)
+				{
+				int i,j;
+				char Attrib[SIZE_DEFAULT];
+				char *p,*printcmd;
+				const char PrintScript[] = "YAM:Scripts/LaTeX-print";
+
+					for(i=0; i<Header.Used; i++)
+					{
+						p = Header.Data[i];
+						if(NULL != strchr(p,':'))
+						{
+							for(j=0; p[j] != ':' && j < sizeof(Attrib); j++) Attrib[j] = p[j];
+							Attrib[j++] = ':';
+							Attrib[j++] = '\0';
+							ts1 = StrBufCat(ts1,"\\NewLabWidth{");
+							ts1 = StrBufCat(ts1,Attrib);
+							ts1 = StrBufCat(ts1,"}\n");
+							ts2 = StrBufCat(ts2,Attrib);
+							ts2 = StrBufCat(ts2," &");
+							ts2 = StrBufCat(ts2,p+j-1);
+							ts2 = StrBufCat(ts2,"\\\\\n");
+						} else KPrintF("RE_PrintFile(): strange header line %s\n",p);
+					}
+					fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n",
+								ts1,
+								"\\begin{document}\n\n"
+								"\\setlength{\\tabcolsep}{3.0pt}\n"
+								"\\setlength{\\TabRestWidth}{\\linewidth}\n"
+								"\\addtolength{\\TabRestWidth}{-\\tabcolsep}\n"
+								"\\addtolength{\\TabRestWidth}{-\\LabelWidth}\n\n"
+								"\\begin{tabular}"
+								"{@{}>{\\PBS\\raggedleft\\hspace{0pt}\\bf}p{\\LabelWidth}"
+								">{\\PBS\\raggedright\\hspace{0pt}}p{\\TabRestWidth}}\n\n",
+								ts2,
+								"\\end{tabular}\n"
+								"\\hrule\n"
+								"\\bigskip\n"
+								"\\input{Texts:TeXdocs/Experimental/email.text}\n"
+								"\\end{document}\n");
+					fclose(texfile->FP);
+					texfile->FP = NULL;
+					if(printcmd = malloc(sizeof(PrintScript)+strlen(texfile->Filename)+1))
+					{
+						strcpy(printcmd,PrintScript);
+						strcat(printcmd," ");
+						strcat(printcmd,texfile->Filename);
+						system(printcmd);
+						free(printcmd);
+					} else DisplayBeep(NULL);
+				} else
+				{
+					KPrintF("RE_PrintFile(): no headers for this part\n");
+				}
+			}
+			if(ts1) FreeStrBuf(ts1);
+			if(ts2) FreeStrBuf(ts2);
+		} else KPrintF("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n");
+		CloseTempFile(texfile);
+	} else KPrintF("RE_PrintFile(): can't open temp TeX file\n");
+}
+
 
 ///
 // ISO8859_to_LaTeX
