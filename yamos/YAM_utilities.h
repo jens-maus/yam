@@ -204,7 +204,7 @@ Object * MakeString(int maxlen, char *label);
 int      MatchNoCase(char *string, char *match);
 BOOL     MatchTT(char *charset, struct TranslationTable *tt, BOOL in);
 void     MyAddTail(struct Mail **list, struct Mail *new);
-char *   MyStrChr(char *s, int c);
+char *   MyStrChr(const char *s, int c);
 struct TempFile *OpenTempFile(char *mode);
 BOOL     PFExists(char *path, char *file);
 void     PGPClearPassPhrase(BOOL force);
@@ -232,7 +232,7 @@ char *   StrBufCpy(char *strbuf, char *source);
 int      StringRequest(char *string, int size, char *title, char *body,
          char *yestext, char *alttext, char *notext, BOOL secret, APTR parent);
 char *   StripUnderscore(char *label);
-char *   stristr(char *a, char *b);
+char *   stristr(const char *a, const char *b);
 char *   strtok_r(char **s, char *brk);
 BOOL     TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder);
 char *   Trim(char *s);
