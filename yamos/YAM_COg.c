@@ -280,6 +280,7 @@ static Object *MakeTransPop(Object **string, BOOL output,  char *shortcut)
       }
 
       DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
+			DoMethod(*string,MUIM_Notify,MUIA_Disabled,MUIV_EveryTime,po,3,MUIM_Set,MUIA_Disabled,MUIV_TriggerValue);
    }
 
    return po;
@@ -1013,7 +1014,7 @@ APTR CO_Page4(struct CO_ClassData *data)
       SetHelp(data->GUI.CY_SIGSEPLINE,MSG_HELP_CO_CY_SIGSEPLINE);
       SetHelp(data->GUI.CH_FIXFEDIT  ,MSG_HELP_CO_CH_FIXFEDIT  );
       SetHelp(data->GUI.CH_WRAPHEAD  ,MSG_HELP_CO_CH_WRAPHEAD  );
-      SetHelp(data->GUI.CH_TEXTSTYLES,MSG_HELP_CO_CH_TEXTSTYLES);
+			SetHelp(data->GUI.CH_TEXTSTYLES,MSG_HELP_CO_CH_TEXTSTYLES);
       DoMethod(data->GUI.CH_AUTOTRANSLATEIN, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.ST_INTRANS, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,0             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,1             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,FALSE);

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-19  Alexey Ivanov <AmiS@amiga.org.ru>
+
+		* YAM_COg.c: fixed bug #773860 - Charset gadget not fully disabled
+			if Autodetect on.
+
 2004-11-15  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed a minor bug in the mail status handling which didn't
