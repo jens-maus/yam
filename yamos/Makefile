@@ -32,16 +32,22 @@ TARGET	= YAM
 CC	= gcc
 RM	= rm -f
 CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
-CFLAGS	= -I./includes -c -Wall
+CFLAGS	= -DDEBUG -I./includes -I./ -c -Wall
+OPTFLAG = -O2
 LDFLAGS	= -noixemul -mstackextend
-LDLIBS	= -lmui
+LDLIBS	= -lmui -ldebug
+
+GENCLASSES = extrasrc/genclasses/GenClasses
 
 #
+
+CLASSES = classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o\
+          classes/Addrmatchlist.o classes/InfoBar.o classes/YAM.o
 
 OBJS	= YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
 	  YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o YAM_MA.o YAM_MAf.o \
 	  YAM_md5.o YAM_MI.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
-	  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o $(EXTRA)
+	  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o $(EXTRA) $(CLASSES) Debug.o
 
 EXTRA	= all_gcc.o
 
@@ -52,17 +58,27 @@ all: $(TARGET)
 #
 
 .c.o:
-	$(CC) $(CFLAGS) $< -DNO_INLINE_STDARG
+	$(CC) $(CFLAGS) $< -o $@ -DNO_INLINE_STDARG
 
 #
 
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
 
+#
+
 clean:
 	-$(RM) $(TARGET) $(OBJS) YAM_locale.?
 
-#
+#######################################
+
+genclasses: extrasrc/genclasses/gc.c extrasrc/genclasses/gc.h extrasrc/genclasses/lists.c extrasrc/genclasses/lists.h
+	@make -C extrasrc/genclasses
+
+classinfo:
+	@$(GENCLASSES) classes -b$(TARGET) -gpl -storm -iClassesExtra.h
+
+#######################################
 
 YAM.o:	YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
 	YAM_config.h YAM_configFile.h YAM_debug.h YAM_find.h YAM_folderconfig.h \
@@ -184,3 +200,32 @@ all_gcc.o: all_gcc.c extrasrc/astcsma.c extrasrc/getft.c extrasrc/stccpy.c \
 YAM_locale.h: YAM_locale.c
 YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
 	flexcat $< YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+
+#######################################
+
+classes/Addrmatchlist.o: classes/Addrmatchlist.c classes/Addrmatchlist_cl.h \
+  YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
+  YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+classes/Searchwindow.o: classes/Searchwindow.c classes/Searchwindow_cl.h YAM.h \
+  YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h \
+  YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+classes/Recipientstring.o: classes/Recipientstring.c classes/Recipientstring_cl.h \
+  YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
+  YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+classes/InfoBar.o: classes/InfoBar.c classes/InfoBar_cl.h \
+  YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h YAM_folderconfig.h \
+  YAM_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+classes/Classes.o: classes/Classes.c classes/Classes.h YAM.h YAM_addressbook.h \
+  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
+  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+classes/YAM.o: classes/YAM.c classes/YAM_cl.h YAM.h YAM_addressbook.h \
+  YAM_config.h YAM_debug.h YAM_folderconfig.h YAM_hook.h YAM_locale.h \
+  YAM_main.h YAM_mainFolder.h YAM_utilities.h YAM_write.h
+
+#######################################
+
