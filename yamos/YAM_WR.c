@@ -221,12 +221,24 @@ static char *NewID(BOOL is_msgid)
 
    if(is_msgid)
    {
+      ULONG seconds;
       struct DateStamp ds;
-      DateStamp(&ds);
 
-      sprintf(idbuf, "yam%ld.%ld.%ld@%s", ds.ds_Days, ds.ds_Tick, (ULONG)FindTask(NULL), C->SMTP_Server);
+      // lets calculate the seconds
+      DateStamp(&ds);
+      seconds = ds.ds_Days*24*60*60+ds.ds_Minute*60; // seconds since 1-Jan-78
+
+      // Here we try to generate a unique MessageID.
+      // We try to be as much conform to the Recommandations for generating
+      // unqiue Message IDs as we can: http://www.jwz.org/doc/mid.html
+      sprintf(idbuf, "%lx%lx.%lx@%s", seconds, ds.ds_Tick, (ULONG)rand(), C->SMTP_Server);
    }
-   else sprintf(idbuf, "%ld.%d", (ULONG)FindTask(NULL), ++ctr);
+   else
+   {
+      // Generate a unique Boundary ID which conforms to RFC 2045 and includes
+      // a "=_" sequence to make it safe for quoted printable encoded parts
+      sprintf(idbuf, "=_BOUNDARY.%lx%lx.%02x", (ULONG)FindTask(NULL), (ULONG)rand(), ++ctr);
+   }
 
    return idbuf;
 }
@@ -1241,7 +1253,7 @@ mimebody:
 
    fputs("MIME-Version: 1.0\n", fh); // RFC 1521 requires that
 
-   sprintf(boundary, "BOUNDARY.%s", NewID(FALSE));
+   strcpy(boundary, NewID(FALSE));
    if (comp->ReportType > 0)
    {
       WR_ComposeReport(fh, comp, boundary);

@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-24  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAN_WR.c: modified MessageID and BoundardID generation code to
+      generate somewhat more unique IDs. The MessageID generation code
+      was not so unique like we thought and the BoundaryID code wasn't
+      conform to RFC2045. Now we should be very well on the safe side
+      in generating world-unique IDs.
+
 2004-11-23  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAN_AB.c, extrasrc/atcsma.c: applied patch #1071505 which requested
