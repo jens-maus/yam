@@ -529,7 +529,9 @@ HOOKPROTONHNONP(AB_DoubleClick, void)
          case ABM_BCC:     obj = gui->ST_BCC;     break;
          case ABM_FROM:    obj = gui->ST_FROM;    break;
          case ABM_REPLYTO: obj = gui->ST_REPLYTO; break;
-         default:          obj = gui->ST_TO;      break;
+         default:
+          // nothing
+         break;
       }
       DoMethod(G->App, MUIM_CallHook, &AB_FromAddrBookHook, obj, TAG_DONE);
       set(G->AB->GUI.WI, MUIA_Window_CloseRequest, TRUE);
@@ -879,8 +881,9 @@ HOOKPROTONHNO(AB_OpenFunc, void, int *arg)
       case ABM_BCC:     md = "(BCC)";     break;
       case ABM_FROM:    md = "(From)";    break;
       case ABM_REPLYTO: md = "(Reply-To)";break;
-      case ABM_EDIT:                      break;
-      default:          md = "(To)";      break;
+      default:
+        // nothing
+      break;
    }
    ab->WrWin = *md ? arg[1] : -1;
    ab->Modified = FALSE;
