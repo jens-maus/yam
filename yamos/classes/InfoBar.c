@@ -126,7 +126,7 @@ OVERLOAD(OM_NEW)
 			Child, gauge = GaugeObject,
 				GaugeFrame,
 				MUIA_Gauge_Horiz,    TRUE,
-				MUIA_Gauge_InfoText, " ",
+				MUIA_Gauge_InfoText, "",
 			End,
 			Child, infoText = TextObject,
 				MUIA_Text_SetMax,   FALSE,
@@ -272,7 +272,7 @@ DECLARE(ShowInfoText) // STRPTR infoText
 	}
 	else
 	{
-		nnset(data->TX_INFO, MUIA_Text_Contents, " ");
+		nnset(data->TX_INFO, MUIA_Text_Contents, "");
 	}
 
 	return TRUE;
