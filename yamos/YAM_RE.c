@@ -1748,6 +1748,7 @@ static void RE_ParseContentDispositionParameters(struct Part *rp)
          UnquoteString(eq, FALSE);
          if (!stricmp(s, "filename"))
          {
+						SParse(eq);
             rp->CParFileName = eq;
          }
       }
@@ -2221,7 +2222,7 @@ BOOL RE_DecodePart(struct Part *rp)
       if ((in = fopen(rp->Filename, "r")))
       {
          if (rp->HasHeaders) while (GetLine(in, buf, SIZE_LINE)) if (!*buf) break;
-         stcgfe(ext, rp->Name);
+				 stcgfe(ext, rp->Name);
          if (strlen(ext) > 10) *ext = 0;
          sprintf(file, "YAMm%08lx-w%dp%d.%s", G->RE[rp->Win]->MailPtr, rp->Win, rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);

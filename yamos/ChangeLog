@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-09-28  AmiS <amis@amiga.org.ru>
+    * YAM_RE.c: Added autodetection of russian codepages and
+      converting names of attached files to system codepage during
+      saving them to disk. (Only only for Codepage Autodetect/Translation = On)
+
 2003-09-23  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c, YAM_UT.c: reworked the .index loading routines a bit
