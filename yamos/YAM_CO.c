@@ -156,28 +156,34 @@ void CO_RuleGhost(struct CO_GUIData *gui, struct Rule *ru)
 {
    BOOL isremote = FALSE, single = FALSE;
 
-   if (ru) { isremote = ru->Remote; single = !ru->Combine; }
-   set(gui->ST_RNAME, MUIA_Disabled, !ru);
-   set(gui->CH_REMOTE, MUIA_Disabled, !ru);
-   set(gui->CH_APPLYNEW, MUIA_Disabled, !ru || isremote);
-   set(gui->CH_APPLYREQ, MUIA_Disabled, !ru || isremote);
-   set(gui->CH_APPLYSENT, MUIA_Disabled, !ru || isremote);
+   if(ru)
+   {
+    isremote = ru->Remote;
+    single = !ru->Combine;
+   }
+
+   set(gui->ST_RNAME,             MUIA_Disabled, !ru);
+   set(gui->CH_REMOTE,            MUIA_Disabled, !ru);
+   set(gui->CH_APPLYNEW,          MUIA_Disabled, !ru || isremote);
+   set(gui->CH_APPLYREQ,          MUIA_Disabled, !ru || isremote);
+   set(gui->CH_APPLYSENT,         MUIA_Disabled, !ru || isremote);
    set(gui->CY_COMBINE[isremote], MUIA_Disabled, !ru);
-   set(gui->CH_ABOUNCE, MUIA_Disabled, !ru || isremote);
-   set(gui->CH_AFORWARD, MUIA_Disabled, !ru || isremote);
-   set(gui->CH_ARESPONSE, MUIA_Disabled, !ru || isremote);
-   set(gui->CH_AEXECUTE, MUIA_Disabled, !ru);
-   set(gui->CH_APLAY, MUIA_Disabled, !ru);
-   set(gui->CH_AMOVE, MUIA_Disabled, !ru || isremote);
-   set(gui->CH_ADELETE, MUIA_Disabled, !ru);
-   set(gui->CH_ASKIP, MUIA_Disabled, !ru || !isremote);
-   set(gui->ST_ABOUNCE, MUIA_Disabled, !ru);
-   set(gui->ST_AFORWARD, MUIA_Disabled, !ru);
-   set(gui->ST_ARESPONSE, MUIA_Disabled, !ru);
-   set(gui->ST_AEXECUTE, MUIA_Disabled, !ru);
-   set(gui->ST_APLAY, MUIA_Disabled, !ru);
-   set(gui->TX_MOVETO, MUIA_Disabled, !ru);
-   set(gui->BT_RDEL, MUIA_Disabled, !ru);
+   set(gui->CH_ABOUNCE,           MUIA_Disabled, !ru || isremote);
+   set(gui->CH_AFORWARD,          MUIA_Disabled, !ru || isremote);
+   set(gui->CH_ARESPONSE,         MUIA_Disabled, !ru || isremote);
+   set(gui->CH_AEXECUTE,          MUIA_Disabled, !ru);
+   set(gui->CH_APLAY,             MUIA_Disabled, !ru);
+   set(gui->CH_AMOVE,             MUIA_Disabled, !ru || isremote);
+   set(gui->CH_ADELETE,           MUIA_Disabled, !ru);
+   set(gui->CH_ASKIP,             MUIA_Disabled, !ru || !isremote);
+   set(gui->ST_ABOUNCE,           MUIA_Disabled, !ru || isremote || !xget(gui->CH_ABOUNCE,    MUIA_Selected));
+   set(gui->ST_AFORWARD,          MUIA_Disabled, !ru || isremote || !xget(gui->CH_AFORWARD,   MUIA_Selected));
+   set(gui->ST_ARESPONSE,         MUIA_Disabled, !ru || isremote || !xget(gui->CH_ARESPONSE,  MUIA_Selected));
+   set(gui->ST_AEXECUTE,          MUIA_Disabled, !ru || !xget(gui->CH_AEXECUTE, MUIA_Selected));
+   set(gui->ST_APLAY,             MUIA_Disabled, !ru || !xget(gui->CH_APLAY, MUIA_Selected));
+   set(gui->PO_MOVETO,            MUIA_Disabled, !ru || !xget(gui->CH_AMOVE, MUIA_Selected));
+   set(gui->BT_RDEL,              MUIA_Disabled, !ru);
+
    FI_SearchGhost(&(gui->GR_SEARCH[2*isremote]), !ru);
    FI_SearchGhost(&(gui->GR_SEARCH[2*isremote+1]), !ru || single);
 

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-11-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c: the action gadgets of the filter rules will now be
+      ghosted as soon as the corresponding checkmark is disabled.
+
 2003-11-11  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: added "7-bit" and "8-bit" to the recognizable transfer
