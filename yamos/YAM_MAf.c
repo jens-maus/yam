@@ -423,7 +423,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
   else if(set_active) FO_SetCurrentFolder(folder);
 
   // if this folder should be disabled, lets do it now
-  if(folder->Type == FT_GROUP || MA_GetIndex(folder) == NULL)
+  if(folder->Type == FT_GROUP || MA_GetIndex(folder) == FALSE)
   {
     SetAttrs(gui->NL_MAILS, MUIA_Disabled, TRUE,
                             MUIA_ShortHelp, NULL,
