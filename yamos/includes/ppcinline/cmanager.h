@@ -1,64 +1,91 @@
+/* Automatically generated header! Do not edit! */
+
 #ifndef _PPCINLINE_CMANAGER_H
 #define _PPCINLINE_CMANAGER_H
 
 #ifndef __PPCINLINE_MACROS_H
 #include <ppcinline/macros.h>
-#endif
+#endif /* !__PPCINLINE_MACROS_H */
 
 #ifndef CMANAGER_BASE_NAME
 #define CMANAGER_BASE_NAME CManagerBase
-#endif
+#endif /* !CMANAGER_BASE_NAME */
 
-#define CM_StartManager(par1, last) \
-	LP2(0x1e, APTR, CM_StartManager, STRPTR, par1, a0, STRPTR, last, a1, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_CreateBitMap(__p0, __p1, __p2, __p3, __p4) \
+	LP5(84, struct BitMap *, CM_CreateBitMap, \
+		ULONG , __p0, d0, \
+		ULONG , __p1, d1, \
+		ULONG , __p2, d2, \
+		ULONG , __p3, d3, \
+		struct BitMap *, __p4, a0, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_LoadData(par1, par2, last) \
-	LP3(0x24, BOOL, CM_LoadData, STRPTR, par1, a0, struct CMData *, par2, a1, STRPTR, last, a2, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_GetEntry(__p0, __p1) \
+	LP2(78, APTR , CM_GetEntry, \
+		APTR , __p0, a0, \
+		ULONG , __p1, d0, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_SaveData(par1, par2, last) \
-	LP3NR(0x2a, CM_SaveData, STRPTR, par1, a0, struct CMData *, par2, a1, STRPTR, last, a2, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_FreeEntry(__p0) \
+	LP1NR(66, CM_FreeEntry, \
+		APTR , __p0, a0, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_FreeData(last) \
-	LP1NR(0x30, CM_FreeData, struct CMData *, last, a0, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_SaveData(__p0, __p1, __p2) \
+	LP3NR(42, CM_SaveData, \
+		STRPTR , __p0, a0, \
+		struct CMData *, __p1, a1, \
+		STRPTR , __p2, a2, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_GetParent(par1, last) \
-	LP2(0x36, struct CMGroup  *, CM_GetParent, struct CMGroup *, par1, a0, struct CMGroup *, last, a1, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_StartManager(__p0, __p1) \
+	LP2(30, APTR , CM_StartManager, \
+		STRPTR , __p0, a0, \
+		STRPTR , __p1, a1, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_AllocEntry(last) \
-	LP1(0x3c, APTR, CM_AllocEntry, ULONG, last, d0, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_GetParent(__p0, __p1) \
+	LP2(54, struct CMGroup *, CM_GetParent, \
+		struct CMGroup *, __p0, a0, \
+		struct CMGroup *, __p1, a1, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_FreeEntry(last) \
-	LP1NR(0x42, CM_FreeEntry, APTR, last, a0, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_LoadData(__p0, __p1, __p2) \
+	LP3(36, BOOL , CM_LoadData, \
+		STRPTR , __p0, a0, \
+		struct CMData *, __p1, a1, \
+		STRPTR , __p2, a2, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_FreeHandle(par1, last) \
-	LP2NR(0x48, CM_FreeHandle, APTR, par1, a0, BOOL, last, d0, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_AddEntry(__p0) \
+	LP1(96, BOOL , CM_AddEntry, \
+		APTR , __p0, a0, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_GetEntry(par1, last) \
-	LP2(0x4e, APTR, CM_GetEntry, APTR, par1, a0, ULONG, last, d0, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_FreeData(__p0) \
+	LP1NR(48, CM_FreeData, \
+		struct CMData *, __p0, a0, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_CreateBitMap(par1, par2, par3, par4, last) \
-	LP5(0x54, struct BitMap   *, CM_CreateBitMap, ULONG, par1, d0, ULONG, par2, d1, ULONG, par3, d2, ULONG, par4, d3, struct BitMap *, last, a0, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_AllocEntry(__p0) \
+	LP1(60, APTR , CM_AllocEntry, \
+		ULONG , __p0, d0, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_DeleteBitMap(last) \
-	LP1NR(0x5a, CM_DeleteBitMap, struct BitMap *, last, a0, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_FreeHandle(__p0, __p1) \
+	LP2NR(72, CM_FreeHandle, \
+		APTR , __p0, a0, \
+		BOOL , __p1, d0, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_AddEntry(last) \
-	LP1(0x60, BOOL, CM_AddEntry, APTR, last, a0, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_FreeList(__p0) \
+	LP1NR(102, CM_FreeList, \
+		struct MinList *, __p0, a0, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#define CM_FreeList(last) \
-	LP1NR(0x66, CM_FreeList, struct MinList *, last, a0, \
-	, CMANAGER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
+#define CM_DeleteBitMap(__p0) \
+	LP1NR(90, CM_DeleteBitMap, \
+		struct BitMap *, __p0, a0, \
+		, CMANAGER_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
-#endif /*  _PPCINLINE_CMANAGER_H  */
+#endif /* !_PPCINLINE_CMANAGER_H */

@@ -1,92 +1,132 @@
+/* Automatically generated header! Do not edit! */
+
 #ifndef _PPCINLINE_XPKMASTER_H
 #define _PPCINLINE_XPKMASTER_H
 
 #ifndef __PPCINLINE_MACROS_H
 #include <ppcinline/macros.h>
-#endif
+#endif /* !__PPCINLINE_MACROS_H */
 
 #ifndef XPKMASTER_BASE_NAME
 #define XPKMASTER_BASE_NAME XpkBase
+#endif /* !XPKMASTER_BASE_NAME */
+
+#define XpkOpen(__p0, __p1) \
+	LP2(54, LONG , XpkOpen, \
+		struct XpkFib **, __p0, a0, \
+		struct TagItem *, __p1, a1, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkQuery(__p0) \
+	LP1(84, LONG , XpkQuery, \
+		struct TagItem *, __p0, a0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkClose(__p0) \
+	LP1(78, LONG , XpkClose, \
+		struct XpkFib *, __p0, a0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkFreeObject(__p0, __p1) \
+	LP2NR(96, XpkFreeObject, \
+		ULONG , __p0, d0, \
+		APTR , __p1, a0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkRead(__p0, __p1, __p2) \
+	LP3(60, LONG , XpkRead, \
+		struct XpkFib *, __p0, a0, \
+		STRPTR , __p1, a1, \
+		ULONG , __p2, d0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkFault(__p0, __p1, __p2, __p3) \
+	LP4(108, ULONG , XpkFault, \
+		LONG , __p0, d0, \
+		STRPTR , __p1, a0, \
+		STRPTR , __p2, a1, \
+		ULONG , __p3, d1, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkPack(__p0) \
+	LP1(42, LONG , XpkPack, \
+		struct TagItem *, __p0, a0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkPassRequest(__p0) \
+	LP1(114, LONG , XpkPassRequest, \
+		struct TagItem *, __p0, a0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkUnpack(__p0) \
+	LP1(48, LONG , XpkUnpack, \
+		struct TagItem *, __p0, a0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkAllocObject(__p0, __p1) \
+	LP2(90, APTR , XpkAllocObject, \
+		ULONG , __p0, d0, \
+		struct TagItem *, __p1, a0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkExamine(__p0, __p1) \
+	LP2(36, LONG , XpkExamine, \
+		struct XpkFib *, __p0, a0, \
+		struct TagItem *, __p1, a1, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkSeek(__p0, __p1, __p2) \
+	LP3(72, LONG , XpkSeek, \
+		struct XpkFib *, __p0, a0, \
+		LONG , __p1, d0, \
+		LONG , __p2, d1, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkPrintFault(__p0, __p1) \
+	LP2(102, BOOL , XpkPrintFault, \
+		LONG , __p0, d0, \
+		STRPTR , __p1, a0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#define XpkWrite(__p0, __p1, __p2) \
+	LP3(66, LONG , XpkWrite, \
+		struct XpkFib *, __p0, a0, \
+		STRPTR , __p1, a1, \
+		LONG , __p2, d0, \
+		, XPKMASTER_BASE_NAME, 0, 0, 0, 0, 0, 0)
+
+#ifdef USE_INLINE_STDARG
+
+#include <stdarg.h>
+
+#define XpkPackTags(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	XpkPack((struct TagItem *)_tags);})
+
+#define XpkPassRequestTags(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	XpkPassRequest((struct TagItem *)_tags);})
+
+#define XpkUnpackTags(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	XpkUnpack((struct TagItem *)_tags);})
+
+#define XpkAllocObjectTags(__p0, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	XpkAllocObject(__p0, (struct TagItem *)_tags);})
+
+#define XpkExamineTags(__p0, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	XpkExamine(__p0, (struct TagItem *)_tags);})
+
+#define XpkOpenTags(__p0, ...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	XpkOpen(__p0, (struct TagItem *)_tags);})
+
+#define XpkQueryTags(...) \
+	({ULONG _tags[] = { __VA_ARGS__ }; \
+	XpkQuery((struct TagItem *)_tags);})
+
 #endif
 
-#define XpkExamine(fib, tags) \
-	LP2(0x24, LONG, XpkExamine, struct XpkFib *, fib, a0, struct TagItem *, tags, a1, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkExamineTags(fib, tags...) \
-	({ULONG _tags[] = {tags}; XpkExamine((fib), (struct TagItem *) _tags);})
-
-#define XpkPack(tags) \
-	LP1(0x2a, LONG, XpkPack, struct TagItem *, tags, a0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkPackTags(tags...) \
-	({ULONG _tags[] = {tags}; XpkPack((struct TagItem *) _tags);})
-
-#define XpkUnpack(tags) \
-	LP1(0x30, LONG, XpkUnpack, struct TagItem *, tags, a0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkUnpackTags(tags...) \
-	({ULONG _tags[] = {tags}; XpkUnpack((struct TagItem *) _tags);})
-
-
-#define XpkOpen(xbuf, tags) \
-	LP2(0x36, LONG, XpkOpen, struct XpkFib **, xbuf, a0, struct TagItem *, tags, a1, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkOpenTags(xbuf, tags...) \
-	({ULONG _tags[] = {tags}; XpkOpen((xbuf), (struct TagItem *) _tags);})
-
-
-#define XpkRead(xbuf, buf, len) \
-	LP3(0x3c, LONG, XpkRead, struct XpkFib *, xbuf, a0, STRPTR, buf, a1, ULONG, len, d0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkWrite(xbuf, buf, len) \
-	LP3(0x42, LONG, XpkWrite, struct XpkFib *, xbuf, a0, STRPTR, buf, a1, LONG, len, d0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkSeek(xbuf, len, mode) \
-	LP3(0x48, LONG, XpkSeek, struct XpkFib *, xbuf, a0, LONG, len, d0, LONG, mode, d1, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkClose(xbuf) \
-	LP1(0x4e, LONG, XpkClose, struct XpkFib *, xbuf, a0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkQuery(tags) \
-	LP1(0x54, LONG, XpkQuery, struct TagItem *, tags, a0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkQueryTags(tags...) \
-	({ULONG _tags[] = {tags}; XpkQuery((struct TagItem *) _tags);})
-
-
-#define XpkAllocObject(type, tags) \
-	LP2(0x5a, APTR, XpkAllocObject, ULONG, type, d0, struct TagItem *, tags, a0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkAllocObjectTags(type, tags...) \
-	({ULONG _tags[] = {tags}; XpkAllocObject((type), (struct TagItem *) _tags);})
-
-#define XpkFreeObject(type, object) \
-	LP2NR(0x60, XpkFreeObject, ULONG, type, d0, APTR, object, a0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkPrintFault(code, header) \
-	LP2(0x66, BOOL, XpkPrintFault, LONG, code, d0, STRPTR, header, a0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkFault(code, header, buffer, size) \
-	LP4(0x6c, ULONG, XpkFault, LONG, code, d0, STRPTR, header, a0, STRPTR, buffer, a1, ULONG, size, d1, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkPassRequest(tags) \
-	LP1(0x72, LONG, XpkPassRequest, struct TagItem *, tags, a0, \
-	, XPKMASTER_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
-
-#define XpkPassRequestTags(tags...) \
-	({ULONG _tags[] = {tags}; XpkPassRequest((struct TagItem *) _tags);})
-
-#endif /*  _PPCINLINE_XPKMASTER_H  */
+#endif /* !_PPCINLINE_XPKMASTER_H */

@@ -48,7 +48,7 @@ OPTFLAGS = -O2 -fomit-frame-pointer -fstrength-reduce -funroll-loops
 DEBUG    = -DDEBUG -g3 -O0
 CFLAGS   = -noixemul -pipe -I./ -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS  = -noixemul $(CPU)
-LDLIBS   = -ldebug 
+LDLIBS   = -ldebug -lxpk -lamissl
 
 # Special flags
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
