@@ -316,20 +316,21 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
     // lets collect the waiting returnIDs now
     COLLECT_RETURNIDS;
 
-    if(!SafeOpenWindow(WI_YAMREQ)) result = FALSE;
-    else while(result == -1)
+    if(!SafeOpenWindow(WI_YAMREQ)) result = 0;
+    else do
     {
       ULONG signals;
-      ULONG ret = DoMethod(app, MUIM_Application_NewInput, &signals);
+      LONG ret = DoMethod(app, MUIM_Application_NewInput, &signals);
 
-      // if a button was hit, lets get outda here.
+      // bail out if a button was hit
       if(ret > 0 && ret <= num_gads+1)
       {
         result = ret-1;
         break;
       }
-      if(result == -1 && signals) Wait(signals);
-    }
+
+      if(signals) Wait(signals);
+    } while (result == -1);
 
     // now lets reissue the collected returnIDs again
     REISSUE_RETURNIDS;
