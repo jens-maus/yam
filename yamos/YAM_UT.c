@@ -2217,58 +2217,158 @@ ULONG CompressMsgID(char *msgid)
 //  Replaces variables with values
 char *ExpandText(char *src, struct ExpandTextData *etd)
 {
-   char buf[SIZE_ADDRESS], *p, *p2, *dst = AllocStrBuf(SIZE_DEFAULT);
+   char buf[SIZE_ADDRESS];
+   char *p;
+   char *p2;
+   char *dst = AllocStrBuf(SIZE_DEFAULT);
    struct DateStamp adate;
 
-   for (; *src; src++)
-      if (*src == '\\')
+   for(; *src; src++)
+   {
+      if(*src == '\\')
       {
          src++;
          switch (*src)
          {
-            case '\\':  dst = StrBufCat(dst, "\\"); break;
-            case 'n':  dst = StrBufCat(dst, "\n"); break;
+            case '\\':
+              dst = StrBufCat(dst, "\\");
+            break;
+
+            case 'n':
+              dst = StrBufCat(dst, "\n");
+            break;
          }
       }
-      else if (*src == '%' && etd)
+      else if(*src == '%' && etd)
       {
-         if (!etd->OM_Date) etd->OM_Date = DateStamp(&adate);
+         if(!etd->OM_Date)
+           etd->OM_Date = DateStamp(&adate);
+
          src++;
-         switch (*src)
+         switch(*src)
          {
-            case 'n': dst = StrBufCat(dst, etd->OS_Name); break;
-            case 'f': MyStrCpy(buf, etd->OS_Name);
-                      if ((p = strchr(buf, ','))) p = Trim(++p);
-                      else { for (p = buf; *p && *p != ' '; p++); *p = 0; p = buf; }
-                      dst = StrBufCat(dst, p); break;
-            case 's': dst = StrBufCat(dst, etd->OM_Subject); break;
-            case 'e': dst = StrBufCat(dst, etd->OS_Address); break;
-            case 'd': dst = StrBufCat(dst, DateStamp2String(etd->OM_Date, DSS_DATE, TZC_NONE)); break;
-            case 't': dst = StrBufCat(dst, DateStamp2String(etd->OM_Date, DSS_TIME, TZC_NONE)); break;
-            case 'w': dst = StrBufCat(dst, DateStamp2String(etd->OM_Date, DSS_WEEKDAY, TZC_NONE)); break;
-            case 'm': dst = StrBufCat(dst, etd->OM_MessageID); break;
-            case 'r': dst = StrBufCat(dst, etd->R_Name); break;
-            case 'v': strcpy(buf, etd->R_Name);
-                      if ((p = strchr(buf, ','))) p = Trim(++p);
-                      else { for (p = buf; *p && *p != ' '; p++); *p = 0; p = buf; }
-                      dst = StrBufCat(dst, p); break;
-            case 'a': dst = StrBufCat(dst, etd->R_Address); break;
-            case 'i': strcpy(buf, etd->OS_Name);
-                      for (p = p2 = &buf[1]; *p; p++)
-                         if (*p == ' ' && p[1] && p[1] != ' ') *p2++ = *++p;
-                      *p2 = 0;
-                      dst = StrBufCat(dst, buf); break;
-            case 'j': strcpy(buf, etd->OS_Name);
-                      for (p2 = &buf[1], p = &buf[strlen(buf)-1]; p > p2; p--)
-                         if (p[-1] == ' ') { *p2++ = *p; break; }
-                      *p2 = 0;
-                      dst = StrBufCat(dst, buf); break;
-            case 'h': if ((p = FileToBuffer(etd->HeaderFile)))
-                      {
-                         dst = StrBufCat(dst, p); free(p);
-                      }
-                      break;
-        }
+            case 'n':
+              dst = StrBufCat(dst, etd->OS_Name);
+            break;
+
+            case 'f':
+            {
+              MyStrCpy(buf, etd->OS_Name);
+
+              if((p = strchr(buf, ',')))
+                p = Trim(++p);
+              else
+              {
+                for(p = buf; *p && *p != ' '; p++);
+
+                *p = 0;
+                p = buf;
+              }
+              dst = StrBufCat(dst, p);
+            }
+            break;
+
+            case 's':
+              dst = StrBufCat(dst, etd->OM_Subject);
+            break;
+
+            case 'e':
+              dst = StrBufCat(dst, etd->OS_Address);
+            break;
+
+            case 'd':
+            {
+              char datstr[64];
+              DateStamp2String(datstr, etd->OM_Date, DSS_DATE, TZC_NONE);
+              dst = StrBufCat(dst, datstr);
+            }
+            break;
+
+            case 't':
+            {
+              char datstr[64];
+              DateStamp2String(datstr, etd->OM_Date, DSS_TIME, TZC_NONE);
+              dst = StrBufCat(dst, datstr);
+            }
+            break;
+
+            case 'w':
+            {
+              char datstr[64];
+              DateStamp2String(datstr, etd->OM_Date, DSS_WEEKDAY, TZC_NONE);
+              dst = StrBufCat(dst, datstr);
+            }
+            break;
+
+            case 'm':
+              dst = StrBufCat(dst, etd->OM_MessageID);
+            break;
+
+            case 'r':
+              dst = StrBufCat(dst, etd->R_Name);
+            break;
+
+            case 'v':
+            {
+              strcpy(buf, etd->R_Name);
+              if((p = strchr(buf, ',')))
+                p = Trim(++p);
+              else
+              {
+                for(p = buf; *p && *p != ' '; p++);
+
+                *p = 0;
+                p = buf;
+              }
+              dst = StrBufCat(dst, p);
+            }
+            break;
+
+            case 'a':
+              dst = StrBufCat(dst, etd->R_Address);
+            break;
+
+            case 'i':
+            {
+              strcpy(buf, etd->OS_Name);
+
+              for(p = p2 = &buf[1]; *p; p++)
+              {
+                if(*p == ' ' && p[1] && p[1] != ' ')
+                  *p2++ = *++p;
+              }
+              *p2 = 0;
+              dst = StrBufCat(dst, buf);
+            }
+            break;
+
+            case 'j':
+            {
+              strcpy(buf, etd->OS_Name);
+
+              for(p2 = &buf[1], p = &buf[strlen(buf)-1]; p > p2; p--)
+              {
+                if(p[-1] == ' ')
+                {
+                  *p2++ = *p;
+                  break;
+                }
+              }
+              *p2 = 0;
+              dst = StrBufCat(dst, buf);
+            }
+            break;
+
+            case 'h':
+            {
+              if((p = FileToBuffer(etd->HeaderFile)))
+              {
+                dst = StrBufCat(dst, p);
+                free(p);
+              }
+            }
+            break;
+         }
       }
       else
       {
@@ -2276,6 +2376,8 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
          chr[0] = *src;
          dst = StrBufCat(dst, chr);
       }
+   }
+
    return dst;
 }
 ///
@@ -2380,7 +2482,7 @@ void DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZCo
 ///
 /// TimeVal2String
 //  Converts a timeval structure to a string with using DateStamp2String after a convert
-char *TimeVal2String(const struct timeval *tv, enum DateStampType mode, enum TZConvert tzc)
+BOOL TimeVal2String(char *dst, const struct timeval *tv, enum DateStampType mode, enum TZConvert tzc)
 {
    struct DateStamp ds;
 
@@ -2388,20 +2490,21 @@ char *TimeVal2String(const struct timeval *tv, enum DateStampType mode, enum TZC
    TimeVal2DateStamp(tv, &ds, TZC_NONE);
 
    // then call the DateStamp2String() function to get the real string
-   return DateStamp2String(&ds, mode, tzc);
+   return DateStamp2String(dst, &ds, mode, tzc);
 }
 ///
 /// DateStamp2String
-//  Converts a datestamp to a string
-char *DateStamp2String(struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc)
+//  Converts a datestamp to a string. The caller have to make sure that the destination has
+//  at least 64 characters space.
+BOOL DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc)
 {
-   static char resstr[64];                    // allocate enough space as OS3.1 is buggy here.
-   char datestr[32], timestr[32], daystr[32]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+   char datestr[64], timestr[64], daystr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
    struct DateTime dt;
    struct DateStamp dsnow;
 
    // if this argument is not set we get the actual time
-   if(!date) date = DateStamp(&dsnow);
+   if(!date)
+     date = DateStamp(&dsnow);
 
    // now we fill the DateTime structure with the data for our request.
    dt.dat_Stamp   = *date;
@@ -2412,7 +2515,8 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode, enum TZC
    dt.dat_StrDay  = daystr;
 
    // now we check wheter we have to convert the datestamp to a specific TZ or not
-   if(tzc != TZC_NONE) DateStampTZConvert(&dt.dat_Stamp, tzc);
+   if(tzc != TZC_NONE)
+     DateStampTZConvert(&dt.dat_Stamp, tzc);
 
    // lets terminate the strings as OS 3.1 is strange
    datestr[31] = '\0';
@@ -2420,7 +2524,8 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode, enum TZC
    daystr[31]  = '\0';
 
    // lets convert the DateStamp now to a string
-   if(DateToStr(&dt) == FALSE) return NULL;
+   if(DateToStr(&dt) == FALSE)
+     return FALSE;
 
    switch (mode)
    {
@@ -2433,32 +2538,32 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode, enum TZC
         if (date->ds_Days < 8035) y += 1900;
         else y += 2000;
 
-        sprintf(resstr, "%s %s %02d %s %d\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
+        sprintf(dst, "%s %s %02d %s %d\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
       }
       break;
 
       case DSS_DATETIME:
       case DSS_USDATETIME:
       {
-        sprintf(resstr, "%s %s", datestr, timestr);
+        sprintf(dst, "%s %s", datestr, timestr);
       }
       break;
 
       case DSS_WEEKDAY:
       {
-        strcpy(resstr, daystr);
+        strcpy(dst, daystr);
       }
       break;
 
       case DSS_DATE:
       {
-        strcpy(resstr, datestr);
+        strcpy(dst, datestr);
       }
       break;
 
       case DSS_TIME:
       {
-        strcpy(resstr, timestr);
+        strcpy(dst, timestr);
       }
       break;
 
@@ -2468,12 +2573,13 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode, enum TZC
         // calculate the beat time
         LONG beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
 
-        if(mode == DSS_DATEBEAT) sprintf(resstr, "%s @%03ld", datestr, beat);
-        else                     sprintf(resstr, "@%03ld", beat);
+        if(mode == DSS_DATEBEAT) sprintf(dst, "%s @%03ld", datestr, beat);
+        else                     sprintf(dst, "@%03ld", beat);
       }
       break;
    }
-   return resstr;
+
+   return TRUE;
 }
 ///
 /// DateStamp2Long
@@ -3953,7 +4059,9 @@ static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, vo
    strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
    if ((fh = fopen(logfile, "a")))
    {
-      fprintf(fh, "%s [%02d] ", DateStamp2String(NULL, DSS_DATETIME, TZC_NONE), id);
+      char datstr[64];
+      DateStamp2String(datstr, NULL, DSS_DATETIME, TZC_NONE);
+      fprintf(fh, "%s [%02d] ", datstr, id);
       fprintf(fh, text, a1, a2, a3, a4);
       fprintf(fh, "\n");
       fclose(fh);

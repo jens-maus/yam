@@ -320,7 +320,10 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
         search->DT.dat_StrTime = (time = strchr(match,' ')) ? time+1 : "00:00:00";
         if (!StrToDate(&(search->DT)))
         {
-          ER_NewError(GetStr(MSG_ER_ErrorDateFormat), DateStamp2String(NULL, DSS_DATE, TZC_NONE), NULL);
+          char datstr[64];
+          DateStamp2String(datstr, NULL, DSS_DATE, TZC_NONE);
+          ER_NewError(GetStr(MSG_ER_ErrorDateFormat), datstr, NULL);
+
           return FALSE;
         };
         search->Pattern = (char *)&(search->DT.dat_Stamp);

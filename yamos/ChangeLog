@@ -7,6 +7,10 @@ $Source$
 
 2004-10-08  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c, misc: reworked DateStamp2String() function to not work
+      with a static variable because it happend in the past that routines
+      used it incorrectly, resulting e.g. in the maillistview displaying
+      wrong or cutted timevalues.
     * YAM_MAf.c, YAM_FI.c: fixed some buffer overflows which were caused by
       some unterminated strncpy() usages and resulted in messages showing
       a size of -1.

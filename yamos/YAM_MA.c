@@ -163,7 +163,21 @@ HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
    static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
    char *sh = NULL;
    struct Mail *mail = MA_GetActiveMail(NULL, NULL, NULL);
-   if (mail) SPrintF(sh = buffer, GetStr(MSG_MA_MessageInfo), mail->From.RealName, mail->From.Address, mail->To.RealName, mail->To.Address, mail->Subject, DateStamp2String(&mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL), mail->MailFile, mail->Size);
+   if(mail)
+   {
+      char datstr[64];
+
+      DateStamp2String(datstr, &mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+      SPrintF(sh = buffer, GetStr(MSG_MA_MessageInfo), mail->From.RealName,
+                                                       mail->From.Address,
+                                                       mail->To.RealName,
+                                                       mail->To.Address,
+                                                       mail->Subject,
+                                                       datstr,
+                                                       mail->MailFile,
+                                                       mail->Size);
+   }
+
    set(G->MA->GUI.NL_MAILS, MUIA_ShortHelp, sh);
 }
 MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
@@ -2356,6 +2370,7 @@ void MA_ChangeSubject(struct Mail *mail, char *subj)
       f = FileSize(newfile); fo->Size += f - mail->Size; mail->Size = f;
       AppendLog(82, GetStr(MSG_LOG_ChangingSubject), mail->Subject, mail->MailFile, fo->Name, subj);
       strncpy(mail->Subject, subj, SIZE_SUBJECT-1); // only copy a maximum of SIZE_SUBJECT or it will burn
+      mail->Subject[SIZE_SUBJECT-1] = '\0';
       MA_ExpireIndex(fo);
 
       if(fo->XPKType > 1)
@@ -2738,14 +2753,17 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
          // set by all ppl and strcpy() is costy ;)
          if((C->MessageCols & (1<<7) && entry->transDate.tv_secs > 0) || searchWinHook)
          {
-            static char datestr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
-            array[7] = strcpy(datestr, TimeVal2String(&entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL));
+            static char datstr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+            TimeVal2String(datstr, &entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+            array[7] = datstr;
          }
          else array[7] = "";
 
          if(C->MessageCols & (1<<4) || searchWinHook)
          {
-            array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+            static char datstr[64];
+            DateStamp2String(datstr, &entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+            array[4] = datstr;
          }
 
          if(C->MessageCols & (1<<5) || searchWinHook)
@@ -3332,10 +3350,10 @@ struct MA_ClassData *MA_New(void)
               MUIA_ShowMe,  !(C->InfoBar == IB_POS_OFF),
             End,
             Child, data->GUI.GR_BOTTOM = HGroup,
-               MUIA_Group_Spacing, 1,
+               GroupSpacing(1),
                Child, data->GUI.LV_FOLDERS = NListviewObject,
-                  MUIA_HelpNode, "MA00",
-                  MUIA_CycleChain, 1,
+                  MUIA_HelpNode,    "MA00",
+                  MUIA_CycleChain,  TRUE,
                   MUIA_HorizWeight, 30,
                   MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
                   MUIA_NListview_NList, data->GUI.NL_FOLDERS = MainFolderListtreeObject,
@@ -3362,8 +3380,8 @@ struct MA_ClassData *MA_New(void)
                End,
                Child, BalanceObject, End,
                Child, data->GUI.LV_MAILS = NListviewObject,
-                  MUIA_HelpNode, "MA01",
-                  MUIA_CycleChain,1,
+                  MUIA_HelpNode,   "MA01",
+                  MUIA_CycleChain, TRUE,
                   MUIA_NListview_NList, data->GUI.NL_MAILS = MainMailListObject,
                      MUIA_NList_MinColSortable, 0,
                      MUIA_NList_TitleClick          , TRUE,

@@ -794,7 +794,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
       struct rxd_mailinfo rd;
       long active;
       char from[SIZE_ADDRESS], to[SIZE_ADDRESS], replyto[SIZE_ADDRESS], flags[SIZE_SMALL];
-      char filename[SIZE_PATHFILE], date[32], msgid[9];
+      char filename[SIZE_PATHFILE], date[64], msgid[9];
    } *rd = (void *)*rxd;
    struct Mail *mail;
    struct Folder *folder = 0;
@@ -814,6 +814,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, rd->active, &mail);
          }
          else mail = MA_GetActiveMail(ANYBOX, &folder, (int *)&rd->active);
+
          if (mail)
          {
             struct Person *pe = GetReturnAddress(mail);
@@ -849,7 +850,7 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             stccpy(rd->rd.res.from    = rd->from   , BuildAddrName2(&mail->From), SIZE_ADDRESS);
             stccpy(rd->rd.res.to      = rd->to     , BuildAddrName2(&mail->To), SIZE_ADDRESS);
             stccpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(pe), SIZE_ADDRESS);
-            strcpy(rd->rd.res.date    = rd->date   , DateStamp2String(&mail->Date, DSS_USDATETIME, TZC_LOCAL));
+            DateStamp2String(rd->rd.res.date = rd->date, &mail->Date, DSS_USDATETIME, TZC_LOCAL);
             rd->rd.res.subject = mail->Subject;
             rd->rd.res.size = &mail->Size;
             sprintf(rd->rd.res.msgid = rd->msgid, "%lX", mail->cMsgID);

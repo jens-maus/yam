@@ -403,11 +403,17 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
 
    if ((tf1 = OpenTempFile("w")))
    {
-      char *date = DateStamp2String(&mail->Date, DSS_DATETIME, TZC_NONE), *rcpt = BuildAddrName2(&mail->To), *subj = mail->Subject;
+      char date[64];
+      char *rcpt = BuildAddrName2(&mail->To);
+      char *subj = mail->Subject;
+
+      DateStamp2String(date, &mail->Date, DSS_DATETIME, TZC_NONE);
+
       p1->Filename = tf1->Filename;
       mode = isAutoActMDN(MDNtype) ? "automatically" : "in response to a user command";
       strcpy(disp, isAutoActMDN(MDNtype) ? "automatic-action/" : "manual-action/");
       strcat(disp, isAutoSendMDN(MDNtype) ? "MDN-sent-automatically; " : "MDN-sent-manually; ");
+
       switch (MDNtype & MDN_TYPEMASK)
       {
          case MDN_READ: strcat(disp, "displayed");  fprintf(tf1->FP, MDNMessage[0], date, rcpt, subj); break;

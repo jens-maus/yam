@@ -55,7 +55,6 @@ static struct ER_ClassData *ER_New(void);
 void ER_NewError(char *error, char *arg1, char *arg2)
 {
    static char label[SIZE_SMALL];
-   char buf[SIZE_LARGE];
    struct ER_GUIData *gui;
    int i;
 
@@ -69,16 +68,26 @@ void ER_NewError(char *error, char *arg1, char *arg2)
       if (!(G->ER = ER_New())) return;
       if (!SafeOpenWindow(G->ER->GUI.WI)) { DisposeModule(&G->ER); return; }
    }
+
    gui = &(G->ER->GUI);
+
    if (error)
    {
+      char buf[SIZE_LARGE];
+      char datstr[64];
+
       if (++G->ER_NumErr > MAXERR)
       {
          free(G->ER_Message[0]);
          for (--G->ER_NumErr, i = 1; i < G->ER_NumErr; i++) G->ER_Message[i-1] = G->ER_Message[i];
       }
-      SPrintF(buf, error, arg1, arg2); strcat(buf, "\n\n(");
-      strcat(buf, DateStamp2String(NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE));
+
+      // get actual date as a string
+      DateStamp2String(datstr, NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
+
+      SPrintF(buf, error, arg1, arg2);
+      strcat(buf, "\n\n(");
+      strcat(buf, datstr);
       strcat(buf, ")");
 
       if((G->ER_Message[G->ER_NumErr-1] = malloc(strlen(buf)+1)))

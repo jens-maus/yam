@@ -2931,10 +2931,12 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
                // open the message file to start exporting it
                if((mfh = fopen(fullfile, "r")))
                {
+                  char datstr[64];
                   BOOL inHeader = TRUE;
 
                   // printf out our leading "From " MBOX format line first
-                  fprintf(fh, "From %s %s", mail->From.Address, DateStamp2String(&mail->Date, DSS_UNIXDATE, TZC_NONE));
+                  DateStamp2String(datstr, &mail->Date, DSS_UNIXDATE, TZC_NONE);
+                  fprintf(fh, "From %s %s", mail->From.Address, datstr);
 
                   // let us put out the Status: header field
                   fprintf(fh, "Status: %s\n", MA_ToStatusHeader(mail));
@@ -3767,7 +3769,8 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct Mail *entry)
 {
    if (entry)
    {
-      static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL], dispdate[32];
+      static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL], dispdate[64];
+
       struct Person *pe = &entry->From;
       sprintf(array[0] = dispsta, "%3d ", entry->Index);
       if(hasTR_LOAD(entry))   strcat(dispsta, "\033o[10]");
@@ -3777,10 +3780,12 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct Mail *entry)
       array[2] = dispfro;
       MyStrCpy(dispfro, AddrName((*pe)));
       array[3] = entry->Subject;
-      array[4] = dispdate; *dispdate = 0;
+      array[4] = dispdate;
+      *dispdate = '\0';
+
       if(entry->Date.ds_Days)
       {
-        MyStrCpy(dispdate, DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL));
+        DateStamp2String(dispdate, &entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
       }
    }
    else
