@@ -7,6 +7,8 @@ $Source$
 
 2003-05-20  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_FO.c: fixed bug #729366 where YAM ignored the Cancel button of the
+      password entry window while creating/changing a folder.
     * YAM_FO.c: fixed bug in the folder config loading routines where YAM
       always created a "outgoing" folder if the folder directory was missing
       while starting up.
