@@ -768,6 +768,17 @@ SAVEDS ASM void RE_GetAddressFunc(REG(a1,int *arg))
 }
 MakeHook(RE_GetAddressHook, RE_GetAddressFunc);
 ///
+/// RE_SetUnreadFunc
+//  Sets the status of the current mail to unread
+SAVEDS ASM void RE_SetUnreadFunc(REG(a1,int *arg))
+{
+   int winnum = *arg;
+   MA_SetMailStatus(G->RE[winnum]->MailPtr, STATUS_UNR);
+   RE_UpdateStatusGroup(winnum);
+   DisplayStatistics(NULL);
+}
+MakeHook(RE_SetUnreadHook, RE_SetUnreadFunc);
+///
 /// RE_ChangeSubjectFunc
 //  Changes the subject of the current message
 SAVEDS ASM void RE_ChangeSubjectFunc(REG(a1,int *arg))
@@ -2340,7 +2351,7 @@ MakeHook(RE_LV_HDspHook,RE_LV_HDspFunc);
 ///
 /// RE_New
 //  Creates a read window
-enum {   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_CHSUBJ,
+enum {   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_SETUNREAD,RMEN_CHSUBJ,
          RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,
          RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
          RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT };
@@ -2395,6 +2406,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MBounce), MUIA_Menuitem_Shortcut,"B", MUIA_UserData,RMEN_BOUNCE, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MGetAddress), MUIA_Menuitem_Shortcut,"J", MUIA_UserData,RMEN_SAVEADDR, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SetUnread), MUIA_Menuitem_Shortcut,"U", MUIA_UserData,RMEN_SETUNREAD, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_ChangeSubj), MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_CHSUBJ, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_RE_Navigation),
@@ -2535,6 +2547,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_FORWARD         ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_FORWARD,0,winnum,FALSE);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_BOUNCE          ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_BOUNCE,0,winnum,FALSE);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SAVEADDR        ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_GetAddressHook,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SETUNREAD       ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_SetUnreadHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_CHSUBJ          ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_ChangeSubjectHook,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_PREV            ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,-1,0,winnum,FALSE);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_NEXT            ,MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,1,0,winnum,FALSE);

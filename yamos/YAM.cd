@@ -4234,7 +4234,9 @@ Pa_ssword
 MSG_CO_Del (//)
 Delete
 ;
-<<<<<<< YAM.cd
+MSG_RE_SetUnread (//)
+Set status to unread
+;
 MSG_WR_AltQuoted (//)
 Alternate Quoted
 ;
