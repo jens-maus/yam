@@ -207,6 +207,8 @@ DISPATCHERPROTO(FL_Dispatcher)
    struct Folder *srcfolder, *dstfolder;
    struct MUI_NListtree_TreeNode *tn_src, *tn_dst;
 
+//   DB(if(msg->MethodID != 0x9d510090) kprintf("%lx\n", msg->MethodID);)
+
    switch (msg->MethodID)
    {
       // we catch MUIM_DragReport because we want to restrict some dragging for some special objects

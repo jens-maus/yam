@@ -2493,16 +2493,17 @@ void MA_SetupDynamicMenus(void)
 //  Creates a ContextMenu for the folder Listtree
 ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
 {
+  static char menutitle[SIZE_DEFAULT];
   struct MUI_NList_TestPos_Result res;
   struct Mail *mail = NULL;
   struct PopupMenu *pop_menu;
   struct Window *win;
   struct MA_GUIData *gui = &G->MA->GUI;
   struct Folder *fo = FO_GetCurrentFolder();
+  BOOL isOutBox = OUTGOING(fo->Type);
   BOOL beingedited = FALSE, hasattach = FALSE;
   BOOL nomail = FALSE;
   ULONG  ret;
-  int i;
 
   enum{ PMN_READ=1, PMN_EDIT, PMN_REPLY, PMN_FORWARD, PMN_BOUNCE, PMN_SAVEADDR, PMN_MOVE, PMN_COPY,
         PMN_DELETE, PMN_PRINT, PMN_SAVE, PMN_DETACH, PMN_CROP, PMN_EXPMSG, PMN_NEW, PMN_SELALL,
@@ -2518,41 +2519,57 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
   if(res.entry == -1) nomail = TRUE;
   else
   {
-      DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, res.entry, &mail);
+    int i;
+    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, res.entry, &mail);
 
-      if(!mail) return(0);
+    if(!mail) return(0);
 
-      fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
+    fo->LastActive = xget(gui->NL_MAILS, MUIA_NList_Active);
 
-      if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
+    if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
 
-      for (i = 0; i < MAXWR; i++)
-      {
-         if (G->WR[i] && G->WR[i]->Mail == mail) beingedited = TRUE;
-      }
+    for (i = 0; i < MAXWR; i++)
+    {
+      if (G->WR[i] && G->WR[i]->Mail == mail) beingedited = TRUE;
+    }
 
-      // Now we set this entry as activ
-      if(fo->LastActive != res.entry) set(gui->NL_MAILS, MUIA_NList_Active, res.entry);
+    // Now we set this entry as activ
+    if(fo->LastActive != res.entry) set(gui->NL_MAILS, MUIA_NList_Active, res.entry);
   }
 
   // Get the window structure of the window which this listtree belongs to
   get(_win(gui->NL_MAILS), MUIA_Window_Window, &win);
   if(!win) return(0);
 
+  // now we create the menu title of the context menu
+  if(mail)
+  {
+    struct Person *pers = isOutBox ? &mail->To : &mail->From;
+
+    strcpy(menutitle, GetStr(isOutBox ? MSG_To : MSG_From));
+    strcat(menutitle, ": ");
+    strncat(menutitle, BuildAddrName2(pers), 20-strlen(menutitle));
+    strcat(menutitle, "...");
+  }
+  else
+  {
+    strcpy(menutitle, GetStr(MSG_MAIL_NONSEL));
+  }
+
   // We create the PopupMenu now
-  pop_menu =   PMMenu(mail ? mail->MailFile : GetStr(MSG_MAIL_NONSEL)),
+  pop_menu =   PMMenu(menutitle),
                  PMItem(GetStripStr(MSG_MA_MRead)),            PM_Disabled, nomail,        PM_UserData, PMN_READ,      End,
-                 PMItem(GetStripStr(MSG_MESSAGE_EDIT)),        PM_Disabled, nomail || !OUTGOING(fo->Type) || beingedited, PM_UserData, PMN_EDIT, End,
+                 PMItem(GetStripStr(MSG_MESSAGE_EDIT)),        PM_Disabled, nomail || !isOutBox || beingedited, PM_UserData, PMN_EDIT, End,
                  PMItem(GetStripStr(MSG_MESSAGE_REPLY)),       PM_Disabled, nomail,        PM_UserData, PMN_REPLY,     End,
                  PMItem(GetStripStr(MSG_MESSAGE_FORWARD)),     PM_Disabled, nomail,        PM_UserData, PMN_FORWARD,   End,
                  PMItem(GetStripStr(MSG_MESSAGE_BOUNCE)),      PM_Disabled, nomail,        PM_UserData, PMN_BOUNCE,    End,
                  PMItem(GetStripStr(MSG_MA_MSend)),            PM_Disabled, nomail || (fo->Type != FT_OUTGOING), PM_UserData, PMN_SEND,      End,
                  PMItem(GetStripStr(MSG_MA_ChangeSubj)),       PM_Disabled, nomail,        PM_UserData, PMN_CHSUBJ,    End,
                  PMItem(GetStripStr(MSG_MA_SetStatus)),        PM_Disabled, nomail, PMSimpleSub,
-                   PMItem(GetStripStr(MSG_MA_ToUnread)),       PM_Disabled, nomail || OUTGOING(fo->Type),   PM_UserData, PMN_TOUNREAD,  End,
-                   PMItem(GetStripStr(MSG_MA_ToRead)),         PM_Disabled, nomail || OUTGOING(fo->Type),   PM_UserData, PMN_TOREAD,    End,
-                   PMItem(GetStripStr(MSG_MA_ToHold)),         PM_Disabled, nomail || !OUTGOING(fo->Type),  PM_UserData, PMN_TOHOLD,    End,
-                   PMItem(GetStripStr(MSG_MA_ToQueued)),       PM_Disabled, nomail || !OUTGOING(fo->Type),  PM_UserData, PMN_TOQUEUED,  End,
+                   PMItem(GetStripStr(MSG_MA_ToUnread)),       PM_Disabled, nomail || isOutBox,   PM_UserData, PMN_TOUNREAD,  End,
+                   PMItem(GetStripStr(MSG_MA_ToRead)),         PM_Disabled, nomail || isOutBox,   PM_UserData, PMN_TOREAD,    End,
+                   PMItem(GetStripStr(MSG_MA_ToHold)),         PM_Disabled, nomail || !isOutBox,  PM_UserData, PMN_TOHOLD,    End,
+                   PMItem(GetStripStr(MSG_MA_ToQueued)),       PM_Disabled, nomail || !isOutBox,  PM_UserData, PMN_TOQUEUED,  End,
                    End,
                  End,
                  PMBar, End,
@@ -2606,9 +2623,9 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
     case PMN_CROP:     DoMethod(G->App, MUIM_CallHook, &MA_RemoveAttachHook,   TAG_DONE); break;
     case PMN_EXPMSG:   DoMethod(G->App, MUIM_CallHook, &MA_ExportMessagesHook, TAG_DONE); break;
     case PMN_NEW:      DoMethod(G->App, MUIM_CallHook, &MA_NewMessageHook,     NEW_NEW,  0,  FALSE,  TAG_DONE); break;
-    case PMN_SELALL:   DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On,     NULL, TAG_DONE); break;
-    case PMN_SELNONE:  DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off,    NULL, TAG_DONE); break;
-    case PMN_SELTOGG:  DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL, TAG_DONE); break;
+    case PMN_SELALL:   DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On,     NULL); break;
+    case PMN_SELNONE:  DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off,    NULL); break;
+    case PMN_SELTOGG:  DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Toggle, NULL); break;
   }
 
   return(0);

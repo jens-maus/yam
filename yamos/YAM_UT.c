@@ -2513,7 +2513,7 @@ char ShortCut(char *label)
 ///
 /// RemoveCut
 //  Removes shortcut character from text label
-#ifndef UNUSED
+#ifdef UNUSED
 static char *RemoveCut(char *label)
 {
    static char lab[SIZE_DEFAULT], *p;

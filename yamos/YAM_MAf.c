@@ -365,7 +365,7 @@ void MA_FlushIndexes(BOOL all)
          }
       }
       free(flist);
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All);
+      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
    }
 }
 
@@ -395,7 +395,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
   // if this folder should be disabled, lets do it now
   if(folder->Type == FT_GROUP || MA_GetIndex(folder) == NULL)
   {
-    set(gui->LV_MAILS, MUIA_Disabled, TRUE);
+    set(gui->NL_MAILS, MUIA_Disabled, TRUE);
     DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
   }
   else
@@ -410,7 +410,7 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
     DisplayMailList(folder, gui->NL_MAILS);
 
     // now we have to assure that the folder is enabled
-    set(gui->LV_MAILS, MUIA_Disabled, FALSE);
+    set(gui->NL_MAILS, MUIA_Disabled, FALSE);
 
     // Now we jump to messages that are NEW
     if(C->JumpToNewMsg) MA_JumpToNewMsg();
