@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-09  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_RE.c: Made the ExtractURL code within the ReadMessage
+      functions a bit safer and also added normal email addresses
+      to the recognition also. Now normal email addresses without
+      a mailto: will not only be clickable within the readwindow
+      they will also be highlighted like other clickable links.
+
 2002-07-08  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_RE.c: Undecoded message part sizes will now also be shown

@@ -2275,13 +2275,17 @@ static char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
 //  Extracts URL from a message line
 static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
 {
-   static const char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=;:*#()";
+   // some constant arrays for legal characters within a URL and
+   // within a email address
+   static const char *URL_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=;:*#()";
+   static const char *EML_legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_+-.=";
    static const char *protocols[7] =
    {
      "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:"
    };
 
    char *foundurl = NULL, *p;
+   char *legalchars = (char *)URL_legalchars; // by thefault we extract with the URL legalchars
    int i;
 
    if ((p = strchr(line, ':')))
@@ -2293,9 +2297,27 @@ static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
       }
    }
 
-   if (!foundurl) return FALSE;
+   // now we check if the line just contains a email address
+   if(!foundurl)
+   {
+      if((p = strchr(line, '@')))
+      {
+        // now we move back from the @ until the start of the address, so that we can find out
+        // from where this URL starts
+        for(i=0, foundurl=p; p && strchr(EML_legalchars, *p); p--)
+        {
+          foundurl = p;
+          if(p == line) break;
+        }
 
-   for (i = 0; foundurl[i] && strchr(legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
+        // for the following copy operation we use the EML legalchars array
+        // so that it is filtered for characters only allowed in email addresses
+        legalchars = (char *)EML_legalchars;
+      }
+      else return FALSE;
+   }
+
+   for(i=0; foundurl[i] && strchr(legalchars, foundurl[i]) && i < SIZE_URL-1; i++)
    {
       url[i] = foundurl[i];
    }
@@ -2946,10 +2968,10 @@ HOOKPROTONH(RE_DoubleClickFunc, BOOL, APTR obj, struct ClickMessage *clickmsg)
    if (RE_ExtractURL(surl, url, NULL, NULL))
    {
       if (!strnicmp(url, "mailto:", 7)) RE_ClickedOnMessage(&url[7]);
+      else if(strchr(url, ':') == NULL && strchr(url, '@')) RE_ClickedOnMessage(url);
       else GotoURL(url);
    }
-   else if (strchr(url, '@')) RE_ClickedOnMessage(url);
-   else if (isdigit(line[0]) && (line[1] == ':' || line[2] == ':'))
+   else if (isdigit(line[0]) && ((line[1] == ':' && line[2] == ' ') || (line[2] == ':' && line[3] == ' ')))
    {
       int pnr = atoi(line), winnum;
       struct Part *part;
