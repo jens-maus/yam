@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.40 (14.04.2003)
+## version $VER: YAM.catalog 5.40 (15.04.2003)
 ## language español
 ## codeset 0
 ;
@@ -1459,103 +1459,103 @@ _Cancelar
 ; _Cancel
 ;
 MSG_CO_TZoneM12
-GMT-12   Islas Kwajalein
+(GMT-12:00) Islas Kwajalein (IDLW)
 ; (GMT-12:00) Kwajalein Islands (IDLW)
 ;
 MSG_CO_TZoneM11
-GMT-11   Islas Midway, Samoa
+(GMT-11:00) Islas Midway, Samoa (NT)
 ; (GMT-11:00) Midway Islands, Samoa (NT)
 ;
 MSG_CO_TZoneM10
-GMT-10   Honolulu, Tahití
+(GMT-10:00) Honolulú, Tahití (HST)
 ; (GMT-10:00) Honolulu, Tahiti (HST)
 ;
 MSG_CO_TZoneM9
-GMT-9   Anchorage
+(GMT-09:00) Anchorage (AKST)
 ; (GMT-09:00) Anchorage (AKST)
 ;
 MSG_CO_TZoneM8
-GMT-8   Los Ángeles, San Francisco (PDT)
+(GMT-08:00) Los Ángeles, San Francisco (PST)
 ; (GMT-08:00) Los Angeles, San Francisco (PST)
 ;
 MSG_CO_TZoneM7
-GMT-7   Calgary, Denver, Phoenix (MDT)
+(GMT-07:00) Calgary, Denver, Phoenix (MST)
 ; (GMT-07:00) Calgary, Denver, Phoenix (MST)
 ;
 MSG_CO_TZoneM6
-GMT-6   Chicago, Dallas, Ciudad de México (CMT)
+(GMT-06:00) Chicago, Dallas, Ciudad de México (CST)
 ; (GMT-06:00) Chicago, Dallas, Mexico City (CST)
 ;
 MSG_CO_TZoneM5
-GMT-5   Lima, Miami, Montreal, Nueva York (EST)
+(GMT-05:00) Lima, Miami, Montreal, Nueva York (EST)
 ; (GMT-05:00) Lima, Miami, Montreal, New York (EST)
 ;
 MSG_CO_TZoneM4
-GMT-4   Caracas, Santiago, Thule (ADT)
+(GMT-04:00) Caracas, Santiago, Thule (AST)
 ; (GMT-04:00) Caracas, Santiago, Thule (AST)
 ;
 MSG_CO_TZoneM3
-GMT-3   Buenos Aires, Río de Janeiro
+(GMT-03:00) Buenos Aires, Río de Janeiro (BRT)
 ; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
 ;
 MSG_CO_TZoneM2
-GMT-2   Este de Brasil
+(GMT-02:00) Este de Brasil (FNT)
 ; (GMT-02:00) Brazil East (FNT)
 ;
 MSG_CO_TZoneM1
-GMT-1   Islas Azores
+(GMT-01:00) Islas Azores (WAT)
 ; (GMT-01:00) Azores (WAT)
 ;
 MSG_CO_TZone0
-GMT   Dublín, Lisboa, Londres (GMT)
+(GMT 00:00) Dublín, Lisboa, Londres (GMT/UTC)
 ; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
 ;
 MSG_CO_TZone1
-GMT+1   Berlín, París, Madrid, Oslo (MET)
+(GMT+01:00) Berlín, París, Madrid, Oslo (CET)
 ; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
 ;
 MSG_CO_TZone2
-GMT+2   Atenas, El Cairo, Helsinki (EET)
+(GMT+02:00) Atenas, El Cairo, Helsinki (EET)
 ; (GMT+02:00) Athens, Cairo, Helsinki (EET)
 ;
 MSG_CO_TZone3
-GMT+3   Bagdad, Kuwait, Moscú, Nairobi
+(GMT+03:00) Bagdad, Kuwait, Moscú, Nairobi (EEST)
 ; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
 ;
 MSG_CO_TZone4
-GMT+4   Dubai, Port Louis, Victoria
+(GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
 ; (GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
 ;
 MSG_CO_TZone5
-GMT+5   Islamabad, Karachi
+(GMT+05:00) Islamabad, Karachi (ZP5)
 ; (GMT+05:00) Islamabad, Karachi (ZP5)
 ;
 MSG_CO_TZone6
-GMT+6   Alma-Ata, Dhaka, Tashkent
+(GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
 ; (GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
 ;
 MSG_CO_TZone7
-GMT+7   Bangkok, Hanoi, Phnom Penh
+(GMT+07:00) Bangkok, Hanoi, Phnom Penh
 ; (GMT+07:00) Bangkok, Hanoi, Phnom Penh
 ;
 MSG_CO_TZone8
-GMT+8   Hong Kong, Shanghai, Singapur (PST)
+(GMT+08:00) Hong Kong, Shanghai, Singapur (WST)
 ; (GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
 ;
 MSG_CO_TZone9
-GMT+9   Osaka, Seúl, Tokyo
+(GMT+09:00) Osaka, Seúl, Tokyo (JST)
 ; (GMT+09:00) Osaka, Seoul, Tokyo (JST)
 ;
 MSG_CO_TZone10
-GMT+10   Melbourne, Sydney, Vladivostok
+(GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
 ; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
 ;
 MSG_CO_TZone11
-GMT+11   Nueva Caledonia
+(GMT+11:00) Nueva Caledonia (AEDT)
 ; (GMT+11:00) New Caldonia (AEDT)
 ;
 MSG_CO_TZone12
-GMT+12   Auckland, Wellington
+(GMT+12:00) Auckland, Wellington (IDLE)
 ; (GMT+12:00) Auckland, Wellington (IDLE)
 ;
 MSG_CO_MinConfig
