@@ -2017,14 +2017,14 @@ char *RE_ReadInMessage(int winnum, int mode)
                   // find signature first if it should be stripped
                   if (mode == RIM_QUOTE && C->StripSignature)
                   {
-                  int lines=21;
+                     int lines = 101;
 
                      sigptr = msg + part->Size;
                      while(sigptr > msg)
                      {
                         sigptr--;
                         while((sigptr > msg) && (*sigptr != '\n')) sigptr--;  // step back to previous line
-                        if((!--lines) || (sigptr <= msg+1))                   // abort after 20 lines or if at msg start
+                        if((!--lines) || (sigptr <= msg+1))                   // abort after 100 lines or if at msg start
                         {
                            sigptr = NULL;
                            break;
