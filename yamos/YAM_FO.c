@@ -112,6 +112,31 @@ struct Folder *FO_GetCurrentFolder(void)
 }
 
 ///
+/// FO_SetCurrentFolder
+//  Set the passed folder as the active one
+BOOL FO_SetCurrentFolder(struct Folder *fo)
+{
+   int i;
+   struct MUI_NListtree_TreeNode *tn = NULL;
+
+   if(!fo) return(FALSE);
+
+   for (i = 0;;i++)
+   {
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0 , TAG_DONE);
+      if (!tn || !tn->tn_User) return(FALSE);
+
+      if(tn->tn_User == fo)
+      {
+         nnset(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
+         break;
+      }
+   }
+
+   return(TRUE);
+}
+
+///
 /// FO_GetFolderRexx
 //  Finds a folder by its name, type or position
 struct Folder *FO_GetFolderRexx(char *arg, int *pos)
@@ -1051,8 +1076,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
    if (success)
    {
       MA_SetSortFlag();
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort);
-      MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL));
+      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort, TAG_DONE);
+      MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL), FALSE);
       FO_SaveTree(CreateFilename(".folders"));
       DisplayStatistics(&folder);
    }

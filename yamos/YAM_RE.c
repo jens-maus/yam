@@ -154,7 +154,8 @@ static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
    struct Folder *CurrentFolder = mail->Folder;
 
    G->RE[winnum]->LastDirection = direction;
-   MA_ChangeFolder(CurrentFolder);
+   MA_ChangeFolder(CurrentFolder, FALSE);
+
    for (act += direction; act >= 0; act += direction)
    {
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, act, &mail, TAG_DONE);
@@ -195,7 +196,7 @@ static void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
                   if (!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_RE_MoveNextFolderReq), flist[i]->Name))
                      break;
 
-                  MA_ChangeFolder(flist[i]);
+                  MA_ChangeFolder(flist[i], TRUE);
                   DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail, TAG_DONE);
                   if (!mail) break;
                   RE_ReadMessage(winnum, mail);

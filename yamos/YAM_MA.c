@@ -1459,7 +1459,7 @@ BOOL MA_Send(enum SendMode sendpos)
    BOOL success = FALSE;
    if (!G->TR)
    {
-      MA_ChangeFolder(FO_GetFolderByType(FT_OUTGOING, NULL));
+      MA_ChangeFolder(FO_GetFolderByType(FT_OUTGOING, NULL), TRUE);
       if (sendpos == SEND_ALL) DoMethod(lv, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL);
       if ((mlist = MA_CreateMarkedList(lv)))
       {
@@ -1579,7 +1579,7 @@ HOOKPROTONHNONP(MA_RescanIndexFunc, void)
 
    MA_ScanMailBox(folder);
    MA_SaveIndex(folder);
-   MA_ChangeFolder(NULL);
+   MA_ChangeFolder(NULL, FALSE);
 }
 MakeHook(MA_RescanIndexHook, MA_RescanIndexFunc);
 
@@ -2575,7 +2575,7 @@ struct MA_ClassData *MA_New(void)
          // Define the Images the FolderListtree that can be used
          for (i = 0; i < MAXBCSTDIMAGES; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, 0, TAG_DONE);
 
-			set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.NL_MAILS);
+         set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.NL_MAILS);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUT     ,G->AY_Win,3,MUIM_Set                ,MUIA_Window_Open,TRUE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_VERSION   ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_CheckVersionHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ERRORS    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ShowErrorsHook);

@@ -1852,7 +1852,7 @@ BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
 int SelectMessage(struct Mail *mail)
 {
    struct MailInfo *mi;
-   if (mail->Folder != FO_GetCurrentFolder()) MA_ChangeFolder(mail->Folder);
+   MA_ChangeFolder(mail->Folder, TRUE);
    mi = GetMailInfo(mail);
    if (mi->Pos >= 0) set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
    return mi->Pos;

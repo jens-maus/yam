@@ -802,7 +802,7 @@ void rx_setfolder( struct RexxHost *host, struct rxd_setfolder **rxd, long actio
          break;
          
       case RXIF_ACTION:
-         if (folder = FO_GetFolderRexx(rd->arg.folder, NULL)) MA_ChangeFolder(folder);
+         if (folder = FO_GetFolderRexx(rd->arg.folder, NULL)) MA_ChangeFolder(folder, TRUE);
          else rd->rc = RETURN_ERROR;
          break;
       

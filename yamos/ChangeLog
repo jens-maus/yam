@@ -655,11 +655,13 @@
 2001-06-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * the position of a folder was calculated wrong on performed FOLDERINFO rexx
-      commands. fixed ! (Bug #433825)
+      commands. fixed!
     * if using the folder context menu now, the mail list will be refreshed if
       the user uses the context menu on a folder that is not active. This will
       fix some bugs that will result because the mail list is not in sync with
       the folder list.
+    * fixed several bugs concerning syncing of the mail and folder list.
+      This also hopefully fixed now really (Bug #433825)
 
 2001-06-17  Jacob Laursen <laursen@myself.com>
 

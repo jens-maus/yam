@@ -652,7 +652,7 @@ void Initialise2(BOOL hidden)
       else if (folder->Type != FT_GROUP) folder->LoadedMode = MA_LoadIndex(folder, FALSE);
       DoMethod(G->App, MUIM_Application_InputBuffered);
    }
-   MA_ChangeFolder(FO_GetFolderByType(FT_INCOMING, NULL));
+   MA_ChangeFolder(FO_GetFolderByType(FT_INCOMING, NULL), TRUE);
    AY_PrintStatus(GetStr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
    if (!(G->RexxHost = SetupARexxHost("YAM", NULL))) Abort(GetStr(MSG_ErrorARexx));
@@ -754,11 +754,19 @@ void SendWaitingMail(void)
    int tots = 0, hidden;
    struct Folder *fo = FO_GetFolderByType(FT_OUTGOING, NULL);
 
-   get(G->App, MUIA_Application_Iconified, &hidden);
-   for (mail = fo->Messages; mail; mail = mail->Next) if (mail->Status != STATUS_HLD) tots++;
+   if(!fo) return;
+
+   for (mail = fo->Messages; mail; mail = mail->Next)
+   {
+      if (mail->Status != STATUS_HLD) tots++;
+   }
    if (!tots) return;
-   MA_ChangeFolder(fo);
+
+   MA_ChangeFolder(fo, TRUE);
+
+   get(G->App, MUIA_Application_Iconified, &hidden);
    if (!hidden) doit = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq));
+
    if (doit) MA_Send(SEND_ALL);
 }
 ///
@@ -901,29 +909,29 @@ void main(int argc, char **argv)
       G->CO_DST = GetDST();
       if (yamFirst)
       {
-			Object *root, *grp, *bt_okay;
+         Object *root, *grp, *bt_okay;
 
          Initialise(args.hide);
          Login(args.user, args.password, args.maildir, args.prefsfile);
          Initialise2(args.hide);
 
-			grp = HGroup,
-				Child, RectangleObject, End,
-			   Child, bt_okay = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
-				Child, RectangleObject, End,
-			End;
+         grp = HGroup,
+            Child, RectangleObject, End,
+            Child, bt_okay = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
+            Child, RectangleObject, End,
+         End;
 
-			get(G->AY_Win, MUIA_Window_RootObject, &root);
-			if(root && grp && DoMethod(root, MUIM_Group_InitChange))
-			{
-				DoMethod(root, OM_ADDMEMBER, grp);
-				DoMethod(root, MUIM_Group_ExitChange);
-		      DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-				SetAttrs(G->AY_Win,
-					MUIA_Window_Activate, TRUE,
-					MUIA_Window_DefaultObject, bt_okay,
-					TAG_DONE);
-			}
+         get(G->AY_Win, MUIA_Window_RootObject, &root);
+         if(root && grp && DoMethod(root, MUIM_Group_InitChange))
+         {
+            DoMethod(root, OM_ADDMEMBER, grp);
+            DoMethod(root, MUIM_Group_ExitChange);
+            DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+            SetAttrs(G->AY_Win,
+               MUIA_Window_Activate, TRUE,
+               MUIA_Window_DefaultObject, bt_okay,
+               TAG_DONE);
+         }
 
          DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
          AppendLog(0, GetStr(MSG_LOG_Started), "", "", "", "");

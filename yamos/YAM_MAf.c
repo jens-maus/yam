@@ -377,7 +377,7 @@ MakeHook(MA_FlushIndexHook, MA_FlushIndexFunc);
 /*** Private functions ***/
 /// MA_ChangeFolder
 //  Changes to another folder
-void MA_ChangeFolder(struct Folder *folder)
+void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 {
    BOOL folderopen = TRUE;
    int i, pos = -1;
@@ -390,6 +390,7 @@ void MA_ChangeFolder(struct Folder *folder)
       folder = FO_GetCurrentFolder();
    }
    else if(FO_GetCurrentFolder() == folder) return;
+   else if(set_active) FO_SetCurrentFolder(folder);
 
    if (folder->Type == FT_GROUP) folderopen = FALSE;
    else if (!MA_GetIndex(folder)) folderopen = FALSE;
@@ -460,7 +461,7 @@ void MA_ChangeFolder(struct Folder *folder)
 
 HOOKPROTONHNONP(MA_ChangeFolderFunc, void)
 {
-   MA_ChangeFolder(NULL);
+   MA_ChangeFolder(NULL, FALSE);
 }
 MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 ///

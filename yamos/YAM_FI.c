@@ -706,7 +706,7 @@ HOOKPROTONHNONP(FI_SwitchFunc, void)
    DoMethod(G->FI->GUI.LV_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
    if (mail)
    {
-      MA_ChangeFolder(mail->Folder);
+      MA_ChangeFolder(mail->Folder, TRUE);
       mi = GetMailInfo(mail);
       set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
    }
