@@ -10,7 +10,9 @@ $Source$
     * smakefile: Fix overlong command lines and wrong YAM_locale.h
       dependency. The latter caused all sources using localized strings to
       be rebuilt every time.
-      Also added stuff to create objdir only when neccesary.
+      Also added stuff to create objdir only when neccesary and moved
+      YAM_global.o near the beginning of the OBJ list to make the $VER
+      string appear at the beginning of the binary.
     * YAM_utilities.h: Add intuition proto to fix SAS/C build.
 
 2005-02-22  Jens Langner <Jens.Langner@light-speed.de>
