@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-11-27  AmiS <amis@amiga.org.ru>
+
+    * YAM_WR.c: popup gadget of the translation table doesn`t support
+      any scrollbar. Fixed.
+
 2003-11-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed tiny flaws within the test parsing routines
