@@ -2044,7 +2044,7 @@ Dateianlagen _holen von
 ; _Attach files from
 ;
 MSG_CO_TempDir
-_Temporärdateien
+_Temporäre Dateien
 ; Directory for _tempfiles
 ;
 MSG_CO_AppIcon
