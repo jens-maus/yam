@@ -136,7 +136,10 @@ DISPATCHERPROTO(BC_Dispatcher)
                else
                {
                   // Print out a error message that this image couldn`t be loaded
-                  ER_NewError(GetStr(MSG_ERROR_IMGLOAD), fname, NULL);
+//                ER_NewError(GetStr(MSG_ERROR_IMGLOAD), fname, NULL);
+// this would pop up in front of the about window while loading indices,
+// and can't be closed until covered by the main window. Very clumpsy. It
+// would also show up when de-iconifying YAM. Therefore removed!
                }
             }
          }
