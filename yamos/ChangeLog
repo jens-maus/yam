@@ -74,3 +74,11 @@
 
     * Now uses original Listtree includes
 
+2001-01-29  laursen <laursen@myself.com>
+
+    * Added dynamic date string creation in smakefile.
+
+2001-02-01  laursen <laursen@myself.com>
+
+    * Removed enforcer hits when encountering message headers with
+      non-terminated MIME-encoded text (i.e. during a folder rescan).

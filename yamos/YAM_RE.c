@@ -1002,7 +1002,7 @@ int RE_CharIn(char c, struct TranslationTable *tt)
 }
 ///
 /// RE_ProcessHeader (rec)
-//  Processes MIME encoded message headers
+//  Processes MIME encoded message headers (RFC-2047)
 STACKEXT void RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhitespace, char *ptr)
 {
    char *charset, *encoding, *txt, *txtend, *t;
@@ -1010,7 +1010,7 @@ STACKEXT void RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhite
    struct TranslationTable *tt = NULL;
 
    if (MatchTT(prevcharset, G->TTin, TRUE)) tt = G->TTin;
-   while (*s && (*s != '=')) 
+   while (*s && (*s != '='))
    {
       if (*s == ' ' || *s == '\t') { if (ShowLeadingWhitespace) *ptr++ = ' '; }
       else 
@@ -1025,17 +1025,21 @@ STACKEXT void RE_ProcessHeader(char *prevcharset, char *s, BOOL ShowLeadingWhite
    if (*(s+1) != '?') 
    {
       *ptr++ = '=';
-      RE_ProcessHeader(prevcharset, ++s, True, ptr);
+      RE_ProcessHeader(prevcharset, ++s, TRUE, ptr);
       return;
    }
    charset = s+2;
    encoding = strchr(charset, '?');
-   if (!encoding) { *ptr++ = '='; RE_ProcessHeader(prevcharset, ++s, True, ptr); return; }
+   if (!encoding) { *ptr++ = '='; RE_ProcessHeader(prevcharset, ++s, TRUE, ptr); return; }
    txt = strchr(encoding+1, '?');
-   if (!txt) { *ptr++ = '='; RE_ProcessHeader(prevcharset, ++s, True, ptr); return; }
+   if (!txt) { *ptr++ = '='; RE_ProcessHeader(prevcharset, ++s, TRUE, ptr); return; }
    txtend = txt;
    do { txtend = strchr(txtend+1, '?'); } while(txtend && (*(txtend+1) != '='));
-   if (!txtend) { *ptr++ = '='; RE_ProcessHeader(prevcharset, ++s, True, ptr); }
+   if (!txtend) {
+      *ptr++ = '=';
+      RE_ProcessHeader(prevcharset, ++s, TRUE, ptr);
+      return;
+   }
    *encoding = 0;
    *txt = 0;
    *txtend = 0;
