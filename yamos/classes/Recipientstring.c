@@ -45,6 +45,7 @@ struct Data
 /* EXPORT
 #define MUIF_Recipientstring_Resolve_NoFullName  (1 << 0) // do not resolve with fullname "Mister X <misterx@mister.com>"
 #define MUIF_Recipientstring_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
+#define MUIF_Recipientstring_Resolve_NoCache     (1 << 2) // do not resolve addresses out of the eMailCache
 */
 
 
@@ -389,11 +390,13 @@ DECLARE(Resolve) // ULONG flags
 	LONG max_list_nesting = 5;
 	STRPTR s, contents, tmp;
 	BOOL res = TRUE;
-	BOOL withrealname = TRUE, checkvalids = TRUE;
+	BOOL withrealname = TRUE, checkvalids = TRUE, withcache = TRUE;
+	BOOL quiet = muiRenderInfo(obj) == NULL ? TRUE : FALSE; // if this object doesn`t have a renderinfo we are quiet
 
 	// Lets check the flags first
 	if(msg->flags & MUIF_Recipientstring_Resolve_NoFullName) withrealname= FALSE;
 	if(msg->flags & MUIF_Recipientstring_Resolve_NoValid)    checkvalids = FALSE;
+	if(msg->flags & MUIF_Recipientstring_Resolve_NoCache)    withcache   = FALSE;
 
 	set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 
@@ -475,7 +478,7 @@ DECLARE(Resolve) // ULONG flags
 					{
 						D(DBF_ERROR, ("Found matching entry in address book with unknown type: %ld", entry->Type))
 						DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-						set(_win(obj), MUIA_Window_ActiveObject, obj);
+						if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
 						res = FALSE;
 					}
 				}
@@ -483,11 +486,11 @@ DECLARE(Resolve) // ULONG flags
 				{
 					D(DBF_ERROR, ("Found more than one matching entry in address book!\n"))
 					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-					set(_win(obj), MUIA_Window_ActiveObject, obj);
+					if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
 					res = FALSE;
 				}
 			}
-			else if(entry = (struct ABEntry *)DoMethod(_app(obj), MUIM_YAM_FindEmailCacheMatch, s))
+			else if(withcache && (entry = (struct ABEntry *)DoMethod(G->App, MUIM_YAM_FindEmailCacheMatch, s)))
 			{
 				DB(kprintf("\tEmailCache Hit: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
 				DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
@@ -509,7 +512,7 @@ DECLARE(Resolve) // ULONG flags
 				{
 					D(DBF_ERROR, ("No entry found in addressbook for alias: %s", s))
 					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-					set(_win(obj), MUIA_Window_ActiveObject, obj);
+					if(!quiet) set(_win(obj), MUIA_Window_ActiveObject, obj);
 					res = FALSE;
 				}
 			}

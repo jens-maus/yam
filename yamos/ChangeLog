@@ -1,5 +1,12 @@
 2002-05-06  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed another bug in the ADDRRESOLVE rexx command where it
+      was also checking the emailcache what is not supposed to
+      happen with the command.
+    * fixed bug #552414 where the creations of a Recipientstring
+      object in the ADDRRESOLVE rexx command caused some enforcer
+      hits later because we were refering to the renderinfo of that
+      object where obviously is not renderinfo at all.
     * fixed bug #552395 where we forgot to set a pointer to a
       empty string by default to prevent a NULL pointer hit.
     * got rid of the SAS/C portability warnings #120 by modifying

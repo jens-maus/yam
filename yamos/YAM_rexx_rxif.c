@@ -1522,20 +1522,20 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
          break;
          
       case RXIF_ACTION:
-		{
-			Object *str = RecipientstringObject, MUIA_String_Contents, rd->rd.arg.alias, End;
-			STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, 0);
-			if(strcmp(rd->rd.arg.alias, res)) /* did the string change ? */
-			{
-				if(rd->rd.res.recpt = rd->string = AllocStrBuf((LONG)strlen(res)+1))
-					strcpy(rd->string, res);
-			}
-			else
-			{
-				rd->rd.rc = RETURN_WARN;
-			}
-			MUI_DisposeObject(str);
-		}
+      {
+        Object *str = RecipientstringObject, MUIA_String_Contents, rd->rd.arg.alias, End;
+        STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoCache);
+        if(res && strcmp(rd->rd.arg.alias, res)) /* did the string change ? */
+        {
+          if(rd->rd.res.recpt = rd->string = AllocStrBuf((LONG)strlen(res)+1))
+          strcpy(rd->string, res);
+        }
+        else
+        {
+          rd->rd.rc = RETURN_WARN;
+        }
+        MUI_DisposeObject(str);
+      }
       break;
 
       case RXIF_FREE:
