@@ -121,7 +121,7 @@ static BPTR CloneWorkbenchPath(struct WBStartup *wbmsg)
    Forbid();
    if (wbmsg->sm_Message.mn_ReplyPort)
    {
-      if (((LONG)wbmsg->sm_Message.mn_ReplyPort->mp_Flags & PF_ACTION) == PA_SIGNAL)
+      if ((wbmsg->sm_Message.mn_ReplyPort->mp_Flags & PF_ACTION) == PA_SIGNAL)
       {
          struct Process *wbproc = wbmsg->sm_Message.mn_ReplyPort->mp_SigTask;
 
@@ -185,11 +185,11 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
 {
   LONG result = -1;
   char reqtxt[SIZE_LINE];
-  va_list args;
   Object *WI_YAMREQ;
   Object *TX_REQTEXT;
   Object *BT_GROUP;
-  Object *BT_REQ[32]; // more than 32 buttongadgets within a requester shouldn`t happen
+  Object *BT_REQ[32]; // more than 32 buttongadgets within a requester shouldn`t happen: FIXME
+  va_list args;
 
   // lets create the requester text
   va_start(args, format);
@@ -760,24 +760,21 @@ void SParse(char *s)
    unsigned char *tptr, *p = NULL, *tp, la, lb;
    BOOL gr = 0, lr = 0;
             
-   if (!s || (!PNum) || (!G->CO_AutoTranslateIn)) return;
+   if (!s || !PNum || !G->CO_AutoTranslateIn) return;
 
    while (*s)
    {
-
       for (n = 0; n != PNum; n++) ctr[n] = 0; 
 
       tp = s;
 
       do
       {
-
          Nmax = 0;
          mid = max = -466725766; 
 
          for (n = 0; n != PNum; n++)      
          { 
-
             tptr = PPtr[n]; 
             la = 0;
             p = tp;
@@ -824,10 +821,7 @@ void SParse(char *s)
       while (s != (char*)p); 
 
       if (*p == 0x0a) gr = 0; 
-                              
-
    }
-   return;
 }
 
 /// 
@@ -926,17 +920,6 @@ char *MyStrChr(const char *s, int c)
       else if (*s == (char)c && !nested) return (char *)s;
    return NULL;
 }
-///
-/// Index
-//  Returns position of a character in a string
-#ifdef UNUSED
-int Index(char *str, char chr)
-{
-   char *t = strchr(str, chr);
-
-   return t ? (int)(t-str) : -1;
-}
-#endif
 ///
 /// AllocStrBuf
 //  Allocates a dynamic buffer
@@ -2685,25 +2668,23 @@ MakeHook(PO_ListPublicKeysHook, PO_ListPublicKeys);
 char ShortCut(char *label)
 {
    char *ptr = strchr(label, '_');
-
    if (!ptr) return 0;
    return (char)ToLower((ULONG)(*++ptr));
 }
-
 ///
 /// RemoveCut
 //  Removes shortcut character from text label
 #ifdef UNUSED
 static char *RemoveCut(char *label)
 {
-   static char lab[SIZE_DEFAULT], *p;
+   static char lab[SIZE_DEFAULT];
+   char *p;
 
    for (p = lab; *label; label++) if (*label != '_') *p++ = *label;
    *p = 0;
    return lab;
 }
 #endif
-
 ///
 /// MakeCycle
 //  Creates a MUI cycle object
@@ -2877,7 +2858,6 @@ Object *MakeAddressField(APTR *string, char *label, APTR help, int abmode, int w
 
    return obj;
 }
-
 ///
 /// MakeNumeric
 //  Creates a MUI numeric slider
@@ -2948,7 +2928,6 @@ Object * STDARGS DoSuperNew(struct IClass *cl, Object *obj, ...)
 ULONG xget(Object *obj, ULONG attr)
 {
    ULONG b;
-
    get(obj, attr, &b);
    return b;
 }
@@ -3622,7 +3601,7 @@ BOOL MatchExtension(char *fileext, char *extlist)
 //  Detects the file type using datatypes.library
 static char *IdentifyFileDT(char *fname)
 {
-   static char ctype[SIZE_CTYPE], *type = NULL;
+   static char ctype[SIZE_CTYPE];
 
    strcpy(ctype, "application/octet-stream");
    if (DataTypesBase)
@@ -3633,6 +3612,7 @@ static char *IdentifyFileDT(char *fname)
          struct DataType *dtn;
          if ((dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL)))
          {
+            char *type = NULL;
             struct DataTypeHeader *dth = dtn->dtn_Header;
             switch (dth->dth_GroupID)
             {
