@@ -1046,20 +1046,22 @@ struct AB_ClassData *AB_New(void)
         AMEN_FOLD,AMEN_UNFOLD
       };
 
-      static const APTR tb_butt[13] = {
+      static const APTR tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
         MSG_AB_TBSave,MSG_AB_TBFind,MSG_Space,
         MSG_AB_TBNewUser,MSG_AB_TBNewList,MSG_AB_TBNewGroup,MSG_AB_TBEdit,MSG_AB_TBDelete,MSG_AB_TBPrint,MSG_Space,
         MSG_AB_TBOpenTree,MSG_AB_TBCloseTree,NULL
       };
-      static const APTR tb_help[13] = {
+      static const APTR tb_help[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
         MSG_HELP_AB_BT_SAVE,MSG_HELP_AB_BT_SEARCH,NULL,
         MSG_HELP_AB_BT_ADDUSER,MSG_HELP_AB_BT_ADDMLIST,MSG_HELP_AB_BT_ADDGROUP,MSG_HELP_AB_BT_EDIT,MSG_HELP_AB_BT_DELETE,MSG_HELP_AB_BT_PRINT,NULL,
         MSG_HELP_AB_BT_OPEN,MSG_HELP_AB_BT_CLOSE,NULL
       };
       APTR list;
-
       int i;
-      for (i = 0; i < 13; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
+
+      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+        SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
+
       data->GUI.WI = WindowObject,
          MUIA_HelpNode,"AB_W",
          MUIA_Window_Menustrip, MenustripObject,
