@@ -42,7 +42,7 @@
 
 /* the version stuff */
 char * yamversion     = "YAM 2.4-dev" CPU;
-char * yamversionstring = "$VER: YAM 2.4 (" __YAM_VERDATE ")" CPU " devel";
+char * yamversionstring = "$VER: YAM 2.4 (" __YAM_VERDATE ")" CPU " dev";
 char * yamversiondate = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;
 

@@ -4,19 +4,17 @@
 /*****************************************************************************
 **
 ** rootclass
-** +--Addrmatchlist
+** +--YAM
 ** +--Recipientstring
+** +--Addrmatchlist
 ** +--Searchwindow
 **
 **
-** Addrmatchlist   -- Popup a list of addresses which match a given substring
+** YAM             -- Application subclass handles all "global" stuff.
 **
 **                    Implements:
 **                    OM_NEW
-**                    OM_SET
-**                    ChangeWindow
-**                    Event
-**                    Open
+**                    OM_DISPOSE
 **
 ** Recipientstring -- Auto-completes email addresses etc.
 **
@@ -38,6 +36,15 @@
 **                    RecipientStart
 **                    CurrentRecipient
 **
+** Addrmatchlist   -- Popup a list of addresses which match a given substring
+**
+**                    Implements:
+**                    OM_NEW
+**                    OM_SET
+**                    ChangeWindow
+**                    Event
+**                    Open
+**
 ** Searchwindow    -- Window where user inputs search string and options.
 **
 **                    Implements:
@@ -51,7 +58,7 @@
 
 #include "ClassesExtra.h"
 
-#define NumberOfClasses 3
+#define NumberOfClasses 4
 
 extern struct MUI_CustomClass *YAMClasses[NumberOfClasses];
 Object *YAM_NewObject (STRPTR class, ULONG tag, ...);
@@ -59,39 +66,19 @@ Object *YAM_NewObject (STRPTR class, ULONG tag, ...);
 int YAM_SetupClasses (VOID);
 VOID YAM_CleanupClasses (VOID);
 
-/* --------------------- */
-/* --- Addrmatchlist --- */
-/* --------------------- */
+/* ----------- */
+/* --- YAM --- */
+/* ----------- */
 
 
-#define MUIC_Addrmatchlist "YAM_Addrmatchlist"
+#define MUIC_YAM "YAM_YAM"
 
-#define MUIM_Addrmatchlist_ChangeWindow       0xAE008DA7UL
-#define MUIM_Addrmatchlist_Event              0xAE0087CCUL
-#define MUIM_Addrmatchlist_Open               0xAE00DF3EUL
 
-#define MUIA_Addrmatchlist_String             0xAE00576EUL
+#define MUIA_YAM_EMailCacheName               0xAE008C36UL
 
-struct MUIP_Addrmatchlist_ChangeWindow
-{
-	ULONG methodID;
-};
+#define YAMObject YAM_NewObject(MUIC_YAM
 
-struct MUIP_Addrmatchlist_Event
-{
-	ULONG methodID;
-	struct IntuiMessage *imsg;
-};
-
-struct MUIP_Addrmatchlist_Open
-{
-	ULONG methodID;
-	STRPTR str;
-};
-
-#define AddrmatchlistObject YAM_NewObject(MUIC_Addrmatchlist
-
-ULONG AddrmatchlistGetSize (VOID);
+ULONG YAMGetSize (VOID);
 /* ----------------------- */
 /* --- Recipientstring --- */
 /* ----------------------- */
@@ -140,6 +127,39 @@ ULONG RecipientstringGetSize (VOID);
 #define MUIF_Recipientstring_Resolve_NoFullName  (1 << 0) // do not resolve with fullname "Mister X <misterx@mister.com>"
 #define MUIF_Recipientstring_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
 
+/* --------------------- */
+/* --- Addrmatchlist --- */
+/* --------------------- */
+
+
+#define MUIC_Addrmatchlist "YAM_Addrmatchlist"
+
+#define MUIM_Addrmatchlist_ChangeWindow       0xAE008DA7UL
+#define MUIM_Addrmatchlist_Event              0xAE0087CCUL
+#define MUIM_Addrmatchlist_Open               0xAE00DF3EUL
+
+#define MUIA_Addrmatchlist_String             0xAE00576EUL
+
+struct MUIP_Addrmatchlist_ChangeWindow
+{
+	ULONG methodID;
+};
+
+struct MUIP_Addrmatchlist_Event
+{
+	ULONG methodID;
+	struct IntuiMessage *imsg;
+};
+
+struct MUIP_Addrmatchlist_Open
+{
+	ULONG methodID;
+	STRPTR str;
+};
+
+#define AddrmatchlistObject YAM_NewObject(MUIC_Addrmatchlist
+
+ULONG AddrmatchlistGetSize (VOID);
 /* -------------------- */
 /* --- Searchwindow --- */
 /* -------------------- */
@@ -178,11 +198,8 @@ struct MUIP_Searchwindow_Next
 #define SearchwindowObject YAM_NewObject(MUIC_Searchwindow
 
 ULONG SearchwindowGetSize (VOID);
-ULONG m_Addrmatchlist_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
-ULONG m_Addrmatchlist_OM_SET(struct IClass *cl, Object *obj, Msg msg);
-ULONG m_Addrmatchlist_ChangeWindow(struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_ChangeWindow *msg);
-ULONG m_Addrmatchlist_Event(struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_Event *msg);
-ULONG m_Addrmatchlist_Open(struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_Open *msg);
+ULONG m_YAM_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
+ULONG m_YAM_OM_DISPOSE(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_OM_DISPOSE(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_OM_GET(struct IClass *cl, Object *obj, Msg msg);
@@ -199,6 +216,11 @@ ULONG m_Recipientstring_Resolve(struct IClass *cl, Object *obj, struct MUIP_Reci
 ULONG m_Recipientstring_AddRecipient(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_AddRecipient *msg);
 ULONG m_Recipientstring_RecipientStart(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_RecipientStart *msg);
 ULONG m_Recipientstring_CurrentRecipient(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_CurrentRecipient *msg);
+ULONG m_Addrmatchlist_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
+ULONG m_Addrmatchlist_OM_SET(struct IClass *cl, Object *obj, Msg msg);
+ULONG m_Addrmatchlist_ChangeWindow(struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_ChangeWindow *msg);
+ULONG m_Addrmatchlist_Event(struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_Event *msg);
+ULONG m_Addrmatchlist_Open(struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_Open *msg);
 ULONG m_Searchwindow_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Searchwindow_Open(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Open *msg);
 ULONG m_Searchwindow_Close(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Close *msg);

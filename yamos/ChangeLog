@@ -1,3 +1,28 @@
+2001-08-05  Allan Odgaard <duff@diku.dk>
+
+    * Added loading of email cache in OM_NEW of new application subclass.
+    * Added Debug.c and Debug.h to the repository. The system is used like
+      this (notice no \n and no ;):
+             D(DBF_ALWAYS, ("this value is %ld", val))
+      When DEBUG isn't defined this turns into ';', so you can write:
+             for(int i = 0; i < 10; i++)
+                D(DBF_ERROR, ("invalid item: %ld", a[i]))
+      I.e. without using braces.
+      DBF_ALWAYS is used for stuff that must always be shown. DBF_ERROR when
+      something fails. DBF_VERBOSE is for generally interesting messages which
+      doesn't really fit a category. The rest of the flags has to be added
+      when required. They should e categorized, i.e. no flag for 'my fancy
+      feature', but instead a flag for i/o, network stuff etc.
+      You enable debug output with "SetEnv YAMDebug «flags»". Flags is a
+      comma, space or semi-colon separated list of stuff you want enabled.
+      E.g. "io, verbose, error". You can also enter "all" to get everything
+      enabled.
+      Currently 'always' and 'error' are enabled by default (and can't be
+      disabled).
+    * Some styleguide changes.
+    * Changed version string to say 'dev' instead of 'devel'.
+    * Added an application subclass which is now used.
+
 2001-08-06  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * ContextMenus now also open in areas where no mail/folder is, so that this

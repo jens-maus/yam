@@ -1,14 +1,11 @@
 #include "Classes.h"
 
-DISPATCHERPROTO(AddrmatchlistDispatcher)
+DISPATCHERPROTO(YAMDispatcher)
 {
 	switch (msg->MethodID)
 	{
-		case OM_NEW                                  : return(m_Addrmatchlist_OM_NEW(cl, obj, (APTR)msg));
-		case OM_SET                                  : return(m_Addrmatchlist_OM_SET(cl, obj, (APTR)msg));
-		case MUIM_Addrmatchlist_ChangeWindow         : return(m_Addrmatchlist_ChangeWindow(cl, obj, (APTR)msg));
-		case MUIM_Addrmatchlist_Event                : return(m_Addrmatchlist_Event(cl, obj, (APTR)msg));
-		case MUIM_Addrmatchlist_Open                 : return(m_Addrmatchlist_Open(cl, obj, (APTR)msg));
+		case OM_NEW                                  : return(m_YAM_OM_NEW(cl, obj, (APTR)msg));
+		case OM_DISPOSE                              : return(m_YAM_OM_DISPOSE(cl, obj, (APTR)msg));
 	}
 	return DoSuperMethodA(cl, obj, msg);
 }
@@ -37,6 +34,19 @@ DISPATCHERPROTO(RecipientstringDispatcher)
 	return DoSuperMethodA(cl, obj, msg);
 }
 
+DISPATCHERPROTO(AddrmatchlistDispatcher)
+{
+	switch (msg->MethodID)
+	{
+		case OM_NEW                                  : return(m_Addrmatchlist_OM_NEW(cl, obj, (APTR)msg));
+		case OM_SET                                  : return(m_Addrmatchlist_OM_SET(cl, obj, (APTR)msg));
+		case MUIM_Addrmatchlist_ChangeWindow         : return(m_Addrmatchlist_ChangeWindow(cl, obj, (APTR)msg));
+		case MUIM_Addrmatchlist_Event                : return(m_Addrmatchlist_Event(cl, obj, (APTR)msg));
+		case MUIM_Addrmatchlist_Open                 : return(m_Addrmatchlist_Open(cl, obj, (APTR)msg));
+	}
+	return DoSuperMethodA(cl, obj, msg);
+}
+
 DISPATCHERPROTO(SearchwindowDispatcher)
 {
 	switch (msg->MethodID)
@@ -52,8 +62,9 @@ DISPATCHERPROTO(SearchwindowDispatcher)
 
 const struct { STRPTR Name; STRPTR Superclass; LONG SuperMCC; ULONG (*GetSize) (VOID); APTR Dispatcher; } MCCInfo[NumberOfClasses] = 
 {
-	{ MUIC_Addrmatchlist, MUIC_Window, -1, AddrmatchlistGetSize, ENTRY(AddrmatchlistDispatcher) },
+	{ MUIC_YAM, MUIC_Application, -1, YAMGetSize, ENTRY(YAMDispatcher) },
 	{ MUIC_Recipientstring, MUIC_BetterString, -1, RecipientstringGetSize, ENTRY(RecipientstringDispatcher) },
+	{ MUIC_Addrmatchlist, MUIC_Window, -1, AddrmatchlistGetSize, ENTRY(AddrmatchlistDispatcher) },
 	{ MUIC_Searchwindow, MUIC_Window, -1, SearchwindowGetSize, ENTRY(SearchwindowDispatcher) }
 };
 

@@ -221,8 +221,10 @@ MUI convention), e.g. "Texteditor" instead of "TextEditor".
 
 Defines (both constants and macros) are completely uppercase.
 
-Enumerations, global variables and structure names and memebers are proper
-case as defined under functions.
+Enumerations, global variables and structure names and members are proper
+case as defined under functions. Generally static variables should also comply
+to this rule (when they are really ment as globals, but local not to clutter
+the global namespace).
 
 Abbreviations which normally appear in uppercase (e.g. HTML) should still be
 uppercase despite the above rules.

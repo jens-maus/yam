@@ -2,6 +2,8 @@
 #define CLASSES_CLASSES_EXTRA_H
 
 #include <clib/alib_protos.h>
+#include <proto/dos.h>
+#include <proto/exec.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>
@@ -13,11 +15,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Debug.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_folderconfig.h"
+#include "YAM_global.h"
 #include "YAM_hook.h"
 #include "YAM_locale.h"
 #include "YAM_locale.h"
@@ -40,6 +44,9 @@
 #endif
 #ifndef MUIA_Window_DisableKeys
 #define MUIA_Window_DisableKeys      0x80424c36 /* V15 isg ULONG */
+#endif
+#ifndef MUIA_Application_UsedClasses 
+#define MUIA_Application_UsedClasses 0x8042e9a7
 #endif
 #ifndef MUIA_String_Popup
 #define MUIA_String_Popup            0x80420d71
