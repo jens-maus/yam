@@ -1,5 +1,7 @@
 2001-10-28  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * on resolve, if a realname doesn`t exists in the AB, the recipient
+      resolve feature only completes the address with the email.
     * if more than one entry for a recipientstring is found in the
       addressbook the Resolve routines doesn`t just take the first
       one for resolving, they now stop resolving it.

@@ -401,7 +401,7 @@ DECLARE(Resolve) // ULONG flags
         	if(entry->Type == AET_USER) /* it's a normal person */
 				  {
 					  DB(kprintf("\tPlain user: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
-  					DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
+  					DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
 	  			}
 		  		else if(entry->Type == AET_LIST) /* it's a list of persons */
 			  	{
