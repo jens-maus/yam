@@ -44,23 +44,23 @@ Developers: msbethke - Matthias Bethke
             tactica  - David Rey
 
 - Fixed: no more Enforcer hits on exit (damato)
-- Fixed: YAM didn't really disconnect from the server if an STMP AUTH
+- Fixed: didn't really disconnect from the server if an STMP AUTH
   request failed (damato)
 - Fixed: if SMTP AUTH failed, the response gotten from the server was
   never reported to the user (damato)
 - Fixed: if a host had 2 different IPs in the DNS and the first one
-  was down, YAM would never try to connect to the second one and just
+  was down, it would never try to connect to the second one and just
   threw an error message (damato)
 - Fixed: aborting a mail transfer could throw Enforcer hits; we didn't
   even issue a QUIT command (damato)
-- Fixed: YAM could crash if the Edit window was opened from a Read window
+- Fixed: potential crash if the Edit window was opened from a Read window
   and the Read window was closed before clicking Send now/Send later/Hold
   (krille)
-- Fixed: YAM could get confused while re-selecting multiple parts of a
+- Fixed: possible confusion while re-selecting multiple parts of a
   message (damato)
 - Fixed: the appearance of the message status flags could get corrupted
   because of a too wide Address column (damato)
-- Fixed: at long last, sorting by status works as it should (damato)
+- Fixed: sorting by status works now as intended (damato)
 - Fixed: updating the folder index didn't clear the mail listview, thus
   letting the user toy around with the list and break havoc (damato)
 - Fixed: several problems with the handling of temporary files, using
@@ -69,7 +69,7 @@ Developers: msbethke - Matthias Bethke
   returning now a proper error message (damato)
 - Fixed: an error on sending could make sent email to end up in the
   wrong folder (damato)
-- Fixed: potential crash in the message handling because YAM forgot to
+- Fixed: potential crash in the message handling because it forgot to
   close the output file on an error condition (damato)
 - Fixed: temporary unpack files (XPK) weren't deleted when switching
   messages from within the Read window (damato)
@@ -84,16 +84,21 @@ Developers: msbethke - Matthias Bethke
   (damato)
 - Fixed: ADDREDIT couldn't edit/create distribution lists without
   throwing Enforcer hits later (damato)
+- Fixed: ADDREDIT would produce hits with bogus BIRTHDATE parameters
+  (damato)
 - Fixed: ADDRRESOLVE was utterly broken and crashed the system right
   away (damato)
 - Fixed: GETSELECTED wouldn't initialize <stem>num.count in empty folders
   (damato)
 - Fixed: INFO SCREEN would return an empty string if YAM was iconified
   (damato)
-- Fixed: MAILREAD couldn't really activate a Read window (damato)
-- Fixed: MAILWRITE couldn't really activate a Write window (damato)
+- Fixed: MAILCHECK didn't set <STEM>ONSERVER correctly (damato)
+- Fixed: neither MAILREAD or MAILWRITE could really activate windows
+  in the GUI (damato)
 - Fixed: MAILWRITE accepted bad WINDOW values (damato)
 - Fixed: Enforcer hits when filtering by message body or headers (damato)
+- Fixed: Enforcer hits when replying or forwarding a message attached
+  to another message (damato)
 - Fixed: remote filters could trigger actions that were not supposed to
   (damato)
 - Fixed: Enforcer hits when clicking the [Filter] button or selecting
@@ -106,8 +111,8 @@ Developers: msbethke - Matthias Bethke
   "Check version" (damato)
 - Fixed: calling "Show last message" would also disrupt the current mail
   transfer and cause further calamities later on (damato)
-- Fixed: clicking the support URL <www.yam.ch> in the About window on
-  startup was rewarded with an Enforcer hit (damato)
+- Fixed: Enforcer hit when clicking the support URL <www.yam.ch> in the
+  About window on startup (damato)
 - Fixed: the results in the Search window could get out of sync with the
   message list (damato)
 - Fixed: even if "Display all texts" was disabled, some operations in the
@@ -117,17 +122,16 @@ Developers: msbethke - Matthias Bethke
   replaced the rudimentary algorithm this code was based on with a more
   advanced CRC32 checksum algorithm which in turn calls for an .index
   revision update - yup, this *REQUIRES ALL INDICES TO BE UPDATED*, but
-  this also wins you the possibility of sorting messages by the date they
-  were received or sent, which has now been implemented for real, complete
-  with a suitable new "Date sent/received" sort criterion (damato)
+  also wins you the possibility of sorting messages by the date they
+  were sent or received, which has now been implemented for real (damato)
 - Fixed: a gadget in the filter definition showed junk when switching
   to a remote filter and viceversa (damato)
-- Fixed: YAM remembers again the last active message in a folder and jumps
+- Fixed: remembers again the last active message in a folder and jumps
   to this message if the folder is selected again (damato)
 - Fixed: doesn't lose track anymore when Next/Previous message is selected
   in the Read window and an unrelated folder is currently opened (damato)
-- Fixed: the address book listview won't be cleared anymore if YAM can't
-  open a new address book from disk (damato)
+- Fixed: the address book listview won't be cleared anymore if the new
+  address book on disk cannot be opened (damato)
 - Fixed: variable signatures will also work now when forwarding or
   writing a new mail in a folder belonging to a mailing list (damato)
 - Fixed: the title of the file requester for importing MIME viewers & types
@@ -169,8 +173,8 @@ Developers: msbethke - Matthias Bethke
   (krille)
 - Changed: dates in the mail listview and other areas are now displayed
   using Locale settings (damato)
-- Changed: YAM will also honour the hidden JumpToNewMsg option regarding
-  newly received messages (damato)
+- Changed: will also honour the hidden JumpToNewMsg option wrt newly
+  received messages (damato)
 - Changed: the listview in the Search window will now be sorted by
   date by default (damato)
 - Changed: personal sender info will only be displayed if only one
@@ -211,9 +215,9 @@ Developers: msbethke - Matthias Bethke
   groups, and nested at the user's discretion (damato)
 - Added: SMTP & POP3 TLS1/SSL3 support for stunnel servers, using
   AmiSSL.library (damato)
-- Added: email address cache - YAM can now "remember" the last N used
-  recipients if they don't appear in the address book (laursen, duff,
-  damato)
+- Added: email address cache, making it possible to "remember" the last
+  N used recipients if they don't appear in the address book (laursen,
+  duff, damato)
 - Added: optional pop-up menus for the folder & message lists, using
   popupmenu.library (damato)
 - Added: automatic codepage detection and translation, mainly for
@@ -224,7 +228,7 @@ Developers: msbethke - Matthias Bethke
 - Added: more powerful recipient string gadgets, resolving aliases/
   real names/email addresses "on the fly" as they are found in the
   address book (duff)
-- Added: Search function in the Write window (duff)
+- Added: search function in the Write window (duff)
 - Added: the format of size values can be chosen now (damato)
 - Added: individual appicon stats for folders (damato)
 - Added: user-definable appicon label (damato)
