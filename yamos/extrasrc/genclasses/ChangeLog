@@ -1,3 +1,9 @@
+2004-05-28  Jens Langner <Jens.Langner@light-speed.de>
+
+    * removed the special AmigaOS4 ASMSTUB handling again as the 51.4
+      kernel of AmigaOS4 seem to handle m68k<>PPC cross calls correctly
+      now.
+
 2004-01-24  Jens Langner <Jens.Langner@light-speed.de>
 
     * added AmigaOS4 support. Now the _NewObject() varargs function
