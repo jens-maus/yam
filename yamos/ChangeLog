@@ -327,7 +327,11 @@
 
     * YAM_RE.c: increased length to search for signature
     * YAM_WR.c: fixed crash when the address field contained a single "
-      Bug #433820; however the real problem is in
-      YAM_UT.c/ExtractAdress() which fails to extract
-      E-Mailaddress and Realname correctly in this case
+      Bug #433820; this was introduced in YAM_WR.c rev 1.28
+
+2001-08-23  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_RE.c: now recognizes attachment name in Content-Disposition
+      header also (patch from MAIN)
+    * YAM_AB.c: fixed sorting of the address list (patch from MAIN)
 
