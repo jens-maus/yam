@@ -192,12 +192,10 @@ MSG_CompilationDate (//)
 Compilation date:
 ;
 MSG_Copyright2 (//)
-This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n\
-
+This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
 ;
 MSG_UsedSoftware (//)
-This application uses the following third party software:\n\
-
+This application uses the following third party software:\n
 ;
 MSG_WebSite (//)
 The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
@@ -522,8 +520,7 @@ _From|*_Reply-To|_Cancel
 ;
 MSG_MA_AttachRemoved (//)
 \n\
-_The following attachments have been removed manually:_\n\
-
+_The following attachments have been removed manually:_\n
 ;
 MSG_MA_ConfirmReq (//)
 Please confirm...
@@ -532,12 +529,10 @@ MSG_MA_ConfirmDel (//)
 Please confirm deletion.
 ;
 MSG_MA_1Selected (//)
-One message selected.\n\
-
+One message selected.\n
 ;
 MSG_MA_xSelected (//)
-%lD messages selected.\n\
-
+%lD messages selected.\n
 ; COUNT
 ;
 MSG_MA_ConfirmFilter (//)
@@ -917,8 +912,7 @@ MSG_CO_ImportMIMEGads (//)
 *_MIME.prefs|m_ailcap|m_ime.types|_Cancel
 ;
 MSG_CO_NewIntroDef (//)
-Hello,\\\\n\
-
+Hello,\\\\n
 ;
 MSG_CO_AltRepIntroDef (//)
 
@@ -934,12 +928,10 @@ From: %n <%e>\\\\n\
 Subject: %s\\\\n\
 \\\\n\
 --- Forwarded message follows ---\\\\n\
-\\\\n\
-
+\\\\n
 ;
 MSG_CO_ForwardFinishDef (//)
-*** End of forwarded message ***\\\\n\
-
+*** End of forwarded message ***\\\\n
 ;
 MSG_CO_GreetingsDef (//)
 Kind regards
@@ -954,8 +946,7 @@ MSG_CO_MLRepHelloDef (//)
 
 ;
 MSG_CO_MLRepIntroDef (//)
-On %d, %n wrote:\\\\n\
-
+On %d, %n wrote:\\\\n
 ;
 MSG_CO_MLRepByeDef (//)
 Regards
@@ -2829,8 +2820,7 @@ MSG_RE_GoodSig (//)
 Good signature
 ;
 MSG_RE_SigFrom (//)
- from\n\
-
+ from\n
 ;
 MSG_RE_SigCheck (//)
 Check PGP signature
@@ -2886,55 +2876,47 @@ MSG_RE_MDNdisplay (//)
 The message\n\
 %s\n\
 has been displayed.\n\
-This is no guarantee that the content has been read or understood.\n\
-
+This is no guarantee that the content has been read or understood.\n
 ;
 MSG_RE_MDNprocessed (//)
 The message\n\
 %s\n\
 has been processed%s,\n\
 without being displayed to the user. The user may or may not see\n\
-the message later.\n\
-
+the message later.\n
 ;
 MSG_RE_MDNdispatched (//)
 The message\n\
 %s\n\
 has been sent somewhere%s,\n\
 without being displayed to the user. The user may or may not see\n\
-the message later.\n\
-
+the message later.\n
 ;
 MSG_RE_MDNdeleted (//)
 The message\n\
 %s\n\
 has been deleted%s.\n\
 The recipient may or may not have seen the message. The recipient\n\
-may \"undelete\" the message at a later time and read the message.\n\
-
+may \"undelete\" the message at a later time and read the message.\n
 ;
 MSG_RE_MDNdenied (//)
 The recipient of the message\n\
 %s\n\
-doesn't wish to inform you about the disposition of that message.\n\
-
+doesn't wish to inform you about the disposition of that message.\n
 ;
 MSG_RE_MDNunknown (//)
 The message\n\
 %s\n\
-has been %s%s.\n\
-
+has been %s%s.\n
 ;
 MSG_RE_PGPNotAllowed (//)
 >PGP Error<\n\
 \n\
 You're not allowed to view this PGP encrypted message. Either your PGP software\n\
-isn't configured properly, or the message was encrypted for someone else.\n\
-
+isn't configured properly, or the message was encrypted for someone else.\n
 ;
 MSG_RE_MsgReadOnly (//)
-The message can only be read by %s\n\
-
+The message can only be read by %s\n
 ; RECIPIENT
 ;
 MSG_RE_AddSender (//)
@@ -3647,8 +3629,7 @@ MSG_TR_NewMailReq (//)
 \n\
 %3ld messages downloaded,\n\
 %3ld left on server\n\
-%3ld duplicates skipped\n\
-
+%3ld duplicates skipped\n
 ; COUNT, COUNT, COUNT, COUNT
 ;
 MSG_TR_FilterStats (//)
