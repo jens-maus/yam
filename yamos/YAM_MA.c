@@ -41,6 +41,7 @@
 #include <proto/muimaster.h>
 #include <proto/pm.h>
 #include <proto/utility.h>
+#include <proto/timer.h>
 #include <rexx/storage.h>
 
 #include "extra.h"
@@ -59,6 +60,7 @@
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
+#include "YAM_mime.h"
 #include "YAM_read.h"
 #include "YAM_rexx.h"
 #include "YAM_userlist.h"
@@ -90,7 +92,7 @@ static int MA_MailCompare(struct Mail*, struct Mail*, LONG col);
 //  Calculates value for sort indicator
 static ULONG MA_GetSortType(int sort)
 {
-   static const ULONG sort2col[8] = { 0,4,6,1,1,3,5,0 };
+   static const ULONG sort2col[8] = { 0,4,7,1,1,3,5,0 };
    if(sort > 0)
       return sort2col[sort];
    else
@@ -211,20 +213,15 @@ struct Mail *MA_GetActiveMail(struct Folder *forcefolder, struct Folder **folder
 ///
 /// MA_SetMailStatus
 //  Sets the status of a message
-void MA_SetMailStatus(struct Mail *mail, enum MailStatus stat)
+void MA_SetMailStatus(struct Mail *mail, enum MailStatus status)
 {
-   struct MailInfo *mi;
-   char statstr[3];
-   int pf;
-
-   strcpy(statstr, Status[stat&0xFF]);
-   if ((pf = ((mail->Flags & 0x0700) >> 8))) sprintf(statstr+1, "%c", pf+'0');
-   if (stat != mail->Status)
+   if(status != mail->Status)
    {
-      mail->Status = stat&0xFF;
+      struct MailInfo *mi;
+
+      mail->Status = status;
       MA_ExpireIndex(mail->Folder);
       mi = GetMailInfo(mail);
-      SetComment(mi->FName, statstr);
 
       // if the mail is currently displayed in the listview we
       // have to redraw some stuff.
@@ -235,7 +232,39 @@ void MA_SetMailStatus(struct Mail *mail, enum MailStatus stat)
         DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
       }
    }
-   else SetComment(GetMailFile(NULL, NULL, mail), statstr);
+
+   // And last, but not least we set the comment to
+   // the Mailfile regardless if a status changed.
+   MA_SetMailComment(mail);
+}
+
+///
+/// MA_SetMailComment
+//  Sets the correct comment of a mail file STATUS + transferDate
+BOOL MA_SetMailComment(struct Mail *mail)
+{
+   char commentStr[15]; // it "should" be not greater than 15 bytes!
+
+   // lets first copy the actual status of that mail into
+   // the start of the commentStr
+   strcpy(commentStr, Status[mail->Status]);
+
+   // then we check if this mail has a valid timeval and then attach
+   // the base64 encoded representation of the timeval to the commentString
+   if(mail->transDate.tv_secs > 0)
+   {
+      char transDateStr[13]; // it should always by 12bytes long + \0
+
+      encode64((char *)&mail->transDate, transDateStr, sizeof(struct timeval));
+
+      // lets attach the transDate to the commentString somehow
+      sprintf(commentStr, "%s %s", commentStr, transDateStr);
+   }
+
+   // now set the comment to the MailFile
+   if(SetComment(GetMailFile(NULL, NULL, mail), commentStr)) return TRUE;
+
+   return FALSE;
 }
 
 ///
@@ -2208,15 +2237,11 @@ MakeHook(MA_FindAddressHook, MA_FindAddressFunc);
 /*** MA_LV_DspFunc - Message listview display hook ***/
 HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
 {
-   BOOL outbox;
-   struct Folder *folder;
-   int type;
+   struct Folder *folder = FO_GetCurrentFolder();
 
-   if (G->MA && (folder = FO_GetCurrentFolder())) type = folder->Type;
-   else return 0;
+   if(!G->MA || !folder) return 0;
 
-   outbox = isOutgoingFolder(folder);
-   if (entry)
+   if(entry)
    {
       if (folder)
       {
@@ -2240,8 +2265,8 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
             *dispfro = 0;
             if(isMultiRCPTMail(entry)) strcat(dispfro, "\033o[11]");
 
-            pe = outbox ? &entry->To : &entry->From;
-            if((type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress))
+            pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
+            if((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress))
             {
               pe = &entry->To;
               strcat(dispfro, GetStr(MSG_MA_ToPrefix));
@@ -2269,23 +2294,56 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
 
          // lets set all other fields now
          if(C->MessageCols & (1<<2)) array[2] = AddrName((entry->ReplyTo));
+
+         // then the Subject
          array[3] = entry->Subject;
+
+         // we first copy the Date Received/sent because this would probably be not
+         // set by all ppl and strcpy() is costy ;)
+         if(C->MessageCols & (1<<7) && entry->transDate.tv_secs > 0)
+         {
+            static char datestr[32];
+            array[7] = strcpy(datestr, TimeVal2String(&entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
+         }
+         else array[7] = "";
+
          if(C->MessageCols & (1<<4)) array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME);
+
          if(C->MessageCols & (1<<5)) { array[5] = dispsiz; *dispsiz = 0; FormatSize(entry->Size, dispsiz); }
+
          array[6] = entry->MailFile;
-         array[7] = entry->Folder->Name;
+         array[8] = entry->Folder->Name;
       }
    }
    else
    {
       array[0] = GetStr(MSG_MA_TitleStatus);
-      array[1] = GetStr(outbox ? MSG_To : MSG_From);
+
+      // depending on the current folder we
+      // display different titles for different columns
+      if(isOutgoingFolder(folder))
+      {
+        array[1] = GetStr(MSG_To);
+        array[7] = GetStr(MSG_DATE_SENT);
+      }
+      else if(folder->Type == FT_CUSTOMMIXED || folder->Type == FT_DELETED)
+      {
+        array[1] = GetStr(MSG_FROMTO);
+        array[7] = GetStr(MSG_DATE_SNTRCVD);
+      }
+      else
+      {
+        array[1] = GetStr(MSG_From);
+        array[7] = GetStr(MSG_DATE_RECEIVED);
+      }
+
       array[2] = GetStr(MSG_ReturnAddress);
       array[3] = GetStr(MSG_Subject);
       array[4] = GetStr(MSG_Date);
       array[5] = GetStr(MSG_Size);
       array[6] = GetStr(MSG_Filename);
-      array[7] = GetStr(MSG_Folder);
+
+      array[8] = GetStr(MSG_Folder); // The Folder is just a dummy entry to serve the SearchWindowDisplayHook
    }
 
    return 0;
@@ -2384,6 +2442,12 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
     break;
 
     case 7:
+    {
+      return CmpTime(&entry2->transDate, &entry1->transDate);
+    }
+    break;
+
+    case 8:
     {
       return stricmp(entry1->Folder->Name, entry2->Folder->Name);
     }
@@ -2738,7 +2802,7 @@ BOOL MA_SortWindow(void)
 //  Creates format definition for message listview
 void MA_MakeMAFormat(APTR lv)
 {
-   static const int defwidth[MACOLNUM] = { -1,-1,-1,-1,-1,-1,-1 };
+   static const int defwidth[MACOLNUM] = { -1,-1,-1,-1,-1,-1,-1,-1 };
    char format[SIZE_LARGE];
    BOOL first = TRUE;
    int i;

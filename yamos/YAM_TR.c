@@ -41,6 +41,7 @@
 #include <proto/intuition.h>
 #include <proto/miami.h>
 #include <proto/muimaster.h>
+#include <proto/timer.h>
 #include <proto/utility.h>
 #include <proto/amissl.h>
 
@@ -2386,6 +2387,9 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                     // put the transferStat to 100%
                     set(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current, mail->Size);
 
+                    // now that we are at 100% we have to set the transfer Date of the message
+                    GetSysTime(&mail->Reference->transDate);
+
                     result = email->DelSend ? 2 : 1;
                     AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size, "");
                   }
@@ -2607,11 +2611,13 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
          BOOL header = FALSE, body = FALSE;
          struct Folder *folder = G->TR->ImportBox;
          int btype = folder->Type;
-         char buffer[SIZE_LINE], *stat;
+         char buffer[SIZE_LINE];
+         enum MailStatus stat;
 
-         if (btype == FT_OUTGOING) stat = Status[STATUS_WFS];
-         else if (btype == FT_SENT || btype == FT_CUSTOMSENT) stat = Status[STATUS_SNT];
-         else stat = " ";
+         if (btype == FT_OUTGOING) stat = STATUS_WFS;
+         else if (btype == FT_SENT || btype == FT_CUSTOMSENT) stat = STATUS_SNT;
+         else stat = STATUS_NEW;
+
          while (fgets(buffer, SIZE_LINE, fh) && !G->TR->Abort)
          {
             if (!header && !strncmp(buffer, "From ", 5))
@@ -2621,8 +2627,13 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                   if (f)
                   {
                      fclose(f); f = NULL;
-                     if ((email = MA_ExamineMail(folder, mfile, stat, FALSE)))
+                     if ((email = MA_ExamineMail(folder, mfile, NULL, FALSE)))
                      {
+                        email->Mail.Status = stat;
+
+                        // depending on the Status we have to set the transDate or not
+                        if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTime(&email->Mail.transDate);
+
                         AddMailToList((struct Mail *)email, folder);
                         MA_FreeEMailStruct(email);
                      }
@@ -2647,13 +2658,19 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
          if (body && f)
          {
             fclose(f);
-            if ((email = MA_ExamineMail(folder, mfile, stat, FALSE)))
+            if ((email = MA_ExamineMail(folder, mfile, NULL, FALSE)))
             {
+               email->Mail.Status = stat;
+
+               // depending on the Status we have to set the transDate or not
+               if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTime(&email->Mail.transDate);
+
                AddMailToList((struct Mail *)email, folder);
                MA_FreeEMailStruct(email);
             }
          }
          fclose(fh);
+
          DisplayMailList(folder, G->MA->GUI.NL_MAILS);
          AppendLog(50, GetStr(MSG_LOG_Importing), (void *)ts.Msgs_Done, G->TR->ImportFile, folder->Name, "");
          DisplayStatistics(folder, TRUE);
@@ -2771,9 +2788,16 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
       if(!G->TR->Abort && !G->Error && done)
       {
          struct ExtendedMail *mail;
-         if ((mail = MA_ExamineMail(infolder, mfile, " ", FALSE)))
+         if ((mail = MA_ExamineMail(infolder, mfile, NULL, FALSE)))
          {
             struct Mail *new = AddMailToList((struct Mail *)mail, infolder);
+
+            // we have to get the actual Time and place it in the transDate, so that we know at
+            // which time this mail arrived
+            GetSysTime(&new->transDate);
+            new->Status = STATUS_NEW;
+            MA_SetMailComment(new);
+
             if (FO_GetCurrentFolder() == infolder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
             AppendLogVerbose(32, GetStr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, (void *)new->Size, "");
             MA_StartMacro(MACRO_NEWMSG, mfile);

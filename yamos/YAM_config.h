@@ -33,7 +33,7 @@
 #include "YAM_find.h"
 
 #define FOCOLNUM 5
-#define MACOLNUM 7
+#define MACOLNUM 8  // the maximum number of columns the MessageListview can have
 #define ABCOLNUM 9
 
 struct CO_GUIData

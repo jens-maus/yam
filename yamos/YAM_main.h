@@ -203,6 +203,7 @@ void  MA_RemoveAttach(struct Mail *mail);
 BOOL  MA_Send(enum SendMode sendpos);
 BOOL  MA_SendMList(struct Mail **mlist);
 void  MA_SetMailStatus(struct Mail *mail, enum MailStatus stat);
+BOOL  MA_SetMailComment(struct Mail *mail);
 void  MA_SetSortFlag(void);
 void  MA_SetStatusTo(int status);
 void  MA_SetupDynamicMenus(void);

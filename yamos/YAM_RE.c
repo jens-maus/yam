@@ -333,9 +333,9 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
       {
          char mfile[SIZE_MFILE];
          struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
-         struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, "", TRUE);
+         struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE);
 
-         if(email && outfolder)
+         if(email)
          {
             p2->ContentType = "message/disposition-notification";
             p2->Filename = tf2->Filename;
@@ -352,6 +352,9 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
             EmitHeader(tf2->FP, "Disposition", disp);
             fclose(tf2->FP);  tf2->FP = NULL;
             p3 = p2->Next = NewPart(2);
+
+            MA_FreeEMailStruct(email);
+
             if ((tf3 = OpenTempFile("w")))
             {
               char fullfile[SIZE_PATHFILE];
@@ -379,9 +382,10 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
                 mlist[0] = (struct Mail *)1; mlist[2] = NULL;
                 WriteOutMessage(&comp);
                 fclose(comp.FH);
-                if ((email = MA_ExamineMail(outfolder, mfile, Status[STATUS_WFS], TRUE)))
+                if ((email = MA_ExamineMail(outfolder, mfile, NULL, TRUE)))
                 {
-                  mlist[2] = AddMailToList((struct Mail *)email, outfolder);
+                  email->Mail.Status = STATUS_WFS;  // Set "WaitForSend" status
+                  mlist[2] = AddMailToList(&email->Mail, outfolder);
                   MA_FreeEMailStruct(email);
                 }
                 if (sendnow && mlist[2] && !G->TR) MA_SendMList(mlist);
@@ -390,7 +394,6 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
               FreeStrBuf(comp.MailTo);
               CloseTempFile(tf3);
             }
-            MA_FreeEMailStruct(email);
          }
          CloseTempFile(tf2);
       }
@@ -1054,7 +1057,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
     struct ExtendedMail *email;
     struct TempFile *tf = OpenTempFile(NULL);
     CopyFile(tf->Filename, NULL, fname, NULL);
-    if ((email = MA_ExamineMail(NULL, FilePart(tf->Filename), "O", TRUE)))
+    if ((email = MA_ExamineMail(NULL, FilePart(tf->Filename), NULL, TRUE)))
     {
       mail = calloc(1, sizeof(struct Mail));
       if(!mail) return;
@@ -1064,6 +1067,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
       mail->Reference = NULL;
       mail->Folder    = NULL;
       mail->UIDL      = NULL;
+      mail->Status    = STATUS_OLD;
       SET_FLAG(mail->Flags, MFLAG_NOFOLDER);
 
       MA_FreeEMailStruct(email);
@@ -1423,9 +1427,15 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
       WriteOutMessage(&comp);
       FreePartsList(p1);
       fclose(comp.FH);
-      if ((email = MA_ExamineMail(folder, mfile, Status[re->MailPtr->Status], TRUE)))
+      if ((email = MA_ExamineMail(folder, mfile, NULL, TRUE)))
       {
-         new = AddMailToList((struct Mail *)email, folder);
+         // lets set some values depending on the original message
+         email->Mail.Status = re->MailPtr->Status;
+         memcpy(&email->Mail.transDate, &re->MailPtr->transDate, sizeof(struct timeval));
+
+         // add the mail to the folder now
+         new = AddMailToList(&email->Mail, folder);
+
          if (FO_GetCurrentFolder() == folder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
          MA_FreeEMailStruct(email);
          if (choice == 2)

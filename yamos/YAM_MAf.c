@@ -50,6 +50,7 @@
 #include "YAM_locale.h"
 #include "YAM_main.h"
 #include "YAM_mainFolder.h"
+#include "YAM_mime.h"
 #include "YAM_read.h"
 #include "YAM_rexx.h"
 #include "YAM_userlist.h"
@@ -88,6 +89,7 @@ struct ComprMail
    int              Flags;
    char             MailFile[SIZE_MFILE];
    struct DateStamp Date;
+   struct timeval   transDate; // we need microseconds for received/sent Date
    char             Status;
    char             Importance;
    unsigned long    cMsgID;
@@ -183,7 +185,7 @@ static char *MA_IndexFileName(struct Folder *folder)
 ///
 /// MA_LoadIndex
 //  Loads a folder index from disk
-int MA_LoadIndex(struct Folder *folder, BOOL full)
+enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 {
    FILE *fh;
    enum LoadedMode indexloaded = LM_UNLOAD;
@@ -238,6 +240,7 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
                mail.Flags = (cmail.Flags&0x7ff);
                strcpy(mail.MailFile, cmail.MailFile);
                mail.Date = cmail.Date;
+               mail.transDate = cmail.transDate;
                mail.Status = cmail.Status;
                mail.Importance = cmail.Importance;
                mail.cMsgID = cmail.cMsgID;
@@ -302,6 +305,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
       cmail.Flags = mail->Flags;
       strcpy(cmail.MailFile, mail->MailFile);
       cmail.Date = mail->Date;
+      cmail.transDate = mail->transDate;
       cmail.Status = mail->Status;
       cmail.Importance = mail->Importance;
       cmail.cMsgID = mail->cMsgID;
@@ -757,7 +761,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
 {
    static struct ExtendedMail email;
    static struct Person pe;
-   struct Mail *mail = (struct Mail *)&email;
+   struct Mail *mail = &email.Mail;
    char *p, fullfile[SIZE_PATHFILE];
    int ok, i;
    struct DateStamp *foundDate = NULL;
@@ -934,13 +938,51 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
 
       FreeData2D(&Header);
       if ((ok & 8) && !mail->ReplyTo.RealName[0] && !stricmp(mail->ReplyTo.Address, mail->From.Address)) strcpy(mail->ReplyTo.RealName, mail->From.RealName);
-      mail->Date.ds_Days   = foundDate ? foundDate->ds_Days   : atol(mail->MailFile);
-      mail->Date.ds_Minute = foundDate ? foundDate->ds_Minute : 0;
-      mail->Date.ds_Tick   = foundDate ? foundDate->ds_Tick   : 0;
-      mail->Size = FileSize(fullfile);
+
+      // then we check the fileComment field and set the mail status
+      // aswell as the Date
       if (statstr)
-         for (mail->Status = STATUS_NEW, i = 0; i < STATUS_NEW; i++)
-            if (*statstr == *Status[i]) mail->Status = i;
+      {
+         // by default this mail should be new
+         for (mail->Status = STATUS_NEW, i = 0; i < 9; i++)
+         {
+            if (statstr[0] == *Status[i])
+            {
+              mail->Status = i;
+              break;
+            }
+         }
+
+         // now we check if this comment also has the transfer Date included
+         // we only take the string if it is exactly 12bytes long or
+         // otherwise it could be some weird data in the Comment string
+         if(statstr[1] == ' ' && statstr[2] && statstr[14] == '\0')
+         {
+            // lets decode the base64 encoded timestring directly
+            // into the mail->transDate timeval structure
+            from64txt(&statstr[2], (char *)&mail->transDate, NULL);
+         }
+      }
+
+      // if we found the Date in the mail itself and it was convertable we
+      // copy it out of the foundDate struct
+      if(foundDate)
+      {
+        memcpy(&mail->Date, foundDate, sizeof(struct DateStamp));
+      }
+      else if(mail->transDate.tv_secs > 0) // if not we take the transfered Date (if found)
+      {
+        TimeVal2DateStamp(&mail->transDate, &mail->Date);
+      }
+      else
+      {
+        // and as a fallback we take the name of the MailFile as the days
+        mail->Date.ds_Days = atoi(mail->MailFile);
+      }
+
+      // lets calculate the mailSize out of the FileSize() function
+      mail->Size = FileSize(fullfile);
+
       FinishUnpack(fullfile);
       return &email;
    }
@@ -954,12 +996,14 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
 //  Scans for message files in a folder directory
 void MA_ScanMailBox(struct Folder *folder)
 {
-   struct ExtendedMail *mail;
+   struct ExtendedMail *email;
    struct FileInfoBlock *fib;
    BPTR lock;
 
    BusyText(GetStr(MSG_BusyScanning), folder->Name);
    ClearMailList(folder, TRUE);
+
+   DB(kprintf("Recanning index for folder: %s...\n", folder->Name);)
 
    if((lock = Lock(GetFolderDir(folder), ACCESS_READ)))
    {
@@ -983,10 +1027,31 @@ void MA_ScanMailBox(struct Folder *folder)
               {
                 if(fib_copy.fib_Size)
                 {
-                  if((mail = MA_ExamineMail(folder, fib_copy.fib_FileName, fib_copy.fib_Comment,FALSE)))
+                  DB(kprintf("  examining MailFile: %s\n", fib_copy.fib_FileName);)
+
+                  if((email = MA_ExamineMail(folder, fib_copy.fib_FileName, fib_copy.fib_Comment, FALSE)))
                   {
-                    AddMailToList((struct Mail *)mail, folder);
-                    MA_FreeEMailStruct(mail);
+                    struct Mail *newMail = AddMailToList(&email->Mail, folder);
+
+                    // if this new mail hasn`t got a valid transDate we have to check if we
+                    // have to take the fileDate as a fallback value.
+                    if(newMail->transDate.tv_secs == 0)
+                    {
+                      // only if it is _not_ a "waitforsend" and "hold" message we can take the fib_Date
+                      // as the fallback
+                      if(newMail->Status != STATUS_WFS && newMail->Status != STATUS_HLD)
+                      {
+                         DB(kprintf("    no transfer Date information found in comment, taking fileDate...\n");)
+
+                         // now convert the fib_Date in a struct timeval.
+                         DateStamp2TimeVal(&fib_copy.fib_Date, &newMail->transDate);
+
+                         // then we write back the filecomment
+                         MA_SetMailComment(newMail);
+                      }
+                    }
+
+                    MA_FreeEMailStruct(email);
                   }
                 }
                 else

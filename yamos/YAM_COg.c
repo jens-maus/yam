@@ -1179,6 +1179,8 @@ APTR CO_Page8(struct CO_ClassData *data)
              Child, LLabel(GetStr(MSG_Size)),
              Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
              Child, LLabel(GetStr(MSG_Filename)),
+             Child, data->GUI.CH_MCOLS[7] = MakeCheck(""),
+             Child, LLabel(GetStr(MSG_CO_DATE_SNTRCVD)),
              Child, data->GUI.CH_MCNTMENU = MakeCheck(""),
              Child, LLabel(GetStr(MSG_CO_CONTEXTMENU)),
            End,

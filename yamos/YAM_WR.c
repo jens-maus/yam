@@ -1336,7 +1336,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    {
       struct MailInfo *mi;
       struct ExtendedMail *email;
-      int stat = mode == WRITE_HOLD ? STATUS_HLD : STATUS_WFS;
+      enum MailStatus stat = mode == WRITE_HOLD ? STATUS_HLD : STATUS_WFS;
       BOOL done = WriteOutMessage(&comp);
       fclose(comp.FH);
 
@@ -1347,8 +1347,9 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       }
 
       if (wr->Mode != NEW_BOUNCE) EndNotify(&G->WR_NRequest[winnum]);
-      if ((email = MA_ExamineMail(outfolder, mail.MailFile, Status[stat], C->EmailCache > 0 ? TRUE : FALSE)))
+      if ((email = MA_ExamineMail(outfolder, mail.MailFile, NULL, C->EmailCache > 0 ? TRUE : FALSE)))
       {
+         email->Mail.Status = stat;
          new = AddMailToList((struct Mail *)email, outfolder);
 
          // Now we have to check wheter we have to add the To & CC addresses

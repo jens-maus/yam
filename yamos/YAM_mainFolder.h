@@ -47,6 +47,7 @@ struct Mail
    int              Position;
    int              Index;
    struct DateStamp Date;
+   struct timeval   transDate;  // the date/time when this messages arrived/was sent.
    struct Person    From;
    struct Person    To;
    struct Person    ReplyTo;

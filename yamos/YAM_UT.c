@@ -1876,6 +1876,40 @@ time_t GetDateStamp(void)
    return (ds.ds_Days*24*60*60 + ds.ds_Minute*60 + ds.ds_Tick/TICKS_PER_SECOND);
 }
 ///
+/// TimeVal2DateStamp
+//  converts a struct timeval to a struct DateStamp
+void TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds)
+{
+   LONG seconds = (tv->tv_secs+tv->tv_micro/1000000);
+
+   ds->ds_Days   = seconds/86400;       // calculate the days since 1.1.1978
+   ds->ds_Minute = (seconds%86400)/60;
+   ds->ds_Tick   = (tv->tv_secs%60)*TICKS_PER_SECOND + (tv->tv_micro/20000);
+}
+///
+/// DateStamp2TimeVal
+//  converts a struct DateStamp to a struct timeval
+void DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv)
+{
+   /* creates wrong timevals from DateStamps with year >= 2114 ... */
+
+   tv->tv_secs = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
+   tv->tv_micro = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
+}
+///
+/// TimeVal2String
+//  Converts a timeval structure to a string with using DateStamp2String after a convert
+char *TimeVal2String(const struct timeval *tv, enum DateStampType mode)
+{
+   struct DateStamp ds;
+
+   // convert the timeval into a datestamp
+   TimeVal2DateStamp(tv, &ds);
+
+   // then call the DateStamp2String() function to get the real string
+   return DateStamp2String(&ds, mode);
+}
+///
 /// DateStamp2String
 //  Converts a datestamp to a string
 char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)

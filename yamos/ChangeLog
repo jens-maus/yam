@@ -5,6 +5,29 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-16  Jens Langner <Jens.Langner@light-speed.de>
+
+    * added the possibility to correctly display/sort messages
+      by the date they were received/sent. Previously YAM lacked
+      to correctly save and display messages if they were sorted
+      by "date received".
+      To fix that lack, YAM now also saves the received date
+      within the .index files of the folders and in addition to
+      that also within the file comment as a base64 encoded string.
+      This is necessary to make it possible to rescan the index
+      without loosing the exact received/sent date after the scan.
+      Also it is now possible to display the sent/received date
+      within the mail listview by selecting "Date Sent/Received"
+      from the config [Lists] tab.
+      Please note that with this new feature/bugfix it is
+      _necessary_ to do a complete rescan of the .index files of
+      your folders.
+      This should normally automatically be covered by the last
+      index version update to YIN4 - if you used a version in
+      between of this two changes you will end up with "corrupt index"
+      warnings which should easily be solved by doing a manual
+      rescan.
+
 2002-10-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c, YAM.c: reworked the index loading/rescanning

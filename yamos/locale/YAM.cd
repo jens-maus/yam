@@ -5005,3 +5005,18 @@ procedure and the connection was terminated:\n\n%s\n
 MSG_CO_APPICON_LABEL (//)
 New: %n Total: %t
 ;
+MSG_DATE_RECEIVED (//)
+Received
+;
+MSG_DATE_SENT (//)
+Sent
+;
+MSG_DATE_SNTRCVD (//)
+Sent/Received
+;
+MSG_CO_DATE_SNTRCVD (//)
+Date Sent/Received
+;
+MSG_FROMTO (//)
+From/To
+;

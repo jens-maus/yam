@@ -96,7 +96,7 @@ static int nextcharin(FILE *infile, BOOL PortableNewlines)
 ///
 /// encode64
 //  Encodes string in base64 format
-void encode64(char *s, char *d, int len)
+void encode64(const unsigned char *s, char *d, int len)
 {
    int i;
 
@@ -130,7 +130,7 @@ void encode64(char *s, char *d, int len)
 /// decode64
 //  Decodes string in base64 format
 #define BASE64(c) (index_64[(unsigned char)(c) & 0x7F])
-char *decode64 (char *dest, char *src, char *srcmax)
+char *decode64 (char *dest, const char *src, char *srcmax)
 {
    while (src + 3 < srcmax)
      {

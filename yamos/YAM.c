@@ -47,6 +47,7 @@
 #include <proto/muimaster.h>
 #include <proto/pm.h>
 #include <proto/rexxsyslib.h>
+#include <proto/timer.h>
 #include <proto/utility.h>
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
@@ -76,6 +77,8 @@
 /***************************************************************************
  Module: Root
 ***************************************************************************/
+
+struct Device *TimerBase = NULL;
 
 struct Global *G;
 
@@ -132,6 +135,7 @@ static void TC_Exit(void)
          if (CheckIO(&TCData.req->tr_node)) return;
          AbortIO(&TCData.req->tr_node);
          WaitIO(&TCData.req->tr_node);
+         TimerBase = (struct Device *)(-1);
          CloseDevice(&TCData.req->tr_node);
          DeleteIORequest(&TCData.req->tr_node);
       }
@@ -147,9 +151,16 @@ static void TC_Exit(void)
 static BOOL TC_Init(void)
 {
    if ((TCData.port = CreateMsgPort()))
+   {
       if ((TCData.req = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest))))
-         if (!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.req->tr_node, 0))
-            return TRUE;
+      {
+         if (!OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)TCData.req, 0L))
+         {
+           TimerBase = TCData.req->tr_node.io_Device;
+           return TRUE;
+         }
+      }
+   }
    return FALSE;
 }
 
