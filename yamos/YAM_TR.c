@@ -1692,30 +1692,32 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
          int j;
          BOOL rcptok = TRUE;
          struct ExtendedMail *email = MA_ExamineMail(outfolder, mail->MailFile, NULL, TRUE);
-         sprintf(buf, "TO:<%s>", mail->To.Address);
-         if (!TR_SendSMTPCmd("RCPT", buf)) rcptok = FALSE;
-         for (j = 0; j < email->NoSTo && rcptok; j++)
+         if(email)
          {
-            sprintf(buf, "TO:<%s>", email->STo[j].Address);
+            sprintf(buf, "TO:<%s>", mail->To.Address);
             if (!TR_SendSMTPCmd("RCPT", buf)) rcptok = FALSE;
-         }
-         for (j = 0; j < email->NoCC && rcptok; j++)
-         {
-            sprintf(buf, "TO:<%s>", email->CC[j].Address);
-            if (!TR_SendSMTPCmd("RCPT", buf)) rcptok = FALSE;
-         }
-         for (j = 0; j < email->NoBCC && rcptok; j++)
-         {
-            sprintf(buf, "TO:<%s>", email->BCC[j].Address);
-            if (!TR_SendSMTPCmd("RCPT", buf)) rcptok = FALSE;
-         }
-         if (rcptok)
-         {
-            if (TR_SendSMTPCmd("DATA", NULL))
+            for (j = 0; j < email->NoSTo && rcptok; j++)
             {
-               BOOL infield = FALSE, inbody = FALSE;
-               while (fgets(buf, SIZE_LINE-1, f) && !G->TR->Abort && !G->Error)
-               {
+              sprintf(buf, "TO:<%s>", email->STo[j].Address);
+              if (!TR_SendSMTPCmd("RCPT", buf)) rcptok = FALSE;
+            }
+            for (j = 0; j < email->NoCC && rcptok; j++)
+            {
+              sprintf(buf, "TO:<%s>", email->CC[j].Address);
+              if (!TR_SendSMTPCmd("RCPT", buf)) rcptok = FALSE;
+            }
+            for (j = 0; j < email->NoBCC && rcptok; j++)
+            {
+              sprintf(buf, "TO:<%s>", email->BCC[j].Address);
+              if (!TR_SendSMTPCmd("RCPT", buf)) rcptok = FALSE;
+            }
+            if (rcptok)
+            {
+              if (TR_SendSMTPCmd("DATA", NULL))
+              {
+                BOOL infield = FALSE, inbody = FALSE;
+                while (fgets(buf, SIZE_LINE-1, f) && !G->TR->Abort && !G->Error)
+                {
                   char *p, sendbuf[SIZE_LINE+2];
                   int sb = strlen(buf);
                   if (p = strpbrk(buf, "\r\n")) *p = 0;
@@ -1733,17 +1735,19 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                      if (!TR_SendDat(sendbuf)) ER_NewError(GetStr(MSG_ER_ConnectionBroken), NULL, NULL);
                   }
                   TR_TransStat_Update(ts, sb);
-               }
-               if (IoErr()) ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), mf, NULL);
-               else if (!G->TR->Abort && !G->Error)
-               {
+                }
+                if (IoErr()) ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), mf, NULL);
+                else if (!G->TR->Abort && !G->Error)
+                {
                   result = email->DelSend ? 2 : 1;
                   AppendLogVerbose(41, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size, "");
-               }
-               TR_SendSMTPCmd("\r\n.", NULL);
+                }
+                TR_SendSMTPCmd("\r\n.", NULL);
+              }
             }
-         }
-         MA_FreeEMailStruct(email);
+            MA_FreeEMailStruct(email);
+          }
+          else ER_NewError(GetStr(MSG_ER_CantOpenFile), mf, NULL);
       }
       fclose(f);
    }

@@ -322,60 +322,64 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
          char mfile[SIZE_MFILE];
          struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
          struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, "", TRUE);
-         p2->ContentType = "message/disposition-notification";
-         p2->Filename = tf2->Filename;
-         sprintf(buf, "%s (%s)", C->SMTP_Domain, yamversion);
-         EmitHeader(tf2->FP, "Reporting-UA", buf);
-         if (*email->OriginalRcpt.Address)
+
+         if(email && outfolder)
          {
-            sprintf(buf, "rfc822;%s", BuildAddrName2(&email->OriginalRcpt));
-            EmitHeader(tf2->FP, "Original-Recipient", buf);
-         }
-         sprintf(buf, "rfc822;%s", BuildAddrName(C->EmailAddress, C->RealName));
-         EmitHeader(tf2->FP, "Final-Recipient", buf);
-         EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
-         EmitHeader(tf2->FP, "Disposition", disp);
-         fclose(tf2->FP);  tf2->FP = NULL;
-         p3 = p2->Next = NewPart(2);
-         if (tf3 = OpenTempFile("w"))
-         {
-            char fullfile[SIZE_PATHFILE];
-            FILE *fh;
-            p3->ContentType = "text/rfc822-headers";
-            p3->Filename = tf3->Filename;
-            if (StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
+            p2->ContentType = "message/disposition-notification";
+            p2->Filename = tf2->Filename;
+            sprintf(buf, "%s (%s)", C->SMTP_Domain, yamversion);
+            EmitHeader(tf2->FP, "Reporting-UA", buf);
+            if (*email->OriginalRcpt.Address)
             {
-               if (fh = fopen(fullfile, "r"))
-               {
+              sprintf(buf, "rfc822;%s", BuildAddrName2(&email->OriginalRcpt));
+              EmitHeader(tf2->FP, "Original-Recipient", buf);
+            }
+            sprintf(buf, "rfc822;%s", BuildAddrName(C->EmailAddress, C->RealName));
+            EmitHeader(tf2->FP, "Final-Recipient", buf);
+            EmitHeader(tf2->FP, "Original-Message-ID", email->MsgID);
+            EmitHeader(tf2->FP, "Disposition", disp);
+            fclose(tf2->FP);  tf2->FP = NULL;
+            p3 = p2->Next = NewPart(2);
+            if (tf3 = OpenTempFile("w"))
+            {
+              char fullfile[SIZE_PATHFILE];
+              FILE *fh;
+              p3->ContentType = "text/rfc822-headers";
+              p3->Filename = tf3->Filename;
+              if (StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
+              {
+                if (fh = fopen(fullfile, "r"))
+                {
                   while (fgets(buf, SIZE_LINE, fh)) if (*buf == '\n') break; else fputs(buf, tf3->FP);
                   fclose(fh);
-               }
-               FinishUnpack(fullfile);
-            }
-            fclose(tf3->FP); tf3->FP = NULL;
-            memset(&comp, 0, sizeof(struct Compose));
-            comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
-            comp.Subject = "Disposition Notification";
-            comp.ReportType = 1;
-            comp.FirstPart = p1;
-            if (comp.FH = fopen(MA_NewMailFile(outfolder, mfile, 0), "w"))
-            {
-               struct Mail *mlist[3];
-               mlist[0] = (struct Mail *)1; mlist[2] = NULL;
-               WriteOutMessage(&comp);
-               fclose(comp.FH);
-               if (email = MA_ExamineMail(outfolder, mfile, Status[STATUS_WFS], TRUE))
-               {
+                }
+                FinishUnpack(fullfile);
+              }
+              fclose(tf3->FP); tf3->FP = NULL;
+              memset(&comp, 0, sizeof(struct Compose));
+              comp.MailTo = StrBufCpy(comp.MailTo, BuildAddrName2(recipient));
+              comp.Subject = "Disposition Notification";
+              comp.ReportType = 1;
+              comp.FirstPart = p1;
+              if (comp.FH = fopen(MA_NewMailFile(outfolder, mfile, 0), "w"))
+              {
+                struct Mail *mlist[3];
+                mlist[0] = (struct Mail *)1; mlist[2] = NULL;
+                WriteOutMessage(&comp);
+                fclose(comp.FH);
+                if (email = MA_ExamineMail(outfolder, mfile, Status[STATUS_WFS], TRUE))
+                {
                   mlist[2] = AddMailToList((struct Mail *)email, outfolder);
                   MA_FreeEMailStruct(email);
-               }
-               if (sendnow && mlist[2] && !G->TR) MA_SendMList(mlist);
+                }
+                if (sendnow && mlist[2] && !G->TR) MA_SendMList(mlist);
+              }
+              else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
+              FreeStrBuf(comp.MailTo);
+              CloseTempFile(tf3);
             }
-            else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
-            FreeStrBuf(comp.MailTo);
-            CloseTempFile(tf3);
+            MA_FreeEMailStruct(email);
          }
-         MA_FreeEMailStruct(email);
          CloseTempFile(tf2);
       }
       CloseTempFile(tf1);
@@ -400,12 +404,14 @@ BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi)
    if (MDNmode)
    {
       struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE);
-      if (*email->ReceiptTo.Address)
+      if(email)
       {
-         char buttons[SIZE_DEFAULT*2];
-         BOOL isonline = TR_IsOnline(), sendnow = C->SendMDNAtOnce && isonline;
-         switch (MDNmode)
-         {
+        if(*email->ReceiptTo.Address)
+        {
+          char buttons[SIZE_DEFAULT*2];
+          BOOL isonline = TR_IsOnline(), sendnow = C->SendMDNAtOnce && isonline;
+          switch (MDNmode)
+          {
             case 1: MDNtype = MDN_DENY|MDN_AUTOSEND|MDN_AUTOACT; break;
             case 2: sendnow = FALSE;
                     strcpy(buttons, GetStr(MSG_RE_MDNGads1));
@@ -423,10 +429,11 @@ BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi)
                     }
                     break;
             case 3: if (MDNtype != MDN_IGNORE) MDNtype |= MDN_AUTOSEND; break;
-         }
-         if (MDNtype != MDN_IGNORE) RE_SendMDN(MDNtype, mail, &email->ReceiptTo, sendnow);
+          }
+          if (MDNtype != MDN_IGNORE) RE_SendMDN(MDNtype, mail, &email->ReceiptTo, sendnow);
+        }
+        MA_FreeEMailStruct(email);
       }
-      MA_FreeEMailStruct(email);
    }
    return ignoreall;
 }
@@ -465,8 +472,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
 {
    struct MailInfo *mi = GetMailInfo(mail);
    struct RE_ClassData *re = G->RE[winnum];
-   struct RE_GUIData *gui = &re->GUI;
-   int i;
+   struct RE_GUIData *gui;
    struct Folder **flist, *folder = mail->Folder;
    BOOL real = !Virtual(mail);
    BOOL out = real ? OUTGOING(folder->Type) : FALSE, allloaded = TRUE;
@@ -479,6 +485,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
       return;
    }
 
+   gui = &re->GUI;
    re->Mail = *mail;
    re->MailPtr = mail;
    re->PGPKey = FALSE;
@@ -500,9 +507,19 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    {
       if (flist = FO_CreateList())
       {
-         for (i = 1; i <= (int)*flist; i++) if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_GROUP) allloaded = FALSE;
+         int i;
+
+         for (i = 1; i <= (int)*flist; i++)
+         {
+            if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_GROUP)
+            {
+              allloaded = FALSE;
+              break;
+            }
+         }
          free(flist);
       }
+
       if (allloaded && gui->TO_TOOLBAR)
       {
          DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, !RE_GetQuestion(mail->cIRTMsgID));
@@ -533,6 +550,12 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    }
    else
    {
+      // check first if the mail file exists and if not we have to exit with an error
+      if(!FileExists(mail->MailFile))
+      {
+        ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
+      }
+
       RE_CleanupMessage(winnum);
       DisposeModulePush(&G->RE[winnum]);
    }
@@ -715,22 +738,36 @@ HOOKPROTONHNO(RE_PrintFunc, void, int *arg)
 
    if (part = AttachRequest(GetStr(MSG_RE_PrintMsg), GetStr(MSG_RE_SelectPrintPart), GetStr(MSG_RE_PrintGad), GetStr(MSG_Cancel), winnum, ATTREQ_PRINT|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
    {
-      if (C->PrinterCheck) if (!CheckPrinter()) return;
+      if (C->PrinterCheck && !CheckPrinter()) return;
       BusyText(GetStr(MSG_BusyDecPrinting), "");
-      for (; part; part = part->NextSelected) switch (part->Nr)
+      for (; part; part = part->NextSelected)
       {
-         case -2: RE_PrintFile(G->RE[winnum]->File,part);
-                  break;
-         case -1: if (prttmp = OpenTempFile("w"))
-                  {
-                     RE_SaveDisplay(winnum, prttmp->FP);
-                     fclose(prttmp->FP);
-                     prttmp->FP = NULL;
-                     RE_PrintFile(prttmp->Filename,part);
-                     CloseTempFile(prttmp);
-                  }
-                  break;
-         default: RE_PrintFile(part->Filename,part);
+        switch (part->Nr)
+        {
+          case PART_ORIGINAL:
+          {
+            RE_PrintFile(G->RE[winnum]->File,part);
+          }
+          break;
+
+          case PART_ALLTEXT:
+          {
+            if (prttmp = OpenTempFile("w"))
+            {
+              RE_SaveDisplay(winnum, prttmp->FP);
+              fclose(prttmp->FP);
+              prttmp->FP = NULL;
+              RE_PrintFile(prttmp->Filename,part);
+              CloseTempFile(prttmp);
+            }
+          }
+          break;
+
+          default:
+          {
+            RE_PrintFile(part->Filename,part);
+          }
+        }
       }
       BusyEnd;
    }
@@ -775,7 +812,7 @@ static void RE_PrintLaTeX(char *filename, struct Part *part)
 
       if((ts1 = AllocStrBuf(SIZE_LINE)) && (ts2 = AllocStrBuf(SIZE_LINE)))
       {
-        if(1 == part->Nr)
+        if(part->Nr == PART_LETTER)
         {
           int i,j;
           char Attrib[SIZE_DEFAULT];
@@ -1044,11 +1081,23 @@ HOOKPROTONHNO(RE_DisplayFunc, void, int *arg)
    if (part = AttachRequest(GetStr(MSG_RE_DisplayMsg), GetStr(MSG_RE_SelectDisplayPart), GetStr(MSG_RE_DisplayGad), GetStr(MSG_Cancel), winnum, ATTREQ_DISP|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
    {
       BusyText(GetStr(MSG_BusyDecDisplaying), "");
+
       for (; part; part = part->NextSelected)
       {
          RE_DecodePart(part);
-         if (part->Nr == PART_ORIGINAL) RE_DisplayMIME(G->RE[winnum]->File, "text/plain");
-         else RE_DisplayMIME(part->Filename, part->ContentType);
+         switch(part->Nr)
+         {
+            case PART_ORIGINAL:
+            {
+              RE_DisplayMIME(G->RE[winnum]->File, "text/plain");
+            }
+            break;
+
+            default:
+            {
+              RE_DisplayMIME(part->Filename, part->ContentType);
+            }
+         }
       }
       BusyEnd;
    }
@@ -1588,12 +1637,15 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
 static void RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 {
    struct TranslationTable *tt = NULL;
-   if (rp->Nr == C->LetterPart && rp->Printable)
+   if (rp->Nr == PART_LETTER && rp->Printable)
+   {
       if (!rp->CParCSet)
       {
          if (MatchTT(C->LocalCharset, G->TTin, TRUE) || MatchTT("us-ascii", G->TTin, TRUE)) tt = G->TTin;
       }
       else if (MatchTT(rp->CParCSet, G->TTin, TRUE)) tt = G->TTin;
+   }
+
    switch (rp->EncodingCode)
    {
       case ENC_B64:  from64  (in, out, tt, DoesNeedPortableNewlines(rp->ContentType)); break;
@@ -1628,7 +1680,7 @@ static FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, st
       }
       strcpy((*new)->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
       (*new)->Win = winnum;
-      sprintf(file, "YAMraw-w%ldp%ld.txt", winnum, (*new)->Nr);
+      sprintf(file, "YAMr%lx-w%ldp%ld.txt", G->RE[winnum]->MailPtr, winnum, (*new)->Nr);
       strmfp((*new)->Filename, C->TempDir, file);
       if (fp = fopen((*new)->Filename, "w")) return fp;
       free(*new);
@@ -1692,13 +1744,13 @@ static void RE_SetPartInfo(struct Part *rp)
       case ENC_QP:                rp->Size = (100*size)/106; break;
    }
    if (!*rp->Name && rp->CParName) { stccpy(rp->Name, rp->CParName, SIZE_FILE); UnquoteString(rp->Name, FALSE); }
-   switch (rp->Nr)
-   {
-      case 0:  SetComment(rp->Filename, GetStr(MSG_RE_Header)); break;
-      case 1:  SetComment(rp->Filename, GetStr(MSG_RE_Letter)); break;
-      default: SetComment(rp->Filename, *rp->Description ? rp->Description : rp->Name); break;
-   }
-   rp->Printable = !strnicmp(rp->ContentType, "text", 4) || rp->Nr == 0;
+
+   // lets set the comments of the partfiles
+   if(rp->Nr == PART_RAW)         SetComment(rp->Filename, GetStr(MSG_RE_Header));
+   else if(rp->Nr == PART_LETTER) SetComment(rp->Filename, GetStr(MSG_RE_Letter));
+   else SetComment(rp->Filename, *rp->Description ? rp->Description : rp->Name);
+
+   rp->Printable = !strnicmp(rp->ContentType, "text", 4) || rp->Nr == PART_RAW;
 }
 ///
 /// RE_ParseMessage
@@ -1790,16 +1842,28 @@ BOOL RE_DecodePart(struct Part *rp)
    {
       FILE *in, *out;
       char file[SIZE_FILE], buf[SIZE_LINE], ext[FNSIZE];
+
       if (in = fopen(rp->Filename, "r"))
       {
          if (rp->HasHeaders) while (GetLine(in, buf, SIZE_LINE)) if (!*buf) break;
          stcgfe(ext, rp->Name);
          if (strlen(ext) > 10) *ext = 0;
-         sprintf(file, "YAMmsg-w%ldp%ld.%s", rp->Win, rp->Nr, *ext ? ext : "tmp");
+         sprintf(file, "YAMm%lx-w%ldp%ld.%s", G->RE[rp->Win]->MailPtr, rp->Win, rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
          if (out = fopen(buf, "w"))
          {
             RE_DecodeStream(rp, in, out);
+            fclose(out);
+            fclose(in);
+            DeleteFile(rp->Filename);
+            strcpy(rp->Filename, buf);
+            rp->Decoded = TRUE;
+            RE_SetPartInfo(rp);
+         }
+         else if(out = fopen(buf, "r"))
+         {
+            // if we couldn`t open that file for writing we check if it exists
+            // and if so we use it because it is locked actually and already decoded
             fclose(out);
             fclose(in);
             DeleteFile(rp->Filename);
@@ -1879,7 +1943,7 @@ static void RE_HandleMDNReport(struct Part *frp)
       if (!strnicmp(MDNtype, "manual-action", 13)) mode = GetStr(MSG_RE_MDNmanual);
       if (!strnicmp(MDNtype, "automatic-action", 16)) mode = GetStr(MSG_RE_MDNauto);
       if (type = strchr(MDNtype, ';')) type = Trim(++type); else type = MDNtype;
-      sprintf(file, "YAMmsg-w%ldp%ld.txt", rp[0]->Win, rp[0]->Nr);
+      sprintf(file, "YAMm%lx-w%ldp%ld.txt", G->RE[rp[0]->Win]->MailPtr, rp[0]->Win, rp[0]->Nr);
       strmfp(buf, C->TempDir, file);
       if (out = fopen(buf, "w"))
       {
@@ -2016,7 +2080,7 @@ static void RE_LoadMessagePart(int winnum, struct Part *part)
          }
          else if (!stricmp(rp->ContentType, "application/pgp-keys"))
             G->RE[winnum]->PGPKey = TRUE;
-         else if (rp->Nr < 2 || (rp->Printable && C->DisplayAllTexts)) RE_DecodePart(rp);
+         else if (rp->Nr <= PART_LETTER || (rp->Printable && C->DisplayAllTexts)) RE_DecodePart(rp);
       }
    }
 }
@@ -2036,13 +2100,17 @@ static BOOL RE_LoadMessage(int winnum, int parsemode)
    if (rp = G->RE[winnum]->FirstPart = RE_ParseMessage(winnum, NULL, G->RE[winnum]->File, NULL))
    {
       RE_LoadMessagePart(winnum, rp);
-      for (i = 0; rp; i++, rp = rp->Next) if (rp->Nr != i)
+      for (i = 0; rp; i++, rp = rp->Next)
       {
-         rp->Nr = i;
-         sprintf(file, "YAMmsg-w%ldp%ld%s", winnum, i, strchr(rp->Filename,'.'));
-         strmfp(newfile, C->TempDir, file);
-         RenameFile(rp->Filename, newfile);
-         strcpy(rp->Filename, newfile);
+        if (rp->Nr != i)
+        {
+          rp->Nr = i;
+          sprintf(file, "YAMm%lx-w%ldp%ld%s", G->RE[winnum]->MailPtr, winnum, i, strchr(rp->Filename,'.'));
+          strmfp(newfile, C->TempDir, file);
+
+          RenameFile(rp->Filename, newfile);
+          strcpy(rp->Filename, newfile);
+        }
       }
    }
    BusyEnd;
@@ -2143,7 +2211,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
    else { tsb = "<tsb>"; sb = "<sb>"; bo = "*"; pl = "*"; }
    for (totsize = 1000, part = first; part; part = part->Next)
    {
-      if (mode != RIM_READ && part->Nr && part->Nr != C->LetterPart) continue;
+      if (mode != RIM_READ && part->Nr && part->Nr != PART_LETTER) continue;
       if (part->Decoded || !part->Nr) totsize += part->Size; else totsize += 200;
    }
    if (cmsg = calloc(len=(totsize*3)/2,1))
@@ -2151,6 +2219,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
       if (mode != RIM_QUIET) BusyText(GetStr(MSG_BusyDisplaying), "");
       wptr = 0;
       if (mode == RIM_READ)
+      {
          if (fh = fopen(first->Filename, "r"))
          {
             int buflen = re->FirstPart->MaxHeaderLen+4;
@@ -2164,14 +2233,16 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
             fclose(fh);
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
          }
+      }
+
       for (part = first->Next; part; part = part->Next)
       {
          BOOL dodisp = (part->Printable && part->Decoded);
 
          prewptr = wptr;
 
-         if (mode != RIM_READ && part->Nr > 1) break;
-         if (mode == RIM_READ && (part->Nr > 1 || !dodisp))
+         if (mode != RIM_READ && part->Nr > PART_LETTER) break;
+         if (mode == RIM_READ && (part->Nr > PART_LETTER || !dodisp))
          {
             *buffer = 0; sprintf(buffer, "%s\033p[7]%ld: %s\033p[0]\n%s%s:%s %s   %s%s:%s %ld %s\n", tsb, part->Nr, part->Name, bo, GetStr(MSG_RE_ContentType), pl, DescribeCT(part->ContentType), bo, GetStr(MSG_Size), pl, part->Size, GetStr(MSG_Bytes));
             if (*buffer) cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
@@ -2370,11 +2441,13 @@ static void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
    stccpy(ab->RealName, mail->From.RealName, SIZE_REALNAME);
    if (mail->Flags & MFLAG_SENDERINFO)
    {
-      email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE);
-      if (s = strchr(email->SenderInfo, ';'))
+      if(email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE))
       {
-         *s++ = 0;
-         do {
+        if (s = strchr(email->SenderInfo, ';'))
+        {
+          *s++ = 0;
+          do
+          {
             if (t = ParamEnd(s)) *t++ = 0;
             if (!(eq = strchr(s, '='))) Cleanse(s);
             else
@@ -2393,9 +2466,10 @@ static void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
                ab->Type = 1;
             }
             s = t;
-         } while (t);
-      }
-      MA_FreeEMailStruct(email);
+         }while (t);
+       }
+       MA_FreeEMailStruct(email);
+     }
    }
 }
 ///
@@ -2761,7 +2835,7 @@ HOOKPROTONH(RE_LV_AttachDspFunc, long, char **array, struct Part *entry)
    {
       static char dispnu[SIZE_SMALL], dispna[SIZE_CTYPE], dispsz[SIZE_SMALL];
       array[0] = array[2] = "";
-      if (entry->Nr > 0) sprintf(array[0] = dispnu, "%ld", entry->Nr);
+      if (entry->Nr > PART_RAW) sprintf(array[0] = dispnu, "%ld", entry->Nr);
       sprintf(array[1] = dispna, *entry->Name ? entry->Name : DescribeCT(entry->ContentType));
       if (entry->Size)
       {

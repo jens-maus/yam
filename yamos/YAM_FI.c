@@ -40,7 +40,6 @@
 
 #include "extra.h"
 #include "YAM.h"
-#include "YAM_addressbook.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 #include "YAM_error.h"

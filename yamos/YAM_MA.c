@@ -607,7 +607,15 @@ int MA_NewEdit(struct Mail *mail, int flags, int ReadwinNum)
          wr->Mail = mail;
          wr->ReadwinNum = ReadwinNum;
          folder = mail->Folder;
-         email = MA_ExamineMail(folder, mail->MailFile, NULL, TRUE);
+
+         if(!(email = MA_ExamineMail(folder, mail->MailFile, NULL, TRUE)))
+         {
+            ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
+            fclose(out);
+            DisposeModulePush(&G->WR[winnum]);
+            return winnum;
+         }
+
          MA_SetupQuoteString(wr, NULL, mail);
          RE_InitPrivateRC(mail, PM_ALL);
          cmsg = RE_ReadInMessage(4, RIM_EDIT);
@@ -710,7 +718,16 @@ int MA_NewForward(struct Mail **mlist, int flags)
          for (i = 0; i < (int)mlist[0]; i++)
          {
             mail = mlist[i+2];
-            email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE);
+
+            if(!(email = MA_ExamineMail(mail->Folder, mail->MailFile, NULL, TRUE)))
+            {
+              ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail), NULL);
+              fclose(out);
+              FreeStrBuf(rsub);
+              DisposeModulePush(&G->WR[winnum]);
+              return winnum;
+            }
+
             MA_SetupQuoteString(wr, &etd, mail);
             etd.OM_MessageID = email->MsgID;
             etd.R_Name = *mail->To.RealName ? mail->To.RealName : mail->To.Address;
@@ -792,7 +809,18 @@ int MA_NewReply(struct Mail **mlist, int flags)
          {
             mail = mlist[j+2];
             folder = mail->Folder;
-            email = MA_ExamineMail(folder, mail->MailFile, NULL, TRUE);
+
+            if(!(email = MA_ExamineMail(folder, mail->MailFile, NULL, TRUE)))
+            {
+              ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
+              fclose(out);
+              DisposeModulePush(&G->WR[winnum]);
+              FreeStrBuf(rto);
+              FreeStrBuf(rcc);
+              FreeStrBuf(rsub);
+              return winnum;
+            }
+
             MA_SetupQuoteString(wr, &etd, mail);
             etd.OM_MessageID = email->MsgID;
 
@@ -867,8 +895,11 @@ int MA_NewReply(struct Mail **mlist, int flags)
               {
                 MA_FreeEMailStruct(email);
                 fclose(out);
-                doabort = TRUE;
-                goto abort_repl;
+                DisposeModulePush(&G->WR[winnum]);
+                FreeStrBuf(rto);
+                FreeStrBuf(rcc);
+                FreeStrBuf(rsub);
+                return winnum;
               }
             }
 
@@ -902,9 +933,12 @@ int MA_NewReply(struct Mail **mlist, int flags)
                      case 0:
                      {
                         MA_FreeEMailStruct(email);
-                        doabort = TRUE;
                         fclose(out);
-                        goto abort_repl;
+                        DisposeModulePush(&G->WR[winnum]);
+                        FreeStrBuf(rto);
+                        FreeStrBuf(rcc);
+                        FreeStrBuf(rsub);
+                        return winnum;
                      }
                   }
                }
@@ -958,9 +992,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
       }
       else doabort = TRUE;
    }
-   if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
-
-abort_repl:
+   if (winnum >= 0 && !quiet && !doabort) return MA_CheckWriteWindow(winnum);
 
    if (doabort)
    {

@@ -880,6 +880,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
       FinishUnpack(fullfile);
       return &email;
    }
+
    FinishUnpack(fullfile);
    return NULL;
 }

@@ -1,3 +1,23 @@
+2002-04-17  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed more possibly bug issues on the mailfile doesn`t exist fact
+      because the result code from MA_ExamineMail() wasn`t checked
+      everywhere probably.
+    * fixed bug #461926 by throwing an error requester now, informing the
+      user that YAM tried to open a mail file that doesn`t exists anymore
+      but is still listed in the folder.
+
+2002-04-16  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug #480905/505857 by changing the temporary file handling like
+      described below and also by just opening a eventually unwriteable file
+      with just read because it is locked by another application (viewer)
+    * changed behaviour of the temporary file handling a bit to make it more
+      secure. Now YAM not only identifies tempfiles by the window and part
+      number, it also takes the serialzed ID of the mail itself, so this
+      tempfiles should be really unique while mail reading which will
+      fix many issues/bugs that are related to that old restriction/flaw.
+
 2002-04-15  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed bug #528105 that was caused because of the usage of one shared
@@ -11,7 +31,7 @@
       bit. If the user now double clicks on a folder group it will just fold
       or unfold the tree and not popup the change requester for it. This
       feels a little bit better because in the past it could happen that
-      on a doubleclick for fold/unfold the requester poped up as well which
+      on a doubleclick for fold/unfold the requester poped up aswell which
       was quite annoying.
 
 2002-04-14  Jens Langner <Jens.Langner@htw-dresden.de>

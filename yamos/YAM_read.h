@@ -40,6 +40,8 @@
 // special defines for Part Types
 #define PART_ORIGINAL -2
 #define PART_ALLTEXT  -1
+#define PART_RAW      0
+#define PART_LETTER   (C->LetterPart)
 
 enum MDNType    { MDN_IGNORE=0, MDN_DENY, MDN_READ, MDN_DISP, MDN_PROC, MDN_DELE };
 enum ParseMode  { PM_ALL, PM_TEXTS, PM_NONE };
