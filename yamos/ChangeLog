@@ -5,13 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-25  Christian Hattemer <krille@users.sourceforge.net>
+
+    * supportfiles/contrib/Gfx/Matt_Chaput/#?: Add toolbar graphics by
+      Matt Chaput with his permission.
+
 2004-11-24  Jens Langner <Jens.Langner@light-speed.de>
 
-    * YAN_WR.c: modified MessageID and BoundardID generation code to
+    * YAN_WR.c: modified MessageID and BoundaryID generation code to
       generate somewhat more unique IDs. The MessageID generation code
-      was not so unique like we thought and the BoundaryID code wasn't
+      was not so unique as we thought and the BoundaryID code wasn't
       conform to RFC2045. Now we should be very well on the safe side
-      in generating world-unique IDs.
+      in generating world-unique IDs. Noticed by Krille.
 
 2004-11-23  Jens Langner <Jens.Langner@light-speed.de>
 
@@ -28,7 +33,7 @@ $Source$
 2004-11-19  Alexey Ivanov <AmiS@amiga.org.ru>
 
     * YAM_COg.c: fixed bug #773860 - Charset gadget not fully disabled
-      if Autodetect on.
+      if Autodetect is on.
 
 2004-11-15  Jens Langner <Jens.Langner@light-speed.de>
 
@@ -54,7 +59,7 @@ $Source$
 
     * YAM_RE.c: fixed bug in the message disposition notification reply
       routines where a mail status update call was placed slightly wrong,
-      which caused crashes under curtain situations.
+      which caused crashes under certain situations.
 
 2004-11-10  Jens Langner <Jens.Langner@light-speed.de>
 
@@ -64,7 +69,7 @@ $Source$
       SSLv3 method directly connects to the specified port and initiates the
       secure connection without previously querying the mail server via the
       STARTTLS command, which is quite common for some SMTP-SSL servers out
-      there.
+      there. Noticed missing by Krille.
     * misc: replaced all GUI based "APTR" occurances with proper "Object *"
       types. This is no functional change but should make the source better
       maintainable in future.
