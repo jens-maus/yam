@@ -33,52 +33,52 @@
 /* CLASSDATA
 struct Data
 {
-  Object *TX_FOLDER;
-  Object *TX_FINFO;
-  Object *TX_INFO;
-  Object *BC_INFO;
-  Object *GA_GROUP;
-  Object *GA_INFO;
-  Object *GA_LABEL;
-  struct Folder *actualFolder;
+	Object *TX_FOLDER;
+	Object *TX_FINFO;
+	Object *TX_INFO;
+	Object *BC_INFO;
+	Object *GA_GROUP;
+	Object *GA_INFO;
+	Object *GA_LABEL;
+	struct Folder *actualFolder;
 };
 */
 
 /* Private Functions */
 /// GetFolderInfo()
-// this function creats a folder string and returns it
+// this function creates a folder string and returns it
 char *GetFolderInfo(struct Folder *folder)
 {
-  char *src, dst[10];
-  static char bartxt[SIZE_DEFAULT/2];
+	char *src, dst[10];
+	static char bartxt[SIZE_DEFAULT/2];
 
-  // clear the bar text first
-  strcpy(bartxt, "");
+	// clear the bar text first
+	strcpy(bartxt, "");
 
-  // Lets create the label of the AppIcon now
-  for (src = C->InfoBarText; *src; src++)
-  {
-    if (*src == '%')
-    {
-      switch (*++src)
-      {
-        case '%': strcpy(dst, "%");                     break;
-        case 'n': sprintf(dst, "%ld", folder->New);     break;
-        case 'u': sprintf(dst, "%ld", folder->Unread);  break;
-        case 't': sprintf(dst, "%ld", folder->Total);   break;
-        case 's': sprintf(dst, "%ld", folder->Sent);    break;
-        case 'd': sprintf(dst, "%ld", folder->Deleted); break;
-      }
-    }
-    else
-    {
-      sprintf(dst, "%c", *src);
-    }
+	// Lets create the label of the AppIcon now
+	for (src = C->InfoBarText; *src; src++)
+	{
+		if (*src == '%')
+		{
+			switch (*++src)
+			{
+				case '%': strcpy(dst, "%");                     break;
+				case 'n': sprintf(dst, "%ld", folder->New);     break;
+				case 'u': sprintf(dst, "%ld", folder->Unread);  break;
+				case 't': sprintf(dst, "%ld", folder->Total);   break;
+				case 's': sprintf(dst, "%ld", folder->Sent);    break;
+				case 'd': sprintf(dst, "%ld", folder->Deleted); break;
+			}
+		}
+		else
+		{
+			sprintf(dst, "%c", *src);
+		}
 
-    strcat(bartxt, dst);
-  }
+		strcat(bartxt, dst);
+	}
 
-  return bartxt;
+	return bartxt;
 }
 
 ///
@@ -87,64 +87,64 @@ char *GetFolderInfo(struct Folder *folder)
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-  struct Data *data;
+	struct Data *data;
 	Object *folderString;
-  Object *folderInfoStr;
-  Object *statusGroup;
-  Object *gauge;
-  Object *gaugeLabel;
-  Object *infoText;
+	Object *folderInfoStr;
+	Object *statusGroup;
+	Object *gauge;
+	Object *gaugeLabel;
+	Object *infoText;
 
 	if (!(obj = DoSuperNew(cl, obj,
 
-    MUIA_Frame,         MUIV_Frame_Group, // Also MUIV_Frame_ImageButton looks nice
-    MUIA_Background,    MUII_GroupBack,   // Also MUII_HSHADOWSHADOW looks nice
-    MUIA_Group_Horiz,   TRUE,
-    MUIA_InnerTop,      2,
-    MUIA_InnerBottom,   2,
-    MUIA_InnerLeft,     2,
-    MUIA_InnerRight,    2,
+		TextFrame,
+		MUIA_Background,    MUII_TextBack,
+		MUIA_Group_Horiz,   TRUE,
+		MUIA_InnerTop,      2,
+		MUIA_InnerBottom,   2,
+		MUIA_InnerLeft,     2,
+		MUIA_InnerRight,    2,
 
-    Child, HGroup,
-      Child, folderString = TextObject,
-        MUIA_HorizWeight,   0,
-        MUIA_Font,          MUIV_Font_Big,
-        MUIA_Text_PreParse, "\033b",
-      End,
+		Child, HGroup,
+			Child, folderString = TextObject,
+				MUIA_HorizWeight,   0,
+				MUIA_Font,          MUIV_Font_Big,
+				MUIA_Text_PreParse, "\033b",
+			End,
 
-      Child, folderInfoStr = TextObject,
-        MUIA_Font,          MUIV_Font_Tiny,
-        MUIA_Text_PreParse, "\033l",
-      End,
-    End,
+			Child, folderInfoStr = TextObject,
+				MUIA_Text_PreParse, "\033l",
+			End,
+	    End,
 
-    Child, gaugeLabel = TextObject,
-      MUIA_Text_PreParse, "\033r",
-    End,
+		Child, gaugeLabel = TextObject,
+			MUIA_Text_PreParse, "\033r",
+		End,
 
-    Child, statusGroup = PageGroup,
-      Child, HSpace(0),
-      Child, gauge = GaugeObject,
-        GaugeFrame,
-        MUIA_Gauge_Horiz,    TRUE,
-        MUIA_Gauge_InfoText, " ",
-      End,
-      Child, infoText = TextObject,
-        MUIA_Text_PreParse, "\033r",
-      End,
-    End,
+		Child, statusGroup = PageGroup,
+			Child, HSpace(0),
+			Child, gauge = GaugeObject,
+				GaugeFrame,
+				MUIA_Gauge_Horiz,    TRUE,
+				MUIA_Gauge_InfoText, " ",
+			End,
+			Child, infoText = TextObject,
+				MUIA_Text_PreParse, "\033r",
+			End,
+		End,
 
 		TAG_MORE, inittags(msg))))
-		return 0;
+
+	return 0;
 
 	data = (struct Data *)INST_DATA(cl,obj);
 
-  data->TX_FOLDER = folderString;
-  data->TX_FINFO  = folderInfoStr;
-  data->GA_GROUP  = statusGroup;
-  data->GA_LABEL  = gaugeLabel;
-  data->GA_INFO   = gauge;
-  data->TX_INFO   = infoText;
+	data->TX_FOLDER = folderString;
+	data->TX_FINFO  = folderInfoStr;
+	data->GA_GROUP  = statusGroup;
+	data->GA_LABEL  = gaugeLabel;
+	data->GA_INFO   = gauge;
+	data->TX_INFO   = infoText;
 
 	return (ULONG)obj;
 }
@@ -152,61 +152,63 @@ OVERLOAD(OM_NEW)
 
 /* Public Methods */
 /// DECLARE(SetFolder)
-/* set a new folder and update it`s name & image in the infobar */
+/* set a new folder and update its name and image in the infobar */
 DECLARE(SetFolder) // struct Folder *newFolder
 {
 	GETDATA;
 
-  struct Folder *folder = msg->newFolder;
-  struct BodyChunkData *bcd = NULL;
+	struct Folder *folder = msg->newFolder;
+	struct BodyChunkData *bcd = NULL;
 
-  data->actualFolder = folder;
+	data->actualFolder = folder;
 
-  if(!folder) return NULL;
+	if(!folder) return NULL;
 
-  // set the name of the folder as the info text
-  set(data->TX_FOLDER, MUIA_Text_Contents, folder->Name);
+	// set the name of the folder as the info text
+	set(data->TX_FOLDER, MUIA_Text_Contents, folder->Name);
 
-  // now we are going to set some status field at the right side of the folder name
-  set(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(folder));
+	// now we are going to set some status field at the right side of the folder name
+	set(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(folder));
 
-  // Prepare the GR_INFO group for adding a new child
-  if(DoMethod(obj, MUIM_Group_InitChange))
-  {
-    if(data->BC_INFO)
-    {
-      DoMethod(obj, OM_REMMEMBER, data->BC_INFO);
-      MUI_DisposeObject(data->BC_INFO);
-      data->BC_INFO = NULL;
-    }
+	// Prepare the GR_INFO group for adding a new child
+	if(DoMethod(obj, MUIM_Group_InitChange))
+	{
+		if(data->BC_INFO)
+		{
+			DoMethod(obj, OM_REMMEMBER, data->BC_INFO);
+			MUI_DisposeObject(data->BC_INFO);
+			data->BC_INFO = NULL;
+		}
 
-    if(folder->FImage) bcd = folder->FImage;
-    else if(folder->ImageIndex >= 0) bcd = G->BImage[folder->ImageIndex+(MAXIMAGES-MAXBCSTDIMAGES)];
+		if(folder->FImage)
+			bcd = folder->FImage;
+		else if(folder->ImageIndex >= 0)
+			bcd = G->BImage[folder->ImageIndex+(MAXIMAGES-MAXBCSTDIMAGES)];
 
-    if(bcd)
-    {
-      data->BC_INFO = BodychunkObject,
-                        MUIA_FixWidth,             bcd->Width,
-                        MUIA_FixHeight,            bcd->Height,
-                        MUIA_Bitmap_Width,         bcd->Width,
-                        MUIA_Bitmap_Height,        bcd->Height,
-                        MUIA_Bitmap_SourceColors,  bcd->Colors,
-                        MUIA_Bodychunk_Depth,      bcd->Depth,
-                        MUIA_Bodychunk_Body,       bcd->Body,
-                        MUIA_Bodychunk_Compression,bcd->Compression,
-                        MUIA_Bodychunk_Masking,    bcd->Masking,
-                        MUIA_Bitmap_Transparent,   0,
-                        MUIA_InnerBottom,          0,
-                        MUIA_InnerLeft,            0,
-                        MUIA_InnerRight,           0,
-                        MUIA_InnerTop,             0,
-                      End;
+		if(bcd)
+		{
+			data->BC_INFO = BodychunkObject,
+				MUIA_FixWidth,             bcd->Width,
+				MUIA_FixHeight,            bcd->Height,
+				MUIA_Bitmap_Width,         bcd->Width,
+				MUIA_Bitmap_Height,        bcd->Height,
+				MUIA_Bitmap_SourceColors,  bcd->Colors,
+				MUIA_Bodychunk_Depth,      bcd->Depth,
+				MUIA_Bodychunk_Body,       bcd->Body,
+				MUIA_Bodychunk_Compression,bcd->Compression,
+				MUIA_Bodychunk_Masking,    bcd->Masking,
+				MUIA_Bitmap_Transparent,   0,
+				MUIA_InnerBottom,          0,
+				MUIA_InnerLeft,            0,
+				MUIA_InnerRight,           0,
+				MUIA_InnerTop,             0,
+			End;
 
-      if(data->BC_INFO) DoMethod(obj, OM_ADDMEMBER, data->BC_INFO);
-    }
+			if(data->BC_INFO) DoMethod(obj, OM_ADDMEMBER, data->BC_INFO);
+		}
 
-    DoMethod(obj, MUIM_Group_ExitChange);
-  }
+		DoMethod(obj, MUIM_Group_ExitChange);
+	}
 }
 ///
 /// DECLARE(RefreshText)
@@ -215,13 +217,13 @@ DECLARE(RefreshText)
 {
 	GETDATA;
 
-  // set the name of the folder as the info text
-  set(data->TX_FOLDER, MUIA_Text_Contents, data->actualFolder->Name);
+	// set the name of the folder as the info text
+	set(data->TX_FOLDER, MUIA_Text_Contents, data->actualFolder->Name);
 
-  // now we are going to set some status field at the right side of the folder name
-  set(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(data->actualFolder));
+	// now we are going to set some status field at the right side of the folder name
+	set(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(data->actualFolder));
 
-  return 0;
+	return 0;
 }
 ///
 /// DECLARE(ShowGauge)
@@ -230,29 +232,29 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
 {
 	GETDATA;
 
-  static char infoText[256];
+	static char infoText[256];
 
-  if(msg->gaugeText != NULL)
-  {
-    set(data->GA_LABEL, MUIA_Text_Contents, msg->gaugeText);
+	if(msg->gaugeText != NULL)
+	{
+		set(data->GA_LABEL, MUIA_Text_Contents, msg->gaugeText);
 
-    sprintf(infoText, "%%ld/%ld", msg->max);
+		sprintf(infoText, "%%ld/%ld", msg->max);
 
-    SetAttrs(data->GA_INFO,
-               MUIA_Gauge_InfoText,  infoText,
-               MUIA_Gauge_Current,   msg->perc,
-               MUIA_Gauge_Max,       msg->max
-            );
+		SetAttrs(data->GA_INFO,
+			MUIA_Gauge_InfoText,  infoText,
+			MUIA_Gauge_Current,   msg->perc,
+			MUIA_Gauge_Max,       msg->max
+		);
 
-    set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
-  }
-  else
-  {
-    set(data->GA_INFO, MUIA_Gauge_Current, msg->perc);
-    set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
-  }
+		set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
+	}
+	else
+	{
+		set(data->GA_INFO, MUIA_Gauge_Current, msg->perc);
+		set(data->GA_GROUP, MUIA_Group_ActivePage, 1);
+	}
 
-  return TRUE;
+	return TRUE;
 }
 ///
 /// DECLARE(ShowInfoText)
@@ -261,18 +263,18 @@ DECLARE(ShowInfoText) // STRPTR infoText
 {
 	GETDATA;
 
-  set(data->GA_GROUP, MUIA_Group_ActivePage, 2);
+	set(data->GA_GROUP, MUIA_Group_ActivePage, 2);
 
-  if(msg->infoText != NULL)
-  {
-    set(data->TX_INFO, MUIA_Text_Contents, msg->infoText);
-  }
-  else
-  {
-    set(data->TX_INFO, MUIA_Text_Contents, " ");
-  }
+	if(msg->infoText != NULL)
+	{
+		set(data->TX_INFO, MUIA_Text_Contents, msg->infoText);
+	}
+	else
+	{
+		set(data->TX_INFO, MUIA_Text_Contents, " ");
+	}
 
-  return TRUE;
+	return TRUE;
 }
 ///
 /// DECLARE(HideBars)
@@ -281,9 +283,9 @@ DECLARE(HideBars)
 {
 	GETDATA;
 
-  set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
-  set(data->GA_LABEL, MUIA_Text_Contents, " ");
+	set(data->GA_GROUP, MUIA_Group_ActivePage, 0);
+	set(data->GA_LABEL, MUIA_Text_Contents, " ");
 
-  return TRUE;
+	return TRUE;
 }
 ///
