@@ -1732,6 +1732,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
          int j;
          BOOL rcptok = TRUE;
          struct ExtendedMail *email = MA_ExamineMail(outfolder, mail->MailFile, NULL, TRUE);
+
          if(email)
          {
             sprintf(buf, "TO:<%s>", mail->To.Address);
@@ -1751,6 +1752,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
               sprintf(buf, "TO:<%s>", email->BCC[j].Address);
               if (!TR_SendSMTPCmd("RCPT", buf)) rcptok = FALSE;
             }
+
             if (rcptok)
             {
               if (TR_SendSMTPCmd("DATA", NULL))
@@ -1776,6 +1778,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                   }
                   TR_TransStat_Update(ts, sb);
                 }
+
                 if (IoErr()) ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), mf, NULL);
                 else if (!G->TR->Abort && !G->Error)
                 {
@@ -1792,6 +1795,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
       fclose(f);
    }
    else ER_NewError(GetStr(MSG_ER_CantOpenFile), mf, NULL);
+
    return result;
 }
 ///
@@ -1879,6 +1883,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                if (G->TR->Abort || G->Error) break;
                ts.Msgs_Done++;
                TR_TransStat_NextMsg(&ts, mail->Index, -1, mail->Size, GetStr(MSG_TR_Sending));
+
                switch (TR_SendMessage(&ts, mail))
                {
                   case 0: MA_SetMailStatus(mail->Reference, STATUS_ERR);
@@ -1904,6 +1909,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
    }
 
    TR_AbortnClose();
+
    return success;
 }
 ///
