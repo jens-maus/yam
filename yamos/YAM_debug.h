@@ -37,7 +37,7 @@
       #endif
     #endif
     #ifndef kprintf
-      #define kprintf(format, args...)  ((struct ExecIFace *)((*(struct ExecBase **)4)->MainInterface))->DebugPrintF(format, ## args)
+      #define kprintf(format, args...)  ((struct ExecIFace *)((*(struct ExecBase **)4L)->MainInterface))->DebugPrintF(format, ## args)
     #endif
   #else
     void kprintf(const char *formatString,...);
