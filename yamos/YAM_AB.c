@@ -278,8 +278,13 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
                   stccpy(addr.PGPId   , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_DEFAULT);
                   addr.BirthDay = atol(Trim(GetLine(fh, buffer, SIZE_LARGE)));
                   stccpy(addr.Photo   , Trim(GetLine(fh, buffer, SIZE_LARGE)),SIZE_PATHFILE);
-                  if (strcmp(GetLine(fh, buffer, SIZE_LARGE), "@ENDUSER")) stccpy(addr.Homepage,Trim(buffer),SIZE_URL);
+                  if (strcmp(GetLine(fh, buffer, SIZE_LARGE), "@ENDUSER"))	stccpy(addr.Homepage,Trim(buffer),SIZE_URL);
                }
+					if(version > 3)
+					{
+						addr.DefSecurity = atoi(Trim(GetLine(fh, buffer, SIZE_LARGE)));
+						DB(KPrintf("Read DefSecurity from address book: %d\n",addr.DefSecurity));
+					}
                do if (!strcmp(buffer, "@ENDUSER")) break;
                while (GetLine(fh, buffer, SIZE_LARGE));
                DoMethod(G->AB->GUI.LV_ADRESSES, MUIM_Listtree_Insert, addr.Alias[0] ? addr.Alias : addr.RealName, &addr, parent[nested], sorted ?  MUIV_Lt_Insert_PrevNode_Sorted : MUIV_Lt_Insert_PrevNode_Tail, 0);
@@ -365,8 +370,8 @@ LOCAL STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUIS_Listtree_TreeNode *lis
          ab = tn->tn_User;
          switch (ab->Type)
          {
-            case AET_USER:  fprintf(fh, "@USER %s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%08ld\n%s\n%s\n@ENDUSER\n", ab->Alias, ab->Address, ab->RealName, ab->Comment,
-                               ab->Phone, ab->Street, ab->City, ab->Country, ab->PGPId, ab->BirthDay, ab->Photo, ab->Homepage);
+            case AET_USER:  fprintf(fh, "@USER %s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%08ld\n%s\n%s\n%d\n@ENDUSER\n", ab->Alias, ab->Address, ab->RealName, ab->Comment,
+                               ab->Phone, ab->Street, ab->City, ab->Country, ab->PGPId, ab->BirthDay, ab->Photo, ab->Homepage, ab->DefSecurity);
                             break;
             case AET_LIST:  fprintf(fh, "@LIST %s\n%s\n%s\n%s\n%s\n@ENDLIST\n", ab->Alias, ab->Address, ab->RealName, ab->Comment, ab->Members);
                             break;
@@ -388,7 +393,7 @@ BOOL AB_SaveTree(char *fname)
 
    if (fh = fopen(fname, "w"))
    {
-      fputs("YAB3 - YAM Addressbook\n", fh);
+      fputs("YAB4 - YAM Addressbook\n", fh);
       AB_SaveTreeNode(fh, MUIV_Lt_GetEntry_ListNode_Root);
       fclose(fh);
       AppendLogVerbose(70, GetStr(MSG_LOG_SavingABook), fname, "", "", "");
