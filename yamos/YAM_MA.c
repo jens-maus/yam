@@ -266,7 +266,8 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 
   // for proper handling we have to remove an eventually existing "/" which
   // could be part of a base64 encoding
-  while((ptr = strchr(dateFilePart, '/')))
+  ptr = dateFilePart;
+  while((ptr = strchr(ptr, '/')))
     *ptr = '-';
 
   // get the counter from the current mailfile
@@ -622,8 +623,11 @@ char *MA_ToStatusHeader(struct Mail *mail)
 // to "X-Status:" headerline flags
 char *MA_ToXStatusHeader(struct Mail *mail)
 {
-  static char flags[5]; // should not be more than 5 bytes
+  static char flags[6]; // should not be more than 5+1 bytes
   char *ptr = flags;
+
+  if(hasStatusRead(mail))
+    *ptr++ = 'R';
 
   if(hasStatusReplied(mail))
     *ptr++ = 'A';
@@ -641,6 +645,73 @@ char *MA_ToXStatusHeader(struct Mail *mail)
   *ptr = '\0';
 
   return flags;
+}
+
+///
+/// MA_FromStatusHeader()
+// Function that converts chars from the Status: headerline to a proper
+// mail status flag value
+unsigned int MA_FromStatusHeader(char *statusflags)
+{
+  unsigned int sflags = SFLAG_NEW;
+
+  while(*statusflags != '\0')
+  {
+    switch(*statusflags)
+    {
+      case 'R':
+        SET_FLAG(sflags, SFLAG_READ);
+      break;
+
+      case 'O':
+        CLEAR_FLAG(sflags, SFLAG_NEW);
+      break;
+    }
+
+    statusflags++;
+  }
+
+  return sflags;
+}
+
+///
+/// MA_FromXStatusHeader()
+// Function that converts chars from the X-Status: headerline to a
+// proper mail status flag value
+unsigned int MA_FromXStatusHeader(char *xstatusflags)
+{
+  unsigned int sflags = SFLAG_NEW;
+
+  while(*xstatusflags != '\0')
+  {
+    switch(*xstatusflags)
+    {
+      case 'R':
+        SET_FLAG(sflags, SFLAG_READ);
+        CLEAR_FLAG(sflags, SFLAG_NEW);
+      break;
+
+      case 'A':
+        SET_FLAG(sflags, SFLAG_REPLIED);
+      break;
+
+      case 'F':
+        SET_FLAG(sflags, SFLAG_MARKED);
+      break;
+
+      case 'D':
+        SET_FLAG(sflags, SFLAG_DELETED);
+      break;
+
+      case 'T':
+        SET_FLAG(sflags, SFLAG_HOLD);
+      break;
+    }
+
+    xstatusflags++;
+  }
+
+  return sflags;
 }
 
 ///

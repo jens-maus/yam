@@ -277,6 +277,8 @@ void  MA_SetupDynamicMenus(void);
 BOOL  MA_StartMacro(enum Macro num, char *param);
 char *MA_ToStatusHeader(struct Mail *mail);
 char *MA_ToXStatusHeader(struct Mail *mail);
+unsigned int MA_FromStatusHeader(char *statusflags);
+unsigned int MA_FromXStatusHeader(char *xstatusflags);
 
 // real methods (will be separated later in own ML class
 ULONG MA_MLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_ContextMenuBuild *msg);

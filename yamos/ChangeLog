@@ -7,6 +7,10 @@ $Source$
 
 2004-09-11  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c, YAM_MAf.c, YAM_TR.c: now that the new status
+      handling is implemented I finished my work on the "Status:"
+      and "X-Status:" headerline handling stuff when importing
+      or exporting mails from/to MBOX formatted files.
     * YAM_UT.c: convered all Examine()/ExNext() usages to proper
       ExAll() calls which slightly increases the performance
       in traversing through directory entries.

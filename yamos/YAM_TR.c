@@ -3385,45 +3385,56 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
          struct Folder *folder = G->TR->ImportBox;
          int btype = folder->Type;
          char buffer[SIZE_LINE];
-         int stat;
+         unsigned int stat = 0;
+         BOOL ownStatusFound = FALSE;
 
-         if(btype == FT_OUTGOING)
-           stat = SFLAG_QUEUED;
-         else if(btype == FT_SENT || btype == FT_CUSTOMSENT)
-           stat = SFLAG_SENT;
-         else
-           stat = SFLAG_NEW;
-
-         while (fgets(buffer, SIZE_LINE, fh) && !G->TR->Abort)
+         while(fgets(buffer, SIZE_LINE, fh) && !G->TR->Abort)
          {
-            if (!header && !strncmp(buffer, "From ", 5))
+            if(!header && strncmp(buffer, "From ", 5) == 0)
             {
-               if (body)
+               if(body)
                {
-                  if (f)
+                  if(f)
                   {
                      fclose(f);
                      f = NULL;
 
-                     if ((email = MA_ExamineMail(folder, mfile, FALSE)))
+                     if((email = MA_ExamineMail(folder, mfile, FALSE)))
                      {
+                        if(ownStatusFound == FALSE)
+                        {
+                          // define the default status flags depending on the
+                          // folder
+                          if(btype == FT_OUTGOING)
+                            stat = SFLAG_QUEUED;
+                          else if(btype == FT_SENT || btype == FT_CUSTOMSENT)
+                            stat = SFLAG_SENT;
+                          else
+                            stat = SFLAG_NEW;
+                        }
                         email->Mail.sflags = stat;
 
                         // depending on the Status we have to set the transDate or not
-                        if(hasStatusSent(&(email->Mail)) || hasStatusNew(&(email->Mail)))
+                        if(!hasStatusQueued(&(email->Mail)) && !hasStatusHold(&(email->Mail)))
                           GetSysTimeUTC(&email->Mail.transDate);
 
                         // add the mail to the folderlist now
                         newmail = AddMailToList((struct Mail *)email, folder);
 
                         // if this was a compressed/encrypted folder we need to pack the mail now
-                        if(folder->XPKType != XPK_OFF) RepackMailFile(newmail, -1, NULL);
+                        if(folder->XPKType != XPK_OFF)
+                          RepackMailFile(newmail, -1, NULL);
 
                         MA_FreeEMailStruct(email);
+
+                        // update the mailfile accordingly.
+                        MA_UpdateMailFile(newmail);
 
                         // put the transferStat to 100%
                         TR_TransStat_Update(&ts, TS_SETMAX);
                      }
+
+                     ownStatusFound = FALSE;
                   }
                   mail = mail->Next;
                }
@@ -3436,22 +3447,51 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                   f = fopen(MA_NewMailFile(folder, mfile), "w");
                }
             }
-            else if (f && (header || body))
+            else if(f && (header || body))
             {
                char *tmp = buffer;
 
                // the mboxrd format specifies that we need to unquote any >From, >>From etc. occurance.
                // http://www.qmail.org/man/man5/mbox.html
-               while(*tmp == '>') tmp++;
+               while(*tmp == '>')
+                 tmp++;
 
                // if we found a quoted line we need to check if there is a following "From " and if so
                // we have to skip ONE quote.
-               if(tmp != buffer && strncmp(tmp, "From ", 5) == 0) fputs(&buffer[0]+1, f);
-               else fputs(buffer, f);
+               if(tmp != buffer && strncmp(tmp, "From ", 5) == 0)
+                 fputs(&buffer[0]+1, f);
+               else
+                 fputs(buffer, f);
+
+               // on import we take the Status: and X-Status: headerline into
+               // account for status definitions
+               if(strnicmp(tmp, "X-Status: ", 10) == 0)
+               {
+                 if(ownStatusFound)
+                   stat |= MA_FromXStatusHeader(tmp+10);
+                 else
+                   stat = MA_FromXStatusHeader(tmp+10);
+
+                 ownStatusFound = TRUE;
+               }
+               else if(strnicmp(tmp, "Status: ", 8) == 0)
+               {
+                 if(ownStatusFound)
+                   stat |= MA_FromStatusHeader(tmp+8);
+                 else
+                   stat = MA_FromStatusHeader(tmp+8);
+
+                 ownStatusFound = TRUE;
+               }
 
                TR_TransStat_Update(&ts, strlen(buffer));
             }
-            if (header && !buffer[1]) { body = TRUE; header = FALSE; }
+
+            if(header && buffer[1] == '\0')
+            {
+              body = TRUE;
+              header = FALSE;
+            }
          }
 
          if (body && f)
@@ -3459,19 +3499,34 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
             fclose(f);
             if ((email = MA_ExamineMail(folder, mfile, FALSE)))
             {
+               if(ownStatusFound == FALSE)
+               {
+                  // define the default status flags depending on the
+                  // folder
+                  if(btype == FT_OUTGOING)
+                    stat = SFLAG_QUEUED;
+                  else if(btype == FT_SENT || btype == FT_CUSTOMSENT)
+                    stat = SFLAG_SENT;
+                  else
+                    stat = SFLAG_NEW;
+               }
                email->Mail.sflags = stat;
 
                // depending on the Status we have to set the transDate or not
-               if(hasStatusSent(&(email->Mail)) || hasStatusNew(&(email->Mail)))
+               if(!hasStatusQueued(&(email->Mail)) && !hasStatusHold(&(email->Mail)))
                  GetSysTimeUTC(&email->Mail.transDate);
 
                // add the mail to the folderlist now
                newmail = AddMailToList((struct Mail *)email, folder);
 
                // if this was a compressed/encrypted folder we need to pack the mail now
-               if(folder->XPKType != XPK_OFF) RepackMailFile(newmail, -1, NULL);
+               if(folder->XPKType != XPK_OFF)
+                 RepackMailFile(newmail, -1, NULL);
 
                MA_FreeEMailStruct(email);
+
+               // update the mailfile accordingly.
+               MA_UpdateMailFile(newmail);
 
                // put the transferStat to 100%
                TR_TransStat_Update(&ts, TS_SETMAX);

@@ -889,7 +889,8 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
 
   // as the dateFilePart may contain slashes "/" we have to replace them
   // with "-" chars to don't drive the filesystem crazy :)
-  while((ptr = strchr(dateFilePart, '/')))
+  ptr = dateFilePart;
+  while((ptr = strchr(ptr, '/')))
     *ptr = '-';
 
   do
@@ -1040,7 +1041,8 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
 
   // as the dateFilePart may contain slashes "/" we have to replace them
   // with "-" chars to don't drive the filesystem crazy :)
-  while((ptr = strchr(dateFilePart, '/')))
+  ptr = dateFilePart;
+  while((ptr = strchr(ptr, '/')))
     *ptr = '-';
 
   do
@@ -1464,7 +1466,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
       // make sure there is no "-" in the base64 encoded part as we just mapped
       // the not allowed "/" to "-" to make it possible to use base64 for
       // the timeval encoding
-      while((ptr = strchr(dateFilePart, '-')))
+      ptr = dateFilePart;
+      while((ptr = strchr(ptr, '-')))
         *ptr = '/';
 
       // lets decode the base64 encoded timestring in a temporary buffer
