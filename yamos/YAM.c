@@ -20,6 +20,8 @@
  YAM Official Support Site :  http://www.yam.ch
  YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
 
+ $Id$
+
 ***************************************************************************/
 
 #include "YAM.h"
@@ -307,7 +309,7 @@ BOOL AY_New(BOOL hidden)
       text = StrBufCat(text, "\0338Magic User Interface\0332 (Stefan Stuntz)\n"
                              "\0338TextEditor.mcc, BetterString.mcc\0332 (Allan Odgaard)\n"
                              "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
-                             "\0338Listtree.mcc\0332 (Klaus Melchior)\n"
+                             "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
                              "\0338NList.mcc\0332 (Gilles Masson)\n"
                              "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n\n");
       text = StrBufCat(text, GetStr(MSG_WebSite));
@@ -383,13 +385,13 @@ BOOL Root_GlobalDispatcher(ULONG app_input)
 BOOL Root_New(BOOL hidden)
 {
 #define MUIA_Application_UsedClasses 0x8042e9a7
-   static char *classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "Listtree.mcc", "NList.mcc", "NListviews.mcc", NULL };
+   static char *classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListviews.mcc", NULL };
    G->App = ApplicationObject,
       MUIA_Application_Author     ,"Marcel Beck",
       MUIA_Application_Base       ,"YAM",
       MUIA_Application_Title      ,"YAM",
       MUIA_Application_Version    ,"$VER: YAM " __YAM_VERSION " (" __YAM_VERDATE ")",
-      MUIA_Application_Copyright  ,"© 1995-2000 by Marcel Beck",
+      MUIA_Application_Copyright  ,"© 1995-2001 by Marcel Beck",
       MUIA_Application_Description,GetStr(MSG_AppDescription),
       MUIA_Application_UseRexx    ,FALSE,
       MUIA_Application_SingleTask ,!getenv("MultipleYAM"),
