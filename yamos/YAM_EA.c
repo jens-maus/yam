@@ -36,6 +36,7 @@
 #include <proto/intuition.h>
 #include <proto/locale.h>
 #include <proto/muimaster.h>
+#include <mui/NListview_mcc.h>
 
 #include "extra.h"
 #include "SDI_hook.h"
@@ -115,12 +116,12 @@ void EA_Setup(int winnum, struct ABEntry *ab)
                        setstring(gui->ST_REALNAME, ab->RealName);
                        setstring(gui->ST_ADDRESS, ab->Address);
                        setstring(gui->ST_COMMENT, ab->Comment);
-                       DoMethod(gui->LV_MEMBER, MUIM_List_Clear);
+                       DoMethod(gui->LV_MEMBER, MUIM_NList_Clear);
                        for (ptr = ab->Members; *ptr; ptr++)
                        {
                           char *nptr = strchr(ptr, '\n');
                           if (nptr) *nptr = 0; else break;
-                          DoMethod(gui->LV_MEMBER, MUIM_List_InsertSingle, ptr, MUIV_List_Insert_Bottom);
+                          DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, ptr, MUIV_NList_Insert_Bottom);
                           *nptr = '\n';
                           ptr = nptr;
                        }
@@ -165,7 +166,7 @@ HOOKPROTONHNO(EA_GetEntry, void, int *arg)
 {
    int winnum = *arg;
    char *entry = NULL;
-   DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
+   DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &entry);
    if (entry) nnset(G->EA[winnum]->GUI.ST_MEMBER, MUIA_String_Contents, entry);
 }
 MakeStaticHook(EA_GetEntryHook, EA_GetEntry);
@@ -178,8 +179,8 @@ HOOKPROTONHNO(EA_AddFunc, void, int *arg)
 
    if (*buf)
    {
-      DoMethod(gui->LV_MEMBER, MUIM_List_InsertSingle, buf, MUIV_List_Insert_Bottom);
-      nnset(gui->LV_MEMBER, MUIA_List_Active, MUIV_List_Active_Off);
+      DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, buf, MUIV_NList_Insert_Bottom);
+      nnset(gui->LV_MEMBER, MUIA_NList_Active, MUIV_NList_Active_Off);
       setstring(gui->ST_MEMBER, "");
    }
    set(gui->WI, MUIA_Window_ActiveObject, gui->ST_MEMBER);
@@ -192,7 +193,7 @@ MakeStaticHook(EA_AddHook, EA_AddFunc);
 HOOKPROTONHNO(EA_PutEntry, void, int *arg)
 {
    struct EA_GUIData *gui = &(G->EA[*arg]->GUI);
-   int active = xget(gui->LV_MEMBER, MUIA_List_Active);
+   int active = xget(gui->LV_MEMBER, MUIA_NList_Active);
 
    if(active == MUIV_List_Active_Off)
    {
@@ -202,8 +203,8 @@ HOOKPROTONHNO(EA_PutEntry, void, int *arg)
    {
       char *buf = (char *)xget(gui->ST_MEMBER, MUIA_String_Contents);
 
-      DoMethod(gui->LV_MEMBER, MUIM_List_InsertSingle, buf, active);
-      DoMethod(gui->LV_MEMBER, MUIM_List_Remove, active+1);
+      DoMethod(gui->LV_MEMBER, MUIM_NList_InsertSingle, buf, active);
+      DoMethod(gui->LV_MEMBER, MUIM_NList_Remove, active+1);
    }
 }
 MakeStaticHook(EA_PutEntryHook, EA_PutEntry);
@@ -345,7 +346,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
                       for (i = 0; ; i++)
                       {
                          char *p;
-                         DoMethod(gui->LV_MEMBER, MUIM_List_GetEntry, i, &p);
+                         DoMethod(gui->LV_MEMBER, MUIM_NList_GetEntry, i, &p);
                          if (!p) break;
                          members = StrBufCat(members, p);
                          members = StrBufCat(members, "\n");
@@ -634,14 +635,14 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                   Child, VSpace(0),
                End,
                Child, VGroup, GroupFrameT(GetStr(MSG_EA_Members)),
-                  Child, ListviewObject,
+                  Child, NListviewObject,
                      MUIA_CycleChain, 1,
-                     MUIA_Listview_DragType, 1,
-                     MUIA_Listview_List, data->GUI.LV_MEMBER = NewObject(CL_DDList->mcc_Class,NULL,
+                     MUIA_Listview_DragType, MUIV_Listview_DragType_Immediate,
+                     MUIA_NListview_NList, data->GUI.LV_MEMBER = AddrBookEntryListObject,
                         InputListFrame,
-                        MUIA_List_DragSortable ,TRUE,
-                        MUIA_List_ConstructHook,MUIV_List_ConstructHook_String,
-                        MUIA_List_DestructHook ,MUIV_List_DestructHook_String,
+                        MUIA_NList_DragSortable,  TRUE,
+                        MUIA_NList_ConstructHook, MUIV_NList_ConstructHook_String,
+                        MUIA_NList_DestructHook,  MUIV_NList_DestructHook_String,
                      End,
                   End,
                   Child, data->GUI.ST_MEMBER = RecipientstringObject,
@@ -669,10 +670,10 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                SetHelp(data->GUI.BT_DEL     ,MSG_HELP_EA_BT_DEL        );
                SetHelp(bt_sort              ,MSG_HELP_EA_BT_SORT       );
                DoMethod(data->GUI.BT_ADD   ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook   ,&EA_AddHook,winnum);
-               DoMethod(data->GUI.BT_DEL   ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,data->GUI.LV_MEMBER,2,MUIM_List_Remove,MUIV_List_Remove_Active);
-               DoMethod(bt_sort            ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,data->GUI.LV_MEMBER,1,MUIM_List_Sort);
+               DoMethod(data->GUI.BT_DEL   ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,data->GUI.LV_MEMBER,2,MUIM_NList_Remove,MUIV_NList_Remove_Active);
+               DoMethod(bt_sort            ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,data->GUI.LV_MEMBER,1,MUIM_NList_Sort);
                DoMethod(data->GUI.ST_MEMBER,MUIM_Notify,MUIA_String_Acknowledge ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&EA_PutEntryHook,winnum);
-               DoMethod(data->GUI.LV_MEMBER,MUIM_Notify,MUIA_List_Active        ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&EA_GetEntryHook,winnum);
+               DoMethod(data->GUI.LV_MEMBER,MUIM_Notify,MUIA_NList_Active       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&EA_GetEntryHook,winnum);
             }
             break;
       }

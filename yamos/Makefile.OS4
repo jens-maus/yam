@@ -77,6 +77,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/Classes.o \
 	$(OBJDIR)/$(CLASSDIR)/Recipientstring.o \
 	$(OBJDIR)/$(CLASSDIR)/Searchwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/AddrBookEntryList.o \
 	$(OBJDIR)/$(CLASSDIR)/AddrBookListtree.o \
 	$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
 	$(OBJDIR)/$(CLASSDIR)/Aboutwindow.o \
@@ -301,6 +302,9 @@ $(OBJDIR)/all_gcc.o: all_gcc.c $(EXTRASRC)/astcsma.c $(EXTRASRC)/getft.c $(EXTRA
 	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/dice.c
 
 ## CLASS DEPENDENCIES #################
+
+$(OBJDIR)/$(CLASSDIR)/AddrBookEntryList.o: $(CLASSDIR)/AddrBookEntryList.c \
+	$(CLASSDIR)/AddrBookEntryList_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/AddrBookListtree.o: $(CLASSDIR)/AddrBookListtree.c \
 	$(CLASSDIR)/AddrBookListtree_cl.h

@@ -42,7 +42,6 @@ struct PL_Data
 
 extern struct MUI_CustomClass *CL_AttachList;
 extern struct MUI_CustomClass *CL_BodyChunk;
-extern struct MUI_CustomClass *CL_DDList;
 extern struct MUI_CustomClass *CL_FolderList;
 extern struct MUI_CustomClass *CL_MailList;
 extern struct MUI_CustomClass *CL_PageList;
