@@ -171,3 +171,12 @@
 2001-03-13  Christian Hattemer <krille@users.sourceforge.net>
 
     * Added a warning when a mail without subject is going to be sent.
+
+2001-03-17  Matthias Bethke <Matthias.Bethke@gmx.net>
+
+    * Added rather rudimentary LaTeX printing support
+
+2001-03-20  Matthias Bethke <Matthias.Bethke@gmx.net>
+
+    * Fixed enforcer hits when listing a PGP keyring with very long UID
+      lines.
