@@ -2268,12 +2268,21 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
 void RemoveMailFromList(struct Mail *mail)
 {
    struct Folder *folder = mail->Folder;
+
+   // lets decrease the folder statistics first
    folder->Total--;
    folder->Size -= mail->Size;
-   if (mail->Status == STATUS_NEW) { folder->New--; folder->Unread--; }
-   if (mail->Status == STATUS_UNR) folder->Unread--;
-   MA_ExpireIndex(folder);
+   if (mail->Status == STATUS_NEW)      { folder->New--; folder->Unread--; }
+   else if (mail->Status == STATUS_UNR) folder->Unread--;
+
+   // remove the mail from the folderlist now
    MyRemove(&(folder->Messages), mail);
+
+   // then we have to mark the folder index as expired so
+   // that it will be saved next time.
+   MA_ExpireIndex(folder);
+
+   // and last, but not least we have to free the mail
    free(mail);
 }
 ///
