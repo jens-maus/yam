@@ -1399,6 +1399,7 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
          else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), fname, NULL);
       }
    }
+
    if (lline >= 0) DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, lline);
 }
 ///
@@ -1465,7 +1466,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    if (!G->TR->SinglePOP) for (pop = ++G->TR->POP_Nr; pop < MAXP3; pop++)
                              if (C->P3[pop]) if (C->P3[pop]->Enabled) break;
 
-   if (pop == MAXP3) /* Finish last connection */
+   if (pop >= MAXP3) /* Finish last connection */
    {
       TR_CloseTCPIP();
       set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
@@ -1493,8 +1494,11 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       return;
    }
 
+   // lets initialize some important data first so that the transfer can
+   // begin
    G->TR->POP_Nr = pop;
-   G->TR_Allow = G->TR->Abort = G->Error = FALSE;
+   G->TR_Allow = G->TR->Abort = G->TR->Pause = G->TR->Start = G->Error = FALSE;
+
    if ((msgs = TR_ConnectPOP(G->TR->GUIlevel)) != -1)    // connection succeeded
    {
       if (msgs)                                          // there are messages on the server
@@ -1542,12 +1546,12 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                G->TR->GMD_Mail = G->TR->List;
                G->TR->GMD_Line = 0;
                TR_CompleteMsgList();
-               return;
             }
             else
             {
                CallHookPkt(&TR_ProcessGETHook, 0, 0);
             }
+
             return;
          }
       }
@@ -2237,23 +2241,12 @@ HOOKPROTONHNONP(TR_AbortGETFunc, void)
    // first set the Abort variable so that other can benefit from it
    G->TR->Abort = TRUE;
 
-   MA_FreeRules(G->TR->Search, G->TR->Scnt);
-   TR_DisconnectPOP();
-
-   // Normally we would call AbortnClose() here but this would
-   // Dispose G->TR, which we really don`t want at this stage because
-   // other functions in parallel can still refer to it
-   TR_Cleanup();
-   MA_ChangeTransfer(TRUE);
-
-   TR_CloseTCPIP();
-   G->TR->Checking = FALSE;
-
-   // close the window now, because now it`s safe to close it.
-   set(G->TR->GUI.WI, MUIA_Window_Open, FALSE);
-   DisposeModulePush(&G->TR);
-
-   DisplayStatistics((struct Folder *)-1, TRUE);
+   // we can easily abort the transfer by setting the POP_Nr to the
+   // highest value possible and issue a GetMailFromNextPOP command.
+   // with this solution YAM will also process the filters for mails that
+   // were already downloaded even if the user aborted the transfer somehow
+   G->TR->POP_Nr = MAXP3;
+   TR_GetMailFromNextPOP(FALSE, MAXP3, 0);
 }
 MakeStaticHook(TR_AbortGETHook, TR_AbortGETFunc);
 ///
@@ -2420,17 +2413,28 @@ static void TR_CompleteMsgList(void)
    // this is needed so that if we get mail from more than one POP3 at a line this
    // abort stuff works out
    set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, FALSE);
+   set(G->TR->GUI.BT_RESUME, MUIA_Disabled, TRUE);
    DoMethod(tr->GUI.BT_START, MUIM_KillNotify, MUIA_Pressed);
    DoMethod(tr->GUI.BT_START, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Start));
    DoMethod(tr->GUI.BT_QUIT , MUIM_KillNotify, MUIA_Pressed);
    DoMethod(tr->GUI.BT_QUIT , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(tr->Abort));
 
-   if (C->PreSelection < 3) while (mail && !tr->Abort)
+   if(C->PreSelection < 3)
    {
-      if (tr->Pause) return;
-      if (tr->Start) { TR_ProcessGETFunc(); return; }
-      if (C->PreSelection != 1 || mail->Size >= C->WarnSize*1024) TR_GetMessageDetails(mail, tr->GMD_Line++);
-      mail = mail->Next;
+      while(mail && !tr->Abort)
+      {
+        if(tr->Pause) break;
+        if(tr->Start) { TR_ProcessGETFunc(); break; }
+        if(C->PreSelection != 1 || mail->Size >= C->WarnSize*1024)
+        {
+          TR_GetMessageDetails(mail, tr->GMD_Line++);
+
+          // set the next mail as the active one for the display,
+          // so that if the user pauses we can go on here
+          tr->GMD_Mail = mail->Next;
+        }
+        mail = mail->Next;
+      }
    }
 
    set(G->TR->GUI.BT_PAUSE, MUIA_Disabled, TRUE);
@@ -2613,8 +2617,8 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
             else
             {
                set(data->GUI.GR_PAGE, MUIA_Group_ActivePage, 1);
-               DoMethod(data->GUI.BT_RESUME,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook,0);
-               DoMethod(data->GUI.BT_PAUSE ,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook,1);
+               DoMethod(data->GUI.BT_RESUME,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, FALSE);
+               DoMethod(data->GUI.BT_PAUSE ,MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_PauseHook, TRUE);
                DoMethod(data->GUI.BT_PAUSE, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_WriteLong, TRUE, &(data->Pause));
                DoMethod(data->GUI.LV_MAILS ,MUIM_Notify, MUIA_NList_DoubleClick,TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &TR_GetMessageInfoHook);
                DoMethod(bt_delonly,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &TR_ChangeStatusHook,2);

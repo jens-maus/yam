@@ -7,6 +7,15 @@ $Source$
 
 2002-06-28  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_TR.c: fixed some more bugs within the transfer preselection
+      routines. Mainly we forgot to filter already downloaded mail,
+      even if the user aborted the transfer, this would leave
+      unfiltered mail in the incoming folder.
+      Secondly, the PAUSE and RESUME buttons within the preselection
+      window somehow didn`t work correctly because we forgot to
+      remember the last mail that was displayed within the transfer
+      window. Now the whole preselection stuff should work as
+      expected and a bit safer.
     * YAM.c, YAM_UT.c: fixed the recalculation routines of the
       folder listtree where it didn`t take respect of grandparent
       folder groups. If a mail within a folder had the status of
