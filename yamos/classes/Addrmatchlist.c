@@ -191,40 +191,40 @@ DECLARE(Event) // struct IntuiMessage *imsg
 		struct CustomABEntry *entry;
 
 		if(xget(data->Matchlist, MUIA_List_Active) != MUIV_List_Active_Off)
-    {
+		{
 				set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Up     : MUIV_List_Active_Down);
-    }
+		}
 		else
-    {
-        set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
-    }
+		{
+			set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
+		}
 
 		DoMethod(data->Matchlist, MUIM_List_GetEntry, xget(data->Matchlist, MUIA_List_Active), &entry);
 
-    res = entry->MatchString;
+		res = entry->MatchString;
 
-    // Now we check if the match is because of the real name and the same name exists twice in
-    // this list we have to return the email as matchstring
-    if(entry->MatchField == 1)  // RealName
-    {
-      int i;
-      for(i=0;;i++)
-      {
-        struct CustomABEntry *compareEntry;
+		// Now we check if the match is because of the real name and the same name exists twice in
+		// this list we have to return the email as matchstring
+		if(entry->MatchField == 1)  // RealName
+		{
+			int i;
+			for(i=0;;i++)
+			{
+				struct CustomABEntry *compareEntry;
 
-        DoMethod(data->Matchlist, MUIM_List_GetEntry, i, &compareEntry);
-        if(!compareEntry) break;
+				DoMethod(data->Matchlist, MUIM_List_GetEntry, i, &compareEntry);
+				if(!compareEntry) break;
 
-        if(compareEntry != entry)
-        {
-          if(Stricmp(compareEntry->MatchString, entry->MatchString) == 0)
-          {
-            res = entry->MatchEntry->Address;
-            break;
-          }
-        }
-      }
-    }
+				if(compareEntry != entry)
+				{
+					if(Stricmp(compareEntry->MatchString, entry->MatchString) == 0)
+					{
+						res = entry->MatchEntry->Address;
+						break;
+					}
+				}
+			}
+		}
 	}
 	return (ULONG)res;
 }
@@ -238,22 +238,22 @@ DECLARE(Open) // STRPTR str
 	LONG entries;
 	struct CustomABEntry *entry;
 
-  DB(kprintf("Match this: %s\n", msg->str);)
+	DB(kprintf("Match this: %s\n", msg->str);)
 
 	set(data->Matchlist, MUIA_List_Quiet, TRUE);
 
 	DoMethod(data->Matchlist, MUIM_List_Clear);
 
-  DoMethod(_app(obj), MUIM_YAM_FindEmailMatches, msg->str, data->Matchlist);
+	DoMethod(_app(obj), MUIM_YAM_FindEmailMatches, msg->str, data->Matchlist);
 
 	set(data->Matchlist, MUIA_List_Quiet, FALSE);
 
 	/* is there more entries in the list and if only one, is it longer than what the user already typed... */
-  entries = xget(data->Matchlist, MUIA_List_Entries);
+	entries = xget(data->Matchlist, MUIA_List_Entries);
 	if(entries > 0 && (DoMethod(data->Matchlist, MUIM_List_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
 		res = entry->MatchString;
 
-   /* should we open the popup list (if not already shown) */
+	/* should we open the popup list (if not already shown) */
 	if(!res || !xget(obj, MUIA_Window_Open))
 		set(obj, MUIA_Window_Open, res ? TRUE : FALSE);
 
@@ -261,4 +261,3 @@ DECLARE(Open) // STRPTR str
 }
 
 ///
-

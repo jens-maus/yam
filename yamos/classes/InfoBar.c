@@ -108,10 +108,10 @@ OVERLOAD(OM_NEW)
 			End,
 
 			Child, folderInfoStr = TextObject,
-        MUIA_Font,          MUIV_Font_Tiny,
+				MUIA_Font,          MUIV_Font_Tiny,
 				MUIA_Text_PreParse, "\033l",
 			End,
-	    End,
+		End,
 
 		Child, gaugeLabel = TextObject,
 			MUIA_Text_PreParse, "\033r",
