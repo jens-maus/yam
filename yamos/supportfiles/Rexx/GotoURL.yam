@@ -1,22 +1,35 @@
-/* GotoURL.yam - Passes URL's from YAM to a web browser             */
-/* $VER: GotoURL.yam 1.3 (25.02.00) © 2000 by M.Beck <mbeck@yam.ch> */
-/* based on Harry Samwels <samwel@algonet.se> script                */
-/* Tested with IBrowse 1.2, Voyager 2.95 and AWeb 3.1               */
-/*                                                                  */
-/* Call this script from                                            */
-/* YAM/Configuration/ARexx/When double-clicking an URL              */
+/* GotoURL.yam - Passes URL's from YAM to a web browser                   */
+/* $VER: GotoURL.yam v1.5 Richard de Rivaz (07.05.03) <richard@mdr.co.uk> */
+/* based on v1.3 copyright 2000 by M.Beck <mbeck@yam.ch> script           */
+/* based on Harry Samwels <samwel@algonet.se> script                      */
+/* Tested with IBrowse 1.2, Voyager 2.95 and AWeb 3.1                     */
+/*                                                                        */
+/* New for v1.5: Select Internet connection with INET DIAL v3.9+          */
+/* INET DIAL available at http://www.mdr.co.uk                            */
+/*                                                                        */
+/* Call this script from                                                  */
+/* YAM/Configuration/ARexx/When double-clicking an URL                    */
 
 /* Use Miami to go online if necessary (1=yes) */
-UseMiami=1
+UseMiami=0
+
+/* Use INET DIAL local or proxy to go online if necessary (1=yes) */
+UseInetDial=0
+
+/* IP address of Proxy Server for INET DIAL */
+InternetProxy='127.0.0.1'
+
+/* IP address of this computer */
+LocalIP='127.0.0.1'
 
 /* Path and filename of Miami */
-MiamiPath = "MIAMI:Miami"
+MiamiPath='MIAMI:Miami'
 
 /* Path and filename of your default browser */
-BrowserPath='Prog:Internet/IBrowse/IBrowse'
+BrowserPath='AWeb3:AWeb-II'
 
 /* Default browser (possible inputs: IBrowse, Voyager and AWeb) */
-UsedBrowser='IBrowse'
+UsedBrowser='AWeb'
 
 /* Load URL in a new window (1=yes) */
 NewWindow=1
@@ -24,20 +37,47 @@ NewWindow=1
 /* Use running browser if available (1=yes) */
 AutoBrowser=1
 
+/* Make Screen come to front (1=yes) */
+ScreenToFront=1
+
 /* ----------------------- DON'T EDIT BELOW THIS LINE ---------------------- */
 
 OPTIONS RESULTS
 OPTIONS FAILAT 21
-
 PARSE ARG URL
 
 UB = UPPER(UsedBrowser)
+
+IF UseInetDial=1 THEN DO
+   ADDRESS COMMAND
+   filename='dserver:mdr_internet_online_WWW' 
+   CALL EXISTS (filename)
+   IF result ~= 1 THEN DO
+     ADDRESS YAM
+     body = '"Connect to the Internet?"'
+     gadgets = '*_No|_Yes'
+     REQUEST body gadgets
+     IF result > 0 THEN EXIT 5
+     ADDRESS COMMAND
+     CALL OPEN 'outfile','ram:mdr_temp_req','W'
+     CALL WRITELN 'outfile','echo >ram:misr1 "WWW"'
+     CALL WRITELN 'outfile','echo >ram:misr2' LocalIP
+     CALL WRITELN 'outfile','join ram:misr1 ram:misr2 as ram:mdr_internet_server_required'
+     CALL CLOSE 'outfile'
+     remotecmd = 'mdr:tcpip/bin/letnet host=' || InternetProxy ||' port=mdrcli < ram:mdr_temp_req'
+     'Run <>NIL:' remotecmd
+     'SYS:rexxc/WaitForPort MDR.ONLINE'
+     StartingBrowser=1
+   END
+END
+
 rxports=SHOW('P')
 IF AutoBrowser=1 THEN DO
   IF SHOW('P','IBROWSE') THEN UB='IBROWSE'
   ELSE IF SHOW('P','VOYAGER') THEN UB='VOYAGER'
   ELSE IF INDEX(rxports,'AWEB')>0 THEN UB='AWEB'
 END
+
 SELECT
   WHEN UB='IBROWSE' THEN port='IBROWSE'
   WHEN UB='VOYAGER' THEN port='VOYAGER'
@@ -48,7 +88,9 @@ SELECT
   END
   OTHERWISE EXIT 10
 END
+
 ADDRESS COMMAND
+
 IF ~SHOW('P',port) THEN DO
   NewWindow = 0
   'RUN >NIL:' browserpath
@@ -58,6 +100,7 @@ IF ~SHOW('P',port) THEN DO
      EXIT 5
   END
 END
+
 IF UseMiami=1 THEN DO
    IF ~SHOW('P', 'MIAMI.1') THEN DO
      'Run <>NIL:' miamipath
@@ -70,7 +113,21 @@ IF UseMiami=1 THEN DO
    IF RC=0 THEN EXIT 5
    HIDE
 END
+
+IF StartingBrowser=1 THEN DO
+  DO i=1 to 10
+    CALL EXISTS (filename)
+    IF result = 1 THEN LEAVE
+    'SYS:rexxc/WaitForPort MDR.ONLINE'
+  END
+  IF result = 0 THEN DO
+    ADDRESS YAM 'REQUEST "Internet Connection failed\nPlease try again later!" "Okay!"'
+    EXIT 5
+  END
+END
+
 INTERPRET 'ADDRESS' port
+
 SELECT
   WHEN UB='IBROWSE' THEN DO
     IF NewWindow=1 THEN 'NewWindow 'url
@@ -85,6 +142,10 @@ SELECT
                    ELSE 'Open 'url
   END
 END
+
+IF ScreenToFront=1 THEN DO
+  'ADDRESS' port
+  'SCREENTOFRONT'
+END
+
 EXIT
-
-
