@@ -709,12 +709,15 @@ BOOL MA_ReadHeader(FILE *fh)
 //  Frees an extended email structure
 void MA_FreeEMailStruct(struct ExtendedMail *email)
 {
-   FreeStrBuf(email->SenderInfo);
-   FreeStrBuf(email->Headers);
-   if (email->NoSTo) free(email->STo);
-   if (email->NoCC ) free(email->CC );
-   if (email->NoBCC) free(email->BCC);
-   memset(email, 0, sizeof(struct ExtendedMail));
+   if(email)
+   {
+      FreeStrBuf(email->SenderInfo);
+      FreeStrBuf(email->Headers);
+      if (email->NoSTo) free(email->STo);
+      if (email->NoCC ) free(email->CC );
+      if (email->NoBCC) free(email->BCC);
+      free(email);
+   }
 }
 
 ///
@@ -747,17 +750,20 @@ static void MA_GetRecipients(char *h, struct Person **per, int *percnt)
 //  Parses the header lines of a message and fills email structure
 struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *statstr, BOOL deep)
 {
-   static struct ExtendedMail email;
+   struct ExtendedMail *email;
    static struct Person pe;
-   struct Mail *mail = &email.Mail;
+   struct Mail *mail;
    char *p, fullfile[SIZE_PATHFILE];
    int ok, i;
    struct DateStamp *foundDate = NULL;
    FILE *fh;
 
-   memset(&email, 0, sizeof(struct ExtendedMail));
+   // first we generate a new ExtendedMail buffer
+   if(!(email = calloc(1, sizeof(struct ExtendedMail)))) return NULL;
+
+   mail = &email->Mail;
    stccpy(mail->MailFile, file, SIZE_MFILE);
-   email.DelSend = !C->SaveSent;
+   email->DelSend = !C->SaveSent;
    if ((fh = fopen(GetMailFile(fullfile, folder, mail), "r")))
    {
       BOOL xpk = FALSE;
@@ -799,24 +805,24 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             else if (!stricmp(field, "original-recipient"))
             {
                ExtractAddress(value, &pe);
-               email.OriginalRcpt = pe;
+               email->OriginalRcpt = pe;
             }
             else if (!stricmp(field, "disposition-notification-to"))
             {
                ExtractAddress(value, &pe);
-               email.ReceiptTo = pe;
-               email.ReceiptType = RCPT_TYPE_ALL;
+               email->ReceiptTo = pe;
+               email->ReceiptType = RCPT_TYPE_ALL;
                SET_FLAG(mail->Flags, MFLAG_SENDMDN);
             }
             else if (!stricmp(field, "return-view-to"))
             {
                ExtractAddress(value, &pe);
-               email.ReceiptTo = pe;
-               email.ReceiptType = RCPT_TYPE_READ;
+               email->ReceiptTo = pe;
+               email->ReceiptType = RCPT_TYPE_READ;
             }
             else if (!stricmp(field, "return-receipt-to"))
             {
-               email.RetRcpt = TRUE;
+               email->RetRcpt = TRUE;
             }
             else if (!stricmp(field, "to"))
             {
@@ -830,19 +836,19 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                   if (p)
                   {
                     SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
-                    if (deep && !email.NoSTo) MA_GetRecipients(p, &(email.STo), &(email.NoSTo));
+                    if (deep && !email->NoSTo) MA_GetRecipients(p, &(email->STo), &(email->NoSTo));
                   }
                }
             }
             else if (!stricmp(field, "cc"))
             {
                SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
-               if (deep && !email.NoCC) MA_GetRecipients(value, &(email.CC), &(email.NoCC));
+               if (deep && !email->NoCC) MA_GetRecipients(value, &(email->CC), &(email->NoCC));
             }
             else if (!stricmp(field, "bcc"))
             {
                SET_FLAG(mail->Flags, MFLAG_MULTIRCPT);
-               if (deep && !email.NoBCC) MA_GetRecipients(value, &(email.BCC), &(email.NoBCC));
+               if (deep && !email->NoBCC) MA_GetRecipients(value, &(email->BCC), &(email->NoBCC));
             }
             else if (!stricmp(field, "subject"))
             {
@@ -853,12 +859,12 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             else if (!stricmp(field, "message-id"))
             {
                mail->cMsgID = CompressMsgID(p = Trim(value));
-               stccpy(email.MsgID, p, SIZE_MSGID);
+               stccpy(email->MsgID, p, SIZE_MSGID);
             }
             else if (!stricmp(field, "in-reply-to"))
             {
                mail->cIRTMsgID = CompressMsgID(p = Trim(value));
-               stccpy(email.IRTMsgID, p, SIZE_MSGID);
+               stccpy(email->IRTMsgID, p, SIZE_MSGID);
             }
             else if (!stricmp(field, "date"))
             {
@@ -891,7 +897,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             {
                SET_FLAG(mail->Flags, MFLAG_SENDERINFO);
                SParse(value);
-               if (deep) email.SenderInfo = StrBufCpy(email.SenderInfo, value);
+               if (deep) email->SenderInfo = StrBufCpy(email->SenderInfo, value);
             }
             else if(deep) // and if we end up here we check if we really have to go further
             {
@@ -899,18 +905,18 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
               {
                 enum Security sec;
 
-                if (strstr(value, "delsent")) email.DelSend = TRUE;
-                if ((p = strstr(value, "sigfile"))) email.Signature = p[7]-'0'+1;
+                if (strstr(value, "delsent")) email->DelSend = TRUE;
+                if ((p = strstr(value, "sigfile"))) email->Signature = p[7]-'0'+1;
                 for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
                 {
                   if(strstr(value, SecCodes[sec]))
-                  email.Security = sec;
+                  email->Security = sec;
                 }
               }
               else if(!strnicmp(field, "x-yam-header-", 13))
               {
-                email.Headers = StrBufCat(StrBufCat(email.Headers, &field[13]), ":");
-                email.Headers = StrBufCat(StrBufCat(email.Headers, value), "\\n");
+                email->Headers = StrBufCat(StrBufCat(email->Headers, &field[13]), ":");
+                email->Headers = StrBufCat(StrBufCat(email->Headers, value), "\\n");
               }
             }
          }
@@ -973,7 +979,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
       mail->Size = FileSize(fullfile);
 
       FinishUnpack(fullfile);
-      return &email;
+      return email;
    }
 
    FinishUnpack(fullfile);

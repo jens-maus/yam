@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-01-08  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c: changed MA_ExamineMail() function to not use a static
+      buffer for operation. That caused bug #657352 and probably was also
+      the reason for some strange behaviour somewhere. Before that fix
+      it was unsafe to use MA_ExamineMail() twice in a row, because the
+      second call would have deleted the results of the first one.
+
 2003-01-07  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_rexx_rxif.c: fixed bug #658683 where the APPBUSY arexx command
