@@ -51,6 +51,11 @@ unsigned long yamversiondays = __YAM_VERDAYS;
   __near long __buffsize = 8192;
 #elif defined(__VBCC__) /* starting with VBCC 0.8 release */
   long __stack = 32768;
+#elif defined(__GNUC__)
+  /* neither of these are supported by GCC
+  long __stack = 32768;
+  long __buffsize = 8192;
+  */
 #endif
 
 struct WBStartup *WBmsg;
