@@ -2285,7 +2285,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
                   fclose(mfh);
 
                   // put the transferStat to 100%
-                  TR_TransStat_Update(&ts, (int)mail->Size);
+                  set(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current, mail->Size);
                }
                FinishUnpack(fullfile);
             }
@@ -2383,7 +2383,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                   if(TR_SendSMTPCmd(SMTP_FINISH, NULL, MSG_ER_BadResponse))
                   {
                     // put the transferStat to 100%
-                    TR_TransStat_Update(ts, (int)mail->Size);
+                    set(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current, mail->Size);
 
                     result = email->DelSend ? 2 : 1;
                     AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size, "");
@@ -2844,7 +2844,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
             if (TR_LoadMessage(&ts, mail->Index))
             {
                // put the transferStat to 100%
-               TR_TransStat_Update(&ts, (int)mail->Size);
+               set(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current, mail->Size);
 
                G->TR->Stats.Downloaded++;
                if (C->AvoidDuplicates) TR_AppendUIDL(mail->UIDL);

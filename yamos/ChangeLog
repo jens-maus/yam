@@ -7,6 +7,9 @@ $Source$
 
 2002-09-14  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_TR.c: fixed bug #601755 where YAM showed the overall
+      transfered bytes in the transferwindow always doubled by
+      the amount of mails downloaded.
     * YAM_RE.c: fixed bug #598715 where YAM didn`t display the
       letter part of a message if the user deselected "Display
       All Texts" within the Read configuration and if the
