@@ -48,6 +48,8 @@
  *
  * History
  * -------
+ * 0.9 - fixed crash in processclasssrc()
+ *
  * 0.8 - added MORPHOS support for the vararg _NewObject() function.
  *       added STDARGS to _NewObject() function.
  *
@@ -100,10 +102,9 @@
  *
  * 0.1 - Initial version, given to Allan and Jens.
  *
- *
  */
 
-char *verstr = "0.8";
+char *verstr = "0.9";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -521,7 +522,7 @@ struct classdef *processclasssrc( char *path )
 		printf("WARNING: Source file '%s' doesn't contain a " KEYWD_SUPERCLASS " keyword. Skipping.\n", path);
 		free_classdef(cd); cd = NULL;
 	}
-	if (!cd->classdata)
+	else if (!cd->classdata)
 	{
 		printf("WARNING: Source file '%s' doesn't contain a " KEYWD_CLASSDATA " keyword. Skipping.\n", path);
 		free_classdef(cd); cd = NULL;
