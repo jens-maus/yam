@@ -44,6 +44,7 @@
 #include <rexx/rxslib.h>
 
 #include "old.h"
+#include "extra.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_addressbookEntry.h"
