@@ -3,11 +3,11 @@
 
 /* Includeheader
 
-	Name:		SDI_compiler.h
+	Name:           SDI_compiler.h
 	Versionstring:	$VER: SDI_compiler.h 1.6 (19.05.2001)
-	Author:		SDI
-	Distribution:	PD
-	Description:	defines to hide compiler stuff
+	Author:         SDI
+	Distribution:   PD
+	Description:    defines to hide compiler stuff
 
  1.1   25.06.98 : created from data made by Gunter Nikl
  1.2   17.11.99 : added VBCC
@@ -15,6 +15,7 @@
  1.4   30.03.00 : fixed SAVEDS for VBCC
  1.5   29.07.00 : added #undef statements (needed e.g. for AmiTCP together with vbcc)
  1.6   19.05.01 : added STACKEXT and Dice stuff
+ 1.7   09.06.02 : added #ifdef check for __stackext as the cross-gcc of morphos doesn`t support stackext
 */
 
 #ifdef ASM
@@ -100,7 +101,11 @@
   #define STDARGS __stdargs
 #endif
 #if !defined(STACKEXT)
-  #define STACKEXT __stackext
+  #if defined(__stackext)         // the cross-gcc of morphos doesn`t support __stackext somehow :/
+    #define STACKEXT __stackext
+  #else
+    #define STACKEXT
+  #endif
 #endif
 
 #endif /* SDI_COMPILER_H */
