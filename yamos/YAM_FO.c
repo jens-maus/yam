@@ -813,7 +813,7 @@ static void FO_GetFolder(struct Folder *folder, BOOL existing)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
    BOOL isdefault = (folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED);
-   static int type2cycle[9] = { 0,0,1,1,2,-1,1,2,-1 };
+   static const int type2cycle[9] = { 0,0,1,1,2,-1,1,2,-1 };
    int i;
 
    set(gui->ST_FNAME, MUIA_String_Contents, folder->Name);
@@ -845,7 +845,7 @@ static void FO_PutFolder(struct Folder *folder)
 {
    struct FO_GUIData *gui = &G->FO->GUI;
    BOOL isdefault = (folder->Type != FT_CUSTOM && folder->Type != FT_CUSTOMSENT && folder->Type != FT_CUSTOMMIXED);
-   static int cycle2type[3] = { FT_CUSTOM,FT_CUSTOMSENT,FT_CUSTOMMIXED };
+   static const int cycle2type[3] = { FT_CUSTOM,FT_CUSTOMSENT,FT_CUSTOMMIXED };
    int i;
 
    GetMUIString(folder->Name, gui->ST_FNAME);
@@ -1120,9 +1120,8 @@ MakeHook(FO_SetOrderHook, FO_SetOrderFunc);
 //  Creates folder configuration window
 static struct FO_ClassData *FO_New(void)
 {
-   struct FO_ClassData *data;
-
-   if (data = calloc(1, sizeof(struct FO_ClassData)))
+   struct FO_ClassData *data = calloc(1, sizeof(struct FO_ClassData));
+   if (data)
    {
       APTR bt_okay, bt_cancel;
       static char *ftypes[4], *fmodes[5], *sortopt[8], *fsignat[5];
