@@ -504,7 +504,7 @@ struct rxd_mailinfo
                 long *size;
                 char *date;
                 char *flags;
-                long *msgid;
+                char *msgid;
         } res;
 };
 

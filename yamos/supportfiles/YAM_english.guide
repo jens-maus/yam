@@ -7414,8 +7414,9 @@ MAILINFO
                       a value of zero, the last 2 bytes of the string will
                       have the value of "-" instead of "0".
 
-     <STEM>MSGID    - compressed 32 bit representation of the contents
-                      of the "Message-ID:" header, e.g. 7008417  (V2.1)
+     <STEM>MSGID    - compressed hexadecimal 32 bit representation of the
+                      contents of the "Message-ID:" header, e.g. BBC62595
+                      (V2.1)
 
      RC is set to 10 if INDEX is out of the range of messages available in
      the folder.

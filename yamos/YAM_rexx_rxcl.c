@@ -69,7 +69,7 @@ struct rxs_command rxs_commandlist[] =
 	{ "MAILFILTER", "ALL/S", "CHECKED/N,BOUNCED/N,FORWARDED/N,REPLIED/N,EXECUTED/N,MOVED/N,DELETED/N", RESINDEX(rxd_mailfilter), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailfilter, 1 },
 	{ "MAILFORWARD", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailforward), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailforward, 1 },
 	{ "MAILIMPORT", "FILENAME/A,WAIT/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailimport, 1 },
-	{ "MAILINFO", "INDEX/N", "INDEX/N,STATUS,FROM,TO,REPLYTO,SUBJECT,FILENAME,SIZE/N,DATE,FLAGS,MSGID/N", RESINDEX(rxd_mailinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailinfo, 1 },
+	{ "MAILINFO", "INDEX/N", "INDEX/N,STATUS,FROM,TO,REPLYTO,SUBJECT,FILENAME,SIZE/N,DATE,FLAGS,MSGID", RESINDEX(rxd_mailinfo), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailinfo, 1 },
 	{ "MAILMOVE", "FOLDER/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailmove, 1 },
 	{ "MAILREAD", "WINDOW/N,QUIET/S", "WINDOW/N", RESINDEX(rxd_mailread), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailread, 1 },
 	{ "MAILREPLY", "QUIET/S", "WINDOW/N", RESINDEX(rxd_mailreply), (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_mailreply, 1 },

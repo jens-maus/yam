@@ -7,6 +7,10 @@ $Source$
 
 2003-03-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_rexx_rxif.c: fixed bug in MAILINFO arexx command where the
+      stem variable didn`t return the 32bit checksum value in the correct
+      format. Now the stem will return it as the correct 32bit hexvalue
+      like it is saved within the .index file.
     * YAM.c, YAM_UT.c: fixed bug in xget() wrapper function where we
       forgot to set the destination variable to zero which caused the
       CheckMCC() function to fail if a .mcc didn`t had the
