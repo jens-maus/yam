@@ -26,17 +26,17 @@
 ***************************************************************************/
 
 #include "extrasrc/astcsma.c"
-#include "extrasrc/NewReadArgs.c"
-#include "extrasrc/dice.c"
-
-// If we don`t have MorphOS libnix lets
-// use our own implementations.
+// if we don`t have MorphOS libnix lets use our own implementations
 #if !defined(__MORPHOS__) || !defined(__libnix)
   #include "extrasrc/getft.c"
   #include "extrasrc/stccpy.c"
   #include "extrasrc/stcgfe.c"
-  #include "extrasrc/stcgfn.c"
+  //#include "extrasrc/stcgfn.c"
   #include "extrasrc/stpblk.c"
   #include "extrasrc/strmfp.c"
   #include "extrasrc/strsfn.c"
 #endif
+#include "extrasrc/NewReadArgs.c"
+#include "extrasrc/dice.c"
+
+void __chkabort(void) {}
