@@ -2275,7 +2275,7 @@ static char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
 //  Extracts URL from a message line
 static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
 {
-   static const char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#()";
+   static const char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=;:*#()";
    static const char *protocols[7] =
    {
      "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:"
@@ -2853,16 +2853,35 @@ static void RE_ClickedOnMessage(char *address)
 {
    struct ABEntry *ab = NULL;
    int l, win, hits;
-   char *p, *gads, buf[SIZE_LARGE], *body = NULL, *subject = NULL;
+   char *p, *gads, buf[SIZE_LARGE];
+   char *body = NULL, *subject = NULL, *cc = NULL, *bcc = NULL;
 
-   if ((l = strlen(address))) if (strchr(".?!", address[--l])) address[l] = 0;
+   DB(kprintf("ClickedOnMessage: [%s]\n", address);)
 
-   for (p = strchr(address, '&'); p; p = strchr(p, '&'))
+   // just prevent something bad from happening.
+   if(!address || !(l = strlen(address))) return;
+
+   // now we check for additional options to the mailto: string (if it is one)
+   if((p = strchr(address, '?'))) *p++ = '\0';
+
+   while(p)
    {
-      *p++ = 0;
-      if (!strnicmp(p, "body=", 5)) body = &p[5];
-      if (!strnicmp(p, "subject=", 8)) subject = &p[8];
+      if(!strnicmp(p, "subject=", 8))    subject = &p[8];
+      else if(!strnicmp(p, "body=", 5))  body = &p[5];
+      else if(!strnicmp(p, "cc=", 3))    cc = &p[3];
+      else if(!strnicmp(p, "bcc=", 4))   bcc = &p[4];
+
+      if((p = strchr(p, '&'))) *p++ = '\0';
+
+      // now we check if this "&" is because of a "&amp;" which is the HTML code
+      // for a "&" - we only handle this code because handling ALL HTML code
+      // would be too complicated right now. we will support that later anyway.
+      if(p && !strnicmp(p, "amp;", 4)) p+=4;
    }
+
+   // please note that afterwards we should normally transfer HTML specific codes
+   // like &amp; %20 aso. because otherwise links like mailto:Bilbo%20Baggins%20&lt;bilbo@baggins.de&gt;
+   // will not work... but this is stuff we can do in one of the next versions.
 
    // lets see if we have an entry for that in the Addressbook
    // and if so, we reuse it
@@ -2882,6 +2901,8 @@ static void RE_ClickedOnMessage(char *address)
           setstring(gui->ST_TO, hits ? BuildAddrName(address, ab->RealName) : address);
           if (subject) setstring(gui->ST_SUBJECT, subject);
           if (body) set(gui->TE_EDIT, MUIA_TextEditor_Contents, body);
+          if (cc) setstring(gui->ST_CC, cc);
+          if (bcc) setstring(gui->ST_BCC, bcc);
           set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
         }
       }

@@ -7,6 +7,15 @@ $Source$
 
 2002-07-08  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_RE.c: fixed the doubleclick on mailto: functions once
+      again and now it should also recognize ?subject= attributes
+      and as a special bonus I also added support for cc= and bcc=
+      as defined in the HTML standard.
+      It will also try to figure out "&amp;" as the separator
+      between attributes. With that I recognized that also the ";"
+      was missing within the legal chars of a URI because a valid
+      URI can also be something like:
+      "mailto:a@b.c?subject=test&amp;cc=b@c.d"
     * YAM_WR.c: reverted the Hotkeys for the Menushortcuts of
       the write window back to use CommandStrings, so that they
       will not interfere with the same hotkeys for other gadgets.
