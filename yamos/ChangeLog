@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-02-20  Gunther Nikl <gni@gecko.de>
+
+    * YAM_comapt.h: OS4 compatibility header.
+    * YAM.c, YAM_TR.c, YAM_UT.c: Use it.
+
 2004-02-15  Jens Langner <Jens.Langner@light-speed.de>
 
     * smakefile: adapted SAS/C makefile to also put all object
