@@ -137,7 +137,7 @@ APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
       if (XpkBase) if (!XpkQueryTags(XPK_PackersQuery, &xpl, TAG_DONE))
       {
          struct XpkPackerInfo xpi;
-         int i;
+         ULONG i;
          for (i = 0; i < xpl.xpl_NumPackers; i++)
          {
             if (!XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE))
@@ -417,26 +417,26 @@ APTR CO_Page1(struct CO_ClassData *data)
    if (grp = VGroup,
          MUIA_HelpNode, "CO01",
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_SendMail)),
-				Child, HGroup,
-					Child, VGroup,
-						Child, ColGroup(2),
-		               Child, Label2(GetStr(MSG_CO_Server)),
-   		            Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST,GetStr(MSG_CO_Server)),
-	      	         Child, Label2(GetStr(MSG_CO_Domain)),
-   	      	      Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,GetStr(MSG_CO_Domain)),
-						End,
-	               Child, MakeCheckGroup((Object **)&data->GUI.CH_SMTP8BIT, GetStr(MSG_CO_Allow8bit)),
-					End,
-					Child, VGroup,
-						Child, authgrp=ColGroup(2),
-		               Child, Label2(GetStr(MSG_CO_SMTPUser)),
-	   	            Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,GetStr(MSG_CO_SMTPUser)),
-   	   	         Child, Label2(GetStr(MSG_CO_SMTPPass)),
-      	   	      Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(GetStr(MSG_CO_SMTPPass)),
-						End,
-	               Child, MakeCheckGroup((Object **)&data->GUI.CH_USESMTPAUTH, GetStr(MSG_CO_UseSMTPAUTH)),
-					End,
-				End,
+            Child, HGroup,
+               Child, VGroup,
+                  Child, ColGroup(2),
+                     Child, Label2(GetStr(MSG_CO_Server)),
+                     Child, data->GUI.ST_SMTPHOST = MakeString(SIZE_HOST,GetStr(MSG_CO_Server)),
+                     Child, Label2(GetStr(MSG_CO_Domain)),
+                     Child, data->GUI.ST_DOMAIN = MakeString(SIZE_HOST,GetStr(MSG_CO_Domain)),
+                  End,
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_SMTP8BIT, GetStr(MSG_CO_Allow8bit)),
+               End,
+               Child, VGroup,
+                  Child, authgrp=ColGroup(2),
+                     Child, Label2(GetStr(MSG_CO_SMTPUser)),
+                     Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,GetStr(MSG_CO_SMTPUser)),
+                     Child, Label2(GetStr(MSG_CO_SMTPPass)),
+                     Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(GetStr(MSG_CO_SMTPPass)),
+                  End,
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USESMTPAUTH, GetStr(MSG_CO_UseSMTPAUTH)),
+               End,
+            End,
          End,
          Child, HGroup, GroupFrameT(GetStr(MSG_CO_ReceiveMail)),
             Child, ListviewObject,
@@ -485,7 +485,7 @@ APTR CO_Page1(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_USEAPOP     ,MSG_HELP_CO_CH_USEAPOP   );
       SetHelp(data->GUI.CH_POPENABLED  ,MSG_HELP_CO_CH_POPENABLED);
       DoMethod(grp,MUIM_MultiSet,MUIA_Disabled,TRUE,data->GUI.GR_POP3,
-					data->GUI.BT_PDEL, authgrp, NULL);
+               data->GUI.BT_PDEL, authgrp, NULL);
       DoMethod(data->GUI.LV_POP3       ,MUIM_Notify,MUIA_List_Active    ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_GetP3EntryHook,0);
       DoMethod(data->GUI.ST_POPHOST    ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
       DoMethod(data->GUI.ST_POPUSERID  ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_PutP3EntryHook,0);
@@ -939,10 +939,10 @@ APTR CO_Page6(struct CO_ClassData *data)
                Child, data->GUI.ST_AREPLYPAT = MakeString(SIZE_PATTERN, GetStr(MSG_CO_AltRepPat)),
                Child, Label2(GetStr(MSG_CO_MLRepInit)),
                Child, MakePhraseGroup(&data->GUI.ST_MREPLYHI, &data->GUI.ST_MREPLYTEXT, &data->GUI.ST_MREPLYBYE, GetStr(MSG_CO_MLRepInit), GetStr(MSG_HELP_CO_ST_MREPLYTEXT)),
-					Child, Label2(GetStr(MSG_CO_QuoteMail)),
-					Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, 2, SIZE_SMALL, ""),
-					Child, Label2(GetStr(MSG_CO_AltQuote)),
-					Child, data->GUI.ST_ALTQUOTECHAR = MakeString(SIZE_SMALL, GetStr(MSG_CO_AltQuote)),
+               Child, Label2(GetStr(MSG_CO_QuoteMail)),
+               Child, MakeVarPop(&data->GUI.ST_REPLYCHAR, 2, SIZE_SMALL, ""),
+               Child, Label2(GetStr(MSG_CO_AltQuote)),
+               Child, data->GUI.ST_ALTQUOTECHAR = MakeString(SIZE_SMALL, GetStr(MSG_CO_AltQuote)),
             End,
             Child, ColGroup(2),
                Child, MakeCheckGroup((Object **)&data->GUI.CH_QUOTE, GetStr(MSG_CO_DoQuote)),
@@ -1510,4 +1510,3 @@ APTR CO_Page14(struct CO_ClassData *data)
    return grp;
 }
 ///
-

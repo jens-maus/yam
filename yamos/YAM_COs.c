@@ -367,16 +367,16 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
                if (!stricmp(buffer, "TimeZone"))
                {
-	               /* If Locale is present, don't use the timezone from the config */
-  	             if (G->Locale)
+                 /* If Locale is present, don't use the timezone from the config */
+                 if (G->Locale)
                  {
-    	              CloseLocale(G->Locale);
-      	            G->Locale = OpenLocale(NULL);
-        	          co->TimeZone = -G->Locale->loc_GMTOffset/60;
-          	     }else
+                    CloseLocale(G->Locale);
+                    G->Locale = OpenLocale(NULL);
+                    co->TimeZone = -G->Locale->loc_GMTOffset/60;
+                 }else
                  {
-               	 		co->TimeZone = atoi(value);
-								 }
+                    co->TimeZone = atoi(value);
+                 }
                }
 
                if (!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);

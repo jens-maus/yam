@@ -287,8 +287,8 @@ ULONG SAVEDS ASM FL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
       case MUIM_DragQuery:
       {
          if (dq->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
-			}
-    	break;
+      }
+      break;
 
       case MUIM_DragDrop:
       {
@@ -300,24 +300,25 @@ ULONG SAVEDS ASM FL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 
          tn_dst = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, 0, TAG_DONE);
          if(!tn_dst) return 0;
-				 dstfolder = tn_dst->tn_User;
+         dstfolder = tn_dst->tn_User;
 
          tn_src = (struct MUI_NListtree_TreeNode *)DoMethod(obj, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, MUIV_NListtree_GetEntry_Position_Active, 0, TAG_DONE);
          if(!tn_src) return 0;
-				 srcfolder = tn_src->tn_User;
+         srcfolder = tn_src->tn_User;
 
          if (dstfolder->Type != FT_GROUP) MA_MoveCopy(NULL, srcfolder, dstfolder, FALSE);
          return 0;
       }
-    	break;
+      break;
 
-      // If the user tryed to open a ContextMenu we check if popupmenu.library was open and then display the ContextMenu
+      // If the user tried to open a ContextMenu we check if
+      // popupmenu.library was open and then display the ContextMenu
       case MUIM_ContextMenuBuild:
       {
-				if(PopupMenuBase) return(MA_FolderContextMenu((APTR)msg));
-				else return 0;
+         if(PopupMenuBase) return(MA_FolderContextMenu((APTR)msg));
+         else return 0;
       }
-    	break;
+      break;
    }
 
    return DoSuperMethodA(cl,obj,msg);
@@ -329,13 +330,14 @@ ULONG SAVEDS ASM ML_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 {
    switch (msg->MethodID)
    {
-      // If the user tryed to open a ContextMenu we check if popupmenu.library was open and then display the ContextMenu
+      // If the user tried to open a ContextMenu we check if
+      // popupmenu.library was open and then display the ContextMenu
       case MUIM_ContextMenuBuild:
       {
-				if(PopupMenuBase) return(MA_MailListContextMenu((APTR)msg));
-				else return 0;
+          if(PopupMenuBase) return(MA_MailListContextMenu((APTR)msg));
+          else return 0;
       }
-    	break;
+      break;
    }
 
    return DoSuperMethodA(cl,obj,msg);
@@ -377,22 +379,22 @@ ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
    switch (msg->MethodID)
    {
       case OM_NEW:
-			{
+      {
          obj = (Object *)DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
 
          if (obj)
          {
             struct AL_Data *data = INST_DATA(cl, obj);
-	    			InitHook(&data->DisplayHook, AB_LV_DspFunc, data);
+            InitHook(&data->DisplayHook, AB_LV_DspFunc, data);
             set(obj, MUIA_NListtree_DisplayHook, &data->DisplayHook);
 
          }
          return (ULONG)obj;
       }
-    	break;
+      break;
 
       case MUIM_Setup:
- 			{
+      {
          if (!DoSuperMethodA(cl, obj, msg)) return FALSE;
          data = INST_DATA(cl, obj);
          data->Object = NewObject(CL_BodyChunk->mcc_Class,NULL,
@@ -404,31 +406,31 @@ ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
          return TRUE;
       }
-    	break;
+      break;
 
       case MUIM_Cleanup: 
-			{
+      {
          data = INST_DATA(cl, obj);
          MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
          DoMethod(obj, MUIM_List_DeleteImage, data->Image);
          if (data->Object) MUI_DisposeObject(data->Object);
       }
-    	break;
+      break;
 
       case MUIM_DragQuery:
-			{
+      {
          if (d->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
-			}
+      }
       break;
 
       case MUIM_DragDrop:
-			{
-   			if (d->obj == G->MA->GUI.NL_MAILS)
+      {
+        if (d->obj == G->MA->GUI.NL_MAILS)
         {
-        	struct Mail **mlist = MA_CreateMarkedList(d->obj);
+          struct Mail **mlist = MA_CreateMarkedList(d->obj);
           if (mlist) { MA_GetAddress(mlist); free(mlist); }
         }
-    	}
+      }
       break;
    }
 
@@ -534,8 +536,8 @@ ULONG SAVEDS ASM PL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
          obj = (Object *)DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
          if (obj)
          {
-	    struct PL_Data *data = INST_DATA(cl,obj);
-	    InitHook(&data->DisplayHook, CO_PL_DspFunc, data);
+            struct PL_Data *data = INST_DATA(cl,obj);
+            InitHook(&data->DisplayHook, CO_PL_DspFunc, data);
             set(obj, MUIA_List_DisplayHook, &data->DisplayHook);
          }
          return (ULONG)obj;
@@ -581,7 +583,7 @@ void ExitClasses(void)
    if (CL_MainWin    ) MUI_DeleteCustomClass(CL_MainWin    );
    if (CL_TextEditor ) MUI_DeleteCustomClass(CL_TextEditor );
    if (CL_BodyChunk  ) MUI_DeleteCustomClass(CL_BodyChunk  );
-   if (CL_MailList 	 ) MUI_DeleteCustomClass(CL_MailList 	 );
+   if (CL_MailList   ) MUI_DeleteCustomClass(CL_MailList   );
    if (CL_FolderList ) MUI_DeleteCustomClass(CL_FolderList );
    if (CL_AddressList) MUI_DeleteCustomClass(CL_AddressList);
    if (CL_DDString   ) MUI_DeleteCustomClass(CL_DDString   );
@@ -593,18 +595,18 @@ void ExitClasses(void)
 //  Initialize custom MUI classes
 BOOL InitClasses(void)
 {
-	CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
-	CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
-	CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
-	CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct AL_Data), ENTRY(AL_Dispatcher));
-	CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
-	CL_MailList  	 = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(ML_Dispatcher));
-	CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));
-	CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct DumData), ENTRY(TE_Dispatcher));
-	CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));
-	CL_PageList    = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher));
+   CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
+   CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
+   CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
+   CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct AL_Data), ENTRY(AL_Dispatcher));
+   CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
+   CL_MailList    = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(ML_Dispatcher));
+   CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));
+   CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct DumData), ENTRY(TE_Dispatcher));
+   CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));
+   CL_PageList    = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher));
 
-	return (BOOL)(CL_AttachList && CL_DDList && CL_DDString && CL_AddressList && CL_FolderList && CL_MailList &&
-                CL_BodyChunk && CL_TextEditor && CL_MainWin && CL_PageList);
+   return (BOOL)(CL_AttachList && CL_DDList && CL_DDString && CL_AddressList && CL_FolderList && CL_MailList &&
+                 CL_BodyChunk && CL_TextEditor && CL_MainWin && CL_PageList);
 }
 ///

@@ -728,7 +728,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->ConfirmOnQuit = FALSE;
       co->HideGUIElements = 0;
       strcpy(co->LocalCharset, "iso-8859-1");
-		co->PrintMethod = PRINTMETHOD_DUMPRAW;
+      co->PrintMethod = PRINTMETHOD_DUMPRAW;
       co->StackSize = 40000;
    }
 }
