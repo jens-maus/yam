@@ -7,6 +7,8 @@ $Source$
 
 2002-06-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM.c: fixed bug where it could have happened that on a
+      restart the AppIcon wasn`t displayed anymore.
     * YAM.c: fixed bug #560664 where YAM didn`t add the Okay
       button to the About window at initiating a restart.
     * YAM.c: fixed bug #555675 where YAM "lost" the folder group

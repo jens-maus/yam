@@ -1084,6 +1084,7 @@ int main(int argc, char **argv)
 
         yamFirst = FALSE;
       }
+      else DisplayAppIconStatistics();
 
       user = US_GetCurrentUser();
       AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name, "", "", "");
