@@ -2041,10 +2041,10 @@ If the hit ratio of the email cache is very low  in your everyday use, you
 might want to turn it off completely by selecting zero mails.
 
 @ENDNODE
-@NODE "CO06" "Configuration - Replying"
+@NODE "CO06" "Configuration - Reply"
 @TOC "CO_W"
 
-Configuration - REPLYING (Replying and forwarding messages)
+Configuration - REPLY (Replying and forwarding messages)
 
 
 ---- Forwarding ----------------------------------------------------------
@@ -3250,7 +3250,8 @@ Homepage
 
 The  URL  for the person's homepage in the World Wide Web. YAM can connect
 to  this address via your browser, provided that the appropriate script is
-specified in the @{" scripts " LINK "CO13" 0} configuration for 'When double clicking a URL'.
+specified in the @{" scripts " LINK "CO13" 0} configuration for 'When double clicking a URL'
+or you have OpenURL installed, in which case the latter will get priority.
 All  you  have  to  do  is  to  click  on  the  button to the right of the
 textfield.
 
@@ -3585,11 +3586,12 @@ b) while the address book  window is open, you can click the "To:" button
    message. To  add several  recipients, just select  them one by  one and
    click the "To:" button in turn.
 
-c) lastly, a newly  introduced method is  to just  start typing the alias,
-   first name or email  address of your  recipient in  the To: field. This
-   will you will be quickly presented with a dropdown list of the possible
-   matches, as found  in your  address book - just use the cursor  up/down
-   keys to select the intended recipient and press <Return>.
+c) lastly, a  newly introduced and  more elegant method is  to just  start
+   typing the alias, first name or email  address of your recipient in the
+   To: field. This way you are  quickly presented  with a dropdown list of
+   the  possible matches, taken from your  address book; now just use  the
+   cursor up/down  keys to select the  intended recipient  and then  press
+   <Return>.
 
 If YAM cannot find a name or alias you've  inserted  manually into the To:
 field, you will  get an error report as soon as you try to send [later] or
@@ -3601,81 +3603,96 @@ the selection methods outlined above.
 
 Subject
 
-What  the mail is all about. When a mail is answered there will be a 'Re:'
-inserted  in  front of the original subject, when forwarded a '(fwd)' will
-be added to the subject.
+What the mail is all about. When a mail is answered, there will be a 'Re:'
+inserted  in  front of  the  original  subject, whereas  when  forwarded a
+'(fwd)' will be added at the end.
 
     Toolbar
 
-    [Editor]   same as menu item @{" Text/Launch editor               " LINK "WRM1" 0}.
-    [Insert]   same as menu item @{" Text/Insert as/plain             " LINK "WRM1" 0}.
-    [Cut]      same as menu item @{" Edit/Cut                         " LINK "WRM2" 0}.
-    [Copy]     same as menu item @{" Edit/Copy                        " LINK "WRM2" 0}.
-    [Paste]    same as menu item @{" Edit/Paste                       " LINK "WRM2" 0}.
-    [Undo]     same as menu item @{" Edit/Undo                        " LINK "WRM2" 0}.
-    [Bold]     same as menu item @{" Edit/Textstyle/Bold              " LINK "WRM2" 0}.
-    [Italic]   same as menu item @{" Edit/Textstyle/Italic            " LINK "WRM2" 0}.
-    [ULined]   same as menu item @{" Edit/Textstyle/Underlined        " LINK "WRM2" 0}.
-    [Colored]  same as menu item @{" Edit/Textstyle/Alternative color " LINK "WRM2" 0}.
+    [Editor]   same as menu item @{" Text/Launch editor               " LINK "WRM1" 0}
+    [Insert]   same as menu item @{" Text/Insert as/Plain             " LINK "WRM1" 0}
+    [Cut]      same as menu item @{" Edit/Cut                         " LINK "WRM2" 0}
+    [Copy]     same as menu item @{" Edit/Copy                        " LINK "WRM2" 0}
+    [Paste]    same as menu item @{" Edit/Paste                       " LINK "WRM2" 0}
+    [Undo]     same as menu item @{" Edit/Undo                        " LINK "WRM2" 0}
+    [Bold]     same as menu item @{" Edit/Textstyle/Bold              " LINK "WRM2" 0}
+    [Italic]   same as menu item @{" Edit/Textstyle/Italic            " LINK "WRM2" 0}
+    [ULined]   same as menu item @{" Edit/Textstyle/Underlined        " LINK "WRM2" 0}
+    [Colored]  same as menu item @{" Edit/Textstyle/Alternative color " LINK "WRM2" 0}
+    [Search]   allows you to search the text for a given string
 
 @ENDNODE
-@NODE "WR01" "Write window - Attachments "
+@NODE "WR01" "Write window - Attachments"
 @TOC "WR_W"
 
 Write window - ATTACHMENTS SHEET
+
 
 You  can  add  one  or  more  files to your message. This way you can send
 binary  files  such as archives, pictures, etc. via e-mail. You can choose
 the  method  of  encoding (MIME or UUencoded) and write a comment for each
 file.  Files  can  be  archived  automatically  to  reduce the size of the
-message.
+resulting message.
 
-The attachment list contains five columns:
+The  attachment  list  contains  five  columns: filename, size (in bytes),
+contents, encryption and  description. You  can re-order  the files  using
+Drag & Drop.
 
-File  name, Size (in bytes), Contents, Encryption and Description. You can
-re-order the files using Drag & Drop.
 
 Buttons and Gadgets
 
+
 Add file(s)
+
 You can select on or more files which will be added as a new attachment to
 the  list. YAM recognizes over 20 filetypes automatically and will fill in
 the field 'MIME type' accordingly.
 
+
 Pack & add
-By  adding  files  this way they will be archived (LHA, LZX or ZIP) before
-being attached to the message. Select the files you would like to be added
-to the archive, then enter an archive name. You can define the archiver in
-the configuration window under @{"Miscellaneous" LINK "CO14" 0}.
+
+By adding  files this way, they will be archived with e.g. LhA, LZX or ZIP
+before being actually attached to the message. Select the files  you would
+like to add to the archive and then enter an archive name. You can  define
+the archiver in the configuration window, under @{" Miscellaneous " LINK "CO14" 0}.
+
 
 Delete
+
 Removes the selected entries from the list.
 
+
 Display
+
 Displays  the  selected  entry  using one of the programs contained in the
-MIME-viewer list. The default program is MultiView.
+MIME viewers list. The program used by default is MultiView.
+
 
 Encoding
-For  normal  use  you should encode your files using MIME (base64/qp). YAM
-uses  quoted-printable  for text files and base64 for binary files. If the
-recipient  isn't  able  to  decode  messages  in  MIME format (because his
-e-mailer  does not support this) you can also UUencode the files. Messages
-containing  UUencoded  files  are still in MIME multipart/mixed format but
-can be stripped from the message using a UUdecoder such as UUxt. A message
-generated  by YAM may contain UUencoded attachments as well as attachments
-in base64 format.
+
+For  normal  use  you should encode your files using MIME (Base64/QP). YAM
+uses quoted printable encoding for text files and Base64 for binary files.
+If the recipient isn't able to decode messages in MIME format (because his
+mailer  does  not  support this) you can also UUencode the files. Messages
+containing UUencoded  files  are still in MIME multipart/mixed format, but
+those attachments can be extracted from the message using a UUdecoder such
+as UUxT. A message generated  by YAM may contain  UUencoded attachments as
+well as attachments in Base64 format.
+
 
 MIME type
-As  long as YAM recognizes the filetype of the attachment the correct MIME
-type  will  be  inserted  automatically.  Otherwise  the  default  setting
-(application/octet-stream)  will  be used. Before defining a new MIME type
-please check if it's not already part of the pop-up list.
+
+As long as YAM recognizes the filetype of the attachment, the correct MIME
+type  will  be  inserted  automatically,  otherwise  the  default  setting
+(application/octet-stream)  will be used. Before defining a new MIME type,
+please check that is isn't already part of the pop-up list.
 
   Example:  image/gif
 
+
 Description
-You  may  enter  a  comment  on  the  actual  attachment  here.  When more
-attachments are added the description - if there is one - will be copied.
+
+Here you can enter a comment about the actual attachment.
 
   Example:  Picture from our summer holidays (GIF format)
 
@@ -3685,7 +3702,8 @@ attachments are added the description - if there is one - will be copied.
 
 Write window - OPTIONS SHEET
 
-The OPTIONS MENU items correspond to the buttons on this sheet.
+
+The items in the 'Options' menu correspond to the buttons on this sheet.
 
 The layout of this sheet is:
                     _________________________________________________
@@ -3696,102 +3714,133 @@ The layout of this sheet is:
   Additional header|_________________________________________________|
 
      .-------------.           .-------------.          .------------.
-     |Send options |           |  signature  |          |  security  |
+     |Send options |           |  Signature  |          |  Security  |
      `-------------'           `-------------'          `------------'
 
+
 Header fields
+=============
 
 Copies to
+
 The  recipients listed here will receive a copy of the actual message. See
-also information about the 'To' header given for the @{"Message sheet" LINK "WR00" 0}.
+also information about the 'To:' header given for the @{" Message sheet " LINK "WR00" 0}.
+
 
 Hidden copies to
+
 The  recipients  listed  here  will  receive a copy of the actual message.
-Unlike  the  recipients  listed in 'Copies to' they won't be listed in the
-message  header.  This  is  useful if you want to send someone a copy of a
-message without the other recipient(s) knowing.
+However, unlike the recipients listed in 'Copies to', they won't appear in
+the message headers. This  is useful if you want to send someone a copy of
+a message without the other recipient(s) knowing.
+
 
 From
+
 Pretty  obvious,  really! YAM will fill this in with your address, but you
-can change the way your real name appears (the string in double quotes).
+might want to change the way your real name appears (the string in  double
+quotes).
+
 
 Reply to
+
 This  setting  is  valid  only for the actual message and will be inserted
-instead  of  the  normal  reply-to  address  as  specified  in the program
-settings.  Leave this blank unless it is different from the e-mail address
-in the From header.
+instead  of  the  usual  Reply-To  address  as  specified  in  the program
+settings. Leave this blank unless it needs to be different from the e-mail
+address in the From header.
+
 
 Additional header
+
 If  for  any  reason it should become necessary to add one or more special
-header  lines to a message you can enter these here. Several lines must be
-separated by inserting '\\n'.
+header lines to a message, you can enter these here. Several lines must be
+separated by inserting '\\n'. YAM  will prepend the  entered headers  with
+'X-YAM-Header-'.
+
+  Example:  Keywords: Amiga, YAM\\nPassword: CuriosityKilledTheCat
+
 
 Send options
+============
 
 Delete after sending
+
 Activate  this  option  if  you want the message to be deleted right after
 transfer instead of being copied to the 'Sent' folder.
 
+
 Return receipt
+
 By  activating  this  option you ask the recipient's mail server to inform
 you  of  the successful mail transfer. Normally you'll only be notified if
 problems have occurred. Please note that not all mail servers support this
 function.  The  command  to  notify you is sent in the 'Return-Receipt-To'
 header field.
 
-Track message
-Activate  this  option to ask the recipient's e-mail program to inform you
-about  the condition of your message, stating if the message has been read
-by  the  recipient or if the recipient has deleted or forwarded it. Please
-note  there  are  only  few e-mail programs which support this function as
-well  as  the  fact  that  the  recipient is able to forbid the sending of
-status  reports  on e-mails. So not getting any information even with this
-option  in  force does not necessarily mean the message has not been read.
-The   command   to   send   a   status   report   is   contained   in  the
-'Disposition-Notification-To'  header  field.  At  the time of writing the
-internet  standard  for  Message Disposition Notifications (MDN) was still
-being formulated.
 
-Add personalinfo
+Track message
+
+Activate this  option to request the recipient's e-mail program to let you
+know about  what the recipient did with your  message, e.g. if the message
+has  been read  by  the  recipient  or if the  recipient  has  deleted  or
+forwarded it. Please note there  are only a bunch of e-mail programs which
+support this function, as well as the fact that the recipient might forbid
+the sending of any status  report  on e-mails. Therefore, not getting  any
+information  even with this  option  in use does not necessarily mean  the
+message has not been read. The   command   to   send   a   status   report
+is   contained   in  the 'Disposition-Notification-To'  header  field.  At
+the time  of writing  this document, the  Internet  standard  for  Message
+Disposition Notifications (MDN) was still being formulated.
+
+
+Add personal info
+
 Check  this  option  to create special message headers containing personal
 data  like  your  postal address, phone number, homepage, date of birth or
-URL  of your picture. If the recipient works with YAM too, (s)he will able
-to  create  an  address book entry and fill it with your data. To get this
-working,  add an entry in your address book containing your data (YAM will
-find  your  entry based on the e-mail address). If existing, enter the WWW
-address  of  a  small  photo  of  you in the "address book" section of the
-configuration.
+URL  of your picture. If  the recipient  works with YAM too, (s)he will be
+able to  create  an  address book entry and fill it with your data. To get
+this to work,  add an entry in your address book containing your data (YAM
+will find your entry based on the email address). If one exists, enter the
+WWW address of a  small  photo  of  yourself in the "address book" section
+of the configuration.
+
 
 Importance
-Specify here how important the message is for the recipient. Messages with
-a  high  grade of importance will be displayed with an exclamation mark in
-the  status  line  and  will  be  put  into  first place by automatic mail
-sorting. The importance will be stated in the 'Importance' header field.
+
+Specify  here how  important the  message is for  the  recipient. Messages
+noted as  important will  be displayed  with an  exclamation  mark in  the
+status line and will  be  put into  first place by automatic mail sorting.
+The level of importance is stored in the 'Importance' header.
+
 
 Signature
+=========
+
 Here  you  can  replace  the  standard signature by one of the alternative
-signatures or switch it off completely.
+signatures, or switch it off completely for this message.
+
 
 Security
+========
+
 Select here which security measures you want to take for this message.
 
              none: Normal mail transfer.
-             sign: The message will be signed with your PGP key and saved
-                   in multipart/signed format. The text of the message will
-                   be readable without PGP.
+             sign: The message will be signed with your PGP public key and
+                   saved in multipart/signed format. The text of the message
+                   will be readable without PGP.
           encrypt: The message will be encrypted using the recipient's PGP
                    key and saved in multipart/encrypted format.
- sign and encrypt: This is a combination of the two previous options
+ sign and encrypt: This is a combination of the two previous options,
                    allowing the recipient to check the sender's identity.
- send anonymously: The mail will be sent using an ANON service so the
+ send anonymously: The mail will be sent using an ANON service, so the
                    sender will stay anonymous.
+          default: The mail will use whatever security measures have been
+                   selected for this recipient in the address book, or
+                   "none" if this recipient cannot be found there.
 
-Please  note  that encrypted or signed messages must not have binary files
-attached. You can find further information in the chapter...
-
-          @{"PGP" LINK "PGP" 0}
-and in...
-          @{"CONFIGURATION/Security" LINK "CO09" 0}.
+Further information about PGP and security issues can be found in the @{" PGP " LINK "PGP" 0}
+and @{" Configuration/Security " LINK "CO09" 0} chapters.
 
 @ENDNODE
 @NODE "WRM1" "Write window - Text menu"
@@ -3799,40 +3848,56 @@ and in...
 
 Write window - TEXT MENU
 
+
 Text/New
+
 Clears any text to start a new message.
 
-Text/Open...
-Opens an existing file.
 
-Text/Insert as »  plain
+Text/Open...
+
+Opens an existing text file.
+
+
+Text/Insert as »  Plain
+
 Inserts a text file at the current cursor position.
 
-Text/Insert as »  quoted
+
+Text/Insert as »  Quoted
+
 Inserts  a  text  file at the current cursor position, prefacing each line
 with the quote character (usually '>').
 
-Text/Insert as »  alternate quoted
+
+Text/Insert as »  Alternate Quoted
+
 Inserts  a  text  file at the current cursor position, prefacing each line
 with an alternate quote character (usually '|').
 
-Text/Insert as »  ROT-13 encrypted
+
+Text/Insert as »  ROT13 encoded
+
 Inserts  a  text  file  at  the  current cursor position and replaces each
-letter  with  the one 13 characters on, cycling back from Z to A (so A->M,
-B->N,  M->A).  This  very  simple  code  is  used for example for indecent
-humour.
+letter with the one 13 characters ahead on the alphabet, cycling back from
+Z to A (so A->M, B->N,  M->A) as appropriate.  This very  simple  code  is
+used for example for indecent humour.
+
 
 Text/Save as...
+
 Saves the current message  (only the text part, without  any header) to  a
 file of your choice.
 
+
 Text/Launch editor
+
 This  lets  you  compose  your  message  with  your  favourite  editor (as
-installed  in  the @{"Write" LINK "CO05" 0} configuration). Note that a few functions such as
-text  styles and the @{"Glossary" LINK "DI_W" 0} are only supported correctly in the internal
+specified in the @{" Write " LINK "CO05" 0} configuration). Note that a few functions such
+as text  styles and the @{" Glossary " LINK "DI_W" 0} may only be supported correctly in the internal
 editor. Whenever you save in the external editor, the text in the internal
-editor is updated. (This is due to the way the operating system interprets
-the FileSystem-Notification when you save the temporary file.)
+editor is updated, due to the way the operating system interprets the file
+notification when you save the temporary file.
 
 @ENDNODE
 @NODE "WRM2" "Write window - Edit menu"
@@ -3840,78 +3905,110 @@ the FileSystem-Notification when you save the temporary file.)
 
 Write window - EDIT MENU
 
+
 Edit/Cut
-Cuts the marked text and saves it to the Clipboard.
+
+Cuts the marked text and saves it to the clipboard.
+
 
 Edit/Copy
-Places a copy of the marked text on the Clipboard.
+
+Places in the clipboard a copy of the marked text.
+
 
 Edit/Paste
-Inserts the text on the Clipboard at the current cursor position.
 
-Edit/Paste as »  quoted
-Inserts  the  text  on  the  Clipboard  at  the  current  cursor position,
-prefacing each line with the quote mark.
+Inserts the text on the clipboard at the current cursor position.
 
-Edit/Paste as »  alternate quoted
-Inserts  the  text  on  the  Clipboard  at  the  current  cursor position,
-prefacing each line with the alternative quote mark.
 
-Edit/Paste as »  ROT-13 encoded
+Edit/Paste as »  Quoted
+
+Inserts  the  text  on  the  clipboard  at  the  current  cursor position,
+prefacing each line with the quote character (usually '>').
+
+
+Edit/Paste as »  Alternate Quoted
+
+Inserts  the  text  on  the  clipboard  at  the  current  cursor position,
+prefacing each line with the alternative quote mark (usually '|').
+
+
+Edit/Paste as »  ROT13 encoded
+
 Inserts  a  text  file  at  the  current  cursor position, applying ROT-13
-encoding. (See also under @{"Text/Input as" LINK "WRM1" 0}).
+encoding. (See also under @{" Text/Insert as/ROT13 encoded " LINK "WRM1" 0}).
+
 
 Edit/Undo
-Undoes the last change made in the editor
+
+Undoes the last change made in the editor.
+
 
 Edit/Redo
-Restores the change just undone with 'Edit/Undo'
+
+Restores the change just undone with 'Edit/Undo'.
+
 
 Edit/Glossary
-Opens the @{"Glossary" LINK "DI_W" 0} window.
+
+Opens the @{" Glossary " LINK "DI_W" 0} window.
+
 
 Edit/Textstyle »  Bold
+
 Toggles  bold  type  on  or  off  for  a  marked block or for text entered
-subsequently.  In a transmitted message text in bold type is delineated by
+subsequently. In the resulting message, text in bold  type is delimited by
 asterisks, thus: bold -> *bold*
 
+
 Edit/Textstyle »  Italic
+
 Toggles  italic  type  on  or  off  for a marked block or for text entered
-subsequently.  In  a  transmitted message text in italics is delineated by
+subsequently.  In  the resulting message, text in italics  is delimited by
 slashes, thus: italic -> /italic/
 
+
 Edit/Textstyle »  Underlined
+
 Toggles  underlining  on  or  off  for  a marked block or for text entered
-subsequently.  In a transmitted message text in bold type is delineated by
+subsequently.  In the  resulting message, underlined  text is delimited by
 underline characters, thus: underline -> _underline_
 
+
 Edit/Textstyle »  Alternative color
+
 Toggles  coloured  type  on  or off for a marked block or for text entered
-subsequently.  The  colour  is  defined  in  the  @{"Read configuration" LINK "CO04" 0}. In a
-transmitted message the coloured text is delineated by hash signs, thus:
+subsequently. The colour is defined in  the  @{" Read configuration " LINK "CO04" 0}. In the
+resulting message, the coloured text is delimited by hash signs, thus:
 
   colour -> #colour#
 
-Edit/Separators »  thin or  thick
-Inserts  a  separator  at  the  current  cursor  position. It does this by
-inserting  an  extra  line  containing either <sb> or <tsb>. YAM and other
-(MUI-)Mail programs interpret this character sequence as a separator.
 
-Edit/Emoticons »  happy | indifferent | sad/angry | ironic
+Edit/Separators »  Thin | Thick
+
+Inserts  a  separator  at  the  current  cursor  position. This is done by
+inserting  an  extra  line  containing either <sb> or <tsb>. YAM and other
+(MUI-) mail programs interpret this character sequence as a separator.
+
+
+Edit/Emoticons »  Happy | Indifferent | Sad/angry | Ironic
+
 Inserts  a  'smiley'  at the current cursor position. Smilies express your
 feelings  about  the  topic and compensate for the loss of intonation when
 expressing yourself in writing rather than speech.
 
-  (See also under @{"E-Mail Netiquette" LINK "NETI" 0}).
+(See also @{" E-Mail Netiquette " LINK "NETI" 0}).
 
-Edit/Type and Spell
-Switches automatic spell-checking on or off. The spell-check is a function
-of  the  Text-editor class and must be configured in @{"Settings/MUI" LINK "MAM5" 0}. It must
+
+Edit/Type and spell
+
+Switches  automatic spell-checking on or off. Spellchecking is  a function
+of  the  Texteditor class and must be configured in @{" Settings/MUI " LINK "MAM5" 0}. It must
 use an external program like AlphaSpell.
 
 If  you  type in a word which is not in the dictionary, the screen flashes
-(and  you  will  get an audible signal too if you have set this up in your
-Workbench  Sound-Preferences).  Hit  the  <Help>  key  to  get  a  list of
+(and you will  get an audible signal, too, if you have set this up in your
+Workbench  Sound  preferences). Hit  the  <Help>  key  to  get  a  list of
 suggestions for the correct spelling.
 
 @ENDNODE
@@ -3920,27 +4017,34 @@ suggestions for the correct spelling.
 
 Write window - ATTACHMENTS MENU
 
+
 Attachments/Add file
-Equivalent to the button [Add file] in the @{"Attachments" LINK "WR01" 0} sheet.
+
+Equivalent to the button [Add file] in the @{" Attachments " LINK "WR01" 0} sheet.
+
 
 Attachments/Add clipboard
+
 Adds  the  contents  of the clipboard as an attachment to your message, so
 you can easily include documents from other applications.
 
+
 Attachments/Add PGP key
-Use  this to attach your @{"public PGP key" LINK "PGP" 0} to your message. The recipient can
-add  this  to  his  "keyring"  and will then be able in future to send you
-PGP-encoded messages.
+
+Use this to attach your @{" public PGP key " LINK "PGP" 0} to your message. The recipient can
+add  this  to  his  "keyring"  and will then be able to send  you messages
+signed and/or encrypted with PGP.
 
 @ENDNODE
 @NODE "EDIT" "Editor features"
 
 THE INTERNAL EDITOR
 
-YAM  uses the efficient MUI-Class TextEditor.mcc of messages. Many aspects
-of the editor such as key bindings, spell checking or fonts can be changed
-in  the  'TextEditor'  sheet  of  the  @{"MUI-configuration" LINK "MAM4" 0}. Although you can
-modify the key bindings, here is a list of the important default settings:
+
+YAM uses the efficient MUI class TextEditor.mcc for message handling. Many
+aspects of the editor, such as keybindings, spell checking or fonts can be
+changed in  the  'TextEditor'  sheet  of  the  @{"MUI-configuration" LINK "MAM4" 0}. Although you
+can modify the keybindings, here is a list of the important default settings:
 
         <Control-Up>         go to the start of the text
         <Control-Down>       go to the end of the text
@@ -3963,40 +4067,50 @@ modify the key bindings, here is a list of the important default settings:
         <Alt-Del>            delete to end of word
         <Alt-Tab>            quit editor
 
-The TextEditor homepage can be found at...
 
-            http://www.DIKU.dk/students/duff/texteditor/
+The TextEditor homepage can be found at
+
+          http:\//www.diku.dk/students/duff/TextEditor/index.html
 
 @ENDNODE
 @NODE "DI_W" "The Glossary"
 
 THE GLOSSARY
 
+
 YAM's Glossary acts as a place to collect blocks of text which you may use
 fairly  frequently,  such  as  templates  for letters, greeting phrases or
-frequently  asked  questions.  The  text can be as long as desired and can
-extend  over several lines. Using the menu item 'Edit/glossary' or the key
-combination  <RAmiga-D>  you can go straight from the @{"internal editor" LINK "EDIT" 0} into
-the  glossary.  Each  entry  has  a name (e.g. "ys" for "Yours sincerely")
-which  you  can see in the left-hand part of the window. Click on the name
-and  you can edit the entry in the right-hand side of the window. A double
-click on the name pastes the text block at the current cursor position and
+frequently asked  questions. The text can be as long as desired, extending
+over several lines. Using the menu  item 'Edit/Glossary' or the <RAmiga-D>
+shortcut you can go straight from the @{" internal editor " LINK "EDIT" 0} into the
+glossary. Each  entry  has  a name (e.g. "ys" for "Yours sincerely") which
+you can see in the left-hand part of the window. Click on the name and you
+can edit the entry in the right-hand side of the window. A double click on
+the name pastes  the text block  at the current  cursor position  and then
 closes the window.
 
-Functions of the buttons:
+
+Function of the buttons:
 
 [New]
+
 Starts a new entry in the glossary.
 
+
 [Add selection]
-Creates  a  new entry in the glossary based on the marked text in the text
+
+Creates a new entry in the  glossary using the  block marked  in the  text
 editor.
 
+
 [Delete]
-Deletes the selected entry in the glossary.
+
+Deletes the selected entry from the glossary.
+
 
 [Paste]
-Pastes  the  highlighted  entry into the text editor at the current cursor
+
+Pastes the  highlighted  entry into the text editor, at the current cursor
 position.
 
 @ENDNODE
@@ -4004,58 +4118,64 @@ position.
 
 READING MESSAGES
 
+
 This  window  opens when you choose to read a message. If you have enabled
-multiple  windows  in the @{"Read configuration" LINK "CO04" 0}, then you can have up to four
-open simultaneously. The window is laid out as shown:
+multiple windows in the @{" Read configuration " LINK "CO04" 0}, then you can have up to four
+of them open simultaneously. The window is laid out as shown:
 
   Menu bar
-  @{"Message" LINK "REM1" 0}  @{"Navigation" LINK "REM2" 0}  @{"PGP" LINK "REM3" 0}  @{"Settings" LINK "REM4" 0}
+  @{" Message " LINK "REM1" 0}  @{" Navigation " LINK "REM2" 0}  @{" PGP " LINK "REM3" 0}  @{" Settings " LINK "REM4" 0}
 
- .--------------------------------------------------. .--------.
- |                    @{"Tool bar" LINK "RE_B" 0}                      | | @{"status" LINK "MA0S" 0}|
- |__________________________________________________| |________|
+ .--------------------------------------------------.  .----------.
+ |                    @{" Toolbar " LINK "RE_B" 0}                     | | @{" status " LINK "MA0S" 0} |
+ |__________________________________________________|  |__________|
 
- .-------------------------------------------------------------.
- |                                                             |
- |                      Message headers                        |
- |_____________________________________________________________| You can
-  _____________________________________________________________ <--
- |                                                             | click &
- |                                                             | drag the
- |                                                             | divider
- |                       Message body                          |
- |                                                             |
- |                                                             |
- `-------------------------------------------------------------'
+ .----------------------------------------------------------------.
+ |                        Message headers                         |
+ |________________________________________________________________| You can
+  ________________________________________________________________ <--
+ |                                                                | click &
+ |                                                                | drag the
+ |                                                                | divider
+ |                          Message body                          |
+ |                                                                |
+ |                                                                |
+ `----------------------------------------------------------------'
+
 
 Message status
+
 At the top right corner there is a small field in which small icons
-appear to display the @{"status" LINK "MA0S" 0} of the message (new, read etc.).
+appear to display the @{" status " LINK "MA0S" 0} of the message (new, read, etc).
+
 
 Headers
-The  amount  of  information  displayed  in  the  list  of @{"headers" LINK "HEAD" 0} for the
-selected   message  is  set  in  the  @{"configuration" LINK "CO04" 0}  but  can  be  changed
-(temporarily)  with  the  @{"Settings" LINK "REM4" 0}  menu.  If you want to copy some of the
+
+The amount of  information  displayed  in  the  list  of @{" headers " LINK "HEAD" 0} for the
+selected  message is  set  in  the  @{" configuration " LINK "CO04" 0}, but  can  be  changed
+(temporarily) with  the  @{" Settings " LINK "REM4" 0} menu.  If you want to copy some of the
 lines  to  the  clipboard,  click and drag with the mouse to highlight the
-lines. The copy action is automatic and the highlighting disappears.
+lines. The copy operation is automatic and the highlighting disappears.
+
 
 Message body
+
 The  largest  field displays the message body. Only text can be shown; for
-graphics or sounds you must use an @{"external program" LINK "CO04" 0}. Navigation within the
-message  uses  the  same  keyboard  shortcuts  as  the @{"internal editor" LINK "EDIT" 0}. In
-addition  you can hit the spacebar to go forwards one page and <backspace>
-to  go  back to the previous page. To copy part of the part of the message
-to the clipboard, click and drag with the mouse to highlight the text. The
-copy   action  is  automatic  and  the  highlighting  disappears.  If  you
-doubleclick  on  an  e-mail  address,  a  new 'write' window opens and the
-address  is  pasted  into  the 'To' header. A doubleclick on a URL, either
-http://  or  ftp://, starts the macro defined in the @{"Scripts configuration" LINK "CO13" 0}
-with  the  URL  as  parameter (if openurl.library is installed, it will be
-used  in  place  of  the macro). In this way you can copy WWW-addresses to
-your web browser without fuss.
+graphics  or sounds  you must use an @{" external program " LINK "CO04" 0}. Navigation within
+the message uses the  same keyboard shortcuts as the @{" internal editor " LINK "EDIT" 0}. In
+addition, you can use the spacebar to go forwards one page and <backspace>
+to  go  back  to the previous page. To  copy  part  of the  message to the
+clipboard, click and drag  with the  mouse to highlight the text; the copy
+operation is automatic and the  highlighting disappears immeditely. If you
+double-click an  e-mail  address, a new Write window opens and the address
+is automatically pasted  into  the 'To'  header. A double  click on a URL,
+either http:\//  or  ftp:\//, starts  the  macro  defined accordingly in the
+@{" Scripts configuration " LINK "CO13" 0} with  the  URL  as  parameter (if OpenURL is
+installed, it will be used in place of the macro). This way  you can  copy
+WWW addresses to your web browser with very little work.
 
 @ENDNODE
-@NODE "RE_B" "Read window - Buttons"
+@NODE "RE_B" "Read window - Toolbar"
 @TOC "RE_W"
 
 Read window - TOOLBAR
@@ -4066,32 +4186,32 @@ Read window - TOOLBAR
 
       Button      Shortcut    Equivalent to menu...
 
-  1.  [Prev]      P,<left>    @{"Navigation/next message" LINK "REM2" 0}
-  2.  [Next]      N,<right>   @{"Navigation/previous message" LINK "REM2" 0}
-  3.  [PrevThr]   T           @{"Navigation/previous message in thread" LINK "REM2" 0}
-  4.  [NextThr]   H           @{"Navigation/next message in thread" LINK "REM2" 0}
+  1.  [Prev]      P,<left>    @{" Navigation/Next message " LINK "REM2" 0}
+  2.  [Next]      N,<right>   @{" Navigation/Previous message " LINK "REM2" 0}
+  3.  [PrevThr]   T           @{" Navigation/Previous message in thread " LINK "REM2" 0}
+  4.  [NextThr]   H           @{" Navigation/Next message in thread " LINK "REM2" 0}
 
-  5.  [Display]   D           @{"Message/Attachments/Display" LINK "REM1" 0}
-  6.  [Save]      S           @{"Message/Save" LINK "REM1" 0}
-  7.  [Print]     I           @{"Message/Print" LINK "REM1" 0}
+  5.  [Display]   D           @{" Message/Attachments/Display... " LINK "REM1" 0}
+  6.  [Save]      S           @{" Message/Save... " LINK "REM1" 0}
+  7.  [Print]     I           @{" Message/Print... " LINK "REM1" 0}
 
-  8.  [Delete]    L,<del>     @{"Message/Delete" LINK "REM1" 0}
-  9.  [Move]      V           @{"Message/Move" LINK "REM1" 0}
- 10.  [Reply]     R           @{"Message/Reply" LINK "REM1" 0}
- 11.  [Forward]   W           @{"Message/Forward" LINK "REM1" 0}
+  8.  [Delete]    L,<Del>     @{" Message/Delete " LINK "REM1" 0}
+  9.  [Move]      M           @{" Message/Move... " LINK "REM1" 0}
+ 10.  [Reply]     R           @{" Message/Reply... " LINK "REM1" 0}
+ 11.  [Forward]   W           @{" Message/Forward... " LINK "REM1" 0}
 
 Additional  features  are  available  by  clicking  a toolbar button while
 holding down a certain qualifier key:
 
  Shift + [Prev]     Displays the previous unread message
  Shift + [Next]     Displays the next unread message
- Shift + [Delete]   Immediately deletes the messages
+ Shift + [Delete]   Immediately deletes the selected messages
  Shift + [Reply]    Forces a private reply (address in From field is used)
  Shift + [Forward]  Bounces the message
- Alt   + [Reply]    Forces a mailing list reply (address in ReplyTo field
-                    is used)
- Ctrl  + [Reply]    Omits quoting of the original message
- Ctrl  + [Forward]  Omits forwarding of the attachments
+ Alt   + [Reply]    Forces a mailing list reply, using the address in the
+                    Reply-To field
+ Ctrl  + [Reply]    Avoids quoting the original message
+ Ctrl  + [Forward]  Avoids forwarding any attachment
 
 @ENDNODE
 @NODE "REM1" "Read window - Message Menu"
@@ -4099,84 +4219,121 @@ holding down a certain qualifier key:
 
 Read window - MESSAGE MENU
 
-Message/Edit
+
+Message/Edit...
+
 Sends the current message to the message editor.
 
-Message/Move
+
+Message/Move...
+
 Moves the current message to a different folder.
 
-Message/Copy
-Creates  a  copy  of  the  current  message  in  another  folder. With the
-exception of the filename the copy is identical with the original.
+
+Message/Copy...
+
+Creates a copy of the current message. With the exception of the filename,
+the copy is identical to the original.
+
 
 Message/Delete
-Deletes  the  current message and loads the next one into the read window.
-Unless  the option 'remove messages immediately' is enabled (@{"Miscellaneous" LINK "CO14" 0}
-configuration  settings), the message is actually moved into the "Deleted"
-folder,  from which it can be recovered if need be. The <Del> key works as
-a  keyboard  shortcut,  while  <Shift-Del> forces immediate (irreversible)
-deletion, regardless of the configuration settings.
 
-Message/Print
-Sends  the  actual  message,  or a part of it, to the printer. A requester
+Deletes  the  current message and loads the next one into the Read window.
+Unless  the  option  'Remove  messages  immediately'  is  enabled  in  the
+@{" Miscellaneous " LINK "CO14" 0} configuration  settings, the message is actually moved into
+the 'Deleted' folder,  from which it can be recovered if needed. The <Del>
+key works as a convenient keyboard  shortcut,  while <Shift-Del> forces an
+immediate (irreversible) deletion, no matter which configuration  settings
+are in use.
+
+
+Message/Print...
+
+Sends  the  current message,  or a part of it, to the printer. A requester
 opens  to  let  you  choose  whether to print the original message without
-decoding  (raw  format),  or  to print the decoded text as diplayed, or to
-print  an  attached text file. Note that you cannot print binary data such
-as  graphics;  for  that  you must use the print option of the appropriate
-(@{"MIME viewer" LINK "CO11" 0}).
+decoding  (raw  format), print the decoded text as diplayed, or  print  an
+attached  text  file. Note  that you  cannot  print  binary data  such  as
+graphics; for that purpose you must use the relevant  print  option in the
+appropriate @{" MIME viewer " LINK "CO11" 0}.
 
-Message/Save
+
+Message/Save...
+
 Saves  the current message or a part of it to your hard disk, floppy, etc.
 Again a requester appears to let you choose whether to save the message in
-raw  format,  the  decoded  message  (the  same  as it appears in the read
-window), or to save one of the attached files.
+raw  format,  the  decoded  message (as it appears in the Read window), or
+to save one of the attached files.
 
-Message/Attachments »  Display
-This  displays  the  current message, or part of it, using the MIME viewer
-specified in the @{"MIME configuration" LINK "CO11" 0}. You can choose whether to display the
+
+Message/Attachments »  Display...
+
+Displays the  current message or part of it using the MIME viewer selected
+in the @{" MIME configuration " LINK "CO11" 0}. You can choose whether to display the
 message in raw format (to check for errors) or to view one of the attached
 files.  If  nothing  happens,  check  the settings for MIME viewers in the
 configuration.
 
-Message/Attachments »  Save all
-Saves  all  the  files  attached to the current message to a directory you
+
+Message/Attachments »  Save all...
+
+Saves all the  files  attached to the current message to the directory you
 select.
 
+
 Message/Attachments »  Crop
+
 Deletes  all  the  attached files for the current message in order to save
-disk  space.  Note - these files are not sent to the deleted folder, so be
-sure  that  you  don't  want  to  keep  one! This function only applies to
-messages in @{"MIME format" LINK "MIME" 0}. A notice is added to the end of the message about
-the removed files.
+disk  space. BEWARE:  these files are not sent to the 'Deleted' folder, so
+be sure  that  you  don't  want  to  keep any of them! This function  only
+applies to messages in @{" MIME format " LINK "MIME" 0}. A notice is added to the end of
+the message about the removed files.
+
 
 Message/New
-Opens the @{"Write window" LINK "WR_W" 0} so you can compose a new message.
 
-Message/Reply
+Opens the @{" Write window " LINK "WR_W" 0} so you can compose a new message.
+
+
+Message/Reply...
+
 Use this to reply to the current message. Subject and recipient fields are
-filled in automatically and the original message is quoted.
+filled in  automatically and  the original  message is  quoted, unless the
+@{" Reply " LINK "CO06" 0} configuration settings say otherwise.
 
-Message/Forward
+
+Message/Forward...
+
 Use  this to forward the contents of the message to another recipient. The
 subject  and  the  message body are automatically copied and a new message
-header   is  created.  The  text  for  forwarding  defined  in  the  @{"Reply" LINK "CO06" 0}
-configuration is inserted at the start of the message.
+header   is  created.  The  text  for  forwarding  defined  in the @{" Reply " LINK "CO06" 0}
+configuration is inserted in the message.
 
-Message/Bounce
+
+Message/Bounce...
+
 Use  this to send the original unaltered message to another recipient. The
-only  changes made are to enter a new To header while YAM adds a couple of
-Resent  headers  (based on the original To header). The text for forwarded
-messages (as defined in the configuration) is not used.
+only changes made are to enter a new To: header while YAM adds a couple of
+Resent  headers  based on the original To: header. The text  for forwarded
+messages (as defined in the configuration) is not used here.
 
-Message/Save address
+
+Message/Save address...
+
 The  address  of  the  sender  (or the recipient, depending on the type of
-folder)  of  the  current  message  is  put into your @{"Address book." LINK "AB_W" 0}. If the
+folder)  of  the  current  message  is  added to your @{" address book " LINK "AB_W" 0}. If the
 message  has  multiple  recipients,  you  have  the  option  of creating a
-distribution list.
+new distribution list.
 
-Message/Change subject
+
+Message/Set status to unread
+
+Lets you change the status of the current message to unread.
+
+
+Message/Change subject...
+
 This  lets you change the subject of the current message, so you can amend
-uninformative  subject  headers  subsequent  to receiving the message. The
+uninformative  subject  headers on  some messages  you have  received. The
 original  subject  is saved in an X-Original-Subject header, to facilitate
 following a thread back.
 
@@ -4186,41 +4343,52 @@ following a thread back.
 
 Read window - NAVIGATION MENU
 
-Navigation/next message
-This  displays  the next message i.e. the one below the current message in
+
+Navigation/Next message
+
+This  displays the next message, i.e. the one below the current message in
 the main window. Shortcut: <cursor right>
 
-Navigation/previous message
-This  displays the previous message i.e. the one above the current message
+
+Navigation/Previous message
+
+This displays the previous message, i.e. the one above the current message
 in the main window. Shortcut: <cursor left>
 
-Navigation/next unread message
-This  displays  the  next unread message i.e. below the current message in
-the main window. If there are no  more  new  messages  below  the  current
-message  in  the  current  folder but in one of the following folders, you
-will be notified about this and asked if you want to change to  the  given
+
+Navigation/Next unread message
+
+This  displays  the  next unread message below the current message  in the
+main window. If there are no more new  messages below the  current message
+in the  current  folder but there is some in one of the following folders,
+you will be notified  about this  and asked if  you want to  jump to  that
 folder and continue reading there. Shortcut: <Shift-cursor right>
 
-Navigation/previous unread message
-This displays the previous unread message i.e. above the  current  message
-in  the  main  window. If there are no more new messages above the current
-message in the current folder but in one of the previous folders, you will
-be notified about this and asked if you want to change to the given folder
-and continue reading there. Shortcut: <Shift-cursor left>
 
-Navigation/next message in thread
+Navigation/Previous unread message
+
+This displays the previous unread message above the current message in the
+main  window. If there are no more new messages above  the current message
+in the current folder but  there is some  in one of  the previous folders,
+you will be notified  about this and  asked if you  want to  jump to  that
+folder and continue reading there. Shortcut: <Shift-cursor left>
+
+
+Navigation/Next message in thread
+
 This  displays  the  message  which  replies  to the current message. This
-allows  you  to  follow  a  dialogue  between yourself and another person,
-regardless  of  what  other  messages are present in the folders. But note
-that  to  find  the  reply  in a different folder, YAM must load the index
-filesvfor  all  the  folders,  which  can  take  a while. YAM compares the
-@{"message-ID" LINK "HEAD" 0}  header  of  the current message with the In-Reply-To header of
-the  other  message.  Should  the  answer not be found, the screen flashes
-briefly.
+allows you to  e.g. follow a dialogue between yourself and another person,
+regardless  of  what  other  messages are there. However, please note that
+to  find  the  reply  in a different folder, YAM must load the index files
+for all the folders, and this can take  a while. YAM compares the @{"message-ID" LINK "HEAD" 0}
+header  of  the current message with the In-Reply-To header of  the  other
+messages. If no answer can be found, the screen will flash briefly.
 
-Navigation/previous message in thread
-Loads  the  message  to  which  the  current  message is a reply (see item
-above!).
+
+Navigation/Previous message in thread
+
+Loads the message to which  the current message is replying (see  the item
+above).
 
 @ENDNODE
 @NODE "REM3" "Read window - PGP menu"
@@ -4228,17 +4396,23 @@ above!).
 
 Read window - PGP MENU
 
-PGP/extract public key
-If  the  sender of the current message has attached his @{"public PGP key" LINK "PGP" 0} you
-can  transfer  this  to  your "key ring". You can then use this key if the
-sender then sends you an encrypted message.
 
-PGP/check PGP signature
+PGP/Extract public key(s)
+
+If  the  sender of the current message has attached his @{" public PGP key " LINK "PGP" 0},
+you can  transfer  this  to  your "key ring". You can then use this if the
+sender sends you any encrypted message.
+
+
+PGP/Check PGP signature
+
 Verifies  the  signature  of the current message. This works only with PGP
 signed  messages  and  serves  to  ensure  that  the  message has not been
 tampered with and is really from the named sender.
 
-PGP/save decrypted message
+
+PGP/Save decrypted message
+
 On  the  grounds  of security a @{"PGP-encrypted" LINK "PGP" 0} message is saved to the hard
 disk  as  it stands. To open it you have to use the key each time. You can
 use  this  menu  item  to  save  the  decrypted  message to the hard disk,
