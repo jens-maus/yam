@@ -25,12 +25,10 @@
 
 ***************************************************************************/
 
-#include <dos/dos.h>
-#include <exec/types.h>
 #include <rexx/storage.h>
 
-#include "YAM_rexx_rxcl.h"
 #include "YAM_rexx_rxif.h"
+#include "YAM_rexx_rxcl.h"
 
 #define RESINDEX(stype) (((long) &((struct stype *)0)->res) / sizeof(long))
 
@@ -108,7 +106,7 @@ struct rxs_command rxs_commandlist[] =
 	{ "WRITESEND", NULL, NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writesend, 1 },
 	{ "WRITESUBJECT", "SUBJECT/A", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writesubject, 1 },
 	{ "WRITETO", "ADDRESS/A/M,ADD/S", NULL, 0, (void (*)(struct RexxHost *,void **,long,struct RexxMsg *)) rx_writeto, 1 },
-	{ NULL, NULL, NULL, NULL, NULL }
+	{ NULL, NULL, NULL, 0, NULL, 0 }
 };
 
 static struct arb_p_link link0[] = {
@@ -217,4 +215,3 @@ struct arb_p_state arb_p_state[] = {
 	{0, link85}, {8, NULL}, {7, NULL}, {6, NULL}, {5, NULL},
 	{4, NULL}, {3, NULL}, {2, NULL}, {1, NULL}, {0, NULL} 
 	};
-
