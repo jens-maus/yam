@@ -1219,7 +1219,7 @@ Vælg et katalog til den nye mappe:
 ; Please select a directory for the new folder:
 ;
 MSG_CO_ChangeFolderPass
-Angiv en nyt adgangskode til denne mappe:
+Angiv en ny adgangskode til denne mappe:
 ; Enter a new password for this folder:
 ;
 MSG_CO_RetypePass
