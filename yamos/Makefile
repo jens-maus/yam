@@ -31,11 +31,24 @@ TARGET	= YAM
 
 CC	= gcc
 RM	= rm -f
-CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
-CFLAGS	= -DDEBUG -I./includes -I./ -c -Wall
-OPTFLAG = -O2
-LDFLAGS	= -noixemul -mstackextend
-LDLIBS	= -lmui -ldebug
+
+CPU      = -m68020
+CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
+WARN     = -Wall
+OPTFLAGS = -O2
+DEBUG    = -DDEBUG -g -O0
+CFLAGS   = -I./includes -I./ -c $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
+LDFLAGS  = -noixemul -mstackextend
+LDLIBS   = -lmui -ldebug
+
+# CPU and DEBUG can be defined outside, defaults to above
+# using e.g. "make DEBUG= CPU=-m68060" produces optimized non-debug 68060 version
+#
+# OPTFLAGS are disabled by DEBUG normally!
+#
+# ignored warnings are:
+# none - because we want to compile with -Wall all the time
+#
 
 GENCLASSES = extrasrc/genclasses/GenClasses
 
