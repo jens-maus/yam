@@ -703,3 +703,13 @@
 
     * fixed potential enforcer hits where check for NULL of FO_GetCurrentFolder()
       was missing. Should also fix some enforcer hits on exit of YAM.
+
+2001-06-19  Giles Burdett <layabouts@the-giant-sofa.demon.co.uk>
+
+    * Added #include <extra.h> to a number of files to stop "implicit declaration"
+      warnings caused by usage of extra string functions
+    * YAM now uses it's own icon when being hidden/iconified, instead of default
+      icon provided by MUI
+
+
+
