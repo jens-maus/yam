@@ -1499,7 +1499,7 @@ char *GetMailFile(char *string, struct Folder *folder, struct Mail *mail)
    static char buffer[SIZE_PATHFILE];
    if (!folder && mail) folder = mail->Folder;
    if (!string) string = buffer;
-   strmfp(string, (int)folder <= 0 ? C->TempDir : GetFolderDir(folder), mail->MailFile);
+   strmfp(string, folder == NULL ? C->TempDir : GetFolderDir(folder), mail->MailFile);
    return string;
 }
 ///
@@ -2907,7 +2907,7 @@ MakeHook(DisposeModuleHook,DisposeModuleFunc);
 //  Frees resources of a MUI window (forwarded to DisposeModule via a hook
 void DisposeModulePush(void *module)
 {
-   DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, module, TAG_DONE);
+   DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, module);
 }
 ///
 /// LoadLayout

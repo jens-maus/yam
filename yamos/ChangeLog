@@ -1,3 +1,9 @@
+2002-04-29  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed a nasty bug in the multipart handling code where we forgot to
+      close the output file on a error condition. That resulted in a
+      crash if we tried to open that mail several times.
+
 2002-04-28  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed some possible errors with not checking the result of Examine()

@@ -618,40 +618,47 @@ static BOOL MA_DetectUUE(FILE *fh)
 //  Reads header lines of a message into memory
 BOOL MA_ReadHeader(FILE *fh)
 {
-   char *buffer, *ptr, *head;
-   char *ptr2;
-   BOOL success = FALSE;
-   char prevcharset[SIZE_DEFAULT];
+  char *buffer, *ptr, *head;
+  char *ptr2;
+  BOOL success = FALSE;
+  char prevcharset[SIZE_DEFAULT];
 
-   buffer = calloc(SIZE_LINE,1);
-   head   = calloc(SIZE_LINE,1);
-   FreeData2D(&Header);
-   while (GetLine(fh, buffer, SIZE_LARGE))
-   {
-      if (!buffer[0]) { success = TRUE; break; }
-      memset(head, 0, SIZE_LINE);
-      strcpy(prevcharset, "us-ascii");
-      RE_ProcessHeader(prevcharset, buffer, TRUE, head);
+  if(buffer = calloc(SIZE_LINE, sizeof(char)))
+  {
+    if(head = calloc(SIZE_LINE, sizeof(char)))
+    {
+      FreeData2D(&Header);
 
-      // Now we have to process the head and strip out every Escape Sequence
-      // This is needed to make it impossible to execute commands in MUI
-      // elements with those escape sequences because it can be dangerous !
-      for(ptr2=head; *ptr2; ptr2++)
+      while(GetLine(fh, buffer, SIZE_LARGE))
       {
-        if(*ptr2 == 0x1b) *ptr2 = ' ';
-      }
+        if (!buffer[0]) { success = TRUE; break; }
+        memset(head, 0, SIZE_LINE);
+        strcpy(prevcharset, "us-ascii");
+        RE_ProcessHeader(prevcharset, buffer, TRUE, head);
 
-      if ((buffer[0] == ' ' || buffer[0] == '\t') && Header.Used)
-      {
-         for (ptr = head; *ptr && ISpace(*ptr); ptr++);
-         ptr = StrBufCat(Header.Data[Header.Used-1], ptr);
+        // Now we have to process the head and strip out every Escape Sequence
+        // This is needed to make it impossible to execute commands in MUI
+        // elements with those escape sequences because it can be dangerous !
+        for(ptr2=head; *ptr2; ptr2++)
+        {
+          if(*ptr2 == 0x1b) *ptr2 = ' ';
+        }
+
+        if ((buffer[0] == ' ' || buffer[0] == '\t') && Header.Used)
+        {
+          for (ptr = head; *ptr && ISpace(*ptr); ptr++);
+          ptr = StrBufCat(Header.Data[Header.Used-1], ptr);
+        }
+        else ptr = StrBufCpy(AllocData2D(&Header, SIZE_DEFAULT), head);
+
+        Header.Data[Header.Used-1] = ptr;
       }
-      else                      
-         ptr = StrBufCpy(AllocData2D(&Header, SIZE_DEFAULT), head);
-      Header.Data[Header.Used-1] = ptr;
-   }
-   free(buffer); free(head);
-   return success;
+      free(head);
+    }
+    free(buffer);
+  }
+
+  return success;
 }  
 
 ///

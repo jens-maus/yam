@@ -490,6 +490,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    re->MailPtr = mail;
    re->PGPKey = FALSE;
    re->PGPSigned = re->PGPEncrypted = 0;
+
    sprintf(re->WTitle, "%s %s %s: ", mail->MailFile, out ? GetStr(MSG_To) : GetStr(MSG_From), out ? AddrName(mail->To) : AddrName(mail->From));
    stccat(re->WTitle, mail->Subject, SIZE_DEFAULT);
    set(gui->WI, MUIA_Window_Title, re->WTitle);
@@ -531,8 +532,10 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
       DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, TRUE);
       DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, TRUE);
    }
+
    GetMailFile(G->RE[winnum]->File, folder, mail);
-   if (RE_LoadMessage(winnum, PM_ALL))
+
+   if(RE_LoadMessage(winnum, PM_ALL))
    {
       RE_DisplayMessage(winnum);
       set(gui->MI_EXTKEY, MUIA_Menuitem_Enabled, re->PGPKey);
@@ -1023,52 +1026,77 @@ MakeStaticHook(RE_SaveHook, RE_SaveFunc);
 //  Displays a message part (attachment) using a MIME viewer
 void RE_DisplayMIME(char *fname, char *ctype)
 {
-   static char command[SIZE_COMMAND+SIZE_PATHFILE];
-   int i;
-   struct MimeView *mv = NULL;
+  static char command[SIZE_COMMAND+SIZE_PATHFILE];
+  int i;
+  struct MimeView *mv = NULL;
 
-   for (i = 1; i < MAXMV; i++) if (C->MV[i])
-      if (MatchNoCase(ctype, C->MV[i]->ContentType)) { mv = C->MV[i]; break; }
-   if (!mv && !stricmp(ctype, "message/rfc822"))
-   {
-      int winnum;
-      struct Mail *mail;
-      struct ExtendedMail *email;
-      struct TempFile *tf = OpenTempFile(NULL);
-      CopyFile(tf->Filename, NULL, fname, NULL);
-      if (email = MA_ExamineMail(NULL, FilePart(tf->Filename), "O", TRUE))
+  for (i = 1; i < MAXMV; i++)
+  {
+    if (C->MV[i] && MatchNoCase(ctype, C->MV[i]->ContentType))
+    {
+      mv = C->MV[i];
+      break;
+    }
+  }
+
+  if (!mv && !stricmp(ctype, "message/rfc822"))
+  {
+    int winnum;
+    struct Mail *mail;
+    struct ExtendedMail *email;
+    struct TempFile *tf = OpenTempFile(NULL);
+    CopyFile(tf->Filename, NULL, fname, NULL);
+    if (email = MA_ExamineMail(NULL, FilePart(tf->Filename), "O", TRUE))
+    {
+      mail = calloc(1, sizeof(struct Mail));
+      if(!mail) return;
+
+      memcpy(mail, &(email->Mail), sizeof(struct Mail));
+      mail->Next      = NULL;
+      mail->Reference = NULL;
+      mail->Folder    = NULL;
+      mail->UIDL      = NULL;
+      mail->Flags     |= MFLAG_NOFOLDER;
+
+      MA_FreeEMailStruct(email);
+
+      if ((winnum = RE_Open(-1, FALSE)) != -1)
       {
-         mail = malloc(sizeof(struct Mail));
-         memcpy(mail, &email->Mail, sizeof(struct Mail));
-         mail->Folder = NULL;
-         mail->Flags |= MFLAG_NOFOLDER;
-         MA_FreeEMailStruct(email);
-         if ((winnum = RE_Open(-1, FALSE)) != -1)
-         {
-            G->RE[winnum]->TempFile = tf;
-            if (SafeOpenWindow(G->RE[winnum]->GUI.WI)) RE_ReadMessage(winnum, mail);
-            else
-            {
-              DisposeModulePush(&G->RE[winnum]);
-            }
-         }
+        G->RE[winnum]->TempFile = tf;
+        if(SafeOpenWindow(G->RE[winnum]->GUI.WI))
+        {
+          RE_ReadMessage(winnum, mail);
+        }
+        else
+        {
+          DisposeModulePush(&G->RE[winnum]);
+          free(mail);
+        }
       }
-   }
-   else
-   {
-      if (!mv)
+      else free(mail);
+    }
+  }
+  else
+  {
+    if (!mv)
+    {
+      if (C->IdentifyBin)
       {
-         if (C->IdentifyBin)
-         {
-            ctype = IdentifyFile(fname);
-            for (i = 1; i < MAXMV; i++) if (C->MV[i])
-               if (MatchNoCase(ctype, C->MV[i]->ContentType)) { mv = C->MV[i]; break; }
-         }
-         if (!mv) mv = C->MV[0];
+        ctype = IdentifyFile(fname);
+        for (i = 1; i < MAXMV; i++)
+        {
+          if(C->MV[i] && MatchNoCase(ctype, C->MV[i]->ContentType))
+          {
+            mv = C->MV[i];
+            break;
+          }
+        }
       }
-      sprintf(command, mv->Command, fname);
-      ExecuteCommand(command, TRUE, OUT_NIL);
-   }
+      if (!mv) mv = C->MV[0];
+    }
+    sprintf(command, mv->Command, fname);
+    ExecuteCommand(command, TRUE, OUT_NIL);
+  }
 }
 ///
 /// RE_DisplayFunc
@@ -1543,6 +1571,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
       else if (mode == 1) ER_NewError(GetStr(MSG_ER_MultipartEOF), NULL, NULL);
       return FALSE;
    }
+
    rp->HasHeaders = TRUE;
    for (i = 0; i < Header.Used; i++)
    {
@@ -1757,81 +1786,122 @@ static void RE_SetPartInfo(struct Part *rp)
 //  Parses a complete message
 static struct Part *RE_ParseMessage(int winnum, FILE *in, char *fname, struct Part *hrp)
 {
-   if (fname) in = fopen(fname, "r");
-   if (in)
-   {
-      FILE *out;
-      struct Part *rp;
-      char *boundary;
-      if (!hrp) if (out = RE_OpenNewPart(winnum, &hrp, NULL, NULL))
+  if(in == NULL && fname) in = fopen(fname, "r");
+
+  if(in)
+  {
+    FILE *out;
+    struct Part *rp;
+    char *boundary;
+
+    if(hrp == NULL)
+    {
+      if (out = RE_OpenNewPart(winnum, &hrp, NULL, NULL))
       {
-         BOOL parse_ok = RE_ScanHeader(hrp, in, out, 0);
-         fclose(out);
-         if (parse_ok) RE_SetPartInfo(hrp);
+        BOOL parse_ok = RE_ScanHeader(hrp, in, out, 0);
+
+        fclose(out);
+        if (parse_ok) RE_SetPartInfo(hrp);
       }
       else ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
-      if (hrp)
+    }
+
+    if(hrp)
+    {
+      if (!(boundary = hrp->CParBndr)) boundary = hrp->JunkParameter;
+
+      if (!strnicmp(hrp->ContentType, "multipart", 9))
       {
-         if (!(boundary = hrp->CParBndr)) boundary = hrp->JunkParameter;
-         if (!strnicmp(hrp->ContentType, "multipart", 9))
-         {
-            if (!boundary) ER_NewError(GetStr(MSG_ER_MissingBoundary), NULL, NULL);
-            else
+        if(!boundary) ER_NewError(GetStr(MSG_ER_MissingBoundary), NULL, NULL);
+        else
+        {
+          BOOL done;
+          if (*boundary == '"') boundary = UnquoteString(boundary, TRUE);
+          sprintf(hrp->Boundary, "--%s", boundary);
+          done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp);
+          rp = hrp;
+
+          while (!done)
+          {
+            struct Part *prev = rp, *newrp;
+            out = RE_OpenNewPart(winnum, &rp, prev, hrp);
+
+            if(out == NULL) break;
+
+            if(!RE_ScanHeader(rp, in, out, 1))
             {
-               BOOL done;
-               if (*boundary == '"') boundary = UnquoteString(boundary, TRUE);
-               sprintf(hrp->Boundary, "--%s", boundary);
-               done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp);
-               rp = hrp;
-               while (!done)
-               {
-                  struct Part *prev = rp, *newrp;
-                  out = RE_OpenNewPart(winnum, &rp, prev, hrp);
-                  if (!RE_ScanHeader(rp, in, out, 1)) break;
-                  if (!strnicmp(rp->ContentType, "multipart", 9))
-                  {
-                     fclose(out);
-                     if (newrp = RE_ParseMessage(winnum, in, NULL, rp))
-                     {
-                        RE_UndoPart(rp);
-                        done = RE_ConsumeRestOfPart(in, NULL, NULL, prev);
-                        for (rp = prev; rp->Next; rp = rp->Next);
-                     }
-                  }
-                  else if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
-                  {
-                     fputc('\n', out);
-                     done = RE_ConsumeRestOfPart(in, out, NULL, rp);
-                     fclose(out);
-                     RE_SetPartInfo(rp);
-                  }
-                  else
-                  {
-                     fclose(out);
-                     done = RE_ConsumeRestOfPart(in, NULL, NULL, rp);
-                     RE_UndoPart(rp);
-                     rp = prev;
-                  }
-               }
+              fclose(out);
+              RE_UndoPart(rp);
+              break;
             }
-         }
-         else if (out = RE_OpenNewPart(winnum, &rp, hrp, hrp))
-         {
-            if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
+
+            if(!strnicmp(rp->ContentType, "multipart", 9))
             {
-               RE_ConsumeRestOfPart(in, out, NULL, NULL); fclose(out);
-               RE_SetPartInfo(rp);
+              fclose(out);
+
+              if (newrp = RE_ParseMessage(winnum, in, NULL, rp))
+              {
+                RE_UndoPart(rp);
+                done = RE_ConsumeRestOfPart(in, NULL, NULL, prev);
+                for (rp = prev; rp->Next; rp = rp->Next);
+              }
+            }
+            else if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
+            {
+              fputc('\n', out);
+              done = RE_ConsumeRestOfPart(in, out, NULL, rp);
+              fclose(out);
+              RE_SetPartInfo(rp);
             }
             else
             {
-               fclose(out); RE_UndoPart(rp);
-               RE_ConsumeRestOfPart(in, NULL, NULL, NULL);
+              fclose(out);
+              done = RE_ConsumeRestOfPart(in, NULL, NULL, rp);
+              RE_UndoPart(rp);
+              rp = prev;
             }
-         }
+          }
+        }
       }
-      if (fname) fclose(in);
-   } 
-   return hrp;
+      else if (out = RE_OpenNewPart(winnum, &rp, hrp, hrp))
+      {
+        if (RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
+        {
+          RE_ConsumeRestOfPart(in, out, NULL, NULL); fclose(out);
+          RE_SetPartInfo(rp);
+        }
+        else
+        {
+          fclose(out);
+          RE_UndoPart(rp);
+          RE_ConsumeRestOfPart(in, NULL, NULL, NULL);
+        }
+      }
+    }
+
+    if (fname) fclose(in);
+  }
+
+#ifdef DEBUG
+{
+  struct Part *rp;
+
+  kprintf("\nHeaderPart: [%lx]\n", hrp);
+
+  for(rp = hrp; rp; rp = rp->Next)
+  {
+    kprintf("Part[%lx]\n", rp);
+    kprintf("  Name.......: [%s]\n", rp->Name);
+    kprintf("  ContentType: [%s]\n", rp->ContentType);
+    kprintf("  Filename...: [%s]\n", rp->Filename);
+    kprintf("  Size.......: %d\n", rp->Size);
+    kprintf("  Nextptr....: %lx\n", rp->Next);
+    kprintf("  Prevptr....: %lx\n", rp->Prev);
+  }
+}
+#endif
+
+  return hrp;
 }
 ///
 /// RE_DecodePart
@@ -2060,27 +2130,49 @@ static void RE_HandleEncryptedMessage(struct Part *frp)
 //  Decodes a single message part
 static void RE_LoadMessagePart(int winnum, struct Part *part)
 {
-   struct Part *rp, *next;
    int rsh = RE_RequiresSpecialHandling(part);
 
    switch (rsh)
    {
-      case 1:  RE_HandleMDNReport(part); break;
-      case 2:  RE_HandleSignedMessage(part); break;
-      case 3:  RE_HandleEncryptedMessage(part); break;
-      default:
-      for (rp = part->Next; rp; rp = next)
+      case 1:
       {
-         next = rp->Next;
-         if (RE_IsURLencoded(rp))
-         {
+        RE_HandleMDNReport(part);
+      }
+      break;
+
+      case 2:
+      {
+        RE_HandleSignedMessage(part);
+      }
+      break;
+
+      case 3:
+      {
+        RE_HandleEncryptedMessage(part);
+      }
+      break;
+
+      default:
+      {
+        struct Part *rp;
+
+        for(rp = part->Next; rp; rp = rp->Next)
+        {
+          if(RE_IsURLencoded(rp))
+          {
             rp->ContentType = StrBufCpy(rp->ContentType, "text/plain");
             rp->EncodingCode = ENC_FORM;
             RE_DecodePart(rp);
-         }
-         else if (!stricmp(rp->ContentType, "application/pgp-keys"))
+          }
+          else if(!stricmp(rp->ContentType, "application/pgp-keys"))
+          {
             G->RE[winnum]->PGPKey = TRUE;
-         else if (rp->Nr <= PART_LETTER || (rp->Printable && C->DisplayAllTexts)) RE_DecodePart(rp);
+          }
+          else if(rp->Nr <= PART_LETTER || (rp->Printable && C->DisplayAllTexts))
+          {
+            RE_DecodePart(rp);
+          }
+        }
       }
    }
 }
