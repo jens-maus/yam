@@ -7,6 +7,8 @@ $Source$
 
 2003-01-07  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_rexx_rxif.c: fixed bug #658259 where YAM didn`t resolve names
+      or aliases if they belonged to a distribution list.
     * YAM_AB.c, YAM_rexx_rxif.c: fixed bug #658175 where it was
       possible that a wrong birthdate definition was passed
       through the ADDREDIT command and throwed an enforcer hit.
