@@ -345,7 +345,7 @@ Object * MakeStatusFlag(char *fname);
 Object * MakeFolderImage(char *fname);
 Object * MakeString(int maxlen, char *label);
 Object * MakeAddressField(Object **string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti);
-BOOL     MatchNoCase(char *string, char *match);
+BOOL     MatchNoCase(const char *string, const char *match);
 void     MyAddTail(struct Mail **list, struct Mail *new);
 char *   MyStrChr(const char *s, int c);
 struct TempFile *OpenTempFile(char *mode);

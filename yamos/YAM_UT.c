@@ -708,7 +708,7 @@ char *itoa(int val)
 ///
 /// MatchNoCase
 //  Case insensitive pattern matching
-BOOL MatchNoCase(char *string, char *match)
+BOOL MatchNoCase(const char *string, const char *match)
 {
    BOOL result=FALSE;
    LONG patternlen = strlen(match)*2+2; // ParsePattern() needs at least 2*source+2 bytes buffer
@@ -716,9 +716,9 @@ BOOL MatchNoCase(char *string, char *match)
 
    if(pattern)
    {
-     if(ParsePatternNoCase(match, pattern, patternlen) != -1)
+     if(ParsePatternNoCase((STRPTR)match, (STRPTR)pattern, patternlen) != -1)
      {
-        result = MatchPatternNoCase(pattern, string);
+        result = MatchPatternNoCase((STRPTR)pattern, (STRPTR)string);
      }
 
      free(pattern);

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAN_AB.c, extrasrc/atcsma.c: applied patch #1071505 which requested
+      to remove the obsolete use of the astcsma() function which was a
+      duplicate of the MatchNoCase() function in YAM_UT.c.
+
 2004-11-20  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_WR.c: fixed a minor bug in a MUIM_MultiSet notify connection

@@ -25,7 +25,6 @@
 
 ***************************************************************************/
 
-#include "extrasrc/astcsma.c"
 #include "extrasrc/getft.c"
 #include "extrasrc/stccpy.c"
 #include "extrasrc/stcgfe.c"

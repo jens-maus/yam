@@ -805,35 +805,73 @@ BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, e
    int i;
 
    for (i=0; ; i++)
-      if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, list, i, MUIF_NONE)))
+   {
+      if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, list, i, MUIF_NONE)))
       {
          struct ABEntry *ab = tn->tn_User;
-         if (ab->Type == AET_GROUP)
+
+         if(ab->Type == AET_GROUP)
          {
-            if (!AB_FindEntry(tn, pattern, mode, result)) return FALSE;
+            if(!AB_FindEntry(tn, pattern, mode, result))
+              return FALSE;
          }
          else
          {
-            int found = 0, winnum;
+            BOOL found = FALSE;
+            int winnum;
+
             switch (mode)
             {
-               case ABF_RX_NAME:       if (ab->Type != AET_GROUP) found |= astcsma(ab->RealName, pattern); break;
-               case ABF_RX_EMAIL:      if (ab->Type != AET_GROUP) found |= astcsma(ab->Address, pattern); break;
-               case ABF_RX_NAMEEMAIL:  if (ab->Type != AET_GROUP) found |= astcsma(ab->RealName, pattern) | astcsma(ab->Address, pattern); break;
+               case ABF_RX_NAME:
+               {
+                  if(ab->Type != AET_GROUP)
+                    found = MatchNoCase(ab->RealName, pattern);
+               }
+               break;
+
+               case ABF_RX_EMAIL:
+               {
+                  if(ab->Type != AET_GROUP)
+                    found = MatchNoCase(ab->Address, pattern);
+               }
+               break;
+
+               case ABF_RX_NAMEEMAIL:
+               {
+                  if(ab->Type != AET_GROUP)
+                    found = MatchNoCase(ab->RealName, pattern) | MatchNoCase(ab->Address, pattern);
+               }
+               break;
+
                default:
-                  found |= astcsma(ab->Alias, pattern) | astcsma(ab->Comment, pattern);
-                  if (ab->Type != AET_GROUP) found |= astcsma(ab->RealName, pattern) | astcsma(ab->Address, pattern);
-                  if (ab->Type == AET_USER) found |= astcsma(ab->Homepage, pattern) | astcsma(ab->Street, pattern) | astcsma(ab->City, pattern) | astcsma(ab->Country, pattern) | astcsma(ab->Phone, pattern);
+               {
+                  found = MatchNoCase(ab->Alias, pattern) | MatchNoCase(ab->Comment, pattern);
+
+                  if(found == FALSE && ab->Type != AET_GROUP)
+                    found = MatchNoCase(ab->RealName, pattern) | MatchNoCase(ab->Address, pattern);
+
+                  if(found == FALSE && ab->Type == AET_USER)
+                  {
+                    found = MatchNoCase(ab->Homepage, pattern)|
+                            MatchNoCase(ab->Street, pattern)  |
+                            MatchNoCase(ab->City, pattern)    |
+                            MatchNoCase(ab->Country, pattern) |
+                            MatchNoCase(ab->Phone, pattern);
+                  }
+               }
             }
-            if (found)
+
+            if(found)
             {
                G->AB->Hits++;
-               if (mode == ABF_USER)
+
+               if(mode == ABF_USER)
                {
                   char buf[SIZE_LARGE];
                   DoMethod(lv, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
                   set(lv, MUIA_NListtree_Active, tn);
                   sprintf(buf, GetStr(MSG_AB_FoundEntry), ab->Alias, ab->RealName);
+
                   switch (MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_AB_FindEntry), GetStr(MSG_AB_FoundEntryGads), buf))
                   {
                      case 1: break;
@@ -846,6 +884,8 @@ BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, e
          }
       }
       else break;
+   }
+
    return TRUE;
 }
 

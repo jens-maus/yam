@@ -25,7 +25,6 @@
 
 ***************************************************************************/
 
-#include "extrasrc/astcsma.c"
 // if we don`t have MorphOS libnix lets use our own implementations
 #if !defined(__MORPHOS__) || !defined(__libnix)
   #include "extrasrc/getft.c"
