@@ -5,6 +5,33 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-10  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_ER.c, YAM_FI.c, YAM_MA.c,
+      YAM_MAf.c, YAM_RE.c, YAM_TR.c, YAM_UT.c, YAM_WR.c, YAM_mainFolders.h,
+      YAM_rexx_rxif.c, YAM_utilities.h:
+      fixed the whole flawed timezone handling within YAM after I
+      recognized that YAM couldn`t handle half-an-hour timezones and also
+      the dates of the mails were saved within the local timezone to the
+      .findex files. Now YAM doesn`t need the YAM_TZ env-variable anymore,
+      because it can now also obtain half-an-hour timezone directly from
+      Locale and all the timeinformation of a mail are saved in reference
+      to UTC. This allows the user to switch timezones without having to
+      rescan the whole indices. Please note that this change requires all
+      indices to be rebuild, so that the dates are saved in UTC which
+      YAM will later refer to. To make this index rescan automatic, I
+      bumped the .findex version to YIN5.
+      In addition to that fixes/changes, YAM should now also know all
+      "well-known" timezone abbreviations. It will now also accept
+      timezones which are specified in ISO8601 and accepts timezone
+      abbreviations in the military format specified in RFC822.
+      And as a special "bonus" the withdraw of the YAM_TZ variable seems
+      to have caused that a index rescan processes about 20% faster
+      than before because the mass GetVar() calls while index scanning
+      are gone. All in all this whole timezone handling should be
+      more stable/pratical as before and people using YAM within such a
+      half-an-hour timezone should be happy now. ;)
+
 2003-04-08  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c, YAM_UT.c: fixed bug in YAM_TZ env variable handling where

@@ -312,7 +312,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens
         search->DT.dat_StrTime = (time = strchr(match,' ')) ? time+1 : "00:00:00";
         if (!StrToDate(&(search->DT)))
         {
-          ER_NewError(GetStr(MSG_ER_ErrorDateFormat), DateStamp2String(NULL,DSS_DATE), NULL);
+          ER_NewError(GetStr(MSG_ER_ErrorDateFormat), DateStamp2String(NULL, DSS_DATE, TZC_NONE), NULL);
           return FALSE;
         };
         search->Pattern = (char *)&(search->DT.dat_Stamp);

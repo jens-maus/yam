@@ -52,6 +52,8 @@ struct TranslationTable;
 enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
   DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT };
 
+enum TZConvert { TZC_NONE, TZC_UTC, TZC_LOCAL };
+
 enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
   ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_FOLDER };
 
@@ -250,10 +252,13 @@ BOOL     CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh);
 char *   CreateFilename(char *file);
 BOOL     CreateDirectory(char *dir);
 long     DateStamp2Long(struct DateStamp *date);
-void     TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds);
-void     DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv);
-char *   TimeVal2String(const struct timeval *tv, enum DateStampType mode);
-char *   DateStamp2String(struct DateStamp *date, enum DateStampType mode);
+int      TZtoMinutes(char *tzone);
+void     DateStampUTC(struct DateStamp *ds);
+void     GetSysTimeUTC(struct timeval *tv);
+void     TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum TZConvert tzc);
+void     DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZConvert tzc);
+char *   TimeVal2String(const struct timeval *tv, enum DateStampType mode, enum TZConvert tzc);
+char *   DateStamp2String(struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc);
 char *   Decrypt(char *source);
 void     DeleteMailDir(char *dir, BOOL isroot);
 char *   DescribeCT(char *ct);
@@ -339,7 +344,6 @@ BOOL     RepackMailFile(struct Mail *mail, int dstxpk, char *passwd);
 int      ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file);
 BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
-struct DateStamp *ScanDate(char *date);
 int      SelectMessage(struct Mail *mail);
 void     SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, UWORD flags);
 char     ShortCut(char *label);

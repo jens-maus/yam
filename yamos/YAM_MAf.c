@@ -82,7 +82,7 @@ struct ComprMail
 {
    int              Flags;
    char             MailFile[SIZE_MFILE];
-   struct DateStamp Date;
+   struct DateStamp Date;      // the creation date of the mail within UTC
    struct timeval   transDate; // we need microseconds for received/sent Date
    char             Status;
    char             Importance;
@@ -109,6 +109,10 @@ struct FIndex
    long  reserved[2];
 };
 
+// whenever you change something up there (in FIndex or ComprMail) you
+// need to increase this version ID!
+#define FINDEX_VER  (MAKE_ID('Y','I','N','5'))
+
 #include "default-align.h"
 
 /* global variables */
@@ -119,6 +123,7 @@ static void MA_ValidateStatus(struct Folder*);
 static char *MA_IndexFileName(struct Folder*);
 static BOOL MA_DetectUUE(FILE*);
 static void MA_GetRecipients(char*, struct Person**, int*);
+static struct DateStamp *MA_ScanDate(char *date);
 
 /***************************************************************************
  Module: Main - Folder handling
@@ -188,7 +193,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
       BusyText(GetStr(MSG_BusyLoadingIndex), folder->Name);
       fread(&fi, sizeof(struct FIndex), 1, fh);
-      if (fi.ID == MAKE_ID('Y','I','N','4'))
+      if(fi.ID == FINDEX_VER)
       {
          folder->Total  = fi.Total;
          folder->New    = fi.New;
@@ -279,7 +284,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
    // lets prepare the Folder Index struct and write it out
    // we clear it first, so that the reserved field is also 0
    memset(&fi, 0, sizeof(struct FIndex));
-   fi.ID = MAKE_ID('Y','I','N','4');
+   fi.ID = FINDEX_VER;
    fi.Total = folder->Total; fi.New = folder->New; fi.Unread = folder->Unread; fi.Size = folder->Size;
    fwrite(&fi, sizeof(struct FIndex), 1, fh);
 
@@ -936,7 +941,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             }
             else if (!stricmp(field, "date"))
             {
-               foundDate = ScanDate(value);
+               foundDate = MA_ScanDate(value);
             }
             else if (!stricmp(field, "importance"))
             {
@@ -1051,7 +1056,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
       }
       else if(mail->transDate.tv_secs > 0) // if not we take the transfered Date (if found)
       {
-        TimeVal2DateStamp(&mail->transDate, &mail->Date);
+        // convert the UTC transDate to a UTC mail Date
+        TimeVal2DateStamp(&mail->transDate, &mail->Date, TZC_NONE);
       }
       else
       {
@@ -1122,8 +1128,8 @@ void MA_ScanMailBox(struct Folder *folder)
                       {
                          DB(kprintf("    no transfer Date information found in comment, taking fileDate...\n");)
 
-                         // now convert the fib_Date in a struct timeval.
-                         DateStamp2TimeVal(&fib_copy.fib_Date, &newMail->transDate);
+                         // now convert the local TZ fib_Date to a UTC transDate
+                         DateStamp2TimeVal(&fib_copy.fib_Date, &newMail->transDate, TZC_UTC);
 
                          // then we write back the filecomment
                          MA_SetMailComment(newMail);
@@ -1148,6 +1154,95 @@ void MA_ScanMailBox(struct Folder *folder)
       UnLock(lock);
    }
    BusyEnd;
+}
+///
+/// MA_ScanDate
+//  Converts textual date header into datestamp format
+static struct DateStamp *MA_ScanDate(char *date)
+{
+   int count = 0, day = 0, mon = 0, year = 0, hour = 0, min = 0, sec = 0;
+   char *tzone = "", *p, tdate[SIZE_SMALL], ttime[SIZE_SMALL];
+   static struct DateTime dt;
+   struct DateStamp *ds = &dt.dat_Stamp;
+
+   if((p = strchr(date, ','))) p++;
+   else p = date;
+
+   while(*p && isspace(*p)) p++;
+
+   while((p = strtok(p, " \t")))
+   {
+      switch (count)
+      {
+         // get the day
+         case 0:
+         {
+            if(!isdigit(*p) || (day = atoi(p)) > 31) return NULL;
+         }
+         break;
+
+         // get the month
+         case 1:
+         {
+            for(mon = 1; mon <= 12; mon++)
+            {
+              if(strnicmp(p, months[mon-1], 3) == 0) break;
+            }
+            if(mon > 12) return NULL;
+         }
+         break;
+
+         // get the year
+         case 2:
+         {
+            year = atoi(p);
+         }
+         break;
+
+         // get the time values
+         case 3:
+         {
+            if(sscanf(p, "%d:%d:%d", &hour, &min, &sec) == 3) ;
+            else if (sscanf (p, "%d:%d", &hour, &min) == 2) sec = 0;
+            else return NULL;
+         }
+         break;
+
+         // get the time zone
+         case 4:
+         {
+            while (*p && (isspace(*p) || *p == '(')) p++;
+            tzone = p;
+         }
+         break;
+      }
+
+      // if we iterated until 4 we can break out
+      if(count == 4) break;
+
+      count++;
+      p = NULL;
+   }
+
+   // then format a standard DateStamp string like string
+   // so that we can use StrToDate()
+   sprintf(tdate, "%02d-%02d-%02d", mon, day, year%100);
+   sprintf(ttime, "%02d:%02d:%02d", hour, min, sec);
+   dt.dat_Format  = FORMAT_USA;
+   dt.dat_Flags   = 0;
+   dt.dat_StrDate = (STRPTR)tdate;
+   dt.dat_StrTime = (STRPTR)ttime;
+   if(!StrToDate(&dt)) return NULL;
+
+   // bring the date in relation to UTC
+   ds->ds_Minute -= TZtoMinutes(tzone);
+
+   // we need to check the datestamp variable that it is still in it`s borders
+   // after the UTC correction
+   while(ds->ds_Minute < 0)     { ds->ds_Minute += 1440; ds->ds_Days--; }
+   while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
+
+   return ds;
 }
 ///
 

@@ -77,7 +77,7 @@ void ER_NewError(char *error, char *arg1, char *arg2)
          for (--G->ER_NumErr, i = 1; i < G->ER_NumErr; i++) G->ER_Message[i-1] = G->ER_Message[i];
       }
       SPrintF(buf, error, arg1, arg2); strcat(buf, "\n\n(");
-      strcat(buf, DateStamp2String(NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
+      strcat(buf, DateStamp2String(NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE));
       strcat(buf, ")");
 
       if((G->ER_Message[G->ER_NumErr-1] = malloc(strlen(buf)+1)))

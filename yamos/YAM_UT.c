@@ -56,6 +56,7 @@
 #include <proto/locale.h>
 #include <proto/muimaster.h>
 #include <proto/openurl.h>
+#include <proto/timer.h>
 #include <proto/utility.h>
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
@@ -104,12 +105,13 @@ static char *RemoveQuoteString(char *start, char *end, char *quot, char *dest);
 static char *InsertQuoteString(char *start, char *quote, FILE *out);
 static void SaveParagraph(char *start, char *end, char *prefix, FILE *out);
 static char *FileToBuffer(char *file);
-static int TZtoMinutes(char *tzone);
 static BOOL GetPackMethod(int xpktype, char **method, int *eff);
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff);
 static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 static char *IdentifyFileDT(char *fname);
+static void TimeValTZConvert(struct timeval *tv, enum TZConvert tzc);
+static void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc);
 
 struct PathNode
 {
@@ -1858,9 +1860,9 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
                       dst = StrBufCat(dst, p); break;
             case 's': dst = StrBufCat(dst, etd->OM_Subject); break;
             case 'e': dst = StrBufCat(dst, etd->OS_Address); break;
-            case 'd': dst = StrBufCat(dst, DateStamp2String(etd->OM_Date, DSS_DATE)); break;
-            case 't': dst = StrBufCat(dst, DateStamp2String(etd->OM_Date, DSS_TIME)); break;
-            case 'w': dst = StrBufCat(dst, DateStamp2String(etd->OM_Date, DSS_WEEKDAY)); break;
+            case 'd': dst = StrBufCat(dst, DateStamp2String(etd->OM_Date, DSS_DATE, TZC_NONE)); break;
+            case 't': dst = StrBufCat(dst, DateStamp2String(etd->OM_Date, DSS_TIME, TZC_NONE)); break;
+            case 'w': dst = StrBufCat(dst, DateStamp2String(etd->OM_Date, DSS_WEEKDAY, TZC_NONE)); break;
             case 'm': dst = StrBufCat(dst, etd->OM_MessageID); break;
             case 'r': dst = StrBufCat(dst, etd->R_Name); break;
             case 'v': strcpy(buf, etd->R_Name);
@@ -1924,43 +1926,89 @@ time_t GetDateStamp(void)
    return (ds.ds_Days*24*60*60 + ds.ds_Minute*60 + ds.ds_Tick/TICKS_PER_SECOND);
 }
 ///
+/// DateStampUTC
+//  gets the current system time in UTC
+void DateStampUTC(struct DateStamp *ds)
+{
+  DateStamp(ds);
+  DateStampTZConvert(ds, TZC_UTC);
+}
+///
+/// GetSysTimeUTC
+//  gets the actual system time in UTC
+void GetSysTimeUTC(struct timeval *tv)
+{
+  GetSysTime(tv);
+  TimeValTZConvert(tv, TZC_UTC);
+}
+///
+/// TimeValTZConvert
+//  converts a supplied timeval depending on the TZConvert flag to be converted
+//  to/from UTC
+static void TimeValTZConvert(struct timeval *tv, enum TZConvert tzc)
+{
+  if(tzc == TZC_LOCAL)    tv->tv_secs += (C->TimeZone+C->DaylightSaving*60)*60;
+  else if(tzc == TZC_UTC) tv->tv_secs -= (C->TimeZone+C->DaylightSaving*60)*60;
+}
+///
+/// DateStampTZConvert
+//  converts a supplied DateStamp depending on the TZConvert flag to be converted
+//  to/from UTC
+static void DateStampTZConvert(struct DateStamp *ds, enum TZConvert tzc)
+{
+  // convert the DateStamp from local -> UTC or visa-versa
+  if(tzc == TZC_LOCAL)    ds->ds_Minute += (C->TimeZone+C->DaylightSaving*60);
+  else if(tzc == TZC_UTC) ds->ds_Minute -= (C->TimeZone+C->DaylightSaving*60);
+
+  // we need to check the datestamp variable that it is still in it`s borders
+  // after the UTC correction
+  while(ds->ds_Minute < 0)     { ds->ds_Minute += 1440; ds->ds_Days--; }
+  while(ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
+}
+///
 /// TimeVal2DateStamp
 //  converts a struct timeval to a struct DateStamp
-void TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds)
+void TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum TZConvert tzc)
 {
    LONG seconds = (tv->tv_secs+tv->tv_micro/1000000);
 
    ds->ds_Days   = seconds/86400;       // calculate the days since 1.1.1978
    ds->ds_Minute = (seconds%86400)/60;
    ds->ds_Tick   = (tv->tv_secs%60)*TICKS_PER_SECOND + (tv->tv_micro/20000);
+
+   // if we want to convert from/to UTC we need to do this now
+   if(tzc != TZC_NONE) DateStampTZConvert(ds, tzc);
 }
 ///
 /// DateStamp2TimeVal
 //  converts a struct DateStamp to a struct timeval
-void DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv)
+void DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZConvert tzc)
 {
    /* creates wrong timevals from DateStamps with year >= 2114 ... */
 
    tv->tv_secs = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
    tv->tv_micro = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
+
+   // if we want to convert from/to UTC we need to do this now
+   if(tzc != TZC_NONE) TimeValTZConvert(tv, tzc);
 }
 ///
 /// TimeVal2String
 //  Converts a timeval structure to a string with using DateStamp2String after a convert
-char *TimeVal2String(const struct timeval *tv, enum DateStampType mode)
+char *TimeVal2String(const struct timeval *tv, enum DateStampType mode, enum TZConvert tzc)
 {
    struct DateStamp ds;
 
    // convert the timeval into a datestamp
-   TimeVal2DateStamp(tv, &ds);
+   TimeVal2DateStamp(tv, &ds, TZC_NONE);
 
    // then call the DateStamp2String() function to get the real string
-   return DateStamp2String(&ds, mode);
+   return DateStamp2String(&ds, mode, tzc);
 }
 ///
 /// DateStamp2String
 //  Converts a datestamp to a string
-char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
+char *DateStamp2String(struct DateStamp *date, enum DateStampType mode, enum TZConvert tzc)
 {
    static char resstr[64];                    // allocate enough space as OS3.1 is buggy here.
    char datestr[32], timestr[32], daystr[32]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
@@ -1968,7 +2016,7 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
    struct DateStamp dsnow;
 
    // if this argument is not set we get the actual time
-   if (!date) date = DateStamp(&dsnow);
+   if(!date) date = DateStamp(&dsnow);
 
    // now we fill the DateTime structure with the data for our request.
    dt.dat_Stamp   = *date;
@@ -1977,6 +2025,9 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
    dt.dat_StrDate = datestr;
    dt.dat_StrTime = timestr;
    dt.dat_StrDay  = daystr;
+
+   // now we check wheter we have to convert the datestamp to a specific TZ or not
+   if(tzc != TZC_NONE) DateStampTZConvert(&dt.dat_Stamp, tzc);
 
    // lets terminate the strings as OS 3.1 is strange
    datestr[31] = '\0';
@@ -2030,7 +2081,7 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
       case DSS_DATEBEAT:
       {
         // calculate the beat time
-        LONG beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+        LONG beat = (((date->ds_Minute-C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
 
         if(mode == DSS_DATEBEAT) sprintf(resstr, "%s @%03ld", datestr, beat);
         else                     sprintf(resstr, "@%03ld", beat);
@@ -2070,115 +2121,231 @@ long DateStamp2Long(struct DateStamp *date)
 }
 ///
 /// TZtoMinutes
-//  Converts time zone into a numeric offset
-static int TZtoMinutes(char *tzone)
+//  Converts time zone into a numeric offset also using timezone abbreviations
+//  Refer to http://www.cise.ufl.edu/~sbeck/DateManip.html#TIMEZONES
+int TZtoMinutes(char *tzone)
 {
-   static const struct {
+  /*
+    The following timezone names are currently understood (and can be used in parsing dates).
+    These are zones defined in RFC 822.
+      Universal:  GMT, UT
+      US zones :  EST, EDT, CST, CDT, MST, MDT, PST, PDT
+      Military :  A to Z (except J)
+      Other    :  +HHMM or -HHMM
+      ISO 8601 :  +HH:MM, +HH, -HH:MM, -HH
+
+      In addition, the following timezone abbreviations are also accepted. In a few
+      cases, the same abbreviation is used for two different timezones (for example,
+      NST stands for Newfoundland Standard -0330 and North Sumatra +0630). In these
+      cases, only 1 of the two is available. The one preceded by a ``#'' sign is NOT
+      available but is documented here for completeness.
+   */
+
+   static const struct
+   {
      char *TZname;
      int   TZcorr;
-   } tzones[] = {
-    { "sst",    -1100 },
-    { "pst",     -800 },
-    { "mst",     -700 },
-    { "pdt",     -700 },
-    { "cst",     -600 },
-    { "mdt",     -600 },
-    { "est",     -500 },
-    { "ast",     -500 },
-    { "edt",     -400 },
-    { "wgt",     -300 },
-    { "wgst",    -200 },
-    { "aat",     -100 },
-    { "egt",     -100 },
-    { "egst",       0 },
-    { "gmt",        0 },
-    { "utc",        0 },
-    { "wat",        0 },
-    { "wet",        0 },
-    { "bst",      100 },
-    { "cat",      100 },
-    { "cet",      100 },
-    { "met",      100 },
-    { "west",     100 },
-    {"cest",      200 },
-    { "met dst",  200 },
-    { "eet",      200 },
-    { "ist",      200 },
-    { "sat",      200 },
-    { "ast",      300 },
-    { "eat",      300 },
-    { "eest",     300 },
-    { "idt",      300 },
-    { "msk",      300 },
-    { "adt",      400 },
-    { "msd",      300 },
-    { "gst",      400 },
-    { "smt",      400 },
-    { "ict",      400 },
-    { "hkt",      800 },
-    { "wst",      800 },
-    { "jst",      900 },
-    { "kst",     1000 },
-    { "nzst",    1200 },
-    { "nzdt",    1300 },
-    { NULL,         0 }
-   };
-   int i, tzcorr = 0;
-
-   if (tzone[0] == '+') tzcorr = atoi(&tzone[1]);
-   else if (tzone[0] == '-') tzcorr = -atoi(&tzone[1]);
-   else for (i = 0; tzones[i].TZname; i++)
-      if (!strnicmp(tzones[i].TZname, tzone, strlen(tzones[i].TZname)))
-      { tzcorr = tzones[i].TZcorr; break; }
-   tzcorr = (tzcorr/100)*60 + (tzcorr%100);
-   return tzcorr;
-}
-///
-/// ScanDate
-//  Converts textual date header into datestamp format
-struct DateStamp *ScanDate(char *date)
-{
-   int count = 0, day = 0, mon = 0, year = 0, hour = 0, min = 0, sec = 0;
-   char *tzone = "", *p, tdate[SIZE_SMALL], ttime[SIZE_SMALL];
-   static struct DateTime dt;
-   struct DateStamp *ds = &dt.dat_Stamp;
-
-   if ((p = strchr(date, ','))) p++; else p = date;
-   while (*p && ISpace(*p)) p++;
-   while ((p = strtok(p, " \t")))
+   } time_zone_table[] =
    {
-      switch (count)
+    { "IDLW",   -1200 }, // International Date Line West
+    { "NT",     -1100 }, // Nome
+    { "HST",    -1000 }, // Hawaii Standard
+    { "CAT",    -1000 }, // Central Alaska
+    { "AHST",   -1000 }, // Alaska-Hawaii Standard
+    { "AKST",    -900 }, // Alaska Standard
+    { "YST",     -900 }, // Yukon Standard
+    { "HDT",     -900 }, // Hawaii Daylight
+    { "AKDT",    -800 }, // Alaska Daylight
+    { "YDT",     -800 }, // Yukon Daylight
+    { "PST",     -800 }, // Pacific Standard
+    { "PDT",     -700 }, // Pacific Daylight
+    { "MST",     -700 }, // Mountain Standard
+    { "MDT",     -600 }, // Mountain Daylight
+    { "CST",     -600 }, // Central Standard
+    { "CDT",     -500 }, // Central Daylight
+    { "EST",     -500 }, // Eastern Standard
+    { "ACT",     -500 }, // Brazil, Acre
+    { "SAT",     -400 }, // Chile
+    { "BOT",     -400 }, // Bolivia
+    { "EDT",     -400 }, // Eastern Daylight
+    { "AST",     -400 }, // Atlantic Standard
+    { "AMT",     -400 }, // Brazil, Amazon
+    { "ACST",    -400 }, // Brazil, Acre Daylight
+//# { "NST",     -330 }, // Newfoundland Standard       nst=North Sumatra    +0630
+    { "NFT",     -330 }, // Newfoundland
+//# { "GST",     -300 }, // Greenland Standard          gst=Guam Standard    +1000
+//# { "BST",     -300 }, // Brazil Standard             bst=British Summer   +0100
+    { "BRST",    -300 }, // Brazil Standard
+    { "BRT",     -300 }, // Brazil Standard
+    { "AMST",    -300 }, // Brazil, Amazon Daylight
+    { "ADT",     -300 }, // Atlantic Daylight
+    { "ART",     -300 }, // Argentina
+    { "NDT",     -230 }, // Newfoundland Daylight
+    { "AT",      -200 }, // Azores
+    { "BRST",    -200 }, // Brazil Daylight (official time)
+    { "FNT",     -200 }, // Brazil, Fernando de Noronha
+    { "WAT",     -100 }, // West Africa
+    { "FNST",    -100 }, // Brazil, Fernando de Noronha Daylight
+    { "GMT",     +000 }, // Greenwich Mean
+    { "UT",      +000 }, // Universal (Coordinated)
+    { "UTC",     +000 }, // Universal (Coordinated)
+    { "WET",     +000 }, // Western European
+    { "WEST",    +000 }, // Western European Daylight
+    { "CET",     +100 }, // Central European
+    { "FWT",     +100 }, // French Winter
+    { "MET",     +100 }, // Middle European
+    { "MEZ",     +100 }, // Middle European
+    { "MEWT",    +100 }, // Middle European Winter
+    { "SWT",     +100 }, // Swedish Winter
+    { "BST",     +100 }, // British Summer              bst=Brazil standard  -0300
+    { "GB",      +100 }, // GMT with daylight savings
+    { "CEST",    +200 }, // Central European Summer
+    { "EET",     +200 }, // Eastern Europe, USSR Zone 1
+    { "FST",     +200 }, // French Summer
+    { "MEST",    +200 }, // Middle European Summer
+    { "MESZ",    +200 }, // Middle European Summer
+    { "METDST",  +200 }, // An alias for MEST used by HP-UX
+    { "SAST",    +200 }, // South African Standard
+    { "SST",     +200 }, // Swedish Summer              sst=South Sumatra    +0700
+    { "EEST",    +300 }, // Eastern Europe Summer
+    { "BT",      +300 }, // Baghdad, USSR Zone 2
+    { "MSK",     +300 }, // Moscow
+    { "EAT",     +300 }, // East Africa
+    { "IT",      +330 }, // Iran
+    { "ZP4",     +400 }, // USSR Zone 3
+    { "MSD",     +300 }, // Moscow Daylight
+    { "ZP5",     +500 }, // USSR Zone 4
+    { "IST",     +530 }, // Indian Standard
+    { "ZP6",     +600 }, // USSR Zone 5
+    { "NOVST",   +600 }, // Novosibirsk time zone, Russia
+    { "NST",     +630 }, // North Sumatra               nst=Newfoundland Std -0330
+//# { "SST",     +700 }, // South Sumatra, USSR Zone 6  sst=Swedish Summer   +0200
+    { "JAVT",    +700 }, // Java
+    { "CCT",     +800 }, // China Coast, USSR Zone 7
+    { "AWST",    +800 }, // Australian Western Standard
+    { "WST",     +800 }, // West Australian Standard
+    { "PHT",     +800 }, // Asia Manila
+    { "JST",     +900 }, // Japan Standard, USSR Zone 8
+    { "ROK",     +900 }, // Republic of Korea
+    { "ACST",    +930 }, // Australian Central Standard
+    { "CAST",    +930 }, // Central Australian Standard
+    { "AEST",   +1000 }, // Australian Eastern Standard
+    { "EAST",   +1000 }, // Eastern Australian Standard
+    { "GST",    +1000 }, // Guam Standard, USSR Zone 9  gst=Greenland Std    -0300
+    { "ACDT",   +1030 }, // Australian Central Daylight
+    { "CADT",   +1030 }, // Central Australian Daylight
+    { "AEDT",   +1100 }, // Australian Eastern Daylight
+    { "EADT",   +1100 }, // Eastern Australian Daylight
+    { "IDLE",   +1200 }, // International Date Line East
+    { "NZST",   +1200 }, // New Zealand Standard
+    { "NZT",    +1200 }, // New Zealand
+    { "NZDT",   +1300 }, // New Zealand Daylight
+    { NULL,         0 }  // Others can be added in the future upon request.
+   };
+
+   // Military time zone table
+   static const struct
+   {
+      char tzcode;
+      int  tzoffset;
+   } military_table[] =
+   {
+    { 'A',  -100 },
+    { 'B',  -200 },
+    { 'C',  -300 },
+    { 'D',  -400 },
+    { 'E',  -500 },
+    { 'F',  -600 },
+    { 'G',  -700 },
+    { 'H',  -800 },
+    { 'I',  -900 },
+    { 'K', -1000 },
+    { 'L', -1100 },
+    { 'M', -1200 },
+    { 'N',  +100 },
+    { 'O',  +200 },
+    { 'P',  +300 },
+    { 'Q',  +400 },
+    { 'R',  +500 },
+    { 'S',  +600 },
+    { 'T',  +700 },
+    { 'U',  +800 },
+    { 'V',  +900 },
+    { 'W', +1000 },
+    { 'X', +1100 },
+    { 'Y', +1200 },
+    { 'Z', +0000 },
+    { 0,       0 }
+   };
+
+   int tzcorr = -1;
+
+   /*
+    * first we check if the timezone string conforms to one of the
+    * following standards (RFC 822)
+    *
+    * 1.Other    :  +HHMM or -HHMM
+    * 2.ISO 8601 :  +HH:MM, +HH, -HH:MM, -HH
+    * 3.Military :  A to Z (except J)
+    *
+    * only if none of the 3 above formats match, we take our hughe TZtable
+    * and search for the timezone abbreviation
+    */
+
+   // check if the timezone definition starts with a + or -
+   if(tzone[0] == '+' || tzone[0] == '-')
+   {
+      tzcorr = atoi(&tzone[1]);
+
+      // check if tzcorr is correct of if it is perhaps a ISO 8601 format
+      if(tzcorr != 0 && tzcorr/100 == 0)
       {
-         case 0: if (!isdigit(*p)) return NULL;
-                 if ((day = atoi(p)) > 31) return NULL;
-                 break;
-         case 1: for (mon = 1; mon <= 12; mon++) if (!strnicmp(p, months[mon-1], 3)) break;
-                 if (mon > 12) return NULL;
-                 break;
-         case 2: year = atoi(p);
-                 break;
-         case 3: if (sscanf(p, "%d:%d:%d", &hour, &min, &sec) == 3) ;
-                 else if (sscanf (p, "%d:%d", &hour, &min) == 2) sec = 0;
-                 else return NULL;
-                 break;
-         case 4: while (*p && (ISpace(*p) || *p == '(')) p++;
-                 tzone = p;
-                 break;
+        char *c;
+
+        // multiply it by 100 so that we have now a correct format
+        tzcorr *= 100;
+
+        // then check if we have a : to seperate HH:MM and add the minutes
+        // to tzcorr
+        if((c = strchr(tzone, ':'))) tzcorr += atoi(c);
       }
-      count++; p = NULL;
+
+      // now we have to distingush between + and -
+      if(tzone[0] == '-') tzcorr = -tzcorr;
    }
-   sprintf(tdate, "%02d-%02d-%02d", mon, day, year%100);
-   sprintf(ttime, "%02d:%02d:%02d", hour, min, sec);
-   dt.dat_Format  = FORMAT_USA;
-   dt.dat_Flags   = 0;
-   dt.dat_StrDate = (STRPTR)tdate;
-   dt.dat_StrTime = (STRPTR)ttime;
-   StrToDate(&dt);
-   ds->ds_Minute -= TZtoMinutes(tzone);
-   ds->ds_Minute += TZtoMinutes(C->TimeZoneStr);
-   while (ds->ds_Minute < 0)  { ds->ds_Minute += 1440; ds->ds_Days--; }
-   while (ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
-   return ds;
+   else if(isalpha(tzone[0]))
+   {
+      int i;
+
+      // if we end up here then the timezone string is
+      // probably a abbreviation and we first check if it is a military abbr
+      if(isalpha(tzone[1]) == 0) // military need to be 1 char long
+      {
+        for(i=0; military_table[i].tzcode; i++)
+        {
+          if(toupper(tzone[0]) == military_table[i].tzcode)
+          {
+            tzcorr = military_table[i].tzoffset;
+            break;
+          }
+        }
+      }
+      else
+      {
+        for(i=0; time_zone_table[i].TZname; i++) // and as a last chance we scan our abbrev table
+        {
+          if(strnicmp(time_zone_table[i].TZname, tzone, strlen(time_zone_table[i].TZname)) == 0)
+          {
+            tzcorr = time_zone_table[i].TZcorr;
+            DB(kprintf("TZtoMinutes: found abbreviation '%s' (%ld)\n", time_zone_table[i].TZname, tzcorr);)
+            break;
+          }
+        }
+        DB(if(tzcorr == -1) kprintf("TZtoMinutes: abbreviation '%s' NOT found!\n", tzone);)
+      }
+   }
+
+   return tzcorr == -1 ? 0 : (tzcorr/100)*60 + (tzcorr%100);
 }
 ///
 /// FormatSize
@@ -3284,7 +3451,7 @@ static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, vo
    strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
    if ((fh = fopen(logfile, "a")))
    {
-      fprintf(fh, "%s [%02d] ", DateStamp2String(NULL, DSS_DATETIME), id);
+      fprintf(fh, "%s [%02d] ", DateStamp2String(NULL, DSS_DATETIME, TZC_NONE), id);
       fprintf(fh, text, a1, a2, a3, a4);
       fprintf(fh, "\n");
       fclose(fh);

@@ -215,8 +215,7 @@ static char *GetDateTime(void)
    struct ClockData cd;
 
    Amiga2Date(GetDateStamp(), &cd);
-   sprintf(dt, "%s, %02d %s %d %02d:%02d:%02d", wdays[cd.wday], cd.mday, months[cd.month-1], cd.year, cd.hour, cd.min, cd.sec);
-   if(C->TimeZoneStr) sprintf(dt, "%s %s", dt, C->TimeZoneStr);
+   sprintf(dt, "%s, %02d %s %d %02d:%02d:%02d %s", wdays[cd.wday], cd.mday, months[cd.month-1], cd.year, cd.hour, cd.min, cd.sec, C->TimeZoneStr);
 
    return dt;  
 }
@@ -228,11 +227,16 @@ static char *NewID(BOOL is_msgid)
 {
    static char idbuf[SIZE_MSGID];
    static int ctr = 0;
-   struct DateStamp ds;
 
-   DateStamp(&ds);
-   if (is_msgid) sprintf(idbuf, "yam%ld.%ld.%ld@%s", ds.ds_Days, ds.ds_Tick, FindTask(NULL), C->SMTP_Server);
-   else          sprintf(idbuf, "%ld.%d", FindTask(NULL), ++ctr);
+   if(is_msgid)
+   {
+      struct DateStamp ds;
+      DateStamp(&ds);
+
+      sprintf(idbuf, "yam%ld.%ld.%ld@%s", ds.ds_Days, ds.ds_Tick, FindTask(NULL), C->SMTP_Server);
+   }
+   else sprintf(idbuf, "%ld.%d", FindTask(NULL), ++ctr);
+
    return idbuf;
 }
 

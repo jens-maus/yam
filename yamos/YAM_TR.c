@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include <clib/alib_protos.h>
 #include <clib/socket_protos.h>
@@ -2201,15 +2202,6 @@ HOOKPROTONHNO(TR_ChangeStatusFunc, void, int *arg)
 }
 MakeStaticHook(TR_ChangeStatusHook, TR_ChangeStatusFunc);
 ///
-/// TR_GetSeconds
-//  Gets current date and time in seconds
-static long TR_GetSeconds(void)
-{
-   struct DateStamp ds;
-   DateStamp(&ds);
-   return ((86400*ds.ds_Days) + (60*ds.ds_Minute) + (ds.ds_Tick/50));
-}
-///
 /// TR_TransStat_Init
 //  Initializes transfer statistics
 static void TR_TransStat_Init(struct TransStat *ts)
@@ -2240,7 +2232,7 @@ static void TR_TransStat_Start(struct TransStat *ts)
                                  MUIA_Gauge_Max, ts->Msgs_Tot,
                                  TAG_DONE);
 
-   ts->Clock_Start = TR_GetSeconds();
+   ts->Clock_Start = time(NULL);
 }
 ///
 /// TR_TransStat_NextMsg
@@ -2286,7 +2278,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
       DoMethod(G->App, MUIM_Application_InputBuffered);
       size_done = ts->Size_Done;
    }
-   if ((clock = (TR_GetSeconds()-ts->Clock_Start)) == ts->Clock_Last) return;
+   if ((clock = (time(NULL)-ts->Clock_Start)) == ts->Clock_Last) return;
    ts->Clock_Last = clock;
    if (clock) speed = ts->Size_Done/clock;
    if(speed)
@@ -2382,7 +2374,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
             {
                if ((mfh = fopen(fullfile, "r")))
                {
-                  fprintf(fh, "From %s %s", mail->From.Address, DateStamp2String(&mail->Date, DSS_UNIXDATE));
+                  fprintf(fh, "From %s %s", mail->From.Address, DateStamp2String(&mail->Date, DSS_UNIXDATE, TZC_NONE));
                   while (fgets(buf, SIZE_LINE, mfh) && !G->TR->Abort)
                   {
                      if (!strncmp(buf, "From ", 5)) fputc('>', fh);
@@ -2530,7 +2522,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                     set(G->TR->GUI.GA_BYTES, MUIA_Gauge_Current, mail->Size);
 
                     // now that we are at 100% we have to set the transfer Date of the message
-                    GetSysTime(&mail->Reference->transDate);
+                    GetSysTimeUTC(&mail->Reference->transDate);
 
                     result = email->DelSend ? 2 : 1;
                     AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size, "");
@@ -2774,7 +2766,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                         email->Mail.Status = stat;
 
                         // depending on the Status we have to set the transDate or not
-                        if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTime(&email->Mail.transDate);
+                        if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTimeUTC(&email->Mail.transDate);
 
                         AddMailToList((struct Mail *)email, folder);
                         MA_FreeEMailStruct(email);
@@ -2805,7 +2797,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                email->Mail.Status = stat;
 
                // depending on the Status we have to set the transDate or not
-               if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTime(&email->Mail.transDate);
+               if(stat == STATUS_SNT || stat == STATUS_NEW) GetSysTimeUTC(&email->Mail.transDate);
 
                AddMailToList((struct Mail *)email, folder);
                MA_FreeEMailStruct(email);
@@ -2873,7 +2865,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
 
             // we have to get the actual Time and place it in the transDate, so that we know at
             // which time this mail arrived
-            GetSysTime(&new->transDate);
+            GetSysTimeUTC(&new->transDate);
             new->Status = STATUS_NEW;
             MA_SetMailComment(new);
 
@@ -3059,7 +3051,7 @@ HOOKPROTO(TR_LV_DspFunc, long, char **array, struct Mail *entry)
       array[4] = dispdate; *dispdate = 0;
       if(entry->Date.ds_Days)
       {
-        MyStrCpy(dispdate, DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
+        MyStrCpy(dispdate, DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL));
       }
    }
    else

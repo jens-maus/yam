@@ -165,7 +165,7 @@ HOOKPROTONHNONP(MA_SetMessageInfoFunc, void)
    static char buffer[SIZE_DEFAULT+SIZE_SUBJECT+2*SIZE_REALNAME+2*SIZE_ADDRESS+SIZE_MFILE];
    char *sh = NULL;
    struct Mail *mail = MA_GetActiveMail(NULL, NULL, NULL);   
-   if (mail) SPrintF(sh = buffer, GetStr(MSG_MA_MessageInfo), mail->From.RealName, mail->From.Address, mail->To.RealName, mail->To.Address, mail->Subject, DateStamp2String(&mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME), mail->MailFile, mail->Size);
+   if (mail) SPrintF(sh = buffer, GetStr(MSG_MA_MessageInfo), mail->From.RealName, mail->From.Address, mail->To.RealName, mail->To.Address, mail->Subject, DateStamp2String(&mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL), mail->MailFile, mail->Size);
    set(G->MA->GUI.NL_MAILS, MUIA_ShortHelp, sh);
 }
 MakeHook(MA_SetMessageInfoHook, MA_SetMessageInfoFunc);
@@ -1845,7 +1845,9 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
    int f;
    struct Mail *mail, *next;
 
-   DateStamp(&today); today_days = today.ds_Days;
+   DateStampUTC(&today);
+   today_days = today.ds_Days;
+
    if ((flist = FO_CreateList()))
    {
       BusyGauge(GetStr(MSG_BusyDeletingOld), "", (int)*flist);
@@ -2455,13 +2457,13 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
          if((C->MessageCols & (1<<7) && entry->transDate.tv_secs > 0) || searchWinHook)
          {
             static char datestr[64]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
-            array[7] = strcpy(datestr, TimeVal2String(&entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
+            array[7] = strcpy(datestr, TimeVal2String(&entry->transDate, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL));
          }
          else array[7] = "";
 
          if(C->MessageCols & (1<<4) || searchWinHook)
          {
-            array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME);
+            array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
          }
 
          if(C->MessageCols & (1<<5) || searchWinHook)

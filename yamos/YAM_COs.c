@@ -66,6 +66,80 @@ BOOL Txt2Bool(const char *txt)
 }
 
 ///
+/// MapTZ
+//
+static int MapTZ(int value, BOOL forward)
+{
+  static const struct
+  {
+    int CY_TZONE; // the number in the cycle gadget
+    int GMTOffset;// GMT offset in minutes
+  } tzmap[] =
+  {
+    {  0, -720 }, // GMT-12:00
+    {  1, -660 }, // GMT-11:00
+    {  2, -600 }, // GMT-10:00
+    {  3, -540 }, // GMT-09:00
+    {  4, -480 }, // GMT-08:00
+    {  5, -420 }, // GMT-07:00
+    {  6, -360 }, // GMT-06:00
+    {  7, -300 }, // GMT-05:00
+    {  8, -240 }, // GMT-04:00
+    {  9, -210 }, // GMT-03:30
+    { 10, -180 }, // GMT-03:00
+    { 11, -120 }, // GMT-02:00
+    { 12,  -60 }, // GMT-01:00
+    { 13,    0 }, // GMT 00:00
+    { 14,   60 }, // GMT+01:00
+    { 15,  120 }, // GMT+02:00
+    { 16,  180 }, // GMT+03:00
+    { 17,  210 }, // GMT+03:30
+    { 18,  240 }, // GMT+04:00
+    { 19,  270 }, // GMT+04:30
+    { 20,  300 }, // GMT+05:00
+    { 21,  330 }, // GMT+05:30
+    { 22,  345 }, // GMT+05:45
+    { 23,  360 }, // GMT+06:00
+    { 24,  390 }, // GMT+06:30
+    { 25,  420 }, // GMT+07:00
+    { 26,  480 }, // GMT+08:00
+    { 27,  540 }, // GMT+09:00
+    { 28,  570 }, // GMT+09:30
+    { 29,  600 }, // GMT+10:00
+    { 30,  660 }, // GMT+11:00
+    { 31,  720 }, // GMT+12:00
+    { 32,  780 }  // GMT+13:00
+  };
+
+  // depending on the mode we do a forward/backward mapping
+  if(forward)
+  {
+    // we can do a direct mapping
+    if(value >= 0 && value <= 32) return tzmap[value].GMTOffset;
+  }
+  else
+  {
+    // here we have to iterate through our array
+    if(value == 0 || value >= 12 || value <= -12)
+    {
+      int i;
+      for(i=0; i <= 32; i++)
+      {
+        if(tzmap[i].GMTOffset == value) return i;
+      }
+    }
+    else
+    {
+      // if we end up here we have probably an old type TimeZone Mapping of YAM 2.3
+      return value-12;
+    }
+  }
+
+  // minus 1000 can NEVER be because there is no
+  // index of minus 1000 or GMT value
+  return -1000;
+}
+///
 /// CO_SaveConfig
 //  Saves configuration to a file
 void CO_SaveConfig(struct Config *co, char *fname)
@@ -647,7 +721,8 @@ void CO_GetConfig(void)
       case 0:
          GetMUIString(CE->RealName        ,gui->ST_REALNAME);
          GetMUIString(CE->EmailAddress    ,gui->ST_EMAIL);
-         CE->TimeZone          = GetMUICycle  (gui->CY_TZONE)-12;
+
+         CE->TimeZone          = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
          CE->DaylightSaving    = GetMUICheck  (gui->CH_DLSAVING);
          break;
       case 1:
@@ -823,7 +898,7 @@ void CO_SetConfig(void)
       case 0:
          setstring(gui->ST_REALNAME  ,CE->RealName);
          setstring(gui->ST_EMAIL     ,CE->EmailAddress);
-         setcycle(gui->CY_TZONE, CE->TimeZone+12);
+         setcycle(gui->CY_TZONE, MapTZ(CE->TimeZone, FALSE));
          setcheckmark(gui->CH_DLSAVING  ,CE->DaylightSaving);
          nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
          nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);

@@ -364,10 +364,10 @@ static void RE_UpdateStatusGroup(int winnum)
 static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient, BOOL sendnow)
 {
    static const char *MDNMessage[5] = {
-      "The message written on %s to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
-      "The message written on %s to %s with subject \"%s\" has been sent somewhere %s, without being displayed to the user. The user may or may not see the message later.\n",
-      "The message written on %s to %s with subject \"%s\" has been processed %s, without being displayed to the user. The user may or may not see the message later.\n",
-      "The message written on %s to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",
+      "The message written on %s (UTC) to %s with subject \"%s\" has been displayed. This is no guarantee that the content has been read or understood.\n",
+      "The message written on %s (UTC) to %s with subject \"%s\" has been sent somewhere %s, without being displayed to the user. The user may or may not see the message later.\n",
+      "The message written on %s (UTC) to %s with subject \"%s\" has been processed %s, without being displayed to the user. The user may or may not see the message later.\n",
+      "The message written on %s (UTC) to %s with subject \"%s\" has been deleted %s. The recipient may or may not have seen the message. The recipient may \"undelete\" the message at a later time and read the message.\n",
       "%s doesn't wish to inform you about the disposition of your message written on %s with subject \"%s\".\n"
    };
    struct WritePart *p1 = NewPart(2), *p2, *p3;
@@ -377,7 +377,7 @@ static void RE_SendMDN(int MDNtype, struct Mail *mail, struct Person *recipient,
 
    if ((tf1 = OpenTempFile("w")))
    {
-      char *date = DateStamp2String(&mail->Date, DSS_DATETIME), *rcpt = BuildAddrName2(&mail->To), *subj = mail->Subject;
+      char *date = DateStamp2String(&mail->Date, DSS_DATETIME, TZC_NONE), *rcpt = BuildAddrName2(&mail->To), *subj = mail->Subject;
       p1->Filename = tf1->Filename;
       mode = isAutoActMDN(MDNtype) ? "automatically" : "in response to a user command";
       strcpy(disp, isAutoActMDN(MDNtype) ? "automatic-action/" : "manual-action/");

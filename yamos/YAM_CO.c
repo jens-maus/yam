@@ -660,20 +660,10 @@ void CO_SetDefaults(struct Config *co, int page)
       *co->RealName = *co->EmailAddress = 0;
 
       // If Locale is present, don't use the timezone from the config
-      // and if not we first check if we have a ENV:YAM_TZ variable and use this instead
-      if(G->Locale)
-      {
-        co->TimeZone = -G->Locale->loc_GMTOffset/60;
-      }
-      else
-      {
-        char tzone[SIZE_SMALL];
+      if(G->Locale) co->TimeZone = -G->Locale->loc_GMTOffset;
+      else          co->TimeZone = 0;
 
-        if(GetVar("YAM_TZ", tzone, SIZE_SMALL, 0) < 0)  co->TimeZone = atoi(tzone);
-        else                                            co->TimeZone = 0;
-      }
-
-      co->DaylightSaving = 0;
+      co->DaylightSaving = FALSE;
    }
    if (page == 1 || page < 0)
    {
@@ -863,7 +853,7 @@ static void CO_CopyConfig(struct Config *dco, struct Config *sco)
 //  Validates a configuration, update GUI etc.
 void CO_Validate(struct Config *co, BOOL update)
 {
-   char *p, buffer[SIZE_USERID], sbuffer[SIZE_SMALL];
+   char *p, buffer[SIZE_USERID];
    int i;
 
    if (!*co->SMTP_Server) strcpy(co->SMTP_Server, co->P3[0]->Server);
@@ -883,18 +873,15 @@ void CO_Validate(struct Config *co, BOOL update)
       sprintf(co->P3[i]->Account, "%s@%s", co->P3[i]->User, co->P3[i]->Server);
    }
 
-   // If Locale is present, don't use the timezone from the config
-   // and if not we first check if we have a ENV:YAM_TZ variable and use this instead
-   if(G->Locale)                                          co->TimeZone = -G->Locale->loc_GMTOffset/60;
-   else if(GetVar("YAM_TZ", sbuffer, SIZE_SMALL, 0) >= 5) co->TimeZone = atoi(sbuffer);
-   else                                                   co->TimeZone = 0;
+   // If Locale is present, overwrite the timezone from the config
+   if(G->Locale) co->TimeZone = -(G->Locale->loc_GMTOffset);
 
    // lets check the DaylightSaving stuff now
    if(G->CO_DST) co->DaylightSaving = G->CO_DST==2;
 
    // lets generate the TimeZoneStr string now
-   if(co->TimeZone >= 0) sprintf(co->TimeZoneStr, "+%02d00", co->TimeZone + (co->DaylightSaving ? 1 : 0));
-   else                  sprintf(co->TimeZoneStr, "-%02d00", -(co->TimeZone + (co->DaylightSaving ? 1 : 0)));
+   if(co->TimeZone >= 0) sprintf(co->TimeZoneStr, "+%02d%02d", (co->TimeZone + (co->DaylightSaving ? 60 : 0))/60, co->TimeZone%60);
+   else                  sprintf(co->TimeZoneStr, "-%02d%02d", -(co->TimeZone + (co->DaylightSaving ? 60 : 0))/60, -(co->TimeZone%60));
 
    G->PGPVersion = CO_DetectPGP(co);
    CreateDirectory(co->TempDir);

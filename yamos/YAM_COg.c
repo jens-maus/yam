@@ -415,7 +415,7 @@ MakeStaticHook(CO_PlaySoundHook,CO_PlaySoundFunc);
 APTR CO_Page0(struct CO_ClassData *data)
 {
    APTR grp;
-   static char *tzone[26];
+   static char *tzone[34];
    tzone[ 0] = GetStr(MSG_CO_TZoneM12);
    tzone[ 1] = GetStr(MSG_CO_TZoneM11);
    tzone[ 2] = GetStr(MSG_CO_TZoneM10);
@@ -425,23 +425,31 @@ APTR CO_Page0(struct CO_ClassData *data)
    tzone[ 6] = GetStr(MSG_CO_TZoneM6);
    tzone[ 7] = GetStr(MSG_CO_TZoneM5);
    tzone[ 8] = GetStr(MSG_CO_TZoneM4);
-   tzone[ 9] = GetStr(MSG_CO_TZoneM3);
-   tzone[10] = GetStr(MSG_CO_TZoneM2);
-   tzone[11] = GetStr(MSG_CO_TZoneM1);
-   tzone[12] = GetStr(MSG_CO_TZone0);
-   tzone[13] = GetStr(MSG_CO_TZone1);
-   tzone[14] = GetStr(MSG_CO_TZone2);
-   tzone[15] = GetStr(MSG_CO_TZone3);
-   tzone[16] = GetStr(MSG_CO_TZone4);
-   tzone[17] = GetStr(MSG_CO_TZone5);
-   tzone[18] = GetStr(MSG_CO_TZone6);
-   tzone[19] = GetStr(MSG_CO_TZone7);
-   tzone[20] = GetStr(MSG_CO_TZone8);
-   tzone[21] = GetStr(MSG_CO_TZone9);
-   tzone[22] = GetStr(MSG_CO_TZone10);
-   tzone[23] = GetStr(MSG_CO_TZone11);
-   tzone[24] = GetStr(MSG_CO_TZone12);
-   tzone[25] = NULL;
+   tzone[ 9] = GetStr(MSG_CO_TZoneM330);
+   tzone[10] = GetStr(MSG_CO_TZoneM3);
+   tzone[11] = GetStr(MSG_CO_TZoneM2);
+   tzone[12] = GetStr(MSG_CO_TZoneM1);
+   tzone[13] = GetStr(MSG_CO_TZone0);
+   tzone[14] = GetStr(MSG_CO_TZone1);
+   tzone[15] = GetStr(MSG_CO_TZone2);
+   tzone[16] = GetStr(MSG_CO_TZone3);
+   tzone[17] = GetStr(MSG_CO_TZone330);
+   tzone[18] = GetStr(MSG_CO_TZone4);
+   tzone[19] = GetStr(MSG_CO_TZone430);
+   tzone[20] = GetStr(MSG_CO_TZone5);
+   tzone[21] = GetStr(MSG_CO_TZone530);
+   tzone[22] = GetStr(MSG_CO_TZone545);
+   tzone[23] = GetStr(MSG_CO_TZone6);
+   tzone[24] = GetStr(MSG_CO_TZone630);
+   tzone[25] = GetStr(MSG_CO_TZone7);
+   tzone[26] = GetStr(MSG_CO_TZone8);
+   tzone[27] = GetStr(MSG_CO_TZone9);
+   tzone[28] = GetStr(MSG_CO_TZone930);
+   tzone[29] = GetStr(MSG_CO_TZone10);
+   tzone[30] = GetStr(MSG_CO_TZone11);
+   tzone[31] = GetStr(MSG_CO_TZone12);
+   tzone[32] = GetStr(MSG_CO_TZone13);
+   tzone[33] = NULL;
    if ((grp = VGroup,
          MUIA_HelpNode, "CO00",
          Child, HVSpace,

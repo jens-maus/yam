@@ -49,7 +49,7 @@ struct Mail
    int              Flags;
    int              Position;
    int              Index;
-   struct DateStamp Date;
+   struct DateStamp Date;       // the datestamp of the mail in UTC
    struct timeval   transDate;  // the date/time when this messages arrived/was sent.
    struct Person    From;
    struct Person    To;
