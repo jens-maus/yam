@@ -1,9 +1,14 @@
 ;
-; $VER: Installer script 1.5 for YAM 2.3 (11.11.2001) © 2000-2001 by YAM Open Source Team
-; language support added by Sönke Tesch/ATO
+; $VER: Installer script 1.6 for YAM 2.4 (11.04.2003) © 2000-2003 by YAM Open Source Team
+; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
-
+;
+; TODO:
+;
+; - Uninstall option
+;
+;
 ; /// Setting up
 (set #def_lang_English              0)
 (set #def_lang_Bosanski             1)
@@ -36,31 +41,56 @@
 ;/// ***** English
 (set #def_cat_lang #def_lang_English)
 (set #def_doc_lang #def_doc_English)
-(set #wrongOS  "YAM needs at least OS3.0 to run\n")
-(set #wrongMUI "YAM needs at least MUI3.8 to run\n")
-(set #wrongCPU "YAM needs at least a 68020 CPU to run\n")
+(set #wronginstaller "This script requires Installer 42.6 or better!")
+(set #wrongOS  "YAM needs at least OS3.0 to run!\n")
+(set #wrongMOS "MorphOS has not been found!\n")
+(set #wrongMUI "YAM needs at least MUI3.8 to run!\n")
+(set #wrongCPU "YAM needs at least a 68020 CPU to run!\n")
 (set #proc_type "Select which version of YAM you would like to install:")
 (set #proc_help (cat "Here you can select which version of YAM to install "
-                     "depending on type of processor you own."))
+                     "depending on the type of OS/processor you own."))
 (set #proc_020 "Optimized for 68020/030")
 (set #proc_040 "Optimized for 68040")
 (set #proc_060 "Optimized for 68060")
-(set #YAM_dir  (cat "Choose YAM home directory\n"
+(set #YAM_dir  (cat "Please select a directory for YAM\n"
                     "(NO extra drawer will be created!)"))
 (set #lang_catalog (cat "Which catalog file do you want to install?\n"
                         "(English language is built-in)"))
-(set #lang_manual "Select language for on-line AmigaGuide help")
-(set #icons_prompt "Which graphics do you want to install?\n")
+(set #lang_manual "Select language for online AmigaGuide help")
+(set #icons_prompt "Which icon set do you want to install?\n")
 (set #icons_none "None")
-(set #assign_prompt (cat "YAM: assign should be added to your S:User-Startup\n"
+(set #charset_help (cat "YAM can use character conversion tables for reading "
+                        "and writing messages. These tables are a set of "
+                        "plain text files installed in \"YAM:Charsets/\" which "
+                        "describe how each character should be remapped when "
+                        "reading and/or writing messages, for example to replace "
+                        "accented vowels (ASCII8bit -> ASCII7bit), convert "
+                        "ISO-Latin-2 to AmigaPL charset and so on.\n\n"
+                        "If you don't need this feature, you may want not "
+                        "to install these tables and save about 10kB of space "
+                        "on disk.\n"))
+(set #parser_help (cat "YAM 2.4+ offers an option to automatically find "
+                       "the suitable charset to display every part of the "
+                       "messages as they are read, which is especially "
+                       "helpful for users in countries like Russia where "
+                       "there isn't a commonly accepted charset - in fact, "
+                       "currently this feature supports only the Win1250, "
+                       "DOS866 and KOI8 charsets and therefore is especially "
+                       "meant for Russian (cyrillic) users.\n\n"
+                       "If you don't need this feature, you may want not to "
+                       "install the needed parsers and save 50kB of space on disk.\n"))
+(set #imagepool_prompt "Deleting \"libs:imagepool.library\"")
+(set #imagepool_help (cat "The Toolbar.mcc 15.8 class provided with YAM does not "
+                          "support imagepool.library anymore. If nothing else "
+                          "needs this library, you may want to delete it now.\n"))
+(set #assign_prompt (cat "A \"YAM:\" assign needs to be added to your "
+                         "\"S:User-Startup\" file.\n\n"
                          "Do you mind?"))
-(set #assign_help (cat "When the Installer program asks if you want to place this "
-                       "assignment into your S:user-startup file, you should select "
-                       "the \"Proceed\" button; otherwise, the next time you boot up your "
-                       "machine, the program won't be able to find the necessary files "
+(set #assign_help (cat "If this assign is not present, the next time you boot up "
+                       "your machine the program will be unable to find the files "
                        "and drawers it needs to run.\n"))
-(set #done_1   (cat "\nYAM has been succesfuly installed.\n\n"
-                    "Click the \"YAM\" icon in the\n"))
+(set #done_1   (cat "\nYAM has been succesfully installed.\n\n"
+                    "Double click the \"YAM\" icon in the\n"))
 (set #done_2        "\ndirectory to taste it.\n\nHave fun...")
 ; ///
 ; /// ***** Bosanski
@@ -196,8 +226,10 @@
 (
 (set #def_cat_lang #def_lang_Espanol)
 (set #def_doc_lang #def_doc_Espanol)
-(set #wrongOS  "YAM necesita como mínimo OS3.0 para funcionar\n")
-(set #wrongMUI "YAM necesita como mínimo MUI3.8 para funcionar\n")
+(set #wronginstaller "¡Este script necesita Installer 42.6 o superior!")
+(set #wrongOS  "YAM necesita como mínimo el AmigaOS 3.0 para funcionar\n")
+(set #wrongMOS "¡No se ha encontrado MorphOS!\n")
+(set #wrongMUI "YAM necesita como mínimo MUI 3.8 para funcionar\n")
 (set #wrongCPU "YAM necesita como mínimo una CPU 68020 para funcionar\n")
 (set #proc_type "Elija la versión de YAM que desea instalar:")
 (set #proc_help (cat "Seleccione la versión de YAM a instalar "
@@ -205,21 +237,47 @@
 (set #proc_020 "Optimizado para 68020/030")
 (set #proc_040 "Optimizado para 68040")
 (set #proc_060 "Optimizado para 68060")
-(set #YAM_dir  (cat "Escoja el directorio raiz para YAM\n"
-                    "(¡El directorio NO se creará!)"))
+(set #YAM_dir  (cat "Elija el directorio donde desea instalar YAM\n"
+                    "(¡no se creará ningún directorio dentro de éste!)"))
 (set #lang_catalog (cat "¿Qué idiomas (catálogos) quiere instalar?\n"
-                        "(El programa está diseñado en inglés)"))
-(set #lang_manual "Elija el idioma para la ayuda en-linea")
-(set #icons_prompt "¿Qué gráficos quiere instalar?\n")
+                        "(por omisión, YAM funciona en inglés)"))
+(set #lang_manual "Elija el idioma para la ayuda en línea")
+(set #icons_prompt "¿Qué juego de iconos desea instalar?\n")
 (set #icons_none "Ninguno")
-(set #assign_prompt (cat "Es necesario añadir la asignación YAM: al guión S:USER-STARTUP\n"
-                         "¿Está de acuerdo?"))
-(set #assign_help (cat "El programa de instalación pretende insertar esta asignación"
-                       "en su fichero S:User-Startup.   Debería seleccionar el botón"
-                       "\"Proceder\". De lo contrario, la próxima vez que arranque su  "
-                       "Amiga, el  programa no será capaz de encontrar los ficheros y"
-                       "directorios necesarios para su funcionamiento.\n"))
-(set #done_1   (cat "\nYAM se ha instalado satisfactoriamente.\n\n"
+(set #charset_help (cat "YAM puede utilizar tablas de juegos de caracteres "
+                        "para leer y escribir mensajes. Estas tablas son un "
+                        "juego de ficheros que se instalan en \"YAM:Charsets/\" "
+                        "y que describen cómo debería remapearse cada carácter "
+                        "a la hora de leer y/o escribir mensajes, por ejemplo "
+                        "para sustituir las vocales acentuadas (para pasar de "
+                        "ASCII de 8 bits a ASCII de 7 bits), convertir "
+                        "ISO-Latin-2 al juego de caracteres AmigaPL, etc.\n\n"
+                        "Si no necesita nada de esto, quizá prefiera no instalar "
+                        "estas tablas y ahorrarse unos 10 kB de espacio en disco.\n"))
+(set #parser_help (cat "YAM 2.4+ ofrece la posibilidad de hallar automáticamente "
+                       "el juego de caracteres apropiado para mostrar cada parte "
+                       "de los mensajes cuando son leídos, lo cual resulta "
+                       "especialmente útil para los usuarios de países como "
+                       "Rusia, donde no existe un juego de caracteres aceptado "
+                       "como estándar; de hecho, esta función soporta solamente "
+                       "los juegos de caracteres Win2150, DOS866 y KOI8, así que "
+                       "quizá sólo resulte de utilidad para los usuarios rusos "
+                       "(cirílico).\n\n"
+                       "Si no necesita esto para nada, quizá prefiera no instalar "
+                       "los correspondientes intérpretes y ahorrar 50kB de espacio "
+                       "en disco.\n"))
+(set #imagepool_prompt "Borrando \"libs:imagepool.library\"")
+(set #imagepool_help (cat "La clase Toolbar.mcc 15.8 que acompaña a YAM ya no "
+                          "usa imagepool.library para nada. Si ningún otro "
+                          "software de su sistema utiliza esta librería, quizá "
+                          "desee borrarla ahora.\n"))
+(set #assign_prompt (cat "Es necesario añadir la asignación \"YAM:\" al script "
+                         "\"s:User-startup\"\n\n¿Está de acuerdo?"))
+(set #assign_help (cat "Si no está presente esta asignación, la próxima vez "
+                       "que arranque su Amiga el programa no será capaz de "
+                       "encontrar los ficheros y directorios necesarios para "
+                       "su funcionamiento.\n"))
+(set #done_1   (cat "\nYAM ha sido instalado satisfactoriamente.\n\n"
                     "Pulse el icono de \"YAM\" en el directorio\n"))
 (set #done_2        "\npara saborearlo.\n\n¡Que lo disfrute!")
 )
@@ -229,6 +287,7 @@
 (IF (= @language "français")
 (
 (set #def_cat_lang #def_lang_Francais)
+(set #def_doc_lang #def_doc_Francais)
 (set #wrongOS  "YAM a besoin de l' OS3.0 minimum\n")
 (set #wrongMUI "YAM a besoin de MUI3.8 minimum\n")
 (set #wrongCPU "YAM a besoin d'un CPU 68020 minimum\n")
@@ -527,8 +586,14 @@
 
 ;----------------------------------------------------------------------------
 ; /// Checking environment
+(set installer_ver (/ @installer-version 65536))
+(set installer_rev (- @installer-version (* installer_ver 65536)))
+(if (or (< installer_ver 42) (< installer_rev 6)) (abort #wronginstaller))
+
 (set OS_ver (getversion "exec.library" (resident)))
 (if (< OS_ver (* 39 65536)) (abort #wrongOS))
+
+(set MOS_ver (getversion "MorphOS"))
 
 (set MUI_ver (getversion "MUI:libs/muimaster.library"))
 (if (AND (< MUI_ver (* 19 65536)) (<> MUI_ver 0)) (abort #wrongMUI))
@@ -540,6 +605,7 @@
 (if (= cpu_type "68060") (set cpu 2))
 
 (set package_cpu (exists "/.package_cpu"))
+(set package_mos (exists "/.package_mos"))
 (set package_loc (exists "/.package_loc"))
 ; ///
 ; /// Let's ask user for anything
@@ -559,7 +625,7 @@
 
 (complete 5)
 
-(if package_cpu
+(if (and package_cpu (not package_mos))    ; only 68k diffs available
    (set cpu
       (askchoice
          (prompt #proc_type)
@@ -568,7 +634,19 @@
          (default cpu)
       )
    )
-   (set cpu 0)
+   (
+      (if (and package_mos (not package_cpu)) ; only MorphOS binary available
+         (
+            (if (not (MOS_ver))
+               (abort #wrongMOS)
+               (set cpu 3)
+            )
+         )
+         (if (and package_mos (and package_cpu MOS_ver)) ; everything available,
+            (set cpu 3)                                  ; let's pick MOS then
+         )
+      )
+   )
 )
 
 (complete 10)
@@ -578,8 +656,24 @@
       (askoptions
          (prompt  #lang_catalog)
          (help @askoptions-help)
-         (choices "Bosanski" "Czech" "Dansk" "Deutsch" "Español" "Français" "Italiano" "Magyar" "Norsk"
-                  "Polski" "Português" "Português (Brasil)" "Russian" "Slovensko" "Srpski" "Suomi" "Svenska" "Türkçe"
+         (choices "Bosanski (V2.3)"
+                  "Czech (V2.4)"
+                  "Dansk (V2.4)"
+                  "Deutsch (V2.4)"
+                  "Español (V2.4)"
+                  "Français (V2.4)"
+                  "Italiano (V2.3)"
+                  "Magyar (V2.3)"
+                  "Norsk (V2.3)"
+                  "Polski (V2.4)"
+                  "Português (V2.3)"
+                  "Português (Brasil) (V2.3)"
+                  "Russian (V2.3)"
+                  "" ; Slovenian locale (Slovensko) is not available
+                  "Srpski (V2.3)"
+                  "Suomi (V2.3)"
+                  "Svenska (V2.3)"
+                  "Türkçe (V2.3)"
          )
          (default #def_cat_lang)
       )
@@ -594,8 +688,12 @@
       (askchoice
          (prompt  #lang_manual)
          (help    @askchoice-help)
-         (choices "English (V2.3)" "Deutsch (V2.3)" "Español (V2.3)"
-                  "Français (V2.3)" "Italiano (V2.3)" "Slovensko (V2.0)")
+         (choices "English (V2.4)"
+                  "Deutsch (V2.3)"
+                  "Español (V2.4)"
+                  "Français (V2.3)"
+                  "Italiano (V2.3)"
+                  "Slovensko (V2.0)")
          (default #def_doc_lang)
       )
    )
@@ -609,7 +707,10 @@
    (askchoice
       (prompt  #icons_prompt)
       (help    @askchoice-help)
-      (choices "MagicWB" "ProLite" "NewIcons" #icons_none)
+      (choices "MagicWB"
+               "ProLite"
+               "NewIcons"
+               #icons_none)
       (default 0)
    )
 )
@@ -618,11 +719,31 @@
 (complete 30)
 
 (makedir YAM_dir (infos))
-(copyfiles (source "/YAM.info") (dest YAM_dir) (infos) (noposition) (help @copyfiles-help))
-(select cpu
+(if (not (exists (tackon YAM_dir "YAM.info")))
+   (copyfiles (source "/YAM.info")
+              (dest YAM_dir)
+              (infos)
+              (noposition)
+              (help @copyfiles-help)
+   )
+)
 (copyfiles (source "/YAM") (dest YAM_dir) (help @copyfiles-help))
-(run (cat "/680x0/spatch -o" (tackon YAM_dir "YAM") " -p/680x0/YAM.040.pch /YAM"))
-(run (cat "/680x0/spatch -o" (tackon YAM_dir "YAM") " -p/680x0/YAM.060.pch /YAM"))
+(select cpu
+   (set dummy 0)
+   (run 
+      (cat "/680x0/GPatch " (tackon YAM_dir "YAM") " /680x0/YAM.gpatch DIRECT")
+   )
+   (run
+      (cat "/680x0/GPatch " (tackon YAM_dir "YAM") " /680x0/YAM.gpatch DIRECT RECURSIVE")
+   )
+   (
+      (rename (tackon YAM_dir "YAM") "YAM.amigaos")
+      (copyfiles (source "/morphos/")
+                 (dest YAM_dir)
+                 (pattern "YAM#?")
+                 (help @copyfiles-help)
+      )
+   )
 )
 
 (complete 40)
@@ -632,41 +753,251 @@
 )
 
 (if (> Catalog_lang 0)
-(
-   (set Cat_dir (tackon YAM_dir "Catalogs"))
-   (if (not (exists Cat_dir))  (makedir Cat_dir))
-   (if (bitand Catalog_lang #def_lang_Bosanski)         ((set lang "bosanski") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Czech)            ((set lang "czech") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Dansk)            ((set lang "dansk") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Deutsch)          ((set lang "deutsch") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Espanol)          ((set lang "español") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Francais)         ((set lang "français") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Italiano)         ((set lang "italiano") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Magyar)           ((set lang "magyar") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Norsk)            ((set lang "norsk") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Polski)           ((set lang "polski") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Portugues)        ((set lang "português") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Portugues_Brasil) ((set lang "português-brasil") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Russian)          ((set lang "russian") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Slovensko)        ((set lang "slovensko") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Srpski)           ((set lang "srpski") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Suomi)            ((set lang "suomi") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Svenska)          ((set lang "svenska") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-   (if (bitand Catalog_lang #def_lang_Turkce)           ((set lang "türkçe") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
-)
+   (
+      (set Cat_dir (tackon YAM_dir "Catalogs"))
+      (if (not (exists Cat_dir))  (makedir Cat_dir))
+
+      (if (bitand Catalog_lang #def_lang_Bosanski)
+         (
+            (set lang "bosanski")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Czech)
+         (
+            (set lang "czech")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Dansk)
+         (
+            (set lang "dansk")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Deutsch)
+         (
+            (set lang "deutsch")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Espanol)
+         (
+            (set lang "español")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Francais)
+         (
+            (set lang "français")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Italiano)
+         (
+            (set lang "italiano")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Magyar)
+         (
+            (set lang "magyar")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Norsk)
+         (
+            (set lang "norsk")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Polski)
+         (
+            (set lang "polski")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Portugues)
+         (
+            (set lang "português")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Portugues_Brasil)
+         (
+            (set lang "português-brasil")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Russian)
+         (
+            (set lang "russian")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Slovensko)
+         (
+            (set lang "slovensko")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Srpski)
+         (
+            (set lang "srpski")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Suomi)
+         (
+            (set lang "suomi")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Svenska)
+         (
+            (set lang "svenska")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+
+      (if (bitand Catalog_lang #def_lang_Turkce)
+         (
+            (set lang "türkçe")
+            (copyfiles (source (tackon "/Catalogs" lang))
+               (choices "YAM.catalog")
+               (dest (tackon Cat_dir lang))
+            )
+         )
+      )
+   )
 )
 
 (complete 50)
 
-(if (= Docs_lang #def_doc_English  ) (copyfiles (source "/Docs/YAM_english.guide")   (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
-(if (= Docs_lang #def_doc_Deutsch  ) (copyfiles (source "/Docs/YAM_deutsch.guide")   (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
-(if (= Docs_lang #def_doc_Espanol  ) (copyfiles (source "/Docs/YAM_español.guide")   (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
-(if (= Docs_lang #def_doc_Francais ) (copyfiles (source "/Docs/YAM_français.guide")  (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
-(if (= Docs_lang #def_doc_Italiano ) (copyfiles (source "/Docs/YAM_italiano.guide")  (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
-(if (= Docs_lang #def_doc_Slovensko) (copyfiles (source "/Docs/YAM_slovensko.guide") (dest YAM_dir) (newname "YAM.guide") (infos) (noposition)))
-(if (= Icon_set 2)
-   (copyfiles (source "/Contributions/Gfx/NewIcons/YAM.guide.info") (dest YAM_dir) (noposition) (help @copyfiles-help))
+(if (= Docs_lang #def_doc_English)
+   (copyfiles (source "/Docs/YAM_english.guide")
+      (dest YAM_dir)
+      (newname "YAM.guide")
+      (infos)
+      (noposition)
+   )
 )
+(if (= Docs_lang #def_doc_Deutsch)
+   (copyfiles (source "/Docs/YAM_deutsch.guide")
+      (dest YAM_dir)
+      (newname "YAM.guide")
+      (infos)
+      (noposition)
+   )
+)
+(if (= Docs_lang #def_doc_Espanol)
+   (copyfiles (source "/Docs/YAM_español.guide")
+      (dest YAM_dir)
+      (newname "YAM.guide")
+      (infos)
+      (noposition)
+   )
+)
+(if (= Docs_lang #def_doc_Francais)
+   (copyfiles (source "/Docs/YAM_français.guide")
+      (dest YAM_dir)
+      (newname "YAM.guide")
+      (infos)
+      (noposition)
+   )
+)
+(if (= Docs_lang #def_doc_Italiano)
+   (copyfiles (source "/Docs/YAM_italiano.guide")
+      (dest YAM_dir)
+      (newname "YAM.guide")
+      (infos)
+      (noposition)
+   )
+)
+(if (= Docs_lang #def_doc_Slovensko)
+   (copyfiles (source "/Docs/YAM_slovensko.guide")
+      (dest YAM_dir)
+      (newname "YAM.guide")
+      (infos)
+      (noposition)
+   )
+)
+
+(if (= Icon_set 2)
+   (copyfiles (source "/Contributions/Gfx/NewIcons/YAM.guide.info")
+      (dest YAM_dir)
+      (noposition)
+      (help @copyfiles-help)
+   )
+)
+
 (copyfiles (source "/Readme First") (dest YAM_dir) (infos) (noposition))
 (copyfiles (source "/GPL.txt")      (dest YAM_dir) (noposition))
 
@@ -678,53 +1009,165 @@
    (makedir Icons_dir)
 )
 (select Icon_set
-(
-   (copyfiles (source "/Icons.info") (dest YAM_dir) (noposition) (help @copyfiles-help))
-   (copyfiles (source "/Icons/") (dest Icons_dir) (all))
-)
-(
-   (copyfiles (source "/Contributions/Gfx/ProLite/Icons.info") (dest YAM_dir) (noposition) (help @copyfiles-help))
-   (copyfiles (source "/Contributions/Gfx/ProLite/Icons/") (dest Icons_dir) (all))
-)
-(
-   (copyfiles (source "/Contributions/Gfx/NewIcons/Icons.info") (dest YAM_dir) (noposition) (help @copyfiles-help))
-   (copyfiles (source "/Contributions/Gfx/NewIcons/Icons/") (dest Icons_dir) (all))
-)
-(set dummy 0)
+   (
+      (copyfiles (source "/Icons.info")
+         (dest YAM_dir)
+         (noposition)
+         (help @copyfiles-help)
+      )
+      (copyfiles (source "/Icons/")
+         (dest Icons_dir)
+         (all)
+      )
+   )
+   (
+      (copyfiles (source "/Contributions/Gfx/ProLite/Icons.info")
+         (dest YAM_dir)
+         (noposition)
+         (help @copyfiles-help)
+      )
+      (copyfiles (source "/Contributions/Gfx/ProLite/Icons/")
+         (dest Icons_dir)
+         (all)
+      )
+   )
+   (
+      (copyfiles (source "/Contributions/Gfx/NewIcons/Icons.info")
+         (dest YAM_dir)
+         (noposition)
+         (help @copyfiles-help)
+      )
+      (copyfiles (source "/Contributions/Gfx/NewIcons/Icons/")
+         (dest Icons_dir)
+         (all)
+      )
+   )
+   (set dummy 0)
 )
 
-(complete 70)
+(complete 65)
 
 (set Charset_dir (tackon YAM_dir "Charsets"))
 (if (not (exists Charset_dir)) (makedir Charset_dir))
-(copyfiles (source "/Charsets/") (dest Charset_dir) (all))
+(copyfiles (source "/Charsets/")
+           (dest Charset_dir)
+           (all)
+           (help #charset_help "\n" @copyfiles-help)
+)
 (copyfiles (source "/Charsets.info") (dest YAM_dir) (noposition))
+
+(complete 70)
+
+(set Parser_dir (tackon YAM_dir "Parsers"))
+(if (not (exists Parser_dir)) (makedir Parser_dir))
+(copyfiles (source "/Parsers/")
+           (dest Parser_dir)
+           (all)
+           (help #parser_help "\n" @copyfiles-help)
+)
+(copyfiles (source "/Parsers.info") (dest YAM_dir) (noposition))
 
 (complete 75)
 
 (set ARexx_dir (tackon YAM_dir "Rexx"))
 (if (not (exists ARexx_dir)) (makedir ARexx_dir))
-(copyfiles (source "/Rexx/") (dest ARexx_dir) (all))
+(copyfiles (source "/Rexx/")
+           (dest ARexx_dir)
+           (all)
+           (confirm)
+)
 (copyfiles (source "/Rexx.info") (dest YAM_dir) (noposition))
 
 (complete 80)
 
-(copylib (prompt "MUI - BetterString.mcc") (source "/MUI/BetterString.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - BetterString.mcp") (source "/MUI/BetterString.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - HotkeyString.mcc") (source "/MUI/HotkeyString.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - NListtree.mcc")    (source "/MUI/NListtree.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - NListtree.mcp")    (source "/MUI/NListtree.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - NFloattext.mcc")   (source "/MUI/NFloattext.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - NList.mcc")        (source "/MUI/NList.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - NListview.mcc")    (source "/MUI/NListview.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - NListviews.mcp")   (source "/MUI/NListviews.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - TextEditor.mcc")   (source "/MUI/TextEditor.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - TextEditor.mcp")   (source "/MUI/TextEditor.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - Toolbar.mcc")      (source "/MUI/Toolbar.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - Toolbar.mcp")      (source "/MUI/Toolbar.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "imagepool.library")      (source "/libs/imagepool.library") (dest "LIBS:") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - BetterString.mcc")
+   (source "/MUI/BetterString.mcc")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - BetterString.mcp")
+   (source "/MUI/BetterString.mcp")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - HotkeyString.mcc")
+   (source "/MUI/HotkeyString.mcc")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - NListtree.mcc")
+   (source "/MUI/NListtree.mcc")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - NListtree.mcp")
+   (source "/MUI/NListtree.mcp")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - NFloattext.mcc")
+   (source "/MUI/NFloattext.mcc")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - NList.mcc")
+   (source "/MUI/NList.mcc")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - NListview.mcc")
+   (source "/MUI/NListview.mcc")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - NListviews.mcp")
+   (source "/MUI/NListviews.mcp")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - TextEditor.mcc")
+   (source "/MUI/TextEditor.mcc")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - TextEditor.mcp")
+   (source "/MUI/TextEditor.mcp")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - Toolbar.mcc")
+   (source "/MUI/Toolbar.mcc")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
+(copylib (prompt "MUI - Toolbar.mcp")
+   (source "/MUI/Toolbar.mcp")
+   (dest "MUI:Libs/MUI/")
+   (confirm 2)
+   (help @copylib-help)
+)
 
 (complete 90)
+
+(if (exists "libs:imagepool.library")
+   (delete "libs:imagepool.library"
+      (prompt #imagepool_prompt)
+      (help #imagepool_help)
+      (confirm)
+   )
+)
 
 (startup "YAM - Amiga mailer © Marcel Beck & YAM Open Source Team"
    (prompt #assign_prompt)
@@ -740,4 +1183,3 @@
 ; /// ********************
 ;----------------------------------------------------------------------------
 (exit (QUIET))
-
