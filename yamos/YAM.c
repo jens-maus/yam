@@ -49,6 +49,7 @@
 #include <proto/utility.h>
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
+#include <proto/amissl.h>
 
 #include "Debug.h"
 #include "extra.h"
@@ -541,6 +542,7 @@ static void Terminate(void)
 
    if (DataTypesBase) CloseLibrary(DataTypesBase);
    if (XpkBase)       CloseLibrary(XpkBase);
+   if (AmiSSLBase)    CloseLibrary(AmiSSLBase);
    if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
    if (MUIMasterBase) CloseLibrary(MUIMasterBase);
    if (RexxSysBase) CloseLibrary((struct Library *)RexxSysBase);
@@ -627,12 +629,17 @@ static APTR InitLib(char *libname, int version, int revision, BOOL required, BOO
    {
       if(lib->lib_Version == version && lib->lib_Revision < revision)
       {
-         CloseLibrary(lib); lib = NULL;
+         CloseLibrary(lib);
+         lib = NULL;
       }
    }
 
    if(!lib && required) Abort(MSG_ERR_OPENLIB, libname, version, revision);
-   if(lib && close) CloseLibrary(lib);
+   if(lib && close)
+   {
+      CloseLibrary(lib);
+      lib = NULL;
+   }
 
    return lib;
 }
@@ -762,7 +769,7 @@ static void Initialise(BOOL hidden)
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
-   if(InitLib("amissl.library", 1, 0, FALSE, TRUE)) G->TR_UseableTLS = TRUE;
+   if(AmiSSLBase = InitLib("amissl.library", 1, 0, FALSE, FALSE)) G->TR_UseableTLS = TRUE;
 
    SetupDebug();
 

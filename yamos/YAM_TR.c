@@ -281,8 +281,6 @@ void TR_CloseTCPIP(void)
   if(AmiSSLBase)
   {
     CleanupAmiSSL(TAG_DONE);
-    CloseLibrary(AmiSSLBase);
-    AmiSSLBase = NULL;
   }
 
   if(SocketBase)
@@ -301,25 +299,15 @@ BOOL TR_OpenTCPIP(void)
   if(!SocketBase) SocketBase = OpenLibrary("bsdsocket.library", 2L);
 
   // Now we have to check for TLS/SSL support
-  if(G->TR_UseableTLS && SocketBase && !AmiSSLBase)
+  if(AmiSSLBase && SocketBase)
   {
-    if((AmiSSLBase = OpenLibrary("amissl.library", 1L)))
-    {
-      if(InitAmiSSL(AmiSSL_Version,     AmiSSL_CurrentVersion,
-                    AmiSSL_Revision,    AmiSSL_CurrentRevision,
-                    AmiSSL_SocketBase,  SocketBase,
-                    /*AmiSSL_VersionOverride, TRUE,*/ /* If you insist */
-                    TAG_DONE) != 0)
-      {
-        CloseLibrary(AmiSSLBase);
-        AmiSSLBase = NULL;
-      }
-    }
-
-    if(!AmiSSLBase)
+    if(InitAmiSSL(AmiSSL_Version,     AmiSSL_CurrentVersion,
+                  AmiSSL_Revision,    AmiSSL_CurrentRevision,
+                  AmiSSL_SocketBase,  SocketBase,
+                  /*AmiSSL_VersionOverride, TRUE,*/ /* If you insist */
+                  TAG_DONE) != 0)
     {
       ER_NewError(GetStr(MSG_ER_INITAMISSL), NULL, NULL);
-
       G->TR_UseableTLS = G->TR_UseTLS = FALSE;
     }
   }

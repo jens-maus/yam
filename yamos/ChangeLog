@@ -1,5 +1,14 @@
 2002-04-30  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed (worked-around) the bug #534430. I call this "worked-around"
+      because it seems that if the autocorrect feature of Toolbar.mcc
+      is turned on and we close the amissl.library within YAM somehow,
+      something gets really wrong within YAM which results in strange
+      crashes/lock ups as soon as the autocorrect feature gets initiate
+      from within the Toolbar.mcc. I really couldn`t see any dependency
+      between closing amissl.library and this lock ups within toolbar.mcc,
+      but simply keeping the amissl.library open for the lifetime of YAM
+      solved the problem somehow.
     * added a error message to the import mail function to tell the user
       that a selected file doesn`t contain any mails.
     * fixed bug in GetMailFile() utility functions where a -1 assignment

@@ -446,6 +446,7 @@ DISPATCHERPROTO(TE_Dispatcher)
          break;
       }
    }
+
    return DoSuperMethodA(cl, obj, msg);
 }
 ///
