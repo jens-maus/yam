@@ -1092,3 +1092,8 @@
       to perform a resolving on the entered string, what means in fact that it
       will not transform it with a realname or something else.
     * fixed some bugs recently introduced to the recipientstring class.
+
+2001-08-02  Allan Odgaard <duff@diku.dk>
+
+    * Recipientstring class no longer sets the frame, cyclechain or 'advance
+      on cr' tags.

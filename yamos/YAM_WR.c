@@ -2099,7 +2099,10 @@ static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, i
 		GroupSpacing(1),
 #ifdef DUFF
 		Child, *string = RecipientstringObject,
-			MUIA_Recipientstring_MultipleRecipients, allowmulti,
+			StringFrame,
+			MUIA_CycleChain,									TRUE,
+			MUIA_String_AdvanceOnCR,						TRUE,
+			MUIA_Recipientstring_MultipleRecipients,	allowmulti,
 #else
 		Child, *string = NewObject(CL_DDString->mcc_Class, NULL,
 			MUIA_UserData, allowmulti,
@@ -2117,7 +2120,7 @@ static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, i
 //		DoMethod(bt_ver, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_CallHook, &WR_VerifyManualHook, *string, winnum, !allowmulti, TAG_DONE);
 		DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
 		DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
-//		  DoMethod(*string, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_Recipientstring_Resolve);
+//		DoMethod(*string, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_Recipientstring_Resolve);
 	}
 	return obj;
 }

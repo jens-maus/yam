@@ -62,11 +62,7 @@ ULONG RecipientstringGetSize (VOID) { return sizeof(struct Data); }
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-	if((obj = DoSuperNew(cl, obj,
-		StringFrame,
-		MUIA_CycleChain,				TRUE,
-		MUIA_String_AdvanceOnCR,	TRUE,
-		TAG_MORE,						inittags(msg))))
+	if(obj = DoSuperMethodA(cl, obj, msg))
 	{
 		GETDATA;
 
