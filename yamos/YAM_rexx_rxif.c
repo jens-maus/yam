@@ -185,6 +185,8 @@ void rx_info( struct RexxHost *host, struct rxd_info **rxd, long action, struct 
          
       case RXIF_ACTION:
          key = rd->arg.item;
+         if (!key) break;
+
          if      (!stricmp(key, "title"))       get(G->App, MUIA_Application_Title, &rd->res.value);
          else if (!stricmp(key, "author"))      get(G->App, MUIA_Application_Author, &rd->res.value);
          else if (!stricmp(key, "copyright"))   get(G->App, MUIA_Application_Copyright, &rd->res.value);
