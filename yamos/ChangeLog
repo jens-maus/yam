@@ -1,5 +1,8 @@
 2002-05-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_rexx_rxif.c: fixed bug #555115 where the MAILREAD
+      rexx command didn`t activate a readwindow as stated
+      in the documentation.
     * YAM_AB.c: fixed bug/flaw #555113 by adding additional
       checkings and a requester to inform the user that YAM
       will process a non YAM addressbook file as a newline

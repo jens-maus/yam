@@ -575,7 +575,11 @@ void rx_mailread( struct RexxHost *host, struct rxd_mailread **rxd, long action,
          }
          else
          {
-            if (winnr >= 0 && winnr <= 3) if (G->RE[winnr]) G->ActiveReadWin = winnr;
+            if (winnr >= 0 && winnr <= 3 && G->RE[winnr])
+            {
+              G->ActiveReadWin = winnr;
+              if(!rd->arg.quiet) set(G->RE[winnr]->GUI.WI, MUIA_Window_Activate, TRUE);
+            }
             else rd->rc = RETURN_ERROR;
          }
          break;
