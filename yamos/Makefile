@@ -36,7 +36,7 @@ RM	  = rm -f
 CPU      = -m68020
 CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 WARN     = -Wall
-OPTFLAGS = -O2
+OPTFLAGS = -O2 -fomit-frame-pointer
 DEBUG    = -DDEBUG -g -O0
 CFLAGS   = -noixemul -I./includes -I./ -c $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
 LDFLAGS  = -noixemul -mstackextend
