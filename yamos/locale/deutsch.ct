@@ -5514,7 +5514,7 @@ Warte auf Benutzeranmeldung...
 ; Waiting for user login...
 ;
 MSG_US_RemoveReq
-Alle Nachrichten, Postfächer und Konfigurationsdateien\ndieses Benutzers gehen verloren!\n\nWollen Sie den\nBenutzer wirklich löschen?
+Alle Nachrichten, Postfächer und Konfigurationsdateien\ndieses Benutzers gehen verloren!\n\nWollen Sie den Benutzer wirklich löschen?
 ; All messages, folders and configuration\n\
 ; files belonging to this user will be lost!\n\
 ; \n\
