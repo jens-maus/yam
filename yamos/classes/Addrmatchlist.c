@@ -38,12 +38,14 @@ struct Data
 };
 */
 
+/* EXPORT
 struct CustomABEntry
 {
 	LONG MatchField;
 	STRPTR MatchString;
 	struct ABEntry *MatchEntry;
 };
+*/
 
 HOOKPROTONH(ConstructFunc, struct CustomABEntry *, APTR pool, struct CustomABEntry *e)
 {
@@ -58,9 +60,9 @@ HOOKPROTONH(DisplayFunc, LONG, STRPTR *array, struct CustomABEntry *e)
 {
 	static TEXT buf[SIZE_ADDRESS + 4];
 
-	array[0] = e->MatchEntry->Alias;
-	array[1] = e->MatchEntry->RealName;
-	array[2] = e->MatchEntry->Address;
+	array[0] = e->MatchEntry->Alias[0]    ? e->MatchEntry->Alias    : "-";
+	array[1] = e->MatchEntry->RealName[0] ? e->MatchEntry->RealName : "-";
+	array[2] = e->MatchEntry->Address[0]  ? e->MatchEntry->Address  : "-";
 
 	sprintf(buf, "\033b%." STR(SIZE_ADDRESS) "s", e->MatchString);
 	array[e->MatchField] = buf;
@@ -151,36 +153,6 @@ OVERLOAD(OM_SET)
 ///
 
 /* Private Functions */
-/// FindAllMatches()
-VOID FindAllMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *root)
-{
-	int tl = strlen(text);
-	struct MUI_NListtree_TreeNode *tn;
-	for(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);tn ;tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE))
-	{
-		if(tn->tn_Flags & TNF_LIST) /* it's a sublist */
-		{
-			FindAllMatches(text, list, tn);
-		}
-		else
-		{
-			struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
-			struct CustomABEntry e = { -1 };
-
-			if(!Strnicmp(entry->Alias, text, tl))				{ e.MatchField = 0; e.MatchString = entry->Alias; }
-			else if(!Strnicmp(entry->RealName, text, tl))	{ e.MatchField = 1; e.MatchString = entry->RealName; }
-			else if(!Strnicmp(entry->Address, text, tl))		{ e.MatchField = 2; e.MatchString = entry->Address; }
-
-			if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
-			{
-				e.MatchEntry = entry;
-				DoMethod(list, MUIM_List_InsertSingle, &e, MUIV_List_Insert_Sorted);
-			}
-		}
-	}
-}
-
-///
 
 /* Class Methods */
 /// DECLARE(ChangeWindow)
@@ -235,13 +207,14 @@ DECLARE(Open) // STRPTR str
 	LONG entries;
 	struct CustomABEntry *entry;
 
-//	DB(kprintf("Match this: %s\n", msg->str);)
-	kprintf("Match this: %s\n", msg->str);
+  DB(kprintf("Match this: %s\n", msg->str);)
 
 	set(data->Matchlist, MUIA_List_Quiet, TRUE);
+
 	DoMethod(data->Matchlist, MUIM_List_Clear);
-	if(msg->str && msg->str[0] != '\0')
-		FindAllMatches(msg->str, data->Matchlist, MUIV_NListtree_GetEntry_ListNode_Root);
+
+  DoMethod(_app(obj), MUIM_YAM_FindEmailMatches, msg->str, data->Matchlist);
+
 	set(data->Matchlist, MUIA_List_Quiet, FALSE);
 
 	/* is there more entries in the list and if only one, is it longer than what the user already typed... */

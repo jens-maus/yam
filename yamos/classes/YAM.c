@@ -43,9 +43,10 @@ struct Data
 struct EMailCacheNode
 {
 	struct Node ecn_Node;
-	struct Person ecn_Person;
+	struct ABEntry ecn_Person;
 };
 
+/* Private functions */
 /// LoadEMailCache()
 VOID LoadEMailCache (STRPTR name, struct List *list)
 {
@@ -58,7 +59,7 @@ VOID LoadEMailCache (STRPTR name, struct List *list)
 		{
 			STRPTR addr, end;
 			struct EMailCacheNode *node;
-			if((addr = strchr(line, '<')) && (end = strchr(addr, '>')) && (node = calloc(1, sizeof(*node))))
+			if((addr = strchr(line, '<')) && (end = strchr(addr, '>')) && (node = calloc(1, sizeof(struct EMailCacheNode))))
 			{
 				if(addr != line)
 				{
@@ -84,7 +85,93 @@ VOID LoadEMailCache (STRPTR name, struct List *list)
 }
 
 ///
+/// FindAllABMatches()
+// tries to find all matching addressbook entries and add them to the list
+VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *root)
+{
+	int tl = strlen(text);
+	struct MUI_NListtree_TreeNode *tn;
 
+  // Now we try to find matches in the Addressbook Listtree
+  tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
+
+  for(;tn;)
+	{
+		if(tn->tn_Flags & TNF_LIST) /* it's a sublist */
+		{
+			FindAllABMatches(text, list, tn);
+		}
+		else
+		{
+			struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
+			struct CustomABEntry e = { -1 };
+
+			if(!Strnicmp(entry->Alias, text, tl))				{ e.MatchField = 0; e.MatchString = entry->Alias; }
+			else if(!Strnicmp(entry->RealName, text, tl))	{ e.MatchField = 1; e.MatchString = entry->RealName; }
+			else if(!Strnicmp(entry->Address, text, tl))		{ e.MatchField = 2; e.MatchString = entry->Address; }
+
+			if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
+			{
+				e.MatchEntry = entry;
+				DoMethod(list, MUIM_List_InsertSingle, &e, MUIV_List_Insert_Sorted);
+			}
+		}
+
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
+	}
+}
+
+///
+
+/* Public Methods */
+/// DECLARE(FindEmailMatches)
+DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
+{
+	GETDATA;
+
+  if(msg->matchText && msg->matchText[0] != '\0')
+  {
+    // We first try to find matches in the Addressbook
+    // and add them to the MUI list
+	  FindAllABMatches(msg->matchText, msg->list, MUIV_NListtree_GetEntry_ListNode_Root);
+
+    // If the user has selected the EmailCache feature we also have to check this
+    // list and add matches to the MUI List too
+    if(C->EmailCache > 0 && !IsListEmpty(&data->EMailCache))
+    {
+      int i, tl = strlen(msg->matchText);
+      struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
+
+      kprintf("emailCache: %ld\n", C->EmailCache);
+
+      for(i=0; ((struct Node *)node)->ln_Succ != NULL; node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+      {
+  		  struct ABEntry *entry = &node->ecn_Person;
+			  struct CustomABEntry e = { -1 };
+
+        kprintf("Realname: [%s]\n",   entry->RealName);
+        kprintf("EMail...: [%s]\n\n", entry->Address);
+
+			  if(!Strnicmp(entry->RealName, msg->matchText, tl))      { e.MatchField = 1; e.MatchString = entry->RealName;  }
+			  else if(!Strnicmp(entry->Address, msg->matchText, tl))  { e.MatchField = 2; e.MatchString = entry->Address;   }
+
+			  if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
+			  {
+				  e.MatchEntry = entry;
+				  DoMethod(msg->list, MUIM_List_InsertSingle, &e, MUIV_List_Insert_Bottom);
+			  }
+
+      }
+
+    }
+  }
+
+  return NULL;
+}
+
+///
+
+/* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {

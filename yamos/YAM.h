@@ -1,5 +1,5 @@
-#ifndef YAM_H
-#define YAM_H
+#ifndef MAIN_YAM_H
+#define MAIN_YAM_H
 
 /***************************************************************************
 
@@ -120,4 +120,4 @@ extern struct Global *    G;
 void PopUp(void);
 void SetupAppIcons(void);
 
-#endif /* YAM_H */
+#endif /* MAIN_YAM_H */

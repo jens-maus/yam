@@ -28,7 +28,7 @@
 
 ***************************************************************************/
 
-#if defined(DEBUG_OLD)
+#if defined(DEBUG)
   void kprintf(const char *formatString,...);
 
   #define DB(x) x

@@ -4872,6 +4872,6 @@ MSG_CO_NB_EMAILCACHEFMT (//)
 ;
 MSG_HELP_CO_NB_EMAILCACHE (//)
 Here you can select the amount of a separate cache\n\
-for emails which will be used in recipients string.\n\
-Select 0 mails for disabling this feature.
+for emails which will be used in recipient strings.\n\
+Select 0 mails to disable this feature.
 ;

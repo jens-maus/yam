@@ -1,5 +1,8 @@
 2001-10-26  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * added functions/methods to use the new emailcache on a
+      recipientstring. Moved match function from the addrmatchlist
+      to the YAM main subclass like proposed in the mailinglist.
     * added config entry and GUI elements for upcoming emailcache
       feature. Also reconfigured some GUI elements to use a
       NumericbuttonObject.

@@ -50,12 +50,20 @@ void YAM_CleanupClasses( void );
 
 #define MUIC_YAM "YAM_YAM"
 #define YAMObject YAM_NewObject(MUIC_YAM
+#define MUIM_YAM_FindEmailMatches                     0xc37f3e01
 #define MUIA_YAM_EMailCacheName                       0xcccf4d01
+
+struct MUIP_YAM_FindEmailMatches
+{
+  ULONG methodID;
+  STRPTR matchText; Object *list;
+};
 
 
 ULONG YAMGetSize( void );
 ULONG m_YAM_OM_NEW              (struct IClass *cl, Object *obj, Msg msg);
 ULONG m_YAM_OM_DISPOSE          (struct IClass *cl, Object *obj, Msg msg);
+ULONG m_YAM_FindEmailMatches    (struct IClass *cl, Object *obj, struct MUIP_YAM_FindEmailMatches *msg);
 
 /******** Class: Searchwindow ********/
 
@@ -236,6 +244,15 @@ ULONG m_Addrmatchlist_OM_SET              (struct IClass *cl, Object *obj, Msg m
 ULONG m_Addrmatchlist_ChangeWindow        (struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_ChangeWindow *msg);
 ULONG m_Addrmatchlist_Event               (struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_Event *msg);
 ULONG m_Addrmatchlist_Open                (struct IClass *cl, Object *obj, struct MUIP_Addrmatchlist_Open *msg);
+
+/* Exported text */
+
+struct CustomABEntry
+{
+	LONG MatchField;
+	STRPTR MatchString;
+	struct ABEntry *MatchEntry;
+};
 
 
 #endif /* CLASSES_CLASSES_H */
