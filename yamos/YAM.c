@@ -247,7 +247,7 @@ MakeStaticHook(AY_GoPageHook, AY_GoPageFunc);
 static BOOL AY_New(BOOL hidden)
 {
    char logopath[SIZE_PATHFILE];
-	 APTR ft_text, bt_gopage;
+   APTR ft_text, bt_gopage;
    struct DateTime dt;
    char datebuf[32]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
 
@@ -533,6 +533,7 @@ static void Terminate(void)
    if (G->RexxHost) CloseDownARexxHost(G->RexxHost);
 
    TC_Exit();
+
    if (G->AY_AboutText) FreeStrBuf(G->AY_AboutText);
 
    if (G->HideIcon) FreeDiskObject(G->HideIcon);
@@ -601,119 +602,96 @@ static void Abort(APTR formatnum, ...)
    va_end(a);
    exit(5);
 }
-///
-/// FlushLibrary
-// Flushes a library
-static VOID FlushLibrary(STRPTR name)
-{
-	struct Library *result;
-
-	Forbid();
-	if ((result = (struct Library *)FindName(&SysBase->LibList, name)))
-		RemLibrary(result);
-	Permit();
-}
-///
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
 static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 {
-	#define OBJECTDIR "mui/"
+   BOOL flush = TRUE;
 
-	struct Library *base;
-	Object *obj;
-	ULONG ver, rev;
-	BOOL success = FALSE;
-	BOOL flush = TRUE;
-	BOOL retry;
+   for(;;) {
 
-	do {
-		retry = FALSE;
+     // First we attempt to acquire the version and revision through MUI
 
-		// First we attempt to acquire the version and revision through MUI
+     Object *obj = MUI_NewObject(name, TAG_DONE);
+     if (obj)
+     {
+       ULONG ver = xget(obj, MUIA_Version);
+       ULONG rev = xget(obj, MUIA_Revision);
 
-		obj = MUI_NewObject(name, TAG_DONE);
-		if (obj)
-		{
-			ver = xget(obj, MUIA_Version);
-			rev = xget(obj, MUIA_Revision);
+       struct Library *base;
+       char libname[256];
 
-			if (ver > minver || (ver == minver && rev >= minrev))
-				success = TRUE;
+       MUI_DisposeObject(obj);
 
-			MUI_DisposeObject(obj);
+       if (ver > minver || (ver == minver && rev >= minrev))
+         return TRUE;
 
-			// If we did't get the version we wanted, let's try to open the
-			// libraries ourselves and see what happens...
+       // If we did't get the version we wanted, let's try to open the
+       // libraries ourselves and see what happens...
 
-			if (!success)
-			{
-				char libname1[256], libname2[256];
+       strcpy(libname, "PROGDIR:mui/");
+       strcat(libname, name);
 
-				strcpy(libname1, OBJECTDIR);
-				strcat(libname1, name);
+       if ((base = OpenLibrary(&libname[8], 0)) || (base = OpenLibrary(&libname[0], 0)))
+       {
+         UWORD OpenCnt = base->lib_OpenCnt;
 
-				strcpy(libname2, "PROGDIR:" OBJECTDIR);
-				strcat(libname2, name);
+         ver = base->lib_Version;
+         rev = base->lib_Revision;
 
-				if ((base = OpenLibrary(libname1, 0)) || (base = OpenLibrary(libname2, 0)))
-				{
-					UWORD OpenCnt = base->lib_OpenCnt;
+         CloseLibrary(base);
 
-					ver = base->lib_Version;
-					rev = base->lib_Revision;
-					CloseLibrary(base);
+         // we add some additional check here so that eventual broken .mcc also have
+         // a chance to pass this test (i.e. Toolbar.mcc is broken)
 
-          // we add some additional check here so that eventual broken .mcc also have
-          // a chance to pass this test (i.e. Toolbar.mcc is broken)
-    			if(ver > minver || (ver == minver && rev >= minrev))
-		        return TRUE;
+         if (ver > minver || (ver == minver && rev >= minrev))
+           return TRUE;
 
-					if (OpenCnt > 1)
-					{
-						if (req && (retry = MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_IN_USE), name, minver, minrev, ver, rev)))
-							flush = TRUE;
-						else if (req)
-							exit(5); // Ugly
-						else return FALSE;
-					}
+         if (OpenCnt > 1)
+         {
+           if (req && MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_IN_USE), name, minver, minrev, ver, rev))
+             flush = TRUE;
+           else
+             break;
+         }
 
-					// Attempt to flush the library if open count is 0 or because
-					// the user wants to retry (meaning there's a chance that it's 0 now).
+         // Attempt to flush the library if open count is 0 or because the
+         // user wants to retry (meaning there's a chance that it's 0 now)
 
-					if (flush)
-					{
-						FlushLibrary(name);
-						flush = FALSE;
-						retry = TRUE;
-					}
-					else
-					{
-						// We're out of luck - open count is 0, we've tried to flush
-						// and still haven't got the version we want
-						if (req && (retry = MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_OLD), name, minver, minrev, ver, rev)))
-							flush = TRUE;
-						else if (req)
-							exit(5); // Ugly
-						else
-							return FALSE;
-					}
-				}
-			}
-		}
-		else
-		{
-			// No MCC at all - no need to attempt flush
-			retry = MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_NO_MCC), name, minver, minrev);
-			flush = FALSE;
-		}
+         if (flush)
+         {
+           struct Library *result;
+           Forbid();
+           if ((result = (struct Library *)FindName(&SysBase->LibList, name)))
+             RemLibrary(result);
+           Permit();
+           flush = FALSE;
+         }
+         else
+         {
+           // We're out of luck - open count is 0, we've tried to flush
+           // and still haven't got the version we want
+           if (req && MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_OLD), name, minver, minrev, ver, rev))
+             flush = TRUE;
+           else
+             break;
+         }
+       }
+     }
+     else
+     {
+       // No MCC at all - no need to attempt flush
+       flush = FALSE;
+       if (!MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_NO_MCC), name, minver, minrev))
+         break;
+     }
 
-	} while (retry);
+   }
 
-	if (req && !success)
-		exit(5); // Ugly
+   if (req)
+     exit(5); // Ugly
 
-	return success;
+   return FALSE;
 }
 ///
 /// InitLib
@@ -732,6 +710,7 @@ static APTR InitLib(STRPTR libname, ULONG version, int revision, BOOL required, 
    }
 
    if(!lib && required) Abort(MSG_ERR_OPENLIB, libname, version, revision);
+
    if(lib && close)
    {
       CloseLibrary(lib);
@@ -788,7 +767,7 @@ static void Initialise2(BOOL hidden)
    set(G->MA->GUI.LV_MAILS,   MUIA_HorizWeight, G->Weights[1]);
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 50);
 
-   if(G->CO_AutoTranslateIn)	LoadParsers();
+   if(G->CO_AutoTranslateIn) LoadParsers();
    if (!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
    {
       for (i = 0; i < 100; i++) if (oldfolders[i]) DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
