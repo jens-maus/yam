@@ -1004,12 +1004,20 @@ void rx_getfolderinfo( struct RexxHost *host, struct rxd_getfolderinfo **rxd, lo
       case RXIF_ACTION:
          key = rd->rd.arg.item;
          fo = FO_GetCurrentFolder();
-         num = FO_GetFolderPosition(fo);
-         if (!strnicmp(key, "NUM", 3)) sprintf(rd->rd.res.value = rd->result, "%d", num);
-         else if (!strnicmp(key, "NAM", 3)) rd->rd.res.value = fo->Name;
-         else if (!strnicmp(key, "PAT", 3)) rd->rd.res.value = fo->Path;
-         else if (!strnicmp(key, "MAX", 3)) sprintf(rd->rd.res.value = rd->result, "%d", fo->Total);
+
+         // this command should only act on a folder folder and
+         // also only on a non-group
+         if(fo && fo->Type != FT_GROUP)
+         {
+            num = FO_GetFolderPosition(fo, FALSE);
+            if (!strnicmp(key, "NUM", 3))      sprintf(rd->rd.res.value = rd->result, "%d", num);
+            else if (!strnicmp(key, "NAM", 3)) rd->rd.res.value = fo->Name;
+            else if (!strnicmp(key, "PAT", 3)) rd->rd.res.value = fo->Path;
+            else if (!strnicmp(key, "MAX", 3)) sprintf(rd->rd.res.value = rd->result, "%d", fo->Total);
+            else rd->rd.rc = RETURN_ERROR;
+         }
          else rd->rd.rc = RETURN_ERROR;
+
          break;
       
       case RXIF_FREE:
@@ -1096,6 +1104,7 @@ void rx_folderinfo( struct RexxHost *host, struct rxd_folderinfo **rxd, long act
    struct rxd_folderinfo *rd = *rxd;
    struct Folder *fo;
    static long num;
+   static long type;
    switch( action )
    {
       case RXIF_INIT:
@@ -1104,9 +1113,12 @@ void rx_folderinfo( struct RexxHost *host, struct rxd_folderinfo **rxd, long act
          
       case RXIF_ACTION:
          fo = rd->arg.folder ? FO_GetFolderRexx(rd->arg.folder, NULL) : FO_GetCurrentFolder();
-         if (fo)
+
+         // this command should only act on a folder folder and
+         // also only on a non-group
+         if (fo && fo->Type != FT_GROUP)
          {
-            num = FO_GetFolderPosition(fo);
+            num = FO_GetFolderPosition(fo, FALSE);
             rd->res.number = &num;
             rd->res.name = fo->Name;
             rd->res.path = fo->Path;
@@ -1114,7 +1126,17 @@ void rx_folderinfo( struct RexxHost *host, struct rxd_folderinfo **rxd, long act
             rd->res.new = (long *)&fo->New;
             rd->res.unread = (long *)&fo->Unread;
             rd->res.size = (long *)&fo->Size;
-            rd->res.type = (long *)&fo->Type;
+
+            // per definition of the .guide arexx docu.
+            if(fo->Type == FT_CUSTOM)           type = 0;
+            else if(fo->Type == FT_INCOMING)    type = 1;
+            else if(fo->Type == FT_OUTGOING)    type = 2;
+            else if(fo->Type == FT_SENT)        type = 3;
+            else if(fo->Type == FT_DELETED)     type = 4;
+            else if(fo->Type == FT_CUSTOMMIXED) type = 5;
+            else if(fo->Type == FT_CUSTOMSENT)  type = 6;
+
+            rd->res.type = &type;
          }
          else rd->rc = RETURN_ERROR;
          break;

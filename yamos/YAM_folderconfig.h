@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ BOOL            FO_SetCurrentFolder(struct Folder *fo);
 struct Folder * FO_GetFolderByName(char *name, int *pos);
 struct Folder * FO_GetFolderByType(enum FolderType type, int *pos);
 struct Folder * FO_GetFolderRexx(char *arg, int *pos);
-int             FO_GetFolderPosition(struct Folder *findfo);
+int             FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups);
 BOOL            FO_LoadConfig(struct Folder *fo);
 BOOL            FO_LoadTree(char *fname);
 BOOL            FO_LoadFolderImages(struct Folder *fo);

@@ -3377,7 +3377,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
    }
 
    // Get Position of Folder
-   pos = FO_GetFolderPosition(fo);
+   pos = FO_GetFolderPosition(fo, TRUE);
 
    // Now we recount the amount of Messages of this Folder
    for (mail = fo->Messages, fo->Unread = fo->New = fo->Total = fo->Sent = fo->Deleted = 0; mail; mail = mail->Next)

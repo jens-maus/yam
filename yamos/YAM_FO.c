@@ -156,9 +156,11 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
    {
       // lets find out if the user wants to have the folder identified by it`s position
       while (*p) if (!isdigit((int)*p++)) numeric = FALSE;
+
+      // if this is a numeric search we go on.
       if(numeric)
       {
-        if((i = atoi(arg)) >= 0)
+        if((i = atoi(arg)) >= 0 && i < (int)*flist)
         {
           for(j = 1; j <= (int)*flist; j++)
           {
@@ -248,19 +250,20 @@ static BOOL FO_GetFolderByName_cmp(struct Folder *f, char *name)
 ///
 /// FO_GetFolderPosition
 //  Gets the position of a folder in the list
-int FO_GetFolderPosition(struct Folder *findfo)
+int FO_GetFolderPosition(struct Folder *findfo, BOOL withGroups)
 {
-   int i;
+   int i, j;
    struct Folder *fo;
    struct MUI_NListtree_TreeNode *tn;
 
-   for (i = 0;;i++)
+   for (i = 0;;i++,j++)
    {
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
       if (!tn || !tn->tn_User) return(-1);
  
       fo = tn->tn_User;
-      if (fo == findfo) return(i);
+      if(!withGroups && fo->Type == FT_GROUP) j--;
+      if (fo == findfo) return(j);
    }
 }
 
