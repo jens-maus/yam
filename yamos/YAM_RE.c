@@ -59,6 +59,7 @@
 #include "YAM_read.h"
 #include "YAM_write.h"
 #include "YAM_utilities.h"
+#include "classes/Classes.h"
 
 // PGP flags & macros
 #define PGPE_MIME     1
@@ -2317,7 +2318,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
    int totsize, len, wptr, prewptr;
    FILE *fh;
    
-   DB( kprintf("RE_ReadInMessage(%ld,%ld\n",winnum,mode); )
+   DB( kprintf("RE_ReadInMessage(%ld,%ld)\n",winnum,mode); )
    if (re->NoTextstyles) { tsb = "\033c\033[s:18]\033l"; sb = "\033[s:2]"; bo = "\033b"; pl = "\033n"; }
    else { tsb = "<tsb>"; sb = "<sb>"; bo = "*"; pl = "*"; }
    for (totsize = 1000, part = first; part; part = part->Next)
@@ -2547,7 +2548,7 @@ rim_cont:
       re->FirstReadDone = TRUE;
       if (mode != RIM_QUIET) BusyEnd;
    }
-   DB( kprintf("RE_ReadInMessage() ends"); )
+   DB( kprintf("RE_ReadInMessage() ends\n"); )
    return cmsg;
 }
 ///
@@ -2661,20 +2662,30 @@ static struct ABEntry *RE_AddToAddrbook(APTR win, struct ABEntry *templ)
    {
       struct MUI_NListtree_TreeNode *tn = NULL;
 
-      if (*C->NewAddrGroup && !DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, C->NewAddrGroup, 0, TAG_DONE))
+      // first we check if the group for new entries already exists and if so
+      // we add this address to this special group.
+      if(C->NewAddrGroup[0])
       {
-         memset(&ab_new, 0, sizeof(struct ABEntry));
-         stccpy(ab_new.Alias, C->NewAddrGroup, SIZE_NAME);
-         stccpy(ab_new.Comment, GetStr(MSG_RE_NewGroupTitle), SIZE_DEFAULT);
-         ab_new.Type = AET_GROUP;
-         tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST, TAG_DONE);
+         tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, C->NewAddrGroup, MUIF_NONE);
+
+         // only if the group doesn`t exist yet
+         if(!tn || ((struct ABEntry *)tn->tn_User)->Type != AET_GROUP)
+         {
+            memset(&ab_new, 0, sizeof(struct ABEntry));
+            stccpy(ab_new.Alias, C->NewAddrGroup, SIZE_NAME);
+            stccpy(ab_new.Comment, GetStr(MSG_RE_NewGroupTitle), SIZE_DEFAULT);
+            ab_new.Type = AET_GROUP;
+            tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, TNF_LIST);
+         }
       }
 
+      // then lets add the entry to the group that was perhaps
+      // created previously.
       memset(&ab_new, 0, sizeof(struct ABEntry));
       ab_new.Type = AET_USER;
       RE_UpdateSenderInfo(&ab_new, templ);
       EA_SetDefaultAlias(&ab_new);
-      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, tn, MUIV_NListtree_Insert_PrevNode_Sorted, 0, TAG_DONE);
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, ab_new.Alias, &ab_new, tn ? tn : MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Sorted, MUIF_NONE);
       if (tn)
       {
          CallHookPkt(&AB_SaveABookHook, 0, 0);
