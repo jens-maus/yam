@@ -2069,27 +2069,6 @@ long DateStamp2Long(struct DateStamp *date)
    return((100*atoi(&s[3])+atoi(s))*10000+y);
 }
 ///
-/// GetTZ
-//  Gets the locale time zone
-char *GetTZ(void)
-{
-   static char tzone[SIZE_SMALL];
-   if (GetVar("YAM_TZ", tzone, SIZE_SMALL, 0) < 0)
-   {
-      int tz, tzd;
-      if (G->Locale) {
-         CloseLocale(G->Locale);
-         G->Locale = OpenLocale(NULL);
-         tz = -G->Locale->loc_GMTOffset/60;
-      }
-      else tz = C->TimeZone;
-      tzd = tz + (C->DaylightSaving ? 1 : 0);
-      if (tz >= 0) sprintf(tzone, "+%02d00", tzd);
-      else         sprintf(tzone, "-%02d00", -tzd);
-   }
-   return tzone;
-}
-///
 /// TZtoMinutes
 //  Converts time zone into a numeric offset
 static int TZtoMinutes(char *tzone)
@@ -2196,7 +2175,7 @@ struct DateStamp *ScanDate(char *date)
    dt.dat_StrTime = (STRPTR)ttime;
    StrToDate(&dt);
    ds->ds_Minute -= TZtoMinutes(tzone);
-   ds->ds_Minute += TZtoMinutes(GetTZ());
+   ds->ds_Minute += TZtoMinutes(C->TimeZoneStr);
    while (ds->ds_Minute < 0)  { ds->ds_Minute += 1440; ds->ds_Days--; }
    while (ds->ds_Minute >= 1440) { ds->ds_Minute -= 1440; ds->ds_Days++; }
    return ds;

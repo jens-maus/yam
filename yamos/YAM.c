@@ -1090,24 +1090,32 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
 ///
 /// GetDST
 //  Checks if daylight saving time is active
+//  return 0 if no DST system was found - 1 if no DST is set and 3 if set
 static int GetDST(void)
 {
-   int i;
-   char *dst;
+   char buffer[SIZE_SMALL];
 
-   if((dst = getenv("IXGMTOFFSET")))
+   // lets check the DaylightSaving stuff now
+   // we also take respect of the IXGMTOFFSET and SUMMERTIME env variables
+   if(GetVar("IXGMTOFFSET", buffer, SIZE_SMALL, 0) >= 5)
    {
-      return dst[4]?2:1;
+      return buffer[4] ? 2 : 1;
+   }
+   else if(GetVar("SUMMERTIME", buffer, SIZE_SMALL, 0) > 0)
+   {
+     int i;
+     char *dst = buffer;
+
+     for(i = 0; i < 11; i++)
+     {
+        while (*dst != ':') if (!*dst++) return 0;
+        dst++;
+     }
+
+     return *dst == 'Y' ? 2 : 1;
    }
 
-   dst = getenv("SUMMERTIME");
-   if (!dst) return 0;
-   for (i = 0; i < 11; i++)
-   {
-      while (*dst != ':') if (!*dst++) return 0;
-      dst++;
-   }
-   return (*dst == 'Y' ? 2 : 1);
+   return 0;
 }
 ///
 

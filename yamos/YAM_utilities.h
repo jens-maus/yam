@@ -296,7 +296,6 @@ void     GetMUIText(char *a, Object *obj);
 char *   GetNextLine(char *p1);
 struct Person *GetReturnAddress(struct Mail *mail);
 int      GetSimpleID(void);
-char *   GetTZ(void);
 void     GotoURL(char *url);
 char *   IdentifyFile(char *fname);
 void     InfoWindow(char *title, char *body, char *oktext, APTR parent);

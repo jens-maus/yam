@@ -485,6 +485,7 @@ struct Config
    char  IOCInterface[SIZE_SMALL];
    char  AppIconText[SIZE_COMMAND];
    char  InfoBarText[SIZE_COMMAND];
+   char  TimeZoneStr[SIZE_SMALL];
 };
 
 enum SizeFormat { SF_DEFAULT=0, SF_MIXED, SF_1PREC, SF_2PREC, SF_3PREC };

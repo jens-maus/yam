@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-08  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c, YAM_UT.c: fixed bug in YAM_TZ env variable handling where
+      upon a index rescan the environment variable was checked all the
+      time and probably lead to some performance problems. Now the
+      YAM_TZ variable will just be checked upon a YAM startup.
+
 2003-04-06  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed bug in the headerline parsing routines where YAM did

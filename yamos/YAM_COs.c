@@ -419,19 +419,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                }
 /*0*/          else if (!stricmp(buffer, "RealName"))       stccpy(co->RealName, value, SIZE_REALNAME);
                else if (!stricmp(buffer, "EmailAddress"))   stccpy(co->EmailAddress, value, SIZE_ADDRESS);
-               else if (!stricmp(buffer, "TimeZone"))
-               {
-                 /* If Locale is present, don't use the timezone from the config */
-                 if (G->Locale)
-                 {
-                    CloseLocale(G->Locale);
-                    G->Locale = OpenLocale(NULL);
-                    co->TimeZone = -G->Locale->loc_GMTOffset/60;
-                 }else
-                 {
-                    co->TimeZone = atoi(value);
-                 }
-               }
+               else if (!stricmp(buffer, "TimeZone"))       co->TimeZone = atoi(value);
                else if (!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
 /*1*/          else if (!stricmp(buffer, "SMTP-Server"))    stccpy(co->SMTP_Server, value, SIZE_HOST);
                else if (!stricmp(buffer, "SMTP-Port"))      co->SMTP_Port = atoi(value);

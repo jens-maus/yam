@@ -213,11 +213,11 @@ static char *GetDateTime(void)
 {
    static char dt[SIZE_DEFAULT];
    struct ClockData cd;
-   char *tz;
 
    Amiga2Date(GetDateStamp(), &cd);
    sprintf(dt, "%s, %02d %s %d %02d:%02d:%02d", wdays[cd.wday], cd.mday, months[cd.month-1], cd.year, cd.hour, cd.min, cd.sec);
-   if ((tz = GetTZ())) { strcat(dt, " "); strcat(dt, tz); }
+   if(C->TimeZoneStr) sprintf(dt, "%s %s", dt, C->TimeZoneStr);
+
    return dt;  
 }
 
