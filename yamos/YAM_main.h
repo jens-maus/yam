@@ -164,6 +164,16 @@ enum Macro {
 
 enum SendMode { SEND_ALL, SEND_ACTIVE };
 
+enum { MMEN_ABOUT=100,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HIDE,MMEN_QUIT,
+       MMEN_NEWF,MMEN_NEWFG,MMEN_EDITF,MMEN_DELETEF,MMEN_OSAVE,MMEN_ORESET,MMEN_SELALL,MMEN_SELNONE,
+       MMEN_SELTOGG,MMEN_SEARCH,MMEN_FILTER,MMEN_DELDEL,MMEN_INDEX,MMEN_FLUSH,MMEN_IMPORT,MMEN_EXPORT,
+       MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,
+       MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_CROP,MMEN_EXPMSG,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD,
+       MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_TOMARKED,
+       MMEN_TOUNMARKED,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,MMEN_USER,MMEN_MUI,MMEN_SCRIPT,
+       MMEN_POPHOST, MMEN_MACRO=MMEN_POPHOST+MAXP3
+     };
+
 struct MA_GUIData
 {
    APTR WI;
@@ -223,13 +233,19 @@ struct MA_ClassData  /* main window */
    char WinTitle[SIZE_DEFAULT];
 };
 
-// MailList class instance data
-struct ML_Data
-{
-   Object *context_menu;
-};
-
-
+// Hooks available to other modules
+extern struct Hook MA_ReadMessageHook;
+extern struct Hook MA_NewMessageHook;
+extern struct Hook MA_ChangeSubjectHook;
+extern struct Hook MA_SetStatusToHook;
+extern struct Hook MA_GetAddressHook;
+extern struct Hook MA_MoveMessageHook;
+extern struct Hook MA_CopyMessageHook;
+extern struct Hook MA_DeleteMessageHook;
+extern struct Hook MA_SavePrintHook;
+extern struct Hook MA_SaveAttachHook;
+extern struct Hook MA_RemoveAttachHook;
+extern struct Hook MA_ExportMessagesHook;
 extern struct Hook MA_ApplyRulesHook;
 extern struct Hook MA_ChangeSelectedHook;
 extern struct Hook MA_DeleteDeletedHook;
@@ -279,9 +295,5 @@ char *MA_ToStatusHeader(struct Mail *mail);
 char *MA_ToXStatusHeader(struct Mail *mail);
 unsigned int MA_FromStatusHeader(char *statusflags);
 unsigned int MA_FromXStatusHeader(char *xstatusflags);
-
-// real methods (will be separated later in own ML class
-ULONG MA_MLContextMenuBuild(struct IClass *cl, Object *obj, struct MUIP_NList_ContextMenuBuild *msg);
-ULONG MA_MLContextMenuChoice(struct IClass *cl, Object *obj, struct MUIP_ContextMenuChoice *msg);
 
 #endif /* YAM_MAIN_H */

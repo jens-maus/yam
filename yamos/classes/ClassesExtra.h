@@ -36,6 +36,7 @@
 #include <proto/muimaster.h>
 #include <proto/timer.h>
 #include <proto/utility.h>
+#include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
 #include <libraries/mui.h>
 #include <mui/BetterString_mcc.h>

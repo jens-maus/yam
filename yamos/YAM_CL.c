@@ -71,7 +71,6 @@ struct BC_Data
 /*** Definitions ***/
 struct MUI_CustomClass *CL_BodyChunk    = NULL;
 struct MUI_CustomClass *CL_FolderList   = NULL;
-struct MUI_CustomClass *CL_MailList     = NULL;
 struct MUI_CustomClass *CL_AttachList   = NULL;
 struct MUI_CustomClass *CL_PageList     = NULL;
 
@@ -305,41 +304,6 @@ DISPATCHERPROTO(FL_Dispatcher)
    }
 
    return DoSuperMethodA(cl,obj,msg);
-}
-
-///
-/// ML_Dispatcher (Mail NListview)
-/*** ML_Dispatcher (Mail NListview) - Subclass of NList, adds ContextMenuBuild to Message List ***/
-DISPATCHERPROTO(ML_Dispatcher)
-{
-  switch(msg->MethodID)
-  {
-    // we need to make sure that everything is disposed
-    case OM_DISPOSE:
-    {
-      struct ML_Data *data = (struct ML_Data *)INST_DATA(cl,obj);
-
-      // make sure that our context menus are also disposed
-      if(data->context_menu) MUI_DisposeObject(data->context_menu);
-    }
-    break;
-
-    // we use the MUI internal methods to create a context menu
-    case MUIM_NList_ContextMenuBuild:
-    {
-      return MA_MLContextMenuBuild(cl, obj, (struct MUIP_NList_ContextMenuBuild *)msg);
-    }
-    break;
-
-    // If the user chooses a item out of the ContextMenu we have to process it.
-    case MUIM_ContextMenuChoice:
-    {
-      return MA_MLContextMenuChoice(cl, obj, (struct MUIP_ContextMenuChoice *)msg);
-    }
-    break;
-  }
-
-  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
@@ -662,7 +626,6 @@ void ExitClasses(void)
 {
   if(CL_PageList)    { MUI_DeleteCustomClass(CL_PageList);     CL_PageList     = NULL; }
   if(CL_BodyChunk)   { MUI_DeleteCustomClass(CL_BodyChunk);    CL_BodyChunk    = NULL; }
-  if(CL_MailList)    { MUI_DeleteCustomClass(CL_MailList);     CL_MailList     = NULL; }
   if(CL_FolderList)  { MUI_DeleteCustomClass(CL_FolderList);   CL_FolderList   = NULL; }
   if(CL_AttachList)  { MUI_DeleteCustomClass(CL_AttachList);   CL_AttachList   = NULL; }
 }
@@ -674,7 +637,6 @@ BOOL InitClasses(void)
 {
   if((CL_AttachList   = CreateMCC(MUIC_NList,     NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher))))
   if((CL_FolderList   = CreateMCC(MUIC_NListtree, NULL, sizeof(struct FL_Data), ENTRY(FL_Dispatcher))))
-  if((CL_MailList     = CreateMCC(MUIC_NList,     NULL, sizeof(struct ML_Data), ENTRY(ML_Dispatcher))))
   if((CL_BodyChunk    = CreateMCC(MUIC_Bodychunk, NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher))))
   if((CL_PageList     = CreateMCC(MUIC_List,      NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher))))
   {
