@@ -5296,3 +5296,10 @@ _Welcome phrase
 MSG_FO_Greetings (//)
 C_losing phrase
 ;
+MSG_ER_SOCKETOPTION (//)
+Warning: Wasn`t able to set the specified socket option '%s'.\n\
+\n\
+It may not be supported by the TCP/IP Stack your are using, \
+or it is incorrectly specified in your configuration.
+; OPTIONNAME
+;

@@ -973,6 +973,7 @@ static void TR_Disconnect(void)
 static int TR_Connect(char *host, int port)
 {
   int i;
+  LONG optval;
   struct hostent *hostaddr;
 
   // get the hostent out of the supplied hostname
@@ -981,7 +982,7 @@ static int TR_Connect(char *host, int port)
     return -1;
   }
 
-#ifdef DEBUG
+  #ifdef DEBUG
   kprintf("Host %s :\n", host);
   kprintf("  Officially:\t%s\n", hostaddr->h_name);
   kprintf("  Aliases:\t");
@@ -1000,7 +1001,7 @@ static int TR_Connect(char *host, int port)
       kprintf("  Address:\t%s\n", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr));
     }
   }
-#endif
+  #endif
 
   // lets create a standard AF_INET socket now
   G->TR_Socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -1008,6 +1009,120 @@ static int TR_Connect(char *host, int port)
   {
     return -2;
   }
+
+  // lets set the socket options the user has defined
+  // in the configuration
+  if((optval = C->SocketOptions.KeepAlive))
+  {
+    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) == -1)
+    {
+      DB(kprintf("setsockopt(SO_KEEPALIVE) error\n"));
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_KEEPALIVE", NULL);
+    }
+  }
+
+  if((optval = C->SocketOptions.NoDelay))
+  {
+    if(setsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) == -1)
+    {
+      DB(kprintf("setsockopt(TCP_NODELAY) error\n"));
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "TCP_NODELAY", NULL);
+    }
+  }
+
+  if(C->SocketOptions.LowDelay)
+  {
+    optval = IPTOS_LOWDELAY;
+    if(setsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, sizeof(optval)) == -1)
+    {
+      DB(kprintf("setsockopt(IPTOS_LOWDELAY) error\n"));
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "IPTOS_LOWDELAY", NULL);
+    }
+  }
+
+  if((optval = C->SocketOptions.SendBuffer) > -1)
+  {
+    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, sizeof(optval)) == -1)
+    {
+      DB(kprintf("setsockopt(SO_SNDBUF) error\n"));
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDBUF", NULL);
+    }
+  }
+
+  if((optval = C->SocketOptions.RecvBuffer) > -1)
+  {
+    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, sizeof(optval)) == -1)
+    {
+      DB(kprintf("setsockopt(SO_RCVBUF) error\n"));
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVBUF", NULL);
+    }
+  }
+
+  if((optval = C->SocketOptions.SendLowAt) > -1)
+  {
+    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, sizeof(optval)) == -1)
+    {
+      DB(kprintf("setsockopt(SO_SNDLOWAT) error\n"));
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDLOWAT", NULL);
+    }
+  }
+
+  if((optval = C->SocketOptions.RecvLowAt) > -1)
+  {
+    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, sizeof(optval)) == -1)
+    {
+      DB(kprintf("setsockopt(SO_RCVLOWAT) error\n"));
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVLOWAT", NULL);
+    }
+  }
+
+  if(C->SocketOptions.SendTimeOut > -1)
+  {
+    struct timeval tv = { C->SocketOptions.SendTimeOut, 0 };
+    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct timeval)) == -1)
+    {
+      DB(kprintf("setsockopt(SO_SNDTIMEO) error\n"));
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDTIMEO", NULL);
+    }
+  }
+
+  if(C->SocketOptions.RecvTimeOut > -1)
+  {
+    struct timeval tv = { C->SocketOptions.RecvTimeOut, 0 };
+    if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval)) == -1)
+    {
+      DB(kprintf("setsockopt(SO_RCVTIMEO) error\n"));
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVTIMEO", NULL);
+    }
+  }
+
+  // lets print out the current socket options
+  #ifdef DEBUG
+  {
+    LONG optlen = sizeof(optval);
+    struct timeval tv;
+    LONG tvlen = sizeof(struct timeval);
+    kprintf("Opened socket: %lx\n", G->TR_Socket);
+    getsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
+    kprintf("  SO_KEEPALIVE..: %ld\n", optval);
+    getsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, &optlen);
+    kprintf("  TCP_NODELAY...: %ld\n", optval);
+    getsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, &optlen);
+    kprintf("  IPTOS_LOWDELAY: %ld\n", hasFlag(optval, IPTOS_LOWDELAY));
+    getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, &optlen);
+    kprintf("  SO_SNDBUF.....: %ld bytes\n", optval);
+    getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, &optlen);
+    kprintf("  SO_RCVBUF.....: %ld bytes\n", optval);
+    getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, &optlen);
+    kprintf("  SO_SNDLOWAT...: %ld\n", optval);
+    getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, &optlen);
+    kprintf("  SO_RCVLOWAT...: %ld\n", optval);
+    getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, &tvlen);
+    kprintf("  SO_SNDTIMEO...: %ld\n", tv.tv_sec);
+    getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, &tvlen);
+    kprintf("  SO_RCVTIMEO...: %ld\n", tv.tv_sec);
+  }
+  #endif
 
   // copy the hostaddr data in a local copy for further reference
   memset(&G->TR_INetSocketAddr, 0, sizeof(G->TR_INetSocketAddr));
@@ -1297,7 +1412,7 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
   int fill_cnt;
 
   // if we don`t have a buffer yet, lets allocate own
-  if(!read_buf && !(read_buf = calloc(1, SIZE_BUFSIZE*sizeof(char)))) return -1;
+  if(!read_buf && !(read_buf = calloc(1, C->TRBufferSize*sizeof(char)))) return -1;
 
   // if we called that function with the FREEBUFFER flag we free the buffer only
   // and return with 0
@@ -1315,8 +1430,8 @@ static int TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags)
   {
     again:
 
-      if(G->TR_UseTLS) read_cnt = SSL_read(ssl, read_buf, SIZE_BUFSIZE);
-      else             read_cnt = recv(socket, read_buf, SIZE_BUFSIZE, 0);
+      if(G->TR_UseTLS) read_cnt = SSL_read(ssl, read_buf, C->TRBufferSize);
+      else             read_cnt = recv(socket, read_buf, C->TRBufferSize, 0);
 
       if(read_cnt < 0)
       {
@@ -1372,7 +1487,7 @@ static int TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags)
   // if we don`t have a buffer yet, lets allocate own
   if(!write_buf)
   {
-    if(!(write_buf = calloc(1, SIZE_BUFSIZE*sizeof(char)))) return -1;
+    if(!(write_buf = calloc(1, C->TRBufferSize*sizeof(char)))) return -1;
     write_ptr = write_buf;
   }
 
@@ -1388,7 +1503,7 @@ static int TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags)
 
   // if we haven`t enough space in our buffer,
   // lets flush it first
-  if(write_cnt >= SIZE_BUFSIZE || hasTCP_ONLYFLUSH(flags))
+  if(write_cnt >= C->TRBufferSize || hasTCP_ONLYFLUSH(flags))
   {
     again:
 
@@ -1418,9 +1533,9 @@ static int TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags)
 
   // if the string we want to copy into the buffer
   // wouldn`t fit, we copy as many as we can and clear the buffer
-  if(write_cnt+maxlen > SIZE_BUFSIZE)
+  if(write_cnt+maxlen > C->TRBufferSize)
   {
-    int fillable = SIZE_BUFSIZE-write_cnt;
+    int fillable = C->TRBufferSize-write_cnt;
 
     memcpy(write_ptr, ptr, fillable);
 

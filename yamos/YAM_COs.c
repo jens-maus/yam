@@ -145,10 +145,12 @@ static int MapTZ(int value, BOOL forward)
 void CO_SaveConfig(struct Config *co, char *fname)
 {
    FILE *fh;
-   int i;
 
-   if ((fh = fopen(fname, "w")))
+   if((fh = fopen(fname, "w")))
    {
+      int i;
+      char buf[SIZE_LARGE];
+
       fprintf(fh, "YCO3 - YAM Configuration\n");
 
       fprintf(fh, "\n[First steps]\n");
@@ -342,8 +344,10 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "\n[Scripts]\n");
       for (i = 0; i < MAXRX; i++)
       {
-         if (i < 10)
+         if(i < 10)
+         {
            fprintf(fh, "Rexx%02d.Name      = %s\n", i, co->RX[i].Name);
+         }
          fprintf(fh, "Rexx%02d.Script    = %s\n", i, co->RX[i].Script);
          fprintf(fh, "Rexx%02d.IsAmigaDOS= %s\n", i, Bool2Txt(co->RX[i].IsAmigaDOS));
          fprintf(fh, "Rexx%02d.UseConsole= %s\n", i, Bool2Txt(co->RX[i].UseConsole));
@@ -385,6 +389,28 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "StackSize        = %d\n", co->StackSize);
       fprintf(fh, "PrintMethod      = %d\n", co->PrintMethod);
       fprintf(fh, "AutoColumnResize = %s\n", Bool2Txt(co->AutoColumnResize));
+
+      // prepare the socket option string
+      buf[0] = '\0'; // clear it first
+      if(co->SocketOptions.KeepAlive)   strcat(buf, " SO_KEEPALIVE");
+      if(co->SocketOptions.NoDelay)     strcat(buf, " TCP_NODELAY");
+      if(co->SocketOptions.LowDelay)    strcat(buf, " IPTOS_LOWDELAY");
+      if(co->SocketOptions.SendBuffer > -1)
+        sprintf(&buf[strlen(buf)], " SO_SNDBUF=%ld", co->SocketOptions.SendBuffer);
+      if(co->SocketOptions.RecvBuffer > -1)
+        sprintf(&buf[strlen(buf)], " SO_RCVBUF=%ld", co->SocketOptions.RecvBuffer);
+      if(co->SocketOptions.SendLowAt > -1)
+        sprintf(&buf[strlen(buf)], " SO_SNDLOWAT=%ld", co->SocketOptions.SendLowAt);
+      if(co->SocketOptions.RecvLowAt > -1)
+        sprintf(&buf[strlen(buf)], " SO_RCVLOWAT=%ld", co->SocketOptions.RecvLowAt);
+      if(co->SocketOptions.SendTimeOut > -1)
+        sprintf(&buf[strlen(buf)], " SO_SNDTIMEO=%ld", co->SocketOptions.SendTimeOut);
+      if(co->SocketOptions.RecvTimeOut > -1)
+        sprintf(&buf[strlen(buf)], " SO_RCVTIMEO=%ld", co->SocketOptions.RecvTimeOut);
+
+      fprintf(fh, "SocketOptions    =%s\n", buf);
+      fprintf(fh, "TRBufferSize     = %d\n", co->TRBufferSize);
+
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
    }
@@ -700,6 +726,60 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
                else if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
                else if (!stricmp(buffer, "AutoColumnResize")) co->AutoColumnResize = Txt2Bool(value);
+               else if (!stricmp(buffer, "SocketOptions"))
+               {
+                  // Now we have to identify the socket option line
+                  // and we to that by tokenizing it
+                  char *tok = strtok(value, " ");
+                  while(tok)
+                  {
+                    if(stricmp(tok, "SO_KEEPALIVE") == 0)
+                    {
+                      co->SocketOptions.KeepAlive = TRUE;
+                    }
+                    else if(stricmp(tok, "TCP_NODELAY") == 0)
+                    {
+                      co->SocketOptions.NoDelay = TRUE;
+                    }
+                    else if(stricmp(tok, "IPTOS_LOWDELAY") == 0)
+                    {
+                      co->SocketOptions.LowDelay = TRUE;
+                    }
+                    else if(strnicmp(tok, "SO_SNDBUF", 9) == 0)
+                    {
+                      char *p = strchr(tok, '=');
+                      if(p) co->SocketOptions.SendBuffer = atoi(p+1);
+                    }
+                    else if(strnicmp(tok, "SO_RCVBUF", 9) == 0)
+                    {
+                      char *p = strchr(tok, '=');
+                      if(p) co->SocketOptions.RecvBuffer = atoi(p+1);
+                    }
+                    else if(strnicmp(tok, "SO_SNDLOWAT", 11) == 0)
+                    {
+                      char *p = strchr(tok, '=');
+                      if(p) co->SocketOptions.SendLowAt = atoi(p+1);
+                    }
+                    else if(strnicmp(tok, "SO_RCVLOWAT", 11) == 0)
+                    {
+                      char *p = strchr(tok, '=');
+                      if(p) co->SocketOptions.RecvLowAt = atoi(p+1);
+                    }
+                    else if(strnicmp(tok, "SO_SNDTIMEO", 11) == 0)
+                    {
+                      char *p = strchr(tok, '=');
+                      if(p) co->SocketOptions.SendTimeOut = atoi(p+1);
+                    }
+                    else if(strnicmp(tok, "SO_RCVTIMEO", 11) == 0)
+                    {
+                      char *p = strchr(tok, '=');
+                      if(p) co->SocketOptions.SendBuffer = atoi(p+1);
+                    }
+
+                    tok = strtok(NULL, " ");
+                  }
+               }
+               else if (!stricmp(buffer, "TRBufferSize")) co->TRBufferSize = atoi(value);
             }
          }
          fclose(fh);

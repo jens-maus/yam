@@ -33,6 +33,12 @@
 #ifndef _NETINET_IN_H
 #include <netinet/in.h>
 #endif
+#ifndef _NETINET_IP_H
+#include <netinet/ip.h>
+#endif
+#ifndef _NETINET_TCP_H
+#include <netinet/tcp.h>
+#endif
 #ifndef _SYS_SOCKET_H
 #include <sys/socket.h>
 #endif

@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -48,7 +48,6 @@
 #define SIZE_RCPTS    4096
 #define SIZE_INTRO     200
 #define SIZE_PATTERN   160
-#define SIZE_BUFSIZE  4096  // receive and sendbuffer size for TCP/IP functions
 #define SIZE_PATHFILE  (SIZE_PATH+SIZE_FILE)
 #define SIZE_URL       (SIZE_HOST+SIZE_PATHFILE)
 

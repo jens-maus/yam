@@ -375,6 +375,7 @@ struct Config
    int   InfoBar;
    int   EmailCache;
    int   SMTP_Port;
+   int   TRBufferSize;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
@@ -436,6 +437,7 @@ struct Config
    struct MUI_PenSpec Color4thLevel;
    struct MUI_PenSpec ColorURL;
    struct RxHook      RX[MAXRX];
+   struct TRSocketOpt SocketOptions;
 
    char  RealName[SIZE_REALNAME];
    char  EmailAddress[SIZE_ADDRESS];

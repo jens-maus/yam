@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -700,6 +700,7 @@ void CO_SetDefaults(struct Config *co, int page)
 
       co->DaylightSaving = FALSE;
    }
+
    if (page == 1 || page < 0)
    {
       for (i = 0; i < MAXP3; i++) { if (co->P3[i]) free(co->P3[i]); co->P3[i] = NULL; }
@@ -711,6 +712,7 @@ void CO_SetDefaults(struct Config *co, int page)
       *co->SMTP_AUTH_User = *co->SMTP_AUTH_Pass = 0;
       co->P3[0] = CO_NewPOP3(co, TRUE); co->P3[0]->DeleteOnServer = TRUE;
    }
+
    if (page == 2 || page < 0)
    {
       co->AvoidDuplicates = FALSE;
@@ -722,10 +724,12 @@ void CO_SetDefaults(struct Config *co, int page)
       co->NotifyType = 1;
       *co->NotifySound = *co->NotifyCommand = 0;
    }
+
    if (page == 3 || page < 0)
    {
       for (i = 0; i < MAXRU; i++) { if (co->RU[i]) free(co->RU[i]); co->RU[i] = NULL; }
    }
+
    if (page == 4 || page < 0)
    {
       for (i = 0; i < MAXMV; i++) { if (co->MV[i]) free(co->MV[i]); co->MV[i] = NULL; }
@@ -744,6 +748,7 @@ void CO_SetDefaults(struct Config *co, int page)
       *co->TranslationIn = 0;
 
    }
+
    if (page == 5 || page < 0)
    {
       *co->ReplyTo = *co->Organization = *co->ExtraHeaders = *co->TranslationOut = 0;
@@ -756,6 +761,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->LaunchAlways = FALSE;
       co->EmailCache = 10;
    }
+
    if (page == 6 || page < 0)
    {
       strcpy(co->ReplyHello, "Hello %f\\n");
@@ -774,12 +780,14 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->QuoteText, ">");
       strcpy(co->AltQuoteText, "|");
    }
+
    if (page == 7 || page < 0)
    {
       co->UseSignature = FALSE;
       strmfp(co->TagsFile, G->ProgDir, ".taglines");
       strcpy(co->TagsSeparator, "%%");
    }
+
    if (page == 8 || page < 0)
    {
       co->FolderCols = 1+2+16;
@@ -790,6 +798,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->InfoBar = IB_POS_CENTER;
       strcpy(co->InfoBarText, GetStr(MSG_CO_InfoBarDef));
    }
+
    if (page == 9 || page < 0)
    {
       G->PGPVersion = 0;
@@ -807,12 +816,14 @@ void CO_SetDefaults(struct Config *co, int page)
       co->LogfileMode = 1;
       co->SplitLogfile = FALSE;
    }
+
    if (page == 10 || page < 0)
    {
       co->GetOnStartup = co->SendOnStartup = co->LoadAllFolders = co->SendOnQuit = FALSE;
       co->CleanupOnStartup = co->RemoveOnStartup = FALSE;
       co->UpdateNewMail = co->CheckBirthdates = co->CleanupOnQuit = co->RemoveOnQuit = TRUE;
    }
+
    if (page == 11 || page < 0)
    {
       co->MV[0] = CO_NewMimeView();
@@ -822,6 +833,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->DetachDir, "RAM:");
       strcpy(co->AttachDir, "RAM:");
    }
+
    if (page == 12 || page < 0)
    {
       strcpy(co->GalleryDir, "YAM:Gallery");
@@ -830,6 +842,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->AddToAddrbook = 0;
       co->AddrbookCols = 1+2+4;
    }
+
    if (page == 13 || page < 0)
    {
       for (i = 0; i < MAXRX; i++)
@@ -839,6 +852,7 @@ void CO_SetDefaults(struct Config *co, int page)
          co->RX[i].WaitTerm = TRUE;
       }
    }
+
    if (page == 14 || page < 0)
    {
       strcpy(co->TempDir, "T:");
@@ -855,6 +869,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->XPKPackEff = 50;
       co->XPKPackEncryptEff = 50;
    }
+
    if (page < 0)
    {
       co->LetterPart = 1;
@@ -869,6 +884,16 @@ void CO_SetDefaults(struct Config *co, int page)
       co->PrintMethod = PRINTMETHOD_DUMPRAW;
       co->StackSize = 40000;
       co->AutoColumnResize = TRUE;
+      co->SocketOptions.SendBuffer  = -1;
+      co->SocketOptions.RecvBuffer  = -1;
+      co->SocketOptions.SendLowAt   = -1;
+      co->SocketOptions.RecvLowAt   = -1;
+      co->SocketOptions.SendTimeOut = -1;
+      co->SocketOptions.RecvTimeOut = -1;
+      co->SocketOptions.KeepAlive   = FALSE;
+      co->SocketOptions.NoDelay     = FALSE;
+      co->SocketOptions.LowDelay    = FALSE;
+      co->TRBufferSize = 8192;
    }
 }
 
