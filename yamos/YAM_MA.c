@@ -1500,7 +1500,6 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
 
             for (i = 0; i < scnt; i++)
             {
-               DoMethod(G->App, MUIM_Application_InputBuffered);
                if (FI_DoComplexSearch(search[i], search[i]->Rule->Combine, search[i+MAXRU], mail))
                {
                   matches++;
@@ -1519,6 +1518,7 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
    }
    set(lv, MUIA_NList_Quiet, FALSE); G->AppIconQuiet = FALSE;
    DisplayStatistics(NULL, TRUE);
+
    if (G->RRs.Checked && mode == APPLY_USER)
    {
       sprintf(buf, GetStr(MSG_MA_FilterStats), G->RRs.Checked, G->RRs.Forwarded, G->RRs.Moved, G->RRs.Deleted);

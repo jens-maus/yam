@@ -1,5 +1,6 @@
 2001-10-19  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed enforcer hit that happened on a manual filter operation.
     * added ability to configurate the position of the new Infobar
       along with the ability to disable it completly.
     * changed catalog description for the new introduced size formats
