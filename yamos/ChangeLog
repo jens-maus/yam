@@ -7,6 +7,8 @@ $Source$
 
 2004-02-13  Jens Langner <Jens.Langner@light-speed.de>
 
+    * Makefile: modified and improved. Now it omits the compiler
+      command line and puts the object files in a separate directory.
     * OS4: final changes to get a first working native PPC version
       for AmigaOS4. Now it at least seems to popup the GUI and
       doesn't crash on exit anymore. Let's see if it also works
