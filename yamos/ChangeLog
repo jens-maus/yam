@@ -5,9 +5,9 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
-2003-10-03	AmiS <amis@amiga.org.ru>
-		* Debug.h, Makefile.MorphOS, YAM_debug.h, includes/extra.h: improved MorphOS
-			compilation.
+2003-10-03  AmiS <amis@amiga.org.ru>
+    * Debug.h, Makefile.MorphOS, YAM_debug.h, includes/extra.h: improved MorphOS
+      compilation.
 
 2003-09-28  AmiS <amis@amiga.org.ru>
     * YAM_RE.c: Added autodetection of russian codepages and
