@@ -321,6 +321,7 @@ BOOL     MatchTT(char *charset, struct TranslationTable *tt, BOOL in);
 void     MyAddTail(struct Mail **list, struct Mail *new);
 char *   MyStrChr(const char *s, int c);
 struct TempFile *OpenTempFile(char *mode);
+BOOL     AllFolderLoaded(void);
 BOOL     PFExists(char *path, char *file);
 void     PGPClearPassPhrase(BOOL force);
 int      PGPCommand(char *progname, char *options, int flags);

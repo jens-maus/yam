@@ -67,6 +67,9 @@ enum FolderType { FT_CUSTOM=0, FT_INCOMING, FT_OUTGOING, FT_SENT, FT_DELETED, FT
 // SetOrder enum
 enum SetOrder   { SO_SAVE=0, SO_RESET };
 
+// LoadedMode enum (if folder index is valid/flushed or unloaded)
+enum LoadedMode { LM_UNLOAD=0, LM_FLUSHED, LM_VALID };
+
 // XPKType flags and macros
 #define XPK_OFF         0
 #define XPK_CRYPT       1
@@ -99,13 +102,13 @@ struct Folder
    int             Stats;
    int             MaxAge;
    int             LastActive;
-   int             LoadedMode;
    int             SortIndex;
    int             Open;
    int             ImageIndex;
    int             XPKType;
 
    enum FolderType Type;
+   enum LoadedMode LoadedMode;
 
    char            Name[SIZE_NAME];
    char            Path[SIZE_PATH];

@@ -134,21 +134,15 @@ static struct Mail *RE_GetAnswer(long id)
 //  Follows a thread in either direction
 HOOKPROTONHNO(RE_Follow, void, int *arg)
 {  
-   int i, direction = arg[0], winnum = arg[1];
-   struct Folder **flist;
+   int direction = arg[0], winnum = arg[1];
    struct Mail *fmail = NULL;
-   BOOL allloaded = TRUE;
 
-   if ((flist = FO_CreateList()))
-   {
-      for (i = 1; i < (int)*flist; i++) if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_GROUP) allloaded = FALSE;
-      free(flist);
-   }
-   if (!allloaded)
+   if(!AllFolderLoaded())
    {
       STRPTR str = GetStr(MSG_RE_FollowThreadReq); // don`t remove, this is a SAS/C bug workaround !
       if(!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), str)) return;
    }
+
    if (direction == -1) fmail = RE_GetQuestion(G->RE[winnum]->Mail.cIRTMsgID);
    if (direction ==  1) fmail = RE_GetAnswer  (G->RE[winnum]->Mail.cMsgID);
    if (fmail)
@@ -495,10 +489,9 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    struct MailInfo *mi = GetMailInfo(mail);
    struct RE_ClassData *re = G->RE[winnum];
    struct RE_GUIData *gui;
-   struct Folder **flist, *folder = mail->Folder;
+   struct Folder *folder = mail->Folder;
    BOOL real = !isVirtualMail(mail);
    BOOL out = real ? isOutgoingFolder(folder) : FALSE;
-   BOOL allloaded = TRUE;
 
    /* Check if the window is still open,
     * needed for the "update readwindow after writewindow close" feature
@@ -533,22 +526,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    }
    if (real)
    {
-      if ((flist = FO_CreateList()))
-      {
-         int i;
-
-         for (i = 1; i <= (int)*flist; i++)
-         {
-            if (flist[i]->LoadedMode != 2 && flist[i]->Type != FT_GROUP)
-            {
-              allloaded = FALSE;
-              break;
-            }
-         }
-         free(flist);
-      }
-
-      if (allloaded && gui->TO_TOOLBAR)
+      if (AllFolderLoaded() && gui->TO_TOOLBAR)
       {
          DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 2, MUIV_Toolbar_Set_Ghosted, !RE_GetQuestion(mail->cIRTMsgID));
          DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 3, MUIV_Toolbar_Set_Ghosted, !RE_GetAnswer(mail->cMsgID));

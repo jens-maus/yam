@@ -398,7 +398,7 @@ static void MA_UpdateStatus(void)
    {
       for(i = 1; i <= (int)*flist; i++)
       {
-        if(!isOutgoingFolder(flist[i]) && flist[i]->LoadedMode == 2)
+        if(!isOutgoingFolder(flist[i]) && flist[i]->LoadedMode == LM_VALID)
         {
           BOOL updated = FALSE;
 
@@ -1507,7 +1507,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
       if (mail->Folder != fo)
       {
         G->RRs.Moved++;
-        if(fo->LoadedMode != 2 && isCryptedFolder(fo)) SET_FLAG(fo->Flags, FOFL_FREEXS);
+        if(fo->LoadedMode != LM_VALID && isCryptedFolder(fo)) SET_FLAG(fo->Flags, FOFL_FREEXS);
         MA_MoveCopy(mail, mail->Folder, fo, FALSE);
         return FALSE;
       }

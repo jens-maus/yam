@@ -7,6 +7,8 @@ $Source$
 
 2002-10-14  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c, YAM.c: reworked the index loading/rescanning
+      routines a bit to work a bit safer.
     * YAM_COg.c: changed Layout of NewMail/Download MUI group
       a bit and disabled the automatic ghosting of the WarnSize
       gadget to make more clear that this WarnSize is not only

@@ -1506,12 +1506,38 @@ BOOL DumpClipboard(FILE *out)
 ///
 /// IsFolderDir
 //  Checks if a directory is used as a mail folder
-BOOL IsFolderDir(char *dir)
+static BOOL IsFolderDir(char *dir)
 {
    char *filename = FilePart(dir);
    int i;
    for (i = 0; i < 4; i++) if (!stricmp(filename, FolderNames[i])) return TRUE;
    return (BOOL)(PFExists(dir, ".fconfig") || PFExists(dir, ".index"));
+}
+///
+/// AllFolderLoaded
+//  Checks if all folder index are correctly loaded
+BOOL AllFolderLoaded(void)
+{
+   BOOL allloaded = TRUE;
+   struct Folder **flist;
+
+   if((flist = FO_CreateList()))
+   {
+      int i;
+
+      for (i = 1; i < (int)*flist; i++)
+      {
+        if (flist[i]->LoadedMode != LM_VALID && flist[i]->Type != FT_GROUP)
+        {
+          allloaded = FALSE;
+          break;
+        }
+      }
+      free(flist);
+   }
+   else return FALSE;
+
+   return allloaded;
 }
 ///
 /// PFExists

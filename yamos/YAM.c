@@ -813,7 +813,10 @@ static void Initialise2(BOOL hidden)
       {
         MA_GetIndex(folder);
       }
-      else folder->LoadedMode = MA_LoadIndex(folder, FALSE);
+      else if(folder->LoadedMode != LM_VALID)
+      {
+        folder->LoadedMode = MA_LoadIndex(folder, FALSE);
+      }
 
       // if this folder hasn`t got any own folder image in the folder
       // directory and it is one of our standard folders we have to check which image we put in front of it

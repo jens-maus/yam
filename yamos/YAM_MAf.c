@@ -186,15 +186,15 @@ static char *MA_IndexFileName(struct Folder *folder)
 int MA_LoadIndex(struct Folder *folder, BOOL full)
 {
    FILE *fh;
-   int indexloaded = 0;
+   enum LoadedMode indexloaded = LM_UNLOAD;
    char buf[SIZE_LARGE];
+   BOOL corrupt = FALSE;
 
    DB( kprintf("Loading index for folder %s\n", folder->Name); )
 
    if ((fh = fopen(MA_IndexFileName(folder), "r")))
    {
       struct FIndex fi;
-      BOOL corrupt = FALSE;
 
       BusyText(GetStr(MSG_BusyLoadingIndex), folder->Name);
       fread(&fi, sizeof(struct FIndex), 1, fh);
@@ -204,7 +204,7 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
          folder->New    = fi.New;
          folder->Unread = fi.Unread;
          folder->Size   = fi.Size;
-         indexloaded++;
+         indexloaded = LM_FLUSHED;
 
          if (full)
          {
@@ -245,29 +245,28 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
                mail.Size = cmail.Size;
                AddMailToList(&mail, folder);
             }
-            if (corrupt) {
-               ClearMailList(folder, TRUE);
-/*
-If/when this is enabled, remove the "else".
-               MA_ScanMailBox(folder);
-               MA_SaveIndex(folder);
-*/
-            }
-            else {
-               indexloaded++;
-               CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
-            }
          }
       }
       BusyEnd;
       fclose(fh);
-
-      if (corrupt)
-      {
-         MA_ScanMailBox(folder);
-         MA_SaveIndex(folder);
-      }
    }
+
+   if(corrupt || indexloaded == LM_UNLOAD)
+   {
+     DB( kprintf("  corrupt or outdated .index file detected, %s\n", full ? "rebuilding..." : "skipping..."); )
+     ClearMailList(folder, TRUE);
+     if(full)
+     {
+        MA_ScanMailBox(folder);
+        if(MA_SaveIndex(folder)) indexloaded = LM_VALID;
+     }
+   }
+   else if(full)
+   {
+     indexloaded = LM_VALID;
+     CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
+   }
+
    return indexloaded;
 }
 
@@ -323,21 +322,18 @@ BOOL MA_SaveIndex(struct Folder *folder)
 //  Opens/unlocks a folder
 BOOL MA_GetIndex(struct Folder *folder)
 {
-   if (!folder) return FALSE;
-   if (folder->Type == FT_GROUP) return FALSE;
-   if (folder->LoadedMode != 2)
+   if (!folder || folder->Type == FT_GROUP) return FALSE;
+
+   if (folder->LoadedMode != LM_VALID)
    {
-      if(isCryptedFolder(folder) && *folder->Password)
-         if (!MA_PromptFolderPassword(folder, G->MA->GUI.WI)) return FALSE;
-      if (!MA_LoadIndex(folder, TRUE))
-      {
-         MA_ScanMailBox(folder);
-         MA_SaveIndex(folder);
-      }
+      if(isCryptedFolder(folder) && *folder->Password && !MA_PromptFolderPassword(folder, G->MA->GUI.WI))
+        return FALSE;
+
+      folder->LoadedMode = MA_LoadIndex(folder, TRUE);
       MA_ValidateStatus(folder);
-      folder->LoadedMode = 2;
    }
-   return TRUE;
+
+   return (BOOL)(folder->LoadedMode == LM_VALID);
 }
 
 ///
@@ -376,7 +372,7 @@ void MA_UpdateIndexes(BOOL initial)
          }
          else
          {
-            if (flist[i]->LoadedMode == 2 && isModified(flist[i])) MA_SaveIndex(flist[i]);
+            if (flist[i]->LoadedMode == LM_VALID && isModified(flist[i])) MA_SaveIndex(flist[i]);
          }
         }
       }
@@ -400,11 +396,11 @@ void MA_FlushIndexes(BOOL all)
       {
          fo = flist[i];
 
-         if ((fo->Type == FT_SENT || fo->Type == FT_CUSTOM || fo->Type == FT_CUSTOMSENT) && fo != actfo  && fo->LoadedMode == 2 && (all || isFreeAccess(fo)))
+         if ((fo->Type == FT_SENT || fo->Type == FT_CUSTOM || fo->Type == FT_CUSTOMSENT) && fo != actfo  && fo->LoadedMode == LM_VALID && (all || isFreeAccess(fo)))
          {
             if(isModified(fo)) MA_SaveIndex(fo);
             ClearMailList(fo, FALSE);
-            fo->LoadedMode = 1;
+            fo->LoadedMode = LM_FLUSHED;
             CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
          }
       }

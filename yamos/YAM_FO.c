@@ -1294,7 +1294,7 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
 
          // FIXME: Something seems to be wrong here !!
          if(oldxpk == newxpk || (newxpk > XPK_CRYPT && !XpkBase)) changed = FALSE;
-         else if(!isCryptedFolder(&folder) && isCryptedFolder(oldfolder) && oldfolder->LoadedMode != 2) changed = MA_PromptFolderPassword(&folder, gui->WI);
+         else if(!isCryptedFolder(&folder) && isCryptedFolder(oldfolder) && oldfolder->LoadedMode != LM_VALID) changed = MA_PromptFolderPassword(&folder, gui->WI);
          else if(isCryptedFolder(&folder) && !isCryptedFolder(oldfolder)) changed = FO_EnterPassword(&folder);
 
          if(isCryptedFolder(&folder) && isCryptedFolder(oldfolder)) strcpy(folder.Password, oldfolder->Password);
