@@ -1,0 +1,5811 @@
+; This Catalog Translation ".ct" file has been written using
+; ReCatIt Pro V1.00 (07.11.98) - By Fabio Rotondo
+;
+## version $VER: YAM.catalog 5.0 (25.05.02)
+## codeset 0
+## language greek
+;
+MSG_Folder
+Φάκελος
+;Folder
+;
+MSG_Message
+Μήνυμα
+;Message
+;
+MSG_Attachments
+Συννημένα
+;Attachments
+;
+MSG_Options
+Επιλογές
+;Options
+;
+MSG_Add
+_Νέο
+;_New
+;
+MSG_Del
+_Διαγραφή
+;_Delete
+;
+MSG_New
+Νέο
+;New
+;
+MSG_Open
+Άνοιγμα...
+;Open...
+;
+MSG_Append
+Προσάρτηση...
+;Append...
+;
+MSG_Save
+Αποθήκευση
+;Save
+;
+MSG_SaveAs
+Αποθήκευση ως...
+;Save as...
+;
+MSG_Print
+Εκτύπωση...
+;Print...
+;
+MSG_Edit
+Επεξεργασία...
+;Edit...
+;
+MSG_Display
+Εμφάνιση
+;Display
+;
+MSG_Filter
+Φίλτρο
+;Filter
+;
+MSG_Process
+Διεργασία
+;Process
+;
+MSG_Okay
+_Ok
+;_Okay
+;
+MSG_Use
+_Εφαρμογή
+;_Use
+;
+MSG_Cancel
+_Άκυρο
+;_Cancel
+;
+MSG_Yes
+_Ναι
+;_Yes
+;
+MSG_No
+_Όχι
+;_No
+;
+MSG_OkayReq
+*_Ok
+;*_Okay
+;
+MSG_OkayCancelReq
+*_Ok|_Άκυρο
+;*_Okay|_Cancel
+;
+MSG_YesNoReq
+*_Ναι|_Όχι
+;*_Yes|_No
+;
+MSG_ErrorReq
+Σφάλμα
+;Error
+;
+MSG_NewEntry
+- νέο -
+;- new -
+;
+MSG_Unnamed
+ανώνυμο
+;unnamed
+;
+MSG_Bytes
+bytes
+;bytes
+;
+MSG_Date
+Ημερομηνία
+;Date
+;
+MSG_Sender
+Αποστολέας
+;Sender
+;
+MSG_Recipient
+Παραλήπτης
+;Recipient
+;
+MSG_Subject
+Θέμα
+;Subject
+;
+MSG_Size
+Μέγεθος
+;Size
+;
+MSG_Status
+Κατάσταση
+;Status
+;
+MSG_FolderList
+Λίστα Φακέλων
+;Folder list
+;
+MSG_MessageList
+Λίστα Μηνυμάτων
+;Message list
+;
+MSG_Realname
+Πραγματικό όνομα
+;Real name
+;
+MSG_Filename
+Όνομα αρχείου
+;Filename
+;
+MSG_Alias
+Ψευδώνυμο
+;Alias
+;
+MSG_Description
+Περιγραφή
+;Description
+;
+MSG_DOB
+Ημερομηνία γέννησης
+;Date of birth
+;
+MSG_City
+Πόλη
+;City
+;
+MSG_Country
+Χώρα
+;Country
+;
+MSG_Street
+Οδός
+;Street
+;
+MSG_Phone
+Τηλέφωνο
+;Phone
+;
+MSG_Name
+Όνομα
+;Name
+;
+MSG_Email
+Διεύθυνση Email
+;Email address
+;
+MSG_Address
+Διεύθυνση
+;Address
+;
+MSG_ReturnAddress
+Διευθυνση επιστροφής
+;Return address
+;
+MSG_SenderRecpt
+Αποστολέας/παραλήπτης
+;Sender/recipient
+;
+MSG_MessageDate
+Ημερομηνία μηνύματος
+;Message date
+;
+MSG_Unread
+Μη αναγνωσμένο
+;Unread
+;
+MSG_Total
+Σύνολο
+;Total
+;
+MSG_From
+Από
+;From
+;
+MSG_To
+Προς
+;To
+;
+MSG_Default
+προεπιλογή
+;default
+;
+MSG_Columns
+Στήλες
+;Columns
+;
+MSG_Path
+Διαδρομή
+;Path
+;
+MSG_Directory
+Κατάλογος
+;Directory
+;
+MSG_Copyright1
+Open Source πακέτο E-mail για την Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2002 YAM Open Source Team
+;Open Source E-mail package for the Amiga\n\nCopyright © 1995-2000 Marcel Beck\nCopyright © 2000-2002 YAM Open Source Team
+;
+MSG_Version
+Έκδοση:
+;Version:
+;
+MSG_CompilationDate
+Ημερομηνία έκδοσης:
+;Compilation date:
+;
+MSG_Copyright2
+Το πρόγραμμα αυτό είναι δωρεάν. Μπορείτε να το διαδώσετε και/ή να το τροποποιήσετε σύμφωνα με τους όρους της GNU Public License. Για περισσότερες λεπτομέρειες δείτε τις οδηγίες.\n
+;This program is free software; you're welcome to distribute and/or modify it under the terms of the GNU Public License. See the enclosed documents for more details.\n
+;
+MSG_UsedSoftware
+\nΗ εφαρμογή αυτή χρησιμοποιεί το ακόλουθο λογισμικό τρίτων:\n
+;\nThis application uses the following third party software:\n
+;
+MSG_WebSite
+Τα τελευταία νέα περί του YAM μπορούν να βρεθούν στην ιστοσελίδα υποστήριξης \e5http://www.yam.ch/
+;The latest news about YAM can be found at the YAM Support Site at \e5http://www.yam.ch/
+;
+MSG_UserLogin
+Επιλέξτε το όνομά σας για είσοδο
+;Click your name to login
+;
+MSG_AppDescription
+SMTP/POP3 Client & Mailer για AmigaOS
+;SMTP/POP3 Client & Mailer for AmigaOS
+;
+MSG_ErrorStartup
+Σφάλμα κατά την εκκίνηση
+;Error during startup
+;
+MSG_Quit
+Έξοδος
+;Quit
+;
+MSG_ErrorLib
+Αδύνατο το άνοιγμα της βιβλιοθήκης '%s', έκδοσης %ld
+;Can't open library '%s', version %ld
+;
+MSG_LoadingConfig
+Φόρτωμα ρυθμίσεων...
+;Loading configuration...
+;
+MSG_CreatingGUI
+Δημιουργία περιβάλλοντος χρήστη...
+;Creating user interface...
+;
+MSG_ErrorMuiApp
+Αδύνατη η δημιουργία της εφαρμογής
+;Can't create application
+;
+MSG_RebuildIndices
+Ανακατασκευή δεικτών φακέλων...
+;Rebuilding folders' indices...
+;
+MSG_LoadingFolders
+Φόρτωμα φακέλων...
+;Loading folders...
+;
+MSG_LoadingABook
+Φόρτωμα βιβλίου διευθύνσεων...
+;Loading address book...
+;
+MSG_InitLibs
+Ενεργοποίηση βιβλιοθηκών και classes...
+;Initialising libraries and classes...
+;
+MSG_ErrorClasses
+Αδύνατη η δημιουργία ειδικών MUI classes
+;Can't create MUI custom classes
+;
+MSG_ErrorAslStruct
+Αδύνατη η κατανομή δομής ASL
+;Can't allocate ASL structure
+;
+MSG_ErrorTimer
+Αδύνατο το άνοιγμα της timer.device
+;Can't open timer.device
+;
+MSG_ErrorARexx
+Αδύνατη η δημιουργία θύρας ARexx
+;Can't create ARexx port
+;
+MSG_LoadingGFX
+Φόρτωμα γραφικών...
+;Loading graphics...
+;
+MSG_SendStartReq
+Ο φάκελος εξερχομένων περιέχει μηνύματα που δεν στάλθηκαν.\nΘέλετε να στείλετε τα μηνύματα αυτά τώρα;
+;The outgoing folder contains unsent mail.\nDo you want to send these messages now?
+;
+MSG_QuitYAMReq
+Θέλετε πραγματικά να κλείσετε το YAM?
+;Do you really want to quit YAM?
+;
+MSG_CTtextplain
+απλό κείμενο
+;plain text
+;
+MSG_CTtexthtml
+έγγραφο HTML
+;HTML document
+;
+MSG_CTtextaguide
+έγγραφο AmigaGuide
+;AmigaGuide document
+;
+MSG_CTapplicationoctetstream
+δυαδικό αρχείο
+;binary file
+;
+MSG_CTapplicationpostscript
+έγγραφο Postscript
+;Postscript document
+;
+MSG_CTapplicationrtf
+Μορφή Rich Text
+;Rich Text Format
+;
+MSG_CTapplicationlha
+αρχείο LhA
+;LhA archive
+;
+MSG_CTapplicationlzx
+αρχείο LZX
+;LZX archive
+;
+MSG_CTapplicationzip
+αρχείο ZIP
+;ZIP archive
+;
+MSG_CTapplicationamigaexe
+εκτελέσιμο Amiga
+;Amiga executable
+;
+MSG_CTimagejpeg
+εικόνα JPEG/JFIF
+;JPEG/JFIF picture
+;
+MSG_CTimagegif
+εικόνα GIF
+;GIF picture
+;
+MSG_CTimagepng
+εικόνα PNG
+;PNG picture
+;
+MSG_CTimagetiff
+εικόνα TIFF
+;TIFF picture
+;
+MSG_CTimageilbm
+εικόνα Amiga IFF-ILBM
+;Amiga IFF-ILBM picture
+;
+MSG_CTaudiobasic
+αρχείο ήχου UNIX
+;UNIX audio file
+;
+MSG_CTaudio8svx
+ήχος Amiga IFF-8SVX
+;Amiga IFF-8SVX audio
+;
+MSG_CTaudiowav
+ήχος Microsoft WAV
+;Microsoft WAV audio
+;
+MSG_CTvideompeg
+βίντεο MPEG stream
+;MPEG video stream
+;
+MSG_CTvideoquicktime
+βίντεο Apple QuickTime
+;Apple QuickTime video
+;
+MSG_CTvideoanim
+βίντεο Amiga IFF-ANIM
+;Amiga IFF-ANIM video
+;
+MSG_CTvideomsvideo
+βίντεο Microsoft AVI
+;Microsoft AVI video
+;
+MSG_CTmessagerfc822
+Μήνυμα E-mail
+;E-mail message
+;
+MSG_LOG_Started
+Το YAM ξεκίνησε
+;YAM started
+;
+MSG_LOG_Terminated
+Το YAM τερματίστηκε
+;YAM terminated
+;
+MSG_LOG_LoggedIn
+Συνδεμένος ως χρήστης '%s'
+;Logged in as user '%s'
+;
+MSG_LOG_LoggedInVerbose
+Συνδεμένος ως χρήστης '%s', χρησιμοποιώντας τις ρυθμίσεις '%s' και τον κατάλογο μηνυμάτων '%s'
+;Logged in as '%s', using configuration '%s' and mail directory '%s'
+;
+MSG_LOG_Deleting
+Διαγράφηκαν %ld μηνύματα στο φάκελο '%s'
+;Deleted %ld message(s) in folder '%s'
+;
+MSG_LOG_DeletingVerbose
+Διαγράφηκε το μήνυμα από '%s' περί '%s' στο φάκελο '%s'
+;Deleted message from '%s' about '%s' in folder '%s'
+;
+MSG_LOG_Moving
+Μετακινήθηκαν %ld μηνύματα από τον φάκελο '%s' στον '%s'
+;Moved %ld message(s) from folder '%s' to '%s'
+;
+MSG_LOG_MovingVerbose
+Μετακινήθηκε το μήνυμα από '%s' περί '%s' από τον φάκελο '%s' στον '%s'
+;Moved message from '%s' about '%s' from folder '%s' to '%s'
+;
+MSG_LOG_Copying
+Αντιγράφηκαν %ld μηνύματα από τον φάκελο '%s' στον '%s'
+;Copied %ld message(s) from folder '%s' to '%s'
+;
+MSG_LOG_CopyingVerbose
+Αντιγράφηκε το μήνυμα από '%s' περί '%s' από τον φάκελο '%s' στον '%s'
+;Copied message from '%s' about '%s' from folder '%s' to '%s'
+;
+MSG_LOG_ConnectPOP
+Έγινε σύνδεση στον λογαριασμό POP3 '%s@%s': %ld μηνύματα σε αναμονή
+;Logged in on POP3 account '%s@%s': %ld messages waiting
+;
+MSG_LOG_RetrievingVerbose
+Έγινε λήψη του μηνύματος από '%s' περί '%s' (%ld bytes)
+;Retrieved message from '%s' about '%s' (%ld bytes)
+;
+MSG_LOG_Retrieving
+Λήφθηκαν %ld μηνύματα από το λογαριασμό POP3 '%s@%s'
+;Retrieved %ld message(s) from POP3 account '%s@%s'
+;
+MSG_LOG_ConnectSMTP
+Έγινε σύνδεση στο διακομιστή SMTP '%s'
+;Connected to SMTP server '%s'
+;
+MSG_LOG_SendingVerbose
+Έγινε αποστολή μηνύματος στο '%s' περί '%s' (%ld bytes)
+;Sent message to '%s' about '%s' (%ld bytes)
+;
+MSG_LOG_Sending
+Έγινε αποστολή %ld μηνυμάτων με χρήση διακομιστή SMTP '%s'
+;Sent %ld message(s) using SMTP server '%s'
+;
+MSG_LOG_Editing
+Έγινε επεξεργασία του μηνύματος από '%s' σε '%s' περί '%s'
+;Edited message from '%s' to '%s' about '%s'
+;
+MSG_LOG_Creating
+Δημιουργία νέου μηνύματος για '%s' περί '%s', που συμπεριλαμβάνει %ld συννημένα
+;Wrote new message for '%s' about '%s', including %ld attachment(s)
+;
+MSG_LOG_Replying
+Απάντηση μηνύματος από '%s' περί '%s'
+;Replied message from '%s' about '%s'
+;
+MSG_LOG_Bouncing
+Επιστροφή μηνύματος από '%s' περί '%s' σε '%s'
+;Bounced message from '%s' about '%s' to '%s'
+;
+MSG_LOG_Forwarding
+Προώθηση μηνύματος από '%s' περί '%s' σε '%s'
+;Forwarded message from '%s' about '%s' to '%s'
+;
+MSG_LOG_Filtering
+Φιλτράρισμα %ld μηνυμάτων στο φάκελο '%s': %ld ταιριάζουν
+;Filtered %ld message(s) in folder '%s': %ld match(es)
+;
+MSG_LOG_SavingConfig
+Αποθήκευση αρχείου ρυθμίσεων '%s'
+;Saved configuration file '%s'
+;
+MSG_LOG_SavingABook
+Αποθήκευση βιβλίου διευθύνσεων '%s'
+;Saved address book '%s'
+;
+MSG_LOG_SavingUsers
+Έγινε αποθήκευση ρυθμίσεων χρήστη
+;Saved user configuration
+;
+MSG_LOG_NewAddress
+Έγινε προσθήκη εγγραφής '%s' στο βιβλίο διευθύνσεων
+;Added address book entry '%s'
+;
+MSG_LOG_Importing
+Έγινε εισαγωγή %ld μηνυμάτων από το αρχείο '%s' στο φάκελο '%s'
+;Imported %ld message(s) from file '%s' into folder '%s'
+;
+MSG_LOG_Exporting
+Έγινε εξαγωγή %ld μηνυμάτων από τον φάκελο '%s' στο αρχείο '%s'
+;Exported %ld message(s) from folder '%s' to file '%s'
+;
+MSG_LOG_SavingAtt
+Αποθήκευση συννημένου '%s' του μηνύματος '%s' στο φάκελο '%s'
+;Saved attachment '%s' of message '%s' in folder '%s'
+;
+MSG_LOG_CroppingAtt
+Έγινε αποκοπή συννημένων του μηνύματος '%s' στο φάκελο '%s'
+;Cropped attachment(s) of message '%s' in folder '%s'
+;
+MSG_LOG_ChangingSubject
+Αλλαγή θέματος '%s' του μηνύματος '%s' στο φάκελο '%s' του '%s'
+;Changed subject '%s' of message '%s' in folder '%s' to '%s'
+;
+MSG_UT_Save
+Αποθήκευση
+;Save
+;
+MSG_UT_Load
+Φόρτωμα
+;Load
+;
+MSG_UT_PGPPassReq
+Παρακαλώ εισάγετε το συνθηματικό του PGP σας:
+;Please enter your PGP pass phrase:
+;
+MSG_UT_AppStats
+
+;MSG_UT_AppStats (//)
+;
+MSG_UT_NoPrinter
+Δεν υπάρχει εκτυπωτής ή ο εκτυπωτής είναι offline!
+;No printer or printer offline!
+;
+MSG_UT_NoPaper
+Τελείωσε το χαρτί!
+;Out of paper!
+;
+MSG_MA_GetFolderPass
+Ο Φάκελος '%s' είναι προστατευμένος.\nΠαρακαλώ εισάγετε τον κωδικό για να τον ξεκλειδώσετε:
+;Folder '%s' is a protected folder.\nPlease enter the password to unlock it:
+;
+MSG_MA_LatestVersion
+Τελευταία έκδοση: %s (%2ld.%02ld.%ld)\nΗ έκδοσή σας: %s (%s)\n\n%s
+;Latest version: %s (%2ld.%02ld.%ld)\nThis version: %s (%s)\n\n%s
+;
+MSG_MA_NewVersion
+\e8Μια νέα έκδοση είναι διαθέσιμη στην ιστοσελίδα του YAM!
+;\e8A new version is available at the YAM homepage!
+;
+MSG_MA_NoNewVersion
+Χρησιμοποιείτε ήδη την τελευταία έκδοση.
+;You're already using the latest version.
+;
+MSG_MA_VersionReqOpt
+_Επίσκεψη ιστοσελίδας|*_Άκυρο
+;_Visit homepage|*_Cancel
+;
+MSG_MA_ReplyReq
+Το επιλεγμένο μήνυμα έχει πολλαπλούς παραλήπτες.\nΘέλετε να στείλετε την απάντηση...
+;The selected message has multiple recipients.\nDo you want to send the reply...
+;
+MSG_MA_ReplyReqOpt
+*...στον\n_αποστολέα|...στον αποστολέα και\n_όλους τους παραλήπτες|...στους\n_παραλήπτες|_Ακύρωση
+;*...to the\n_sender|...to the sender and\n_all recipients|...to the\n_recipients|_Cancel
+;
+MSG_MA_CompareReq
+Η διεύθυνση αποστολέα (From) είναι <%s>, αλλά\nη διεύθυνση επιστροφής (Reply-To) είναι <%s>.\nΠοιά διεύθυνση θέλετε να χρησιμοποιήσετε;
+;Sender address (From) is <%s>, but\nreturn address (Reply-To) is <%s>.\nWhich address do you want to use?
+;
+MSG_MA_Compare3ReqOpt
+_Από|*_Reply-To|_Και τις δύο|_Άκυρο
+;_From|*_Reply-To|_Both|_Cancel
+;
+MSG_MA_Compare2ReqOpt
+_Από|*_Reply-To|_Άκυρο
+;_From|*_Reply-To|_Cancel
+;
+MSG_MA_AttachRemoved
+\n_Τα ακόλουθα συννημένα έχουν αφαιρεθεί χειροκίνητα:_\n
+;\n_The following attachments have been removed manually:_\n
+;
+MSG_MA_ConfirmReq
+Παρακαλώ επιβεβαιώστε...
+;Please confirm...
+;
+MSG_MA_ConfirmDel
+Παρακαλώ επιβεβαιώστε τη διαγραφή.
+;Please confirm deletion.
+;
+MSG_MA_1Selected
+Ένα μήνυμα έχει επιλεγεί.\n
+;One message selected.\n
+;
+MSG_MA_xSelected
+%lD μηνύματα έχουν επιλεγεί.\n
+;%lD messages selected.\n
+;
+MSG_MA_ConfirmFilter
+Είναι εντάξει να φιλτραριστούν όλα τα μηνύματα\nστο φάκελο '%s'?
+;Is it okay to filter all the messages\nin the folder '%s'?
+;
+MSG_MA_FilterStats
+Τέλος φιλτραρίσματος:\n%3ld μηνύματα ελέγχθηκαν,\n%3ld προωθήθηκαν,\n%3ld αρχειοθετήθηκαν,\n%3ld διαγράφηκαν
+;Filtering done:\n%3ld messages checked,\n%3ld forwarded,\n%3ld archived,\n%3ld deleted
+;
+MSG_MA_ExportAppendReq
+Το αρχείο εξόδου υπάρχει ήδη. Θέλετε να το\nδιαγράψετε ή να προσαρτήσετε τα μηνύματα;
+;The output file already exists. Do you want\nto overwrite it or append the messages?
+;
+MSG_MA_ExportAppendOpts
+*_Διαγραφή|_Προσάρτηση|_Άκυρο
+;*_Overwrite|_Append|_Cancel
+;
+MSG_MA_MoveMsg
+Μετακίνηση μηνυμάτων
+;Move message(s)
+;
+MSG_MA_MoveMsgReq
+Παρακαλώ επιλέξτε ένα φάκελο προορισμού:
+;Please select a destination folder:
+;
+MSG_MA_MoveGad
+_Mετακίνηση
+;_Move
+;
+MSG_MA_CopyMsg
+Αντιγραφή μηνυμάτων
+;Copy message(s)
+;
+MSG_MA_CopyGad
+_Αντιγραφή
+;Cop_y
+;
+MSG_MA_ChangeSubjReq
+Εισάγετε ένα νέο θέμα:
+;Enter a new subject:
+;
+MSG_MA_All
+Όλα
+;All
+;
+MSG_MA_Cancel
+\ebΆκυρο
+;\ebCancel
+;
+MSG_MA_TitleStatus
+Κατάσταση
+;Status
+;
+MSG_MA_Scripts
+Scripts
+;Scripts
+;
+MSG_MA_ExecuteScript
+Εκτέλεση script...
+;Execute script...
+;
+MSG_MA_CheckSingle
+Έλεγχος ενός λογαριασμού
+;Check single account
+;
+MSG_MA_FolderInfo
+\ebΤρέχον φάκελος\en\nΌνομα: %s\nΔιαδρομή: %s\nΜέγεθος: %lD bytes\nΜηνύματα: %lD (%lD νέα, %lD μη αναγνωσμένα)
+;\ebCurrent folder\en\nName: %s\nPath: %s\nSize: %lD bytes\nMessages: %lD (%lD new, %lD unread)
+;
+MSG_MA_MessageInfo
+\ebΤρέχον μήνυμα\en\nΑπό: %s <%s>\nΠρος: %s <%s>\nΘέμα: %s\nΗμερομηνία: %s\nΌνομα αρχείου: %s\nΜέγεθος: %lD bytes
+;\ebCurrent message\en\nFrom: %s <%s>\nTo: %s <%s>\nSubject: %s\nDate: %s\nFilename: %s\nSize: %lD bytes
+;
+MSG_MA_WinTitle
+Amiga YAM %s  -  Χρήστης: %s
+;Amiga YAM %s  -  User: %s
+;
+MSG_MA_ToPrefix
+\ebΠρος: \en
+;\ebTo: \en
+;
+MSG_MA_Incoming
+Εισερχόμενα
+;Incoming
+;
+MSG_MA_Outgoing
+Εξερχόμενα
+;Outgoing
+;
+MSG_MA_Sent
+Απεσταλμένα
+;Sent
+;
+MSG_MA_Deleted
+Διεγραμμένα
+;Deleted
+;
+MSG_MA_Archived
+Αρχειοθετημένα
+;Archived
+;
+MSG_MA_TBRead
+_Ανάγνωση
+;Rea_d
+;
+MSG_MA_TBEdit
+_Επεξεργασία
+;_Edit
+;
+MSG_MA_TBMove
+_Mετακίνηση
+;_Move
+;
+MSG_MA_TBDelete
+_Διαγραφή
+;De_lete
+;
+MSG_MA_TBGetAddr
+_ΚατΔιεύθ
+;Ge_tAdd
+;
+MSG_MA_TBWrite
+_Nέο
+;_New
+;
+MSG_MA_TBReply
+Απά_ντηση
+;_Reply
+;
+MSG_MA_TBForward
+Π_ροώθηση
+;For_ward
+;
+MSG_MA_TBGetMail
+_Λήψη
+;_Get
+;
+MSG_MA_TBSendAll
+Απο_στολή
+;_Send
+;
+MSG_MA_TBFilter
+_Φίλτρο
+;F_ilter
+;
+MSG_MA_TBFind
+Ε_ύρεση
+;_Find
+;
+MSG_MA_TBAddrBook
+_Διευθ
+;_Addr
+;
+MSG_MA_TBConfig
+_Ρυθμίσεις
+;_Config
+;
+MSG_MA_Project
+Εργασία
+;Project
+;
+MSG_MA_About
+Περί YAM
+;About YAM
+;
+MSG_MA_AboutMUI
+Περί MUI...
+;About MUI...
+;
+MSG_MA_CheckVersion
+Έλεγχος έκδοσης
+;Check version
+;
+MSG_MA_LastErrors
+Εμφάνιση τελευταίου μηνύματος
+;Show last message
+;
+MSG_MA_Restart
+Επανεκκίνηση
+;Restart
+;
+MSG_MA_Hide
+H\000Απόκρυψη
+;H\000Hide
+;
+MSG_MA_Quit
+Q\000Έξοδος
+;Q\000Quit
+;
+MSG_MA_NewFolder
+Νέος φάκελος
+;New folder
+;
+MSG_MA_NewSeparator
+Νέο διαχωριστικό...
+;New separator...
+;
+MSG_MA_SortOrder
+Ταξινόμηση
+;Order
+;
+MSG_MA_OSave
+Αποθήκευση
+;Save
+;
+MSG_MA_Reset
+Επαναφορά
+;Reset
+;
+MSG_MA_Select
+Επιλογή
+;Select
+;
+MSG_MA_SelectAll
+L\000Όλα
+;L\000All
+;
+MSG_MA_SelectNone
+Κανένα
+;None
+;
+MSG_MA_SelectToggle
+Εναλλαγή
+;Toggle
+;
+MSG_MA_MSearch
+F\000Αναζήτηση...
+;F\000Search...
+;
+MSG_MA_MFilter
+I\000Φίλτρο
+;I\000Filter
+;
+MSG_MA_RemoveDeleted
+Z\000Άδειασμα απορριμάτων
+;Z\000Empty trash
+;
+MSG_MA_UpdateIndex
+U\000Ενημέρωση ευρετηρίου
+;U\000Update index
+;
+MSG_MA_FlushIndices
+Εκκαθάριση δεικτών
+;Flush indices
+;
+MSG_MA_ExportMessages
+Εξαγωγή...
+;Export...
+;
+MSG_MA_ImportMessages
+Εισαγωγή...
+;Import...
+;
+MSG_MA_MSendAll
+S\000Αποστολή μηνυμάτων στην ουρά
+;S\000Send queued mail
+;
+MSG_MA_Exchange
+X\000Ανταλλαγή μηνυμάτων
+;X\000Exchange mail
+;
+MSG_MA_MGetMail
+G\000Λήψη νέων μηνυμάτων
+;G\000Get new mail
+;
+MSG_MA_MRead
+D\000Ανάγνωση
+;D\000Read
+;
+MSG_MA_MEdit
+Επεξεργασία...
+;Edit...
+;
+MSG_MA_MDelete
+Διαγραφή
+;Delete
+;
+MSG_MA_MMove
+Μετακίνηση...
+;Move...
+;
+MSG_MA_MCopy
+Αντιγραφή...
+;Copy...
+;
+MSG_MA_Save
+Αποθήκευση...
+;Save...
+;
+MSG_MA_Crop
+Αποκοπή
+;Crop
+;
+MSG_MA_MReply
+Απάντηση...
+;Reply...
+;
+MSG_MA_MForward
+Προώθηση...
+;Forward...
+;
+MSG_MA_MBounce
+Επιστροφή...
+;Bounce...
+;
+MSG_MA_MGetAddress
+Αποθήκευση διεύθυνσης...
+;Save address...
+;
+MSG_MA_SetStatus
+Ορισμός κατάστασης σε
+;Set status to
+;
+MSG_MA_ToUnread
+[\000Μη αναγνωσμένο
+;[\000Unread
+;
+MSG_MA_ToRead
+]\000Αναγνωσμένο
+;]\000Read
+;
+MSG_MA_ToHold
+{\000Αναμονή
+;{\000Hold
+;
+MSG_MA_ToQueued
+}\000Σε ουρά
+;}\000Queued
+;
+MSG_MA_ChangeSubj
+Αλλαγή θέματος...
+;Change subject...
+;
+MSG_MA_MSend
+Αποστολή
+;Send
+;
+MSG_MA_Settings
+Ρυθμίσεις
+;Settings
+;
+MSG_MA_MAddrBook
+Βιβλίο Διευθύνσεων
+;Address Book
+;
+MSG_MA_MConfig
+Ρυθμίσεις
+;Configuration
+;
+MSG_MA_MUsers
+Χρήστες
+;Users
+;
+MSG_HELP_MA_BT_READ
+Εμφάνιση περιεχομένων\nεπιλεγμένου μηνύματος
+;Display contents of\nselected message
+;
+MSG_HELP_MA_BT_EDIT
+Τροποποίηση\nεπιλεγμένου μηνύματος
+;Modify the\nselected message
+;
+MSG_HELP_MA_BT_MOVE
+Μετακίνηση επιλεγμένων μηνυμάτων\nσε άλλο φάκελο
+;Move selected message(s)\nto another folder
+;
+MSG_HELP_MA_BT_DELETE
+Διαγραφή επιλεγμένων μηνυμάτων
+;Delete selected message(s)
+;
+MSG_HELP_MA_BT_GETADDRESS
+Αποθήκευση διεύθυνσης αποστολέα\nστο βιβλίο διευθύνσεων
+;Save sender's address\nin your address book
+;
+MSG_HELP_MA_BT_WRITE
+Σύνθεση νέου μηνύματος
+;Compose a new message
+;
+MSG_HELP_MA_BT_REPLY
+Απάντηση στο επιλεγμένο μήνυμα
+;Reply to selected message
+;
+MSG_HELP_MA_BT_FORWARD
+Προώθηση επιλεγμένου μηνύματος\nσε άλλο παραλήπτη
+;Forward selected message\nto another recipient
+;
+MSG_HELP_MA_BT_POPNOW
+Σύνδεση στον διακομιστή αλληλογραφίας\nκαι λήψη νέων μηνυμάτων
+;Connect to the mail server\nand download new messages
+;
+MSG_HELP_MA_BT_SENDALL
+Αποστολή μηνυμάτων σε ουρά\nστο φάκελο εξερχομένων
+;Send queued messages\nin the outgoing folder
+;
+MSG_HELP_MA_BT_FILTER
+Εφαρμογή φίλτρων σε όλα\nτα μηνύματα αυτού του φακέλου
+;Apply filters to all\nmessages in this folder
+;
+MSG_HELP_MA_BT_SEARCH
+Αναζήτηση στους φακέλους αλληλογραφίας σας
+;Search your mail folders
+;
+MSG_HELP_MA_BT_ABOOK
+Άνοιγμα βιβλίου διευθύνσεων
+;Open the address book
+;
+MSG_HELP_MA_BT_CONFIG
+Τροποποίηση ρυθμίσεων του YAM
+;Modify YAM's preferences
+;
+MSG_CO_SelectDir
+Παρακαλώ επιλέξτε έναν κατάλογο για τον νέο φάκελο:
+;Please select a directory for the new folder:
+;
+MSG_CO_ChangeFolderPass
+Εισάγετε ένα νέο κωδικό για αυτό το φάκελο:
+;Enter a new password for this folder:
+;
+MSG_CO_RetypePass
+Παρακαλώ ξαναγράψτε τον κωδικό:
+;Please re-type the password:
+;
+MSG_CO_ConfirmDelete
+Όλα τα μηνύματα σε αυτό το φάκελο θα χαθούν!\nΘέλετε πραγματικά να τον διαγράψετε;
+;All messages in this folder will be lost!\nDo you really want to delete it?
+;
+MSG_CO_InvalidConf
+Λανθασμένη ρύθμιση (λείπει το hostname\n ή η διεύθυνση email)\n\nΠαρακαλώ εισάγετε αυτά τα πεδία και προσπαθήστε πάλι!
+;Invalid configuration (missing hostname\n or email address)\n\nPlease fill in these fields and try again!
+;
+MSG_CO_ImportMIMEReq
+Εισαγωγή ρυθμίσεων από...
+;Import settings from...
+;
+MSG_CO_ImportMIMEGads
+*_MIME.prefs|m_ailcap|m_ime.types|_Άκυρο
+;*_MIME.prefs|m_ailcap|m_ime.types|_Cancel
+;
+MSG_CO_NewIntroDef
+Γειά σας,\\\\n
+;Hello,\\\\n
+;
+MSG_CO_AltRepIntroDef
+
+;MSG_CO_AltRepIntroDef (//)
+;
+MSG_CO_AltRepPatternDef
+
+;MSG_CO_AltRepPatternDef (//)
+;
+MSG_CO_ForwardIntroDef
+*** Αρχή προωθημένου μηνύματος ***\\\\n\\\\nΗμερομηνία: %d %t\\\\nΑπό: %n <%e>\\\\nΘέμα: %s\\\\n\\\\n--- Ακολουθεί το προωθημένο μήνυμα ---\\\\n\\\\n
+;*** Begin of forwarded message ***\\\\n\\\\nDate: %d %t\\\\nFrom: %n <%e>\\\\nSubject: %s\\\\n\\\\n--- Forwarded message follows ---\\\\n\\\\n
+;
+MSG_CO_ForwardFinishDef
+*** Τέλος προωθημένου μηνύματος ***\\\\n
+;*** End of forwarded message ***\\\\n
+;
+MSG_CO_GreetingsDef
+Φιλικούς χαιρετισμούς
+;Kind regards
+;
+MSG_CO_AltRepHelloDef
+
+;MSG_CO_AltRepHelloDef (//)
+;
+MSG_CO_AltRepByeDef
+
+;MSG_CO_AltRepByeDef (//)
+;
+MSG_CO_MLRepHelloDef
+
+;MSG_CO_MLRepHelloDef (//)
+;
+MSG_CO_MLRepIntroDef
+Στις %d,ο %n έγραψε:\\\\n
+;On %d, %n wrote:\\\\n
+;
+MSG_CO_MLRepByeDef
+Χαιρετισμούς
+;Regards
+;
+MSG_CO_LineBreak
+\\\\n  Αλλαγή γραμμής
+;\\\\n  Line break
+;
+MSG_CO_SenderName
+%n  Αρχικός αποστολέας: Όνομα
+;%n  Original sender: Name
+;
+MSG_CO_SenderFirstname
+%f  Αρχικός αποστολέας: Πρώτο όνομα
+;%f  Original sender: First name
+;
+MSG_CO_SenderAddress
+%e  Αρχικός αποστολέας: Διεύθυνση
+;%e  Original sender: Address
+;
+MSG_CO_SenderSubject
+%s  Αρχικό μήνυμα: Θέμα
+;%s  Original message: Subject
+;
+MSG_CO_SenderDate
+%d  Αρχικό μήνυμα: Ημερομηνία
+;%d  Original message: Date
+;
+MSG_CO_SenderTime
+%t  Αρχικό μήνυμα: Ώρα
+;%t  Original message: Time
+;
+MSG_CO_SenderDOW
+%w  Αρχικό μήνυμα: Ημέρα της εβδομάδας
+;%w  Original message: Day of week
+;
+MSG_CO_SenderMsgID
+%m  Αρχικό μήνυμα: ID Μηνύματος
+;%m  Original message: Message ID
+;
+MSG_CO_SenderInitials
+%i  Αρχικός αποστολέας: Αρχικά
+;%i  Original sender: Initials
+;
+MSG_CO_Sender2Initials
+%j  Αρχικός αποστολέας: Δύο αρχικά
+;%j  Original sender: Two initials
+;
+MSG_CO_RecptName
+%r  Παραλήπτης: Όνομα
+;%r  Recipient: Name
+;
+MSG_CO_RecptFirstname
+%v  Παραλήπτης: Πρώτο όνομα
+;%v  Recipient: First name
+;
+MSG_CO_RecptAddress
+%a  Παραλήπτης: Διεύθυνση
+;%a  Recipient: Address
+;
+MSG_CO_ORecptName
+%r  Αρχικός παραλήπτης: Όνομα
+;%r  Original recipient: Name
+;
+MSG_CO_ORecptFirstname
+%v  Αρχικός παραλήπτης: Πρώτο όνομα
+;%v  Original recipient: First name
+;
+MSG_CO_ORecptAddress
+%a  Αρχικός παραλήπτης: Διεύθυνση
+;%a  Original recipient: Address
+;
+MSG_CO_CompleteHeader
+%h  Ολόκληρη κεφαλίδα
+;%h  Complete header
+;
+MSG_CO_ArchiveName
+%a  Όνομα αρχείου
+;%a  Filename of archive
+;
+MSG_CO_ArchiveFiles
+%f  Αρχεία που θα αρχειοθετηθούν
+;%f  Files to be archived
+;
+MSG_CO_ArchiveFilelist
+%l  Λίστα ονομάτων αρχείων
+;%l  List containing filenames
+;
+MSG_CO_CrdFirstSteps
+Πρώτα βήματα
+;First steps
+;
+MSG_CO_CrdTCPIP
+TCP/IP
+;TCP/IP
+;
+MSG_CO_CrdNewMail
+Νέο μήνυμα
+;New mail
+;
+MSG_CO_CrdFilters
+Φίλτρα
+;Filters
+;
+MSG_CO_CrdRead
+Ανάγνωση
+;Read
+;
+MSG_CO_CrdWrite
+Εγγραφή
+;Write
+;
+MSG_CO_CrdReply
+Απάντηση
+;Reply
+;
+MSG_CO_CrdSignature
+Υπογραφή
+;Signature
+;
+MSG_CO_CrdLists
+Λίστες
+;Lists
+;
+MSG_CO_CrdMIME
+MIME
+;MIME
+;
+MSG_CO_CrdSecurity
+Ασφάλεια
+;Security
+;
+MSG_CO_CrdMixed
+Διάφορα
+;Miscellaneous
+;
+MSG_CO_CrdScripts
+ARexx
+;ARexx
+;
+MSG_CO_CrdStartQuit
+Εκκίνηση/Έξοδος
+;Start/Quit
+;
+MSG_CO_CrdABook
+Βιβλίο διευθύνσεων
+;Address book
+;
+MSG_CO_Save
+_Αποθήκευση
+;_Save
+;
+MSG_CO_Use
+_Χρήση
+;_Use
+;
+MSG_CO_Cancel
+_Άκυρο
+;_Cancel
+;
+MSG_CO_TZoneM12
+GMT-12  Νησιά Kwajalein
+;GMT-12  Kwajalein Islands
+;
+MSG_CO_TZoneM11
+GMT-11  Νησιά Midway, Σαμόα
+;GMT-11  Midway Islands, Samoa
+;
+MSG_CO_TZoneM10
+GMT-10  Χονολουλού, Ταϊτη
+;GMT-10  Honolulu, Tahiti
+;
+MSG_CO_TZoneM9
+GMT-9   Άνκοραζ
+;GMT-9   Anchorage
+;
+MSG_CO_TZoneM8
+GMT-8   Λος Άντζελες, Σαν Φρανσίσκο (PDT)
+;GMT-8   Los Angeles, San Francisco (PDT)
+;
+MSG_CO_TZoneM7
+GMT-7   Κάλγκαρι, Ντένβερ, Φοίνιξ (MDT)
+;GMT-7   Calgary, Denver, Phoenix (MDT)
+;
+MSG_CO_TZoneM6
+GMT-6   Σικάγο, Ντάλας, Μεξικό (CMT)
+;GMT-6   Chicago, Dallas, Mexico City (CMT)
+;
+MSG_CO_TZoneM5
+GMT-5   Λίμα, Μαϊάμι, Μοντρεάλ, Νέα Υόρκη (EST)
+;GMT-5   Lima, Miami, Montreal, New York (EST)
+;
+MSG_CO_TZoneM4
+GMT-4   Καράκας, Σαντιάγκο, Θουλή (ADT)
+;GMT-4   Caracas, Santiago, Thule (ADT)
+;
+MSG_CO_TZoneM3
+GMT-3   Μπουένος Άϊρες, Ρίο ντε Τζανέϊρο
+;GMT-3   Buenos Aires, Rio de Janeiro
+;
+MSG_CO_TZoneM2
+GMT-2   Ανατολική Βραζιλία
+;GMT-2   Brazil East
+;
+MSG_CO_TZoneM1
+GMT-1   Αζόρες
+;GMT-1   Azores
+;
+MSG_CO_TZone0
+GMT     Δουβλίνο, Λισαβόνα, Λονδίνο (GMT)
+;GMT     Dublin, Lisbon, London (GMT)
+;
+MSG_CO_TZone1
+GMT+1   Βερολίνο, Παρίσι, Μαδρίτη, Όσλο (MET)
+;GMT+1   Berlin, Paris, Madrid, Oslo (MET)
+;
+MSG_CO_TZone2
+GMT+2   Αθήνα, Κάϊρο, Ελσίνκι (EET)
+;GMT+2   Athens, Cairo, Helsinki (EET)
+;
+MSG_CO_TZone3
+GMT+3   Βαγδάτη, Κουβέϊτ, Μόσχα, Ναϊρόμπι
+;GMT+3   Baghdad, Kuwait, Moscow, Nairobi
+;
+MSG_CO_TZone4
+GMT+4   Ντουμπάϊ, Πορτ Λούϊς, Βικτώρια
+;GMT+4   Dubai, Port Louis, Victoria
+;
+MSG_CO_TZone5
+GMT+5   Ισλαμαμπάντ, Καράτσι
+;GMT+5   Islamabad, Karachi
+;
+MSG_CO_TZone6
+GMT+6   Άλμα-Άτα, Ντάκα, Τασκένδη
+;GMT+6   Alma-Ata, Dhaka, Tashkent
+;
+MSG_CO_TZone7
+GMT+7   Μπαγκόνγκ, Χανόι, Πνομ Πεν
+;GMT+7   Bangkok, Hanoi, Phnom Penh
+;
+MSG_CO_TZone8
+GMT+8   Χονγκ Κονγκ, Σαγκάϊ, Σιγκαπούρη (PST)
+;GMT+8   Hong Kong, Shanghai, Singapore (PST)
+;
+MSG_CO_TZone9
+GMT+9   Oσάκα, Σεούλ, Τόκυο
+;GMT+9   Osaka, Seoul, Tokyo
+;
+MSG_CO_TZone10
+GMT+10  Μελβούρνη, Σύδνεϋ, Βλάδιβοστοκ
+;GMT+10  Melbourne, Sydney, Vladivostok
+;
+MSG_CO_TZone11
+GMT+11  Nέα Καληδονία
+;GMT+11  New Caldonia
+;
+MSG_CO_TZone12
+GMT+12  Ώκλαντ, Ουέλλινγκτον
+;GMT+12  Auckland, Wellington
+;
+MSG_CO_MinConfig
+Ελάχιστες Ρυθμίσεις
+;Minimal configuration
+;
+MSG_CO_RealName
+_Πραγματικό όνομα
+;_Real name
+;
+MSG_CO_EmailAddress
+_Διεύθυνση Email
+;_Email address
+;
+MSG_CO_POPServer
+Διακομιστής POP_3
+;POP_3 server
+;
+MSG_CO_Password
+_Κωδικός
+;_Password
+;
+MSG_CO_TimeZone
+Ζώνη ώρας
+;Time zone
+;
+MSG_CO_DaylightSaving
+_Ρύθμιση για αλλαγή ώρας
+;_Add adjustment for daylight saving time
+;
+MSG_CO_SendMail
+Αποστολή μηνυμάτων (SMTP)
+;Send mail (SMTP)
+;
+MSG_CO_Server
+_Διακομιστής
+;Ser_ver
+;
+MSG_CO_Domain
+Do_main
+;Do_main
+;
+MSG_CO_Allow8bit
+Ο διακομιστής SMTP επιτρέπει _8bit
+;SMTP server allows _8bit
+;
+MSG_CO_ReceiveMail
+Λήψη μηνυμάτων (POP3)
+;Receive mail (POP3)
+;
+MSG_CO_POPUserID
+_ID Χρήστη
+;User _ID
+;
+MSG_CO_POPActive
+_Ενεργό
+;_Active
+;
+MSG_CO_DeleteServerMail
+Διαγραφή μηνυμάτων _στο διακομιστή
+;Delete mail _on server
+;
+MSG_CO_UseAPOP
+_Σύνδεση με χρήση APOP
+;_Login using APOP
+;
+MSG_CO_PSNever
+ποτέ
+;never
+;
+MSG_CO_PSLarge
+μεγάλα μηνύματα
+;large messages
+;
+MSG_CO_PSAlways
+πάντα
+;always
+;
+MSG_CO_PSAlwaysFast
+πάντα, μόνο μεγέθη
+;always, only sizes
+;
+MSG_CO_TWNever
+απόκρυψη πάντα
+;hide always
+;
+MSG_CO_TWAuto
+αυτόματα
+;automatic
+;
+MSG_CO_TWAlways
+εμφάνιση πάντα
+;show always
+;
+MSG_CO_Download
+Λήψη
+;Download
+;
+MSG_CO_AvoidDuplicates
+_Αποφυγή διπλότυπων
+;_Avoid duplicates
+;
+MSG_CO_TransferWin
+_Παράθυρο μεταφοράς
+;_Transfer window
+;
+MSG_CO_PreSelect
+_Προ-επιλογή
+;_Pre-selection
+;
+MSG_CO_UpdateStatus
+Ενημέρωση κατάστασης μηνυμάτων
+;Update m_essage status
+;
+MSG_CO_WarnSize1
+Όριο _μεγέθους
+;Size _limit
+;
+MSG_CO_WarnSize2
+kB
+;kB
+;
+MSG_CO_AutoOperation
+Αυτόματη λειτουργία
+;Automatic operation
+;
+MSG_CO_CheckMail
+Έλεγχος για νέα μηνύματα κάθε
+;Chec_k for new mail every
+;
+MSG_CO_Minutes
+λεπτά
+;minutes
+;
+MSG_CO_DownloadLarge
+_Λήψη μεγάλων μηνυμάτων
+;_Download large messages
+;
+MSG_CO_Notification
+Ειδοποίηση
+;Notification
+;
+MSG_CO_NotiReq
+_Παράθυρο αιτήματος
+;_Requester
+;
+MSG_CO_NotiSound
+Ήχος
+;S_ound
+;
+MSG_CO_NotiCommand
+Εντολή
+;Co_mmand
+;
+MSG_CO_Name
+Όνομα
+;N_ame
+;
+MSG_CO_CTNone
+όχι συνδυασμός
+;don't combine
+;
+MSG_CO_CTAnd
+και
+;and
+;
+MSG_CO_CTOr
+ή
+;or
+;
+MSG_CO_CTXor
+αποκλειστικό ή
+;exclusive or
+;
+MSG_CO_Comparison
+Σύγκριση
+;Comparison
+;
+MSG_CO_Action
+Πράξη
+;Action
+;
+MSG_CO_Remote
+Φίλτρο
+;Remote _filter
+;
+MSG_CO_ApplyToNew
+Εφαρμογή σε νέα μηνύματα
+;A_pply to new mail
+;
+MSG_CO_ApplyToSent
+Εφαρμογή σε απεσταλμένα μηνύματα
+;Apply to sent _mail
+;
+MSG_CO_ApplyOnReq
+Εφαρμογή με αίτηση
+;Apply on _request
+;
+MSG_CO_ActionBounce
+_Επιστροφή
+;_Bounce
+;
+MSG_CO_ActionForward
+_Προώθηση
+;_Forward
+;
+MSG_CO_ActionReply
+_Απάντηση
+;_Reply
+;
+MSG_CO_ActionExecute
+_Εκτέλεση
+;_Execute
+;
+MSG_CO_ActionPlay
+_Αναπαραγωγή ήχου
+;_Play sound
+;
+MSG_CO_ActionMove
+_Μετακίνηση
+;_Move
+;
+MSG_CO_ActionDelete
+Διαγραφή
+;De_lete
+;
+MSG_CO_ActionSkip
+Χωρίς λήψη
+;D_on't download
+;
+MSG_CO_HeadNone
+καθόλου
+;none
+;
+MSG_CO_HeadShort
+επιλεγμένα
+;selected
+;
+MSG_CO_HeadFull
+πλήρες
+;full
+;
+MSG_CO_SINone
+καθόλου
+;none
+;
+MSG_CO_SIFields
+μόνο δεδομένα
+;data only
+;
+MSG_CO_SIAll
+δεδομένα και εικόνα
+;data and image
+;
+MSG_CO_SLBlank
+κενή γραμμή
+;blank line
+;
+MSG_CO_SLDash
+δύο παύλες
+;two dashes
+;
+MSG_CO_SLBar
+διαχωριστική μπάρα
+;separator bar
+;
+MSG_CO_SLSkip
+χωρίς υπογραφή
+;no signature
+;
+MSG_CO_HeaderLayout
+Μορφή κεφαλίδας
+;Header layout
+;
+MSG_CO_BodyLayout
+Μορφή σώματος κειμένου
+;Message body layout
+;
+MSG_CO_OtherOptions
+Άλλες επιλογές
+;Other options
+;
+MSG_CO_WrapHeader
+Αναδίπλωση κεφαλίδας
+;_Wrap header
+;
+MSG_CO_OldQuotes
+Παλιές παραθέσεις
+;Old _quotes
+;
+MSG_CO_UseTextstyles
+Χρήση τύπων κειμένου
+;Use te_xtstyles
+;
+MSG_CO_Header
+_Κεφαλίδα
+;_Header
+;
+MSG_CO_SenderInfo
+Πληροφορίες αποστολέα
+;Sender _info
+;
+MSG_CO_SignatureSep
+Διαχωρισμός υπογρ.
+;Separate si_g.
+;
+MSG_CO_ColoredText
+Χρωματισμένο κείμενο
+;C_olored text
+;
+MSG_CO_MultiReadWin
+Πολλαπλά παράθυρα
+;_Multiple windows
+;
+MSG_CO_CharsetTrans
+Μετάφραση σετ χαρακτήρων
+;Charset _translation
+;
+MSG_CO_DisplayAll
+Εμφάνιση όλων των κειμένων
+;Display _all texts
+;
+MSG_CO_FixedFontEdit
+Χρήση σταθερής γραμματοσειράς
+;Use _fixed font
+;
+MSG_CO_MimeViewers
+Εφαρμογές MIME
+;MIME viewers
+;
+MSG_CO_MimeType
+Τύπος συννημένου
+;Attachment _type
+;
+MSG_CO_MimeCmd
+_Εφαρμογή εμφάνισης
+;_Viewer
+;
+MSG_CO_Extension
+Επέκταση
+;E_xtension
+;
+MSG_CO_DefaultViewer
+Προεπιλεγμένη εφαρμογή εμφ.
+;De_fault viewer
+;
+MSG_CO_IdentifyBin
+Αναγνώριση δυαδικών συννημένων
+;_Identify binary attachments
+;
+MSG_CO_MessageHeader
+Κεφαλίδα μηνύματος
+;Message header
+;
+MSG_CO_ReplyTo
+_Απάντηση Σε
+;_Reply to
+;
+MSG_CO_Organization
+_Oργανισμός
+;_Organization
+;
+MSG_CO_ExtraHeaders
+Επιπλέον κεφαλίδες
+;E_xtra headers
+;
+MSG_CO_MessageBody
+Σώμα κειμένου
+;Message body
+;
+MSG_CO_Welcome
+Φράση καλωσορίσματος
+;Welcome _phrase
+;
+MSG_CO_Greetings
+Φράση κλεισίματος
+;Closing p_hrase
+;
+MSG_CO_Editor
+Επεξεργαστής κειμένου
+;Editor
+;
+MSG_CO_WordWrap
+Αναδίπλωση λέξεων
+;_Word wrap
+;
+MSG_CO_EWOff
+όχι
+;off
+;
+MSG_CO_EWAsYouType
+κατά την πληκτρολόγηση
+;as you type
+;
+MSG_CO_EWBeforeSend
+πριν την αποστολή
+;before sending
+;
+MSG_CO_ExternalEditor
+_Eξωτερικός επεξεργαστής κειμένου
+;_External editor
+;
+MSG_CO_Launch
+_Εκκίνηση αμέσως
+;_Launch immediately
+;
+MSG_CO_PhraseOpen
+Άνοιγμα
+;Open
+;
+MSG_CO_PhraseIntro
+Εισαγωγή
+;Intro
+;
+MSG_CO_PhraseClose
+Κλείσιμο
+;Close
+;
+MSG_CO_Forwarding
+Προώθηση
+;Forwarding
+;
+MSG_CO_FwdInit
+_Αρχική φράση
+;_Initial phrase
+;
+MSG_CO_FwdFinish
+_Φράση τερματισμού
+;_Terminating phrase
+;
+MSG_CO_Replying
+Απάντηση
+;Replying
+;
+MSG_CO_RepInit
+Προεπιλεγμένη φράση απάντησης
+;Default _reply phrase
+;
+MSG_CO_AltRepInit
+Εναλλακτική φράση απάντησης
+;_Alternative reply phrase
+;
+MSG_CO_AltRepPat
+Χρήση με αυτά τα _domains
+;Use with these _domains
+;
+MSG_CO_MLRepInit
+_Φράση απάντησης σε Λίστα μηνυμάτων
+;_Mailing list reply phrase
+;
+MSG_CO_QuoteMail
+_Παράθεση μηνύματος με χρήση
+;_Quote message using
+;
+MSG_CO_QuoteEmpty
+Παράθεση κενών γραμμών
+;Quote _empty lines
+;
+MSG_CO_VerifyAddress
+_Επιβεβαίωση διεύθυνσης παραλήπτη
+;_Verify recipient address
+;
+MSG_CO_StripSignature
+Αποκοπή υπογραφής
+;Stri_p signature
+;
+MSG_CO_DefSig
+Προεπιλεγμένη υπογραφή
+;Default signature
+;
+MSG_CO_AltSig1
+Εναλ. υπογραφή #1
+;Alt. signature #1
+;
+MSG_CO_AltSig2
+Εναλ. υπογραφή #2
+;Alt. signature #2
+;
+MSG_CO_Signature
+Υπογραφή
+;Signature
+;
+MSG_CO_UseSig
+Χρήση υπογραφής
+;Use s_ignature
+;
+MSG_CO_EditSig
+_Επεξεργασία σε εξωτερική εφαρμογή
+;_Edit in external editor
+;
+MSG_CO_InsertTag
+Εισαγωγή τυχαίας tagline
+;Insert _random tagline
+;
+MSG_CO_InsertENV
+Εισαγωγή E_NV:Signature
+;Insert E_NV:Signature
+;
+MSG_CO_Taglines
+Taglines
+;Taglines
+;
+MSG_CO_TaglineFile
+Αρχείο Tagline
+;Tagline _file
+;
+MSG_CO_TaglineSep
+Διαχωριστής T_agline
+;T_agline separator
+;
+MSG_CO_FixedFontList
+Χρήση σταθερής γραμματοσειράς
+;Use _fixed font
+;
+MSG_CO_SwatchBeat
+Ώρα σε Swatch _Beats
+;Time in Swatch _Beats
+;
+MSG_CO_LogNone
+καθόλου
+;none
+;
+MSG_CO_LogNormal
+κανονικό
+;normal
+;
+MSG_CO_LogVerbose
+λεπτομερές
+;verbose
+;
+MSG_CO_PGPExe
+Κατάλογος PGP
+;P_GP's directory
+;
+MSG_CO_PGPKey
+Το κλειδί PGP ID σας
+;Your PGP key _ID
+;
+MSG_CO_EncryptToSelf
+Κρυπτογράφηση στον εαυτό
+;_Encrypt to self
+;
+MSG_CO_AnonMail
+Ανώνυμα μηνύματα
+;Anonymous mail
+;
+MSG_CO_ReMailer
+_Re-Mailer
+;_Re-Mailer
+;
+MSG_CO_ReMailerLine
+_Πεδίο Κεφαλίδας
+;_Header field
+;
+MSG_CO_Logfiles
+Αρχεία καταγραφής
+;Logfiles
+;
+MSG_CO_LogPath
+_Διαδρομή
+;_Path
+;
+MSG_CO_LogSplit
+Διαίρεση αρχείου καταγραφής
+;Split _logfile
+;
+MSG_CO_LogMode
+_Τύπος
+;_Mode
+;
+MSG_CO_LogAllEvents
+Καταγραφή όλων των γεγονότων
+;Log _all events
+;
+MSG_CO_OnStartup
+Στην εκκίνηση του προγράμματος
+;On program startup
+;
+MSG_CO_LoadAll
+Φόρτωμα όλων των φακέλων
+;Load all folders
+;
+MSG_CO_MarkNew
+Σημείωση νέων μηνυμάτων ως μη αναγνωσμένα
+;Mark new mail as unread
+;
+MSG_CO_SendStart
+Αποστολή μηνυμάτων στην ουρά εξερχομένων
+;Send mail in outgoing queue
+;
+MSG_CO_PopStart
+Λήψη νέων μηνυμάτων
+;Download new mail
+;
+MSG_CO_CheckDOB
+Έλεγχος ημερομηνίας γεννήσεων
+;Check birthdates
+;
+MSG_CO_OnTermination
+Στο τερματισμό του προγράμματος
+;On program termination
+;
+MSG_CO_DeleteOld
+Διαγραφή παλιών μηνυμάτων
+;Delete old mail
+;
+MSG_CO_RemoveDel
+Απαλοιφή διεγραμένων μηνυμάτων
+;Remove deleted mail
+;
+MSG_CO_ATABnever
+ποτέ
+;never
+;
+MSG_CO_ATABask
+ερώτηση πρώτα
+;ask before
+;
+MSG_CO_ATABinfoask
+εαν υπάρχει διαθέσιμη πληροφορία, ερώτηση
+;if info available; ask
+;
+MSG_CO_ATABinfo
+εάν υπάρχει διαθέσιμη πληροφορία
+;if info available
+;
+MSG_CO_ATABalways
+πάντα
+;always
+;
+MSG_CO_InfoExc
+Προσωπική ανταλλαγή δεδομένων
+;Personal data exchange
+;
+MSG_CO_Gallery
+Αποθήκευση φωτογραφιών σε
+;Save _photos in
+;
+MSG_CO_MyURL
+UR_L της φωτογραφίας σας
+;UR_L of your picture
+;
+MSG_CO_AddToAddrbook
+Αποθήκευση διεύθυνσης αποστολέα
+;Sa_ve sender's address
+;
+MSG_CO_ProxyServer
+Διακομιστής _HTTP Proxy
+;_HTTP Proxy server
+;
+MSG_CO_NewGroup
+Γκρουπ για νέες εγγραφές
+;_Group for new entries
+;
+MSG_CO_AddInfo
+Προσθήκη προσωπικών πληροφοριών
+;_Add personal info
+;
+MSG_CO_Paths
+Διαδρομές
+;Paths
+;
+MSG_CO_Detach
+Αποκωδικοποίηση αρχείων σε
+;D_ecode files to
+;
+MSG_CO_Attach
+Σύναψη αρχείων από
+;_Attach files from
+;
+MSG_CO_TempDir
+Κατάλογος για προσωρινά αρχεία
+;Directory for _tempfiles
+;
+MSG_CO_AppIcon
+AppIcon κατάστασης γραμματοκιβωτίου
+;Mailbox status AppIcon
+;
+MSG_CO_PositionX
+Θέση _X
+;Position _X
+;
+MSG_CO_CloseGadget
+Το κουμπί κλεισίματος εικονοποιεί την εφαρμογή
+;Close _gadget iconifies program
+;
+MSG_CO_SaveDelete
+Αποθήκευση/διαγραφή μηνυμάτων
+;Save/delete messages
+;
+MSG_CO_ConfirmDelPart1
+Επιβεβαίωση διαγραφής
+;Confirm _deletion of
+;
+MSG_CO_ConfirmDelPart2
+ή παραπάνω μηνυμάτων
+;or more messages
+;
+MSG_CO_Remove
+Απαλοιφή μηνυμάτων αμέσως
+;_Remove messages immediately
+;
+MSG_CO_SaveSent
+Αποθήκευση απεσταλμένων μηνυμάτων
+;Sa_ve sent messages
+;
+MSG_CO_DispIgnore
+Παράβλεψη
+;Ignore
+;
+MSG_CO_DispDeny
+Αυτόματη άρνηση
+;Autodeny
+;
+MSG_CO_DispAsk
+Ερώτηση
+;Ask user
+;
+MSG_CO_DispAccept
+Αποδοχή
+;Accept
+;
+MSG_CO_MDN
+Παρακολούθηση μηνυμάτων
+;Message tracking
+;
+MSG_CO_SendAtOnce
+Αποστολή αμέσως
+;Send at _once
+;
+MSG_CO_XPK
+Ρυθμίσεις XPK/LhA
+;XPK/LhA settings
+;
+MSG_CO_XPKPack
+_Συμπιεστής
+;_Packer
+;
+MSG_CO_XPKPackEnc
+Συμπίεση/προστασία
+;Pac_k/protect
+;
+MSG_CO_Archiver
+_Aρχειοθέτηση
+;_Archiver
+;
+MSG_CO_ScriptMenu
+'Scripts' καταχώρηση μενού %ld
+;'Scripts' menu entry %ld
+;
+MSG_CO_ScriptStartup
+Εκκίνηση προγράμματος
+;Program startup
+;
+MSG_CO_ScriptTerminate
+Τερματισμός προγράμματος
+;Program termination
+;
+MSG_CO_ScriptPreGetMail
+Πριν την λήψη μηνυμάτων
+;Before getting mail
+;
+MSG_CO_ScriptPostGetMail
+Μετά τη λήψη μηνυμάτων
+;After getting mail
+;
+MSG_CO_ScriptNewMsg
+Με κάθε νέο μήνυμα
+;With each new message
+;
+MSG_CO_ScriptPreSendMail
+Πριν την αποστολή μηνυμάτων
+;Before sending mail
+;
+MSG_CO_ScriptPostSendMail
+Μετά την αποστολή μηνυμάτων
+;After sending mail
+;
+MSG_CO_ScriptReadMsg
+Κατα την ανάγνωση μηνύματος
+;When reading a message
+;
+MSG_CO_ScriptPreWriteMsg
+Πριν την δημιουργία μηνύματος
+;Before writing a message
+;
+MSG_CO_ScriptPostWriteMsg
+Μετά την δημιουργία μηνύματος
+;After writing a message
+;
+MSG_CO_ScriptClickURL
+Όταν γίνεται διπλό-κλικ σε URL
+;When double-clicking an URL
+;
+MSG_CO_Script
+Sc_ript
+;Sc_ript
+;
+MSG_CO_OpenConsole
+Άνοιγμα παραθύρου κονσόλας
+;_Open console window
+;
+MSG_CO_WaitTerm
+Αναμονή για τερματισμό
+;_Wait for termination
+;
+MSG_CO_Open
+Άνοιγμα...
+;Open...
+;
+MSG_CO_SaveAs
+Αποθήκευση Ως...
+;Save as...
+;
+MSG_CO_Edit
+Επεξεργασία
+;Edit
+;
+MSG_CO_ResetDefaults
+Επαναφορά στα προεπιλεγμένα
+;Reset to defaults
+;
+MSG_CO_ResetAll
+Επαναφορά όλων των ρυθμίσεων
+;Reset all settings
+;
+MSG_CO_LastSaved
+Τελευταία αποθήκευση
+;Last saved
+;
+MSG_CO_Restore
+Επαναφορά
+;Restore
+;
+MSG_CO_Extras
+Επιπλέον
+;Extras
+;
+MSG_CO_ScanForFolders
+Έλεγχος για φακέλους
+;Scan for folders
+;
+MSG_CO_ImportMIME
+Εισαγωγή εφαρμογών και τύπων MIME...
+;Import MIME viewers & types...
+;
+MSG_HELP_CO_ST_REALNAME
+Το πλήρες όνομά σας\n(όνομα και επώνυμο)
+;Your full name\n(first name last name)
+;
+MSG_HELP_CO_ST_EMAIL
+Η διεύθυνση email σας.
+;Your email address.
+;
+MSG_HELP_CO_ST_POPHOST
+Η διεύθυνση του διακομιστή POP3 από όπου θα γίνεται η λήψη.\nΑν αφήσετε το πεδίο αυτό κενό, θα χρησιμοποιηθεί\nαυτή του διακομιστή SMTP.
+;The address of the POP3 server to receive mail from.\nIf you leave this field empty, then the address\nof the SMTP server is used.
+;
+MSG_HELP_CO_ST_PASSWD
+Κωδικός για την πρόσβαση\nστο διακομιστή αλληλογραφίας
+;Password to access\nthe mail server
+;
+MSG_HELP_CO_CY_TZONE
+Επιλογή της ζώνης ώρας\nτης τοποθεσίας σας
+;Select the timezone of\nyour current location
+;
+MSG_HELP_CO_CH_DLSAVING
+Προσαρμογή της ζώνης ώρας κατά τις\nαλλαγές ώρας (καλοκαιρινή ώρα)
+;Adjust the timezone during daylight\nsaving time (summer time)
+;
+MSG_HELP_CO_ST_SMTPHOST
+Η διεύθυνση του διακομιστή SMTP που θα γίνεται η αποστολή.\nΑν αφήσετε το πεδίο αυτό κενό,\nθα χρησιμοποιηθεί αυτή του διακομιστή POP3.
+;The address of the SMTP server to send mail to.\nIf you leave this field empty,\nthen the address of the POP3 server is used.
+;
+MSG_HELP_CO_ST_DOMAIN
+Το hostname της Amiga σας. Αλλάξτε αυτό\nτο πεδίο εάν η εντολή HELO αποτύχει.
+;The hostname of your Amiga. Change this\nfield if the HELO commands fails.
+;
+MSG_HELP_CO_CH_SMTP8BIT
+Να μην γίνεται μετατροπή μηνυμάτων σε 7bit κατά τη μεταφορά.\nΧρησιμοποιήστε αυτή την\nεπιλογή μόνο αν ο διακομιστής SMTP υποστηρίζει 8bit μεταφορές!\nΔιαφορετικά τα μηνύματά σας θα είναι αλοιωμένα.
+;Don't convert messages to 7bit when transfering.\nOnly use this option if your\nSMTP server supports 8bit transfers!\nOtherwise your messages will get corrupted.
+;
+MSG_HELP_CO_LV_POP3
+Λίστα των διακομιστών POP3
+;List of POP3 hosts
+;
+MSG_HELP_CO_BT_PADD
+Προσθήκη νέου διακομιστή POP3 στη λίστα
+;Add a new POP3 host to the list
+;
+MSG_HELP_CO_BT_PDEL
+Αφαίρεση επιλεγμένου διακομιστή POP3 από τη λίστα
+;Remove selected POP3 host from the list
+;
+MSG_HELP_CO_ST_POPUSERID
+Όνομα χρήση για τη σύνδεση στο διακομιστή POP3.\nΑν αφήσετε κενό αυτό το πεδίο, θα χρησιμοποιηθεί το\nόνομα χρήστη της διεύθυνσης email.
+;User name to log in on the POP3 server.\nIf you leave this field empty, then the user-ID\nwill be taken from your email address.
+;
+MSG_HELP_CO_CH_DELETE
+Διαγραφή μηνυμάτων από\nτο διακομιστή αλληλογραφίας\nμετά τη λήψη
+;Delete messages from\nmail server after\ndownloading
+;
+MSG_HELP_CO_CH_USEAPOP
+Σύνδεση με χρήση πιστοποίησης APOP
+;Login using APOP authentication
+;
+MSG_HELP_CO_CH_POPENABLED
+Σύνδεση σε αυτό το διακομιστή\nκατά τον έλεγχο νέας αλληλογραφίας
+;Connect to this server\nwhen checking for new mail
+;
+MSG_HELP_CO_CH_AVOIDDUP
+Αν δεν διαγράφετε τα παλιά μηνύματα\nστο διακομιστή, χρησιμοποιήστε αυτή\nτην επιλογή για την αποφυγή διπλότυπων μηνυμάτων.
+;If you don't delete old mail\non the server, use this option to\navoid duplicate messages.
+;
+MSG_HELP_CO_CH_TRANSWIN
+Εμφάνιση παραθύρου προόδου κατά την μεταφορά αλληλογραφίας
+;Show progress window during mail transfers
+;
+MSG_HELP_CO_CY_MSGSELECT
+Ενεργοποιήστε την επιλογή αυτή για να εμφανίσετε τα περιεχόμενα του\nγραμματοκιβωτίου POP3 και να επιτρέψετε την επιλογή των μηνυμάτων πριν τη λήψη
+;Enable this option to show the contents of the POP3 mailbox\nand allow selection of the messages before downloading
+;
+MSG_HELP_CO_CH_UPDSTAT
+Σημείωση νέων μηνυμάτων στο φάκελο εισερχομένων\nως μη αναγνωσμένα πριν τη λήψη νέας αλληλογραφίας
+;Mark new messages in the incoming folder\nas unread before downloading new mail
+;
+MSG_HELP_CO_ST_WARNSIZE
+Τα εισερχόμενα μηνύματα που είναι μεγαλύτερα\nαπό αυτό το μέγεθος θα θεωρούνται μεγάλα.
+;Incoming messages which are bigger than this\nsize will be considered as large.
+;
+MSG_HELP_CO_ST_INTERVAL
+Πόσο συχνά θέλετε να ελέγχετε για νέα αλληλογραφία;\n(εισάγετε 0 ή τίποτα για να απενεργοποιήσετε την επιλογή);
+;How frequently do you want to check for new mail?\n(enter 0 or no value to disable this feature)?
+;
+MSG_HELP_CO_CH_DLLARGE
+Κατα τον αυτόματο έλεγχο νέας αλληλογραφίας,\nλήψη μεγάλων μηνυμάτων ακόμα και αν\nείναι μεγαλύτερα από το μέγεθος που ορίστηκε παραπάνω
+;When automatically checking for new mail,\ndownload large messages even if they are\nlarger than the size specified above
+;
+MSG_HELP_CO_CH_NOTIREQ
+Εμφάνιση παραθύρου αιτήματος\nόταν έχετε νέα αλληλογραφία
+;Show a requester\nwhen you get new mail
+;
+MSG_HELP_CO_ST_NOTICMD
+Το πρόγραμμα που θέλετε να\nεκτελείτε όταν έχετε νέα αλληλογραφία
+;The program you want to\nexecute when you get new mail
+;
+MSG_HELP_CO_ST_NOTISOUND
+Ο ήχος που θέλετε να ακούγεται\nόταν έχετε νέα αλληλογραφία
+;The sound file you want to play\nwhen you get new mail
+;
+MSG_HELP_CO_LV_RULES
+Λίστα φίλτρων
+;List of filters
+;
+MSG_HELP_CO_ST_RNAME
+Όνομα φίλτρου
+;Filter name
+;
+MSG_HELP_CO_CH_REMOTE
+Εφαρμογή του φίλτρου αυτού πριν τη λήψη μηνύματος
+;Apply this filter before downloading a message
+;
+MSG_HELP_CO_CH_APPLYNEW
+Εφαρμογή του φίλτρου αυτού στα νέα μηνύματα
+;Apply this filter to new messages
+;
+MSG_HELP_CO_CH_APPLYSENT
+Εφαρμογή του φίλτρου αυτού στα απεσταλμένα μηνύματα
+;Apply this filter to sent messages
+;
+MSG_HELP_CO_CH_APPLYREQ
+Εφαρμογή του φίλτρου αυτού όταν ενεργοποιείτε\nτην λειτουργία φίλτρου χειροκίνητα
+;Apply this filter when you activate\nthe filter function manually
+;
+MSG_HELP_CO_CY_COMBINE
+Πως να συνδυαστούν τα δύο\nκλειδιά αναζήτησης για το φίλτρο αυτό
+;How to combine the two\nsearch keys for this filter
+;
+MSG_HELP_CO_CH_ABOUNCE
+Επιστροφή των μηνυμάτων που ταιριάζουν σε κάποιο άλλο άτομο
+;Bounce matching messages to another person
+;
+MSG_HELP_CO_ST_ABOUNCE
+Διεύθυνση Email του ατόμου που θα λαμβάνει τα επιστρεφόμενα μηνύματα
+;Email address of the person that gets the bounced messages
+;
+MSG_HELP_CO_CH_AFORWARD
+Προώθηση μηνυμάτων που ταιριάζουν σε κάποιο άλλο άτομο
+;Forward matching messages to another person
+;
+MSG_HELP_CO_ST_AFORWARD
+Διεύθυνση Email του ατόμου που θα λαμβάνει τα προωθημένα μηνύματα
+;Email address of the person that gets the forwarded messages
+;
+MSG_HELP_CO_CH_ARESPONSE
+Αποστολή αυτόματης απάντησης για κάθε μήνυμα που ταιριάζει
+;Send an automatic reply for each matching message
+;
+MSG_HELP_CO_ST_ARESPONSE
+Αρχείο κειμένου που περιέχει την απάντηση
+;Text file that contains the response
+;
+MSG_HELP_CO_CH_AEXECUTE
+Εκτέλεση εντολής για κάθε μήνυμα που ταιριάζει
+;Execute a command for each matching message
+;
+MSG_HELP_CO_ST_AEXECUTE
+Εντολή που θα εκτελεστεί. Η διαδρομή του μηνύματος\nπου ταιριάζει δίνεται ως παράμετρος.
+;Command to execute. The path of the matching\nmessage is passed as an argument.
+;
+MSG_HELP_CO_CH_APLAY
+Αναπαραγωγή αρχείου ήχου\nγια κάθε μήνυμα που ταιριάζει
+;Plays a sound file for\neach matching message
+;
+MSG_HELP_CO_ST_APLAY
+Αρχείο ήχου για αναπαραγωγή
+;Sound file to play
+;
+MSG_HELP_CO_CH_AMOVE
+Μετακίνηση μηνυμάτων που ταιριάζουν σε άλλο φάκελο
+;Move matching messages to a different folder
+;
+MSG_HELP_CO_PO_MOVETO
+Φάκελος προορισμού
+;Destination folder
+;
+MSG_HELP_CO_CH_ADELETE
+Διαγραφή μηνυμάτων που ταιριάζουν
+;Delete matching messages
+;
+MSG_HELP_CO_CH_ASKIP
+Να μην γίνεται λήψη των μηνυμάτων που ταιριάζουν
+;Don't download matching messages
+;
+MSG_HELP_CO_BT_RADD
+Προσθήκη νέου φίλτρου
+;Add a new filter
+;
+MSG_HELP_CO_BT_RDEL
+Αφαίρεση επιλεγμένου φίλτρου
+;Remove selected filter
+;
+MSG_HELP_CO_CA_COL2QUOT
+Ρύθμιση του χρώματος για την εμφάνιση παλιών παραθέσεων
+;Adjust the color used for displaying old quotes
+;
+MSG_HELP_CO_CH_WRAPHEAD
+Εμφάνιση μεγάλων κεφαλίδων σε πολλαπλές γραμμές
+;Display long headers on multiple lines
+;
+MSG_HELP_CO_CH_TEXTSTYLES
+Μετάφραση των / * _ και # ως\nκωδικών ελέγχου για τύπους κειμένου
+;Interpret / * _ and # as\ncontrol codes for textstyles
+;
+MSG_HELP_CO_CY_HEADER
+Πως θέλετε να εμφανίζεται\nη κεφαλίδα του κειμένου\nστο παράθυρο Ανάγνωσης;
+;How do you want to\ndisplay the message header\nin the Read window?
+;
+MSG_HELP_CO_ST_HEADERS
+Ορίστε ένα φίλτρο AmigaDOS για\nτην επιλογή των κεφαλίδων στη μορφή SELECTED.\nΠροεπιλογή είναι (Από|Προς|Ημερ/νία|Θέμα)
+;Specify an AmigaDOS pattern to\nchoose the headers in SELECTED format.\nDefault is (From|To|Date|Subject)
+;
+MSG_HELP_CO_CY_SENDERINFO
+Πληροφορίες για τον αποστολέα που θα εμφανίζονται\nστο παράθυρο ανάγνωσης (αν υπάρχουν)
+;Information about the sender to display\nin the read window (if available)
+;
+MSG_HELP_CO_CY_SIGSEPLINE
+Τύπος της διαχωριστικής\nγραμμής στην υπογραφή
+;Type of the signature\nseparation line
+;
+MSG_HELP_CO_ST_INTRANS
+Εφαρμογή αυτής της μετάφρασης σετ χαρακτήρων\nκατά την ανάγνωση μηνυμάτων
+;Apply this character set translation\nwhen reading messages
+;
+MSG_HELP_CO_CH_ALLTEXTS
+Εμφάνιση όλων των μερών κειμένου\nαπό ένα πολυμερές μήνυμα
+;Display all textual parts\nof a multipart message
+;
+MSG_HELP_CO_CH_MULTIWIN
+Άνοιγμα νέου παραθύρου ανάγνωσης\nγια κάθε επιλεγμένο μήνυμα
+;Open a new read window\nfor each selected message
+;
+MSG_HELP_CO_CA_COLTEXT
+Ρύθμιση του χρώματος του 'χρωματιστού' κειμένου\nστο παράθυρο ανάγνωσης και στον επεξεργαστή
+;Adjust the color of 'colored' text used\nin the read window and the editor
+;
+MSG_HELP_CO_CH_FIXFEDIT
+Εμφάνιση μηνυμάτων με χρήση\nσταθερής γραμματοσειράς
+;Display messages using\na fixed-width font
+;
+MSG_HELP_CO_ST_CTYPE
+Η εφαρμογή εμφάνισης MIME ενεργοποιείται\nαπό αυτό το τύπο συννημένου
+;MIME viewer is activated\nby this attachment type
+;
+MSG_HELP_CO_ST_COMMAND
+Διαδρομή και προεραιτικές παραμέτροι\nτης εντολής εμφάνισης. Χρησιμοποιήστε το %s για να\nεισάγετε το αρχείο δεδομένων.
+;Path and optional arguments of\nthe viewer command. Use %s to\ninsert the datafile.
+;
+MSG_HELP_CO_BT_MADD
+Προσθήκη νέας εφαρμογής εμφάνισης MIME
+;Add a new MIME viewer
+;
+MSG_HELP_CO_BT_MDEL
+Αφαίρεση επιλεγμένης εφαρμογής εμφάνισης MIME
+;Remove selected MIME viewer
+;
+MSG_HELP_CO_ST_EXTENS
+Επεκτάσεις αρχείων που χρησιμοποιούνται από αυτόν τον τύπο αρχείου
+;Filename extensions used by this file type
+;
+MSG_HELP_CO_ST_DEFVIEWER
+Εφαρμογή που θα χρησιμοποιείται\nγια εμφάνιση συννημένων αγνώστου τύπου
+;Program used to displaying\nattachments of unknown type
+;
+MSG_HELP_CO_CH_IDENTBIN
+Επιχείρηση αναγνώρησης του τύπου αρχείου\nπριν την χρήση της προεπιλεγμένης εφαρμογής
+;Try to identify the file type\nbefore using the default viewer
+;
+MSG_HELP_CO_ST_REPLYTO
+Εισάγετε την προεπιλεγμένη διεύθυνση επιστροφής, αν\nαυτή διαφέρει από την διεύθυνση email σας.
+;Enter the default return address, if\nit differs from your email address.
+;
+MSG_HELP_CO_ST_ORGAN
+Η επωνυμία της\nεταιρίας ή του ινστιτούτου σας
+;The name of your\ncompany or institute
+;
+MSG_HELP_CO_ST_EXTHEADER
+Επιπλέον κεφαλίδες μηνυμάτων που θα\nπροστίθενται σε κάθε εξερχόμενο μήνυμα
+;Additional message header(s) that will\nbe added to every outgoing message
+;
+MSG_HELP_CO_ST_HELLOTEXT
+Κείμενο που θα εισάγετε\nστην κορυφή ενός νέου μηνύματος
+;Text to insert at the\ntop of a new message
+;
+MSG_HELP_CO_ST_BYETEXT
+Κείμενο που θα εισάγεται στο\nτέλος ενός νέου μηνύματος
+;Text to insert at the\nbottom of a new message
+;
+MSG_HELP_CO_ST_OUTTRANS
+Εφαρμογή αυτής της μετάφρασης σετ χαρακτήρων\nστα νέα μηνύματα
+;Apply this character set translation\non new messages
+;
+MSG_HELP_CO_ST_EDWRAP
+Αναδίπλωση λέξεων του κειμένου\nσε αυτή τη στήλη
+;Word-wrap message text\nat this column
+;
+MSG_HELP_CO_CH_AUTOBREAK
+Εισαγωγή πραγματικών αλλαγών γραμμών\nκατά την εισαγωγή σε ένα μήνυμα
+;Insert real line breaks\nwhile entering a message
+;
+MSG_HELP_CO_CY_EDWRAP
+Επιλέξτε 'κατά την πληκτρολόγηση' για να εισάγετε αλλαγές γραμμών\nκαθώς πληκτρολογείτε το μήνυμα
+;Select 'as you type' to insert linebreak\ncodes while you're typing the message
+;
+MSG_HELP_CO_CH_LAUNCH
+Εκκίνηση του εξωτερικού επεξεργαστή\nκειμένου όταν ξεκινάτε ένα νέο μήνυμα
+;Launch the external editor\nwhen you start a new message
+;
+MSG_HELP_CO_ST_EDITOR
+Όνομα αρχείου του\nαγαπημένου σας επεξεργαστή κειμένου
+;Filename of your\nfavorite text editor
+;
+MSG_HELP_CO_ST_FWDSTART
+Κείμενο που θα χρησιμοποιείται πριν ένα προωθημένο μήνυμα.\nΧρησιμοποιήστε το κουμπί δεξιά για να εισάγετε μια μεταβλητή.
+;Text used to introduce a forwarded message.\nUse the button at the right side to insert a variable.
+;
+MSG_HELP_CO_ST_FWDEND
+Κείμενο που θα εισάγεται στο\nτέλος ενός προωθημένου μηνύματος.
+;Text to insert at the\nend a forwarded message.
+;
+MSG_HELP_CO_ST_REPLYTEXT
+Κείμενο που θα χρησιμοποιείται σε απαντήσεις μηνυμάτων.\nΧρησιμοποιήστε το κουμπί δεξιά για να εισάγετε μια μεταβλητή.
+;Texts used in replies to messages.\nUse the button at the right side to insert a variable.
+;
+MSG_HELP_CO_ST_AREPLYTEXT
+Χρήση αυτών των κειμένων σε απαντήσεις μηνυμάτων\nαν το φίλτρο παρακάτων ταιριάζει με την διεύθυνση του παραλήπτη.
+;Use these texts in replies to messages\nif the pattern below matches the recipient address.
+;
+MSG_HELP_CO_ST_AREPLYPAT
+Φίλτρο AmigaDOS που ενεργοποιεί\nτις εναλλακτικές κεφαλίδες απαντήσεων
+;AmigaDOS pattern that triggers\nthe alternative reply headers
+;
+MSG_HELP_CO_ST_MREPLYTEXT
+Χρήση αυτών των κειμένων σε απαντήσεις\nμηνυμάτων από μια λίστα μηνυμάτων.
+;Use these texts in replies to\nmessages from a mailing list.
+;
+MSG_HELP_CO_CH_QUOTE
+Παράθεση αρχικού\nμηνύματος στην απάντηση;
+;Quote original\nmessage in reply?
+;
+MSG_HELP_CO_ST_REPLYCHAR
+Συμβολοσειρά που θα προηγείται κάθε γραμμή\nτου παραθετημένου μηνύματος. Χρησιμοποιήστε το\nκουμπί δεξιά για να εισάγετε μια μεταβλητή.
+;String that should precede each line of\nthe quoted message. Use the button at\nthe right side to insert a variable.
+;
+MSG_HELP_CO_CH_QUOTEEMPTY
+Εισαγωγή χαρακτήρων παράθεσης για τις κενές γραμμές;
+;Insert quote character(s) for empty lines?
+;
+MSG_HELP_CO_CH_COMPADDR
+Επιλογή της διεύθυνσης παραλήπτη από τον χρήστη\nαν οι διευθύνσεις Από και Απάντηση-Σε είναι διαφορετικές
+;Let the user select the desired recipient address\nif the From and Reply-To addresses are different
+;
+MSG_HELP_CO_CH_STRIPSIG
+Να μην γίνεται παράθεση της\nυπογραφής του αρχικού μηνύματος
+;Don't quote signature\nof original message
+;
+MSG_HELP_CO_CY_SIGNAT
+Επιλογή υπογραφής για επεξεργασία
+;Select signature to edit
+;
+MSG_HELP_CO_BT_EDITSIG
+Τροποποίηση της υπογραφής σας\nμε τον επεξεργαστή κειμένου
+;Modify your signature\nusing the editor
+;
+MSG_HELP_CO_BT_INSTAG
+Εισαγωγή κωδικού ελέγχου για τυχαίες taglines
+;Insert control code for random taglines
+;
+MSG_HELP_CO_BT_INSENV
+Εισαγωγή κωδικού ελέγχου για\nγια την μεταβλητή περιβάλλοντος SIGNATURE
+;Insert control code for the\nenvironment variable SIGNATURE
+;
+MSG_HELP_CO_ST_TAGFILE
+Βάση δεδομένων που περιέχει taglines (\"cookies\")
+;Database containing taglines (\"cookies\")
+;
+MSG_HELP_CO_ST_TAGSEP
+Χαρακτήρας ή συμβολοσειρά που θα χρησιμοποιείται\nγια το διαχωρισμό των taglines στη βάση δεδομένων
+;Character or string used to separate\nthe taglines in the database
+;
+MSG_HELP_CO_CG_FO
+Στήλες που εμφανίζονται στη λίστα φακέλων
+;Columns displayed in the folder list
+;
+MSG_HELP_CO_CG_MA
+Στήλες που εμφανίζονται στη λίστα μηνυμάτων
+;Columns displayed in the message list
+;
+MSG_HELP_CO_CG_AB
+Στήλες που εμφανίζονται στο βιβλίο διευθύνσεων
+;Columns displayed in the address book
+;
+MSG_HELP_CO_CH_FIXFLIST
+Εμφάνιση εγγραφών λίστας\nμε χρήση σταθερής γραμματοσειράς
+;Display list entries\nusing a fixed-width font
+;
+MSG_HELP_CO_CH_BEAT
+Εμφάνιση ώρας σε Swatch Beats, την\nεπαναστατική νέα μονάδα χρόνου
+;Display time in Swatch Beats, the\nrevolutionary new unit of time
+;
+MSG_HELP_CO_ST_PGPCMD
+Κατάλογος όπου μπορεί να\nβρεθεί το εκτελέσιμο PGP
+;Directory where the PGP\nexecutable can be found
+;
+MSG_HELP_CO_ST_MYPGPID
+Το ID του κλειδιού PGP σας που\nχρησιμοποιείται για την υπογραφή των μηνυμάτων
+;The ID of your PGP key that's\nused to sign messages
+;
+MSG_HELP_CO_CH_ENCSELF
+Κρυπτογράφηση νέων μηνυμάτων με το καθολικό σας κλειδί,\nώστε να μπορείτε να διαβάσετε ή να επεξεργαστείτε τα απεσταλμένα μηνύματα
+;Encrypt new messages with your public key,\nso you can still read or edit sent messages
+;
+MSG_HELP_CO_ST_REMAILER
+Διεύθυνση Email της υπηρεσίας remailer\nπου χρησιμοποιείτε για την αποστολή ανωνύμων μηνυμάτων
+;Email address of the remailer service\nused to send anonymous mail
+;
+MSG_HELP_CO_ST_FIRSTLINE
+Εισαγωγή αυτής της γραμμής στην αρχή\nτου μηνύματος αν αποστέλεται μέσω remailer
+;Insert this line at the top of your\nmessage if it is sent via remailer
+;
+MSG_HELP_CO_ST_LOGFILE
+Διαδρομή όπου θα αποθηκευθούν τα αρχεία καταγραφής
+;Path where the logfiles will be saved
+;
+MSG_HELP_CO_CH_SPLITLOG
+Εκκίνηση νέου αρχείου καταγραφής κάθε μήνα
+;Start a new logfile every month
+;
+MSG_HELP_CO_CY_LOGMODE
+Επιλέξτε τύπο καταγραφής
+;Select type of logging
+;
+MSG_HELP_CO_CH_LOGALL
+Απενεργοποίηση της επιλογής αυτής σε μεταφορές μηνυμάτων μόνο
+;Disable this option to log mail transfers only
+;
+MSG_HELP_CO_CH_LOADALL
+Φόρτωμα αρχείων ευρετηρίων για όλους τους φακέλους
+;Load index files of all folders
+;
+MSG_HELP_CO_CH_MARKNEW
+Αλλαγή κατάστασης νέων μηνυμάτων σε μη αναγνωσμένα
+;Change status of new messages to unread
+;
+MSG_HELP_CO_CH_SEND
+Αποστολή μηνυμάτων στην ουρά
+;Send queued messages
+;
+MSG_HELP_CO_CH_POPSTART
+Έλεγχος για αλληλογραφία
+;Check for mail
+;
+MSG_HELP_CO_CH_CHECKBD
+Έλεγχος του βιβλίου διευθύνσεων και εμφάνιση\nυπενθύμισης αν είναι τα γενέθλια κάποιου
+;Check the address book and open a reminder\nif it's a person's birthday
+;
+MSG_HELP_CO_CH_DELETEOLD
+Διαγραφή μηνυμάτων που ξεπερνούν τη μέγιστη\nηλικία (δείτε ρυθμίσεις φακέλου)
+;Delete messages that exceed the maximum\nage (see folder configuration)
+;
+MSG_HELP_CO_CH_REMOVEDEL
+Άδειασμα φακέλου απορριμάτων
+;Empty trash folder
+;
+MSG_HELP_CO_ST_GALLDIR
+Κατάλογος για την αποθήκευση\nεικονών των επαφών σας
+;Directory to save the\npictures of your correspondents
+;
+MSG_HELP_CO_ST_PHOTOURL
+Διεύθυνση WWW της εικόνας σας
+;WWW address of your portrait image
+;
+MSG_HELP_CO_CY_ATAB
+Αυτόματη δημιουργία εγγραφής στο βιβλίο διευθύνσεων\nγια τον αποστολέα όταν διαβάζετε το μήνυμά του/της;
+;Automatically create an address book entry\nfor the sender when your read his/her message?
+;
+MSG_HELP_CO_ST_PROXY
+Διεύθυνση και προεραιτικά αριθμός θύρας του\nδιακομιστή HTTP proxy (προεπιλεγμένη θύρα είναι η 80)\nΜπορείτε να αφήσετε το πεδίο αυτό κενό.
+;Address and optional port number of your\nHTTP proxy server (default port is 80)\nYou may leave this field empty.
+;
+MSG_HELP_CO_ST_NEWGROUP
+Προσθήκη νέως εγγραφών του βιβλίου διευθύνσεων στο γρουπ αυτό\n(θα δημιουργηθεί αν δεν υπάρχει ήδη)
+;Add new address book entries to this group (it\nwill be created if it doesn't exist yet)
+;
+MSG_HELP_CO_ST_TEMPDIR
+Κατάλογος αποθήκευσης\nπροσωρινών αρχείων
+;Directory to store\ntemporary files
+;
+MSG_HELP_CO_ST_DETACHDIR
+Κατάλογος αποθήκευσης\nσυννημένων αρχείων
+;Directory to save\nattached files to
+;
+MSG_HELP_CO_ST_ATTACHDIR
+Προεπιλεγμένος πηγαίος κατάλογος\nγια συννημένα
+;Default source directory\nfor attachments
+;
+MSG_HELP_CO_ST_APP
+Θέση του εικονιδίου του\nγραμματοκιβωτίου σε pixel
+;Position of the mailbox\nAppIcon in pixels
+;
+MSG_HELP_CO_CH_CLGADGET
+Θέλετε το ΥΑΜ να εικονοποιείται όταν\nπατάτε το κουμπί κλεισίματος;
+;Do you want YAM to iconify when\nyou hit the close gadget?
+;
+MSG_HELP_CO_CH_CONFIRM
+Θέλετε να επιβεβαιώσετε\nτη διαγραφή των μηνυμάτων;
+;Do you want to confirm\ndeletion of messages?
+;
+MSG_HELP_CO_NB_CONFIRMDEL
+Ελάχιστος αριθμός μηνυμάτων που\nθα εμφανίζονται στο παράθυρο επιβεβαίωσης
+;Minimum number of messages to\ndisplay the confirmation requester
+;
+MSG_HELP_CO_CH_REMOVE
+Διαγραφή μηνυμάτων άμεσα, χωρίς\nμετακίνηση τους στο φάκελο απορριμάτων
+;Delete messages instantly, don't\nmove them to the trash folder
+;
+MSG_HELP_CO_CH_SAVESENT
+Αποθήκευση απεσταλμένων μηνυμάτων στο φάκελο Εξερχομένων
+;Save sent messages in the Sent folder
+;
+MSG_HELP_CO_RA_MDN_DISP
+Κατά την ανάγνωση ενός μηνύματος,  αποστολή\nειδοποίησης στον αποστολέα\nαν αυτό ζητήθηκε
+;When reading a message, send a\ndisposition notification to the\nsender if requested
+;
+MSG_HELP_CO_RA_MDN_PROC
+Κατά την προώθηση ενός μηνύματος, αποστολή\nειδοποίησης στον αποστολέα\nαν αυτό ζητήθηκε
+;When forwarding a message, send a\ndisposition notification to the\nsender if requested
+;
+MSG_HELP_CO_RA_MDN_DELE
+Κατά τη διαγραφή ενός μηνύματος, αποστολή\nειδοποίησης στον αποστολέα\nαν αυτό ζητήθηκε
+;When deleting a message, send a\ndisposition notification to the\nsender if requested
+;
+MSG_HELP_CO_RA_MDN_RULE
+Κατά τη διαγραφή ή προώθηση ενός μηνύματος με χρήση\nφίλτρων, αποστολή ειδοποίησης στον αποστολέα\nαν αυτό ζητήθηκε
+;When deleting or forwarding a message using\nfilters, send a disposition notification to the sender\nif requested
+;
+MSG_HELP_CO_CH_SEND_MDN
+Προσπάθεια αποστολής ειδοποίησης\nαμέσως μετά τη δημιουργία της
+;Try to send the disposition notification\nas soon as it is generated
+;
+MSG_HELP_CO_TX_ENCPACK
+Βιβλιοθήκη XPK που θα χρησιμοποιείται\nγια προστασία και συμπίεση φακέλων
+;XPK library used to protect\nand compress folders
+;
+MSG_HELP_CO_TX_PACKER
+Βιβλιοθήκη XPK που θα χρησιμοποιείται\nγια συμπίεση φακέλων
+;XPK library used to\ncompress folders
+;
+MSG_HELP_CO_NB_ENCPACK
+Αποτελεσματικότητα συμπιεστή\n100% είναι καλύτερο, αλλά και ποιό αργό
+;Efficiency of this packer\n100% is best, but slowest
+;
+MSG_HELP_CO_ST_ARCHIVER
+Εντολή και επιλογές του συμπιεστή που\nχρησιμοποιούνται για τη δημιουργία συμπιεσμένων συννημένων
+;Archiver command and options used\nto create compressed attachments
+;
+MSG_HELP_CO_ST_RXNAME
+Περιγραφή του script\nστο μενού 'Scripts'
+;Description of the script\nin the 'Scripts' menu
+;
+MSG_HELP_CO_ST_SCRIPT
+Όνομα αρχείου του script
+;Filename of the script
+;
+MSG_HELP_CO_CY_ISADOS
+Τύπος του script\n(ARexx ή AmigaDOS)
+;Type of the script\n(ARexx or AmigaDOS)
+;
+MSG_HELP_CO_CH_CONSOLE
+Άνοιγμα παραθύρου κονσόλας για την\nείσοδο και έξοδο από το script
+;Open a console window to allow input\nand output from the script
+;
+MSG_HELP_CO_CH_WAITTERM
+Να μήν γίνει ασύγχρονη εκτέλεση του script
+;Don't run the script asynchronously
+;
+MSG_HELP_CO_BT_SAVE
+Αποθήκευση ρυθμίσεων
+;Save current settings
+;
+MSG_HELP_CO_BT_USE
+Εφαρμογή ρυθμίσεων
+;Use current settings
+;
+MSG_HELP_CO_BT_CANCEL
+Κλείσιμο παραθύρου\nρυθμίσεων και εφαρμογή\nπροηγούμενων ρυθμίσεων
+;Close configuration\nwindow and use old\nsettings
+;
+MSG_AB_BirthdayReq
+Σήμερα, ο/η %s φθάνει την ηλικία των %ld!\nΘέλετε να στείλετε μια ευχετήρια κάρτα;
+;Today, %s reaches age %ld!\nDo you want to send a greetings card?
+;
+MSG_AB_BirthdayReminder
+Υπενθύμιση Γενεθλίων
+;Birthday Reminder
+;
+MSG_AB_HappyBirthday
+Χρόνια Πολλά!
+;Happy birthday!
+;
+MSG_AB_PersonAlias
+Ψευδόνυμο (ΑΤΟΜΟ)
+;Alias (PERSON)
+;
+MSG_AB_ListAlias
+Ψευδόνυμο (ΛΙΣΤΑ)
+;Alias (LIST)
+;
+MSG_AB_GroupAlias
+Ψευδόνυμο (ΓΚΡΟΥΠ)
+;Alias (GROUP)
+;
+MSG_AB_PrintReqGads
+_Εκτεταμένη μορφή|_Σύντομη μορφή|_Άκυρο
+;_Long format|_Short format|_Cancel
+;
+MSG_AB_PrintReq
+Επιλογή μορφής εκτύπωσης:
+;Select print format:
+;
+MSG_AB_AliasFld
+Ψευδόνυμο
+;Alias
+;
+MSG_AB_FoundEntry
+Βρέθηκε εγγραφή που ταιριάζει!\nΨευδόνυμο: %s\nΌνομα: %s
+;Found matching entry!\nAlias: %s\nName: %s
+;
+MSG_AB_FindEntry
+Εύρεση Εγγραφής
+;Find Entry
+;
+MSG_AB_FindEntryReq
+Αυτή η μονάδα βρίσκει το κείμενο που εισάχθηκε στα πεδία Ψευδόνυμο, Όνομα, Διεύθυνση,\nΠεριγραφή, Οδός, Πόλη ή Χώρα. Παρακαλώ εισάγετε\nτο φίλτρο αναζήτησης (υποστηρίζονται χαρακτήρες μπαλαντέρ AmigaDOS):
+;This module finds a given text in the alias, name, address,\ndescription, street, city or country fields. Please enter\nthe search pattern (AmigaDOS wildchars are supported):
+;
+MSG_AB_StartSearch
+_Εκκίνηση Αναζήτησης
+;_Start search
+;
+MSG_AB_FoundEntryGads
+_Επόμενο|_Επεξεργασία|_Άκυρο
+;_Next hit|_Edit hit|_Cancel
+;
+MSG_AB_NoneFound
+Δεν βρέθηκαν εγγραφές που να ταιριάζουν!
+;No matching entries found!
+;
+MSG_AB_Modified
+Το Βιβλίο Διευθύνσεων τροποποιήθηκε!
+;Address book has been modified!
+;
+MSG_AB_ModifiedGads
+*_Αποθήκευση|_Εφαρμογή|_Απόρριψη αλλαγών|_Άκυρο
+;*_Save|_Use|_Discard changes|_Cancel
+;
+MSG_AB_TitleAlias
+\e8Ψευδόνυμο
+;\e8Alias
+;
+MSG_AB_TitleName
+\e8Όνομα
+;\e8Name
+;
+MSG_AB_TitleDescription
+\e8Περιγραφή
+;\e8Description
+;
+MSG_AB_TitleAddress
+\e8Διεύθυνση
+;\e8Address
+;
+MSG_AB_TitleStreet
+\e8Οδός
+;\e8Street
+;
+MSG_AB_TitleCity
+\e8Πόλη
+;\e8City
+;
+MSG_AB_TitleCountry
+\e8Χώρα
+;\e8Country
+;
+MSG_AB_TitlePhone
+\e8Τηλέφωνο
+;\e8Phone
+;
+MSG_AB_TitleBirthDate
+\e8Ημερομηνία Γεννήσεως
+;\e8Birth date
+;
+MSG_AB_TitlePGPId
+\e8PGP Id
+;\e8PGP Id
+;
+MSG_AB_TitleHomepage
+\e8Ιστοσελίδα
+;\e8Homepage
+;
+MSG_AB_MIFind
+Εύρεση...
+;Find...
+;
+MSG_AB_Entry
+Εγγραφή
+;Entry
+;
+MSG_AB_AddUser
+Νέο άτομο...
+;New person...
+;
+MSG_AB_AddGroup
+Νέο γρουπ...
+;New group...
+;
+MSG_AB_AddList
+Νέα λίστα διανομής...
+;New distribution list...
+;
+MSG_AB_Duplicate
+Αναπαραγωγή
+;Duplicate
+;
+MSG_AB_MIPrint
+Εκτύπωση
+;Print
+;
+MSG_AB_MIDelete
+Διαγραφή
+;Delete
+;
+MSG_AB_Sort
+Ταξινόμηση
+;Sort
+;
+MSG_AB_SortByAlias
+Κατά ψευδόνυμο
+;By alias
+;
+MSG_AB_SortByName
+Κατά επώνυμο
+;By last name
+;
+MSG_AB_SortByFirstname
+Κατά όνομα
+;By first name
+;
+MSG_AB_SortByDesc
+Κατά περιγραφή
+;By description
+;
+MSG_AB_SortByAddress
+Κατά διεύθυνση
+;By address
+;
+MSG_AB_View
+Εμφάνιση
+;View
+;
+MSG_AB_Fold
+Απόκρυψη όλων
+;Fold all
+;
+MSG_AB_Unfold
+Εμφάνιση όλων
+;Unfold all
+;
+MSG_AB_TBSave
+_Αποθήκευση
+;_Save
+;
+MSG_AB_TBFind
+_Εύρεση
+;_Find
+;
+MSG_AB_TBNewUser
+_Άτομο
+;_Person
+;
+MSG_AB_TBNewList
+_Λίστα
+;_List
+;
+MSG_AB_TBNewGroup
+_Γκρουπ
+;_Group
+;
+MSG_AB_TBEdit
+_Επεξεργασία
+;_Edit
+;
+MSG_AB_TBDelete
+_Διαγραφή
+;_Delete
+;
+MSG_AB_TBPrint
+Εκτύπωση
+;P_rint
+;
+MSG_AB_TBOpenTree
+Εμφάνιση
+;_Unfold
+;
+MSG_AB_TBCloseTree
+Απόκρυψη
+;F_old
+;
+MSG_HELP_AB_BT_SAVE
+Αποθήκευση αλλαγών
+;Save current changes
+;
+MSG_HELP_AB_BT_SEARCH
+Εύρεση κάποιας εγγραφής στο\nβιβλίο διευθύνσεων
+;Find an entry in\nthe address book
+;
+MSG_HELP_AB_BT_ADDUSER
+Προσθήκη νέου ατόμου\nστο βιβλίο διευθύνσεων
+;Add a new person to\nyour address book
+;
+MSG_HELP_AB_BT_ADDGROUP
+Προσθήκη νέου γρουπ (καταλόγου)\nστο βιβλίο διευθύνσεων
+;Add a new group (directory)\nto your address book
+;
+MSG_HELP_AB_BT_ADDMLIST
+Προσθήκη νέας λίστας διανομής\nστο βιβλίο διευθύνσεων
+;Add a new distribution list\nto your address book
+;
+MSG_HELP_AB_BT_EDIT
+Τροποποίηση επιλεγμένης\nεγγραφής
+;Modify selected\nentry
+;
+MSG_HELP_AB_BT_DELETE
+Διαγραφή επιλεγμένης εγγραφής\nαπό το βιβλίο διευθύνσεων
+;Delete selected entry\nfrom your address book
+;
+MSG_HELP_AB_BT_PRINT
+Εκτύπωση επιλεγμένης εγγραφής
+;Print selected entry
+;
+MSG_HELP_AB_BT_OPEN
+Εμφάνιση όλων των εγγραφών\nστο βιβλίο διευθύνσεων
+;Display all entries in\nthe address book
+;
+MSG_HELP_AB_BT_CLOSE
+Εμφάνιση μόνο ριζικών εγγραφών\nστο βιβλίο διευθύνσεων
+;Only display root entries\nin the address book
+;
+MSG_HELP_AB_BT_TO
+Ορισμός κυρίων παραληπτών\nγια το νέο μήνυμα
+;Set primary recipient(s)\nfor new message
+;
+MSG_HELP_AB_BT_CC
+Ορισμός δευτεύοντων παραληπτών\nγια το νέο μήνυμα
+;Set secondary recipient(s)\nfor new message
+;
+MSG_HELP_AB_BT_BCC
+Ορισμός παραληπτών πιστού αντιγράφου\nγια το νέο μήνυμα
+;Set blind copy recipient(s)\nfor new message
+;
+MSG_CL_ErrorEmptyCB
+Tο clipboard είναι άδειο.
+;The clipboard is empty.
+;
+MSG_CL_ErrorNotFTXT
+Το clipboard δεν περιέχει κείμενο.
+;The clipboard does not contain text.
+;
+MSG_CL_ErrorNoArea
+Δεν σημειώθηκε περιοχή.
+;No area marked.
+;
+MSG_CL_ErrorNoRedo
+Δεν υπάρχει τίποτα προς επανάληψη.
+;Nothing to redo.
+;
+MSG_CL_ErrorNoUndo
+Δεν υπάρχει τίποτα προς αναίρεση.
+;Nothing to undo.
+;
+MSG_CL_ErrorNoUndoMem
+Δεν υπάρχει αρκετή διαθέσιμη μνήμη\nγια τον buffer αναίρεσης.\n\nΟ buffer αναίρεσης χάθηκε.
+;There is not enough memory\nto keep the undo buffer.\n\nThe undo buffer is lost.
+;
+MSG_EA_EditUser
+Επεξεργασία ατόμου
+;Edit person
+;
+MSG_EA_EditList
+Επεξεργασία λίστας διανομής
+;Edit distribution list
+;
+MSG_EA_EditGroup
+Επεξεργασία γρουπ
+;Edit group
+;
+MSG_EA_ElectronicMail
+Ηλεκτρονικό ταχυδρομείο
+;Electronic mail
+;
+MSG_EA_Alias
+Ψευδόνυμο
+;_Alias
+;
+MSG_EA_RealName
+Πραγματικό όνομα
+;_Real name
+;
+MSG_EA_EmailAddress
+Διεύθυνση Email
+;E_mail address
+;
+MSG_EA_PGPId
+Κλειδί PGP ID
+;PGP _key ID
+;
+MSG_EA_Homepage
+Ιστοσελίδα
+;_Homepage
+;
+MSG_EA_SnailMail
+Ταχυδρομική διεύθυνση
+;Snail mail
+;
+MSG_EA_Street
+Διεύθυνση
+;_Street
+;
+MSG_EA_City
+Πόλη/ΤΚ
+;C_ity/ZIP
+;
+MSG_EA_Country
+Πολιτεία/Χώρα
+;S_tate/Country
+;
+MSG_EA_Phone
+Νούμερο(α) τηλεφώνου
+;_Phone number(s)
+;
+MSG_EA_Miscellaneous
+Διάφορα
+;Miscellaneous
+;
+MSG_EA_Description
+Περιγραφή
+;D_escription
+;
+MSG_EA_DOB
+Ημερομηνία γεννήσεως
+;Date of _birth
+;
+MSG_EA_Portrait
+Πορτραίτο
+;Portrait
+;
+MSG_EA_SelectPhoto
+Επιλογή
+;Se_lect
+;
+MSG_EA_LoadPhoto
+Λήψη
+;_Download
+;
+MSG_EA_ReturnAddress
+Διεύθυνση επιστροφής
+;_Return address
+;
+MSG_EA_MLName
+Όνομα λίστας αλληλογραφίας
+;_Mailing list name
+;
+MSG_EA_Members
+Μέλη
+;Members
+;
+MSG_EA_Sort
+Ταξινόμηση
+;_Sort
+;
+MSG_HELP_EA_ST_ALIAS
+Ταυτότητα (π.χ. ψευδόνυμο ή\nχαρακτηρισμός) της εγγραφής αυτής
+;Identity (e.g. nickname or\nabbreviation) of this entry
+;
+MSG_HELP_EA_ST_DESCRIPTION
+Σχόλια για την εγγραφή αυτή
+;Comment for this entry
+;
+MSG_HELP_EA_ST_REALNAME
+Πλήρες όνομα της εγγραφής\n(όνομα και επώνυμο)
+;Full name of this entry\n(first name last name)
+;
+MSG_HELP_EA_ST_ADDRESS
+Διέυθυνση διαδικτύου\nτης εγγραφής αυτής
+;Internet address\nof this entry
+;
+MSG_HELP_EA_ST_PGPKEY
+Δεκαεξαδικό ID του κλειδιού\nPGP του ατόμου αυτού
+;Hexadecimal ID of this\nperson's public PGP key
+;
+MSG_HELP_EA_ST_HOMEPAGE
+URL της ιστοσελίδας του ατόμου αυτού.\nΠατήστε το κουμπί δεξιά για να\nφορτώσετε την σελίδα στον browser σας.
+;URL of the homepage of this person.\nClick the button on the right side\nto load the page into your browser.
+;
+MSG_HELP_EA_ST_STREET
+Ταχυδρομική διεύθυνση:\nΟδός και αριθμός
+;Postal address:\nStreet name and number
+;
+MSG_HELP_EA_ST_CITY
+Ταχυδρομική διεύθυνση:\nΠόλη και Ταχυδρομικός Κώδικας
+;Postal address:\nCity and postal code
+;
+MSG_HELP_EA_ST_COUNTRY
+Ταχυδρομική διεύθυνση:\nΠολιτεία και/ή Χώρα
+;Postal address:\nState and/or country
+;
+MSG_HELP_EA_ST_PHONE
+Αριθμοί τηλεφώνου και/ή ΦΑΞ
+;Phone and/or FAX number(s)
+;
+MSG_HELP_EA_ST_BIRTHDAY
+Ημερομηνία γεννήσεως\nΧρησιμοποιήστε μορφή AmigaDOS,\nπ.χ. 10-Ιαν-1950
+;Date of birth\nUse AmigaDOS format,\ne.g. 10-Jan-1950
+;
+MSG_HELP_EA_BC_PHOTO
+Εικόνα πορτραίτου του ατόμου αυτού
+;Portrait picture of this person
+;
+MSG_HELP_EA_BT_SELECTPHOTO
+Επιλογή αρχείου εικόνας από δίσκο\n(υποστηρίζονται datatypes εικόνας)
+;Select a picture file from disk\n(image datatypes supported)
+;
+MSG_HELP_EA_BT_LOADPHOTO
+Λήψη εικόνας του ατόμου από τη\nΓκαλλερί Χρηστών YAM
+;Download a picture of the person\nfrom the YAM User Gallery
+;
+MSG_HELP_EA_ST_REALNAME_L
+Πλήρες όνομα της λίστας διανομής\n(θα χρησιμοποιηθεί στο πεδίο Προς:)
+;Full name of this distribution list\n(will be used in To: field)
+;
+MSG_HELP_EA_ST_ADDRESS_L
+Διεύθυνση επιστροφής που θα χρησιμοποιηθεί\nκατα την αποστολή μηνυμάτων στη λίστα αυτή
+;Return address to use when\nsending a message to this list
+;
+MSG_HELP_EA_LV_MEMBERS
+Μέλη της λίστας διανομής αυτής
+;Members of this distribution list
+;
+MSG_HELP_EA_ST_MEMBER
+Διεύθυνση (και όνομα) ή\nψευδόνυμο μέλους
+;Address (and name) or\nalias of a member
+;
+MSG_HELP_EA_BT_ADD
+Προσθήκη νέου μέλους\nστη λίστα
+;Add a new member\nto the list
+;
+MSG_HELP_EA_BT_DEL
+Αφαίρεση επιλεγμένου μέλους\nαπό τη λίστα
+;Remove selected member\nfrom the list
+;
+MSG_HELP_EA_BT_SORT
+Ταξινόμηση λίστας μελών αλφαβητικά
+;Sort member list alphabetically
+;
+MSG_HELP_EA_BT_OKAY
+Αποδοχή της εγγραφής
+;Accept this entry
+;
+MSG_HELP_EA_BT_CANCEL
+Απόρριψη αλλαγών
+;Discard changes
+;
+MSG_RE_MDNGads1
+Αποδοχή και\nαποστολή αργότερα|Απόρριψη και\nαποστολή αργότερα
+;Accept and\nsend later|Deny and\nsend later
+;
+MSG_RE_MDNGads2
+|Αποδοχή και\nαποστολή τώρα|Απόρριψη και\nαποστολή τώρα
+;|Accept and\nsend now|Deny and\nsend now
+;
+MSG_RE_MDNGads3
+|Παράβλεψη
+;|Ignore
+;
+MSG_RE_MDNReq
+Ο αποστολέας του μηνύματος αυτού ζήτησε ειδοποίηση (MDN).\nΤι θέλετε να κάνετε;
+;The sender of this message requests a disposition notification (MDN).\nWhat do you want to do?
+;
+MSG_RE_SaveMessage
+Αποθήκευση μηνύματος...
+;Save message...
+;
+MSG_RE_Overwrite
+Το αρχείο '%s' υπάρχει ήδη.\nΘέλετε να το διαγράψετε;
+;File '%s' already exists.\nDo you want to overwrite it?
+;
+MSG_RE_PrintMsg
+Εκτύπωση μηνύματος
+;Print message
+;
+MSG_RE_SelectPrintPart
+Επιλογή μέρους για εκτύπωση:
+;Select part to print:
+;
+MSG_RE_PrintGad
+Εκτύπωση
+;Print
+;
+MSG_RE_SelectSavePart
+Επιλογή μέρους για αποθήκευση:
+;Select part to save:
+;
+MSG_RE_SaveGad
+Αποθήκευση
+;Save
+;
+MSG_RE_DisplayMsg
+Εμφάνιση μηνύματος
+;Display message
+;
+MSG_RE_SelectDisplayPart
+Επιλογή μέρους για εμφάνιση:
+;Select part to display:
+;
+MSG_RE_DisplayGad
+Εμφάνιση
+;Display
+;
+MSG_RE_BadSig
+ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Προβληματική υπογραφή
+;WARNING: Bad signature
+;
+MSG_RE_GoodSig
+Καλή υπογραφή
+;Good signature
+;
+MSG_RE_SigFrom
+ από\n
+; from\n
+;
+MSG_RE_SigCheck
+Έλεγχος υπογραφής PGP
+;Check PGP signature
+;
+MSG_RE_SaveDecGads
+*_Κράτηση|_Αντικατάσταση|_Άκυρο
+;*_Keep|_Replace|_Cancel
+;
+MSG_RE_SaveDecReq
+Τι θέλετε να κάνετε με το\nαυθεντικό (κρυπτογραφημένο) μήνυμα;
+;What do you want to do with\noriginal (encrypted) message?
+;
+MSG_RE_Header
+Κεφαλίδα
+;Header
+;
+MSG_RE_Letter
+Γράμμα
+;Letter
+;
+MSG_RE_MDNFrom
+\nΑπό:
+;\nFrom:
+;
+MSG_RE_MDNTo
+\nΠρος:
+;\nTo:
+;
+MSG_RE_MDNSubject
+\nΘέμα:
+;\nSubject:
+;
+MSG_RE_MDNMessageID
+\nID-Μηνύματος:
+;\nMessage-ID:
+;
+MSG_RE_MDNDate
+\nΗμερομηνία:
+;\nDate:
+;
+MSG_RE_MDNOrigRecpt
+\nΑρχικός παραλήπτης:
+;\nOriginal recipient:
+;
+MSG_RE_MDNFinalRecpt
+\nΤελικός παραλήπτης:
+;\nFinal recipient:
+;
+MSG_RE_MDNmanual
+ σε απάντηση σε μια εντολή χρήστη
+; in response to a user command
+;
+MSG_RE_MDNauto
+ αυτόματα
+; automatically
+;
+MSG_RE_MDNdisplay
+Το μήνυμα\n%s\nεμφανίστηκε.\nΑυτό δεν είναι εγγύηση ότι το περιεχόμενο έχει διαβαστεί ή κατανοηθεί.\n
+;The message\n%s\nhas been displayed.\nThis is no guarantee that the content has been read or understood.\n
+;
+MSG_RE_MDNprocessed
+Το μήνυμα\n%s\nεπεξεργάστηκε%s,\nχωρίς να έχει εμφανιστεί στον χρήστη. Ο χρήστης μπορεί ή μπορεί να μην δει\nτο μήνυμα αργότερα.\n
+;The message\n%s\nhas been processed%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
+;
+MSG_RE_MDNdispatched
+Το μήνυμα\n%s\nαποστάλθηκε κάπου%s,\nχωρίς να έχει εμφανιστεί στον χρήστη. Ο χρήστης μπορεί ή μπορεί να μην δει\nτο μήνυμα αργότερα.\n
+;The message\n%s\nhas been sent somewhere%s,\nwithout being displayed to the user. The user may or may not see\nthe message later.\n
+;
+MSG_RE_MDNdeleted
+Το μήνυμα\n%s\nδιαγράφηκε%s.\nΟ παραλήπτης μπορεί ή μπορεί να μην είδε το μήνυμα. Ο παραλήπτης\nμπορεί να \"επαναφέρει\" το μήνυμα κάποια άλλη στιγμή και να το διαβάσει.\n
+;The message\n%s\nhas been deleted%s.\nThe recipient may or may not have seen the message. The recipient\nmay \"undelete\" the message at a later time and read the message.\n
+;
+MSG_RE_MDNdenied
+Ο παραλήπτης του μηνύματος\n%s\nδεν επιθυμεί να σας ενημερώσει για την μεταχείριση του μηνύματος αυτού.\n
+;The recipient of the message\n%s\ndoesn't wish to inform you about the disposition of that message.\n
+;
+MSG_RE_MDNunknown
+Το μήνυμα\n%s\nέχει %s%s.\n
+;The message\n%s\nhas been %s%s.\n
+;
+MSG_RE_PGPNotAllowed
+>Σφάλμα PGP<\n\nΔεν επιτρέπεται να δείτε το κρυπτογραφημένο με PGP μήνυμα αυτό. Είτε το λογισμικό PGP σας\nδεν είναι σωστά ρυθμισμένο, είτε το μήνυμα κρυπτογραφήθηκε από κάποιον άλλον.\n
+;>PGP Error<\n\nYou're not allowed to view this PGP encrypted message. Either your PGP software\nisn't configured properly, or the message was encrypted for someone else.\n
+;
+MSG_RE_MsgReadOnly
+Το μήνυμα μπορεί να διαβαστεί μόνο από τον %s\n
+;The message can only be read by %s\n
+;
+MSG_RE_AddSender
+Θέλετε να προσθέσετε τον αποστολέα\n%s\nστο βιβλίο διευθύνσεων;
+;Do you want to add the sender\n%s\nto your address book?
+;
+MSG_RE_NewGroupTitle
+Αυτόματα καταχωρημένες εγγραφές
+;Automatically added entries
+;
+MSG_RE_DownloadPhotoReq
+Θέλετε να κατεβάσετε την φωτογραφία του αποστολέα\nκαι να την προσθέσετε στην προσωπική σας γκαλλερί;\n(Πρέπει να είστε συνδεδεμένοι πριν πατήσετε το κουμπί ΕΝΤΑΞΕΙ)
+;Do you want to download the photo of the sender\nand add it to your personal gallery?\n(You must be online before clicking the OKAY button)
+;
+MSG_RE_ContentType
+Τύπος-Περιεχόμενο
+;Content-Type
+;
+MSG_RE_Description
+Περιγραφή
+;Description
+;
+MSG_RE_UUencodedFile
+Αρχείο UUencoded
+;UUencoded file
+;
+MSG_RE_SelectAddressReq
+Επιλεγμένη διεύθυνση: %s\nΤι θέλετε να κάνετε;
+;Selected address: %s\nWhat do you want to do?
+;
+MSG_RE_SelectAddressEdit
+*_Δημιουργία μηνύματος|_Επεξεργασία εγγραφής|_Άκυρο
+;*_Write message|_Edit entry|_Cancel
+;
+MSG_RE_SelectAddressAdd
+*_Δημιουργία μηνύματος|_Προσθήκη εγγραφής|_Άκυρο
+;*_Write message|_Add entry|_Cancel
+;
+MSG_RE_Original
+Μορφή Raw
+;Raw format
+;
+MSG_RE_AllTexts
+Εμφανιζόμενο κείμενο
+;Displayed text
+;
+MSG_RE_MDisplay
+Εμφάνιση...
+;Display...
+;
+MSG_RE_SaveAll
+Αποθήκευση όλων...
+;Save all...
+;
+MSG_RE_Navigation
+Πλοήγηση
+;Navigation
+;
+MSG_RE_MNext
+Επόμενο μήνυμα
+;Next message
+;
+MSG_RE_MPrev
+Προηγούμενο μήνυμα
+;Previous message
+;
+MSG_RE_MURNext
+Επόμενο μη αναγνωσμένο μήνυμα
+;Next unread message
+;
+MSG_RE_MURPrev
+Προηγούμενο μη αναγνωσμένο μήνυμα
+;Previous unread message
+;
+MSG_RE_MNextTh
+Επόμενο μήνυμα στο thread
+;Next message in thread
+;
+MSG_RE_MPrevTh
+Προηγούμενο μήνυμα στο thread
+;Previous message in thread
+;
+MSG_RE_ExtractKey
+Παραλαβή καθολικών κλειδιών
+;Extract public key(s)
+;
+MSG_RE_SaveDecrypted
+Αποθήκευση αποκρυπτογραφημένου μηνύματος
+;Save decrypted message
+;
+MSG_RE_NoHeaders
+Χωρίς κεφαλίδες
+;No headers
+;
+MSG_RE_ShortHeaders
+Σύντομες κεφαλίδες
+;Short headers
+;
+MSG_RE_FullHeaders
+Πλήρης κεφαλίδες
+;Full headers
+;
+MSG_RE_NoSInfo
+Χωρίς πληροφορίες αποστολέα
+;No sender info
+;
+MSG_RE_SInfo
+Πεδία δεδομένων μόνο
+;Data fields only
+;
+MSG_RE_SInfoImage
+Δεδομένα και εικόνα
+;Data and image
+;
+MSG_RE_WrapHeader
+Αναδίπλωση κεφαλίδων
+;Wrap headers
+;
+MSG_RE_Textstyles
+Τύποι κειμένου
+;Textstyles
+;
+MSG_RE_TBPrev
+_Προηγ
+;_Prev
+;
+MSG_RE_TBNext
+_Επόμ
+;_Next
+;
+MSG_RE_TBPrevTh
+Προηγ_Thr
+;Prev_Thr
+;
+MSG_RE_TBNextTh
+ΕπομT_hr
+;NextT_hr
+;
+MSG_RE_TBDisplay
+_Εμφάνιση
+;_Display
+;
+MSG_RE_TBSave
+_Αποθήκευση
+;_Save
+;
+MSG_RE_TBPrint
+Εκτύπωση
+;Pr_int
+;
+MSG_RE_TBDelete
+Διαγραφή
+;De_lete
+;
+MSG_RE_TBMove
+_Μετακίνηση
+;_Move
+;
+MSG_RE_TBReply
+Απάντηση
+;_Reply
+;
+MSG_RE_TBForward
+Προώθηση
+;For_ward
+;
+MSG_HELP_RE_BT_PREVIOUS
+Εμφάνιση περιεχομένων του\nπροηγούμενου μηνύματος
+;Display contents of\nthe previous message
+;
+MSG_HELP_RE_BT_NEXT
+Εμφάνιση περιεχομένων του\nεπόμενου μηνύματος
+;Display contents of\nthe next message
+;
+MSG_HELP_RE_BT_QUESTION
+Εμφάνιση του μηνύματος που\nαπαντάται εδώ\n(ένα βήμα πίσω στο thread)
+;Show the message that\nis being answered here\n(go back in thread)
+;
+MSG_HELP_RE_BT_ANSWER
+Εμφάνιση της απάντησης\nστο μήνυμα αυτό\n(συνέχεια στο thread)
+;Show the reply\nto this message\n(follow thread)
+;
+MSG_HELP_RE_BT_DISPLAY
+Χρήση ρυθμισμένης εφαρμογής MIME\nγια την εμφάνιση\nμέρους του μηνύματος αυτού
+;Use a configured MIME\nviewer to display a\npart of this message
+;
+MSG_HELP_RE_BT_EXPORT
+Αποθήκευση του εμφανιζόμενου μηνύματος ή\nμέρους του στο δίσκο
+;Save displayed message or\na part of it to disk
+;
+MSG_HELP_RE_BT_PRINT
+Αποστολή του μηνύματος αυτού\nστον εκτυπωτή
+;Send this message\nto the printer
+;
+MSG_HELP_RE_BT_MOVE
+Μετακίνηση του μηνύματος αυτού σε άλλο φάκελο\nκαι εμφάνιση του επόμενου
+;Move this message to another folder\nand display the next one
+;
+MSG_HELP_RE_BT_DELETE
+Διαγραφή του μηνύματος αυτού\nκαι εμφάνιση του επόμενου
+;Delete this message and\ndisplay the next one
+;
+MSG_HELP_RE_BT_REPLY
+Απάντηση στο\nμήνυμα αυτό
+;Reply to this\nmessage
+;
+MSG_HELP_RE_BT_FORWARD
+Προώθηση του\nμηνύματος
+;Forward this\nmessage
+;
+MSG_WR_ErrorNoRcpt
+Η αλληλογραφία είναι ατελής: Χωρίς παραλήπτη!
+;Mail is incomplete: No recipient!
+;
+MSG_WR_NoRcptReqGad
+_Προσθήκη παραλήπτη αργότερα|*_Άκυρο
+;_Add recipient later|*_Cancel
+;
+MSG_WR_PGPMIMEconflict
+Το PGP/MIME δεν υποστηρίζει συννημένα: η υπογραφή/κρυπτογράφηση απενεργοποιήθηκε.
+;PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
+;
+MSG_WR_DiscardChanges
+Θέλετε πραγματικά να απορρίψετε όλες τις αλλαγές στο μήνυμα αυτό;
+;Do you really want to discard all modifications to this message?
+;
+MSG_WR_DiscardChangesGad
+*_Αποστολή αργότερα|_Απόρριψη|_Άκυρο
+;*_Send later|_Discard|_Cancel
+;
+MSG_WR_SaveTextAs
+Αποθήκευση κειμένου ως...
+;Save text as...
+;
+MSG_WR_AddFile
+Επιλογή αρχείων για επισύναψη...
+;Select file(s) to attach...
+;
+MSG_WR_CreateArc
+Δημιουργία αρχειοθέτησης
+;Create archive
+;
+MSG_WR_CreateArcReq
+Παρακαλώ εισάγετε όνομα αρχείου\nγια τη νέα αρχειοθέτηση
+;Please enter a filename\nfor the new archive
+;
+MSG_WR_InsertFile
+Εισαγωγή αρχείου...
+;Insert file...
+;
+MSG_WR_TitleFile
+\e8Όνομα αρχείου
+;\e8File name
+;
+MSG_WR_TitleSize
+\e8Μέγεθος
+;\e8Size
+;
+MSG_WR_TitleContents
+\e8Περιεχόμενα
+;\e8Contents
+;
+MSG_WR_TitleEncoding
+\e8Κωδ.
+;\e8Enc.
+;
+MSG_WR_TitleDescription
+\e8Περιγραφή
+;\e8Description
+;
+MSG_WR_SecNone
+Καθόλου
+;None
+;
+MSG_WR_SecSign
+Υπογραφή
+;Sign
+;
+MSG_WR_SecEncrypt
+Κρυπτογράφηση
+;Encrypt
+;
+MSG_WR_SecBoth
+Υπογραφή και κρυπτογράφηση
+;Sign and encrypt
+;
+MSG_WR_SecAnon
+Αποστολή ανώνυμα
+;Send anonymously
+;
+MSG_WR_ImpHigh
+Υψηλή
+;High
+;
+MSG_WR_ImpNormal
+Κανονική
+;Normal
+;
+MSG_WR_ImpLow
+Χαμηλή
+;Low
+;
+MSG_WR_NoSig
+Καθόλου
+;None
+;
+MSG_WR_DefSig
+Προεπιλογή
+;Default
+;
+MSG_WR_AltSig1
+Εναλ. #1
+;Alt. #1
+;
+MSG_WR_AltSig2
+Εναλ. #2
+;Alt. #2
+;
+MSG_WR_WriteWT
+Δημιουργία μηνύματος
+;Write message
+;
+MSG_WR_Subject
+Θέμα
+;Sub_ject
+;
+MSG_WR_To
+Προς
+;_To
+;
+MSG_WR_Add
+Προσθήκη αρχείων
+;_Add file(s)
+;
+MSG_WR_AddPack
+Συμπίεση & προσθήκη
+;_Pack & add
+;
+MSG_WR_Display
+Εμφάνιση
+;D_isplay
+;
+MSG_WR_Encoding
+Κωδικοποίηση
+;Encoding
+;
+MSG_WR_ContentType
+Τύπος _MIME
+;_MIME type
+;
+MSG_WR_Description
+Περιγραφή
+;D_escription
+;
+MSG_WR_CopyTo
+Αντίγραφα σε
+;C_opies to
+;
+MSG_WR_BlindCopyTo
+Κρυφά αντίγραφα σε
+;Hidde_n copies to
+;
+MSG_WR_From
+Από
+;_From
+;
+MSG_WR_ReplyTo
+Απάντηση σε
+;Reply _to
+;
+MSG_WR_ExtraHeaders
+Επιπλέον κεφαλίδα
+;_Additional header
+;
+MSG_WR_SendOpt
+Επιλογές Αποστολής
+;Send Options
+;
+MSG_WR_DelSend
+_Διαγραφή μετά την αποστολή
+;_Delete after sending
+;
+MSG_WR_Receipt
+Απόδειξη επιστροφής
+;_Return receipt
+;
+MSG_WR_GetMDN
+Παρακολούθηση _μηνύματος (MDN)
+;Track _message (MDN)
+;
+MSG_WR_AddInfo
+Προσθήκη _προσωπικών πληροφοριών
+;Add _personal info
+;
+MSG_WR_Importance
+Προτεραιότητα
+;_Importance
+;
+MSG_WR_Signature
+Υπογραφή
+;Signature
+;
+MSG_WR_Security
+Ασφάλεια
+;Security
+;
+MSG_WR_ToQueue
+Αποστολή αργότερα
+;Send _later
+;
+MSG_WR_Send
+Αποστολή τώρα
+;_Send now
+;
+MSG_WR_Hold
+Αναμονή
+;_Hold
+;
+MSG_WR_BounceWT
+Επιστροφή μηνύματος
+;Bounce message
+;
+MSG_WR_BounceTo
+Επιστροφή σε
+;Bounce _to
+;
+MSG_WR_TBEditor
+Επεξεργαστής
+;Editor
+;
+MSG_WR_TBInsert
+Εισαγωγή
+;Insert
+;
+MSG_WR_TBCut
+Αποκοπή
+;Cut
+;
+MSG_WR_TBCopy
+Αντιγραφή
+;Copy
+;
+MSG_WR_TBPaste
+Επικόλληση
+;Paste
+;
+MSG_WR_TBUndo
+Αναίρεση
+;Undo
+;
+MSG_WR_TBBold
+Έντονα
+;Bold
+;
+MSG_WR_TBItalic
+Πλαγιαστά
+;Italic
+;
+MSG_WR_TBUnderlined
+Υπογραμμιση
+;ULined
+;
+MSG_WR_TBColored
+Χρωματιστά
+;Colored
+;
+MSG_WR_Text
+Κείμενο
+;Text
+;
+MSG_WR_InsertAs
+Εισαγωγή ως
+;Insert as
+;
+MSG_WR_Plain
+Απλό
+;Plain
+;
+MSG_WR_Quoted
+Παραθετημένο
+;Quoted
+;
+MSG_WR_ROT13
+Κωδικοποίηση ROT13
+;ROT13 encoded
+;
+MSG_WR_LaunchEd
+Εκκίνηση επεξεργαστή
+;Launch editor
+;
+MSG_WR_Edit
+Επεξεργασία
+;Edit
+;
+MSG_WR_MCut
+Αποκοπή
+;Cut
+;
+MSG_WR_MCopy
+Αντιγραφή
+;Copy
+;
+MSG_WR_MPaste
+Επικόλληση
+;Paste
+;
+MSG_WR_PasteAs
+Επικόλληση ως
+;Paste as
+;
+MSG_WR_MUndo
+Αναίρεση
+;Undo
+;
+MSG_WR_Redo
+Επανάληψη
+;Redo
+;
+MSG_WR_Dictionary
+Λεξικό
+;Glossary
+;
+MSG_WR_Textstyle
+Τύπος κειμένου
+;Textstyle
+;
+MSG_WR_Bold
+Έντονα
+;Bold
+;
+MSG_WR_Italic
+Πλαγιαστά
+;Italic
+;
+MSG_WR_Underlined
+Υπογράμμιση
+;Underlined
+;
+MSG_WR_Colored
+Εναλλακτικό χρώμα
+;Alternative color
+;
+MSG_WR_Separators
+Διαχωριστές
+;Separators
+;
+MSG_WR_Thin
+Λεπτός
+;Thin
+;
+MSG_WR_Thick
+Χονδρός
+;Thick
+;
+MSG_WR_Emoticons
+Emoticons
+;Emoticons
+;
+MSG_WR_Happy
+Χαρούμενο
+;Happy
+;
+MSG_WR_Indifferent
+Αδιάφορο
+;Indifferent
+;
+MSG_WR_Sad
+Πικραμένο/νευριασμένο
+;Sad/angry
+;
+MSG_WR_Ironic
+Ειρωνικό
+;Ironic
+;
+MSG_WR_SpellCheck
+Πληκτρολόγηση και ορθογραφία
+;Type and spell
+;
+MSG_WR_MAddFile
+Προσθήκη αρχείου...
+;Add file...
+;
+MSG_WR_AddCB
+Προσθήκη clipboard
+;Add clipboard
+;
+MSG_WR_AddKey
+Προσθήκη κλειδιού PGP
+;Add PGP key
+;
+MSG_WR_MDelSend
+Διαγραφή μετά την αποστολή
+;Delete after sending
+;
+MSG_WR_MReceipt
+Απόδειξη επιστροφής
+;Return receipt
+;
+MSG_WR_MGetMDN
+Παρακολούθηση μηνύματος
+;Track message
+;
+MSG_WR_MAddInfo
+Προσθήκη προσωπικών πληροφοριών
+;Add personal information
+;
+MSG_WR_MImportance
+Προτεραιότητα
+;Importance
+;
+MSG_HELP_WR_ST_TO
+Διεύθυνση (και όνομα) ή ψευδόνυμο\nτου κυρίως παραλήπτη(ων)
+;Address (and name) or alias\nof the primary recipient(s)
+;
+MSG_HELP_WR_BT_VER
+Επιβεβαίωση παραλήπτη: αναζήτηση διεύθυνσης\nemail για το ψευδόνυμο ή όνομα
+;Verify recipient: find email\naddress for alias or name
+;
+MSG_HELP_WR_BT_ADR
+Επιλογή παραλήπτη από\nτο βιβλίο διευθύνσεων
+;Select recipient from\nthe address book
+;
+MSG_HELP_WR_ST_SUBJECT
+Θέμα του μηνύματός σας
+;Subject of your message
+;
+MSG_HELP_WR_BT_EDITOR
+Χρήση εξωτερικού επεξεργαστή\n για την τροποποίηση του κειμένου
+;Use external editor to\n modify the message text
+;
+MSG_HELP_WR_BT_LOAD
+Εισαγωγή αρχείου κειμένου στη θέση του κέρσορα
+;Insert text file at cursor position
+;
+MSG_HELP_WR_BT_CUT
+Αποκοπή σημειωμένου κειμένου στο clipboard
+;Cut marked text to the clipboard
+;
+MSG_HELP_WR_BT_COPY
+Αντιγραφή σημειωμένου κειμένο στο clipboard
+;Copy marked text to the clipboard
+;
+MSG_HELP_WR_BT_PASTE
+Εισαγωγή περιεχομένων του clipboard\nστη θέση του κέρσορα
+;Insert clipboard contents\nat cursor position
+;
+MSG_HELP_WR_BT_UNDO
+Αναίρεση πρόσφατων αλλαγών στο κείμενο
+;Undo recent changes to the text
+;
+MSG_HELP_WR_BT_BOLD
+Χρήση έντονης γραμματοσειράς για το σημειωμένο κείμενο
+;Use bold typeface for marked text
+;
+MSG_HELP_WR_BT_ITALIC
+Χρήση πλαγιαστής γραμματοσειράς για το σημειωμένο κείμενο
+;Use italic typeface for marked text
+;
+MSG_HELP_WR_BT_UNDERL
+Χρήση υπογράμμισης για το σημειωμένο κείμενο
+;Underline marked text
+;
+MSG_HELP_WR_BT_COLOR
+Χρωματισμός σημειωμένου κειμένου
+;Color marked text
+;
+MSG_HELP_WR_BT_ADD
+Προσθήκη επισύναψης\nστη λίστα
+;Add an attachment\nto the list
+;
+MSG_HELP_WR_BT_ADDPACK
+Δημιουργία αρχειοθέτησης από\nδιάφορα αρχεία και προσθήκη\nως επισύναψη στη λίστα
+;Create an archive from\nseveral files and add it\nas attachment to the list
+;
+MSG_HELP_WR_BT_DEL
+Αφαίρεση επιλεγμένης επισύναψης\nαπό τη λίστα
+;Remove selected attachment\nfrom the list
+;
+MSG_HELP_WR_BT_DISPLAY
+Χρήση ρυθμισμένης εφαρμογής ΜΙΜΕ\nγια την εμφάνιση της επισύναψης
+;Use a configured MIME viewer\nto display this attachment
+;
+MSG_HELP_WR_RA_ENCODING
+Τύπος κωδικοποίησης που χρησιμοποιείται στην επιλεγμένη επισύναψη.\nΧρησιμοποιήστε UUencode μόνο αν ο παραλήπτης δεν\nέχει πρόγραμμα συμβατό με MIME.
+;Type of encoding used for the selected attachment.\nUse UUencode only if the recipient hasn't got\na MIME compliant mailer.
+;
+MSG_HELP_WR_ST_CTYPE
+Τύπος MIME για την επιλεγμένη επισύναψη.\nΌποτε είναι δυνατό, χρησιμοποιήστε έναν απο την αναδυόμενη λίστα.
+;MIME type for the selected attachment.\nWhenever possible, use one from the popup list.
+;
+MSG_HELP_WR_ST_DESC
+Προεραιτική περιγραφή για\nτην επιλεγμένη επισύναψη
+;Optional description for\nthe selected attachment
+;
+MSG_HELP_WR_ST_CC
+Διεύθυνση (και όνομα) ή ψευδόνυμο\nδευτερεύων παραληπτών
+;Address (and name) or alias\nof the secondary recipient(s)
+;
+MSG_HELP_WR_ST_BCC
+Αποστολή ακριβές αντίγραφου του\nμηνύματος σε αυτό το παραλήπτη
+;Send a blind carbon copy of the\nmessage to this recipient
+;
+MSG_HELP_WR_ST_EXTHEADER
+Επιπλέον κεφαλίδα(ες) μηνύματος που\nθα προστεθούν στο μήνυμα
+;Additional message header(s) that\nwill be added to the message
+;
+MSG_HELP_WR_ST_FROM
+Περιεχόμενα του πεδίου κεφαλίδας Από\n(διεύθυνση και όνομα του ατόμου\nπου γράφει το μήνυμα αυτό)
+;Contents of From header field\n(address and name of the person\nwho's writing this letter)
+;
+MSG_HELP_WR_ST_REPLYTO
+Διεύθυνση επιστροφής\nγια το γράμμα αυτό
+;Return address\nfor this letter
+;
+MSG_HELP_WR_CH_DELSEND
+Να μην γίνει αποθήκευση του μηνύματος\nστο φάκελο Απεσταλμένων
+;Don't store this message\nin the Sent folder
+;
+MSG_HELP_WR_CH_RECEIPT
+Λήψη ειδοποίησης\nεπιτυχούς παράδοσης
+;Get a notification on\nsuccessful delivery
+;
+MSG_HELP_WR_CH_DISPNOTI
+Λήψη ειδοποίησης αν ο παραλήπτης\nδιαβάσει ή διεργαστεί το μήνυμα
+;Get a notification if the recipient\nreads or processes the message
+;
+MSG_HELP_WR_CH_ADDINFO
+Δημιουργία πεδίων κεφαλίδας που περιέχουν δεδομένα\nαπό την εγγραφή στο βιβλίο διευθύνσεων
+;Create header fields containing data\nfrom your personal address book entry
+;
+MSG_HELP_WR_CY_IMPORTANCE
+Ορισμός της προτεραιότητας\nτου μηνύματος αυτού
+;Set the priority\nof this message
+;
+MSG_HELP_WR_RA_SIGNATURE
+Ποιά υπογραφή θέλετε να επισυνάψετε\nστο γράμμα αυτό;
+;Which signature do you want\nto append to this letter?
+;
+MSG_HELP_WR_RA_SECURITY
+Επιλέξτε κάποια από αυτές τις επιλογές ασφαλείας\nγια την αποστολή του μηνύματος ως PGP-υπογεγραμμένο, κρυπτογραφημένο\nή ανώνυμο
+;Select the one of these security options\nto send your message PGP-signed, encrypted\nor anonymously
+;
+MSG_HELP_WR_BT_HOLD
+Αντιγραφή του δημιουργημένου μηνύματος\nστο φάκελο εξερχομένων\nκαι ορισμός της κατάστασής του σε ΑΝΑΜΟΝΗ
+;Copy the created message to\nthe outgoing mail folder\nand set its status to HOLD
+;
+MSG_HELP_WR_BT_QUEUE
+Αντιγραφή του δημιουργημένου μηνύματος\nστο φάκελο εξερχομένων
+;Copy the created message to\nthe outgoing mail folder
+;
+MSG_HELP_WR_BT_SEND
+Αντιγραφή του δημιουργημένου μηνύματος\nστο φάκελο εξερχομένων και\nαποστολή του αμέσως
+;Copy the created message to\nthe outgoing mail folder\nand send it immediately
+;
+MSG_HELP_WR_BT_CANCEL
+Απόρριψη του\nδημιουργημένου μηνύματος
+;Discard the\ncreated message
+;
+MSG_TR_Connecting
+Σύνδεση με το διακομιστή αλληλογραφίας...
+;Connecting to mail server...
+;
+MSG_TR_WaitWelcome
+Σύνδεση έγινε, αναμονή μηνύματος καλωσορίσματος...
+;Connected, awaiting welcome message...
+;
+MSG_TR_PopLoginReq
+Παρακαλώ ελέγξτε τον κωδικό POP3 σας\nγια το λογαριασμό %s@%s
+;Please enter your POP3 password\nfor account %s@%s
+;
+MSG_TR_PopLogin
+Σύνδεση POP3
+;POP3 login
+;
+MSG_TR_SendAPOPLogin
+Αποστολή πληροφοριών σύνδεσης APOP...
+;Sending APOP login information...
+;
+MSG_TR_SendUserID
+Αποστολή ID χρήστη...
+;Sending user ID...
+;
+MSG_TR_SendPassword
+Αποστολή κωδικού...
+;Sending password...
+;
+MSG_TR_GetStats
+Λήψη στατιστικών...
+;Getting statistics...
+;
+MSG_TR_Disconnecting
+Αποσύνδεση...
+;Disconnecting...
+;
+MSG_TR_ApplyFilters
+Εφαρμογή φίλτρων...
+;Applying remote filters...
+;
+MSG_TR_SendHello
+Αποστολή 'Hello'...
+;Sending 'Hello'...
+;
+MSG_TR_MessageGauge
+Μήνυμα %s από %ld
+;Message %s of %ld
+;
+MSG_TR_SizeGauge
+%%ld από %ld bytes
+;%%ld of %ld bytes
+;
+MSG_TR_TransferStats
+%lD από %lD kB μεταφέρθηκαν στα %lD cps\nΧρόνος που απομένει: %lD λεπτά %ld δευτ
+;%lD of %lD kB transmitted at %lD cps\nRemaining time: %lD min %ld sec
+;
+MSG_TR_Exporting
+Εξαγωγή μηνύματος...
+;Exporting message...
+;
+MSG_TR_Sending
+Αποστολή μηνύματος...
+;Sending message...
+;
+MSG_TR_Importing
+Εισαγωγή μηνύματος...
+;Importing message...
+;
+MSG_TR_DeletingServerMail
+Διαγραφή αλληλογραφίας στον διακομιστή...
+;Deleting mail on server...
+;
+MSG_TR_NewMailReq
+\e8Έχετε νέα αλληλογραφία!\e2\n\n%3ld μηνύματα λήφθηκαν,\n%3ld έμειναν στο διακομιστή\n%3ld αντίγραφα παραλήφθηκαν\n
+;\e8You have new mail!\e2\n\n%3ld messages downloaded,\n%3ld left on server\n%3ld duplicates skipped\n
+;
+MSG_TR_FilterStats
+\nΤο φιλτράρισμα έγινε:\n%3ld μηνύματα ελέγχθηκαν,\n%3ld ανακατευθύνθηκαν,\n%3ld προωθήθηκαν,\n%3ld αυτό-απαντήθηκαν,\n%3ld ενεργοποιήθηκε εντολή,\n%3ld μετακινήθηκαν,\n%3ld διαγράφηκαν
+;\nFiltering done:\n%3ld messages checked,\n%3ld redirected,\n%3ld forwarded,\n%3ld auto-replied,\n%3ld command activated,\n%3ld moved,\n%3ld deleted
+;
+MSG_TR_NewMail
+Νέα Αλληλογραφία
+;New Mail
+;
+MSG_TR_Downloading
+Λήψη μηνύματος...
+;Downloading message...
+;
+MSG_TR_MailTransferFrom
+Λήψη Αλληλογραφίας από %s
+;Mail transfer from %s
+;
+MSG_TR_MailTransferTo
+Αποστολή Αλληλογραφίας σε %s
+;Mail transfer to %s
+;
+MSG_TR_MsgInFile
+Μηνύματα στο αρχείο
+;Messages in file
+;
+MSG_TR_MsgOnServer
+Μηνύματα στον διακομιστή
+;Messages on server
+;
+MSG_TR_Control
+Έλεγχος
+;Control
+;
+MSG_TR_All
+Ό_λα
+;A_ll
+;
+MSG_TR_DownloadOnly
+Λήψη μόνο
+;_Download only
+;
+MSG_TR_Leave
+Παράβλεψη
+;L_eave
+;
+MSG_TR_Pause
+_Παύση
+;_Pause
+;
+MSG_TR_Clear
+Καθαρισμός
+;_Clear
+;
+MSG_TR_DeleteOnly
+Μόνο διαγραφή
+;Delete _only
+;
+MSG_TR_DownloadDelete
+Λήψη & Διαγραφή
+;Do_wnload & delete
+;
+MSG_TR_Resume
+Συνέχεια
+;_Resume
+;
+MSG_TR_Start
+Εκκίνηση
+;_Start
+;
+MSG_TR_Status
+Κατάσταση
+;Status
+;
+MSG_TR_Abort
+_Ακύρωση
+;_Abort
+;
+MSG_TR_TransferStats0
+  0 από   0 kB μεταφέρθηκαν στα    0 cps\nΧρόνος που απομένει:  0 λεπτά  0 δευτ
+;  0 of   0 kB transmitted at    0 cps\nRemaining time:  0 min  0 sec
+;
+MSG_TR_BytesGauge0
+   0 από    0 bytes
+;   0 of    0 bytes
+;
+MSG_TR_MessageGauge0
+Μήνυμα  0 από  0
+;Message  0 of  0
+;
+MSG_HELP_TR_TX_STATUS
+Ισχύουσα κατάσταση\nμεταφοράς αλληλογραφίας
+;Current state\nof mail transfer
+;
+MSG_HELP_TR_BT_ABORT
+Ακύρωση μεταφοράς αλληλογραφίας\nτο νωρίτερο δυνατό
+;Abort mail transfer\nas soon as possible
+;
+MSG_ER_ErrorMessages
+Μηνύματα σφάλματος
+;Error messages
+;
+MSG_ER_PrevError
+_Προηγούμενο σφάλμα
+;_Previous error
+;
+MSG_ER_NextError
+Επόμενο σφάλμα
+;_Next error
+;
+MSG_ER_Clear
+_Διαγραφή μηνυμάτων
+;_Delete messages
+;
+MSG_ER_Close
+Κλείσιμο παραθύρου
+;_Close window
+;
+MSG_ER_ErrorTTable
+Αδύνατο το άνοιγμα πίνακα μετάφρασης '%s'\n(δεν υπάρχει ή έχει λάθος μορφή).
+;Couldn't open translation table '%s'\n(non existent or wrong format).
+;
+MSG_ER_CantCreateFile
+Αδύνατη η εγγραφή στο αρχείο '%s'. Βεβαιωθείτε ότι η διαδρομή υπάρχει και η μονάδα δεν είναι προστατευμένη από εγγραφή.
+;Can't write to file '%s'. Make sure that the path exists and that the volume isn't write-protected.
+;
+MSG_ER_CantCreateDir
+Αδύνατη η δημιουργία καταλόγου '%s'. Βεβαιωθείτε ότι η μονάδα δεν έχει προστασία από εγγραφή.
+;Can't create directory '%s'. Make sure that the volume isn't write-protected.
+;
+MSG_ER_ErrorNoAlias
+Πρέπει να ορίσετε ένα ψευδόνυμο σαν ταυτότητα της εγγραφής αυτής!
+;You must specify an alias to identify this entry!
+;
+MSG_ER_ErrorNoAddress
+Πρέπει να ορίσετε μια διεύθυνση για την εγγραφή αυτή!
+;You must specify an address for this entry!
+;
+MSG_ER_ErrorDOBformat
+Η ημερομηνία γεννήσεως έχει λάθος μορφή. Η σωστή μορφή είναι ΜΜ-ΗΗΗ-ΧΧΧΧ (ονόματα μηνών στα Αγγλικά).
+;Date of birth is in wrong format. The correct format is DD-MMM-YYYY (month names in English).
+;
+MSG_ER_NotInGallery
+Αδύνατη η εύρεση του ατόμου αυτού στην γκαλλερί χρηστών YAM. Είτε το άτομο δεν υπάρχει στη βάση δεδομένων ή το όνομα ή η διεύθυνση είναι λάθος.
+;Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or his/her name or address is mispelt.
+;
+MSG_ER_NoTCP
+Δεν τρέχει TCP/IP stack! Ένα πρόγραμμα διαδικτύου συμβατό με bsdsocket.library πρέπει να τρέχει για να μπορείτε να χρησιμοποιήσετε την λειτουργία αυτή.
+;No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
+;
+MSG_ER_ErrorDateFormat
+Λανθασμένη μορφή ημερομηνίας/ώρας.\nΗ ημερομηνία πρέπει να είναι σε μορφή AmigaDOS.\nΠαράδειγμα: %s
+;Invalid date/time format.\nThe date has to be in AmigaDOS format.\nExample: %s
+;
+MSG_ER_ErrorMaxFilters
+Φθάσατε το μέγιστο αριθμό των φίλτρων! Δεν μπορείτε να προσθέσετε άλλα φίλτρα.
+;Maximum number of filters reached! You can't add more filters.
+;
+MSG_ER_CantOpenTempfile
+Αδύνατο το άνοιγμα του προσωρινού αρχείου '%s'. Ελέγξτε τις ρυθμίσεις της διαδρομής.
+;Can't open temporary file '%s'. Check the path settings in the configuration.
+;
+MSG_ER_CantCreateTempfile
+Αδύνατη η δημιουργία προσωρινού αρχείου. Λόγος: ανεπαρκής μνήμη ή ορίστηκε λανθασμένη διαδρομή στις ρυθμίσεις
+;Can't create temporary file. Reason: out of memory or invalid path specified in the configuration.
+;
+MSG_ER_ErrorConsole
+Αδύνατο το άνοιγμα παραθύρου κονσόλας για script.
+;Can't open console window for script.
+;
+MSG_ER_ErrorARexxScript
+Αδύνατη η αποστολή εντολής ARexx '%s'. Βεβαιωθείτε ότι το script υπάρχει.
+;Can't send ARexx command '%s'. Make sure that the script exists.
+;
+MSG_ER_UnexpEOFB64
+Απρόσμενο EOF κατά την αποκωδικοποίηση ενός αρχείου BASE64. Το μήνυμα φαίνεται να είναι περικομμένο.
+;Unexpected EOF while decoding a BASE64 encoded file. The message seems to be truncated.
+;
+MSG_ER_UnexpEOFUU
+Απρόσμενο EOF κατά την αποκωδικοποίηση ενός αρχείου UUencoded. Το μήνυμα φαίνεται να είναι περικομμένο.
+;Unexpected EOF while decoding a UUencoded file. The message seems to be truncated.
+;
+MSG_ER_InvalidLength
+Λανθασμένο μήκος γραμμής στο UUencoded αρχείο: %lD. Χρησιμοποιήθηκε ελλατωματικός UUencoder ή το μήνυμα περικόπηκε.
+;Invalid line length in UUencoded file: %lD. A defective UUencoder was used or the message is truncated.
+;
+MSG_ER_CreateMailError
+Αδύνατη η δημιουργία αρχείου αλληλογραφίας. Λόγος: λανθασμένος κατάλογος φακέλου ή ανεπαρκής χώρος στο δίσκο.
+;Can't create mail file. Reason: invalid folder directory or unsufficient diskspace.
+;
+MSG_ER_UnknownEnc
+Άγνωστη κωδικοποίηση MIME: %s. Το YAM απέτυχε στην αποκωδικοποίηση μέρους του μηνύματος. Αποθηκεύστε το μήνυμα και δοκιμάστε με άλλον αποκωδικοποιητή.
+;Unknown MIME encoding: %s. YAM failed decoding a part of the message. Save the message to disk and try with a different decoder.
+;
+MSG_ER_UnknownHeaderEnc
+Άγνωστη κωδικοποίηση κεφαλίδας: %s. Το YAM δεν μπορεί να εμφανίσει μια συγκεκριμένη κεφαλίδα του μηνύματος σωστά.
+;Unknown header encoding: %s. YAM cannot display a particular message header correctly.
+;
+MSG_ER_MultipartEOF
+Ατελής πολυμερές μήνυμα: απρόσμενο τέλος αρχείου. Το μήνυμα φαίνεται να έχει περικοπεί.
+;Incomplete multipart message: unexpected end of file. The message seems to be truncated.
+;
+MSG_ER_MIMEError
+Αδύνατη η εξαγωγή μηνύματος MIME. Το μήνυμα περιέχει κομμάτια λανθασμένης μορφής MIME ή είναι άδειο, ή έχει περικοπεί.
+;Can't extract MIME message. The message contains badly formed MIME parts or it's empty or truncated.
+;
+MSG_ER_MissingBoundary
+Έλλειψη ορίου σε πολυμερές μήνυμα. Το μήνυμα φαίνεται να έχει περικοπεί.
+;Missing boundary in multipart message. The message seems to be truncated.
+;
+MSG_ER_CantOpenFile
+Αδύνατη η ανάγνωση από το αρχείο '%s'. Το αρχείο δεν φαίνεται να υπάρχει.
+;Can't read from file '%s'. The file doesn't seem to exist.
+;
+MSG_ER_UUSize
+Το αποκωδικοποιημένο μέγεθος [%lD] δεν ταιριάζει\nμε το αρχικό μέγεθος [%lD]. Χρησιμοποιήθηκε ελλατωματικός UUencoder ή το μήνυμα έχει περικοπεί.
+;Decoded size [%lD] does not\nmatch original size [%lD]. A defective UUencoder was used or the message is truncated.
+;
+MSG_ER_DocNotFound
+Το έγγραφο HTML '%s' δεν βρέθηκε. Το αρχείο δεν υπάρχει στον διακομιστή WWW.
+;HTML document '%s' not found. The file doesn't exist on the WWW server.
+;
+MSG_ER_SendHTTP
+Αδύνατη η αποστολή αίτησης HTTP. Η αίτηση ενός εγγράφου από τον διακομιστή WWW απέτυχε.
+;Can't send HTTP request. Requesting a document from the WWW server failed.
+;
+MSG_ER_ConnectHTTP
+Αδύνατη η σύνδεση στον διακομιστή WWW '%s'. Πιθανές αιτίες: Το TCP/IP δεν ειναι συνδεμένο, λάθος διεύθυνση, ο διακομιστής δεν λειτουργεί ή δεν υποστηρίζει αιτήσεις HTTP.
+;Can't connect to WWW server '%s'. Possible reasons: TCP/IP off-line, invalid address, server is currently down or doesn't support HTTP requests.
+;
+MSG_ER_BadResponse
+Εσφαλμένη %s απάντηση εντολής: %s.\nΟ διακομιστής αλληλογραφίας δεν μπόρεσε να εκτελέσει την εντολή και απάντησε με μήνυμα λάθους.
+;Bad %s command response: %s.\nThe mail server couldn't execute the command and replied with the error message.
+;
+MSG_ER_UnknownPOP
+Άγνωστος διακομιστής POP3: '%s'. Το TCP/IP είναι αποσυνδεμένο ή η διεύθυνση του διακομιστή είναι λανθασμένη.
+;Unknown POP3 server: '%s'. TCP/IP is off-line or the server address is invalid.
+;
+MSG_ER_UnknownSMTP
+Άγνωστος διακομιστής SMTP: '%s'. Το TCP/IP είναι αποσυνδεμένο ή η διεύθυνση του διακομιστή είναι λανθασμένη.
+;Unknown SMTP server: '%s'. TCP/IP is off-line or the server address is invalid.
+;
+MSG_ER_CantConnect
+Αδύνατη η σύνδεση με '%s'. Ο διακομιστής αλληλογραφίας είναι ανενεργός ή δεν υποστηρίζει τα πρωτόκολλα POP3/SMTP.
+;Can't connect to '%s'. The mail server is currently down or doesn't support the POP3/SMTP protocols.
+;
+MSG_ER_NoAPOP
+Ο διακομιστής POP3 δεν υποστηρίζει APOP. Απενεργοποιήστε την επιλογή APOP στις ρυθμίσεις του YAM.
+;Your POP3 server doesn't support APOP. Disable the APOP option in your YAM configuration.
+;
+MSG_ER_ErrorWriteMailfile
+Σφάλμα εγγραφής στο αρχείο αλληλογραφίας: %s.\nΤο YAM δεν μπόρεσε να αποθηκεύσει το μήνυμα στο δίσκο, ίσως σας τελείωσε ο διαθέσιμος χώρος.
+;Write error on mail file: %s.\nYAM can't save the message to disk, maybe you're out of diskspace.
+;
+MSG_ER_ConnectionBroken
+Η σύνδεση TCP/IP διακόπηκε, πιθανόν λόγω απώλειας της γραμμής.
+;TCP/IP connection broken, probably due to a carrier drop.
+;
+MSG_ER_InvalidAddress
+Λανθασμένη διεύθυνση '%s'. Ο διακομιστής SMTP δεν δέχθηκε την διεύθυνση. Ελέγξτε για λανθασμένους χαρακτήρες.
+;Invalid address '%s'. The SMTP server didn't accept the address. Check for illegal characters.
+;
+MSG_ER_ErrorReadMailfile
+Σφάλμα ανάγνωσης στο αρχείο αλληλογραφίας: %s.\nΤο αρχείο υπάρχει, αλλά δημιουργήθηκε σφάλμα κατά την ανάγνωσή του.
+;Read error on mail file: %s.\nThe file exists, but there was an error while reading it.
+;
+MSG_ER_UserRemoved
+Ο κατάλογος '%s' δεν βρέθηκε!\nΟ χρήστης %s αφαιρέθηκε.
+;Directory '%s' not found!\nUser %s has been removed.
+;
+MSG_ER_MissingDirectory
+Πρέπει να ορίσετε έναν κατάλογο για το νέο χρήστη!
+;You must specify a directory for the new user!
+;
+MSG_ER_MissingName
+Πρέπει να ορίσετε ένα όνομα για το νέο χρήστη!
+;You must specify a name for the new user!
+;
+MSG_ER_NoPublicKeys
+Δεν βρέθηκαν καθολικά κλειδιά PGP. Βεβαιωθείτε ότι το PGP είναι εγκατεστημένο και οι απαραίτητες ρυθμίσεις έχουν γίνει στο ΥΑΜ.
+;No public PGP keys found. Make sure that PGP is installed and the required settings are made in the configuration of YAM.
+;
+MSG_ER_PGPreturnsError
+Η ακόλουθη εντολή PGP επέστρεψε ένα σφάλμα: '%s'\nΕλέγξτε το αρχείο %s για μια διάγνωση.
+;The following PGP command returned with an error: '%s'\nCheck the file %s for a diagnosis.
+;
+MSG_ER_PGPnotfound
+Αδύνατη η εκτέλεση εντολής PGP.\nΕλέγξτε αν το %s υπάρχει.
+;Couldn't execute PGP command.\nCheck if %s exists.
+;
+MSG_ER_InvalidAlias
+Λανθασμένο ψευδόνυμο: %s. Δεν επιτρέπονται πολλαπλές διευθύνσεις σε αυτό το πεδίο.
+;Invalid alias: %s. Multiple addresses are not allowed in this field.
+;
+MSG_ER_AliasNotFound
+Άγνωστο ψευδόνυμο ή όνομα: %s. Το YAM δεν μπόρεσε να βρει την διεύθυνση email του παραλήπτη αυτού στο βιβλίο διευθύνσεων. Παρακαλώ ελέγξτε τη σύνταξη.
+;Unknown alias or name: %s. YAM couldn't find the email address of this recipient in the address book. Please verify the spelling.
+;
+MSG_ER_AmbiguousAlias
+Αμφιλεγόμενο ψευδόνυμο ή όνομα: %s. Υπάρχουν παραπάνω από μία εγγραφές με αυτό το όνομα στο βιβλίο διευθύνσεων. Παρακαλώ αφαιρέστε τις διπλές εγγραφές ή χρησιμοποιήστε μοναδικά ψευδόνυμα.
+;Ambiguous alias or name: %s. There is more than one entry with this name in the address book. Please remove duplicate entries or use unique aliases.
+;
+MSG_ER_ErrorAddrDontFit
+Οι διευθύνσεις δεν χωρούν στο gadget συμβολοσειράς. Χρησιμποιήστε μια λίστα διανομής για να αποφύγετε αυτό το πρόβλημα.
+;Addresses don't fit in string gadget. Use a distribution list to avoid this problem.
+;
+MSG_ER_ErrorNoPGPId
+Αδύνατη η εύρεση του PGP ID για το '%s' στο βιβλίο διευθύνσεων, προσπάθεια με '%s'.
+;Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
+;
+MSG_ER_ErrorAppendKey
+Αδύνατη η προσθήκη του καθολικού κλειδιού PGP %s. Υπήρξε πρόβλημα με την εξαγωγή του από το PGP keyring.
+;Can't append public PGP key %s. There was a problem extracting it from the PGP keyring.
+;
+MSG_DI_Alias
+Συντόμευση
+;_Abbreviation
+;
+MSG_DI_New
+_Nέο
+;_New
+;
+MSG_DI_AddSelect
+Προσθήκη Επιλογής
+;Add _selection
+;
+MSG_DI_Delete
+_Διαγραφή
+;_Delete
+;
+MSG_DI_Paste
+Επικόλληση
+;_Paste
+;
+MSG_HELP_DI_LV_ENTRIES
+Λίστα θιαθέσιμων συντομεύσεων
+;List of available abbreviations
+;
+MSG_HELP_DI_ST_ALIAS
+Συντόμευση της επιλεγμένης εγγραφής
+;Abbreviation of selected entry
+;
+MSG_HELP_DI_BT_NEW
+Προσθήκη νέας συντόμευσης\nστο λεξικό
+;Add a new abbreviation\nto the glossary
+;
+MSG_HELP_DI_BT_ADDSELECT
+Δημιουργία νέας εγγραφής βασισμένη στο\nεπιλεγμένο κείμενο στον επεξεργαστή
+;Create a new entry based on\nthe marked text in the editor
+;
+MSG_HELP_DI_BT_DELETE
+Αφαίρεση επιλεγμένης εγγραφής
+;Remove selected entry
+;
+MSG_HELP_DI_BT_PASTE
+Εισαγωγή επιλεγμένης εγγραφής στην ισχύουσα\nθέση στον επεξεργαστή κειμένου
+;Insert selected entry at the current\nposition in the text editor
+;
+MSG_FI_GaugeText
+%%ld από %lD μηνύματα
+;%%ld of %lD messages
+;
+MSG_FI_AddFilter
+Προσθήκη φίλτρου
+;Add filter
+;
+MSG_FI_AddFilterReq
+Εισαγωγή ονόματος για το νέο φίλτρο
+;Enter a name for the new filter
+;
+MSG_FI_StatNew
+Νέο/Μη αναγνωσμένο
+;New/Unread
+;
+MSG_FI_StatRead
+Αναγνωσμένο
+;Read
+;
+MSG_FI_StatForwarded
+Προωθημένο
+;Forwarded
+;
+MSG_FI_StatReplied
+Απαντημένο
+;Replied
+;
+MSG_FI_StatQueued
+Σε ουρά
+;Queued
+;
+MSG_FI_StatFailed
+Αποτυχία Αποστολής
+;Send failed
+;
+MSG_FI_StatHold
+Σε Αναμονή
+;On hold
+;
+MSG_FI_StatSent
+Απεσταλμένο
+;Sent
+;
+MSG_FI_FromField
+\ebΑπό\en πεδίο
+;\ebFrom\en field
+;
+MSG_FI_ToField
+\ebΠρος\en πεδίο
+;\ebTo\en field
+;
+MSG_FI_CCField
+\ebCC\en πεδίο
+;\ebCC\en field
+;
+MSG_FI_ReplyToField
+\ebΑπάντηση-Σε\en πεδίο
+;\ebReply-To\en field
+;
+MSG_FI_SubjectField
+\ebΘέμα\en πεδίο
+;\ebSubject\en field
+;
+MSG_FI_DateField
+\ebΗμερομηνία\en πεδίο
+;\ebDate\en field
+;
+MSG_FI_OtherField
+Άλλο πεδίο:
+;Other field:
+;
+MSG_FI_MessageSize
+Μέγεθος μηνύματος
+;Message size
+;
+MSG_FI_MessageHeader
+Κεφαλίδα μηνύματος
+;Message header
+;
+MSG_FI_MessageBody
+Σώμα μηνύματος
+;Message body
+;
+MSG_FI_WholeMessage
+Ολόκληρο μήνυμα
+;Whole message
+;
+MSG_FI_SearchIn
+Αναζήτηση σε
+;Search in
+;
+MSG_FI_CaseSensitive
+Διαχωρισμός κεφαλαίων/μικρών
+;Case sensitive
+;
+MSG_FI_SubString
+Αναζήτηση σε υποσύνολα
+;Substring search
+;
+MSG_FI_FindMessages
+Εύρεση Μηνυμάτων
+;Find Messages
+;
+MSG_FI_AllFolders
+παντού
+;_everywhere
+;
+MSG_FI_FindIn
+Εύρεση σε
+;Find in
+;
+MSG_FI_FindWhat
+Εύρεση τι
+;Find what
+;
+MSG_FI_UseFilter
+Χρήση ρυθμίσεων φίλτρου
+;_Use filter settings
+;
+MSG_FI_AddAsFilter
+Προσθήκη σαν _νέο φίλτρο
+;Add as _new filter
+;
+MSG_FI_Results
+Αποτελέσματα
+;Results
+;
+MSG_FI_StartSearch
+Εκκίνηση αναζήτησης
+;_Start search
+;
+MSG_FI_SelectMatched
+Επιλογή ταιριάσματος
+;Select _matched
+;
+MSG_FI_ReadMessage
+Ανάγνωση μηνύματος
+;_Read message
+;
+MSG_FI_Abort
+_Aκύρωση
+;_Abort
+;
+MSG_HELP_FI_LV_FOLDERS
+Επιλογή ενός ή περισσότερων\nφακέλων για αναζήτηση
+;Select one or more\nfolders to search in
+;
+MSG_HELP_FI_BT_ALL
+Έλεγχος όλων των φακέλων στην αναζήτησή σας
+;Include all folders in your search
+;
+MSG_HELP_FI_PO_FROMRULE
+Λήψη κριτηρίων αναζήτησης\nαπό φίλτρο
+;Get search criteria\nfrom a filter
+;
+MSG_HELP_FI_BT_TORULE
+Δημιουργία νέου φίλτρου από\nαυτά τα κριτήρια αναζήτησης
+;Create a new filter from\nthese search criteria
+;
+MSG_HELP_FI_BT_SEARCH
+Εκκίνηση αναζήτησης και εμφάνιση\nτων αποτελεσμάτων στη παραπάνω λίστα
+;Start the search and display\nthe results in the list above
+;
+MSG_HELP_FI_BT_SELECT
+Επιλογή μηνυμάτων που ταιριάζουν\nστο κεντρικό παράθυρο
+;Select matching messages\nin the main window
+;
+MSG_HELP_FI_BT_READ
+Εμφάνιση επιλεγμένου μηνύματος\nαπό τη παραπάνω λίστα
+;Display selected message\nfrom the list above
+;
+MSG_HELP_FI_BT_ABORT
+Ακύρωση αναζήτησης
+;Stop searching
+;
+MSG_HELP_FI_CY_MODE
+Πεδίο ή μέρος μηνύματος που\nπρέπει να ταιριάζει στο φίλτρο
+;Field or message part that\nshould match the pattern
+;
+MSG_HELP_FI_ST_FIELD
+Όνομα πεδίου κεφαλίδας που θα γίνει η αναζήτηση
+;Name of header field to search in
+;
+MSG_HELP_FI_RA_ADRMODE
+Επιλέξτε αν θέλετε να κάνετε αναζήτηση στο\nμέρος διεύθυνσης ή πραγματικού ονόματος του πεδίου
+;Choose whether you want to search in the\naddress or real name part of the field
+;
+MSG_HELP_FI_CY_STATUS
+Κατάσταση μηνύματος που θα ταιριάξει
+;Message status to match
+;
+MSG_HELP_FI_ST_MATCH
+Φίλτρο αναζήτησης (AmigaDOS\nμπαλαντέρ υποστηρίζονται)
+;Search pattern (AmigaDOS\nwildchars are supported)
+;
+MSG_HELP_FI_CH_CASESENS
+Να ξεχωρίζει η αναζήτηση\nκεφαλαίους από μικρούς χαρακτήρες;
+;Should the search\nbe case sensitive?
+;
+MSG_HELP_FI_CH_SUBSTR
+Ενεργοποίηση αναζήτησης υποσυνόλου συμβολοσειράς
+;Enable partial string search
+;
+MSG_HELP_FI_CY_COMP
+Τύπος σύγκρισης. Επιλέξτε <> για να πάρετε όλα τα μηνύματα\nπου δεν ταιριάζουν με το φίλτρο, IN για να χρησιμοποιήσετε αρχείο φίλτρων
+;Type of comparison. Select <> to get all messages that\ndon't match the pattern, IN to use a file of patterns
+;
+MSG_US_EnterPassword
+Παρακαλώ εισάγετε τον κωδικό σας
+;Please enter your password
+;
+MSG_US_TitleUserName
+Όνομα χρήστη
+;User name
+;
+MSG_US_TitleMailDir
+Κατάλογος αλληλογραφίας
+;Mail directory
+;
+MSG_US_WaitLogin
+Αναμονή για σύνδεση χρήστη...
+;Waiting for user login...
+;
+MSG_US_RemoveReq
+Όλα τα μηνύματα, οι φακέλοι και τα αρχεία\nρυθμίσεων που ανήκουν σε αυτό το χρήστη θα χαθούν!\nΘέλετε πραγματικά να αφαιρέσετε τον χρήστη;
+;All messages, folders and configuration\nfiles belonging to this user will be lost!\nDo you really want to remove the user?
+;
+MSG_US_RemoveReqGads
+*_Εντάξει|_Διατήρηση αρχείων|_Άκυρο
+;*_Okay|_Keep files|_Cancel
+;
+MSG_US_ErrorNoDirectory
+Ο κατάλογος αλληλογραφίας δεν βρέθηκε.\nΘέλετε να τον δημιουργήσετε;
+;Mail directory not found.\nDo you want to create it?
+;
+MSG_US_UserName
+Όνομα χρήστη
+;_User name
+;
+MSG_US_MailDirectory
+Κατάλογος Αλληλογραφίας
+;_Mail directory
+;
+MSG_US_GlobalAddrBook
+Χρήση καθολικού βιβλίου διευθύνσεων
+;Use global address _book
+;
+MSG_US_GlobalDict
+Χρήση καθολικού λεξικού
+;Use global _glossary
+;
+MSG_US_CopyConfig
+Αντιγραφή ρυθμίσεων από τον τρέχον χρήστη
+;C_opy configuration from current user
+;
+MSG_US_Password
+Κωδικός
+;_Password
+;
+MSG_US_SuperVisor
+Δικαιώματα Supervisor
+;_Supervisor privileges
+;
+MSG_US_AddUser
+Προσθήκη χρήστη
+;_Add user
+;
+MSG_US_DelUser
+_Διαγραφή χρήστη
+;_Delete user
+;
+MSG_HELP_US_ST_USER
+Όνομα του νέου χρήστη YAM
+;Name of the new YAM user
+;
+MSG_HELP_US_ST_MAILDIR
+Κατάλογος για αποθήκευση\nτων φακέλων και αρχείων ρυθμίσεων\nτου λογαριασμού του νέου χρήστη
+;Directory to store the\nfolders and config files\nof the new user account
+;
+MSG_HELP_US_CH_USEADDR
+Μοίρασμα του βιβλίου διευθύνσεων\nμε άλλους χρήστες
+;Share address book\nwith other users
+;
+MSG_HELP_US_CH_USEDICT
+Μοίρασμα λεξικού\nμε άλλους χρήστες
+;Share glossary\nwith other users
+;
+MSG_HELP_US_ST_PASSWD
+Κωδικός που απαιτείται για την σύνδεση του χρήστη
+;Password required for this user to login
+;
+MSG_HELP_US_CH_ROOT
+Ενεργοποιήστε την επιλογή αυτή αν θέλετε\nο χρήστης να προσθέτει ή να αφαιρεί άλλους χρήστες
+;Enable this option if the user\nmay add or remove other users
+;
+MSG_HELP_US_CH_CLONE
+Χρήση τρέχοντων ρυθμίσεων ως\nπροεπιλογή για τον νέο λογαριασμό
+;Use current configuration as\ndefault for the new account
+;
+MSG_HELP_US_BT_ADD
+Δημιουργία νέου λογαριασμού
+;Create a new account
+;
+MSG_HELP_US_BT_DEL
+Αφαίρεση επιλεγμένου λογαριασμού
+;Remove selected account
+;
+MSG_FO_NewSepReq
+Προεραιτική ετικέτα για τον διαχωριστή
+;Optional label for the separator
+;
+MSG_FO_NewFolderReq
+Τι ρυθμίσεις θέλετε να χρησιμοποιήσετε για το νέο φάκελο;\nΕπιλέξτε 'Υπαρκτός κατάλογος' αν ο φάκελος υπάρχει ήδη\nστο δίσκο σας
+;What settings do you want to use for the new folder?\nSelect 'Existing directory' if the folder already exists\non your disk
+;
+MSG_FO_NewFolderGads
+*_Εσωτερική προεπιλογή|_Σαν τον τρέχον|_Υπαρκτός κατάλογος|_Άκυρο
+;*_Internal defaults|_Like current|_Existing directory|_Cancel
+;
+MSG_FO_SelectDir
+Επιλογή καταλόγου...
+;Select directory...
+;
+MSG_FO_MessageDate
+Ημερομηνία μηνύματος
+;Message date
+;
+MSG_FO_DateRecvd
+Ημερομηνία λήψης
+;Date received
+;
+MSG_FO_FMNormal
+κανονικό
+;normal
+;
+MSG_FO_FMSimple
+απλή προστασία
+;simple protection
+;
+MSG_FO_FMPack
+συμπίεση
+;compressed
+;
+MSG_FO_FMEncPack
+συμπίεση με κωδικό
+;compressed with password
+;
+MSG_FO_FTRcvdMail
+εισερχόμενη αλληλογραφία
+;received mail
+;
+MSG_FO_FTSentMail
+απεσταλμένη αλληλογραφία
+;sent mail
+;
+MSG_FO_FTBothMail
+εισερχόμενη και απεσταλμένη
+;received and sent
+;
+MSG_FO_FTSeparate
+διαχωριστής
+;separator
+;
+MSG_FO_EditFolder
+Ρυθμίσεις φακέλου
+;Folder settings
+;
+MSG_FO_Properties
+Ιδιότητες
+;Properties
+;
+MSG_FO_MaxAge
+Μέγ. ηλικία
+;Ma_x. age
+;
+MSG_FO_FolderType
+Τ_ύπος
+;T_ype
+;
+MSG_FO_FolderMode
+_Mορφή
+;_Mode
+;
+MSG_FO_SortBy
+_Ταξινόμηση κατά
+;_Sort by
+;
+MSG_FO_ThenBy
+Μετά κατά
+;T_hen by
+;
+MSG_FO_Reverse
+Αντ
+;Rev
+;
+MSG_FO_MLSupport
+Υποστήριξη λίστας αλληλογραφίας
+;Mailing list support
+;
+MSG_FO_ToPattern
+Προς: _φίλτρο
+;To: _pattern
+;
+MSG_FO_ToAddress
+_Προς: διεύθυνση
+;_To: address
+;
+MSG_HELP_FO_ST_FNAME
+Όνομα φακέλου
+;Folder name
+;
+MSG_HELP_FO_TX_FPATH
+Κατάλογος που αποθηκεύονται τα\nμηνύματα του επιλεγμένου φακέλου
+;Directory where the messages of\nthe selected folder are stored
+;
+MSG_HELP_FO_ST_MAXAGE
+Τα παλιά μηνύματα θα διαγράφονται\nαυτόματα μετά από τόσο χρόνο (σε μέρες).\nΕισάγετε 0 ή καθόλου τιμή για να απενεργοποιήσετε την λειτουργία αυτή.
+;Old messages will automatically\nbe deleted after this time (in days).\nEnter 0 or no value to disable this feature.
+;
+MSG_HELP_FO_CY_FTYPE
+Τύπος ειδικού φακέλου αρχειοθέτησης\n(εισ/εξερ/και τα δύο)
+;Type of custom archive folder\n(in/out/both)
+;
+MSG_HELP_FO_CY_FMODE
+Οι φακέλοι μπορούν να είναι προστατευμένοι με κωδικό\nκαι/ή συμπιεσμένοι με ΧΡΚ
+;Folders can be password-protected\nand/or compressed using XPK
+;
+MSG_HELP_FO_CY_SORT0
+Κύρια ταξινόμηση των\nμηνυμάτων στο φάκελο
+;Primary sorting order of the\nmessages in this folder
+;
+MSG_HELP_FO_CY_SORT1
+Δευτερέυουσα ταξινόμηση των\nμηνυμάτων στο φάκελο
+;Secondary sorting order of the\nmessages in this folder
+;
+MSG_HELP_FO_CH_REVERSE
+Αντίθετη ταξινόμηση
+;Reversed sorting
+;
+MSG_HELP_FO_ST_MLPATTERN
+Ένα μήνυμα ανήκει σε λίστα αλληλογραφίας\nαν το πεδίο Προς: ταιριάζει με το φίλτρο αυτό
+;A message belongs to a mailing list\nif the To: field matches this pattern
+;
+MSG_HELP_FO_ST_MLADDRESS
+Χρήση της διεύθυνσης παραλήπτη\nγια απάντηση στο μήνυμα λίστας αλληλογραφίας
+;Use this recipient address for\na reply to a mailing list message
+;
+MSG_BusySavingAB
+Αποθήκευση βιβλίου διευθύνσεων '%s'...
+;Saving address book '%s'...
+;
+MSG_BusyPrintingAB
+Εκτύπωση βιβλίου διευθύνσεων...
+;Printing address book...
+;
+MSG_BusySavingDI
+Αποθήκευση λεξικού...
+;Saving glossary...
+;
+MSG_BusyLoadingDI
+Φόρτωμα λεξικού...
+;Loading glossary...
+;
+MSG_BusyDownloadingPic
+Λήψη πορτραίτου για %s...
+;Downloading portrait of %s...
+;
+MSG_BusyUncompressingFO
+(Από)συμπίεση φακέλων...
+;(De)compressing folders...
+;
+MSG_BusyMoving
+Μετακίνηση/αντιγραφή %s μηνυμάτων...
+;Moving/copying %s messages...
+;
+MSG_BusyRemovingAtt
+Αφαίρεση συννημένων...
+;Removing attachments...
+;
+MSG_BusyDeleting
+Διαγραφή %s μηνυμάτων...
+;Deleting %s message(s)...
+;
+MSG_BusyFiltering
+Εφαρμογή φίλτρων...
+;Applying filters...
+;
+MSG_BusyDeletingOld
+Διαγραφή παλιάς αλληλογραφίας...
+;Deleting old mail...
+;
+MSG_BusyEmptyingTrash
+Άδειασμα φακέλου απορριμάτων...
+;Emptying trash folder...
+;
+MSG_BusyGettingVerInfo
+Λήψη πληροφοριών αναβάθμισης...
+;Getting update information...
+;
+MSG_BusyLoadingIndex
+Φόρτωμα ευρετηρίου του φακέλου '%s'...
+;Loading index of folder '%s'...
+;
+MSG_BusySavingIndex
+Αποθήκευση ευρετηρίου του φακέλου '%s'...
+;Saving index of folder '%s'...
+;
+MSG_BusyScanning
+Έλεγχος καταλόγου του φακέλου '%s'...
+;Scanning directory of folder '%s'...
+;
+MSG_BusyReading
+Ανάγνωση μηνύματος...
+;Reading message...
+;
+MSG_BusyDisplaying
+Εμφάνιση μηνύματος...
+;Displaying message...
+;
+MSG_BusyDisplayingList
+Εμφάνιση μηνυμάτων...
+;Displaying messages...
+;
+MSG_BusyPGPrunning
+Λειτουργία PGP...
+;PGP operation...
+;
+MSG_BusyComposing
+Σύνθεση μηνύματος...
+;Composing message...
+;
+MSG_BusyDecPrinting
+Αποκωδικοποίηση/εκτύπωση...
+;Decoding/printing...
+;
+MSG_BusyDecSaving
+Αποκωδικοποίηση/αποθήκευση...
+;Decoding/saving...
+;
+MSG_BusyDecDisplaying
+Αποκωδικοποίηση/εμφάνιση...
+;Decoding/displaying...
+;
+MSG_RE_FollowThreadReq
+Για να ακολουθήσει το thread, το YAM πρέπει να φορτώσει όλους τους δείκτες.\nΑυτό μπορεί να είναι χρονοβόρο. Θέλετε να συνεχίσετε;
+;In order to follow the thread, YAM has to load all indices.\nThis may be time consuming. Do you want to continue?
+;
+MSG_CTapplicationadosscript
+AmigaDOS script
+;AmigaDOS script
+;
+MSG_CTapplicationrexx
+Rexx script
+;Rexx script
+;
+MSG_PROJECT_ABOUT
+?\000Περί...
+;?\000About...
+;
+MSG_PROJECT_CHECKVERSION
+Έλεγχος έκδοσης
+;Check version
+;
+MSG_FOLDER_NEWFOLDER
+Νέος φάκελος...
+;New folder...
+;
+MSG_FOLDER_NEWSEPARATOR
+Νέος διαχωριστής...
+;New separator...
+;
+MSG_FOLDER_EDIT
+Επεξεργασία...
+;Edit...
+;
+MSG_FOLDER_DELETE
+Διαγραφή
+;Delete
+;
+MSG_FOLDER_IMPORT
+Εισαγωγή...
+;Import...
+;
+MSG_FOLDER_EXPORT
+Εξαγωγή...
+;Export...
+;
+MSG_MESSAGE_EDIT
+E\000Επεξεργασία...
+;E\000Edit...
+;
+MSG_MESSAGE_MOVE
+M\000Μετακίνηση...
+;M\000Move...
+;
+MSG_MESSAGE_COPY
+Αντιγραφή...
+;Copy...
+;
+MSG_MESSAGE_PRINT
+P\000Εκτύπωση
+;P\000Print
+;
+MSG_MESSAGE_SAVE
+V\000Αποθήκευση...
+;V\000Save...
+;
+MSG_MESSAGE_SAVEATT
+T\000Αποθήκευση...
+;T\000Save...
+;
+MSG_MESSAGE_CROP
+O\000Αποκοπή
+;O\000Crop
+;
+MSG_MESSAGE_EXPORT
+Εξαγωγή...
+;Export...
+;
+MSG_MESSAGE_NEW
+N\000Νέο
+;N\000New
+;
+MSG_MESSAGE_REPLY
+R\000Απάντηση...
+;R\000Reply...
+;
+MSG_MESSAGE_FORWARD
+W\000Προώθηση...
+;W\000Forward...
+;
+MSG_MESSAGE_BOUNCE
+B\000Επιστροφή...
+;B\000Bounce...
+;
+MSG_MESSAGE_GETADDRESS
+J\000Αποθήκευση διεύθυνσης...
+;J\000Save address...
+;
+MSG_MESSAGE_CHANGESUBJECT
+Αλλαγή θέματος...
+;Change subject...
+;
+MSG_SETTINGS_ADDRESSBOOK
+A\000Βιβλίο Διευθύνσεων...
+;A\000Address Book...
+;
+MSG_SETTINGS_CONFIG
+K\000Ρυθμίσεις...
+;K\000Configuration...
+;
+MSG_SETTINGS_USERS
+Χρήστες...
+;Users...
+;
+MSG_SETTINGS_MUI
+MUI...
+;MUI...
+;
+MSG_FO_FromAddress
+Από: διεύθυνση
+;From: address
+;
+MSG_HELP_FO_ST_MLFROMADDRESS
+Χρήση αυτής της Από: διεύθυνσης όταν γίνεται αποστολή\nνέων μηνυμάτων στη λίστα
+;Use this From: address when posting\nnew mails to the list
+;
+MSG_FO_ReplyToAddress
+Απάντηση-Σε: διεύθυνση
+;Reply-To: address
+;
+MSG_HELP_FO_ST_MLREPLYTOADDRESS
+Χρήση αυτής της Απάντηση-Σε: διεύθυνσης όταν γίνεται αποστολή\nνέων μηνυμάτων στη λίστα
+;Use this Reply-To: address when posting\nnew mails to the list
+;
+MSG_RE_MDNGads4
+|Παράβλεψη όλων
+;|Ignore all
+;
+MSG_EA_DefSecurity
+Ασφάλεια
+;Sec_urity
+;
+MSG_HELP_MA_CY_DEFSECURITY
+Προεπιλεγμένη ασφάλεια για την\nαποστολή αλληλογραφίας στο άτομο αυτό
+;Default security for sending\nmail to this person
+;
+MSG_WR_DefSecurityConflict
+Οι παραλήπτες της αλληλογραφίας αυτής έχουν διαφορετικές\nρυθμίσεις ασφαλείας. Τι είδους ασφάλεια θέλετε;
+;The recipients of this mail have different default\nsecurity settings. What kind of security do you want?
+;
+MSG_WR_DefSecurityConflictGads
+*_Καμία|_Υπογραφή|_Κρυπτογράφηση|_Και τα δύο|Αποστολή ανώνυμα
+;*_None|_Sign|_Encrypt|_Both|Send _anonymously
+;
+MSG_WR_SecDefaults
+Προεπιλογή
+;Default
+;
+MSG_ER_PGPMultipart
+Σφάλμα κατά τη δημιουργία πολυμερούς μηνύματος PGP. Η Κρυπτογράφηση/υπογραφή διακόπηκε!
+;Error creating multipart PGP message. Encrypting/signing disabled!
+;
+MSG_RE_FixedFont
+Σταθερή γραμματοσειρά
+;Fixed font
+;
+MSG_ER_NO_SMTP_AUTH
+ESMTP διακομιστής %s δεν υποστηρίζει SMTP AUTH!
+;ESMTP Server %s doesn't support SMTP AUTH!
+;
+MSG_CO_UseSMTPAUTH
+Χρήση SMTP AU_TH
+;Use SMTP AU_TH
+;
+MSG_CO_SMTPUser
+ID Χρήστη
+;Us_er ID
+;
+MSG_CO_SMTPPass
+Κωδικός
+;Passwo_rd
+;
+MSG_CO_Del
+Διαγραφή
+;Delete
+;
+MSG_RE_SetUnread
+Ορισμός κατάστασης σε μη αναγνωσμένο
+;Set status to unread
+;
+MSG_WR_AltQuoted
+Εναλλακτική Παράθεση
+;Alternate Quoted
+;
+MSG_CO_AltQuote
+Παράθεση εξωτερικού με χρήση
+;Quote e_xternal using
+;
+MSG_CO_DoQuote
+Παράθεση μηνύματος
+;Qu_ote message
+;
+MSG_HELP_CO_ST_ALTQUOTECHAR
+Συμβολοσειρά που πρέπει να προηγείται κάθε γραμμή\nπαράθεσης που εισάχθηκε από πηγές μη-email
+;String that should precede each line of\na quote inserted from non-email sources
+;
+MSG_EA_SelectPhoto_Title
+Επιλογή πορτραίτου
+;Select portrait
+;
+MSG_RE_MoveNextFolderReq
+Ο επόμενος φάκελος με μη αναγνωσμένα μηνύματα\nείναι: \eb%s\en\nΑλλαγή σε αυτό το φάκελο και συνέχεια\nμε την ανάγνωση εκεί;
+;The next folder with unread messages\nis: \eb%s\en\nChange to this folder and continue\nwith reading there?
+;
+MSG_WR_NoSubjectReqGad
+*_Ορισμός θέματος|_Συνέχεια χωρίς θέμα
+;*_Set subject|_Continue without subject
+;
+MSG_NoSubjectReq
+Προειδοποίηση: Το θέμα είναι κενό
+;Warning: Subject is empty
+;
+MSG_MA_ABookModifiedGad
+*_Αποθήκευση τώρα|_Έξοδος χωρίς αποθήκευση
+;*_Save now|_Quit without saving
+;
+MSG_APPICON_STATS
+N:%lD U:%lD T:%lD
+;N:%lD U:%lD T:%lD
+;
+MSG_ATTACH_NO
+Όχι.
+;No.
+;
+MSG_ATTACH_PART
+Μέρος
+;Part
+;
+MSG_ABOUT_OKAY_GAD
+\033bΕντάξει
+;\033bOkay
+;
+MSG_FOLDER_NEWFOLDERGROUP
+Νέο γρουπ φακέλων...
+;New folder group...
+;
+MSG_FOLDER_SNAPSHOT
+Απομνημόνευση δέντρου
+;Snapshot tree
+;
+MSG_FOLDER_RELOAD
+Επαναφόρτωση δέντρου
+;Reload tree
+;
+MSG_CO_GENLISTCFG
+Γενικές ρυθμίσεις
+;General settings
+;
+MSG_CO_FIELDLISTCFG
+Ρυθμίσεις πεδίου
+;Field settings
+;
+MSG_CO_SIZEFORMAT
+Μορφή μεγέθους
+;Size format
+;
+MSG_HELP_CO_CY_SIZE
+Πως θα θέλατε να εμφανίζεται το\nμέγεθος κάθε μηνύματος;
+;How would you like the size of\neach mail to be displayed?
+;
+MSG_CO_SIZEFORMAT01
+Παλιά μορφή - (1.234.567 bytes)
+;Old format - (1.234.567 bytes)
+;
+MSG_CO_SIZEFORMAT02
+Ανάμικτη ακρίβεια (0.001 GB, 0.01 MB, 0.1 KB)
+;Mixed precision (0.001 GB, 0.01 MB, 0.1 KB)
+;
+MSG_CO_SIZEFORMAT03
+10^-1 ακρίβεια (0.1 GB/MB/KB)
+;10^-1 precision (0.1 GB/MB/KB)
+;
+MSG_CO_SIZEFORMAT04
+10^-2 ακρίβεια (0.01 GB/MB/KB)
+;10^-2 precision (0.01 GB/MB/KB)
+;
+MSG_CO_SIZEFORMAT05
+10^-3 ακρίβεια (0.001 GB/MB/KB)
+;10^-3 precision (0.001 GB/MB/KB)
+;
+MSG_HELP_CO_CH_USESMTPAUTH
+Επιλέξτε αν θέλετε να πιστοποιήσετε\nτον εαυτό σας σε ξένο διακομιστήSMTP\n(συνήθως εκτός του domain του ISP).\nΑν δεν είστε σίγουροι, μην ενεργοποιείτε την επιλογή αυτή.
+;Select if you wish to authenticate\nyourself to a foreign SMTP server\n(usually outside your ISP's domain).\nIf in doubt, don't enable this option.
+;
+MSG_HELP_CO_ST_SMTPAUTHUSER
+Εισάγετε εδώ το username\nτου χρήστη SMTP AUTH.
+;Enter here the username\nof the SMTP AUTH user.
+;
+MSG_HELP_CO_ST_SMTPAUTHPASS
+Εισάγετε εδώ τον κωδικό\nτου χρήστη SMTP AUTH.
+;Enter here the password\nof the SMTP AUTH user.
+;
+MSG_HELP_CO_ST_APPICON
+Το κείμενο που θα εμφανίζεται\nως ετικέτα του AppIcon.
+;Text that should be displayed\nas the label of the AppIcon.
+;
+MSG_CO_APPICONTEXT
+Ετικέτα
+;_Label
+;
+MSG_CO_NEWMSGS
+%n  Νέα μηνύματα
+;%n  New messages
+;
+MSG_CO_UNREADMSGS
+%u  Μη αναγνωσμένα μηνύματα
+;%u  Unread messages
+;
+MSG_CO_TOTALMSGS
+%t  Συνολικά μηνύματα
+;%t  Total messages
+;
+MSG_CO_DELMSGS
+%d  Διεγραμένα μηνύματα
+;%d  Deleted messages
+;
+MSG_CO_SENTMSGS
+%s  Απεσταλμένα μηνύματα
+;%s  Sent messages
+;
+MSG_FO_DSTATS
+Στατιστικά AppIcon
+;App_Icon stats
+;
+MSG_HELP_FO_CH_STATS
+Θέλετε να βλεπετε τα στατιστικά\nτου φακέλου αυτού στην\nετικέτα του YAM AppIcon;
+;Would you like to see this\nfolder's statistics in the\nYAM AppIcon's label?
+;
+MSG_ERROR_IMGLOAD
+Το αρχείο εικόνας\nPROGDIR:Icons/%s\nδεν μπόρεσε να φορτωθεί.
+;The image file\nPROGDIR:Icons/%s\ncouldn't be loaded.
+;
+MSG_OPENGUI
+Άνοιγμα του GUI...
+;Opening GUI...
+;
+MSG_ERR_OPENLIB
+Αδύνατο το άνοιγμα της '%s', έκδοσης v%lu.%lu
+;Can't open '%s', version v%lu.%lu
+;
+MSG_CO_CONTEXTMENU
+Μενού λειτουργιών
+;Context menu
+;
+MSG_HELP_CO_CONTEXTMENU
+Εμφάνιση αναδυόμενου μενού όταν γίνεται\nδεξί κλικ του ποντικιού\nσε αντικείμενο της λίστας;
+;Show a popup menu when clicking\nthe right mouse button on an\nitem in this list?
+;
+MSG_CO_INFOBAR
+Μπάρα πληροφοριών
+;Information bar
+;
+MSG_HELP_CO_CH_INFOBAR
+Εδώ μπορείτε να επιλέξετε την θέση της InfoBar\nπου δείχνει γενικές πληροφορίες στο YAM.
+;Here you can select the position of the InfoBar\nwhich shows general information in YAM.
+;
+MSG_CO_WARNSUBJECT
+Προειδοποίηση όταν υπάρχει άδεια γραμμή θέματος
+;Warn when there's an empty subject line
+;
+MSG_HELP_CO_CH_WARNSUBJECT
+Θέλετε να ειδοποιήστε όταν αφήνετε\nτην γραμμή θέματος κενή;
+;Would you like to be warned if you\nleave the subject line blank?
+;
+MSG_WR_OKAYCANCELREQ
+*Εντάξει|Άκυρο
+;*Okay|Cancel
+;
+MSG_WR_NOSUBJECTREQ
+Το θέμα λείπει, παράβλεψη και συνέχεια;
+;The subject is missing, continue anyway?
+;
+MSG_WR_TBSearch
+Αναζητηση
+;Search
+;
+MSG_HELP_WR_BT_SEARCH
+Αναζήτηση του κειμένου για συγκεκριμένη συμβολοσειρά.
+;Search the text for a given string.
+;
+MSG_SEARCHWINDOW_TITLE
+Αναζήτηση
+;Search
+;
+MSG_SEARCHWINDOW_TOGGLE_CASESENSITVE
+Διαχωρισμός κεφαλαίων-μικρών
+;Case sensitive
+;
+MSG_SEARCHWINDOW_BT_SEARCH
+Αναζήτηση
+;Search
+;
+MSG_SEARCHWINDOW_BT_FROMTOP
+>Από την κορυφή
+;>From top
+;
+MSG_SEARCHWINDOW_BT_CANCEL
+Άκυρο
+;Cancel
+;
+MSG_SEARCHNOTFOUND_TITLE
+Αναζήτηση
+;Search
+;
+MSG_SEARCHNOTFOUND_MSG
+Το '%s' δεν βρέθηκε
+;'%s' not found
+;
+MSG_SEARCHNOTFOUND_BUTTON
+Συνέχεια
+;Continue
+;
+MSG_WR_ERRORNOSENDER
+Αλληλογραφία ατελής: Χωρίς αποστολέα!
+;Mail is incomplete: No sender!
+;
+MSG_WR_NOSENDERREQGAD
+_Χρήση προεπιλεγμένου αποστολέα|*_Άκυρο
+;_Use default sender|*_Cancel
+;
+MSG_FO_GROUP_CONFDEL
+Το γρουπ αυτό περιέχει υποκαταλόγους, που θα\nμετακινηθούν στον προηγούμενο φάκελο στη διαγραφή.\nΘέλετε πραγματικά να διαγράψετε το γρουπ;
+;This group contains subfolders, which will\nbe moved to the parent folder on deletion.\nDo you really want to delete this group?
+;
+MSG_FOLDER_NONSEL
+(καμιά επιλογή)
+;(none selected)
+;
+MSG_MAIL_NONSEL
+(καμιά επιλογή)
+;(none selected)
+;
+MSG_FO_NEWFGROUP
+Νέο γρουπ φακέλων...
+;New folder group...
+;
+MSG_FO_NEWFGROUPREQ
+Παρακαλώ εισάγετε ένα όνομα για το νέο γρουπ φακέλων:
+;Please enter a name for the new folder group:
+;
+MSG_ER_CANTMOVEMAIL
+Αδύνατη η μετακίνηση αλληλογραφίας '%s' στο φάκελο '%s' γιατί δεν υπάρχει φάκελος με αυτό το όνομα. Παρακαλώ ελέγξτε τις ρυθμίσεις Φίλτρων.
+;Can't move mail '%s' to folder '%s' because a folder with that name doesn't exist. Please check your Filters configuration.
+;
+MSG_MA_EXECUTINGCMD
+Εκτέλεση εντολής...
+;Executing command...
+;
+MSG_APP_DESCRIPTION
+SMTP/POP3 E-Mail Client για AmigaOS
+;SMTP/POP3 E-Mail Client for AmigaOS
+;
+MSG_CO_INFOBARPOS
+Θέση
+;Pos_ition
+;
+MSG_CO_INFOBARPOS01
+Κορυφή
+;Top
+;
+MSG_CO_INFOBARPOS02
+Κέντρο
+;Center
+;
+MSG_CO_INFOBARPOS03
+Βάση
+;Bottom
+;
+MSG_CO_INFOBARPOS04
+Απενεργοποίηση
+;Turned off
+;
+MSG_CO_FOLDERLABEL
+Ετικέτα
+;_Label
+;
+MSG_FO_MLSUPPORT
+ML_-Υποστήριξη
+;ML_-Support
+;
+MSG_HELP_FO_CH_MLSUPPORT
+Ενεργοποίηση ή όχι της υποστήριξης\nλίστας αλληλογραφίας για τον φάκελο αυτό.
+;Turn on/off the mailing list\nsupport for this folder.
+;
+MSG_FO_AUTODETECT
+Αυτόματη εύρεση
+;Autodetect
+;
+MSG_HELP_FO_BT_AUTODETECT
+Προσπάθεια για αυτόματη εύρεση των κατάλληλων\nρυθμίσεων υποστήριξης ML με έλεγχο των\nπρώτων 5 email στο φάκελο.
+;Try to guess automatically the suitable\nML support settings by scanning the\nfirst 5 emails in the folder.
+;
+MSG_FO_NOTRECOGNIZED
+Αδύνατη η αναγνώριση!
+;Couldn't be recognized!
+;
+MSG_FO_MAXAGEFMT
+%ld μέρες
+;%ld days
+;
+MSG_CO_NB_EMAILCACHE
+Email cache
+;Email cache
+;
+MSG_CO_NB_EMAILCACHEFMT
+%ld mails
+;%ld mails
+;
+MSG_HELP_CO_NB_EMAILCACHE
+Μέγεθος Cache για τους ποιο πρόσφατους\nπαραλήπτες που χρησιμοποιήθηκαν και δεν είναι στο βιβλίο διευθ.\nΕπιλέξτε 0 mails για απενεργοποίηση.
+;Cache size for the most recently used\nrecipients not yet in the address book.\nSelect 0 mails to disable this feature.
+;
+MSG_CO_USESMTPTLS
+Χρήση SMTP TLSv1/SSLv3
+;Use SMTP TLSv1/SSLv3
+;
+MSG_HELP_CO_CH_USESMTPTLS
+Μια ασφαλής σύνδεση TLSv1/SSLv3 θα πραγματοποιηθεί μεταξύ\nτου διακομιστή SMTP και του YAM για αποστολή email. Αν αυτό το πλαίσιο επιλογής είναι\nανενεργό, σημαίνει ότι δεν υπάρχει υποστήριξη AmiSSL.
+;A TLSv1/SSLv3 secure connection will be established between\nthe SMTP server and YAM to send email. If this checkbox is\nghosted, it means AmiSSL support is not available.
+;
+MSG_CO_POP3SSL
+Χρήση POP3 TLSv1/SSLv3
+;Use POP3 TLSv1/SSLv3
+;
+MSG_HELP_CO_CH_POP3SSL
+Το YAM θα συνδεθεί μέσω TLSv1/SSLv3 στο διακομιστή POP3 στη\nPOP3 SSL θύρα 995 και θα μεταφέρει email από εκεί. Αν αυτό το\nπλαίσιο επιλογής είναι ανενεργό, σημαίνει ότι δεν υπάρχει υποστήριξη AmiSSL.
+;YAM will connect via TLSv1/SSLv3 to the POP3 server on the\nPOP3 SSL port 995 port and transfer email from there. If this\ncheckbox is ghosted, it means AmiSSL support is not available.
+;
+MSG_CO_USESTLS
+με STLS
+;with STLS
+;
+MSG_HELP_CO_CH_USESTLS
+Αν επιλεγεί, ο διακομιστής POP3 υποτίθεται ότι υποστηρίζει STLS\nκαι χρησιμοποιεί την κανονική θύρα POP3 110 σαν κάθε μη SSL διακομιστή.
+;If checked, the POP3 server is assumed to support STLS\nand use the standard POP3 110 port like any non SSL server.
+;
+MSG_CO_ST_SMTPPORT
+Θύρα
+;Port
+;
+MSG_HELP_CO_ST_SMTPPORT
+Θύρα που χρησιμοποιείται από το διακομιστή SMTP (προεπιλογή: 25)
+;Port used by the SMTP server (default: 25)
+;
+MSG_CO_ST_POPPORT
+Θύρα
+;Port
+;
+MSG_HELP_CO_ST_POPPORT
+Θύρα που χρησιμοποιείται από το διακομιστή POP3 (προεπιλογή: 110)
+;Port used by the POP3 server (default: 110)
+;
+MSG_CO_InfoBarDef
+- Σύνολο: %t Νέα: %n Μη Αναγν: %u
+;- Total: %t New: %n Unread: %u
+;
+MSG_TR_INITTLS
+Εκκίνηση TLSv1/SSLv3 session...
+;Initializing TLSv1/SSLv3 session...
+;
+MSG_ER_INITAMISSL
+Αδύνατη η εκκίνση της amissl.library - απενεργοποίηση υποστήριξης TLSv1/SSLv3. Παρακαλώ ελέγξτε την εγκατάσταση AmiSSL και επανεκινήστε το YAM.
+;Couldn't init amissl.library - TLSv1/SSLv3 support disabled. Please check your AmiSSL installation and restart YAM.
+;
+MSG_ER_INITTLS
+Αδύνατη η εκκίνηση του TLSv1/SSLv3 session για %s
+;Couldn't initialize TLSv1/SSLv3 session for %s
+;
+MSG_TR_SENDAUTH
+Αποστολή αίτησης SMTP AUTH...
+;Sending SMTP AUTH request...
+;
+MSG_CO_AutoTranslateIn
+Αυτόματη εύρεση/Μετάφραση κωδικοσελίδας
+;Codepage Autodetect/T_ranslation
+;
+MSG_HELP_CO_CH_AUTOTRANSLATEIN
+Βοηθάει στην εμφάνιση περίεργων σετ χαρακτήρων.\nΚυρίως για χρήστες κυριλλικών
+;Helps decyphering strange character sets.\nMainly for cyrillic users.
+;
+MSG_CO_IMPORTMIMETITLE
+Εισαγωγή εφαρμογών & τύπων MIME
+;Import MIME viewers & types
+;
+MSG_ER_TRANSFERMAIL
+Αδύνατη η μεταφορά αλληλογραφίας '%s' στο φάκελο '%s'.\nΊσως το αρχείο δεν υπάρχει ή δεν μπόρεσε να αντιγραφεί για κάποιο λόγο.
+;Couldn't transfer mail '%s' to folder '%s'.\nPerhaps the file doesn't exist or it couldn't be copied for some reason.
+;
+MSG_ER_IMPORTMAIL
+Αδύνατη η εισαγωγή αλληλογραφίας από το αρχείο '%s'.\nΒεβαιωθείτε ότι το αρχείο αυτό περιέχει πραγματικά email στην κανονική μορφή MBOX (διαχωρισμένα από μια γραμμή "From ").
+;Couldn't import any mail out of file '%s'.\nPlease make sure that this file really contains emails in the standard MBOX format (separated by a single "From " line).
+;
+MSG_ER_ADDRBOOKLOAD
+Αδύνατη η φόρτωση βιβλίου διευθύνσεων από το αρχείο '%s'.\nΤο αρχείο δεν φαίνεται να υπάρχει ή είναι αδύνατη η πρόσβαση.
+;Couldn't load address book from file '%s'.\nThe file doesn`t seem to exist or is unaccessible.
+;
+MSG_AB_NOYAMADDRBOOK
+Το αρχείο '%s' δεν είναι έγκυρο βιβλίο διευθύνσεων YAM.\nΘέλετε να το διεργαστείτε ως αρχείο που περιέχει\nemail διευθύνσεις σε ξεχωριστές γραμμές;
+;The file '%s' isn`t a valid YAM addressbook file.\nDo you still want to process it as a file that contains\nemail addresses on separate lines ?
+;
+MSG_AB_NOYAMADDRBOOK_GADS
+_Ναι|*_Όχι
+;_Yes|*_No
+;
+MSG_FO_EDIT_FGROUP
+Ρυθμίσεις γρουπ φακέλων
+;Folder group preferences
+;
+MSG_FO_EDIT_FGROUPREQ
+Όνομα γρουπ φακέλων:
+;Name of folder group:
+;
+MSG_ERR_OPENMCC
+Αδύνατη η εύρεση της έκδοσης v%lu.%lu του MUI '%s' εγκατεστημένου.\nΓια λόγους συμβατότητας απαιτείται τουλάχιστον αυτή\nη έκδοση από το YAM. Παρακαλώ σιγουρευτείτε ότι την έχετε\nσωστά εγκατεστημένη.
+;Couldn`t find version v%lu.%lu of MUI '%s' installed.\nFor compatibility reasons at least this version is\nrequired by YAM. Please make sure you have installed\nit correctly.
+;
