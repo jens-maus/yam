@@ -5,6 +5,25 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-02  Gunther Nikl <gni@gecko.de>
+
+    * YAM_COs.c/CO_LoadConfig: constified sortconv[]
+    * YAM.c,YAM_UT.c: use EasyRequestArgs()
+    * YAM.c: suppress warnings for TimerBase (different casts),
+      use MAXICONS as loop count in SetupAppIcons()
+    * YAM_UT.c/ExpandText: move chr[] to its usage scope
+    * YAM_WR.c/WR_AddArchiveFunc: likewise
+    * YAM_UT.c/(RemoveCut,IdentifyFileDT): fixed wrong static usage,
+      remove unused dead code (Index), stylistic changes
+    * YAM_UT.c/AllocStrBuf: use size_t as argument type
+    * YAM_UT.c/StrBufCpy,StrBufCat: adapt to that change
+    * YAM_rexx_rxif/rx_addrresolve: remove cast of AllocStrBuf argument
+    * YAM_UT.c/AllocCopy,CompressMailFile,UncompressMailFile,CheckPrinter,
+      IdentifyFileDT: miscellaneous changes
+    * YAM_CL.c/BC_Dispatcher: remove test in case of MUIA_Bodychunk_UseOld
+    * YAM_FO.c/FO_MLAutoDetectFunc: fixed potential enforcer hits
+    * YAM_UT.c/StrBufCpy,StrBufCat: optimized
+
 2002-12-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_rexx_rxif.c/YAM_MA.c: fixed bug #635892 where
@@ -17,7 +36,7 @@ $Source$
     * includes/SDI_compiler.h: added REGARGS define for MorphOS
     * Makefile/Makefile.MorphOS: added $(CPU) to LDFLAGS
 
-2002-11-22  Gunther Nikl <gni@gecko.de>
+2002-11-27  Gunther Nikl <gni@gecko.de>
 
     * YAM_MAf.c/FO_SetCurrentFolder: fix wrong NULL usage
     * classes/Recipientstring.c: fix wrong NULL usage, drop superflous
