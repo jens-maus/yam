@@ -956,30 +956,40 @@ BOOL FirstAddr=TRUE;
 		if(buf = strdup(CheckThese[i]))
 		{
 		int hits,currsec;
-		STRPTR s;
+		STRPTR in=buf,s,t;
 		struct MUIS_Listtree_TreeNode *tn;
 
 			// loop through comma-separated addresses in string
-			s = strtok(buf,",");
-			while(s)
+			while(s = strtok_r(&in,","))
 			{
 				DB(KPrintf("SetDefaultSecurity(): looking for user '%s'\n",s)); 
-				AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, s, ASM_REALNAME|ASM_ADDRESS|ASM_COMPLETE, &hits, &tn);
-				if(hits == 0) currsec = 0;		// entry not in address book -> no security
+				while(t = strtok_r(&s," ()<>"))
+					if(strchr(t,'@')) break;
+
+				if(!t) continue; // can't find address for this entry - shouldn't happen
+				else DB(KPrintf("SetDefaultSecurity(): address is %s\n",t));
+
+				AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER, &hits, &tn);
+
+				if(0 == hits) currsec = 0;		// entry not in address book -> no security
 				else currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;	// else get default
+
+				DB(KPrintf("SetDefaultSecurity(): currsec=%ld\n",currsec)); 
 				if(currsec != Security)
 				{
 					if(FirstAddr)		// first address' setting is always used
 					{
 						FirstAddr = FALSE;
-						Security = currsec;
-					} else				// conflict: two addresses have different defaults
+						Security = currsec;	// assume as default
+					} else						// conflict: two addresses have different defaults
 					{
-						DB(KPrintf("SetDefaultSecurity(): conflicting security for address '%s': %ld\n",s,currsec));
-						Security = 0;	// disable
+						Security = MUI_RequestA(G->App, NULL, 0, NULL, GetStr(MSG_WR_DefSecurityConflictGads),
+														GetStr(MSG_WR_DefSecurityConflict),NULL);
+						if(0 == Security) Security = 4;	// correct 1..N numbering of requester buttons
+						else Security--;
+						break;	// terminate recipient loop
 					}
 				}
-				s = strtok(NULL,",");
 			}
 			free(buf);
 		}
@@ -1192,7 +1202,6 @@ mimebody:
 		success = TRUE;
    }
 	CloseTempFile(tf);
-	DBpr("WriteOutMessage() done\n");
 	return success;
 }
 
@@ -1268,7 +1277,8 @@ void WR_NewMail(int mode, int winnum)
       comp.FirstPart->TTable = G->TTout;
    }
 
-//	SetDefaultSecurity(&comp);
+	// try to get default security from address book unless requested otherwise
+	if(GetMUICheck(wr->GUI.CH_DEFSECURITY)) SetDefaultSecurity(&comp);
 
    if (wr->Mode == NEW_EDIT)
    {
@@ -2164,10 +2174,13 @@ struct WR_ClassData *WR_New(int winnum)
                         MUIA_CycleChain, 1,
                      End,
                      Child, HSpace(0),
-                     Child, data->GUI.RA_SECURITY = RadioObject, GroupFrameT(GetStr(MSG_WR_Security)),
-                        MUIA_Radio_Entries, security,
-                        MUIA_CycleChain, 1,
-                     End,
+							Child, VGroup,  GroupFrameT(GetStr(MSG_WR_Security)),
+	                     Child, data->GUI.RA_SECURITY = RadioObject,
+   	                     MUIA_Radio_Entries, security,
+      	                  MUIA_CycleChain, 1,
+         	            End,
+								Child, MakeCheckGroup((Object **)&data->GUI.CH_DEFSECURITY,GetStr(MSG_WR_CH_UseDefSecurity)),
+							End,
                   End,
                End,
             End,
@@ -2190,23 +2203,25 @@ struct WR_ClassData *WR_New(int winnum)
          get(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell, &spell);
          set(mi_autospell, MUIA_Menuitem_Checked, spell);
          set(data->GUI.CY_IMPORTANCE, MUIA_Cycle_Active, 1);
-         DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.RA_ENCODING, data->GUI.ST_CTYPE, data->GUI.ST_DESC, data->GUI.BT_DEL, data->GUI.BT_DISPLAY, NULL);
-         SetHelp(data->GUI.ST_SUBJECT   ,MSG_HELP_WR_ST_SUBJECT   );
-         SetHelp(data->GUI.BT_ADD       ,MSG_HELP_WR_BT_ADD       );
-         SetHelp(data->GUI.BT_ADDPACK   ,MSG_HELP_WR_BT_ADDPACK   );
-         SetHelp(data->GUI.BT_DEL       ,MSG_HELP_WR_BT_DEL       );
-         SetHelp(data->GUI.BT_DISPLAY   ,MSG_HELP_WR_BT_DISPLAY   );
-         SetHelp(data->GUI.RA_ENCODING  ,MSG_HELP_WR_RA_ENCODING  );
-         SetHelp(data->GUI.ST_CTYPE     ,MSG_HELP_WR_ST_CTYPE     );
-         SetHelp(data->GUI.ST_DESC      ,MSG_HELP_WR_ST_DESC      );
-         SetHelp(data->GUI.ST_EXTHEADER ,MSG_HELP_WR_ST_EXTHEADER );
-         SetHelp(data->GUI.CH_DELSEND   ,MSG_HELP_WR_CH_DELSEND   );
-         SetHelp(data->GUI.CH_RECEIPT   ,MSG_HELP_WR_CH_RECEIPT   );
-         SetHelp(data->GUI.CH_DISPNOTI  ,MSG_HELP_WR_CH_DISPNOTI  );
-         SetHelp(data->GUI.CH_ADDINFO   ,MSG_HELP_WR_CH_ADDINFO   );
-         SetHelp(data->GUI.CY_IMPORTANCE,MSG_HELP_WR_CY_IMPORTANCE);
-         SetHelp(data->GUI.RA_SIGNATURE ,MSG_HELP_WR_RA_SIGNATURE );
-         SetHelp(data->GUI.RA_SECURITY  ,MSG_HELP_WR_RA_SECURITY  );
+			setcheckmark(data->GUI.CH_DEFSECURITY,TRUE);
+         DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->GUI.RA_ENCODING, data->GUI.ST_CTYPE, data->GUI.ST_DESC, data->GUI.BT_DEL, data->GUI.BT_DISPLAY, NULL);
+         SetHelp(data->GUI.ST_SUBJECT    ,MSG_HELP_WR_ST_SUBJECT   );
+         SetHelp(data->GUI.BT_ADD        ,MSG_HELP_WR_BT_ADD       );
+         SetHelp(data->GUI.BT_ADDPACK    ,MSG_HELP_WR_BT_ADDPACK   );
+         SetHelp(data->GUI.BT_DEL        ,MSG_HELP_WR_BT_DEL       );
+         SetHelp(data->GUI.BT_DISPLAY    ,MSG_HELP_WR_BT_DISPLAY   );
+         SetHelp(data->GUI.RA_ENCODING   ,MSG_HELP_WR_RA_ENCODING  );
+         SetHelp(data->GUI.ST_CTYPE      ,MSG_HELP_WR_ST_CTYPE     );
+         SetHelp(data->GUI.ST_DESC       ,MSG_HELP_WR_ST_DESC      );
+         SetHelp(data->GUI.ST_EXTHEADER  ,MSG_HELP_WR_ST_EXTHEADER );
+         SetHelp(data->GUI.CH_DELSEND    ,MSG_HELP_WR_CH_DELSEND   );
+         SetHelp(data->GUI.CH_RECEIPT    ,MSG_HELP_WR_CH_RECEIPT   );
+         SetHelp(data->GUI.CH_DISPNOTI   ,MSG_HELP_WR_CH_DISPNOTI  );
+         SetHelp(data->GUI.CH_ADDINFO    ,MSG_HELP_WR_CH_ADDINFO   );
+         SetHelp(data->GUI.CY_IMPORTANCE ,MSG_HELP_WR_CY_IMPORTANCE);
+         SetHelp(data->GUI.RA_SIGNATURE  ,MSG_HELP_WR_RA_SIGNATURE );
+         SetHelp(data->GUI.RA_SECURITY   ,MSG_HELP_WR_RA_SECURITY  );
+         SetHelp(data->GUI.CH_DEFSECURITY,MSG_HELP_WR_CH_UseDefSecurity);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_NEW      ,data->GUI.TE_EDIT      ,1,MUIM_TextEditor_ClearText);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_OPEN     ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_OPEN,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSFILE  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSERT,winnum);
@@ -2285,17 +2300,18 @@ struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.ST_CTYPE   ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
          DoMethod(data->GUI.ST_DESC    ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook   ,&WR_PutFileEntryHook,winnum);
          DoMethod(data->GUI.RA_SIGNATURE,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_ChangeSignatureHook,MUIV_TriggerValue,winnum);
-         DoMethod(data->GUI.CH_DELSEND ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_delsend             ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.CH_RECEIPT ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_receipt             ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.CH_DISPNOTI,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_dispnoti            ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(data->GUI.CH_ADDINFO ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_addinfo             ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
-         DoMethod(mi_autospell         ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.TE_EDIT      ,3,MUIM_Set        ,MUIA_TextEditor_TypeAndSpell,MUIV_TriggerValue);
-         DoMethod(mi_delsend           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DELSEND   ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
-         DoMethod(mi_receipt           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_RECEIPT   ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
-         DoMethod(mi_dispnoti          ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DISPNOTI  ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
-         DoMethod(mi_addinfo           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_ADDINFO   ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
-         DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.RA_SIGNATURE ,3,MUIM_Set        ,MUIA_Radio_Active,0);
-         DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.CH_ADDINFO   ,3,MUIM_Set        ,MUIA_Selected,FALSE);
+         DoMethod(data->GUI.CH_DELSEND ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_delsend              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
+         DoMethod(data->GUI.CH_RECEIPT ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_receipt              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
+         DoMethod(data->GUI.CH_DISPNOTI,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_dispnoti             ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
+         DoMethod(data->GUI.CH_ADDINFO ,MUIM_Notify,MUIA_Selected            ,MUIV_EveryTime,mi_addinfo              ,3,MUIM_Set        ,MUIA_Menuitem_Checked,MUIV_TriggerValue);
+         DoMethod(mi_autospell         ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.TE_EDIT       ,3,MUIM_Set        ,MUIA_TextEditor_TypeAndSpell,MUIV_TriggerValue);
+         DoMethod(mi_delsend           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DELSEND    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
+         DoMethod(mi_receipt           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_RECEIPT    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
+         DoMethod(mi_dispnoti          ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_DISPNOTI   ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
+         DoMethod(mi_addinfo           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
+         DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.RA_SIGNATURE  ,3,MUIM_Set        ,MUIA_Radio_Active,0);
+         DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,FALSE);
+         DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,data->GUI.CH_DEFSECURITY,3,MUIM_Set        ,MUIA_Selected,FALSE);
          for (i = 0; i < 3; i++)
          {
             DoMethod(data->GUI.CY_IMPORTANCE,MUIM_Notify,MUIA_Cycle_Active     ,i              ,strip                  ,4,MUIM_SetUData,WMEN_IMPORT0+i,MUIA_Menuitem_Checked,TRUE);
@@ -2356,4 +2372,4 @@ LOCAL struct WR_ClassData *WR_NewBounce(int winnum)
    }
    return NULL;
 }
-///
+/// vi: set ts=3 ss=0 scs si nu:
