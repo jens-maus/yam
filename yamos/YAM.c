@@ -585,23 +585,28 @@ MakeStaticHook(DoublestartHook, DoublestartFunc);
 //  Makes sure that the user really wants to quit the program
 static BOOL StayInProg(void)
 {
-   int i, fq;
+   int i;
+   BOOL req = FALSE;
 
    if (G->AB->Modified)
    {
+     // make sure the application is uniconified before we popup the requester
+     nnset(G->App, MUIA_Application_Iconified, FALSE);
+
      if (MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_ABookModifiedGad), GetStr(MSG_AB_Modified)))
        CallHookPkt(&AB_SaveABookHook, 0, 0);
    }
 
-   get(G->App, MUIA_Application_ForceQuit, &fq);
-   if (!fq)
+   for(i=0; i < MAXEA && !req; i++) if(G->EA[i]) req = TRUE;
+   for(i=0; i < MAXWR && !req; i++) if(G->WR[i]) req = TRUE;
+
+   if(req || G->CO || C->ConfirmOnQuit)
    {
-     BOOL req = FALSE;
-     for (i = 0; i < 4; i++) if (G->EA[i]) req = TRUE;
-     for (i = 0; i < 2; i++) if (G->WR[i]) req = TRUE;
-     if (req || G->CO || C->ConfirmOnQuit)
-       if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq)))
-         return TRUE;
+     // make sure the application is uniconified before we popup the requester
+     nnset(G->App, MUIA_Application_Iconified, FALSE);
+
+     if (!MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_QuitYAMReq)))
+       return TRUE;
    }
 
    return FALSE;
@@ -609,17 +614,43 @@ static BOOL StayInProg(void)
 ///
 /// Root_GlobalDispatcher
 //  Processes return value of MUI_Application_NewInput
-static BOOL Root_GlobalDispatcher(ULONG app_input)
+static int Root_GlobalDispatcher(ULONG app_input)
 {
+   int ret = 0;
+
    switch (app_input)
    {
-      case MUIV_Application_ReturnID_Quit: return (BOOL)!StayInProg();
-      case ID_CLOSEALL: if (!C->IconifyOnQuit) return (BOOL)!StayInProg();
-                        set(G->App, MUIA_Application_Iconified, TRUE); break;
-      case ID_RESTART:  return 2;
-      case ID_ICONIFY:  MA_UpdateIndexes(FALSE); break;
+      case MUIV_Application_ReturnID_Quit:
+      {
+        if(!xget(G->App, MUIA_Application_ForceQuit))
+        {
+          ret = (int)!StayInProg();
+        }
+        else ret = 1;
+      }
+      break;
+
+      case ID_CLOSEALL:
+      {
+        if(!C->IconifyOnQuit) ret = (int)!StayInProg();
+        set(G->App, MUIA_Application_Iconified, TRUE);
+      }
+      break;
+
+      case ID_RESTART:
+      {
+        ret = 2;
+      }
+      break;
+
+      case ID_ICONIFY:
+      {
+        MA_UpdateIndexes(FALSE);
+      }
+      break;
    }
-   return FALSE;
+
+   return ret;
 }
 ///
 /// Root_New

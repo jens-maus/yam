@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-05-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: fixed bug #727871 where it wasn`t possible to quit YAM while
+      it was iconified and a confirmation requester need to pop up. Now
+      YAM will automatically uniconify to request the user to answer to
+      this requester before quitting. Only a "QUIT FORCE" arexx command will
+      exit YAM the hard way and skipping all further user input while
+      quitting.
+
 2003-05-21  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_rexx_rxif.c: fixed bug where the FOLDERINFO arexx command
