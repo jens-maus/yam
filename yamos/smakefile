@@ -36,13 +36,21 @@ RM = delete quiet
 # Compiler/Linker flags
 
 CPU      = 68020
-CDEFS    = `rx "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"`
-WARN     = WARN=ALL IGNORE=147,306,62,165,148,178,61,212,120,51
+CDEFS    = `rx "say 'DEF __YAM_VERDATE=' || '22'x ||\
+  right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) ||\
+  '22'x || ' DEF __YAM_VERDAYS=' || date('I')"`
+WARN     = WARN=ALL IGNORE=51,61,120,148,165,178,212,306
 OPTFLAGS = STRIPDEBUG OPT OPTSIZE OPTINLOCAL OPTGO OPTLOOP OPTPEEP #OPTSCHED
 DEBUG    = NOSTRIPDEBUG NOOPT DEF DEBUG DEBUG=LINE
-# CPU can be defined outside, defaults to above
-# OPTFLAGS are disabled by DEBUG!
+CFLAGS   = RESOPT NOVER PARM=R NOLINK DATA=NEAR CODE=FAR ERRORREXX NOICONS\
+  NOSTKCHK STRINGMERGE IDLEN=60 INCLUDEDIR=includes NOCHECKABORT UTILLIB\
+  SMALLCODE DEF=__USE_SYSBASE CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
 
+# CPU and DEBUG can be defined outside, defaults to above
+# using e.g. "smake DEBUG= CPU=68060" produces optimized non-debug 68060 version
+#
+# OPTFLAGS are disabled by DEBUG normally!
+#
 # ignored warnings are:
 #  51 C++ comment detected                                 -- we agreed to use them
 #  61 undefined struct/union tag "tag-name"                -- in include files
@@ -53,10 +61,6 @@ DEBUG    = NOSTRIPDEBUG NOOPT DEF DEBUG DEBUG=LINE
 # 212 item "name" already declared                         -- in include files
 # 306 .. function inlined                                  -- disturbs
 
-CFLAGS = RESOPT NOVER PARM=R NOLINK DATA=NEAR CODE=FAR ERRORREXX NOICONS\
-  NOSTKCHK STRINGMERGE IDLEN=60 INCLUDEDIR=includes NOCHECKABORT UTILLIB\
-  SMALLCODE DEF=__USE_SYSBASE CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
-
 # Objects
 
 OBJS = YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
@@ -66,7 +70,7 @@ OBJS = YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
 
 #
 
-all: $(TARGET)
+default: $(TARGET)
 
 # Default rule
 
@@ -82,10 +86,10 @@ $(TARGET): $(OBJS)
   <
 
 clean: # leaves final YAM exe
-  -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.?
+  -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.c YAM_locale.h
 
 cleanall:
-  -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.? $(TARGET)
+  -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.c YAM_locale.h $(TARGET)
 
 copy:
   $(CP) $(TARGET) YAM:
@@ -149,7 +153,7 @@ YAM_FO.o: YAM_FO.c YAM.h YAM_classes.h YAM_debug.h YAM_error.h \
   YAM_userlist.h YAM_utilities.h
 
 YAM_global.o: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
-  $(CC) $(CDEFS) $(CFLAGS) $<
+  $(CC) $(CFLAGS) $(CDEFS) YAM_global.c
 
 YAM_MA.o: YAM_MA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
@@ -209,4 +213,5 @@ all_sas.o: all_sas.c extrasrc/NewReadArgs.c
 
 YAM_locale.c: YAM_locale.h
 YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
-  flexcat $< YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+  flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+

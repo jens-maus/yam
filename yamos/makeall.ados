@@ -26,17 +26,16 @@
 ;**************************************************************************/
 
 echo "Compiling 68060 version..."
-smake CPU=68060 cleanall YAM
-rename YAM YAM.060
+smake CPU=68060 DEBUG= cleanall TARGET=YAM.060 default
 rename YAM.map YAM.map.060
 
 echo "Compiling 68040 version..."
-smake CPU=68040 cleanall YAM
-rename YAM YAM.040
+smake CPU=68040 DEBUG= cleanall TARGET=YAM.040 default
 rename YAM.map YAM.map.040
 
 echo "Compiling 68020 version..."
-smake CPU=68020 cleanll YAM
+smake CPU=68020 DEBUG= cleanall TARGET=YAM.020 default
+rename YAM.map YAM.map.020
 
 echo "Making 68060 patch file..."
 scompare -oYAM.060.pch YAM YAM.060

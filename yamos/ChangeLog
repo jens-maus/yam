@@ -778,3 +778,12 @@
     * (smakefile) changed CFLAGS handling, changed LINK statement
     * (Makefile, Makefile.m68k-AmigaOS) restruc
     * (starter.c) cleanup
+
+2001-06-120  Dirk Stöcker <stoecker@epost.de>
+
+    * fixed smakefile: $< does NOT work, when there are 2 or more depencies
+      in the header line! This only works, if the header files are never
+      changed and this very unlikely.
+    * Also adding $(CDEFS) before RESOPT was not that clever at all.
+    * makeall.dos now uses the stuff Gunther introduced
+
