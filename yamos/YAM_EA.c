@@ -65,19 +65,20 @@ void EA_Setup(int winnum, struct ABEntry *ab)
 
    switch (ab->Type)
    {
-      case AET_USER:   setstring(gui->ST_ALIAS, ab->Alias);
-                       setstring(gui->ST_REALNAME, ab->RealName);
-                       setstring(gui->ST_ADDRESS, ab->Address);
-                       setstring(gui->ST_PHONE, ab->Phone);
-                       setstring(gui->ST_STREET, ab->Street);
-                       setstring(gui->ST_CITY, ab->City);
-                       setstring(gui->ST_COUNTRY, ab->Country);
-                       setstring(gui->ST_PGPKEY, ab->PGPId);
-                       setstring(gui->ST_HOMEPAGE, ab->Homepage);
-                       setstring(gui->ST_COMMENT, ab->Comment);
-                       setstring(gui->ST_BIRTHDAY, AB_ExpandBD(ab->BirthDay));
-                       EA_SetPhoto(winnum, ab->Photo);
-                       break;
+      case AET_USER:		setstring(gui->ST_ALIAS, ab->Alias);
+								setstring(gui->ST_REALNAME, ab->RealName);
+								setstring(gui->ST_ADDRESS, ab->Address);
+								setstring(gui->ST_PHONE, ab->Phone);
+								setstring(gui->ST_STREET, ab->Street);
+								setstring(gui->ST_CITY, ab->City);
+								setstring(gui->ST_COUNTRY, ab->Country);
+								nnsetstring(gui->ST_PGPKEY, ab->PGPId);			// avoid triggering notification to "default security" cycle
+								setcycle(gui->CY_DEFSECURITY,ab->DefSecurity);
+								setstring(gui->ST_HOMEPAGE, ab->Homepage);
+								setstring(gui->ST_COMMENT, ab->Comment);
+								setstring(gui->ST_BIRTHDAY, AB_ExpandBD(ab->BirthDay));
+								EA_SetPhoto(winnum, ab->Photo);
+								break;
       case AET_LIST:   setstring(gui->ST_ALIAS, ab->Alias);
                        setstring(gui->ST_REALNAME, ab->RealName);
                        setstring(gui->ST_ADDRESS, ab->Address);
@@ -256,20 +257,21 @@ SAVEDS ASM void EA_Okay(REG(a1) int *arg)
    GetMUIString(addr->Comment, gui->ST_COMMENT);
    switch (addr->Type = G->EA[winnum]->Type)
    {
-      case AET_USER:  GetMUIString(addr->RealName, gui->ST_REALNAME);
-                      GetMUIString(addr->Address, gui->ST_ADDRESS);
-                      GetMUIString(addr->Phone, gui->ST_PHONE);
-                      GetMUIString(addr->Street, gui->ST_STREET);
-                      GetMUIString(addr->City, gui->ST_CITY);
-                      GetMUIString(addr->Country, gui->ST_COUNTRY);
-                      GetMUIString(addr->PGPId, gui->ST_PGPKEY);
-                      GetMUIString(addr->Homepage, gui->ST_HOMEPAGE);
-                      strcpy(addr->Photo, G->EA[winnum]->PhotoName);
-                      addr->BirthDay = bdate;
-                      if (!*addr->Alias) EA_SetDefaultAlias(addr);
-                      EA_FixAlias(addr, old);
-                      if (!old) EA_InsertBelowActive(addr, 0);
-                      break;
+      case AET_USER:		GetMUIString(addr->RealName, gui->ST_REALNAME);
+								GetMUIString(addr->Address, gui->ST_ADDRESS);
+								GetMUIString(addr->Phone, gui->ST_PHONE);
+								GetMUIString(addr->Street, gui->ST_STREET);
+								GetMUIString(addr->City, gui->ST_CITY);
+								GetMUIString(addr->Country, gui->ST_COUNTRY);
+								GetMUIString(addr->PGPId, gui->ST_PGPKEY);
+								GetMUIString(addr->Homepage, gui->ST_HOMEPAGE);
+								addr->DefSecurity = GetMUICycle(gui->CY_DEFSECURITY);
+								strcpy(addr->Photo, G->EA[winnum]->PhotoName);
+								addr->BirthDay = bdate;
+								if (!*addr->Alias) EA_SetDefaultAlias(addr);
+								EA_FixAlias(addr, old);
+								if (!old) EA_InsertBelowActive(addr, 0);
+								break;
       case AET_LIST:  GetMUIString(addr->RealName, gui->ST_REALNAME);
                       GetMUIString(addr->Address, gui->ST_ADDRESS);
                       members = AllocStrBuf(SIZE_DEFAULT);
@@ -445,15 +447,28 @@ MakeHook(EA_CloseHook, EA_CloseFunc);
 //  Creates address book entry window
 LOCAL struct EA_ClassData *EA_New(int winnum, int type)
 {
-   struct EA_ClassData *data;
+struct EA_ClassData *data;
 
    if (data = calloc(1,sizeof(struct EA_ClassData)))
    {
+		static STRPTR SecurityCycleEntries[6] = {NULL};
       APTR group = NULL, bt_homepage, bt_sort;
+
       data->Type = type;
       switch (type)
       {
-         case AET_USER: group = HGroup,
+         case AET_USER:
+					/* initialize string array for cycle object on first invocation */
+					if(NULL == SecurityCycleEntries[0])
+					{
+			      int i;
+					static const APTR SecurityCycleStrings[] = {MSG_WR_SecNone,MSG_WR_SecSign,MSG_WR_SecEncrypt,MSG_WR_SecBoth,MSG_WR_SecAnon};
+
+						for(i=0; i<5; i++) SecurityCycleEntries[i] = GetStr(SecurityCycleStrings[i]);
+					}
+
+					/* build MUI object tree */
+					group = HGroup,
                MUIA_Group_SameWidth, TRUE,
                Child, VGroup,
                   Child, ColGroup(2), GroupFrameT(GetStr(MSG_EA_ElectronicMail)),
@@ -471,6 +486,10 @@ LOCAL struct EA_ClassData *EA_New(int winnum, int type)
                         Child, data->GUI.ST_HOMEPAGE = MakeString(SIZE_URL,GetStr(MSG_EA_Homepage)),
                         Child, bt_homepage = PopButton(MUII_TapeRecord),
                      End,
+							Child, Label2(GetStr(MSG_EA_DefSecurity)),
+							Child, data->GUI.CY_DEFSECURITY = CycleObject,
+								MUIA_Cycle_Entries, SecurityCycleEntries,
+							End,
                   End,
                   Child, ColGroup(2), GroupFrameT(GetStr(MSG_EA_SnailMail)),
                      Child, Label2(GetStr(MSG_EA_Street)),
@@ -514,6 +533,7 @@ LOCAL struct EA_ClassData *EA_New(int winnum, int type)
                SetHelp(data->GUI.ST_ADDRESS    ,MSG_HELP_EA_ST_ADDRESS    );
                SetHelp(data->GUI.ST_PGPKEY     ,MSG_HELP_EA_ST_PGPKEY     );
                SetHelp(data->GUI.ST_HOMEPAGE   ,MSG_HELP_EA_ST_HOMEPAGE   );
+               SetHelp(data->GUI.CY_DEFSECURITY,MSG_HELP_MA_CY_DEFSECURITY);
                SetHelp(data->GUI.ST_STREET     ,MSG_HELP_EA_ST_STREET     );
                SetHelp(data->GUI.ST_CITY       ,MSG_HELP_EA_ST_CITY       );
                SetHelp(data->GUI.ST_COUNTRY    ,MSG_HELP_EA_ST_COUNTRY    );
@@ -522,8 +542,13 @@ LOCAL struct EA_ClassData *EA_New(int winnum, int type)
                SetHelp(data->GUI.BC_PHOTO      ,MSG_HELP_EA_BC_PHOTO      );
                SetHelp(data->GUI.BT_SELECTPHOTO,MSG_HELP_EA_BT_SELECTPHOTO);
                SetHelp(data->GUI.BT_LOADPHOTO  ,MSG_HELP_EA_BT_LOADPHOTO  );
+
                DoMethod(data->GUI.BT_SELECTPHOTO, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_SelectPhotoHook, winnum);
                DoMethod(data->GUI.BT_LOADPHOTO,   MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_DownloadPhotoHook, winnum);
+
+					// when a key ID is selected, set default security to "encrypt"
+					DoMethod(data->GUI.ST_PGPKEY, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, data->GUI.CY_DEFSECURITY, 3, MUIM_Set, MUIA_Cycle_Active, 2);
+
                DoMethod(bt_homepage, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 3, MUIM_CallHook, &EA_HomepageHook, winnum);
             }
             break;
@@ -618,4 +643,4 @@ LOCAL struct EA_ClassData *EA_New(int winnum, int type)
    }
    return NULL;
 }
-///
+/// vi: set tabsize=3:
