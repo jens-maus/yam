@@ -42,7 +42,7 @@ CFLAGS68K = -nostdlib -DNAME=\"YAM\" -O -fomit-frame-pointer
 
 CPU      = -mcpu=604e
 CPUFLAGS = -mmultiple
-CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS=\"`expr \`date +%s\` / 86400 - 2922`\"
+CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 WARN     = -Wall
 OPTFLAGS = -O2 -fomit-frame-pointer
 DEBUG    = -DDEBUG -g3 -O0
@@ -51,7 +51,7 @@ LDFLAGS  = -noixemul $(CPU)
 LDLIBS   = -lamigastubs -lmui -lsyscall -lxpkmaster -lpm -lamissl -lopenurl
 
 # Special flags
-DEVFLAGS = -DDEVWARNING -DEXPDATE=\"`expr \`date +%s\` / 86400 - 2922 + 31`\"
+DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
 
 # CPU and DEBUG can be defined outside, defaults to above
 # using e.g. "make DEBUG= CPU=-mcpu=603e" produces optimized non-debug PPC-603e version
