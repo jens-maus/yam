@@ -152,7 +152,7 @@ static BOOL TC_Init(void)
    {
       if ((TCData.req = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest))))
       {
-         if (!OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)TCData.req, 0L))
+         if (!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.req->tr_node, 0L))
          {
            TimerBase = TCData.req->tr_node.io_Device;
            return TRUE;
@@ -484,7 +484,7 @@ static void Terminate(void)
       }
    }
 
-   for (i = 0; i <=MAXWR; i++)
+   for (i = 0; i <= MAXWR; i++)
    {
       if (G->WR[i])
       {
@@ -1126,9 +1126,10 @@ static int GetDST(void)
 /* This makes it possible to leave YAM without explicitely calling cleanup procedure */
 static void yam_exitfunc(void)
 {
-   Terminate();
    if(olddirlock != -1)
+   {  Terminate();
       CurrentDir(olddirlock);
+   }
    if(nrda.Template)
       NewFreeArgs(&nrda);
    if(UtilityBase)
@@ -1325,7 +1326,7 @@ int main(int argc, char **argv)
                         if (wrwin >= 0) WR_App(wrwin, apmsg);
                      }
                   }
-                  ReplyMsg((struct Message *)apmsg);
+                  ReplyMsg(&apmsg->am_Message);
                }
             }
             if (signals & notsigs0)
@@ -1356,6 +1357,7 @@ int main(int argc, char **argv)
       // if the user really wants to exit, do it now as Terminate() is broken !
       if(ret == 1) exit(0);
 
+      // prepare for restart
       Terminate();
    }
    /* not reached */
