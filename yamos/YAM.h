@@ -119,6 +119,7 @@ struct Global
 
 /**************************************************************************/
 
+extern struct WBStartup *WBmsg;
 extern struct Config *C;
 extern struct Global *G;
 extern char *FolderNames[4];
