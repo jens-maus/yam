@@ -1,3 +1,8 @@
+2002-01-17  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug in the listview display of the glossary. Now YAM
+      should again display every glossary item correct.
+
 2002-01-04  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed bug where YAM lost the LastActive variable which normally

@@ -32,8 +32,8 @@
 
 struct Dict
 {
-   char *Text;
    char  Alias[SIZE_NAME];
+   char *Text;
 };
 
 struct DI_GUIData
