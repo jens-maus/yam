@@ -7,6 +7,9 @@ $Source$
 
 2002-07-08  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_rexx_rxif.c: changed the INFO arexx command to
+      require the ITEM attribute and return an error as stated
+      in the arexx documentation. This fixes bug #555127
     * YAM_FO.c: fixed another enforcer hit within the ML-Autodetect
       functions that occured if only one mail was in a folder.
       This should hopefully fix this whole autodetect thing now.
