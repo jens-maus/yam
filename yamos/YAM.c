@@ -982,8 +982,46 @@ static void DoStartup(BOOL nocheck, BOOL hide)
    {
       if (C->GetOnStartup && !nocheck)
       {
-         MA_PopNow(POP_START, -1);
-         if (G->TR) DisposeModule(&G->TR);
+         if(hide || C->PreSelection == 0)
+         {
+            MA_PopNow(POP_START, -1);
+            if (G->TR) DisposeModule(&G->TR);
+         }
+         else
+         {
+            MA_PopNow(POP_USER, -1);
+
+            // If the user has some preselection transfer
+            // selected we have to get into a local event loop
+            if(G->TR && xget(G->TR->GUI.WI, MUIA_Window_Open))
+            {
+              LONG result = 0;
+
+              set(G->MA->GUI.WI, MUIA_Window_Sleep, TRUE);
+
+              DoMethod(G->TR->GUI.WI, MUIM_Notify, MUIA_Window_Open, FALSE, G->App, 2, MUIM_Application_ReturnID, 100);
+
+              // lets collect the waiting returnIDs now
+              COLLECT_RETURNIDS;
+
+              while(result == 0)
+              {
+                ULONG signals;
+                result = DoMethod(G->App, MUIM_Application_NewInput, &signals);
+
+                if(result > 0) break;
+                if(signals) Wait(signals);
+              }
+
+              // now lets reissue the collected returnIDs again
+              REISSUE_RETURNIDS;
+
+              set(G->MA->GUI.WI, MUIA_Window_Sleep, FALSE);
+            }
+
+            if(G->TR) DisposeModule(&G->TR);
+         }
+
          DoMethod(G->App, MUIM_Application_InputBuffered);
       }
 
