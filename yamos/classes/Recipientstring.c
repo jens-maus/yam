@@ -273,7 +273,7 @@ OVERLOAD(MUIM_HandleEvent)
 			break;
 
 			case IECODE_DEL:
-			case IECODE_ESCAPE:
+			case IECODE_ESCAPE: /* FIXME: Escape should clear the marked text. Currently the marked text goes when leaving the gadget or e.g. pressing ','. Seems to be a refresh problem */
 				set(data->Matchwindow, MUIA_Window_Open, FALSE);
 			break;
 
