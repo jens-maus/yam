@@ -116,9 +116,8 @@ MakeStaticHook(ER_CloseHook, ER_CloseFunc);
 /*** ER_New - Creates error window ***/
 static struct ER_ClassData *ER_New(void)
 {
-   struct ER_ClassData *data;
-
-   if (data = calloc(1,sizeof(struct ER_ClassData)))
+   struct ER_ClassData *data = calloc(1, sizeof(struct ER_ClassData));
+   if (data)
    {
       APTR bt_close, bt_clear;
       data->GUI.WI = WindowObject,
