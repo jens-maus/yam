@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-12-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: fixed recently introduced CRAM-MD5/DIGEST-MD5
+      authentication bug, where YAM stripped too much of the
+      received MD5 challenge ID which caused the authentification
+      to fail on server which just return "\n" instead of "\r\n".
+
 2003-12-20  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c, YAM_RE.c: rewrote the base64 file decoding routines

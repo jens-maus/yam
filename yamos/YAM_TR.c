@@ -430,9 +430,9 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       {
         ULONG digest[4]; // 16 chars
         char buf[512];
-
         char *login = C->SMTP_AUTH_User;
         char *password = C->SMTP_AUTH_Pass;
+        char *chalRet;
 
         // get the challenge code from the response line of the
         // AUTH command.
@@ -441,13 +441,19 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
         // now that we have the challange phrase we need to base64decode
         // it, but have to take care to remove the ending "\r\n" cookie.
-        if(base64decode(challenge, challenge, strlen(challenge)-3) <= 0)
+        chalRet = strpbrk(challenge, "\r\n"); // find the first CR or LF
+        if(chalRet)
+          *chalRet = '\0'; // strip it
+
+        // lets base64 decode it
+        if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
           return FALSE;
 
+        // compose the md5 challenge
         hmac_md5(challenge, strlen(challenge), password, strlen(password), (char *)digest);
+        sprintf(buf, "%s %08lx%08lx%08lx%08lx\0\0", login, digest[0], digest[1], digest[2], digest[3]);
 
-        sprintf(buf, "%s %08lx%08lx%08lx%08lx%c%c", login, digest[0], digest[1], digest[2], digest[3], 0, 0);
-
+        // lets base64 encode the md5 challenge for the answer
         base64encode(buffer, buf, strlen(buf));
         strcat(buffer, "\r\n");
 
@@ -470,6 +476,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         int len;
         ULONG digest[4];
         struct MD5Context context;
+        char *chalRet;
 
         // get the challenge code from the response line of the
         // AUTH command.
@@ -478,7 +485,12 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
 
         // now that we have the challange phrase we need to base64decode
         // it, but have to take care to remove the ending "\r\n" cookie.
-        if(base64decode(challenge, challenge, strlen(challenge)-3) <= 0)
+        chalRet = strpbrk(challenge, "\r\n"); // find the first CR or LF
+        if(chalRet)
+          *chalRet = '\0'; // strip it
+
+        // lets base64 decode it
+        if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
           return FALSE;
 
         strcat(challenge, C->SMTP_AUTH_Pass);
@@ -507,7 +519,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       // send the AUTH command
       if(TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, MSG_ER_BadResponse))
       {
-         int len = sprintf(challenge,"%s%c%c", C->SMTP_AUTH_User, 0, 0);
+         int len = sprintf(challenge,"%s\0\0", C->SMTP_AUTH_User);
          base64encode(buffer, challenge, len-2);
          strcat(buffer,"\r\n");
 
@@ -517,7 +529,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
          // get the server response and see if it was valid
          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0 && (rc = getResponseCode(buffer)) == 334)
          {
-            int len = sprintf(challenge,"%s%c%c", C->SMTP_AUTH_Pass, 0, 0);
+            int len = sprintf(challenge,"%s\0\0", C->SMTP_AUTH_Pass);
             base64encode(buffer, challenge, len-2);
             strcat(buffer,"\r\n");
 
@@ -2459,6 +2471,9 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
                {
                   // printf out our leading "From " MBOX format line first
                   fprintf(fh, "From %s %s", mail->From.Address, DateStamp2String(&mail->Date, DSS_UNIXDATE, TZC_NONE));
+
+                  // initialize buf first
+                  buf[0] = '\0';
 
                   // now we iterate through every line of our mail and try to substitute
                   // found "From " line with quoted ones
