@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2001-10-31  AmiS <amis@amiga.org.ru>
+
+    * Added analyse "x-senderinfo" fields and and automatically
+      translate them to system codepage if "Codepage Autodetect/Translation"
+      option is turn on. Mainly for cyrillic users.
+
 2002-10-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed bug #625377 where YAM displayed the

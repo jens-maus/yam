@@ -902,6 +902,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             else if (!stricmp(field, "x-senderinfo"))
             {
                SET_FLAG(mail->Flags, MFLAG_SENDERINFO);
+               SParse(value);
                if (deep) email.SenderInfo = StrBufCpy(email.SenderInfo, value);
             }
             else if(deep) // and if we end up here we check if we really have to go further
