@@ -40,5 +40,7 @@
 
 2000-12-19  laursen <laursen@myself.com>
 
-    * Fixed .taglines bug - %'s would be used for formatting, which would
+    * Fixed .taglines bug - %'s was used for formatting, which would
       result in a "***NULL POINTER***" mess.
+
+    * Localized all menu shortcuts in main window.

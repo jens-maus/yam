@@ -2018,6 +2018,25 @@ Object *MakeNumeric(int min, int max, BOOL percent)
    End;
 }
 ///
+/// MakeMenuitem
+//  Creates a menu item from a catalog string
+Object *MakeMenuitem(const UBYTE *str, ULONG ud)
+{
+   if (str == NULL) return (MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End);
+
+   if (str[1] == '\0')
+      return (MenuitemObject,
+         MUIA_Menuitem_Title, str+2,
+         MUIA_Menuitem_Shortcut, str,
+         MUIA_UserData, ud,
+         End);
+   else
+      return (MenuitemObject,
+         MUIA_Menuitem_Title, str,
+         MUIA_UserData, ud,
+         End);
+}
+///
 /// SetupToolbar
 //  Initializes a single button in a MUI toolbar object
 void SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, UWORD flags)

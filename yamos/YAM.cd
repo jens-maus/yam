@@ -656,6 +656,7 @@ Project
 ;
 MSG_MA_About (//)
 About...
+; This is the title of the about window, not the menu item.
 ;
 MSG_MA_AboutMUI (//)
 About MUI...
@@ -670,10 +671,10 @@ MSG_MA_Restart (//)
 Restart
 ;
 MSG_MA_Hide (//)
-Hide
+H\000Hide
 ;
 MSG_MA_Quit (//)
-Quit
+Q\000Quit
 ;
 MSG_MA_NewFolder (//)
 New folder...
@@ -694,7 +695,7 @@ MSG_MA_Select (//)
 Select
 ;
 MSG_MA_SelectAll (//)
-All
+L\000All
 ;
 MSG_MA_SelectNone (//)
 None
@@ -703,16 +704,16 @@ MSG_MA_SelectToggle (//)
 Toggle
 ;
 MSG_MA_MSearch (//)
-Search...
+F\000Search...
 ;
 MSG_MA_MFilter (//)
-Filter
+I\000Filter
 ;
 MSG_MA_RemoveDeleted (//)
-Empty trash
+Z\000Empty trash
 ;
 MSG_MA_UpdateIndex (//)
-Update index
+U\000Update index
 ;
 MSG_MA_FlushIndices (//)
 Flush indices
@@ -724,16 +725,16 @@ MSG_MA_ImportMessages (//)
 Import...
 ;
 MSG_MA_MSendAll (//)
-Send queued mail
+S\000Send queued mail
 ;
 MSG_MA_Exchange (//)
-Exchange mail
+X\000Exchange mail
 ;
 MSG_MA_MGetMail (//)
-Get new mail
+G\000Get new mail
 ;
 MSG_MA_MRead (//)
-Read
+D\000Read
 ;
 MSG_MA_MEdit (//)
 Edit
@@ -769,16 +770,16 @@ MSG_MA_SetStatus (//)
 Set status to
 ;
 MSG_MA_ToUnread (//)
-Unread
+[\000Unread
 ;
 MSG_MA_ToRead (//)
-Read
+]\000Read
 ;
 MSG_MA_ToHold (//)
-Hold
+{\000Hold
 ;
 MSG_MA_ToQueued (//)
-Queued
+}\000Queued
 ;
 MSG_MA_ChangeSubj (//)
 Change subject...
@@ -791,9 +792,11 @@ Settings
 ;
 MSG_MA_MAddrBook (//)
 Address Book...
+; This is the title of the address book window, not the menu item.
 ;
 MSG_MA_MConfig (//)
 Configuration...
+; This is the title of the configuration window, not the menu item.
 ;
 MSG_MA_MUsers (//)
 Users...
@@ -4096,6 +4099,51 @@ MSG_CTapplicationrexx (//)
 Rexx script
 ;
 ; ADDED AFTER 04-DEC-2000
+;
+MSG_PROJECT_ABOUT (//)
+?\000About...
+;
+MSG_MESSAGE_EDIT (//)
+E\000Edit
+;
+MSG_MESSAGE_MOVE (//)
+M\000Move...
+;
+MSG_MESSAGE_PRINT (//)
+P\000Print...
+;
+MSG_MESSAGE_SAVE (//)
+V\000Save...
+;
+MSG_MESSAGE_SAVEATT (//)
+T\000Save
+;
+MSG_MESSAGE_CROP (//)
+O\000Crop
+;
+MSG_MESSAGE_NEW (//)
+N\000New
+;
+MSG_MESSAGE_REPLY (//)
+R\000Reply...
+;
+MSG_MESSAGE_FORWARD (//)
+W\000Forward...
+;
+MSG_MESSAGE_BOUNCE (//)
+B\000Bounce...
+;
+MSG_MESSAGE_GETADDRESS (//)
+J\000Save address...
+;
+MSG_SETTINGS_ADDRESSBOOK (//)
+A\000Address Book...
+;
+MSG_SETTINGS_CONFIG (//)
+K\000Configuration...
+;
+MSG_SETTINGS_MUI (//)
+MUI...
 ;
 MSG_FO_FromAddress (//)
 From: address

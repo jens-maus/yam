@@ -1171,6 +1171,7 @@ extern Object *MakePGPKeyList(APTR *, BOOL, char *);
 extern Object *MakePicture(char *);
 extern Object *MakeStatusFlag(char *);
 extern Object *MakeNumeric(int, int, BOOL);
+extern Object *MakeMenuitem(const UBYTE *str, ULONG ud);
 extern void SetupToolbar(struct MUIP_Toolbar_Description *, char *, char *, UWORD);
 extern void SetupMenu(int, struct NewMenu *, char *, char *, int);
 extern int GetMUI(struct Object *,int);
