@@ -1806,7 +1806,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 else if (!G->TR->Abort && !G->Error)
                 {
                   result = email->DelSend ? 2 : 1;
-                  AppendLogVerbose(41, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size, "");
+                  AppendLogVerbose(42, GetStr(MSG_LOG_SendingVerbose), AddrName(mail->To), mail->Subject, (void *)mail->Size, "");
                 }
                 if(!TR_SendSMTPCmd("\r\n.", NULL)) result = 0;
               }
