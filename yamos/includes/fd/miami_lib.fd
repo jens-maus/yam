@@ -1,0 +1,43 @@
+##base _MiamiBase
+##bias 30
+##public
+MiamiSysCtl(par1,par2,par3,par4,par5,last)(a0,d0,a1,a2,a3,d1)
+##bias 66
+MiamiDisallowDNS(last)(d0)
+##bias 78
+MiamiGetPid()()
+##bias 96
+MiamiPFAddHook(par1,par2,last)(a0,a1,a2)
+MiamiPFRemoveHook(last)(a0)
+MiamiGetHardwareLen(last)(a0)
+##bias 150
+MiamiOpenSSL(last)(a0)
+MiamiCloseSSL()()
+##bias 198
+MiamiSetSocksConn(par1,last)(a0,d0)
+##bias 210
+MiamiIsOnline(last)(a0)
+MiamiOnOffline(par1,last)(a0,d0)
+##bias 228
+inet_ntop(par1,par2,par3,last)(d0,a0,a1,d1)
+inet_aton(par1,last)(a0,a1)
+inet_pton(par1,par2,last)(d0,a0,a1)
+gethostbyname2(par1,last)(a0,d0)
+gai_strerror(last)(d0)
+freeaddrinfo(last)(a0)
+getaddrinfo(par1,par2,par3,last)(a0,a1,a2,a3)
+getnameinfo(par1,par2,par3,par4,par5,par6,last)(a0,d0,a1,d1,a2,d2,d3)
+if_nametoindex(last)(a0)
+if_indextoname(par1,last)(d0,a0)
+if_nameindex()()
+if_freenameindex(last)(a0)
+MiamiSupportsIPV6()()
+MiamiResGetOptions()()
+MiamiResSetOptions(last)(d0)
+sockatmark(last)(d0)
+MiamiSupportedCPUs(par1,par2,last)(a0,a1,a2)
+MiamiGetFdCallback(last)(a0)
+MiamiSetFdCallback(par1,last)(a0,d0)
+##bias 348
+MiamiGetCredentials()()
+##end
