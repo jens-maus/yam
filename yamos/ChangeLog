@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-10  David Rey <david@saug.org>
+
+    * Logfile related fixes:
+
+      - YAM_TR.c: Changed the event code issued with MSG_LOG_SendingVerbose
+                  to be 42.  41 was already in use by MSG_LOG_ConnectSMTP,
+                  and on the other hand 42 is also consistent with 32 as
+                  used by MSG_LOG_RetrievingVerbose
+      - YAM.c: Likewise, MSG_LOG_LoggedInVerbose will use code 2 from now
+               on instead of 1, which is reserved for MSG_LOG_LoggedIn
+
 2002-06-10  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * all_morphos.c: removed file, because the whole libnix stuff
