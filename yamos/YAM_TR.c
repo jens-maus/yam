@@ -1705,7 +1705,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
          }
          if (rcptok)
          {
-            if (TR_SendSMTPCmd("DATA", NULL)) 
+            if (TR_SendSMTPCmd("DATA", NULL))
             {
                BOOL infield = FALSE, inbody = FALSE;
                while (fgets(buf, SIZE_LINE-1, f) && !G->TR->Abort && !G->Error)
@@ -1737,7 +1737,6 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                TR_SendSMTPCmd("\r\n.", NULL);
             }
          }
-         else ER_NewError(GetStr(MSG_ER_InvalidAddress), buf, NULL);
          MA_FreeEMailStruct(email);
       }
       fclose(f);

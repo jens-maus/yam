@@ -1,3 +1,8 @@
+2001-11-16  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * removed a unneeded error message in the SMTP send routines
+      as the TR_SendSMTPCmd() always throws out errors on failure.
+
 2001-11-15  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * added SMTP SSL/TLS support through AmiSSL accordingly to
