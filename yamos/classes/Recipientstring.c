@@ -365,7 +365,7 @@ STRPTR rcptok(STRPTR s, BOOL *quote)
 
 	while (*p)
 	{
-		if (*p == '\"')
+		if (*p == '"')
 			*quote ^= TRUE;
 		else if (*p == ',' && !*quote)
 		{
@@ -541,17 +541,27 @@ DECLARE(AddRecipient) // STRPTR address
 DECLARE(RecipientStart)
 {
 	STRPTR buf;
-	ULONG pos, start;
+	ULONG pos, i;
+	BOOL quote = FALSE;
 	get(obj, MUIA_String_Contents, &buf);
 	get(obj, MUIA_String_BufferPos, &pos);
 
-	start = pos;
-	while(start > 0 && buf[start-1] != ',')
-		start--;
-	while(ISpace(buf[start]))
-		start++;
+	for(i = 0; i < pos; i++)
+	{
+		if(buf[i] == '\"')
+			quote ^= TRUE;
+	}
 
-	return start;
+	while(i > 0 && (buf[i-1] != ',' || quote))
+	{
+		i--;
+		if(buf[i] == '"')
+			quote ^= TRUE;
+	}
+	while(ISpace(buf[i]))
+		i++;
+
+	return i;
 }
 ///
 
