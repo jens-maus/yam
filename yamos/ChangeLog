@@ -7,6 +7,11 @@ $Source$
 
 2002-07-05  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_UT.c, YAM_FO.c: reworked the whole "Autodetect"
+      feature for MLs once more and hopefully now it will be
+      stable and doesn`t crash at all. Also found and fixed
+      a bug within the SWS string functions. This should fix
+      bug #555125 and #557784.
     * YAM_COg.c, YAM_COs.c: changed the location of the
       "New Group for addrbook entries" string gadget and added
       a MUIA_Disabled relation to the above cycle gadget to better

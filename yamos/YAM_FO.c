@@ -1325,7 +1325,7 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   struct Mail *mail = folder->Messages;
   char *toPattern = mail->To.Address;
   char *toAddress = mail->To.Address;
-  char res[3*SIZE_ADDRESS+1];
+  char *res = NULL;
   char *result;
   int i;
   BOOL takePattern = TRUE;
@@ -1336,11 +1336,16 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 
   for(i=0, mail=mail->Next; mail && i < SCANMSGS; i++, mail = mail->Next)
   {
-    DB(kprintf("SWS: [%s] [%s] - [%s]\n", toPattern, mail->To.Address, mail->Subject));
+    DB(kprintf("SWS: [%s] [%s]\n", toPattern, mail->To.Address));
 
     // Analyze the ToAdress through the Smith&Waterman algorithm
     if(takePattern && (result = SWSSearch(toPattern, mail->To.Address)))
     {
+      if(res) res = realloc(res, strlen(result)+1);
+      else    res = malloc(strlen(result)+1);
+
+      if(!res) return;
+
       strcpy(res, result);
       toPattern = res;
 
@@ -1353,15 +1358,53 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
 
     // Lets check if the toAddress kept the same and then we can use
     // it for the TOADDRESS string gadget
-    if(takeAddress && strcmp(toAddress, mail->To.Address) != 0)
+    if(takeAddress && stricmp(toAddress, mail->To.Address) != 0)
     {
       takeAddress = FALSE;
     }
   }
 
+  // lets make a pattern out of the found SWS string
+  if(takePattern)
+  {
+    if(strlen(toPattern) >= 2 && !(toPattern[0] == '#' && toPattern[1] == '?'))
+    {
+      if(res) res = realloc(res, strlen(res)+3);
+      else    res = malloc(strlen(res)+3);
+
+      if(!res) return;
+
+      // move the actual string to the back and copy the wildcard in front of it.
+      memmove(&res[2], res, strlen(res)+1);
+      res[0] = '#';
+      res[1] = '?';
+
+      toPattern = res;
+    }
+
+    if(strlen(toPattern) >= 2 && !(toPattern[strlen(toPattern)-2] == '#' && toPattern[strlen(toPattern)-1] == '?'))
+    {
+      if(res) res = realloc(res, strlen(res)+3);
+      else    res = malloc(strlen(res)+3);
+
+      if(!res) return;
+
+      // and now copy also the wildcard at the back of the string
+      strcat(res, "#?");
+
+      toPattern = res;
+    }
+  }
+
+  DB(kprintf("ML-Pattern: [%s]\n", toPattern));
+
   // Now we set the new pattern & address values to the string gadgets
   setstring(G->FO->GUI.ST_MLPATTERN, takePattern ? toPattern : notRecog);
   setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
+
+  // lets free all resources now
+  if(res) free(res);
+  SWSSearch(NULL, NULL);
 }
 MakeStaticHook(FO_MLAutoDetectHook, FO_MLAutoDetectFunc);
 

@@ -32,6 +32,7 @@
 #include <stdarg.h>
 
 #include <clib/alib_protos.h>
+#include <clib/macros.h>
 #include <datatypes/pictureclass.h>
 #include <datatypes/soundclass.h>
 #include <devices/printer.h>
@@ -3869,37 +3870,58 @@ char *p,*ret;
 // in a Amiga suitable format. This is case-insensitive !
 char *SWSSearch(char *str1, char *str2)
 {
-  int  L[SIZE_ADDRESS+1][SIZE_ADDRESS+1];    // L matrix
-  int  Ind[SIZE_ADDRESS+1][SIZE_ADDRESS+1];  // Index matrix
-  char X[SIZE_ADDRESS+2];                    // 1.string X
-  char Y[SIZE_ADDRESS+2];                    // 2.string Y
-  static char Z[3*SIZE_ADDRESS+1];           // the destination string (result)
-  int   lx;                                  // length of X
-  int   ly;                                  // length of Y
-  int   lz;                                  // length of Z
-  int   i, j, k;
-  BOOL  firstLoop = TRUE;
+  static char *Z = NULL;    // the destination string (result)
+  int **L        = NULL;    // L matrix
+  int **Ind      = NULL;    // Indicator matrix
+  char *X        = NULL;    // 1.string X
+  char *Y        = NULL;    // 2.string Y
+  int lx;                   // length of X
+  int ly;                   // length of Y
+  int lz;                   // length of Z (maximum)
+  int i, j, k;
+  BOOL gap = FALSE;
+  BOOL success = FALSE;
 
-  enum  IndType { DELX=0, DELY, DONE, TAKEBOTH };   // special enum for the Indicator
+  // special enum for the Indicator
+  enum  IndType { DELX=1, DELY, DONE, TAKEBOTH };
 
-  // we copy str1&str2 into X and Y but have to copy a placeholder in front of them
-  sprintf(X, " %s", str1);
-  sprintf(Y, " %s", str2);
+  // by calling this function with (NULL, NULL) someone wants
+  // to signal us to free the destination string
+  if(str1 == NULL && str2 == NULL && Z != NULL) free(Z);
 
-  // calculate the length of every string
-  lx = strlen(X);
-  ly = strlen(Y);
+  // calculate the length of our buffers we need
+  lx = strlen(str1)+1;
+  ly = strlen(str2)+1;
+  lz = MAX(lx, ly)*3+3;
 
-  // Now we initialize the two matrixes first
+  // first allocate all resources
+  if(!(X   = calloc(lx+1, sizeof(char)))) goto abort;
+  if(!(Y   = calloc(ly+1, sizeof(char)))) goto abort;
+
+  // now we have to alloc our help matrixes
+  if(!(L   = calloc(lx,   sizeof(int))))  goto abort;
+  if(!(Ind = calloc(lx,   sizeof(int))))  goto abort;
   for(i=0; i < lx; i++)
   {
-    L[i][0] = 0;
+    if(!(L[i]   = calloc(ly, sizeof(int)))) goto abort;
+    if(!(Ind[i] = calloc(ly, sizeof(int)))) goto abort;
+  }
+
+  // and allocate the result string separately
+  if(Z) free(Z);
+  if(!(Z = calloc(lz, sizeof(char)))) goto abort;
+
+  // we copy str1&str2 into X and Y but have to copy a placeholder in front of them
+  memcpy(&X[1], str1, lx);
+  memcpy(&Y[1], str2, ly);
+
+  for(i=0; i < lx; i++)
+  {
     Ind[i][0] = DELX;
   }
 
   for(j=0; j < ly; j++)
   {
-    L[0][j] = 0;
     Ind[0][j] = DELY;
   }
 
@@ -3933,82 +3955,97 @@ char *SWSSearch(char *str1, char *str2)
   }
 
 #ifdef DEBUG
-
   // for debugging only
   // This will print out the L & Ind matrix to identify problems
 /*
-  kprintf(" ");
+  printf(" ");
   for(j=0; j < ly; j++)
   {
-    kprintf(" %c", Y[j]);
+    printf(" %c", Y[j]);
   }
-  kprintf("\n");
+  printf("\n");
 
   for(i=0; i < lx; i++)
   {
-    kprintf("%c ", X[i]);
+    printf("%c ", X[i]);
 
     for(j=0; j < ly; j++)
     {
-      kprintf("%ld", L[i][j]);
-      if(Ind[i][j] == 3) kprintf("`");
-      else if(Ind[i][j] == 0) kprintf("^");
-      else if(Ind[i][j] == 1) kprintf("<");
-      else kprintf("*");
+      printf("%d", L[i][j]);
+      if(Ind[i][j] == TAKEBOTH)  printf("`");
+      else if(Ind[i][j] == DELX) printf("^");
+      else if(Ind[i][j] == DELY) printf("<");
+      else printf("*");
     }
-    kprintf("\n");
+    printf("\n");
   }
 */
 #endif
-
-  // lets alloc the result Z string
-  // we calulate the maximum that is possible if each char is followed
-  // by a wildcard (3*lz+1) even if we don`t need it completly
-  lz = 3*SIZE_ADDRESS+1;
-
-  Z[--lz] = '\0';
-  Z[--lz] = '?';
-  Z[--lz] = '#';
 
   // the second step of the SW algorithm where we
   // process the Ind matrix which represents which
   // char we take and which we delete
 
+  Z[--lz] = '\0';
   k = i = lx-1;
   j = ly-1;
 
-  while(Ind[i][j] != DONE)
+  while(i >= 0 && j >= 0 && Ind[i][j] != DONE)
   {
     if(Ind[i][j] == TAKEBOTH)
     {
-      if(k-i > 1 && !firstLoop)
-      {
-        Z[--lz]   = '?';
-        Z[--lz] = '#';
-        Z[--lz] = X[i];
-      }
-      else
-      {
-        Z[--lz] = X[i];
-        firstLoop = FALSE;
-      }
+      Z[--lz] = X[i];
 
-      k = i--;
+      i--;
       j--;
-
+      gap = FALSE;
     }
-    else if(Ind[i][j] == DELX) i--;
-    else if(Ind[i][j] == DELY) j--;
-
+    else if(Ind[i][j] == DELX)
+    {
+      if(!gap)
+      {
+        if(j>0)
+        {
+          Z[--lz] = '?';
+          Z[--lz] = '#';
+        }
+        gap = TRUE;
+      }
+      i--;
+    }
+    else if(Ind[i][j] == DELY)
+    {
+      if(!gap)
+      {
+        if(i>0)
+        {
+          Z[--lz] = '?';
+          Z[--lz] = '#';
+        }
+        gap = TRUE;
+      }
+      j--;
+    }
   }
 
-  if(!firstLoop)
+  success = TRUE;
+
+abort:
+
+  // now we free our temporary buffers now
+  if(X)   free(X);
+  if(Y)   free(Y);
+
+  // lets free our help matrixes
+  for(i=0; i < lx; i++)
   {
-    Z[--lz] = '?';
-    Z[--lz] = '#';
+    if(L[i])    free(L[i]);
+    if(Ind[i])  free(Ind[i]);
   }
+  if(L)   free(L);
+  if(Ind) free(Ind);
 
-  return &(Z[lz]);
+  return success ? &(Z[lz]) : NULL;
 }
 
 ///
