@@ -107,14 +107,15 @@ void encode64(char *s, char *d, int len)
       *d++=basis_64[c1];
       *d++=basis_64[c2];
       if (count == 1) {
-	 *d++='=';
-	 *d++='=';
-      } else {
-	  *d++=basis_64[c3];
-	  if (count == 2)
-              *d++='=';
-	  else
-	      *d++=basis_64[c4];
+        *d++='=';
+        *d++='=';
+      }
+      else {
+        *d++=basis_64[c3];
+        if (count == 2)
+          *d++='=';
+        else
+          *d++=basis_64[c4];
       }
       s+=3;
    }
@@ -129,14 +130,14 @@ char *decode64 (char *dest, char *src, char *srcmax)
 {
    while (src + 3 < srcmax)
      {
-	*dest++ = (BASE64(src[0]) << 2) | (BASE64(src[1]) >> 4);
-	
-	if (src[2] == '=') break;
-	*dest++ = ((BASE64(src[1]) & 0xf) << 4) | (BASE64(src[2]) >> 2);
-	
-	if (src[3] == '=') break;
-	*dest++ = ((BASE64(src[2]) & 0x3) << 6) | BASE64(src[3]);
-	src += 4;
+        *dest++ = (BASE64(src[0]) << 2) | (BASE64(src[1]) >> 4);
+        
+        if (src[2] == '=') break;
+        *dest++ = ((BASE64(src[1]) & 0xf) << 4) | (BASE64(src[2]) >> 2);
+        
+        if (src[3] == '=') break;
+        *dest++ = ((BASE64(src[2]) & 0x3) << 6) | BASE64(src[3]);
+        src += 4;
      }
    *dest=0;
    return dest;
@@ -148,18 +149,18 @@ LOCAL void output64chunk(int c1, int c2, int c3, int pads, FILE *outfile)
 {
    fputc(basis_64[c1>>2], outfile);
    fputc(basis_64[((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4)], outfile);
-	switch(pads)
-	{
-   	case 0 :
-	      fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
-   	   fputc(basis_64[c3 & 0x3F], outfile);
-      	break;
-		case 2 :
-	      fputs("==", outfile);
-			break;
-		default :
-	      fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
-   	   fputc('=', outfile);
+   switch(pads)
+   {
+      case 0 :
+         fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
+         fputc(basis_64[c3 & 0x3F], outfile);
+         break;
+      case 2 :
+         fputs("==", outfile);
+         break;
+      default :
+         fputc(basis_64[((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6)], outfile);
+         fputc('=', outfile);
    }
 /*
    if (pads == 2) 
@@ -472,10 +473,10 @@ LOCAL BOOL gettxtline(char *buf, int size, char **rptr)
       c = (int)**rptr; (*rptr)++;
       if (!c) { *ptr = '\0'; return (BOOL)(ptr == buf); }
       else if (c == '\n' || c == '\r') { *ptr = '\0'; return False; }
-	// Emm: I guess the following line was meant to process quoted
-	// mails, but it causes file corruption when the '>' is really
-	// part of the uuencoding (usually, this happens for the last
-	// line).
+      // Emm: I guess the following line was meant to process quoted
+      // mails, but it causes file corruption when the '>' is really
+      // part of the uuencoding (usually, this happens for the last
+      // line).
       //else if (ptr == buf && c == '>') continue;
       else if (size > 0) { *ptr++ = c; size--; }
    } while (TRUE);
@@ -535,10 +536,10 @@ LOCAL BOOL getline(char *buf, int size, FILE *fp)
    {
       if ((c = fgetc(fp)) == -1) {*ptr = '\0'; return (BOOL)(ptr == buf); }
       else if (c == '\n' || c == '\r') { *ptr = '\0'; return False; }
-	// Emm: I guess the following line was meant to process quoted
-	// mails, but it causes file corruption when the '>' is really
-	// part of the uuencoding (usually, this happens for the last
-	// line).
+      // Emm: I guess the following line was meant to process quoted
+      // mails, but it causes file corruption when the '>' is really
+      // part of the uuencoding (usually, this happens for the last
+      // line).
       //else if (ptr == buf && c == '>') continue;
       else if (size > 0) { *ptr++ = c; size--; }
    } while (TRUE);

@@ -91,7 +91,7 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
    int indexloaded = 0;
    char buf[SIZE_LARGE];
 
-   KPrintF("Loading index for folder %s\n", folder->Name);
+   DB( KPrintF("Loading index for folder %s\n", folder->Name); )
    if (fh = fopen(MA_IndexFileName(folder), "r"))
    {
       struct FIndex fi;
@@ -118,9 +118,9 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
                if (fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1) break;
                if (cmail.MoreBytes > SIZE_LARGE)
                {
-									fpos_t pos;
-									printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.MailFile, cmail.MoreBytes);
-									if (!fgetpos(fh, &pos)) printf("File position: %ld\n", pos);
+                  fpos_t pos;
+                  printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.MailFile, cmail.MoreBytes);
+                  if (!fgetpos(fh, &pos)) printf("File position: %ld\n", pos);
 
                   corrupt = TRUE;
                   break;
@@ -311,9 +311,9 @@ void MA_ChangeFolder(struct Folder *folder)
 
    set(gui->NL_MAILS, MUIA_ShortHelp, NULL);
 
-	 if(!folder)
+   if(!folder)
    {
-   		folder = FO_GetCurrentFolder();
+      folder = FO_GetCurrentFolder();
    }
    else if(FO_GetCurrentFolder() == folder) return;
 
@@ -352,7 +352,7 @@ void MA_ChangeFolder(struct Folder *folder)
             DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, i, &mail, TAG_DONE);
             if (!mail)
             {
-            	 pos = -1;
+               pos = -1;
                break;
             }
 
@@ -373,7 +373,7 @@ void MA_ChangeFolder(struct Folder *folder)
 
 void SAVEDS MA_ChangeFolderFunc(void)
 {
-	MA_ChangeFolder(NULL);
+   MA_ChangeFolder(NULL);
 }
 MakeHook(MA_ChangeFolderHook, MA_ChangeFolderFunc);
 ///
@@ -383,12 +383,12 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
 {
   struct MUI_NListtree_TestPos_Result r;
   struct MUI_NListtree_TreeNode *tn;
-  struct Folder 				*folder;
-  struct PopupMenu      *pop_menu;
-  struct Window         *win;
-  struct MA_GUIData 		*gui = &G->MA->GUI;
-  ULONG  ret = 0;
-  BOOL   tmp_dis = TRUE;
+  struct Folder *folder;
+  struct PopupMenu *pop_menu;
+  struct Window *win;
+  struct MA_GUIData *gui = &G->MA->GUI;
+  ULONG ret = 0;
+  BOOL tmp_dis = TRUE;
 
   enum{ PMN_EDITF=1, PMN_DELETEF, PMN_INDEX, PMN_FLUSH, PMN_NEWF, PMN_NEWFG, PMN_SNAPS };
 
@@ -412,31 +412,31 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
   if(folder->Type != FT_GROUP) tmp_dis = FALSE;
 
   // We create the PopupMenu now
-	pop_menu = 	PMMenu(FolderName(folder)),
-								PMItem(GetStripStr(MSG_FOLDER_EDIT)),						PM_UserData, PMN_EDITF, 		End,
-      					PMItem(GetStripStr(MSG_FOLDER_DELETE)),					PM_UserData, PMN_DELETEF,		End,
-      					PMItem(GetStripStr(MSG_MA_UpdateIndex)),				PM_Disabled, tmp_dis, 			PM_UserData, PMN_INDEX, End,
-      					PMItem(GetStripStr(MSG_MA_FlushIndices)),				PM_Disabled, tmp_dis, 			PM_UserData, PMN_FLUSH,	End,
-                PMBar, End,
-      					PMItem(GetStripStr(MSG_FOLDER_NEWFOLDER)),  		PM_UserData, PMN_NEWF, 			End,
-      					PMItem(GetStripStr(MSG_FOLDER_NEWFOLDERGROUP)), PM_UserData, PMN_NEWFG, 		End,
-                PMBar, End,
-      					PMItem(GetStripStr(MSG_FOLDER_SNAPSHOT)), 			PM_UserData, PMN_SNAPS, 		End,
-              End;
+  pop_menu =   PMMenu(FolderName(folder)),
+                 PMItem(GetStripStr(MSG_FOLDER_EDIT)),           PM_UserData, PMN_EDITF,     End,
+                 PMItem(GetStripStr(MSG_FOLDER_DELETE)),         PM_UserData, PMN_DELETEF,   End,
+                 PMItem(GetStripStr(MSG_MA_UpdateIndex)),        PM_Disabled, tmp_dis,       PM_UserData, PMN_INDEX, End,
+                 PMItem(GetStripStr(MSG_MA_FlushIndices)),       PM_Disabled, tmp_dis,       PM_UserData, PMN_FLUSH,  End,
+                 PMBar, End,
+                 PMItem(GetStripStr(MSG_FOLDER_NEWFOLDER)),      PM_UserData, PMN_NEWF,      End,
+                 PMItem(GetStripStr(MSG_FOLDER_NEWFOLDERGROUP)), PM_UserData, PMN_NEWFG,     End,
+                 PMBar, End,
+                 PMItem(GetStripStr(MSG_FOLDER_SNAPSHOT)),       PM_UserData, PMN_SNAPS,     End,
+               End;
 
-  ret = (ULONG)(PM_OpenPopupMenu(  win, PM_Menu,    pop_menu, TAG_DONE));
+  ret = (ULONG)(PM_OpenPopupMenu(win, PM_Menu,pop_menu, TAG_DONE));
 
   PM_FreePopupMenu(pop_menu);
 
   switch(ret)
   {
-  	case PMN_EDITF: 	DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook, 		TAG_DONE);					break;
-    case PMN_DELETEF: DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook, 	TAG_DONE);					break;
-    case PMN_INDEX:   DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook,		TAG_DONE);					break;
-    case PMN_FLUSH:   DoMethod(G->App, MUIM_CallHook, &MA_FlushIndexHook,			TAG_DONE);					break;
-  	case PMN_NEWF:		DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook, 			TAG_DONE);					break;
-  	case PMN_NEWFG:	 	DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook, TAG_DONE);					break;
-  	case PMN_SNAPS:		DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook,				SO_SAVE, TAG_DONE);	break;
+    case PMN_EDITF:   DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook,     TAG_DONE);           break;
+    case PMN_DELETEF: DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook,   TAG_DONE);           break;
+    case PMN_INDEX:   DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook,    TAG_DONE);           break;
+    case PMN_FLUSH:   DoMethod(G->App, MUIM_CallHook, &MA_FlushIndexHook,     TAG_DONE);           break;
+    case PMN_NEWF:    DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook,      TAG_DONE);           break;
+    case PMN_NEWFG:   DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook, TAG_DONE);           break;
+    case PMN_SNAPS:   DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook,       SO_SAVE, TAG_DONE);  break;
   }
 
   return(0);
@@ -797,38 +797,38 @@ long SAVEDS ASM MA_LV_FDspFunc(REG(a1, struct MUIP_NListtree_DisplayMessage *msg
    {
       static char dispfold[SIZE_DEFAULT], disptot[SIZE_SMALL], dispunr[SIZE_SMALL], dispnew[SIZE_SMALL], dispsiz[SIZE_SMALL];
 
-    	struct Folder *entry = (struct Folder *)msg->TreeNode->tn_User;
+      struct Folder *entry = (struct Folder *)msg->TreeNode->tn_User;
 
       msg->Array[0] = msg->Array[1] = msg->Array[2] = msg->Array[3] = msg->Array[4] = "";
       *dispsiz = 0;
 
-			switch(entry->Type)
+      switch(entry->Type)
       {
-      	case FT_GROUP:
+        case FT_GROUP:
         {
           msg->Array[0] = entry->Name;
-       		msg->Preparse[0] = MUIX_PH;
+          msg->Preparse[0] = MUIX_PH;
         }
-      	break;
+        break;
 
-      	default:
+        default:
         {
-		      if (entry->FImage) sprintf(msg->Array[0] = dispfold, "\033o[%d]", entry->SortIndex+1);
+          if (entry->FImage) sprintf(msg->Array[0] = dispfold, "\033o[%d]", entry->SortIndex+1);
           else strcpy(msg->Array[0] = dispfold, "");
 
-					if (strlen(entry->Name) > 0) strcat(dispfold, entry->Name);
+          if (strlen(entry->Name) > 0) strcat(dispfold, entry->Name);
           else sprintf(dispfold, "(%s)", FilePart(entry->Path));
 
-         	if (entry->XPKType&1) strcat(dispfold, " \033o[0]");
+          if (entry->XPKType&1) strcat(dispfold, " \033o[0]");
 
-         	if (entry->LoadedMode)
-         	{
-         		if (entry->New+entry->Unread) msg->Preparse[0] = MUIX_PH;
-          	sprintf(msg->Array[1] = disptot, "%d", entry->Total);
-          	sprintf(msg->Array[2] = dispunr, "%d", entry->Unread);
-          	sprintf(msg->Array[3] = dispnew, "%d", entry->New);
-          	FormatSize(entry->Size, msg->Array[4] = dispsiz);
-         	}
+          if (entry->LoadedMode)
+          {
+            if (entry->New+entry->Unread) msg->Preparse[0] = MUIX_PH;
+            sprintf(msg->Array[1] = disptot, "%d", entry->Total);
+            sprintf(msg->Array[2] = dispunr, "%d", entry->Unread);
+            sprintf(msg->Array[3] = dispnew, "%d", entry->New);
+            FormatSize(entry->Size, msg->Array[4] = dispsiz);
+          }
         }
       }
    }
