@@ -52,7 +52,6 @@ __near long __MemPoolPuddleSize = 16384;
 struct WBStartup *WBmsg;
 
 /* no longer external visible, this is done by proto files! */
-/*
 struct Library *       CManagerBase = NULL;
 struct Library *       DataTypesBase = NULL;
 struct Library *       GenesisBase = NULL;
@@ -70,7 +69,6 @@ struct Library *       SocketBase = NULL;
 struct UtilityBase *   UtilityBase = NULL;
 struct Library *       WorkbenchBase = NULL;
 struct Library *       XpkBase = NULL;
-*/
 
 BOOL yamFirst = TRUE, yamLast = FALSE;
 
