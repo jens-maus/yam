@@ -7,6 +7,10 @@ $Source$
 
 2002-07-05  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_ER.c: fixed bug #431550 where the activation of
+      the error window via the Menuitem "Show last message"
+      caused a actual transfer to abort. Also enhanced
+      the Error window handling a bit.
     * YAM_MA.c: fixed enforcer hit that occured on clicking
       the support URL within the About window while YAM
       was starting up. (bug #576191)

@@ -34,6 +34,7 @@
 
 #include "YAM.h"
 #include "YAM_config.h"
+#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_hook.h"
 #include "YAM_main.h"
@@ -56,7 +57,11 @@ void ER_NewError(char *error, char *arg1, char *arg2)
    struct ER_GUIData *gui;
    int i;
 
-   G->Error = TRUE;
+   // we only signal an error if we really have one,
+   // otherwise calling this function with error=NULL is just
+   // for showing the last errors,
+   if(error) G->Error = TRUE;
+
    if (!G->ER)
    {
       if (!(G->ER = ER_New())) return;
@@ -73,13 +78,21 @@ void ER_NewError(char *error, char *arg1, char *arg2)
       SPrintF(buf, error, arg1, arg2); strcat(buf, "\n\n(");
       strcat(buf, DateStamp2String(NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME));
       strcat(buf, ")");
-      strcpy(G->ER_Message[G->ER_NumErr-1] = malloc(strlen(buf)+1), buf);
+
+      if(G->ER_Message[G->ER_NumErr-1] = malloc(strlen(buf)+1))
+      {
+        strcpy(G->ER_Message[G->ER_NumErr-1], buf);
+      }
    }
    SPrintF(label, "\033c%s %%ld/%ld", GetStr(MSG_ErrorReq), G->ER_NumErr);
-   set(gui->NB_ERROR, MUIA_Numeric_Format, label);
-   set(gui->NB_ERROR, MUIA_Numeric_Min, 1);
-   set(gui->NB_ERROR, MUIA_Numeric_Max, G->ER_NumErr);
-   set(gui->NB_ERROR, MUIA_Numeric_Value, G->ER_NumErr);
+
+   SetAttrs(gui->NB_ERROR,
+              MUIA_Numeric_Format, label,
+              MUIA_Numeric_Min,    1,
+              MUIA_Numeric_Max,    G->ER_NumErr,
+              MUIA_Numeric_Value,  G->ER_NumErr,
+              TAG_DONE);
+
    if (G->MA) set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
 }
 
@@ -127,7 +140,7 @@ static struct ER_ClassData *ER_New(void)
             Child, HGroup,
                Child, data->GUI.BT_PREV = MakeButton(GetStr(MSG_ER_PrevError)),
                Child, data->GUI.NB_ERROR = NumericbuttonObject,
-                  MUIA_Numeric_Min, 0,
+                  MUIA_Numeric_Min,   0,
                   MUIA_Numeric_Value, 0,
                   MUIA_Numeric_Format, "Error %%ld/%ld",
                   MUIA_CycleChain, TRUE,
