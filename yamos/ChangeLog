@@ -306,3 +306,15 @@
     * Raised NList.mcc requirement to V19.98.
 
     * Applied fix for trashed NListtree images.
+
+2001-08-02  Jacob Laursen <laursen@myself.com>
+
+    * Re-added uniconify behaviour when attempting to start a second instance
+      of YAM (without enforcer hits).
+
+    * Corrected 'Check version' date.
+
+    * Better looking 'Okay' button in about window.
+
+    * Now respects the "Iconified on startup" MUI setting. If the HIDE
+      tooltype is present, it'll override it.
