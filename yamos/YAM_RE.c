@@ -3283,14 +3283,14 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_REPLY,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,12, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_NewHook,NEW_FORWARD,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE                 ,MUIV_Notify_Application,3,MUIM_CallHook,&RE_CloseHook,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat del"        ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_DeleteHook,0,winnum,FALSE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift del"  ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_DeleteHook,IEQUALIFIER_LSHIFT,winnum,FALSE);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat space"      ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Next Page");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat backspace"  ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Previous Page");
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat left"       ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,FALSE,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat right"      ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,FALSE,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift left" ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,TRUE,winnum);
-         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift right",MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,TRUE,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock del"        ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_DeleteHook,0,winnum,FALSE);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift del"  ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_DeleteHook,IEQUALIFIER_LSHIFT,winnum,FALSE);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock space"      ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Next Page");
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock backspace"  ,data->GUI.TE_TEXT      ,2,MUIM_TextEditor_ARexxCmd,"Previous Page");
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock left"       ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,FALSE,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock right"      ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,FALSE,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift left" ,MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,-1,TRUE,winnum);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat -capslock shift right",MUIV_Notify_Application,5,MUIM_CallHook,&RE_PrevNextHook,1,TRUE,winnum);
          return data;
       }
       free(data);
