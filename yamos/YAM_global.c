@@ -29,7 +29,11 @@
 #include "YAM_locale.h"
 
 #if defined(__PPC__)
-  #define CPU " [PPC]"
+  #if defined(__MORPHOS__)
+    #define CPU " [MOS/PPC]"
+  #else
+    #define CPU " [OS4/PPC]"
+  #endif
 #elif defined(_M68060) || defined(__M68060) || defined(__mc68060)
   #define CPU " [060]"
 #elif defined(_M68040) || defined(__M68040) || defined(__mc68040)
@@ -53,14 +57,13 @@ char * yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_
 char * yamversiondate   = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;
 
-#if defined(__SASC)
+#if defined(__SASC) || defined(__GNUC__)
+  /* GCC (libnix) supports the same as SAS/C! */
   long __stack = 65536;
   long __buffsize = 8192;
   long _MSTEP = 16384;
 #elif defined(__VBCC__) /* starting with VBCC 0.8 release */
   long __stack = 65536;
-#elif defined(__GNUC__)
-  /* GCC (libnix) supports the same as SAS/C! */
 #endif
 
 struct WBStartup *WBmsg;
