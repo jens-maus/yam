@@ -2584,7 +2584,7 @@ static int TR_ConnectESMTP(void)
          if (NULL != strstr(resp+9,"PLAIN"))      SET_FLAG(ServerFlags, ESMTP_FLG_AUTH_PLAIN);
          if (NULL != strstr(resp+9,"LOGIN"))      SET_FLAG(ServerFlags, ESMTP_FLG_AUTH_LOGIN);
       }
-      else if(strnicmp(resp+4, "SIZE", 4) == 0)         // STD:10 - SIZE declaration (RFC 1860)
+      else if(strnicmp(resp+4, "SIZE", 4) == 0)         // STD:10 - SIZE declaration (RFC 1870)
       {
         SET_FLAG(ServerFlags, ESMTP_FLG_SIZE);
       }
