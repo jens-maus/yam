@@ -1482,13 +1482,13 @@ BOOL TR_GetMessageList_IMPORT(FILE *fh)
 {
    BOOL body = FALSE;
    int c = 0, size = 0;
-   char tfname[SIZE_FILE];
+   char tfname[SIZE_MFILE];
    char buffer[SIZE_LINE], *ptr;
    char fname[SIZE_PATHFILE];
    FILE *f = NULL;
 
    // generate the temporary filename
-   sprintf(tfname, "YAMi%08lx.tmp", FindTask(NULL));
+   sprintf(tfname, "YAMi%02d.tmp", G->RexxHost->portnumber);
    strmfp(fname, C->TempDir, tfname);
 
    G->TR->List = NULL;
