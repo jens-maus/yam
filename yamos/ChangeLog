@@ -1,0 +1,28 @@
+2000-12-06  laursen <laursen@myself.com>
+
+    * Enforcer hits when doing: rx "address 'YAM';info"
+      (without arguments) Fixed!
+
+2000-12-06  laursen <laursen@myself.com>
+
+    * Added "From:" address to folder options. Useful when using
+      different e-mail addresses on different mailing lists.
+
+2000-12-06  laursen <laursen@myself.com>
+
+    * When deleting a bunch of mails, and one with Disposition
+      Notification pops up - new option: Ignore all
+
+2000-12-07  laursen <laursen@myself.com>
+
+    * Added "Reply-To:" address to folder options. Useful for folders that
+      are mail aliases instead of real mailing lists, to avoid getting
+      dublicate answers.
+
+2000-12-10  laursen <laursen@myself.com>
+
+    * Removed custom bsdsocket.library interface - now uses the includes.
+
+2000-12-17  laursen <laursen@myself.com>
+
+    * SAS/C fixes. Now compiles again, also without V44 includes.
