@@ -2504,8 +2504,9 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
 //  Returns description of a content type
 char *DescribeCT(const char *ct)
 {
-  ENTER();
   char *ret = (char *)ct;
+
+  ENTER();
 
   if(ct == NULL)
     ret = GetStr(MSG_CTunknown);
