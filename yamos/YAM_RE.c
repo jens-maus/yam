@@ -2781,9 +2781,13 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
   // first we precalucalte the size of the final buffer where the message text will be put in
   for(totsize = 1000, part = first; part; part = part->Next)
   {
-    if(mode != RIM_READ && part->Nr && part->Nr != PART_LETTER) continue;
-    if(part->Decoded || !part->Nr) totsize += part->Size;
-    else totsize += 200;
+    if(mode != RIM_READ && part->Nr && part->Nr != PART_LETTER)
+      continue;
+
+    if(part->Decoded || !part->Nr)
+      totsize += part->Size;
+    else
+      totsize += 200;
   }
 
   // then we generate our final buffer for the message
@@ -3769,15 +3773,22 @@ HOOKPROTONH(RE_LV_AttachDspFunc, long, char **array, struct Part *entry)
    {
       static char dispnu[SIZE_SMALL], dispsz[SIZE_SMALL];
       array[0] = array[2] = "";
-      if (entry->Nr > PART_RAW) sprintf(array[0] = dispnu, "%d", entry->Nr);
+
+      if(entry->Nr > PART_RAW)
+        sprintf(array[0] = dispnu, "%d", entry->Nr);
 
       if(*entry->Name) array[1] = entry->Name;
       else             array[1] = DescribeCT(entry->ContentType);
 
-      if (entry->Size)
+      if(entry->Size > 0)
       {
-        sprintf(array[2] = dispsz, "%s", entry->Decoded ? "" : "~");
-        FormatSize(entry->Size, dispsz);
+        if(entry->Decoded)
+          FormatSize(entry->Size, array[2] = dispsz);
+        else
+        {
+          dispsz[0] = '~';
+          FormatSize(entry->Size, &dispsz[1]);
+        }
       }
    }
    else

@@ -2624,10 +2624,9 @@ int TZtoMinutes(char *tzone)
 ///
 /// FormatSize
 //  Displays large numbers using group separators
-void FormatSize(LONG size, char *buffer)
+void FormatSize(LONG size, char *buf)
 {
   char *dp = G->Locale ? (char *)G->Locale->loc_DecimalPoint : ".";
-  char *p = &buffer[strlen(buffer)];
   double dsize = (double)size;
 
   // we check what SizeFormat the user has choosen
@@ -2643,12 +2642,12 @@ void FormatSize(LONG size, char *buffer)
     */
     case SF_1PREC:
     {
-      if(size < KB)       sprintf(p, "%ld B", size);
-      else if(size < MB)  sprintf(p, "%.1f KB", dsize/KB);
-      else if(size < GB)  sprintf(p, "%.1f MB", dsize/MB);
-      else                sprintf(p, "%.1f GB", dsize/GB);
+      if(size < KB)       sprintf(buf, "%ld B", size);
+      else if(size < MB)  sprintf(buf, "%.1f KB", dsize/KB);
+      else if(size < GB)  sprintf(buf, "%.1f MB", dsize/MB);
+      else                sprintf(buf, "%.1f GB", dsize/GB);
 
-      if((p = strchr(p, '.'))) *p = *dp;
+      if((buf = strchr(buf, '.'))) *buf = *dp;
     }
     break;
 
@@ -2659,12 +2658,12 @@ void FormatSize(LONG size, char *buffer)
     */
     case SF_2PREC:
     {
-      if(size < KB)       sprintf(p, "%ld B", size);
-      else if(size < MB)  sprintf(p, "%.2f KB", dsize/KB);
-      else if(size < GB)  sprintf(p, "%.2f MB", dsize/MB);
-      else                sprintf(p, "%.2f GB", dsize/GB);
+      if(size < KB)       sprintf(buf, "%ld B", size);
+      else if(size < MB)  sprintf(buf, "%.2f KB", dsize/KB);
+      else if(size < GB)  sprintf(buf, "%.2f MB", dsize/MB);
+      else                sprintf(buf, "%.2f GB", dsize/GB);
 
-      if((p = strchr(p, '.'))) *p = *dp;
+      if((buf = strchr(buf, '.'))) *buf = *dp;
     }
     break;
 
@@ -2675,12 +2674,12 @@ void FormatSize(LONG size, char *buffer)
     */
     case SF_3PREC:
     {
-      if(size < KB)       sprintf(p, "%ld B", size);
-      else if(size < MB)  sprintf(p, "%.3f KB", dsize/KB);
-      else if(size < GB)  sprintf(p, "%.3f MB", dsize/MB);
-      else                sprintf(p, "%.3f GB", dsize/GB);
+      if(size < KB)       sprintf(buf, "%ld B", size);
+      else if(size < MB)  sprintf(buf, "%.3f KB", dsize/KB);
+      else if(size < GB)  sprintf(buf, "%.3f MB", dsize/MB);
+      else                sprintf(buf, "%.3f GB", dsize/GB);
 
-      if((p = strchr(p, '.'))) *p = *dp;
+      if((buf = strchr(buf, '.'))) *buf = *dp;
     }
     break;
 
@@ -2691,12 +2690,12 @@ void FormatSize(LONG size, char *buffer)
     */
     case SF_MIXED:
     {
-      if(size < KB)       sprintf(p, "%ld B", size);
-      else if(size < MB)  sprintf(p, "%.1f KB", dsize/KB);
-      else if(size < GB)  sprintf(p, "%.2f MB", dsize/MB);
-      else                sprintf(p, "%.3f GB", dsize/GB);
+      if(size < KB)       sprintf(buf, "%ld B", size);
+      else if(size < MB)  sprintf(buf, "%.1f KB", dsize/KB);
+      else if(size < GB)  sprintf(buf, "%.2f MB", dsize/MB);
+      else                sprintf(buf, "%.3f GB", dsize/GB);
 
-      if((p = strchr(p, '.'))) *p = *dp;
+      if((buf = strchr(buf, '.'))) *buf = *dp;
     }
     break;
 
@@ -2712,10 +2711,10 @@ void FormatSize(LONG size, char *buffer)
       // as we just split the size to another value, we redefine the KB/MB/GB values to base 10 variables
       enum { KB = 1000, MB = 1000 * 1000, GB = 1000 * 1000 * 1000 };
 
-      if(size < KB)      sprintf(p, "%ld", size);
-      else if(size < MB) sprintf(p, "%ld%s%03ld", size/KB, gs, size%KB);
-      else if(size < GB) sprintf(p, "%ld%s%03ld%s%03ld", size/MB, gs, (size%MB)/KB, gs, size%KB);
-      else               sprintf(p, "%ld%s%03ld%s%03ld%s%03ld", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
+      if(size < KB)      sprintf(buf, "%ld", size);
+      else if(size < MB) sprintf(buf, "%ld%s%03ld", size/KB, gs, size%KB);
+      else if(size < GB) sprintf(buf, "%ld%s%03ld%s%03ld", size/MB, gs, (size%MB)/KB, gs, size%KB);
+      else               sprintf(buf, "%ld%s%03ld%s%03ld%s%03ld", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
     }
     break;
   }
@@ -2843,12 +2842,16 @@ void RemoveMailFromList(struct Mail *mail)
 void ClearMailList(struct Folder *folder, BOOL resetstats)
 {
    struct Mail *work, *next;
-   for (work = folder->Messages; work; work = next)
+
+   for(work = folder->Messages; work; work = next)
    {
       next = work->Next;
       free(work);
    }
-   if (resetstats) folder->Total = folder->New = folder->Unread = folder->Size = 0;
+
+   if(resetstats)
+     folder->Total = folder->New = folder->Unread = folder->Size = 0;
+
    folder->Messages = NULL;
 }
 ///

@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-09-10  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c, YAM_RE.c, YAM_TR.c, YAM_UT.c: reworked the
+      FormatSize() invocation a bit and removed a unnecessary
+      strlen() call as we anyway call this function mostly to put
+      stuff at the start of the string. This change also works
+      around a tempoaray problem with the clib2 runtime library
+      which seem to be broken with empty sprintf() calls and
+      caused problem with the size display in the read window.
+
 2004-09-08  Jens Langner <Jens.Langner@light-speed.de>
 
     * Mail filenames: in accordance to the change in the mail

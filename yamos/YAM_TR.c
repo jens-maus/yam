@@ -3718,8 +3718,7 @@ HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct Mail *entry)
       if(hasTR_LOAD(entry))   strcat(dispsta, "\033o[10]");
       if(hasTR_DELETE(entry)) strcat(dispsta, "\033o[9]");
       if (entry->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);
-      array[1] = dispsiz; *dispsiz = 0;
-      FormatSize(entry->Size, dispsiz);
+      FormatSize(entry->Size, array[1] = dispsiz);
       array[2] = dispfro;
       MyStrCpy(dispfro, AddrName((*pe)));
       array[3] = entry->Subject;

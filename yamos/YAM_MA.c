@@ -2643,9 +2643,7 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
          if(C->MessageCols & (1<<5) || searchWinHook)
          {
-            array[5] = dispsiz;
-            *dispsiz = 0;
-            FormatSize(entry->Size, dispsiz);
+            FormatSize(entry->Size, array[5] = dispsiz);
          }
 
          array[6] = entry->MailFile;
