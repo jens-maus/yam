@@ -1,6 +1,8 @@
-## version $VER: YAM.catalog 5.6 (27.03.2003) (c) Vit Sindlar
+## version $VER: YAM.catalog 5.6 (19.04.2003) (c) Vit Sindlar
 ## language czech
 ## codeset 0
+;
+; $Id$
 ;
 ; General
 ;
@@ -6019,8 +6021,8 @@ Vlastnosti sloùky
 ; Properties
 ;
 MSG_FO_MaxAge
-Ma_x. doba
-; Ma_x. age
+Max. doba
+; Max. age
 ;
 MSG_FO_FolderType
 T_yp

@@ -1,6 +1,8 @@
-## version $VER: YAM.catalog 5.40 (15.04.2003)
+## version $VER: YAM.catalog 5.40 (19.04.2003)
 ## language español
 ## codeset 0
+;
+; $Id$
 ;
 ; General
 ;
@@ -6113,8 +6115,8 @@ Propiedades
 ; Properties
 ;
 MSG_FO_MaxAge
-Vida má_x.
-; Ma_x. age
+Vida máx.
+; Max. age
 ;
 MSG_FO_FolderType
 T_ipo

@@ -1,6 +1,8 @@
-## version $VER: YAM.catalog 5.85 (15.04.2003) (c) Mariusz Danilewicz <mandi@interia.pl>
+## version $VER: YAM.catalog 5.85 (19.04.2003) (c) Mariusz Danilewicz <mandi@interia.pl>
 ## language polski
 ## codeset 0
+;
+; $Id$
 ;
 ; General
 ;
@@ -6088,8 +6090,8 @@ Wîaôciwoôci
 ; Properties
 ;
 MSG_FO_MaxAge
-_Maksymalny wiek
-; Ma_x. age
+Maksymalny wiek
+; Max. age
 ;
 MSG_FO_FolderType
 T_yp

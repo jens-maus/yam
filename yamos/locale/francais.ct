@@ -1,6 +1,8 @@
-## version $VER: yam.catalog 5.95 (06.04.2003) ATO-Fr
+## version $VER: YAM.catalog 5.95 (19.04.2003) ATO-Fr
 ## language français
 ## codeset 0
+;
+; $Id$
 ;
 ; General
 ;
@@ -6130,8 +6132,8 @@ Propriétés
 ; Properties
 ;
 MSG_FO_MaxAge
-Âge ma_x
-; Ma_x. age
+Âge max
+; Max. age
 ;
 MSG_FO_FolderType
 T_ype

@@ -1,13 +1,8 @@
-## version $VER: YAM.catalog 5.8 (17.4.2003)
+## version $VER: YAM.catalog 5.9 (19.04.2003)
 ## language dansk
 ## codeset 0
 ;
-;
-; YAM.cd - YAM 2.4 catalog description file
 ; $Id$
-; 
-;#version 5
-;#language english
 ;
 ; General
 ;
@@ -768,7 +763,7 @@ Vælg den mappe beskeden skal over i:
 ; Please select a destination folder:
 ;
 MSG_MA_MoveGad
-_Flytte
+F_lytte
 ; _Move
 ;
 MSG_MA_CopyMsg
@@ -3711,7 +3706,7 @@ _Beskrivelse
 ; D_escription
 ;
 MSG_EA_DOB
-_Fødselsdato
+Fø_dselsdato
 ; Date of _birth
 ;
 MSG_EA_Portrait
@@ -4510,7 +4505,7 @@ _Pakke og tilføje
 ; _Pack & add
 ;
 MSG_WR_Display
-_Fremvise
+F_remvise
 ; D_isplay
 ;
 MSG_WR_Encoding
@@ -4534,7 +4529,7 @@ _Blindkopi til
 ; Hidde_n copies to
 ;
 MSG_WR_From
-A_fsenderadresse
+_Afsenderadresse
 ; _From
 ;
 MSG_WR_ReplyTo
@@ -4594,7 +4589,7 @@ Omdirigere besked
 ; Bounce message
 ;
 MSG_WR_BounceTo
-Omdirigere _til
+_Omdirigere til
 ; Bounce _to
 ;
 ;
@@ -6152,8 +6147,8 @@ Egenskaber
 ; Properties
 ;
 MSG_FO_MaxAge
-_Max-alder
-; Ma_x. age
+Max-alder
+; Max. age
 ;
 MSG_FO_FolderType
 _Type
@@ -6486,7 +6481,7 @@ MUI...
 ; MUI...
 ;
 MSG_FO_FromAddress
-_Fra-adresse
+Fra-adr_esse
 ; _From: address
 ;
 MSG_HELP_FO_ST_MLFROMADDRESS

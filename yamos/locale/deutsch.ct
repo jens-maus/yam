@@ -1,7 +1,9 @@
 ## chunk AUTH Dirk Neubauer, Horst Schumann [ATO]
-## version $VER: YAM.catalog 5.9 (15.04.2003)
+## version $VER: YAM.catalog 5.9 (19.04.2003)
 ## language deutsch
 ## codeset 0
+;
+; $Id$
 ;
 ; General
 ;
@@ -5684,8 +5686,8 @@ Eigenschaften
 ; Properties
 ;
 MSG_FO_MaxAge
-Ma_x. Alter
-; Ma_x. age
+Max. Alter
+; Max. age
 ;
 MSG_FO_FolderType
 _Typ
