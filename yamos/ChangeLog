@@ -923,3 +923,13 @@
       of a mail.
     * added missing status_flags to the Status Group of the read window. Now
       it should show all statuses accordingly to the message status
+
+2001-07-26  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * removed possible enforcer hit in YAM_FO.c where the destructor of
+      the folder listtree called FO_FreeFolder and tried to remove a Object
+      with a InitChange where this Group doesn`t exists anymore.
+    * change addressfield completion accordingly to some discussions on the
+      mailinglist. if you now press SHIFT+RETURN after entering a string that
+      matches a addressbook entry to should not complete it with the realname.
+      Also if you send a mail it will not complete already valid email addresses.

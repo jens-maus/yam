@@ -1470,7 +1470,7 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
          
       case RXIF_ACTION:
          rd->rd.res.recpt = rd->string = AllocStrBuf(80);
-         if (WR_ResolveName(-1, rd->rd.arg.alias, &(rd->string), FALSE)) rd->rd.rc = RETURN_WARN;
+         if (WR_ResolveName(-1, rd->rd.arg.alias, &(rd->string), FALSE, TRUE)) rd->rd.rc = RETURN_WARN;
          break;
       
       case RXIF_FREE:

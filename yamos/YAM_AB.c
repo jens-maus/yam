@@ -160,10 +160,13 @@ int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
   struct ABEntry *ab_found;
   int i;
   int hits = 0;
-  BOOL found = 0;
+  BOOL found = FALSE;
+  int mode_type = mode&ASM_TYPEMASK;
   int tl = strlen(text);
 
-  for(i=0; hits < 2; i++, found=FALSE)
+  // we scan until we are at the end of the list or
+  // if we found more then one matching entry
+  for(i=0; hits <= 2; i++, found=FALSE)
   {
     tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0, TAG_DONE);
     if(!tn) break;
@@ -172,34 +175,25 @@ int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
     ab_found = tn->tn_User;
     if(!ab_found) break;
 
-    // if the addressbook entry is a group we skip it
-    if(ab_found->Type == AET_GROUP) continue;
+    // now we check if this entry is one of the not wished entry types
+    // and then we skip it.
+    if(ab_found->Type == AET_USER  && !(mode & ASM_USER))  continue;
+    if(ab_found->Type == AET_LIST  && !(mode & ASM_LIST))  continue;
+    if(ab_found->Type == AET_GROUP && !(mode & ASM_GROUP)) continue;
 
     if(mode&ASM_COMPLETE)
     {
-      switch(mode&ASM_TYPEMASK)
-      {
-        case ASM_ALIAS   : found = !Strnicmp(ab_found->Alias, text, tl);    break;
-        case ASM_REALNAME: found = !Strnicmp(ab_found->RealName, text, tl); break;
-        case ASM_ADDRESS :
-        {
-          if(ab_found->Type != AET_LIST) found = !Strnicmp(ab_found->Address, text, tl);
-        }
-        break;
-      }
+      // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
+      if(mode_type&ASM_ALIAS)          found = !Strnicmp(ab_found->Alias,    text, tl);
+      else if(mode_type&ASM_REALNAME)  found = !Strnicmp(ab_found->RealName, text, tl);
+      else if(mode_type&ASM_ADDRESS)   found = !Strnicmp(ab_found->Address,  text, tl);
     }
     else
     {
-      switch (mode&ASM_TYPEMASK)
-      {
-        case ASM_ALIAS   : found = !Stricmp(ab_found->Alias, text);         break;
-        case ASM_REALNAME: found = !Stricmp(ab_found->RealName, text);      break;
-        case ASM_ADDRESS :
-        {
-          if(ab_found->Type != AET_LIST) found = !Stricmp(ab_found->Address, text);
-        }
-        break;
-      }
+      // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
+      if(mode_type&ASM_ALIAS)          found = !Stricmp(ab_found->Alias,    text);
+      else if(mode_type&ASM_REALNAME)  found = !Stricmp(ab_found->RealName, text);
+      else if(mode_type&ASM_ADDRESS)   found = !Stricmp(ab_found->Address,  text);
     }
 
     if(found)
@@ -220,15 +214,15 @@ char *AB_CompleteAlias(char *text)
   char *compl = NULL;
   struct ABEntry *ab = NULL;
 
-  if(AB_SearchEntry(text, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP|ASM_COMPLETE, &ab) == 1)
+  if(AB_SearchEntry(text, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_COMPLETE, &ab) == 1)
   {
     compl = ab->Alias;
   }
-  else if(AB_SearchEntry(text, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP|ASM_COMPLETE, &ab) == 1)
+  else if(AB_SearchEntry(text, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_COMPLETE, &ab) == 1)
   {
     compl = ab->RealName;
   }
-  else if(AB_SearchEntry(text, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_GROUP|ASM_COMPLETE, &ab) == 1)
+  else if(AB_SearchEntry(text, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_COMPLETE, &ab) == 1)
   {
     compl = ab->Address;
   }

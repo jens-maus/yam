@@ -344,32 +344,29 @@ struct Folder *FO_NewFolder(enum FolderType type, char *path, char *name)
 //  frees all resources previously allocated on creation time of the folder
 BOOL FO_FreeFolder(struct Folder *folder)
 {
-  if(!folder) return FALSE;
+  if(!folder) return(FALSE);
 
   // remove the image of this folder from the objectlist at the application
   if(folder->BC_FImage)
   {
+    // Here we cannot remove the BC_FImage from the BC_GROUP because the
+    // destructor of the Folder Listtree will call this function and then
+    // this BC_GROUP doesn`t exists anymore. -> Enforcer hit !
+    // so if the user is going to remove this folder by hand we will remove
+    // the BC_FImage of it in the FO_DeleteFolderFunc() before the destructor
+    // is going to call this function.
+
     // remove the bodychunk object from the nlist
     DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_UseImage, NULL, folder->ImageIndex, 0, TAG_DONE);
-
-    // Prepare the BC_GROUP for removing a child
-    if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
-    {
-      DoMethod(G->MA->GUI.BC_GROUP, OM_REMMEMBER, folder->BC_FImage);
-      DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
-    }
   }
 
   // free the Bodychunk
   if(folder->FImage) FreeBCImage(folder->FImage);
 
-  // if we still have mails in the folder we have to clear the list
-//  if(folder->Messages) ClearMailList(folder, TRUE);
-
   // now it`s time to deallocate the folder itself
   free(folder);
 
-  return TRUE;
+  return(TRUE);
 }
 
 ///
@@ -998,6 +995,19 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
       ClearMailList(folder, TRUE);
     }
     break;
+  }
+
+  // Here we remove the Bodychunk Object from the BC_GROUP because the destructor
+  // of the Folder Listtree can`t do this without throwing enforcer hits
+  if(folder->BC_FImage)
+  {
+    // Prepare the BC_GROUP for removing a child
+
+    if(DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_InitChange))
+    {
+      DoMethod(G->MA->GUI.BC_GROUP, OM_REMMEMBER, folder->BC_FImage);
+      DoMethod(G->MA->GUI.BC_GROUP, MUIM_Group_ExitChange);
+    }
   }
 
   // remove the entry from the listtree now

@@ -1980,7 +1980,7 @@ MakeStaticHook(MA_LV_FConHook, MA_LV_FConFunc);
 HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
 {
    if(!msg) return(-1);
-   if(msg->UserData) FO_FreeFolder(msg->UserData);
+   if(msg->UserData) FO_FreeFolder((struct Folder *)msg->UserData);
    return(0);
 }
 MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);

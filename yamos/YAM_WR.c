@@ -119,19 +119,23 @@ static char FailedAlias[SIZE_ADDRESS];
 /*** Translate aliases ***/
 /// WR_ResolveName
 /*** WR_ResolveName - Looks for an alias, email address or name in the address book ***/
-int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
+int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists, BOOL withrname)
 {
   int hits, retcode;
   struct ABEntry *ab = NULL;
+  int searchtypes = ASM_USER;
+
+  if(!nolists) searchtypes |= ASM_LIST;
 
   MyStrCpy(FailedAlias, name);
 
-  if((hits = AB_SearchEntry(name, ASM_ALIAS|ASM_USER|ASM_LIST|ASM_GROUP, &ab)) == 0)
+  if((hits = AB_SearchEntry(name, ASM_ALIAS|searchtypes, &ab)) != 1)
   {
-    if((hits = AB_SearchEntry(name, ASM_REALNAME|ASM_USER|ASM_LIST|ASM_GROUP, &ab)) == 0)
+    if((hits = AB_SearchEntry(name, ASM_REALNAME|searchtypes, &ab)) != 1)
     {
-      if((hits = AB_SearchEntry(name, ASM_ADDRESS|ASM_USER|ASM_LIST|ASM_GROUP, &ab)) != 1)
+      if((hits = AB_SearchEntry(name, ASM_ADDRESS|searchtypes, &ab)) == 0)
       {
+        // is the entered string already a valid email ?
         if (strchr(name, '@'))
         {
           char *p = NULL;
@@ -143,7 +147,10 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
 
           if (!p[1]) strcpy(p, strchr(C->EmailAddress, '@'));
           if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
-          *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
+
+          // If we want to complete it with realname we have to build a correct addressstring first
+          if(withrname) *adrstr = StrBufCat(*adrstr, BuildAddrName2(&pe));
+          else          *adrstr = StrBufCat(*adrstr, pe.Address);
 
           return 0; // if it is an email we return without an error because finding an entry for an email isn`t a must
         }
@@ -159,8 +166,11 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
   {
     case AET_USER:
     {
-      if (**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
-      *adrstr = StrBufCat(*adrstr, BuildAddrName(ab->Address, ab->RealName));
+      if(**adrstr) *adrstr = StrBufCat(*adrstr, ", ");
+
+      // If we want to complete it with realname we have to build a correct addressstring first
+      if(withrname) *adrstr = StrBufCat(*adrstr, BuildAddrName(ab->Address, ab->RealName));
+      else          *adrstr = StrBufCat(*adrstr, ab->Address);
     }
     break;
 
@@ -180,7 +190,7 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
           if (nptr) *nptr = 0;
           else break;
 
-          retcode = WR_ResolveName(winnum, ptr, adrstr, nolists);
+          retcode = WR_ResolveName(winnum, ptr, adrstr, nolists, withrname);
           *nptr = '\n'; ptr = nptr;
           if (retcode) return retcode;
         }
@@ -195,7 +205,7 @@ int WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists)
 ///
 /// WR_ExpandAddresses
 //  Expands aliases and names in a recipient field to valid e-mail addresses
-char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single)
+char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single, BOOL withrname)
 {
    char *source, *buffer = malloc(strlen(src)+1), *next, *adr = AllocStrBuf(SIZE_DEFAULT);
    int err;
@@ -205,7 +215,15 @@ char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single)
    {
       if (!*source) break;
       if ((next = MyStrChr(source, ','))) *next++ = 0;
-      if ((err = WR_ResolveName(winnum, Trim(source), &adr, single)))
+
+      // if the source should be resolved without realname and it is already a valid email
+      // we just skip the resolving
+      if(!withrname && strchr(source, '@'))
+      {
+         if (*adr) adr = StrBufCat(adr, ", ");
+         adr = StrBufCat(adr, source);
+      }
+      else if ((err = WR_ResolveName(winnum, Trim(source), &adr, single, withrname)))
       {
          if (err == 2 && !quiet) ER_NewError(GetStr(MSG_ER_AliasNotFound), FailedAlias, NULL);
          if (err == 3 && !quiet) ER_NewError(GetStr(MSG_ER_AmbiguousAlias), FailedAlias, NULL);
@@ -221,25 +239,6 @@ char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single)
 }
 
 ///
-/// WR_VerifyAutoFunc
-/*** WR_VerifyAutoFunc - Checks recipient field (user pressed return key) ***/
-HOOKPROTONHNO(WR_VerifyAutoFunc, void, int *arg)
-{
-   APTR str = (APTR)arg[0], next = str;
-   char *value, *adr;
-   get(str, MUIA_String_Contents, &value);
-   if ((adr = WR_ExpandAddresses(arg[1], value, TRUE, arg[2])))
-   {
-      setstring(str, adr);
-      FreeStrBuf(adr);
-      get(str, MUIA_UserData, &next);
-   }
-   else DisplayBeep(0);
-   if (next) set(_win(next), MUIA_Window_ActiveObject, next);
-}
-MakeStaticHook(WR_VerifyAutoHook, WR_VerifyAutoFunc);
-
-///
 /// WR_VerifyManualFunc
 /*** WR_VerifyManualFunc - Checks and expands recipient field (user clicked gadget) ***/
 HOOKPROTONHNO(WR_VerifyManualFunc, void, int *arg)
@@ -247,7 +246,7 @@ HOOKPROTONHNO(WR_VerifyManualFunc, void, int *arg)
    APTR object = (APTR)arg[0];
    char *value, *adr;
    get(object, MUIA_String_Contents, &value);
-   if ((adr = WR_ExpandAddresses(arg[1], value, FALSE, arg[2])))
+   if ((adr = WR_ExpandAddresses(arg[1], value, FALSE, arg[2], TRUE)))
    {
       setstring(object, adr);
       FreeStrBuf(adr);
@@ -337,7 +336,6 @@ BOOL WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp)
    return FALSE;
 }  
 ///
-
 
 /*** Compose Message ***/
 /// GetDateTime
@@ -1294,7 +1292,7 @@ char *WR_AutoSaveFile(int winnr)
 void WR_NewMail(enum WriteMode mode, int winnum)
 {
    struct Compose comp;
-   char *addr, *er;
+   char *addr;
    static struct Mail mail;
    struct Mail *new = NULL, *mlist[3];
    int i, att = 0;
@@ -1309,37 +1307,55 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
    memset(&mail, 0, sizeof(struct Mail));
    memset(&comp, 0, sizeof(struct Compose));
-   mlist[0] = (struct Mail *)1; mlist[1] = NULL;
+   mlist[0] = (struct Mail *)1;
+   mlist[1] = NULL;
+
+   // get the contents of the TO: String gadget and check if it is valid
    get(gui->ST_TO, MUIA_String_Contents, &addr);
-   er = GetStr(MSG_WR_ErrorNoRcpt);
-   if (!*addr) if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), er)) mode = WRITE_HOLD;
-      else return;
+   if (!*addr)
+   {
+      // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
+      char *err = GetStr(MSG_WR_ErrorNoRcpt);
+
+      if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), err)) mode = WRITE_HOLD;
+      else
+      {
+         // otherwise set the TO Field active and go back
+         set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
+         return;
+      }
+   }
+
+   // get the content of the Subject: String gadget and check if it is empty or not.
    get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
-   if (wr->Mode != NEW_BOUNCE && *comp.Subject == '\0' && C->WarnSubject)
-   {  /* CAUTION: This is a hack for SAS/C! Do not remove! */
-      char *a = GetStr(MSG_WR_NOSUBJECTREQ);
-      if (!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), a))
+   if (wr->Mode != NEW_BOUNCE && C->WarnSubject && strlen(comp.Subject) == 0)
+   {
+      // CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
+      char *err = GetStr(MSG_WR_NOSUBJECTREQ);
+
+      if (!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), err))
       {
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
          return;
       }
    }
+
    Busy(GetStr(MSG_BusyComposing), "", 0, 0);
    comp.Mode = wr->Mode;
    comp.OrigMail = wr->Mail;
    comp.OldSecurity = wr->OldSecurity;
    wr->ListEntry = NULL;
-   if (*addr) if (!(comp.MailTo = WR_ExpandAddresses(winnum, addr, FALSE, FALSE))) goto skip;
+   if (*addr) if (!(comp.MailTo = WR_ExpandAddresses(winnum, addr, FALSE, FALSE, FALSE))) goto skip;
    if (wr->Mode != NEW_BOUNCE)
    {
       get(gui->ST_CC, MUIA_String_Contents, &addr);
-      if (*addr) if (!(comp.MailCC = WR_ExpandAddresses(winnum, addr, FALSE, FALSE))) goto skip;
+      if (*addr) if (!(comp.MailCC = WR_ExpandAddresses(winnum, addr, FALSE, FALSE, FALSE))) goto skip;
       get(gui->ST_BCC, MUIA_String_Contents, &addr);
-      if (*addr) if (!(comp.MailBCC = WR_ExpandAddresses(winnum, addr, FALSE, FALSE))) goto skip;
+      if (*addr) if (!(comp.MailBCC = WR_ExpandAddresses(winnum, addr, FALSE, FALSE, FALSE))) goto skip;
       get(gui->ST_FROM, MUIA_String_Contents, &addr);
-      if (*addr) if (!(comp.From = WR_ExpandAddresses(winnum, addr, FALSE, TRUE))) goto skip;
+      if (*addr) if (!(comp.From = WR_ExpandAddresses(winnum, addr, FALSE, TRUE, FALSE))) goto skip;
       get(gui->ST_REPLYTO, MUIA_String_Contents, &addr);
-      if (*addr) if (!(comp.ReplyTo = WR_ExpandAddresses(winnum, addr, FALSE, TRUE))) goto skip;
+      if (*addr) if (!(comp.ReplyTo = WR_ExpandAddresses(winnum, addr, FALSE, TRUE, FALSE))) goto skip;
       get(gui->ST_EXTHEADER, MUIA_String_Contents, &comp.ExtHeader);
       if (wr->ListEntry)
       {
@@ -2036,9 +2052,8 @@ static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, i
       SetHelp(*string,help);
       SetHelp(bt_ver, MSG_HELP_WR_BT_VER);
       SetHelp(bt_adr, MSG_HELP_WR_BT_ADR);
-      DoMethod(*string,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,MUIV_Notify_Window,5,MUIM_CallHook,&WR_VerifyAutoHook,*string,winnum,!allowmulti);
-      DoMethod(bt_ver,MUIM_Notify,MUIA_Pressed,FALSE,MUIV_Notify_Application,5,MUIM_CallHook,&WR_VerifyManualHook,*string,winnum,!allowmulti);
-      DoMethod(bt_adr,MUIM_Notify,MUIA_Pressed,FALSE,MUIV_Notify_Application,4,MUIM_CallHook,&AB_OpenHook,abmode,winnum);
+      DoMethod(bt_ver, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_CallHook, &WR_VerifyManualHook, *string, winnum, !allowmulti, TAG_DONE);
+      DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
    }
    return obj;
 }

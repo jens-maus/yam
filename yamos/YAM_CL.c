@@ -185,9 +185,13 @@ DISPATCHERPROTO(WS_Dispatcher)
    switch(msg->MethodID)
    {
       case OM_NEW:
+      {
          result = DoSuperNew(cl, obj, StringFrame, MUIA_CycleChain, 1, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
-         break;
+      }
+      break;
+
       case MUIM_Setup:
+      {
          if(DoSuperMethodA(cl, obj, msg))
          {
             data->ehnode.ehn_Priority = 1;
@@ -197,28 +201,63 @@ DISPATCHERPROTO(WS_Dispatcher)
             data->ehnode.ehn_Events   = IDCMP_RAWKEY;
             result = TRUE;
          }
-         break;
+      }
+      break;
+
       case MUIM_GoActive:
+      {
          DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
          result = DoSuperMethodA(cl, obj, msg);
-         break;
+
+      }
+      break;
+
       case MUIM_GoInactive:
+      {
          DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
          set(obj, MUIA_BetterString_SelectSize, 0);
          result = DoSuperMethodA(cl, obj, msg);
-         break;
+      }
+      break;
+
       case MUIM_HandleEvent:
+      {
          hmsg = (struct MUIP_HandleEvent *)msg;
          if (hmsg->imsg && hmsg->imsg->Class == IDCMP_RAWKEY)
          {
             char *contents, *newcontents, *completed = NULL, *comma;
             int pos, allowmulti;
-            if (hmsg->imsg->Code == 95 && (hmsg->imsg->Qualifier & IEQUALIFIER_CONTROL))
+            APTR next = obj;
+
+            // If RETURN was pressed
+            if(hmsg->imsg->Code == 68)
             {
+               // we expand the entered string with realname if SHIFT was not pressed also
+               BOOL withrname = !((hmsg->imsg->Qualifier & IEQUALIFIER_RSHIFT) || (hmsg->imsg->Qualifier & IEQUALIFIER_LSHIFT));
+
+               // If RETURN was pressed WITH SHIFT we expand the adress WITHOUT realname
                DoSuperMethodA(cl, obj, msg);
                get(obj, MUIA_String_Contents, &contents);
                get(obj, MUIA_UserData, &allowmulti);
-               if (completed = WR_ExpandAddresses(-1, contents, FALSE, !allowmulti))
+               if (completed = WR_ExpandAddresses(-1, contents, FALSE, !allowmulti, withrname))
+               {
+                  setstring(obj, completed);
+                  FreeStrBuf(completed);
+                  get(obj, MUIA_UserData, &next);
+               }
+               else DisplayBeep(0);
+
+               if(next) set(_win(next), MUIA_Window_ActiveObject, next);
+
+               result = MUI_EventHandlerRC_Eat;
+            }
+            else if(hmsg->imsg->Code == 95 && (hmsg->imsg->Qualifier & IEQUALIFIER_CONTROL))
+            {
+               // If CTRL+HELP is pressed we expand the entered string with the addressbook
+               DoSuperMethodA(cl, obj, msg);
+               get(obj, MUIA_String_Contents, &contents);
+               get(obj, MUIA_UserData, &allowmulti);
+               if (completed = WR_ExpandAddresses(-1, contents, FALSE, !allowmulti, TRUE))
                {
                   setstring(obj, completed);
                   FreeStrBuf(completed);
@@ -229,27 +268,42 @@ DISPATCHERPROTO(WS_Dispatcher)
             {
                ULONG select_size = 0;
                get(obj, MUIA_BetterString_SelectSize, &select_size);
-               if (hmsg->imsg->Code == 65) DoMethod(obj, MUIM_BetterString_ClearSelected);
+
+               // Clear all marked text if BACKSPACE (65) is pressed
+               if (hmsg->imsg->Code == 65) DoMethod(obj, MUIM_BetterString_ClearSelected, TAG_DONE);
+
+               // Convert the RAWKEY with MapRawKey() to a real keycode
                code = ConvertKey(hmsg->imsg);
+
                if (code == ',' && select_size != 0)
                {
+                  // if the comma was pressed then we jump to the end of the string an continue
                   set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
                   DoSuperMethodA(cl, obj, msg);
                   result = MUI_EventHandlerRC_Eat;
                }
                else if ((((code >= 32 && code <= 126) || code >= 160) && !(hmsg->imsg->Qualifier & IEQUALIFIER_RCOMMAND)) || (code && hmsg->imsg->Qualifier & IEQUALIFIER_CONTROL))
                {
+                  // if the pressed key is a REAL key and NOT pressed with right AMIGA
+                  // or pressed with control then...
+
                   DoSuperMethodA(cl, obj, msg);
                   get(obj, MUIA_String_Contents, &contents);
                   get(obj, MUIA_String_BufferPos, &pos);
-                  if (strlen(contents) > 1)
+
+                  // we only try to complete the Alias if the entered string is
+                  // at least 2 characters hough
+                  if(strlen(contents) > 1)
                   {
+                     // if there is a comma in the entered string we only try to
+                     // complete the right sight of the last comma
                      if (comma = strrchr(contents,','))
                      {
-                        while (*++comma == ' ');
+                        while (*++comma == ' '); // skip any space between the comma and the real string
                         if (strlen(comma) > 1) completed = AB_CompleteAlias(comma);
                      }
                      else completed = AB_CompleteAlias(contents);
+
                      if (completed)
                      {
                         newcontents = malloc(strlen(contents)+strlen(completed)+1);
@@ -263,15 +317,28 @@ DISPATCHERPROTO(WS_Dispatcher)
                }
             }
          }
-         break;
+      }
+      break;
+
       case MUIM_DragQuery:
+      {
          result = MUIV_DragQuery_Refuse;
          if (d->obj == G->MA->GUI.NL_MAILS) result = MUIV_DragQuery_Accept;
          else if (d->obj == G->AB->GUI.LV_ADDRESSES)
-            if (active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active))
-               if (!(active->tn_Flags & TNF_LIST)) result = MUIV_DragQuery_Accept;
-         break;
+         {
+            if(active = (struct MUI_NListtree_TreeNode *)GetMUI(d->obj, MUIA_NListtree_Active))
+            {
+               if (!(active->tn_Flags & TNF_LIST))
+               {
+                  result = MUIV_DragQuery_Accept;
+               }
+            }
+         }
+      }
+      break;
+
       case MUIM_DragDrop:
+      {
          if (d->obj == G->MA->GUI.NL_MAILS)
          {
             struct Mail *mail;
@@ -285,10 +352,14 @@ DISPATCHERPROTO(WS_Dispatcher)
             struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
             AB_InsertAddress(obj, addr->Alias, addr->RealName, "");
          }
-         break;
+      }
+      break;
+
       default:
+      {
          result = DoSuperMethodA(cl, obj, msg);
-         break;
+      }
+      break;
    }
    return result;
 
@@ -515,7 +586,7 @@ DISPATCHERPROTO(TE_Dispatcher)
                if (ab->Type != AET_GROUP)
                {
                   char *adr = AllocStrBuf(SIZE_DEFAULT);
-                  WR_ResolveName(-1, ab->Alias, &adr, FALSE);
+                  WR_ResolveName(-1, ab->Alias, &adr, FALSE, TRUE);
                   DoMethod(obj, MUIM_TextEditor_InsertText, adr, MUIV_TextEditor_InsertText_Cursor);
                   FreeStrBuf(adr);
                }

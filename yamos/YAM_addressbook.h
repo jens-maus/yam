@@ -35,9 +35,10 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_stringsizes.h"
 
-#define ASM_ALIAS    0
-#define ASM_REALNAME 1
-#define ASM_ADDRESS  2
+// special Searchtypes for AB_SearchEntry()
+#define ASM_ALIAS    1
+#define ASM_REALNAME 2
+#define ASM_ADDRESS  4
 #define ASM_TYPEMASK 7
 #define ASM_USER     8
 #define ASM_LIST     16

@@ -172,10 +172,10 @@ void  WR_AddSignature(char *mailfile, int signat);
 void  WR_App(int winnum, struct AppMessage *amsg);
 char *WR_AutoSaveFile(int winnr);
 void  WR_Cleanup(int winnum);
-char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single);
+char *WR_ExpandAddresses(int winnum, char *src, BOOL quiet, BOOL single, BOOL withrname);
 void  WR_NewMail(enum WriteMode mode, int winnum);
 int   WR_Open(int winnum, BOOL bounce);
-int   WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists);
+int   WR_ResolveName(int winnum, char *name, char **adrstr, BOOL nolists, BOOL withrname);
 void  WR_SetupOldMail(int winnum);
 BOOL  WriteOutMessage(struct Compose *comp);
 
