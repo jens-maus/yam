@@ -31,7 +31,6 @@
 #include "extrasrc/strsfn.c"
 #include "extrasrc/NewReadArgs.c"
 #include "extrasrc/dice.c"
-#include "extrasrc/access.c"
 #include "extrasrc/strdup.c"
 
 void _chkabort(void) {}
