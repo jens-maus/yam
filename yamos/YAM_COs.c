@@ -620,7 +620,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "XPKPackEncrypt")) { stccpy(co->XPKPackEncrypt, value, 5); co->XPKPackEncryptEff = atoi(&value[5]); }
                else if (!stricmp(buffer, "PackerCommand"))  stccpy(co->PackerCommand, value, SIZE_COMMAND);
                else if (!stricmp(buffer, "AppIconText"))    stccpy(co->AppIconText, value, SIZE_DEFAULT/2);
-/*Hidden*/     else if (!stricmp(buffer, "LetterPart"))     co->LetterPart = atoi(value);
+/*Hidden*/     else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
                else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
                else if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
                else if (!stricmp(buffer, "SupportSite"))    stccpy(co->SupportSite, value, SIZE_HOST);
