@@ -2879,7 +2879,7 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MNext),  MUIA_Menuitem_Shortcut, "right", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_NEXT, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MPrev),  MUIA_Menuitem_Shortcut, "left", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_PREV, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MURNext),MUIA_Menuitem_Shortcut, "shift right", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_URNEXT, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MURPrev),MUIA_Menuitem_Shortcut, "shift right", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_URPREV, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MURPrev),MUIA_Menuitem_Shortcut, "shift left", MUIA_Menuitem_Enabled,real, MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,RMEN_URPREV, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MNextTh),MUIA_Menuitem_Shortcut, ">", MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_NEXTTH, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_MPrevTh),MUIA_Menuitem_Shortcut, "<", MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_PREVTH, End,
             End,
