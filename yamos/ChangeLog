@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-03  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CL.c: replaced multiple set() call to the same object
+      with a single SetAttrs() call.
+
 2002-12-02  Gunther Nikl <gni@gecko.de>
 
     * YAM_COs.c/CO_LoadConfig: constified sortconv[]

@@ -124,16 +124,17 @@ DISPATCHERPROTO(BC_Dispatcher)
 
                if (data->BCD)
                {
-                  set(obj, MUIA_FixWidth,             data->BCD->Width);
-                  set(obj, MUIA_FixHeight,            data->BCD->Height);
-                  set(obj, MUIA_Bitmap_Width,         data->BCD->Width);
-                  set(obj, MUIA_Bitmap_Height,        data->BCD->Height);
-                  set(obj, MUIA_Bitmap_SourceColors,  data->BCD->Colors);
-                  set(obj, MUIA_Bodychunk_Depth,      data->BCD->Depth);
-                  set(obj, MUIA_Bodychunk_Body,       data->BCD->Body);
-                  set(obj, MUIA_Bodychunk_Compression,data->BCD->Compression);
-                  set(obj, MUIA_Bodychunk_Masking,    data->BCD->Masking);
-                  set(obj, MUIA_UserData,             useold);
+                  SetAttrs(obj, MUIA_FixWidth,              data->BCD->Width,
+                                MUIA_FixHeight,             data->BCD->Height,
+                                MUIA_Bitmap_Width,          data->BCD->Width,
+                                MUIA_Bitmap_Height,         data->BCD->Height,
+                                MUIA_Bitmap_SourceColors,   data->BCD->Colors,
+                                MUIA_Bodychunk_Depth,       data->BCD->Depth,
+                                MUIA_Bodychunk_Body,        data->BCD->Body,
+                                MUIA_Bodychunk_Compression, data->BCD->Compression,
+                                MUIA_Bodychunk_Masking,     data->BCD->Masking,
+                                MUIA_UserData,              useold,
+                                TAG_DONE);
                }
             }
          }
