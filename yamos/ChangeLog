@@ -5,6 +5,31 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-28  Gunther Nikl <gni@gecko.de>
+
+    * includes/inline/bsdsocket_protos.h: New.
+    * VMakefile: Added new class objects.
+    * YAM_config.h, YAM_MA.c, YAM_global.c: Removed unused CManager stuff.
+    * YAM_MA.c (MA_GetAddress): Cleanup after CManager removal.
+    * YAM.c, YAM_MA.c, YAM_UT.c: Removed dead assignments.
+    * classes/ReadWindow.c/OM_NEW: Fix argument for MUIA_Toolbar_Description.
+      NewMail: Don't construct array on declaration.
+      GrabSenderAddress: Likewise.
+    * classes/Recipientstring.c/rcptok: Make STATIC.
+    * Makefile, Makefile.MorphOS, Makefile.OS4, VMakefile: Make YAM_global.o
+      the first object linked to place $STACK into the first 1024 bytes of
+      hunk to allow automatic stackallocation through shell v45 or later.
+    * YAM_FI.c (FI_MatchListPattern): Use "SearchPatternNode".
+      (FreeSearchPatternList): Likewise.
+      (FI_GenerateListPatterns): Use sizeof() for buffer handling. Replace
+      calloc with malloc().
+    * YAM.h, YAM.c: Change arguments for TC_Start() from ULONG to int.
+    * YAM_utilities.h (StrTok_R): Replace argument 'brk' with 'sep'.
+      Remove "#include <time.h>".
+    * include/SDI_compiler.h: Correct INLINE for VBCC. Cleanup __GCC__ case.
+    * YAM_global.c: Removed silly USED_VAR uses. Move platform section
+      infront of version stuff to have $STACK first.
+
 2005-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/ReadMailGroup.c: regrouped the attachmentgroup object into a separate
