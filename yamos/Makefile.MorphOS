@@ -33,7 +33,7 @@ CC        = ppc-morphos-gcc
 STRIP     = ppc-morphos-strip
 RM        = rm -f
 CC68K     = m68k-amigaos-gcc
-STR68K    = m68k-amigaos-strip
+STR68K    = strip
 CFLAGS68K = -nostdlib -DNAME=\"$(TARGET)\" -O -fomit-frame-pointer
 
 CPU      = -mcpu=604e
@@ -161,7 +161,7 @@ YAM_FO.o.elf: YAM_FO.c YAM.h YAM_classes.h YAM_debug.h YAM_error.h \
 	YAM_userlist.h YAM_utilities.h
 
 YAM_global.o.elf: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
-	$(CC) $(CDEFS) $(CFLAGS) $<
+	$(CC) $(CDEFS) $(CFLAGS) $< -o $@
 
 YAM_MA.o.elf: YAM_MA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
