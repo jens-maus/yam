@@ -219,7 +219,7 @@ OVERLOAD(OM_NEW)
 							MUIA_Toolbar_ImageNormal,    	"PROGDIR:Icons/Read.toolbar",
 							MUIA_Toolbar_ImageGhost,     	"PROGDIR:Icons/Read_G.toolbar",
 							MUIA_Toolbar_ImageSelect,    	"PROGDIR:Icons/Read_S.toolbar",
-							MUIA_Toolbar_Description,    	&data->toolbarDesc,
+							MUIA_Toolbar_Description,    	&data->toolbarDesc[0],
 							MUIA_Toolbar_Reusable,				TRUE,
 							MUIA_Toolbar_ParseUnderscore,	TRUE,
 							MUIA_Font,                   	MUIV_Font_Tiny,
@@ -563,8 +563,12 @@ DECLARE(NewMail) // enum NewMode mode, ULONG qualifier
 	GETDATA;
 	struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 	struct Mail *mail = rmData->mail;
-	struct Mail *mlist[3] = { (struct Mail *)1, NULL, mail }; // some fake mail list
+	struct Mail *mlist[3]; // some fake mail list
 	int flags = 0;
+
+	mlist[0] = (struct Mail *)1;
+	mlist[1] = NULL;
+	mlist[2] = mail;
 
 	// check for qualifier keys
 	if(msg->mode == NEW_FORWARD)
@@ -938,11 +942,15 @@ DECLARE(GrabSenderAddress)
 	GETDATA;
 	struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 	struct Mail *mail = rmData->mail;
-	struct Folder *folder = mail->Folder;
-	struct Mail *mlist[3] = { (struct Mail *)1, NULL, mail };
-	
-	if(MailExists(mail, folder))
+
+	if(MailExists(mail, mail->Folder))
+	{
+		struct Mail *mlist[3];
+		mlist[0] = (struct Mail *)1;
+		mlist[1] = NULL;
+		mlist[2] = mail;
 		MA_GetAddress(mlist);
+	}
 
 	return 0;
 }
