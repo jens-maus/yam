@@ -118,23 +118,25 @@ DISPATCHERPROTO(BC_Dispatcher)
 
             if (*fname)
             {
+               struct BodyChunkData *BCD;
                data = INST_DATA(cl,obj);
-               if (useold) data->BCD = GetBCImage(fname);
-               else data->BCD = LoadBCImage(fname);
+               if (useold) BCD = GetBCImage(fname);
+               else BCD = LoadBCImage(fname);
 
-               if (data->BCD)
+               if ((data->BCD=BCD))
                {
-                  SetAttrs(obj, MUIA_FixWidth,              data->BCD->Width,
-                                MUIA_FixHeight,             data->BCD->Height,
-                                MUIA_Bitmap_Width,          data->BCD->Width,
-                                MUIA_Bitmap_Height,         data->BCD->Height,
-                                MUIA_Bitmap_SourceColors,   data->BCD->Colors,
-                                MUIA_Bodychunk_Depth,       data->BCD->Depth,
-                                MUIA_Bodychunk_Body,        data->BCD->Body,
-                                MUIA_Bodychunk_Compression, data->BCD->Compression,
-                                MUIA_Bodychunk_Masking,     data->BCD->Masking,
-                                MUIA_UserData,              useold,
-                                TAG_DONE);
+                  SetAttrs(obj,
+                    MUIA_FixWidth,              BCD->Width,
+                    MUIA_FixHeight,             BCD->Height,
+                    MUIA_Bitmap_Width,          BCD->Width,
+                    MUIA_Bitmap_Height,         BCD->Height,
+                    MUIA_Bitmap_SourceColors,   BCD->Colors,
+                    MUIA_Bodychunk_Depth,       BCD->Depth,
+                    MUIA_Bodychunk_Body,        BCD->Body,
+                    MUIA_Bodychunk_Compression, BCD->Compression,
+                    MUIA_Bodychunk_Masking,     BCD->Masking,
+                    MUIA_UserData,              useold,
+                  TAG_DONE);
                }
             }
          }
