@@ -30,6 +30,9 @@ Developer: Jens Langner (damato)
 - Changed: no longer complains if it can't save ENVARC:mui/YAM.cfg on exit
   (damato)
 
+- Added: new hidden option "AutoColumnResize" for YAM to resize the NList
+  columns when switching folders if the option is enabled (it is by default)
+
 
 A more detailed and recent history of changes can be viewed at
 
