@@ -3257,13 +3257,13 @@ void Busy(char *text, char *parameter, int cur, int max)
 
          if(G->MA)
          {
-            if(BusyLevel == 0)
+            if(BusyLevel <= 0)
             {
               DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
             }
             else
             {
-              DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel]);
+              DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext[BusyLevel-1]);
             }
          }
       }
