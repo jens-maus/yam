@@ -37,7 +37,7 @@ FLEX	= flex
 FC	= flexcat
 
 CPU	= -m68020
-CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
+CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS=\"`expr \`date +%s\` / 86400 - 2922`\"
 WARN	= -Wall
 OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel
 DEBUG	= -DDEBUG -g -O0
@@ -46,7 +46,7 @@ LDFLAGS	= -noixemul -mstackextend -fbaserel $(CPU)
 LDLIBS	= -ldebug -lmui -lm
 
 # Special flags
-DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
+DEVFLAGS = -DDEVWARNING -DEXPDATE=\"`expr \`date +%s\` / 86400 - 2922 + 31`\"
 
 # CPU and DEBUG can be defined outside, defaults to above
 # using e.g. "make DEBUG= CPU=-m68060" produces optimized non-debug 68060 version
@@ -105,7 +105,7 @@ YAM.o:	YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
 	YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
 	YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
 	YAM_userlist.h YAM_utilities.h YAM_write.h
-	$(CC) $(CDEFS) $(CFLAGS) $(DEVFLAGS) $<
+	$(CC) $(CDEFS) $(DEVFLAGS) $(CFLAGS) $< -o $@ -DNO_INLINE_STDARG
 
 YAM_AB.o: YAM_AB.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h YAM_global.h \
