@@ -804,7 +804,7 @@ HOOKPROTONHNO(RE_DeleteFunc, void, int *arg)
    struct Mail *mail = G->RE[winnum]->MailPtr;
    if (MailExists(mail, folder)) if ((pos = SelectMessage(mail)) >= 0)
    {
-      MA_DeleteSingle(G->RE[winnum]->MailPtr, delatonce);
+      MA_DeleteSingle(G->RE[winnum]->MailPtr, delatonce, FALSE);
       RE_UpdateDisplay(pos, winnum);
       if (delatonce) AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)1, folder->Name, "", "");
       else           AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)1, folder->Name, delfolder->Name, "");
@@ -1534,7 +1534,7 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
          MA_FreeEMailStruct(email);
          if (choice == 2)
          {
-            MA_DeleteSingle(re->MailPtr, FALSE);
+            MA_DeleteSingle(re->MailPtr, FALSE, FALSE);
             RE_ReadMessage(*arg, new);
          }
       }

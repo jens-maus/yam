@@ -197,7 +197,7 @@ void  MA_ChangeSubject(struct Mail *mail, char *subj);
 void  MA_ChangeTransfer(BOOL on);
 struct Mail **MA_CreateMarkedList(APTR lv);
 void  MA_DeleteMessage(BOOL delatonce, BOOL force);
-void  MA_DeleteSingle(struct Mail *mail, BOOL forceatonce);
+void  MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet);
 BOOL  MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail);
 BOOL  MA_ExportMessages(BOOL all, char *filename, BOOL append);
 void  MA_FreeRules(struct Search **search, int scnt);

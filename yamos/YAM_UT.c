@@ -3480,6 +3480,8 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
      fo = FO_GetFolderByType(FT_INCOMING, NULL);
    }
 
+   //DB(kprintf("DisplayStatistics: [%s] %ld\n", fo->Name, updateAppIcon);)
+
    // Get Position of Folder
    pos = FO_GetFolderPosition(fo, TRUE);
 

@@ -7,6 +7,20 @@ $Source$
 
 2003-03-10  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c, YAM_RE.c, YAM_TR.c: fixed bug #433751 where the automatic
+      deletion of mails triggered an AppIcon refresh for every deleted mail
+      and therefore caused lots of flickering.
+    * YAM_COs.c: fixed flaw where a "LetterPart = 0" config value always
+      caused confusion on users upgrading from 2.3 to 2.4 because the old
+      version did interpret the LetterPart a little bit different. If a
+      user specified the LetterPart to be zero it could have happened that
+      he wasn`t able to see any text on a forward or edit mail operation.
+      Now YAM will always use 1 as the bare minimum for the Letterpart
+      regardless of what the user specified there.
+      This should explain bugreport #701002.
+
+2003-03-10  Jens Langner <Jens.Langner@light-speed.de>
+
     * YAM_WR.c, YAM_TR: fixed bug #701277 where YAM sent the email body
       with bare LFs which is prohibited by the RFC 2822 and therefore throw
       some errors on some pedantic SMTP servers (qmail).

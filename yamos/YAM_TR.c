@@ -2590,7 +2590,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
                   case 2:
                   {
                     MA_SetMailStatus(mail->Reference, STATUS_SNT);
-                    if (TR_ApplySentFilters(mail->Reference)) MA_DeleteSingle(mail->Reference, FALSE);
+                    if (TR_ApplySentFilters(mail->Reference)) MA_DeleteSingle(mail->Reference, FALSE, FALSE);
                   }
                   break;
                }

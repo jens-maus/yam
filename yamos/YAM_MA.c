@@ -348,17 +348,35 @@ struct Mail **MA_CreateMarkedList(APTR lv)
 ///
 /// MA_DeleteSingle
 //  Deletes a single message
-void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce)
+void MA_DeleteSingle(struct Mail *mail, BOOL forceatonce, BOOL quiet)
 {
+   struct MailInfo *mi = GetMailInfo(mail);
+
    if (C->RemoveAtOnce || mail->Folder->Type == FT_DELETED || forceatonce)
    {        
-      struct MailInfo *mi = GetMailInfo(mail);
       AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, mail->Folder->Name, "");
       DeleteFile(mi->FName);
       if (mi->Display) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Remove, mi->Pos);
       RemoveMailFromList(mail);
+
+      // if we are allowed to make some noise we
+      // update our Statistics
+      if(!quiet) DisplayStatistics(mail->Folder, TRUE);
    }
-   else MA_MoveCopy(mail, mail->Folder, FO_GetFolderByType(FT_DELETED, NULL), FALSE);
+   else
+   {
+      struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
+
+      MA_MoveCopySingle(mail, mi->Pos, mail->Folder, delfolder, FALSE);
+
+      // if we are allowed to make some noise we
+      // update our Statistics
+      if(!quiet)
+      {
+        DisplayStatistics(mail->Folder, FALSE); // don`t update the appicon
+        DisplayStatistics(delfolder, TRUE);     // but update the appicon now.
+      }
+   }
 }
 
 ///
@@ -1274,7 +1292,6 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
    set(lv, MUIA_NList_Quiet, TRUE);
 
    BusyGauge(GetStr(MSG_BusyDeleting), itoa(selected), selected);
-   if (C->RemoveAtOnce || folder == delfolder) delatonce = TRUE;
    for (i = 0; i < selected; i++)
    {
       mail = mlist[i+2];
@@ -1282,19 +1299,20 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       {
         if ((mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) && !ignoreall) ignoreall = RE_DoMDN(MDN_DELE, mail, TRUE);
       }
-      if (delatonce) MA_DeleteSingle(mail, TRUE);
-      else
-      {
-         struct MailInfo *mi = GetMailInfo(mail);
-         MA_MoveCopySingle(mail, mi->Pos, mail->Folder, delfolder, FALSE);
-      }
+
+      // call our subroutine with quiet option
+      MA_DeleteSingle(mail, delatonce, TRUE);
+
       BusySet(i+1);
    }
    BusyEnd;
    set(lv, MUIA_NList_Quiet, FALSE);
    free(mlist);
-   if (delatonce)
+
+   if (delatonce || C->RemoveAtOnce || folder == delfolder)
+   {
       AppendLogNormal(20, GetStr(MSG_LOG_Deleting), (void *)selected, folder->Name, "", "");
+   }
    else
    {
       AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)selected, folder->Name, delfolder->Name, "");
@@ -1577,7 +1595,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
       RE_DoMDN(MDN_DELE|MDN_AUTOACT, mail, FALSE);
     }
 
-    MA_DeleteSingle(mail, FALSE);
+    MA_DeleteSingle(mail, FALSE, FALSE);
     return FALSE;
   }
 
@@ -1812,7 +1830,9 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
               {
                 if (flist[f]->Type == FT_DELETED || (mail->Status != STATUS_NEW && mail->Status != STATUS_UNR))
                 {
-                  MA_DeleteSingle(mail, C->RemoveOnQuit);
+                  MA_DeleteSingle(mail, C->RemoveOnQuit, TRUE);
+
+                  DisplayStatistics(mail->Folder, FALSE);
                 }
               }
             }
@@ -1822,6 +1842,9 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
         BusySet(f);
       }
       free(flist);
+
+      // and last but not least we update the appIcon also
+      DisplayStatistics(NULL, TRUE);
 
       BusyEnd;
    }
