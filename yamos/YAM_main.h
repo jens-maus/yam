@@ -226,7 +226,7 @@ struct MA_GUIData
    Object *GR_BOTTOM;
    Object *GR_MAILVIEW;
    Object *BL_MAILVIEW;
-   Object *MN_MAILPREVIEW;
+   Object *MN_EMBEDDEDREADPANE;
    struct MUIP_Toolbar_Description TB_TOOLBAR[18];
 };
 
@@ -298,6 +298,6 @@ char *MA_ToStatusHeader(struct Mail *mail);
 char *MA_ToXStatusHeader(struct Mail *mail);
 unsigned int MA_FromStatusHeader(char *statusflags);
 unsigned int MA_FromXStatusHeader(char *xstatusflags);
-void  MA_SetupMailPreview(void);
+void  MA_SetupEmbeddedReadPane(void);
 
 #endif /* YAM_MAIN_H */

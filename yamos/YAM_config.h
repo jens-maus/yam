@@ -244,7 +244,7 @@ struct CO_GUIData
    Object *NB_EMAILCACHE;
    Object *CH_AUTOTRANSLATEIN;
    Object *RA_SMTPSECURE;
-   Object *CH_MAILPREVIEW;
+   Object *CH_EMBEDDEDREADPANE;
    Object *CH_DELAYEDSTATUS;
    Object *NB_DELAYEDSTATUS;
 };
@@ -434,7 +434,7 @@ struct Config
    BOOL  MessageCntMenu;
 	 BOOL	 AutomaticTranslationIn;
    BOOL  AutoColumnResize;
-   BOOL  MailPreview;
+   BOOL  EmbeddedReadPane;
    BOOL  StatusChangeDelayOn;
 
    struct MUI_PenSpec ColoredText;

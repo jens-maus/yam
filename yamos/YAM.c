@@ -337,11 +337,11 @@ static void TC_Dispatcher(enum TimerIO tio)
         }
         break;
 
-        case TIO_PREVIEWUPDATE:
+        case TIO_READPANEUPDATE:
         {
-          DB(kprintf("TIO_PREVIEWUPDATE triggered at: %ld\n", time(NULL));)
+          DB(kprintf("TIO_READPANEUPDATE triggered at: %ld\n", time(NULL));)
 
-          if(C->MailPreview)
+          if(C->EmbeddedReadPane)
           {
             struct MA_GUIData *gui = &G->MA->GUI;
             struct Mail *mail;
@@ -351,8 +351,8 @@ static void TC_Dispatcher(enum TimerIO tio)
 
             // update the readMailGroup of the main window.
             if(mail)
-              DoMethod(gui->MN_MAILPREVIEW, MUIM_ReadMailGroup_ReadMail, mail,
-                                            MUIF_ReadMailGroup_ReadMail_StatusChangeDelay);
+              DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_ReadMail, mail,
+                                                 MUIF_ReadMailGroup_ReadMail_StatusChangeDelay);
           }
         }
         break;
@@ -965,8 +965,8 @@ static void Initialise2(void)
    if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
       Abort(MSG_ErrorMuiApp);
 
-   // make sure the GUI objects for the mail preview are created
-   MA_SetupMailPreview();
+   // make sure the GUI objects for the embedded read pane are created
+   MA_SetupEmbeddedReadPane();
 
    // Now we have to check on which position we should display the InfoBar and if it`s not
    // center or off we have to resort the main group

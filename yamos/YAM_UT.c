@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -4001,9 +4001,9 @@ void LoadLayout(void)
    // 4: Horizontal weight of listview group in the glossary window
    // 5: Horizontal weight of text group in the glossary window
    // 6: Vertical weight of top right maillistview group in main window.
-   // 7: Vertical weight of bottom right mail preview object in the main window.
-   // 8: Vertical weight of top object (headerlist) of the mail preview
-   // 9: Vertical weight of bottom object (texteditor) of the mail preview
+   // 7: Vertical weight of bottom right embedded read pane object in the main window.
+   // 8: Vertical weight of top object (headerlist) of the embedded read pane
+   // 9: Vertical weight of bottom object (texteditor) of the embedded read pane
 
    if(!*(ls = (STRPTR)xget(G->MA->GUI.ST_LAYOUT, MUIA_String_Contents)))
      ls = "30 100 25 100 30 100 25 100 5 100";
@@ -4065,12 +4065,12 @@ void LoadLayout(void)
    set(G->MA->GUI.GR_MAILVIEW,    MUIA_HorizWeight,                G->Weights[1]);
    set(G->MA->GUI.LV_MAILS,       MUIA_VertWeight,                 G->Weights[6]);
 
-   // if the mail preview is active we set its weight values
-   if(C->MailPreview)
+   // if the embedded read pane is active we set its weight values
+   if(C->EmbeddedReadPane)
    {
-     SetAttrs(G->MA->GUI.MN_MAILPREVIEW, MUIA_VertWeight,                 G->Weights[7],
-                                         MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
-                                         MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
+     SetAttrs(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight,                 G->Weights[7],
+                                              MUIA_ReadMailGroup_HGVertWeight, G->Weights[8],
+                                              MUIA_ReadMailGroup_TGVertWeight, G->Weights[9]);
    }
 
 }
@@ -4086,12 +4086,12 @@ void SaveLayout(BOOL permanent)
    G->Weights[1] = xget(G->MA->GUI.GR_MAILVIEW,     MUIA_HorizWeight);
    G->Weights[6] = xget(G->MA->GUI.LV_MAILS,        MUIA_VertWeight);
 
-   // if the mailpreview objects are currently active we save their weight values
-   if(C->MailPreview)
+   // if the embedded read pane objects are currently active we save their weight values
+   if(C->EmbeddedReadPane)
    {
-     G->Weights[7] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_VertWeight);
-     G->Weights[8] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_ReadMailGroup_HGVertWeight);
-     G->Weights[9] = xget(G->MA->GUI.MN_MAILPREVIEW,  MUIA_ReadMailGroup_TGVertWeight);
+     G->Weights[7] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_VertWeight);
+     G->Weights[8] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_HGVertWeight);
+     G->Weights[9] = xget(G->MA->GUI.MN_EMBEDDEDREADPANE, MUIA_ReadMailGroup_TGVertWeight);
    }
 
    // we encode the different weight factors which are embeeded in a dummy string
@@ -4104,9 +4104,9 @@ void SaveLayout(BOOL permanent)
    // 4: Horizontal weight of listview group in the glossary window
    // 5: Horizontal weight of text group in the glossary window
    // 6: Vertical weight of top right maillistview group in main window.
-   // 7: Vertical weight of bottom right mail preview object in the main window.
-   // 8: Vertical weight of top object (headerlist) of the mail preview
-   // 9: Vertical weight of bottom object (texteditor) of the mail preview
+   // 7: Vertical weight of bottom right embedded read pane object in the main window.
+   // 8: Vertical weight of top object (headerlist) of the embedded read pane
+   // 9: Vertical weight of bottom object (texteditor) of the embedded read pane
    sprintf(buf, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld", G->Weights[0],
                                                            G->Weights[1],
                                                            G->Weights[2],

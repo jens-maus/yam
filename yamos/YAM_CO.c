@@ -756,7 +756,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->Color3rdLevel.buf, "m3");
       strcpy(co->Color4thLevel.buf, "m1");
       strcpy(co->ColorURL.buf, "p6");
-      co->DisplayAllTexts = co->FixedFontEdit = co->UseTextstyles = co->MailPreview = TRUE;
+      co->DisplayAllTexts = co->FixedFontEdit = co->UseTextstyles = co->EmbeddedReadPane = TRUE;
       co->AutomaticTranslationIn = co->WrapHeader = co->MultipleWindows = FALSE;
       co->SigSepLine = 2;
       *co->TranslationIn = 0;
@@ -1014,12 +1014,12 @@ void CO_Validate(struct Config *co, BOOL update)
       if(G->CO->Visited[4] || G->CO->UpdateAll)
       {
          // we signal the mainwindow that it may check wheter to include the
-         // mail preview part or not
-         MA_SetupMailPreview();
+         // embedded read pane part or not
+         MA_SetupEmbeddedReadPane();
 
-         // and to not let the mail preview be empty when it is newly created
+         // and to not let the embedded read pane be empty when it is newly created
          // we have to make sure the actual selected mail is loaded
-         if(C->MailPreview)
+         if(C->EmbeddedReadPane)
            DoMethod(G->App, MUIM_CallHook, &MA_ChangeSelectedHook);
       }
 

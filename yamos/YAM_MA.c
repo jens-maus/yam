@@ -140,11 +140,11 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
       TC_Stop(TIO_READSTATUSUPDATE);
 
    // make sure the mail is displayed in our readMailGroup of the main window
-   // (if enabled) - but we do only issue a timer event here so the mail preview
+   // (if enabled) - but we do only issue a timer event here so the read pane
    // is only refreshed about 100 milliseconds after the last change in the listview
    // was recognized.
-   if(C->MailPreview)
-      TC_Start(TIO_PREVIEWUPDATE, 0, C->PreviewDelay*1000);
+   if(C->EmbeddedReadPane)
+      TC_Start(TIO_READPANEUPDATE, 0, C->PreviewDelay*1000);
 
    type = fo->Type;
    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
@@ -3271,34 +3271,34 @@ void MA_SetupDynamicMenus(void)
 }
 
 ///
-/// MA_SetupMailPreview()
-//  Updates/Setup the Mail Preview part in the main window
-void MA_SetupMailPreview(void)
+/// MA_SetupEmbeddedReadPane()
+//  Updates/Setup the embedded read pane part in the main window
+void MA_SetupEmbeddedReadPane(void)
 {
   Object *mailViewGroup  = G->MA->GUI.GR_MAILVIEW;
   Object *mailBalanceObj = G->MA->GUI.BL_MAILVIEW;
-  Object *mailPreviewObj = G->MA->GUI.MN_MAILPREVIEW;
+  Object *readPaneObj    = G->MA->GUI.MN_EMBEDDEDREADPANE;
 
-  // check wheter the mailpreview object is already embeeded in our main
+  // check wheter the embedded read pane object is already embeeded in our main
   // window so that we know what to do now
-  if(mailPreviewObj)
+  if(readPaneObj)
   {
-    if(C->MailPreview == FALSE)
+    if(C->EmbeddedReadPane == FALSE)
     {
-      // the user want to have the mail preview removed from the main
+      // the user want to have the embedded read pane removed from the main
       // window, so lets do it now
       if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
       {
-        DoMethod(mailViewGroup, OM_REMMEMBER, mailPreviewObj);
+        DoMethod(mailViewGroup, OM_REMMEMBER, readPaneObj);
         DoMethod(mailViewGroup, OM_REMMEMBER, mailBalanceObj);
 
         // dispose the objects now that we don't need them anymore
-        MUI_DisposeObject(mailPreviewObj);
+        MUI_DisposeObject(readPaneObj);
         MUI_DisposeObject(mailBalanceObj);
 
         // and nullify it to make it readdable again
-        G->MA->GUI.MN_MAILPREVIEW = NULL;
-        G->MA->GUI.BL_MAILVIEW    = NULL;
+        G->MA->GUI.MN_EMBEDDEDREADPANE = NULL;
+        G->MA->GUI.BL_MAILVIEW = NULL;
 
         DoMethod(mailViewGroup, MUIM_Group_ExitChange);
       }
@@ -3306,20 +3306,20 @@ void MA_SetupMailPreview(void)
   }
   else
   {
-    if(C->MailPreview == TRUE)
+    if(C->EmbeddedReadPane == TRUE)
     {
-      // the user want to have the mail preview added to the main
+      // the user want to have the embedded read pane added to the main
       // window, so lets do it now and create the object
       G->MA->GUI.BL_MAILVIEW = mailBalanceObj = BalanceObject, End;
       if(mailBalanceObj)
       {
-        G->MA->GUI.MN_MAILPREVIEW = mailPreviewObj = ReadMailGroupObject, End;
-        if(mailPreviewObj)
+        G->MA->GUI.MN_EMBEDDEDREADPANE = readPaneObj = ReadMailGroupObject, End;
+        if(readPaneObj)
         {
           if(DoMethod(mailViewGroup, MUIM_Group_InitChange))
           {
             DoMethod(mailViewGroup, OM_ADDMEMBER, mailBalanceObj);
-            DoMethod(mailViewGroup, OM_ADDMEMBER, mailPreviewObj);
+            DoMethod(mailViewGroup, OM_ADDMEMBER, readPaneObj);
 
             DoMethod(mailViewGroup, MUIM_Group_ExitChange);
 
@@ -3327,8 +3327,8 @@ void MA_SetupMailPreview(void)
             return;
           }
 
-          MUI_DisposeObject(mailPreviewObj);
-          G->MA->GUI.MN_MAILPREVIEW = NULL;
+          MUI_DisposeObject(readPaneObj);
+          G->MA->GUI.MN_EMBEDDEDREADPANE = NULL;
         }
 
         MUI_DisposeObject(mailBalanceObj);

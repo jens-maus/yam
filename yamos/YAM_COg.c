@@ -991,7 +991,7 @@ APTR CO_Page4(struct CO_ClassData *data)
             End,
             Child, MakeCheckGroup((Object **)&data->GUI.CH_AUTOTRANSLATEIN, GetStr(MSG_CO_AutoTranslateIn)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, GetStr(MSG_CO_MultiReadWin)),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_MAILPREVIEW, GetStr(MSG_CO_SHOWMAILPREVIEW)),
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, GetStr(MSG_CO_SHOWEMBEDDEDREADPANE)),
             Child, HGroup,
                Child, data->GUI.CH_DELAYEDSTATUS = MakeCheck(GetStr(MSG_CO_ConfirmDelPart1)),
                Child, Label2(GetStr(MSG_CO_SETSTATUSDELAYED1)),
@@ -1022,7 +1022,7 @@ APTR CO_Page4(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_ALLTEXTS,        MSG_HELP_CO_CH_ALLTEXTS);
       SetHelp(data->GUI.CH_AUTOTRANSLATEIN, MSG_HELP_CO_CH_AUTOTRANSLATEIN);
       SetHelp(data->GUI.CH_MULTIWIN,        MSG_HELP_CO_CH_MULTIWIN);
-      SetHelp(data->GUI.CH_MAILPREVIEW,     MSG_HELP_CO_CH_MAILPREVIEW);
+      SetHelp(data->GUI.CH_EMBEDDEDREADPANE,MSG_HELP_CO_CH_EMBEDDEDREADPANE);
       SetHelp(data->GUI.CY_SIGSEPLINE,      MSG_HELP_CO_CY_SIGSEPLINE);
       SetHelp(data->GUI.CH_FIXFEDIT,        MSG_HELP_CO_CH_FIXFEDIT);
       SetHelp(data->GUI.CH_WRAPHEAD,        MSG_HELP_CO_CH_WRAPHEAD);

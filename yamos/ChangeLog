@@ -7,6 +7,10 @@ $Source$
 
 2005-01-30  Jens Langner <Jens.Langner@light-speed.de>
 
+    * misc: renamed the previously named "mail preview" to the more
+      intuitive name "embedded read pane" because in fact the new GUI
+      element is not only showing just a preview, but act as a full
+      embedded read window.
     * classes/UserImage.c: implemented a new internal custom class which
       manages the images of the addressbook users and displays it in the
       read window or embeeded mailview, instead of the formerly used
@@ -25,12 +29,12 @@ $Source$
     * YAM_MA.c: fixed crash that occurred when trying to open a virtual
       mail in a separate window.
     * YAM_RE.c: fixed bug #1108922 which caused a crash upon closing the main
-      window if no mail preview was enabled and YAM was exited immediately
+      window if no embedded read pane was enabled and YAM was exited immediately
       after the startup.
-    * YAM_RE.c, YAM_TR.c : fixed bug #1110862 where switching the mail preview
-      on/off could have left the user with the wrong or no mail displayed in the
-      mail preview. Also reworked some of the mail preview generation code
-      to be a bit cleaner.
+    * YAM_RE.c, YAM_TR.c : fixed bug #1110862 where switching the embedded read
+      pane on/off could have left the user with the wrong or no mail displayed in
+      the embedded read pane. Also reworked some of the embedded read pane
+      generation code to be a bit cleaner.
 
 2005-01-27  Gunther Nikl <gni@gecko.de>
 
@@ -42,7 +46,7 @@ $Source$
     * misc: added new StatusChangeDelay functionality to YAM that changes
       the status of a NEW/UNREAD mail to READ only after a configured
       time interval passed. This should increase the usability of the
-      previously introduced mail preview because YAM will now only change
+      previously introduced embedded read pane because YAM will now only change
       the status of a mail after that short interval passed. However, for
       doubleclicking a mail the behaviour hasn't been changed as that
       user operation should be certain enough to tell that the user really
@@ -61,8 +65,8 @@ $Source$
 2005-01-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: used the modular functionality of our new internal readmail
-      classes to integrate a MailPreview pane similar to others found in
-      mail clients like Thunderbird&Co. This pane always shows the currently
+      classes to integrate an embedded mail read pane similar to others found
+      in mail clients like Thunderbird&Co. This pane always shows the currently
       selected mail which allows to read the mail without having to open any
       separate window. However, as this is a new major feature the pane can
       be disabled in the main YAM configuration to ensure the old behaviour
@@ -72,7 +76,7 @@ $Source$
       interval which can however be altered in the hidden configuration of YAM.
       Per default this timeinterval is 100ms, which means that if the user
       hasn't moved on in the mail list for 100ms YAM will load and display the
-      last selected mail into the mailpreview pane.
+      last selected mail into the embedded mail pane.
     * YAM_RE.c, ...: reworked the whole ReadWindow related codebase, separated
       the window code from the readmail code and integrated it into own
       internal custom MUI classes. This, aside from the more modular and
