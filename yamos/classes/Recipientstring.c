@@ -380,6 +380,13 @@ DECLARE(Resolve) // ULONG flags
 		{
       DB(kprintf("token: '%s'\n", s);)
 
+      // if the resolve string is empty we skip it and go on
+      if(!s[0] || strlen(s) == 0)
+      {
+        tmp=NULL;
+        continue;
+      }
+
       if(checkvalids == FALSE && (tmp = strchr(s, '@')))
       {
 		    DB(kprintf("Valid address found.. will not resolve it: %s\n", s);)
