@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.95 (19.04.2003) ATO-Fr
+## version $VER: YAM.catalog 5.98 (21.04.2003) ATO-Fr
 ## language français
 ## codeset 0
 ;
@@ -147,7 +147,7 @@ Liste dossiers
 ; Folder list
 ;
 MSG_MessageList
-Liste message
+Liste messages
 ; Message list
 ;
 MSG_Realname
@@ -990,12 +990,12 @@ L\000Tous
 ; L\000All
 ;
 MSG_MA_SelectNone
-Aucun
-; None
+-\000Aucun
+; -\000None
 ;
 MSG_MA_SelectToggle
-Inverser
-; Toggle
+=\000Inverser
+; =\000Toggle
 ;
 MSG_MA_MSearch
 F\000Chercher...
@@ -1460,104 +1460,104 @@ _Annuler
 ; _Cancel
 ;
 MSG_CO_TZoneM12
-GMT-12 Les îles Kwajalein
-; GMT-12  Kwajalein Islands
+(GMT-12:00) Les îles Kwajalein (IDLW)
+; (GMT-12:00) Kwajalein Islands (IDLW)
 ;
 MSG_CO_TZoneM11
-GMT-11  Iles Midway, Samoa
-; GMT-11  Midway Islands, Samoa
+(GMT-11:00) Les îles Midway, Samoa (NT)
+; (GMT-11:00) Midway Islands, Samoa (NT)
 ;
 MSG_CO_TZoneM10
-GMT-10  Honolulu, Tahiti
-; GMT-10  Honolulu, Tahiti
+(GMT-10:00) Honolulu, Tahiti (HST)
+; (GMT-10:00) Honolulu, Tahiti (HST)
 ;
 MSG_CO_TZoneM9
-GMT-9   Anchorage
-; GMT-9   Anchorage
+(GMT-09:00) Anchorage (AKST)
+; (GMT-09:00) Anchorage (AKST)
 ;
 MSG_CO_TZoneM8
-GMT-8   Los Angeles, San Francisco (PDT)
-; GMT-8   Los Angeles, San Francisco (PDT)
+(GMT-08:00) Los Angeles, San Francisco (PST)
+; (GMT-08:00) Los Angeles, San Francisco (PST)
 ;
 MSG_CO_TZoneM7
-GMT-7   Calgary, Denver, Phoenix (MDT)
-; GMT-7   Calgary, Denver, Phoenix (MDT)
+(GMT-07:00) Calgary, Denver, Phoenix (MST)
+; (GMT-07:00) Calgary, Denver, Phoenix (MST)
 ;
 MSG_CO_TZoneM6
-GMT-6   Chicago, Dallas, Mexique ville (CMT)
-; GMT-6   Chicago, Dallas, Mexico City (CMT)
+(GMT-06:00) Chicago, Dallas, Mexique ville (CST)
+; (GMT-06:00) Chicago, Dallas, Mexico City (CST)
 ;
 MSG_CO_TZoneM5
-GMT-5   Lima, Miami, Montréal, New York (EST)
-; GMT-5   Lima, Miami, Montreal, New York (EST)
+(GMT-05:00) Lima, Miami, Montréal, New York (EST)
+; (GMT-05:00) Lima, Miami, Montreal, New York (EST)
 ;
 MSG_CO_TZoneM4
-GMT-4   Caracas, Santiago, Thule (ADT)
-; GMT-4   Caracas, Santiago, Thule (ADT)
+(GMT-04:00) Caracas, Santiago, Thule (AST)
+; (GMT-04:00) Caracas, Santiago, Thule (AST)
 ;
 MSG_CO_TZoneM3
-GMT-3   Buenos Aires, Rio de Janeiro
-; GMT-3   Buenos Aires, Rio de Janeiro
+(GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
+; (GMT-03:00) Buenos Aires, Rio de Janeiro (BRT)
 ;
 MSG_CO_TZoneM2
-GMT-2   Est Brésil
-; GMT-2   Brazil East
+(GMT-02:00) Est Brésil (FNT)
+; (GMT-02:00) Brazil East (FNT)
 ;
 MSG_CO_TZoneM1
-GMT-1   Açores
-; GMT-1   Azores
+(GMT-01:00) Açores (WAT)
+; (GMT-01:00) Azores (WAT)
 ;
 MSG_CO_TZone0
-GMT     Dublin, Lisbonne, Londres (GMT)
-; GMT     Dublin, Lisbon, London (GMT)
+(GMT 00:00) Dublin, Lisbonne, Londres (GMT/UTC)
+; (GMT 00:00) Dublin, Lisbon, London (GMT/UTC)
 ;
 MSG_CO_TZone1
-GMT+1   Berlin, Paris, Madrid, Oslo (MET)
-; GMT+1   Berlin, Paris, Madrid, Oslo (MET)
+(GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
+; (GMT+01:00) Berlin, Paris, Madrid, Oslo (CET)
 ;
 MSG_CO_TZone2
-GMT+2   Athènes, Caire, Helsinki (EET)
-; GMT+2   Athens, Cairo, Helsinki (EET)
+(GMT+02:00) Athènes, Caire, Helsinki (EET)
+; (GMT+02:00) Athens, Cairo, Helsinki (EET)
 ;
 MSG_CO_TZone3
-GMT+3   Baghdad, Kowet, Moscou, Nairobi
-; GMT+3   Baghdad, Kuwait, Moscow, Nairobi
+(GMT+03:00) Bagdad, Koweït, Moscou, Nairobi (EEST)
+; (GMT+03:00) Baghdad, Kuwait, Moscow, Nairobi (EEST)
 ;
 MSG_CO_TZone4
-GMT+4   Dubaï, Port Louis, Victoria
-; GMT+4   Dubai, Port Louis, Victoria
+(GMT+04:00) Dubaï, Port Louis, Victoria (ZP4)
+; (GMT+04:00) Dubai, Port Louis, Victoria (ZP4)
 ;
 MSG_CO_TZone5
-GMT+5   Islamabad, Karachi
-; GMT+5   Islamabad, Karachi
+(GMT+05:00) Islamabad, Karachi (ZP5)
+; (GMT+05:00) Islamabad, Karachi (ZP5)
 ;
 MSG_CO_TZone6
-GMT+6   Alma-Ata, Dhaka, Tashkent
-; GMT+6   Alma-Ata, Dhaka, Tashkent
+(GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
+; (GMT+06:00) Alma-Ata, Dhaka, Tashkent (ZP6)
 ;
 MSG_CO_TZone7
-GMT+7   Bangkok, Hanoi, Phnom Penh
-; GMT+7   Bangkok, Hanoi, Phnom Penh
+(GMT+07:00) Bangkok, Hanoi, Phnom Penh
+; (GMT+07:00) Bangkok, Hanoi, Phnom Penh
 ;
 MSG_CO_TZone8
-GMT+8   Hong Kong, Shanghai, Singapour (PST)
-; GMT+8   Hong Kong, Shanghai, Singapore (PST)
+(GMT+08:00) Hong Kong, Shanghai, Singapour (WST)
+; (GMT+08:00) Hong Kong, Shanghai, Singapore (WST)
 ;
 MSG_CO_TZone9
-GMT+9   Osaka, Seoul, Tokyo
-; GMT+9   Osaka, Seoul, Tokyo
+(GMT+09:00) Osaka, Séoul, Tokyo (JST)
+; (GMT+09:00) Osaka, Seoul, Tokyo (JST)
 ;
 MSG_CO_TZone10
-GMT+10  Melbourne, Sydney, Vladivostok
-; GMT+10  Melbourne, Sydney, Vladivostok
+(GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
+; (GMT+10:00) Melbourne, Sydney, Vladivostok (GST)
 ;
 MSG_CO_TZone11
-GMT+11  Nouvelle Calédonie
-; GMT+11  New Caldonia
+(GMT+11:00) Nouvelle Calédonie (AEDT)
+; (GMT+11:00) New Caldonia (AEDT)
 ;
 MSG_CO_TZone12
-GMT+12  Auckland, Wellington
-; GMT+12  Auckland, Wellington
+(GMT+12:00) Auckland, Wellington (IDLE)
+; (GMT+12:00) Auckland, Wellington (IDLE)
 ;
 MSG_CO_MinConfig
 Configuration minimale
@@ -6132,7 +6132,7 @@ Propriétés
 ; Properties
 ;
 MSG_FO_MaxAge
-Âge max
+Âge max.
 ; Max. age
 ;
 MSG_FO_FolderType
@@ -6299,7 +6299,7 @@ Sauve l'index du dossier « %s »...
 ; FOLDER
 ;
 MSG_BusyScanning
-Analyse le répertoire du dossier « %s »...
+Analyse le dossier « %s »...
 ; Scanning directory of folder '%s'...
 ; FOLDER
 ;
@@ -6538,7 +6538,7 @@ M_ot de passe
 ; Passwo_rd
 ;
 MSG_CO_Del
-Supprimer
+Supprimé
 ; Delete
 ;
 MSG_RE_SetUnread
@@ -6711,12 +6711,12 @@ MSG_CO_SENTMSGS
 ; %s  Sent messages
 ;
 MSG_FO_DSTATS
-_Statistiques dans l'icône
+Statistiques dans l'_icône
 ; App_Icon stats
 ;
 MSG_HELP_FO_CH_STATS
-Voulez-vous voir les statistiques de ce dossier\n\
-ajoutées dans le nom de l'icône d'application ?
+Voulez-vous ajouter les statistiques de ce dossier\n\
+et les afficher dans le nom de l'icône d'application ?
 ; Would you like to see this\n\
 ; folder's statistics in the\n\
 ; YAM AppIcon's label?
@@ -7220,31 +7220,31 @@ Vous n'avez pas indiqué de chemin d'accès pour le nouveau dossier.
 ; You haven't specified a valid path for the new folder.
 ;
 MSG_MA_TOMARKED
-/\000Marqué
-; /\000Marked
+:\000Marqué
+; ,\000Marked
 ;
 MSG_MA_TOUNMARKED
-*\000Non marqué
-; *\000Unmarked
+/\000Non marqué
+; .\000Unmarked
 ;
 MSG_RE_SETMARKED
 Marquer le message
 ; Set status to marked
 ;
 MSG_MA_CTX_DEFWIDTH_THIS
-Largeur par défaut : celui-ci
+Largeur par défaut : celle-ci
 ; Default Width: this
 ;
 MSG_MA_CTX_DEFWIDTH_ALL
-Largeur par défaut : Tous
+Largeur par défaut : Toutes
 ; Default Width: all
 ;
 MSG_MA_CTX_DEFORDER_THIS
-Ordre par défaut : celui-ci
+Ordre par défaut : celle-ci
 ; Default Order: this
 ;
 MSG_MA_CTX_DEFORDER_ALL
-Ordre par défaut : tous
+Ordre par défaut : toutes
 ; Default Order: all
 ;
 MSG_MA_CTX_MAILLIST
@@ -7264,4 +7264,42 @@ des courriers sur cette liste.
 MSG_CTapplicationpdf
 Document PDF
 ; PDF document
+;
+MSG_CO_TZoneM330
+(GMT-03:30) Newfoundland (NFT)
+; (GMT-03:30) Newfoundland (NFT)
+;
+MSG_CO_TZone330
+(GMT+03:30) Téhéran (IT)
+; (GMT+03:30) Teheran (IT)
+;
+MSG_CO_TZone430
+(GMT+04:30) Kaboul
+; (GMT+04:30) Kabul
+;
+MSG_CO_TZone530
+(GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
+; (GMT+05:30) Chennai, Kolkata, Mumbai, New-Delhi (IST)
+;
+MSG_CO_TZone545
+(GMT+05:45) Katmandou
+; (GMT+05:45) Katmandu
+;
+MSG_CO_TZone630
+(GMT+06:30) Rangoon (NST)
+; (GMT+06:30) Rangun (NST)
+;
+MSG_CO_TZone930
+(GMT+09:30) Adélaïde, Darwin (ACST)
+; (GMT+09:30) Adelaide, Darwin (ACST)
+;
+MSG_CO_TZone13
+(GMT+13:00) Nuku'alofa (NZDT)
+; (GMT+13:00) Nuku'alofa (NZDT)
+;
+MSG_HELP_CO_ST_INFOBARTXT
+Texte qui devraît être affiché\n\
+dans la barre d'information.
+; Text that should be displayed\n\
+; in the status bar
 ;
