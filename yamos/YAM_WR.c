@@ -970,11 +970,16 @@ BOOL FirstAddr=TRUE;
 				else DB(KPrintf("SetDefaultSecurity(): address is %s\n",t));
 
 				if(AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
+				{
 					currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;	// get default from entry
+					DB(KPrintf("SetDefaultSecurity(): found user w/security=%ld\n",currsec)); 
+				}
 				else
+				{
 					currsec = 0;		// entry not in address book -> no security
+					DB(KPrintf("SetDefaultSecurity(): can't find user, assuming SEC_NONE\n")); 
+				}
 
-				DB(KPrintf("SetDefaultSecurity(): currsec=%ld\n",currsec)); 
 				if(currsec != Security)
 				{
 					if(FirstAddr)		// first address' setting is always used
@@ -985,7 +990,7 @@ BOOL FirstAddr=TRUE;
 					{
 						Security = MUI_RequestA(G->App, NULL, 0, NULL, GetStr(MSG_WR_DefSecurityConflictGads),
 														GetStr(MSG_WR_DefSecurityConflict),NULL);
-						if(0 == Security) Security = 4;	// correct 1..N numbering of requester buttons
+						if(SEC_NONE == Security) Security = SEC_MAXDUMMY-1;	// correct 1..N numbering of requester buttons
 						else Security--;
 						break;	// terminate recipient loop
 					}
@@ -994,7 +999,7 @@ BOOL FirstAddr=TRUE;
 			free(buf);
 		}
 	}
-	comp->Security = Security;		// FIXME: consider user's manual changes before setting defaults!
+	comp->Security = Security;
 }
 
 ///
@@ -1010,7 +1015,7 @@ LOCAL BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
 
    pgppart.Filename = pgpfile; *pgpfile = 0;
    pgppart.EncType = ENC_NONE;
-   if (sec & 2)
+   if((sec == SEC_ENCRYPT) || (sec == SEC_BOTH))
    {
       if (comp->MailTo) ids = WR_GetPGPIds(comp->MailTo, ids);
       if (comp->MailCC) ids = WR_GetPGPIds(comp->MailCC, ids);
@@ -1031,10 +1036,10 @@ LOCAL BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
       ConvertCRLF(tf->Filename, tf2->Filename, TRUE);
       CloseTempFile(tf);
       sprintf(pgpfile, "%s.asc", tf2->Filename);
-      if (sec & 1) PGPGetPassPhrase();
+      if((sec == SEC_SIGN) || (sec == SEC_BOTH)) PGPGetPassPhrase();
       switch (sec)
       {
-         case 1: /* sign */
+         case SEC_SIGN :
             fprintf(fh, "Content-type: multipart/signed; boundary=\"%s\"; micalc=pgp-md5; protocol=\"application/pgp-signature\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
             WriteContentTypeAndEncoding(fh, firstpart);
             fputc('\n', fh);
@@ -1044,13 +1049,13 @@ LOCAL BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
             if (*C->MyPGPID) { strcat(options, " -u "); strcat(options, C->MyPGPID); }
             if (!PGPCommand((G->PGPVersion == 5) ? "pgps" : "pgp", options, 0)) success = TRUE;
             break;
-         case 2: /* encrypt */
+         case SEC_ENCRYPT :
             fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
             fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n\n%s\n--%s\nContent-Type: application/octet-stream\n\n", PGPwarn, boundary);
             sprintf(options, (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force" : "-ea %s %s +bat +f", tf2->Filename, ids);
             if (!PGPCommand((G->PGPVersion == 5) ? "pgpe" : "pgp", options, 0)) success = TRUE;
             break;
-         case 3: /* sign+encrypt */
+         case SEC_BOTH :
             fprintf(fh, "Content-type: multipart/encrypted; boundary=\"%s\"; protocol=\"application/pgp-encrypted\"\n\n%s\n--%s\n", boundary, MIMEwarn, boundary);
             fprintf(fh, "Content-Type: application/pgp-encrypted\n\nVersion: 1\n\n%s\n--%s\nContent-Type: application/octet-stream\n\n", PGPwarn, boundary);
             sprintf(options, (G->PGPVersion == 5) ? "-a %s %s +batchmode=1 +force -s" : "-sea %s %s +bat +f", tf2->Filename, ids);
@@ -1080,7 +1085,7 @@ LOCAL void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
    {
       fprintf(fh, "\n--%s\n", boundary);
       WriteContentTypeAndEncoding(fh, p);
-      if (comp->Security == 4) WR_Anonymize(fh, comp->MailTo);
+      if (comp->Security == SEC_SENDANON) WR_Anonymize(fh, comp->MailTo);
       fputs("\n", fh);
       EncodePart(fh, p);
    }
@@ -1107,7 +1112,7 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
    if (!firstpart) return FALSE;
 
 	// encrypted multipart message requested?
-   if (firstpart->Next && comp->Security >= 1 && comp->Security <= 3)
+   if (firstpart->Next && comp->Security > SEC_NONE  && comp->Security <= SEC_BOTH)
    {
 	struct Compose tcomp;
 	FILE *tfh;
@@ -1116,7 +1121,7 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
 			{
 				memcpy(&tcomp,comp,sizeof(tcomp));	// clone struct Compose
 				tcomp.FH = tfh;							// set new filehandle
-				tcomp.Security = 0;						// clear security field
+				tcomp.Security = SEC_NONE;				// temp msg gets attachments and no security
 
 				// clear a few other fields to avoid redundancies
 				tcomp.MailCC = tcomp.MailBCC = tcomp.ExtHeader = NULL;
@@ -1145,15 +1150,13 @@ char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
 					}
 				} else
 				{
-//					ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);		// gotta define this!
-					ER_NewError("Error while creating multipart PGP message. Encryption/signing disabled!",NULL,NULL);
+					ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
 					comp->Security = 0;
 				}
 				fclose(tfh);
 			} else
 			{
-//				ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
-				ER_NewError("Error while creating multipart PGP message. Encryption/signing disabled!",NULL,NULL);
+				ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
 				comp->Security = 0;
 			}
    }
@@ -1186,7 +1189,7 @@ mimebody:
    {
 		WR_ComposeReport(fh, comp, boundary);
 		success = TRUE;
-	} else if (comp->Security >= 1 && comp->Security <= 3)
+	} else if (comp->Security > SEC_NONE && comp->Security <= SEC_BOTH)
 	{
 		success = WR_ComposePGP(fh, comp, boundary);
 	} else if (firstpart->Next)
@@ -1196,7 +1199,8 @@ mimebody:
 	} else
    {
       WriteContentTypeAndEncoding(fh, firstpart);
-      if (comp->Security == 4 && comp->OldSecurity != 4) WR_Anonymize(fh, comp->MailTo);
+      if (comp->Security == SEC_SENDANON && comp->OldSecurity != SEC_SENDANON)
+			WR_Anonymize(fh, comp->MailTo);
       fputs("\n", fh);
       EncodePart(fh, firstpart);
 		success = TRUE;
@@ -1268,7 +1272,8 @@ void WR_NewMail(int mode, int winnum)
       if (GetMUICheck(gui->CH_RECEIPT)) comp.Receipt |= 1;
       if (GetMUICheck(gui->CH_DISPNOTI)) comp.Receipt |= 2;
       comp.Signature = GetMUIRadio(gui->RA_SIGNATURE);
-      comp.Security = GetMUIRadio(gui->RA_SECURITY);
+      if((comp.Security = GetMUIRadio(gui->RA_SECURITY)) == SEC_DEFAULTS)
+			SetDefaultSecurity(&comp);
       comp.DelSend = GetMUICheck(gui->CH_DELSEND);
       comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
       get(G->WR[winnum]->GUI.LV_ATTACH, MUIA_List_Entries, &att);
@@ -1276,9 +1281,6 @@ void WR_NewMail(int mode, int winnum)
       comp.FirstPart = BuildPartsList(winnum);
       comp.FirstPart->TTable = G->TTout;
    }
-
-	// try to get default security from address book unless requested otherwise
-	if(GetMUICheck(wr->GUI.CH_DEFSECURITY)) SetDefaultSecurity(&comp);
 
    if (wr->Mode == NEW_EDIT)
    {
@@ -1923,7 +1925,7 @@ enum { WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,
        WMEN_AUTOSP,WMEN_SEP0,WMEN_SEP1,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
        WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
        WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
-       WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4 };
+       WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5 };
 extern long cmap[8];
 
 struct WR_ClassData *WR_New(int winnum)
@@ -1932,8 +1934,9 @@ struct WR_ClassData *WR_New(int winnum)
 
    if (data = calloc(1,sizeof(struct WR_ClassData)))
    {
-      static char *rtitles[4], *encoding[3], *security[6], *priority[4], *signat[5];
+      static char *rtitles[4]={NULL}, *encoding[3], *security[SEC_MAXDUMMY+1], *priority[4], *signat[5];
       static char *emoticons[4] = { ":-)", ":-|", ":-(", ";-)" };
+		APTR sec_menus[SEC_MAXDUMMY];
       APTR mi_copy, mi_cut, mi_redo, mi_undo, mi_bold, mi_italic, mi_underl, mi_color;
       APTR strip, mi_autospell, mi_delsend, mi_receipt, mi_dispnoti, mi_addinfo;
       APTR slider = ScrollbarObject, End;
@@ -1945,28 +1948,32 @@ struct WR_ClassData *WR_New(int winnum)
                            MSG_HELP_WR_BT_BOLD,MSG_HELP_WR_BT_ITALIC,MSG_HELP_WR_BT_UNDERL,MSG_HELP_WR_BT_COLOR,NULL };
       int i, spell;
       for (i = 0; i < 13; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, (i>=8 && i<=11)?TDF_TOGGLE:0);
-      rtitles[0] = GetStr(MSG_Message);
-      rtitles[1] = GetStr(MSG_Attachments);
-      rtitles[2] = GetStr(MSG_Options);
-      rtitles[3] = NULL;
-      encoding[0] = "Base64/QP";
-      encoding[1] = "UUencode";
-      encoding[2] = NULL;
-      security[0] = GetStr(MSG_WR_SecNone);
-      security[1] = GetStr(MSG_WR_SecSign);
-      security[2] = GetStr(MSG_WR_SecEncrypt);
-      security[3] = GetStr(MSG_WR_SecBoth);
-      security[4] = GetStr(MSG_WR_SecAnon);
-      security[5] = NULL;
-      priority[0] = GetStr(MSG_WR_ImpHigh);
-      priority[1] = GetStr(MSG_WR_ImpNormal);
-      priority[2] = GetStr(MSG_WR_ImpLow);
-      priority[3] = NULL;
-      signat[0] = GetStr(MSG_WR_NoSig);
-      signat[1] = GetStr(MSG_WR_DefSig);
-      signat[2] = GetStr(MSG_WR_AltSig1);
-      signat[3] = GetStr(MSG_WR_AltSig2);
-      signat[4] = NULL;
+		if(NULL == rtitles[0])	// only initialize static data on first call
+		{
+			rtitles[0] = GetStr(MSG_Message);
+			rtitles[1] = GetStr(MSG_Attachments);
+			rtitles[2] = GetStr(MSG_Options);
+			rtitles[3] = NULL;
+			encoding[0] = "Base64/QP";
+			encoding[1] = "UUencode";
+			encoding[2] = NULL;
+			security[SEC_NONE]    = GetStr(MSG_WR_SecNone);
+			security[SEC_SIGN]    = GetStr(MSG_WR_SecSign);
+			security[SEC_ENCRYPT] = GetStr(MSG_WR_SecEncrypt);
+			security[SEC_BOTH]    = GetStr(MSG_WR_SecBoth);
+			security[SEC_SENDANON]= GetStr(MSG_WR_SecAnon);
+			security[SEC_DEFAULTS]= GetStr(MSG_WR_SecDefaults);
+			security[SEC_MAXDUMMY]= NULL;
+			priority[0] = GetStr(MSG_WR_ImpHigh);
+			priority[1] = GetStr(MSG_WR_ImpNormal);
+			priority[2] = GetStr(MSG_WR_ImpLow);
+			priority[3] = NULL;
+			signat[0] = GetStr(MSG_WR_NoSig);
+			signat[1] = GetStr(MSG_WR_DefSig);
+			signat[2] = GetStr(MSG_WR_AltSig1);
+			signat[3] = GetStr(MSG_WR_AltSig2);
+			signat[4] = NULL;
+		}
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_WR_WriteWT),
          MUIA_HelpNode, "WR_W",
@@ -2039,11 +2046,12 @@ struct WR_ClassData *WR_New(int winnum)
                   MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,signat[3], MUIA_Menuitem_Shortcut,"9", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x07, MUIA_UserData,WMEN_SIGN3, End,
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_CO_CrdSecurity),
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,security[0], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x1E, MUIA_Menuitem_Checked,TRUE, MUIA_UserData,WMEN_SECUR0, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,security[1], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x1D, MUIA_UserData,WMEN_SECUR1, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,security[2], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x1B, MUIA_UserData,WMEN_SECUR2, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,security[3], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x17, MUIA_UserData,WMEN_SECUR3, End,
-                  MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,security[4], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x0F, MUIA_UserData,WMEN_SECUR4, End,
+                  MUIA_Family_Child, sec_menus[SEC_NONE]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_NONE]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3E, MUIA_UserData,WMEN_SECUR0, End,
+                  MUIA_Family_Child, sec_menus[SEC_SIGN]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SIGN]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3D, MUIA_UserData,WMEN_SECUR1, End,
+                  MUIA_Family_Child, sec_menus[SEC_ENCRYPT]  = MenuitemObject, MUIA_Menuitem_Title,security[SEC_ENCRYPT] , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x3B, MUIA_UserData,WMEN_SECUR2, End,
+                  MUIA_Family_Child, sec_menus[SEC_BOTH]     = MenuitemObject, MUIA_Menuitem_Title,security[SEC_BOTH]    , MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x37, MUIA_UserData,WMEN_SECUR3, End,
+                  MUIA_Family_Child, sec_menus[SEC_SENDANON] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_SENDANON], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x2F, MUIA_UserData,WMEN_SECUR4, End,
+                  MUIA_Family_Child, sec_menus[SEC_DEFAULTS] = MenuitemObject, MUIA_Menuitem_Title,security[SEC_DEFAULTS], MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Exclude,0x1F, MUIA_UserData,WMEN_SECUR5, MUIA_Menuitem_Checked, TRUE, End,
                End,
             End,
          End,
@@ -2174,13 +2182,11 @@ struct WR_ClassData *WR_New(int winnum)
                         MUIA_CycleChain, 1,
                      End,
                      Child, HSpace(0),
-							Child, VGroup,  GroupFrameT(GetStr(MSG_WR_Security)),
-	                     Child, data->GUI.RA_SECURITY = RadioObject,
-   	                     MUIA_Radio_Entries, security,
-      	                  MUIA_CycleChain, 1,
-         	            End,
-								Child, MakeCheckGroup((Object **)&data->GUI.CH_DEFSECURITY,GetStr(MSG_WR_CH_UseDefSecurity)),
-							End,
+                     Child, data->GUI.RA_SECURITY = RadioObject, GroupFrameT(GetStr(MSG_WR_Security)),
+  	                     MUIA_Radio_Entries, security,
+     	                  MUIA_Radio_Active, SEC_DEFAULTS,
+     	                  MUIA_CycleChain, 1,
+        	            End,
                   End,
                End,
             End,
@@ -2203,7 +2209,6 @@ struct WR_ClassData *WR_New(int winnum)
          get(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell, &spell);
          set(mi_autospell, MUIA_Menuitem_Checked, spell);
          set(data->GUI.CY_IMPORTANCE, MUIA_Cycle_Active, 1);
-			setcheckmark(data->GUI.CH_DEFSECURITY,TRUE);
          DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->GUI.RA_ENCODING, data->GUI.ST_CTYPE, data->GUI.ST_DESC, data->GUI.BT_DEL, data->GUI.BT_DISPLAY, NULL);
          SetHelp(data->GUI.ST_SUBJECT    ,MSG_HELP_WR_ST_SUBJECT   );
          SetHelp(data->GUI.BT_ADD        ,MSG_HELP_WR_BT_ADD       );
@@ -2221,7 +2226,6 @@ struct WR_ClassData *WR_New(int winnum)
          SetHelp(data->GUI.CY_IMPORTANCE ,MSG_HELP_WR_CY_IMPORTANCE);
          SetHelp(data->GUI.RA_SIGNATURE  ,MSG_HELP_WR_RA_SIGNATURE );
          SetHelp(data->GUI.RA_SECURITY   ,MSG_HELP_WR_RA_SECURITY  );
-         SetHelp(data->GUI.CH_DEFSECURITY,MSG_HELP_WR_CH_UseDefSecurity);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_NEW      ,data->GUI.TE_EDIT      ,1,MUIM_TextEditor_ClearText);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_OPEN     ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_OPEN,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_INSFILE  ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_EditorCmdHook,ED_INSERT,winnum);
@@ -2311,7 +2315,6 @@ struct WR_ClassData *WR_New(int winnum)
          DoMethod(mi_addinfo           ,MUIM_Notify,MUIA_Menuitem_Checked    ,MUIV_EveryTime,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,MUIV_TriggerValue);
          DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.RA_SIGNATURE  ,3,MUIM_Set        ,MUIA_Radio_Active,0);
          DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,4             ,data->GUI.CH_ADDINFO    ,3,MUIM_Set        ,MUIA_Selected,FALSE);
-         DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active        ,MUIV_EveryTime,data->GUI.CH_DEFSECURITY,3,MUIM_Set        ,MUIA_Selected,FALSE);
          for (i = 0; i < 3; i++)
          {
             DoMethod(data->GUI.CY_IMPORTANCE,MUIM_Notify,MUIA_Cycle_Active     ,i              ,strip                  ,4,MUIM_SetUData,WMEN_IMPORT0+i,MUIA_Menuitem_Checked,TRUE);
@@ -2322,9 +2325,12 @@ struct WR_ClassData *WR_New(int winnum)
             DoMethod(data->GUI.RA_SIGNATURE ,MUIM_Notify,MUIA_Radio_Active     ,i              ,strip                  ,4,MUIM_SetUData,WMEN_SIGN0+i,MUIA_Menuitem_Checked,TRUE);
             DoMethod(data->GUI.WI           ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SIGN0+i   ,data->GUI.RA_SIGNATURE ,3,MUIM_Set     ,MUIA_Radio_Active,i);
          }
-         for (i = 0; i < 5; i++) 
+         for (i = SEC_NONE; i < SEC_MAXDUMMY; i++) 
          {
-           DoMethod(data->GUI.WI           ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SECUR0+i  ,data->GUI.RA_SECURITY  ,3,MUIM_Set     ,MUIA_Radio_Active,i);
+				// connect menuitems -> radiobuttons
+				DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction,WMEN_SECUR0+i,data->GUI.RA_SECURITY,3,MUIM_Set        ,MUIA_Radio_Active    ,i);
+				// ...and the other way round
+				DoMethod(data->GUI.RA_SECURITY,MUIM_Notify,MUIA_Radio_Active     ,i            ,sec_menus[i]         ,3,MUIM_NoNotifySet,MUIA_Menuitem_Checked,TRUE);
          }
          WR_SharedSetup(data, winnum);
          return data;
