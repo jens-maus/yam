@@ -332,6 +332,7 @@ static struct DI_ClassData *DI_New(void)
          SetHelp(data->GUI.BT_DELETE,    MSG_HELP_DI_BT_DELETE);
          SetHelp(data->GUI.BT_PASTE,     MSG_HELP_DI_BT_PASTE);
          DoMethod(data->GUI.ST_ALIAS    ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,data->GUI.TE_EDIT      ,3,MUIM_Set,MUIA_TextEditor_HasChanged,TRUE);
+         DoMethod(data->GUI.ST_ALIAS    ,MUIM_Notify,MUIA_String_Contents     ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&DI_DisplayHook,0);
          DoMethod(data->GUI.BT_NEW      ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_ModifyHook,0);
          DoMethod(data->GUI.BT_ADDSELECT,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_ModifyHook,1);
          DoMethod(data->GUI.BT_DELETE   ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&DI_DeleteHook,0);

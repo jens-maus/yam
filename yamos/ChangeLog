@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-09  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_DI.c: fixed bug where the listview wasn`t always
+      in sync with the current Abbreviature text.
+
 2002-12-06  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c/MA_GetRealSubject(): fixed bug where YAM didn`t
