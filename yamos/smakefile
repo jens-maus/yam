@@ -83,6 +83,7 @@ YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_loc.h 
 
 YAM_loc.o: YAM_loc.h YAM_loc.c
+	$(CC) YAM_loc.c $(CFLAGS)
 
 deutsch.catalog: deutsch.ct
    flexcat YAM.cd deutsch.ct CATALOG LOCALE:catalogs/deutsch/YAM.catalog FLUSH

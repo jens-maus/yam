@@ -233,13 +233,13 @@ void MD5Final (unsigned char [16], MD5_CTX *);
 ///
 /// bsdsocket.library Interface
 #ifdef __GNUC__
-	#ifdef MORPHOS
-		#include <ppcinline/socket.h>
-	#else
-		#include <inline/socket.h>
-	#endif
+   #ifdef __MORPHOS__
+      #include <ppcinline/socket.h>
+   #else
+      #include <inline/socket.h>
+   #endif
 #else
-	#include <proto/socket.h>
+   #include <proto/socket.h>
 #endif
 
 #include <netdb.h>
@@ -251,19 +251,19 @@ void MD5Final (unsigned char [16], MD5_CTX *);
 #include <bsdsocket/socketbasetags.h>
 #include <errno.h>
 #ifdef __SASC
-	#undef EAGAIN
-	#include <sys/errno.h>	/* SAS/C's errno.h doesn't define EINPROGRESS
+   #undef EAGAIN
+   #include <sys/errno.h>  /* SAS/C's errno.h doesn't define EINPROGRESS */
 #endif
 #include <time.h>
 
 #define SMTP_NO_SOCKET (-1)
 
 /* To be deleted - all socket functions should be called by their real name */
-#define Socket 	socket
-#define Connect connect
-#define Send	send
-#define Recv	recv
-#define Shutdown shutdown
+#define Socket        socket
+#define Connect       connect
+#define Send          send
+#define Recv          recv
+#define Shutdown      shutdown
 #define GetHostByName gethostbyname
 
 ///
