@@ -327,6 +327,10 @@ OVERLOAD(MUIM_Draw)
 		struct TextExtent te;
 		int cnt;
 
+		// make sure we do not draw outside
+		if(_mleft(obj) <= 0 || _mtop(obj) < 10)
+			return 0;
+
 		// let us first draw the "Attachments:" label
 		SetAPen(_rp(obj), _dri(obj)->dri_Pens[TEXTPEN]);
 		SetFont(_rp(obj), _font(obj));
@@ -347,7 +351,9 @@ OVERLOAD(MUIM_Draw)
 			while((child = NextObject(&cstate)))
 			{
 				struct Part *mailPart = (struct Part *)xget(child, MUIA_AttachmentImage_MailPart);
-				if(mailPart)
+
+				// make sure this child is valid and does not draw outside
+				if(mailPart && _mtop(child) > 10 && _mleft(child) > 10)
 				{
 					LONG maxHeight = MAX(_mheight(child), TEXTROWS*_font(obj)->tf_YSize);
 					LONG topPosition = _mtop(child)+_font(obj)->tf_Baseline-(maxHeight-_mheight(child))/2;

@@ -7,6 +7,9 @@ $Source$
 
 2005-02-19  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/AttachmentGroup.c: added some _mtop/_mleft checkings to make
+      sure no text is drawn outside our rastport. This should hopefully fix
+      bug #1123850
     * YAM_RE.c: YAM was not only closing an open read window while getting
       iconified, but also cleaning up the whole read mail data which results
       in a lost read window after reopening the application.
