@@ -218,7 +218,7 @@ OVERLOAD(MUIM_Popstring_Open)
 }
 ///
 /// OVERLOAD(MUIM_HandleEvent)
-enum { IECODE_RETURN = 68, IECODE_HELP = 95, IECODE_BACKSPACE = 65, IECODE_UP = 76, IECODE_DOWN = 77 };
+enum { IECODE_RETURN = 68, IECODE_HELP = 95, IECODE_BACKSPACE = 65, IECODE_DEL = 70, IECODE_UP = 76, IECODE_DOWN = 77 };
 
 OVERLOAD(MUIM_HandleEvent)
 {
@@ -264,6 +264,13 @@ OVERLOAD(MUIM_HandleEvent)
 
 					result = MUI_EventHandlerRC_Eat;
 				}
+			}
+			break;
+
+			case IECODE_DEL:
+			{
+				if(data->Matchwindow)
+					set(data->Matchwindow, MUIA_Window_Open, FALSE);
 			}
 			break;
 
@@ -612,8 +619,7 @@ DECLARE(ShowMatches)
    if(!res || (get(data->Matchwindow, MUIA_Window_Open, &state), !state))
    	SetAttrs(data->Matchwindow, MUIA_Window_Open, res ? TRUE : FALSE, TAG_DONE);
 
-   if(start)
-   	free(start);
+  	free(start);
 
 	return (ULONG)res;
 }

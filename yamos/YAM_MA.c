@@ -1986,6 +1986,16 @@ HOOKPROTONHNO(MA_LV_FDesFunc, LONG, struct MUIP_NListtree_DestructMessage *msg)
 MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 
 ///
+/// FindAddressHook()
+HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDataMessage *msg)
+{
+	struct ABEntry *entry = (struct ABEntry *)msg->UserData;
+	return Stricmp(msg->User, entry->Address);
+}
+MakeStaticHook(FindAddressHook, FindAddressFunc);
+///
+
+///
 /// MA_LV_DspFunc
 /*** MA_LV_DspFunc - Message listview display hook ***/
 HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
@@ -2003,13 +2013,32 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
       if (folder)
       {
          static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL];
-         struct Person *pe;
          sprintf(array[0] = dispsta, "\033o[%ld]", entry->Status);
          if (entry->Importance == 1) strcat(dispsta, "\033o[12]");
          if (entry->Flags & MFLAG_CRYPT) strcat(dispsta, "\033o[15]");
          else if (entry->Flags & MFLAG_SIGNED) strcat(dispsta, "\033o[16]");
          else if (entry->Flags & MFLAG_REPORT) strcat(dispsta, "\033o[14]");
          else if (entry->Flags & MFLAG_MULTIPART) strcat(dispsta, "\033o[13]");
+
+#if 01
+{
+         struct Person *pe;
+			struct MUI_NListtree_TreeNode *tn;
+			STRPTR multiple, to, addr;
+
+			multiple = entry->Flags & MFLAG_MULTIRCPT ? "\033o[11]" : "";
+			pe = outbox ? &entry->To : &entry->From;
+			to = (type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress) ? (pe = &entry->To, GetStr(MSG_MA_ToPrefix)) : "";
+
+			set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
+         if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], 0))
+					addr = ((struct ABEntry *)tn->tn_User)->RealName;
+			else	addr = AddrName((*pe));
+
+			sprintf(dispfro, "%s%s%s", multiple, to, addr);
+			array[1] = dispfro;
+}
+#else
          array[1] = dispfro; *dispfro = 0;
          if (entry->Flags & MFLAG_MULTIRCPT) strcat(dispfro, "\033o[11]");
          pe = outbox ? &entry->To : &entry->From;
@@ -2018,6 +2047,8 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
             pe = &entry->To; strcat(dispfro, GetStr(MSG_MA_ToPrefix));
          }
          strncat(dispfro, AddrName((*pe)), SIZE_DEFAULT-strlen(dispfro)-1);
+#endif
+
          array[2] = AddrName((entry->ReplyTo));
          array[3] = entry->Subject;
          array[4] = DateStamp2String(&entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME);

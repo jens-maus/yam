@@ -1114,7 +1114,13 @@
       This allows e.g. to do a »Search YAM_#?.c "*N Module:"« to see the
       description of each source file.
 
-2001-08-02  Allan Odgaard <duff@diku.dk>
+2001-08-05  Allan Odgaard <duff@diku.dk>
 
     * Fixed enforcer hit in Recipientstring class (introduced by... gues who?)
     * ResolveOnCR defaults to FALSE similar to AdvanceOnCR.
+    * Pressing 'delete' in a recipient string will now delete close the popup
+      list.
+    * The mails in the main listview are now shown to be from the real name
+      of the sender found in your addressbook (this name should also be used
+      when replying to the letter and composing the greeting phrase, but is
+      currently not).
