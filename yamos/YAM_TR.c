@@ -2392,6 +2392,15 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                     // lets copy everything into our sendbuffer
                     memcpy(&sendbuf[sendsize-cpos], &buf[0], (size_t)cpos+1);
 
+                    // RFC 2822 doesn`t allow bare CR and LF so we have to put a CR before a LF
+                    if(sendbuf[sendsize-1] == '\n')
+                    {
+                      sendbuf[sendsize-1] = '\r';
+                      sendbuf[sendsize]   = '\n';
+                      sendbuf[sendsize+1] = '\0';
+                      sendsize++;
+                    }
+
                     // now lets send the data buffered to the socket.
                     // we will flush it later then.
                     if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0) ER_NewError(GetStr(MSG_ER_ConnectionBroken), NULL, NULL);

@@ -256,7 +256,8 @@ static enum Encoding WhichEncodingForFile(char *fname, char *ctype)
       {
          // (RFC 821) restricts 7bit lines to a maximum of 1000 characters
          // so we have to use QP or base64 later on.
-         if(linesize > 1000) ++longlines;
+         // but RFC 2822 says that lines shouldn`t be longer than 998 chars, so we take this one
+         if(linesize > 998) ++longlines;
          linesize = 0;
       }
       else if (c > 127) ++unsafechars; // count the number of unprintable >7bit characters

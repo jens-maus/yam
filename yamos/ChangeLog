@@ -7,6 +7,12 @@ $Source$
 
 2003-03-10  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_WR.c, YAM_TR: fixed bug #701277 where YAM sent the email body
+      with bare LFs which is prohibited by the RFC 2822 and therefore throw
+      some errors on some pedantic SMTP servers (qmail).
+
+2003-03-10  Jens Langner <Jens.Langner@light-speed.de>
+
     * YAM_RE.c: fixed bug #700608 where a missing "unsigned" definition
       caused the automatic display charset translation to fail. Now all
       charset converters should work as expected again.
