@@ -962,3 +962,7 @@
 
     * fixed bug #440000. Now the NListtree default foldergroup icons will be
       displayed if one of the folder_fold/unfold images are missing.
+    * fixed bug #445715. YAM should now not change the Track Message flag if
+      a message is going to edit.
+    * WR_WriteUserInfo() now takes respect of the alternative selected From:
+      address of the folder the mail was created in.

@@ -93,7 +93,7 @@ static void FPutsQuoting(char*, FILE*);
 static void WriteCtypeNicely(FILE*, char*);
 static void WriteContentTypeAndEncoding(FILE*, struct WritePart*);
 static void WR_WriteUIItem(FILE*, int*, char*, char*);
-static void WR_WriteUserInfo(FILE*);
+static void WR_WriteUserInfo(FILE *, char *);
 static void EncodePart(FILE*, struct WritePart*);
 static BOOL WR_CreateHashTable(char*, char*, char*);
 static void WR_AddTagline(FILE*);
@@ -669,12 +669,19 @@ static void WR_WriteUIItem(FILE *fh, int *len, char *parameter, char *value)
 ///
 /// WR_WriteUserInfo
 //  Outputs X-SenderInfo header line
-static void WR_WriteUserInfo(FILE *fh)
+static void WR_WriteUserInfo(FILE *fh, char *from)
 {
    int len = 15;
    struct ABEntry *ab = NULL;
+   struct Person pers;
 
-   if (AB_SearchEntry(C->EmailAddress, ASM_ADDRESS|ASM_USER, &ab))
+   // Now we extract the real email from the address string
+   if(*from)
+   {
+      ExtractAddress(from, &pers);
+   }
+
+   if(*(pers.Address) && AB_SearchEntry(pers.Address, ASM_ADDRESS|ASM_USER, &ab))
    {
       if (ab->Type != AET_USER) ab = NULL;
       else if (!*ab->Homepage && !*ab->Phone && !*ab->Street && !*ab->City && !*ab->Country && !ab->BirthDay) ab = NULL;
@@ -1240,7 +1247,7 @@ BOOL WriteOutMessage(struct Compose *comp)
    if (comp->Receipt & 2) EmitHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
    fprintf(fh, "X-Mailer: %s AmigaOS E-mail Client (c) 2000-2001 by YAM Open Source Team - http://www.yam.ch/\n", yamversion);
-   if (comp->UserInfo) WR_WriteUserInfo(fh);
+   if (comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
    if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
    if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
    if (comp->ExtHeader) WR_EmitExtHeader(fh, comp);
