@@ -176,6 +176,11 @@
 
     * Added rather rudimentary LaTeX printing support
 
+2001-03-19  Christian Hattemer <krille@users.sourceforge.net>
+
+    * When the maileditor is invoked from a readwindow this is updated
+      after editing.
+
 2001-03-20  Matthias Bethke <Matthias.Bethke@gmx.net>
 
     * Fixed enforcer hits when listing a PGP keyring with very long UID
