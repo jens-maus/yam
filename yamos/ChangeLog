@@ -7,6 +7,9 @@ $Source$
 
 2003-02-16  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_mail_lex.l: fixed tiny bug in the text highlighting routines
+      where after a URL in a quoted text part, the color information
+      was lost.
     * YAM_CL.c: changed the TextEditor WheelMouse support to scroll
       up/down by a value of 1/6 of the displayed text. Let`s see if
       this is the value most people can live with :)

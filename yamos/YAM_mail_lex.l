@@ -121,7 +121,6 @@ char *ParseEmailText(char *mailTxt)
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033p[12]");
             cmsg = AppendToBuffer(cmsg, &wptr, &len, yytext);
             cmsg = AppendToBuffer(cmsg, &wptr, &len, colorTag ? colorTag : "\033p[0]");
-            colorTag = NULL;
           }
           break;
 
