@@ -604,6 +604,7 @@ static void Abort(APTR formatnum, ...)
    va_end(a);
    exit(5);
 }
+///
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
 static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
