@@ -2138,13 +2138,13 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    if(FI_DoComplexSearch(filter->search[0], filter->Combine, filter->search[1], mail))
+    if(DoFilterSearch(filter, mail))
     {
-      if(hasExecuteAction(filter) && *filter->ExecuteCmd)
-         ExecuteCommand(filter->ExecuteCmd, FALSE, OUT_DOS);
+      if(hasExecuteAction(filter) && *filter->executeCmd)
+         ExecuteCommand(filter->executeCmd, FALSE, OUT_DOS);
 
-      if(hasPlaySoundAction(filter) && *filter->PlaySound)
-         PlaySound(filter->PlaySound);
+      if(hasPlaySoundAction(filter) && *filter->playSound)
+         PlaySound(filter->playSound);
 
       if(hasDeleteAction(filter))
          SET_FLAG(mail->tflags, TRF_DELETE);
@@ -2884,7 +2884,7 @@ static BOOL TR_ApplySentFilters(struct Mail *mail)
     {
       struct FilterNode *filter = (struct FilterNode *)curNode;
 
-      if(FI_DoComplexSearch(filter->search[0], filter->Combine, filter->search[1], mail))
+      if(DoFilterSearch(filter, mail))
       {
         if(!ExecuteFilterAction(filter, mail))
           return FALSE;

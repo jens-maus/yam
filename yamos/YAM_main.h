@@ -33,25 +33,6 @@
 #include "YAM_mainFolder.h"
 #include "YAM_stringsizes.h"
 
-// lets define all the Rule->Actions flags and
-// define some flag macros for them
-#define RULE_BOUNCE       (1<<0)
-#define RULE_FORWARD      (1<<1)
-#define RULE_REPLY        (1<<2)
-#define RULE_EXECUTE      (1<<3)
-#define RULE_PLAYSOUND    (1<<4)
-#define RULE_MOVE         (1<<5)
-#define RULE_DELETE       (1<<6)
-#define RULE_SKIPMSG      (1<<7)
-#define hasBounceAction(rule)     (isFlagSet((rule)->Actions, RULE_BOUNCE))
-#define hasForwardAction(rule)    (isFlagSet((rule)->Actions, RULE_FORWARD))
-#define hasReplyAction(rule)      (isFlagSet((rule)->Actions, RULE_REPLY))
-#define hasExecuteAction(rule)    (isFlagSet((rule)->Actions, RULE_EXECUTE))
-#define hasPlaySoundAction(rule)  (isFlagSet((rule)->Actions, RULE_PLAYSOUND))
-#define hasMoveAction(rule)       (isFlagSet((rule)->Actions, RULE_MOVE))
-#define hasDeleteAction(rule)     (isFlagSet((rule)->Actions, RULE_DELETE))
-#define hasSkipMsgAction(rule)    (isFlagSet((rule)->Actions, RULE_SKIPMSG))
-
 #define ANYBOX NULL
 
 // General internal flags of a mail (no status information)

@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-03-21  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FI.c, misc: slightly enhanced the filter management once more to allow to
+      specify an ulimited amount of rules per filter instead of the previously static
+      amount of only 2 rules per filter. Now a user can theoretically specify unlimited
+      rules for each filter. This should allow to combine certain filters which were
+      required to be separated because of the previously existed 2 rules limitation.
+      Now the whole filter/rule managment should be totally unlimited in size and
+      amount like it should have been for ages.
+
 2005-03-18  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c: fixed a possible bug/flaw in DescribeCT() function where a passed NULL

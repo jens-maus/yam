@@ -2,7 +2,7 @@
 #
 # YAM - Yet Another Mailer
 # Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
-# Copyright (C) 2000-2004 by YAM Open Source Team
+# Copyright (C) 2000-2005 by YAM Open Source Team
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -77,6 +77,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/Classes.o \
 	$(OBJDIR)/$(CLASSDIR)/Recipientstring.o \
 	$(OBJDIR)/$(CLASSDIR)/Searchwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/SearchControlGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/AddrBookEntryList.o \
 	$(OBJDIR)/$(CLASSDIR)/AddrBookListtree.o \
 	$(OBJDIR)/$(CLASSDIR)/Addrmatchlist.o \
@@ -363,6 +364,9 @@ $(OBJDIR)/$(CLASSDIR)/Searchwindow.o: $(CLASSDIR)/Searchwindow.c \
 	$(CLASSDIR)/Searchwindow_cl.h YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h \
 	YAM_folderconfig.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
 	YAM_utilities.h YAM_write.h
+
+$(OBJDIR)/$(CLASSDIR)/SearchControlGroup.o: $(CLASSDIR)/SearchControlGroup.c \
+	$(CLASSDIR)/SearchControlGroup_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/Recipientstring.o: $(CLASSDIR)/Recipientstring.c \
 	$(CLASSDIR)/Recipientstring_cl.h YAM.h YAM_addressbook.h YAM_config.h YAM_debug.h \

@@ -459,11 +459,11 @@ HOOKPROTONHNO(FilterDisplayFunc, LONG, struct NList_DisplayMessage *msg)
 
   if(entry)
   {
-    array[0] = entry->Name;
-    array[1] = entry->Remote ? "x" : " ";
-    array[2] = entry->ApplyToNew && !entry->Remote ?  "x" : " ";
-    array[3] = entry->ApplyToSent && !entry->Remote ? "x" : " ";
-    array[4] = entry->ApplyOnReq && !entry->Remote ?  "x" : " ";
+    array[0] = entry->name;
+    array[1] = entry->remote ? "x" : " ";
+    array[2] = entry->applyToNew && !entry->remote ?  "x" : " ";
+    array[3] = entry->applyToSent && !entry->remote ? "x" : " ";
+    array[4] = entry->applyOnReq && !entry->remote ?  "x" : " ";
   }
   else
   {
@@ -793,18 +793,16 @@ APTR CO_Page2(struct CO_ClassData *data)
 /// CO_Page3  (Filters)
 APTR CO_Page3(struct CO_ClassData *data)
 {
-   static char *bcrit[5], *rtitles[4];
-   APTR grp, bt_moveto;
-   bcrit[0] = GetStr(MSG_CO_CTNone);
-   bcrit[1] = GetStr(MSG_CO_CTOr);
-   bcrit[2] = GetStr(MSG_CO_CTAnd);
-   bcrit[3] = GetStr(MSG_CO_CTXor);
-   bcrit[4] = NULL;
+   static char *rtitles[4];
+   Object *grp;
+   Object *bt_moveto;
+
    rtitles[0] = GetStr(MSG_Options);
    rtitles[1] = GetStr(MSG_CO_Comparison);
    rtitles[2] = GetStr(MSG_CO_Action);
    rtitles[3] = NULL;
-   if ((grp = HGroup,
+
+   if((grp = HGroup,
          MUIA_HelpNode, "CO03",
          MUIA_Background, MUII_GroupBack,
          Child, VGroup,
@@ -831,7 +829,7 @@ APTR CO_Page3(struct CO_ClassData *data)
          End,
          Child, BalanceObject, End,
          Child, RegisterGroup(rtitles),
-            MUIA_CycleChain,1,
+            MUIA_CycleChain, TRUE,
             Child, VGroup,
                Child, HGroup,
                   Child, Label2(GetStr(MSG_CO_Name)),
@@ -843,18 +841,26 @@ APTR CO_Page3(struct CO_ClassData *data)
                Child, MakeCheckGroup((Object **)&data->GUI.CH_APPLYREQ, GetStr(MSG_CO_ApplyOnReq)),
                Child, HVSpace,
             End,
-            Child, data->GUI.GR_LRGROUP = PageGroup,
-               Child, data->GUI.GR_LOCAL = VGroup,
-                  Child, FI_ConstructSearchGroup(&data->GUI.GR_SEARCH[0], FALSE),
-                  Child, data->GUI.CY_COMBINE[0] = MakeCycle(bcrit,""),
-                  Child, FI_ConstructSearchGroup(&data->GUI.GR_SEARCH[1], FALSE),
-                  Child, HVSpace,
+            Child, data->GUI.GR_RGROUP = VGroup,
+               Child, ScrollgroupObject,
+                  GroupSpacing(3),
+                  MUIA_Weight, 100,
+                  MUIA_Scrollgroup_FreeHoriz, FALSE,
+                  MUIA_Scrollgroup_FreeVert,  TRUE,
+                  MUIA_Scrollgroup_Contents,  data->GUI.GR_SGROUP = VirtgroupObject,
+                  End,
                End,
-               Child, data->GUI.GR_REMOTE = VGroup,
-                  Child, FI_ConstructSearchGroup(&data->GUI.GR_SEARCH[2], TRUE),
-                  Child, data->GUI.CY_COMBINE[1] = MakeCycle(bcrit,""),
-                  Child, FI_ConstructSearchGroup(&data->GUI.GR_SEARCH[3], TRUE),
+               Child, RectangleObject,
+                  MUIA_Weight, 1,
+               End,
+      				 Child, RectangleObject,
+			      	    MUIA_Rectangle_HBar, TRUE,
+					        MUIA_FixHeight,      4,
+      				 End,
+               Child, HGroup,
+                  Child, data->GUI.BT_MORE = MakeButton(GetStr(MSG_CO_More)),
                   Child, HVSpace,
+                  Child, data->GUI.BT_LESS = MakeButton(GetStr(MSG_CO_Less)),
                End,
             End,
             Child, VGroup,
@@ -909,15 +915,12 @@ APTR CO_Page3(struct CO_ClassData *data)
          End,
       End))
    {
-      int i, j;
       SetHelp(data->GUI.LV_RULES     ,MSG_HELP_CO_LV_RULES     );
       SetHelp(data->GUI.ST_RNAME     ,MSG_HELP_CO_ST_RNAME     );
       SetHelp(data->GUI.CH_REMOTE    ,MSG_HELP_CO_CH_REMOTE    );
       SetHelp(data->GUI.CH_APPLYNEW  ,MSG_HELP_CO_CH_APPLYNEW  );
       SetHelp(data->GUI.CH_APPLYSENT ,MSG_HELP_CO_CH_APPLYSENT );
       SetHelp(data->GUI.CH_APPLYREQ  ,MSG_HELP_CO_CH_APPLYREQ  );
-      SetHelp(data->GUI.CY_COMBINE[0],MSG_HELP_CO_CY_COMBINE   );
-      SetHelp(data->GUI.CY_COMBINE[1],MSG_HELP_CO_CY_COMBINE   );
       SetHelp(data->GUI.CH_ABOUNCE   ,MSG_HELP_CO_CH_ABOUNCE   );
       SetHelp(data->GUI.CH_AFORWARD  ,MSG_HELP_CO_CH_AFORWARD  );
       SetHelp(data->GUI.CH_ARESPONSE ,MSG_HELP_CO_CH_ARESPONSE );
@@ -947,8 +950,6 @@ APTR CO_Page3(struct CO_ClassData *data)
       DoMethod(data->GUI.CH_APPLYREQ ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_APPLYSENT,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_APPLYNEW ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CY_COMBINE[0],MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
-      DoMethod(data->GUI.CY_COMBINE[1],MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_ABOUNCE  ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_AFORWARD ,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.CH_ARESPONSE,MUIM_Notify,MUIA_Selected           ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
@@ -966,28 +967,16 @@ APTR CO_Page3(struct CO_ClassData *data)
       DoMethod(data->GUI.TX_MOVETO   ,MUIM_Notify,MUIA_Text_Contents      ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&SetActiveFilterDataHook);
       DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.PO_MOVETO   ,2,MUIM_Popstring_Close,TRUE);
       DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.CH_AMOVE    ,3,MUIM_Set,MUIA_Selected,TRUE);
-      for (j = 0; j < 4; j++)
-      {
-         struct SearchGroup *sg = &(data->GUI.GR_SEARCH[j]);
-         DoMethod(sg->CY_MODE     ,MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
-         DoMethod(sg->RA_ADRMODE  ,MUIM_Notify,MUIA_Radio_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
-         DoMethod(sg->ST_FIELD    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
-         DoMethod(sg->CY_STATUS   ,MUIM_Notify,MUIA_Cycle_Active       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
-         for (i = 0; i < 5; i++)
-         {
-            if (sg->CY_COMP[i])     DoMethod(sg->CY_COMP[i]    ,MUIM_Notify,MUIA_Cycle_Active   ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
-            if (sg->ST_MATCH[i])    DoMethod(sg->ST_MATCH[i]   ,MUIM_Notify,MUIA_String_Contents,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
-            if (sg->CH_CASESENS[i]) DoMethod(sg->CH_CASESENS[i],MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
-            if (sg->CH_SUBSTR[i])   DoMethod(sg->CH_SUBSTR[i]  ,MUIM_Notify,MUIA_Selected       ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook,&SetActiveFilterDataHook);
-         }
-      }
       DoMethod(data->GUI.BT_RADD,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &AddNewFilterToListHook);
       DoMethod(data->GUI.BT_RDEL,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &RemoveActiveFilterHook);
       DoMethod(data->GUI.BT_FILTERUP,   MUIM_Notify, MUIA_Pressed,  FALSE,  data->GUI.LV_RULES,       3,  MUIM_NList_Move,  MUIV_NList_Move_Selected, MUIV_NList_Move_Previous);
       DoMethod(data->GUI.BT_FILTERDOWN, MUIM_Notify, MUIA_Pressed,  FALSE,  data->GUI.LV_RULES,       3,  MUIM_NList_Move,  MUIV_NList_Move_Selected, MUIV_NList_Move_Next);
       DoMethod(data->GUI.CH_AMOVE,      MUIM_Notify, MUIA_Selected, TRUE,   data->GUI.CH_ADELETE,     3,  MUIM_Set,         MUIA_Selected,            FALSE);
       DoMethod(data->GUI.CH_ADELETE,    MUIM_Notify, MUIA_Selected, TRUE,   data->GUI.CH_AMOVE,       3,  MUIM_Set,         MUIA_Selected,            FALSE);
+      DoMethod(data->GUI.BT_MORE,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &AddNewRuleToListHook);
+      DoMethod(data->GUI.BT_LESS,       MUIM_Notify, MUIA_Pressed,  FALSE,  MUIV_Notify_Application,  2,  MUIM_CallHook,    &RemoveLastRuleHook);
    }
+
    return grp;
 }
 

@@ -5509,3 +5509,9 @@ U
 MSG_CTunknown (//)
 unknown
 ;
+MSG_CO_More (//)
+_More
+;
+MSG_CO_Less (//)
+_Less
+;

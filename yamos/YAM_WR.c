@@ -1656,7 +1656,7 @@ HOOKPROTONHNO(WR_Edit, void, int *arg)
       /* Workaround for a MUI bug */
 
       EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum], NULL);
-      sprintf(buffer,"%s \"%s\"", C->Editor, GetRealPath(G->WR_Filename[winnum]));
+      sprintf(buffer,"\"%s\" \"%s\"", C->Editor, GetRealPath(G->WR_Filename[winnum]));
       ExecuteCommand(buffer, TRUE, OUT_NIL);
    }
 }

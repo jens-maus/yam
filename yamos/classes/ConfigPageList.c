@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
  $Id$
 
- Superclass:  MUIC_List
+ Superclass:  MUIC_NList
  Description: List that manages the different pages of the configuration
 
 ***************************************************************************/
@@ -35,7 +35,6 @@ struct Data
 {
 	struct Hook DisplayHook;
 	Object 			*Object[MAXCPAGES];
-	APTR        Image[MAXCPAGES];
 };
 */
 
@@ -47,14 +46,14 @@ struct PageList
 };
 */
 
+/* Hooks */
 /// DisplayHook
 //  Section listview displayhook
-HOOKPROTO(DisplayFunc, long, char **array, struct PageList *entry)
+HOOKPROTONH(DisplayFunc, long, char **array, struct PageList *entry)
 {
 	static char page[SIZE_DEFAULT];
-	struct Data *data = (struct Data *)hook->h_Data;
 	
-	sprintf(array[0] = page, "\033O[%08lx] %s", (ULONG)data->Image[entry->Offset], GetStr(entry->PageLabel));
+	sprintf(array[0] = page, "\033o[%d] %s", entry->Offset, GetStr(entry->PageLabel));
 	
 	return 0;
 }
@@ -315,6 +314,8 @@ static const UBYTE PL_IconBody[MAXCPAGES][240] = {
 
 ///
 
+/* Private Functions */
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -323,68 +324,34 @@ OVERLOAD(OM_NEW)
 		TAG_MORE, inittags(msg))))
 	{
 		GETDATA;
+		int i;
 
 		InitHook(&data->DisplayHook, DisplayHook, data);
-		set(obj, MUIA_List_DisplayHook, &data->DisplayHook);
+		set(obj, MUIA_NList_DisplayHook, &data->DisplayHook);
+
+		for(i = 0; i < MAXCPAGES; i++)
+		{
+			data->Object[i] = BodychunkObject,
+													MUIA_FixWidth             , 23,
+													MUIA_FixHeight            , 15,
+													MUIA_Bitmap_Width         , 23,
+													MUIA_Bitmap_Height        , 15,
+													MUIA_Bitmap_SourceColors  , PL_Colors,
+													MUIA_Bodychunk_Depth      , 3,
+													MUIA_Bodychunk_Body       , PL_IconBody[i],
+													MUIA_Bodychunk_Compression, 1,
+													MUIA_Bodychunk_Masking    , 2,
+													MUIA_Bitmap_Transparent   , 0,
+												End;
+
+			DoMethod(obj, OM_ADDMEMBER, data->Object[i]);
+			DoMethod(obj, MUIM_NList_UseImage, data->Object[i], i, MUIF_NONE);
+		}
 	}
 	
 	return (ULONG)obj;
 }
+
 ///
-/// OVERLOAD(MUIM_Setup)
-OVERLOAD(MUIM_Setup)
-{
-	int i;
-
-	if(!DoSuperMethodA(cl, obj, msg))
-		return FALSE;
-	
-	for(i = 0; i < MAXCPAGES; i++)
-	{
-		GETDATA;
-
-		data->Object[i] = BodychunkObject,
-												MUIA_FixWidth             , 23,
-												MUIA_FixHeight            , 15,
-												MUIA_Bitmap_Width         , 23,
-												MUIA_Bitmap_Height        , 15,
-												MUIA_Bitmap_SourceColors  , PL_Colors,
-												MUIA_Bodychunk_Depth      , 3,
-												MUIA_Bodychunk_Body       , PL_IconBody[i],
-												MUIA_Bodychunk_Compression, 1,
-												MUIA_Bodychunk_Masking    , 2,
-												MUIA_Bitmap_Transparent   , 0,
-											End;
-		
-		data->Image[i] = (APTR)DoMethod(obj, MUIM_List_CreateImage, data->Object[i], MUIF_NONE);
-	}
-	
-	MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-	
-	return TRUE;
-}
-///
-/// OVERLOAD(MUIM_Cleanup)
-OVERLOAD(MUIM_Cleanup)
-{
-	int i;
-
-	MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-	
-	for(i = 0; i < MAXCPAGES; i++)
-	{
-		GETDATA;
-
-		DoMethod(obj, MUIM_List_DeleteImage, data->Image[i]);
-		
-		if(data->Object[i])
-			MUI_DisposeObject(data->Object[i]);
-	}
-
-	return DoSuperMethodA(cl, obj, msg);
-}
-///
-
-/* Private Functions */
 
 /* Public Methods */

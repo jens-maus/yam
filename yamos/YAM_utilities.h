@@ -232,6 +232,8 @@ struct NewToolbarEntry
 #define isValidMailFile(file) (!(strlen(file) < 17 || file[12] != '.' || file[16] != ',' || !isdigit(file[13])))
 #define Bool2Txt(b)           ((b) ? "Y" : "N")
 #define Txt2Bool(t)           (BOOL)(toupper((int)*(t)) == 'Y' || (int)*(t) == '1')
+#define GetMUIString(a, obj)  strcpy((a), (char *)xget((obj), MUIA_String_Contents))
+#define GetMUIText(a, obj)    strcpy((a), (char *)xget((obj), MUIA_Text_Contents))
 
 #if !defined(IsMinListEmpty)
 #define IsMinListEmpty(x)     (((x)->mlh_TailPred) == (struct MinNode *)(x))
@@ -307,8 +309,7 @@ struct DateStamp *FileDate(char *filename);
 long     FileTime(const char *filename);
 long     FileCount(char *directory);
 void     FinishUnpack(char *file);
-struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext,
-         struct Folder *exclude, APTR parent);
+struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext, struct Folder *exclude, APTR parent);
 void     FormatSize(LONG size, char *buffer);
 void     FreeBCImage(struct BodyChunkData *bcd);
 struct BodyChunkData *GetBCImage(char *fname);
@@ -322,8 +323,6 @@ int      GetMUICycle(Object *obj);
 int      GetMUIInteger(Object *obj);
 int      GetMUINumer(Object *obj);
 int      GetMUIRadio(Object *obj);
-void     GetMUIString(char *a, Object *obj);
-void     GetMUIText(char *a, Object *obj);
 char *   GetNextLine(char *p1);
 struct Person *GetReturnAddress(struct Mail *mail);
 int      GetSimpleID(void);

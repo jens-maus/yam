@@ -263,9 +263,7 @@ OVERLOAD(OM_NEW)
 
 		TAG_MORE, inittags(msg))))
 	{
-		GETDATA;
-
-		if(!(data = (struct Data *)INST_DATA(cl,obj)))
+		if(!(data = (struct Data *)INST_DATA(cl, obj)))
 			return 0;
 
 		// copy back the data stored in our temporarly struct Data

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -125,6 +125,9 @@
 #endif
 #ifndef MUIM_DeleteDragImage
 #define MUIM_DeleteDragImage 				 0x80423037
+#endif
+#ifndef MUIM_Group_MoveMember
+#define MUIM_Group_MoveMember				 0x8042ff4e /* V16 */
 #endif
 #if (MUIMASTER_VMIN < 18)
 #define MUIM_DoDrag 0x804216bb /* private */ /* V18 */

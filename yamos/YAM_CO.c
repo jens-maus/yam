@@ -84,22 +84,6 @@ static void CO_NewPrefsFile(char *fname)
 ///
 
 /**** Filters ****/
-/// CreateNewFilter
-//  Initializes a new rule
-struct FilterNode *CreateNewFilter(void)
-{
-  struct FilterNode *filter = calloc(1, sizeof(struct FilterNode));
-
-  if(filter)
-  {
-    strcpy(filter->Name, GetStr(MSG_NewEntry));
-    filter->ApplyToNew = TRUE;
-    filter->ApplyOnReq = TRUE;
-  }
-
-  return filter;
-}
-///
 /// AddNewFilterToList
 //  Adds a new entry to the global filter list
 HOOKPROTONHNONP(AddNewFilterToList, void)
@@ -108,39 +92,13 @@ HOOKPROTONHNONP(AddNewFilterToList, void)
 
   if((filterNode = CreateNewFilter()))
   {
-    int s;
-
-    for(s = 0; s < 4; s++)
-    {
-      int m;
-
-      for(m = 0; m < 5; m++)
-      {
-        struct SearchGroup *sg = &(G->CO->GUI.GR_SEARCH[s]);
-
-        // reset all GUI elements due to the new active filter
-        nnset(sg->CY_COMP[m], MUIA_Cycle_Active, 0);
-
-        if(sg->ST_MATCH[m])
-          nnset(sg->ST_MATCH[m], MUIA_String_Contents, "");
-        else
-          nnset(sg->CY_STATUS, MUIA_Cycle_Active, 0);
-
-        if(sg->CH_CASESENS[m])
-          nnset(sg->CH_CASESENS[m], MUIA_Selected, FALSE);
-
-        if(sg->CH_SUBSTR[m])
-          nnset(sg->CH_SUBSTR[m], MUIA_Selected, FALSE);
-      }
-    }
-
     DoMethod(G->CO->GUI.LV_RULES, MUIM_NList_InsertSingle, filterNode, MUIV_NList_Insert_Bottom);
     set(G->CO->GUI.LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Bottom);
 
     // lets set the new string gadget active and select all text in there automatically to
     // be more handy to the user ;)
     set(_win(G->CO->GUI.LV_RULES), MUIA_Window_ActiveObject, G->CO->GUI.ST_RNAME);
-    set(G->CO->GUI.ST_RNAME, MUIA_BetterString_SelectSize, -((LONG)strlen(filterNode->Name)));
+    set(G->CO->GUI.ST_RNAME, MUIA_BetterString_SelectSize, -((LONG)strlen(filterNode->name)));
 
     // now add the filterNode to our global filterList
     AddTail((struct List *)&CE->filterList, (struct Node *)filterNode);
@@ -171,20 +129,126 @@ HOOKPROTONHNONP(RemoveActiveFilter, void)
 MakeHook(RemoveActiveFilterHook, RemoveActiveFilter);
 
 ///
+/// AddNewRuleToList
+//  Adds a new entry to the current filter's rule list
+HOOKPROTONHNONP(AddNewRuleToList, void)
+{
+  struct FilterNode *filter = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
+
+  // get the active filterNode
+  DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
+
+  if(filter)
+  {
+    struct RuleNode *rule;
+
+    if((rule = CreateNewRule(filter)))
+    {
+      // add a new GUI element for that particular rule
+      Object *newSearchGroup = SearchControlGroupObject,
+                                 MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
+                                 MUIA_SearchControlGroup_ShowCombineCycle, TRUE,
+                               End;
+
+      if(newSearchGroup == NULL)
+        return;
+
+      // fill the new search group with some content
+      DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, rule);
+
+      // set some notifies
+      DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime,
+                               MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
+
+      // add it to our searchGroupList
+      DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange); // required for a proper refresh
+      DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
+      DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
+      DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
+      DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for a proper refresh
+
+      GhostOutFilter(gui, filter);
+    }
+  }
+}
+MakeHook(AddNewRuleToListHook, AddNewRuleToList);
+
+///
+/// RemoveLastRule
+//  Deletes the last rule of the filter
+HOOKPROTONHNONP(RemoveLastRule, void)
+{
+  struct FilterNode *filter = NULL;
+  struct CO_GUIData *gui = &G->CO->GUI;
+
+  // get the active filterNode
+  DoMethod(gui->LV_RULES, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &filter);
+
+  // if we got an active entry lets remove it from the GUI List
+  // and also from the filter's rule list
+  if(filter)
+  {
+    // lets remove the rule at the end of our ruleList
+    struct RuleNode *rule = (struct RuleNode *)RemTail((struct List *)&filter->ruleList);
+
+    if(rule)
+    {
+      struct List *childList;
+
+      // now we do free our search structure if it exists
+      if(rule->search)
+      {
+        FreeSearchPatternList(rule->search);
+        free(rule->search);
+        rule->search = NULL;
+      }
+
+      free(rule);
+
+      // Remove the GUI elements as well
+    	if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+	    {
+        Object *cstate = (Object *)childList->lh_Head;
+		    Object *child;
+        Object *lastChild = NULL;
+
+		    while((child = NextObject(&cstate)))
+          lastChild = child;
+
+        if(lastChild)
+        {
+          // remove the searchGroup
+          DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
+          DoMethod(gui->GR_SGROUP, OM_REMMEMBER, lastChild);
+          DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
+
+          // Dipose the object
+          MUI_DisposeObject(lastChild);
+
+          GhostOutFilter(gui, filter);
+        }
+      }
+    }
+  }
+}
+MakeHook(RemoveLastRuleHook, RemoveLastRule);
+
+///
 /// GhostOutFilter
 //  Enables/disables GUI gadgets in filter form
 void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
 {
-  BOOL isremote = filter ? filter->Remote : FALSE;
-  BOOL single = filter ? !filter->Combine : FALSE;
+  BOOL isremote = filter ? filter->remote : FALSE;
   LONG pos = MUIV_NList_GetPos_Start;
+  int numRules = 0;
+  struct List *childList;
 
   set(gui->ST_RNAME,             MUIA_Disabled, !filter);
   set(gui->CH_REMOTE,            MUIA_Disabled, !filter);
   set(gui->CH_APPLYNEW,          MUIA_Disabled, !filter || isremote);
   set(gui->CH_APPLYREQ,          MUIA_Disabled, !filter || isremote);
   set(gui->CH_APPLYSENT,         MUIA_Disabled, !filter || isremote);
-  set(gui->CY_COMBINE[isremote], MUIA_Disabled, !filter);
   set(gui->CH_ABOUNCE,           MUIA_Disabled, !filter || isremote);
   set(gui->CH_AFORWARD,          MUIA_Disabled, !filter || isremote);
   set(gui->CH_ARESPONSE,         MUIA_Disabled, !filter || isremote);
@@ -209,8 +273,21 @@ void GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter)
   set(gui->BT_FILTERUP,   MUIA_Disabled, !filter || pos == 0);
   set(gui->BT_FILTERDOWN, MUIA_Disabled, !filter || pos+1 == (LONG)xget(gui->LV_RULES, MUIA_NList_Entries));
 
-  FI_SearchGhost(&(gui->GR_SEARCH[2*isremote]), !filter);
-  FI_SearchGhost(&(gui->GR_SEARCH[2*isremote+1]), !filter || single);
+  // we have to find out how many rules the filter has
+  if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+	{
+    Object *cstate = (Object *)childList->lh_Head;
+		Object *child;
+
+		while((child = NextObject(&cstate)))
+    {
+      set(child, MUIA_Disabled, !filter);
+      numRules++;
+    }
+  }
+
+  set(gui->BT_MORE, MUIA_Disabled, !filter);
+  set(gui->BT_LESS, MUIA_Disabled, !filter || numRules <= 1);
 }
 
 ///
@@ -230,15 +307,13 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
   // values of this filter
   if(filter)
   {
-    int i;
-    int rm = filter->Remote ? 1 : 0;
+    struct List *childList;
 
-    nnset(gui->ST_RNAME,      MUIA_String_Contents,   filter->Name);
-    nnset(gui->CH_REMOTE,     MUIA_Selected,          rm);
-    nnset(gui->CH_APPLYNEW,   MUIA_Selected,          filter->ApplyToNew);
-    nnset(gui->CH_APPLYSENT,  MUIA_Selected,          filter->ApplyToSent);
-    nnset(gui->CH_APPLYREQ,   MUIA_Selected,          filter->ApplyOnReq);
-    nnset(gui->CY_COMBINE[rm],MUIA_Cycle_Active,      filter->Combine);
+    nnset(gui->ST_RNAME,      MUIA_String_Contents,   filter->name);
+    nnset(gui->CH_REMOTE,     MUIA_Selected,          filter->remote);
+    nnset(gui->CH_APPLYNEW,   MUIA_Selected,          filter->applyToNew);
+    nnset(gui->CH_APPLYSENT,  MUIA_Selected,          filter->applyToSent);
+    nnset(gui->CH_APPLYREQ,   MUIA_Selected,          filter->applyOnReq);
     nnset(gui->CH_ABOUNCE,    MUIA_Selected,          hasBounceAction(filter));
     nnset(gui->CH_AFORWARD,   MUIA_Selected,          hasForwardAction(filter));
     nnset(gui->CH_ARESPONSE,  MUIA_Selected,          hasReplyAction(filter));
@@ -247,47 +322,56 @@ HOOKPROTONHNONP(GetActiveFilterData, void)
     nnset(gui->CH_AMOVE,      MUIA_Selected,          hasMoveAction(filter));
     nnset(gui->CH_ADELETE,    MUIA_Selected,          hasDeleteAction(filter));
     nnset(gui->CH_ASKIP,      MUIA_Selected,          hasSkipMsgAction(filter));
-    nnset(gui->ST_ABOUNCE,    MUIA_String_Contents,   filter->BounceTo);
-    nnset(gui->ST_AFORWARD,   MUIA_String_Contents,   filter->ForwardTo);
-    nnset(gui->ST_ARESPONSE,  MUIA_String_Contents,   filter->ReplyFile);
-    nnset(gui->ST_AEXECUTE,   MUIA_String_Contents,   filter->ExecuteCmd);
-    nnset(gui->ST_APLAY,      MUIA_String_Contents,   filter->PlaySound);
-    nnset(gui->TX_MOVETO,     MUIA_Text_Contents,     filter->MoveTo);
-    set(gui->GR_LRGROUP,      MUIA_Group_ActivePage,  rm);
+    nnset(gui->ST_ABOUNCE,    MUIA_String_Contents,   filter->bounceTo);
+    nnset(gui->ST_AFORWARD,   MUIA_String_Contents,   filter->forwardTo);
+    nnset(gui->ST_ARESPONSE,  MUIA_String_Contents,   filter->replyFile);
+    nnset(gui->ST_AEXECUTE,   MUIA_String_Contents,   filter->executeCmd);
+    nnset(gui->ST_APLAY,      MUIA_String_Contents,   filter->playSound);
+    nnset(gui->TX_MOVETO,     MUIA_Text_Contents,     filter->moveTo);
 
-    for(i = 0; i < 2; i++)
-    {
-      struct SearchGroup *sg = &(gui->GR_SEARCH[i+2*rm]);
-      int m;
+    // before we actually set our rule options we have to clear out
+    // all previous existing group childs
+    DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange); // required for proper refresh
+    DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
+  	if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+	  {
+      int i;
+		  struct MinNode *curNode;
+      Object *cstate = (Object *)childList->lh_Head;
+		  Object *child;
 
-      nnset(sg->CY_MODE,      MUIA_Cycle_Active,      filter->Field[i]);
-      nnset(sg->RA_ADRMODE,   MUIA_Radio_Active,      filter->SubField[i]);
-      nnset(sg->ST_FIELD,     MUIA_String_Contents,   filter->CustomField[i]);
-      nnset(sg->PG_SRCHOPT,   MUIA_Group_ActivePage,  m = Mode2Group[filter->Field[i]]);
-      nnset(sg->CY_COMP[m],   MUIA_Cycle_Active,      filter->Comparison[i]);
+		  while((child = NextObject(&cstate)))
+		  {
+        // remove that child
+        DoMethod(gui->GR_SGROUP, OM_REMMEMBER, child);
+        MUI_DisposeObject(child);
+		  }
 
-      if(sg->ST_MATCH[m])
-        nnset(sg->ST_MATCH[m], MUIA_String_Contents, filter->Match[i]);
-      else
+      // Now we should have a clean SGROUP and can populate with new SearchControlGroup
+      // objects
+      for(i=0, curNode = filter->ruleList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
       {
-        int k;
+        Object *newSearchGroup = SearchControlGroupObject,
+                                   MUIA_SearchControlGroup_RemoteFilterMode, filter->remote,
+                                   MUIA_SearchControlGroup_ShowCombineCycle, i > 0,
+                                 End;
 
-        for(k=0; k <= 8; k++)
-        {
-          if(*filter->Match[i] == mailStatusCycleMap[k])
-          {
-            nnset(sg->CY_STATUS, MUIA_Cycle_Active, k);
-            break;
-          }
-        }
+        if(newSearchGroup == NULL)
+          break;
+
+        // fill the new search group with some content
+        DoMethod(newSearchGroup, MUIM_SearchControlGroup_GetFromRule, curNode);
+
+        // set some notifies
+        DoMethod(newSearchGroup, MUIM_Notify, MUIA_SearchControlGroup_Modified, MUIV_EveryTime,
+                                 MUIV_Notify_Application, 2, MUIM_CallHook, &SetActiveFilterDataHook);
+
+        // add it to our searchGroupList
+        DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
       }
-
-      if(sg->CH_CASESENS[m])
-        nnset(sg->CH_CASESENS[m], MUIA_Selected, filter->CaseSens[i]);
-
-      if(sg->CH_SUBSTR[m])
-        nnset(sg->CH_SUBSTR[m], MUIA_Selected, filter->Substring[i]);
-    }
+	  }
+    DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
+    DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for proper refresh
   }
 
   GhostOutFilter(gui, filter);
@@ -311,58 +395,53 @@ HOOKPROTONHNONP(SetActiveFilterData, void)
   // values of this filter
   if(filter)
   {
-    char *tx;
-    int i;
+    struct List *childList;
     int rm = GetMUICheck(gui->CH_REMOTE);
 
-    GetMUIString(filter->Name, gui->ST_RNAME);
-    filter->Remote = (rm == 1);
-    filter->ApplyToNew  = GetMUICheck(gui->CH_APPLYNEW);
-    filter->ApplyToSent = GetMUICheck(gui->CH_APPLYSENT);
-    filter->ApplyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
-    filter->Combine     = GetMUICycle(gui->CY_COMBINE[rm]);
-    filter->Actions = 0;
-    if(GetMUICheck(gui->CH_ABOUNCE))    SET_FLAG(filter->Actions, RULE_BOUNCE);
-    if(GetMUICheck(gui->CH_AFORWARD))   SET_FLAG(filter->Actions, RULE_FORWARD);
-    if(GetMUICheck(gui->CH_ARESPONSE))  SET_FLAG(filter->Actions, RULE_REPLY);
-    if(GetMUICheck(gui->CH_AEXECUTE))   SET_FLAG(filter->Actions, RULE_EXECUTE);
-    if(GetMUICheck(gui->CH_APLAY))      SET_FLAG(filter->Actions, RULE_PLAYSOUND);
-    if(GetMUICheck(gui->CH_AMOVE))      SET_FLAG(filter->Actions, RULE_MOVE);
-    if(GetMUICheck(gui->CH_ADELETE))    SET_FLAG(filter->Actions, RULE_DELETE);
-    if(GetMUICheck(gui->CH_ASKIP))      SET_FLAG(filter->Actions, RULE_SKIPMSG);
-    GetMUIString(filter->BounceTo,   gui->ST_ABOUNCE);
-    GetMUIString(filter->ForwardTo,  gui->ST_AFORWARD);
-    GetMUIString(filter->ReplyFile,  gui->ST_ARESPONSE);
-    GetMUIString(filter->ExecuteCmd, gui->ST_AEXECUTE);
-    GetMUIString(filter->PlaySound,  gui->ST_APLAY);
+    GetMUIString(filter->name, gui->ST_RNAME);
+    filter->remote = (rm == 1);
+    filter->applyToNew  = GetMUICheck(gui->CH_APPLYNEW);
+    filter->applyToSent = GetMUICheck(gui->CH_APPLYSENT);
+    filter->applyOnReq  = GetMUICheck(gui->CH_APPLYREQ);
+    filter->actions = 0;
+    if(GetMUICheck(gui->CH_ABOUNCE))    SET_FLAG(filter->actions, FA_BOUNCE);
+    if(GetMUICheck(gui->CH_AFORWARD))   SET_FLAG(filter->actions, FA_FORWARD);
+    if(GetMUICheck(gui->CH_ARESPONSE))  SET_FLAG(filter->actions, FA_REPLY);
+    if(GetMUICheck(gui->CH_AEXECUTE))   SET_FLAG(filter->actions, FA_EXECUTE);
+    if(GetMUICheck(gui->CH_APLAY))      SET_FLAG(filter->actions, FA_PLAYSOUND);
+    if(GetMUICheck(gui->CH_AMOVE))      SET_FLAG(filter->actions, FA_MOVE);
+    if(GetMUICheck(gui->CH_ADELETE))    SET_FLAG(filter->actions, FA_DELETE);
+    if(GetMUICheck(gui->CH_ASKIP))      SET_FLAG(filter->actions, FA_SKIPMSG);
+    GetMUIString(filter->bounceTo,   gui->ST_ABOUNCE);
+    GetMUIString(filter->forwardTo,  gui->ST_AFORWARD);
+    GetMUIString(filter->replyFile,  gui->ST_ARESPONSE);
+    GetMUIString(filter->executeCmd, gui->ST_AEXECUTE);
+    GetMUIString(filter->playSound,  gui->ST_APLAY);
 
-    tx = (char *)xget(gui->TX_MOVETO, MUIA_Text_Contents);
-    strncpy(filter->MoveTo, tx, SIZE_NAME);
-    filter->MoveTo[SIZE_NAME-1] = '\0';
+    strncpy(filter->moveTo, (char *)xget(gui->TX_MOVETO, MUIA_Text_Contents), SIZE_NAME);
+    filter->moveTo[SIZE_NAME-1] = '\0';
 
-    for(i = 0; i < 2; i++)
-    {
-      struct SearchGroup *sg = &(gui->GR_SEARCH[i+2*rm]);
-      int m = xget(sg->PG_SRCHOPT, MUIA_Group_ActivePage);
+    // make sure to update all rule settings
+  	if((childList = (struct List *)xget(gui->GR_SGROUP, MUIA_Group_ChildList)))
+	  {
+      Object *cstate = (Object *)childList->lh_Head;
+		  Object *child;
+      int i=0;
 
-      filter->Field[i]      = GetMUICycle(sg->CY_MODE);
-      filter->SubField[i]   = GetMUIRadio(sg->RA_ADRMODE);
-      GetMUIString(filter->CustomField[i], sg->ST_FIELD);
-      filter->Comparison[i] = GetMUICycle(sg->CY_COMP[m]);
+		  // iterate through the childList and update the rule structures
+      while((child = NextObject(&cstate)))
+		  {
+        struct RuleNode *rule;
 
-      if(sg->ST_MATCH[m])
-        GetMUIString(filter->Match[i], sg->ST_MATCH[m]);
-      else
-      {
-        filter->Match[i][0] = mailStatusCycleMap[GetMUICycle(sg->CY_STATUS)];
-        filter->Match[i][1] = '\0';
-      }
+        // get the rule out of the ruleList or create a new one
+        while(!(rule = GetFilterRule(filter, i)))
+          CreateNewRule(filter);
 
-      if(sg->CH_CASESENS[m])
-        filter->CaseSens[i]  = GetMUICheck(sg->CH_CASESENS[m]);
+        // set the rule settings
+        DoMethod(child, MUIM_SearchControlGroup_SetToRule, rule);
 
-      if(sg->CH_SUBSTR[m])
-        filter->Substring[i] = GetMUICheck(sg->CH_SUBSTR[m]);
+        ++i;
+		  }
     }
 
     GhostOutFilter(gui, filter);
@@ -376,30 +455,21 @@ MakeHook(SetActiveFilterDataHook, SetActiveFilterData);
 //  Enables/disables GUI elements for remote filters
 HOOKPROTONHNO(CO_RemoteToggleFunc, void, int *arg)
 {
-   BOOL rm = *arg;
-   struct CO_GUIData *gui = &G->CO->GUI;
-   struct SearchGroup *src, *dst;
-   int i, m;
+  BOOL rm = *arg;
+  struct List *childList = (struct List *)xget(G->CO->GUI.GR_SGROUP, MUIA_Group_ChildList);
 
-   set(gui->GR_LRGROUP, MUIA_Group_ActivePage, rm);
-   nnset(gui->CY_COMBINE[rm], MUIA_Cycle_Active, GetMUICycle(gui->CY_COMBINE[!rm]));
-   for (i = 0; i < 2; i++)
-   {
-      src = &(gui->GR_SEARCH[i+2*(!rm)]); dst = &(gui->GR_SEARCH[i+2*rm]);
-      set(dst->CY_MODE, MUIA_Cycle_Active, GetMUICycle(src->CY_MODE));
-      nnset(dst->RA_ADRMODE, MUIA_Radio_Active, GetMUIRadio(src->RA_ADRMODE));
-      nnset(dst->ST_FIELD, MUIA_String_Contents, (STRPTR)xget(src->ST_FIELD, MUIA_String_Contents));
-      for (m = 0; m < 5; m++)
-      {
-         nnset(dst->CY_COMP[m], MUIA_Cycle_Active, GetMUICycle(src->CY_COMP[m]));
-         if (src->ST_MATCH[m]) nnset(dst->ST_MATCH[m], MUIA_String_Contents, (STRPTR)xget(src->ST_MATCH[m], MUIA_String_Contents));
-         else nnset(dst->CY_STATUS, MUIA_Cycle_Active, GetMUICycle(src->CY_STATUS));
-         if (src->CH_CASESENS[m]) nnset(dst->CH_CASESENS[m], MUIA_Selected, GetMUICheck(src->CH_CASESENS[m]));
-         if (src->CH_SUBSTR[m]  ) nnset(dst->CH_SUBSTR[m]  , MUIA_Selected, GetMUICheck(src->CH_SUBSTR[m]));
-      }
-   }
+  if(childList)
+	{
+	  Object *cstate = (Object *)childList->lh_Head;
+		Object *child;
 
-   SetActiveFilterData();
+		while((child = NextObject(&cstate)))
+		{
+      set(child, MUIA_SearchControlGroup_RemoteFilterMode, rm);
+		}
+	}
+
+  SetActiveFilterData();
 }
 MakeHook(CO_RemoteToggleHook,CO_RemoteToggleFunc);
 ///
@@ -747,18 +817,10 @@ void CO_FreeConfig(struct Config *co)
   // we have to free the filterList
   for(curNode = co->filterList.mlh_Head; curNode->mln_Succ;)
   {
-    int i;
     struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    for(i=0; i < 2; i++)
-    {
-      if(filter->search[i])
-      {
-        FreeSearchPatternList(filter->search[i]);
-        free(filter->search[i]);
-        filter->search[i] = NULL;
-      }
-    }
+    // free the ruleList of the filter
+    FreeFilterRuleList(filter);
 
     // before we remove the node we have to save the pointer to the next one
     curNode = curNode->mln_Succ;
@@ -1359,7 +1421,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
    {
       if(*(CE->Editor))
       {
-        sprintf(buffer,"%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig])));
+        sprintf(buffer,"\"%s\" \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig])));
         ExecuteCommand(buffer, FALSE, OUT_NIL);
       }
       else return;
@@ -1471,25 +1533,31 @@ static APTR CO_BuildPage(struct CO_ClassData *data, int page)
 //  Selects a different section of the configuration
 HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
 {
-   struct CO_GUIData *gui = &G->CO->GUI;
-   if (*arg < 0 || *arg >= MAXCPAGES) return;
-   set(gui->WI, MUIA_Window_Sleep, TRUE);
-   CO_GetConfig();
-   if (DoMethod(gui->GR_PAGE, MUIM_Group_InitChange))
-   {
-      DoMethod(gui->GR_PAGE, OM_REMMEMBER, gui->GR_SUBPAGE);
-      MUI_DisposeObject(gui->GR_SUBPAGE);
-      if ((gui->GR_SUBPAGE = CO_BuildPage(G->CO, *arg)))
-      {
-         DoMethod(gui->GR_PAGE, OM_ADDMEMBER, gui->GR_SUBPAGE);
-         G->CO->VisiblePage = *arg;
-         G->CO->Visited[*arg] = TRUE;
-      }
-      DoMethod(gui->GR_PAGE, MUIM_Group_ExitChange);
-      set(gui->MI_IMPMIME, MUIA_Menuitem_Enabled, *arg == 11);
-      CO_SetConfig();
-   }
-   set(gui->WI, MUIA_Window_Sleep, FALSE);
+  struct CO_GUIData *gui = &G->CO->GUI;
+
+  if(*arg < 0 || *arg >= MAXCPAGES)
+    return;
+
+  set(gui->WI, MUIA_Window_Sleep, TRUE);
+  CO_GetConfig();
+
+  if(DoMethod(gui->GR_PAGE, MUIM_Group_InitChange))
+  {
+    DoMethod(gui->GR_PAGE, OM_REMMEMBER, gui->GR_SUBPAGE);
+    MUI_DisposeObject(gui->GR_SUBPAGE);
+
+    if((gui->GR_SUBPAGE = CO_BuildPage(G->CO, *arg)))
+    {
+      DoMethod(gui->GR_PAGE, OM_ADDMEMBER, gui->GR_SUBPAGE);
+      G->CO->VisiblePage = *arg;
+      G->CO->Visited[*arg] = TRUE;
+    }
+
+    DoMethod(gui->GR_PAGE, MUIM_Group_ExitChange);
+    set(gui->MI_IMPMIME, MUIA_Menuitem_Enabled, *arg == 11);
+    CO_SetConfig();
+  }
+  set(gui->WI, MUIA_Window_Sleep, FALSE);
 }
 MakeStaticHook(CO_ChangePageHook,CO_ChangePageFunc);
 
@@ -1559,11 +1627,11 @@ static struct CO_ClassData *CO_New(void)
    if (data)
    {
       static struct PageList page[MAXCPAGES], *pages[MAXCPAGES+1];
-      APTR lv;
       int i;
 
       for (i = 0; i < MAXCPAGES; i++) { page[i].Offset = i; pages[i] = &page[i]; }
       pages[i] = NULL;
+
       page[ 0].PageLabel = MSG_CO_CrdFirstSteps;
       page[ 1].PageLabel = MSG_CO_CrdTCPIP;
       page[ 2].PageLabel = MSG_CO_CrdNewMail;
@@ -1579,6 +1647,7 @@ static struct CO_ClassData *CO_New(void)
       page[12].PageLabel = MSG_CO_CrdABook;
       page[13].PageLabel = MSG_CO_CrdScripts;
       page[14].PageLabel = MSG_CO_CrdMixed;
+
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_MA_MConfig),
          MUIA_HelpNode,"CO_W",
@@ -1600,17 +1669,22 @@ static struct CO_ClassData *CO_New(void)
          MUIA_Window_ID, MAKE_ID('C','O','N','F'),
          WindowContents, VGroup,
             Child, HGroup,
-               Child, lv = ListviewObject,
-                  MUIA_CycleChain,1,
-                  MUIA_Listview_List, data->GUI.LV_PAGE = ConfigPageListObject,
+               GroupSpacing(3),
+               Child, data->GUI.NLV_PAGE = NListviewObject,
+                  MUIA_HorizWeight, 25,
+                  MUIA_CycleChain,  TRUE,
+                  MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
+                  MUIA_NListview_NList, data->GUI.LV_PAGE = ConfigPageListObject,
                      InputListFrame,
-                     MUIA_List_AdjustWidth, TRUE,
-                     MUIA_List_MinLineHeight, 16,
-                     MUIA_List_SourceArray, pages,
-                     MUIA_List_Active, 0,
+                     MUIA_NList_Format,         "MW=-1 W=-1",
+                     MUIA_NList_MinLineHeight,  16,
+                     MUIA_NList_SourceArray,    pages,
+                     MUIA_NList_Active,         MUIV_NList_Active_Top,
                   End,
                End,
+               Child, BalanceObject, End,
                Child, data->GUI.GR_PAGE = VGroup,
+                  MUIA_HorizWeight, 100,
                   TextFrame,
                   InnerSpacing(6,6),
                   MUIA_Background, MUII_PageBack,
@@ -1628,7 +1702,7 @@ static struct CO_ClassData *CO_New(void)
       if (data->GUI.WI)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         set(data->GUI.WI, MUIA_Window_DefaultObject, lv);
+         set(data->GUI.WI, MUIA_Window_DefaultObject, data->GUI.NLV_PAGE);
          SetHelp(data->GUI.BT_SAVE,   MSG_HELP_CO_BT_SAVE);
          SetHelp(data->GUI.BT_USE,    MSG_HELP_CO_BT_USE);
          SetHelp(data->GUI.BT_CANCEL, MSG_HELP_CO_BT_CANCEL);
@@ -1639,7 +1713,7 @@ static struct CO_ClassData *CO_New(void)
          DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_LAST     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_LastSavedHook);
          DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_REST     ,MUIV_Notify_Application,2,MUIM_CallHook,&CO_RestoreHook);
          DoMethod(data->GUI.WI          ,MUIM_Notify,MUIA_Window_MenuAction  ,CMEN_MIME     ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ImportCTypesHook,FALSE);
-         DoMethod(data->GUI.LV_PAGE     ,MUIM_Notify,MUIA_List_Active        ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ChangePageHook,MUIV_TriggerValue);
+         DoMethod(data->GUI.LV_PAGE     ,MUIM_Notify,MUIA_NList_Active       ,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_ChangePageHook,MUIV_TriggerValue);
          DoMethod(data->GUI.BT_SAVE     ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,2);
          DoMethod(data->GUI.BT_USE      ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,1);
          DoMethod(data->GUI.BT_CANCEL   ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_CloseHook,0);

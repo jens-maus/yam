@@ -36,63 +36,71 @@
 
 #include "YAM_mainFolder.h"
 
-struct SearchGroup
-{
-   Object *PG_SRCHOPT;
-   Object *CY_MODE;
-   Object *ST_FIELD;
-   Object *CY_COMP[5];
-   Object *ST_MATCH[5];
-   Object *BT_FILE[5];
-   Object *BT_EDIT[5];
-   Object *RA_ADRMODE;
-   Object *CY_STATUS;
-   Object *CH_CASESENS[5];
-   Object *CH_SUBSTR[5];
-};
-
 struct FI_GUIData
 {
-   Object *WI;
-   Object *LV_FOLDERS;
-   struct SearchGroup GR_SEARCH;
-   Object *LV_MAILS;
-   Object *GR_PAGE;
-   Object *GA_PROGRESS;
-   Object *BT_SELECT;
-   Object *BT_READ;
+  Object *WI;
+  Object *LV_FOLDERS;
+  Object *GR_SEARCH;
+  Object *LV_MAILS;
+  Object *GR_PAGE;
+  Object *GA_PROGRESS;
+  Object *BT_SELECT;
+  Object *BT_READ;
 };
 
-struct FI_ClassData  /* find window */
+// find window
+struct FI_ClassData
 {
-   struct FI_GUIData GUI;
-   LONG              Abort;
-   BOOL              SearchActive;
-   BOOL              DisposeOnEnd;
+  struct FI_GUIData GUI;
+  LONG              Abort;
+  BOOL              SearchActive;
+  BOOL              DisposeOnEnd;
 };
 
-enum ApplyFilterMode { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX };
-enum FastSearch { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
-enum SearchMode { SM_FROM=0, SM_TO, SM_CC, SM_REPLYTO, SM_SUBJECT, SM_DATE, SM_HEADLINE,
-                  SM_SIZE, SM_HEADER, SM_BODY, SM_WHOLE, SM_STATUS };
+enum ApplyFilterMode  { APPLY_USER, APPLY_AUTO, APPLY_SENT, APPLY_REMOTE, APPLY_RX_ALL, APPLY_RX };
+enum FastSearch       { FS_NONE=0, FS_FROM, FS_TO, FS_CC, FS_REPLYTO, FS_SUBJECT, FS_DATE, FS_SIZE };
+enum SearchMode       { SM_FROM=0, SM_TO, SM_CC, SM_REPLYTO, SM_SUBJECT, SM_DATE, SM_HEADLINE,
+                        SM_SIZE, SM_HEADER, SM_BODY, SM_WHOLE, SM_STATUS };
+enum CombineMode      { CB_NONE=0, CB_OR, CB_AND, CB_XOR };
+enum SubSearchMode    { SSM_ADDRESS=0, SSM_NAME };
+enum Comparison       { CP_EQUAL=0, CP_NOTEQUAL, CP_LOWER, CP_GREATER, CP_INPUT };
+
+// lets define all the filter->actions flags and
+// define some flag macros for them
+#define FA_BOUNCE       (1<<0)
+#define FA_FORWARD      (1<<1)
+#define FA_REPLY        (1<<2)
+#define FA_EXECUTE      (1<<3)
+#define FA_PLAYSOUND    (1<<4)
+#define FA_MOVE         (1<<5)
+#define FA_DELETE       (1<<6)
+#define FA_SKIPMSG      (1<<7)
+#define hasBounceAction(filter)     (isFlagSet((filter)->actions, FA_BOUNCE))
+#define hasForwardAction(filter)    (isFlagSet((filter)->actions, FA_FORWARD))
+#define hasReplyAction(filter)      (isFlagSet((filter)->actions, FA_REPLY))
+#define hasExecuteAction(filter)    (isFlagSet((filter)->actions, FA_EXECUTE))
+#define hasPlaySoundAction(filter)  (isFlagSet((filter)->actions, FA_PLAYSOUND))
+#define hasMoveAction(filter)       (isFlagSet((filter)->actions, FA_MOVE))
+#define hasDeleteAction(filter)     (isFlagSet((filter)->actions, FA_DELETE))
+#define hasSkipMsgAction(filter)    (isFlagSet((filter)->actions, FA_SKIPMSG))
 
 struct Search
 {
-   char *               Pattern;
-   struct FilterNode *  filter;
-   long                 Size;
-   enum SearchMode      Mode;
-   int                  PersMode;
-   int                  Compare;
-   char                 Status;  // mail status flags
-   enum FastSearch      Fast;
-   BOOL                 CaseSens;
-   BOOL                 SubString;
-   char                 Match[SIZE_PATTERN+4];
-   char                 PatBuf[(SIZE_PATTERN+4)*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
-   char                 Field[SIZE_DEFAULT];
-   struct DateTime      DT;
-   struct MinList       patternList;                  // for storing search patterns
+  char *               Pattern;
+  struct FilterNode *  filter;
+  long                 Size;
+  enum SearchMode      Mode;
+  int                  PersMode;
+  int                  Compare;
+  char                 Status;  // mail status flags
+  enum FastSearch      Fast;
+  BOOL                 CaseSens;
+  BOOL                 SubString;
+  char                 Match[SIZE_PATTERN+4];
+  char                 PatBuf[(SIZE_PATTERN+4)*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
+  char                 Field[SIZE_DEFAULT];
+  struct DateTime      DT;
+  struct MinList       patternList;                  // for storing search patterns
 };
 
 struct SearchPatternNode
@@ -101,32 +109,40 @@ struct SearchPatternNode
   char pattern[SIZE_PATTERN*2+2]; // for storing the already parsed pattern
 };
 
+// A rule structure which is used to be placed
+// into the ruleList of a filter
+struct RuleNode
+{
+  struct MinNode      node;                       // required for placing it into struct FilterNode;
+  struct Search*      search;                     // ptr to our search structure or NULL if not ready yet
+  enum CombineMode    combine;                    // combine value defining which combine operation is used (i.e. AND/OR/XOR)
+  enum SearchMode     searchMode;                 // the destination of the search (i.e. FROM/TO/CC/REPLYTO etc..)
+  enum SubSearchMode  subSearchMode;              // the sub mode for the search (i.e. Adress/Name for email adresses etc.)
+  enum Comparison     comparison;                 // comparison mode to use for our query (i.e. >, <, <>, IN)
+  BOOL                caseSensitive;              // case sensitive search/filtering or not.
+  BOOL                subString;                  // sub string search/filtering or not.
+  char                matchPattern[SIZE_PATTERN]; // user defined pattern for search/filter
+  char                customField[SIZE_DEFAULT];  // user definable string to query some more information
+};
+
 // A filter is represented as a single filter node
 // containing actions and stuff to apply
 struct FilterNode
 {
-  struct MinNode  node;           // required for placing it into struct Config
-  struct Search*  search[2];      // ptr to our search structures or NULL if not ready yet
-  int             Combine;
-  int             Field[2];
-  int             SubField[2];
-  int             Comparison[2];
-  int             Actions;
-  BOOL            Remote;
-  BOOL            ApplyToNew;
-  BOOL            ApplyOnReq;
-  BOOL            ApplyToSent;
-  BOOL            CaseSens[2];
-  BOOL            Substring[2];
-  char            Name[SIZE_NAME];
-  char            CustomField[2][SIZE_DEFAULT];
-  char            Match[2][SIZE_PATTERN];
-  char            BounceTo[SIZE_ADDRESS];
-  char            ForwardTo[SIZE_ADDRESS];
-  char            ReplyFile[SIZE_PATHFILE];
-  char            ExecuteCmd[SIZE_COMMAND];
-  char            PlaySound[SIZE_PATHFILE];
-  char            MoveTo[SIZE_NAME];
+  struct MinNode  node;                     // required for placing it into struct Config
+  int             actions;                  // actions to execute if filter/search matches
+  BOOL            remote;                   // filter is a remote filter
+  BOOL            applyToNew;               // apply filter automatically to new mail
+  BOOL            applyOnReq;               // apply filter on user request
+  BOOL            applyToSent;              // apply filter automatically on sent mail
+  char            name[SIZE_NAME];          // user definable filter name
+  char            bounceTo[SIZE_ADDRESS];   // bounce action: address to bounce the mail to
+  char            forwardTo[SIZE_ADDRESS];  // forward action: address to forward the mail to
+  char            replyFile[SIZE_PATHFILE]; // path to a file to use as the reply text
+  char            executeCmd[SIZE_COMMAND]; // command string for execute action
+  char            playSound[SIZE_PATHFILE]; // path to sound file for sound notification action
+  char            moveTo[SIZE_NAME];        // folder name for move mail action
+  struct MinList  ruleList;                 // list of all rules that filter evaluates.
 };
 
 // external hooks
@@ -136,15 +152,17 @@ extern struct Hook ApplyFiltersHook;
 extern const int Mode2Group[12];
 extern const char mailStatusCycleMap[10];
 
-Object *FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote);
-BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail);
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, char stat, BOOL substr, char *match, char *field);
-void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled);
 
 void FreeSearchPatternList(struct Search *search);
 int AllocFilterSearch(enum ApplyFilterMode mode);
 void FreeFilterSearch(void);
 BOOL ExecuteFilterAction(struct FilterNode *filter, struct Mail *mail);
 void CopyFilterData(struct FilterNode *dstFilter, struct FilterNode *srcFilter);
+void FreeFilterRuleList(struct FilterNode *filter);
+struct FilterNode *CreateNewFilter(void);
+struct RuleNode *CreateNewRule(struct FilterNode *filter);
+struct RuleNode *GetFilterRule(struct FilterNode *filter, int pos);
+BOOL DoFilterSearch(struct FilterNode *filter, struct Mail *mail);
 
 #endif /* YAM_FIND_H */

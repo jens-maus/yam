@@ -3960,20 +3960,6 @@ Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 }
 #endif
 ///
-/// GetMUIString
-//  Returns the value of a MUI string object
-void GetMUIString(char *a,Object *obj)
-{
-   strcpy(a,(char*)xget(obj,MUIA_String_Contents));
-}
-///
-/// GetMUIText
-//  Returns the value of a MUI text object
-void GetMUIText(char *a,Object *obj)
-{
-   strcpy(a,(char*)xget(obj,MUIA_Text_Contents));
-}
-///
 /// GetMUIInteger
 //  Returns the numeric value of a MUI string object
 int GetMUIInteger(Object *obj)

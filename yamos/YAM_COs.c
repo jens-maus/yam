@@ -186,42 +186,54 @@ void CO_SaveConfig(struct Config *co, char *fname)
       // configuration accordingly.
       for(i=0, curNode = co->filterList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ, i++)
       {
+        int j;
         struct FilterNode *filter = (struct FilterNode *)curNode;
+        struct MinNode *curRuleNode;
 
-        fprintf(fh, "FI%02d.Name        = %s\n", i, filter->Name);
-        fprintf(fh, "FI%02d.Remote      = %s\n", i, Bool2Txt(filter->Remote));
-        fprintf(fh, "FI%02d.ApplyToNew  = %s\n", i, Bool2Txt(filter->ApplyToNew));
-        fprintf(fh, "FI%02d.ApplyToSent = %s\n", i, Bool2Txt(filter->ApplyToSent));
-        fprintf(fh, "FI%02d.ApplyOnReq  = %s\n", i, Bool2Txt(filter->ApplyOnReq));
-        fprintf(fh, "FI%02d.Field       = %d\n", i, filter->Field[0]);
-        fprintf(fh, "FI%02d.SubField    = %d\n", i, filter->SubField[0]);
-        fprintf(fh, "FI%02d.CustomField = %s\n", i, filter->CustomField[0]);
-        fprintf(fh, "FI%02d.Comparison  = %d\n", i, filter->Comparison[0]);
-        fprintf(fh, "FI%02d.Match       = %s\n", i, filter->Match[0]);
-        fprintf(fh, "FI%02d.CaseSens    = %s\n", i, Bool2Txt(filter->CaseSens[0]));
-        fprintf(fh, "FI%02d.Substring   = %s\n", i, Bool2Txt(filter->Substring[0]));
-        fprintf(fh, "FI%02d.Combine     = %d\n", i, filter->Combine);
+        fprintf(fh, "FI%02d.Name        = %s\n", i, filter->name);
+        fprintf(fh, "FI%02d.Remote      = %s\n", i, Bool2Txt(filter->remote));
+        fprintf(fh, "FI%02d.ApplyToNew  = %s\n", i, Bool2Txt(filter->applyToNew));
+        fprintf(fh, "FI%02d.ApplyToSent = %s\n", i, Bool2Txt(filter->applyToSent));
+        fprintf(fh, "FI%02d.ApplyOnReq  = %s\n", i, Bool2Txt(filter->applyOnReq));
 
-        // if this filter includes more combining subfilters
-        // we write them out now
-        if(filter->Combine > 0)
+        // now we do have to iterate through our ruleList
+        for(j=0, curRuleNode = filter->ruleList.mlh_Head; curRuleNode->mln_Succ; curRuleNode = curRuleNode->mln_Succ, j++)
         {
-          fprintf(fh, "FI%02d.Field2      = %d\n", i, filter->Field[1]);
-          fprintf(fh, "FI%02d.SubField2   = %d\n", i, filter->SubField[1]);
-          fprintf(fh, "FI%02d.CustomField2= %s\n", i, filter->CustomField[1]);
-          fprintf(fh, "FI%02d.Comparison2 = %d\n", i, filter->Comparison[1]);
-          fprintf(fh, "FI%02d.Match2      = %s\n", i, filter->Match[1]);
-          fprintf(fh, "FI%02d.CaseSens2   = %s\n", i, Bool2Txt(filter->CaseSens[1]));
-          fprintf(fh, "FI%02d.Substring2  = %s\n", i, Bool2Txt(filter->Substring[1]));
+          struct RuleNode *rule = (struct RuleNode *)curRuleNode;
+
+          // we treat the first rule a bit different for compatibility
+          // reasons.
+          if(j == 0)
+          {
+            fprintf(fh, "FI%02d.Field       = %d\n", i, rule->searchMode);
+            fprintf(fh, "FI%02d.SubField    = %d\n", i, rule->subSearchMode);
+            fprintf(fh, "FI%02d.CustomField = %s\n", i, rule->customField);
+            fprintf(fh, "FI%02d.Comparison  = %d\n", i, rule->comparison);
+            fprintf(fh, "FI%02d.Match       = %s\n", i, rule->matchPattern);
+            fprintf(fh, "FI%02d.CaseSens    = %s\n", i, Bool2Txt(rule->caseSensitive));
+            fprintf(fh, "FI%02d.Substring   = %s\n", i, Bool2Txt(rule->subString));
+            fprintf(fh, "FI%02d.Combine     = %d\n", i, rule->combine);
+          }
+          else
+          {
+            fprintf(fh, "FI%02d.Field%d      = %d\n", i, j+1, rule->searchMode);
+            fprintf(fh, "FI%02d.SubField%d   = %d\n", i, j+1, rule->subSearchMode);
+            fprintf(fh, "FI%02d.CustomField%d= %s\n", i, j+1, rule->customField);
+            fprintf(fh, "FI%02d.Comparison%d = %d\n", i, j+1, rule->comparison);
+            fprintf(fh, "FI%02d.Match%d      = %s\n", i, j+1, rule->matchPattern);
+            fprintf(fh, "FI%02d.CaseSens%d   = %s\n", i, j+1, Bool2Txt(rule->caseSensitive));
+            fprintf(fh, "FI%02d.Substring%d  = %s\n", i, j+1, Bool2Txt(rule->subString));
+            fprintf(fh, "FI%02d.Combine%d    = %d\n", i, j+1, rule->combine);
+          }
         }
 
-        fprintf(fh, "FI%02d.Actions     = %d\n", i, filter->Actions);
-        fprintf(fh, "FI%02d.BounceTo    = %s\n", i, filter->BounceTo);
-        fprintf(fh, "FI%02d.ForwardTo   = %s\n", i, filter->ForwardTo);
-        fprintf(fh, "FI%02d.ReplyFile   = %s\n", i, filter->ReplyFile);
-        fprintf(fh, "FI%02d.ExecuteCmd  = %s\n", i, filter->ExecuteCmd);
-        fprintf(fh, "FI%02d.PlaySound   = %s\n", i, filter->PlaySound);
-        fprintf(fh, "FI%02d.MoveTo      = %s\n", i, filter->MoveTo);
+        fprintf(fh, "FI%02d.Actions     = %d\n", i, filter->actions);
+        fprintf(fh, "FI%02d.BounceTo    = %s\n", i, filter->bounceTo);
+        fprintf(fh, "FI%02d.ForwardTo   = %s\n", i, filter->forwardTo);
+        fprintf(fh, "FI%02d.ReplyFile   = %s\n", i, filter->replyFile);
+        fprintf(fh, "FI%02d.ExecuteCmd  = %s\n", i, filter->executeCmd);
+        fprintf(fh, "FI%02d.PlaySound   = %s\n", i, filter->playSound);
+        fprintf(fh, "FI%02d.MoveTo      = %s\n", i, filter->moveTo);
       }
 
       fprintf(fh, "\n[Read]\n");
@@ -441,6 +453,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
             for (p = buffer; *p && *p != '=' && !ISpace(*p); p++); *p = 0;
             if (*buffer && value)
             {
+               // check for an old config version and try to import its values
                if (version == 2)
                {
                   if (!stricmp(buffer, "POP3-Server"))         stccpy(co->P3[0]->Server, value, SIZE_HOST);
@@ -476,35 +489,38 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
                      if(filter)
                      {
+                        struct RuleNode *rule;
                         char *p2;
 
-                        filter->ApplyToNew = filter->ApplyOnReq = Txt2Bool(value);
+                        filter->applyToNew = filter->applyOnReq = Txt2Bool(value);
                         p = strchr(p2 = &value[2], ';');
                         *p++ = '\0';
-                        stccpy(filter->Name, p2, SIZE_NAME);
+                        stccpy(filter->name, p2, SIZE_NAME);
 
-                        if((filter->Field[0] = atoi(p)) == 2)
-                          filter->Field[0] = 4;
+                        // get the first rule (always existent) and fill in data
+                        rule = (struct RuleNode *)filter->ruleList.mlh_Head;
+                        if((rule->searchMode = atoi(p)) == 2)
+                          rule->searchMode = SM_SUBJECT;
 
-                        filter->CaseSens[0] = Txt2Bool(&p[2]);
-                        filter->Comparison[0] = Txt2Bool(&p[4]) ? 1 : 0;
+                        rule->caseSensitive = Txt2Bool(&p[2]);
+                        rule->comparison = Txt2Bool(&p[4]) ? CP_NOTEQUAL : CP_EQUAL;
                         p = strchr(p2 = &p[6], ';');
                         *p++ = '\0';
-                        stccpy(filter->Match[0], p2, SIZE_PATTERN);
+                        stccpy(rule->matchPattern, p2, SIZE_PATTERN);
 
                         switch(atoi(p))
                         {
-                          case 0: filter->Actions = RULE_MOVE;    break;
-                          case 1: filter->Actions = RULE_DELETE;  break;
-                          case 2: filter->Actions = RULE_FORWARD; break;
+                          case 0: filter->actions = FA_MOVE;    break;
+                          case 1: filter->actions = FA_DELETE;  break;
+                          case 2: filter->actions = FA_FORWARD; break;
                         }
 
                         p = strchr(p2 = &p[2], ';');
                         *p++ = '\0';
-                        stccpy(filter->MoveTo, p2, SIZE_NAME);
-                        stccpy(filter->ForwardTo, p, SIZE_ADDRESS);
-                        if(*filter->ForwardTo)
-                          SET_FLAG(filter->Actions, RULE_FORWARD);
+                        stccpy(filter->moveTo, p2, SIZE_NAME);
+                        stccpy(filter->forwardTo, p, SIZE_ADDRESS);
+                        if(*filter->forwardTo)
+                          SET_FLAG(filter->actions, FA_FORWARD);
 
                         AddTail((struct List *)&co->filterList, (struct Node *)filter);
                      }
@@ -602,32 +618,104 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
 
                  if(lastFilter == NULL)
                  {
-                   lastFilter = calloc(1, sizeof(struct FilterNode));
+                   lastFilter = CreateNewFilter();
                    AddTail((struct List *)&co->filterList, (struct Node *)lastFilter);
                    lastFilterID = curFilterID;
                  }
 
                  // now find out which subtype this filter has
-                 if(!stricmp(p, "Name"))                  stccpy(lastFilter->Name, value, SIZE_NAME);
-                 else if(!stricmp(p, "Remote"))           lastFilter->Remote = Txt2Bool(value);
-                 else if(!stricmp(p, "ApplyToNew"))       lastFilter->ApplyToNew = Txt2Bool(value);
-                 else if(!stricmp(p, "ApplyToSent"))      lastFilter->ApplyToSent = Txt2Bool(value);
-                 else if(!stricmp(p, "ApplyOnReq"))       lastFilter->ApplyOnReq = Txt2Bool(value);
-                 else if(!strnicmp(p, "Field", 5))        lastFilter->Field[p[5]=='2'] = atoi(value);
-                 else if(!strnicmp(p, "SubField", 8))     lastFilter->SubField[p[8]=='2'] = atoi(value);
-                 else if(!strnicmp(p, "CustomField", 11)) stccpy(lastFilter->CustomField[p[11]=='2'], value, SIZE_DEFAULT);
-                 else if(!strnicmp(p, "Comparison", 10))  lastFilter->Comparison[p[10]=='2'] = atoi(value);
-                 else if(!strnicmp(p, "Match", 5))        stccpy(lastFilter->Match[p[5]=='2'], value2, SIZE_PATTERN);
-                 else if(!strnicmp(p, "CaseSens", 8))     lastFilter->CaseSens[p[8]=='2'] = Txt2Bool(value);
-                 else if(!strnicmp(p, "Substring", 9))    lastFilter->Substring[p[9]=='2'] = Txt2Bool(value);
-                 else if(!stricmp(p, "Combine"))          lastFilter->Combine = atoi(value);
-                 else if(!stricmp(p, "Actions"))          lastFilter->Actions = atoi(value);
-                 else if(!stricmp(p, "BounceTo"))         stccpy(lastFilter->BounceTo, value, SIZE_ADDRESS);
-                 else if(!stricmp(p, "ForwardTo"))        stccpy(lastFilter->ForwardTo, value, SIZE_ADDRESS);
-                 else if(!stricmp(p, "ReplyFile"))        stccpy(lastFilter->ReplyFile, value, SIZE_PATHFILE);
-                 else if(!stricmp(p, "ExecuteCmd"))       stccpy(lastFilter->ExecuteCmd, value, SIZE_COMMAND);
-                 else if(!stricmp(p, "PlaySound"))        stccpy(lastFilter->PlaySound, value, SIZE_PATHFILE);
-                 else if(!stricmp(p, "MoveTo"))           stccpy(lastFilter->MoveTo, value, SIZE_NAME);
+                 if(!stricmp(p, "Name"))                  stccpy(lastFilter->name, value, SIZE_NAME);
+                 else if(!stricmp(p, "Remote"))           lastFilter->remote = Txt2Bool(value);
+                 else if(!stricmp(p, "ApplyToNew"))       lastFilter->applyToNew = Txt2Bool(value);
+                 else if(!stricmp(p, "ApplyToSent"))      lastFilter->applyToSent = Txt2Bool(value);
+                 else if(!stricmp(p, "ApplyOnReq"))       lastFilter->applyOnReq = Txt2Bool(value);
+                 else if(!stricmp(p, "Actions"))          lastFilter->actions = atoi(value);
+                 else if(!stricmp(p, "BounceTo"))         stccpy(lastFilter->bounceTo, value, SIZE_ADDRESS);
+                 else if(!stricmp(p, "ForwardTo"))        stccpy(lastFilter->forwardTo, value, SIZE_ADDRESS);
+                 else if(!stricmp(p, "ReplyFile"))        stccpy(lastFilter->replyFile, value, SIZE_PATHFILE);
+                 else if(!stricmp(p, "ExecuteCmd"))       stccpy(lastFilter->executeCmd, value, SIZE_COMMAND);
+                 else if(!stricmp(p, "PlaySound"))        stccpy(lastFilter->playSound, value, SIZE_PATHFILE);
+                 else if(!stricmp(p, "MoveTo"))           stccpy(lastFilter->moveTo, value, SIZE_NAME);
+                 else
+                 {
+                   struct RuleNode *rule;
+
+                   // if nothing of the above string matched than the FI string
+                   // is probably a rule definition so we check it here
+
+                   if(!strnicmp(p, "Field", 5))
+                   {
+                     int n = atoi(p+5);
+
+                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                       CreateNewRule(lastFilter);
+
+                     rule->searchMode = atoi(value);
+                   }
+                   else if(!strnicmp(p, "SubField", 8))
+                   {
+                     int n = atoi(p+8);
+
+                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                       CreateNewRule(lastFilter);
+
+                     rule->subSearchMode = atoi(value);
+                   }
+                   else if(!strnicmp(p, "CustomField", 11))
+                   {
+                     int n = atoi(p+11);
+
+                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                       CreateNewRule(lastFilter);
+
+                     stccpy(rule->customField, value, SIZE_DEFAULT);
+                   }
+                   else if(!strnicmp(p, "Comparison", 10))
+                   {
+                     int n = atoi(p+10);
+
+                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                       CreateNewRule(lastFilter);
+
+                     rule->comparison = atoi(value);
+                   }
+                   else if(!strnicmp(p, "Match", 5))
+                   {
+                     int n = atoi(p+5);
+
+                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                       CreateNewRule(lastFilter);
+
+                     stccpy(rule->matchPattern, value2, SIZE_PATTERN);
+                   }
+                   else if(!strnicmp(p, "CaseSens", 8))
+                   {
+                     int n = atoi(p+8);
+
+                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                       CreateNewRule(lastFilter);
+
+                     rule->caseSensitive = Txt2Bool(value);
+                   }
+                   else if(!strnicmp(p, "Substring", 9))
+                   {
+                     int n = atoi(p+9);
+
+                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                       CreateNewRule(lastFilter);
+
+                     rule->subString = Txt2Bool(value);
+                   }
+                   else if(!strnicmp(p, "Combine", 7))
+                   {
+                     int n = atoi(p+7);
+
+                     while(!(rule = GetFilterRule(lastFilter, n>0 ? n-1 : 0)))
+                       CreateNewRule(lastFilter);
+
+                     rule->combine = atoi(value);
+                   }
+                 }
                }
 /*4*/          else if (!stricmp(buffer, "ShowHeader"))     co->ShowHeader = atoi(value);
                else if (!stricmp(buffer, "ShortHeaders"))   stccpy(co->ShortHeaders, value, SIZE_PATTERN);
@@ -1127,6 +1215,9 @@ void CO_SetConfig(void)
          {
            DoMethod(gui->LV_RULES, MUIM_NList_InsertSingle, curNode, MUIV_NList_Insert_Bottom);
          }
+
+         // make sure the first entry is selected per default
+         set(gui->LV_RULES, MUIA_NList_Active, MUIV_NList_Active_Top);
       }
       break;
 

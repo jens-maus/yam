@@ -44,6 +44,7 @@ struct CO_GUIData
    Object *BT_USE;
    Object *BT_CANCEL;
    Object *MI_IMPMIME;
+   Object *NLV_PAGE;
    Object *LV_PAGE;
    Object *GR_PAGE;
    Object *GR_SUBPAGE;
@@ -90,10 +91,8 @@ struct CO_GUIData
    Object *BT_RDEL;
    Object *ST_RNAME;
    Object *CH_REMOTE;
-   Object *CY_COMBINE[2];
-   Object *GR_LRGROUP;
-   Object *GR_LOCAL;
-   Object *GR_REMOTE;
+   Object *GR_RGROUP;
+   Object *GR_SGROUP;
    Object *PO_MOVETO;
    Object *TX_MOVETO;
    Object *LV_MOVETO;
@@ -117,7 +116,6 @@ struct CO_GUIData
    Object *CH_AMOVE;
    Object *CH_ADELETE;
    Object *CH_ASKIP;
-   struct SearchGroup GR_SEARCH[4];
    Object *CY_HEADER;
    Object *ST_HEADERS;
    Object *CY_SENDERINFO;
@@ -250,6 +248,8 @@ struct CO_GUIData
    Object *NB_DELAYEDSTATUS;
    Object *BT_FILTERUP;
    Object *BT_FILTERDOWN;
+   Object *BT_MORE;
+   Object *BT_LESS;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -506,6 +506,8 @@ extern struct Hook AddNewFilterToListHook;
 extern struct Hook RemoveActiveFilterHook;
 extern struct Hook SetActiveFilterDataHook;
 extern struct Hook GetActiveFilterDataHook;
+extern struct Hook AddNewRuleToListHook;
+extern struct Hook RemoveLastRuleHook;
 
 void              CO_FreeConfig(struct Config *co);
 BOOL              CO_IsValid(void);
@@ -514,7 +516,6 @@ struct POP3 *     CO_NewPOP3(struct Config *co, BOOL first);
 void              CO_SetDefaults(struct Config *co, int page);
 void              CO_Validate(struct Config *co, BOOL update);
 
-struct FilterNode *CreateNewFilter(void);
-void               GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
+void              GhostOutFilter(struct CO_GUIData *gui, struct FilterNode *filter);
 
 #endif /* YAM_CONFIG_H */
