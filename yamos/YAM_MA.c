@@ -1397,15 +1397,22 @@ int MA_AllocRules(struct Search **search, enum ApplyMode mode)
 
    for (i = 0; i < MAXRU; i++) if ((rule = C->RU[i]))
    {
-      if (mode == APPLY_AUTO && !rule->ApplyToNew) continue;
-      if (mode == APPLY_USER && !rule->ApplyOnReq) continue;
-      if (mode == APPLY_SENT && !rule->ApplyToSent) continue;
+      // lets check if we can skip some filters
+      if (mode == APPLY_AUTO && (!rule->ApplyToNew || rule->Remote))  continue;
+      if (mode == APPLY_USER && (!rule->ApplyOnReq || rule->Remote))  continue;
+      if (mode == APPLY_SENT && (!rule->ApplyToSent || rule->Remote)) continue;
       if (mode == APPLY_REMOTE && !rule->Remote) continue;
+
+      // we can combine 2 different equations
       for (j = 0; j < 2; j++)
       {
-         search[scnt+j*MAXRU] = malloc(sizeof(struct Search));
+         search[scnt+j*MAXRU] = calloc(1, sizeof(struct Search));
          stat = 0;
+
+         // we check the status field first and if we find a match
+         // we can immediatly break up here because we don`t need to prepare the search somehow
          if (rule->Field[j] == 11) for (; stat < 8; stat++) if (!stricmp(rule->Match[j], Status[stat])) break;
+
          FI_PrepareSearch(search[scnt+j*MAXRU], rule->Field[j], rule->CaseSens[j], rule->SubField[j], rule->Comparison[j], stat, rule->Substring[j], rule->Match[j], rule->CustomField[j]);
          search[scnt+j*MAXRU]->Rule = rule;
       }
@@ -1436,7 +1443,8 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   struct Folder* fo;
   mlist[0] = (struct Mail *)1; mlist[1] = NULL; mlist[2] = mail;
 
-  if ((rule->Actions & 1) == 1) if (*rule->BounceTo)
+  // Bounce Action
+  if ((rule->Actions & 1) == 1 && !rule->Remote && *rule->BounceTo)
   {
     G->RRs.Bounced++;
     MA_NewBounce(mail, TRUE);
@@ -1444,7 +1452,8 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
     DoMethod(G->App, MUIM_CallHook, &WR_NewMailHook, WRITE_QUEUE, 2);
   }
 
-  if ((rule->Actions & 2) == 2) if (*rule->ForwardTo)
+  // Forward Action
+  if ((rule->Actions & 2) == 2 && !rule->Remote && *rule->ForwardTo)
   {
     G->RRs.Forwarded++;
     MA_NewForward(mlist, TRUE);
@@ -1452,7 +1461,8 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
     WR_NewMail(WRITE_QUEUE, 2);
   }
 
-  if ((rule->Actions & 4) == 4) if (*rule->ReplyFile)
+  // Reply Action
+  if ((rule->Actions & 4) == 4 && !rule->Remote && *rule->ReplyFile)
   {
     MA_NewReply(mlist, TRUE);
     FileToEditor(rule->ReplyFile, G->WR[2]->GUI.TE_EDIT);
@@ -1460,7 +1470,8 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
     G->RRs.Replied++;
   }
 
-  if ((rule->Actions & 8) == 8) if (*rule->ExecuteCmd)
+  // Execute Action
+  if ((rule->Actions & 8) == 8 && *rule->ExecuteCmd)
   {
     char buf[SIZE_COMMAND+SIZE_PATHFILE];
     sprintf(buf, "%s %s", rule->ExecuteCmd, GetMailFile(NULL, NULL, mail));
@@ -1468,12 +1479,14 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
     G->RRs.Executed++;
   }
 
-  if ((rule->Actions & 16) == 16) if (*rule->PlaySound)
+  // PlaySound Action
+  if ((rule->Actions & 16) == 16 && *rule->PlaySound)
   {
     PlaySound(rule->PlaySound);
   }
 
-  if ((rule->Actions & 32) == 32)
+  // Move Action
+  if ((rule->Actions & 32) == 32 && !rule->Remote)
   {
     if((fo = FO_GetFolderByName(rule->MoveTo, NULL)))
     {
@@ -1488,6 +1501,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
     else ER_NewError(GetStr(MSG_ER_CANTMOVEMAIL), mail->MailFile, rule->MoveTo);
   }
 
+  // Delete Action
   if ((rule->Actions & 64) == 64)
   {
     G->RRs.Deleted++;
