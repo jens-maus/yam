@@ -1,28 +1,28 @@
-/* Automatically generated header! Do not edit! */
-
-#ifndef PROTO_SOCKET_H
-#define PROTO_SOCKET_H
+#ifndef _PROTO_SOCKET_H
+#define _PROTO_SOCKET_H
 
 #include <clib/socket_protos.h>
-
-#ifdef __GNUC__
-#include <inline/socket.h>
-#endif /* __GNUC__ */
-
-#ifdef __VBCC__
-#include <inline/socket_protos.h>
-#endif /* __VBCC__ */
-
-#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
-#include <pragmas/socket_pragmas.h>
-#endif
 
 #ifndef __NOLIBBASE__
 extern struct Library *
 #ifdef __CONSTLIBBASEDECL__
 __CONSTLIBBASEDECL__
-#endif /* __CONSTLIBBASEDECL__ */
+#endif
 SocketBase;
-#endif /* !__NOLIBBASE__ */
+#endif
 
-#endif /* !PROTO_SOCKET_H */
+#ifdef __GNUC__
+#ifdef __PPC__
+#include <ppcinline/socket.h>
+#else
+#include <inline/socket.h>
+#endif
+#else /* SAS-C */
+#ifdef __PPC__
+#include <ppcpragmas/socket_pragmas.h>
+#else
+#include <pragmas/socket_pragmas.h>
+#endif
+#endif
+
+#endif	/*  _PROTO_SOCKET_H  */

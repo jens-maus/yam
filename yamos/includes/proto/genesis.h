@@ -1,29 +1,28 @@
-/* Automatically generated header! Do not edit! */
+#ifndef _PROTO_GENESIS_H
+#define _PROTO_GENESIS_H
 
-#ifndef PROTO_GENESIS_H
-#define PROTO_GENESIS_H
-
-#include <libraries/genesis.h>
 #include <clib/genesis_protos.h>
-
-#ifdef __GNUC__
-#include <inline/genesis.h>
-#endif /* __GNUC__ */
-
-#ifdef __VBCC__
-#include <inline/genesis_protos.h>
-#endif /* __VBCC__ */
-
-#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
-#include <pragmas/genesis_pragmas.h>
-#endif /* __SASC */
 
 #ifndef __NOLIBBASE__
 extern struct Library *
 #ifdef __CONSTLIBBASEDECL__
 __CONSTLIBBASEDECL__
-#endif /* __CONSTLIBBASEDECL__ */
+#endif
 GenesisBase;
-#endif /* !__NOLIBBASE__ */
+#endif
 
-#endif /* !PROTO_GENESIS_H */
+#ifdef __GNUC__
+#ifdef __PPC__
+#include <ppcinline/genesis.h>
+#else
+#include <inline/genesis.h>
+#endif
+#else /* SAS-C */
+#ifdef __PPC__
+#include <ppcpragmas/genesis_pragmas.h>
+#else
+#include <pragmas/genesis_pragmas.h>
+#endif
+#endif
+
+#endif	/*  _PROTO_GENESIS_H  */

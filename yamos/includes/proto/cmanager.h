@@ -1,24 +1,28 @@
-/* Automatically generated header! Do not edit! */
-
-#ifndef PROTO_CMANAGER_H
-#define PROTO_CMANAGER_H
+#ifndef _PROTO_CMANAGER_H
+#define _PROTO_CMANAGER_H
 
 #include <clib/cmanager_protos.h>
-
-#ifdef __GNUC__
-#include <inline/cmanager.h>
-#endif /* __GNUC__ */
-
-#ifdef __SASC
-#include <pragmas/cmanager_pragmas.h>
-#endif /* __SASC */
 
 #ifndef __NOLIBBASE__
 extern struct Library *
 #ifdef __CONSTLIBBASEDECL__
 __CONSTLIBBASEDECL__
-#endif /* __CONSTLIBBASEDECL__ */
+#endif
 CManagerBase;
-#endif /* !__NOLIBBASE__ */
+#endif
 
-#endif /* !PROTO_CMANAGER_H */
+#ifdef __GNUC__
+#ifdef __PPC__
+#include <ppcinline/cmanager.h>
+#else
+#include <inline/cmanager.h>
+#endif
+#else /* SAS-C */
+#ifdef __PPC__
+#include <ppcpragmas/cmanager_pragmas.h>
+#else
+#include <pragmas/cmanager_pragmas.h>
+#endif
+#endif
+
+#endif	/*  _PROTO_CMANAGER_H  */

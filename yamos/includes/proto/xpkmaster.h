@@ -1,19 +1,28 @@
 #ifndef _PROTO_XPKMASTER_H
 #define _PROTO_XPKMASTER_H
 
-#ifndef __NOLIBBASE__
-  extern struct Library *XpkBase;
-#endif
-
-#include <exec/types.h>
 #include <clib/xpkmaster_protos.h>
 
+#ifndef __NOLIBBASE__
+extern struct Library *
+#ifdef __CONSTLIBBASEDECL__
+__CONSTLIBBASEDECL__
+#endif
+XpkBase;
+#endif
+
 #ifdef __GNUC__
-  #include <inline/xpkmaster.h>
-#elif defined(__VBCC__)
-  #include <inline/xpkmaster_protos.h>
+#ifdef __PPC__
+#include <ppcinline/xpkmaster.h>
 #else
-  #include <pragma/xpkmaster_lib.h>
+#include <inline/xpkmaster.h>
+#endif
+#else /* SAS-C */
+#ifdef __PPC__
+#include <ppcpragmas/xpkmaster_pragmas.h>
+#else
+#include <pragmas/xpkmaster_pragmas.h>
+#endif
 #endif
 
 #endif	/*  _PROTO_XPKMASTER_H  */

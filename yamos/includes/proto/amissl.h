@@ -1,24 +1,28 @@
-/* Automatically generated header! Do not edit! */
-
-#ifndef PROTO_AMISSL_H
-#define PROTO_AMISSL_H
+#ifndef _PROTO_AMISSL_H
+#define _PROTO_AMISSL_H
 
 #include <clib/amissl_protos.h>
 
+#ifndef __NOLIBBASE__
+extern struct Library *
+#ifdef __CONSTLIBBASEDECL__
+__CONSTLIBBASEDECL__
+#endif
+AmiSSLBase;
+#endif
+
 #ifdef __GNUC__
+#ifdef __PPC__
+#include <ppcinline/amissl.h>
+#else
 #include <inline/amissl.h>
-#endif /* __GNUC__ */
-
-#ifdef __VBCC__
-#include <inline/amissl_protos.h>
-#endif /* __VBCC__ */
-
-#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
+#endif
+#else /* SAS-C */
+#ifdef __PPC__
+#include <ppcpragmas/amissl_pragmas.h>
+#else
 #include <pragmas/amissl_pragmas.h>
 #endif
-
-#ifndef __NOLIBBASE__
-extern struct Library *AmiSSLBase;
 #endif
 
-#endif /* PROTO_AMISSL_H */
+#endif	/*  _PROTO_AMISSL_H  */
