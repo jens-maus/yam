@@ -7,6 +7,10 @@ $Source$
 
 2004-07-25  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MI.c: slightly modified the rfc2047 quoted-printable
+      decoding routines to use the global lookup table instead of 
+      extensive string functions. This should perhaps speed up the
+      routines once more.
     * YAM_MI.c, YAM_RE.c: also rewrote the quoted-printable decoding
       routines from scratch and reimplemented everything according to
       RFC 2045. Also this new routines have full input and output

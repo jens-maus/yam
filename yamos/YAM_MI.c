@@ -1766,10 +1766,20 @@ static int rfc2047_decode_int(const char *text,
 
             if(*q == '=' && q[1] && q[2])
             {
-              char *p1 = strchr(basis_hex, toupper((int)(unsigned char)q[1]));
-              char *p2 = strchr(basis_hex, toupper((int)(unsigned char)q[2]));
+              unsigned char c1 = hexchar(q[1]);
+              unsigned char c2 = hexchar(q[2]);
 
-              *r++ = (char)(p1 ? p1-basis_hex : 0)*16+(p2 ? p2-basis_hex : 0);
+              if(c1 != 255 && c2 != 255)
+              {
+                *r++ = c1<<4 | c2;
+              }
+              else
+              {
+                *r++ = *q;
+                *r++ = q[1];
+                *r++ = q[2];
+              }
+
               q += 3;
 
               continue;
