@@ -155,3 +155,8 @@
       StrBufCpy()
 
     * Started to improve the printing system (see RE_PrintFile())
+
+2001-03-10  Matthias Bethke <Matthias.Bethke@gmx.net>
+
+    * Changed dynamic string functions in YAM_UT.c to use calloc()/free()
+      instead of AllocMem()/FreeMem() and thus (hopefully) memory pools.

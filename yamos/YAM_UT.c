@@ -437,7 +437,8 @@ int Index(char *str, char chr)
 //  Allocates a dynamic buffer
 char *AllocStrBuf(long initlen)
 {
-   char *strbuf = AllocMem(initlen+4, MEMF_PUBLIC|MEMF_CLEAR);
+//   char *strbuf = AllocMem(initlen+4, MEMF_PUBLIC|MEMF_CLEAR);
+   char *strbuf = calloc(initlen+4,1);
    if (strbuf)
    {
       *((long *)strbuf) = initlen;
@@ -454,7 +455,8 @@ void FreeStrBuf(char *strbuf)
 
    if (!strbuf) return;
    len = *((long *)(strbuf-4));
-   FreeMem(strbuf-4, len+4);        
+//   FreeMem(strbuf-4, len+4);
+   free(strbuf-4);
 }
 ///
 /// StrBufCpy
