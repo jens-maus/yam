@@ -67,6 +67,7 @@
 #include "YAM_read.h"
 #include "YAM_rexx.h"
 #include "YAM_write.h"
+#include "classes/Classes.h"
 
 /***************************************************************************
  Module: Root
@@ -516,6 +517,7 @@ static void Terminate(void)
       if (G->BImage[i]) FreeBCImage(G->BImage[i]);
    }
    CO_FreeConfig(C);
+   YAM_CleanupClasses();
    ExitClasses();
 
    if (DataTypesBase) CloseLibrary(DataTypesBase);
@@ -734,7 +736,7 @@ static void Initialise(BOOL hidden)
    // buggy
    CheckMCC(MUIC_NListtree, 18, 7, TRUE);
 
-   if(!InitClasses())
+   if(!InitClasses() || !YAM_SetupClasses())
       Abort(MSG_ErrorClasses);
    if(!Root_New(hidden))
       Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);

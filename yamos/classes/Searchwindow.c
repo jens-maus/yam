@@ -28,6 +28,7 @@
 
 ***************************************************************************/
 
+#include <string.h>
 #include <libraries/iffparse.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/TextEditor_mcc.h>
@@ -45,6 +46,7 @@ struct Data
 {
 	Object *Searchstring;
 	Object *Texteditor;
+	Object *ParentWindow;
 	ULONG CaseSensitive;
 };
 
@@ -52,14 +54,12 @@ ULONG SearchwindowGetSize (VOID) { return sizeof(struct Data); }
 
 OVERLOAD(OM_NEW)
 {
-	struct TagItem *tags, *tag;
 	struct Data *data;
 	Object *string, *case_sensitive, *search, *top, *cancel;
 
 	if (!(obj = (Object *)DoSuperNew(cl, obj,
 
 		MUIA_Window_Title, GetStr(MSG_SEARCHWINDOW_TITLE),
-		MUIA_Window_ID, MAKE_ID('S','E','A','R'),
 		WindowContents, VGroup,
 
 			Child, string = BetterStringObject,
@@ -80,41 +80,54 @@ OVERLOAD(OM_NEW)
 		return 0;
 
 	data = (struct Data *)INST_DATA(cl,obj);
-
 	data->Searchstring = string;
-
-	tags = inittags(msg);
-	while((tag = NextTagItem(&tags)))
-	{
-		switch(tag->ti_Tag)
-		{
-			ATTR(Texteditor) : data->Texteditor = (Object *)tag->ti_Data  ; break;
-		}
-	}
 
 	DoMethod(string,         MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, FALSE);
 	DoMethod(case_sensitive, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Self, 3, MUIM_WriteLong, MUIV_TriggerValue, &data->CaseSensitive);
 	DoMethod(search,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, FALSE);
 	DoMethod(top,            MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 2, MUIM_Searchwindow_Search, TRUE);
-	DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_Open, FALSE);
-	DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+	DoMethod(cancel,         MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 1, MUIM_Searchwindow_Close);
+	DoMethod(obj,            MUIM_Notify, MUIA_Window_CloseRequest, TRUE, MUIV_Notify_Self, 1, MUIM_Searchwindow_Close);
 
 	return (ULONG)obj;
 }
 
-DECLARE(Open)
+DECLARE(Open) // Object *texteditor
 {
 	GETDATA;
+	STRPTR contents;
 
+	if(data->ParentWindow)
+		DoMethod(obj, MUIM_Searchwindow_Close);
+
+	data->Texteditor = msg->texteditor;
+	data->ParentWindow = _win(msg->texteditor);
+
+	DoMethod(data->ParentWindow, MUIM_Notify, MUIA_Window_Open, FALSE, obj, 1, MUIM_Searchwindow_Close);
+
+	get(data->Searchstring, MUIA_String_Contents, &contents);
 	SetAttrs(data->Searchstring,
 		MUIA_String_BufferPos, 0,
-		MUIA_BetterString_SelectSize, 0xffff,
+		MUIA_BetterString_SelectSize, strlen(contents),
 		TAG_DONE);
 
 	SetAttrs(obj,
+		MUIA_Window_Activate, TRUE,
 		MUIA_Window_ActiveObject, data->Searchstring,
+		MUIA_Window_RefWindow, data->ParentWindow,
 		MUIA_Window_Open, TRUE,
 		TAG_DONE);
+
+	return 0;
+}
+
+DECLARE(Close)
+{
+	GETDATA;
+
+	set(obj, MUIA_Window_Open, FALSE);
+	DoMethod(data->ParentWindow, MUIM_KillNotifyObj, MUIA_Window_Open, obj);
+	data->ParentWindow = NULL;
 
 	return 0;
 }
@@ -123,15 +136,17 @@ DECLARE(Search) // ULONG top
 {
 	GETDATA;
 	STRPTR string;
+	Object *parent = data->ParentWindow;
 
-	set(obj, MUIA_Window_Open, FALSE);
+	DoMethod(obj, MUIM_Searchwindow_Close);
 
 	if((get(data->Searchstring, MUIA_String_Contents, &string), string) && string[0] != '\0' && data->Texteditor)
 	{
 		ULONG flags = 0;
 		if(msg->top)             flags |= MUIF_TextEditor_Search_FromTop;
 		if(data->CaseSensitive)  flags |= MUIF_TextEditor_Search_CaseSensitive;
-		DoMethod(data->Texteditor, MUIM_TextEditor_Search, string, flags);
+		if(!DoMethod(data->Texteditor, MUIM_TextEditor_Search, string, flags))
+			MUI_Request(_app(obj), parent, 0L, GetStr(MSG_SEARCHNOTFOUND_TITLE), GetStr(MSG_SEARCHNOTFOUND_BUTTON), GetStr(MSG_SEARCHNOTFOUND_MSG), string);
 	}
 
 	return 0;
@@ -139,6 +154,5 @@ DECLARE(Search) // ULONG top
 
 DECLARE(Next)
 {
-	DoMethod(obj, MUIM_Searchwindow_Search, FALSE);
-	return 0;
+	return DoMethod(obj, MUIM_Searchwindow_Search, FALSE);
 }

@@ -7,6 +7,7 @@ DISPATCHERPROTO(SearchwindowDispatcher)
 	{
 		case OM_NEW                                  : return(m_Searchwindow_OM_NEW(cl, obj, (APTR)msg));
 		case MUIM_Searchwindow_Open                  : return(m_Searchwindow_Open(cl, obj, (APTR)msg));
+		case MUIM_Searchwindow_Close                 : return(m_Searchwindow_Close(cl, obj, (APTR)msg));
 		case MUIM_Searchwindow_Search                : return(m_Searchwindow_Search(cl, obj, (APTR)msg));
 		case MUIM_Searchwindow_Next                  : return(m_Searchwindow_Next(cl, obj, (APTR)msg));
 	}

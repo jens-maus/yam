@@ -74,6 +74,7 @@
 #include "YAM_utilities.h"
 #include "YAM_write.h"
 #include "YAM_locale.h"
+#include "classes/Classes.h"
 
 /**************************************************************************/
 /* local protos */
@@ -1783,6 +1784,18 @@ HOOKPROTONHNO(WR_EditorCmd, void, int *arg)
 MakeStaticHook(WR_EditorCmdHook, WR_EditorCmd);
 
 ///
+/// WR_SearchFunc
+/*** WR_SearchFunc - Opens a search window ***/
+HOOKPROTONHNO(WR_SearchFunc, void, Object **texteditor)
+{
+	if(!G->WI_SEARCH && (G->WI_SEARCH = SearchwindowObject, End))
+		DoMethod(G->App, OM_ADDMEMBER, G->WI_SEARCH);
+
+	DoMethod(G->WI_SEARCH, MUIM_Searchwindow_Open, *texteditor);
+}
+MakeStaticHook(WR_SearchHook, WR_SearchFunc);
+
+///
 /// WR_AddClipboardFunc
 /*** WR_AddClipboardFunc - Adds contents of clipboard as attachment ***/
 HOOKPROTONHNO(WR_AddClipboardFunc, void, int *arg)
@@ -2408,6 +2421,7 @@ static struct WR_ClassData *WR_New(int winnum)
             DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,10, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_StyleUnderline,MUIV_TriggerValue);
             DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,TRUE,           data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_Pen,           7);
             DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,11, MUIV_Toolbar_Notify_Pressed,FALSE,          data->GUI.TE_EDIT,3,MUIM_Set,MUIA_TextEditor_Pen,           0);
+            DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify,13, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,3,MUIM_CallHook,&WR_SearchHook,data->GUI.TE_EDIT);
             DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleBold,      MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set, 8,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
             DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleItalic,    MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set, 9,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);
             DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify, MUIA_TextEditor_StyleUnderline, MUIV_EveryTime, data->GUI.TO_TOOLBAR,4,MUIM_Toolbar_Set,10,MUIV_Toolbar_Set_Selected,MUIV_TriggerValue);

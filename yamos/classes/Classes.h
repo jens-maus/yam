@@ -1,5 +1,5 @@
-#ifndef YAM_CLASSES_H
-#define YAM_CLASSES_H
+#ifndef CLASSES_CLASSES_H
+#define CLASSES_CLASSES_H
 
 /*****************************************************************************
 **
@@ -12,6 +12,7 @@
 **                    Implements:
 **                    OM_NEW
 **                    Open
+**                    Close
 **                    Search
 **                    Next
 **
@@ -45,12 +46,18 @@ VOID YAM_CleanupClasses (VOID);
 #define MUIC_Searchwindow "YAM_Searchwindow"
 
 #define MUIM_Searchwindow_Open                0xAE00129AUL
+#define MUIM_Searchwindow_Close               0xAE006FF1UL
 #define MUIM_Searchwindow_Search              0xAE008B93UL
 #define MUIM_Searchwindow_Next                0xAE00F7C1UL
 
-#define MUIA_Searchwindow_Texteditor          0xAE006B7DUL
 
 struct MUIP_Searchwindow_Open
+{
+	ULONG methodID;
+	Object *texteditor;
+};
+
+struct MUIP_Searchwindow_Close
 {
 	ULONG methodID;
 };
@@ -71,6 +78,7 @@ struct MUIP_Searchwindow_Next
 ULONG SearchwindowGetSize (VOID);
 ULONG m_Searchwindow_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Searchwindow_Open(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Open *msg);
+ULONG m_Searchwindow_Close(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Close *msg);
 ULONG m_Searchwindow_Search(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Search *msg);
 ULONG m_Searchwindow_Next(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Next *msg);
 

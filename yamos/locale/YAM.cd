@@ -4779,3 +4779,12 @@ From top
 ;
 MSG_SEARCHWINDOW_BT_CANCEL (//)
 Cancel
+;
+MSG_SEARCHNOTFOUND_TITLE (//)
+Search
+;
+MSG_SEARCHNOTFOUND_MSG (//)
+'%s' not found
+;
+MSG_SEARCHNOTFOUND_BUTTON (//)
+Continue

@@ -670,7 +670,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
    char buffer[SIZE_LARGE];
    int i, winnum = -1, mlen = (2+(int)mlist[0])*sizeof(struct Mail *);
    struct WR_ClassData *wr;
-   struct Mail *mail;
+   struct Mail *mail = NULL;
    struct ExtendedMail *email;
    struct ExpandTextData etd;
    FILE *out;

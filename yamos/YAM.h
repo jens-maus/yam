@@ -75,6 +75,7 @@ struct Global
    struct FO_ClassData *    FO;
    struct DI_ClassData *    DI;
    struct US_ClassData *    US;
+   APTR                     WI_SEARCH;
 
    long                     EdColMap[9];
    long                     Weights[6];
