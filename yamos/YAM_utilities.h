@@ -324,7 +324,6 @@ char *   GetFolderDir(struct Folder *fo);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
 char *   GetMailFile(char *string, struct Folder *folder, struct Mail *mail);
 struct MailInfo *GetMailInfo(struct Mail *smail);
-INLINE ULONG xget(Object *obj, ULONG attr);
 BOOL     GetMUICheck(Object *obj);
 int      GetMUICycle(Object *obj);
 int      GetMUIInteger(Object *obj);
@@ -403,11 +402,10 @@ APTR     WhichLV(struct Folder *folder);
 
 /// xget()
 //  Gets an attribute value from a MUI object
-INLINE ULONG xget(Object *obj, ULONG attr)
+INLINE ULONG xget(Object *obj, const ULONG attr)
 {
-   ULONG b = 0;
-   get(obj, attr, &b);
-   return b;
+  ULONG b = 0;
+  return get(obj, attr, &b) ? b : 0;
 }
 ///
 
