@@ -1890,7 +1890,7 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
         case FT_GROUP:
         {
           sprintf(msg->Array[0] = dispfold, "\033o[%d] %s", (isFlagSet(msg->TreeNode->tn_Flags, TNF_OPEN) ? 1 : 0), entry->Name);
-          msg->Preparse[0] = (entry->New+entry->Unread) ? (MUIX_B MUIX_I "\0334") : MUIX_I "\0334";
+          msg->Preparse[0] = (entry->New+entry->Unread) ? (MUIX_B MUIX_I ) : MUIX_B MUIX_I "\0334";
         }
         break;
 
@@ -1904,19 +1904,42 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
           if(entry->Name[0])
             strcat(dispfold, entry->Name);
           else
-            sprintf(dispfold, "(%s)", FilePart(entry->Path));
-
-          if(isProtectedFolder(entry))
-            sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCFOLDERIMG);
+            sprintf(dispfold, "[%s]", FilePart(entry->Path));
 
           if(entry->LoadedMode != LM_UNLOAD)
           {
-            if(entry->New+entry->Unread) msg->Preparse[0] = MUIX_PH;
-            if(C->FolderCols & (1<<1)) sprintf(msg->Array[1] = disptot, "%d", entry->Total);
-            if(C->FolderCols & (1<<2)) sprintf(msg->Array[2] = dispunr, "%d", entry->Unread);
-            if(C->FolderCols & (1<<3)) sprintf(msg->Array[3] = dispnew, "%d", entry->New);
-            if(C->FolderCols & (1<<4)) FormatSize(entry->Size, msg->Array[4] = dispsiz);
+            if(entry->New)
+            {
+              msg->Preparse[0] = MUIX_B;
+              if((C->FolderCols & (1<<3)) == 0)
+                sprintf(dispfold, "%s (%d)", dispfold, entry->Unread);
+            }
+            else if(entry->Unread)
+            {
+              msg->Preparse[0] = MUIX_B "\0334";
+              if((C->FolderCols & (1<<2)) == 0)
+                sprintf(dispfold, "%s (%d)", dispfold, entry->Unread);
+            }
+
+            // if other folder columns are enabled lets fill the values
+            // in
+            if(C->FolderCols & (1<<1))
+              sprintf(msg->Array[1] = disptot, "%d", entry->Total);
+
+            if(C->FolderCols & (1<<2) && entry->Unread-entry->New > 0)
+              sprintf(msg->Array[2] = dispunr, "%d", entry->Unread-entry->New);
+
+            if(C->FolderCols & (1<<3) && entry->New > 0)
+              sprintf(msg->Array[3] = dispnew, "%d", entry->New);
+
+            if(C->FolderCols & (1<<4) && entry->Size > 0)
+              FormatSize(entry->Size, msg->Array[4] = dispsiz);
           }
+          else
+            msg->Preparse[0] = MUIX_I;
+
+          if(isProtectedFolder(entry))
+            sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCFOLDERIMG);
         }
       }
    }
