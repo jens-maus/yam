@@ -48,6 +48,9 @@
  *
  * History
  * -------
+ * 0.15 - changed the variable argument definition to use the new macros from
+ *        SDI_stdarg.h
+ *
  * 0.14 - removed the special OS4 ASMSTUB handling from the generated code again
  *        as the 51.4 kernel of AmigaOS4 seem to handle m68k<>PPC cross calls
  *        correctly now.
@@ -120,7 +123,7 @@
  *
  */
 
-static const char *verstr = "0.14";
+static const char *verstr = "0.15";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -660,19 +663,11 @@ void gen_supportroutines( FILE *fp )
 "  {\n"
 "    if(!strcmp(MCCInfo[i].Name, class))\n"
 "    {\n"
-"      va_list args;\n"
 "      Object *obj;\n"
-"      #if defined(__amigaos4__)\n"
-"      va_startlinear(args, class);\n"
-"      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)va_getlinearva(args, ULONG));\n"
-"      #elif defined(__MORPHOS__)\n"
-"      va_start(args, class);\n"
-"      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)args->overflow_arg_area);\n"
-"      #else\n"
-"      va_start(args, class);\n"
-"      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)args);\n"
-"      #endif\n"
-"      va_end(args);\n"
+"      VA_LIST args;\n\n"
+"      VA_START(args, class);\n"
+"      obj = NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)VA_ARG(args, ULONG));\n"
+"      VA_END(args);\n\n"
 "      return obj;\n"
 "    }\n"
 "  }\n"
@@ -716,7 +711,7 @@ void gen_supportroutines( FILE *fp )
 	arg_storm ? "/// "                : "",	
 	arg_storm ? bn                    : "",	
 	arg_storm ? "_NewObject()\n"      : "",
-	bn, bn, bn, bn,
+	bn, bn,
 	arg_storm ? "///\n"               : "",	
 
 	arg_storm ? "/// "                : "",	

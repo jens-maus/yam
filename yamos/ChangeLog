@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-07-05  Jens Langner <Jens.Langner@light-speed.de>
+
+    * SDI_#?.h: added the new SDI_lib.h and SDI_stdarg.h special
+      macro definition headers which allow to use macros/defines
+      for variable arguments support functions instead of cluttered
+      #ifdef constructs. Also the added SDI_lib.h allows to
+      define library functions and library vectors in an operating
+      system independent fashion, too. In fact, those two new
+      headers should make some code better readable and backward
+      compatible in future.
+
 2004-06-29  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c: fixed a bug in the base64 file decoding routines

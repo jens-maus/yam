@@ -64,6 +64,7 @@
 
 #include "extra.h"
 #include "SDI_hook.h"
+#include "SDI_stdarg.h"
 
 #include "YAM.h"
 #include "YAM_classes.h"
@@ -3285,17 +3286,11 @@ void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int 
 Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 {
   Object *rc;
-  va_list args;
+  VA_LIST args;
 
-  #if defined(__amigaos4__)
-  va_startlinear(args, obj);
-  rc = (Object *)DoSuperMethod(cl, obj, OM_NEW, va_getlinearva(args, ULONG), NULL);
-  #else
-  va_start(args, obj);
-  rc = (Object *)DoSuperMethod(cl, obj, OM_NEW, args, NULL);
-  #endif
-
-  va_end(args);
+  VA_START(args, obj);
+  rc = (Object *)DoSuperMethod(cl, obj, OM_NEW, VA_ARG(args, ULONG), NULL);
+  VA_END(args);
 
   return rc;
 }
@@ -4594,25 +4589,13 @@ MakeStaticHook(putCharHook, putCharFunc);
 void STDARGS VARARGS68K SPrintF(char *outstr, char *fmtstr, ...)
 {
   struct Hook hook;
-  va_list args;
+  VA_LIST args;
 
   // initialize the hook
   InitHook(&hook, putCharHook, outstr);
 
-  #if defined(__amigaos4__)
-  va_startlinear(args, fmtstr);
-  #else
-  va_start(args, fmtstr);
-  #endif
-
-  #if defined(__amigaos4__)
-  FormatString(G->Locale, fmtstr, va_getlinearva(args, void *), &hook);
-  #elif defined(__MORPHOS__)
-  FormatString(G->Locale, fmtstr, args->overflow_arg_area, &hook);
-  #else
-  FormatString(G->Locale, fmtstr, args, &hook);
-  #endif
-
-  va_end(args);
+  VA_START(args, fmtstr);
+  FormatString(G->Locale, fmtstr, VA_ARG(args, void *), &hook);
+  VA_END(args);
 }
 ///

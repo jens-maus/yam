@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.16 (07.03.2004)
+        Versionstring:  $VER: SDI_compiler.h 1.18 (04.07.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler stuff
@@ -28,6 +28,11 @@
                   or variable as "unused" which will not cause any compiler warning.
  1.15  02.03.04 : added special INLINE define for gcc > 3.0 version
  1.17  07.03.04 : changed INLINE definition of gcc <= 2.95.3 to be static aswell.
+ 1.18  21.06.04 : added USED and USED_VAR attribute to allow placing a
+                  __attribute__((used)) to a function and a variable, taking care of
+                  different compiler versions.
+ 1.19  04.07.04 : register specification for variables is not supported on MorphOS,
+                  so we modified the REG() macro accordingly.
 */
 
 /*
@@ -81,7 +86,12 @@
 #ifdef UNUSED
 #undef UNUSED
 #endif
-
+#ifdef USED
+#undef USED
+#endif
+#ifdef USED_VAR
+#undef USED_VAR
+#endif
 
 /* first "exceptions" */
 
@@ -129,11 +139,14 @@
 #elif defined(__SASC)
   #define ASM __asm
 #elif defined(__GNUC__)
-  #define UNUSED __attribute__((unused))
+  #define UNUSED __attribute__((unused)) /* for functions, variables and types */
+  #define USED   __attribute__((used))   /* for functions only! */
   #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ > 0)
     #define INLINE static __inline __attribute__((always_inline))
+    #define USED_VAR __attribute__((used)) /* for variables only! */
   #else
     #define INLINE static __inline__
+    #define USED_VAR                       /* no support for used with variables */
   #endif
   /* we have do distinguish between AmigaOS4 and MorphOS */
   #if defined(__amigaos4__)
@@ -147,7 +160,7 @@
     #define CHIP
     #define INTERRUPT
   #elif defined(__MORPHOS__)
-    #define REG(reg,arg) arg __asm(#reg)
+    #define REG(reg,arg) arg
     #define LREG(reg,arg) register REG(reg,arg)
     #define STDARGS
     #define STACKEXT
@@ -214,5 +227,11 @@
 #endif
 #if !defined(UNUSED)
   #define UNUSED
+#endif
+#if !defined(USED)
+  #define USED
+#endif
+#if !defined(USED_VAR)
+  #define USED_VAR
 #endif
 #endif /* SDI_COMPILER_H */

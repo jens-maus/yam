@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.6 (02.03.2004)
+        Versionstring:  $VER: SDI_hook.h 1.7 (04.07.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler specific hook stuff
@@ -20,6 +20,8 @@
                   compiler can ignore some warnings.
  1.6   02.03.04 : added (APTR) casts to MorphOS prototype definition to
                   reduce compiler warnings.
+ 1.7   04.07.04 : removed static from all DISPATCHERPROTO definitions as there
+                  may dispatcher that are of course non static.
 */
 
 /*
@@ -89,8 +91,8 @@
     name(REG(a0, struct Hook *hook), REG(a2, obj),                           \
     REG(a1, UNUSED APTR param))
   #define HOOKPROTONONP(name, ret) static SAVEDS ASM ret                     \
-    name(REG(a0, struct Hook *hook), REG(a2, UNUSED APTR obj,),              \
-    REG(a1, APTR param))
+    name(REG(a0, struct Hook *hook), REG(a2, UNUSED APTR obj),               \
+    REG(a1, UNUSED APTR param))
   #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ASM ret           \
     name(REG(a0, UNUSED struct Hook *hook), REG(a2, obj), REG(a1, param))
   #define HOOKPROTONHNO(name, ret, param) static SAVEDS ASM ret              \
@@ -160,12 +162,12 @@
       (HOOKFUNC)&Gate_##funcname, NULL, NULL}
     #define DISPATCHERPROTO(name)                                            \
       struct IClass;                                                         \
-      static ULONG name(struct IClass * cl, Object * obj, Msg msg);          \
+      ULONG name(struct IClass * cl, Object * obj, Msg msg);                 \
       static ULONG Trampoline_##name(void) {return name((struct IClass *)    \
       REG_A0, (Object *) REG_A2, (Msg) REG_A1);}                             \
       static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,   \
       (void(*)())Trampoline_##name};                                         \
-      static ULONG name(struct IClass * cl, Object * obj, Msg msg)
+      ULONG name(struct IClass * cl, Object * obj, Msg msg)
   #else
     #define MakeHook(hookname, funcname)                                     \
       static const struct SDI_EmulLibEntry Gate_##funcname = {SDI_TRAP_LIB,  \
@@ -179,17 +181,17 @@
       (HOOKFUNC)&Gate_##funcname, NULL, NULL}
     #define DISPATCHERPROTO(name)                                            \
       struct IClass;                                                         \
-      static ASM ULONG  name(REG(a0,                                         \
+      ASM ULONG  name(REG(a0,                                                \
       struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg));         \
       static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,   \
       (APTR)name};                                                           \
-      static ASM ULONG  name(REG(a0,                                         \
+      ASM ULONG  name(REG(a0,                                                \
       struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
   #endif
 
   #define ENTRY(func) (APTR)&Gate_##func
 #else
-  #define DISPATCHERPROTO(name) static SAVEDS ASM ULONG  name(REG(a0,        \
+  #define DISPATCHERPROTO(name) SAVEDS ASM ULONG  name(REG(a0,               \
     struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
   #define ENTRY(func) (APTR)func
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \

@@ -45,8 +45,9 @@
 
 #include "Debug.h"
 #include "extra.h"
-#include "SDI_hook.h"
 #include "newmouse.h"
+#include "SDI_hook.h"
+#include "SDI_stdarg.h"
 
 #include "YAM.h"
 #include "YAM_addressbook.h"
