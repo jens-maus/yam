@@ -42,6 +42,9 @@
   #define INLINE static
 #elif defined(__STORM__)
   #define STDARGS /**/
+  #define REGARGS /**/
+  #define STACKEXT /**/
+  #define REG(reg,arg) arg
 #endif
 
 /*

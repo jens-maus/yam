@@ -1,6 +1,7 @@
 #include <proto/dos.h>
 #include "extra.h"
 #include <stdlib.h>
+#include <string.h>
 
 /* Not completely equivalent to the SAS/C version, as the returned value
    is not the same. But YAM only uses the return value as a boolean. */

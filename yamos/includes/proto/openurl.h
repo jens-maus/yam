@@ -5,7 +5,7 @@
 #ifdef __GNUC__
    #include <inline/openurl.h>
 #endif
-#if defined(LATTICE) || defined(__SASC) || defined(_DCC)
+#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
    #include <pragmas/openurl_pragmas.h>
 #endif
 extern struct Library *OpenURLBase;

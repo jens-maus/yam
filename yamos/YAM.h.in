@@ -118,8 +118,13 @@
 
 #else /* __MORPHOS__ */
 
+#if defined(__VBCC__) || defined(__STORM__)
+#define MakeHook(hookname, funcname) struct Hook hookname = { {NULL, NULL}, (void *)HookEntry, (void *)funcname, NULL }
+#define InitHook(hook, funcname, data) ((hook)->h_Entry = (void *)HookEntry, (hook)->h_SubEntry = (void *)funcname, (hook)->h_Data = (APTR)(data))
+#else
 #define MakeHook(hookname, funcname) struct Hook hookname = { {NULL, NULL}, (void *)funcname, NULL, NULL }
 #define InitHook(hook, funcname, data) ((hook)->h_Entry = (void *)funcname, (hook)->h_Data = (APTR)(data))
+#endif
 #define ENTRY(func)	  func
 
 #endif /* __MORPHOS__ */
@@ -664,7 +669,7 @@ struct ExpandTextData
 struct PageList
 {
    int Offset;
-   APTR Label;
+   APTR PageLabel;
 };
 
 struct FIndex
@@ -1241,9 +1246,9 @@ extern struct ExtendedMail *MA_ExamineMail(struct Folder *, char *, char *, BOOL
 extern void MA_FreeEMailStruct(struct ExtendedMail *);
 extern void MA_ScanMailBox(struct Folder *);
 extern void MA_ChangeFolder(struct Folder *);
-extern SAVEDS void MA_ChangeSelectedFunc(void);
-extern SAVEDS void MA_SetMessageInfoFunc(void);
-extern SAVEDS void MA_SetFolderInfoFunc(void);
+extern void SAVEDS MA_ChangeSelectedFunc(void);
+extern void SAVEDS MA_SetMessageInfoFunc(void);
+extern void SAVEDS MA_SetFolderInfoFunc(void);
 extern struct Mail **MA_CreateMarkedList(APTR);
 extern void MA_ChangeTransfer(BOOL);
 extern int MA_NewNew(struct Mail *, int);
@@ -1272,7 +1277,7 @@ extern void MA_SetupDynamicMenus(void);
 extern int MA_CmpFunc(struct Mail **, struct Mail **);
 extern void MA_MakeFOFormat(APTR);
 extern void MA_MakeMAFormat(APTR);
-extern SAVEDS ASM long MA_LV_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct Mail *));
+extern long SAVEDS ASM MA_LV_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct Mail *));
 extern struct MA_ClassData *MA_New(void);
 
 extern BOOL CO_IsValid(void);
@@ -1288,7 +1293,7 @@ extern void CO_Validate(struct Config *, BOOL);
 extern void CO_SetConfig(void);
 extern void CO_GetConfig(void);
 extern void CO_FreeConfig(struct Config *);
-extern SAVEDS ASM long CO_PL_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct PageList *));
+extern long SAVEDS ASM CO_PL_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct PageList *));
 extern APTR CO_Page0(struct CO_ClassData *), CO_Page1(struct CO_ClassData *), CO_Page2(struct CO_ClassData *), CO_Page3(struct CO_ClassData *), CO_Page4(struct CO_ClassData *), CO_Page5(struct CO_ClassData *), CO_Page6(struct CO_ClassData *), CO_Page7(struct CO_ClassData *);
 extern APTR CO_Page8(struct CO_ClassData *), CO_Page9(struct CO_ClassData *), CO_Page10(struct CO_ClassData *),CO_Page11(struct CO_ClassData *), CO_Page12(struct CO_ClassData *),CO_Page13(struct CO_ClassData *),CO_Page14(struct CO_ClassData *),CO_Page15(struct CO_ClassData *);
 
@@ -1297,7 +1302,7 @@ extern struct Folder *FO_GetCurrentFolder(void);
 extern struct Folder *FO_GetFolderRexx(char *, int *);
 extern struct Folder *FO_GetFolderByName(char *, int *);
 extern struct Folder *FO_GetFolderByType(int, int *);
-extern SAVEDS void FO_DeleteFolderFunc(void);
+extern void SAVEDS FO_DeleteFolderFunc(void);
 extern BOOL FO_LoadConfig(struct Folder *);
 extern void FO_SaveConfig(struct Folder *);
 
@@ -1316,11 +1321,11 @@ extern void AB_CheckBirthdates(void);
 extern STACKEXT int AB_SearchEntry(struct MUIS_Listtree_TreeNode *list, char *, int, int *, struct  MUIS_Listtree_TreeNode **);
 extern BOOL AB_LoadTree(char *, BOOL, BOOL);
 extern BOOL AB_SaveTree(char *);
-extern SAVEDS void AB_SaveABookFunc(void);
-extern SAVEDS void AB_DeleteFunc(void);
+extern void SAVEDS AB_SaveABookFunc(void);
+extern void SAVEDS AB_DeleteFunc(void);
 extern STACKEXT BOOL AB_FindEntry(struct MUIS_Listtree_TreeNode *, char *, int mode, char **);
 extern void AB_MakeABFormat(APTR);
-extern SAVEDS ASM long AB_LV_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct MUIS_Listtree_TreeNode *));
+extern long SAVEDS ASM AB_LV_DspFunc(REG(a0,struct Hook *), REG(a2,char **), REG(a1,struct MUIS_Listtree_TreeNode *));
 extern struct AB_ClassData *AB_New(void);
 
 extern int EA_Init(int, struct MUIS_Listtree_TreeNode *);
@@ -1358,9 +1363,9 @@ extern char *WR_ExpandAddresses(int, char *, BOOL, BOOL);
 extern void WR_AddSignature(char *, int);
 extern void WR_OpenWin(int);
 extern void WR_FromAddrBook(struct Object *);
-extern SAVEDS ASM void WR_GetFileEntry(REG(a1,int *));
-extern SAVEDS ASM void WR_PutFileEntry(REG(a1,int *));
-extern SAVEDS ASM void WR_Edit(REG(a1,int *));
+extern void SAVEDS ASM WR_GetFileEntry(REG(a1,int *));
+extern void SAVEDS ASM WR_PutFileEntry(REG(a1,int *));
+extern void SAVEDS ASM WR_Edit(REG(a1,int *));
 extern void EmitHeader(FILE *, char *, char *);
 extern BOOL WriteOutMessage(struct Compose *);
 extern struct WritePart *NewPart(int);
@@ -1393,7 +1398,7 @@ extern BOOL TR_GetMessageList_GET(int);
 extern void TR_GetMailFromNextPOP(BOOL, int, int);
 extern BOOL TR_ProcessSEND(struct Mail **);
 extern BOOL TR_ProcessEXPORT(char *, struct Mail **, BOOL);
-extern SAVEDS void TR_ProcessIMPORTFunc(void);
+extern void SAVEDS TR_ProcessIMPORTFunc(void);
 extern void TR_GetUIDL(void);
 extern void TR_GetMessageDetails(struct Mail *, int);
 extern int TR_CheckMessage(int, int, int);

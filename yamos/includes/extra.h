@@ -15,6 +15,10 @@
    extern struct Library *WorkbenchBase;
    extern struct Library *KeymapBase;
    extern void dice_closelibs(void);
+#elif defined(__STORM__)
+   #define isascii(c) (((c)&0xff)<127)
+   #define F_OK    0
+   char *index(const char *s, int c);
 #else
    #include <unistd.h>
 #endif

@@ -1,6 +1,38 @@
 #ifdef __PPC__
 #include <ppcpragmas/miami_pragmas.h>
 #else
+#if defined(AZTEC_C) || defined(__MAXON__) || defined(__STORM__)
+#pragma amicall(MiamiBase,0x01E,MiamiSysCtl(a0,d0,a1,a2,a3,d1))
+#pragma amicall(MiamiBase,0x042,MiamiDisallowDNS(d0))
+#pragma amicall(MiamiBase,0x04E,MiamiGetPid())
+#pragma amicall(MiamiBase,0x060,MiamiPFAddHook(a0,a1,a2))
+#pragma amicall(MiamiBase,0x066,MiamiPFRemoveHook(a0))
+#pragma amicall(MiamiBase,0x06C,MiamiGetHardwareLen(a0))
+#pragma amicall(MiamiBase,0x096,MiamiOpenSSL(a0))
+#pragma amicall(MiamiBase,0x09C,MiamiCloseSSL())
+#pragma amicall(MiamiBase,0x0C6,MiamiSetSocksConn(a0,d0))
+#pragma amicall(MiamiBase,0x0D2,MiamiIsOnline(a0))
+#pragma amicall(MiamiBase,0x0D8,MiamiOnOffline(a0,d0))
+#pragma amicall(MiamiBase,0x0E4,inet_ntop(d0,a0,a1,d1))
+#pragma amicall(MiamiBase,0x0EA,inet_aton(a0,a1))
+#pragma amicall(MiamiBase,0x0F0,inet_pton(d0,a0,a1))
+#pragma amicall(MiamiBase,0x0F6,gethostbyname2(a0,d0))
+#pragma amicall(MiamiBase,0x0FC,gai_strerror(d0))
+#pragma amicall(MiamiBase,0x102,freeaddrinfo(a0))
+#pragma amicall(MiamiBase,0x108,getaddrinfo(a0,a1,a2,a3))
+#pragma amicall(MiamiBase,0x10E,getnameinfo(a0,d0,a1,d1,a2,d2,d3))
+#pragma amicall(MiamiBase,0x114,if_nametoindex(a0))
+#pragma amicall(MiamiBase,0x11A,if_indextoname(d0,a0))
+#pragma amicall(MiamiBase,0x120,if_nameindex())
+#pragma amicall(MiamiBase,0x126,if_freenameindex(a0))
+#pragma amicall(MiamiBase,0x12C,MiamiSupportsIPV6())
+#pragma amicall(MiamiBase,0x132,MiamiResGetOptions())
+#pragma amicall(MiamiBase,0x138,MiamiResSetOptions(d0))
+#pragma amicall(MiamiBase,0x13E,sockatmark(d0))
+#pragma amicall(MiamiBase,0x144,MiamiSupportedCPUs(a0,a1,a2))
+#pragma amicall(MiamiBase,0x14A,MiamiGetFdCallback(a0))
+#pragma amicall(MiamiBase,0x150,MiamiSetFdCallback(a0,d0))
+#else
 #pragma libcall MiamiBase MiamiSysCtl 1e 1BA90806
 #pragma libcall MiamiBase MiamiDisallowDNS 42 001
 #pragma libcall MiamiBase MiamiGetPid 4e 0
@@ -32,4 +64,5 @@
 #pragma libcall MiamiBase MiamiGetFdCallback 14a 801
 #pragma libcall MiamiBase MiamiSetFdCallback 150 0802
 #pragma libcall MiamiBase MiamiGetCredentials 15c 0
+#endif
 #endif

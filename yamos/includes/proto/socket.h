@@ -9,7 +9,7 @@
 #include <inline/socket.h>
 #endif /* __GNUC__ */
 
-#if defined(LATTICE) || defined(__SASC) || defined(_DCC)
+#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
 #include <pragmas/socket_pragmas.h>
 #endif
 

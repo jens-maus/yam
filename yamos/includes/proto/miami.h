@@ -17,7 +17,7 @@ struct addrinfo;
 #include <inline/miami.h>
 #endif /* __GNUC__ */
 
-#if defined(LATTICE) || defined(__SASC) || defined(_DCC)
+#if defined(LATTICE) || defined(__SASC) || defined(_DCC) || defined(__STORM__)
 #include <pragmas/miami_pragmas.h>
 #endif
 

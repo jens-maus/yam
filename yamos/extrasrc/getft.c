@@ -14,7 +14,11 @@ int getft(const char *fn)
 #include <proto/dos.h>
 #include "extra.h"
 
+#ifdef __libnix__
 extern long __gmtoffset;
+#else
+#define __gmtoffset 0
+#endif
 
 long getft(const char *name)
 {
