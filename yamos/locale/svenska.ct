@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.2 (11.05.2003)
+## version $VER: YAM.catalog 5.3 (31.05.2003)
 ## language svenska
 ## codeset 0
 ;
@@ -6976,4 +6976,16 @@ MSG_HELP_CO_ST_INFOBARTXT
 Text som bör visas i statusbaren
 ; Text that should be displayed\n\
 ; in the status bar
+;
+MSG_MA_CROPREQUEST
+Alla bilagor hos de valda breven kommer att tas bort.\n\
+\n\
+Vill du verkligen fortsätta?
+; All attachments of the selected mails will be cropped.\n\
+; \n\
+; Do you really want to proceed?
+;
+MSG_YesNoReq2
+_Ja|*_Nej
+; _Yes|*_No
 ;
