@@ -152,12 +152,14 @@ OVERLOAD(MUIM_Setup)
 }
 ///
 
+/// OVERLOAD(MUIM_Show)
 OVERLOAD(MUIM_Show)
 {
 	GETDATA;
 	DoMethod(data->Matchwindow, MUIM_Addrmatchlist_ChangeWindow);
 	return DoSuperMethodA(cl, obj, msg);
 }
+///
 
 /// OVERLOAD(MUIM_GoActive)
 OVERLOAD(MUIM_GoActive)

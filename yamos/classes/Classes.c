@@ -85,6 +85,21 @@ DISPATCHERPROTO(RecipientstringDispatcher)
 }
 ///
 
+/// InfoBarDispatcher()
+DISPATCHERPROTO(InfoBarDispatcher)
+{
+  switch(msg->MethodID)
+  {
+    case OM_NEW                                  : return m_InfoBar_OM_NEW              (cl, obj, msg);
+    case MUIM_InfoBar_SetFolder                  : return m_InfoBar_SetFolder           (cl, obj, (APTR)msg);
+    case MUIM_InfoBar_ShowGauge                  : return m_InfoBar_ShowGauge           (cl, obj, (APTR)msg);
+    case MUIM_InfoBar_ShowInfoText               : return m_InfoBar_ShowInfoText        (cl, obj, (APTR)msg);
+    case MUIM_InfoBar_HideBars                   : return m_InfoBar_HideBars            (cl, obj, (APTR)msg);
+  }
+  return DoSuperMethodA(cl, obj, msg);
+}
+///
+
 /// AddrmatchlistDispatcher()
 DISPATCHERPROTO(AddrmatchlistDispatcher)
 {
@@ -108,6 +123,7 @@ const struct
   { MUIC_YAM, MUIC_Application, -1, YAMGetSize, ENTRY(YAMDispatcher) },
   { MUIC_Searchwindow, MUIC_Window, -1, SearchwindowGetSize, ENTRY(SearchwindowDispatcher) },
   { MUIC_Recipientstring, MUIC_BetterString, -1, RecipientstringGetSize, ENTRY(RecipientstringDispatcher) },
+  { MUIC_InfoBar, MUIC_Group, -1, InfoBarGetSize, ENTRY(InfoBarDispatcher) },
   { MUIC_Addrmatchlist, MUIC_Window, -1, AddrmatchlistGetSize, ENTRY(AddrmatchlistDispatcher) },
 };
 

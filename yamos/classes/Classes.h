@@ -39,7 +39,7 @@
 
 #define inittags(msg)   (((struct opSet *)msg)->ops_AttrList)
 #define GETDATA         struct Data *data = (struct Data *)INST_DATA(cl,obj)
-#define NUMBEROFCLASSES 4
+#define NUMBEROFCLASSES 5
 
 extern struct MUI_CustomClass *YAMClasses[NUMBEROFCLASSES];
 Object *YAM_NewObject( STRPTR class, ULONG tag, ... );
@@ -155,6 +155,46 @@ ULONG m_Recipientstring_CurrentRecipient    (struct IClass *cl, Object *obj, str
 
 #define MUIF_Recipientstring_Resolve_NoFullName  (1 << 0) // do not resolve with fullname "Mister X <misterx@mister.com>"
 #define MUIF_Recipientstring_Resolve_NoValid     (1 << 1) // do not resolve already valid string like "misterx@mister.com"
+
+/******** Class: InfoBar ********/
+
+#define MUIC_InfoBar "YAM_InfoBar"
+#define InfoBarObject YAM_NewObject(MUIC_InfoBar
+#define MUIM_InfoBar_SetFolder                        0xefff1101
+#define MUIM_InfoBar_ShowGauge                        0xe0f79501
+#define MUIM_InfoBar_ShowInfoText                     0xe97b7001
+#define MUIM_InfoBar_HideBars                         0xb1f7a401
+
+struct MUIP_InfoBar_SetFolder
+{
+  ULONG methodID;
+  struct Folder *newFolder;
+};
+
+struct MUIP_InfoBar_ShowGauge
+{
+  ULONG methodID;
+  STRPTR gaugeText; LONG perc; LONG max;
+};
+
+struct MUIP_InfoBar_ShowInfoText
+{
+  ULONG methodID;
+  STRPTR infoText;
+};
+
+struct MUIP_InfoBar_HideBars
+{
+  ULONG methodID;
+};
+
+
+ULONG InfoBarGetSize( void );
+ULONG m_InfoBar_OM_NEW              (struct IClass *cl, Object *obj, Msg msg);
+ULONG m_InfoBar_SetFolder           (struct IClass *cl, Object *obj, struct MUIP_InfoBar_SetFolder *msg);
+ULONG m_InfoBar_ShowGauge           (struct IClass *cl, Object *obj, struct MUIP_InfoBar_ShowGauge *msg);
+ULONG m_InfoBar_ShowInfoText        (struct IClass *cl, Object *obj, struct MUIP_InfoBar_ShowInfoText *msg);
+ULONG m_InfoBar_HideBars            (struct IClass *cl, Object *obj, struct MUIP_InfoBar_HideBars *msg);
 
 /******** Class: Addrmatchlist ********/
 

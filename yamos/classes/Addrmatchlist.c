@@ -77,6 +77,8 @@ HOOKPROTONH(CompareFunc, LONG, struct CustomABEntry *e2, struct CustomABEntry *e
 }
 MakeStaticHook(CompareHook, CompareFunc);
 
+/* Overloaded Methods */
+/// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
 	Object *list;
@@ -124,6 +126,8 @@ OVERLOAD(OM_NEW)
 	return (ULONG)obj;
 }
 
+///
+/// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
 	GETDATA;
@@ -144,46 +148,10 @@ OVERLOAD(OM_SET)
 	return DoSuperMethodA(cl, obj, msg);
 }
 
-DECLARE(ChangeWindow)
-{
-	GETDATA;
-	ULONG left = xget(_win(data->String), MUIA_Window_LeftEdge) + _left(data->String);
-	ULONG top = xget(_win(data->String), MUIA_Window_TopEdge) + _bottom(data->String) + 1;
+///
 
-	if(xget(obj, MUIA_Window_Open))
-	{
-		struct Window *win = (struct Window *)xget(obj, MUIA_Window_Window);
-		ChangeWindowBox(win, left, top, _width(data->String), win->Height);
-	}
-	else
-	{
-		SetAttrs(obj,
-			MUIA_Window_LeftEdge,   left,
-			MUIA_Window_TopEdge,    top,
-			MUIA_Window_Width,      _width(data->String),
-			TAG_DONE);
-	}
-
-	return 0;
-}
-
-DECLARE(Event) // struct IntuiMessage *imsg
-{
-	GETDATA;
-	STRPTR res = NULL;
-	if(xget(obj, MUIA_Window_Open))
-	{
-		struct CustomABEntry *entry;
-		if(xget(data->Matchlist, MUIA_List_Active) != MUIV_List_Active_Off)
-				set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Up     : MUIV_List_Active_Down);
-		else	set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
-
-		DoMethod(data->Matchlist, MUIM_List_GetEntry, xget(data->Matchlist, MUIA_List_Active), &entry);
-		res = entry->MatchString;
-	}
-	return (ULONG)res;
-}
-
+/* Private Functions */
+/// FindAllMatches()
 VOID FindAllMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *root)
 {
 	int tl = strlen(text);
@@ -212,6 +180,54 @@ VOID FindAllMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *r
 	}
 }
 
+///
+
+/* Class Methods */
+/// DECLARE(ChangeWindow)
+DECLARE(ChangeWindow)
+{
+	GETDATA;
+	ULONG left = xget(_win(data->String), MUIA_Window_LeftEdge) + _left(data->String);
+	ULONG top = xget(_win(data->String), MUIA_Window_TopEdge) + _bottom(data->String) + 1;
+
+	if(xget(obj, MUIA_Window_Open))
+	{
+		struct Window *win = (struct Window *)xget(obj, MUIA_Window_Window);
+		ChangeWindowBox(win, left, top, _width(data->String), win->Height);
+	}
+	else
+	{
+		SetAttrs(obj,
+			MUIA_Window_LeftEdge,   left,
+			MUIA_Window_TopEdge,    top,
+			MUIA_Window_Width,      _width(data->String),
+			TAG_DONE);
+	}
+
+	return 0;
+}
+
+///
+/// DECLARE(Event)
+DECLARE(Event) // struct IntuiMessage *imsg
+{
+	GETDATA;
+	STRPTR res = NULL;
+	if(xget(obj, MUIA_Window_Open))
+	{
+		struct CustomABEntry *entry;
+		if(xget(data->Matchlist, MUIA_List_Active) != MUIV_List_Active_Off)
+				set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Up     : MUIV_List_Active_Down);
+		else	set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
+
+		DoMethod(data->Matchlist, MUIM_List_GetEntry, xget(data->Matchlist, MUIA_List_Active), &entry);
+		res = entry->MatchString;
+	}
+	return (ULONG)res;
+}
+
+///
+/// DECLARE(Open)
 DECLARE(Open) // STRPTR str
 {
 	GETDATA;
@@ -237,3 +253,6 @@ DECLARE(Open) // STRPTR str
 
 	return (ULONG)res;
 }
+
+///
+
