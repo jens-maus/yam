@@ -245,7 +245,7 @@ static BOOL AY_New(BOOL hidden)
    dt.dat_Stamp.ds_Days   = yamversiondays;
    dt.dat_Stamp.ds_Minute = 0;
    dt.dat_Stamp.ds_Tick   = 0;
-   dt.dat_Format  = FORMAT_DOS;
+   dt.dat_Format  = FORMAT_DEF;
    dt.dat_Flags   = 0L;
    dt.dat_StrDay  = NULL;
    dt.dat_StrDate = datebuf;

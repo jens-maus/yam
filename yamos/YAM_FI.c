@@ -302,7 +302,7 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens
       {
         char *time;
         search->Fast = FS_DATE;
-        search->DT.dat_Format = FORMAT_DOS;
+        search->DT.dat_Format = FORMAT_DEF;
         search->DT.dat_StrDate = match;
         search->DT.dat_StrTime = (time = strchr(match,' ')) ? time+1 : "00:00:00";
         if (!StrToDate(&(search->DT)))

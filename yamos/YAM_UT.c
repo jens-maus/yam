@@ -1843,10 +1843,11 @@ char *DescribeCT(char *ct)
 time_t GetDateStamp(void)
 {
    struct DateStamp ds;
-   struct DateStamp *rds;
 
-   rds = DateStamp(&ds);
-   return (rds->ds_Days*24*60*60 + rds->ds_Minute*60 + rds->ds_Tick/TICKS_PER_SECOND);
+   // get the actual time
+   DateStamp(&ds);
+
+   return (ds.ds_Days*24*60*60 + ds.ds_Minute*60 + ds.ds_Tick/TICKS_PER_SECOND);
 }
 ///
 /// DateStamp2String
@@ -1857,19 +1858,20 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
    char datestr[16], timestr[16], daystr[16];
    struct DateTime dt;
    struct DateStamp dsnow;
-   long beat;
 
    // if this argument is not set we get the actual time
    if (!date) date = DateStamp(&dsnow);
 
-   memset(&dt, 0, sizeof(struct DateTime));
+   // now we fill the DateTime structure with the data for our request.
    dt.dat_Stamp   = *date;
-   dt.dat_Format  = FORMAT_DOS;
-   if (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) dt.dat_Format = FORMAT_USA;
+   dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
+   dt.dat_Flags   = 0; // perhaps later we can add Weekday substitution
    dt.dat_StrDate = (STRPTR)datestr;
    dt.dat_StrTime = (STRPTR)timestr;
    dt.dat_StrDay  = (STRPTR)daystr;
-   DateToStr(&dt);
+
+   // lets convert the DateStamp now to a string
+   if(DateToStr(&dt) == FALSE) return NULL;
 
    switch (mode)
    {
@@ -1888,17 +1890,8 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
 
       case DSS_DATETIME:
       {
-        timestr[5] = 0;
+//        timestr[5] = 0; // strip the seconds (only works with AmigaDOS-like DateString)
         sprintf(resstr, "%s %s", datestr, timestr);
-      }
-      break;
-
-      case DSS_DATEBEAT:
-      {
-        // calculate the beat time
-        beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
-
-        sprintf(resstr, "%s @%03ld", datestr, beat);
       }
       break;
 
@@ -1927,11 +1920,13 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
       break;
 
       case DSS_BEAT:
+      case DSS_DATEBEAT:
       {
         // calculate the beat time
-        beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
+        LONG beat = (((date->ds_Minute-60*C->TimeZone+(C->DaylightSaving?0:60)+1440)%1440)*1000)/1440;
 
-        sprintf(resstr, "@%03ld", beat);
+        if(mode == DSS_DATEBEAT) sprintf(resstr, "%s @%03ld", datestr, beat);
+        else                     sprintf(resstr, "@%03ld", beat);
       }
       break;
    }
