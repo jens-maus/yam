@@ -732,7 +732,7 @@ void CO_SetConfig(void)
       case 0:
          setstring   (gui->ST_REALNAME  ,CE->RealName);
          setstring   (gui->ST_EMAIL     ,CE->EmailAddress);
-         setcycle    (gui->CY_TZONE     ,CE->TimeZone+12);
+         setcycle    (gui->CY_TZONE     ,G->Locale ? -G->Locale->loc_GMTOffset/60+12 : CE->TimeZone+12);
          setcheckmark(gui->CH_DLSAVING  ,CE->DaylightSaving);
          nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
          nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);

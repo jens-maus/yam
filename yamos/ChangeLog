@@ -191,3 +191,7 @@
     * Offers to save the address book on quit if it was modified
 
     * Added some return statements to avoid warnings
+
+2001-04-02  Jacob Laursen <laursen@myself.com>
+
+    * Using Locale timezone setting now if available.
