@@ -626,7 +626,7 @@ HOOKPROTONHNO(FI_EditFileFunc, void, int *arg)
    if (*C->Editor)
    {
       char buffer[SIZE_COMMAND+SIZE_PATHFILE];
-      sprintf(buffer,"%s \"%s\"", C->Editor, (STRPTR)xget((Object *)arg[0], MUIA_String_Contents));
+      sprintf(buffer,"%s \"%s\"", C->Editor, GetRealPath((STRPTR)xget((Object *)arg[0], MUIA_String_Contents)));
       ExecuteCommand(buffer, TRUE, OUT_NIL);
    }
 }

@@ -1111,7 +1111,8 @@ void RE_DisplayMIME(char *fname, char *ctype)
       }
       if (!mv) mv = C->MV[0];
     }
-    sprintf(command, mv->Command, fname);
+
+    sprintf(command, mv->Command, GetRealPath(fname));
     ExecuteCommand(command, TRUE, OUT_NIL);
   }
 }

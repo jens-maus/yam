@@ -1479,7 +1479,7 @@ BOOL MA_ExecuteRuleAction(struct Rule *rule, struct Mail *mail)
   if(hasExecuteAction(rule) && *rule->ExecuteCmd)
   {
     char buf[SIZE_COMMAND+SIZE_PATHFILE];
-    sprintf(buf, "%s %s", rule->ExecuteCmd, GetMailFile(NULL, NULL, mail));
+    sprintf(buf, "%s %s", rule->ExecuteCmd, GetRealPath(GetMailFile(NULL, NULL, mail)));
     ExecuteCommand(buf, FALSE, OUT_DOS);
     G->RRs.Executed++;
   }

@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-09-26  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c, YAM_CO.c, YAM_FI.c, YAM_MA.c, YAM_UT.c, YAM_WR.c,
+      YAM_utilities.h: fixed bug #610607 where mails in a
+      PROGDIR: located folder were able to display the RAW part.
+      YAM was just forwarding PROGDIR: to the third party program
+      where then this programs tried to find the mailfile out of
+      PROGDIR: which obviously wasn`t correct. Now YAM will always
+      do a Lock()/NameFromLock()/UnLock() to get out the
+      correct path to the file before executing a third party
+      program (mime viewer).
+
 2002-09-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: fixed bug #601755 where YAM showed the overall

@@ -257,6 +257,7 @@ BOOL     DoPack(char *file, char *newfile, struct Folder *folder);
 BOOL     DumpClipboard(FILE *out);
 BOOL     EditorToFile(Object *editor, char *file, struct TranslationTable *tt);
 char *   Encrypt(char *source);
+char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef);
 char *   ExpandText(char *src, struct ExpandTextData *etd);
 void     ExtractAddress(char *line, struct Person *pe);

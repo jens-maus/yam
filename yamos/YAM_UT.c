@@ -3716,25 +3716,80 @@ BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
    return FALSE;
 }
 ///
+/// GetRealPath
+//  Function that gets the real path out of a supplied path. It will correctly resolve pathes like PROGDIR: aso.
+char *GetRealPath(char *path)
+{
+  BPTR lock;
+  BOOL success = FALSE;
+  static char buf[SIZE_PATHFILE];
+
+  // lets try to get a Lock on the supplied path
+  if((lock = Lock(path, SHARED_LOCK)))
+  {
+    // so, if it seems to exists, we get the "real" name out of
+    // the lock again.
+    if(NameFromLock(lock, buf, SIZE_PATHFILE) != DOSFALSE)
+    {
+      success = TRUE;
+    }
+
+    // And then we unlock the file/dir immediatly again.
+    UnLock(lock);
+  }
+
+  // only on success we return the buffer.
+  return success ? buf : NULL;
+}
+
+///
 /// ExecuteCommand
 //  Executes a DOS command
 BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
 {
-   BPTR in, out, path;
+   BPTR in, out;
    int ret;
+
+   DB(kprintf("Execute cmd: [%s]", cmd);)
+
    switch (outdef)
    {
       case OUT_DOS: in = Input(); out = Output(); break;
       case OUT_NIL: out = Open("NIL:", MODE_NEWFILE); in = Open("NIL:", MODE_OLDFILE); break;
       default:      out = outdef; in = Open("NIL:", MODE_OLDFILE); break;
    }
+
    if (!outdef) asynch = FALSE;
+
    if (WBmsg)
    {
-      path = CloneWorkbenchPath(WBmsg);
-      if ((ret = SystemTags(cmd, SYS_Input,in, SYS_Output,out, NP_Path,path, NP_StackSize,C->StackSize, SYS_Asynch,asynch, TAG_DONE)) == -1) FreeWorkbenchPath(path);
+      BPTR path = CloneWorkbenchPath(WBmsg);
+
+      DB(kprintf(" with CloneWBPath()\n");)
+
+      if ((ret = SystemTags(cmd,
+                            SYS_Input,    in,
+                            SYS_Output,   out,
+                            NP_Path,      path,
+                            NP_StackSize, C->StackSize,
+                            SYS_Asynch,   asynch,
+                            TAG_DONE)) == -1)
+      {
+        FreeWorkbenchPath(path);
+      }
    }
-   else ret = SystemTags(cmd, SYS_Input,in, SYS_Output,out, NP_StackSize,C->StackSize, SYS_Asynch,asynch, TAG_DONE);
+   else
+   {
+      DB(kprintf(" without CloneWBPath()\n");)
+
+      ret = SystemTags(cmd,
+                       SYS_Input,     in,
+                       SYS_Output,    out,
+                       NP_StackSize,  C->StackSize,
+                       SYS_Asynch,    asynch,
+                       TAG_DONE);
+   }
+
    if (ret == -1 && asynch && outdef) { Close(out); Close(in); }
 
    return (BOOL)(!ret);

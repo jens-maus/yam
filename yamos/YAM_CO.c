@@ -1023,7 +1023,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
    {
       if(*(CE->Editor))
       {
-        sprintf(buffer,"%s \"%s\"", CE->Editor, CreateFilename(SigNames[sig]));
+        sprintf(buffer,"%s \"%s\"", CE->Editor, GetRealPath(CreateFilename(SigNames[sig])));
         ExecuteCommand(buffer, FALSE, OUT_NIL);
       }
       else return;
