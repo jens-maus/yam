@@ -13,10 +13,8 @@
 	LP2(0x1e, BOOL, URL_OpenA, STRPTR, par1, a0, struct TagItem *, last, a1, \
 	, OPENURL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define URL_Open(par1, tags...) \
 	({ULONG _tags[] = {tags}; URL_OpenA((par1), (struct TagItem *) _tags);})
-#endif
 
 #define URL_GetPrefs() \
 	LP0(0x24, struct URL_Prefs *, URL_GetPrefs, \

@@ -22,7 +22,9 @@
 ** <string.h>
 */
 
+#ifndef __MORPHOS__
 extern int stccpy(char *, const char *, int);
+#endif
 extern int stcgfe(char *, const char *);
 extern int stcgfn(char *, const char *);
 extern int astcsma(const char *, const char *);

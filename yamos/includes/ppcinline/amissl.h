@@ -13,19 +13,15 @@
 	LP1(0x1e, long, InitAmiSSLA, struct TagItem *, tagList, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define InitAmiSSL(tags...) \
 	({ULONG _tags[] = {tags}; InitAmiSSLA((struct TagItem *) _tags);})
-#endif
 
 #define CleanupAmiSSLA(tagList) \
 	LP1(0x24, long, CleanupAmiSSLA, struct TagItem *, tagList, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define CleanupAmiSSL(tags...) \
 	({ULONG _tags[] = {tags}; CleanupAmiSSLA((struct TagItem *) _tags);})
-#endif
 
 #define AmiSSLMalloc(num) \
 	LP1(0x2a, void *, AmiSSLMalloc, long, num, a0, \
@@ -779,10 +775,8 @@
 	LP2(0x48c, int, BIO_printfA, BIO *, bio, a0, void *, args, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define BIO_printf(bio, tags...) \
 	({ULONG _tags[] = {tags}; BIO_printfA((bio), (void *) _tags);})
-#endif
 
 #define BN_value_one() \
 	LP0(0x492, BIGNUM *, BN_value_one, \
@@ -1540,10 +1534,8 @@
 	LP2NR(0x90c, ERR_add_error_dataA, int, num, a0, void *, data, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define ERR_add_error_data(num, tags...) \
 	({ULONG _tags[] = {tags}; ERR_add_error_dataA((num), (void *) _tags);})
-#endif
 
 #define ERR_load_strings(lib, str) \
 	LP2NR(0x912, ERR_load_strings, int, lib, a0, ERR_STRING_DATA *, str, a1, \
@@ -2485,10 +2477,8 @@
 	LP2(0xe8e, int, i2d_PKCS12_MAC_DATA, PKCS12_MAC_DATA *, a, a0, unsigned char **, pp, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define i2d_PKCS12_MAC_DAT(a, tags...) \
 	({ULONG _tags[] = {tags}; i2d_PKCS12_MAC_DATA((a), (unsigned char **) _tags);})
-#endif
 
 #define PKCS12_MAC_DATA_new() \
 	LP0(0xe94, PKCS12_MAC_DATA *, PKCS12_MAC_DATA_new, \
@@ -2498,10 +2488,8 @@
 	LP3(0xe9a, PKCS12_MAC_DATA *, d2i_PKCS12_MAC_DATA, PKCS12_MAC_DATA **, a, a0, unsigned char **, pp, a1, long, length, a2, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define d2i_PKCS12_MAC_DAT(a, pp, tags...) \
 	({ULONG _tags[] = {tags}; d2i_PKCS12_MAC_DATA((a), (pp), (long) _tags);})
-#endif
 
 #define PKCS12_MAC_DATA_free(a) \
 	LP1NR(0xea0, PKCS12_MAC_DATA_free, PKCS12_MAC_DATA *, a, a0, \
@@ -2959,19 +2947,15 @@
 	LP3FP(0x1146, int, i2d_Netscape_RSA, RSA *, a, a0, unsigned char **, pp, a1, __fpt, cb, a2, \
 	, AMISSL_BASE_NAME, int (*__fpt)(), IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define i2d_Netscape_RS(a, pp, tags...) \
 	({ULONG _tags[] = {tags}; i2d_Netscape_RSA((a), (pp), (int (*)()) _tags);})
-#endif
 
 #define d2i_Netscape_RSA(a, pp, length, cb) \
 	LP4FP(0x114c, RSA *, d2i_Netscape_RSA, RSA **, a, a0, unsigned char **, pp, a1, long, length, a2, __fpt, cb, a3, \
 	, AMISSL_BASE_NAME, int (*__fpt)(), IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define d2i_Netscape_RS(a, pp, length, tags...) \
 	({ULONG _tags[] = {tags}; d2i_Netscape_RSA((a), (pp), (length), (int (*)()) _tags);})
-#endif
 
 #define d2i_Netscape_RSA_2(a, pp, length, cb) \
 	LP4FP(0x1152, RSA *, d2i_Netscape_RSA_2, RSA **, a, a0, unsigned char **, pp, a1, long, length, a2, __fpt, cb, a3, \
@@ -3577,20 +3561,16 @@
 	LP2(0x14e2, int, SSL_add_client_CA, SSL *, ssl, a0, X509 *, x, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define SSL_add_client_C(ssl, tags...) \
 	({ULONG _tags[] = {tags}; SSL_add_client_CA((ssl), (X509 *) _tags);})
-#endif
 
 #define SSL_CTX_add_client_CA(ctx, x) \
 	LP2(0x14e8, int, SSL_CTX_add_client_CA, SSL_CTX *, ctx, a0, X509 *, x, a1, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define SSL_CTX_add_client_C(ctx, tags...) \
 	({ULONG _tags[] = {tags}; SSL_CTX_add_client_CA((ctx), (X509 *) _tags);})
-#endif
-
+ 
 #define SSL_set_connect_state(s) \
 	LP1NR(0x14ee, SSL_set_connect_state, SSL *, s, a0, \
 	, AMISSL_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)

@@ -85,10 +85,9 @@
 	LP1(0x126, LONG, SocketBaseTagList, struct TagItem *, last, a0, \
 	, SOCKET_BASE_NAME, IF_CACHEFLUSHALL, NULL, 0, IF_CACHEFLUSHALL, NULL, 0)
 
-#ifndef NO_PPCINLINE_STDARG
 #define SocketBaseTags(tags...) \
 	({ULONG _tags[] = {tags}; SocketBaseTagList((struct TagItem *) _tags);})
-#endif
+
 
 #define GetSocketEvents(last) \
 	LP1(0x12c, LONG, GetSocketEvents, ULONG *, last, a0, \

@@ -46,9 +46,9 @@ CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%
 WARN     = -Wall
 OPTFLAGS = -O2 -fomit-frame-pointer
 DEBUG    = -DDEBUG -g3 -O0
-CFLAGS   = -noixemul -I./ -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
+CFLAGS   = -noixemul -pipe -I./ -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS  = -noixemul $(CPU)
-LDLIBS   = -lamigastubs -lmui -lsyscall -lxpkmaster -lpm -lamissl -lopenurl
+LDLIBS   = -ldebug 
 
 # Special flags
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
@@ -82,11 +82,11 @@ all: $(TARGET) starter
 #
 
 %.o.elf: %.c
-	$(CC) $(CFLAGS) $< -o $@ -DNO_PPCINLINE_STDARG
+	$(CC) $(CFLAGS) $< -o $@ 
 
 #
 
-$(TARGET): $(OBJS)
+$(TARGET):  $(OBJS)
 	$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
 	$(STRIP) -o $@ $@.debug
 	$(CHMOD) a+x $@
@@ -117,7 +117,7 @@ YAM.o.elf:	YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
 	YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
 	YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
 	YAM_userlist.h YAM_utilities.h YAM_write.h
-	$(CC) $(CDEFS) $(DEVFLAGS) $(CFLAGS) $< -o $@ -DNO_PPCINLINE_STDARG
+	$(CC) $(CDEFS) $(DEVFLAGS) $(CFLAGS) $< -o $@
 
 YAM_AB.o.elf: YAM_AB.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h YAM_global.h \
