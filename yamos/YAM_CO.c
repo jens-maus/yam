@@ -687,7 +687,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->FixedFontList = C->SwatchBeat = FALSE;
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;
-      co->InfoBar = TRUE;
+      co->InfoBar = FALSE;
    }
    if (page == 9 || page < 0)
    {
