@@ -5556,6 +5556,25 @@ subchapters using the following format:
 
           'WRITESUBJECT "Hello World"'
 
+
+     Please note that because of the internal use of the ReadArgs() function,
+     the ARexx Host requires to escape certain special characters like a newline
+     (0x0a) or escape character (0x1b) if you want to have it included in your
+     final string or otherwise it is stripped by the ReadArgs() function.
+
+     This means that you have to use the following escape sequences in your
+     provided strings:
+
+     *N substitutes to 0x0a
+     *E substitutes to 0x1b
+     ** substitutes to *
+     *" substitutes to "
+
+     For example the following command would write a string to a texteditor
+     containing a newline:
+
+     'WRITEEDITOR "TEXT Hello Joe,*N I would like to meet you."'
+
 @{b}RETURNS@{ub}
      Returned info to be expected from the command.  Commands may return
      results in three different kinds; let's look at these examples which
@@ -9135,8 +9154,24 @@ WRITEEDITOR
       TOUPPER
       TOLOWER
 
-     Please refer to the Amiga User Interface Style Guide for more info
+     Refer to the Amiga User Interface Style Guide for more info
      about these commands.
+
+     Please note that because of the internal use of the ReadArgs() function,
+     the ARexx Host requires to escape certain special characters like a newline
+     (0x0a) or escape character (0x1b) if you want to pass it i.e. with an
+     TEXT command to the texteditor.
+
+     This means that you have to use the following escape sequences in your
+     provided strings:
+
+     *N substitutes to 0x0a
+     *E substitutes to 0x1b
+     ** substitutes to *
+     *" substitutes to "
+
+     Please have a look at the examples below for a short example on how to use
+     these escape sequences properly.
 
 @{b}INPUTS@{ub}
      VAR/K       - alternative variable to put the results into instead of
@@ -9177,6 +9212,10 @@ WRITEEDITOR
          /* Write some text into the editor */
 
          'WRITEEDITOR "TEXT Sorry, but I am sick today!"'
+
+         /* Write some text containing a newline (*N) */
+
+         'WRITEEDITOR "TEXT Hello Joe,*N I would like to meet you."'
 
 @{b}BUGS@{ub}
 
