@@ -1010,8 +1010,8 @@ char *AllocData2D(struct Data2D *data, LONG initsize)
 //  Duplicates a memory block
 APTR AllocCopy(APTR source, int size)
 {
-   APTR dest;
-   if ((dest = malloc(size))) memcpy(dest, source, size);
+   APTR dest = malloc(size);
+   if (dest) memcpy(dest, source, size);
    return dest;
 }
 ///
@@ -2354,10 +2354,8 @@ static BOOL GetPackMethod(int xpktype, char **method, int *eff)
 //  Shrinks a message file
 static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, int eff)
 {
-   int err;
    if (!XpkBase) return FALSE;
-   err = XpkPackTags(XPK_InName, src, XPK_OutName, dst, XPK_Password, passwd, XPK_PackMethod, method, XPK_PackMode, eff, TAG_DONE);
-   return (BOOL)!err;
+   return (BOOL)!XpkPackTags(XPK_InName, src, XPK_OutName, dst, XPK_Password, passwd, XPK_PackMethod, method, XPK_PackMode, eff, TAG_DONE);
 }
 ///
 /// UncompressMailFile
@@ -2365,7 +2363,7 @@ static BOOL CompressMailFile(char *src, char *dst, char *passwd, char *method, i
 static BOOL UncompressMailFile(char *src, char *dst, char *passwd)
 {
    if (!XpkBase) return FALSE;
-   return (BOOL)(!XpkUnpackTags(XPK_InName, src, XPK_OutName, dst, XPK_Password, passwd, TAG_DONE));
+   return (BOOL)!XpkUnpackTags(XPK_InName, src, XPK_OutName, dst, XPK_Password, passwd, TAG_DONE);
 }
 ///
 /// TransferMailFile
@@ -3514,18 +3512,16 @@ BOOL CheckPrinter(void)
 {
    struct MsgPort *PrintPort;
    struct IOStdReq *PrintIO;
-   UWORD  Result = 0;
-   char  _PrinterDeviceName[] = "printer.device";
-   long  _PrinterDeviceUnit = 0;
    char *error = NULL;
 
    if ((PrintPort = CreateMsgPort()))
    {
-      PrintPort->mp_Node.ln_Name = "YAM PrintPort";
+      //PrintPort->mp_Node.ln_Name = "YAM PrintPort";
       if ((PrintIO = CreateIORequest(PrintPort, sizeof(struct IOStdReq))))
       {
-         if (!(OpenDevice((STRPTR)_PrinterDeviceName, _PrinterDeviceUnit, (struct IORequest *)PrintIO, 0)))
+         if (!(OpenDevice("printer.device", 0, (struct IORequest *)PrintIO, 0)))
          {
+            UWORD Result = 0;
             PrintIO->io_Message.mn_ReplyPort = PrintPort;
             PrintIO->io_Command = PRD_QUERY;
             PrintIO->io_Data = &Result;
@@ -3542,7 +3538,7 @@ BOOL CheckPrinter(void)
       }
       DeleteMsgPort(PrintPort);
    }
-   if (error) if (!MUI_Request(G->App, NULL, 0, GetStr(MSG_ErrorReq), GetStr(MSG_OkayCancelReq), error)) return FALSE;
+   if (error && !MUI_Request(G->App, NULL, 0, GetStr(MSG_ErrorReq), GetStr(MSG_OkayCancelReq), error)) return FALSE;
    return TRUE;
 }
 ///
@@ -3604,11 +3600,11 @@ static char *IdentifyFileDT(char *fname)
    strcpy(ctype, "application/octet-stream");
    if (DataTypesBase)
    {
-      BPTR lock;
-      if ((lock = Lock(fname, ACCESS_READ)))
+      BPTR lock = Lock(fname, ACCESS_READ);
+      if (lock)
       {
-         struct DataType *dtn;
-         if ((dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL)))
+         struct DataType *dtn = ObtainDataTypeA(DTST_FILE, (APTR)lock, NULL);
+         if (dtn)
          {
             char *type = NULL;
             struct DataTypeHeader *dth = dtn->dtn_Header;
@@ -3637,7 +3633,6 @@ static char *IdentifyFileDT(char *fname)
 char *IdentifyFile(char *fname)
 {
    char *ctype = "";
-   long bits = FileProtection(fname);
    FILE *fh;
 
    if ((fh = fopen(fname, "r")))
@@ -3704,7 +3699,7 @@ char *IdentifyFile(char *fname)
          for (i = 0; i < len; i++)
             if (c=(int)buffer[i],c < 32 || c > 127)
                if (c != '\t' && c != '\n') notascii++;
-         if (notascii < len/10) ctype =  ContType[(bits&FIBF_SCRIPT) ? CT_AP_SCRIPT : CT_TX_PLAIN];
+         if (notascii < len/10) ctype =  ContType[(FileProtection(fname)&FIBF_SCRIPT) ? CT_AP_SCRIPT : CT_TX_PLAIN];
          else ctype = IdentifyFileDT(fname);
       }
    }
