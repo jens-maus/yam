@@ -92,13 +92,14 @@ char *Status[9] = { "U","O","F","R","W","E","H","S","N" };
 char *SigNames[3] = { ".signature", ".altsignature1", ".altsignature2" };
 char *FolderNames[4] = { "incoming", "outgoing", "sent", "deleted" };
 
-char *ContType[MAXCTYPE+1] =
+char *ContType[] =
 {
    /*CT_TX_PLAIN */ "text/plain",
    /*CT_TX_HTML  */ "text/html",
    /*CT_TX_GUIDE */ "text/x-aguide",
    /*CT_AP_OCTET */ "application/octet-stream",
    /*CT_AP_PS    */ "application/postscript",
+   /*CT_AP_PDF   */ "application/pdf",
    /*CT_AP_RTF   */ "application/rtf",
    /*CT_AP_LHA   */ "application/x-lha",
    /*CT_AP_LZX   */ "application/x-lzx",
@@ -122,14 +123,35 @@ char *ContType[MAXCTYPE+1] =
    NULL,
 };
 
-void *ContTypeDesc[MAXCTYPE] =
+char *ContTypeDesc[] =
 {
-   MSG_CTtextplain, MSG_CTtexthtml, MSG_CTtextaguide,
-   MSG_CTapplicationoctetstream, MSG_CTapplicationpostscript, MSG_CTapplicationrtf, MSG_CTapplicationlha, MSG_CTapplicationlzx, MSG_CTapplicationzip, MSG_CTapplicationamigaexe, MSG_CTapplicationadosscript, MSG_CTapplicationrexx,
-   MSG_CTimagejpeg, MSG_CTimagegif, MSG_CTimagepng, MSG_CTimagetiff, MSG_CTimageilbm,
-   MSG_CTaudiobasic, MSG_CTaudio8svx, MSG_CTaudiowav,
-   MSG_CTvideompeg, MSG_CTvideoquicktime, MSG_CTvideoanim, MSG_CTvideomsvideo,
-   MSG_CTmessagerfc822
+   MSG_CTtextplain,
+   MSG_CTtexthtml,
+   MSG_CTtextaguide,
+   MSG_CTapplicationoctetstream,
+   MSG_CTapplicationpostscript,
+   MSG_CTapplicationpdf,
+   MSG_CTapplicationrtf,
+   MSG_CTapplicationlha,
+   MSG_CTapplicationlzx,
+   MSG_CTapplicationzip,
+   MSG_CTapplicationamigaexe,
+   MSG_CTapplicationadosscript,
+   MSG_CTapplicationrexx,
+   MSG_CTimagejpeg,
+   MSG_CTimagegif,
+   MSG_CTimagepng,
+   MSG_CTimagetiff,
+   MSG_CTimageilbm,
+   MSG_CTaudiobasic,
+   MSG_CTaudio8svx,
+   MSG_CTaudiowav,
+   MSG_CTvideompeg,
+   MSG_CTvideoquicktime,
+   MSG_CTvideoanim,
+   MSG_CTvideomsvideo,
+   MSG_CTmessagerfc822,
+   NULL,
 };
 
 char *wdays[7] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };

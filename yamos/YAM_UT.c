@@ -1197,16 +1197,26 @@ BOOL CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh)
 
    if (sour) sourfh = fopen(sour, "r");
    if (sourfh && dest) destfh = fopen(dest, "w");
+
    if (sourfh && destfh)
    {
       char buf[SIZE_LARGE];
       int len;
-      success = TRUE;
-      while ((len = fread(buf, 1, SIZE_LARGE, sourfh)))
-         if (fwrite(buf, 1, len, destfh) != len) { success = FALSE; break; }
+
+      while((len = fread(buf, 1, SIZE_LARGE, sourfh)))
+      {
+         if(fwrite(buf, 1, len, destfh) != len) break;
+      }
+
+      // if we arrived here because this was the eof of the sourcefile
+      // and non of the two filehandles are in error state we can set
+      // success to TRUE.
+      if(feof(sourfh) && !ferror(sourfh) && !ferror(destfh)) success = TRUE;
    }
+
    if (dest && destfh) fclose(destfh);
    if (sour && sourfh) fclose(sourfh);
+
    return success;
 }
 ///
@@ -1889,8 +1899,16 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
 char *DescribeCT(char *ct)
 {
    int i;
-   for (i = 0; i < MAXCTYPE; i++)
-      if (!stricmp(ct, ContType[i])) { ct = GetStr(ContTypeDesc[i]); break; }
+
+   for(i = 0; ContType[i]; i++)
+   {
+      if(!stricmp(ct, ContType[i]))
+      {
+        ct = GetStr(ContTypeDesc[i]);
+        break;
+      }
+   }
+
    return ct;
 }
 ///
@@ -3690,56 +3708,40 @@ char *IdentifyFile(char *fname)
       len = fread(buffer, 1, SIZE_LARGE-1, fh);
       buffer[len] = 0;
       fclose(fh);
-      if ((ext = strrchr(fname, '.'))) ++ext; else ext = "--";
-      if (!stricmp(ext, "htm") || !stricmp(ext, "html"))
-         ctype = ContType[CT_TX_HTML];
-      else if (!strnicmp(buffer, "@database", 9) || !stricmp(ext, "guide"))
-         ctype = ContType[CT_TX_GUIDE];
-      else if (!stricmp(ext, "ps") || !stricmp(ext, "eps"))
-         ctype = ContType[CT_AP_PS];
-      else if (!stricmp(ext, "rtf"))
-         ctype = ContType[CT_AP_RTF];
-      else if (!stricmp(ext, "lha") || !strncmp(&buffer[2], "-lh5-", 5))
-         ctype = ContType[CT_AP_LHA];
-      else if (!stricmp(ext, "lzx") || !strncmp(buffer, "LZX", 3))
-         ctype = ContType[CT_AP_LZX];
-      else if (!stricmp(ext, "zip"))
-         ctype = ContType[CT_AP_ZIP];
-      else if (*((long *)buffer) >= HUNK_UNIT && *((long *)buffer) <= HUNK_INDEX)
-         ctype = ContType[CT_AP_AEXE];
-      else if (!stricmp(ext, "rexx") || !stricmp(ext+strlen(ext)-2, "rx"))
-         ctype = ContType[CT_AP_REXX];
-      else if (!strncmp(&buffer[6], "JFIF", 4))
-         ctype = ContType[CT_IM_JPG];
-      else if (!strncmp(buffer, "GIF8", 4))
-         ctype = ContType[CT_IM_GIF];
-      else if (!strnicmp(ext, "png",4) || !strncmp(&buffer[1], "PNG", 3))
-         ctype = ContType[CT_IM_PNG];
-      else if (!strnicmp(ext, "tif",4))
-         ctype = ContType[CT_IM_TIFF];
-      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ILBM", 4))
-         ctype = ContType[CT_IM_ILBM];
-      else if (!stricmp(ext, "au") || !stricmp(ext, "snd"))
-         ctype = ContType[CT_AU_AU];
-      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))
-         ctype = ContType[CT_AU_8SVX];
-      else if (!stricmp(ext, "wav"))
-         ctype = ContType[CT_AU_WAV];
-      else if (!stricmp(ext, "mpg") || !stricmp(ext, "mpeg"))
-         ctype = ContType[CT_VI_MPG];
-      else if (!stricmp(ext, "qt") || !stricmp(ext, "mov"))
-         ctype = ContType[CT_VI_MOV];
-      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))
-         ctype = ContType[CT_VI_ANIM];
-      else if (!stricmp(ext, "avi"))
-         ctype = ContType[CT_VI_AVI];
-      else if (stristr(buffer, "\nFrom:"))
-         ctype = ContType[CT_ME_EMAIL];
+      if ((ext = strrchr(fname, '.'))) ++ext;
+      else ext = "--";
+
+      if (!stricmp(ext, "htm") || !stricmp(ext, "html"))                          ctype = ContType[CT_TX_HTML];
+      else if (!strnicmp(buffer, "@database", 9) || !stricmp(ext, "guide"))       ctype = ContType[CT_TX_GUIDE];
+      else if (!stricmp(ext, "ps") || !stricmp(ext, "eps"))                       ctype = ContType[CT_AP_PS];
+      else if (!stricmp(ext, "pdf") || !strncmp(buffer, "%PDF-", 5))              ctype = ContType[CT_AP_PDF];
+      else if (!stricmp(ext, "rtf"))                                              ctype = ContType[CT_AP_RTF];
+      else if (!stricmp(ext, "lha") || !strncmp(&buffer[2], "-lh5-", 5))          ctype = ContType[CT_AP_LHA];
+      else if (!stricmp(ext, "lzx") || !strncmp(buffer, "LZX", 3))                ctype = ContType[CT_AP_LZX];
+      else if (!stricmp(ext, "zip"))                                              ctype = ContType[CT_AP_ZIP];
+      else if (*((long *)buffer) >= HUNK_UNIT && *((long *)buffer) <= HUNK_INDEX) ctype = ContType[CT_AP_AEXE];
+      else if (!stricmp(ext, "rexx") || !stricmp(ext+strlen(ext)-2, "rx"))        ctype = ContType[CT_AP_REXX];
+      else if (!strncmp(&buffer[6], "JFIF", 4))                                   ctype = ContType[CT_IM_JPG];
+      else if (!strncmp(buffer, "GIF8", 4))                                       ctype = ContType[CT_IM_GIF];
+      else if (!strnicmp(ext, "png",4) || !strncmp(&buffer[1], "PNG", 3))         ctype = ContType[CT_IM_PNG];
+      else if (!strnicmp(ext, "tif",4))                                           ctype = ContType[CT_IM_TIFF];
+      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ILBM", 4))    ctype = ContType[CT_IM_ILBM];
+      else if (!stricmp(ext, "au") || !stricmp(ext, "snd"))                       ctype = ContType[CT_AU_AU];
+      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "8SVX", 4))    ctype = ContType[CT_AU_8SVX];
+      else if (!stricmp(ext, "wav"))                                              ctype = ContType[CT_AU_WAV];
+      else if (!stricmp(ext, "mpg") || !stricmp(ext, "mpeg"))                     ctype = ContType[CT_VI_MPG];
+      else if (!stricmp(ext, "qt") || !stricmp(ext, "mov"))                       ctype = ContType[CT_VI_MOV];
+      else if (!strncmp(buffer, "FORM", 4) && !strncmp(&buffer[8], "ANIM", 4))    ctype = ContType[CT_VI_ANIM];
+      else if (!stricmp(ext, "avi"))                                              ctype = ContType[CT_VI_AVI];
+      else if (stristr(buffer, "\nFrom:"))                                        ctype = ContType[CT_ME_EMAIL];
       else
       {
          for (i = 1; i < MAXMV; i++) if (C->MV[i])
+         {
             if (MatchExtension(ext, C->MV[i]->Extension)) ctype = C->MV[i]->ContentType;
+         }
       }
+
       if (!*ctype)
       {
          int c, notascii = 0;
