@@ -2705,14 +2705,21 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
               }
 /* Signat. */ else if(!strcmp(rptr, "-- "))
               {
-                if(mode == RIM_QUOTE && C->StripSignature && (rptr == sigptr)) break;
-                else if (mode == RIM_READ)
+                if (mode == RIM_READ)
                 {
                   if(C->SigSepLine == 1) cmsg = AppendToBuffer(cmsg, &wptr, &len, rptr);
-                  if(C->SigSepLine == 2) cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
-                  if(C->SigSepLine == 3) break;
+                  else if(C->SigSepLine == 2) cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033[s:2]");
+                  else if(C->SigSepLine == 3) break;
 
                   cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
+                }
+                else if(mode == RIM_QUOTE)
+                {
+                  if(C->StripSignature && (rptr == sigptr)) break;
+                }
+                else
+                {
+                  cmsg = AppendToBuffer(cmsg, &wptr, &len, "-- \n");
                 }
               }
 /* PGP sig */ else if (!strncmp(rptr, "-----BEGIN PGP PUBLIC KEY BLOCK", 31)) re->PGPKey = TRUE;

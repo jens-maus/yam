@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-04  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug #678206 where YAM did strip the signature separator
+      upon a mail edit.
+
 2003-02-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: The read window will also take respect of the newly
