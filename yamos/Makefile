@@ -29,20 +29,20 @@ TARGET	= YAM
 
 #
 
-CC	= gcc
+CC	= m68k-amigaos-gcc
 RM	= rm -f
-STRIP	= strip
+STRIP	= m68k-amigaos-strip
 CHMOD	= chmod
 FLEX	= flex
 FC	= flexcat
 
-CPU	= -m68020
+CPU	= -m68020-60
 CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
 WARN	= -Wall
-OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel
+OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel -funroll-loops
 DEBUG	= -DDEBUG -g -O0
 CFLAGS	= -I. -I./includes $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
-LDFLAGS	= -noixemul -mstackextend -fbaserel $(CPU)
+LDFLAGS	= -noixemul -fbaserel $(CPU)
 LDLIBS	= -ldebug -lmui -lm
 
 # Special flags
