@@ -31,11 +31,11 @@ CFLAGS = NOLINK GST=$(GST) DEF YAMVER=$(YAMVERSION) DEF YAMDATE=$(YAMDATE) $(DEB
 all:	$(GST) YAM
 
 clean:
-	$(RM) YAM *.o $(GST)
+	$(RM) YAM *.o $(GST) YAM_loc.* YAM.h
 
 copy:	all catalogs
 	copy YAM YAM:
-	copy YAM_$$language.catalog LOCALE:$$language/YAM.catalog
+#	copy YAM_$$language.catalog LOCALE:$$language/YAM.catalog
 
 catalogs: YAM_deutsch.catalog
 
@@ -44,14 +44,14 @@ YAM:	$(OBJS)
 	TO YAM
 	FROM lib:c.o $(OBJS)
 	LIB lib:sc.lib lib:amiga.lib lib:debug.lib lib:md5.lib lib:wbpath.o lib:NewReadArgs.o 
+	MAP YAM.map
 	<
 
 YAM.h: YAM.h.in
    copy YAM.h.in YAM.h
 
-YAM_loc.o: YAM.cd YAM_loc.h YAM_loc.c
+YAM_loc.h: YAM.cd
 	flexcat YAM.cd YAM_loc.h=C_h.sd YAM_loc.c=C_c.sd
-	$(CC) YAM_loc.c $(CFLAGS)
 
 YAM_deutsch.catalog: deutsch.ct
 
@@ -81,6 +81,8 @@ YAM_WR.o:  YAM_WR.c  YAM.h YAM_loc.h
 YAM_rexx.o     : YAM_rexx.c YAM_rexx.h 
 YAM_rexx_rxcl.o: YAM_rexx_rxcl.c YAM_rexx.h
 YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_loc.h 
+
+YAM_loc.o: YAM_loc.h YAM_loc.c
 
 deutsch.catalog: deutsch.ct
    flexcat YAM.cd deutsch.ct CATALOG LOCALE:catalogs/deutsch/YAM.catalog FLUSH
