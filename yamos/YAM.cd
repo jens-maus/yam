@@ -4225,3 +4225,5 @@ Try defaults
 MSG_ER_PGPMultipart (//)
 Error creating multipart PGP message. Encryption/signing disabled!
 ;
+MSG_RE_FixedFont (//)
+Fixed font

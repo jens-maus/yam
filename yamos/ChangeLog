@@ -49,7 +49,10 @@
 
     * Finished slave work on menus in main window.
 
+    * Added "Fixed font" menu item in read window to quickly switch
+      font when needed. It doesn't work yet, though, since TextEditor.mcc
+      doesn't seem to catch MUIA_TextEditor_FixedFont on the fly.
+
 2000-12-20  Jörg Strohmayer <joergs@users.sourceforge.net>
 
     * Added SMTP AUTH to config GUI.
-

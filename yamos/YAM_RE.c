@@ -2133,6 +2133,7 @@ void RE_DisplayMessage(int winnum)
       set(gui->GR_INFO, MUIA_ShowMe, (G->RE[winnum]->SenderInfo == 2) && (gui->BC_PHOTO != NULL));
       set(gui->LV_HEAD, MUIA_NList_Quiet, FALSE);
       set(gui->TE_TEXT, MUIA_TextEditor_ImportHook, G->RE[winnum]->NoTextstyles ? MUIV_TextEditor_ImportHook_Plain : MUIV_TextEditor_ImportHook_EMail);
+      set(gui->TE_TEXT, MUIA_TextEditor_FixedFont, G->RE[winnum]->FixedFont);
       set(gui->TE_TEXT, MUIA_TextEditor_Contents, body);
       free(cmsg);
    }
@@ -2230,6 +2231,8 @@ SAVEDS ASM void RE_ShowEnvFunc(REG(a1,int *arg))
                re->WrapHeader = opt; break;
       case 7:  get(re->GUI.MI_TSTYLE, MUIA_Menuitem_Checked, &opt);
                re->NoTextstyles = !opt; break;
+      case 8:  get(re->GUI.MI_FFONT, MUIA_Menuitem_Checked, &opt);
+               re->FixedFont = opt; break;
    }
    RE_DisplayMessage(winnum);
    set(re->GUI.SL_TEXT, MUIA_Prop_First, lev);
@@ -2308,7 +2311,7 @@ MakeHook(RE_LV_HDspHook,RE_LV_HDspFunc);
 enum {   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_CHSUBJ,
          RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,
          RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
-         RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH, RMEN_TSTYLE };
+         RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT };
 
 APTR RE_LEDGroup(char *filename)
 {
@@ -2333,6 +2336,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
       data->SenderInfo = C->ShowSenderInfo;
       data->WrapHeader = C->WrapHeader;
       data->NoTextstyles = !C->UseTextstyles;
+      data->FixedFont = C->FixedFontEdit;
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, "",
          MUIA_HelpNode, "RE_W",
@@ -2385,6 +2389,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, data->GUI.MI_WRAPH = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_WrapHeader), MUIA_Menuitem_Shortcut,"H", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->WrapHeader, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_WRAPH, End,
                MUIA_Family_Child, data->GUI.MI_TSTYLE = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_Textstyles), MUIA_Menuitem_Shortcut,"T", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,!data->NoTextstyles, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_TSTYLE, End,
+               MUIA_Family_Child, data->GUI.MI_FFONT = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FixedFont), MUIA_Menuitem_Shortcut,"F", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->FixedFont, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_FFONT, End,
             End,
          End,
          WindowContents, VGroup,
@@ -2467,7 +2472,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
                   Child, data->GUI.TE_TEXT = NewObject(CL_TextEditor->mcc_Class,NULL,
                      InputListFrame,
                      MUIA_TextEditor_Slider, data->GUI.SL_TEXT,
-                     MUIA_TextEditor_FixedFont, C->FixedFontEdit,
+                     MUIA_TextEditor_FixedFont, data->FixedFont,
                      MUIA_TextEditor_DoubleClickHook, &RE_DoubleClickHook,
                      MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_EMail,
                      MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_Plain,
@@ -2516,6 +2521,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_SFULL           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,5);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_WRAPH           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,6);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_TSTYLE          ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,7);
+         DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,RMEN_FFONT           ,MUIV_Notify_Application,4,MUIM_CallHook,&RE_ShowEnvHook,winnum,8);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 0, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,-1,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 1, MUIV_Toolbar_Notify_Pressed,MUIV_EveryTime, MUIV_Notify_Application,6,MUIM_CallHook,&RE_PrevNextHook,1,MUIV_Toolbar_Qualifier,winnum,MUIV_TriggerValue);
          DoMethod(data->GUI.TO_TOOLBAR ,MUIM_Toolbar_Notify, 2, MUIV_Toolbar_Notify_Pressed,FALSE, MUIV_Notify_Application,4,MUIM_CallHook,&RE_FollowHook,-1,winnum);

@@ -772,7 +772,7 @@ struct RE_ClassData  /* read window */
    struct RE_GUIData
    {
       APTR WI;
-      APTR MI_EDIT, MI_DETACH, MI_CROP, MI_WRAPH, MI_TSTYLE, MI_EXTKEY, MI_CHKSIG, MI_SAVEDEC;
+      APTR MI_EDIT, MI_DETACH, MI_CROP, MI_WRAPH, MI_TSTYLE, MI_FFONT, MI_EXTKEY, MI_CHKSIG, MI_SAVEDEC;
       APTR GR_BODY, GR_HEAD, LV_HEAD, TO_TOOLBAR, TE_TEXT, SL_TEXT, GR_STATUS[6];
       APTR GR_INFO, GR_PHOTO, BC_PHOTO, LV_INFO, BO_BALANCE;
       struct MUIP_Toolbar_Description TB_TOOLBAR[13];
@@ -788,7 +788,7 @@ struct RE_ClassData  /* read window */
    int               ParseMode;
    int               Header;
    int               SenderInfo;
-   BOOL              NoTextstyles, WrapHeader;
+   BOOL              NoTextstyles, WrapHeader, FixedFont;
    int               LastDirection;
    BOOL              PGPKey;
    int               PGPSigned, PGPEncrypted;
