@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-06-17  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c: to make the index rebuilding process upon start of
+      YAM a bit less painfull and memory consuming, the rebuilt
+      index will now be immediatly flushed so that several
+      successive index rebuilts should not consume all available
+      memory anymore.
+
 2004-05-27  Jens Langner <Jens.Langner@light-speed.de>
 
     * os4: removed the OS4 dependent ASM stub again as the OS4

@@ -430,28 +430,64 @@ void MA_UpdateIndexes(BOOL initial)
    int i;
    struct Folder **flist;
 
-   if ((flist = FO_CreateList()))
+   if((flist = FO_CreateList()))
    {
-      for (i = 1; i <= (int)*flist; i++)
+      for(i = 1; i <= (int)*flist; i++)
       {
-        if (flist[i]->Type != FT_GROUP)
+        struct Folder *fo = flist[i];
+
+        if(fo && fo->Type != FT_GROUP)
         {
-         if (initial)
-         {
-            long dirdate = getft(GetFolderDir(flist[i]));
-            long inddate = getft(MA_IndexFileName(flist[i]));
-            if (dirdate > inddate+30 && inddate != -1)
+          if(initial)
+          {
+            // get date of the folder directory and the .index file
+            // itself
+            long dirdate = getft(GetFolderDir(fo));
+            long inddate = getft(MA_IndexFileName(fo));
+
+            // only start rebuilding the .index if either the date
+            // of the directory is greater than the date of the
+            // .index file itself, or if there is no index file
+            // date at all (no file present)
+            if(dirdate > inddate+30 && inddate != -1)
             {
-               DeleteFile(MA_IndexFileName(flist[i]));
-               MA_GetIndex(flist[i]);
+               // lets first delete the .index file to
+               // make sure MA_GetIndex() is going to
+               // rebuild it.
+               DeleteFile(MA_IndexFileName(fo));
+
+               // then lets call GetIndex() to star rebuilding
+               // the .index
+               if(MA_GetIndex(fo) == TRUE)
+               {
+                  // if we finally rebuilt the .index we
+                  // immediatly flush it here so that another
+                  // following index rebuild doesn't take
+                  // all remaining memory.
+                  if((fo->Type == FT_SENT   || 
+                      fo->Type == FT_CUSTOM || 
+                      fo->Type == FT_CUSTOMSENT) && 
+                      fo->LoadedMode == LM_VALID && 
+                      isFreeAccess(fo))
+                  {
+                     if(isModified(fo))
+                        MA_SaveIndex(fo);
+
+                     ClearMailList(fo, FALSE);
+                     fo->LoadedMode = LM_FLUSHED;
+                     CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
+                  }
+               }
             }
-         }
-         else
-         {
-            if (flist[i]->LoadedMode == LM_VALID && isModified(flist[i])) MA_SaveIndex(flist[i]);
-         }
+          }
+          else
+          {
+            if(fo->LoadedMode == LM_VALID && isModified(fo))
+               MA_SaveIndex(fo);
+          }
         }
       }
+
       free(flist);
    }
 }
