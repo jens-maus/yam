@@ -1,0 +1,16 @@
+YCT1 - YAM Charset Translation
+Amiga-Srpski to CP1250
+AUTHOR Ognjen Nedeljkovic <ogisha@bigfoot.com>
+FROM Amiga-Srpski
+TO windows-1250
+HEADER
+ã=š
+á=æ
+à=è
+ä=ž
+â=ð
+Ã=Š
+Á=Æ
+À=È
+Ä=Ž
+Â=Ð
