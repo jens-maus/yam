@@ -93,7 +93,7 @@ extern int         Mode2Group[12];
 
 APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote);
 BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *search2, struct Mail *mail);
-BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, enum MailStatus compar, int stat, BOOL substr, char *match, char *field);
+BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, enum MailStatus stat, BOOL substr, char *match, char *field);
 void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled);
 
 #endif /* YAM_FIND_H */
