@@ -663,18 +663,20 @@ void rx_mailcheck( struct RexxHost *host, struct rxd_mailcheck **rxd, long actio
       case RXIF_ACTION:
          if (rd->arg.pop) { if ((pop = *rd->arg.pop) >= 0 && pop < MAXP3) if (C->P3[pop]) popnr = pop; }
          else popnr = -1;
+
          if (popnr > -2)
          {
-            if (rd->arg.manual) MA_PopNow(POP_USER, popnr);
-            else
-            {
-               MA_PopNow(POP_REXX, popnr);
-               rd->res.downloaded = &G->LastDL.Downloaded;
-               rd->res.onserver = &G->LastDL.OnServer;
-               rd->res.dupskipped = &G->LastDL.DupSkipped;
-               rd->res.deleted = &G->LastDL.Deleted;
-               if (G->LastDL.Error) rd->rc = RETURN_WARN;
-            }
+           static long remaining;
+
+           MA_PopNow(rd->arg.manual ? POP_USER : POP_REXX, popnr);
+
+           remaining = G->LastDL.OnServer - G->LastDL.Deleted;
+
+           rd->res.downloaded = &G->LastDL.Downloaded;
+           rd->res.onserver = &remaining;
+           rd->res.dupskipped = &G->LastDL.DupSkipped;
+           rd->res.deleted = &G->LastDL.Deleted;
+           if (G->LastDL.Error) rd->rc = RETURN_WARN;
          }
          else rd->rc = RETURN_ERROR;
          break;

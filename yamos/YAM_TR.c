@@ -1768,6 +1768,10 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       }
       else DisplayAppIconStatistics();
 
+      // lets populate the LastDL statistics variable with the stats
+      // of this download.
+      memcpy(&G->LastDL, &G->TR->Stats, sizeof(struct DownloadResult));
+
       MA_ChangeTransfer(TRUE);
 
       DisposeModulePush(&G->TR);
@@ -2829,7 +2833,6 @@ static void TR_NewMailAlert(void)
 {
    struct DownloadResult *stats = &G->TR->Stats;
 
-   memcpy(&G->LastDL, stats, sizeof(struct DownloadResult));
    if (!stats->Downloaded) return;
    if(hasRequesterNotify(C->NotifyType) && G->TR->GUIlevel != POP_REXX)
    {
