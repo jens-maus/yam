@@ -41,6 +41,7 @@
 #include "YAM_addressbook.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_debug.h"
 #include "YAM_find.h"
 #include "YAM_global.h"
 #include "YAM_hook.h"
@@ -161,6 +162,9 @@ static APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
       {
          struct XpkPackerInfo xpi;
          ULONG i;
+
+         DB(kprintf("Loaded XPK Packerlist: %ld packers found\n", xpl.xpl_NumPackers);)
+
          for (i = 0; i < xpl.xpl_NumPackers; i++)
          {
             if (!XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE))
@@ -168,6 +172,9 @@ static APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
                BOOL suits = TRUE;
                if (encrypt && isFlagClear(xpi.xpi_Flags, XPKIF_ENCRYPTION)) suits = FALSE;
                if (pack && isFlagClear(xpi.xpi_Flags, 0x3f)) suits = FALSE;
+
+               DB(kprintf("Found XPKPacker: %ld: [%s] - suits: %d\n", i, xpl.xpl_Packer[i], suits);)
+
                if (suits) DoMethod(lv, MUIM_List_InsertSingle, xpl.xpl_Packer[i], MUIV_List_Insert_Sorted);
             }
          }
