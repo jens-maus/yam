@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-18  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: YAM didn`t issue any error message under certain
+      situations while sending a mail. Now YAM should pop up a proper
+      error message to signal the user that the connection was broken
+      somehow.
+
 2002-07-17  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_CO.c: fixed bug #580961 where the default AppIcon Label

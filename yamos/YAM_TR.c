@@ -1856,14 +1856,14 @@ static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, APTR error
    static char *buf = NULL;
 
    // first we check if the socket is ready
-   if(G->TR_Socket == SMTP_NO_SOCKET) return NULL;
+   if(G->TR_Socket == SMTP_NO_SOCKET) { errorMsg = MSG_ER_ConnectionBroken; goto clean_exit; }
 
    // if we are here for the first time lets generate a minimum buffer
    if(buf == NULL)
    {
       // by lookin at RFC 821 a buffer of 1000 chars for one line
       // should really be enough
-      if(!(buf = AllocStrBuf(SIZE_LINE))) return NULL;
+      if(!(buf = AllocStrBuf(SIZE_LINE))) { errorMsg = NULL; goto clean_exit; }
    }
 
    // now we prepare the SMTP command
@@ -1871,10 +1871,10 @@ static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, APTR error
    else sprintf(buf, "%s %s\r\n", SMTPcmd[command], parmtext);
 
    // lets issue the command, but not if we connect
-   if(command != SMTP_CONNECT && TR_WriteLine(buf) <= 0) return NULL;
+   if(command != SMTP_CONNECT && TR_WriteLine(buf) <= 0) { errorMsg = MSG_ER_ConnectionBroken; goto clean_exit; }
 
    // after issuing the SMTP command we read out the server response to it
-   if((len = TR_ReadLine(G->TR_Socket, buf, SIZE_LINE)) <= 0) return NULL;
+   if((len = TR_ReadLine(G->TR_Socket, buf, SIZE_LINE)) <= 0) { errorMsg = MSG_ER_ConnectionBroken; goto clean_exit; }
 
    // get the response code
    rc = strtol(buf, NULL, 10);
@@ -1888,10 +1888,10 @@ static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, APTR error
       do
       {
          // lets get out the next line from the socket
-         if((len = TR_ReadLine(G->TR_Socket, tbuf, SIZE_LINE)) <= 0) return NULL;
+         if((len = TR_ReadLine(G->TR_Socket, tbuf, SIZE_LINE)) <= 0) { errorMsg = MSG_ER_ConnectionBroken; goto clean_exit; }
 
          // lets concatenate the both strings
-         if(StrBufCat(buf, tbuf) == NULL) return NULL;
+         if(StrBufCat(buf, tbuf) == NULL) { errorMsg = NULL; goto clean_exit; }
 
       }while(tbuf[3] == '-');
    }
@@ -1935,6 +1935,8 @@ static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, APTR error
       case ESMTP_AUTH_LOGIN:
       case ESMTP_AUTH_PLAIN:      { if(rc == 334) return buf; } break;
    }
+
+clean_exit:
 
    // the rest of the responses throws an error
    if(errorMsg) ER_NewError(GetStr(errorMsg), (char *)SMTPcmd[command], buf);
@@ -2538,13 +2540,21 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
             }
             AppendLogNormal(40, GetStr(MSG_LOG_Sending), (void *)c, host, "", "");
          }
+         else err = 1;
+
          TR_DisconnectSMTP();
       }
-      else switch (err)
+
+      // if we got an error here, let`s throw it
+      if(err != 0)
       {
-         case -1: ER_NewError(GetStr(MSG_ER_UnknownSMTP), C->SMTP_Server, NULL); break;
-         default: ER_NewError(GetStr(MSG_ER_CantConnect), C->SMTP_Server, NULL);
+        switch (err)
+        {
+          case -1: ER_NewError(GetStr(MSG_ER_UnknownSMTP), C->SMTP_Server, NULL); break;
+          default: ER_NewError(GetStr(MSG_ER_CantConnect), C->SMTP_Server, NULL);
+        }
       }
+
       MA_FreeRules(G->TR->Search, G->TR->Scnt);
    }
 
