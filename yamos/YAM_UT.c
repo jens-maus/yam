@@ -1791,7 +1791,6 @@ ULONG CompressMsgID(char *msgid)
 //  Replaces variables with values
 char *ExpandText(char *src, struct ExpandTextData *etd)
 {
-   static char chr[2] = { 0,0 };
    char buf[SIZE_ADDRESS], *p, *p2, *dst = AllocStrBuf(SIZE_DEFAULT);
    struct DateStamp adate;
   
@@ -1847,6 +1846,7 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
       }
       else
       {
+         static char chr[2] = { 0,0 };
          chr[0] = *src;
          dst = StrBufCat(dst, chr);
       }
