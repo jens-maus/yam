@@ -7,8 +7,12 @@
 *.debug
 *.dump
 *.tmp
+.obj*
 starter
 YAM
+YAM.os3
+YAM.os4
+YAM.mos
 YAM.amigaos
 YAM.morphos
 YAM_locale.c
