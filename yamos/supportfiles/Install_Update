@@ -362,7 +362,7 @@
 ; /// Here we go!
 (complete 50)
 
-(copyfiles (source "YAM") (dest YAM_dir) (help @copyfiles-help))
+(copyfiles (source "680x0/YAM") (dest YAM_dir) (help @copyfiles-help))
 (select cpu
    (set dummy 0)
    (run (cat "run <>NIL: 680x0/GPatch \"" (tackon YAM_dir "YAM") "\" 680x0/YAM.gpatch DIRECT"))
@@ -376,6 +376,8 @@
       )
    )
 )
+
+(run "C:Run <>NIL: SYS:Utilities/MultiView NewsLetter")
 
 (complete 100)
 
