@@ -705,7 +705,7 @@ APTR CO_Page2(struct CO_ClassData *data)
 APTR CO_Page3(struct CO_ClassData *data)
 {
    static char *bcrit[5], *rtitles[4];
-   APTR grp, po_response, po_execute, po_play, bt_aplay, bt_moveto;
+   APTR grp, bt_moveto;
    bcrit[0] = GetStr(MSG_CO_CTNone);
    bcrit[1] = GetStr(MSG_CO_CTOr);
    bcrit[2] = GetStr(MSG_CO_CTAnd);
@@ -770,13 +770,13 @@ APTR CO_Page3(struct CO_ClassData *data)
                   Child, MakeAddressField(&data->GUI.ST_AFORWARD, GetStr(MSG_CO_ActionForward), MSG_HELP_CO_ST_AFORWARD, ABM_EDIT, -1, FALSE),
                   Child, data->GUI.CH_ARESPONSE = MakeCheck(GetStr(MSG_CO_ActionReply)),
                   Child, LLabel2(GetStr(MSG_CO_ActionReply)),
-                  Child, po_response = PopaslObject,
+                  Child, data->GUI.PO_ARESPONSE = PopaslObject,
                      MUIA_Popstring_String, data->GUI.ST_ARESPONSE = MakeString(SIZE_PATHFILE, ""),
                      MUIA_Popstring_Button, PopButton(MUII_PopFile),
                   End,
                   Child, data->GUI.CH_AEXECUTE = MakeCheck(GetStr(MSG_CO_ActionExecute)),
                   Child, LLabel2(GetStr(MSG_CO_ActionExecute)),
-                  Child, po_execute = PopaslObject,
+                  Child, data->GUI.PO_AEXECUTE = PopaslObject,
                      MUIA_Popstring_String, data->GUI.ST_AEXECUTE = MakeString(SIZE_PATHFILE, ""),
                      MUIA_Popstring_Button, PopButton(MUII_PopFile),
                   End,
@@ -784,11 +784,11 @@ APTR CO_Page3(struct CO_ClassData *data)
                   Child, LLabel2(GetStr(MSG_CO_ActionPlay)),
                   Child, HGroup,
                      MUIA_Group_HorizSpacing, 0,
-                     Child, po_play = PopaslObject,
+                     Child, data->GUI.PO_APLAY = PopaslObject,
                         MUIA_Popstring_String, data->GUI.ST_APLAY = MakeString(SIZE_PATHFILE, ""),
                         MUIA_Popstring_Button, PopButton(MUII_PopFile),
                      End,
-                     Child, bt_aplay = PopButton(MUII_TapePlay),
+                     Child, data->GUI.BT_APLAY = PopButton(MUII_TapePlay),
                   End,
                   Child, data->GUI.CH_AMOVE = MakeCheck(GetStr(MSG_CO_ActionMove)),
                   Child, LLabel2(GetStr(MSG_CO_ActionMove)),
@@ -835,7 +835,7 @@ APTR CO_Page3(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_ASKIP     ,MSG_HELP_CO_CH_ASKIP     );
       SetHelp(data->GUI.BT_RADD      ,MSG_HELP_CO_BT_RADD      );
       SetHelp(data->GUI.BT_RDEL      ,MSG_HELP_CO_BT_RDEL      );
-      set(bt_aplay,MUIA_CycleChain,1);
+      set(data->GUI.BT_APLAY, MUIA_CycleChain, 1);
       set(bt_moveto,MUIA_CycleChain,1);
       CO_RuleGhost(&(data->GUI), NULL);
       DoMethod(data->GUI.LV_RULES    ,MUIM_Notify,MUIA_List_Active        ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_GetRUEntryHook);
@@ -859,7 +859,7 @@ APTR CO_Page3(struct CO_ClassData *data)
       DoMethod(data->GUI.ST_ARESPONSE,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
       DoMethod(data->GUI.ST_AEXECUTE ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
       DoMethod(data->GUI.ST_APLAY    ,MUIM_Notify,MUIA_String_Contents    ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
-      DoMethod(bt_aplay              ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook, &CO_PlaySoundHook,data->GUI.ST_APLAY);
+      DoMethod(data->GUI.BT_APLAY    ,MUIM_Notify,MUIA_Pressed            ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook, &CO_PlaySoundHook,data->GUI.ST_APLAY);
       DoMethod(data->GUI.TX_MOVETO   ,MUIM_Notify,MUIA_Text_Contents      ,MUIV_EveryTime,MUIV_Notify_Application,2,MUIM_CallHook ,&CO_PutRUEntryHook);
       DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.PO_MOVETO   ,2,MUIM_Popstring_Close,TRUE);
       DoMethod(data->GUI.LV_MOVETO   ,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE         ,data->GUI.CH_AMOVE    ,3,MUIM_Set,MUIA_Selected,TRUE);

@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-11-15  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c: once again enhanced the gadgets enable/disable
+      functionality of the filter action gadgets.
+
 2003-11-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_CO.c: the action gadgets of the filter rules will now be

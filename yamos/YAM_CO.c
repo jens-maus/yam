@@ -178,9 +178,10 @@ void CO_RuleGhost(struct CO_GUIData *gui, struct Rule *ru)
    set(gui->CH_ASKIP,             MUIA_Disabled, !ru || !isremote);
    set(gui->ST_ABOUNCE,           MUIA_Disabled, !ru || isremote || !xget(gui->CH_ABOUNCE,    MUIA_Selected));
    set(gui->ST_AFORWARD,          MUIA_Disabled, !ru || isremote || !xget(gui->CH_AFORWARD,   MUIA_Selected));
-   set(gui->ST_ARESPONSE,         MUIA_Disabled, !ru || isremote || !xget(gui->CH_ARESPONSE,  MUIA_Selected));
-   set(gui->ST_AEXECUTE,          MUIA_Disabled, !ru || !xget(gui->CH_AEXECUTE, MUIA_Selected));
-   set(gui->ST_APLAY,             MUIA_Disabled, !ru || !xget(gui->CH_APLAY, MUIA_Selected));
+   set(gui->PO_ARESPONSE,         MUIA_Disabled, !ru || isremote || !xget(gui->CH_ARESPONSE,  MUIA_Selected));
+   set(gui->PO_AEXECUTE,          MUIA_Disabled, !ru || !xget(gui->CH_AEXECUTE, MUIA_Selected));
+   set(gui->PO_APLAY,             MUIA_Disabled, !ru || !xget(gui->CH_APLAY, MUIA_Selected));
+   set(gui->BT_APLAY,             MUIA_Disabled, !ru || !xget(gui->CH_APLAY, MUIA_Selected));
    set(gui->PO_MOVETO,            MUIA_Disabled, !ru || !xget(gui->CH_AMOVE, MUIA_Selected));
    set(gui->BT_RDEL,              MUIA_Disabled, !ru);
 
