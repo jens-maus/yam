@@ -257,16 +257,21 @@ static enum FastSearch FI_IsFastSearch(char *field)
 //  Reads list of patterns from a file
 static void FI_GenerateListPatterns(struct Search *search)
 {
-   char buf[SIZE_PATTERN], pattern[SIZE_PATTERN];
+   char buf[SIZE_PATTERN], pattern[SIZE_PATTERN*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
    FILE *fh;
+
    if ((fh = fopen(search->Match, "r")))
    {
       FreeData2D(&(search->List));
-      while (GetLine(fh, buf, SIZE_PATTERN)) if (*buf)
+      while (GetLine(fh, buf, SIZE_PATTERN))
       {
-         if (search->CaseSens) ParsePattern      (buf, pattern, SIZE_PATTERN);
-         else                  ParsePatternNoCase(buf, pattern, SIZE_PATTERN);
-         strcpy(AllocData2D(&search->List, SIZE_PATTERN), pattern);
+         if(*buf)
+         {
+            if (search->CaseSens) ParsePattern      (buf, pattern, SIZE_PATTERN*2+2);
+            else                  ParsePatternNoCase(buf, pattern, SIZE_PATTERN*2+2);
+
+            strcpy(AllocData2D(&search->List, strlen(pattern)+1), pattern);
+         }
       }
       fclose(fh);
    }
@@ -335,8 +340,8 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens
         FI_MakeSubstringPattern(search->Match);
       }
 
-      if (casesens) ParsePattern      (search->Match, search->Pattern, SIZE_PATTERN);
-      else          ParsePatternNoCase(search->Match, search->Pattern, SIZE_PATTERN);
+      if (casesens) ParsePattern      (search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
+      else          ParsePatternNoCase(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
    }
 
    return FALSE;

@@ -652,12 +652,23 @@ char *itoa(int val)
 ///
 /// MatchNoCase
 //  Case insensitive pattern matching
-int MatchNoCase(char *string, char *match)
+BOOL MatchNoCase(char *string, char *match)
 {
-   char pattern[SIZE_PATTERN];
+   BOOL result=FALSE;
+   LONG patternlen = strlen(match)*2+2; // ParsePattern() needs at least 2*source+2 bytes buffer
+   char *pattern = malloc((size_t)patternlen);
 
-   ParsePatternNoCase(match, pattern, SIZE_PATTERN);
-   return MatchPatternNoCase(pattern, string);
+   if(pattern)
+   {
+     if(ParsePatternNoCase(match, pattern, patternlen) != -1)
+     {
+        result = MatchPatternNoCase(pattern, string);
+     }
+
+     free(pattern);
+   }
+
+   return result;
 }
 ///
 /// CompNoCase
@@ -673,7 +684,7 @@ static BOOL CompNoCase(const char *a, const char *b, int l)
 BOOL MatchTT(char *charset, struct TranslationTable *tt, BOOL in)
 {
    if (!tt) return FALSE;
-   return (BOOL)MatchNoCase(charset, in ? tt->SourceCharset : tt->DestCharset);
+   return MatchNoCase(charset, in ? tt->SourceCharset : tt->DestCharset);
 }
 ////
 /// isSpace

@@ -86,7 +86,7 @@ struct Search
    BOOL            CaseSens;
    BOOL            SubString;
    char            Match[SIZE_PATTERN+4];
-   char            PatBuf[SIZE_PATTERN];
+   char            PatBuf[(SIZE_PATTERN+4)*2+2]; // ParsePattern() needs at least 2*source+2 bytes buffer
    char            Field[SIZE_DEFAULT];
    struct DateTime DT;
    struct Data2D   List;
