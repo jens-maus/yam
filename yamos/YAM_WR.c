@@ -34,6 +34,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if !defined(isascii)
+  #define isascii(c) (((c)&0xff)<127) /* shouldn't it be <= ? */
+#endif
+
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <libraries/gadtools.h>
@@ -1302,9 +1306,10 @@ void WR_NewMail(int mode, int winnum)
    if (!*addr) if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), er)) mode = WRITE_HOLD;
       else return;
    get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
-   if (wr->Mode != NEW_BOUNCE && *comp.Subject == '\0')
-   {
-      if (C->WarnSubject && !MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), GetStr(MSG_WR_NOSUBJECTREQ)))
+   if (wr->Mode != NEW_BOUNCE && *comp.Subject == '\0' && C->WarnSubject)
+   {  /* CAUTION: This is a hack for SAS/C! Do not remove! */
+      char *a = GetStr(MSG_WR_NOSUBJECTREQ);
+      if (!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), a))
       {
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
          return;
@@ -1901,14 +1906,14 @@ void WR_App(int winnum, struct AppMessage *amsg)
       if (!mode)
       {
          FILE *fh;
-         int len, j, notascii = 0;
+         int len, j, c, notascii = 0;
          char buffer[SIZE_LARGE];
          if ((fh = fopen(buf, "r")))
          {
             len = fread(buffer, 1, SIZE_LARGE-1, fh);
             buffer[len] = 0;
             fclose(fh);
-            for (j = 0; j < len; j++) if ((int)buffer[j] < 32 || (int)buffer[j] > 127) if (buffer[j] != '\t' && buffer[j] != '\n') notascii++;
+            for (j = 0; j < len; j++) if (c=(int)buffer[j],c < 32 || c > 127) if (c != '\t' && c != '\n') notascii++;
             if (notascii) if (len/notascii <= 16) mode = 1;
          }
       }
