@@ -1045,12 +1045,13 @@ enum { MACRO_MEN0=0, MACRO_MEN1, MACRO_MEN2, MACRO_MEN3, MACRO_MEN4, MACRO_MEN5,
 enum { SEC_NONE=0, SEC_SIGN, SEC_ENCRYPT, SEC_BOTH, SEC_SENDANON, SEC_DEFAULTS, SEC_MAXDUMMY };
 ///
 /// Declaration of external variables
-extern struct Library *LocaleBase, *WorkbenchBase, *IconBase, *IFFParseBase, *KeymapBase;
+extern struct Library *WorkbenchBase, *IconBase, *IFFParseBase, *KeymapBase;
 extern struct Library *DataTypesBase, *MUIMasterBase, *SocketBase, *XpkBase, *OpenURLBase, *CManagerBase;
+extern struct LocaleBase *LocaleBase;
 extern struct ExecBase *SysBase;
 extern struct IntuitionBase *IntuitionBase;
 extern struct DosLibrary *DOSBase;
-extern struct Library *UtilityBase;
+extern struct UtilityBase *UtilityBase;
 extern struct Global *G;
 extern struct Config *C, *CE;
 extern struct Hook AB_FromAddrBookHook;

@@ -82,3 +82,10 @@
 
     * Removed enforcer hits when encountering message headers with
       non-terminated MIME-encoded text (i.e. during a folder rescan).
+
+2001-02-04  Jörg Strohmayer <joergs@users.sourceforge.net>
+
+    * Fixed Utility and LocalBase types, added m68k-AmigaOS makefile
+      and some other minor changes to be able to compile with GCC again.
+      SAS/C users with old, broken includes have to fix them now.
+
