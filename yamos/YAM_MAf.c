@@ -321,13 +321,41 @@ void MA_ChangeFolder(struct Folder *folder)
          MA_SetSortFlag();
          DisplayMailList(folder, gui->NL_MAILS);
          DisplayStatistics(folder);
-         if (C->JumpToNewMsg) for (i = 0; ; i++)
+
+         if (C->JumpToNewMsg)
          {
-            struct Mail *mail;
-            DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, i, &mail);
-            if (!mail) break;
-            if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) { pos = i; break; }
+            // jump to first or last unread mail in folder,
+            // depending on sort order
+
+            int incr;
+
+            if (folder->Sort[0] < 0 || folder->Sort[1] < 0)
+            {
+               get(gui->NL_MAILS, MUIA_NList_Entries, &i);
+               i--;
+               incr = -1;
+            }
+            else
+            {
+               i = 0;
+               incr = 1;
+            }
+
+            while (1)
+            {
+               struct Mail *mail;
+               DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, i, &mail);
+               if (!mail) break;
+               if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR)
+               {
+                  pos = i;
+                  break;
+               }
+
+               i += incr;
+            }
          }
+
          set(gui->NL_MAILS, MUIA_NList_Active, pos);
       }
       set(gui->LV_MAILS, MUIA_Disabled, !folderopen);
