@@ -280,7 +280,7 @@ static BOOL AY_New(BOOL hidden)
                MUIA_Group_HorizSpacing, 8,
                MUIA_Group_VertSpacing, 2,
                Child, Label(GetStr(MSG_Version)),
-               Child, LLabel(yamversion),
+               Child, LLabel(yamversionver),
                Child, Label(GetStr(MSG_CompilationDate)),
                Child, LLabel(datebuf),
              End,
