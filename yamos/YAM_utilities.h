@@ -134,10 +134,10 @@ struct NewToolbarEntry
 #define OUT_NIL       ((BPTR)1)
 
 // attachment requester flags & macros
-#define ATTREQ_DISP   0
-#define ATTREQ_SAVE   1
-#define ATTREQ_PRINT  2
-#define ATTREQ_MULTI  32
+#define ATTREQ_DISP       (1<<0)
+#define ATTREQ_SAVE       (1<<1)
+#define ATTREQ_PRINT      (1<<2)
+#define ATTREQ_MULTI      (1<<3)
 #define isDisplayReq(v)   (isFlagSet((v), ATTREQ_DISP))
 #define isSaveReq(v)      (isFlagSet((v), ATTREQ_SAVE))
 #define isPrintReq(v)     (isFlagSet((v), ATTREQ_PRINT))
