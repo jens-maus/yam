@@ -5788,35 +5788,35 @@ im standard MBOX Format enthält (getrennt durch einzelne "From " \
 Zeilen).
 ; FILENAME
 ;
-MSG_ER_ADDRBOOKLOAD (//)
+MSG_ER_ADDRBOOKLOAD
 Konnte Addressbuch von Datei '%s' nicht laden.\n\
 Die Datei scheint nicht zu existieren oder ein\n\
 Zugriff ist nicht möglich.
 ; FILENAME
 ;
-MSG_AB_NOYAMADDRBOOK (//)
+MSG_AB_NOYAMADDRBOOK
 Die Datei '%s' ist keine YAM Addressbuchdatei.\n\
 Möchten Sie trotzdem diese Datei als eine durch Zeilenumbruch\n\
 getrennte Addressbuchdatei laden ?
 ; FILENAME
 ;
-MSG_AB_NOYAMADDRBOOK_GADS (//)
+MSG_AB_NOYAMADDRBOOK_GADS
 _Ja|*_Nein
 ;
-MSG_FO_EDIT_FGROUP (//)
+MSG_FO_EDIT_FGROUP
 Postfachgruppeneinstellungen
 ;
-MSG_FO_EDIT_FGROUPREQ (//)
+MSG_FO_EDIT_FGROUPREQ
 Name der Postfachgruppe:
 ;
-MSG_ERR_OPENMCC (//)
+MSG_ERR_OPENMCC
 Konnte version v%lu.lu der MUI '%s' Klasse nicht finden.\n\
 Zwecks Kompatibilitätsgründen ist es notwendig das mindestens\n\
 diese version mit YAM benutzt wird. Bitte stellen Sie\n\
 sicher das diese bei Ihnen installiert ist.
 ;MCC_VERSION, MCC_REVISION, MCC_NAME
 ;
-MSG_ER_UNUSABLEAMISSL (//)
+MSG_ER_UNUSABLEAMISSL
 Sie haben TLSv1/SSLv3 Unterstützung für diese Verbindung \
 ausgewählt, jedoch konnte AmiSSL nicht initialisiert werden. \
 Bitte überprüfen Sie ihre AmiSSL Installation oder schalten Sie \
