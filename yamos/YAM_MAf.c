@@ -160,12 +160,10 @@ static void MA_ValidateStatus(struct Folder *folder)
       folder->Type == FT_SENT
      )
    {
-      DB(kprintf("Validating status for folder %s\n", folder->Name);)
+      DB(kprintf("Validating status of new msgs in folder %s\n", folder->Name);)
 
       for (mail = folder->Messages; mail; mail = mail->Next)
       {
-        DB(kprintf("mail: %lx - %lx - %s - [%s]\n", mail, mail->Next, mail->MailFile, mail->Subject);)
-
         if (mail->Status == STATUS_NEW)
         {
           if (folder->Type == FT_OUTGOING)   MA_SetMailStatus(mail, STATUS_WFS);
@@ -205,9 +203,12 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
       struct FIndex fi;
 
       BusyText(GetStr(MSG_BusyLoadingIndex), folder->Name);
-      if(fread(&fi, sizeof(struct FIndex), 1, fh) == 1 &&
-         fi.ID == FINDEX_VER
-        )
+      if(fread(&fi, sizeof(struct FIndex), 1, fh) != 1)
+      {
+        DB(kprintf("error while loading struct FIndex from .index file\n");)
+        error = TRUE;
+      }
+      else if(fi.ID == FINDEX_VER)
       {
          folder->Total  = fi.Total;
          folder->New    = fi.New;
@@ -277,22 +278,12 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
             }
          }
       }
-      else
-      {
-        DB(kprintf("error while loading struct FIndex from .index file\n");)
-        error = TRUE;
-      }
 
       if(!error && ferror(fh) == 1)
         error = TRUE;
 
       BusyEnd;
       fclose(fh);
-   }
-   else
-   {
-     DB(kprintf("error while opening .index file\n");)
-     error = TRUE;
    }
 
    if(error)
