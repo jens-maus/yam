@@ -967,6 +967,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_GALLDIR   ,CE->GalleryDir);
          setstring   (gui->ST_PHOTOURL  ,CE->MyPictureURL);
          setstring   (gui->ST_NEWGROUP  ,CE->NewAddrGroup);
+         set(gui->ST_NEWGROUP, MUIA_Disabled, CE->AddToAddrbook == 0);
          setstring   (gui->ST_PROXY     ,CE->ProxyServer);
          setcycle    (gui->CY_ATAB      ,CE->AddToAddrbook);
          setcheckmark(gui->CH_ADDINFO   ,CE->AddMyInfo);

@@ -1449,6 +1449,8 @@ APTR CO_Page12(struct CO_ClassData *data)
             End,
             Child, Label1(GetStr(MSG_CO_AddToAddrbook)),
             Child, data->GUI.CY_ATAB = MakeCycle(atab, GetStr(MSG_CO_AddToAddrbook)),
+            Child, Label2(GetStr(MSG_CO_NewGroup)),
+            Child, data->GUI.ST_NEWGROUP = MakeString(SIZE_NAME,GetStr(MSG_CO_NewGroup)),
             Child, Label2(GetStr(MSG_CO_Gallery)),
             Child, PopaslObject,
                MUIA_Popasl_Type     ,ASL_FileRequest,
@@ -1456,8 +1458,6 @@ APTR CO_Page12(struct CO_ClassData *data)
                MUIA_Popstring_Button,PopButton(MUII_PopDrawer),
                ASLFR_DrawersOnly, TRUE,
             End,
-            Child, Label2(GetStr(MSG_CO_NewGroup)),
-            Child, data->GUI.ST_NEWGROUP = MakeString(SIZE_NAME,GetStr(MSG_CO_NewGroup)),
             Child, Label2(GetStr(MSG_CO_MyURL)),
             Child, data->GUI.ST_PHOTOURL = MakeString(SIZE_URL,GetStr(MSG_CO_MyURL)),
             Child, Label2(GetStr(MSG_CO_ProxyServer)),
@@ -1472,6 +1472,8 @@ APTR CO_Page12(struct CO_ClassData *data)
       SetHelp(data->GUI.ST_NEWGROUP  ,MSG_HELP_CO_ST_NEWGROUP  );
       SetHelp(data->GUI.CY_ATAB      ,MSG_HELP_CO_CY_ATAB      );
       SetHelp(data->GUI.CH_ADDINFO   ,MSG_HELP_WR_CH_ADDINFO   );
+
+      DoMethod(data->GUI.CY_ATAB, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, data->GUI.ST_NEWGROUP, 3, MUIM_Set, MUIA_Disabled, MUIV_NotTriggerValue);
    }
    return grp;
 }

@@ -7,6 +7,15 @@ $Source$
 
 2002-07-05  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_COg.c, YAM_COs.c: changed the location of the
+      "New Group for addrbook entries" string gadget and added
+      a MUIA_Disabled relation to the above cycle gadget to better
+      point out that this two options are belonging together.
+    * YAM_RE.c: the designated addressbook group for new
+      automatic added entries didn`t work correctly - fixed now.
+      This should fix bug #528082, even if we have to mention
+      that this group will only be used if a address is added
+      automatically as soon as the user reads a message.
     * YAM_MA.c: fixed bug #431549 where it was possible to
       interrupt a transfer by trying to use the "Check Version"
       menuitem within the Main menu.
