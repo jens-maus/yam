@@ -1,0 +1,162 @@
+YAM 2.4 AVAILABLE FOR DOWNLOAD
+
+
+TITLE
+
+     YAM - Yet Another Mailer
+
+
+VERSION
+
+     2.4
+
+
+AUTHOR
+
+     YAM Open Source Team <http://sourceforge.net/projects/yamos/>
+
+
+DESCRIPTION
+
+     YAM (Yet Another Mailer) lets you send and receive electronic mail
+     over the Internet and maintain archives of messages in your computer.
+     The idea came to Marcel Beck in 1995 when he first tried using email:
+     the programmes available at the time were either powerful but
+     complicated to configure, or else used a too limiting graphical
+     interface. The goal, therefore, was to program a cross between
+     AdMail and AirMail, with a few ideas from Pegasus Mail.
+
+     YAM made its first public appearance in early 1996 under the
+     "mailware" concept. The unexpectedly enthusiastic response
+     from the public led to a steady development of YAM that reached
+     its finest hour in version 1.3.5, the last incarnation in the
+     "classic" series. By then, YAM had turned into one of the most
+     popular Amiga programmes ever, and won Marcel the appreciation
+     and several awards from the Amiga community thanks to its
+     simplicity and ease of use.
+
+     Unwilling to stop at that point, Marcel spent almost two years
+     developing YAM2.  In the summer of 1999, a greatly improved YAM
+     set some of the standards that would be lately imitated by other
+     popular Internet applications. In November 2000, Marcel finally
+     gave up out of lack of time and motivation, but was yet kind enough
+     to release the "final" YAM 2.2 together with its sources under the
+     GNU General Public License. On this day and age, Marcel Beck is
+     still fondly remembered by many as one of a selected few who made
+     a difference on the Amiga.
+
+     Today, after YAM 2.3 and 2.3p1 fixed some of the most outstanding
+     problems in the original sources and almost 18 months of hard work
+     have been spent, the YAM Open Source team is proud to make the legend
+     continue with YAM 2.4, the most powerful Amiga mailer to date.
+
+
+NEW FEATURES
+
+     * Hierarchical folder list - folders can now be arranged into
+       groups, and nested at the user's discretion
+
+     * SMTP & POP3 TLS1/SSL3 support for stunnel servers, using
+       AmiSSL.library
+
+     * Email address cache, making it possible to "remember" the last
+       N used recipients if they don't appear in the address book
+
+     * More powerful recipient string gadgets, resolving aliases,
+       real names and email addresses "on the fly" as they are found
+       in the address book or the email cache
+
+     * Optional pop-up menus in the folder & message lists
+
+     * Automatic codepage detection and translation, specially meant
+       for cyrillic users.
+
+     * Reworked status bar
+
+     * Automatically finds the suitable mailing list support settings
+
+     * Extended support for mailto: links
+
+     * Search function in the Write window
+
+     * Customizable size format and localized unit display
+
+     * Individual appicon stats for folders, with an user-definable
+       label
+
+     * New hidden option "JumpToIncoming"
+
+     * Deleting a block of text with RAmiga-Del automatically inserts
+       a "[...]" marker
+
+     * Built-in mouse wheel support
+
+     * New "marked" status
+
+     * "application/pdf" is now in the built-in list of MIME types
+
+     * Extended documentation
+
+
+SPECIAL REQUIREMENTS
+
+     * AmigaOS V39+, MC68020+, MUI3.8+ and the latest NList, NListtree,
+       Toolbar, TextEditor & BetterString classes (included)
+
+
+AVAILABILITY
+
+     YAM 2.4 is now available for download at the YAMOS homepage:
+
+              http://sourceforge.net/projects/yamos/
+
+
+DIRECTORY
+
+     /pub/aminet/comm/mail
+
+
+FILE NAMES
+
+     YAM24.lha      Main archive - basic 020 binary and English guide
+     YAM24cpu.lha   Diffs for 040/060 processors and the GPatch utility
+     YAM24loc.lha   Foreign language support files: catalogs & guides
+     YAM24con.lha   Additional graphics, ARexx scripts, etc.
+     YAM24mos.lha   MorphOS binary, includes starter
+
+
+OTHER
+
+     * YAM homepage
+
+          http://www.yam.ch/
+
+
+     * Mailing list
+
+          http://www.freelists.org/list/yam
+
+       To subscribe:  mailto:yam-request@freelists.org?Subject=SUBSCRIBE
+
+
+     * CVS repository
+
+          http://sourceforge.net/cvs/?group_id=13560
+
+
+DISTRIBUTABILITY
+
+     Free software, distributed under the General Public License
+
+
+ACKNOWLEDGEMENTS
+
+     Kudos to Brian for bringing c.s.a.a. back to life!
+
+
+
+For the YAMOS team,
+
+-- 
+David Rey
+<tactica@users.sourceforge.net>
