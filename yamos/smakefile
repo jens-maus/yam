@@ -43,8 +43,18 @@ DEBUG    = DEF DEBUG DEBUG=LINE NOOPT NOSTRIPDEBUG
 # CPU can be defined outside, defaults to above
 # OPTFLAGS are disabled by DEBUG!
 
-CFLAGS = RESOPT NOVER PARM=R NOLINK DATA=FAR CODE=FAR ERRORREXX NOICONS\
-  STRINGSECTION=FAR WARN=ALL IGNORE=147,306,62,165,148,178,61,212,120,51\
+# ignored warnings are:
+#  51 C++ comment detected                                 -- we agreed to use them
+#  61 undefined struct/union tag "tag-name"                -- in include files
+# 120 Integral type mismatch: possible portability problem -- should be used somewhen
+# 148 use of incomplete struct/union/enum tag "name"       -- in include files
+# 165 use of narrow type in prototype                      -- very unlikely portability problem
+# 178 indirect call without indirection operator           -- only old-style support
+# 212 item "name" already declared                         -- in include files
+# 306 .. function inlined                                  -- disturbs
+
+CFLAGS = RESOPT NOVER PARM=R NOLINK DATA=NEAR CODE=FAR ERRORREXX NOICONS\
+  STRINGSECTION=FAR WARN=ALL IGNORE=51,61,120,148,165,178,212,306\
   IDLEN=60 INCLUDEDIR=includes STRIPDEBUG NOCHECKABORT UTILLIB SMALLCODE\
   DEF=__USE_SYSBASE $(OPTFLAGS) CPU=$(CPU) $(DEBUG)
 

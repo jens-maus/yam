@@ -117,7 +117,7 @@ struct Folder *FO_GetCurrentFolder(void)
 BOOL FO_SetCurrentFolder(struct Folder *fo)
 {
    int i;
-   struct MUI_NListtree_TreeNode *tn = NULL;
+   struct MUI_NListtree_TreeNode *tn;
 
    if(!fo) return(FALSE);
 

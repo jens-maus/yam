@@ -695,7 +695,7 @@
               stack if there is not enough space for the current frame. Thats hardly
               the case for main() ...)
     * YAM_FI.c: fix prototype for FI_IsFastSearch()
-    * YAM_global.(c,h): replaced "APTR" wth "void *" and removed include
+    * YAM_global.(c,h): replaced "APTR" with "void *" and removed include
     * YAM_UT.c: (DisplayAppIconStatistics) replaced AppAppIconA() with AddAppIcon()
                 (DisplayStatistics) small cleanup
 
@@ -711,5 +711,9 @@
     * YAM now uses it's own icon when being hidden/iconified, instead of default
       icon provided by MUI
 
+2001-06-19  Dirk Stöcker <stoecker@epost.de>
 
+    * documented disabled warnings in smakefile, remove 2 disabled warnings
+    * mada DATA=NEAR in smakefile, suggested by Gunther
+    * added YAMOS-texts to other makefiles
 
