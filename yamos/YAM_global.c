@@ -54,11 +54,11 @@ char * yamversiondate   = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;
 
 #if defined(__SASC)
-  long __stack = 32768;
+	long __stack = 65536;
   long __buffsize = 8192;
   long _MSTEP = 16384;
 #elif defined(__VBCC__) /* starting with VBCC 0.8 release */
-  long __stack = 32768;
+	long __stack = 65536;
 #elif defined(__GNUC__)
   /* GCC (libnix) supports the same as SAS/C! */
 #endif

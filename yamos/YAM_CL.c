@@ -214,7 +214,7 @@ DISPATCHERPROTO(FL_Dispatcher)
       {
         struct MUIP_DragReport *dr = (struct MUIP_DragReport *)msg;
         struct MUI_NListtree_TestPos_Result res;
-        struct MUI_NListtree_TreeNode *tn = NULL;
+				struct MUI_NListtree_TreeNode *tn;
 
         DoMethod(obj, MUIM_NListtree_TestPos, dr->x, dr->y, &res);
 

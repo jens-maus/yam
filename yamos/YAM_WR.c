@@ -532,7 +532,7 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
 {
    int len = 15;
    struct ABEntry *ab = NULL;
-   struct Person pers;
+	 struct Person pers = { "", "" };
 
    // Now we extract the real email from the address string
    if(*from)
@@ -540,7 +540,7 @@ static void WR_WriteUserInfo(FILE *fh, char *from)
       ExtractAddress(from, &pers);
    }
 
-   if(*(pers.Address) && AB_SearchEntry(pers.Address, ASM_ADDRESS|ASM_USER, &ab))
+	 if(*(pers.Address) && AB_SearchEntry(pers.Address, ASM_ADDRESS|ASM_USER, &ab))
    {
       if (ab->Type != AET_USER) ab = NULL;
       else if (!*ab->Homepage && !*ab->Phone && !*ab->Street && !*ab->City && !*ab->Country && !ab->BirthDay) ab = NULL;

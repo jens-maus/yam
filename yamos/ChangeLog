@@ -2,6 +2,13 @@
 
     * YAM_EA.c: Added missing MUIA_ControlChar to security cycle
 
+2001-12-11  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * the SWSSearch() function requires more stack than I thought and
+      so I increased it to obtain 65535 bytes to be on the safe side.
+      This fixes the enforcer hit that occured on the use of the new
+      autoguess feature for MLs.
+
 2001-12-11  Christian Hattemer <krille@users.sourceforge.net>
 
     * YAM_RE.c: fixed crash when the edit window was opened from
