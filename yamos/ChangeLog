@@ -492,3 +492,5 @@
     * added a nice FolderInfoBar above the Listviews. Perhaps we have to make this
       bar optional, but I think it will fit in the layout if we are going to
       introduce TearOff.mcc in YAM.
+    * changed FolderInfoBar refreshing. Now it should not flicker anymore and refreshing
+      the main NList Mail List should be fast again.

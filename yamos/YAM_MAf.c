@@ -334,13 +334,16 @@ void MA_ChangeFolder(struct Folder *folder)
    }
    else if(FO_GetCurrentFolder() == folder) return;
 
+   // Now we update the InfoBar accordingly
+   MA_UpdateInfoBar(folder);
+
    if (folder->Type == FT_GROUP) folderopen = FALSE;
    else if (!MA_GetIndex(folder)) folderopen = FALSE;
 
    if (folderopen)
    {
-      MA_SetSortFlag();
       DisplayMailList(folder, gui->NL_MAILS);
+      MA_SetSortFlag();
 
       if (C->JumpToNewMsg)
       {

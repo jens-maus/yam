@@ -154,9 +154,6 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
   struct Folder *fo = FO_GetCurrentFolder();
   if (fo->Type != FT_GROUP) SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
   set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
-
-  // Now we update the InfoBar accordingly
-  MA_UpdateInfoBar(fo);
 }
 MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
 
