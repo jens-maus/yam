@@ -25,21 +25,21 @@
 #
 #***************************************************************************/
 
+TARGET = YAM
+
 # Programs
+
 CC = sc
 CP = copy
-RM = delete
+RM = delete quiet
 
-# Files
-OBJS = all_sas.o YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o \
-  YAM_DI.o YAM_EA.o YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o \
-  YAM_MA.o YAM_MAf.o YAM_md5.o YAM_MI.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o \
-  YAM_rexx_rxif.o YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o
+# Compiler/Linker flags
 
-# Compiler flags
 CPU      = 68020
-OPTFLAGS = OPT OPTSIZE OPTINLOCAL OPTGO OPTLOOP OPTPEEP #OPTSCHED
-DEBUG    = DEF DEBUG DEBUG=LINE NOOPT NOSTRIPDEBUG
+CDEFS    = `rx "say 'DEF __YAM_VERDATE=' || '22'x || right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) || '22'x || ' DEF __YAM_VERDAYS=' || date('I')"`
+WARN     = WARN=ALL IGNORE=147,306,62,165,148,178,61,212,120,51
+OPTFLAGS = STRIPDEBUG OPT OPTSIZE OPTINLOCAL OPTGO OPTLOOP OPTPEEP #OPTSCHED
+DEBUG    = NOSTRIPDEBUG NOOPT DEF DEBUG DEBUG=LINE
 # CPU can be defined outside, defaults to above
 # OPTFLAGS are disabled by DEBUG!
 
@@ -54,31 +54,43 @@ DEBUG    = DEF DEBUG DEBUG=LINE NOOPT NOSTRIPDEBUG
 # 306 .. function inlined                                  -- disturbs
 
 CFLAGS = RESOPT NOVER PARM=R NOLINK DATA=NEAR CODE=FAR ERRORREXX NOICONS\
-  STRINGMERGE WARN=ALL IGNORE=51,61,120,148,165,178,212,306\
-  IDLEN=60 INCLUDEDIR=includes STRIPDEBUG NOCHECKABORT UTILLIB SMALLCODE\
-  DEF=__USE_SYSBASE $(OPTFLAGS) CPU=$(CPU) $(DEBUG)
+  NOSTKCHK STRINGMERGE IDLEN=60 INCLUDEDIR=includes NOCHECKABORT UTILLIB\
+  SMALLCODE DEF=__USE_SYSBASE CPU=$(CPU) $(WARN) $(OPTFLAGS) $(DEBUG)
 
-YAM: $(OBJS)
+# Objects
+
+OBJS = YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
+  YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o YAM_MA.o YAM_MAf.o \
+  YAM_md5.o YAM_MI.o YAM_RE.o YAM_rexx.o YAM_rexx_rxcl.o YAM_rexx_rxif.o \
+  YAM_TR.o YAM_US.o YAM_UT.o YAM_WR.o all_sas.o
+
+#
+
+all: $(TARGET)
+
+# Default rule
+
+.c.o:
+  $(CC) $(CFLAGS) $<
+
+#
+
+$(TARGET): $(OBJS)
   $(CC) $(CFLAGS) LINK "LINKOPT=MAP YAM.map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"\
-  LIB lib:scnb.lib lib:amiga.lib lib:debug.lib TO $@ WITH <<
+  LIB lib:debug.lib TO $@ WITH <<
   $(OBJS)
   <
 
-.c.o:
-  $(CC) $(CFLAGS) $*.c
-
 clean: # leaves final YAM exe
-  -$(RM) \#?.(o|map|lnk) (YAM_locale.\#?)
+  -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.?
 
 cleanall:
-  -$(RM) \#?.(o|map|lnk) (YAM_locale.\#?|YAM)
+  -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.? $(TARGET)
 
 copy:
-  $(CP) YAM YAM:
+  $(CP) $(TARGET) YAM:
 
 #######################################
-
-all_sas.o: all_sas.c extrasrc/NewReadArgs.c
 
 YAM.o: YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
   YAM_config.h YAM_configFile.h YAM_debug.h YAM_find.h YAM_folderconfig.h \
@@ -137,16 +149,7 @@ YAM_FO.o: YAM_FO.c YAM.h YAM_classes.h YAM_debug.h YAM_error.h \
   YAM_userlist.h YAM_utilities.h
 
 YAM_global.o: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
-  $(CC) $(CFLAGS)  YAM_global.c\
-  `rx >T:YAM-date.tmp "say 'DEF __YAM_VERDATE=' || '22'x ||\
-  right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) ||\
-  '22'x || ' DEF __YAM_VERDAYS=' || date('I')"`
-
-YAM_locale.c: locale/YAM.cd C_h.sd C_c.sd
-  ; # dummy entry to make smake happy
-
-YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
-  flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+  $(CC) $(CDEFS) $(CFLAGS) $<
 
 YAM_MA.o: YAM_MA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
@@ -201,3 +204,9 @@ YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_locale.h YAM_main.h YAM_mainFolder.h YAM_mime.h YAM_read.h \
   YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
   YAM_utilities.h YAM_write.h
+
+all_sas.o: all_sas.c extrasrc/NewReadArgs.c
+
+YAM_locale.c: YAM_locale.h
+YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
+  flexcat $< YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
