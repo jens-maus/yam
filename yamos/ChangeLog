@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-01-31  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CL.c: YAM will now insert the famous multilinedelete replacement
+      text snippet "[...]" if the user marked whole lines and presses
+      RAMIGA+DEL within the Write window. This tiny text snippet is used
+      quite often in mailinglists and signals the reader that a whole bunch
+      of lines have been deleted in the replied text. Previously a user
+      had to add this "[...]" snippet on his own, but now YAM inserts it
+      automatically if the user deletes those lines with RAMIGA+DEL.
+
 2003-01-29  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l: fixed bug #674998 where a empty mailbody caused

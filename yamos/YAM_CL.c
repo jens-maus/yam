@@ -53,6 +53,7 @@
 #include "YAM_mainFolder.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
+#include "classes/Classes.h"
 
 /***************************************************************************
  Module: Private MUI classes
@@ -63,6 +64,11 @@ struct DumData { long dummy; };
 struct BC_Data
 {
    struct BodyChunkData *BCD;
+};
+
+struct TE_Data
+{
+   struct MUI_EventHandlerNode ehnode;
 };
 
 /*** Definitions ***/
@@ -395,10 +401,12 @@ DISPATCHERPROTO(MW_Dispatcher)
 
 ///
 /// TE_Dispatcher (Text Editor)
-/*** TE_Dispatcher (Text Editor) - Subclass of Texteditor, adds
-     error requester, Drag&Drop capabilities and multi-color support ***/
+// TE_Dispatcher (Text Editor) - Subclass of Texteditor, adds
+// error requester, Drag&Drop capabilities and multi-color support
 DISPATCHERPROTO(TE_Dispatcher)
 {
+   struct TE_Data *data = INST_DATA(cl, obj);
+
    switch (msg->MethodID)
    {
       case MUIM_DragQuery:
@@ -406,6 +414,8 @@ DISPATCHERPROTO(TE_Dispatcher)
          struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
          return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADDRESSES);
       }
+      break;
+
       case MUIM_DragDrop:
       {
          struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
@@ -421,8 +431,9 @@ DISPATCHERPROTO(TE_Dispatcher)
                }
             }
          }
-         break;
       }
+      break;
+
       case MUIM_TextEditor_HandleError:
       {
          char *errortxt = NULL;
@@ -436,8 +447,9 @@ DISPATCHERPROTO(TE_Dispatcher)
             case Error_NotEnoughUndoMem:  errortxt = GetStr(MSG_CL_ErrorNoUndoMem); break;
          }
          if (errortxt) MUI_Request(_app(obj), _win(obj), 0L, NULL, GetStr(MSG_OkayReq), errortxt);
-         break;
       }
+      break;
+
       case MUIM_Show:
       {
          G->EdColMap[6] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColoredText, 0);
@@ -446,8 +458,9 @@ DISPATCHERPROTO(TE_Dispatcher)
          G->EdColMap[9] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color3rdLevel, 0);
          G->EdColMap[10] = MUI_ObtainPen(muiRenderInfo(obj), &C->Color4thLevel, 0);
          G->EdColMap[11] = MUI_ObtainPen(muiRenderInfo(obj), &C->ColorURL, 0);
-         break;
       }
+      break;
+
       case MUIM_Hide:
       {
          if (G->EdColMap[6] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[6]);
@@ -456,8 +469,69 @@ DISPATCHERPROTO(TE_Dispatcher)
          if (G->EdColMap[9] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[9]);
          if (G->EdColMap[10] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[10]);
          if (G->EdColMap[11] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[11]);
-         break;
       }
+      break;
+
+      // On the Setup of the TextEditor gadget we prepare the evenhandlernode
+      // for adding it later on a GoActive Method call.
+      case MUIM_Setup:
+      {
+		    data->ehnode.ehn_Priority = 1;
+		    data->ehnode.ehn_Flags	  = 0;
+		    data->ehnode.ehn_Object	  = obj;
+		    data->ehnode.ehn_Class	  = cl;
+		    data->ehnode.ehn_Events	  = IDCMP_RAWKEY;
+    	}
+      break;
+
+      // The EventHandler should only get active if the TextEditor gadgets gets active.
+      case MUIM_GoActive:
+      {
+      	DoMethod(_win(obj), MUIM_Window_AddEventHandler, &data->ehnode);
+      }
+      break;
+
+      // As soon as the TextEditor gets inactive we remove the EventHandler for listing
+      // to RAWKEY events.
+      case MUIM_GoInactive:
+      {
+      	DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
+      }
+      break;
+
+      // We use HandleEvent to implement our neat tiny feature that on a press of
+      // RAMIGA+DEL while a multiline text is marked YAM deletes the text and
+      // inserts the famous [...] substitution.
+      case MUIM_HandleEvent:
+      {
+        struct IntuiMessage *imsg;
+	      if(!(imsg = ((struct MUIP_HandleEvent *)msg)->imsg)) break;
+
+	      if(imsg->Class == IDCMP_RAWKEY)
+	      {
+		      if(imsg->Code == IECODE_DEL && isFlagSet(imsg->Qualifier, IEQUALIFIER_RCOMMAND))
+          {
+            ULONG ret;
+            ULONG x1, y1, x2, y2;
+
+            // let`s check first if a multiline block is marked or not
+            if(DoMethod(obj, MUIM_TextEditor_BlockInfo, &x1, &y1, &x2, &y2) && y2-y1 >= 1)
+            {
+              // then we first clear the qualifier so that the real
+              // TextEditor HandleEvent method treats this imsg as a normal DEL pressed imsg
+              CLEAR_FLAG(imsg->Qualifier, IEQUALIFIER_RCOMMAND);
+              ret = DoSuperMethodA(cl, obj, msg);
+
+              // Now that the marked text is cleared we can insert our great [...]
+              // snip text ;)
+              DoMethod(obj, MUIM_TextEditor_InsertText, "[...]\n", MUIV_TextEditor_InsertText_Cursor);
+
+              return ret;
+            }
+          }
+        }
+      }
+      break;
    }
 
    return DoSuperMethodA(cl, obj, msg);
@@ -794,7 +868,7 @@ BOOL InitClasses(void)
    CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NListtree    , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
    CL_MailList    = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(ML_Dispatcher));
    CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));
-   CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct DumData), ENTRY(TE_Dispatcher));
+   CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct TE_Data), ENTRY(TE_Dispatcher));
    CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));
    CL_PageList    = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher));
 
