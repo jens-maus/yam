@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-10  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * all_morphos.c: removed file, because the whole libnix stuff
+      of morphos is now somehow more compatible and so we can use
+      the more general all_gcc.c for morphos support also
+    * did some efforts on getting YAM compiled for MorphOS again.
+      Updated several includes and included ppcinline includes
+      to the CVS tree.
+      Even if I couldn`t tested it yet, it`s compiling and linking
+      correctly. So this needs some more tests until we can release
+      a new MorphOS version.
+
 2002-06-08  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_rexx_rxif.c: fixed bug #563641 where the ADDRDELETE function
