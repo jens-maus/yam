@@ -107,3 +107,14 @@
 #define MAX(x,y)        ((x)<(y)?(y):(x))
 #endif
 
+#if (defined DEBUG) || (defined _MGST)
+	#include "clib/debug_protos.h"
+#endif
+
+#if (defined DEBUG)
+	#define DB(x) (x)
+	#define DBpr(x) (KPrintf("YAM: %s",x))
+#else
+	#define DB(x)
+	#define DBpr(x)
+#endif
