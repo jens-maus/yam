@@ -323,7 +323,7 @@ void rx_writeletter( struct RexxHost *host, struct rxd_writeletter **rxd, long a
       case RXIF_ACTION:
          if (G->WR[G->ActiveWriteWin] && CopyFile(G->WR_Filename[G->ActiveWriteWin], 0, rd->arg.file, 0))
          {
-            if (C->UseSignature && !rd->arg.nosig) WR_AddSignature(G->WR_Filename[G->ActiveWriteWin], -1);
+            if (C->UseSignature && !rd->arg.nosig) WR_AddSignature(G->ActiveWriteWin, -1);
             FileToEditor(G->WR_Filename[G->ActiveWriteWin], G->WR[G->ActiveWriteWin]->GUI.TE_EDIT);
          }
          else rd->rc = RETURN_ERROR;

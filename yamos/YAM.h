@@ -79,8 +79,6 @@ struct Global
 
    LONG                     EdColMap[9];
    LONG                     Weights[6];
-   LONG                     ActiveReadWin;
-   LONG                     ActiveWriteWin;
    LONG                     TR_Socket;
 
    int                      GM_Count;
@@ -88,6 +86,8 @@ struct Global
    int                      PGPVersion;
    int                      CO_DST;
    int                      ER_NumErr;
+   int                      ActiveReadWin;
+   int                      ActiveWriteWin;
 
    BOOL                     Error;
    BOOL                     PGP5;

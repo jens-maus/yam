@@ -173,7 +173,7 @@ void  EmitHeader(FILE *fh, char *hdr, char *body);
 void  FreePartsList(struct WritePart *p);
 struct WritePart *NewPart(int winnum);
 BOOL  WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp);
-void  WR_AddSignature(char *mailfile, int signat);
+void  WR_AddSignature(int winnum, int signat);
 void  WR_App(int winnum, struct AppMessage *amsg);
 char *WR_AutoSaveFile(int winnr);
 void  WR_Cleanup(int winnum);

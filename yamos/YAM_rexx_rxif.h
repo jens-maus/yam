@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -360,7 +360,7 @@ struct rxd_mailbounce
                 long quiet;
         } arg;
         struct {
-                long *window;
+                int *window;
         } res;
 };
 
@@ -423,7 +423,7 @@ struct rxd_mailedit
                 long quiet;
         } arg;
         struct {
-                long *window;
+                int *window;
         } res;
 };
 
@@ -469,7 +469,7 @@ struct rxd_mailforward
                 long quiet;
         } arg;
         struct {
-                long *window;
+                int *window;
         } res;
 };
 
@@ -525,11 +525,11 @@ struct rxd_mailread
         long rc, rc2;
         struct {
                 char *var, *stem;
-                long *window;
+                int *window;
                 long quiet;
         } arg;
         struct {
-                long *window;
+                int *window;
         } res;
 };
 
@@ -543,7 +543,7 @@ struct rxd_mailreply
                 long quiet;
         } arg;
         struct {
-                long *window;
+                int *window;
         } res;
 };
 
@@ -588,11 +588,11 @@ struct rxd_mailwrite
         long rc, rc2;
         struct {
                 char *var, *stem;
-                long *window;
+                int *window;
                 long quiet;
         } arg;
         struct {
-                long *window;
+                int *window;
         } res;
 };
 
