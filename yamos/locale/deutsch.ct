@@ -1,6 +1,6 @@
 ## chunk AUTH Jens Langner, Dirk Neubauer, Horst Schumann [ATO]
 ## language deutsch
-## version $VER: YAM.catalog 5.7 (07.10.2002)
+## version $VER: YAM.catalog 5.7 (17.10.2002)
 ## codeset 0
 ;
 MSG_Folder
@@ -5850,4 +5850,19 @@ und die Verbindung wurde daraufhin beendet:\n\n%s\n
 ;
 MSG_CO_APPICON_LABEL
 Neu: %n Gesamt: %t
+;
+MSG_DATE_RECEIVED
+Empfangen
+;
+MSG_DATE_SENT
+Versandt
+;
+MSG_DATE_SNTRCVD
+Empf/Versandsdatum
+;
+MSG_CO_DATE_SNTRCVD
+Empfangs/Versendedatum
+;
+MSG_FROMTO
+Von/An
 ;
