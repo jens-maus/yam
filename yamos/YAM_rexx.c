@@ -37,6 +37,12 @@
 #include <proto/exec.h>
 #include <proto/dos.h>
 
+#if INCLUDE_VERSION >= 44
+#define REXXMSG(msg) msg
+#else
+#define REXXMSG(msg) &msg->rm_Node
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -83,7 +89,7 @@ void ReplyRexxCommand(struct RexxMsg *rexxmessage, long primary, long secondary,
             result = (char *) secondary;
          }
          
-         SetRexxVar( (struct RexxMsg *)&rexxmessage->rm_Node, "RC2", result, strlen(result) );
+         SetRexxVar( REXXMSG(rexxmessage), "RC2", result, strlen(result) );
          
          secondary = 0;
       }
@@ -727,7 +733,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
                for( rb = (char *) argarray[0]; *rb; ++rb )
                   *rb = toupper( *rb );
                
-               if( SetRexxVar( (struct RexxMsg *)&rexxmsg->rm_Node,
+               if( SetRexxVar( REXXMSG(rexxmsg),
                   *((char *)argarray[0]) ? (char *)argarray[0] : "RESULT",
                   result, strlen(result) ) )
                {
@@ -752,7 +758,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
             else
             {
                for( s = stem; s; s = s->succ )
-                  rc |= SetRexxVar( (struct RexxMsg *)&rexxmsg->rm_Node, s->name, s->value, strlen(s->value) );
+                  rc |= SetRexxVar( REXXMSG(rexxmsg), s->name, s->value, strlen(s->value) );
                
                if( rc )
                {
