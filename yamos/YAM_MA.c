@@ -1125,17 +1125,25 @@ HOOKPROTONHNONP(MA_SaveAttachFunc, void)
    if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
    {
       if (ReqFile(ASL_DETACH, G->MA->GUI.WI, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
+      {
+         BusyText(GetStr(MSG_BusyDecSaving), "");
+
          for (i = 0; i < (int)*mlist; i++)
          {
             RE_InitPrivateRC(mail = mlist[i+2], PM_ALL);
             if ((cmsg = RE_ReadInMessage(4, RIM_QUIET)))
             {
                free(cmsg);
-               if ((part = G->RE[4]->FirstPart->Next)) if (part->Next)
+               if ((part = G->RE[4]->FirstPart->Next) && part->Next)
+               {
                   RE_SaveAll(4, G->ASLReq[ASL_DETACH]->fr_Drawer);
+               }
             }
             RE_FreePrivateRC();
          }
+
+         BusyEnd;
+      }
       free(mlist);
    }
 }

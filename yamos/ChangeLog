@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-26  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c, YAM_MA.c: fixed a possible buffer overrun
+      in the DisplayHook of the Attachment requester.
+      Also fixed a possible problem with attachments which
+      included "%" chars - some sprintf() drove crazy because
+      of it ;)
+
 2002-10-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: YAM_UT.c, YAM_MA.c: had to remove the LEN_DATSTRING

@@ -715,8 +715,8 @@ BOOL RE_Export(int winnum, char *source, char *dest, char *name, int nr, BOOL fo
    }
    if (FileExists(dest) && !overwrite)
    {
-      sprintf(buffer2, GetStr(MSG_RE_Overwrite), FilePart(dest));
-      if (!MUI_Request(G->App, win, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_OkayCancelReq), buffer2)) return FALSE;
+      if (!MUI_Request(G->App, win, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_OkayCancelReq), GetStr(MSG_RE_Overwrite), FilePart(dest)))
+        return FALSE;
    }
    if (!CopyFile(dest, 0, source, 0))
    {
@@ -3281,10 +3281,13 @@ HOOKPROTONH(RE_LV_AttachDspFunc, long, char **array, struct Part *entry)
 {
    if (entry)
    {
-      static char dispnu[SIZE_SMALL], dispna[SIZE_CTYPE], dispsz[SIZE_SMALL];
+      static char dispnu[SIZE_SMALL], dispsz[SIZE_SMALL];
       array[0] = array[2] = "";
       if (entry->Nr > PART_RAW) sprintf(array[0] = dispnu, "%d", entry->Nr);
-      sprintf(array[1] = dispna, *entry->Name ? entry->Name : DescribeCT(entry->ContentType));
+
+      if(*entry->Name) array[1] = entry->Name;
+      else             array[1] = DescribeCT(entry->ContentType);
+
       if (entry->Size)
       {
         sprintf(array[2] = dispsz, "%s", entry->Decoded ? "" : "~");
