@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-12-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c: started reworking the MIME encoding routines.
+      Optimized the base64 string encoding/decoding functions to
+      be a bit faster and also provide a better interface for
+      error reporting during decoding/encoding phase. Adapted
+      other sources to use the new reworked base64 string functions.
+
 2003-12-03  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_COg.c: changed MUIA_Listview_ScrollerPos of translation

@@ -42,9 +42,10 @@ struct TranslationTable
    char  DestCharset[SIZE_NAME];
 };
 
-char *decode64 (char *dest, const char *src, char *srcmax);
+int base64encode(char *to, const unsigned char *from, unsigned int len);
+int base64decode(char *to, const unsigned char *from, unsigned int len);
+
 BOOL  DoesNeedPortableNewlines(char *ctype);
-void  encode64(const unsigned char *s, char *d, int len);
 void  from64(FILE *infile, FILE *outfile, struct TranslationTable *tt, BOOL PortableNewlines);
 void  from64txt(char *src, char *dst, struct TranslationTable *tt);
 void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);

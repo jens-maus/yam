@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -50,16 +50,18 @@ static int outdec(char*, FILE*);
 static const char basis_64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const char basis_hex[] = "0123456789ABCDEF";
 
-static const char index_64[128] = {
-   -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
-   -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
-   -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,62, -1,-1,-1,63,
-   52,53,54,55, 56,57,58,59, 60,61,-1,-1, -1,-1,-1,-1,
-   -1, 0, 1, 2,  3, 4, 5, 6,  7, 8, 9,10, 11,12,13,14,
-   15,16,17,18, 19,20,21,22, 23,24,25,-1, -1,-1,-1,-1,
-   -1,26,27,28, 29,30,31,32, 33,34,35,36, 37,38,39,40,
-   41,42,43,44, 45,46,47,48, 49,50,51,-1, -1,-1,-1,-1
+static const unsigned char index_64[128] =
+{
+  255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+	255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,
+	255,255,255,255,255,255,255,255,255,255,255,62, 255,255,255,63,
+	52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 255,255,255,255,255,255,
+	255,0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 255,255,255,255,255,
+	255,26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+	41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 255,255,255,255,255
 };
+
 static const char index_hex[128] = {
    -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
    -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
@@ -72,12 +74,130 @@ static const char index_hex[128] = {
 };
 
 #define hexchar(c)  (((c) > 127) ? -1 : index_hex[(c)])
-#define char64(c)  (((c) < 0 || (c) > 127) ? -1 : index_64[(c)])
-#define SUMSIZE 64
-#define ENC(c) ((c) ? ((c) & 077) + ' ': '`')
+#define char64(c)   (((c) < 0 || (c) > 127) ? 255 : index_64[(c)])
+#define SUMSIZE     64
+#define ENC(c)      ((c) ? ((c) & 077) + ' ': '`')
 
 static BOOL InNewline = FALSE;
 static BOOL CRpending = FALSE;
+///
+
+/// base64encode
+// optimized base64 encoding function returning the length of the
+// encoded string.
+int base64encode(char *to, const unsigned char *from, unsigned int len)
+{
+  char *fromp = (char*)from;
+  char *top = to;
+  unsigned char cbyte;
+  unsigned char obyte;
+  char end[3];
+
+  for (; len >= 3; len -= 3)
+  {
+    cbyte = *fromp++;
+    *top++ = basis_64[(int)(cbyte >> 2)];
+    obyte = (cbyte << 4) & 0x30;            /* 0011 0000 */
+
+    cbyte = *fromp++;
+    obyte |= (cbyte >> 4);                  /* 0000 1111 */
+    *top++ = basis_64[(int)obyte];
+    obyte = (cbyte << 2) & 0x3C;            /* 0011 1100 */
+
+    cbyte = *fromp++;
+    obyte |= (cbyte >> 6);                  /* 0000 0011 */
+    *top++ = basis_64[(int)obyte];
+    *top++ = basis_64[(int)(cbyte & 0x3F)]; /* 0011 1111 */
+  }
+
+  if(len)
+  {
+    end[0] = *fromp++;
+    if(--len) end[1] = *fromp++; else end[1] = 0;
+    end[2] = 0;
+
+    cbyte = end[0];
+    *top++ = basis_64[(int)(cbyte >> 2)];
+    obyte = (cbyte << 4) & 0x30;            /* 0011 0000 */
+
+    cbyte = end[1];
+    obyte |= (cbyte >> 4);
+    *top++ = basis_64[(int)obyte];
+    obyte = (cbyte << 2) & 0x3C;            /* 0011 1100 */
+
+    if(len) *top++ = basis_64[(int)obyte];
+    else *top++ = '=';
+    *top++ = '=';
+  }
+  *top = 0;
+  return top - to;
+}
+
+///
+/// base64decode
+// optimized base64 decoing function returning the length of the
+// decoded string or -1 on an occurred error
+int base64decode(char *to, const unsigned char *from, unsigned int len)
+{
+	int x, y;
+  char *fromp = (char*)from;
+  char *top = to;
+
+	while(len > 0)
+	{
+    len--;
+    x = (unsigned char)(*fromp++);
+		if(x > 127 || (x = index_64[x]) == 255)
+			return -1;
+
+    if(len < 0 || (y = (unsigned char)(*fromp++)) == 0 ||
+       y > 127 || (y = index_64[y]) == 255)
+    {
+			return -1;
+    }
+
+    len--;
+		*top++ = (x << 2) | (y >> 4);
+
+		if(len > 0)
+    {
+      len--;
+      if((x = (unsigned char)(*fromp++)) == '=')
+      {
+	  		if(len > 0 && *fromp++ != '=' || *fromp != 0)
+  				return -1;
+
+        len--;
+	  	}
+  		else
+      {
+		  	if (x > 127 || (x = index_64[x]) == 255)
+			  	return -1;
+
+  			*top++ = (y << 4) | (x >> 2);
+        if(len > 0)
+        {
+          len--;
+  	  		if ((y = (unsigned char)(*fromp++)) == '=')
+          {
+		  	  	if(*fromp != 0) return -1;
+  		  	}
+  	  		else
+          {
+		  	  	if (y > 127 || (y = index_64[y]) == 255)
+			  	  	return -1;
+
+    				*top++ = (x << 6) | y;
+	    		}
+        }
+		  }
+    }
+	}
+	*top = 0;
+  if(len != 0) return -1;
+	return top - to;
+}
+
 ///
 
 /// nextcharin
@@ -93,59 +213,6 @@ static int nextcharin(FILE *infile, BOOL PortableNewlines)
    return c;
 }
 
-///
-/// encode64
-//  Encodes string in base64 format
-void encode64(const unsigned char *s, char *d, int len)
-{
-   int i;
-
-   for(i=0;i<len;i+=3)
-   {
-      int c1, c2, c3, c4, count=len-i;
-
-      c1 = *s >> 2;
-      c2 = ((*s << 4) & 060) | ((s[1] >> 4) & 017);
-      c3 = ((s[1] << 2) & 074) | ((s[2] >> 6) & 03);
-      c4 = s[2] & 077;
-      *d++=basis_64[c1];
-      *d++=basis_64[c2];
-      if (count == 1) {
-        *d++='=';
-        *d++='=';
-      }
-      else {
-        *d++=basis_64[c3];
-        if (count == 2)
-          *d++='=';
-        else
-          *d++=basis_64[c4];
-      }
-      s+=3;
-   }
-   *d=0;
-}
-
-///
-/// decode64
-//  Decodes string in base64 format
-#define BASE64(c) (index_64[(unsigned char)(c) & 0x7F])
-char *decode64 (char *dest, const char *src, char *srcmax)
-{
-   while (src + 3 < srcmax)
-     {
-        *dest++ = (BASE64(src[0]) << 2) | (BASE64(src[1]) >> 4);
-        
-        if (src[2] == '=') break;
-        *dest++ = ((BASE64(src[1]) & 0xf) << 4) | (BASE64(src[2]) >> 2);
-        
-        if (src[3] == '=') break;
-        *dest++ = ((BASE64(src[2]) & 0x3) << 6) | BASE64(src[3]);
-        src += 4;
-     }
-   *dest=0;
-   return dest;
-}
 ///
 /// output64chunk
 //  Writes three bytes in base64 format

@@ -269,7 +269,7 @@ BOOL MA_SetMailComment(struct Mail *mail)
    {
       char transDateStr[13]; // it should always by 12bytes long + \0
 
-      encode64((char *)&mail->transDate, transDateStr, sizeof(struct timeval));
+      base64encode(transDateStr, (char *)&mail->transDate, sizeof(struct timeval));
 
       // lets attach the transDate to the commentString somehow
       strcat(commentStr, transDateStr);

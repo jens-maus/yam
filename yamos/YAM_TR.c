@@ -408,7 +408,7 @@ static BOOL TR_InitSTARTTLS(int ServerFlags)
 // function to authenticate to a ESMTP Server
 static BOOL TR_InitSMTPAUTH(int ServerFlags)
 {
-   int len, rc = SMTP_SERVICE_NOT_AVAILABLE;
+   int rc = SMTP_SERVICE_NOT_AVAILABLE;
    char *resp;
    char buffer[SIZE_LINE];
    char challenge[SIZE_LINE];
@@ -437,15 +437,18 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         // get the challenge code from the response line of the
         // AUTH command.
         strncpy(challenge, &resp[4], 511);
-        challenge[511]=0;
+        challenge[511] = '\0';
 
-        decode64(challenge, challenge, challenge+strlen(challenge));
+        // now that we have the challange phrase we need to base64decode
+        // it, but have to take care to remove the ending "\r\n" cookie.
+        if(base64decode(challenge, challenge, strlen(challenge)-3) <= 0)
+          return FALSE;
 
         hmac_md5(challenge, strlen(challenge), password, strlen(password), (char *)digest);
 
         sprintf(buf, "%s %08lx%08lx%08lx%08lx%c%c", login, digest[0], digest[1], digest[2], digest[3], 0, 0);
 
-        encode64(buf, buffer, strlen(buf));
+        base64encode(buffer, buf, strlen(buf));
         strcat(buffer, "\r\n");
 
         // now we send the SMTP AUTH response
@@ -464,21 +467,28 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       // send the AUTH command and get the response back
       if((resp = TR_SendSMTPCmd(ESMTP_AUTH_DIGEST_MD5, NULL, MSG_ER_BadResponse)))
       {
+        int len;
         ULONG digest[4];
         struct MD5Context context;
 
+        // get the challenge code from the response line of the
+        // AUTH command.
         strncpy(challenge, &resp[4], 511);
-        challenge[511]=0;
-        decode64(challenge, challenge, challenge+strlen(challenge));
+        challenge[511] = '\0';
+
+        // now that we have the challange phrase we need to base64decode
+        // it, but have to take care to remove the ending "\r\n" cookie.
+        if(base64decode(challenge, challenge, strlen(challenge)-3) <= 0)
+          return FALSE;
 
         strcat(challenge, C->SMTP_AUTH_Pass);
         MD5Init(&context);
         MD5Update(&context, challenge, strlen(challenge));
         MD5Final((UBYTE *)digest, &context);
 
-        len=sprintf(challenge,"%s %08lx%08lx%08lx%08lx%c%c",C->SMTP_AUTH_User,
-                    digest[0],digest[1],digest[2],digest[3],0,0)-2;
-        encode64(challenge,buffer,len);
+        len = sprintf(challenge,"%s %08lx%08lx%08lx%08lx%c%c", C->SMTP_AUTH_User,
+                      digest[0], digest[1], digest[2], digest[3], 0, 0);
+        base64encode(buffer, challenge, len-2);
         strcat(buffer,"\r\n");
 
         // now we send the SMTP AUTH response
@@ -497,8 +507,8 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       // send the AUTH command
       if(TR_SendSMTPCmd(ESMTP_AUTH_LOGIN, NULL, MSG_ER_BadResponse))
       {
-         len=sprintf(challenge,"%s%c%c",C->SMTP_AUTH_User,0,0)-2;
-         encode64(challenge,buffer,len);
+         int len = sprintf(challenge,"%s%c%c", C->SMTP_AUTH_User, 0, 0);
+         base64encode(buffer, challenge, len-2);
          strcat(buffer,"\r\n");
 
          // now we send the SMTP AUTH response (UserName)
@@ -507,8 +517,8 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
          // get the server response and see if it was valid
          if(TR_ReadLine(G->TR_Socket, buffer, SIZE_LINE) > 0 && (rc = getResponseCode(buffer)) == 334)
          {
-            len=sprintf(challenge,"%s%c%c",C->SMTP_AUTH_Pass,0,0)-2;
-            encode64(challenge,buffer,len);
+            int len = sprintf(challenge,"%s%c%c", C->SMTP_AUTH_Pass, 0, 0);
+            base64encode(buffer, challenge, len-2);
             strcat(buffer,"\r\n");
 
             // now lets send the Password
@@ -532,12 +542,11 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       // send the AUTH command
       if(TR_SendSMTPCmd(ESMTP_AUTH_PLAIN, NULL, MSG_ER_BadResponse))
       {
-         len=0;
-         challenge[len++]=0;
-         len+=sprintf(challenge+len,"%s",C->SMTP_AUTH_User);
-         len++;
-         len+=sprintf(challenge+len,"%s",C->SMTP_AUTH_Pass);
-         encode64(challenge,buffer,len);
+         int len = 0;
+         challenge[len++] = 0;
+         len += sprintf(challenge+len,"%s", C->SMTP_AUTH_User)+1;
+         len += sprintf(challenge+len,"%s", C->SMTP_AUTH_Pass);
+         base64encode(buffer, challenge, len);
          strcat(buffer,"\r\n");
 
          // now we send the SMTP AUTH response (UserName+Password)
