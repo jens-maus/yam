@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-25  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM.c, YAM_TR.c: fixed missbehaviours with MUIA_Window_Activate
+      where we sometimes activated the Main/Transferwindow were it
+      shouldn`t be. Also fixed a bug where a MUIA_Window_Open with TRUE
+      caused the window to activate if the window was already open.
+      Now YAM shouldn`t interrupt the user if it`s really not
+      necessary.
+
 2002-06-22  Jacob Laursen <jlaur@mail1.stofanet.dk>
 
     * Improved the MCC check - now automatically attempts flushing,

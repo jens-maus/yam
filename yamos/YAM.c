@@ -254,7 +254,6 @@ static BOOL AY_New(BOOL hidden)
    G->AY_Win = WindowObject,
       MUIA_Window_Title, GetStr(MSG_MA_About),
       MUIA_Window_ID, MAKE_ID('C','O','P','Y'),
-      MUIA_Window_Activate, FALSE,
       MUIA_HelpNode, "COPY",
       WindowContents, VGroup,
          MUIA_Background, MUII_GroupBack,
@@ -349,40 +348,40 @@ static BOOL AY_New(BOOL hidden)
 //  Un-iconify YAM
 void PopUp(void)
 {
-   int winopen, i;
+   int i;
+   Object *window = G->MA->GUI.WI;
 
-   winopen = xget(G->MA->GUI.WI, MUIA_Window_Open);
    nnset(G->App, MUIA_Application_Iconified, FALSE);
+
+   // avoid MUIA_Window_Open's side effect of activating the window if it was already open
    if(!xget(G->MA->GUI.WI, MUIA_Window_Open)) set(G->MA->GUI.WI, MUIA_Window_Open, TRUE);
+
    DoMethod(G->MA->GUI.WI, MUIM_Window_ScreenToFront);
+   DoMethod(G->MA->GUI.WI, MUIM_Window_ToFront);
 
-   if(winopen)
+   // Now we check if there is any read and write window open and bring it also
+   // to the front
+   for(i = 0; i < MAXRE; i++)
    {
-     DoMethod(G->MA->GUI.WI, MUIM_Window_ToFront);
-     set(G->MA->GUI.WI, MUIA_Window_Activate, TRUE);
-
-     // Now we check if there is any read and write window open and bring it also
-     // to the front
-
-     for(i = 0; i < MAXRE; i++)
+     if(G->RE[i])
      {
-       if(G->RE[i])
-       {
-         DoMethod(G->RE[i]->GUI.WI, MUIM_Window_ToFront);
-         set(G->RE[i]->GUI.WI, MUIA_Window_Activate, TRUE);
-       }
-     }
-
-     // Bring the write window to the front
-     for(i = 0; i < MAXWR; i++)
-     {
-       if(G->WR[i])
-       {
-         DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
-         set(G->WR[i]->GUI.WI, MUIA_Window_Activate, TRUE);
-       }
+       DoMethod(G->RE[i]->GUI.WI, MUIM_Window_ToFront);
+       window = G->RE[i]->GUI.WI;
      }
    }
+
+   // Bring the write window to the front
+   for(i = 0; i < MAXWR; i++)
+   {
+     if(G->WR[i])
+     {
+       DoMethod(G->WR[i]->GUI.WI, MUIM_Window_ToFront);
+       window = G->WR[i]->GUI.WI;
+     }
+   }
+
+   // now we activate the window that is on the top
+   set(window, MUIA_Window_Activate, TRUE);
 }
 ///
 /// DoublestartHook
@@ -831,7 +830,14 @@ static void Initialise2(BOOL hidden)
    if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))
       Abort(MSG_ErrorARexx);
    AY_PrintStatus(GetStr(MSG_OPENGUI), 100);
-   set(G->MA->GUI.WI, MUIA_Window_Open, !hidden);
+
+   // only activate the main window if the about window is activ
+   // and open it immediatly
+   SetAttrs(G->MA->GUI.WI,
+            MUIA_Window_Activate, xget(G->AY_Win, MUIA_Window_Activate),
+            MUIA_Window_Open,     !hidden,
+            TAG_DONE);
+
    set(G->AY_Win, MUIA_Window_Open, FALSE);
    set(G->AY_Text, MUIA_ShowMe, FALSE);
 }

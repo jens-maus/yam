@@ -599,10 +599,8 @@ static int TR_ConnectPOP(int guilevel)
 
    if (C->TransferWindow == 2 || (C->TransferWindow == 1 && (guilevel == POP_START || guilevel == POP_USER)))
    {
-      LONG wstate;
-
-      get(G->TR->GUI.WI, MUIA_Window_Open, &wstate);            // avoid MUIA_Window_Open's side effect of
-      if(!wstate) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);   // activating the window if it was already open
+      // avoid MUIA_Window_Open's side effect of activating the window if it was already open
+      if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
    }
    set(G->TR->GUI.TX_STATUS  , MUIA_Text_Contents,GetStr(MSG_TR_Connecting));
 
@@ -1149,21 +1147,31 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
             if (G->TR->GUIlevel == POP_USER)             // manually initiated transfer
             {
                if (C->PreSelection >= 2) preselect = TRUE;           // preselect messages if preference is "always [sizes only]"
-               if (C->WarnSize && C->PreSelection)                   // ...or any sort of preselection and there is a maximum size
+               else if (C->WarnSize && C->PreSelection)              // ...or any sort of preselection and there is a maximum size
                   for (mail = G->TR->List; mail; mail = mail->Next)  // ...and one of the messages is at least this big
                      if (mail->Size >= C->WarnSize<<10) { preselect = TRUE; break; }
             }
             if (preselect)                               // anything to preselect?
             {
-               set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
+               // avoid MUIA_Window_Open's side effect of activating the window if it was already open
+               if(!xget(G->TR->GUI.WI, MUIA_Window_Open)) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
+
+               // if preselect mode is "always [sizes only]"
                if (C->PreSelection == 1)
                {
                   TR_DisplayMailList(TRUE);                          // add entries to list
                   set(G->TR->GUI.GR_LIST, MUIA_ShowMe, TRUE);        // ...and show it
-                  set(G->TR->GUI.WI, MUIA_Window_Activate, TRUE);    // activate window
-                  DoMethod(G->TR->GUI.WI, MUIM_Window_ScreenToFront);
                }
-               else TR_DisplayMailList(FALSE);
+               else
+               {
+                  TR_DisplayMailList(FALSE);
+               }
+
+               DoMethod(G->TR->GUI.WI, MUIM_Window_ScreenToFront);
+               DoMethod(G->TR->GUI.WI, MUIM_Window_ToFront);
+               // activate window only if main window activ
+               set(G->TR->GUI.WI, MUIA_Window_Activate, xget(G->MA->GUI.WI, MUIA_Window_Activate));
+               
                set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 0);
                G->TR->GMD_Mail = G->TR->List;
                G->TR->GMD_Line = 0;
@@ -2172,7 +2180,7 @@ HOOKPROTONHNONP(TR_ProcessGETFunc, void)
    TR_TransStat_Init(&ts);
    if (ts.Msgs_Tot)
    {
-      if (C->TransferWindow == 2) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
+      if (C->TransferWindow == 2 && !xget(G->TR->GUI.WI, MUIA_Window_Open)) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
       TR_TransStat_Start(&ts);
       for (mail = G->TR->List; mail && !G->TR->Abort && !G->Error; mail = mail->Next)
       {
