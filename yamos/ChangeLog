@@ -7,6 +7,9 @@ $Source$
 
 2003-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c, YAM_WR.c: fixed a bug in the save routines for decrypting
+      PGP messages. Previously YAM was not correctly saving a decrypted PGP
+      message to a compressed folder.
     * YAM_RE.c: fixed bug in PGP signed routines where YAM didn`t give the
       user the possibility to check the signature even if the message was
       correctly signed.

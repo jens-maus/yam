@@ -1516,10 +1516,11 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
 
    if (!(choice = MUI_Request(G->App, re->GUI.WI, 0, GetStr(MSG_RE_SaveDecrypted), GetStr(MSG_RE_SaveDecGads), GetStr(MSG_RE_SaveDecReq)))) return;
    memset(&comp, 0, sizeof(struct Compose));
+
    if ((comp.FH = fopen(MA_NewMailFile(folder, mfile, 0), "w")))
    {
       struct ExtendedMail *email;
-      struct Mail *new;
+
       comp.Mode = NEW_SAVEDEC;
       comp.OrigMail = re->MailPtr;
       comp.FirstPart = p1 = NewPart(2);
@@ -1527,21 +1528,27 @@ HOOKPROTONHNO(RE_SaveDecryptedFunc, void, int *arg)
       WriteOutMessage(&comp);
       FreePartsList(p1);
       fclose(comp.FH);
+
       if ((email = MA_ExamineMail(folder, mfile, NULL, TRUE)))
       {
+         struct Mail *newmail;
+
          // lets set some values depending on the original message
          email->Mail.Status = re->MailPtr->Status;
          memcpy(&email->Mail.transDate, &re->MailPtr->transDate, sizeof(struct timeval));
 
          // add the mail to the folder now
-         new = AddMailToList(&email->Mail, folder);
+         newmail = AddMailToList(&email->Mail, folder);
 
-         if (FO_GetCurrentFolder() == folder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
+         // if this was a compressed/encrypted folder we need to pack the mail now
+         if(folder->XPKType != XPK_OFF) RepackMailFile(newmail, -1, NULL);
+
+         if (FO_GetCurrentFolder() == folder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
          MA_FreeEMailStruct(email);
          if (choice == 2)
          {
             MA_DeleteSingle(re->MailPtr, FALSE, FALSE);
-            RE_ReadMessage(*arg, new);
+            RE_ReadMessage(*arg, newmail);
          }
       }
       else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);

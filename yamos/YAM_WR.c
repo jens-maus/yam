@@ -851,7 +851,24 @@ static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
 static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
 {
    FILE *oldfh;
-   if ((oldfh = fopen(GetMailFile(NULL, NULL, comp->OrigMail), "r")))
+   char *mailfile = GetMailFile(NULL, NULL, comp->OrigMail);
+   char unpFile[SIZE_PATHFILE];
+   BOOL xpkPacked = FALSE;
+   BOOL result = FALSE;
+
+   // we need to analyze if the folder we are reading this mail from
+   // is encrypted or compressed and then first unpacking it to a temporary file
+   if(comp->OrigMail->Folder->XPKType != XPK_OFF)
+   {
+      // so, this mail seems to be packed, so we need to unpack it to a temporary file
+      if(StartUnpack(mailfile, unpFile, comp->OrigMail->Folder) && stricmp(mailfile, unpFile) != 0)
+      {
+        xpkPacked = TRUE;
+      }
+      else return FALSE;
+   }
+
+   if ((oldfh = fopen(xpkPacked ? unpFile : mailfile, "r")))
    {
       BOOL infield = FALSE;
       char buf[SIZE_LINE];
@@ -864,9 +881,14 @@ static BOOL WR_SaveDec(FILE *fh, struct Compose *comp)
          if (!infield) fputs(buf, fh);
       }
       fclose(oldfh);
-      return TRUE;
+
+      result = TRUE;
    }
-   return FALSE;
+
+   // if we temporary unpacked the file we delete it now
+   if(xpkPacked) DeleteFile(unpFile);
+
+   return result;
 }
 
 ///
