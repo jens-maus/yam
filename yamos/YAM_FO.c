@@ -874,12 +874,12 @@ static void FO_GetFolder(struct Folder *folder, BOOL existing)
    set(gui->CY_FTYPE,       MUIA_Disabled, isdefault);
    set(gui->CY_FMODE,       MUIA_Disabled, isdefault || existing);
    set(gui->BT_MOVE,        MUIA_Disabled, existing);
-   set(gui->BT_AUTODETECT,  MUIA_Disabled, isdefault);
+   set(gui->BT_AUTODETECT,  MUIA_Disabled, !folder->MLSupport || isdefault);
 
    // for ML-Support
    SetAttrs(gui->CH_MLSUPPORT,
-            MUIA_Selected, folder->MLSupport && !isdefault,
-            MUIA_Disabled, !folder->MLSupport || isdefault,
+            MUIA_Selected, isdefault ? FALSE : folder->MLSupport,
+            MUIA_Disabled, isdefault,
             TAG_DONE);
 
    SetAttrs(gui->ST_MLADDRESS,
