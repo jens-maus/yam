@@ -1,0 +1,16 @@
+YCT1 - YAM Charset Translation
+CP1250 to Latin2SI
+AUTHOR Blaz Kriznik <blaz.kriznik@guest.arnes.si>
+HEADER
+FROM windows-1250
+TO iso-8859-2
+$89=$c8
+$8b=$e8
+$8a=$a9
+$9a=$b9
+$8e=$ae
+$9e=$be
+$e1=$a9
+$e4=$b9
+$eb=$ae
+$ec=$be

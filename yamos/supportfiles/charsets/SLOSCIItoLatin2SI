@@ -1,0 +1,11 @@
+YCT1 - YAM Charset Translation
+SLOSCII to Latin2SI
+AUTHOR Blaz Kriznik <blaz.kriznik@guest.arnes.si>
+HEADER
+TO iso-8859-2
+$5e=$c8
+$7e=$e8
+$5b=$a9
+$7b=$b9
+$40=$ae
+$60=$be

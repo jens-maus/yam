@@ -1,0 +1,16 @@
+YCT1 - YAM Charset Translation
+WarpHRII Normal to CROSCII
+AUTHOR Rated RR <dalibor.puljiz@zg.tel.hr>, <dpuljiz@zesoi.fer.hr>
+HEADER
+FROM Windows-1250
+TO CROSCII
+$C8=$5E
+$E8=$7E
+$C6=$5D
+$E6=$7D
+$D0=$5C
+$F0=$7C
+$A9=$5B
+$B9=$7B
+$AE=$40
+$BE=$60

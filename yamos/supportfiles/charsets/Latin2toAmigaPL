@@ -1,0 +1,24 @@
+YCT1 - YAM Charset Translation
+ISO-8859-2 (Latin-2) -> AmigaPL
+AUTHOR Marcin Orlowski <carlos@amiga.com.pl>
+FROM iso-8859-2
+HEADER
+$b1=$e2
+$e6=$ea
+$ea=$eb
+$b3=$ee
+$f1=$ef
+$f3=$f3
+$b6=$f4
+$bc=$fa
+$bf=$fb
+$a1=$c2
+$c6=$ca
+$ca=$cb
+$a3=$ce
+$d1=$cf
+$d3=$d3
+$a6=$d4
+$ac=$da
+$af=$db
+

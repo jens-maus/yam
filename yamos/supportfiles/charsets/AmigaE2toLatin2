@@ -1,0 +1,35 @@
+YCT1 - YAM Charset Translation
+AmigaE2 -> ISO-8859-2 (Latin-2)
+AUTHOR Richard de Rivaz <richard@mdr.co.uk>
+FROM amiga-e2
+TO iso-8859-2
+HEADER
+$e1=$e1
+$c1=$c1
+$e7=$e8
+$c7=$c8
+$f0=$ef
+$d0=$cf
+$e9=$e9
+$c9=$c9
+$eb=$ec
+$cb=$cc
+$ed=$ed
+$cd=$c9
+$f1=$f2
+$d1=$d2
+$f3=$f3
+$d3=$d3
+$ea=$f8
+$ca=$d8
+$ee=$b9
+$ce=$a9
+$ef=$bb
+$cf=$ab
+$fa=$fa
+$da=$da
+$fb=$f9
+$fd=$fd
+$dd=$dd
+$f9=$be
+$d9=$ae

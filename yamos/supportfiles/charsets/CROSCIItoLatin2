@@ -1,0 +1,16 @@
+YCT1 - YAM Charset Translation
+WarpHRII CROSCII to Latin2
+AUTHOR Rated RR <dalibor.puljiz@zg.tel.hr>, <dpuljiz@zesoi.fer.hr>
+HEADER
+FROM CROSCII
+TO ISO-8859-2
+$5E=$C8
+$7E=$E8
+$5D=$C6
+$7D=$E6
+$5C=$D0
+$7C=$F0
+$5B=$8A
+$7B=$9A
+$40=$8E
+$60=$9E

@@ -1,0 +1,16 @@
+YCT1 - YAM Charset Translation
+WarpHRII Normal to LII
+AUTHOR Rated RR <dalibor.puljiz@zg.tel.hr>, <dpuljiz@zesoi.fer.hr>
+HEADER
+FROM Windows-1250
+TO ISO-8859-2
+$C8=$C8
+$E8=$E8
+$C6=$C6
+$E6=$E6
+$D0=$D0
+$F0=$F0
+$A9=$8A
+$B9=$9A
+$AE=$8E
+$BE=$9E
