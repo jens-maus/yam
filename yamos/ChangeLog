@@ -7,6 +7,8 @@ $Source$
 
 2002-06-01  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * Makefile, inline/#?: Did some efforts to get YAM compiled
+      with gcc again, as we will need that in future for sure.
     * YAM_AB.c, YAM_RE.c: also added the capslock (fix) to other
       places like the addressbook and read window to allow the user
       to still use his keys with a turned on capslock.
