@@ -771,3 +771,10 @@
 
     * (smakefile) refined CFLAGS
     * (YAM_global.c) removed __near
+
+2001-06-20  Gunther Nikl <gni@gecko.de>
+
+    * (makeall.ados) changed "move" to "rename"
+    * (smakefile) changed CFLAGS handling, changed LINK statement
+    * (Makefile, Makefile.m68k-AmigaOS) restruc
+    * (starter.c) cleanup
