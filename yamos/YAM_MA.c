@@ -144,7 +144,19 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    // is only refreshed about 100 milliseconds after the last change in the listview
    // was recognized.
    if(C->EmbeddedReadPane)
-      TC_Start(TIO_READPANEUPDATE, 0, C->PreviewDelay*1000);
+   {
+      ULONG numSelected;
+
+      // but before we really issue a readpaneupdate we check wheter the user has
+      // selected more than one mail at a time which then should clear the
+      // readpane as it might have been disabled.
+      DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
+
+      if(numSelected == 1)
+        TC_Start(TIO_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
+      else
+        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear);
+   }
 
    type = fo->Type;
    DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
@@ -2942,6 +2954,10 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
          array[6] = entry->MailFile;
          array[8] = entry->Folder->Name;
+
+         // depending on the mail status we set the font to bold or plain
+         if(hasStatusNew(entry) || hasStatusUnread(entry))
+           msg->preparses[1] = msg->preparses[2] = msg->preparses[3] = msg->preparses[4] = msg->preparses[5] = "\033b";
       }
    }
    else
@@ -2949,7 +2965,8 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
       struct Folder *folder = NULL;
 
       // first we have to make sure that the mail window has a valid folder
-      if(!searchWinHook && !(folder = FO_GetCurrentFolder())) return 0;
+      if(!searchWinHook && !(folder = FO_GetCurrentFolder()))
+        return 0;
 
       array[0] = GetStr(MSG_MA_TitleStatus);
 
@@ -3769,8 +3786,8 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_TitleClick2   ,MUIV_EveryTime,MUIV_Notify_Self         ,4,MUIM_NList_Sort3         ,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values,MUIV_NList_Sort3_SortType_2);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_SortType      ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_Set                 ,MUIA_NList_TitleMark,MUIV_TriggerValue);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_SortType2     ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_Set                 ,MUIA_NList_TitleMark2,MUIV_TriggerValue);
-         //DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_SelectChange  ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
-         DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
+         DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_SelectChange  ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
+         //DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetMessageInfoHook);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FolderClickHook);
 //         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_TitleClick    ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_NList_Sort2         ,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
