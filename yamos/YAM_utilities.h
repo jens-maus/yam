@@ -29,6 +29,7 @@
 ***************************************************************************/
 
 #include <stdio.h>
+#include <time.h>
 
 #include <dos/dos.h>
 #include <intuition/classusr.h>
