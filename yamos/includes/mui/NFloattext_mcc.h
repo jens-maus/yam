@@ -13,7 +13,7 @@
 #endif
 
 #ifndef MUI_NListview_MCC_H
-#include <MUI/NListview_mcc.h>
+#include <mui/NListview_mcc.h>
 #endif
 
 #include "amiga-align.h"
