@@ -24,6 +24,18 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL void FO_XPKUpdateFolder(struct Folder*, int);
+LOCAL BOOL FO_Move(char*, char*);
+LOCAL BOOL FO_MoveFolderDir(struct Folder*, struct Folder*);
+LOCAL BOOL FO_EnterPassword(struct Folder*);
+LOCAL BOOL FO_FoldernameRequest(char*);
+LOCAL struct FO_ClassData *FO_New(void);
+LOCAL BOOL GetFolderByType_cmp(struct Folder*, int*);
+LOCAL BOOL GetFolderByName_cmp(struct Folder*, char*);
+LOCAL struct Folder *GetFolderByAttribute(BOOL(*)(struct Folder*,void*), void*, int*);
+
+
 /***************************************************************************
  Module: Folder Configuration
 ***************************************************************************/
@@ -44,6 +56,7 @@ struct Folder **FO_CreateList(void)
    }
    return flist;
 }
+
 ///
 /// FO_GetCurrentFolder
 //  Returns pointer to active folder
@@ -53,6 +66,7 @@ struct Folder *FO_GetCurrentFolder(void)
    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &fo);
    return fo;
 }
+
 ///
 /// FO_GetFolderRexx
 //  Finds a folder by its name, type or position
@@ -82,10 +96,11 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
    }
    return fo;
 }
+
 ///
-/// FO_GetFolderByName
-//  Finds a folder by its name
-struct Folder *FO_GetFolderByName(char *name, int *pos)
+/// FO_GetFolderByAttribute
+//  Generalized find-folder function
+LOCAL struct Folder *GetFolderByAttribute(BOOL (*cmpf)(struct Folder*,void*), void *attr, int *pos)
 {
    int i;
    struct Folder *fo = NULL;
@@ -94,28 +109,39 @@ struct Folder *FO_GetFolderByName(char *name, int *pos)
    {
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_GetEntry, i, &fo);
       if (!fo) break;
-      if (!strcmp(fo->Name, name) && fo->Type != FT_SEPARATOR) break;
+      if (cmpf(fo,attr)) break;
    }
    if (pos) *pos = i;
    return fo;
 }
+
 ///
 /// FO_GetFolderByType
 //  Finds a folder by its name
 struct Folder *FO_GetFolderByType(int type, int *pos)
 {
-   int i;
-   struct Folder *fo = NULL;
-
-   for (i = 0;; i++)
-   {
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NList_GetEntry, i, &fo);
-      if (!fo) break;
-      if (fo->Type == type) break;
-   }
-   if (fo && pos) *pos = i;
-   return fo;
+	return GetFolderByAttribute(&GetFolderByType_cmp,&type,pos);
 }
+// comparison function for FO_GetFolderByType
+LOCAL BOOL GetFolderByType_cmp(struct Folder *f, int *type)
+{
+	return (BOOL)(f->Type == *type);
+}
+
+///
+/// FO_GetFolderByName
+//  Finds a folder by its name
+struct Folder *FO_GetFolderByName(char *name, int *pos)
+{
+	return GetFolderByAttribute(&GetFolderByName_cmp,name,pos);
+}
+// comparison function for FO_GetFolderByName
+LOCAL BOOL GetFolderByName_cmp(struct Folder *f, char *name)
+{
+	return (BOOL)(!strcmp(f->Name, name) && (f->Type != FT_SEPARATOR));
+}
+
+
 ///
 /// FO_GetFolderPosition
 //  Gets the position of a folder in the list
@@ -131,6 +157,7 @@ int FO_GetFolderPosition(struct Folder *findfo)
       if (fo == findfo) return i;
    }
 }
+
 ///
 /// FO_LoadConfig
 //  Loads folder configuration from .fconfig file
@@ -171,6 +198,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
    }
    return success;
 }
+
 ///
 /// FO_SaveConfig
 //  Saves folder configuration to .fconfig file
@@ -199,6 +227,7 @@ void FO_SaveConfig(struct Folder *fo)
    }
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
 }
+
 ///
 /// FO_NewFolder
 //  Initializes a new folder and creates its directory
@@ -214,6 +243,7 @@ struct Folder *FO_NewFolder(int type, char *path, char *name)
    free(folder);
    return NULL;
 }
+
 ///
 /// FO_CreateFolder
 //  Adds a new entry to the folder list
@@ -229,6 +259,7 @@ BOOL FO_CreateFolder(int type, char *path, char *name)
    }
    return FALSE;
 }
+
 ///
 /// FO_LoadTree
 //  Loads folder list from a file
@@ -243,12 +274,12 @@ BOOL FO_LoadTree(char *fname)
    
    if (fh = fopen(fname, "r"))
    {
-      GetLine(fh, buffer, SIZE_LARGE);
+      GetLine(fh, buffer, sizeof(buffer));
       if (!strncmp(buffer, "YFO", 3))
       {
          DoMethod(lv, MUIM_NList_Clear);
          set(lv, MUIA_NList_Quiet, TRUE);
-         while (GetLine(fh, buffer, SIZE_LARGE))
+         while (GetLine(fh, buffer, sizeof(buffer)))
          {
             clear(&fo, sizeof(struct Folder));
             if (!strncmp(buffer, "@FOLDER", 7))
@@ -256,7 +287,7 @@ BOOL FO_LoadTree(char *fname)
                fo.Type = FT_CUSTOM;
                fo.Sort[0] = 1; fo.Sort[1] = 3;
                stccpy(fo.Name, Trim(&buffer[8]),SIZE_NAME);
-               stccpy(fo.Path, Trim(GetLine(fh, buffer, SIZE_LARGE)), SIZE_PATH);
+               stccpy(fo.Path, Trim(GetLine(fh, buffer, sizeof(buffer))), SIZE_PATH);
                if (CreateDirectory(GetFolderDir(&fo)))
                {
                   if (!FO_LoadConfig(&fo))
@@ -271,14 +302,14 @@ BOOL FO_LoadTree(char *fname)
                   DoMethod(lv, MUIM_NList_InsertSingle, &fo, MUIV_NList_Insert_Bottom);
                }
                do if (!strcmp(buffer, "@ENDFOLDER")) break;
-               while (GetLine(fh, buffer, SIZE_LARGE));
+               while (GetLine(fh, buffer, sizeof(buffer)));
             }
             else if (!strncmp(buffer, "@SEPARATOR", 10))
             {
                fo.Type = FT_SEPARATOR;
                stccpy(fo.Name, Trim(&buffer[11]), SIZE_NAME);
                do if (!strcmp(buffer, "@ENDSEPARATOR")) break;
-               while (GetLine(fh, buffer, SIZE_LARGE));
+               while (GetLine(fh, buffer, sizeof(buffer)));
                fo.SortIndex = i++;
                DoMethod(lv, MUIM_NList_InsertSingle, &fo, MUIV_NList_Insert_Bottom);
             }
@@ -300,6 +331,7 @@ BOOL FO_LoadTree(char *fname)
    }
    return success;
 }
+
 ///
 /// FO_SaveTree
 //  Saves folder list to a file
@@ -336,10 +368,11 @@ BOOL FO_SaveTree(char *fname)
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
    return success;
 }
+
 ///
 /// FO_XPKUpdateFolder
 //  Updates compression mode for a folder
-void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
+LOCAL void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
 {
    if (fo->XPKType != oldtype)
    {
@@ -354,18 +387,20 @@ void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
       BusyEnd;
    }
 }
+
 ///
 /// FO_Move
 //  Moves a folder directory to a new destination
-BOOL FO_Move(char *srcbuf, char *dstbuf)
+LOCAL BOOL FO_Move(char *srcbuf, char *dstbuf)
 {
    if (!RenameFile(srcbuf, dstbuf)) if (!CopyFile(dstbuf, 0, srcbuf, 0)) return FALSE;
    return TRUE;
 }
+
 ///
 /// FO_MoveFolderDir
 //  Moves a folder to a new directory
-BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
+LOCAL BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 {
    struct Mail *mail;
    char srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
@@ -392,10 +427,11 @@ BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    BusyEnd;
    return success;
 }
+
 ///
 /// FO_EnterPassword
 //  Sets password for a protected folder
-BOOL FO_EnterPassword(struct Folder *fo)
+LOCAL BOOL FO_EnterPassword(struct Folder *fo)
 {
    char passwd[SIZE_PASSWORD], passwd2[SIZE_PASSWORD];
 
@@ -410,10 +446,11 @@ BOOL FO_EnterPassword(struct Folder *fo)
    strcpy(fo->Password, passwd);
    return TRUE;
 }
+
 ///
 /// FO_FoldernameRequest
 //  Asks user for a folder name and path
-BOOL FO_FoldernameRequest(char *string)
+LOCAL BOOL FO_FoldernameRequest(char *string)
 {
    char *path;
    APTR bt_okay, bt_cancel, wi, st_pa, st_di;
@@ -481,6 +518,7 @@ BOOL FO_FoldernameRequest(char *string)
    }
    return (BOOL)ret_code;
 }
+
 ///
 /// FO_GetFolder
 //  Fills form with data from folder structure
@@ -507,6 +545,7 @@ void FO_GetFolder(struct Folder *folder, BOOL existing)
    set(gui->CY_FMODE, MUIA_Disabled, isdefault || existing);
    set(gui->BT_MOVE, MUIA_Disabled, existing);
 }
+
 ///
 /// FO_PutFolder
 //  Updates folder structure with form data
@@ -533,6 +572,7 @@ void FO_PutFolder(struct Folder *folder)
    GetMUIString(folder->MLPattern, gui->ST_MLPATTERN);
    GetMUIString(folder->MLAddress, gui->ST_MLADDRESS);
 }
+
 ///
 /// FO_NewSeparatorFunc
 //  Creates a new separator
@@ -550,6 +590,7 @@ SAVEDS void FO_NewSeparatorFunc(void)
    }
 }
 MakeHook(FO_NewSeparatorHook, FO_NewSeparatorFunc);
+
 ///
 /// FO_NewFolderFunc
 //  Creates a new folder
@@ -587,6 +628,7 @@ SAVEDS void FO_NewFolderFunc(void)
    FO_GetFolder(&folder, mode==3);
 }
 MakeHook(FO_NewFolderHook, FO_NewFolderFunc);
+
 ///
 /// FO_EditFolderFunc
 //  Opens folder window to edit the settings of the active folder
@@ -609,6 +651,7 @@ SAVEDS void FO_EditFolderFunc(void)
    }
 }
 MakeHook(FO_EditFolderHook, FO_EditFolderFunc);
+
 ///
 /// FO_DeleteFolderFunc
 //  Removes the active folder
@@ -641,6 +684,7 @@ SAVEDS void FO_DeleteFolderFunc(void)
    }
 }
 MakeHook(FO_DeleteFolderHook, FO_DeleteFolderFunc);
+
 ///
 /// FO_MoveFunc
 //  Asks user for the new destination
@@ -651,6 +695,7 @@ SAVEDS void FO_MoveFunc(void)
    if (FO_FoldernameRequest(path)) set(G->FO->GUI.TX_FPATH, MUIA_Text_Contents, path);
 }
 MakeHook(FO_MoveHook, FO_MoveFunc);
+
 ///
 /// FO_CloseFunc
 //  Closes folder configuration window
@@ -659,6 +704,7 @@ SAVEDS void FO_CloseFunc(void)
    DisposeModulePush(&G->FO);
 }
 MakeHook(FO_CloseHook, FO_CloseFunc);
+
 ///
 /// FO_SaveFunc
 //  Saves modified folder configuration
@@ -733,6 +779,7 @@ SAVEDS void FO_SaveFunc(void)
    DisposeModulePush(&G->FO);
 }
 MakeHook(FO_SaveHook, FO_SaveFunc);
+
 ///
 /// FO_SetOrderFunc
 //  Saves or resets folder order
@@ -749,7 +796,7 @@ MakeHook(FO_SetOrderHook, FO_SetOrderFunc);
 
 /// FO_New
 //  Creates folder configuration window
-struct FO_ClassData *FO_New(void)
+LOCAL struct FO_ClassData *FO_New(void)
 {
    struct FO_ClassData *data;
 
