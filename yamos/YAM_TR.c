@@ -2368,6 +2368,11 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
       TR_TransStat_Start(&ts);
       if ((fh = fopen(fname, append ? "a" : "w")))
       {
+         struct timeval last_time;
+
+         // the reference point for the display update calculation below
+         GetSysTime(&last_time);
+
          success = TRUE;
          for (mail = G->TR->List; mail && !G->TR->Abort; mail = mail->Next)
          {
@@ -2375,6 +2380,9 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
             TR_TransStat_NextMsg(&ts, mail->Index, -1, mail->Size, GetStr(MSG_TR_Exporting));
             if (StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
             {
+               BOOL update_transfer_display = TRUE;
+               int accumulated_size_increment = 0;
+
                if ((mfh = fopen(fullfile, "r")))
                {
                   // printf out our leading "From " MBOX format line first
@@ -2382,8 +2390,9 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 
                   // now we iterate through every line of our mail and try to substitute
                   // found "From " line with quoted ones
-                  while(fgets(buf, SIZE_LINE, mfh) && !G->TR->Abort)
+                  while(!G->TR->Abort && fgets(buf, SIZE_LINE, mfh))
                   {
+                     struct timeval now;
                      char *tmp = buf;
 
                      // the mboxrd format specifies that we need to quote any From, >From, >>From etc. occurance.
@@ -2394,10 +2403,37 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
                      // write the line to our destination file
                      fputs(buf, fh);
 
+                     // remember how many bytes were just read from the file
+                     accumulated_size_increment += strlen(buf);
+
+                     // figure out how much time has passed since the last display update
+                     GetSysTime(&now);
+                     if(-CmpTime(&now,&last_time) > 0)
+                     {
+                        struct timeval delta;
+
+                        // how much time has passed exactly?
+                        delta = now;
+                        SubTime(&delta,&last_time);
+
+                        // update the display at least twice a second
+                        if(delta.tv_secs > 0 || delta.tv_micro > 250000)
+                        {
+                           update_transfer_display = TRUE;
+                           last_time = now;
+                        }
+                     }
+
                      // Update the transfer status
-                     TR_TransStat_Update(&ts, strlen(buf));
+                     if(update_transfer_display)
+                     {
+                        TR_TransStat_Update(&ts, accumulated_size_increment);
+
+                        update_transfer_display = FALSE;
+                        accumulated_size_increment = 0;
+                     }
                   }
-                  if (*buf) if (buf[strlen(buf)-1] != '\n') fputc('\n', fh);
+                  if(*buf && buf[strlen(buf)-1] != '\n') fputc('\n', fh);
                   fclose(mfh);
 
                   // put the transferStat to 100%
