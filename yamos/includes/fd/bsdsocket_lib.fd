@@ -119,11 +119,9 @@ mbuf_pullup(m,len)(a0,d0)
 * Internet servers
 ProcessIsServer(pr)(a0)
 ObtainServerSocket()()
-* Network shutdown
-PrepareNetShutdown(signal_mask)(d0)
-* Nine reserved slots for future expansion
-*--- (9 function slots reserved here) ---
-##bias 762
+* Ten reserved slots for future expansion
+*--- (10 function slots reserved here) ---
+##bias 756
 ##private
 bsdsocketPrivate2()()
 bsdsocketPrivate3()()

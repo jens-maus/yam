@@ -470,9 +470,7 @@
 		</method>
 		<method name="ObtainServerSocket" result="LONG">
 		</method>
-		<method name="PrepareNetShutdown" result="BOOL">
-			<arg name="signal_mask" type="ULONG"/>
-		</method>
+		<method name="Reserved11" result="void" status="unimplemented"/>
 		<method name="Reserved12" result="void" status="unimplemented"/>
 		<method name="Reserved13" result="void" status="unimplemented"/>
 		<method name="Reserved14" result="void" status="unimplemented"/>

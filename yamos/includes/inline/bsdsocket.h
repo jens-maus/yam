@@ -499,8 +499,4 @@
 	LP0(0x2b8, LONG, ObtainServerSocket, \
 	, BSDSOCKET_BASE_NAME)
 
-#define PrepareNetShutdown(signal_mask) \
-	LP1(0x2be, BOOL, PrepareNetShutdown, ULONG, signal_mask, d0, \
-	, BSDSOCKET_BASE_NAME)
-
 #endif /*  _INLINE_BSDSOCKET_H  */

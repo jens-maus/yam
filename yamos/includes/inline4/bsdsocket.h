@@ -32,19 +32,19 @@
 #ifndef UTILITY_HOOKS_H
 #include <utility/hooks.h>
 #endif
-#ifndef _NETINET_IN_H
+#ifndef NETINET_IN_H
 #include <netinet/in.h>
 #endif
-#ifndef _SYS_SOCKET_H
+#ifndef SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-#ifndef _SYS_MBUF_H
+#ifndef SYS_MBUF_H
 #include <sys/mbuf.h>
 #endif
-#ifndef _NET_ROUTE_H
+#ifndef NET_ROUTE_H
 #include <net/route.h>
 #endif
-#ifndef _NETDB_H
+#ifndef NETDB_H
 #include <netdb.h>
 #endif
 #ifndef LIBRARIES_BSDSOCKET_H
@@ -187,7 +187,6 @@
 #define mbuf_pullup(m, len) ISocket->mbuf_pullup(m, len) 
 #define ProcessIsServer(pr) ISocket->ProcessIsServer(pr) 
 #define ObtainServerSocket() ISocket->ObtainServerSocket() 
-#define PrepareNetShutdown(signal_mask) ISocket->PrepareNetShutdown(signal_mask) 
 #define ipf_open(channel) ISocket->ipf_open(channel) 
 #define ipf_close(channel) ISocket->ipf_close(channel) 
 #define ipf_ioctl(channel, command, buffer) ISocket->ipf_ioctl(channel, command, buffer) 

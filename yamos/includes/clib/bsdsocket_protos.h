@@ -99,7 +99,7 @@ LONG recvmsg( LONG sock, struct msghdr *msg, LONG flags );
 LONG gethostname( STRPTR name, LONG namelen );
 ULONG gethostid( VOID );
 LONG SocketBaseTagList( struct TagItem *tags );
-LONG SocketBaseTags( LONG tag, ... );
+LONG SocketBaseTags( ... );
 LONG GetSocketEvents( ULONG *event_ptr );
 /* Ten reserved slots for future expansion */
 /* Berkeley Packet Filter (Roadshow extensions start here) */
@@ -113,9 +113,9 @@ LONG bpf_ioctl( LONG channel, ULONG command, APTR buffer );
 LONG bpf_data_waiting( LONG channel );
 /* Route management */
 LONG AddRouteTagList( struct TagItem *tags );
-LONG AddRouteTags( LONG tag, ... );
+LONG AddRouteTags( ... );
 LONG DeleteRouteTagList( struct TagItem *tags );
-LONG DeleteRouteTags( LONG tag, ... );
+LONG DeleteRouteTags( ... );
 VOID FreeRouteInfo( struct rt_msghdr *buf );
 struct rt_msghdr *GetRouteInfo( LONG address_family, LONG flags );
 /* Interface management */
@@ -174,9 +174,7 @@ struct mbuf *mbuf_pullup( struct mbuf *m, LONG len );
 /* Internet servers */
 BOOL ProcessIsServer( struct Process *pr );
 LONG ObtainServerSocket( VOID );
-/* Network shutdown */
-BOOL PrepareNetShutdown( ULONG signal_mask );
-/* Nine reserved slots for future expansion */
+/* Ten reserved slots for future expansion */
 /* Ten reserved slots for future expansion */
 
 #ifdef __cplusplus

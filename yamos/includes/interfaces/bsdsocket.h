@@ -28,19 +28,19 @@
 #ifndef UTILITY_HOOKS_H
 #include <utility/hooks.h>
 #endif
-#ifndef _NETINET_IN_H
+#ifndef NETINET_IN_H
 #include <netinet/in.h>
 #endif
-#ifndef _SYS_SOCKET_H
+#ifndef SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-#ifndef _SYS_MBUF_H
+#ifndef SYS_MBUF_H
 #include <sys/mbuf.h>
 #endif
-#ifndef _NET_ROUTE_H
+#ifndef NET_ROUTE_H
 #include <net/route.h>
 #endif
-#ifndef _NETDB_H
+#ifndef NETDB_H
 #include <netdb.h>
 #endif
 #ifndef LIBRARIES_BSDSOCKET_H
@@ -180,7 +180,7 @@ struct SocketIFace
 	struct mbuf * APICALL (*mbuf_pullup)(struct SocketIFace *Self, struct mbuf * m, LONG len);
 	BOOL APICALL (*ProcessIsServer)(struct SocketIFace *Self, struct Process * pr);
 	LONG APICALL (*ObtainServerSocket)(struct SocketIFace *Self);
-	BOOL APICALL (*PrepareNetShutdown)(struct SocketIFace *Self, ULONG signal_mask);
+	void APICALL (*Reserved11)(struct SocketIFace *Self);
 	void APICALL (*Reserved12)(struct SocketIFace *Self);
 	void APICALL (*Reserved13)(struct SocketIFace *Self);
 	void APICALL (*Reserved14)(struct SocketIFace *Self);

@@ -118,7 +118,6 @@
 #pragma amicall(SocketBase,0x2ac,mbuf_pullup(a0,d0))
 #pragma amicall(SocketBase,0x2b2,ProcessIsServer(a0))
 #pragma amicall(SocketBase,0x2b8,ObtainServerSocket())
-#pragma amicall(SocketBase,0x2be,PrepareNetShutdown(d0))
 #endif
 #if defined(_DCC) || defined(__SASC)
 #pragma  libcall SocketBase socket                 01e 21003
@@ -222,7 +221,6 @@
 #pragma  libcall SocketBase mbuf_pullup            2ac 0802
 #pragma  libcall SocketBase ProcessIsServer        2b2 801
 #pragma  libcall SocketBase ObtainServerSocket     2b8 00
-#pragma  libcall SocketBase PrepareNetShutdown     2be 001
 #endif
 #ifdef __STORM__
 #pragma tagcall(SocketBase,0x102,syslog(d0,a0,a1))

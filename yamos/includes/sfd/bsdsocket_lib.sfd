@@ -152,10 +152,8 @@ struct mbuf *mbuf_pullup(struct mbuf *m, LONG len) (a0,d0)
 * Internet servers
 BOOL ProcessIsServer(struct Process * pr) (a0)
 LONG ObtainServerSocket() ()
-* Network shutdown
-BOOL PrepareNetShutdown(ULONG signal_mask) (d0)
-* Nine reserved slots for future expansion
-==reserve 9
+* Ten reserved slots for future expansion
+==reserve 10
 ==private
 * The IP filtering interface is subject to change!
 * IP filter management and logging

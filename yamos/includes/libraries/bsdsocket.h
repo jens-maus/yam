@@ -231,9 +231,6 @@ extern "C" {
 /* Query the number of bytes sent so far. */
 #define SBTC_GET_BYTES_SENT 65
 
-/* Whether or not the shutdown API is supported. */
-#define SBTC_HAVE_SHUTDOWN_API 66
-
 /****************************************************************************/
 
 /*
@@ -1066,8 +1063,7 @@ struct DomainNameServerNode
  */
 struct IPFilterMsg
 {
-	LONG		ifm_Size;	/* Size of this data
-					   structure */
+	LONG		ifm_Size;	/* Size of this data structure */
 	struct ip *	ifm_IP;		/* Points to IP packet header */
 	LONG		ifm_IPLength;	/* Size of the IP packet header */
 	struct ifnet *	ifm_Interface;	/* Interface this packet either
@@ -1078,6 +1074,73 @@ struct IPFilterMsg
 	struct mbuf *	ifm_Packet;	/* The entire packet, as stored
 					   in a memory buffer */
 };
+
+/****************************************************************************/
+
+/*
+ * Network shutdown
+ */
+
+/* To shut down the network, send a message of the following form to the
+ * network controller message port.
+ */
+struct NetShutdownMessage
+{
+	struct Message	nsm_Message;	/* Standard Message header */
+
+	ULONG		nsm_Command;	/* The action to be performed */
+
+	APTR		nsm_Data;	/* Payload */
+	ULONG		nsm_Length;	/* Payload size */
+
+	LONG		nsm_Error;	/* Whether or not the command
+					   suceeded */
+	ULONG		nsm_Actual;	/* How much data was transferred */
+};
+
+/* The command to be sent to the network controller message port must
+ * be one of the following:
+ */
+
+#define NSMC_Shutdown	1	/* Shut down the network; a pointer to an
+				   ULONG may be placed in nsm_Data (if the
+				   shutdown does not succeed, this is where
+				   the number of active clients will be
+				   placed). */
+
+#define NSMC_Cancel	2	/* Cancel a shutdown request; this recalls
+				   a shutdown message, to which a pointer must
+				   be placed in nsm_Data. */
+
+/* Error codes that may be set when a message returns: */
+
+#define NSME_Success	0	/* Command was processed successfully */
+
+#define NSME_Aborted	1	/* Command was aborted */
+
+#define NSME_InUse	2	/* Network is still running, since clients are
+				   still using it */
+
+#define NSME_Ignored	3	/* Command was ignored (network may be shutting
+				   down right now) */
+
+#define NSME_NotFound	4	/* Shutdown command to be cancelled could not
+				   be recalled */
+
+/* The name of the public network controller message port: */
+#define NETWORK_CONTROLLER_PORT_NAME "TCP/IP Control"
+
+/* The network controller message port data structure; check the magic
+ * cookie before you post a message to it!
+ */
+struct NetControlPort
+{
+	struct MsgPort	ncp_Port;
+	ULONG		ncp_Magic;
+};
+
+/* The magic cookie stored in ncp_Magic: */
+#define NCPM_Cookie	0x20040306
 
 /****************************************************************************/
 
