@@ -1,3 +1,12 @@
+2002-02-22  Gunther Nikl <gni@gecko.de>
+
+    * YAM_AB.c, YAM_CL.c, YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_EA.c, YAM_FI.c,
+      YAM_FO.c, YAM_MA.c, YAM_MAf.c, YAM_RE.c, YAM_TR.c, YAM_UT.c, YAM_WR.c:
+      converted TABs to spaces
+    * includes/inline/muimaster.h: switched to macro based inlines
+    * YAM_TR.c: removed AmiSSLBase definition
+    * YAM_global.c: added here
+
 2002-02-22  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed smakefile accordingly to new genclasses changes.
