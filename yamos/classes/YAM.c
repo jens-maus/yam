@@ -234,6 +234,43 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 }
 
 ///
+/// DECLARE(FindEmailCacheMatch)
+// Method that search in the email cache and return the found entry if not more than one
+DECLARE(FindEmailCacheMatch) // STRPTR matchText
+{
+	GETDATA;
+
+	if(C->EmailCache == 0 || IsListEmpty(&data->EMailCache)) return NULL;
+
+  if(msg->matchText && msg->matchText[0] != '\0')
+  {
+		int i, matches = 0;
+		int tl = strlen(msg->matchText);
+		struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
+		struct ABEntry *foundentry = NULL;
+
+		for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; i++, node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+		{
+			struct ABEntry *entry = &node->ecn_Person;
+
+			if(!Strnicmp(entry->RealName, msg->matchText, tl) || !Strnicmp(entry->Address, msg->matchText, tl))
+			{
+				if(++matches > 1)
+				{
+					foundentry = NULL;
+					break;
+				}
+				foundentry = entry;
+			}
+		}
+
+		return (ULONG)foundentry;
+  }
+
+  return NULL;
+}
+
+///
 /// DECLARE(AddToEmailCache)
 // method that parses a string for addresses and add them to the emailcache if enabled
 DECLARE(AddToEmailCache) // struct Person *person

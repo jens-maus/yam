@@ -349,6 +349,7 @@ HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDa
 }
 MakeStaticHook(FindAddressHook, FindAddressFunc);
 
+/// rcptok()
 // Non-threadsafe strtok() alike recipient tokenizer.
 // "," is the hardcoded token. Ignored if surrounded by quotes ("").
 STRPTR rcptok(STRPTR s, BOOL *quote)
@@ -377,6 +378,7 @@ STRPTR rcptok(STRPTR s, BOOL *quote)
 
 	return s;
 }
+///
 
 /// DECLARE(Resolve)
 /* resolve all addresses */
@@ -398,6 +400,7 @@ DECLARE(Resolve) // ULONG flags
 	do {
 
 		struct MUI_NListtree_TreeNode *tn;
+		struct ABEntry *entry;
 		BOOL quote = FALSE;
 
 		list_expansion = FALSE;
@@ -483,6 +486,11 @@ DECLARE(Resolve) // ULONG flags
 					set(_win(obj), MUIA_Window_ActiveObject, obj);
 					res = FALSE;
 				}
+			}
+			else if(entry = (struct ABEntry *)DoMethod(_app(obj), MUIM_YAM_FindEmailCacheMatch, s))
+			{
+				DB(kprintf("\tEmailCache Hit: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
+				DoMethod(obj, MUIM_Recipientstring_AddRecipient, withrealname && entry->RealName[0] ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
 			}
 			else
 			{
