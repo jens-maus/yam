@@ -106,7 +106,7 @@ static void WR_EmitExtHeader(FILE*, struct Compose*);
 static void WR_ComposeReport(FILE*, struct Compose*, char*);
 static void SetDefaultSecurity(struct Compose*);
 static BOOL WR_ComposePGP(FILE*, struct Compose*, char*);
-static char *WR_TransformText(char*, int, char*);
+static char *WR_TransformText(char*, enum TransformMode, char*);
 static void WR_SharedSetup(struct WR_ClassData*, int);
 static APTR MakeAddressField(APTR*, char*, APTR, int, int, BOOL);
 static struct WR_ClassData *WR_NewBounce(int);
@@ -2310,14 +2310,14 @@ static struct WR_ClassData *WR_New(int winnum)
       if (data->GUI.WI)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-			SetAttrs(data->GUI.ST_TO,
-				MUIA_UserData, data->GUI.ST_SUBJECT,
-				MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
-				TAG_DONE);
-			SetAttrs(data->GUI.ST_SUBJECT,
-				MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
-				MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT,
-				TAG_DONE);
+                        SetAttrs(data->GUI.ST_TO,
+                                MUIA_UserData, data->GUI.ST_SUBJECT,
+                                MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
+                                TAG_DONE);
+                        SetAttrs(data->GUI.ST_SUBJECT,
+                                MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
+                                MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT,
+                                TAG_DONE);
          set(data->GUI.ST_CC, MUIA_UserData, data->GUI.ST_BCC);
          set(data->GUI.ST_BCC, MUIA_UserData, data->GUI.ST_FROM);
          set(data->GUI.ST_FROM, MUIA_UserData, data->GUI.ST_REPLYTO);
