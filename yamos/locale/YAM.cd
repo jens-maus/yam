@@ -746,10 +746,10 @@ MSG_MA_SelectAll (//)
 L\000All
 ;
 MSG_MA_SelectNone (//)
-None
+-\000None
 ;
 MSG_MA_SelectToggle (//)
-Toggle
+=\000Toggle
 ;
 MSG_MA_MSearch (//)
 F\000Search...
@@ -5212,10 +5212,10 @@ MSG_FO_FOLDERPATHINVALID (//)
 You haven't specified a valid path for the new folder.
 ;
 MSG_MA_TOMARKED (//)
-/\000Marked
+,\000Marked
 ;
 MSG_MA_TOUNMARKED (//)
-*\000Unmarked
+.\000Unmarked
 ;
 MSG_RE_SETMARKED (//)
 Set status to marked

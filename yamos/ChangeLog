@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+
+2003-04-14  David Rey <david@saug.org>
+
+    * YAM_RE.c, YAM.cd: changed the shortcuts for the "Set status to
+      marked/unmarked" menu items for them to be actually usable and
+      added shortcuts for selecting no messages/toggle the selection.
+
 2003-04-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: fixed enforcer hit upon exit, where a not previously

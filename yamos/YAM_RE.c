@@ -3546,7 +3546,7 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_MGetAddress), MUIA_Menuitem_Shortcut,"J", MUIA_UserData,RMEN_SAVEADDR, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SetUnread), MUIA_Menuitem_Shortcut,"U", MUIA_UserData,RMEN_SETUNREAD, End,
-               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SETMARKED), MUIA_Menuitem_Shortcut,"/", MUIA_UserData,RMEN_SETMARKED, End,
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_SETMARKED), MUIA_Menuitem_Shortcut,",", MUIA_UserData,RMEN_SETMARKED, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_MA_ChangeSubj), MUIA_Menuitem_Enabled,real, MUIA_UserData,RMEN_CHSUBJ, End,
             End,
             MUIA_Family_Child, MenuObject, MUIA_Menu_Title, GetStr(MSG_RE_Navigation),
