@@ -97,7 +97,7 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 		struct EMailCacheNode *node = (struct EMailCacheNode *)(list->lh_Head);
 		TEXT line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
 
-		for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; i++, node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+		for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node=(struct EMailCacheNode *)node->ecn_Node.ln_Succ)
 		{
 			struct ABEntry *entry = &node->ecn_Person;
 
@@ -154,7 +154,7 @@ VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode 
 			}
 		}
 
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
+		tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
 	}
 }
 
@@ -213,7 +213,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 			LONG tl = strlen(msg->matchText);
 			struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
 
-			for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; i++, node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+			for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node=(struct EMailCacheNode *)node->ecn_Node.ln_Succ)
 			{
 				struct ABEntry *entry = &node->ecn_Person;
 				struct CustomABEntry e = { -1 };
@@ -230,7 +230,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 		}
 	}
 
-	return NULL;
+	return 0;
 }
 
 ///
@@ -240,16 +240,14 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
 {
 	GETDATA;
 
-	if(C->EmailCache == 0 || IsListEmpty(&data->EMailCache)) return NULL;
-
-	if(msg->matchText && msg->matchText[0] != '\0')
+	if(C->EmailCache && !IsListEmpty(&data->EMailCache) && msg->matchText && msg->matchText[0] != '\0')
 	{
 		int i, matches = 0;
 		LONG tl = strlen(msg->matchText);
 		struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
 		struct ABEntry *foundentry = NULL;
 
-		for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; i++, node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+		for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
 		{
 			struct ABEntry *entry = &node->ecn_Person;
 
@@ -267,7 +265,7 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
 		return (ULONG)foundentry;
 	}
 
-	return NULL;
+	return 0;
 }
 
 ///
@@ -291,7 +289,7 @@ DECLARE(AddToEmailCache) // struct Person *person
 
 		// Ok, it doesn`t exists in the AB, now lets check the cache list
 		// itself
-		for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; i++, node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+		for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node = (struct EMailCacheNode *)node->ecn_Node.ln_Succ)
 		{
 			struct ABEntry *entry = &node->ecn_Person;
 
