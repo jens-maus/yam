@@ -1,48 +1,22 @@
 
-How to compile YAM 2.3-dev from a clean SAS/C 6.58 installation:
+Introduction
+------------
+
+YAM uses a custom tool to generate header files for some of the MUI
+classes. Before compiling YAM you must compile this tool:
+
+ smake GenClasses
+
+and create the needed header files (you also need to do this from time
+to time when the classes are updated):
+
+ smake ClassInfo
+
+
+How to compile YAM from a clean SAS/C 6.58 installation:
 ----------------------------------------------------------------
 
 * Download 'dev/mui/mui38dev.lha' from Aminet and install the includes.
 
 * Download http://ftp1.sourceforge.net/yamos/YAM22src.lha and copy
   'lib/NewReadArgs.o' from the archive to lib:
-
-* If you are using the NDK 3.1 from the SAS/C installation:
-  - In include:proto/locale.h, change line 4 from:
-
-extern struct Library *LocaleBase ;
-    to:
-extern struct LocaleBase *LocaleBase ;
-
-  - In include:proto/rexxsyslib.h, change line 4 from:
-
-extern struct Library *RexxSysBase ;
-    to:
-extern struct RxsLib *RexxSysBase ;
-
-  - In include:proto/utility.h, change line 4 from:
-
-extern struct Library *UtilityBase ;
-    to:
-extern struct UtilityBase *UtilityBase ;
-
-* If you are using NDK 3.5 from the Developer CD V2.1:
-  - In include:proto/utility.h, change line 22 from:
-
-extern struct Library * UtilityBase;
-    to:
-extern struct UtilityBase * UtilityBase;
-
-
-Required changes to compile YAM 2.3-dev with DICE
--------------------------------------------------
-DINCLUDE:proto/timer.h:
-extern struct Library *TimerBase; -> extern struct Device *TimerBase;
-DINCLUDE:proto/rexxsyslib.h:
-extern struct Library *RexxSysBase; -> extern struct RxsLib * RexxSysBase;
-
-Required changes to compile YAM 2.3-dev with NDK 3.5 includes (StormC 3.0)
---------------------------------------------------------------------------
-proto/utility.h:
-extern struct Library * UtilityBase; -> extern struct UtilityBase * UtilityBase;
-
