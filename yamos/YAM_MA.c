@@ -2356,6 +2356,19 @@ HOOKPROTONHNO(MA_FolderKeyFunc, void, int *idx)
 MakeHook(MA_FolderKeyHook, MA_FolderKeyFunc);
 
 ///
+/// MA_FolderClickFunc
+//  Handles double clicks on the folder listtree
+HOOKPROTONHNONP(MA_FolderClickFunc, void)
+{
+  struct Folder *folder = FO_GetCurrentFolder();
+
+  if(!folder || folder->Type == FT_GROUP) return;
+
+  DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook);
+}
+MakeHook(MA_FolderClickHook, MA_FolderClickFunc);
+
+///
 
 /*** GUI ***/
 enum { MMEN_ABOUT=1,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HIDE,MMEN_QUIT,
@@ -2941,7 +2954,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_SelectChange  ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeSelectedHook);
          DoMethod(data->GUI.NL_MAILS       ,MUIM_Notify,MUIA_NList_Active        ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetMessageInfoHook);
-         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&FO_EditFolderHook);
+         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_DoubleClick   ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_FolderClickHook);
 //         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_TitleClick    ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_NList_Sort2         ,MUIV_TriggerValue,MUIV_NList_SortTypeAdd_2Values);
 //         DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NList_SortType      ,MUIV_EveryTime,MUIV_Notify_Self         ,3,MUIM_Set                 ,MUIA_NList_TitleMark,MUIV_TriggerValue);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeFolderHook);

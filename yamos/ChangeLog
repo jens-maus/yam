@@ -1,3 +1,12 @@
+2002-04-15  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * changed behaviour of Folder Listtree according to doubleclick events a
+      bit. If the user now double clicks on a folder group it will just fold
+      or unfold the tree and not popup the change requester for it. This
+      feels a little bit better because in the past it could happen that
+      on a doubleclick for fold/unfold the requester poped up as well which
+      was quite annoying.
+
 2002-04-14  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed some problems with setting a folder active without opening the
