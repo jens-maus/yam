@@ -601,7 +601,7 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
   APTR lv = G->MA->GUI.NL_FOLDERS;
   int i;
 
-  kprintf("saving SubTree!\n");
+  DB(kprintf("saving SubTree!\n");)
 
   // The root-Treenode is the subtree at the start
   tn_root = subtree;

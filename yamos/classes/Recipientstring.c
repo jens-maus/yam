@@ -369,7 +369,7 @@ DECLARE(Resolve) // ULONG flags
    			if(tmp[1] == '\0')
 	   		   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
          }
-         else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, 0)) /* entry found in address book */
+         else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE)) /* entry found in address book */
 			{
 				struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
 				DB(kprintf("Found match: %s\n", s);)
