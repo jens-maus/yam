@@ -39,6 +39,7 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/genesis.h>
+#include <proto/graphics.h>
 #include <proto/icon.h>
 #include <proto/iffparse.h>
 #include <proto/intuition.h>
@@ -714,6 +715,7 @@ static void Terminate(void)
    CLOSELIB(IFFParseBase,  IIFFParse);
    CLOSELIB(KeymapBase,    IKeymap);
    CLOSELIB(WorkbenchBase, IWorkbench);
+   CLOSELIB(GfxBase,       IGraphics);
 
    // close the catalog and locale now
    CloseYAMCatalog();
@@ -1135,11 +1137,14 @@ static void Initialise(BOOL hidden)
    // Now load the catalog of YAM
    OpenYAMCatalog();
 
+   // load&initialize all required libraries
+   INITLIB(IGraphics,  InitLib("graphics.library",  (APTR)&GfxBase,       36, 0, TRUE, FALSE));
    INITLIB(IWorkbench, InitLib("workbench.library", (APTR)&WorkbenchBase, 36, 0, TRUE, FALSE));
    INITLIB(IKeymap,    InitLib("keymap.library",    (APTR)&KeymapBase,    36, 0, TRUE, FALSE));
    INITLIB(IIFFParse,  InitLib("iffparse.library",  (APTR)&IFFParseBase,  36, 0, TRUE, FALSE));
    INITLIB(IRexxSys,   InitLib(RXSNAME,             (APTR)&RexxSysBase,   36, 0, TRUE, FALSE));
    INITLIB(IMUIMaster, InitLib("muimaster.library", (APTR)&MUIMasterBase, 19, 0, TRUE, FALSE));
+   INITLIB(IDataTypes, InitLib("datatypes.library", (APTR)&DataTypesBase, 39, 0, TRUE, FALSE));
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
@@ -1179,14 +1184,8 @@ static void Initialise(BOOL hidden)
    // lets advance the progress bar to 10%
    SplashProgress(GetStr(MSG_InitLibs), 10);
 
+   // load & initialize some optional libraries which are not required, however highly recommended
    INITLIB(IXpk, InitLib(XPKNAME, (APTR)&XpkBase, 0, 0, FALSE, FALSE));
-
-   // open the datatypes.library v39
-   if(INITLIB(IDataTypes, InitLib("datatypes.library", (APTR)&DataTypesBase, 39, 0, FALSE, FALSE)))
-   {
-      if(CheckMCC("Dtpic.mui", 19, 0, FALSE))
-        G->DtpicSupported = TRUE;
-   }
 
    if (!TC_Init()) Abort(MSG_ErrorTimer);
    for (i = 0; i < MAXASL; i++)

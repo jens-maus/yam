@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-01-30  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/UserImage.c: implemented a new internal custom class which
+      manages the images of the addressbook users and displays it in the
+      read window or embeeded mailview, instead of the formerly used
+      Dtpic.mui class. Also implemented a small scaling routine which
+      uses the PDTM_SCALE method of picture.datatype to scale down
+      the image proportional if it exceeds the limit of 64x64 pixels.
+      This should also fix bug #1109541.
+
 2005-01-27  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: removed "-repeat" from the DELETE key definition that is

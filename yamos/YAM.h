@@ -95,7 +95,6 @@ struct Global
 
    BOOL                     Error;
    BOOL                     PGP5;
-   BOOL                     DtpicSupported;
    BOOL                     AppIconQuiet;
    BOOL                     PGPPassVolatile;
    BOOL                     CO_Valid;
