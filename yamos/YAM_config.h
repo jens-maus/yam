@@ -224,6 +224,10 @@ struct CO_GUIData
    APTR NB_ENCPACK;
    APTR ST_ARCHIVER;
    APTR ST_APPICON;
+   APTR CH_FCNTMENU;
+   APTR CH_MCNTMENU;
+   APTR CH_INFOBAR;
+   APTR CH_WARNSUBJECT;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -255,6 +259,7 @@ struct MimeView
 
 struct Rule
 {
+   char  Name[SIZE_NAME];     // due to alignment this entry have to be on the top
    char  **PatternsFromList;
    int   Combine;
    int   Field[2];
@@ -267,7 +272,6 @@ struct Rule
    BOOL  ApplyToSent;
    BOOL  CaseSens[2];
    BOOL  Substring[2];
-   char  Name[SIZE_NAME];
    char  CustomField[2][SIZE_DEFAULT];
    char  Match[2][SIZE_PATTERN];
    char  BounceTo[SIZE_ADDRESS];
@@ -382,6 +386,9 @@ struct Config
    BOOL  ConfirmOnQuit;
    BOOL  AskJumpUnread;
    BOOL  WarnSubject;
+   BOOL  FolderCntMenu;
+   BOOL  MessageCntMenu;
+   BOOL  InfoBar;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color2ndLevel;

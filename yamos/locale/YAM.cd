@@ -4617,9 +4617,11 @@ is: \eb%s\en\n\
 Change to this folder and continue\n\
 with reading there?
 ;
+; Obsolete
 MSG_WR_NoSubjectReqGad (//)
 *_Set subject|_Continue without subject
 ;
+; Obsolete
 MSG_NoSubjectReq (//)
 Warning: Subject is empty
 ;
@@ -4725,3 +4727,29 @@ Opening GUI...
 MSG_ERR_OPENLIB (//)
 Can't open library '%s', version v%lu.%lu
 ;LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
+MSG_CO_CONTEXTMENU (//)
+ContextMenu
+;
+MSG_HELP_CO_CONTEXTMENU (//)
+Select if you want the context\n\
+menu enabled in this list.
+;
+MSG_CO_INFOBAR (//)
+Information Bar
+;
+MSG_HELP_CO_CH_INFOBAR (//)
+Displays a information bar between\n\
+toolbar and mail listview.
+;
+MSG_CO_WARNSUBJECT (//)
+Subject Warning
+;
+MSG_HELP_CO_CH_WARNSUBJECT (//)
+Check if you want to be warned for\n\
+empty subject lines.
+;
+MSG_WR_OKAYCANCELREQ (//)
+_Okay|*_Cancel
+;
+MSG_WR_NOSUBJECTREQ (//)
+The subject is missing, continue anyway?

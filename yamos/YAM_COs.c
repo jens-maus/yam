@@ -165,6 +165,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "NewIntro         = %s\n", co->NewIntro);
       fprintf(fh, "Greetings        = %s\n", co->Greetings);
       fprintf(fh, "TranslationOut   = %s\n", co->TranslationOut);
+      fprintf(fh, "WarnSubject      = %s\n", Bool2Txt(co->WarnSubject));
       fprintf(fh, "EdWrapCol        = %ld\n", co->EdWrapCol);
       fprintf(fh, "EdWrapMode       = %ld\n", co->EdWrapMode);
       fprintf(fh, "Editor           = %s\n", co->Editor);
@@ -198,6 +199,9 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "FixedFontList    = %s\n", Bool2Txt(co->FixedFontList));
       fprintf(fh, "SwatchBeat       = %s\n", Bool2Txt(co->SwatchBeat));
       fprintf(fh, "SizeFormat       = %ld\n", co->SizeFormat);
+      fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
+      fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
+      fprintf(fh, "InfoBar          = %s\n", Bool2Txt(co->InfoBar));
       fprintf(fh, "\n[Security]\n");
       fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
       fprintf(fh, "MyPGPID          = %s\n", co->MyPGPID);
@@ -270,7 +274,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SupportSite      = %s\n", co->SupportSite);
       fprintf(fh, "JumpToNewMsg     = %s\n", Bool2Txt(co->JumpToNewMsg));
       fprintf(fh, "AskJumpUnread    = %s\n", Bool2Txt(co->AskJumpUnread));
-      fprintf(fh, "WarnSubject      = %s\n", Bool2Txt(co->WarnSubject));
       fprintf(fh, "PrinterCheck     = %s\n", Bool2Txt(co->PrinterCheck));
       fprintf(fh, "IsOnlineCheck    = %s\n", Bool2Txt(co->IsOnlineCheck));
       fprintf(fh, "IOCInterface     = %s\n", co->IOCInterface);
@@ -475,6 +478,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "NewIntro"))       stccpy(co->NewIntro, value2, SIZE_INTRO);
                if (!stricmp(buffer, "Greetings"))      stccpy(co->Greetings, value2, SIZE_INTRO);
                if (!stricmp(buffer, "TranslationOut")) stccpy(co->TranslationOut, value, SIZE_PATHFILE);
+               if (!stricmp(buffer, "WarnSubject"))    co->WarnSubject = Txt2Bool(value);
                if (!stricmp(buffer, "EdWrapCol"))      co->EdWrapCol = atoi(value);
                if (!stricmp(buffer, "EdWrapMode"))     co->EdWrapMode = atoi(value);
                if (!stricmp(buffer, "Editor"))         stccpy(co->Editor, value, SIZE_PATHFILE);
@@ -505,6 +509,9 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "FixedFontList"))  co->FixedFontList = Txt2Bool(value);
                if (!stricmp(buffer, "SwatchBeat"))     co->SwatchBeat = Txt2Bool(value);
                if (!stricmp(buffer, "SizeFormat"))     co->SizeFormat = atoi(value);
+               if (!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
+               if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
+               if (!stricmp(buffer, "InfoBar"))        co->InfoBar = Txt2Bool(value);
 /*9*/          if (!stricmp(buffer, "PGPCmdPath"))     stccpy(co->PGPCmdPath, value, SIZE_PATH);
                if (!stricmp(buffer, "MyPGPID"))        stccpy(co->MyPGPID, value, SIZE_DEFAULT);
                if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
@@ -580,7 +587,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "SupportSite"))    stccpy(co->SupportSite, value, SIZE_HOST);
                if (!stricmp(buffer, "JumpToNewMsg"))   co->JumpToNewMsg = Txt2Bool(value);
                if (!stricmp(buffer, "AskJumpUnread"))  co->AskJumpUnread = Txt2Bool(value);
-               if (!stricmp(buffer, "WarnSubject"))    co->WarnSubject = Txt2Bool(value);
                if (!stricmp(buffer, "PrinterCheck"))   co->PrinterCheck = Txt2Bool(value);
                if (!stricmp(buffer, "IsOnlineCheck"))  co->IsOnlineCheck = Txt2Bool(value);
                if (!stricmp(buffer, "IOCInterface"))   stccpy(co->IOCInterface, value, SIZE_SMALL);
@@ -662,6 +668,7 @@ void CO_GetConfig(void)
          GetMUIString(CE->NewIntro            ,gui->ST_HELLOTEXT);
          GetMUIString(CE->Greetings           ,gui->ST_BYETEXT);
          GetMUIString(CE->TranslationOut      ,gui->ST_OUTTRANS);
+         CE->WarnSubject       = GetMUICheck  (gui->CH_WARNSUBJECT);
          CE->EdWrapCol         = GetMUIInteger(gui->ST_EDWRAP);
          CE->EdWrapMode        = GetMUICycle  (gui->CY_EDWRAP);
          GetMUIString(CE->Editor              ,gui->ST_EDITOR);
@@ -700,6 +707,9 @@ void CO_GetConfig(void)
          CE->FixedFontList = GetMUICheck(gui->CH_FIXFLIST);
          CE->SwatchBeat    = GetMUICheck(gui->CH_BEAT);
          CE->SizeFormat    = GetMUICycle(gui->CY_SIZE);
+         CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
+         CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
+         CE->InfoBar       = GetMUICheck(gui->CH_INFOBAR);
          break;
       case 9:
          GetMUIString(CE->PGPCmdPath          ,gui->ST_PGPCMD);
@@ -834,6 +844,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_HELLOTEXT ,CE->NewIntro);
          setstring   (gui->ST_BYETEXT   ,CE->Greetings);
          setstring   (gui->ST_OUTTRANS  ,CE->TranslationOut);
+         setcheckmark(gui->CH_WARNSUBJECT,CE->WarnSubject);
          set(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol);
          setcycle    (gui->CY_EDWRAP    ,CE->EdWrapMode);
          setstring   (gui->ST_EDITOR    ,CE->Editor);
@@ -872,6 +883,9 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_FIXFLIST  ,CE->FixedFontList);
          setcheckmark(gui->CH_BEAT      ,CE->SwatchBeat);
          setcycle(gui->CY_SIZE, CE->SizeFormat);
+         setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
+         setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
+         setcheckmark(gui->CH_INFOBAR   ,CE->InfoBar);
          break;
       case 9:
          setstring   (gui->ST_PGPCMD    ,CE->PGPCmdPath);

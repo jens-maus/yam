@@ -908,7 +908,10 @@ APTR CO_Page5(struct CO_ClassData *data)
                Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,GetStr(MSG_CO_Greetings)),
                Child, Label2(GetStr(MSG_CO_CharsetTrans)),
                Child, MakeTransPop(&data->GUI.ST_OUTTRANS, TRUE, GetStr(MSG_CO_CharsetTrans)),
+//               Child, Label2(GetStr(MSG_CO_WARNSUBJECT)),
+//               Child, data->GUI.CH_WARNSUBJECT = MakeCheck(GetStr(MSG_CO_WARNSUBJECT)),
             End,
+            Child, MakeCheckGroup((Object **)&data->GUI.CH_WARNSUBJECT, GetStr(MSG_CO_WARNSUBJECT)),
          End,
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_Editor)),
             Child, ColGroup(3),
@@ -927,16 +930,17 @@ APTR CO_Page5(struct CO_ClassData *data)
          Child, HVSpace,
       End)
    {
-      SetHelp(data->GUI.ST_REPLYTO   ,MSG_HELP_CO_ST_REPLYTO  );
-      SetHelp(data->GUI.ST_ORGAN     ,MSG_HELP_CO_ST_ORGAN    );
-      SetHelp(data->GUI.ST_EXTHEADER ,MSG_HELP_CO_ST_EXTHEADER);
-      SetHelp(data->GUI.ST_HELLOTEXT ,MSG_HELP_CO_ST_HELLOTEXT);
-      SetHelp(data->GUI.ST_BYETEXT   ,MSG_HELP_CO_ST_BYETEXT  );
-      SetHelp(data->GUI.ST_OUTTRANS  ,MSG_HELP_CO_ST_OUTTRANS );
-      SetHelp(data->GUI.ST_EDWRAP    ,MSG_HELP_CO_ST_EDWRAP   );
-      SetHelp(data->GUI.CY_EDWRAP    ,MSG_HELP_CO_CY_EDWRAP   );
-      SetHelp(data->GUI.ST_EDITOR    ,MSG_HELP_CO_ST_EDITOR   );
-      SetHelp(data->GUI.CH_LAUNCH    ,MSG_HELP_CO_CH_LAUNCH   );
+      SetHelp(data->GUI.ST_REPLYTO      ,MSG_HELP_CO_ST_REPLYTO     );
+      SetHelp(data->GUI.ST_ORGAN        ,MSG_HELP_CO_ST_ORGAN       );
+      SetHelp(data->GUI.ST_EXTHEADER    ,MSG_HELP_CO_ST_EXTHEADER   );
+      SetHelp(data->GUI.ST_HELLOTEXT    ,MSG_HELP_CO_ST_HELLOTEXT   );
+      SetHelp(data->GUI.ST_BYETEXT      ,MSG_HELP_CO_ST_BYETEXT     );
+      SetHelp(data->GUI.ST_OUTTRANS     ,MSG_HELP_CO_ST_OUTTRANS    );
+      SetHelp(data->GUI.CH_WARNSUBJECT  ,MSG_HELP_CO_CH_WARNSUBJECT );
+      SetHelp(data->GUI.ST_EDWRAP       ,MSG_HELP_CO_ST_EDWRAP      );
+      SetHelp(data->GUI.CY_EDWRAP       ,MSG_HELP_CO_CY_EDWRAP      );
+      SetHelp(data->GUI.ST_EDITOR       ,MSG_HELP_CO_ST_EDITOR      );
+      SetHelp(data->GUI.CH_LAUNCH       ,MSG_HELP_CO_CH_LAUNCH      );
    }
    return grp;
 }
@@ -1086,6 +1090,8 @@ APTR CO_Page8(struct CO_ClassData *data)
                     Child, LLabel(GetStr(MSG_New)),
                     Child, data->GUI.CH_FCOLS[4] = MakeCheck(""),
                     Child, LLabel(GetStr(MSG_Size)),
+                    Child, data->GUI.CH_FCNTMENU = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_CO_CONTEXTMENU)),
                   End,
                   Child, HSpace(0),
                   Child, ColGroup(2), GroupFrame,
@@ -1105,11 +1111,14 @@ APTR CO_Page8(struct CO_ClassData *data)
                     Child, LLabel(GetStr(MSG_Size)),
                     Child, data->GUI.CH_MCOLS[6] = MakeCheck(""),
                     Child, LLabel(GetStr(MSG_Filename)),
+                    Child, data->GUI.CH_MCNTMENU = MakeCheck(""),
+                    Child, LLabel(GetStr(MSG_CO_CONTEXTMENU)),
                   End,
                 End,
                 Child, VGroup, GroupFrameT(GetStr(MSG_CO_GENLISTCFG)),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST, GetStr(MSG_CO_FixedFontList)),
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT, GetStr(MSG_CO_SwatchBeat)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST,  GetStr(MSG_CO_FixedFontList)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT,      GetStr(MSG_CO_SwatchBeat)),
+                  Child, MakeCheckGroup((Object **)&data->GUI.CH_INFOBAR,   GetStr(MSG_CO_INFOBAR)),
                   Child, HGroup,
                     Child, Label1(GetStr(MSG_CO_SIZEFORMAT)),
                     Child, data->GUI.CY_SIZE = MakeCycle(sizef, GetStr(MSG_CO_SIZEFORMAT)),
@@ -1121,7 +1130,10 @@ APTR CO_Page8(struct CO_ClassData *data)
    {
       SetHelp(data->GUI.CH_FIXFLIST,MSG_HELP_CO_CH_FIXFLIST);
       SetHelp(data->GUI.CH_BEAT    ,MSG_HELP_CO_CH_BEAT);
+      SetHelp(data->GUI.CH_INFOBAR ,MSG_HELP_CO_CH_INFOBAR);
       SetHelp(data->GUI.CY_SIZE    ,MSG_HELP_CO_CY_SIZE);
+      SetHelp(data->GUI.CH_FCNTMENU,MSG_HELP_CO_CONTEXTMENU);
+      SetHelp(data->GUI.CH_MCNTMENU,MSG_HELP_CO_CONTEXTMENU);
    }
    return grp;
 }

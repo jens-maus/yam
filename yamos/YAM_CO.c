@@ -648,6 +648,7 @@ void CO_SetDefaults(struct Config *co, int page)
       *co->ReplyTo = *co->Organization = *co->ExtraHeaders = *co->TranslationOut = 0;
       strcpy(co->NewIntro, GetStr(MSG_CO_NewIntroDef));
       strcpy(co->Greetings, GetStr(MSG_CO_GreetingsDef));
+      co->WarnSubject = TRUE;
       co->EdWrapCol = 76;
       co->EdWrapMode = 2;
       strcpy(co->Editor, "C:Ed");
@@ -682,6 +683,9 @@ void CO_SetDefaults(struct Config *co, int page)
       co->FolderCols = 1+2+16;
       co->MessageCols = 1+2+8+16;      
       co->FixedFontList = C->SwatchBeat = FALSE;
+      co->FolderCntMenu = TRUE;
+      co->MessageCntMenu = TRUE;
+      co->InfoBar = TRUE;
    }
    if (page == 9 || page < 0)
    {
@@ -754,7 +758,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->WriteIndexes = 120;
       co->AutoSave = 600;
       strcpy(co->SupportSite, "http://www.yam.ch/");
-      co->JumpToNewMsg = co->AskJumpUnread = co->WarnSubject = co->PrinterCheck = co->IsOnlineCheck = TRUE;
+      co->JumpToNewMsg = co->AskJumpUnread = co->PrinterCheck = co->IsOnlineCheck = TRUE;
       co->ConfirmOnQuit = FALSE;
       co->HideGUIElements = 0;
       strcpy(co->LocalCharset, "iso-8859-1");
@@ -822,10 +826,17 @@ void CO_Validate(struct Config *co, BOOL update)
       if (G->CO->Visited[1] || G->CO->Visited[13] || G->CO->UpdateAll) MA_SetupDynamicMenus();
       if (G->CO->Visited[8] || G->CO->UpdateAll)
       {
+         // Modify the ContextMenu flags
+         set(G->MA->GUI.NL_MAILS,   MUIA_ContextMenu, C->MessageCntMenu);
+         set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu);
+
          SaveLayout(FALSE);
          MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
          MA_MakeMAFormat(G->MA->GUI.NL_MAILS);
          LoadLayout();
+
+         // Update the InfoBar
+         MA_UpdateInfoBar(FO_GetCurrentFolder());
       }
       if (G->CO->Visited[12] || G->CO->UpdateAll) AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
       if (G->CO->Visited[14] || G->CO->UpdateAll) { SetupAppIcons(); DisplayStatistics((struct Folder *)-1); }

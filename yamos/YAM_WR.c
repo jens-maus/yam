@@ -1304,7 +1304,7 @@ void WR_NewMail(int mode, int winnum)
    get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
    if (wr->Mode != NEW_BOUNCE && *comp.Subject == '\0')
    {
-      if (C->WarnSubject && MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoSubjectReqGad), GetStr(MSG_NoSubjectReq)))
+      if (C->WarnSubject && !MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), GetStr(MSG_WR_NOSUBJECTREQ)))
       {
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
          return;

@@ -57,6 +57,7 @@
 #include "YAM_classes.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
+#include "YAM_debug.h"
 #include "YAM_folderconfig.h"
 #include "YAM_global.h"
 #include "YAM_hook.h"
@@ -75,14 +76,14 @@ BOOL yamFirst = TRUE, yamLast = FALSE;
 
 struct Global *G;
 
-
-/// Timer Class
+// Timer Class
 struct TC_Data
 {
    struct MsgPort     *port;
    struct timerequest *req;
 } TCData = { NULL,NULL };
 
+/// TC_Start
 //  Start a one second delay
 void TC_Start(void)
 {
@@ -92,6 +93,8 @@ void TC_Start(void)
    SendIO(&TCData.req->tr_node);
 }
 
+///
+/// TC_Exit
 //  Frees timer resources
 void TC_Exit(void)
 {
@@ -111,6 +114,8 @@ void TC_Exit(void)
    TCData.req = NULL;
 }
 
+///
+/// TC_Init
 //  Initializes timer resources
 BOOL TC_Init(void)
 {
@@ -121,6 +126,8 @@ BOOL TC_Init(void)
    return FALSE;
 }
 
+///
+/// TC_ActiveEditor
 //  Returns TRUE if the internal editor is currently being used
 BOOL TC_ActiveEditor(int wrwin)
 {
@@ -133,6 +140,8 @@ BOOL TC_ActiveEditor(int wrwin)
    return FALSE;
 }
 
+///
+/// TC_Dispatcher
 //  Dispatcher for timer class (called once every second)
 void TC_Dispatcher(void)
 {

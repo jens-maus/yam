@@ -234,10 +234,8 @@ void EA_InsertBelowActive(struct ABEntry *addr, int flags)
 void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
 {
   char alias[SIZE_NAME];
-  int c = 1, l, hits = 0;
+  int c = 1, l;
   struct ABEntry *ab_found = NULL;
-
-  DB( kprintf("EA_FixAlias()\n"); )
 
   strcpy(alias, ab->Alias);
 

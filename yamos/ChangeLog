@@ -569,9 +569,24 @@
     * fixed some addressbook<->NListtree related bugs/issues.
     * fixed Distribution List bug (BUG #431536)
 
-
 2001-06-15  Jacob Laursen <laursen@myself.com>
 
     * Removed information bar, since it was redundant.
-
     * Last year digit was missing in error window - fixed! (Bug #431947)
+
+2001-06-16  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * reactivated information bar, but made it optional. Now a user can select
+      if he wants to have the infobar or not.
+    * now the ContextMenus for the folder and message list are optional. A user can
+      select in the configuration if he wants to have context menus or not.
+      (Please note that if a context menu is selected and the user has the mouse
+      over the list, the menu shortcuts will not work anymore due to a bug of MUI)
+    * made WarnSubject a public option. The user can now select in the config if he
+      wants to be warned or not if he is going to send a message without a subject.
+    * fixed alignment bug in struct Rule.
+
+2001-06-16  Christian Hattemer <krille@users.sourceforge.net>
+
+    * changed the behaviour of the WarnSubject requester due to some discussions
+      in the YAMos ML.

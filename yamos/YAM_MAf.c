@@ -229,10 +229,10 @@ If/when this is enabled, remove the "else".
       BusyEnd;
       fclose(fh);
 
-      if (corrupt) {
+      if (corrupt)
+      {
          MA_ScanMailBox(folder);
          MA_SaveIndex(folder);
-//printf("Rescanned!\n");
       }
    }
    return indexloaded;
@@ -399,7 +399,7 @@ void MA_ChangeFolder(struct Folder *folder)
       MA_SetSortFlag();
 
       // Now we update the InfoBar accordingly
-//    MA_UpdateInfoBar(folder);
+      MA_UpdateInfoBar(folder);
 
       // Create the Mail List and display it
       DisplayMailList(folder, gui->NL_MAILS);
@@ -444,8 +444,14 @@ void MA_ChangeFolder(struct Folder *folder)
       }
 
       set(gui->NL_MAILS, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
+
+      // if there is still no entry active in the NList we make the first one active
+      if(GetMUI(gui->NL_MAILS, MUIA_NList_Active) == MUIV_NList_Active_Off)
+      {
+        set(gui->NL_MAILS, MUIA_NList_Active, MUIV_NList_Active_Top);
+      }
    }
-// else MA_UpdateInfoBar(folder);
+   else MA_UpdateInfoBar(folder);
 
    // disable/reactivate the Listview with the mails in it
    set(gui->LV_MAILS, MUIA_Disabled, !folderopen);
@@ -523,12 +529,16 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
 ///
 /// MA_UpdateInfoBar
 //  updates the information bar above the mail listview
-/*
 void MA_UpdateInfoBar(struct Folder *folder)
 {
   struct MA_GUIData *gui = &G->MA->GUI;
   struct BodyChunkData *bcd = NULL;
 
+  // Now we set the GUI element of the InfoBar
+  // visible or invisible
+  set(gui->GR_INFO, MUIA_ShowMe, C->InfoBar);
+
+  if(!C->InfoBar) return;
   if(!folder) return;
 
   // set the name of the folder as the info text
@@ -572,7 +582,6 @@ void MA_UpdateInfoBar(struct Folder *folder)
     DoMethod(gui->GR_INFO, MUIM_Group_ExitChange);
   }
 }
-*/
 ///
 
 /*** Mail header scanning ***/

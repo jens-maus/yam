@@ -43,6 +43,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
@@ -364,8 +365,8 @@ DISPATCHERPROTO(FL_Dispatcher)
       // popupmenu.library was open and then display the ContextMenu
       case MUIM_ContextMenuBuild:
       {
-         if(PopupMenuBase) return(MA_FolderContextMenu((APTR)msg));
-         else return 0;
+         if(PopupMenuBase && C->FolderCntMenu) return(MA_FolderContextMenu((APTR)msg));
+         else return(0);
       }
       break;
    }
@@ -378,19 +379,19 @@ DISPATCHERPROTO(FL_Dispatcher)
 /*** ML_Dispatcher (Mail NListview) - Subclass of NList, adds ContextMenuBuild to Message List ***/
 DISPATCHERPROTO(ML_Dispatcher)
 {
-   switch (msg->MethodID)
-   {
-      // If the user tried to open a ContextMenu we check if
-      // popupmenu.library was open and then display the ContextMenu
-      case MUIM_ContextMenuBuild:
-      {
-          if(PopupMenuBase) return(MA_MailListContextMenu((APTR)msg));
-          else return 0;
-      }
-      break;
-   }
+  switch (msg->MethodID)
+  {
+    // If the user tried to open a ContextMenu we check if
+    // popupmenu.library was open and then display the ContextMenu
+    case MUIM_ContextMenuBuild:
+    {
+      if(PopupMenuBase) return(MA_MailListContextMenu((APTR)msg));
+      else return(0);
+    }
+    break;
+  }
 
-   return DoSuperMethodA(cl,obj,msg);
+  return DoSuperMethodA(cl,obj,msg);
 }
 
 ///
