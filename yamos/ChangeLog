@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-01-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_mail_lex.l: slightly optimized the regular expressions to be
+      more accurate in finding the correct tokens.
+
 2003-01-15  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed bug #667194 where a reply or forward of a "virtual"
