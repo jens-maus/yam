@@ -46,12 +46,9 @@ OBJDIR     = .obj_sas
 
 # Compiler/Linker flags
 CPU      = 68020
-CDEFS    = `rx "say 'DEF __YAM_VERDATE=' || '22'x ||\
-  right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) ||\
-  '22'x || ' DEF __YAM_VERDAYS=' || date('I')"`
 WARN     = WARN=ALL IGNORE=51,61,148,165,178,212,306
 OPTFLAGS = STRIPDEBUG OPT OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL\
-  OPTGO OPTLOOP OPTPEEP OPTSCHED OPTTIME #OPTSIZE
+  OPTGO OPTLOOP OPTPEEP OPTSCHED OPTTIME
 DEBUG    = NOSTRIPDEBUG NOOPT DEF=DEBUG DEBUG=LINE
 CFLAGS   = RESOPT NOVER PARM=R CODE=FAR NOSTKCHK STRINGMERGE\
   IDLEN=60 ERRORREXX INCLUDEDIR=includes INCLUDEDIR=$(CLASSDIR)\
@@ -134,10 +131,14 @@ OBJS = \
 all: note $(OBJDIR) classinfo YAM_locale.c YAM_mail_lex.c $(TARGET)
 
 # make the object directories
-$(OBJDIR):
+$(OBJDIR): $(OBJDIR)/objdir_is_here
   @echo "*e[33mGenerating $@ directory*e[0m"
   @$(MKDIR) $(OBJDIR)
   @$(MKDIR) $(OBJDIR)/$(CLASSDIR)
+  @echo "dummy target" >$(OBJDIR)/objdir_is_here
+
+$(OBJDIR)/objdir_is_here:
+  @echo "dummy entry to make smake happy" >nil:
 
 # Default rule
 
@@ -168,11 +169,11 @@ note:
 #
 
 clean:
-  -$(RM) $(TARGET) $(TARGET).debug $(TARGET).lnk $(TARGET).map $(OBJS)
+  -$(RM) $(TARGET) $(TARGET).debug $(TARGET).lnk $(TARGET).map
+  -$(RMDIR) $(OBJDIR)
 
 cleanall: clean
   -$(RM) YAM_locale.* YAM_mail_lex.c $(CLASSDIR)/Classes.* $(CLASSDIR)/*_cl.h
-  -$(RMDIR) $(OBJDIR)
 
 distclean: cleanall
   @execute <<
@@ -209,12 +210,18 @@ Catalogs: $(LOCALE)/deutsch.catalog $(LOCALE)/bosanski.catalog $(LOCALE)/czech.c
 
 $(OBJDIR)/YAM_global.o: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
   @echo "*e[32mCompiling $*.c*e[0m"
-  @$(CC) $(CFLAGS) $(CDEFS) YAM_global.c OBJNAME=$@
+  @rx "say 'DEF __YAM_VERDATE=' || '22'x ||\
+       right(date(S),2)*1'.'substr(date(S),5,2)*1'.'left(date(S),4) ||\
+       '22'x || ' DEF __YAM_VERDAYS=' || date('I')" >T:YAM_VERDATE.tmp
+  @$(CC) $(CFLAGS) `type T:YAM_VERDATE.tmp` YAM_global.c OBJNAME=$@
+  @$(RM) T:YAM_VERDATE.tmp
 
-YAM_locale.h: YAM_locale.c
 YAM_locale.c: $(LOCALE)/YAM.cd C_h.sd C_c.sd
   @echo "*e[33mConverting Catalog with flexcat*e[0m"
   @$(FC) $(LOCALE)/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
+
+YAM_locale.h: $(LOCALE)/YAM.cd
+  @echo "dummy entry to make smake happy" >nil:
 
 $(OBJDIR)/YAM_locale.o: YAM_locale.c YAM_locale.h
 
