@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include <clib/alib_protos.h>
 #include <datatypes/pictureclass.h>
@@ -180,12 +181,15 @@ static void FreeWorkbenchPath(BPTR path)
 LONG YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
 {
   LONG result = 0;
+  va_list args;
 
   // lets collect the waiting returnIDs now
   COLLECT_RETURNIDS;
 
 #undef MUI_Request
-  result = MUI_Request(app, win, flags, title, gadgets, format, &format+1);
+  va_start(args, format);
+  result = MUI_Request(app, win, flags, title, gadgets, format, va_arg(args, ULONG));
+  va_end(args);
 #define MUI_Request YAMMUIRequest
 
   // now lets reissue the collected returnIDs again
