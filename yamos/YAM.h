@@ -52,8 +52,6 @@
 #define True  ((BOOL)TRUE)
 #define False ((BOOL)FALSE)
 
-#define LOCAL static
-
 #define MAXP3 16
 #define MAXRU 100
 #define MAXMV 100
@@ -129,12 +127,26 @@
 #define InitHook(hook, funcname, data) ((hook)->h_Entry = (void *)funcname, (hook)->h_Data = (APTR)(data))
 #define ENTRY(func)	  func
 
+#ifdef _DCC
+#define REG(x) __ ## x
+#define ASM
+#define SAVEDS __geta4
+#define STACKEXT __stkcheck
+#define __stdargs __stkargs
+#define F_OK 0
+#define FNSIZE 108
+#define _OSERR IoErr()
+#else
 #define REG(x) register __ ## x
 #define ASM    __asm
 #define SAVEDS __saveds
 #define STACKEXT __stackext
+#endif
 
 #endif /* __MORPHOS__ */
+
+#define LOCAL static
+#define nnsetstring(obj,s) nnset((obj),MUIA_String_Contents,(s))
 
 #define MUIA_Bodychunk_File          0x80002501
 #define MUIA_Bodychunk_UseOld        0x80002502
@@ -302,6 +314,8 @@ struct Folder
    char  Password[SIZE_USERID];   
    char  MLPattern[SIZE_PATTERN];
    char  MLAddress[SIZE_ADDRESS];
+   char  MLFromAddress[SIZE_ADDRESS];
+   char  MLReplyToAddress[SIZE_ADDRESS];
    int   Type, XPKType;
    int   Total, New, Unread;
    int   Size;
@@ -496,6 +510,8 @@ struct Config
    char  IOCInterface[SIZE_SMALL];
    BOOL  ConfirmOnQuit;
    int   StackSize;
+   char  SMTP_AUTH_User[SIZE_USERID];
+   char  SMTP_AUTH_Pass[SIZE_USERID];
 };
 ///
 /// Miscellaneous structures
@@ -538,9 +554,9 @@ struct ABEntry
    long BirthDay;
    char PGPId[SIZE_ADDRESS];
    char Photo[SIZE_PATHFILE];
-   char *Members;					// member names for list entries
-   int  Type;						// AET_*
-	int  DefSecurity;				// Default security setting for mailing this person
+   char *Members;
+   int  Type;
+   int  DefSecurity;
 };
 
 struct MailInfo
@@ -802,7 +818,7 @@ struct FO_ClassData  /* folder configuration window */
    struct FO_GUIData
    {
       APTR WI;
-      APTR ST_FNAME, TX_FPATH, BT_MOVE, ST_MAXAGE, CY_FMODE, CY_FTYPE, CY_SORT[2], CH_REVERSE[2], ST_MLPATTERN, ST_MLADDRESS;
+      APTR ST_FNAME, TX_FPATH, BT_MOVE, ST_MAXAGE, CY_FMODE, CY_FTYPE, CY_SORT[2], CH_REVERSE[2], ST_MLPATTERN, ST_MLFROMADDRESS, ST_MLREPLYTOADDRESS, ST_MLADDRESS;
    } GUI;
    struct Folder *EditFolder;
 };
@@ -812,11 +828,10 @@ struct EA_ClassData  /* address book entry window */
    struct EA_GUIData
    {
       APTR WI;
-      APTR ST_ALIAS, ST_REALNAME, ST_ADDRESS, ST_COMMENT, ST_PHONE, ST_STREET, ST_CITY, ST_COUNTRY, ST_PGPKEY;
+      APTR ST_ALIAS, ST_REALNAME, ST_ADDRESS, ST_COMMENT, ST_PHONE, ST_STREET, ST_CITY, ST_COUNTRY, ST_PGPKEY, CY_DEFSECURITY;
       APTR ST_HOMEPAGE, ST_BIRTHDAY, GR_PHOTO, BC_PHOTO, BT_SELECTPHOTO, BT_LOADPHOTO;
       APTR LV_MEMBER, ST_MEMBER, BT_ADD, BT_DEL;
       APTR BT_OKAY, BT_CANCEL;
-      APTR CY_DEFSECURITY;
    } GUI;
    int  Type;
    int  EntryPos;
@@ -881,7 +896,8 @@ struct WR_ClassData  /* write window */
       APTR LV_ATTACH;
       APTR BT_ADD, BT_ADDPACK, BT_DEL, BT_DISPLAY;
       APTR RA_ENCODING, CY_CTYPE, ST_CTYPE, ST_DESC;
-      APTR ST_CC, ST_BCC, ST_FROM, ST_REPLYTO, ST_EXTHEADER, CH_DELSEND, CH_RECEIPT, CH_DISPNOTI, CH_ADDINFO, CY_IMPORTANCE, RA_SECURITY, RA_SIGNATURE;
+      APTR ST_CC, ST_BCC, ST_FROM, ST_REPLYTO, ST_EXTHEADER, CH_DELSEND, CH_RECEIPT, CH_DISPNOTI, CH_ADDINFO, CY_IMPORTANCE;
+		APTR RA_SECURITY, CH_DEFSECURITY, RA_SIGNATURE;
       APTR BT_HOLD, BT_QUEUE, BT_SEND, BT_CANCEL;
       struct MUIP_Toolbar_Description TB_TOOLBAR[13];
    } GUI;
@@ -1282,6 +1298,7 @@ extern void PGPClearPassPhrase(BOOL);
 extern BOOL ExecuteCommand(char *, BOOL, BPTR);
 extern int GetSimpleID(void);
 extern void GotoURL(char *);
+extern char *strtok_r(char**, char*);
 
 extern void MA_SetSortFlag(void);
 extern BOOL MA_PromptFolderPassword(struct Folder *, APTR);
@@ -1392,7 +1409,7 @@ extern STACKEXT void EA_AddMembers(Object *, struct MUIS_Listtree_TreeNode *);
 extern void EA_SetDefaultAlias(struct ABEntry *);
 extern void EA_SetPhoto(int, char *);
 
-extern void RE_DoMDN(int MDNtype, struct Mail *mail);
+extern BOOL RE_DoMDN(int MDNtype, struct Mail *mail, BOOL multi);
 extern struct Mail *RE_GetQuestion(long);
 extern struct Mail *RE_GetAnswer(long);
 extern BOOL RE_DecodePart(struct Part *);
