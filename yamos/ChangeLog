@@ -1,3 +1,8 @@
+2001-11-22  Jacob Laursen <laursen@myself.com>
+
+    * Commas inside quotes are now accepted as valid characters in
+      recipient strings.
+
 2001-11-20  Gunther Nikl <gni@gecko.de>
 
     * (YAM.c/InitLib): changed return type to APTR for better NDK

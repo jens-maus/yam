@@ -349,6 +349,35 @@ HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDa
 }
 MakeStaticHook(FindAddressHook, FindAddressFunc);
 
+// Non-threadsafe strtok() alike recipient tokenizer.
+// "," is the hardcoded token. Ignored if surrounded by quotes ("").
+STRPTR rcptok(STRPTR s, BOOL *quote)
+{
+	STATIC STRPTR p;
+
+	if (s)
+		p = s;
+	else
+		s = p;
+
+	if (!p || !*p)
+		return NULL;
+
+	while (*p)
+	{
+		if (*p == '\"')
+			*quote ^= TRUE;
+		else if (*p == ',' && !*quote)
+		{
+			*p++ = '\0';
+			return s;
+		}
+		p++;
+	}
+
+	return s;
+}
+
 /// DECLARE(Resolve)
 /* resolve all addresses */
 DECLARE(Resolve) // ULONG flags
@@ -369,6 +398,8 @@ DECLARE(Resolve) // ULONG flags
 	do {
 
 		struct MUI_NListtree_TreeNode *tn;
+		BOOL quote = FALSE;
+
 		list_expansion = FALSE;
 		get(obj, MUIA_String_Contents, &s);
 		if(!(contents = tmp = strdup(s)))
@@ -376,7 +407,7 @@ DECLARE(Resolve) // ULONG flags
 		set(obj, MUIA_String_Contents, NULL);
 
 		DB(kprintf("Resolve this string: %s\n", tmp);)
-		while(s = Trim(strtok(tmp, ","))) /* tokenize string and resolve each recipient */
+		while(s = Trim(rcptok(tmp, &quote))) /* tokenize string and resolve each recipient */
 		{
 			DB(kprintf("token: '%s'\n", s);)
 
