@@ -349,9 +349,7 @@ void PopUp(void)
 //  A second copy of YAM was started
 HOOKPROTONHNONP(DoublestartFunc, void)
 {
-//   PopUp();
-//   ^^^^^^^^ Crap! If we want to popup the other (running) YAM,
-//            we can't use our own app object (NULL) pointer!
+   if (G->App && G->MA->GUI.WI) PopUp();
 }
 MakeHook(DoublestartHook, DoublestartFunc);
 ///
@@ -443,8 +441,8 @@ void Terminate(void)
       SaveLayout(TRUE);
       set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
 
-      /** the folder and it`s resources will get freed automatically at exit
-          so we don`t have to clear it be hand here.
+      /** the folder and its resources will get freed automatically on exit,
+          so we don't have to clear it by hand here.
       **/
    }
    if (G->AB) DisposeModule(&G->AB);

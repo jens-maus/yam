@@ -591,3 +591,8 @@
 
     * changed the behaviour of the WarnSubject requester due to some discussions
       in the YAMos ML.
+
+2001-06-16  Jacob Laursen <laursen@myself.com>
+
+    * Re-added uniconify behaviour when attempting to start a second instance
+      of YAM (without enforcer hits).
