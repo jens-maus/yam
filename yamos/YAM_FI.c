@@ -326,9 +326,12 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens
    {
       if (substr || mode == SM_HEADER || mode == SM_BODY || mode == SM_WHOLE || mode == SM_STATUS)
       {
+         char buffer[SIZE_PATTERN];
+
          // if substring is selected lets generate a substring out
          // of the current match string, but keep the string borders in mind.
-         sprintf(search->Match, "#?%s#?", search->Match);
+         strncpy(buffer, search->Match, SIZE_PATTERN);
+         sprintf(search->Match, "#?%s#?", buffer);
       }
 
       if (casesens) ParsePattern      (search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
