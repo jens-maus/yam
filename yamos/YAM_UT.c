@@ -1046,17 +1046,19 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
 
    get(win, MUIA_Window_Window, &truewin);
    if (!init[num]) { init[num] = TRUE; skip = 0; }
-   return MUI_AslRequestTags(G->ASLReq[num],
-      ASLFR_Window, truewin,
-      ASLFR_TitleText, title,
-      ASLFR_PositiveText, postext,
-      ASLFR_InitialFile, file,
-      ASLFR_DoMultiSelect, (mode & 2)==2,
-      ASLFR_DrawersOnly, (mode & 4)==4,
-      ASLFR_DoPatterns, pattern[num] != NULL,
-      skip ? TAG_DONE : ASLFR_InitialDrawer, drawer,
-      ASLFR_InitialPattern, pattern[num] ? pattern[num] : "#?",
-      TAG_DONE);
+   return MUI_AslRequestTags( G->ASLReq[num],
+                              ASLFR_Window,        truewin,
+                              ASLFR_TitleText,     title,
+                              ASLFR_PositiveText,  postext,
+                              ASLFR_InitialFile,   file,
+                              ASLFR_DoSaveMode,    (mode & 1)==1,
+                              ASLFR_DoMultiSelect, (mode & 2)==2,
+                              ASLFR_DrawersOnly,   (mode & 4)==4,
+                              ASLFR_DoPatterns,    pattern[num] != NULL,
+                              skip ? TAG_DONE : ASLFR_InitialDrawer, drawer,
+                              ASLFR_InitialPattern, pattern[num] ? pattern[num] : "#?",
+                              TAG_DONE
+                            );
 }
 ///
 /// OpenTempFile

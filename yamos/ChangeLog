@@ -923,6 +923,3 @@
       of a mail.
     * added missing status_flags to the Status Group of the read window. Now
       it should show all statuses accordingly to the message status
-    * removed ASLFR_DoSaveMode Tag from AslRequest call, because this will
-      bring up an ugly black ASL Requester and we anyway set the "Save" text
-      explicitly to the requester.
