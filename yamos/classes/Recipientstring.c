@@ -57,7 +57,7 @@ struct Data
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-	if(obj = (Object *)DoSuperMethodA(cl, obj, msg))
+	if((obj = (Object *)DoSuperMethodA(cl, obj, msg)))
 	{
 		GETDATA;
 
@@ -197,7 +197,7 @@ OVERLOAD(MUIM_DragQuery)
 	else if(d->obj == G->AB->GUI.LV_ADDRESSES)
 	{
 		struct MUI_NListtree_TreeNode *active;
-		if(active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active))
+		if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
 		{
 			if(isFlagClear(active->tn_Flags, TNF_LIST))
 				result = MUIV_DragQuery_Accept;
@@ -271,7 +271,7 @@ OVERLOAD(MUIM_HandleEvent)
 			case IECODE_UP:
 			case IECODE_DOWN:
 			{
-				if(new_address = (STRPTR)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg))
+				if((new_address = (STRPTR)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg)))
 				{
 					LONG start;
 					STRPTR old;
@@ -417,7 +417,7 @@ DECLARE(Resolve) // ULONG flags
 		set(obj, MUIA_String_Contents, NULL);
 
 		DB(kprintf("Resolve this string: %s\n", tmp);)
-		while(s = Trim(rcptok(tmp, &quote))) /* tokenize string and resolve each recipient */
+		while((s = Trim(rcptok(tmp, &quote)))) /* tokenize string and resolve each recipient */
 		{
 			DB(kprintf("token: '%s'\n", s);)
 
@@ -437,7 +437,7 @@ DECLARE(Resolve) // ULONG flags
 				if(tmp[1] == '\0')
 					DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
 			}
-			else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE)) /* entry found in address book */
+			else if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE))) /* entry found in address book */
 			{
 				struct MUI_NListtree_TreeNode *nexttn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
 				struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
@@ -456,9 +456,9 @@ DECLARE(Resolve) // ULONG flags
 						if(data->MultipleRecipients)
 						{
 							STRPTR members, lf;
-							if(members = strdup(entry->Members))
+							if((members = strdup(entry->Members)))
 							{
-								while(lf = strchr(members, '\n'))
+								while((lf = strchr(members, '\n')))
 									lf[0] = ',';
 
 								DB(kprintf("Found list: »%s«\n", entry->Members);)
@@ -503,7 +503,7 @@ DECLARE(Resolve) // ULONG flags
 			{
 				DB(kprintf("Entry not found: %s\n", s);)
 
-				if(tmp = strchr(s, '@')) /* entry seems to be an email address */
+				if((tmp = strchr(s, '@'))) /* entry seems to be an email address */
 				{
 					DB(kprintf("Email address: %s\n", s);)
 					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);

@@ -433,7 +433,7 @@ static BOOL Root_GlobalDispatcher(ULONG app_input)
 //  Creates MUI application
 static BOOL Root_New(BOOL hidden)
 {
-   if (G->App = YAMObject, End)
+   if ((G->App = YAMObject, End))
    {
       set(G->App, MUIA_Application_HelpFile, "YAM.guide");
       if (hidden) set(G->App, MUIA_Application_Iconified, TRUE);
@@ -597,7 +597,7 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
    Object *obj;
    int success = 0;
 
-   if(obj = MUI_NewObjectA(name, NULL))
+   if((obj = MUI_NewObjectA(name, NULL)))
    {
       int ver = (int)xget(obj, MUIA_Version);
       int rev = (int)xget(obj, MUIA_Revision);
@@ -773,7 +773,7 @@ static void Initialise(BOOL hidden)
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
-   if(AmiSSLBase = InitLib("amissl.library", 1, 0, FALSE, FALSE)) G->TR_UseableTLS = TRUE;
+   if((AmiSSLBase = InitLib("amissl.library", 1, 0, FALSE, FALSE))) G->TR_UseableTLS = TRUE;
 
    SetupDebug();
 

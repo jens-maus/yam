@@ -212,7 +212,7 @@ static BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 
    if(StartUnpack(GetMailFile(NULL, mail->Folder, mail), fullfile, mail->Folder))
    {
-      if(fh = fopen(fullfile, "r"))
+      if((fh = fopen(fullfile, "r")))
       {
          MA_ReadHeader(fh);
 
@@ -258,7 +258,7 @@ static void FI_GenerateListPatterns(struct Search *search)
 {
    char buf[SIZE_PATTERN], pattern[SIZE_PATTERN];
    FILE *fh;
-   if (fh = fopen(search->Match, "r"))
+   if ((fh = fopen(search->Match, "r")))
    {
       FreeData2D(&(search->List));
       while (GetLine(fh, buf, SIZE_PATTERN)) if (*buf)
@@ -474,7 +474,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
       DoMethod(gui->LV_FOLDERS, MUIM_List_NextSelected, &id);
       if (id == MUIV_List_NextSelected_End) break;
       DoMethod(gui->LV_FOLDERS, MUIM_List_GetEntry, id, &name);
-      if (folder = FO_GetFolderByName(name, NULL)) if (MA_GetIndex(folder))
+      if ((folder = FO_GetFolderByName(name, NULL))) if (MA_GetIndex(folder))
       {
          sfo[sfonum++] = folder;
          totmsg += folder->Total;
@@ -531,8 +531,8 @@ HOOKPROTONHNONP(FI_ToRuleFunc, void)
    {
       char name[SIZE_NAME];
       *name = 0;
-      if (ch = StringRequest(name, SIZE_NAME, GetStr(MSG_FI_AddFilter), GetStr(MSG_FI_AddFilterReq), GetStr(MSG_Save), GetStr(MSG_Use), GetStr(MSG_Cancel), FALSE, G->FI->GUI.WI))
-         if (C->RU[r] = CO_NewRule())
+      if ((ch = StringRequest(name, SIZE_NAME, GetStr(MSG_FI_AddFilter), GetStr(MSG_FI_AddFilterReq), GetStr(MSG_Save), GetStr(MSG_Use), GetStr(MSG_Cancel), FALSE, G->FI->GUI.WI)))
+         if ((C->RU[r] = CO_NewRule()))
          {
             struct SearchGroup *grp = &(G->FI->GUI.GR_SEARCH);
             int g;

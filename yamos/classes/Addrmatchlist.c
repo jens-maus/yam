@@ -50,7 +50,7 @@ struct CustomABEntry
 HOOKPROTONH(ConstructFunc, struct CustomABEntry *, APTR pool, struct CustomABEntry *e)
 {
 	struct CustomABEntry *res;
-	if(res = malloc(sizeof(struct CustomABEntry)))
+	if((res = malloc(sizeof(struct CustomABEntry))))
 		*res = *e;
 	return res;
 }
@@ -84,7 +84,7 @@ MakeStaticHook(CompareHook, CompareFunc);
 OVERLOAD(OM_NEW)
 {
 	Object *list;
-	if(obj = DoSuperNew(cl, obj,
+	if((obj = DoSuperNew(cl, obj,
 		MUIA_Window_Activate,         FALSE,
 		MUIA_Window_Borderless,       TRUE,
 		MUIA_Window_CloseGadget,      FALSE,
@@ -103,7 +103,7 @@ OVERLOAD(OM_NEW)
 				MUIA_List_Format,          ",,",
 			End,
 		End,
-		TAG_MORE, inittags(msg)))
+		TAG_MORE, inittags(msg))))
 	{
 		GETDATA;
 

@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-02  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * #?.c: removed a whole bunch of gcc warnings. Mainly some
+      suggested paratheses and wrong format descriptions.
+      Nothing really serious and cross-checked with SAS/C.
+    * Makefile: Changed the Makefile to be more compatible to the
+      SAS/C smakefile. Now the invocation should be somehow the
+      same, especially for creating non-debug versions.
+
 2002-06-01  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * Makefile, inline/#?: Did some efforts to get YAM compiled

@@ -74,14 +74,14 @@ void CO_SaveConfig(struct Config *co, char *fname)
    FILE *fh;
    int i;
 
-   if (fh = fopen(fname, "w"))
+   if ((fh = fopen(fname, "w")))
    {
       fprintf(fh, "YCO3 - YAM Configuration\n");
 
       fprintf(fh, "\n[First steps]\n");
       fprintf(fh, "RealName         = %s\n", co->RealName);
       fprintf(fh, "EmailAddress     = %s\n", co->EmailAddress);
-      fprintf(fh, "TimeZone         = %ld\n", co->TimeZone);
+      fprintf(fh, "TimeZone         = %d\n", co->TimeZone);
       fprintf(fh, "DaylightSaving   = %s\n", Bool2Txt(co->DaylightSaving));
 
       fprintf(fh, "\n[TCP/IP]\n");
@@ -95,25 +95,25 @@ void CO_SaveConfig(struct Config *co, char *fname)
       for (i = 0; i < MAXP3; i++) if (co->P3[i])
       {
          struct POP3 *p3 = co->P3[i];
-         fprintf(fh, "POP%02ld.Server     = %s\n", i, p3->Server);
-         fprintf(fh, "POP%02ld.Port       = %ld\n", i, p3->Port);
-         fprintf(fh, "POP%02ld.User       = %s\n", i, p3->User);
-         fprintf(fh, "POP%02ld.Password   = %s\n", i, Encrypt(p3->Password));
-         fprintf(fh, "POP%02ld.Enabled    = %s\n", i, Bool2Txt(p3->Enabled));
-         fprintf(fh, "POP%02ld.SSLMode    = %ld\n", i, p3->SSLMode);
-         fprintf(fh, "POP%02ld.UseAPOP    = %s\n", i, Bool2Txt(p3->UseAPOP));
-         fprintf(fh, "POP%02ld.Delete     = %s\n", i, Bool2Txt(p3->DeleteOnServer));
+         fprintf(fh, "POP%02d.Server     = %s\n", i, p3->Server);
+         fprintf(fh, "POP%02d.Port       = %d\n", i, p3->Port);
+         fprintf(fh, "POP%02d.User       = %s\n", i, p3->User);
+         fprintf(fh, "POP%02d.Password   = %s\n", i, Encrypt(p3->Password));
+         fprintf(fh, "POP%02d.Enabled    = %s\n", i, Bool2Txt(p3->Enabled));
+         fprintf(fh, "POP%02d.SSLMode    = %d\n", i, p3->SSLMode);
+         fprintf(fh, "POP%02d.UseAPOP    = %s\n", i, Bool2Txt(p3->UseAPOP));
+         fprintf(fh, "POP%02d.Delete     = %s\n", i, Bool2Txt(p3->DeleteOnServer));
       }
 
       fprintf(fh, "\n[New mail]\n");
       fprintf(fh, "AvoidDuplicates  = %s\n", Bool2Txt(co->AvoidDuplicates));
-      fprintf(fh, "PreSelection     = %ld\n", co->PreSelection);
-      fprintf(fh, "TransferWindow   = %ld\n", co->TransferWindow);
+      fprintf(fh, "PreSelection     = %d\n", co->PreSelection);
+      fprintf(fh, "TransferWindow   = %d\n", co->TransferWindow);
       fprintf(fh, "UpdateStatus     = %s\n", Bool2Txt(co->UpdateStatus));
-      fprintf(fh, "WarnSize         = %ld\n", co->WarnSize);
-      fprintf(fh, "CheckMailDelay   = %ld\n", co->CheckMailDelay);
+      fprintf(fh, "WarnSize         = %d\n", co->WarnSize);
+      fprintf(fh, "CheckMailDelay   = %d\n", co->CheckMailDelay);
       fprintf(fh, "DownloadLarge    = %s\n", Bool2Txt(co->DownloadLarge));
-      fprintf(fh, "NotifyType       = %ld\n", co->NotifyType);
+      fprintf(fh, "NotifyType       = %d\n", co->NotifyType);
       fprintf(fh, "NotifySound      = %s\n", co->NotifySound);
       fprintf(fh, "NotifyCommand    = %s\n", co->NotifyCommand);
 
@@ -121,44 +121,44 @@ void CO_SaveConfig(struct Config *co, char *fname)
       for (i = 0; i < MAXRU; i++) if (co->RU[i])
       {
          struct Rule *ru = co->RU[i];
-         fprintf(fh, "FI%02ld.Name        = %s\n", i, ru->Name);
-         fprintf(fh, "FI%02ld.Remote      = %s\n", i, Bool2Txt(ru->Remote));
-         fprintf(fh, "FI%02ld.ApplyToNew  = %s\n", i, Bool2Txt(ru->ApplyToNew));
-         fprintf(fh, "FI%02ld.ApplyToSent = %s\n", i, Bool2Txt(ru->ApplyToSent));
-         fprintf(fh, "FI%02ld.ApplyOnReq  = %s\n", i, Bool2Txt(ru->ApplyOnReq));
-         fprintf(fh, "FI%02ld.Field       = %ld\n", i, ru->Field[0]);
-         fprintf(fh, "FI%02ld.SubField    = %ld\n", i, ru->SubField[0]);
-         fprintf(fh, "FI%02ld.CustomField = %s\n", i, ru->CustomField[0]);
-         fprintf(fh, "FI%02ld.Comparison  = %ld\n", i, ru->Comparison[0]);
-         fprintf(fh, "FI%02ld.Match       = %s\n", i, ru->Match[0]);
-         fprintf(fh, "FI%02ld.CaseSens    = %s\n", i, Bool2Txt(ru->CaseSens[0]));
-         fprintf(fh, "FI%02ld.Substring   = %s\n", i, Bool2Txt(ru->Substring[0]));
-         fprintf(fh, "FI%02ld.Combine     = %ld\n", i, ru->Combine);
+         fprintf(fh, "FI%02d.Name        = %s\n", i, ru->Name);
+         fprintf(fh, "FI%02d.Remote      = %s\n", i, Bool2Txt(ru->Remote));
+         fprintf(fh, "FI%02d.ApplyToNew  = %s\n", i, Bool2Txt(ru->ApplyToNew));
+         fprintf(fh, "FI%02d.ApplyToSent = %s\n", i, Bool2Txt(ru->ApplyToSent));
+         fprintf(fh, "FI%02d.ApplyOnReq  = %s\n", i, Bool2Txt(ru->ApplyOnReq));
+         fprintf(fh, "FI%02d.Field       = %d\n", i, ru->Field[0]);
+         fprintf(fh, "FI%02d.SubField    = %d\n", i, ru->SubField[0]);
+         fprintf(fh, "FI%02d.CustomField = %s\n", i, ru->CustomField[0]);
+         fprintf(fh, "FI%02d.Comparison  = %d\n", i, ru->Comparison[0]);
+         fprintf(fh, "FI%02d.Match       = %s\n", i, ru->Match[0]);
+         fprintf(fh, "FI%02d.CaseSens    = %s\n", i, Bool2Txt(ru->CaseSens[0]));
+         fprintf(fh, "FI%02d.Substring   = %s\n", i, Bool2Txt(ru->Substring[0]));
+         fprintf(fh, "FI%02d.Combine     = %d\n", i, ru->Combine);
          if (ru->Combine)
          {
-            fprintf(fh, "FI%02ld.Field2      = %ld\n", i, ru->Field[1]);
-            fprintf(fh, "FI%02ld.SubField2   = %ld\n", i, ru->SubField[1]);
-            fprintf(fh, "FI%02ld.CustomField2= %s\n", i, ru->CustomField[1]);
-            fprintf(fh, "FI%02ld.Comparison2 = %ld\n", i, ru->Comparison[1]);
-            fprintf(fh, "FI%02ld.Match2      = %s\n", i, ru->Match[1]);
-            fprintf(fh, "FI%02ld.CaseSens2   = %s\n", i, Bool2Txt(ru->CaseSens[1]));
-            fprintf(fh, "FI%02ld.Substring2  = %s\n", i, Bool2Txt(ru->Substring[1]));
+            fprintf(fh, "FI%02d.Field2      = %d\n", i, ru->Field[1]);
+            fprintf(fh, "FI%02d.SubField2   = %d\n", i, ru->SubField[1]);
+            fprintf(fh, "FI%02d.CustomField2= %s\n", i, ru->CustomField[1]);
+            fprintf(fh, "FI%02d.Comparison2 = %d\n", i, ru->Comparison[1]);
+            fprintf(fh, "FI%02d.Match2      = %s\n", i, ru->Match[1]);
+            fprintf(fh, "FI%02d.CaseSens2   = %s\n", i, Bool2Txt(ru->CaseSens[1]));
+            fprintf(fh, "FI%02d.Substring2  = %s\n", i, Bool2Txt(ru->Substring[1]));
          }
-         fprintf(fh, "FI%02ld.Actions     = %ld\n", i, ru->Actions);
-         fprintf(fh, "FI%02ld.BounceTo    = %s\n", i, ru->BounceTo);
-         fprintf(fh, "FI%02ld.ForwardTo   = %s\n", i, ru->ForwardTo);
-         fprintf(fh, "FI%02ld.ReplyFile   = %s\n", i, ru->ReplyFile);
-         fprintf(fh, "FI%02ld.ExecuteCmd  = %s\n", i, ru->ExecuteCmd);
-         fprintf(fh, "FI%02ld.PlaySound   = %s\n", i, ru->PlaySound);
-         fprintf(fh, "FI%02ld.MoveTo      = %s\n", i, ru->MoveTo);
+         fprintf(fh, "FI%02d.Actions     = %d\n", i, ru->Actions);
+         fprintf(fh, "FI%02d.BounceTo    = %s\n", i, ru->BounceTo);
+         fprintf(fh, "FI%02d.ForwardTo   = %s\n", i, ru->ForwardTo);
+         fprintf(fh, "FI%02d.ReplyFile   = %s\n", i, ru->ReplyFile);
+         fprintf(fh, "FI%02d.ExecuteCmd  = %s\n", i, ru->ExecuteCmd);
+         fprintf(fh, "FI%02d.PlaySound   = %s\n", i, ru->PlaySound);
+         fprintf(fh, "FI%02d.MoveTo      = %s\n", i, ru->MoveTo);
       }
 
       fprintf(fh, "\n[Read]\n");
-      fprintf(fh, "ShowHeader       = %ld\n", co->ShowHeader);
+      fprintf(fh, "ShowHeader       = %d\n", co->ShowHeader);
       fprintf(fh, "ShortHeaders     = %s\n", co->ShortHeaders);
-      fprintf(fh, "ShowSenderInfo   = %ld\n", co->ShowSenderInfo);
+      fprintf(fh, "ShowSenderInfo   = %d\n", co->ShowSenderInfo);
       fprintf(fh, "WrapHeader       = %s\n", Bool2Txt(co->WrapHeader));
-      fprintf(fh, "SigSepLine       = %ld\n", co->SigSepLine);
+      fprintf(fh, "SigSepLine       = %d\n", co->SigSepLine);
       fprintf(fh, "ColoredText      = %s\n", co->ColoredText.buf);
       fprintf(fh, "Color2ndLevel    = %s\n", co->Color2ndLevel.buf);
       fprintf(fh, "DisplayAllTexts  = %s\n", Bool2Txt(co->DisplayAllTexts));
@@ -176,11 +176,11 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "Greetings        = %s\n", co->Greetings);
       fprintf(fh, "TranslationOut   = %s\n", co->TranslationOut);
       fprintf(fh, "WarnSubject      = %s\n", Bool2Txt(co->WarnSubject));
-      fprintf(fh, "EdWrapCol        = %ld\n", co->EdWrapCol);
-      fprintf(fh, "EdWrapMode       = %ld\n", co->EdWrapMode);
+      fprintf(fh, "EdWrapCol        = %d\n", co->EdWrapCol);
+      fprintf(fh, "EdWrapMode       = %d\n", co->EdWrapMode);
       fprintf(fh, "Editor           = %s\n", co->Editor);
       fprintf(fh, "LaunchAlways     = %s\n", Bool2Txt(co->LaunchAlways));
-      fprintf(fh, "EmailCache       = %ld\n", co->EmailCache);
+      fprintf(fh, "EmailCache       = %d\n", co->EmailCache);
 
       fprintf(fh, "\n[Reply/Forward]\n");
       fprintf(fh, "ReplyHello       = %s\n", co->ReplyHello);
@@ -208,14 +208,14 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "TagsSeparator    = %s\n", co->TagsSeparator);
 
       fprintf(fh, "\n[Lists]\n");
-      fprintf(fh, "FolderCols       = %ld\n", co->FolderCols);
-      fprintf(fh, "MessageCols      = %ld\n", co->MessageCols);
+      fprintf(fh, "FolderCols       = %d\n", co->FolderCols);
+      fprintf(fh, "MessageCols      = %d\n", co->MessageCols);
       fprintf(fh, "FixedFontList    = %s\n", Bool2Txt(co->FixedFontList));
       fprintf(fh, "SwatchBeat       = %s\n", Bool2Txt(co->SwatchBeat));
-      fprintf(fh, "SizeFormat       = %ld\n", co->SizeFormat);
+      fprintf(fh, "SizeFormat       = %d\n", co->SizeFormat);
       fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
       fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
-      fprintf(fh, "InfoBar          = %ld\n", co->InfoBar);
+      fprintf(fh, "InfoBar          = %d\n", co->InfoBar);
       fprintf(fh, "InfoBarText      = %s\n", co->InfoBarText);
 
       fprintf(fh, "\n[Security]\n");
@@ -225,7 +225,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "ReMailer         = %s\n", co->ReMailer);
       fprintf(fh, "RMCommands       = %s\n", co->RMCommands);
       fprintf(fh, "LogfilePath      = %s\n", co->LogfilePath);
-      fprintf(fh, "LogfileMode      = %ld\n", co->LogfileMode);
+      fprintf(fh, "LogfileMode      = %d\n", co->LogfileMode);
       fprintf(fh, "SplitLogfile     = %s\n", Bool2Txt(co->SplitLogfile));
       fprintf(fh, "LogAllEvents     = %s\n", Bool2Txt(co->LogAllEvents));
 
@@ -244,9 +244,9 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "\n[MIME]\n");
       for (i = 0; i < MAXMV; i++) if (co->MV[i])
       {
-         fprintf(fh, "MV%02ld.ContentType = %s\n", i, co->MV[i]->ContentType);
-         fprintf(fh, "MV%02ld.Extension   = %s\n", i, co->MV[i]->Extension);
-         fprintf(fh, "MV%02ld.Command     = %s\n", i, co->MV[i]->Command);
+         fprintf(fh, "MV%02d.ContentType = %s\n", i, co->MV[i]->ContentType);
+         fprintf(fh, "MV%02d.Extension   = %s\n", i, co->MV[i]->Extension);
+         fprintf(fh, "MV%02d.Command     = %s\n", i, co->MV[i]->Command);
       }
       fprintf(fh, "IdentifyBin      = %s\n", Bool2Txt(co->IdentifyBin));
       fprintf(fh, "DetachDir        = %s\n", co->DetachDir);
@@ -257,43 +257,43 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "MyPictureURL     = %s\n", co->MyPictureURL);
       fprintf(fh, "ProxyServer      = %s\n", co->ProxyServer);
       fprintf(fh, "NewAddrGroup     = %s\n", co->NewAddrGroup);
-      fprintf(fh, "AddToAddrbook    = %ld\n", co->AddToAddrbook);
+      fprintf(fh, "AddToAddrbook    = %d\n", co->AddToAddrbook);
       fprintf(fh, "AddMyInfo        = %s\n", Bool2Txt(co->AddMyInfo));
-      fprintf(fh, "AddrbookCols     = %ld\n", co->AddrbookCols);
+      fprintf(fh, "AddrbookCols     = %d\n", co->AddrbookCols);
 
       fprintf(fh, "\n[Scripts]\n");
       for (i = 0; i < MAXRX; i++)
       {
          if (i < 10)
-           fprintf(fh, "Rexx%02ld.Name      = %s\n", i, co->RX[i].Name);
-         fprintf(fh, "Rexx%02ld.Script    = %s\n", i, co->RX[i].Script);
-         fprintf(fh, "Rexx%02ld.IsAmigaDOS= %s\n", i, Bool2Txt(co->RX[i].IsAmigaDOS));
-         fprintf(fh, "Rexx%02ld.UseConsole= %s\n", i, Bool2Txt(co->RX[i].UseConsole));
-         fprintf(fh, "Rexx%02ld.WaitTerm  = %s\n", i, Bool2Txt(co->RX[i].WaitTerm));
+           fprintf(fh, "Rexx%02d.Name      = %s\n", i, co->RX[i].Name);
+         fprintf(fh, "Rexx%02d.Script    = %s\n", i, co->RX[i].Script);
+         fprintf(fh, "Rexx%02d.IsAmigaDOS= %s\n", i, Bool2Txt(co->RX[i].IsAmigaDOS));
+         fprintf(fh, "Rexx%02d.UseConsole= %s\n", i, Bool2Txt(co->RX[i].UseConsole));
+         fprintf(fh, "Rexx%02d.WaitTerm  = %s\n", i, Bool2Txt(co->RX[i].WaitTerm));
       }
 
       fprintf(fh, "\n[Mixed]\n");
       fprintf(fh, "TempDir          = %s\n", co->TempDir);
-      fprintf(fh, "IconPosition     = %ld;%ld\n", co->IconPositionX, co->IconPositionY);
+      fprintf(fh, "IconPosition     = %d;%d\n", co->IconPositionX, co->IconPositionY);
       fprintf(fh, "IconifyOnQuit    = %s\n", Bool2Txt(co->IconifyOnQuit));
       fprintf(fh, "Confirm          = %s\n", Bool2Txt(co->Confirm));
-      fprintf(fh, "ConfirmDelete    = %ld\n", co->ConfirmDelete);
+      fprintf(fh, "ConfirmDelete    = %d\n", co->ConfirmDelete);
       fprintf(fh, "RemoveAtOnce     = %s\n", Bool2Txt(co->RemoveAtOnce));
       fprintf(fh, "SaveSent         = %s\n", Bool2Txt(co->SaveSent));
-      fprintf(fh, "MDN_Display      = %ld\n", co->MDN_Display);
-      fprintf(fh, "MDN_Process      = %ld\n", co->MDN_Process);
-      fprintf(fh, "MDN_Delete       = %ld\n", co->MDN_Delete);
-      fprintf(fh, "MDN_Filter       = %ld\n", co->MDN_Filter);
+      fprintf(fh, "MDN_Display      = %d\n", co->MDN_Display);
+      fprintf(fh, "MDN_Process      = %d\n", co->MDN_Process);
+      fprintf(fh, "MDN_Delete       = %d\n", co->MDN_Delete);
+      fprintf(fh, "MDN_Filter       = %d\n", co->MDN_Filter);
       fprintf(fh, "SendMDNAtOnce    = %s\n", Bool2Txt(co->SendMDNAtOnce));
-      fprintf(fh, "XPKPack          = %s;%ld\n", co->XPKPack, co->XPKPackEff);
-      fprintf(fh, "XPKPackEncrypt   = %s;%ld\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
+      fprintf(fh, "XPKPack          = %s;%d\n", co->XPKPack, co->XPKPackEff);
+      fprintf(fh, "XPKPackEncrypt   = %s;%d\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
       fprintf(fh, "PackerCommand    = %s\n", co->PackerCommand);
       fprintf(fh, "AppIconText      = %s\n", co->AppIconText);
 
       fprintf(fh, "\n[Advanced]\n");
-      fprintf(fh, "LetterPart       = %ld\n", co->LetterPart);
-      fprintf(fh, "WriteIndexes     = %ld\n", co->WriteIndexes);
-      fprintf(fh, "AutoSave         = %ld\n", co->AutoSave);
+      fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
+      fprintf(fh, "WriteIndexes     = %d\n", co->WriteIndexes);
+      fprintf(fh, "AutoSave         = %d\n", co->AutoSave);
       fprintf(fh, "SupportSite      = %s\n", co->SupportSite);
       fprintf(fh, "JumpToNewMsg     = %s\n", Bool2Txt(co->JumpToNewMsg));
       fprintf(fh, "JumpToIncoming   = %s\n", Bool2Txt(co->JumpToIncoming));
@@ -302,10 +302,10 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "IsOnlineCheck    = %s\n", Bool2Txt(co->IsOnlineCheck));
       fprintf(fh, "IOCInterface     = %s\n", co->IOCInterface);
       fprintf(fh, "ConfirmOnQuit    = %s\n", Bool2Txt(co->ConfirmOnQuit));
-      fprintf(fh, "HideGUIElements  = %ld\n", co->HideGUIElements);
+      fprintf(fh, "HideGUIElements  = %d\n", co->HideGUIElements);
       fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
-      fprintf(fh, "StackSize        = %ld\n", co->StackSize);
-      fprintf(fh, "PrintMethod      = %ld\n", co->PrintMethod);
+      fprintf(fh, "StackSize        = %d\n", co->StackSize);
+      fprintf(fh, "PrintMethod      = %d\n", co->PrintMethod);
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
    }
@@ -322,7 +322,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
    char buffer[SIZE_LARGE];
    int version;
    
-   if (fh = fopen(fname, "r"))
+   if ((fh = fopen(fname, "r")))
    {
       fgets(buffer, SIZE_LARGE, fh);
       if (!Strnicmp(buffer, "YCO", 3))
@@ -332,8 +332,8 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
          while (fgets(buffer, SIZE_LARGE, fh))
          {
             char *p, *p2, *value, *value2 = "";
-            if (value = strchr(buffer, '=')) for (value2 = (++value)+1; ISpace(*value); value++);
-            if (p = strpbrk(buffer,"\r\n")) *p = 0;
+            if ((value = strchr(buffer, '='))) for (value2 = (++value)+1; ISpace(*value); value++);
+            if ((p = strpbrk(buffer,"\r\n"))) *p = 0;
             for (p = buffer; *p && *p != '=' && !ISpace(*p); p++); *p = 0;
             if (*buffer && value)
             {
@@ -361,7 +361,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                      if (j >= 3) for (j = 4; j < 100; j++) if (!ofo[j]) break;
                      type = (j == 0 ? FT_INCOMING : (j == 1 ? FT_OUTGOING : (j == 2 ? FT_SENT : FT_CUSTOM)));
                      p = strchr(&value[4], ';'); *p++ = 0;
-                     if (!ofo[j]) if (ofo[j] = FO_NewFolder(type, &value[4], p)) ofo[j]->Sort[0] = sortconv[atoi(&value[2])];
+                     if (!ofo[j]) if ((ofo[j] = FO_NewFolder(type, &value[4], p))) ofo[j]->Sort[0] = sortconv[atoi(&value[2])];
                   }
                   if (!strnicmp(buffer, "Rule", 4))
                   {
@@ -597,7 +597,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   }
                }
 /*14*/         if (!stricmp(buffer, "TempDir"))        stccpy(co->TempDir, value, SIZE_PATH);
-               if (!stricmp(buffer, "IconPosition"))   sscanf(value, "%ld;%ld", &(co->IconPositionX), &(co->IconPositionY));
+               if (!stricmp(buffer, "IconPosition"))   sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
                if (!stricmp(buffer, "IconifyOnQuit"))  co->IconifyOnQuit = Txt2Bool(value);
                if (!stricmp(buffer, "Confirm"))        co->Confirm = Txt2Bool(value);
                if (!stricmp(buffer, "ConfirmDelete"))  co->ConfirmDelete = atoi(value);
@@ -839,7 +839,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
          setstring   (gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);
          DoMethod(gui->LV_POP3, MUIM_List_Clear);
-         for (i = 0; i < MAXP3; i++) if (pop3 = CE->P3[i])
+         for (i = 0; i < MAXP3; i++) if ((pop3 = CE->P3[i]))
          {
             sprintf(pop3->Account, "%s@%s", pop3->User, pop3->Server);
             DoMethod(gui->LV_POP3, MUIM_List_InsertSingle, pop3, MUIV_List_Insert_Bottom);

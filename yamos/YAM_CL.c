@@ -104,7 +104,7 @@ DISPATCHERPROTO(BC_Dispatcher)
             useold = FALSE;
             *fname = 0;
             data = INST_DATA(cl,obj);
-            while (tag = NextTagItem(&tags))
+            while ((tag = NextTagItem(&tags)))
             {
                switch (tag->ti_Tag)
                {
@@ -220,7 +220,7 @@ DISPATCHERPROTO(FL_Dispatcher)
 
         DoMethod(obj, MUIM_NListtree_TestPos, dr->x, dr->y, &res);
 
-        if(tn = res.tpr_TreeNode)
+        if((tn = res.tpr_TreeNode))
         {
           struct Folder *folder = (struct Folder *)tn->tn_User;
 
@@ -325,15 +325,17 @@ DISPATCHERPROTO(EL_Dispatcher)
       case MUIM_DragQuery:
          if (d->obj == obj) break;
          if (d->obj == G->AB->GUI.LV_ADDRESSES && d->obj != obj)
-            if (active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active))
+            if ((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
                if (!((struct ABEntry *)(active->tn_User))->Members) return MUIV_DragQuery_Accept;
          return MUIV_DragQuery_Refuse;
       case MUIM_DragDrop:
          if (d->obj == obj) break;
          if (d->obj == G->AB->GUI.LV_ADDRESSES && d->obj != obj)
-            if (active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active))
+            if ((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
+            {
                if (isFlagSet(active->tn_Flags, TNF_LIST)) EA_AddMembers(obj, active);
                else EA_AddSingleMember(obj, active);
+            }
          return 0;
    }
    return DoSuperMethodA(cl,obj,msg);
@@ -409,7 +411,7 @@ DISPATCHERPROTO(TE_Dispatcher)
          if (drop_msg->obj == G->AB->GUI.LV_ADDRESSES)
          {
             struct MUI_NListtree_TreeNode *tn;
-            if (tn = (struct MUI_NListtree_TreeNode *)xget(drop_msg->obj, MUIA_NListtree_Active))
+            if ((tn = (struct MUI_NListtree_TreeNode *)xget(drop_msg->obj, MUIA_NListtree_Active)))
             {
                struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
                if (ab->Type != AET_GROUP)

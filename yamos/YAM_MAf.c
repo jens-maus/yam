@@ -131,9 +131,11 @@ static void MA_ValidateStatus(struct Folder *folder)
 
    for (mail = folder->Messages; mail; mail = mail->Next)
       if (mail->Status == STATUS_NEW)
+      {
          if (folder->Type == FT_OUTGOING) MA_SetMailStatus(mail, STATUS_WFS);
          else if (folder->Type == FT_SENT) MA_SetMailStatus(mail, STATUS_SNT);
          else if (C->UpdateNewMail) MA_SetMailStatus(mail, STATUS_UNR);
+      }
 }
 
 ///
@@ -158,7 +160,7 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
 
    DB( kprintf("Loading index for folder %s\n", folder->Name); )
 
-   if (fh = fopen(MA_IndexFileName(folder), "r"))
+   if ((fh = fopen(MA_IndexFileName(folder), "r")))
    {
       struct FIndex fi;
       BOOL corrupt = FALSE;
@@ -320,9 +322,12 @@ void MA_UpdateIndexes(BOOL initial)
    int i;
    struct Folder **flist;
 
-   if (flist = FO_CreateList())
+   if ((flist = FO_CreateList()))
    {
-      for (i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_GROUP)
+      for (i = 1; i <= (int)*flist; i++)
+      {
+        if (flist[i]->Type != FT_GROUP)
+        {
          if (initial)
          {
             long dirdate = getft(GetFolderDir(flist[i]));
@@ -337,6 +342,8 @@ void MA_UpdateIndexes(BOOL initial)
          {
             if (flist[i]->LoadedMode == 2 && isModified(flist[i])) MA_SaveIndex(flist[i]);
          }
+        }
+      }
       free(flist);
    }
 }
@@ -351,7 +358,7 @@ void MA_FlushIndexes(BOOL all)
 
    if(!actfo) return;
 
-   if (flist = FO_CreateList())
+   if ((flist = FO_CreateList()))
    {
       for (i = 1; i <= (int)*flist; i++)
       {
@@ -624,9 +631,9 @@ BOOL MA_ReadHeader(FILE *fh)
   BOOL success = FALSE;
   char prevcharset[SIZE_DEFAULT];
 
-  if(buffer = calloc(SIZE_LINE, sizeof(char)))
+  if((buffer = calloc(SIZE_LINE, sizeof(char))))
   {
-    if(head = calloc(SIZE_LINE, sizeof(char)))
+    if((head = calloc(SIZE_LINE, sizeof(char))))
     {
       FreeData2D(&Header);
 
@@ -685,7 +692,7 @@ static void MA_GetRecipients(char *h, struct Person **per, int *percnt)
    for (cnt = 0; *p;)
    {
       cnt++;
-      if (p = MyStrChr(p, ',')) p++; else break;
+      if ((p = MyStrChr(p, ','))) p++; else break;
    }
    *percnt = cnt;
    if (cnt)
@@ -693,7 +700,7 @@ static void MA_GetRecipients(char *h, struct Person **per, int *percnt)
       *per = calloc(cnt, sizeof(struct Person));
       for (cnt = 0, p = h; *p; cnt++)
       {
-         if (next = MyStrChr(p, ',')) *next++ = 0;
+         if ((next = MyStrChr(p, ','))) *next++ = 0;
          ExtractAddress(p, (struct Person *)((ULONG)*per+cnt*sizeof(struct Person)));
          if (!(p = next)) break;
       }
@@ -716,7 +723,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
    memset(&email, 0, sizeof(struct ExtendedMail));
    stccpy(mail->MailFile, file, SIZE_MFILE);
    email.DelSend = !C->SaveSent;
-   if (fh = fopen(GetMailFile(fullfile, folder, mail), "r"))
+   if ((fh = fopen(GetMailFile(fullfile, folder, mail), "r")))
    {
       BOOL xpk = FALSE;
       if (fgetc(fh) == 'X') if (fgetc(fh) == 'P') if (fgetc(fh) == 'K') xpk = TRUE;
@@ -737,7 +744,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
       for (ok=i=0; i < Header.Used; i++)
       {
          char *value, *field = Header.Data[i];
-         if (value = strchr(field, ':'))
+         if ((value = strchr(field, ':')))
          {
             *value++ = 0;
             if (!stricmp(field, "from"))
@@ -780,7 +787,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             {
                SET_FLAG(ok, 2);
                SParse(value);
-               if (p = MyStrChr(value, ',')) *p++ = 0;
+               if ((p = MyStrChr(value, ','))) *p++ = 0;
                ExtractAddress(value, &pe);
                mail->To = pe;
                if (p)
@@ -851,7 +858,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                   enum Security sec;
 
                   if (strstr(value, "delsent")) email.DelSend = TRUE;
-                  if (p = strstr(value, "sigfile")) email.Signature = p[7]-'0'+1;
+                  if ((p = strstr(value, "sigfile"))) email.Signature = p[7]-'0'+1;
                   for(sec = SEC_SIGN; sec <= SEC_SENDANON; sec++)
                   {
                     if(strstr(value, SecCodes[sec]))
@@ -917,7 +924,7 @@ void MA_ScanMailBox(struct Folder *folder)
             {
               if (fib->fib_Size)
               {
-                if (mail = MA_ExamineMail(folder,fib->fib_FileName,fib->fib_Comment,FALSE))
+                if ((mail = MA_ExamineMail(folder,fib->fib_FileName,fib->fib_Comment,FALSE)))
                 {
                   AddMailToList((struct Mail *)mail, folder);
                   MA_FreeEMailStruct(mail);
@@ -952,7 +959,7 @@ HOOKPROTONHNP(PO_InitFolderList, long, Object *pop)
 
    DoMethod(pop, MUIM_List_Clear);
    DoMethod(pop, MUIM_List_InsertSingle, GetStr(MSG_MA_Cancel), MUIV_List_Insert_Bottom);
-   if (flist = FO_CreateList())
+   if ((flist = FO_CreateList()))
    {
       for (i = 1; i <= (int)*flist; i++) if (flist[i]->Type != FT_GROUP)
          DoMethod(pop, MUIM_List_InsertSingle, flist[i]->Name, MUIV_List_Insert_Bottom);
@@ -1049,7 +1056,7 @@ void MA_MakeFOFormat(APTR lv)
    for (i = 0; i < FOCOLNUM; i++) if (C->FolderCols & (1<<i))
    {
       if (first) first = FALSE; else strcat(format, " BAR,");
-      sprintf(&format[strlen(format)], "COL=%ld W=%ld", i, defwidth[i]);
+      sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
       if (i) strcat(format, " P=\033r");
    }
    strcat(format, " BAR");

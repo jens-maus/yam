@@ -621,7 +621,7 @@ void InfoWindow(char *title, char *body, char *oktext, APTR parent)
 char *itoa(int val)
 {
    static char str[SIZE_SMALL];
-   sprintf(str, "%ld", val);
+   sprintf(str, "%d", val);
    return str;
 }
 ///
@@ -838,7 +838,7 @@ BOOL LoadParsers(void)
 
             if ((fp = fopen(file, "rb")))
             {
-              if (PPtr[PNum] = calloc(1, 16640))
+              if ((PPtr[PNum] = calloc(1, 16640)))
               {
                 fread(PPtr[PNum], 1, 16640, fp);
 
@@ -1425,7 +1425,7 @@ struct TempFile *OpenTempFile(char *mode)
    if ((tf = calloc(1, sizeof(struct TempFile))))
    {
       char buf[SIZE_SMALL];
-      sprintf(buf, "YAM.%ld.tmp", ++count);
+      sprintf(buf, "YAM.%d.tmp", ++count);
       strmfp(tf->Filename, C->TempDir, buf);
       if (!mode) return tf;
       if ((tf->FP = fopen(tf->Filename, mode))) return tf;
@@ -1863,7 +1863,7 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
         if (date->ds_Days < 8035) y += 1900;
         else y += 2000;
 
-        sprintf(resstr, "%s %s %02ld %s %ld\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
+        sprintf(resstr, "%s %s %02d %s %d\n", wdays[dt.dat_Stamp.ds_Days%7], months[atoi(datestr)-1], atoi(&datestr[3]), timestr, y);
       }
       break;
 
@@ -2065,8 +2065,8 @@ struct DateStamp *ScanDate(char *date)
       }
       count++; p = NULL;
    }
-   sprintf(tdate, "%02ld-%02ld-%02ld", mon, day, year%100);
-   sprintf(ttime, "%02ld:%02ld:%02ld", hour, min, sec);
+   sprintf(tdate, "%02d-%02d-%02d", mon, day, year%100);
+   sprintf(ttime, "%02d:%02d:%02d", hour, min, sec);
    dt.dat_Format  = FORMAT_USA;
    dt.dat_Flags   = 0;
    dt.dat_StrDate = (STRPTR)tdate;
@@ -2102,29 +2102,29 @@ void FormatSize(LONG size, char *buffer)
     {
       if (size >= GB)
       {
-        sprintf(buf, "%d", (size%GB)/MB);
+        sprintf(buf, "%ld", (size%GB)/MB);
 
         if(strlen(buf) > 1) buf[1] = '\0';
 
-        sprintf(p, "%d%s%s GB", size/GB, gs, buf);
+        sprintf(p, "%ld%s%s GB", size/GB, gs, buf);
       }
       else if (size >= MB)
       {
-        sprintf(buf, "%d", (size%MB)/KB);
+        sprintf(buf, "%ld", (size%MB)/KB);
 
         if(strlen(buf) > 1) buf[1] = '\0';
 
-        sprintf(p, "%d%s%s MB", size/MB, gs, buf);
+        sprintf(p, "%ld%s%s MB", size/MB, gs, buf);
       }
       else if (size >= KB)
       {
-        sprintf(buf, "%d", (size%KB));
+        sprintf(buf, "%ld", (size%KB));
 
         if(strlen(buf) > 1) buf[1] = '\0';
 
-        sprintf(p, "%d%s%s KB", size/KB, gs, buf);
+        sprintf(p, "%ld%s%s KB", size/KB, gs, buf);
       }
-      else sprintf(p, "%d B", size);
+      else sprintf(p, "%ld B", size);
     }
     break;
 
@@ -2137,32 +2137,32 @@ void FormatSize(LONG size, char *buffer)
     {
       if (size >= GB)
       {
-        sprintf(buf, "%d", (size%GB)/MB);
+        sprintf(buf, "%ld", (size%GB)/MB);
 
         if(strlen(buf) > 2) buf[2] = '\0';
         if(strlen(buf) < 2) buf[1] = '0';
 
-        sprintf(p, "%d%s%s GB", size/GB, gs, buf);
+        sprintf(p, "%ld%s%s GB", size/GB, gs, buf);
       }
       else if (size >= MB)
       {
-        sprintf(buf, "%d", (size%MB)/KB);
+        sprintf(buf, "%ld", (size%MB)/KB);
 
         if(strlen(buf) > 2) buf[2] = '\0';
         if(strlen(buf) < 2) buf[1] = '0';
 
-        sprintf(p, "%d%s%s MB", size/MB, gs, buf);
+        sprintf(p, "%ld%s%s MB", size/MB, gs, buf);
       }
       else if (size >= KB)
       {
-        sprintf(buf, "%d", (size%KB));
+        sprintf(buf, "%ld", (size%KB));
 
         if(strlen(buf) > 2) buf[2] = '\0';
         if(strlen(buf) < 2) buf[1] = '0';
 
-        sprintf(p, "%d%s%s KB", size/KB, gs, buf);
+        sprintf(p, "%ld%s%s KB", size/KB, gs, buf);
       }
-      else sprintf(p, "%d B", size);
+      else sprintf(p, "%ld B", size);
     }
     break;
 
@@ -2175,35 +2175,35 @@ void FormatSize(LONG size, char *buffer)
     {
       if (size >= GB)
       {
-        sprintf(buf, "%d", (size%GB)/MB);
+        sprintf(buf, "%ld", (size%GB)/MB);
 
         if(strlen(buf) > 3) buf[3] = '\0';
         if(strlen(buf) < 3) buf[2] = '0';
         if(strlen(buf) < 2) buf[1] = '0';
 
-        sprintf(p, "%d%s%s GB", size/GB, gs, buf);
+        sprintf(p, "%ld%s%s GB", size/GB, gs, buf);
       }
       else if (size >= MB)
       {
-        sprintf(buf, "%d", (size%MB)/KB);
+        sprintf(buf, "%ld", (size%MB)/KB);
 
         if(strlen(buf) > 3) buf[3] = '\0';
         if(strlen(buf) < 3) buf[2] = '0';
         if(strlen(buf) < 2) buf[1] = '0';
 
-        sprintf(p, "%d%s%s MB", size/MB, gs, buf);
+        sprintf(p, "%ld%s%s MB", size/MB, gs, buf);
       }
       else if (size >= KB)
       {
-        sprintf(buf, "%d", (size%KB));
+        sprintf(buf, "%ld", (size%KB));
 
         if(strlen(buf) > 3) buf[3] = '\0';
         if(strlen(buf) < 3) buf[2] = '0';
         if(strlen(buf) < 2) buf[1] = '0';
 
-        sprintf(p, "%d%s%s KB", size/KB, gs, buf);
+        sprintf(p, "%ld%s%s KB", size/KB, gs, buf);
       }
-      else sprintf(p, "%d B", size);
+      else sprintf(p, "%ld B", size);
     }
     break;
 
@@ -2216,32 +2216,32 @@ void FormatSize(LONG size, char *buffer)
     {
       if (size >= GB)
       {
-        sprintf(buf, "%d", (size%GB)/MB);
+        sprintf(buf, "%ld", (size%GB)/MB);
 
         if(strlen(buf) > 3) buf[3] = '\0';
         if(strlen(buf) < 3) buf[2] = '0';
         if(strlen(buf) < 2) buf[1] = '0';
 
-        sprintf(p, "%d%s%s GB", size/GB, gs, buf);
+        sprintf(p, "%ld%s%s GB", size/GB, gs, buf);
       }
       else if (size >= MB)
       {
-        sprintf(buf, "%d", (size%MB)/KB);
+        sprintf(buf, "%ld", (size%MB)/KB);
 
         if(strlen(buf) > 2) buf[2] = '\0';
         if(strlen(buf) < 2) buf[1] = '0';
 
-        sprintf(p, "%d%s%s MB", size/MB, gs, buf);
+        sprintf(p, "%ld%s%s MB", size/MB, gs, buf);
       }
       else if (size >= KB)
       {
-        sprintf(buf, "%d", (size%KB));
+        sprintf(buf, "%ld", (size%KB));
 
         if(strlen(buf) > 1) buf[1] = '\0';
 
-        sprintf(p, "%d%s%s KB", size/KB, gs, buf);
+        sprintf(p, "%ld%s%s KB", size/KB, gs, buf);
       }
-      else sprintf(p, "%d B", size);
+      else sprintf(p, "%ld B", size);
     }
     break;
 
@@ -2252,10 +2252,10 @@ void FormatSize(LONG size, char *buffer)
     */
     default:
     {
-      if (size >= GB) sprintf(p, "%d%s%03d%s%03d%s%03d", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
-      else if (size >= MB) sprintf(p, "%d%s%03d%s%03d", size/MB, gs, (size%MB)/KB, gs, size%KB);
-      else if (size >= KB) sprintf(p, "%d%s%03d", size/KB, gs, size%KB);
-      else sprintf(p, "%d", size);
+      if (size >= GB) sprintf(p, "%ld%s%03ld%s%03ld%s%03ld", size/GB, gs, (size%GB)/MB, gs, (size%MB)/KB, gs, size%KB);
+      else if (size >= MB) sprintf(p, "%ld%s%03ld%s%03ld", size/MB, gs, (size%MB)/KB, gs, size%KB);
+      else if (size >= KB) sprintf(p, "%ld%s%03ld", size/KB, gs, size%KB);
+      else sprintf(p, "%ld", size);
     }
     break;
   }
@@ -3263,13 +3263,13 @@ static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, vo
    {
       struct ClockData cd;
       Amiga2Date(GetDateStamp(), &cd);
-      sprintf(filename, "YAM-%s%ld.log", months[cd.month-1], cd.year);
+      sprintf(filename, "YAM-%s%d.log", months[cd.month-1], cd.year);
    }
    else strcpy(filename, "YAM.log");
    strmfp(logfile, *C->LogfilePath ? C->LogfilePath : G->ProgDir, filename);
    if ((fh = fopen(logfile, "a")))
    {
-      fprintf(fh, "%s [%02ld] ", DateStamp2String(NULL, DSS_DATETIME), id);
+      fprintf(fh, "%s [%02d] ", DateStamp2String(NULL, DSS_DATETIME), id);
       fprintf(fh, text, a1, a2, a3, a4);
       fprintf(fh, "\n");
       fclose(fh);
@@ -3396,12 +3396,12 @@ void DisplayAppIconStatistics(void)
     {
       switch (*++src)
       {
-        case '%': strcpy(dst, "%");             break;
-        case 'n': sprintf(dst, "%ld", new_msg); break;
-        case 'u': sprintf(dst, "%ld", unr_msg); break;
-        case 't': sprintf(dst, "%ld", tot_msg); break;
-        case 's': sprintf(dst, "%ld", snt_msg); break;
-        case 'd': sprintf(dst, "%ld", del_msg); break;
+        case '%': strcpy(dst, "%");            break;
+        case 'n': sprintf(dst, "%d", new_msg); break;
+        case 'u': sprintf(dst, "%d", unr_msg); break;
+        case 't': sprintf(dst, "%d", tot_msg); break;
+        case 's': sprintf(dst, "%d", snt_msg); break;
+        case 'd': sprintf(dst, "%d", del_msg); break;
       }
     }
     else
@@ -3468,7 +3468,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
    }
 
    // Recalc the number of messages of the folder group
-   if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, MUIF_NONE))
+   if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, pos, MUIF_NONE)))
    {
       struct MUI_NListtree_TreeNode *tn_parent;
 
@@ -3476,7 +3476,7 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
       DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, tn, MUIF_NONE);
 
       // Now get the parent of the treenode
-      if(tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE))
+      if((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
       {
          // fo_parent is NULL then it`s ROOT and we have to skip here
          struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;

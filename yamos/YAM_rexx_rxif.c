@@ -140,7 +140,7 @@ void rx_help( struct RexxHost *host, struct rxd_help **rxd, long action, struct 
          break;
          
       case RXIF_ACTION:
-         if (rd->arg.file) if (fp = fopen(rd->arg.file, "w")) out = fp;
+         if (rd->arg.file) if ((fp = fopen(rd->arg.file, "w"))) out = fp;
          fprintf(out, "Commands for application \"YAM\"\n\nCommand          Template\n-------          --------\n");
          for (rxc = rxs_commandlist; rxc->command; rxc++)
             fprintf(out, "%-16s%c%s%s%s%s%s\n", rxc->command,
@@ -543,7 +543,7 @@ void rx_mailmove( struct RexxHost *host, struct rxd_mailmove **rxd, long action,
          break;
          
       case RXIF_ACTION:
-         if (folder = FO_GetFolderRexx(rd->arg.folder, NULL))
+         if ((folder = FO_GetFolderRexx(rd->arg.folder, NULL)))
             MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, FALSE);
          else rd->rc = RETURN_ERROR;
          break;
@@ -574,7 +574,7 @@ void rx_mailread( struct RexxHost *host, struct rxd_mailread **rxd, long action,
          rd->res.window = &G->ActiveReadWin;
          if (winnr < 0)
          {
-            if (mail = MA_GetActiveMail(ANYBOX, NULL, NULL))
+            if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
                if ((winnr = RE_Open(-1, TRUE)) >= 0)
                {
                   G->ActiveReadWin = winnr;
@@ -852,7 +852,7 @@ void rx_setfolder( struct RexxHost *host, struct rxd_setfolder **rxd, long actio
          break;
          
       case RXIF_ACTION:
-         if (folder = FO_GetFolderRexx(rd->arg.folder, NULL)) MA_ChangeFolder(folder, TRUE);
+         if ((folder = FO_GetFolderRexx(rd->arg.folder, NULL))) MA_ChangeFolder(folder, TRUE);
          else rd->rc = RETURN_ERROR;
          break;
       
@@ -1003,10 +1003,10 @@ void rx_getfolderinfo( struct RexxHost *host, struct rxd_getfolderinfo **rxd, lo
          key = rd->rd.arg.item;
          fo = FO_GetCurrentFolder();
          num = FO_GetFolderPosition(fo);
-         if (!strnicmp(key, "NUM", 3)) sprintf(rd->rd.res.value = rd->result, "%ld", num);
+         if (!strnicmp(key, "NUM", 3)) sprintf(rd->rd.res.value = rd->result, "%d", num);
          else if (!strnicmp(key, "NAM", 3)) rd->rd.res.value = fo->Name;
          else if (!strnicmp(key, "PAT", 3)) rd->rd.res.value = fo->Path;
-         else if (!strnicmp(key, "MAX", 3)) sprintf(rd->rd.res.value = rd->result, "%ld", fo->Total);
+         else if (!strnicmp(key, "MAX", 3)) sprintf(rd->rd.res.value = rd->result, "%d", fo->Total);
          else rd->rd.rc = RETURN_ERROR;
          break;
       
@@ -1036,7 +1036,7 @@ void rx_getmailinfo( struct RexxHost *host, struct rxd_getmailinfo **rxd, long a
          break;
          
       case RXIF_ACTION:
-         if (mail = MA_GetActiveMail(ANYBOX, NULL, &active))
+         if ((mail = MA_GetActiveMail(ANYBOX, NULL, &active)))
          {
             struct Person *pe = GetReturnAddress(mail);
 
@@ -1209,22 +1209,25 @@ void rx_setflag( struct RexxHost *host, struct rxd_setflag **rxd, long action, s
          break;
          
       case RXIF_ACTION:
-         if (mail = MA_GetActiveMail(ANYBOX, NULL, NULL))
+         if ((mail = MA_GetActiveMail(ANYBOX, NULL, NULL)))
          {
             if (rd->arg.vol) { if ((flag = *rd->arg.vol) >= 0 && flag < 8)
                mail->Flags = (mail->Flags&0xC7FF) | (flag<<11);
                
             else rd->rc = RETURN_ERROR;
             }
-            if (rd->arg.per) if ((flag = *rd->arg.per) >= 0 && flag < 8)
+            if (rd->arg.per)
             {
+              if ((flag = *rd->arg.per) >= 0 && flag < 8)
+              {
                if (flag != ((mail->Flags&0x0700)>>8))
                {
                   mail->Flags = (mail->Flags&0xF8FF) | (flag<<8);
                   MA_SetMailStatus(mail, mail->Status|0x100);
                }
+              }
+              else rd->rc = RETURN_ERROR;
             }
-            else rd->rc = RETURN_ERROR;
          }
          else rd->rc = RETURN_WARN;
          break;
@@ -1328,6 +1331,7 @@ void rx_readsave( struct RexxHost *host, struct rxd_readsave **rxd, long action,
          
       case RXIF_ACTION:
          if (G->RE[G->ActiveReadWin])
+         {
             if (rd->arg.part)
             {
                for (part = G->RE[G->ActiveReadWin]->FirstPart->Next; part; part = part->Next)
@@ -1338,13 +1342,14 @@ void rx_readsave( struct RexxHost *host, struct rxd_readsave **rxd, long action,
                         success = RE_Export((int)G->ActiveReadWin, part->Filename, rd->arg.filename ? rd->arg.filename : "", part->Name, part->Nr, TRUE, (BOOL)rd->arg.overwrite, part->ContentType);
                      }
             }
-            else if (tf = OpenTempFile("w"))
+            else if ((tf = OpenTempFile("w")))
             {
                RE_SaveDisplay((int)G->ActiveReadWin, tf->FP);
                fclose(tf->FP); tf->FP = NULL;
                success = RE_Export((int)G->ActiveReadWin, tf->Filename, rd->arg.filename ? rd->arg.filename : "", "", 0, TRUE, (BOOL)rd->arg.overwrite, ContType[CT_TX_PLAIN]);
                CloseTempFile(tf);
             }
+         }
          if (!success) rd->rc = RETURN_ERROR;
          break;
       
@@ -1372,18 +1377,20 @@ void rx_readprint( struct RexxHost *host, struct rxd_readprint **rxd, long actio
       case RXIF_ACTION:
          if (C->PrinterCheck) if (!CheckPrinter()) { rd->rc = RETURN_ERROR; break; }
          if (G->RE[G->ActiveReadWin])
+         {
             if (rd->arg.part)
             {
                for (part = G->RE[G->ActiveReadWin]->FirstPart->Next; part; part = part->Next)
                   if (part->Nr == *(rd->arg.part))
                      if (RE_DecodePart(part)) success = CopyFile("PRT:", 0, part->Filename, 0);
             }
-            else if (prt = fopen("PRT:","w"))
+            else if ((prt = fopen("PRT:","w")))
             {
                RE_SaveDisplay((int)G->ActiveReadWin, prt);
                fclose(prt);
                success = TRUE;
             }
+         }
          if (!success) rd->rc = RETURN_ERROR;
          break;
       
@@ -1500,7 +1507,7 @@ void rx_addrinfo( struct RexxHost *host, struct rxd_addrinfo **rxd, long action,
             strcpy(rd->members, ab->Members);
             for (j = 0, ptr = rd->members; *ptr; j++, ptr++)
             {
-              if (ptr = strchr(ptr, '\n')) *ptr = 0; else break;
+              if ((ptr = strchr(ptr, '\n'))) *ptr = 0; else break;
             }
             rd->rd.res.members = rd->memberptr = calloc(j+1, sizeof(char *));
             for (i = 0, ptr = rd->members; i < j; ptr += strlen(ptr)+1) rd->memberptr[i++] = ptr;
@@ -1542,7 +1549,7 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
         STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoCache);
         if(res && strcmp(rd->rd.arg.alias, res)) /* did the string change ? */
         {
-          if(rd->rd.res.recpt = rd->string = AllocStrBuf((LONG)strlen(res)+1))
+          if((rd->rd.res.recpt = rd->string = AllocStrBuf((LONG)strlen(res)+1)))
           strcpy(rd->string, res);
         }
         else
@@ -1739,7 +1746,7 @@ void rx_mailcopy( struct RexxHost *host, struct rxd_mailcopy **rxd, long action,
          break;
          
       case RXIF_ACTION:
-         if (folder = FO_GetFolderRexx(rd->arg.folder, NULL))
+         if ((folder = FO_GetFolderRexx(rd->arg.folder, NULL)))
             MA_MoveCopy(NULL, FO_GetCurrentFolder(), folder, TRUE);
          else rd->rc = RETURN_ERROR;
          break;
@@ -1850,7 +1857,7 @@ void rx_userinfo( struct RexxHost *host, struct rxd_userinfo **rxd, long action,
             int i = 0, numfolders = 0;
             struct MUI_NListtree_TreeNode *tn;
 
-            while(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE))
+            while((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE)))
             {
               if(!isFlagSet(tn->tn_Flags, TNF_LIST)) numfolders++;
               i++;
@@ -1968,7 +1975,7 @@ void rx_requestfolder( struct RexxHost *host, struct rxd_requestfolder **rxd, lo
       case RXIF_ACTION:
          reqtext = AllocReqText(rd->arg.body);
          exfolder = rd->arg.excludeactive ? FO_GetCurrentFolder() : NULL;
-         if (folder = FolderRequest(NULL, reqtext, GetStr(MSG_Okay), GetStr(MSG_Cancel), exfolder, G->MA->GUI.WI)) rd->res.folder = folder->Name;
+         if ((folder = FolderRequest(NULL, reqtext, GetStr(MSG_Okay), GetStr(MSG_Cancel), exfolder, G->MA->GUI.WI))) rd->res.folder = folder->Name;
          else rd->rc = 1;
          free(reqtext);
          break;
@@ -1994,7 +2001,7 @@ void rx_getselected( struct RexxHost *host, struct rxd_getselected **rxd, long a
          break;
          
       case RXIF_ACTION:
-         if (mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS))
+         if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
          {
             int i;
             rd->res.num = calloc(1+(int)mlist[0], sizeof(long));
@@ -2026,7 +2033,7 @@ void rx_addredit( struct RexxHost *host, struct rxd_addredit **rxd, long action,
          
       case RXIF_ACTION:
       {
-         if(tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+         if((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
          {
             struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
             if (rd->arg.alias)    stccpy(ab->Alias, rd->arg.alias, SIZE_NAME);
@@ -2188,7 +2195,12 @@ void rx_addrnew( struct RexxHost *host, struct rxd_addrnew **rxd, long action, s
          if (rd->arg.alias)    stccpy(addr.Alias, rd->arg.alias, SIZE_NAME);
          if (rd->arg.name)     stccpy(addr.RealName, rd->arg.name, SIZE_REALNAME);
          if (rd->arg.email)    stccpy(addr.Address, rd->arg.email, SIZE_ADDRESS);
-         if (!*addr.Alias) if (addr.Type == AET_USER) EA_SetDefaultAlias(&addr); else rd->rc = RETURN_ERROR;
+         if (!*addr.Alias)
+         {
+            if (addr.Type == AET_USER) EA_SetDefaultAlias(&addr);
+            else rd->rc = RETURN_ERROR;
+         }
+
          if (!rd->rc)
          {
             EA_FixAlias(&addr, FALSE);
@@ -2219,7 +2231,7 @@ void rx_mailchangesubject( struct RexxHost *host, struct rxd_mailchangesubject *
          break;
          
       case RXIF_ACTION:
-         if (mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS))
+         if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
          {
             int i, selected = (int)*mlist;
             for (i = 0; i < selected; i++) MA_ChangeSubject(mlist[i+2], rd->arg.subject);

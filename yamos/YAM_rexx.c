@@ -48,6 +48,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "YAM_mime.h"
 #include "YAM_rexx.h"
 #include "YAM_rexx_rxcl.h"
 #include "YAM_utilities.h"
@@ -178,7 +179,7 @@ struct RexxMsg *SendRexxCommand( struct RexxHost *host, char *buff, BPTR fh )
 {
    struct RexxMsg *rcm;
    
-   if( rcm = CreateRexxCommand(host, buff, fh) )
+   if((rcm = CreateRexxCommand(host, buff, fh)))
       return CommandToRexx( host, rcm );
    else
       return NULL;
@@ -200,7 +201,7 @@ void CloseDownARexxHost( struct RexxHost *host )
       {
          WaitPort( host->port );
          
-         while( rexxmsg = (struct RexxMsg *) GetMsg(host->port) )
+         while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)))
          {
             if( rexxmsg->rm_Node.mn_Node.ln_Type == NT_REPLYMSG )
             {
@@ -220,7 +221,7 @@ void CloseDownARexxHost( struct RexxHost *host )
       }
       
       /* MsgPort leeren */
-      while( rexxmsg = (struct RexxMsg *) GetMsg(host->port) )
+      while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)))
          ReplyRexxCommand( rexxmsg, -20, (long) "Host closing down", NULL );
       
       if(isFlagClear(host->flags, ARB_HF_USRMSGPORT))
@@ -328,14 +329,14 @@ static int find( char *input )
       
       /* Wo geht's weiter? */
       ni = 0;
-      for( ad = st->pa; s = ad->str; ad++ )
+      for(ad = st->pa; (s = ad->str); ad++)
       {
          /* die Links sind absteigend sortiert */
          if( *input > *s )
             break;
          
          if( *input == *s )
-            if( ni = scmp(input+1, s+1) )
+            if((ni = scmp(input+1, s+1)))
                break;
       }
       
@@ -537,7 +538,7 @@ static struct rxs_stemnode *CreateSTEM( struct rxs_command *rxc, LONG *resarray,
          
          /* Die Elemente selbst */
          
-         while( r = *subarray++ )
+         while((r = *subarray++))
          {
             if( !(new = new_stemnode(&first, &old)) )
             {
@@ -626,7 +627,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
       /* Msg an ARexx schicken, vielleicht existiert ein Skript */
       struct RexxMsg *rm;
       
-      if( rm = CreateRexxCommand(host, (char *) ARG0(rexxmsg), 0) )
+      if((rm = CreateRexxCommand(host, (char *) ARG0(rexxmsg), 0)))
       {
          /* Original-Msg merken */
          rm->rm_Args[15] = (STRPTR) rexxmsg;
@@ -806,7 +807,7 @@ void ARexxDispatch( struct RexxHost *host )
 {
    struct RexxMsg *rexxmsg;
 
-   while( rexxmsg = (struct RexxMsg *) GetMsg(host->port) )
+   while((rexxmsg = (struct RexxMsg *) GetMsg(host->port)))
    {
       if( (rexxmsg->rm_Action & RXCODEMASK) != RXCOMM )
       {

@@ -1329,6 +1329,7 @@ void MA_GetAddress(struct Mail **mlist)
       }
       DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
       if ((winnum = EA_Init(mode, NULL)) >= 0)
+      {
          if (mode == AET_USER)
          {
             setstring(G->EA[winnum]->GUI.ST_REALNAME, pe->RealName);
@@ -1353,6 +1354,7 @@ void MA_GetAddress(struct Mail **mlist)
                   DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(pe), MUIV_List_Insert_Bottom);
                }
             }
+      }
    }
 }
 
@@ -2001,7 +2003,7 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
 
    if (TR_OpenTCPIP())
    {
-      sscanf(yamversiondate, "%ld.%ld.%ld", &day, &mon, &year);
+      sscanf(yamversiondate, "%d.%d.%d", &day, &mon, &year);
       thisver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
       BusyText(GetStr(MSG_BusyGettingVerInfo), "");
       tf = OpenTempFile(NULL);
@@ -2009,7 +2011,7 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
       {
          if ((tf->FP = fopen(tf->Filename,"r")))
          {
-            fscanf(tf->FP, "%ld.%ld.%ld", &day, &mon, &year);
+            fscanf(tf->FP, "%d.%d.%d", &day, &mon, &year);
             GetLine(tf->FP, newver, SIZE_SMALL);
             currver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
             sprintf(buf, GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year < 78 ? 2000+year : 1900+year, yamversion, yamversiondate,
@@ -2193,7 +2195,7 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
          STRPTR addr;
 
          // lets choose the status icon for that mail
-         sprintf(array[0] = dispsta, "\033o[%ld]", entry->Status);
+         sprintf(array[0] = dispsta, "\033o[%d]", entry->Status);
 
          if (entry->Importance == 1)      strcat(dispsta, "\033o[12]");
          if (isCryptedMail(entry))        strcat(dispsta, "\033o[15]");
@@ -2218,7 +2220,7 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
          struct MUI_NListtree_TreeNode *tn;
 
          set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &MA_FindAddressHook);
-         if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE))
+         if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)))
          {
             addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
          }
@@ -2714,7 +2716,7 @@ void MA_MakeMAFormat(APTR lv)
    for (i = 0; i < MACOLNUM; i++) if (C->MessageCols & (1<<i))
    {
       if (first) first = FALSE; else strcat(format, " BAR,");
-      sprintf(&format[strlen(format)], "COL=%ld W=%ld", i, defwidth[i]);
+      sprintf(&format[strlen(format)], "COL=%d W=%d", i, defwidth[i]);
       if (i == 5) strcat(format, " P=\033r");
    }
    strcat(format, " BAR");

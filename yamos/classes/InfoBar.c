@@ -62,12 +62,12 @@ char *GetFolderInfo(struct Folder *folder)
 		{
 			switch (*++src)
 			{
-				case '%': strcpy(dst, "%");                     break;
-				case 'n': sprintf(dst, "%ld", folder->New);     break;
-				case 'u': sprintf(dst, "%ld", folder->Unread);  break;
-				case 't': sprintf(dst, "%ld", folder->Total);   break;
-				case 's': sprintf(dst, "%ld", folder->Sent);    break;
-				case 'd': sprintf(dst, "%ld", folder->Deleted); break;
+				case '%': strcpy(dst, "%");                    break;
+				case 'n': sprintf(dst, "%d", folder->New);     break;
+				case 'u': sprintf(dst, "%d", folder->Unread);  break;
+				case 't': sprintf(dst, "%d", folder->Total);   break;
+				case 's': sprintf(dst, "%d", folder->Sent);    break;
+				case 'd': sprintf(dst, "%d", folder->Deleted); break;
 			}
 		}
 		else
@@ -158,7 +158,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
 
 	data->actualFolder = folder;
 
-	if(!folder) return NULL;
+	if(!folder) return -1;
 
 	// set the name of the folder as the info text
 	set(data->TX_FOLDER, MUIA_Text_Contents, folder->Name);
@@ -205,6 +205,8 @@ DECLARE(SetFolder) // struct Folder *newFolder
 
 		DoMethod(obj, MUIM_Group_ExitChange);
 	}
+
+	return 0;
 }
 ///
 /// DECLARE(RefreshText)

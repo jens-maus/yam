@@ -94,7 +94,7 @@ APTR AB_GotoEntry(char *alias)
 
    if(!alias) return NULL;
 
-   if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, alias, MUIF_NONE))
+   if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindName, MUIV_NListtree_FindName_ListNode_Root, alias, MUIF_NONE)))
    {
       DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
       set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active, tn);
@@ -110,7 +110,7 @@ char *AB_ExpandBD(long date)
 {
    static char datestr[SIZE_SMALL];
    if (!date) return "";
-   sprintf(datestr, "%02d-%s-%ld", date/1000000, months[((date/10000)%100)-1], date%10000);
+   sprintf(datestr, "%02ld-%s-%ld", date/1000000, months[((date/10000)%100)-1], date%10000);
    return datestr;
 }
 
@@ -137,7 +137,7 @@ static STACKEXT BOOL AB_FindTodaysBirthdates(struct MUI_NListtree_TreeNode *list
    
   for(i=0;;i++)
   {
-    if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, 0, TAG_DONE))
+    if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIF_NONE)))
     {
       struct ABEntry *ab = tn->tn_User;
 
@@ -289,7 +289,7 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
    APTR string;
    struct MUI_NListtree_TreeNode *active;
 
-   if (active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+   if ((active = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
    {
       int winnum = G->AB->WrWin;
       struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
@@ -421,14 +421,14 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
            {
               char *p, *p2;
               memset(&addr, 0, sizeof(struct ABEntry));
-              if (p = strchr(buffer, ' ')) *p = 0;
+              if ((p = strchr(buffer, ' '))) *p = 0;
               stccpy(addr.Address, buffer, SIZE_ADDRESS);
               if (p)
               {
                  stccpy(addr.RealName, ++p, SIZE_REALNAME);
-                 if (p2 = strchr(p, ' ')) *p2 = 0;
+                 if ((p2 = strchr(p, ' '))) *p2 = 0;
               }
-              else if (p2 = strchr(p = buffer, '@')) *p2 = 0;
+              else if ((p2 = strchr(p = buffer, '@'))) *p2 = 0;
               stccpy(addr.Alias, p, SIZE_NAME);
               DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Insert, addr.Alias, &addr, parent[nested], sorted ?  MUIV_NListtree_Insert_PrevNode_Sorted : MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE);
            }
@@ -456,7 +456,7 @@ static STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUI_NListtree_TreeNode *li
    int i;
         
    for (i=0; ; i++)
-      if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel, TAG_DONE))
+      if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)))
       {
          ab = tn->tn_User;
          switch (ab->Type)
@@ -482,7 +482,7 @@ BOOL AB_SaveTree(char *fname)
 {
    FILE *fh;
 
-   if (fh = fopen(fname, "w"))
+   if ((fh = fopen(fname, "w")))
    {
       fputs("YAB4 - YAM Addressbook\n", fh);
       AB_SaveTreeNode(fh, MUIV_NListtree_GetEntry_ListNode_Root);
@@ -500,7 +500,7 @@ BOOL AB_SaveTree(char *fname)
 HOOKPROTONHNONP(AB_EditFunc, void)
 {
    struct MUI_NListtree_TreeNode *tn;
-   if (tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+   if ((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
    {
       struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
       int winnum = EA_Init(ab->Type, ab);
@@ -685,7 +685,7 @@ static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode *list, FILE *pr
    int i;
    
    for (i=0; ; i++)
-      if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel, TAG_DONE))
+      if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)))
       {
          struct ABEntry *ab = tn->tn_User;
          if (mode == 1) AB_PrintLongEntry(prt, ab); else AB_PrintShortEntry(prt, ab);
@@ -703,7 +703,7 @@ HOOKPROTONHNONP(AB_PrintABookFunc, void)
    int mode = MUI_Request(G->App, G->AB->GUI.WI, 0, GetStr(MSG_Print), GetStr(MSG_AB_PrintReqGads), GetStr(MSG_AB_PrintReq));
    if (!mode) return;
    if (C->PrinterCheck) if (!CheckPrinter()) return;
-   if (prt = fopen("PRT:", "w"))
+   if ((prt = fopen("PRT:", "w")))
    {
       Busy(GetStr(MSG_BusyPrintingAB), "", 0, 0);
       fprintf(prt, "%s\n", G->AB_Filename);
@@ -726,10 +726,10 @@ HOOKPROTONHNONP(AB_PrintFunc, void)
 {
    FILE *prt;
    struct MUI_NListtree_TreeNode *tn;
-   if (tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+   if ((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
    {
       if (C->PrinterCheck) if (!CheckPrinter()) return;
-      if (prt = fopen("PRT:", "w"))
+      if ((prt = fopen("PRT:", "w")))
       {
          struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
          set(G->App, MUIA_Application_Sleep, TRUE);
@@ -767,7 +767,7 @@ MakeHook(AB_DeleteHook, AB_DeleteFunc);
 HOOKPROTONHNONP(AB_DuplicateFunc, void)
 {
    struct MUI_NListtree_TreeNode *tn;
-   if (tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active))
+   if ((tn = (struct MUI_NListtree_TreeNode *)xget(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_Active)))
    {
       struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
       int winnum = EA_Init(ab->Type, NULL);
@@ -777,7 +777,7 @@ HOOKPROTONHNONP(AB_DuplicateFunc, void)
          int len;
          EA_Setup(winnum, ab);
          strcpy(buf, ab->Alias);
-         if (len = strlen(buf))
+         if ((len = strlen(buf)))
          {
             if (isdigit(buf[len-1])) buf[len-1]++;
             else if (len < SIZE_NAME-1) strcat(buf, "2");
@@ -799,7 +799,7 @@ BOOL STACKEXT AB_FindEntry(struct MUI_NListtree_TreeNode *list, char *pattern, e
    int i;
    
    for (i=0; ; i++)
-      if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, list, i, 0, TAG_DONE))
+      if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_GetEntry, list, i, MUIF_NONE)))
       {
          struct ABEntry *ab = tn->tn_User;
          if (ab->Type == AET_GROUP)
@@ -1026,13 +1026,13 @@ HOOKPROTONHNO(AB_LV_CmpFunc, long, struct MUIP_NListtree_CompareMessage *msg)
    {
       case 1: if (!(n1 = strrchr(ab1->RealName,' '))) n1 = ab1->RealName;
               if (!(n2 = strrchr(ab2->RealName,' '))) n2 = ab2->RealName;
-              if (cmp = Stricmp(n1, n2)) return cmp;
+              if ((cmp = Stricmp(n1, n2))) return cmp;
               break;
-      case 2: if (cmp = Stricmp(ab1->RealName, ab2->RealName)) return cmp;
+      case 2: if ((cmp = Stricmp(ab1->RealName, ab2->RealName))) return cmp;
               break;
-      case 3: if (cmp = Stricmp(ab1->Comment, ab2->Comment)) return cmp;
+      case 3: if ((cmp = Stricmp(ab1->Comment, ab2->Comment))) return cmp;
               break;
-      case 4: if (cmp = Stricmp(ab1->Address, ab2->Address)) return cmp;
+      case 4: if ((cmp = Stricmp(ab1->Address, ab2->Address))) return cmp;
               break;
    }
    return Stricmp(ab1->Alias, ab2->Alias);
@@ -1051,7 +1051,7 @@ void AB_MakeABFormat(APTR lv)
    for (i = 0; i < ABCOLNUM; i++) if (C->AddrbookCols & (1<<i))
    {
       if (first) first = FALSE; else strcat(format, " BAR,");
-      sprintf(&format[strlen(format)], "COL=%ld W=-1", i);
+      sprintf(&format[strlen(format)], "COL=%d W=-1", i);
    }
    set(lv, MUIA_NListtree_Format, format);
 }

@@ -150,7 +150,7 @@ void STACKEXT EA_AddMembers(Object *obj, struct MUI_NListtree_TreeNode *list)
    int i;
    
    for (i=0; ; i++)
-      if (tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel))
+      if ((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, list, i, MUIV_NListtree_GetEntry_Flag_SameLevel)))
          if (isFlagSet(tn->tn_Flags, TNF_LIST)) EA_AddMembers(obj, tn);
          else EA_AddSingleMember(obj, tn);
       else break;
@@ -246,7 +246,7 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
     if (excludemyself && ab == ab_found) return;
 
     if ((l = strlen(ab->Alias)) > SIZE_NAME-2) l = SIZE_NAME-2;
-    sprintf(&alias[l], "%ld", ++c);
+    sprintf(&alias[l], "%d", ++c);
   }
 
   // copy the modified string back
@@ -263,7 +263,7 @@ void EA_SetDefaultAlias(struct ABEntry *ab)
    memset(p, 0, SIZE_NAME);
    if (*ab->RealName)
    {
-      if (ln = strrchr(ab->RealName, ' '))
+      if ((ln = strrchr(ab->RealName, ' ')))
       {
          if (isAlNum(ab->RealName[0])) { *p++ = ab->RealName[0]; *p++ = '_'; }
          ln++;
@@ -405,7 +405,7 @@ HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
    if (*addr || *name)
    {
       strcpy(dbfile, name);
-      if (p = strrchr(dbfile, ' ')) { *p = 0; sprintf(newname, "%s, %s", p+1, dbfile); }
+      if ((p = strrchr(dbfile, ' '))) { *p = 0; sprintf(newname, "%s, %s", p+1, dbfile); }
       else strcpy(newname, name);
       strmfp(dbfile, C->TempDir, "gallery.db");
       if (TR_OpenTCPIP())

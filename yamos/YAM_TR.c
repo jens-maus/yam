@@ -257,12 +257,12 @@ BOOL TR_IsOnline(void)
 
    if (C->IsOnlineCheck)
    {
-      if (MiamiBase = OpenLibrary(MIAMINAME, 10))
+      if ((MiamiBase = OpenLibrary(MIAMINAME, 10)))
       {
          isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL); CloseLibrary(MiamiBase);
          return isonline;
       }
-      else if (GenesisBase = OpenLibrary("genesis.library", 1))
+      else if ((GenesisBase = OpenLibrary("genesis.library", 1)))
       {
          isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0); CloseLibrary(GenesisBase);
          return isonline;
@@ -483,9 +483,9 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
       if (url[strlen(url)-1] != '/') strcat(url, "/");
       strcat(url, url2);
    }
-   if (path = strchr(url,'/')) *path++ = 0; else path = "";
+   if ((path = strchr(url,'/'))) *path++ = 0; else path = "";
    strcpy(host, noproxy ? url : C->ProxyServer);
-   if (bufptr = strchr(host, ':')) { *bufptr++ = 0; hport = atoi(bufptr); }
+   if ((bufptr = strchr(host, ':'))) { *bufptr++ = 0; hport = atoi(bufptr); }
    else hport = noproxy ? 80 : 8080;
    if (!TR_Connect(host, hport))
    {
@@ -500,7 +500,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
       sprintf(&buf[strlen(buf)], "From: %s\r\nUser-Agent: %s\r\n\r\n", BuildAddrName(C->EmailAddress, C->RealName), yamversion);
 */
       if (noproxy) sprintf(buf, "GET /%s HTTP/1.0\r\nHost: %s\r\n", path, host);
-      else if (port = strchr(url, ':'))
+      else if ((port = strchr(url, ':')))
       {
          *port++ = 0;
          sprintf(buf, "GET http://%s:%s/%s HTTP/1.0\r\nHost: %s\r\n", url, port, path, url);
@@ -512,7 +512,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
          len = TR_RecvDat(buf);
          if (atoi(&buf[9]) == 200)
          {
-            if (bufptr = strstr(buf, "\r\n")) bufptr += 2;
+            if ((bufptr = strstr(buf, "\r\n"))) bufptr += 2;
             while (!G->Error)
             {
                for (; *bufptr; bufptr++)
@@ -526,7 +526,7 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
                if ((len = TR_RecvDat(buf)) <= 0) break;
                bufptr = buf;
             }
-            if (out = fopen(filename, "w"))
+            if ((out = fopen(filename, "w")))
             {
                ++bufptr;
                fwrite(bufptr, (size_t)(len-(bufptr-buf)), 1, out);
@@ -599,12 +599,12 @@ static int TR_ConnectPOP(int guilevel)
 
    // If the hostname has a explicit :xxxxx port statement at the end we
    // take this one, even if its not needed anymore.
-   if (p = strchr(host, ':')) { *p = 0; port = atoi(++p); }
+   if ((p = strchr(host, ':'))) { *p = 0; port = atoi(++p); }
 
    BusyText(GetStr(MSG_TR_MailTransferFrom), host);
    TR_SetWinTitle(TRUE, host);
 
-   if (err = TR_Connect(host, port))
+   if ((err = TR_Connect(host, port)))
    {
       if (guilevel == POP_USER) switch (err)
       {
@@ -687,10 +687,10 @@ static int TR_ConnectPOP(int guilevel)
       UBYTE digest[16];
       int i, j;
 
-      if (p = strchr(welcomemsg, '<'))
+      if ((p = strchr(welcomemsg, '<')))
       {
          strcpy(buf, p);
-         if (p = strchr(buf, '>')) p[1] = 0;
+         if ((p = strchr(buf, '>'))) p[1] = 0;
       }
       else ER_NewError(GetStr(MSG_ER_NoAPOP), NULL, NULL);
       strcat(buf, passwd);
@@ -715,7 +715,7 @@ static int TR_ConnectPOP(int guilevel)
 
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_GetStats));
    if (!TR_SendPopCmd(buf, "STAT", NULL, POPCMD_WAITEOL)) { BusyEnd; return -1; }
-   sscanf(&buf[4], "%ld", &msgs);
+   sscanf(&buf[4], "%d", &msgs);
    if (msgs) AppendLogVerbose(31, GetStr(MSG_LOG_ConnectPOP), C->P3[pop]->User, host, (void *)msgs, "");
 
    BusyEnd;
@@ -745,7 +745,7 @@ static void TR_AddMessageHeader(int *count, int size, char *tfname)
 {
    struct ExtendedMail *email;
 
-   if (email = MA_ExamineMail((struct Folder *)-1, tfname, NULL, FALSE))
+   if ((email = MA_ExamineMail((struct Folder *)-1, tfname, NULL, FALSE)))
    {
       struct Mail *mail = malloc(sizeof(struct Mail));
       if (mail)
@@ -778,7 +778,7 @@ BOOL TR_GetMessageList_IMPORT(FILE *fh)
    while (fgets(buffer, SIZE_LINE, fh))
    {
       if (f || body) size += strlen(buffer);
-      if (ptr = strpbrk(buffer, "\r\n")) *ptr = 0;
+      if ((ptr = strpbrk(buffer, "\r\n"))) *ptr = 0;
       if (!f && !strncmp(buffer, "From ", 5))
       {
          if (body)
@@ -826,8 +826,8 @@ static BOOL TR_GetMessageList_GET(void)
       struct Mail *new;
 
       G->TR->List = NULL;
-      if (bufptr = strstr(buf, "\r\n")) bufptr += 2;
-      else if (TR_RecvDat(buf) > 0) if (bufptr = strstr(buf, "\r\n")) bufptr += 2;
+      if ((bufptr = strstr(buf, "\r\n"))) bufptr += 2;
+      else if (TR_RecvDat(buf) > 0) if ((bufptr = strstr(buf, "\r\n"))) bufptr += 2;
       if (!bufptr) return FALSE;
       while (!G->Error)
       {
@@ -837,8 +837,8 @@ static BOOL TR_GetMessageList_GET(void)
             if (*bufptr != '\n') continue;
             line[l] = 0; l = 0;
             if (line[0] == '.' && line[1] == '\n') { done = TRUE; break; }
-            sscanf(line, "%ld %ld", &index, &size);
-            if (index) if (new = calloc(1, sizeof(struct Mail)))
+            sscanf(line, "%d %d", &index, &size);
+            if (index) if ((new = calloc(1, sizeof(struct Mail))))
             {
                static const int mode2status[16] = { 1,1,3,3,1,1,3,3,0,1,0,3,0,1,0,3 };
                new->Index = index; new->Size = size; new->Folder = NULL;
@@ -864,7 +864,7 @@ static BOOL TR_GetMessageList_GET(void)
 static void TR_AppendUIDL(char *uidl)
 {
    FILE *fh;
-   if (fh = fopen(CreateFilename(".uidl"), "a"))
+   if ((fh = fopen(CreateFilename(".uidl"), "a")))
    {
       fprintf(fh, "%s\n", uidl);
       fclose(fh);
@@ -894,8 +894,8 @@ static char *TR_GetUIDLonDisk(void)
    int size;
 
    if ((size = FileSize(file)) > 0)
-      if (text = calloc(size+1,1))
-         if (fh = fopen(file, "r"))
+      if ((text = calloc(size+1,1)))
+         if ((fh = fopen(file, "r")))
          {
             fread(text, 1, size, fh);
             fclose(fh);
@@ -916,7 +916,7 @@ static BOOL TR_GetUIDLonServer(void)
       char  uidl[SIZE_DEFAULT+SIZE_HOST], line[SIZE_DEFAULT], *bufptr;
       BOOL done = FALSE;
 
-      if (bufptr = strstr(buf, "\r\n")) bufptr += 2;
+      if ((bufptr = strstr(buf, "\r\n"))) bufptr += 2;
       while (!G->Error)
       {
          for (; *bufptr; bufptr++)
@@ -925,7 +925,7 @@ static BOOL TR_GetUIDLonServer(void)
             if (*bufptr != '\n') continue;
             line[l] = 0; l = 0;
             if (line[0] == '.' && line[1] == '\n') { done = TRUE; break; }
-            sscanf(line, "%ld %s", &num, uidl);
+            sscanf(line, "%d %s", &num, uidl);
             strcat(uidl, "@"); strcat(uidl, C->P3[G->TR->POP_Nr]->Server);
             for (mail = G->TR->List; mail; mail = mail->Next)
                if (mail->Index == num) { mail->UIDL = AllocCopy(uidl, strlen(uidl)+1); break; }
@@ -971,20 +971,20 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
    if (!*mail->From.Address)
    {
       char buf[SIZE_LINE], cmdbuf[SIZE_SMALL], *tfname = "yamTOP.tmp";
-      sprintf(cmdbuf, "%ld 1", mail->Index);
+      sprintf(cmdbuf, "%d 1", mail->Index);
       if (TR_SendPopCmd(buf, "TOP", cmdbuf, POPCMD_NOERROR))
       {
          char fname[SIZE_PATHFILE];
          FILE *f;
          strmfp(fname, C->TempDir, tfname);
-         if (f = fopen(fname, "w"))
+         if ((f = fopen(fname, "w")))
          {
             struct ExtendedMail *email;
             int l = 0;
             char line[SIZE_LINE], *bufptr;
             BOOL done = FALSE;
 
-            if (bufptr = strstr(buf, "\r\n")) bufptr += 2;
+            if ((bufptr = strstr(buf, "\r\n"))) bufptr += 2;
             while (!G->Error && !G->TR->Abort)
             {
                for (; *bufptr; bufptr++)
@@ -1005,7 +1005,7 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
                bufptr = buf;
             }
             fclose(f);
-            if (email = MA_ExamineMail(NULL, tfname, NULL, TRUE))
+            if ((email = MA_ExamineMail(NULL, tfname, NULL, TRUE)))
             {
                mail->From    = email->Mail.From;
                mail->To      = email->Mail.To;
@@ -1703,7 +1703,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
       TR_SetWinTitle(FALSE, FilePart(fname));
       TR_TransStat_Init(&ts);
       TR_TransStat_Start(&ts);
-      if (fh = fopen(fname, append ? "a" : "w"))
+      if ((fh = fopen(fname, append ? "a" : "w")))
       {
          success = TRUE;
          for (mail = G->TR->List; mail && !G->TR->Abort; mail = mail->Next)
@@ -1712,7 +1712,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
             TR_TransStat_NextMsg(&ts, mail->Index, -1, mail->Size, GetStr(MSG_TR_Exporting));
             if (StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
             {
-               if (mfh = fopen(fullfile, "r"))
+               if ((mfh = fopen(fullfile, "r")))
                {
                   fprintf(fh, "From %s %s", mail->From.Address, DateStamp2String(&mail->Date, DSS_UNIXDATE));
                   while (fgets(buf, SIZE_LINE, mfh) && !G->TR->Abort)
@@ -1746,7 +1746,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
    char *mf;
    FILE *f;
 
-   if (f = fopen(mf = GetMailFile(NULL, outfolder, mail), "r"))
+   if ((f = fopen(mf = GetMailFile(NULL, outfolder, mail), "r")))
    {
       char buf[SIZE_LINE];
       sprintf(buf, "FROM:<%s>", C->EmailAddress);
@@ -1785,7 +1785,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 {
                   char *p, sendbuf[SIZE_LINE+2];
                   int sb = strlen(buf);
-                  if (p = strpbrk(buf, "\r\n")) *p = 0;
+                  if ((p = strpbrk(buf, "\r\n"))) *p = 0;
                   if (!*buf && !inbody)
                   {
                      inbody = TRUE; infield = FALSE;
@@ -1840,7 +1840,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
    for (c = i = 0; i < (int)*mlist; i++)
    {
       mail = mlist[i+2];
-      if (mail->Status == STATUS_WFS || mail->Status == STATUS_ERR) if (new = malloc(sizeof(struct Mail)))
+      if (mail->Status == STATUS_WFS || mail->Status == STATUS_ERR) if ((new = malloc(sizeof(struct Mail))))
       {
          *new = *mail;
          new->Index = ++c;
@@ -1861,7 +1861,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
       // If the hostname has a explicit :xxxxx port statement at the end we
       // take this one, even if its not needed anymore.
-      if (p = strchr(host, ':')) { *p = 0; port = atoi(++p); }
+      if ((p = strchr(host, ':'))) { *p = 0; port = atoi(++p); }
 
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Connecting));
 
@@ -1963,7 +1963,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
    if (ts.Msgs_Tot)
    {
       TR_TransStat_Start(&ts);
-      if (fh = fopen(G->TR->ImportFile, "r"))
+      if ((fh = fopen(G->TR->ImportFile, "r")))
       {
          struct ExtendedMail *email;
          struct Mail *mail = G->TR->List;
@@ -1985,7 +1985,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
                   if (f)
                   {
                      fclose(f); f = NULL;
-                     if (email = MA_ExamineMail(folder, mfile, stat, FALSE))
+                     if ((email = MA_ExamineMail(folder, mfile, stat, FALSE)))
                      {
                         AddMailToList((struct Mail *)email, folder);
                         MA_FreeEMailStruct(email);
@@ -2011,7 +2011,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
          if (body && f)
          {
             fclose(f);
-            if (email = MA_ExamineMail(folder, mfile, stat, FALSE))
+            if ((email = MA_ExamineMail(folder, mfile, stat, FALSE)))
             {
                AddMailToList((struct Mail *)email, folder);
                MA_FreeEMailStruct(email);
@@ -2052,16 +2052,16 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
    FILE *f;
 
    MyStrCpy(msgfile, MA_NewMailFile(infolder, mfile, 0));
-   if (f = fopen(msgfile, "w"))
+   if ((f = fopen(msgfile, "w")))
    {
-      sprintf(msgnum, "%ld", number);
+      sprintf(msgnum, "%d", number);
       if (TR_SendPopCmd(buf, "RETR", msgnum, 0))
       {
          int l = 0;
          char line[SIZE_LINE], *bufptr;
          BOOL done = FALSE;
 
-         if (bufptr = strstr(buf, "\r\n")) bufptr += 2;
+         if ((bufptr = strstr(buf, "\r\n"))) bufptr += 2;
          while (!G->Error && !G->TR->Abort)
          {
             for (; *bufptr; bufptr++)
@@ -2077,8 +2077,10 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
                TR_TransStat_Update(ts, l+1);
                line[l] = 0; l = 0;
                if (line[0] == '.')
+               {
                   if (line[1] == '\n') { done = TRUE; break; }
                   else l = 1;  /* RFC 1725 */
+               }
                if (fputs(&line[l], f) == EOF) { ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), mfile, NULL); break; }
                l = 0;
             }
@@ -2092,7 +2094,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
       if (!G->TR->Abort && !G->Error)
       {
          struct ExtendedMail *mail;
-         if (mail = MA_ExamineMail(infolder, mfile, " ", FALSE))
+         if ((mail = MA_ExamineMail(infolder, mfile, " ", FALSE)))
          {
             struct Mail *new = AddMailToList((struct Mail *)mail, infolder);
             if (FO_GetCurrentFolder() == infolder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
@@ -2113,7 +2115,7 @@ static void TR_DeleteMessage(int number)
 {
    char msgnum[SIZE_SMALL], buf[SIZE_LINE];
 
-   sprintf(msgnum, "%ld", number);
+   sprintf(msgnum, "%d", number);
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_DeletingServerMail));
    if (TR_SendPopCmd(buf, "DELE", msgnum, POPCMD_WAITEOL)) G->TR->Stats.Deleted++;
 }
@@ -2238,7 +2240,7 @@ HOOKPROTO(TR_LV_DspFunc, long, char **array, struct Mail *entry)
    {
       static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL], dispdate[32];
       struct Person *pe = &entry->From;
-      sprintf(array[0] = dispsta, "%3ld ", entry->Index);
+      sprintf(array[0] = dispsta, "%3d ", entry->Index);
       if (entry->Status & 1) strcat(dispsta, "\033o[10]");
       if (entry->Status & 2) strcat(dispsta, "\033o[9]");
       if (entry->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);

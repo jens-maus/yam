@@ -139,7 +139,7 @@ static APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
 {
    APTR lv, po;
 
-   if (po = PopobjectObject,
+   if ((po = PopobjectObject,
       MUIA_Popstring_String, *text = TextObject, TextFrame,
          MUIA_Background, MUII_TextBack,
          MUIA_FixWidthTxt, "MMMM",
@@ -154,7 +154,7 @@ static APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
             MUIA_List_DestructHook, MUIV_List_DestructHook_String,
          End,
       End,
-   End)
+   End))
    {
       struct XpkPackerList xpl;
       if (XpkBase) if (!XpkQueryTags(XPK_PackersQuery, &xpl, TAG_DONE))
@@ -195,7 +195,7 @@ static APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
 {
    APTR lv, po;
 
-   if (po = PopobjectObject,
+   if ((po = PopobjectObject,
       MUIA_Popstring_String, *string = MakeString(SIZE_PATHFILE, shortcut),
       MUIA_Popstring_Button, PopButton(MUII_PopUp),
       MUIA_Popobject_ObjStrHook, &PO_HandleTransHook,
@@ -209,7 +209,7 @@ static APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
             MUIA_List_DestructHook, &GeneralDesHook,
          End,
       End,
-   End)
+   End))
    {
       char dir[SIZE_PATH], file[SIZE_PATHFILE];
       struct FileInfoBlock *fib;
@@ -218,7 +218,7 @@ static APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
       strmfp(dir, G->ProgDir, "charsets");
       if((fib = AllocDosObject(DOS_FIB,NULL)))
       {
-        if(lock = Lock(dir, ACCESS_READ))
+        if((lock = Lock(dir, ACCESS_READ)))
         {
           if(Examine(lock, fib))
           {
@@ -267,7 +267,7 @@ static APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
 {
    APTR lv, po;
 
-   if (po = PopobjectObject,
+   if ((po = PopobjectObject,
       MUIA_Popstring_String, *string = MakeString(size, shortcut),
       MUIA_Popstring_Button, PopButton(MUII_PopUp),
       MUIA_Popobject_ObjStrHook, &PO_HandleVarHook,
@@ -279,7 +279,7 @@ static APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
             MUIA_List_AdjustHeight, TRUE,
          End,
       End,
-   End)
+   End))
    {
       switch (mode)
       {
@@ -328,7 +328,7 @@ static APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, ch
    cytext[1] = GetStr(MSG_CO_PhraseIntro);
    cytext[2] = GetStr(MSG_CO_PhraseClose);
    cytext[3] = NULL;
-   if (grp = HGroup,
+   if ((grp = HGroup,
          MUIA_Group_HorizSpacing, 1,
          Child, cycl = CycleObject,
             MUIA_CycleChain, 1,
@@ -343,7 +343,7 @@ static APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, ch
             Child, MakeVarPop(bye, 1, SIZE_INTRO, ""),
          End,
          MUIA_ShortHelp, help,
-      End)
+      End))
    {
       DoMethod(cycl, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, pgrp, 3, MUIM_Set, MUIA_Group_ActivePage, MUIV_TriggerValue);
    }
@@ -408,7 +408,7 @@ APTR CO_Page0(struct CO_ClassData *data)
    tzone[23] = GetStr(MSG_CO_TZone11);
    tzone[24] = GetStr(MSG_CO_TZone12);
    tzone[25] = NULL;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO00",
          Child, HVSpace,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_MinConfig)),
@@ -426,7 +426,7 @@ APTR CO_Page0(struct CO_ClassData *data)
             Child, MakeCheckGroup((Object **)&data->GUI.CH_DLSAVING, GetStr(MSG_CO_DaylightSaving)),
          End,
          Child, HVSpace,
-      End)
+      End))
    {
       SetHelp(data->GUI.ST_REALNAME  ,MSG_HELP_CO_ST_REALNAME  );
       SetHelp(data->GUI.ST_EMAIL     ,MSG_HELP_CO_ST_EMAIL     );
@@ -448,7 +448,7 @@ APTR CO_Page1(struct CO_ClassData *data)
 {
    APTR grp, authgrp;
 
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO01",
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_SendMail)),
             Child, HGroup,
@@ -511,7 +511,7 @@ APTR CO_Page1(struct CO_ClassData *data)
                End,
             End,
          End,
-      End)
+      End))
    {
       SetHelp(data->GUI.ST_SMTPHOST    ,MSG_HELP_CO_ST_SMTPHOST     );
       SetHelp(data->GUI.ST_SMTPPORT    ,MSG_HELP_CO_ST_SMTPPORT     );
@@ -568,7 +568,7 @@ APTR CO_Page2(struct CO_ClassData *data)
    trwopt[1] = GetStr(MSG_CO_TWAuto);
    trwopt[2] = GetStr(MSG_CO_TWAlways);
    trwopt[3] = NULL;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO02",
          Child, HVSpace,
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_Download)),
@@ -631,7 +631,7 @@ APTR CO_Page2(struct CO_ClassData *data)
             End,
          End,
          Child, HVSpace,
-      End)
+      End))
    {
       SetHelp(data->GUI.CH_AVOIDDUP  ,MSG_HELP_CO_CH_AVOIDDUP  );
       SetHelp(data->GUI.CY_TRANSWIN  ,MSG_HELP_CO_CH_TRANSWIN  );
@@ -668,7 +668,7 @@ APTR CO_Page3(struct CO_ClassData *data)
    rtitles[1] = GetStr(MSG_CO_Comparison);
    rtitles[2] = GetStr(MSG_CO_Action);
    rtitles[3] = NULL;
-   if (grp = HGroup,
+   if ((grp = HGroup,
          MUIA_HelpNode, "CO03",
          MUIA_Background, MUII_GroupBack,
          Child, VGroup,
@@ -763,7 +763,7 @@ APTR CO_Page3(struct CO_ClassData *data)
                Child, HVSpace,
             End,
          End,
-      End)
+      End))
    {
       int i, j;
       SetHelp(data->GUI.LV_RULES     ,MSG_HELP_CO_LV_RULES     );
@@ -858,7 +858,7 @@ APTR CO_Page4(struct CO_ClassData *data)
    slopt[2] = GetStr(MSG_CO_SLBar);
    slopt[3] = GetStr(MSG_CO_SLSkip);
    slopt[4] = NULL;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO04",
          Child, ColGroup(3), GroupFrameT(GetStr(MSG_CO_HeaderLayout)),
             Child, Label2(GetStr(MSG_CO_Header)),
@@ -890,7 +890,7 @@ APTR CO_Page4(struct CO_ClassData *data)
             End,
          End,
          Child, HVSpace,
-      End)
+      End))
    {
       set(data->GUI.ST_HEADERS, MUIA_Disabled, TRUE);
       SetHelp(data->GUI.CY_HEADER    ,MSG_HELP_CO_CY_HEADER    );
@@ -924,7 +924,7 @@ APTR CO_Page5(struct CO_ClassData *data)
    wrapmode[1] = GetStr(MSG_CO_EWAsYouType);
    wrapmode[2] = GetStr(MSG_CO_EWBeforeSend);
    wrapmode[3] = NULL;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO05",
          Child, HVSpace,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_MessageHeader)),
@@ -972,7 +972,7 @@ APTR CO_Page5(struct CO_ClassData *data)
             End,
          End,
          Child, HVSpace,
-      End)
+      End))
    {
       SetHelp(data->GUI.ST_REPLYTO      ,MSG_HELP_CO_ST_REPLYTO     );
       SetHelp(data->GUI.ST_ORGAN        ,MSG_HELP_CO_ST_ORGAN       );
@@ -996,7 +996,7 @@ APTR CO_Page5(struct CO_ClassData *data)
 APTR CO_Page6(struct CO_ClassData *data)
 {
    APTR grp;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO06",
          Child, HVSpace,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_Forwarding)),
@@ -1028,7 +1028,7 @@ APTR CO_Page6(struct CO_ClassData *data)
             End,
          End,
          Child, HVSpace,
-      End)
+      End))
    {
       SetHelp(data->GUI.ST_FWDSTART    ,MSG_HELP_CO_ST_FWDSTART  );
       SetHelp(data->GUI.ST_FWDEND      ,MSG_HELP_CO_ST_FWDEND    );
@@ -1056,7 +1056,7 @@ APTR CO_Page7(struct CO_ClassData *data)
    signat[1] = GetStr(MSG_CO_AltSig1);
    signat[2] = GetStr(MSG_CO_AltSig2);
    signat[3] = NULL;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO07",
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_Signature)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_USESIG, GetStr(MSG_CO_UseSig)),
@@ -1091,7 +1091,7 @@ APTR CO_Page7(struct CO_ClassData *data)
                Child, data->GUI.ST_TAGSEP = MakeString(SIZE_SMALL,GetStr(MSG_CO_TaglineSep)),
             End,
          End,
-      End)
+      End))
    {
       SetHelp(data->GUI.CY_SIGNAT    ,MSG_HELP_CO_CY_SIGNAT   );
       SetHelp(data->GUI.BT_SIGEDIT   ,MSG_HELP_CO_BT_EDITSIG  );
@@ -1128,7 +1128,7 @@ APTR CO_Page8(struct CO_ClassData *data)
    infob[3] = GetStr(MSG_CO_INFOBARPOS04);
    infob[4] = NULL;
 
-   if (grp =  VGroup,
+   if ((grp =  VGroup,
          MUIA_HelpNode, "CO08",
          Child, HGroup, GroupFrameT(GetStr(MSG_CO_FIELDLISTCFG)),
            Child, ColGroup(2), GroupFrame,
@@ -1186,7 +1186,7 @@ APTR CO_Page8(struct CO_ClassData *data)
            Child, MakeVarPop(&data->GUI.ST_INFOBARTXT, 4, SIZE_DEFAULT, ""),
          End,
          Child, HVSpace,
-      End)
+      End))
    {
       SetHelp(data->GUI.CH_FIXFLIST,MSG_HELP_CO_CH_FIXFLIST);
       SetHelp(data->GUI.CH_BEAT    ,MSG_HELP_CO_CH_BEAT);
@@ -1208,7 +1208,7 @@ APTR CO_Page9(struct CO_ClassData *data)
    logfmode[1] = GetStr(MSG_CO_LogNormal);
    logfmode[2] = GetStr(MSG_CO_LogVerbose);
    logfmode[3] = NULL;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO09",
          Child, HVSpace,
          Child, ColGroup(2), GroupFrameT("PGP"),
@@ -1257,7 +1257,7 @@ APTR CO_Page9(struct CO_ClassData *data)
             End,
          End,
          Child, HVSpace,
-      End)
+      End))
    {
       SetHelp(data->GUI.ST_PGPCMD    ,MSG_HELP_CO_ST_PGPCMD   );
       SetHelp(data->GUI.ST_MYPGPID   ,MSG_HELP_CO_ST_MYPGPID  );
@@ -1277,7 +1277,7 @@ APTR CO_Page9(struct CO_ClassData *data)
 APTR CO_Page10(struct CO_ClassData *data)
 {
    APTR grp;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO10",
          Child, HVSpace,
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_OnStartup)),
@@ -1295,7 +1295,7 @@ APTR CO_Page10(struct CO_ClassData *data)
             Child, MakeCheckGroup((Object **)&data->GUI.CH_REMOVEQUIT, GetStr(MSG_CO_RemoveDel)),
          End,
          Child, HVSpace,
-      End)
+      End))
    {
       SetHelp(data->GUI.CH_LOADALL    ,MSG_HELP_CO_CH_LOADALL   );
       SetHelp(data->GUI.CH_MARKNEW    ,MSG_HELP_CO_CH_MARKNEW   );
@@ -1316,7 +1316,7 @@ APTR CO_Page10(struct CO_ClassData *data)
 APTR CO_Page11(struct CO_ClassData *data)
 {
    APTR grp;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO11",
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_MimeViewers)),
             Child, HGroup,
@@ -1373,7 +1373,7 @@ APTR CO_Page11(struct CO_ClassData *data)
                ASLFR_DrawersOnly, TRUE,
             End,
          End,
-      End)
+      End))
    {
       SetHelp(data->GUI.ST_CTYPE     ,MSG_HELP_CO_ST_CTYPE     );
       SetHelp(data->GUI.ST_EXTENS    ,MSG_HELP_CO_ST_EXTENS    );
@@ -1408,7 +1408,7 @@ APTR CO_Page12(struct CO_ClassData *data)
    atab[3] = GetStr(MSG_CO_ATABinfo);
    atab[4] = GetStr(MSG_CO_ATABalways);
    atab[5] = NULL;
-   if (grp = VGroup,
+   if ((grp = VGroup,
          MUIA_HelpNode, "CO12",
          Child, HGroup, GroupFrameT(GetStr(MSG_Columns)),
             Child, HVSpace,
@@ -1456,7 +1456,7 @@ APTR CO_Page12(struct CO_ClassData *data)
             Child, data->GUI.ST_PROXY = MakeString(SIZE_HOST,GetStr(MSG_CO_ProxyServer)),
          End,
          Child, HVSpace,
-      End)
+      End))
    {
       SetHelp(data->GUI.ST_GALLDIR   ,MSG_HELP_CO_ST_GALLDIR   );
       SetHelp(data->GUI.ST_PHOTOURL  ,MSG_HELP_CO_ST_PHOTOURL  );
@@ -1477,7 +1477,7 @@ APTR CO_Page13(struct CO_ClassData *data)
      "ARexx", "AmigaDOS", NULL
    };
 
-   if (grp = VGroup, GroupFrameT(GetStr(MSG_MA_Scripts)),
+   if ((grp = VGroup, GroupFrameT(GetStr(MSG_MA_Scripts)),
          MUIA_HelpNode, "CO13",
          Child, data->GUI.LV_REXX = ListviewObject,
             MUIA_CycleChain, 1,
@@ -1503,7 +1503,7 @@ APTR CO_Page13(struct CO_ClassData *data)
             Child, MakeCheckGroup((Object **)&data->GUI.CH_CONSOLE, GetStr(MSG_CO_OpenConsole)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_WAITTERM, GetStr(MSG_CO_WaitTerm)),
          End,
-      End)
+      End))
    {
       int i;
       for (i = 1; i <= MAXRX; i++) DoMethod(data->GUI.LV_REXX, MUIM_List_InsertSingle, i, MUIV_List_Insert_Bottom);
@@ -1536,7 +1536,7 @@ APTR CO_Page14(struct CO_ClassData *data)
    empty[0] = empty[1] = empty[2] = empty[3] = "";
    empty[4] = NULL;
 
-   if (grp = ScrollgroupObject,
+   if ((grp = ScrollgroupObject,
          MUIA_HelpNode, "CO14",
          MUIA_Scrollgroup_FreeHoriz, FALSE,
          MUIA_Scrollgroup_Contents, VGroupV,
@@ -1607,7 +1607,7 @@ APTR CO_Page14(struct CO_ClassData *data)
             End,
             Child, HVSpace,
          End,
-      End)
+      End))
    {
       SetHelp(data->GUI.ST_TEMPDIR   ,MSG_HELP_CO_ST_TEMPDIR   );
       SetHelp(data->GUI.ST_APPX      ,MSG_HELP_CO_ST_APP       );

@@ -235,7 +235,7 @@ void from64txt(char *src, char *dst, struct TranslationTable *tt)
    int c1, c2, c3, c4;
    UBYTE c;
 
-   while (c1 = (int)*src++)
+   while ((c1 = (int)*src++))
    {
       if (ISpace((char)c1)) continue;
       do { c2 = (int)*src++; } while (c2 && ISpace((char)c2));
@@ -393,7 +393,7 @@ void fromqptxt(char *src, char *dst, struct TranslationTable *tt)
    unsigned int c1, c2;
    UBYTE c;
 
-   while (c1 = *src++) 
+   while ((c1 = *src++))
       if (c1 == '=') 
       {
          c1 = *src++; c2 = *src++;

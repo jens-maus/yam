@@ -79,14 +79,14 @@ static void US_SaveUsers(void)
 
    for (i = 0; i < G->Users.Num; i++) if (!G->Users.User[i].Limited) break;
    if (i == G->Users.Num) G->Users.User[0].Limited = FALSE;
-   if (fh = fopen(fname, "w"))
+   if ((fh = fopen(fname, "w")))
    {
       int i;
       fputs("YUS2 - YAM Users\n", fh);
       for (i = 0; i < G->Users.Num; i++)
       {
          struct User *u = &G->Users.User[i];
-         if (u->Name) fprintf(fh, "@USER %s\n%s\n%ld\n%s\n@ENDUSER\n", u->Name, u->MailDir, u->Limited*4+u->UseAddr*2+u->UseDict, Encrypt(u->Password));
+         if (u->Name) fprintf(fh, "@USER %s\n%s\n%d\n%s\n@ENDUSER\n", u->Name, u->MailDir, u->Limited*4+u->UseAddr*2+u->UseDict, Encrypt(u->Password));
       }
       fclose(fh);
       AppendLogVerbose(62, GetStr(MSG_LOG_SavingUsers), "", "", "", "");
@@ -104,7 +104,7 @@ static void US_LoadUsers(void)
    char buffer[SIZE_LARGE];
    memset(&G->Users, 0, sizeof(struct Users));
    G->Users.Num = 0;
-   if (fh = fopen("PROGDIR:.users", "r"))
+   if ((fh = fopen("PROGDIR:.users", "r")))
    {
       BOOL hasmanager = FALSE;
       GetLine(fh, buffer, SIZE_LARGE);
@@ -239,8 +239,10 @@ BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
    strmfp(G->AB_Filename, u->UseAddr ? G->ProgDir : G->MA_MailDir, ".addressbook");
    strmfp(G->DI_Filename, u->UseDict ? G->ProgDir : G->MA_MailDir, ".glossary");
    if (u->Password[0])
+   {
       if (password) loggedin = (!strcmp(password, u->Password) || *password == '\01');
       else loggedin = US_PromptForPassword(u, G->AY_Win);
+   }
    return loggedin;
 }
 
@@ -298,15 +300,21 @@ static BOOL US_SaveUserList(void)
       DoMethod(G->US->GUI.LV_USERS, MUIM_NList_GetEntry, i, &u);
       G->Users.User[i] = *u;
       if (*u->Name)
+      {
          if (*u->MailDir)
+         {
             if (FileType(u->MailDir) != 2)
             {
                if (MUI_Request(G->App, G->US->GUI.WI, 0, GetStr(MSG_MA_MUsers), GetStr(MSG_YesNoReq), GetStr(MSG_US_ErrorNoDirectory)))
+               {
                   if (CreateDirectory(u->MailDir)) valid = TRUE;
                   else ER_NewError(GetStr(MSG_ER_CantCreateDir), u->MailDir, NULL);
+               }
             }
             else valid = TRUE;
+         }
          else ER_NewError(GetStr(MSG_ER_MissingDirectory), NULL, NULL);
+      }
       else ER_NewError(GetStr(MSG_ER_MissingName), NULL, NULL);
       if (!valid)
       {

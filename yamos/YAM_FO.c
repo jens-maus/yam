@@ -82,7 +82,7 @@ struct Folder **FO_CreateList(void)
 
    max = DoMethod(lv, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll);
 
-   if (flist = calloc(max+1, sizeof(struct Folder *)))
+   if ((flist = calloc(max+1, sizeof(struct Folder *))))
    {
       flist[0] = (struct Folder *)max;
       for (i = 0; i < max; i++)
@@ -152,7 +152,7 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
    char *p = arg;
    BOOL numeric = TRUE;
 
-   if (flist = FO_CreateList())
+   if ((flist = FO_CreateList()))
    {
       // lets find out if the user wants to have the folder identified by it`s position
       while (*p) if (!isdigit((int)*p++)) numeric = FALSE;
@@ -274,7 +274,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
    char buffer[SIZE_LARGE], fname[SIZE_PATHFILE];
 
    MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".fconfig", sizeof(fname));
-   if (fh = fopen(fname, "r"))
+   if ((fh = fopen(fname, "r")))
    {
       fgets(buffer, SIZE_LARGE, fh);
       if (!strnicmp(buffer, "YFC", 3))
@@ -288,8 +288,8 @@ BOOL FO_LoadConfig(struct Folder *fo)
          while (fgets(buffer, SIZE_LARGE, fh))
          {
             char *p, *value;
-            if (value = strchr(buffer, '=')) for (++value; ISpace(*value); value++);
-            if (p = strpbrk(buffer,"\r\n")) *p = 0;
+            if ((value = strchr(buffer, '='))) for (++value; ISpace(*value); value++);
+            if ((p = strpbrk(buffer,"\r\n"))) *p = 0;
             for (p = buffer; *p && !ISpace(*p); p++); *p = 0;
             if (*buffer && value)
             {
@@ -346,23 +346,23 @@ void FO_SaveConfig(struct Folder *fo)
    FILE *fh;
 
    MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".fconfig", sizeof(fname));
-   if (fh = fopen(fname, "w"))
+   if ((fh = fopen(fname, "w")))
    {
       fprintf(fh, "YFC1 - YAM Folder Configuration\n");
       fprintf(fh, "Name        = %s\n",  fo->Name);
-      fprintf(fh, "MaxAge      = %ld\n", fo->MaxAge);
+      fprintf(fh, "MaxAge      = %d\n",  fo->MaxAge);
       fprintf(fh, "Password    = %s\n",  Encrypt(fo->Password));
-      fprintf(fh, "Type        = %ld\n", fo->Type);
-      fprintf(fh, "XPKType     = %ld\n", fo->XPKType);
-      fprintf(fh, "Sort1       = %ld\n", fo->Sort[0]);
-      fprintf(fh, "Sort2       = %ld\n", fo->Sort[1]);
+      fprintf(fh, "Type        = %d\n",  fo->Type);
+      fprintf(fh, "XPKType     = %d\n",  fo->XPKType);
+      fprintf(fh, "Sort1       = %d\n",  fo->Sort[0]);
+      fprintf(fh, "Sort2       = %d\n",  fo->Sort[1]);
       fprintf(fh, "Stats       = %s\n",  Bool2Txt(fo->Stats));
       fprintf(fh, "MLSupport   = %s\n",  Bool2Txt(fo->MLSupport));
       fprintf(fh, "MLFromAddr  = %s\n",  fo->MLFromAddress);
       fprintf(fh, "MLRepToAddr = %s\n",  fo->MLReplyToAddress);
       fprintf(fh, "MLPattern   = %s\n",  fo->MLPattern);
       fprintf(fh, "MLAddress   = %s\n",  fo->MLAddress);
-      fprintf(fh, "MLSignature = %ld\n", fo->MLSignature);
+      fprintf(fh, "MLSignature = %d\n",  fo->MLSignature);
       fclose(fh);
       MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".index", sizeof(fname));
 
@@ -457,7 +457,7 @@ BOOL FO_LoadTree(char *fname)
    APTR lv = G->MA->GUI.NL_FOLDERS;
    struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
    
-   if (fh = fopen(fname, "r"))
+   if ((fh = fopen(fname, "r")))
    {
       GetLine(fh, buffer, sizeof(buffer));
       if (!strncmp(buffer, "YFO", 3))
@@ -683,7 +683,7 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
       {
         case FT_GROUP:
         {
-          fprintf(fh, "@GROUP %s\n%ld\n", fo->Name, isFlagSet(tn->tn_Flags, TNF_OPEN));
+          fprintf(fh, "@GROUP %s\n%d\n", fo->Name, isFlagSet(tn->tn_Flags, TNF_OPEN));
 
           // Now we recursively save this subtree first
           success = FO_SaveSubTree(fh, tn);
@@ -714,7 +714,7 @@ BOOL FO_SaveTree(char *fname)
 
    DB(kprintf("saving YAM:.folders !!!\n");)
 
-   if (fh = fopen(fname, "w"))
+   if ((fh = fopen(fname, "w")))
    {
       fputs("YFO1 - YAM Folders\n", fh);
 
@@ -1162,7 +1162,7 @@ HOOKPROTONHNONP(FO_DeleteFolderFunc, void)
          char *err = GetStr(MSG_FO_GROUP_CONFDEL);
 
          // Now we popup a requester and if this requester is confirmed we move the subentries to the parent node.
-         if(delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), err))
+         if((delete_folder = MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), err)))
          {
             struct MUI_NListtree_TreeNode *tn_sub_next = tn_sub;
 

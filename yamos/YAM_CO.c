@@ -333,7 +333,7 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
          char *p, buffer[SIZE_USERID];
 
          stccpy(buffer, co->EmailAddress, SIZE_USERID);
-         if (p = strchr(buffer, '@')) *p = 0;
+         if ((p = strchr(buffer, '@'))) *p = 0;
          strcpy(pop3->User, buffer);
          strcpy(pop3->Server, co->SMTP_Server);
       }
@@ -853,7 +853,7 @@ void CO_Validate(struct Config *co, BOOL update)
       if (!*co->P3[i]->User)
       {
          stccpy(buffer, co->EmailAddress, SIZE_USERID);
-         if (p = strchr(buffer, '@')) *p = 0;
+         if ((p = strchr(buffer, '@'))) *p = 0;
          strcpy(co->P3[i]->User, buffer);
       }
       sprintf(co->P3[i]->Account, "%s@%s", co->P3[i]->User, co->P3[i]->Server);
@@ -923,7 +923,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
 {
    int mode;
 
-   if (mode = MUI_Request(G->App, G->CO->GUI.WI, 0, GetStr(MSG_CO_ImportMIME), GetStr(MSG_CO_ImportMIMEGads), GetStr(MSG_CO_ImportMIMEReq)))
+   if ((mode = MUI_Request(G->App, G->CO->GUI.WI, 0, GetStr(MSG_CO_ImportMIME), GetStr(MSG_CO_ImportMIMEGads), GetStr(MSG_CO_ImportMIMEReq))))
       if (ReqFile(ASL_CONFIG,G->CO->GUI.WI, GetStr(MSG_CO_IMPORTMIMETITLE), REQF_NONE, (mode == 1 ? "ENV:" : G->MA_MailDir), (mode == 1 ? "MIME.prefs" : (mode == 2 ? "mailcap" : "mime.types"))))
       {
          char buffer[SIZE_LARGE], fname[SIZE_PATHFILE], *p, *p2;
@@ -932,13 +932,13 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
          int i;
          FILE *fh;
          strmfp(fname, G->ASLReq[ASL_CONFIG]->fr_Drawer, G->ASLReq[ASL_CONFIG]->fr_File);
-         if (fh = fopen(fname, "r"))
+         if ((fh = fopen(fname, "r")))
          {
             set(lv, MUIA_List_Quiet, TRUE);
             while (fgets(buffer, SIZE_LARGE, fh))
             {
                char *ctype = buffer, *ext = "", *command = "";
-               if (p = strpbrk(ctype, "\r\n")) *p = 0;
+               if ((p = strpbrk(ctype, "\r\n"))) *p = 0;
                if (!*ctype || ISpace(*ctype)) continue;
                if (mode == 1)
                {
@@ -962,7 +962,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
                {
                   if (*ctype == '#') continue;
                   for (p2 = p = ctype; !ISpace(*p) && *p && *p != ';'; p2 = ++p);
-                  if (p = strpbrk(p,";")) ++p;
+                  if ((p = strpbrk(p,";"))) ++p;
                   if (p) command = stpblk(p);
                   *p2 = 0;
                }
@@ -1137,7 +1137,7 @@ HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
    {
       DoMethod(gui->GR_PAGE, OM_REMMEMBER, gui->GR_SUBPAGE);
       MUI_DisposeObject(gui->GR_SUBPAGE);
-      if (gui->GR_SUBPAGE = CO_BuildPage(G->CO, *arg))
+      if ((gui->GR_SUBPAGE = CO_BuildPage(G->CO, *arg)))
       {
          DoMethod(gui->GR_PAGE, OM_ADDMEMBER, gui->GR_SUBPAGE);
          G->CO->VisiblePage = *arg;

@@ -52,7 +52,7 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
 {
 	BPTR fh;
 	NewList(list);
-	if(fh = Open(name, MODE_OLDFILE))
+	if((fh = Open(name, MODE_OLDFILE)))
 	{
 		TEXT line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
 		while(FGets(fh, line, sizeof(line)))
@@ -90,7 +90,7 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 {
 	BPTR fh;
 
-	if(fh = Open(name, MODE_NEWFILE))
+	if((fh = Open(name, MODE_NEWFILE)))
 	{
 		int i;
 		struct EMailCacheNode *node = (struct EMailCacheNode *)(list->lh_Head);
@@ -310,7 +310,7 @@ DECLARE(AddToEmailCache) // struct Person *person
 			struct EMailCacheNode *newnode;
 
 			// we alloc mem for this new node and add it behind the last node
-			if(newnode = calloc(1, sizeof(struct EMailCacheNode)))
+			if((newnode = calloc(1, sizeof(struct EMailCacheNode))))
 			{
 				struct ABEntry *entry = &newnode->ecn_Person;
 
@@ -336,7 +336,7 @@ DECLARE(AddToEmailCache) // struct Person *person
 OVERLOAD(OM_NEW)
 {
 	static STRPTR Classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListview.mcc", NULL };
-	if(obj = (Object *)DoSuperNew(cl, obj,
+	if((obj = (Object *)DoSuperNew(cl, obj,
 		MUIA_Application_Author,         "YAM Open Source Team",
 		MUIA_Application_Base,           "YAM",
 		MUIA_Application_Title,          "YAM",
@@ -346,7 +346,7 @@ OVERLOAD(OM_NEW)
 		MUIA_Application_UseRexx,        FALSE,
 		MUIA_Application_SingleTask,     !getenv("MultipleYAM"),
 		MUIA_Application_UsedClasses,    Classes,
-		TAG_MORE,                        inittags(msg)))
+		TAG_MORE,                        inittags(msg))))
 	{
 		GETDATA;
 		struct TagItem *tags = inittags(msg), *tag;

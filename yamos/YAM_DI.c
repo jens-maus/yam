@@ -90,7 +90,7 @@ static void DI_Save(void)
    struct Dict *entry;
    int i;
 
-   if (fh = fopen(G->DI_Filename, "w"))
+   if ((fh = fopen(G->DI_Filename, "w")))
    {
       BusyGauge(GetStr(MSG_BusySavingDI), "", (int)xget(G->DI->GUI.LV_ENTRIES, MUIA_List_Entries));
       fputs("YDI1 - YAM Dictionary\n", fh);
@@ -119,7 +119,7 @@ static int DI_Load(void)
    char buffer[SIZE_LARGE], *p;
    struct Dict entry;
 
-   if (fh = fopen(G->DI_Filename, "r"))
+   if ((fh = fopen(G->DI_Filename, "r")))
    {
       BusyText(GetStr(MSG_BusyLoadingDI), "");
       GetLine(fh, buffer, SIZE_LARGE);
@@ -134,7 +134,7 @@ static int DI_Load(void)
                MyStrCpy(entry.Alias, Trim(&buffer[7]));
                entry.Text = AllocStrBuf(80);
                while (fgets(buffer, SIZE_LARGE, fh))
-                  if (p = strstr(buffer, "@ENDENTRY\n")) { *p = 0; entry.Text = StrBufCat(entry.Text, buffer); break; }
+                  if ((p = strstr(buffer, "@ENDENTRY\n"))) { *p = 0; entry.Text = StrBufCat(entry.Text, buffer); break; }
                   else entry.Text = StrBufCat(entry.Text, buffer);
                DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_InsertSingle, &entry, MUIV_List_Insert_Bottom);
                entries++;

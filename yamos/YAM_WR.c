@@ -215,7 +215,7 @@ static char *GetDateTime(void)
    char *tz;
 
    Amiga2Date(GetDateStamp(), &cd);
-   sprintf(dt, "%s, %02ld %s %ld %02ld:%02ld:%02ld", wdays[cd.wday], cd.mday, months[cd.month-1], cd.year, cd.hour, cd.min, cd.sec);
+   sprintf(dt, "%s, %02d %s %d %02d:%02d:%02d", wdays[cd.wday], cd.mday, months[cd.month-1], cd.year, cd.hour, cd.min, cd.sec);
    if ((tz = GetTZ())) { strcat(dt, " "); strcat(dt, tz); }
    return dt;  
 }
@@ -231,7 +231,7 @@ static char *NewID(BOOL is_msgid)
 
    DateStamp(&ds);
    if (is_msgid) sprintf(idbuf, "yam%ld.%ld.%ld@%s", ds.ds_Days, ds.ds_Tick, FindTask(NULL), C->SMTP_Server);
-   else          sprintf(idbuf, "%ld.%ld", FindTask(NULL), ++ctr);
+   else          sprintf(idbuf, "%ld.%d", FindTask(NULL), ++ctr);
    return idbuf;
 }
 
@@ -589,7 +589,7 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
          case ENC_UUE: size = FileSize(part->Filename);
                        fprintf(ofh, "begin 644 %s\n", *part->Name ? part->Name : (char *)FilePart(part->Filename));
                        touue(ifh, ofh);
-                       fprintf(ofh, "end\nsize %ld\n", size);
+                       fprintf(ofh, "end\nsize %d\n", size);
                        break;
          default:      CopyFile(NULL, ofh, NULL, ifh);
       }
@@ -1048,7 +1048,12 @@ BOOL WriteOutMessage(struct Compose *comp)
       if (comp->DelSend) EmitHeader(fh, "X-YAM-Options", "delsent");
       return WR_Bounce(fh, comp);
    }
-   if (comp->Mode == NEW_SAVEDEC) if (!WR_SaveDec(fh, comp)) return FALSE; else goto mimebody;
+   if (comp->Mode == NEW_SAVEDEC)
+   {
+      if (!WR_SaveDec(fh, comp)) return FALSE;
+      else goto mimebody;
+   }
+
    if (!firstpart) return FALSE;
 
    /* encrypted multipart message requested? */
@@ -1103,7 +1108,7 @@ BOOL WriteOutMessage(struct Compose *comp)
    *options = 0;
    if (comp->DelSend) strcat(options, ",delsent");
    if (comp->Security) sprintf(&options[strlen(options)], ",%s", SecCodes[comp->Security]);
-   if (comp->Signature) sprintf(&options[strlen(options)], ",sigfile%ld", comp->Signature-1);
+   if (comp->Signature) sprintf(&options[strlen(options)], ",sigfile%d", comp->Signature-1);
    if (*options) EmitHeader(fh, "X-YAM-Options", &options[1]);
    EmitHeader(fh, "From", comp->From ? comp->From : BuildAddrName(C->EmailAddress, C->RealName));
    if (comp->ReplyTo) EmitHeader(fh, "Reply-To", comp->ReplyTo);
@@ -1531,6 +1536,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
    struct FileRequester *ar = G->ASLReq[ASL_ATTACH];
 
    if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, ""))
+   {
       if (!ar->fr_NumArgs)
       {
          strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
@@ -1541,6 +1547,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
          strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_ArgList[i].wa_Name);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
+   }
 }
 MakeStaticHook(WR_AddFileHook, WR_AddFileFunc);
 
@@ -1793,12 +1800,15 @@ HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
    char *myid = *C->MyPGPID ? C->MyPGPID : C->EmailAddress;
    char options[SIZE_LARGE], *fname = "T:PubKey.asc";
    sprintf(options, (G->PGPVersion == 5) ? "-x %s -o %s +force +batchmode=1" : "-kxa %s %s +f +bat", myid, fname);
-   if (!PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0)) if (FileSize(fname) > 0)
+   if (!PGPCommand((G->PGPVersion == 5) ? "pgpk" : "pgp", options, 0))
    {
+    if (FileSize(fname) > 0)
+    {
       WR_AddFileToList(winnum, fname, NULL, TRUE);
       setstring(G->WR[winnum]->GUI.ST_CTYPE, "application/pgp-keys");
+    }
+    else ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid, NULL);
    }
-   else ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid, NULL);
 }
 MakeStaticHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);
 ///
