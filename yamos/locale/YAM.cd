@@ -4949,7 +4949,7 @@ in the standard MBOX format (separated by a single \
 ; FILENAME
 MSG_ER_ADDRBOOKLOAD (//)
 Couldn't load address book from file '%s'.\n\
-The file doesn`t seem to exist.
+The file doesn`t seem to exist or is unaccessible.
 ; FILENAME
 MSG_AB_NOYAMADDRBOOK (//)
 The file '%s' isn`t a valid YAM addressbook file.\n\

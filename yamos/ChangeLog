@@ -1,5 +1,8 @@
 2002-05-19  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_AB.c: added a more sophisticated error handling to the
+      LoadTree() function to return a proper error message even
+      if the file exists but isn`t accessible at all.
     * YAM_FO.c: the bug #555117 wasn`t completly fixed because
       FO_GetFolderRexx() still counted groups as folders.
 
