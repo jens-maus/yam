@@ -68,7 +68,7 @@ enum MDNType    { MDN_IGNORE=0, MDN_DENY, MDN_READ, MDN_DISP, MDN_PROC, MDN_DELE
 enum ParseMode  { PM_ALL, PM_TEXTS, PM_NONE };
 enum ReadInMode { RIM_QUIET, RIM_READ, RIM_EDIT, RIM_QUOTE, RIM_PRINT };
 enum HeaderMode { HM_NOHEADER, HM_SHORTHEADER, HM_FULLHEADER };
-enum SInfoMode  { SIM_OFF, SIM_DATA, SIM_ALL };
+enum SInfoMode  { SIM_OFF, SIM_DATA, SIM_ALL, SIM_PHOTO };
 
 // ReadMailData structure which carries all necessary information
 // during the read mail process. It is used while opening a read

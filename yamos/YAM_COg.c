@@ -941,7 +941,7 @@ APTR CO_Page3(struct CO_ClassData *data)
 APTR CO_Page4(struct CO_ClassData *data)
 {
    APTR grp;
-   static char *headopt[4], *siopt[4], *slopt[5];
+   static char *headopt[4], *siopt[5], *slopt[5];
    headopt[0] = GetStr(MSG_CO_HeadNone);
    headopt[1] = GetStr(MSG_CO_HeadShort);
    headopt[2] = GetStr(MSG_CO_HeadFull);
@@ -949,7 +949,8 @@ APTR CO_Page4(struct CO_ClassData *data)
    siopt[0] = GetStr(MSG_CO_SINone);
    siopt[1] = GetStr(MSG_CO_SIFields);
    siopt[2] = GetStr(MSG_CO_SIAll);
-   siopt[3] = NULL;
+   siopt[3] = GetStr(MSG_CO_SIPhoto);
+   siopt[4] = NULL;
    slopt[0] = GetStr(MSG_CO_SLBlank);
    slopt[1] = GetStr(MSG_CO_SLDash);
    slopt[2] = GetStr(MSG_CO_SLBar);

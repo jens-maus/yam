@@ -500,61 +500,64 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 		
 			if(rmData->senderInfoMode != SIM_OFF)
 			{
-				if(hits == 1 || ab->Type == AET_LIST)
+				if(rmData->senderInfoMode != SIM_PHOTO)
 				{
-					// Add some extra headers with sender info
-					char buffer[SIZE_LARGE];
-
-					if(*ab->RealName)
+					if(hits == 1 || ab->Type == AET_LIST)
 					{
-						sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_RealName)), ab->RealName);
-						DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
-					}
+						// Add some extra headers with sender info
+						char buffer[SIZE_LARGE];
 
-					if(*ab->Street)
-					{
-						sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Street)), ab->Street);
-						DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
-					}
+						if(*ab->RealName)
+						{
+							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_RealName)), ab->RealName);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+						}
 
-					if(*ab->City)
-					{
-						sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_City)), ab->City);
-						DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
-					}
+						if(*ab->Street)
+						{
+							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Street)), ab->Street);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+						}
 
-					if(*ab->Country)
-					{
-						sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Country)), ab->Country);
-						DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
-					}
+						if(*ab->City)
+						{
+							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_City)), ab->City);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+						}
 
-					if(*ab->Phone)
-					{
-						sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Phone)), ab->Phone);
-						DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
-					}
+						if(*ab->Country)
+						{
+							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Country)), ab->Country);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+						}
 
-					if(*AB_ExpandBD(ab->BirthDay))
-					{
-						sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_DOB)), AB_ExpandBD(ab->BirthDay));
-						DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
-					}
+						if(*ab->Phone)
+						{
+							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Phone)), ab->Phone);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+						}
 
-					if(*ab->Comment)
-					{
-						sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Description)), ab->Comment);
-						DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
-					}
+						if(*AB_ExpandBD(ab->BirthDay))
+						{
+							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_DOB)), AB_ExpandBD(ab->BirthDay));
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+						}
 
-					if(*ab->Homepage)
-					{
-						sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Homepage)), ab->Homepage);
-						DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+						if(*ab->Comment)
+						{
+							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Description)), ab->Comment);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+						}
+
+						if(*ab->Homepage)
+						{
+							sprintf(buffer, MUIX_I"%s: %s", StripUnderscore(GetStr(MSG_EA_Homepage)), ab->Homepage);
+							DoMethod(data->headerList, MUIM_NList_InsertSingle, buffer, MUIV_NList_Insert_Bottom);
+						}
 					}
 				}
 
-				if(rmData->senderInfoMode == SIM_ALL &&
+				if((rmData->senderInfoMode == SIM_ALL || rmData->senderInfoMode == SIM_PHOTO) &&
 					 DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
 				{
 					char photopath[SIZE_PATHFILE];
@@ -588,7 +591,8 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 					DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
 				}
 			}
-			set(data->senderImageGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL) &&
+			set(data->senderImageGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL ||
+																							  rmData->senderInfoMode == SIM_PHOTO) &&
 																							 (data->senderImage != NULL));
 			
 			// enable the headerList again

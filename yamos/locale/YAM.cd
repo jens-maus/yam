@@ -5467,3 +5467,9 @@ Save selected...
 MSG_MA_ATTACHMENT_CROPALL (//)
 Crop all
 ;
+MSG_CO_SIPhoto (//)
+image only
+;
+MSG_RE_SImageOnly (//)
+Image only
+;

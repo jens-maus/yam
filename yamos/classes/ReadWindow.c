@@ -78,7 +78,8 @@ OVERLOAD(OM_NEW)
 		RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_SETUNREAD,RMEN_SETMARKED,
 		RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,
 		RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
-		RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT
+		RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT,
+		RMEN_SPHOTO
 	};
 
 	// Our static Toolbar description field
@@ -197,9 +198,10 @@ OVERLOAD(OM_NEW)
 				MenuChild, MenuitemCheck(GetStr(MSG_RE_ShortHeaders), "1", C->ShowHeader==HM_SHORTHEADER, FALSE, 0x05, RMEN_HSHORT),
 				MenuChild, MenuitemCheck(GetStr(MSG_RE_FullHeaders),	"2", C->ShowHeader==HM_FULLHEADER,	FALSE, 0x03, RMEN_HFULL),
 				MenuChild, MenuBarLabel,
-				MenuChild, MenuitemCheck(GetStr(MSG_RE_NoSInfo), 		"3", C->ShowSenderInfo==SIM_OFF, 	 FALSE, 0x60, RMEN_SNONE),
-				MenuChild, MenuitemCheck(GetStr(MSG_RE_SInfo), 	 		"4", C->ShowSenderInfo==SIM_DATA,	 FALSE, 0x50, RMEN_SDATA),
-				MenuChild, MenuitemCheck(GetStr(MSG_RE_SInfoImage), "5", C->ShowSenderInfo==SIM_ALL, 	 FALSE, 0x30, RMEN_SFULL),
+				MenuChild, MenuitemCheck(GetStr(MSG_RE_NoSInfo), 		"3", C->ShowSenderInfo==SIM_OFF, 	 FALSE, 0xE0, RMEN_SNONE),
+				MenuChild, MenuitemCheck(GetStr(MSG_RE_SInfo), 	 		"4", C->ShowSenderInfo==SIM_DATA,	 FALSE, 0xD0, RMEN_SDATA),
+				MenuChild, MenuitemCheck(GetStr(MSG_RE_SInfoImage), "5", C->ShowSenderInfo==SIM_ALL, 	 FALSE, 0x90, RMEN_SFULL),
+				MenuChild, MenuitemCheck(GetStr(MSG_RE_SImageOnly), "6", C->ShowSenderInfo==SIM_PHOTO, FALSE, 0x70, RMEN_SPHOTO),
 				MenuChild, MenuBarLabel,
 				MenuChild, data->MI_WRAPH = MenuitemCheck(GetStr(MSG_RE_WrapHeader), "H", C->WrapHeader, TRUE, 0, RMEN_WRAPH),
 				MenuChild, data->MI_TSTYLE = MenuitemCheck(GetStr(MSG_RE_Textstyles), "T", C->UseTextstyles, TRUE, 0, RMEN_TSTYLE),
@@ -326,6 +328,7 @@ OVERLOAD(OM_NEW)
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SNONE,		obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_OFF);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SDATA,		obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_DATA);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SFULL,		obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_ALL);
+		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SPHOTO,		obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_PHOTO);
 		DoMethod(obj,	MUIM_Notify, MUIA_Window_MenuAction, RMEN_WRAPH,		obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TSTYLE,		obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FFONT,		obj, 1, MUIM_ReadWindow_StyleOptionsChanged);

@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-16  Alexey Ivanov <AmiS@amiga.org.ru>
+    * ReadMailGroup, misc: àdded 'image only' mode to show sender image in
+      read window with out other sender infos.
+
 2005-02-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * AttachmentGroup, WriteAttachmentList: implemented the missing drag&drop
