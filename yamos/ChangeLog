@@ -7,6 +7,11 @@ $Source$
 
 2005-03-18  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c: fixed a possible bug/flaw in DescribeCT() function where a passed NULL
+      pointer could have caused problems due to the used stricmp() function. Also
+      returning a NULL pointer doesn't seem to be a wise solution here based on the
+      usage of DescribeCT(). This hopefully fixes some crashes in the AttachmentGroup
+      where no content-type were found for some attachments.
     * YAM_MAf.c, YAM_UT.c: fixed a crash bug in the index rescanning routines where
       the file date function wasn't called with the full path, which in fact caused
       it to fail and pass a NULL pointer to the DateStamp2TimeVal() function afterwards.

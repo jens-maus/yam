@@ -2475,18 +2475,23 @@ char *ExpandText(char *src, struct ExpandTextData *etd)
 //  Returns description of a content type
 char *DescribeCT(char *ct)
 {
-   int i;
+  if(ct == NULL)
+    return GetStr(MSG_CTunknown);
+  else
+  {
+    int i;
 
-   for(i = 0; ContType[i]; i++)
-   {
+    for(i = 0; ContType[i]; i++)
+    {
       if(!stricmp(ct, ContType[i]))
       {
         ct = GetStr((char*)ContTypeDesc[i]);
         break;
       }
-   }
+    }
+  }
 
-   return ct;
+  return ct;
 }
 ///
 /// GetDateStamp
