@@ -690,7 +690,7 @@ HOOKPROTONHNO(RE_PrintFunc, void, int *arg)
    if (part = AttachRequest(GetStr(MSG_RE_PrintMsg), GetStr(MSG_RE_SelectPrintPart), GetStr(MSG_RE_PrintGad), GetStr(MSG_Cancel), winnum, ATTREQ_PRINT|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
    {
       if (C->PrinterCheck) if (!CheckPrinter()) return;
-      Busy(GetStr(MSG_BusyDecPrinting), "", 0, 0);
+      BusyText(GetStr(MSG_BusyDecPrinting), "");
       for (; part; part = part->NextSelected) switch (part->Nr)
       {
          case -2: RE_PrintFile(G->RE[winnum]->File,part);
@@ -920,7 +920,7 @@ HOOKPROTONHNO(RE_SaveFunc, void, int *arg)
 
    if (part = AttachRequest(GetStr(MSG_RE_SaveMessage), GetStr(MSG_RE_SelectSavePart), GetStr(MSG_RE_SaveGad), GetStr(MSG_Cancel), winnum, ATTREQ_SAVE|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
    {
-      Busy(GetStr(MSG_BusyDecSaving), "", 0, 0);
+      BusyText(GetStr(MSG_BusyDecSaving), "");
       for (; part; part = part->NextSelected) switch (part->Nr)
       {
          case -2: RE_Export(winnum, G->RE[winnum]->File, "", "", 0, FALSE, FALSE, ContType[CT_ME_EMAIL]);
@@ -1002,7 +1002,7 @@ HOOKPROTONHNO(RE_DisplayFunc, void, int *arg)
 
    if (part = AttachRequest(GetStr(MSG_RE_DisplayMsg), GetStr(MSG_RE_SelectDisplayPart), GetStr(MSG_RE_DisplayGad), GetStr(MSG_Cancel), winnum, ATTREQ_DISP|ATTREQ_MULTI, G->RE[winnum]->GUI.WI))
    {
-      Busy(GetStr(MSG_BusyDecDisplaying), "", 0, 0);
+      BusyText(GetStr(MSG_BusyDecDisplaying), "");
       for (; part; part = part->NextSelected)
       {
          RE_DecodePart(part);
@@ -1038,7 +1038,7 @@ HOOKPROTONHNO(RE_SaveAllFunc, void, int *arg)
    struct Part *part = G->RE[*arg]->FirstPart->Next;
    if (part) if (part->Next) if (ReqFile(ASL_DETACH, G->RE[*arg]->GUI.WI, GetStr(MSG_RE_SaveMessage), 5, C->DetachDir, ""))
    {
-      Busy(GetStr(MSG_BusyDecSaving), "", 0, 0);
+      BusyText(GetStr(MSG_BusyDecSaving), "");
       RE_SaveAll(*arg, G->ASLReq[ASL_DETACH]->fr_Drawer);
       BusyEnd;
    }
@@ -1983,7 +1983,7 @@ static BOOL RE_LoadMessage(int winnum, int parsemode)
    char newfile[SIZE_PATHFILE], file[SIZE_FILE];
    struct Part *rp;
    int i;
-   Busy(GetStr(MSG_BusyReading), "", 0, 0);
+   BusyText(GetStr(MSG_BusyReading), "");
    RE_CleanupMessage(winnum);
    if (!StartUnpack(G->RE[winnum]->File, newfile, G->RE[winnum]->MailPtr->Folder)) return FALSE;
    strcpy(G->RE[winnum]->File, newfile);
@@ -2087,7 +2087,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
    }
    if (cmsg = calloc(len=(totsize*3)/2,1))
    {
-      if (mode != RIM_QUIET) Busy(GetStr(MSG_BusyDisplaying), "", 0, 0);
+      if (mode != RIM_QUIET) BusyText(GetStr(MSG_BusyDisplaying), "");
       wptr = 0;
       if (mode == RIM_READ)
          if (fh = fopen(first->Filename, "r"))
@@ -2449,7 +2449,7 @@ static BOOL RE_DownloadPhoto(APTR win, char *url, struct ABEntry *ab)
       strmfp(picfname, C->GalleryDir, fname);
       if (TR_OpenTCPIP())
       {
-         Busy(GetStr(MSG_BusyDownloadingPic), name, 0, 0);
+         BusyText(GetStr(MSG_BusyDownloadingPic), name);
          CreateDirectory(C->GalleryDir);
          if (TR_DownloadURL(url, NULL, NULL, picfname))
          {

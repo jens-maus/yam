@@ -53,6 +53,7 @@
 #include "YAM_rexx.h"
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
+#include "classes/Classes.h"
 
 /*
 ** structure of the compressed mail
@@ -162,7 +163,7 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
       struct FIndex fi;
       BOOL corrupt = FALSE;
 
-      Busy(GetStr(MSG_BusyLoadingIndex), folder->Name, 0, 0);
+      BusyText(GetStr(MSG_BusyLoadingIndex), folder->Name);
       fread(&fi, sizeof(struct FIndex), 1, fh);
       if (fi.ID == MAKE_ID('Y','I','N','3'))
       {
@@ -249,7 +250,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
    struct FIndex fi;
 
    if (!(fh = fopen(MA_IndexFileName(folder), "w"))) return FALSE;
-   Busy(GetStr(MSG_BusySavingIndex), folder->Name, 0, 0);
+   BusyText(GetStr(MSG_BusySavingIndex), folder->Name);
    fi.ID = MAKE_ID('Y','I','N','3');
    fi.Total = folder->Total; fi.New = folder->New; fi.Unread = folder->Unread; fi.Size = folder->Size;
    fwrite(&fi, sizeof(struct FIndex), 1, fh);
@@ -402,7 +403,8 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       MA_SetSortFlag();
 
       // Now we update the InfoBar accordingly
-      MA_UpdateInfoBar(folder);
+      DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
+//      MA_UpdateInfoBar(folder);
 
       // Create the Mail List and display it
       DisplayMailList(folder, gui->NL_MAILS);
@@ -454,7 +456,8 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
         set(gui->NL_MAILS, MUIA_NList_Active, MUIV_NList_Active_Top);
       }
    }
-   else MA_UpdateInfoBar(folder);
+   else DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
+//   else MA_UpdateInfoBar(folder);
 
    // disable/reactivate the Listview with the mails in it
    set(gui->LV_MAILS, MUIA_Disabled, !folderopen);
@@ -549,63 +552,6 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
   return(0);
 }
 
-///
-/// MA_UpdateInfoBar
-//  updates the information bar above the mail listview
-void MA_UpdateInfoBar(struct Folder *folder)
-{
-  struct MA_GUIData *gui = &G->MA->GUI;
-  struct BodyChunkData *bcd = NULL;
-
-  if(!folder) return;
-
-  // Now we set the GUI element of the InfoBar
-  // visible or invisible
-  set(gui->GR_INFO, MUIA_ShowMe, C->InfoBar);
-
-  if(!C->InfoBar) return;
-
-  // set the name of the folder as the info text
-  set(gui->TX_INFO, MUIA_Text_Contents, folder->Name);
-
-  // Prepare the GR_INFO group for adding a new child
-  if(DoMethod(gui->GR_INFO, MUIM_Group_InitChange))
-  {
-    if(gui->BC_INFO)
-    {
-      DoMethod(gui->GR_INFO, OM_REMMEMBER, gui->BC_INFO);
-      MUI_DisposeObject(gui->BC_INFO);
-      gui->BC_INFO = NULL;
-    }
-
-    if(folder->FImage) bcd = folder->FImage;
-    else if(folder->ImageIndex >= 0) bcd = G->BImage[folder->ImageIndex+(MAXIMAGES-MAXBCSTDIMAGES)];
-
-    if(bcd)
-    {
-      gui->BC_INFO = BodychunkObject,
-                        MUIA_FixWidth,             bcd->Width,
-                        MUIA_FixHeight,            bcd->Height,
-                        MUIA_Bitmap_Width,         bcd->Width,
-                        MUIA_Bitmap_Height,        bcd->Height,
-                        MUIA_Bitmap_SourceColors,  bcd->Colors,
-                        MUIA_Bodychunk_Depth,      bcd->Depth,
-                        MUIA_Bodychunk_Body,       bcd->Body,
-                        MUIA_Bodychunk_Compression,bcd->Compression,
-                        MUIA_Bodychunk_Masking,    bcd->Masking,
-                        MUIA_Bitmap_Transparent,   0,
-                        MUIA_InnerBottom,          0,
-                        MUIA_InnerLeft,            0,
-                        MUIA_InnerRight,           0,
-                        MUIA_InnerTop,             0,
-                      End;
-
-      if(gui->BC_INFO) DoMethod(gui->GR_INFO, OM_ADDMEMBER, gui->BC_INFO);
-    }
-
-    DoMethod(gui->GR_INFO, MUIM_Group_ExitChange);
-  }
-}
 ///
 
 /*** Mail header scanning ***/
@@ -925,7 +871,7 @@ void MA_ScanMailBox(struct Folder *folder)
    struct FileInfoBlock *fib;
    BPTR lock;
 
-   Busy(GetStr(MSG_BusyScanning), folder->Name, 0, 0);
+   BusyText(GetStr(MSG_BusyScanning), folder->Name);
    ClearMailList(folder, TRUE);
    if ((fib = AllocDosObject(DOS_FIB,NULL)) && (lock = Lock(GetFolderDir(folder), ACCESS_READ)))
    {

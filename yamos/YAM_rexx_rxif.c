@@ -1694,7 +1694,7 @@ void rx_appbusy( struct RexxHost *host, struct rxd_appbusy **rxd, long action, s
          
       case RXIF_ACTION:
          s = rd->arg.text;
-         if (s) Busy(s, "", 0, 0);
+         if (s) BusyText(s, "");
          rd->rc = BusyLevel ? 1 : 0;
          break;
       
@@ -2164,7 +2164,7 @@ void rx_geturl( struct RexxHost *host, struct rxd_geturl **rxd, long action, str
       case RXIF_ACTION:
          if (TR_OpenTCPIP())
          {
-            Busy(GetStr(MSG_TR_Downloading), "", 0, 0);
+            BusyText(GetStr(MSG_TR_Downloading), "");
             if (!TR_DownloadURL(rd->arg.url, NULL, NULL, rd->arg.filename)) rd->rc = RETURN_ERROR;
             TR_CloseTCPIP();
             BusyEnd;

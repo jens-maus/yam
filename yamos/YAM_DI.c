@@ -92,13 +92,15 @@ static void DI_Save(void)
 
    if (fh = fopen(G->DI_Filename, "w"))
    {
-      Busy(GetStr(MSG_BusySavingDI), "", 0, 0);
+      BusyGauge(GetStr(MSG_BusySavingDI), "", (int)xget(G->DI->GUI.LV_ENTRIES, MUIA_List_Entries));
       fputs("YDI1 - YAM Dictionary\n", fh);
-      for (i = 0; ; i++)
+      for (i = 0; ;i++)
       {
          DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_GetEntry, i, &entry);
          if (!entry) break;
          fprintf(fh, "@ENTRY %s\n%s@ENDENTRY\n", entry->Alias, entry->Text);
+
+         BusySet(i+1);
       }
       fclose(fh);
       G->DI->Modified = FALSE;
@@ -119,7 +121,7 @@ static int DI_Load(void)
 
    if (fh = fopen(G->DI_Filename, "r"))
    {
-      Busy(GetStr(MSG_BusyLoadingDI), "", 0, 0);
+      BusyText(GetStr(MSG_BusyLoadingDI), "");
       GetLine(fh, buffer, SIZE_LARGE);
       if (!strncmp(buffer,"YDI",3))
       {

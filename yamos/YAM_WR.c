@@ -1398,7 +1398,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
 HOOKPROTONHNO(WR_NewMailFunc, void, int *arg)
 {
-   Busy(GetStr(MSG_BusyComposing), "", 0, 0);
+   BusyText(GetStr(MSG_BusyComposing), "");
    WR_NewMail(arg[0], arg[1]);
    BusyEnd;
 }
@@ -1817,7 +1817,7 @@ void WR_SetupOldMail(int winnum)
    if (part) for (part = part->Next; part; part = part->Next)
       if (stricmp(part->ContentType, "application/pgp-signature"))
       {
-         Busy(GetStr(MSG_BusyDecSaving), "", 0, 0);
+         BusyText(GetStr(MSG_BusyDecSaving), "");
          RE_DecodePart(part);
          memset(&attach, 0, sizeof(struct Attach));
          attach.Size = part->Size;

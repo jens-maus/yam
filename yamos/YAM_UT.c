@@ -73,6 +73,7 @@
 #include "YAM_mime.h"
 #include "YAM_read.h"
 #include "YAM_utilities.h"
+#include "classes/Classes.h"
 #include "classes/ClassesExtra.h"
 
 #define CRYPTBYTE       164
@@ -1946,7 +1947,7 @@ void DisplayMailList(struct Folder *fo, APTR lv)
    {
       int i = 0;
 
-      Busy(GetStr(MSG_BusyDisplayingList), "", 0, 0);
+      BusyText(GetStr(MSG_BusyDisplayingList), "");
       for (work = fo->Messages; work; work = work->Next)
       {
          array[i++] = work;
@@ -2869,7 +2870,7 @@ int PGPCommand(char *progname, char *options, int flags)
    {
       if ((fho = Open("NIL:", MODE_NEWFILE)))
       {
-         Busy(GetStr(MSG_BusyPGPrunning), "", 0, 0);
+         BusyText(GetStr(MSG_BusyPGPrunning), "");
          strmfp(command, C->PGPCmdPath, progname);
          strcat(command, " >" PGPLOGFILE " ");
          strcat(command, options);
@@ -2925,37 +2926,49 @@ void AppendLogVerbose(int id, char *text, void *a1, void *a2, void *a3, void *a4
 }
 ///
 /// Busy
-//  Displays busy message and sleep pointer
+//  Displays busy message
 void Busy(char *text, char *parameter, int cur, int max)
 {
    static char infotext[SIZE_DEFAULT];
-   if (text)
+
+   if(text)
    {
-      if (*text)
+      if(*text)
       {
-         sprintf(infotext, text, parameter);
-         if (G->MA && !BusyLevel)
-         {
-            set(G->MA->GUI.GA_INFO, MUIA_Gauge_InfoText, infotext);
-            set(G->MA->GUI.GA_INFO, MUIA_Gauge_Max, max);
-         }
-         BusyLevel++;
-         //set(G->App, MUIA_Application_Sleep, TRUE);
+        sprintf(infotext, text, parameter);
+
+        if (G->MA && BusyLevel == 0)
+        {
+          if(max > 0)
+          {
+            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, infotext, cur, max);
+          }
+          else
+          {
+            DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowInfoText, infotext);
+          }
+        }
+
+        BusyLevel++;
       }
       else
       {
-         //set(G->App, MUIA_Application_Sleep, FALSE);
-         if (BusyLevel) --BusyLevel;
-         if (G->MA && !BusyLevel)
+         if(BusyLevel) BusyLevel--;
+
+         if (G->MA && BusyLevel == 0)
          {
-            set(G->MA->GUI.GA_INFO, MUIA_Gauge_InfoText, "");
-            set(G->MA->GUI.GA_INFO, MUIA_Gauge_Current, 0);
+           DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
          }
       }
    }
    else
    {
-      set(G->MA->GUI.GA_INFO, MUIA_Gauge_Current, cur);
+      // If the text is NULL we just have to set the Gauge of the infoBar to the current
+      // level
+      if (G->MA && BusyLevel > 0)
+      {
+        DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_ShowGauge, NULL, cur, max);
+      }
    }
 }
 

@@ -410,7 +410,7 @@ HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
       strmfp(dbfile, C->TempDir, "gallery.db");
       if (TR_OpenTCPIP())
       {
-         Busy(GetStr(MSG_BusyDownloadingPic), name, 0, 0);
+         BusyText(GetStr(MSG_BusyDownloadingPic), name);
          if (!(db = fopen(dbfile, "r")))
             if (TR_DownloadURL(C->SupportSite, "gallery", "database", dbfile))
                db = fopen(dbfile, "r");

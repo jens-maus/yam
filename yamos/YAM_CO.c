@@ -841,9 +841,6 @@ void CO_Validate(struct Config *co, BOOL update)
          MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
          MA_MakeMAFormat(G->MA->GUI.NL_MAILS);
          LoadLayout();
-
-         // Update the InfoBar
-         MA_UpdateInfoBar(FO_GetCurrentFolder());
       }
       if (G->CO->Visited[12] || G->CO->UpdateAll) AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
       if (G->CO->Visited[14] || G->CO->UpdateAll) { SetupAppIcons(); DisplayStatistics((struct Folder *)-1, TRUE); }

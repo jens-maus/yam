@@ -63,6 +63,7 @@
 #include "YAM_userlist.h"
 #include "YAM_utilities.h"
 #include "YAM_write.h"
+#include "classes/Classes.h"
 
 /* local protos */
 static ULONG MA_GetSortType(int);
@@ -354,13 +355,13 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
    {
       selected = (int)*mlist;
       set(lv, MUIA_NList_Quiet, TRUE);
-      Busy(GetStr(MSG_BusyMoving), itoa(selected), 0, selected);
+      BusyGauge(GetStr(MSG_BusyMoving), itoa(selected), selected);
       for (i = 0; i < selected; i++)
       {
-         Busy(NULL, NULL, i, 0);
          mail = mlist[i+2];
          if (copyit) pos = mail->Position; else { mi = GetMailInfo(mail); pos = mi->Pos; }
          MA_MoveCopySingle(mail, pos, frombox, tobox, copyit);
+         BusySet(i+1);
       }
       BusyEnd;
       set(lv, MUIA_NList_Quiet, FALSE);
@@ -977,11 +978,11 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
    if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS)))
    {
       int selected = (int)*mlist;
-      Busy(GetStr(MSG_BusyRemovingAtt), "", 0, selected);
+      BusyGauge(GetStr(MSG_BusyRemovingAtt), "", selected);
       for (i = 0; i < selected; i++)
       {
-         Busy(NULL, NULL, i, 0);
          MA_RemoveAttach(mlist[i+2]);
+         BusySet(i+1);
       }
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
       MA_ChangeSelectedFunc();
@@ -1123,11 +1124,11 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       }
    }
    set(lv, MUIA_NList_Quiet, TRUE);
-   Busy(GetStr(MSG_BusyDeleting), itoa(selected), 0, selected);
+
+   BusyGauge(GetStr(MSG_BusyDeleting), itoa(selected), selected);
    if (C->RemoveAtOnce || folder == delfolder) delatonce = TRUE;
    for (i = 0; i < selected; i++)
    {
-      Busy(NULL, NULL, i, 0);
       mail = mlist[i+2];
       if (mail->Flags & MFLAG_SENDMDN) if ((mail->Status == STATUS_NEW || mail->Status == STATUS_UNR) && !ignoreall) ignoreall = RE_DoMDN(MDN_DELE, mail, TRUE);
       if (delatonce) MA_DeleteSingle(mail, TRUE);
@@ -1136,6 +1137,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
          struct MailInfo *mi = GetMailInfo(mail);
          MA_MoveCopySingle(mail, mi->Pos, mail->Folder, delfolder, FALSE);
       }
+      BusySet(i+1);
    }
    BusyEnd;
    set(lv, MUIA_NList_Quiet, FALSE);
@@ -1441,7 +1443,7 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
       if (!mlist) mlist = MA_CreateFullList(folder);
       if (mlist)
       {
-         Busy(GetStr(MSG_BusyFiltering), "", 0, (int)*mlist);
+         BusyGauge(GetStr(MSG_BusyFiltering), "", (int)*mlist);
          for (m = 0; m < (int)*mlist; m++)
          {
             mail = mlist[m+2];
@@ -1457,12 +1459,13 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
                   if (!MA_ExecuteRuleAction(search[i]->Rule, mail)) break;
                }
             }
-            Busy(NULL, NULL, m, 0);
+            BusySet(m+1);
          }
          free(mlist);
          if (G->RRs.Moved) MA_FlushIndexes(FALSE);
          if (G->RRs.Checked) AppendLog(26, GetStr(MSG_LOG_Filtering), (void *)(G->RRs.Checked), folder->Name, (void *)matches, "");
-         Busy("", NULL,  0, 0);
+
+         BusyEnd;
       }
       MA_FreeRules(search, scnt);
    }
@@ -1565,22 +1568,38 @@ HOOKPROTONHNONP(MA_DeleteOldFunc, void)
    int f;
    struct Mail *mail, *next;
 
-   Busy(GetStr(MSG_BusyDeletingOld), "", 0, 0);
    DateStamp(&today); today_days = today.ds_Days;
    if ((flist = FO_CreateList()))
    {
-      for (f = 1; f <= (int)*flist; f++) if (flist[f]->MaxAge) if (MA_GetIndex(flist[f]))
-         for (mail = flist[f]->Messages; mail; mail = next)
-         {
-            next = mail->Next;
-            today.ds_Days = today_days - flist[f]->MaxAge;
-            if (CompareDates(&today, &(mail->Date)) < 0)
-               if (flist[f]->Type == FT_DELETED || (mail->Status != STATUS_NEW && mail->Status != STATUS_UNR))
+      BusyGauge(GetStr(MSG_BusyDeletingOld), "", (int)*flist);
+
+      for (f = 1; f <= (int)*flist; f++)
+      {
+        if (flist[f]->MaxAge)
+        {
+          if (MA_GetIndex(flist[f]))
+          {
+            for(mail = flist[f]->Messages; mail; mail = next)
+            {
+              next = mail->Next;
+              today.ds_Days = today_days - flist[f]->MaxAge;
+              if (CompareDates(&today, &(mail->Date)) < 0)
+              {
+                if (flist[f]->Type == FT_DELETED || (mail->Status != STATUS_NEW && mail->Status != STATUS_UNR))
+                {
                   MA_DeleteSingle(mail, C->RemoveOnQuit);
-         }
+                }
+              }
+            }
+          }
+        }
+
+        BusySet(f);
+      }
       free(flist);
+
+      BusyEnd;
    }
-   BusyEnd;
 }
 MakeHook(MA_DeleteOldHook, MA_DeleteOldFunc);
 
@@ -1596,11 +1615,11 @@ HOOKPROTONHNO(MA_DeleteDeletedFunc, void, int *arg)
 
   if(!folder) return;
 
-  Busy(GetStr(MSG_BusyEmptyingTrash), "", 0, folder->Total);
+  BusyGauge(GetStr(MSG_BusyEmptyingTrash), "", folder->Total);
 
   for (mail = folder->Messages; mail; mail = mail->Next)
   {
-    Busy(NULL, NULL, i++, 0);
+    BusySet(++i);
     AppendLogVerbose(21, GetStr(MSG_LOG_DeletingVerbose), AddrName(mail->From), mail->Subject, folder->Name, "");
     DeleteFile(GetMailFile(NULL, NULL, mail));
   }
@@ -1866,7 +1885,7 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
    {
       sscanf(yamversiondate, "%ld.%ld.%ld", &day, &mon, &year);
       thisver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
-      Busy(GetStr(MSG_BusyGettingVerInfo), "", 0, 0);
+      BusyText(GetStr(MSG_BusyGettingVerInfo), "");
       tf = OpenTempFile(NULL);
       if (TR_DownloadURL(C->SupportSite, "files/", "version", tf->Filename))
       {
@@ -1912,7 +1931,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
    if (param) { strcat(command, " "); strcat(command, param); }
    if (C->RX[num].IsAmigaDOS)
    {
-      Busy(" ", "", 0, 0);
+      BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");
       ExecuteCommand(command, !C->RX[num].WaitTerm, C->RX[num].UseConsole ? OUT_DOS : OUT_NIL);
       BusyEnd;
    }
@@ -1934,7 +1953,7 @@ BOOL MA_StartMacro(enum Macro num, char *param)
          extern void DoRXCommand( struct RexxHost *, struct RexxMsg *);
          struct RexxMsg *rm;
          BOOL waiting = TRUE;
-         Busy(" ", "", 0, 0);
+         BusyText(GetStr(MSG_MA_EXECUTINGCMD), "");
          do
          {
             WaitPort(G->RexxHost->port);
@@ -2614,17 +2633,7 @@ struct MA_ClassData *MA_New(void)
                   MUIA_String_MaxLen, SIZE_DEFAULT,
                End,
             End,
-            Child, data->GUI.GR_INFO = HGroup,
-               MUIA_ShowMe,      C->InfoBar,
-               MUIA_InnerTop,    3,
-               MUIA_InnerBottom, 3,
-               MUIA_InnerLeft,   3,
-               MUIA_InnerRight,  3,
-               MUIA_Background,  MUII_HSHADOWSHADOW,
-               Child, data->GUI.TX_INFO = TextObject,
-                  MUIA_Font,          MUIV_Font_Big,
-                  MUIA_Text_PreParse, "\0338\033b",
-               End,
+            Child, data->GUI.IB_INFOBAR = InfoBarObject,
             End,
             Child, HGroup,
                MUIA_Group_Spacing, 1,
@@ -2679,12 +2688,14 @@ struct MA_ClassData *MA_New(void)
                   End,
                End,
             End,
+/*
             Child, data->GUI.GA_INFO = GaugeObject,
                GaugeFrame,
                MUIA_Gauge_Horiz   , TRUE,
                MUIA_Gauge_InfoText, " ",
                MUIA_ShowMe        , !(C->HideGUIElements & HIDE_INFO) ,
             End,
+*/
          End,
       End;
       if (data->GUI.WI)

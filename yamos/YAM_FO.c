@@ -585,6 +585,8 @@ static BOOL FO_SaveSubTree(FILE *fh, struct MUI_NListtree_TreeNode *subtree)
   APTR lv = G->MA->GUI.NL_FOLDERS;
   int i;
 
+  kprintf("saving SubTree!\n");
+
   // The root-Treenode is the subtree at the start
   tn_root = subtree;
 
@@ -654,6 +656,8 @@ BOOL FO_SaveTree(char *fname)
    BOOL success = TRUE;
    FILE *fh;
 
+   kprintf("saving YAM:.folders !!!\n");
+
    if (fh = fopen(fname, "w"))
    {
       fputs("YFO1 - YAM Folders\n", fh);
@@ -676,10 +680,10 @@ static void FO_XPKUpdateFolder(struct Folder *fo, int oldtype)
    {
       struct Mail *mail;
       int i;
-      Busy(GetStr(MSG_BusyUncompressingFO), "", 0, fo->Total);
+      BusyGauge(GetStr(MSG_BusyUncompressingFO), "", fo->Total);
       for (i = 0, mail = fo->Messages; mail; mail = mail->Next, i++)
       {
-         Busy(NULL, NULL, i, 0);
+         BusySet(i+1);
          RepackMailFile(mail, fo->XPKType, fo->Password);
       }
       BusyEnd;
@@ -704,12 +708,12 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    char srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
    BOOL success = TRUE;
    int i;
-   Busy(GetStr(MSG_BusyMoving), itoa(fo->Total), 0, fo->Total);
+   BusyGauge(GetStr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
    strcpy(srcbuf, GetFolderDir(oldfo));
    strcpy(dstbuf, GetFolderDir(fo));
    for (i = 0, mail = fo->Messages; mail && success; mail = mail->Next, i++)
    {
-      Busy(NULL, NULL, i, 0);
+      BusySet(i+1);
       GetMailFile(dstbuf, fo, mail);
       GetMailFile(srcbuf, oldfo, mail);
       if (!FO_Move(srcbuf, dstbuf)) success = FALSE;

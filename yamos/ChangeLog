@@ -1,3 +1,19 @@
+2001-10-12  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * Added/Created new InfoBar class, removed the bottom gauge bar and
+      made this InfoBar a default setting.
+      This new InfoBar combines the old first version of the InfoBar
+      together with the bottom GaugeBar and Busy texts/gauges are only
+      displayed if necessary.
+
+      This InfoBar class is NOT finished yet and there are still some
+      unimplemented features like:
+      - user configurable InfoBar position (Top/Center/Bottom)
+      - user configurable Folder text (number of new mails etc.)
+
+      The new style of this InfoBar is not finished yet and any suggestion
+      is welcome.
+
 2001-09-14  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed another bug in the folder listtree were on a drag&drop mail

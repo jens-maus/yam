@@ -109,7 +109,12 @@ struct NewToolbarEntry
 #define PGPLOGFILE    "T:PGP.log"
 #define NOERRORS      16
 #define KEEPLOG       32
-#define BusyEnd       Busy("", NULL, 0, 0)
+
+// special Macros for the Busy Handling of the InfoBar.
+#define BusyEnd               Busy("", NULL, 0, 0)
+#define BusySet(c)            Busy(NULL, NULL, c, 0)
+#define BusyText(t, p)        Busy(t, p, 0, 0)
+#define BusyGauge(t, p, max)  Busy(t, p, 0, max)
 
 #define OUT_DOS       ((BPTR)0)
 #define OUT_NIL       ((BPTR)1)
