@@ -737,7 +737,7 @@ struct rfc2047_decode_info
 int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
                    struct TranslationTable *tt)
 {
-  int result = 0;
+  int result;
   // pack all the necessary information in the decode_info
   // structure so that the decode function can process it.
   struct rfc2047_decode_info info;
