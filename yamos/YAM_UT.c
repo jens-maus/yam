@@ -414,13 +414,14 @@ char *itoa(int val)
 int MatchNoCase(char *string, char *match)
 {
    char pattern[SIZE_PATTERN];
+
    ParsePatternNoCase(match, pattern, SIZE_PATTERN);
    return MatchPatternNoCase(pattern, string);
 }
 ///
 /// CompNoCase
 //  Case insensitive string comparison
-BOOL CompNoCase(char *a, char *b, int l)
+static BOOL CompNoCase(const char *a, const char *b, int l)
 {
    for (; l; l--, a++, b++) if (toupper(*a) != toupper(*b)) return FALSE;
    return TRUE;
@@ -532,31 +533,36 @@ char *stccat(char *a, char *b, int n)
 ///
 /// stristr
 //  Case insensitive version of strstr()
-char *stristr(char *a, char *b)
+char *stristr(const char *a, const char *b)
 {
    int l = strlen(b);
-   for (; *a; a++) if (CompNoCase(a, b, l)) return a;
+
+   for (; *a; a++) if (CompNoCase(a, b, l)) return (char *)a;
    return NULL;
 }
 ///
 /// MyStrChr
 //  Searches for a character in string, ignoring text in quotes
-char *MyStrChr(char *s, int c)
+char *MyStrChr(const char *s, int c)
 {
    BOOL nested = FALSE;
+
    for (; *s; s++)
-      if (*s == '\"') nested = !nested; 
-      else if (*s == (char)c && !nested) return s;
+      if (*s == '\"') nested = !nested;
+      else if (*s == (char)c && !nested) return (char *)s;
    return NULL;
 }
 ///
 /// Index
 //  Returns position of a character in a string
+#ifdef UNUSED
 int Index(char *str, char chr)
 {
    char *t = strchr(str, chr);
+
    return t ? (int)(t-str) : -1;
 }
+#endif
 ///
 /// AllocStrBuf
 //  Allocates a dynamic buffer
@@ -1017,12 +1023,16 @@ void SimpleWordWrap(char *filename, int wrapsize)
 /// ReqFile
 //  Puts up a file requester
 int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file)
-{   
-   static BOOL init[MAXASL] = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE };
-   static char *pattern[MAXASL] =  { "#?.addressbook#?", "#?.config#?", NULL, NULL, "#?.(yam|rexx)", "#?.(gif|jpg|jpeg|png|iff|ilbm)", NULL, NULL };
-   struct Window *truewin;
-   int skip = *file ? 1 : 2;
+{
+   static const char *pattern[MAXASL] = {
+     "#?.addressbook#?", "#?.config#?", NULL, NULL, "#?.(yam|rexx)", "#?.(gif|jpg|jpeg|png|iff|ilbm)", NULL, NULL
+   };
+   static BOOL init[MAXASL] = {
+     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
+   };
    char *postext = (mode & 1)==1 ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load);
+   int skip = *file ? 1 : 2;
+   struct Window *truewin;
 
    get(win, MUIA_Window_Window, &truewin);
    if (!init[num]) { init[num] = TRUE; skip = 0; }
@@ -1591,53 +1601,57 @@ char *GetTZ(void)
 //  Converts time zone into a numeric offset
 static int TZtoMinutes(char *tzone)
 {
+   static const struct {
+     char *TZname;
+     int   TZcorr;
+   } tzones[] = {
+    { "sst",    -1100 },
+    { "pst",     -800 },
+    { "mst",     -700 },
+    { "pdt",     -700 },
+    { "cst",     -600 },
+    { "mdt",     -600 },
+    { "est",     -500 },
+    { "ast",     -500 },
+    { "edt",     -400 },
+    { "wgt",     -300 },
+    { "wgst",    -200 },
+    { "aat",     -100 },
+    { "egt",     -100 },
+    { "egst",       0 },
+    { "gmt",        0 },
+    { "utc",        0 },
+    { "wat",        0 },
+    { "wet",        0 },
+    { "bst",      100 },
+    { "cat",      100 },
+    { "cet",      100 },
+    { "met",      100 },
+    { "west",     100 },
+    {"cest",      200 },
+    { "met dst",  200 },
+    { "eet",      200 },
+    { "ist",      200 },
+    { "sat",      200 },
+    { "ast",      300 },
+    { "eat",      300 },
+    { "eest",     300 },
+    { "idt",      300 },
+    { "msk",      300 },
+    { "adt",      400 },
+    { "msd",      300 },
+    { "gst",      400 },
+    { "smt",      400 },
+    { "ict",      400 },
+    { "hkt",      800 },
+    { "wst",      800 },
+    { "jst",      900 },
+    { "kst",     1000 },
+    { "nzst",    1200 },
+    { "nzdt",    1300 },
+    { NULL,         0 }
+   };
    int i, tzcorr = 0;
-   static struct TimeZones { char *TZname; int TZcorr; }
-   tzones[] = {{"sst",    -1100},
-               {"pst",    -800 },
-               {"mst",    -700 },
-               {"pdt",    -700 },
-               {"cst",    -600 },
-               {"mdt",    -600 },
-               {"est",    -500 },
-               {"ast",    -500 },
-               {"edt",    -400 },
-               {"wgt",    -300 },
-               {"wgst",   -200 },
-               {"aat",    -100 },
-               {"egt",    -100 },
-               {"egst",    0   },
-               {"gmt",     0   },
-               {"utc",     0   },
-               {"wat",     0   },
-               {"wet",     0   },
-               {"bst",     100 },
-               {"cat",     100 },
-               {"cet",     100 },
-               {"met",     100 },
-               {"west",    100 },
-               {"cest",    200 },
-               {"met dst", 200 },
-               {"eet",     200 },
-               {"ist",     200 },
-               {"sat",     200 },
-               {"ast",     300 },
-               {"eat",     300 },
-               {"eest",    300 },
-               {"idt",     300 },
-               {"msk",     300 },
-               {"adt",     400 },
-               {"msd",     300 },
-               {"gst",     400 },
-               {"smt",     400 },
-               {"ict",     400 },
-               {"hkt",     800 },
-               {"wst",     800 },
-               {"jst",     900 },
-               {"kst",     1000},
-               {"nzst",    1200},
-               {"nzdt",    1300},
-               {NULL,      0   }};
 
    if (tzone[0] == '+') tzcorr = atoi(&tzone[1]);
    else if (tzone[0] == '-') tzcorr = -atoi(&tzone[1]);
@@ -1698,10 +1712,6 @@ struct DateStamp *ScanDate(char *date)
 /// FormatSize
 //  Displays large numbers using group separators
 
-#define GB  (1000000000)
-#define MB  (1000000)
-#define KB  (1000)
-
 void FormatSize(int size, char *buffer)
 {
   // get the GroupSeparator string
@@ -1712,6 +1722,8 @@ void FormatSize(int size, char *buffer)
   // we check what SizeFormat the user has choosen
   switch(C->SizeFormat)
   {
+    enum { KB = 1000, MB = 1000 * 1000, GB = 1000 * 1000 * 1000 };
+
     /*
     ** ONE Precision mode
     ** This will result in the following output:

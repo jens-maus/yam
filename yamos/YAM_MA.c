@@ -88,7 +88,7 @@ static int MA_MailCompare(struct Mail*, struct Mail*, int);
 //  Calculates value for sort indicator
 static ULONG MA_GetSortType(int sort)
 {
-   ULONG sort2col[8] = { 0,4,6,1,1,3,5,0 };
+   static const ULONG sort2col[8] = { 0,4,6,1,1,3,5,0 };
    if(sort > 0)
       return sort2col[sort];
    else
@@ -2060,7 +2060,8 @@ static char *MA_GetRealSubject(char *sub)
 //  Compares two messages
 static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, int column)
 {
-   static int values[9] = { 50, 35, 30, 25, 45, 60, 40, 20, 55 };
+   static const int values[9] = { 50, 35, 30, 25, 45, 60, 40, 20, 55 };
+
    switch (column)
    {
       case 0: return -(values[entry1->Status]+entry1->Importance)+(values[entry2->Status]+entry2->Importance);
@@ -2168,8 +2169,8 @@ enum { MMEN_ABOUT=1,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HIDE,
 //  Updates ARexx and POP3 account menu items
 void MA_SetupDynamicMenus(void)
 {
+   static const char *shortcuts[10] = { "0","1","2","3","4","5","6","7","8","9" };
    int i;
-   static char *shortcuts[10] = { "0","1","2","3","4","5","6","7","8","9" };
 
    /* Scripts menu */
 
@@ -2343,10 +2344,11 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
 //  Creates format definition for message listview
 void MA_MakeMAFormat(APTR lv)
 {
-   int i;
-   int defwidth[MACOLNUM] = { -1,-1,-1,-1,-1,-1,-1 };
+   static const int defwidth[MACOLNUM] = { -1,-1,-1,-1,-1,-1,-1 };
    char format[SIZE_LARGE];
    BOOL first = TRUE;
+   int i;
+
    *format = 0;
    for (i = 0; i < MACOLNUM; i++) if (C->MessageCols & (1<<i))
    {
@@ -2364,21 +2366,25 @@ void MA_MakeMAFormat(APTR lv)
 //  Creates main window
 struct MA_ClassData *MA_New(void)
 {
-   struct MA_ClassData *data;
-  
-   if ((data = calloc(1,sizeof(struct MA_ClassData))))
+   struct MA_ClassData *data = calloc(1, sizeof(struct MA_ClassData));
+   if (data)
    {
-      APTR tb_butt[18] = { MSG_MA_TBRead,MSG_MA_TBEdit,MSG_MA_TBMove,MSG_MA_TBDelete,MSG_MA_TBGetAddr,MSG_Space,
-                           MSG_MA_TBWrite,MSG_MA_TBReply,MSG_MA_TBForward,MSG_Space,
-                           MSG_MA_TBGetMail,MSG_MA_TBSendAll,MSG_Space,
-                           MSG_MA_TBFilter,MSG_MA_TBFind,MSG_MA_TBAddrBook,MSG_MA_TBConfig,NULL };
-      APTR tb_help[18] = { MSG_HELP_MA_BT_READ,MSG_HELP_MA_BT_EDIT,MSG_HELP_MA_BT_MOVE,MSG_HELP_MA_BT_DELETE,MSG_HELP_MA_BT_GETADDRESS,NULL,
-                           MSG_HELP_MA_BT_WRITE,MSG_HELP_MA_BT_REPLY,MSG_HELP_MA_BT_FORWARD,NULL,
-                           MSG_HELP_MA_BT_POPNOW,MSG_HELP_MA_BT_SENDALL,NULL,
-                           MSG_HELP_MA_BT_FILTER,MSG_HELP_MA_BT_SEARCH,MSG_HELP_MA_BT_ABOOK,MSG_HELP_MA_BT_CONFIG,NULL };
-      int i;
+      static const APTR tb_butt[18] = {
+        MSG_MA_TBRead,MSG_MA_TBEdit,MSG_MA_TBMove,MSG_MA_TBDelete,MSG_MA_TBGetAddr,MSG_Space,
+        MSG_MA_TBWrite,MSG_MA_TBReply,MSG_MA_TBForward,MSG_Space,
+        MSG_MA_TBGetMail,MSG_MA_TBSendAll,MSG_Space,
+        MSG_MA_TBFilter,MSG_MA_TBFind,MSG_MA_TBAddrBook,MSG_MA_TBConfig,NULL
+      };
+      static const APTR tb_help[18] = {
+        MSG_HELP_MA_BT_READ,MSG_HELP_MA_BT_EDIT,MSG_HELP_MA_BT_MOVE,MSG_HELP_MA_BT_DELETE,MSG_HELP_MA_BT_GETADDRESS,NULL,
+        MSG_HELP_MA_BT_WRITE,MSG_HELP_MA_BT_REPLY,MSG_HELP_MA_BT_FORWARD,NULL,
+        MSG_HELP_MA_BT_POPNOW,MSG_HELP_MA_BT_SENDALL,NULL,
+        MSG_HELP_MA_BT_FILTER,MSG_HELP_MA_BT_SEARCH,MSG_HELP_MA_BT_ABOOK,MSG_HELP_MA_BT_CONFIG,NULL
+      };
       char *key = "-repeat 0", *username = C->RealName;
       struct User *user;
+      int i;
+
       for (i = 0; i < 18; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
       if ((user = US_GetCurrentUser())) username = user->Name;
       sprintf(data->WinTitle, GetStr(MSG_MA_WinTitle), yamversion, username);

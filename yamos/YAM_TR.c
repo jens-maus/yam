@@ -499,9 +499,9 @@ static BOOL TR_GetMessageList_GET(void)
             line[l] = 0; l = 0;
             if (line[0] == '.' && line[1] == '\n') { done = TRUE; break; }
             sscanf(line, "%ld %ld", &index, &size);
-            if (index) if (new = calloc(1,sizeof(struct Mail)))
+            if (index) if (new = calloc(1, sizeof(struct Mail)))
             {
-               static int mode2status[16] = { 1,1,3,3,1,1,3,3,0,1,0,3,0,1,0,3 };
+               static const int mode2status[16] = { 1,1,3,3,1,1,3,3,0,1,0,3,0,1,0,3 };
                new->Index = index; new->Size = size; new->Folder = NULL;
                mode = (C->DownloadLarge ? 1 : 0) +
                       (C->P3[G->TR->POP_Nr]->DeleteOnServer ? 2 : 0) +
@@ -1326,12 +1326,13 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
    int i, c;
    char buf[SIZE_LINE], fullfile[SIZE_PATHFILE];
    FILE *fh, *mfh;
-   struct Mail *mail, *new;
+   struct Mail *mail;
 
    G->TR->List = NULL;
    for (c = i = 0; i < (int)*mlist; i++)
    {
-      if (new = calloc(1,sizeof(struct Mail)))
+      struct Mail *new = malloc(sizeof(struct Mail));
+      if (new)
       {
          *new = *mlist[i+2];
          new->Index = ++c; new->Status = 1;
@@ -1864,15 +1865,13 @@ MakeStaticHook(TR_LV_DspFuncHook,TR_LV_DspFunc);
 //  Creates transfer window
 struct TR_ClassData *TR_New(enum TransferType TRmode)
 {
-   struct TR_ClassData *data;
-
-   if (data = calloc(1,sizeof(struct TR_ClassData)))
+   struct TR_ClassData *data = calloc(1, sizeof(struct TR_ClassData));
+   if (data)
    {
       APTR bt_all = NULL, bt_none = NULL, bt_loadonly = NULL, bt_loaddel = NULL, bt_delonly = NULL, bt_leave = NULL;
       APTR gr_sel, gr_proc, gr_win;
       BOOL fullwin = (TRmode == TR_GET || TRmode == TR_IMPORT);
 
-      
       gr_proc = ColGroup(2), GroupFrameT(GetStr(MSG_TR_Status)),
          Child, data->GUI.TX_STATS = TextObject,
             MUIA_Text_Contents, GetStr(MSG_TR_TransferStats0),

@@ -1015,10 +1015,11 @@ MakeHook(MA_LV_FDspFuncHook,MA_LV_FDspFunc);
 //  Creates format definition for folder listview
 void MA_MakeFOFormat(APTR lv)
 {
-   int i;
-   int defwidth[FOCOLNUM] = { -1,-1,-1,-1,-1 };
+   static const int defwidth[FOCOLNUM] = { -1,-1,-1,-1,-1 };
    char format[SIZE_LARGE];
    BOOL first = TRUE;
+   int i;
+
    *format = 0;
    for (i = 0; i < FOCOLNUM; i++) if (C->FolderCols & (1<<i))
    {

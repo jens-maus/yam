@@ -444,9 +444,8 @@ MakeStaticHook(US_LV_DspHook,US_LV_DspFunc);
 //  Creates user list window
 static struct US_ClassData *US_New(BOOL supervisor)
 {
-   struct US_ClassData *data;
-
-   if (data = calloc(1, sizeof(struct US_ClassData)))
+   struct US_ClassData *data = calloc(1, sizeof(struct US_ClassData));
+   if (data)
    {
       data->Supervisor = supervisor;
       data->GUI.WI = WindowObject,

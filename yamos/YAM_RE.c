@@ -2043,10 +2043,13 @@ static char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
 //  Extracts URL from a message line
 static BOOL RE_ExtractURL(char *line, char *url, char **urlptr, char **rest)
 {
-   char *protocols[7] = { "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:" };
-   char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#";
+   static const char *legalchars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_?+-,.~/%&=:*#";
+   static const char *protocols[7] = {
+     "mailto:", "http://", "https://", "ftp://", "gopher://", "telnet://", "news:"
+   };
    char *foundurl = NULL, *p;
    int i;
+
    if (p = strchr(line, ':')) for (i = 0; i < 7; i++) if (foundurl = stristr(line, protocols[i])) break;
    if (!foundurl) return FALSE;
    for (i = 0; foundurl[i] && strchr(legalchars, foundurl[i]) && i < SIZE_URL-1; i++) url[i] = foundurl[i];
@@ -2741,28 +2744,35 @@ MakeStaticHook(RE_LV_HDspHook,RE_LV_HDspFunc);
 ///
 /// RE_New
 //  Creates a read window
-enum {   RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_SETUNREAD,RMEN_CHSUBJ,
-         RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,
-         RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
-         RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT };
-
 static APTR RE_LEDGroup(char *filename)
 {
    return PageGroup, Child, HSpace(0), Child, MakeStatusFlag(filename), End;
 }
+
 static struct RE_ClassData *RE_New(int winnum, BOOL real)
 {
-   struct RE_ClassData *data;
-
-   if (data = calloc(1,sizeof(struct RE_ClassData)))
+   struct RE_ClassData *data = calloc(1, sizeof(struct RE_ClassData));
+   if (data)
    {
-      APTR tb_butt[14] = { MSG_RE_TBPrev,MSG_RE_TBNext,MSG_RE_TBPrevTh,MSG_RE_TBNextTh,MSG_Space,
-                           MSG_RE_TBDisplay,MSG_RE_TBSave,MSG_RE_TBPrint,MSG_Space,
-                           MSG_RE_TBDelete,MSG_RE_TBMove,MSG_RE_TBReply,MSG_RE_TBForward,NULL };
-      APTR tb_help[14] = { MSG_HELP_RE_BT_PREVIOUS,MSG_HELP_RE_BT_NEXT,MSG_HELP_RE_BT_QUESTION,MSG_HELP_RE_BT_ANSWER,NULL,
-                           MSG_HELP_RE_BT_DISPLAY,MSG_HELP_RE_BT_EXPORT,MSG_HELP_RE_BT_PRINT,NULL,
-                           MSG_HELP_RE_BT_DELETE,MSG_HELP_RE_BT_MOVE,MSG_HELP_RE_BT_REPLY,MSG_HELP_RE_BT_FORWARD,NULL };
+      enum {
+        RMEN_EDIT=501,RMEN_MOVE,RMEN_COPY,RMEN_DELETE,RMEN_PRINT,RMEN_SAVE,RMEN_DISPLAY,RMEN_DETACH,RMEN_CROP,RMEN_NEW,RMEN_REPLY,RMEN_FORWARD,RMEN_BOUNCE,RMEN_SAVEADDR,RMEN_SETUNREAD,RMEN_CHSUBJ,
+        RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,
+        RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
+        RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT
+      };
+
+      static const APTR tb_butt[14] = {
+         MSG_RE_TBPrev,MSG_RE_TBNext,MSG_RE_TBPrevTh,MSG_RE_TBNextTh,MSG_Space,
+         MSG_RE_TBDisplay,MSG_RE_TBSave,MSG_RE_TBPrint,MSG_Space,
+         MSG_RE_TBDelete,MSG_RE_TBMove,MSG_RE_TBReply,MSG_RE_TBForward,NULL
+      };
+      static const APTR tb_help[14] = {
+         MSG_HELP_RE_BT_PREVIOUS,MSG_HELP_RE_BT_NEXT,MSG_HELP_RE_BT_QUESTION,MSG_HELP_RE_BT_ANSWER,NULL,
+         MSG_HELP_RE_BT_DISPLAY,MSG_HELP_RE_BT_EXPORT,MSG_HELP_RE_BT_PRINT,NULL,
+         MSG_HELP_RE_BT_DELETE,MSG_HELP_RE_BT_MOVE,MSG_HELP_RE_BT_REPLY,MSG_HELP_RE_BT_FORWARD,NULL
+      };
       int i;
+
       for (i = 0; i < 14; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, 0);
       data->GUI.SL_TEXT = ScrollbarObject, End;
       data->Header = C->ShowHeader;

@@ -486,7 +486,8 @@ static char *firstbad(char *s)
 //  Outputs a base64 encoded, single byte of a message header
 static void PutQP(unsigned char c, FILE *fh)
 {
-   static char basis_hex[] = "0123456789ABCDEF";
+   static const char basis_hex[] = "0123456789ABCDEF";
+
    fputc('=', fh);
    fputc(basis_hex[c>>4], fh);
    fputc(basis_hex[c&0xF], fh);
@@ -2024,35 +2025,42 @@ static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, i
 ///
 /// WR_New
 //  Creates a write window
-enum { WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
-       WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,
-       WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_DICT,WMEN_STYLE1,WMEN_STYLE2,WMEN_STYLE3,
-       WMEN_STYLE4,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
-       WMEN_AUTOSP,WMEN_SEP0,WMEN_SEP1,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
-       WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
-       WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
-       WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5 };
-extern long cmap[8];
-
 static struct WR_ClassData *WR_New(int winnum)
 {
-   struct WR_ClassData *data;
-
-   if ((data = calloc(1,sizeof(struct WR_ClassData))))
+   struct WR_ClassData *data = calloc(1, sizeof(struct WR_ClassData));
+   if (data)
    {
+      enum {
+        WMEN_NEW=1,WMEN_OPEN,WMEN_INSFILE,WMEN_SAVEAS,WMEN_INSQUOT,WMEN_INSALTQUOT,
+        WMEN_INSROT13,WMEN_EDIT,WMEN_CUT,WMEN_COPY,WMEN_PASTE,
+        WMEN_PASQUOT,WMEN_PASALTQUOT,WMEN_PASROT13,WMEN_DICT,WMEN_STYLE1,WMEN_STYLE2,WMEN_STYLE3,
+        WMEN_STYLE4,WMEN_EMOT0,WMEN_EMOT1,WMEN_EMOT2,WMEN_EMOT3,WMEN_UNDO,WMEN_REDO,
+        WMEN_AUTOSP,WMEN_SEP0,WMEN_SEP1,WMEN_ADDFILE, WMEN_ADDCLIP, WMEN_ADDPGP,
+        WMEN_DELSEND,WMEN_RECEIPT,WMEN_DISPNOTI,WMEN_ADDINFO,WMEN_IMPORT0,WMEN_IMPORT1,
+        WMEN_IMPORT2,WMEN_SIGN0,WMEN_SIGN1,WMEN_SIGN2,WMEN_SIGN3,
+        WMEN_SECUR0,WMEN_SECUR1,WMEN_SECUR2,WMEN_SECUR3,WMEN_SECUR4, WMEN_SECUR5
+      };
+
       static char *rtitles[4]={NULL}, *encoding[3], *security[SEC_MAXDUMMY+1], *priority[4], *signat[5];
-      static char *emoticons[4] = { ":-)", ":-|", ":-(", ";-)" };
+      static const char *emoticons[4] = {
+        ":-)", ":-|", ":-(", ";-)"
+      };
+      static const APTR tb_butt[13] = {
+        MSG_WR_TBEditor,MSG_WR_TBInsert,MSG_Space,
+        MSG_WR_TBCut,MSG_WR_TBCopy,MSG_WR_TBPaste,MSG_WR_TBUndo,MSG_Space,
+        MSG_WR_TBBold,MSG_WR_TBItalic,MSG_WR_TBUnderlined,MSG_WR_TBColored,NULL
+      };
+      static const APTR tb_help[13] = {
+        MSG_HELP_WR_BT_EDITOR,MSG_HELP_WR_BT_LOAD,NULL,
+        MSG_HELP_WR_BT_CUT,MSG_HELP_WR_BT_COPY,MSG_HELP_WR_BT_PASTE,MSG_HELP_WR_BT_UNDO,NULL,
+        MSG_HELP_WR_BT_BOLD,MSG_HELP_WR_BT_ITALIC,MSG_HELP_WR_BT_UNDERL,MSG_HELP_WR_BT_COLOR,NULL
+      };
       APTR sec_menus[SEC_MAXDUMMY];
       APTR mi_copy, mi_cut, mi_redo, mi_undo, mi_bold, mi_italic, mi_underl, mi_color;
       APTR strip, mi_autospell, mi_delsend, mi_receipt, mi_dispnoti, mi_addinfo;
       APTR slider = ScrollbarObject, End;
-      APTR tb_butt[13] = { MSG_WR_TBEditor,MSG_WR_TBInsert,MSG_Space,
-                           MSG_WR_TBCut,MSG_WR_TBCopy,MSG_WR_TBPaste,MSG_WR_TBUndo,MSG_Space,
-                           MSG_WR_TBBold,MSG_WR_TBItalic,MSG_WR_TBUnderlined,MSG_WR_TBColored,NULL };
-      APTR tb_help[13] = { MSG_HELP_WR_BT_EDITOR,MSG_HELP_WR_BT_LOAD,NULL,
-                           MSG_HELP_WR_BT_CUT,MSG_HELP_WR_BT_COPY,MSG_HELP_WR_BT_PASTE,MSG_HELP_WR_BT_UNDO,NULL,
-                           MSG_HELP_WR_BT_BOLD,MSG_HELP_WR_BT_ITALIC,MSG_HELP_WR_BT_UNDERL,MSG_HELP_WR_BT_COLOR,NULL };
       int i, spell;
+
       for (i = 0; i < 13; i++) SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i]?(tb_butt[i]==MSG_Space?"":GetStr(tb_butt[i])):NULL, tb_help[i]?GetStr(tb_help[i]):NULL, (i>=8 && i<=11)?TDF_TOGGLE:0);
       if(NULL == rtitles[0])   // only initialize static data on first call
       {
@@ -2464,9 +2472,8 @@ static struct WR_ClassData *WR_New(int winnum)
 //  Creates a bounce window
 static struct WR_ClassData *WR_NewBounce(int winnum)
 {
-   struct WR_ClassData *data;
-
-   if ((data = calloc(1,sizeof(struct WR_ClassData))))
+   struct WR_ClassData *data = calloc(1, sizeof(struct WR_ClassData));
+   if (data)
    {
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_WR_BounceWT),
