@@ -435,18 +435,34 @@ static BOOL AY_New(BOOL hidden)
    char logopath[SIZE_PATHFILE];
    APTR ft_text, bt_gopage;
    struct DateTime dt;
-   char datebuf[32]; // we don`t use LEN_DATSTRING as OS3.1 anyway ignores it.
+   char compiledon[SIZE_DEFAULT]; // have to be at least LEN_DATSTRING long = 32
 
    dt.dat_Stamp.ds_Days   = yamversiondays;
    dt.dat_Stamp.ds_Minute = 0;
    dt.dat_Stamp.ds_Tick   = 0;
-   dt.dat_Format  = FORMAT_DEF;
-   dt.dat_Flags   = 0L;
-   dt.dat_StrDay  = NULL;
-   dt.dat_StrDate = datebuf;
-   datebuf[31] = '\0';  // make sure that the string is really terminated.
-   dt.dat_StrTime = NULL;
+   dt.dat_Format          = FORMAT_DEF;
+   dt.dat_Flags           = 0L;
+   dt.dat_StrDay          = NULL;
+   dt.dat_StrDate         = compiledon;
+   dt.dat_StrTime         = NULL;
    DateToStr(&dt);
+   compiledon[31] = '\0';  // make sure that the string is really terminated at LEN_DATSTRING.
+
+   // now we add the compiler information as YAM can be
+   // compiled with different versions and types of compilers
+   #if defined(__GNUC__)
+     #if defined(__GNUC_PATCHLEVEL__)
+     sprintf(&compiledon[strlen(compiledon)], " (GCC %d.%d.%d)", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
+     #else
+     sprintf(&compiledon[strlen(compiledon)], " (GCC %d.%d.x)",  __GNUC__, __GNUC_MINOR__);
+     #endif
+   #elif defined(__VBCC__)
+     strcpy(&compiledon[strlen(compiledon)],  " (VBCC)");
+   #elif defined(__SASC)
+     sprintf(&compiledon[strlen(compiledon)], " (SAS/C %d.%d)", __VERSION__, __REVISION__);
+   #else
+     strcpy(&compiledon[strlen(compiledon)],  " (unknown)");
+   #endif
 
    strmfp(logopath, G->ProgDir, "Icons/logo");
    G->AY_Win = WindowObject,
@@ -481,7 +497,7 @@ static BOOL AY_New(BOOL hidden)
                Child, Label(GetStr(MSG_Version)),
                Child, LLabel(yamversionver),
                Child, Label(GetStr(MSG_CompilationDate)),
-               Child, LLabel(datebuf),
+               Child, LLabel(compiledon),
              End,
          End)),
          Child, G->AY_Group = PageGroup,

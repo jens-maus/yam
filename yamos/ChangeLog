@@ -7,6 +7,10 @@ $Source$
 
 2004-03-07  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: added compiler version to compile information of the
+      about/splash window. As YAM can be compiled with different
+      versions and types of compilers it`s probably a good idea
+      to have an information about that in the about window.
     * all: fixed some more compiler warnings which occurred by
       introducing the -W compiler option. Now xget() is defined
       as an inline function and used everywhere throughout the
