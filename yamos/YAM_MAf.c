@@ -572,7 +572,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
                {
                   if (strstr(value, "delsent")) email.DelSend = TRUE;
                   if (p = strstr(value, "sigfile")) email.Signature = p[7]-'0'+1;
-                  for (j = 1; j < 5; j++) if (strstr(value, SecCodes[j])) email.Security = j;
+                  for (j = SEC_SIGN; j <= SEC_SENDANON; j++) if (strstr(value, SecCodes[j])) email.Security = j;
                }
                if (!strnicmp(field, "x-yam-header-", 13))
                {
