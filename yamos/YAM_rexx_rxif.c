@@ -1833,8 +1833,22 @@ void rx_userinfo( struct RexxHost *host, struct rxd_userinfo **rxd, long action,
          rd->rd.res.realname = C->RealName;
          rd->rd.res.config = G->CO_PrefsFile;
          rd->rd.res.maildir = G->MA_MailDir;
-         rd->folders = DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetNr, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_GetNr_Flag_CountAll);
+
+         // count the real folders now
+         {
+            int i = 0, numfolders = 0;
+            struct MUI_NListtree_TreeNode *tn;
+
+            while(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE))
+            {
+              if(!isFlagSet(tn->tn_Flags, TNF_LIST)) numfolders++;
+              i++;
+            }
+
+            rd->folders = numfolders;
+         }
          rd->rd.res.folders = (long *)&rd->folders;
+
          break;
       
       case RXIF_FREE:
