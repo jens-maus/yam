@@ -1112,7 +1112,7 @@ void MA_RemoveAttach(struct Mail *mail, BOOL warning)
 
    // if we need to warn the user of this operation we put up a requester
    // before we go on
-   if(warning && MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_CROPREQUEST_GADS), GetStr(MSG_MA_CROPREQUEST)) == 0)
+   if(warning && MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) == 0)
    {
      return;
    }
@@ -1162,7 +1162,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
 
    // we need to warn the user of this operation we put up a requester
    // before we go on
-   if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_MA_CROPREQUEST_GADS), GetStr(MSG_MA_CROPREQUEST)) == 0)
+   if(MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq2), GetStr(MSG_MA_CROPREQUEST)) == 0)
    {
       return;
    }

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-05-23  David Rey <tactica@gmx.net>
+
+    * YAM_MA.c, YAM.cd: replaced MSG_MA_CROPREQUEST_GADS with MSG_YesNoReq2
+      to avoid reinventing the wheel every time. MSG_AB_NOYAMADDRBOOK_GADS
+      should also be dropped in YAM2.5+ in favour of the new string.
+
 2003-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: fixed bug #730474 where YAM didn`t uniconfiy the application

@@ -5279,6 +5279,6 @@ All attachments of the selected mails will be cropped.\n\
 \n\
 Do you really want to proceed?
 ;
-MSG_MA_CROPREQUEST_GADS (//)
+MSG_YesNoReq2 (//)
 _Yes|*_No
 ;
