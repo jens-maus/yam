@@ -951,58 +951,58 @@ static struct MUI_CustomClass *CreateMCC(STRPTR supername, struct MUI_CustomClas
 // Let us use the Assembler muiDispatcherEntry function
 // as long as AmigaOS4 can`t handle the MUI dispatchers correctly.
 __asm__
-("
-    .globl  muiDispatcherEntry
-	  .type   muiDispatcherEntry, @function
-
-    .section .data
-
-  muiDispatcherEntry:
-	  .short     0x4ef8                /* JMP.w */
-	  .short     0                     /* Indicate switch */
-	  .short     1                     /* Trap type */
-	  .long      muiDispatcherEntryPPC
-	  /* Register mapping */
-	  .byte      4
-	  .byte      1,60
-	  .byte      3,32
-	  .byte	     4,40
-	  .byte	     5,36
-	  .align	   4
-
-		.section .text
-	  .align     2
-
-  muiDispatcherEntryPPC:
-	  addi       r12, r1, -16        /* Calculate stackframe size */
-		rlwinm     r12, r12, 0, 0, 27  /* Align it */
-		stw        r1, 0(r12)          /* Store backchain pointer */
-		mr         r1, r12             /* Set real stack pointer */
-
-		stw		     r11,12(r1)          /* Store Enter68kQuick vector */
-
-		lwz		     r12,36(r3)          /* Get the cl_Userdata */
-		mtlr	     r12
-		blrl
-
-		lwz		     r11,12(r1)
-		mtlr	     r11
-
-		lwz        r1, 0(r1)           /* Cleanup stack frame */
-
-		blrl							             /* Return to emulation */
-		.long      muiHookExit
-		.byte      0                   /* Flags */
-		.byte      2                   /* Two registers (a7 and d0) */
-		.byte      1                   /* Map r1 */
-		.byte      60                  /* to A7 */
-		.byte      3                   /* Map r3 */
-		.byte      0                   /* to D0 */
-		.align     4
-		.section .data
-
-  muiHookExit:
-    .short     0x4e75              /* RTS */
+("\n\
+    .globl  muiDispatcherEntry\n\
+	  .type   muiDispatcherEntry, @function\n\
+\n\
+    .section .data\n\
+\n\
+  muiDispatcherEntry:\n\
+	  .short     0x4ef8                /* JMP.w */\n\
+	  .short     0                     /* Indicate switch */\n\
+	  .short     1                     /* Trap type */\n\
+	  .long      muiDispatcherEntryPPC\n\
+	  /* Register mapping */\n\
+	  .byte      4\n\
+	  .byte      1,60\n\
+	  .byte      3,32\n\
+	  .byte	     4,40\n\
+	  .byte	     5,36\n\
+	  .align	   4\n\
+\n\
+		.section .text\n\
+	  .align     2\n\
+\n\
+  muiDispatcherEntryPPC:\n\
+	  addi       r12, r1, -16        /* Calculate stackframe size */\n\
+		rlwinm     r12, r12, 0, 0, 27  /* Align it */\n\
+		stw        r1, 0(r12)          /* Store backchain pointer */\n\
+		mr         r1, r12             /* Set real stack pointer */\n\
+\n\
+		stw		     r11,12(r1)          /* Store Enter68kQuick vector */\n\
+\n\
+		lwz		     r12,36(r3)          /* Get the cl_Userdata */\n\
+		mtlr	     r12\n\
+		blrl\n\
+\n\
+		lwz		     r11,12(r1)\n\
+		mtlr	     r11\n\
+\n\
+		lwz        r1, 0(r1)           /* Cleanup stack frame */\n\
+\n\
+		blrl							             /* Return to emulation */\n\
+		.long      muiHookExit\n\
+		.byte      0                   /* Flags */\n\
+		.byte      2                   /* Two registers (a7 and d0) */\n\
+		.byte      1                   /* Map r1 */\n\
+		.byte      60                  /* to A7 */\n\
+		.byte      3                   /* Map r3 */\n\
+		.byte      0                   /* to D0 */\n\
+		.align     4\n\
+		.section .data\n\
+\n\
+  muiHookExit:\n\
+    .short     0x4e75              /* RTS */\n\
 ");
 #else
  #error "no ASM for 68k OS4 required"
