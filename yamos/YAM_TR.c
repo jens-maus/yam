@@ -1053,7 +1053,11 @@ BOOL TR_ConnectESMTP(void)
   
       if (rc == 334)
       {
-         len=sprintf(challenge,"\0%s\0%s",C->SMTP_AUTH_User,C->SMTP_AUTH_Pass);
+         len=0;
+         challenge[len++]=0;
+         len+=sprintf(challenge+len,"%s",C->SMTP_AUTH_User);
+         len++;
+         len+=sprintf(challenge+len,"%s",C->SMTP_AUTH_Pass);
          encode64(challenge,buffer,len);
          strcat(buffer,"\r\n");
          /* Send AUTH response */
