@@ -5,6 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-17  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_debug.h: put the NOP statements back into as there is no real reason
+      for not having them. They increase the security, are supported by all
+      common gcc versions and are anyway removed during optimization. And if
+      a properitery compiler doesn't support it, please do add a separate
+      #ifdef for that case. Just removing them for the sake of supporting
+      other compilers isn't an alternative.
+    * ReadMailGroup, misc: renamed all internal "Photo" ocurrances to
+      "Image" because that name is used all over the place in YAM for the
+      SenderImage.
+    * AttachmentImage.c: fixed a possible buffer overrun
+
 2005-02-16  Gunther Nikl <gni@gecko.de>
 
     * classes/AttachmentImage.c: replace calloc() with malloc().
@@ -20,7 +33,7 @@ $Source$
 2005-02-16  Alexey Ivanov <AmiS@amiga.org.ru>
 
     * ReadMailGroup, misc: added 'image only' mode to show sender image in
-      read window with out other sender infos.
+      read window without other sender infos.
 
 2005-02-16  Jens Langner <Jens.Langner@light-speed.de>
 
