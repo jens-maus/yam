@@ -848,6 +848,32 @@
       faster (since AddTail is O(n)), however NList layout is still required,
       so it's still painfully slow...
 
+2001-06-29  Gunther Nikl <gni@gecko.de>
+
+    * YAM_hook.h: use proper types in hook casts, change placement of SAVEDS
+      in DISPATCHERPROTO to match other uses, added cast for ENTRY argument in
+      AmigaOS case
+
+    * YAM_utilities: added OUT_DOS define as replacement for incorrect NULL
+      usage
+    * YAM_MA.c: (MA_ExecuteRuleAction,MA_StartMacro): use OUT_DOS
+    * YAM_TR.c: (TR_ApplyRemoteFilters,TR_NewMailAlert): likewise
+    * YAM_UT.c: (ExecuteCommand): likewise
+
+    * YAM_MA.c: (MA_CallRexxFunc) fix wrong NULL usage
+    * YAM_TR.c: (TR_IsOnline) likewise
+    * YAM_UT.c: (GetBCImage) likewise
+    * YAM_rexx.c: (DoRXCommand) likewise
+
+    * YAM_UT.c: (putCharFunc) change parameter type from "char" to "int"
+
+    * YAM_rexx_rxcl.c: changed RESINDEX to utilize stddef.h/offsetof()
+
+    * extrasrc/dice.c: added test for VBCC
+    * includes/extra.h: more general access() handling
+
+    * added all_vbcc.c, inlines/*_protos.h and VMakefile
+
 2001-07-06  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * replaced "remailer@replay.com" in YAM_CO.c with a uptodate remailer,
