@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -2072,6 +2072,7 @@ int SelectMessage(struct Mail *mail)
 void DisplayMailList(struct Folder *fo, APTR lv)
 {
    struct Mail *work, **array;
+	 int lastActive = fo->LastActive;
 
    if ((array = (struct Mail **)calloc(fo->Total+1,sizeof(struct Mail *))))
    {
@@ -2091,6 +2092,9 @@ void DisplayMailList(struct Folder *fo, APTR lv)
       free(array);
       BusyEnd;
    }
+
+	 // Now we have to recove the LastActive or otherwise it will be -1 later
+	 fo->LastActive = lastActive;
 }
 ///
 /// AddMailToList

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -1001,6 +1001,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 {
    struct Mail *mail;
    static int laststats;
+	 static int msgsInCurrentFolder;
    int msgs, pop = singlepop;
 
    if (isfirst) /* Init first connection */
@@ -1016,6 +1017,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       if (singlepop >= 0) G->TR->SinglePOP = TRUE;
       else G->TR->POP_Nr = -1;
       laststats = 0;
+			msgsInCurrentFolder = FO_GetCurrentFolder()->Total;
    }
    else /* Finish previous connection */
    {
@@ -1039,6 +1041,10 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
       DoMethod(G->App, MUIM_CallHook, &MA_ApplyRulesHook, APPLY_AUTO, 0, FALSE);
 
+			// Now we jump to the first new mail we received if the number of messages has changed
+			// after the mail transfer
+			if(msgsInCurrentFolder < FO_GetCurrentFolder()->Total) MA_JumpToNewMsg();
+
       G->TR->Checking = FALSE;
       DisplayStatistics((struct Folder *)-1, TRUE);
       TR_NewMailAlert();
@@ -1049,7 +1055,6 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       {
          G->TR_Exchange = FALSE;
          DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &MA_SendHook, SEND_ALL);
-
       }
 
       return;
@@ -2059,7 +2064,7 @@ static void TR_NewMailAlert(void)
 }
 
 ///
-/// TR_PreccessGETFunc
+/// TR_ProccessGETFunc
 /*** TR_ProcessGETFunc - Downloads messages from a POP3 server ***/
 HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 {

@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -94,6 +94,7 @@ void   MA_ExpireIndex(struct Folder *folder);
 struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *statstr, BOOL deep);
 void   MA_FlushIndexes(BOOL all);
 ULONG  MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg);
+BOOL   MA_JumpToNewMsg(VOID);
 void   MA_FreeEMailStruct(struct ExtendedMail *email);
 BOOL   MA_GetIndex(struct Folder *folder);
 int    MA_LoadIndex(struct Folder *folder, BOOL full);

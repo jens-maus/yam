@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -341,7 +341,7 @@ OVERLOAD(OM_NEW)
 		MUIA_Application_Base,           "YAM",
 		MUIA_Application_Title,          "YAM",
 		MUIA_Application_Version,        yamversionstring,
-		MUIA_Application_Copyright,      "Copyright © 2000-2001 YAM Open Source Team",
+		MUIA_Application_Copyright,      "Copyright © 2000-2002 YAM Open Source Team",
 		MUIA_Application_Description,    GetStr(MSG_APP_DESCRIPTION),
 		MUIA_Application_UseRexx,        FALSE,
 		MUIA_Application_SingleTask,     !getenv("MultipleYAM"),

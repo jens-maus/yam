@@ -1,3 +1,13 @@
+2002-01-04  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed bug where YAM lost the LastActive variable which normally
+      saves the last active entry in a mail folder and jumps to this
+      position if the folder is activated again.
+    * YAM now also jumps to a new received message after getting
+      all mail from the POP servers with respect to the JumpToNewMsg
+      option.
+    * changed copyright note to reflect the new year 2002.
+
 2001-12-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * removed support@yam.ch email from About window on request

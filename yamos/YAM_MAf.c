@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2002 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -382,7 +382,6 @@ MakeHook(MA_FlushIndexHook, MA_FlushIndexFunc);
 void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 {
    BOOL folderopen = TRUE;
-   int i, pos = -1;
    struct Folder *actfo = FO_GetCurrentFolder();
    struct MA_GUIData *gui = &G->MA->GUI;
 
@@ -404,51 +403,12 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 
       // Now we update the InfoBar accordingly
       DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
-//      MA_UpdateInfoBar(folder);
 
       // Create the Mail List and display it
       DisplayMailList(folder, gui->NL_MAILS);
 
-      if (C->JumpToNewMsg)
-      {
-         // jump to first or last unread mail in folder,
-         // depending on sort order
-
-         int incr;
-
-         if (folder->Sort[0] < 0 || folder->Sort[1] < 0)
-         {
-            get(gui->NL_MAILS, MUIA_NList_Entries, &i);
-            i--;
-            incr = -1;
-         }
-         else
-         {
-            i = 0;
-            incr = 1;
-         }
-
-         while (1)
-         {
-            struct Mail *mail;
-            DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, i, &mail, TAG_DONE);
-            if (!mail)
-            {
-               pos = -1;
-               break;
-            }
-
-            if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR)
-            {
-               pos = i;
-               break;
-            }
-
-            i += incr;
-         }
-      }
-
-      set(gui->NL_MAILS, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
+			// Now we jump to messages that are NEW
+			MA_JumpToNewMsg();
 
       // if there is still no entry active in the NList we make the first one active
       if(xget(gui->NL_MAILS, MUIA_NList_Active) == MUIV_NList_Active_Off)
@@ -457,7 +417,6 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       }
    }
    else DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
-//   else MA_UpdateInfoBar(folder);
 
    // disable/reactivate the Listview with the mails in it
    set(gui->LV_MAILS, MUIA_Disabled, !folderopen);
@@ -554,6 +513,57 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
   return(0);
 }
 
+///
+/// MA_JumpToNewMsg
+// Function that jumps to the first or last unread mail in a folder,
+// depending on sort order of the folder
+BOOL MA_JumpToNewMsg(VOID)
+{
+	struct Folder *folder = FO_GetCurrentFolder();
+	int pos = -1;
+
+	// We only enable this function if the user wishes it
+	if (C->JumpToNewMsg)
+	{
+		int i, incr;
+
+		if (folder->Sort[0] < 0 || folder->Sort[1] < 0)
+		{
+			get(G->MA->GUI.NL_MAILS, MUIA_NList_Entries, &i);
+			i--;
+			incr = -1;
+		}
+		else
+		{
+			i = 0;
+			incr = 1;
+		}
+	
+		while (1)
+		{
+			struct Mail *mail;
+			DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
+
+			if (!mail)
+			{
+				pos = -1;
+				break;
+			}
+
+			if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR)
+			{
+				pos = i;
+				break;
+			}
+
+			i += incr;
+		}
+	}
+
+	set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
+
+	return TRUE;
+}
 ///
 
 /*** Mail header scanning ***/
