@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/Recipientstring.c: fixed bug in HandleEvent() method where
+      a recipientstring did always eat all RAWKEY events, even if they
+      were not handled by the string itself. That caused an active string
+      not to forward hotkey events to the window.
+
 2003-02-23  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c, YAM_MA.c YAM_RE.c: removed all Toolbar qualifier bugs

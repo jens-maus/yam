@@ -313,7 +313,8 @@ OVERLOAD(MUIM_HandleEvent)
 
 				old = strdup((STRPTR)xget(obj, MUIA_String_Contents));
 
-				DoSuperMethodA(cl, obj, msg);
+				// call the SuperMethod and set the result (Eat or non-eat) to our result
+				result = DoSuperMethodA(cl, obj, msg);
 				new = (STRPTR)xget(obj, MUIA_String_Contents);
 
 				if(strcmp(old, new)) /* if contents changed, check if something matches */
@@ -332,8 +333,6 @@ OVERLOAD(MUIM_HandleEvent)
 												MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
 												TAG_DONE);
 				}
-
-				result = MUI_EventHandlerRC_Eat;
 			}
 			break;
 		}
