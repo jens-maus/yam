@@ -1302,7 +1302,7 @@ struct DateStamp *FileDate(char *filename)
   static struct DateStamp ds;
   struct DateStamp *res = NULL;
 
-  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
+  if((lock = Lock(filename, ACCESS_READ)))
   {
     struct FileInfoBlock *fib;
 
@@ -2178,11 +2178,17 @@ char *GetFolderDir(struct Folder *fo)
 //  Returns path of a message file
 char *GetMailFile(char *string, struct Folder *folder, struct Mail *mail)
 {
-   static char buffer[SIZE_PATHFILE];
-   if (!folder && mail) folder = mail->Folder;
-   if (!string) string = buffer;
-   strmfp(string, (folder == NULL || folder == (struct Folder *)-1) ? C->TempDir : GetFolderDir(folder), mail->MailFile);
-   return string;
+  static char buffer[SIZE_PATHFILE];
+
+  if(!folder && mail)
+    folder = mail->Folder;
+
+  if(!string)
+    string = buffer;
+
+  strmfp(string, (folder == NULL || folder == (struct Folder *)-1) ? C->TempDir : GetFolderDir(folder), mail->MailFile);
+
+  return string;
 }
 ///
 /// GetMailInfo
@@ -2555,13 +2561,14 @@ void TimeVal2DateStamp(const struct timeval *tv, struct DateStamp *ds, enum TZCo
 //  converts a struct DateStamp to a struct timeval
 void DateStamp2TimeVal(const struct DateStamp *ds, struct timeval *tv, enum TZConvert tzc)
 {
-   /* creates wrong timevals from DateStamps with year >= 2114 ... */
+  // creates wrong timevals from DateStamps with year >= 2114 ...
 
-   tv->tv_secs = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
-   tv->tv_micro = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
+  tv->tv_secs = (ds->ds_Days*24*60 + ds->ds_Minute)*60 + ds->ds_Tick/TICKS_PER_SECOND;
+  tv->tv_micro = (ds->ds_Tick % TICKS_PER_SECOND) * 1000000/TICKS_PER_SECOND;
 
-   // if we want to convert from/to UTC we need to do this now
-   if(tzc != TZC_NONE) TimeValTZConvert(tv, tzc);
+  // if we want to convert from/to UTC we need to do this now
+  if(tzc != TZC_NONE)
+    TimeValTZConvert(tv, tzc);
 }
 ///
 /// TimeVal2String
