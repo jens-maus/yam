@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-03-30  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c: fixed a very strange bug (perhaps a GCC3 bug?) that caused menu items
+      with a shortcut string of just "0" to appear as "9" in the menu, which in fact
+      caused some menus to contain items with the exact same shortcut. Somehow it seems
+      that the previously placed 'char *key = "-repeat 0"' was the reason for that and
+      changing it to 'char key[] = "-repeat 0"' somehow solves the problems?!?
+
 2005-03-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_CO.c, YAM_FI.c, YAM_WR.c, SearchControlGroup.c: fixed a minor bug in

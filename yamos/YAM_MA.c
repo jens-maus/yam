@@ -3236,7 +3236,8 @@ void MA_MakeMAFormat(Object *lv)
 struct MA_ClassData *MA_New(void)
 {
    struct MA_ClassData *data = calloc(1, sizeof(struct MA_ClassData));
-   if (data)
+
+   if(data)
    {
       static const struct NewToolbarEntry tb_butt[ARRAY_SIZE(data->GUI.TB_TOOLBAR)] = {
         { MSG_MA_TBRead,     MSG_HELP_MA_BT_READ       },
@@ -3258,7 +3259,7 @@ struct MA_ClassData *MA_New(void)
         { MSG_MA_TBConfig,   MSG_HELP_MA_BT_CONFIG     },
         { NULL,              NULL                      }
       };
-      char *key = "-repeat 0", *username;
+      char *username;
       struct User *user;
       ULONG i;
 
@@ -3351,7 +3352,7 @@ struct MA_ClassData *MA_New(void)
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_SETTINGS_USERS), MMEN_USER),
             MUIA_Family_Child, MakeMenuitem(GetStr(MSG_SETTINGS_MUI), MMEN_MUI),
          End,
-      End,
+      End;
 
       data->GUI.WI = MainWindowObject,
          MUIA_Window_Title, data->WinTitle,
@@ -3589,8 +3590,9 @@ struct MA_ClassData *MA_New(void)
 //       DoMethod(G->App                   ,MUIM_Notify,MUIA_Application_Iconified,FALSE        ,data->GUI.WI             ,3,MUIM_Set                 ,MUIA_Window_Open,TRUE);
 
          // Define Notifies for ShortcutFolderKeys
-         for (i = 0; i < 10; i++)
+         for(i = 0; i < 10; i++)
          {
+            static char key[] = "-repeat 0";
             key[8] = '0'+i;
             DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_FolderKeyHook, i);
          }
