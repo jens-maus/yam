@@ -91,6 +91,66 @@ static const char index_hex[128] =
 #define SUMSIZE       64
 #define ENC(c)        ((c) ? ((c) & 077) + ' ': '`')
 
+// The following table and macros were taken from the GMIME project`s CVS
+// and are used to help analyzing ASCII characters and to which special
+// group of characters they belong. While decoding/endcoding MIME messages
+// this table can be quiet helpful because it helps analyzing text
+// in terms of RFC compliance more precisly.
+static const unsigned short specials_table[256] =
+{
+//  0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+    5,  5,  5,  5,  5,  5,  5,  5,  5,103,  7,  5,  5, 39,  5,  5, // 0
+    5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, // 1
+  242,448, 76,192,192,192,192,192, 76, 76,448,448, 76,448, 72,324, // 2
+  448,448,448,448,448,448,448,448,448,448, 76, 76, 76,260, 76, 68, // 3
+   76,448,448,448,448,448,448,448,448,448,448,448,448,448,448,448, // 4
+  448,448,448,448,448,448,448,448,448,448,448,108,236,108,192,320, // 5
+  192,448,448,448,448,448,448,448,448,448,448,448,448,448,448,448, // 6
+  448,448,448,448,448,448,448,448,448,448,448,192,192,192,192,  5, // 7
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 8
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // 9
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // A
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // B
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // C
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // D
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, // E
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0  // F
+};
+
+enum {
+  IS_CTRL         = (1 << 0),
+  IS_LWSP         = (1 << 1),
+  IS_TSPECIAL     = (1 << 2),
+  IS_SPECIAL      = (1 << 3),
+  IS_SPACE        = (1 << 4),
+  IS_DSPECIAL     = (1 << 5),
+  IS_QPSAFE       = (1 << 6),
+  IS_ESAFE        = (1 << 7), // encoded word safe
+  IS_PSAFE        = (1 << 8)  // encode word in phrase safe
+};
+
+#define is_type(x, t)   ((specials_table[(unsigned char)(x)] & (t)) != 0)
+#define is_ctrl(x)      ((specials_table[(unsigned char)(x)] & IS_CTRL) != 0)
+#define is_lwsp(x)      ((specials_table[(unsigned char)(x)] & IS_LWSP) != 0)
+#define is_tspecial(x)  ((specials_table[(unsigned char)(x)] & IS_TSPECIAL) != 0)
+#define is_ttoken(x)    ((specials_table[(unsigned char)(x)] & (IS_TSPECIAL|IS_LWSP|IS_CTRL)) == 0)
+#define is_atom(x)      ((specials_table[(unsigned char)(x)] & (IS_SPECIAL|IS_SPACE|IS_CTRL)) == 0)
+#define is_dtext(x)     ((specials_table[(unsigned char)(x)] & IS_DSPECIAL) == 0)
+#define is_fieldname(x) ((specials_table[(unsigned char)(x)] & (IS_CTRL|IS_SPACE)) == 0)
+#define is_qpsafe(x)    ((specials_table[(unsigned char)(x)] & IS_QPSAFE) != 0)
+#define is_esafe(x)     ((specials_table[(unsigned char)(x)] & IS_ESAFE) != 0)
+#define is_psafe(x)     ((specials_table[(unsigned char)(x)] & IS_PSAFE) != 0)
+
+#define ENCWORD_LEN    75                  // max. encoded-word length (rfc2047 2.0)
+
+#define CHARS_LWSP     " \t\n\r"           // linear whitespace chars
+#define CHARS_TSPECIAL "()<>@,;:\\\"/[]?="
+#define CHARS_SPECIAL  "()<>@,;:\\\".[]"
+#define CHARS_CSPECIAL "()\\\r"            // not in comments
+#define CHARS_DSPECIAL "[]\\\r \t"         // not in domains
+#define CHARS_ESPECIAL "()<>@,;:\"/[]?.=_" // encoded word specials (rfc2047 5.1)
+#define CHARS_PSPECIAL "!*+-/=_"           // encoded phrase specials (rfc2047 5.3)
+
 ///
 
 /*** BASE64 encode/decode routines ***/
@@ -924,7 +984,312 @@ void touue(FILE *in, FILE *out)
 }
 ///
 
-/*** RFC 2047 MIME decoding routines ***/
+/*** RFC 2047 MIME encoding/decoding routines ***/
+/// rfc2047_encode_file()
+// Special encoding routines based on RFC2047 which directly
+// encodes header and body text into the supllied file stream.
+int rfc2047_encode_file(const FILE *fh, const char *str,
+                        const struct TranslationTable *tt)
+{
+  char *c = (char *)str;
+  char *c_wstart = NULL;      // pointer to the start of the actual word
+  char encode_buf[SIZE_LINE]; // some general encoding buffer.
+  char *ebp = encode_buf;
+  char *eb_wstart = NULL;
+  char *eb_wstart_prev = NULL;
+  char *eb_wend = NULL;
+  BOOL encode_mode = FALSE;
+
+  // in the following we parse the string charwise and separate each
+  // single word, analyze it to be RFC 2047 compliant and if any non US-ASCII
+  // chars are found we convert them to quoted printables and concatenate them
+  // in one long string, taking care of maximum line lengths as defined
+  // in the RFC.
+  do
+  {
+    // to start the search we keep a pointer to the start
+    // of the actual word.
+    if(c_wstart == NULL)
+    {
+			// and if the current char is not a linear white space we found
+			// the start
+      if(!is_lwsp(*c))
+      {
+        c_wstart = c;     // save the current c as the word start in the source string
+        eb_wstart = ebp;  // save the current ebp as the word start in the encode_buffer
+      }
+      else if(encode_mode == FALSE)
+      {
+        // ok, we found a whitespace and we are not in encoding mode
+        // so we can directly copy this whitespace to our
+        // encode buffer.
+        *ebp = *c;
+        ebp++;
+
+        if(*c == '\0')
+          break;
+
+        c++;
+        continue;
+      }
+    }
+
+    // now we have to check wheter we are in the encode mode or not
+    // This means, that if we previously found characters which require
+    // endcoding, the followed character also should be encoded if
+    // it is no whitespace and not quoted printable safe.
+    if(encode_mode == TRUE)
+    {
+      if(is_lwsp(*c) || *c == '\0')
+      {
+        // a whitespace/nullbyte stops the encoding until we have
+        // verified that the next word also contains non US-ASCII
+        // chars so that we can concatenate those strings later on
+        // again to one large on.
+        eb_wend = ebp;
+        *ebp = '?';
+        ebp++;
+        *ebp = '=';
+        ebp++;
+        *ebp = *c;
+        ebp++;
+
+        c_wstart = NULL;
+        encode_mode = FALSE;
+
+        // then we check wheter the current line is
+        // larger than 75 chars as this is the limit for a line
+        // containing RFC 2047 encoded strings
+        while((ebp-encode_buf) > ENCWORD_LEN)
+        {
+          // check if there are any words before the current one
+          if(eb_wstart != encode_buf)
+          {
+            // ok, then write until eb_wstart-1 and move the rest
+            fwrite(encode_buf, eb_wstart-encode_buf-1, 1, fh);
+
+            // also put out a CRLF SPACE to signal a new line
+            // starts
+            fwrite("\r\n ", 3*sizeof(char), 1, fh);
+
+            // then move the other stuff to the start
+            memmove(encode_buf, eb_wstart, ebp-eb_wstart);
+            eb_wend = encode_buf+(eb_wend-eb_wstart);
+            eb_wstart = encode_buf;
+            ebp = eb_wend;
+          }
+          else
+          {
+            // so it seems to now got a huge encoded-word that we
+            // require to split up into several small (<75 chars) ones
+            // and we do this in a loop, of course.
+            while((ebp-encode_buf) > ENCWORD_LEN)
+            {
+              char *split_pos;
+
+              // ok, now it gets a bit more tricky, as we
+              // have to split the encoded word, which seems to
+              // be larger than 75 chars into smaller pieces
+              split_pos = encode_buf+ENCWORD_LEN-2; // we need 2 for the ending ?=
+              if(*split_pos != '=')
+              {
+                if(*(split_pos-1) == '=')
+                {
+                  split_pos--;
+                }
+                else if(*(split_pos-2) == '=')
+                {
+                  split_pos -= 2;
+                }
+              }
+
+              // now we should have the position where we can safely split
+              // the encoded word, so lets do it
+              fwrite(encode_buf, split_pos-encode_buf, 1, fh);
+
+              // now add "?=\r\n " so that the next line is prepared
+              fwrite("?=\r\n ", 5*sizeof(char), 1, fh);
+
+              if(ebp-split_pos > 3)
+              {
+                int move_start;
+
+                // as we splitted an encoded-word we have to start the next
+                // line with a proper encoded-word start again.
+                if(tt && tt->SourceCharset)
+                  move_start = sprintf(encode_buf, "=?%s?Q?", tt->SourceCharset);
+                else
+                  move_start = sprintf(encode_buf, "=?ISO-8859-1?Q?");
+
+                // then move the other stuff to the start again
+                memmove(encode_buf+move_start, split_pos, ebp-split_pos);
+
+                eb_wstart = encode_buf+move_start;
+                eb_wend = eb_wstart+(eb_wend-split_pos);
+                ebp = eb_wstart+(ebp-split_pos);
+              }
+              else
+              {
+                eb_wstart = encode_buf;
+                eb_wend = encode_buf;
+                ebp = encode_buf;
+              }
+            }
+          }
+        }
+
+        eb_wstart_prev = eb_wstart;
+      }
+      else
+      {
+        // so this is something other than a whitespace and if
+        // it is a non US-ASCII char or not safe in a quoted
+        // printable string we encode it accordingly to the
+        // quoted-printable rules.
+        if(!is_qpsafe(*c) || !is_esafe(*c))
+        {
+          *ebp = '=';
+          ebp++;
+          *ebp = basis_hex[(*c >> 4) & 0xF];
+          ebp++;
+          *ebp = basis_hex[*c & 0xF];
+          ebp++;
+        }
+        else
+        {
+          // so this char seems to be safe to directly be put
+          // into our final encode buffer
+          *ebp = *c;
+          ebp++;
+        }
+      }
+    }
+    else
+    {
+      // then we check wheter the current char is a non US-ASCII (7bit)
+      // char which would require us to encode the full word as a RFC 2047
+      // compliant `encoded-word`. 
+      if(*c != '\0' &&
+         (!isascii(*c) || iscntrl(*c) ||
+          (*c == '=' && *(c+1) == '?' && isascii(*(c+2)) &&
+           (c == str || is_lwsp(*(c-1))))))
+      {
+        // ok, this is a non US-ASCII char and should be encoded
+        // accordingly. so lets check wheter the previous word was
+        // also encoded or not and if so we concatenate them
+        if(eb_wend)
+        {
+          ebp = eb_wend;
+          eb_wstart = eb_wstart_prev;
+
+          // decrease c_wstart by one because we want to encode
+          // the separating char aswell
+          c_wstart--;
+        }
+        else
+        {
+          // no it seems this is a plain start so lets add the full
+          // encoding aswell.
+          ebp = eb_wstart;
+
+          // before we place encoded data in our encode buffer we have to
+          // place the "=?charset?Q?" string at the beginning because here
+          // the encoding starts
+          if(tt && tt->SourceCharset)
+            ebp += sprintf(ebp, "=?%s?Q?", tt->SourceCharset);
+          else
+            ebp += sprintf(ebp, "=?ISO-8859-1?Q?");
+        }
+
+        // so this is where the actual encoding is performed now.
+        // we start at the last recognized word start and go on until
+        // the current character, then the upper loop does the rest of the job
+        // for us.
+        while(c_wstart <= c)
+        {
+          if(!is_qpsafe(*c_wstart) || !is_esafe(*c_wstart))
+          {
+            *ebp = '=';
+            ebp++;
+            *ebp = basis_hex[(*c_wstart >> 4) & 0xF];
+            ebp++;
+            *ebp = basis_hex[*c_wstart & 0xF];
+          }
+          else if(*c_wstart == ' ')
+          {
+            *ebp = '_'; // RFC 2047 allows to replace a SPACE by a '_'
+          }
+          else
+          {
+            *ebp = *c_wstart;
+          }
+
+          ebp++;
+          c_wstart++;
+        }
+
+        // now flag that we are in global encoding mode now
+        // so that the upper loops encodes everything properly.
+        encode_mode = TRUE;
+      }
+      else
+      {
+        // if we end up here the it is fine to directly place
+        // the current char in the encoding buffer.
+        *ebp = *c;
+        ebp++;
+
+        // if this had been a whitespace we found it without encoding
+        // enabled, so we probably found a "clean" word. So we can also
+        // clean the last word markers
+        if(is_lwsp(*c) || *c == '\0')
+        {
+          c_wstart = NULL;
+          eb_wend = NULL;
+
+          // only if there is an encoded-word on the current line
+          // we check wheter the line is too long and split
+          // it accordingly.
+          if((ebp-encode_buf) > ENCWORD_LEN)
+          {
+            // check if there are any words before the current one
+            // and if not we got a huge plain unencoded word on the line
+            // so we don't have to worry about any 75 char limit like
+            // defined in rfc 2047
+            if(eb_wstart != encode_buf)
+            {
+              // ok, then write until eb_wstart-1 and move the rest
+              fwrite(encode_buf, eb_wstart-encode_buf-1, 1, fh);
+
+              // also put out a CRLF SPACE to signal a new line
+              // starts
+              fwrite("\r\n ", 3*sizeof(char), 1, fh);
+
+              // then move the other stuff to the start
+              memmove(encode_buf, eb_wstart, ebp-eb_wstart);
+              eb_wend = encode_buf+(ebp-eb_wstart);
+              eb_wstart = encode_buf;
+              ebp = eb_wend;
+            }
+          }
+        }
+      }
+    }
+
+    if(*c == '\0')
+      break;
+
+    c++;
+  }
+  while(1);
+
+  // write it out to the file stream
+  fwrite(encode_buf, strlen(encode_buf), 1, fh);
+
+  return 0;
+}
+
+///
 /// rfc2047_decode()
 // decodes a rfc2047 encoded string and eventually translates
 // each character of the decoded string according to the provided
@@ -1043,17 +1408,21 @@ static int rfc2047_decode_int(const char *text,
   char *chset, *lang;
   char *encoding;
   char *enctext;
+  const char *start = text;
 
   while(text && *text)
   {
     p=text;
 
-    if(text[0] != '=' || text[1] != '?')
+    if(*text != '=' || *(text+1) != '?')
     {
       while(*text)
       {
-        if (text[0] == '=' && text[1] == '?')
+        if(*text == '=' && *(text+1) == '?' &&
+           (text == start || is_lwsp(*(text-1))))
+        {
           break;
+        }
 
         if(!isspace((int)(unsigned char)*text))
           had_last_word=0;

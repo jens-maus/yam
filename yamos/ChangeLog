@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-07-19  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c, YAM_WR.c: completly rewrote the RFC2047 MIME encoding
+      routines which were quiet broken and didn't really work as
+      expected/documented in the official RFC paper. Along with this
+      the whole RFC2047 mime encoding/decoding process has been
+      syncronized and should perfect a bit better than the old routines.
+      Of course, these new routines still need testing to get them
+      stable for every case, but they should hopefully already
+      perform quiet good.
+
 2004-07-05  Jens Langner <Jens.Langner@light-speed.de>
 
     * SDI_#?.h: added the new SDI_lib.h and SDI_stdarg.h special

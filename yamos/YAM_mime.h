@@ -50,6 +50,8 @@ long base64decode_file(FILE *in, FILE *out,
                        struct TranslationTable *tt, BOOL convCRLF);
 
 // rfc2047 decoding routines
+int rfc2047_encode_file(const FILE *fh, const char *str,
+                        const struct TranslationTable *tt);
 int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
                    struct TranslationTable *tt);
 

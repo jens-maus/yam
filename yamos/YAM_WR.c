@@ -34,10 +34,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined(isascii)
-  #define isascii(c) (((c)&0xff)<127)
-#endif
-
 #include <clib/alib_protos.h>
 #include <libraries/asl.h>
 #include <libraries/gadtools.h>
@@ -84,9 +80,6 @@ static struct WritePart *BuildPartsList(int);
 static char *GetDateTime(void);
 static char *NewID(BOOL);
 static enum Encoding WhichEncodingForFile(char*, char*);
-static int WR_CharOut(char);
-static char *firstbad(char*);
-static void PutQP(unsigned char, FILE*);
 static void HeaderFputs(char*, FILE*);
 static void EmitRcptField(FILE*, char*);
 static void EmitRcptHeader(FILE*, char*, char*);
@@ -368,58 +361,58 @@ void FreePartsList(struct WritePart *p)
 }
 
 ///
-/// WR_CharOut
-//  Outputs a single byte of a message header
-static int WR_CharOut(char c)
-{
-   if (G->TTout) if (G->TTout->Header) return (int)G->TTout->Table[(UBYTE)c];
-   return (int)c;
-}
-
-///
-/// firstbad
-//  Returns a pointer to the first non-ascii or control character in a string
-static char *firstbad(char *s)
-{
-   unsigned char *dum;
-   for (dum = (unsigned char *)s; *dum; ++dum)
-      if (!isascii(WR_CharOut(*dum)) || iscntrl(WR_CharOut(*dum))) return (char *)dum;
-   return NULL;
-}
-
-///
-/// PutQP
-//  Outputs a base64 encoded, single byte of a message header
-static void PutQP(unsigned char c, FILE *fh)
-{
-   static const char basis_hex[] = "0123456789ABCDEF";
-
-   fputc('=', fh);
-   fputc(basis_hex[c>>4], fh);
-   fputc(basis_hex[c&0xF], fh);
-}
-
-///
 /// HeaderFputs
-//  Outputs the value of a header line (optional QP encoding and charset translation)
+//  Outputs the value of a header line directly to the FILE pointer and handle
+//  QP MIME encoding (RFC2047) and automatic charset translation.
 static void HeaderFputs(char *s, FILE *fh)
 {
-   char *firstnonascii, *wordstart;
+   BOOL doEncoding = FALSE;
+   char *c = s;
 
-   if (!s) return;
-   while ((firstnonascii = firstbad(s)))
+   // get the charset translation table, if available
+   struct TranslationTable *tt = (G->TTout && G->TTout->Header) ? G->TTout : NULL;
+
+   // let us now search for any non-ascii compliant character aswell
+   // as converting each character with the translation table
+   while(*c)
    {
-      for (wordstart = firstnonascii; wordstart >= s; wordstart--) if (ISpace(*wordstart)) break;
-      while (s <= wordstart) { fputc(WR_CharOut(*s), fh); ++s; }
-      fprintf(fh, "=?%s?Q?", G->TTout ? G->TTout->DestCharset : C->LocalCharset);
-      for (; *s && !ISpace(*s); ++s)
+      // translate the character
+      if(tt)
+        *c = tt->Table[(UBYTE)*c];
+
+      // check for any non-ascii character
+      if(!doEncoding && (!isascii(*c) || iscntrl(*c)))
       {
-         char c = (char)WR_CharOut(*s);
-         if (c > ' ') fputc(c, fh); else PutQP((unsigned char)c, fh);
-         }
-      fputs("?=", fh);
+        doEncoding = TRUE;
+
+        // if we don`t have a translation table, there is no reason
+        // to go on.
+        if(!tt)
+          break;
+      }
+
+      // increment the pointer
+      c++;
    }
-   while (*s) { fputc(WR_CharOut(*s), fh); ++s; }
+
+   // now that we have converted the string and analyzed it we
+   // have to check wheter we have to encode some words like proposed
+   // in RFC 2047
+   if(doEncoding ||
+      ((c = strstr(s, "=?")) && isascii(*(c+1)) &&
+       (c == s || isspace(*(c-1))))) // to find stray =? strings
+   {
+      // now that we found out that the string contains non ASCII
+      // characters, lets encode them accoding to RFC 2047
+      rfc2047_encode_file(fh, s, tt);
+   }
+   else
+   {
+      // there seems to be non "violating" characters in the string, so lets
+      // simply put it out to the FILE pointer without encoding some text
+      // according to RFC 2047
+      fputs(s, fh);
+   }
 }
 
 ///
