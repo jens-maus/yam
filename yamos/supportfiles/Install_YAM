@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.6 for YAM 2.4 (14.04.2003) © 2000-2003 by YAM Open Source Team
+; $VER: Installer script 1.6 for YAM 2.4 (22.04.2003) © 2000-2003 by YAM Open Source Team
 ; Language support added by Sönke Tesch/ATO
 ;
 ; $Id$
@@ -54,6 +54,12 @@
                         "(English language is built-in)"))
 (set #lang_manual "Select language for online AmigaGuide help")
 (set #icons_prompt "Which icon set do you want to install?\n")
+(set #icons_help (cat "Please select which icon set you want to install:\n\n"
+                      "- MagicWB (8 colors)\n"
+                      "- ProLite (16 colors)\n"
+                      "- NewIcons (32 colors)\n"
+                      "- GlowIcons (64 colors)\n"
+                      "- GlowIcons-2 (64 colors)"))
 (set #icons_none "None")
 (set #charset_help (cat "YAM can use character conversion tables for reading "
                         "and writing messages. These tables are a set of "
@@ -92,6 +98,7 @@
 (set #done_1   (cat "\nYAM has been successfully installed.\n\n"
                     "Double click the \"YAM\" icon in the\n"))
 (set #done_2        "\ndirectory to taste it.\n\nHave fun...")
+
 ; ///
 ; /// ***** Bosanski
 (IF (= @language "bosanski")
@@ -226,10 +233,10 @@
 (
 (set #def_cat_lang #def_lang_Espanol)
 (set #def_doc_lang #def_doc_Espanol)
-(set #wrongOS  "YAM necesita como mínimo el AmigaOS 3.0 para funcionar\n")
+(set #wrongOS  "YAM necesita como mínimo el AmigaOS 3.0 para funcionar.\n")
 (set #wrongMOS "¡No se ha encontrado MorphOS!\n")
-(set #wrongMUI "YAM necesita como mínimo MUI 3.8 para funcionar\n")
-(set #wrongCPU "YAM necesita como mínimo una CPU 68020 para funcionar\n")
+(set #wrongMUI "YAM necesita como mínimo MUI 3.8 para funcionar.\n")
+(set #wrongCPU "YAM necesita como mínimo una CPU 68020 para funcionar.\n")
 (set #proc_type "Elija la versión de YAM que desea instalar:")
 (set #proc_help (cat "Seleccione la versión de YAM a instalar "
                      "en función del procesador que posea."))
@@ -242,6 +249,12 @@
                         "(por omisión, YAM funciona en inglés)"))
 (set #lang_manual "Elija el idioma para la ayuda en línea")
 (set #icons_prompt "¿Qué juego de iconos desea instalar?\n")
+(set #icons_help (cat "Por favor, elija el juego de iconos que desea instalar:\n\n"
+                      "- MagicWB (8 colores)\n"
+                      "- ProLite (16 colores)\n"
+                      "- NewIcons (32 colores)\n"
+                      "- GlowIcons (64 colores)\n"
+                      "- GlowIcons-2 (64 colores)"))
 (set #icons_none "Ninguno")
 (set #charset_help (cat "YAM puede utilizar tablas de juegos de caracteres "
                         "para leer y escribir mensajes. Estas tablas son un "
@@ -270,6 +283,10 @@
                           "usa imagepool.library para nada. Si ningún otro "
                           "software de su sistema utiliza esta librería, quizá "
                           "desee borrarla ahora.\n"))
+(set #yamtz_prompt "Borrando \"ENV(ARC):YAM_TZ\"")
+(set #yamtz_help (cat "YAM 2.4+ ya no soporta la variable de entorno \"YAM_TZ\". "
+                      "Su función ha sido sustituida por rutinas nativas del "
+                      "subsistema Locale, así que puede borrarla sin temor.\n"))
 (set #assign_prompt (cat "Es necesario añadir la asignación \"YAM:\" al script "
                          "\"s:User-startup\"\n\n¿Está de acuerdo?"))
 (set #assign_help (cat "Si no está presente esta asignación, la próxima vez "
@@ -743,7 +760,7 @@
          (choices "English (V2.4)"
                   "Deutsch (V2.3)"
                   "Español (V2.4)"
-                  "Français (V2.3)"
+                  "Français (V2.4)"
                   "Italiano (V2.3)"
                   "Slovensko (V2.0)")
          (default #def_doc_lang)
@@ -755,15 +772,20 @@
 (complete 20)
 
 (run "C:Run <>NIL: SYS:Utilities/MultiView GfxPreview.iff")
+(set icon_def 1)                             ; ProLite style is now the default
+(set graphics (database "graphics-mem"))     ; If available chip mem is >= 1,850,000
+(if (>= graphics 1850000) (set icon_def 3))  ; bytes, assume we have plenty of colors
 (set Icon_set
    (askchoice
       (prompt  #icons_prompt)
-      (help    @askchoice-help)
+      (help    #icons_help "\n" @askchoice-help)
       (choices "MagicWB"
                "ProLite"
                "NewIcons"
+               "GlowIcons"
+               "GlowIcons-2"
                #icons_none)
-      (default 0)
+      (default #icon_def)
    )
 )
 ; ///
@@ -790,7 +812,7 @@
    )
    (
       (rename (tackon YAM_dir "YAM") "YAM.amigaos")
-      (copyfiles (source "/morphos/")
+      (copyfiles (source "/MorphOS/")
                  (dest YAM_dir)
                  (pattern "YAM#?")
                  (help @copyfiles-help)
@@ -1042,14 +1064,6 @@
    )
 )
 
-(if (= Icon_set 2)
-   (copyfiles (source "/Contributions/Gfx/NewIcons/YAM.guide.info")
-      (dest YAM_dir)
-      (noposition)
-      (help @copyfiles-help)
-   )
-)
-
 (copyfiles (source "/Readme First") (dest YAM_dir) (infos) (noposition))
 (copyfiles (source "/GPL.txt")      (dest YAM_dir) (noposition))
 
@@ -1057,42 +1071,59 @@
 
 (set Icons_dir (tackon YAM_dir "Icons"))
 (if (exists Icons_dir)
-   (if (<> Icon_set 3) (delete Icons_dir (all)))
+   (if (<> Icon_set 5) (delete Icons_dir (all)))
    (makedir Icons_dir)
 )
+
+(copyfiles (source "/Icons.info")
+   (dest YAM_dir)
+   (noposition)
+   (help @copyfiles-help)
+)
+(copyfiles (source "/Icons/")
+   (dest Icons_dir)
+   (all)
+)
+
 (select Icon_set
    (
-      (copyfiles (source "/Icons.info")
-         (dest YAM_dir)
-         (noposition)
-         (help @copyfiles-help)
-      )
-      (copyfiles (source "/Icons/")
+      (copyfiles (source "/Contributions/Gfx/Pavel_Narozny/")
          (dest Icons_dir)
          (all)
       )
-   )
-   (
-      (copyfiles (source "/Contributions/Gfx/ProLite/Icons.info")
-         (dest YAM_dir)
-         (noposition)
-         (help @copyfiles-help)
-      )
-      (copyfiles (source "/Contributions/Gfx/ProLite/Icons/")
+      (copyfiles (source "/Contributions/Gfx/Roman_Patzner/")
          (dest Icons_dir)
+         (noposition)
          (all)
       )
    )
+   (set dummy 0)
    (
-      (copyfiles (source "/Contributions/Gfx/NewIcons/Icons.info")
+      (copyfiles (source "/Contributions/Gfx/NewIcons/")
+         (pattern "(YAM.guide|Icons).info")
          (dest YAM_dir)
          (noposition)
-         (help @copyfiles-help)
       )
       (copyfiles (source "/Contributions/Gfx/NewIcons/Icons/")
          (dest Icons_dir)
          (all)
       )
+   )
+   (
+      (copyfiles (source "/Contributions/Gfx/IconDesigner/")
+         (dest Icons_dir)
+         (pattern "(Logo|#?.toolbar)")
+      )
+      (copyfiles (source "/Contributions/Gfx/IconDesigner/Icons/")
+         (dest Icons_dir)
+         (noposition)
+         (all)
+      )
+   )
+   (copyfiles (source "/Contributions/Gfx/Martin_Merz/MasonIcons/")
+      (dest Icons_dir)
+      (noposition)
+      (all)
    )
    (set dummy 0)
 )
@@ -1132,7 +1163,7 @@
 
 (complete 80)
 
-(foreach "/MUI/" "#?.mc?"
+(foreach "/MUI/" "#?.m??"
    (copylib (prompt (cat "MUI - " @each-name))
             (source (cat "/MUI/" @each-name))
             (dest "MUI:Libs/MUI/")
