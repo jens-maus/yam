@@ -5077,3 +5077,7 @@ MailListview Settings
 MSG_MA_CTX_FOLDERLIST (//)
 FolderList Settings
 ;
+MSG_HELP_FO_CY_MLSIGNATURE (//)
+Use this Signature when posting\n\
+new mails to the list.
+;

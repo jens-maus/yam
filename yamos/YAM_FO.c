@@ -1598,7 +1598,7 @@ static struct FO_ClassData *FO_New(void)
          SetHelp(data->GUI.CH_REVERSE[0],       MSG_HELP_FO_CH_REVERSE          );
          SetHelp(data->GUI.CH_REVERSE[1],       MSG_HELP_FO_CH_REVERSE          );
          SetHelp(data->GUI.ST_MLPATTERN,        MSG_HELP_FO_ST_MLPATTERN        );
-         SetHelp(data->GUI.CY_MLSIGNATURE,      MSG_HELP_WR_RA_SIGNATURE        );
+         SetHelp(data->GUI.CY_MLSIGNATURE,      MSG_HELP_FO_CY_MLSIGNATURE      );
          SetHelp(data->GUI.CH_STATS,            MSG_HELP_FO_CH_STATS            );
          SetHelp(data->GUI.CH_MLSUPPORT,        MSG_HELP_FO_CH_MLSUPPORT        );
          SetHelp(data->GUI.BT_AUTODETECT,       MSG_HELP_FO_BT_AUTODETECT       );
