@@ -144,7 +144,7 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
 
 ///
 /// base64decode
-// optimized base64 decoing function returning the length of the
+// optimized base64 decoding function returning the length of the
 // decoded string or -1 on an occurred error
 int base64decode(char *to, const unsigned char *from, unsigned int len)
 {

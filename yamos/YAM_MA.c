@@ -2458,7 +2458,6 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 #else
             addr = AddrName((*pe));
 #endif
-
             // lets put the string together
             strncat(dispfro, addr, SIZE_DEFAULT-strlen(dispfro)-1);
          }
