@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-12  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: fixed and enhanced the AutoDST facility. Now YAM also takes
+      respect of the ENV:TZONE variable created by SetDST. It`s not
+      completly finished yet, as we need some notification mechanism
+      to signal YAM that the DST has changed.
+
 2003-04-10  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_COg.c, YAM.cd: fixed bug #717880 and #717881 where we forgot

@@ -28,6 +28,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <clib/alib_protos.h>
 #include <exec/execbase.h>
@@ -176,33 +177,57 @@ static BOOL TC_ActiveEditor(int wrwin)
 //  Dispatcher for timer class (called once every second)
 static void TC_Dispatcher(void)
 {
-   if (CheckIO(&TCData.req->tr_node))
+   // if the IORequest isn`t ready yet we don`t wait
+   // or else we get perhaps into a deadlock
+   if(CheckIO(&TCData.req->tr_node))
    {
       int i;
+
+      // then wait&remove the IORequest
       WaitIO(&TCData.req->tr_node);
-      if (++G->SI_Count >= C->WriteIndexes && C->WriteIndexes)
-         if (!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
+
+      // check if we need to write the indexes back to disk.
+      if(C->WriteIndexes && ++G->SI_Count >= C->WriteIndexes)
+      {
+         // only write the indexes if no Editor is actually in use
+         if(!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
          {
             MA_UpdateIndexes(FALSE);
             G->SI_Count = 0;
          }
-      if (++G->GM_Count >= C->CheckMailDelay*60 && C->CheckMailDelay)
+      }
+
+      // check if we need to check for new mail
+      if(C->CheckMailDelay && ++G->GM_Count >= C->CheckMailDelay*60)
       {
-         for (i = 0; i < MAXWR && !G->WR[i]; i++)
-            ;
-         if (i == MAXWR && !G->CO)
+         // only if there is currently no write window open we
+         // check for new mail.
+         for(i=0; i < MAXWR && !G->WR[i]; i++) ;
+
+         // also the configuration window needs to be closed
+         // or we skip the pop operation
+         if(i == MAXWR && !G->CO)
          {
             MA_PopNow(POP_TIMED,-1);
             G->GM_Count = 0;
          }
       }
-      for (i = 0; i < MAXWR; i++)
-         if (G->WR[i] && ++G->WR[i]->AS_Count >= C->AutoSave && C->AutoSave)
-         {
+
+      // check wheter we have to autosave a editor
+      if(C->AutoSave)
+      {
+        for(i=0; i < MAXWR; i++)
+        {
+          if(G->WR[i] && ++G->WR[i]->AS_Count >= C->AutoSave)
+          {
             EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
             G->WR[i]->AS_Count = 0;
             G->WR[i]->AS_Done = TRUE;
-         }
+          }
+        }
+      }
+
+      // start another 1 second timer request
       TC_Start();
    }
 }
@@ -1094,28 +1119,50 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
 static int GetDST(void)
 {
    char buffer[SIZE_SMALL];
+   char *tmp;
+   int result = 0;
 
-   // lets check the DaylightSaving stuff now
-   // we also take respect of the IXGMTOFFSET and SUMMERTIME env variables
-   if(GetVar("IXGMTOFFSET", buffer, SIZE_SMALL, 0) >= 5)
+   /* lets check the DaylightSaving stuff now
+    * we check in the following order:
+    * 1. SetDST (ENV:TZONE)
+    * 2. SummertimeGuard (ENV:SUMMERTIME)
+    * 3. ixemul (ENV:IXGMTOFFSET)
+    */
+
+   // SetDST saves the DST settings in the TZONE env-variable which
+   // is a bit more complex than the others, so we need to do some advance parsing
+   if(GetVar("TZONE", buffer, SIZE_SMALL, 0) >= 3)
+   {
+      int i;
+
+      for(i=0; buffer[i]; i++)
+      {
+        if(result == 0)
+        {
+          // if we found the time difference in the TZONE variable we at least found a correct TZONE file
+          if(buffer[i] >= '0' && buffer[i] <= '9') result = 1;
+        }
+        else if(isalpha(buffer[i])) result = 2; // if it is followed by a alphabetic sign we are in DST mode
+      }
+   }
+
+   // SummerTimeGuard sets the last string to "YES" if DST is actually active
+   if(result == 0 && GetVar("SUMMERTIME", buffer, SIZE_SMALL, 0) > 3 && (tmp = strrchr(buffer, ':')))
+   {
+      if(tmp[1] == 'Y')       return 2;
+      else if(tmp[1] == 'N')  return 1;
+   }
+
+   // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
+   // DST is actually active.
+   if(result == 0 && GetVar("IXGMTOFFSET", buffer, SIZE_SMALL, 0) >= 4)
    {
       return buffer[4] ? 2 : 1;
    }
-   else if(GetVar("SUMMERTIME", buffer, SIZE_SMALL, 0) > 0)
-   {
-     int i;
-     char *dst = buffer;
 
-     for(i = 0; i < 11; i++)
-     {
-        while (*dst != ':') if (!*dst++) return 0;
-        dst++;
-     }
-
-     return *dst == 'Y' ? 2 : 1;
-   }
-
-   return 0;
+   // No correctly installed AutoDST tool was found
+   // so lets return zero.
+   return result;
 }
 ///
 
@@ -1309,12 +1356,12 @@ int main(int argc, char **argv)
       AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name, "", "", "");
       AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir, "");
       TC_Start();
-      timsig    = 1 << TCData.port->mp_SigBit;
-      rexsig    = 1 << G->RexxHost->port->mp_SigBit;
-      appsig    = 1 << G->AppPort->mp_SigBit;
-      notsig[0] = 1 << G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
-      notsig[1] = 1 << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
-      notsig[2] = 1 << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
+      timsig    = 1L << TCData.port->mp_SigBit;
+      rexsig    = 1L << G->RexxHost->port->mp_SigBit;
+      appsig    = 1L << G->AppPort->mp_SigBit;
+      notsig[0] = 1L << G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
+      notsig[1] = 1L << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
+      notsig[2] = 1L << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
       while (!(ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))))
       {
          if (signals)
