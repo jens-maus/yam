@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-15  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: fixed bug #721608 where a return value of NULL
+      in the GetRealPath() function wasn`t quite a wise decision as
+      GetRealPath is often used in string manipulation functions.
+
 2003-04-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_FI.c: fixed bug #721041 where YAM caused some serious

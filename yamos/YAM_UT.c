@@ -3974,8 +3974,8 @@ char *GetRealPath(char *path)
     UnLock(lock);
   }
 
-  // only on success we return the buffer.
-  return success ? buf : NULL;
+  // only on success we return the realpath.
+  return success ? buf : path;
 }
 
 ///
