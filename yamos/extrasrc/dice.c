@@ -5,7 +5,7 @@ BOOL WorkbenchControl(STRPTR name, ...)
 { return WorkbenchControlA(name,(struct TagItem *)(&name+1)); }
 
 #include <proto/icon.h>
-struct DiskObject *GetIconTags(CONST_STRPTR name, ... )
+struct DiskObject *GetIconTags(CONST STRPTR name, ... )
 { return GetIconTagList(name, (struct TagItem *)(&name+1)); }
 
 #include <proto/xpkmaster.h>

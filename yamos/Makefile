@@ -54,7 +54,7 @@ CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
 WARN	= -W -Wall
 OPTFLAGS= -O3 -fomit-frame-pointer -funroll-loops
 DEBUG	= -DDEBUG -g3 -O0
-CFLAGS  = -I. -I./includes -DNO_INLINE_STDARG $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
+CFLAGS  = -I. -I./includes -D__USE_SYSBASE -DNO_INLINE_STDARG $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS = -noixemul -mstackextend $(CPU)
 LDLIBS  = -ldebug -lmui -lm
 

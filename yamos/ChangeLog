@@ -7,6 +7,8 @@ $Source$
 
 2005-02-17  Jens Langner <Jens.Langner@light-speed.de>
 
+    * Makefile, extrasrc/dice.c: minor changes to make YAM easier compileable
+      with a vanilla OS3.9 NDK.
     * YAM_debug.h: put the NOP statements back into as there is no real reason
       for not having them. They increase the security, are supported by all
       common gcc versions and are anyway removed during optimization. And if
