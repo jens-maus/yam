@@ -686,7 +686,7 @@ void main(int argc, char **argv)
    nrda.Parameters = (LONG *)&args;
    nrda.FileParameter = -1;
    nrda.PrgToolTypesOnly = FALSE;
-   if (err = NewReadArgs((struct WBStartup *)(!argc && argv ? argv : 0), &nrda))
+   if (err = NewReadArgs(_WBenchMsg, &nrda))
    {
       PrintFault(err, "YAM");
       NewFreeArgs(&nrda);

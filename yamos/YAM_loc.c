@@ -1321,6 +1321,7 @@ void OpenYAMCatalog(void)
 
 void CloseYAMCatalog(void)
 {
+	extern struct Library *LocaleBase;
   	if (LocaleBase) CloseCatalog(YAM_Catalog);
   	YAM_Catalog = NULL;
 }

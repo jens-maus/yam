@@ -26,6 +26,9 @@
 #include "YAM_loc.h"
 
 /// Defines
+#ifdef __PPC__
+#define CPU " [PPC]"
+#else
 #ifdef _M68060
 #define CPU " [060]"
 #else
@@ -36,6 +39,7 @@
 #define CPU " [020]"
 #else
 #define CPU ""
+#endif
 #endif
 #endif
 #endif
@@ -93,7 +97,6 @@
 
 #define AddrName(abentry) ((abentry).RealName[0]?(abentry).RealName:(abentry).Address)
 #define FolderName(fo)    ((fo) ? (fo)->Name : "?")
-#define MakeHook(hookname, funcname) struct Hook hookname = { {NULL, NULL}, (void *)funcname, NULL, NULL }
 #define BusyEnd           Busy("", NULL, 0, 0)
 #define OUTGOING(type)    (type == FT_OUTGOING || type == FT_SENT || type == FT_CUSTOMSENT)
 #define Virtual(mail)     (((mail)->Flags&MFLAG_NOFOLDER) == MFLAG_NOFOLDER)
@@ -102,10 +105,34 @@
 #define DBGP DBG Delay(100);
 #define clear(p,l) memset((p), 0, (l));
 
+#ifdef __MORPHOS__
+
+#define MakeHook(hookname, funcname) \
+    extern struct EmulLibEntry Gate_##funcname; \
+    struct Hook hookname = { {NULL, NULL}, (void*)&Gate_##funcname, NULL, NULL }
+#define InitHook(hook, funcname, data) ((hook)->h_Entry = (void*)&Gate_##funcname, (hook)->h_Data = (APTR)(data))
+#define ENTRY(func)	  (void*)&Gate_##func
+
+#define REG(x)
+#define ASM
+#define SAVEDS
+#define STACKEXT
+#define __stdargs
+#define __regargs
+#define __near
+
+#else /* __MORPHOS__ */
+
+#define MakeHook(hookname, funcname) struct Hook hookname = { {NULL, NULL}, (void *)funcname, NULL, NULL }
+#define InitHook(hook, funcname, data) ((hook)->h_Entry = (void *)funcname, (hook)->h_Data = (APTR)(data))
+#define ENTRY(func)	  func
+
 #define REG(x) register __ ## x
 #define ASM    __asm
 #define SAVEDS __saveds
 #define STACKEXT __stackext
+
+#endif /* __MORPHOS__ */
 
 #define MUIA_Bodychunk_File          0x80002501
 #define MUIA_Bodychunk_UseOld        0x80002502
@@ -218,6 +245,17 @@ struct hostent
 #define h_addr h_addr_list[0]
 };
 
+#ifdef __MORPHOS__
+
+#define Socket 	socket
+#define Connect connect
+#define Send	send
+#define Recv	recv
+#define Shutdown shutdown
+#define GetHostByName gethostbyname
+
+#else
+
 extern LONG Shutdown(LONG, LONG);
 extern LONG CloseSocket(LONG);
 extern struct hostent *GetHostByName(UBYTE *);
@@ -233,6 +271,8 @@ extern LONG Send(LONG, UBYTE *, LONG, LONG);
 #pragma libcall SocketBase Shutdown 54 1002
 #pragma libcall SocketBase CloseSocket 78 001
 #pragma libcall SocketBase GetHostByName D2 801
+
+#endif
 ///
 /// Configuration sub-structures
 struct POP3
@@ -1103,6 +1143,9 @@ extern int Mode2Group[12];
 extern int BusyLevel;
 ///
 /// Function prototypes
+struct Object; /* Help gcc compiling. But 'Object' is actually not a struct.
+		  a proper fix would be to change all 'struct Object' to 'Object'
+		  below and in the .c files. */
 extern char *Protection2(void);
 extern int StringRequest(char *, int, char *, char *, char *, char *, char *, BOOL, APTR);
 extern struct Folder *FolderRequest(char *, char *, char *, char *, struct Folder *, APTR);
@@ -1457,4 +1500,19 @@ extern BOOL DoesNeedPortableNewlines(char *);
 
 extern BOOL InitClasses(void);
 extern void ExitClasses(void);
+
+#ifdef __MORPHOS__
+extern struct EmulLibEntry HookEntry;
+extern struct EmulLibEntry Gate_WL_Dispatcher;
+extern struct EmulLibEntry Gate_EL_Dispatcher;
+extern struct EmulLibEntry Gate_WS_Dispatcher;
+extern struct EmulLibEntry Gate_AL_Dispatcher;
+extern struct EmulLibEntry Gate_FL_Dispatcher;
+extern struct EmulLibEntry Gate_BC_Dispatcher;
+extern struct EmulLibEntry Gate_TE_Dispatcher;
+extern struct EmulLibEntry Gate_MW_Dispatcher;
+extern struct EmulLibEntry Gate_PL_Dispatcher;
+extern struct EmulLibEntry Gate_AB_LV_DspFunc;
+extern struct EmulLibEntry Gate_CO_PL_DspFunc;
+#endif
 ///

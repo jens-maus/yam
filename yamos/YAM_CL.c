@@ -337,8 +337,7 @@ SAVEDS ASM ULONG AL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
          if (obj)
          {
             struct AL_Data *data = INST_DATA(cl, obj);
-            data->DisplayHook.h_Entry = (VOID *)AB_LV_DspFunc;
-            data->DisplayHook.h_Data  = (APTR)data;
+	    InitHook(&data->DisplayHook, AB_LV_DspFunc, data);
             set(obj, MUIA_Listtree_DisplayHook, &data->DisplayHook);
          }
          return (ULONG)obj;
@@ -469,9 +468,8 @@ SAVEDS ASM ULONG PL_Dispatcher(REG(a0) struct IClass *cl, REG(a2) Object *obj, R
          obj = (Object *)DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
          if (obj)
          {
-            struct PL_Data *data = INST_DATA(cl,obj);
-            data->DisplayHook.h_Entry = (VOID *)CO_PL_DspFunc;
-            data->DisplayHook.h_Data  = (APTR)data;
+	    struct PL_Data *data = INST_DATA(cl,obj);
+	    InitHook(&data->DisplayHook, CO_PL_DspFunc, data);
             set(obj, MUIA_List_DisplayHook, &data->DisplayHook);
          }
          return (ULONG)obj;
@@ -528,15 +526,15 @@ void ExitClasses(void)
 //  Initialize custom MUI classes
 BOOL InitClasses(void)
 {
-   CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), WL_Dispatcher);
-   CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), EL_Dispatcher);
-   CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), WS_Dispatcher);
-   CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_Listtree     , NULL, sizeof(struct AL_Data), AL_Dispatcher);
-   CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), FL_Dispatcher);
-   CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), BC_Dispatcher);
-   CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct DumData), TE_Dispatcher);
-   CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), MW_Dispatcher);
-   CL_PageList    = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct PL_Data), PL_Dispatcher);
+   CL_AttachList  = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher));
+   CL_DDList      = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct DumData), ENTRY(EL_Dispatcher));
+   CL_DDString    = MUI_CreateCustomClass(NULL, MUIC_BetterString , NULL, sizeof(struct WS_Data), ENTRY(WS_Dispatcher));
+   CL_AddressList = MUI_CreateCustomClass(NULL, MUIC_Listtree     , NULL, sizeof(struct AL_Data), ENTRY(AL_Dispatcher));
+   CL_FolderList  = MUI_CreateCustomClass(NULL, MUIC_NList        , NULL, sizeof(struct DumData), ENTRY(FL_Dispatcher));
+   CL_BodyChunk   = MUI_CreateCustomClass(NULL, MUIC_Bodychunk    , NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher));
+   CL_TextEditor  = MUI_CreateCustomClass(NULL, MUIC_TextEditor   , NULL, sizeof(struct DumData), ENTRY(TE_Dispatcher));
+   CL_MainWin     = MUI_CreateCustomClass(NULL, MUIC_Window       , NULL, sizeof(struct DumData), ENTRY(MW_Dispatcher));
+   CL_PageList    = MUI_CreateCustomClass(NULL, MUIC_List         , NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher));
    return (BOOL)(CL_AttachList && CL_DDList && CL_DDString && CL_AddressList && CL_FolderList && CL_BodyChunk &&
                  CL_TextEditor && CL_MainWin && CL_PageList);
 }

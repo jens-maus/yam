@@ -2010,10 +2010,26 @@ void SetupMenu(int type, struct NewMenu *menu, char *label, char *shortcut, int 
 ///
 /// DoSuperNew
 //  Calls parent NEW method within a subclass
+#ifdef __MORPHOS__
+ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
+{
+   ULONG tags[4 * 2];
+   va_list args;
+   // SVR4 varargs to Tags hack.
+   va_start(args, tag1);
+   tags[0] = tag1;
+   memcpy(tags + 1, args->reg_save_area + 3 * 4, 5 * 4);
+   tags[6] = TAG_MORE;
+   tags[7] = (ULONG)args->overflow_arg_area;
+   va_end(args);
+   return DoSuperMethod(cl, obj, OM_NEW, tags, NULL);
+}
+#else
 ULONG DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...)
 {
    return DoSuperMethod(cl, obj, OM_NEW, &tag1, NULL);
 }
+#endif
 ///
 /// GetMUI
 //  Gets an attribute value from a MUI object

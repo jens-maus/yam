@@ -49,14 +49,6 @@
 #define inline __inline
 #endif
 
-#ifdef __GNUC__
-#undef toupper
-static inline char toupper( char c )
-{
-   return( islower(c) ? c - 'a' + 'A' : c );
-}
-#endif
-
 #ifdef AZTEC_C
 #define inline
 #endif
