@@ -67,7 +67,6 @@
 
 #include "YAM.h"
 #include "YAM_classes.h"
-#include "YAM_compat.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_error.h"
@@ -1063,12 +1062,28 @@ char *Encrypt(char *source)
 //  Gets Null terminated line of a text file
 char *GetLine(FILE *fh, char *buffer, int bufsize)
 {
-   char *ptr;
-   memset(buffer, 0, bufsize);
-   if (!fgets(buffer, bufsize, fh)) return NULL;
-   if ((ptr = strpbrk(buffer, "\r\n"))) *ptr = 0;
-   return buffer;
-}
+  char *ptr;
+
+  // read in the next line or return NULL if
+  // a problem occurrs. The caller then should
+  // query ferror() to determine why exactly it
+  // failed.
+  if(fgets(buffer, bufsize, fh) == NULL)
+  {
+    // lets NUL-terminate the string at least.
+    buffer[0] = '\0';
+    return NULL;
+  }
+
+  // search for either a \r or \n and terminate there
+  // if found.
+  if((ptr = strpbrk(buffer, "\r\n")))
+    *ptr = '\0';
+
+  // now return the buffer.
+  return buffer;
+}       
+
 ///
 /// FileInfo
 //  Gets size, protection bits and type of a file/directory
@@ -3485,18 +3500,24 @@ struct BodyChunkData *LoadBCImage(char *fname)
                            struct BitMapHeader *bmhd = (struct BitMapHeader *)sp->sp_Data;
                            if (bmhd->bmh_Compression == cmpNone || bmhd->bmh_Compression==cmpByteRun1)
                            {
-                              LONG size = CurrentChunk(iff)->cn_Size;
-                              if ((bcd->Body = calloc((size_t)size,1)))
+                              struct ContextNode *cnode = CurrentChunk(iff);
+
+                              if(cnode)
                               {
-                                 if (ReadChunkBytes(iff, bcd->Body, size) == size)
-                                 {
-                                    bcd->Width  = bmhd->bmh_Width;
-                                    bcd->Height = bmhd->bmh_Height;
-                                    bcd->Depth = bmhd->bmh_Depth;
-                                    bcd->Compression = bmhd->bmh_Compression;
-                                    bcd->Masking = bmhd->bmh_Masking;
-                                    strcpy(bcd->File, FilePart(fname));
-                                 }
+                                LONG size = cnode->cn_Size;
+
+                                if((bcd->Body = calloc((size_t)size,1)))
+                                {
+                                   if(ReadChunkBytes(iff, bcd->Body, size) == size)
+                                   {
+                                      bcd->Width  = bmhd->bmh_Width;
+                                      bcd->Height = bmhd->bmh_Height;
+                                      bcd->Depth = bmhd->bmh_Depth;
+                                      bcd->Compression = bmhd->bmh_Compression;
+                                      bcd->Masking = bmhd->bmh_Masking;
+                                      strcpy(bcd->File, FilePart(fname));
+                                   }
+                                }
                               }
                            }
                         }
@@ -3919,7 +3940,7 @@ void PlaySound(char *filename)
       DisposeDTObject(G->NewMailSound_Obj);
 
     // create the new datatype object
-    G->NewMailSound_Obj = NewDTObject(filename,DTA_GroupID,GID_SOUND,TAG_DONE);
+    G->NewMailSound_Obj = NewDTObject(filename, DTA_GroupID, GID_SOUND, TAG_DONE);
     if(G->NewMailSound_Obj)
     {
       // create a datatype trigger
@@ -4197,13 +4218,11 @@ void GotoURL(char *url)
   }
   else if((OpenURLBase=OpenLibrary("openurl.library", 1)))
   {
-    if (!IS_AMIGAOS4 || (IOpenURL=(APTR)GetInterface(OpenURLBase,"main",1L,NULL)))
+    if(GETINTERFACE(IOpenURL, OpenURLBase))
     {
       URL_OpenA(url, NULL);
-      if (IS_AMIGAOS4) {
-        DropInterface((APTR)IOpenURL);
-        IOpenURL = NULL;
-      }
+
+      DROPINTERFACE(IOpenURL);
     }
     CloseLibrary(OpenURLBase);
     OpenURLBase = NULL;

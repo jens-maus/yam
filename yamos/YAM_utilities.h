@@ -113,6 +113,19 @@ struct NewToolbarEntry
    APTR help;
 };
 
+// Library open/close macros
+#if defined(__amigaos4__)
+#define INITLIB(iface, func)      ((iface)=func)
+#define CLOSELIB(lib, iface)      { if((iface) && (lib)) { DropInterface((APTR)(iface)); iface = NULL; CloseLibrary((struct Library *)lib); lib = NULL; } }
+#define GETINTERFACE(iface, base) (iface = (APTR)GetInterface((struct Library *)(base), "main", 1L, NULL))
+#define DROPINTERFACE(iface)      { DropInterface((APTR)(iface)); iface = NULL; }
+#else
+#define INITLIB(iface, func)      func
+#define CLOSELIB(lib, iface)      { if((lib)) { CloseLibrary((struct Library *)lib); lib = NULL; } }
+#define GETINTERFACE(iface, base) TRUE
+#define DROPINTERFACE(iface)
+#endif
+
 // misc defines
 #define PGPLOGFILE          "T:PGP.log"
 #define NOERRORS            (1<<4)

@@ -51,7 +51,6 @@
 
 #include "YAM.h"
 #include "YAM_addressbookEntry.h"
-#include "YAM_compat.h"
 #include "YAM_config.h"
 #include "YAM_debug.h"
 #include "YAM_error.h"
@@ -838,38 +837,35 @@ BOOL TR_IsOnline(void)
 {
    BOOL isonline = FALSE;
 
-   if (C->IsOnlineCheck)
+   if(C->IsOnlineCheck)
    {
-      if ((MiamiBase=OpenLibrary("miami.library", 10)))
+      if((MiamiBase = OpenLibrary("miami.library", 10)))
       {
-         if (!IS_AMIGAOS4 || (IMiami=(APTR)GetInterface(MiamiBase,"main",1L,NULL)))
+         if(GETINTERFACE(IMiami, MiamiBase))
          {
            isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL);
-           if (IS_AMIGAOS4) {
-             DropInterface((APTR)IMiami);
-             IMiami = NULL;
-           }
+
+           DROPINTERFACE(IMiami);
          }
 
          CloseLibrary(MiamiBase);
          MiamiBase = NULL;
       }
-      else if ((GenesisBase = OpenLibrary("genesis.library", 1)))
+      else if((GenesisBase = OpenLibrary("genesis.library", 1)))
       {
-         if (!IS_AMIGAOS4 || (IGenesis=(APTR)GetInterface(GenesisBase,"main",1L,NULL)))
+         if(GETINTERFACE(IGenesis, GenesisBase))
          {
            isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0);
-           if (IS_AMIGAOS4) {
-             DropInterface((APTR)IGenesis);
-             IGenesis = NULL;
-           }
+
+           DROPINTERFACE(IGenesis);
          }
 
          CloseLibrary(GenesisBase);
          GenesisBase = NULL;
       }
    }
-   else
+
+   if(isonline == FALSE)
    {
      // if no online check was selected, we just check if bsdsocket.library
      // is available.
@@ -894,11 +890,12 @@ void TR_CloseTCPIP(void)
     CleanupAmiSSLA(NULL);
   }
 
-  if(IS_AMIGAOS4 && ISocket)
+  #if defined(__amigaos4__)
+  if(ISocket)
   {
-    DropInterface((APTR)ISocket);
-    ISocket = NULL;
+    DROPINTERFACE(ISocket);
   }
+  #endif
 
   if(SocketBase)
   {
@@ -922,7 +919,7 @@ BOOL TR_OpenTCPIP(void)
     if(!(SocketBase = OpenLibrary("bsdsocket.library", 2L)))
       return FALSE;
 
-    if(IS_AMIGAOS4 && !(ISocket=(APTR)GetInterface(SocketBase,"main",1L,NULL)))
+    if(GETINTERFACE(ISocket, SocketBase) == NULL)
     {
       CloseLibrary(SocketBase);
       SocketBase = NULL;

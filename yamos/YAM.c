@@ -59,7 +59,6 @@
 #include "YAM.h"
 #include "YAM_addressbook.h"
 #include "YAM_classes.h"
-#include "YAM_compat.h"
 #include "YAM_config.h"
 #include "YAM_configFile.h"
 #include "YAM_debug.h"
@@ -72,17 +71,6 @@
 #include "YAM_rexx.h"
 #include "YAM_write.h"
 #include "classes/Classes.h"
-
-/**************************************************************************/
-
-static void CloseLib(APTR libbase, APTR iFace);
-#if IS_AMIGAOS4 > 0
-#define INITLIB(iface,func) ((iface)=func)
-#define CLOSELIB(lib,iface) CloseLib(lib,iface)
-#else
-#define INITLIB(iface,func) func
-#define CLOSELIB(lib,iface) CloseLib(lib,NULL)
-#endif
 
 /***************************************************************************
  Module: Root
@@ -192,10 +180,8 @@ static void TC_Exit(void)
     if(TCData.timerIO[0]->tr_node.io_Device != NULL)
     {
       // drop the OS4 Interface of the TimerBase
-      if (IS_AMIGAOS4) {
-        DropInterface((APTR)ITimer);
-        ITimer = NULL;
-      }
+      DROPINTERFACE(ITimer);
+
       CloseDevice(&TCData.timerIO[0]->tr_node);
     }
 
@@ -240,19 +226,20 @@ static BOOL TC_Init(void)
         int i;
 
         // needed to get GetSysTime() working
-        TimerBase = (APTR)TCData.timerIO[0]->tr_node.io_Device;
-        if (IS_AMIGAOS4) ITimer = (APTR)GetInterface((struct Library *)TimerBase, "main", 1L, NULL);
-
-        // create our other TimerIOs now
-        for(i=1; i < TIO_NUM; i++)
+        if((TimerBase = (APTR)TCData.timerIO[0]->tr_node.io_Device) &&
+           GETINTERFACE(ITimer, TimerBase))
         {
-          if(!(TCData.timerIO[i] = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC|MEMF_CLEAR))) return FALSE;
+          // create our other TimerIOs now
+          for(i=1; i < TIO_NUM; i++)
+          {
+            if(!(TCData.timerIO[i] = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC|MEMF_CLEAR))) return FALSE;
 
-          // then copy the data of our timerIO[0] to the other ones
-          memcpy(TCData.timerIO[i], TCData.timerIO[0], sizeof(struct timerequest));
+            // then copy the data of our timerIO[0] to the other ones
+            memcpy(TCData.timerIO[i], TCData.timerIO[0], sizeof(struct timerequest));
+          }
+
+          return TRUE;
         }
-
-        return TRUE;
       }
     }
   }
@@ -411,8 +398,10 @@ static void ADSTnotify_stop(void)
 //  Shows progress of program initialization
 static void AY_PrintStatus(char *txt, int percent)
 {
-   set(G->AY_Text, MUIA_Gauge_InfoText, txt);
-   set(G->AY_Text, MUIA_Gauge_Current, percent);
+   SetAttrs(G->AY_Text, MUIA_Gauge_InfoText, txt,
+                        MUIA_Gauge_Current,  percent,
+                        TAG_DONE);
+
    DoMethod(G->App, MUIM_Application_InputBuffered);
 }
 ///
@@ -987,13 +976,14 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
    *libbase = base;
 
    // if we end up here, we can open the OS4 base library interface
-   if(IS_AMIGAOS4 && base)
+   #if defined(__amigaos4__)
+   if(base)
    {
      // get the "main" interface
-     APTR iFace = GetInterface(base, "main", 1L, NULL);
+     APTR iFace;
 
      // if we weren`t able to obtain the main interface, lets close the library also
-     if(iFace == NULL)
+     if(GETINTERFACE(iFace, base) == NULL)
      {
        DB(kprintf("InitLib: can`t get main interface of library %s\n", libname);)
 
@@ -1008,6 +998,7 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
    {
      DB(kprintf("InitLib: library %s v%ld.%ld successfully opened.\n", libname, base->lib_Version, base->lib_Revision);)
    }
+   #endif
 
    if(!base && required)
      Abort(MSG_ERR_OPENLIB, libname, version, revision);
@@ -1015,30 +1006,18 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
    return base;
 }
 ///
-/// CloseLib
-//  Closes a library & on OS4 also the main interface
-static void CloseLib(APTR libbase, APTR iFace)
-{
-   if(IS_AMIGAOS4 && iFace)
-   {
-     DropInterface(iFace);
-   }
-
-   if(libbase)
-   {
-     CloseLibrary((struct Library *)libbase);
-   }
-}
-///
 /// SetupAppIcons
 //  Sets location of mailbox status icon on workbench screen
 void SetupAppIcons(void)
 {
    int i;
-   for (i = 0; i < MAXICONS; i++) if (G->DiskObj[i])
+   for (i = 0; i < MAXICONS; i++)
    {
-      G->DiskObj[i]->do_CurrentX = C->IconPositionX;
-      G->DiskObj[i]->do_CurrentY = C->IconPositionY;
+      if (G->DiskObj[i])
+      {
+         G->DiskObj[i]->do_CurrentX = C->IconPositionX;
+         G->DiskObj[i]->do_CurrentY = C->IconPositionY;
+      }
    }
 }
 ///
@@ -1075,12 +1054,19 @@ static void Initialise2(void)
    LoadLayout();
    set(G->MA->GUI.LV_FOLDERS, MUIA_HorizWeight, G->Weights[0]);
    set(G->MA->GUI.LV_MAILS,   MUIA_HorizWeight, G->Weights[1]);
-   AY_PrintStatus(GetStr(MSG_LoadingFolders), 50);
 
-   if(G->CO_AutoTranslateIn) LoadParsers();
-   if (!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
+   if(G->CO_AutoTranslateIn)
+     LoadParsers();
+
+   AY_PrintStatus(GetStr(MSG_LoadingFolders), 50);
+   if(!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
    {
-      for (i = 0; i < 100; i++) if (oldfolders[i]) DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
+      for(i = 0; i < 100; i++)
+      {
+        if (oldfolders[i])
+          DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
+      }
+
       newfolders = TRUE;
    }
 
@@ -1097,6 +1083,7 @@ static void Initialise2(void)
 
    AY_PrintStatus(GetStr(MSG_RebuildIndices), 60);
    MA_UpdateIndexes(TRUE);
+
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 75);
    for(i = 0; ;i++)
    {
@@ -1104,14 +1091,18 @@ static void Initialise2(void)
       struct MUI_NListtree_TreeNode *tn_parent;
 
       tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-      if (!tn || !tn->tn_User) break;
+      if(!tn || !tn->tn_User)
+        break;
 
       folder = tn->tn_User;
 
       // if this entry is a group lets skip here immediatly
-      if (folder->Type == FT_GROUP) continue;
+      if(folder->Type == FT_GROUP)
+        continue;
 
-      if ((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING || folder->Type == FT_DELETED || C->LoadAllFolders) && !isCryptedFolder(folder))
+      if((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING ||
+          folder->Type == FT_DELETED || C->LoadAllFolders) &&
+          !isCryptedFolder(folder))
       {
         MA_GetIndex(folder);
       }
@@ -1164,8 +1155,8 @@ static void Initialise2(void)
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
    if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))
       Abort(MSG_ErrorARexx);
-   AY_PrintStatus(GetStr(MSG_OPENGUI), 100);
 
+   AY_PrintStatus(GetStr(MSG_OPENGUI), 100);
    // only activate the main window if the about window is activ
    // and open it immediatly
    // we always start YAM with Window_Open TRUE or else YAM the hide
@@ -1521,7 +1512,7 @@ int main(int argc, char **argv)
 
    // obtain the MainInterface of Exec before anything else.
    #ifdef __amigaos4__
-   IExec = (struct ExecIFace *)((struct ExecBase **)4L)->MainInterface;
+   IExec = (struct ExecIFace *)((*(struct ExecBase **)4L)->MainInterface);
    #endif
 
 #if defined(DEVWARNING)
@@ -1529,10 +1520,10 @@ int main(int argc, char **argv)
      BOOL goon = TRUE;
 
      if((IntuitionBase=(APTR)OpenLibrary("intuition.library", 36)) &&
-        (!IS_AMIGAOS4 || (IIntuition=(APTR)GetInterface((struct Library *)IntuitionBase,"main",1L,NULL))))
+        GETINTERFACE(IIntuition, IntuitionBase))
      {
        if((UtilityBase=(APTR)OpenLibrary("utility.library", 36)) &&
-          (!IS_AMIGAOS4 || (IUtility=(APTR)GetInterface((struct Library *)UtilityBase,"main",1L,NULL))))
+          GETINTERFACE(IUtility, UtilityBase))
        {
          struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
          struct DateStamp ds;
@@ -1569,14 +1560,9 @@ int main(int argc, char **argv)
        }
 
        CLOSELIB(UtilityBase, IUtility);
-       if (IS_AMIGAOS4) IUtility = NULL;
-       UtilityBase = NULL;
      }
 
      CLOSELIB(IntuitionBase, IIntuition);
-     if (IS_AMIGAOS4) IIntuition = NULL;
-     IntuitionBase = NULL;
-
      if(!goon) exit(0);
    }
 #endif
