@@ -1,4 +1,4 @@
-## version $VER: YAM.catalog 5.40 (19.04.2003)
+## version $VER: YAM.catalog 5.41 (24.05.2003)
 ## language español
 ## codeset 0
 ;
@@ -3919,7 +3919,7 @@ ATENCIÓN: La firma PGP no es correcta.
 ; WARNING: Bad signature
 ;
 MSG_RE_GoodSig
-Firma correcta.
+Firma correcta
 ; Good signature
 ;
 MSG_RE_SigFrom
@@ -7291,4 +7291,17 @@ Texto que debería mostrarse\n\
 en la barra de estado.
 ; Text that should be displayed\n\
 ; in the status bar
+;
+MSG_MA_CROPREQUEST
+Todos los ficheros anexos de los\n\
+mensajes seleccionados se perderán.\n\
+\n\
+¿De verdad desea eliminarlos?
+; All attachments of the selected mails will be cropped.\n\
+; \n\
+; Do you really want to proceed?
+;
+MSG_YesNoReq2
+_Sí|*_No
+; _Yes|*_No
 ;
