@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-05-11  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: fixed bug in MBOX export function where YAM didn`t correctly
+      export & import file depending on the "mboxrd" specification found at
+      http://www.qmail.org/man/man5/mbox.html
+
 2003-05-06  Jens Langner <Jens.Langner@light-speed.de>
 
     * fixed the temporary filename generation once more to generate real

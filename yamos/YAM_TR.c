@@ -1482,15 +1482,18 @@ BOOL TR_GetMessageList_IMPORT(FILE *fh)
 {
    BOOL body = FALSE;
    int c = 0, size = 0;
-   char *tfname = "yamIMP.tmp";
+   char tfname[SIZE_FILE];
    char buffer[SIZE_LINE], *ptr;
    char fname[SIZE_PATHFILE];
    FILE *f = NULL;
 
+   // generate the temporary filename
+   sprintf(tfname, "YAMi%08lx.tmp", FindTask(NULL));
    strmfp(fname, C->TempDir, tfname);
+
    G->TR->List = NULL;
    fseek(fh, 0, SEEK_SET);
-   while (fgets(buffer, SIZE_LINE, fh))
+   while(fgets(buffer, SIZE_LINE, fh))
    {
       if (f || body) size += strlen(buffer);
       if ((ptr = strpbrk(buffer, "\r\n"))) *ptr = 0;
@@ -2374,11 +2377,24 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
             {
                if ((mfh = fopen(fullfile, "r")))
                {
+                  // printf out our leading "From " MBOX format line first
                   fprintf(fh, "From %s %s", mail->From.Address, DateStamp2String(&mail->Date, DSS_UNIXDATE, TZC_NONE));
-                  while (fgets(buf, SIZE_LINE, mfh) && !G->TR->Abort)
+
+                  // now we iterate through every line of our mail and try to substitute
+                  // found "From " line with quoted ones
+                  while(fgets(buf, SIZE_LINE, mfh) && !G->TR->Abort)
                   {
-                     if (!strncmp(buf, "From ", 5)) fputc('>', fh);
+                     char *tmp = buf;
+
+                     // the mboxrd format specifies that we need to quote any From, >From, >>From etc. occurance.
+                     // http://www.qmail.org/man/man5/mbox.html
+                     while(*tmp == '>') tmp++;
+                     if(strncmp(tmp, "From ", 5) == 0) fputc('>', fh);
+
+                     // write the line to our destination file
                      fputs(buf, fh);
+
+                     // Update the transfer status
                      TR_TransStat_Update(&ts, strlen(buf));
                   }
                   if (*buf) if (buf[strlen(buf)-1] != '\n') fputc('\n', fh);
@@ -2390,9 +2406,10 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
                FinishUnpack(fullfile);
             }
          }
+
+        fclose(fh);
+        AppendLog(51, GetStr(MSG_LOG_Exporting), (void *)ts.Msgs_Done, G->TR->List->Folder->Name, fname, "");
       }
-      fclose(fh);
-      AppendLog(51, GetStr(MSG_LOG_Exporting), (void *)ts.Msgs_Done, G->TR->List->Folder->Name, fname, "");
    }
    TR_AbortnClose();
    return success;
@@ -2784,7 +2801,17 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
             } 
             else if (f && (header || body))
             { 
-               fputs(buffer, f);
+               char *tmp = buffer;
+
+               // the mboxrd format specifies that we need to unquote any >From, >>From etc. occurance.
+               // http://www.qmail.org/man/man5/mbox.html
+               while(*tmp == '>') tmp++;
+
+               // if we found a quoted line we need to check if there is a following "From " and if so
+               // we have to skip ONE quote.
+               if(tmp != buffer && strncmp(tmp, "From ", 5) == 0) fputs(&buffer[0]+1, f);
+               else fputs(buffer, f);
+
                TR_TransStat_Update(&ts, strlen(buffer));
             }
             if (header && !buffer[1]) { body = TRUE; header = FALSE; }
