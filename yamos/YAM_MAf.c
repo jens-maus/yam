@@ -414,7 +414,7 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
   ULONG ret;
   BOOL tmp_dis = TRUE;
 
-  enum{ PMN_EDITF=1, PMN_DELETEF, PMN_INDEX, PMN_FLUSH, PMN_NEWF, PMN_NEWFG, PMN_SNAPS };
+  enum{ PMN_EDITF=1, PMN_DELETEF, PMN_INDEX, PMN_NEWF, PMN_NEWFG, PMN_SNAPS };
 
   // Now lets find out which entry is under the mouse pointer
   DoMethod(gui->NL_FOLDERS, MUIM_NListtree_TestPos, msg->mx, msg->my, &r);
@@ -440,7 +440,6 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
                  PMItem(GetStripStr(MSG_FOLDER_EDIT)),           PM_UserData, PMN_EDITF,     End,
                  PMItem(GetStripStr(MSG_FOLDER_DELETE)),         PM_UserData, PMN_DELETEF,   End,
                  PMItem(GetStripStr(MSG_MA_UpdateIndex)),        PM_Disabled, tmp_dis,       PM_UserData, PMN_INDEX, End,
-                 PMItem(GetStripStr(MSG_MA_FlushIndices)),       PM_Disabled, tmp_dis,       PM_UserData, PMN_FLUSH,  End,
                  PMBar, End,
                  PMItem(GetStripStr(MSG_FOLDER_NEWFOLDER)),      PM_UserData, PMN_NEWF,      End,
                  PMItem(GetStripStr(MSG_FOLDER_NEWFOLDERGROUP)), PM_UserData, PMN_NEWFG,     End,
@@ -457,7 +456,6 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
     case PMN_EDITF:   DoMethod(G->App, MUIM_CallHook, &FO_EditFolderHook,     TAG_DONE);           break;
     case PMN_DELETEF: DoMethod(G->App, MUIM_CallHook, &FO_DeleteFolderHook,   TAG_DONE);           break;
     case PMN_INDEX:   DoMethod(G->App, MUIM_CallHook, &MA_RescanIndexHook,    TAG_DONE);           break;
-    case PMN_FLUSH:   DoMethod(G->App, MUIM_CallHook, &MA_FlushIndexHook,     TAG_DONE);           break;
     case PMN_NEWF:    DoMethod(G->App, MUIM_CallHook, &FO_NewFolderHook,      TAG_DONE);           break;
     case PMN_NEWFG:   DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook, TAG_DONE);           break;
     case PMN_SNAPS:   DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook,       SO_SAVE, TAG_DONE);  break;
