@@ -1926,7 +1926,9 @@ Reply to
 
 Normally  this  field should remain empty. The default Reply-To address is
 your  e-mail address. If want to use a different address (AND ONLY THEN!!)
-you should insert that address here.
+you should insert that address here. Alternatively, you can use the pop-up
+button to open the address book window, and then drag an entry  from there
+into this field.
 
   Example:  jdoe\@home.uk
 
@@ -2234,15 +2236,14 @@ into this text field.
 Configuration - LISTS  (Column layout in different lists)
 
 
-Folder list
+---- Field settings ------------------------------------------------------
 
-Select the items you want to see in the folder list.
+Folder list, Message list
+
+Select the items you want to see in these lists.
 
 
-Message list
-
-Select the items you want to se in the message list.
-
+---- General settings ----------------------------------------------------
 
 [ ] Use fixed font
 
@@ -2259,6 +2260,30 @@ hours:minutes format. This revolutionary unit of time, invented by Swatch,
 a  Swiss  watch  manufacturer, divides the day in 1000 beats and abolishes
 the  different  time  zones. The  meridian  is  Biel, a  town  located  in
 Switzerland.
+
+
+Size format
+
+This setting allows you to select the exact format  of the sizes  given in
+the message list, assuming the "Size" field is used in this list.
+
+
+---- Information bar -----------------------------------------------------
+
+Position
+
+Allows you to select the position of the information (status) bar, or even
+disable it completely.
+
+  Example:  Top
+
+
+Label
+
+The contents of the information bar. Use the pop-up button at the right to
+select a variable for new, unread, etc. messages.
+
+  Example:  - Total: %t New: %n Unread: %u
 
 @ENDNODE
 @NODE "CO09" "Configuration - Security"
@@ -2735,37 +2760,42 @@ disposition notification:
 The  condition  report  will be sent immediately if there's a TCP/IP-stack
 running. If not it will be saved to the 'Outgoing' folder.
 
+
 ---- XPK/LhA settings ----------------------------------------------------
 
 Packer
-Here  you  can  choose  the  XPK  library  you wish to use for compressing
-folders  by  clicking on the pop-up button. Before doing so an XPK package
-must  be  installed on your computer system. This package is not contained
-in  the  YAM  archive.  You can obtain such a package from Aminet. You can
-select the packer's efficiency using the slider bar on the right-hand side
-of  the  pop-up button. The higher the value is the more effective and the
-slower is the compression.
+
+By clicking the pop-up button, you can choose the  XPK library you wish to
+use to compress folders. Before doing so, an XPK package must be installed
+on your computer system. This package is not contained in the YAM archive,
+but  can  be downloaded  from the  Aminet. You  can  select  the  packer's
+efficiency by  using the slider  bar on the right-hand side of the  pop-up
+button - the higher the value, the better compression, but also slower.
 
   Example:  NUKE 100%
 
+
 Pack/protect
-Click  on  the pop-up button to select the XPK library you wish to use for
+
+Click  the pop-up  button to select  the XPK library  you wish  to use for
 compression  and  password  protection of folders. You can only select XPK
 libraries  offering  password  protection. Specify the packer's efficiency
 with the slider bar on the right-hand side of the pop-up button.
 
   Example:  HUFF 50%
 
-Archiver
-YAM  is capable of crunching one or more files before attaching them to an
-e-mail. Suitable for that use are archive packers such as LHA, LZX or ZIP.
-Enter  the  full  command  line  for your favourite packer. You can insert
-variables  for  the  resulting  archive  and  the  source files (or a list
-containing  the  source  files)  by  clicking  on the pop-up button on the
-righthand side of the text field.
 
-  Example:  LhA -a -m -i%l a %a
-  Example:  BIN:LZX -a -m a %a %f
+Archiver
+
+YAM  is capable of crunching one or more files before attaching them to an
+e-mail, using a suitable archiver such as LHA, LZX or ZIP. Enter  here the
+full command path line for your favourite archiver, including any options.
+You can insert variables for the resulting  archive and  the  source files
+(or a list containing  the  source files) by clicking the pop-up button on
+the right hand side of the text field.
+
+  Examples:  LhA -a -m -i%l a %a
+             BIN:LZX -a -m a %a %f
 
 @ENDNODE
 @NODE "CO_H" "Configuration - Hidden Options"
@@ -2773,97 +2803,128 @@ righthand side of the text field.
 
 Configuration - HIDDEN OPTIONS
 
-YAM  recognises  a  couple  of  parameters which cannot be set through the
-configuration window. You have to load the file YAM:.config into an editor
-and alter the parameters in the [Advanced] section by hand.
+
+YAM  recognises  some extra  parameters  that  are not  mentioned  in  any
+configuration  window. You have to load the file 'YAM:.config' into a text
+editor and alter the parameters in the [Advanced] section by hand.
+
 
 LetterPart
-Usually  the  first part of a multipart letter contains tha actual message
+
+Usually the  first part of a multipart letter contains the actual message,
 while  the  subsequent parts are the attachments. A few mail servers, like
-GeoCities,  use  the  first  part  for  their advertisments which then get
-quoted  in  a  reply  instead  of  the  actual  message.  With  the option
+GeoCities, use the first  part  for their advertisements, which would then
+be quoted  in  a  reply  instead  of the actual  message. With  the option
 LetterPart you can correct this.
 
   Example:  LetterPart = 2
 
+
 WriteIndexes
+
 If  the contents of a folder are altered, YAM must rebuild the index. This
-index  is  in  the  memory  and is saved back to the hard disk on a normal
+index is in RAM memory,  and it is saved back to the hard disk on a normal
 exit.  In  the  event  that  the computer has to be rebooted (because of a
-crash,  perhaps), YAM has to rebuild the indices on startup. Therefore YAM
+crash, perhaps), YAM has to rebuild the indices on startup. Therefore, YAM
 will  save alterations to the index file at intervals of 120 seconds. This
 time interval can be altered using the WriteIndexes option.
 
   Example:  WriteIndexes = 30
 
+
 AutoSave
-While  you're  entering big messages, YAM saves the contents of the editor
-every  ten  minutes  as  .autosave0.txt  or  autosave1.txt  in the program
+
+While you're writing a message, YAM saves the contents of the editor every
+ten  minutes  as  '.autosave0.txt'  or  '.autosave1.txt'  in  the  program
 directory.  After  a crash you can load this file using "Text/Insert". The
-AutoSave parameter contains the delay between two backups in seconds.
+AutoSave  parameter  contains  the  time interval between  two backups, in
+seconds.
 
   Example:  AutoSave = 600
 
+
 SupportSite
-This  is  the address of the YAM homepage, which is used for access to the
-user picture gallery and the version check.
+
+This  is  the address of the YAM homepage, used to access the user picture
+gallery and to request the version check.
 
   Example:  SupportSite = http://www.YAM.ch/
 
+
 JumpToNewMsg
-If this option is set to 'Y', YAM jumps to the first new or unread message
-whenever you select a folder.
+
+If this option is set to  'Y', YAM will  jump to the  first new or  unread
+message whenever you select a folder.
 
   Example:  JumpToNewMsg = N
 
+
 AskJumpUnread
+
 If  this  option  is  set to 'N', YAM won't ask if you want to jump to the
 next/previous folder with unread  messages if you  are reading the last or
 first message and select 'Next/Previous unread message' in the menu.
 
   Example:  AskJumpUnread = N
 
+
 WarnSubject
+
 If  this  option  is  set  to 'N', YAM won't warn you if you try to send a
 message without a subject.
 
   Example:  WarnSubject = N
 
+
 PrinterCheck
+
 YAM does some printer checking before printing a message. This test can be
 disabled because it's not fully compatible with some printer drivers.
 
   Example:  PrinterCheck = N
 
+
 IsOnlineCheck
-If  you're  using  Miami or AmiTCP Genesis, YAM can check if your Amiga is
+
+If  you're  using  Miami or AmiTCP/Genesis, YAM can check if your Amiga is
 really online. If you're using another TCP/IP software and YAM is claiming
-about  a  missing  connection when you're online, then you must switch off
-this option.
+a  missing connection although you're acually online, then you must switch
+off this option.
 
   Example:  IsOnlineCheck = N
 
+
 IOCInterface
+
 Specifies  which  Miami Deluxe/AmiTCP Genesis interface should be used for
 the online check (see IsOnlineCheck).
 
   Example:  IOCInterface = ppp1
 
+
 ConfirmOnQuit
-If  this  option is enabled, YAM always ask for confirmation when you quit
-it. By default YAM only ask for confirmation if there is some unsaved data
-(configuration, address book).
+
+If this  option is enabled, YAM will ask for confirmation whenever you try
+to quit it. By  default, YAM only asks for  confirmation if  there is some
+unsaved data (configuration, address book).
 
   Example:  ConfirmOnQuit = Y
 
+
 HideGUIElements
-This  option  can  be  used  to  hide  some elements of the graphical user
-interface.  The  following  values can be added: 4 for the toolbars, 2 for
-the cursor position display in the editor and 1 for the status bar.
+
+This can be used to hide some elements of the graphic user  interface. The
+following  values can be combined: 4 for the  toolbars,  2 for the  cursor
+position in the editor, and 1 for the status bar.
 
   Example:  HideGUIElements = 3
 
+Please note that as of YAM 2.4, the status bar is not affected by this
+setting anymore, but it is now set in Configuration/Lists.
+
+
 LocalCharset
+
 This  is  the ISO name of the character set you're using on your computer.
 The  default  iso-8859-1  (Latin-1)  works  for Western Europe and English
 speaking  countries.  Polish or Russian users probably have to adjust this
@@ -2871,7 +2932,9 @@ option.
 
   Example:  LocalCharset = iso-8859-2
 
+
 StackSize
+
 Sets  the  stack  size for programs which are launched from YAM (e.g. MIME
 viewers and PGP).
 
@@ -2882,31 +2945,44 @@ viewers and PGP).
 
 Configuration - MENUS
 
-Project/Open
-Loads   a   config  file  thus  enabling  you  to  use  several  different
-configuration setups.
 
-Project/Save as
+Project/Open
+
+Loads   a   config  file, and thus enables you to  use  several and  maybe
+different YAM setups.
+
+
+Project/Save as...
+
 Saves the actual configuration with another name.
 
-Edit/Reset To Defaults
+
+Edit/Reset to defaults
+
 Resets  the  parameters  on  the  current  sheet  to  their default values
 internally contained in YAM.
 
-Edit/Reset all settings
-Resets all parameters to their default values internally contained in YAM.
 
-Edit/Last Saved
-Replaces the present configuration with the one most recently saved.
+Edit/Reset all settings
+
+Resets all configuration parameters to  their  default  values, internally
+contained in YAM.
+
+
+Edit/Last saved
+
+Replaces the current configuration with the one most recently saved.
+
 
 Edit/Restore
-Discards any changes of the settings made since the last time they've been
+
+Discards any changes in the  settings made  since the last  time they were
 [Save]d or [Use]d.
 
 Extras/Import MIME viewers & types
-Imports   attachment  types,  file  name  extenstions  and  MIME  viewers.
+Imports attachment types, file  name  extensions  and  MIME  viewers data.
 Supported  file  formats are mime.types, mailcap and MIME.prefs. This menu
-item can only be called from the @{"MIME" LINK "CO11" 0} sheet.
+item can only be called from the @{" MIME " LINK "CO11" 0} sheet.
 
 @ENDNODE
 @NODE "AB_W" "Address Book"
@@ -2928,31 +3004,31 @@ ADDRESS BOOK
    |          |              |                 |                    |
    `----------------------------------------------------------------'
 
-By  default  the  list  displays  four  columns  as above, but you can (of
-course)  change  the  @{"List" LINK "CO08" 0}  configuration,  to  include  phone numbers for
+By  default, the  list  displays  four  columns  as above, but you can (of
+course) change the  @{" List " LINK "CO08" 0}  configuration  to  include  phone numbers, for
 example. You can click and drag the column dividers to reposition them.
 
 Double  click  on  an  entry  to  see  or  edit  the  information  in  the
-@{"edit address" LINK "EA_W" 0}  window.  In  addition to the fields mentioned, you can enter
+@{" Edit address " LINK "EA_W" 0}  window. In addition to the fields mentioned, you can enter
 the postal address, PGP key, homepage URL, date of birth and a picture.
 
-An  entry  must contain at the least the real name and the e-mail address.
-The point of the Alias is to save typing; you can put a short nickname, or
+An  entry must contain at least the real name and some e-mail address. The
+point of  the Alias  is to save  typing; you  can put a short nickname, or
 initials,  into  the To field of an e-mail message and let YAM fill in the
-details.  For  this  to  work, the alias obviously has to be unique to the
+details.  For this to  work, the alias obviously has to be unique for each
 entry.
 
 In  addition  to personal entries, the address book can also contain Lists
 of  individual  recipients which can be invoked with a single alias. Lists
-are  used  for circular e-mails and are marked with the list symbol (three
-little heads).
+are best used for  circular e-mails, and are  marked with  the list symbol
+(three little heads).
 
 Both  individual  entries and lists can be put into Groups, which are like
 subdirectories,  used  to  keep  the  address book clearly arranged. Group
 names  are displayed in bold. You can open a group to display the names in
-it  by clicking on the [+] and close it again by clicking on [-].
+it  by clicking on the little arrow in front of their name.
 
-Use @{"drag & drop" LINK "Drag" 0} to move an entry from one group into another.
+Use @{" drag & drop " LINK "Drag" 0} to move an entry from one group into another.
 
 @ENDNODE
 @NODE "AB_B" "Address book - Toolbar"
@@ -2960,55 +3036,77 @@ Use @{"drag & drop" LINK "Drag" 0} to move an entry from one group into another.
 
 Address book - TOOLBAR
 
+
 [Save]
+
 Saves the address book to your hard disk.
 
+
 [Find]
+
 Searches  the  address  book  for  a  specific  text string. All variables
 contained   in  the  database  will  be  searched  with  full  support  of
-@{"AmigaDOS patterns" LINK "DOSW" 0}.  If  the result of the search is positive the alias and
-the  name  of  the  found entry will be displayed. You can then search for
-other hits or edit the found entry.
+@{" AmigaDOS patterns " LINK "DOSW" 0}. If the result of the search is positive the alias and
+the  name  of  the  found entry will be displayed. You can then do another
+search or edit the found entry.
 
-  Example: Anna#? (finds all Annas contained in the address book)
+  Example:  Anna#? (finds all Annas contained in the address book)
+
 
 [Person] [List] [Group]
-All  three  buttons open the @{"edit address" LINK "EA_W" 0} window to add a new entry to the
-address  book. However the appearance of the window depends on the type of
+
+All three buttons open the @{" Edit address " LINK "EA_W" 0} window to add a new entry to the
+address book; however, the appearance of the window depends on the type of
 entry, since the information stored is different.
 
+
 [Edit]
-This  also  opens  the edit address window, to see or edit the information
+
+This  also  opens  the Edit address window, to see or edit the information
 stored. Again, the layout depends on the type of entry.
 
+
 [Delete]
+
 Deletes the selected entry from the address book.
 
+
 [Print]
+
 Prints the selected entry.
 
+
 [Unfold]
+
 Unfolds  all  groups  (subdirectories)  of the address book so all entries
 will be visible.
 
+
 [Fold]
+
 Folds  all groups (subdirectories) of the address book so only the entries
-on the highest hierarchical level will be visible.
+at the top of the hierarchy will be visible.
+
 
 [To:]
+
 Uses  the  selected entry as the primary recipient of a new e-mail. If the
-address  book  window  has been opened from the main window, a new 'write'
+address  book  window  has been opened from the main window, a new 'Write'
 window will appear.
+
 
 [CC:]
+
 Uses  the  selected  entry  as secondary recipient of a new e-mail. If the
-address  book  window  has been opened from the main window, a new 'write'
+address  book  window  has been opened from the main window, a new 'Write'
 window will appear.
 
+
 [BCC:]
+
 Uses  the selected entry as recipient of a hidden copy of a new e-mail. If
 the  address  book  window  has  been  opened  from the main window, a new
-'write' window will appear.
+'Write' window will appear.
 
 @ENDNODE
 @NODE "AB_M" "Address book - Menus"
@@ -3016,55 +3114,83 @@ the  address  book  window  has  been  opened  from the main window, a new
 
 Address book - MENUS
 
+
 Address book/New
+
 Starts  a  new  address  book;  all  existing  entries of the address book
-presently  resident in RAM will be deleted. CAUTION: Save your old address
+currently  resident in RAM will be deleted. CAUTION: Save your old address
 book with another name before selecting this option!!
 
-Address book/Open
-Opens  an  existing  address  book  from  your hard disk. The address book
-presently resident in RAM will be replaced.
 
-Address book/Append
+Address book/Open...
+
+Opens  an  existing  address  book  from  your hard disk. The address book
+currently resident in RAM will be replaced.
+
+
+Address book/Append...
+
 Loads another address book from your hard disk and appends its contents to
-the address book presently resident in RAM.
+the address book currently resident in RAM.
+
 
 Address book/Save
+
 Saves the address book to your hard disk.
 
-Address book/Save as
+
+Address book/Save as...
+
 Saves  the address book with a name of your choice so you can keep several
 different address book files.
 
-Address book/Find
-Searches the address book for a certain character string. For more details
-see @{"BUTTONS" LINK "AB_B" 0}/Search.
 
-Address book/Print
+Address book/Find...
+
+Searches the address book for a certain string. See @{" BUTTONS " LINK "AB_B" 0}/Search for
+more info.
+
+
+Address book/Print...
+
 Prints  the  whole  address  book. Select 'Short format' to print a single
-line for each entry. Select 'Long format' to print the entry with details,
-which needs several lines for each entry.
+line for each entry, or 'Long format' for a more verbose printout, needing
+several lines for each entry.
 
-Entry/New person Entry/New distribution list Entry/New group
-Opens  the @{"Edit address window" LINK "EA_W" 0} to add a new entry to the address book. The
-appearance of the window depends on the type of entry.
 
-Entry/Edit
-The selected entry can be modified in the @{"Edit address window" LINK "EA_W" 0}.
+Entry/New person...
+Entry/New distribution list...
+Entry/New group...
+
+They open the @{" Edit address window " LINK "EA_W" 0} to add a new entry to the address book.
+The appearance of the window depends on the type of entry.
+
+
+Entry/Edit...
+
+The selected entry can be modified in the @{" Edit address window " LINK "EA_W" 0}.
+
 
 Entry/Duplicate
+
 Duplicates the selected entry. The alias will be adjusted automatically.
 
+
 Entry/Delete
+
 Deletes the selected entry from the address book.
 
+
 Entry/Print
-Prints the selected entry. (Who would have guessed it? ;) ).
+
+Prints the selected entry immediately. (Who would have guessed it? ;) ).
+
 
 Sort/by...
+
 Sorts  the  address  book  by alias, last name, first name, description or
 e-mail address. Please note that 'First name' is related to the first word
-in the 'Full name' textfield while 'Last name' is related to the last word
+in the 'Full name' text field while 'Last name' is related to the last word
 in this textfield.
 
 @ENDNODE
@@ -3073,10 +3199,12 @@ in this textfield.
 
 Address book - ENTERING ADDRESSES
 
+
 In this window a single address book entry can be edited. According to the
 kind  of  entry  (person,  list  or group) you will see a different set of
-editing  fields.  Click on [Okay] to accept the changes, click on [Cancel]
-to discard the changes.
+editing  fields.  Click [Okay] to accept  the changes, or [Cancel] if  you
+change your mind.
+
 
 PERSON
 ------
@@ -3084,131 +3212,167 @@ PERSON
 ---- Electronic mail -----------------------------------------------------
 
 Alias   (applies to person, list or group)
-An  'Alias'  is  a  convenient  short name that identifes the address book
+
+An  'Alias' is  a  convenient  short name that identifies the address book
 entry  unambiguously.  Its  function  is  to save typing - you can put the
-alias  into  the  to  field of a message and YAM fills in the details when
-sending  the  message.  If  you leave this field blank, YAM will create an
-alias for the entry.
+alias into  the  To: field of  a message, and YAM will fill in the details
+when sending  the  message. If you leave this field blank, YAM will create
+an alias for the entry on its own.
 
-  Example: JohnD
+  Example:  JohnD
 
-Real Name
+
+Real name
+
 The person's first name and surname.
 
-  Example: John Doe
+  Example:  John Doe
+
 
 Email address
-The internet address to use to send e-mail to this person.
+
+The Internet mail address to use to send mail to this person.
 
   Example:  jdoe\@athome.uk
 
+
 PGP key ID
-The hexadecimal code of this person's PGP public key. It is needed to send
-the  recipient  a  PGP  encrypted  message.  Click on the pop-up button to
-select  the  key  from  your  public  key  folder  (for  that, PGP must be
-installed  on  your  system  and the key you're looking for must be in the
-keyring folder).
+
+The  hexadecimal code  of this person's PGP public key, needed to send the
+recipient a PGP encrypted  message.  Click the pop-up button to select the
+key  from  your  public  keyring; PGP must be installed on your system and
+the key you're looking for must be there.
 
   Example:  0x709B40C3
 
-Home page
-The  URL  for the person's homepage in the world wide web. YAM can connect
+
+Homepage
+
+The  URL  for the person's homepage in the World Wide Web. YAM can connect
 to  this address via your browser, provided that the appropriate script is
-specified  in  the @{"scripts" LINK "CO13" 0} configuration for 'when double clicking a URL'.
+specified in the @{" scripts " LINK "CO13" 0} configuration for 'When double clicking a URL'.
 All  you  have  to  do  is  to  click  on  the  button to the right of the
 textfield.
 
   Example:  http://come.to/mars
 
+
 ---- Snail mail ----------------------------------------------------------
 
 Street
+
 Street and house number of the postal address.
 
   Example:  43 High street
 
+
 City / ZIP
+
 City and (ZIP) postcode (who would have guessed that...)
 
   Example:  Shrewsbury SY1 3PE
 
+
 State / Country
 
-  Example: Shropshire, England
+  Example:  Shropshire, England
+
 
 Phone number(s)
-One or more phone numbers (voice, FAX, cellular phone, whatever...)
+
+One or more phone numbers (voice, FAX, mobile phone, whatever...)
 
   Example:  08154711
+
 
 ---- Miscellaneous -------------------------------------------------------
 
 Description    (applies to person, list or group)
-Any comment you'd like to enter to describe the current entry.
+
+Any comment you'd like to have stored to describe the current entry.
 
   Example:  My beloved one ;-)
 
+
 Date of birth
+
 The person's date of birth. Enter it in the format DD-MMM-YYYY.
 
   Example:  12-Dec-1967
 
+
 ---- Portrait ------------------------------------------------------------
 
 Select
+
 Here  you  can  select a picture (preferably a portrait) of the person. By
 using the datatypes library you may use any kind of picture format as long
-as  you've  installed  the datatypes needed for displaying it. If you want
-this  picture  will show up whenever you display a message written by this
-person. (See 'sender info' in the @{"Read" LINK "CO04" 0} configuration)
+as you've installed  the datatypes needed for displaying it. If you desire
+so, this  picture  will show up  whenever you display a message written by
+this person. (See 'sender info' in the @{" Read " LINK "CO04" 0} configuration)
+
 
 Download
+
 You  can find a steadily growing number of portraits of other users of YAM
-on  the YAM homepage. YAM can access this data bank automatically; all you
+on the YAM homepage. YAM can access this data bank automatically - all you
 need  to do is to input the name and/or the e-mail address, connect to the
-internet  and click the [download] button. YAM starts by getting a list of
+Internet  and click the [Download] button. YAM starts by getting a list of
 available  photos  and  searching  it  for the named person. If found, any
 information  missing from the address book entry (Name, e-mail address and
-home  page)  is  made  good  and  the  picture downloaded and saved in the
+homepage) will be made good  and  the  picture downloaded and saved in the
 gallery.  If you want to add your picture to the collection, please follow
-the instructions on YAM's home page at http://www.YAM.ch/gallery.html.
+the instructions on YAM's home page at http:\//www.YAM.ch/gallery.html .
+
+
 
 LIST
 ----
 
 Alias   as described above.
 
+
 Return address
+
 If  you'd  like  to maintain a small mailing list using a YAM distribution
-list  you  will  have  to  correct  the reply-to addresses of the original
-messages.  Otherwise  the  answer  to  an  e-mail would be returned to the
-message's  author  and  not  to the mailing list. Enter the return address
-you'd like to use.
+list, you  will  have  to  correct  the Reply-To addresses of the original
+messages, otherwise  the  answer  to  an  e-mail would be returned to  the
+message's author and  not  to the mailing list as you would probably want.
+Enter here  the  return  address  you'd like  to use, or click  the pop-up
+button  to open the address book window and then  drag an entry from there
+into this field.
 
   Example:  discussion\@provider.uk
 
+
 Mailing list name
-When maintaining a mailing list by using a YAM distribution list enter the
-mailing  list's  name here. This name will appear in the 'To' header field
-to help the recipient sorting the mail correctly by using filters.
+
+When maintaining  a mailing list  by using a  YAM distribution list, enter
+the mailing  list's  name here. This name  will appear in  the 'To' header
+field to help the recipient sorting the mail correctly by using filters.
 
   Example:  discussion-ML
 
+
 Members
+
 A  list  of  all  current  members of the distribution list. You may enter
 aliases,  names  or complete e-mail addresses. Click on [New] to add a new
 list  member,  [Delete]  to delete the highlighted entry or [Sort] to have
 all entries sorted alphabetically.
 
+
+
 GROUP
 -----
 
-Only the Alias  and Description  fields apply in this case.
+Only the Alias and Description fields apply in this case.
 
 @ENDNODE
 @NODE "FI_W" "Finding messages"
 
 FINDING MESSAGES
+
 
 If  you  have  many messages and folders, it is easy to lose track of them
 all.  You  know you have saved a message on a particular topic, but where?
@@ -3216,30 +3380,42 @@ YAM's search function solves this problem.
 
 In  the upper half of the window you define the query. On the left you can
 select one or more folders in which to search. On the right you define the
-@{"Search criterion" LINK "FI_K" 0}.  In  the lower half of the window you will get a list of
+@{" Search criterion " LINK "FI_K" 0}. In the lower half of the window you will get a list of
 messages which match the query.
 
-Functions of the buttons
+
+Functions of the buttons:
 
 [everywhere]
+
 Includes all folders in your search.
 
-[Use filter settings]
-Replaces the search criterion with a @{"Filter" LINK "CO03" 0}.
 
-[Make new filter]
-Sets up a new @{"Filter" LINK "CO03" 0} based on the current search criterion.
+[Use filter settings]
+
+Replaces the search criterion with a @{" filter " LINK "CO03" 0}.
+
+
+[Add as new filter]
+
+Creates a new @{" filter " LINK "CO03" 0} using the current search criterion.
+
 
 [Start search]
-Begins  the  search.  Matching messages are shown in the results list. The
-search can be stopped by clicking on [Abort].
 
-[Select found messages]
+Starts the search process. Matching messages are shown in the results list
+below. The search can be stopped by clicking on [Abort].
+
+
+[Select matched]
+
 Selects  all  the  messages listed as a result of the search, highlighting
-them in the @{"message list" LINK "MA01" 0} of the main window.
+them in the @{" message list " LINK "MA01" 0} of the main window.
 
-[Read messages]
-Displays   the  contents  of  a  selected  message  in  the  result  list.
+
+[Read message]
+
+Displays the contents of the last selected message  in  the  results list.
 Double-clicking on the name in the result list has the same effect.
 
 @ENDNODE
@@ -3248,58 +3424,69 @@ Double-clicking on the name in the result list has the same effect.
 
 SEARCH CRITERIA
 
+
 Search in
-Here you select what part of the message is to be searched with the search
-pattern. If you want to search in a header line you can either pick it out
-of the list or else choose 'Other field' and type in the name of the field
-in  the  text gadget on the right. 'Message body' causes the whole message
-to  be  searched, apart from the headers. Note that a full text search can
-take a long time. (YAM has to decode messages in MIME format before it can
-search them.) Example : Other field X-Mailer
+
+Here you select what  part of the message is going to be compared with the
+search pattern. If you want to search in a header line you can either pick
+one  out of the  list or choose 'Other field:' and type  the  name  of the
+header in  the  text  field on the right. 'Message body' forces the  whole
+message to  be  searched, except for the headers. Please note  that a full
+text search can take a long time, since YAM will  have to decode  any MIME
+attachments before it can search them.
+
+  Example:  Other field: X-Mailer
+
 
 Comparison
+
 The instruction has two components, the comparison operator and the search
 pattern.
 
 YAM supports the following comparison operators:
 
  =   the text which is compared must match the search pattern
- <   the text must be less than the search string
- >   the text must be greater than the search string
- <>  the text must be different from the search string
+ <   the text must be "less than" the search string
+ >   the text must be "greater than" the search string
+ <>  the text must be "different" from the search string
  IN  the text must match a pattern contained in the file which is
      specified in the text field to the right side of the comparison
-     cycle gadget. Instead of a search pattern itself the name of a
+     cycle gadget. Instead of a search pattern itself, the name of a
      file is to be inserted here, containing one or several lines of
-     search patterns. In this way it is possible to create a so-called
-     'Killfile' containing a list of e-mail addresses. Click on the page
-     icon to edit the file.
+     search patterns. This way it is possible to create the so-called
+     'Killfile' containing a list of e-mail addresses. Click the magnifier
+     looking icon to edit the file.
 
-The comparison operators < and > work using alphanumeric ordering, as used
-for names in a telephone directory, so James < Jim and 12 < 2.
+The  comparison operators '<' and '>' work using  alphanumeric ordering as
+used for names in a telephone directory, so James < Jim and 12 < 2.
 
-The search pattern may contain Amiga-DOS @{"wildcards" LINK "DOSW" 0} such as ?, #?, (a|b) or
-[abc].  Please  note  that  the  search  pattern  [YAM]#?  will filter all
-messages  beginning  with  Y, A or M. For filtering mails out of a mailing
-list  (for  example  a  mailing  list  related to YAM) you need to use the
-search  pattern  ?YAM#? or have the filter compare the 'To' field with the
-address of the mailing list.
+The search pattern may contain AmigaDOS @{" wildcards " LINK "DOSW" 0} such as ?, #?, (a|b) or
+[abc].  Please  note  that  the  search  pattern  [YAM]#?  will  match any
+message  beginning with  Y, A or M.  To filter email coming from a mailing
+list  (for  example, a  mailing  list  related to YAM), you should use the
+search  pattern  ?YAM#?  or, even better,  have  the  filter  compare  the
+'Reply-To' field with the address of the mailing list.
 
   Example:  = YAM 1.3.#?
 
+
 Address/Name
-If  you want to search a header field containing an e-mail address you can
+
+If you want to search a header field containing an e-mail address, you can
 specify here whether the search pattern should be processed on the address
+(e.g.  jdoe\@provider.uk) or on the author's name (e.g.  'John Doe').
 
-  (e.g.  jdoe\@provider.uk) or the author's name (e.g.  'John Doe').
 
-[] Case sensitive
+[ ] Case sensitive
+
 Activate  this option if you want the search to distinguish between normal
 and capital letters.
 
-[] Substring search
+
+[ ] Substring search
+
 If the search pattern consists of only a part of the header field which is
-to  be  searched  through  you  must  activate  this option. YAM will then
+to  be searched  through, you  must  activate  this option - YAM will then
 complete the search pattern with #? internally.
 
 @ENDNODE
@@ -3307,23 +3494,24 @@ complete the search pattern with #? internally.
 
 WRITING MESSAGES
 
+
 This  window  will appear when you choose to write a new message or answer
-or  forward an existing message. You can open TWO write windows at a time.
-The write window consists of three sheets, laid out as shown:
+or  forward an already existing message. You can open TWO Write windows at
+a time. The  Write  window  consists of three sheets, laid  out  as  shown
+below. The menu bar is the same for each sheet.
 
-  The Menu bar is the same for each sheet:
 
-  @{"Text" LINK "WRM1" 0} @{"Edit" LINK "WRM2" 0} @{"Attachments" LINK "WRM3" 0} @{"Options" LINK "WR02" 0}
+  @{" Text " LINK "WRM1" 0} @{" Edit " LINK "WRM2" 0} @{" Attachments " LINK "WRM3" 0} @{" Options " LINK "WR02" 0}
 
   .-----------------------. .------------------.   .--------------------.
-  |      @{"  Message  " LINK "WR00" 0}      | |    @{"Attachments" LINK "WR01" 0}     | |    @{"  Options  " LINK "WR02" 0}     |
-  |                       |_|____________________|_|____________________|
+  |      @{"  Message  " LINK "WR00" 0}     | |  @{" Attachments " LINK "WR01" 0}   |  |    @{"  Options  " LINK "WR02" 0}     |
+  |                       |_|__________________|___|____________________|
   |                                                                     |
   |                                                                     |
   |                                                                     |
   |                                                                     |
   |            The big text edit field on the 'Message'                 |
-  |            sheet is the @{"internal editor" LINK "EDIT" 0} which you                   |
+  |            sheet is the @{" internal editor " LINK "EDIT" 0} which you                 |
   |            can use to enter your message.                           |
   |                                                                     |
   |                                                                     |
@@ -3334,28 +3522,37 @@ The write window consists of three sheets, laid out as shown:
   |   Send now    | |  Send later   | |     Hold      | |    Cancel     |
   `---------------' `---------------' `---------------' `---------------'
 
- These four buttons appear at the bottom of each sheet:
+
+These four buttons appear at the bottom of each sheet:
+
 
 Send now
-Prepares  the  message  for  sending, copies it to the outgoing folder and
+
+Prepares  the  message  for  sending, moves it to the Outgoing folder  and
 tries  to  send  the mail at once. For this option to work correctly there
-must be a TCP/IP stack running already.
+must be a TCP/IP stack running and online.
+
 
 Send later
-Prepares the message for sending and copies it to the outgoing folder. Use
-this button when working off line.
+
+Prepares the message for sending and copies it to the Outgoing folder. Use
+this button when working offline.
+
 
 Hold
+
 The  message  will  be prepared as described in [Send later] and copied to
-the  outgoing  folder, but will be held back and NOT sent. Use this button
+the  Outgoing  folder, but will be held back and NOT sent. Use this button
 for  unfinished messages (e.g. if you'd like to make some additions to the
 e-mail at a later time).
 
+
 Cancel
-Push  this  in  case you've changed your mind. BEWARE: All entries made in
-this window will be lost. But don't worry too much, the security requester
-will  pop  up  before YAM really discards any modifications you have made.
-(It won't show if you haven't made any modifications at all, though).
+
+Use this button  if you've  changed your mind.  BEWARE:  All input made in
+this window will be lost. But don't worry, a security requester will popup
+before YAM really discards any modifications you have made. (It won't show
+up if you haven't made any modifications in the message itself, though).
 
 @ENDNODE
 @NODE "WR00" "Write window - message"
@@ -3363,25 +3560,47 @@ will  pop  up  before YAM really discards any modifications you have made.
 
 Write window - MESSAGE SHEET
 
-Above the large @{"text editor" LINK "EDIT" 0} field there are two header fields and a toolbar
+
+Above the large @{" text editor " LINK "EDIT" 0} area there are two header fields and a toolbar.
+
 
 To
-Insert  the  main  recipient here, you wish to send the actual message to.
-You  may  use  names  or aliases from the address book or even full e-mail
+
+Insert  here the  main  recipient  you wish to send the actual message to.
+You  can  use  names  or aliases from the address book or even full e-mail
 addresses in case the recipient does not exist in the address book. If you
-wish  to  enter  several recipients you have to separate them by inserting
-commas. To insert an address book entry just click on the pop-up button to
-the  right  thereby  opening  the  address  book.  Now double-click on the
-selected  entry  or simply @{"drag" LINK "Drag" 0} it over to the text field holding the left
-mouse  button.  Then  click  on  [To:]. If YAM cannot find a name or alias
-you've  inserted  manually  into  the  text  field in the address book the
-screen  will flash, as soon as you press the RETURN key. You can change an
-alias  to  an e-mail address manually by clicking on the [<] button to the
-right.
+wish to  enter  several recipients, you have to separate them by inserting
+commas.
+
+There are several ways of importing here any recipient which can be  found
+in  your  address book; just select the method you  feel more  comfortable
+with:
+
+a) click on the pop-up button  to the  right, thereby opening the  address
+   book. Now you can either double click on any entry you want, or @{" drag " LINK "Drag" 0} it over
+   to the text field holding the left mouse  button.
+
+b) while the address book  window is open, you can click the "To:" button
+   there to automatically add the current entry to the "To:" field of your
+   message. To  add several  recipients, just select  them one by  one and
+   click the "To:" button in turn.
+
+c) lastly, a newly  introduced method is  to just  start typing the alias,
+   first name or email  address of your  recipient in  the To: field. This
+   will you will be quickly presented with a dropdown list of the possible
+   matches, as found  in your  address book - just use the cursor  up/down
+   keys to select the intended recipient and press <Return>.
+
+If YAM cannot find a name or alias you've  inserted  manually into the To:
+field, you will  get an error report as soon as you try to send [later] or
+hold your  message. Please double  check your spelling, or just use one of
+the selection methods outlined above.
 
   Example:  jdoe, boss\@work.whyme.com
 
+
 Subject
+
 What  the mail is all about. When a mail is answered there will be a 'Re:'
 inserted  in  front of the original subject, when forwarded a '(fwd)' will
 be added to the subject.
