@@ -229,3 +229,13 @@
 
     * Removed enforcer hits when trying to spawn a second instance of YAM
       while the first one is starting up.
+
+2001-05-06  Christian Hattemer <krille@users.sourceforge.net>
+
+    * Added backwards search to the 'change to next folder with unread
+      mail' feature.
+
+    * MA_ChangeFolder() now jumps to the first unread mail from bottom
+      if reverse sorting is used in one of the sort criteria.
+      This is needed for the above feature.
+
