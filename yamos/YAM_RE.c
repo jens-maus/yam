@@ -1775,11 +1775,16 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
          char buf[SIZE_DEFAULT];
          stccpy(p = buf, stpblk(&s[26]), SIZE_DEFAULT);
          StripTrailingSpace(p);
+
          if      (!stricmp(p, "base64"))           rp->EncodingCode = ENC_B64;
          else if (!stricmp(p, "quoted-printable")) rp->EncodingCode = ENC_QP;
          else if (!strnicmp(p, "x-uue", 5))        rp->EncodingCode = ENC_UUE;
-         else if (stricmp(p, "none") && !stricmp(p, "8bit") && !stricmp(p, "7bit"))
+         else if (!stricmp(p, "8bit"))             rp->EncodingCode = ENC_8BIT;
+         else if (!stricmp(p, "binary"))           rp->EncodingCode = ENC_BIN;
+         else if (stricmp(p, "none") && stricmp(p, "7bit"))
+         {
             ER_NewError(GetStr(MSG_ER_UnknownEnc), p, NULL);
+         }
       } 
       else if (!strnicmp(s, "content-description:", 20))
       {
@@ -1813,29 +1818,67 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 //  Processes body of a message part
 static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *tt, struct Part *rp)
 {
-   char *ptr, c = 0, buf[SIZE_LINE];
-   UBYTE *p;
+   char c = 0, buf[SIZE_LINE];
    int blen = 0;
+   long cpos;
+   BOOL cempty = TRUE;
 
-   if (rp) blen = strlen(rp->Boundary);
-   while (fgets(buf, SIZE_LINE, in))
+   if(!in) return FALSE;
+   if(rp) blen = strlen(rp->Boundary);
+   if(out) cpos = ftell(in);
+
+   while(fgets(buf, SIZE_LINE, in))
    {
-      if (rp) if (!strncmp(buf, rp->Boundary, blen))
+      // first we check if we reached the boundary yet.
+      if(rp && !strncmp(buf, rp->Boundary, blen))
       {
-         if (buf[blen] == '\n') return FALSE;
          if (buf[blen] == '-' && buf[blen+1] == '-' && buf[blen+2] == '\n') return TRUE;
+         else return FALSE;
       }
+
       if (out)
       {
-         if (c == '\n') fputc(c, out);
-         ptr = &buf[strlen(buf)-1];
-         if ((c = *ptr) == '\n') *ptr = 0;
-         if (tt) for (p = buf; *p; ++p) *p = tt->Table[*p];
-         fputs(buf, out);
+         long size = ftell(in)-cpos; // get new position and size of read chars
+
+         // if this function was invokes with a translation table, we have to change
+         // all chars accordingly
+         if(tt)
+         {
+            long t = size;
+            char *p = buf;
+
+            // iterate through the buffer and change the chars accordingly.
+            for(;size; size--, p++) *p = tt->Table[*p];
+
+            size = t;
+         }
+
+         // if there is some endchar in the c variable we write it first
+         // out to the fh.
+         if(!cempty) fputc(c, out);
+
+         // lets save the last char of the buffer in a temp variable because
+         // we need to skip the last byte of the stream later on
+         c = buf[size-1];
+         cempty = FALSE;
+
+         // now write back exactly the same amount of bytes we read previously
+         if(fwrite(buf, 1, (size_t)size-1, out) != size-1) return FALSE;
+
+         // increase cpos for next iteration
+         cpos += size;
       }
    }
-   if (out && c == '\n') fputc(c, out);
-   return TRUE;
+
+   // if we end up here because of a EOF we have check
+   // if there is still something in c and then write it into the out fh.
+   if(feof(in))
+   {
+      if(out && !cempty) fputc(c, out);
+      return TRUE;
+   }
+
+   return FALSE;
 }
 ///
 /// RE_DecodeStream
@@ -2111,6 +2154,7 @@ if(fname)
     kprintf("Part[%lx] - %ld\n", rp, rp->Nr);
     kprintf("  Name.......: [%s]\n", rp->Name);
     kprintf("  ContentType: [%s]\n", rp->ContentType);
+    kprintf("  Encoding...: %ld\n",  rp->EncodingCode);
     kprintf("  Filename...: [%s]\n", rp->Filename);
     kprintf("  Size.......: %ld\n", rp->Size);
     kprintf("  Nextptr....: %lx\n", rp->Next);

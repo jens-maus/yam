@@ -5,6 +5,21 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-08  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c, YAM_RE.c, YAM_WR.c: fixed serious flaw within the mail
+      parsing and transfer routines where YAM didn`t take respect of
+      binary data could being transfered/parsed. All main parsing
+      function did use fgets() and string function which could have
+      caused trouble if the file/mail had null bytes within. Now
+      all major routines take respect of that.
+      Also reworked the Encoding test routines to pick the correct
+      transfer type encoding depending on previous analyzes of the parsed file.
+      This fixes bug #685826.
+    * YAM_UT.c, YAM_global.c, YAM_global.h: added new common ContentType
+      "application/pdf" to internal YAM types as this one is quite common
+      and should be included in YAM.
+
 2003-03-07  Gunther Nikl <gni@gecko.de>
 
     * classes/InfoBar.c/ShowGauge: fixed an ancient and serious bug in

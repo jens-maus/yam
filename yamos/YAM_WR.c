@@ -243,33 +243,66 @@ static enum Encoding WhichEncodingForFile(char *fname, char *ctype)
 {
    int c, linesize=0, total=0, unsafechars=0, binarychars=0, longlines=0;
    FILE *fh = fopen(fname, "r");
-
    if (!fh) return ENC_B64;
-   while ((c = fgetc(fh)) != -1)
+
+   // scan until end of file
+   while((c = fgetc(fh)) != EOF)
    {
-      if (c > 127) ++unsafechars;
-      if (c < 32 && c != '\t' && c != '\n' && c != '\r') ++binarychars;
-      ++total;
-      if (c == '\n') 
+      linesize++; // count the characters to get linelength
+      total++;    // count the total number of scanned characters
+
+      // first we check if this is a linebreak
+      if(c == '\n')
       {
-         if (linesize > 79) ++longlines;
+         // (RFC 821) restricts 7bit lines to a maximum of 1000 characters
+         // so we have to use QP or base64 later on.
+         if(linesize > 1000) ++longlines;
          linesize = 0;
-      } else ++linesize;
-      if (total > 4000 && (longlines || unsafechars || binarychars)) break;
+      }
+      else if (c > 127) ++unsafechars; // count the number of unprintable >7bit characters
+      else if (c < 32 && c != '\t' && c != '\r') ++binarychars; // count the number of chars used in binaries.
+
+      // if we successfully scanned 4000 bytes out of the file and found enough
+      // data we break out here. we have to at least find some longlines or
+      // we have to scan the whole part.
+      if(total > 4000 && longlines) break;
    }
    fclose(fh);
-   if (longlines || unsafechars || binarychars)
+
+   DB(kprintf("EncodingTest [%s] t:%ld l:%ld u:%ld b:%ld\n", fname, total, longlines, unsafechars, binarychars);)
+
+   // now that we analyzed the file we have to decide which encoding to take
+   if(longlines || unsafechars || binarychars)
    {
-      if (!strnicmp(ctype, "image/", 6) ||
-          !strnicmp(ctype, "audio/", 6) ||
-          !strnicmp(ctype, "application/octet-stream", 24) ||
-          !strnicmp(ctype, "video/", 6))
-         return ENC_B64;
-      if (!strnicmp(ctype, "message/", 8)) return (longlines) ? ENC_BIN : ENC_8BIT;
-      if (!unsafechars && !binarychars) return C->Allow8bit ? ENC_BIN : ENC_QP;
-      if (C->Allow8bit && !binarychars) return ENC_8BIT;
-      return (total/++unsafechars < 16) ? ENC_B64 : ENC_QP;
+      // we make sure that the following content-types get always encoded via base64
+      if(!strnicmp(ctype, "image/", 6) ||
+         !strnicmp(ctype, "audio/", 6) ||
+         !strnicmp(ctype, "video/", 6))      return ENC_B64;
+
+      // if we are here just because of long lines we have to decide for either
+      // binary or quoted-printable encoding.
+      if(!unsafechars && !binarychars)       return C->Allow8bit ? ENC_BIN : ENC_QP;
+
+      // if there are no binary chars in the file we just have
+      // unsafe 8bit characters and if the server support them we can easily decide between binary or 8bit
+      if(!binarychars && C->Allow8bit)       return longlines ? ENC_BIN : ENC_8BIT;
+
+      // if we end up here we have a file with just unprintable characters
+      // and we have to decide if we take base64 or quoted-printable.
+      // base64 is more compact if there are many unprintable characters, as
+      // when sending a graphics file or such. see (RFC 1521)
+      if(total/(unsafechars+binarychars+1) < 16 || !strnicmp(ctype, "application/", 12))
+      {
+        return ENC_B64;
+      }
+      else
+      {
+        return ENC_QP;
+      }
    }
+
+   // if there are no special stuff within the file we can break out
+   // telling the caller that there is no encoding needed.
    return ENC_NONE;
 }
 
@@ -284,7 +317,6 @@ struct WritePart *NewPart(int winnum)
      p->ContentType = "text/plain";
      p->EncType = ENC_NONE;
      p->Filename = G->WR_Filename[winnum];
-//     p->Name = NULL; // redundant due to calloc() -msbethke
    }
    return p;
 }
@@ -300,6 +332,7 @@ static struct WritePart *BuildPartsList(int winnum)
 
    first = p = NewPart(winnum); p->IsTemp = TRUE;
    p->EncType = WhichEncodingForFile(p->Filename, p->ContentType);
+
    for (i = 0; ; i++)
    {
       DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
@@ -1137,7 +1170,8 @@ BOOL WriteOutMessage(struct Compose *comp)
 
 mimebody:
 
-   fputs("MIME-Version: 1.0\n", fh);
+   fputs("MIME-Version: 1.0\n", fh); // RFC 1521 requires that
+
    sprintf(boundary, "BOUNDARY.%s", NewID(FALSE));
    if (comp->ReportType > 0)
    {

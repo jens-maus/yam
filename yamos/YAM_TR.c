@@ -192,11 +192,11 @@ static char *TR_SendSMTPCmd(enum SMTPCommand command, char *parmtext, APTR error
 static int  TR_Recv(char *vptr, int maxlen);
 static int  TR_ReadLine(LONG socket, char *vptr, int maxlen);
 static int  TR_ReadBuffered(LONG socket, char *ptr, int maxlen, int flags);
-static int  TR_Send(char *vptr, int flags);
+static int  TR_Send(char *vptr, int len, int flags);
 static int  TR_WriteBuffered(LONG socket, char *ptr, int maxlen, int flags);
 
-#define TR_WriteLine(buf)       (TR_Send((buf), TCPF_FLUSH))
-#define TR_WriteFlush()         (TR_Send(NULL,  TCPF_FLUSHONLY))
+#define TR_WriteLine(buf)       (TR_Send((buf), strlen(buf), TCPF_FLUSH))
+#define TR_WriteFlush()         (TR_Send(NULL,  0, TCPF_FLUSHONLY))
 #define TR_FreeTransBuffers()   { TR_ReadBuffered(0, NULL, 0, TCPF_FREEBUFFER);  \
                                   TR_WriteBuffered(0, NULL, 0, TCPF_FREEBUFFER); }
 
@@ -737,7 +737,7 @@ static int TR_Recv(char *recvdata, int maxlen)
    if (len <= 0) recvdata[0] = '\0';
    else recvdata[len] = '\0';
 
-   if (G->TR_Debug) printf("SERVER: %s", recvdata);
+   if (G->TR_Debug) printf("SERVER[%04ld]: %s", len, recvdata);
 
    return len;
 }
@@ -746,19 +746,19 @@ static int TR_Recv(char *recvdata, int maxlen)
 /// TR_Send()
 // a own wrapper function for Send()/SSL_write() that writes buffered somehow
 // if called with flag != TCP_FLUSH - otherwise it will write and flush immediatly
-static int TR_Send(char *ptr, int flags)
+static int TR_Send(char *ptr, int len, int flags)
 {
   int nwritten;
 
   DoMethod(G->App,MUIM_Application_InputBuffered);
   if (G->TR_Socket == SMTP_NO_SOCKET) return -1;
-  if (G->TR_Debug && ptr) printf("CLIENT: %s", ptr);
+  if (G->TR_Debug && ptr) printf("CLIENT[%04ld]: %s", len, ptr);
 
   // we call the WriteBuffered() function to write this characters
   // out to the socket. the provided flag will define if it
   // really will be buffered or if we write and flush the buffer
   // immediatly
-  nwritten = TR_WriteBuffered(G->TR_Socket, ptr, ptr ? strlen(ptr) : 0, flags);
+  nwritten = TR_WriteBuffered(G->TR_Socket, ptr, len, flags);
 
   return nwritten;
 }
@@ -806,7 +806,7 @@ static int TR_ReadLine(LONG socket, char *vptr, int maxlen)
 
   *ptr = 0;                 // null terminate like fgets()
 
-  if(G->TR_Debug) printf("SERVER: %s", vptr);
+  if(G->TR_Debug) printf("SERVER[%04ld]: %s", n, vptr);
 
   return n; // return the number of chars we read
 }
@@ -2349,29 +2349,55 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
             {
               if (TR_SendSMTPCmd(SMTP_DATA, NULL, MSG_ER_BadResponse))
               {
-                BOOL infield = FALSE, inbody = FALSE;
-                while(!G->TR->Abort && !G->Error && fgets(buf, SIZE_LINE-1, f))
-                {
-                  char *p, sendbuf[SIZE_LINE+2];
-                  int sb = strlen(buf);
-                  if ((p = strpbrk(buf, "\r\n"))) *p = 0;
-                  if (!*buf && !inbody)
-                  {
-                     inbody = TRUE; infield = FALSE;
-                  }
-                  if (!ISpace(*buf) && !inbody) infield = !strnicmp(buf, "bcc", 3) || !strnicmp(buf, "x-yam-", 6);
-                  if (!infield)
-                  {
-                     *sendbuf = 0;
-                     if (*buf == '.') strcat(sendbuf, "."); /* RFC 821 */
-                     strcat(sendbuf, buf);
-                     strcat(sendbuf, "\r\n");
+                BOOL lineskip = FALSE, inbody = FALSE;
+                char sendbuf[SIZE_LINE+2];
+                int sendsize, cpos;
+                int prevpos = ftell(f); // get current file position
 
-                     // now lets send the data buffered to the socket.
-                     // we will flush it later then.
-                     if(TR_Send(sendbuf, TCPF_NONE) <= 0) ER_NewError(GetStr(MSG_ER_ConnectionBroken), NULL, NULL);
+                // as long there is no abort situation we go on reading out
+                // from the stream and sending it to our SMTP server
+                while(!G->TR->Abort && !G->Error && fgets(buf, SIZE_LINE, f))
+                {
+                  sendsize = cpos = ftell(f)-prevpos; // get the size we really read out from the stream.
+                  prevpos += sendsize;                // set the new prevpos to the ftell() value.
+
+                  // as long as we process header lines we have to make differ in some ways.
+                  if(!inbody)
+                  {
+                    // we check if we found the body of the mail now
+                    // the start of a body is seperated by the header with a single
+                    // empty line and we have to make sure that it isn`t the beginning of the file
+                    if(sendsize == 1 && cpos > 1 && buf[0] == '\n' && buf[1] == '\0')
+                    {
+                      inbody = TRUE;
+                      lineskip = FALSE;
+                    }
+                    else if(!ISpace(*buf)) // headerlines don`t start with a space
+                    {
+                      // headerlines with bcc or x-yam- will be skipped by us.
+                      lineskip = !strnicmp(buf, "bcc", 3) || !strnicmp(buf, "x-yam-", 6);
+                    }
                   }
-                  TR_TransStat_Update(ts, sb);
+
+                  // if we don`t skip this line we write it out to the SMTP server
+                  if(!lineskip)
+                  {
+                    // RFC 821 says a starting period needs a second one
+                    if(buf[0] == '.')
+                    {
+                      sendbuf[0] = buf[0];
+                      sendsize++;
+                    }
+
+                    // lets copy everything into our sendbuffer
+                    memcpy(&sendbuf[sendsize-cpos], &buf[0], (size_t)cpos+1);
+
+                    // now lets send the data buffered to the socket.
+                    // we will flush it later then.
+                    if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0) ER_NewError(GetStr(MSG_ER_ConnectionBroken), NULL, NULL);
+                  }
+
+                  TR_TransStat_Update(ts, cpos);
                 }
 
                 // if buf == NULL when we arrive here, then the fgets()
