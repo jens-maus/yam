@@ -1474,7 +1474,7 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
 		{
 			Object *str = RecipientstringObject, MUIA_String_Contents, rd->rd.arg.alias, End;
 			STRPTR res;
-			if(res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Transform))
+			if(res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve))
 		         strcpy(rd->rd.res.recpt = rd->string = AllocStrBuf(strlen(res)+1), res);
 			else	rd->rd.rc = RETURN_WARN;
 			MUI_DisposeObject(str);

@@ -1356,14 +1356,14 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 	comp.OldSecurity = wr->OldSecurity;
 //	wr->ListEntry = NULL;
 //	if (*addr) if (!(comp.MailTo = WR_ExpandAddresses(winnum, addr, FALSE, FALSE, FALSE))) goto skip;
-	comp.MailTo = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Transform);
+	comp.MailTo = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve);
 
 	if (wr->Mode != NEW_BOUNCE)
 	{
-		comp.MailCC		= (STRPTR)DoMethod(gui->ST_CC,			MUIM_Recipientstring_Transform);
-		comp.MailBCC	= (STRPTR)DoMethod(gui->ST_BCC,			MUIM_Recipientstring_Transform);
-		comp.From		= (STRPTR)DoMethod(gui->ST_FROM,		MUIM_Recipientstring_Transform);
-		comp.ReplyTo	= (STRPTR)DoMethod(gui->ST_REPLYTO,	MUIM_Recipientstring_Transform);
+		comp.MailCC		= (STRPTR)DoMethod(gui->ST_CC,			MUIM_Recipientstring_Resolve);
+		comp.MailBCC	= (STRPTR)DoMethod(gui->ST_BCC,			MUIM_Recipientstring_Resolve);
+		comp.From		= (STRPTR)DoMethod(gui->ST_FROM,		MUIM_Recipientstring_Resolve);
+		comp.ReplyTo	= (STRPTR)DoMethod(gui->ST_REPLYTO,	MUIM_Recipientstring_Resolve);
 
 /*		get(gui->ST_CC, MUIA_String_Contents, &addr);
 		if (*addr) if (!(comp.MailCC = WR_ExpandAddresses(winnum, addr, FALSE, FALSE, FALSE))) goto skip;
@@ -2077,7 +2077,7 @@ static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, i
 //		DoMethod(bt_ver, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_CallHook, &WR_VerifyManualHook, *string, winnum, !allowmulti, TAG_DONE);
 		DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
 		DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
-		DoMethod(*string, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_Recipientstring_Transform);
+		DoMethod(*string, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_Recipientstring_Resolve);
 	}
 	return obj;
 }

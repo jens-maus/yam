@@ -289,7 +289,7 @@ DECLARE(AddRecipient) // STRPTR address
 }
 
 /* resolve all addresses */
-DECLARE(Transform)
+DECLARE(Resolve)
 {
 	GETDATA;
 	BOOL list_expansion;
