@@ -16,9 +16,19 @@ Developer: Jens Langner (damato)
   to "- new -" every time the contents were deleted (damato)
 - Fixed: if AutoSave was disabled for the internal editor (AutoSave = 0),
   it tried to delete an inexistant ".autosave0" file (damato)
+- Fixed: it could happen that a temporary letter file was used for
+  different Write windows at once (damato)
+- Fixed: the "Export..." item in the popup menu exported the whole folder
+  contents (damato)
 
-- Changed: added support for the DST variable created by Facts, making
+- Changed: it is now actually compatible with the most common MBOX
+  formats, e.g. MBOXRD <http://www.qmail.org/man/man5/mbox.html> (damato)
+- Changed: added support for the DST variable created by Facts, rendering
   SummerTimeGuard emulation obsolete (damato)
+- Changed: no longer disables the pattern field in the ASL file requester
+  opened to attach files (damato)
+- Changed: no longer complains if it can't save ENVARC:mui/YAM.cfg on exit
+  (damato)
 
 
 A more detailed and recent history of changes can be viewed at
