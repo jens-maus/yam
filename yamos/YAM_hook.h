@@ -47,10 +47,10 @@
     static ULONG name(struct IClass * cl, Object * obj, Msg msg)
 
   #define MakeHook(hookname, funcname) \
-    } static const struct EmulLibEntry Gate_##funcname = { TRAP_LIBNR, 0, (void(*)()) funcname }; \
+    } static const struct EmulLibEntry Gate_##funcname = { TRAP_LIB, 0, (void(*)()) funcname }; \
     struct Hook hookname = { {NULL, NULL}, (HOOKFUNC)&Gate_##funcname, NULL, NULL }
   #define MakeStaticHook(hookname, funcname) \
-    } static const struct EmulLibEntry Gate_##funcname = { TRAP_LIBNR, 0, (void(*)()) funcname }; \
+    } static const struct EmulLibEntry Gate_##funcname = { TRAP_LIB, 0, (void(*)()) funcname }; \
     static struct Hook hookname = { {NULL, NULL}, (HOOKFUNC)&Gate_##funcname, NULL, NULL }
   #define ENTRY(func) (APTR)&Gate_##func
 #else

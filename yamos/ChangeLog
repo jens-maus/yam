@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-17  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_hook.h: fixed a nasty bug within the HOOK macros for MorphOS
+      that caused the whole hook stuff to freak out. :)
+      Now Hooks should work as expected.
+
 2002-06-16  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * reworked the handling of varargs functions within YAM to make
