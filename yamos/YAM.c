@@ -1139,33 +1139,55 @@ int main(int argc, char **argv)
    BPTR progdir;
    LONG err;
 
-#if !defined(NO_DEVWARNING) && !defined(RELEASE)
-
-   if(!getenv("I_KNOW_YAM_IS_UNDER_DEVELOPMENT"))
+#if defined(DEVWARNING)
    {
-     struct Library *IntuitionBase;
-     struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
+      struct Library *IntuitionBase;
+      struct Library *UtilityBase;
+      struct DateStamp ds;
+      BOOL goon = TRUE;
 
-     ErrReq.es_Title        = "YAM Developer Version Warning";
-     ErrReq.es_TextFormat   = "This is an *internal* developer version and\n"
-                              "not recommended for public usage.\n"
-                              "Please note that it may contain bugs that can\n"
-                              "lead to any loss of data and that no support for\n"
-                              "this version is available in any form.\n\n"
-                              "So if you're unsure, please reconsider to wait\n"
-                              "for an official release!";
-     ErrReq.es_GadgetFormat = "Go on|Exit";
+      if((IntuitionBase = OpenLibrary("intuition.library", 36)))
+      {
+        if((UtilityBase = OpenLibrary("utility.library", 36)))
+        {
+          struct EasyStruct ErrReq = { sizeof (struct EasyStruct), 0, NULL, NULL, NULL };
+          DateStamp(&ds); // get actual time/date
 
-     if((IntuitionBase = OpenLibrary("intuition.library", 36)))
-     {
-       LONG cont = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
+          if(EXPDATE <= ds.ds_Days)
+          {
+            ErrReq.es_Title        = "YAM Developer Version Expired";
+            ErrReq.es_TextFormat   = "This developer version of YAM has expired.\n"
+                                     "Please note that you may download a new, updated\n"
+                                     "version from the YAM support homepage.";
+            ErrReq.es_GadgetFormat = "Exit";
 
-       CloseLibrary(IntuitionBase);
+            EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
 
-       if(!cont) exit(0);
+            goon = FALSE;
+          }
+
+          if(goon && !getenv("I_KNOW_YAM_IS_UNDER_DEVELOPMENT"))
+          {
+            ErrReq.es_Title        = "YAM Developer Version Warning";
+            ErrReq.es_TextFormat   = "This is an *internal* developer version and\n"
+                                     "not recommended for public usage.\n"
+                                     "Please note that it may contain bugs that can\n"
+                                     "lead to any loss of data and that no support for\n"
+                                     "this version is available in any form.\n\n"
+                                     "So if you're unsure, please reconsider to wait\n"
+                                     "for an official release!";
+            ErrReq.es_GadgetFormat = "Go on|Exit";
+
+            if(!EasyRequestArgs(NULL, &ErrReq, NULL, NULL)) goon = FALSE;
+          }
+
+          CloseLibrary(UtilityBase);
+        }
+        CloseLibrary(IntuitionBase);
      }
-   }
 
+     if(!goon) exit(0);
+   }
 #endif
 
    atexit(yam_exitfunc); /* we need to free the stuff on exit()! */

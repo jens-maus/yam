@@ -7,6 +7,10 @@ $Source$
 
 2003-03-08  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: added developer version expiration requester that will be
+      presented to the user if he uses that compiled version for more than
+      one month. This should minimize the problems with users using old
+      developer versions we can`t build our bugreports on.
     * YAM_RE.c: fixed bug #680450 where attachment filesnames were always
       truncated to 32bytes. Now YAM should leave it to the filesystem
       to support longer filenames or not. This should also fix the

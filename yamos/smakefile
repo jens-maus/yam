@@ -57,8 +57,12 @@ LNKFLAGS = RESOPT NOVER LINK SMALLCODE SMALLDATA UTILLIB MATH=S\
   LIB lib:debug.lib NOICONS NOCHECKABORT $(OPTFLAGS) $(DEBUG)\
   "LINKOPT=MAP $(TARGET).map,fhx FWIDTH 32 PWIDTH 32 SWIDTH 32"
 
+# Special flags
+DEVFLAGS = DEF=DEVWARNING `rx "say 'DEF EXPDATE=' || date('I')+31"`
+
 # CPU and DEBUG can be defined outside, defaults to above
 # using e.g. "smake DEBUG= CPU=68060" produces optimized non-debug 68060 version
+# using e.g. "smake DEBUG= DEVFLAGS=" produces 68020 optimized release version
 #
 # OPTFLAGS are disabled by DEBUG normally!
 #
@@ -159,6 +163,8 @@ YAM.o: YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
   YAM_global.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
   YAM_read.h YAM_rexx.h YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h \
   YAM_userlist.h YAM_utilities.h YAM_write.h
+  @echo "*e[32mCompiling $*.c*e[0m"
+  @$(CC) $(CFLAGS) $(DEVFLAGS) $<
 
 YAM_AB.o: YAM_AB.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h YAM_global.h \
