@@ -627,7 +627,6 @@ static struct EA_ClassData *EA_New(int winnum, int type)
 					      StringFrame,
                      MUIA_CycleChain,                    TRUE,
 					      MUIA_String_MaxLen,                 SIZE_ADDRESS,
-                     MUIA_Recipientstring_ResolveOnCR,   FALSE,
 					      End,
                   Child, ColGroup(3), GroupSpacing(0),
                      Child, data->GUI.BT_ADD = MakeButton(GetStr(MSG_Add)),

@@ -1958,6 +1958,7 @@ static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, i
          StringFrame,
          MUIA_CycleChain,                          TRUE,
          MUIA_String_AdvanceOnCR,                  TRUE,
+         MUIA_Recipientstring_ResolveOnCR,         TRUE,
          MUIA_Recipientstring_MultipleRecipients,  allowmulti,
          MUIA_ControlChar, ShortCut(label),
       End,
@@ -2279,7 +2280,6 @@ static struct WR_ClassData *WR_New(int winnum)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
          SetAttrs(data->GUI.ST_TO,
-//               MUIA_Recipientstring_FocusOnCr, data->GUI.ST_SUBJECT,
                  MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
                  MUIA_Recipientstring_FromString, data->GUI.ST_FROM,
                  MUIA_Recipientstring_ReplyToString, data->GUI.ST_REPLYTO,
@@ -2288,11 +2288,7 @@ static struct WR_ClassData *WR_New(int winnum)
                  MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
                  MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT,
                  TAG_DONE);
-/*       set(data->GUI.ST_CC, MUIA_Recipientstring_FocusOnCr, data->GUI.ST_BCC);
-         set(data->GUI.ST_BCC, MUIA_Recipientstring_FocusOnCr, data->GUI.ST_FROM);
-         set(data->GUI.ST_FROM, MUIA_Recipientstring_FocusOnCr, data->GUI.ST_REPLYTO);
-         set(data->GUI.ST_REPLYTO, MUIA_Recipientstring_FocusOnCr, data->GUI.ST_EXTHEADER);
-*/       get(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell, &spell);
+         get(data->GUI.TE_EDIT, MUIA_TextEditor_TypeAndSpell, &spell);
          set(mi_autospell, MUIA_Menuitem_Checked, spell);
          set(data->GUI.CY_IMPORTANCE, MUIA_Cycle_Active, 1);
          DoMethod(G->App, MUIM_MultiSet,  MUIA_Disabled, TRUE, data->GUI.RA_ENCODING, data->GUI.ST_CTYPE, data->GUI.ST_DESC, data->GUI.BT_DEL, data->GUI.BT_DISPLAY, NULL);
@@ -2458,7 +2454,6 @@ static struct WR_ClassData *WR_NewBounce(int winnum)
       if (data->GUI.WI)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-//       set(data->GUI.ST_TO, MUIA_Recipientstring_FocusOnCr, data->GUI.BT_SEND);
          WR_SharedSetup(data, winnum);
          return data;
       }

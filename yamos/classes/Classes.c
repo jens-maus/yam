@@ -1,5 +1,28 @@
 #include "Classes.h"
 
+DISPATCHERPROTO(RecipientstringDispatcher)
+{
+	switch (msg->MethodID)
+	{
+		case OM_NEW                                  : return(m_Recipientstring_OM_NEW(cl, obj, (APTR)msg));
+		case OM_DISPOSE                              : return(m_Recipientstring_OM_DISPOSE(cl, obj, (APTR)msg));
+		case OM_GET                                  : return(m_Recipientstring_OM_GET(cl, obj, (APTR)msg));
+		case OM_SET                                  : return(m_Recipientstring_OM_SET(cl, obj, (APTR)msg));
+		case MUIM_Setup                              : return(m_Recipientstring_MUIM_Setup(cl, obj, (APTR)msg));
+		case MUIM_GoActive                           : return(m_Recipientstring_MUIM_GoActive(cl, obj, (APTR)msg));
+		case MUIM_GoInactive                         : return(m_Recipientstring_MUIM_GoInactive(cl, obj, (APTR)msg));
+		case MUIM_DragQuery                          : return(m_Recipientstring_MUIM_DragQuery(cl, obj, (APTR)msg));
+		case MUIM_DragDrop                           : return(m_Recipientstring_MUIM_DragDrop(cl, obj, (APTR)msg));
+		case MUIM_Popstring_Open                     : return(m_Recipientstring_MUIM_Popstring_Open(cl, obj, (APTR)msg));
+		case MUIM_HandleEvent                        : return(m_Recipientstring_MUIM_HandleEvent(cl, obj, (APTR)msg));
+		case MUIM_Recipientstring_AddRecipient       : return(m_Recipientstring_AddRecipient(cl, obj, (APTR)msg));
+		case MUIM_Recipientstring_Resolve            : return(m_Recipientstring_Resolve(cl, obj, (APTR)msg));
+		case MUIM_Recipientstring_RecipientStart     : return(m_Recipientstring_RecipientStart(cl, obj, (APTR)msg));
+		case MUIM_Recipientstring_ShowMatches        : return(m_Recipientstring_ShowMatches(cl, obj, (APTR)msg));
+	}
+	return DoSuperMethodA(cl, obj, msg);
+}
+
 DISPATCHERPROTO(SearchwindowDispatcher)
 {
 	switch (msg->MethodID)
@@ -13,33 +36,10 @@ DISPATCHERPROTO(SearchwindowDispatcher)
 	return DoSuperMethodA(cl, obj, msg);
 }
 
-DISPATCHERPROTO(RecipientstringDispatcher)
-{
-	switch (msg->MethodID)
-	{
-		case OM_NEW                                  : return(m_Recipientstring_OM_NEW(cl, obj, (APTR)msg));
-		case OM_DISPOSE                              : return(m_Recipientstring_OM_DISPOSE(cl, obj, (APTR)msg));
-		case OM_SET                                  : return(m_Recipientstring_OM_SET(cl, obj, (APTR)msg));
-		case MUIM_Setup                              : return(m_Recipientstring_MUIM_Setup(cl, obj, (APTR)msg));
-		case MUIM_GoActive                           : return(m_Recipientstring_MUIM_GoActive(cl, obj, (APTR)msg));
-		case MUIM_GoInactive                         : return(m_Recipientstring_MUIM_GoInactive(cl, obj, (APTR)msg));
-		case MUIM_DragQuery                          : return(m_Recipientstring_MUIM_DragQuery(cl, obj, (APTR)msg));
-		case MUIM_DragDrop                           : return(m_Recipientstring_MUIM_DragDrop(cl, obj, (APTR)msg));
-		case OM_GET                                  : return(m_Recipientstring_OM_GET(cl, obj, (APTR)msg));
-		case MUIM_Popstring_Open                     : return(m_Recipientstring_MUIM_Popstring_Open(cl, obj, (APTR)msg));
-		case MUIM_Recipientstring_AddRecipient       : return(m_Recipientstring_AddRecipient(cl, obj, (APTR)msg));
-		case MUIM_Recipientstring_Resolve            : return(m_Recipientstring_Resolve(cl, obj, (APTR)msg));
-		case MUIM_Recipientstring_RecipientStart     : return(m_Recipientstring_RecipientStart(cl, obj, (APTR)msg));
-		case MUIM_HandleEvent                        : return(m_Recipientstring_MUIM_HandleEvent(cl, obj, (APTR)msg));
-		case MUIM_Recipientstring_ShowMatches        : return(m_Recipientstring_ShowMatches(cl, obj, (APTR)msg));
-	}
-	return DoSuperMethodA(cl, obj, msg);
-}
-
 const struct { STRPTR Name; STRPTR Superclass; LONG SuperMCC; ULONG (*GetSize) (VOID); APTR Dispatcher; } MCCInfo[NumberOfClasses] = 
 {
-	{ MUIC_Searchwindow, MUIC_Window, -1, SearchwindowGetSize, ENTRY(SearchwindowDispatcher) },
-	{ MUIC_Recipientstring, MUIC_BetterString, -1, RecipientstringGetSize, ENTRY(RecipientstringDispatcher) }
+	{ MUIC_Recipientstring, MUIC_BetterString, -1, RecipientstringGetSize, ENTRY(RecipientstringDispatcher) },
+	{ MUIC_Searchwindow, MUIC_Window, -1, SearchwindowGetSize, ENTRY(SearchwindowDispatcher) }
 };
 
 struct MUI_CustomClass *YAMClasses[NumberOfClasses];

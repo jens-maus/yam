@@ -1113,3 +1113,8 @@
     * Ensured that all source descriptions are now prefixed with ' Module:'.
       This allows e.g. to do a »Search YAM_#?.c "*N Module:"« to see the
       description of each source file.
+
+2001-08-02  Allan Odgaard <duff@diku.dk>
+
+    * Fixed enforcer hit in Recipientstring class (introduced by... gues who?)
+    * ResolveOnCR defaults to FALSE similar to AdvanceOnCR.
