@@ -134,7 +134,7 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    fo->LastActive = GetMUI(gui->NL_MAILS, MUIA_NList_Active);
    if ((active = (mail != NULL))) if (mail->Flags & MFLAG_MULTIPART) hasattach = TRUE;
    for (i = 0; i < MAXWR; i++) if (mail && G->WR[i]) if (G->WR[i]->Mail == mail) beingedited = TRUE;
-   if (!mail) if (!GetMUI(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
+// if (!mail) if (!GetMUI(gui->NL_MAILS, MUIA_NList_Entries)) set(gui->WI, MUIA_Window_ActiveObject, gui->LV_FOLDERS);
    DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
    if (gui->TO_TOOLBAR)
    {
@@ -2546,7 +2546,7 @@ struct MA_ClassData *MA_New(void)
                      MUIA_NList_AutoVisible         , TRUE,
                      MUIA_NList_Title               , TRUE,
                      MUIA_NList_TitleSeparator      , TRUE,
-                     MUIA_NList_DefaultObjectOnClick, TRUE,
+                     MUIA_NList_DefaultObjectOnClick, FALSE,
                      MUIA_ContextMenu               , (C->MessageCntMenu && PopupMenuBase),
                      MUIA_Font                      , C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
                      MUIA_NList_Exports             , MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
@@ -2575,7 +2575,7 @@ struct MA_ClassData *MA_New(void)
          // Define the Images the FolderListtree that can be used
          for (i = 0; i < MAXBCSTDIMAGES; i++) DoMethod(data->GUI.NL_FOLDERS, MUIM_NList_UseImage, data->GUI.BC_FOLDER[i], i, 0, TAG_DONE);
 
-         set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.LV_MAILS);
+			set(data->GUI.WI,MUIA_Window_DefaultObject,data->GUI.NL_MAILS);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ABOUT     ,G->AY_Win,3,MUIM_Set                ,MUIA_Window_Open,TRUE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_VERSION   ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_CheckVersionHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ERRORS    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ShowErrorsHook);
@@ -2663,7 +2663,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,ID_CLOSEALL);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat del" ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_DelKeyHook,FALSE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift del" ,MUIV_Notify_Application  ,4,MUIM_CallHook      ,&MA_DelKeyHook,TRUE);
-         DoMethod(G->App                   ,MUIM_Notify,MUIA_Application_Iconified,FALSE        ,data->GUI.WI             ,3,MUIM_Set                 ,MUIA_Window_Open,TRUE);
+//       DoMethod(G->App                   ,MUIM_Notify,MUIA_Application_Iconified,FALSE        ,data->GUI.WI             ,3,MUIM_Set                 ,MUIA_Window_Open,TRUE);
 
          // Define Notifies for ShortcutFolderKeys
          for (i = 0; i < 10; i++)

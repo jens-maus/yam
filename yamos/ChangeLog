@@ -605,8 +605,38 @@
 
     * Re-added uniconify behaviour when attempting to start a second instance
       of YAM (without enforcer hits).
-
     * Corrected 'Check version' date.
+
+2001-06-16 Allan Odgaard <duff@diku.dk>
+
+    * No longer sets MUIA_Window_Open to TRUE for main window on uniconify.
+      (this had the effect of bringing main window to front on uniconify)
+    * Added #define __USE_SYSBASE to YAM_UT.c so that it compiles with SAS/C.
+    * Message list no longer has MUIA_NList_DefaultObjectOnClick set to TRUE
+      since this makes it non-default when clicking outside the listview.
+    * Now sets MUIA_BetterString_KeyUp/DownFocus for the To and Subject
+      strings in the mail write window.
+    * Updated BetterString_mcc.h (latest Betterstring.mcc can be found in the
+      file area of YahooGroups.Com/yamos/).
+    * When pressing ',' in the recipient string and text is marked, the comma
+      will be inserted at the end of the string. This is to allow easier
+      name-completion with multiple recipients.
+    * Now sets GUI.NL_MAILS as the default object instead of GUI.LV_MAILS.
+    * No longer sets the folder list as active window object when no entries
+      exist in the message list (this would e.g. happen after sending emails
+      from the outbox, because the outbox goes empty before returning to the
+      inbox).
+    * The OK gadget in the about window now have some space on each side of
+      the label, bares the label 'Okay', is the default object and rendered in
+      bold (to indicate the user can use 'return' to continue).
+    * The OK gadget is now added after first phase of startup (rather than
+      setting MUIA_ShowMe to TRUE) -- mainly because it's now 2 rectangle
+      objects and the gadget, so we'd need to set the MUIA_ShowMe value for 3
+      objects (not to mention that MUIA_ShowMe is buggy). Also
+      MUIA_Window_Activate is set after this initial setup phase, so selecting
+      about should now bring up an *active* about window.
+    * Cancel is no longer the default gadget in the 'missing subject'-warning
+      (since that'd make both the return and escape key act as cancel).
 
 2001-06-16  Gunther Nikl <gni@gecko.de>
 

@@ -45,6 +45,7 @@
 #include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#define __USE_SYSBASE
 #include <proto/exec.h>
 #include <proto/datatypes.h>
 #include <proto/dos.h>

@@ -42,6 +42,7 @@
 #include <libraries/asl.h>
 #include <libraries/gadtools.h>
 #include <libraries/iffparse.h>
+#include <mui/BetterString_mcc.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/NListview_mcc.h>
@@ -2309,7 +2310,14 @@ static struct WR_ClassData *WR_New(int winnum)
       if (data->GUI.WI)
       {
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
-         set(data->GUI.ST_TO, MUIA_UserData, data->GUI.ST_SUBJECT);
+			SetAttrs(data->GUI.ST_TO,
+				MUIA_UserData, data->GUI.ST_SUBJECT,
+				MUIA_BetterString_KeyDownFocus, data->GUI.ST_SUBJECT,
+				TAG_DONE);
+			SetAttrs(data->GUI.ST_SUBJECT,
+				MUIA_BetterString_KeyUpFocus, data->GUI.ST_TO,
+				MUIA_BetterString_KeyDownFocus, data->GUI.TE_EDIT,
+				TAG_DONE);
          set(data->GUI.ST_CC, MUIA_UserData, data->GUI.ST_BCC);
          set(data->GUI.ST_BCC, MUIA_UserData, data->GUI.ST_FROM);
          set(data->GUI.ST_FROM, MUIA_UserData, data->GUI.ST_REPLYTO);

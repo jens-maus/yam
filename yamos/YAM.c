@@ -290,11 +290,6 @@ BOOL AY_New(BOOL hidden)
             MUIA_Gauge_InfoText, " ",
             MUIA_Gauge_Horiz, TRUE,
          End,
-         Child, HGroup,
-            Child, HSpace(0),
-            Child, G->AY_Button = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
-            Child, HSpace(0),
-         End,
       End,
    End;
 
@@ -314,15 +309,11 @@ BOOL AY_New(BOOL hidden)
                                                    "\0338popupmenu.library\0332 (Henrik Isaksson)\n\n");
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
-      set(G->AY_Button, MUIA_ShowMe, FALSE);
 
       DoMethod(G->App, OM_ADDMEMBER, G->AY_Win);
       DoMethod(bt_sendmail, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_SendMailHook);
       DoMethod(bt_gopage  , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_GoPageHook);
       DoMethod(G->AY_Win  , MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->AY_Win, 3, MUIM_Set,MUIA_Window_Open, FALSE);
-
-      // If the close button will be pressed we close the window
-      DoMethod(G->AY_Button, MUIM_Notify, MUIA_Pressed, FALSE, G->AY_Win, 3, MUIM_Set, MUIA_Window_Open, FALSE, TAG_DONE);
 
       set(G->AY_Win, MUIA_Window_Open, !hidden);
 
@@ -669,7 +660,6 @@ void Initialise2(BOOL hidden)
    set(G->MA->GUI.WI, MUIA_Window_Open, !hidden);
    set(G->AY_Win, MUIA_Window_Open, FALSE);
    set(G->AY_Text, MUIA_ShowMe, FALSE);
-   set(G->AY_Button, MUIA_ShowMe, TRUE);
 }
 ///
 /// Initialise
@@ -911,9 +901,30 @@ void main(int argc, char **argv)
       G->CO_DST = GetDST();
       if (yamFirst)
       {
+			Object *root, *grp, *bt_okay;
+
          Initialise(args.hide);
          Login(args.user, args.password, args.maildir, args.prefsfile);
          Initialise2(args.hide);
+
+			grp = HGroup,
+				Child, RectangleObject, End,
+			   Child, bt_okay = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
+				Child, RectangleObject, End,
+			End;
+
+			get(G->AY_Win, MUIA_Window_RootObject, &root);
+			if(root && grp && DoMethod(root, MUIM_Group_InitChange))
+			{
+				DoMethod(root, OM_ADDMEMBER, grp);
+				DoMethod(root, MUIM_Group_ExitChange);
+		      DoMethod(bt_okay, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Window, 3, MUIM_Set, MUIA_Window_Open, FALSE);
+				SetAttrs(G->AY_Win,
+					MUIA_Window_Activate, TRUE,
+					MUIA_Window_DefaultObject, bt_okay,
+					TAG_DONE);
+			}
+
          DoMethod(G->App, MUIM_Application_Load, MUIV_Application_Load_ENVARC);
          AppendLog(0, GetStr(MSG_LOG_Started), "", "", "", "");
          MA_StartMacro(MACRO_STARTUP, NULL);

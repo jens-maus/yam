@@ -217,9 +217,17 @@ DISPATCHERPROTO(WS_Dispatcher)
             }
             else
             {
+               ULONG select_size = 0;
+               get(obj, MUIA_BetterString_SelectSize, &select_size);
                if (hmsg->imsg->Code == 65) DoMethod(obj, MUIM_BetterString_ClearSelected);
                code = ConvertKey(hmsg->imsg);
-               if ((((code >= 32 && code <= 126) || code >= 160) && !(hmsg->imsg->Qualifier & IEQUALIFIER_RCOMMAND)) || (code && hmsg->imsg->Qualifier & IEQUALIFIER_CONTROL))
+               if (code == ',' && select_size != 0)
+               {
+                  set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
+                  DoSuperMethodA(cl, obj, msg);
+                  result = MUI_EventHandlerRC_Eat;
+               }
+               else if ((((code >= 32 && code <= 126) || code >= 160) && !(hmsg->imsg->Qualifier & IEQUALIFIER_RCOMMAND)) || (code && hmsg->imsg->Qualifier & IEQUALIFIER_CONTROL))
                {
                   DoSuperMethodA(cl, obj, msg);
                   get(obj, MUIA_String_Contents, &contents);

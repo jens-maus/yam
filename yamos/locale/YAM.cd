@@ -4639,7 +4639,7 @@ MSG_ATTACH_PART (//)
 Part
 ;
 MSG_ABOUT_OKAY_GAD (//)
-_Okay
+\33bOkay
 ;
 ; ADDED AFTER 15-MAR-2001
 ;
@@ -4750,7 +4750,7 @@ Enable this option if you want\n\
 empty subject warnings.
 ;
 MSG_WR_OKAYCANCELREQ (//)
-_Okay|*_Cancel
+_Okay|_Cancel
 ;
 MSG_WR_NOSUBJECTREQ (//)
 The subject is missing, continue anyway?

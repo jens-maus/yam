@@ -51,7 +51,6 @@ struct Global
    APTR                     AY_Text;
    APTR                     AY_Group;
    APTR                     AY_List;
-   APTR                     AY_Button;
    APTR                     AY_AboutText;
    char *                   ER_Message[MAXERR];
    struct AppIcon *         AppIcon;
