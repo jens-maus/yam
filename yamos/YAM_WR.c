@@ -948,10 +948,10 @@ static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
 /// SetDefaultSecurity
 static void SetDefaultSecurity(struct Compose *comp)
 {
-   STRPTR CheckThese[3],buf;
-   int i;
-   enum Security security=0;
+   enum Security security=SEC_NONE;
    BOOL FirstAddr=TRUE;
+   char *CheckThese[3],*buf;
+   unsigned int i;
 
    /* collect address pointers for easier iteration */
    CheckThese[0] = comp->MailTo;
@@ -959,20 +959,20 @@ static void SetDefaultSecurity(struct Compose *comp)
    CheckThese[2] = comp->MailBCC;
 
    /* go through all addresses */
-   for(i=0; i<3; i++)
+   for(i=0; i<ARRAY_SIZE(CheckThese); i++)
    {
       if(CheckThese[i] == NULL) continue;  /* skip empty fields */
       /* copy string as strtok() will modify it */
-      if((buf = (STRPTR)strdup(CheckThese[i])))
+      if((buf = strdup(CheckThese[i])))
       {
+         struct ABEntry *ab=NULL;
          enum Security currsec;
-         STRPTR in=buf,s,t;
-         struct ABEntry *ab = NULL;
+         char *in=buf,*s,*t;
 
          /* loop through comma-separated addresses in string */
-         while((s = strtok_r((char **)&in,",")))
+         while((s = strtok_r(&in,",")))
          {
-            while((t = strtok_r((char **)&s," ()<>")))
+            while((t = strtok_r(&s," ()<>")))
             {
                if(strchr(t,'@'))
                   break;
@@ -984,7 +984,8 @@ static void SetDefaultSecurity(struct Compose *comp)
             {
               currsec = ab->DefSecurity; /* get default from entry */
             }
-            else currsec = 0;    /* entry not in address book -> no security */
+            else
+              currsec = SEC_NONE;    /* entry not in address book -> no security */
 
             if(currsec != security)
             {
