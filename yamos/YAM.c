@@ -122,7 +122,7 @@ static struct ADST_Data
 
 /// TC_Start
 //  Start a delay depending on the time specified
-void TC_Start(enum TimerIO tio, ULONG seconds, ULONG micros)
+void TC_Start(enum TimerIO tio, int seconds, int micros)
 {
   if(micros > 0 || seconds > 0)
   {

@@ -126,7 +126,7 @@ struct Global
 
 extern struct Global *G;
 
-void TC_Start(enum TimerIO tio, ULONG seconds, ULONG micros);
+void TC_Start(enum TimerIO tio, int seconds, int micros);
 void TC_Stop(enum TimerIO tio);
 void PopUp(void);
 void SetupAppIcons(void);
