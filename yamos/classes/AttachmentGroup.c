@@ -747,7 +747,7 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
 		BusyText(GetStr(MSG_BusyDecSaving), "");
 
 		// make sure the drawer is opened upon the drag operation
-		if(WorkbenchBase->lib_Version >= 44)
+		if(WorkbenchBase->lib_Version >= 45)
 			OpenWorkbenchObject(msg->dropPath, TAG_DONE);
 
 		// prepare the final path
@@ -767,13 +767,16 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
 		// let the workbench know about the change
 		if(result)
 		{
+			#warning "UpdateWorkbench only available for OS4! Fix it!"
+			#ifdef __amigaos4__
 			BPTR parentDirLock = Lock(msg->dropPath, SHARED_LOCK);
 			UpdateWorkbench(fileName, parentDirLock, UPDATEWB_ObjectAdded);
 			UnLock(parentDirLock);
-
+			#endif
+			
 			// Now that the workbench knows about the new object we also have to make sure the icon
 			// is actually visible in the window
-			if(WorkbenchBase->lib_Version >= 44)
+			if(WorkbenchBase->lib_Version >= 45)
 				MakeWorkbenchObjectVisible(filePathBuf, TAG_DONE);
 		}
 		else
