@@ -7,6 +7,8 @@ $Source$
 
 2003-03-16  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_WR.c: removed the GroupFrame from the bouncing request window
+      because it is not needed.
     * YAM_UT.c: omit the MUIA_Window_ID for the Attachment requester or
       otherwise the refering window attributes like RefWindow don`t work
       correctly and put the position of a attachment requester in relation
