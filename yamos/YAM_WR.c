@@ -2106,7 +2106,7 @@ static struct WR_ClassData *WR_New(int winnum)
                End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, mi_undo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_MUndo), MUIA_Menuitem_Shortcut,"ramiga Z", MUIA_Menuitem_CommandString,TRUE, MUIA_UserData,WMEN_UNDO, End,
-               MUIA_Family_Child, mi_redo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Redo), WMEN_REDO, End,
+               MUIA_Family_Child, mi_redo = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Redo), MUIA_UserData, WMEN_REDO, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Dictionary), MUIA_Menuitem_Shortcut,"D", MUIA_UserData,WMEN_DICT, End,
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_WR_Textstyle),

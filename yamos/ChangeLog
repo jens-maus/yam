@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-04  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_WR.c: fixed a tiny, but extremly nasty bug within the
+      MenuStripObject for the Writewindow, that crashed a gcc
+      compiled version of YAM as soon as one tried to Dispose the
+      Write Window. Somehow this bug didn`t show up with SAS/C.
+
 2002-07-02  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_UT.c: our own MUI_Request() reimplementation didn`t
