@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: reworked the FormatSize() function once more to
+      now show sizes as a base of 2 for the fraction modes.
+      Please note that this function will round the value
+      depending on the selected precision mode - so i.e.
+      102397 bytes is "100,0 KB", but "99,997 KB".
+      Also slightly improved the overall performance of the
+      function itself.
+
 2002-07-19  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_rexx_rxif.c: fixed bug where the SHOW arexx command
