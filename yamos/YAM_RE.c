@@ -684,7 +684,7 @@ LOCAL void RE_PrintFile(char *filename, struct Part *part)
 								ts2 = StrBufCat(ts2," &");
 								ts2 = StrBufCat(ts2,p+j-1);
 								ts2 = StrBufCat(ts2,"\\\\\n");
-							} else KPrintf("RE_PrintFile(): strange header line %s\n",p);
+							} else KPrintF("RE_PrintFile(): strange header line %s\n",p);
 						}
 						fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n",
 									ts1,
@@ -704,14 +704,14 @@ LOCAL void RE_PrintFile(char *filename, struct Part *part)
 									"\\end{document}\n");
 					} else
 					{
-						KPrintf("RE_PrintFile(): no headers for this part\n");
+						KPrintF("RE_PrintFile(): no headers for this part\n");
 					}
 				}
 				if(ts1) FreeStrBuf(ts1);
 				if(ts2) FreeStrBuf(ts2);
-			} else KPrintf("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n");
+			} else KPrintF("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n");
 			CloseTempFile(texfile);
-		} else KPrintf("RE_PrintFile(): can't open temp TeX file\n");
+		} else KPrintF("RE_PrintFile(): can't open temp TeX file\n");
 	}
 }
 
@@ -732,7 +732,7 @@ char **CVTab;
 		for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
 			ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
 
-		KPrintf("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen);
+		KPrintF("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen);
 
 		if(result = AllocStrBuf(ResLen+1))
 		{
@@ -779,12 +779,12 @@ BOOL success=FALSE;
 					{
 						if(!c)
 						{
-							if(tok[1]) KPrintf("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n");
+							if(tok[1]) KPrintF("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n");
 							else c = tok[0];
 						} else
 						{
 							CVTab[c] = tok;
-							KPrintf("LaTeX mapping: '%c' -> '%s'\n",c,tok);
+							KPrintF("LaTeX mapping: '%c' -> '%s'\n",c,tok);
 							c = '\0';
 						}
 					}
@@ -2001,8 +2001,8 @@ char *RE_ReadInMessage(int winnum, int mode)
                            break;
                         }
                      }
-//                   if(sigptr) DB(KPrintf("Found sig separator %ld lines from end\n",20-lines));
-//                   else DB(KPrintf("No sig found\n"));
+//                   if(sigptr) DB(KPrintF("Found sig separator %ld lines from end\n",20-lines));
+//                   else DB(KPrintF("No sig found\n"));
                   }
 
                   while (*rptr)
