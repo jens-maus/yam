@@ -7,6 +7,9 @@ $Source$
 
 2003-12-25  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c, YAM_Cog.c: fixed the MakeInteger() function to
+      generate a integer dependent string gadget with maxlen+1
+      instead of just maxlen. This fixes flaw #862238.
     * Recipientstring.c: moved back the dipose of the Matchwindow
       to the OM_DISPOSE method because the MUIM_Cleanup method is
       also called upon an iconification request of the application.

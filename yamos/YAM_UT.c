@@ -2984,11 +2984,12 @@ Object *MakePassString(char *label)
 //  Creates a MUI string object for numeric input
 Object *MakeInteger(int maxlen, char *label)
 {
-   Object *str = MakeString(maxlen, label);
+   Object *str = MakeString(maxlen+1, label);
    if (str)
    {
-      set(str, MUIA_String_Integer, 0);
-      set(str, MUIA_String_Accept, "0123456789");
+      SetAttrs(str, MUIA_String_Integer,  0,
+                    MUIA_String_Accept,   "0123456789",
+                    TAG_DONE);
    }
    return str;
 }
