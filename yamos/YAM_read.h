@@ -136,7 +136,7 @@ BOOL  RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi);
 struct ReadMailData *CreateReadWindow(BOOL forceNewWindow);
 struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode);
 void FreePrivateRMData(struct ReadMailData *rmData);
-BOOL CleanupReadMailData(struct ReadMailData *rmData);
+BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup);
 BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode);
 char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode rMode);
 void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab);

@@ -522,7 +522,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
         {
           // on any error we make sure to delete the read window
           // immediatly again.
-          CleanupReadMailData(rmData);
+          CleanupReadMailData(rmData, TRUE);
         }
       }
       else
@@ -958,13 +958,15 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
    while(fgets(buf, SIZE_LINE, in))
    {
       // first we check if we reached the boundary yet.
-      if(rp && !strncmp(buf, rp->Boundary, blen))
+      if(rp && strncmp(buf, rp->Boundary, blen) == 0)
       {
-         if (buf[blen] == '-' && buf[blen+1] == '-' && buf[blen+2] == '\n') return TRUE;
-         else return FALSE;
+         if(buf[blen] == '-' && buf[blen+1] == '-' && buf[blen+2] == '\n')
+           return TRUE;
+         else
+           return FALSE;
       }
 
-      if (out)
+      if(out)
       {
          long size = ftell(in)-cpos; // get new position and size of read chars
 
@@ -976,14 +978,16 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
             unsigned char *p = buf;
 
             // iterate through the buffer and change the chars accordingly.
-            for(;size; size--, p++) *p = tt->Table[*p];
+            for(;size; size--, p++)
+              *p = tt->Table[*p];
 
             size = t;
          }
 
          // if there is some endchar in the c variable we write it first
          // out to the fh.
-         if(!cempty) fputc(c, out);
+         if(!cempty)
+           fputc(c, out);
 
          // lets save the last char of the buffer in a temp variable because
          // we need to skip the last byte of the stream later on
@@ -1003,7 +1007,9 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
    // if there is still something in c and then write it into the out fh.
    if(feof(in))
    {
-      if(out && !cempty) fputc(c, out);
+      if(out && !cempty)
+        fputc(c, out);
+
       return TRUE;
    }
 
@@ -1217,7 +1223,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
 
     strcpy(newPart->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
     newPart->rmData = rmData;
-    sprintf(file, "YAMr%08lx-p%d.txt", (ULONG)rmData, newPart->Nr);
+    sprintf(file, "YAMr%08lx-p%d.txt", (ULONG)rmData->mail, newPart->Nr);
     strmfp(newPart->Filename, C->TempDir, file);
 
     if((fp = fopen(newPart->Filename, "w")))
@@ -1546,7 +1552,7 @@ BOOL RE_DecodePart(struct Part *rp)
            *ext = 0; // if the file extension is longer than 10 chars lets use "tmp"
 
          // lets generate the destination file name for the decoded part
-         sprintf(file, "YAMm%08lx-p%d.%s", (ULONG)rp->rmData, rp->Nr, *ext ? ext : "tmp");
+         sprintf(file, "YAMm%08lx-p%d.%s", (ULONG)rp->rmData->mail, rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
 
          // now open the stream and decode it afterwards.
@@ -1631,7 +1637,7 @@ static void RE_HandleMDNReport(struct Part *frp)
       if (!strnicmp(MDNtype, "manual-action", 13)) mode = GetStr(MSG_RE_MDNmanual);
       if (!strnicmp(MDNtype, "automatic-action", 16)) mode = GetStr(MSG_RE_MDNauto);
       if ((type = strchr(MDNtype, ';'))) type = Trim(++type); else type = MDNtype;
-      sprintf(file, "YAMm%08lx-p%d.txt", (ULONG)rp[0]->rmData, rp[0]->Nr);
+      sprintf(file, "YAMm%08lx-p%d.txt", (ULONG)rp[0]->rmData->mail, rp[0]->Nr);
       strmfp(buf, C->TempDir, file);
       if ((out = fopen(buf, "w")))
       {
@@ -1890,7 +1896,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
         char file[SIZE_FILE];
 
         part->Nr = i;
-        sprintf(file, "YAMm%08lx-p%d%s", (ULONG)rmData, i, strchr(part->Filename, '.'));
+        sprintf(file, "YAMm%08lx-p%d%s", (ULONG)rmData->mail, i, strchr(part->Filename, '.'));
         strmfp(tmpFile, C->TempDir, file);
 
         RenameFile(part->Filename, tmpFile);
@@ -2650,7 +2656,7 @@ HOOKPROTONHNO(ClosedReadWindowFunc, void, struct ReadMailData **arg)
     G->ActiveRexxRMData = NULL;
 
   // calls the CleanupReadMailData to clean everything else up
-  CleanupReadMailData(rmData);
+  CleanupReadMailData(rmData, TRUE);
 }
 MakeStaticHook(ClosedReadWindowHook, ClosedReadWindowFunc);
 ///
@@ -2738,22 +2744,20 @@ struct ReadMailData *AllocPrivateRMData(struct Mail *mail, enum ParseMode pMode)
 //  Frees resources used by background message parsing
 void FreePrivateRMData(struct ReadMailData *rmData)
 {
-  if(CleanupReadMailData(rmData))
-  {
+  if(CleanupReadMailData(rmData, TRUE))
     free(rmData);
-  }
 }
 ///
 /// CleanupReadMailData()
 // cleans/deletes all data of a readmaildata structure
-BOOL CleanupReadMailData(struct ReadMailData *rmData)
+BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
 {
   struct Part *part;
   struct Part *next;
 
-  DB(kprintf("CleanupReadMailData()\n");)
+  DB(kprintf("CleanupReadMailData(): %ld\n", windowCleanup);)
 
-  if(rmData->readWindow)
+  if(windowCleanup && rmData->readWindow)
   {
     // make sure the window is really closed
     nnset(rmData->readWindow, MUIA_Window_Open, FALSE);
@@ -2798,10 +2802,12 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData)
   }
 
   // clean up the read window now
-  if(rmData->readWindow)
+  if(windowCleanup && rmData->readWindow)
   {
     DoMethod(G->App, OM_REMMEMBER, rmData->readWindow);
     MUI_DisposeObject(rmData->readWindow);
+
+    rmData->readWindow = NULL;
   }
 
   return TRUE;

@@ -833,7 +833,7 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
       {
         // on any error we make sure to delete the read window
         // immediatly again.
-        CleanupReadMailData(rmData);
+        CleanupReadMailData(rmData, TRUE);
       }
     }
   }

@@ -631,7 +631,7 @@ static void Terminate(void)
       {
         struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-        CleanupReadMailData(rmData);
+        CleanupReadMailData(rmData, TRUE);
       }
    }
 

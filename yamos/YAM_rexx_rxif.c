@@ -595,7 +595,7 @@ void rx_mailread( UNUSED struct RexxHost *host, struct rxd_mailread **rxd, long 
 
                 // on any error we make sure to delete the read window
                 // immediatly again.
-                CleanupReadMailData(rmData);
+                CleanupReadMailData(rmData, TRUE);
 
                 rd->rc = RETURN_ERROR;
               }

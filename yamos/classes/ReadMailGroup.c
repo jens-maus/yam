@@ -358,6 +358,8 @@ DECLARE(Clear)
 		set(data->attachmentGroup, MUIA_ShowMe, FALSE);
 	}
 
+	CleanupReadMailData(data->readMailData, FALSE);
+
 	return 0;
 }
 
@@ -371,6 +373,11 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 	struct ReadMailData *rmData = data->readMailData;
 	char *cmsg;
 	BOOL result = FALSE; // error per default
+
+	// before we actually start loading data into our readmailGroup
+	// we have to make sure we didn't actually have something displayed
+	// which should get freed first
+	CleanupReadMailData(rmData, FALSE);
 
 	// set the passed mail as the current mail read by our ReadMailData
 	// structure

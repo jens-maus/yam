@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-15  Jens Langner <Jens.Langner@light-speed.de>
+
+    * misc: fixed a bug in the temporary file handling where it happened
+      that due to the limited way the filenames of the tempfiles were
+      generated, some undefined behaviour in mail handling occurred
+      such that the wrong attachments were opened after mail switching.
+
 2005-02-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c, misc: slightly reworked the ReadInMessage() routines to not
