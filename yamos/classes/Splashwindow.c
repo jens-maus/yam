@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ struct Data
   Object *imageGroup;
   Object *textGroup;
 	Object *statusGauge;
+	Object *progressGroup;
 	Object *progressGauge;
 	Object *selectGroup;
 	Object *userGroup;
@@ -64,6 +65,7 @@ OVERLOAD(OM_NEW)
   Object *imageGroup;
   Object *textGroup;
 	Object *statusGauge;
+	Object *progressGroup;
 	Object *progressGauge;
 	Object *selectGroup;
 	Object *userGroup;
@@ -116,6 +118,10 @@ OVERLOAD(OM_NEW)
 				MUIA_Gauge_InfoText, " ",
 				MUIA_Gauge_Horiz,    TRUE,
 			End,
+			Child, progressGroup = PageGroup,
+				MUIA_Group_ActivePage, 0,
+				Child, HVSpace,
+			End,
 		End,
 
 		TAG_MORE, (ULONG)inittags(msg))))
@@ -123,13 +129,11 @@ OVERLOAD(OM_NEW)
 		return 0;
 	}
 
-  // create the progress Gauge separatly as we add/remove
-  // it manually
-  progressGauge = GaugeObject,
-	  GaugeFrame,
-		MUIA_Gauge_InfoText, " ",
-		MUIA_Gauge_Horiz,    TRUE,
-	End;
+				progressGauge = GaugeObject,
+					GaugeFrame,
+					MUIA_Gauge_InfoText, " ",
+					MUIA_Gauge_Horiz,		 TRUE,
+				End;
 
   // create the selectionGroup manually as we add/remove
   // it manually later on
@@ -158,6 +162,7 @@ OVERLOAD(OM_NEW)
 	data->imageGroup    = imageGroup;
 	data->textGroup     = textGroup;
 	data->statusGauge   = statusGauge;
+	data->progressGroup = progressGroup;
 	data->progressGauge = progressGauge;
 	data->selectGroup   = selectGroup;
 	data->userGroup     = userGroup;
@@ -210,14 +215,15 @@ DECLARE(StatusChange) // char *txt, LONG percent
 	else
 		set(data->statusGauge, MUIA_Gauge_Current, msg->percent);
 
+	set(data->progressGroup, MUIA_Group_ActivePage, 0);
 
   // lets remove the progress Gauge from our splashwindow
-  if(isChildOfGroup(data->windowGroup, data->progressGauge) &&
-     DoMethod(data->windowGroup, MUIM_Group_InitChange))
+	if(isChildOfGroup(data->progressGroup, data->progressGauge) &&
+		 DoMethod(data->progressGroup, MUIM_Group_InitChange))
   {
-    DoMethod(data->windowGroup, OM_REMMEMBER, data->progressGauge);
+		DoMethod(data->progressGroup, OM_REMMEMBER, data->progressGauge);
 
-    DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+		DoMethod(data->progressGroup, MUIM_Group_ExitChange);
   }
 
 	DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -241,12 +247,14 @@ DECLARE(ProgressChange) // char *txt, LONG percent, LONG max
 		set(data->progressGauge, MUIA_Gauge_Max, msg->max);
 
   // lets add the progress Gauge to our splashwindow now
-  if(isChildOfGroup(data->windowGroup, data->progressGauge) == FALSE &&
-     DoMethod(data->windowGroup, MUIM_Group_InitChange))
+	if(isChildOfGroup(data->progressGroup, data->progressGauge) == FALSE &&
+		 DoMethod(data->progressGroup, MUIM_Group_InitChange))
   {
-    DoMethod(data->windowGroup, OM_ADDMEMBER, data->progressGauge);
+		DoMethod(data->progressGroup, OM_ADDMEMBER, data->progressGauge);
 
-    DoMethod(data->windowGroup, MUIM_Group_ExitChange);
+		DoMethod(data->progressGroup, MUIM_Group_ExitChange);
+
+		set(data->progressGroup, MUIA_Group_ActivePage, 1);
   }
 
 	DoMethod(G->App, MUIM_Application_InputBuffered);
@@ -358,6 +366,8 @@ DECLARE(SelectUser)
     DoMethod(data->windowGroup, OM_REMMEMBER, data->selectGroup);
     DoMethod(data->windowGroup, MUIM_Group_ExitChange);
   }
+
+	DoMethod(G->App, MUIM_Application_InputBuffered);
 
 	return user;
 }
