@@ -37,6 +37,7 @@
 #include "AttachmentGroup_cl.h"
 
 #include <proto/graphics.h>
+#include <proto/icon.h>
 #include <proto/wb.h>
 
 /* CLASSDATA
@@ -785,12 +786,11 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
 		// let the workbench know about the change
 		if(result)
 		{
-			#warning "UpdateWorkbench only available for OS4! Fix it!"
-			#ifdef __amigaos4__
-			BPTR parentDirLock = Lock(msg->dropPath, SHARED_LOCK);
-			UpdateWorkbench(fileName, parentDirLock, UPDATEWB_ObjectAdded);
-			UnLock(parentDirLock);
-			#endif
+			struct DiskObject *diskObject = (struct DiskObject *)xget(msg->imageObject, MUIA_AttachmentImage_DiskObject);
+
+			// make sure to write out the diskObject of our attachment as well
+			if(diskObject)
+				PutDiskObject(filePathBuf, diskObject);
 			
 			// Now that the workbench knows about the new object we also have to make sure the icon
 			// is actually visible in the window

@@ -46,6 +46,7 @@
 /* CLASSDATA
 struct Data
 {
+	struct DiskObject *diskObject;
 	struct Part *mailPart;
 
 	struct BitMap *normalBitMap;
@@ -185,8 +186,9 @@ OVERLOAD(OM_GET)
 	switch(((struct opGet *)msg)->opg_AttrID)
 	{
 		ATTR(DoubleClick) : *store = 1; return TRUE;
-		ATTR(DropPath)		: *store = (ULONG)data->dropPath; return TRUE;
-		ATTR(MailPart)		: *store = (ULONG)data->mailPart; return TRUE;
+		ATTR(DropPath)		: *store = (ULONG)data->dropPath; 	return TRUE;
+		ATTR(MailPart)		: *store = (ULONG)data->mailPart; 	return TRUE;
+		ATTR(DiskObject)	: *store = (ULONG)data->diskObject; return TRUE;
 	}
 
 	return DoSuperMethodA(cl, obj, msg);
@@ -436,10 +438,11 @@ OVERLOAD(MUIM_Setup)
 
 			FreeBitMap(orgBitMap);
 		}
-
-		// we don't need our diskObject anymore.
-		FreeDiskObject(diskObject);
 	}
+
+	// store the diskObject in our instance data for later
+	// reference
+	data->diskObject = diskObject;
 
 	// add an event handler for the drag&drop operations
 	// this object supports.
@@ -473,6 +476,12 @@ OVERLOAD(MUIM_Cleanup)
 	{
 		FreeBitMap(data->selectedBitMap);
 		data->selectedBitMap = NULL;
+	}
+
+	if(data->diskObject)
+	{
+		FreeDiskObject(data->diskObject);
+		data->diskObject = NULL;
 	}
 
 	DoSuperMethodA(cl, obj, msg);
