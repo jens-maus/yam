@@ -7,6 +7,9 @@ $Source$
 
 2003-05-20  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_FO.c: fixed bug #739139 where YAM didn`t refresh the mail listview
+      upon a folder type change. Also the refresh was done slightly wrong
+      which should be fixed now.
     * YAM_FO.c: fixed bug #729366 where YAM ignored the Cancel button of the
       password entry window while creating/changing a folder.
     * YAM_FO.c: fixed bug in the folder config loading routines where YAM

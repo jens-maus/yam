@@ -1283,8 +1283,6 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
          }
          oldfolder->Type = folder.Type;
       }
-      set(gui->WI, MUIA_Window_Open, FALSE);
-      DoMethod(lv, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
 
       if(FO_SaveConfig(&folder)) success = TRUE;
    }
@@ -1326,23 +1324,25 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
           if(FO_SaveConfig(&folder))
           {
             DoMethod(lv, MUIM_NListtree_Insert, folder.Name, &folder, MUIV_NListtree_Insert_ListNode_Active, MUIV_NListtree_Insert_PrevNode_Active, MUIV_NListtree_Insert_Flag_Active);
+            oldfolder = &folder;
             success = TRUE;
           }
         }
         else return;
-
-        set(gui->WI, MUIA_Window_Open, FALSE);
       }
       else return;
    }
 
+   set(gui->WI, MUIA_Window_Open, FALSE);
+
    if (success)
    {
       MA_SetSortFlag();
+      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_Title);
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort);
       MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL), FALSE);
       FO_SaveTree(CreateFilename(".folders"));
-      DisplayStatistics(&folder, TRUE);
+      DisplayStatistics(oldfolder, TRUE);
    }
    DisposeModulePush(&G->FO);
 }
