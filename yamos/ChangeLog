@@ -2877,7 +2877,7 @@ $Source$
     * The alternative images of the OUTGOING and DELETED folder will now be displayed if
       there is any mail in the folders. This is a more natural behaviour.
     * now the SortFlag of the NList Mail List should work again without flickering the
-n also. Users w
+      Listview.
     * removed "Flush indices" entry of the FolderList ContextMenu
 
 2001-06-06  Jacob Laursen <laursen@myself.com>
