@@ -718,12 +718,14 @@ BOOL FileInfo(char *filename, int *size, long *bits, long *type)
 
    if ((lock = Lock((STRPTR)filename,ACCESS_READ)))
    {
-      fib = AllocDosObject(DOS_FIB, NULL);
-      Examine(lock, fib);
-      if (size) *size = fib->fib_Size;
-      if (bits) *bits = fib->fib_Protection;
-      if (type) *type = fib->fib_DirEntryType;
-      FreeDosObject(DOS_FIB, fib);
+      if ((fib = AllocDosObject(DOS_FIB, NULL)))
+      {
+        Examine(lock, fib);
+        if (size) *size = fib->fib_Size;
+        if (bits) *bits = fib->fib_Protection;
+        if (type) *type = fib->fib_DirEntryType;
+        FreeDosObject(DOS_FIB, fib);
+      }
       UnLock(lock);
       return TRUE;
    }
@@ -767,6 +769,7 @@ BOOL RenameFile(char *oldname, char *newname)
 {
    struct FileInfoBlock *fib;
    BPTR lock;
+
    if (!Rename(oldname, newname)) return FALSE;
    if((fib = AllocDosObject(DOS_FIB,NULL)))
    {
@@ -776,8 +779,9 @@ BOOL RenameFile(char *oldname, char *newname)
          SetProtection(newname, fib->fib_Protection & (~FIBF_ARCHIVE));
       }
       FreeDosObject(DOS_FIB,fib);
-   } else return FALSE;
-   return TRUE;
+      return TRUE;
+   }
+   return FALSE;
 }
 ///
 /// CopyFile
@@ -972,20 +976,23 @@ void QuoteWordWrap(char *rptr, int lmax, char *prefix, char *firstprefix, FILE *
       pe = rptr;
       if (lsm > lmax)
       {
-         if (*quot)
+         char *buf = calloc(1, 2*(pe-ps+2));
+         if (buf)
          {
-            char *buf = calloc(2*(pe-ps+2),1), newprefix[SIZE_DEFAULT];
-            RemoveQuoteString(ps, pe, quot, buf);
-            strcpy(newprefix, firstprefix); strcat(newprefix, TrimEnd(quot));
-            QuoteWordWrap(buf, lmax-strlen(quot), newprefix, firstprefix, out);
-            free(buf);
-         }
-         else
-         {
-            char *buf = calloc(2*(pe-ps+2),1);
-            p = ReflowParagraph(ps, pe, lmax, buf);
-            SaveParagraph(buf, p, prefix, out);
-            free(buf);
+           if (*quot)
+           {
+              char newprefix[SIZE_DEFAULT];
+              RemoveQuoteString(ps, pe, quot, buf);
+              strcpy(newprefix, firstprefix); strcat(newprefix, TrimEnd(quot));
+              QuoteWordWrap(buf, lmax-strlen(quot), newprefix, firstprefix, out);
+           }
+           else
+           {
+              p = ReflowParagraph(ps, pe, lmax, buf);
+              SaveParagraph(buf, p, prefix, out);
+           }
+
+           free(buf);
          }
       }
       else SaveParagraph(ps, pe, prefix, out);
@@ -1143,13 +1150,12 @@ BOOL PFExists(char *path, char *file)
 //  Recursively deletes a mail directory
 void DeleteMailDir(char *dir, BOOL isroot)
 {
-   BOOL cont, isdir;
-   struct FileInfoBlock *fib;
-   BPTR lock;
    char fname[SIZE_PATHFILE], *filename, dirname[SIZE_PATHFILE];
+   struct FileInfoBlock *fib;
+   BOOL cont, isdir;
+   BPTR lock;
 
-   fib = AllocDosObject(DOS_FIB,NULL);
-   if ((lock = Lock(dir, ACCESS_READ)))
+   if ((fib = AllocDosObject(DOS_FIB,NULL)) && (lock = Lock(dir, ACCESS_READ)))
    {
       strcpy(dirname, dir);
       Examine(lock, fib);

@@ -86,7 +86,8 @@ MakeStaticHook(CO_LV_TDspHook,CO_LV_TDspFunc);
 HOOKPROTONHNO(CO_LV_TConFunc, struct TranslationTable *, struct TranslationTable *tt)
 {
    struct TranslationTable *entry = malloc(sizeof(struct TranslationTable));
-   memcpy(entry, tt, sizeof(struct TranslationTable));
+   if (entry)
+     *entry = *tt;
    return entry;
 }
 MakeStaticHook(CO_LV_TConHook, CO_LV_TConFunc);
@@ -213,14 +214,15 @@ static APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
       char dir[SIZE_PATH], file[SIZE_PATHFILE];
       struct FileInfoBlock *fib;
       BPTR lock;
+
       strmfp(dir, G->ProgDir, "charsets");
-      fib = AllocDosObject(DOS_FIB,NULL);
-      if (lock = Lock(dir, ACCESS_READ))
+      if ((fib = AllocDosObject(DOS_FIB,NULL)) && (lock = Lock(dir, ACCESS_READ)))
       {
          Examine(lock, fib);
          while (ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
          {
             struct TranslationTable *tt = NULL;
+
             strmfp(file, dir, fib->fib_FileName);
             if (LoadTranslationTable(&tt, file))
             {

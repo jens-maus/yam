@@ -411,12 +411,14 @@ static enum Encoding WhichEncodingForFile(char *fname, char *ctype)
 //  Initializes a new message part
 struct WritePart *NewPart(int winnum)
 {
-   struct WritePart *p;
-   p = (struct WritePart *)calloc(1,sizeof(struct WritePart));
-   p->ContentType = "text/plain";
-   p->EncType = ENC_NONE;
-   p->Filename = G->WR_Filename[winnum];
-//   p->Name = NULL; // redundant due to calloc() -msbethke
+   struct WritePart *p = calloc(1, sizeof(struct WritePart));
+   if (p)
+   {
+     p->ContentType = "text/plain";
+     p->EncType = ENC_NONE;
+     p->Filename = G->WR_Filename[winnum];
+//     p->Name = NULL; // redundant due to calloc() -msbethke
+   }
    return p;
 }
 
@@ -533,16 +535,19 @@ static void EmitRcptField(FILE *fh, char *body)
 {
    char *part, *next, *bodycpy = malloc(strlen(body)+1);
 
-   strcpy(part = bodycpy, body);
-   while (part)
+   if (bodycpy)
    {
-      if (!*part) break;
-      if ((next = MyStrChr(part, ','))) *next++ = 0;
-      HeaderFputs(Trim(part), fh);
-      if ((part = next)) fputs(",\n\t", fh);
+     strcpy(part = bodycpy, body);
+     while (part)
+     {
+        if (!*part) break;
+        if ((next = MyStrChr(part, ','))) *next++ = 0;
+        HeaderFputs(Trim(part), fh);
+        if ((part = next)) fputs(",\n\t", fh);
+     }
+     free(bodycpy);
    }
-   free(bodycpy);
-} 
+}
 
 ///
 /// EmitRcptHeader
@@ -1945,7 +1950,9 @@ MakeStaticHook(WR_AppHook, WR_AppFunc);
 HOOKPROTONHNO(WR_LV_ConFunc, struct Attach *, struct Attach *attach)
 {
    struct Attach *entry = malloc(sizeof(struct Attach));
-   *entry = *attach;
+
+   if (entry)
+     *entry = *attach;
    return entry;
 }
 MakeStaticHook(WR_LV_ConFuncHook, WR_LV_ConFunc);

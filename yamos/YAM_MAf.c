@@ -886,8 +886,7 @@ void MA_ScanMailBox(struct Folder *folder)
 
    Busy(GetStr(MSG_BusyScanning), folder->Name, 0, 0);
    ClearMailList(folder, TRUE);
-   fib = AllocDosObject(DOS_FIB,NULL);
-   if (lock = Lock(GetFolderDir(folder), ACCESS_READ))
+   if ((fib = AllocDosObject(DOS_FIB,NULL)) && (lock = Lock(GetFolderDir(folder), ACCESS_READ)))
    {
       Examine(lock, fib);
       while (ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))

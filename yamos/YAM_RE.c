@@ -2013,11 +2013,14 @@ static struct Part *RE_GetPart(int winnum, int partnr)
 //  Allocates resources for background message parsing
 void RE_InitPrivateRC(struct Mail *mail, enum ParseMode parsemode)
 {
-   G->RE[4] = calloc(1,sizeof(struct RE_ClassData));
-   G->RE[4]->Mail = *mail;
-   G->RE[4]->MailPtr = mail;
-   GetMailFile(G->RE[4]->File, mail->Folder, mail);
-   RE_LoadMessage(4, parsemode);
+   struct RE_ClassData *data = calloc(1, sizeof(struct RE_ClassData));
+   if ((G->RE[4] = data))
+   {
+     data->Mail = *mail;
+     data->MailPtr = mail;
+     GetMailFile(data->File, mail->Folder, mail);
+     RE_LoadMessage(4, parsemode);
+   }
 }
 ///
 /// RE_FreePrivateRC

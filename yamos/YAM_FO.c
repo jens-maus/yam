@@ -323,15 +323,20 @@ void FO_SaveConfig(struct Folder *fo)
 struct Folder *FO_NewFolder(enum FolderType type, char *path, char *name)
 {
    struct Folder *folder = calloc(1, sizeof(struct Folder));
-   folder->Sort[0] = 1;
-   folder->Sort[1] = 3;
-   folder->Type = type;
-   folder->ImageIndex = -1;
-   MyStrCpy(folder->Path, path);
-   MyStrCpy(folder->Name, name);
-   if (CreateDirectory(GetFolderDir(folder))) return folder;
-   free(folder);
-   return NULL;
+   if (folder)
+   {
+     folder->Sort[0] = 1;
+     folder->Sort[1] = 3;
+     folder->Type = type;
+     folder->ImageIndex = -1;
+     MyStrCpy(folder->Path, path);
+     MyStrCpy(folder->Name, name);
+     if (!CreateDirectory(GetFolderDir(folder)))
+     {
+       free(folder); return NULL;
+     }
+   }
+   return folder;
 }
 
 ///

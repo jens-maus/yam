@@ -421,19 +421,21 @@ static void TR_DisplayMailList(BOOL largeonly)
 //  Parses downloaded message header
 static void TR_AddMessageHeader(int *count, int size, char *tfname)
 {
-   struct Mail *mail;
    struct ExtendedMail *email;
 
    if (email = MA_ExamineMail((struct Folder *)-1, tfname, NULL, FALSE))
    {
-      mail = calloc(1,sizeof(struct Mail));
-      *mail = email->Mail;
-      mail->Folder  = NULL;
-      mail->Status  = 1;
-      mail->Index   = ++(*count);
-      mail->Size    = size;
-      MA_FreeEMailStruct(email);
-      MyAddTail(&(G->TR->List), mail);
+      struct Mail *mail = malloc(sizeof(struct Mail));
+      if (mail)
+      {
+        *mail = email->Mail;
+        mail->Folder  = NULL;
+        mail->Status  = 1;
+        mail->Index   = ++(*count);
+        mail->Size    = size;
+        MA_FreeEMailStruct(email);
+        MyAddTail(&(G->TR->List), mail);
+      }
    }
 }
 ///

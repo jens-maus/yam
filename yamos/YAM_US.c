@@ -414,7 +414,8 @@ MakeStaticHook(US_PutUSEntryHook,US_PutUSEntryFunc);
 HOOKPROTONHNO(US_LV_ConFunc, struct User *, struct User *user)
 {
    struct User *entry = malloc(sizeof(struct User));
-   *entry = *user;
+   if (entry)
+     *entry = *user;
    return entry;
 }
 MakeStaticHook(US_LV_ConHook, US_LV_ConFunc);
