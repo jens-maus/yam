@@ -121,3 +121,11 @@
     * Removed memory deallocation of all mails on shutdown when
       compiling with SAS/C - based on the assumption that SAS/C uses
       memory pools in its malloc()/free() implementation.
+
+2001-02-19  Christian Hattemer <krille@users.sourceforge.net>
+
+    * When pressing "shift right" in the read window YAM now looks
+      if there are unread mails in folders after the current one
+      (below the current one in the folders list).
+      If there are such folders the user is asked if he wants to change
+      to the first of these and continue reading there.

@@ -103,9 +103,10 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
    struct Mail *mail = G->RE[winnum]->MailPtr;
    struct MailInfo *mi = GetMailInfo(mail);
    int act = mi->Pos;
+   struct Folder *CurrentFolder = mail->Folder;
 
    G->RE[winnum]->LastDirection = direction;
-   MA_ChangeFolder(mail->Folder);
+   MA_ChangeFolder(CurrentFolder);
    for (act += direction; act >= 0; act += direction)
    {
       DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, act, &mail);
@@ -117,7 +118,57 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
          return;
       }
    }
-   if (onlynew) DisplayBeep(0); else DoMethod(G->App, MUIM_CallHook, &RE_CloseHook, winnum);
+
+   if (onlynew)
+   {
+      struct Folder **flist;
+
+      // only look for following folders if moving forwards
+      if (direction == -1)
+      {
+         DisplayBeep(NULL);
+         return;
+      }
+
+      if (flist = FO_CreateList())
+      {
+         int i;
+
+         // look for next folder after the current one
+         for (i = 1; i <= (int)*flist; i++)
+         {
+            if (flist[i] == CurrentFolder)
+            {
+               i++;
+               break;
+            }
+         }
+
+         // look for first folder with at least one unread mail
+         // and if found read that mail
+         for ( ; i <= (int)*flist; i++)
+         {
+            if (flist[i]->Type != FT_SEPARATOR && flist[i]->Unread > 0)
+            {
+               if (!MUI_Request(G->App, G->RE[winnum]->GUI.WI, 0, GetStr(MSG_MA_ConfirmReq), GetStr(MSG_YesNoReq), GetStr(MSG_RE_MoveNextFolderReq), flist[i]->Name))
+                  break;
+
+               MA_ChangeFolder(flist[i]);
+               DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+               if (!mail) break;
+               RE_ReadMessage(winnum, mail);
+               break;
+            }
+         }
+
+         // beep if no folder with unread mails was found
+         if (i > (int)*flist)
+            DisplayBeep(NULL);
+
+         free(flist);
+      }
+   }
+   else DoMethod(G->App, MUIM_CallHook, &RE_CloseHook, winnum);
 }
 ///
 /// RE_PrevNext

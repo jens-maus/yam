@@ -4252,3 +4252,9 @@ a quote inserted from non-email sources
 MSG_EA_SelectPhoto_Title (//)
 Select portrait
 ;
+MSG_RE_MoveNextFolderReq (//)
+The next folder with unread messages\n\
+is: \eb%s\en\n\
+Change to this folder and continue\n\
+with reading there?
+;
