@@ -1,3 +1,11 @@
+2002-05-09  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * added a proper status message to the connecting process of
+      the SMTP send commands. Now YAM will show a message that
+      it is trying to connect to the SMTP server. Formerly
+      there were no status message at all informing the user
+      about what is next.
+
 2002-05-07  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * change the title generation of the MailContextMenu to show

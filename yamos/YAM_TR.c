@@ -1849,6 +1849,10 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       // take this one, even if its not needed anymore.
       if (p = strchr(host, ':')) { *p = 0; port = atoi(++p); }
 
+      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_Connecting));
+
+      BusyText(GetStr(MSG_TR_MailTransferTo), host);
+
       TR_SetWinTitle(FALSE, host);
 
       if (!(err = TR_Connect(host, port)))
@@ -1860,12 +1864,12 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
          if(G->TR_UseableTLS && C->Use_SMTP_TLS)
          {
            set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
-           if(!TR_SendSMTPCmd(NULL, NULL)) return FALSE; // This is needed to skip the welcome msg
+           if(!TR_SendSMTPCmd(NULL, NULL)) { BusyEnd; return FALSE; } // This is needed to skip the welcome msg
 
            set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_INITTLS));
 
            // Now we initiate the STARTTLS command (RFC 2487)
-           if(!TR_SendSMTPCmd("STARTTLS", NULL)) return FALSE;
+           if(!TR_SendSMTPCmd("STARTTLS", NULL)) { BusyEnd; return FALSE; }
 
            if(TR_InitTLS() && TR_StartTLS())
            {
@@ -1874,6 +1878,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
            else
            {
               ER_NewError(GetStr(MSG_ER_INITTLS), host, NULL);
+              BusyEnd;
               return FALSE;
            }
          }
@@ -1919,6 +1924,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 
    TR_AbortnClose();
 
+   BusyEnd;
    return success;
 }
 ///
