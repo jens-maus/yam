@@ -52,7 +52,6 @@
 #include <proto/xpkmaster.h>
 #include <proto/amissl.h>
 
-#include "Debug.h"
 #include "extra.h"
 #include "NewReadArgs.h"
 #include "SDI_hook.h"
@@ -697,9 +696,9 @@ static void Terminate(void)
 
    DB(kprintf("Terminate()\n");)
 
-   while (PNum > 0)                        
+   while (PNum > 0)
       if (PPtr[PNum-1]) free(PPtr[--PNum]);
-   
+
    if (G->CO)
    {
       CO_FreeConfig(CE);
@@ -835,16 +834,12 @@ static void Terminate(void)
 ///
 /// Abort
 //  Shows error requester, then terminates the program
-static VARARGS68K void Abort(APTR formatnum, ...)
+static void Abort(APTR formatnum, ...)
 {
-   va_list a;
    static char error[SIZE_LINE];
+   va_list a;
 
-   #if defined(__amigaos4__)
-   va_startlinear(a, formatnum);
-   #else
    va_start(a, formatnum);
-   #endif
 
    if(formatnum)
    {
@@ -1593,8 +1588,7 @@ int main(int argc, char **argv)
 
    // obtain the MainInterface of Exec before anything else.
    #ifdef __amigaos4__
-	 struct Library* SysBase = *((struct Library **)4L);
-	 IExec = (struct ExecIFace *)((struct ExecBase *)SysBase)->MainInterface;
+   IExec = (struct ExecIFace *)((struct ExecBase **)4L)->MainInterface;
    #endif
 
 #if defined(DEVWARNING)
