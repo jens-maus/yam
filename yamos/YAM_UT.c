@@ -2506,7 +2506,8 @@ void DisplayMailList(struct Folder *fo, APTR lv)
       // We do not encapsulate this Clear&Insert with a NList_Quiet because
       // this will speed up the Insert with about 3-4 seconds for ~6000 items
       DoMethod(lv, MUIM_NList_Clear);
-      DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted, MUIV_NList_Insert_Flag_Raw);
+      DoMethod(lv, MUIM_NList_Insert, array, fo->Total, MUIV_NList_Insert_Sorted,
+                   C->AutoColumnResize ? MUIF_NONE : MUIV_NList_Insert_Flag_Raw);
 
       free(array);
       BusyEnd;

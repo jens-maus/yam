@@ -7,6 +7,18 @@ $Source$
 
 2003-05-16  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_CO.c, YAM_COs.c, YAM_UT.c: as many people were confused by the
+      fact that YAM 2.4 wasn`t automatically resizing the main listview
+      columns anymore, a new hidden option "AutoColumnResize" to the .config
+      file has been introduced.
+      By default this variable will be set to Yes, to stop confusing people
+      with the non autoresizing feature of YAM 2.4+. So, all those people out
+      there whining about a slow folder switching if they have >1000 mails
+      in their folders should now explicitly modify their .config file and
+      use "AutoColumnResize = N" to stop YAM from using the autoresizing
+      feature of NList which significantly slows down a NList refresh.
+      Following that, those people should also know that they need to have
+      their columns fixed if AutoColumResize is set to No.
     * YAM_UT.c: YAM will now suppress any DOS requester from popping up while
       trying to save the MUI object information to the ENVARC:mui/YAM.cfg file
       upon the exit of YAM. This should prevent people from whining about the

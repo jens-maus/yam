@@ -833,6 +833,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->LocalCharset, "iso-8859-1");
       co->PrintMethod = PRINTMETHOD_DUMPRAW;
       co->StackSize = 40000;
+      co->AutoColumnResize = TRUE;
    }
 }
 
