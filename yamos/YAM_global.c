@@ -30,7 +30,7 @@
 #include "YAM_utilities.h"
 
 // some platform/compiler dependent stack definitions.
-const char * yam_stack = "$STACK:65536";      // Shell v45 and later
+static const char USED_VAR yam_stack_size[] = "$STACK:65536";  // Shell v45 and later
 #if defined(__amigaos4__)
   long __stack_size = 65536;             // set the minimum startup stack for clib2
   long __default_pool_size = 128*1024;   // set the pool & puddle size for the
