@@ -7,6 +7,10 @@ $Source$
 
 2005-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/ReadMailGroup.c: regrouped the attachmentgroup object into a separate
+      vertical group with the MailTextObject. This should slightly improve the
+      way YAM is weighting the attachmentgroup if the balance objects are moved
+      around.
     * misc: replaced all isspace() usages by calls to our own ISpace() macro.
     * extrasrc/stpblk.c: replaced all stpblk() function usages by TrimStart() calls
       as these two function are totally redundant.
