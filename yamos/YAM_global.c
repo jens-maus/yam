@@ -84,11 +84,11 @@ const unsigned long yamversiondays = __YAM_VERDAYS;
 #endif
 
 // some platform/compiler dependent stack definitions.
-static const char USED_VAR Stack[] = "$STACK:65536";
+const char * yam_stack = "$STACK:65536";      // used by Shell v45 and later
 #if defined(__amigaos4__)
-  long USED_VAR __stack_size = 65536;             // set the minimum startup stack for clib2
-  long USED_VAR __default_pool_size = 128*1024;   // set the pool & puddle size for the
-  long USED_VAR __default_puddle_size = 32*1024;  // AllocPool() functions to something more reasonable.
+  long __stack_size = 65536;             // set the minimum startup stack for clib2
+  long __default_pool_size = 128*1024;   // set the pool & puddle size for the
+  long __default_puddle_size = 32*1024;  // AllocPool() functions to something more reasonable.
 #elif defined(__SASC) || defined(__GNUC__)
   #if defined(__libnix__) || defined(__SASC)
   /* GCC (libnix) supports the same as SAS/C! */
@@ -96,7 +96,7 @@ static const char USED_VAR Stack[] = "$STACK:65536";
   long __buffsize = 8192;
   long _MSTEP = 16384;
   #else
-  long USED_VAR __stack_size = 65536;    // set the minimum startup stack for clib2
+  long __stack_size = 65536;    // set the minimum startup stack for clib2
   #endif
 #elif defined(__VBCC__) /* starting with VBCC 0.8 release */
   long __stack = 65536;
