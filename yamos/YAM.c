@@ -679,8 +679,15 @@ void Login(char *user, char *password, char *maildir, char *prefsfile)
 //  Checks if daylight saving time is active
 int GetDST(void)
 {
-   char *dst = getenv("SUMMERTIME");
    int i;
+   char *dst;
+
+   if((dst = getenv("IXGMTOFFSET")))
+   {
+      return dst[4]?2:1;
+   }
+
+   dst = getenv("SUMMERTIME");
    if (!dst) return 0;
    for (i = 0; i < 11; i++)
    {
