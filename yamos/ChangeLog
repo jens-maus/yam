@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-05-06  Jens Langner <Jens.Langner@light-speed.de>
+
+    * fixed the temporary filename generation once more to generate real
+      unique files depending on the YAM instance that is currently running
+      and also fixed a bug where a tempfilename from OpenTempFile()
+      shouldn`t be longer than SIZE_MFILE.
+
 2003-05-04  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed bug in Popupmenu routines where the use of

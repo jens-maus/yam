@@ -1131,6 +1131,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
     struct ExtendedMail *email;
     struct TempFile *tf = OpenTempFile(NULL);
     CopyFile(tf->Filename, NULL, fname, NULL);
+
     if ((email = MA_ExamineMail(NULL, FilePart(tf->Filename), NULL, TRUE)))
     {
       mail = calloc(1, sizeof(struct Mail));
@@ -1938,7 +1939,7 @@ static FILE *RE_OpenNewPart(int winnum, struct Part **new, struct Part *prev, st
       }
       strcpy((*new)->Boundary, first ? first->Boundary : (prev ? prev->Boundary : ""));
       (*new)->Win = winnum;
-      sprintf(file, "YAMr%lx-w%dp%d.txt", G->RE[winnum]->MailPtr, winnum, (*new)->Nr);
+      sprintf(file, "YAMr%08lx-w%dp%d.txt", G->RE[winnum]->MailPtr, winnum, (*new)->Nr);
       strmfp((*new)->Filename, C->TempDir, file);
       if ((fp = fopen((*new)->Filename, "w"))) return fp;
       free(*new);
@@ -2213,7 +2214,7 @@ BOOL RE_DecodePart(struct Part *rp)
          if (rp->HasHeaders) while (GetLine(in, buf, SIZE_LINE)) if (!*buf) break;
          stcgfe(ext, rp->Name);
          if (strlen(ext) > 10) *ext = 0;
-         sprintf(file, "YAMm%lx-w%dp%d.%s", G->RE[rp->Win]->MailPtr, rp->Win, rp->Nr, *ext ? ext : "tmp");
+         sprintf(file, "YAMm%08lx-w%dp%d.%s", G->RE[rp->Win]->MailPtr, rp->Win, rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
          if ((out = fopen(buf, "w")))
          {
@@ -2311,7 +2312,7 @@ static void RE_HandleMDNReport(struct Part *frp)
       if (!strnicmp(MDNtype, "manual-action", 13)) mode = GetStr(MSG_RE_MDNmanual);
       if (!strnicmp(MDNtype, "automatic-action", 16)) mode = GetStr(MSG_RE_MDNauto);
       if ((type = strchr(MDNtype, ';'))) type = Trim(++type); else type = MDNtype;
-      sprintf(file, "YAMm%lx-w%dp%d.txt", G->RE[rp[0]->Win]->MailPtr, rp[0]->Win, rp[0]->Nr);
+      sprintf(file, "YAMm%08lx-w%dp%d.txt", G->RE[rp[0]->Win]->MailPtr, rp[0]->Win, rp[0]->Nr);
       strmfp(buf, C->TempDir, file);
       if ((out = fopen(buf, "w")))
       {
@@ -2536,7 +2537,7 @@ static BOOL RE_LoadMessage(int winnum, int parsemode)
         if (rp->Nr != i)
         {
           rp->Nr = i;
-          sprintf(file, "YAMm%lx-w%dp%d%s", G->RE[winnum]->MailPtr, winnum, i, strchr(rp->Filename,'.'));
+          sprintf(file, "YAMm%08lx-w%dp%d%s", G->RE[winnum]->MailPtr, winnum, i, strchr(rp->Filename,'.'));
           strmfp(newfile, C->TempDir, file);
 
           RenameFile(rp->Filename, newfile);

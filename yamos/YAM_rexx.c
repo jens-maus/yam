@@ -266,6 +266,7 @@ struct RexxHost *SetupARexxHost( char *basename, struct MsgPort *usrport )
    while( FindPort(host->portname) )
       sprintf( host->portname, "%s.%d", basename, ++ext );
    
+   host->portnumber = ext;
    host->port->mp_Node.ln_Name = host->portname;
    AddPort( host->port );
    

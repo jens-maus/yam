@@ -85,7 +85,7 @@ struct MailInfo
 struct TempFile
 {
    FILE *FP;
-   char  Filename[SIZE_PATHFILE];
+   char  Filename[SIZE_PATH+SIZE_MFILE];
 };
 
 struct BodyChunkData

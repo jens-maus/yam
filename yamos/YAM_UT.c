@@ -1483,9 +1483,18 @@ struct TempFile *OpenTempFile(char *mode)
    struct TempFile *tf;
    if ((tf = calloc(1, sizeof(struct TempFile))))
    {
-      char buf[SIZE_FILE];
-      sprintf(buf, "YAMt%lx-%d.tmp", (LONG)FindTask(NULL), ++count);
+      // the tempfile MUST be SIZE_MFILE long because we
+      // also use this tempfile routine for showing temporary mails which
+      // conform to SIZE_MFILE
+      char buf[SIZE_MFILE];
+
+      // now format our temporary filename according to our Application data
+      // this format tries to make the temporary filename kinda unique.
+      sprintf(buf, "YAMt%d%02d.tmp", G->RexxHost->portnumber, ++count);
+
+      // now add the temporary path to the filename
       strmfp(tf->Filename, C->TempDir, buf);
+
       if (!mode) return tf;
       if ((tf->FP = fopen(tf->Filename, mode))) return tf;
 

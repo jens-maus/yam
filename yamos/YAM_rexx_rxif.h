@@ -36,6 +36,7 @@ struct RexxHost
 {
    struct MsgPort *port;
    char portname[ 80 ];
+   int portnumber;
    long replies;
    struct RDArgs *rdargs;
    long flags;

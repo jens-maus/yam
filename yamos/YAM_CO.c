@@ -893,7 +893,7 @@ void CO_Validate(struct Config *co, BOOL update)
    {
       char filename[SIZE_FILE];
 
-      sprintf(filename, "YAMw%lx-%d.tmp", (LONG)FindTask(NULL), i);
+      sprintf(filename, "YAMw%08lx-%d.tmp", (LONG)FindTask(NULL), i);
       strmfp(G->WR_Filename[i], co->TempDir, filename);
    }
 
