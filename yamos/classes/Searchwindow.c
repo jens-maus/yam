@@ -28,16 +28,10 @@
 
 ***************************************************************************/
 
-#include <clib/alib_protos.h>
 #include <libraries/iffparse.h>
-#include <libraries/mui.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/TextEditor_mcc.h>
-#include <proto/intuition.h>
-#include <proto/muimaster.h>
-#include <proto/utility.h>
-
-#include "YAM.h"
+#include "Classes.h"
 #include "YAM_locale.h"
 #include "YAM_utilities.h"
 
@@ -47,9 +41,6 @@
 #define ATTR(attr) case MUIA_Searchwindow_## attr
 /* ---------------------------------- */
 
-#define inittags(msg) (((struct opSet *)msg)->ops_AttrList)
-#define GETDATA struct Data *data = (struct Data *)INST_DATA(cl,obj)
-
 struct Data
 {
 	Object *Searchstring;
@@ -58,11 +49,6 @@ struct Data
 };
 
 ULONG SearchwindowGetSize (VOID) { return sizeof(struct Data); }
-
-#define MUIM_Searchwindow_Open       0x80000000
-#define MUIM_Searchwindow_Search     0x80000001
-#define MUIM_Searchwindow_Next       0x80000002
-#define MUIA_Searchwindow_Texteditor 0x80000003
 
 OVERLOAD(OM_NEW)
 {

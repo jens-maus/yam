@@ -67,7 +67,7 @@ LNKFLAGS = RESOPT NOVER LINK SMALLCODE SMALLDATA UTILLIB LIB lib:debug.lib\
 
 # Objects
 
-CLASSES = #classes/searchwindow.o
+CLASSES = classes/Classes.o classes/Searchwindow.o
 
 OBJS = YAM.o YAM_AB.o YAM_CL.o YAM_CO.o YAM_COg.o YAM_COs.o YAM_DI.o YAM_EA.o \
   YAM_ER.o YAM_FI.o YAM_FO.o YAM_global.o YAM_locale.o YAM_MA.o YAM_MAf.o \
@@ -81,25 +81,38 @@ default: $(TARGET)
 # Default rule
 
 .c.o:
-  $(CC) $(CFLAGS) $<
+  @echo "*e[32mCompiling $*.c*e[0m"
+  @$(CC) $(CFLAGS) $<
 
 #
 
 $(TARGET): $(OBJS)
-  $(CC) $(LNKFLAGS) TO $@ WITH <<
+  @echo "*e[32mLinking $**e[0m"
+  @$(CC) $(LNKFLAGS) TO $@ WITH <<
   $(OBJS)
   <
 
 clean: # leaves final YAM exe
   -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.c YAM_locale.h
+#  -$(RM) classes/BuildClassInfo classes/BuildClassInfo.info classes/BuildClassInfo.lnk classes/BuildClassInfo.o classes/Classes.c classes/Classes.h
 
-cleanall:
-  -$(RM) $(OBJS) YAM.lnk YAM.map YAM_locale.c YAM_locale.h $(TARGET)
+cleanall: clean
+  -$(RM) $(TARGET)
 
 copy:
   $(CP) $(TARGET) YAM:
 
+classes/BuildClassInfo: classes/BuildClassInfo.o
+  @echo "*e[32mMaking $@ tool...*e[0m"
+  @$(CC) classes/BuildClassInfo.c link
+
+ClassInfo: classes/BuildClassInfo
+  @echo "*e[32mMaking $@...*e[0m"
+  @classes/BuildClassInfo scan classes/
+
 #######################################
+
+classes/BuildClassInfo.o: classes/BuildClassInfo.c
 
 YAM.o: YAM.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h YAM_classes.h \
   YAM_config.h YAM_configFile.h YAM_debug.h YAM_find.h YAM_folderconfig.h \
@@ -158,7 +171,8 @@ YAM_FO.o: YAM_FO.c YAM.h YAM_classes.h YAM_debug.h YAM_error.h \
   YAM_userlist.h YAM_utilities.h
 
 YAM_global.o: YAM_global.c YAM_global.h YAM_locale.h YAM_stringsizes.h
-  $(CC) $(CFLAGS) $(CDEFS) YAM_global.c
+  @echo "*e[32mCompiling $*.c*e[0m"
+  @$(CC) $(CFLAGS) $(CDEFS) YAM_global.c
 
 YAM_MA.o: YAM_MA.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
   YAM_classes.h YAM_config.h YAM_debug.h YAM_error.h YAM_find.h \
@@ -222,6 +236,6 @@ YAM_locale.h: locale/YAM.cd C_h.sd C_c.sd
 
 #######################################
 
-classes/searchwindow.o: classes/searchwindow.c YAM.h YAM_locale.h \
+classes/Searchwindow.o: classes/Searchwindow.c YAM.h YAM_locale.h \
   YAM_utilities.h
 

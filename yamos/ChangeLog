@@ -891,3 +891,14 @@
     * Makefile: renamed revision 1.12 to Makefile.MorphOS 
     * Makefile.m68k-AmigaOS: renamed revison 1.14 to Makefile
     * Makefile.m68k-AmigaOS-ixemul: deleted
+
+2001-07-18  Allan Odgaard <duff@diku.dk>
+
+    * Fixed some wrong RexxMsg types.
+    * Enhanced the output of the smake and also did other minor changes
+      to the smakefile (e.g. cleanall now use clean).
+    * Re-added Searchwindow.c with uppercase 's' to the repository.
+    * Added Classes.c,h to the repository, though these files are
+      auto-generated (so they'll go again when I add the auto-generate tool).
+    * Enabled Searchwindow.c in smakefile, since it should compile.
+    * When DEBUG is enabled NewReadArgs.c includes YAM_debug.h.
