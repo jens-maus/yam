@@ -30,8 +30,6 @@
 
 #include "AttachmentGroup_cl.h"
 
-#include <clib/wb_protos.h>
-
 #include <proto/graphics.h>
 #include <proto/wb.h>
 
@@ -747,8 +745,8 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
 		BusyText(GetStr(MSG_BusyDecSaving), "");
 
 		// make sure the drawer is opened upon the drag operation
-		if(WorkbenchBase->lib_Version >= 45)
-			OpenWorkbenchObject(msg->dropPath, TAG_DONE);
+		if(WorkbenchBase->lib_Version >= 44)
+			OpenWorkbenchObjectA(msg->dropPath, NULL);
 
 		// prepare the final path
 		fileName = mailPart->CParFileName ? mailPart->CParFileName : mailPart->Name;
@@ -776,8 +774,8 @@ DECLARE(ImageDropped) // Object *imageObject, char *dropPath
 			
 			// Now that the workbench knows about the new object we also have to make sure the icon
 			// is actually visible in the window
-			if(WorkbenchBase->lib_Version >= 45)
-				MakeWorkbenchObjectVisible(filePathBuf, TAG_DONE);
+			if(WorkbenchBase->lib_Version >= 44)
+				MakeWorkbenchObjectVisibleA(filePathBuf, NULL);
 		}
 		else
 			DisplayBeep(NULL);
