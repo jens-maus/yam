@@ -4,9 +4,18 @@
 /*****************************************************************************
 **
 ** rootclass
-** +--Recipientstring
 ** +--Searchwindow
+** +--Recipientstring
 **
+**
+** Searchwindow    -- Window where user inputs search string and options.
+**
+**                    Implements:
+**                    OM_NEW
+**                    Open
+**                    Close
+**                    Search
+**                    Next
 **
 ** Recipientstring -- Auto-completes email addresses etc.
 **
@@ -22,31 +31,38 @@
 **                    OM_GET
 **                    MUIM_Popstring_Open
 **                    AddRecipient
-**                    Transform
+**                    Resolve
 **                    RecipientStart
 **                    MUIM_HandleEvent
 **                    ShowMatches
 **
-** Searchwindow    -- Window where user inputs search string and options.
-**
-**                    Implements:
-**                    OM_NEW
-**                    Open
-**                    Close
-**                    Search
-**                    Next
-**
 *****************************************************************************/
 
 #include <clib/alib_protos.h>
-#include <libraries/mui.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/utility.h>
+#include <libraries/iffparse.h>
+#include <libraries/mui.h>
 #include <mui/BetterString_mcc.h>
+#include <mui/NList_mcc.h>
+#include <mui/TextEditor_mcc.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "YAM.h"
+#include "YAM_addressbook.h"
+#include "YAM_config.h"
+#include "YAM_debug.h"
+#include "YAM_folderconfig.h"
 #include "YAM_hook.h"
+#include "YAM_locale.h"
+#include "YAM_locale.h"
+#include "YAM_main.h"
+#include "YAM_mainFolder.h"
+#include "YAM_utilities.h"
+#include "YAM_utilities.h"
+#include "YAM_write.h"
 
 #ifndef MUIM_GoActive
 #define MUIM_GoActive                0x8042491a
@@ -69,47 +85,6 @@ Object *YAM_NewObject (STRPTR class, ULONG tag, ...);
 int YAM_SetupClasses (VOID);
 VOID YAM_CleanupClasses (VOID);
 
-/* ----------------------- */
-/* --- Recipientstring --- */
-/* ----------------------- */
-
-
-#define MUIC_Recipientstring "YAM_Recipientstring"
-
-#define MUIM_Recipientstring_AddRecipient     0xAE0000CBUL
-#define MUIM_Recipientstring_Transform        0xAE007B5AUL
-#define MUIM_Recipientstring_RecipientStart   0xAE004D2EUL
-#define MUIM_Recipientstring_ShowMatches      0xAE006D64UL
-
-#define MUIA_Recipientstring_MultipleRecipients 0xAE005A79UL
-#define MUIA_Recipientstring_FromString       0xAE00D557UL
-#define MUIA_Recipientstring_ReplyToString    0xAE006744UL
-#define MUIA_Recipientstring_Popup            0xAE003126UL
-
-struct MUIP_Recipientstring_AddRecipient
-{
-	ULONG methodID;
-	STRPTR address;
-};
-
-struct MUIP_Recipientstring_Transform
-{
-	ULONG methodID;
-};
-
-struct MUIP_Recipientstring_RecipientStart
-{
-	ULONG methodID;
-};
-
-struct MUIP_Recipientstring_ShowMatches
-{
-	ULONG methodID;
-};
-
-#define RecipientstringObject YAM_NewObject(MUIC_Recipientstring
-
-ULONG RecipientstringGetSize (VOID);
 /* -------------------- */
 /* --- Searchwindow --- */
 /* -------------------- */
@@ -148,6 +123,52 @@ struct MUIP_Searchwindow_Next
 #define SearchwindowObject YAM_NewObject(MUIC_Searchwindow
 
 ULONG SearchwindowGetSize (VOID);
+/* ----------------------- */
+/* --- Recipientstring --- */
+/* ----------------------- */
+
+
+#define MUIC_Recipientstring "YAM_Recipientstring"
+
+#define MUIM_Recipientstring_AddRecipient     0xAE0000CBUL
+#define MUIM_Recipientstring_Resolve          0xAE00EB08UL
+#define MUIM_Recipientstring_RecipientStart   0xAE004D2EUL
+#define MUIM_Recipientstring_ShowMatches      0xAE006D64UL
+
+#define MUIA_Recipientstring_MultipleRecipients 0xAE005A79UL
+#define MUIA_Recipientstring_FromString       0xAE00D557UL
+#define MUIA_Recipientstring_ReplyToString    0xAE006744UL
+#define MUIA_Recipientstring_Popup            0xAE003126UL
+
+struct MUIP_Recipientstring_AddRecipient
+{
+	ULONG methodID;
+	STRPTR address;
+};
+
+struct MUIP_Recipientstring_Resolve
+{
+	ULONG methodID;
+};
+
+struct MUIP_Recipientstring_RecipientStart
+{
+	ULONG methodID;
+};
+
+struct MUIP_Recipientstring_ShowMatches
+{
+	ULONG methodID;
+};
+
+#define RecipientstringObject YAM_NewObject(MUIC_Recipientstring
+
+ULONG RecipientstringGetSize (VOID);
+ULONG m_Searchwindow_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
+ULONG m_Searchwindow_Open(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Open *msg);
+ULONG m_Searchwindow_Close(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Close *msg);
+ULONG m_Searchwindow_Search(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Search *msg);
+ULONG m_Searchwindow_Next(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Next *msg);
 ULONG m_Recipientstring_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_OM_DISPOSE(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_OM_SET(struct IClass *cl, Object *obj, Msg msg);
@@ -159,14 +180,9 @@ ULONG m_Recipientstring_MUIM_DragDrop(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_OM_GET(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_MUIM_Popstring_Open(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_AddRecipient(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_AddRecipient *msg);
-ULONG m_Recipientstring_Transform(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_Transform *msg);
+ULONG m_Recipientstring_Resolve(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_Resolve *msg);
 ULONG m_Recipientstring_RecipientStart(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_RecipientStart *msg);
 ULONG m_Recipientstring_MUIM_HandleEvent(struct IClass *cl, Object *obj, Msg msg);
 ULONG m_Recipientstring_ShowMatches(struct IClass *cl, Object *obj, struct MUIP_Recipientstring_ShowMatches *msg);
-ULONG m_Searchwindow_OM_NEW(struct IClass *cl, Object *obj, Msg msg);
-ULONG m_Searchwindow_Open(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Open *msg);
-ULONG m_Searchwindow_Close(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Close *msg);
-ULONG m_Searchwindow_Search(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Search *msg);
-ULONG m_Searchwindow_Next(struct IClass *cl, Object *obj, struct MUIP_Searchwindow_Next *msg);
 
 #endif

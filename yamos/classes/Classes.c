@@ -1,5 +1,17 @@
-#include <string.h>
 #include "Classes.h"
+
+DISPATCHERPROTO(SearchwindowDispatcher)
+{
+	switch (msg->MethodID)
+	{
+		case OM_NEW                                  : return(m_Searchwindow_OM_NEW(cl, obj, (APTR)msg));
+		case MUIM_Searchwindow_Open                  : return(m_Searchwindow_Open(cl, obj, (APTR)msg));
+		case MUIM_Searchwindow_Close                 : return(m_Searchwindow_Close(cl, obj, (APTR)msg));
+		case MUIM_Searchwindow_Search                : return(m_Searchwindow_Search(cl, obj, (APTR)msg));
+		case MUIM_Searchwindow_Next                  : return(m_Searchwindow_Next(cl, obj, (APTR)msg));
+	}
+	return DoSuperMethodA(cl, obj, msg);
+}
 
 DISPATCHERPROTO(RecipientstringDispatcher)
 {
@@ -16,7 +28,7 @@ DISPATCHERPROTO(RecipientstringDispatcher)
 		case OM_GET                                  : return(m_Recipientstring_OM_GET(cl, obj, (APTR)msg));
 		case MUIM_Popstring_Open                     : return(m_Recipientstring_MUIM_Popstring_Open(cl, obj, (APTR)msg));
 		case MUIM_Recipientstring_AddRecipient       : return(m_Recipientstring_AddRecipient(cl, obj, (APTR)msg));
-		case MUIM_Recipientstring_Transform          : return(m_Recipientstring_Transform(cl, obj, (APTR)msg));
+		case MUIM_Recipientstring_Resolve            : return(m_Recipientstring_Resolve(cl, obj, (APTR)msg));
 		case MUIM_Recipientstring_RecipientStart     : return(m_Recipientstring_RecipientStart(cl, obj, (APTR)msg));
 		case MUIM_HandleEvent                        : return(m_Recipientstring_MUIM_HandleEvent(cl, obj, (APTR)msg));
 		case MUIM_Recipientstring_ShowMatches        : return(m_Recipientstring_ShowMatches(cl, obj, (APTR)msg));
@@ -24,23 +36,10 @@ DISPATCHERPROTO(RecipientstringDispatcher)
 	return DoSuperMethodA(cl, obj, msg);
 }
 
-DISPATCHERPROTO(SearchwindowDispatcher)
-{
-	switch (msg->MethodID)
-	{
-		case OM_NEW                                  : return(m_Searchwindow_OM_NEW(cl, obj, (APTR)msg));
-		case MUIM_Searchwindow_Open                  : return(m_Searchwindow_Open(cl, obj, (APTR)msg));
-		case MUIM_Searchwindow_Close                 : return(m_Searchwindow_Close(cl, obj, (APTR)msg));
-		case MUIM_Searchwindow_Search                : return(m_Searchwindow_Search(cl, obj, (APTR)msg));
-		case MUIM_Searchwindow_Next                  : return(m_Searchwindow_Next(cl, obj, (APTR)msg));
-	}
-	return DoSuperMethodA(cl, obj, msg);
-}
-
 const struct { STRPTR Name; STRPTR Superclass; LONG SuperMCC; ULONG (*GetSize) (VOID); APTR Dispatcher; } MCCInfo[NumberOfClasses] = 
 {
-	{ MUIC_Recipientstring, MUIC_BetterString, -1, RecipientstringGetSize, ENTRY(RecipientstringDispatcher) },
-	{ MUIC_Searchwindow, MUIC_Window, -1, SearchwindowGetSize, ENTRY(SearchwindowDispatcher) }
+	{ MUIC_Searchwindow, MUIC_Window, -1, SearchwindowGetSize, ENTRY(SearchwindowDispatcher) },
+	{ MUIC_Recipientstring, MUIC_BetterString, -1, RecipientstringGetSize, ENTRY(RecipientstringDispatcher) }
 };
 
 struct MUI_CustomClass *YAMClasses[NumberOfClasses];

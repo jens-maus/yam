@@ -1053,5 +1053,7 @@
         "DB(kprintf();)").
 
     * Renamed MUIM_Recipientstring_Transform method to
-      MUIM_Recipientstring_Resolve for consistancy with the rest of the YAM
+      MUIM_Recipientstring_Resolve for consistency with the rest of the YAM
       source.
+    * Fixed ADDRRESOLVE arexx command further. Btw: this command would earlier
+      (YAM 2.2) return a random string on failure.

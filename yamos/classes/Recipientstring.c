@@ -28,19 +28,7 @@
 
 ***************************************************************************/
 
-#include <stdlib.h>
-#include <string.h>
-#include <mui/NList_mcc.h>
 #include "Classes.h"
-#include "YAM_addressbook.h"
-#include "YAM_config.h"
-#include "YAM_debug.h"
-#include "YAM_folderconfig.h"
-#include "YAM_locale.h"
-#include "YAM_main.h"
-#include "YAM_mainFolder.h"
-#include "YAM_utilities.h"
-#include "YAM_write.h"
 
 /* ---------------------------------- */
 #define DECLARE(method) ULONG m_Recipientstring_## method (struct IClass *cl, Object *obj, struct MUIP_Recipientstring_## method *msg)

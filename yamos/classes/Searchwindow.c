@@ -28,12 +28,7 @@
 
 ***************************************************************************/
 
-#include <string.h>
-#include <libraries/iffparse.h>
-#include <mui/TextEditor_mcc.h>
 #include "Classes.h"
-#include "YAM_locale.h"
-#include "YAM_utilities.h"
 
 /* ---------------------------------- */
 #define DECLARE(method) ULONG m_Searchwindow_## method (struct IClass *cl, Object *obj, struct MUIP_Searchwindow_## method *msg)
