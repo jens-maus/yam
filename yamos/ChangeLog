@@ -7,6 +7,10 @@ $Source$
 
 2005-02-16  Gunther Nikl <gni@gecko.de>
 
+    * classes/AttachmentImage.c: replace calloc() with malloc().
+
+2005-02-16  Gunther Nikl <gni@gecko.de>
+
     * classes/AttachmentImage.c: wrap DB statement of else-case into {}.
     * YAM_debug.h: revert previous change (NOP addition).
 
