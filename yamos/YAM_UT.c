@@ -4222,6 +4222,6 @@ void STDARGS SPrintF(char *outstr, char *fmtstr, ...)
 #else
   FormatString(G->Locale, fmtstr, args, &hook);
 #endif
-  va_end(va);
+  va_end(args);
 }
 ///
