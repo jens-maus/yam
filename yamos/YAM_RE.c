@@ -3074,6 +3074,9 @@ static void RE_DisplayMessage(int winnum, BOOL update)
 
    if ((cmsg = RE_ReadInMessage(winnum, RIM_READ)))
    {
+      char headername[SIZE_DEFAULT];
+      int i;
+
       dispheader = (G->RE[winnum]->Header != HM_NOHEADER);
       set(gui->GR_HEAD, MUIA_ShowMe, dispheader);
       set(gui->BO_BALANCE, MUIA_ShowMe, dispheader);
@@ -3089,29 +3092,31 @@ static void RE_DisplayMessage(int winnum, BOOL update)
          // the body and break here.
          if (*body == '\n') { body++; break; }
 
-         if(G->RE[winnum]->Header == HM_SHORTHEADER)
+         // we copy the headername from the mail as long as there is no space and
+         // no interrupting character is found
+         for(i = 0; body[i] != ':' && !isspace(body[i]) && body[i] != '\n' && body[i] != '\0' && i < SIZE_DEFAULT-1; i++)
          {
-            char headername[SIZE_DEFAULT];
-            int i;
-
-            // we copy the headername from the mail as long as there is space and
-            // now interrupting character is found
-            for (i = 0; body[i] != ':' && body[i] != ' ' && body[i] != '\n' && i < SIZE_DEFAULT-1; i++)
-            {
-              headername[i] = body[i];
-            }
-            headername[i] = '\0'; // terminate with 0
-
-            // Now we check if this is a header the user wants to be displayed.
-            dispheader = MatchNoCase(headername, C->ShortHeaders);
+           headername[i] = body[i];
          }
-         else dispheader = (G->RE[winnum]->Header == HM_FULLHEADER);
 
-         if(dispheader)
+         // if we end up here and body[i] isn`t a : then this wasn`t a proper headerline and we
+         // can ignore it anyway because the RFC says that a headerline must have characters
+         // without any space followed by a ":"
+         if(body[i] == ':')
          {
-            // we simply insert the whole thing from the actual body pointer
-            // because the ConstructHook_String of NList will anyway just copy until a \n, \r or \0
-            DoMethod(gui->LV_HEAD, MUIM_NList_InsertSingleWrap, body, MUIV_NList_Insert_Bottom, G->RE[winnum]->WrapHeader ? WRAPCOL1 : NOWRAP, ALIGN_LEFT);
+           headername[i] = '\0'; // terminate with 0
+
+           // Now we check if this is a header the user wants to be displayed if he has choosen
+           // to display only shortheaders
+           if(G->RE[winnum]->Header == HM_SHORTHEADER) dispheader = MatchNoCase(headername, C->ShortHeaders);
+           else dispheader = (G->RE[winnum]->Header == HM_FULLHEADER);
+
+           if(dispheader)
+           {
+              // we simply insert the whole thing from the actual body pointer
+              // because the ConstructHook_String of NList will anyway just copy until a \n, \r or \0
+              DoMethod(gui->LV_HEAD, MUIM_NList_InsertSingleWrap, body, MUIV_NList_Insert_Bottom, G->RE[winnum]->WrapHeader ? WRAPCOL1 : NOWRAP, ALIGN_LEFT);
+           }
          }
 
          // then we move forward until the end of the line

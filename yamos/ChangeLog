@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-04-06  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed bug in the headerline parsing routines where YAM did
+      also display malformed headerlines (which doesn`t conform to RFC)
+      and probably mixed up the headerline display within a read window.
+
 2003-04-05  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed bug #715777 where the gauge while filtering upon new
