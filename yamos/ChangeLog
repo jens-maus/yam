@@ -7,6 +7,9 @@ $Source$
 
 2003-03-15  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_TR.c: fixed bug in the SMTP send routines where the new routines
+      didn`t correctly find the message body and therefore stripped some
+      lines on accident.
     * YAM_TR.c: fixed serious bug within the POP3 receive routines where
       a POP3 server that allowed transfers of binary data caused YAM to
       hang under certain situations i.e. a transfered NUL (ASCII 0) caused

@@ -2455,6 +2455,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                 char sendbuf[SIZE_LINE+2];
                 int sendsize, cpos;
                 int prevpos = ftell(f); // get current file position
+                int startpos = prevpos;
 
                 // as long there is no abort situation we go on reading out
                 // from the stream and sending it to our SMTP server
@@ -2469,7 +2470,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
                     // we check if we found the body of the mail now
                     // the start of a body is seperated by the header with a single
                     // empty line and we have to make sure that it isn`t the beginning of the file
-                    if(sendsize == 1 && cpos > 1 && buf[0] == '\n' && buf[1] == '\0')
+                    if(sendsize == 1 && buf[0] == '\n' && buf[1] == '\0' && prevpos-startpos > 1)
                     {
                       inbody = TRUE;
                       lineskip = FALSE;
