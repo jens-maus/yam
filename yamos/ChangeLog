@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-05  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c/Busy(): fixed bug #596303 and brought back the
+      MUIA_Application_Sleep calls to make the Busy() function work
+      again like in 2.3. These calls doesn`t seem to harm the
+      performance anymore (at least with MUI 3.9) like described in
+      bug #458521. And if so, this is more a problem of old MUI
+      versions and not ours.
+
 2002-12-04  Gunther Nikl <gni@gecko.de>
 
     * YAM.c: (TC_Dispatcher) reformat loops (no code change),

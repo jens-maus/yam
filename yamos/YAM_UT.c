@@ -3285,6 +3285,8 @@ void Busy(char *text, char *parameter, int cur, int max)
 
         if(BusyLevel < BUSYLEVEL-1) BusyLevel++;
         DB(else kprintf("Error: reached highest BusyLevel!!!\n");)
+
+        if(BusyLevel == 1) nnset(G->App, MUIA_Application_Sleep, TRUE);
       }
       else
       {
@@ -3295,6 +3297,7 @@ void Busy(char *text, char *parameter, int cur, int max)
             if(BusyLevel <= 0)
             {
               DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_HideBars);
+              nnset(G->App, MUIA_Application_Sleep, FALSE);
             }
             else
             {
