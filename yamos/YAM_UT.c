@@ -2996,8 +2996,8 @@ void DisplayStatistics(struct Folder *fo)
       // Now get the parent of the treenode
       if(tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, 0, TAG_DONE))
       {
-         // only if the parent one is not ROOT
-         if(tn_parent != MUIV_NListtree_GetEntry_ListNode_Root)
+         // If tn_parent->tn_User is NULL then it`s ROOT and we have to skip here
+         if(tn_parent->tn_User)
          {
             struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
             int i;
