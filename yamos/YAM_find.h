@@ -30,6 +30,10 @@
 
 #include <dos/datetime.h>
 
+#ifndef FORMAT_DEF
+#define FORMAT_DEF 4
+#endif
+
 #include "YAM_mainFolder.h"
 
 struct SearchGroup
