@@ -1,9 +1,9 @@
-
 /***************************************************************************
 
  GenClasses - MUI class dispatcher generator
  Copyright (C) 2001 by Andrew Bell <mechanismx@lineone.net>
- Created on 2/Aug/2001
+
+ Contributed to the YAM Open Source Team as a special version
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -43,11 +43,15 @@
  * When compiling for YAM under VBCC use:
  *
  * GenClasses <classespath> -bYAM -gpl -i"/YAM.h" -mkfilevmakefile,vc,-o,-+,-c* 
- * Note: The DISPATCHERPROTO define is not included in the generated source.
  *
  *
  * History
  * -------
+ * 0.4 - fixed bug in extra header inclusion and makefile argument
+ *     - the collision array of the hash function will be alloced dynamically
+ *       so that we still can compile genclasses with near data & code.
+ *     - updated TAG_ID to use 0x00430000 and a BUCKET_CNT of 98304
+ *     - modified GPL header to reflect standard YAM source header
  *
  * 0.3 - List counter wasn't being set to 0 on init
  *       resulting in some large trashy values. :-)
@@ -88,7 +92,7 @@
  *
  */
 
-char *verstr = "0.3";
+char *verstr = "0.4";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -241,7 +245,7 @@ char *myfilepart( char *path )
  *
  */ 
 
-long collision_cnts[BUCKET_CNT];
+long *collision_cnts;
 
 unsigned long gethash( char *str )
 {
@@ -574,26 +578,32 @@ void gen_gpl( FILE *fp )
 {
 	if (!fp || !arg_gpl) return;
 	fprintf(fp,
-	"\n"
-	"/***************************************************************************\n"
-	"\n"
-	" This program is free software; you can redistribute it and/or modify\n"
-	" it under the terms of the GNU General Public License as published by\n"
-	" the Free Software Foundation; either version 2 of the License, or\n"
-	" (at your option) any later version.\n"
-	"\n"
-	" This program is distributed in the hope that it will be useful,\n"
-	" but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-	" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-	" GNU General Public License for more details.\n"
-	"\n"
-	" You should have received a copy of the GNU General Public License\n"
-	" along with this program; if not, write to the Free Software\n"
-	" Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
-	"\n"
-	" $Id$\n"
-	"\n"
-	"***************************************************************************/\n");
+  "/***************************************************************************\n"
+  "\n"
+  " YAM - Yet Another Mailer\n"
+  " Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>\n"
+  " Copyright (C) 2000-2001 by YAM Open Source Team\n"
+  "\n"
+  " This program is free software; you can redistribute it and/or modify\n"
+  " it under the terms of the GNU General Public License as published by\n"
+  " the Free Software Foundation; either version 2 of the License, or\n"
+  " (at your option) any later version.\n"
+  "\n"
+  " This program is distributed in the hope that it will be useful,\n"
+  " but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+  " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+  " GNU General Public License for more details.\n"
+  "\n"
+  " You should have received a copy of the GNU General Public License\n"
+  " along with this program; if not, write to the Free Software\n"
+  " Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
+  "\n"
+  " YAM Official Support Site :  http://www.yam.ch/\n"
+  " YAM OpenSource project    :  http://sourceforge.net/projects/yamos/\n"
+  "\n"
+  " $Id$\n"
+  "\n"
+  "***************************************************************************/\n");
 }
 
 void gen_supportroutines( FILE *fp )
@@ -601,26 +611,31 @@ void gen_supportroutines( FILE *fp )
 	char *bn = arg_basename;
 	fprintf(fp,
 "%s%s%s"
-"Object *%s_NewObject( STRPTR class, ULONG tag, ... )\n"
+"Object *%s_NewObject(STRPTR class, ULONG tag, ...)\n"
 "{\n"
 "  long i;\n"
-"  for(i = 0; i < NUMBEROFCLASSES; i++) {\n"
+"  for(i = 0; i < NUMBEROFCLASSES; i++)\n"
+"  {\n"
 "    if(!strcmp(MCCInfo[i].Name, class))\n"
-"    return NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)&tag);\n"
+"    {\n"
+"      return NewObjectA(%sClasses[i]->mcc_Class, NULL, (struct TagItem *)&tag);\n"
+"    }\n"
 "  }\n"
 "  return NULL;\n"
 "}\n"
 "%s"
 "\n"
 "%s%s%s"
-"long %s_SetupClasses( void )\n"
+"long %s_SetupClasses(void)\n"
 "{\n"
 "  long i;\n"
 "  memset(%sClasses, 0, sizeof(%sClasses));\n"
-"  for (i = 0; i < NUMBEROFCLASSES; i++) {\n"
+"  for (i = 0; i < NUMBEROFCLASSES; i++)\n"
+"  {\n"
 "    struct MUI_CustomClass *superMCC = MCCInfo[i].SuperMCC == -1 ? NULL : %sClasses[MCCInfo[i].SuperMCC];\n"
 "    %sClasses[i] = MUI_CreateCustomClass(NULL, MCCInfo[i].SuperClass, superMCC, MCCInfo[i].GetSize(), MCCInfo[i].Dispatcher);\n"
-"    if (!%sClasses[i]) {\n"
+"    if (!%sClasses[i])\n"
+"    {\n"
 "      %s_CleanupClasses();\n"
 "      return 0;\n"
 "    }\n"
@@ -630,10 +645,11 @@ void gen_supportroutines( FILE *fp )
 "%s"
 "\n"
 "%s%s%s"
-"void %s_CleanupClasses( void )\n"
+"void %s_CleanupClasses(void)\n"
 "{\n"
 "  long i;\n"
-"  for (i = NUMBEROFCLASSES-1; i >= 0; i--) {\n"
+"  for (i = NUMBEROFCLASSES-1; i >= 0; i--)\n"
+"  {\n"
 "    MUI_DeleteCustomClass(%sClasses[i]);\n"
 "    %sClasses[i] = NULL;\n"
 "  }\n"
@@ -682,7 +698,7 @@ long gen_source( char *destfile, struct list *classlist )
 	gen_gpl(fp);
 	fprintf(fp, "\n /* " EDIT_WARNING " */\n\n"
 		"#include <string.h>\n"
-		 "#include \"Classes.h\"\n\n"
+		"#include \"Classes.h\"\n\n"
 		"struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n\n",
 		arg_basename);
 
@@ -719,8 +735,12 @@ long gen_source( char *destfile, struct list *classlist )
 	/*****************************************/
 
 	fprintf(fp,
-		"const struct {\n" "  STRPTR Name; STRPTR SuperClass; LONG SuperMCC; ULONG (*GetSize) (void); APTR Dispatcher;\n"
-		"} MCCInfo[NUMBEROFCLASSES] = {\n");
+		"const struct\n"
+    "{\n"
+    "  STRPTR Name; STRPTR SuperClass; LONG SuperMCC; ULONG (*GetSize) (void); APTR Dispatcher;\n"
+		"} MCCInfo[NUMBEROFCLASSES] =\n"
+    "{\n");
+
 	for (n = NULL; n = list_getnext(classlist, n, (void **) &nextcd);)
 	{
 		fprintf(fp, "  { MUIC_%s, %s, -1, %sGetSize, ENTRY(%sDispatcher) }",
@@ -780,11 +800,10 @@ long gen_header( char *destfile, struct list *classlist )
 	if (arg_includes[0])
 	{
 		char *nx, *p = arg_includes;
-		fprintf(fp, "/* These are user defined includes */\n");
 		do
 		{
 			if ((nx = strchr(p, ','))) *nx++ = 0;
-			fprintf(fp, "#include %s\n", p);
+			fprintf(fp, "#include \"%s\"\n", p);
 		}
 		while ((p = nx));
 	}
@@ -920,6 +939,11 @@ long gen_classheaders( struct list *classlist )
 			continue;
 		}
 		strncpy(buf, cn, 127); for (p = buf; *p; p++) *p = toupper(*p);
+
+    /* write the gpl to this class header also */
+  	gen_gpl(fp);
+	  fprintf(fp, "\n /* " EDIT_WARNING " */\n\n");
+
 		fprintf(fp,
 			"#ifndef %s_H\n"
 			"#define %s_H\n"
@@ -1068,17 +1092,28 @@ long doargs( int argc, char *argv[] )
 		success = 0;
 		printf("ERROR: You MUST provide a basename using the -b argument\n");
 	}
-	if (arg_mkfile[0])
-		if ((arg_mkfile_cc     = strchr(arg_mkfile,        ','))) *arg_mkfile_cc++     = 0;
-	if (arg_mkfile_cc)
-		if ((arg_mkfile_outarg = strchr(arg_mkfile_cc,     ','))) *arg_mkfile_outarg++ = 0;
-	if (arg_mkfile_outarg)
-		if ((arg_mkfile_ccopts = strchr(arg_mkfile_outarg, ','))) *arg_mkfile_ccopts++ = 0;
-	if (!arg_mkfile_cc)     arg_mkfile_cc     = "cc";
-	if (!arg_mkfile_outarg) arg_mkfile_outarg = "-o";
-	if (!arg_mkfile_ccopts) arg_mkfile_ccopts = "";
-	strncpy(arg_mkfile_dest,   arg_classdir, 255);
-	myaddpart(arg_mkfile_dest, arg_mkfile,   255);
+
+	if(arg_mkfile[0])
+  {
+		if((arg_mkfile_cc     = strchr(arg_mkfile,        ',')))  *arg_mkfile_cc++     = 0;
+
+	  if(arg_mkfile_cc)
+    {
+		  if((arg_mkfile_outarg = strchr(arg_mkfile_cc,     ','))) *arg_mkfile_outarg++ = 0;
+	  }
+
+    if(arg_mkfile_outarg)
+    {
+		  if ((arg_mkfile_ccopts = strchr(arg_mkfile_outarg, ','))) *arg_mkfile_ccopts++ = 0;
+    }
+
+	  if (!arg_mkfile_cc)     arg_mkfile_cc     = "cc";
+	  if (!arg_mkfile_outarg) arg_mkfile_outarg = "-o";
+	  if (!arg_mkfile_ccopts) arg_mkfile_ccopts = "";
+	  strncpy(arg_mkfile_dest,   arg_classdir, 255);
+	  myaddpart(arg_mkfile_dest, arg_mkfile,   255);
+  }
+
 	return success;
 }
 
@@ -1086,9 +1121,15 @@ int main( int argc, char *argv[] )
 {
 	struct node *n;
 	struct list classlist;
+
 	list_init(&classlist);
-    printf("GenClasses v%s by Andrew Bell\n\n", verstr);
+  printf("GenClasses v%s by Andrew Bell\n\n", verstr);
+
 	if (!doargs(argc, argv)) return 0;
+
+  /* get memory for the hash */
+  if(!(collision_cnts = calloc(BUCKET_CNT, sizeof(long)))) return 0;
+
 	if (scanclasses(arg_classdir, &classlist))
 	{
 		myaddpart(arg_classdir, SOURCE_NAME, 255);
