@@ -87,6 +87,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/MainMailList.o \
 	$(OBJDIR)/$(CLASSDIR)/MainWindow.o \
 	$(OBJDIR)/$(CLASSDIR)/InfoBar.o \
+	$(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
 	$(OBJDIR)/$(CLASSDIR)/YAM.o
 
 # and the other object files
@@ -304,6 +305,9 @@ $(OBJDIR)/all_gcc.o: all_gcc.c $(EXTRASRC)/astcsma.c $(EXTRASRC)/getft.c $(EXTRA
 	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/dice.c
 
 ## CLASS DEPENDENCIES #################
+
+$(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o: $(CLASSDIR)/WriteAttachmentList.c \
+	$(CLASSDIR)/WriteAttachmentList_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o: $(CLASSDIR)/MainFolderListtree.c \
 	$(CLASSDIR)/MainFolderListtree_cl.h

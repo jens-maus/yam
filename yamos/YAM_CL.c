@@ -70,7 +70,6 @@ struct BC_Data
 
 /*** Definitions ***/
 struct MUI_CustomClass *CL_BodyChunk    = NULL;
-struct MUI_CustomClass *CL_AttachList   = NULL;
 struct MUI_CustomClass *CL_PageList     = NULL;
 
 /// BC_Dispatcher (BodyChunk)
@@ -149,52 +148,6 @@ DISPATCHERPROTO(BC_Dispatcher)
          if (!useold && data->BCD) FreeBCImage(data->BCD);
       }
       break;
-   }
-   return DoSuperMethodA(cl, obj, msg);
-}
-
-///
-/// WL_Dispatcher (Attachment NList)
-/*** WL_Dispatcher (Attachment NList) - Subclass of NList, adds Drag&Drop from message list ***/
-DISPATCHERPROTO(WL_Dispatcher)
-{
-   struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-
-   switch (msg->MethodID)
-   {
-      case OM_NEW:
-         return (ULONG)DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
-      case MUIM_Setup:
-         if (!DoSuperMethodA(cl, obj, msg)) return FALSE;
-         MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-         return TRUE;
-      case MUIM_Cleanup:
-         MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-         break;
-      case MUIM_DragQuery:
-         if (d->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
-         break;
-      case MUIM_DragDrop:
-         if (d->obj == G->MA->GUI.NL_MAILS)
-         {
-            struct Attach attach;
-            struct Mail *mail;
-            int id = MUIV_NList_NextSelected_Start;
-            while (TRUE)
-            {
-               DoMethod(d->obj, MUIM_NList_NextSelected, &id); if (id == MUIV_NList_NextSelected_End) break;
-               DoMethod(d->obj, MUIM_NList_GetEntry, id, &mail);
-               memset(&attach, 0, sizeof(struct Attach));
-               GetMailFile(attach.FilePath, NULL, mail);
-               stccpy(attach.Description, mail->Subject, SIZE_DEFAULT);
-               strcpy(attach.ContentType, "message/rfc822");
-               attach.Size = mail->Size;
-               attach.IsMIME = TRUE;
-               DoMethod(obj, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
-            }
-            return 0;
-         }
-         break;
    }
    return DoSuperMethodA(cl, obj, msg);
 }
@@ -519,7 +472,6 @@ void ExitClasses(void)
 {
   if(CL_PageList)    { MUI_DeleteCustomClass(CL_PageList);     CL_PageList     = NULL; }
   if(CL_BodyChunk)   { MUI_DeleteCustomClass(CL_BodyChunk);    CL_BodyChunk    = NULL; }
-  if(CL_AttachList)  { MUI_DeleteCustomClass(CL_AttachList);   CL_AttachList   = NULL; }
 }
 
 ///
@@ -527,7 +479,6 @@ void ExitClasses(void)
 /*** InitClasses - Initialize custom MUI classes ***/
 BOOL InitClasses(void)
 {
-  if((CL_AttachList   = CreateMCC(MUIC_NList,     NULL, sizeof(struct DumData), ENTRY(WL_Dispatcher))))
   if((CL_BodyChunk    = CreateMCC(MUIC_Bodychunk, NULL, sizeof(struct BC_Data), ENTRY(BC_Dispatcher))))
   if((CL_PageList     = CreateMCC(MUIC_List,      NULL, sizeof(struct PL_Data), ENTRY(PL_Dispatcher))))
   {

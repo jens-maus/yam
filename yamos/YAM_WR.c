@@ -2350,7 +2350,7 @@ static struct WR_ClassData *WR_New(int winnum)
                   Child, NListviewObject,
                      MUIA_CycleChain, 1,
                      MUIA_Listview_DragType,  MUIV_Listview_DragType_Immediate,
-                     MUIA_NListview_NList,    data->GUI.LV_ATTACH = NewObject(CL_AttachList->mcc_Class,NULL,
+                     MUIA_NListview_NList,    data->GUI.LV_ATTACH = WriteAttachmentListObject,
                         InputListFrame,
                         MUIA_NList_ListBackground, MUII_ListBack,
                         MUIA_NList_TitleBackground, MUII_ListBack,

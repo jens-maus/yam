@@ -40,7 +40,6 @@ struct PL_Data
 #define MUIA_Bodychunk_File          0x80002501    // [I..]
 #define MUIA_Bodychunk_UseOld        0x80002502    // [I..]
 
-extern struct MUI_CustomClass *CL_AttachList;
 extern struct MUI_CustomClass *CL_BodyChunk;
 extern struct MUI_CustomClass *CL_PageList;
 
