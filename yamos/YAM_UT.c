@@ -519,7 +519,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     MUIA_Window_RefWindow,  parent,
     MUIA_Window_LeftEdge,   MUIV_Window_LeftEdge_Centered,
     MUIA_Window_TopEdge,    MUIV_Window_TopEdge_Centered,
-    MUIA_Window_ID,         MAKE_ID('A','R','E','Q'),
+//    MUIA_Window_ID,         MAKE_ID('A','R','E','Q'), // we don`t supply a windowID or otherwise the upper three attributes don`t work.
     WindowContents, VGroup,
       Child, LLabel(body),
         Child, lv_attach = NListviewObject,

@@ -7,6 +7,10 @@ $Source$
 
 2003-03-16  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c: omit the MUIA_Window_ID for the Attachment requester or
+      otherwise the refering window attributes like RefWindow don`t work
+      correctly and put the position of a attachment requester in relation
+      to the read window.
     * YAM_RE.c: fixed bug where a found PGP PUBLIC KEY BLOCK line was not
       displayed while viewing a mail.
 
