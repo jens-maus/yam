@@ -772,7 +772,6 @@ static void Initialise2(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 50);
 
    if(G->CO_AutoTranslateIn)	LoadParsers();
-
    if (!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
    {
       for (i = 0; i < 100; i++) if (oldfolders[i]) DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);
@@ -806,6 +805,17 @@ static void Initialise2(BOOL hidden)
       }
       else folder->LoadedMode = MA_LoadIndex(folder, FALSE);
 
+      // if this folder hasn`t got any own folder image in the folder
+      // directory and it is one of our standard folders we have to check which image we put in front of it
+      if(!folder->BC_FImage)
+      {
+        if(folder->Type == FT_INCOMING)      folder->ImageIndex = (folder->New+folder->Unread) ? 3 : 2;
+        else if(folder->Type == FT_OUTGOING) folder->ImageIndex = (folder->Total > 0) ? 5 : 4;
+        else if(folder->Type == FT_DELETED)  folder->ImageIndex = (folder->Total > 0) ? 7 : 6;
+        else if(folder->Type == FT_SENT)     folder->ImageIndex = 8;
+        else folder->ImageIndex = -1;
+      }
+
       // now we have to add the amount of mails of this folder to the foldergroup
       // aswell and also the grandparents.
       while((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
@@ -830,7 +840,10 @@ static void Initialise2(BOOL hidden)
 
       DoMethod(G->App, MUIM_Application_InputBuffered);
    }
-   MA_ChangeFolder(FO_GetFolderByType(FT_INCOMING, NULL), TRUE);
+
+   // Now we make sure that the InfoBar shows the correct data
+   DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, FO_GetCurrentFolder());
+
    AY_PrintStatus(GetStr(MSG_LoadingABook), 90);
    AB_LoadTree(G->AB_Filename, FALSE, FALSE);
    if(!(G->RexxHost = SetupARexxHost("YAM", NULL)))

@@ -182,9 +182,6 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
       SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
    }
 
-   // Update the Folder information in the InfoBar
-   DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_RefreshText);
-
    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
 }
 MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
@@ -1583,7 +1580,7 @@ HOOKPROTONHNO(MA_ApplyRulesFunc, void, int *arg)
       MA_FreeRules(search, scnt);
    }
    set(lv, MUIA_NList_Quiet, FALSE); G->AppIconQuiet = FALSE;
-   DisplayStatistics(NULL, TRUE);
+   if(mode != APPLY_AUTO) DisplayStatistics(NULL, TRUE);
 
    if (G->RRs.Checked && mode == APPLY_USER)
    {

@@ -429,8 +429,6 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
 
   if(!actfo) return;
 
-  set(gui->NL_MAILS, MUIA_ShortHelp, NULL);
-
   if(!folder) folder = actfo;
   else if(actfo == folder) return;
   else if(set_active) FO_SetCurrentFolder(folder);
@@ -438,7 +436,10 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
   // if this folder should be disabled, lets do it now
   if(folder->Type == FT_GROUP || MA_GetIndex(folder) == NULL)
   {
-    set(gui->NL_MAILS, MUIA_Disabled, TRUE);
+    SetAttrs(gui->NL_MAILS, MUIA_Disabled, TRUE,
+                            MUIA_ShortHelp, NULL,
+                            TAG_DONE);
+
     DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
   }
   else
@@ -1035,34 +1036,17 @@ HOOKPROTONHNO(MA_LV_FDspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 
         default:
         {
-          BOOL new_mail = FALSE;
-
-          // check if there is new mail
-          if(entry->New+entry->Unread) new_mail = TRUE;
-
-          if (!entry->BC_FImage)
-          {
-            if(entry->Type == FT_INCOMING)      entry->ImageIndex = new_mail ? 3 : 2;
-            else if(entry->Type == FT_OUTGOING) entry->ImageIndex = (entry->Total > 0) ? 5 : 4;
-            else if(entry->Type == FT_DELETED)  entry->ImageIndex = (entry->Total > 0)? 7 : 6;
-            else if(entry->Type == FT_SENT)     entry->ImageIndex = 8;
-            else
-            {
-              strcpy(msg->Array[0] = dispfold, " ");
-              entry->ImageIndex = -1;
-            }
-          }
-
           if(entry->ImageIndex >= 0) sprintf(msg->Array[0] = dispfold, "\033o[%d] ", entry->ImageIndex);
+          else strcpy(msg->Array[0] = dispfold, " ");
 
-          if (strlen(entry->Name) > 0) strcat(dispfold, entry->Name);
+          if (entry->Name[0]) strcat(dispfold, entry->Name);
           else sprintf(dispfold, "(%s)", FilePart(entry->Path));
 
           if(isCryptedFolder(entry)) sprintf(dispfold, "%s \033o[%d]", dispfold, MAXBCSTDIMAGES);
 
           if (entry->LoadedMode)
           {
-            if (new_mail) msg->Preparse[0] = MUIX_PH;
+            if(entry->New+entry->Unread) msg->Preparse[0] = MUIX_PH;
             if(C->FolderCols & (1<<1)) sprintf(msg->Array[1] = disptot, "%d", entry->Total);
             if(C->FolderCols & (1<<2)) sprintf(msg->Array[2] = dispunr, "%d", entry->Unread);
             if(C->FolderCols & (1<<3)) sprintf(msg->Array[3] = dispnew, "%d", entry->New);

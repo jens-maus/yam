@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-07-16  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM.c, YAM_MA.c, YAM_MAf.c, YAM_TR.c, YAM_UT.c,
+      classes/InfoBar.c: fixed bug #557910 where the status
+      icon of the infobar wasn`t in sync with the one in the
+      folder listtree. Now they both should always show the
+      same icon depending on the status.
+      Please note that this fix could lead to additional
+      flickering within the Listtree, which is a NList.mcc
+      bug that is fixed within version 20.107+.
+
 2002-07-11  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_TR.c: added some general flags for the ->Status

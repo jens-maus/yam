@@ -3442,10 +3442,22 @@ void DisplayStatistics(struct Folder *fo, BOOL updateAppIcon)
       }
    }
 
+   // if this folder hasn`t got any own folder image in the folder
+   // directory and it is one of our standard folders we have to check which image we put in front of it
+   if (!fo->BC_FImage)
+   {
+      if(fo->Type == FT_INCOMING)      fo->ImageIndex = (fo->New+fo->Unread) ? 3 : 2;
+      else if(fo->Type == FT_OUTGOING) fo->ImageIndex = (fo->Total > 0) ? 5 : 4;
+      else if(fo->Type == FT_DELETED)  fo->ImageIndex = (fo->Total > 0) ? 7 : 6;
+      else if(fo->Type == FT_SENT)     fo->ImageIndex = 8;
+      else fo->ImageIndex = -1;
+   }
+
    if (fo == actfo)
    {
       CallHookPkt(&MA_SetMessageInfoHook, 0, 0);
       CallHookPkt(&MA_SetFolderInfoHook, 0, 0);
+      DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
    }
 
    // Recalc the number of messages of the folder group

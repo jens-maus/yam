@@ -1708,7 +1708,6 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 {
    struct Mail *mail;
    static int laststats;
-   static int msgsInCurrentFolder;
    int msgs, pop = singlepop;
 
    if (isfirst) /* Init first connection */
@@ -1724,7 +1723,6 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       if (singlepop >= 0) G->TR->SinglePOP = TRUE;
       else G->TR->POP_Nr = -1;
       laststats = 0;
-      msgsInCurrentFolder = FO_GetCurrentFolder()->Total;
    }
    else /* Finish previous connection */
    {
@@ -1746,15 +1744,28 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       MA_FreeRules(G->TR->Search, G->TR->Scnt);
       MA_StartMacro(MACRO_POSTGET, itoa((int)G->TR->Stats.Downloaded));
 
-      DoMethod(G->App, MUIM_CallHook, &MA_ApplyRulesHook, APPLY_AUTO, 0, FALSE);
-
-      // Now we jump to the first new mail we received if the number of messages has changed
-      // after the mail transfer
-      if(C->JumpToIncoming && msgsInCurrentFolder < FO_GetCurrentFolder()->Total) MA_JumpToNewMsg();
-
+      // tell the appicon that we are finished with checking mail
+      // the apply rules or DisplayAppIconStatistics() function will refresh it later on
       G->TR->Checking = FALSE;
-      DisplayStatistics((struct Folder *)-1, TRUE);
-      TR_NewMailAlert();
+
+      // we only apply the filters if we downloaded something, or it`s wasted
+      if(G->TR->Stats.Downloaded > 0)
+      {
+        DoMethod(G->App, MUIM_CallHook, &MA_ApplyRulesHook, APPLY_AUTO, 0, FALSE);
+
+        // Now we jump to the first new mail we received if the number of messages has changed
+        // after the mail transfer
+        if(C->JumpToIncoming) MA_JumpToNewMsg();
+
+        // only call the DisplayStatistics() function if the actual folder wasn`t already the INCOMING
+        // one or we would hav refreshed it twice
+        if(FO_GetCurrentFolder()->Type != FT_INCOMING) DisplayStatistics((struct Folder *)-1, TRUE);
+        else DisplayAppIconStatistics();
+
+        TR_NewMailAlert();
+      }
+      else DisplayAppIconStatistics();
+
       MA_ChangeTransfer(TRUE);
 
       DisposeModulePush(&G->TR);

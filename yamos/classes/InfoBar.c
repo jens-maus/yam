@@ -40,6 +40,7 @@ struct Data
 	Object *GA_GROUP;
 	Object *GA_INFO;
 	Object *GA_LABEL;
+	struct BodyChunkData *actualImage;
 	struct Folder *actualFolder;
 };
 */
@@ -101,19 +102,22 @@ OVERLOAD(OM_NEW)
 		MUIA_Background,    MUII_TextBack,
 		MUIA_Group_Horiz,   TRUE,
 		Child, HGroup,
+			InnerSpacing(0,0),
 			Child, folderString = TextObject,
-				MUIA_HorizWeight,   0,
+				MUIA_HorizWeight, 	0,
 				MUIA_Font,          MUIV_Font_Big,
+				MUIA_Text_SetMax,   FALSE,
 				MUIA_Text_PreParse, "\033b",
 			End,
-
 			Child, folderInfoStr = TextObject,
 				MUIA_Font,          MUIV_Font_Tiny,
+				MUIA_Text_SetMax,   FALSE,
 				MUIA_Text_PreParse, "\033l",
 			End,
 		End,
-
+			
 		Child, gaugeLabel = TextObject,
+			MUIA_Text_SetMax,   FALSE,
 			MUIA_Text_PreParse, "\033r",
 		End,
 
@@ -125,6 +129,7 @@ OVERLOAD(OM_NEW)
 				MUIA_Gauge_InfoText, " ",
 			End,
 			Child, infoText = TextObject,
+				MUIA_Text_SetMax,   FALSE,
 				MUIA_Text_PreParse, "\033r",
 			End,
 		End,
@@ -160,66 +165,64 @@ DECLARE(SetFolder) // struct Folder *newFolder
 
 	if(!folder) return -1;
 
-	// set the name of the folder as the info text
-	set(data->TX_FOLDER, MUIA_Text_Contents, folder->Name);
-
-	// now we are going to set some status field at the right side of the folder name
-	set(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(folder));
-
-	// Prepare the GR_INFO group for adding a new child
+	// prepare the object for a change
 	if(DoMethod(obj, MUIM_Group_InitChange))
 	{
-		if(data->BC_INFO)
+		// set the name of the folder as the info text
+		nnset(data->TX_FOLDER, MUIA_Text_Contents, folder->Name);
+
+		// now we are going to set some status field at the right side of the folder name
+		nnset(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(folder));
+
+		// lets see which image we should display
+		if(folder->FImage) 								bcd = folder->FImage;
+		else if(folder->ImageIndex >= 0)	bcd = G->BImage[folder->ImageIndex+(MAXIMAGES-MAXBCSTDIMAGES)];
+		else bcd = NULL;
+
+		// only if the image should be changed we proceed or otherwise
+		// MUI will refresh too often
+		if(data->actualImage != bcd)
 		{
-			DoMethod(obj, OM_REMMEMBER, data->BC_INFO);
-			MUI_DisposeObject(data->BC_INFO);
-			data->BC_INFO = NULL;
+			// now we check wheter we have to remove the old bodychunkobject first
+			if(data->BC_INFO)
+			{
+				DoMethod(obj, OM_REMMEMBER, data->BC_INFO);
+				MUI_DisposeObject(data->BC_INFO);
+				data->BC_INFO = NULL;
+			}
+
+			// and if we have a new one we generate the object an add it
+			// to the grouplist of this infobar
+			if(bcd)
+			{
+				data->BC_INFO = BodychunkObject,
+					InnerSpacing(0,0),
+					MUIA_FixWidth,             bcd->Width,
+					MUIA_FixHeight,            bcd->Height,
+					MUIA_Bitmap_Width,         bcd->Width,
+					MUIA_Bitmap_Height,        bcd->Height,
+					MUIA_Bitmap_SourceColors,  bcd->Colors,
+					MUIA_Bodychunk_Depth,      bcd->Depth,
+					MUIA_Bodychunk_Body,       bcd->Body,
+					MUIA_Bodychunk_Compression,bcd->Compression,
+					MUIA_Bodychunk_Masking,    bcd->Masking,
+					MUIA_Bitmap_Transparent,   0,
+				End;
+
+				if(data->BC_INFO)
+				{
+					DoMethod(obj, OM_ADDMEMBER, data->BC_INFO);
+				}
+			}
 		}
 
-		if(folder->FImage)
-			bcd = folder->FImage;
-		else if(folder->ImageIndex >= 0)
-			bcd = G->BImage[folder->ImageIndex+(MAXIMAGES-MAXBCSTDIMAGES)];
-
-		if(bcd)
-		{
-			data->BC_INFO = BodychunkObject,
-				MUIA_FixWidth,             bcd->Width,
-				MUIA_FixHeight,            bcd->Height,
-				MUIA_Bitmap_Width,         bcd->Width,
-				MUIA_Bitmap_Height,        bcd->Height,
-				MUIA_Bitmap_SourceColors,  bcd->Colors,
-				MUIA_Bodychunk_Depth,      bcd->Depth,
-				MUIA_Bodychunk_Body,       bcd->Body,
-				MUIA_Bodychunk_Compression,bcd->Compression,
-				MUIA_Bodychunk_Masking,    bcd->Masking,
-				MUIA_Bitmap_Transparent,   0,
-				MUIA_InnerBottom,          0,
-				MUIA_InnerLeft,            0,
-				MUIA_InnerRight,           0,
-				MUIA_InnerTop,             0,
-			End;
-
-			if(data->BC_INFO) DoMethod(obj, OM_ADDMEMBER, data->BC_INFO);
-		}
-
+		// now that we are finished we can call ExitChange to refresh the infobar
 		DoMethod(obj, MUIM_Group_ExitChange);
 	}
 
-	return 0;
-}
-///
-/// DECLARE(RefreshText)
-/* refreshes the text at the right of the folder name */
-DECLARE(RefreshText)
-{
-	GETDATA;
-
-	// set the name of the folder as the info text
-	set(data->TX_FOLDER, MUIA_Text_Contents, data->actualFolder->Name);
-
-	// now we are going to set some status field at the right side of the folder name
-	set(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(data->actualFolder));
+	// and lets point the instancedata to our new image
+	// so that we can check later if we should really update it or not.
+	data->actualImage = bcd;
 
 	return 0;
 }
@@ -234,7 +237,7 @@ DECLARE(ShowGauge) // STRPTR gaugeText, LONG perc, LONG max
 
 	if(msg->gaugeText != NULL)
 	{
-		set(data->GA_LABEL, MUIA_Text_Contents, msg->gaugeText);
+		nnset(data->GA_LABEL, MUIA_Text_Contents, msg->gaugeText);
 
 		sprintf(infoText, "%%ld/%ld", msg->max);
 
@@ -261,15 +264,15 @@ DECLARE(ShowInfoText) // STRPTR infoText
 {
 	GETDATA;
 
-	set(data->GA_GROUP, MUIA_Group_ActivePage, 2);
+	nnset(data->GA_GROUP, MUIA_Group_ActivePage, 2);
 
 	if(msg->infoText != NULL)
 	{
-		set(data->TX_INFO, MUIA_Text_Contents, msg->infoText);
+		nnset(data->TX_INFO, MUIA_Text_Contents, msg->infoText);
 	}
 	else
 	{
-		set(data->TX_INFO, MUIA_Text_Contents, " ");
+		nnset(data->TX_INFO, MUIA_Text_Contents, " ");
 	}
 
 	return TRUE;
