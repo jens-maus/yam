@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (30.03.2003)
+@$VER: YAM.guide 2.4 (03.04.2003)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -31,11 +31,6 @@
 **  TO DO...
 **
 ** - Explain the NListtree tricks for the folder list
-** - Give real life examples of how to use the Mailing list support
-**   settings. For the best results, this will have to wait for both
-**   YAM and the guide to be extended for every configuration item
-**   (or group of items) to have a separated node in the documentation,
-**   a la Miami
 ** - Explain how to get the most of Message preselection
 ** - Explain how to use "Avoid duplicates" properly
 ** - More detailed info about which MUI settings affect what part of YAM
@@ -170,13 +165,13 @@ Features of YAM
 
 * Context-sensitive online Help using help bubbles and AmigaGuide.
 
-* Provision for up to 16 different @{" Users " link "US_W"}, who can each have their
+* Provision for up to 16 different @{" users " link "US_W"}, who can each have their
   own folders and define their own preferences.
 
 * Any number of @{" user-defined folders " link "FO_W"}, which can be compressed and/or
   have passwords set, and be arranged in groups.
 
-* Hierarchical @{" Address book " link "AB_W"} with groups and distribution lists as
+* Hierarchical @{" address book " link "AB_W"} with groups and distribution lists as
   well as comprehensive descriptions for each entry.
 
 * Freely customisable interface, thanks to @{" MUI " link "MUI"}.
@@ -2224,23 +2219,23 @@ Configuration - Security
      Example:  Anon-to: %s
 
 
----- Logfiles ------------------------------------------------------------
+---- Log files -----------------------------------------------------------
 
-@{b}Logfile path@{ub}
-     YAM will save the logfiles to the path specified here.  The
-     format of logfiles is explained in the @{" Reference " link "RFLO"} chapter.
+@{b}Log file path@{ub}
+     YAM will save the log files to the path specified here.  The
+     format of log files is explained in the @{" Reference " link "RFLO"} chapter.
 
 
-@{b}Split logfile@{ub}
-     Switch this option on if you want YAM to create a new logfile each
+@{b}Split log file@{ub}
+     Switch this option on if you want YAM to create a new log file each
      month.  To distinguish the different files that will be created,
-     YAM includes the date in the logfile name, e.g. YAM-Jan98.log.
-     If you'd like one big single logfile, just leave this option
+     YAM includes the date in the log file name, e.g. YAM-Jan98.log.
+     If you'd like one big single log file, just leave this option
      deactivated.
 
 
 @{b}Mode@{ub}
-     If you are not interested in having logfiles at all, select
+     If you are not interested in having log files at all, select
      'none'.  Select 'normal' to have only the important events like
      receiving/sending mail recorded.  In 'verbose' mode, YAM will log
      every transferred e-mail in detail.
@@ -2927,10 +2922,12 @@ whatever way you like, including arranging them in groups.
    The folder list can have up to five columns: Name of the folder,
 number of messages (in total, new or unread) as well as the size of
 the folder.  Which of these columns are actually shown depends on how
-you set up @{" Lists " link "CO08"} in the configuration.  The column widths can be
-adjusted by using the mouse to drag the thin lines separating the
-column headings in the folder list itself.  The order of the columns
-can be modified by moving the column headers.
+you set up @{" lists " link "CO08"} in the configuration; you can also use the context
+menu (click RMB on the column headings) to have some columns temporary
+enabled or disabled.  The column widths can be adjusted by using the
+mouse to drag the thin lines separating the column headings in the
+folder list itself.  The order of the columns can be modified by
+dragging the column headings sideways.
 
    The folders themselves can be rearranged by @{" Drag&Drop " link "Drag"}.
 
@@ -2970,7 +2967,9 @@ Main window - message list
 
 
    The message list can have up to eight columns, the contents being
-set in the @{" Lists " link "CO08"} configuration.
+set in the @{" lists " link "CO08"} configuration.  You can also use the context menu
+(click RMB on the column headings) to have some columns temporary enabled
+or disabled.
 
 @{b}Message status@{ub}
      An icon showing the @{" status " link "MA0S"} of the message (new, unread, read,
@@ -3011,7 +3010,8 @@ set in the @{" Lists " link "CO08"} configuration.
 
    The column widths can be adjusted by using the mouse to drag the
 thin lines separating the column headings in the message list itself.
-The order of the columns can be modified by moving the column headers.
+The order of the columns can be modified by dragging the column headings
+sideways.
 
    A little arrow in the one of the column headings shows how the
 messages are sorted.  One click on a column heading causes the messages
@@ -5811,7 +5811,7 @@ ADDRGOTO
 --------
 
 @{b}NAME@{ub}
-     AddrGoto -- Change the current entry in the address book.  (V2.0)
+     AddrGoto -- Set the current entry in the address book.  (V2.0)
 
 @{b}TEMPLATE@{ub}
      ALIAS/A
@@ -7484,7 +7484,7 @@ MAILINFO
      was specified.  This was fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
-     @{"SETFLAG " link "RX_SETFLAG"}
+     @{" SETFLAG " link "RX_SETFLAG"}
 
 @endnode
 
@@ -9435,6 +9435,7 @@ old.info@{ub}
      new.info       the mailbox has at least one new message
      old.info       the mailbox only holds "old" mail
      
+
 @{b}#?.toolbar@{ub}
      These are the images used to build the toolbars in the Main, Read,
      Write and Address book windows.  Those named "#?_G.toolbar" are the
@@ -9458,6 +9459,9 @@ old.info@{ub}
      with the "_new" suffix are used automatically whenever there is new
      or unread mail in the folder.
 
+     The "folder_fold" and "folder_unfold" images are special: they are
+     used as the icon for folder groups.
+
      A ".fimage" picture file in a folder overrides the default image.
 
      All of them should be no larger than 16*16 pixels.
@@ -9473,14 +9477,15 @@ Reference - Misc file formats
 =============================
 
 
- @{" The .addressbook file " link "RFAB"}
- @{" The .emailcache file  " link "RFCA"}
- @{" The .folders file     " link "RFFO"}
- @{" The .glossary file    " link "RFGL"}
- @{" The .uidl file        " link "RFUI"}
- @{" The .users file       " link "RFUS"}
- @{" The charsets files    " link "RFCH"}
- @{" The log file          " link "RFLO"}
+ @{" The .addressbook file " link "RFAB"}  - Format of the ".addressbook" file
+ @{" The .emailcache file  " link "RFCA"}  - Format of the ".emailcache" file
+ @{" The .fconfig file     " link "RFFC"}  - Format of the ".fconfig" files
+ @{" The .folders file     " link "RFFO"}  - Format of the ".folders" file
+ @{" The .glossary file    " link "RFGL"}  - Format of the ".glossary" file
+ @{" The .uidl file        " link "RFUI"}  - Format of the ".uidl" file
+ @{" The .users file       " link "RFUS"}  - Format of the ".users" file
+ @{" The charsets files    " link "RFCH"}  - Format of the charset conversion tables
+ @{" The log file          " link "RFLO"}  - Format of the log files
 
 @endnode
 
@@ -9542,7 +9547,7 @@ added to it.
 @endnode
 
 @node "RFCA" "The .emailcache file"
-@next "RFFO"
+@next "RFFC"
 @prev "RFAB"
 @toc "RF05"
 
@@ -9564,9 +9569,98 @@ still have priority over the cache, though.
 
 @endnode
 
+@node "RFFC" "The .fconfig file"
+@next "RFFO"
+@prev "RFCA"
+@toc "RF05"
+
+The .fconfig file
+-----------------
+
+   This plain text file exists in every folder and stores the settings
+used therein, using this format:
+
+
+    YFC1 - YAM Folder Configuration
+    Name        = folder_name
+    MaxAge      = age
+    Password    = password
+    Type        = folder_type
+    XPKType     = type_number
+    Sort1       = primary_sort
+    Sort2       = secondary_sort
+    Stats       = Y|N
+    MLSupport   = Y|N
+    MLFromAddr  = MLFrom_address
+    MLRepToAddr = MLRepTo_address
+    MLPattern   = ML_pattern
+    MLAddress   = ML_address
+    MLSignature = signature_number
+
+
+where
+
+   - @{b}Name@{ub} is the name of the folder, as it appears in the folder list
+
+   - @{b}MaxAge@{ub} is the number of days the messages in the folder will be kept
+     before removing them automatically, where 0 disables this feature
+     (see @{" Configuration/Start/Quit " link "CO10"})
+
+   - @{b}Password@{ub} is the encoded counterpart of the password used to protect
+     this folder, if any
+
+   - @{b}Type@{ub} is a number indicating which type this folder is (should be
+     usually 0 for user folders - see the documentation for the @{" FOLDERINFO " link "RX_FOLDERINFO"}
+     command)
+
+   - @{b}XPKType@{ub} refers to the XPK mode used in the folder:
+
+        0 = none
+        1 = simple protection (password)
+        2 = compressed
+        3 = compressed with password
+
+   - @{b}Sort1@{ub} refers to the primary sort criterion used in the folder,
+     in negative form if the sort is reversed:
+
+        1 = Message date
+        2 = Date received
+        3 = Sender
+        4 = Recipient
+        5 = Subject
+        6 = Size
+        7 = Status
+
+   - @{b}Sort2@{ub} is just the same as primary_sort, but referred to the
+     secondary sort criterion
+
+   - @{b}Stats@{ub} may be either Y or N depending on the status of the
+     "AppIcon stats" flag
+
+   - @{b}MLSupport@{ub} may be either Y or N depending on the status of the
+     "Mailing list support" flag
+
+   - @{b}MLFromAddr@{ub} shows the contents of the "From: address" field
+
+   - @{b}MLRepToAddr@{ub} shows the contents of the "Reply-To: address" field
+
+   - @{b}MLPattern@{ub} shows the contents of the "To: pattern" field
+
+   - @{b}MLAddress@{ub} shows the contents of the "To: address" field
+
+   - @{b}MLSignature@{ub} refers to the default signature to be used when posting
+     messages to this mailing list:
+
+        0 = none
+        1 = default signature, i.e. YAM:.signature
+        2 = alt. signature #1
+        3 = alt. signature #2
+
+@endnode
+
 @node "RFFO" "The .folders file"
 @next "RFGL"
-@prev "RFCA"
+@prev "RFFC"
 @toc "RF05"
 
 The .folders file
@@ -9639,7 +9733,7 @@ The .uidl file
 
    If "Avoid duplicates" is enabled in @{" Configuration/New mail " link "CO02"}, YAM
 will use the UIDL POP3 command when connecting to your POP3 server to
-request a Unique ID Listing of the messages in your mail account.
+request an @{b}U@{ub}nique @{b}ID@{ub} @{b}L@{ub}isting of the messages in your mail account.
 The POP3 server is responsible for assigning an unique ID to every
 message and put it into a "X-UIDL:" header.
 
@@ -9694,6 +9788,7 @@ unless maybe you are @{" moving YAM " link "TIP2"} to another place in your hard
         6th line:   @ENDUSER
    further lines:   next user definition, up to 16 maximum.
 
+
    where "number" is a value defining the status of this user combining
 the following set of elements:
 
@@ -9730,6 +9825,7 @@ table is set up as follows:
                     (optional) HEADER
                     Old character=New character
 
+
    Characters can be defined either in hexadecimal code with a '$'
 character in front, or using the actual characters.  Therefore, both
 "$E5=$61" and "å=a" are valid character definitions.
@@ -9747,14 +9843,14 @@ the message headers.
 The log file
 ------------
 
-   The logfile used by YAM is an ASCII file storing one event per line.
+   The log file used by YAM is an ASCII file storing one event per line.
 Each line is saved in this format:
 
 DD-MMM-YY HH:MM [code] Event description
 
    where @{b}code@{ub} is a two digit number and "Event description" is obviously
 the event description, possibly localized.  Therefore, any computer-assisted
-software meant to analyze the logfile data should refer to the code of the
+software meant to analyze the log file data should refer to the code of the
 event.
 
    Events out of the 30<->49 range will only be printed if "Log all events"
@@ -9765,8 +9861,10 @@ is enabled in the @{" Security options " link "CO09"}.
 
  0 - YAM started
  1 - Logged in as user 'user_name'
- 2 - Logged in as 'user_name', using configuration 'config_file' and mail directory 'folder_path'
-10 - Wrote new message for 'recipient' about 'subject', including n attachment(s)
+ 2 - Logged in as 'user_name', using configuration 'config_file' and
+     mail directory 'folder_path'
+10 - Wrote new message for 'recipient' about 'subject', including n
+     attachment(s)
 11 - Replied message from 'sender' about 'subject'
 12 - Forwarded message from 'sender' about 'subject' to 'recipient'
 13 - Bounced message from 'sender' about 'subject' to 'recipient'
@@ -9774,9 +9872,11 @@ is enabled in the @{" Security options " link "CO09"}.
 20 - Deleted n message(s) in folder 'folder'
 21 - Deleted message from 'sender' about 'subject' in folder 'folder'
 22 - Moved n message(s) from folder 'folder' to 'folder'
-23 - Moved message from 'sender' about 'subject' from folder 'folder' to 'folder'
+23 - Moved message from 'sender' about 'subject' from folder 'folder'
+     to 'folder'
 24 - Copied n message(s) from folder 'folder' to 'folder'
-25 - Copied message from 'sender' about 'subject' from folder 'folder' to 'folder'
+25 - Copied message from 'sender' about 'subject' from folder 'folder'
+     to 'folder'
 26 - Filtered n message(s) in folder 'folder': n match(es)
 30 - Retrieved n message(s) from POP3 account 'user_id@host'
 31 - Logged in on POP3 account 'user_id@host': n messages waiting
@@ -9792,7 +9892,8 @@ is enabled in the @{" Security options " link "CO09"}.
 71 - Added address book entry 'alias'
 80 - Saved attachment 'filename' of message 'mailfile' in folder 'folder'
 81 - Cropped attachment(s) of message 'mailfile' in folder 'folder'
-82 - Changed subject 'subject' of message 'mailfile' in folder 'folder' to 'subject'
+82 - Changed subject 'subject' of message 'mailfile' in folder 'folder'
+     to 'subject'
 99 - YAM terminated
 
 @endnode
@@ -9810,12 +9911,13 @@ Tips & tricks
  @{" Avoiding context menus from getting on your way " link "TIP1"}
  @{" Moving YAM to another partition or directory    " link "TIP2"}
  @{" Avoiding excessive disk trashing on startup     " link "TIP3"}
+ @{" Using Mailing list support settings properly    " link "TIP4"}
 
 @endnode
 
 @node "TIP0" "Snapshotting the window positions and sizes"
 @next "TIP1"
-@prev "TIP3"
+@prev "TIP4"
 @toc "TIPS"
 
 Snapshotting the window positions and sizes
@@ -9891,7 +9993,7 @@ be a safe operation now.
 @endnode
 
 @node "TIP3" "Avoiding excessive disk trashing on startup"
-@next "TIP0"
+@next "TIP4"
 @prev "TIP2"
 @toc "TIPS"
 
@@ -9919,6 +10021,80 @@ which can indeed take a long time.
 
      - A faulty filesystem, not updating a directory datestamp whenever
        its contents change.
+
+@endnode
+
+@node "TIP4" "Using Mailing list support settings properly"
+@next "TIP0"
+@prev "TIP3"
+@toc "TIPS"
+
+Using Mailing list support settings properly
+--------------------------------------------
+
+   YAM offers a set of settings meant to support mailing lists that
+do not set the "Reply-To:" field correctly or require some sort of
+special handling.  As of V2.4, the default signature selection is
+also part of these settings.
+
+   First and foremost, enter the mailing list address as a pattern in
+the @{b}To: pattern@{ub} field, e.g. "#?mylist@example.net#?" (without the quotes,
+of course).  This way, these settings will be used whenever you start
+a new message or reply to an already existing message while this is
+the current folder.
+
+   Let's see a few examples that demonstrate how you can use these
+settings to your advantage.
+
+
+   a) You want to use an alternate signature when posting to a certain
+      mailing list.
+
+   Just select the desired signature using the bottom gadget.  New messages
+   started while this is the current folder will always use this signature,
+   even if signatures are disabled in @{" Configuration/Signature " link "CO07"}.
+
+   For replies to use this signature no matter which folder is currently
+   selected, you need to fill the next gadget with the address to the
+   mailing list.
+
+
+   b) The mailing list server does not set a "Reply-To:" address and thus
+      my replies end up being sent to the original sender.
+
+   Just enter the mailing list address in the @{b}To: address@{ub} field.  This way
+   all the replies will be sent here by default, no matter which folder
+   is actually selected; a private reply can still be forced with
+   <Shift> + [Reply].
+
+   New messages started while this is the current folder will also be sent
+   here by default.
+
+   Please note that the stock phrases used in these messages are taken from
+   @{" Configuration/Reply/Mailing list reply phrase " link "CO06"}.
+
+
+   c) I need to email additional recipients when posting to a certain
+      mailing list.
+
+   Just add them to the contents of the @{b}To: address@{ub} field, and all of them
+   will be put in the "To:" address of your message as well.  This way
+   it is very easy to keep other people up to date on something, as it
+   is sometimes needed when posting to certain development-orientated
+   mailing lists.
+
+
+   d) I want to use a specific "From:" and/or "Reply-To:" address when
+      posting to a certain mailing list.
+
+   Just enter those addresses in the @{b}From: address@{ub} and @{b}Reply-To: address@{ub}
+   fields, respectively.  These addresses will be used automatically on
+   replies to messages where the "To:" address matches the @{b}To: pattern@{ub},
+   and in new messages started while this is the current folder.
+
+   Please note that only one address can be entered into these fields.
+   Also, some mail servers refuse to transmit messages apparently not
+   originating from within their own domain.
 
 @endnode
 
@@ -10592,6 +10768,9 @@ or for administrating mailing lists.
      search for similarities between strings.  This should make it
      easier to find the correct mailing list pattern.
 
+     Examples on how to use the mailing list support settings are given
+     in the @{" Tips & tricks " link "TIP4"} chapter.
+
 
 @{b}Signature@{ub}
      Here you can select the signature that will be used by default when
@@ -10757,7 +10936,7 @@ or for administrating mailing lists.
    @{" Limit, Message size " link "CO02"}
    @{" List of all ARexx commands " link "REXX"}
    @{" LISTSELECT, ARexx command " link "RX_LISTSELECT"}
-   @{" Logfiles, Using " link "CO09"}
+   @{" Log files, Using " link "CO09"}
 
    M...
 
@@ -10776,7 +10955,8 @@ or for administrating mailing lists.
    @{" MAILFORWARD, ARexx command " link "RX_MAILFORWARD"}
    @{" MAILIMPORT, ARexx command " link "RX_MAILIMPORT"}
    @{" MAILINFO, ARexx command " link "RX_MAILINFO"}
-   @{" Mailing lists " link "INF1"}
+   @{" Mailing list support settings, Examples " link "TIP4"}
+   @{" Mailing lists, Support " link "INF1"}
    @{" MAILMOVE, ARexx command " link "RX_MAILMOVE"}
    @{" MAILREAD, ARexx command " link "RX_MAILREAD"}
    @{" MAILREPLY, ARexx command " link "RX_MAILREPLY"}
