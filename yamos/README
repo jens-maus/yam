@@ -56,7 +56,8 @@ located at http://yamos.sourceforge.net/
 
 
 Marcel Beck
-November 2000
+November, 2000
+
 
 Introduction
 ============
@@ -85,19 +86,20 @@ to time when the classes are updated):
 Rules
 =====
 
-- Parts of YAM are being rewritten to archieve a more modular, object-
-  oriented design. Doing this transition two different styles are used
-  throughout the project. In the classes directory you'll find the new
-  sources. Read the StyleGuide before making changes to these files or
-  adding new classes - especially the paragraph about tabs. Remember:
-  Follow the style! The old sources use a tab setting of 3, but use
-  spaces instead of real tabs. Follow the style!
+- Parts of YAM are being rewritten to achieve a more modular, object-
+  oriented design; during this transition, two different styles are used
+  throughout the project. In the "classes" directory you'll find the new
+  sources. Read the "StyleGuide.ReadMe" file before making changes to
+  these files or adding new classes - especially the paragraph about tabs.
 
-- Before doing any major or questionable changes, bring it up on the
-  YAMos-dev mailing list. Don't make any changes based on personal
+  Remember:  Follow the style! The old sources use a tab setting of 3, but
+  you must use spaces instead of real tabs. Follow the style!
+
+- Before doing any major or questionable change, bring it up on the
+  YAMos-dev mailing list. Don't make any change based on personal
   preferences without discussing it first. Remember that you are not the
-  only one using YAM, and other developers may disagree with your ideas
+  only one using YAM, and other developers may disagree with your ideas.
 
 
 YAM Open Source Team
-December 2001
+December, 2001
