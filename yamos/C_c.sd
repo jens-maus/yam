@@ -4,39 +4,35 @@
    This file was created automatically by `FlexCat V1.3'
 ****************************************************************/
 
-#include <clib/locale_protos.h>
+#include <proto/locale.h>
 
-static long %b_Version = %v;
-static const STRPTR %b_BuiltInLanguage = (STRPTR)%l;
 struct FC_Type { long ID; char * Str; };
+
 const struct FC_Type _%i = { %d, %s };
+
 static struct Catalog *%b_Catalog = NULL;
 
-void Open%bCatalog(void)
+char *GetStr(APTR fcstr)
 {
-	extern struct Library *LocaleBase;
-	extern void Close%bCatalog(void);
+  char *defaultstr = ((struct FC_Type *)fcstr)->Str;
 
-	if (LocaleBase && !%b_Catalog)
-  	{
-     	%b_Catalog = OpenCatalog(NULL, (STRPTR)"%b.catalog", OC_BuiltInLanguage, %b_BuiltInLanguage,
-      	OC_Version, %b_Version, TAG_DONE);
-	}
+  if (LocaleBase)
+    return (char *)GetCatalogStr(%b_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
+  return defaultstr;
 }
 
 void Close%bCatalog(void)
 {
-	extern struct Library *LocaleBase;
-  	if (LocaleBase) CloseCatalog(%b_Catalog);
-  	%b_Catalog = NULL;
+  if (LocaleBase) CloseCatalog(%b_Catalog);
+  %b_Catalog = NULL;
 }
 
-char *GetStr(APTR fcstr)
+void Open%bCatalog(void)
 {
-   char *defaultstr;
-   int strnum;
+  static const Tag tags[] = {
+    OC_BuiltInLanguage,(Tag)%l, OC_Version,%v, TAG_DONE
+  };
 
-   strnum = ((struct FC_Type *)fcstr)->ID;
-   defaultstr = ((struct FC_Type *)fcstr)->Str;
-   return %b_Catalog ? (char *)GetCatalogStr(%b_Catalog, strnum, (STRPTR)defaultstr) : defaultstr;
+  if (LocaleBase && !%b_Catalog)
+    %b_Catalog = OpenCatalogA(NULL, "%b.catalog", (struct TagItem *)tags);
 }
