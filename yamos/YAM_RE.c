@@ -487,49 +487,60 @@ void RE_DisplayMIME(char *fname, char *ctype)
     }
   }
 
+  // if the MIME part is an rfc822 conform email attachment we
+  // try to open it as a virtual mail in another read window.
   if(!mv && !stricmp(ctype, "message/rfc822"))
   {
-    struct Mail *mail;
-    struct ExtendedMail *email;
-    struct TempFile *tf = OpenTempFile(NULL);
-    CopyFile(tf->Filename, NULL, fname, NULL);
+    struct TempFile *tf;
 
-    if((email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
+    if((tf = OpenTempFile(NULL)))
     {
-      struct ReadMailData *rmData;
+      struct ExtendedMail *email;
 
-      mail = calloc(1, sizeof(struct Mail));
-      if(!mail)
-        return;
-
-      memcpy(mail, &(email->Mail), sizeof(struct Mail));
-      mail->Next      = NULL;
-      mail->Reference = NULL;
-      mail->Folder    = NULL;
-      mail->UIDL      = NULL;
-      mail->sflags    = SFLAG_READ; // this sets the mail as OLD
-      SET_FLAG(mail->mflags, MFLAG_NOFOLDER);
-
-      MA_FreeEMailStruct(email);
-
-      if((rmData = CreateReadWindow(TRUE)))
+      // copy the contents of our message file into the
+      // temporary file.
+      if(CopyFile(tf->Filename, NULL, fname, NULL) &&
+         (email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
       {
-        rmData->tempFile = tf;
+        struct Mail *mail;
+        struct ReadMailData *rmData;
 
-        // make sure it is opened correctly and then read in a mail
-        if(SafeOpenWindow(rmData->readWindow) == FALSE ||
-           DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail) == FALSE)
+        mail = calloc(1, sizeof(struct Mail));
+        if(!mail)
+          return;
+
+        memcpy(mail, &(email->Mail), sizeof(struct Mail));
+        mail->Next      = NULL;
+        mail->Reference = NULL;
+        mail->Folder    = NULL;
+        mail->UIDL      = NULL;
+        mail->sflags    = SFLAG_READ; // this sets the mail as OLD
+        SET_FLAG(mail->mflags, MFLAG_NOFOLDER);
+
+        MA_FreeEMailStruct(email);
+
+        // create the read read window now
+        if((rmData = CreateReadWindow(TRUE)))
         {
-          // on any error we make sure to delete the read window
-          // immediatly again.
-          CleanupReadMailData(rmData, TRUE);
+          rmData->tempFile = tf;
+
+          // make sure it is opened correctly and then read in a mail
+          if(SafeOpenWindow(rmData->readWindow) == FALSE ||
+             DoMethod(rmData->readWindow, MUIM_ReadWindow_ReadMail, mail) == FALSE)
+          {
+            // on any error we make sure to delete the read window
+            // immediatly again.
+            CleanupReadMailData(rmData, TRUE);
+          }
+        }
+        else
+        {
+          CloseTempFile(tf);
+          free(mail);
         }
       }
       else
-      {
         CloseTempFile(tf);
-        free(mail);
-      }
     }
   }
   else
@@ -1947,6 +1958,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
   struct Mail *mail = rmData->mail;
   struct Folder *folder = mail->Folder;
   struct Part *part;
+  BOOL result = FALSE;
 
   BusyText(GetStr(MSG_BusyReading), "");
 
@@ -1991,10 +2003,13 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
         strcpy(part->Filename, tmpFile);
       }
     }
+
+    if(i > 0)
+      result = TRUE;
   }
 
   BusyEnd();
-  return TRUE;
+  return result;
 }
 
 ///
@@ -2848,14 +2863,14 @@ void FreePrivateRMData(struct ReadMailData *rmData)
 ///
 /// CleanupReadMailData()
 // cleans/deletes all data of a readmaildata structure
-BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
+BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
 {
   struct Part *part;
   struct Part *next;
 
-  DB(kprintf("CleanupReadMailData(): %lx %ld\n", rmData, windowCleanup);)
+  DB(kprintf("CleanupReadMailData(): %lx %ld\n", rmData, fullCleanup);)
 
-  if(windowCleanup && rmData->readWindow)
+  if(fullCleanup && rmData->readWindow)
   {
     // make sure the window is really closed
     nnset(rmData->readWindow, MUIA_Window_Open, FALSE);
@@ -2897,39 +2912,43 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL windowCleanup)
   }
   rmData->firstPart = NULL;
 
-  // now we have to check whether there is a .unp (unpack) file and delete
-  // it acoordingly (we can`t use the FinishUnpack() function because the
-  // window still refers to the file which will be prevent the deletion.
-  if(strstr(rmData->readFile, ".unp"))
-    DeleteFile(rmData->readFile);
-
-  // close any opened temporary file
-  if(rmData->tempFile)
-  {
-    CloseTempFile(rmData->tempFile);
-    rmData->tempFile = NULL;
-  }
-
-  // if the rmData carries a virtual mail we have to clear it
-  // aswell
-  if(rmData->mail &&
-     isVirtualMail(rmData->mail))
-  {
-    free(rmData->mail);
-    rmData->mail = NULL;
-  }
-
   // now clear some flags and stuff so that others may have a clean readmaildata
   // structure
   rmData->signedFlags = 0;
   rmData->encryptionFlags = 0;
   rmData->hasPGPKey = 0;
 
-  // clean up the read window now
-  if(windowCleanup && rmData->readWindow)
+  // if the caller wants to cleanup everything tidy we do it here or exit immediatly
+  if(fullCleanup)
   {
-    DoMethod(G->App, OM_REMMEMBER, rmData->readWindow);
-    MUI_DisposeObject(rmData->readWindow);
+    // now we have to check whether there is a .unp (unpack) file and delete
+    // it acoordingly (we can`t use the FinishUnpack() function because the
+    // window still refers to the file which will be prevent the deletion.
+    if(strstr(rmData->readFile, ".unp"))
+      DeleteFile(rmData->readFile);
+
+    // close any opened temporary file
+    if(rmData->tempFile)
+    {
+      CloseTempFile(rmData->tempFile);
+      rmData->tempFile = NULL;
+    }
+
+    // if the rmData carries a virtual mail we have to clear it
+    // aswell
+    if(rmData->mail &&
+       isVirtualMail(rmData->mail))
+    {
+      free(rmData->mail);
+      rmData->mail = NULL;
+    }
+
+    // clean up the read window now
+    if(rmData->readWindow)
+    {
+      DoMethod(G->App, OM_REMMEMBER, rmData->readWindow);
+      MUI_DisposeObject(rmData->readWindow);
+    }
   }
 
   return TRUE;
