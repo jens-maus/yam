@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-21  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c, YAM_MA.c: changed buffer allocation
+      constants to use the LEN_DATSTRING defined symbol
+      for better clarifications in those sections.
+
 2002-10-18  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_COg.c: fixed bug #624953 where YAM did provide

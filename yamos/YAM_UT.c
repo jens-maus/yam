@@ -1914,8 +1914,8 @@ char *TimeVal2String(const struct timeval *tv, enum DateStampType mode)
 //  Converts a datestamp to a string
 char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
 {
-   static char resstr[32];
-   char datestr[16], timestr[16], daystr[16];
+   static char resstr[2*LEN_DATSTRING]; // the maximum length for this should be 32 bytes
+   char datestr[LEN_DATSTRING], timestr[LEN_DATSTRING], daystr[LEN_DATSTRING];
    struct DateTime dt;
    struct DateStamp dsnow;
 
@@ -1926,9 +1926,9 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
    dt.dat_Stamp   = *date;
    dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
    dt.dat_Flags   = 0; // perhaps later we can add Weekday substitution
-   dt.dat_StrDate = (STRPTR)datestr;
-   dt.dat_StrTime = (STRPTR)timestr;
-   dt.dat_StrDay  = (STRPTR)daystr;
+   dt.dat_StrDate = datestr;
+   dt.dat_StrTime = timestr;
+   dt.dat_StrDay  = daystr;
 
    // lets convert the DateStamp now to a string
    if(DateToStr(&dt) == FALSE) return NULL;
@@ -1991,7 +1991,7 @@ char *DateStamp2String(struct DateStamp *date, enum DateStampType mode)
 // Converts a datestamp to a numeric value
 long DateStamp2Long(struct DateStamp *date)
 {
-   char *s, datestr[16];
+   char *s, datestr[LEN_DATSTRING];
    struct DateStamp dsnow;
    struct DateTime dt;
    int y;
@@ -2000,8 +2000,10 @@ long DateStamp2Long(struct DateStamp *date)
    memset(&dt, 0, sizeof(struct DateTime));
    dt.dat_Stamp   = *date;
    dt.dat_Format  = FORMAT_USA;
-   dt.dat_StrDate = (STRPTR)datestr;
-   DateToStr(&dt); s = Trim(datestr);
+   dt.dat_StrDate = datestr;
+
+   DateToStr(&dt);
+   s = Trim(datestr);
 
    // get the year
    y = atoi(&s[6]);
