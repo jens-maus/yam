@@ -678,3 +678,12 @@
     * smakefile reflects the correct dependencies now. Please addapt this for
       other makefiles as well.
 
+2001-06-18  Giles Burdett <layabouts@the-giant-sofa.demon.co.uk>
+
+    * Added file dependencies listed in smakefile to Makefile, Makefile.m68k-AmigaOS and
+      Makefile.m68k-AmigaOS-ixemul.
+    * Added GNUC section to YAM_global.c to handle stack stuff - it is an empty section
+      because GCC supports neither __stack nor __buffsize, but this empty define should
+      really stay so that this fact is recorded instead of leading others to think that
+      GCC support has not been considered.
+
