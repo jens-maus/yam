@@ -32,3 +32,17 @@ extern struct UtilityBase *UtilityBase ;
 extern struct Library * UtilityBase;
     to:
 extern struct UtilityBase * UtilityBase;
+
+
+Required changes to compile YAM 2.3-dev with DICE
+-------------------------------------------------
+DINCLUDE:proto/timer.h:
+extern struct Library *TimerBase; -> extern struct Device *TimerBase;
+DINCLUDE:proto/rexxsyslib.h:
+extern struct Library *RexxSysBase; -> extern struct RxsLib * RexxSysBase;
+
+Required changes to compile YAM 2.3-dev with NDK 3.5 includes (StormC 3.0)
+--------------------------------------------------------------------------
+proto/utility.h:
+extern struct Library * UtilityBase; -> extern struct UtilityBase * UtilityBase;
+
