@@ -5429,3 +5429,20 @@ MSG_HELP_MA_CY_DEFSECURITY
 Vorwahl für die Sicherheitseinstellungen\n\
 bei neuen Mails an diese Person
 ;
+MSG_WR_DefSecurityConflict
+Für die einzelnen Empfänger dieser Nachricht sind unterschiedliche\n\
+Sicherheitsstufen voreingestellt. Welche Einstellung möchten Sie verwenden?
+;The recipients of this mail have different default\n\
+;security settings. What kind of security do you want?
+;
+MSG_WR_DefSecurityConflictGads
+*_Keine|_Signieren|_Verschlüsseln|_Beides|_Anonym senden
+;*_None|_Sign|_Encrypt|_Both|Send _anonymously
+;
+MSG_WR_CH_UseDefSecurity
+Voreinstellungen versuchen
+;
+MSG_HELP_WR_CH_UseDefSecurity
+Versuche die Voreinstellungen aus dem\n\
+Adressbuch zu verwenden
+;
