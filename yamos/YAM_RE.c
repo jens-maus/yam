@@ -80,9 +80,6 @@
 #define hasPGPSAddressFlag(v)  (isFlagSet((v)->PGPSigned, PGPS_ADDRESS))
 #define hasPGPSCheckedFlag(v)  (isFlagSet((v)->PGPSigned, PGPS_CHECKED))
 
-// translation table convert macros
-#define RE_CharIn(c, tt) (((tt) && (tt)->Header) ? (tt)->Table[(UBYTE)(c)] : (c))
-
 /* local protos */
 static BOOL RE_LoadMessage(int winnum, int parsemode);
 static struct RE_ClassData *RE_New(int winnum, BOOL real);
