@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2003 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -1129,7 +1129,7 @@ BOOL WriteOutMessage(struct Compose *comp)
    if (hasReturnRcptFlag(comp)) EmitHeader(fh, "Return-Receipt-To", rcptto);
    if (hasMDNRcptFlag(comp)) EmitHeader(fh, "Disposition-Notification-To", rcptto);
    if (comp->Importance) EmitHeader(fh, "Importance", comp->Importance == 1 ? "High" : "Low");
-   fprintf(fh, "X-Mailer: %s AmigaOS E-mail Client (c) 2000-2002 by YAM Open Source Team - http://www.yam.ch/\n", yamversion);
+   fprintf(fh, "X-Mailer: %s AmigaOS E-mail Client (c) 2000-2003 by YAM Open Source Team - http://www.yam.ch/\n", yamversion);
    if (comp->UserInfo) WR_WriteUserInfo(fh, comp->From);
    if (*C->Organization) EmitHeader(fh, "Organization", C->Organization);
    if (*comp->Subject) EmitHeader(fh, "Subject", comp->Subject);
@@ -1516,11 +1516,10 @@ MakeStaticHook(WR_SaveAsHook, WR_SaveAsFunc);
 /*** WR_Edit - Launches external editor with message text ***/
 HOOKPROTONHNO(WR_Edit, void, int *arg)
 {
-   int winnum = *arg;
-   long winopen;
-
    if (*(C->Editor))
    {
+      int winnum = *arg;
+      long winopen;
       char buffer[SIZE_COMMAND+SIZE_PATHFILE];
 
       get(G->WR[winnum]->GUI.WI, MUIA_Window_Open, &winopen);
@@ -1741,9 +1740,7 @@ static char *WR_TransformText(char *source, enum TransformMode mode, char *qtext
 HOOKPROTONHNO(WR_InsertSeparatorFunc, void, int *arg)
 {
    APTR ed = G->WR[arg[1]]->GUI.TE_EDIT;
-   set(ed, MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain);
    DoMethod(ed, MUIM_TextEditor_InsertText, arg[0] ? "\n\033c\033[s:18]\n" : "\n\033c\033[s:2]\n");
-   set(ed, MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_EMail);
 }
 MakeStaticHook(WR_InsertSeparatorHook, WR_InsertSeparatorFunc);
 
@@ -2228,7 +2225,7 @@ static struct WR_ClassData *WR_New(int winnum)
                         MUIA_TextEditor_FixedFont, C->FixedFontEdit,
                         MUIA_TextEditor_WrapBorder, C->EdWrapMode == 1 ? C->EdWrapCol : 0,
                         MUIA_TextEditor_ExportWrap, C->EdWrapMode == 2 ? C->EdWrapCol : 0,
-                        MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_EMail,
+                        MUIA_TextEditor_ImportHook, MUIV_TextEditor_ImportHook_Plain,
                         MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_EMail,
                         MUIA_CycleChain, TRUE,
                      End,
