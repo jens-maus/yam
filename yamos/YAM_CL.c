@@ -393,6 +393,31 @@ ULONG SAVEDS ASM TE_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 {
    switch (msg->MethodID)
    {
+      case MUIM_DragQuery:
+      {
+         struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
+         return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADRESSES);
+      }
+      case MUIM_DragDrop:
+      {
+         struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
+         if (drop_msg->obj == G->AB->GUI.LV_ADRESSES)
+         {
+            struct MUIS_Listtree_TreeNode *tn;
+            if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(drop_msg->obj, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0))
+            {
+               struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
+               if (ab->Type != AET_GROUP)
+               {
+                  char *adr = AllocStrBuf(SIZE_DEFAULT);
+                  WR_ResolveName(-1, ab->Alias, &adr, FALSE);
+                  DoMethod(obj, MUIM_TextEditor_InsertText, adr, MUIV_TextEditor_InsertText_Cursor);
+                  FreeStrBuf(adr);
+               }
+            }
+         }
+         break;
+      }
       case MUIM_TextEditor_HandleError:
       {
          char *errortxt = NULL;
@@ -418,31 +443,6 @@ ULONG SAVEDS ASM TE_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
       {
          if (G->EdColMap[6] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[6]);
          if (G->EdColMap[7] >= 0) MUI_ReleasePen(muiRenderInfo(obj), G->EdColMap[7]);
-         break;
-      }
-      case MUIM_DragQuery:
-      {
-         struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-         return (ULONG)(drop_msg->obj == G->AB->GUI.LV_ADRESSES);
-      }
-      case MUIM_DragDrop:
-      {
-         struct MUIP_DragDrop *drop_msg = (struct MUIP_DragDrop *)msg;
-         if (drop_msg->obj == G->AB->GUI.LV_ADRESSES)
-         {
-            struct MUIS_Listtree_TreeNode *tn;
-            if (tn = (struct MUIS_Listtree_TreeNode *)DoMethod(drop_msg->obj, MUIM_Listtree_GetEntry, MUIV_Listtree_GetEntry_ListNode_Active, MUIV_Listtree_GetEntry_Position_Active, 0))
-            {
-               struct ABEntry *ab = (struct ABEntry *)(tn->tn_User);
-               if (ab->Type != AET_GROUP)
-               {
-                  char *adr = AllocStrBuf(SIZE_DEFAULT);
-                  WR_ResolveName(-1, ab->Alias, &adr, FALSE);
-                  DoMethod(obj, MUIM_TextEditor_InsertText, adr, MUIV_TextEditor_InsertText_Cursor);
-                  FreeStrBuf(adr);
-               }
-            }
-         }
          break;
       }
    }
