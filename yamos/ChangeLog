@@ -7,6 +7,9 @@ $Source$
 
 2003-11-16  Jens Langner <Jens.Langner@light-speed.de>
 
+    * Recipientstring.c: fixed a possible enforcer hit on recipient
+      string not having attached a FromString or ReplyTo string and
+      were a recipient list had been inserted.
     * Recipientstring.c: changed the OM_DISPOSE method to be a
       MUIM_Cleanup method instead. This is necessary because the used
       macro _app(obj) is per definition only allowed within the context

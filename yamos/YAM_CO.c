@@ -250,6 +250,8 @@ HOOKPROTONHNONP(CO_PutRUEntry, void)
    struct CO_GUIData *gui = &G->CO->GUI;
    char *tx;
 
+   kprintf("CO_PutRUEntry\n");
+
    DoMethod(gui->LV_RULES, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &rule);
    if (rule)
    {
@@ -275,6 +277,7 @@ HOOKPROTONHNONP(CO_PutRUEntry, void)
       GetMUIString(rule->ReplyFile , gui->ST_ARESPONSE);
       GetMUIString(rule->ExecuteCmd, gui->ST_AEXECUTE);
       GetMUIString(rule->PlaySound,  gui->ST_APLAY);
+      DB(kprintf("str: [%s]\n", rule->BounceTo);)
       get(gui->TX_MOVETO, MUIA_Text_Contents, &tx); strcpy(rule->MoveTo, tx);
       for (i = 0; i < 2; i++)
       {

@@ -487,8 +487,11 @@ DECLARE(Resolve) // ULONG flags
 								DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
 								free(members);
 
-								if(entry->RealName[0])	set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
-								if(entry->Address[0])	set(data->ReplyTo, MUIA_String_Contents, entry->Address);
+								if(data->From && entry->RealName[0])
+									set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
+
+								if(data->ReplyTo && entry->Address[0])
+									set(data->ReplyTo, MUIA_String_Contents, entry->Address);
 
 								list_expansion = TRUE;
 							}
