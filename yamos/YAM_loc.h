@@ -2611,6 +2611,10 @@ extern const APTR _MSG_FO_FromAddress;
 #define MSG_FO_FromAddress ((APTR) &_MSG_FO_FromAddress)
 extern const APTR _MSG_HELP_FO_ST_MLFROMADDRESS;
 #define MSG_HELP_FO_ST_MLFROMADDRESS ((APTR) &_MSG_HELP_FO_ST_MLFROMADDRESS)
+extern const APTR _MSG_FO_ReplyToAddress;
+#define MSG_FO_ReplyToAddress ((APTR) &_MSG_FO_ReplyToAddress)
+extern const APTR _MSG_HELP_FO_ST_MLREPLYTOADDRESS;
+#define MSG_HELP_FO_ST_MLREPLYTOADDRESS ((APTR) &_MSG_HELP_FO_ST_MLREPLYTOADDRESS)
 extern const APTR _MSG_RE_MDNGads4;
 #define MSG_RE_MDNGads4 ((APTR) &_MSG_RE_MDNGads4)
 

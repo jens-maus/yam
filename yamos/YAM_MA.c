@@ -665,7 +665,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
    struct Folder **flist, *folder;
    FILE *out;
    char *mlistad = NULL, buffer[SIZE_LARGE];
-   char *cmsg, *rfrom = NULL, *rto = NULL, *rcc = NULL, *rsub = NULL, *domain, *tofld;
+   char *cmsg, *rfrom = NULL, *rrepto = NULL, *rto = NULL, *rcc = NULL, *rsub = NULL;
+   char *domain, *tofld;
 
    if (CO_IsValid()) if ((winnum = WR_Open(quiet ? 2 : -1, FALSE)) >= 0)
    {
@@ -704,7 +705,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
                   {
                      for (i = 1; i <= (int)*flist; i++) if (flist[i]->MLPattern[0]) if (MatchNoCase(tofld, flist[i]->MLPattern)) {
                         mlistad = flist[i]->MLAddress[0] ? flist[i]->MLAddress : tofld;
-                        if (flist[i]->MLFromAddress[0]) rfrom = flist[i]->MLFromAddress;
+                        if (flist[i]->MLFromAddress[0])    rfrom  = flist[i]->MLFromAddress;
+                        if (flist[i]->MLReplyToAddress[0]) rrepto = flist[i]->MLReplyToAddress;
                         break;
                      }
                      free(flist);
@@ -712,7 +714,8 @@ int MA_NewReply(struct Mail **mlist, int flags)
                }
                else if (folder->MLPattern[0]) if (MatchNoCase(tofld, folder->MLPattern)) {
                   mlistad = folder->MLAddress[0] ? folder->MLAddress : tofld;
-                  if (folder->MLFromAddress[0]) rfrom = folder->MLFromAddress;
+                  if (folder->MLFromAddress[0])    rfrom  = folder->MLFromAddress;
+                  if (folder->MLReplyToAddress[0]) rrepto = folder->MLReplyToAddress;
                }
             }
             if (mlistad && !(flags & (NEWF_REP_PRIVATE|NEWF_REP_MLIST)))
@@ -777,8 +780,9 @@ cont_repl:  etd.R_Name = repto->RealName;
          WR_AddSignature(G->WR_Filename[winnum], -1);
 
          /* If this is a reply to a mail belonging to a mailing list,
-            set the "From:" address accordingly */
-         if (rfrom) setstring(wr->GUI.ST_FROM, rfrom);
+            set the "From:" and "Reply-To:" addresses accordingly */
+         if (rfrom)  setstring(wr->GUI.ST_FROM,    rfrom);
+         if (rrepto) setstring(wr->GUI.ST_REPLYTO, rrepto);
 
          setstring(wr->GUI.ST_TO, rto);
          setstring(*rto ? wr->GUI.ST_CC : wr->GUI.ST_TO, rcc);
@@ -790,7 +794,9 @@ cont_repl:  etd.R_Name = repto->RealName;
       } else doabort = TRUE;
   }
    if (winnum >= 0 && !quiet) return MA_CheckWriteWindow(winnum);
+
 abort_repl:
+
    if (doabort) DisposeModulePush(&G->WR[winnum]);
    FreeStrBuf(rto);
    FreeStrBuf(rcc);
