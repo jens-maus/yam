@@ -500,7 +500,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 		
 			if(rmData->senderInfoMode != SIM_OFF)
 			{
-				if(rmData->senderInfoMode != SIM_PHOTO)
+				if(rmData->senderInfoMode != SIM_IMAGE)
 				{
 					if(hits == 1 || ab->Type == AET_LIST)
 					{
@@ -557,7 +557,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 					}
 				}
 
-				if((rmData->senderInfoMode == SIM_ALL || rmData->senderInfoMode == SIM_PHOTO) &&
+				if((rmData->senderInfoMode == SIM_ALL || rmData->senderInfoMode == SIM_IMAGE) &&
 					 DoMethod(data->senderImageGroup, MUIM_Group_InitChange))
 				{
 					char photopath[SIZE_PATHFILE];
@@ -592,7 +592,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 				}
 			}
 			set(data->senderImageGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL ||
-																							  rmData->senderInfoMode == SIM_PHOTO) &&
+																								rmData->senderInfoMode == SIM_IMAGE) &&
 																							 (data->senderImage != NULL));
 			
 			// enable the headerList again

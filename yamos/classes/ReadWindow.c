@@ -79,7 +79,7 @@ OVERLOAD(OM_NEW)
 		RMEN_CHSUBJ,RMEN_PREV,RMEN_NEXT,RMEN_URPREV,RMEN_URNEXT,RMEN_PREVTH,RMEN_NEXTTH,
 		RMEN_EXTKEY,RMEN_CHKSIG,RMEN_SAVEDEC,
 		RMEN_HNONE,RMEN_HSHORT,RMEN_HFULL,RMEN_SNONE,RMEN_SDATA,RMEN_SFULL,RMEN_WRAPH,RMEN_TSTYLE,RMEN_FFONT,
-		RMEN_SPHOTO
+		RMEN_SIMAGE
 	};
 
 	// Our static Toolbar description field
@@ -201,7 +201,7 @@ OVERLOAD(OM_NEW)
 				MenuChild, MenuitemCheck(GetStr(MSG_RE_NoSInfo), 		"3", C->ShowSenderInfo==SIM_OFF, 	 FALSE, 0xE0, RMEN_SNONE),
 				MenuChild, MenuitemCheck(GetStr(MSG_RE_SInfo), 	 		"4", C->ShowSenderInfo==SIM_DATA,	 FALSE, 0xD0, RMEN_SDATA),
 				MenuChild, MenuitemCheck(GetStr(MSG_RE_SInfoImage), "5", C->ShowSenderInfo==SIM_ALL, 	 FALSE, 0x90, RMEN_SFULL),
-				MenuChild, MenuitemCheck(GetStr(MSG_RE_SImageOnly), "6", C->ShowSenderInfo==SIM_PHOTO, FALSE, 0x70, RMEN_SPHOTO),
+				MenuChild, MenuitemCheck(GetStr(MSG_RE_SImageOnly),	"6", C->ShowSenderInfo==SIM_IMAGE, FALSE, 0x70, RMEN_SIMAGE),
 				MenuChild, MenuBarLabel,
 				MenuChild, data->MI_WRAPH = MenuitemCheck(GetStr(MSG_RE_WrapHeader), "H", C->WrapHeader, TRUE, 0, RMEN_WRAPH),
 				MenuChild, data->MI_TSTYLE = MenuitemCheck(GetStr(MSG_RE_Textstyles), "T", C->UseTextstyles, TRUE, 0, RMEN_TSTYLE),
@@ -328,7 +328,7 @@ OVERLOAD(OM_NEW)
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SNONE,		obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_OFF);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SDATA,		obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_DATA);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SFULL,		obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_ALL);
-		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SPHOTO,		obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_PHOTO);
+		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_SIMAGE,		obj, 2, MUIM_ReadWindow_ChangeSenderInfoMode, SIM_IMAGE);
 		DoMethod(obj,	MUIM_Notify, MUIA_Window_MenuAction, RMEN_WRAPH,		obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_TSTYLE,		obj, 1, MUIM_ReadWindow_StyleOptionsChanged);
 		DoMethod(obj, MUIM_Notify, MUIA_Window_MenuAction, RMEN_FFONT,		obj, 1, MUIM_ReadWindow_StyleOptionsChanged);

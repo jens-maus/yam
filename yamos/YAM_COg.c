@@ -949,7 +949,7 @@ APTR CO_Page4(struct CO_ClassData *data)
    siopt[0] = GetStr(MSG_CO_SINone);
    siopt[1] = GetStr(MSG_CO_SIFields);
    siopt[2] = GetStr(MSG_CO_SIAll);
-   siopt[3] = GetStr(MSG_CO_SIPhoto);
+   siopt[3] = GetStr(MSG_CO_SImageOnly);
    siopt[4] = NULL;
    slopt[0] = GetStr(MSG_CO_SLBlank);
    slopt[1] = GetStr(MSG_CO_SLDash);
