@@ -24,6 +24,15 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL STACKEXT BOOL AB_FindTodaysBirthdates(struct MUIS_Listtree_TreeNode*, long);
+LOCAL STACKEXT void AB_SaveTreeNode(FILE*, struct MUIS_Listtree_TreeNode *);
+LOCAL void AB_PrintField(FILE*, char*, char*);
+LOCAL void AB_PrintShortEntry(FILE*, struct ABEntry*);
+LOCAL void AB_PrintLongEntry(FILE*, struct ABEntry*);
+LOCAL STACKEXT void AB_PrintLevel(struct MUIS_Listtree_TreeNode*, FILE*, int);
+
+
 /***************************************************************************
  Module: Address book
 ***************************************************************************/
@@ -41,6 +50,7 @@ APTR AB_GotoEntry(char *alias)
    }
    return tn;
 }
+
 ///
 /// AB_ExpandBD
 //  Converts date from numeric into textual format
@@ -51,6 +61,7 @@ char *AB_ExpandBD(long date)
    sprintf(datestr, "%02d-%s-%ld", date/1000000, months[((date/10000)%100)-1], date%10000);
    return datestr;
 }
+
 ///
 /// AB_CompressBD
 //  Connverts date from textual into numeric format
@@ -63,10 +74,11 @@ long AB_CompressBD(char *datestr)
    if ((y = atoi(&datestr[7])) < 1800 || y > 2100) return 0;
    return (100*d+m)*10000+y;
 }
+
 ///
 /// AB_FindTodaysBirthdates (rec)
 //  Recursively searches the address book for a given birth date
-STACKEXT BOOL AB_FindTodaysBirthdates(struct MUIS_Listtree_TreeNode *list, long today)
+LOCAL STACKEXT BOOL AB_FindTodaysBirthdates(struct MUIS_Listtree_TreeNode *list, long today)
 {
    struct MUIS_Listtree_TreeNode *tn;
    int wrwin, i;
@@ -96,6 +108,7 @@ STACKEXT BOOL AB_FindTodaysBirthdates(struct MUIS_Listtree_TreeNode *list, long 
       else break;
    return TRUE;
 }
+
 ///
 /// AB_CheckBirthdates
 //  Searches address book for todays birth days
@@ -104,6 +117,7 @@ void AB_CheckBirthdates(void)
    long today = DateStamp2Long(NULL);
    AB_FindTodaysBirthdates(MUIV_Lt_GetEntry_ListNode_Root, today);
 }
+
 ///
 /// AB_SearchEntry (rec)
 //  Recursively searches the address book by alias, name or address
@@ -142,6 +156,7 @@ STACKEXT int AB_SearchEntry(struct MUIS_Listtree_TreeNode *list, char *text, int
       else break;
    return *hits;
 }
+
 ///
 /// AB_CompleteAlias
 //  Auto-completes alias or name in recipient field
@@ -159,6 +174,7 @@ char *AB_CompleteAlias(char *text)
    }
    if (compl) return &compl[strlen(text)]; else return NULL;
 }
+
 ///
 /// AB_InsertAddress
 //  Adds a new recipient to a recipient field
@@ -189,6 +205,7 @@ void AB_InsertAddress(APTR string, char *alias, char *name, char *address)
       }
    }
 }
+
 ///
 /// AB_FromAddrBook
 //  Inserts an address book entry into a recipient string
@@ -220,6 +237,7 @@ SAVEDS ASM void AB_FromAddrBook(REG(a1) ULONG *arg)
    }
 }
 MakeHook(AB_FromAddrBookHook, AB_FromAddrBook);
+
 ///
 /// AB_LoadTree
 //  Loads the address book from a file
@@ -331,10 +349,11 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
    else return False;
    return True;
 }
+
 ///
 /// AB_SaveTreeNode (rec)
 //  Recursively saves an address book node
-STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUIS_Listtree_TreeNode *list)
+LOCAL STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUIS_Listtree_TreeNode *list)
 {
    struct MUIS_Listtree_TreeNode *tn;
    struct ABEntry *ab;
@@ -359,6 +378,7 @@ STACKEXT void AB_SaveTreeNode(FILE *fh, struct MUIS_Listtree_TreeNode *list)
       }
       else break;
 }
+
 ///
 /// AB_SaveTree
 //  Saves the address book to a file
@@ -377,6 +397,7 @@ BOOL AB_SaveTree(char *fname)
    ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
    return FALSE;
 }
+
 ///
 /// AB_DoubleClick
 //  User double-clicked in the address book
@@ -420,6 +441,7 @@ SAVEDS ASM void AB_Sort(REG(a1) int *arg)
    }
 }
 MakeHook(AB_SortHook, AB_Sort);
+
 ///
 /// AB_NewABookFunc
 //  Clears entire address book
@@ -429,6 +451,7 @@ SAVEDS void AB_NewABookFunc(void)
    G->AB->Modified = FALSE;
 }
 MakeHook(AB_NewABookHook, AB_NewABookFunc);
+
 ///
 /// AB_OpenABookFunc
 //  Loads selected address book
@@ -441,6 +464,7 @@ SAVEDS void AB_OpenABookFunc(void)
    }
 }
 MakeHook(AB_OpenABookHook, AB_OpenABookFunc);
+
 ///
 /// AB_AppendABookFunc
 //  Appends selected address book
@@ -454,6 +478,7 @@ SAVEDS void AB_AppendABookFunc(void)
    }
 }
 MakeHook(AB_AppendABookHook, AB_AppendABookFunc);
+
 ///
 /// AB_SaveABookFunc
 //  Saves address book using the default name
@@ -465,6 +490,7 @@ SAVEDS void AB_SaveABookFunc(void)
    BusyEnd;
 }
 MakeHook(AB_SaveABookHook, AB_SaveABookFunc);
+
 ///
 /// AB_SaveABookAsFunc
 //  Saves address book under a different name
@@ -477,27 +503,30 @@ SAVEDS void AB_SaveABookAsFunc(void)
    }
 }
 MakeHook(AB_SaveABookAsHook, AB_SaveABookAsFunc);
+
 ///
 /// AB_PrintField
 //  Formats and prints a single field
-void AB_PrintField(FILE *prt, char *fieldname, char *field)
+LOCAL void AB_PrintField(FILE *prt, char *fieldname, char *field)
 {
-   char *format = "%-20.20s: %-50.50s\n";
+const char *format = "%-20.20s: %-50.50s\n";
    if (*field) fprintf(prt, format, StripUnderscore(fieldname), field);
 }
+
 ///
 /// AB_PrintShortEntry
 //  Prints an address book entry in compact format
-void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab)
+LOCAL void AB_PrintShortEntry(FILE *prt, struct ABEntry *ab)
 {
    char types[3] = { 'P','L','G' };
    fprintf(prt, "%c %-12.12s %-20.20s %-36.36s\n", types[ab->Type-AET_USER],
       ab->Alias, ab->RealName, ab->Type == AET_USER ? ab->Address : ab->Comment);
 }
+
 ///
 /// AB_PrintLongEntry
 //  Prints an address book entry in detailed format
-void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
+LOCAL void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
 {
    fputs("------------------------------------------------------------------------\n", prt);
    switch (ab->Type)
@@ -542,7 +571,7 @@ void AB_PrintLongEntry(FILE *prt, struct ABEntry *ab)
 ///
 /// AB_PrintLevel (rec)
 //  Recursively prints an address book node
-STACKEXT void AB_PrintLevel(struct MUIS_Listtree_TreeNode *list, FILE *prt, int mode)
+LOCAL STACKEXT void AB_PrintLevel(struct MUIS_Listtree_TreeNode *list, FILE *prt, int mode)
 {
    struct MUIS_Listtree_TreeNode *tn;
    int i;
@@ -556,6 +585,7 @@ STACKEXT void AB_PrintLevel(struct MUIS_Listtree_TreeNode *list, FILE *prt, int 
       }
       else break;
 }
+
 ///
 /// AB_PrintABookFunc
 //  Prints the entire address book in compact or detailed format
@@ -580,6 +610,7 @@ SAVEDS void AB_PrintABookFunc(void)
    }
 }
 MakeHook(AB_PrintABookHook, AB_PrintABookFunc);
+
 ///
 /// AB_PrintFunc
 //  Prints selected address book entry in detailed format
@@ -602,6 +633,7 @@ SAVEDS void AB_PrintFunc(void)
    }
 }
 MakeHook(AB_PrintHook, AB_PrintFunc);
+
 ///
 /// AB_AddEntryFunc
 //  Add a new entry to the address book
@@ -610,6 +642,7 @@ SAVEDS ASM void AB_AddEntryFunc(REG(a1) int *arg)
    EA_Init(*arg, NULL);
 }
 MakeHook(AB_AddEntryHook, AB_AddEntryFunc);
+
 ///
 /// AB_EditFunc
 //  Modifies selected address book entry
@@ -624,6 +657,7 @@ SAVEDS void AB_EditFunc(void)
    }
 }
 MakeHook(AB_EditHook, AB_EditFunc);
+
 ///
 /// AB_DeleteFunc
 //  Deletes selected address book entry
@@ -633,6 +667,7 @@ SAVEDS void AB_DeleteFunc(void)
    G->AB->Modified = TRUE;
 }
 MakeHook(AB_DeleteHook, AB_DeleteFunc);
+
 ///
 /// AB_DuplicateFunc
 //  Duplicates selected address book entry
@@ -660,6 +695,7 @@ SAVEDS void AB_DuplicateFunc(void)
    }
 }
 MakeHook(AB_DuplicateHook, AB_DuplicateFunc);
+
 ///
 /// AB_FindEntry (rec)
 //  Recursively searches an address book node for a given pattern
@@ -713,6 +749,7 @@ STACKEXT BOOL AB_FindEntry(struct MUIS_Listtree_TreeNode *list, char *pattern, i
       else break;
    return TRUE;
 }
+
 ///
 /// AB_FindFunc
 //  Searches address book
@@ -753,6 +790,7 @@ SAVEDS ASM void AB_OpenFunc(REG(a1) int *arg)
    SafeOpenWindow(ab->GUI.WI);
 }
 MakeHook(AB_OpenHook, AB_OpenFunc);
+
 ///
 /// AB_Close
 //  Closes address book window
@@ -783,6 +821,7 @@ SAVEDS ASM struct ABEntry *AB_LV_ConFunc(REG(a1) struct ABEntry *addr)
    return entry;
 }
 MakeHook(AB_LV_ConFuncHook, AB_LV_ConFunc);
+
 ///
 /// AB_LV_DesFunc
 //  Address book listview destruction hook
@@ -793,6 +832,7 @@ SAVEDS ASM long AB_LV_DesFunc(REG(a1) struct ABEntry *entry)
    return 0;
 }
 MakeHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
+
 ///
 /// AB_LV_DspFunc
 //  Address book listview display hook
@@ -845,6 +885,7 @@ SAVEDS ASM long AB_LV_DspFunc(REG(a0) struct Hook *hook, REG(a2) char **array, R
    return 0;
 }
 MakeHook(AB_LV_DspFuncHook, AB_LV_DspFunc);
+
 ///
 /// AB_LV_CmpFunc
 //  Address book listview sort hook
@@ -887,6 +928,7 @@ void AB_MakeABFormat(APTR lv)
    }
    set(lv, MUIA_Listtree_Format, format);
 }
+
 ///
 /// AB_New
 //  Creates address book window

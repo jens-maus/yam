@@ -23,26 +23,42 @@
 ***************************************************************************/
 
 #include "YAM.h"
-                     
+
+/* local protos */
+LOCAL void FI_MakeSubstringPattern(char*);
+LOCAL BOOL FI_MatchString(struct Search*, char*);
+LOCAL BOOL FI_MatchListPattern(struct Search*, char*);
+LOCAL BOOL FI_MatchPerson(struct Search*, struct Person*);
+LOCAL BOOL FI_SearchPatternFast(struct Search*, struct Mail*);
+LOCAL BOOL FI_SearchPatternInBody(struct Search*, struct Mail*);
+LOCAL BOOL FI_SearchPatternInHeader(struct Search*, struct Mail*);
+LOCAL int FI_IsFastSearch(char*);
+LOCAL void FI_GenerateListPatterns(struct Search*);
+LOCAL BOOL FI_DoSearch(struct Search*, struct Mail*);
+LOCAL struct FI_ClassData *FI_New(void);
+
+
 /***************************************************************************
  Module: Find
 ***************************************************************************/
 
 /// Global variables
 int Mode2Group[12] = { 0,0,0,0,1,2,1,2,4,4,4,3 };
+
 ///
 /// FI_MakeSubstringPattern
 //  Creates pattern for substring search
-void FI_MakeSubstringPattern(char *pattern)
+LOCAL void FI_MakeSubstringPattern(char *pattern)
 {
    char npattern[SIZE_PATTERN];
    sprintf(npattern, "#?%s#?", pattern);
    strcpy(pattern, npattern);
 }
+
 ///
 /// FI_MatchString
 //  Matches string against pattern
-BOOL FI_MatchString(struct Search *search, char *string)
+LOCAL BOOL FI_MatchString(struct Search *search, char *string)
 {
    switch (search->Compare)
    {
@@ -52,10 +68,11 @@ BOOL FI_MatchString(struct Search *search, char *string)
       case 3: return (BOOL)(search->CaseSens ? strcmp(string, search->Match) > 0 : Stricmp(string, search->Match) > 0);
    }
 }
+
 ///
 /// FI_MatchListPattern
 //  Matches string against a list of patterns
-BOOL FI_MatchListPattern(struct Search *search, char *string)
+LOCAL BOOL FI_MatchListPattern(struct Search *search, char *string)
 {
    int i;
    for (i = 0; i < search->List.Used; i++)
@@ -66,7 +83,7 @@ BOOL FI_MatchListPattern(struct Search *search, char *string)
 ///
 /// FI_MatchPerson
 //  Matches string against a person's name or address
-BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
+LOCAL BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
 {
    if (search->Compare == 4) return FI_MatchListPattern(search, search->PersMode ? pe->RealName : pe->Address);
                         else return FI_MatchString(search, search->PersMode ? pe->RealName : pe->Address);
@@ -74,7 +91,7 @@ BOOL FI_MatchPerson(struct Search *search, struct Person *pe)
 ///
 /// FI_SearchPatternFast
 //  Searches string in standard header fields
-BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
+LOCAL BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
 {
    struct ExtendedMail *email;
    int j;
@@ -129,10 +146,11 @@ BOOL FI_SearchPatternFast(struct Search *search, struct Mail *mail)
    }
    return found;
 }
+
 ///
 /// FI_SearchPatternInBody
 //  Searches string in message body
-BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
+LOCAL BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
 {
    char *rptr, *ptr, *cmsg;
    BOOL found = FALSE;
@@ -150,10 +168,11 @@ BOOL FI_SearchPatternInBody(struct Search *search, struct Mail *mail)
    RE_FreePrivateRC();
    return found;
 }
+
 ///
 /// FI_SearchPatternInHeader
 //  Searches string in header field(s)
-BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
+LOCAL BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
 {
    char *rptr, *line, fullfile[SIZE_PATHFILE];
    BOOL found = FALSE;
@@ -181,10 +200,11 @@ BOOL FI_SearchPatternInHeader(struct Search *search, struct Mail *mail)
    }
    return found;
 }
+
 ///
 /// FI_IsFastSearch
 //  Checks if quick search is available for selected header field
-int FI_IsFastSearch(char *field)
+LOCAL int FI_IsFastSearch(char *field)
 {
    if (!stricmp(field, "from"))     return FS_FROM;
    if (!stricmp(field, "to"))       return FS_TO;
@@ -194,10 +214,11 @@ int FI_IsFastSearch(char *field)
    if (!stricmp(field, "date"))     return FS_DATE;
    return FS_NONE;
 }
+
 ///
 /// FI_GenerateListPatterns
 //  Reads list of patterns from a file
-void FI_GenerateListPatterns(struct Search *search)
+LOCAL void FI_GenerateListPatterns(struct Search *search)
 {
    char buf[SIZE_PATTERN], pattern[SIZE_PATTERN];
    FILE *fh;
@@ -213,6 +234,7 @@ void FI_GenerateListPatterns(struct Search *search)
       fclose(fh);
    }
 }
+
 ///
 /// FI_PrepareSearch
 //  Initializes Search structure
@@ -266,10 +288,11 @@ BOOL FI_PrepareSearch(struct Search *search, int mode, BOOL casesens, int persmo
       else          ParsePatternNoCase(search->Match, search->Pattern, SIZE_PATTERN);
    }
 }
+
 ///
 /// FI_DoSearch
 //  Checks if a message fulfills the search criteria
-BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
+LOCAL BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 {
    BOOL found0, found = FALSE;
    int comp_bak = search->Compare, mstat;
@@ -301,6 +324,7 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
    }
    return found;
 }
+
 ///
 /// FI_DoComplexSearch
 //  Does a complex search with two combined criteria
@@ -318,6 +342,7 @@ BOOL FI_DoComplexSearch(struct Search *search1, int combine, struct Search *sear
       case 3: return (BOOL)(found1 != FI_DoSearch(search2, mail));
    }
 }
+
 ///
 /// FI_SearchFunc
 //  Starts the search and shows progress
@@ -386,6 +411,7 @@ SAVEDS void FI_SearchFunc(void)
    set(gui->BT_READ, MUIA_Disabled, !fndmsg);
 }
 MakeHook(FI_SearchHook,FI_SearchFunc);
+
 ///
 /// FI_ToRuleFunc
 //  Creates a filter from the current search options
@@ -420,6 +446,7 @@ SAVEDS void FI_ToRuleFunc(void)
    else ER_NewError(GetStr(MSG_ER_ErrorMaxFilters), NULL, NULL);
 }
 MakeHook(FI_ToRuleHook,FI_ToRuleFunc);
+
 ///
 /// FI_Open
 //  Opens find window
@@ -445,6 +472,7 @@ SAVEDS void FI_Open(void)
    if (!SafeOpenWindow(G->FI->GUI.WI)) DisposeModulePush(&G->FI);
 }
 MakeHook(FI_OpenHook,FI_Open);
+
 ///
 /// FI_SearchGhost
 //  Enables/disables gadgets in search form
@@ -466,6 +494,7 @@ void FI_SearchGhost(struct SearchGroup *gdata, BOOL disabled)
       if (gdata->BT_EDIT[i]) set(gdata->BT_EDIT[i], MUIA_Disabled, disabled || oper != 4);
    }
 }
+
 ///
 /// FI_SearchOptFunc
 //  Selects correct form for search mode
@@ -477,6 +506,7 @@ SAVEDS ASM void FI_SearchOptFunc(REG(a1) ULONG *arg)
    FI_SearchGhost(gdata, FALSE);
 }
 MakeHook(FI_SearchOptHook, FI_SearchOptFunc);
+
 ///
 /// FI_EditFileFunc
 //  Edits pattern list in text editor
@@ -490,6 +520,7 @@ SAVEDS ASM void FI_EditFileFunc(REG(a1) int *arg)
    }
 }
 MakeHook(FI_EditFileHook,FI_EditFileFunc);
+
 ///
 /// FI_ConstructSearchGroup
 //  Creates search form
@@ -623,6 +654,7 @@ APTR FI_ConstructSearchGroup(struct SearchGroup *gdata, BOOL remote)
    }
    return grp;
 }
+
 ///
 /// FI_SwitchFunc
 //  Sets active folder according to the selected message in the results window
@@ -639,6 +671,7 @@ SAVEDS void FI_SwitchFunc(void)
    }
 }
 MakeHook(FI_SwitchHook, FI_SwitchFunc);
+
 ///
 /// FI_ReadFunc
 //  Reads a message listed in the results window
@@ -653,6 +686,7 @@ SAVEDS void FI_ReadFunc(void)
    }
 }
 MakeHook(FI_ReadHook, FI_ReadFunc);
+
 ///
 /// FI_SelectFunc
 //  Selects matching messages in the main message list
@@ -675,6 +709,7 @@ SAVEDS void FI_SelectFunc(void)
    }
 }
 MakeHook(FI_SelectHook, FI_SelectFunc);
+
 ///
 /// FI_Close
 //  Closes find window
@@ -697,6 +732,7 @@ SAVEDS ASM long FI_PO_InitRuleListFunc(REG(a2) Object *pop)
    return TRUE;
 }
 MakeHook(FI_PO_InitRuleListHook, FI_PO_InitRuleListFunc);
+
 ///
 /// FI_PO_FromRuleFunc
 //  Gets search options from selected filter
@@ -720,10 +756,11 @@ SAVEDS ASM void FI_PO_FromRuleFunc(REG(a2) Object *pop)
    }
 }
 MakeHook(FI_PO_FromRuleHook, FI_PO_FromRuleFunc);
+
 ///
 /// FI_New
 //  Creates find window
-struct FI_ClassData *FI_New(void)
+LOCAL struct FI_ClassData *FI_New(void)
 {
    struct FI_ClassData *data;
 

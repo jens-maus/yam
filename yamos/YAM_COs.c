@@ -24,20 +24,25 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL char *Bool2Txt(BOOL);
+LOCAL BOOL Txt2Bool(char*);
+
 /***************************************************************************
  Module: Configuration - Basic Get/Put routines
 ***************************************************************************/
 
 /// Bool2Txt
 //  Converts boolean value to text
-char *Bool2Txt(BOOL bool)
+LOCAL char *Bool2Txt(BOOL bool)
 {
    return bool ? "Y" : "N";
 }
+
 ///
 /// Txt2Bool
 //  Converts Y/N string to boolean value
-BOOL Txt2Bool(char *txt)
+LOCAL BOOL Txt2Bool(char *txt)
 {
    return (BOOL)(tolower((int)*txt) == 'y');
 }
@@ -250,6 +255,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
    }
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
 }
+
 ///
 /// CO_LoadConfig
 //  Loads configuration from a file
@@ -540,6 +546,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
    }
    return FALSE;
 }
+
 ///
 /// CO_GetConfig
 //  Fills form data of current section with data from configuration structure
@@ -697,6 +704,7 @@ void CO_GetConfig(void)
          break;
    }
 }
+
 ///
 /// CO_SetConfig
 //  Sets current section of configuration structure with data from GUI

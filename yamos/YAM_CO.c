@@ -24,13 +24,21 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL void CO_NewPrefsFile(char*);
+LOCAL int CO_DetectPGP(struct Config*);
+LOCAL void CO_CopyConfig(struct Config*, struct Config*);
+LOCAL APTR CO_BuildPage(struct CO_ClassData*, int);
+LOCAL struct CO_ClassData *CO_New(void);
+
+
 /***************************************************************************
  Module: Configuration
 ***************************************************************************/
 
 /// CO_NewPrefsFile
 //  Sets the name of the configuration file
-void CO_NewPrefsFile(char *fname)
+LOCAL void CO_NewPrefsFile(char *fname)
 {
    static char wtitle[SIZE_SMALL+SIZE_PATHFILE];
    strcpy(G->CO_PrefsFile, fname);
@@ -77,6 +85,7 @@ SAVEDS void CO_AddRule(void)
       }
 }
 MakeHook(CO_AddRuleHook,CO_AddRule);
+
 ///
 /// CO_DelRule
 //  Deletes an entry from the rule list
@@ -92,6 +101,7 @@ SAVEDS void CO_DelRule(void)
    }
 }
 MakeHook(CO_DelRuleHook,CO_DelRule);
+
 ///
 /// CO_RuleGhost
 //  Enables/disables gadgets in rule form
@@ -125,6 +135,7 @@ void CO_RuleGhost(struct CO_GUIData *gui, struct Rule *ru)
    FI_SearchGhost(&(gui->GR_SEARCH[2*isremote+1]), !ru || single);
 
 }
+
 ///
 /// CO_GetRUEntry
 //  Fills form with data from selected list entry
@@ -175,6 +186,7 @@ SAVEDS void CO_GetRUEntry(void)
    CO_RuleGhost(gui, rule);
 }
 MakeHook(CO_GetRUEntryHook,CO_GetRUEntry);
+
 ///
 /// CO_PutRUEntry
 //  Fills form data into selected list entry
@@ -228,6 +240,7 @@ SAVEDS void CO_PutRUEntry(void)
    }
 }
 MakeHook(CO_PutRUEntryHook,CO_PutRUEntry);
+
 ///
 /// CO_RemoteToggleFunc
 //  Enables/disables GUI elements for remote filters
@@ -281,6 +294,7 @@ struct POP3 *CO_NewPOP3(struct Config *co, BOOL first)
    }
    return pop3;
 }
+
 ///
 /// CO_AddPOP3
 //  Adds a new entry to the POP3 account list
@@ -298,6 +312,7 @@ SAVEDS void CO_AddPOP3(void)
       }
 }
 MakeHook(CO_AddPOP3Hook,CO_AddPOP3);
+
 ///
 /// CO_DelPOP3
 //  Deletes an entry from the POP3 account list
@@ -316,6 +331,7 @@ SAVEDS void CO_DelPOP3(void)
    }
 }
 MakeHook(CO_DelPOP3Hook,CO_DelPOP3);
+
 ///
 /// CO_GetP3Entry
 //  Fills form with data from selected list entry
@@ -340,6 +356,7 @@ SAVEDS void CO_GetP3Entry(void)
    set(gui->BT_PDEL, MUIA_Disabled, !pop3 || e < 2);
 }
 MakeHook(CO_GetP3EntryHook,CO_GetP3Entry);
+
 ///
 /// CO_PutP3Entry
 //  Fills form data into selected list entry
@@ -364,6 +381,7 @@ SAVEDS void CO_PutP3Entry(void)
    }
 }
 MakeHook(CO_PutP3EntryHook,CO_PutP3Entry);
+
 ///
 /// CO_GetDefaultPOPFunc
 //  Sets values of first POP3 account
@@ -391,6 +409,7 @@ struct MimeView *CO_NewMimeView(void)
    }
    return mv;
 }
+
 ///
 /// CO_AddMimeView
 //  Adds a new entry to the MIME viewer list
@@ -409,6 +428,7 @@ SAVEDS void CO_AddMimeView(void)
       }
 }
 MakeHook(CO_AddMimeViewHook,CO_AddMimeView);
+
 ///
 /// CO_DelMimeView
 //  Deletes an entry from the MIME viewer list
@@ -424,6 +444,7 @@ SAVEDS void CO_DelMimeView(void)
    }
 }
 MakeHook(CO_DelMimeViewHook,CO_DelMimeView);
+
 ///
 /// CO_GetMVEntry
 //  Fills form with data from selected list entry
@@ -445,6 +466,7 @@ SAVEDS void CO_GetMVEntry(void)
    set(gui->BT_MDEL, MUIA_Disabled, !mv);
 }
 MakeHook(CO_GetMVEntryHook,CO_GetMVEntry);
+
 ///
 /// CO_PutMVEntry
 //  Fills form data into selected list entry
@@ -484,6 +506,7 @@ SAVEDS void CO_GetRXEntry(void)
    DoMethod(gui->LV_REXX, MUIM_List_Redraw, act);
 }
 MakeHook(CO_GetRXEntryHook,CO_GetRXEntry);
+
 ///
 /// CO_PutRXEntry
 //  Fills form data into selected list entry
@@ -515,15 +538,17 @@ BOOL CO_IsValid(void)
    MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_OkayReq), GetStr(MSG_CO_InvalidConf));
    return FALSE;
 }
+
 ///
 /// CO_DetectPGP
 //  Checks if PGP 2 or 5 is available
-int CO_DetectPGP(struct Config *co)
+LOCAL int CO_DetectPGP(struct Config *co)
 {
    if (PFExists(co->PGPCmdPath, "pgpe")) return 5;
    else if (PFExists(co->PGPCmdPath, "pgp")) return 2;
    return 0;
 }
+
 ///
 /// CO_FreeConfig
 //  Deallocates a configuration structure
@@ -535,6 +560,7 @@ void CO_FreeConfig(struct Config *co)
    for (i = 0; i < MAXMV; i++) if (co->MV[i]) free(co->MV[i]);
    clear(co, sizeof(struct Config));
 }  
+
 ///
 /// CO_SetDefaults
 //  Sets configuration (or a part of it) to the factory settings
@@ -699,10 +725,11 @@ void CO_SetDefaults(struct Config *co, int page)
       co->StackSize = 40000;
    }
 }
+
 ///
 /// CO_CopyConfig
 //  Copies a configuration structure
-void CO_CopyConfig(struct Config *dco, struct Config *sco)
+LOCAL void CO_CopyConfig(struct Config *dco, struct Config *sco)
 {
    int i;
    memcpy(dco, sco, sizeof(struct Config));
@@ -710,6 +737,7 @@ void CO_CopyConfig(struct Config *dco, struct Config *sco)
    for (i = 0; i < MAXRU; i++) dco->RU[i] = sco->RU[i] ? (struct Rule     *)AllocCopy(sco->RU[i], sizeof(struct Rule)) : NULL;
    for (i = 0; i < MAXMV; i++) dco->MV[i] = sco->MV[i] ? (struct MimeView *)AllocCopy(sco->MV[i], sizeof(struct MimeView)) : NULL;
 }
+
 ///
 /// CO_Validate
 //  Validates a configuration, update GUI etc.
@@ -764,6 +792,7 @@ void CO_Validate(struct Config *co, BOOL update)
       if (G->CO->Visited[14] || G->CO->UpdateAll) { SetupAppIcons(); G->TotMsgs = -1; DisplayStatistics(FO_GetFolderByType(FT_INCOMING, NULL)); }
    }
 }
+
 ///
 /// CO_ImportCTypes
 //  Imports MIME viewers from a MIME.prefs file
@@ -850,6 +879,7 @@ SAVEDS void CO_ImportCTypesFunc(void)
       }
 }
 MakeHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);
+
 ///
 /// CO_EditSignatFunc
 //  Edits the signature file
@@ -871,6 +901,7 @@ SAVEDS ASM void CO_EditSignatFunc(REG(a1) int *arg)
    G->CO->LastSig = sig;
 }
 MakeHook(CO_EditSignatHook,CO_EditSignatFunc);
+
 ///
 /// CO_OpenConfig
 //  Opens a different configuration file
@@ -886,6 +917,7 @@ SAVEDS void CO_OpenConfig(void)
    }
 }
 MakeHook(CO_OpenConfigHook, CO_OpenConfig);
+
 ///
 /// CO_SaveConfigAs
 //  Saves configuration to a file using an alternative name
@@ -902,6 +934,7 @@ SAVEDS void CO_SaveConfigAs(void)
    }
 }
 MakeHook(CO_SaveConfigAsHook, CO_SaveConfigAs);
+
 ///
 /// CO_Restore
 //  Makes all changes undone
@@ -912,6 +945,7 @@ SAVEDS void CO_Restore(void)
    CO_SetConfig();
 }
 MakeHook(CO_RestoreHook,CO_Restore);
+
 ///
 /// CO_LastSaved
 //  Reloads configuration from file
@@ -922,6 +956,7 @@ SAVEDS void CO_LastSaved(void)
    G->CO->UpdateAll = TRUE;
 }
 MakeHook(CO_LastSavedHook,CO_LastSaved);
+
 ///
 /// CO_ResetToDefaultFunc
 //  Resets configuration (or a part of it)
@@ -932,10 +967,11 @@ SAVEDS ASM void CO_ResetToDefaultFunc(REG(a1) int *arg)
    CO_SetConfig();
 }
 MakeHook(CO_ResetToDefaultHook,CO_ResetToDefaultFunc);
+
 ///
 /// CO_BuildPage
 //  Creates a GUI section of the configuration
-APTR CO_BuildPage(struct CO_ClassData *data, int page)
+LOCAL APTR CO_BuildPage(struct CO_ClassData *data, int page)
 {
    switch (page)
    {
@@ -956,6 +992,7 @@ APTR CO_BuildPage(struct CO_ClassData *data, int page)
       case 14: return CO_Page14(data);
    }
 }
+
 ///
 /// CO_ChangePageFunc
 //  Selects a different section of the configuration
@@ -982,6 +1019,7 @@ SAVEDS ASM void CO_ChangePageFunc(REG(a1) int *arg)
    set(gui->WI, MUIA_Window_Sleep, FALSE);
 }
 MakeHook(CO_ChangePageHook,CO_ChangePageFunc);
+
 ///
 /// CO_CloseFunc
 //  Closes configuration window
@@ -999,6 +1037,7 @@ SAVEDS ASM void CO_CloseFunc(REG(a1) int *arg)
    DisposeModulePush(&G->CO);
 }
 MakeHook(CO_CloseHook,CO_CloseFunc);
+
 ///
 /// CO_OpenFunc
 //  Opens configuration window
@@ -1028,10 +1067,11 @@ SAVEDS ASM long CO_PL_DspFunc(REG(a0) struct Hook *hook, REG(a2) char **array, R
    sprintf(array[0] = page, "\033O[%08lx] %s", data->Image[entry->Offset], GetStr(entry->Label));
    return 0;
 }
+
 ///
 /// Images
 //  Images for section listview in ILBM/BODY format
-UBYTE PL_IconBody[MAXCPAGES][240] = {
+const UBYTE PL_IconBody[MAXCPAGES][240] = {
 { /* 0 */
 0xfd,0x00,0xfd,0x00,0xfd,0x00,0xff,0x00,0x01,0x10,0x00,0xff,0x00,0x01,0xf0,
 0x00,0xff,0x00,0x01,0x18,0x00,0xff,0x00,0x01,0xf8,0x00,0x03,0x00,0x01,0x88,
@@ -1278,7 +1318,7 @@ UBYTE PL_IconBody[MAXCPAGES][240] = {
 //  Creates configuration window
 enum { CMEN_OPEN = 1201, CMEN_SAVEAS, CMEN_DEF, CMEN_DEFALL, CMEN_LAST, CMEN_REST, CMEN_MIME };
 
-struct CO_ClassData *CO_New(void)
+LOCAL struct CO_ClassData *CO_New(void)
 {
    struct CO_ClassData *data;
 

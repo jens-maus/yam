@@ -24,6 +24,9 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL struct ER_ClassData *ER_New(void);
+
 /***************************************************************************
  Module: Error window
 ***************************************************************************/
@@ -65,6 +68,7 @@ void ER_NewError(char *error, char *arg1, char *arg2)
    set(gui->NB_ERROR, MUIA_Numeric_Value, G->ER_NumErr);
    if (G->MA) set(G->MA->GUI.MI_ERRORS, MUIA_Menuitem_Enabled, TRUE);
 }
+
 ///
 /// ER_SelectFunc
 //  Displays an earlier error message
@@ -76,6 +80,7 @@ SAVEDS ASM void ER_SelectFunc(REG(a1) int *arg)
    set(G->ER->GUI.LV_ERROR, MUIA_Floattext_Text, G->ER_Message[value-1]);
 }
 MakeHook(ER_SelectHook, ER_SelectFunc);
+
 ///
 /// ER_CloseFunc
 //  Closes error window
@@ -95,7 +100,7 @@ MakeHook(ER_CloseHook, ER_CloseFunc);
 /*** GUI***/
 /// ER_New
 //  Creates error window
-struct ER_ClassData *ER_New(void)
+LOCAL struct ER_ClassData *ER_New(void)
 {
    struct ER_ClassData *data;
 

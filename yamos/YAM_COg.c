@@ -24,6 +24,12 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL APTR MakeVarPop(APTR*, int, int, char*);
+LOCAL APTR MakePhraseGroup(APTR*, APTR*, APTR*, char*, char*);
+LOCAL Object *MakeStaticCheck(void);
+
+
 /***************************************************************************
  Modul: Configuration - GUI for sections
 ***************************************************************************/
@@ -38,6 +44,7 @@ SAVEDS ASM void PO_List2TextFunc(REG(a2) Object *list, REG(a1) Object *text)
    if (selection) if (strcmp(selection, GetStr(MSG_MA_Cancel))) set(text, MUIA_Text_Contents, selection);
 }
 MakeHook(PO_List2TextHook, PO_List2TextFunc);
+
 ///
 /// CO_LV_TDspFunc
 //  Translation table listview display hook
@@ -47,6 +54,7 @@ SAVEDS ASM long CO_LV_TDspFunc(REG(a0) struct Hook *hook, REG(a2) char **array, 
    return 0;
 }
 MakeHook(CO_LV_TDspHook,CO_LV_TDspFunc);
+
 ///
 /// CO_LV_TConFunc
 //  Translation table listview construction hook
@@ -57,6 +65,7 @@ SAVEDS ASM struct TranslationTable *CO_LV_TConFunc(REG(a1) struct TranslationTab
    return entry;
 }
 MakeHook(CO_LV_TConHook, CO_LV_TConFunc);
+
 ///
 /// CO_LV_RxDspFunc
 //  ARexx listview display hook
@@ -85,6 +94,7 @@ SAVEDS ASM long CO_LV_RxDspFunc(REG(a0) struct Hook *hook, REG(a2) char **array,
    return 0;
 }
 MakeHook(CO_LV_RxDspHook,CO_LV_RxDspFunc);
+
 ///
 /// PO_HandleXPKFunc
 //  Copies XPK sublibrary id from list to string gadget
@@ -95,6 +105,7 @@ SAVEDS ASM void PO_HandleXPKFunc(REG(a1) APTR text, REG(a2) APTR pop)
    if (entry) set(text, MUIA_Text_Contents, entry);
 }
 MakeHook(PO_HandleXPKHook, PO_HandleXPKFunc);
+
 ///
 /// MakeXPKPop
 //  Creates a popup list of available XPK sublibraries
@@ -139,6 +150,7 @@ APTR MakeXPKPop(APTR *text, BOOL pack, BOOL encrypt)
    }
    return po;
 }
+
 ///
 /// PO_HandleTrans
 //  Copies filename of selected translation table to the string gadget
@@ -149,6 +161,7 @@ SAVEDS ASM void PO_HandleTrans(REG(a1) APTR string, REG(a2) APTR pop)
    if (entry) setstring(string, entry->File);
 }
 MakeHook(PO_HandleTransHook, PO_HandleTrans);
+
 ///
 /// MakeTransPop
 //  Creates a popup list of available translation tables
@@ -198,6 +211,7 @@ APTR MakeTransPop(APTR *string, BOOL output,  char *shortcut)
    }
    return po;
 }
+
 ///
 /// PO_HandleVar
 //  Pastes an entry from variable listview into string gadget
@@ -213,10 +227,11 @@ SAVEDS ASM void PO_HandleVar(REG(a1) APTR string, REG(a2) APTR pop)
    }
 }
 MakeHook(PO_HandleVarHook, PO_HandleVar);
+
 ///
 /// MakeVarPop
 //  Creates a popup list containing variables and descriptions for phrases etc.
-APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
+LOCAL APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
 {
    APTR lv, po;
 
@@ -264,10 +279,11 @@ APTR MakeVarPop(APTR *string, int mode, int size, char *shortcut)
    }
    return po;
 }
+
 ///
 /// MakePhraseGroup
 //  Creates a cycle/string gadgets for forward and reply phrases
-APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, char *help)
+LOCAL APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, char *help)
 {
    APTR grp, cycl, pgrp;
    static char *cytext[4];
@@ -296,10 +312,11 @@ APTR MakePhraseGroup(APTR *hello, APTR *intro, APTR *bye, char *label, char *hel
    }
    return grp;
 }
+
 ///
 /// MakeStaticCheck
 //  Creates non-interactive checkmark gadget
-Object *MakeStaticCheck(void)
+LOCAL Object *MakeStaticCheck(void)
 {
    return
    ImageObject,
@@ -311,6 +328,7 @@ Object *MakeStaticCheck(void)
       MUIA_Disabled    , TRUE,
    End;
 }
+
 ///
 /// CO_PlaySoundFunc
 //  Plays sound file referred by the string gadget
@@ -385,6 +403,7 @@ APTR CO_Page0(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page1  (TCP/IP)
 APTR CO_Page1(struct CO_ClassData *data)
@@ -457,6 +476,7 @@ APTR CO_Page1(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page2  (New Mail)
 APTR CO_Page2(struct CO_ClassData *data)
@@ -551,6 +571,7 @@ APTR CO_Page2(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page3  (Rules)
 APTR CO_Page3(struct CO_ClassData *data)
@@ -737,6 +758,7 @@ APTR CO_Page3(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page4  (Read)
 APTR CO_Page4(struct CO_ClassData *data)
@@ -806,6 +828,7 @@ APTR CO_Page4(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page5  (Write)
 APTR CO_Page5(struct CO_ClassData *data)
@@ -867,6 +890,7 @@ APTR CO_Page5(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page6  (Reply/Forward)
 APTR CO_Page6(struct CO_ClassData *data)
@@ -919,6 +943,7 @@ APTR CO_Page6(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page7  (Signature)
 APTR CO_Page7(struct CO_ClassData *data)
@@ -979,6 +1004,7 @@ APTR CO_Page7(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page8  (Lists)
 APTR CO_Page8(struct CO_ClassData *data)
@@ -1029,6 +1055,7 @@ APTR CO_Page8(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page9  (Security)
 APTR CO_Page9(struct CO_ClassData *data)
@@ -1102,6 +1129,7 @@ APTR CO_Page9(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page10 (Start/Quit)
 APTR CO_Page10(struct CO_ClassData *data)
@@ -1140,6 +1168,7 @@ APTR CO_Page10(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page11 (MIME)
 APTR CO_Page11(struct CO_ClassData *data)
@@ -1224,6 +1253,7 @@ APTR CO_Page11(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page12 (Address book)
 APTR CO_Page12(struct CO_ClassData *data)
@@ -1295,6 +1325,7 @@ APTR CO_Page12(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page13 (Scripts)
 APTR CO_Page13(struct CO_ClassData *data)
@@ -1348,6 +1379,7 @@ APTR CO_Page13(struct CO_ClassData *data)
    }
    return grp;
 }
+
 ///
 /// CO_Page14 (Mixed)
 APTR CO_Page14(struct CO_ClassData *data)

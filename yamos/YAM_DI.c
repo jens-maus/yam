@@ -24,13 +24,19 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL void DI_FinishEdit(void);
+LOCAL void DI_Save(void);
+LOCAL int DI_Load(void);
+LOCAL struct DI_ClassData *DI_New(void);
+
 /***************************************************************************
  Module: Glossary
 ***************************************************************************/
 
 /// DI_FinishEdit
 //  Adds/updates changed glossary entry
-void DI_FinishEdit(void)
+LOCAL void DI_FinishEdit(void)
 {
    struct DI_GUIData *gui = &G->DI->GUI;
    int modified;
@@ -53,10 +59,11 @@ void DI_FinishEdit(void)
    }
    set(gui->TE_EDIT, MUIA_TextEditor_HasChanged, FALSE);
 }
+
 ///
 /// DI_Save
 //  Saves glossary to disk
-void DI_Save(void)
+LOCAL void DI_Save(void)
 {
    FILE *fh;
    struct Dict *entry;
@@ -78,10 +85,11 @@ void DI_Save(void)
    }
    else ER_NewError(GetStr(MSG_ER_CantCreateFile), G->DI_Filename, NULL);
 }
+
 ///
 /// DI_Load
 //  Load glossary from disk
-int DI_Load(void)
+LOCAL int DI_Load(void)
 {
    int entries = 0;
    FILE *fh;
@@ -116,6 +124,7 @@ int DI_Load(void)
    }
    return entries;
 }
+
 ///
 /// DI_CloseFunc
 //  Closes glossary window
@@ -128,6 +137,7 @@ SAVEDS void DI_CloseFunc(void)
    DisposeModulePush(&G->DI);
 }
 MakeHook(DI_CloseHook, DI_CloseFunc);
+
 ///
 /// DI_PasteFunc
 //  Pastes text of selected glossary entry into the internal editors
@@ -140,6 +150,7 @@ SAVEDS void DI_PasteFunc(void)
    DI_CloseFunc();
 }
 MakeHook(DI_PasteHook, DI_PasteFunc);
+
 ///
 /// DI_DeleteFunc
 //  Removes selected entry from the glossary
@@ -150,6 +161,7 @@ SAVEDS void DI_DeleteFunc(void)
     DoMethod(G->DI->GUI.LV_ENTRIES, MUIM_List_Remove, MUIV_List_Remove_Active);
 }
 MakeHook(DI_DeleteHook, DI_DeleteFunc);
+
 ///
 /// DI_DisplayFunc
 //  Displays selected glossary entry
@@ -166,6 +178,7 @@ SAVEDS void DI_DisplayFunc(void)
    G->DI->OldEntry = entry;
 }
 MakeHook(DI_DisplayHook, DI_DisplayFunc);
+
 ///
 /// DI_ModifyFunc
 //  Saves changed glossary item
@@ -187,6 +200,7 @@ SAVEDS ASM void DI_ModifyFunc(REG(a1) int *arg)
    set(G->DI->GUI.WI, MUIA_Window_ActiveObject, G->DI->GUI.ST_ALIAS);
 }
 MakeHook(DI_ModifyHook, DI_ModifyFunc);
+
 ///
 /// DI_OpenFunc
 //  Opens glossary window
@@ -213,6 +227,7 @@ SAVEDS ASM struct Dict *DI_LV_ConFunc(REG(a1) struct Dict *dict)
    return entry;
 }
 MakeHook(DI_LV_ConFuncHook, DI_LV_ConFunc);
+
 ///
 /// DI_LV_DesFunc
 //  Glossary listview destruction hook
@@ -223,10 +238,11 @@ SAVEDS ASM long DI_LV_DesFunc(REG(a1) struct Dict *entry)
    return 0;
 }
 MakeHook(DI_LV_DesFuncHook, DI_LV_DesFunc);
+
 ///
 /// DI_New
 //  Creates glossary window
-struct DI_ClassData *DI_New(void)
+LOCAL struct DI_ClassData *DI_New(void)
 {
    struct DI_ClassData *data;
 

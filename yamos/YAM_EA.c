@@ -24,6 +24,10 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL int EA_Open(int);
+LOCAL struct EA_ClassData *EA_New(int, int);
+
 /***************************************************************************
  Module: Address book entry
 ***************************************************************************/
@@ -50,6 +54,7 @@ int EA_Init(int type, struct MUIS_Listtree_TreeNode *tn)
    set(ea->GUI.WI, MUIA_Window_ActiveObject, ea->GUI.ST_ALIAS);
    return winnum;
 }       
+
 ///
 /// EA_Setup
 //  Setup GUI fields with data from adress book entry
@@ -105,6 +110,7 @@ void EA_AddSingleMember(Object *obj, struct MUIS_Listtree_TreeNode *tn)
    get(obj, MUIA_List_DropMark, &dropmark);
    DoMethod(obj, MUIM_List_InsertSingle, ab->Alias ? ab->Alias : ab->RealName, dropmark);
 }
+
 ///
 /// EA_AddMembers (rec)
 //  Adds an entire group to the member list by Drag&Drop
@@ -119,6 +125,7 @@ STACKEXT void EA_AddMembers(Object *obj, struct MUIS_Listtree_TreeNode *list)
          else EA_AddSingleMember(obj, tn);
       else break;
 }
+
 ///
 /// EA_GetEntry
 //  Fills string gadget with data from selected list entry
@@ -130,6 +137,7 @@ SAVEDS ASM void EA_GetEntry(REG(a1) int *arg)
    if (entry) nnset(G->EA[winnum]->GUI.ST_MEMBER, MUIA_String_Contents, entry);
 }
 MakeHook(EA_GetEntryHook, EA_GetEntry);
+
 ///
 /// EA_PutEntry
 //  Updates selected list entry
@@ -150,6 +158,7 @@ SAVEDS ASM void EA_PutEntry(REG(a1) int *arg)
    }
 }
 MakeHook(EA_PutEntryHook, EA_PutEntry);
+
 ///
 /// EA_InsertBelowActive
 //  Inserts an entry into the address book tree
@@ -173,6 +182,7 @@ void EA_InsertBelowActive(struct ABEntry *addr, int flags)
 */
    if (res) set(lt, MUIA_Listtree_Active, res);
 }
+
 ///
 /// EA_FixAlias
 //  Avoids ambiguos aliases
@@ -190,6 +200,7 @@ void EA_FixAlias(struct ABEntry *ab, BOOL excludemyself)
    }
    strcpy(ab->Alias, alias);
 }
+
 ///
 /// EA_SetDefaultAlias
 //  Creates an alias from the real name if user left it empty
@@ -289,6 +300,7 @@ SAVEDS ASM void EA_Okay(REG(a1) int *arg)
    DisposeModulePush(&G->EA[winnum]);
 }
 MakeHook(EA_OkayHook, EA_Okay);
+
 ///
 /// EA_AddFunc
 //  Adds a new entry to the member list
@@ -307,6 +319,7 @@ SAVEDS ASM void EA_AddFunc(REG(a1) int *arg)
    set(gui->WI, MUIA_Window_ActiveObject, gui->ST_MEMBER);
 }
 MakeHook(EA_AddHook, EA_AddFunc);
+
 ///
 /// EA_SetPhoto
 //  Updates the portrait image
@@ -325,6 +338,7 @@ void EA_SetPhoto(int winnum, char *fname)
       DoMethod(gui->GR_PHOTO, MUIM_Group_ExitChange);
    }
 }
+
 ///
 /// EA_SelectPhotoFunc
 //  Lets user select an image file to be used as portrait
@@ -339,6 +353,7 @@ SAVEDS ASM void EA_SelectPhotoFunc(REG(a1) int *arg)
    }
 }
 MakeHook(EA_SelectPhotoHook, EA_SelectPhotoFunc);
+
 ///
 /// EA_DownloadPhotoFunc
 //  Downloads a portrait from the YAM user gallery
@@ -391,6 +406,7 @@ SAVEDS ASM void EA_DownloadPhotoFunc(REG(a1) int *arg)
    }
 }
 MakeHook(EA_DownloadPhotoHook, EA_DownloadPhotoFunc);
+
 ///
 /// EA_HomepageFunc
 //  Launches a browser to view the homepage of the person
@@ -401,10 +417,11 @@ SAVEDS ASM void EA_HomepageFunc(REG(a1) int *arg)
    if (*url) GotoURL(url);
 }
 MakeHook(EA_HomepageHook, EA_HomepageFunc);
+
 ///
 /// EA_Open
 //  Assigns a number for a new window
-int EA_Open(int type)
+LOCAL int EA_Open(int type)
 {
    int winnum;
    for (winnum = 0; winnum < 4; winnum++) if (!G->EA[winnum]) break;
@@ -426,7 +443,7 @@ MakeHook(EA_CloseHook, EA_CloseFunc);
 /*** GUI ***/
 /// EA_New
 //  Creates address book entry window
-struct EA_ClassData *EA_New(int winnum, int type)
+LOCAL struct EA_ClassData *EA_New(int winnum, int type)
 {
    struct EA_ClassData *data;
 
