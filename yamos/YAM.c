@@ -1050,11 +1050,25 @@ static void Initialise2(void)
           folder->Type == FT_DELETED || C->LoadAllFolders) &&
           !isProtectedFolder(folder))
       {
+        // call the getIndex function which on one hand loads the full .index file
+        // and makes sure that all "new" mail is marked to unread if the user
+        // enabled the C->UpdateNewMail option in the configuration.
         MA_GetIndex(folder);
       }
       else if(folder->LoadedMode != LM_VALID)
       {
+        // do not load the full index, do load only the header of the .index
+        // which summarizes everything
         folder->LoadedMode = MA_LoadIndex(folder, FALSE);
+
+        // if the user wishs to make sure all "new" mail is flagged as
+        // read upon start we go through our folders and make sure they show
+        // no "new" mail, even if their .index file is not fully loaded
+        if(C->UpdateNewMail && folder->LoadedMode == LM_FLUSHED)
+        {
+          folder->Unread = folder->New;
+          folder->New = 0;
+        }
       }
 
       // if this folder hasn`t got any own folder image in the folder
@@ -1269,10 +1283,23 @@ static void DoStartup(BOOL nocheck, BOOL hide)
    // do it it could happen that no AppIcon will be displayed at all.
    DisplayAppIconStatistics();
 
-   if (C->CleanupOnStartup) DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
-   if (C->RemoveOnStartup) DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
-   if (C->CheckBirthdates && !nocheck && !hide) AB_CheckBirthdates();
-   if (TR_IsOnline())
+   // if the user wishs to delete all old mail during startup of YAM,
+   // we do it now
+   if(C->CleanupOnStartup)
+     DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
+
+   // if the user wants to clean the trash upon starting YAM, do it
+   if(C->RemoveOnStartup)
+     DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
+
+   // check for current birth days in our addressbook if the user
+   // selected it
+   if(C->CheckBirthdates && !nocheck && !hide)
+     AB_CheckBirthdates();
+
+   // the rest of the startup jobs require a running TCP/IP stack,
+   // so check if it is properly running.
+   if(TR_IsOnline())
    {
       if (C->GetOnStartup && !nocheck)
       {

@@ -7,6 +7,10 @@ $Source$
 
 2005-02-19  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: fixed bug where the amount of new mails was not correctly resetted
+      to unread when the UpdateNewMail feature was enabled for YAM startup
+      processing. Now YAM should show all folder statistics correctly after
+      startup.
     * YAM_MA.c, YAM_RE.c, ReadWindow.c: fixed bug where YAM didn't close an
       open read window on a Delete/Move operation even if no mail was left in
       the corresponding folder. Now YAM should close the read window after the

@@ -375,9 +375,10 @@ BOOL MA_SaveIndex(struct Folder *folder)
 //  Opens/unlocks a folder
 BOOL MA_GetIndex(struct Folder *folder)
 {
-   if (!folder || folder->Type == FT_GROUP) return FALSE;
+   if(!folder || folder->Type == FT_GROUP)
+     return FALSE;
 
-   if (folder->LoadedMode != LM_VALID)
+   if(folder->LoadedMode != LM_VALID)
    {
       if(isProtectedFolder(folder) && *folder->Password &&
          !MA_PromptFolderPassword(folder, G->MA->GUI.WI))
@@ -395,22 +396,7 @@ BOOL MA_GetIndex(struct Folder *folder)
         MA_ValidateStatus(folder);
 
         if(G->MA)
-        {
-          struct MUI_NListtree_TreeNode *tn;
-          int i;
-
-          for(i=0;;i++)
-          {
-            tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIV_NListtree_GetEntry_Flag_Visible);
-            if(!tn) break;
-
-            if(tn->tn_User == folder)
-            {
-              DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, i, MUIV_NListtree_Redraw_Flag_Nr);
-              break;
-            }
-          }
-        }
+          DisplayStatistics(folder, FALSE);
       }
    }
 
