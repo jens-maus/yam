@@ -994,6 +994,7 @@ char *AppendToBuffer(char *buf, int *wptr, int *len, char *add)
    while (npos >= nlen-1) nlen = (nlen*3)/2;
    if (nlen != *len) buf = realloc(buf, *len = nlen);
    while (*add) buf[(*wptr)++] = *add++;
+   buf[*wptr] = '\0'; // we have to make sure that the string is null terminated
    return buf;
 }
 ///

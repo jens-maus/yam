@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-02-21  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: fixed bug in AppendToBuffer() function where we forgot
+      to terminate a string with a '\0' and therefore sometimes got
+      back unterminated string which could have caused problems later on.
+
 2003-02-18  Jens Langner <Jens.Langner@light-speed.de>
 
     * added seperate contextmenu for the titlebar of the MailList and
