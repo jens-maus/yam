@@ -177,23 +177,129 @@ static void FreeWorkbenchPath(BPTR path)
 
 /*** Requesters ***/
 /// YAMMUIRequest
-//  Own -secure- wrapper implementation of MUI_Request with collecting and reissueing ReturnIDs
+// Own -secure- implementation of MUI_Request with collecting and reissueing ReturnIDs
+// We also have a wrapper #define MUI_Request for calling that function instead.
 LONG YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...)
 {
-  LONG result = 0;
+  LONG result = -1;
+  char reqtxt[SIZE_LINE];
   va_list args;
+  Object *WI_YAMREQ;
+  Object *TX_REQTEXT;
+  Object *BT_GROUP;
+  Object *BT_REQ[32]; // more than 32 buttongadgets within a requester shouldn`t happen
 
-  // lets collect the waiting returnIDs now
-  COLLECT_RETURNIDS;
-
-#undef MUI_Request
+  // lets create the requester text
   va_start(args, format);
-  result = MUI_Request(app, win, flags, title, gadgets, format, va_arg(args, ULONG));
+  sprintf(reqtxt, format, va_arg(args, ULONG));
   va_end(args);
-#define MUI_Request YAMMUIRequest
 
-  // now lets reissue the collected returnIDs again
-  REISSUE_RETURNIDS;
+  WI_YAMREQ = WindowObject,
+    MUIA_Window_Title,        title ? title : "YAM",
+    MUIA_Window_RefWindow,    win,
+    MUIA_Window_LeftEdge,     MUIV_Window_LeftEdge_Centered,
+    MUIA_Window_TopEdge,      MUIV_Window_TopEdge_Centered,
+    MUIA_Window_CloseGadget,  FALSE,
+    MUIA_Window_SizeGadget,   FALSE,
+    WindowContents, VGroup,
+       MUIA_Background, MUII_FILLSHINE,
+       Child, HGroup,
+          Child, TX_REQTEXT = TextObject,
+            TextFrame,
+            MUIA_InnerBottom,   8,
+            MUIA_InnerLeft,     8,
+            MUIA_InnerRight,    8,
+            MUIA_InnerTop,      8,
+            MUIA_Background,    MUII_TextBack,
+            MUIA_Text_SetMax,   TRUE,
+            MUIA_Text_Contents, reqtxt,
+          End,
+       End,
+       Child, VSpace(2),
+       Child, BT_GROUP = HGroup,
+       End,
+    End,
+  End;
+
+  // lets see if the WindowObject could be created perfectly
+  if(WI_YAMREQ)
+  {
+    char *gadgs = StrBufCpy(NULL, gadgets);
+    char *next = gadgs;
+    char *token;
+    int active = -1;
+    int num_gads = 0;
+
+    set(app, MUIA_Application_Sleep, TRUE);
+    DoMethod(app, OM_ADDMEMBER, WI_YAMREQ);
+
+    // now we create the buttons for the requester
+    do
+    {
+      token = strtok_r(&next, "|");
+      if(token[0] == '*')
+      {
+        active = num_gads;
+        token++;
+      }
+
+      BT_REQ[num_gads] = SimpleButton(token);
+      num_gads++;
+    }
+    while(next);
+
+    FreeStrBuf(gadgs);
+
+    DoMethod(BT_GROUP, MUIM_Group_InitChange);
+    // if this is only one button lets add it separatly
+    if(num_gads == 1)
+    {
+      DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+      DoMethod(BT_GROUP, OM_ADDMEMBER, BT_REQ[0]);
+      DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+      DoMethod(BT_REQ[0], MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, 2);
+    }
+    else
+    {
+      int j;
+
+      for(j=0; j < num_gads; j++)
+      {
+        if(j > 0) DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+        DoMethod(BT_GROUP, OM_ADDMEMBER, BT_REQ[j]);
+        DoMethod(BT_REQ[j], MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, j+2 <= num_gads ? j+2 : 1);
+        set(BT_REQ[j], MUIA_CycleChain, 1);
+      }
+    }
+    DoMethod(BT_GROUP, MUIM_Group_ExitChange);
+
+    // now activate that button with a starting "*"
+    if(active > -1) set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_REQ[active]);
+
+    // lets collect the waiting returnIDs now
+    COLLECT_RETURNIDS;
+
+    if(!SafeOpenWindow(WI_YAMREQ)) result = FALSE;
+    else while(result == -1)
+    {
+      ULONG signals;
+      ULONG ret = DoMethod(app, MUIM_Application_NewInput, &signals);
+
+      // if a button was hit, lets get outda here.
+      if(ret > 0 && ret <= num_gads+1)
+      {
+        result = ret-1;
+        break;
+      }
+      if(result == -1 && signals) Wait(signals);
+    }
+
+    // now lets reissue the collected returnIDs again
+    REISSUE_RETURNIDS;
+
+    DoMethod(app, OM_REMMEMBER, WI_YAMREQ);
+    set(app, MUIA_Application_Sleep, FALSE);
+  }
 
   return result;
 }
