@@ -5,7 +5,7 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
-2003-12-13  Jens Langner <Jens.Langner@light-speed.de>
+2003-12-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c, YAM_MI.c, YAM_RE.c: YAM wasn`t at all RFC 2047
       compliant and the decoding routines RE_ProcessHeader where
