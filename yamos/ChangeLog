@@ -687,3 +687,14 @@
       really stay so that this fact is recorded instead of leading others to think that
       GCC support has not been considered.
 
+2001-06-18  Gunther Nikl <gni@gecko.de>
+
+    * YAM.c. (Terminate) always release resources in reverse allocation order
+             (main) removed warning about return type and discarded STACKEXT
+             (NOTE: STACKEXT doesn't do what was intended! It does *only* extend the
+              stack if there is not enough space for the current frame. Thats hardly
+              the case for main() ...)
+    * YAM_FI.c: fix prototype for FI_IsFastSearch()
+    * YAM_global.(c,h): replaced "APTR" wth "void *" and removed include
+    * YAM_UT.c: (DisplayAppIconStatistics) replaced AppAppIconA() with AddAppIcon()
+                (DisplayStatistics) small cleanup
