@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2001-11-13  Gunther Nikl <gni@gecko.de>
+
+    * YAM.c: don't call Terminate() inside the exitfunc on a premature exit
+    * YAM_MAf.c: use alignment headers
+
 2001-11-08  Gunther Nikl <gni@gecko.de>
 
     * YAM.c: removed "struct Device *TimerBase"
