@@ -2853,8 +2853,9 @@ static void RE_ClickedOnMessage(char *address)
       if (!strnicmp(p, "subject=", 8)) subject = &p[8];
    }
 
+   // lets see if we have an entry for that in the Addressbook
+   // and if so, we reuse it
    hits = AB_SearchEntry(address, ASM_ADDRESS|ASM_USER|ASM_LIST, &ab);
-   if(!ab) return;
 
    sprintf(buf, GetStr(MSG_RE_SelectAddressReq), address);
    gads = GetStr(hits ? MSG_RE_SelectAddressEdit : MSG_RE_SelectAddressAdd);
