@@ -48,10 +48,8 @@
 #include <proto/utility.h>
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
-#include <rexx/rxslib.h>
-#include <xpk/xpk.h>
-#include <extra.h>
 
+#include "extra.h"
 #include "NewReadArgs.h"
 #include "YAM.h"
 #include "YAM_addressbook.h"
@@ -668,7 +666,6 @@ static void Initialise2(BOOL hidden)
 static void Initialise(BOOL hidden)
 {
    static char iconfile[SIZE_PATHFILE];
-   char hideiconfile[SIZE_PATHFILE];
    char iconpath[SIZE_PATH];
    char *icnames[MAXICONS] = { "empty", "old", "new", "check" };
    char *imnames[MAXIMAGES] = { "status_unread",  "status_old",     "status_forward", "status_reply",
@@ -715,10 +712,6 @@ static void Initialise(BOOL hidden)
    if (!InitClasses()) Abort(GetStr(MSG_ErrorClasses));
    if (!Root_New(hidden)) Abort(FindPort("YAM") ? NULL : GetStr(MSG_ErrorMuiApp));
 
-   strmfp(hideiconfile, G->ProgDir, "YAM");
-   if (G->HideIcon=GetDiskObject(hideiconfile))
-      set(G->App, MUIA_Application_DiskObject, G->HideIcon);
-
    AY_PrintStatus(GetStr(MSG_InitLibs), 10);
    XpkBase = InitLib(XPKNAME, 0, 0, FALSE, FALSE);
    if ((DataTypesBase = InitLib("datatypes.library", 39, 0, FALSE, FALSE)))
@@ -736,6 +729,9 @@ static void Initialise(BOOL hidden)
    }
    srand(GetDateStamp());
    AY_PrintStatus(GetStr(MSG_LoadingGFX), 20);
+   strmfp(iconfile, G->ProgDir, "YAM");
+   if (G->HideIcon=GetDiskObject(iconfile))
+      set(G->App, MUIA_Application_DiskObject, G->HideIcon);
    strmfp(iconpath, G->ProgDir, "Icons");
    for (i = 0; i < MAXICONS; i++)
    {
@@ -781,7 +777,6 @@ static void SendWaitingMail(void)
 //  Performs different checks/cleanup operations on startup
 static void DoStartup(BOOL nocheck, BOOL hide)
 {
-
    if (C->CleanupOnStartup) DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
    if (C->RemoveOnStartup) DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
    if (C->CheckBirthdates && !nocheck && !hide) AB_CheckBirthdates();
@@ -903,8 +898,8 @@ int main(int argc, char **argv)
    oldcdirlock = CurrentDir(yamlock);
    while (1)
    {
-      G = calloc(1,sizeof(struct Global));
-      C = calloc(1,sizeof(struct Config));
+      G = calloc(1, sizeof(struct Global));
+      C = calloc(1, sizeof(struct Config));
       strcpy(G->ProgDir, progdir);
       if (!args.maildir) strcpy(G->MA_MailDir, progdir);
       args.hide = -args.hide; args.nocheck = -args.nocheck;
