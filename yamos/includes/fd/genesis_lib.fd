@@ -1,0 +1,20 @@
+##base _GenesisBase
+##bias 30
+##public
+GetFileSize(file)(a0)
+ParseConfig(file, pc_data)(a0,a1)
+ParseNext(pc_data)(a0)
+ParseNextLine(pc_data)(a0)
+ParseEnd(pc_data)(a0)
+ReallocCopy(old_ptr, src)(a0,a1)
+FreeUser(user)(a0)
+GetUserName(user_number, buffer, len)(d0,a0,d1)
+GetUser(name, password, title, flags)(a0,a1,a2,d0)
+GetGlobalUser()()
+SetGlobalUser(user)(a0)
+ClearUserList()()
+ReloadUserList()()
+ReadFile(file, buffer, len)(a0,a1,d0)
+WriteFile(file, buffer, len)(a0,a1,d0)
+IsOnline(flags)(d0)
+##end

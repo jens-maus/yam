@@ -1,0 +1,16 @@
+*
+* FD file for url.library
+*
+##base _OpenURLBase
+##bias 30
+##public
+URL_OpenA(url,tags)(a0/a1)
+URL_GetPrefs()()
+URL_FreePrefs(up)(a0)
+URL_SetPrefs(up, permanent)(a0/d0)
+*--- functions in V2 or higher ---
+URL_GetDefaultPrefs()()
+*--- functions in V3 or higher ---
+URL_LaunchPrefsApp()()
+DoFunction(rxmsg)(a0)
+##end

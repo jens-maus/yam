@@ -1,0 +1,26 @@
+*
+* Prototype FD file for CManager.library
+*
+##base _CManagerBase
+##bias 30
+##public
+CM_StartManager(file,pubscreen)(a0,a1)
+CM_LoadDataOld(prefs,data,user)(a0,a1,a2)
+CM_SaveDataOld(prefs,data,user)(a0,a1,a2)
+CM_FreeDataOld(data)(a0)
+CM_GetParent(list,current)(a0,a1)
+CM_AllocEntry(type)(d0)
+CM_FreeEntry(entry)(a0)
+CM_FreeHandle(handle,close)(a0,d0)
+CM_GetEntry(handle,flags)(a0,d0)
+CM_CreateBitMap(width,height,depth,flags,friend)(d0,d1,d2,d3,a0)
+CM_DeleteBitMap(bitmap)(a0)
+CM_AddEntry(entry)(a0)
+CM_FreeList(list)(a0)
+CM_LoadCurrentUserData(askuser)(d0)
+CM_LoadData(prefs,data,user)(a0,a1,a2)
+CM_SaveData(prefs,data,user)(a0,a1,a2)
+CM_FreeData(data)(a0)
+CM_AllocCMData()()
+CM_GetString(id)(d0)
+##end

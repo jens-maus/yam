@@ -1,0 +1,21 @@
+##base _XpkBase
+##bias 36
+##public
+XpkExamine(fib,tags)(a0,a1)
+XpkPack(tags)(a0)
+XpkUnpack(tags)(a0)
+XpkOpen(xbuf,tags)(a0,a1)
+XpkRead(xbuf,buf,len)(a0,a1,d0)
+XpkWrite(xbuf,buf,len)(a0,a1,d0)
+XpkSeek(xbuf,len,mode)(a0,d0,d1)
+XpkClose(xbuf)(a0)
+XpkQuery(tags)(a0)
+*
+* functions new in version 4 start here
+*
+XpkAllocObject(type,tags)(d0,a0)
+XpkFreeObject(type,object)(d0,a0)
+XpkPrintFault(code,header)(d0,a0)
+XpkFault(code,header,buffer,size)(d0,a0,a1,d1)
+XpkPassRequest(tags)(a0)
+##end
