@@ -8,11 +8,14 @@
 #else
 
 #ifdef _DCC
-   #include <fcntl.h>
-#elif defined(__STORM__)
-   #define F_OK 0
-#else
-   #include <unistd.h>
+  #include <fcntl.h>
+#elif defined(__GNUC__)
+  #include <unistd.h>
+#endif
+
+#ifndef F_OK
+  #define F_OK 0
+  int access (const char *, int);
 #endif
 
 /*
