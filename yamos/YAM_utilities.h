@@ -241,7 +241,7 @@ extern unsigned char  *PPtr[16];
 
 // only prototypes needed for AmigaOS
 #if !defined(__MORPHOS__)
-Object * STDARGS DoSuperNew(struct IClass *cl, Object *obj, ...);
+Object * STDARGS VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 #endif
 
 // all the utility prototypes
