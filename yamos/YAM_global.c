@@ -45,10 +45,10 @@
 /* the version stuff */
 
 #define __YAM_VERSION "2.4"
-#define __YAM_DEVEL   ""
+#define __YAM_DEVEL   "-dev"
 
 char * yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
-char * yamversionver    = "YAM " __YAM_VERSION __YAM_DEVEL CPU + 4;
+char * yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
 char * yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") Copyright © 2000-2001 YAM Open Source Team";
 char * yamversiondate   = __YAM_VERDATE;
 unsigned long yamversiondays = __YAM_VERDAYS;
