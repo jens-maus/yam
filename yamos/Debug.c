@@ -40,7 +40,7 @@ VOID SetupDebug (VOID)
 
 BOOL TestDebugFlag (ULONG flag)
 {
-	return (BOOL)(DebugFlags & flag) ? TRUE : FALSE;
+	return (BOOL)((DebugFlags & flag) ? TRUE : FALSE);
 }
 
 #endif
