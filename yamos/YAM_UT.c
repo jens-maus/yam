@@ -3646,16 +3646,16 @@ char *p,*ret;
 // in a Amiga suitable format. This is case-insensitive !
 char *SWSSearch(char *str1, char *str2)
 {
-	int  	L[SIZE_ADDRESS+1][SIZE_ADDRESS+1];    // L matrix
-	int  	Ind[SIZE_ADDRESS+1][SIZE_ADDRESS+1];  // Index matrix
-	char  X[SIZE_ADDRESS+2];                    // 1.string X
-	char  Y[SIZE_ADDRESS+2];                    // 2.string Y
-  int   lx;                                   // length of X
-  int   ly;                                   // length of Y
-  int   lz;                                   // length of Z
+	int  L[SIZE_ADDRESS+1][SIZE_ADDRESS+1];    // L matrix
+	int  Ind[SIZE_ADDRESS+1][SIZE_ADDRESS+1];  // Index matrix
+	char X[SIZE_ADDRESS+2];                    // 1.string X
+	char Y[SIZE_ADDRESS+2];                    // 2.string Y
+	static char	Z[3*SIZE_ADDRESS+1];           // the destination string (result)
+	int   lx;                                  // length of X
+	int   ly;                                  // length of Y
+	int   lz;                                  // length of Z
   int   i, j, k;
   BOOL  firstLoop = TRUE;
-	static  char Z[3*SIZE_ADDRESS+1];           // the destination string (result)
 
   enum  IndType { DELX=0, DELY, DONE, TAKEBOTH };   // special enum for the Indicator
 

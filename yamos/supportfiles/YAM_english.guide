@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (18.12.2001)
+@$VER: YAM.guide 2.4 (21.12.2001)
 
 /***************************************************************************
 
@@ -140,6 +140,10 @@ data and automatic recognition of over 20 datatypes.
 
 Event-sensitive starting of @{" macros " LINK "CO13" 0} and comprehensive @{" Arexx " LINK "REXX" 0} support.
 
+Hierarchical folder system with the ability to order mail folder in a hierarchical system.
+
+TLSv1/SSLv3 secure connections (POP3/SMTP) via AmiSSL.library.
+
 Localised for many languages.
 
 @ENDNODE
@@ -170,7 +174,7 @@ Software
  - optional: XPK for compression of articles
  - optional: popupmenu.library for pop-up menus
  - optional: PGP 2.6 or 5.0 for encryption and signing messages
- - optional: AmiSSL for SSL security layers over SMTP/POP
+ - optional: AmiSSL for TLSv1/SSLv3 security layers over SMTP/POP
  - optional: Archiver for compressing folders, e.g.  LhA
  - optional: Program for spell-checking, e.g.  AlphaSpell
 
@@ -181,6 +185,7 @@ LEGAL STUFF
 
 YAM - Yet Another Mailer
 Copyright (C) 1995-2000 Marcel Beck
+Copyright (C) 2000-2001 by YAM Open Source Team
 
 This program  is free software;  you can redistribute it  and/or modify it
 under the terms of the GNU General Public License as published by the Free
@@ -434,10 +439,10 @@ YAM's main window is laid out as shown:
     @{"Project" LINK "MAM1" 0} @{"Folder" LINK "MAM2" 0} @{"Message" LINK "MAM3" 0} @{"Settings" LINK "MAM4" 0} @{"Scripts" LINK "MAM5" 0}
 
    .--------------------------------------------------------.
-   |                       Status bar                       |
-   |--------------------------------------------------------.
    |              @{"Toolbar" LINK "MA02" 0}                                   |
-   |________________________________________________________|
+   |--------------------------------------------------------|
+   |                       Status bar                       |
+   |--------------------------------------------------------|
    |                 |                                      |
    |                 |           @{"Message list" LINK "MA01" 0}               |
    |   @{"Folder list" LINK "MA00" 0}   |                                      |
@@ -1337,6 +1342,12 @@ documented in RFC 2554. You will need to fill in another couple of User Id
 If your ESMTP server does not support SMTP AUTH, you will receive an error
 message when trying to send email. Ask your ISP if in doubt.
 
+[ ] Use SMTP TLSv1/SSLv3
+
+Enable this  if  your SMTP server supports TLSv1/SSLv3 secure connections.
+If enabled, YAM will connect via the AmiSSL library with the SMTP server
+and encryptes every transfer.
+
 
 ---- Receive mail (POP3) -------------------------------------------------
 
@@ -1395,7 +1406,7 @@ to be checked automatically, switch this option off and  use the menu item
 'Folder/Check single account' from the main window instead.
 
 
-[ ] Use POP3 SSL/TLS
+[ ] Use POP3 TLSv1/SSLv3
 
 Activate this option to use SSL based encryption under the TLS protocol as
 described in  RFC  2595. This adds extra  security to prevent  the typical
@@ -2449,6 +2460,11 @@ will  choose  a  'safe'  position for the AppIcon on its own (so you don't
 have to worry about 'deleting' another icon).
 
   Example:  X 550  Y 144
+
+AppIcon Label
+The standard text for the AppIcon which will be displayed if YAM is running
+can be specified here. There are also several patterns you can specify, like
+Total numbers of mails a.s.o.
 
 [] Closegadget iconifies program
 Normally the closegagdet (or ESC-key) will terminate the program. Activate
@@ -4505,6 +4521,7 @@ directories will be found:
  .taglines         your collection of @{"taglines" LINK "CO07" 0}
  .autosave?.txt    @{"backup copies" LINK "CO_H"} of the editor contents
  .uidl             used to @{"avoid duplicates" LINK "CO02" 0}
+ .emailcache       this file is used to place some email cache in it.
  YAM.log           log file (if the @{"log feature" LINK "CO09" 0} has been set).
 
  incoming/         the incoming mailbox directory
@@ -4955,9 +4972,8 @@ Just send an empty e-mail to YAMML-subscribe\@yahoogroups.com
 
 You can send me suggestions, questions, criticism, bug reports etc. at:
 
-                    support\@yam.ch
-                    http://www.yam.ch/contact.html
                     http://sourceforge.net/projects/yamos/
+                    http://www.yam.ch/contact.html
                     http://marcel.buz.ch/
 
 or failing that, by conventional mail at:
@@ -4972,20 +4988,21 @@ or failing that, by conventional mail at:
 
 CREDITS
 
-The following YAM Open Source Team members contributed to YAM 2.3:
+The following YAM Open Source Team members contributed to YAM 2.4:
+(in alphabetical order)
 
-Nicholai Benalal 
-Matthias Bethke
-Christian Hattemer
-Jens Langner
-Jacob Laursen
-Emmanuel Lesueur (MorphOS port)
-Gunther Nikl
-Jörg Strohmayer
-Dirk Stöcker
+  Allan Odgaard       <duff@diku.dk>
+  AmiS                <amis@amiga.org.ru>
+  Christian Hattemer  <krille@users.sourceforge.net>
+  Dirk Stöcker        <stoecker@epost.de>
+  Giles Burdett       <layabouts@the-giant-sofa.demon.co.uk>
+  Gunther Nikl        <gni@gecko.de>
+  Jens Langner        <Jens.Langner@htw-dresden.de>
+  Jacob Laursen       <laursen@myself.com>
 
-Marcel Beck,  the  author  of  YAM 1.0 - 2.2,  would  like  to  thank  the
-following  people who contributed substantially to the development of YAM:
+Marcel Beck,  the  author  of  YAM 1.0-2.2 and the YAM Open Source Team,
+would  like  to  thank  the following  people who contributed substantially
+to the development of YAM:
 
 Beta-testers:
 
@@ -5003,8 +5020,9 @@ Ulf Seltier, James Bridge, Tony P. Parr (english YAM.guide)
 
 Icon Artists:
 
-Roman Patzner (title graphic, button borders, status icons), Ash Thomas (a
-complete set of @{"NewIcons" LINK "NEWI" 0})
+Philip A. Vedovatti <vedovatti@u.washington.edu> (new folderlist images)
+Roman Patzner (title graphic, button borders, status icons)
+Ash Thomas (a complete set of @{"NewIcons" LINK "NEWI" 0})
 
 Programmers:
 
@@ -5014,6 +5032,7 @@ Programmers:
         Marcin Orlowski      (Flexcat)
         Gilles Masson        (NList.mcc)
         Carsten Scholling    (NListtree.mcc)
+        Andrija Antonijevic  (AmiSSL library)
 
 @ENDNODE
 @NODE INDEX "Index"

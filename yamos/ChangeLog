@@ -1,3 +1,9 @@
+2001-12-21  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * removed support@yam.ch email from About window on request
+      from Marcel Beck.
+    * reworked the YAM.cd a bit.
+
 2001-12-16  Christian Hattemer <krille@users.sourceforge.net>
 
     * YAM_EA.c: Added missing MUIA_ControlChar to security cycle

@@ -4877,18 +4877,18 @@ for emails which will be used in recipient strings.\n\
 Select 0 mails to disable this feature.
 ;
 MSG_CO_USESMTPTLS (//)
-Use SMTP SSL/TLS
+Use SMTP TLSv1/SSLv3
 ;
 MSG_HELP_CO_CH_USESMTPTLS (//)
-A SSL/TLS secure connection will be established between\n\
+A TLSv1/SSLv3 secure connection will be established between\n\
 the SMTP server and YAM to send emails.\n\
 If this checkbox is ghosted AmiSSL support is not available.
 ;
 MSG_CO_POP3SSL (//)
-Use POP3 SSL/TLS
+Use POP3 TLSv1/SSLv3
 ;
 MSG_HELP_CO_CH_POP3SSL (//)
-If checked, YAM is going to connect via SSL/TLS to the POP3\n\
+If checked, YAM is going to connect via TLSv1/SSLv3 to the POP3\n\
 server on the POP3-SSL 995 port and transfers mail from there.\n\
 If this checkbox is ghosted AmiSSL support is not available.
 ;
@@ -4917,14 +4917,14 @@ MSG_CO_InfoBarDef (//)
 - Total: %t New: %n Unread: %u
 ;
 MSG_TR_INITTLS (//)
-Initializing TLS/SSL session...
+Initializing TLSv1/SSLv3 session...
 ;
 MSG_ER_INITAMISSL (//)
-Couldn't init amissl.library. Disabled TLS/SSL support completely.\
+Couldn't init amissl.library. Disabled TLSv1/SSLv3 support completely.\
 Please check your AmiSSL installation and restart YAM.
 ;
 MSG_ER_INITTLS (//)
-Couldn't initialize TLS/SSL session for %s
+Couldn't initialize TLSv1/SSLv3 session for %s
 ;
 MSG_TR_SENDAUTH (//)
 Sending SMTP AUTH request...

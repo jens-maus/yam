@@ -233,7 +233,7 @@ MakeStaticHook(AY_GoPageHook, AY_GoPageFunc);
 static BOOL AY_New(BOOL hidden)
 {
    char logopath[SIZE_PATHFILE];
-   APTR ft_text, bt_sendmail, bt_gopage;
+	 APTR ft_text, bt_gopage;
    struct DateTime dt;
    char datebuf[LEN_DATSTRING];
 
@@ -266,10 +266,6 @@ static BOOL AY_New(BOOL hidden)
          Child, HCenter((VGroup,
             Child, CLabel(GetStr(MSG_Copyright1)),
             Child, ColGroup(2),
-               Child, bt_sendmail = TextObject,
-                  MUIA_Text_Contents, "\033c\033u\0335support@yam.ch",
-                  MUIA_InputMode, MUIV_InputMode_RelVerify,
-               End,
                Child, bt_gopage = TextObject,
                   MUIA_Text_Contents, "\033c\033u\0335http://www.yam.ch/",
                   MUIA_InputMode, MUIV_InputMode_RelVerify,
@@ -336,7 +332,6 @@ static BOOL AY_New(BOOL hidden)
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
 
       DoMethod(G->App, OM_ADDMEMBER, G->AY_Win);
-      DoMethod(bt_sendmail, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_SendMailHook);
       DoMethod(bt_gopage  , MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_GoPageHook);
       DoMethod(G->AY_Win  , MUIM_Notify, MUIA_Window_CloseRequest, TRUE, G->AY_Win, 3, MUIM_Set,MUIA_Window_Open, FALSE);
 
