@@ -5,6 +5,42 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-01-15  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c, YAM_COs.c, YAM_COg.c: added additional color selection
+      gadgets for the 1st, 3rd and 4th level quotes. Now the user can select
+      different colors for each quoting level. In addition to that also
+      the used colored for highlighting URLs is now user configurable within
+      the YAM config. This shows how powerfull the new preparsing routines
+      are.
+    * YAM_RE.c: removed the RE_ExtractURL() function and replaced it with
+      a own function that also uses the lexical analyses functions
+      introduced recently. This should also make the search for URL
+      passages much more precise within YAM.
+    * disabled the use of all MUIV_TextEditor_ImportHook_EMail within YAM
+      because the internal E-mail importhook of TextEditor seems to be
+      way to buggy to allow it to crash YAM anymore.
+      As a replacement I implemented own text preparsing routines to highlight
+      text passages. This routines are mainly based on the flex tool which
+      generates own, fast and reliable lexical analyses. Now YAM should not
+      only run more stable, it should also be more precise in highlighting
+      URLs, using textstyles such as *bold* /italic/ and so on and it should
+      probably also be a bit faster.
+      Please note that you now need at least flex v2.5 to correctly compile
+      YAM out of the box. One more advantage of this flex mechanism is, that
+      we can now exactly specify text areas that should be highlighted with
+      the use of regular expressions (flex format). This makes the whole
+      engine more powerful and precise.
+
+2003-01-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_COs.c: added dozen of "else if" instead of simple "if" statements
+      to the config loading routines of YAM. That should speed up the config
+      loading very significant.
+    * YAM_RE.c: removed MUIM_TextEditor_ClearText calls because they seem
+      to be one of the reasons why some emails crash if the Next/Prev
+      functionality is used.
+
 2003-01-08  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed bug #658937 where a MAILSUBJECTCHANGE arexx command
