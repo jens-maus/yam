@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-09-16  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_global.c: fixed $STACK: definition as it had been
+      removed by the gcc3 optimizer. Also added a proper
+      __stack_size definition for clib2. This should hopefully
+      fix some stack related problems while using YAM on OS3 and
+      OS4.
+
 2004-09-11  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: added rfc2047 decoding to the MIME content-type
