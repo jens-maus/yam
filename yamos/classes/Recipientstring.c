@@ -388,7 +388,7 @@ MakeStaticHook(FindAddressHook, FindAddressFunc);
 /// rcptok()
 // Non-threadsafe strtok() alike recipient tokenizer.
 // "," is the hardcoded token. Ignored if surrounded by quotes ("").
-STRPTR rcptok(STRPTR s, BOOL *quote)
+STATIC STRPTR rcptok(STRPTR s, BOOL *quote)
 {
 	STATIC STRPTR p;
 
