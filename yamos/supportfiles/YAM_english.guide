@@ -1,5 +1,5 @@
 @DATABASE YAM.guide
-@$VER: YAM.guide 2.4 (03.04.2003)
+@$VER: YAM.guide 2.4 (18.04.2003)
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -60,20 +60,14 @@
       @{" What is e-mail? " link "MAIL"}  - Introduction to electronic mail
 
       @{" Configuration   " link "CO_W"}  - Configuring YAM to suit your own needs
-      @{" Windows         " link "WI_W"}  - The Main, Read and Write windows
-      @{" Address book    " link "AB_W"}  - Saving useful addresses
-      @{" Mail transfers  " link "TR_W"}  - Downloading and sending messages
-      @{" Search          " link "FI_W"}  - Finding a particular message
-      @{" Users           " link "US_W"}  - Defining multiple users
-
+      @{" Windows         " link "WI_W"}  - The main windows used by YAM
       @{" Reference       " link "RF_W"}  - File formats, ARexx commands, etc.
+
       @{" Tips & tricks   " link "TIPS"}  - Some useful hints
       @{" Known problems  " link "PROB"}  - Things that you should be aware of
-
       @{" Support         " link "INFO"}  - Some useful contact links
       @{" The future      " link "PLAN"}  - Planned improvements
       @{" Credits         " link "CRED"}  - Those who supported the development of YAM
-
  
 @endnode
 
@@ -249,7 +243,7 @@ Software
    * AmiTCP compatible TCP/IP stack (AmiTCP, Miami[DX], TermiteTCP, RoadShow)
    * optional: XPK for compression of articles
    * optional: PGP 2.6 or 5.0 for encryption and signing messages
-   * optional: AmiSSL for TLSv1/SSLv3 security layers over SMTP/POP
+   * optional: AmiSSL v1 for TLSv1/SSLv3 security layers over SMTP/POP
    * optional: Archiver for attachment compression, e.g.  LhA
    * optional: Program for spell-checking, e.g.  AlphaSpell
    * optional: DST handling tool, e.g.  SetDST, SummerTimeGuard
@@ -990,7 +984,6 @@ Basics - e-mail netiquette
   provided that they don't make the message unintelligible.
   The following are often used:
 
-
             IMHO   (in my humble opinion)
             BTW    (by the way)
             FYI    (for your information)
@@ -1045,13 +1038,15 @@ Basics - e-mail netiquette
 Configuration
 *************
 
+
    YAM has a huge number of options, which can be set up in the
 configuration window.  The program options are divided into 15 sheets
 which can be selected by clicking on the corresponding word in the left
 part of the configuration window.  There are also three menus available.
 
+
  @{" First Steps    " link "CO00"}  - Essential information for YAM to work:
-                          your e-mail address, mail server & timezone
+                      your e-mail address, mail server & timezone
  @{" TCP/IP         " link "CO01"}  - SMTP and POP3 settings for mail transfer
  @{" New Mail       " link "CO02"}  - Controlling the way mail is downloaded
  @{" Filters        " link "CO03"}  - Automated sorting and filing of messages
@@ -1472,7 +1467,7 @@ trigger certain actions.  Applications for the use of filters include
 
 - automatic re-directing of mails to another recipient.
 
-   You can define up to 100 of such filters.  The list on the left shows
+   You can define upto 100 of such filters.  The list on the left shows
 the names of all the filters defined so far.  Click on a name to bring
 up its details on the right, spread across three sheets -- @{b}Options@{ub},
 @{b}Comparison@{ub} and @{b}Action@{ub}.  Click on [New] to create a new filter or use
@@ -1781,7 +1776,7 @@ Configuration - Read
 
 @{b}Multiple windows@{ub}
      With this option selected, each message which you choose to read
-     will open its own Read window.  Up to four of such windows can be
+     will open its own Read window.  Upto four of such windows can be
      opened at the same time.
 
 @endnode
@@ -2038,7 +2033,7 @@ Configuration - Signature
 *************************
 
 
-   You can define and use one standard and up to two alternative
+   You can define and use one standard and upto two alternative
 signatures within YAM (e.g. one signature for private email and another
 one for business).  Clicking on the cycle button in the upper left
 corner of the window you can display and edit the signatures in the
@@ -2836,7 +2831,7 @@ Configuration - Menus
 @endnode
 
 @node "WI_W" "Windows"
-@next "AB_W"
+@next "RF_W"
 @prev "CO_W"
 @toc "Main"
 
@@ -2844,15 +2839,20 @@ Windows
 *******
 
 
- @{" Main Window " link "MA_W"}  - How to receive and send mail, copy it, etc.
- @{" Write       " link "WR_W"}  - Writing e-mail messages
- @{" Read        " link "RE_W"}  - Reading e-mail messages
+ @{" Main Window     " link "MA_W"}  - How to receive and send mail, copy it, etc.
+ @{" Write           " link "WR_W"}  - Writing e-mail messages
+ @{" Read            " link "RE_W"}  - Reading e-mail messages
+ @{" Folder settings " link "FO_W"}  - Editing a folder
+ @{" Address book    " link "AB_W"}  - Saving useful addresses
+ @{" Mail transfers  " link "TR_W"}  - Downloading and sending messages
+ @{" Search          " link "FI_W"}  - Finding a particular message
+ @{" Users           " link "US_W"}  - Defining multiple users
 
 @endnode
 
 @node "MA_W" "Main window"
 @next "WR_W"
-@prev "RE_W"
+@prev "US_W"
 @toc "WI_W"
 
 Main window
@@ -2862,22 +2862,22 @@ Main window
    YAM's main window is laid out as shown:
 
 
-    Menu bar:
+   Menu bar:
 
-    @{" Project " link "MAM1"} @{" Folder " link "MAM2"} @{" Message " link "MAM3"} @{" Settings " link "MAM4"} @{" Scripts " link "MAM5"}
+   @{" Project " link "MAM1"} @{" Folder " link "MAM2"} @{" Message " link "MAM3"} @{" Settings " link "MAM4"} @{" Scripts " link "MAM5"}
 
-   .--------------------------------------------------------.
-   |              @{" Toolbar " link "MA02"}                                 |
-   |--------------------------------------------------------|
-   |                       Status bar                       |
-   |--------------------------------------------------------|
-   |                 |                                      |
-   |                 |          @{" Message list " link "MA01"}              |
-   |  @{" Folder list " link "MA00"}  |                                      |
-   |                 |      This shows the contents         |
-   |                 |      of the selected folder          |
-   |                 |                                      |
-   `-----------------^--------------------------------------'
+  .--------------------------------------------------------.
+  |              @{" Toolbar " link "MA02"}                                 |
+  |--------------------------------------------------------|
+  |                       Status bar                       |
+  |--------------------------------------------------------|
+  |                 |                                      |
+  |                 |          @{" Message list " link "MA01"}              |
+  |  @{" Folder list " link "MA00"}  |                                      |
+  |                 |      This shows the contents         |
+  |                 |      of the selected folder          |
+  |                 |                                      |
+  `-----------------^--------------------------------------'
 
 @endnode
 
@@ -2917,7 +2917,7 @@ Main window - folder list
 which you have received and/or sent, so you can arrange the mails in
 whatever way you like, including arranging them in groups.
 
-   The folder list can have up to five columns: Name of the folder,
+   The folder list can have upto five columns: Name of the folder,
 number of messages (in total, new or unread) as well as the size of
 the folder.  Which of these columns are actually shown depends on how
 you set up @{" lists " link "CO08"} in the configuration; you can also use the context
@@ -2964,7 +2964,7 @@ Main window - message list
 **************************
 
 
-   The message list can have up to eight columns, the contents being
+   The message list can have upto eight columns, the contents being
 set in the @{" lists " link "CO08"} configuration.  You can also use the context menu
 (click RMB on the column headings) to have some columns temporary enabled
 or disabled.
@@ -3158,22 +3158,27 @@ Main window - Project menu
 @{b}Project/About@{ub}
      Shows @{" Copyright Information " link "COPY"} for this program.
 
+
 @{b}Project/About MUI@{ub}
      Shows copyright and version information for @{" MUI " link "MUI"}.
 
-@{b}Project/Check Version@{ub}
+
+@{b}Project/Check version@{ub}
      Fetches information about the newest version of YAM from the YAM
      homepage.  Make sure that you are online before calling this
      function.  YAM then tells you whether there is an update for
      your version.  The button [Visit Homepage] will then start an
      @{" ARexx script " link "CO13"} which connects your browser to the YAM homepage.
 
+
 @{b}Project/Show last message@{ub}
      Shows recent error messages.
+
 
 @{b}Project/Restart@{ub}
      Forces a "warm start" of YAM.  You can use this to login in again
      using @{" another username " link "US_W"}, for instance.
+
 
 @{b}Project/Hide@{ub}
      This switches the program to iconified mode.  The icon will still
@@ -3183,6 +3188,7 @@ Main window - Project menu
      mailbox icons can be changed, if you want -- all you have to do is
      to put new files @{b}new.info@{ub}, @{b}old.info@{ub}, @{b}empty.info@{ub} and @{b}check.info@{ub}
      into YAM's @{b}/Icons@{ub} directory.
+
 
 @{b}Project/Quit@{ub}
      Exit from YAM.
@@ -3206,6 +3212,7 @@ Main window - Folder menu
      folder ("Like current").  Now a @{" configuration panel " link "FO_W"} opens where
      you can modify the properties of the new folder.
 
+
 @{b}Folder/New folder group...@{ub}
      Creates a new folder group and inserts it at the end of the
      folder list.  Groups are useful to group your folders in
@@ -3213,31 +3220,38 @@ Main window - Folder menu
      Folders can also be nested, i.e. you can insert a group into
      another group.
 
+
 @{b}Folder/Edit...@{ub}
      Opens a @{" configuration panel " link "FO_W"} where you can modify the properties
      of the current folder.  If a group is selected, only its name can
      be changed here.
+
 
 @{b}Folder/Delete@{ub}
      Removes the current (user defined) folder, asking for confirmation
      first.  When a group is deleted, its contents simply move one place
      up in the tree.
 
+
 @{b}Folder/Order »  Save | Reset@{ub}
      Saves or restores the order of the folders in their @{" list " link "MA00"}.
      This order is also saved when modifing the folder settings.
 
+
 @{b}Folder/Search...@{ub}
      Opens the @{" Search window " link "FI_W"}, which allows you to find any particular
      message.
+
 
 @{b}Folder/Filter@{ub}
      Applies the user defined @{" filters " link "CO03"} to all messages in the current
      folder.  Filters are of the form 'On query, take action', the
      options being defined in the configuration settings.
 
+
 @{b}Folder/Empty trash@{ub}
      Actually deletes the messages in the 'Deleted' folder.
+
 
 @{b}Folder/Update index@{ub}
      Scans the directory for the current folder and builds a new index
@@ -3245,10 +3259,12 @@ Main window - Folder menu
      needed.  However it can be useful to force an index update after
      a crash or in the event of a problem.
 
+
 @{b}Folder/Flush indices@{ub}
      Removes the indices of the user defined folders, which is helpful
      if you're low on memory.  If you change to one of these folders at
      a later time, the index will be reloaded from the hard disk.
+
 
 @{b}Folder/Import...@{ub}
      Allows the import of a mail file created by a different application.
@@ -3257,25 +3273,30 @@ Main window - Folder menu
      Such a file may contain several messages, which are identified by
      their "From:" and "Date:" headers.
 
+
 @{b}Folder/Export...@{ub}
      Saves all the messages in the current folder to a single file,
      so that they can be read by a different e-mail client (see the
      previous option).
 
+
 @{b}Folder/Send queued mail@{ub}
      Transmits all messages in the Outgoing mailbox (except for those
      which are on 'Hold').
+
 
 @{b}Folder/Exchange mail@{ub}
      First fetches new mail from your mail server and then sends the
      messages in the Outgoing mailbox.  This simply combines the
      actions of 'Get new mail' and 'Send queued mail'.
 
+
 @{b}Folder/Get new mail@{ub}
      Attempts to connect to the mail server, checks whether there is
      new mail waiting and if so downloads it into the 'Incoming'
      mailbox.  If you have specified more than one @{" POP3 account " link "CO02"},
      those marked as "Active" will all be checked in turn.
+
 
 @{b}Folder/Check single account@{ub}
      If you have set up several POP3 accounts, you can use this function
@@ -3295,17 +3316,21 @@ Main window - Message menu
 @{b}Message/Read@{ub}
      Loads the selected message into the @{" Read window " link "RE_W"}.
 
+
 @{b}Message/Edit@{ub}
      Allows you to edit a message you have composed earlier.
+
 
 @{b}Message/Move...@{ub}
      Moves one or more messages into another folder.  You can also do
      this by @{" dragging " link "Drag"} the message(s) from the message list into the
      @{" folder list " link "MA00"} and dropping them onto the desired destination.
 
+
 @{b}Message/Copy...@{ub}
      Allows you to duplicate a message.  The copy is identical to the
      original apart from its filename on disk.
+
 
 @{b}Message/Delete@{ub}
      Moves one or more messages to the 'Deleted' folder (from which
@@ -3316,9 +3341,11 @@ Main window - Message menu
      immediate deletion from the hard disk, regardless of the
      configuration settings.
 
+
 @{b}Message/Print@{ub}
      Sends the readable part (text and headers) of the message(s) to the
      printer.
+
 
 @{b}Message/Save@{ub}
      Saves the text (and headers) of one or more messages, creating
@@ -3326,21 +3353,26 @@ Main window - Message menu
      the messages in the folder to a single file in mailbox (MBOX)
      format, use @{" Folder/Export " link "MAM2"} instead.
 
+
 @{b}Message/Attachments »  Save@{ub}
      Saves the attached files from one or more messages in a directory
      you select.
+
 
 @{b}Message/Attachments »  Crop@{ub}
      Deletes, without further warning, the MIME attachments from one or
      more messages, in order to save storage space.  A notice about the
      deleted data is written into any message cropped in this way.
 
+
 @{b}Message/Export...@{ub}
      Saves one or more messages to a single file, so that they can be
      read by a different e-mail client (see also @{" Folder/Import... " link "MAM2"}).
 
+
 @{b}Message/Write@{ub}
      Opens the @{" Write window " link "WR_W"}, in which you can compose a new message.
+
 
 @{b}Message/Reply@{ub}
      Use this to reply to a message which someone has sent to you.
@@ -3348,6 +3380,7 @@ Main window - Message menu
      original text is quoted.  It is also possible to select several
      messages which will all be quoted in the same reply and sent back
      to the original senders (@{i}Multi-reply@{ui}).
+
 
 @{b}Message/Forward@{ub}
      This lets you send the contents of an e-mail on to another
@@ -3358,16 +3391,19 @@ Main window - Message menu
      also select multiple messages, in which case these are combined
      into a single forwarded message (@{i}Multi-forward@{ui}).
 
+
 @{b}Message/Bounce@{ub}
      This lets you send a message on to another recipient, with no
      visible changes at all.  Only the @{b}To:@{ub} field of the header is
      changed and a couple of @{b}Resent:@{ub} fields are added; the phrases
      defined for forwarded messages are not used here.
 
+
 @{b}Message/Select  »  All | None | Toggle@{ub}
      Selects all the messages in the current folder, clears any
      selection or toggles the selection (i.e. exchanges selected and
      unselected items), respectively.
+
 
 @{b}Message/Save address...@{ub}
      The address of the sender of the selected message (or the
@@ -3376,16 +3412,19 @@ Main window - Message menu
      a message has several recipients, then you get the option of
      creating a new distribution list.
 
+
 @{b}Message/Set status to  »  Marked | Unmarked | Unread | Read | Hold | Queued@{ub}
      This changes the status of one or more messages.  Thus you can
      release held messages in the Outgoing mailbox, or mark unread
      messages as read.
+
 
 @{b}Message/Change subject...@{ub}
      This alters the subject of one or more messages, so you can amend
      irrelevant @{b}Subject:@{ub} fields in messages you have received.  To
      preserve the capability of tracing a thread back, the original
      subject is saved in the message headers as @{b}X-Original-Subject:@{ub}.
+
 
 @{b}Message/Send@{ub}
      Makes a connection to the mail server and transmits the selected
@@ -3406,13 +3445,16 @@ Main window - Settings menu
 @{b}Settings/Address book...@{ub}
      Lets you edit the entries in the @{" address book " link "AB_W"}.
 
+
 @{b}Settings/Configuration...@{ub}
      Opens the @{" configuration window " link "CO_W"}, in which you can change YAM's
      settings.
 
+
 @{b}Settings/Users...@{ub}
      Opens the @{" users window " link "US_W"}, where you can add new users
      ("Multi-User").
+
 
 @{b}Settings/MUI...@{ub}
      Opens the settings window for @{" MUI " link "MUI"}, where you can specify
@@ -3429,7 +3471,8 @@ Main window - Settings menu
            Toolbar: icon buttons in the YAM windows.
            Options: labels, spacing, fonts.
      
-        TextEditor: internal editor as well as message display in the Read window.
+        TextEditor: internal editor as well as message display in the
+                    Read window
            Options: fonts, colors, cursor, separator, keybindings, spell
                     checker.
      
@@ -3463,31 +3506,33 @@ Main window - Scripts menu
 Write window
 ************
 
+
    This window will appear when you choose to write a new message or
 answer or forward an already existing message.  You can open TWO Write
 windows at a time.  The Write window consists of three sheets, laid out
 as shown below.  The menu bar is the same for each sheet.
 
-  @{" Text " link "WRM1"} @{" Edit " link "WRM2"} @{" Attachments " link "WRM3"} @{" Options " link "WR02"}
+
+   @{" Text " link "WRM1"} @{" Edit " link "WRM2"} @{" Attachments " link "WRM3"} @{" Options " link "WR02"}
   
-    .-----------------------. .------------------.   .--------------------.
-    |      @{"  Message  " link "WR00"}     | |  @{" Attachments " link "WR01"}   |  |    @{"  Options  " link "WR02"}     |
-    |                       |_|__________________|___|____________________|
-    |                                                                     |
-    |                                                                     |
-    |                                                                     |
-    |                                                                     |
-    |            The big text edit field on the 'Message'                 |
-    |            sheet is the @{" internal editor " link "EDIT"} which you                 |
-    |            can use to enter your message.                           |
-    |                                                                     |
-    |                                                                     |
-    |                                                                     |
-    |                                                                     |
-    `---------------------------------------------------------------------'
-    .---------------. .---------------. .---------------. .---------------.
-    |   Send now    | |  Send later   | |     Hold      | |    Cancel     |
-    `---------------' `---------------' `---------------' `---------------'
+  .-----------------------. .------------------.   .--------------------.
+  |      @{"  Message  " link "WR00"}     | |  @{" Attachments " link "WR01"}   |  |    @{"  Options  " link "WR02"}     |
+  |                       |_|__________________|___|____________________|
+  |                                                                     |
+  |                                                                     |
+  |                                                                     |
+  |                                                                     |
+  |            The big text edit field on the 'Message'                 |
+  |            sheet is the @{" internal editor " link "EDIT"} which you                 |
+  |            can use to enter your message.                           |
+  |                                                                     |
+  |                                                                     |
+  |                                                                     |
+  |                                                                     |
+  `---------------------------------------------------------------------'
+  .---------------. .---------------. .---------------. .---------------.
+  |   Send now    | |  Send later   | |     Hold      | |    Cancel     |
+  `---------------' `---------------' `---------------' `---------------'
 
 
    These four buttons appear at the bottom of each sheet:
@@ -4100,7 +4145,7 @@ Function of the buttons
 @endnode
 
 @node "RE_W" "Read window"
-@next "MA_W"
+@next "FO_W"
 @prev "WR_W"
 @toc "WI_W"
 
@@ -4110,27 +4155,28 @@ Read window
 
    This window opens when you choose to read a message.  If you have
 enabled multiple windows in the @{" Read configuration " link "CO04"}, then you can have
-up to four of them open simultaneously.  The window is laid out as shown:
+upto four of them open simultaneously.  The window is laid out as shown:
 
 
-  Menu bar
-  @{" Message " link "REM1"}  @{" Navigation " link "REM2"}  @{" PGP " link "REM3"}  @{" Settings " link "REM4"}
+   Menu bar:
 
- .--------------------------------------------------.  .----------.
- |                    @{" Toolbar " link "RE_B"}                     | | @{" status " link "MA0S"} |
- |__________________________________________________|  |__________|
+   @{" Message " link "REM1"}  @{" Navigation " link "REM2"}  @{" PGP " link "REM3"}  @{" Settings " link "REM4"}
 
- .----------------------------------------------------------------.
- |                        Message headers                         |
- |________________________________________________________________| You can
-  ________________________________________________________________ <--
- |                                                                | click &
- |                                                                | drag the
- |                                                                | divider
- |                          Message body                          |
- |                                                                |
- |                                                                |
- `----------------------------------------------------------------'
+  .--------------------------------------------------.  .----------.
+  |                    @{" Toolbar " link "RE_B"}                     | | @{" status " link "MA0S"} |
+  |__________________________________________________|  |__________|
+
+  .----------------------------------------------------------------.
+  |                        Message headers                         |
+  |________________________________________________________________| You can
+   ________________________________________________________________ <--
+  |                                                                | click &
+  |                                                                | drag the
+  |                                                                | divider
+  |                          Message body                          |
+  |                                                                |
+  |                                                                |
+  `----------------------------------------------------------------'
 
 
 Message status
@@ -4187,6 +4233,7 @@ Read window - Message menu
 @{b}Message/Edit...@{ub}
      Sends the current message to the message editor.  This option
      is only available for "Outgoing mail"-like folders.
+
 
 @{b}Message/Move...@{ub}
      Moves the current message to a different folder.
@@ -4463,29 +4510,183 @@ holding down a certain qualifier key:
 
 @endnode
 
+@node "FO_W" "Editing a folder"
+@next "AB_W"
+@prev "RE_W"
+@toc "WI_W"
+
+Folder settings
+***************
+
+
+   Apart from the standard 'Incoming', 'Outgoing', 'Sent' and 'Deleted'
+folders, you can create any number of additional folders.  These folders
+are useful e.g. for archiving received and/or sent mail, or for
+administrating mailing lists.
+
+   Whenever you create a new folder or edit one that already exists, a
+settings window will open with the following options:
+
+
+@{b}Name@{ub}
+     The name of the folder will appear in the folder listing in the
+     main window.
+
+     Example:  YAM mailing list
+
+
+@{b}Path@{ub}
+     This is the path in which the messages, the @{b}.fconfig@{ub} file and the
+     @{b}.index@{ub} file of the actual folder will be saved.  Usually this is a
+     subdirectory of the actual basic folder directory, but you can
+     specify any other place, like another hard disk partition for
+     example.
+
+     Example:  YAM_ml
+
+
+@{b}Max. age@{ub}
+     If you like, you can make YAM delete messages exceeding a certain
+     age automatically.  To do so, just drag the slider to select a
+     value different from zero (which stands for the maximum age of the
+     mail, in @{b}days@{ub}).  Then switch to the 'Start/Quit' configuration
+     sheet and activate the option 'Delete old mail'.
+
+     N.B.: Messages with the status 'new' or 'unread' will not be
+     deleted automatically.
+
+
+@{b}Type@{ub}
+     Here you choose if the folder is for incoming and/or sent mail.
+     This influences the column titles and whose address is displayed
+     in the message list.
+
+
+@{b}Mode@{ub}
+     Folders can be protected with a password and/or be compressed if
+     necessary.  There are the following modes available:
+
+     normal                    no password protection, no compression
+                               + fast
+                               - no protection of your e-mail from third persons
+                                 with access to your computer
+     
+     simple protection         simple password protection, no compression
+                               + fast
+                               - your e-mails are protected within YAM only
+     
+     compressed                XPK compression without password protection
+                               + saves hard disk space
+                               - slow, no protection for your e-mail
+     
+     compressed with password  XPK compression with password protection
+                               + saves hard disk space, good protection
+                               - slow
+
+     The XPK software package is needed for compressing.  It is not
+     contained in the YAM archive, but can be downloaded e.g. from
+     Aminet for free.  The settings for the compression library can be
+     found at @{" Miscellaneous " link "CO14"}.
+
+
+@{b}Sort by@{ub}
+     Here the primary order of the messages in the chosen folder is
+     specified.  You can have the mail sorted by message date, date
+     sent/received, sender, recipient, subject, size or status.
+     Concerning the message status, the messages will be sorted in
+     the following orders:
+
+       new > unread > read > replied > forwarded (for incoming mail)
+       error sending > hold > in queue > sent (for outgoing mail)
+
+     Additionally, several flags are also taken into account:
+
+       1. important
+       2. marked
+       3. PGP encrypted
+       4. PGP signed
+       5. status report
+       6. contains attachments
+
+     With the option 'Rev', the order will be reversed (e.g. Z-A
+     instead of A-Z).
+
+
+@{b}Then by@{ub}
+     Here the secondary order of the messages in the chosen folder is
+     specified.  If for example mails are sorted by subject on a first
+     instance, messages with the same subject can be sorted by date or
+     author using this second key.
+
+
+@{b}AppIcon stats@{ub}
+     Enable this if you want this folder's statistics to be added to
+     those shown in the application icon that YAM usually puts on the
+     Workbench screen.  By default, only the stats for the 'Incoming'
+     folder are noted there.
+
+     Exactly what data appears under the appicon depends on the label
+     set in the @{" Miscellaneous settings " link "CO14"}.
+
+
+@{b}Mailing list support@{ub}
+     Since not all mailing list servers set the "Reply-To:" field to the
+     correct address (which would be the mailing list address), YAM can
+     help you to work around this problem, offering also some other
+     nice tricks for a good measure.
+
+     When you reply to a mail contained in this folder, YAM checks if
+     the data in the "To:" field of the original message is matched by
+     the contents of the @{b}To: pattern@{ub} field -- if they do, the address
+     entered in the @{b}To: address@{ub} field will be inserted as the recipient
+     instead of the recipient's address contained in the original
+     message.
+
+     Additionally, if you have entered a @{b}From: address@{ub}, this will
+     replace your e-mail address when posting to the mailing list.
+     This is useful if you use different e-mail addresses for different
+     mailing lists, or just want to avoid SPAM.
+
+     You can also enter a @{b}Reply-To: address@{ub} in case the mailing list
+     software doesn't set this.
+
+     The @{b}Autodetect@{ub} button will try to guess what @{b}To: pattern@{ub} and
+     @{b}To: address@{ub} data should be used by scanning the first 5 messages
+     in the folder using the Smith&Waterman algorithm to search for
+     similarities between strings.  This should make it easier to find
+     the correct mailing list pattern.
+
+     Lastly, you can select the signature that will be used by default
+     when replying or posting new messages to this mailing list.
+
+     Examples on how to use the mailing list support settings are given
+     in the @{" Tips & tricks " link "TIP4"} chapter.
+ 
+@endnode
+
 @node "AB_W" "Address book"
 @next "TR_W"
-@prev "WI_W"
-@toc "Main"
+@prev "FO_W"
+@toc "WI_W"
 
 Address book
 ************
 
 
-    @{" menu bar " link "AB_M"}
+   @{" Menu bar " link "AB_M"}
 
-   .----------------------------------------------------------------.
-   |                           @{" toolbar " link "AB_B"}                            |
-   |________________________________________________________________|
+  .----------------------------------------------------------------.
+  |                           @{" Toolbar " link "AB_B"}                            |
+  |________________________________________________________________|
 
-   .----------------------------------------------------------------.
-   | Alias    |     Name     |   Description   |       Address      |
-   |----------|--------------|-----------------|--------------------|
-   |js        | John Smith   | mate            | jsmith\@example.com |
-   |          |              |                 |                    |
-   |          |              |                 |                    |
-   |          |              |                 |                    |
-   `----------------------------------------------------------------'
+  .----------------------------------------------------------------.
+  | Alias    |     Name     |   Description   |       Address      |
+  |----------|--------------|-----------------|--------------------|
+  |js        | John Smith   | mate            | jsmith\@example.com |
+  |          |              |                 |                    |
+  |          |              |                 |                    |
+  |          |              |                 |                    |
+  `----------------------------------------------------------------'
 
    By default, the list displays four columns as above, but you can (of
 course) change the @{" address book configuration " link "CO12"} to include phone numbers,
@@ -4862,7 +5063,7 @@ GROUP
 @node "TR_W" "Mail transfers"
 @next "FI_W"
 @prev "AB_W"
-@toc "Main"
+@toc "WI_W"
 
 Mail transfers
 **************
@@ -4968,7 +5169,7 @@ offline.
 @node "FI_W" "Finding messages"
 @next "US_W"
 @prev "TR_W"
-@toc "Main"
+@toc "WI_W"
 
 Finding messages
 ****************
@@ -5091,16 +5292,16 @@ Finding messages - Search criteria
 @endnode
 
 @node "US_W" "User administration"
-@next "RF_W"
+@next "MA_W"
 @prev "FI_W"
-@toc "Main"
+@toc "WI_W"
 
 User administration
 *******************
 
 
    YAM will satisfy the needs of a large family, being able to handle
-up to 16 users, who can each have their own folders and configuration
+upto 16 users, who can each have their own folders and configuration
 settings.  While starting YAM, you can say who you are and immediately
 use your own personal setup, making programs like MultiYAM become
 redundant.  Selecting the @{b}Settings/Users@{ub} menu item brings you to the
@@ -5164,6 +5365,8 @@ Users window.
 @endnode
 
 @node "Drag" "Drag & Drop"
+@next "Drag"
+@prev "Drag"
 
 Drag & Drop
 ***********
@@ -5199,7 +5402,7 @@ another object by releasing the mouse button to trigger some operation.
 
 @node "RF_W" "Reference"
 @next "TIPS"
-@prev "US_W"
+@prev "WI_W"
 @toc "Main"
 
 Reference
@@ -5632,7 +5835,8 @@ ADDRDELETE
 
 @{b}RETURNS@{ub}
      RC is set to 5 if ALIAS doesn't exist or if none was provided and
-     there is nothing to delete.
+     there is nothing to delete (because the address book window is
+     closed).
 
 @{b}NOTES@{ub}
      If ALIAS refers to a group or distribution list, all their
@@ -5684,7 +5888,7 @@ ADDREDIT
      CITY          - city for the entry (person only) (upto 79 chars)
      COUNTRY       - country for the entry (person only) (upto 79 chars)
      PHONE         - phone # for the entry (person only) (upto 79 chars)
-     COMMENT       - comment for the entry (upto 79 chars)
+     COMMENT       - comment for the entry (up to 79 chars)
      BIRTHDATE/N   - birthdate for a person in DDMMYYYY format, e.g. 13091969
      IMAGE         - image filename for the entry (person only)
      MEMBER/M      - use the argument(s) to edit a member list
@@ -5705,7 +5909,7 @@ ADDREDIT
 
          /* Select an entry */
 
-         ADDRGOTO YAM
+         ADDRGOTO YAM_ml
  
          /* Edit this entry */
 
@@ -5727,9 +5931,8 @@ ADDREDIT
      Even if a group or person is selected, MEMBER [ADD] will return
      success (0).
 
-     There isn't any real error checking to ensure the given data is
-     correct, which means that it is quite possible to trash memory by
-     entering nonsense data as birth date for instance.
+     Entering nonsense data as birth date or editing a distribution list
+     would throw Enforcer hits; this was fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
 
@@ -5821,8 +6024,9 @@ ADDRGOTO
      ALIAS/A
 
 @{b}FUNCTION@{ub}
-     This command just changes the current entry in the address book,
-     according to the alias supplied.
+     Makes the named alias the current entry in the address book.
+     The address book window is redrawn to make the new current entry
+     visible.
 
 @{b}INPUTS@{ub}
      ALIAS/A   - alias of the entry to turn into the current one
@@ -5856,7 +6060,7 @@ ADDRINFO
      VAR/K,STEM/K,ALIAS/A
 
 @{b}FUNCTION@{ub}
-     This command returns information about an address book entry.
+    Returns information about an address book entry.
 
 @{b}INPUTS@{ub}
      VAR/K     - variable to store the results of the query
@@ -5884,10 +6088,13 @@ ADDRINFO
                            distribution list, NR being a number between
                            0 and n-1
 
+     RC is set to 10 if the supplied alias does not exist or none was
+     provided.
+
 @{b}NOTES@{ub}
      Fields where information is not available are returned as an
      empty string, except for the birth date which is returned as
-     zero (0).
+     a literal zero (0).
 
 @{b}EXAMPLE@{ub}
          /* Enable result codes */
@@ -5999,13 +6206,15 @@ ADDRNEW
 
 @{b}FUNCTION@{ub}
      Creates a new entry in the address book and inserts it below
-     the active entry.
+     the last active entry.  If the address book window has not yet
+     been opened in the current session, the new entry will be added
+     below the first entry.
 
 @{b}INPUTS@{ub}
      VAR/K    - variable where the alias of the resulting entry will
                 be stored
-     STEM/K   - base name used for the stem where the name of the
-                resulting alias will be stored
+     STEM/K   - base name used for the stem where the alias of the
+                resulting entry will be stored
      TYPE     - type of entry, may be one of G (group), L (distribution
                 list) or P (person, the default value)
      ALIAS    - alias for the new entry
@@ -6017,10 +6226,11 @@ ADDRNEW
      <STEM>ALIAS - alias of the resulting entry
 
 @{b}NOTES@{ub}
-     At least one of ALIAS, NAME or EMAIL must be specified.
+     At least one of ALIAS, NAME or EMAIL should be specified.  Bogus
+     types are simply ignored.
 
-     If the provided alias exists already, a new alias will be
-     used instead by taking the supplied string and adding a trailing
+     If the provided alias exists already, a new alias will be used
+     instead by taking the supplied string and adding a trailing
      number until no clash is produced.  String limits are also taken
      into account.
 
@@ -6029,6 +6239,11 @@ ADDRNEW
      instance, "Jose Luis Feliciano" would turn into "J_Feliciano",
      or "Jose" if Jose\@example.com was the only argument provided.
      The rule mentioned above is also applied.
+
+     If the address book window is closed at the time the new entry
+     is added, it won't count as a change in the address book, which
+     means you won't be warned if you try to quit YAM afterwards
+     without saving the address book.
 
      While using spaces in aliases is possible, it is discouraged.
 
@@ -6064,19 +6279,22 @@ ADDRRESOLVE
      VAR/K,STEM/K,ALIAS/A
 
 @{b}FUNCTION@{ub}
-     This command will try to resolve a given alias or name into
-     the corresponding email address(es).
+     Tries to resolve a given alias or name into the corresponding
+     email address(es).  The command can resolve both individuals
+     and distribution lists.
 
 @{b}INPUTS@{ub}
      VAR/K     - variable where the name and/or address(es) of the
-                 matching entries will be stored
-     STEM/K    - base name used for the stem where the name of the
-                 resulting recipient will be stored
+                 resulting recipient(s) will be stored
+     STEM/K    - base name used for the stem where the name and/or
+                 address(s) of the resulting recipient(s) will be stored
      ALIAS/A   - alias or name to be resolved
 
 @{b}RETURNS@{ub}
-     VAR         - name and/or address(es) of the matching entries
-     <STEM>RECPT - name and/or address(es) of the matching entries
+     VAR         - name and/or address(es) of the matching entry
+     <STEM>RECPT - name and/or address(es) of the matching entry
+
+     RC is set to 5 if the supplied alias or name cannot be resolved.
 
 @{b}NOTES@{ub}
 
@@ -6088,6 +6306,7 @@ ADDRRESOLVE
      fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
+     @{" ADDRFIND " link "RX_ADDRFIND"}
 
 @endnode
 
@@ -6106,7 +6325,7 @@ ADDRSAVE
      FILENAME
 
 @{b}FUNCTION@{ub}
-     This command will try to save the address book to the disk.
+     Tries to save the address book to disk.
 
 @{b}INPUTS@{ub}
      FILENAME   - the complete path of the file to save the address
@@ -6146,16 +6365,18 @@ APPBUSY
 
 @{b}INPUTS@{ub}
      TEXT   - optional, a brief piece of text to display in the status
-              bar while YAM is in busy state
+              bar while YAM is in busy state; the maximum length of the
+              displayable text depends on the width of the characters
+              used
 
 @{b}RETURNS@{ub}
-     RC will be set to 1 if YAM is already busy.
+     RC is set to 1 if YAM was already busy.
 
 @{b}NOTES@{ub}
      V2.4 introduced the concept of busy levels, meaning the command
-     is now accumulative: if AppBusy is called several times in a row,
-     an equal number of calls to AppNoBusy must be made for the
-     application to return to normal state.
+     is now accumulative: if AppBusy is called several times, an equal
+     number of calls to AppNoBusy must be made for the application to
+     return to normal state.
 
 @{b}EXAMPLE@{ub}
          /* Turn busy mode on */
@@ -6174,7 +6395,7 @@ APPBUSY
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
-    @{" APPNOBUSY " link "RX_APPNOBUSY"}
+     @{" APPNOBUSY " link "RX_APPNOBUSY"}
 
 @endnode
 
@@ -6233,7 +6454,7 @@ FOLDERINFO
 
 @{b}FUNCTION@{ub}
      Returns information about the specified folder, or the current
-     folder if no folder is specified.
+     folder if none is specified.
 
 @{b}INPUTS@{ub}
      VAR/K    - variable where the results will be stored
@@ -6312,7 +6533,7 @@ GETCONFIGINFO
      Returns information about the current user.
 
 @{b}INPUTS@{ub}
-     VAR/K    - alternative variable to put the result into instead of
+     VAR/K    - alternative variable to put the results into instead of
                 RESULT  (V2.0)
      STEM/K   - base name used for the stem where the result will be
                 stored  (V2.0)
@@ -6326,8 +6547,7 @@ GETCONFIGINFO
      <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
-     This command is superseded by USERINFO in V2.0+.  Don't use it
-     in new scripts.
+     Superseded by @{" USERINFO " link "RX_USERINFO"} in V2.0+.  Don't use it in new scripts.
 
 @{b}EXAMPLE@{ub}
          /* Enable result codes */
@@ -6389,8 +6609,7 @@ GETFOLDERINFO
      <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
-     This command is superseded by FOLDERINFO in V2.0+.  Don't use it
-     in new scripts.
+     Superseded by @{" FOLDERINFO " link "RX_FOLDERINFO"} in V2.0+.  Don't use it in new scripts.
 
 @{b}EXAMPLE@{ub}
          /* Enable result codes */
@@ -6442,7 +6661,7 @@ GETMAILINFO
                 be stored  (V2.0)
      ITEM/A   - item to return info about, may be one of
 
-                   ACT(IVE)    - number (0 = first message in the folder)
+                   ACT(IVE)    - position (0 = first message in the folder)
                    STA(TUS)    - status of the message, possible values are
 
                                     N   - new
@@ -6469,8 +6688,7 @@ GETMAILINFO
      <STEM>VALUE - info returned by the query
 
 @{b}NOTES@{ub}
-     This command is superseded by MAILINFO in V2.0+.  Don't use it
-     in new scripts.
+     Superseded by @{" MAILINFO " link "RX_MAILINFO"} in V2.0+.  Don't use it in new scripts.
 
 @{b}EXAMPLE@{ub}
          /* Enable result codes */
@@ -6557,7 +6775,7 @@ GETSELECTED
          END
 
 @{b}BUGS@{ub}
-     <stem>num.count was not initialized for empty folders.  This was
+     <STEM>NUM.COUNT was not initialized for empty folders.  This was
      fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
@@ -6616,9 +6834,10 @@ GETURL
             WHEN c = 5 THEN SAY 'TCP/IP stack not running.'
             WHEN c > 5 THEN SAY 'Error.'
             OTHERWISE SAY 'File downloaded successfully.'
-            END
+         END
 
 @{b}BUGS@{ub}
+     The command is interrupted if email is sent or received.
 
 @{b}SEE ALSO@{ub}
 
@@ -6761,7 +6980,7 @@ ISONLINE
      Due to the fact that YAM is not multithreaded yet, the ARexx host
      runs into the very same task and thus the command doesn't return
      until the transference is finished, and then of course it returns 0.
-     Therefore, the command is only useful when using mail preselection
+     Therefore, this command is only useful when using mail preselection
      (it will return 1 after all the headers are transferred and the
      application stops to wait for user interaction) until multithreading
      is implemented.
@@ -6794,8 +7013,8 @@ LISTSELECT
 @{b}INPUTS@{ub}
      MODE/A   - may be one of N (none), A (all), T (toggle selection) or
                 a numeric value to add to the selection the message in
-                that position, 0 referring to the message at the top of
-                the folder.
+                that position, where 0 refers to the message at the top
+                of the folder
 
 @{b}RETURNS@{ub}
 
@@ -6839,7 +7058,7 @@ MAILARCHIVE
      RC is set to 10 if the specified folder doesn't exist.
 
 @{b}NOTES@{ub}
-     Superseded by MAILMOVE in V2.0+.  Don't use it in new scripts.
+     Superseded by @{" MAILMOVE " link "RX_MAILMOVE"} in V2.0+.  Don't use it in new scripts.
 
 @{b}EXAMPLE@{ub}
          /* Move the selected messages to the Archived folder */
@@ -6926,6 +7145,8 @@ MAILCHANGESUBJECT
 @{b}RETURNS@{ub}
 
 @{b}NOTES@{ub}
+     If the supplied string is longer than 199 characters, it will be
+     truncated.
 
 @{b}EXAMPLE@{ub}
      /* Change the subject of the selected messages */
@@ -6933,11 +7154,9 @@ MAILCHANGESUBJECT
      'MAILCHANGESUBJECT "This is the new subject"'
 
 @{b}BUGS@{ub}
-     MAILCHANGESUBJECT doesn't actually check that the string is not longer
-     than the allowed maximum of 199 characters, the result being that the
-     command wipes the message info contained in the filename comment, thus
-     requiring an index update and possibly causing further calamities
-     later on.  Handle with care for now.
+     The command didn't check that the string was not longer than the
+     maximum length allowed, causing a buffer overrun that spilled onto
+     the message file comment when this happened.  Fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
 
@@ -6962,13 +7181,13 @@ MAILCHECK
      of them if none is specified.
 
 @{b}INPUTS@{ub}
-     VAR/K      - alternative variable to store the number of the created
-                  window instead of RESULT  (V2.0)
+     VAR/K      - alternative variable to put the results into instead of
+                  RESULT  (V2.0)
      STEM/K     - base name used for the stems where the returned data
                   will be stored  (V2.0)
-     POP/K/N    - POP3 mail account to check (V2.0), specified as the position
+     POP/K/N    - POP3 mail account to check, specified as the position
                   in the list of POP3 accounts in Configuration ->TCP/IP;
-                  the account at the top is account 0
+                  the account at the top is account 0  (V2.0)
      MANUAL/S   - open the transfer window to enable user interaction,
                   i.e. message preselection  (V2.0)
 
@@ -6980,8 +7199,7 @@ MAILCHECK
      <STEM>DELETED    - total number of emails deleted from the server
 
      In V1.x, RC was always set to 0.  As of V2.0 however, RC is set to
-     5 if the TCP/IP stack is not online or if no messages are found on
-     the server.
+     5 if the TCP/IP stack is not online.
 
      Likewise, in V1.x RESULT was set to the number of downloaded emails,
      or -1 if the connection to the mail server failed.
@@ -7010,8 +7228,9 @@ MAILCHECK
          SAY 'Deleted on server:  'st.deleted
 
 @{b}BUGS@{ub}
-     Currently <stem>onserver simply returns the number of messages
-     found in the server.
+     RC was set to 5 if no mail was found on the server, and
+     <STEM>ONSERVER simply returned the number of messages found.
+     Both were fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
 
@@ -7073,10 +7292,10 @@ MAILDELETE
      ATONCE/S,FORCE/S
 
 @{b}FUNCTION@{ub}
-     Deletes the messages selected in the current folder
+     Deletes the messages selected in the current folder.
 
 @{b}INPUTS@{ub}
-     ATONCE/S   - delete the messages immediately, without moving them
+     ATONCE/S   - delete the messages immediately instead of moving them
                   to the 'Deleted' folder  (V2.0)
      FORCE/S    - skip any confirmation requester  (V2.0)
 
@@ -7118,7 +7337,7 @@ MAILEDIT
                  window instead of RESULT
      STEM/K    - base name used for the stem where the returned data
                  will be stored
-     QUIET/S   - force the Write window to stay invisible  (V2.1)
+     QUIET/S   - force the window to stay invisible  (V2.1)
 
 @{b}RETURNS@{ub}
      VAR          - info returned by the command
@@ -7301,7 +7520,7 @@ MAILFORWARD
                  RESULT  (V2.0)
      STEM/K    - base name used for the stem where the number of the created
                  window will be stored  (V2.0)
-     QUIET/S   - force the Write window to stay invisible  (V2.1)
+     QUIET/S   - force the window to stay invisible  (V2.1)
 
 @{b}RETURNS@{ub}
      VAR          - info returned by the command
@@ -7471,7 +7690,7 @@ MAILINFO
             WHEN status = 'W' THEN status = 'Pending'
             WHEN status = 'H' THEN status = 'Hold'
             OTHERWISE status = 'Error sending'
-            END
+         END
          SAY 'Status:     'status
          SAY 'From:       'st.from
          SAY 'To:         'st.to
@@ -7484,8 +7703,8 @@ MAILINFO
          SAY 'Message-ID: 'st.msgid
 
 @{b}BUGS@{ub}
-     In V2.3p1, <stem>FILENAME omitted the folder name part if an INDEX
-     was specified.  This was fixed in V2.4.
+     In V2.3p1, <STEM>FILENAME omitted the folder name part if an INDEX
+     was specified.  Fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
      @{" SETFLAG " link "RX_SETFLAG"}
@@ -7554,9 +7773,8 @@ MAILREAD
                   RESULT
      STEM/K     - base name used for the stem where the returned data will
                   be stored
-     WINDOW/N   - change the command behavior to just activate an
-                  already opened Read window, possible values go
-                  between 0 and 3
+     WINDOW/N   - change the command behavior to just activate an already
+                  opened Read window, possible values go between 0 and 3
      QUIET/S    - force the window to stay invisible
 
 @{b}RETURNS@{ub}
@@ -7627,6 +7845,9 @@ MAILREPLY
      folder is empty.
 
 @{b}NOTES@{ub}
+     Depending on the configuration, a requester may open to e.g. let the
+     user select the address to reply to; the command won't return until
+     the Write window finally opens.
 
 @{b}EXAMPLE@{ub}
 
@@ -7697,8 +7918,13 @@ MAILSENDALL
 @{b}INPUTS@{ub}
 
 @{b}RETURNS@{ub}
-     RC is set to 5 if the system is not online or if there isn't any
-     message ready to be sent.  (V???)
+     In V1.x, RC was always set to 0.  As of V2.0 however, RC is set to
+     5 if the TCP/IP stack is not online of if there isn't any message
+     ready to be sent.
+
+     Likewise, in V1.x RESULT was set to the number of sent emails,
+     or -1 if the connection to the mail server failed.  RESULT is
+     never initialized in V2.0+.
 
 @{b}NOTES@{ub}
 
@@ -7706,7 +7932,7 @@ MAILSENDALL
 
 @{b}BUGS@{ub}
      No warning was returned in case of a problem to send.  This was
-     fixed in V???.
+     fixed in V2.0.
 
 @{b}SEE ALSO@{ub}
 
@@ -7886,7 +8112,7 @@ MAILWRITE
          /* Start a new email using an invisible Write window */
 
          MAILWRITE STEM st. QUIET
-         win3 = st.window   /* just for completeness sake */
+         win3 = st.window
          WRITETO sales\@example.com
          'WRITESUBJECT "Two with Mozzarella + lots of coke"'
          WRITELETTER 'dh5:priv/Snail_Linda.txt'
@@ -7940,10 +8166,11 @@ NEWMAILFILE
                 supplied, the current folder will be used
 
 @{b}RETURNS@{ub}
-     VAR            - info returned by the query
+     VAR            - filename returned, with path
      <STEM>FILENAME - filename returned, with path
 
-     RC is set to 10 if the specified folder doesn't exist.
+     RC is set to 10 if the specified folder doesn't exist or a group
+     is currently selected.
 
 @{b}NOTES@{ub}
      The command works by trying to lock the first message slot usable for
@@ -8245,7 +8472,7 @@ REQUEST
      returns the choice taken by the user.
 
 @{b}INPUTS@{ub}
-     VAR/K       - alternative variable to put the result into instead of
+     VAR/K       - alternative variable to put the results into instead of
                    RESULT  (V2.0)
      STEM/K      - base name used for the stem where the result will be
                    stored  (V2.0)
@@ -8310,7 +8537,7 @@ REQUESTFOLDER
      current folder.
 
 @{b}INPUTS@{ub}
-     VAR/K             - alternative variable to put the result into
+     VAR/K             - alternative variable to put the results into
                          instead of RESULT
      STEM/K            - base name used for the stem where the result
                          will be stored
@@ -8353,8 +8580,8 @@ REQUESTSTRING
      Opens a requester asking the user to enter a text string.
 
 @{b}INPUTS@{ub}
-     VAR/K      - alternative variable to put the result into instead of
-                  RESULT
+     VAR/K      - alternative variable to put the results into instead
+                  of RESULT
      STEM/K     - base name used for the stem where the result will be
                   stored
      BODY/A     - a string containing the body of the requester
@@ -8517,7 +8744,8 @@ SETFOLDER
 
 @{b}INPUTS@{ub}
      FOLDER/A   - name, directory or number of the folder to turn into
-                  the current folder; folder numbers start from 0
+                  the current folder; folder numbers start counting
+                  from 0
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the specified folder doesn't exist.
@@ -8566,7 +8794,8 @@ SETMAIL
 @{b}FUNCTION@{ub}
      Sets the current message in the current folder by its position
      in the list.  The message list is redrawn if necessary to make the
-     new current message visible.
+     new current message visible, and all previously selected messages
+     get deselected.
 
 @{b}INPUTS@{ub}
      NUM/N/A   - position occupied by the message in the list, may be a
@@ -8685,7 +8914,7 @@ USERINFO
 
 @{b}RETURNS@{ub}
      VAR            - info returned by the query
-     <STEM>USERNAME - username of this user
+     <STEM>USERNAME - user name of this user
      <STEM>EMAIL    - email address of this user
      <STEM>REALNAME - real name of this user
      <STEM>CONFIG   - configuration file of this user
@@ -8732,7 +8961,8 @@ WRITEATTACH
      "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
-     The default encoding type is Base64 (MIME).
+     By default, binary files are encoded as Base64 (MIME), whereas
+     text files are UUencoded.
 
      The default content type is taken after scanning the built-in
      list of MIME types and then looking at the MIME types defined
@@ -8742,10 +8972,6 @@ WRITEATTACH
      will default to "application/pgs" unless CTYPE overrides this.
      If no suitable MIME type is found and no content type has been
      specified, YAM will fallback to "application/octet-stream".
-
-     Never, ever use MIME types not standardised when sending email
-     through the Internet, otherwise you risk the data to be mangled
-     along the way.
 
 @{b}EXAMPLE@{ub}
          /* Attach a file */
@@ -8974,7 +9200,8 @@ WRITEFROM
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no Write window was previously specified as "active"
-     with @{" MAILWRITE " link "RX_MAILWRITE"}.
+     with @{" MAILWRITE " link "RX_MAILWRITE"} or if an attempt is made to enter more than one
+     sender.
 
 @{b}NOTES@{ub}
 
@@ -9006,8 +9233,8 @@ WRITELETTER
      FILE/A,NOSIG/S
 
 @{b}FUNCTION@{ub}
-     Loads a file into the internal text editor.  The file replaces
-     the current contents of the editor.
+     Loads a file into the internal text editor, completely replacing
+     its current contents, if any.
 
 @{b}INPUTS@{ub}
      FILE/A    - file to load; only a text file will be accepted
@@ -9096,7 +9323,7 @@ WRITEOPTIONS
 @{b}INPUTS@{ub}
      DELETE/S       - discard the message completely after sending
      RECEIPT/S      - ask for a return receipt
-     NOTIF/S        - enable message tracking
+     NOTIF/S        - enable message tracking (MDN)
      ADDINFO/S      - add personal information
      IMPORTANCE/N   - importance of the message, possible values are
 
@@ -9107,8 +9334,8 @@ WRITEOPTIONS
      SIG/N          - signature to use, possible values are
 
                          0 - no signature
-                         1 - default value taken from the Signatures
-                             configuration (default)
+                         1 - default value taken from the Signature
+                             configuration
                          2 - alt. signature #1
                          3 - alt. signature #2
 
@@ -9126,9 +9353,10 @@ WRITEOPTIONS
      "active" with @{" MAILWRITE " link "RX_MAILWRITE"}.
 
 @{b}NOTES@{ub}
-     Defaults are taken from the program configuration.  If anonymous
-     send is specified, personal info and signatures are removed
-     automatically.
+     Defaults are taken from the program configuration; the default
+     signature may vary depending on whether mailing list support is
+     enabled or not for the current folder.  If anonymous send is
+     specified, personal info and signatures are removed automatically.
 
 @{b}EXAMPLE@{ub}
          /* Set a message to be sent anonymously */
@@ -9286,7 +9514,7 @@ WRITESUBJECT
      Enters a subject into a new message.
 
 @{b}INPUTS@{ub}
-     SUBJECT/A   - subject of the message (up to 199 characters)
+     SUBJECT/A   - subject of the message (upto 199 characters)
 
 @{b}RETURNS@{ub}
      RC is set to 10 if no Write window was previously specified as
@@ -9457,18 +9685,16 @@ old.info@{ub}
 
 
 @{b}folder_#?@{ub} (V2.4)
-     These are the images used by default in front of the folder names
-     in the folder list; the standard YAM 2.4 distribution includes images
-     for the basic Incoming, Deleted, Outgoing and Sent folders; those
-     with the "_new" suffix are used automatically whenever there is new
-     or unread mail in the folder.
+     These are the images used in front of the basic Incoming, Deleted,
+     Outgoing and Sent folders.  Those with the "_new" suffix are used
+     automatically whenever there is new or unread mail in the folder.
 
      The "folder_fold" and "folder_unfold" images are special: they are
      used as the icon for folder groups.
 
      A ".fimage" picture file in a folder overrides the default image.
-
-     All of them should be no larger than 16*16 pixels.
+     This is also the only method supported to have images displayed
+     in front of custom folders.
 
 @endnode
 
@@ -9635,8 +9861,8 @@ where
         6 = Size
         7 = Status
 
-   - @{b}Sort2@{ub} is just the same as primary_sort, but referred to the
-     secondary sort criterion
+   - @{b}Sort2@{ub} is just the same as Sort1, but referred to the secondary
+     sort criterion
 
    - @{b}Stats@{ub} may be either Y or N depending on the status of the
      "AppIcon stats" flag
@@ -9790,7 +10016,7 @@ unless maybe you are @{" moving YAM " link "TIP2"} to another place in your hard
         4th line:   number
         5th line:   encrypted password, if any
         6th line:   \@ENDUSER
-   further lines:   next user definition, up to 16 maximum.
+   further lines:   next user definition, upto 16 maximum.
 
 
    where "number" is a value defining the status of this user combining
@@ -10174,6 +10400,14 @@ using a key qualifier
 were lost.  A solution is being considered for a future YAM release.
 
 
+YAM dies when the toolbar images are mixed up and I select "Fail" in
+the requester that Toolbar.mcc puts up
+--------------------------------------------------------------------
+
+   Bug in Toolbar.mcc.  This problem will go away in the next YAM
+version as Toolbar.mcc is replaced with a better class.
+
+
 The layout of the prefs window doesn't adapt properly when reducing
 its size
 -------------------------------------------------------------------
@@ -10502,17 +10736,32 @@ Credits
 
    Third party contributors
 
-      Stefan Stuntz        (MUI)
-      Allan Odgaard        (TextEditor.mcc, BetterString.mcc)
-      Benny Kjær Nielsen   (Toolbar.mcc)
-      Marcin Orlowski      (Flexcat)
+      Stefan Stuntz           (MUI)
+      Allan Odgaard           (TextEditor.mcc, BetterString.mcc)
+      Benny Kjær Nielsen      (Toolbar.mcc)
+      Marcin Orlowski         (Flexcat)
       Gilles Masson,
       Carsten Scholling,
       Przemyslaw Gruchala,
       Sebastian Bauer
-      & Jens Langner       (NList.mcc, NListview.mcc)
-      Carsten Scholling    (NListtree.mcc)
-      Andrija Antonijevic  (AmiSSL library)
+      & Jens Langner          (NList.mcc, NListview.mcc)
+      Carsten Scholling       (NListtree.mcc)
+      Andrija Antonijevic     (AmiSSL library)
+      Urban Dominik Mueller,
+      Bryan Ford,
+      Christian Schneider,
+      Christian von Roques
+      & Dirk Stöcker          (XPK)
+      Stephan Rupprecht       (NewReadArgs)
+      Andrew Bell             (GenClasses)
+      Emmanuel Lesueur        (MorphOS starter tool)
+      Ralph Gruner            (GPatch)
+      Troels Walsted Hansen   (OpenURL)
+      Alessandro Zumo         (NewMouse standard)
+      Holger Kruse            (Miami)
+      NSDi                    (AmiTCP/Genesis)
+      Ron Rivest &
+      Colin Plumb             (MD5 algorithm support)
 
 
    Original idea
@@ -10537,7 +10786,7 @@ Credits
 
    Titles, button borders and status icons
 
-      Roman Patzner
+      Pavel Narozny, Roman Patzner
 
 
    NewIcons
@@ -10545,9 +10794,9 @@ Credits
       Ash Thomas
 
 
-   GPatch
+   Additional GlowIcons
 
-      Ralf Gruner
+      Thomas Peterseim  <http://mitglied.lycos.de/IconDesigner/>
 
 
    YAM 1.0 - 2.2 betatesters
@@ -10642,157 +10891,7 @@ local bulletin boards or on public domain disks.
 
 @endnode
 
-@node "FO_W" "Folder settings"
-
-Folder settings
-***************
-
-   Apart from the four mailbox folders 'Incoming', 'Outgoing', 'Sent'
-and 'Deleted', you can create any number of user-defined folders.
-These folders are useful e.g. for archiving received and/or sent mail
-or for administrating mailing lists.
-
-
-@{b}Name@{ub}
-     The name of the folder will appear in the folder listing in the
-     main window.
-
-     Example:  YAM mailing list
-
-
-@{b}Path@{ub}
-     This is the path in which the messages, the @{b}.fconfig@{ub} file and the
-     @{b}.index@{ub} file of the actual folder will be saved.  Usually this is a
-     subdirectory of the actual basic folder directory, but you can
-     specify any other place, like another hard disk partition for
-     example.
-
-     Example:  YAM_ml
-
-
-@{b}Max. age@{ub}
-     If you like, you can make YAM delete messages exceeding a certain
-     age automatically.  To do so, just drag the slider to select a
-     value different from zero (which stands for the maximum age of the
-     mail, in @{b}days@{ub}).  Then switch to the 'Start/Quit' configuration
-     sheet and activate the option 'Delete old mail'.
-
-     N.B.: Messages with the status 'new' or 'unread' will not be
-     deleted automatically.
-
-
-@{b}Type@{ub}
-     Here you choose if the folder is for incoming and/or sent mail.
-     This influences the column titles and whose address is displayed
-     in the message list.
-
-
-@{b}Mode@{ub}
-     Folders can be protected with a password and/or be compressed if
-     necessary.  There are the following modes available:
-
-     normal                    no password protection, no compression
-                               + fast
-                               - no protection of your e-mail from third persons
-                                 with access to your computer
-     
-     simple protection         simple password protection, no compression
-                               + fast
-                               - your e-mails are protected within YAM only
-     
-     compressed                XPK compression without password protection
-                               + saves hard disk space
-                               - slow, no protection for your e-mail
-     
-     compressed with password  XPK compression with password protection
-                               + saves hard disk space, good protection
-                               - slow
-
-     The XPK software package is needed for compressing.  It is not
-     contained in the YAM archive, but can be downloaded e.g. from
-     Aminet for free.  The settings for the compression library can be
-     found at @{" Miscellaneous " link "CO14"}.
-
-
-@{b}Sort by@{ub}
-     Here the primary order of the messages in the chosen folder is
-     specified.  You can have the mail sorted by message date, date
-     sent/received, sender, recipient, subject, size or status.
-     Concerning the message status, the messages will be sorted in
-     the following orders:
-
-       new > unread > read > replied > forwarded (for incoming mail)
-       error sending > hold > in queue > sent (for outgoing mail)
-
-     Additionally, several flags are also taken into account:
-
-       1. important
-       2. marked
-       3. PGP encrypted
-       4. PGP signed
-       5. status report
-       6. contains attachments
-
-     With the option 'Rev', the order will be reversed (e.g. Z-A
-     instead of A-Z).
-
-
-@{b}Then by@{ub}
-     Here the secondary order of the messages in the chosen folder is
-     specified.  If for example mails are sorted by subject on a first
-     instance, messages with the same subject can be sorted by date or
-     author using this second key.
-
-
-@{b}AppIcon stats@{ub}
-     Enable this if you want this folder's statistics to be added to
-     those shown in the application icon that YAM usually puts on the
-     Workbench screen.  By default, only the stats for the 'Incoming'
-     folder are noted there.
-
-     Exactly what data appears under the appicon depends on the label
-     set in the @{" Miscellaneous settings " link "CO14"}.
-
-
-@{b}Mailing list support@{ub}
-     Since not all mailing list servers set the "Reply-To:" field to the
-     correct address (which would be the mailing list address), YAM can
-     help you to work around this problem, offering also some other
-     nice tricks for a good measure.
-
-     When you reply to a mail contained in this folder, YAM checks if
-     the data in the "To:" field of the original message is matched by
-     the contents of the @{b}To: pattern@{ub} field -- if they do, the address
-     entered in the @{b}To: address@{ub} field will be inserted as the recipient
-     instead of the recipient's address contained in the original
-     message.
-
-     Additionally, if you have entered a @{b}From: address@{ub}, this will
-     replace your e-mail address when posting to the mailing list.
-     This is useful if you use different e-mail addresses for different
-     mailing lists, or just want to avoid SPAM.
-
-     You can also enter a @{b}Reply-To: address@{ub} in case the mailing list
-     software doesn't set this.
-
-     Lastly, the @{b}Autodetect@{ub} button will try to guess what @{b}To: pattern@{ub}
-     and @{b}To: address@{ub} data should be used by scanning the first 5
-     messages in the folder using the Smith&Waterman algorithm to
-     search for similarities between strings.  This should make it
-     easier to find the correct mailing list pattern.
-
-     Examples on how to use the mailing list support settings are given
-     in the @{" Tips & tricks " link "TIP4"} chapter.
-
-
-@{b}Signature@{ub}
-     Here you can select the signature that will be used by default when
-     replying to messages coming from this mailing list (the ones with
-     a @{b}To:@{ub} header matching the pattern given in @{b}To: pattern@{ub}).
-
-@endnode
-
-@node "Index" "Index"
+@node "Index"
 @{CODE}
 
    A...
