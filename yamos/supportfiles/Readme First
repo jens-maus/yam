@@ -39,14 +39,15 @@ Developers: msbethke - Matthias Bethke
             laursen  - Jacob Laursen
             joergs   - Jörg Strohmayer
             gizmo    - Dirk Stöcker
+            AmiS     - Alexey Ivanov
             charlie  - Karoly Balogh
             tactica  - David Rey
 
 - Fixed: no more Enforcer hits on exit (damato)
 - Fixed: YAM didn't really disconnect from the server if an STMP AUTH
   request failed (damato)
-- Fixed: the response gotten from the server was never reported to the
-  user if SMTP AUTH failed (damato)
+- Fixed: if SMTP AUTH failed, the response gotten from the server was
+  never reported to the user (damato)
 - Fixed: if a host had 2 different IPs in the DNS and the first one
   was down, YAM would never try to connect to the second one and just
   threw an error message (damato)
@@ -77,8 +78,8 @@ Developers: msbethke - Matthias Bethke
   (damato)
 - Fixed: the gauge in the mail transfer window would never reach 100%
   (damato)
-- Fixed: enforced proper Write window parameters when dealing with ARexx
-  to avoid things going terribly wrong (damato)
+- Fixed: enforced proper Read/Write window parameters when dealing with
+  ARexx to avoid things going terribly wrong (damato)
 - Fixed: ADDRDELETE would throw Enforcer hits if no alias was provided
   (damato)
 - Fixed: ADDREDIT couldn't edit/create distribution lists without
@@ -101,10 +102,10 @@ Developers: msbethke - Matthias Bethke
   was enabled (damato)
 - Fixed: no mail was downloaded automatically if "Download large messages"
   was disabled (damato)
-- Fixed: it was possible to interrupt a mail transfer by using "Check
-  version" (damato)
-- Fixed: calling "Show last message" would disrupt the current mail transfer
-  and cause further calamities later on (damato)
+- Fixed: it was possible to abruptly interrupt a mail transfer by using
+  "Check version" (damato)
+- Fixed: calling "Show last message" would also disrupt the current mail
+  transfer and cause further calamities later on (damato)
 - Fixed: clicking the support URL <www.yam.ch> in the About window on
   startup was rewarded with an Enforcer hit (damato)
 - Fixed: the results in the Search window could get out of sync with the
@@ -137,16 +138,17 @@ Developers: msbethke - Matthias Bethke
 - Fixed: double clicking mailto: links does something useful again; as
   an extra bonus, subject, CC and BCC fields are also correctly handled as
   in mailto:a@b.c?subject=test&amp;cc=b@c.d , and two URLs can appear in
-  the same line without triggering side effects, hooray! :) (damato)
+  the same line without triggering side effects (damato)
 - Fixed: temporary files for attachments cancelled in the Write window
   were not deleted (damato)
 - Fixed: couldn't display raw messages stored in PROGDIR:folder (damato)
 - Fixed: will now take care of spaces in path names when calling MIME
   viewers (damato)
 - Fixed: when dealing with subjects without a space after the [tag],
-  i.e. "Re: [list]subject", YAM would delete the first character in the
-  edited subject (charlie)
-- Fixed: problem with the "%" character in attachment filenames (damato)
+  i.e. "Re: [list]subject", the first character in the edited subject
+  got lost (charlie)
+- Fixed: hiccup when finding a "%" character in attachment filenames
+  (damato)
 - Fixed: the "group for new entries" in the address book configuration
   was never used (damato)
 - Fixed: two codes were used in the logfile for different purposes
@@ -177,9 +179,6 @@ Developers: msbethke - Matthias Bethke
   Close phrases, since it doesn't make much sense there (damato)
 - Changed: string gadgets for email addresses and real names are now
   limited to 150 and 30 characters, respectively (damato)
-- Changed: when sorting messages by status, additional flags will be
-  taken into account, e.g. messages marked as "important" will be listed
-  first (damato)
 - Changed: trying to import email from a file that doesn't contain any
   will now trigger an error message (damato)
 - Changed: updated the URLs given by the warning in MIME messages
@@ -194,22 +193,22 @@ Developers: msbethke - Matthias Bethke
   loading whatever is thrown at it (damato)
 - Changed: made the GUI a bit less obstrusive at getting the focus
   while the user is typing away elsewhere (damato)
-- Changed: "Show last message" remains ghosted now until there is actually
+- Changed: "Show last message" remains disabled now until there is actually
   some message to show (damato)
 - Changed: sizes of uuencoded attachments are displayed with a "~" (tilde)
   character in the Read window meaning this is just an approximation
   (damato)
-- Changed: email addresses in the usual a@b.c form are now clickable
-  just like mailto: links, and they are shown highlighted just like URLs
-  (damato)
+- Changed: email addresses in the usual a@b.c form are (again) clickable
+  just like mailto: links, and as a bonus they also appear highlighted
+  just like URLs (damato)
 - Changed: CTRL-C will now break the application, while CTRL-D will
   restart it immediately (damato)
 - Changed: updated default remailer address (damato)
 - Changed: now requires NList.mcc 20.104 and NListtree.mcc 18.12 as
   the bare minimum (damato)
 
-- Added: hierarchical folders - folders can now be arranged into groups,
-  and nested at the user's discretion (damato)
+- Added: hierarchical folder list - folders can now be arranged into
+  groups, and nested at the user's discretion (damato)
 - Added: SMTP & POP3 TLS1/SSL3 support for stunnel servers, using
   AmiSSL.library (damato)
 - Added: email address cache - YAM can now "remember" the last N used
