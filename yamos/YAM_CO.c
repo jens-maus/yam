@@ -685,9 +685,10 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->ColoredText.buf, "m6");
       strcpy(co->Color2ndLevel.buf, "m7");
       co->DisplayAllTexts = co->FixedFontEdit = co->UseTextstyles = TRUE;
-      co->WrapHeader = co->MultipleWindows = FALSE;
+      co->AutomaticTranslationIn = co->WrapHeader = co->MultipleWindows = FALSE;
       co->SigSepLine = 2;
       *co->TranslationIn = 0;
+
    }
    if (page == 5 || page < 0)
    {
@@ -856,9 +857,11 @@ void CO_Validate(struct Config *co, BOOL update)
    strmfp(G->WR_Filename[0], co->TempDir, "NewLetter.yam");
    strmfp(G->WR_Filename[1], co->TempDir, "NewLetter.1.yam");
    strmfp(G->WR_Filename[2], co->TempDir, "NewLetter.2.yam");
-   LoadTranslationTable(&(G->TTin), co->TranslationIn);
+   LoadTranslationTable(&(G->TTin), co->AutomaticTranslationIn?NULL:co->TranslationIn);
+   G->CO_AutoTranslateIn = co->AutomaticTranslationIn;
    LoadTranslationTable(&(G->TTout), co->TranslationOut);
    G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
+   if(G->CO_AutoTranslateIn) LoadParsers();
    if (update && G->CO)
    {
       switch (G->CO->VisiblePage)

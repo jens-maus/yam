@@ -165,6 +165,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "UseTextstyles    = %s\n", Bool2Txt(co->UseTextstyles));
       fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleWindows));
       fprintf(fh, "TranslationIn    = %s\n", co->TranslationIn);
+      fprintf(fh, "AutoTranslationIn= %s\n", Bool2Txt(co->AutomaticTranslationIn));
 
       fprintf(fh, "\n[Write]\n");
       fprintf(fh, "ReplyTo          = %s\n", co->ReplyTo);
@@ -497,6 +498,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "UseTextstyles"))  co->UseTextstyles = Txt2Bool(value);
                if (!stricmp(buffer, "MultipleWindows"))co->MultipleWindows = Txt2Bool(value);
                if (!stricmp(buffer, "TranslationIn"))  stccpy(co->TranslationIn, value, SIZE_PATHFILE);
+               if (!stricmp(buffer, "AutoTranslationIn"))co->AutomaticTranslationIn = Txt2Bool(value);
 /*5*/          if (!stricmp(buffer, "ReplyTo"))        stccpy(co->ReplyTo,  value, SIZE_ADDRESS);
                if (!stricmp(buffer, "Organization"))   stccpy(co->Organization, value, SIZE_DEFAULT);
                if (!stricmp(buffer, "ExtraHeaders"))   stccpy(co->ExtraHeaders, value, SIZE_LARGE);
@@ -689,6 +691,7 @@ void CO_GetConfig(void)
          CE->UseTextstyles     = GetMUICheck  (gui->CH_TEXTSTYLES);
          CE->MultipleWindows   = GetMUICheck  (gui->CH_MULTIWIN);
          GetMUIString(CE->TranslationIn       ,gui->ST_INTRANS);
+         CE->AutomaticTranslationIn = GetMUICheck(gui->CH_AUTOTRANSLATEIN);
          break;
       case 5:
          GetMUIString(CE->ReplyTo             ,gui->ST_REPLYTO);
@@ -870,6 +873,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_TEXTSTYLES,CE->UseTextstyles);
          setcheckmark(gui->CH_MULTIWIN  ,CE->MultipleWindows);
          setstring   (gui->ST_INTRANS   ,CE->TranslationIn);
+         setcheckmark(gui->CH_AUTOTRANSLATEIN, CE->AutomaticTranslationIn);
          break;
       case 5:
          setstring   (gui->ST_REPLYTO   ,CE->ReplyTo);

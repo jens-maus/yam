@@ -727,12 +727,14 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             if (!stricmp(field, "from"))
             {
                ok |= 1;
+               SParse(value);
                ExtractAddress(value, &pe);
                mail->From =  pe;
             }
             if (!stricmp(field, "reply-to"))
             {
                ok |= 8;
+               SParse(value);
                ExtractAddress(value, &pe);
                mail->ReplyTo = pe;
             }
@@ -761,6 +763,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             if (!stricmp(field, "to") && !(ok & 2))
             {
                ok |= 2;
+               SParse(value);
                if (p = MyStrChr(value, ',')) *p++ = 0;
                ExtractAddress(value, &pe);
                mail->To = pe;
@@ -783,6 +786,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, char *sta
             if (!stricmp(field, "subject"))
             {
                ok |= 4;
+               SParse(value);
                stccpy(mail->Subject, Trim(value), SIZE_SUBJECT);
             }
             if (!stricmp(field, "message-id"))

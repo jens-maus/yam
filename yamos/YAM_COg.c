@@ -881,7 +881,10 @@ APTR CO_Page4(struct CO_ClassData *data)
                Child, Label2(GetStr(MSG_CO_CharsetTrans)),
                Child, MakeTransPop(&data->GUI.ST_INTRANS, FALSE, GetStr(MSG_CO_CharsetTrans)),
             End,
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, GetStr(MSG_CO_MultiReadWin)),
+            Child, HGroup,
+            	Child, MakeCheckGroup((Object **)&data->GUI.CH_AUTOTRANSLATEIN, GetStr(MSG_CO_AutoTranslateIn)),
+            	Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, GetStr(MSG_CO_MultiReadWin)),
+            End,
          End,
          Child, HVSpace,
       End)
@@ -894,11 +897,13 @@ APTR CO_Page4(struct CO_ClassData *data)
       SetHelp(data->GUI.CA_COLTEXT   ,MSG_HELP_CO_CA_COLTEXT   );
       SetHelp(data->GUI.CA_COL2QUOT  ,MSG_HELP_CO_CA_COL2QUOT  );
       SetHelp(data->GUI.CH_ALLTEXTS  ,MSG_HELP_CO_CH_ALLTEXTS  );
+      SetHelp(data->GUI.CH_AUTOTRANSLATEIN, MSH_HELP_CO_CH_AUTOTRANSLATEIN);
       SetHelp(data->GUI.CH_MULTIWIN  ,MSG_HELP_CO_CH_MULTIWIN  );
       SetHelp(data->GUI.CY_SIGSEPLINE,MSG_HELP_CO_CY_SIGSEPLINE);
       SetHelp(data->GUI.CH_FIXFEDIT  ,MSG_HELP_CO_CH_FIXFEDIT  );
       SetHelp(data->GUI.CH_WRAPHEAD  ,MSG_HELP_CO_CH_WRAPHEAD  );
       SetHelp(data->GUI.CH_TEXTSTYLES,MSG_HELP_CO_CH_TEXTSTYLES);
+      DoMethod(data->GUI.CH_AUTOTRANSLATEIN, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.ST_INTRANS, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,0             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,1             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,FALSE);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,2             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);

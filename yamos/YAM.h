@@ -100,6 +100,7 @@ struct Global
    BOOL                     TR_Exchange;
    BOOL                     TR_UseableTLS;
    BOOL                     TR_UseTLS;
+   BOOL                     CO_AutoTranslateIn;
 
    struct DateStamp         StartDate;
    struct Users             Users;

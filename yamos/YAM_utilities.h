@@ -128,6 +128,8 @@ struct NewToolbarEntry
 
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
+extern long           PNum;
+extern unsigned char  *PPtr[16];
 
 struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder);
 APTR     AllocCopy(APTR source, int size);
@@ -262,6 +264,8 @@ BOOL     TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfold
 char *   Trim(char *s);
 char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
+BOOL     LoadParsers(void);
+void     SParse(char *);
 APTR     WhichLV(struct Folder *folder);
 
 #define MyStrCpy(a,b) { strncpy((a),(b), sizeof(a)); (a)[sizeof(a)-1] = 0; }

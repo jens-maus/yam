@@ -93,6 +93,9 @@ struct Args {
    char **attach;
 };
 
+long PNum = 0;
+unsigned char *PPtr[16];
+
 /**************************************************************************/
 
 // Timer Class
@@ -450,6 +453,9 @@ static void Terminate(void)
 {
    int i;
 
+   while (PNum > 0)                        
+      if (PPtr[PNum-1]) free(PPtr[--PNum]);
+   
    if (G->CO)
    {
       CO_FreeConfig(CE);
@@ -680,6 +686,9 @@ static void Initialise2(BOOL hidden)
    set(G->MA->GUI.LV_FOLDERS, MUIA_HorizWeight, G->Weights[0]);
    set(G->MA->GUI.LV_MAILS,   MUIA_HorizWeight, G->Weights[1]);
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 50);
+
+   if(G->CO_AutoTranslateIn)	LoadParsers();
+
    if (!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
    {
       for (i = 0; i < 100; i++) if (oldfolders[i]) DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Insert, oldfolders[i]->Name, oldfolders[i], MUIV_NListtree_Insert_ListNode_Root);

@@ -235,6 +235,7 @@ struct CO_GUIData
    APTR ST_INFOBARTXT;
    APTR CH_WARNSUBJECT;
    APTR NB_EMAILCACHE;
+   APTR CH_AUTOTRANSLATEIN;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -408,6 +409,7 @@ struct Config
    BOOL  WarnSubject;
    BOOL  FolderCntMenu;
    BOOL  MessageCntMenu;
+   BOOL	AutomaticTranslationIn;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color2ndLevel;

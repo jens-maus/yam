@@ -526,6 +526,136 @@ char *Trim(char *s)
    }
    return s;
 }       
+
+///
+/// SParse
+//  Translate string with parsers
+void SParse(char *s)
+{
+   long ctr[16], n, Nmax, NGlob = 0, max, mid;
+   unsigned char *tptr, *p = NULL, *tp, la, lb;
+   BOOL gr = 0, lr = 0;
+            
+   if (!s || (!PNum) || (!G->CO_AutoTranslateIn)) return;
+
+   while (*s) 	
+   {
+	
+      for (n = 0; n != PNum; n++) ctr[n] = 0; 
+
+      tp = s;
+
+      do
+      {
+
+         Nmax = 0;
+         mid = max = -466725766; 
+
+         for (n = 0; n != PNum; n++)      
+         { 
+
+            tptr = PPtr[n]; 
+            la = 0;
+            p = tp;
+ 
+            do
+            {
+               lb = (*p++) ^ 128;
+               if ( !((la | lb) & 128) ) ctr[n] += (signed char)tptr[(la << 7) + lb];
+               la = lb;
+            }
+            while ((*p) && (*p) != 0x0a); 
+
+            if (max < ctr[n])
+            {   
+               mid = max;
+               max = ctr[n];
+               Nmax = n; 
+            }
+
+         }
+
+         if (*p == 0x0a) p++;
+
+         tp = p;        
+
+         if ((max >= 500) && ((max-mid) >=1000)) 
+         {
+            lr = gr = 1;
+            NGlob = Nmax;
+         }
+
+      }
+      while ((*p) && (!gr));
+
+      if (gr || ((!(*p)) && lr)) Nmax = NGlob; 
+
+      tptr = PPtr[Nmax] + 16384;
+
+      do
+      {
+         *s = tptr[(unsigned char)*s]; 
+         s++;
+      }
+      while (s != (char*)p); 
+
+      if (*p == 0x0a) gr = 0; 
+                              
+
+   }
+   return;
+}
+
+/// 
+/// LoadParsers
+//  Load a parser tables into memory
+BOOL LoadParsers(void)
+{
+   char *temp;
+   char dir[SIZE_PATH], file[SIZE_PATHFILE];
+   struct FileInfoBlock *fib;
+   FILE *fp;
+   BPTR lock;
+   BOOL result = 1;
+   
+   if(PNum) return 1;
+   
+   strmfp(dir, G->ProgDir, "parsers");
+   fib = AllocDosObject(DOS_FIB,NULL);
+      if (lock = Lock(dir, ACCESS_READ))
+   {
+      Examine(lock, fib);
+      while ((PNum < 16) && ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
+      {
+         strmfp(file, dir, fib->fib_FileName);
+
+         if ((fp = fopen(file, "rb")))                 
+         {
+            if (PPtr[PNum] = calloc(1, 16640))
+            {
+               fread(PPtr[PNum], 1, 16640, fp);
+
+               if (fib->fib_Protection & FIBF_PURE)
+               { 
+                  temp = PPtr[PNum];    
+                  PPtr[PNum] = PPtr[0]; 
+                  PPtr[0] = temp;
+               }
+
+               PNum++;
+
+            }
+            else result = 0;
+               
+            fclose(fp);
+         }
+      }
+      UnLock(lock);
+   }
+   FreeDosObject(DOS_FIB,fib);
+   return result;
+}
+
 ///
 /// stccat
 //  Safe string concatenation
@@ -3377,7 +3507,8 @@ BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
 {
    FILE *fp;
    if (*tt) free(*tt);
-   if (!*file) return FALSE;
+   *tt = NULL;
+   if (!file || !*file) return FALSE;
    if (!(*tt = calloc(1,sizeof(struct TranslationTable)))) return FALSE;
    if ((fp = fopen(file, "r")))
    {

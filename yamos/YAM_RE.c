@@ -557,25 +557,34 @@ void RE_SaveDisplay(int winnum, FILE *fh)
       }
       else fputc(*ptr, fh);
 }  
+
 ///
 /// RE_SuggestName
 //  Suggests a file name based on the message subject
-static char *RE_SuggestName(struct Mail *mail)
+char *RE_SuggestName(struct Mail *mail)
 {
    static char name[SIZE_FILE];
    char *ptr = mail->Subject;
    int i = 0;
+   unsigned char tc;
 
    memset(name, 0, SIZE_FILE);
    while (*ptr && i < 26)
    {
-      if ((int)*ptr <= ' ') name[i++] = '_';
-      else if (*ptr != ':' && *ptr != '/') name[i++] = *ptr;
-      ptr++;
+
+      tc = *ptr++;
+
+      if ((tc <= 32) || (tc > 0x80 && tc < 0xA0) || (tc == ':') || (tc == '/'))
+         name[i++] = '_';
+
+      else name[i++] = tc;
+
    }
+
    strcat(name, ".msg");
    return name;
 }
+
 ///
 /// RE_Export
 //  Saves message or attachments to disk
@@ -1401,7 +1410,11 @@ static void RE_ParseContentParameters(struct Part *rp)
          s = Cleanse(s); eq = stpblk(eq);
          StripTrailingSpace(eq);
          UnquoteString(eq, FALSE);
-         if (!stricmp(s, "name")) rp->CParName = eq;
+         if (!stricmp(s, "name"))
+         {
+            SParse(eq);
+            rp->CParName = eq;
+         }
          if (!stricmp(s, "description")) rp->CParDesc = eq;
          if (!stricmp(s, "boundary")) rp->CParBndr = eq;
          if (!stricmp(s, "protocol")) rp->CParProt = eq;
@@ -2090,7 +2103,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
    struct RE_ClassData *re = G->RE[winnum];
    struct Part *part, *uup = NULL, *last, *first = re->FirstPart;
    char buffer[SIZE_LARGE], *msg, *cmsg, *ptr, *rptr, *eolptr, url[SIZE_URL], *urlptr, *tsb, *sb, *bo, *pl;
-   int totsize, len, wptr;
+   int totsize, len, wptr, prewptr;
    FILE *fh;
    
    DB( kprintf("RE_ReadInMessage(%ld,%ld\n",winnum,mode); )
@@ -2111,7 +2124,10 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
             int buflen = re->FirstPart->MaxHeaderLen+4;
             char *linebuf = malloc(buflen);
             while (fgets(linebuf, buflen, fh))
+            {
+	         SParse(linebuf);	
                cmsg = AppendToBuffer(cmsg, &wptr, &len, linebuf);
+	         }            
             free(linebuf);
             fclose(fh);
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
@@ -2119,6 +2135,9 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
       for (part = first->Next; part; part = part->Next)
       {
          BOOL dodisp = (part->Printable && part->Decoded);
+
+	 prewptr = wptr;
+
          if (mode != RIM_READ && part->Nr > 1) break;
          if (mode == RIM_READ && (part->Nr > 1 || !dodisp))
          {
@@ -2286,6 +2305,9 @@ rim_cont:
                fclose(fh);
             }
          }
+
+      SParse(cmsg + prewptr);
+
       }
       re->FirstReadDone = TRUE;
       if (mode != RIM_QUIET) BusyEnd;
