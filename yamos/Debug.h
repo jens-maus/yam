@@ -43,7 +43,13 @@
 
 VOID SetupDebug (VOID);
 BOOL TestDebugFlag (ULONG flag);
-void kprintf(const char *formatString, ...);
+
+#if defined(__MORPHOS__)
+  #define kprintf dprintf
+  void dprintf(char *, ...);
+#else
+  void kprintf(const char *formatString,...);
+#endif
 
 #define D(flag, str)			\
 	if(TestDebugFlag(flag))	\

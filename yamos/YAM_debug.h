@@ -29,7 +29,13 @@
 ***************************************************************************/
 
 #if defined(DEBUG)
-  void kprintf(const char *formatString,...);
+
+  #if defined(__MORPHOS__)
+    #define kprintf dprintf
+    void dprintf(char *, ...);
+  #else
+    void kprintf(const char *formatString,...);
+  #endif
 
   #define DB(x) x
   #define DBG kprintf("File %s, Func %s, Line %d\n",__FILE__,__FUNC__,__LINE__);
