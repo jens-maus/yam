@@ -49,6 +49,7 @@
  * History
  * -------
  * 0.8 - added MORPHOS support for the vararg _NewObject() function.
+ *       added STDARGS to _NewObject() function.
  *
  * 0.7 - added cast to CreateCustomClass call to get rid of #120 Warnings
  *
@@ -635,7 +636,7 @@ void gen_supportroutines( FILE *fp )
 	char *bn = arg_basename;
 	fprintf(fp,
 "%s%s%s"
-"Object *%s_NewObject(STRPTR class, ...)\n"
+"Object * STDARGS %s_NewObject(STRPTR class, ...)\n"
 "{\n"
 "  long i;\n"
 "  for(i = 0; i < NUMBEROFCLASSES; i++)\n"
@@ -849,7 +850,7 @@ long gen_header( char *destfile, struct list *classlist )
 		"#define NUMBEROFCLASSES %ld\n"
 		"\n"
 		"extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n"
-		"Object *%s_NewObject( STRPTR class, ... ) VARARGS68K;\n"
+		"Object * STDARGS %s_NewObject( STRPTR class, ... ) VARARGS68K;\n"
 		"long %s_SetupClasses( void );\n"
 		"void %s_CleanupClasses( void );\n"
 		"\n",
