@@ -756,7 +756,7 @@ MakeStaticHook(AB_AddEntryHook, AB_AddEntryFunc);
 /*** AB_DeleteFunc - Deletes selected address book entry ***/
 HOOKPROTONHNONP(AB_DeleteFunc, void)
 {
-   DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, NULL, MUIV_NListtree_Remove_TreeNode_Active, 0, TAG_DONE);
+   DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_Remove, NULL, MUIV_NListtree_Remove_TreeNode_Active, MUIF_NONE);
    G->AB->Modified = TRUE;
 }
 MakeHook(AB_DeleteHook, AB_DeleteFunc);
