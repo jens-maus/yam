@@ -1,5 +1,7 @@
 2001-12-04  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * the incoming folder appicon stats is now enabled by default if not
+      explicitly disabled in the folder config. (Bug #484553)
     * fixed a not localized string in the MIME import functions
       (Bug #441917)
     * changed drag&drop routines of folder NListtree accordingly that

@@ -253,9 +253,10 @@ BOOL FO_LoadConfig(struct Folder *fo)
       fgets(buffer, SIZE_LARGE, fh);
       if (!strnicmp(buffer, "YFC", 3))
       {
-         // pick a default value
+         BOOL statsproc = FALSE;
+
+         // pick a default value for ML support parameters
          fo->MLSignature  = 1;
-         fo->Stats        = FALSE;
          fo->MLSupport    = TRUE;
 
          while (fgets(buffer, SIZE_LARGE, fh))
@@ -273,7 +274,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
                if (!stricmp(buffer, "XPKType"))     fo->XPKType = atoi(value);
                if (!stricmp(buffer, "Sort1"))       fo->Sort[0] = atoi(value);
                if (!stricmp(buffer, "Sort2"))       fo->Sort[1] = atoi(value);
-               if (!stricmp(buffer, "Stats"))       fo->Stats = Txt2Bool(value);
+               if (!stricmp(buffer, "Stats"))     { fo->Stats = Txt2Bool(value); statsproc = TRUE; }
                if (!stricmp(buffer, "MLSupport"))   fo->MLSupport = Txt2Bool(value);
                if (!stricmp(buffer, "MLFromAddr"))  MyStrCpy(fo->MLFromAddress,value);
                if (!stricmp(buffer, "MLRepToAddr")) MyStrCpy(fo->MLReplyToAddress, value);
@@ -283,6 +284,18 @@ BOOL FO_LoadConfig(struct Folder *fo)
             }
          }
          success = TRUE;
+
+         if(!statsproc)
+         {
+            if(fo->Type != FT_INCOMING)
+            {
+              fo->Stats = FALSE;
+            }
+            else
+            {
+              fo->Stats = TRUE;
+            }
+         }
 
          // check for the non custom folder
          // and set some values which shouldn`t be changed
