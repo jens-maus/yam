@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.4 (17.02.2004)
+        Versionstring:  $VER: SDI_hook.h 1.5 (02.03.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler specific hook stuff
@@ -16,6 +16,8 @@
  1.2   18.10.02 : reverted to old MorphOS-method for GCC
  1.3   08.02.04 : modified to get it compatible to AmigaOS4
  1.4   17.02.04 : modified to get compatible to latest SDI_compiler.h changes
+ 1.5   02.03.04 : added UNUSED define to OS4 hook specification so that the
+                  compiler can ignore some warnings.
 */
 
 /*
@@ -79,17 +81,22 @@
   #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM ret             \
     name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
   #define HOOKPROTONO(name, ret, param) static SAVEDS ASM ret                \
-    name(REG(a0, struct Hook *hook), REG(a2, APTR obj), REG(a1, param))
+    name(REG(a0, struct Hook *hook), REG(a2, UNUSED APTR obj),               \
+    REG(a1, param))
   #define HOOKPROTONP(name, ret, obj) static SAVEDS ASM ret                  \
-    name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, APTR param))
+    name(REG(a0, struct Hook *hook), REG(a2, obj),                           \
+    REG(a1, UNUSED APTR param))
   #define HOOKPROTONONP(name, ret) static SAVEDS ASM ret                     \
-    name(REG(a0, struct Hook *hook), REG(a2, APTR obj,), REG(a1, APTR param))
+    name(REG(a0, struct Hook *hook), REG(a2, UNUSED APTR obj,),              \
+    REG(a1, APTR param))
   #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ASM ret           \
-    name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
+    name(REG(a0, UNUSED struct Hook *hook), REG(a2, obj), REG(a1, param))
   #define HOOKPROTONHNO(name, ret, param) static SAVEDS ASM ret              \
-    name(REG(a0, struct Hook *hook), REG(a2, APTR obj), REG(a1, param))
+    name(REG(a0, UNUSED struct Hook *hook), REG(a2, UNUSED APTR obj),        \
+    REG(a1, param))
   #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM ret                \
-    name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, APTR param))
+    name(REG(a0, UNUSED struct Hook *hook), REG(a2, obj),                    \
+    REG(a1, UNUSED APTR param))
   #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
   #else
   #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM ret             \

@@ -505,7 +505,7 @@ static void MA_UpdateStatus(void)
 /*** Main button functions ***/
 /// MA_ReadMessage
 //  Loads active message into a read window
-HOOKPROTONHNO(MA_ReadMessage, void, int *arg)
+HOOKPROTONHNONP(MA_ReadMessage, void)
 {
    static int lastwin = 0;
    struct Mail *mail;
@@ -1784,7 +1784,7 @@ MakeHook(MA_SendHook, MA_SendFunc);
 /*** Menu options ***/
 /// MA_SetStatusTo
 //  Sets status of selectes messages
-void MA_SetStatusTo(int status)
+void MA_SetStatusTo(enum MailStatus status)
 {
    APTR lv = G->MA->GUI.NL_MAILS;
    struct Mail **mlist;
@@ -1793,8 +1793,13 @@ void MA_SetStatusTo(int status)
    {
       int i;
       set(lv, MUIA_NList_Quiet, TRUE);
-      for (i = 0; i < (int)*mlist; i++) if (mlist[i+2]->Status != status) MA_SetMailStatus(mlist[i+2], status);
+      for(i = 0; i < (int)*mlist; i++)
+      {
+        if(mlist[i+2]->Status != status)
+          MA_SetMailStatus(mlist[i+2], status);
+      }
       set(lv, MUIA_NList_Quiet, FALSE);
+
       free(mlist);
       DisplayStatistics(NULL, TRUE);
    }
@@ -2381,7 +2386,7 @@ MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 
 ///
 /// MA_FindAddressHook()
-HOOKPROTONH(MA_FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDataMessage *msg)
+HOOKPROTONHNO(MA_FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
    struct ABEntry *entry = (struct ABEntry *)msg->UserData;
    return Stricmp(msg->User, entry->Address);
@@ -2667,7 +2672,7 @@ static int MA_MailCompare(struct Mail *entry1, struct Mail *entry2, LONG column)
 ///
 /// MA_LV_Cmp2Func
 //  Message listview sort hook
-HOOKPROTONH(MA_LV_Cmp2Func, LONG, Object *obj, struct NList_CompareMessage *ncm)
+HOOKPROTONHNO(MA_LV_Cmp2Func, LONG, struct NList_CompareMessage *ncm)
 {
    struct Mail *entry1 = (struct Mail *)ncm->entry1;
    struct Mail *entry2 = (struct Mail *)ncm->entry2;
@@ -2675,7 +2680,9 @@ HOOKPROTONH(MA_LV_Cmp2Func, LONG, Object *obj, struct NList_CompareMessage *ncm)
    LONG col2 = ncm->sort_type2 & MUIV_NList_TitleMark2_ColMask;
    int cmp;
 
-   if (ncm->sort_type == MUIV_NList_SortType_None) return 0;
+   if(ncm->sort_type == (LONG)MUIV_NList_SortType_None)
+     return 0;
+
    if (ncm->sort_type & MUIV_NList_TitleMark_TypeMask) cmp = MA_MailCompare(entry2, entry1, col1);
    else                                                cmp = MA_MailCompare(entry1, entry2, col1);
 
@@ -3109,10 +3116,12 @@ struct MA_ClassData *MA_New(void)
       };
       char *key = "-repeat 0", *username;
       struct User *user;
-      int i;
+      ULONG i;
 
-      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+      for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+      {
         SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
+      }
 
       if (username = C->RealName,(user = US_GetCurrentUser()))
         username = user->Name;

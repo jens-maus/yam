@@ -843,7 +843,8 @@ BOOL LoadParsers(void)
       {
         if(Examine(lock, fib))
         {
-          while ((PNum < ARRAY_SIZE(PPtr)) && ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
+          while((PNum < (long)ARRAY_SIZE(PPtr)) &&
+                 ExNext(lock,fib) && (IoErr() != ERROR_NO_MORE_ENTRIES))
           {
             strmfp(file, dir, fib->fib_FileName);
 
@@ -1188,7 +1189,8 @@ BOOL CopyFile(char *dest, FILE *destfh, char *sour, FILE *sourfh)
 
       while((len = fread(buf, 1, SIZE_LARGE, sourfh)))
       {
-         if(fwrite(buf, 1, len, destfh) != len) break;
+         if(fwrite(buf, 1, len, destfh) != (size_t)len)
+           break;
       }
 
       // if we arrived here because this was the eof of the sourcefile
@@ -1381,7 +1383,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
         len -= (skip_chars + skip_on_next_newline);
         skip_on_next_newline = 0;
 
-        if(temp_len == (strlen(temp_buf)-skip_chars) && wrapped)
+        if(temp_len == ((int)strlen(temp_buf)-skip_chars) && wrapped)
         {
           // the text has been wrapped previously and the quoting chars
           // are the same like the previous line, so the following text
@@ -3022,7 +3024,7 @@ char ShortCut(char *label)
 ///
 /// RemoveCut
 //  Removes shortcut character from text label
-#ifdef UNUSED
+#if 0
 static char *RemoveCut(char *label)
 {
    static char lab[SIZE_DEFAULT];
@@ -4568,7 +4570,7 @@ char *AllocReqText(char *s)
 
 /// putCharFunc
 //  Hook used by FormatString()
-HOOKPROTO(putCharFunc, void, struct Locale *locale, int c)
+HOOKPROTONO(putCharFunc, void, int c)
 {
   char **tmp;
 

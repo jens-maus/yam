@@ -951,7 +951,7 @@ MakeStaticHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
 ///
 /// AB_LV_DspFunc
 /*** AB_LV_DspFunc - Address book listview display hook ***/
-HOOKPROTONO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
+HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 {
    static char dispal[SIZE_DEFAULT];
 
@@ -1100,10 +1100,12 @@ struct AB_ClassData *AB_New(void)
         { NULL              , NULL                    }
       };
       APTR list;
-      int i;
+      ULONG i;
 
-      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+      for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+      {
         SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
+      }
 
       data->GUI.WI = WindowObject,
          MUIA_HelpNode,"AB_W",

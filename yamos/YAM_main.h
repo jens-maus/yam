@@ -222,7 +222,7 @@ void  MA_SetMailStatus(struct Mail *mail, enum MailStatus stat);
 void  MA_SetMailFlag(struct Mail *mail, int flag, BOOL clear);
 BOOL  MA_SetMailComment(struct Mail *mail);
 void  MA_SetSortFlag(void);
-void  MA_SetStatusTo(int status);
+void  MA_SetStatusTo(enum MailStatus status);
 void  MA_SetupDynamicMenus(void);
 BOOL  MA_StartMacro(enum Macro num, char *param);
 

@@ -162,7 +162,7 @@ int base64decode(char *to, const unsigned char *from, unsigned int len)
       return 0;
     }
 
-    if(len < 0 || (y = *fromp++) == 0 ||
+    if((y = *fromp++) == 0 ||
        y > 127 || (y = index_64[y]) == 255)
     {
       return 0;
@@ -327,7 +327,7 @@ long base64decode_file(FILE *in, FILE *out,
 
     // now that we got the string decoded we write it into
     // our file
-    if(fwrite(decBuf, 1, (size_t)outLength, out) != outLength)
+    if(fwrite(decBuf, 1, (size_t)outLength, out) != (size_t)outLength)
     {
       success = FALSE;
       break;
@@ -497,7 +497,7 @@ void toqp(FILE *infile, FILE *outfile)
 void fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt)
 {
    unsigned int c;
-   while ((c = fgetc(infile)) != -1)
+   while ((c = fgetc(infile)) != (unsigned int)-1)
    {
       switch (c)
       {
@@ -543,7 +543,7 @@ void fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt)
    unsigned int c1, c2;
    BOOL neednewline = FALSE;
 
-   while ((c1 = fgetc(infile)) != -1)
+   while ((c1 = fgetc(infile)) != (unsigned int)-1)
    {
       if (neednewline) { fputc('\n', outfile); neednewline = FALSE; };
       if (c1 == '=')

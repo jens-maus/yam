@@ -495,13 +495,15 @@ static struct EA_ClassData *EA_New(int winnum, int type)
           /* initialize string array for cycle object on first invocation */
           if(NULL == SecurityCycleEntries[0])
           {
+            ULONG i;
             static const APTR SecurityCycleStrings[ARRAY_SIZE(SecurityCycleEntries)-1] = {
               MSG_WR_SecNone,MSG_WR_SecSign,MSG_WR_SecEncrypt,MSG_WR_SecBoth,MSG_WR_SecAnon
             };
-            int i;
 
             for(i=0; i<ARRAY_SIZE(SecurityCycleEntries)-1; i++)
+            {
               SecurityCycleEntries[i] = GetStr(SecurityCycleStrings[i]);
+            }
           }
 
           /* build MUI object tree */

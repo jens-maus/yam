@@ -162,7 +162,7 @@ struct NewToolbarEntry
 #define isPrintReq(v)     (isFlagSet((v), ATTREQ_PRINT))
 #define isMultiReq(v)     (isFlagSet((v), ATTREQ_MULTI))
 
-#define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
+#define ARRAY_SIZE(x)     (sizeof(x[0]) ? sizeof(x)/sizeof(x[0]) : 0)
 
 // special flagging macros
 #define isFlagSet(v,f)      (((v) & (f)) == (f))  // return TRUE if the flag is set

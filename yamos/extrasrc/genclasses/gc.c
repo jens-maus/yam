@@ -50,6 +50,10 @@
  *
  * History
  * -------
+ * 0.13 - added UNUSED define specification to function prototype macros of
+ *        each class. This prevents dozen of warnings because of not used
+ *        parameters.
+ *
  * 0.12 - added special AmigaOS4 only dependent muiDispatcherEntry wrapper
  *        dispatcher call. This should be only temporarly here and will be
  *        removed as soon as AmigaOS4 allows full PPC->68k cross hook calls.
@@ -114,7 +118,7 @@
  *
  */
 
-char *verstr = "0.12";
+char *verstr = "0.13";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -1011,8 +1015,8 @@ long gen_classheaders( struct list *classlist )
 			"#include \"Classes.h\"\n"
 			"#endif /* CLASSES_CLASSES_H */\n"
 			"\n"
-			"#define DECLARE(method)  ULONG m_%s_## method( struct IClass *cl, Object *obj, struct MUIP_%s_## method *msg )\n"
-			"#define OVERLOAD(method) ULONG m_%s_## method( struct IClass *cl, Object *obj, Msg msg )\n"
+			"#define DECLARE(method)  ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED struct MUIP_%s_## method *msg )\n"
+			"#define OVERLOAD(method) ULONG m_%s_## method(UNUSED struct IClass *cl, UNUSED Object *obj, UNUSED Msg msg )\n"
 			"#define ATTR(attr)       case MUIA_%s_## attr\n"
 			"\n"
 			"/* Exported CLASSDATA */\n"

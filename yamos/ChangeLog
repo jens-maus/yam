@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-03-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * all: fixed some compiler warnings which are mainly caused by
+      unused parameters and so on.
+    * Makefiles: added -W option to get out more detailed warning
+      messages from the gcc compiler.
+
 2004-02-23  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c: fixed recently introduced bug in base64decode_file()

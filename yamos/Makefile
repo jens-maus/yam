@@ -48,7 +48,7 @@ OBJDIR    = .obj_os3
 # Compiler/Linker flags
 CPU	= -m68020-60 -msoft-float
 CDEFS	= -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`"
-WARN	= -Wall
+WARN	= -W -Wall
 OPTFLAGS= -O2 -fomit-frame-pointer -fbaserel -funroll-loops
 DEBUG	= -DDEBUG -g3 -O0
 CFLAGS  = -I. -I./includes -DNO_INLINE_STDARG $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) -c

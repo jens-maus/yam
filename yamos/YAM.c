@@ -844,7 +844,7 @@ static void Abort(APTR formatnum, ...)
 ///
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
-static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
+static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
 {
    BOOL flush = TRUE;
 
@@ -864,7 +864,7 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 
        MUI_DisposeObject(obj);
 
-       if (ver > minver || (ver == minver && rev >= minrev))
+       if(ver > minver || (ver == minver && rev >= minrev))
        {
          DB(kprintf("v%ld.%ld found through MUIA_Version/Revision\n", ver, rev);)
          return TRUE;

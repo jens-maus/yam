@@ -87,7 +87,7 @@ static void RE_DisplayMessage(int winnum, BOOL update);
 static void RE_PrintFile(char*,struct Part*);
 static void RE_PrintLaTeX(char*,struct Part*);
 static void RE_GetSigFromLog(int winnum, char *decrFor);
-#ifdef UNUSED
+#if 0
 static char **Init_ISO8859_to_LaTeX_Tab(char*);
 static char *ISO8859_to_LaTeX(char*);
 #endif
@@ -912,7 +912,9 @@ static void RE_PrintLaTeX(char *filename, struct Part *part)
             p = Header.Data[i];
             if(NULL != strchr(p,':'))
             {
-              for(j=0; p[j] != ':' && j < sizeof(Attrib); j++) Attrib[j] = p[j];
+              for(j=0; p[j] != ':' && j < (int)sizeof(Attrib); j++)
+                Attrib[j] = p[j];
+
               Attrib[j++] = ':';
               Attrib[j++] = '\0';
               ts1 = StrBufCat(ts1,"\\NewLabWidth{");
@@ -964,7 +966,7 @@ static void RE_PrintLaTeX(char *filename, struct Part *part)
 }
 
 
-#ifdef UNUSED
+#if 0
 ///
 /// ISO8859_to_LaTeX
 // Takes a string in ISO-8859 charset and converts it to a equivalent
@@ -1815,7 +1817,8 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
          cempty = FALSE;
 
          // now write back exactly the same amount of bytes we read previously
-         if(fwrite(buf, 1, (size_t)size-1, out) != size-1) return FALSE;
+         if(fwrite(buf, 1, (size_t)size-1, out) != (size_t)(size-1))
+           return FALSE;
 
          // increase cpos for next iteration
          cpos += size;
@@ -3624,10 +3627,12 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
         { MSG_RE_TBForward, MSG_HELP_RE_BT_FORWARD  },
         { NULL,             NULL                    }
       };
-      int i;
+      ULONG i;
 
-      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+      for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+      {
         SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
+      }
 
       data->GUI.SL_TEXT = ScrollbarObject, End;
       data->Header = C->ShowHeader;

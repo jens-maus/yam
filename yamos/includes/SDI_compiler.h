@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.13 (17.02.2004)
+        Versionstring:  $VER: SDI_compiler.h 1.14 (02.03.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler stuff
@@ -24,6 +24,8 @@
  1.12  18.01.04 : some adaptions for AmigaOS4 compatibility
  1.13  17.02.04 : changed ASM macros to be a simple define and added
                   INTERRUPT, CHIP and FAR
+ 1.14  02.03.04 : added UNUSED which can be used to specify a function parameter
+                  or variable as "unused" which will not cause any compiler warning.
 */
 
 /*
@@ -74,6 +76,9 @@
 #ifdef FAR
 #undef FAR
 #endif
+#ifdef UNUSED
+#undef UNUSED
+#endif
 
 
 /* first "exceptions" */
@@ -122,6 +127,7 @@
 #elif defined(__SASC)
   #define ASM __asm
 #elif defined(__GNUC__)
+  #define UNUSED __attribute__((unused))
   /* we have do distinguish between AmigaOS4 and MorphOS */
   #if defined(__amigaos4__)
     #define INLINE __inline__
@@ -199,5 +205,8 @@
 #endif
 #if !defined(FAR)
   #define FAR __far
+#endif
+#if !defined(UNUSED)
+  #define UNUSED
 #endif
 #endif /* SDI_COMPILER_H */

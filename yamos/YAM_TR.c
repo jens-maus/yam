@@ -1091,7 +1091,11 @@ static int TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts)
         if(ts) TR_TransStat_Update(ts, l);
 
         // write the line to the file now
-        if(fwrite(line, 1, l, fh) != l) { ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), filename, NULL); break; }
+        if(fwrite(line, 1, l, fh) != (size_t)l)
+        {
+          ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), filename, NULL);
+          break;
+        }
 
         // if we end up here and done is true we have to break that iteration
         if(done) break;
@@ -2611,7 +2615,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
         {
            ULONG deltatime = now.tv_secs - ts->Clock_Start;
            ULONG speed = 0;
-           ULONG remclock = 0;
+           LONG remclock = 0;
 
            // first we calculate the speed in bytes/sec
            // to display to the user
@@ -2640,7 +2644,7 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
      struct timeval now;
      ULONG deltatime;
      ULONG speed = 0;
-     ULONG remclock = 0;
+     LONG remclock = 0;
 
      ts->Size_Done += ts->Size_Curr_Max - ts->Size_Curr;
 
@@ -3462,7 +3466,7 @@ MakeStaticHook(TR_PauseHook, TR_PauseFunc);
 /*** GUI ***/
 /// TR_LV_DspFunc
 //  Message listview display hook
-HOOKPROTO(TR_LV_DspFunc, long, char **array, struct Mail *entry)
+HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct Mail *entry)
 {
    if (entry)
    {

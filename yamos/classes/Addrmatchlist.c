@@ -48,7 +48,7 @@ struct CustomABEntry
 };
 */
 
-HOOKPROTONH(ConstructFunc, struct CustomABEntry *, APTR pool, struct CustomABEntry *e)
+HOOKPROTONHNO(ConstructFunc, struct CustomABEntry *, struct CustomABEntry *e)
 {
 	struct CustomABEntry *res;
 	if((res = malloc(sizeof(struct CustomABEntry))))
@@ -164,7 +164,7 @@ OVERLOAD(OM_SET)
 		{
 			case MUIA_Window_Open:
 			{
-				if(data->Open != tag->ti_Data && _win(data->String))
+				if(data->Open != (BOOL)tag->ti_Data && _win(data->String))
 					set(_win(data->String), MUIA_Window_DisableKeys, (data->Open = tag->ti_Data) ? 1 << MUIKEY_WINDOW_CLOSE : 0);
 			}
 			break;
@@ -211,7 +211,10 @@ DECLARE(Event) // struct IntuiMessage *imsg
 		{
 			if(position == 0) direction = MUIV_List_Active_Bottom;
 		}
-		else if(position == xget(data->Matchlist, MUIA_List_Entries)-1) direction = MUIV_List_Active_Top;
+		else if(position == (LONG)xget(data->Matchlist, MUIA_List_Entries)-1)
+		{
+			direction = MUIV_List_Active_Top;
+		}
 
 		set(data->Matchlist, MUIA_List_Active, direction);
 	}

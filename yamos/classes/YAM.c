@@ -141,11 +141,11 @@ VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode 
 		else
 		{
 			struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
-			struct CustomABEntry e = { -1 };
+			struct CustomABEntry e = { -1, NULL, NULL };
 
-			if(!Strnicmp(entry->Alias, text, tl))				{ e.MatchField = 0; e.MatchString = entry->Alias; }
-			else if(!Strnicmp(entry->RealName, text, tl))	{ e.MatchField = 1; e.MatchString = entry->RealName; }
-			else if(!Strnicmp(entry->Address, text, tl))		{ e.MatchField = 2; e.MatchString = entry->Address; }
+			if(!Strnicmp(entry->Alias, text, tl))					{ e.MatchField = 0; e.MatchString = entry->Alias; 		}
+			else if(!Strnicmp(entry->RealName, text, tl))	{ e.MatchField = 1; e.MatchString = entry->RealName; 	}
+			else if(!Strnicmp(entry->Address, text, tl))	{ e.MatchField = 2; e.MatchString = entry->Address; 	}
 
 			if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
 			{
@@ -216,7 +216,7 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 			for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node=(struct EMailCacheNode *)node->ecn_Node.ln_Succ)
 			{
 				struct ABEntry *entry = &node->ecn_Person;
-				struct CustomABEntry e = { -1 };
+				struct CustomABEntry e = { -1, NULL, NULL };
 
 				if(!Strnicmp(entry->RealName, msg->matchText, tl))      { e.MatchField = 1; e.MatchString = entry->RealName;  }
 				else if(!Strnicmp(entry->Address, msg->matchText, tl))  { e.MatchField = 2; e.MatchString = entry->Address;   }

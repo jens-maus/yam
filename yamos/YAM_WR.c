@@ -2135,10 +2135,13 @@ static struct WR_ClassData *WR_New(int winnum)
       APTR mi_copy, mi_cut, mi_redo, mi_undo, mi_bold, mi_italic, mi_underl, mi_color;
       APTR strip, mi_autospell, mi_delsend, mi_receipt, mi_dispnoti, mi_addinfo;
       APTR slider = ScrollbarObject, End;
-      int spell, i;
+      int spell;
+      ULONG i;
 
-      for (i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+      for(i = 0; i < ARRAY_SIZE(data->GUI.TB_TOOLBAR); i++)
+      {
         SetupToolbar(&(data->GUI.TB_TOOLBAR[i]), tb_butt[i].label?(tb_butt[i].label==MSG_Space?"":GetStr(tb_butt[i].label)):NULL, tb_butt[i].help?GetStr(tb_butt[i].help):NULL, 0);
+      }
 
       if(NULL == rtitles[0])   // only initialize static data on first call
       {
