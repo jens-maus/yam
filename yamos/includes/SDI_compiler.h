@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_compiler.h
-        Versionstring:  $VER: SDI_compiler.h 1.12 (18.01.2004)
+        Versionstring:  $VER: SDI_compiler.h 1.13 (17.02.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler stuff
@@ -22,6 +22,8 @@
  1.10  18.10.02 : reverted to old MorphOS-method for GCC
  1.11  09.11.02 : added REGARGS define to MorphOS section
  1.12  18.01.04 : some adaptions for AmigaOS4 compatibility
+ 1.13  17.02.04 : changed ASM macros to be a simple define and added
+                  INTERRUPT, CHIP and FAR
 */
 
 /*
@@ -63,6 +65,16 @@
 #ifdef OFFSET
 #undef OFFSET
 #endif
+#ifdef INTERRUPT
+#undef INTERRUPT
+#endif
+#ifdef CHIP
+#undef CHIP
+#endif
+#ifdef FAR
+#undef FAR
+#endif
+
 
 /* first "exceptions" */
 
@@ -108,7 +120,7 @@
   #define REGARGS
   #define INLINE inline
 #elif defined(__SASC)
-  #define ASM(arg) arg __asm
+  #define ASM __asm
 #elif defined(__GNUC__)
   /* we have do distinguish between AmigaOS4 and MorphOS */
   #if defined(__amigaos4__)
@@ -119,6 +131,9 @@
     #define STACKEXT
     #define REGARGS
     #define SAVEDS
+    #define FAR
+    #define CHIP
+    #define INTERRUPT
   #elif defined(__MORPHOS__)
     #define REG(reg,arg) arg __asm(#reg)
     #define LREG(reg,arg) register REG(reg,arg)
@@ -126,6 +141,9 @@
     #define STACKEXT
     #define REGARGS
     #define VARARGS68K  __attribute__((varargs68k))
+    #define FAR
+    #define CHIP
+    #define INTERRUPT
   #else
     #define REG(reg,arg) arg __asm(#reg)
     #define LREG(reg,arg) register REG(reg,arg)
@@ -140,7 +158,7 @@
 /* then "common" ones */
 
 #if !defined(ASM)
-  #define ASM(arg) arg
+  #define ASM
 #endif
 #if !defined(REG)
   #define REG(reg,arg) register __##reg arg
@@ -173,5 +191,13 @@
   #define OFFSET(structName, structEntry) \
     ((char *)(&(((struct structName *)0)->structEntry))-(char *)0)
 #endif
-
+#if !defined(INTERRUPT)
+  #define INTERRUPT __interrupt
+#endif
+#if !defined(CHIP)
+  #define CHIP __chip
+#endif
+#if !defined(FAR)
+  #define FAR __far
+#endif
 #endif /* SDI_COMPILER_H */

@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.3 (08.02.2004)
+        Versionstring:  $VER: SDI_hook.h 1.4 (17.02.2004)
         Author:         SDI
         Distribution:   PD
         Description:    defines to hide compiler specific hook stuff
@@ -15,6 +15,7 @@
  1.1   07.10.02 : added HOOKPROTONP and HOOKPROTONONP requested by Jens
  1.2   18.10.02 : reverted to old MorphOS-method for GCC
  1.3   08.02.04 : modified to get it compatible to AmigaOS4
+ 1.4   17.02.04 : modified to get compatible to latest SDI_compiler.h changes
 */
 
 /*
@@ -75,35 +76,35 @@
 
 #if !defined(__MORPHOS__) || !defined(__GNUC__)
   #if defined(__amigaos4__)
-  #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM(ret)            \
+  #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM ret             \
     name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
-  #define HOOKPROTONO(name, ret, param) static SAVEDS ASM(ret)               \
+  #define HOOKPROTONO(name, ret, param) static SAVEDS ASM ret                \
     name(REG(a0, struct Hook *hook), REG(a2, APTR obj), REG(a1, param))
-  #define HOOKPROTONP(name, ret, obj) static SAVEDS ASM(ret)                 \
+  #define HOOKPROTONP(name, ret, obj) static SAVEDS ASM ret                  \
     name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, APTR param))
-  #define HOOKPROTONONP(name, ret) static SAVEDS ASM(ret)                    \
+  #define HOOKPROTONONP(name, ret) static SAVEDS ASM ret                     \
     name(REG(a0, struct Hook *hook), REG(a2, APTR obj,), REG(a1, APTR param))
-  #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ASM(ret)          \
+  #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ASM ret           \
     name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
-  #define HOOKPROTONHNO(name, ret, param) static SAVEDS ASM(ret)             \
+  #define HOOKPROTONHNO(name, ret, param) static SAVEDS ASM ret              \
     name(REG(a0, struct Hook *hook), REG(a2, APTR obj), REG(a1, param))
-  #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM(ret)               \
+  #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM ret                \
     name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, APTR param))
   #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
   #else
-  #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM(ret)            \
+  #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM ret             \
     name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
-  #define HOOKPROTONO(name, ret, param) static SAVEDS ASM(ret)               \
+  #define HOOKPROTONO(name, ret, param) static SAVEDS ASM ret                \
     name(REG(a0, struct Hook *hook), REG(a1, param))
-  #define HOOKPROTONP(name, ret, obj) static SAVEDS ASM(ret)                 \
+  #define HOOKPROTONP(name, ret, obj) static SAVEDS ASM ret                  \
     name(REG(a0, struct Hook *hook), REG(a2, obj))
-  #define HOOKPROTONONP(name, ret) static SAVEDS ASM(ret)                    \
+  #define HOOKPROTONONP(name, ret) static SAVEDS ASM ret                     \
     name(REG(a0, struct Hook *hook))
-  #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ASM(ret)          \
+  #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ASM ret           \
     name(REG(a2, obj), REG(a1, param))
-  #define HOOKPROTONHNO(name, ret, param) static SAVEDS ASM(ret)             \
+  #define HOOKPROTONHNO(name, ret, param) static SAVEDS ASM ret              \
     name(REG(a1, param))
-  #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM(ret)               \
+  #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM ret                \
     name(REG(a2, obj))
   #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
   #endif
@@ -168,17 +169,17 @@
       (HOOKFUNC)&Gate_##funcname, NULL, NULL}
     #define DISPATCHERPROTO(name)                                            \
       struct IClass;                                                         \
-      static ASM(ULONG) name(REG(a0,                                         \
+      static ASM ULONG  name(REG(a0,                                         \
       struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg));         \
       static const struct SDI_EmulLibEntry Gate_##name = {SDI_TRAP_LIB, 0,   \
       (APTR)name};                                                           \
-      static ASM(ULONG) name(REG(a0,                                         \
+      static ASM ULONG  name(REG(a0,                                         \
       struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
   #endif
 
   #define ENTRY(func) (APTR)&Gate_##func
 #else
-  #define DISPATCHERPROTO(name) static SAVEDS ASM(ULONG) name(REG(a0,        \
+  #define DISPATCHERPROTO(name) static SAVEDS ASM ULONG  name(REG(a0,        \
     struct IClass * cl), REG(a2, Object * obj), REG(a1, Msg msg))
   #define ENTRY(func) (APTR)func
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
