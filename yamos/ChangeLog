@@ -7,6 +7,9 @@ $Source$
 
 2005-02-17  Jens Langner <Jens.Langner@light-speed.de>
 
+    * AttachmentGroup.c: fixed a bug where upon a mail switching the
+      image object weren't cleaned up correctly which caused YAM to crash if
+      it was brought back from an iconify state.
     * Makefile, extrasrc/dice.c: minor changes to make YAM easier compileable
       with a vanilla OS3.9 NDK.
     * YAM_debug.h: put the NOP statements back into as there is no real reason

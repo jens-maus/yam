@@ -292,6 +292,14 @@ OVERLOAD(OM_SET)
 			}
 			break;
 
+			// we also catch foreign attributes
+			case MUIA_ShowMe:
+			{
+				// if the object should be hided we clean it up also
+				if(tag->ti_Data == FALSE)
+					DoMethod(obj, MUIM_AttachmentGroup_Clear);
+			}
+			break;
 		}
 	}
 
