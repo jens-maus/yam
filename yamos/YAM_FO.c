@@ -491,6 +491,7 @@ BOOL FO_LoadTree(char *fname)
 
                   // Now we load the FolderImages if they exists
                   if(FO_LoadFolderImages(&fo)) j++;
+                  else fo.ImageIndex = -1;
 
                   // Now we add this folder to the folder listtree
                   if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))

@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-08  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM_FO.c: fixed a small, but nasty bug within the Folderimage
+      allocation routines that stopped YAM somehow to show up the
+      GUI if the user had just enabled one column of the Folder
+      NListtree.
+
 2002-06-02  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * YAM_MA.c: to be on the safe side with that ReturnID issues,
