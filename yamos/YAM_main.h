@@ -116,8 +116,10 @@ struct MA_GUIData
    APTR LV_MAILS;
    APTR NL_MAILS;
    APTR TO_TOOLBAR;
-   APTR GA_INFO;
    APTR IB_INFOBAR;
+   APTR GR_MAIN;
+   APTR GR_TOP;
+   APTR GR_BOTTOM;
    struct MUIP_Toolbar_Description TB_TOOLBAR[18];
 };
 
@@ -154,6 +156,7 @@ void  MA_GetAddress(struct Mail **mlist);
 BOOL  MA_ImportMessages(char *fname);
 struct MA_ClassData *MA_New(void);
 ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg);
+BOOL  MA_SortWindow(void);
 void  MA_MakeMAFormat(APTR lv);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit);
 int   MA_NewBounce(struct Mail *mail, int flags);

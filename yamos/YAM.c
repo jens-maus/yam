@@ -628,8 +628,20 @@ static void Initialise2(BOOL hidden)
    CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
    CO_Validate(C, FALSE);
    AY_PrintStatus(GetStr(MSG_CreatingGUI), 40);
+
+   // Create a new Main & Addressbook Window
    if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
+   {
       Abort(MSG_ErrorMuiApp);
+   }
+
+   // Now we have to check on which position we should display the InfoBar and if it`s not
+   // center or off we have to resort the main group
+   if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
+   {
+      MA_SortWindow();
+   }
+
    MA_SetupDynamicMenus();
    CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
    SetupAppIcons();

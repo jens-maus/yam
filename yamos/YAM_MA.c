@@ -2487,6 +2487,49 @@ ULONG MA_MailListContextMenu(struct MUIP_ContextMenuBuild *msg)
 }
 
 ///
+/// MA_SortWindow
+//  Resorts the main window group accordingly to the InfoBar setting
+BOOL MA_SortWindow(void)
+{
+  BOOL showbar = TRUE;
+
+  DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_InitChange);
+
+  switch(C->InfoBar)
+  {
+    case IB_POS_TOP:
+    {
+      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.IB_INFOBAR, G->MA->GUI.GR_TOP, G->MA->GUI.BC_GROUP, G->MA->GUI.GR_BOTTOM, NULL);
+    }
+    break;
+
+    case IB_POS_CENTER:
+    {
+      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP, G->MA->GUI.BC_GROUP, G->MA->GUI.IB_INFOBAR, G->MA->GUI.GR_BOTTOM, NULL);
+    }
+    break;
+
+    case IB_POS_BOTTOM:
+    {
+      DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_Sort, G->MA->GUI.GR_TOP, G->MA->GUI.BC_GROUP, G->MA->GUI.GR_BOTTOM, G->MA->GUI.IB_INFOBAR, NULL);
+    }
+    break;
+
+    default:
+    {
+      showbar = FALSE;
+    }
+  }
+
+  // Here we can do a MUIA_ShowMe, TRUE because ResortWindow is encapsulated
+  // in a InitChange/ExitChange..
+  set(G->MA->GUI.IB_INFOBAR, MUIA_ShowMe, showbar);
+
+  DoMethod(G->MA->GUI.GR_MAIN, MUIM_Group_ExitChange);
+
+  return TRUE;
+}
+///
 /// MA_MakeMAFormat
 //  Creates format definition for message listview
 void MA_MakeMAFormat(APTR lv)
@@ -2631,8 +2674,8 @@ struct MA_ClassData *MA_New(void)
          MUIA_HelpNode, "MA_W",
          MUIA_Window_ID, MAKE_ID('M','A','I','N'),
          MUIA_Window_Menustrip, data->GUI.MS_MAIN,
-         WindowContents, VGroup,
-            Child, (C->HideGUIElements & HIDE_TBAR) ?
+         WindowContents, data->GUI.GR_MAIN = VGroup,
+            Child, data->GUI.GR_TOP = (C->HideGUIElements & HIDE_TBAR) ?
                VSpace(1) :
                (HGroupV,
                   MUIA_HelpNode, "MA02",
@@ -2684,8 +2727,9 @@ struct MA_ClassData *MA_New(void)
                End,
             End,
             Child, data->GUI.IB_INFOBAR = InfoBarObject,
+              MUIA_ShowMe,  !(C->InfoBar == IB_POS_OFF),
             End,
-            Child, HGroup,
+            Child, data->GUI.GR_BOTTOM = HGroup,
                MUIA_Group_Spacing, 1,
                Child, data->GUI.LV_FOLDERS = NListviewObject,
                   MUIA_HelpNode, "MA00",
@@ -2738,16 +2782,9 @@ struct MA_ClassData *MA_New(void)
                   End,
                End,
             End,
-/*
-            Child, data->GUI.GA_INFO = GaugeObject,
-               GaugeFrame,
-               MUIA_Gauge_Horiz   , TRUE,
-               MUIA_Gauge_InfoText, " ",
-               MUIA_ShowMe        , !(C->HideGUIElements & HIDE_INFO) ,
-            End,
-*/
          End,
       End;
+
       if (data->GUI.WI)
       {
          MA_MakeFOFormat(data->GUI.NL_FOLDERS);
@@ -2849,15 +2886,15 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_ChangeFolderHook);
          DoMethod(data->GUI.NL_FOLDERS     ,MUIM_Notify,MUIA_NListtree_Active    ,MUIV_EveryTime,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&MA_SetFolderInfoHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application  ,2,MUIM_Application_ReturnID,ID_CLOSEALL);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat del" ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_DelKeyHook,FALSE);
-         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift del" ,MUIV_Notify_Application  ,4,MUIM_CallHook      ,&MA_DelKeyHook,TRUE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat del" ,MUIV_Notify_Application  ,3,MUIM_CallHook            ,&MA_DelKeyHook,FALSE);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_InputEvent   ,"-repeat shift del" ,MUIV_Notify_Application  ,3,MUIM_CallHook      ,&MA_DelKeyHook,TRUE);
 //       DoMethod(G->App                   ,MUIM_Notify,MUIA_Application_Iconified,FALSE        ,data->GUI.WI             ,3,MUIM_Set                 ,MUIA_Window_Open,TRUE);
 
          // Define Notifies for ShortcutFolderKeys
          for (i = 0; i < 10; i++)
          {
             key[8] = '0'+i;
-            DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_FolderKeyHook, i, TAG_DONE);
+            DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_FolderKeyHook, i);
          }
          return data;
       }

@@ -32,6 +32,8 @@
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
 #include <libraries/locale.h>
+#include <mui/NList_mcc.h>
+#include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
@@ -692,7 +694,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->FixedFontList = C->SwatchBeat = FALSE;
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;
-      co->InfoBar = FALSE;
+      co->InfoBar = IB_POS_CENTER;
    }
    if (page == 9 || page < 0)
    {
@@ -833,14 +835,25 @@ void CO_Validate(struct Config *co, BOOL update)
       if (G->CO->Visited[1] || G->CO->Visited[13] || G->CO->UpdateAll) MA_SetupDynamicMenus();
       if (G->CO->Visited[8] || G->CO->UpdateAll)
       {
+         // First we set the NL_MAILS and NL_FOLDER Quiet
+         set(G->MA->GUI.NL_MAILS,   MUIA_NList_Quiet,     TRUE);
+         set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
+
          // Modify the ContextMenu flags
          set(G->MA->GUI.NL_MAILS,   MUIA_ContextMenu, (C->MessageCntMenu && PopupMenuBase));
          set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, (C->FolderCntMenu && PopupMenuBase));
+
+         // Now we reorder the Maingroup accordingly to the InfoBar setting
+         MA_SortWindow();
 
          SaveLayout(FALSE);
          MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
          MA_MakeMAFormat(G->MA->GUI.NL_MAILS);
          LoadLayout();
+
+         // Now we give the control back to the NLists
+         set(G->MA->GUI.NL_MAILS,   MUIA_NList_Quiet,     FALSE);
+         set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
       }
       if (G->CO->Visited[12] || G->CO->UpdateAll) AB_MakeABFormat(G->AB->GUI.LV_ADDRESSES);
       if (G->CO->Visited[14] || G->CO->UpdateAll) { SetupAppIcons(); DisplayStatistics((struct Folder *)-1, TRUE); }

@@ -226,7 +226,7 @@ struct CO_GUIData
    APTR ST_APPICON;
    APTR CH_FCNTMENU;
    APTR CH_MCNTMENU;
-   APTR CH_INFOBAR;
+   APTR CY_INFOBAR;
    APTR CH_WARNSUBJECT;
 };
 
@@ -342,6 +342,7 @@ struct Config
    enum PrintMethod PrintMethod;
    int   StackSize;
    int   SizeFormat;
+   int   InfoBar;
 
    BOOL  DaylightSaving;
    BOOL  Allow8bit;
@@ -391,7 +392,6 @@ struct Config
    BOOL  WarnSubject;
    BOOL  FolderCntMenu;
    BOOL  MessageCntMenu;
-   BOOL  InfoBar;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color2ndLevel;
@@ -452,6 +452,7 @@ struct Config
 };
 
 enum SizeFormat { SF_DEFAULT=0, SF_MIXED, SF_1PREC, SF_2PREC, SF_3PREC };
+enum InfoBarPos { IB_POS_TOP=0, IB_POS_CENTER, IB_POS_BOTTOM, IB_POS_OFF };
 
 extern struct Config *C;
 extern struct Config *CE;

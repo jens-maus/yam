@@ -4746,8 +4746,8 @@ MSG_CO_INFOBAR (//)
 Information bar
 ;
 MSG_HELP_CO_CH_INFOBAR (//)
-Displays an information bar between\n\
-the toolbar and mail listview.
+Here you can select the position of the InfoBar\n\
+which shows general information in YAM.
 ;
 MSG_CO_WARNSUBJECT (//)
 Warn when there's an empty subject line?
@@ -4824,4 +4824,19 @@ Executing command...
 ;
 MSG_APP_DESCRIPTION (//39)
 SMTP/POP3 Email Client for AmigaOS
+;
+MSG_CO_INFOBARPOS (//)
+Position
+;
+MSG_CO_INFOBARPOS01 (//)
+Top
+;
+MSG_CO_INFOBARPOS02 (//)
+Center
+;
+MSG_CO_INFOBARPOS03 (//)
+Bottom
+;
+MSG_CO_INFOBARPOS04 (//)
+Turned off
 ;

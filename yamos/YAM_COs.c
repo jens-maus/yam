@@ -204,7 +204,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SizeFormat       = %ld\n", co->SizeFormat);
       fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
       fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
-      fprintf(fh, "InfoBar          = %s\n", Bool2Txt(co->InfoBar));
+      fprintf(fh, "InfoBar          = %ld\n", co->InfoBar);
       fprintf(fh, "\n[Security]\n");
       fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
       fprintf(fh, "MyPGPID          = %s\n", co->MyPGPID);
@@ -515,7 +515,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "SizeFormat"))     co->SizeFormat = atoi(value);
                if (!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
                if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
-               if (!stricmp(buffer, "InfoBar"))        co->InfoBar = Txt2Bool(value);
+               if (!stricmp(buffer, "InfoBar"))        co->InfoBar = atoi(value);
 /*9*/          if (!stricmp(buffer, "PGPCmdPath"))     stccpy(co->PGPCmdPath, value, SIZE_PATH);
                if (!stricmp(buffer, "MyPGPID"))        stccpy(co->MyPGPID, value, SIZE_DEFAULT);
                if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
@@ -713,7 +713,7 @@ void CO_GetConfig(void)
          CE->SizeFormat    = GetMUICycle(gui->CY_SIZE);
          CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
          CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
-         CE->InfoBar       = GetMUICheck(gui->CH_INFOBAR);
+         CE->InfoBar       = GetMUICycle(gui->CY_INFOBAR);
          break;
       case 9:
          GetMUIString(CE->PGPCmdPath          ,gui->ST_PGPCMD);
@@ -889,7 +889,7 @@ void CO_SetConfig(void)
          setcycle(gui->CY_SIZE, CE->SizeFormat);
          setcheckmark(gui->CH_FCNTMENU  ,CE->FolderCntMenu);
          setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
-         setcheckmark(gui->CH_INFOBAR   ,CE->InfoBar);
+         setcycle(gui->CY_INFOBAR,       CE->InfoBar);
          set(gui->CH_FCNTMENU, MUIA_Disabled, !PopupMenuBase);
          set(gui->CH_MCNTMENU, MUIA_Disabled, !PopupMenuBase);
          break;

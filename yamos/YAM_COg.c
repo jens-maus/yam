@@ -1069,12 +1069,20 @@ APTR CO_Page8(struct CO_ClassData *data)
 {
    APTR grp;
    static char *sizef[6];
+   static char *infob[5];
+
    sizef[0] = GetStr(MSG_CO_SIZEFORMAT01);
    sizef[1] = GetStr(MSG_CO_SIZEFORMAT02);
    sizef[2] = GetStr(MSG_CO_SIZEFORMAT03);
    sizef[3] = GetStr(MSG_CO_SIZEFORMAT04);
    sizef[4] = GetStr(MSG_CO_SIZEFORMAT05);
    sizef[5] = NULL;
+
+   infob[0] = GetStr(MSG_CO_INFOBARPOS01);
+   infob[1] = GetStr(MSG_CO_INFOBARPOS02);
+   infob[2] = GetStr(MSG_CO_INFOBARPOS03);
+   infob[3] = GetStr(MSG_CO_INFOBARPOS04);
+   infob[4] = NULL;
 
    if (grp =  VGroup,
          MUIA_HelpNode, "CO08",
@@ -1120,10 +1128,15 @@ APTR CO_Page8(struct CO_ClassData *data)
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_GENLISTCFG)),
            Child, MakeCheckGroup((Object **)&data->GUI.CH_FIXFLIST,  GetStr(MSG_CO_FixedFontList)),
            Child, MakeCheckGroup((Object **)&data->GUI.CH_BEAT,      GetStr(MSG_CO_SwatchBeat)),
-           Child, MakeCheckGroup((Object **)&data->GUI.CH_INFOBAR,   GetStr(MSG_CO_INFOBAR)),
            Child, HGroup,
              Child, Label1(GetStr(MSG_CO_SIZEFORMAT)),
              Child, data->GUI.CY_SIZE = MakeCycle(sizef, GetStr(MSG_CO_SIZEFORMAT)),
+           End,
+         End,
+         Child, VGroup, GroupFrameT(GetStr(MSG_CO_INFOBAR)),
+           Child, HGroup,
+             Child, Label1(GetStr(MSG_CO_INFOBARPOS)),
+             Child, data->GUI.CY_INFOBAR = MakeCycle(infob, GetStr(MSG_CO_INFOBARPOS)),
            End,
          End,
          Child, HVSpace,
@@ -1131,7 +1144,7 @@ APTR CO_Page8(struct CO_ClassData *data)
    {
       SetHelp(data->GUI.CH_FIXFLIST,MSG_HELP_CO_CH_FIXFLIST);
       SetHelp(data->GUI.CH_BEAT    ,MSG_HELP_CO_CH_BEAT);
-      SetHelp(data->GUI.CH_INFOBAR ,MSG_HELP_CO_CH_INFOBAR);
+      SetHelp(data->GUI.CY_INFOBAR ,MSG_HELP_CO_CH_INFOBAR);
       SetHelp(data->GUI.CY_SIZE    ,MSG_HELP_CO_CY_SIZE);
       SetHelp(data->GUI.CH_FCNTMENU,MSG_HELP_CO_CONTEXTMENU);
       SetHelp(data->GUI.CH_MCNTMENU,MSG_HELP_CO_CONTEXTMENU);
