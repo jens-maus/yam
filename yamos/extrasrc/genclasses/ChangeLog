@@ -1,5 +1,6 @@
 2001-06-16  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * added STDARGS define to _NewObject()
     * added MorphOS support. Now the _NewObject() varargs function
       will take respect of the different vararg handling of MorphOS.
 
