@@ -117,7 +117,7 @@ static BOOL FI_MatchListPattern(struct Search *search, char *string)
   // Now we process the read header to set all flags accordingly
   for(curNode = patternList->mlh_Head; curNode->mln_Succ;)
   {
-    struct SearchPatternNode *patternNode = (struct PatternNode *)curNode;
+    struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
     if(search->CaseSens ? MatchPattern(patternNode->pattern, string)
                         : MatchPatternNoCase(patternNode->pattern, string)) return TRUE;
@@ -1127,7 +1127,7 @@ void FreeSearchPatternList(struct Search *search)
   // Now we process the read header to set all flags accordingly
   for(curNode = patternList->mlh_Head; curNode->mln_Succ;)
   {
-    struct PatternNode *patternNode = (struct PatternNode *)curNode;
+    struct SearchPatternNode *patternNode = (struct SearchPatternNode *)curNode;
 
     // before we remove the node we have to save the pointer to the next one
     curNode = curNode->mln_Succ;
