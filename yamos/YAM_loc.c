@@ -1312,6 +1312,14 @@ const struct FC_Type _MSG_FO_ReplyToAddress = { 1300, "Reply-To: address" };
 const struct FC_Type _MSG_HELP_FO_ST_MLREPLYTOADDRESS = { 1301, "Use this reply-to address when posting\n"\
 	"new mails to the list" };
 const struct FC_Type _MSG_RE_MDNGads4 = { 1302, "|Ignore all" };
+const struct FC_Type _MSG_EA_DefSecurity = { 1303, "Se_curity" };
+const struct FC_Type _MSG_HELP_MA_CY_DEFSECURITY = { 1304, "Default security for sending\nmail to this person" };
+const struct FC_Type _MSG_WR_DefSecurityConflict = { 1305, "The recipients of this mail have different default\n"\
+	"security settings. What kind of security do you want?" };
+const struct FC_Type _MSG_WR_DefSecurityConflictGads = { 1306, "*_None|_Sign|_Encrypt|_Both|Send _anonymously" };
+const struct FC_Type _MSG_WR_CH_UseDefSecurity = { 1307, "Try defaults" };
+const struct FC_Type _MSG_HELP_WR_CH_UseDefSecurity = { 1308, "Try to use security presets from\n"\
+	"address book" };
 static struct Catalog *YAM_Catalog = NULL;
 
 void OpenYAMCatalog(void)

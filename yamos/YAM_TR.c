@@ -94,14 +94,25 @@ int TR_Connect(char *host, int port)
 
    if (!(hostaddr = GetHostByName((STRPTR)host))) return -1;
    G->TR_INetSocketAddr.sin_len = sizeof(G->TR_INetSocketAddr);
-   G->TR_INetSocketAddr.sin_family = 2;
+   G->TR_INetSocketAddr.sin_family = AF_INET;
    G->TR_INetSocketAddr.sin_port = port;
    G->TR_INetSocketAddr.sin_addr.s_addr = 0;
    memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr, hostaddr->h_length);
-   G->TR_Socket = Socket(hostaddr->h_addrtype, 1, 0);
-   if (G->TR_Socket == -1) { TR_Disconnect(); return -2; }
-   if (Connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) == -1) { TR_Disconnect(); return -3; }
-   return 0;
+
+   G->TR_Socket = Socket(hostaddr->h_addrtype, SOCK_STREAM, 0);
+   if (G->TR_Socket == -1) {
+      TR_Disconnect();
+      return -2;
+   }
+
+   if (Connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1) {
+      return 0;
+   }
+   if (Errno() == EINPROGRESS) return 0;
+   /* Preparation for non-blocking I/O */
+
+   TR_Disconnect();
+   return -3;
 }
 ///
 /// TR_RecvDat
@@ -259,10 +270,10 @@ int TR_ConnectPOP(int guilevel)
    strcpy(host, C->P3[pop]->Server);
    if (C->TransferWindow == 2 || (C->TransferWindow == 1 && (guilevel == POP_START || guilevel == POP_USER)))
    {
-	LONG wstate;
+      LONG wstate;
 
-		get(G->TR->GUI.WI, MUIA_Window_Open, &wstate);				// avoid MUIA_Window_Open's side effect of
-		if(!wstate) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);	// activating the window if it was already open
+      get(G->TR->GUI.WI, MUIA_Window_Open, &wstate);            // avoid MUIA_Window_Open's side effect of
+      if(!wstate) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);   // activating the window if it was already open
    }
    set(G->TR->GUI.TX_STATUS  , MUIA_Text_Contents,GetStr(MSG_TR_Connecting));
    if (p = strchr(host, ':')) { *p = 0; port = atoi(++p); }
@@ -277,6 +288,7 @@ int TR_ConnectPOP(int guilevel)
       return -1;
    }
    set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
+
    if (!TR_RecvDat(buf)) return -1;
    if (!*passwd)
    {

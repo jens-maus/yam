@@ -2617,6 +2617,18 @@ extern const APTR _MSG_HELP_FO_ST_MLREPLYTOADDRESS;
 #define MSG_HELP_FO_ST_MLREPLYTOADDRESS ((APTR) &_MSG_HELP_FO_ST_MLREPLYTOADDRESS)
 extern const APTR _MSG_RE_MDNGads4;
 #define MSG_RE_MDNGads4 ((APTR) &_MSG_RE_MDNGads4)
+extern const APTR _MSG_EA_DefSecurity;
+#define MSG_EA_DefSecurity ((APTR) &_MSG_EA_DefSecurity)
+extern const APTR _MSG_HELP_MA_CY_DEFSECURITY;
+#define MSG_HELP_MA_CY_DEFSECURITY ((APTR) &_MSG_HELP_MA_CY_DEFSECURITY)
+extern const APTR _MSG_WR_DefSecurityConflict;
+#define MSG_WR_DefSecurityConflict ((APTR) &_MSG_WR_DefSecurityConflict)
+extern const APTR _MSG_WR_DefSecurityConflictGads;
+#define MSG_WR_DefSecurityConflictGads ((APTR) &_MSG_WR_DefSecurityConflictGads)
+extern const APTR _MSG_WR_CH_UseDefSecurity;
+#define MSG_WR_CH_UseDefSecurity ((APTR) &_MSG_WR_CH_UseDefSecurity)
+extern const APTR _MSG_HELP_WR_CH_UseDefSecurity;
+#define MSG_HELP_WR_CH_UseDefSecurity ((APTR) &_MSG_HELP_WR_CH_UseDefSecurity)
 
 #endif
 
