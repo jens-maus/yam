@@ -1573,7 +1573,7 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
         STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoCache);
         if(res && strcmp(rd->rd.arg.alias, res)) /* did the string change ? */
         {
-          if((rd->rd.res.recpt = rd->string = AllocStrBuf((LONG)strlen(res)+1)))
+          if((rd->rd.res.recpt = rd->string = AllocStrBuf(strlen(res)+1)))
           strcpy(rd->string, res);
         }
         else
