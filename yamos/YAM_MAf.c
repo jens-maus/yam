@@ -91,16 +91,16 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
    int indexloaded = 0;
    char buf[SIZE_LARGE];
 
-   KPrintF("Loading index for folder %s\n", folder->Name);
+// KPrintF("Loading index for folder %s\n", folder->Name);
    if (fh = fopen(MA_IndexFileName(folder), "r"))
    {
       struct FIndex fi;
+      BOOL corrupt = FALSE;
+
       Busy(GetStr(MSG_BusyLoadingIndex), folder->Name, 0, 0);
       fread(&fi, sizeof(struct FIndex), 1, fh);
       if (fi.ID == MAKE_ID('Y','I','N','3'))
       {
-         BOOL corrupt = FALSE;
-
          folder->Total  = fi.Total;
          folder->New    = fi.New;
          folder->Unread = fi.Unread;
@@ -116,10 +116,14 @@ int MA_LoadIndex(struct Folder *folder, BOOL full)
                struct ComprMail cmail;
                clear(&mail, sizeof(struct Mail));               
                if (fread(&cmail, sizeof(struct ComprMail), 1, fh) != 1) break;
-               if (cmail.MoreBytes > SIZE_LARGE) {
+               if (cmail.MoreBytes > SIZE_LARGE)
+               {
+/*
 fpos_t pos;
 printf("WARNING: Index of folder '%s' CORRUPTED near mailfile '%s' (MoreBytes: 0x%x) - aborting!\n", folder->Name, cmail.MailFile, cmail.MoreBytes);
 if (!fgetpos(fh, &pos)) printf("File position: %ld\n", pos);
+*/
+
                   corrupt = TRUE;
                   break;
                }
@@ -143,22 +147,18 @@ if (!fgetpos(fh, &pos)) printf("File position: %ld\n", pos);
                mail.Size = cmail.Size;
                AddMailToList(&mail, folder);
             }
-            if (corrupt) {
-               ClearMailList(folder, TRUE);
-/*
-If/when this is enabled, remove the "else".
-               MA_ScanMailBox(folder);
-               MA_SaveIndex(folder);
-*/
-            }
-            else {
-               indexloaded++;
-               folder->Flags &= ~FOFL_MODIFY;
-            }
+            indexloaded++;
+            folder->Flags &= ~FOFL_MODIFY;
          }
       }
       BusyEnd;
       fclose(fh);
+
+      if (corrupt) {
+         MA_ScanMailBox(folder);
+         MA_SaveIndex(folder);
+//printf("Rescanned!\n");
+      }
    }
    return indexloaded;
 }

@@ -1,3 +1,7 @@
+;
+; YAM 2.3 catalog description
+; $Id$
+;
 #version 5
 ;
 ; General
@@ -183,6 +187,7 @@ Directory
 ;
 MSG_Copyright1 (//)
 Open Source E-mail package for the Amiga\n\
+\n\
 Copyright © 1995-2000 Marcel Beck\n\
 Copyright © 2000-2001 YAM Open Source Team
 ;
@@ -768,7 +773,7 @@ MSG_MA_MRead (//)
 D\000Read
 ;
 MSG_MA_MEdit (//)
-Edit
+Edit...
 ;
 MSG_MA_MDelete (//)
 Delete
@@ -1172,7 +1177,7 @@ MSG_CO_SendMail (//)
 Send mail (SMTP)
 ;
 MSG_CO_Server (//)
-Server
+Ser_ver
 ;
 MSG_CO_Domain (//)
 Do_main
@@ -1658,7 +1663,7 @@ MSG_CO_PositionX (//)
 Position _X
 ;
 MSG_CO_CloseGadget (//)
-Close_gadget iconifies program
+Close _gadget iconifies program
 ;
 MSG_CO_SaveDelete (//)
 Save/delete messages
@@ -2059,7 +2064,7 @@ Text to insert at the\n\
 bottom of a new message
 ;
 MSG_HELP_CO_ST_OUTTRANS (//)
-Apply this characterset translation\n\
+Apply this character set translation\n\
 on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP (//)
@@ -2138,7 +2143,7 @@ Insert control code for random taglines
 ;
 MSG_HELP_CO_BT_INSENV (//)
 Insert control code for the\n\
-enviromental variable SIGNATURE
+environment variable SIGNATURE
 ;
 MSG_HELP_CO_ST_TAGFILE (//)
 Database containing taglines (\"cookies\")
@@ -2237,7 +2242,7 @@ You may leave this field empty.
 ;
 MSG_HELP_CO_ST_NEWGROUP (//)
 Add new address book entries to this group (it\n\
-will be created if it doesn't already exist)
+will be created if it doesn't exist yet)
 ;
 MSG_HELP_CO_ST_TEMPDIR (//)
 Directory to store\n\
@@ -2257,7 +2262,7 @@ AppIcon in pixels
 ;
 MSG_HELP_CO_CH_CLGADGET (//)
 Do you want YAM to iconify when\n\
-you hit the closegadget?
+you hit the close gadget?
 ;
 MSG_HELP_CO_CH_CONFIRM (//)
 Do you want to confirm\n\
@@ -2296,7 +2301,7 @@ if requested
 ;
 MSG_HELP_CO_CH_SEND_MDN (//)
 Try to send the disposition notification\n\
-as soon it has been generated
+as soon as it is generated
 ;
 MSG_HELP_CO_TX_ENCPACK (//)
 XPK library used to protect\n\
@@ -2630,7 +2635,7 @@ MSG_EA_Homepage (//)
 _Homepage
 ;
 MSG_EA_SnailMail (//)
-S_nail mail
+Snail mail
 ;
 MSG_EA_Street (//)
 _Street
@@ -2779,7 +2784,7 @@ MSG_RE_MDNGads3 (//)
 |Ignore
 ;
 MSG_RE_MDNReq (//)
-The sender of this message request a disposition notification (MDN).\n\
+The sender of this message requests a disposition notification (MDN).\n\
 What do you want to do?
 ;
 MSG_RE_SaveMessage (//)
@@ -3067,7 +3072,7 @@ Display contents of\n\
 the next message
 ;
 MSG_HELP_RE_BT_QUESTION (//)
-Show the message which\n\
+Show the message that\n\
 is being answered here\n\
 (go back in thread)
 ;
@@ -3321,7 +3326,7 @@ MSG_WR_Quoted (//)
 Quoted
 ;
 MSG_WR_ROT13 (//)
-ROT13 encrypted
+ROT13 encoded
 ;
 MSG_WR_LaunchEd (//)
 Launch editor
@@ -3339,7 +3344,7 @@ MSG_WR_MPaste (//)
 Paste
 ;
 MSG_WR_PasteAs (//)
-PasteAs
+Paste as
 ;
 MSG_WR_MUndo (//)
 Undo
@@ -3438,7 +3443,7 @@ Use external editor to\n\
  modify the message text
 ;
 MSG_HELP_WR_BT_LOAD (//)
-Insert textfile at cursor position
+Insert text file at cursor position
 ;
 MSG_HELP_WR_BT_CUT (//)
 Cut marked text to the clipboard
@@ -3655,11 +3660,11 @@ Downloading message...
 ; Module TR - Window
 ;
 MSG_TR_MailTransferFrom (//)
-Transfer mail from %s
+Mail transfer from %s
 ; HOST
 ;
 MSG_TR_MailTransferTo (//)
-Transfer mail to %s
+Mail transfer to %s
 ; HOST
 ;
 MSG_TR_MsgInFile (//)
@@ -3766,7 +3771,8 @@ MSG_ER_ErrorDOBformat (//)
 Date of birth is in wrong format. The correct format is DD-MMM-YYYY (month names in English).
 ;
 MSG_ER_NotInGallery (//)
-Couldn't find this person in the YAM user gallery. Either the person doesn't exist in the database or her name or address is misspelled.
+Couldn't find this person in the YAM user gallery. Either the person \
+doesn't exist in the database or his/her name or address is mispelt.
 ;
 MSG_ER_NoTCP (//)
 No TCP/IP stack running! A bsdsocket.library-compatible internet stack must be started before you can use this function.
@@ -3825,7 +3831,7 @@ MSG_ER_MissingBoundary (//)
 Missing boundary in multipart message. The message seems to be truncated.
 ;
 MSG_ER_CantOpenFile (//)
-Can't read from file '%s'. The file doesn't seem to exists.
+Can't read from file '%s'. The file doesn't seem to exist.
 ; FILENAME
 ;
 MSG_ER_UUSize (//)
@@ -3971,7 +3977,7 @@ position in the text editor
 ; Module FI - Procedures
 ;
 MSG_FI_GaugeText (//)
-%%lD of %lD messages
+%%ld of %lD messages
 ; COUNT, COUNT
 ;
 MSG_FI_AddFilter (//)
@@ -4109,7 +4115,7 @@ Select matching messages\n\
 in the main window
 ;
 MSG_HELP_FI_BT_READ (//)
-Display selected message/nfrom the list above
+Display selected message\nfrom the list above
 ;
 MSG_HELP_FI_BT_ABORT (//)
 Stop searching
@@ -4123,7 +4129,7 @@ Name of header field to search in
 ;
 MSG_HELP_FI_RA_ADRMODE (//)
 Choose whether you want to search in the\n\
-address or realname part of the field
+address or real name part of the field
 ;
 MSG_HELP_FI_CY_STATUS (//)
 Message status to match
@@ -4190,7 +4196,7 @@ MSG_US_Password (//)
 _Password
 ;
 MSG_US_SuperVisor (//)
-_Supervisor privileges
+_Supervisor priviledges
 ;
 MSG_US_AddUser (//)
 _Add user
@@ -4228,7 +4234,7 @@ Use current configuration as\n\
 default for the new account
 ;
 MSG_HELP_US_BT_ADD (//)
-Create the new account
+Create a new account
 ;
 MSG_HELP_US_BT_DEL (//)
 Remove selected account
@@ -4299,7 +4305,7 @@ MSG_FO_FolderMode (//)
 _Mode
 ;
 MSG_FO_SortBy (//)
-S_ort by
+_Sort by
 ;
 MSG_FO_ThenBy (//)
 T_hen by
@@ -4340,11 +4346,11 @@ and/or compressed using XPK
 ;
 MSG_HELP_FO_CY_SORT0 (//)
 Primary sorting order of the\n\
-message in this folder
+messages in this folder
 ;
 MSG_HELP_FO_CY_SORT1 (//)
 Secondary sorting order of the\n\
-message in this folder
+messages in this folder
 ;
 MSG_HELP_FO_CH_REVERSE (//)
 Reversed sorting
@@ -4466,7 +4472,7 @@ MSG_FOLDER_NEWSEPARATOR (//)
 New separator...
 ;
 MSG_FOLDER_EDIT (//)
-Edit
+Edit...
 ;
 MSG_FOLDER_DELETE (//)
 Delete
@@ -4478,7 +4484,7 @@ MSG_FOLDER_EXPORT (//)
 Export...
 ;
 MSG_MESSAGE_EDIT (//)
-E\000Edit
+E\000Edit...
 ;
 MSG_MESSAGE_MOVE (//)
 M\000Move...
@@ -4487,13 +4493,13 @@ MSG_MESSAGE_COPY (//)
 Copy...
 ;
 MSG_MESSAGE_PRINT (//)
-P\000Print...
+P\000Print
 ;
 MSG_MESSAGE_SAVE (//)
 V\000Save...
 ;
 MSG_MESSAGE_SAVEATT (//)
-T\000Save
+T\000Save...
 ;
 MSG_MESSAGE_CROP (//)
 O\000Crop
@@ -4535,21 +4541,21 @@ MSG_FO_FromAddress (//)
 From: address
 ;
 MSG_HELP_FO_ST_MLFROMADDRESS (//)
-Use this from address when posting\n\
+Use this From: address when posting\n\
 new mails to the list
 ;
 MSG_FO_ReplyToAddress (//)
 Reply-To: address
 ;
 MSG_HELP_FO_ST_MLREPLYTOADDRESS (//)
-Use this reply-to address when posting\n\
+Use this Reply-To: address when posting\n\
 new mails to the list
 ;
 MSG_RE_MDNGads4 (//)
 |Ignore all
 ;
 MSG_EA_DefSecurity (//)
-Se_curity
+Sec_urity
 ;
 MSG_HELP_MA_CY_DEFSECURITY (//)
 Default security for sending\n\
@@ -4566,7 +4572,7 @@ MSG_WR_SecDefaults (//)
 Default
 ;
 MSG_ER_PGPMultipart (//)
-Error creating multipart PGP message. Encryption/signing disabled!
+Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont (//)
 Fixed font
@@ -4575,13 +4581,13 @@ MSG_ER_NO_SMTP_AUTH (//)
 ESMTP Server %s doesn't support SMTP AUTH!
 ;
 MSG_CO_UseSMTPAUTH (//)
-Use SMTP _AUTH
+Use SMTP AU_TH
 ;
 MSG_CO_SMTPUser (//)
-_User ID
+Us_er ID
 ;
 MSG_CO_SMTPPass (//)
-Pa_ssword
+Passwo_rd
 ;
 MSG_CO_Del (//)
 Delete
@@ -4593,10 +4599,10 @@ MSG_WR_AltQuoted (//)
 Alternate Quoted
 ;
 MSG_CO_AltQuote (//)
-Quote external using
+Quote e_xternal using
 ;
 MSG_CO_DoQuote (//)
-Quote message
+Qu_ote message
 ;
 MSG_HELP_CO_ST_ALTQUOTECHAR (//)
 String that should precede each line of\n\
@@ -4629,3 +4635,6 @@ No.
 ;
 MSG_ATTACH_PART (//)
 Part
+;
+MSG_ABOUT_OKAY_GAD (//)
+OK

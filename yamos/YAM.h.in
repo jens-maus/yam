@@ -430,6 +430,8 @@ struct Config
    int   AutoSave;
    char  SupportSite[SIZE_HOST];
    BOOL  JumpToNewMsg;
+   BOOL  AskJumpUnread;
+   BOOL  WarnSubject;
    BOOL  PrinterCheck;
    int   HideGUIElements;
    char  LocalCharset[SIZE_CTYPE];

@@ -133,7 +133,7 @@ void RE_SwitchMessage(int winnum, int direction, BOOL onlynew)
    // mails and change to there if the user wants
    if (onlynew)
    {
-      if (!getenv("DoNotBotherMe"))
+      if (C->AskJumpUnread)
       {
          struct Folder **flist;
 
@@ -701,7 +701,7 @@ struct TempFile *texfile;
 							ts2 = StrBufCat(ts2," &");
 							ts2 = StrBufCat(ts2,p+j-1);
 							ts2 = StrBufCat(ts2,"\\\\\n");
-						} else KPrintF("RE_PrintFile(): strange header line %s\n",p);
+						} else DB(KPrintF("RE_PrintFile(): strange header line %s\n",p));
 					}
 					fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n\\input{%s}\n\\end{document}\n",
 								ts1,
@@ -730,14 +730,14 @@ struct TempFile *texfile;
 					} else DisplayBeep(NULL);
 				} else
 				{
-					KPrintF("RE_PrintFile(): no headers for this part\n");
+					DB(KPrintF("RE_PrintFile(): no headers for this part\n"));
 				}
 			}
 			if(ts1) FreeStrBuf(ts1);
 			if(ts2) FreeStrBuf(ts2);
-		} else KPrintF("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n");
+		} else DB(KPrintF("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n"));
 		CloseTempFile(texfile);
-	} else KPrintF("RE_PrintFile(): can't open temp TeX file\n");
+	} else DB(KPrintF("RE_PrintFile(): can't open temp TeX file\n"));
 }
 
 
@@ -758,7 +758,7 @@ char **CVTab;
 		for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
 			ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
 
-		KPrintF("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen);
+		DB(KPrintF("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen));
 
 		if(result = AllocStrBuf(ResLen+1))
 		{
@@ -806,12 +806,12 @@ BOOL success=FALSE;
 					{
 						if(!c)
 						{
-							if(tok[1]) KPrintF("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n");
+							if(tok[1]) DB(KPrintF("Init_ISO8859_to_LaTeX_tab(): line format is %%c %%s\n"));
 							else c = tok[0];
 						} else
 						{
 							CVTab[c] = tok;
-							KPrintF("LaTeX mapping: '%c' -> '%s'\n",c,tok);
+							DB(KPrintF("LaTeX mapping: '%c' -> '%s'\n",c,tok));
 							c = '\0';
 						}
 					}
@@ -2699,7 +2699,7 @@ struct RE_ClassData *RE_New(int winnum, BOOL real)
                MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title,NM_BARLABEL, End,
                MUIA_Family_Child, data->GUI.MI_WRAPH = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_WrapHeader), MUIA_Menuitem_Shortcut,"H", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->WrapHeader, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_WRAPH, End,
                MUIA_Family_Child, data->GUI.MI_TSTYLE = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_Textstyles), MUIA_Menuitem_Shortcut,"T", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,!data->NoTextstyles, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_TSTYLE, End,
-               MUIA_Family_Child, data->GUI.MI_FFONT = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FixedFont), MUIA_Menuitem_Shortcut,"F", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->FixedFont, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_FFONT, End,
+//             MUIA_Family_Child, data->GUI.MI_FFONT = MenuitemObject, MUIA_Menuitem_Title,GetStr(MSG_RE_FixedFont), MUIA_Menuitem_Shortcut,"F", MUIA_Menuitem_Checkit,TRUE, MUIA_Menuitem_Checked,data->FixedFont, MUIA_Menuitem_Toggle,TRUE, MUIA_UserData,RMEN_FFONT, End,
             End,
          End,
          WindowContents, VGroup,

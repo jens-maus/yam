@@ -12,11 +12,15 @@ DATE = T:YAM-date.tmp
 
 # Compiler flags
 CPU        = 68020
-YAMVERSION = "2.3-dev"
+#YAMVERSION = "2.3-dev"
 YAMDATE	   = `Type $(DATE)`
 #OPTFLAGS   = OPT OPTCOMPLEXITY=5 OPTDEPTH=3 OPTINLOCAL
 OPTFLAGS   = NOOPT
-DEBUG	   = DEF DEBUG DEBUG=LINE
+#DEBUG	   = DEF DEBUG DEBUG=LINE
+
+# Pre-build for release:
+DEBUG      = DEBUG=LINE
+YAMVERSION = "2.3"
 
 # CPU is defined outside
 

@@ -868,8 +868,9 @@ MakeHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
 //  Address book listview display hook
 long SAVEDS ASM AB_LV_DspFunc(REG(a0, struct Hook *hook), REG(a1, struct MUIP_NListtree_DisplayMessage *msg))
 {
-   static char dispal[SIZE_DEFAULT], dispco[SIZE_DEFAULT+8];
-   struct AL_Data *data = (APTR)hook->h_Data;
+   static char dispal[SIZE_DEFAULT];
+// static char dispco[SIZE_DEFAULT+8];
+// struct AL_Data *data = (APTR)hook->h_Data;
 
    if (msg != NULL && msg->TreeNode != NULL)
    {
@@ -877,17 +878,7 @@ long SAVEDS ASM AB_LV_DspFunc(REG(a0, struct Hook *hook), REG(a1, struct MUIP_NL
 
       if (entry)
       {
-         switch (entry->Type)
-         {
-            case AET_USER:  msg->Array[0] = entry->Alias;
-                            msg->Array[2] = entry->Comment;
-                            break;
-            case AET_LIST:  sprintf(msg->Array[0] = dispal, "\033O[%08lx]%s", data->Image, entry->Alias);
-                            msg->Array[2] = entry->Comment;
-                            break;
-            case AET_GROUP: sprintf(msg->Array[0] = dispal, MUIX_B"%s", entry->Alias);
-                            sprintf(msg->Array[2] = dispco, MUIX_B"%s", entry->Comment);
-         }
+         msg->Array[0] = entry->Alias;
          msg->Array[1] = entry->RealName;
          msg->Array[3] = entry->Address;
          msg->Array[4] = entry->Street;
@@ -897,6 +888,33 @@ long SAVEDS ASM AB_LV_DspFunc(REG(a0, struct Hook *hook), REG(a1, struct MUIP_NL
          msg->Array[8] = AB_ExpandBD(entry->BirthDay);
          msg->Array[9] = entry->PGPId;
          msg->Array[10]= entry->Homepage;
+
+         switch (entry->Type)
+         {
+/*
+            case AET_USER:  msg->Array[0] = entry->Alias;
+                            msg->Array[2] = entry->Comment;
+                            break;
+            case AET_LIST:  if (data->Image) sprintf(msg->Array[0] = dispal, "\033O[%08lx]%s", data->Image, entry->Alias);
+                            else strcpy(msg->Array[0] = dispal, entry->Alias);
+                            msg->Array[2] = entry->Comment;
+                            break;
+            case AET_GROUP: sprintf(msg->Array[0] = dispal, MUIX_B"%s", entry->Alias);
+                            sprintf(msg->Array[2] = dispco, MUIX_B"%s", entry->Comment);
+*/
+            case AET_LIST:
+            {
+               sprintf(msg->Array[0] = dispal, "\033o[0] %s", entry->Alias);
+            }
+            break;
+
+            case AET_GROUP:
+            {
+               msg->Preparse[0] = MUIX_B;
+               msg->Preparse[2] = MUIX_B;
+            }
+            break;
+         }
       }
    }
    else
@@ -1068,6 +1086,7 @@ struct AB_ClassData *AB_New(void)
                   MUIA_NListtree_Title,						TRUE,
                   MUIA_NListtree_ConstructHook,		&AB_LV_ConFuncHook,
                   MUIA_NListtree_DestructHook,		&AB_LV_DesFuncHook,
+                  MUIA_NListtree_DisplayHook,		&AB_LV_DspFuncHook,
                   MUIA_NListtree_EmptyNodes,			TRUE,
                   MUIA_Font, 											C->FixedFontList ? MUIV_Font_Fixed : MUIV_Font_List,
                End,
@@ -1084,6 +1103,9 @@ struct AB_ClassData *AB_New(void)
     	  SetHelp(data->GUI.BT_TO ,MSG_HELP_AB_BT_TO );
       	SetHelp(data->GUI.BT_CC ,MSG_HELP_AB_BT_CC );
 	      SetHelp(data->GUI.BT_BCC,MSG_HELP_AB_BT_BCC);
+
+        // Now we add the group image to the NListtree
+        DoMethod(data->GUI.LV_ADRESSES, MUIM_NList_UseImage, G->MA->GUI.BC_STAT[11], 0, 0, TAG_DONE);
 
   	    DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_NEW      ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_NewABookHook,0);
     	  DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,AMEN_OPEN     ,MUIV_Notify_Application,3,MUIM_CallHook,&AB_OpenABookHook,0);

@@ -1,5 +1,5 @@
 ;
-; $VER: Installer script 1.3 for YAM 2.2 (28.10.00) © Marcel Beck
+; $VER: Installer script 1.4 for YAM 2.3 (8.6.2001) © Marcel Beck & YAM Open Source Team
 ; language support added by Sönke Tesch/ATO
 
 ; /// Setting up
@@ -12,13 +12,16 @@
 (set #def_lang_Francais            32)
 (set #def_lang_Italiano            64)
 (set #def_lang_Magyar             128)
-(set #def_lang_Polski             256)
-(set #def_lang_Portugues          512)
-(set #def_lang_Portugues_Brasil  1024)
-(set #def_lang_Russian           2048)
-(set #def_lang_Slovensko         4096)
-(set #def_lang_Suomi             8192)
-(set #def_lang_Svenska          16384)
+(set #def_lang_Norsk              256)
+(set #def_lang_Polski             512)
+(set #def_lang_Portugues         1024)
+(set #def_lang_Portugues_Brasil  2048)
+(set #def_lang_Russian           4096)
+(set #def_lang_Slovensko         8192)
+(set #def_lang_Srpski           16384)
+(set #def_lang_Suomi            32768)
+(set #def_lang_Svenska          65536)
+(set #def_lang_Turkce          131072)
 
 (set #def_doc_English            0)
 (set #def_doc_Deutsch            1)
@@ -47,7 +50,7 @@
 (set #lang_manual "Select language for on-line AmigaGuide help")
 (set #icons_prompt "Which graphics do you want to install?\n")
 (set #icons_none "None")
-(set #assign_prompt (cat "YAM: assign should be added to your S:USER-STARTUP\n"
+(set #assign_prompt (cat "YAM: assign should be added to your S:User-Startup\n"
                          "Do you mind?"))
 (set #assign_help (cat "When the Installer program asks if you want to place this "
                        "assignment into your S:user-startup file, you should select "
@@ -573,8 +576,8 @@
       (askoptions
          (prompt  #lang_catalog)
          (help @askoptions-help)
-         (choices "Bosanski" "Czech" "Dansk" "Deutsch" "Español" "Français" "Italiano" "Magyar"
-                  "Polski" "Português" "Português (Brasil)" "Russian" "Slovensko" "Suomi" "Svenska"
+         (choices "Bosanski" "Czech" "Dansk" "Deutsch" "Español" "Français" "Italiano" "Magyar" "Norsk"
+                  "Polski" "Português" "Português (Brasil)" "Russian" "Slovensko" "Srpski" "Suomi" "Svenska" "Türkçe"
          )
          (default #def_cat_lang)
       )
@@ -589,8 +592,8 @@
       (askchoice
          (prompt  #lang_manual)
          (help    @askchoice-help)
-         (choices "English (V2.2)" "Deutsch (V2.2)" "Español (V2.0)"
-                  "Français (V2.0)" "Italiano (V2.0)" "Slovensko (V2.0)")
+         (choices "English (V2.3)" "Deutsch (V2.3)" "Español (V2.3)"
+                  "Français (V2.3)" "Italiano (V2.3)" "Slovensko (V2.0)")
          (default #def_doc_lang)
       )
    )
@@ -638,13 +641,16 @@
    (if (bitand Catalog_lang #def_lang_Francais)         ((set lang "français") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
    (if (bitand Catalog_lang #def_lang_Italiano)         ((set lang "italiano") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
    (if (bitand Catalog_lang #def_lang_Magyar)           ((set lang "magyar") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Norsk)            ((set lang "norsk") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
    (if (bitand Catalog_lang #def_lang_Polski)           ((set lang "polski") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
    (if (bitand Catalog_lang #def_lang_Portugues)        ((set lang "português") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
    (if (bitand Catalog_lang #def_lang_Portugues_Brasil) ((set lang "português-brasil") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
    (if (bitand Catalog_lang #def_lang_Russian)          ((set lang "russian") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
    (if (bitand Catalog_lang #def_lang_Slovensko)        ((set lang "slovensko") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Srpski)           ((set lang "srpski") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
    (if (bitand Catalog_lang #def_lang_Suomi)            ((set lang "suomi") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
    (if (bitand Catalog_lang #def_lang_Svenska)          ((set lang "svenska") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
+   (if (bitand Catalog_lang #def_lang_Turkce)           ((set lang "türkçe") (copyfiles (source (tackon "/Catalogs" lang)) (choices "YAM.catalog") (dest (tackon Cat_dir lang)))))
 )
 )
 
@@ -704,8 +710,8 @@
 (copylib (prompt "MUI - BetterString.mcc") (source "/MUI/BetterString.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
 (copylib (prompt "MUI - BetterString.mcp") (source "/MUI/BetterString.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
 (copylib (prompt "MUI - HotkeyString.mcc") (source "/MUI/HotkeyString.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - NListTree.mcc")    (source "/MUI/NListTree.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
-(copylib (prompt "MUI - NListTree.mcp")    (source "/MUI/NListTree.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - NListtree.mcc")    (source "/MUI/NListtree.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
+(copylib (prompt "MUI - NListtree.mcp")    (source "/MUI/NListtree.mcp") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
 (copylib (prompt "MUI - NFloattext.mcc")   (source "/MUI/NFloattext.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
 (copylib (prompt "MUI - NList.mcc")        (source "/MUI/NList.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
 (copylib (prompt "MUI - NListview.mcc")    (source "/MUI/NListview.mcc") (dest "MUI:Libs/MUI/") (confirm 2) (help @copylib-help))
@@ -718,7 +724,7 @@
 
 (complete 90)
 
-(startup "YAM - Amiga mailer © Marcel Beck"
+(startup "YAM - Amiga mailer © Marcel Beck & YAM Open Source Team"
    (prompt #assign_prompt)
    (help   #assign_help)
    (command "C:Assign YAM: \"" YAM_dir "\"\n")

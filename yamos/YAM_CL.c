@@ -330,50 +330,11 @@ ULONG SAVEDS ASM EL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), R
 //  Subclass of Listtree, supports inline images and Drag&Drop from message list
 ULONG SAVEDS ASM AL_Dispatcher(REG(a0,struct IClass *cl), REG(a2,Object *obj), REG(a1,Msg msg))
 {
-   struct AL_Data *data;
+// struct AL_Data *data;
    struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
    switch (msg->MethodID)
    {
-      case OM_NEW:
-			{
-         obj = (Object *)DoSuperNew(cl, obj, TAG_MORE, ((struct opSet *)msg)->ops_AttrList);
-
-         if (obj)
-         {
-            struct AL_Data *data = INST_DATA(cl, obj);
-	    			InitHook(&data->DisplayHook, AB_LV_DspFunc, data);
-            set(obj, MUIA_NListtree_DisplayHook, &data->DisplayHook);
-
-         }
-         return (ULONG)obj;
-      }
-    	break;
-
-      case MUIM_Setup:
- 			{
-         if (!DoSuperMethodA(cl, obj, msg)) return FALSE;
-         data = INST_DATA(cl, obj);
-         data->Object = NewObject(CL_BodyChunk->mcc_Class,NULL,
-                                  MUIA_Bodychunk_File, "status_group",
-                                  MUIA_Bodychunk_UseOld, TRUE,
-                                  MUIA_Bitmap_Transparent, 0,
-                              End;
-         data->Image = (APTR)DoMethod(obj, MUIM_List_CreateImage, data->Object, 0);
-         MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-         return TRUE;
-      }
-    	break;
-
-      case MUIM_Cleanup: 
-			{
-         data = INST_DATA(cl, obj);
-         MUI_RequestIDCMP(obj, IDCMP_MOUSEBUTTONS|IDCMP_RAWKEY);
-         DoMethod(obj, MUIM_List_DeleteImage, data->Image);
-         if (data->Object) MUI_DisposeObject(data->Object);
-      }
-    	break;
-
       case MUIM_DragQuery:
 			{
          if (d->obj == G->MA->GUI.NL_MAILS) return MUIV_DragQuery_Accept;
