@@ -71,7 +71,11 @@ struct rxs_stemnode
 
 extern struct ExecBase *SysBase;
 extern struct DosLibrary *DOSBase;
+#ifndef _DCC
 extern struct RxsLib *RexxSysBase;
+#else
+extern struct Library *RexxSysBase;
+#endif
 
 void (*ARexxResultHook)( struct RexxHost *, struct RexxMsg * ) = NULL;
 
