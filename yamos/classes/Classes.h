@@ -51,6 +51,7 @@ void YAM_CleanupClasses( void );
 #define MUIC_YAM "YAM_YAM"
 #define YAMObject YAM_NewObject(MUIC_YAM
 #define MUIM_YAM_FindEmailMatches                     0xc37f3e01
+#define MUIM_YAM_AddToEmailCache                      0xf9fbe901
 #define MUIA_YAM_EMailCacheName                       0xcccf4d01
 
 struct MUIP_YAM_FindEmailMatches
@@ -59,11 +60,18 @@ struct MUIP_YAM_FindEmailMatches
   STRPTR matchText; Object *list;
 };
 
+struct MUIP_YAM_AddToEmailCache
+{
+  ULONG methodID;
+  struct Person *person;
+};
+
 
 ULONG YAMGetSize( void );
 ULONG m_YAM_OM_NEW              (struct IClass *cl, Object *obj, Msg msg);
 ULONG m_YAM_OM_DISPOSE          (struct IClass *cl, Object *obj, Msg msg);
 ULONG m_YAM_FindEmailMatches    (struct IClass *cl, Object *obj, struct MUIP_YAM_FindEmailMatches *msg);
+ULONG m_YAM_AddToEmailCache     (struct IClass *cl, Object *obj, struct MUIP_YAM_AddToEmailCache *msg);
 
 /******** Class: Searchwindow ********/
 

@@ -1,3 +1,10 @@
+2001-10-27  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * implemented match & save functions for new emailcache
+      feature. Now YAM should save/move entries in the emailcache
+      list to the corresponding file. This finally finishes the
+      emailcache feature.
+
 2001-10-26  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * added functions/methods to use the new emailcache on a

@@ -185,7 +185,7 @@ int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
   // if we found more then one matching entry
   for(i=0; hits <= 2; i++, found=FALSE)
   {
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, 0, TAG_DONE);
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
     if(!tn) break;
 
     // now we set the AB_Entry

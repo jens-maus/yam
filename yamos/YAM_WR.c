@@ -1322,10 +1322,27 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       }
 
       if (wr->Mode != NEW_BOUNCE) EndNotify(&G->WR_NRequest[winnum]);
-      if ((email = MA_ExamineMail(outfolder, mail.MailFile, Status[stat], FALSE)))
+      if ((email = MA_ExamineMail(outfolder, mail.MailFile, Status[stat], C->EmailCache > 0 ? TRUE : FALSE)))
       {
          new = AddMailToList((struct Mail *)email, outfolder);
+
+         // Now we have to check wheter we have to add the To & CC addresses
+         // to the emailCache
+         if(C->EmailCache > 0)
+         {
+            DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &new->To);
+
+            // if this mail has more than one recipient we have to add the others too
+            if(new->Flags & MFLAG_MULTIRCPT)
+            {
+              int j;
+
+              for (j = 0; j < email->NoSTo; j++) DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->STo[j]);
+              for (j = 0; j < email->NoCC; j++)  DoMethod(_app(gui->WI), MUIM_YAM_AddToEmailCache, &email->CC[j]);
+            }
+         }
          MA_FreeEMailStruct(email);
+
          if (FO_GetCurrentFolder() == outfolder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
          MA_SetMailStatus(new, stat);
          if (wr->Mode == NEW_EDIT)
@@ -1372,6 +1389,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
             }
          }
       }
+
       switch (wr->Mode)
       {
          case NEW_NEW:     AppendLog(10, GetStr(MSG_LOG_Creating),   AddrName(new->To), new->Subject, (void *)att, ""); break;

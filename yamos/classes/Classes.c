@@ -40,6 +40,7 @@ DISPATCHERPROTO(YAMDispatcher)
     case OM_NEW                                  : return m_YAM_OM_NEW              (cl, obj, msg);
     case OM_DISPOSE                              : return m_YAM_OM_DISPOSE          (cl, obj, msg);
     case MUIM_YAM_FindEmailMatches               : return m_YAM_FindEmailMatches    (cl, obj, (APTR)msg);
+    case MUIM_YAM_AddToEmailCache                : return m_YAM_AddToEmailCache     (cl, obj, (APTR)msg);
   }
   return DoSuperMethodA(cl, obj, msg);
 }

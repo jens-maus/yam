@@ -48,7 +48,7 @@ struct EMailCacheNode
 
 /* Private functions */
 /// LoadEMailCache()
-VOID LoadEMailCache (STRPTR name, struct List *list)
+VOID LoadEMailCache(STRPTR name, struct List *list)
 {
 	BPTR fh;
 	NewList(list);
@@ -81,6 +81,42 @@ VOID LoadEMailCache (STRPTR name, struct List *list)
 	else
 	{
 		D(DBF_ERROR, ("Error opening file '%s' for reading", name))
+	}
+}
+
+///
+/// SaveEMailCache()
+VOID SaveEMailCache(STRPTR name, struct List *list)
+{
+	BPTR fh;
+
+	if(fh = Open(name, MODE_NEWFILE))
+	{
+    int i;
+    struct EMailCacheNode *node = (struct EMailCacheNode *)(list->lh_Head);
+		TEXT line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
+
+    for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; i++, node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+    {
+      struct ABEntry *entry = &node->ecn_Person;
+
+      if(entry->RealName[0])
+      {
+        sprintf(line, "%s <%s>\n", entry->RealName, entry->Address);
+      }
+      else
+      {
+        sprintf(line, "<%s>\n", entry->Address);
+      }
+
+      FPuts(fh, line);
+    }
+
+		Close(fh);
+	}
+	else
+	{
+		D(DBF_ERROR, ("Error opening file '%s' for writing", name))
 	}
 }
 
@@ -122,6 +158,40 @@ VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode 
 }
 
 ///
+/// FindABPerson()
+// tries to find a Person in a addressbook
+BOOL FindABPerson(struct Person *person, struct MUI_NListtree_TreeNode *root)
+{
+  struct MUI_NListtree_TreeNode *tn;
+
+  // Now we try to find matches in the Addressbook Listtree
+  tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, root, MUIV_NListtree_GetEntry_Position_Head, MUIF_NONE);
+
+  for(;tn;)
+	{
+		if(tn->tn_Flags & TNF_LIST) /* it's a sublist */
+		{
+			if(FindABPerson(person, tn)) return TRUE;
+		}
+		else
+		{
+			struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
+
+			if((person->RealName[0] ? !Stricmp(entry->RealName, person->RealName) : TRUE) &&
+         !Stricmp(entry->Address, person->Address)
+        )
+      {
+        return TRUE;
+      }
+		}
+
+    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Next, MUIF_NONE);
+	}
+
+  return FALSE;
+}
+
+///
 
 /* Public Methods */
 /// DECLARE(FindEmailMatches)
@@ -139,18 +209,14 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
     // list and add matches to the MUI List too
     if(C->EmailCache > 0 && !IsListEmpty(&data->EMailCache))
     {
-      int i, tl = strlen(msg->matchText);
+      int i;
+      int tl = strlen(msg->matchText);
       struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
 
-      kprintf("emailCache: %ld\n", C->EmailCache);
-
-      for(i=0; ((struct Node *)node)->ln_Succ != NULL; node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+      for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; i++, node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
       {
   		  struct ABEntry *entry = &node->ecn_Person;
 			  struct CustomABEntry e = { -1 };
-
-        kprintf("Realname: [%s]\n",   entry->RealName);
-        kprintf("EMail...: [%s]\n\n", entry->Address);
 
 			  if(!Strnicmp(entry->RealName, msg->matchText, tl))      { e.MatchField = 1; e.MatchString = entry->RealName;  }
 			  else if(!Strnicmp(entry->Address, msg->matchText, tl))  { e.MatchField = 2; e.MatchString = entry->Address;   }
@@ -160,13 +226,74 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 				  e.MatchEntry = entry;
 				  DoMethod(msg->list, MUIM_List_InsertSingle, &e, MUIV_List_Insert_Bottom);
 			  }
-
       }
-
     }
   }
 
   return NULL;
+}
+
+///
+/// DECLARE(AddToEmailCache)
+// method that parses a string for addresses and add them to the emailcache if enabled
+DECLARE(AddToEmailCache) // struct Person *person
+{
+  GETDATA;
+
+  if(C->EmailCache == 0) return -1;
+
+  // We first check the Addressbook if this Person already exists in the AB and if
+  // so we cancel this whole operation.
+  if(!FindABPerson(msg->person, MUIV_NListtree_GetEntry_ListNode_Root))
+  {
+    int i;
+    BOOL found = FALSE;
+    struct EMailCacheNode *node = (struct EMailCacheNode *)(data->EMailCache.lh_Head);
+
+    // Ok, it doesn`t exists in the AB, now lets check the cache list
+    // itself
+    for(i=0; i < C->EmailCache && ((struct Node *)node)->ln_Succ != NULL; node = (struct EMailCacheNode *)((struct Node *)node)->ln_Succ)
+    {
+      struct ABEntry *entry = &node->ecn_Person;
+
+      // If we find the same entry already in the list we just move it
+      // up to the top
+			if((msg->person->RealName[0] ? !Stricmp(entry->RealName, msg->person->RealName) : TRUE) &&
+         !Stricmp(entry->Address, msg->person->Address)
+        )
+      {
+        Remove((struct Node *)node);
+        AddHead(&data->EMailCache, (struct Node *)node);
+        found = TRUE;
+
+        break;
+      }
+    }
+
+    // if we didn`t find the person already in the list
+    // we have to add it after the last node
+    if(!found)
+    {
+      struct EMailCacheNode *newnode;
+
+      // we alloc mem for this new node and add it behind the last node
+      if(newnode = calloc(1, sizeof(struct EMailCacheNode)))
+      {
+        struct ABEntry *entry = &newnode->ecn_Person;
+
+        // Lets copy the data in the new Person struct
+        strcpy(entry->RealName, msg->person->RealName);
+        strcpy(entry->Address, msg->person->Address);
+
+        Insert(&data->EMailCache, (struct Node *)newnode, ((struct Node *)node)->ln_Pred);
+      }
+    }
+
+    // Now lets save the emailcache file again
+		SaveEMailCache(data->EMailCacheName, &data->EMailCache);
+  }
+
+  return 0;
 }
 
 ///
