@@ -268,7 +268,24 @@ OVERLOAD(MUIM_HandleEvent)
 			{
 				if(new_address = (STRPTR)DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg))
 				{
-					DoMethod(obj, MUIM_BetterString_ClearSelected);
+          LONG start;
+          STRPTR old;
+
+          // we first have to clear the selected area
+          DoMethod(obj, MUIM_BetterString_ClearSelected);
+
+          start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+          old = (STRPTR)xget(obj, MUIA_String_Contents);
+
+          if(Strnicmp(new_address, &old[start], strlen(&old[start])) != 0)
+          {
+            SetAttrs(obj, MUIA_String_BufferPos, start,
+                          MUIA_BetterString_SelectSize, strlen(&old[start]),
+                          TAG_DONE);
+
+            DoMethod(obj, MUIM_BetterString_ClearSelected);
+          }
+
 					result = MUI_EventHandlerRC_Eat;
 				}
 			}
@@ -307,11 +324,14 @@ OVERLOAD(MUIM_HandleEvent)
 
 		if(new_address) /* this is the complete address of what the user is typing, so let's insert it (marked) */
 		{
-			LONG pos, start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);;
-			pos = xget(obj, MUIA_String_BufferPos);
+			LONG start = DoMethod(obj, MUIM_Recipientstring_RecipientStart);
+			LONG pos = xget(obj, MUIA_String_BufferPos);
 
 			DoMethod(obj, MUIM_BetterString_Insert, &new_address[pos - start], pos);
-			SetAttrs(obj, MUIA_String_BufferPos, pos, MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start), TAG_DONE);
+
+			SetAttrs(obj, MUIA_String_BufferPos, pos,
+                    MUIA_BetterString_SelectSize, strlen(new_address) - (pos - start),
+                    TAG_DONE);
 		}
 	}
 	else if(imsg->Class == IDCMP_CHANGEWINDOW)
@@ -358,21 +378,22 @@ DECLARE(Resolve) // ULONG flags
 		DB(kprintf("Resolve this string: %s\n", tmp);)
 		while(s = Trim(strtok(tmp, ","))) /* tokenize string and resolve each recipient */
 		{
-		   DB(kprintf("token: '%s'\n", s);)
+      DB(kprintf("token: '%s'\n", s);)
 
-         if(checkvalids == FALSE && (tmp = strchr(s, '@')))
-         {
-		   	DB(kprintf("Valid address found.. will not resolve it: %s\n", s);)
-			   DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+      if(checkvalids == FALSE && (tmp = strchr(s, '@')))
+      {
+		    DB(kprintf("Valid address found.. will not resolve it: %s\n", s);)
+			  DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 
             /* email address lacks domain... */
    			if(tmp[1] == '\0')
 	   		   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
-         }
-         else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE)) /* entry found in address book */
+      }
+      else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, MUIF_NONE)) /* entry found in address book */
 			{
 				struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
 				DB(kprintf("Found match: %s\n", s);)
+
 				if(entry->Type == AET_USER) /* it's a normal person */
 				{
 					DB(kprintf("\tPlain user: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)

@@ -1,5 +1,9 @@
 2001-10-28  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * fixed a little flaw in the recipientstring class where it
+      wasn`t possible to select the correct recipient if more
+      than one entry with the same realname was found in the
+      addressbook.
     * Parts in a multipart mail will now be displayed colored to
       indicate that they are clickable.
 

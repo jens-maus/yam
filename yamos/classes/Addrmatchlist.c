@@ -185,15 +185,46 @@ DECLARE(Event) // struct IntuiMessage *imsg
 {
 	GETDATA;
 	STRPTR res = NULL;
+
 	if(xget(obj, MUIA_Window_Open))
 	{
 		struct CustomABEntry *entry;
+
 		if(xget(data->Matchlist, MUIA_List_Active) != MUIV_List_Active_Off)
+    {
 				set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Up     : MUIV_List_Active_Down);
-		else	set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
+    }
+		else
+    {
+        set(data->Matchlist, MUIA_List_Active, msg->imsg->Code == IECODE_UP ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
+    }
 
 		DoMethod(data->Matchlist, MUIM_List_GetEntry, xget(data->Matchlist, MUIA_List_Active), &entry);
-		res = entry->MatchString;
+
+    res = entry->MatchString;
+
+    // Now we check if the match is because of the real name and the same name exists twice in
+    // this list we have to return the email as matchstring
+    if(entry->MatchField == 1)  // RealName
+    {
+      int i;
+      for(i=0;;i++)
+      {
+        struct CustomABEntry *compareEntry;
+
+        DoMethod(data->Matchlist, MUIM_List_GetEntry, i, &compareEntry);
+        if(!compareEntry) break;
+
+        if(compareEntry != entry)
+        {
+          if(Stricmp(compareEntry->MatchString, entry->MatchString) == 0)
+          {
+            res = entry->MatchEntry->Address;
+            break;
+          }
+        }
+      }
+    }
 	}
 	return (ULONG)res;
 }
