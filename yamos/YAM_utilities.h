@@ -93,6 +93,12 @@ struct Data2D
    char **Data;
 };
 
+struct NewToolbarEntry
+{
+   APTR label;
+   APTR help;
+};
+
 #define PGPLOGFILE    "T:PGP.log"
 #define OUT_NIL       ((BPTR)1)
 #define NOERRORS      16
