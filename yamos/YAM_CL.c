@@ -1028,7 +1028,7 @@ void ExitClasses(void)
   #warning "OS4 specific work-around still there!"
   // this seems to work around an OS4 specific bug, but why??? remove it and YAM
   // will crash on exit.. because of an invalid return jump? mhh?!?
-  DebugPrintF("");
+  kprintf("");
   #endif
 }
 
