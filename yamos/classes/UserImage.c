@@ -124,18 +124,32 @@ OVERLOAD(MUIM_Setup)
 			LONG scaleHeightDiff = fri.fri_Dimensions.Height - data->maxHeight;
 			LONG scaleWidthDiff  = fri.fri_Dimensions.Width - data->maxWidth;
 
-			if(scaleHeightDiff > 0 || scaleWidthDiff > 0)
+			if((scaleHeightDiff > 0 && data->maxHeight > 0) ||
+				 (scaleWidthDiff > 0 && data->maxWidth > 0))
 			{
+				float scaleFactor;
+				LONG newHeight;
+				LONG newWidth;
+
 				// make sure we are scaling proportional
-				LONG scaleFactor = MAX(scaleHeightDiff, scaleWidthDiff);
-				LONG newHeight = fri.fri_Dimensions.Height - scaleFactor;
-				LONG newWidth = fri.fri_Dimensions.Width - scaleFactor;
+				if(scaleHeightDiff > scaleWidthDiff)
+				{
+					scaleFactor = (float)fri.fri_Dimensions.Width / (float)fri.fri_Dimensions.Height;
+					newWidth = scaleFactor * data->maxHeight + 0.5; //round the value
+					newHeight = data->maxHeight;
+				}
+				else
+				{
+					scaleFactor = (float)fri.fri_Dimensions.Height / (float)fri.fri_Dimensions.Width;
+					newWidth = data->maxWidth;
+					newHeight = scaleFactor * data->maxWidth + 0.5; // round the value
+				}
 
 				// scale it now
-				DB(kprintf("UserImage scale (h/w) from %ld/%ld to %ld/%ld\n", fri.fri_Dimensions.Height,
-																																			fri.fri_Dimensions.Width,
-																																			newHeight,
-																																			newWidth);)
+				DB(kprintf("UserImage scale (w/h) from %ld/%ld to %ld/%ld\n", fri.fri_Dimensions.Width,
+																																			fri.fri_Dimensions.Height,
+																																			newWidth,
+																																			newHeight);)
 				DoMethod(data->datatypeObject, PDTM_SCALE,
 																			 newWidth  > 0 ? newWidth  : 1,
 																			 newHeight > 0 ? newHeight : 1,

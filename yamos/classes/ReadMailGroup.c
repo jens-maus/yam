@@ -251,10 +251,10 @@ OVERLOAD(OM_NEW)
 			End,
 			Child, data->senderImageGroup = VGroup,
 				GroupSpacing(0),
-				InputListFrame,
-				MUIA_ShowMe, 								FALSE,
-				MUIA_HorizWeight, 					0,
-				MUIA_VertWeight, 					  0,
+				InnerSpacing(0,0),
+				MUIA_CycleChain,		FALSE,
+				MUIA_ShowMe, 				FALSE,
+				MUIA_Weight, 				1,
 				Child, data->senderImageSpace = VSpace(0),
 			End,
 		End,
@@ -572,11 +572,15 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 					}
 
 					data->senderImage = NULL;
-					
+
 					if(RE_FindPhotoOnDisk(ab, photopath) &&
-						 (data->senderImage = MakePicture(photopath)))
+						 (data->senderImage = UserImageObject,
+																		MUIA_UserImage_File, 			photopath,
+																		MUIA_UserImage_MaxHeight,	64, // xget(data->headerList, MUIA_Height),
+																		MUIA_UserImage_MaxWidth,	64, // xget(data->headerList, MUIA_Width),
+																	End))
 					{
-						DB(kprintf("SenderPicture found: %s\n", photopath);)
+						DB(kprintf("SenderPicture found: %s %ld %ld\n", photopath, xget(data->headerList, MUIA_Width), xget(data->headerList, MUIA_Height));)
 
 						DoMethod(data->senderImageGroup, OM_ADDMEMBER, data->senderImage);
 
@@ -586,6 +590,10 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 																															NULL);
 					}
 					DoMethod(data->senderImageGroup, MUIM_Group_ExitChange);
+
+					if (data->senderImage)
+						DB(kprintf("minheight: %ld %ld %ld %ld %ld\n", _minheight(data->senderImageSpace), _minheight(data->senderImage), _minheight(data->senderImageGroup), _minheight(data->headerList), _subheight(data->senderImageGroup)));
+
 				}
 			}
 			set(data->senderImageGroup, MUIA_ShowMe, (rmData->senderInfoMode == SIM_ALL) &&

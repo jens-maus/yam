@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-01-31  Jens Langner <Jens.Langner@light-speed.de>
+
+    * UserImage.c: fixed bug #1113084 where the proportional image
+      scaling routines where such "proportional". Now the user images
+      should be perfectly scaled taking respect of their width/height
+      proportion. I also tried to fix another flaw in the user image
+      display where a small space is displayed below the image.
+      However, this is currently hard to resolve and points more towards
+      a possible MUI bug. Lets see if we can work around it later on.
+
 2005-01-30  Jens Langner <Jens.Langner@light-speed.de>
 
     * misc: renamed the previously named "mail preview" to the more
