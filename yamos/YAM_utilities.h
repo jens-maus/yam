@@ -348,7 +348,7 @@ int      SelectMessage(struct Mail *mail);
 void     SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, UWORD flags);
 char     ShortCut(char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
-void STDARGS SPrintF(char *outstr, char *fmtstr, ...) VARARGS68K;
+void STDARGS VARARGS68K SPrintF(char *outstr, char *fmtstr, ...);
 char *   StartUnpack(char *file, char *newfile, struct Folder *folder);
 char *   stccat(char *a, char *b, int n);
 char *   StrBufCat(char *strbuf, char *source);
@@ -366,7 +366,7 @@ char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
 BOOL     LoadParsers(void);
 void     SParse(char *);
-LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
+LONG STDARGS VARARGS68K YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
 APTR     WhichLV(struct Folder *folder);
 
 #endif /* YAM_UTILITIES_H */

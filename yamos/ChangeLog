@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-24  Jens Langner <Jens.Langner@light-speed.de>
+
+    * OS4: some more modifications to get YAM working on AmigaOS4.
+
 2004-01-23  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: slightly modified InitLib() to correctly set the library

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2002 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -197,11 +197,11 @@ LONG STDARGS VARARGS68K YAMMUIRequest(APTR app, APTR win, LONG flags, char *titl
   // lets create the requester text
   #if defined(__amigaos4__)
   va_startlinear(args, format);
-  vsprintf(reqtxt, format, va_getlinearva(args, void *));
   #else
   va_start(args, format);
-  vsprintf(reqtxt, format, args);
   #endif
+
+  vsprintf(reqtxt, format, args);
   va_end(args);
 
   // if the applicationpointer is NULL we fall back to a standard requester
@@ -4525,7 +4525,7 @@ MakeStaticHook(putCharHook, putCharFunc);
 
 /// SPrintF
 //  sprintf() replacement with Locale support
-void STDARGS SPrintF(char *outstr, char *fmtstr, ...)
+void STDARGS VARARGS68K SPrintF(char *outstr, char *fmtstr, ...)
 {
   struct Hook hook;
   va_list args;

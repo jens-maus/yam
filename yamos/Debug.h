@@ -44,13 +44,25 @@
 VOID SetupDebug (VOID);
 BOOL TestDebugFlag (ULONG flag);
 
+#if defined(__amigaos4__)
+  #include <proto/exec.h>
+  #ifdef __USE_INLINE__
+    #ifdef DebugPrintF
+      #undef DebugPrintF
+    #endif
+  #endif
+  #ifndef kprintf
+    #define kprintf(format, args...)  ((struct ExecIFace *)((*(struct ExecBase **)4)->MainInterface))->DebugPrintF(format, ## args)
+  #endif
+#else
 void kprintf(const char *formatString,...);
+#endif
 
 #define D(flag, str)			\
 	if(TestDebugFlag(flag))	\
-	{								\
-		kprintf str ;			\
-		kprintf("\n");			\
+	{								        \
+		kprintf str; 			    \
+		kprintf("\n");        \
 	}
 
 #endif

@@ -847,11 +847,7 @@ static VARARGS68K void Abort(APTR formatnum, ...)
 
    if(formatnum)
    {
-      #if defined(__amigaos4__)
-      vsprintf(error, GetStr(formatnum), va_getlinearva(a, void *));
-      #else
       vsprintf(error, GetStr(formatnum), a);
-      #endif
 
       if(MUIMasterBase && G && G->App)
       {
@@ -871,6 +867,8 @@ static VARARGS68K void Abort(APTR formatnum, ...)
         puts(error);
    }
    va_end(a);
+
+   // do a hard exit.
    exit(5);
 }
 ///
@@ -988,6 +986,8 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
       if((*libbase)->lib_Version == version &&
          (*libbase)->lib_Revision < revision)
       {
+         DB(kprintf("InitLib: can`t open library %s with minimum version v%ld.%d\n", libname, version, revision);)
+
          CloseLibrary(*libbase);
          *libbase = NULL;
       }
@@ -998,6 +998,8 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
 
    if(*libbase && close)
    {
+      DB(kprintf("InitLib: library %s v%ld.%ld successfully opened - autoclosed.\n", libname, (*libbase)->lib_Version, (*libbase)->lib_Revision);)
+
       CloseLibrary(*libbase);
       *libbase = NULL;
    }
@@ -1014,7 +1016,7 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
      // if we weren`t able to obtain the main interface, lets close the library also
      if(iFace == NULL)
      {
-        DB(kprintf("GetInterface() for %s failed.\n", libname);)
+        DB(kprintf("InitLib: can`t get main interface of library %s\n", libname);)
 
         CloseLibrary(*libbase);
         *libbase = NULL;
@@ -1022,14 +1024,18 @@ static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int
         if(required)
           Abort(MSG_ERR_OPENLIB, libname, version, revision);
      }
+     else DB(kprintf("InitLib: library %s v%ld.%ld successfully opened.\n", libname, (*libbase)->lib_Version, (*libbase)->lib_Revision);)
 
      return iFace;
    }
-
-   return NULL;
    #else
-   return *libbase;
+   if(*libbase)
+   {
+     DB(kprintf("InitLib: library %s v%ld.%ld successfully opened.\n", libname, (*libbase)->lib_Version, (*libbase)->lib_Revision);)
+   }
    #endif
+
+   return *libbase;
 }
 ///
 /// CloseLib
@@ -1286,11 +1292,15 @@ static void Initialise(BOOL hidden)
    // buggy
    CheckMCC(MUIC_NListtree, 18, 12, TRUE);
 
+   // Initialise and Setup our own MUI custom classes before we go on
    if(!InitClasses() || !YAM_SetupClasses())
       Abort(MSG_ErrorClasses);
+
+   // allocate the MUI root object and popup the progress/about window
    if(!Root_New(hidden))
       Abort(FindPort("YAM") ? NULL : MSG_ErrorMuiApp);
 
+   // lets advance the progress bar to 10%
    AY_PrintStatus(GetStr(MSG_InitLibs), 10);
 
    #if defined(__amigaos4__)

@@ -29,8 +29,19 @@
 ***************************************************************************/
 
 #if defined(DEBUG)
-
-	void kprintf(const char *formatString,...);
+  #if defined(__amigaos4__)
+    #include <proto/exec.h>
+    #ifdef __USE_INLINE__
+      #ifdef DebugPrintF
+        #undef DebugPrintF
+      #endif
+    #endif
+    #ifndef kprintf
+      #define kprintf(format, args...)  ((struct ExecIFace *)((*(struct ExecBase **)4)->MainInterface))->DebugPrintF(format, ## args)
+    #endif
+  #else
+	  void kprintf(const char *formatString,...);
+  #endif
 
   #define DB(x) x
   #define DBG kprintf("File %s, Func %s, Line %d\n",__FILE__,__FUNC__,__LINE__);

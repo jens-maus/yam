@@ -46,7 +46,7 @@ DEBUG    = -DDEBUG -g3 -O0
 REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
 CFLAGS   = -pipe -I./ -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ $(REDEFINE) -c
 LDFLAGS  = $(CPU)
-LDLIBS   = -ldebug 
+LDLIBS   =
 
 # Special flags
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
