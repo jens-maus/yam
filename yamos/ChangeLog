@@ -306,3 +306,6 @@
 
     * Fixed bug in the AB_FindTodaysBirthdates() function. Now YAM should find
       contacts who have birthday again.
+
+    * Modified & reactivated AB_LB_CmpFunc() again. Now the addressbook should be
+      sortable again.
