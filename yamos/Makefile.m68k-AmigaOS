@@ -42,6 +42,6 @@ YAM_rexx_rxif.o: YAM_rexx_rxif.c YAM_rexx.h YAM.h YAM_locale.h
 YAM_extra.o: YAM_extra.c YAM.h YAM_locale.h
 YAM_md5.o: YAM_md5.c
 
-YAM_locale.c: locale/YAM.cd
+YAM_locale.h: locale/YAM.cd
 	flexcat locale/YAM.cd YAM_locale.h=C_h.sd YAM_locale.c=C_c.sd
 
