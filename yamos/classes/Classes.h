@@ -8,6 +8,7 @@
 ** +--Recipientstring
 **
 **
+=======
 ** Searchwindow    -- Window where user inputs search string and options.
 **
 **                    Implements:
@@ -92,11 +93,10 @@ VOID YAM_CleanupClasses (VOID);
 
 #define MUIC_Searchwindow "YAM_Searchwindow"
 
-#define MUIM_Searchwindow_Open                0xAE00129AUL
-#define MUIM_Searchwindow_Close               0xAE006FF1UL
-#define MUIM_Searchwindow_Search              0xAE008B93UL
-#define MUIM_Searchwindow_Next                0xAE00F7C1UL
-
+#define MUIM_Searchwindow_Open                  0xAE00129AUL
+#define MUIM_Searchwindow_Close                 0xAE006FF1UL
+#define MUIM_Searchwindow_Search                0xAE008B93UL
+#define MUIM_Searchwindow_Next                  0xAE00F7C1UL
 
 struct MUIP_Searchwindow_Open
 {
@@ -107,6 +107,7 @@ struct MUIP_Searchwindow_Open
 struct MUIP_Searchwindow_Close
 {
 	ULONG methodID;
+   ULONG flags;
 };
 
 struct MUIP_Searchwindow_Search
@@ -130,15 +131,18 @@ ULONG SearchwindowGetSize (VOID);
 
 #define MUIC_Recipientstring "YAM_Recipientstring"
 
-#define MUIM_Recipientstring_AddRecipient     0xAE0000CBUL
-#define MUIM_Recipientstring_Resolve          0xAE00EB08UL
-#define MUIM_Recipientstring_RecipientStart   0xAE004D2EUL
-#define MUIM_Recipientstring_ShowMatches      0xAE006D64UL
+#define MUIM_Recipientstring_AddRecipient          0xAE0000CBUL
+#define MUIM_Recipientstring_Resolve               0xAE00EB08UL
+#define MUIM_Recipientstring_RecipientStart        0xAE004D2EUL
+#define MUIM_Recipientstring_ShowMatches           0xAE006D64UL
 
-#define MUIA_Recipientstring_MultipleRecipients 0xAE005A79UL
-#define MUIA_Recipientstring_FromString       0xAE00D557UL
-#define MUIA_Recipientstring_ReplyToString    0xAE006744UL
-#define MUIA_Recipientstring_Popup            0xAE003126UL
+#define MUIA_Recipientstring_MultipleRecipients    0xAE005A79UL
+#define MUIA_Recipientstring_FromString            0xAE00D557UL
+#define MUIA_Recipientstring_ReplyToString         0xAE006744UL
+#define MUIA_Recipientstring_Popup                 0xAE003126UL
+
+#define MUIV_Recipientstring_Resolve_NoRealName    1
+#define MUIV_Recipientstring_Resolve_NoValids      2
 
 struct MUIP_Recipientstring_AddRecipient
 {
@@ -149,6 +153,7 @@ struct MUIP_Recipientstring_AddRecipient
 struct MUIP_Recipientstring_Resolve
 {
 	ULONG methodID;
+   ULONG flags;
 };
 
 struct MUIP_Recipientstring_RecipientStart

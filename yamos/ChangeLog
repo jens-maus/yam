@@ -1063,3 +1063,24 @@
     * YAM_rexx.c (global): added REXXMSG macro to hide annoying NDK difference
       (ReplyRexxCommand, DoRXCommand): use it
     * YAM_rexx.c: small cleanups
+
+2001-08-01  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * changed RETURN, SHIFT+RETURN behaviour as discussed in the mailing list.
+      Now YAM should resolve any entered string without the realname if the user
+      press SHIFT+RETURN in a recipientstring gadget.
+    * changed the string gadget checks if a mail is going to be sent accordingly
+      to the above behaviour. Now YAM will pop up an error requester if a user
+      tries to send a email and it can`t resolve any entered string or if the
+      From: is missing.
+    * YAM will also change the focus of the pagegroup and string gadget that
+      produced the failure, so that the user can immediatly change it.
+    * added From: is missing warning requester. Now YAM will warn the user that
+      the From: string is empty and allow him to either use the default sender
+      address from the config or reenter the string again.
+    * fixed bug in recipient string where the position of the popuplist was not
+      set everytime it was opened. This caused that if the window was moved in
+      between of two popups, then the popuplist was displayed on a wrong position.
+      Still one flaw:
+      1)if the window is moved while the popuplist ist open, then the popuplist
+        will not move it`s position in sync with the window.

@@ -4788,3 +4788,9 @@ MSG_SEARCHNOTFOUND_MSG (//)
 ;
 MSG_SEARCHNOTFOUND_BUTTON (//)
 Continue
+;
+MSG_WR_ErrorNoSender (//)
+Mail is incomplete: No Sender!
+;
+MSG_WR_NoSenderReqGad (//)
+_Use default sender|*_Cancel

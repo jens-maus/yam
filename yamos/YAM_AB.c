@@ -70,11 +70,14 @@ static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode*, FILE*, int);
  Module: Address book
 ***************************************************************************/
 
+/// AB_PrettyPrintAddress
 STRPTR AB_PrettyPrintAddress (struct ABEntry *e)
 {
 	return AB_PrettyPrintAddress2(e->RealName, e->Address);
 }
 
+///
+/// AB_PrettyPrintAddress2
 STRPTR AB_PrettyPrintAddress2 (STRPTR realname, STRPTR address)
 {
 	static TEXT buf[SIZE_REALNAME + SIZE_ADDRESS + 4];
@@ -82,6 +85,7 @@ STRPTR AB_PrettyPrintAddress2 (STRPTR realname, STRPTR address)
 	return buf;
 }
 
+///
 /// AB_GotoEntry
 //  Searches an entry by alias and activates it
 APTR AB_GotoEntry(char *alias)

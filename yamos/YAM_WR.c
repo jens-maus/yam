@@ -904,7 +904,6 @@ static char *WR_GetPGPIds(char *source, char *ids)
 	return ids;
 }
 ///
-
 /// WR_Bounce
 //	 Bounce message: inserts resent-headers while copying the message
 static BOOL WR_Bounce(FILE *fh, struct Compose *comp)
@@ -1302,7 +1301,7 @@ char *WR_AutoSaveFile(int winnr)
 void WR_NewMail(enum WriteMode mode, int winnum)
 {
 	struct Compose comp;
-	char *addr;
+	STRPTR addr;
 	static struct Mail mail;
 	struct Mail *new = NULL, *mlist[3];
 	int i, att = 0;
@@ -1312,7 +1311,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 	long winopen;
 
 	get(gui->WI, MUIA_Window_Open, &winopen);
-	if (winopen) set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+	if (winopen) set(gui->RG_PAGE, MUIA_Group_ActivePage, GetMUI(gui->RG_PAGE, MUIA_Group_ActivePage));
 	/* Workaround for a MUI bug */
 
 	memset(&mail, 0, sizeof(struct Mail));
@@ -1321,20 +1320,27 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 	mlist[1] = NULL;
 
 	// get the contents of the TO: String gadget and check if it is valid
-	get(gui->ST_TO, MUIA_String_Contents, &addr);
-	if (!*addr)
+	addr = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+   if(!addr)
+   {
+      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_TO, MUIA_String_Contents), NULL);
+      set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+		set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
+		return;
+   }
+   else if(!addr[0])
 	{
 		// CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
 		char *err = GetStr(MSG_WR_ErrorNoRcpt);
 
-		if (MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), err)) mode = WRITE_HOLD;
-		else
-		{
-			// otherwise set the TO Field active and go back
-			set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
-			return;
-		}
+		// set the TO Field active and go back
+      set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
+
+		if(MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoRcptReqGad), err)) mode = WRITE_HOLD;
+		else return;
 	}
+   else comp.MailTo = addr;
 
 	// get the content of the Subject: String gadget and check if it is empty or not.
 	get(gui->ST_SUBJECT, MUIA_String_Contents, &comp.Subject);
@@ -1343,44 +1349,77 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 		// CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
 		char *err = GetStr(MSG_WR_NOSUBJECTREQ);
 
-		if (!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), err))
-		{
-			set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
-			return;
-		}
+      set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
+      set(gui->WI, MUIA_Window_ActiveObject, gui->ST_SUBJECT);
+
+		if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_OKAYCANCELREQ), err))
+		   return;
 	}
 
-	Busy(GetStr(MSG_BusyComposing), "", 0, 0);
 	comp.Mode = wr->Mode;
 	comp.OrigMail = wr->Mail;
 	comp.OldSecurity = wr->OldSecurity;
-//	wr->ListEntry = NULL;
-//	if (*addr) if (!(comp.MailTo = WR_ExpandAddresses(winnum, addr, FALSE, FALSE, FALSE))) goto skip;
-	comp.MailTo = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve);
 
 	if (wr->Mode != NEW_BOUNCE)
 	{
-		comp.MailCC		= (STRPTR)DoMethod(gui->ST_CC,			MUIM_Recipientstring_Resolve);
-		comp.MailBCC	= (STRPTR)DoMethod(gui->ST_BCC,			MUIM_Recipientstring_Resolve);
-		comp.From		= (STRPTR)DoMethod(gui->ST_FROM,		MUIM_Recipientstring_Resolve);
-		comp.ReplyTo	= (STRPTR)DoMethod(gui->ST_REPLYTO,	MUIM_Recipientstring_Resolve);
+      // now we check the From gadget and raise an error if is invalid
+      addr = (STRPTR)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+      if(!addr)
+      {
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_FROM, MUIA_String_Contents), NULL);
+         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+	   	set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
+		   return;
+      }
+      else if(!addr[0])
+      {
+   		// CAUTION: This is a hack for a SAS/C bug! Do not remove the following line!
+	   	char *err = GetStr(MSG_WR_ErrorNoSender);
 
-/*		get(gui->ST_CC, MUIA_String_Contents, &addr);
-		if (*addr) if (!(comp.MailCC = WR_ExpandAddresses(winnum, addr, FALSE, FALSE, FALSE))) goto skip;
-		get(gui->ST_BCC, MUIA_String_Contents, &addr);
-		if (*addr) if (!(comp.MailBCC = WR_ExpandAddresses(winnum, addr, FALSE, FALSE, FALSE))) goto skip;
-		get(gui->ST_FROM, MUIA_String_Contents, &addr);
-		if (*addr) if (!(comp.From = WR_ExpandAddresses(winnum, addr, FALSE, TRUE, FALSE))) goto skip;
-		get(gui->ST_REPLYTO, MUIA_String_Contents, &addr);
-		if (*addr) if (!(comp.ReplyTo = WR_ExpandAddresses(winnum, addr, FALSE, TRUE, FALSE))) goto skip;
-*/
+   		// set the TO Field active and go back
+         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+         set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
+
+		   if(!MUI_Request(G->App, gui->WI, 0, NULL, GetStr(MSG_WR_NoSenderReqGad), err))
+            return;
+      }
+      else comp.From = addr;
+
+      // then we check the CC string gadget
+      addr = (STRPTR)DoMethod(gui->ST_CC,	MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+      if(!addr)
+      {
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_CC, MUIA_String_Contents), NULL);
+         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+	   	set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CC);
+		   return;
+      }
+      else if(addr[0]) comp.MailCC = addr;
+
+      // then we check the BCC string gadget
+      addr = (STRPTR)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+      if(!addr)
+      {
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_BCC, MUIA_String_Contents), NULL);
+         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+	   	set(gui->WI, MUIA_Window_ActiveObject, gui->ST_BCC);
+		   return;
+      }
+      else if(addr[0]) comp.MailBCC = addr;
+
+      // then we check the ReplyTo string gadget
+      addr = (STRPTR)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoValids);
+      if(!addr)
+      {
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)GetMUI(gui->ST_REPLYTO, MUIA_String_Contents), NULL);
+         set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
+	   	set(gui->WI, MUIA_Window_ActiveObject, gui->ST_REPLYTO);
+		   return;
+      }
+      else if(addr[0]) comp.ReplyTo = addr;
+
 		get(gui->ST_EXTHEADER, MUIA_String_Contents, &comp.ExtHeader);
-/*		if (wr->ListEntry)
-		{
-			if (wr->ListEntry->Address[0]) comp.ReplyTo = StrBufCpy(NULL, wr->ListEntry->Address);
-			if (wr->ListEntry->RealName[0]) comp.From = StrBufCpy(comp.From, BuildAddrName(C->EmailAddress, wr->ListEntry->RealName));
-		}
-*/		if (wr->MsgID[0]) comp.IRTMsgID = wr->MsgID;
+  		if (wr->MsgID[0]) comp.IRTMsgID = wr->MsgID;
 		comp.Importance = 1-GetMUICycle(gui->CY_IMPORTANCE);
 		if (GetMUICheck(gui->CH_RECEIPT)) comp.Receipt |= 1;
 		if (GetMUICheck(gui->CH_DISPNOTI)) comp.Receipt |= 2;
@@ -1411,6 +1450,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 		}
 	}
 	else comp.FH = fopen(MA_NewMailFile(outfolder, mail.MailFile, 0), "w");
+
 	if (comp.FH)
 	{
 		struct MailInfo *mi;
@@ -1418,7 +1458,13 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 		int stat = mode == WRITE_HOLD ? STATUS_HLD : STATUS_WFS;
 		BOOL done = WriteOutMessage(&comp);
 		fclose(comp.FH);
-		if (!done) { DeleteFile(GetMailFile(NULL, outfolder, &mail)); goto skip; }
+
+		if (!done)
+      {
+         DeleteFile(GetMailFile(NULL, outfolder, &mail));
+         return;
+      }
+
 		if (wr->Mode != NEW_BOUNCE) EndNotify(&G->WR_NRequest[winnum]);
 		if ((email = MA_ExamineMail(outfolder, mail.MailFile, Status[stat], FALSE)))
 		{
@@ -1481,19 +1527,14 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 	}
 	DeleteFile(WR_AutoSaveFile(winnum));
 	DisposeModulePush(&G->WR[winnum]);
-skip:
-/*	FreeStrBuf(comp.MailTo);
-	FreeStrBuf(comp.MailCC);
-	FreeStrBuf(comp.MailBCC);
-	FreeStrBuf(comp.From);
-	FreeStrBuf(comp.ReplyTo);
-*/	DisplayStatistics(outfolder);
-	BusyEnd;
+  	DisplayStatistics(outfolder);
 }
 
 HOOKPROTONHNO(WR_NewMailFunc, void, int *arg)
 {
+	Busy(GetStr(MSG_BusyComposing), "", 0, 0);
 	WR_NewMail(arg[0], arg[1]);
+   BusyEnd;
 }
 MakeHook(WR_NewMailHook, WR_NewMailFunc);
 
@@ -1944,7 +1985,6 @@ MakeStaticHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
 ///
 
 /*** Hooks ***/
-
 /// WR_App
 /*** WR_App - Handles Drag&Drop ***/
 void WR_App(int winnum, struct AppMessage *amsg)
@@ -2077,7 +2117,7 @@ static APTR MakeAddressField(APTR *string, char *label, APTR help, int abmode, i
 //		DoMethod(bt_ver, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 5, MUIM_CallHook, &WR_VerifyManualHook, *string, winnum, !allowmulti, TAG_DONE);
 		DoMethod(bt_adr, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
 		DoMethod(*string, MUIM_Notify, MUIA_Recipientstring_Popup, TRUE, MUIV_Notify_Application, 4, MUIM_CallHook, &AB_OpenHook, abmode, winnum, TAG_DONE);
-		DoMethod(*string, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_Recipientstring_Resolve);
+//		  DoMethod(*string, MUIM_Notify, MUIA_String_Acknowledge, MUIV_EveryTime, MUIV_Notify_Self, 1, MUIM_Recipientstring_Resolve);
 	}
 	return obj;
 }

@@ -1473,7 +1473,7 @@ void rx_addrresolve( struct RexxHost *host, struct rxd_addrresolve **rxd, long a
 #ifdef DUFF
 		{
 			Object *str = RecipientstringObject, MUIA_String_Contents, rd->rd.arg.alias, End;
-			STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve);
+			STRPTR res = (STRPTR)DoMethod(str, MUIM_Recipientstring_Resolve, 0);
 			if(strcmp(rd->rd.arg.alias, res)) /* did the string change ? */
 			{
 				if(rd->rd.res.recpt = rd->string = AllocStrBuf(strlen(res)+1))

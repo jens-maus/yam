@@ -36,6 +36,17 @@
 #define ATTR(attr) case MUIA_Recipientstring_## attr
 /* ---------------------------------- */
 
+/* some private stuff... someone sucks... */
+#define MUIA_List_CursorType					  0x8042c53e /* V4  is. LONG */
+#define MUIV_List_CursorType_Bar 1
+
+struct CustomABEntry
+{
+	LONG MatchField;
+	STRPTR MatchString;
+	struct ABEntry *MatchEntry;
+};
+
 struct Data
 {
 	struct MUI_EventHandlerNode ehnode;
@@ -77,7 +88,6 @@ OVERLOAD(OM_NEW)
 	return (ULONG)obj;
 }
 ///
-
 /// OVERLOAD(OM_DISPOSE)
 OVERLOAD(OM_DISPOSE)
 {
@@ -92,7 +102,19 @@ OVERLOAD(OM_DISPOSE)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
+/// OVERLOAD(OM_GET)
+/* this is just so that we can notify the popup tag */
+OVERLOAD(OM_GET)
+{
+	ULONG *store = ((struct opGet *)msg)->opg_Storage;
+	switch(((struct opGet *)msg)->opg_AttrID)
+	{
+		ATTR(Popup) : *store = FALSE ; return TRUE;
+	}
+	return DoSuperMethodA(cl, obj, msg);
+}
+///
+/// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
 	GETDATA;
@@ -110,7 +132,7 @@ OVERLOAD(OM_SET)
 
 	return DoSuperMethodA(cl, obj, msg);
 }
-
+///
 /// OVERLOAD(MUIM_Setup)
 OVERLOAD(MUIM_Setup)
 {
@@ -128,7 +150,6 @@ OVERLOAD(MUIM_Setup)
 	return FALSE;
 }
 ///
-
 /// OVERLOAD(MUIM_GoActive)
 OVERLOAD(MUIM_GoActive)
 {
@@ -137,7 +158,6 @@ OVERLOAD(MUIM_GoActive)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
 /// OVERLOAD(MUIM_GoInactive)
 OVERLOAD(MUIM_GoInactive)
 {
@@ -147,7 +167,6 @@ OVERLOAD(MUIM_GoInactive)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
-
 /// OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragQuery)
 {
@@ -168,7 +187,6 @@ OVERLOAD(MUIM_DragQuery)
 	return result;
 }
 ///
-
 /// OVERLOAD(MUIM_DragDrop)
 OVERLOAD(MUIM_DragDrop)
 {
@@ -189,194 +207,15 @@ OVERLOAD(MUIM_DragDrop)
 	return 0;
 }
 ///
-
-/* this is just so that we can notify the popup tag */
-OVERLOAD(OM_GET)
-{
-	ULONG *store = ((struct opGet *)msg)->opg_Storage;
-	switch(((struct opGet *)msg)->opg_AttrID)
-	{
-		ATTR(Popup) : *store = FALSE ; return TRUE;
-	}
-	return DoSuperMethodA(cl, obj, msg);
-}
-
-/* some private stuff... someone sucks... */
-#define MUIA_List_CursorType					  0x8042c53e /* V4  is. LONG */
-#define MUIV_List_CursorType_Bar 1
-
-struct CustomABEntry
-{
-	LONG MatchField;
-	STRPTR MatchString;
-	struct ABEntry *MatchEntry;
-};
-
-HOOKPROTONH(ConstructFunc, struct CustomABEntry *, APTR pool, struct CustomABEntry *e)
-{
-	struct CustomABEntry *res;
-	if(res = malloc(sizeof(*e)))
-		*res = *e;
-	return res;
-}
-MakeStaticHook(ConstructHook, ConstructFunc);
-
-HOOKPROTONH(DisplayFunc, LONG, STRPTR *array, struct CustomABEntry *e)
-{
-	static TEXT buf[SIZE_ADDRESS + 4];
-
-	array[0] = e->MatchEntry->Alias;
-	array[1] = e->MatchEntry->RealName;
-	array[2] = e->MatchEntry->Address;
-
-	sprintf(buf, "\033b%." STR(SIZE_ADDRESS) "s", e->MatchString);
-	array[e->MatchField] = buf;
-
-   return 0;
-}
-MakeStaticHook(DisplayHook, DisplayFunc);
-
-HOOKPROTONH(CompareFunc, LONG, struct CustomABEntry *e2, struct CustomABEntry *e1)
-{
-	if(e1->MatchField == e2->MatchField)
-			return Stricmp(e1->MatchString, e2->MatchString);
-	else	return e1->MatchField < e2->MatchField ? -1 : +1;
-}
-MakeStaticHook(CompareHook, CompareFunc);
-
-HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDataMessage *msg)
-{
-	struct ABEntry *entry = (struct ABEntry *)msg->UserData;
-	return (!Stricmp(msg->User, entry->Alias) || !Stricmp(msg->User, entry->RealName)) ? 0 : ~0;
-}
-MakeStaticHook(FindAddressHook, FindAddressFunc);
-
+/// OVERLOAD(MUIM_Popstring_Open)
 /* this method is invoked when the MUI popup key is pressed, we let it trigger a notify, so that the address book will open -- in the future this should be removed and we should just use a Popupstring object */
 OVERLOAD(MUIM_Popstring_Open)
 {
 	set(obj, MUIA_Recipientstring_Popup, TRUE);
 	return 0;
 }
-
-/* add a recipient to this string taking care of comma (if in multi-mode). */
-DECLARE(AddRecipient) // STRPTR address
-{
-	GETDATA;
-	STRPTR contents;
-
-	if(!data->MultipleRecipients)
-		set(obj, MUIA_String_Contents, NULL);
-
-	if(get(obj, MUIA_String_Contents, &contents), contents[0] != '\0')
-		DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
-
-	DoMethod(obj, MUIM_BetterString_Insert, msg->address, MUIV_BetterString_Insert_EndOfString);
-	set(obj, MUIA_String_BufferPos, -1);
-
-	return 0;
-}
-
-/* resolve all addresses */
-DECLARE(Resolve)
-{
-	GETDATA;
-	BOOL list_expansion;
-	LONG max_list_nesting = 5;
-	STRPTR s, contents, tmp;
-	set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
-	do {
-
-		struct MUI_NListtree_TreeNode *tn;
-		list_expansion = FALSE;
-		get(obj, MUIA_String_Contents, &s);
-		if(!(contents = tmp = strdup(s)))
-			break;
-		set(obj, MUIA_String_Contents, NULL);
-
-		DB(kprintf("Resolve this string: %s\n", tmp);)
-		while(s = Trim(strtok(tmp, ","))) /* tokenize string and resolve each recipient */
-		{
-		   DB(kprintf("token: '%s'\n", s);)
-			if(tmp = strchr(s, '@')) /* entry seems to be an email address */
-			{
-				DB(kprintf("Email address: %s\n", s);)
-				DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-				if(tmp[1] == '\0') /* email address lacks domain... */
-					DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
-			}
-			else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, 0)) /* entry found in address book */
-			{
-				struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
-				DB(kprintf("Found match: %s\n", s);)
-				if(entry->Type == AET_USER) /* it's a normal person */
-				{
-					DB(kprintf("\tPlain user: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
-					DoMethod(obj, MUIM_Recipientstring_AddRecipient, AB_PrettyPrintAddress(entry));
-				}
-				else if(entry->Type == AET_LIST) /* it's a list of persons */
-				{
-					if(data->MultipleRecipients)
-					{
-						STRPTR members, lf;
-						if(members = strdup(entry->Members))
-						{
-							while(lf = strchr(members, '\n'))
-							   lf[0] = ',';
-
-							DB(kprintf("Found list: »%s«\n", entry->Members);)
-							DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
-							free(members);
-
-							if(entry->RealName[0])	set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
-							if(entry->Address[0])	set(data->ReplyTo, MUIA_String_Contents, entry->Address);
-
-							list_expansion = TRUE;
-						}
-					}
-					else
-					{
-						DB(kprintf("String doesn't allow multiple recipients\n");)
-						DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-						DisplayBeep(NULL);
-					}
-				}
-				else /* it's unknown... */
-				{
-					DB(kprintf("Unknown type: %ld\n", entry->Type);)
-					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-					DisplayBeep(NULL);
-				}
-			}
-			else
-			{
-				DB(kprintf("Entry not found: %s\n", s);)
-				DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-				DisplayBeep(NULL);
-			}
-			tmp = NULL;
-		}
-		free(contents);
-
-	} while(list_expansion && max_list_nesting-- > 0);
-
-	return (ULONG)(get(obj, MUIA_String_Contents, &contents), contents[0] ? contents : NULL);
-}
-
-/* return the index where current recipient start (from cursor pos), this is only useful for objects with more than one recipient */
-DECLARE(RecipientStart)
-{
-	STRPTR buf;
-	ULONG pos, start;
-	get(obj, MUIA_String_Contents, &buf);
-	get(obj, MUIA_String_BufferPos, &pos);
-
-	start = pos;
-	while(start > 0 && buf[start-1] != ',')	start--;
-	while(ISpace(buf[start]))						start++;
-
-	return start;
-}
-
+///
+/// OVERLOAD(MUIM_HandleEvent)
 enum { IECODE_RETURN = 68, IECODE_HELP = 95, IECODE_BACKSPACE = 65, IECODE_UP = 76, IECODE_DOWN = 77 };
 
 OVERLOAD(MUIM_HandleEvent)
@@ -384,25 +223,47 @@ OVERLOAD(MUIM_HandleEvent)
 	GETDATA;
 	ULONG result = 0;
 	struct IntuiMessage *imsg = ((struct MUIP_HandleEvent *)msg)->imsg;
+
 	if(imsg && imsg->Class == IDCMP_RAWKEY)
 	{
 		STRPTR new_address = NULL;
 		switch(imsg->Code)
 		{
+         case IECODE_RETURN:
+         {
+            // first we call the super method
+            DoSuperMethodA(cl, obj, msg);
+
+            if((imsg->Qualifier & IEQUALIFIER_RSHIFT) || (imsg->Qualifier & IEQUALIFIER_LSHIFT))
+            {
+               if(DoMethod(obj, MUIM_Recipientstring_Resolve, MUIV_Recipientstring_Resolve_NoRealName))
+               {
+                  // SHIFT+RETURN will not automatically change the active object to the next string gadget
+                  // so we have to go two steps (ok, this is not the best was, but easier then saving the
+                  // next object in MUIA_UserData or something like this.
+                  set(_win(obj), MUIA_Window_ActiveObject, obj);
+                  set(_win(obj), MUIA_Window_ActiveObject, MUIV_Window_ActiveObject_Next);
+               }
+            }
+            else
+            {
+               DoMethod(obj, MUIM_Recipientstring_Resolve, 0);
+            }
+         }
+         break;
+
 			/* keys are sent to the popup-list if it's open */
 			case IECODE_UP:
 			case IECODE_DOWN:
 			{
-				ULONG open = FALSE, active;
-				if(get(data->Matchwindow, MUIA_Window_Open, &open), open)
+				if(GetMUI(data->Matchwindow, MUIA_Window_Open))
 				{
 					struct CustomABEntry *entry;
-					if(get(data->Matchlist, MUIA_List_Active, &active), active != MUIV_List_Active_Off)
+					if(GetMUI(data->Matchlist, MUIA_List_Active) != MUIV_List_Active_Off)
 							set(data->Matchlist, MUIA_List_Active, imsg->Code == IECODE_UP ? MUIV_List_Active_Up     : MUIV_List_Active_Down);
 					else	set(data->Matchlist, MUIA_List_Active, imsg->Code == IECODE_UP ? MUIV_List_Active_Bottom : MUIV_List_Active_Top);
 
-					get(data->Matchlist, MUIA_List_Active, &active);
-					DoMethod(data->Matchlist, MUIM_List_GetEntry, active, &entry);
+					DoMethod(data->Matchlist, MUIM_List_GetEntry, GetMUI(data->Matchlist, MUIA_List_Active), &entry);
 					new_address = entry->MatchString;
 
 					DoMethod(obj, MUIM_BetterString_ClearSelected);
@@ -420,9 +281,7 @@ OVERLOAD(MUIM_HandleEvent)
 			{
 				STRPTR old, new;
 
-				ULONG select_size;
-				get(obj, MUIA_BetterString_SelectSize, &select_size);
-				if(select_size != 0 && ConvertKey(imsg) == ',')
+				if(GetMUI(obj, MUIA_BetterString_SelectSize) != 0 && ConvertKey(imsg) == ',')
 					set(obj, MUIA_String_BufferPos, MUIV_BetterString_BufferPos_End);
 
 				get(obj, MUIA_String_Contents, &old);
@@ -431,7 +290,7 @@ OVERLOAD(MUIM_HandleEvent)
 				DoSuperMethodA(cl, obj, msg);
 				get(obj, MUIA_String_Contents, &new);
 
-				if(old && strcmp(old, new)) /* if contents changed, check if something matches */
+				if(strcmp(old, new)) /* if contents changed, check if something matches */
 					new_address = (STRPTR)DoMethod(obj, MUIM_Recipientstring_ShowMatches);
 
 				free(old);
@@ -452,7 +311,59 @@ OVERLOAD(MUIM_HandleEvent)
 	}
 	return result;
 }
+///
 
+/* Hooks */
+/// ConstructHook()
+HOOKPROTONH(ConstructFunc, struct CustomABEntry *, APTR pool, struct CustomABEntry *e)
+{
+	struct CustomABEntry *res;
+	if(res = malloc(sizeof(*e)))
+		*res = *e;
+	return res;
+}
+MakeStaticHook(ConstructHook, ConstructFunc);
+///
+/// DisplayHook()
+HOOKPROTONH(DisplayFunc, LONG, STRPTR *array, struct CustomABEntry *e)
+{
+	static TEXT buf[SIZE_ADDRESS + 4];
+
+	array[0] = e->MatchEntry->Alias;
+	array[1] = e->MatchEntry->RealName;
+	array[2] = e->MatchEntry->Address;
+
+	sprintf(buf, "\033b%." STR(SIZE_ADDRESS) "s", e->MatchString);
+	array[e->MatchField] = buf;
+
+   return 0;
+}
+MakeStaticHook(DisplayHook, DisplayFunc);
+///
+/// CompareHook()
+HOOKPROTONH(CompareFunc, LONG, struct CustomABEntry *e2, struct CustomABEntry *e1)
+{
+	if(e1->MatchField == e2->MatchField)
+			return Stricmp(e1->MatchString, e2->MatchString);
+	else	return e1->MatchField < e2->MatchField ? -1 : +1;
+}
+MakeStaticHook(CompareHook, CompareFunc);
+///
+/// FindAddressHook()
+HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDataMessage *msg)
+{
+	struct ABEntry *entry;
+
+   if(!msg) return(NULL);
+   entry = (struct ABEntry *)msg->UserData;
+
+	return (!Stricmp(msg->User, entry->Alias) || !Stricmp(msg->User, entry->RealName) || !Stricmp(msg->User, entry->Address)) ? 0 : ~0;
+}
+MakeStaticHook(FindAddressHook, FindAddressFunc);
+///
+
+/* Private Functions */
+/// FindAllMatches()
 /* helper function, recursively go through the address book to find entries which match the string given */
 VOID FindAllMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *root)
 {
@@ -481,7 +392,159 @@ VOID FindAllMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode *r
 		}
 	}
 }
+///
 
+/* Public Methods */
+/// DECLARE(AddRecipient)
+/* add a recipient to this string taking care of comma (if in multi-mode). */
+DECLARE(AddRecipient) // STRPTR address
+{
+	GETDATA;
+	STRPTR contents;
+
+	if(!data->MultipleRecipients)
+		set(obj, MUIA_String_Contents, NULL);
+
+	if(get(obj, MUIA_String_Contents, &contents), contents[0] != '\0')
+		DoMethod(obj, MUIM_BetterString_Insert, ", ", MUIV_BetterString_Insert_EndOfString);
+
+	DoMethod(obj, MUIM_BetterString_Insert, msg->address, MUIV_BetterString_Insert_EndOfString);
+	set(obj, MUIA_String_BufferPos, -1);
+
+	return 0;
+}
+///
+/// DECLARE(Transform)
+/* resolve all addresses */
+DECLARE(Resolve) // BOOL wrname
+{
+	GETDATA;
+	BOOL list_expansion;
+	LONG max_list_nesting = 5;
+	STRPTR s, contents, tmp;
+   BOOL res = TRUE;
+   BOOL wrname = TRUE, checkvalids = TRUE;
+
+   // Lets check the flags first
+   if(msg->flags & MUIV_Recipientstring_Resolve_NoRealName) wrname      = FALSE;
+   if(msg->flags & MUIV_Recipientstring_Resolve_NoValids)   checkvalids = FALSE;
+
+	set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
+
+	do {
+
+		struct MUI_NListtree_TreeNode *tn;
+		list_expansion = FALSE;
+		get(obj, MUIA_String_Contents, &s);
+		if(!(contents = tmp = strdup(s)))
+			break;
+		set(obj, MUIA_String_Contents, NULL);
+
+		DB(kprintf("Resolve this string: %s\n", tmp);)
+		while(s = Trim(strtok(tmp, ","))) /* tokenize string and resolve each recipient */
+		{
+		   DB(kprintf("token: '%s'\n", s);)
+
+         if(checkvalids == FALSE && (tmp = strchr(s, '@')))
+         {
+		   	DB(kprintf("Valid address found.. will not resolve it: %s\n", s);)
+			   DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+   			if(tmp[1] == '\0') /* email address lacks domain... */
+	   		   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
+         }
+         else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, 0)) /* entry found in address book */
+			{
+				struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
+				DB(kprintf("Found match: %s\n", s);)
+				if(entry->Type == AET_USER) /* it's a normal person */
+				{
+					DB(kprintf("\tPlain user: %s (%s, %s)\n", AB_PrettyPrintAddress(entry), entry->RealName, entry->Address);)
+					DoMethod(obj, MUIM_Recipientstring_AddRecipient, wrname ? AB_PrettyPrintAddress(entry) : (STRPTR)entry->Address);
+				}
+				else if(entry->Type == AET_LIST) /* it's a list of persons */
+				{
+					if(data->MultipleRecipients)
+					{
+						STRPTR members, lf;
+						if(members = strdup(entry->Members))
+						{
+							while(lf = strchr(members, '\n'))
+							   lf[0] = ',';
+
+							DB(kprintf("Found list: »%s«\n", entry->Members);)
+							DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
+							free(members);
+
+							if(entry->RealName[0])	set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
+							if(entry->Address[0])	set(data->ReplyTo, MUIA_String_Contents, entry->Address);
+
+							list_expansion = TRUE;
+						}
+					}
+					else
+					{
+						DB(kprintf("String doesn't allow multiple recipients\n");)
+						DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+						DisplayBeep(NULL);
+                  res = FALSE;
+					}
+				}
+				else /* it's unknown... */
+				{
+					DB(kprintf("Unknown type: %ld\n", entry->Type);)
+					DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+               set(_win(obj), MUIA_Window_ActiveObject, obj);
+					DisplayBeep(NULL);
+               res = FALSE;
+				}
+			}
+			else
+			{
+				DB(kprintf("Entry not found: %s\n", s);)
+
+   		   if(tmp = strchr(s, '@')) /* entry seems to be an email address */
+	   	   {
+		   	   DB(kprintf("Email address: %s\n", s);)
+			      DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+   			   if(tmp[1] == '\0') /* email address lacks domain... */
+	   			   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
+		      }
+            else
+				{
+               DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+               set(_win(obj), MUIA_Window_ActiveObject, obj);
+				   DisplayBeep(NULL);
+               res = FALSE;
+            }
+			}
+			tmp = NULL;
+		}
+		free(contents);
+
+	} while(list_expansion && max_list_nesting-- > 0);
+
+   contents = (STRPTR)GetMUI(obj, MUIA_String_Contents);
+
+	return((ULONG)(res ? contents : NULL));
+}
+///
+/// DECALRE(RecipientStart)
+/* return the index where current recipient start (from cursor pos), this is only useful for objects with more than one recipient */
+DECLARE(RecipientStart)
+{
+	STRPTR buf;
+	ULONG pos, start;
+	get(obj, MUIA_String_Contents, &buf);
+	get(obj, MUIA_String_BufferPos, &pos);
+
+	start = pos;
+	while(start > 0 && buf[start-1] != ',')	start--;
+	while(ISpace(buf[start]))						start++;
+
+	return start;
+}
+///
+/// DECLARE(ShowMatches)
 /* this compares the string for any matches in the address book. If some are found then a list popup and the first entry of this list is returned */
 DECLARE(ShowMatches)
 {
@@ -489,12 +552,10 @@ DECLARE(ShowMatches)
 	LONG entries, state, pos;
 	STRPTR res = NULL, buf, start = NULL, end;
 	struct CustomABEntry *entry;
+   LONG top, left;
 
 	if(!data->Matchwindow)
 	{
-		LONG top, left;
-		get(_win(obj), MUIA_Window_TopEdge, &top);
-		get(_win(obj), MUIA_Window_LeftEdge, &left);
 		data->Matchwindow = WindowObject,
 			MUIA_Window_Activate,			FALSE,
 			MUIA_Window_Borderless,			TRUE,
@@ -502,9 +563,6 @@ DECLARE(ShowMatches)
 			MUIA_Window_DepthGadget,		FALSE,
 			MUIA_Window_DragBar,				FALSE,
 			MUIA_Window_SizeGadget,			FALSE,
-			MUIA_Window_TopEdge,				top + _bottom(obj) + 1,
-			MUIA_Window_LeftEdge,			left + _left(obj),
-			MUIA_Window_Width,				_width(obj),
 			WindowContents, GroupObject,
 				InnerSpacing(0, 0),
 				Child, data->Matchlist = ListObject,
@@ -519,9 +577,18 @@ DECLARE(ShowMatches)
 			End,
 		End;
 
-		if(data->Matchwindow)
-			DoMethod(_app(obj), OM_ADDMEMBER, data->Matchwindow);
+		if(data->Matchwindow) DoMethod(_app(obj), OM_ADDMEMBER, data->Matchwindow);
+      else                  return(NULL);
 	}
+
+   // get the window position everytime because the window could be moved in the meantime
+   get(_win(obj), MUIA_Window_TopEdge, &top);
+	get(_win(obj), MUIA_Window_LeftEdge, &left);
+
+   // now set the dimesions every time because they could have been changed.
+   set(data->Matchwindow, MUIA_Window_TopEdge, top + _bottom(obj) + 1);
+   set(data->Matchwindow, MUIA_Window_LeftEdge, left + _left(obj));
+   set(data->Matchwindow, MUIA_Window_Width, _width(obj));
 
 	/* we need to isolate the recipient currently being entered when the string contain several */
 	set(data->Matchlist, MUIA_List_Quiet, TRUE);
@@ -550,3 +617,4 @@ DECLARE(ShowMatches)
 
 	return (ULONG)res;
 }
+///
