@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-03-25  Alexey Ivanov <amis@amiga.org.ru>
+    * YAM_AB.c: fixed "Address Book double click" bug, introduction 
+      since 14.02.2004.
+
 2004-03-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * all: fixed a bunch of SAS/C dependent compiler warnings which

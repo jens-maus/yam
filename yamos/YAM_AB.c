@@ -879,6 +879,7 @@ HOOKPROTONHNO(AB_OpenFunc, void, int *arg)
       case ABM_BCC:     md = "(BCC)";     break;
       case ABM_FROM:    md = "(From)";    break;
       case ABM_REPLYTO: md = "(Reply-To)";break;
+      case ABM_EDIT:                      break;
       default:          md = "(To)";      break;
    }
    ab->WrWin = *md ? arg[1] : -1;
