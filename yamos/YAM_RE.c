@@ -34,6 +34,7 @@
 #include "YAM_addressbookEntry.h"
 #include "YAM_classes.h"
 #include "YAM_config.h"
+#include "YAM_debug.h"
 #include "YAM_error.h"
 #include "YAM_folderconfig.h"
 #include "YAM_hook.h"
@@ -720,7 +721,7 @@ struct TempFile *texfile;
                      ts2 = StrBufCat(ts2," &");
                      ts2 = StrBufCat(ts2,p+j-1);
                      ts2 = StrBufCat(ts2,"\\\\\n");
-                  } DB(else kprintf("RE_PrintFile(): strange header line %s\n",p);)
+                  } DB( else kprintf("RE_PrintFile(): strange header line %s\n",p); )
                }
                fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n\\input{%s}\n\\end{document}\n",
                         ts1,
@@ -747,13 +748,13 @@ struct TempFile *texfile;
                   system(printcmd);
                   free(printcmd);
                } else DisplayBeep(NULL);
-            } DB(else kprintf("RE_PrintFile(): no headers for this part\n");)
+            } DB( else kprintf("RE_PrintFile(): no headers for this part\n"); )
          }
          if(ts1) FreeStrBuf(ts1);
          if(ts2) FreeStrBuf(ts2);
-      } DB(else kprintf("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n");)
+      } DB( else kprintf("RE_PrintFile(): can't copy YAM:.texheader to temp TeX file\n"); )
       CloseTempFile(texfile);
-   } DB(else kprintf("RE_PrintFile(): can't open temp TeX file\n");)
+   } DB( else kprintf("RE_PrintFile(): can't open temp TeX file\n"); )
 }
 
 
@@ -775,7 +776,7 @@ char **CVTab;
       for(p=s,ResLen=0; *p; p++)  // pre-calculate resulting string's length
          ResLen += (CVTab[*p] == NULL ? 1 : strlen(CVTab[*p]));
 
-      DB(kprintf("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen);)
+      DB( kprintf("ISO8859_to_LaTeX(): source=%ld result=%ld\n",strlen(s),ResLen); )
 
       if(result = AllocStrBuf(ResLen+1))
       {
