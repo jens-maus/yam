@@ -5395,3 +5395,37 @@ MSG_CTapplicationrexx
 Rexx-Skript
 ;Rexx script
 ;
+;
+; ADDED AFTER 04-DEC-2000
+;
+MSG_FO_FromAddress
+Absenderadresse
+;From: address
+;
+MSG_HELP_FO_ST_MLFROMADDRESS
+Diese Absenderadresse (From:) für\n\
+neue Mails an die Liste benutzen
+;Use this from address when posting\nnew mails to the list
+;
+MSG_FO_ReplyToAddress
+Antwortadresse
+;Reply-To: address
+;
+MSG_HELP_FO_ST_MLREPLYTOADDRESS
+Diese Antwortadresse (Reply-To:) für\n\
+neue Mails an die Liste benutzen
+;Use this reply-to address when posting\nnew mails to the list
+;
+MSG_RE_MDNGads4
+|Alle ignorieren
+;|Ignore all
+;
+; ADDED AFTER 06-DEC-2000
+;
+MSG_EA_DefSecurity
+Si_cherheit
+;
+MSG_HELP_MA_CY_DEFSECURITY
+Vorwahl für die Sicherheitseinstellungen\n\
+bei neuen Mails an diese Person
+;
