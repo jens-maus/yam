@@ -160,6 +160,9 @@ Developers: msbethke - Matthias Bethke
 - Fixed: the duplicated "shift right" menu shortcut in the Read window
   is now gone (tactica)
 
+- Changed: All elementary TCP/IP routines were completly rewritten and
+  tuned up to use separate transfer buffers which should especially speed up
+  transfers on low connection speeds (damato)
 - Changed: "Program startup" & "Program termination" macros are also
   executed on Restart (damato)
 - Changed: windows are now navigable no matter what's the status of
