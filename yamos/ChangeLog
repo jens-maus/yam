@@ -7,6 +7,10 @@ $Source$
 
 2003-04-17  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c: fixed bug #720377 where the folderlist update
+      routine did count the entries in the listtree wrong and
+      therefore didn`t refresh some entries if some folder groups
+      where closed.
     * YAM.c: fixed bug #715959 where a fast try to double start
       YAM caused a small enforcer hit.
 
