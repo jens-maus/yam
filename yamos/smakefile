@@ -59,7 +59,7 @@ LNKFLAGS = RESOPT NOVER LINK NOSMALLCODE NOSMALLDATA UTILLIB LIB lib:scnb.lib,li
 all:	$(DATE) $(GST) YAM catalogs
 
 clean:
-	$(RM) \#?.(o|map|gst) (YAM_loc.\#?|YAM.h|YAM)
+	-$(RM) \#?.(o|map|gst) (YAM_loc.\#?|YAM.h|YAM)
 
 copy:	all catalogs
 	copy YAM YAM:
