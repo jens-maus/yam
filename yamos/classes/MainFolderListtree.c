@@ -37,7 +37,7 @@ struct Data
 };
 */
 
-enum { CMN_EDITF=10, CMN_DELETEF, CMN_INDEX, CMN_NEWF, CMN_NEWFG, CMN_SNAPS, CMN_RELOAD };
+enum { CMN_EDITF=10, CMN_DELETEF, CMN_INDEX, CMN_NEWF, CMN_NEWFG, CMN_SNAPS, CMN_RELOAD, CMN_EXPUNGE };
 
 /* Overloaded Methods */
 /// OVERLOAD(OM_DISPOSE)
@@ -150,9 +150,10 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
   struct MUI_NListtree_TreeNode *tn;
   struct Folder *folder = NULL;
   struct MA_GUIData *gui = &G->MA->GUI;
-  BOOL disable_delete   = FALSE;
-  BOOL disable_edit     = FALSE;
-  BOOL disable_update   = FALSE;
+  BOOL disable_delete = FALSE;
+  BOOL disable_edit   = FALSE;
+  BOOL disable_update = FALSE;
+  BOOL disable_expunge= FALSE;
 
   // dispose the old context_menu if it still exists
   if(data->context_menu)
@@ -192,6 +193,7 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     disable_delete = TRUE;
     disable_edit   = TRUE;
     disable_update = TRUE;
+    disable_expunge= TRUE;
   }
   else
   {
@@ -213,6 +215,11 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
     {
       disable_update = TRUE;
     }
+
+    if(folder->Type != FT_DELETED)
+    {
+      disable_expunge = TRUE;
+    }
   }
 
   // We create the ContextMenu now
@@ -227,6 +234,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_SNAPSHOT),       MUIA_UserData, CMN_SNAPS,  End,
       Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_FOLDER_RELOAD),         MUIA_UserData, CMN_RELOAD, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+      Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_RemoveDeleted),      MUIA_Menuitem_Enabled, !disable_expunge, MUIA_UserData, CMN_EXPUNGE, End,
     End,
   End;
 
@@ -265,6 +274,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case CMN_NEWFG:   { DoMethod(G->App, MUIM_CallHook, &FO_NewFolderGroupHook);      } break;
     case CMN_SNAPS:   { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_SAVE);   } break;
     case CMN_RELOAD:  { DoMethod(G->App, MUIM_CallHook, &FO_SetOrderHook, SO_RESET);  } break;
+    case CMN_EXPUNGE: { DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook, FALSE);} break;
 
     default:
     {

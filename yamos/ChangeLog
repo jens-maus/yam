@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-01-18  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/MainFolderListtree.c: added an additional contextmenu item
+      which allows to expunge all mails in the deleted folder and which
+      is only available if used on the deleted folder.
+    * YAM_global.c: Changed the application wide copyright string to
+      reflect the new year.
+    * YAM.c: improved the expiration and developer version requesters to
+      show the new internet addresses for further reference.
+
 2004-11-25  Christian Hattemer <krille@users.sourceforge.net>
 
     * supportfiles/contrib/Gfx/Matt_Chaput/#?: Add toolbar graphics by
@@ -12,7 +22,7 @@ $Source$
 
 2004-11-24  Jens Langner <Jens.Langner@light-speed.de>
 
-    * YAN_WR.c: modified MessageID and BoundaryID generation code to
+    * YAM_WR.c: modified MessageID and BoundaryID generation code to
       generate somewhat more unique IDs. The MessageID generation code
       was not so unique as we thought and the BoundaryID code wasn't
       conform to RFC2045. Now we should be very well on the safe side

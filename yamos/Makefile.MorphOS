@@ -144,6 +144,10 @@ $(OBJDIR)/%.o: %.c
 	@printf '\033[33mGenerating lexer $<\033[0m\n'
 	@$(FLEX) -Cem -i -t $< > $@
 
+$(LOCALE)/%.catalog: $(LOCALE)/%.ct
+	@printf '\033[33mGenerating $@\033[0m\n'
+	@$(FC) $(LOCALE)/YAM.cd $< CATALOG $@
+
 #
 
 $(TARGET): $(OBJS)
@@ -184,6 +188,12 @@ $(CLASSDIR)/Classes.c: $(CLASSDIR)/ClassesExtra.h
 $(GENCLASSES)/GenClasses: $(GENCLASSES)/gc.c $(GENCLASSES)/gc.h \
 	$(GENCLASSES)/lists.c $(GENCLASSES)/lists.h
 	@(cd $(GENCLASSES) && $(MAKE))
+
+catalogs: $(LOCALE)/deutsch.catalog $(LOCALE)/bosanski.catalog $(LOCALE)/czech.catalog\
+  $(LOCALE)/dansk.catalog $(LOCALE)/greek.catalog $(LOCALE)/italiano.catalog\
+  $(LOCALE)/magyar.catalog $(LOCALE)/norsk.catalog $(LOCALE)/polski.catalog\
+  $(LOCALE)/russian.catalog $(LOCALE)/srpski.catalog $(LOCALE)/suomi.catalog\
+  $(LOCALE)/svenska.catalog
 
 ## MAIN DEPENDENCIES ##################
 

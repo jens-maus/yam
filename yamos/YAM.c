@@ -1453,12 +1453,19 @@ int main(int argc, char **argv)
 
          if(EXPDATE <= ds.ds_Days)
          {
-           ErrReq.es_Title        = "YAM Developer Version Expired";
-           ErrReq.es_TextFormat   = "This developer version of YAM has expired.\n"
+           ErrReq.es_Title        = "YAM Developer Version Expired!";
+           ErrReq.es_TextFormat   = "This developer version of YAM has expired!\n\n"
                                     "Please note that you may download a new, updated\n"
-                                    "version from the YAM support homepage.";
+                                    "version from the YAM nightly build page at:\n\n"
+                                    "http://nightly.yam.ch/\n\n"
+                                    "All developer versions will automatically expire\n"
+                                    "after a certian time interval. This is to insure\n"
+                                    "that no old versions are floating around causing\n"
+                                    "users to report bugs on old versions.\n\n"
+                                    "Thanks for your help in improving YAM!";
            ErrReq.es_GadgetFormat = "Exit";
 
+           DisplayBeep(NULL);
            EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
 
            goon = FALSE;
@@ -1466,16 +1473,23 @@ int main(int argc, char **argv)
 
          if(goon && !getenv("I_KNOW_YAM_IS_UNDER_DEVELOPMENT"))
          {
-           ErrReq.es_Title        = "YAM Developer Version Warning";
+           ErrReq.es_Title        = "YAM Developer Version Warning!";
            ErrReq.es_TextFormat   = "This is an *internal* developer version and\n"
-                                    "not recommended for public usage.\n"
-                                    "Please note that it may contain bugs that can\n"
-                                    "lead to any loss of data and that no support for\n"
-                                    "this version is available in any form.\n\n"
-                                    "So if you're unsure, please reconsider to wait\n"
-                                    "for an official release!";
+                                    "not recommended or intended for public use.\n"
+                                    "It may contain bugs that can lead to any loss\n"
+                                    "of data and no regular support for this version\n"
+                                    "will be provided in any form.\n\n"
+                                    "In addition, this version will automatically\n"
+                                    "expire 30 days after its compilation date.\n\n"
+                                    "So if you're unsure and prefer to have a stable\n"
+                                    "installation instead of a possible dangerous\n"
+                                    "version, please consider to use the current\n"
+                                    "stable release version available from:\n\n"
+                                    "http://www.yam.ch/\n\n"
+                                    "Thanks for your help in improving YAM!";
            ErrReq.es_GadgetFormat = "Go on|Exit";
 
+           DisplayBeep(NULL);
            if(!EasyRequestArgs(NULL, &ErrReq, NULL, NULL))
              goon = FALSE;
          }
@@ -1486,7 +1500,8 @@ int main(int argc, char **argv)
      }
 
      CLOSELIB(IntuitionBase, IIntuition);
-     if(!goon) exit(0);
+     if(!goon)
+       exit(0);
    }
 #endif
 

@@ -57,13 +57,13 @@
 #ifndef __YAM_BUILDID
 #define __YAM_BUILDID   ""
 #endif
-#define __YAM_COPYRIGHT "Copyright (c) 2000-2004 YAM Open Source Team"
+#define __YAM_COPYRIGHT "Copyright (c) 2000-2005 YAM Open Source Team"
 
 const char * const yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
 const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
 const char * const yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU " (" __YAM_VERDATE ") " __YAM_COPYRIGHT;
 const char * const yamverxmailer    = "YAM " __YAM_VERSION __YAM_DEVEL __YAM_BUILDID CPU \
-                                      " AmigaOS E-mail Client (c) 2000-2004 by YAM Open Source Team - http://www.yam.ch/";
+                                      " AmigaOS E-mail Client (c) 2000-2005 by YAM Open Source Team - http://www.yam.ch/";
 const char * const yamcopyright     = __YAM_COPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;
 const unsigned long yamversiondays = __YAM_VERDAYS;
