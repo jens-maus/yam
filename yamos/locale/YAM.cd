@@ -5308,3 +5308,8 @@ An unexpected error occurred while trying to encode the file \
 '%s' with the base64 file encoding routines.
 ; FILENAME
 ;
+MSG_ER_QPFILEENCODE (//)
+An unexpected error occurred while trying to encode the file \
+'%s' with the quoted-printable file encoding routines.
+; FILENAME
+;

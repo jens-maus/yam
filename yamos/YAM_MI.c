@@ -82,10 +82,12 @@ static const char index_hex[128] =
 };
 
 // some defines that can be usefull
-#define B64_LINELEN   72    // number of characters before the b64encode_file()
-                            // issues a newline
-#define B64DEC_BUF    4096  // bytes to use as a file decoding buffer
-#define B64ENC_BUF    4095  // bytes to use as a file encoding buffer (must be a multiple of 3)
+#define B64_LINELEN 72    // number of chars before the b64encode_file() issues a CRLF
+#define B64DEC_BUF  4096  // bytes to use as a base64 file decoding buffer
+#define B64ENC_BUF  4095  // bytes to use as a base64 file encoding buffer (must be a multiple of 3)
+
+#define QP_LINELEN  76    // number of chars before qpencode_file() issues a CRLF
+#define QPENC_BUF   4096  // bytes to use as a quoted-printable file encoding buffer
 
 #define hexchar(c)    (((c) > 127) ? -1 : index_hex[(c)])
 #define SUMSIZE       64
@@ -153,7 +155,7 @@ enum {
 
 ///
 
-/*** BASE64 encode/decode routines ***/
+/*** BASE64 encode/decode routines (RFC 2045) ***/
 /// base64encode
 // optimized base64 encoding function returning the length of the
 // encoded string.
@@ -665,63 +667,175 @@ long base64decode_file(FILE *in, FILE *out,
 
 ///
 
-/*** Quoted-Printable encode/decode routines ***/
-/// toqp
-//  Encodes a file using quoted-printable format
-void toqp(FILE *infile, FILE *outfile)
+/*** Quoted-Printable encode/decode routines (RFC 2045) ***/
+/// qpencode_file()
+// Encodes a whole file using the quoted-printable format defined in
+// RFC 2045 (page 19)
+long qpencode_file(FILE *in, FILE *out)
 {
-   int c, ct = 0, prevc = 255;
+  unsigned char inbuffer[QPENC_BUF+1]; // we read out data in ~4096 byte chunks
+  unsigned char outbuffer[QPENC_BUF+5];// the output buffer should not be more than
+                                       // the input buffer with an additional space
+                                       // for 5 chars which could be used during
+                                       // encoding.
 
-   while ((c = fgetc(infile)) != -1)
-   {
-      if ((c < 32 && (c != '\n' && c != '\t')) || (c == '=') || (c >= 127) || (ct == 0 && c == '.'))
+  unsigned char *iptr;
+  unsigned char *optr = outbuffer;
+  unsigned char c;
+  int last = -1;
+  long encoded_chars = 0;
+  int line_len = 0;
+  BOOL eof_reached = FALSE;
+  size_t read;
+
+  DB(kprintf("qpencode_file()\n");)
+
+  while(eof_reached == FALSE)
+  {
+    // read in 4096 byte chunks
+    read = fread(inbuffer, 1, QPENC_BUF, in);
+
+    // on a short item count we check for a potential
+    // error and return immediatly.
+    if(read != QPENC_BUF)
+    {
+      if(feof(in) != 0)
       {
-         fputc('=', outfile);
-         fputc(basis_hex[c>>4], outfile);
-         fputc(basis_hex[c&0xF], outfile);
-         ct += 3;
-         prevc = 'A';
-      }
-      else if (c == '\n')
-      {
-         if (prevc == ' ' || prevc == '\t')
-         {
-            fputs("=\n", outfile);
-         }
-         fputc('\n', outfile);
-         ct = 0;
-         prevc = c;
+        DB(kprintf("EOF file at %ld\n", ftell(in));)
+
+        eof_reached = TRUE; // we found an EOF
+
+        // if the last read was zero we can exit immediatly
+        if(read == 0)
+          break;
       }
       else
       {
-         if (c == 'F' && prevc == '\n')
-         {
-            if ((c = fgetc(infile)) == 'r')
-               if ((c = fgetc(infile)) == 'o')
-                  if ((c = fgetc(infile)) == 'm')
-                     if ((c = fgetc(infile)) == ' ') { fputs("=46rom", outfile);  ct += 6; }
-                     else { fputs("From", outfile); ct += 4; }
-                  else { fputs("Fro", outfile); ct += 3; }
-               else { fputs("Fr", outfile); ct += 2; }
-            else { fputc('F', outfile); ++ct; }
-            ungetc(c, infile);
-            prevc = 'x';
-         }
-         else
-         {
-            fputc(c, outfile);
-            ++ct;
-            prevc = c;
-         }
+        DB(kprintf("error on reading data!\n");)
+
+        // an error occurred, lets return -1
+        return -1;
       }
-      if (ct > 72)
+    }
+
+    // let us now parse through the inbuffer and encode it according
+    // to RFC 2045
+    iptr = inbuffer;
+
+    while(read)
+    {
+      // decrease the read number and increase
+      // out input buffer pointer
+      c = *iptr++;
+      read--;
+
+      if(c == '\n')
       {
-         fputs("=\n", outfile);
-         ct = 0;
-         prevc = '\n';
+        // check if the previous char is a linear whitespace and
+        // if so we have to put a soft break right before the
+        // newline
+        if(last != -1 && (last == ' ' || last == '\t'))
+        {
+          *optr++ = '=';
+          *optr++ = '\n';
+        }
+
+        *optr++ = '\n';
+
+        // reset the line_len counter
+        line_len = 0;
+        last = -1;
       }
-   }
-   if (ct) fputs("=\n", outfile);
+        // we encode the current char if:
+        // 1) it is an unsafe safe
+        // 2) it is an upcoming "From " at the start of a line
+      else if(!is_qpsafe(c) ||
+              (last = -1 && c == 'F' && strncmp(iptr, "rom ", 4) == 0))
+      {
+
+        // before we can encode the data we have to check
+        // wheter there is enough space left on the line
+        // or if we have to put it on the next line
+        if(line_len+3 >= QP_LINELEN-1) // one space for the trailing '='
+        {
+          *optr++ = '=';
+          *optr++ = '\n';
+
+          // reset the line_len counter
+          line_len = 0;
+        }
+
+        // now put out the encoded char
+        *optr++ = '=';
+        *optr++ = basis_hex[(c >> 4) & 0xF];
+        *optr++ = basis_hex[c & 0xF];
+
+        // increase the line_len counter
+        line_len += 3;
+
+        // count the number of encoded chars
+        encoded_chars++;
+      }
+      else
+      {
+        // so this char seems to be safe to be directly placed
+        // in the output buffer without any encoding. We just
+        // have to check wheter this line is going to be longer
+        // than the limit
+        if(line_len+1 >= QP_LINELEN-1) // one space for the trailing '='
+        {
+          *optr++ = '=';
+          *optr++ = '\n';
+
+          // reset the line_len counter
+          line_len = 0;
+        }
+
+        *optr++ = c;
+
+        // increase the line_len counter
+        line_len++;
+      }
+
+      // let us now check if our outbuffer is filled up so that we can write
+      // out the data to our out stream.
+      if(optr-outbuffer >= QPENC_BUF)
+      {
+        size_t todo = optr-outbuffer;
+
+        // now we do a binary write of the data
+        if(fwrite(outbuffer, 1, todo, out) != todo)
+        {
+          DB(kprintf("error on writing data!\n");)
+          // an error must have occurred.
+          return -1;
+        }
+
+        // now reset the outbuffer and stuff
+        optr = outbuffer;
+      }
+
+      last = c;
+    }
+  }
+
+  // check if there is something in the outbuffer that
+  // hasn't been written out yet
+  if(optr-outbuffer > 0)
+  {
+    size_t todo = optr-outbuffer;
+
+    // now we do a binary write of the data
+    if(fwrite(outbuffer, 1, todo, out) != todo)
+    {
+      DB(kprintf("error on writing data!\n");)
+      // an error must have occurred.
+      return -1;
+    }
+  }
+
+  DB(kprintf("finished qpencode_file(): %ld\n", encoded_chars);)
+  return encoded_chars;
 }
 
 ///

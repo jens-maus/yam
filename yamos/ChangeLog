@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-07-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c, YAM_WR.c: completly rewritten and optimized the
+      RFC 2045 quoted-printable MIME encoding routines from scratch.
+      The encoding is now done fully buffered which results in a
+      greater performance during encoding of large attachment if the
+      quoted-printable encoding is used.
+
 2004-07-24  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c: fixed another minor bug in the RFC2047 decoding

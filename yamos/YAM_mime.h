@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -49,6 +49,9 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF);
 long base64decode_file(FILE *in, FILE *out,
                        struct TranslationTable *tt, BOOL convCRLF);
 
+// quoted-printable encoding/decoding routines
+long qpencode_file(FILE *in, FILE *out);
+
 // rfc2047 decoding routines
 int rfc2047_encode_file(FILE *fh, const char *str,
                         const struct TranslationTable *tt);
@@ -61,7 +64,6 @@ void  fromuue(FILE *infp, FILE *outfp);
 void  fromuuetxt(char **txt, FILE *outfp);
 void  fromqp(FILE *infile, FILE *outfile, struct TranslationTable *tt);
 void  fromqptxt(char *src, char *dst, struct TranslationTable *tt);
-void  toqp(FILE *infile, FILE *outfile);
 void  touue(FILE *in, FILE *out);
 
 #endif /* YAM_MIME_H */

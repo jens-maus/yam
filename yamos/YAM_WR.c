@@ -639,7 +639,10 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 
          case ENC_QP:
          {
-            toqp(ifh, ofh);
+            if(qpencode_file(ifh, ofh) < 0)
+            {
+              ER_NewError(GetStr(MSG_ER_QPFILEENCODE), part->Filename, NULL);
+            }
          }
          break;
 
