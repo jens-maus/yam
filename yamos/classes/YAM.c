@@ -340,7 +340,7 @@ OVERLOAD(OM_NEW)
 	// prepare a string pointer array with all the
 	// names of the used classes within. This array is only usefull if MUI v20
 	// is used and the user wants to alter the MUI settings of the application
-	const static STRPTR Classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "NListtree.mcc", "NList.mcc", "NListviews.mcc", NULL };
+	static const STRPTR Classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "NListtree.mcc", "NList.mcc", "NListviews.mcc", NULL };
 
 	if((obj = (Object *)DoSuperNew(cl, obj,
 		MUIA_Application_Author,         "YAM Open Source Team",
