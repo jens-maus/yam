@@ -343,7 +343,6 @@ DECLARE(Resolve) // ULONG flags
 	STRPTR s, contents, tmp;
    BOOL res = TRUE;
    BOOL withrealname = TRUE, checkvalids = TRUE;
-   int int_flag = 0;
 
    // Lets check the flags first
    if(msg->flags & MUIF_Recipientstring_Resolve_NoFullName) withrealname= FALSE;
@@ -368,7 +367,11 @@ DECLARE(Resolve) // ULONG flags
          if(checkvalids == FALSE && (tmp = strchr(s, '@')))
          {
 		   	DB(kprintf("Valid address found.. will not resolve it: %s\n", s);)
-            int_flag = 1;
+			   DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+
+            /* email address lacks domain... */
+   			if(tmp[1] == '\0')
+	   		   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
          }
          else if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, s, 0)) /* entry found in address book */
 			{
@@ -416,28 +419,28 @@ DECLARE(Resolve) // ULONG flags
                res = FALSE;
 				}
 			}
-			else int_flag = 2;
+			else
+			{
+				DB(kprintf("Entry not found: %s\n", s);)
 
-         // Lets check the flags now
-			if(int_flag == 1 || (int_flag == 2 && (tmp = strchr(s, '@'))))
-         {
-		      DB(kprintf("Email address: %s\n", s);)
-			   DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+   		   if(tmp = strchr(s, '@')) /* entry seems to be an email address */
+	   	   {
+		   	   DB(kprintf("Email address: %s\n", s);)
+			      DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
 
-            /* email address lacks domain... */
-   			if(tmp[1] == '\0')
-	   		   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
+               /* email address lacks domain... */
+   			   if(tmp[1] == '\0')
+	   			   DoMethod(obj, MUIM_BetterString_Insert, strchr(C->EmailAddress, '@')+1, MUIV_BetterString_Insert_EndOfString);
+		      }
+            else
+				{
+               DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
+               set(_win(obj), MUIA_Window_ActiveObject, obj);
+				   DisplayBeep(NULL);
+               res = FALSE;
+            }
 			}
-         else if(int_flag == 2)
-         {
-            DoMethod(obj, MUIM_Recipientstring_AddRecipient, s);
-            set(_win(obj), MUIA_Window_ActiveObject, obj);
-            DisplayBeep(NULL);
-            res = FALSE;
-         }
 
-         // reset the values
-         int_flag = 0;
 			tmp = NULL;
 		}
 		free(contents);
@@ -487,6 +490,7 @@ DECLARE(RecipientStart)
 }
 ///
 
+/// DECLARE(CurrentRecipient)
 /* return current recipient if cursor is at the end of it (i.e at comma or '\0'-byte */
 DECLARE(CurrentRecipient)
 {
@@ -504,3 +508,4 @@ DECLARE(CurrentRecipient)
 
 	return (ULONG)data->CurrentRecipient;
 }
+///
