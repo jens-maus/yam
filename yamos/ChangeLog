@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-10-07  Christian Hattemer <krille@users.sourceforge.net>
+
+    * YAM_RE.c: Don't try to use PGP if it's not installed
+
 2002-10-04  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: fixed bug #588099 where YAM didn`t automatically

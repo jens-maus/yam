@@ -461,6 +461,9 @@ HOOKPROTONHNO(RE_CheckSignatureFunc, void, int *arg)
 {
    struct RE_ClassData *re = G->RE[arg[1]];
 
+   // Don't try to use PGP if it's not installed
+   if (G->PGPVersion == 0) return;
+
    if(hasPGPSOldFlag(re) && !hasPGPSCheckedFlag(re))
    {
       int error;
@@ -2165,7 +2168,7 @@ static void RE_HandleSignedMessage(struct Part *frp)
 
    if ((rp[0] = frp->Next))
    {
-      if (*C->PGPCmdPath && (rp[1] = rp[0]->Next))
+      if (G->PGPVersion && (rp[1] = rp[0]->Next))
       {
          int error;
          struct TempFile *tf = OpenTempFile(NULL);
