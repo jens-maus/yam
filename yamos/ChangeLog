@@ -1,3 +1,8 @@
+2002-03-02  David Rey <david@saug.org>
+
+    * YAM_RE.c: fixed the duplicated "shift right" menu shorcut
+      (bug #440010)
+
 2002-02-22  Gunther Nikl <gni@gecko.de>
 
     * YAM_AB.c, YAM_CL.c, YAM_CO.c, YAM_COg.c, YAM_COs.c, YAM_EA.c, YAM_FI.c,
