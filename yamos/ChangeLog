@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-06-29  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MI.c: fixed a bug in the base64 file decoding routines
+      where it happened that the selected temporary output buffer
+      had been to low and cause some unexpected crashes.
+
 2004-06-17  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c: to make the index rebuilding process upon start of

@@ -157,8 +157,8 @@ int base64encode(char *to, const unsigned char *from, unsigned int len)
 int base64decode(char *to, const unsigned char *from, unsigned int len)
 {
   unsigned char *fromp = (unsigned char *)from;
+  unsigned char x, y;
   char *top = to;
-  int x, y;
 
   while(len >= 4)
   {
@@ -435,7 +435,7 @@ long base64decode_file(FILE *in, FILE *out,
                        struct TranslationTable *tt, BOOL convCRLF)
 {
   char inbuffer[B64DEC_BUF+1];
-  char outbuffer[B64DEC_BUF/2+5];
+  char outbuffer[B64DEC_BUF/4*3];
   char ungetbuf[3];
   long decodedChars = 0;
   int next_unget = 0;
@@ -536,6 +536,13 @@ long base64decode_file(FILE *in, FILE *out,
       // or error
       return -1;
     }
+    #if defined(DEBUG)
+    else if(outLength > B64DEC_BUF/4*3)
+    {
+      kprintf("Error: outbuffer has been overwritten by base64decode()!!!\n");
+      return -1;
+    }
+    #endif
 
     // if we got a translation table or need to convert a CRLF we have to parse through
     // the decoded string again and convert some chars.
