@@ -342,6 +342,7 @@ static void RE_UpdateStatusGroup(int winnum)
    struct Mail *mail = re->MailPtr;
    int    status = 0;
 
+   // set the correct page for the mail Status group
    set(gui->GR_STATUS[0], MUIA_Group_ActivePage, 1+mail->Status);
 
    // Now we check for the other statuses of the mail
@@ -351,7 +352,11 @@ static void RE_UpdateStatusGroup(int winnum)
    else if(isMultiPartMail(mail)) status = 4;
    set(gui->GR_STATUS[1], MUIA_Group_ActivePage, status);
 
+   // set the correct page for the Importance flag
    set(gui->GR_STATUS[2], MUIA_Group_ActivePage, mail->Importance == 1 ? 1 : 0);
+
+   // set the correct page for the Marked flag
+   set(gui->GR_STATUS[3], MUIA_Group_ActivePage, isMarkedMail(mail) ? 1 : 0);
 }
 ///
 /// RE_SendMDN
@@ -3504,6 +3509,10 @@ static struct RE_ClassData *RE_New(int winnum, BOOL real)
                         Child, data->GUI.GR_STATUS[2] = PageGroup,
                            Child, HSpace(0),
                            Child, MakeStatusFlag("status_urgent"),
+                        End,
+                        Child, data->GUI.GR_STATUS[3] = PageGroup,
+                           Child, HSpace(0),
+                           Child, MakeStatusFlag("status_mark"),
                         End,
                      End,
                      Child, VSpace(0),

@@ -7,6 +7,8 @@ $Source$
 
 2003-02-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: The read window will also take respect of the newly
+      introduced marked flag now.
     * supportfiles/icons: Now the 16color Iconset is the new default set
       for YAM. Moved the old and partly outdated 8colors images to std8col
       subdirectory.
