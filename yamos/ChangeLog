@@ -7,6 +7,9 @@ $Source$
 
 2002-07-02  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM_UT.c: our own MUI_Request() reimplementation didn`t
+      support a immediate exit via the "ESC" key. Now this
+      should be possible like with the original MUI_Request().
     * YAM_MAf.c: did some small performance tuning to the
       MA_ExamineMail() function where we didn`t use "else if"
       constructs somehow.

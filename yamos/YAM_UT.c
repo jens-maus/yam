@@ -290,6 +290,10 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
     }
     DoMethod(BT_GROUP, MUIM_Group_ExitChange);
 
+    // we add the esc key to the input event of the requester and if we receive it we close the requester by safely
+    // exiting with the last button
+    DoMethod(WI_YAMREQ ,MUIM_Notify, MUIA_Window_InputEvent, "-capslock esc", app, 2, MUIM_Application_ReturnID, 1);
+
     // now activate that button with a starting "*"
     if(active > -1) set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_REQ[active]);
 
