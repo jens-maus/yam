@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c, YAM_rexx_rxif.c: changed the bugfix of
+      bug #596303 on user demand. Previously YAM
+      did always put the Application to sleep if the Busy()
+      function was used. This made the usability of the
+      application a bit too annoying. Now we just put
+      the application to sleep (showing a busy pointer) if
+      the APPBUSY arexx command will be used.
+
 2002-12-09  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_DI.c: fixed bug where the listview wasn`t always

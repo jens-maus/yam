@@ -1798,6 +1798,7 @@ void rx_appbusy( struct RexxHost *host, struct rxd_appbusy **rxd, long action, s
       case RXIF_ACTION:
          s = rd->arg.text;
          if (s) BusyText(s, "");
+         if(BusyLevel == 1) nnset(G->App, MUIA_Application_Sleep, TRUE);
          rd->rc = BusyLevel ? 1 : 0;
          break;
       
@@ -1821,6 +1822,7 @@ void rx_appnobusy( struct RexxHost *host, struct rxd_appnobusy **rxd, long actio
          
       case RXIF_ACTION:
          BusyEnd;
+         if(BusyLevel <= 0) nnset(G->App, MUIA_Application_Sleep, FALSE);
          rd->rc = BusyLevel ? 1 : 0;
          break;
       
