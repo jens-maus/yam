@@ -709,6 +709,7 @@ BOOL MA_ReadHeader(FILE *fh)
   char *ptr2;
   BOOL success = FALSE;
   char prevcharset[SIZE_DEFAULT];
+  int linesread = 0;
 
   if((buffer = calloc(SIZE_LINE, sizeof(char))))
   {
@@ -716,9 +717,10 @@ BOOL MA_ReadHeader(FILE *fh)
     {
       FreeData2D(&Header);
 
-      while(GetLine(fh, buffer, SIZE_LARGE))
+      while(GetLine(fh, buffer, SIZE_LARGE) && ++linesread && buffer[0])
       {
-        if (!buffer[0]) { success = TRUE; break; }
+        BOOL linestart = TRUE;
+
         memset(head, 0, SIZE_LINE);
         strcpy(prevcharset, "us-ascii");
         RE_ProcessHeader(prevcharset, buffer, TRUE, head);
@@ -728,7 +730,15 @@ BOOL MA_ReadHeader(FILE *fh)
         // elements with those escape sequences because it can be dangerous !
         for(ptr2=head; *ptr2; ptr2++)
         {
-          if(*ptr2 == 0x1b) *ptr2 = ' ';
+          // if we find a ESC sequence, strip it!
+          if(*ptr2 == 0x1b)       { *ptr2 = ' '; linestart = FALSE; }
+          else if(!success && linestart)
+          {
+            // we also need to analyse if we at least found one valid headerline
+            // or not, because then wenn need to return FALSE
+            if(*ptr2 == ':') success = TRUE;
+            else if(isspace(*ptr2)) linestart = FALSE;
+          }
         }
 
         // if the start of this line is a space or a tabulator sign
@@ -738,7 +748,7 @@ BOOL MA_ReadHeader(FILE *fh)
         {
           // move to the "real" start of the string so that we can copy
           // from there to our previous header.
-          for (ptr = head; *ptr && ISpace(*ptr); ptr++);
+          for (ptr = head; *ptr && isspace(*ptr); ptr++);
 
           // we want to preserve the last space so that this headerline
           // is correctly connected
@@ -755,7 +765,11 @@ BOOL MA_ReadHeader(FILE *fh)
     free(buffer);
   }
 
-  return success;
+  // we have to make sure that the Header data is empty if we
+  // hadn`t success in getting some headers
+  if(!success) FreeData2D(&Header);
+
+  return (BOOL)(success == TRUE || linesread == 1);
 }  
 
 ///

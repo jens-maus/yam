@@ -610,7 +610,7 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
    {
       RE_DisplayMessage(winnum);
       set(gui->MI_EXTKEY, MUIA_Menuitem_Enabled, re->PGPKey);
-      set(gui->MI_CHKSIG, MUIA_Menuitem_Enabled, re->PGPSigned > 0);
+      set(gui->MI_CHKSIG, MUIA_Menuitem_Enabled, hasPGPSOldFlag(re));
       set(gui->MI_SAVEDEC, MUIA_Menuitem_Enabled, real && hasPGPEMimeFlag(re));
       RE_UpdateStatusGroup(winnum);
       MA_StartMacro(MACRO_READ, itoa(winnum));
@@ -618,7 +618,10 @@ void RE_ReadMessage(int winnum, struct Mail *mail)
       {
          MA_SetMailStatus(mail, STATUS_OLD);
          DisplayStatistics(folder, TRUE);
-         if (re->PGPSigned) DoMethod(G->App, MUIM_CallHook, &RE_CheckSignatureHook, FALSE, winnum);
+         if(hasPGPSOldFlag(re) && !hasPGPSCheckedFlag(re))
+         {
+            DoMethod(G->App, MUIM_CallHook, &RE_CheckSignatureHook, FALSE, winnum);
+         }
          RE_DoMDN(MDN_READ, mail, FALSE);
       }
    }
@@ -1476,7 +1479,7 @@ static void RE_GetSigFromLog(int winnum, char *decrFor)
          if(!sigDone)
          {
             if(!strnicmp(buffer, "good signature", 14)) sigDone = TRUE;
-            else if(!strnicmp(buffer, "bad signature", 13) || !stristr(buffer, "unknown keyid"))
+            else if(!strnicmp(buffer, "bad signature", 13) || stristr(buffer, "unknown keyid"))
             {
               SET_FLAG(re->PGPSigned, PGPS_BADSIG);
               sigDone = TRUE;
@@ -1753,6 +1756,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
    {
       if (mode == 0) ER_NewError(GetStr(MSG_ER_MIMEError), NULL, NULL);
       else if (mode == 1) ER_NewError(GetStr(MSG_ER_MultipartEOF), NULL, NULL);
+
+      rp->HasHeaders = FALSE;
       return FALSE;
    }
 
@@ -2318,7 +2323,7 @@ static void RE_HandleSignedMessage(struct Part *frp)
          char options[SIZE_LARGE];
          SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_MIME);
          ConvertCRLF(rp[0]->Filename, tf->Filename, TRUE);
-         sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f", rp[1]->Filename, tf->Filename);
+         sprintf(options, (G->PGPVersion == 5) ? "%s -o %s +batchmode=1 +force +language=us" : "%s %s +bat +f +lang=en", rp[1]->Filename, tf->Filename);
          error = PGPCommand((G->PGPVersion == 5) ? "pgpv": "pgp", options, NOERRORS|KEEPLOG);
          if (error > 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_BADSIG);
          if (error >= 0) RE_GetSigFromLog(frp->Win, NULL);
@@ -2352,18 +2357,18 @@ static int RE_DecryptPGP(int winnum, char *src)
    }
    else
    {
-      sprintf(options, "%s +bat +f", src);
+      sprintf(options, "%s +bat +f +lang=en", src);
       error = PGPCommand("pgp", options, KEEPLOG|NOERRORS);
       RE_GetSigFromLog(winnum, NULL);
    }
    PGPClearPassPhrase(error < 0 || error > 1);
    if (error < 0 || error > 1) if ((fh = fopen(src, "w")))
    {
-      fprintf(fh, GetStr(MSG_RE_PGPNotAllowed));
+      fputs(GetStr(MSG_RE_PGPNotAllowed), fh);
       if (G->PGPVersion == 5 && *orcpt) fprintf(fh, GetStr(MSG_RE_MsgReadOnly), orcpt);
       fclose(fh);
    }
-   DB( kprintf("RE_DecryptPGP() ends\n"); )
+   DB( kprintf("RE_DecryptPGP() ends: %ld\n", error); )
    return error;
 }
 ///
@@ -2371,28 +2376,62 @@ static int RE_DecryptPGP(int winnum, char *src)
 //  Handles a PGP encryped message
 static void RE_HandleEncryptedMessage(struct Part *frp)
 {
-   struct Part *rp[2];
-   FILE *in;
-   DB( kprintf("RE_HandleEncryptedMessage()\n"); )
-   if ((rp[0] = frp->Next)) if ((rp[1] = rp[0]->Next))
+   struct Part *warnPart;
+   struct Part *encrPart;
+
+   // if we find a warning and a encryption part we start decrypting
+   if((warnPart = frp->Next) && (encrPart = warnPart->Next))
    {
-      if (!RE_DecryptPGP(frp->Win, rp[1]->Filename))
+      int decryptResult;
+      struct TempFile *tf = OpenTempFile("w");
+
+      // first we copy our encrypted part because the DecryptPGP()
+      // function will overwrite it
+      if(!tf || !CopyFile(NULL, tf->FP, encrPart->Filename, NULL)) return;
+      fclose(tf->FP);
+      tf->FP = NULL;
+
+      decryptResult = RE_DecryptPGP(frp->Win, tf->Filename);
+
+      if(decryptResult == 1 || decryptResult == 0)
       {
-         SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_OLD);
+         FILE *in;
+
+         if(decryptResult == 0) SET_FLAG(G->RE[frp->Win]->PGPSigned, PGPS_OLD);
+         SET_FLAG(G->RE[frp->Win]->PGPEncrypted, PGPE_MIME);
+
+         // if DecryptPGP() returns with 0 everything worked perfectly and we can
+         // convert & copy our decrypted file over the encrypted part
+         if(ConvertCRLF(tf->Filename, warnPart->Filename, FALSE) && (in = fopen(warnPart->Filename, "r")))
+         {
+            warnPart->ContentType = StrBufCpy(warnPart->ContentType, "text/plain");
+            warnPart->Printable = TRUE;
+            warnPart->EncodingCode = ENC_NONE;
+            *warnPart->Description = 0;
+            RE_ScanHeader(warnPart, in, NULL, 2);
+            fclose(in);
+            warnPart->Decoded = FALSE;
+            RE_DecodePart(warnPart);
+            RE_UndoPart(encrPart); // undo the encrypted part because we have a decrypted now.
+         }
       }
-      SET_FLAG(G->RE[frp->Win]->PGPEncrypted, PGPE_MIME);
-      if (ConvertCRLF(rp[1]->Filename, rp[0]->Filename, FALSE)) if ((in = fopen(rp[0]->Filename, "r")))
+      else
       {
-         rp[0]->ContentType = StrBufCpy(rp[0]->ContentType, "text/plain");
-         rp[0]->Printable = TRUE; rp[0]->EncodingCode = ENC_NONE;
-         *rp[0]->Description = 0;
-         RE_ScanHeader(rp[0], in, NULL, 2);
-         fclose(in);
-         rp[0]->Decoded = FALSE; RE_DecodePart(rp[0]);
-         RE_UndoPart(rp[1]);
+        // if we end up here the DecryptPGP returned an error an
+        // we have to put this error in place were the nonlocalized version is right now.
+        if(CopyFile(warnPart->Filename, NULL, tf->Filename, NULL))
+        {
+           warnPart->ContentType = StrBufCpy(warnPart->ContentType, "text/plain");
+           warnPart->Printable = TRUE;
+           warnPart->EncodingCode = ENC_NONE;
+           *warnPart->Description = 0;
+           warnPart->Decoded = TRUE;
+           warnPart->HasHeaders = FALSE;
+        }
       }
+
+      CloseTempFile(tf);
    }
-   DB( kprintf("RE_HandleEncryptedMessage() ends\n"); )
 }
 ///
 /// RE_LoadMessagePart
@@ -2719,7 +2758,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
 
                   DB( kprintf("RE_ReadInMessage(): decrypting\n"); )
 
-                  if(!RE_DecryptPGP(winnum, tf->Filename))
+                  if(RE_DecryptPGP(winnum, tf->Filename) == 0)
                   {
                     SET_FLAG(re->PGPSigned, PGPS_OLD);
 
