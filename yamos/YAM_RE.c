@@ -704,7 +704,7 @@ struct TempFile *texfile;
 							ts2 = StrBufCat(ts2,"\\\\\n");
 						} else KPrintF("RE_PrintFile(): strange header line %s\n",p);
 					}
-					fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n",
+					fprintf(texfile->FP,"\n%s\n%s\n%s\n%s\n\\input{%s}\n\\end{document}\n",
 								ts1,
 								"\\begin{document}\n\n"
 								"\\setlength{\\tabcolsep}{3.0pt}\n"
@@ -717,9 +717,8 @@ struct TempFile *texfile;
 								ts2,
 								"\\end{tabular}\n"
 								"\\hrule\n"
-								"\\bigskip\n"
-								"\\input{Texts:TeXdocs/Experimental/email.text}\n"
-								"\\end{document}\n");
+								"\\bigskip\n",
+								filename);
 					fclose(texfile->FP);
 					texfile->FP = NULL;
 					if(printcmd = malloc(sizeof(PrintScript)+strlen(texfile->Filename)+1))
@@ -1785,6 +1784,7 @@ int RE_DecryptPGP(int winnum, char *src)
    char options[SIZE_LARGE], orcpt[SIZE_ADDRESS];
 
    *orcpt = 0;
+	DB(KPrintF("RE_DecryptPGP()\n"));
    PGPGetPassPhrase();
    if (G->PGPVersion == 5)
    {
@@ -1809,6 +1809,7 @@ int RE_DecryptPGP(int winnum, char *src)
       if (G->PGPVersion == 5 && *orcpt) fprintf(fh, GetStr(MSG_RE_MsgReadOnly), orcpt);
       fclose(fh);
    }
+	DB(KPrintF("RE_DecryptPGP() ends\n"));
    return error;
 }
 ///
@@ -1818,6 +1819,7 @@ void RE_HandleEncryptedMessage(struct Part *frp)
 {
    struct Part *rp[2];
    FILE *in;
+	DB(KPrintf("RE_HandleEncryptedMessage()\n"));
    if (rp[0] = frp->Next) if (rp[1] = rp[0]->Next)
    {
       if (!RE_DecryptPGP(frp->Win, rp[1]->Filename))
@@ -1836,6 +1838,7 @@ void RE_HandleEncryptedMessage(struct Part *frp)
          RE_UndoPart(rp[1]);
       }
    }
+	DB(KPrintf("RE_HandleEncryptedMessage() ends\n"));
 }
 ///
 /// RE_LoadMessagePart
@@ -1962,6 +1965,7 @@ char *RE_ReadInMessage(int winnum, int mode)
    int totsize, len, wptr;
    FILE *fh;
    
+	DB(KPrintf("RE_ReadInMessage(%ld,%ld\n",winnum,mode));
    if (re->NoTextstyles) { tsb = "\033c\033[s:18]\033l"; sb = "\033[s:2]"; bo = "\033b"; pl = "\033n"; }
    else { tsb = "<tsb>"; sb = "<sb>"; bo = "*"; pl = "*"; }
    for (totsize = 1000, part = first; part; part = part->Next)
@@ -2079,6 +2083,7 @@ char *RE_ReadInMessage(int winnum, int mode)
 /* PGP message */    if (!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
                      {
                         struct TempFile *tf;
+								DB(KPrintF("RE_ReadInMessage(): encrypted message\n"));
                         if (tf = OpenTempFile("w"))
                         {
                            *eolptr = '\n';
@@ -2090,19 +2095,23 @@ char *RE_ReadInMessage(int winnum, int mode)
                            while (*ptr && *ptr != '\n') ptr++; eolptr = ptr++;
                            fwrite(rptr, 1, ptr-rptr, tf->FP);
                            fclose(tf->FP); tf->FP = NULL;
+									DB(KPrintF("RE_ReadInMessage(): decrypting\n"));
                            if (!RE_DecryptPGP(winnum, tf->Filename)) re->PGPSigned |= PGPS_OLD;
                            if (tf->FP = fopen(tf->Filename, "r"))
                            {
                               char buf2[SIZE_LARGE];
+										DB(KPrintF("RE_ReadInMessage(): decrypted message follows\n"));
                               while (fgets(buf2, SIZE_LARGE, tf->FP))
                               {
                                  rptr = buf2;
+											DB(KPrintF(buf2));
                                  cmsg = AppendToBuffer(cmsg, &wptr, &len, buf2);
                               }
                            }
                            CloseTempFile(tf);
                         }
                         re->PGPEncrypted |= PGPE_OLD;
+								DB(KPrintF("RE_ReadInMessage(): done with decryption\n"));
                         goto rim_cont;
                      }
 /* signature */      if (!strcmp(rptr, "-- "))
@@ -2152,6 +2161,7 @@ rim_cont:
       re->FirstReadDone = TRUE;
       if (mode != RIM_QUIET) BusyEnd;
    }
+	DB(KPrintf("RE_ReadInMessage() ends"));
    return cmsg;
 }
 ///
