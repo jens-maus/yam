@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2001-11-22  Gunther Nikl <gni@gecko.de>
+
+    * includes/proto/amissl.h,includes/proto/genesis.h,includes/proto/miami.h,
+      includes/proto/muimaster.h,includes/proto/openurl.h,includes/proto/pm.h,
+      includes/proto/socket.h,includes/proto/xpkmaster.h: re-established VBCC
+      support
+    * includes/clib/socket_protos.h: add define for htons if its missing
+    * YAM.c/CheckMCC: reduced stack usage and simplified it
+
 2001-11-21  Gunther Nikl <gni@gecko.de>
 
     * includes/clib/socket_protos.h: usage of sys/types.h removed
