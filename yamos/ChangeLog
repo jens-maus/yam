@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-06-21  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * YAM.c: fixed bug #555675 where YAM "lost" the folder group
+      status on a restart of YAM.
+
 2002-06-20  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * Makefile.MorphOS: added stub link library calls so that YAM will

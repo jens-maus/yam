@@ -711,14 +711,42 @@ static void Initialise2(BOOL hidden)
    AY_PrintStatus(GetStr(MSG_RebuildIndices), 60);
    MA_UpdateIndexes(TRUE);
    AY_PrintStatus(GetStr(MSG_LoadingFolders), 75);
-   for (i = 0; ; i++)
+   for(i = 0; ;i++)
    {
-      struct MUI_NListtree_TreeNode *tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-      if (!tn) break;
+      struct MUI_NListtree_TreeNode *tn;
+      struct MUI_NListtree_TreeNode *tn_parent;
+
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
+      if (!tn || !tn->tn_User) break;
+
       folder = tn->tn_User;
-      if (!folder) break;
-      if ((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING || folder->Type == FT_DELETED || C->LoadAllFolders) && !isCryptedFolder(folder)) MA_GetIndex(folder);
-      else if (folder->Type != FT_GROUP) folder->LoadedMode = MA_LoadIndex(folder, FALSE);
+
+      // if this entry is a group lets skip here immediatly
+      if (folder->Type == FT_GROUP) continue;
+
+      if ((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING || folder->Type == FT_DELETED || C->LoadAllFolders) && !isCryptedFolder(folder))
+      {
+        MA_GetIndex(folder);
+      }
+      else folder->LoadedMode = MA_LoadIndex(folder, FALSE);
+
+      // now we have to add the amount of mails of this folder to the foldergroup
+      // aswell.
+      if((tn_parent = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, tn, MUIV_NListtree_GetEntry_Position_Parent, MUIF_NONE)))
+      {
+         // fo_parent is NULL then it`s ROOT and we have to skip here
+         // because we cannot have a status of the ROOT tree.
+         struct Folder *fo_parent = (struct Folder *)tn_parent->tn_User;
+         if(fo_parent)
+         {
+            fo_parent->Unread    += folder->Unread;
+            fo_parent->New       += folder->New;
+            fo_parent->Total     += folder->Total;
+            fo_parent->Sent      += folder->Sent;
+            fo_parent->Deleted   += folder->Deleted;
+         }
+      }
+
       DoMethod(G->App, MUIM_Application_InputBuffered);
    }
    MA_ChangeFolder(FO_GetFolderByType(FT_INCOMING, NULL), TRUE);
