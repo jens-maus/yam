@@ -553,11 +553,11 @@ int MA_NewNew(struct Mail *mail, int flags)
          wr->Mode = NEW_NEW;
          wr->Mail = mail;
          if (mail) setstring(wr->GUI.ST_TO, BuildAddrName2(GetReturnAddress(mail)));
-         else if (folder->Type != FT_INCOMING)
+         else if(folder->MLSupport)
          {
-            if (folder->MLAddress[0]) setstring(wr->GUI.ST_TO, folder->MLAddress);
-            if (folder->MLFromAddress[0]) setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
-            if (folder->MLReplyToAddress[0]) setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
+            if(folder->MLAddress[0]) setstring(wr->GUI.ST_TO, folder->MLAddress);
+            if(folder->MLFromAddress[0]) setstring(wr->GUI.ST_FROM, folder->MLFromAddress);
+            if(folder->MLReplyToAddress[0]) setstring(wr->GUI.ST_REPLYTO, folder->MLReplyToAddress);
          }
 
          MA_SetupQuoteString(wr, NULL, NULL);
@@ -566,7 +566,7 @@ int MA_NewNew(struct Mail *mail, int flags)
          fclose(out);
 
          // add a signature to the mail depending on the selected signature for this list
-         WR_AddSignature(G->WR_Filename[winnum], folder->Type != FT_INCOMING ? folder->MLSignature: -1);
+         WR_AddSignature(G->WR_Filename[winnum], folder->MLSupport ? folder->MLSignature: -1);
 
          if (!quiet) set(wr->GUI.WI, MUIA_Window_Open, TRUE);
          MA_EditorNotification(winnum);
