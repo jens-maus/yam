@@ -1,10 +1,18 @@
 #include <proto/exec.h>
 struct Library *WorkbenchBase;
 struct Library *KeymapBase;
-void dice_closelibs(void)
+void __autoexit dice_closelibs(void)
 {
    CloseLibrary(WorkbenchBase);
    CloseLibrary(KeymapBase);
+}
+
+void __autoinit dice_openlibs(void)
+{
+   WorkbenchBase=OpenLibrary("workbench.library",37);
+   KeymapBase=OpenLibrary("keymap.library",37);
+
+   if(!WorkbenchBase || !KeymapBase) exit(5);
 }
 
 extern struct Library *XpkBase;
