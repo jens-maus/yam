@@ -182,6 +182,9 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
       SPrintF(sh = buffer, GetStr(MSG_MA_FolderInfo), fo->Name, fo->Path, fo->Size, fo->Total, fo->New, fo->Unread);
    }
 
+   // Update the Folder information in the InfoBar
+   DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
+
    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
 }
 MakeHook(MA_SetFolderInfoHook, MA_SetFolderInfoFunc);
@@ -2894,7 +2897,7 @@ struct MA_ClassData *MA_New(void)
          for (i = 0; i < 10; i++)
          {
             key[8] = '0'+i;
-            DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 4, MUIM_CallHook, &MA_FolderKeyHook, i);
+            DoMethod(data->GUI.WI, MUIM_Notify, MUIA_Window_InputEvent, key, MUIV_Notify_Application, 3, MUIM_CallHook, &MA_FolderKeyHook, i);
          }
          return data;
       }

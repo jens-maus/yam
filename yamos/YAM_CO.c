@@ -55,6 +55,7 @@
 #include "YAM_main.h"
 #include "YAM_hook.h"
 #include "YAM_utilities.h"
+#include "classes/Classes.h"
 
 struct Config *C;
 struct Config *CE;
@@ -695,6 +696,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->FolderCntMenu = TRUE;
       co->MessageCntMenu = TRUE;
       co->InfoBar = IB_POS_CENTER;
+      strcpy(co->InfoBarText, "- Total: %t New: %n Unread: %u");
    }
    if (page == 9 || page < 0)
    {
@@ -845,6 +847,9 @@ void CO_Validate(struct Config *co, BOOL update)
 
          // Now we reorder the Maingroup accordingly to the InfoBar setting
          MA_SortWindow();
+
+         // Now we update the InfoBar because the text could have been changed
+         DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, FO_GetCurrentFolder());
 
          SaveLayout(FALSE);
          MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);

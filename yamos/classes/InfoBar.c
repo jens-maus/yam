@@ -43,6 +43,45 @@ struct Data
 };
 */
 
+/* Private Functions */
+/// GetFolderInfo()
+// this function creats a folder string and returns it
+char *GetFolderInfo(struct Folder *folder)
+{
+  char *src, dst[10];
+  static char bartxt[SIZE_DEFAULT/2];
+
+  // clear the bar text first
+  strcpy(bartxt, "");
+
+  // Lets create the label of the AppIcon now
+  for (src = C->InfoBarText; *src; src++)
+  {
+    if (*src == '%')
+    {
+      switch (*++src)
+      {
+        case '%': strcpy(dst, "%");                     break;
+        case 'n': sprintf(dst, "%ld", folder->New);     break;
+        case 'u': sprintf(dst, "%ld", folder->Unread);  break;
+        case 't': sprintf(dst, "%ld", folder->Total);   break;
+        case 's': sprintf(dst, "%ld", folder->Sent);    break;
+        case 'd': sprintf(dst, "%ld", folder->Deleted); break;
+      }
+    }
+    else
+    {
+      sprintf(dst, "%c", *src);
+    }
+
+    strcat(bartxt, dst);
+  }
+
+  return bartxt;
+}
+
+///
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
@@ -110,13 +149,13 @@ OVERLOAD(OM_NEW)
 }
 ///
 
+/* Public Methods */
 /// DECLARE(SetFolder)
 /* set a new folder and update it`s name & image in the infobar */
 DECLARE(SetFolder) // struct Folder *newFolder
 {
 	GETDATA;
 
-  static char folderInfo[256];
   struct Folder *folder = msg->newFolder;
   struct BodyChunkData *bcd = NULL;
 
@@ -126,9 +165,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
   set(data->TX_FOLDER, MUIA_Text_Contents, folder->Name);
 
   // now we are going to set some status field at the right side of the folder name
-  sprintf(folderInfo, "- Total: %ld New: %ld", folder->Total, folder->New);
-
-  set(data->TX_FINFO, MUIA_Text_Contents, folderInfo);
+  set(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(folder));
 
   // Prepare the GR_INFO group for adding a new child
   if(DoMethod(obj, MUIM_Group_InitChange))

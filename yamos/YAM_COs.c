@@ -80,11 +80,13 @@ void CO_SaveConfig(struct Config *co, char *fname)
    if (fh = fopen(fname, "w"))
    {
       fprintf(fh, "YCO3 - YAM Configuration\n");
+
       fprintf(fh, "\n[First steps]\n");
       fprintf(fh, "RealName         = %s\n", co->RealName);
       fprintf(fh, "EmailAddress     = %s\n", co->EmailAddress);
       fprintf(fh, "TimeZone         = %ld\n", co->TimeZone);
       fprintf(fh, "DaylightSaving   = %s\n", Bool2Txt(co->DaylightSaving));
+
       fprintf(fh, "\n[TCP/IP]\n");
       fprintf(fh, "SMTP-Server      = %s\n", co->SMTP_Server);
       fprintf(fh, "SMTP-Domain      = %s\n", co->SMTP_Domain);
@@ -102,6 +104,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
          fprintf(fh, "POP%02ld.UseAPOP    = %s\n", i, Bool2Txt(p3->UseAPOP));
          fprintf(fh, "POP%02ld.Delete     = %s\n", i, Bool2Txt(p3->DeleteOnServer));
       }
+
       fprintf(fh, "\n[New mail]\n");
       fprintf(fh, "AvoidDuplicates  = %s\n", Bool2Txt(co->AvoidDuplicates));
       fprintf(fh, "PreSelection     = %ld\n", co->PreSelection);
@@ -113,6 +116,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "NotifyType       = %ld\n", co->NotifyType);
       fprintf(fh, "NotifySound      = %s\n", co->NotifySound);
       fprintf(fh, "NotifyCommand    = %s\n", co->NotifyCommand);
+
       fprintf(fh, "\n[Filters]\n");
       for (i = 0; i < MAXRU; i++) if (co->RU[i])
       {
@@ -148,6 +152,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
          fprintf(fh, "FI%02ld.PlaySound   = %s\n", i, ru->PlaySound);
          fprintf(fh, "FI%02ld.MoveTo      = %s\n", i, ru->MoveTo);
       }
+
       fprintf(fh, "\n[Read]\n");
       fprintf(fh, "ShowHeader       = %ld\n", co->ShowHeader);
       fprintf(fh, "ShortHeaders     = %s\n", co->ShortHeaders);
@@ -161,6 +166,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "UseTextstyles    = %s\n", Bool2Txt(co->UseTextstyles));
       fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleWindows));
       fprintf(fh, "TranslationIn    = %s\n", co->TranslationIn);
+
       fprintf(fh, "\n[Write]\n");
       fprintf(fh, "ReplyTo          = %s\n", co->ReplyTo);
       fprintf(fh, "Organization     = %s\n", co->Organization);
@@ -173,6 +179,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "EdWrapMode       = %ld\n", co->EdWrapMode);
       fprintf(fh, "Editor           = %s\n", co->Editor);
       fprintf(fh, "LaunchAlways     = %s\n", Bool2Txt(co->LaunchAlways));
+
       fprintf(fh, "\n[Reply/Forward]\n");
       fprintf(fh, "ReplyHello       = %s\n", co->ReplyHello);
       fprintf(fh, "ReplyIntro       = %s\n", co->ReplyIntro);
@@ -192,10 +199,12 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "QuoteEmptyLines  = %s\n", Bool2Txt(co->QuoteEmptyLines));
       fprintf(fh, "CompareAddress   = %s\n", Bool2Txt(co->CompareAddress));
       fprintf(fh, "StripSignature   = %s\n", Bool2Txt(co->StripSignature));
+
       fprintf(fh, "\n[Signature]\n");
       fprintf(fh, "UseSignature     = %s\n", Bool2Txt(co->UseSignature));
       fprintf(fh, "TagsFile         = %s\n", co->TagsFile);
       fprintf(fh, "TagsSeparator    = %s\n", co->TagsSeparator);
+
       fprintf(fh, "\n[Lists]\n");
       fprintf(fh, "FolderCols       = %ld\n", co->FolderCols);
       fprintf(fh, "MessageCols      = %ld\n", co->MessageCols);
@@ -205,6 +214,8 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "FolderCntMenu    = %s\n", Bool2Txt(co->FolderCntMenu));
       fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
       fprintf(fh, "InfoBar          = %ld\n", co->InfoBar);
+      fprintf(fh, "InfoBarText      = %s\n", co->InfoBarText);
+
       fprintf(fh, "\n[Security]\n");
       fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
       fprintf(fh, "MyPGPID          = %s\n", co->MyPGPID);
@@ -215,6 +226,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "LogfileMode      = %ld\n", co->LogfileMode);
       fprintf(fh, "SplitLogfile     = %s\n", Bool2Txt(co->SplitLogfile));
       fprintf(fh, "LogAllEvents     = %s\n", Bool2Txt(co->LogAllEvents));
+
       fprintf(fh, "\n[Start/Quit]\n");
       fprintf(fh, "GetOnStartup     = %s\n", Bool2Txt(co->GetOnStartup));
       fprintf(fh, "SendOnStartup    = %s\n", Bool2Txt(co->SendOnStartup));
@@ -226,6 +238,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SendOnQuit       = %s\n", Bool2Txt(co->SendOnQuit));
       fprintf(fh, "CleanupOnQuit    = %s\n", Bool2Txt(co->CleanupOnQuit));
       fprintf(fh, "RemoveOnQuit     = %s\n", Bool2Txt(co->RemoveOnQuit));
+
       fprintf(fh, "\n[MIME]\n");
       for (i = 0; i < MAXMV; i++) if (co->MV[i])
       {
@@ -236,6 +249,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "IdentifyBin      = %s\n", Bool2Txt(co->IdentifyBin));
       fprintf(fh, "DetachDir        = %s\n", co->DetachDir);
       fprintf(fh, "AttachDir        = %s\n", co->AttachDir);
+
       fprintf(fh, "\n[Address book]\n");
       fprintf(fh, "GalleryDir       = %s\n", co->GalleryDir);
       fprintf(fh, "MyPictureURL     = %s\n", co->MyPictureURL);
@@ -244,6 +258,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "AddToAddrbook    = %ld\n", co->AddToAddrbook);
       fprintf(fh, "AddMyInfo        = %s\n", Bool2Txt(co->AddMyInfo));
       fprintf(fh, "AddrbookCols     = %ld\n", co->AddrbookCols);
+
       fprintf(fh, "\n[Scripts]\n");
       for (i = 0; i < MAXRX; i++)
       {
@@ -254,6 +269,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
          fprintf(fh, "Rexx%02ld.UseConsole= %s\n", i, Bool2Txt(co->RX[i].UseConsole));
          fprintf(fh, "Rexx%02ld.WaitTerm  = %s\n", i, Bool2Txt(co->RX[i].WaitTerm));
       }
+
       fprintf(fh, "\n[Mixed]\n");
       fprintf(fh, "TempDir          = %s\n", co->TempDir);
       fprintf(fh, "IconPosition     = %ld;%ld\n", co->IconPositionX, co->IconPositionY);
@@ -271,6 +287,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "XPKPackEncrypt   = %s;%ld\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
       fprintf(fh, "PackerCommand    = %s\n", co->PackerCommand);
       fprintf(fh, "AppIconText      = %s\n", co->AppIconText);
+
       fprintf(fh, "\n[Advanced]\n");
       fprintf(fh, "LetterPart       = %ld\n", co->LetterPart);
       fprintf(fh, "WriteIndexes     = %ld\n", co->WriteIndexes);
@@ -516,6 +533,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "FolderCntMenu"))  co->FolderCntMenu = Txt2Bool(value);
                if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
                if (!stricmp(buffer, "InfoBar"))        co->InfoBar = atoi(value);
+               if (!stricmp(buffer, "InfoBarText"))    stccpy(co->InfoBarText, value, SIZE_DEFAULT);
 /*9*/          if (!stricmp(buffer, "PGPCmdPath"))     stccpy(co->PGPCmdPath, value, SIZE_PATH);
                if (!stricmp(buffer, "MyPGPID"))        stccpy(co->MyPGPID, value, SIZE_DEFAULT);
                if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
@@ -714,6 +732,7 @@ void CO_GetConfig(void)
          CE->FolderCntMenu = GetMUICheck(gui->CH_FCNTMENU);
          CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
          CE->InfoBar       = GetMUICycle(gui->CY_INFOBAR);
+         GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT);
          break;
       case 9:
          GetMUIString(CE->PGPCmdPath          ,gui->ST_PGPCMD);
@@ -892,6 +911,7 @@ void CO_SetConfig(void)
          setcycle(gui->CY_INFOBAR,       CE->InfoBar);
          set(gui->CH_FCNTMENU, MUIA_Disabled, !PopupMenuBase);
          set(gui->CH_MCNTMENU, MUIA_Disabled, !PopupMenuBase);
+         setstring(gui->ST_INFOBARTXT   ,CE->InfoBarText);
          break;
       case 9:
          setstring   (gui->ST_PGPCMD    ,CE->PGPCmdPath);

@@ -227,6 +227,7 @@ struct CO_GUIData
    APTR CH_FCNTMENU;
    APTR CH_MCNTMENU;
    APTR CY_INFOBAR;
+   APTR ST_INFOBARTXT;
    APTR CH_WARNSUBJECT;
 };
 
@@ -449,6 +450,7 @@ struct Config
    char  LocalCharset[SIZE_CTYPE];
    char  IOCInterface[SIZE_SMALL];
    char  AppIconText[SIZE_COMMAND];
+   char  InfoBarText[SIZE_COMMAND];
 };
 
 enum SizeFormat { SF_DEFAULT=0, SF_MIXED, SF_1PREC, SF_2PREC, SF_3PREC };

@@ -4840,3 +4840,6 @@ Bottom
 MSG_CO_INFOBARPOS04 (//)
 Turned off
 ;
+MSG_CO_FOLDERLABEL (//)
+Folderlabel
+;
