@@ -20,6 +20,14 @@ Developer: Jens Langner (damato)
   different Write windows at once (damato)
 - Fixed: the "Export..." item in the popup menu exported the whole folder
   contents (damato)
+- Fixed: folders that "lost" their directory were automatically recreated
+  as folders of type "outgoing" (damato)
+- Fixed: pressing "cancel" in the password acquiration window causes YAM
+  to use a empty password (damato)
+- Fixed: changing the folder type doesn`t refresh the title of the mail
+  listview (damato)
+- Fixed: the FOLDERINFO arexx command returns the wrong ID number for
+  a "sent and received" folder type. (damato)
 
 - Changed: it is now actually compatible with the most common MBOX
   formats, e.g. MBOXRD <http://www.qmail.org/man/man5/mbox.html> (damato)
@@ -31,7 +39,9 @@ Developer: Jens Langner (damato)
   (damato)
 
 - Added: new hidden option "AutoColumnResize" for YAM to resize the NList
-  columns when switching folders if the option is enabled (it is by default)
+  columns when switching folders if the option is enabled, which it is by
+  default (damato)
+- Added: warning requester for the "crop attachments" operations (damato)
 
 
 A more detailed and recent history of changes can be viewed at
