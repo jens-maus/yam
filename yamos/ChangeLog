@@ -396,3 +396,8 @@
 2001-05-22  Gunther Nikl <gni@gecko.de>
 
     * converted _WBenchMsg to WBmsg initialised from argv
+
+2001-05-22  Gunther Nikl <gni@gecko.de>
+
+    * YAM_CO.c: removed PL_IconBody[]
+    * YAM_CL.c: added here
