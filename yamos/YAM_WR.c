@@ -969,10 +969,10 @@ BOOL FirstAddr=TRUE;
 				if(!t) continue; // can't find address for this entry - shouldn't happen
 				else DB(KPrintf("SetDefaultSecurity(): address is %s\n",t));
 
-				AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER, &hits, &tn);
-
-				if(0 == hits) currsec = 0;		// entry not in address book -> no security
-				else currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;	// else get default
+				if(AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, t, ASM_ADDRESS|ASM_USER|ASM_COMPLETE, &hits, &tn) && (NULL != tn->tn_User))
+					currsec = ((struct ABEntry*)(tn->tn_User))->DefSecurity;	// get default from entry
+				else
+					currsec = 0;		// entry not in address book -> no security
 
 				DB(KPrintf("SetDefaultSecurity(): currsec=%ld\n",currsec)); 
 				if(currsec != Security)
