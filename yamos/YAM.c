@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2003 by YAM Open Source Team
+ Copyright (C) 2000-2004 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -975,47 +975,49 @@ static BOOL CheckMCC(char *name, int minver, int minrev, BOOL req)
 ///
 /// InitLib
 //  Opens a library & on OS4 also the main interface
-static APTR InitLib(STRPTR libname, APTR *libbase, ULONG version, int revision, BOOL required, BOOL close)
+static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int revision, BOOL required, BOOL close)
 {
-   struct Library *lib = *libbase;
+   if(!libbase)
+    return NULL;
 
    // open the library
-   lib = OpenLibrary(libname, version);
+   *libbase = OpenLibrary(libname, version);
 
-   if(libbase && revision)
+   if(*libbase && revision)
    {
-      if(lib->lib_Version == version && lib->lib_Revision < revision)
+      if((*libbase)->lib_Version == version &&
+         (*libbase)->lib_Revision < revision)
       {
-         CloseLibrary(lib);
-         lib = NULL;
+         CloseLibrary(*libbase);
+         *libbase = NULL;
       }
    }
 
-   if(!lib && required)
+   if(!(*libbase) && required)
      Abort(MSG_ERR_OPENLIB, libname, version, revision);
 
-   if(lib && close)
+   if(*libbase && close)
    {
-      CloseLibrary(lib);
-      lib = NULL;
+      CloseLibrary(*libbase);
+      *libbase = NULL;
    }
 
    // if we end up here, we can open the OS4 base library interface
    #if defined(__amigaos4__)
-   if(lib)
+   if(*libbase)
    {
      APTR iFace = NULL;
 
      // get the "main" interface
-     iFace = GetInterface(lib, "main", 1L, NULL);
+     iFace = GetInterface(*libbase, "main", 1L, NULL);
 
      // if we weren`t able to obtain the main interface, lets close the library also
      if(iFace == NULL)
      {
         DB(kprintf("GetInterface() for %s failed.\n", libname);)
 
-        CloseLibrary(lib);
-        lib = NULL;
+        CloseLibrary(*libbase);
+        *libbase = NULL;
 
         if(required)
           Abort(MSG_ERR_OPENLIB, libname, version, revision);
@@ -1026,7 +1028,7 @@ static APTR InitLib(STRPTR libname, APTR *libbase, ULONG version, int revision, 
 
    return NULL;
    #else
-   return lib;
+   return *libbase;
    #endif
 }
 ///
@@ -1592,7 +1594,7 @@ int main(int argc, char **argv)
       if((IntuitionBase = OpenLibrary("intuition.library", 36)) &&
          (IIntuition = (APTR)GetInterface(IntuitionBase, "main", 1L, NULL)))
       #else
-      if((IntuitionBase = OpenLibrary("intuition.library", 36)))
+      if((IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library", 36)))
       #endif
       {
         #if defined(__amigaos4__)
@@ -1635,16 +1637,22 @@ int main(int argc, char **argv)
 
           #if defined(__amigaos4__)
           CloseLib(UtilityBase, IUtility);
+          IUtility = NULL;
           #else
           CloseLib(UtilityBase);
           #endif
+
+          UtilityBase = NULL;
         }
 
         #if defined(__amigaos4__)
         CloseLib(IntuitionBase, IIntuition);
+        IIntuition = NULL;
         #else
         CloseLib(IntuitionBase);
         #endif
+
+        IntuitionBase = NULL;
      }
 
      if(!goon) exit(0);

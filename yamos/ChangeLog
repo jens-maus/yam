@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-01-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: slightly modified InitLib() to correctly set the library
+      base from the pointer that is provided as an argument. Previously
+      only the local pointer was set and returned, which was not
+      exactly my intention in first place ;)
+      
 2004-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * OS4: finally YAM compiles and links with the AmigaOS4
