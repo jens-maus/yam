@@ -9,6 +9,8 @@
 
 #include <sys/types.h>
 
+#include "amiga-align.h"
+
 struct in_addr {
   u_long s_addr;
 };
@@ -50,6 +52,8 @@ struct addrinfo {
 */
 struct sockaddr;
 struct addrinfo;
+
+#include "default-align.h"
 
 #include <exec/types.h>
 

@@ -18,6 +18,8 @@
 #include <exec/types.h>
 #endif
 
+#include "amiga-align.h"
+
 #ifndef BKN_SERIAL
 #define BKN_SERIAL 0xfcf70000
 #endif
@@ -140,5 +142,7 @@ struct MUIP_Toolbar_Description
 #define Toolbar_KeyButton(flags, text, key)  { TDT_BUTTON, key,  flags, text, NULL, NULL}
 #define Toolbar_Space                        { TDT_SPACE,  NULL, NULL,  NULL, NULL, NULL}
 #define Toolbar_End                          { TDT_END,    NULL, NULL,  NULL, NULL, NULL}
+
+#include "default-align.h"
 
 #endif /* TOOLBAR_MCC_H */

@@ -3,6 +3,8 @@
 
 #include <exec/libraries.h>
 
+#include "amiga-align.h"
+
 #define GENESISNAME "AmiTCP:libs/genesis.library"
 
 #define GUF_TextObject  1   /* use a TextObject for loginname instead of StringObject *
@@ -29,5 +31,6 @@ struct ParseConfig_Data
    STRPTR pc_contents;  /* pointer to the argument's contents */
 };
 
+#include "default-align.h"
 
 #endif

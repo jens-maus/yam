@@ -1,6 +1,8 @@
 #ifndef CMANAGER_H
 #define CMANAGER_H
 
+#include "amiga-align.h"
+
 /*
     $VER: CManager.h 1.4 (30.5.98) © Simone Tellini
 */
@@ -135,7 +137,6 @@ struct CMData {
 #define CMGE_CHAT           (1 << 3)
 #define CMGE_MULTISELECT    (1 << 4)    //  CM_GetEntry returns a struct MinList *
 
-
-
+#include "default-align.h"
 
 #endif /* CMANAGER_H */

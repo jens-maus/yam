@@ -27,6 +27,8 @@
 #include <utility/tagitem.h>
 #endif
 
+#include "amiga-align.h"
+
 /**************************************************************************/
 
 #define URL_Tagbase TAG_USER
@@ -103,5 +105,7 @@ struct URL_MailerNode
 	TEXT           umn_ToFrontCmd[UMN_TOFRONTCMD_LEN];     /* command to bring mailer to front */
 	TEXT           umn_WriteMailCmd[UMN_WRITEMAILCMD_LEN]; /* command to write mail */
 };
+
+#include "default-align.h"
 
 #endif  /* LIBRARIES_OPENURL_H */

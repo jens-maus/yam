@@ -20,7 +20,7 @@
 #include <libraries/mui.h>
 #endif
 
-
+#include "amiga-align.h"
 
 #define MUIC_NList "NList.mcc"
 #define NListObject MUI_NewObject(MUIC_NList
@@ -581,6 +581,7 @@ struct NList_CopyColumnToClipMessage
   LONG str_pos2;
 };
 
+#include "default-align.h"
 
 #endif /* MUI_NList_MCC_H */
 

@@ -16,6 +16,7 @@ h*/
 #include "libraries/mui.h"
 #endif
 
+#include "amiga-align.h"
 
 /*** MUI Defines ***/
 
@@ -682,5 +683,7 @@ struct MUIP_NListtree_MultiTestMessage
             SelFlags,
             CurrType;
 };
+
+#include "default-align.h"
 
 #endif /* NLISTTREE_MCC_H */

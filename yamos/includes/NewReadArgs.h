@@ -19,6 +19,8 @@
 #include <workbench/startup.h>
 #endif
 
+#include "amiga-align.h"
+
 struct NewRDArgs {
 	/* you MUST initialize these fields 
 	   before calling NewReadArgs() !!! */
@@ -34,5 +36,7 @@ struct NewRDArgs {
 
 void NewFreeArgs(struct NewRDArgs *);
 LONG NewReadArgs(struct WBStartup *, struct NewRDArgs *);
+
+#include "default-align.h"
 
 #endif /* NEWREADARGS_H */

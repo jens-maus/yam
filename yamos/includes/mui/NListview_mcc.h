@@ -16,6 +16,8 @@
 #include <mui/NList_mcc.h>
 #endif
 
+#include "amiga-align.h"
+
 #define MUIC_NListview "NListview.mcc"
 #define NListviewObject MUI_NewObject(MUIC_NListview
 
@@ -55,5 +57,6 @@
 #define MUIV_NListview_HSB_On          0x0300
 #define MUIV_NListview_HSB_Off         0x0100
 
+#include "default-align.h"
 
 #endif /* MUI_NListview_MCC_H */

@@ -10,6 +10,9 @@
 #ifndef UTILITY_TAGITEM_H
 #include <utility/tagitem.h>
 #endif
+#ifndef LIBRARIES_MUI_H
+#include <libraries/mui.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,4 +66,5 @@ BOOL MUI_Layout(Object *obj,LONG left,LONG top,LONG width,LONG height,ULONG flag
 #ifdef __cplusplus
 }
 #endif
+
 #endif /* CLIB_MUIMASTER_PROTOS_H */

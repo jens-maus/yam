@@ -16,6 +16,8 @@
 #include <MUI/NListview_mcc.h>
 #endif
 
+#include "amiga-align.h"
+
 #define MUIC_NFloattext "NFloattext.mcc"
 #define NFloattextObject MUI_NewObject(MUIC_NFloattext
 
@@ -31,5 +33,6 @@
 #define MUIM_NFloattext_GetEntry            0x9d5100aF /* GM */
 struct  MUIP_NFloattext_GetEntry            { ULONG MethodID; LONG pos; APTR *entry; };
 
+#include "default-align.h"
 
 #endif /* MUI_NFloattext_MCC_H */

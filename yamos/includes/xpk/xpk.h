@@ -27,6 +27,8 @@
   #include <utility/hooks.h>
 #endif
 
+#include "amiga-align.h"
+
 #define XPKNAME "xpkmaster.library"
 
 /***************************************************************************
@@ -382,5 +384,7 @@ struct XpkPackerList {
 #define XPKOBJ_PACKERINFO	1	/* XpkPackerInfo structure */
 #define XPKOBJ_MODE		2	/* XpkMode structure */
 #define XPKOBJ_PACKERLIST	3	/* XpkPackerList structure */
+
+#include "default-align.h"
 
 #endif /* XPK_XPK_H */

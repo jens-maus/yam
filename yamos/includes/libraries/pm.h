@@ -40,6 +40,8 @@
 #include <intuition/classusr.h>
 #endif
 
+#include "amiga-align.h"
+
 /*
 // Tags passed to PM_OpenPopupMenuA and PM_FilterIMsgA
 */
@@ -303,5 +305,7 @@ typedef struct PopupMenu PopupMenu;
 
 #define PM_CHECKIT             0x40000000
 #define PM_CHECKED             0x80000000
+
+#include "default-align.h"
 
 #endif

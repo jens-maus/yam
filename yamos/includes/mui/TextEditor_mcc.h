@@ -12,6 +12,8 @@
 #include  <exec/types.h>
 #endif
 
+#include "amiga-align.h"
+
 #define   MUIC_TextEditor     "TextEditor.mcc"
 #define   TextEditorObject    MUI_NewObject(MUIC_TextEditor
 
@@ -142,5 +144,6 @@ struct ClickMessage
 #define LNSF_StrikeThru      (1<<LNSB_StrikeThru)
 #define LNSF_Thick           (1<<LNSB_Thick)
 
+#include "default-align.h"
 
 #endif /* TEXTEDITOR_MCC_H */

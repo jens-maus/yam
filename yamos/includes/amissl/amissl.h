@@ -1,6 +1,8 @@
 #ifndef AMISSL_AMISSL_H
 #define AMISSL_AMISSL_H
 
+#include "amiga-align.h"
+
 #include <amissl/asn1.h>
 #include <amissl/bio.h>
 #include <amissl/blowfish.h>
@@ -44,5 +46,7 @@
 
 #define RSA_PKCS1_SSLeay RSA_PKCS1_Default
 #define RSA_PKCS1_RSAref RSA_PKCS1_Default
+
+#include "default-align.h"
 
 #endif /* AMISSL_AMISSL_H */

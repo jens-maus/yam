@@ -126,6 +126,8 @@
 #include "clib/intuition_protos.h"
 #endif
 
+#include "amiga-align.h"
+
 
 /***************************************************************************
 ** Library specification
@@ -3174,6 +3176,6 @@ struct MUI_CustomClass
 };
 
 
-
+#include "default-align.h"
 
 #endif /* MUI_H */

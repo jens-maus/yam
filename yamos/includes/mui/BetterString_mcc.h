@@ -8,6 +8,8 @@
 #ifndef   BETTERSTRING_MCC_H
 #define   BETTERSTRING_MCC_H
 
+#include "amiga-align.h"
+
 #ifndef   EXEC_TYPES_H
 #include  <exec/types.h>
 #endif
@@ -36,5 +38,7 @@
 struct MUIP_BetterString_ClearSelected {ULONG MethodID; };
 struct MUIP_BetterString_FileNameStart {ULONG MethodID; STRPTR buffer; LONG pos; };
 struct MUIP_BetterString_Insert        {ULONG MethodID; STRPTR text; LONG pos; };
+
+#include "default-align.h"
 
 #endif /* BETTERSTRING_MCC_H */
