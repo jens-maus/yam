@@ -1,5 +1,8 @@
 2001-10-20  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * changed InfoBar label refresh not to refresh the folder image
+      also, because this causes some unnecessary flickering while
+      opening a read mail window.
     * added user ability to define the InfoBar label with own text
       and inputs from a folder. This finishes the missing features
       of the new InfoBar.

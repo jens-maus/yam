@@ -183,7 +183,7 @@ HOOKPROTONHNONP(MA_SetFolderInfoFunc, void)
    }
 
    // Update the Folder information in the InfoBar
-   DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, fo);
+   DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_RefreshText);
 
    set(G->MA->GUI.NL_FOLDERS, MUIA_ShortHelp, sh);
 }

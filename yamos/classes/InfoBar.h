@@ -50,6 +50,7 @@ struct Data
   Object *GA_GROUP;
   Object *GA_INFO;
   Object *GA_LABEL;
+  struct Folder *actualFolder;
 
 };
 

@@ -92,6 +92,7 @@ DISPATCHERPROTO(InfoBarDispatcher)
   {
     case OM_NEW                                  : return m_InfoBar_OM_NEW              (cl, obj, msg);
     case MUIM_InfoBar_SetFolder                  : return m_InfoBar_SetFolder           (cl, obj, (APTR)msg);
+    case MUIM_InfoBar_RefreshText                : return m_InfoBar_RefreshText         (cl, obj, (APTR)msg);
     case MUIM_InfoBar_ShowGauge                  : return m_InfoBar_ShowGauge           (cl, obj, (APTR)msg);
     case MUIM_InfoBar_ShowInfoText               : return m_InfoBar_ShowInfoText        (cl, obj, (APTR)msg);
     case MUIM_InfoBar_HideBars                   : return m_InfoBar_HideBars            (cl, obj, (APTR)msg);

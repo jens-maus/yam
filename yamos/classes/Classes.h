@@ -161,6 +161,7 @@ ULONG m_Recipientstring_CurrentRecipient    (struct IClass *cl, Object *obj, str
 #define MUIC_InfoBar "YAM_InfoBar"
 #define InfoBarObject YAM_NewObject(MUIC_InfoBar
 #define MUIM_InfoBar_SetFolder                        0xefff1101
+#define MUIM_InfoBar_RefreshText                      0x98fba301
 #define MUIM_InfoBar_ShowGauge                        0xe0f79501
 #define MUIM_InfoBar_ShowInfoText                     0xe97b7001
 #define MUIM_InfoBar_HideBars                         0xb1f7a401
@@ -169,6 +170,11 @@ struct MUIP_InfoBar_SetFolder
 {
   ULONG methodID;
   struct Folder *newFolder;
+};
+
+struct MUIP_InfoBar_RefreshText
+{
+  ULONG methodID;
 };
 
 struct MUIP_InfoBar_ShowGauge
@@ -192,6 +198,7 @@ struct MUIP_InfoBar_HideBars
 ULONG InfoBarGetSize( void );
 ULONG m_InfoBar_OM_NEW              (struct IClass *cl, Object *obj, Msg msg);
 ULONG m_InfoBar_SetFolder           (struct IClass *cl, Object *obj, struct MUIP_InfoBar_SetFolder *msg);
+ULONG m_InfoBar_RefreshText         (struct IClass *cl, Object *obj, struct MUIP_InfoBar_RefreshText *msg);
 ULONG m_InfoBar_ShowGauge           (struct IClass *cl, Object *obj, struct MUIP_InfoBar_ShowGauge *msg);
 ULONG m_InfoBar_ShowInfoText        (struct IClass *cl, Object *obj, struct MUIP_InfoBar_ShowInfoText *msg);
 ULONG m_InfoBar_HideBars            (struct IClass *cl, Object *obj, struct MUIP_InfoBar_HideBars *msg);

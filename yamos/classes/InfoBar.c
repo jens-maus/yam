@@ -40,6 +40,7 @@ struct Data
   Object *GA_GROUP;
   Object *GA_INFO;
   Object *GA_LABEL;
+  struct Folder *actualFolder;
 };
 */
 
@@ -159,6 +160,8 @@ DECLARE(SetFolder) // struct Folder *newFolder
   struct Folder *folder = msg->newFolder;
   struct BodyChunkData *bcd = NULL;
 
+  data->actualFolder = folder;
+
   if(!folder) return NULL;
 
   // set the name of the folder as the info text
@@ -204,6 +207,21 @@ DECLARE(SetFolder) // struct Folder *newFolder
 
     DoMethod(obj, MUIM_Group_ExitChange);
   }
+}
+///
+/// DECLARE(RefreshText)
+/* refreshes the text at the right of the folder name */
+DECLARE(RefreshText)
+{
+	GETDATA;
+
+  // set the name of the folder as the info text
+  set(data->TX_FOLDER, MUIA_Text_Contents, data->actualFolder->Name);
+
+  // now we are going to set some status field at the right side of the folder name
+  set(data->TX_FINFO, MUIA_Text_Contents, GetFolderInfo(data->actualFolder));
+
+  return 0;
 }
 ///
 /// DECLARE(ShowGauge)
