@@ -64,7 +64,7 @@ struct Library *       MiamiBase = NULL;
 struct Library *       MUIMasterBase = NULL;
 struct Library *       OpenURLBase = NULL;
 struct PopupMenuBase * PopupMenuBase = NULL;
-struct RxsLib *        RexxSysBase;
+struct RxsLib *        RexxSysBase = NULL;
 struct Library *       SocketBase = NULL;
 struct UtilityBase *   UtilityBase = NULL;
 struct Library *       WorkbenchBase = NULL;
@@ -466,11 +466,11 @@ void Terminate(void)
    for (i = 0; i < MAXEA; i++) DisposeModule(&G->EA[i]);
    for (i = 0; i < MAXRE; i++) if (G->RE[i]) { RE_CleanupMessage(i); DisposeModule(&G->RE[i]); }
    for (i = 0; i <=MAXWR; i++) if (G->WR[i]) { WR_Cleanup(i); DisposeModule(&G->WR[i]); }
-   if (G->TR) { TR_Cleanup(); TR_CloseTCPIP(); }
-   DisposeModule(&G->FO);
-   DisposeModule(&G->FI);
-   DisposeModule(&G->ER);
-   DisposeModule(&G->US);
+   if (G->TR) { TR_Cleanup(); TR_CloseTCPIP(); DisposeModule(&G->TR); }
+   if (G->FO) DisposeModule(&G->FO);
+   if (G->FI) DisposeModule(&G->FI);
+   if (G->ER) DisposeModule(&G->ER);
+   if (G->US) DisposeModule(&G->US);
    if (G->MA)
    {
       MA_UpdateIndexes(FALSE);
@@ -490,8 +490,8 @@ void Terminate(void)
          free(flist);
       }
    }
-   DisposeModule(&G->AB);
-   DisposeModule(&G->MA);
+   if (G->AB) DisposeModule(&G->AB);
+   if (G->MA) DisposeModule(&G->MA);
    if (G->TTin) free(G->TTin);
    if (G->TTout) free(G->TTout);
    for (i = 0; i < MAXASL; i++) if (G->ASLReq[i]) MUI_FreeAslRequest(G->ASLReq[i]);
@@ -510,7 +510,7 @@ void Terminate(void)
    if (XpkBase)       CloseLibrary(XpkBase);
    if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
    if (MUIMasterBase) CloseLibrary(MUIMasterBase);
-   if (RexxSysBase) CloseLibrary(RexxSysBase);
+   if (RexxSysBase) CloseLibrary((struct Library *)RexxSysBase);
    if (IFFParseBase) CloseLibrary(IFFParseBase);
    if (KeymapBase) CloseLibrary(KeymapBase);
    if (WorkbenchBase) CloseLibrary(WorkbenchBase);
@@ -695,7 +695,7 @@ void Initialise(BOOL hidden)
    WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
    KeymapBase = InitLib("keymap.library", 36, 0, TRUE, FALSE);
    IFFParseBase = InitLib("iffparse.library", 36, 0, TRUE, FALSE);
-   RexxSysBase = InitLib("rexxsyslib.library", 36, 0, TRUE, FALSE);
+   RexxSysBase = (struct RxsLib *)InitLib("rexxsyslib.library", 36, 0, TRUE, FALSE);
    MUIMasterBase = InitLib("muimaster.library", 19, 0, TRUE, FALSE);
 
    // we open the popupmenu.library for the ContextMenus in YAM but it`s not a MUST.
@@ -766,13 +766,18 @@ void DoStartup(BOOL nocheck, BOOL hide)
    if (C->CheckBirthdates && !nocheck && !hide) AB_CheckBirthdates();
    if (TR_IsOnline())
    {
-      if (C->GetOnStartup && !nocheck) {
-         MA_PopNow(POP_START,-1);
+      if (C->GetOnStartup && !nocheck)
+      {
+         MA_PopNow(POP_START, -1);
          if (G->TR) DisposeModule(&G->TR);
+         DoMethod(G->App, MUIM_Application_InputBuffered, TAG_DONE);
       }
-      if (C->SendOnStartup && !nocheck) {
+
+      if (C->SendOnStartup && !nocheck)
+      {
          SendWaitingMail();
          if (G->TR) DisposeModule(&G->TR);
+         DoMethod(G->App, MUIM_Application_InputBuffered, TAG_DONE);
       }
    }
 }
@@ -928,8 +933,9 @@ void main(int argc, char **argv)
       {
          if (signals)
          {
-            signals = Wait(signals | timsigs | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_F | appsigs | notsigs0 | notsigs1 | rexsigs);
-            if (signals & SIGBREAKF_CTRL_C) break;
+            signals = Wait(signals | timsigs | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | appsigs | notsigs0 | notsigs1 | rexsigs);
+            if (signals & SIGBREAKF_CTRL_C) { ret = 1; break; }
+            if (signals & SIGBREAKF_CTRL_D) { ret = 0; break; }
             if (signals & SIGBREAKF_CTRL_F) PopUp();
             if (signals & timsigs) TC_Dispatcher();
             if (signals & rexsigs) ARexxDispatch(G->RexxHost);
@@ -973,6 +979,7 @@ void main(int argc, char **argv)
       if (C->SendOnQuit && !args.nocheck) if (TR_IsOnline()) SendWaitingMail();
       if (C->CleanupOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteOldHook);
       if (C->RemoveOnQuit) DoMethod(G->App, MUIM_CallHook, &MA_DeleteDeletedHook);
+
       if (ret == 1)
       {
          yamLast = TRUE;
