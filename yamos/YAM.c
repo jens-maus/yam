@@ -38,7 +38,7 @@ __near long __YAM_STACK = 32768;
 __near long __buffsize = 8192;
 __near long __MemPoolPuddleSize = 16384;
 
-struct Library *WorkbenchBase = NULL, *IconBase = NULL;
+struct Library *WorkbenchBase = NULL, *IconBase = NULL, *KeymapBase = NULL, *IFFParseBase = NULL;
 struct Library *DataTypesBase = NULL, *MUIMasterBase = NULL, *XpkBase = NULL;
 struct Library *OpenURLBase = NULL, *SocketBase = NULL, *CManagerBase = NULL;
 struct LocaleBase *LocaleBase = NULL;
@@ -109,7 +109,7 @@ void TC_Start(void)
    TCData.req->tr_node.io_Command = TR_ADDREQUEST;
    TCData.req->tr_time.tv_secs    = 1;
    TCData.req->tr_time.tv_micro   = 0;
-   SendIO((struct IORequest *)TCData.req);
+   SendIO(&TCData.req->tr_node);
 }
 
 //  Frees timer resources
@@ -119,11 +119,11 @@ void TC_Exit(void)
    {
       if (TCData.req)
       {
-         if (CheckIO((struct IORequest *)TCData.req)) return;
-         AbortIO((struct IORequest *)TCData.req);
-         WaitIO((struct IORequest *)TCData.req);
-         CloseDevice((struct IORequest *)TCData.req);
-         DeleteExtIO((struct IORequest *)TCData.req);
+         if (CheckIO(&TCData.req->tr_node)) return;
+         AbortIO(&TCData.req->tr_node);
+         WaitIO(&TCData.req->tr_node);
+         CloseDevice(&TCData.req->tr_node);
+         DeleteIORequest(&TCData.req->tr_node);
       }
       DeleteMsgPort(TCData.port);
    }
@@ -135,8 +135,8 @@ void TC_Exit(void)
 BOOL TC_Init(void)
 {
    if ((TCData.port = CreateMsgPort()))
-      if ((TCData.req = (struct timerequest *)CreateExtIO(TCData.port, sizeof(struct timerequest))))
-         if (!OpenDevice(TIMERNAME, UNIT_VBLANK, (struct IORequest *)TCData.req, 0))
+      if ((TCData.req = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest))))
+         if (!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.req->tr_node, 0))
             return TRUE;
    return FALSE;
 }
@@ -156,10 +156,10 @@ BOOL TC_ActiveEditor(int wrwin)
 //  Dispatcher for timer class (called once every second)
 void TC_Dispatcher(void)
 {
-   if (CheckIO((struct IORequest *)TCData.req))
+   if (CheckIO(&TCData.req->tr_node))
    {
       int i;
-      WaitIO((struct IORequest *)TCData.req);
+      WaitIO(&TCData.req->tr_node);
       if (++G->SI_Count >= C->WriteIndexes && C->WriteIndexes)
          if (!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
          {
@@ -470,9 +470,9 @@ void Terminate(void)
    if (G->TTin) free(G->TTin);
    if (G->TTout) free(G->TTout);
    for (i = 0; i < MAXASL; i++) if (G->ASLReq[i]) MUI_FreeAslRequest(G->ASLReq[i]);
-   for (i = 0; i < MAXWR+1; i++) if (G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port) DeletePort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+   for (i = 0; i < MAXWR+1; i++) if (G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port) DeleteMsgPort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
    if (G->AppIcon) RemoveAppIcon(G->AppIcon);
-   if (G->AppPort) DeletePort(G->AppPort);
+   if (G->AppPort) DeleteMsgPort(G->AppPort);
    if (G->RexxHost) CloseDownARexxHost(G->RexxHost);
    TC_Exit();
    if (G->AY_AboutText) FreeStrBuf(G->AY_AboutText);
@@ -695,10 +695,10 @@ void Initialise(BOOL hidden)
    for (i = 0; i < MAXASL; i++)
       if (!(G->ASLReq[i] = MUI_AllocAslRequestTags(ASL_FileRequest, ASLFR_RejectIcons, TRUE,
          TAG_END))) Abort(GetStr(MSG_ErrorAslStruct));
-   G->AppPort = CreatePort(NULL, 0);
+   G->AppPort = CreateMsgPort();
    for (i = 0; i < 3; i++)
    {
-      G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreatePort(NULL, 0);
+      G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort();
       G->WR_NRequest[i].nr_Name = (UBYTE *)G->WR_Filename[i];
       G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
    }
@@ -814,17 +814,17 @@ void main(int argc, char **argv)
 #endif
 {
    struct NewRDArgs nrda;
-   struct { STRPTR user;
-            STRPTR password;
-            STRPTR maildir;
-            STRPTR prefsfile;
+   struct { char  *user;
+            char  *password;
+            char  *maildir;
+            char  *prefsfile;
             LONG   nocheck;
             LONG   hide;
             LONG   debug;
-            STRPTR mailto;
-            STRPTR subject;
-            STRPTR letter;
-            STRPTR *attach;
+            char  *mailto;
+            char  *subject;
+            char  *letter;
+            char **attach;
           } args = { NULL, NULL, NULL, NULL, FALSE, FALSE, FALSE, NULL, NULL, NULL, NULL };
    int wrwin, err, ret;
    char **sptr, progdir[SIZE_PATH];
@@ -889,7 +889,7 @@ void main(int argc, char **argv)
             if (args.mailto) setstring(G->WR[wrwin]->GUI.ST_TO, args.mailto);
             if (args.subject) setstring(G->WR[wrwin]->GUI.ST_SUBJECT, args.subject);
             if (args.letter) FileToEditor(args.letter, G->WR[wrwin]->GUI.TE_EDIT);
-            if (args.attach) for (sptr = (char**)args.attach; *sptr; sptr++)
+            if (args.attach) for (sptr = args.attach; *sptr; sptr++)
                if (FileSize(*sptr) >= 0) WR_AddFileToList(wrwin, *sptr, NULL, FALSE);
          }
          yamFirst = FALSE;
