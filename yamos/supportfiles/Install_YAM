@@ -229,6 +229,7 @@
 (set #def_cat_lang #def_lang_Deutsch)
 (set #def_doc_lang #def_doc_Deutsch)
 (set #wrongOS  "YAM benötigt OS3.0 oder höher\n")
+(set #wrongMOS "MorphOS wurde nicht gefunden!\n")
 (set #wrongMUI "YAM benötigt MUI3.8 oder höher\n")
 (set #wrongCPU "YAM läuft nur ab einer 68020 CPU\n")
 (set #proc_type "Welche YAM-Version wollen Sie installieren?")
@@ -243,7 +244,42 @@
                         "(Englisch ist eingebaut)"))
 (set #lang_manual "Wählen Sie eine Sprache für die Online-AmigaGuide-Hilfe")
 (set #icons_prompt "Welche Grafiken wollen Sie installieren?")
+(set #icons_help (cat "Bitte wählen Sie das Iconpaket das sie installieren wollen:\n\n"
+                      "- MagicWB (8 Farben)\n"
+                      "- ProLite (16 Farben)\n"
+                      "- NewIcons (32 Farben)\n"
+                      "- GlowIcons (64 Farben)\n"
+                      "- GlowIcons-2 (64 Farben)"))
 (set #icons_none "Keine")
+(set #charset_help (cat "YAM kann Zeichensatzkonvertierungstabellen für das lesen, "
+                        "bzw. schreiben von Textdateien verwenden. Diese Tabellen "
+                        "sind reine Textdaten die in \"YAM:Charsets/\" abgelegt "
+                        "werden und die jeweilige Zeichenkonvertierung beinhalten. "
+                        "Zum Beispiel werden hier betonte Vokale von ASCII 8bit zu "
+                        "ASCII 7bit oder von ISO-Latin-2 zu AmigaPL konvertiert.\n\n"
+                        "Wenn Sie diese Funktionalität nicht benötigen, können Sie "
+                        "durch überspringen dieses Installationsteiles rund 10kB an "
+                        "Daten einsparen.\n"))
+(set #parser_help (cat "YAM 2.4+ bietet die Möglichkeit zusätzlich zu einer "
+                       "manuellen Konvertierung der Zeichensätze, auch gewisse "
+                       "Konvertierungen voll automatisch anhand von sogenannten "
+                       "Parserdefinitionen durchzuführen. Dies ist insbesondere "
+                       "für Länder wie Russland nützlich da es dort unterschiedlichste "
+                       "Zeichensatzdefinitionen gibt. In der Tat werden hier momentan "
+                       "nur Win1250, DOS866 und KOI8 Autokonvertierungen für den "
+                       "Kyrillischen Raum angeboten.\n\n"
+                       "Falls Sie diese Funktionalität nicht benötigen können Sie "
+                       "durch überspringen dieses Installationsteiles rund 50kB an "
+                       "Daten einsparen.\n"))
+(set #imagepool_prompt "Lösche \"libs:imagepool.library\"")
+(set #imagepool_help (cat "Die Toolbar.mcc 15.8 Klasse die bei YAM 2.4 zum Einsatz kommt "
+                          "unterstützt die vorherige imagepool.library nicht mehr. "
+                          "Wenn keinerlei andere Anwendung diese mehr benötigt wird "
+                          "Ihnen vorgeschlagen diese nun automatisch löschen zu lassen.\n"))
+(set #yamtz_prompt "Lösche \"ENV(ARC):YAM_TZ\"")
+(set #yamtz_help (cat "YAM 2.4+ benötigt die \"YAM_TZ\" Umgebungsvariable nicht mehr, "
+                      "da sämtliche Zeitzonendefinitionen nun direkt unterstützt werden. "
+                      "Sie können nun also in Ruhe diese Datei automatisch löschen lassen.\n"))
 (set #assign_prompt (cat "In S:USER-STARTUP sollte ein Assign YAM: eingefügt werden.\n"
                          "Sind Sie damit einverstanden?"))
 (set #assign_help (cat "Wenn Sie vom Installer gefragt werden, ob er diese Zuweisung "
@@ -1207,7 +1243,6 @@
 (copyfiles (source "/Rexx/")
            (dest ARexx_dir)
            (all)
-           (confirm)
 )
 (copyfiles (source "/Rexx.info") (dest YAM_dir) (noposition))
 
