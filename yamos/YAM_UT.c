@@ -2977,9 +2977,9 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
       default:      out = outdef; in = Open("NIL:", MODE_OLDFILE); break;
    }
    if (!outdef) asynch = FALSE;
-   if (_WBenchMsg)
+   if (WBmsg)
    {
-      path = CloneWorkbenchPath(_WBenchMsg);
+      path = CloneWorkbenchPath(WBmsg);
       if ((ret = SystemTags(cmd, SYS_Input,in, SYS_Output,out, NP_Path,path, NP_StackSize,C->StackSize, SYS_Asynch,asynch, TAG_DONE)) == -1) FreeWorkbenchPath(path);
    }
    else ret = SystemTags(cmd, SYS_Input,in, SYS_Output,out, NP_StackSize,C->StackSize, SYS_Asynch,asynch, TAG_DONE);

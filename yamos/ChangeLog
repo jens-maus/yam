@@ -392,3 +392,7 @@
     * put back all fold/unfold statements (///) for our beloved GoldED users :)
       This will break Dirks plan to remove all "//" comments, but I think that`s
       acceptable. ;)
+
+2001-05-22  Gunther Nikl <gni@gecko.de>
+
+    * converted _WBenchMsg to WBmsg initialised from argv
