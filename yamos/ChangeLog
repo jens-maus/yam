@@ -1,16 +1,21 @@
+2001-12-08  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * we use a Recipientstring for the return address specification
+      in the configuration of AB Lists now.
+
 2001-12-07  Jens Langner <Jens.Langner@htw-dresden.de>
 
-		* fixed bug in email cache that caused that new entries weren`t
-			added to the cache if it was already filled up completly.
-		* the email cache check routines for the addressbook now only
-			check for a existing AB entry with the email address because we
-			don`t want to have duplicate entries in the AB and EmailCache.
+    * fixed bug in email cache that caused that new entries weren`t
+      added to the cache if it was already filled up completly.
+    * the email cache check routines for the addressbook now only
+      check for a existing AB entry with the email address because we
+      don`t want to have duplicate entries in the AB and EmailCache.
 
 2001-12-05  Jens Langner <Jens.Langner@htw-dresden.de>
 
-		* added support for emailcache resolving in recipientstrings.
-			Now YAM should also fully resolve a email adress out of the
-			email cache if the user press return.
+    * added support for emailcache resolving in recipientstrings.
+      Now YAM should also fully resolve a email adress out of the
+      email cache if the user press return.
 
 2001-12-04  Jens Langner <Jens.Langner@htw-dresden.de>
 
@@ -30,7 +35,7 @@
 
 2001-12-03  Jens Langner <Jens.Langner@htw-dresden.de>
 
-		* removed the tiny font from the Autodetect button in the folder
+    * removed the tiny font from the Autodetect button in the folder
       configuration following the MUI Styleguide.
     * reapplied the tiny font in the info bar.
 

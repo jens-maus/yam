@@ -604,7 +604,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                      Child, Label2(GetStr(MSG_EA_Alias)),
                      Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,GetStr(MSG_EA_Alias)),
                      Child, Label2(GetStr(MSG_EA_ReturnAddress)),
-                     Child, data->GUI.ST_ADDRESS = MakeString(SIZE_ADDRESS,GetStr(MSG_EA_ReturnAddress)),
+										 Child, MakeAddressField(&data->GUI.ST_ADDRESS, GetStr(MSG_EA_ReturnAddress), MSG_HELP_EA_ST_ADDRESS_L, ABM_TO, -1, FALSE),
                      Child, Label2(GetStr(MSG_EA_MLName)),
                      Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,GetStr(MSG_EA_MLName)),
                      Child, Label2(GetStr(MSG_EA_Description)),
