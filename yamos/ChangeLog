@@ -1,3 +1,10 @@
+2002-04-19  Jens Langner <Jens.Langner@htw-dresden.de>
+
+    * fixed a TCP/IP issue flaw within the TR_Connect() function were it could
+      have happened that if a particular host has 2 different IPs in the
+      DNS and the first was down, YAM didn`t try to connect to the other one
+      instead and just reported a error.
+
 2002-04-17  Jens Langner <Jens.Langner@htw-dresden.de>
 
     * fixed behaviour of status flag ordering again a bit. Now it should

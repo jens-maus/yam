@@ -29,6 +29,7 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <clib/socket_protos.h>
 #include <libraries/iffparse.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
@@ -349,30 +350,69 @@ static void TR_Disconnect(void)
 //  Connects to a internet service
 static int TR_Connect(char *host, int port)
 {
-   struct hostent *hostaddr;
+  int i;
+  struct hostent *hostaddr;
 
-   if (!(hostaddr = GetHostByName((STRPTR)host))) return -1;
-   G->TR_INetSocketAddr.sin_len = sizeof(G->TR_INetSocketAddr);
-   G->TR_INetSocketAddr.sin_family = AF_INET;
-   G->TR_INetSocketAddr.sin_port = port;
-   G->TR_INetSocketAddr.sin_addr.s_addr = 0;
-   memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr, hostaddr->h_length);
+  // get the hostent out of the supplied hostname
+  if(!(hostaddr = GetHostByName((STRPTR)host)))
+  {
+    return -1;
+  }
 
-   G->TR_Socket = Socket(hostaddr->h_addrtype, SOCK_STREAM, 0);
-   if (G->TR_Socket == -1) {
-      TR_Disconnect();
-      return -2;
-   }
+#ifdef DEBUG
+  kprintf("Host %s :\n", host);
+  kprintf("  Officially:\t%s\n", hostaddr->h_name);
+  kprintf("  Aliases:\t");
 
-   if (Connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1) {
+  for(i=0; hostaddr->h_aliases[i]; ++i)
+  {
+    if(i) kprintf(", ");
+    kprintf("%s", hostaddr->h_aliases[i]);
+  }
+
+  kprintf("\n  Type:\t\t%s\n", hostaddr->h_addrtype == AF_INET ? "AF_INET" : "AF_INET6");
+  if(hostaddr->h_addrtype == AF_INET)
+  {
+    for(i=0; hostaddr->h_addr_list[i]; ++i)
+    {
+      kprintf("  Address:\t%s\n", Inet_NtoA(((struct in_addr *)hostaddr->h_addr_list[i])->s_addr));
+    }
+  }
+#endif
+
+  // lets create a standard AF_INET socket now
+  G->TR_Socket = Socket(AF_INET, SOCK_STREAM, 0);
+  if (G->TR_Socket == -1)
+  {
+    TR_Disconnect();
+    return -2;
+  }
+
+  // copy the hostaddr data in a local copy for further reference
+  memset(&G->TR_INetSocketAddr, 0, sizeof(G->TR_INetSocketAddr));
+  G->TR_INetSocketAddr.sin_len          = sizeof(G->TR_INetSocketAddr);
+  G->TR_INetSocketAddr.sin_family       = AF_INET;
+  G->TR_INetSocketAddr.sin_port         = htons(port);
+
+  // now we try a connection for every address we have for this host
+  // because a hostname can have more than one IP in h_addr_list[]
+  for(i=0; hostaddr->h_addr_list[i]; i++)
+  {
+    memcpy(&G->TR_INetSocketAddr.sin_addr, hostaddr->h_addr_list[i], hostaddr->h_length);
+
+    if(Connect(G->TR_Socket, (struct sockaddr *)&G->TR_INetSocketAddr, sizeof(G->TR_INetSocketAddr)) != -1)
+    {
+      // if all works and we finally established a connection we can return with zero.
       return 0;
-   }
+    }
 
-   /* Preparation for non-blocking I/O */
-   if (Errno() == EINPROGRESS) return 0;
+    // Preparation for non-blocking I/O
+    if(Errno() == EINPROGRESS) return 0;
+  }
 
-   TR_Disconnect();
-   return -3;
+  // if we end up here something went really wrong
+  TR_Disconnect();
+  return -3;
 }
 ///
 /// TR_RecvDat
