@@ -201,10 +201,10 @@ void MD5Update(struct MD5Context *ctx, unsigned char *buf, unsigned len)
       if(len < t)
       {
          memcpy(p, buf, len);
-         return;
-      }
+         return;
+      }
       memcpy(p, buf, t);
-      byteReverse(ctx->buffer, 16);
+      byteReverse(ctx->buffer, 16);
       MD5Transform(ctx->state, (unsigned long *)ctx->buffer);
       buf += t;
       len -= t;
@@ -232,7 +232,7 @@ void MD5Update(struct MD5Context *ctx, unsigned char *buf, unsigned len)
  */
 void MD5Final(unsigned char digest[16], struct MD5Context *ctx)
 {
-   unsigned count;
+   unsigned count;
    unsigned char *p;
 
    /* Compute number of bytes mod 64 */
@@ -243,11 +243,11 @@ void MD5Final(unsigned char digest[16], struct MD5Context *ctx)
    p = ctx->buffer + count;
    *p++ = 0x80;
 
-   /* Bytes of padding needed to make 64 bytes */
+   /* Bytes of padding needed to make 64 bytes */
    count = 64 - 1 - count;
 
    /* Pad out to 56 mod 64 */
-   if(count < 8)
+   if(count < 8)
    {
       /* Two lots of padding:  Pad the first block to 64 bytes */
       memset(p, 0, count);
@@ -261,10 +261,10 @@ void MD5Final(unsigned char digest[16], struct MD5Context *ctx)
    {
       /* Pad block to 56 bytes */
       memset(p, 0, count-8);
-   }
+   }
    byteReverse(ctx->buffer, 14);
 
-   /* Append length in bits and transform */
+   /* Append length in bits and transform */
    ((unsigned long *)ctx->buffer)[ 14 ] = ctx->count[0];
    ((unsigned long *)ctx->buffer)[ 15 ] = ctx->count[1];
 
