@@ -101,7 +101,7 @@ unsigned char *PPtr[16];
 /* local protos */
 static int GetWord(char **rptr, char *wbuf, int max);
 static char *ReflowParagraph(char *start, char *end, int lmax, char *dest);
-static char *RemoveQuoteString(char *start, char *end, char *quot, char *dest);
+static void RemoveQuoteString(char *start, char *end, char *quot, char *dest);
 static char *InsertQuoteString(char *start, char *quote, FILE *out);
 static void SaveParagraph(char *start, char *end, char *prefix, FILE *out);
 static char *FileToBuffer(char *file);
@@ -1316,16 +1316,17 @@ static char *ReflowParagraph(char *start, char *end, int lmax, char *dest)
 ///
 /// RemoveQuoteString
 //  Removes reply prefix
-static char *RemoveQuoteString(char *start, char *end, char *quot, char *dest)
+static void RemoveQuoteString(char *start, char *end, char *quot, char *dest)
 {
+   int quotlen = strlen(quot);
+
    while (start <= end)
    {
-      if (!strncmp(start, quot, strlen(quot))) start += strlen(quot);
+      if (!strncmp(start, quot, quotlen)) start += quotlen;
       while (*start && *start != '\n') *dest++ = *start++;
       if (*start) *dest++ = *start++;
    }
-   *(dest--) = 0;
-   return dest;
+   *dest = '\0'; // null-terminate
 }
 ///
 /// InsertQuoteString
