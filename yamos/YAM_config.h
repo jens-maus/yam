@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2001 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include <libraries/mui.h>
 
 #include "YAM_find.h"
+#include "YAM_transfer.h"
 
 #define FOCOLNUM 5
 #define MACOLNUM 8  // the maximum number of columns the MessageListview can have
@@ -436,6 +437,7 @@ struct Config
    BOOL  AutoColumnResize;
    BOOL  EmbeddedReadPane;
    BOOL  StatusChangeDelayOn;
+   BOOL  SysCharsetCheck;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;
@@ -495,7 +497,7 @@ struct Config
    char  XPKPack[5];
    char  XPKPackEncrypt[5];
    char  SupportSite[SIZE_HOST];
-   char  LocalCharset[SIZE_CTYPE];
+   char  LocalCharset[SIZE_CTYPE+1];
    char  IOCInterface[SIZE_SMALL];
    char  AppIconText[SIZE_COMMAND];
    char  InfoBarText[SIZE_COMMAND];

@@ -30,6 +30,7 @@
 #include <string.h>
 
 #include "YAM_debug.h"
+#include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_locale.h"
 #include "YAM_mime.h"
@@ -1664,7 +1665,7 @@ int rfc2047_encode_file(FILE *fh, const char *str,
                 if(tt && tt->DestCharset && tt->DestCharset[0])
                   move_start = sprintf(encode_buf, "=?%s?Q?", tt->DestCharset);
                 else
-                  move_start = sprintf(encode_buf, "=?ISO-8859-1?Q?");
+                  move_start = sprintf(encode_buf, "=?%s?Q?", C->LocalCharset);
 
                 // then move the other stuff to the start again
                 memmove(encode_buf+move_start, split_pos, ebp-split_pos);
@@ -1743,7 +1744,7 @@ int rfc2047_encode_file(FILE *fh, const char *str,
           if(tt && tt->DestCharset && tt->DestCharset[0])
             ebp += sprintf(ebp, "=?%s?Q?", tt->DestCharset);
           else
-            ebp += sprintf(ebp, "=?ISO-8859-1?Q?");
+            ebp += sprintf(ebp, "=?%s?Q?", C->LocalCharset);
         }
 
         // so this is where the actual encoding is performed now.

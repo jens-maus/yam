@@ -5473,3 +5473,15 @@ image only
 MSG_RE_SImageOnly (//)
 Image only
 ;
+MSG_CO_CHARSETWARN_TITLE (//)
+Local Charset configuration warning
+;
+MSG_CO_CHARSETWARN (//)
+The charset configured for YAM is '%s' and doesn't\n\
+match the system's default charset '%s'.\n\
+\n\
+How do you want to proceed?
+; LOCALCHARSET, SYSCHARSET
+MSG_CO_CHARSETWARN_BT (//)
+*_Change|Ignore _always|_Ignore
+;

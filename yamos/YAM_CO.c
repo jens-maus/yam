@@ -29,12 +29,14 @@
 #include <string.h>
 
 #include <clib/alib_protos.h>
+#include <diskfont/diskfonttag.h>
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
 #include <libraries/locale.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <proto/diskfont.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
@@ -895,7 +897,8 @@ void CO_SetDefaults(struct Config *co, int page)
       co->JumpToIncoming = FALSE;
       co->ConfirmOnQuit = FALSE;
       co->HideGUIElements = 0;
-      strcpy(co->LocalCharset, "iso-8859-1");
+      strcpy(co->LocalCharset, "ISO-8859-1");
+      co->SysCharsetCheck = TRUE;
       co->PrintMethod = PRINTMETHOD_RAW;
       co->StackSize = 40000;
       co->AutoColumnResize = TRUE;
@@ -931,6 +934,7 @@ static void CO_CopyConfig(struct Config *dco, struct Config *sco)
 void CO_Validate(struct Config *co, BOOL update)
 {
    char *p, buffer[SIZE_USERID];
+   BOOL saveAtEnd = FALSE;
    int i;
 
    if (!*co->SMTP_Server) strcpy(co->SMTP_Server, co->P3[0]->Server);
@@ -980,6 +984,73 @@ void CO_Validate(struct Config *co, BOOL update)
    G->CO_AutoTranslateIn = co->AutomaticTranslationIn;
    LoadTranslationTable(&(G->TTout), co->TranslationOut);
    G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
+
+   // we try to find out the system charset and validate it with the
+   // currently configured local charset
+   if(co->SysCharsetCheck)
+   {
+      char sysCharset[SIZE_CTYPE+1];
+
+      sysCharset[0] = '\0';
+
+      #ifdef __amigaos4__
+      {
+	      LONG default_charset = GetDiskFontCtrl(DFCTRL_CHARSET);
+		    char *charset = (char *)ObtainCharsetInfo(DFCS_NUMBER, default_charset, DFCS_MIMENAME);
+
+        if(charset && charset[0])
+          strncpy(sysCharset, charset, SIZE_CTYPE);
+      }
+      #endif
+
+      // if we still do not have our default charset we try to load
+      // it from and environment variable ENVARC:CHARSET
+      if(sysCharset[0] == '\0')
+      {
+        char *charset = getenv("CHARSET");
+
+        if(charset && charset[0])
+          strncpy(sysCharset, charset, SIZE_CTYPE);
+      }
+
+      // now we check wheter the currently set localCharset matches
+      // the system charset or not
+      if(co->LocalCharset[0] && sysCharset[0])
+      {
+        if(stricmp(co->LocalCharset, sysCharset) != 0)
+        {
+          int res = MUI_Request(G->App, NULL, 0,
+                                GetStr(MSG_CO_CHARSETWARN_TITLE),
+                                GetStr(MSG_CO_CHARSETWARN_BT),
+                                GetStr(MSG_CO_CHARSETWARN),
+                                co->LocalCharset, sysCharset);
+
+          // if the user has clicked on Change, we do
+          // change the charset and save it immediatly
+          if(res == 1)
+          {
+            strncpy(co->LocalCharset, sysCharset, SIZE_CTYPE);
+            saveAtEnd = TRUE;
+          }
+          else if(res == 2)
+          {
+            co->SysCharsetCheck = FALSE;
+            saveAtEnd = TRUE;
+          }
+        }
+      }
+      else if(sysCharset[0])
+      {
+        strncpy(co->LocalCharset, sysCharset, SIZE_CTYPE);
+        saveAtEnd = TRUE;
+      }
+   }
+
+   if(co->LocalCharset[0] == '\0')
+   {
+      strcpy(co->LocalCharset, "ISO-8859-1");
+      saveAtEnd = TRUE;
+   }
 
    if(G->CO_AutoTranslateIn)
      LoadParsers();
@@ -1058,6 +1129,10 @@ void CO_Validate(struct Config *co, BOOL update)
         DisplayStatistics((struct Folder *)-1, TRUE);
       }
    }
+
+   // if some items have modified the config we do save it again.
+   if(saveAtEnd == TRUE)
+      CO_SaveConfig(co, G->CO_PrefsFile);
 }
 
 ///

@@ -7,6 +7,17 @@ $Source$
 
 2005-02-20  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_CO.c, YAM_MI.c, misc: implemented a system default charset
+      recognition method where YAM will try to check the configured charset
+      of the system it is running on and compares it to the LocalCharset
+      settings of the YAM configuration. If YAM then finds out that the
+      system charset doesn't match the localcharset it will put up a warning
+      requester where the user can choose to either change the local charset
+      or ignore the requester.
+      However, please note that a proper system charset identification is only
+      fully implemented in AmigaOS4. On all other platforms YAM will try
+      to find a CHARSET environment variable which contains the currently
+      active charset of the system.
     * YAM_MI.c: fixed bug where the source charset specification was used
       in the RFC2047 encoding routines, instead of the destination charset
       which fixes bug #1107821

@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
 #include <libraries/genesis.h>
 #include <mui/NList_mcc.h>
 #include <proto/datatypes.h>
+#include <proto/diskfont.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/genesis.h>
@@ -1469,6 +1470,7 @@ static void yam_exitfunc(void)
       NewFreeArgs(&nrda);
 
    // close some libraries now
+   CLOSELIB(DiskfontBase,   IDiskfont);
    CLOSELIB(UtilityBase,    IUtility);
    CLOSELIB(IconBase,       IIcon);
    CLOSELIB(IntuitionBase,  IIntuition);
@@ -1596,6 +1598,7 @@ int main(int argc, char **argv)
    INITLIB(IIntuition, InitLib("intuition.library", (APTR)&IntuitionBase, 36, 0, TRUE, FALSE));
    INITLIB(IIcon,      InitLib("icon.library",      (APTR)&IconBase,      36, 0, TRUE, FALSE));
    INITLIB(IUtility,   InitLib("utility.library",   (APTR)&UtilityBase,   36, 0, TRUE, FALSE));
+   INITLIB(IDiskfont,  InitLib("diskfont.library",  (APTR)&DiskfontBase,  37, 0, TRUE, FALSE));
 
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
    nrda.ExtHelp = NULL;

@@ -372,6 +372,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "ConfirmOnQuit    = %s\n", Bool2Txt(co->ConfirmOnQuit));
       fprintf(fh, "HideGUIElements  = %d\n", co->HideGUIElements);
       fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
+      fprintf(fh, "SysCharsetCheck  = %s\n", Bool2Txt(co->SysCharsetCheck));
       fprintf(fh, "StackSize        = %d\n", co->StackSize);
       fprintf(fh, "PrintMethod      = %d\n", co->PrintMethod);
       fprintf(fh, "AutoColumnResize = %s\n", Bool2Txt(co->AutoColumnResize));
@@ -727,6 +728,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "ConfirmOnQuit"))  co->ConfirmOnQuit = Txt2Bool(value);
                else if (!stricmp(buffer, "HideGUIElements")) co->HideGUIElements = atoi(value);
                else if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
+               else if (!stricmp(buffer, "SysCharsetCheck"))co->SysCharsetCheck = Txt2Bool(value);
                else if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
                else if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
                else if (!stricmp(buffer, "AutoColumnResize")) co->AutoColumnResize = Txt2Bool(value);
