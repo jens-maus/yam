@@ -1605,7 +1605,12 @@ BOOL MA_SendMList(struct Mail **mlist)
       if (CO_IsValid()) if ((G->TR = TR_New(TR_SEND)))
       {
          if (SafeOpenWindow(G->TR->GUI.WI)) success = TR_ProcessSEND(mlist);
-         else { MA_ChangeTransfer(TRUE); DisposeModulePush(&G->TR); }
+
+         if(success == FALSE)
+         {
+            MA_ChangeTransfer(TRUE);
+            DisposeModulePush(&G->TR);
+         }
       }
       TR_CloseTCPIP();
    }
@@ -1802,7 +1807,12 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
       if (filename) if ((G->TR = TR_New(TR_EXPORT)))
       {
          if (SafeOpenWindow(G->TR->GUI.WI)) success = TR_ProcessEXPORT(filename, mlist, append);
-         else {  MA_ChangeTransfer(TRUE); DisposeModulePush(&G->TR); }
+
+         if(success == FALSE)
+         {
+            MA_ChangeTransfer(TRUE);
+            DisposeModulePush(&G->TR);
+         }
       }
       free(mlist);
    }

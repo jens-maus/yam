@@ -556,6 +556,7 @@ APTR CO_Page1(struct CO_ClassData *data)
       DoMethod(data->GUI.BT_PDEL       ,MUIM_Notify,MUIA_Pressed        ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook ,&CO_DelPOP3Hook,0);
       DoMethod(data->GUI.CH_USESMTPAUTH,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,authgrp,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
       DoMethod(data->GUI.CH_POP3SSL    ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_USESTLS,3,MUIM_Set,MUIA_Disabled,MUIV_NotTriggerValue);
+      DoMethod(data->GUI.CH_SMTPTLS    ,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,data->GUI.CH_SMTPTLS,3,MUIM_Set,MUIA_Disabled, !G->TR_UseableTLS);
    }
    return grp;
 }

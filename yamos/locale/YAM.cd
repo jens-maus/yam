@@ -4972,3 +4972,8 @@ required by YAM. Please make sure you have installed\n\
 it correctly.
 ;MCC_VERSION, MCC_REVISION, MCC_NAME
 ;
+MSG_ER_UNUSABLEAMISSL (//)
+You have selected TLSv1/SSLv3 for this connection, but AmiSSL \
+couldn`t be initialized. Please check your AmiSSL installation \
+or disable TLS/SSL for this connection.
+;

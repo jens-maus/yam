@@ -7,6 +7,16 @@ $Source$
 
 2002-06-21  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * YAM.c, YAM:CO.c, YAM_COg.c, YAM_COs.c, YAM_MA.c, YAM_TR.c:
+      fixed a bug in the TLS/SSL recognition routines where it could
+      have happen that a user selected SSL for a connection but the
+      next time the amissl library is perhaps not available. In that
+      situation YAM still tried to initiate a SSL connection and
+      suddenly hang. Now YAM will throw a error message telling the
+      user that he has selected SSL but SSL is not available right now.
+      Also changed the configuration accordingly that the user can
+      still disable the SSL support for those connection, but can`t
+      enable it again as long as SSL is not available.
     * YAM.c: fixed bug where it could have happened that on a
       restart the AppIcon wasn`t displayed anymore.
     * YAM.c: fixed bug #560664 where YAM didn`t add the Okay

@@ -409,7 +409,7 @@ HOOKPROTONHNONP(CO_GetP3Entry, void)
 
    // we have to enabled/disable the SSL support accordingly
    if(pop3) set(gui->CH_USESTLS, MUIA_Disabled, !G->TR_UseableTLS || (pop3->SSLMode == P3SSL_OFF));
-   set(gui->CH_POP3SSL, MUIA_Disabled, !G->TR_UseableTLS);
+   set(gui->CH_POP3SSL, MUIA_Disabled, !G->TR_UseableTLS && pop3->SSLMode == P3SSL_OFF);
 }
 MakeHook(CO_GetP3EntryHook,CO_GetP3Entry);
 
@@ -440,7 +440,11 @@ HOOKPROTONHNONP(CO_PutP3Entry, void)
          new_ssl_mode = P3SSL_SSL;
          if(GetMUICheck(gui->CH_USESTLS)) new_ssl_mode = P3SSL_STLS;
       }
-      else new_ssl_mode = P3SSL_OFF;
+      else
+      {
+         new_ssl_mode = P3SSL_OFF;
+         if(!G->TR_UseableTLS) set(gui->CH_POP3SSL, MUIA_Disabled, TRUE);
+      }
 
       if(pop3->SSLMode != new_ssl_mode)
       {

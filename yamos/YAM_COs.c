@@ -834,7 +834,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_DOMAIN    ,CE->SMTP_Domain);
          setcheckmark(gui->CH_SMTP8BIT  ,CE->Allow8bit);
          setcheckmark(gui->CH_SMTPTLS   ,CE->Use_SMTP_TLS);
-         set(gui->CH_SMTPTLS, MUIA_Disabled, !G->TR_UseableTLS);
+         nnset(gui->CH_SMTPTLS, MUIA_Disabled, !G->TR_UseableTLS && !CE->Use_SMTP_TLS);
          setcheckmark(gui->CH_USESMTPAUTH,CE->Use_SMTP_AUTH);
          setstring   (gui->ST_SMTPAUTHUSER,CE->SMTP_AUTH_User);
          setstring   (gui->ST_SMTPAUTHPASS,CE->SMTP_AUTH_Pass);

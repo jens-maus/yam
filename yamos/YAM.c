@@ -803,6 +803,7 @@ static void Initialise(BOOL hidden)
    // so that we can use it later
    if((AmiSSLBase = InitLib("amissl.library", AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, FALSE, FALSE)))
    {
+      DB(kprintf("AmiSSL library found and enabled!\n");)
       G->TR_UseableTLS = TRUE;
    }
 

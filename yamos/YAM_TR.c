@@ -314,6 +314,7 @@ BOOL TR_OpenTCPIP(void)
       G->TR_UseableTLS = G->TR_UseTLS = FALSE;
     }
   }
+  else G->TR_UseTLS = FALSE;
 
   return (BOOL)(SocketBase != NULL);
 }
@@ -588,6 +589,14 @@ static int TR_ConnectPOP(int guilevel)
    strcpy(passwd, C->P3[pop]->Password);
    strcpy(host, C->P3[pop]->Server);
 
+   // now we have to check wheter SSL/TLS is selected for that POP account,
+   // but perhaps TLS is not working.
+   if(C->P3[pop]->SSLMode != P3SSL_OFF && !G->TR_UseableTLS)
+   {
+      ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL), NULL, NULL);
+      return -1;
+   }
+
    if (C->TransferWindow == 2 || (C->TransferWindow == 1 && (guilevel == POP_START || guilevel == POP_USER)))
    {
       LONG wstate;
@@ -617,7 +626,7 @@ static int TR_ConnectPOP(int guilevel)
 
    // If this connection should be a STLS like connection we have to get the welcome
    // message now and then send the STLS command to start TLS negotiation
-   if(G->TR_UseableTLS && C->P3[pop]->SSLMode == P3SSL_STLS)
+   if(C->P3[pop]->SSLMode == P3SSL_STLS)
    {
       set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_WaitWelcome));
 
@@ -638,7 +647,7 @@ static int TR_ConnectPOP(int guilevel)
    }
 
    // Here start the TLS/SSL Connection stuff
-   if(G->TR_UseableTLS && C->P3[pop]->SSLMode != P3SSL_OFF)
+   if(C->P3[pop]->SSLMode != P3SSL_OFF)
    {
      set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_INITTLS));
 
@@ -654,11 +663,10 @@ static int TR_ConnectPOP(int guilevel)
         return -1;
      }
    }
-   else G->TR_UseTLS = FALSE;
 
    // If this was a connection on a stunnel on port 995 or a non-ssl connection
    // we have to get the welcome message now
-   if(!G->TR_UseableTLS || C->P3[pop]->SSLMode != P3SSL_STLS)
+   if(C->P3[pop]->SSLMode != P3SSL_STLS)
    {
       if(TR_RecvDat(buf) <= 0) { BusyEnd; return -1; }
       welcomemsg = StrBufCpy(NULL, buf);
@@ -1854,6 +1862,15 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
    if (c)
    {
       char host[SIZE_HOST];
+
+      // now we have to check wheter SSL/TLS is selected for SMTP account,
+      // but perhaps TLS is not working.
+      if(C->Use_SMTP_TLS && !G->TR_UseableTLS)
+      {
+        ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL), NULL, NULL);
+        return FALSE;
+      }
+
       G->TR->Scnt = MA_AllocRules(G->TR->Search, APPLY_SENT);
       TR_TransStat_Init(&ts);
       TR_TransStat_Start(&ts);
@@ -1896,7 +1913,6 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
               return FALSE;
            }
          }
-         else G->TR_UseTLS = FALSE;
 
          if (C->Use_SMTP_AUTH && C->SMTP_AUTH_User[0]) connected=TR_ConnectESMTP();
          else connected=TR_ConnectSMTP();
