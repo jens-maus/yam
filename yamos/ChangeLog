@@ -5,6 +5,33 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-02-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c, ReadMailGroup.c: fixed bug #1114873 where a multiselect
+      operation during an enabled embedded mail pane acted a bit
+      strange from a users point of view. Now YAM will clear up the
+      read pane in case a multiselect operation is underway.
+    * YAM_MAf.c, YAM_MA.c: slightly modified the folderlist to not
+      use the MUI highlight pen for signaling that a folder group
+      has folders with new mail in it. Also adapted the mail list
+      to show unread/new mails using bold text as this might be
+      a better approach for easily finding unread/new mail in the
+      list. However, lets see how users like that little change
+      which is similar to what Thunderbird is actually doing.
+    * YAM_CO.c: changed the default embedded mail pane display
+      delay to 200ms as this might be a more reasonable value and
+      also renamed the option to "EmbeddedMailDelay" which should me
+      more intuitive.
+    * YAM_UT.c, YAM_utilities.h, YAM_WR.c: renamed our properitery
+      strtok_r() to carry some uppercase letters so that it may not
+      conflict with the strtok_r() function available in newer clib2
+      runtime library versions. However, in future we might better
+      rewrite our function to carry the same function prototype than
+      the standard strtok_r() function.
+    * ReadWindow.c: removed another bunch of "-repeat" key definition
+      to prevent a continious deletion of mails by holding down the
+      delete key.
+	 
 2005-02-01  Jens Langner <Jens.Langner@light-speed.de>
 
     * UserImage.c: another minor change to the UserImage custom class
