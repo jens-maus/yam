@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2004-11-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_WR.c: fixed a minor bug in a MUIM_MultiSet notify connection
+      where the argument counts were too low which could have caused some
+      unexpected trouble.
+
 2004-11-19  Alexey Ivanov <AmiS@amiga.org.ru>
 
     * YAM_COg.c: fixed bug #773860 - Charset gadget not fully disabled

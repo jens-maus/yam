@@ -2494,7 +2494,7 @@ static struct WR_ClassData *WR_New(int winnum)
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEP0      ,data->GUI.TE_EDIT      ,4,MUIM_CallHook   ,&WR_InsertSeparatorHook,FALSE,winnum);
          DoMethod(data->GUI.WI         ,MUIM_Notify,MUIA_Window_MenuAction   ,WMEN_SEP1      ,data->GUI.TE_EDIT      ,4,MUIM_CallHook   ,&WR_InsertSeparatorHook,TRUE,winnum);
          DoMethod(data->GUI.RG_PAGE    ,MUIM_Notify,MUIA_AppMessage          ,MUIV_EveryTime ,MUIV_Notify_Application,4,MUIM_CallHook   ,&WR_AppHook,MUIV_TriggerValue,winnum);
-         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_AreaMarked,MUIV_EveryTime,MUIV_Notify_Application,5,MUIM_MultiSet  ,MUIA_Menuitem_Enabled,MUIV_TriggerValue,mi_copy,mi_cut,NULL);
+         DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_AreaMarked,MUIV_EveryTime,MUIV_Notify_Application,6,MUIM_MultiSet   ,MUIA_Menuitem_Enabled,MUIV_TriggerValue,mi_copy,mi_cut,NULL);
          if (data->GUI.TO_TOOLBAR)
          {
             DoMethod(data->GUI.TE_EDIT    ,MUIM_Notify,MUIA_TextEditor_AreaMarked,MUIV_EveryTime,data->GUI.TO_TOOLBAR  ,6,MUIM_Toolbar_MultiSet,MUIV_Toolbar_Set_Ghosted, MUIV_NotTriggerValue,3,4,-1);
