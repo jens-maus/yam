@@ -315,7 +315,7 @@ $(OBJDIR)/YAM_WR.o: YAM_WR.c YAM.h YAM_addressbook.h YAM_addressbookEntry.h \
 	YAM_rexx_rxif.h YAM_stringsizes.h YAM_transfer.h YAM_userlist.h \
 	YAM_utilities.h YAM_write.h
 
-$(OBJDIR)/all_gcc.o: all_gcc.c $(EXTRASRC)/getft.c $(EXTRASRC)/stccpy.c \
+$(OBJDIR)/all_gcc.o: all_gcc.c $(EXTRASRC)/stccpy.c \
 	$(EXTRASRC)/stcgfe.c $(EXTRASRC)/stpblk.c $(EXTRASRC)/strmfp.c $(EXTRASRC)/strsfn.c \
 	$(EXTRASRC)/NewReadArgs.c $(EXTRASRC)/dice.c
 

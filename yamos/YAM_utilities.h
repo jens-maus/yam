@@ -294,10 +294,12 @@ char *   ExpandText(char *src, struct ExpandTextData *etd);
 void     ExtractAddress(char *line, struct Person *pe);
 BOOL     FileExists(char *filename);
 int      FileSize(char *filename);
+long     FileProtection(const char *filename);
 BOOL     FileToEditor(char *file, Object *editor);
 int      FileType(char *filename);
 char *   FileComment(char *filename);
 struct DateStamp *FileDate(char *filename);
+long     FileTime(const char *filename);
 long     FileCount(char *directory);
 void     FinishUnpack(char *file);
 struct Folder *FolderRequest(char *title, char *body, char *yestext, char *notext,

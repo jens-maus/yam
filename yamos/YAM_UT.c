@@ -1181,7 +1181,7 @@ int FileSize(char *filename)
 ///
 /// FileProtection
 //  Returns protection bits of a file
-long FileProtection(char *filename)
+long FileProtection(const char *filename)
 {
   BPTR lock;
   long prots = -1;
@@ -1285,6 +1285,38 @@ struct DateStamp *FileDate(char *filename)
   }
 
   return res;
+}
+///
+/// FileTime
+//  Returns the date of the file in seconds since 1.1.1970
+long FileTime(const char *filename)
+{
+  BPTR lock;
+  long ret = 0;
+
+  if((lock = Lock((STRPTR)filename, ACCESS_READ)))
+  {
+    struct FileInfoBlock *fib;
+
+    if((fib = AllocDosObject(DOS_FIB, NULL)))
+    {
+      if(Examine(lock, fib))
+      {
+        // this is the correct calculation to convert the
+        // struct DateStamp entries which are based on the 1.1.1978
+        // to a long variable for the seconds since 1.1.1970
+        ret = ((fib->fib_Date.ds_Days + 2922) * 1440 +
+                fib->fib_Date.ds_Minute) * 60 +
+                fib->fib_Date.ds_Tick / TICKS_PER_SECOND;
+      }
+
+      FreeDosObject(DOS_FIB, fib);
+    }
+
+    UnLock(lock);
+  }
+
+  return ret;
 }
 ///
 /// RenameFile

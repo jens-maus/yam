@@ -27,7 +27,6 @@
 
 // if we don`t have MorphOS libnix lets use our own implementations
 #if !defined(__MORPHOS__) || !defined(__libnix)
-  #include "extrasrc/getft.c"
   #include "extrasrc/stccpy.c"
   #include "extrasrc/stcgfe.c"
   //#include "extrasrc/stcgfn.c"

@@ -721,8 +721,11 @@ static void WR_AddTagline(FILE *fh_mail)
    if (*C->TagsFile)
    {
       sprintf(hashfile, "%s.hsh", C->TagsFile);
-      if (getft(C->TagsFile) > getft(hashfile)) WR_CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
-      if ((fh_tag = fopen(C->TagsFile, "r")))
+
+      if(FileTime(C->TagsFile) > FileTime(hashfile))
+        WR_CreateHashTable(C->TagsFile, hashfile, C->TagsSeparator);
+
+      if((fh_tag = fopen(C->TagsFile, "r")))
       {
          if ((fh_hash = fopen(hashfile, "r")))
          {

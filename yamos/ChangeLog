@@ -5,6 +5,16 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-01-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c: YAM does now check the archive bit of the folder
+	   directory and the .index file as well before issuing an automatic
+		index rebuild. This should prevent YAM from rescanning all folders
+		after a backup program has set all archive bits in a folder
+		directory and therefore modified the directory timestamp as well.
+	 * extrasrc/getft.c: converted function to FileTime() function
+	   in YAM_UT.c and removed file
+
 2005-01-18  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/MainFolderListtree.c: added an additional contextmenu item

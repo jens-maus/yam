@@ -25,7 +25,6 @@
 
 ***************************************************************************/
 
-#include "extrasrc/getft.c"
 #include "extrasrc/stccpy.c"
 #include "extrasrc/stcgfe.c"
 //#include "extrasrc/stcgfn.c"

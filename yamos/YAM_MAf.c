@@ -445,42 +445,54 @@ void MA_UpdateIndexes(BOOL initial)
         {
           if(initial)
           {
+            char *folderDir = GetFolderDir(fo);
+            char *indexFile = MA_IndexFileName(fo);
+
             // get date of the folder directory and the .index file
             // itself
-            long dirdate = getft(GetFolderDir(fo));
-            long inddate = getft(MA_IndexFileName(fo));
+            long dirdate = FileTime(folderDir);
+            long inddate = FileTime(indexFile);
 
-            // only start rebuilding the .index if either the date
-            // of the directory is greater than the date of the
-            // .index file itself, or if there is no index file
-            // date at all (no file present)
-            if(dirdate > inddate+30 && inddate != -1)
+            // only consider starting to rebuilding the .index if
+            // either the date of the directory is greater than the
+            // date of the .index file itself, or if there is no index
+            // file date at all (no file present)
+            if(dirdate > inddate+30)
             {
-               // lets first delete the .index file to
-               // make sure MA_GetIndex() is going to
-               // rebuild it.
-               DeleteFile(MA_IndexFileName(fo));
-
-               // then lets call GetIndex() to star rebuilding
-               // the .index
-               if(MA_GetIndex(fo) == TRUE)
+               // get the protection bits of the folder index file
+               // and the folder directory, and if both have the A
+               // bit set we skip the index rescanning process because
+               // the A bits might have been set by a backup program
+               if(isFlagClear(FileProtection(indexFile), FIBF_ARCHIVE) ||
+                  isFlagClear(FileProtection(folderDir), FIBF_ARCHIVE))
                {
-                  // if we finally rebuilt the .index we
-                  // immediatly flush it here so that another
-                  // following index rebuild doesn't take
-                  // all remaining memory.
-                  if((fo->Type == FT_SENT   || 
-                      fo->Type == FT_CUSTOM || 
-                      fo->Type == FT_CUSTOMSENT) && 
-                      fo->LoadedMode == LM_VALID && 
-                      isFreeAccess(fo))
-                  {
-                     if(isModified(fo))
-                        MA_SaveIndex(fo);
+                  // lets first delete the .index file to
+                  // make sure MA_GetIndex() is going to
+                  // rebuild it.
+                  if(inddate > 0)
+                     DeleteFile(indexFile);
 
-                     ClearMailList(fo, FALSE);
-                     fo->LoadedMode = LM_FLUSHED;
-                     CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
+                  // then lets call GetIndex() to star rebuilding
+                  // the .index
+                  if(MA_GetIndex(fo) == TRUE)
+                  {
+                     // if we finally rebuilt the .index we
+                     // immediatly flush it here so that another
+                     // following index rebuild doesn't take
+                     // all remaining memory.
+                     if((fo->Type == FT_SENT   ||
+                         fo->Type == FT_CUSTOM ||
+                         fo->Type == FT_CUSTOMSENT) &&
+                         fo->LoadedMode == LM_VALID &&
+                         isFreeAccess(fo))
+                     {
+                        if(isModified(fo))
+                          MA_SaveIndex(fo);
+
+                        ClearMailList(fo, FALSE);
+                        fo->LoadedMode = LM_FLUSHED;
+                        CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
+                     }
                   }
                }
             }
