@@ -1725,7 +1725,7 @@ void SAVEDS MA_CheckVersionFunc(void)
             fscanf(tf->FP, "%ld.%ld.%ld", &day, &mon, &year);
             GetLine(tf->FP, newver, SIZE_SMALL);
             currver = (year<78 ? 1000000:0)+year*10000+mon*100+day;
-            sprintf(buf, GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year, __YAM_VERSION, __YAM_VERDATE,
+            sprintf(buf, GetStr(MSG_MA_LatestVersion), &newver[1], day, mon, year < 78 ? 2000+year : 1900+year, __YAM_VERSION, __YAM_VERDATE,
                currver > thisver ? GetStr(MSG_MA_NewVersion) : GetStr(MSG_MA_NoNewVersion));
             if (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_CheckVersion), GetStr(MSG_MA_VersionReqOpt), buf)) GotoURL(C->SupportSite);
          }

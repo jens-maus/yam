@@ -300,14 +300,10 @@ BOOL AY_New(BOOL hidden)
             MUIA_Gauge_InfoText, " ",
             MUIA_Gauge_Horiz, TRUE,
          End,
-         Child, G->AY_Button = TextObject,
-           MUIA_ShowMe, FALSE,
-           MUIA_Text_Contents, GetStr(MSG_ABOUT_OKAY_GAD),
-           MUIA_Background, MUII_ButtonBack,
-           MUIA_Frame, MUIV_Frame_Button,
-           MUIA_InputMode, MUIV_InputMode_RelVerify,
-           MUIA_Text_SetMax, TRUE,
-           MUIA_CycleChain, 1,
+         Child, HGroup,
+            Child, HSpace(0),
+            Child, G->AY_Button = SimpleButton(GetStr(MSG_ABOUT_OKAY_GAD)),
+            Child, HSpace(0),
          End,
       End,
    End;
@@ -327,6 +323,7 @@ BOOL AY_New(BOOL hidden)
                                                    "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n\n");
       G->AY_AboutText = StrBufCat(G->AY_AboutText, GetStr(MSG_WebSite));
       set(ft_text, MUIA_Floattext_Text, G->AY_AboutText);
+      set(G->AY_Button, MUIA_ShowMe, FALSE);
 
       DoMethod(G->App, OM_ADDMEMBER, G->AY_Win);
       DoMethod(bt_sendmail, MUIM_Notify, MUIA_Pressed, FALSE, MUIV_Notify_Application, 2, MUIM_CallHook, &AY_SendMailHook);
@@ -358,9 +355,7 @@ void PopUp(void)
 //  A second copy of YAM was started
 void SAVEDS DoublestartFunc(void)
 {
-//   PopUp();
-//   ^^^^^^^^ Crap! If we want to popup the other (running) YAM,
-//            we can't use our own app object (NULL) pointer!
+	if (G->App && G->MA->GUI.WI) PopUp();
 }
 MakeHook(DoublestartHook, DoublestartFunc);
 ///
@@ -420,7 +415,7 @@ BOOL Root_New(BOOL hidden)
    if (G->App)
    {
       set(G->App, MUIA_Application_HelpFile, "YAM.guide");
-      set(G->App, MUIA_Application_Iconified, hidden);
+      if (hidden) set(G->App, MUIA_Application_Iconified, TRUE);
       DoMethod(G->App, MUIM_Notify, MUIA_Application_DoubleStart, TRUE, MUIV_Notify_Application, 2, MUIM_CallHook, &DoublestartHook);
       DoMethod(G->App, MUIM_Notify, MUIA_Application_Iconified, TRUE, MUIV_Notify_Application, 2, MUIM_Application_ReturnID, ID_ICONIFY);
       if (AY_New(hidden)) return TRUE;
