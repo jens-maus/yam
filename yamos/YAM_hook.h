@@ -43,7 +43,7 @@
     struct IClass; \
     static ULONG name(struct IClass * cl, Object * obj, Msg msg); \
     static ULONG Trampoline_##name(void) { return name((struct IClass *) REG_A0, (Object *) REG_A2, (Msg) REG_A1); } \
-    static const struct EmulLibEntry Gate_##namer = { TRAP_LIB, 0, (void(*)())Trampoline_##name }; \
+    static const struct EmulLibEntry Gate_##name = { TRAP_LIB, 0, (void(*)())Trampoline_##name }; \
     static ULONG name(struct IClass * cl, Object * obj, Msg msg)
 
   #define MakeHook(hookname, funcname) \
