@@ -10063,12 +10063,13 @@ table is set up as follows:
 
         1st line:   YCT1 - YAM Charset Translation
         2nd line:   Description of the converter
-        3rd line:   Resulting charset, e.g.  iso-5589-1
-   further lines:   (optional) FROM source charset (e.g. iso-5589-1)
-                    (optional) TO target charset
+   further lines:   (optional) FROM source charset pattern (e.g. iso-8859-1)
+                    (optional) TO target charset pattern
                     (optional) HEADER
+                    (optional) AUTHOR name/email of author of charset file
                     Old character=New character
-
+                    ...
+                    ...
 
    Characters can be defined either in hexadecimal code with a '$'
 character in front, or using the actual characters.  Therefore, both
@@ -10076,6 +10077,11 @@ character in front, or using the actual characters.  Therefore, both
 
    With the HEADER keyword, the charset conversion is also applied to
 the message headers.
+
+   The FROM and TO charset specifications are pattern based specifications.
+That means that one can specify a pattern like charset spec like 'iso-8859-[1|2]'
+(cf. @{" AmigaDOS wildcards " link "DOSW"}). This way it is possible to match multiple different
+charsets at a time for the charset translation.
 
 @endnode
 
