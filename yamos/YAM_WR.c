@@ -1668,15 +1668,17 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
    char filename[SIZE_PATHFILE];
    struct FileRequester *ar = G->ASLReq[ASL_ATTACH];
 
-   if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, ""))
+   if(ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, ""))
    {
       if (!ar->fr_NumArgs)
       {
+         DB(kprintf("choosen file: [%s] from drawer: [%s]\n", ar->fr_File, ar->fr_Drawer);)
          strmfp(filename, ar->fr_Drawer, ar->fr_File);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
       else for (i = 0; i < ar->fr_NumArgs; i++)
       {
+         DB(kprintf("choosen file: [%s] from drawer: [%s]\n", ar->fr_ArgList[i].wa_Name, ar->fr_Drawer);)
          strmfp(filename, ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }

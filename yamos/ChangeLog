@@ -7,6 +7,11 @@ $Source$
 
 2005-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+	 * YAM_stringsizes.h: increased the SIZE_FILE buffer length define
+	   to 107 and the SIZE_PATH define to 1024. This does not only fix
+		problem when trying to add files as an attachment if their filename
+		is larger than 30 chars, but also should make YAM a bit safer when
+		dealing with huge directory path lengths.
     * YAM_MAf.c: YAM does now check the archive bit of the folder
 	   directory and the .index file as well before issuing an automatic
 		index rebuild. This should prevent YAM from rescanning all folders

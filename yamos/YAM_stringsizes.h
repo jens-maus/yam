@@ -5,7 +5,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2004 by YAM Open Source Team
+ Copyright (C) 2000-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@
 #define SIZE_COMMAND   120
 #define SIZE_CTYPE      40
 #define SIZE_NAME       30
-#define SIZE_PATH      120
-#define SIZE_FILE       30
+#define SIZE_PATH     1024 // max. possible directory path length
+#define SIZE_FILE      107 // max. possible filename length
 #define SIZE_SMALL      16
 #define SIZE_DEFAULT    80
 #define SIZE_LARGE     512
