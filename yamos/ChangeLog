@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2002-12-06  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MA.c/MA_GetRealSubject(): fixed bug where YAM didn`t
+      correctly return the real subject if a subject line with
+      brackets hadn`t got any whitespace between the last
+      bracket and the real subject line. Also slightly optimized
+      the function a bit.
+
 2002-12-05  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c/Busy(): fixed bug #596303 and brought back the

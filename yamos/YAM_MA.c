@@ -2397,11 +2397,24 @@ MakeHook(MA_LV_DspFuncHook,MA_LV_DspFunc);
 //  Strips reply prefix / mailing list name from subject
 static char *MA_GetRealSubject(char *sub)
 {
-   char *p, *pend = &sub[strlen(sub)];
-   if (strlen(sub) < 3) return sub;
+   char *p;
+   int sublen = strlen(sub);
+
+   if (sublen < 3) return sub;
    if (sub[2] == ':' && !sub[3]) return "";
-   if (sub[0] == '[') if ((p = strchr(sub, ']'))) if (p < pend-3 && p < &sub[20]) return MA_GetRealSubject(p+2);
+
+   // check if the subject contains some strings embedded in brackets like [test]
+   // and return only the real subject after the last bracket.
+   if(sub[0] == '[' && (p = strchr(sub, ']')) && p < (&sub[sublen])-3 && p < &sub[20])
+   {
+      // if the following char isn`t a whitespace we return the real
+      // subject directly after the last bracket
+      if(ISpace(p[1])) return MA_GetRealSubject(p+2);
+      else return MA_GetRealSubject(p+1);
+   }
+
    if (strchr(":[({", sub[2])) if ((p = strchr(sub, ':'))) return MA_GetRealSubject(TrimStart(++p));
+
    return sub;
 }
 
