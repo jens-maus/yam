@@ -1853,56 +1853,64 @@ static struct Person *MA_GetAddressSelect(struct Mail *mail)
 //  Stores address from a list of messages to the address book
 void MA_GetAddress(struct Mail **mlist)
 {
-   int i, j, winnum, num = (int)mlist[0], mode = AET_USER;
+   int i, j, mode, winnum, num = (int)mlist[0];
    struct Folder *folder = mlist[2]->Folder;
    BOOL outgoing = folder ? isOutgoingFolder(folder) : FALSE;
    struct ExtendedMail *email;
+   struct Person *pe = NULL;
 
-   if (num == 1)
+   if (num == 1 && !(outgoing && isMultiRCPTMail(mlist[2])))
    {
-      if (outgoing && isMultiRCPTMail(mlist[2])) mode = AET_LIST;
+      if (outgoing)
+      {
+         pe = &mlist[2]->To;
+      }
+      else
+      {
+         pe = MA_GetAddressSelect(mlist[2]);
+         if (!pe)
+            return;
+      }
+      mode = AET_USER;
    }
-   else mode = AET_LIST;
+   else
+      mode = AET_LIST;
 
+   DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
+
+   winnum = EA_Init(mode, NULL);
+   if (winnum >= 0)
    {
-      struct Person *pe = NULL;
       if (mode == AET_USER)
       {
-         pe = outgoing ? &(mlist[2]->To) : MA_GetAddressSelect(mlist[2]);
-         if (!pe) return;
+        setstring(G->EA[winnum]->GUI.ST_REALNAME, pe->RealName);
+        setstring(G->EA[winnum]->GUI.ST_ADDRESS, pe->Address);
       }
-      DoMethod(G->App, MUIM_CallHook, &AB_OpenHook, ABM_EDIT);
-      if ((winnum = EA_Init(mode, NULL)) >= 0)
+      else
       {
-         if (mode == AET_USER)
+         for (i = 2; i < num+2; i++)
          {
-            setstring(G->EA[winnum]->GUI.ST_REALNAME, pe->RealName);
-            setstring(G->EA[winnum]->GUI.ST_ADDRESS, pe->Address);
-         }
-         else
-            for (i = 2; i < num+2; i++)
+            if (outgoing)
             {
-               if (outgoing)
+               DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&mlist[i]->To), MUIV_List_Insert_Bottom);
+               if(isMultiRCPTMail(mlist[i]) &&
+                  (email = MA_ExamineMail(mlist[i]->Folder, mlist[i]->MailFile, TRUE)))
                {
-                  DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(mlist[i]->To)), MUIV_List_Insert_Bottom);
-                  if(isMultiRCPTMail(mlist[i]) &&
-                     (email = MA_ExamineMail(mlist[i]->Folder, mlist[i]->MailFile, TRUE)))
-                  {
-                     for(j = 0; j < email->NoSTo; j++)
-                       DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->STo[j])), MUIV_List_Insert_Bottom);
+                  for(j = 0; j < email->NoSTo; j++)
+                    DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&email->STo[j]), MUIV_List_Insert_Bottom);
 
-                     for(j = 0; j < email->NoCC; j++)
-                       DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&(email->CC[j])), MUIV_List_Insert_Bottom);
+                  for(j = 0; j < email->NoCC; j++)
+                    DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(&email->CC[j]), MUIV_List_Insert_Bottom);
 
-                     MA_FreeEMailStruct(email);
-                  }
-               }
-               else
-               {
-                  struct Person *pe = GetReturnAddress(mlist[i]);
-                  DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(pe), MUIV_List_Insert_Bottom);
+                  MA_FreeEMailStruct(email);
                }
             }
+            else
+            {
+               struct Person *pe1 = GetReturnAddress(mlist[i]);
+               DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(pe1), MUIV_List_Insert_Bottom);
+            }
+         }
       }
    }
 }
