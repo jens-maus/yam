@@ -412,7 +412,7 @@ static int TR_RecvDat(char *recvdata)                   /* success? */
 {
    int len;
 
-   DoMethod(G->App,MUIM_Application_InputBuffered, TAG_DONE);
+   DoMethod(G->App,MUIM_Application_InputBuffered);
    if (G->TR_Socket == SMTP_NO_SOCKET) return 0;
 
    if(G->TR_UseTLS)
@@ -434,7 +434,7 @@ static int TR_RecvDat(char *recvdata)                   /* success? */
 //  Sends data through a TCP/IP connection
 static BOOL TR_SendDat(char *senddata)                  /* success? */
 {
-   DoMethod(G->App,MUIM_Application_InputBuffered, TAG_DONE);
+   DoMethod(G->App,MUIM_Application_InputBuffered);
    if (G->TR_Socket == SMTP_NO_SOCKET) return FALSE;
    if (!senddata) return TRUE;
    if (G->TR_Debug) printf("CLIENT: %s", senddata);
