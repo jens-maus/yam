@@ -1,4 +1,4 @@
-#if defined(_DCC) || defined(__VBCC__) || defined(NO_INLINE_STDARG)
+#if defined(_DCC) || defined(__VBCC__) || defined(NO_INLINE_STDARG) || defined(NO_PPCINLINE_STDARG)
 
 #include <proto/xpkmaster.h>
 LONG XpkQueryTags(ULONG tag, ...)
