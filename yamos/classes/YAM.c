@@ -3,7 +3,6 @@
 
  Superclass:  MUIC_Application
  Description: Application subclass handles all "global" stuff.
-
 ***************************************************************************/
 
 #include "Classes.h"
