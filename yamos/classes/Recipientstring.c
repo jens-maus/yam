@@ -283,14 +283,15 @@ DECLARE(Resolve)
 	BOOL list_expansion;
 	LONG max_list_nesting = 5;
 	STRPTR s, contents, tmp;
+	set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 	do {
 
 		struct MUI_NListtree_TreeNode *tn;
 		list_expansion = FALSE;
 		get(obj, MUIA_String_Contents, &s);
-		contents = tmp = strdup(s);
+		if(!(contents = tmp = strdup(s)))
+			break;
 		set(obj, MUIA_String_Contents, NULL);
-		set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
 
 		DB(kprintf("Resolve this string: %s\n", tmp);)
 		while(s = Trim(strtok(tmp, ","))) /* tokenize string and resolve each recipient */
@@ -316,18 +317,21 @@ DECLARE(Resolve)
 				{
 					if(data->MultipleRecipients)
 					{
-						STRPTR members = strdup(entry->Members), lf;
-						while(lf = strchr(members, '\n'))
-						   lf[0] = ',';
+						STRPTR members, lf;
+						if(members = strdup(entry->Members))
+						{
+							while(lf = strchr(members, '\n'))
+							   lf[0] = ',';
 
-						DB(kprintf("Found list: »%s«\n", entry->Members);)
-						DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
-						free(members);
+							DB(kprintf("Found list: »%s«\n", entry->Members);)
+							DoMethod(obj, MUIM_Recipientstring_AddRecipient, members);
+							free(members);
 
-						if(entry->RealName[0])	set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
-						if(entry->Address[0])	set(data->ReplyTo, MUIA_String_Contents, entry->Address);
+							if(entry->RealName[0])	set(data->From, MUIA_String_Contents, AB_PrettyPrintAddress2(entry->RealName, C->EmailAddress));
+							if(entry->Address[0])	set(data->ReplyTo, MUIA_String_Contents, entry->Address);
 
-						list_expansion = TRUE;
+							list_expansion = TRUE;
+						}
 					}
 					else
 					{
@@ -427,7 +431,7 @@ OVERLOAD(MUIM_HandleEvent)
 				DoSuperMethodA(cl, obj, msg);
 				get(obj, MUIA_String_Contents, &new);
 
-				if(strcmp(old, new)) /* if contents changed, check if something matches */
+				if(old && strcmp(old, new)) /* if contents changed, check if something matches */
 					new_address = (STRPTR)DoMethod(obj, MUIM_Recipientstring_ShowMatches);
 
 				free(old);
@@ -524,9 +528,8 @@ DECLARE(ShowMatches)
 	DoMethod(data->Matchlist, MUIM_List_Clear);
 	get(obj, MUIA_String_Contents, &buf);
 	get(obj, MUIA_String_BufferPos, &pos);
-	if(buf[pos] == '\0' || buf[pos] == ',')
+	if((buf[pos] == '\0' || buf[pos] == ',') && (start = strdup(&buf[DoMethod(obj, MUIM_Recipientstring_RecipientStart)])))
 	{
-		start = strdup(&buf[DoMethod(obj, MUIM_Recipientstring_RecipientStart)]);
 		if(end = strchr(start, ','))
 			end[0] = '\0';
 		if(start[0] != '\0')
