@@ -961,7 +961,7 @@ void SetupAppIcons(void)
 ///
 /// Initialise2
 //  Phase 2 of program initialization (after user logs in)
-static void Initialise2(BOOL hidden)
+static void Initialise2(void)
 {
    BOOL newfolders = FALSE;
    int i;
@@ -1084,9 +1084,11 @@ static void Initialise2(BOOL hidden)
 
    // only activate the main window if the about window is activ
    // and open it immediatly
+   // we always start YAM with Window_Open TRUE or else YAM the hide
+   // functionality doesn`t work as expected.
    SetAttrs(G->MA->GUI.WI,
             MUIA_Window_Activate, xget(G->AY_Win, MUIA_Window_Activate),
-            MUIA_Window_Open,     !hidden,
+            MUIA_Window_Open,     TRUE,
             TAG_DONE);
 
    set(G->AY_Win, MUIA_Window_Open, FALSE);
@@ -1525,13 +1527,13 @@ int main(int argc, char **argv)
       {
          Initialise((BOOL)args.hide);
          Login(args.user, args.password, args.maildir, args.prefsfile);
-         Initialise2((BOOL)args.hide);
+         Initialise2();
       }
       else
       {
          Initialise(FALSE);
          Login(NULL, NULL, NULL, NULL);
-         Initialise2(FALSE);
+         Initialise2();
       }
 
       grp = HGroup,

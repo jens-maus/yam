@@ -7,6 +7,9 @@ $Source$
 
 2003-05-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: fixed bug #730474 where YAM didn`t uniconfiy the application
+      via a created MUI appicon if the HIDE option was used upon the
+      startup.
     * YAM.c: fixed bug #727871 where it wasn`t possible to quit YAM while
       it was iconified and a confirmation requester need to pop up. Now
       YAM will automatically uniconify to request the user to answer to
