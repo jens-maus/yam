@@ -24,6 +24,11 @@
 
 #include "YAM.h"
 
+/* local protos */
+LOCAL void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary);
+LOCAL struct WritePart *BuildPartsList(int winnum);
+
+
 /***************************************************************************
  Module: Write
 ***************************************************************************/
@@ -310,13 +315,13 @@ struct WritePart *NewPart(int winnum)
    p->ContentType = "text/plain";
    p->EncType = ENC_NONE;
    p->Filename = G->WR_Filename[winnum];
-   p->Name = NULL;
+//   p->Name = NULL; // redundant due to calloc() -msbethke
    return p;
 }
 ///
 /// BuildPartsList
 //  Builds message parts from attachment list
-struct WritePart *BuildPartsList(int winnum)
+LOCAL struct WritePart *BuildPartsList(int winnum)
 {
    int i;
    struct Attach *att;
@@ -731,7 +736,9 @@ char *WR_GetPGPId(struct Person *pe)
    struct MUIS_Listtree_TreeNode *tn;
    if (!AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, pe->RealName, ASM_REALNAME|ASM_USER, &hits, &tn))
         AB_SearchEntry(MUIV_Lt_GetEntry_ListNode_Root, pe->Address, ASM_ADDRESS|ASM_USER, &hits, &tn);
-   if (hits) if (((struct ABEntry *)(tn->tn_User))->PGPId[0]) pgpid = ((struct ABEntry *)(tn->tn_User))->PGPId;
+   if (hits && tn && tn->tn_User)
+		if (((struct ABEntry *)(tn->tn_User))->PGPId[0])
+			pgpid = ((struct ABEntry *)(tn->tn_User))->PGPId;
    return pgpid;
 }
 ///
@@ -860,12 +867,12 @@ void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
 /// WR_ComposePGP
 //  Creates a signed and/or encrypted PGP/MIME message
 BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
- {
+{
    int sec = comp->Security;
    BOOL success = FALSE;
    struct WritePart pgppart, *firstpart = comp->FirstPart;
    char *ids = AllocStrBuf(SIZE_DEFAULT), pgpfile[SIZE_PATHFILE], options[SIZE_LARGE];
-   struct TempFile *tf, *tf2 = NULL;
+   struct TempFile *tf, *tf2;
 
    pgppart.Filename = pgpfile; *pgpfile = 0;
    pgppart.EncType = ENC_NONE;
@@ -929,7 +936,7 @@ BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
 ///
 /// WR_ComposeMulti
 //  Assembles a multipart message
-void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
+LOCAL void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
 {
    struct WritePart *p;
    fprintf(fh, "Content-type: multipart/mixed; boundary=\"%s\"\n\n", boundary);
@@ -949,10 +956,39 @@ void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
 //  Outputs header and body of a new message
 BOOL WriteOutMessage(struct Compose *comp)
 {
-   FILE *fh = comp->FH;
-   struct WritePart *firstpart = comp->FirstPart;
-   char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
+BOOL success=FALSE;
+struct TempFile *tf=NULL;
+FILE *fh = comp->FH;
+struct WritePart *firstpart = comp->FirstPart;
+char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
    
+	DB(KPrintf("WriteOutMessage() starting\n"
+"\tMailTo     = '%s'\n"
+"\tMailCC     = '%s'\n"
+"\tMailBCC    = '%s'\n"
+"\tFrom       = '%s'\n"
+"\tReplyTo    = '%s'\n"
+"\tRealName   = '%s'\n"
+"\tSubject    = '%s'\n"
+"\tExtHeader  = '%s'\n"
+"\tIRTMsgID   = '%s'\n"
+"\tMode       = %ld\n"
+"\tImportance = %ld\n"
+"\tSignature  = %ld\n"
+"\tSecurity   = %ld\n"
+"\tOldSecurity= %ld\n"
+"\tReceipt    = %ld\n"
+"\tReportType = %ld\n"
+"\tDelSend    = %s\n"
+"\tUserInfo   = %s\n"
+"\tFirstPart  = $%08lx\n"
+"\tOrigMail   = $%08lx\n",
+	comp->MailTo,comp->MailCC,comp->MailBCC,comp->From,comp->ReplyTo,comp->RealName,
+	comp->Subject,comp->ExtHeader,comp->IRTMsgID,comp->Mode,comp->Importance,
+	comp->Signature,comp->Security,comp-> OldSecurity,comp->Receipt,comp->ReportType,
+	comp->DelSend?"TRUE":"FALSE",comp->UserInfo?"TRUE":"FALSE",
+	comp->FirstPart,comp->OrigMail));
+
    if (comp->Mode == NEW_BOUNCE)
    {
       if (comp->DelSend) EmitHeader(fh, "X-YAM-Options", "delsent");
@@ -960,10 +996,53 @@ BOOL WriteOutMessage(struct Compose *comp)
    }
    if (comp->Mode == NEW_SAVEDEC) if (!WR_SaveDec(fh, comp)) return FALSE; else goto mimebody;
    if (!firstpart) return FALSE;
+
    if (firstpart->Next && comp->Security >= 1 && comp->Security <= 3)
    {
-      ER_NewError(GetStr(MSG_WR_PGPMIMEconflict), NULL, NULL);
-      comp->Security = 0;
+	struct Compose tcomp;
+	FILE *tfh;
+
+			DBpr("Experimental PGP/MIME multipart support\n");
+			if((tf = OpenTempFile(NULL)) &&
+				(KPrintf("Trying tempfile '%s'\n",tf->Filename),1) &&
+				(tfh = fopen(tf->Filename,"w")))
+			{
+				// clone struct Compose
+				memcpy(&tcomp,comp,sizeof(tcomp));
+				// set new filehandle
+				tcomp.FH = tfh;
+				// clear security field and recurse
+				tcomp.Security = 0;
+				if(WriteOutMessage(&tcomp))
+				{
+				int EncType;
+					
+					DBpr("successfully wrote temporary messsage file, now encoding...\n");
+					EncType = comp->FirstPart->EncType;		// save first part's encoding
+					// free parts list, this was processed by WriteOutMessage() already
+   				FreePartsList(comp->FirstPart);
+					// replace with single new part
+   				if(comp->FirstPart = (struct WritePart *)calloc(1,sizeof(struct WritePart)))
+					{
+						comp->FirstPart->ContentType = "message/rfc822"; // the only part is an email message
+						comp->FirstPart->EncType = EncType;				// reuse encoding
+						comp->FirstPart->Filename = tf->Filename;		// set filename to tempfile
+					} else
+					{
+						DBpr("out of memory preparing for encoding :-(((\n");
+						return FALSE; // ugh...buggy!!!
+					}
+				} else
+				{
+					DBpr("Can't write temporary mail file - encryption disabled!\n");
+					comp->Security = 0;
+				}
+				fclose(tfh);
+			} else
+			{
+				DBpr("Can't create tempfile - encryption disabled!\n");
+				comp->Security = 0;
+			}
    }
    *options = 0;
    if (comp->DelSend) strcat(options, ",delsent");
@@ -990,17 +1069,28 @@ BOOL WriteOutMessage(struct Compose *comp)
 mimebody:
    fputs("MIME-Version: 1.0\n", fh);
    sprintf(boundary, "BOUNDARY.%s", NewID(False));
-   if (comp->ReportType > 0) WR_ComposeReport(fh, comp, boundary);
-   else if (comp->Security >= 1 && comp->Security <= 3) return WR_ComposePGP(fh, comp, boundary);
-   else if (firstpart->Next) WR_ComposeMulti(fh, comp, boundary);
-   else
+   if (comp->ReportType > 0)
+   {
+		WR_ComposeReport(fh, comp, boundary);
+		success = TRUE;
+	} else if (comp->Security >= 1 && comp->Security <= 3)
+	{
+		success = WR_ComposePGP(fh, comp, boundary);
+	} else if (firstpart->Next)
+	{
+		WR_ComposeMulti(fh, comp, boundary);
+		success = TRUE;
+	} else
    {
       WriteContentTypeAndEncoding(fh, firstpart);
       if (comp->Security == 4 && comp->OldSecurity != 4) WR_Anonymize(fh, comp->MailTo);
       fputs("\n", fh);
       EncodePart(fh, firstpart);
+		success = TRUE;
    }
-   return TRUE;
+	CloseTempFile(tf);
+	DBpr("WriteOutMessage() done\n");
+	return success;
 }
 ///
 /// WR_AutoSaveFile
