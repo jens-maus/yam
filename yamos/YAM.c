@@ -49,7 +49,10 @@ __near long __YAM_STACK = 32768;
 __near long __buffsize = 8192;
 __near long __MemPoolPuddleSize = 16384;
 
+struct WBStartup *WBmsg;
+
 /* no longer external visible, this is done by proto files! */
+/*
 struct Library *       CManagerBase = NULL;
 struct Library *       DataTypesBase = NULL;
 struct Library *       GenesisBase = NULL;
@@ -67,6 +70,7 @@ struct Library *       SocketBase = NULL;
 struct UtilityBase *   UtilityBase = NULL;
 struct Library *       WorkbenchBase = NULL;
 struct Library *       XpkBase = NULL;
+*/
 
 BOOL yamFirst = TRUE, yamLast = FALSE;
 
@@ -512,7 +516,7 @@ void Terminate(void)
    if (LocaleBase) CloseLibrary((struct Library *)LocaleBase);
    if (WorkbenchBase) CloseLibrary(WorkbenchBase);
    if (IconBase) CloseLibrary(IconBase);
-	 if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
+   if (PopupMenuBase) CloseLibrary((struct Library *)PopupMenuBase);
 #ifdef __ixemul__
    if (RexxSysBase) CloseLibrary(RexxSysBase);
 #endif
@@ -850,13 +854,11 @@ void main(int argc, char **argv)
    struct User *user;
    BPTR progdirlock, yamlock, oldcdirlock;
 
+   WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
+
    IntuitionBase = (struct IntuitionBase *) InitLib("intuition.library", 36, 0, TRUE, FALSE);
    IconBase = InitLib("icon.library", 36, 0, TRUE, FALSE);
    WorkbenchBase = InitLib("workbench.library", 36, 0, TRUE, FALSE);
-
-#ifdef __ixemul__
-   if(0 == argc) _WBenchMsg=(struct WBStartup *)argv;
-#endif
 
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
    nrda.ExtHelp = NULL;
@@ -864,7 +866,7 @@ void main(int argc, char **argv)
    nrda.Parameters = (LONG *)&args;
    nrda.FileParameter = -1;
    nrda.PrgToolTypesOnly = FALSE;
-   if ((err = NewReadArgs(_WBenchMsg, &nrda)))
+   if ((err = NewReadArgs(WBmsg, &nrda)))
    {
       PrintFault(err, "YAM");
       NewFreeArgs(&nrda);
