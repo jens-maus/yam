@@ -80,15 +80,14 @@ struct MUI_CustomClass *CL_PageList;
 /*** BC_Dispatcher (BodyChunk) - Subclass of BodyChunk, can load images from files ***/
 DISPATCHERPROTO(BC_Dispatcher)
 {
-   struct BC_Data *data;
-   struct TagItem *tags, *tag;
-   int useold;
-
    switch (msg->MethodID)
    {
+      struct BC_Data *data;
+      ULONG useold;
+
       case OM_NEW:
       {
-         tags = ((struct opSet *)msg)->ops_AttrList;
+         struct TagItem *tag, *tags = ((struct opSet *)msg)->ops_AttrList;
 
          obj = DoSuperNew(cl, obj,
             MUIA_FixWidth, 16,
@@ -104,13 +103,12 @@ DISPATCHERPROTO(BC_Dispatcher)
             char fname[SIZE_PATHFILE];
             useold = FALSE;
             *fname = 0;
-            data = INST_DATA(cl,obj);
             while ((tag = NextTagItem(&tags)))
             {
                switch (tag->ti_Tag)
                {
                   case MUIA_Bodychunk_UseOld:
-                     if (tag->ti_Data) useold = (BOOL)tag->ti_Data;
+                     useold = (BOOL)tag->ti_Data;
                      break;
                   case MUIA_Bodychunk_File:
                      if (tag->ti_Data) stccpy(fname, (char *)tag->ti_Data, SIZE_PATHFILE);
@@ -120,6 +118,7 @@ DISPATCHERPROTO(BC_Dispatcher)
 
             if (*fname)
             {
+               data = INST_DATA(cl,obj);
                if (useold) data->BCD = GetBCImage(fname);
                else data->BCD = LoadBCImage(fname);
 
