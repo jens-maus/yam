@@ -53,9 +53,9 @@
 @NODE "Main" "YAM - English documentation"
 
 
-         @{b}=============================================
-          Y A M    (Yet Another Mailer)   VERSION 2.4
-         =============================================@{ub}
+            @{b}=============================================
+             Y A M    (Yet Another Mailer)   VERSION 2.4
+            =============================================@{ub}
 
                       © 1995-2000 by Marcel Beck
                  © 2000-2002 by YAM Open Source Team
@@ -859,7 +859,7 @@ permanent way.  For instance,
 where the PGP executable may be found, e.g. "Work:PGP/bin/".
 
 5. If you want to be able to edit or read outgoing messages that have
-been encrypted already, switch the "Encript to self" option on.
+been encrypted already, switch the "Encrypt to self" option on.
 
 6. In "PGP:config.txt" the following changes should be made:
 
@@ -913,7 +913,7 @@ permanent way.  For instance,
 where the PGP executable may be found, e.g. "Work:PGP/bin/".
 
 5. If you want to be able to edit or read outgoing messages that have
-been encrypted already, switch the "Encript to self" option on.
+been encrypted already, switch the "Encrypt to self" option on.
 
 6. In "PGP:pgp.cfg" the following changes should be made:
 
@@ -2549,7 +2549,7 @@ Configuration - Miscellaneous
 
 
 @{b}Close gadget iconifies program@{ub}
-     Following the MUI default behaviour, the close gadget (or the
+     Following the MUI default behavior, the close gadget (or the
      <Esc> key) will terminate the program.  Activate this option to
      let them iconify YAM instead.
 
@@ -2912,10 +2912,7 @@ adjusted by using the mouse to drag the thin lines separating the
 column headings in the folder list itself.  The order of the columns
 can be modified by moving the column headers.
 
-   You can rearrange the folders either by @{" Drag&Drop " link "Drag"} or by clicking on
-the column heading.  A little arrow on one of the column headings shows
-how the messages are sorted.  A second click on the same heading
-reverses the order of sorting (Z->A instead of A->Z).
+   The folders themselves can be rearranged by @{" Drag&Drop " link "Drag"}.
 
    If the name of the folder is shown in white, this means that the box
 contains new or unread mail.  When the numerical indication is missing,
@@ -5256,9 +5253,10 @@ Reference - ARexx interface
 
 
    With the help of ARexx scripts, you can add new functions to YAM or
-let it do things automatically.  YAM offers a @{" set of commands " link "REXX"} which
-can be called through the @{b}YAM@{ub} ARexx port.  They are explained along the
-following subchapters using the following format:
+let it do things automatically.  YAM offers a set of commands (listed
+in this guide both @{" by name " link "REXX"} and @{" by function " link "REXL"}) which can be called
+through the @{b}YAM@{ub} ARexx port.  They are explained along the following
+subchapters using the following format:
 
 
 @{b}NAME@{ub}
@@ -5343,10 +5341,6 @@ following subchapters using the following format:
 @{b}SEE ALSO@{ub}
      Links to other related commands.
 
-
-@{" Alphabetical list of all ARexx commands    " link "REXX"}
-@{" List of all ARexx commands sorted by scope " link "REXL"}
-
 @endnode
 
 @node "REXX" "Reference - ARexx interface"
@@ -5356,9 +5350,6 @@ following subchapters using the following format:
 
 Alphabetical list of all ARexx commands
 =======================================
-
-@{" List of all the ARexx commands sorted by scope " link "REXL"}
-
 
 
  @{" ADDRDELETE        " link "RX_ADDRDELETE"}  - Remove an entry from the address book
@@ -5436,13 +5427,13 @@ Alphabetical list of all ARexx commands
 
 @endnode
 
-@node "REXL" "List of all the ARexx commands sorted by scope"
+@node "REXL" "List of all the ARexx commands sorted by function"
 @next "REXX"
 @prev "REXX"
 @toc "RF01"
 
-List of all the ARexx commands sorted by scope
-==============================================
+List of all the ARexx commands sorted by function
+=================================================
 
 
 Commands supplied by MUI
@@ -5583,21 +5574,26 @@ ADDRDELETE
 @{b}INPUTS@{ub}
      alias   - Alias of the entry to be removed.  This parameter is
                optional; if it is missing, AddrDelete will remove
-               the current entry.
+               the current entry, if any.
 
 @{b}RETURNS@{ub}
-     RC is set to 5 if ALIAS doesn't exist.
-
-@{b}WARNING@{ub}
-     If the address book window is not opened at the time the command
-     is executed, the deletion cannot be undone.
+     RC is set to 5 if ALIAS doesn't exist or if none was provided and
+     there is nothing to delete.
 
 @{b}NOTES@{ub}
+     If ALIAS refers to a group or distribution list, all their
+     contents are deleted as well.
+
+     If the address book window is not opened at the time the command
+     is executed, the deletion cannot be undone.  However, the deletion
+     doesn't really affect the address book on disk unless the
+     application is instructed to save the address book with e.g.
+     @{" ADDRSAVE " link "RX_ADDRSAVE"}.
 
 @{b}EXAMPLE@{ub}
 
 @{b}BUGS@{ub}
-     A missing check for a NULL pointer used to make this command cause
+     A missing check for a NULL pointer used to make the command cause
      Enforcer hits if no alias was supplied.  This was fixed in V2.4.
 
 @{b}SEE ALSO@{ub}
@@ -5645,12 +5641,40 @@ ADDREDIT
      RC is set 10 if no entry is currently selected in the address book.
 
 @{b}NOTES@{ub}
+     Arguments longer than the available space are simply truncated.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Select an entry */
+
+         ADDRGOTO YAM
+ 
+         /* Edit this entry */
+
+         'ADDREDIT EMAIL "yam@freelists.org" COMMENT "The place to be"'
+
+         /* Select a distribution list */
+
+         ADDRGOTO blacklisted
+
+         /* Reset the list */
+
+         ADDREDIT MEMBER 'bill'
+
+         /* Add a couple of members */
+
+         ADDREDIT MEMBER 'jobs@isp.com' MEMBER 'smith@provider.uk' ADD
 
 @{b}BUGS@{ub}
      Even if a group or person is selected, MEMBER [ADD] will return
      success (0).
+
+     There isn't any real error checking to ensure the given data is
+     correct, which means that it is quite possible to trash memory by
+     entering nonsense data as birth date for instance.
 
 @{b}SEE ALSO@{ub}
 
@@ -5691,9 +5715,8 @@ ADDRFIND
                          the query and a space separated list of the
                          matching aliases.
      <stem>alias.count - number of matches found
-     <stem>alias.nr    - the nth alias in the list of aliases
-                         matching the query, nr being a number
-                         between 0 and n-1.
+     <stem>alias.nr    - the nth alias in the list of aliases matching
+                         the query, nr being a number between 0 and n-1.
 
      RC is set to 5 if no match is found.
 
@@ -5701,6 +5724,23 @@ ADDRFIND
      Aliases are returned in the order they appear in the address book.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Find all the entries using a given provider */
+
+         ADDRFIND PATTERN '#?@saug.org' STEM st. EMAILONLY
+
+         /* List results */
+
+         IF RC = 0 THEN
+            DO i = 0 TO st.alias.count-1
+               SAY 'Match #'i+1': 'st.alias.i
+            END
+         ELSE
+            SAY 'No matches found.'
+         EXIT
 
 @{b}BUGS@{ub}
      AddrFind can't search into the "Alias" or "Description" fields of
@@ -5733,7 +5773,8 @@ ADDRGOTO
      alias   - alias of the entry to turn into the current one
 
 @{b}RETURNS@{ub}
-     RC is set to 5 if the alias given cannot be found.
+     RC is set to 5 if the given alias cannot be found or the address
+     book window is not opened.
 
 @{b}NOTES@{ub}
 
@@ -5789,8 +5830,39 @@ ADDRINFO
                            0 and n-1
 
 @{b}NOTES@{ub}
+     Fields where information is not available are returned as an
+     empty string, except for the birth date which is returned as
+     zero (0).
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Ignore possible error from ADDRINFO */
+
+         OPTIONS FAILAT 11
+
+         /* Find a given entry */
+
+         ADDRINFO 'mars' STEM st.
+
+         /* List results */
+
+         IF RC ~= 0 THEN EXIT
+
+         SAY 'Type of entry: 'st.type
+         SAY 'Real name:     'st.name
+         SAY 'Email address: 'st.email
+         SAY 'PGP key ID:    'st.pgp
+         SAY 'Homepage:      'st.homepage
+         SAY 'Street:        'st.street
+         SAY 'City:          'st.city
+         SAY 'Country:       'st.country
+         SAY 'Phone #:       'st.phone
+         SAY 'Description:   'st.comment
+         SAY 'Date of birth: 'st.birthdate
+         SAY 'Portrait:      'st.image
 
 @{b}BUGS@{ub}
 
@@ -5813,13 +5885,16 @@ ADDRLOAD
      FILENAME/A
 
 @{b}FUNCTION@{ub}
-     Loads the specified address book from disk.
+     Loads the specified address book from disk, replacing the
+     current address book in RAM.
 
 @{b}INPUTS@{ub}
      filename   - address book to be loaded
 
 @{b}RETURNS@{ub}
-     RC is set to 10 if the filename cannot be found.
+     RC is set to 10 if the filename cannot be opened.
+
+     As of V2.4, this condition also triggers an error requester.
 
 @{b}NOTES@{ub}
      Loading a new address book from disk does not count as a change
@@ -5827,7 +5902,22 @@ ADDRLOAD
      you try to quit YAM after loading that file, and thus will lose
      the new information if you forget to save it.
 
+     As of V2.4, YAM pays attention to the contents of the supplied file.
+     If the file is not recognised as a valid address book, a requester
+     will open to let the user select whether he wants it to be loaded
+     as a list of email addresses in the format
+
+        <email address> <name>
+        <email address> <name>
+        ...
+
+     instead of loading whatever it is thrown at it.  The command will
+     not return until the requester is satisfied.
+
 @{b}EXAMPLE@{ub}
+         /* Load an address book from disk */
+
+         ADDRLOAD 'mail:addresslist'
 
 @{b}BUGS@{ub}
 
@@ -5871,15 +5961,32 @@ ADDRNEW
 @{b}NOTES@{ub}
      At least one of ALIAS, NAME or EMAIL must be specified.
 
-     If no alias is provided, one will be created automatically
-     by taking the NAME or EMAIL arguments and stripping any
-     non-alphanumerical characters.
+     If the provided alias exists already, a new alias will be
+     used instead by taking the supplied string and adding a trailing
+     number until no clash is produced.  String limits are also taken
+     into account.
+
+     If no alias is provided, one will be created automatically by
+     using a cut-down version of the NAME or EMAIL arguments; for
+     instance, "Jose Luis Feliciano" would turn into "J_Feliciano",
+     or "Jose" if Jose@provider.uk was the only argument provided.
+     The rule mentioned above is also applied.
+
+     While using spaces in aliases is possible, it is discouraged.
 
 @{b}EXAMPLE@{ub}
+         /* Create a new group */
+
+         ADDRNEW G 'Singers'
+
+         /* Create a new distribution list */
+
+         ADDRNEW L 'Spanish'
 
 @{b}BUGS@{ub}
 
 @{b}SEE ALSO@{ub}
+     @{" ADDREDIT " link "RX_ADDREDIT"}
 
 @endnode
 
@@ -5945,7 +6052,7 @@ ADDRSAVE
 @{b}INPUTS@{ub}
      filename   - the complete path of the file to save the address
                   book to; if no filename is provided, the current
-                  one will be used.
+                  one will be used, usually "<MAILDIR>/.addressbook".
 
 @{b}RETURNS@{ub}
      RC is set to 10 if the file can't be written to.
@@ -5986,8 +6093,24 @@ APPBUSY
      RC will be set to 1 if YAM is already busy.
 
 @{b}NOTES@{ub}
+     V2.4 introduced the concept of busy levels, meaning the command
+     is now accumulative: if AppBusy is called several times in a row,
+     an equal number of calls to AppNoBusy must be made for the
+     application to return to normal state.
 
 @{b}EXAMPLE@{ub}
+         /* Turn busy mode on */
+
+         'APPBUSY "Please wait..."'
+
+         /* Say we are doing something different */
+
+         'APPBUSY "Making coffee..."'
+
+         /* Turn busy mode off */
+
+         APPNOBUSY
+         APPNOBUSY
 
 @{b}BUGS@{ub}
 
@@ -6018,6 +6141,13 @@ APPNOBUSY
      RC is set to 1 if YAM is still busy.
 
 @{b}NOTES@{ub}
+     V2.4 introduced the concept of busy levels, which means that if
+     @{" APPBUSY " link "RX_APPBUSY"} is called several times in a row, an equal number of
+     calls to AppNoBusy must be made for the application to return
+     to normal state.
+
+     AppNoBusy is a "safe" command, i.e. it can be called even if
+     the application is not busy at the time, causing no error.
 
 @{b}EXAMPLE@{ub}
 
@@ -6070,16 +6200,34 @@ FOLDERINFO
                        0 - normal
                        1 - incoming
                        2 - outgoing
-                       3 - sent (default)
+                       3 - sent (for the default "Sent" folder)
                        4 - deleted
                        5 - sent and received
                        6 - sent
 
-     RC is set to 10 if the specified folder can't be found.
+     RC is set to 10 if the specified folder cannot be found.
 
 @{b}NOTES@{ub}
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Request info */
+
+         FOLDERINFO 'Incoming' STEM fi.
+
+         /* Display results */
+
+         SAY 'Folder number:   'fi.number
+         SAY 'Folder name:     'fi.name
+         SAY 'Path:            'fi.path
+         SAY 'Total messages:  'fi.total
+         SAY 'New messages:    'fi.new
+         SAY 'Unread messages: 'fi.unread
+         SAY 'Total size:      'fi.size
+         SAY 'Type:            'fi.type
 
 @{b}BUGS@{ub}
 
@@ -6105,9 +6253,9 @@ GETCONFIGINFO
      Returns information about the current user.
 
 @{b}INPUTS@{ub}
-     var    - alternative variable to put the results into instead of
+     var    - alternative variable to put the result into instead of
               RESULT  (V2.0)
-     stem   - base name used for the stems where the results will be
+     stem   - base name used for the stem where the result will be
               stored  (V2.0)
      item   - item to return information about, may be one of
 
@@ -6115,13 +6263,27 @@ GETCONFIGINFO
                  NAM(E)    - real name
 
 @{b}RETURNS@{ub}
-     var  - info returned by the query
-     stem - ???
+     var         - info returned by the query
+     <stem>value - info returned by the query
 
 @{b}NOTES@{ub}
-     This command is obsoleted by USERINFO in V2.0+.
+     This command is obsoleted by USERINFO in V2.0+.  Don't use it
+     in new scripts.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Request info */
+
+         GETCONFIGINFO NAME VAR name
+         GETCONFIGINFO EMAIL VAR email
+
+         /* Display results */
+
+         SAY 'User name:    'name
+         SAY 'User address: 'email
 
 @{b}BUGS@{ub}
      The original V1.3 implementation would return junk most of the time;
@@ -6162,16 +6324,33 @@ GETFOLDERINFO
                  PAT(H)     - folder directory, without path  (V1.3)
 
 @{b}RETURNS@{ub}
-     var  - info returned by the query
-     stem - ???
+     var         - info returned by the query
+     <stem>value - info returned by the query
 
 @{b}NOTES@{ub}
-     This command is obsoleted by FOLDERINFO in V2.0+.
+     This command is obsoleted by FOLDERINFO in V2.0+.  Don't use it
+     in new scripts.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Request info */
+
+         GETFOLDERINFO NUMBER VAR position
+         GETFOLDERINFO NAME VAR name
+         GETFOLDERINFO MAX VAR total
+         GETFOLDERINFO PATH VAR path
+
+         /* Display results */
+
+         SAY 'Folder name:    'name
+         SAY 'Path:           'path
+         SAY 'Place in list:  'position
+         SAY 'Total messages: 'total
 
 @{b}BUGS@{ub}
-     'GETFOLDERINFO num' counts groups as folders.
 
 @{b}SEE ALSO@{ub}
      @{" FOLDERINFO " link "RX_FOLDERINFO"}
@@ -6225,13 +6404,37 @@ GETMAILINFO
                  FIL(E)      - full path of the message file
 
 @{b}RETURNS@{ub}
-     var  - info returned by the query
-     stem - ???
+     var         - info returned by the query
+     <stem>value - info returned by the query
 
 @{b}NOTES@{ub}
-     This command is obsoleted by MAILINFO in V2.0+.
+     This command is obsoleted by MAILINFO in V2.0+.  Don't use it
+     in new scripts.
 
 @{b}EXAMPLE@{ub}
+         /* Enable result codes */
+
+         OPTIONS RESULTS
+
+         /* Request info */
+
+         GETMAILINFO ACTIVE VAR posi
+         GETMAILINFO STATUS VAR status
+         GETMAILINFO FROM VAR from
+         GETMAILINFO TO VAR to
+         GETMAILINFO REPLY VAR replyto
+         GETMAILINFO SUBJECT VAR subj
+         GETMAILINFO FILE VAR path
+
+         /* Display results */
+
+         SAY 'Position: 'posi
+         SAY 'Status:   'status
+         SAY 'From:     'from
+         SAY 'To:       'to
+         SAY 'Reply-To: 'replyto
+         SAY 'Subject:  'subj
+         SAY 'Path:     'path
 
 @{b}BUGS@{ub}
 
@@ -7092,7 +7295,7 @@ MAILREAD
                 RESULT
      stem     - base name used for the stem where the returned data will
                 be stored
-     window   - change the command behaviour to just activate an
+     window   - change the command behavior to just activate an
                 already opened Read window, possible values go
                 between 0 and 3
      quiet    - force the window to stay invisible
@@ -7325,7 +7528,7 @@ MAILWRITE
                 RESULT  (V2.0)
      stem     - base name used for the stem where the window number will
                 be returned  (V2.0)
-     window   - change the command behaviour to just activate an
+     window   - change the command behavior to just activate an
                 already opened Write window, may be 0 or 1  (V2.0)
      quiet    - force the window to stay invisible  (V2.1)
 
@@ -9103,13 +9306,15 @@ Support - YAM in the World Wide Web
 
 
 @{b}The YAM homepage@{ub}
-     In order to provide all users with up-to-date information about
-     YAM, Marcel Beck, its original author, made a homepage available
-     in the World Wide Web:  http://www.yam.ch/
+
+   In order to provide all users with up-to-date information about YAM,
+Marcel Beck, its original author, made a homepage available in the
+World Wide Web:  http://www.yam.ch/
 
 
 @{b}The YAM Open Source homepage@{ub}
-     http://sourceforge.net/projects/yamos/
+
+   http://sourceforge.net/projects/yamos/
 
 @endnode
 
@@ -9123,20 +9328,23 @@ Support - mailing lists
 
 
 @{b}The YAM mailing list@{ub}
-     If you want to discuss YAM related issues with other users or be
-     notified about new releases, you can join the YAM mailing list.
-     To subscribe, just send an email to <yam-request@freelists.org>
-     with the subject @{b}subscribe@{ub}.  Alternatively, you can use
-     the web based interface at http://www.freelists.org/list/yam
-     or review the list archive at http://www.freelists.org/archives/yam
+
+   If you want to discuss YAM related issues with other users or be
+notified about new releases, you can join the YAM users mailing list.
+To subscribe, just send an email to <yam-request@freelists.org>
+with the subject "subscribe" (without the quotes).  Alternatively,
+you can use the web based interface at http://www.freelists.org/list/yam
+or review the list archive at http://www.freelists.org/archives/yam
+
 
 @{b}The YAMOS Developers mailing list@{ub}
-     If you want to contribute to the development of YAM, you are
-     welcome to join the YAMos-Dev mailing list.  To subscribe, just
-     send an email to <yamos-dev-request@freelists.org> with the
-     subject @{b}subscribe@{ub}.  Alternatively, you can use the web based
-     interface at http://www.freelists.org/list/yamos-dev or review
-     the list archive at http://www.freelists.org/archives/yamos-dev
+
+   If you want to contribute to the development of YAM, you are welcome
+to join the YAMos-dev mailing list.  To subscribe, just send an email
+to <yamos-dev-request@freelists.org> with the subject "subscribe"
+(without the quotes).  Alternatively, you can use the web based
+interface at http://www.freelists.org/list/yamos-dev or review the
+list archive at http://www.freelists.org/archives/yamos-dev
 
 @endnode
 
@@ -9224,7 +9432,7 @@ Support - change requests
 =========================
 
 
-   Sometimes you may want a particular behaviour of YAM to be slightly
+   Sometimes you may want a particular behavior of YAM to be slightly
 changed, and neither a bug report or enhancement request fit the bill.
 
    This is where @{i}change requests @{ui}come in -- please visit
