@@ -65,24 +65,31 @@
 #define MUIF_NONE                    0
 #endif
 
-/* some private MUI stuff... */
+/* some private (mostly undocumented) MUI stuff... */
 #ifndef MUIM_GoActive
-#define MUIM_GoActive                0x8042491a
+#define MUIM_GoActive                0x8042491a /* V8  */
 #endif
 #ifndef MUIM_GoInactive
-#define MUIM_GoInactive              0x80422c0c
+#define MUIM_GoInactive              0x80422c0c /* V8  */
 #endif
 #ifndef MUIA_Window_DisableKeys
-#define MUIA_Window_DisableKeys      0x80424c36 /* V15 isg ULONG */
+#define MUIA_Window_DisableKeys      0x80424c36 /* V15 isg ULONG    */
 #endif
 #ifndef MUIA_Application_UsedClasses 
-#define MUIA_Application_UsedClasses 0x8042e9a7
+#define MUIA_Application_UsedClasses 0x8042e9a7 /* V20 isg STRPTR * */
 #endif
 #ifndef MUIA_String_Popup
-#define MUIA_String_Popup            0x80420d71
+#define MUIA_String_Popup            0x80420d71 /* V9  i.. Object * */
 #endif
-#define MUIA_List_CursorType         0x8042c53e /* V4  is. LONG  */
-#define MUIV_List_CursorType_Bar 1
+#ifndef MUIA_List_CursorType
+#define MUIA_List_CursorType         0x8042c53e /* V4  is. LONG     */
+#endif
+#ifndef MUIV_List_CursorType_Bar
+#define MUIV_List_CursorType_Bar 		 1
+#endif
+#ifndef MUIA_Text_HiIndex
+#define MUIA_Text_HiIndex            0x804214f5 /* V11 i.. LONG     */
+#endif
 
 enum { IECODE_TAB = 66, IECODE_RETURN = 68, IECODE_ESCAPE = 69, IECODE_HELP = 95,
 			 IECODE_BACKSPACE = 65, IECODE_DEL = 70, IECODE_UP = 76, IECODE_DOWN = 77

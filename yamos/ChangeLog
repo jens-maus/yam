@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2003-03-04  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: reworked own YAMMUIRequest() function a bit to work more
+      accurate like the original MUI_Request() function. Also these changes
+      remove the maximum value of 32 buttons per requester. Now a requester
+      can have nearly unlimited buttons.
+
 2003-02-27  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed bug where on a use of PGPv5 a unknown keyid wasn`t

@@ -190,9 +190,7 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
   LONG result = -1;
   char reqtxt[SIZE_LINE];
   Object *WI_YAMREQ;
-  Object *TX_REQTEXT;
   Object *BT_GROUP;
-  Object *BT_REQ[32]; // more than 32 buttongadgets within a requester shouldn`t happen: FIXME
   va_list args;
 
   // lets create the requester text
@@ -229,21 +227,20 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
     MUIA_Window_Activate,     TRUE,
     MUIA_Window_NoMenus,      TRUE,
     WindowContents, VGroup,
+       InnerSpacing(4,4),
+       GroupSpacing(8),
        MUIA_Background,       MUII_RequesterBack,
        Child, HGroup,
-          Child, TX_REQTEXT = TextObject,
+          Child, TextObject,
             TextFrame,
-            MUIA_InnerBottom,   8,
-            MUIA_InnerLeft,     8,
-            MUIA_InnerRight,    8,
-            MUIA_InnerTop,      8,
+            InnerSpacing(8,8),
             MUIA_Background,    MUII_TextBack,
-            MUIA_Text_SetMax,   TRUE,
             MUIA_Text_Contents, reqtxt,
+            MUIA_Text_SetMax,   TRUE,
           End,
        End,
-       Child, VSpace(2),
        Child, BT_GROUP = HGroup,
+          GroupSpacing(0),
        End,
     End,
   End;
@@ -251,71 +248,98 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
   // lets see if the WindowObject could be created perfectly
   if(WI_YAMREQ)
   {
-    char *gadgs = StrBufCpy(NULL, gadgets);
-    char *next = gadgs;
-    char *token;
-    int active = -1;
-    int num_gads = 0;
+    char *next, *token;
+    int num_gads, i;
     char fstring[] = "-capslock f1"; // by default we set it to "-capslock f1" so that we can press f1
+    char *ul;
+    BOOL active = FALSE, ie = TRUE;
+    Object *BT_TEMP;
 
     set(app, MUIA_Application_Sleep, TRUE);
     DoMethod(app, OM_ADDMEMBER, WI_YAMREQ);
 
-    // now we create the buttons for the requester
-    do
+    // first we count how many gadget we have to create
+    for(num_gads=1, token=gadgets; *token; token++)
     {
-      token = strtok_r(&next, "|");
-      if(token[0] == '*')
-      {
-        active = num_gads;
-        token++;
-      }
-
-      BT_REQ[num_gads] = SimpleButton(token);
-      num_gads++;
+      if(*token == '|') num_gads++;
     }
-    while(next);
 
-    FreeStrBuf(gadgs);
-
+    // prepare the BT_Group for the change.
     DoMethod(BT_GROUP, MUIM_Group_InitChange);
-    // if this is only one button lets add it separatly
-    if(num_gads == 1)
-    {
-      DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
-      DoMethod(BT_GROUP, OM_ADDMEMBER, BT_REQ[0]);
-      DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
-      DoMethod(BT_REQ[0], MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, 2);
-      DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, fstring, app, 2, MUIM_Application_ReturnID, 2);
-    }
-    else
-    {
-      int j;
 
-      for(j=0; j < num_gads; j++)
+    // now we create the buttons for the requester
+    for(token=gadgets, i=0; i < num_gads; i++, token=next)
+    {
+      if((next = strchr(token, '|'))) *next++ = '\0';
+      if(*token == '*') { active=TRUE; token++; }
+      if((ul = strchr(token, '_'))) ie = FALSE;
+
+      // create the button object now.
+      BT_TEMP = TextObject,
+                  ButtonFrame,
+                  MUIA_CycleChain,    1,
+                  MUIA_Text_Contents, token,
+                  MUIA_Text_PreParse, "\33c",
+                  MUIA_InputMode,     MUIV_InputMode_RelVerify,
+                  MUIA_Background,    MUII_ButtonBack,
+                  ul ? MUIA_Text_HiIndex : TAG_IGNORE, '_',
+                  ul ? MUIA_ControlChar  : TAG_IGNORE, ul ? tolower(*(ul+1)) : 0,
+                End;
+
+      if(BT_TEMP)
       {
-        if(j > 0) DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
-        DoMethod(BT_GROUP, OM_ADDMEMBER, BT_REQ[j]);
-        DoMethod(BT_REQ[j], MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, j+2 <= num_gads ? j+2 : 1);
-        set(BT_REQ[j], MUIA_CycleChain, 1);
-
-        // lets bind the f-keys 1-8 to the buttons also,
-        // because the original MUI_Request() is doing this also.
-        if(j <= 8)
+        if(num_gads == 1)
         {
-          fstring[11] = '0'+j+1;
-          DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, fstring, app, 2, MUIM_Application_ReturnID, j+2 <= num_gads ? j+2 : 1);
+          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+          DoMethod(BT_GROUP, OM_ADDMEMBER, BT_TEMP);
+          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+          set(WI_YAMREQ, MUIA_Window_DefaultObject, BT_TEMP);
         }
-      }
+        else if(i < num_gads-1)
+        {
+          DoMethod(BT_GROUP, OM_ADDMEMBER, BT_TEMP);
+          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(4));
+          DoMethod(BT_GROUP, OM_ADDMEMBER, HSpace(0));
+        }
+        else
+        {
+          DoMethod(BT_GROUP, OM_ADDMEMBER, BT_TEMP);
+        }
+
+        if(ie && num_gads == 2)
+        {
+          if(i==0)
+          {
+            DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, "y", app, 2, MUIM_Application_ReturnID, i+1);
+          }
+          else if(i == num_gads-1)
+          {
+            DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, "n", app, 2, MUIM_Application_ReturnID, i+1);
+          }
+        }
+
+        if(i<=8)
+        {
+          fstring[11] = '0'+i+1;
+          DoMethod(WI_YAMREQ, MUIM_Notify, MUIA_Window_InputEvent, fstring, app, 2, MUIM_Application_ReturnID, i+1);
+        }
+
+        DoMethod(BT_TEMP, MUIM_Notify, MUIA_Pressed, FALSE, app, 2, MUIM_Application_ReturnID, i+1);
+        if(active) { set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_TEMP); active = FALSE; }
+			}
+
+      // write back what we took.
+      if(next) *(next-1) = '|';
     }
+
+    // signal a ExitChange now
     DoMethod(BT_GROUP, MUIM_Group_ExitChange);
 
     // we add the esc key to the input event of the requester and if we receive it we close the requester by safely
     // exiting with the last button
-    DoMethod(WI_YAMREQ ,MUIM_Notify, MUIA_Window_CloseRequest, TRUE, app, 2, MUIM_Application_ReturnID, 1);
-
-    // now activate that button with a starting "*"
-    if(active > -1) set(WI_YAMREQ, MUIA_Window_ActiveObject, BT_REQ[active]);
+    DoMethod(WI_YAMREQ ,MUIM_Notify, MUIA_Window_CloseRequest, TRUE, app, 2, MUIM_Application_ReturnID, num_gads);
 
     // lets collect the waiting returnIDs now
     COLLECT_RETURNIDS;
@@ -327,14 +351,12 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
       LONG ret = DoMethod(app, MUIM_Application_NewInput, &signals);
 
       // bail out if a button was hit
-      if(ret > 0 && ret <= num_gads+1)
-      {
-        result = ret-1;
-        break;
-      }
+      if(ret > 0 && ret < num_gads) { result = ret; break; }
+			if(ret == num_gads)           { result = 0;   break; }
 
       if(signals) Wait(signals);
-    } while (result == -1);
+    }
+    while(1);
 
     // now lets reissue the collected returnIDs again
     REISSUE_RETURNIDS;
