@@ -126,6 +126,9 @@
     #define STACKEXT
     #define REGARGS
     #define VARARGS68K  __attribute__((varargs68k))
+  #else
+    #define REG(reg,arg) arg __asm(#reg)
+    #define LREG(reg,arg) register REG(reg,arg)
   #endif
 #elif defined(_DCC)
   #define REG(reg,arg) __##reg arg
