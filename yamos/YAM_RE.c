@@ -1696,12 +1696,19 @@ static void RE_ParseContentParameters(struct Part *rp)
          s = Cleanse(s); eq = stpblk(eq);
          StripTrailingSpace(eq);
          UnquoteString(eq, FALSE);
+
          if (!stricmp(s, "name"))
          {
+            rfc2047_decode(eq, eq, strlen(eq), G->TTin);
             SParse(eq);
             rp->CParName = eq;
          }
-         else if (!stricmp(s, "description")) rp->CParDesc  = eq;
+         else if (!stricmp(s, "description"))
+         {
+            rfc2047_decode(eq, eq, strlen(eq), G->TTin);
+            SParse(eq);
+            rp->CParDesc = eq;
+         }
          else if (!stricmp(s, "boundary"))    rp->CParBndr  = eq;
          else if (!stricmp(s, "protocol"))    rp->CParProt  = eq;
          else if (!stricmp(s, "report-type")) rp->CParRType = eq;
@@ -1731,6 +1738,7 @@ static void RE_ParseContentDispositionParameters(struct Part *rp)
          UnquoteString(eq, FALSE);
          if (!stricmp(s, "filename"))
          {
+            rfc2047_decode(eq, eq, strlen(eq), G->TTin);
             SParse(eq);
             rp->CParFileName = eq;
          }
