@@ -483,13 +483,6 @@ BOOL MatchTT(char *charset, struct TranslationTable *tt, BOOL in)
    return (BOOL)MatchNoCase(charset, in ? tt->SourceCharset : tt->DestCharset);
 }
 ////
-/// ISpace
-//  Checks if character is a white-space
-BOOL ISpace(char ch)
-{
-   return (BOOL)(ch == ' ' || (ch >= 9 && ch <= 13));
-}
-///
 /// isSpace
 //  Localized version if isspace()
 BOOL isSpace(int c)
@@ -950,13 +943,6 @@ int FileType(char *filename)
 {
    long type;
    if (FileInfo(filename, NULL, NULL, &type)) return (type < 0 ? 1 : 2); else return 0;
-}
-///
-/// FileExists
-//  Checks if a file exists
-BOOL FileExists(char *filename)
-{
-   return FileInfo(filename, NULL, NULL, NULL);
 }
 ///
 /// RenameFile
@@ -1429,14 +1415,6 @@ void MyAddTail(struct Mail **list, struct Mail *new)
    mail->Next = new;
 }
 ///
-/// MyAddHead
-//  Adds a message to a message list
-void MyAddHead(struct Mail **list, struct Mail *new)
-{
-   new->Next = *list;
-   *list = new;
-}
-///
 /// MyRemove
 //  Removes a message from a message list
 void MyRemove(struct Mail **list, struct Mail *rem)
@@ -1549,10 +1527,6 @@ char *BuildAddrName(char *address, char *name)
    }
    else sprintf(buffer, "%s", address);
    return buffer;
-}
-char *BuildAddrName2(struct Person *pe)
-{
-   return BuildAddrName(pe->Address, pe->RealName);
 }
 ///
 /// ExtractAddress
@@ -2537,10 +2511,10 @@ char ShortCut(char *label)
    return (char)ToLower(*++ptr);
 }
 
-/*********** Function isn't used anywhere! -msbethke **************
 ///
 /// RemoveCut
 //  Removes shortcut character from text label
+#ifndef UNUSED
 static char *RemoveCut(char *label)
 {
    static char lab[SIZE_DEFAULT], *p;
@@ -2549,15 +2523,8 @@ static char *RemoveCut(char *label)
    *p = 0;
    return lab;
 }
-*/
+#endif
 
-///
-/// SetHelp
-//  Sets bubble help of a MUI object
-void SetHelp(APTR object, APTR strnum)
-{
-   set(object, MUIA_ShortHelp, GetStr(strnum));
-}
 ///
 /// MakeCycle
 //  Creates a MUI cycle object
@@ -2902,13 +2869,6 @@ HOOKPROTONHNO(DisposeModuleFunc, void, void **arg)
    DisposeModule(arg[0]);
 }
 MakeHook(DisposeModuleHook,DisposeModuleFunc);
-///
-/// DisposeModulePush
-//  Frees resources of a MUI window (forwarded to DisposeModule via a hook
-void DisposeModulePush(void *module)
-{
-   DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, module);
-}
 ///
 /// LoadLayout
 //  Loads column widths from ENV:MUI/YAM.cfg
@@ -3650,8 +3610,6 @@ BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
    }
    else ret = SystemTags(cmd, SYS_Input,in, SYS_Output,out, NP_StackSize,C->StackSize, SYS_Asynch,asynch, TAG_DONE);
    if (ret == -1 && asynch && outdef) { Close(out); Close(in); }
-
-   DB(kprintf("ret: %ld\n", ret);)
 
    return (BOOL)(!ret);
 }

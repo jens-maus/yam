@@ -1586,8 +1586,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
          while (TRUE) 
          {
             if (!(p = strchr(rp->ContentType, '/'))) break;
-            if (ISpace(*(p-1)))    for (--p; *p; ++p) *p = *(p+1);
-            else if (ISpace(*++p)) for ( ; *p; ++p) *p = *(p+1);
+            if (ISpace(*(p-1)))     for (--p; *p; ++p) *p = *(p+1);
+            else if(ISpace(*(p+1))) for (++p; *p; ++p) *p = *(p+1);
             else break;
          }
          StripTrailingSpace(rp->ContentType);
@@ -1619,8 +1619,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
           while (TRUE)
           {
             if (!(p = strchr(rp->ContentDisposition, '/'))) break;
-            if (ISpace(*(p-1)))    for (--p; *p; ++p) *p = *(p+1);
-            else if (ISpace(*++p)) for ( ; *p; ++p) *p = *(p+1);
+            if (ISpace(*(p-1)))       for (--p; *p; ++p) *p = *(p+1);
+            else if(ISpace(*(p+1)))   for (++p; *p; ++p) *p = *(p+1);
             else break;
           }
           StripTrailingSpace(rp->ContentDisposition);

@@ -1,5 +1,8 @@
 2002-04-29  Jens Langner <Jens.Langner@htw-dresden.de>
 
+    * reverted the fix #508202 because as it pointed out this wasn`t
+      really a bug at all.
+    * changed some of those small utility functions to act as macros.
     * fixed a nasty bug in the multipart handling code where we forgot to
       close the output file on a error condition. That resulted in a
       crash if we tried to open that mail several times.

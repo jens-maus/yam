@@ -796,6 +796,8 @@ void rx_mailinfo( struct RexxHost *host, struct rxd_mailinfo **rxd, long action,
          else mail = MA_GetActiveMail(ANYBOX, &folder, (int *)&rd->active);
          if (mail)
          {
+            struct Person *pe = GetReturnAddress(mail);
+
             pf = (mail->Flags & 0x0700) >> 8;
             vf = (mail->Flags & 0x3800) >> 11;
             GetMailFile(rd->rd.res.filename = rd->filename, folder, mail);
@@ -803,7 +805,7 @@ void rx_mailinfo( struct RexxHost *host, struct rxd_mailinfo **rxd, long action,
             rd->rd.res.status = Status[mail->Status];
             stccpy(rd->rd.res.from    = rd->from   , BuildAddrName2(&mail->From), SIZE_ADDRESS);
             stccpy(rd->rd.res.to      = rd->to     , BuildAddrName2(&mail->To), SIZE_ADDRESS);
-            stccpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(GetReturnAddress(mail)), SIZE_ADDRESS);
+            stccpy(rd->rd.res.replyto = rd->replyto, BuildAddrName2(pe), SIZE_ADDRESS);
             strcpy(rd->rd.res.date    = rd->date   , DateStamp2String(&mail->Date, DSS_USDATETIME));
             rd->rd.res.subject = mail->Subject;
             rd->rd.res.size = &mail->Size;
@@ -1021,13 +1023,15 @@ void rx_getmailinfo( struct RexxHost *host, struct rxd_getmailinfo **rxd, long a
       case RXIF_ACTION:
          if (mail = MA_GetActiveMail(ANYBOX, NULL, &active))
          {
+            struct Person *pe = GetReturnAddress(mail);
+
             rd->rd.res.value = rd->result;
             key = rd->rd.arg.item;
             if (!strnicmp(key, "ACT", 3)) sprintf(rd->result, "%d", active);
             else if (!strnicmp(key, "STA", 3)) rd->rd.res.value = Status[mail->Status];
             else if (!strnicmp(key, "FRO", 3)) strcpy(rd->result, BuildAddrName2(&mail->From));
             else if (!strnicmp(key, "TO" , 2)) strcpy(rd->result, BuildAddrName2(&mail->To));
-            else if (!strnicmp(key, "REP", 3)) strcpy(rd->result, BuildAddrName2(GetReturnAddress(mail)));
+            else if (!strnicmp(key, "REP", 3)) strcpy(rd->result, BuildAddrName2(pe));
             else if (!strnicmp(key, "SUB", 3)) rd->rd.res.value = mail->Subject;
             else if (!strnicmp(key, "FIL", 3)) GetMailFile(rd->rd.res.value = rd->result, mail->Folder, mail);
             else rd->rd.rc = RETURN_ERROR;
@@ -1631,7 +1635,6 @@ void rx_listselect( struct RexxHost *host, struct rxd_listselect **rxd, long act
          
       case RXIF_ACTION:
          nl = G->MA->GUI.NL_MAILS;
-         set(nl, MUIA_NList_Active, MUIV_NList_Active_Off);
          switch (rd->arg.mode[0])
          {
             case 'a': case 'A': DoMethod(nl, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL); break;

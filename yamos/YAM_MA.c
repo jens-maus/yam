@@ -1342,7 +1342,10 @@ void MA_GetAddress(struct Mail **mlist)
                   }
                }
                else
-                  DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(GetReturnAddress(mlist[i])), MUIV_List_Insert_Bottom);
+               {
+                  struct Person *pe = GetReturnAddress(mlist[i]);
+                  DoMethod(G->EA[winnum]->GUI.LV_MEMBER, MUIM_List_InsertSingle, BuildAddrName2(pe), MUIV_List_Insert_Bottom);
+               }
             }
    }
 }

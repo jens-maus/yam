@@ -126,8 +126,18 @@ struct NewToolbarEntry
 
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
+// function macros
+#define ISpace(ch)            ((BOOL)((ch) == ' ' || ((ch) >= 9 && (ch) <= 13)))
+#define FileExists(f)         FileInfo(f, NULL, NULL, NULL)
+#define MyAddHead(l,m)        { (m)->Next = *(l); *(l) = (m); }
+#define BuildAddrName2(p)     BuildAddrName((p)->Address, (p)->RealName)
+#define SetHelp(o,str)        set(o, MUIA_ShortHelp, GetStr(str))
+#define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
+#define MyStrCpy(a,b)         { strncpy((a),(b), sizeof(a)); (a)[sizeof(a)-1] = 0; }
+
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
+extern struct Hook    DisposeModuleHook;
 extern long           PNum;
 extern unsigned char  *PPtr[16];
 
@@ -141,7 +151,6 @@ void     AppendLogNormal(int id, char *text, void *a1, void *a2, void *a3, void 
 void     AppendLogVerbose(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext, int winnum, int mode, APTR parent);
 char *   BuildAddrName(char *address, char *name);
-char *   BuildAddrName2(struct Person *pe);
 void     Busy(char *text, char *parameter, int cur, int max);
 BOOL     CheckPrinter(void);
 void     ClearMailList(struct Folder *folder, BOOL resetstats);
@@ -160,7 +169,6 @@ char *   DescribeCT(char *ct);
 void     DisplayMailList(struct Folder *fo, APTR lv);
 void     DisplayAppIconStatistics(void);
 void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
-void     DisposeModulePush(void *module);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(char *file, char *newfile, struct Folder *folder);
 Object * DoSuperNew(struct IClass *cl, Object *obj, ULONG tag1, ...);
@@ -170,7 +178,7 @@ char *   Encrypt(char *source);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef);
 char *   ExpandText(char *src, struct ExpandTextData *etd);
 void     ExtractAddress(char *line, struct Person *pe);
-BOOL     FileExists(char *filename);
+BOOL     FileInfo(char *filename, int *size, long *bits, long *type);
 int      FileSize(char *filename);
 BOOL     FileToEditor(char *file, Object *editor);
 int      FileType(char *filename);
@@ -204,7 +212,6 @@ char *   IdentifyFile(char *fname);
 void     InfoWindow(char *title, char *body, char *oktext, APTR parent);
 void     InsertAddresses(APTR obj, char **addr, BOOL add);
 BOOL     isAlNum(int c);
-BOOL     ISpace(char ch);
 BOOL     IsValidMailFile(char *fname);
 char *   itoa(int val);
 struct BodyChunkData *LoadBCImage(char *fname);
@@ -227,7 +234,6 @@ Object * MakeString(int maxlen, char *label);
 Object * MakeAddressField(APTR *string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti);
 int      MatchNoCase(char *string, char *match);
 BOOL     MatchTT(char *charset, struct TranslationTable *tt, BOOL in);
-void     MyAddHead(struct Mail **list, struct Mail *new);
 void     MyAddTail(struct Mail **list, struct Mail *new);
 char *   MyStrChr(const char *s, int c);
 struct TempFile *OpenTempFile(char *mode);
@@ -245,7 +251,6 @@ BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
 struct DateStamp *ScanDate(char *date);
 int      SelectMessage(struct Mail *mail);
-void     SetHelp(APTR object, APTR strnum);
 void     SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, UWORD flags);
 char     ShortCut(char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
@@ -267,7 +272,5 @@ char *   TrimStart(char *s);
 BOOL     LoadParsers(void);
 void     SParse(char *);
 APTR     WhichLV(struct Folder *folder);
-
-#define MyStrCpy(a,b) { strncpy((a),(b), sizeof(a)); (a)[sizeof(a)-1] = 0; }
 
 #endif /* YAM_UTILITIES_H */
