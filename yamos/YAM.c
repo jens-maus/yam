@@ -381,7 +381,9 @@ static BOOL Root_GlobalDispatcher(ULONG app_input)
 static BOOL Root_New(BOOL hidden)
 {
 #define MUIA_Application_UsedClasses 0x8042e9a7
-   static char *classes[] = { "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListview.mcc", NULL };
+   static const char *classes[] = {
+     "TextEditor.mcc", "Toolbar.mcc", "BetterString.mcc", "InfoText.mcc", "NListtree.mcc", "NList.mcc", "NListview.mcc", NULL
+   };
    G->App = ApplicationObject,
       MUIA_Application_Author     ,"YAM Open Source Team",
       MUIA_Application_Base       ,"YAM",
@@ -665,18 +667,20 @@ static void Initialise2(BOOL hidden)
 //  Phase 1 of program initialization (before user logs in)
 static void Initialise(BOOL hidden)
 {
-   static char iconfile[SIZE_PATHFILE];
-   char iconpath[SIZE_PATH];
-   char *icnames[MAXICONS] = { "empty", "old", "new", "check" };
-   char *imnames[MAXIMAGES] = { "status_unread",  "status_old",     "status_forward", "status_reply",
-                                "status_waitsend","status_error",   "status_hold",    "status_sent",
-                                "status_new",     "status_delete",  "status_download","status_group",
-                                "status_urgent",  "status_attach",  "status_report",  "status_crypt",
-                                "status_signed",
-                                "folder_fold",    "folder_unfold",  "folder_incoming","folder_incoming_new",
-                                "folder_outgoing","folder_outgoing_new",  "folder_deleted", "folder_deleted_new",
-                                "folder_sent"
-                              };
+   static const char *imnames[MAXIMAGES] = {
+     "status_unread",   "status_old",    "status_forward",  "status_reply",
+     "status_waitsend", "status_error",  "status_hold",     "status_sent",
+     "status_new",      "status_delete", "status_download", "status_group",
+     "status_urgent",   "status_attach", "status_report",   "status_crypt",
+     "status_signed",
+     "folder_fold",     "folder_unfold",       "folder_incoming", "folder_incoming_new",
+     "folder_outgoing", "folder_outgoing_new", "folder_deleted",  "folder_deleted_new",
+     "folder_sent"
+   };
+   static const char *icnames[MAXICONS] = {
+     "empty", "old", "new", "check"
+   };
+   char iconpath[SIZE_PATH], iconfile[SIZE_PATHFILE];
    int i;
 
    DateStamp(&G->StartDate);
