@@ -104,45 +104,45 @@ BOOL TR_InitTLS(VOID)
   sprintf(tmp, "%lx%lx", (unsigned long)time((time_t *)0), (unsigned long)FindTask(NULL));
   RAND_seed(tmp, strlen(tmp));
 
-	if (!(method = SSLv23_client_method()))
+  if (!(method = SSLv23_client_method()))
   {
     DB(kprintf("SSLv23_client_method() error !\n");)
     return FALSE;
   }
 
-	if (!(ctx = SSL_CTX_new(method)))
+  if (!(ctx = SSL_CTX_new(method)))
   {
-	  DB(kprintf("Can't create SSL_CTX object !\n");)
+    DB(kprintf("Can't create SSL_CTX object !\n");)
     return FALSE;
   }
 
   // In future we can give the user the ability to specify his own CA locations
   // in the application instead of using the default ones.
-	if (CAfile || CApath)
+  if (CAfile || CApath)
   {
-		DB(kprintf("CAfile = %s, CApath = %s\n", CAfile ? CAfile : "none", CApath ? CApath : "none");)
-		if ((!SSL_CTX_load_verify_locations(ctx, CAfile, CApath)))
+    DB(kprintf("CAfile = %s, CApath = %s\n", CAfile ? CAfile : "none", CApath ? CApath : "none");)
+    if ((!SSL_CTX_load_verify_locations(ctx, CAfile, CApath)))
     {
-		  DB(kprintf("Error setting default verify locations !\n");)
+      DB(kprintf("Error setting default verify locations !\n");)
       return FALSE;
     }
-	}
-	else
+  }
+  else
   {
     if((!SSL_CTX_set_default_verify_paths(ctx)))
     {
-		  DB(kprintf("Error setting default verify locations !\n");)
+      DB(kprintf("Error setting default verify locations !\n");)
       return FALSE;
     }
   }
 
-	if (!(SSL_CTX_set_cipher_list(ctx, "DEFAULT")))
+  if (!(SSL_CTX_set_cipher_list(ctx, "DEFAULT")))
   {
-	  DB(kprintf("SSL_CTX_set_cipher_list() error !\n");)
+    DB(kprintf("SSL_CTX_set_cipher_list() error !\n");)
     return FALSE;
   }
 
-	SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, 0);
+  SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, 0);
 
   return TRUE;
 }
@@ -152,27 +152,27 @@ BOOL TR_InitTLS(VOID)
 // function that starts & initializes the TLS/SSL session
 BOOL TR_StartTLS(VOID)
 {
-	DB(kprintf("Initializing TLS/SSL session...\n");)
+  DB(kprintf("Initializing TLS/SSL session...\n");)
 
-	if (!(ssl = SSL_new(ctx)))
+  if (!(ssl = SSL_new(ctx)))
   {
-		DB(kprintf("Can't create a new SSL structure for a connection !\n");)
+    DB(kprintf("Can't create a new SSL structure for a connection !\n");)
     return FALSE;
   }
 
-	if (!(SSL_set_fd(ssl, G->TR_Socket)))
-	{
+  if (!(SSL_set_fd(ssl, G->TR_Socket)))
+  {
     DB(kprintf("SSL_set_fd() error !\n");)
     return FALSE;
   }
 
-	if ((SSL_connect(ssl)) <= 0)
+  if ((SSL_connect(ssl)) <= 0)
   {
-		DB(kprintf("TLS/SSL handshake error !\n");)
+    DB(kprintf("TLS/SSL handshake error !\n");)
     return FALSE;
   }
 
-	// Certificate info
+  // Certificate info
   // only for debug reasons
 #ifdef DEBUG
   {
@@ -181,17 +181,17 @@ BOOL TR_StartTLS(VOID)
     X509 *server_cert;
     cipher = SSL_get_current_cipher(ssl);
 
-		if (cipher)
+    if (cipher)
     {
-			DB(kprintf("%s connection using %s\n", SSL_CIPHER_get_version(cipher), SSL_get_cipher(ssl));)
+      DB(kprintf("%s connection using %s\n", SSL_CIPHER_get_version(cipher), SSL_get_cipher(ssl));)
     }
 
-		if (!(server_cert = SSL_get_peer_certificate(ssl)))
+    if (!(server_cert = SSL_get_peer_certificate(ssl)))
     {
-		  DB(kprintf("SSL_get_peer_certificate() error !\n");)
+      DB(kprintf("SSL_get_peer_certificate() error !\n");)
     }
 
-		DB(kprintf("Server public key is %d bits\n", EVP_PKEY_bits(X509_get_pubkey(server_cert)));)
+    DB(kprintf("Server public key is %d bits\n", EVP_PKEY_bits(X509_get_pubkey(server_cert)));)
 
     #define X509BUFSIZE 4096
 
@@ -200,24 +200,24 @@ BOOL TR_StartTLS(VOID)
 
     DB(kprintf("Server certificate:\n");)
 
-		if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
+    if(!(X509_NAME_oneline(X509_get_subject_name(server_cert), x509buf, X509BUFSIZE)))
     {
       DB(kprintf("X509_NAME_oneline...[subject] error !\n");)
     }
-		DB(kprintf("subject: %s\n", x509buf);)
+    DB(kprintf("subject: %s\n", x509buf);)
 
-		if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
+    if(!(X509_NAME_oneline(X509_get_issuer_name(server_cert), x509buf, X509BUFSIZE)))
     {
       DB(kprintf("X509_NAME_oneline...[issuer] error !\n");)
     }
-		DB(kprintf("issuer:  %s\n", x509buf);)
+    DB(kprintf("issuer:  %s\n", x509buf);)
 
     if(x509buf)     free(x509buf);
     if(server_cert) X509_free(server_cert);
-	}
+  }
 #endif
 
-	return TRUE;
+  return TRUE;
 }
 
 ///
@@ -230,15 +230,15 @@ VOID TR_EndTLS(VOID)
   if(ssl)
   {
     SSL_shutdown(ssl);
-		SSL_free(ssl);
+    SSL_free(ssl);
     ssl = NULL;
-	}
-	
+  }
+  
   if(ctx)
   {
     SSL_CTX_free(ctx);
     ctx = NULL;
-	}
+  }
 }
 
 ///
@@ -279,9 +279,9 @@ void TR_CloseTCPIP(void)
 {
   if(AmiSSLBase)
   {
-	  CleanupAmiSSL(TAG_DONE);
-	  CloseLibrary(AmiSSLBase);
-	  AmiSSLBase = NULL;
+    CleanupAmiSSL(TAG_DONE);
+    CloseLibrary(AmiSSLBase);
+    AmiSSLBase = NULL;
   }
 
   if(SocketBase)
@@ -304,16 +304,16 @@ BOOL TR_OpenTCPIP(void)
   {
     if((AmiSSLBase = OpenLibrary("amissl.library", 1L)))
     {
-	    if(InitAmiSSL(AmiSSL_Version,     AmiSSL_CurrentVersion,
-			  	          AmiSSL_Revision,    AmiSSL_CurrentRevision,
-				  	        AmiSSL_SocketBase,  SocketBase,
-					          /*	AmiSSL_VersionOverride, TRUE,*/ /* If you insist */
-					          TAG_DONE) != 0)
+      if(InitAmiSSL(AmiSSL_Version,     AmiSSL_CurrentVersion,
+                    AmiSSL_Revision,    AmiSSL_CurrentRevision,
+                    AmiSSL_SocketBase,  SocketBase,
+                    /*AmiSSL_VersionOverride, TRUE,*/ /* If you insist */
+                    TAG_DONE) != 0)
       {
-	  		CloseLibrary(AmiSSLBase);
-		  	AmiSSLBase = NULL;
-  		}
-	  }
+        CloseLibrary(AmiSSLBase);
+        AmiSSLBase = NULL;
+      }
+    }
 
     if(!AmiSSLBase)
     {
@@ -321,7 +321,7 @@ BOOL TR_OpenTCPIP(void)
 
       G->TR_UseableTLS = G->TR_UseTLS = FALSE;
     }
-	}
+  }
 
   return (BOOL)(SocketBase != NULL);
 }
@@ -999,7 +999,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 {
    struct Mail *mail;
    static int laststats;
-	 static int msgsInCurrentFolder;
+   static int msgsInCurrentFolder;
    int msgs, pop = singlepop;
 
    if (isfirst) /* Init first connection */
@@ -1015,7 +1015,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
       if (singlepop >= 0) G->TR->SinglePOP = TRUE;
       else G->TR->POP_Nr = -1;
       laststats = 0;
-			msgsInCurrentFolder = FO_GetCurrentFolder()->Total;
+      msgsInCurrentFolder = FO_GetCurrentFolder()->Total;
    }
    else /* Finish previous connection */
    {
@@ -1039,9 +1039,9 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 
       DoMethod(G->App, MUIM_CallHook, &MA_ApplyRulesHook, APPLY_AUTO, 0, FALSE);
 
-			// Now we jump to the first new mail we received if the number of messages has changed
-			// after the mail transfer
-			if(C->JumpToIncoming && msgsInCurrentFolder < FO_GetCurrentFolder()->Total) MA_JumpToNewMsg();
+      // Now we jump to the first new mail we received if the number of messages has changed
+      // after the mail transfer
+      if(C->JumpToIncoming && msgsInCurrentFolder < FO_GetCurrentFolder()->Total) MA_JumpToNewMsg();
 
       G->TR->Checking = FALSE;
       DisplayStatistics((struct Folder *)-1, TRUE);

@@ -563,7 +563,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
             End; 
             if (group) 
             {
-            	DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_REALNAME, data->GUI.ST_ADDRESS, NULL);
+               DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_REALNAME, data->GUI.ST_ADDRESS, NULL);
                set(data->GUI.BT_LOADPHOTO, MUIA_Disabled, !*C->GalleryDir);
                SetHelp(data->GUI.ST_REALNAME   ,MSG_HELP_EA_ST_REALNAME   );
                SetHelp(data->GUI.ST_ADDRESS    ,MSG_HELP_EA_ST_ADDRESS    );
@@ -595,7 +595,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                Child, Label2(GetStr(MSG_EA_Description)),
                Child, data->GUI.ST_COMMENT = MakeString(SIZE_DEFAULT,GetStr(MSG_EA_Description)),
             End;
-           	set(data->GUI.ST_ALIAS, MUIA_String_Reject, ",");
+            set(data->GUI.ST_ALIAS, MUIA_String_Reject, ",");
             break;
          case AET_LIST: group = HGroup,
                MUIA_Group_SameWidth, TRUE,
@@ -605,7 +605,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                      Child, Label2(GetStr(MSG_EA_Alias)),
                      Child, data->GUI.ST_ALIAS = MakeString(SIZE_NAME,GetStr(MSG_EA_Alias)),
                      Child, Label2(GetStr(MSG_EA_ReturnAddress)),
-										 Child, MakeAddressField(&data->GUI.ST_ADDRESS, GetStr(MSG_EA_ReturnAddress), MSG_HELP_EA_ST_ADDRESS_L, ABM_TO, -1, FALSE),
+                     Child, MakeAddressField(&data->GUI.ST_ADDRESS, GetStr(MSG_EA_ReturnAddress), MSG_HELP_EA_ST_ADDRESS_L, ABM_TO, -1, FALSE),
                      Child, Label2(GetStr(MSG_EA_MLName)),
                      Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,GetStr(MSG_EA_MLName)),
                      Child, Label2(GetStr(MSG_EA_Description)),
@@ -625,10 +625,10 @@ static struct EA_ClassData *EA_New(int winnum, int type)
                      End,
                   End,
                   Child, data->GUI.ST_MEMBER = RecipientstringObject,
-					      StringFrame,
-                     MUIA_CycleChain,                    TRUE,
-					      MUIA_String_MaxLen,                 SIZE_ADDRESS,
-					      End,
+                     StringFrame,
+                     MUIA_CycleChain,    TRUE,
+                     MUIA_String_MaxLen, SIZE_ADDRESS,
+                     End,
                   Child, ColGroup(3), GroupSpacing(0),
                      Child, data->GUI.BT_ADD = MakeButton(GetStr(MSG_Add)),
                      Child, data->GUI.BT_DEL = MakeButton(GetStr(MSG_Del)),
@@ -638,7 +638,7 @@ static struct EA_ClassData *EA_New(int winnum, int type)
             End; 
             if (group)
             {
-            	DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_ADDRESS, data->GUI.ST_REALNAME, NULL);
+               DoMethod(group, MUIM_MultiSet, MUIA_String_Reject, ",", data->GUI.ST_ALIAS, data->GUI.ST_ADDRESS, data->GUI.ST_REALNAME, NULL);
                SetHelp(data->GUI.ST_ALIAS   ,MSG_HELP_EA_ST_ALIAS      );
                SetHelp(data->GUI.ST_COMMENT ,MSG_HELP_EA_ST_DESCRIPTION);
                SetHelp(data->GUI.ST_REALNAME,MSG_HELP_EA_ST_REALNAME_L );

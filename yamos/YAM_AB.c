@@ -73,16 +73,16 @@ static STACKEXT void AB_PrintLevel(struct MUI_NListtree_TreeNode*, FILE*, int);
 /// AB_PrettyPrintAddress
 STRPTR AB_PrettyPrintAddress (struct ABEntry *e)
 {
-	return AB_PrettyPrintAddress2(e->RealName, e->Address);
+   return AB_PrettyPrintAddress2(e->RealName, e->Address);
 }
 
 ///
 /// AB_PrettyPrintAddress2
 STRPTR AB_PrettyPrintAddress2 (STRPTR realname, STRPTR address)
 {
-	static TEXT buf[SIZE_REALNAME + SIZE_ADDRESS + 4];
-	sprintf(buf, "%." STR(SIZE_REALNAME) "s <%." STR(SIZE_ADDRESS) "s>", realname, address);
-	return buf;
+   static TEXT buf[SIZE_REALNAME + SIZE_ADDRESS + 4];
+   sprintf(buf, "%." STR(SIZE_REALNAME) "s <%." STR(SIZE_ADDRESS) "s>", realname, address);
+   return buf;
 }
 
 ///
@@ -305,7 +305,7 @@ HOOKPROTONHNO(AB_FromAddrBook, void, ULONG *arg)
             case ABM_FROM:    string = G->WR[winnum]->GUI.ST_FROM; break;
             default: string = (APTR)*arg;
          }
-			DoMethod(string, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
+         DoMethod(string, MUIM_Recipientstring_AddRecipient, addr->Alias ? addr->Alias : addr->RealName);
       }
    }
 }

@@ -538,9 +538,9 @@ void SParse(char *s)
             
    if (!s || (!PNum) || (!G->CO_AutoTranslateIn)) return;
 
-   while (*s) 	
+   while (*s)
    {
-	
+
       for (n = 0; n != PNum; n++) ctr[n] = 0; 
 
       tp = s;
@@ -2072,7 +2072,7 @@ int SelectMessage(struct Mail *mail)
 void DisplayMailList(struct Folder *fo, APTR lv)
 {
    struct Mail *work, **array;
-	 int lastActive = fo->LastActive;
+   int lastActive = fo->LastActive;
 
    if ((array = (struct Mail **)calloc(fo->Total+1,sizeof(struct Mail *))))
    {
@@ -2093,8 +2093,8 @@ void DisplayMailList(struct Folder *fo, APTR lv)
       BusyEnd;
    }
 
-	 // Now we have to recove the LastActive or otherwise it will be -1 later
-	 fo->LastActive = lastActive;
+   // Now we have to recove the LastActive or otherwise it will be -1 later
+   fo->LastActive = lastActive;
 }
 ///
 /// AddMailToList
@@ -3650,21 +3650,21 @@ char *p,*ret;
 // in a Amiga suitable format. This is case-insensitive !
 char *SWSSearch(char *str1, char *str2)
 {
-	int  L[SIZE_ADDRESS+1][SIZE_ADDRESS+1];    // L matrix
-	int  Ind[SIZE_ADDRESS+1][SIZE_ADDRESS+1];  // Index matrix
-	char X[SIZE_ADDRESS+2];                    // 1.string X
-	char Y[SIZE_ADDRESS+2];                    // 2.string Y
-	static char	Z[3*SIZE_ADDRESS+1];           // the destination string (result)
-	int   lx;                                  // length of X
-	int   ly;                                  // length of Y
-	int   lz;                                  // length of Z
+  int  L[SIZE_ADDRESS+1][SIZE_ADDRESS+1];    // L matrix
+  int  Ind[SIZE_ADDRESS+1][SIZE_ADDRESS+1];  // Index matrix
+  char X[SIZE_ADDRESS+2];                    // 1.string X
+  char Y[SIZE_ADDRESS+2];                    // 2.string Y
+  static char Z[3*SIZE_ADDRESS+1];           // the destination string (result)
+  int   lx;                                  // length of X
+  int   ly;                                  // length of Y
+  int   lz;                                  // length of Z
   int   i, j, k;
   BOOL  firstLoop = TRUE;
 
   enum  IndType { DELX=0, DELY, DONE, TAKEBOTH };   // special enum for the Indicator
 
   // we copy str1&str2 into X and Y but have to copy a placeholder in front of them
-	sprintf(X, " %s", str1);
+  sprintf(X, " %s", str1);
   sprintf(Y, " %s", str2);
 
   // calculate the length of every string
@@ -3672,13 +3672,13 @@ char *SWSSearch(char *str1, char *str2)
   ly = strlen(Y);
 
   // Now we initialize the two matrixes first
-	for(i=0; i < lx; i++)
+  for(i=0; i < lx; i++)
   {
     L[i][0] = 0;
     Ind[i][0] = DELX;
   }
 
-	for(j=0; j < ly; j++)
+  for(j=0; j < ly; j++)
   {
     L[0][j] = 0;
     Ind[0][j] = DELY;
@@ -3686,7 +3686,7 @@ char *SWSSearch(char *str1, char *str2)
 
   Ind[0][0] = DONE;
 
-	// Now we calculate the L matrix
+  // Now we calculate the L matrix
   // this is the first step of the SW algorithm
   for(i=1; i < lx; i++)
   {
@@ -3745,9 +3745,9 @@ char *SWSSearch(char *str1, char *str2)
   // lets alloc the result Z string
   // we calulate the maximum that is possible if each char is followed
   // by a wildcard (3*lz+1) even if we don`t need it completly
-	lz = 3*SIZE_ADDRESS+1;
+  lz = 3*SIZE_ADDRESS+1;
 
-	Z[--lz] = '\0';
+  Z[--lz] = '\0';
   Z[--lz] = '?';
   Z[--lz] = '#';
 

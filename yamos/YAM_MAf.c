@@ -407,8 +407,8 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
       // Create the Mail List and display it
       DisplayMailList(folder, gui->NL_MAILS);
 
-			// Now we jump to messages that are NEW
-			if(C->JumpToNewMsg) MA_JumpToNewMsg();
+      // Now we jump to messages that are NEW
+      if(C->JumpToNewMsg) MA_JumpToNewMsg();
 
       // if there is still no entry active in the NList we make the first one active
       if(xget(gui->NL_MAILS, MUIA_NList_Active) == MUIV_NList_Active_Off)
@@ -519,45 +519,45 @@ ULONG MA_FolderContextMenu(struct MUIP_ContextMenuBuild *msg)
 // depending on sort order of the folder
 BOOL MA_JumpToNewMsg(VOID)
 {
-	struct Folder *folder = FO_GetCurrentFolder();
-	int pos = -1;
-	int i, incr;
+  struct Folder *folder = FO_GetCurrentFolder();
+  int pos = -1;
+  int i, incr;
 
-	if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
-	{
-		get(G->MA->GUI.NL_MAILS, MUIA_NList_Entries, &i);
-		i--;
-		incr = -1;
-	}
-	else
-	{
-		i = 0;
-		incr = 1;
-	}
-	
-	while(1)
-	{
-		struct Mail *mail;
-		DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
+  if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
+  {
+    get(G->MA->GUI.NL_MAILS, MUIA_NList_Entries, &i);
+    i--;
+    incr = -1;
+  }
+  else
+  {
+    i = 0;
+    incr = 1;
+  }
+  
+  while(1)
+  {
+    struct Mail *mail;
+    DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
 
-		if(!mail)
-		{
-			pos = -1;
-			break;
-		}
+    if(!mail)
+    {
+      pos = -1;
+      break;
+    }
 
-		if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR)
-		{
-			pos = i;
-			break;
-		}
+    if (mail->Status == STATUS_NEW || mail->Status == STATUS_UNR)
+    {
+      pos = i;
+      break;
+    }
 
-		i += incr;
-	}
+    i += incr;
+  }
 
-	set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
+  set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
 
-	return TRUE;
+  return TRUE;
 }
 ///
 

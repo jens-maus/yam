@@ -295,7 +295,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "AutoSave         = %ld\n", co->AutoSave);
       fprintf(fh, "SupportSite      = %s\n", co->SupportSite);
       fprintf(fh, "JumpToNewMsg     = %s\n", Bool2Txt(co->JumpToNewMsg));
-			fprintf(fh, "JumpToIncoming   = %s\n", Bool2Txt(co->JumpToIncoming));
+      fprintf(fh, "JumpToIncoming   = %s\n", Bool2Txt(co->JumpToIncoming));
       fprintf(fh, "AskJumpUnread    = %s\n", Bool2Txt(co->AskJumpUnread));
       fprintf(fh, "PrinterCheck     = %s\n", Bool2Txt(co->PrinterCheck));
       fprintf(fh, "IsOnlineCheck    = %s\n", Bool2Txt(co->IsOnlineCheck));
@@ -616,7 +616,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
                if (!stricmp(buffer, "SupportSite"))    stccpy(co->SupportSite, value, SIZE_HOST);
                if (!stricmp(buffer, "JumpToNewMsg"))   co->JumpToNewMsg = Txt2Bool(value);
-							 if (!stricmp(buffer, "JumpToIncoming")) co->JumpToIncoming = Txt2Bool(value);
+               if (!stricmp(buffer, "JumpToIncoming")) co->JumpToIncoming = Txt2Bool(value);
                if (!stricmp(buffer, "AskJumpUnread"))  co->AskJumpUnread = Txt2Bool(value);
                if (!stricmp(buffer, "PrinterCheck"))   co->PrinterCheck = Txt2Bool(value);
                if (!stricmp(buffer, "IsOnlineCheck"))  co->IsOnlineCheck = Txt2Bool(value);

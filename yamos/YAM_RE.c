@@ -2133,9 +2133,9 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
             char *linebuf = malloc(buflen);
             while (fgets(linebuf, buflen, fh))
             {
-	         SParse(linebuf);	
+               SParse(linebuf);
                cmsg = AppendToBuffer(cmsg, &wptr, &len, linebuf);
-	         }            
+            }            
             free(linebuf);
             fclose(fh);
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\n");
@@ -2144,7 +2144,7 @@ char *RE_ReadInMessage(int winnum, enum ReadInMode mode)
       {
          BOOL dodisp = (part->Printable && part->Decoded);
 
-	 prewptr = wptr;
+         prewptr = wptr;
 
          if (mode != RIM_READ && part->Nr > 1) break;
          if (mode == RIM_READ && (part->Nr > 1 || !dodisp))

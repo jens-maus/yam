@@ -2099,8 +2099,8 @@ MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 /// FindAddressHook()
 HOOKPROTONH(FindAddressFunc, LONG, Object *obj, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
-	struct ABEntry *entry = (struct ABEntry *)msg->UserData;
-	return Stricmp(msg->User, entry->Address);
+   struct ABEntry *entry = (struct ABEntry *)msg->UserData;
+   return Stricmp(msg->User, entry->Address);
 }
 MakeStaticHook(FindAddressHook, FindAddressFunc);
 
@@ -2132,20 +2132,20 @@ HOOKPROTO(MA_LV_DspFunc, long, char **array, struct Mail *entry)
 #ifndef DISABLE_ADDRESSBOOK_LOOKUP
 {
          struct Person *pe;
-			struct MUI_NListtree_TreeNode *tn;
-			STRPTR multiple, to, addr;
+         struct MUI_NListtree_TreeNode *tn;
+         STRPTR multiple, to, addr;
 
-			multiple = entry->Flags & MFLAG_MULTIRCPT ? "\033o[11]" : "";
-			pe = outbox ? &entry->To : &entry->From;
-			to = (type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress) ? (pe = &entry->To, GetStr(MSG_MA_ToPrefix)) : "";
+         multiple = entry->Flags & MFLAG_MULTIRCPT ? "\033o[11]" : "";
+         pe = outbox ? &entry->To : &entry->From;
+         to = (type == FT_CUSTOMMIXED || type == FT_DELETED) && !Stricmp(pe->Address, C->EmailAddress) ? (pe = &entry->To, GetStr(MSG_MA_ToPrefix)) : "";
 
-			set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
+         set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
          if(tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], 0))
-					addr = ((struct ABEntry *)tn->tn_User)->RealName;
-			else	addr = AddrName((*pe));
+              addr = ((struct ABEntry *)tn->tn_User)->RealName;
+         else addr = AddrName((*pe));
 
-			sprintf(dispfro, "%s%s%s", multiple, to, addr);
-			array[1] = dispfro;
+         sprintf(dispfro, "%s%s%s", multiple, to, addr);
+         array[1] = dispfro;
 }
 #else
          array[1] = dispfro; *dispfro = 0;

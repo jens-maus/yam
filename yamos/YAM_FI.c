@@ -441,7 +441,7 @@ HOOKPROTONHNONP(FI_SearchFunc, void)
          DoMethod(G->App,MUIM_Application_InputBuffered);
          if (FI_DoSearch(&search, mail))
          {
-						DoMethod(gui->LV_MAILS, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
+            DoMethod(gui->LV_MAILS, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Sorted);
             fndmsg++;
          }
          set(ga, MUIA_Gauge_Current, ++progress);
@@ -918,8 +918,8 @@ static struct FI_ClassData *FI_New(void)
          DoMethod(data->GUI.BT_READ  ,MUIM_Notify,MUIA_Pressed             ,FALSE         ,MUIV_Notify_Application,2,MUIM_CallHook,&FI_ReadHook);
          DoMethod(data->GUI.WI       ,MUIM_Notify,MUIA_Window_CloseRequest ,TRUE          ,MUIV_Notify_Application,2,MUIM_CallHook,&FI_CloseHook);
 
-				 // Lets have the Listview sorted by Reverse Date by default
-				 set(data->GUI.LV_MAILS, MUIA_NList_SortType, (4 | MUIV_NList_SortTypeAdd_2Values));
+         // Lets have the Listview sorted by Reverse Date by default
+         set(data->GUI.LV_MAILS, MUIA_NList_SortType, (4 | MUIV_NList_SortTypeAdd_2Values));
 
          return data;
       }

@@ -1284,24 +1284,24 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
   struct Mail *mail = folder->Messages;
   char *toPattern = mail->To.Address;
   char *toAddress = mail->To.Address;
-	char res[3*SIZE_ADDRESS+1];
+  char res[3*SIZE_ADDRESS+1];
   char *result;
   int i;
   BOOL takePattern = TRUE;
   BOOL takeAddress = TRUE;
-	char *notRecog = GetStr(MSG_FO_NOTRECOGNIZED);
+  char *notRecog = GetStr(MSG_FO_NOTRECOGNIZED);
 
   if(!folder || !mail) return;
 
   for(i=0, mail=mail->Next; mail && i < SCANMSGS; i++, mail = mail->Next)
   {
-		DB(kprintf("SWS: [%s] [%s] - [%s]\n", toPattern, mail->To.Address, mail->Subject));
+    DB(kprintf("SWS: [%s] [%s] - [%s]\n", toPattern, mail->To.Address, mail->Subject));
 
     // Analyze the ToAdress through the Smith&Waterman algorithm
-		if(takePattern && (result = SWSSearch(toPattern, mail->To.Address)))
+    if(takePattern && (result = SWSSearch(toPattern, mail->To.Address)))
     {
-			strcpy(res, result);
-			toPattern = res;
+      strcpy(res, result);
+      toPattern = res;
 
       // If we reached a #? pattern then we break here
       if(strcmp(toPattern, "#?") == 0)
@@ -1316,11 +1316,11 @@ HOOKPROTONHNONP(FO_MLAutoDetectFunc, void)
     {
       takeAddress = FALSE;
     }
-	}
+  }
 
   // Now we set the new pattern & address values to the string gadgets
-	setstring(G->FO->GUI.ST_MLPATTERN, takePattern ? toPattern : notRecog);
-	setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
+  setstring(G->FO->GUI.ST_MLPATTERN, takePattern ? toPattern : notRecog);
+  setstring(G->FO->GUI.ST_MLADDRESS, takeAddress ? toAddress : notRecog);
 }
 MakeStaticHook(FO_MLAutoDetectHook, FO_MLAutoDetectFunc);
 
