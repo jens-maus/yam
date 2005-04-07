@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-04-07  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_AB.c: removed another "-repeat" specification on a del key operation which
+      might be dangerous.
+
 2005-04-06  Jens Langner <Jens.Langner@light-speed.de>
 
     * ReadMailGroup.c: fixed a possible crash bug where an already used read window or
