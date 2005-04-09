@@ -4,7 +4,7 @@
 /* Includeheader
 
         Name:           SDI_hook.h
-        Versionstring:  $VER: SDI_hook.h 1.7 (04.07.2004)
+        Versionstring:  $VER: SDI_hook.h 1.9 (08.04.2005)
         Author:         SDI & Jens Langner
         Distribution:   PD
         Description:    defines to hide compiler specific hook stuff
@@ -22,6 +22,8 @@
                   reduce compiler warnings.
  1.7   04.07.04 : removed static from all DISPATCHERPROTO definitions as there
                   may dispatcher that are of course non static.
+ 1.8   07.04.05 : added MakeHookWithData (Sebastian Bauer)
+ 1.9   08.04.05 : changed MorphOS hooks to use HookEntry (Ilkka Lehtoranta)
 */
 
 /*
@@ -122,7 +124,9 @@
   #endif
 #endif
 
-#ifdef __MORPHOS__
+#if defined(__MORPHOS__)
+  #include <proto/alib.h>
+
   #define SDI_TRAP_LIB 0xFF00 /* SDI prefix to reduce conflicts */
 
   struct SDI_EmulLibEntry
@@ -132,35 +136,34 @@
     APTR  Func;
   };
 
-  #ifdef __GNUC__
-    #include <emul/emulregs.h>
+  #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
+    (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
+  #define MakeHookWithData(hookname, funcname, data) struct Hook hookname =  \
+    {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, (APTR)data}
+  #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
+    {{NULL, NULL}, (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
 
-    #define HOOKPROTO(name, ret, obj, param) static ret name(void)           \
-      { struct Hook *hook = (APTR)REG_A0; obj = (APTR)REG_A2;                \
-        param = (APTR)REG_A1;
-    #define HOOKPROTONO(name, ret, param) static ret name(void)              \
-      { struct Hook *hook = (APTR)REG_A0; param = (APTR)REG_A1;
-    #define HOOKPROTONP(name, ret, obj) static ret name(void)                \
-      { struct Hook *hook = (APTR)REG_A0; obj = (APTR)REG_A2;
-    #define HOOKPROTONONP(name, ret) static ret name(void)                   \
-      { struct Hook *hook = (APTR)REG_A0;
-    #define HOOKPROTONH(name, ret, obj, param) static ret name(void)         \
-      { obj = (APTR)REG_A2; param = (APTR)REG_A1;
-    #define HOOKPROTONHNO(name, ret, param) static ret name(void)            \
-      { param = (APTR)REG_A1;
-    #define HOOKPROTONHNP(name, ret, obj) static ret name(void)              \
-      { obj = (APTR)REG_A2;
-    #define HOOKPROTONHNONP(name, ret) static ret name(void) {
-    #define MakeHook(hookname, funcname)                                     \
-      } static const struct SDI_EmulLibEntry Gate_##funcname =               \
-      {SDI_TRAP_LIB, 0, (void(*)()) funcname};                               \
-      struct Hook hookname = {{NULL, NULL}, (HOOKFUNC)&Gate_##funcname,      \
-      NULL, NULL}
-    #define MakeStaticHook(hookname, funcname)                               \
-      } static const struct SDI_EmulLibEntry Gate_##funcname =               \
-      {SDI_TRAP_LIB, 0, (void(*)()) funcname};                               \
-      static struct Hook hookname = {{NULL, NULL},                           \
-      (HOOKFUNC)&Gate_##funcname, NULL, NULL}
+  #if defined(__GNUC__)
+    #define HOOKPROTO(name, ret, obj, param) static SAVEDS ASM ret           \
+      name(REG(a0, struct Hook *hook), REG(a2, obj), REG(a1, param))
+    #define HOOKPROTONO(name, ret, param) static SAVEDS ASM ret              \
+      name(REG(a0, struct Hook *hook), REG(a2, UNUSED APTR obj),             \
+      REG(a1, param))
+    #define HOOKPROTONP(name, ret, obj) static SAVEDS ASM ret                \
+      name(REG(a0, struct Hook *hook), REG(a2, obj),                         \
+      REG(a1, UNUSED APTR param))
+    #define HOOKPROTONONP(name, ret) static SAVEDS ASM ret                   \
+      name(REG(a0, struct Hook *hook), REG(a2, UNUSED APTR obj),             \
+      REG(a1, UNUSED APTR param))
+    #define HOOKPROTONH(name, ret, obj, param) static SAVEDS ASM ret         \
+      name(REG(a0, UNUSED struct Hook *hook), REG(a2, obj), REG(a1, param))
+    #define HOOKPROTONHNO(name, ret, param) static SAVEDS ASM ret            \
+      name(REG(a0, UNUSED struct Hook *hook), REG(a2, UNUSED APTR obj),      \
+      REG(a1, param))
+    #define HOOKPROTONHNP(name, ret, obj) static SAVEDS ASM ret              \
+      name(REG(a0, UNUSED struct Hook *hook), REG(a2, obj),                  \
+      REG(a1, UNUSED APTR param))
+    #define HOOKPROTONHNONP(name, ret) static SAVEDS ret name(void)
     #define DISPATCHERPROTO(name)                                            \
       struct IClass;                                                         \
       ULONG name(struct IClass * cl, Object * obj, Msg msg);                 \
@@ -170,16 +173,6 @@
       (void(*)())Trampoline_##name};                                         \
       ULONG name(struct IClass * cl, Object * obj, Msg msg)
   #else
-    #define MakeHook(hookname, funcname)                                     \
-      static const struct SDI_EmulLibEntry Gate_##funcname = {SDI_TRAP_LIB,  \
-      0, (APTR) funcname};                                                   \
-      struct Hook hookname = {{NULL, NULL},                                  \
-      (HOOKFUNC)&Gate_##funcname, NULL, NULL}
-    #define MakeStaticHook(hookname, funcname)                               \
-      static const struct SDI_EmulLibEntry Gate_##funcname = {SDI_TRAP_LIB,  \
-      0, (APTR) funcname};                                                   \
-      static struct Hook hookname = {{NULL, NULL},                           \
-      (HOOKFUNC)&Gate_##funcname, NULL, NULL}
     #define DISPATCHERPROTO(name)                                            \
       struct IClass;                                                         \
       ASM ULONG  name(REG(a0,                                                \
@@ -197,6 +190,8 @@
   #define ENTRY(func) (APTR)func
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
     (HOOKFUNC)funcname, NULL, NULL}
+  #define MakeHookWithData(hookname, funcname, data) struct Hook hookname =  \
+    {{NULL, NULL}, (HOOKFUNC)funcname, NULL, (APTR)data}
   #define MakeStaticHook(hookname, funcname) static struct Hook hookname =   \
     {{NULL, NULL}, (HOOKFUNC)funcname, NULL, NULL}
 #endif
