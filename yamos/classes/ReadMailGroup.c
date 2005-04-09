@@ -342,7 +342,7 @@ OVERLOAD(OM_SET)
 
 /* Public Methods */
 /// DECLARE(Clear)
-DECLARE(Clear)
+DECLARE(Clear) // BOOL noTextEditClear
 {
 	GETDATA;
 
@@ -352,7 +352,9 @@ DECLARE(Clear)
 	{
 		// clear all relevant GUI elements
 		DoMethod(data->headerList, MUIM_NList_Clear);
-		set(data->mailTextObject, MUIA_TextEditor_Contents, "");
+
+		if(msg->noTextEditClear == FALSE)
+			set(data->mailTextObject, MUIA_TextEditor_Contents, "");
 
 		// cleanup the senderInfoHeaders list
 		FreeHeaderList(&data->senderInfoHeaders);
@@ -399,7 +401,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 	// before we actually start loading data into our readmailGroup
 	// we have to make sure we didn't actually have something displayed
 	// which should get freed first
-	DoMethod(obj, MUIM_ReadMailGroup_Clear);
+	DoMethod(obj, MUIM_ReadMailGroup_Clear, hasUpdateOnlyFlag(msg->flags));
 
 	// set the passed mail as the current mail read by our ReadMailData
 	// structure

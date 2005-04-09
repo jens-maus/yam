@@ -158,7 +158,7 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
       if(numSelected == 1)
         TC_Start(TIO_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
       else
-        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear);
+        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
    }
 
    type = fo->Type;

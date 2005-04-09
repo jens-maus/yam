@@ -547,10 +547,10 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
   else if(set_active)
     FO_SetCurrentFolder(folder);
 
-  // in case the main window has a embedded read pane, we have to
+  // in case the main window has an embedded read pane, we have to
   // clear it before changing the actual folder
   if(C->EmbeddedReadPane)
-    DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear);
+    DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
 
   // if this folder should be disabled, lets do it now
   if(folder->Type == FT_GROUP || MA_GetIndex(folder) == FALSE)

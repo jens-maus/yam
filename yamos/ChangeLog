@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-04-09  Jens Langner <Jens.Langner@light-speed.de>
+
+    * ReadMailGroup.c, YAM_MA.f, YAM_MAf.c: slightly improved refresh handling where
+      upon an update of a readmailgroup the texteditor content should be clear prior
+      to placing the anyway more or less same text to the texteditor again. This should
+      hopefully fix/improve some flickering situations.
+    * includes/SDI_hook.h: updated to latest version which doesn't use the MorphOS
+      specific emultraps for hooks anymore.
+
 2005-04-07  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_AB.c: removed another "-repeat" specification on a del key operation which
