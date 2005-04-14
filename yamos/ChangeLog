@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-04-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * starter.c,  Makefile.MorphOS: removed starter.c which is anyway not used
+      anymore on MorphOS distributions.
+
 2005-04-09  Jens Langner <Jens.Langner@light-speed.de>
 
     * ReadMailGroup.c, YAM_MA.f, YAM_MAf.c: slightly improved refresh handling where

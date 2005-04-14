@@ -37,9 +37,6 @@ MKDIR     = mkdir
 CHMOD     = chmod
 FLEX      = flex
 FC        = flexcat
-CC68K     = m68k-amigaos-gcc
-STRIP68K  = m68k-amigaos-strip
-CFLAGS68K = -nostdlib -DNAME=\"YAM\" -O -fomit-frame-pointer
 
 # Directories
 PREFIX    = .
@@ -162,17 +159,11 @@ $(TARGET): $(OBJS)
 	@$(STRIP) -o $@ $@.debug
 	@$(CHMOD) a+x $@
 
-starter: starter.c
-	@printf '\033[32mCompiling&Linking \033[1m$@\033[0m\n'
-	@$(CC68K) $(CFLAGS68K) -o $@.debug $< -DNO_INLINE_STDARG
-	@$(STRIP68K) -o $@ $@.debug
-	@$(CHMOD) a+x $@
-
 dump:
 	-$(OBJDUMP) --section-headers --all-headers --reloc --disassemble-all $(TARGET).debug > $(TARGET).dump
 
 clean:
-	-$(RM) $(TARGET) $(TARGET).debug $(OBJS) starter starter.debug
+	-$(RM) $(TARGET) $(TARGET).debug $(OBJS)
 
 cleanall: clean
 	-$(RM) YAM_locale.? YAM_mail_lex.c $(CLASSDIR)/Classes.? $(CLASSDIR)/*_cl.h
