@@ -29,6 +29,8 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
+
 #include <proto/intuition.h>
 #include <proto/utility.h>
 

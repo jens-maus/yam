@@ -1136,10 +1136,10 @@ static int TR_Connect(char *host, int port)
     D(DBF_NET, "SO_RCVLOWAT...: %ld", optval);
 
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, &tvlen);
-    D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.tv_sec);
+    D(DBF_NET, "SO_SNDTIMEO...: %ld", tv.tv_secs);
 
     getsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, &tvlen);
-    D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.tv_sec);
+    D(DBF_NET, "SO_RCVTIMEO...: %ld", tv.tv_secs);
   }
   #endif
 
