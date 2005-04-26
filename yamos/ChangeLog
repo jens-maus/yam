@@ -7,6 +7,10 @@ $Source$
 
 2005-04-26  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MAf.c: modified the FlushIndexes function to make sure all indexes fo all
+      folders are saved to disk, no matter if the index of a folder is really flushed
+      or not. This way a user can make sure to definitely have all indexes saved to
+      disk by using the "Flush indices" menu item.
     * YAM_MAf.c: fixed the automatic folder index rescanning routine where upon an
       outdated/missing .index file YAM always did rescan a folder upon startup instead
       of taking respect of the LoadAllFolders option.

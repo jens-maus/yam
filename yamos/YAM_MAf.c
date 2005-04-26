@@ -545,28 +545,51 @@ void MA_UpdateIndexes(BOOL initial)
 //  Removes loaded folder indices from memory and closes folders
 void MA_FlushIndexes(BOOL all)
 {
-   int i;
-   struct Folder *fo, **flist, *actfo = FO_GetCurrentFolder();
+  struct Folder **flist;
 
-   if(!actfo) return;
+  ENTER();
 
-   if ((flist = FO_CreateList()))
-   {
-      for (i = 1; i <= (int)*flist; i++)
+  if((flist = FO_CreateList()))
+  {
+    struct Folder *folder;
+    struct Folder *actfolder = FO_GetCurrentFolder();
+
+    int i;
+    for(i=1; i <= (int)*flist; i++)
+    {
+      folder = flist[i];
+
+      // make sure the folder index is saved
+      if(isModified(folder))
+        MA_SaveIndex(folder);
+
+      // then we make sure we only clear the folder index of
+      // a folder where this should really be done and also not
+      // on the actual folder or otherwise we risk to run into
+      // problems.
+      if((folder->Type == FT_SENT ||
+          folder->Type == FT_CUSTOM ||
+          folder->Type == FT_CUSTOMSENT) &&
+          folder->LoadedMode == LM_VALID &&
+          (all || isFreeAccess(folder)) &&
+          folder != actfolder)
       {
-         fo = flist[i];
+        D(DBF_FOLDER, "Flush index of folder '%s'", folder->Name);
 
-         if ((fo->Type == FT_SENT || fo->Type == FT_CUSTOM || fo->Type == FT_CUSTOMSENT) && fo != actfo  && fo->LoadedMode == LM_VALID && (all || isFreeAccess(fo)))
-         {
-            if(isModified(fo)) MA_SaveIndex(fo);
-            ClearMailList(fo, FALSE);
-            fo->LoadedMode = LM_FLUSHED;
-            CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
-         }
+        ClearMailList(folder, FALSE);
+        folder->LoadedMode = LM_FLUSHED;
+        CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
       }
-      free(flist);
-      DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
-   }
+    }
+
+    // free the temporary folder list
+    free(flist);
+
+    // make sure to redraw the whole folder list
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Redraw, MUIV_NListtree_Redraw_All, MUIF_NONE);
+  }
+
+  LEAVE();
 }
 
 HOOKPROTONHNONP(MA_FlushIndexFunc, void)
