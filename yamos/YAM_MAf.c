@@ -153,6 +153,8 @@ static void MA_ValidateStatus(struct Folder *folder)
 {
    struct Mail *mail;
 
+   ENTER();
+
    if(C->UpdateNewMail            ||
       folder->Type == FT_OUTGOING ||
       folder->Type == FT_SENT
@@ -173,6 +175,8 @@ static void MA_ValidateStatus(struct Folder *folder)
         }
       }
    }
+
+   LEAVE();
 }
 
 ///
@@ -300,12 +304,20 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
 
    if(corrupt || indexloaded == LM_UNLOAD)
    {
-     W(DBF_FOLDER, "  corrupt or outdated .index file detected, %s", full ? "rebuilding..." : "skipping...");
+     W(DBF_FOLDER, "  %s .index file detected, %s", corrupt ? "corrupt" : "missing",
+                                                    full ? "rebuilding..." : "skipping...");
+
+     // clear the mail list of the folder
      ClearMailList(folder, TRUE);
+
+     // if the "full" mode was requested we make sure we
+     // rescan the index accordingly
      if(full)
      {
         MA_ScanMailBox(folder);
-        if(MA_SaveIndex(folder)) indexloaded = LM_VALID;
+
+        if(MA_SaveIndex(folder))
+          indexloaded = LM_VALID;
      }
    }
    else if(full)
@@ -328,7 +340,14 @@ BOOL MA_SaveIndex(struct Folder *folder)
    char buf[SIZE_LARGE];
    struct FIndex fi;
 
-   if (!(fh = fopen(MA_IndexFileName(folder), "w"))) return FALSE;
+   ENTER();
+
+   if(!(fh = fopen(MA_IndexFileName(folder), "w")))
+   {
+     RETURN(FALSE);
+     return FALSE;
+   }
+
    BusyText(GetStr(MSG_BusySavingIndex), folder->Name);
 
    // lets prepare the Folder Index struct and write it out
@@ -365,6 +384,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
    CLEAR_FLAG(folder->Flags, FOFL_MODIFY);
    BusyEnd();
 
+   RETURN(TRUE);
    return TRUE;
 }
 
@@ -373,14 +393,22 @@ BOOL MA_SaveIndex(struct Folder *folder)
 //  Opens/unlocks a folder
 BOOL MA_GetIndex(struct Folder *folder)
 {
+   ENTER();
+
    if(!folder || folder->Type == FT_GROUP)
+   {
+     RETURN(FALSE);
      return FALSE;
+   }
+
+   SHOWSTRING(DBF_FOLDER, folder->Name);
 
    if(folder->LoadedMode != LM_VALID)
    {
       if(isProtectedFolder(folder) && *folder->Password &&
          !MA_PromptFolderPassword(folder, G->MA->GUI.WI))
       {
+        RETURN(FALSE);
         return FALSE;
       }
 
@@ -398,6 +426,7 @@ BOOL MA_GetIndex(struct Folder *folder)
       }
    }
 
+   RETURN((BOOL)(folder->LoadedMode == LM_VALID));
    return (BOOL)(folder->LoadedMode == LM_VALID);
 }
 
@@ -416,81 +445,99 @@ void MA_ExpireIndex(struct Folder *folder)
 //  Updates indices of all folders
 void MA_UpdateIndexes(BOOL initial)
 {
-   int i;
-   struct Folder **flist;
+  struct Folder **flist;
 
-   if((flist = FO_CreateList()))
-   {
-      for(i = 1; i <= (int)*flist; i++)
+  ENTER();
+
+  if((flist = FO_CreateList()))
+  {
+    int i;
+
+    for(i = 1; i <= (int)*flist; i++)
+    {
+      struct Folder *folder = flist[i];
+
+      if(folder && folder->Type != FT_GROUP)
       {
-        struct Folder *fo = flist[i];
-
-        if(fo && fo->Type != FT_GROUP)
+        if(initial)
         {
-          if(initial)
+          char *folderDir = GetFolderDir(folder);
+          char *indexFile = MA_IndexFileName(folder);
+
+          // get date of the folder directory and the .index file
+          // itself
+          long dirdate = FileTime(folderDir);
+          long inddate = FileTime(indexFile);
+
+          // only consider starting to rebuilding the .index if
+          // either the date of the directory is greater than the
+          // date of the .index file itself, or if there is no index
+          // file date at all (no file present)
+          if(dirdate > inddate+30)
           {
-            char *folderDir = GetFolderDir(fo);
-            char *indexFile = MA_IndexFileName(fo);
-
-            // get date of the folder directory and the .index file
-            // itself
-            long dirdate = FileTime(folderDir);
-            long inddate = FileTime(indexFile);
-
-            // only consider starting to rebuilding the .index if
-            // either the date of the directory is greater than the
-            // date of the .index file itself, or if there is no index
-            // file date at all (no file present)
-            if(dirdate > inddate+30)
+            // get the protection bits of the folder index file
+            // and the folder directory, and if both have the A
+            // bit set we skip the index rescanning process because
+            // the A bits might have been set by a backup program
+            if(isFlagClear(FileProtection(indexFile), FIBF_ARCHIVE) ||
+               isFlagClear(FileProtection(folderDir), FIBF_ARCHIVE))
             {
-               // get the protection bits of the folder index file
-               // and the folder directory, and if both have the A
-               // bit set we skip the index rescanning process because
-               // the A bits might have been set by a backup program
-               if(isFlagClear(FileProtection(indexFile), FIBF_ARCHIVE) ||
-                  isFlagClear(FileProtection(folderDir), FIBF_ARCHIVE))
-               {
-                  // lets first delete the .index file to
-                  // make sure MA_GetIndex() is going to
-                  // rebuild it.
-                  if(inddate > 0)
-                     DeleteFile(indexFile);
+              // lets first delete the .index file to
+              // make sure MA_GetIndex() is going to
+              // rebuild it.
+              if(inddate > 0)
+                DeleteFile(indexFile);
 
-                  // then lets call GetIndex() to star rebuilding
-                  // the .index
-                  if(MA_GetIndex(fo) == TRUE)
+              // then lets call GetIndex() to start rebuilding
+              // the .index - but only if this folder is one of the folders
+              // that should update it indexes during startup
+              if((folder->Type == FT_INCOMING || folder->Type == FT_OUTGOING ||
+                 folder->Type == FT_DELETED || C->LoadAllFolders) &&
+                 !isProtectedFolder(folder))
+              {
+                if(MA_GetIndex(folder) == TRUE)
+                {
+                  // if we finally rebuilt the .index we
+                  // immediatly flush it here so that another
+                  // following index rebuild doesn't take
+                  // all remaining memory.
+                  if((folder->Type == FT_SENT   ||
+                      folder->Type == FT_CUSTOM ||
+                      folder->Type == FT_CUSTOMSENT) &&
+                      folder->LoadedMode == LM_VALID &&
+                      isFreeAccess(folder))
                   {
-                     // if we finally rebuilt the .index we
-                     // immediatly flush it here so that another
-                     // following index rebuild doesn't take
-                     // all remaining memory.
-                     if((fo->Type == FT_SENT   ||
-                         fo->Type == FT_CUSTOM ||
-                         fo->Type == FT_CUSTOMSENT) &&
-                         fo->LoadedMode == LM_VALID &&
-                         isFreeAccess(fo))
-                     {
-                        if(isModified(fo))
-                          MA_SaveIndex(fo);
+                    if(isModified(folder))
+                      MA_SaveIndex(folder);
 
-                        ClearMailList(fo, FALSE);
-                        fo->LoadedMode = LM_FLUSHED;
-                        CLEAR_FLAG(fo->Flags, FOFL_FREEXS);
-                     }
+                    ClearMailList(folder, FALSE);
+                    folder->LoadedMode = LM_FLUSHED;
+                    CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
                   }
-               }
+                }
+              }
+              else
+              {
+                // otherwise we make sure everything is cleared
+                ClearMailList(folder, FALSE);
+                folder->LoadedMode = LM_FLUSHED;
+                CLEAR_FLAG(folder->Flags, FOFL_FREEXS);
+              }
             }
           }
-          else
-          {
-            if(fo->LoadedMode == LM_VALID && isModified(fo))
-               MA_SaveIndex(fo);
-          }
+        }
+        else
+        {
+          if(folder->LoadedMode == LM_VALID && isModified(folder))
+            MA_SaveIndex(folder);
         }
       }
+    }
 
-      free(flist);
-   }
+    free(flist);
+  }
+
+  LEAVE();
 }
 
 ///

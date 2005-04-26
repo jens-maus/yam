@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-04-26  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c: fixed the automatic folder index rescanning routine where upon an
+      outdated/missing .index file YAM always did rescan a folder upon startup instead
+      of taking respect of the LoadAllFolders option.
+
 2005-04-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * starter.c,  Makefile.MorphOS: removed starter.c which is anyway not used
