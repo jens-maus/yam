@@ -479,7 +479,9 @@ BOOL FO_LoadTree(char *fname)
    APTR lv = G->MA->GUI.NL_FOLDERS;
    struct MUI_NListtree_TreeNode *tn_root = MUIV_NListtree_Insert_ListNode_Root;
 
-   if ((fh = fopen(fname, "r")))
+   ENTER();
+
+   if((fh = fopen(fname, "r")))
    {
       GetLine(fh, buffer, sizeof(buffer));
       if (!strncmp(buffer, "YFO", 3))
@@ -513,6 +515,8 @@ BOOL FO_LoadTree(char *fname)
                      if(!FO_SaveConfig(&fo))
                      {
                         fclose(fh);
+
+                        RETURN(FALSE);
                         return FALSE;
                      }
                   }
@@ -537,6 +541,8 @@ BOOL FO_LoadTree(char *fname)
                   if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, MUIF_NONE)))
                   {
                      fclose(fh);
+
+                     RETURN(FALSE);
                      return FALSE;
                   }
                }
@@ -564,6 +570,8 @@ BOOL FO_LoadTree(char *fname)
                if(!(DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, MUIV_NListtree_Insert_ListNode_Root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
                {
                   fclose(fh);
+
+                  RETURN(FALSE);
                   return FALSE;
                }
             }
@@ -591,6 +599,8 @@ BOOL FO_LoadTree(char *fname)
                if(!(tn_root = (struct MUI_NListtree_TreeNode *)DoMethod(lv, MUIM_NListtree_Insert, fo.Name, &fo, tn_root, MUIV_NListtree_Insert_PrevNode_Tail, tnflags)))
                {
                   fclose(fh);
+
+                  RETURN(FALSE);
                   return FALSE;
                }
 
@@ -619,6 +629,7 @@ BOOL FO_LoadTree(char *fname)
    // if nested is still greater zero we have a misconfiguration
    if (nested > 0) success = FALSE;
 
+   RETURN(success);
    return success;
 }
 
