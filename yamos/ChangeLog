@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-01  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/AttachmentImage.c: modified the tagitem handling of the DrawIconStateA()
+      calls to eventually fix problems on systems using icon.library >= v44. Also
+      increased the ordWidth/Height by one to make sure our destination bitmap is
+      huge enough.
+
 2005-04-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MAf.c: modified the FlushIndexes function to make sure all indexes fo all

@@ -286,6 +286,9 @@ OVERLOAD(MUIM_Setup)
 		ULONG orgWidth;
 		ULONG orgHeight;
 		ULONG screenDepth = GetBitMapAttr(screenBitMap, BMA_DEPTH);
+		static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless, TRUE },
+																									 { ICONDRAWA_Frameless,	 TRUE },
+																									 { TAG_DONE, 						 FALSE} };
 
 		// initialize our temporary rastport
 		InitRastPort(&rp);
@@ -293,18 +296,17 @@ OVERLOAD(MUIM_Setup)
 		// get some information about our diskObject like width/height
 		if(IconBase->lib_Version >= 44)
 		{
-			static const Tag tags[] = { ICONDRAWA_Borderless, TRUE, TAG_DONE };
 			struct Rectangle rect;
 	
-			GetIconRectangleA(NULL, diskObject, NULL, &rect, (APTR)tags);
+			GetIconRectangleA(NULL, diskObject, NULL, &rect, drawIconTags);
 
 			orgWidth  = rect.MaxX - rect.MinX + 1;
 			orgHeight = rect.MaxY - rect.MinY + 1;
 		}
 		else
 		{
-			orgWidth  = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Width;
-			orgHeight = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Height;
+			orgWidth  = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Width + 1;
+			orgHeight = ((struct Image*)diskObject->do_Gadget.GadgetRender)->Height + 1;
 		}
 
 		// we first allocate a source bitmap with equal size to the icon size of the diskObject
@@ -320,7 +322,7 @@ OVERLOAD(MUIM_Setup)
 			rp.BitMap = orgBitMap;
 
 			if(IconBase->lib_Version >= 44)
-				DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_SELECTED, NULL);
+				DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_SELECTED, drawIconTags);
 			else
 			{
 				if(diskObject->do_Gadget.Flags & GFLG_GADGHIMAGE)
@@ -396,7 +398,7 @@ OVERLOAD(MUIM_Setup)
 			// now that we have the selectedBitMap filled we have to scale down the unselected state
 			// of the icon as well.
 			if(IconBase->lib_Version >= 44)
-				DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_NORMAL, NULL);
+				DrawIconStateA(&rp, diskObject, NULL, 0, 0, IDS_NORMAL, drawIconTags);
 			else
 				DrawImage(&rp, ((struct Image*)diskObject->do_Gadget.GadgetRender), 0, 0);
 
