@@ -156,7 +156,7 @@ enum {
 #define CHARS_LWSP     " \t\n\r"           // linear whitespace chars
 #define CHARS_TSPECIAL "()<>@,;:\\\"/[]?="
 #define CHARS_SPECIAL  "()<>@,;:\\\".[]"
-#define CHARS_CSPECIAL "()\\\r"            // not in commeîts
+#define CHARS_CSPECIAL "()\\\r"            // not in comments
 #define CHARS_DSPECIAL "[]\\\r \t"         // not in domains
 #define CHARS_ESPECIAL "()<>@,;:\"/[]?.=_" // encoded word specials (rfc2047 5.1)
 #define CHARS_PSPECIAL "!*+-/=_"           // encoded phrase specials (rfc2047 5.3)
@@ -2019,7 +2019,6 @@ static int rfc2047_decode_int(const char *text,
   char *chset, *lang;
   char *encoding;
   char *enctext;
-  const char *start = text;
 
   while(text && *text)
   {
@@ -2029,14 +2028,11 @@ static int rfc2047_decode_int(const char *text,
     {
       while(*text)
       {
-        if(*text == '=' && *(text+1) == '?' &&
-           (text == start ||
-            is_lwsp(*(text-1)) || *(text-1) == '(' ||
-            *(text-1) == '"')) // all chars in this line are not part of the RFC standard
-                               // but accepted for convienence
-        {
+        // even if RFC2047 exactly defines which chars are allowed right before
+        // an "=?" tag, we do accept all chars right before an "=?" tag for compatibility
+        // reasons (even Thunderbird accepts something like 'Titel/Abs=?ISO-8859-1?Q?tract_f=FCr_Pap?=er Contribution')
+        if(*text == '=' && *(text+1) == '?')
           break;
-        }
 
         if(!ISpace((int)(unsigned char)*text))
           had_last_word=0;

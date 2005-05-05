@@ -7,6 +7,10 @@ $Source$
 
 2005-05-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MI.c: as of change request #1190842 YAM is now more tolerant in accepting
+      RFC2047 encoded header lines in accordance to the "=?" recognition. That means
+      that it will try to decode header lines with "=?" occurances also if no
+      linear white space is put in front of it (as defined in RFC2047).
     * classes/AttachmentImage.c: fixed a bug in the icon dragging routine where it
       could have happened that MUIM_DoDrag was called even if the mouse was not
       located within the object boundaries.
