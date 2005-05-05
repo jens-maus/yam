@@ -552,8 +552,11 @@ OVERLOAD(MUIM_HandleEvent)
 {
 	GETDATA;
 	struct IntuiMessage *imsg = ((struct MUIP_HandleEvent *)msg)->imsg;
+
+	if(!imsg)
+		return 0;
 	
-	if(imsg && imsg->Class == IDCMP_MOUSEBUTTONS)
+	if(imsg->Class == IDCMP_MOUSEBUTTONS)
 	{
 		if(!(_isinobject(obj, imsg->MouseX, imsg->MouseY)))
 		{
@@ -610,13 +613,15 @@ OVERLOAD(MUIM_HandleEvent)
 
 	}
 
-	// in case this event is a mouse move we signal a dragging event
-	if(imsg && imsg->Class == IDCMP_MOUSEMOVE)
+	// in case this event is a mouse move we signal a dragging event, but only
+	// if it starts within our object region.
+	if(imsg->Class == IDCMP_MOUSEMOVE &&
+		 _isinobject(obj, imsg->MouseX, imsg->MouseY))
 	{
 		DoMethod(obj, MUIM_DoDrag, imsg->MouseX - _mleft(obj), imsg->MouseY - _mtop(obj));
 	}
 
-	if(imsg && imsg->Class == IDCMP_RAWKEY)
+	if(imsg->Class == IDCMP_RAWKEY)
 	{
 		switch(imsg->Code)
 		{

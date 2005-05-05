@@ -7,6 +7,9 @@ $Source$
 
 2005-05-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/AttachmentImage.c: fixed a bug in the icon dragging routine where it
+      could have happened that MUIM_DoDrag was called even if the mouse was not
+      located within the object boundaries.
     * classes/AttachmentImage.c: adapted "DeleteDragImage" method to use
       WhichWorkbenchObject() on AmigaOS4 to find the correct dropPath on a drag
       operation.
