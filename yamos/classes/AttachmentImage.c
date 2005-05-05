@@ -82,6 +82,7 @@ struct SelectionMsg
 };
 ///
 /// SelectionHook
+#if !defined(__amigaos4__)
 HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
 {
 	struct SelectionMsg *msg = (struct SelectionMsg *)hook->h_Data;
@@ -124,6 +125,7 @@ HOOKPROTONO(SelectionFunc, ULONG, struct IconSelectMsg *ism)
 	return ISMACTION_Ignore;
 }
 MakeStaticHook(SelectionHook, SelectionFunc);
+#endif
 ///
 
 /* Overloaded Methods */
@@ -650,8 +652,67 @@ OVERLOAD(MUIM_DeleteDragImage)
 {
 	GETDATA;
 
-	D(DBF_GUI, "MUIM_DeleteDragImage");
-	
+#if defined(__amigaos4__)
+	ULONG which;
+	char *buf;
+
+	if(data->dropPath)
+	{
+		free(data->dropPath);
+		data->dropPath = NULL;
+	}
+
+	if((buf = (STRPTR)malloc(2048)))
+	{
+		char name[256];
+		ULONG type = ~0;
+
+		struct TagItem ti[] = { { WBOBJA_DrawerPath, 		 (ULONG)buf 				 },
+													  { WBOBJA_DrawerPathSize, 2048								 },
+														{ WBOBJA_Name, 					 (ULONG)name 				 },
+														{ WBOBJA_NameSize, 			 (ULONG)sizeof(name) },
+														{ WBOBJA_Type, 					 (ULONG)&type				 },
+														{ TAG_DONE,							 FALSE 							 } };
+
+		buf[0] = '\0';
+
+		// Note that we use WhichWorkbenchObjectA() and not WhichWorkbenchObject()
+		// because the latter wasn't implemented in workbench.library < 51.9
+		which = WhichWorkbenchObjectA(NULL, _screen(obj)->MouseX, _screen(obj)->MouseY, ti);
+		if(which == WBO_ICON)
+		{
+			if(type == WBDRAWER)
+				AddPart(buf, name, 2048);
+			else if(type == WBDISK)
+			{
+				strncpy(buf, name, 2047);
+				buf[2047] = '\0';
+				strcat(buf, ":");
+			}
+			
+			which = WBO_DRAWER;
+		}
+		
+		if(which == WBO_DRAWER && buf[0])
+		{
+			int buflen = strlen(buf);
+			if(buflen > 0)
+			{
+				if((data->dropPath = malloc(buflen+1)))
+				{
+					strncpy(data->dropPath, buf, buflen);
+					data->dropPath[buflen] = '\0';
+
+					D(DBF_GUI, "found dropPath: [%s]", data->dropPath);
+					
+					DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 3, MUIM_Set, MUIA_AttachmentImage_DropPath, data->dropPath);
+				}
+			}
+		}
+
+		free(buf);
+	}
+#else
 	// this stuff only works with Workbench v45+
 	if(WorkbenchBase->lib_Version >= 45)
 	{
@@ -740,6 +801,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 			}
 		}
 	}
+#endif
 
 	DoMethod(_win(obj), MUIM_Window_RemEventHandler, &data->ehnode);
 	data->ehnode.ehn_Events &= ~IDCMP_MOUSEMOVE;

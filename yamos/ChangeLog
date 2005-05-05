@@ -7,6 +7,9 @@ $Source$
 
 2005-05-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/AttachmentImage.c: adapted "DeleteDragImage" method to use
+      WhichWorkbenchObject() on AmigaOS4 to find the correct dropPath on a drag
+      operation.
     * classes/AttachmentImage.c: added ICONDRAWA_Transparency tag definition to make
       sure even icon.lib v51+ is always drawing the icon completely opaque.
 
