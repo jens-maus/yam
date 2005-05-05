@@ -286,9 +286,18 @@ OVERLOAD(MUIM_Setup)
 		ULONG orgWidth;
 		ULONG orgHeight;
 		ULONG screenDepth = GetBitMapAttr(screenBitMap, BMA_DEPTH);
-		static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless, TRUE },
-																									 { ICONDRAWA_Frameless,	 TRUE },
-																									 { TAG_DONE, 						 FALSE} };
+
+		// prepare the drawIcon/GetIconRentagle tags
+		#ifdef ICONDRAWA_Transparency // defined starting from icon.lib v51+
+		static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless, 	 TRUE  },
+																									 { ICONDRAWA_Frameless,	 	 TRUE  },
+																									 { ICONDRAWA_Transparency, 255   },
+																									 { TAG_DONE, 							 FALSE } };
+		#else
+		static const struct TagItem drawIconTags[] = { { ICONDRAWA_Borderless, TRUE  },
+																									 { ICONDRAWA_Frameless,	 TRUE  },
+																									 { TAG_DONE, 						 FALSE } };
+		#endif
 
 		// initialize our temporary rastport
 		InitRastPort(&rp);

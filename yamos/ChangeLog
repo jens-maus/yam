@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-05  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/AttachmentImage.c: added ICONDRAWA_Transparency tag definition to make
+      sure even icon.lib v51+ is always drawing the icon completely opaque.
+
 2005-05-01  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/AttachmentImage.c: modified the tagitem handling of the DrawIconStateA()
