@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-06  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: added some SetIoErr() calls to make sure the dos error codes are set
+      correctly upon an exit due to an occurred error. Also change the return values
+      in the exit() and return() calls to use the dos RETURN_WARN/RETURN_ERROR etc.
+      codes instead.
+
 2005-05-05  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c: as of change request #1190842 YAM is now more tolerant in accepting

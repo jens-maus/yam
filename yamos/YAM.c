@@ -782,7 +782,7 @@ static void Abort(APTR formatnum, ...)
    va_end(a);
 
    // do a hard exit.
-   exit(5);
+   exit(RETURN_ERROR);
 }
 ///
 /// CheckMCC
@@ -882,7 +882,7 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
    }
 
    if(req)
-     exit(5); // Ugly
+     exit(RETURN_ERROR); // Ugly
 
    RETURN(FALSE);
    return FALSE;
@@ -1383,7 +1383,7 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
       terminate = !US_Login(user, password, maildir, prefsfile);
 
    if(terminate)
-     exit(5);
+     exit(RETURN_WARN);
 }
 ///
 /// GetDST
@@ -1470,22 +1470,24 @@ static int GetDST(BOOL update)
 /* This makes it possible to leave YAM without explicitely calling cleanup procedure */
 static void yam_exitfunc(void)
 {
-   ENTER();
+  ENTER();
 
-   if(olddirlock != -1)
-   {  Terminate();
-      CurrentDir(olddirlock);
-   }
-   if(nrda.Template)
-      NewFreeArgs(&nrda);
+  if(olddirlock != -1)
+  {
+    Terminate();
+    CurrentDir(olddirlock);
+  }
 
-   // close some libraries now
-   CLOSELIB(DiskfontBase,   IDiskfont);
-   CLOSELIB(UtilityBase,    IUtility);
-   CLOSELIB(IconBase,       IIcon);
-   CLOSELIB(IntuitionBase,  IIntuition);
+  if(nrda.Template)
+    NewFreeArgs(&nrda);
 
-   LEAVE();
+  // close some libraries now
+  CLOSELIB(DiskfontBase,   IDiskfont);
+  CLOSELIB(UtilityBase,    IUtility);
+  CLOSELIB(IconBase,       IIcon);
+  CLOSELIB(IntuitionBase,  IIntuition);
+
+  LEAVE();
 }
 
 ///
@@ -1523,7 +1525,7 @@ int main(int argc, char **argv)
         EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
 
         CLOSELIB(IntuitionBase, IIntuition);
-        exit(0);
+        exit(RETURN_WARN);
       }
    }
    #endif
@@ -1595,7 +1597,7 @@ int main(int argc, char **argv)
 
      CLOSELIB(IntuitionBase, IIntuition);
      if(!goon)
-       exit(0);
+       exit(RETURN_WARN);
    }
 #endif
 
@@ -1621,14 +1623,19 @@ int main(int argc, char **argv)
    nrda.Parameters = (LONG *)&args;
    nrda.FileParameter = -1;
    nrda.PrgToolTypesOnly = FALSE;
-   if ((err = NewReadArgs(WBmsg, &nrda)))
+
+   // now call NewReadArgs to parse all our commandline/tooltype arguments in accordance
+   // to the above template
+   if((err = NewReadArgs(WBmsg, &nrda)))
    {
       PrintFault(err, "YAM");
-      exit(5);
+
+      SetIoErr(err);
+      exit(RETURN_ERROR);
    }
 
    if(!(progdir = GetProgramDir())) /* security only, can happen for residents only */
-      exit(5);
+      exit(RETURN_ERROR);
    olddirlock = CurrentDir(progdir);
 
    for(yamFirst=TRUE;;)
@@ -1822,14 +1829,20 @@ int main(int argc, char **argv)
       MA_StartMacro(MACRO_QUIT, NULL);
 
       // if the user really wants to exit, do it now as Terminate() is broken !
-      if(ret == 1) exit(0);
+      if(ret == 1)
+      {
+        SetIoErr(RETURN_OK);
+        exit(RETURN_OK);
+      }
 
       D(DBF_STARTUP, "Restart issued");
 
       // prepare for restart
       Terminate();
    }
+
    /* not reached */
-   return 0;
+   SetIoErr(RETURN_OK);
+   return RETURN_OK;
 }
 ///
