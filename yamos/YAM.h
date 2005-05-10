@@ -105,6 +105,7 @@ struct Global
    BOOL                     TR_UseTLS;
    BOOL                     CO_AutoTranslateIn;
    BOOL                     InStartupPhase;
+   BOOL                     NoImageWarning;
 
    struct DateStamp         StartDate;
    struct Users             Users;
@@ -116,6 +117,7 @@ struct Global
    struct MinList           readMailDataList;
 
    char                     ProgDir[SIZE_PATH];
+   char                     ProgName[SIZE_FILE];
    char                     PGPPassPhrase[SIZE_DEFAULT];
    char                     MA_MailDir[SIZE_PATH];
    char                     AB_Filename[SIZE_PATHFILE];

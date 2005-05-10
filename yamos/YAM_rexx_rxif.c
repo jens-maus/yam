@@ -870,7 +870,6 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
             GetMailFile(rd->rd.res.filename = rd->filename, folder, mail);
             rd->rd.res.index = &rd->active;
 
-            #warning "old statushandling here. replace ASAP!"
             if(hasStatusError(mail))
               rd->rd.res.status = "E"; // Error status
             else if(hasStatusQueued(mail))
@@ -1137,7 +1136,6 @@ void rx_getmailinfo( UNUSED struct RexxHost *host, struct rxd_getmailinfo **rxd,
             if (!strnicmp(key, "ACT", 3)) sprintf(rd->result, "%d", active);
             else if (!strnicmp(key, "STA", 3))
             {
-              #warning "old statushandling here. replace ASAP!"
               if(hasStatusError(mail))
                 rd->rd.res.value = "E"; // Error status
               else if(hasStatusQueued(mail))

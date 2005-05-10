@@ -2631,63 +2631,48 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
    {
       if(entry->Folder)
       {
-         static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL];
+         static char dispsta[SIZE_DEFAULT];
+         static char dispsiz[SIZE_SMALL];
          struct Person *pe;
          STRPTR addr;
-         int statusicon = 0;
 
-         // lets choose the status icon for that mail
-         #warning "old status handling here. replace ASAP!"
-         if(hasStatusError(entry))
-           statusicon = 5; // Error status
-         else if(hasStatusQueued(entry))
-           statusicon = 4; // Queued (WaitForSend) status
-         else if(hasStatusHold(entry))
-           statusicon = 6; // Hold status
-         else if(hasStatusSent(entry))
-           statusicon = 7; // Sent status
-         else if(hasStatusReplied(entry))
-           statusicon = 3; // Replied status
-         else if(hasStatusForwarded(entry))
-           statusicon = 2; // Forwarded status
-         else if(!hasStatusRead(entry))
-         {
-           if(hasStatusNew(entry))
-             statusicon = 8; // New status
-           else
-             statusicon = 0; // Unread status
-         }
-         else if(!hasStatusNew(entry))
-           statusicon = 1; // Old status
+         // prepare the status char buffer
+         dispsta[0] = '\0';
+         array[0] = dispsta;
 
-         sprintf(array[0] = dispsta, "\033o[%d]", statusicon);
+         // first we check which main status this mail has
+         // and put the leftmost mail icon accordingly.
+         if(hasStatusError(entry))        strcat(dispsta, SICON_ERROR);
+         else if(hasStatusQueued(entry))  strcat(dispsta, SICON_WAITSEND);
+         else if(hasStatusSent(entry))    strcat(dispsta, SICON_SENT);
+         else if(hasStatusRead(entry))    strcat(dispsta, SICON_OLD);
+         else                             strcat(dispsta, SICON_UNREAD);
 
-         if(getImportanceLevel(entry) == IMP_HIGH)
-           strcat(dispsta, "\033o[12]");
+         // then we add the 2. level if icons with the additional mail information
+         // like importance, signed/crypted, report and attachment information
+         if(getImportanceLevel(entry) == IMP_HIGH)  strcat(dispsta, SICON_URGENT);
+         if(isMP_CryptedMail(entry))                strcat(dispsta, SICON_CRYPT);
+         else if(isMP_SignedMail(entry))            strcat(dispsta, SICON_SIGNED);
+         if(isMP_ReportMail(entry))                 strcat(dispsta, SICON_REPORT);
+         if(isMP_MixedMail(entry))                  strcat(dispsta, SICON_ATTACH);
 
-         if(isMP_CryptedMail(entry))      strcat(dispsta, "\033o[15]");
-         else if(isMP_SignedMail(entry))  strcat(dispsta, "\033o[16]");
-         else if(isMP_ReportMail(entry))  strcat(dispsta, "\033o[14]");
-         else if(isMP_MixedMail(entry))   strcat(dispsta, "\033o[13]");
-
-         // if this is a marked mail we have to signal it
-         if(hasStatusMarked(entry))
-         {
-            // if the needed BCImage data doesn`t exist we set preparse to bold
-            if(G->BImage[17])
-              strcat(dispsta, "\033o[17]");
-            else
-              msg->preparses[1] = "\033b";
-         }
+         // and as the 3rd level of icons we put information on the secondary status
+         // like replied, forwarded, hold
+         if(hasStatusNew(entry))        strcat(dispsta, SICON_NEW);
+         else if(hasStatusHold(entry))  strcat(dispsta, SICON_HOLD);
+         if(hasStatusMarked(entry))     strcat(dispsta, SICON_MARK);
+         if(hasStatusReplied(entry))    strcat(dispsta, SICON_REPLY);
+         if(hasStatusForwarded(entry))  strcat(dispsta, SICON_FORWARD);
 
          // now we generate the proper string for the mailaddress
          if(C->MessageCols & (1<<1) || searchWinHook)
          {
+            static char dispfro[SIZE_DEFAULT];
+            dispfro[0] = '\0';
             array[1] = dispfro;
 
-            *dispfro = '\0';
             if(isMultiRCPTMail(entry))
-              strcat(dispfro, "\033o[11]");
+              strcat(dispfro, SICON_GROUP);
 
             if(((entry->Folder->Type == FT_CUSTOMMIXED || entry->Folder->Type == FT_DELETED) &&
                 (hasStatusSent(entry) || hasStatusQueued(entry) || hasStatusHold(entry) ||
@@ -3385,34 +3370,34 @@ struct MA_ClassData *MA_New(void)
             Child, data->GUI.BC_GROUP = HGroup,
                MUIA_ShowMe, FALSE,
                // Create the status flag image objects
-               Child, data->GUI.BC_STAT[ 0] = MakeStatusFlag("status_unread"),
-               Child, data->GUI.BC_STAT[ 1] = MakeStatusFlag("status_old"),
-               Child, data->GUI.BC_STAT[ 2] = MakeStatusFlag("status_forward"),
-               Child, data->GUI.BC_STAT[ 3] = MakeStatusFlag("status_reply"),
-               Child, data->GUI.BC_STAT[ 4] = MakeStatusFlag("status_waitsend"),
-               Child, data->GUI.BC_STAT[ 5] = MakeStatusFlag("status_error"),
-               Child, data->GUI.BC_STAT[ 6] = MakeStatusFlag("status_hold"),
-               Child, data->GUI.BC_STAT[ 7] = MakeStatusFlag("status_sent"),
-               Child, data->GUI.BC_STAT[ 8] = MakeStatusFlag("status_new"),
-               Child, data->GUI.BC_STAT[ 9] = MakeStatusFlag("status_delete"),
-               Child, data->GUI.BC_STAT[10] = MakeStatusFlag("status_download"),
-               Child, data->GUI.BC_STAT[11] = MakeStatusFlag("status_group"),
-               Child, data->GUI.BC_STAT[12] = MakeStatusFlag("status_urgent"),
-               Child, data->GUI.BC_STAT[13] = MakeStatusFlag("status_attach"),
-               Child, data->GUI.BC_STAT[14] = MakeStatusFlag("status_report"),
-               Child, data->GUI.BC_STAT[15] = MakeStatusFlag("status_crypt"),
-               Child, data->GUI.BC_STAT[16] = MakeStatusFlag("status_signed"),
-               Child, data->GUI.BC_STAT[17] = MakeStatusFlag("status_mark"),
+               Child, data->GUI.BC_STAT[SICON_ID_UNREAD]   = MakeBCImage("status_unread"),
+               Child, data->GUI.BC_STAT[SICON_ID_OLD]      = MakeBCImage("status_old"),
+               Child, data->GUI.BC_STAT[SICON_ID_FORWARD]  = MakeBCImage("status_forward"),
+               Child, data->GUI.BC_STAT[SICON_ID_REPLY]    = MakeBCImage("status_reply"),
+               Child, data->GUI.BC_STAT[SICON_ID_WAITSEND] = MakeBCImage("status_waitsend"),
+               Child, data->GUI.BC_STAT[SICON_ID_ERROR]    = MakeBCImage("status_error"),
+               Child, data->GUI.BC_STAT[SICON_ID_HOLD]     = MakeBCImage("status_hold"),
+               Child, data->GUI.BC_STAT[SICON_ID_SENT]     = MakeBCImage("status_sent"),
+               Child, data->GUI.BC_STAT[SICON_ID_NEW]      = MakeBCImage("status_new"),
+               Child, data->GUI.BC_STAT[SICON_ID_DELETE]   = MakeBCImage("status_delete"),
+               Child, data->GUI.BC_STAT[SICON_ID_DOWNLOAD] = MakeBCImage("status_download"),
+               Child, data->GUI.BC_STAT[SICON_ID_GROUP]    = MakeBCImage("status_group"),
+               Child, data->GUI.BC_STAT[SICON_ID_URGENT]   = MakeBCImage("status_urgent"),
+               Child, data->GUI.BC_STAT[SICON_ID_ATTACH]   = MakeBCImage("status_attach"),
+               Child, data->GUI.BC_STAT[SICON_ID_REPORT]   = MakeBCImage("status_report"),
+               Child, data->GUI.BC_STAT[SICON_ID_CRYPT]    = MakeBCImage("status_crypt"),
+               Child, data->GUI.BC_STAT[SICON_ID_SIGNED]   = MakeBCImage("status_signed"),
+               Child, data->GUI.BC_STAT[SICON_ID_MARK]     = MakeBCImage("status_mark"),
                // Create the default folder image objects
-               Child, data->GUI.BC_FOLDER[0] = MakeFolderImage("folder_fold"),
-               Child, data->GUI.BC_FOLDER[1] = MakeFolderImage("folder_unfold"),
-               Child, data->GUI.BC_FOLDER[2] = MakeFolderImage("folder_incoming"),
-               Child, data->GUI.BC_FOLDER[3] = MakeFolderImage("folder_incoming_new"),
-               Child, data->GUI.BC_FOLDER[4] = MakeFolderImage("folder_outgoing"),
-               Child, data->GUI.BC_FOLDER[5] = MakeFolderImage("folder_outgoing_new"),
-               Child, data->GUI.BC_FOLDER[6] = MakeFolderImage("folder_deleted"),
-               Child, data->GUI.BC_FOLDER[7] = MakeFolderImage("folder_deleted_new"),
-               Child, data->GUI.BC_FOLDER[8] = MakeFolderImage("folder_sent"),
+               Child, data->GUI.BC_FOLDER[0] = MakeBCImage("folder_fold"),
+               Child, data->GUI.BC_FOLDER[1] = MakeBCImage("folder_unfold"),
+               Child, data->GUI.BC_FOLDER[2] = MakeBCImage("folder_incoming"),
+               Child, data->GUI.BC_FOLDER[3] = MakeBCImage("folder_incoming_new"),
+               Child, data->GUI.BC_FOLDER[4] = MakeBCImage("folder_outgoing"),
+               Child, data->GUI.BC_FOLDER[5] = MakeBCImage("folder_outgoing_new"),
+               Child, data->GUI.BC_FOLDER[6] = MakeBCImage("folder_deleted"),
+               Child, data->GUI.BC_FOLDER[7] = MakeBCImage("folder_deleted_new"),
+               Child, data->GUI.BC_FOLDER[8] = MakeBCImage("folder_sent"),
                Child, data->GUI.ST_LAYOUT = StringObject,
                   MUIA_ObjectID, MAKE_ID('S','T','L','A'),
                   MUIA_String_MaxLen, SIZE_DEFAULT,

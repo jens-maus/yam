@@ -119,6 +119,45 @@
 #define setStatusToUnread(mail)     MA_ChangeMailStatus(mail, SFLAG_NONE, SFLAG_NEW|SFLAG_READ)
 #define setStatusToOld(mail)        MA_ChangeMailStatus(mail, SFLAG_READ, SFLAG_NEW)
 
+// for managing the different status icons we manage our IDs and ESC sequences here
+#define SICON_ID_UNREAD     0      // status_unread
+#define SICON_ID_OLD        1      // status_old
+#define SICON_ID_FORWARD    2      // status_forward
+#define SICON_ID_REPLY      3      // status_reply
+#define SICON_ID_WAITSEND   4      // status_waitsend
+#define SICON_ID_ERROR      5      // status_error
+#define SICON_ID_HOLD       6      // status_hold
+#define SICON_ID_SENT       7      // status_sent
+#define SICON_ID_NEW        8      // status_new
+#define SICON_ID_DELETE     9      // status_delete
+#define SICON_ID_DOWNLOAD   10     // status_download
+#define SICON_ID_GROUP      11     // status_group
+#define SICON_ID_URGENT     12     // status_urgent
+#define SICON_ID_ATTACH     13     // status_attach
+#define SICON_ID_REPORT     14     // status_report
+#define SICON_ID_CRYPT      15     // status_crypt
+#define SICON_ID_SIGNED     16     // status_signed
+#define SICON_ID_MARK       17     // status_mark
+
+#define SICON_UNREAD        "\033o[" STR(SICON_ID_UNREAD)   "]"
+#define SICON_OLD           "\033o[" STR(SICON_ID_OLD)      "]"
+#define SICON_FORWARD       "\033o[" STR(SICON_ID_FORWARD)  "]"
+#define SICON_REPLY         "\033o[" STR(SICON_ID_REPLY)    "]"
+#define SICON_WAITSEND      "\033o[" STR(SICON_ID_WAITSEND) "]"
+#define SICON_ERROR         "\033o[" STR(SICON_ID_ERROR)    "]"
+#define SICON_HOLD          "\033o[" STR(SICON_ID_HOLD)     "]"
+#define SICON_SENT          "\033o[" STR(SICON_ID_SENT)     "]"
+#define SICON_NEW           "\033o[" STR(SICON_ID_NEW)      "]"
+#define SICON_DELETE        "\033o[" STR(SICON_ID_DELETE)   "]"
+#define SICON_DOWNLOAD      "\033o[" STR(SICON_ID_DOWNLOAD) "]"
+#define SICON_GROUP         "\033o[" STR(SICON_ID_GROUP)    "]"
+#define SICON_URGENT        "\033o[" STR(SICON_ID_URGENT)   "]"
+#define SICON_ATTACH        "\033o[" STR(SICON_ID_ATTACH)   "]"
+#define SICON_REPORT        "\033o[" STR(SICON_ID_REPORT)   "]"
+#define SICON_CRYPT         "\033o[" STR(SICON_ID_CRYPT)    "]"
+#define SICON_SIGNED        "\033o[" STR(SICON_ID_SIGNED)   "]"
+#define SICON_MARK          "\033o[" STR(SICON_ID_MARK)     "]"
+
 enum ImportanceLevel { IMP_NORMAL=0, IMP_LOW, IMP_HIGH };
 enum NewMode { NEW_NEW, NEW_REPLY, NEW_FORWARD, NEW_BOUNCE, NEW_EDIT, NEW_SAVEDEC };
 

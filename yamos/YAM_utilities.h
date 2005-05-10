@@ -345,8 +345,6 @@ Object * MakeMenuitem(const UBYTE *str, ULONG ud);
 Object * MakeNumeric(int min, int max, BOOL percent);
 Object * MakePassString(char *label);
 Object * MakePGPKeyList(Object **st, BOOL secret, char *label);
-Object * MakeStatusFlag(char *fname);
-Object * MakeFolderImage(char *fname);
 Object * MakeString(int maxlen, char *label);
 Object * MakeAddressField(Object **string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti);
 BOOL     MatchNoCase(const char *string, const char *match);

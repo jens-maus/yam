@@ -38,6 +38,15 @@ struct Data
 };
 */
 
+/* EXPORT
+// some of our own common MUI macros
+#define MakeBCImage(fname)    BodychunkImageObject, \
+                                MUIA_BodychunkImage_File,      (fname), \
+                                MUIA_BodychunkImage_UseCached, TRUE,    \
+                                MUIA_Bitmap_Transparent,       0,       \
+                              End
+*/
+
 /* Overloaded Methods */
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)

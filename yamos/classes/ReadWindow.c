@@ -53,7 +53,8 @@ struct Data
 	Object *MI_CHKSIG;
 	Object *MI_SAVEDEC;
 	Object *windowToolbar;
-	Object *statusGroups[4];
+	Object *statusIcon[MAXBCSTATUSIMG];
+	Object *statusGroup;
 	Object *readMailGroup;
 	struct MUIP_Toolbar_Description toolbarDesc[MUIV_ReadWindow_ToolbarItems];
 
@@ -152,6 +153,26 @@ OVERLOAD(OM_NEW)
 	}
 	while(1);
 
+	// prepare the statuc icons for adding it later on to our statusGroup object
+	data->statusIcon[SICON_ID_UNREAD] 	= MakeBCImage("status_unread");
+	data->statusIcon[SICON_ID_OLD] 			= MakeBCImage("status_old");
+	data->statusIcon[SICON_ID_FORWARD] 	= MakeBCImage("status_forward");
+	data->statusIcon[SICON_ID_REPLY] 		= MakeBCImage("status_reply");
+	data->statusIcon[SICON_ID_WAITSEND] = MakeBCImage("status_waitsend");
+	data->statusIcon[SICON_ID_ERROR] 		= MakeBCImage("status_error");
+	data->statusIcon[SICON_ID_HOLD] 		= MakeBCImage("status_hold");
+	data->statusIcon[SICON_ID_SENT] 		= MakeBCImage("status_sent");
+	data->statusIcon[SICON_ID_NEW] 			= MakeBCImage("status_new");
+	data->statusIcon[SICON_ID_DELETE] 	= MakeBCImage("status_delete");
+	data->statusIcon[SICON_ID_DOWNLOAD] = MakeBCImage("status_download");
+	data->statusIcon[SICON_ID_GROUP] 		= MakeBCImage("status_group");
+	data->statusIcon[SICON_ID_URGENT] 	= MakeBCImage("status_urgent");
+	data->statusIcon[SICON_ID_ATTACH] 	= MakeBCImage("status_attach");
+	data->statusIcon[SICON_ID_REPORT] 	= MakeBCImage("status_report");
+	data->statusIcon[SICON_ID_CRYPT] 		= MakeBCImage("status_crypt");
+	data->statusIcon[SICON_ID_SIGNED] 	= MakeBCImage("status_signed");
+	data->statusIcon[SICON_ID_MARK] 		= MakeBCImage("status_mark");
+
 	if((obj = DoSuperNew(cl, obj,
 
 		MUIA_Window_Title, 	"",
@@ -232,37 +253,10 @@ OVERLOAD(OM_NEW)
 					Child, HSpace(8),
 					Child, VGroup,
 						Child, VSpace(0),
-						Child, HGroup,
+						Child, data->statusGroup = HGroup,
 							TextFrame,
 							MUIA_Group_Spacing, 1,
-							MUIA_Background, MUII_TextBack,
-							Child, data->statusGroups[0] = PageGroup,
-								Child, HSpace(0),
-								Child, MakeStatusFlag("status_unread"),
-								Child, MakeStatusFlag("status_old"),
-								Child, MakeStatusFlag("status_forward"),
-								Child, MakeStatusFlag("status_reply"),
-								Child, MakeStatusFlag("status_waitsend"),
-								Child, MakeStatusFlag("status_error"),
-								Child, MakeStatusFlag("status_hold"),
-								Child, MakeStatusFlag("status_sent"),
-								Child, MakeStatusFlag("status_new"),
-							End,
-							Child, data->statusGroups[1] = PageGroup,
-								Child, HSpace(0),
-								Child, MakeStatusFlag("status_crypt"),
-								Child, MakeStatusFlag("status_signed"),
-								Child, MakeStatusFlag("status_report"),
-								Child, MakeStatusFlag("status_attach"),
-							End,
-							Child, data->statusGroups[2] = PageGroup,
-								Child, HSpace(0),
-								Child, MakeStatusFlag("status_urgent"),
-							End,
-							Child, data->statusGroups[3] = PageGroup,
-								Child, HSpace(0),
-								Child, MakeStatusFlag("status_mark"),
-							End,
+							MUIA_Background, 		MUII_TextBack,
 						End,
 						Child, VSpace(0),
 					End,
@@ -362,6 +356,41 @@ OVERLOAD(OM_NEW)
 	free(tmpData);
 
 	return (ULONG)obj;
+}
+
+///
+/// OVERLOAD(OM_DISPOSE)
+OVERLOAD(OM_DISPOSE)
+{
+	GETDATA;
+	struct List *childList = (struct List *)xget(data->statusGroup, MUIA_Group_ChildList);
+	int i;
+
+	// clear all children of the statusGroup first
+	DoMethod(data->statusGroup, MUIM_Group_InitChange);
+
+	// we first remove all childs from our statusGroup
+	if(childList)
+	{
+		Object *cstate = (Object *)childList->lh_Head;
+		Object *child;
+
+		while((child = NextObject(&cstate)))
+		{
+			DoMethod(data->statusGroup, OM_REMMEMBER, child);
+		}
+	}
+
+	DoMethod(data->statusGroup, MUIM_Group_ExitChange);
+
+	// now we can free all status icons
+	for(i=0; i < MAXBCSTATUSIMG; i++)
+	{
+		MUI_DisposeObject(data->statusIcon[i]);
+		data->statusIcon[i] = NULL;
+	}
+
+	return DoSuperMethodA(cl, obj, msg);
 }
 
 ///
@@ -513,47 +542,74 @@ DECLARE(UpdateStatusGroup)
 	GETDATA;
 	struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 	struct Mail *mail = rmData->mail;
-	int activatepage = 0;
+	struct List *childList = (struct List *)xget(data->statusGroup, MUIA_Group_ChildList);
 
-	#warning "old statushandling here. replace ASAP!"
-	if(hasStatusError(mail))
-		activatepage = 6; // Error status
-	else if(hasStatusQueued(mail))
-		activatepage = 5; // Queued (WaitForSend) status
-	else if(hasStatusHold(mail))
-		activatepage = 7; // Hold status
-	else if(hasStatusSent(mail))
-		activatepage = 8; // Sent status
-	else if(hasStatusReplied(mail))
-		activatepage = 4; // Replied status
-	else if(hasStatusForwarded(mail))
-		activatepage = 3; // Forwarded status
-	else if(!hasStatusRead(mail))
+	// update the statusgroup by removing/adding items accordingly
+	DoMethod(data->statusGroup, MUIM_Group_InitChange);
+
+	// we first remove all childs from our statusGroup
+	if(childList)
 	{
-		if(hasStatusNew(mail))
-			activatepage = 9; // New status
+		Object *cstate = (Object *)childList->lh_Head;
+		Object *child;
+
+		while((child = NextObject(&cstate)))
+		{
+			DoMethod(data->statusGroup, OM_REMMEMBER, child);
+		}
+
+		// now we can add the status icons depending on the set status flags of
+		// the mail
+		if(hasStatusError(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_ERROR]);
+		else if(hasStatusQueued(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_WAITSEND]);
+		else if(hasStatusSent(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_SENT]);
+		else if(hasStatusRead(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_OLD]);
 		else
-			activatepage = 1; // Unread status
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_UNREAD]);
+
+		// StatusGroup 1 (importance level)
+		if(getImportanceLevel(mail) == IMP_HIGH)
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_URGENT]);
+
+		// StatusGroup 2 (signed/crypted status)
+		if(isMP_CryptedMail(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_CRYPT]);
+		else if(isMP_SignedMail(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_SIGNED]);
+
+		// StatusGroup 3 (report mail info)
+		if(isMP_ReportMail(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_REPORT]);
+
+		// StatusGroup 4 (multipart info)
+		if(isMP_MixedMail(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_ATTACH]);
+
+		// StatusGroup 5 (New/Hold info)
+		if(hasStatusNew(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_NEW]);
+		else if(hasStatusHold(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_HOLD]);
+
+		// StatusGroup 6 (marked flag)
+		if(hasStatusMarked(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_MARK]);
+
+		// StatusGroup 7 (Replied status)
+		if(hasStatusReplied(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_REPLY]);
+
+		// StatusGroup 8 (Forwarded status)
+		if(hasStatusForwarded(mail))
+			DoMethod(data->statusGroup, OM_ADDMEMBER, data->statusIcon[SICON_ID_FORWARD]);
 	}
-	else if(!hasStatusNew(mail))
-		activatepage = 2; // Old status
 
-	// set the correct page for the mail Status group
-	set(data->statusGroups[0], MUIA_Group_ActivePage, activatepage);
-
-	// Now we check for the other statuses of the mail
-	if(isMP_CryptedMail(mail))      activatepage = 1;
-	else if(isMP_SignedMail(mail))  activatepage = 2;
-	else if(isMP_ReportMail(mail))  activatepage = 3;
-	else if(isMP_MixedMail(mail)) 	activatepage = 4;
-	else activatepage = 0;
-	set(data->statusGroups[1], MUIA_Group_ActivePage, activatepage);
-
-	// set the correct page for the Importance flag
-	set(data->statusGroups[2], MUIA_Group_ActivePage, getImportanceLevel(mail) == IMP_HIGH ? 1 : 0);
-
-	// set the correct page for the Marked flag
-	set(data->statusGroups[3], MUIA_Group_ActivePage, hasStatusMarked(mail) ? 1 : 0);
+	// signal that we have added/modified the status Group successfully
+	DoMethod(data->statusGroup, MUIM_Group_ExitChange);
 
 	return 0;
 }
@@ -766,7 +822,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 }
 
 ///
-/// DECALRE(PrintMailRequest)
+/// DECLARE(PrintMailRequest)
 DECLARE(PrintMailRequest)
 {
 	GETDATA;

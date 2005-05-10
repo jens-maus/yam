@@ -3876,28 +3876,6 @@ Object *MakePGPKeyList(Object **st, BOOL secret, char *label)
    return po;
 }
 ///
-/// MakeStatusFlag
-//  Creates a MUI object for status images
-Object *MakeStatusFlag(char *fname)
-{
-   return BodychunkImageObject,
-      MUIA_BodychunkImage_File,      fname,
-      MUIA_BodychunkImage_UseCached, TRUE,
-      MUIA_Bitmap_Transparent,       0,
-   End;
-}
-///
-/// MakeFolderImage
-//  Creates a MUI object for a folder image
-Object *MakeFolderImage(char *fname)
-{
-   return BodychunkImageObject,
-      MUIA_BodychunkImage_File,      fname,
-      MUIA_BodychunkImage_UseCached, TRUE,
-      MUIA_Bitmap_Transparent,       0,
-   End;
-}
-///
 /// MakeAddressField
 //  Creates a recipient field
 Object *MakeAddressField(Object **string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti)

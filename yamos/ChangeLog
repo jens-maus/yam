@@ -5,6 +5,33 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-10  Jens Langner <Jens.Langner@light-speed.de>
+
+    * misc: in accordance to the new icon layout and mail status management YAM
+      is now taking respect of the new images/icon layout of the YAM:Icons
+      directory. As the new layout is slightly different from older dir layouts
+      YAM is now checking for an ".imglayout" file in YAM:Icons which contains
+      the current version of that directory. This should make it easier to change
+      the layout again in future as YAM is now automatically reminding the user
+      if the layout of the directory is incompatible. Furthermore, YAM is now
+      checking if the loading of the images and icons succeeded without an error,
+      allowing the user to override eventually existing warnings either by
+      ignoring the warning during startup or by specifying an "NOIMGWARNING"
+      option either in tooltype or as a CLI option.
+      Please note that the latest image directory layout is version 3, which is
+      mentioned in the ".imglayout" file.
+    * supportfiles/icons: adapted icons and images to the new status and config
+      icon layout. This new layout not only comes with slightly modified status_#?
+      images to reflect our new more flexible mail status management introduced
+      several month ago, but also comes with config_#? images which replace the
+      images used in the configuration window of YAM.
+    * supportfiles/icons: put the std and std8col icon and images back in place
+      as these directories represent the current default icons and images which
+      will also be shipped as the new default set in future versions. Having to
+      grab them from other places simply doesn't make much sense. However, please
+      note that the 8 color icons/image are not finished yet and need a new proper
+      design to match our default 256 color icons.
+
 2005-05-06  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: added some SetIoErr() calls to make sure the dos error codes are set

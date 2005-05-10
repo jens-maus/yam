@@ -84,18 +84,20 @@ struct Global *G;
 static struct NewRDArgs nrda;
 static BPTR olddirlock = -1; /* -1 is an unset indicator */
 
-struct Args {
-   char  *user;
-   char  *password;
-   char  *maildir;
-   char  *prefsfile;
-   LONG   nocheck;
-   LONG   hide;
-   LONG   debug;
-   char  *mailto;
-   char  *subject;
-   char  *letter;
-   char **attach;
+struct Args
+{
+  char  *user;
+  char  *password;
+  char  *maildir;
+  char  *prefsfile;
+  LONG   nocheck;
+  LONG   hide;
+  LONG   debug;
+  char  *mailto;
+  char  *subject;
+  char  *letter;
+  char **attach;
+  LONG   noImgWarning;
 };
 
 /**************************************************************************/
@@ -1144,7 +1146,26 @@ static void Initialise2(void)
 //  Phase 1 of program initialization (before user logs in)
 static void Initialise(BOOL hidden)
 {
-   static const char *imnames[MAXIMAGES] = {
+   int i;
+   char *errorMsg = NULL;
+   char pathbuf[SIZE_PATH];
+   char filebuf[SIZE_PATHFILE];
+
+   // The following two static variables carry the image files normally loaded
+   // from YAM:Icons. These files contain images that are loaded, cached and
+   // displayed to the user like in the folder listtree oder main listview.
+   // Please note that as soon as you change something here you have to
+   // increase the VERSION define as well to make sure the user is reminded
+   // of having the correct image layout installed.
+   //
+   // VERSIONS:
+   // 1 : <= YAM 2.3
+   // 2 : == YAM 2.4-2.4p1
+   // 3 : >= YAM 2.5
+   //
+   #define IMGLAYOUT_VERSION 3
+   static const char *imnames[MAXIMAGES] =
+   {
      "status_unread",   "status_old",    "status_forward",  "status_reply",
      "status_waitsend", "status_error",  "status_hold",     "status_sent",
      "status_new",      "status_delete", "status_download", "status_group",
@@ -1152,14 +1173,18 @@ static void Initialise(BOOL hidden)
      "status_signed",   "status_mark",
      "folder_fold",     "folder_unfold",       "folder_incoming", "folder_incoming_new",
      "folder_outgoing", "folder_outgoing_new", "folder_deleted",  "folder_deleted_new",
-     "folder_sent"
+     "folder_sent",
+		 "config_firststep",  "config_network", "config_newmail", "config_filters",
+		 "config_read",       "config_write",   "config_answer",  "config_signature",
+     "config_lists",      "config_security","config_start",   "config_mime",
+     "config_abook",      "config_scripts", "config_misc"
    };
-   static const char *icnames[MAXICONS] = {
+   static const char *icnames[MAXICONS] =
+   {
      "empty", "old", "new", "check"
    };
-   char iconpath[SIZE_PATH], iconfile[SIZE_PATHFILE];
-   int i;
 
+   // lets save the current date/time in our startDate value
    DateStamp(&G->StartDate);
 
    // First open locale.library, so we can display a translated error requester
@@ -1234,21 +1259,108 @@ static void Initialise(BOOL hidden)
    srand((unsigned int)GetDateStamp());
 
    SplashProgress(GetStr(MSG_LoadingGFX), 20);
-   strmfp(iconfile, G->ProgDir, "YAM");
-   if ((G->HideIcon=GetDiskObject(iconfile)))
-      set(G->App, MUIA_Application_DiskObject, G->HideIcon);
-   strmfp(iconpath, G->ProgDir, "Icons");
-   for (i = 0; i < MAXICONS; i++)
+
+   // before we load our images in YAM:icons we check the image layout
+   // by loading the ".imglayout" file, checking if it matches the version
+   // we are currently using or present the user a warning requester
+   // accordingly.
+   strmfp(pathbuf, G->ProgDir, "Icons");
+   strmfp(filebuf, pathbuf, ".imglayout");
+   if(FileExists(filebuf))
    {
-      strmfp(iconfile, iconpath, icnames[i]);
-      G->DiskObj[i] = GetDiskObject(iconfile);
+     FILE *fp;
+
+     if((fp = fopen(filebuf, "r")))
+     {
+       char verBuf[5];
+
+       // we load the first 4 bytes of the file as these bytes contain the
+       // necessary information
+       if(fread(verBuf, 1, 4, fp) == 4)
+       {
+         verBuf[4] = '\0';
+
+         if(strnicmp(verBuf, "YIM", 3) == 0)
+         {
+           if(atoi(&verBuf[3]) != IMGLAYOUT_VERSION)
+             errorMsg = GetStr(MSG_ER_WRONGIMGLAYOUTVER);
+         }
+         else
+           errorMsg = GetStr(MSG_ER_LOADIMGLAYOUTFAILED);
+       }
+       else
+         errorMsg = GetStr(MSG_ER_LOADIMGLAYOUTFAILED);
+
+       fclose(fp);
+     }
+     else
+       errorMsg = GetStr(MSG_ER_LOADIMGLAYOUTFAILED);
+   }
+   else
+     errorMsg = GetStr(MSG_ER_MISSINGIMGVERFILE);
+
+   if(errorMsg)
+   {
+     if(MUI_Request(G->App, NULL, 0, GetStr(MSG_ER_IMGLAYOUTFAILURE),
+                                     GetStr(MSG_ER_EXITIGNORE),
+                                     errorMsg, pathbuf))
+     {
+       // exit the application now
+       Abort(NULL);
+     }
+   }
+
+   // now we load the standard icons like (check.info, new.info etc)
+   strmfp(filebuf, G->ProgDir, G->ProgName);
+   if((G->HideIcon = GetDiskObject(filebuf)))
+      set(G->App, MUIA_Application_DiskObject, G->HideIcon);
+
+   for(i=0; i < MAXICONS; i++)
+   {
+      strmfp(filebuf, pathbuf, icnames[i]);
+
+      // load the diskobject and report an error if something went wrong.
+      if((G->DiskObj[i] = GetDiskObject(filebuf)) == NULL &&
+         G->NoImageWarning == FALSE)
+      {
+        int reqResult;
+
+        if((reqResult = MUI_Request(G->App, NULL, 0, GetStr(MSG_ER_ICONOBJECT_TITLE),
+                                                     GetStr(MSG_ER_EXITIGNOREALL),
+                                                     GetStr(MSG_ER_ICONOBJECT),
+                                                     icnames[i], pathbuf)))
+        {
+          if(reqResult == 2)
+            G->NoImageWarning = TRUE;
+          else
+            Abort(NULL); // exit the application
+        }
+      }
    }
 
    // load the standard images now
-   for (i = 0; i < MAXIMAGES; i++)
+   for(i=0; i < MAXIMAGES; i++)
    {
-      strmfp(iconfile, iconpath, imnames[i]);
-      G->BImage[i] = LoadBCImage(iconfile);
+      strmfp(filebuf, pathbuf, imnames[i]);
+
+      // load the bodychunkimage and report an error if something went wrong
+      if((G->BImage[i] = LoadBCImage(filebuf)) == NULL &&
+         G->NoImageWarning == FALSE)
+      {
+        int reqResult;
+
+        if((reqResult = MUI_Request(G->App, NULL, 0, GetStr(MSG_ER_IMAGEOBJECT_TITLE),
+                                                     GetStr(MSG_ER_EXITIGNOREALL),
+                                                     GetStr(MSG_ER_IMAGEOBJECT),
+                                                     imnames[i], pathbuf)))
+        {
+          if(reqResult == 2)
+            G->NoImageWarning = TRUE;
+          else
+            Abort(NULL); // exit the application
+        }
+      }
+
       DoMethod(G->App, MUIM_Application_InputBuffered);
    }
 }
@@ -1617,7 +1729,7 @@ int main(int argc, char **argv)
    INITLIB(IUtility,   InitLib("utility.library",   (APTR)&UtilityBase,   36, 0, TRUE, FALSE));
    INITLIB(IDiskfont,  InitLib("diskfont.library",  (APTR)&DiskfontBase,  37, 0, TRUE, FALSE));
 
-   nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M";
+   nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S";
    nrda.ExtHelp = NULL;
    nrda.Window = NULL;
    nrda.Parameters = (LONG *)&args;
@@ -1647,7 +1759,21 @@ int main(int argc, char **argv)
 
       G = calloc(1, sizeof(struct Global));
       C = calloc(1, sizeof(struct Config));
+
+      // get the PROGDIR: and program name and put it into own variables
       NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
+      if(WBmsg && WBmsg->sm_NumArgs > 0)
+      {
+        strncpy(G->ProgName, WBmsg->sm_ArgList[0].wa_Name, SIZE_FILE);
+      }
+      else
+      {
+        GetProgramName(G->ProgName, SIZE_FILE);
+        strcpy(G->ProgName, FilePart(G->ProgName));
+      }
+
+      D(DBF_STARTUP, "ProgDir.: '%s'", G->ProgDir);
+      D(DBF_STARTUP, "ProgName: '%s'", G->ProgName);
 
       if(!args.maildir) strcpy(G->MA_MailDir, G->ProgDir);
       args.hide = -args.hide;
@@ -1655,6 +1781,7 @@ int main(int argc, char **argv)
       G->TR_Debug = -args.debug;
       G->TR_Allow = TRUE;
       G->CO_DST = GetDST(FALSE);
+      G->NoImageWarning = args.noImgWarning;
 
       // prepare some exec lists of either the Global or Config structure
       NewList((struct List *)&(G->readMailDataList));

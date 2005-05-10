@@ -5515,3 +5515,55 @@ _More
 MSG_CO_Less (//)
 _Less
 ;
+MSG_ER_EXITIGNOREALL (//)
+*_Exit|Ignore _all|_Ignore
+;
+MSG_ER_ICONOBJECT_TITLE (//)
+Error on loading icon image!
+;
+MSG_ER_ICONOBJECT (//)
+An error occurred while trying to load the icon\n\
+object '%s.info' from directory '%s'.\n\
+\n\
+Please make sure your image directory contains all\n\
+necessary icons as defined in the latest image layout.
+;
+MSG_ER_IMAGEOBJECT_TITLE (//)
+Error on loading image!
+;
+MSG_ER_IMAGEOBJECT (//)
+An error occurred while trying to load the image\n\
+file '%s' from directory '%s'.\n\
+\n\
+Please make sure your image directory contains all\n\
+necessary images as defined in the latest image layout.
+;
+MSG_ER_IMGLAYOUTFAILURE (//)
+Image layout failure!
+;
+MSG_ER_EXITIGNORE (//)
+*_Exit|_Ignore
+;
+MSG_ER_MISSINGIMGVERFILE (//)
+The layout of your '%s' image directory\n\
+contains no version information and needs to be updated\n\
+accordingly.\n\
+\n\
+Please make sure you are using a compatible image layout\n\
+or some images may be displayed incorrectly in YAM.
+;
+MSG_ER_LOADIMGLAYOUTFAILED (//)
+An error occurred while trying to load the image\n\
+layout information from your '%s' directory.\n\
+\n\
+Please make sure you are using a compatible image layout\n\
+or some images may be displayed incorrectly in YAM.
+;
+MSG_ER_WRONGIMGLAYOUTVER (//)
+The layout of your '%s' image directory\n\
+contains an incompatible version information and needs\n\
+to be updated accordingly.\n\
+\n\
+Please make sure you are using a compatible image layout\n\
+or some images may be displayed incorrectly in YAM.
+;
