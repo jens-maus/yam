@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-12  Jens Langner <Jens.Langner@light-speed.de>
+
+    * supportfiles/icons/std: to potientally speed up loading of the image data
+      YAM has to load during startup, all default images have been reduced to
+      their minimal palette colors. However, this speed up should only be really
+      worth on slow machines (m68k).
+
 2005-05-10  Jens Langner <Jens.Langner@light-speed.de>
 
     * misc: in accordance to the new icon layout and mail status management YAM
