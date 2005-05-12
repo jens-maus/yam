@@ -2067,21 +2067,32 @@ BOOL DeleteMailDir(char *dir, BOOL isroot)
 //  Reads a complete file into memory
 static char *FileToBuffer(char *file)
 {
-   char *text;
-   int size = FileSize(file);
-   FILE *fh;
+  FILE *fh;
+  char *text = NULL;
+  int size = FileSize(file);
 
-   if (size >= 0) if ((text = calloc(size+1,1)))
-   {
-      if ((fh = fopen(file, "r")))
+  if(size >= 0 && (text = malloc((size+1)*sizeof(char))))
+  {
+    text[size] = '\0'; // NUL-terminate the string
+
+    if((fh = fopen(file, "r")))
+    {
+      if(fread(text, sizeof(char), size, fh) != (size_t)size)
       {
-         fread(text, 1, size, fh);
-         fclose(fh);
-         return text;
+        free(text);
+        text = NULL;
       }
+
+      fclose(fh);
+    }
+    else
+    {
       free(text);
-   }
-   return NULL;
+      text = NULL;
+    }
+  }
+
+  return text;
 }
 ///
 /// FileCount()
@@ -3626,18 +3637,25 @@ BOOL EditorToFile(Object *editor, char *file, struct TranslationTable *tt)
 //  Loads a file into a texteditor object
 BOOL FileToEditor(char *file, Object *editor)
 {
-   char *text = FileToBuffer(file);
-   char *parsedText;
+  char *text = FileToBuffer(file);
+  char *parsedText;
+  BOOL res = FALSE;
 
-   if (!text) return FALSE;
+  if(text)
+  {
+    // Parse the text and do some highlighting and stuff
+    if((parsedText = ParseEmailText(text)))
+    {
+      set(editor, MUIA_TextEditor_Contents, parsedText);
+      free(parsedText);
 
-   parsedText = ParseEmailText(text);
-   set(editor, MUIA_TextEditor_Contents, parsedText);
+      res = TRUE;
+    }
 
-   free(parsedText);
-   free(text);
+    free(text);
+  }
 
-   return TRUE;
+  return res;
 }
 ///
 
