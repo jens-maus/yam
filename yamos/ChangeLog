@@ -7,6 +7,11 @@ $Source$
 
 2005-05-12  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/ReadWindow.c: in case a status_#? image is not available the new
+      status image display in the ReadWindow accessed some possible NULL ptr.
+      Now these basepage accessed is hopefully fixed.
+    * YAM_UT.c: added some additional error checks to the FileToBuffer() and
+      FileToEditor() functions.
     * supportfiles/icons/std: to potientally speed up loading of the image data
       YAM has to load during startup, all default images have been reduced to
       their minimal palette colors. However, this speed up should only be really
