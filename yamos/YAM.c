@@ -243,8 +243,14 @@ static BOOL TC_Init(void)
           // create our other TimerIOs now
           for(i=1; i < TIO_NUM; i++)
           {
+            #if defined(__amigaos4__)
+            if(!(TCData.timerIO[i] = AllocMem(sizeof(struct timerequest), MEMF_SHARED)))
+              break;
+            #else
             if(!(TCData.timerIO[i] = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC)))
               break;
+            #endif
+
             // copy the data of timerIO[0] to the new one
             memcpy(TCData.timerIO[i], TCData.timerIO[0], sizeof(struct timerequest));
           }

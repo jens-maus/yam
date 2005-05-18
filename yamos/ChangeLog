@@ -7,6 +7,8 @@ $Source$
 
 2005-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: changed the TimerIO timerequest allocations to use MEMF_SHARED
+      instead of MEMF_PUBLIC on AmigaOS4.
     * YAM_UT.c: changed the Clone/FreeWorkbenchPath() functions to use v44
       features of workbench.library, if available. This way cloning the WB's
       search path should be way more intuitive and safe.
