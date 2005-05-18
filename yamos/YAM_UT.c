@@ -108,75 +108,99 @@ static BOOL UncompressMailFile(char *src, char *dst, char *passwd);
 static void AppendToLogfile(int id, char *text, void *a1, void *a2, void *a3, void *a4);
 static char *IdentifyFileDT(char *fname);
 
-#ifndef __amigaos4__
+#if !defined(__amigaos4__) || (INCLUDE_VERSION < 50)
 struct PathNode
 {
-   BPTR pn_Next;
-   BPTR pn_Lock;
+  BPTR pn_Next;
+  BPTR pn_Lock;
 };
 #endif
 
-/// CloneWorkbenchPath
-static BPTR CloneWorkbenchPath(struct WBStartup *wbmsg)
+/// CloneSearchPath()
+// This returns a duplicated search path (preferable the workbench
+// searchpath) usable for NP_Path of SystemTagList().
+static BPTR CloneSearchPath(void)
 {
-   BPTR path = 0;
+  BPTR path = 0;
 
-   Forbid();
-   if (wbmsg->sm_Message.mn_ReplyPort)
-   {
-      if ((wbmsg->sm_Message.mn_ReplyPort->mp_Flags & PF_ACTION) == PA_SIGNAL)
+  if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
+  {
+    WorkbenchControl(NULL, WBCTRLA_DuplicateSearchPath, &path, TAG_DONE);
+  }
+  else
+  {
+    // We don't like this evil code in OS4 compile, as we should have
+    // a recent enough workbench available
+#ifndef __amigaos4__
+    struct Process *pr;
+
+    pr = (struct Process*)FindTask(NULL);
+
+    if(pr->pr_Task.tc_Node.ln_Type == NT_PROCESS)
+    {
+      struct CommandLineInterface *cli = BADDR(pr->pr_CLI);
+
+      if(cli)
       {
-         struct Process *wbproc = wbmsg->sm_Message.mn_ReplyPort->mp_SigTask;
+        BPTR *p = &path;
+        BPTR dir = cli->cli_CommandDir;
 
-         if (wbproc->pr_Task.tc_Node.ln_Type == NT_PROCESS)
-         {
-            struct CommandLineInterface *cli = BADDR(wbproc->pr_CLI);
+        while (dir)
+        {
+          BPTR dir2;
+          struct FileLock *lock = BADDR(dir);
+          struct PathNode *node;
 
-            if (cli)
-            {
-               BPTR *p = &path;
-               BPTR dir = cli->cli_CommandDir;
+          dir = lock->fl_Link;
+          dir2 = DupLock(lock->fl_Key);
+          if(!dir2)
+            break;
 
-               while (dir)
-               {
-                  BPTR dir2;
-                  struct FileLock *lock = BADDR(dir);
-                  struct PathNode *node;
+          // TODO: Check out if AllocVec() is correct, because this memory is
+          // freed by the system later
+          if(!(node = AllocVec(sizeof(struct PathNode), MEMF_PUBLIC)))
+          {
+            UnLock(dir2);
+            break;
+          }
 
-                  dir = lock->fl_Link;
-                  dir2 = DupLock(lock->fl_Key);
-                  if (!dir2) break;
-                  node = AllocVec(sizeof(struct PathNode), MEMF_PUBLIC);
-                  if (!node)
-                  {
-                     UnLock(dir2);
-                     break;
-                  }
-                  node->pn_Next = 0;
-                  node->pn_Lock = dir2;
-                  *p = MKBADDR(node);
-                  p = &node->pn_Next;
-               }
-            }
-         }
+          node->pn_Next = 0;
+          node->pn_Lock = dir2;
+          *p = MKBADDR(node);
+          p = &node->pn_Next;
+        }
       }
-   }
-   Permit();
-
-   return path;
+    }
+#endif
+  }
+	
+  return path;
 }
 
 ///
-/// FreeWorkbenchPath
-static void FreeWorkbenchPath(BPTR path)
+/// FreeSearchPath()
+// Free the memory returned by CloneSearchPath
+static void FreeSearchPath(BPTR path)
 {
-   while (path)
-   {
+  if(path == 0)
+    return;
+
+  if(WorkbenchBase && WorkbenchBase->lib_Version >= 44)
+  {
+    WorkbenchControl(NULL, WBCTRLA_FreeSearchPath, path, TAG_DONE);
+  }
+  else
+  {
+#ifndef __amigaos4__
+    while (path)
+    {
       struct PathNode *node = BADDR(path);
       path = node->pn_Next;
       UnLock(node->pn_Lock);
       FreeVec(node);
-   }
+    }
+#endif
+  }
 }
 ///
 
@@ -5060,54 +5084,49 @@ char *GetRealPath(char *path)
 //  Executes a DOS command
 BOOL ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef)
 {
-   BPTR in, out;
-   int ret;
+  BPTR in;
+  BPTR out;
+  BPTR path;
+  BOOL result = TRUE;
 
-   ENTER();
-   SHOWSTRING(DBF_UTIL, cmd);
+  ENTER();
+  SHOWSTRING(DBF_UTIL, cmd);
 
-   switch (outdef)
-   {
-      case OUT_DOS: in = Input(); out = Output(); break;
-      case OUT_NIL: out = Open("NIL:", MODE_NEWFILE); in = Open("NIL:", MODE_OLDFILE); break;
-      default:      out = outdef; in = Open("NIL:", MODE_OLDFILE); break;
-   }
+  switch (outdef)
+  {
+    case OUT_DOS: in = Input(); out = Output(); break;
+    case OUT_NIL: out = Open("NIL:", MODE_NEWFILE); in = Open("NIL:", MODE_OLDFILE); break;
+    default:      out = outdef; in = Open("NIL:", MODE_OLDFILE); break;
+  }
 
-   if (!outdef) asynch = FALSE;
+  if(!outdef)
+    asynch = FALSE;
 
-   if (WBmsg)
-   {
-      BPTR path = CloneWorkbenchPath(WBmsg);
+  // path may return 0, but that's fine.
+  path = CloneSearchPath();
 
-      D(DBF_UTIL, "with CloneWBPath()");
+  if(SystemTags(cmd,
+                SYS_Input,    in,
+                SYS_Output,   out,
+                NP_Path,      path,
+                NP_StackSize, C->StackSize,
+                SYS_Asynch,   asynch,
+                TAG_DONE) == -1)
+  {
+    // something went wrong.
+    FreeSearchPath(path);
 
-      if ((ret = SystemTags(cmd,
-                            SYS_Input,    in,
-                            SYS_Output,   out,
-                            NP_Path,      path,
-                            NP_StackSize, C->StackSize,
-                            SYS_Asynch,   asynch,
-                            TAG_DONE)) == -1)
-      {
-        FreeWorkbenchPath(path);
-      }
-   }
-   else
-   {
-      D(DBF_UTIL, "without CloneWBPath()");
+    if(asynch && outdef)
+    {
+      Close(out);
+      Close(in);
+    }
 
-      ret = SystemTags(cmd,
-                       SYS_Input,     in,
-                       SYS_Output,    out,
-                       NP_StackSize,  C->StackSize,
-                       SYS_Asynch,    asynch,
-                       TAG_DONE);
-   }
+    result = FALSE;
+  }
 
-   if (ret == -1 && asynch && outdef) { Close(out); Close(in); }
-
-   RETURN(!ret);
-   return (BOOL)(!ret);
+  RETURN(result);
+  return result;
 }
 ///
 /// GetSimpleID

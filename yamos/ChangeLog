@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-19  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: changed the Clone/FreeWorkbenchPath() functions to use v44
+      features of workbench.library, if available. This way cloning the WB's
+      search path should be way more intuitive and safe.
+
 2005-05-12  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/ReadWindow.c: in case a status_#? image is not available the new
