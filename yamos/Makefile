@@ -87,6 +87,7 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/ReadWindow.o \
 	$(OBJDIR)/$(CLASSDIR)/Splashwindow.o \
+	$(OBJDIR)/$(CLASSDIR)/StatusIconGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/UserImage.o \
 	$(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
 	$(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o \

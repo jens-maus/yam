@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/ReadWindow.c: moved the statusIcon handling to an own separate
+      MUI class (StatusIconGroup) and implemented it to use an own LayoutHook
+      for displaying/managing the status Icons correctly. This should in fact
+      fix bug #1200076 which mainly manifested itself under OS3 only.
+
 2005-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: changed the TimerIO timerequest allocations to use MEMF_SHARED
