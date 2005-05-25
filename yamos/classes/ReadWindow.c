@@ -639,6 +639,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 	struct Folder *folder = mail->Folder;
 	struct Folder *delfolder = FO_GetFolderByType(FT_DELETED, NULL);
 	BOOL delatonce = hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
+	BOOL closeAfter = FALSE;
 
 	if(MailExists(mail, folder))
 	{
@@ -647,10 +648,12 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 
 		// depending on the last move direction we
 		// set it back
-		if(data->lastDirection == -1 &&
-			 pos-1 >= 0)
+		if(data->lastDirection == -1)
 		{
-			set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, --pos);
+			if(pos-1 >= 0)
+				set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, --pos);
+			else
+				closeAfter = TRUE;
 		}
 
 		// delete the mail
@@ -662,15 +665,23 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 		if(entries > 0)
 		{
 			if(entries < pos+1)
+			{
 				pos = entries-1;
+				closeAfter = TRUE;
+			}
 
 			DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, pos, &mail);
 			if(mail)
 				DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
 			else
-				set(obj, MUIA_Window_Open, FALSE);
+				closeAfter = TRUE;
 		}
 		else
+			closeAfter = TRUE;
+
+		// make sure the read window is closed in case there is no further
+		// mail for deletion in this direction
+		if(closeAfter)
 			set(obj, MUIA_Window_Open, FALSE);
 
 		if(delatonce)
@@ -960,6 +971,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 	struct MailInfo *mi;
 	LONG direction = msg->direction;
 	BOOL onlynew = hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
+	BOOL found = FALSE;
 	int act;
 
 	// save the direction we are going to process now
@@ -986,14 +998,16 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 		{
 			 set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, act);
 			 DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
-			
-			 return 0;
+
+			 // this is a valid break and not break because of an error
+			 found = TRUE;
+			 break;
 		}
 	}
 
 	// check if there are following/previous folders with unread
 	// mails and change to there if the user wants
-	if(onlynew)
+	if(!found && onlynew)
 	{
 		if(C->AskJumpUnread)
 		{
@@ -1030,7 +1044,8 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 						
 						DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
 
-						// this is a valid break and not break out because of an error
+						// this is a valid break and not break because of an error
+						found = TRUE;
 						break;
 					}
 				}
@@ -1045,6 +1060,12 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 		else
 			DisplayBeep(NULL);
 	}
+
+	// if we didn't find any next/previous mail (mail == NULL) then
+	// we can close the window accordingly. This signals a user that he/she
+	// reached the end of the mail list
+	if(found == FALSE)
+		set(obj, MUIA_Window_Open, FALSE);
 
 	return 0;
 }

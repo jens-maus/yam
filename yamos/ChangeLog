@@ -7,6 +7,11 @@ $Source$
 
 2005-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/ReadWindow.c: fixed the SwitchMail() and DeleteMail() methods
+      to behave like the old methods prior to the read window rewrite. In fact,
+      the read window is now finally closed of the start or the end during
+      those operations is reached. This should make YAM a bit more keyboard
+      friendly again.
     * YAM_FI.c: removed the additional FlushIndexes() call which caused YAM to
       always save all indexes after some mail was successfully moved via a
       filter operation. Especially on large folders this caused an undesirable
