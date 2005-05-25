@@ -7,6 +7,10 @@ $Source$
 
 2005-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_FI.c: removed the additional FlushIndexes() call which caused YAM to
+      always save all indexes after some mail was successfully moved via a
+      filter operation. Especially on large folders this caused an undesirable
+      delay.
     * classes/ReadWindow.c: moved the statusIcon handling to an own separate
       MUI class (StatusIconGroup) and implemented it to use an own LayoutHook
       for displaying/managing the status Icons correctly. This should in fact

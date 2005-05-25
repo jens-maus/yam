@@ -1244,9 +1244,6 @@ HOOKPROTONHNO(ApplyFiltersFunc, void, int *arg)
       }
       free(mlist);
 
-      if(G->RRs.Moved)
-        MA_FlushIndexes(FALSE);
-
       if(G->RRs.Checked)
         AppendLog(26, GetStr(MSG_LOG_Filtering), (void *)(G->RRs.Checked), folder->Name, (void *)matches, "");
 
