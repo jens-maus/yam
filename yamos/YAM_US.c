@@ -191,9 +191,12 @@ BOOL US_Login(char *username, char *password, char *maildir, char *prefsfile)
       if(G->Users.Num > 1)
       {
         if((user = DoMethod(G->SplashWinObject, MUIM_Splashwindow_SelectUser)) < 0)
-          user = 0;
+          return FALSE;
       }
-      else user = 0;
+      else if(username)
+        return FALSE;
+      else
+        user = 0;
    }
 
    u = &G->Users.User[user];

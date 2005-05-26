@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-27  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/Splashwindow.c, YAM_US.c: added possibility to exit the
+      splashwindow when it is in user selection mode by pressing the ESC key
+      instead of selecting a user.
+    * classes/Splashwindow.c: fixed some possible crashes while using the
+      keyboard on a select user and/or password request within the splashwindow.
+
 2005-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/ReadWindow.c: fixed the SwitchMail() and DeleteMail() methods
