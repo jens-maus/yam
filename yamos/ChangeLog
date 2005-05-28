@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-28  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/Readwindow.c: fixed some minor bugs in the status update
+      routines where it happend that a mail status was set to read even if
+      the mail was not really showed to the user due to a autoclosing read
+      window.
+
 2005-05-27  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/Splashwindow.c, YAM_US.c: added possibility to exit the

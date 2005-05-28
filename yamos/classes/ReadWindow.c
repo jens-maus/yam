@@ -349,6 +349,36 @@ OVERLOAD(OM_GET)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+	GETDATA;
+
+	struct TagItem *tags = inittags(msg), *tag;
+	while((tag = NextTagItem(&tags)))
+	{
+		switch(tag->ti_Tag)
+		{
+			// we also catch foreign attributes
+			case MUIA_Window_Open:
+			{
+				// if the window is supposed to be closed and the StatusChangeDelay is
+				// active and no embeddedReadPane is active we have to cancel an eventually
+				// existing timerequest to set the status of a mail to read.
+				if(tag->ti_Data == FALSE &&
+					 C->StatusChangeDelayOn == TRUE && C->EmbeddedReadPane == FALSE &&
+					 xget(obj, MUIA_Window_Open) == TRUE)
+				{
+					TC_Stop(TIO_READSTATUSUPDATE);
+				}
+			}
+			break;
+		}
+	}
+
+	return DoSuperMethodA(cl, obj, msg);
+}
+///
 /// OVERLOAD(MUIM_Window_Snapshot)
 OVERLOAD(MUIM_Window_Snapshot)
 {
@@ -661,15 +691,9 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 
 		// if there are still mails in the current folder we make sure
 		// it is displayed in this window now or close it
-		entries = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries);
-		if(entries > 0)
+		if(closeAfter == FALSE &&
+			 (entries = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries)) >= pos+1)
 		{
-			if(entries < pos+1)
-			{
-				pos = entries-1;
-				closeAfter = TRUE;
-			}
-
 			DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, pos, &mail);
 			if(mail)
 				DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
