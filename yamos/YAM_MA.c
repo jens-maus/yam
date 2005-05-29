@@ -156,7 +156,7 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
       DoMethod(gui->NL_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
 
       if(numSelected == 1)
-        TC_Start(TIO_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
+        TC_Restart(TIO_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
       else
         DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
    }

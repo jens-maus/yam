@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-29  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c, YAM.h, YAM_CO.c, YAM_MA.c: reworked the whole timerIO facility
+      in YAM to take care of the status of a timer request instead of querying
+      it with a CheckIO/AbortIO combo during the GetMsg() event loop checking.
+      This completely rewritten timer.device functionality should hopefully fix
+      the recently observed loss of timer requests under certain circumstances.
+    * YAM_WR.c: upon successfully closing a write window YAM does now
+      delete its ".autosaveX.txt" file instead of keeping it for no particular
+      reason. Now only a feature is missing to recognize those autosave files
+      and popup a warning to the user about a found autosave file.
+
 2005-05-28  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/Readwindow.c: fixed some minor bugs in the status update

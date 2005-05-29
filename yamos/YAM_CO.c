@@ -1275,7 +1275,7 @@ void CO_Validate(struct Config *co, BOOL update)
       if(G->CO->Visited[2] || G->CO->UpdateAll)
       {
         // requeue the timerequest for the CheckMailDelay
-        TC_Start(TIO_CHECKMAIL, co->CheckMailDelay*60, 0);
+        TC_Restart(TIO_CHECKMAIL, co->CheckMailDelay*60, 0);
       }
 
       if(G->CO->Visited[4] || G->CO->UpdateAll)

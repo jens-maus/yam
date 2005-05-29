@@ -105,13 +105,21 @@ struct Args
 // the used number of timerIO requests (refer to YAM.h)
 #define TIO_NUM (5)
 
-// Timer Class
+// TimerIO structures we use
+struct TC_Request
+{
+  struct timerequest *tr; // pointer to the timerequest
+  BOOL isRunning;         // if the request is currenty active/running
+  BOOL isPrepared;        // if the request is prepared to get fired
+};
+
 static struct TC_Data
 {
-   struct MsgPort     *port;
-   struct timerequest *timerIO[TIO_NUM]; // lets generate timerIO requests
-
+  struct MsgPort    *port;
+  struct TC_Request timer[TIO_NUM];
 } TCData;
+
+/**************************************************************************/
 
 // AutoDST related variables
 enum ADSTmethod { ADST_NONE=0, ADST_SETDST, ADST_FACTS, ADST_SGUARD, ADST_IXGMT };
@@ -123,90 +131,163 @@ static struct ADST_Data
 
 } ADSTdata;
 
-/// TC_Start
-//  Start a delay depending on the time specified
-void TC_Start(enum TimerIO tio, int seconds, int micros)
+/// TC_Prepare
+//  prepares a timer for being started with TC_Start later on
+static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
 {
+  struct TC_Request *timer = &TCData.timer[tio];
+
+  ENTER();
+
   if(micros > 0 || seconds > 0)
   {
-    struct timerequest *ioreq;
+    if(timer->isRunning == FALSE &&
+       timer->isPrepared == FALSE)
+    {
+      struct timerequest *tr = timer->tr;
+
+      // issue a new timerequest
+      tr->tr_node.io_Command = TR_ADDREQUEST;
+      tr->tr_time.tv_secs    = seconds;
+      tr->tr_time.tv_micro   = micros;
+
+      // flag the timer to be prepared to get fired later on
+      timer->isPrepared = TRUE;
+    }
+    else
+      W(DBF_TIMERIO, "timer[%ld]: already running/prepared", tio);
+  }
+  else
+    D(DBF_TIMERIO, "timer[%ld]: secs and micros is zero, no prepare required");
+
+  LEAVE();
+}
+
+///
+/// TC_Start
+//  Start a delay depending on the time specified
+static void TC_Start(enum TimerIO tio)
+{
+  struct TC_Request *timer = &TCData.timer[tio];
+
+  ENTER();
+
+  if(timer->isRunning == FALSE &&
+     timer->isPrepared == TRUE)
+  {
     #if defined(DEBUG)
     char dateString[64];
-    #endif
 
-    // before we set a new timer request we make sure only one
-    // is active at a time
-    TC_Stop(tio);
-
-    // issue a new timerequest
-    ioreq = TCData.timerIO[tio];
-    ioreq->tr_node.io_Command = TR_ADDREQUEST;
-    ioreq->tr_time.tv_secs    = seconds;
-    ioreq->tr_time.tv_micro   = micros;
-
-    #if defined(DEBUG)
     DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
-    D(DBF_TIMERIO, "Queueing timerIO[%ld] in %ld seconds %ld micros @ %s", tio, seconds, micros, dateString);
+    D(DBF_TIMERIO, "timer[%ld]: started @ %s to finish in %ld'%ld secs", tio,
+                                                                         dateString,
+                                                                         timer->tr->tr_time.tv_secs,
+                                                                         timer->tr->tr_time.tv_micro);
     #endif
 
-    SendIO((struct IORequest *)ioreq);
+    // fire the timer by doing a SendIO()
+    SendIO((struct IORequest *)timer->tr);
+
+    // signal that our timer is running
+    timer->isRunning = TRUE;
+    timer->isPrepared = FALSE;
   }
+  else
+    W(DBF_TIMERIO, "timer[%ld]: is either already running or is not prepared to get fired", tio);
+
+  LEAVE();
 }
 
 ///
 /// TC_Stop
 //  Stop a currently running TimerIO request
+//  Please note that this function may NOT be used in the eventloop after having received
+//  a timer with GetMsg because CheckIO and friends are not defined to work there correctly.
 void TC_Stop(enum TimerIO tio)
 {
-  struct IORequest *ioreq = (struct IORequest *)TCData.timerIO[tio];
+  struct TC_Request *timer = &TCData.timer[tio];
+  struct IORequest *ioreq = (struct IORequest *)timer->tr;
+
+  ENTER();
 
   // check if we have a already issued ioreq running
-  if(ioreq && ioreq->io_Command != 0)
+  if(timer->isRunning)
   {
-    if(CheckIO(ioreq) == NULL)
-      AbortIO(ioreq);
+    if(ioreq && ioreq->io_Command != 0)
+    {
+      if(CheckIO(ioreq) == NULL)
+        AbortIO(ioreq);
 
-    WaitIO(ioreq);
+      WaitIO(ioreq);
 
-    D(DBF_TIMERIO, "Stopped timerIO[%ld]", tio);
+      // make sure the timer is signalled to be NOT running
+      timer->isRunning = FALSE;
+      timer->isPrepared = FALSE;
+
+      D(DBF_TIMERIO, "timer[%ld]: successfully stopped", tio);
+    }
+    else
+      E(DBF_TIMERIO, "timer[%ld]: is invalid and can't be stopped", tio);
   }
+  else
+    D(DBF_TIMERIO, "timer[%ld]: already stopped", tio);
+
+  LEAVE();
 }
 
+///
+/// TC_Restart
+//  restarts a particular timer. In fact it makes sure that the timer in question
+//  is first stopped via AbortIO() and then issues a new one. Please note that
+//  this function may NOT be called from the eventloop because CheckIO and friends
+//  are not defined to work there.
+void TC_Restart(enum TimerIO tio, int seconds, int micros)
+{
+  ENTER();
+
+  TC_Stop(tio);
+  TC_Prepare(tio, seconds, micros);
+  TC_Start(tio);
+
+  LEAVE();
+}
 ///
 /// TC_Exit
 //  Frees timer resources
 static void TC_Exit(void)
 {
+  ENTER();
+
   // first we abort & delete the IORequests
-  if(TCData.timerIO[0] != NULL)
+  if(TCData.timer[0].tr != NULL)
   {
     int i;
 
     // first make sure every TimerIO is stoppped
     for(i=0; i < TIO_NUM; i++)
-    {
       TC_Stop(i);
-    }
 
     // then close the device
-    if(TCData.timerIO[0]->tr_node.io_Device != NULL)
+    if(TCData.timer[0].tr->tr_node.io_Device != NULL)
     {
       // drop the OS4 Interface of the TimerBase
       DROPINTERFACE(ITimer);
 
-      CloseDevice(&TCData.timerIO[0]->tr_node);
+      CloseDevice(&TCData.timer[0].tr->tr_node);
     }
 
     // and then we delete the IO requests
     for(i=1; i < TIO_NUM; i++)
     {
-      if(TCData.timerIO[i] == NULL)
-        break;
-      FreeMem(TCData.timerIO[i], sizeof(struct timerequest));
-      TCData.timerIO[i] = NULL;
+      if(TCData.timer[i].tr != NULL)
+      {
+        FreeMem(TCData.timer[i].tr, sizeof(struct timerequest));
+        TCData.timer[i].tr = NULL;
+      }
     }
-    DeleteIORequest(&TCData.timerIO[0]->tr_node);
-    TCData.timerIO[0] = NULL;
+
+    DeleteIORequest(&TCData.timer[0].tr->tr_node);
+    TCData.timer[0].tr = NULL;
   }
 
   // remove the MsgPort now.
@@ -215,6 +296,8 @@ static void TC_Exit(void)
     DeleteMsgPort(TCData.port);
     TCData.port = NULL;
   }
+
+  LEAVE();
 }
 
 ///
@@ -222,6 +305,8 @@ static void TC_Exit(void)
 //  Initializes timer resources
 static BOOL TC_Init(void)
 {
+  ENTER();
+
   // clear our static structure first
   memset(&TCData, 0, sizeof(struct TC_Data));
 
@@ -229,13 +314,13 @@ static BOOL TC_Init(void)
   if((TCData.port = CreateMsgPort()))
   {
     // create the TimerIOs now
-    if((TCData.timerIO[0] = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest))))
+    if((TCData.timer[0].tr = (struct timerequest *)CreateIORequest(TCData.port, sizeof(struct timerequest))))
     {
       // then open the device
-      if(!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timerIO[0]->tr_node, 0L))
+      if(!OpenDevice(TIMERNAME, UNIT_VBLANK, &TCData.timer[0].tr->tr_node, 0L))
       {
         // needed to get GetSysTime() working
-        if((TimerBase = (APTR)TCData.timerIO[0]->tr_node.io_Device) &&
+        if((TimerBase = (APTR)TCData.timer[0].tr->tr_node.io_Device) &&
            GETINTERFACE(ITimer, TimerBase))
         {
           int i;
@@ -244,22 +329,23 @@ static BOOL TC_Init(void)
           for(i=1; i < TIO_NUM; i++)
           {
             #if defined(__amigaos4__)
-            if(!(TCData.timerIO[i] = AllocMem(sizeof(struct timerequest), MEMF_SHARED)))
+            if(!(TCData.timer[i].tr = AllocMem(sizeof(struct timerequest), MEMF_SHARED)))
               break;
             #else
-            if(!(TCData.timerIO[i] = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC)))
+            if(!(TCData.timer[i].tr = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC)))
               break;
             #endif
 
             // copy the data of timerIO[0] to the new one
-            memcpy(TCData.timerIO[i], TCData.timerIO[0], sizeof(struct timerequest));
+            CopyMem(TCData.timer[0].tr, TCData.timer[i].tr, sizeof(struct timerequest));
           }
         }
       }
     }
   }
 
-  return (TCData.timerIO[TIO_NUM-1] != NULL ? TRUE : FALSE);
+  LEAVE();
+  return (TCData.timer[TIO_NUM-1].tr != NULL ? TRUE : FALSE);
 }
 
 ///
@@ -288,6 +374,8 @@ static void TC_Dispatcher(enum TimerIO tio)
   DateStamp2String(dateString, NULL, DSS_DATETIME, TZC_NONE);
   #endif
 
+  ENTER();
+
   // now dispatch between the differnent timerIOs
   switch(tio)
   {
@@ -296,16 +384,14 @@ static void TC_Dispatcher(enum TimerIO tio)
     // if so we write the indexes.
     case TIO_WRINDEX:
     {
-      D(DBF_TIMERIO, "TIO_WRINDEX triggered at: %s", dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_WRINDEX received at: %s", tio, dateString);
 
       // only write the indexes if no Editor is actually in use
       if(!TC_ActiveEditor(0) && !TC_ActiveEditor(1))
-      {
         MA_UpdateIndexes(FALSE);
-      }
 
-      // restart timer now.
-      TC_Start(tio, C->WriteIndexes, 0);
+      // prepare the timer to get fired again
+      TC_Prepare(tio, C->WriteIndexes, 0);
     }
     break;
 
@@ -316,7 +402,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     {
       int i;
 
-      D(DBF_TIMERIO, "TIO_CHECKMAIL triggered at: %s", dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_CHECKMAIL received at: %s", tio, dateString);
 
       // only if there is currently no write window open we
       // check for new mail.
@@ -329,8 +415,8 @@ static void TC_Dispatcher(enum TimerIO tio)
         MA_PopNow(POP_TIMED,-1);
       }
 
-      // restart timer now.
-      TC_Start(tio, C->CheckMailDelay*60, 0);
+      // prepare the timer to get fired again
+      TC_Prepare(tio, C->CheckMailDelay*60, 0);
     }
     break;
 
@@ -341,19 +427,16 @@ static void TC_Dispatcher(enum TimerIO tio)
     {
       int i;
 
-      D(DBF_TIMERIO, "TIO_AUTOSAVE triggered at: %s", dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_AUTOSAVE received at: %s", tio, dateString);
 
       for(i=0; i < MAXWR; i++)
       {
         if(G->WR[i] && G->WR[i]->Mode != NEW_BOUNCE)
-        {
           EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
-          G->WR[i]->AS_Done = TRUE;
-        }
       }
 
-      // restart timer now
-      TC_Start(tio, C->AutoSave, 0);
+      // prepare the timer to get fired again
+      TC_Prepare(tio, C->AutoSave, 0);
     }
     break;
 
@@ -362,7 +445,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     // currently active mail out of the main mail list and display it in the pane
     case TIO_READPANEUPDATE:
     {
-      D(DBF_TIMERIO, "TIO_READPANEUPDATE triggered at: %s", dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_READPANEUPDATE received: %s", tio, dateString);
 
       if(C->EmbeddedReadPane)
       {
@@ -388,7 +471,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       struct MA_GUIData *gui = &G->MA->GUI;
       struct Mail *mail;
 
-      D(DBF_TIMERIO, "TIO_READSTATUSUPDATE triggered at: %s", dateString);
+      D(DBF_TIMERIO, "timer[%ld]: TIO_READSTATUSUPDATE received: %s", tio, dateString);
 
       // get the actually active mail
       DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
@@ -402,6 +485,8 @@ static void TC_Dispatcher(enum TimerIO tio)
     }
     break;
   }
+
+  LEAVE();
 }
 
 ///
@@ -1840,14 +1925,11 @@ int main(int argc, char **argv)
       AppendLogNormal(1, GetStr(MSG_LOG_LoggedIn), user->Name, "", "", "");
       AppendLogVerbose(2, GetStr(MSG_LOG_LoggedInVerbose), user->Name, G->CO_PrefsFile, G->MA_MailDir, "");
 
-      // start our TimerIO requests for different purposes (writeindexes/mailcheck/autosave)
-      TC_Start(TIO_WRINDEX,   C->WriteIndexes, 0);
-      TC_Start(TIO_CHECKMAIL, C->CheckMailDelay*60, 0);
-      TC_Start(TIO_AUTOSAVE,  C->AutoSave, 0);
-
       // Now start the NotifyRequest for the AutoDST file
-      if(ADSTnotify_start()) adstsig = 1UL << ADSTdata.nRequest.nr_stuff.nr_Signal.nr_SignalNum;
-      else                   adstsig = 0;
+      if(ADSTnotify_start())
+        adstsig = 1UL << ADSTdata.nRequest.nr_stuff.nr_Signal.nr_SignalNum;
+      else
+        adstsig = 0;
 
       // prepare the other signal bits
       timsig    = 1UL << TCData.port->mp_SigBit;
@@ -1866,6 +1948,15 @@ int main(int argc, char **argv)
       D(DBF_STARTUP, " notsig[1]= %08lx", notsig[1]);
       D(DBF_STARTUP, " notsig[2]= %08lx", notsig[2]);
 
+      // start our maintanance TimerIO requests for
+      // different purposes (writeindexes/mailcheck/autosave)
+      TC_Prepare(TIO_WRINDEX,   C->WriteIndexes, 0);
+      TC_Prepare(TIO_CHECKMAIL, C->CheckMailDelay*60, 0);
+      TC_Prepare(TIO_AUTOSAVE,  C->AutoSave, 0);
+      TC_Start(TIO_WRINDEX);
+      TC_Start(TIO_CHECKMAIL);
+      TC_Start(TIO_AUTOSAVE);
+
       // start the event loop
       while (!(ret = Root_GlobalDispatcher(DoMethod(G->App, MUIM_Application_NewInput, &signals))))
       {
@@ -1879,8 +1970,8 @@ int main(int argc, char **argv)
             // check for a TimerIO event
             if(signals & timsig)
             {
-              int i;
               struct timerequest *timeReq;
+              BOOL processed = FALSE;
 
               #if defined(DEBUG)
               char dateString[64];
@@ -1893,21 +1984,66 @@ int main(int argc, char **argv)
               // check if we have a waiting message
               while((timeReq = (struct timerequest *)GetMsg(TCData.port)))
               {
-                D(DBF_TIMERIO, "timeReq: %08lx", timeReq);
+                int i;
 
                 for(i=0; i < TIO_NUM; i++)
                 {
-                  if(timeReq == TCData.timerIO[i])
+                  struct TC_Request *timer = &TCData.timer[i];
+
+                  if(timeReq == timer->tr)
                   {
+                    // set the timer to be not running and not be prepared for
+                    // another shot. Our dispatcher have to do the rest then
+                    timer->isRunning = FALSE;
+                    timer->isPrepared = FALSE;
+
                     // call the dispatcher with signalling which timerIO
                     // this request caused
                     TC_Dispatcher(i);
+
+                    // signal that we processed something
+                    processed = TRUE;
+
+                    // break out of the for() loop
                     break;
                   }
                 }
 
                 // no ReplyMsg() needed
               }
+
+              // make sure that we are starting the timer again after the GetMsg loop
+              if(processed)
+              {
+                // here we just check for the timers that TC_Dispatcher really
+                // prepares and not all of them in a loop
+
+                if(TCData.timer[TIO_WRINDEX].isPrepared)
+                  TC_Start(TIO_WRINDEX);
+
+                if(TCData.timer[TIO_CHECKMAIL].isPrepared)
+                  TC_Start(TIO_CHECKMAIL);
+
+                if(TCData.timer[TIO_AUTOSAVE].isPrepared)
+                  TC_Start(TIO_AUTOSAVE);
+              }
+              else
+                W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");
+
+
+              #if defined(DEBUG)
+              // let us check wheter all necessary maintenance timers are running
+              // because right here ALL maintenance timers should run or something is definitly wrong!
+
+              if(C->WriteIndexes > 0 && TCData.timer[TIO_WRINDEX].isRunning == FALSE)
+                E(DBF_ALWAYS, "timer[%ld]: TIO_WRINDEX is not running and was probably lost!", TIO_WRINDEX);
+
+              if(C->CheckMailDelay > 0 && TCData.timer[TIO_CHECKMAIL].isRunning == FALSE)
+                E(DBF_ALWAYS, "timer[%ld]: TIO_CHECKMAIL is not running and was probably lost!", TIO_CHECKMAIL);
+
+              if(C->AutoSave > 0 && TCData.timer[TIO_AUTOSAVE].isRunning == FALSE)
+                E(DBF_ALWAYS, "timer[%ld]: TIO_AUTOSAVE is not running and was probably lost!", TIO_AUTOSAVE);
+              #endif
             }
 
             // check for a Arexx signal

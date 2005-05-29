@@ -691,7 +691,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 					// start the timer event. Please note that the timer event might be
 					// canceled by the MA_ChangeSelected() function when the next mail
 					// will be selected.
-					TC_Start(TIO_READSTATUSUPDATE, 0, (C->StatusChangeDelay-500)*1000);
+					TC_Restart(TIO_READSTATUSUPDATE, 0, (C->StatusChangeDelay-500)*1000);
 				}
 				else
 				{
