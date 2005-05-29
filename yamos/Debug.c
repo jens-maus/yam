@@ -391,7 +391,7 @@ void _DPRINTF(unsigned long dclass, unsigned long dflags, const char *file, int 
         case DBC_TIMEVAL: highlight = ANSI_ESC_FG_GREEN; break;
         case DBC_DEBUG:   highlight = ANSI_ESC_FG_GREEN; break;
         case DBC_ERROR:   highlight = ANSI_ESC_FG_RED;   break;
-        case DBC_WARNING: highlight = ANSI_ESC_FG_YELLOW;break;
+        case DBC_WARNING: highlight = ANSI_ESC_FG_PURPLE;break;
   		}
 
       kprintf("%s%s:%ld:", highlight, file, line);
