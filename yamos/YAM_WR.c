@@ -1553,15 +1553,23 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       }
       MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
    }
-   else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
+   else
+     ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
+
    FreePartsList(comp.FirstPart);
-   if (wr->MList) free(wr->MList);
-   if (mode == WRITE_SEND && new && !G->TR)
+
+   if(wr->MList)
+     free(wr->MList);
+
+   if(mode == WRITE_SEND && new && !G->TR)
    {
       set(gui->WI, MUIA_Window_Open, FALSE);
       mlist[2] = new; MA_SendMList(mlist);
    }
-   if(C->AutoSave > 0) DeleteFile(WR_AutoSaveFile(winnum));
+
+   // delete a possible autosave file
+   DeleteFile(WR_AutoSaveFile(winnum));
+
    DisposeModulePush(&G->WR[winnum]);
    DisplayStatistics(outfolder, TRUE);
 }
@@ -1579,19 +1587,28 @@ MakeHook(WR_NewMailHook, WR_NewMailFunc);
 //  Terminates file notification and removes temporary files
 void WR_Cleanup(int winnum)
 {
-   int i;
-   struct Attach *att;
-   if (G->WR[winnum]->Mode != NEW_BOUNCE)
-   {
-      EndNotify(&G->WR_NRequest[winnum]);
-      DeleteFile(G->WR_Filename[winnum]);
-      for (i = 0; ; i++)
-      {
-         DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
-         if (!att) break;
-         if (att->IsTemp) DeleteFile(att->FilePath);
-      }
-   }
+  if(G->WR[winnum]->Mode != NEW_BOUNCE)
+  {
+    int i;
+
+    EndNotify(&G->WR_NRequest[winnum]);
+    DeleteFile(G->WR_Filename[winnum]);
+
+    for(i=0; ;i++)
+    {
+      struct Attach *att;
+
+      DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_GetEntry, i, &att);
+      if(!att)
+        break;
+
+      if(att->IsTemp)
+        DeleteFile(att->FilePath);
+    }
+
+    // delete a possible autosave file
+    DeleteFile(WR_AutoSaveFile(winnum));
+  }
 }
 
 ///

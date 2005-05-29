@@ -86,7 +86,6 @@ struct WR_ClassData  /* write window */
    int               OldSecurity;
 
    BOOL              Bounce;
-   BOOL              AS_Done;
 
    char              MsgID[SIZE_MSGID];
    char              QuoteText[SIZE_DEFAULT];
