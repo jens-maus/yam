@@ -3644,17 +3644,32 @@ void FinishUnpack(char *file)
 //  Saves contents of a texteditor object to a file
 BOOL EditorToFile(Object *editor, char *file, struct TranslationTable *tt)
 {
-   char *text;
-   UBYTE *p;
-   FILE *fh;
+  FILE *fh;
+  BOOL result = FALSE;
 
-   if (!(fh = fopen(file, "w"))) return FALSE;
-   text = (char *)DoMethod((Object *)editor, MUIM_TextEditor_ExportText);
-   if (tt) for (p = text; *p; ++p) *p = tt->Table[*p];
-   fputs(text, fh);
-   fclose(fh);
-   FreeVec(text);
-   return TRUE;
+  if((fh = fopen(file, "w")))
+  {
+    char *text = (char *)DoMethod((Object *)editor, MUIM_TextEditor_ExportText);
+    long txtlen = strlen(text);
+
+    // if a translation tables is given we convert the whole test
+    if(tt)
+    {
+      unsigned char *p;
+
+      for(p = text; *p; ++p)
+        *p = tt->Table[*p];
+    }
+
+    // write out the whole text to the file
+    if(fwrite(text, txtlen, 1, fh) == 1)
+      result = TRUE;
+
+    FreeVec(text); // use FreeVec() because TextEditor.mcc uses AllocVec()
+    fclose(fh);
+  }
+
+  return result;
 }
 ///
 /// FileToEditor
@@ -3662,11 +3677,12 @@ BOOL EditorToFile(Object *editor, char *file, struct TranslationTable *tt)
 BOOL FileToEditor(char *file, Object *editor)
 {
   char *text = FileToBuffer(file);
-  char *parsedText;
   BOOL res = FALSE;
 
   if(text)
   {
+    char *parsedText;
+
     // Parse the text and do some highlighting and stuff
     if((parsedText = ParseEmailText(text)))
     {
