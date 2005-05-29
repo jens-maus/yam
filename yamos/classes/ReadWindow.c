@@ -352,9 +352,8 @@ OVERLOAD(OM_GET)
 /// OVERLOAD(OM_SET)
 OVERLOAD(OM_SET)
 {
-	GETDATA;
-
 	struct TagItem *tags = inittags(msg), *tag;
+	
 	while((tag = NextTagItem(&tags)))
 	{
 		switch(tag->ti_Tag)
