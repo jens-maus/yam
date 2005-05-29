@@ -7,6 +7,14 @@ $Source$
 
 2005-05-29  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c, YAM_CO.c, misc: as announce previously, YAM is now checking the
+      existance of ".autosaveX.txt" files during startup. If such a file is
+      found it will remind the user that this file was saved in a previous
+      session and that this may due to a crash/reboot. The user now has the
+      choice to either open that autosaved file in a new write window, to
+      delete it or ignore that warning. Now that this autosave feature is
+      completely implemented, the autosave interval configuration was also
+      moved from the previously hidden area to the [write] configuration page.
     * YAM.c, YAM.h, YAM_CO.c, YAM_MA.c: reworked the whole timerIO facility
       in YAM to take care of the status of a timer request instead of querying
       it with a CheckIO/AbortIO combo during the GetMsg() event loop checking.

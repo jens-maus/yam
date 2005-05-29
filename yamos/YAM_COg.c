@@ -1131,10 +1131,21 @@ APTR CO_Page5(struct CO_ClassData *data)
                Child, Label2(GetStr(MSG_CO_NB_EMAILCACHE)),
                Child, HGroup,
                 Child, data->GUI.NB_EMAILCACHE = NumericbuttonObject,
+                  MUIA_CycleChain,      TRUE,
                   MUIA_Numeric_Min,     0,
                   MUIA_Numeric_Max,     100,
                   MUIA_Numeric_Format,  GetStr(MSG_CO_NB_EMAILCACHEFMT),
-                  MUIA_CycleChain, 1,
+                End,
+                Child, HSpace(0),
+               End,
+               Child, HSpace(0),
+               Child, Label2(GetStr(MSG_CO_NB_AUTOSAVE)),
+               Child, HGroup,
+                Child, data->GUI.NB_AUTOSAVE = NumericbuttonObject,
+                  MUIA_CycleChain,      TRUE,
+                  MUIA_Numeric_Min,     0,
+                  MUIA_Numeric_Max,     30,
+                  MUIA_Numeric_Format,  GetStr(MSG_CO_NB_AUTOSAVEFMT),
                 End,
                 Child, HSpace(0),
                End,
@@ -1156,6 +1167,7 @@ APTR CO_Page5(struct CO_ClassData *data)
       SetHelp(data->GUI.ST_EDITOR       ,MSG_HELP_CO_ST_EDITOR      );
       SetHelp(data->GUI.CH_LAUNCH       ,MSG_HELP_CO_CH_LAUNCH      );
       SetHelp(data->GUI.NB_EMAILCACHE   ,MSG_HELP_CO_NB_EMAILCACHE  );
+      SetHelp(data->GUI.NB_AUTOSAVE     ,MSG_HELP_CO_NB_AUTOSAVE    );
    }
 
    return grp;

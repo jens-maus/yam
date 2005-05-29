@@ -1283,7 +1283,7 @@ mimebody:
 char *WR_AutoSaveFile(int winnr)
 {
    static char fname[SIZE_PATHFILE];
-   strmfp(fname, G->ProgDir, ".autosave");
+   strmfp(fname, G->MA_MailDir, ".autosave");
    strcat(fname, itoa(winnr));
    strcat(fname, ".txt");
    return fname;

@@ -5021,12 +5021,12 @@ MSG_CO_NB_EMAILCACHE (//)
 Email cache
 ;
 MSG_CO_NB_EMAILCACHEFMT (//)
-%ld mails
+%ld adresses
 ;
 MSG_HELP_CO_NB_EMAILCACHE (//)
 Cache size for the most recently used\n\
 recipients not yet in the address book.\n\
-Select 0 mails to disable this feature.
+Select 0 to disable this feature.
 ;
 MSG_CO_USESMTPTLS (//)
 Use SMTP TLSv_1/SSLv3
@@ -5566,4 +5566,29 @@ to be updated accordingly.\n\
 \n\
 Please make sure you are using a compatible image layout\n\
 or some images may be displayed incorrectly in YAM.
+;
+MSG_MA_AUTOSAVEFOUND (//)
+YAM has found the autosaved file '%s' which\n\
+have been created in a previous session. This may be due\n\
+to a possible crash or reboot during writing a message.\n\
+\n\
+What do you want to do with that file?
+;
+MSG_MA_AUTOSAVEFOUND_TITLE (//)
+Autosave file found
+;
+MSG_MA_AUTOSAVEFOUND_BT (//)
+*_Open in write window|_Delete|_Ignore
+;
+MSG_CO_NB_AUTOSAVE (//)
+Autosave interval
+;
+MSG_CO_NB_AUTOSAVEFMT (//)
+%ld minute(s)
+;
+MSG_HELP_CO_NB_AUTOSAVE (//)
+Number of minutes YAM should automatically\n\
+generate a save copy of the mail you are\n\
+currently composing.\n\
+Select 0 to disable this feature.
 ;

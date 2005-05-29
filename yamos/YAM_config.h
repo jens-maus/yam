@@ -241,6 +241,7 @@ struct CO_GUIData
    Object *ST_INFOBARTXT;
    Object *CH_WARNSUBJECT;
    Object *NB_EMAILCACHE;
+   Object *NB_AUTOSAVE;
    Object *CH_AUTOTRANSLATEIN;
    Object *RA_SMTPSECURE;
    Object *CH_EMBEDDEDREADPANE;

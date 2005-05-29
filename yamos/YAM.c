@@ -1915,6 +1915,49 @@ int main(int argc, char **argv)
       AppendLog(0, GetStr(MSG_LOG_Started), "", "", "", "");
       MA_StartMacro(MACRO_STARTUP, NULL);
 
+      // before we go on we check whether there is any .autosaveX.txt file in the
+      // maildir directory. And if so we ask the user what he would like to do with it
+      for(i=0; i < MAXWR; i++)
+      {
+        char *fileName = WR_AutoSaveFile(i);
+
+        if(FileExists(fileName))
+        {
+          int reqres;
+
+          // make sure the application is not iconified
+          set(G->App, MUIA_Application_Iconified, FALSE);
+
+          reqres = MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_AUTOSAVEFOUND_TITLE),
+                                                         GetStr(MSG_MA_AUTOSAVEFOUND_BT),
+                                                         GetStr(MSG_MA_AUTOSAVEFOUND),
+                                                         fileName);
+          if(reqres == 1)
+          {
+            // the user wants to open the autosave file in an own new write window,
+            // so lets do it and delete the autosave file afterwards
+            int wrwin = MA_NewNew(NULL, 0);
+            if(wrwin >= 0)
+            {
+              // load the file in the new editor gadget
+              FileToEditor(fileName, G->WR[wrwin]->GUI.TE_EDIT);
+
+              // make sure the texteditor gadget is marked as being changed
+              set(G->WR[wrwin]->GUI.TE_EDIT, MUIA_TextEditor_HasChanged, TRUE);
+
+              // delete the autosave file
+              DeleteFile(fileName);
+            }
+          }
+          else if(reqres == 2)
+          {
+            // just delete the autosave file.
+            DeleteFile(fileName);
+          }
+        }
+      }
+
+
       if(yamFirst)
       {
         DoStartup((BOOL)args.nocheck, (BOOL)args.hide);

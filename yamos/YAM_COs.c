@@ -276,6 +276,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "Editor           = %s\n", co->Editor);
       fprintf(fh, "LaunchAlways     = %s\n", Bool2Txt(co->LaunchAlways));
       fprintf(fh, "EmailCache       = %d\n", co->EmailCache);
+      fprintf(fh, "AutoSave         = %d\n", co->AutoSave);
 
       fprintf(fh, "\n[Reply/Forward]\n");
       fprintf(fh, "ReplyHello       = %s\n", co->ReplyHello);
@@ -390,7 +391,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "\n[Advanced]\n");
       fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
       fprintf(fh, "WriteIndexes     = %d\n", co->WriteIndexes);
-      fprintf(fh, "AutoSave         = %d\n", co->AutoSave);
       fprintf(fh, "SupportSite      = %s\n", co->SupportSite);
       fprintf(fh, "JumpToNewMsg     = %s\n", Bool2Txt(co->JumpToNewMsg));
       fprintf(fh, "JumpToIncoming   = %s\n", Bool2Txt(co->JumpToIncoming));
@@ -773,6 +773,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "Editor"))         stccpy(co->Editor, value, SIZE_PATHFILE);
                else if (!stricmp(buffer, "LaunchAlways"))   co->LaunchAlways = Txt2Bool(value);
                else if (!stricmp(buffer, "EmailCache"))     co->EmailCache = atoi(value);
+               else if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
 /*6*/          else if (!stricmp(buffer, "ReplyHello"))     stccpy(co->ReplyHello, value2, SIZE_INTRO);
                else if (!stricmp(buffer, "ReplyIntro"))     stccpy(co->ReplyIntro, value2, SIZE_INTRO);
                else if (!stricmp(buffer, "ReplyBye"))       stccpy(co->ReplyBye, value2, SIZE_INTRO);
@@ -873,7 +874,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "AppIconText"))    stccpy(co->AppIconText, value, SIZE_DEFAULT/2);
 /*Hidden*/     else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
                else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
-               else if (!stricmp(buffer, "AutoSave"))       co->AutoSave = atoi(value);
                else if (!stricmp(buffer, "SupportSite"))    stccpy(co->SupportSite, value, SIZE_HOST);
                else if (!stricmp(buffer, "JumpToNewMsg"))   co->JumpToNewMsg = Txt2Bool(value);
                else if (!stricmp(buffer, "JumpToIncoming")) co->JumpToIncoming = Txt2Bool(value);
@@ -1059,6 +1059,7 @@ void CO_GetConfig(void)
          GetMUIString(CE->Editor              ,gui->ST_EDITOR);
          CE->LaunchAlways      = GetMUICheck  (gui->CH_LAUNCH);
          CE->EmailCache        = GetMUINumer  (gui->NB_EMAILCACHE);
+         CE->AutoSave          = GetMUINumer  (gui->NB_AUTOSAVE)*60; // in seconds
          break;
       case 6:
          GetMUIString(CE->ReplyHello          ,gui->ST_REPLYHI);
@@ -1269,6 +1270,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_EDITOR    ,CE->Editor);
          setcheckmark(gui->CH_LAUNCH    ,CE->LaunchAlways);
          setslider   (gui->NB_EMAILCACHE,CE->EmailCache);
+         setslider   (gui->NB_AUTOSAVE,  CE->AutoSave/60);
          break;
       case 6:
          setstring   (gui->ST_REPLYHI     ,CE->ReplyHello);

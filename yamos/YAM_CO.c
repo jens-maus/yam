@@ -941,6 +941,7 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->Editor, "C:Ed");
       co->LaunchAlways = FALSE;
       co->EmailCache = 10;
+      co->AutoSave = 120;
    }
 
    // [Reply/Forward]
@@ -1065,7 +1066,6 @@ void CO_SetDefaults(struct Config *co, int page)
    {
       co->LetterPart = 1;
       co->WriteIndexes = 120;
-      co->AutoSave = 600;
       strcpy(co->SupportSite, "http://www.yam.ch/");
       co->JumpToNewMsg = co->AskJumpUnread = co->PrinterCheck = co->IsOnlineCheck = TRUE;
       co->JumpToIncoming = FALSE;
@@ -1288,6 +1288,12 @@ void CO_Validate(struct Config *co, BOOL update)
          // we have to make sure the actual selected mail is loaded
          if(C->EmbeddedReadPane)
            DoMethod(G->App, MUIM_CallHook, &MA_ChangeSelectedHook);
+      }
+
+      if(G->CO->Visited[5] || G->CO->UpdateAll)
+      {
+        // requeue the timerequest for the AutoSave interval
+        TC_Restart(TIO_AUTOSAVE, co->AutoSave, 0);
       }
 
       if(G->CO->Visited[8] || G->CO->UpdateAll)
