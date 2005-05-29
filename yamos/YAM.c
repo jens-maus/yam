@@ -1567,26 +1567,41 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 //  Allows automatic login for AmiTCP-Genesis users
 static void Login(char *user, char *password, char *maildir, char *prefsfile)
 {
-   struct genUser *guser;
-   BOOL terminate = FALSE;
-   BOOL loggedin = FALSE;
+  BOOL terminate = FALSE;
+  BOOL loggedin = FALSE;
 
-   if(INITLIB(IGenesis, InitLib("genesis.library", (APTR)&GenesisBase, 1, 0, FALSE, FALSE)))
-   {
-      if((guser = GetGlobalUser()))
-      {
-         terminate = !(loggedin = US_Login(guser->us_name, "\01", maildir, prefsfile));
-         FreeUser(guser);
-      }
+  ENTER();
 
-      CLOSELIB(GenesisBase, IGenesis);
-   }
+  if(INITLIB(IGenesis, InitLib("genesis.library", (APTR)&GenesisBase, 1, 0, FALSE, FALSE)))
+  {
+    struct genUser *guser;
 
-   if(!loggedin && !terminate)
-      terminate = !US_Login(user, password, maildir, prefsfile);
+    if((guser = GetGlobalUser()))
+    {
+      D(DBF_STARTUP, "GetGlobalUser returned: %08lx, '%s'", guser, guser->us_name);
 
-   if(terminate)
-     exit(RETURN_WARN);
+      terminate = !(loggedin = US_Login(guser->us_name, "\01", maildir, prefsfile));
+
+      D(DBF_STARTUP, "US_Login returned: %ld %ld", terminate, loggedin);
+
+      FreeUser(guser);
+    }
+    else
+      W(DBF_STARTUP, "GetGlobalUser returned NULL");
+
+    CLOSELIB(GenesisBase, IGenesis);
+  }
+
+  if(!loggedin && !terminate)
+    terminate = !US_Login(user, password, maildir, prefsfile);
+
+  if(terminate)
+  {
+    E(DBF_STARTUP, "terminating due to incorrect login information");
+    exit(RETURN_WARN);
+  }
+
+  LEAVE();
 }
 ///
 /// GetDST
