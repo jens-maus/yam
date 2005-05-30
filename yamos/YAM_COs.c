@@ -1298,6 +1298,7 @@ void CO_SetConfig(void)
          setstring   (gui->ST_TAGSEP      ,CE->TagsSeparator);
          setcycle    (gui->CY_SIGNAT      ,G->CO->LastSig);
          FileToEditor(CreateFilename(SigNames[G->CO->LastSig]), gui->TE_SIGEDIT);
+         DoMethod(G->App, MUIM_CallHook, &CO_SwitchSignatHook, !CE->UseSignature);
          break;
       case 8:
          for (i = 0; i < FOCOLNUM; i++) setcheckmark(gui->CH_FCOLS[i], (CE->FolderCols & (1<<i)) != 0);

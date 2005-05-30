@@ -1459,6 +1459,21 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
 MakeHook(CO_EditSignatHook,CO_EditSignatFunc);
 
 ///
+/// CO_SwitchSignatFunc
+//  Enables/Disables some object upon the status of the signature checkbox
+HOOKPROTONHNO(CO_SwitchSignatFunc, void, int *arg)
+{
+  BOOL enable = *arg;
+
+  set(G->CO->GUI.CY_SIGNAT,   MUIA_Disabled, enable);
+  set(G->CO->GUI.BT_SIGEDIT,  MUIA_Disabled, enable);
+  set(G->CO->GUI.TE_SIGEDIT,  MUIA_Disabled, enable);
+  set(G->CO->GUI.BT_INSTAG,   MUIA_Disabled, enable);
+  set(G->CO->GUI.BT_INSENV,   MUIA_Disabled, enable);
+}
+MakeHook(CO_SwitchSignatHook, CO_SwitchSignatFunc);
+
+///
 /// CO_OpenConfig
 //  Opens a different configuration file
 HOOKPROTONHNONP(CO_OpenConfig, void)

@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-05-30  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_COg.c: changed signature configuration to use a FixedFont TextEditor
+      gadget for editing the signature. Furthermore, the "Use Signature" checkbox
+      does now disable/enable all relevant fields.
+
 2005-05-29  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c, YAM_CO.c, misc: as announce previously, YAM is now checking the

@@ -493,6 +493,7 @@ extern struct Hook CO_AddPOP3Hook;
 extern struct Hook CO_DelMimeViewHook;
 extern struct Hook CO_DelPOP3Hook;
 extern struct Hook CO_EditSignatHook;
+extern struct Hook CO_SwitchSignatHook;
 extern struct Hook CO_GetDefaultPOPHook;
 extern struct Hook CO_GetMVEntryHook;
 extern struct Hook CO_GetP3EntryHook;

@@ -479,7 +479,6 @@ HOOKPROTONHNO(FilterDisplayFunc, LONG, struct NList_DisplayMessage *msg)
 }
 MakeStaticHook(FilterDisplayHook, FilterDisplayFunc);
 
-
 ///
 
 /*** Pages ***/
@@ -1250,9 +1249,10 @@ APTR CO_Page7(struct CO_ClassData *data)
                MUIA_Group_Spacing, 0,
                Child, data->GUI.TE_SIGEDIT = MailTextEditObject,
                   InputListFrame,
+                  MUIA_CycleChain,            TRUE,
+                  MUIA_TextEditor_FixedFont,  TRUE,
                   MUIA_TextEditor_ExportHook, MUIV_TextEditor_ExportHook_EMail,
-                  MUIA_CycleChain, TRUE,
-                  MUIA_TextEditor_Slider, slider,
+                  MUIA_TextEditor_Slider,     slider,
                End,
                Child, slider,
             End,
@@ -1275,17 +1275,20 @@ APTR CO_Page7(struct CO_ClassData *data)
          End,
       End))
    {
-      SetHelp(data->GUI.CY_SIGNAT    ,MSG_HELP_CO_CY_SIGNAT   );
-      SetHelp(data->GUI.BT_SIGEDIT   ,MSG_HELP_CO_BT_EDITSIG  );
-      SetHelp(data->GUI.BT_INSTAG    ,MSG_HELP_CO_BT_INSTAG   );
-      SetHelp(data->GUI.BT_INSENV    ,MSG_HELP_CO_BT_INSENV   );
-      SetHelp(data->GUI.ST_TAGFILE   ,MSG_HELP_CO_ST_TAGFILE  );
-      SetHelp(data->GUI.ST_TAGSEP    ,MSG_HELP_CO_ST_TAGSEP   );
-      DoMethod(data->GUI.BT_INSTAG   ,MUIM_Notify,MUIA_Pressed     ,FALSE         ,data->GUI.TE_SIGEDIT   ,2,MUIM_TextEditor_InsertText,"%t\n");
-      DoMethod(data->GUI.BT_INSENV   ,MUIM_Notify,MUIA_Pressed     ,FALSE         ,data->GUI.TE_SIGEDIT   ,2,MUIM_TextEditor_InsertText,"%e");
-      DoMethod(data->GUI.CY_SIGNAT   ,MUIM_Notify,MUIA_Cycle_Active,MUIV_EveryTime,MUIV_Notify_Application,3,MUIM_CallHook,&CO_EditSignatHook,FALSE);
-      DoMethod(data->GUI.BT_SIGEDIT  ,MUIM_Notify,MUIA_Pressed     ,FALSE         ,MUIV_Notify_Application,3,MUIM_CallHook,&CO_EditSignatHook,TRUE);
+      SetHelp(data->GUI.CY_SIGNAT,  MSG_HELP_CO_CY_SIGNAT   );
+      SetHelp(data->GUI.BT_SIGEDIT, MSG_HELP_CO_BT_EDITSIG  );
+      SetHelp(data->GUI.BT_INSTAG,  MSG_HELP_CO_BT_INSTAG   );
+      SetHelp(data->GUI.BT_INSENV,  MSG_HELP_CO_BT_INSENV   );
+      SetHelp(data->GUI.ST_TAGFILE, MSG_HELP_CO_ST_TAGFILE  );
+      SetHelp(data->GUI.ST_TAGSEP,  MSG_HELP_CO_ST_TAGSEP   );
+
+      DoMethod(data->GUI.BT_INSTAG, MUIM_Notify, MUIA_Pressed,      FALSE         , data->GUI.TE_SIGEDIT   , 2, MUIM_TextEditor_InsertText, "%t\n");
+      DoMethod(data->GUI.BT_INSENV, MUIM_Notify, MUIA_Pressed,      FALSE         , data->GUI.TE_SIGEDIT   , 2, MUIM_TextEditor_InsertText, "%e");
+      DoMethod(data->GUI.CY_SIGNAT, MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_EditSignatHook, FALSE);
+      DoMethod(data->GUI.BT_SIGEDIT,MUIM_Notify, MUIA_Pressed,      FALSE         , MUIV_Notify_Application, 3, MUIM_CallHook, &CO_EditSignatHook, TRUE);
+      DoMethod(data->GUI.CH_USESIG, MUIM_Notify, MUIA_Selected,     MUIV_EveryTime, MUIV_Notify_Application, 3, MUIM_CallHook, &CO_SwitchSignatHook, MUIV_NotTriggerValue);
    }
+
    return grp;
 }
 
