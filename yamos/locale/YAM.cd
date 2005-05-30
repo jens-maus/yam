@@ -5021,7 +5021,7 @@ MSG_CO_NB_EMAILCACHE (//)
 Email cache
 ;
 MSG_CO_NB_EMAILCACHEFMT (//)
-%ld adresses
+%ld address(es)
 ;
 MSG_HELP_CO_NB_EMAILCACHE (//)
 Cache size for the most recently used\n\
