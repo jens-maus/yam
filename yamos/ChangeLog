@@ -7,6 +7,9 @@ $Source$
 
 2005-06-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: modifies the RE_Export() function to take also respect of the
+      now identifyable filename extension. This in fact allows to place proper
+      fileextensions to Save attachments routines as well.
     * YAM_RE.c: modified YAM to automatically identify a file extension of an
       attachment and appends it to a temporary filename instead of using ".tmp"
       if the mail part in question is going to be decoded. In fact, YAM uses its

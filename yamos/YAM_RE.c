@@ -379,7 +379,7 @@ BOOL RE_DoMDN(enum MDNType type, struct Mail *mail, BOOL multi)
 ///
 /// RE_SuggestName
 //  Suggests a file name based on the message subject
-char *RE_SuggestName(struct Mail *mail)
+static char *RE_SuggestName(struct Mail *mail)
 {
    static char name[SIZE_FILE];
    char *ptr = mail->Subject;
@@ -398,7 +398,6 @@ char *RE_SuggestName(struct Mail *mail)
       else name[i++] = tc;
    }
 
-   strcat(name, ".msg");
    return name;
 }
 
@@ -416,11 +415,25 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
   if(!*dest)
   {
     if(*name)
+    {
       strcpy(buffer2, name);
-    else if (nr)
-      sprintf(buffer2, "%s-%d", mail->MailFile, nr);
+    }
+    else if(nr)
+    {
+      char ext[SIZE_FILE];
+
+      // we have to get the file extension of our source file and use it
+      // in our destination file as well
+		  stcgfe(ext, source);
+
+      name = RE_SuggestName(mail);
+      sprintf(buffer2, "%s-%d.%s", name[0] != '\0' ? name : mail->MailFile, nr, ext[0] != '\0' ? ext : "tmp");
+    }
     else
-      strcpy(buffer2, RE_SuggestName(mail));
+    {
+      name = RE_SuggestName(mail);
+      sprintf(buffer2, "%s.msg", name[0] != '\0' ? name : mail->MailFile);
+    }
 
     if(force)
       strmfp(dest = buffer, C->DetachDir, buffer2);
@@ -445,8 +458,7 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
 
   if(!stricmp(ctype, ContType[CT_AP_AEXE]))
     SetProtection(dest, 0);
-
-  if(!stricmp(ctype, ContType[CT_AP_SCRIPT]))
+  else if(!stricmp(ctype, ContType[CT_AP_SCRIPT]))
     SetProtection(dest, FIBF_SCRIPT);
 
   AppendLogVerbose(80, GetStr(MSG_LOG_SavingAtt), dest, mail->MailFile, FolderName(mail->Folder), "");
@@ -1607,7 +1619,7 @@ BOOL RE_DecodePart(struct Part *rp)
     FILE *in, *out;
     char file[SIZE_FILE];
     char buf[SIZE_LINE];
-    char ext[FNSIZE] = "\0";
+    char ext[SIZE_FILE] = "\0";
 
     if((in = fopen(rp->Filename, "r")))
     {
@@ -1650,7 +1662,10 @@ BOOL RE_DecodePart(struct Part *rp)
               char *extension = strtok(C->MV[i]->Extension, " ");
 
               if(extension)
-                strcpy(ext, extension);
+              {
+                strncpy(ext, extension, SIZE_FILE-1);
+                ext[SIZE_FILE-1] = '\0';
+              }
 
               break;
             }
