@@ -7,6 +7,11 @@ $Source$
 
 2005-06-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: modified YAM to automatically identify a file extension of an
+      attachment and appends it to a temporary filename instead of using ".tmp"
+      if the mail part in question is going to be decoded. In fact, YAM uses its
+      own MIME settings for identifying the proper filename extension and if non
+      is found, it still falls back to ".tmp".
     * YAM_RE.c: slightly optimized the RE_DecodeStream() usage and added a check
       if a decoding operation for a certain mail part is really required. If not,
       then YAM will just rename the file which in fact should hopefully speed up

@@ -549,22 +549,24 @@ void RE_DisplayMIME(char *fname, char *ctype)
   }
   else
   {
-    if (!mv)
+    if(!mv && C->IdentifyBin)
     {
-      if (C->IdentifyBin)
+      ctype = IdentifyFile(fname);
+
+      for(i=1; i < MAXMV && C->MV[i]; i++)
       {
-        ctype = IdentifyFile(fname);
-        for (i = 1; i < MAXMV; i++)
+        if(MatchNoCase(ctype, C->MV[i]->ContentType))
         {
-          if(C->MV[i] && MatchNoCase(ctype, C->MV[i]->ContentType))
-          {
-            mv = C->MV[i];
-            break;
-          }
+          mv = C->MV[i];
+          break;
         }
       }
-      if (!mv) mv = C->MV[0];
     }
+
+    // if we didn't find a mime view or the command line was empty
+    // we choose the default mime view action
+    if(!mv || mv->Command[0] == '\0')
+      mv = C->MV[0];
 
     // now we have to generate a real commandstring and make sure that
     // the %s is covered with "" or otherwise we will run into trouble with
@@ -1072,6 +1074,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
 //  return 0 on error
 //  return 1 on success (was decoded)
 //  return 2 on success (no decode required, no data written to out)
+//  return 3 on success (no decode required, data without headers written to out)
 static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 {
    struct TranslationTable *tt = NULL;
@@ -1235,7 +1238,15 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       default:
       {
         if(tt)
-          decodeResult = RE_ConsumeRestOfPart(in, out, tt, NULL);
+        {
+          if(RE_ConsumeRestOfPart(in, out, tt, NULL))
+            decodeResult = 1;
+        }
+        else if(rp->HasHeaders)
+        {
+          if(CopyFile(NULL, out, NULL, in))
+            decodeResult = 3;
+        }
         else
           decodeResult = 2;
       }
@@ -1589,104 +1600,135 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 //  Decodes a single message part
 BOOL RE_DecodePart(struct Part *rp)
 {
-   // it only makes sense to go on here if
-   // the data wasn`t decoded before.
-   if(!rp->Decoded)
-   {
-      FILE *in, *out;
-      char file[SIZE_FILE];
-      char buf[SIZE_LINE];
-      char ext[FNSIZE];
+  // it only makes sense to go on here if
+  // the data wasn`t decoded before.
+  if(!rp->Decoded)
+  {
+    FILE *in, *out;
+    char file[SIZE_FILE];
+    char buf[SIZE_LINE];
+    char ext[FNSIZE] = "\0";
 
-      if((in = fopen(rp->Filename, "r")))
+    if((in = fopen(rp->Filename, "r")))
+    {
+      // if this part has some headers, let`s skip them so that
+      // we just decode the raw data.
+      if(rp->HasHeaders)
       {
-         // if this part has some headers, let`s skip them so that
-         // we just decode the raw data.
-         if(rp->HasHeaders)
-         {
-           while(GetLine(in, buf, SIZE_LINE))
-           {
-             // if we find an empty string it is a sign that
-             // by starting from the next line the encoded data
-             // should follow
-             if(*buf == '\0')
-              break;
-           }
+        while(GetLine(in, buf, SIZE_LINE))
+        {
+          // if we find an empty string it is a sign that
+          // by starting from the next line the encoded data
+          // should follow
+          if(*buf == '\0')
+            break;
+        }
 
-           // we only go on if we are not in an ferror() condition
-           // as we shouldn`t have a EOF or real error here.
-           if(ferror(in) || feof(in))
-           {
-             E(DBF_MAIL, "ferror() or feof() while parsing through PartHeader.");
-             fclose(in);
-             return FALSE;
-           }
-         }
-
-         // get the file extension name
-				 stcgfe(ext, rp->Name);
-         if(strlen(ext) > 10)
-           *ext = 0; // if the file extension is longer than 10 chars lets use "tmp"
-
-         // lets generate the destination file name for the decoded part
-         sprintf(file, "YAMm%08lx-p%d.%s", readMailDataID(rp->rmData), rp->Nr, *ext ? ext : "tmp");
-         strmfp(buf, C->TempDir, file);
-
-         D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, buf);
-
-         // now open the stream and decode it afterwards.
-         if((out = fopen(buf, "w")))
-         {
-            int decodeResult = RE_DecodeStream(rp, in, out);
-
-            // close the streams first.
-            fclose(out);
-            fclose(in);
-
-            // check if we were successfull in decoding the data.
-            if(decodeResult > 0)
-            {
-              // if decodeResult == 2 then no decode was required and we just
-              // rename the file
-              if(decodeResult == 2)
-              {
-                D(DBF_MAIL, "no decode required. just renamed");
-
-                DeleteFile(buf); // delete the temporary file again.
-                RenameFile(rp->Filename, buf);
-              }
-              else
-              {
-                D(DBF_MAIL, "successfully decoded");
-                DeleteFile(rp->Filename);
-              }
-
-              strcpy(rp->Filename, buf);
-              rp->Decoded = TRUE;
-              RE_SetPartInfo(rp);
-            }
-            else
-            {
-              E(DBF_MAIL, "error during RE_DecodeStream()");
-              DeleteFile(buf); // delete the temporary file again.
-            }
-         }
-         else if((out = fopen(buf, "r")))
-         {
-            // if we couldn`t open that file for writing we check if it exists
-            // and if so we use it because it is locked actually and already decoded
-            fclose(out);
-            fclose(in);
-            DeleteFile(rp->Filename);
-            strcpy(rp->Filename, buf);
-            rp->Decoded = TRUE;
-            RE_SetPartInfo(rp);
-         }
-         else fclose(in);
+        // we only go on if we are not in an ferror() condition
+        // as we shouldn`t have a EOF or real error here.
+        if(ferror(in) || feof(in))
+        {
+          E(DBF_MAIL, "ferror() or feof() while parsing through PartHeader.");
+          fclose(in);
+          return FALSE;
+        }
       }
-   }
 
-   return rp->Decoded;
+      // we try to get a proper file extension for our decoded part which we
+      // in fact first try to get out of the user's MIME configuration.
+      if(rp->Nr != PART_LETTER)
+      {
+        // only if we have a contentType we search through our MIME list
+        if(rp->ContentType)
+        {
+          int i;
+
+          for(i=1;i < MAXMV && C->MV[i]; i++)
+          {
+            if(MatchNoCase(rp->ContentType, C->MV[i]->ContentType))
+            {
+              char *extension = strtok(C->MV[i]->Extension, " ");
+
+              if(extension)
+                strcpy(ext, extension);
+
+              break;
+            }
+          }
+        }
+
+        // if we still don't have a valid extension, we try to take it from
+        // and eventually existing part name
+        if(ext[0] == '\0' && rp->Name[0] != '\0')
+        {
+          // get the file extension name
+	  		  stcgfe(ext, rp->Name);
+          if(strlen(ext) > 5)
+            ext[0] = '\0'; // if the file extension is longer than 5 chars lets use "tmp"
+        }
+      }
+
+      // lets generate the destination file name for the decoded part
+      sprintf(file, "YAMm%08lx-p%d.%s", readMailDataID(rp->rmData), rp->Nr, ext[0] != '\0' ? ext : "tmp");
+      strmfp(buf, C->TempDir, file);
+
+      D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, buf);
+
+      // now open the stream and decode it afterwards.
+      if((out = fopen(buf, "w")))
+      {
+        int decodeResult = RE_DecodeStream(rp, in, out);
+
+        // close the streams
+        fclose(out);
+        fclose(in);
+
+        // check if we were successfull in decoding the data.
+        if(decodeResult > 0)
+        {
+          // if decodeResult == 2 then no decode was required and we just have to rename
+          // the file
+          if(decodeResult == 2)
+          {
+            D(DBF_MAIL, "no decode required. renaming file.");
+
+            DeleteFile(buf); // delete the temporary file again.
+            rp->Decoded = Rename(rp->Filename, buf);
+          }
+          else
+          {
+            D(DBF_MAIL, "%s", decodeResult == 1 ? "successfully decoded" : "no decode required. did a raw copy");
+
+            DeleteFile(rp->Filename);
+            rp->Decoded = TRUE;
+          }
+
+          strcpy(rp->Filename, buf);
+          RE_SetPartInfo(rp);
+        }
+        else
+        {
+          E(DBF_MAIL, "error during RE_DecodeStream()");
+          DeleteFile(buf); // delete the temporary file again.
+        }
+      }
+      else if((out = fopen(buf, "r")))
+      {
+        // if we couldn`t open that file for writing we check if it exists
+        // and if so we use it because it is locked actually and already decoded
+        fclose(out);
+        fclose(in);
+        DeleteFile(rp->Filename);
+        strcpy(rp->Filename, buf);
+        rp->Decoded = TRUE;
+        RE_SetPartInfo(rp);
+      }
+      else
+        fclose(in);
+    }
+  }
+
+  return rp->Decoded;
 }
 ///
 /// RE_HandleMDNReport
