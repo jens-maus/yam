@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: slightly optimized the RE_DecodeStream() usage and added a check
+      if a decoding operation for a certain mail part is really required. If not,
+      then YAM will just rename the file which in fact should hopefully speed up
+      the loading of mails with large letter parts which in fact are not encoded
+      in any form.
+
 2005-05-30  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_COg.c: changed signature configuration to use a FixedFont TextEditor

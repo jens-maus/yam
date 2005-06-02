@@ -1069,10 +1069,13 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
 ///
 /// RE_DecodeStream
 //  Decodes contents of a part
-static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
+//  return 0 on error
+//  return 1 on success (was decoded)
+//  return 2 on success (no decode required, no data written to out)
+static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 {
    struct TranslationTable *tt = NULL;
-   BOOL decodeResult = FALSE;
+   int decodeResult = 0;
 
    if(rp->Nr == PART_LETTER && rp->Printable &&
       G->TTin && G->TTin->SourceCharset
@@ -1105,7 +1108,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
         D(DBF_MAIL, "base64 decoded %ld bytes of part %ld.", decoded, rp->Nr);
 
         if(decoded > 0)
-          decodeResult = TRUE;
+          decodeResult = 1;
         else
           ER_NewError(GetStr(MSG_ER_UnexpEOFB64), NULL, NULL);
       }
@@ -1118,7 +1121,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
         D(DBF_MAIL, "quoted-printable decoded %ld chars of part %ld.", decoded, rp->Nr);
 
         if(decoded >= 0)
-          decodeResult = TRUE;
+          decodeResult = 1;
         else
         {
           switch(decoded)
@@ -1139,7 +1142,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             {
               ER_NewError(GetStr(MSG_ER_QPDEC_WARN), rp->Filename, NULL);
 
-              decodeResult = TRUE; // allow to save the resulting file
+              decodeResult = 1; // allow to save the resulting file
             }
             break;
 
@@ -1147,7 +1150,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             {
               ER_NewError(GetStr(MSG_ER_QPDEC_CHAR), rp->Filename, NULL);
 
-              decodeResult = TRUE; // allow to save the resulting file
+              decodeResult = 1; // allow to save the resulting file
             }
             break;
 
@@ -1167,7 +1170,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
         if(decoded >= 0 &&
            RE_ConsumeRestOfPart(in, NULL, NULL, NULL))
         {
-          decodeResult = TRUE;
+          decodeResult = 1;
         }
         else
         {
@@ -1195,7 +1198,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             {
               ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), rp->Filename, NULL);
 
-              decodeResult = TRUE; // allow to save the resulting file
+              decodeResult = 1; // allow to save the resulting file
             }
             break;
 
@@ -1209,7 +1212,7 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             {
               ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "end");
 
-              decodeResult = TRUE; // allow to save the resulting file
+              decodeResult = 1; // allow to save the resulting file
             }
             break;
 
@@ -1225,13 +1228,16 @@ static BOOL RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
       {
         fromform(in, out, tt);
 
-        decodeResult = TRUE;
+        decodeResult = 1;
       }
       break;
 
       default:
       {
-        decodeResult = RE_ConsumeRestOfPart(in, out, tt, NULL);
+        if(tt)
+          decodeResult = RE_ConsumeRestOfPart(in, out, tt, NULL);
+        else
+          decodeResult = 2;
       }
    }
 
@@ -1626,24 +1632,44 @@ BOOL RE_DecodePart(struct Part *rp)
          sprintf(file, "YAMm%08lx-p%d.%s", readMailDataID(rp->rmData), rp->Nr, *ext ? ext : "tmp");
          strmfp(buf, C->TempDir, file);
 
+         D(DBF_MAIL, "decoding '%s' to '%s'", rp->Filename, buf);
+
          // now open the stream and decode it afterwards.
          if((out = fopen(buf, "w")))
          {
-            BOOL decodeResult = RE_DecodeStream(rp, in, out);
+            int decodeResult = RE_DecodeStream(rp, in, out);
 
             // close the streams first.
             fclose(out);
             fclose(in);
 
             // check if we were successfull in decoding the data.
-            if(decodeResult)
+            if(decodeResult > 0)
             {
-              DeleteFile(rp->Filename);
+              // if decodeResult == 2 then no decode was required and we just
+              // rename the file
+              if(decodeResult == 2)
+              {
+                D(DBF_MAIL, "no decode required. just renamed");
+
+                DeleteFile(buf); // delete the temporary file again.
+                RenameFile(rp->Filename, buf);
+              }
+              else
+              {
+                D(DBF_MAIL, "successfully decoded");
+                DeleteFile(rp->Filename);
+              }
+
               strcpy(rp->Filename, buf);
               rp->Decoded = TRUE;
               RE_SetPartInfo(rp);
             }
-            else DeleteFile(buf); // delete the temporary file again.
+            else
+            {
+              E(DBF_MAIL, "error during RE_DecodeStream()");
+              DeleteFile(buf); // delete the temporary file again.
+            }
          }
          else if((out = fopen(buf, "r")))
          {
@@ -1742,6 +1768,8 @@ static void RE_HandleMDNReport(struct Part *frp)
 
     sprintf(file, "YAMm%08lx-p%d.txt", readMailDataID(rp[0]->rmData), rp[0]->Nr);
     strmfp(buf, C->TempDir, file);
+
+    D(DBF_MAIL, "creating MDN report in '%s'", buf);
 
     if((out = fopen(buf, "w")))
     {
@@ -2007,6 +2035,8 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
         part->Nr = i;
         sprintf(file, "YAMm%08lx-p%d%s", readMailDataID(rmData), i, strchr(part->Filename, '.'));
         strmfp(tmpFile, C->TempDir, file);
+
+        D(DBF_MAIL, "renaming '%s' to '%s'", part->Filename, tmpFile);
 
         RenameFile(part->Filename, tmpFile);
         strcpy(part->Filename, tmpFile);
