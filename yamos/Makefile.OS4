@@ -56,7 +56,7 @@ WARN     = -W -Wall
 OPTFLAGS = -O3 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG #-g3 -O0
 REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
-CFLAGS   = -pipe -I. -I./includes -fsigned-char $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ $(REDEFINE) -c
+CFLAGS   = -pipe -I. -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -D__USE_INLINE__ $(REDEFINE) -c
 LDFLAGS  = $(CPU)
 LDLIBS   = -lm -ldebug
 
