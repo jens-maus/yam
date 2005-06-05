@@ -758,14 +758,6 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 ///
 
 /*** MIME ***/
-/// StripTrailingSpace
-//  Strips trailing spaces from a string
-static void StripTrailingSpace(char *s)
-{
-   char *t = &s[strlen(s)-1];
-   while (ISpace(*t) && t >= s) *t-- = 0;
-}
-///
 /// ParamEnd
 //  Finds next parameter in header field
 static char *ParamEnd(char *s)
@@ -837,7 +829,7 @@ static void RE_ParseContentParameters(struct Part *rp)
       {
          *eq++ = 0;
          s = Cleanse(s); eq = TrimStart(eq);
-         StripTrailingSpace(eq);
+         TrimEnd(eq);
          UnquoteString(eq, FALSE);
 
          if (!stricmp(s, "name"))
@@ -877,7 +869,7 @@ static void RE_ParseContentDispositionParameters(struct Part *rp)
       {
          *eq++ = 0;
          s = Cleanse(s); eq = TrimStart(eq);
-         StripTrailingSpace(eq);
+         TrimEnd(eq);
          UnquoteString(eq, FALSE);
          if (!stricmp(s, "filename"))
          {
@@ -939,29 +931,38 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 
     if(!stricmp(field, "content-type"))
     {
-      rp->ContentType = StrBufCpy(rp->ContentType, p=value);
-
-      // now we scan for the content subtype and strip eventually
-      // existing spaces in front or after the dividing '/'
-      do
+      // we check wheter we have a content-type value or not, because otherwise
+      // we have to keep the default "text/plain" content-type value the
+      // OpenNewPart() function sets
+      if(value[0] != '\0')
       {
-        if(!(p = strchr(rp->ContentType, '/'))) break;
+        rp->ContentType = StrBufCpy(rp->ContentType, p=value);
 
-        if (ISpace(*(p-1)))     for (--p; *p; ++p) *p = *(p+1);
-        else if(ISpace(*(p+1))) for (++p; *p; ++p) *p = *(p+1);
-        else break;
+        // now we scan for the content subtype and strip eventually
+        // existing spaces in front or after the dividing '/'
+        do
+        {
+          if(!(p = strchr(rp->ContentType, '/')))
+            break;
+
+          if (ISpace(*(p-1)))     for (--p; *p; ++p) *p = *(p+1);
+          else if(ISpace(*(p+1))) for (++p; *p; ++p) *p = *(p+1);
+          else break;
+        }
+        while(1);
+
+        TrimEnd(rp->ContentType);
+        RE_ParseContentParameters(rp);
       }
-      while(1);
-
-      StripTrailingSpace(rp->ContentType);
-      RE_ParseContentParameters(rp);
+      else
+        W(DBF_MAIL, "Empty 'Content-Type' headerline found.. using default '%s'.", rp->ContentType);
     }
     else if(!stricmp(field, "content-transfer-encoding"))
     {
       char buf[SIZE_DEFAULT];
 
       stccpy(p = buf, value, SIZE_DEFAULT);
-      StripTrailingSpace(p);
+      TrimEnd(p);
 
       // As the content-transfer-encoding field is mostly used in
       // attachment MIME fields, we first check for common attachement encodings
@@ -999,7 +1000,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
       }
       while(1);
 
-      StripTrailingSpace(rp->ContentDisposition);
+      TrimEnd(rp->ContentDisposition);
       RE_ParseContentDispositionParameters(rp);
     }
   }
@@ -1011,7 +1012,8 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 //  Processes body of a message part
 static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *tt, struct Part *rp)
 {
-   char c = 0, buf[SIZE_LINE];
+   char c = 0;
+   char buf[SIZE_LINE];
    int blen = 0;
    long cpos = 0;
    BOOL cempty = TRUE;
@@ -1040,7 +1042,7 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
          if(tt)
          {
             long t = size;
-            unsigned char *p = buf;
+            unsigned char *p = (unsigned char *)buf;
 
             // iterate through the buffer and change the chars accordingly.
             for(;size; size--, p++)
@@ -1594,12 +1596,13 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       D(DBF_MAIL, "Part[%lx] - %ld", rp, rp->Nr);
       D(DBF_MAIL, "  Name.......: [%s]", rp->Name);
       D(DBF_MAIL, "  ContentType: [%s]", rp->ContentType);
+      D(DBF_MAIL, "  Printable..: %ld",  rp->Printable);
       D(DBF_MAIL, "  Encoding...: %ld",  rp->EncodingCode);
       D(DBF_MAIL, "  Filename...: [%s]", rp->Filename);
-      D(DBF_MAIL, "  Size.......: %ld", rp->Size);
-      D(DBF_MAIL, "  Nextptr....: %lx", rp->Next);
-      D(DBF_MAIL, "  Prevptr....: %lx", rp->Prev);
-      D(DBF_MAIL, "  headerList.: %lx", rp->headerList);
+      D(DBF_MAIL, "  Size.......: %ld",  rp->Size);
+      D(DBF_MAIL, "  Nextptr....: %lx",  rp->Next);
+      D(DBF_MAIL, "  Prevptr....: %lx",  rp->Prev);
+      D(DBF_MAIL, "  headerList.: %lx",  rp->headerList);
     }
   }
   #endif
@@ -2124,7 +2127,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
   int totsize, len;
 
   ENTER();
-  D(DBF_MAIL, "%08lx, mode: %d", rmData, mode);
+  D(DBF_MAIL, "0x%08lx, mode: %d", rmData, mode);
 
   // save exit conditions
   if(!rmData || !(first = rmData->firstPart))
@@ -2618,7 +2621,7 @@ void RE_GetSenderInfo(struct Mail *mail, struct ABEntry *ab)
             {
                *eq++ = 0;
                s = Cleanse(s); eq = TrimStart(eq);
-               StripTrailingSpace(eq);
+               TrimEnd(eq);
                UnquoteString(eq, FALSE);
                if (!stricmp(s, "street")) stccpy(ab->Street, eq, SIZE_DEFAULT);
                if (!stricmp(s, "city")) stccpy(ab->City, eq, SIZE_DEFAULT);

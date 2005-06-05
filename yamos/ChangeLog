@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-05  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: added a workaround for mails containing an empty "content-type:"
+      headerline which in fact triggered YAM to suppress the display of any
+      main viewable textpart of these mails. Now YAM will automatically fall back
+      to "text/plain" for such emails and will display it no matter which real
+      content these mails really carry.
+
 2005-06-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: modifies the RE_Export() function to take also respect of the
