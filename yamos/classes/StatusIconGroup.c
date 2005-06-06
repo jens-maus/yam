@@ -118,51 +118,55 @@ MakeStaticHook(LayoutHook, LayoutFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
-	struct Data *data;
-	struct Data *tmpData;
+	// *don't* add MAXBCSTATUSIMG as size since it would fill the missing
+	// entries with NULL values...
+	static const struct { int status; char *const name; } icon[] = {
+		{ SICON_ID_UNREAD,   "status_unread" },
+		{ SICON_ID_OLD,      "status_old" },
+		{ SICON_ID_FORWARD,  "status_forward" },
+		{ SICON_ID_REPLY,    "status_reply" },
+		{ SICON_ID_WAITSEND, "status_waitsend" },
+		{ SICON_ID_ERROR,    "status_error" },
+		{ SICON_ID_HOLD,     "status_hold" },
+		{ SICON_ID_SENT,     "status_sent" },
+		{ SICON_ID_NEW,      "status_new" },
+		{ SICON_ID_DELETE,   "status_delete" },
+		{ SICON_ID_DOWNLOAD, "status_download" },
+		{ SICON_ID_GROUP,    "status_group" },
+		{ SICON_ID_URGENT,   "status_urgent" },
+		{ SICON_ID_ATTACH,   "status_attach" },
+		{ SICON_ID_REPORT,   "status_report" },
+		{ SICON_ID_CRYPT,    "status_crypt" },
+		{ SICON_ID_SIGNED,   "status_signed" },
+		{ SICON_ID_MARK,     "status_mark" }
+	};
+	Object *statusIcon[MAXBCSTATUSIMG];
+	unsigned int i;
 
-	// generate a temporary struct Data to which we store our data and
-	// copy it later on
-	if(!(data = tmpData = calloc(1, sizeof(struct Data))))
-		return 0;
+	// make sure that all icons are listed!
+	ASSERT( ARRAY_SIZE(icon) == MAXBCSTATUSIMG );
 
-	// prepare the statuc icons for adding it later on to our statusGroup object
-	data->statusIcon[SICON_ID_UNREAD] 	= MakeBCImage("status_unread");
-	data->statusIcon[SICON_ID_OLD] 			= MakeBCImage("status_old");
-	data->statusIcon[SICON_ID_FORWARD] 	= MakeBCImage("status_forward");
-	data->statusIcon[SICON_ID_REPLY] 		= MakeBCImage("status_reply");
-	data->statusIcon[SICON_ID_WAITSEND] = MakeBCImage("status_waitsend");
-	data->statusIcon[SICON_ID_ERROR] 		= MakeBCImage("status_error");
-	data->statusIcon[SICON_ID_HOLD] 		= MakeBCImage("status_hold");
-	data->statusIcon[SICON_ID_SENT] 		= MakeBCImage("status_sent");
-	data->statusIcon[SICON_ID_NEW] 			= MakeBCImage("status_new");
-	data->statusIcon[SICON_ID_DELETE] 	= MakeBCImage("status_delete");
-	data->statusIcon[SICON_ID_DOWNLOAD] = MakeBCImage("status_download");
-	data->statusIcon[SICON_ID_GROUP] 		= MakeBCImage("status_group");
-	data->statusIcon[SICON_ID_URGENT] 	= MakeBCImage("status_urgent");
-	data->statusIcon[SICON_ID_ATTACH] 	= MakeBCImage("status_attach");
-	data->statusIcon[SICON_ID_REPORT] 	= MakeBCImage("status_report");
-	data->statusIcon[SICON_ID_CRYPT] 		= MakeBCImage("status_crypt");
-	data->statusIcon[SICON_ID_SIGNED] 	= MakeBCImage("status_signed");
-	data->statusIcon[SICON_ID_MARK] 		= MakeBCImage("status_mark");
+	// prepare the status icons for adding it later on to our statusGroup object
+	for(i=0; i < ARRAY_SIZE(icon); i++)
+		statusIcon[icon[i].status] = MakeBCImage(icon[i].name);
 
-	if((obj = DoSuperNew(cl, obj,
+	// should be a compile-time nop!
+	for(i=ARRAY_SIZE(icon); i<MAXBCSTATUSIMG; i++)
+		statusIcon[i] = NULL;
 
+	obj = DoSuperNew(cl, obj,
 		MUIA_Group_Horiz, 			TRUE,
 		MUIA_Group_LayoutHook,	&LayoutHook,
 		MUIA_ContextMenu,				FALSE,
-
-		TAG_MORE, inittags(msg))))
+	TAG_MORE, inittags(msg));
+	if (obj)
 	{
-		if(!(data = (struct Data *)INST_DATA(cl, obj)))
+		struct Data *data = (struct Data *)INST_DATA(cl, obj);
+		if(!data)
 			return 0;
-
-		// copy back the data stored in our temporarly struct Data
-		memcpy(data, tmpData, sizeof(struct Data));
+		// copy data from temp object to its real place
+		memcpy(&data->statusIcon[0], &statusIcon[0], sizeof(statusIcon));
 	}
-
-	// free the temporary mem we allocated before
-	free(tmpData);
 
 	return (ULONG)obj;
 }
@@ -210,7 +214,6 @@ OVERLOAD(OM_DISPOSE)
 
 	return DoSuperMethodA(cl, obj, msg);
 }
-
 ///
 
 /* Public Methods */
@@ -301,6 +304,4 @@ DECLARE(Update) // struct Mail *mail
 
 	return 0;
 }
-
 ///
-
