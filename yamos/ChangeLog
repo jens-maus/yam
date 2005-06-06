@@ -5,6 +5,10 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-06  Gunther Nikl <gni@gecko.de>
+
+    * classes/StatusIconGroup.c (OM_NEW): Rewrote icon initialization.
+
 2005-06-05  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: added a workaround for mails containing an empty "content-type:"
