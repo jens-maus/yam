@@ -135,14 +135,13 @@ static struct ADST_Data
 //  prepares a timer for being started with TC_Start later on
 static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
 {
-  struct TC_Request *timer = &TCData.timer[tio];
-
   ENTER();
 
   if(micros > 0 || seconds > 0)
   {
-    if(timer->isRunning == FALSE &&
-       timer->isPrepared == FALSE)
+    struct TC_Request *timer = &TCData.timer[tio];
+
+    if(timer->isRunning == FALSE && timer->isPrepared == FALSE)
     {
       struct timerequest *tr = timer->tr;
 
@@ -158,7 +157,7 @@ static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
       W(DBF_TIMERIO, "timer[%ld]: already running/prepared", tio);
   }
   else
-    D(DBF_TIMERIO, "timer[%ld]: secs and micros is zero, no prepare required");
+    D(DBF_TIMERIO, "timer[%ld]: secs and micros are zero, no prepare required", tio);
 
   LEAVE();
 }
@@ -172,8 +171,7 @@ static void TC_Start(enum TimerIO tio)
 
   ENTER();
 
-  if(timer->isRunning == FALSE &&
-     timer->isPrepared == TRUE)
+  if(timer->isRunning == FALSE && timer->isPrepared == TRUE)
   {
     #if defined(DEBUG)
     char dateString[64];
@@ -193,7 +191,7 @@ static void TC_Start(enum TimerIO tio)
     timer->isPrepared = FALSE;
   }
   else
-    W(DBF_TIMERIO, "timer[%ld]: is either already running or is not prepared to get fired", tio);
+    W(DBF_TIMERIO, "timer[%ld]: either already running or prepared to get fired", tio);
 
   LEAVE();
 }
@@ -206,14 +204,15 @@ static void TC_Start(enum TimerIO tio)
 void TC_Stop(enum TimerIO tio)
 {
   struct TC_Request *timer = &TCData.timer[tio];
-  struct IORequest *ioreq = (struct IORequest *)timer->tr;
 
   ENTER();
 
   // check if we have a already issued ioreq running
   if(timer->isRunning)
   {
-    if(ioreq && ioreq->io_Command != 0)
+    struct IORequest *ioreq = (struct IORequest *)timer->tr;
+
+    if(ioreq->io_Command != 0)
     {
       if(CheckIO(ioreq) == NULL)
         AbortIO(ioreq);
@@ -1957,7 +1956,6 @@ int main(int argc, char **argv)
         }
       }
 
-
       if(yamFirst)
       {
         DoStartup((BOOL)args.nocheck, (BOOL)args.hide);
@@ -2038,7 +2036,6 @@ int main(int argc, char **argv)
               D(DBF_TIMERIO, "timer signal received @ %s", dateString);
               #endif
 
-
               // check if we have a waiting message
               while((timeReq = (struct timerequest *)GetMsg(TCData.port)))
               {
@@ -2087,7 +2084,6 @@ int main(int argc, char **argv)
               }
               else
                 W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");
-
 
               #if defined(DEBUG)
               // let us check wheter all necessary maintenance timers are running
