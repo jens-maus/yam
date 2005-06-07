@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-07  Gunther Nikl <gni@gecko.de>
+
+    * YAM.c (TC_Prepare,TC_Start,TC_Stop): Minor changes.
+      (TC_Prepare): Fix debug message.
+
 2005-06-06  Gunther Nikl <gni@gecko.de>
 
     * classes/StatusIconGroup.c (OM_NEW): Rewrote icon initialization.
