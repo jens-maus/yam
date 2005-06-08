@@ -862,9 +862,9 @@ static void Abort(APTR formatnum, ...)
 
          ErrReq.es_StructSize   = sizeof(struct EasyStruct);
          ErrReq.es_Flags        = 0;
-         ErrReq.es_Title        = GetStr(MSG_ErrorStartup);
-         ErrReq.es_TextFormat   = error;
-         ErrReq.es_GadgetFormat = GetStr(MSG_Quit);
+         ErrReq.es_Title        = (unsigned char *)GetStr(MSG_ErrorStartup);
+         ErrReq.es_TextFormat   = (unsigned char *)error;
+         ErrReq.es_GadgetFormat = (unsigned char *)GetStr(MSG_Quit);
 
          EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
       }
@@ -1579,7 +1579,7 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
     {
       D(DBF_STARTUP, "GetGlobalUser returned: %08lx, '%s'", guser, guser->us_name);
 
-      terminate = !(loggedin = US_Login(guser->us_name, "\01", maildir, prefsfile));
+      terminate = !(loggedin = US_Login((char *)guser->us_name, "\01", maildir, prefsfile));
 
       D(DBF_STARTUP, "US_Login returned: %ld %ld", terminate, loggedin);
 
@@ -1734,7 +1734,7 @@ int main(int argc, char **argv)
         ErrReq.es_StructSize = sizeof(struct EasyStruct);
         ErrReq.es_Flags      = 0;
 
-        ErrReq.es_Title        = "YAM Startup Error";
+        ErrReq.es_Title        = (unsigned char *)"YAM Startup Error";
         ErrReq.es_TextFormat   = "This version of YAM requires at least\n"
                                  "an AmigaOS4 kernel version 51.4";
         ErrReq.es_GadgetFormat = "Exit";
