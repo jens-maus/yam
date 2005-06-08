@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-08  Jens Langner <Jens.Langner@light-speed.de>
+
+    * includes/SDI_#?.h: updated SDI headers to latest reincarnation and dropped
+      SDI_lib.h from our includes directory because we won't need it anyway and
+      the "sditools" sf.net project does now serve as the main development
+      platform for the SDI_#?.h headers.
+
 2005-06-07  Gunther Nikl <gni@gecko.de>
 
     * includes/SDI_hook.h: Added changes from Frank Wille and Guido Mersmann.

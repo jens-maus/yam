@@ -5,8 +5,9 @@
 
         Name:           SDI_compiler.h
         Versionstring:  $VER: SDI_compiler.h 1.21 (28.02.2005)
-        Author:         SDI & Jens Langner
+        Author:         Dirk Stöcker & Jens Langner
         Distribution:   PD
+        Project page:   http://www.sf.net/projects/sditools/
         Description:    defines to hide compiler stuff
 
  1.1   25.06.98 : created from data made by Gunter Nikl
@@ -35,6 +36,10 @@
                   so we modified the REG() macro accordingly.
  1.20  28.02.05 : correct INLINE for VBCC.
  1.21  28.02.05 : cleanup __GCC__ case.
+ 1.22  16.05.05 : changed the vbcc/REG() macro.
+                  added missing vbcc/VARARGS68K define.
+                  moved morphos SDI_EmulLib Stuff into compilers.h. I know it's not
+                  compiler specific,  (Guido Mersmann)
 */
 
 /*
@@ -46,9 +51,14 @@
 ** above history list and indicate that the change was not made by myself
 ** (e.g. add your name or nick name).
 **
+** Find the latest version of this file at:
+** http://cvs.sourceforge.net/viewcvs.py/sditools/sditools/headers/
+**
 ** Jens Langner <Jens.Langner@light-speed.de> and
-** Dirk Stöcker <stoecker@epost.de>
+** Dirk Stöcker <soft@dstoecker.de>
 */
+
+/* Some SDI internal header */
 
 #undef ASM
 #undef REG
@@ -74,47 +84,34 @@
   #define REGARGS
   #define SAVEDS
   #define INLINE inline
+/*************************************************************************/
 #elif defined(__VBCC__)
   #define STDARGS
   #define STACKEXT
   #define REGARGS
+  #define VARARGS68K __linearvarargs
   #if (__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L)
     #define INLINE inline
   #else
     #define INLINE static
   #endif
   #define OFFSET(p,m) __offsetof(struct p,m)
-  #if defined(__MORPHOS__)
-    #define REG(reg,arg) __reg(MOS__##reg) arg
 
-    /* NOTE: This assumes "quick native mode" when compiling libraries. */
-    #define MOS__a0 "r24"
-    #define MOS__a1 "r25"
-    #define MOS__a2 "r26"
-    #define MOS__a3 "r27"
-    #define MOS__a4 "r28"
-    #define MOS__a5 "r29"
-    #define MOS__a6 "r30"
-    /* #define MOS__a7 "r31" */
-    #define MOS__d0 "r16"
-    #define MOS__d1 "r17"
-    #define MOS__d2 "r18"
-    #define MOS__d3 "r19"
-    #define MOS__d4 "r20"
-    #define MOS__d5 "r21"
-    #define MOS__d6 "r22"
-    #define MOS__d7 "r23"
-
+  #if defined(__PPC__)
+    #define REG(reg,arg) arg
   #else
     #define REG(reg,arg) __reg(#reg) arg
   #endif
+/*************************************************************************/
 #elif defined(__STORM__)
   #define STDARGS
   #define STACKEXT
   #define REGARGS
   #define INLINE inline
+/*************************************************************************/
 #elif defined(__SASC)
   #define ASM __asm
+/*************************************************************************/
 #elif defined(__GNUC__)
   #define UNUSED __attribute__((unused)) /* for functions, variables and types */
   #define USED   __attribute__((used))   /* for functions only! */
@@ -200,4 +197,5 @@
 #if !defined(USED_VAR)
   #define USED_VAR
 #endif
+
 #endif /* SDI_COMPILER_H */

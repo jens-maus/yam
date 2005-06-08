@@ -7,6 +7,7 @@
         Versionstring:  $VER: SDI_stdarg.h 1.0 (05.07.2004)
         Author:         Jens Langner
         Distribution:   PD
+        Project page:   http://www.sf.net/projects/sditools/
         Description:    defines to hide OS specific variable arguments
                         function definitions
 
@@ -23,8 +24,11 @@
 ** above history list and indicate that the change was not made by myself
 ** (e.g. add your name or nick name).
 **
+** Find the latest version of this file at:
+** http://cvs.sourceforge.net/viewcvs.py/sditools/sditools/headers/
+**
 ** Jens Langner <Jens.Langner@light-speed.de> and
-** Dirk Stöcker <stoecker@epost.de>
+** Dirk Stöcker <soft@dstoecker.de>
 */
 
 #include "SDI_compiler.h"

@@ -7,6 +7,7 @@
         Versionstring:  $VER: SDI_hook.h 1.12 (18.05.2005)
         Author:         SDI & Jens Langner
         Distribution:   PD
+        Project page:   http://www.sf.net/projects/sditools/
         Description:    defines to hide compiler specific hook stuff
 
  1.0   21.06.02 : based on the work made for freeciv and YAM with
@@ -33,6 +34,7 @@
                   Mersmann)
  1.12  18.05.05 : DISPATCHERPROTO wasn't working, because of the missing REG_Ax
                   definitions. Added include <emul/emulregs.h> (Guido Mersmann)
+
 */
 
 /*
@@ -44,8 +46,11 @@
 ** above history list and indicate that the change was not made by myself
 ** (e.g. add your name or nick name).
 **
+** Find the latest version of this file at:
+** http://cvs.sourceforge.net/viewcvs.py/sditools/sditools/headers/
+**
 ** Jens Langner <Jens.Langner@light-speed.de> and
-** Dirk Stöcker <stoecker@epost.de>
+** Dirk Stöcker <soft@dstoecker.de>
 */
 
 #include "SDI_compiler.h"
@@ -127,6 +132,7 @@
 #endif
 
 #ifdef __MORPHOS__
+
   #ifndef SDI_TRAP_LIB /* avoid defining this twice */
     #include <proto/alib.h>
     #include <emul/emulregs.h>
@@ -140,6 +146,7 @@
       APTR  Func;
     };
   #endif
+
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
     (HOOKFUNC)HookEntry, (HOOKFUNC)funcname, NULL}
   #define MakeHookWithData(hookname, funcname, data) struct Hook hookname =  \
@@ -155,6 +162,7 @@
     (APTR) Trampoline_##name};                                               \
     ULONG name(struct IClass * cl, Object * obj, Msg msg)
   #define ENTRY(func) (APTR)&Gate_##func
+
 #else /* !__MORPHOS__ */
   #define MakeHook(hookname, funcname) struct Hook hookname = {{NULL, NULL}, \
     (HOOKFUNC)funcname, NULL, NULL}
@@ -171,3 +179,4 @@
   (hook)->h_SubEntry = (orighook).h_SubEntry,(hook)->h_Data = (APTR)(data))
 
 #endif /* SDI_HOOK_H */
+
