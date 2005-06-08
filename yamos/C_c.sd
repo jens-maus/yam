@@ -47,7 +47,7 @@ char *GetStr(APTR fcstr)
 
   if(LocaleBase)
   {
-    return (char *)GetCatalogStr(%b_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
+    return GetCatalogStr(%b_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
   }
 
   return defaultstr;
@@ -57,9 +57,9 @@ char *GetStr(APTR fcstr)
 // function that will strip out the special menusigns
 char *GetStripStr(APTR fcstr)
 {
-   char *loc_str = GetStr(fcstr);
+  char *loc_str = GetStr(fcstr);
 
-   return (0 == loc_str[1] ? &loc_str[2] : loc_str);
+  return (0 == loc_str[1] ? &loc_str[2] : loc_str);
 }
 ///
 /// Close%bCatalog()
