@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-13  Gunther Nikl <gni@gecko.de>
+
+    * classes/MailTextEdit.c (MUIM_HandleEvent): Use integer math in the
+      wheelmouse scrolling code.
+
 2005-06-08  Jens Langner <Jens.Langner@light-speed.de>
 
     * includes/SDI_#?.h: updated SDI headers to latest reincarnation and dropped
