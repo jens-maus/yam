@@ -201,8 +201,8 @@ OVERLOAD(MUIM_HandleEvent)
 
 					if(visible > 0)
 					{
-						// we scroll 1/6 of the displayed text by default
-						LONG delta = ((((double)visible)/6.0)+0.5); // round the value
+						// we scroll about 1/6 of the displayed text by default
+						LONG delta = (visible + 3) / 6;
 
 						// make sure that we scroll at least 1 line
 						if(delta < 1) delta = 1;
