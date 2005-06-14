@@ -7,6 +7,11 @@ $Source$
 
 2005-06-14  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: even if a "|" is not officially supported as a proper
+      delimiter for file extensions, previous YAM versions were able to
+      distinguish them properly. Therefore, the new file extension
+      recognition code now also properly recognizes a "|" as a valid
+      delimiter. However, its use is highly discouraged. bug #1218176
     * YAM.c: added a warning requester to the Login() routines in case
       Genesis/AmiTCP is used and YAM wasn't able to automatically identify
       the proper YAM user. Previously YAM did just exit without any warning

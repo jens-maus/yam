@@ -1662,7 +1662,7 @@ BOOL RE_DecodePart(struct Part *rp)
           {
             if(MatchNoCase(rp->ContentType, C->MV[i]->ContentType))
             {
-              char *extension = strtok(C->MV[i]->Extension, " ");
+              char *extension = strtok(TrimStart(C->MV[i]->Extension), " |");
 
               if(extension)
               {
