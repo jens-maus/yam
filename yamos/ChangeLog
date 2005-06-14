@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: added a warning requester to the Login() routines in case
+      Genesis/AmiTCP is used and YAM wasn't able to automatically identify
+      the proper YAM user. Previously YAM did just exit without any warning
+      which in fact was very unintuitive.
+
 2005-06-13  Gunther Nikl <gni@gecko.de>
 
     * classes/MailTextEdit.c (MUIM_HandleEvent): Use integer math in the

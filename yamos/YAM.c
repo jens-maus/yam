@@ -1577,11 +1577,19 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
 
     if((guser = GetGlobalUser()))
     {
-      D(DBF_STARTUP, "GetGlobalUser returned: %08lx, '%s'", guser, guser->us_name);
+      D(DBF_STARTUP, "GetGlobalUser returned: '%s'", guser->us_name);
 
-      terminate = !(loggedin = US_Login((char *)guser->us_name, "\01", maildir, prefsfile));
+      loggedin = US_Login((char *)guser->us_name, "\01", maildir, prefsfile);
 
       D(DBF_STARTUP, "US_Login returned: %ld %ld", terminate, loggedin);
+
+      if(!loggedin && !MUI_Request(G->App, NULL, 0, GetStr(MSG_ER_GENESISUSER_TITLE),
+                                                    GetStr(MSG_ER_CONTINUEEXIT),
+                                                    GetStr(MSG_ER_GENESISUSER),
+                                                    guser->us_name))
+      {
+        terminate = TRUE;
+      }
 
       FreeUser(guser);
     }

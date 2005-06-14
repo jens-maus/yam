@@ -5592,3 +5592,19 @@ generate a save copy of the mail you are\n\
 currently composing.\n\
 Select 0 to disable this feature.
 ;
+MSG_ER_GENESISUSER_TITLE (//)
+Unknown Genesis/AmiTCP user account!
+;
+MSG_ER_GENESISUSER (//)
+YAM has identified that you are using Genesis/AmiTCP, but\n\
+could not find a YAM user account which corresponds to\n\
+the currently active global account you have configured\n\
+in Genesis: '%s'\n\
+\n\
+Please make sure your Genesis username and YAM username\n\
+are in sync. Otherwise the autologin feature will not work\n\
+correctly.
+;
+MSG_ER_CONTINUEEXIT (//)
+*_Continue|Exit
+;
