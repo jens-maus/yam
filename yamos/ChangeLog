@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-15  Gunther Nikl <gni@gecko.de>
+
+    * VMakefile: Remove YAM_debug.h dependencies. Add StatusIconGroup.o
+      and SearchControlGroup.o to $(CLASSES).
+    * smakefile: Likewise.
+
 2005-06-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: even if a "|" is not officially supported as a proper
