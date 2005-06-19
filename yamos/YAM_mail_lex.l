@@ -80,6 +80,7 @@ INITIALS   [[:alpha:]]
 "http://"({NOTBLANK}|[.])*{NOTEOR}                                                {return tHTTP      ;}
 "https://"({NOTBLANK}|[.])*{NOTEOR}                                               {return tHTTPS     ;}
 "ftp://"({NOTBLANK}|[.])*{NOTEOR}                                                 {return tFTP       ;}
+"file://"({NOTBLANK}|[.])*{NOTEOR}                                                {return tFILE      ;}
 "gopher://"({NOTBLANK}|[.])*{NOTEOR}                                              {return tGOPHER    ;}
 "telnet://"({NOTBLANK}|[.])*{NOTEOR}                                              {return tTELNET    ;}
 "mailto:"({NOTBLANK}|[.])*{NOTEOR}                                                {return tMAILTO    ;}
@@ -119,6 +120,7 @@ char *ParseEmailText(char *mailTxt)
           case tHTTP:
           case tHTTPS:
           case tFTP:
+          case tFILE:
           case tGOPHER:
           case tTELNET:
           case tMAILTO:
@@ -294,6 +296,7 @@ enum tokenType ExtractURL(char *text, char *resultBuffer)
         case tHTTP:
         case tHTTPS:
         case tFTP:
+        case tFILE:
         case tGOPHER:
         case tTELNET:
         case tMAILTO:

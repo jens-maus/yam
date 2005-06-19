@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-20  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_mail_lex.l,h: added "file://" as a valid URL specification so that
+      YAM will automatically highlight "file://" URL specs in a displayed
+      mail.
+
 2005-06-15  Gunther Nikl <gni@gecko.de>
 
     * VMakefile: Remove YAM_debug.h dependencies. Add StatusIconGroup.o
