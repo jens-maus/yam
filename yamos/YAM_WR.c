@@ -2027,36 +2027,36 @@ int WR_Open(int winnum, BOOL bounce)
 /*** WR_SetupOldMail - When editing a message, sets write window options to old values ***/
 void WR_SetupOldMail(int winnum, struct ReadMailData *rmData)
 {
-   static struct Attach attach;
-   struct Part *part = rmData->firstPart->Next;
+  static struct Attach attach;
+  struct Part *part;
 
-   if(part)
-   {
-     for(part = part->Next; part; part = part->Next)
-     {
-        if(stricmp(part->ContentType, "application/pgp-signature"))
-        {
-          BusyText(GetStr(MSG_BusyDecSaving), "");
+  // we start to iterate right from the first part *after* PART_RAW
+  // and check which one really is really an attachment or which
+  // on is the LetterPart
+  for(part = rmData->firstPart->Next; part; part = part->Next)
+  {
+    if(part->Nr != rmData->letterPartNum &&
+       stricmp(part->ContentType, "application/pgp-signature"))
+    {
+      BusyText(GetStr(MSG_BusyDecSaving), "");
 
-          RE_DecodePart(part);
-          memset(&attach, 0, sizeof(struct Attach));
-          attach.Size = part->Size;
-          attach.IsMIME = part->EncodingCode != ENC_UUE;
-          attach.IsTemp = TRUE;
+      RE_DecodePart(part);
+      memset(&attach, 0, sizeof(struct Attach));
+      attach.Size = part->Size;
+      attach.IsMIME = part->EncodingCode != ENC_UUE;
+      attach.IsTemp = TRUE;
 
-          if(part->Name)
-          {
-            MyStrCpy(attach.Name, part->Name);
-          }
-          MyStrCpy(attach.FilePath, part->Filename);
-          *part->Filename = 0;
-          MyStrCpy(attach.ContentType, part->ContentType);
-          MyStrCpy(attach.Description, part->Description);
-          DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+      if(part->Name)
+        MyStrCpy(attach.Name, part->Name);
 
-          BusyEnd();
-        }
-     }
+      MyStrCpy(attach.FilePath, part->Filename);
+      *part->Filename = '\0';
+      MyStrCpy(attach.ContentType, part->ContentType);
+      MyStrCpy(attach.Description, part->Description);
+      DoMethod(G->WR[winnum]->GUI.LV_ATTACH, MUIM_NList_InsertSingle, &attach, MUIV_NList_Insert_Bottom);
+
+      BusyEnd();
+    }
   }
 }
 

@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c, YAM_WR.c, YAM_mainFolder.h, YAM_read.h: added an automatic
+      letterpart recognition to the MIME routines of YAM. Previously, YAM
+      did always assume that the MIME part number 1 (or the one configured
+      in the 'LetterPart' configuration) is the actual readable, main letter
+      part. However, even if this is the common sense, there seems to exists
+      some strange mailers out there which do add their attachments right
+      at the beginning of a mail, followed by the real mail text/contents.
+      This in fact confused YAM and led to situations where YAM did
+      supress the attachments at the beginning, but showed the real mail
+      text as an attachment. Now YAM takes the first non binary MIME part
+      as the real "letterpart" and should display such mails correctly.
+
 2005-06-20  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l,h: added "file://" as a valid URL specification so that

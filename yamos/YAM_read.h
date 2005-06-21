@@ -94,6 +94,7 @@ struct ReadMailData
   enum SInfoMode  senderInfoMode; // sender info display mode
   short           signedFlags;    // flags for mail signing (i.e. PGP)
   short           encryptionFlags;// flags for encryption modes (i.e. PGP)
+  short           letterPartNum;  // the number which was considered the letter part (0=no yet defined)
   BOOL            hasPGPKey;      // true if mail contains a PGP key
   BOOL            noTextstyles;   // use no Textstyles for displaying the mail
   BOOL            wrapHeaders;    // Wrap the headers if necessary

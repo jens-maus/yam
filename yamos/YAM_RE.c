@@ -1094,7 +1094,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
    struct TranslationTable *tt = NULL;
    int decodeResult = 0;
 
-   if(rp->Nr == PART_LETTER && rp->Printable &&
+   if(rp->Nr != PART_RAW && rp->Nr == rp->rmData->letterPartNum &&
       G->TTin && G->TTin->SourceCharset
      )
    {
@@ -1454,9 +1454,20 @@ static void RE_SetPartInfo(struct Part *rp)
    // let`s set if this is a printable (readable part)
    rp->Printable = !strnicmp(rp->ContentType, "text", 4) || rp->Nr == PART_RAW;
 
-   // lets set the comments of the partfiles
-   if(rp->Nr == PART_RAW)                          SetComment(rp->Filename, GetStr(MSG_RE_Header));
-   else if(rp->Nr == PART_LETTER && rp->Printable) SetComment(rp->Filename, GetStr(MSG_RE_Letter));
+   // Now that we have defined that this part is printable we have
+   // to check wheter our readMailData structure already contains a reference
+   // to the actual readable letterPart or not and if not we do make this
+   // part the actual letterPart
+   if(rp->rmData->letterPartNum < PART_LETTER &&
+      rp->Printable &&
+      rp->Nr >= PART_LETTER)
+   {
+     rp->rmData->letterPartNum = rp->Nr;
+
+     SetComment(rp->Filename, GetStr(MSG_RE_Letter));
+   }
+   else if(rp->Nr == PART_RAW)
+     SetComment(rp->Filename, GetStr(MSG_RE_Header));
    else
    {
       // if this is not a printable LETTER part or a RAW part we
@@ -1593,7 +1604,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 
     for(rp = hrp; rp; rp = rp->Next)
     {
-      D(DBF_MAIL, "Part[%lx] - %ld", rp, rp->Nr);
+      D(DBF_MAIL, "Part[%lx]:#%ld%s", rp, rp->Nr, rp->Nr == rp->rmData->letterPartNum ? ":LETTERPART" : "");
       D(DBF_MAIL, "  Name.......: [%s]", rp->Name);
       D(DBF_MAIL, "  ContentType: [%s]", rp->ContentType);
       D(DBF_MAIL, "  Printable..: %ld",  rp->Printable);
@@ -1651,7 +1662,8 @@ BOOL RE_DecodePart(struct Part *rp)
 
       // we try to get a proper file extension for our decoded part which we
       // in fact first try to get out of the user's MIME configuration.
-      if(rp->Nr != PART_LETTER)
+      if(rp->Nr != PART_RAW &&
+         rp->Nr != rp->rmData->letterPartNum)
       {
         // only if we have a contentType we search through our MIME list
         if(rp->ContentType)
@@ -2038,7 +2050,9 @@ static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
           {
             rmData->hasPGPKey = TRUE;
           }
-          else if(rp->Nr < PART_LETTER || (rp->Printable && (rp->Nr == PART_LETTER || C->DisplayAllTexts)))
+          else if(rp->Nr == PART_RAW || rp->Nr == rmData->letterPartNum ||
+                  (rp->Printable && C->DisplayAllTexts)
+                 )
           {
             RE_DecodePart(rp);
           }
@@ -2136,13 +2150,15 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     return NULL;
   }
 
-  // first we precalucalte the size of the final buffer where the message text will be put in
+  // first we precalculate the size of the final buffer where the message text will be put in
   for(totsize = 1000, part = first; part; part = part->Next)
   {
-    if(mode != RIM_READ && part->Nr && part->Nr != PART_LETTER)
+    // in non-READ mode (Reply, Forward etc) we do have to count only the sizes of
+    // the RAW and LetterPart
+    if(mode != RIM_READ && part->Nr != PART_RAW && part->Nr != rmData->letterPartNum)
       continue;
 
-    if(part->Decoded || !part->Nr)
+    if(part->Decoded || part->Nr == PART_RAW)
       totsize += part->Size;
     else
       totsize += 200;
@@ -2184,41 +2200,41 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
     // texteditor or not and if so we run the part through the lexer
     for(part = first->Next; part; part = part->Next)
     {
-      BOOL dodisp = (part->Nr < PART_LETTER ||
-                    (part->Printable &&
-                      (part->Nr == PART_LETTER ||
-                      (C->DisplayAllTexts && part->Decoded))));
+      BOOL dodisp = (part->Nr == PART_RAW || part->Nr == rmData->letterPartNum) ||
+                    (part->Printable && C->DisplayAllTexts && part->Decoded);
 
       prewptr = wptr;
-
-      if(mode != RIM_READ && part->Nr > PART_LETTER)
-        break;
 
       // if we are in READ mode and other parts than the LETTER part
       // should be displayed in the texteditor as well, we drop a simple separator bar with info.
       // This is used for attachments and here escape sequences are allowed as we don`t want them
       // to get stripped if the user selects "NoTextStyles"
-      if(mode == RIM_READ && part->Nr > PART_LETTER && dodisp)
+      if(part->Nr != PART_RAW && part->Nr != rmData->letterPartNum)
       {
-        char buffer[SIZE_LARGE];
+        if(mode != RIM_READ)
+          continue;
+        else if(dodisp)
+        {
+          char buffer[SIZE_LARGE];
 
-        // lets generate the separator bar.
-        sprintf(buffer, "\033c\033[s:18]\033p[7]%s:%s%s\033p[0]\n"
-                        "\033l\033b%s:\033n %s <%s>\n", GetStr(MSG_MA_ATTACHMENT),
-                                                        *part->Name ? " " : "",
-                                                        part->Name,
-                                                        GetStr(MSG_RE_ContentType),
-                                                        DescribeCT(part->ContentType),
-                                                        part->ContentType);
+          // lets generate the separator bar.
+          sprintf(buffer, "\033c\033[s:18]\033p[7]%s:%s%s\033p[0]\n"
+                          "\033l\033b%s:\033n %s <%s>\n", GetStr(MSG_MA_ATTACHMENT),
+                                                          *part->Name ? " " : "",
+                                                          part->Name,
+                                                          GetStr(MSG_RE_ContentType),
+                                                          DescribeCT(part->ContentType),
+                                                          part->ContentType);
 
-        cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
+          cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
 
-        *buffer = 0;
-        if(*part->Description)
-          sprintf(buffer, "\033b%s:\033n %s\n", GetStr(MSG_RE_Description), part->Description);
+          *buffer = 0;
+          if(*part->Description)
+            sprintf(buffer, "\033b%s:\033n %s\n", GetStr(MSG_RE_Description), part->Description);
 
-        strcat(buffer, "\033[s:2]\n");
-        cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
+          strcat(buffer, "\033[s:2]\n");
+          cmsg = AppendToBuffer(cmsg, &wptr, &len, buffer);
+        }
       }
 
       // only continue of this part should be displayed
@@ -3040,6 +3056,7 @@ BOOL CleanupReadMailData(struct ReadMailData *rmData, BOOL fullCleanup)
   rmData->signedFlags = 0;
   rmData->encryptionFlags = 0;
   rmData->hasPGPKey = 0;
+  rmData->letterPartNum = 0;
 
   // if the caller wants to cleanup everything tidy we do it here or exit immediatly
   if(fullCleanup)
