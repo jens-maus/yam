@@ -190,7 +190,7 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, gui->MI_BOUNCE, NULL);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && isOutgoingFolder(fo) && !beingedited, gui->MI_EDIT, NULL);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, type == FT_OUTGOING && (active || selected), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isOutgoingFolder(fo) && (active || selected) , gui->MI_TOREAD, gui->MI_TOUNREAD, NULL);
+   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isOutgoingFolder(fo) && (active || selected) , gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, NULL);
    DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || selected), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
 
    LEAVE();
@@ -271,12 +271,12 @@ void MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags)
 {
    unsigned int newstatus = (mail->sflags | addflags) & ~(clearflags);
 
-   D(DBF_MAIL, "ChangeMailStatus: +%08lx -%08lx", addflags, clearflags);
-
    // check if the status is already set or not
    if(newstatus != mail->sflags)
    {
       struct MailInfo *mi;
+
+      D(DBF_MAIL, "ChangeMailStatus: +%08lx -%08lx", addflags, clearflags);
 
       // set the new status
       mail->sflags = newstatus;
@@ -2015,36 +2015,49 @@ MakeHook(MA_SendHook, MA_SendFunc);
 /*** Menu options ***/
 /// MA_SetStatusTo
 //  Sets status of selectes messages
-void MA_SetStatusTo(int addflags, int clearflags)
+void MA_SetStatusTo(int addflags, int clearflags, BOOL all)
 {
-   APTR lv = G->MA->GUI.NL_MAILS;
-   struct Mail **mlist;
+  Object *lv = G->MA->GUI.NL_MAILS;
+  struct Mail **mlist;
 
-   // generate a temporary list of all selected
-   // mails
-   if((mlist = MA_CreateMarkedList(lv, FALSE)))
-   {
-      int i;
+  // generate a mail list of either all or just the selected
+  // (marked) mails.
+  if(all)
+    mlist = MA_CreateFullList(FO_GetCurrentFolder(), FALSE);
+  else
+    mlist = MA_CreateMarkedList(lv, FALSE);
 
-      set(lv, MUIA_NList_Quiet, TRUE);
-      for(i = 0; i < (int)*mlist; i++)
-      {
-        MA_ChangeMailStatus(mlist[i+2], addflags, clearflags);
-      }
-      set(lv, MUIA_NList_Quiet, FALSE);
+  if(mlist)
+  {
+    int i;
 
-      free(mlist);
-      DisplayStatistics(NULL, TRUE);
-   }
+    set(lv, MUIA_NList_Quiet, TRUE);
+    for(i = 0; i < (int)*mlist; i++)
+    {
+      MA_ChangeMailStatus(mlist[i+2], addflags, clearflags);
+    }
+    set(lv, MUIA_NList_Quiet, FALSE);
+
+    free(mlist);
+    DisplayStatistics(NULL, TRUE);
+  }
 }
 
 ///
 /// MA_SetStatusToFunc
 HOOKPROTONHNO(MA_SetStatusToFunc, void, int *arg)
 {
-   MA_SetStatusTo(arg[0], arg[1]);
+  MA_SetStatusTo(arg[0], arg[1], FALSE);
 }
 MakeHook(MA_SetStatusToHook, MA_SetStatusToFunc);
+
+///
+/// MA_SetAllStatusToFunc
+HOOKPROTONHNO(MA_SetAllStatusToFunc, void, int *arg)
+{
+  MA_SetStatusTo(arg[0], arg[1], TRUE);
+}
+MakeHook(MA_SetAllStatusToHook, MA_SetAllStatusToFunc);
 
 ///
 /// MA_DeleteOldFunc
@@ -3332,6 +3345,8 @@ struct MA_ClassData *MA_New(void)
                MUIA_Family_Child, data->GUI.MI_TOREAD = MakeMenuitem(GetStr(MSG_MA_ToRead), MMEN_TOREAD),
                MUIA_Family_Child, data->GUI.MI_TOHOLD = MakeMenuitem(GetStr(MSG_MA_ToHold), MMEN_TOHOLD),
                MUIA_Family_Child, data->GUI.MI_TOQUEUED = MakeMenuitem(GetStr(MSG_MA_ToQueued), MMEN_TOQUEUED),
+               MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+               MUIA_Family_Child, data->GUI.MI_ALLTOREAD = MakeMenuitem(GetStr(MSG_MA_ALLTOREAD), MMEN_ALLTOREAD),
             End,
             MUIA_Family_Child, data->GUI.MI_CHSUBJ = MakeMenuitem(GetStr(MSG_MA_ChangeSubj), MMEN_CHSUBJ),
             MUIA_Family_Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
@@ -3533,6 +3548,7 @@ struct MA_ClassData *MA_New(void)
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOQUEUED  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_QUEUED|SFLAG_READ, SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOMARKED  ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_MARKED, SFLAG_NONE);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_TOUNMARKED,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetStatusToHook, SFLAG_NONE,   SFLAG_MARKED);
+         DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_ALLTOREAD ,MUIV_Notify_Application  ,4,MUIM_CallHook            ,&MA_SetAllStatusToHook, SFLAG_READ, SFLAG_NEW);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_CONFIG    ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&CO_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_USER      ,MUIV_Notify_Application  ,2,MUIM_CallHook            ,&US_OpenHook);
          DoMethod(data->GUI.WI             ,MUIM_Notify,MUIA_Window_MenuAction   ,MMEN_MUI       ,MUIV_Notify_Application  ,2,MUIM_Application_OpenConfigWindow,0);

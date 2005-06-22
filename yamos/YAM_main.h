@@ -188,8 +188,8 @@ enum { MMEN_ABOUT=100,MMEN_ABOUTMUI,MMEN_VERSION,MMEN_ERRORS,MMEN_LOGIN,MMEN_HID
        MMEN_GETMAIL,MMEN_GET1MAIL,MMEN_SENDMAIL,MMEN_EXMAIL,MMEN_READ,MMEN_EDIT,MMEN_MOVE,MMEN_COPY,
        MMEN_DELETE,MMEN_PRINT,MMEN_SAVE,MMEN_DETACH,MMEN_CROP,MMEN_EXPMSG,MMEN_NEW,MMEN_REPLY,MMEN_FORWARD,
        MMEN_BOUNCE,MMEN_SAVEADDR,MMEN_TOUNREAD,MMEN_TOREAD,MMEN_TOHOLD,MMEN_TOQUEUED,MMEN_TOMARKED,
-       MMEN_TOUNMARKED,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,MMEN_USER,MMEN_MUI,MMEN_SCRIPT,
-       MMEN_POPHOST, MMEN_MACRO=MMEN_POPHOST+MAXP3
+       MMEN_TOUNMARKED,MMEN_ALLTOREAD,MMEN_CHSUBJ,MMEN_SEND,MMEN_ABOOK,MMEN_CONFIG,MMEN_USER,MMEN_MUI,
+       MMEN_SCRIPT,MMEN_POPHOST, MMEN_MACRO=MMEN_POPHOST+MAXP3
      };
 
 struct MA_GUIData
@@ -231,6 +231,7 @@ struct MA_GUIData
    Object *MI_TOQUEUED;
    Object *MI_TOMARKED;
    Object *MI_TOUNMARKED;
+   Object *MI_ALLTOREAD;
    Object *MI_CHSUBJ;
    Object *MI_SEND;
    Object *LV_FOLDERS;
@@ -259,6 +260,7 @@ extern struct Hook MA_ReadMessageHook;
 extern struct Hook MA_NewMessageHook;
 extern struct Hook MA_ChangeSubjectHook;
 extern struct Hook MA_SetStatusToHook;
+extern struct Hook MA_SetAllStatusToHook;
 extern struct Hook MA_GetAddressHook;
 extern struct Hook MA_MoveMessageHook;
 extern struct Hook MA_CopyMessageHook;
@@ -306,7 +308,7 @@ BOOL  MA_SendMList(struct Mail **mlist);
 void  MA_ChangeMailStatus(struct Mail *mail, int addflags, int clearflags);
 BOOL  MA_UpdateMailFile(struct Mail *mail);
 void  MA_SetSortFlag(void);
-void  MA_SetStatusTo(int addflags, int clearflags);
+void  MA_SetStatusTo(int addflags, int clearflags, BOOL all);
 void  MA_SetupDynamicMenus(void);
 BOOL  MA_StartMacro(enum Macro num, char *param);
 char *MA_ToStatusHeader(struct Mail *mail);

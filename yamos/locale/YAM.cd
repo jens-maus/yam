@@ -5608,3 +5608,6 @@ correctly.
 MSG_ER_CONTINUEEXIT (//)
 *_Continue|Exit
 ;
+MSG_MA_ALLTOREAD (//)
+#\000All to Read
+;

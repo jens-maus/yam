@@ -154,6 +154,8 @@ OVERLOAD(MUIM_NList_ContextMenuBuild)
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToRead),     MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_TOREAD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToHold),     MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOHOLD,     End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ToQueued),   MUIA_Menuitem_Enabled, mail && isOutBox,   MUIA_UserData, MMEN_TOQUEUED,   End,
+				Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
+				Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MA_ALLTOREAD),  MUIA_Menuitem_Enabled, mail && !isOutBox,  MUIA_UserData, MMEN_ALLTOREAD,  End,
       End,
       Child, MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End,
         Child, MenuitemObject, MUIA_Menuitem_Title, GetStripStr(MSG_MESSAGE_GETADDRESS),  MUIA_Menuitem_Enabled, mail, MUIA_UserData, MMEN_SAVEADDR, End,
@@ -223,6 +225,7 @@ OVERLOAD(MUIM_ContextMenuChoice)
     case MMEN_TOQUEUED:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_QUEUED|SFLAG_READ,SFLAG_SENT|SFLAG_HOLD|SFLAG_ERROR); break;
     case MMEN_TOMARKED:   DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_MARKED,           SFLAG_NONE);                        break;
     case MMEN_TOUNMARKED: DoMethod(G->App, MUIM_CallHook, &MA_SetStatusToHook,    SFLAG_NONE,             SFLAG_MARKED);                      break;
+		case MMEN_ALLTOREAD:  DoMethod(G->App, MUIM_CallHook, &MA_SetAllStatusToHook, SFLAG_READ,             SFLAG_NEW);                         break;
     case MMEN_SAVEADDR:   DoMethod(G->App, MUIM_CallHook, &MA_GetAddressHook); break;
     case MMEN_MOVE:       DoMethod(G->App, MUIM_CallHook, &MA_MoveMessageHook); break;
     case MMEN_COPY:       DoMethod(G->App, MUIM_CallHook, &MA_CopyMessageHook); break;

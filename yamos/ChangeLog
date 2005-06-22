@@ -7,6 +7,12 @@ $Source$
 
 2005-06-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c, YAM_main.h, YAM_rexx_rxif.c, classes/MainMailList.c,
+      locale/YAM.cd: implemented an addition menuitem to make it possible to
+      quickly set the status of ALL mails in a folder to read. This is in fact
+      a very common option which should really be a frequently used operation
+      and now the new menuitem+shortcut easily enables an user to switch
+      the status of all mails to the read status.
     * YAM_RE.c, YAM_WR.c, YAM_mainFolder.h, YAM_read.h: added an automatic
       letterpart recognition to the MIME routines of YAM. Previously, YAM
       did always assume that the MIME part number 1 (or the one configured
