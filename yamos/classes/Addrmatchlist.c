@@ -244,9 +244,11 @@ DECLARE(Event) // struct IntuiMessage *imsg
 		}
 
 		set(data->Matchlist, MUIA_List_Active, direction);
+
+		return TRUE;
 	}
 
-	return 0;
+	return FALSE;
 }
 
 ///

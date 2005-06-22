@@ -349,9 +349,8 @@ OVERLOAD(MUIM_HandleEvent)
 			case NM_WHEEL_RIGHT:
 			{
 				// forward this event to the addrmatchlist
-				DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg);
-
-				result = MUI_EventHandlerRC_Eat;
+				if(DoMethod(data->Matchwindow, MUIM_Addrmatchlist_Event, imsg))
+					result = MUI_EventHandlerRC_Eat;
 			}
 			break;
 
