@@ -190,33 +190,6 @@ OVERLOAD(MUIM_HandleEvent)
 					}
 				}
 			}
-			else if(_isinwholeobject(obj, imsg->MouseX, imsg->MouseY))
-			{
-				// MouseWheel events are only possible if the mouse is above the
-				// object
-				if(imsg->Code == NM_WHEEL_UP   || imsg->Code == NM_WHEEL_LEFT ||
-					 imsg->Code == NM_WHEEL_DOWN || imsg->Code == NM_WHEEL_RIGHT)
-				{
-					LONG visible = xget(obj, MUIA_TextEditor_Prop_Visible);
-
-					if(visible > 0)
-					{
-						// we scroll about 1/6 of the displayed text by default
-						LONG delta = (visible + 3) / 6;
-
-						// make sure that we scroll at least 1 line
-						if(delta < 1) delta = 1;
-
-						if(imsg->Code == NM_WHEEL_UP || imsg->Code == NM_WHEEL_LEFT)
-						{
-							DoMethod(data->slider, MUIM_Prop_Decrease, delta);
-						}
-						else DoMethod(data->slider, MUIM_Prop_Increase, delta);
-					}
-
-					return MUI_EventHandlerRC_Eat;
-				}
-			}
 		}
 	}
 

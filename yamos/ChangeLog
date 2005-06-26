@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-27  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c, classes/MailTextEdit.c: removed our own wheelmouse handling code
+      as the latest 15.13 version of TextEditor.mcc now properly comes with
+      direct newmouse based wheelmouse support. This of course required to
+      increase the minimum version to 15.13 in YAM.c which in fact also
+      automatically fixes other problems if users are trying to use older
+      and buggier versions < 15.13.
+
 2005-06-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed a bug in the edit mode of YAM where it always added a
