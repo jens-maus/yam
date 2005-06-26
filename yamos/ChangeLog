@@ -7,6 +7,9 @@ $Source$
 
 2005-06-26  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed a bug in the edit mode of YAM where it always added a
+      newline character to the end of a message due to the fact that
+      MA_ReadInMessage() always adds a newline to the end of a mail.
     * YAM_RE.c: fixed a minor bug in the recently added automatic LetterPart
       finding routines where upon undoing a certain part of a mail could have
       ended up in displaying the wrong MIME part as the main letter part of

@@ -1043,55 +1043,74 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
          {
             if((cmsg = RE_ReadInMessage(rmData, RIM_EDIT)))
             {
-              fputs(cmsg, out);
-              free(cmsg);
-
-              strcpy(wr->MsgID, email->IRTMsgID);
-              setstring(wr->GUI.ST_SUBJECT, mail->Subject);
-              setstring(wr->GUI.ST_FROM, BuildAddrName2(&mail->From));
-              setstring(wr->GUI.ST_REPLYTO, BuildAddrName2(&mail->ReplyTo));
-              sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->To));
-
-              if(isMultiRCPTMail(mail))
+              // we check whether cmsg contains any text and if so we
+              // have to take care that the leading newline isn't written to the
+              // file as ReadInMessage() always puts a newline at the end of cmsg!
+              if(cmsg[0] == '\0' || fwrite(cmsg, strlen(cmsg)-1, 1, out) == 1)
               {
-                *sbuf = 0;
-                sbuf = MA_AppendRcpt(sbuf, &mail->To, FALSE);
-                for(i = 0; i < email->NoSTo; i++)
-                  sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
+                // free our temp text now
+                free(cmsg);
 
-                setstring(wr->GUI.ST_TO, sbuf);
-                *sbuf = 0;
+                strcpy(wr->MsgID, email->IRTMsgID);
+                setstring(wr->GUI.ST_SUBJECT, mail->Subject);
+                setstring(wr->GUI.ST_FROM, BuildAddrName2(&mail->From));
+                setstring(wr->GUI.ST_REPLYTO, BuildAddrName2(&mail->ReplyTo));
+                sbuf = StrBufCpy(NULL, BuildAddrName2(&mail->To));
 
-                for(i = 0; i < email->NoCC; i++)
-                  sbuf = MA_AppendRcpt(sbuf, &email->CC[i], FALSE);
+                if(isMultiRCPTMail(mail))
+                {
+                  *sbuf = '\0';
+                  sbuf = MA_AppendRcpt(sbuf, &mail->To, FALSE);
 
-                setstring(wr->GUI.ST_CC, sbuf);
-                *sbuf = 0;
+                  for(i = 0; i < email->NoSTo; i++)
+                    sbuf = MA_AppendRcpt(sbuf, &email->STo[i], FALSE);
 
-                for(i = 0; i < email->NoBCC; i++)
-                  sbuf = MA_AppendRcpt(sbuf, &email->BCC[i], FALSE);
+                  setstring(wr->GUI.ST_TO, sbuf);
+                  *sbuf = '\0';
 
-                setstring(wr->GUI.ST_BCC, sbuf);
+                  for(i = 0; i < email->NoCC; i++)
+                    sbuf = MA_AppendRcpt(sbuf, &email->CC[i], FALSE);
+
+                  setstring(wr->GUI.ST_CC, sbuf);
+                  *sbuf = '\0';
+
+                  for(i = 0; i < email->NoBCC; i++)
+                    sbuf = MA_AppendRcpt(sbuf, &email->BCC[i], FALSE);
+
+                  setstring(wr->GUI.ST_BCC, sbuf);
+                }
+                else
+                  setstring(wr->GUI.ST_TO, sbuf);
+
+                FreeStrBuf(sbuf);
+                if(email->extraHeaders)
+                  setstring(wr->GUI.ST_EXTHEADER, email->extraHeaders);
+
+                setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
+                setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
+                setcheckmark(wr->GUI.CH_DISPNOTI, email->ReceiptType == RCPT_TYPE_ALL);
+                setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
+                setcycle(wr->GUI.CY_IMPORTANCE, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1);
+                setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
+                setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
+
+                if(folder->Type != FT_OUTGOING)
+                  DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, wr->GUI.BT_SEND, wr->GUI.BT_HOLD, NULL);
+
+                WR_SetupOldMail(winnum, rmData);
               }
               else
-                setstring(wr->GUI.ST_TO, sbuf);
+              {
+                E(DBF_MAIL, "Error while writing cmsg to out FH");
 
-              FreeStrBuf(sbuf);
-              if(email->extraHeaders)
-                setstring(wr->GUI.ST_EXTHEADER, email->extraHeaders);
-
-              setcheckmark(wr->GUI.CH_DELSEND, email->DelSend);
-              setcheckmark(wr->GUI.CH_RECEIPT, email->RetRcpt);
-              setcheckmark(wr->GUI.CH_DISPNOTI, email->ReceiptType == RCPT_TYPE_ALL);
-              setcheckmark(wr->GUI.CH_ADDINFO, isSenderInfoMail(mail));
-              setcycle(wr->GUI.CY_IMPORTANCE, getImportanceLevel(mail) == IMP_HIGH ? 0 : getImportanceLevel(mail)+1);
-              setmutex(wr->GUI.RA_SIGNATURE, email->Signature);
-              setmutex(wr->GUI.RA_SECURITY, wr->OldSecurity = email->Security);
-
-              if(folder->Type != FT_OUTGOING)
-                DoMethod(G->App, MUIM_MultiSet, MUIA_Disabled, TRUE, wr->GUI.BT_SEND, wr->GUI.BT_HOLD, NULL);
-
-              WR_SetupOldMail(winnum, rmData);
+                // an error occurred while trying to write the text to out
+                free(cmsg);
+                FreePrivateRMData(rmData);
+                fclose(out);
+                MA_FreeEMailStruct(email);
+                DisposeModulePush(&G->WR[winnum]);
+                return winnum;
+              }
             }
 
             FreePrivateRMData(rmData);
