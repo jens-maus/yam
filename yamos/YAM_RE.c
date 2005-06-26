@@ -1311,6 +1311,7 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
     sprintf(file, "YAMr%08lx-p%d.txt", readMailDataID(rmData), newPart->Nr);
     strmfp(newPart->Filename, C->TempDir, file);
 
+    SHOWSTRING(DBF_MAIL, newPart->Filename);
     if((fp = fopen(newPart->Filename, "w")))
     {
       RETURN(fp);
@@ -1615,7 +1616,8 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       {
         if(RE_SaveThisPart(rp) || RE_RequiresSpecialHandling(hrp) == 3)
         {
-          RE_ConsumeRestOfPart(in, out, NULL, NULL); fclose(out);
+          RE_ConsumeRestOfPart(in, out, NULL, NULL);
+          fclose(out);
           RE_SetPartInfo(rp);
         }
         else
