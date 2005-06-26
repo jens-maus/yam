@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-06-26  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed a minor bug in the recently added automatic LetterPart
+      finding routines where upon undoing a certain part of a mail could have
+      ended up in displaying the wrong MIME part as the main letter part of
+      a mail.
+
 2005-06-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/Recipientstring.c: fixed a problem where an active recipientstring

@@ -1329,67 +1329,101 @@ static FILE *RE_OpenNewPart(struct ReadMailData *rmData,
 //  Removes an entry from the message part list
 static void RE_UndoPart(struct Part *rp)
 {
-   struct Part *trp = rp;
+  struct Part *trp = rp;
 
-   // lets delete the file first so that we can cleanly "undo" the part
-   DeleteFile(rp->Filename);
+  ENTER();
 
-   // we only iterate through our partlist if there is
-   // a next item, if not we can simply relink it
-   if(trp->Next)
-   {
-      // if we remove a part from the part list we have to take
-      // care of the part index number aswell. So all following
-      // parts have to be descreased somehow by one.
-      //
-      // p2->p3->p4->p5
-      do
+  D(DBF_MAIL, "undoing part #%ld", rp->Nr);
+
+  // lets delete the file first so that we can cleanly "undo" the part
+  DeleteFile(rp->Filename);
+
+  // we only iterate through our partlist if there is
+  // a next item, if not we can simply relink it
+  if(trp->Next)
+  {
+    // if we remove a part from the part list we have to take
+    // care of the part index number aswell. So all following
+    // parts have to be descreased somehow by one.
+    //
+    // p2->p3->p4->p5
+    do
+    {
+      // use the next element as the current trp
+      trp = trp->Next;
+
+      // decrease the part number aswell
+      trp->Nr--;
+
+      // Now we also have to rename the temporary filename also
+      Rename(trp->Filename, trp->Prev->Filename);
+
+    }
+    while(trp->Next);
+
+    // now go from the end to the start again and copy
+    // the filenames strings as we couldn`t do that in the previous
+    // loop also
+    //
+    // p5->p4->p3->p2
+    do
+    {
+      // iterate backwards
+      trp = trp->Prev;
+
+      // now copy the filename string
+      strcpy(trp->Next->Filename, trp->Filename);
+
+    }
+    while(trp->Prev && trp != rp);
+  }
+
+  // relink the partlist
+  if(rp->Prev) rp->Prev->Next = rp->Next;
+  if(rp->Next) rp->Next->Prev = rp->Prev;
+
+  // free an eventually existing headerList
+  if(rp->headerList)
+  {
+    FreeHeaderList(rp->headerList);
+    free(rp->headerList);
+  }
+
+  // free some string buffers
+  FreeStrBuf(rp->ContentType);
+  FreeStrBuf(rp->ContentDisposition);
+  FreeStrBuf(rp->Boundary);
+
+  // now we check wheter the readMailData letterPartNum has to be decreased to
+  // point to the correct letterPart number again
+  if(rp->rmData)
+  {
+    struct ReadMailData *rmData = rp->rmData;
+
+    // if the letterPart is that what is was removed from our part list
+    // we have to find out which one is the new letterPart indeed
+    if(rmData->letterPartNum == rp->Nr)
+    {
+      rmData->letterPartNum = 0;
+
+      for(trp = rmData->firstPart; trp; trp = trp->Next)
       {
-        // use the next element as the current trp
-        trp = trp->Next;
+        if(trp->Nr > PART_RAW && trp->Nr >= PART_LETTER &&
+           trp->Printable)
+        {
+          rmData->letterPartNum = trp->Nr;
+          break;
+        }
+      }
+    }
+    else if(rmData->letterPartNum > rp->Nr)
+      rmData->letterPartNum--;
+  }
 
-        // decrease the part number aswell
-        trp->Nr--;
+  // and last, but not least we free the part
+  free(rp);
 
-        // Now we also have to rename the temporary filename also
-        Rename(trp->Filename, trp->Prev->Filename);
-
-      } while(trp->Next);
-
-      // now go from the end to the start again and copy
-      // the filenames strings as we couldn`t do that in the previous
-      // loop also
-      //
-      // p5->p4->p3->p2
-      do
-      {
-        // iterate backwards
-        trp = trp->Prev;
-
-        // now copy the filename string
-        strcpy(trp->Next->Filename, trp->Filename);
-
-      } while(trp->Prev && trp != rp);
-   }
-
-   // relink the partlist
-   if (rp->Prev) rp->Prev->Next = rp->Next;
-   if (rp->Next) rp->Next->Prev = rp->Prev;
-
-   // free an eventually existing headerList
-   if(rp->headerList)
-   {
-     FreeHeaderList(rp->headerList);
-     free(rp->headerList);
-   }
-
-   // free some string buffers
-   FreeStrBuf(rp->ContentType);
-   FreeStrBuf(rp->ContentDisposition);
-   FreeStrBuf(rp->Boundary);
-
-   // and last, but not least we free the part
-   free(rp);
+  LEAVE();
 }
 ///
 /// RE_RequiresSpecialHandling
@@ -1462,6 +1496,8 @@ static void RE_SetPartInfo(struct Part *rp)
       rp->Printable &&
       rp->Nr >= PART_LETTER)
    {
+     D(DBF_MAIL, "setting part #%ld as LETTERPART", rp->Nr);
+
      rp->rmData->letterPartNum = rp->Nr;
 
      SetComment(rp->Filename, GetStr(MSG_RE_Letter));
