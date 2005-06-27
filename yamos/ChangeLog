@@ -11,6 +11,11 @@ $Source$
       identification of "message/partial" mails. Now YAM will use the
       "status_error" status icon to indicate that a mail is of content-type
       "message/partial" as discussed in RFC 2046 (5.2.2).
+      Please note that due to this change an index rescan of all folder is
+      highly suggested or otherwise existing mails could show incorrect
+      mail status icons. However, do not force an index rescan as we are still
+      in development. So anyone using a developer build should take care of
+      that himself.
     * YAM.c, classes/MailTextEdit.c: removed our own wheelmouse handling code
       as the latest 15.13 version of TextEditor.mcc now properly comes with
       direct newmouse based wheelmouse support. This of course required to

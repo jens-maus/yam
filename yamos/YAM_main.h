@@ -38,6 +38,7 @@
 // General internal flags of a mail (no status information)
 // Warning: Please note that if you change something here you have to make
 //          sure to increase the version number of the .index file in YAM_MAf.c!
+//          However, if only additions are made no index version bump is necessary.
 #define MFLAG_MULTIRCPT   (1<<0)
 #define MFLAG_MP_MIXED    (1<<1)      // multipart/mixed
 #define MFLAG_MP_REPORT   (1<<2)      // multipart/report
@@ -72,6 +73,7 @@
 // Status information flags of a mail (also partly stored in file comments)
 // Warning: Please note that if you change something here you have to make
 //          sure to increase the version number of the .index file in YAM_MAf.c!
+//          However, if only additions are made no index version bump is necessary.
 #define SFLAG_NONE      (0<<0)
 #define SFLAG_READ      (1<<0)      // has been read by the user
 #define SFLAG_REPLIED   (1<<1)      // a reply has been successfully sent
