@@ -251,7 +251,7 @@ DECLARE(Update) // struct Mail *mail
 
 		// now we can add the status icons depending on the set status flags of
 		// the mail
-		if(hasStatusError(mail) && data->statusIcon[SICON_ID_ERROR])
+		if((hasStatusError(mail) || isPartialMail(mail)) && data->statusIcon[SICON_ID_ERROR])
 			DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_ERROR]);
 		else if(hasStatusQueued(mail) && data->statusIcon[SICON_ID_WAITSEND])
 			DoMethod(obj, OM_ADDMEMBER, data->statusIcon[SICON_ID_WAITSEND]);
