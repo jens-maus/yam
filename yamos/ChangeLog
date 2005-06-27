@@ -7,6 +7,10 @@ $Source$
 
 2005-06-27  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c, YAM_MAf.c, YAM_main.h: added a special message flag for
+      identification of "message/partial" mails. Now YAM will use the
+      "status_error" status icon to indicate that a mail is of content-type
+      "message/partial" as discussed in RFC 2046 (5.2.2).
     * YAM.c, classes/MailTextEdit.c: removed our own wheelmouse handling code
       as the latest 15.13 version of TextEditor.mcc now properly comes with
       direct newmouse based wheelmouse support. This of course required to

@@ -44,12 +44,13 @@
 #define MFLAG_MP_CRYPT    (1<<3)      // multipart/encrypted
 #define MFLAG_MP_SIGNED   (1<<4)      // multipart/signed
 #define MFLAG_MP_ALTERN   (1<<5)      // multipart/alternative
-#define MFLAG_SENDERINFO  (1<<6)
-#define MFLAG_SENDMDN     (1<<7)
-#define MFLAG_NOFOLDER    (1<<8)
-#define MFLAG_PERFIELD         9      // reserve 3 bits of the flags for the permanent flag section
-#define MFLAG_VOLFIELD        12      // reserve 3 bits of the flags for the volatile flag section
-#define MFLAG_IMPORTANCE      15      // reserve 2 bits to store the level of importance
+#define MFLAG_PARTIAL     (1<<6)      // message/partial
+#define MFLAG_SENDERINFO  (1<<7)
+#define MFLAG_SENDMDN     (1<<8)
+#define MFLAG_NOFOLDER    (1<<9)
+#define MFLAG_PERFIELD        10      // reserve 3 bits of the flags for the permanent flag section
+#define MFLAG_VOLFIELD        13      // reserve 3 bits of the flags for the volatile flag section
+#define MFLAG_IMPORTANCE      16      // reserve 2 bits to store the level of importance
 #define isMultiRCPTMail(mail)         (isFlagSet((mail)->mflags, MFLAG_MULTIRCPT))
 #define isMultiPartMail(mail)         (hasFlag((mail)->mflags, MFLAG_MP_MIXED | MFLAG_MP_REPORT | MFLAG_MP_CRYPT | MFLAG_MP_SIGNED | MFLAG_MP_ALTERN))
 #define isMP_MixedMail(mail)          (isFlagSet((mail)->mflags, MFLAG_MP_MIXED))
@@ -57,6 +58,7 @@
 #define isMP_CryptedMail(mail)        (isFlagSet((mail)->mflags, MFLAG_MP_CRYPT))
 #define isMP_SignedMail(mail)         (isFlagSet((mail)->mflags, MFLAG_MP_SIGNED))
 #define isMP_AlternativeMail(mail)    (isFlagSet((mail)->mflags, MFLAG_MP_ALTERN))
+#define isPartialMail(mail)           (isFlagSet((mail)->mflags, MFLAG_PARTIAL))
 #define isSenderInfoMail(mail)        (isFlagSet((mail)->mflags, MFLAG_SENDERINFO))
 #define isSendMDNMail(mail)           (isFlagSet((mail)->mflags, MFLAG_SENDMDN))
 #define isVirtualMail(mail)           (isFlagSet((mail)->mflags, MFLAG_NOFOLDER))

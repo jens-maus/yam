@@ -2674,7 +2674,7 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
 
          // first we check which main status this mail has
          // and put the leftmost mail icon accordingly.
-         if(hasStatusError(entry))        strcat(dispsta, SICON_ERROR);
+         if(hasStatusError(entry) || isPartialMail(entry)) strcat(dispsta, SICON_ERROR);
          else if(hasStatusQueued(entry))  strcat(dispsta, SICON_WAITSEND);
          else if(hasStatusSent(entry))    strcat(dispsta, SICON_SENT);
          else if(hasStatusRead(entry))    strcat(dispsta, SICON_OLD);

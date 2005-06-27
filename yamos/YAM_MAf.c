@@ -1459,6 +1459,10 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
                SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
              }
            }
+           else if(!strnicmp(p, "message/partial", 15)) // RFC 2046 (5.2.2)
+           {
+             SET_FLAG(mail->mflags, MFLAG_PARTIAL);
+           }
          }
          else if(!stricmp(field, "x-senderinfo"))
          {
