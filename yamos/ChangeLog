@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-07-01  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/ReadMailGroup.c, classes/ReadWindow.c: fixed a crash problem
+      with virtual mails of content-type "multipart/mixed". In case YAM has
+      to remove an attachment status icon due to a missing real attachment
+      a crash ocurred because it did try to refreh the listview information
+      even if that mail is a virtual mail. Now this operation should be safe
+      and also refresh the statucIconGroup of the particular read window.
+
 2005-06-27  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c, YAM_MAf.c, YAM_main.h: added a special message flag for

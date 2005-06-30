@@ -437,11 +437,22 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 					// multipart flag at all
 					if(isMP_MixedMail(mail))
 					{
-						struct MailInfo *mi = GetMailInfo(mail);
-
+						// clear the multipart/mixed flag
 						CLEAR_FLAG(mail->mflags, MFLAG_MP_MIXED);
-						SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-						DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
+
+						// update the statusIconGroup of an eventually existing read window.
+						if(rmData->readWindow)
+							DoMethod(rmData->readWindow, MUIM_ReadWindow_StatusIconRefresh);
+
+						// if the mail is no virtual mail we can also
+						// refresh the maillist depending information
+						if(!isVirtualMail(mail))
+						{
+							struct MailInfo *mi	= GetMailInfo(mail);
+
+							SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+							DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
+						}
 					}
 				}
 			}
@@ -528,7 +539,6 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 				}
 			}
 
-		
 			if(rmData->senderInfoMode != SIM_OFF)
 			{
 				if(rmData->senderInfoMode != SIM_IMAGE)

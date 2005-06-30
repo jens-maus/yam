@@ -1183,3 +1183,16 @@ DECLARE(StyleOptionsChanged)
 }
 
 ///
+/// DECLARE(StatusIconRefresh)
+DECLARE(StatusIconRefresh)
+{
+	GETDATA;
+	struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
+
+	// Update the statusIconGroup
+	if(rmData->mail)
+		DoMethod(data->statusIconGroup, MUIM_StatusIconGroup_Update, rmData->mail);
+
+	return 0;
+}
+///
