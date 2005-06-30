@@ -159,7 +159,6 @@ OVERLOAD(MUIM_Cleanup)
 // inserts the famous [...] substitution.
 OVERLOAD(MUIM_HandleEvent)
 {
-	GETDATA;
 	struct IntuiMessage *imsg;
 
 	if((imsg = ((struct MUIP_HandleEvent *)msg)->imsg))
