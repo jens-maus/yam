@@ -5611,3 +5611,8 @@ MSG_ER_CONTINUEEXIT (//)
 MSG_MA_ALLTOREAD (//)
 #\000All to Read
 ;
+MSG_ER_MOVEFOLDERDIR (//)
+An error occurred while trying to move the content of folder\n\
+'%s' to directory '%s'. This may either be due to insufficient\n\
+space or because the destination path is not valid or writable.
+;

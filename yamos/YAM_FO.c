@@ -785,6 +785,7 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    char srcbuf[SIZE_PATHFILE], dstbuf[SIZE_PATHFILE];
    BOOL success = TRUE;
    int i;
+
    BusyGauge(GetStr(MSG_BusyMoving), itoa(fo->Total), fo->Total);
    strcpy(srcbuf, GetFolderDir(oldfo));
    strcpy(dstbuf, GetFolderDir(fo));
@@ -801,17 +802,24 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
         success = FALSE;
    }
 
-   if (success)
+   if(success)
    {
       MyStrCpy(srcbuf, GetFolderDir(oldfo));
       AddPart(srcbuf, ".index", sizeof(srcbuf));
       MyStrCpy(dstbuf, GetFolderDir(fo));
       AddPart(dstbuf, ".index", sizeof(dstbuf));
 
-      if(!MoveFile(srcbuf, dstbuf) ||
-         !DeleteMailDir(GetFolderDir(oldfo), FALSE))
+      if(!MoveFile(srcbuf, dstbuf))
       {
         success = FALSE;
+      }
+      else
+      {
+        // if we were able to successfully move all files
+        // we can also delete the source directory. However,
+        // we are NOT doing any error checking here as the
+        // source may be a VOLUME and as such not deleteable
+        DeleteMailDir(GetFolderDir(oldfo), FALSE);
       }
    }
 
@@ -1250,6 +1258,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
               {
                 if(!(CreateDirectory(GetFolderDir(&folder)) && FO_MoveFolderDir(&folder, oldfolder)))
                 {
+                  ER_NewError(GetStr(MSG_ER_MOVEFOLDERDIR), folder.Name, folder.Path);
+
                   return;
                 }
               }

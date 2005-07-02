@@ -7,6 +7,13 @@ $Source$
 
 2005-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_FO.c: fixed bug #1231479 where a moving the contents of a whole
+      folder directory including deletion of the source folders caused
+      an error if the source directory was a undeleteable volume path. Now
+      YAM will not evaluate the return value of the DeleteMailDir() call
+      and as such proceeds if a mailfolder is moved around. It will also now
+      print out a warning if some other operation didn't success during the
+      move folderdir process.
     * YAM_MAf.c: took respect of bugreport #1230272 where some users got
       confused why YAM was always showing y+1 in the x/y busy gauge during
       an index rescan operation. In fact what YAM was actually showing was
