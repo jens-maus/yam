@@ -1670,7 +1670,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
   if(filecount < 1)
     return FALSE;
 
-  BusyGauge(GetStr(MSG_BusyScanning), folder->Name, filecount);
+  BusyGauge(GetStr(MSG_BusyScanning), folder->Name, filecount-1);
   ClearMailList(folder, TRUE);
 
   D(DBF_FOLDER, "Recanning index for folder: '%s'...", folder->Name);

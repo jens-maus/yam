@@ -5,6 +5,20 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-07-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_MAf.c: took respect of bugreport #1230272 where some users got
+      confused why YAM was always showing y+1 in the x/y busy gauge during
+      an index rescan operation. In fact what YAM was actually showing was
+      the number of ALL files found in a folder directory during index
+      rescan including an existing .fconfig file (the .index was anyway
+      previously deleted prior to the index rescan). Now that's why YAM
+      was always showing y+1 in the busy gauge. However, to stop some confusion
+      YAM will now always substract the found filecount by one, assuming all
+      folders having an .fconfig file. However, please note that even after
+      this change the busy gauge may be different to the real number of mails
+      found in a mail folder.
+
 2005-07-01  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/ReadMailGroup.c, classes/ReadWindow.c: fixed a crash problem
