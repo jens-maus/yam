@@ -7,6 +7,12 @@ $Source$
 
 2005-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/ReadWindow.c: fixed bug #1229432 where YAM didn't close the
+      open read window in case the current mail in the window is the one at
+      the bottom or top of the mail list and the current browse direction
+      would suggest that the browing has to end. Now YAM will properly close
+      the read window under such a situation like it was done in the 2.3
+      series also.
     * YAM_FO.c: fixed bug #1231479 where a moving the contents of a whole
       folder directory including deletion of the source folders caused
       an error if the source directory was a undeleteable volume path. Now

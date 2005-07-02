@@ -568,6 +568,7 @@ DECLARE(MoveMailRequest)
 	struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 	struct Mail *mail = rmData->mail;
 	struct Folder *srcfolder = mail->Folder;
+	BOOL closeAfter = FALSE;
 
 	if(MailExists(mail, srcfolder))
 	{
@@ -583,10 +584,12 @@ DECLARE(MoveMailRequest)
 
 			// depending on the last move direction we
 			// set it back
-			if(data->lastDirection == -1 &&
-				 pos-1 >= 0)
+			if(data->lastDirection == -1)
 			{
-				set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, --pos);
+				if(pos-1 >= 0)
+					set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, --pos);
+				else
+					closeAfter = TRUE;
 			}
 
 			// move the mail to the selected destionaltion folder
@@ -594,19 +597,21 @@ DECLARE(MoveMailRequest)
 
 			// if there are still mails in the current folder we make sure
 			// it is displayed in this window now or close it
-			entries = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries);
-			if(entries > 0)
+			if(closeAfter == FALSE &&
+				 (entries = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries)) >= pos+1)
 			{
-				if(entries < pos+1)
-					pos = entries-1;
-
 				DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, pos, &mail);
 				if(mail)
 					DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
 				else
-					set(obj, MUIA_Window_Open, FALSE);
+					closeAfter = TRUE;
 			}
 			else
+				closeAfter = TRUE;
+
+			// make sure the read window is closed in case there is no further
+			// mail for deletion in this direction
+			if(closeAfter)
 				set(obj, MUIA_Window_Open, FALSE);
 
 			AppendLogNormal(22, GetStr(MSG_LOG_Moving), (void *)1, srcfolder->Name, dstfolder->Name, "");
