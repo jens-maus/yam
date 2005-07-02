@@ -7,6 +7,10 @@ $Source$
 
 2005-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: fixed a minor problem with the automatic file extension
+      recognition where YAM didn't analyze the content-type of the main
+      letterpart and therefore couldn't identify the proper file extension
+      for it.
     * classes/ReadWindow.c: fixed bug #1229432 where YAM didn't close the
       open read window in case the current mail in the window is the one at
       the bottom or top of the mail list and the current browse direction
