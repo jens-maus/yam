@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-07-03  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_UT.c: fixed a minor bug in the text quoting functions where YAM
+      did recognize some text passages as quotes if the contained a ">"
+      character if they wasn't meant to represent quotes at all (HTML tags
+      for example). Now YAM tries to be a bit smarter in recognizing a
+      found ">" character as a quoting character.
+
 2005-07-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: fixed a minor problem with the automatic file extension

@@ -1579,10 +1579,9 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
     }
     else
     {
-      if(c == '\n')
-        break;
-
-      if(c != ' ' && (quote_found == TRUE || pre_spaces > 0))
+      // if the current char is a newline or not between A-Z or a-z then we
+      // can break out immediately as these chars are not allowed
+      if(c == '\n' || (c != ' ' && (c < 'A' || c > 'z' || (c > 'Z' && c < 'a'))))
         break;
 
       if(c == ' ')
@@ -1597,9 +1596,15 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
         {
           pre_spaces++;
         }
-        else break;
+        else
+          break;
       }
-      else skip_chars++;
+      else if(quote_found == TRUE || pre_spaces > 0 || skip_chars > 2)
+      {
+        break;
+      }
+      else
+        skip_chars++;
     }
 
     buf[i++] = c;
@@ -1617,6 +1622,7 @@ static int Quoting_Chars(char *buf, int len, char *text, int *post_spaces)
   // any quote char was found.
   return last_bracket ? skip_chars : 0;
 }
+
 ///
 /// Quote_Text
 //  Main mail text quotation function. It takes the source string "src" and
