@@ -35,6 +35,8 @@
 #include <libraries/asl.h>
 #include <libraries/genesis.h>
 #include <mui/NList_mcc.h>
+#include <mui/NListview_mcc.h>
+#include <mui/NFloattext_mcc.h>
 #include <proto/datatypes.h>
 #include <proto/diskfont.h>
 #include <proto/dos.h>
@@ -1314,6 +1316,11 @@ static void Initialise(BOOL hidden)
    // we have to have at least v20.111 of NList.mcc to get YAM working without risking
    // to have it buggy - so we make it a requirement. And also 111 is the fastest one ATM.
    CheckMCC(MUIC_NList, 20, 111, TRUE);
+
+   // we also make sure the user uses the latest brand of all other NList classes, such as
+   // NListview, NFloattext etc.
+   CheckMCC(MUIC_NListview, 19, 70, TRUE);
+   CheckMCC(MUIC_NFloattext, 19, 51, TRUE);
 
    // we make v18.12 the minimum requirement for YAM because earlier versions are
    // buggy
