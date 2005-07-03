@@ -58,11 +58,14 @@ VOID LoadEMailCache(STRPTR name, struct List *list)
 	if((fh = Open(name, MODE_OLDFILE)))
 	{
 		int i=0;
-		TEXT line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
-		while(FGets(fh, line, sizeof(line)) && i++ < 100) // we limit the reading to a maximum of 100 so that this code can`t read endlessly
+		char line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
+
+		while(FGets(fh, (STRPTR)line, sizeof(line)) && i++ < 100) // we limit the reading to a maximum of 100 so that this code can`t read endlessly
 		{
-			STRPTR addr, end;
+			char *addr;
+			char *end;
 			struct EMailCacheNode *node;
+
 			if((addr = strchr(line, '<')) && (end = strchr(addr, '>')) && (node = calloc(1, sizeof(struct EMailCacheNode))))
 			{
 				if(addr != line)
@@ -98,7 +101,7 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 	{
 		int i;
 		struct EMailCacheNode *node = (struct EMailCacheNode *)(list->lh_Head);
-		TEXT line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
+		char line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
 
 		for(i=0; i < C->EmailCache && node->ecn_Node.ln_Succ != NULL; i++, node=(struct EMailCacheNode *)node->ecn_Node.ln_Succ)
 		{
@@ -146,9 +149,21 @@ VOID FindAllABMatches (STRPTR text, Object *list, struct MUI_NListtree_TreeNode 
 			struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
 			struct CustomABEntry e = { -1, NULL, NULL };
 
-			if(!Strnicmp(entry->Alias, text, tl))					{ e.MatchField = 0; e.MatchString = entry->Alias; 		}
-			else if(!Strnicmp(entry->RealName, text, tl))	{ e.MatchField = 1; e.MatchString = entry->RealName; 	}
-			else if(!Strnicmp(entry->Address, text, tl))	{ e.MatchField = 2; e.MatchString = entry->Address; 	}
+			if(!Strnicmp((unsigned char *)entry->Alias, (unsigned char *)text, tl))
+			{
+				e.MatchField = 0;
+				e.MatchString = entry->Alias;
+			}
+			else if(!Strnicmp((unsigned char *)entry->RealName, (unsigned char *)text, tl))
+			{
+				e.MatchField = 1;
+				e.MatchString = entry->RealName;
+			}
+			else if(!Strnicmp((unsigned char *)entry->Address, (unsigned char *)text, tl))
+			{
+				e.MatchField = 2;
+				e.MatchString = entry->Address;
+			}
 
 			if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
 			{
@@ -182,7 +197,7 @@ BOOL FindABPerson(struct Person *person, struct MUI_NListtree_TreeNode *root)
 			struct ABEntry *entry = (struct ABEntry *)tn->tn_User;
 
 			// If the email matches a entry in the AB we already can return here with TRUE
-			if(Stricmp(entry->Address, person->Address) == 0)
+			if(Stricmp((unsigned char *)entry->Address, (unsigned char *)person->Address) == 0)
 			{
 				return TRUE;
 			}
@@ -221,8 +236,16 @@ DECLARE(FindEmailMatches) // STRPTR matchText, Object *list
 				struct ABEntry *entry = &node->ecn_Person;
 				struct CustomABEntry e = { -1, NULL, NULL };
 
-				if(!Strnicmp(entry->RealName, msg->matchText, tl))      { e.MatchField = 1; e.MatchString = entry->RealName;  }
-				else if(!Strnicmp(entry->Address, msg->matchText, tl))  { e.MatchField = 2; e.MatchString = entry->Address;   }
+				if(!Strnicmp((unsigned char *)entry->RealName, (unsigned char *)msg->matchText, tl))
+				{
+					e.MatchField = 1;
+					e.MatchString = entry->RealName;
+				}
+				else if(!Strnicmp((unsigned char *)entry->Address, (unsigned char *)msg->matchText, tl))
+				{
+					e.MatchField = 2;
+					e.MatchString = entry->Address;
+				}
 
 				if(e.MatchField != -1) /* one of the fields matches, so let's insert it in the MUI list */
 				{
@@ -254,7 +277,8 @@ DECLARE(FindEmailCacheMatch) // STRPTR matchText
 		{
 			struct ABEntry *entry = &node->ecn_Person;
 
-			if(!Strnicmp(entry->RealName, msg->matchText, tl) || !Strnicmp(entry->Address, msg->matchText, tl))
+			if(!Strnicmp((unsigned char *)entry->RealName, (unsigned char *)msg->matchText, tl) ||
+				 !Strnicmp((unsigned char *)entry->Address, (unsigned char *)msg->matchText, tl))
 			{
 				if(++matches > 1)
 				{
@@ -298,7 +322,8 @@ DECLARE(AddToEmailCache) // struct Person *person
 
 			// If we find the same entry already in the list we just move it
 			// up to the top
-			if((msg->person->RealName[0] ? !Stricmp(entry->RealName, msg->person->RealName) : TRUE) && !Stricmp(entry->Address, msg->person->Address))
+			if((msg->person->RealName[0] ? !Stricmp((unsigned char *)entry->RealName, (unsigned char *)msg->person->RealName) : TRUE) &&
+				 !Stricmp((unsigned char *)entry->Address, (unsigned char *)msg->person->Address))
 			{
 				Remove((struct Node *)node);
 				AddHead(&data->EMailCache, (struct Node *)node);
@@ -377,7 +402,7 @@ OVERLOAD(OM_NEW)
 		dt.dat_Format          = FORMAT_DEF;
 		dt.dat_Flags           = 0L;
 		dt.dat_StrDay          = NULL;
-		dt.dat_StrDate         = data->compileInfo;
+		dt.dat_StrDate         = (unsigned char *)data->compileInfo;
 		dt.dat_StrTime         = NULL;
 		DateToStr(&dt);
 		data->compileInfo[31] = '\0';  // make sure that the string is really terminated at LEN_DATSTRING.

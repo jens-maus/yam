@@ -47,7 +47,7 @@ char *GetStr(APTR fcstr)
 
   if(LocaleBase)
   {
-    return GetCatalogStr(%b_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
+    return (char *)GetCatalogStr(%b_Catalog, ((struct FC_Type *)fcstr)->ID, (STRPTR)defaultstr);
   }
 
   return defaultstr;

@@ -7,6 +7,8 @@ $Source$
 
 2005-07-03  Jens Langner <Jens.Langner@light-speed.de>
 
+    * misc: fixed a whole bunch of GCC4 relevant compiler warnings about
+      incorrect pointer signedness.
     * YAM_UT.c: fixed a minor bug in the text quoting functions where YAM
       did recognize some text passages as quotes if the contained a ">"
       character if they wasn't meant to represent quotes at all (HTML tags

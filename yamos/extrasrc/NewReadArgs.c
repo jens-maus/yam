@@ -103,17 +103,17 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
 
 /****************************************************************************/
 
-STATIC LONG IsArg( STRPTR template, STRPTR keyword)
+STATIC LONG IsArg(STRPTR template, STRPTR keyword)
 {
   UBYTE buffer[128], c;
-  STRPTR  ptr = buffer;
+  STRPTR ptr = (STRPTR)buffer;
 
   while((c = *keyword++) && (c != '=')) *ptr++ = c;
 
   *ptr = 0;
 
   /*- checks if keyword is specified in template -*/
-  return(FindArg(template, buffer));
+  return(FindArg(template, (STRPTR)buffer));
 }
 
 /****************************************************************************/
@@ -212,17 +212,17 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
         /*- get file-names if requested -*/
         if(FileArgs)
         {
-          TEXT buf[300];
+          char buf[300];
 
           if(FArgNum < FileArgs && FArgNum >= 0L)
           {
             D(DBF_STARTUP, "ICON: %s", wbarg->wa_Name);
 
-            if( NameFromLock(wbarg->wa_Lock, buf, sizeof(buf)) &&
-              AddPart(buf, wbarg->wa_Name, sizeof(buf)) )
+            if(NameFromLock(wbarg->wa_Lock, buf, 300*sizeof(char)) &&
+               AddPart(buf, (char *)wbarg->wa_Name, 300*sizeof(char)))
             {
-              STRPTR  dst;
-              LONG  len = strlen(buf) + 2L;
+              STRPTR dst;
+              LONG len = strlen(buf) + 2L;
               #ifndef COMPILE_V39
               if((Args[FArgNum] = dst = AllocRemember(remember, len, MEMF_ANY)))
               #else
@@ -259,9 +259,9 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
         dobj =
         #ifdef ICONGETA_RemapIcon
           (((struct Library *)IconBase)->lib_Version >= 44L) ?
-          GetIconTagList(wbarg->wa_Name, (struct TagItem *)icontags) :
+          GetIconTagList((char *)wbarg->wa_Name, (struct TagItem *)icontags) :
         #endif
-          GetDiskObject(wbarg->wa_Name);
+          GetDiskObject((char *)wbarg->wa_Name);
 
         if(dobj)
         {
@@ -382,8 +382,10 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       if(num)
       {
         nrdargs->RDArgs->RDA_Source.CS_Length = (num+=MaxArgs);
+        nrdargs->RDArgs->RDA_Source.CS_Buffer = AllocVec(num+1, MEMF_ANY);
+        ptr = (char *)nrdargs->RDArgs->RDA_Source.CS_Buffer;
 
-        if((nrdargs->RDArgs->RDA_Source.CS_Buffer = ptr = AllocVec(num+1, MEMF_ANY)))
+        if(ptr)
         {
           for(FileArgs = 0; FileArgs < MaxArgs; FileArgs++)
           {
@@ -409,13 +411,16 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       else
       {
         nrdargs->RDArgs->RDA_Source.CS_Length = 1;
-        if((nrdargs->RDArgs->RDA_Source.CS_Buffer = ptr = AllocVec(1, MEMF_ANY)))
+        nrdargs->RDArgs->RDA_Source.CS_Buffer = AllocVec(1, MEMF_ANY);
+        ptr = (char *)nrdargs->RDArgs->RDA_Source.CS_Buffer;
+
+        if(ptr)
           *ptr = '\n';
       }
     }
 
     /*- call ReadArgs() -*/
-    nrdargs->RDArgs->RDA_ExtHelp = nrdargs->ExtHelp;
+    nrdargs->RDArgs->RDA_ExtHelp = (unsigned char *)nrdargs->ExtHelp;
     if(!(nrdargs->FreeArgs = ReadArgs(nrdargs->Template, nrdargs->Parameters, nrdargs->RDArgs)))
     {
       E(DBF_STARTUP, "ReadArgs() error");

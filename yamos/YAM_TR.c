@@ -452,7 +452,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         D(DBF_NET, "received DIGEST-MD5 challenge: `%s`", challenge);
 
         // lets base64 decode it
-        if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
+        if(base64decode(challenge, (unsigned char *)challenge, strlen(challenge)) <= 0)
           return FALSE;
 
         D(DBF_NET, "decoded  DIGEST-MD5 challenge: `%s`", challenge);
@@ -598,7 +598,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           //      ":", nonce-value, ":", cnonce-value }
           sprintf(buf, "%s:%s:%s", C->SMTP_AUTH_User, realm, C->SMTP_AUTH_Pass);
           MD5Init(&context);
-          MD5Update(&context, buf, strlen(buf));
+          MD5Update(&context, (unsigned char *)buf, strlen(buf));
           MD5Final(digest, &context);
           memcpy(A1, digest, 16);
           A1_len += sprintf(&A1[16], ":%s:%s", nonce, cnonce);
@@ -607,7 +607,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           // then we directly build the hexadecimal representation
           // HEX(H(A1))
           MD5Init(&context);
-          MD5Update(&context, A1, A1_len);
+          MD5Update(&context, (unsigned char *)A1, A1_len);
           MD5Final((UBYTE *)digest_hex, &context);
           sprintf(A1, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                               digest_hex[2], digest_hex[3]);
@@ -622,7 +622,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           // and also directly build the hexadecimal representation
           // HEX(H(A2))
           MD5Init(&context);
-          MD5Update(&context, A2, strlen(A2));
+          MD5Update(&context, (unsigned char *)A2, strlen(A2));
           MD5Final((UBYTE *)digest_hex, &context);
           sprintf(A2, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                               digest_hex[2], digest_hex[3]);
@@ -640,7 +640,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
           //          nonce-value, ":", nc-value, ":",
           //          cnonce-value, ":", qop-value, ":", HEX(H(A2)) }))
           MD5Init(&context);
-          MD5Update(&context, buf2, strlen(buf2));
+          MD5Update(&context, (unsigned char *)buf2, strlen(buf2));
           MD5Final((UBYTE *)digest_hex, &context);
           sprintf(response, "%08lx%08lx%08lx%08lx", digest_hex[0], digest_hex[1],
                                                     digest_hex[2], digest_hex[3]);
@@ -665,7 +665,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
                 response);
 
         D(DBF_NET, "prepared challenge answer....: `%s`", challenge);
-        base64encode(buffer, challenge, strlen(challenge));
+        base64encode(buffer, (unsigned char *)challenge, strlen(challenge));
         D(DBF_NET, "encoded  challenge answer....: `%s`", buffer);
         strcat(buffer,"\r\n");
 
@@ -718,18 +718,18 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
         D(DBF_NET, "received CRAM-MD5 challenge: `%s`", challenge);
 
         // lets base64 decode it
-        if(base64decode(challenge, challenge, strlen(challenge)) <= 0)
+        if(base64decode(challenge, (unsigned char *)challenge, strlen(challenge)) <= 0)
           return FALSE;
 
         D(DBF_NET, "decoded  CRAM-MD5 challenge: `%s`", challenge);
 
         // compose the md5 challenge
-        hmac_md5(challenge, strlen(challenge), password, strlen(password), (char *)digest);
+        hmac_md5((unsigned char *)challenge, strlen(challenge), (unsigned char *)password, strlen(password), (unsigned char *)digest);
         sprintf(buf, "%s %08lx%08lx%08lx%08lx", login, digest[0], digest[1], digest[2], digest[3]);
 
         D(DBF_NET, "prepared CRAM-MD5 reponse..: `%s`", buf);
         // lets base64 encode the md5 challenge for the answer
-        base64encode(buffer, buf, strlen(buf));
+        base64encode(buffer, (unsigned char *)buf, strlen(buf));
         D(DBF_NET, "encoded  CRAM-MD5 reponse..: `%s`", buffer);
         strcat(buffer, "\r\n");
 
@@ -753,7 +753,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       {
          // prepare the username challenge
          D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_User);
-         base64encode(buffer, C->SMTP_AUTH_User, strlen(C->SMTP_AUTH_User));
+         base64encode(buffer, (unsigned char *)C->SMTP_AUTH_User, strlen(C->SMTP_AUTH_User));
          D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
          strcat(buffer,"\r\n");
 
@@ -766,7 +766,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
          {
             // prepare the password challenge
             D(DBF_NET, "prepared AUTH LOGIN challenge: `%s`", C->SMTP_AUTH_Pass);
-            base64encode(buffer, C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
+            base64encode(buffer, (unsigned char *)C->SMTP_AUTH_Pass, strlen(C->SMTP_AUTH_Pass));
             D(DBF_NET, "encoded  AUTH LOGIN challenge: `%s`", buffer);
             strcat(buffer,"\r\n");
 
@@ -804,7 +804,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
       len += sprintf(challenge+len, "%s", C->SMTP_AUTH_Pass);   // password
 
       // now we base64 encode this string and send it to the server
-      base64encode(buffer, challenge, len);
+      base64encode(buffer, (unsigned char *)challenge, len);
 
       // lets now form up the AUTH PLAIN command we are going to send
       // to the SMTP server for authorization purposes:
@@ -1851,7 +1851,7 @@ static int TR_ConnectPOP(int guilevel)
          // then we send the APOP command to authenticate via APOP
          strcat(buf, passwd);
          MD5Init(&context);
-         MD5Update(&context, buf, strlen(buf));
+         MD5Update(&context, (unsigned char *)buf, strlen(buf));
          MD5Final(digest, &context);
          sprintf(buf, "%s ", C->P3[pop]->User);
          for(j=strlen(buf), i=0; i<16; j+=2, i++) sprintf(&buf[j], "%02x", digest[i]);

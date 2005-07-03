@@ -1702,7 +1702,7 @@ HOOKPROTONHNO(WR_AddFileFunc, void, int *arg)
       {
          D(DBF_GUI, "choosen file: [%s] from drawer: [%s]", ar->fr_ArgList[i].wa_Name, ar->fr_Drawer);
 
-         strmfp(filename, ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
+         strmfp(filename, ar->fr_Drawer, (char *)ar->fr_ArgList[i].wa_Name);
          WR_AddFileToList(winnum, filename, NULL, FALSE);
       }
 
@@ -1723,8 +1723,8 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
 
    if (ReqFile(ASL_ATTACH, G->WR[winnum]->GUI.WI, GetStr(MSG_WR_AddFile), REQF_MULTISELECT, C->AttachDir, ""))
    {
-      strsfn(ar->fr_ArgList[0].wa_Name, NULL, NULL, arcname, NULL);
-      if (!*arcname) strsfn(ar->fr_ArgList[0].wa_Name, NULL, NULL, NULL, arcname);
+      strsfn((char *)ar->fr_ArgList[0].wa_Name, NULL, NULL, arcname, NULL);
+      if (!*arcname) strsfn((char *)ar->fr_ArgList[0].wa_Name, NULL, NULL, NULL, arcname);
       if (!StringRequest(arcname, SIZE_FILE, GetStr(MSG_WR_CreateArc), GetStr(MSG_WR_CreateArcReq), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, G->WR[winnum]->GUI.WI)) return;
       strmfp(filename, C->TempDir, arcname);
       sprintf(arcpath, strchr(filename, ' ') ? "\"%s\"" : "%s", filename);
@@ -1734,7 +1734,7 @@ HOOKPROTONHNO(WR_AddArchiveFunc, void, int *arg)
          {
 //            strmfp(filename, ar->fr_Drawer, ar->fr_ArgList[i].wa_Name);
 //            fprintf(tf->FP, strchr(filename, ' ') ? "\"%s\"\n" : "%s\n", filename);
-            fprintf(tf->FP, strchr(ar->fr_ArgList[i].wa_Name, ' ') ? "\"%s\"\n" : "%s\n", ar->fr_ArgList[i].wa_Name);
+            fprintf(tf->FP, strchr((char *)ar->fr_ArgList[i].wa_Name, ' ') ? "\"%s\"\n" : "%s\n", ar->fr_ArgList[i].wa_Name);
          }
          fclose(tf->FP); tf->FP = NULL;
       }
@@ -2088,7 +2088,7 @@ void WR_App(int winnum, struct AppMessage *amsg)
    {
       ap = &amsg->am_ArgList[i];
       NameFromLock(ap->wa_Lock, buf, SIZE_PATHFILE);
-      AddPart(buf, ap->wa_Name, SIZE_PATHFILE);
+      AddPart(buf, (char *)ap->wa_Name, SIZE_PATHFILE);
       if (!mode)
       {
          FILE *fh;

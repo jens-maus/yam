@@ -271,9 +271,9 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
 
       ErrReq.es_StructSize   = sizeof(struct EasyStruct);
       ErrReq.es_Flags        = 0;
-      ErrReq.es_Title        = title;
-      ErrReq.es_TextFormat   = reqtxt;
-      ErrReq.es_GadgetFormat = gadgets;
+      ErrReq.es_Title        = (unsigned char *)title;
+      ErrReq.es_TextFormat   = (unsigned char *)reqtxt;
+      ErrReq.es_GadgetFormat = (unsigned char *)gadgets;
 
       result = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
     }
@@ -891,7 +891,7 @@ void SParse(char *s)
    {
       for (n = 0; n != PNum; n++) ctr[n] = 0;
 
-      tp = s;
+      tp = (unsigned char *)s;
 
       do
       {
@@ -996,7 +996,7 @@ BOOL LoadParsers(void)
             FILE *fp;
             char file[SIZE_PATHFILE];
 
-            strmfp(file, dir, ead->ed_Name);
+            strmfp(file, dir, (char *)ead->ed_Name);
 
             if((fp = fopen(file, "rb")))
             {
@@ -1007,9 +1007,9 @@ BOOL LoadParsers(void)
                 if(isFlagSet(ead->ed_Prot, FIBF_PURE))
                 {
                   char *temp;
-                  temp = PPtr[PNum];
+                  temp = (char *)PPtr[PNum];
                   PPtr[PNum] = PPtr[0];
-                  PPtr[0] = temp;
+                  PPtr[0] = (unsigned char *)temp;
                 }
 
                 PNum++;
@@ -2040,7 +2040,7 @@ BOOL DeleteMailDir(char *dir, BOOL isroot)
           do
           {
             BOOL isdir = isDrawer(ead->ed_Type);
-            char *filename = ead->ed_Name;
+            char *filename = (char *)ead->ed_Name;
             char fname[SIZE_PATHFILE];
 
             strmfp(fname, dir, filename);
@@ -2684,9 +2684,9 @@ BOOL DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType mode
    dt.dat_Stamp   = *date;
    dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
    dt.dat_Flags   = 0; // perhaps later we can add Weekday substitution
-   dt.dat_StrDate = datestr;
-   dt.dat_StrTime = timestr;
-   dt.dat_StrDay  = daystr;
+   dt.dat_StrDate = (unsigned char *)datestr;
+   dt.dat_StrTime = (unsigned char *)timestr;
+   dt.dat_StrDay  = (unsigned char *)daystr;
 
    // now we check wheter we have to convert the datestamp to a specific TZ or not
    if(tzc != TZC_NONE)
@@ -2817,7 +2817,7 @@ long DateStamp2Long(struct DateStamp *date)
    memset(&dt, 0, sizeof(struct DateTime));
    dt.dat_Stamp   = *date;
    dt.dat_Format  = FORMAT_USA;
-   dt.dat_StrDate = datestr;
+   dt.dat_StrDate = (unsigned char *)datestr;
 
    DateToStr(&dt);
    s = Trim(datestr);
@@ -3663,7 +3663,7 @@ BOOL EditorToFile(Object *editor, char *file, struct TranslationTable *tt)
     {
       unsigned char *p;
 
-      for(p = text; *p; ++p)
+      for(p = (unsigned char *)text; *p; ++p)
         *p = tt->Table[*p];
     }
 
@@ -3983,21 +3983,24 @@ Object *MakeNumeric(int min, int max, BOOL percent)
 ///
 /// MakeMenuitem
 //  Creates a menu item from a catalog string
-Object *MakeMenuitem(const UBYTE *str, ULONG ud)
+Object *MakeMenuitem(const char *str, ULONG ud)
 {
-   if (str == NULL) return (MenuitemObject, MUIA_Menuitem_Title, NM_BARLABEL, End);
+  if(str == NULL)
+    return MenuitemObject,
+             MUIA_Menuitem_Title, NM_BARLABEL,
+           End;
 
-   if (str[1] == '\0')
-      return (MenuitemObject,
-         MUIA_Menuitem_Title, str+2,
-         MUIA_Menuitem_Shortcut, str,
-         MUIA_UserData, ud,
-         End);
-   else
-      return (MenuitemObject,
-         MUIA_Menuitem_Title, str,
-         MUIA_UserData, ud,
-         End);
+  if(str[1] == '\0')
+    return MenuitemObject,
+             MUIA_Menuitem_Title,    str+2,
+             MUIA_Menuitem_Shortcut, str,
+             MUIA_UserData,          ud,
+           End;
+
+  return MenuitemObject,
+           MUIA_Menuitem_Title, str,
+           MUIA_UserData,       ud,
+         End;
 }
 ///
 /// SetupToolbar
@@ -4281,16 +4284,19 @@ void SaveLayout(BOOL permanent)
 //  Converts input event to key code
 ULONG ConvertKey(struct IntuiMessage *imsg)
 {
-   struct InputEvent event;
-   UBYTE code = 0;
-   event.ie_NextEvent    = NULL;
-   event.ie_Class        = IECLASS_RAWKEY;
-   event.ie_SubClass     = 0;
-   event.ie_Code         = imsg->Code;
-   event.ie_Qualifier    = imsg->Qualifier;
-   event.ie_EventAddress = (APTR *) *((ULONG *)imsg->IAddress);
-   MapRawKey(&event, &code, 1, NULL);
-   return code;
+  struct InputEvent event;
+  unsigned char code = 0;
+
+  event.ie_NextEvent    = NULL;
+  event.ie_Class        = IECLASS_RAWKEY;
+  event.ie_SubClass     = 0;
+  event.ie_Code         = imsg->Code;
+  event.ie_Qualifier    = imsg->Qualifier;
+  event.ie_EventAddress = (APTR *) *((ULONG *)imsg->IAddress);
+
+  MapRawKey(&event, (STRPTR)&code, 1, NULL);
+
+  return code;
 }
 ///
 /// isChildOfGroup()
@@ -4721,7 +4727,7 @@ void DisplayAppIconStatistics(void)
     //     hurt other compilers
     // 2.) Using "zero" as lock parameter avoids a header compatibility
     //     issue (old: "struct FileLock *"; new: "BPTR")
-    G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, TAG_DONE);
+    G->AppIcon = AddAppIcon(0, 0, (unsigned char *)apptit, G->AppPort, 0, dobj, TAG_DONE);
   }
 }
 
@@ -5029,50 +5035,84 @@ char *IdentifyFile(char *fname)
 //  Load a translation table into memory
 BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
 {
-   FILE *fp;
-   if (*tt) free(*tt);
-   *tt = NULL;
-   if (!file || !*file) return FALSE;
-   if (!(*tt = calloc(1,sizeof(struct TranslationTable)))) return FALSE;
-   if ((fp = fopen(file, "r")))
-   {
-      UBYTE buf[SIZE_DEFAULT], *p;
-      int i;
-      for (i = 0; i < 256; i++) (*tt)->Table[i] = (UBYTE)i;
-      MyStrCpy((*tt)->File, file);
-      fgets(buf, SIZE_DEFAULT, fp);
-      if (!strncmp(buf, "YCT1", 4))
+  FILE *fp;
+  if(*tt)
+    free(*tt);
+  *tt = NULL;
+
+  if(!file || !*file)
+    return FALSE;
+
+  if(!(*tt = calloc(1,sizeof(struct TranslationTable))))
+    return FALSE;
+
+  if((fp = fopen(file, "r")))
+  {
+    UBYTE buf[SIZE_DEFAULT], *p;
+    int i;
+
+    for(i = 0; i < 256; i++)
+      (*tt)->Table[i] = (UBYTE)i;
+
+    MyStrCpy((*tt)->File, file);
+    fgets((char *)buf, SIZE_DEFAULT, fp);
+
+    if(!strncmp((char *)buf, "YCT1", 4))
+    {
+      fgets((*tt)->Name, SIZE_DEFAULT, fp);
+
+      if((p = (UBYTE *)strchr((*tt)->Name, '\n')))
+        *p = '\0';
+
+      while(fgets((char *)buf, SIZE_DEFAULT, fp))
       {
-         fgets((*tt)->Name, SIZE_DEFAULT, fp);
-         if ((p = strchr((*tt)->Name,'\n'))) *p = 0;
-         while (fgets(buf, SIZE_DEFAULT, fp))
-            if (!strnicmp(buf, "from", 4))
-            {
-              MyStrCpy((*tt)->SourceCharset, Trim(&buf[5]));
-            }
-            else if (!strnicmp(buf, "to", 2))
-            {
-              MyStrCpy((*tt)->DestCharset, Trim(&buf[3]));
-            }
-            else if (!strnicmp(buf, "header", 6)) (*tt)->Header = TRUE;
-            else if (!strnicmp(buf, "author", 6));
-            else if (strchr(buf, '='))
-            {
-               int source, dest;
-               p = buf;
-               if (*p == '$') sscanf(&p[1], "%x", &source); else source = (int)*p;
-               while (*p++ != '=');
-               if (*p == '$') sscanf(&p[1], "%x", &dest); else dest = (int)*p;
-               if (source >= 0 && source <= 0xFF && dest >= 0 && dest <= 0xFF) (*tt)->Table[source] = (UBYTE)dest;
-            }
-         fclose(fp);
-         return TRUE;
+        if(!strnicmp((char *)buf, "from", 4))
+        {
+          MyStrCpy((*tt)->SourceCharset, Trim((char *)&buf[5]));
+        }
+        else if(!strnicmp((char *)buf, "to", 2))
+        {
+          MyStrCpy((*tt)->DestCharset, Trim((char *)&buf[3]));
+        }
+        else if(!strnicmp((char *)buf, "header", 6))
+          (*tt)->Header = TRUE;
+        else if(!strnicmp((char *)buf, "author", 6))
+          ; // void
+        else if(strchr((char *)buf, '='))
+        {
+          int source, dest;
+
+          p = buf;
+          if(*p == '$')
+            sscanf((char *)&p[1], "%x", &source);
+          else
+            source = (int)*p;
+
+          while(*p++ != '=');
+
+          if(*p == '$')
+            sscanf((char *)&p[1], "%x", &dest);
+          else
+            dest = (int)*p;
+
+          if(source >= 0 && source <= 0xFF && dest >= 0 && dest <= 0xFF)
+            (*tt)->Table[source] = (UBYTE)dest;
+        }
       }
+
       fclose(fp);
-   }
-   ER_NewError(GetStr(MSG_ER_ErrorTTable), file, NULL);
-   free(*tt); *tt = NULL;
-   return FALSE;
+
+      return TRUE;
+    }
+
+    fclose(fp);
+  }
+
+  ER_NewError(GetStr(MSG_ER_ErrorTTable), file, NULL);
+  free(*tt);
+  *tt = NULL;
+
+  return FALSE;
 }
 ///
 /// GetRealPath

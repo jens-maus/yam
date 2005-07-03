@@ -1306,7 +1306,7 @@ static void Initialise(BOOL hidden)
    CheckMCC(MUIC_Toolbar, 15, 8, TRUE);
 
    // Lets check for the correct TextEditor.mcc version
-   CheckMCC(MUIC_TextEditor, 15, 13, TRUE);
+   CheckMCC(MUIC_TextEditor, 15, 14, TRUE);
 
    // Lets check for the correct BetterString.mcc version
    CheckMCC(MUIC_BetterString, 11, 6, TRUE);
@@ -1743,9 +1743,9 @@ int main(int argc, char **argv)
         ErrReq.es_Flags      = 0;
 
         ErrReq.es_Title        = (unsigned char *)"YAM Startup Error";
-        ErrReq.es_TextFormat   = "This version of YAM requires at least\n"
-                                 "an AmigaOS4 kernel version 51.4";
-        ErrReq.es_GadgetFormat = "Exit";
+        ErrReq.es_TextFormat   = (unsigned char *)"This version of YAM requires at least\n"
+                                                  "an AmigaOS4 kernel version 51.4";
+        ErrReq.es_GadgetFormat = (unsigned char *)"Exit";
 
         EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
 
@@ -1774,17 +1774,17 @@ int main(int argc, char **argv)
 
          if(EXPDATE <= ds.ds_Days)
          {
-           ErrReq.es_Title        = "YAM Developer Version Expired!";
-           ErrReq.es_TextFormat   = "This developer version of YAM has expired!\n\n"
-                                    "Please note that you may download a new, updated\n"
-                                    "version from the YAM nightly build page at:\n\n"
-                                    "http://nightly.yam.ch/\n\n"
-                                    "All developer versions will automatically expire\n"
-                                    "after a certian time interval. This is to insure\n"
-                                    "that no old versions are floating around causing\n"
-                                    "users to report bugs on old versions.\n\n"
-                                    "Thanks for your help in improving YAM!";
-           ErrReq.es_GadgetFormat = "Exit";
+           ErrReq.es_Title        = (unsigned char *)"YAM Developer Version Expired!";
+           ErrReq.es_TextFormat   = (unsigned char *)"This developer version of YAM has expired!\n\n"
+                                                     "Please note that you may download a new, updated\n"
+                                                     "version from the YAM nightly build page at:\n\n"
+                                                     "http://nightly.yam.ch/\n\n"
+                                                     "All developer versions will automatically expire\n"
+                                                     "after a certian time interval. This is to insure\n"
+                                                     "that no old versions are floating around causing\n"
+                                                     "users to report bugs on old versions.\n\n"
+                                                     "Thanks for your help in improving YAM!";
+           ErrReq.es_GadgetFormat = (unsigned char *)"Exit";
 
            DisplayBeep(NULL);
            EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
@@ -1794,21 +1794,21 @@ int main(int argc, char **argv)
 
          if(goon && !getenv("I_KNOW_YAM_IS_UNDER_DEVELOPMENT"))
          {
-           ErrReq.es_Title        = "YAM Developer Version Warning!";
-           ErrReq.es_TextFormat   = "This is an *internal* developer version and\n"
-                                    "not recommended or intended for public use.\n"
-                                    "It may contain bugs that can lead to any loss\n"
-                                    "of data and no regular support for this version\n"
-                                    "will be provided in any form.\n\n"
-                                    "In addition, this version will automatically\n"
-                                    "expire 30 days after its compilation date.\n\n"
-                                    "So if you're unsure and prefer to have a stable\n"
-                                    "installation instead of a possible dangerous\n"
-                                    "version, please consider to use the current\n"
-                                    "stable release version available from:\n\n"
-                                    "http://www.yam.ch/\n\n"
-                                    "Thanks for your help in improving YAM!";
-           ErrReq.es_GadgetFormat = "Go on|Exit";
+           ErrReq.es_Title        = (unsigned char *)"YAM Developer Version Warning!";
+           ErrReq.es_TextFormat   = (unsigned char *)"This is an *internal* developer version and\n"
+                                                     "not recommended or intended for public use.\n"
+                                                     "It may contain bugs that can lead to any loss\n"
+                                                     "of data and no regular support for this version\n"
+                                                     "will be provided in any form.\n\n"
+                                                     "In addition, this version will automatically\n"
+                                                     "expire 30 days after its compilation date.\n\n"
+                                                     "So if you're unsure and prefer to have a stable\n"
+                                                     "installation instead of a possible dangerous\n"
+                                                     "version, please consider to use the current\n"
+                                                     "stable release version available from:\n\n"
+                                                     "http://www.yam.ch/\n\n"
+                                                     "Thanks for your help in improving YAM!";
+           ErrReq.es_GadgetFormat = (unsigned char *)"Go on|Exit";
 
            DisplayBeep(NULL);
            if(!EasyRequestArgs(NULL, &ErrReq, NULL, NULL))
@@ -1877,7 +1877,7 @@ int main(int argc, char **argv)
       NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
       if(WBmsg && WBmsg->sm_NumArgs > 0)
       {
-        strncpy(G->ProgName, WBmsg->sm_ArgList[0].wa_Name, SIZE_FILE);
+        strncpy(G->ProgName, (char *)WBmsg->sm_ArgList[0].wa_Name, SIZE_FILE);
       }
       else
       {

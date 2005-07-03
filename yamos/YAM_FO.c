@@ -178,7 +178,7 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
 
       // for string folder search
       if (!nr) for (i = 1; i <= (int)*flist; i++)
-         if ((!Stricmp(arg, flist[i]->Name) && flist[i]->Type != FT_GROUP) ||
+         if ((!Stricmp((unsigned char *)arg, (unsigned char *)flist[i]->Name) && flist[i]->Type != FT_GROUP) ||
              (!stricmp(arg, "incoming")     && flist[i]->Type == FT_INCOMING) ||
              (!stricmp(arg, "outgoing")     && flist[i]->Type == FT_OUTGOING) ||
              (!stricmp(arg, "sent")         && flist[i]->Type == FT_SENT) ||
@@ -834,15 +834,27 @@ static BOOL FO_EnterPassword(struct Folder *fo)
 {
    char passwd[SIZE_PASSWORD], passwd2[SIZE_PASSWORD];
 
-   for (*passwd = 0;;)
+   for(*passwd = 0;;)
    {
       *passwd = *passwd2 = 0;
-      if (!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_Folder), GetStr(MSG_CO_ChangeFolderPass), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->FO->GUI.WI)) return FALSE;
-      if (*passwd) if (!StringRequest(passwd2, SIZE_PASSWORD, GetStr(MSG_Folder), GetStr(MSG_CO_RetypePass), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->FO->GUI.WI)) return FALSE;
-      if (!Stricmp(passwd, passwd2)) break; else DisplayBeep(NULL);
+
+      if(!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_Folder), GetStr(MSG_CO_ChangeFolderPass), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->FO->GUI.WI))
+        return FALSE;
+
+      if(*passwd && !StringRequest(passwd2, SIZE_PASSWORD, GetStr(MSG_Folder), GetStr(MSG_CO_RetypePass), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->FO->GUI.WI))
+        return FALSE;
+
+      if(!Stricmp((unsigned char *)passwd, (unsigned char *)passwd2))
+        break;
+      else
+        DisplayBeep(NULL);
    }
-   if (!*passwd) return FALSE;
+
+   if(!*passwd)
+     return FALSE;
+
    strcpy(fo->Password, passwd);
+
    return TRUE;
 }
 

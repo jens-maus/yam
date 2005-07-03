@@ -133,17 +133,26 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder);
 //  Asks user for folder password
 BOOL MA_PromptFolderPassword(struct Folder *fo, APTR win)
 {
-   char passwd[SIZE_PASSWORD], prompt[SIZE_LARGE];
-   struct User *user = US_GetCurrentUser();
+  char passwd[SIZE_PASSWORD], prompt[SIZE_LARGE];
+  struct User *user = US_GetCurrentUser();
 
-   if (isFreeAccess(fo)) return TRUE;
-   if (!Stricmp(fo->Password, user->Password)) return TRUE;
-   sprintf(prompt, GetStr(MSG_MA_GetFolderPass), fo->Name);
-   do {
-      *passwd = 0;
-      if (!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_Folder), prompt, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, win)) return FALSE;
-   } while (Stricmp(passwd, fo->Password));
-   return TRUE;
+  if(isFreeAccess(fo))
+    return TRUE;
+
+  if(!Stricmp((unsigned char *)fo->Password, (unsigned char *)user->Password))
+    return TRUE;
+
+  sprintf(prompt, GetStr(MSG_MA_GetFolderPass), fo->Name);
+
+  do
+  {
+    *passwd = '\0';
+    if(!StringRequest(passwd, SIZE_PASSWORD, GetStr(MSG_Folder), prompt, GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, win))
+      return FALSE;
+  }
+  while(Stricmp((unsigned char *)passwd, (unsigned char *)fo->Password));
+
+  return TRUE;
 }
 
 ///
@@ -269,7 +278,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                mail.mflags = cmail.mflags;
                mail.sflags = cmail.sflags;
                setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn`t loaded
-               strcpy(mail.MailFile, cmail.mailFile);
+               strcpy(mail.MailFile, (char *)cmail.mailFile);
                mail.Date = cmail.date;
                mail.transDate = cmail.transDate;
                mail.cMsgID = cmail.cMsgID;
@@ -366,7 +375,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
          mail->To.Address, mail->To.RealName,
          mail->ReplyTo.Address, mail->ReplyTo.RealName);
 
-      strcpy(cmail.mailFile, mail->MailFile);
+      strcpy((char *)cmail.mailFile, mail->MailFile);
       cmail.date = mail->Date;
       cmail.transDate = mail->transDate;
       cmail.sflags = mail->sflags;
@@ -828,7 +837,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     newDate.tv_micro = 0;
 
     // encode this date as a base64 encoded string
-    base64encode(dateFilePart, (char *)&newDate, sizeof(struct timeval));
+    base64encode(dateFilePart, (unsigned char *)&newDate, sizeof(struct timeval));
   }
 
   // as the dateFilePart may contain slashes "/" we have to replace them
@@ -882,7 +891,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
           // search for files matching the dateFilePart
           sprintf(matchPattern, "%s.#?", dateFilePart);
           ParsePatternNoCase(matchPattern, pattern, 16*2+2);
-          eac->eac_MatchString = pattern;
+          eac->eac_MatchString = (unsigned char *)pattern;
 
           if((eabuffer = malloc(SIZE_EXALLBUF)))
           {
@@ -985,7 +994,7 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
   GetSysTimeUTC(&curDate);
 
   // encode this date as a base64 encoded string
-  base64encode(dateFilePart, (char *)&curDate, sizeof(struct timeval));
+  base64encode(dateFilePart, (unsigned char *)&curDate, sizeof(struct timeval));
 
   // as the dateFilePart may contain slashes "/" we have to replace them
   // with "-" chars to don't drive the filesystem crazy :)
@@ -1529,7 +1538,7 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
           *ptr = '/';
 
         // lets decode the base64 encoded timestring in a temporary buffer
-        if(base64decode(timebuf, dateFilePart, 12) <= 0)
+        if(base64decode(timebuf, (unsigned char *)dateFilePart, 12) <= 0)
         {
           W(DBF_FOLDER, "WARNING: failure in decoding the encoded date from mailfile: '%s'", mail->MailFile);
 
@@ -1722,7 +1731,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
             {
               // check wheter the filename is a valid mailfilename
               char fbuf[SIZE_PATHFILE+1];
-              char *fname = ead->ed_Name;
+              char *fname = (char *)ead->ed_Name;
               BOOL validMailFile = isValidMailFile(fname);
 
               if(validMailFile == FALSE)
@@ -2000,8 +2009,8 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
    sprintf(ttime, "%02d:%02d:%02d", hour, min, sec);
    dt.dat_Format  = FORMAT_USA;
    dt.dat_Flags   = 0;
-   dt.dat_StrDate = (STRPTR)tdate;
-   dt.dat_StrTime = (STRPTR)ttime;
+   dt.dat_StrDate = (unsigned char *)tdate;
+   dt.dat_StrTime = (unsigned char *)ttime;
    if(!StrToDate(&dt))
      return FALSE;
 

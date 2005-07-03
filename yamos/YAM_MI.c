@@ -428,7 +428,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
     // now everything should be prepared so that we can call the
     // base64 encoding routine and let it convert our inbuffer to
     // the apropiate outbuffer
-    encoded = base64encode(outbuffer, inbuffer, read);
+    encoded = base64encode(outbuffer, (unsigned char *)inbuffer, read);
     sumencoded += encoded;
 
     // if the base64encoding routine returns <= 0 then there is obviously
@@ -617,7 +617,7 @@ long base64decode_file(FILE *in, FILE *out,
     // string, we can call the base64decode() function to finally
     // decode the string
     if(read <= 0 ||
-       (outLength = base64decode(outbuffer, inbuffer, read)) <= 0)
+       (outLength = base64decode(outbuffer, (unsigned char *)inbuffer, read)) <= 0)
     {
       E(DBF_MIME, "error on decoding: %ld %ld", read, outLength);
 
@@ -782,7 +782,7 @@ long qpencode_file(FILE *in, FILE *out)
         // 1) it is an unsafe safe
         // 2) it is an upcoming "From " at the start of a line
       else if(!is_qpsafe(c) ||
-              (last = -1 && c == 'F' && strncmp(iptr, "rom ", 4) == 0))
+              (last = -1 && c == 'F' && strncmp((char *)iptr, "rom ", 4) == 0))
       {
 
         // before we can encode the data we have to check
@@ -889,7 +889,7 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
   unsigned char *iptr;
   unsigned char *optr = outbuffer;
   unsigned char c;
-  size_t read;
+  size_t read = 0;
   size_t next_unget = 0;
   long decoded = 0;
   int result = 0;
@@ -1282,11 +1282,11 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
   // the starting "begin XXX" line
   do
   {
-    if(fgets(inbuffer, UUDEC_IBUF, in) != 0)
+    if(fgets((char *)inbuffer, UUDEC_IBUF, in) != 0)
     {
       // check if this line start with "begin " and if so
       // break out and continue decoding the real data
-      if(strncmp(inbuffer, "begin ", 6) == 0)
+      if(strncmp((char *)inbuffer, "begin ", 6) == 0)
         break;
     }
     else if(feof(in) != 0)
@@ -1396,7 +1396,7 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
             cptr = iptr;
 
             // check again
-            if(read < 3 || strncmp(cptr, "end", 3) != 0)
+            if(read < 3 || strncmp((char *)cptr, "end", 3) != 0)
             {
               // if we end up here then there isn't enough
               // data left for checking the finalizing "end"
@@ -2123,7 +2123,7 @@ static int rfc2047_decode_int(const char *text,
         // lets decode it.
         case 'b':
         {
-          int res = base64decode(enctext, enctext, strlen(enctext));
+          int res = base64decode(enctext, (unsigned char *)enctext, strlen(enctext));
           if(res > 0)
             enctext[res] = '\0';
           else

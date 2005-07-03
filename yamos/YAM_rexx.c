@@ -143,7 +143,7 @@ static struct RexxMsg *CreateRexxCommand( struct RexxHost *host, char *buff, BPT
    }
 
    if( (rexx_command_message->rm_Args[0] =
-      (APTR)CreateArgstring((UBYTE *)buff, (ULONG)strlen(buff))) == NULL )
+      (APTR)CreateArgstring(buff, strlen(buff))) == NULL )
    {
       DeleteRexxMsg(rexx_command_message);
       return( NULL );
@@ -713,7 +713,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
    if( *cargstr )
    {
-      host->rdargs->RDA_Source.CS_Buffer = arg;
+      host->rdargs->RDA_Source.CS_Buffer = (unsigned char *)arg;
       host->rdargs->RDA_Source.CS_Length = strlen(arg);
       host->rdargs->RDA_Source.CS_CurChr = 0;
       host->rdargs->RDA_DAList = 0;

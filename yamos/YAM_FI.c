@@ -99,8 +99,8 @@ static BOOL FI_MatchString(struct Search *search, char *string)
    {
       case 0: return (BOOL)(search->CaseSens ? MatchPattern(search->Pattern, string) : MatchPatternNoCase(search->Pattern, string));
       case 1: return (BOOL)(search->CaseSens ? !MatchPattern(search->Pattern, string) : !MatchPatternNoCase(search->Pattern, string));
-      case 2: return (BOOL)(search->CaseSens ? strcmp(string, search->Match) < 0 : Stricmp(string, search->Match) < 0);
-      case 3: return (BOOL)(search->CaseSens ? strcmp(string, search->Match) > 0 : Stricmp(string, search->Match) > 0);
+      case 2: return (BOOL)(search->CaseSens ? strcmp(string, search->Match) < 0 : Stricmp((unsigned char *)string, (unsigned char *)search->Match) < 0);
+      case 3: return (BOOL)(search->CaseSens ? strcmp(string, search->Match) > 0 : Stricmp((unsigned char *)string, (unsigned char *)search->Match) > 0);
    }
 
    return FALSE;
@@ -385,8 +385,8 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
         char *time;
         search->Fast = FS_DATE;
         search->DT.dat_Format = FORMAT_DEF;
-        search->DT.dat_StrDate = match;
-        search->DT.dat_StrTime = (time = strchr(match,' ')) ? time+1 : "00:00:00";
+        search->DT.dat_StrDate = (unsigned char *)match;
+        search->DT.dat_StrTime = (time = strchr(match,' ')) ? (unsigned char *)time+1 : (unsigned char *)"00:00:00";
 
         if(!StrToDate(&(search->DT)))
         {

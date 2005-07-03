@@ -316,7 +316,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
   int mcounter;
 
   // modify the transferDate part
-  base64encode(dateFilePart, (char *)&mail->transDate, sizeof(struct timeval));
+  base64encode(dateFilePart, (unsigned char *)&mail->transDate, sizeof(struct timeval));
 
   // for proper handling we have to remove an eventually existing "/" which
   // could be part of a base64 encoding
@@ -2631,8 +2631,8 @@ MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 /// MA_FindAddressHook()
 HOOKPROTONHNO(MA_FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
-   struct ABEntry *entry = (struct ABEntry *)msg->UserData;
-   return Stricmp(msg->User, entry->Address);
+  struct ABEntry *entry = (struct ABEntry *)msg->UserData;
+  return Stricmp((unsigned char *)msg->User, (unsigned char *)entry->Address);
 }
 MakeHook(MA_FindAddressHook, MA_FindAddressFunc);
 

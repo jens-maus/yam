@@ -258,7 +258,7 @@ static Object *MakeTransPop(Object **string, BOOL output,  char *shortcut)
                 char file[SIZE_PATHFILE];
                 struct TranslationTable *tt = NULL;
 
-                strmfp(file, dir, ead->ed_Name);
+                strmfp(file, dir, (char *)ead->ed_Name);
                 if(LoadTranslationTable(&tt, file))
                 {
                   if((output && *tt->DestCharset) || (!output && *tt->SourceCharset))

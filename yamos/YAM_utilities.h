@@ -341,7 +341,7 @@ Object * MakeCheck(char *label);
 Object * MakeCheckGroup(Object **check, char *label);
 Object * MakeCycle(char **labels, char *label);
 Object * MakeInteger(int maxlen, char *label);
-Object * MakeMenuitem(const UBYTE *str, ULONG ud);
+Object * MakeMenuitem(const char *str, ULONG ud);
 Object * MakeNumeric(int min, int max, BOOL percent);
 Object * MakePassString(char *label);
 Object * MakePGPKeyList(Object **st, BOOL secret, char *label);
