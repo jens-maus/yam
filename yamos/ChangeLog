@@ -7,6 +7,12 @@ $Source$
 
 2005-07-03  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_FO.c: fixed bug #1231670 where upon a folder move operation YAM
+      always tried to move the .index file and throwed a warning if it
+      couldn't move that file aswell. However, due to how YAM manages
+      the .index file generation, an .index file not always exists. Now
+      YAM takes respect of that as well as moving an eventually existing
+      .fimage folder image aswell.
     * misc: fixed a whole bunch of GCC4 relevant compiler warnings about
       incorrect pointer signedness.
     * YAM_UT.c: fixed a minor bug in the text quoting functions where YAM

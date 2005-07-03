@@ -804,22 +804,36 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
 
    if(success)
    {
+      // now we try to move an existing .index file
       MyStrCpy(srcbuf, GetFolderDir(oldfo));
       AddPart(srcbuf, ".index", sizeof(srcbuf));
       MyStrCpy(dstbuf, GetFolderDir(fo));
       AddPart(dstbuf, ".index", sizeof(dstbuf));
 
-      if(!MoveFile(srcbuf, dstbuf))
+      if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
       {
         success = FALSE;
       }
       else
       {
-        // if we were able to successfully move all files
-        // we can also delete the source directory. However,
-        // we are NOT doing any error checking here as the
-        // source may be a VOLUME and as such not deleteable
-        DeleteMailDir(GetFolderDir(oldfo), FALSE);
+        // now we try to mvoe the .fimage file aswell
+        MyStrCpy(srcbuf, GetFolderDir(oldfo));
+        AddPart(srcbuf, ".fimage", sizeof(srcbuf));
+        MyStrCpy(dstbuf, GetFolderDir(fo));
+        AddPart(dstbuf, ".fimage", sizeof(dstbuf));
+
+        if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
+        {
+          success = FALSE;
+        }
+        else
+        {
+          // if we were able to successfully move all files
+          // we can also delete the source directory. However,
+          // we are NOT doing any error checking here as the
+          // source may be a VOLUME and as such not deleteable
+          DeleteMailDir(GetFolderDir(oldfo), FALSE);
+        }
       }
    }
 
