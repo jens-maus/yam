@@ -1117,7 +1117,7 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
             W(DBF_FOLDER, "WARNING: unknown header encoding found");
 
             // signal an error but continue.
-            ER_NewError(GetStr(MSG_ER_UnknownHeaderEnc), hdrContents, NULL);
+            ER_NewError(GetStr(MSG_ER_UnknownHeaderEnc), hdrContents);
           }
           else if(len == -3)
           {

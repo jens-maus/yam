@@ -380,7 +380,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
 
       return TRUE;
    }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
+   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
 
    return FALSE;
 }
@@ -771,7 +771,7 @@ BOOL FO_SaveTree(char *fname)
 
       fclose(fh);
    }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
+   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
 
    return success;
 }

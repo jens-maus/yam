@@ -431,7 +431,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
    }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
+   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
 }
 
 ///

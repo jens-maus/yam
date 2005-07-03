@@ -297,7 +297,7 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
       str = (char *)xget(gui->ST_ALIAS, MUIA_String_Contents);
       if(!*str)
       {
-        ER_NewError(GetStr(MSG_ER_ErrorNoAlias), NULL, NULL);
+        ER_NewError(GetStr(MSG_ER_ErrorNoAlias));
         return;
       }
    }
@@ -306,14 +306,14 @@ HOOKPROTONHNO(EA_Okay, void, int *arg)
       str = (char *)xget(gui->ST_ADDRESS, MUIA_String_Contents);
       if(!*str)
       {
-        ER_NewError(GetStr(MSG_ER_ErrorNoAddress), NULL, NULL);
+        ER_NewError(GetStr(MSG_ER_ErrorNoAddress));
         return;
       }
 
       str = (char *)xget(gui->ST_BIRTHDAY, MUIA_String_Contents);
       if(*str && !(bdate = AB_CompressBD(str)))
       {
-        ER_NewError(GetStr(MSG_ER_ErrorDOBformat), NULL, NULL);
+        ER_NewError(GetStr(MSG_ER_ErrorDOBformat));
         return;
       }
    }
@@ -458,12 +458,12 @@ HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
                }
             }
             fclose(db);
-            if (!success) ER_NewError(GetStr(MSG_ER_NotInGallery), NULL, NULL);
+            if (!success) ER_NewError(GetStr(MSG_ER_NotInGallery));
          }
          BusyEnd();
          TR_CloseTCPIP();
       }
-      else ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL);
+      else ER_NewError(GetStr(MSG_ER_NoTCP));
    }
 }
 MakeStaticHook(EA_DownloadPhotoHook, EA_DownloadPhotoFunc);

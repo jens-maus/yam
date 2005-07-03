@@ -1419,7 +1419,7 @@ HOOKPROTONHNONP(CO_ImportCTypesFunc, void)
             set(lv, MUIA_List_Quiet, FALSE);
             DoMethod(lv, MUIM_List_Redraw, MUIV_List_Redraw_All);
          }
-         else ER_NewError(GetStr(MSG_ER_CantOpenFile), fname, NULL);
+         else ER_NewError(GetStr(MSG_ER_CantOpenFile), fname);
       }
 }
 MakeStaticHook(CO_ImportCTypesHook, CO_ImportCTypesFunc);

@@ -2230,7 +2230,7 @@ BOOL CreateDirectory(char *dir)
          return TRUE;
       }
    }
-   if (G->MA) ER_NewError(GetStr(MSG_ER_CantCreateDir), dir, NULL);
+   if (G->MA) ER_NewError(GetStr(MSG_ER_CantCreateDir), dir);
    return FALSE;
 }
 ///
@@ -4496,7 +4496,7 @@ int PGPCommand(char *progname, char *options, int flags)
       Close(fhi);
    }
    if (error > 0 && !hasNoErrorsFlag(flags)) ER_NewError(GetStr(MSG_ER_PGPreturnsError), command, PGPLOGFILE);
-   if (error < 0) ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath, NULL);
+   if (error < 0) ER_NewError(GetStr(MSG_ER_PGPnotfound), C->PGPCmdPath);
    if (!error && !hasKeepLogFlag(flags)) DeleteFile(PGPLOGFILE);
 
    RETURN(error);
@@ -5108,7 +5108,7 @@ BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
     fclose(fp);
   }
 
-  ER_NewError(GetStr(MSG_ER_ErrorTTable), file, NULL);
+  ER_NewError(GetStr(MSG_ER_ErrorTTable), file);
   free(*tt);
   *tt = NULL;
 

@@ -577,7 +577,7 @@ static struct Mail *MA_MoveCopySingle(struct Mail *mail, int pos, struct Folder 
       switch(result)
       {
         case -2:
-          ER_NewError(GetStr(MSG_ER_XPKUSAGE), mail->MailFile, NULL);
+          ER_NewError(GetStr(MSG_ER_XPKUSAGE), mail->MailFile);
         break;
 
         default:
@@ -1031,7 +1031,7 @@ int MA_NewEdit(struct Mail *mail, int flags, Object *readWindow)
 
          if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
          {
-            ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
+            ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
             fclose(out);
             DisposeModulePush(&G->WR[winnum]);
             return winnum;
@@ -1193,7 +1193,7 @@ int MA_NewForward(struct Mail **mlist, int flags)
 
             if(!(email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE)))
             {
-              ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail), NULL);
+              ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, mail->Folder, mail));
               fclose(out);
               FreeStrBuf(rsub);
               DisposeModulePush(&G->WR[winnum]);
@@ -1294,7 +1294,7 @@ int MA_NewReply(struct Mail **mlist, int flags)
 
             if(!(email = MA_ExamineMail(folder, mail->MailFile, TRUE)))
             {
-              ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
+              ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
               fclose(out);
               DisposeModulePush(&G->WR[winnum]);
               FreeStrBuf(rto);
@@ -1996,7 +1996,8 @@ BOOL MA_SendMList(struct Mail **mlist)
       }
       TR_CloseTCPIP();
    }
-   else ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL);
+   else ER_NewError(GetStr(MSG_ER_NoTCP));
+
    MA_StartMacro(MACRO_POSTSEND, NULL);
    return success;
 }
@@ -2299,7 +2300,7 @@ HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
       strmfp(inname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
       if(!MA_ImportMessages(inname))
       {
-        ER_NewError(GetStr(MSG_ER_IMPORTMAIL), inname, NULL);
+        ER_NewError(GetStr(MSG_ER_IMPORTMAIL), inname);
       }
    }
 }
@@ -2480,13 +2481,13 @@ HOOKPROTONHNONP(MA_CheckVersionFunc, void)
                currver > thisver ? GetStr(MSG_MA_NewVersion) : GetStr(MSG_MA_NoNewVersion));
             if (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_CheckVersion), GetStr(MSG_MA_VersionReqOpt), buf)) GotoURL(C->SupportSite);
          }
-         else ER_NewError(GetStr(MSG_ER_CantOpenTempfile), tf->Filename, NULL);
+         else ER_NewError(GetStr(MSG_ER_CantOpenTempfile), tf->Filename);
       }
       CloseTempFile(tf);
       BusyEnd();
       TR_CloseTCPIP();
    }
-   else ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL);
+   else ER_NewError(GetStr(MSG_ER_NoTCP));
 }
 MakeStaticHook(MA_CheckVersionHook, MA_CheckVersionFunc);
 
@@ -2495,7 +2496,7 @@ MakeStaticHook(MA_CheckVersionHook, MA_CheckVersionFunc);
 //  Opens error message window
 HOOKPROTONHNONP(MA_ShowErrorsFunc, void)
 {
-   ER_NewError(NULL, NULL, NULL);
+   ER_NewError(NULL);
 }
 MakeStaticHook(MA_ShowErrorsHook, MA_ShowErrorsFunc);
 
@@ -2521,13 +2522,13 @@ BOOL MA_StartMacro(enum Macro num, char *param)
    {
       if (!(fh = Open(C->RX[num].UseConsole ? wtitle : "NIL:", MODE_NEWFILE)))
       {
-         ER_NewError(GetStr(MSG_ER_ErrorConsole), NULL, NULL);
+         ER_NewError(GetStr(MSG_ER_ErrorConsole));
          return FALSE;
       }
       if (!(sentrm = SendRexxCommand(G->RexxHost, command, fh)))
       {
          Close(fh);
-         ER_NewError(GetStr(MSG_ER_ErrorARexxScript), command, NULL);
+         ER_NewError(GetStr(MSG_ER_ErrorARexxScript), command);
          return FALSE;
       }
       if (C->RX[num].WaitTerm)

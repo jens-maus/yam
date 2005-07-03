@@ -725,7 +725,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 			result = TRUE;
 		}
 		else
-			ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), GetMailFile(NULL, folder, mail), NULL);
+			ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), GetMailFile(NULL, folder, mail));
 
 		BusyEnd();
 	}
@@ -734,7 +734,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 		// check first if the mail file exists and if not we have to exit with an error
 		if(!FileExists(mail->MailFile))
 		{
-			ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail), NULL);
+			ER_NewError(GetStr(MSG_ER_CantOpenFile), GetMailFile(NULL, folder, mail));
 		}
 	}
 
@@ -972,7 +972,7 @@ DECLARE(SaveDecryptedMail)
 				}
       }
 			else
-				ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
+				ER_NewError(GetStr(MSG_ER_CreateMailError));
 		}
 	}
 

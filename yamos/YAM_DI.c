@@ -108,7 +108,7 @@ static void DI_Save(void)
       G->DI->Modified = FALSE;
       BusyEnd();
    }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), G->DI_Filename, NULL);
+   else ER_NewError(GetStr(MSG_ER_CantCreateFile), G->DI_Filename);
 }
 
 ///

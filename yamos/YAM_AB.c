@@ -444,7 +444,7 @@ BOOL AB_LoadTree(char *fname, BOOL append, BOOL sorted)
    }
    else
    {
-      ER_NewError(GetStr(MSG_ER_ADDRBOOKLOAD), fname, NULL);
+      ER_NewError(GetStr(MSG_ER_ADDRBOOKLOAD), fname);
       if(fh) fclose(fh);
       return FALSE;
    }
@@ -496,7 +496,7 @@ BOOL AB_SaveTree(char *fname)
       AppendLogVerbose(70, GetStr(MSG_LOG_SavingABook), fname, "", "", "");
       return TRUE;
    }
-   ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
+   ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
    return FALSE;
 }
 

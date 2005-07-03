@@ -92,7 +92,7 @@ static void US_SaveUsers(void)
       fclose(fh);
       AppendLogVerbose(62, GetStr(MSG_LOG_SavingUsers), "", "", "", "");
    }
-   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname, NULL);
+   else ER_NewError(GetStr(MSG_ER_CantCreateFile), fname);
 }
 
 ///
@@ -288,14 +288,14 @@ static BOOL US_SaveUserList(void)
                if (MUI_Request(G->App, G->US->GUI.WI, 0, GetStr(MSG_MA_MUsers), GetStr(MSG_YesNoReq), GetStr(MSG_US_ErrorNoDirectory)))
                {
                   if (CreateDirectory(u->MailDir)) valid = TRUE;
-                  else ER_NewError(GetStr(MSG_ER_CantCreateDir), u->MailDir, NULL);
+                  else ER_NewError(GetStr(MSG_ER_CantCreateDir), u->MailDir);
                }
             }
             else valid = TRUE;
          }
-         else ER_NewError(GetStr(MSG_ER_MissingDirectory), NULL, NULL);
+         else ER_NewError(GetStr(MSG_ER_MissingDirectory));
       }
-      else ER_NewError(GetStr(MSG_ER_MissingName), NULL, NULL);
+      else ER_NewError(GetStr(MSG_ER_MissingName));
       if (!valid)
       {
          set(G->US->GUI.LV_USERS, MUIA_NList_Active, i);

@@ -32,8 +32,10 @@
 #include <libraries/iffparse.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
+#include <proto/locale.h>
 
 #include "SDI_hook.h"
+#include "SDI_stdarg.h"
 
 #include "YAM.h"
 #include "YAM_config.h"
@@ -51,9 +53,22 @@ static struct ER_ClassData *ER_New(void);
  Module: Error window
 ***************************************************************************/
 
+/// putCharFunc
+//  Hook used by FormatString()
+HOOKPROTONO(putCharFunc, void, int c)
+{
+  char **tmp;
+
+  ((char *)hook->h_Data)[0] = c;
+  tmp = (char **)(&hook->h_Data);
+  (*tmp)++;
+}
+MakeStaticHook(putCharHook, putCharFunc);
+
+///
 /// ER_NewError
 /*** ER_NewError - Adds a new error message and displays it ***/
-void ER_NewError(char *error, char *arg1, char *arg2)
+void STDARGS VARARGS68K ER_NewError(char *error, ...)
 {
    static char label[SIZE_SMALL];
    struct ER_GUIData *gui;
@@ -72,10 +87,12 @@ void ER_NewError(char *error, char *arg1, char *arg2)
 
    gui = &(G->ER->GUI);
 
-   if (error)
+   if(error)
    {
       char buf[SIZE_LARGE];
       char datstr[64];
+      struct Hook hook;
+      VA_LIST args;
 
       if (++G->ER_NumErr > MAXERR)
       {
@@ -86,7 +103,13 @@ void ER_NewError(char *error, char *arg1, char *arg2)
       // get actual date as a string
       DateStamp2String(datstr, NULL, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_NONE);
 
-      SPrintF(buf, error, arg1, arg2);
+      // initialize the hook
+      InitHook(&hook, putCharHook, buf);
+
+      VA_START(args, error);
+      FormatString(G->Locale, error, VA_ARG(args, void *), &hook);
+      VA_END(args);
+
       strcat(buf, "\n\n(");
       strcat(buf, datstr);
       strcat(buf, ")");

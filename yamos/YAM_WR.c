@@ -640,7 +640,7 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
             // then start base64 encoding the whole file.
             if(base64encode_file(ifh, ofh, convLF) <= 0)
             {
-              ER_NewError(GetStr(MSG_ER_B64FILEENCODE), part->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_B64FILEENCODE), part->Filename);
             }
          }
          break;
@@ -649,7 +649,7 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
          {
             if(qpencode_file(ifh, ofh) < 0)
             {
-              ER_NewError(GetStr(MSG_ER_QPFILEENCODE), part->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_QPFILEENCODE), part->Filename);
             }
          }
          break;
@@ -662,7 +662,7 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 
             if(uuencode_file(ifh, ofh) < 0)
             {
-              ER_NewError(GetStr(MSG_ER_UUFILEENCODE), part->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_UUFILEENCODE), part->Filename);
             }
 
             fprintf(ofh, "``\nend\nsize %d\n", size);
@@ -739,9 +739,9 @@ static void WR_AddTagline(FILE *fh_mail)
             }
             fclose(fh_tag);
          }
-         else ER_NewError(GetStr(MSG_ER_CantOpenFile), hashfile, NULL);
+         else ER_NewError(GetStr(MSG_ER_CantOpenFile), hashfile);
       }
-      else ER_NewError(GetStr(MSG_ER_CantOpenFile), C->TagsFile, NULL);
+      else ER_NewError(GetStr(MSG_ER_CantOpenFile), C->TagsFile);
    }
 }
 
@@ -1215,13 +1215,13 @@ BOOL WriteOutMessage(struct Compose *comp)
             }
          } else
          {
-            ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
+            ER_NewError(GetStr(MSG_ER_PGPMultipart));
             comp->Security = 0;
          }
          fclose(tfh);
       } else
       {
-         ER_NewError(GetStr(MSG_ER_PGPMultipart),NULL,NULL);
+         ER_NewError(GetStr(MSG_ER_PGPMultipart));
          comp->Security = 0;
       }
    }
@@ -1318,7 +1318,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
    addr = (STRPTR)DoMethod(gui->ST_TO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
    if(!addr)
    {
-      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents), NULL);
+      ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_TO, MUIA_String_Contents));
       set(gui->RG_PAGE, MUIA_Group_ActivePage, 0);
       set(gui->WI, MUIA_Window_ActiveObject, gui->ST_TO);
       return;
@@ -1361,7 +1361,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       addr = (STRPTR)DoMethod(gui->ST_FROM, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
       if(!addr)
       {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_FROM, MUIA_String_Contents), NULL);
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_FROM, MUIA_String_Contents));
          set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_FROM);
          return;
@@ -1384,7 +1384,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       addr = (STRPTR)DoMethod(gui->ST_CC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
       if(!addr)
       {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_CC, MUIA_String_Contents), NULL);
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_CC, MUIA_String_Contents));
          set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_CC);
          return;
@@ -1395,7 +1395,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       addr = (STRPTR)DoMethod(gui->ST_BCC, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
       if(!addr)
       {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_BCC, MUIA_String_Contents), NULL);
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_BCC, MUIA_String_Contents));
          set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_BCC);
          return;
@@ -1406,7 +1406,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       addr = (STRPTR)DoMethod(gui->ST_REPLYTO, MUIM_Recipientstring_Resolve, MUIF_Recipientstring_Resolve_NoValid);
       if(!addr)
       {
-         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_REPLYTO, MUIA_String_Contents), NULL);
+         ER_NewError(GetStr(MSG_ER_AliasNotFound), (STRPTR)xget(gui->ST_REPLYTO, MUIA_String_Contents));
          set(gui->RG_PAGE, MUIA_Group_ActivePage, 2);
          set(gui->WI, MUIA_Window_ActiveObject, gui->ST_REPLYTO);
          return;
@@ -1554,7 +1554,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       MA_StartMacro(MACRO_POSTWRITE, itoa(winnum));
    }
    else
-     ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
+     ER_NewError(GetStr(MSG_ER_CreateMailError));
 
    FreePartsList(comp.FirstPart);
 
@@ -1653,7 +1653,7 @@ HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
       strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
       EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum], NULL);
       if (!CopyFile(filename, NULL, G->WR_Filename[winnum], NULL))
-         ER_NewError(GetStr(MSG_ER_CantCreateFile), filename, NULL);
+         ER_NewError(GetStr(MSG_ER_CantCreateFile), filename);
    }
 }
 MakeStaticHook(WR_SaveAsHook, WR_SaveAsFunc);
@@ -1983,7 +1983,7 @@ HOOKPROTONHNO(WR_AddPGPKeyFunc, void, int *arg)
       WR_AddFileToList(winnum, fname, NULL, TRUE);
       setstring(G->WR[winnum]->GUI.ST_CTYPE, "application/pgp-keys");
     }
-    else ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid, NULL);
+    else ER_NewError(GetStr(MSG_ER_ErrorAppendKey), myid);
    }
 }
 MakeStaticHook(WR_AddPGPKeyHook, WR_AddPGPKeyFunc);

@@ -287,7 +287,7 @@ static void RE_SendMDN(enum MDNType type, struct Mail *mail, struct Person *reci
                 // refresh the folder statistics
                 DisplayStatistics(outfolder, TRUE);
               }
-              else ER_NewError(GetStr(MSG_ER_CreateMailError), NULL, NULL);
+              else ER_NewError(GetStr(MSG_ER_CreateMailError));
 
               FreeStrBuf(comp.MailTo);
               CloseTempFile(tf3);
@@ -451,7 +451,7 @@ BOOL RE_Export(struct ReadMailData *rmData, char *source,
 
   if(!CopyFile(dest, 0, source, 0))
   {
-    ER_NewError(GetStr(MSG_ER_CantCreateFile), dest, NULL);
+    ER_NewError(GetStr(MSG_ER_CantCreateFile), dest);
     return FALSE;
   }
   SetComment(dest, BuildAddrName2(&mail->From));
@@ -903,9 +903,9 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
   if(!MA_ReadHeader(in, rp->headerList))
   {
     if(mode == 0)
-      ER_NewError(GetStr(MSG_ER_MIMEError), NULL, NULL);
+      ER_NewError(GetStr(MSG_ER_MIMEError));
     else if(mode == 1)
-      ER_NewError(GetStr(MSG_ER_MultipartEOF), NULL, NULL);
+      ER_NewError(GetStr(MSG_ER_MultipartEOF));
 
     rp->HasHeaders = FALSE;
     return FALSE;
@@ -975,7 +975,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
               !stricmp(p, "none"))                          rp->EncodingCode = ENC_NONE;
       else
       {
-        ER_NewError(GetStr(MSG_ER_UnknownEnc), p, NULL);
+        ER_NewError(GetStr(MSG_ER_UnknownEnc), p);
       }
     }
     else if(!stricmp(field, "content-description"))
@@ -1127,7 +1127,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
         if(decoded > 0)
           decodeResult = 1;
         else
-          ER_NewError(GetStr(MSG_ER_UnexpEOFB64), NULL, NULL);
+          ER_NewError(GetStr(MSG_ER_UnexpEOFB64));
       }
       break;
 
@@ -1145,19 +1145,19 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           {
             case -1:
             {
-              ER_NewError(GetStr(MSG_ER_QPDEC_FILEIO), rp->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_QPDEC_FILEIO), rp->Filename);
             }
             break;
 
             case -2:
             {
-              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
             }
             break;
 
             case -3:
             {
-              ER_NewError(GetStr(MSG_ER_QPDEC_WARN), rp->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_QPDEC_WARN), rp->Filename);
 
               decodeResult = 1; // allow to save the resulting file
             }
@@ -1165,14 +1165,14 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
             case -4:
             {
-              ER_NewError(GetStr(MSG_ER_QPDEC_CHAR), rp->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_QPDEC_CHAR), rp->Filename);
 
               decodeResult = 1; // allow to save the resulting file
             }
             break;
 
             default:
-              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
           }
         }
       }
@@ -1195,7 +1195,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
           {
             case -1:
             {
-              ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
+              ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
             }
             break;
 
@@ -1207,13 +1207,13 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
             case -3:
             {
-              ER_NewError(GetStr(MSG_ER_InvalidLength), 0, NULL);
+              ER_NewError(GetStr(MSG_ER_InvalidLength), 0);
             }
             break;
 
             case -4:
             {
-              ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), rp->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), rp->Filename);
 
               decodeResult = 1; // allow to save the resulting file
             }
@@ -1221,7 +1221,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 
             case -5:
             {
-              ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), rp->Filename, NULL);
+              ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), rp->Filename);
             }
             break;
 
@@ -1234,7 +1234,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
             break;
 
             default:
-              ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
+              ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
           }
         }
       }
@@ -1544,7 +1544,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
           RE_SetPartInfo(hrp);
       }
       else
-        ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
+        ER_NewError(GetStr(MSG_ER_CantCreateTempfile));
     }
 
     if(hrp)
@@ -1555,7 +1555,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       if(!strnicmp(hrp->ContentType, "multipart", 9))
       {
         if(!boundary)
-          ER_NewError(GetStr(MSG_ER_MissingBoundary), NULL, NULL);
+          ER_NewError(GetStr(MSG_ER_MissingBoundary));
         else
         {
           BOOL done;
@@ -2419,7 +2419,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                       {
                         case -1:
                         {
-                          ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
+                          ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
                         }
                         break;
 
@@ -2431,13 +2431,13 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                         case -3:
                         {
-                          ER_NewError(GetStr(MSG_ER_InvalidLength), 0, NULL);
+                          ER_NewError(GetStr(MSG_ER_InvalidLength), 0);
                         }
                         break;
 
                         case -4:
                         {
-                          ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), uup->Filename, NULL);
+                          ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), uup->Filename);
 
                           uup->Decoded = TRUE; // allow to save the resulting file
                         }
@@ -2445,7 +2445,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
 
                         case -5:
                         {
-                          ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), uup->Filename, NULL);
+                          ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), uup->Filename);
                         }
                         break;
 
@@ -2458,7 +2458,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                         break;
 
                         default:
-                          ER_NewError(GetStr(MSG_ER_UnexpEOFUU), NULL, NULL);
+                          ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
                       }
                     }
                   }
@@ -2517,7 +2517,7 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
                   // terminate the end
                   *eolptr = '\0';
                 }
-                else ER_NewError(GetStr(MSG_ER_CantCreateTempfile), NULL, NULL);
+                else ER_NewError(GetStr(MSG_ER_CantCreateTempfile));
               }
 /* PGP msg */ else if(!strncmp(rptr, "-----BEGIN PGP MESSAGE", 21))
               {
@@ -2820,7 +2820,7 @@ BOOL RE_DownloadPhoto(Object *win, char *url, struct ABEntry *ab)
          BusyEnd();
          TR_CloseTCPIP();
       }
-      else ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL);
+      else ER_NewError(GetStr(MSG_ER_NoTCP));
    }
    return success;
 }

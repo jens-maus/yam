@@ -378,7 +378,7 @@ static BOOL TR_InitSTARTTLS(int ServerFlags)
   // If this server doesn`t support TLS at all we return with an error
   if(!hasSTARTTLS(ServerFlags))
   {
-    ER_NewError(GetStr(MSG_ER_NOSTARTTLS), NULL, NULL);
+    ER_NewError(GetStr(MSG_ER_NOSTARTTLS));
     return FALSE;
   }
 
@@ -395,7 +395,7 @@ static BOOL TR_InitSTARTTLS(int ServerFlags)
   }
   else
   {
-    ER_NewError(GetStr(MSG_ER_INITTLS), C->SMTP_Server, NULL);
+    ER_NewError(GetStr(MSG_ER_INITTLS), C->SMTP_Server);
     return FALSE;
   }
 
@@ -420,7 +420,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
    // and if not we return with an error
    if(!C->SMTP_AUTH_User[0] || !C->SMTP_AUTH_Pass[0])
    {
-      ER_NewError(GetStr(MSG_ER_NOAUTHUSERPASS), NULL, NULL);
+      ER_NewError(GetStr(MSG_ER_NOAUTHUSERPASS));
       return FALSE;
    }
 
@@ -824,7 +824,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
    {
       // if we don`t have any of the Authentication Flags turned on we have to
       // exit with an error
-      ER_NewError(GetStr(MSG_ER_NO_SMTP_AUTH), C->SMTP_Server, NULL);
+      ER_NewError(GetStr(MSG_ER_NO_SMTP_AUTH), C->SMTP_Server);
    }
 
    D(DBF_NET, "Server responded with %ld", rc);
@@ -940,7 +940,7 @@ BOOL TR_OpenTCPIP(void)
                   /*AmiSSL_VersionOverride, TRUE,*/ /* If you insist */
                   TAG_DONE) != 0)
     {
-      ER_NewError(GetStr(MSG_ER_INITAMISSL), NULL, NULL);
+      ER_NewError(GetStr(MSG_ER_INITAMISSL));
       G->TR_UseableTLS = G->TR_UseTLS = FALSE;
     }
   }
@@ -1018,7 +1018,7 @@ static int TR_Connect(char *host, int port)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_KEEPALIVE) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_KEEPALIVE", NULL);
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_KEEPALIVE");
     }
   }
 
@@ -1027,7 +1027,7 @@ static int TR_Connect(char *host, int port)
     if(setsockopt(G->TR_Socket, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(TCP_NODELAY) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "TCP_NODELAY", NULL);
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "TCP_NODELAY");
     }
   }
 
@@ -1037,7 +1037,7 @@ static int TR_Connect(char *host, int port)
     if(setsockopt(G->TR_Socket, IPPROTO_IP, IP_TOS, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(IPTOS_LOWDELAY) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "IPTOS_LOWDELAY", NULL);
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "IPTOS_LOWDELAY");
     }
   }
 
@@ -1046,7 +1046,7 @@ static int TR_Connect(char *host, int port)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDBUF, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_SNDBUF) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDBUF", NULL);
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDBUF");
     }
   }
 
@@ -1055,7 +1055,7 @@ static int TR_Connect(char *host, int port)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVBUF, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_RCVBUF) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVBUF", NULL);
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVBUF");
     }
   }
 
@@ -1064,7 +1064,7 @@ static int TR_Connect(char *host, int port)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDLOWAT, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_SNDLOWAT) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDLOWAT", NULL);
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDLOWAT");
     }
   }
 
@@ -1073,7 +1073,7 @@ static int TR_Connect(char *host, int port)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVLOWAT, &optval, sizeof(optval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_RCVLOWAT) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVLOWAT", NULL);
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVLOWAT");
     }
   }
 
@@ -1087,7 +1087,7 @@ static int TR_Connect(char *host, int port)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(struct timeval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_SNDTIMEO) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDTIMEO", NULL);
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_SNDTIMEO");
     }
   }
 
@@ -1101,7 +1101,7 @@ static int TR_Connect(char *host, int port)
     if(setsockopt(G->TR_Socket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval)) == -1)
     {
       E(DBF_NET, "setsockopt(SO_RCVTIMEO) error");
-      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVTIMEO", NULL);
+      ER_NewError(GetStr(MSG_ER_SOCKETOPTION), "SO_RCVTIMEO");
     }
   }
 
@@ -1227,7 +1227,7 @@ static int TR_RecvToFile(FILE *fh, char *filename, struct TransStat *ts)
         // write the line to the file now
         if(fwrite(line, 1, l, fh) != (size_t)l)
         {
-          ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), filename, NULL);
+          ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), filename);
           break;
         }
 
@@ -1683,14 +1683,14 @@ BOOL TR_DownloadURL(char *url0, char *url1, char *url2, char *filename)
                fclose(out);
                success = TRUE;
             }
-            else ER_NewError(GetStr(MSG_ER_CantCreateFile), filename, NULL);
+            else ER_NewError(GetStr(MSG_ER_CantCreateFile), filename);
          }
-         else ER_NewError(GetStr(MSG_ER_DocNotFound), path, NULL);
+         else ER_NewError(GetStr(MSG_ER_DocNotFound), path);
       }
-      else ER_NewError(GetStr(MSG_ER_SendHTTP), NULL, NULL);
+      else ER_NewError(GetStr(MSG_ER_SendHTTP));
       TR_Disconnect();
    }
-   else ER_NewError(GetStr(MSG_ER_ConnectHTTP), host, NULL);
+   else ER_NewError(GetStr(MSG_ER_ConnectHTTP), host);
    return success;
 }
 ///
@@ -1755,7 +1755,7 @@ static int TR_ConnectPOP(int guilevel)
    // but perhaps TLS is not working.
    if(C->P3[pop]->SSLMode != P3SSL_OFF && !G->TR_UseableTLS)
    {
-      ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL), NULL, NULL);
+      ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL));
       return -1;
    }
 
@@ -1777,8 +1777,8 @@ static int TR_ConnectPOP(int guilevel)
    {
       if (guilevel == POP_USER) switch (err)
       {
-         case -1: ER_NewError(GetStr(MSG_ER_UnknownPOP), C->P3[pop]->Server, NULL); break;
-         default: ER_NewError(GetStr(MSG_ER_CantConnect), C->P3[pop]->Server, NULL);
+         case -1: ER_NewError(GetStr(MSG_ER_UnknownPOP), C->P3[pop]->Server); break;
+         default: ER_NewError(GetStr(MSG_ER_CantConnect), C->P3[pop]->Server);
       }
       return -1;
    }
@@ -1810,7 +1810,7 @@ static int TR_ConnectPOP(int guilevel)
      }
      else
      {
-        ER_NewError(GetStr(MSG_ER_INITTLS), host, NULL);
+        ER_NewError(GetStr(MSG_ER_INITTLS), host);
         return -1;
      }
    }
@@ -1861,7 +1861,7 @@ static int TR_ConnectPOP(int guilevel)
       }
       else
       {
-         ER_NewError(GetStr(MSG_ER_NoAPOP), NULL, NULL);
+         ER_NewError(GetStr(MSG_ER_NoAPOP));
          return -1;
       }
    }
@@ -2240,7 +2240,7 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
 
             DeleteFile(fname);
          }
-         else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), fname, NULL);
+         else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), fname);
       }
    }
 
@@ -2293,7 +2293,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
    if (isfirst) /* Init first connection */
    {
       G->LastDL.Error = TRUE;
-      if (!TR_OpenTCPIP()) { if (guilevel == POP_USER) ER_NewError(GetStr(MSG_ER_NoTCP), NULL, NULL); return; }
+      if (!TR_OpenTCPIP()) { if (guilevel == POP_USER) ER_NewError(GetStr(MSG_ER_NoTCP)); return; }
       if (!CO_IsValid()) { TR_CloseTCPIP(); return; }
       if (!(G->TR = TR_New(TR_GET))) { TR_CloseTCPIP(); return; }
       G->TR->Checking = TRUE;
@@ -3163,7 +3163,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
                     // now lets send the data buffered to the socket.
                     // we will flush it later then.
-                    if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0) ER_NewError(GetStr(MSG_ER_ConnectionBroken), NULL, NULL);
+                    if(TR_Send(sendbuf, sendsize, TCPF_NONE) <= 0) ER_NewError(GetStr(MSG_ER_ConnectionBroken));
                   }
 
                   TR_TransStat_Update(ts, cpos);
@@ -3171,7 +3171,7 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
 
                 // if buf == NULL when we arrive here, then the fgets()
                 // at the top exited with an error
-                if(buf == NULL) { ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), mf, NULL); result = -1; }
+                if(buf == NULL) { ER_NewError(GetStr(MSG_ER_ErrorReadMailfile), mf); result = -1; }
                 else if(!G->TR->Abort && !G->Error)
                 {
                   // we have to flush the write buffer if this wasn`t a error or
@@ -3199,11 +3199,11 @@ static int TR_SendMessage(struct TransStat *ts, struct Mail *mail)
             }
             MA_FreeEMailStruct(email);
           }
-          else ER_NewError(GetStr(MSG_ER_CantOpenFile), mf, NULL);
+          else ER_NewError(GetStr(MSG_ER_CantOpenFile), mf);
       }
       fclose(f);
    }
-   else ER_NewError(GetStr(MSG_ER_CantOpenFile), mf, NULL);
+   else ER_NewError(GetStr(MSG_ER_CantOpenFile), mf);
 
    return result;
 }
@@ -3252,7 +3252,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       if(C->SMTP_SecureMethod != SMTPSEC_NONE &&
          !G->TR_UseableTLS)
       {
-        ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL), NULL, NULL);
+        ER_NewError(GetStr(MSG_ER_UNUSABLEAMISSL));
         return FALSE;
       }
 
@@ -3286,7 +3286,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
             }
             else
             {
-              ER_NewError(GetStr(MSG_ER_INITTLS), host, NULL);
+              ER_NewError(GetStr(MSG_ER_INITTLS), host);
               return FALSE;
             }
          }
@@ -3392,8 +3392,8 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       {
         switch (err)
         {
-          case -1: ER_NewError(GetStr(MSG_ER_UnknownSMTP), C->SMTP_Server, NULL); break;
-          default: ER_NewError(GetStr(MSG_ER_CantConnect), C->SMTP_Server, NULL);
+          case -1: ER_NewError(GetStr(MSG_ER_UnknownSMTP), C->SMTP_Server); break;
+          default: ER_NewError(GetStr(MSG_ER_CantConnect), C->SMTP_Server);
         }
       }
 
@@ -3663,7 +3663,7 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
       DeleteFile(msgfile);
       SET_FLAG(infolder->Flags, FOFL_MODIFY); // we need to set the folder flags to modified so that the .index will be saved later.
    }
-   else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), mfile, NULL);
+   else ER_NewError(GetStr(MSG_ER_ErrorWriteMailfile), mfile);
 
    return FALSE;
 }

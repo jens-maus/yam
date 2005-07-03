@@ -7,6 +7,11 @@ $Source$
 
 2005-07-03  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_ER.c: changed the ER_NewError() function to be a variable argument
+      list function. This allows now to use error messages with an unlimited
+      number of parameters. Also adapted all sources to get rid of the
+      previously required "NULL" placeholders if ER_NewError() was used
+      with too less parameters.
     * YAM_FO.c: fixed bug #1231670 where upon a folder move operation YAM
       always tried to move the .index file and throwed a warning if it
       couldn't move that file aswell. However, due to how YAM manages
