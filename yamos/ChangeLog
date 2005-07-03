@@ -7,6 +7,10 @@ $Source$
 
 2005-07-03  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_ER.c: changed the Error window to use a NFloattext class object
+      instead of a pure MUI's Floattext object so that the text within the
+      floattext object can be selected/marked with the mouse and automatically
+      copied to the clipboard.
     * YAM_ER.c: changed the ER_NewError() function to be a variable argument
       list function. This allows now to use error messages with an unlimited
       number of parameters. Also adapted all sources to get rid of the

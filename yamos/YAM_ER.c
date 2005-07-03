@@ -34,6 +34,9 @@
 #include <proto/muimaster.h>
 #include <proto/locale.h>
 
+#include <mui/NListview_mcc.h>
+#include <mui/NFloattext_mcc.h>
+
 #include "SDI_hook.h"
 #include "SDI_stdarg.h"
 
@@ -139,7 +142,7 @@ HOOKPROTONHNO(ER_SelectFunc, void, int *arg)
    int value = *arg;
    set(G->ER->GUI.BT_NEXT, MUIA_Disabled, value == G->ER_NumErr);
    set(G->ER->GUI.BT_PREV, MUIA_Disabled, value == 1);
-   set(G->ER->GUI.LV_ERROR, MUIA_Floattext_Text, G->ER_Message[value-1]);
+   set(G->ER->GUI.LV_ERROR, MUIA_NFloattext_Text, G->ER_Message[value-1]);
 }
 MakeStaticHook(ER_SelectHook, ER_SelectFunc);
 
@@ -182,10 +185,10 @@ static struct ER_ClassData *ER_New(void)
                End,
                Child, data->GUI.BT_NEXT = MakeButton(GetStr(MSG_ER_NextError)),
             End,
-            Child, ListviewObject,
-               MUIA_Listview_Input, FALSE,
-               MUIA_CycleChain, 1,
-               MUIA_Listview_List, data->GUI.LV_ERROR = FloattextObject,
+            Child, NListviewObject,
+               MUIA_Listview_Input,   FALSE,
+               MUIA_CycleChain,       TRUE,
+               MUIA_NListview_NList,  data->GUI.LV_ERROR = NFloattextObject,
                   ReadListFrame,
                End,
             End,
