@@ -81,7 +81,7 @@
 */
 struct ComprMail
 {
-   unsigned char    mailFile[SIZE_MFILE]; // mail filename without path
+   char             mailFile[SIZE_MFILE]; // mail filename without path
    struct DateStamp date;                 // the creation date of the mail (UTC)
    struct timeval   transDate;            // the received/sent date with ms (UTC)
    unsigned int     sflags;               // mail status flags
@@ -278,7 +278,7 @@ enum LoadedMode MA_LoadIndex(struct Folder *folder, BOOL full)
                mail.mflags = cmail.mflags;
                mail.sflags = cmail.sflags;
                setVOLValue(&mail, 0);  // we have to make sure that the volatile flag field isn`t loaded
-               strcpy(mail.MailFile, (char *)cmail.mailFile);
+               strcpy(mail.MailFile, cmail.mailFile);
                mail.Date = cmail.date;
                mail.transDate = cmail.transDate;
                mail.cMsgID = cmail.cMsgID;
@@ -375,7 +375,7 @@ BOOL MA_SaveIndex(struct Folder *folder)
          mail->To.Address, mail->To.RealName,
          mail->ReplyTo.Address, mail->ReplyTo.RealName);
 
-      strcpy((char *)cmail.mailFile, mail->MailFile);
+      strcpy(cmail.mailFile, mail->MailFile);
       cmail.date = mail->Date;
       cmail.transDate = mail->transDate;
       cmail.sflags = mail->sflags;
