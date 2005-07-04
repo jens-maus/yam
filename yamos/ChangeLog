@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-07-04  Gunther Nikl <gni@gecko.de>
+
+    * YAM_MAf.c: Remove casts of mailFile. There must be a better way to
+      deal with those dreaded GCC4 warnings.
+
 2005-07-03  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_ER.c: changed the Error window to use a NFloattext class object
