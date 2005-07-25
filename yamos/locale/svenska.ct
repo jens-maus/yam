@@ -1,6 +1,6 @@
 ## chunk AUTH Pär Boberg
 ## language svenska
-## version $VER: YAM.ct 5.5 (29.03.05)
+## version $VER: YAM.ct 5.5 (25.07.05)
 MSG_Folder
 Mapp
 ;#DEF Folder
@@ -5694,12 +5694,12 @@ Epost buffert
 ;#DEF Email cache
 ;#SET (//)
 MSG_CO_NB_EMAILCACHEFMT
-%ld brev
-;#DEF %ld mails
+%ld adress(er)
+;#DEF %ld address(es)
 ;#SET (//)
 MSG_HELP_CO_NB_EMAILCACHE
-Buffert storleken för de senast använda mottagarna\nsom ännu inte finns i adressboken.\nVälj 0 brev för att stänga av denna funktion.
-;#DEF Cache size for the most recently used\nrecipients not yet in the address book.\nSelect 0 mails to disable this feature.
+Buffert storlek för de senast använda mottagarna\nsom ännu inte finns i adressboken.\nVälj 0 för att stänga av denna funktion.
+;#DEF Cache size for the most recently used\nrecipients not yet in the address book.\nSelect 0 to disable this feature.
 ;#SET (//)
 MSG_CO_USESMTPTLS
 Använd SMTP TLSv_1/SSLv3
@@ -6212,4 +6212,88 @@ _Mer
 MSG_CO_Less
 Mindre
 ;#DEF _Less
+;#SET (//)
+MSG_ER_EXITIGNOREALL
+*A_vsluta|Ignorera _alla|_Ignorera
+;#DEF *_Exit|Ignore _all|_Ignore
+;#SET (//)
+MSG_ER_ICONOBJECT_TITLE
+Fel vid laddning av ikonbild!
+;#DEF Error on loading icon image!
+;#SET (//)
+MSG_ER_ICONOBJECT
+Ett fel inträffade vid försök att ladda ikonobjektet\n'%s.info' från katalog '%s'.\n\nVar god kontrollera, att din bild katalog innehåller alla\nnödvändiga ikoner, definierade enligt senaste bild layouten.
+;#DEF An error occurred while trying to load the icon\nobject '%s.info' from directory '%s'.\n\nPlease make sure your image directory contains all\nnecessary icons as defined in the latest image layout.
+;#SET (//)
+MSG_ER_IMAGEOBJECT_TITLE
+Fel vid laddning av bild!
+;#DEF Error on loading image!
+;#SET (//)
+MSG_ER_IMAGEOBJECT
+Ett fel inträffade vid försök att ladda bildfilen\n'%s' från katalog '%s'.\n\nVar god kontrollera, att din bild katalog innehåller alla\nnödvändiga bilder, definierade enligt senaste bild layouten.
+;#DEF An error occurred while trying to load the image\nfile '%s' from directory '%s'.\n\nPlease make sure your image directory contains all\nnecessary images as defined in the latest image layout.
+;#SET (//)
+MSG_ER_IMGLAYOUTFAILURE
+Bild layout fel!
+;#DEF Image layout failure!
+;#SET (//)
+MSG_ER_EXITIGNORE
+*A_vsluta|_Ignorera
+;#DEF *_Exit|_Ignore
+;#SET (//)
+MSG_ER_MISSINGIMGVERFILE
+Layouten av din '%s' bild katalog\ninnehåller ingen versions information och behöver uppdateras.\n\nVar god kontrollera, att du använder en kompatibel bild layout,\nannars kan vissa bilder visas felaktigt i YAM.
+;#DEF The layout of your '%s' image directory\ncontains no version information and needs to be updated\naccordingly.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
+;#SET (//)
+MSG_ER_LOADIMGLAYOUTFAILED
+Ett fel inträffade vid försök att ladda bild layout\ninformation från din '%s' katalog.\n\nVar god kontrollera, att du använder en kompatibel bild layout,\nannars kan vissa bilder visas felaktigt i YAM.
+;#DEF An error occurred while trying to load the image\nlayout information from your '%s' directory.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
+;#SET (//)
+MSG_ER_WRONGIMGLAYOUTVER
+Layouten av din '%s' bild katalog\ninnehåller en inkompatibel versions information och behöver uppdateras.\n\nVar god kontrollera, att du använder en kompatibel bild layout,\nannars kan vissa bilder visas felaktigt i YAM.
+;#DEF The layout of your '%s' image directory\ncontains an incompatible version information and needs\nto be updated accordingly.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
+;#SET (//)
+MSG_MA_AUTOSAVEFOUND
+YAM har hittat den autosparade filen '%s'\nsom har skapats i en föregående session. Detta kan bero\npå en krash eller omstart, vid skrivning av ett meddelande.\n\nVad vill du göra med den filen?
+;#DEF YAM has found the autosaved file '%s' which\nhave been created in a previous session. This may be due\nto a possible crash or reboot during writing a message.\n\nWhat do you want to do with that file?
+;#SET (//)
+MSG_MA_AUTOSAVEFOUND_TITLE
+Autosparad fil hittad
+;#DEF Autosave file found
+;#SET (//)
+MSG_MA_AUTOSAVEFOUND_BT
+*_Öppna i redigeraren|_Radera|_Ignorera
+;#DEF *_Open in write window|_Delete|_Ignore
+;#SET (//)
+MSG_CO_NB_AUTOSAVE
+Autospara intervall
+;#DEF Autosave interval
+;#SET (//)
+MSG_CO_NB_AUTOSAVEFMT
+%ld minut(er)
+;#DEF %ld minute(s)
+;#SET (//)
+MSG_HELP_CO_NB_AUTOSAVE
+Antalet minuter som YAM automatiskt bör\nspara en kopia av brevet som du förnärvarande skriver.\nVälj 0 för att stänga av denna funktion.
+;#DEF Number of minutes YAM should automatically\ngenerate a save copy of the mail you are\ncurrently composing.\nSelect 0 to disable this feature.
+;#SET (//)
+MSG_ER_GENESISUSER_TITLE
+Okänt Genesis/AmiTCP användarkonto!
+;#DEF Unknown Genesis/AmiTCP user account!
+;#SET (//)
+MSG_ER_GENESISUSER
+YAM har identifierat att du använder Genesis/AmiTCP, men\nkunde inte hitta ett YAM användarkonto som överrensstämmer\nmed nuvarande aktivt globalt konto som du har konfigurerat\ni Genesis: '%s'\n\nVar god kontrollera att ditt Genesis användarnamn och YAM\nanvändarnamn är lika. Annars kommer inte autologin funktionen\natt fungera korrekt.
+;#DEF YAM has identified that you are using Genesis/AmiTCP, but\ncould not find a YAM user account which corresponds to\nthe currently active global account you have configured\nin Genesis: '%s'\n\nPlease make sure your Genesis username and YAM username\nare in sync. Otherwise the autologin feature will not work\ncorrectly.
+;#SET (//)
+MSG_ER_CONTINUEEXIT
+*_Fortsätt|Avsluta
+;#DEF *_Continue|Exit
+;#SET (//)
+MSG_MA_ALLTOREAD
+#\000Alla som lästa
+;#DEF #\000All to Read
+;#SET (//)
+MSG_ER_MOVEFOLDERDIR
+Ett fel inträffade vid försök att flytta innehållet i mappen\n'%s' till katalog '%s'. Detta kan bero på otillräckligt med utrymme\neller för att destinationen inte är giltig eller skrivbar.
+;#DEF An error occurred while trying to move the content of folder\n'%s' to directory '%s'. This may either be due to insufficient\nspace or because the destination path is not valid or writable.
 ;#SET (//)
