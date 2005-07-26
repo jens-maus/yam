@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-07-26  Jens Langner <Jens.Langner@light-speed.de>
+
+    * Makefiles: moved the generic sections of all makefiles into a new
+      "Makefile.include" file which will be automatically included by each
+      platform specific Makefile. Also renamed our target Makefiles to
+      the more common scheme like Makefile.[os3|os4|mos].
+
 2005-07-04  Gunther Nikl <gni@gecko.de>
 
     * YAM_MAf.c: Remove casts of mailFile. There must be a better way to

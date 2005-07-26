@@ -1,0 +1,75 @@
+#/***************************************************************************
+#
+# YAM - Yet Another Mailer
+# Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+# Copyright (C) 2000-2005 by YAM Open Source Team
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+# YAM Official Support Site :  http://www.yam.ch
+# YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+#
+# $Id$
+#
+#***************************************************************************/
+
+TARGET	= YAM.mos
+
+# Programs
+CC        = ppc-morphos-gcc
+STRIP     = ppc-morphos-strip
+OBJDUMP   = ppc-morphos-objdump
+RM        = rm -f
+RMDIR     = rm -rf
+MKDIR     = mkdir
+CHMOD     = chmod
+FLEX      = flex
+FC        = flexcat
+
+# Directories
+PREFIX    = .
+CLASSDIR  = $(PREFIX)/classes
+LOCALE    = $(PREFIX)/locale
+EXTRASRC  = $(PREFIX)/extrasrc
+GENCLASSES= $(EXTRASRC)/genclasses
+OBJDIR    = .obj_mos
+
+# Compiler/Linker flags
+CPU      = -mcpu=750
+CPUFLAGS = -mmultiple
+CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
+           -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" \
+           -D__YAM_BUILDID=\"$(BUILDID)\"
+WARN     = -W -Wall
+OPTFLAGS = -O2 -fomit-frame-pointer -funroll-loops
+DEBUG    = -DDEBUG -g3 -O0
+CFLAGS   = -noixemul -pipe -I. -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
+LDFLAGS  = -noixemul $(CPU)
+LDLIBS   = -lm -ldebug -lxpk -lamissl
+
+# Special flags
+DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
+
+# CPU and DEBUG can be defined outside, defaults to above
+# using e.g. "make DEBUG= CPU=-mcpu=603e" produces optimized non-debug PPC-603e version
+#
+# OPTFLAGS are disabled by DEBUG normally!
+#
+# ignored warnings are:
+# none - because we want to compile with -Wall all the time
+
+# we include the rest from our Makefile.include file
+# which operates as a common include for all GNU makefiles.
+include Makefile.include

@@ -25,50 +25,19 @@
 #
 #***************************************************************************/
 
-TARGET	= YAM.mos
-
-# Programs
-CC        = ppc-morphos-gcc
-STRIP     = ppc-morphos-strip
-OBJDUMP   = ppc-morphos-objdump
-RM        = rm -f
-RMDIR     = rm -rf
-MKDIR     = mkdir
-CHMOD     = chmod
-FLEX      = flex
-FC        = flexcat
-
-# Directories
-PREFIX    = .
-CLASSDIR  = $(PREFIX)/classes
-LOCALE    = $(PREFIX)/locale
-EXTRASRC  = $(PREFIX)/extrasrc
-GENCLASSES= $(EXTRASRC)/genclasses
-OBJDIR    = .obj_mos
-
-# Compiler/Linker flags
-CPU      = -mcpu=750
-CPUFLAGS = -mmultiple
-CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
-           -D__YAM_VERDAYS="`expr \`date +%s\` / 86400 - 2922`" \
-           -D__YAM_BUILDID=\"$(BUILDID)\"
-WARN     = -W -Wall
-OPTFLAGS = -O2 -fomit-frame-pointer -funroll-loops
-DEBUG    = -DDEBUG -g3 -O0
-CFLAGS   = -noixemul -pipe -I. -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
-LDFLAGS  = -noixemul $(CPU)
-LDLIBS   = -lm -ldebug -lxpk -lamissl
+#
+# This makefile is just an include which serves the Makefile.os3, Makefile.os4
+# and Makefile.mos with all common targets
+#
+# WARNING:
+# -------
+# Please note that this include should not carry any platform specific stuff
+# as it may be included be more than one target Makefile!
+#
 
 # Special flags
 DEVFLAGS = -DDEVWARNING -DEXPDATE="`expr \`date +%s\` / 86400 - 2922 + 31`"
 
-# CPU and DEBUG can be defined outside, defaults to above
-# using e.g. "make DEBUG= CPU=-mcpu=603e" produces optimized non-debug PPC-603e version
-#
-# OPTFLAGS are disabled by DEBUG normally!
-#
-# ignored warnings are:
-# none - because we want to compile with -Wall all the time
 .PHONY: all clean cleanall distclean classinfo dump
 
 # our few new rewritten classes
@@ -157,7 +126,7 @@ $(LOCALE)/%.catalog: $(LOCALE)/%.ct
 $(TARGET): $(OBJS)
 	@printf '\033[32mLinking \033[1m$@\033[0m\n'
 	@$(CC) $(LDFLAGS) -o $@.debug $(OBJS) $(LDLIBS)
-	@$(STRIP) -o $@ $@.debug
+	@$(STRIP) -R ".comment" -o $@ $@.debug
 	@$(CHMOD) a+x $@
 
 dump:
@@ -319,6 +288,9 @@ $(OBJDIR)/all_gcc.o: all_gcc.c $(EXTRASRC)/stccpy.c \
 
 ## CLASS DEPENDENCIES #################
 
+$(OBJDIR)/$(CLASSDIR)/ReadMailGroup.o: $(CLASSDIR)/ReadMailGroup.c \
+	$(CLASSDIR)/ReadMailGroup_cl.h
+
 $(OBJDIR)/$(CLASSDIR)/ConfigPageList.o: $(CLASSDIR)/ConfigPageList.c \
 	$(CLASSDIR)/ConfigPageList_cl.h
 
@@ -361,6 +333,9 @@ $(OBJDIR)/$(CLASSDIR)/Searchwindow.o: $(CLASSDIR)/Searchwindow.c \
 	$(CLASSDIR)/Searchwindow_cl.h YAM.h YAM_addressbook.h YAM_config.h Debug.h \
 	YAM_folderconfig.h includes/SDI_hook.h YAM_locale.h YAM_main.h YAM_mainFolder.h \
 	YAM_utilities.h YAM_write.h
+
+$(OBJDIR)/$(CLASSDIR)/SearchControlGroup.o: $(CLASSDIR)/SearchControlGroup.c \
+	$(CLASSDIR)/SearchControlGroup_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/Recipientstring.o: $(CLASSDIR)/Recipientstring.c \
 	$(CLASSDIR)/Recipientstring_cl.h YAM.h YAM_addressbook.h YAM_config.h Debug.h \
