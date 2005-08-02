@@ -2635,7 +2635,7 @@ HOOKPROTONHNO(MA_FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessag
   struct ABEntry *entry = (struct ABEntry *)msg->UserData;
   return Stricmp((unsigned char *)msg->User, (unsigned char *)entry->Address);
 }
-MakeHook(MA_FindAddressHook, MA_FindAddressFunc);
+MakeStaticHook(MA_FindAddressHook, MA_FindAddressFunc);
 
 ///
 /// MA_LV_DspFunc
@@ -2717,21 +2717,23 @@ HOOKPROTONH(MA_LV_DspFunc, LONG, Object *obj, struct NList_DisplayMessage *msg)
             else
               pe = isOutgoingFolder(entry->Folder) ? &entry->To : &entry->From;
 
-#ifndef DISABLE_ADDRESSBOOK_LOOKUP
-{
-            struct MUI_NListtree_TreeNode *tn;
-
-            set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &MA_FindAddressHook);
-            if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)))
+            #ifndef DISABLE_ADDRESSBOOK_LOOKUP
             {
-               addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
+              struct MUI_NListtree_TreeNode *tn;
+
+              set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &MA_FindAddressHook);
+
+              if((tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData, MUIV_NListtree_FindUserData_ListNode_Root, &pe->Address[0], MUIF_NONE)))
+              {
+                addr = ((struct ABEntry *)tn->tn_User)->RealName[0] ? ((struct ABEntry *)tn->tn_User)->RealName : AddrName((*pe));
+              }
+              else
+                addr = AddrName((*pe));
             }
-            else
-              addr = AddrName((*pe));
-}
-#else
+            #else
             addr = AddrName((*pe));
-#endif
+            #endif
+
             // lets put the string together
             strncat(dispfro, addr, SIZE_DEFAULT-strlen(dispfro)-1);
          }
