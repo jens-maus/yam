@@ -367,6 +367,9 @@ DECLARE(AddToEmailCache) // struct Person *person
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+	BOOL singleTaskOnly = TRUE;
+	unsigned char var;
+
 	// prepare a string pointer array with all the
 	// names of the used classes within. This array is only usefull if MUI v20
 	// is used and the user wants to alter the MUI settings of the application
@@ -379,7 +382,13 @@ OVERLOAD(OM_NEW)
 																		NULL
 																	};
 
+	// let us check if there is a "MultipleYAM" env variable and if
+	// so we set SingleTask to true
+	if(GetVar("MultipleYAM", &var, sizeof(var), 0) > -1)
+		singleTaskOnly = FALSE;
+
 	if((obj = (Object *)DoSuperNew(cl, obj,
+
 		MUIA_Application_Author,         "YAM Open Source Team",
 		MUIA_Application_Base,           "YAM",
 		MUIA_Application_Title,          "YAM",
@@ -387,9 +396,10 @@ OVERLOAD(OM_NEW)
 		MUIA_Application_Copyright,      yamcopyright,
 		MUIA_Application_Description,    GetStr(MSG_APP_DESCRIPTION),
 		MUIA_Application_UseRexx,        FALSE,
-		MUIA_Application_SingleTask,     !getenv("MultipleYAM"),
+		MUIA_Application_SingleTask,     singleTaskOnly,
 		MUIA_Application_UsedClasses,    Classes,
-		TAG_MORE,                        inittags(msg))))
+
+		TAG_MORE, inittags(msg))))
 	{
 		GETDATA;
 		struct DateTime dt;

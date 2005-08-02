@@ -1190,7 +1190,7 @@ void CO_Validate(struct Config *co, BOOL update)
    {
       char sysCharset[SIZE_CTYPE+1];
 
-      sysCharset[0] = '\0';
+      memset(sysCharset, 0, sizeof(sysCharset));
 
       #ifdef __amigaos4__
       {
@@ -1206,10 +1206,10 @@ void CO_Validate(struct Config *co, BOOL update)
       // it from and environment variable ENVARC:CHARSET
       if(sysCharset[0] == '\0')
       {
-        char *charset = getenv("CHARSET");
+        unsigned char var[SIZE_CTYPE+1];
 
-        if(charset && charset[0])
-          strncpy(sysCharset, charset, SIZE_CTYPE);
+        if(GetVar("CHARSET", var, sizeof(var), 0) > 0)
+          strncpy(sysCharset, (char *)var, SIZE_CTYPE);
       }
 
       // now we check wheter the currently set localCharset matches

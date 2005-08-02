@@ -33,6 +33,7 @@
 
 #include <proto/intuition.h>
 #include <proto/utility.h>
+#include <proto/dos.h>
 
 #include "YAM_global.h"
 #include "YAM_utilities.h"
@@ -51,14 +52,15 @@ static ULONG debug_classes = DBC_ERROR | DBC_DEBUG | DBC_WARNING | DBC_ASSERT | 
 
 void SetupDebug(void)
 {
-  char *debug;
+  char var[256];
 
   kprintf("** %s startup ***********************************\n", yamversion);
   kprintf("Initializing runtime debugging:\n");
 
-	if((debug = getenv("yamdebug")))
+	if(GetVar("yamdebug", (unsigned char *)var, sizeof(var), 0) > 0)
 	{
 		char *tok;
+    char *debug = var;
 
     // static list of our debugging classes tokens.
     // in the yamdebug variable these classes always start with a @

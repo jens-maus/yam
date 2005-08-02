@@ -1772,6 +1772,7 @@ int main(int argc, char **argv)
        if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) &&
           GETINTERFACE(IUtility, UtilityBase))
        {
+         unsigned char var;
          struct EasyStruct ErrReq;
          struct DateStamp ds;
          DateStamp(&ds); // get actual time/date
@@ -1799,7 +1800,7 @@ int main(int argc, char **argv)
            goon = FALSE;
          }
 
-         if(goon && !getenv("I_KNOW_YAM_IS_UNDER_DEVELOPMENT"))
+         if(goon && GetVar("I_KNOW_YAM_IS_UNDER_DEVELOPMENT", &var, sizeof(char), 0) == -1)
          {
            ErrReq.es_Title        = (unsigned char *)"YAM Developer Version Warning!";
            ErrReq.es_TextFormat   = (unsigned char *)"This is an *internal* developer version and\n"

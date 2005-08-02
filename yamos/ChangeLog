@@ -7,6 +7,8 @@ $Source$
 
 2005-08-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * Debug.c, YAM.c, YAM_CO.c, classes/YAM.c: replaced all getenv() usages
+      by the more native GetVar() calls to check for environment variables.
     * misc: fixed some more GCC4 relevant pointer signedness warnings due to
       minor API changes in the latest OS4 SDK.
     * includes/mui/#?: updated all mcc includes with their latest versions
