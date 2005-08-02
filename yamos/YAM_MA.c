@@ -347,7 +347,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 
   // construct the full old file path
   strcpy(oldFilePath, folderDir);
-  AddPart(oldFilePath, mail->MailFile, SIZE_PATHFILE);
+  AddPart((unsigned char *)oldFilePath, mail->MailFile, SIZE_PATHFILE);
 
   while(success == FALSE)
   {
@@ -363,7 +363,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 
     // construct new full file path
     strcpy(newFilePath, folderDir);
-    AddPart(newFilePath, newFileName, SIZE_PATHFILE);
+    AddPart((unsigned char *)newFilePath, newFileName, SIZE_PATHFILE);
 
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)
@@ -2272,7 +2272,7 @@ BOOL MA_ImportMessages(char *fname)
       if ((G->TR = TR_New(TR_IMPORT)))
       {
          stccpy(G->TR->ImportFile, fname, SIZE_PATHFILE);
-         TR_SetWinTitle(TRUE, FilePart(fname));
+         TR_SetWinTitle(TRUE, (char *)FilePart(fname));
          G->TR->ImportBox = actfo;
 
          if(TR_GetMessageList_IMPORT(fh) && SafeOpenWindow(G->TR->GUI.WI))

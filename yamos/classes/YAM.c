@@ -54,13 +54,15 @@ struct EMailCacheNode
 VOID LoadEMailCache(STRPTR name, struct List *list)
 {
 	BPTR fh;
+	
 	NewList(list);
+
 	if((fh = Open(name, MODE_OLDFILE)))
 	{
 		int i=0;
 		char line[SIZE_REALNAME + SIZE_ADDRESS + 5]; /* should hold "name <addr>\n\0" */
 
-		while(FGets(fh, (STRPTR)line, sizeof(line)) && i++ < 100) // we limit the reading to a maximum of 100 so that this code can`t read endlessly
+		while(FGets(fh, (unsigned char *)line, sizeof(line)) && i++ < 100) // we limit the reading to a maximum of 100 so that this code can`t read endlessly
 		{
 			char *addr;
 			char *end;
@@ -116,7 +118,7 @@ VOID SaveEMailCache(STRPTR name, struct List *list)
 				sprintf(line, "<%s>\n", entry->Address);
 			}
 
-			FPuts(fh, line);
+			FPuts(fh, (unsigned char *)line);
 		}
 
 		Close(fh);

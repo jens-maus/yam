@@ -516,7 +516,7 @@ void RE_DisplayMIME(char *fname, char *ctype)
       // copy the contents of our message file into the
       // temporary file.
       if(CopyFile(tf->Filename, NULL, fname, NULL) &&
-         (email = MA_ExamineMail(NULL, FilePart(tf->Filename), TRUE)))
+         (email = MA_ExamineMail(NULL, (char *)FilePart(tf->Filename), TRUE)))
       {
         struct Mail *mail;
         struct ReadMailData *rmData;

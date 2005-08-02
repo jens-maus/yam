@@ -2944,7 +2944,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
    // lets go on
    if(G->TR->List)
    {
-      TR_SetWinTitle(FALSE, FilePart(fname));
+      TR_SetWinTitle(FALSE, (char *)FilePart(fname));
       TR_TransStat_Init(&ts);
       TR_TransStat_Start(&ts);
 

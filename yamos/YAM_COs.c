@@ -546,7 +546,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   else if (!strnicmp(buffer, "RexxMenu", 8))
                   {
                      int j = atoi(&buffer[8]);
-                     stccpy(co->RX[j].Name, FilePart(value), SIZE_NAME);
+                     stccpy(co->RX[j].Name, (char *)FilePart(value), SIZE_NAME);
                      stccpy(co->RX[j].Script, value, SIZE_PATHFILE);
                   }
                }
@@ -555,7 +555,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                {
                   int j = atoi(&buffer[10]);
                   if (!ofo) ofo = *oldfolders = calloc(100, sizeof(struct Folder *));
-                  if (!ofo[j]) ofo[j] = FO_NewFolder(FT_CUSTOM, value, FilePart(value));
+                  if (!ofo[j]) ofo[j] = FO_NewFolder(FT_CUSTOM, value, (char *)FilePart(value));
                   if (!FO_LoadConfig(ofo[j])) FO_SaveConfig(ofo[j]);
                }
 /*0*/          else if (!stricmp(buffer, "RealName"))       stccpy(co->RealName, value, SIZE_REALNAME);

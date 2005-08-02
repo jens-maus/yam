@@ -332,8 +332,10 @@ static void FI_GenerateListPatterns(struct Search *search)
          {
             struct SearchPatternNode *newNode;
 
-            if (search->CaseSens) ParsePattern      (buf, pattern, sizeof(pattern));
-            else                  ParsePatternNoCase(buf, pattern, sizeof(pattern));
+            if(search->CaseSens)
+              ParsePattern(buf, (unsigned char *)pattern, sizeof(pattern));
+            else
+              ParsePatternNoCase(buf, (unsigned char *)pattern, sizeof(pattern));
 
             // put the pattern in our search pattern list
             newNode = malloc(sizeof(struct SearchPatternNode));
@@ -433,8 +435,10 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
          sprintf(search->Match, "#?%s#?", buffer);
       }
 
-      if (casesens) ParsePattern      (search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
-      else          ParsePatternNoCase(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
+      if(casesens)
+        ParsePattern(search->Match, (unsigned char *)search->Pattern, (SIZE_PATTERN+4)*2+2);
+      else
+        ParsePatternNoCase(search->Match, (unsigned char *)search->Pattern, (SIZE_PATTERN+4)*2+2);
    }
 
    return FALSE;

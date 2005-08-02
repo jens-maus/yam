@@ -167,6 +167,7 @@ HOOKPROTONHNONP(AddNewRuleToList, void)
       DoMethod(gui->GR_RGROUP, MUIM_Group_InitChange); // required for a proper refresh
       DoMethod(gui->GR_SGROUP, MUIM_Group_InitChange);
       DoMethod(gui->GR_SGROUP, OM_ADDMEMBER, newSearchGroup);
+      //DoMethod(gui->GR_SGROUP, MUIM_Group_MoveMember, newSearchGroup, -1);
       DoMethod(gui->GR_SGROUP, MUIM_Group_ExitChange);
       DoMethod(gui->GR_RGROUP, MUIM_Group_ExitChange); // required for a proper refresh
 
@@ -988,8 +989,10 @@ void CO_SetDefaults(struct Config *co, int page)
    if(page == 9 || page < 0)
    {
       G->PGPVersion = 0;
-      if (GetVar("PGPPATH", co->PGPCmdPath, SIZE_PATH, 0) >= 0) G->PGPVersion = CO_DetectPGP(co);
-      if (!G->PGPVersion)
+      if(GetVar("PGPPATH", (unsigned char *)co->PGPCmdPath, SIZE_PATH, 0) >= 0)
+        G->PGPVersion = CO_DetectPGP(co);
+
+      if(!G->PGPVersion)
       {
          strcpy(co->PGPCmdPath, "C:");
          G->PGPVersion = CO_DetectPGP(co);

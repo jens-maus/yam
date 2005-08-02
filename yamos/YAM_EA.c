@@ -452,7 +452,7 @@ HOOKPROTONHNO(EA_DownloadPhotoFunc, void, int *arg)
                   if (!*addr) setstring(gui->ST_ADDRESS, dbentry[1]);
                   if (!*homepage) setstring(gui->ST_HOMEPAGE, dbentry[3]);
                   CreateDirectory(C->GalleryDir);
-                  strmfp(dbfile, C->GalleryDir, FilePart(dbentry[2]));
+                  strmfp(dbfile, C->GalleryDir, (char *)FilePart(dbentry[2]));
                   if (TR_DownloadURL(C->SupportSite, "gallery", dbentry[2], dbfile)) EA_SetPhoto(winnum, dbfile);
                   success = TRUE; break;
                }

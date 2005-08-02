@@ -2087,8 +2087,8 @@ void WR_App(int winnum, struct AppMessage *amsg)
    for (i = 0; i < amsg->am_NumArgs; i++)
    {
       ap = &amsg->am_ArgList[i];
-      NameFromLock(ap->wa_Lock, buf, SIZE_PATHFILE);
-      AddPart(buf, (char *)ap->wa_Name, SIZE_PATHFILE);
+      NameFromLock(ap->wa_Lock, (unsigned char *)buf, SIZE_PATHFILE);
+      AddPart((unsigned char *)buf, (char *)ap->wa_Name, SIZE_PATHFILE);
       if (!mode)
       {
          FILE *fh;

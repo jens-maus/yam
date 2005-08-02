@@ -271,10 +271,13 @@ BOOL FO_LoadConfig(struct Folder *fo)
 {
    BOOL success = FALSE;
    FILE *fh;
-   char buffer[SIZE_LARGE], fname[SIZE_PATHFILE];
+   char buffer[SIZE_LARGE];
+   char fname[SIZE_PATHFILE];
 
-   MyStrCpy(fname, GetFolderDir(fo)); AddPart(fname, ".fconfig", sizeof(fname));
-   if ((fh = fopen(fname, "r")))
+   MyStrCpy(fname, GetFolderDir(fo));
+   AddPart((unsigned char *)fname, ".fconfig", sizeof(fname));
+
+   if((fh = fopen(fname, "r")))
    {
       fgets(buffer, SIZE_LARGE, fh);
       if (!strnicmp(buffer, "YFC", 3))
@@ -348,7 +351,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
    FILE *fh;
 
    MyStrCpy(fname, GetFolderDir(fo));
-   AddPart(fname, ".fconfig", sizeof(fname));
+   AddPart((unsigned char *)fname, ".fconfig", sizeof(fname));
 
    if ((fh = fopen(fname, "w")))
    {
@@ -374,7 +377,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
       fclose(fh);
 
       MyStrCpy(fname, GetFolderDir(fo));
-      AddPart(fname, ".index", sizeof(fname));
+      AddPart((unsigned char *)fname, ".index", sizeof(fname));
 
       if(!isModified(fo)) SetFileDate(fname, DateStamp(&ds));
 
@@ -503,7 +506,7 @@ BOOL FO_LoadTree(char *fname)
                {
                   if (!FO_LoadConfig(&fo))
                   {
-                     char *folderpath = FilePart(fo.Path);
+                     char *folderpath = (char *)FilePart(fo.Path);
 
                      // check if this is a so-called "standard" folder (INCOMING/OUTGOING etc.)
                      if(stricmp(folderpath, FolderNames[0]) == 0)      fo.Type = FT_INCOMING;
@@ -645,7 +648,7 @@ BOOL FO_LoadFolderImages(struct Folder *fo)
   if(!fo && fo->ImageIndex < MAXBCFOLDERIMG+1) return FALSE;
 
   MyStrCpy(fname, GetFolderDir(fo));
-  AddPart(fname, ".fimage", sizeof(fname));
+  AddPart((unsigned char *)fname, ".fimage", sizeof(fname));
 
   fo->FImage = LoadBCImage(fname);
   if(!fo->FImage) return FALSE;
@@ -806,9 +809,9 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    {
       // now we try to move an existing .index file
       MyStrCpy(srcbuf, GetFolderDir(oldfo));
-      AddPart(srcbuf, ".index", sizeof(srcbuf));
+      AddPart((unsigned char *)srcbuf, ".index", sizeof(srcbuf));
       MyStrCpy(dstbuf, GetFolderDir(fo));
-      AddPart(dstbuf, ".index", sizeof(dstbuf));
+      AddPart((unsigned char *)dstbuf, ".index", sizeof(dstbuf));
 
       if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
       {
@@ -818,9 +821,9 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
       {
         // now we try to mvoe the .fimage file aswell
         MyStrCpy(srcbuf, GetFolderDir(oldfo));
-        AddPart(srcbuf, ".fimage", sizeof(srcbuf));
+        AddPart((unsigned char *)srcbuf, ".fimage", sizeof(srcbuf));
         MyStrCpy(dstbuf, GetFolderDir(fo));
-        AddPart(dstbuf, ".fimage", sizeof(dstbuf));
+        AddPart((unsigned char *)dstbuf, ".fimage", sizeof(dstbuf));
 
         if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
         {

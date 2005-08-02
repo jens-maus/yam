@@ -810,7 +810,7 @@ BOOL MatchNoCase(const char *string, const char *match)
 
    if(pattern)
    {
-     if(ParsePatternNoCase((STRPTR)match, (STRPTR)pattern, patternlen) != -1)
+     if(ParsePatternNoCase((STRPTR)match, (unsigned char *)pattern, patternlen) != -1)
      {
         result = MatchPatternNoCase((STRPTR)pattern, (STRPTR)string);
      }
@@ -1961,10 +1961,16 @@ BOOL DumpClipboard(FILE *out)
 //  Checks if a directory is used as a mail folder
 static BOOL IsFolderDir(char *dir)
 {
-   char *filename = FilePart(dir);
-   int i;
-   for (i = 0; i < 4; i++) if (!stricmp(filename, FolderNames[i])) return TRUE;
-   return (BOOL)(PFExists(dir, ".fconfig") || PFExists(dir, ".index"));
+  char *filename = (char *)FilePart(dir);
+  int i;
+
+  for(i = 0; i < 4; i++)
+  {
+    if(!stricmp(filename, FolderNames[i]))
+      return TRUE;
+  }
+
+  return (BOOL)(PFExists(dir, ".fconfig") || PFExists(dir, ".index"));
 }
 ///
 /// AllFolderLoaded
@@ -3388,7 +3394,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    // unique
    strcpy(dstFileName, mail->MailFile);
    strcpy(dstbuf, GetFolderDir(dstfolder));
-   AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
+   AddPart((unsigned char *)dstbuf, dstFileName, SIZE_PATHFILE);
 
    if(FileExists(dstbuf))
    {
@@ -3405,7 +3411,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
        dstFileName[16] = ','; // restore it
 
        strcpy(dstbuf, GetFolderDir(dstfolder));
-       AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
+       AddPart((unsigned char *)dstbuf, dstFileName, SIZE_PATHFILE);
      }
      while(FileExists(dstbuf));
 
@@ -3750,7 +3756,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
       strcpy(buf, "-kv  ");
       if (secret)
       {
-         GetVar("PGPPATH", &buf[4], SIZE_DEFAULT, 0);
+         GetVar("PGPPATH", (unsigned char *)&buf[4], SIZE_DEFAULT, 0);
          if ((p = buf[strlen(buf)-1]) != ':' && p != '/') strcat(buf, "/");
          strcat(buf, "secring.pgp");
       }
@@ -4414,7 +4420,7 @@ struct BodyChunkData *LoadBCImage(char *fname)
                                       bcd->Depth = bmhd->bmh_Depth;
                                       bcd->Compression = bmhd->bmh_Compression;
                                       bcd->Masking = bmhd->bmh_Masking;
-                                      strcpy(bcd->File, FilePart(fname));
+                                      strcpy(bcd->File, (char *)FilePart(fname));
                                    }
                                 }
                               }
@@ -4450,7 +4456,7 @@ void PGPGetPassPhrase(void)
    if (!G->PGPPassPhrase[0])
    {
       G->PGPPassVolatile = FALSE;
-      if (GetVar("PGPPASS", G->PGPPassPhrase, SIZE_DEFAULT, 0) < 0)
+      if(GetVar("PGPPASS", (unsigned char *)G->PGPPassPhrase, SIZE_DEFAULT, 0) < 0)
       {
          char pgppass[SIZE_DEFAULT];
          G->PGPPassVolatile = TRUE; *pgppass = 0;
@@ -4459,7 +4465,7 @@ void PGPGetPassPhrase(void)
       }
       else return;
    }
-   SetVar("PGPPASS", G->PGPPassPhrase, -1, GVF_GLOBAL_ONLY);
+   SetVar("PGPPASS", (unsigned char *)G->PGPPassPhrase, -1, GVF_GLOBAL_ONLY);
 }
 ///
 /// PGPClearPassPhrase
@@ -4727,7 +4733,7 @@ void DisplayAppIconStatistics(void)
     //     hurt other compilers
     // 2.) Using "zero" as lock parameter avoids a header compatibility
     //     issue (old: "struct FileLock *"; new: "BPTR")
-    G->AppIcon = AddAppIcon(0, 0, (unsigned char *)apptit, G->AppPort, 0, dobj, TAG_DONE);
+    G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, TAG_DONE);
   }
 }
 
@@ -5128,7 +5134,7 @@ char *GetRealPath(char *path)
   {
     // so, if it seems to exists, we get the "real" name out of
     // the lock again.
-    if(NameFromLock(lock, buf, SIZE_PATHFILE) != DOSFALSE)
+    if(NameFromLock(lock, (unsigned char *)buf, SIZE_PATHFILE) != DOSFALSE)
     {
       success = TRUE;
     }

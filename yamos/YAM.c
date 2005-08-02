@@ -1641,7 +1641,7 @@ static int GetDST(BOOL update)
    // SetDST saves the DST settings in the TZONE env-variable which
    // is a bit more complex than the others, so we need to do some advance parsing
    if((!update || ADSTdata.method == ADST_SETDST)
-      && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], buffer, 50, 0) >= 3)
+      && GetVar((STRPTR)&ADSTfile[ADST_SETDST][4], (unsigned char *)buffer, 50, 0) >= 3)
    {
       int i;
 
@@ -1661,7 +1661,7 @@ static int GetDST(BOOL update)
    // FACTS saves the DST information in a ENV:FACTS/DST env variable which will be
    // Hex 00 or 01 to indicate the DST value.
    if((!update || ADSTdata.method == ADST_FACTS) && result == 0
-      && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], buffer, 50, GVF_BINARY_VAR) > 0)
+      && GetVar((STRPTR)&ADSTfile[ADST_FACTS][4], (unsigned char *)buffer, 50, GVF_BINARY_VAR) > 0)
    {
       ADSTdata.method = ADST_FACTS;
 
@@ -1671,7 +1671,7 @@ static int GetDST(BOOL update)
 
    // SummerTimeGuard sets the last string to "YES" if DST is actually active
    if((!update || ADSTdata.method == ADST_SGUARD) && result == 0
-      && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
+      && GetVar((STRPTR)&ADSTfile[ADST_SGUARD][4], (unsigned char *)buffer, 50, 0) > 3 && (tmp = strrchr(buffer, ':')))
    {
       ADSTdata.method = ADST_SGUARD;
 
@@ -1682,7 +1682,7 @@ static int GetDST(BOOL update)
    // ixtimezone sets the fifth byte in the IXGMTOFFSET variable to 01 if
    // DST is actually active.
    if((!update || ADSTdata.method == ADST_IXGMT) && result == 0
-      && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], buffer, 50, GVF_BINARY_VAR) >= 4)
+      && GetVar((STRPTR)&ADSTfile[ADST_IXGMT][4], (unsigned char *)buffer, 50, GVF_BINARY_VAR) >= 4)
    {
       ADSTdata.method = ADST_IXGMT;
 
@@ -1881,15 +1881,15 @@ int main(int argc, char **argv)
       C = calloc(1, sizeof(struct Config));
 
       // get the PROGDIR: and program name and put it into own variables
-      NameFromLock(progdir, G->ProgDir, sizeof(G->ProgDir));
+      NameFromLock(progdir, (unsigned char *)G->ProgDir, sizeof(G->ProgDir));
       if(WBmsg && WBmsg->sm_NumArgs > 0)
       {
         strncpy(G->ProgName, (char *)WBmsg->sm_ArgList[0].wa_Name, SIZE_FILE);
       }
       else
       {
-        GetProgramName(G->ProgName, SIZE_FILE);
-        strcpy(G->ProgName, FilePart(G->ProgName));
+        GetProgramName((unsigned char *)G->ProgName, SIZE_FILE);
+        strcpy(G->ProgName, (char *)FilePart(G->ProgName));
       }
 
       D(DBF_STARTUP, "ProgDir.: '%s'", G->ProgDir);

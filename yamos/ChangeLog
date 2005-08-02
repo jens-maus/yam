@@ -7,6 +7,8 @@ $Source$
 
 2005-08-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * misc: fixed some more GCC4 relevant pointer signedness warnings due to
+      minor API changes in the latest OS4 SDK.
     * includes/mui/#?: updated all mcc includes with their latest versions
       available. No functional change, but it's always good to be uptodate :)
 

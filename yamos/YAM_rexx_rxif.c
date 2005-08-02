@@ -1914,7 +1914,7 @@ void rx_setmailfile( UNUSED struct RexxHost *host, struct rxd_setmailfile **rxd,
          break;
          
       case RXIF_ACTION:
-         mfile = FilePart(rd->arg.mailfile);
+         mfile = (char *)FilePart(rd->arg.mailfile);
          for (i = 0;; i++)
          {
             DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);

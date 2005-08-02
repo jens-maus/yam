@@ -193,10 +193,12 @@ static void MA_ValidateStatus(struct Folder *folder)
 //  Returns file name of folder index
 static char *MA_IndexFileName(struct Folder *folder)
 {
-   static char buffer[SIZE_PATHFILE];
-   strcpy(buffer, GetFolderDir(folder));
-   AddPart(buffer, ".index", SIZE_PATHFILE);
-   return buffer;
+  static char buffer[SIZE_PATHFILE];
+
+  strcpy(buffer, GetFolderDir(folder));
+  AddPart((unsigned char *)buffer, ".index", SIZE_PATHFILE);
+
+  return buffer;
 }
 
 ///
@@ -734,7 +736,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
   strncpy(oldFilePath, GetFolderDir(folder), SIZE_PATHFILE);
   oldFilePath[SIZE_PATHFILE] = '\0';
 
-  if(AddPart(oldFilePath, filename, SIZE_PATHFILE) == 0 ||
+  if(AddPart((unsigned char *)oldFilePath, filename, SIZE_PATHFILE) == 0 ||
      (comment = FileComment(oldFilePath)) == NULL)
   {
     return NULL;
@@ -861,7 +863,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
     strncpy(newFilePath, GetFolderDir(folder), SIZE_PATHFILE);
     newFilePath[SIZE_PATHFILE] = '\0';
 
-    if(AddPart(newFilePath, newFileName, SIZE_PATHFILE) == 0)
+    if(AddPart((unsigned char *)newFilePath, newFileName, SIZE_PATHFILE) == 0)
     {
       result = NULL;
       break;
@@ -882,7 +884,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
         {
           struct ExAllData *eabuffer;
           char matchPattern[15+1];
-          char pattern[16*2+2];
+          unsigned char pattern[16*2+2];
           LONG more;
 
           eac->eac_LastKey = 0;
@@ -891,7 +893,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
           // search for files matching the dateFilePart
           sprintf(matchPattern, "%s.#?", dateFilePart);
           ParsePatternNoCase(matchPattern, pattern, 16*2+2);
-          eac->eac_MatchString = (unsigned char *)pattern;
+          eac->eac_MatchString = pattern;
 
           if((eabuffer = malloc(SIZE_EXALLBUF)))
           {
@@ -947,7 +949,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
       strncpy(newFilePath, GetFolderDir(folder), SIZE_PATHFILE);
       newFilePath[SIZE_PATHFILE] = '\0';
 
-      if(AddPart(newFilePath, newFileName, SIZE_PATHFILE) == 0)
+      if(AddPart((unsigned char *)newFilePath, newFileName, SIZE_PATHFILE) == 0)
       {
         result = NULL;
         break;
@@ -1010,7 +1012,7 @@ char *MA_NewMailFile(struct Folder *folder, char *mailfile)
       return NULL;
 
     strcpy(fullpath, folderDir);
-    AddPart(fullpath, newFileName, SIZE_PATHFILE);
+    AddPart((unsigned char *)fullpath, newFileName, SIZE_PATHFILE);
   }
   while(FileExists(fullpath));
 
@@ -1839,7 +1841,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
 
                     strncpy(oldfile, GetFolderDir(folder), SIZE_PATHFILE);
                     oldfile[SIZE_PATHFILE] = '\0';
-                    AddPart(oldfile, fname, SIZE_PATHFILE);
+                    AddPart((unsigned char *)oldfile, fname, SIZE_PATHFILE);
 
                     if((newfile = MA_NewMailFile(folder, fbuf)))
                     {
@@ -1900,7 +1902,7 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
                 char path[SIZE_PATHFILE+1];
                 strncpy(path, GetFolderDir(folder), SIZE_PATHFILE);
                 path[SIZE_PATHFILE] = '\0';
-                AddPart(path, fname, SIZE_PATHFILE);
+                AddPart((unsigned char *)path, fname, SIZE_PATHFILE);
                 DeleteFile(path);
               }
             }

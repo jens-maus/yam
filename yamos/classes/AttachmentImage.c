@@ -687,7 +687,7 @@ OVERLOAD(MUIM_DeleteDragImage)
 		if(which == WBO_ICON)
 		{
 			if(type == WBDRAWER)
-				AddPart(buf, name, 2048);
+				AddPart((unsigned char *)buf, name, 2048);
 			else if(type == WBDISK)
 			{
 				strncpy(buf, name, 2047);
