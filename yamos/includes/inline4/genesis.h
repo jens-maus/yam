@@ -25,7 +25,6 @@
 #endif
 
 /* Inline macros for Interface "main" */
-#define GetFileSize(last) IGenesis->GetFileSize(last) 
 #define ParseConfig(par1, last) IGenesis->ParseConfig(par1, last) 
 #define ParseNext(last) IGenesis->ParseNext(last) 
 #define ParseNextLine(last) IGenesis->ParseNextLine(last) 
