@@ -1,14 +1,29 @@
-/*
-**
-** $VER: Toolbar_mcc.h V15.6
-** Copyright © 1997-00 Benny Kjær Nielsen. All rights reserved.
-**
-*/
+/***************************************************************************
 
-/*** Include stuff ***/
+ Toolbar MCC - MUI Custom Class for Toolbar handling
+ Copyright (C) 1997-2000 Benny Kjær Nielsen <floyd@amiga.dk>
+ Copyright (C) 2004-2005 by Toolbar.mcc Open Source Team
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ Toolbar class Support Site:  http://www.sf.net/projects/toolbar-mcc
+
+ $Id$
+
+***************************************************************************/
 
 #ifndef TOOLBAR_MCC_H
 #define TOOLBAR_MCC_H
+
+/*** Include stuff ***/
 
 #ifndef LIBRARIES_MUI_H
 #include <libraries/mui.h>
@@ -18,10 +33,16 @@
 #include <exec/types.h>
 #endif
 
-#include "amiga-align.h"
-
 #ifndef BKN_SERIAL
 #define BKN_SERIAL 0xfcf70000
+#endif
+
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack(2)
+  #elif defined(__VBCC__)
+    #pragma amiga-align
+  #endif
 #endif
 
 /*** MUI Defines ***/
@@ -143,6 +164,12 @@ struct MUIP_Toolbar_Description
 #define Toolbar_Space                        { TDT_SPACE,  NULL, NULL,  NULL, NULL, NULL}
 #define Toolbar_End                          { TDT_END,    NULL, NULL,  NULL, NULL, NULL}
 
-#include "default-align.h"
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack()
+  #elif defined(__VBCC__)
+    #pragma default-align
+  #endif
+#endif
 
 #endif /* TOOLBAR_MCC_H */

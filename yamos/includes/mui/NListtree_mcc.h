@@ -1,11 +1,24 @@
-/*h
-Class:      MCC_NListtree
-Copyright:  (c)1999-2000 by Carsten Scholling
-Author:     Carsten Scholling
-Contact:    cs@aphaso.de
-Contents:   Registered class of the Magic User Interface.
-h*/
+/***************************************************************************
 
+ NListtree.mcc - New Listtree MUI Custom Class
+ Copyright (C) 1999-2001 by Carsten Scholling
+ Copyright (C) 2001-2005 by NList Open Source Team
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ NList classes Support Site:  http://www.sf.net/projects/nlist-classes
+
+ $Id$
+
+***************************************************************************/
 
 /*** Include stuff ***/
 
@@ -16,17 +29,18 @@ h*/
 #include "libraries/mui.h"
 #endif
 
-#include "amiga-align.h"
+#ifdef __GNUC__
+  #ifdef __PPC__
+    #pragma pack(2)
+  #endif
+#elif defined(__VBCC__)
+  #pragma amiga-align
+#endif
 
 /*** MUI Defines ***/
 
 #define MUIC_NListtree  "NListtree.mcc"
 #define NListtreeObject MUI_NewObject(MUIC_NListtree
-
-
-
-
-
 
 /*** Attributes ***/
 
@@ -684,6 +698,12 @@ struct MUIP_NListtree_MultiTestMessage
             CurrType;
 };
 
-#include "default-align.h"
+#ifdef __GNUC__
+  #ifdef __PPC__
+    #pragma pack()
+  #endif
+#elif defined(__VBCC__)
+  #pragma default-align
+#endif
 
 #endif /* NLISTTREE_MCC_H */

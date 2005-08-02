@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-08-02  Jens Langner <Jens.Langner@light-speed.de>
+
+    * includes/mui/#?: updated all mcc includes with their latest versions
+      available. No functional change, but it's always good to be uptodate :)
+
 2005-07-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * Makefiles: moved the generic sections of all makefiles into a new

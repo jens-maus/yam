@@ -1,9 +1,26 @@
-/*
-  NListview.mcc (c) Copyright 1996 by Gilles Masson
-  Registered MUI class, Serial Number: 1d51                            0x9d510020 to 0x9d51002F
-  *** use only YOUR OWN Serial Number for your public custom class ***
-  NListview_mcc.h
-*/
+/***************************************************************************
+
+ NListview.mcc - New Listview MUI Custom Class
+ Registered MUI class, Serial Number: 1d51 (0x9d510020 to 0x9d51002F)
+
+ Copyright (C) 1996-2001 by Gilles Masson
+ Copyright (C) 2001-2005 by NList Open Source Team
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+
+ NList classes Support Site:  http://www.sf.net/projects/nlist-classes
+
+ $Id$
+
+***************************************************************************/
 
 #ifndef MUI_NListview_MCC_H
 #define MUI_NListview_MCC_H
@@ -16,7 +33,13 @@
 #include <mui/NList_mcc.h>
 #endif
 
-#include "amiga-align.h"
+#ifdef __GNUC__
+  #ifdef __PPC__
+    #pragma pack(2)
+  #endif
+#elif defined(__VBCC__)
+  #pragma amiga-align
+#endif
 
 #define MUIC_NListview "NListview.mcc"
 #define NListviewObject MUI_NewObject(MUIC_NListview
@@ -57,6 +80,12 @@
 #define MUIV_NListview_HSB_On          0x0300
 #define MUIV_NListview_HSB_Off         0x0100
 
-#include "default-align.h"
+#ifdef __GNUC__
+  #ifdef __PPC__
+    #pragma pack()
+  #endif
+#elif defined(__VBCC__)
+  #pragma default-align
+#endif
 
 #endif /* MUI_NListview_MCC_H */
