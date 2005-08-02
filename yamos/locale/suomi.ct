@@ -3477,7 +3477,7 @@ Valitse tulostettava osa:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Tulosta
+_Tulosta
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3485,7 +3485,7 @@ Valitse tallennettava osa:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Tallenna
+_Tallenna
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3497,7 +3497,7 @@ Valitse näytettävä osa:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Näytä
+_Näytä
 ; Display
 ;
 MSG_RE_BadSig

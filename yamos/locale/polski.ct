@@ -3866,7 +3866,7 @@ Wybierz czëôê do druku:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Drukuj
+_Drukuj
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3874,7 +3874,7 @@ Wybierz czëôê do zapisania:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Zapisz
+_Zapisz
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3886,7 +3886,7 @@ Wybierz czëôê do wyôwietlenia:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Wyôwietl
+_Wyôwietl
 ; Display
 ;
 MSG_RE_BadSig

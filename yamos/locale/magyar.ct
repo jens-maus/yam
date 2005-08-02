@@ -80,7 +80,7 @@ Használd
 ; _Use
 ;
 MSG_Cancel
-Mégse
+_Mégse
 ; _Cancel
 ;
 MSG_Yes
@@ -3754,7 +3754,7 @@ Válaszd ki a nyomtatandó részt:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Nyomtasd
+_Nyomtasd
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3762,7 +3762,7 @@ Válaszd ki az elmentendõ részt:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Mentsd
+M_entsd
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3774,7 +3774,7 @@ Válaszd ki a megjelenítendõ részt:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Jelenítsd meg
+_Jelenítsd meg
 ; Display
 ;
 MSG_RE_BadSig

@@ -2843,13 +2843,13 @@ MSG_RE_SelectPrintPart (//)
 Select part to print:
 ;
 MSG_RE_PrintGad (//)
-Print
+_Print
 ;
 MSG_RE_SelectSavePart (//)
 Select part to save:
 ;
 MSG_RE_SaveGad (//)
-Save
+_Save
 ;
 MSG_RE_DisplayMsg (//)
 Display message
@@ -2858,7 +2858,7 @@ MSG_RE_SelectDisplayPart (//)
 Select part to display:
 ;
 MSG_RE_DisplayGad (//)
-Display
+_Display
 ;
 MSG_RE_BadSig (//)
 WARNING: Bad signature

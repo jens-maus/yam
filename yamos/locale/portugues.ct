@@ -2768,13 +2768,13 @@ MSG_RE_SelectPrintPart
 Seleccione a parte a imprimir:
 ;
 MSG_RE_PrintGad
-Imprimir
+_Imprimir
 ;
 MSG_RE_SelectSavePart
 Seleccione a parte a gravar:
 ;
 MSG_RE_SaveGad
-Gravar
+_Gravar
 ;
 MSG_RE_DisplayMsg
 Mostrar a Mensagem
@@ -2783,7 +2783,7 @@ MSG_RE_SelectDisplayPart
 Seleccione a parte a mostrar:
 ;
 MSG_RE_DisplayGad
-Mostrar
+_Mostrar
 ;
 MSG_RE_BadSig
 AVISO: Assinatura em más condições.

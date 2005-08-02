@@ -3940,7 +3940,7 @@ Velg part til utskrift:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Utskrift
+_Utskrift
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3948,7 +3948,7 @@ Velg part til lagring:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Lagre
+_Lagre
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3960,7 +3960,7 @@ Velg part til visning:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Vise
+_Vise
 ; Display
 ;
 MSG_RE_BadSig

@@ -3330,7 +3330,7 @@ MSG_RE_SelectPrintPart
 ;Select part to print:
 ;
 MSG_RE_PrintGad
-Εκτύπωση
+_Εκτύπωση
 ;Print
 ;
 MSG_RE_SelectSavePart
@@ -3338,7 +3338,7 @@ MSG_RE_SelectSavePart
 ;Select part to save:
 ;
 MSG_RE_SaveGad
-Αποθήκευση
+_Αποθήκευση
 ;Save
 ;
 MSG_RE_DisplayMsg
@@ -3350,7 +3350,7 @@ MSG_RE_SelectDisplayPart
 ;Select part to display:
 ;
 MSG_RE_DisplayGad
-Εμφάνιση
+_Εμφάνιση
 ;Display
 ;
 MSG_RE_BadSig

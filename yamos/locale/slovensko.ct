@@ -3742,7 +3742,7 @@ Izberite del, ki naj ga natisnem:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Natisni
+_Natisni
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3750,7 +3750,7 @@ Izberite del, ki naj ga shranim:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Shrani
+_Shrani
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3762,7 +3762,7 @@ Izberite del, ki naj ga prika¾em:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Prika¾i
+P_rika¾i
 ; Display
 ;
 MSG_RE_BadSig

@@ -2726,13 +2726,13 @@ MSG_RE_SelectPrintPart
 Selecione a parte a imprimir:
 ;
 MSG_RE_PrintGad
-Imprimir
+_Imprimir
 ;
 MSG_RE_SelectSavePart
 Selecione a parte a Salvar:
 ;
 MSG_RE_SaveGad
-Salvar
+_Salvar
 ;
 MSG_RE_DisplayMsg
 Visualizar mensagem
@@ -2741,7 +2741,7 @@ MSG_RE_SelectDisplayPart
 Selecione a parte a visualizar:
 ;
 MSG_RE_DisplayGad
-Visualizar
+_Visualizar
 ;
 MSG_RE_BadSig
 AVISO: Assinatura inválida

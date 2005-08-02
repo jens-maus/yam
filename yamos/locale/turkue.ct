@@ -3883,7 +3883,7 @@ Basýlacak bölümü seçin:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Bastýr
+_Bastýr
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3891,7 +3891,7 @@ Kaydedilecek bölümü seçin:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Kaydet
+_Kaydet
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3903,7 +3903,7 @@ Gösterilecek bölümü seçin:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Göster
+_Göster
 ; Display
 ;
 MSG_RE_BadSig

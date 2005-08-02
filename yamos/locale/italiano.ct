@@ -3667,7 +3667,7 @@ Seleziona la parte da stampare:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Stampa
+_Stampa
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3675,7 +3675,7 @@ Seleziona la parte da salvare:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Salva
+_Salva
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3687,7 +3687,7 @@ Seleziona la parte da visualizzare:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Visualizza
+_Visualizza
 ; Display
 ;
 MSG_RE_BadSig

@@ -3694,7 +3694,7 @@ Izaberi dio za stampanje:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Stampaj
+_Stampaj
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3702,7 +3702,7 @@ Izaberi dio za snimanje
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Snimi
+_Snimi
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3714,7 +3714,7 @@ Izaberi dio koji zelis vidjeti:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Pokazi
+_Pokazi
 ; Display
 ;
 MSG_RE_BadSig

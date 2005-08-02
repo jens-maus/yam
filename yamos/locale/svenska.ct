@@ -3326,7 +3326,7 @@ Välj del att skriva ut:
 ;#DEF Select part to print:
 ;#SET (//)
 MSG_RE_PrintGad
-Utskrift
+_Utskrift
 ;#DEF Print
 ;#SET (//)
 MSG_RE_SelectSavePart
@@ -3334,7 +3334,7 @@ Välj del att spara:
 ;#DEF Select part to save:
 ;#SET (//)
 MSG_RE_SaveGad
-Spara
+_Spara
 ;#DEF Save
 ;#SET (//)
 MSG_RE_DisplayMsg
@@ -3346,7 +3346,7 @@ Välj del att visa:
 ;#DEF Select part to display:
 ;#SET (//)
 MSG_RE_DisplayGad
-Visa
+V_isa
 ;#DEF Display
 ;#SET (//)
 MSG_RE_BadSig

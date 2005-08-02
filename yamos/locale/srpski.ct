@@ -3724,7 +3724,7 @@ Odaberite deo za ãtampanje:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Ãtampaj
+_Ãtampaj
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3732,7 +3732,7 @@ Odaberite deo za snimanje:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Snimi
+_Snimi
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3744,7 +3744,7 @@ Odaberite deo za prikazivanje:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Prikaz
+P_rikaz
 ; Display
 ;
 MSG_RE_BadSig

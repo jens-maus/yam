@@ -3842,7 +3842,7 @@ Vyberte çásti zprávy, které chcete vytisknout:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Tisknout
+_Tisknout
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3850,7 +3850,7 @@ Vyberte çásti zprávy, které chcete uloùit:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Uloùit
+_Uloùit
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3862,7 +3862,7 @@ Vyberte çásti zprávy, které chcete zobrazit:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Zobrazit
+Z_obrazit
 ; Display
 ;
 MSG_RE_BadSig

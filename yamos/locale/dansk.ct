@@ -3917,7 +3917,7 @@ Vælg hvilken del der skal udskrives:
 ; Select part to print:
 ;
 MSG_RE_PrintGad
-Udskrive
+_Udskrive
 ; Print
 ;
 MSG_RE_SelectSavePart
@@ -3925,7 +3925,7 @@ Vælg hvilken del der skal gemmes:
 ; Select part to save:
 ;
 MSG_RE_SaveGad
-Gemme
+_Gemme
 ; Save
 ;
 MSG_RE_DisplayMsg
@@ -3937,7 +3937,7 @@ Vælg hvilken del der skal fremvises:
 ; Select part to display:
 ;
 MSG_RE_DisplayGad
-Fremvise
+F_remvise
 ; Display
 ;
 MSG_RE_BadSig
