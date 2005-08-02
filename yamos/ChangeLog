@@ -7,6 +7,9 @@ $Source$
 
 2005-08-02  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c: fixed bug #1240960 where the AttachmentRequests' NList didn't
+      always get the main keyboard focus. Now also the very first item in
+      the list will be automatically selected if the requests is created.
     * Debug.c, YAM.c, YAM_CO.c, classes/YAM.c: replaced all getenv() usages
       by the more native GetVar() calls to check for environment variables.
     * misc: fixed some more GCC4 relevant pointer signedness warnings due to

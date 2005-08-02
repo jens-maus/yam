@@ -639,7 +639,7 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     WindowContents, VGroup,
       Child, LLabel(body),
         Child, lv_attach = NListviewObject,
-          MUIA_CycleChain,      1,
+          MUIA_CycleChain, TRUE,
           MUIA_NListview_NList, NListObject,
             InputListFrame,
             MUIA_NList_Title,       TRUE,
@@ -660,14 +660,18 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
   // if creation of window was successfull
   if(wi_ar)
   {
-    // lets create the static parts of the Attachrequest entries in the NList
     static struct Part spart[2];
+
+    // add the window to our application object
+    DoMethod(G->App, OM_ADDMEMBER, wi_ar);
+
+    // lets create the static parts of the Attachrequest entries in the NList
     spart[0].Nr = PART_ORIGINAL;
     strcpy(spart[0].Name, GetStr(MSG_RE_Original));
     spart[0].Size = rmData->mail->Size;
     spart[0].Decoded = TRUE;
-
-    DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Bottom);
+    DoMethod(lv_attach, MUIM_NList_InsertSingle, &spart[0], MUIV_NList_Insert_Top);
+    set(lv_attach, MUIA_NList_Active, MUIV_NList_Active_Top);
 
     // if this AttachRequest isn`t a DISPLAY request we show all the option to select the text we actually see
     if(!isDisplayReq(mode))
@@ -691,7 +695,6 @@ struct Part *AttachRequest(char *title, char *body, char *yestext, char *notext,
     // now lets create all other window dependencies (this have to be multithreaded later)
     set(wi_ar, MUIA_Window_DefaultObject, lv_attach);
     set(G->App, MUIA_Application_Sleep, TRUE);
-    DoMethod(G->App, OM_ADDMEMBER, wi_ar);
     DoMethod(bt_okay  , MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 1);
     DoMethod(bt_cancel, MUIM_Notify, MUIA_Pressed, FALSE, G->App, 2, MUIM_Application_ReturnID, 3);
     DoMethod(lv_attach, MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, G->App, 2, MUIM_Application_ReturnID, 1);
