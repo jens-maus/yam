@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-08-03  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: updated all minimum required .mcc version numbers to the latest
+      available ones to prevent people from reporting bugs caused by old,
+      buggy .mcc versions.
+
 2005-08-02  Jens Langner <Jens.Langner@light-speed.de>
 
     * catalogs: added missing keyboard shortcuts for the attachment request

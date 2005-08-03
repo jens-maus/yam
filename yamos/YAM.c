@@ -1304,27 +1304,27 @@ static void Initialise(BOOL hidden)
    if(INITLIB(IAmiSSL, InitLib("amissl.library", (APTR)&AmiSSLBase, AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, FALSE, FALSE)))
       G->TR_UseableTLS = TRUE;
 
-   // Lets check for the correct Toolbar.mcc version (minimum 15.8 because earlier versions are too buggy)
-   CheckMCC(MUIC_Toolbar, 15, 8, TRUE);
+   // Lets check for the correct Toolbar.mcc version (minimum 15.12 because earlier versions are too buggy)
+   CheckMCC(MUIC_Toolbar, 15, 12, TRUE);
 
    // Lets check for the correct TextEditor.mcc version
-   CheckMCC(MUIC_TextEditor, 15, 14, TRUE);
+   CheckMCC(MUIC_TextEditor, 15, 16, TRUE);
 
    // Lets check for the correct BetterString.mcc version
-   CheckMCC(MUIC_BetterString, 11, 6, TRUE);
+   CheckMCC(MUIC_BetterString, 11, 7, TRUE);
 
-   // we have to have at least v20.111 of NList.mcc to get YAM working without risking
+   // we have to have at least v20.116 of NList.mcc to get YAM working without risking
    // to have it buggy - so we make it a requirement. And also 111 is the fastest one ATM.
-   CheckMCC(MUIC_NList, 20, 111, TRUE);
+   CheckMCC(MUIC_NList, 20, 116, TRUE);
 
    // we also make sure the user uses the latest brand of all other NList classes, such as
    // NListview, NFloattext etc.
-   CheckMCC(MUIC_NListview, 19, 70, TRUE);
-   CheckMCC(MUIC_NFloattext, 19, 51, TRUE);
+   CheckMCC(MUIC_NListview, 19, 71, TRUE);
+   CheckMCC(MUIC_NFloattext, 19, 52, TRUE);
 
-   // we make v18.12 the minimum requirement for YAM because earlier versions are
+   // we make v18.23 the minimum requirement for YAM because earlier versions are
    // buggy
-   CheckMCC(MUIC_NListtree, 18, 12, TRUE);
+   CheckMCC(MUIC_NListtree, 18, 23, TRUE);
 
    // Initialise and Setup our own MUI custom classes before we go on
    if(!YAM_SetupClasses())
