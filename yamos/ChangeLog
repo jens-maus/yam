@@ -7,6 +7,9 @@ $Source$
 
 2005-08-03  Jens Langner <Jens.Langner@light-speed.de>
 
+    * Debug.c,h: fixed incorrect use of KPutFmt() on MorphOS machines in
+      accordance to the changes in TextEditor.mcc. Now our debug output show
+      hopefully also work on MorphOS.
     * YAM.c: updated all minimum required .mcc version numbers to the latest
       available ones to prevent people from reporting bugs caused by old,
       buggy .mcc versions.

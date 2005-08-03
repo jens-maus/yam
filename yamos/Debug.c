@@ -40,7 +40,9 @@
 
 #include "Debug.h"
 
+#ifndef __MORPHOS__
 extern void KPutFmt(const char *format, va_list arg);
+#endif
 
 // our static variables with default values
 static int indent_level = 0;

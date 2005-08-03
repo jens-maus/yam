@@ -60,8 +60,13 @@
   #ifndef kprintf
     #define kprintf(format, args...)  ((struct ExecIFace *)((*(struct ExecBase **)4)->MainInterface))->DebugPrintF(format, ## args)
   #endif
+#elif defined(__MORPHOS__)
+  #include <exec/rawfmt.h>
+  #include <proto/exec.h>
+  #define KPutFmt(format, args)  VNewRawDoFmt(format, (APTR)RAWFMTFUNC_SERIAL, NULL, args)
+  void kprintf(const char *formatString,...);
 #else
-void kprintf(const char *formatString,...);
+  void kprintf(const char *formatString,...);
 #endif
 
 // debug classes
