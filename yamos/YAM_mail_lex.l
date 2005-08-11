@@ -26,7 +26,8 @@
 
 ***************************************************************************/
 
-/* Remember to call flex with the -i in order to create a case-insensitive
+/*
+ * Remember to call flex with the -i in order to create a case-insensitive
  * scanner:
  * flex -i lexer.l
  */
@@ -41,15 +42,82 @@
     #define YY_NO_INPUT 1
 %}
 
-NOTBLANK   [^[:blank:]\n()<>\[\]*.\"]
-NOTBLANKAT [^[:blank:]\n()<>\[\]*.@\"]
-NOTEOR     [^[:blank:]\n()<>\[\]*.\",!?]
-INITIALS   [[:alpha:]]
+/*
+ * The URL matching rules for this lexer try to be compatible to the official
+ * RFC 1738 (http://www.faqs.org/rfcs/rfc1738.html) which defines how common
+ * URLs look like and defines the correct BNF form for matching these URLs
+ *
+ * However, minor adaptions were made to make the URL matching more compatible to
+ * the way we require it in our text parser in YAM
+ *
+ */
+
+/* common rules */
+LOGIN       ({USER}?(":"{PASSWORD})?"@")?{HOSTPORT}
+HOSTPORT    {HOST}(":"{PORT})?
+HOST        ({HOSTNAME}|{HOSTNUMBER})
+HOSTNAME    ({DOMAINLABEL}".")*{TOPLABEL}
+DOMAINLABEL ([[:alnum:]]|[[:alnum:]]([[:alnum:]]|"-")*[[:alnum:]])
+TOPLABEL    ([[:alpha:]]|[[:alpha:]]([[:alnum:]]|"-")*[[:alnum:]])
+HOSTNUMBER  [[:digit:]]{1,3}"."[[:digit:]]{1,3}"."[[:digit:]]{1,3}"."[[:digit:]]{1,3}
+PORT        [[:digit:]]+
+USER        ({UCHAR}|";"|"?"|"&"|"=")*
+PASSWORD    ({UCHAR}|";"|"?"|"&"|"=")*
+URLPATH     {XCHAR}*
+
+/* FTP (see also RFC959) */
+FTPURL      "ftp://"{LOGIN}("/"{FPATH}(";type="{FTPTYPE})?)?
+FPATH       {FSEGMENT}("/"{FSEGMENT})*
+FSEGMENT    ({UCHAR}|"?"|":"|"@"|"&"|"=")*
+FTPTYPE     [AIDaid]
+
+/* FILE */
+FILEURL     "file://"({HOST}|"localhost")?"/"{FPATH}
+
+/* HTTP/HTTPS/PLAINURL */
+HTTPURL     "http://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?
+HTTPSURL    "https://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?
+PLAINURL    ("www"|"ftp")"."{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?
+HPATH       "~"?{HSEGMENT}("/"{HSEGMENT})*
+HSEGMENT    ({UCHAR}|";"|":"|"@"|"&"|"=")*
+SEARCH      ({UCHAR}|";"|":"|"@"|"&"|"=")*
+
+/* GOPHER (see also RFC1436) */
+GOPHERURL   "gopher://"{HOSTPORT}("/"({GTYPE}({SELECTOR}("%09"{SEARCH}("%09"{GOPHSTR})?)?)?)?)?
+GTYPE       {XCHAR}
+SELECTOR    {XCHAR}*
+GOPHSTR     {XCHAR}*
+
+/* MAILTO (see also RFC822 */
+MAILTOURL   "mailto:"{ENC822ADDR}("?"{SEARCH})?
+ENC822ADDR  ([[:alnum:]]|{SAFE})+"@"{HOST}
+
+/* NEWS (see also RFC1036 */
+NEWSURL     "news:"{GROUPART}
+GROUPART    ("*"|{GROUP}|{ARTICLE})
+GROUP       [[:alpha:]]([[:alnum:]]|"-"|"."|"+"|"_")*
+ARTICLE     ({UCHAR}|";"|"/"|"?"|":"|"&"|"=")+"@"{HOST}
+
+/* NNTP (see also RFC977 */
+NNTPURL     "nntp://"{HOSTPORT}"/"{GROUP}("/"[[:digit:]]+)?
+
+/* TELNET */
+TELNETURL   "telnet://"{LOGIN}("/")?
+
+/* Miscellaneous definitions */
+SAFE        ("$"|"-"|"_"|"."|"+")
+EXTRA       ("!"|"*"|"'"|"("|")"|",")
+RESERVED    (";"|"/"|"?"|":"|"@"|"&"|"=")
+HEX         [[:digit:]A-Fa-f]
+ESCAPE      "%"{HEX}{2}
+UNRESERVED  ([[:alnum:]]|{SAFE}|{EXTRA})
+UCHAR       ({UNRESERVED}|{ESCAPE})
+XCHAR       ({UNRESERVED}|{RESERVED}|{ESCAPE})
 
 %%
 ^"<sb>"                             {return tSB ;}
 ^"<tsb>"                            {return tTSB;}
-^([[:blank:]]*{INITIALS}{0,3}">")+  {return tCITE;}
+^([[:blank:]]*[[:alpha:]]{0,3}">")+  {return tCITE;}
 
 " "  {return tSPACE      ;}
 "  " {return tDOUBLESPACE;}
@@ -77,17 +145,18 @@ INITIALS   [[:alpha:]]
 [[:blank:]]"#"[^[:blank:]\n#?]([^\n#]*[^[:blank:]\n#])?"#"[[:blank:]\n,.!?:]      |
 ^"#"[^[:blank:]\n#?]([^\n#]*[^[:blank:]\n#])?"#"[[:blank:]\n,.!?:]                {return tCOLORED   ;}
 
-"http://"({NOTBLANK}|[.])*{NOTEOR}                                                {return tHTTP      ;}
-"https://"({NOTBLANK}|[.])*{NOTEOR}                                               {return tHTTPS     ;}
-"ftp://"({NOTBLANK}|[.])*{NOTEOR}                                                 {return tFTP       ;}
-"file://"({NOTBLANK}|[.])*{NOTEOR}                                                {return tFILE      ;}
-"gopher://"({NOTBLANK}|[.])*{NOTEOR}                                              {return tGOPHER    ;}
-"telnet://"({NOTBLANK}|[.])*{NOTEOR}                                              {return tTELNET    ;}
-"mailto:"({NOTBLANK}|[.])*{NOTEOR}                                                {return tMAILTO    ;}
-"news:"({NOTBLANK}|[.])*{NOTEOR}                                                  {return tNEWS      ;}
-({NOTBLANKAT}|".")+"@"({NOTBLANKAT}+".")+{NOTEOR}{2,4}                            {return tEMAIL     ;}
-("www"|"ftp")"."{NOTBLANK}{3,}({NOTBLANK}|".")*"."{NOTEOR}{2,}                    {return tURL       ;}
-.                                                                                 {return tNORMALTEXT;}
+{HTTPURL}                                      {return tHTTP      ;}
+{HTTPSURL}                                     {return tHTTPS     ;}
+{FTPURL}                                       {return tFTP       ;}
+{FILEURL}                                      {return tFILE      ;}
+{GOPHERURL}                                    {return tGOPHER    ;}
+{MAILTOURL}                                    {return tMAILTO    ;}
+{NEWSURL}                                      |
+{NNTPURL}                                      {return tNEWS      ;}
+{TELNETURL}                                    {return tTELNET    ;}
+{ENC822ADDR}                                   {return tEMAIL     ;}
+{PLAINURL}                                     {return tURL       ;}
+.                                              {return tNORMALTEXT;}
 
 %%
 /// ParseEmailText()
