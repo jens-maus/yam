@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-08-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_mail_lex.l: fixed URL highlighting once more to also allow the anchor
+      character "#" in http URLs.
+
 2005-08-11  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l: In accordance to the bugfix of bug #1255562 the whole

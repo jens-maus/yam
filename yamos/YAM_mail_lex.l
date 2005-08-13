@@ -79,8 +79,8 @@ HTTPURL     "http://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?
 HTTPSURL    "https://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?
 PLAINURL    ("www"|"ftp")"."{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?
 HPATH       "~"?{HSEGMENT}("/"{HSEGMENT})*
-HSEGMENT    ({UCHAR}|";"|":"|"@"|"&"|"=")*
-SEARCH      ({UCHAR}|";"|":"|"@"|"&"|"=")*
+HSEGMENT    ({UCHAR}|";"|":"|"@"|"&"|"="|"#")*
+SEARCH      ({UCHAR}|";"|":"|"@"|"&"|"="|"#")*
 
 /* GOPHER (see also RFC1436) */
 GOPHERURL   "gopher://"{HOSTPORT}("/"({GTYPE}({SELECTOR}("%09"{SEARCH}("%09"{GOPHSTR})?)?)?)?)?
@@ -115,9 +115,9 @@ UCHAR       ({UNRESERVED}|{ESCAPE})
 XCHAR       ({UNRESERVED}|{RESERVED}|{ESCAPE})
 
 %%
-^"<sb>"                             {return tSB ;}
-^"<tsb>"                            {return tTSB;}
-^([[:blank:]]*[[:alpha:]]{0,3}">")+  {return tCITE;}
+^"<sb>"                               {return tSB ; }
+^"<tsb>"                              {return tTSB; }
+^([[:blank:]]*[[:alpha:]]{0,3}">")+   {return tCITE;}
 
 " "  {return tSPACE      ;}
 "  " {return tDOUBLESPACE;}
