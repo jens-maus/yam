@@ -115,7 +115,7 @@ ESCAPE      "%"{HEX}{2}
 UNRESERVED  ([[:alnum:]]|{SAFE}|{EXTRA})
 UCHAR       ({UNRESERVED}|{ESCAPE})
 XCHAR       ({UNRESERVED}|{RESERVED}|{ESCAPE})
-NOTATEOL    [^[:punct:][:space:]]
+NOTATEOL    ([^[:punct:][:space:]]|"/")
 
 %%
 ^"<sb>"                               {return tSB ; }
