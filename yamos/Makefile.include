@@ -115,7 +115,7 @@ $(OBJDIR)/%.o: %.c
 
 %.c: %.l
 	@printf '\033[33mGenerating lexer $<\033[0m\n'
-	@$(FLEX) -Cem -i -t $< > $@
+	@$(FLEX) -Cfe -i -t $< > $@
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.ct
 	@printf '\033[33mGenerating $@\033[0m\n'

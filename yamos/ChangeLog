@@ -7,6 +7,11 @@ $Source$
 
 2005-08-13  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_mail_lex.l: even more fixes/changes to the flex text highlighting
+      engine so that we now check if an URL doesn't end with a punctation
+      character which is normally used to close sentences. Also increased the
+      flex compressing mode from -Cem to -Cfe which should normally perform
+      better (at the cost of larger tables) according to the flex documentation.
     * YAM_mail_lex.l: fixed URL highlighting once more to also allow the anchor
       character "#" in http URLs.
 

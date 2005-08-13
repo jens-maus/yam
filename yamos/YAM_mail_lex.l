@@ -1,4 +1,3 @@
-%option noyywrap
 /***************************************************************************
 
  YAM - Yet Another Mailer
@@ -31,6 +30,9 @@
  * scanner:
  * flex -i lexer.l
  */
+
+%option noyywrap
+%option never-interactive
 
 %{
     #include <string.h>
@@ -66,40 +68,40 @@ PASSWORD    ({UCHAR}|";"|"?"|"&"|"=")*
 URLPATH     {XCHAR}*
 
 /* FTP (see also RFC959) */
-FTPURL      "ftp://"{LOGIN}("/"{FPATH}(";type="{FTPTYPE})?)?
+FTPURL      "ftp://"{LOGIN}("/"{FPATH}(";type="{FTPTYPE})?)?{NOTATEOL}
 FPATH       {FSEGMENT}("/"{FSEGMENT})*
 FSEGMENT    ({UCHAR}|"?"|":"|"@"|"&"|"=")*
 FTPTYPE     [AIDaid]
 
 /* FILE */
-FILEURL     "file://"({HOST}|"localhost")?"/"{FPATH}
+FILEURL     "file://"({HOST}|"localhost")?"/"{FPATH}{NOTATEOL}
 
 /* HTTP/HTTPS/PLAINURL */
-HTTPURL     "http://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?
-HTTPSURL    "https://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?
-PLAINURL    ("www"|"ftp")"."{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?
+HTTPURL     "http://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
+HTTPSURL    "https://"{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
+PLAINURL    ("www"|"ftp")"."{HOSTPORT}("/"{HPATH}("?"{SEARCH})?)?{NOTATEOL}
 HPATH       "~"?{HSEGMENT}("/"{HSEGMENT})*
 HSEGMENT    ({UCHAR}|";"|":"|"@"|"&"|"="|"#")*
-SEARCH      ({UCHAR}|";"|":"|"@"|"&"|"="|"#")*
+SEARCH      ({UCHAR}|";"|":"|"@"|"&"|"="|"#"|"/")*
 
 /* GOPHER (see also RFC1436) */
-GOPHERURL   "gopher://"{HOSTPORT}("/"({GTYPE}({SELECTOR}("%09"{SEARCH}("%09"{GOPHSTR})?)?)?)?)?
+GOPHERURL   "gopher://"{HOSTPORT}("/"({GTYPE}({SELECTOR}("%09"{SEARCH}("%09"{GOPHSTR})?)?)?)?)?{NOTATEOL}
 GTYPE       {XCHAR}
 SELECTOR    {XCHAR}*
 GOPHSTR     {XCHAR}*
 
 /* MAILTO (see also RFC822 */
-MAILTOURL   "mailto:"{ENC822ADDR}("?"{SEARCH})?
+MAILTOURL   "mailto:"{ENC822ADDR}("?"{SEARCH})?{NOTATEOL}
 ENC822ADDR  ([[:alnum:]]|{SAFE})+"@"{HOST}
 
 /* NEWS (see also RFC1036 */
-NEWSURL     "news:"{GROUPART}
+NEWSURL     "news:"{GROUPART}{NOTATEOL}
 GROUPART    ("*"|{GROUP}|{ARTICLE})
 GROUP       [[:alpha:]]([[:alnum:]]|"-"|"."|"+"|"_")*
 ARTICLE     ({UCHAR}|";"|"/"|"?"|":"|"&"|"=")+"@"{HOST}
 
 /* NNTP (see also RFC977 */
-NNTPURL     "nntp://"{HOSTPORT}"/"{GROUP}("/"[[:digit:]]+)?
+NNTPURL     "nntp://"{HOSTPORT}"/"{GROUP}("/"[[:digit:]]+)?{NOTATEOL}
 
 /* TELNET */
 TELNETURL   "telnet://"{LOGIN}("/")?
@@ -108,11 +110,12 @@ TELNETURL   "telnet://"{LOGIN}("/")?
 SAFE        ("$"|"-"|"_"|"."|"+")
 EXTRA       ("!"|"*"|"'"|"("|")"|",")
 RESERVED    (";"|"/"|"?"|":"|"@"|"&"|"=")
-HEX         [[:digit:]A-Fa-f]
+HEX         [[:xdigit:]]
 ESCAPE      "%"{HEX}{2}
 UNRESERVED  ([[:alnum:]]|{SAFE}|{EXTRA})
 UCHAR       ({UNRESERVED}|{ESCAPE})
 XCHAR       ({UNRESERVED}|{RESERVED}|{ESCAPE})
+NOTATEOL    [^[:punct:][:space:]]
 
 %%
 ^"<sb>"                               {return tSB ; }
