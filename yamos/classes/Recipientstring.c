@@ -61,9 +61,9 @@ HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *
 {
 	struct ABEntry *entry = (struct ABEntry *)msg->UserData;
 	return ((entry->Type == AET_USER) || (entry->Type == AET_LIST)) &&
-					((!Stricmp((unsigned char *)msg->User, (unsigned char *)entry->Alias) ||
-						!Stricmp((unsigned char *)msg->User, (unsigned char *)entry->RealName) ||
-						!Stricmp((unsigned char *)msg->User, (unsigned char *)entry->Address))) ? 0 : ~0;
+					((!Stricmp(msg->User, entry->Alias) ||
+						!Stricmp(msg->User, entry->RealName) ||
+						!Stricmp(msg->User, entry->Address))) ? 0 : ~0;
 }
 MakeStaticHook(FindAddressHook, FindAddressFunc);
 ///
@@ -703,7 +703,7 @@ DECLARE(ReplaceSelected) // char *address
 	else
 		len = strlen(&old[start]);
 
-	if(Strnicmp((unsigned char *)new_address, (unsigned char *)&old[start], len) != 0)
+	if(Strnicmp(new_address, &old[start], len) != 0)
 	{
 		SetAttrs(obj, MUIA_String_BufferPos, start,
 									MUIA_BetterString_SelectSize, len,

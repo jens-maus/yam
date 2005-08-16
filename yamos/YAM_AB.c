@@ -210,16 +210,16 @@ int AB_SearchEntry(char *text, int mode, struct ABEntry **ab)
     if(isCompleteSearch(mode))
     {
       // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
-      if(isAliasSearch(mode_type))          found = !Strnicmp((unsigned char *)ab_found->Alias,     (unsigned char *)text, tl);
-      else if(isRealNameSearch(mode_type))  found = !Strnicmp((unsigned char *)ab_found->RealName,  (unsigned char *)text, tl);
-      else if(isAddressSearch(mode_type))   found = !Strnicmp((unsigned char *)ab_found->Address,   (unsigned char *)text, tl);
+      if(isAliasSearch(mode_type))          found = !Strnicmp(ab_found->Alias,    text, tl);
+      else if(isRealNameSearch(mode_type))  found = !Strnicmp(ab_found->RealName, text, tl);
+      else if(isAddressSearch(mode_type))   found = !Strnicmp(ab_found->Address,  text, tl);
     }
     else
     {
       // Now we check for the ALIAS->REALNAME->ADDRESS, so only ONE mode is allowed at a time
-      if(isAliasSearch(mode_type))          found = !Stricmp((unsigned char *)ab_found->Alias,    (unsigned char *)text);
-      else if(isRealNameSearch(mode_type))  found = !Stricmp((unsigned char *)ab_found->RealName, (unsigned char *)text);
-      else if(isAddressSearch(mode_type))   found = !Stricmp((unsigned char *)ab_found->Address,  (unsigned char *)text);
+      if(isAliasSearch(mode_type))          found = !Stricmp(ab_found->Alias,   text);
+      else if(isRealNameSearch(mode_type))  found = !Stricmp(ab_found->RealName,text);
+      else if(isAddressSearch(mode_type))   found = !Stricmp(ab_found->Address, text);
     }
 
     if(found)
@@ -1084,27 +1084,27 @@ HOOKPROTONHNO(AB_LV_CmpFunc, long, struct MUIP_NListtree_CompareMessage *msg)
         if(!(n1 = strrchr(ab1->RealName,' '))) n1 = ab1->RealName;
         if(!(n2 = strrchr(ab2->RealName,' '))) n2 = ab2->RealName;
 
-        if((cmp = Stricmp((unsigned char *)n1, (unsigned char *)n2)))
+        if((cmp = Stricmp(n1, n2)))
           return cmp;
       break;
 
       case 2:
-        if((cmp = Stricmp((unsigned char *)ab1->RealName, (unsigned char *)ab2->RealName)))
+        if((cmp = Stricmp(ab1->RealName, ab2->RealName)))
           return cmp;
       break;
 
       case 3:
-        if((cmp = Stricmp((unsigned char *)ab1->Comment, (unsigned char *)ab2->Comment)))
+        if((cmp = Stricmp(ab1->Comment, ab2->Comment)))
           return cmp;
       break;
 
       case 4:
-        if((cmp = Stricmp((unsigned char *)ab1->Address, (unsigned char *)ab2->Address)))
+        if((cmp = Stricmp(ab1->Address, ab2->Address)))
           return cmp;
       break;
    }
 
-   return Stricmp((unsigned char *)ab1->Alias, (unsigned char *)ab2->Alias);
+   return Stricmp(ab1->Alias, ab2->Alias);
 }
 MakeStaticHook(AB_LV_CmpFuncHook, AB_LV_CmpFunc);
 

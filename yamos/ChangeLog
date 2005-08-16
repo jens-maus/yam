@@ -5,6 +5,11 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-08-16  Jens Langner <Jens.Langner@light-speed.de>
+
+    * misc: fixed a whole bunch of incorrect cast operations which were just
+      added unluckily added due to some buggy API changes in the OS4 SDK.
+
 2005-08-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l: even more fixes/changes to the flex text highlighting

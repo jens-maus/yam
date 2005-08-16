@@ -813,7 +813,7 @@ BOOL MatchNoCase(const char *string, const char *match)
 
    if(pattern)
    {
-     if(ParsePatternNoCase((STRPTR)match, (unsigned char *)pattern, patternlen) != -1)
+     if(ParsePatternNoCase((STRPTR)match, pattern, patternlen) != -1)
      {
         result = MatchPatternNoCase((STRPTR)pattern, (STRPTR)string);
      }
@@ -3397,7 +3397,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
    // unique
    strcpy(dstFileName, mail->MailFile);
    strcpy(dstbuf, GetFolderDir(dstfolder));
-   AddPart((unsigned char *)dstbuf, dstFileName, SIZE_PATHFILE);
+   AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
 
    if(FileExists(dstbuf))
    {
@@ -3414,7 +3414,7 @@ int TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfolder)
        dstFileName[16] = ','; // restore it
 
        strcpy(dstbuf, GetFolderDir(dstfolder));
-       AddPart((unsigned char *)dstbuf, dstFileName, SIZE_PATHFILE);
+       AddPart(dstbuf, dstFileName, SIZE_PATHFILE);
      }
      while(FileExists(dstbuf));
 
@@ -3759,7 +3759,7 @@ HOOKPROTONH(PO_ListPublicKeys, long, APTR pop, APTR string)
       strcpy(buf, "-kv  ");
       if (secret)
       {
-         GetVar("PGPPATH", (unsigned char *)&buf[4], SIZE_DEFAULT, 0);
+         GetVar("PGPPATH", &buf[4], SIZE_DEFAULT, 0);
          if ((p = buf[strlen(buf)-1]) != ':' && p != '/') strcat(buf, "/");
          strcat(buf, "secring.pgp");
       }
@@ -4459,7 +4459,7 @@ void PGPGetPassPhrase(void)
    if (!G->PGPPassPhrase[0])
    {
       G->PGPPassVolatile = FALSE;
-      if(GetVar("PGPPASS", (unsigned char *)G->PGPPassPhrase, SIZE_DEFAULT, 0) < 0)
+      if(GetVar("PGPPASS", G->PGPPassPhrase, SIZE_DEFAULT, 0) < 0)
       {
          char pgppass[SIZE_DEFAULT];
          G->PGPPassVolatile = TRUE; *pgppass = 0;
@@ -4468,7 +4468,7 @@ void PGPGetPassPhrase(void)
       }
       else return;
    }
-   SetVar("PGPPASS", (unsigned char *)G->PGPPassPhrase, -1, GVF_GLOBAL_ONLY);
+   SetVar("PGPPASS", G->PGPPassPhrase, -1, GVF_GLOBAL_ONLY);
 }
 ///
 /// PGPClearPassPhrase
@@ -5137,7 +5137,7 @@ char *GetRealPath(char *path)
   {
     // so, if it seems to exists, we get the "real" name out of
     // the lock again.
-    if(NameFromLock(lock, (unsigned char *)buf, SIZE_PATHFILE) != DOSFALSE)
+    if(NameFromLock(lock, buf, SIZE_PATHFILE) != DOSFALSE)
     {
       success = TRUE;
     }

@@ -83,7 +83,7 @@ MakeStaticHook(DisplayHook, DisplayFunc);
 HOOKPROTONH(CompareFunc, LONG, struct CustomABEntry *e2, struct CustomABEntry *e1)
 {
 	if(e1->MatchField == e2->MatchField)
-		return Stricmp((unsigned char *)e1->MatchString, (unsigned char *)e2->MatchString);
+		return Stricmp(e1->MatchString, e2->MatchString);
 	else
 		return e1->MatchField < e2->MatchField ? -1 : +1;
 }
@@ -272,7 +272,7 @@ DECLARE(Open) // STRPTR str
 
 	/* is there more entries in the list and if only one, is it longer than what the user already typed... */
 	entries = xget(data->Matchlist, MUIA_List_Entries);
-	if(entries > 0 && (DoMethod(data->Matchlist, MUIM_List_GetEntry, 0, &entry), (entries != 1 || Stricmp((unsigned char *)msg->str, (unsigned char *)entry->MatchString))))
+	if(entries > 0 && (DoMethod(data->Matchlist, MUIM_List_GetEntry, 0, &entry), (entries != 1 || Stricmp(msg->str, entry->MatchString))))
 	{
 		res = entry->MatchString;
 		nnset(data->Matchlist, MUIA_List_Active, MUIV_List_Active_Top);
@@ -325,7 +325,7 @@ DECLARE(ActiveChange) // LONG active
 
 			if(compareEntry != entry)
 			{
-				if(Strnicmp((unsigned char *)compareEntry->MatchEntry->RealName, (unsigned char *)entry->MatchString, elen) == 0)
+				if(Strnicmp(compareEntry->MatchEntry->RealName, entry->MatchString, elen) == 0)
 				{
 					res = entry->MatchEntry->Address;
 					break;

@@ -347,7 +347,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 
   // construct the full old file path
   strcpy(oldFilePath, folderDir);
-  AddPart((unsigned char *)oldFilePath, mail->MailFile, SIZE_PATHFILE);
+  AddPart(oldFilePath, mail->MailFile, SIZE_PATHFILE);
 
   while(success == FALSE)
   {
@@ -363,7 +363,7 @@ BOOL MA_UpdateMailFile(struct Mail *mail)
 
     // construct new full file path
     strcpy(newFilePath, folderDir);
-    AddPart((unsigned char *)newFilePath, newFileName, SIZE_PATHFILE);
+    AddPart(newFilePath, newFileName, SIZE_PATHFILE);
 
     // then rename it
     if(Rename(oldFilePath, newFilePath) != 0)
@@ -2633,7 +2633,7 @@ MakeStaticHook(MA_LV_FDesHook, MA_LV_FDesFunc);
 HOOKPROTONHNO(MA_FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
 {
   struct ABEntry *entry = (struct ABEntry *)msg->UserData;
-  return Stricmp((unsigned char *)msg->User, (unsigned char *)entry->Address);
+  return Stricmp(msg->User, entry->Address);
 }
 MakeStaticHook(MA_FindAddressHook, MA_FindAddressFunc);
 

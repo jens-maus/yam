@@ -989,7 +989,7 @@ void CO_SetDefaults(struct Config *co, int page)
    if(page == 9 || page < 0)
    {
       G->PGPVersion = 0;
-      if(GetVar("PGPPATH", (unsigned char *)co->PGPCmdPath, SIZE_PATH, 0) >= 0)
+      if(GetVar("PGPPATH", co->PGPCmdPath, SIZE_PATH, 0) >= 0)
         G->PGPVersion = CO_DetectPGP(co);
 
       if(!G->PGPVersion)
@@ -1206,7 +1206,7 @@ void CO_Validate(struct Config *co, BOOL update)
       // it from and environment variable ENVARC:CHARSET
       if(sysCharset[0] == '\0')
       {
-        unsigned char var[SIZE_CTYPE+1];
+        char var[SIZE_CTYPE+1];
 
         if(GetVar("CHARSET", var, sizeof(var), 0) > 0)
           strncpy(sysCharset, (char *)var, SIZE_CTYPE);

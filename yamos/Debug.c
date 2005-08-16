@@ -59,7 +59,7 @@ void SetupDebug(void)
   kprintf("** %s startup ***********************************\n", yamversion);
   kprintf("Initializing runtime debugging:\n");
 
-	if(GetVar("yamdebug", (unsigned char *)var, sizeof(var), 0) > 0)
+	if(GetVar("yamdebug", var, sizeof(var), 0) > 0)
 	{
 		char *tok;
     char *debug = var;

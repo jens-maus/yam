@@ -178,7 +178,7 @@ struct Folder *FO_GetFolderRexx(char *arg, int *pos)
 
       // for string folder search
       if (!nr) for (i = 1; i <= (int)*flist; i++)
-         if ((!Stricmp((unsigned char *)arg, (unsigned char *)flist[i]->Name) && flist[i]->Type != FT_GROUP) ||
+         if ((!Stricmp(arg, flist[i]->Name) && flist[i]->Type != FT_GROUP) ||
              (!stricmp(arg, "incoming")     && flist[i]->Type == FT_INCOMING) ||
              (!stricmp(arg, "outgoing")     && flist[i]->Type == FT_OUTGOING) ||
              (!stricmp(arg, "sent")         && flist[i]->Type == FT_SENT) ||
@@ -275,7 +275,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
    char fname[SIZE_PATHFILE];
 
    MyStrCpy(fname, GetFolderDir(fo));
-   AddPart((unsigned char *)fname, ".fconfig", sizeof(fname));
+   AddPart(fname, ".fconfig", sizeof(fname));
 
    if((fh = fopen(fname, "r")))
    {
@@ -351,7 +351,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
    FILE *fh;
 
    MyStrCpy(fname, GetFolderDir(fo));
-   AddPart((unsigned char *)fname, ".fconfig", sizeof(fname));
+   AddPart(fname, ".fconfig", sizeof(fname));
 
    if ((fh = fopen(fname, "w")))
    {
@@ -377,7 +377,7 @@ BOOL FO_SaveConfig(struct Folder *fo)
       fclose(fh);
 
       MyStrCpy(fname, GetFolderDir(fo));
-      AddPart((unsigned char *)fname, ".index", sizeof(fname));
+      AddPart(fname, ".index", sizeof(fname));
 
       if(!isModified(fo)) SetFileDate(fname, DateStamp(&ds));
 
@@ -648,7 +648,7 @@ BOOL FO_LoadFolderImages(struct Folder *fo)
   if(!fo && fo->ImageIndex < MAXBCFOLDERIMG+1) return FALSE;
 
   MyStrCpy(fname, GetFolderDir(fo));
-  AddPart((unsigned char *)fname, ".fimage", sizeof(fname));
+  AddPart(fname, ".fimage", sizeof(fname));
 
   fo->FImage = LoadBCImage(fname);
   if(!fo->FImage) return FALSE;
@@ -809,9 +809,9 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
    {
       // now we try to move an existing .index file
       MyStrCpy(srcbuf, GetFolderDir(oldfo));
-      AddPart((unsigned char *)srcbuf, ".index", sizeof(srcbuf));
+      AddPart(srcbuf, ".index", sizeof(srcbuf));
       MyStrCpy(dstbuf, GetFolderDir(fo));
-      AddPart((unsigned char *)dstbuf, ".index", sizeof(dstbuf));
+      AddPart(dstbuf, ".index", sizeof(dstbuf));
 
       if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
       {
@@ -821,9 +821,9 @@ static BOOL FO_MoveFolderDir(struct Folder *fo, struct Folder *oldfo)
       {
         // now we try to mvoe the .fimage file aswell
         MyStrCpy(srcbuf, GetFolderDir(oldfo));
-        AddPart((unsigned char *)srcbuf, ".fimage", sizeof(srcbuf));
+        AddPart(srcbuf, ".fimage", sizeof(srcbuf));
         MyStrCpy(dstbuf, GetFolderDir(fo));
-        AddPart((unsigned char *)dstbuf, ".fimage", sizeof(dstbuf));
+        AddPart(dstbuf, ".fimage", sizeof(dstbuf));
 
         if(FileExists(srcbuf) && !MoveFile(srcbuf, dstbuf))
         {
@@ -861,7 +861,7 @@ static BOOL FO_EnterPassword(struct Folder *fo)
       if(*passwd && !StringRequest(passwd2, SIZE_PASSWORD, GetStr(MSG_Folder), GetStr(MSG_CO_RetypePass), GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), TRUE, G->FO->GUI.WI))
         return FALSE;
 
-      if(!Stricmp((unsigned char *)passwd, (unsigned char *)passwd2))
+      if(!Stricmp(passwd, passwd2))
         break;
       else
         DisplayBeep(NULL);

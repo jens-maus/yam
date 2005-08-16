@@ -218,8 +218,8 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
           {
             D(DBF_STARTUP, "ICON: %s", wbarg->wa_Name);
 
-            if(NameFromLock(wbarg->wa_Lock, (unsigned char *)buf, 300*sizeof(char)) &&
-               AddPart((unsigned char *)buf, (char *)wbarg->wa_Name, 300*sizeof(char)))
+            if(NameFromLock(wbarg->wa_Lock, buf, 300*sizeof(char)) &&
+               AddPart(buf, (char *)wbarg->wa_Name, 300*sizeof(char)))
             {
               STRPTR dst;
               LONG len = strlen(buf) + 2L;
