@@ -77,4 +77,8 @@ enum ContTypeEntry
    CT_ME_EMAIL
 };
 
+// transforms a define into a string
+#define STR(x)  STR2(x)
+#define STR2(x) #x
+
 #endif /* YAM_GLOBAL_H */

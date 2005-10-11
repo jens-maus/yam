@@ -39,9 +39,6 @@
 #include "YAM_folderconfig.h"
 #include "YAM_stringsizes.h"
 
-#define STR(x)  STR2(x)
-#define STR2(x) #x
-
 // some forward declarations
 #ifndef YAM_FOLDERCONFIG_H
 struct Folder;
