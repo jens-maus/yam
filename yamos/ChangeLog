@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-10-12  Jens Langner <Jens.Langner@light-speed.de>
+
+    * includes/libraries/mui.h: updated the mui.h include to not include
+      the clib file directly anymore as this is not supported with the
+      latest OS4 SDK anymore. Also had to adapt YAM_global.c,h accordingly
+      to that change so that e.g. IntuitionBase stays invisible.
+    * misc: fixed some more incorrect cast operations due to the continous
+      OS4 SDK API fixes.
+
 2005-08-16  Jens Langner <Jens.Langner@light-speed.de>
 
     * misc: fixed a whole bunch of incorrect cast operations which were just

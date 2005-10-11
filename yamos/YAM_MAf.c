@@ -893,7 +893,7 @@ static char *MA_ConvertOldMailFile(char *filename, struct Folder *folder)
           // search for files matching the dateFilePart
           sprintf(matchPattern, "%s.#?", dateFilePart);
           ParsePatternNoCase(matchPattern, pattern, 16*2+2);
-          eac->eac_MatchString = (unsigned char *)pattern;
+          eac->eac_MatchString = pattern;
 
           if((eabuffer = malloc(SIZE_EXALLBUF)))
           {

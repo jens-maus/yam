@@ -271,9 +271,9 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, UNUSED LONG flags, char *title, c
 
       ErrReq.es_StructSize   = sizeof(struct EasyStruct);
       ErrReq.es_Flags        = 0;
-      ErrReq.es_Title        = (unsigned char *)title;
-      ErrReq.es_TextFormat   = (unsigned char *)reqtxt;
-      ErrReq.es_GadgetFormat = (unsigned char *)gadgets;
+      ErrReq.es_Title        = title;
+      ErrReq.es_TextFormat   = reqtxt;
+      ErrReq.es_GadgetFormat = gadgets;
 
       result = EasyRequestArgs(NULL, &ErrReq, NULL, NULL);
     }
