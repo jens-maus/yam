@@ -677,7 +677,7 @@ DECLARE(SaveAll)
 
 	if(part && part->Next)
 	{
-		if(ReqFile(ASL_DETACH, obj, GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
+		if(ReqFile(ASL_DETACH, _win(obj), GetStr(MSG_RE_SaveMessage), (REQF_SAVEMODE|REQF_DRAWERSONLY), C->DetachDir, ""))
 		{
 			BusyText(GetStr(MSG_BusyDecSaving), "");
 			RE_SaveAll(part->rmData, G->ASLReq[ASL_DETACH]->fr_Drawer);

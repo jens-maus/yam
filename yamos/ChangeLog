@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-10-26  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/AttachmentGroup.c: fixed bug #1338712 where upon use of the
+      Save All option in the AttementGroup, the ASL requester was always
+      opened on the Workbench screen no matter if YAM was running on its
+      own public screen.
+
 2005-10-12  Jens Langner <Jens.Langner@light-speed.de>
 
     * includes/libraries/mui.h: updated the mui.h include to not include
