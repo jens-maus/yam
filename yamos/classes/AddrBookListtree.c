@@ -43,7 +43,7 @@ OVERLOAD(MUIM_DragQuery)
 {
 	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
-	if(d->obj == G->MA->GUI.NL_MAILS)
+	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
 		return MUIV_DragQuery_Accept;
 
 	return DoSuperMethodA(cl,obj,msg);
@@ -55,7 +55,7 @@ OVERLOAD(MUIM_DragDrop)
 {
 	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 
-	if(d->obj == G->MA->GUI.NL_MAILS)
+	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
 	{
 		struct Mail **mlist = MA_CreateMarkedList(d->obj, FALSE);
 		if(mlist)

@@ -260,11 +260,8 @@ OVERLOAD(MUIM_DragQuery)
 {
 	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
 	ULONG result = MUIV_DragQuery_Refuse;
-	if(d->obj == G->MA->GUI.NL_MAILS)
-	{
-		result = MUIV_DragQuery_Accept;
-	}
-	else if(d->obj == G->AB->GUI.LV_ADDRESSES)
+
+	if(d->obj == G->AB->GUI.LV_ADDRESSES)
 	{
 		struct MUI_NListtree_TreeNode *active;
 		if((active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active)))
@@ -273,6 +270,11 @@ OVERLOAD(MUIM_DragQuery)
 				result = MUIV_DragQuery_Accept;
 		}
 	}
+	else if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
+	{
+		result = MUIV_DragQuery_Accept;
+	}
+
 	return result;
 }
 ///
@@ -280,7 +282,14 @@ OVERLOAD(MUIM_DragQuery)
 OVERLOAD(MUIM_DragDrop)
 {
 	struct MUIP_DragQuery *d = (struct MUIP_DragQuery *)msg;
-	if(d->obj == G->MA->GUI.NL_MAILS)
+
+	if(d->obj == G->AB->GUI.LV_ADDRESSES)
+	{
+		struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active);
+		struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
+		AB_InsertAddress(obj, addr->Alias, addr->RealName, "");
+	}
+	else if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
 	{
 		struct Mail *mail;
 		DoMethod(d->obj, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
@@ -288,12 +297,7 @@ OVERLOAD(MUIM_DragDrop)
 				AB_InsertAddress(obj, "", mail->To.RealName,   mail->To.Address);
 		else	AB_InsertAddress(obj, "", mail->From.RealName, mail->From.Address);
 	}
-	else if(d->obj == G->AB->GUI.LV_ADDRESSES)
-	{
-		struct MUI_NListtree_TreeNode *active = (struct MUI_NListtree_TreeNode *)xget(d->obj, MUIA_NListtree_Active);
-		struct ABEntry *addr = (struct ABEntry *)(active->tn_User);
-		AB_InsertAddress(obj, addr->Alias, addr->RealName, "");
-	}
+
 	return 0;
 }
 ///

@@ -81,7 +81,7 @@
  Module: Root
 ***************************************************************************/
 
-struct Global *G;
+struct Global *G = NULL;
 
 static struct NewRDArgs nrda;
 static BPTR olddirlock = -1; /* -1 is an unset indicator */
@@ -105,7 +105,7 @@ struct Args
 /**************************************************************************/
 
 // the used number of timerIO requests (refer to YAM.h)
-#define TIO_NUM (5)
+#define TIO_NUM (6)
 
 // TimerIO structures we use
 struct TC_Request
@@ -454,7 +454,7 @@ static void TC_Dispatcher(enum TimerIO tio)
         struct Mail *mail;
 
         // get the actually active mail
-        DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+        DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
         // update the readMailGroup of the main window.
         if(mail)
@@ -475,7 +475,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       D(DBF_TIMERIO, "timer[%ld]: TIO_READSTATUSUPDATE received: %s", tio, dateString);
 
       // get the actually active mail
-      DoMethod(gui->NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+      DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 
       // update the status of the mail to READ now
       if(hasStatusNew(mail) || !hasStatusRead(mail))
@@ -483,6 +483,22 @@ static void TC_Dispatcher(enum TimerIO tio)
         setStatusToRead(mail); // set to OLD
         DisplayStatistics(mail->Folder, TRUE);
       }
+    }
+    break;
+
+    // on a PROCESSQUICKSEARCH we signal the quicksearch bar to actually process the
+    // search. This is used to let a user type in a string in the quicksearchbar
+    // without always reissuing the search process, so only the last search request
+    // comes actually through. This should prevent the GUI from blocking in some
+    // cases.
+    case TIO_PROCESSQUICKSEARCH:
+    {
+      struct MA_GUIData *gui = &G->MA->GUI;
+
+      D(DBF_TIMERIO, "timer[%ld]: TIO_PROCESSQUICKSEARCH received: %s", tio, dateString);
+
+      // signal the QuickSearchBar now.
+      DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_ProcessSearch);
     }
     break;
   }

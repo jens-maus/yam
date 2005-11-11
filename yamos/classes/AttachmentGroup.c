@@ -746,14 +746,13 @@ DECLARE(CropAll)
 	GETDATA;
 	struct ReadMailData *rmData = data->firstPart->rmData;
 	struct Mail *mail = rmData->mail;
-	struct MailInfo *mi;
 
 	// remove the attchments now
 	MA_RemoveAttach(mail, TRUE);
 
-	if((mi = GetMailInfo(mail))->Pos >= 0)
+	// make sure the listview is properly redrawn
+	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
 	{
-		DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
 		CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
 		DisplayStatistics(mail->Folder, TRUE);
 	}

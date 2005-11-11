@@ -48,7 +48,8 @@ enum TimerIO { TIO_WRINDEX=0,
                TIO_CHECKMAIL,
                TIO_AUTOSAVE,
                TIO_READPANEUPDATE,
-               TIO_READSTATUSUPDATE
+               TIO_READSTATUSUPDATE,
+               TIO_PROCESSQUICKSEARCH,
              };
 
 /*** Global Structure ***/

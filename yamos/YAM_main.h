@@ -240,8 +240,6 @@ struct MA_GUIData
    Object *MI_SEND;
    Object *LV_FOLDERS;
    Object *NL_FOLDERS;
-   Object *LV_MAILS;
-   Object *NL_MAILS;
    Object *TO_TOOLBAR;
    Object *IB_INFOBAR;
    Object *GR_MAIN;
@@ -250,6 +248,8 @@ struct MA_GUIData
    Object *GR_MAILVIEW;
    Object *BL_MAILVIEW;
    Object *MN_EMBEDDEDREADPANE;
+   Object *GR_QUICKSEARCHBAR;
+   Object *PG_MAILLIST;
    struct MUIP_Toolbar_Description TB_TOOLBAR[18];
 };
 
@@ -276,8 +276,6 @@ extern struct Hook MA_ExportMessagesHook;
 extern struct Hook MA_ChangeSelectedHook;
 extern struct Hook MA_DeleteDeletedHook;
 extern struct Hook MA_DeleteOldHook;
-extern struct Hook MA_LV_Cmp2Hook;
-extern struct Hook MA_LV_DspFuncHook;
 extern struct Hook MA_RescanIndexHook;
 extern struct Hook MA_SendHook;
 extern struct Hook MA_SetFolderInfoHook;
@@ -297,7 +295,6 @@ void  MA_GetAddress(struct Mail **mlist);
 BOOL  MA_ImportMessages(char *fname);
 struct MA_ClassData *MA_New(void);
 BOOL  MA_SortWindow(void);
-void  MA_MakeMAFormat(Object *lv);
 void  MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox, BOOL copyit);
 int   MA_NewBounce(struct Mail *mail, int flags);
 int   MA_NewEdit(struct Mail *mail, int flags, Object *readWindow);
@@ -320,5 +317,8 @@ char *MA_ToXStatusHeader(struct Mail *mail);
 unsigned int MA_FromStatusHeader(char *statusflags);
 unsigned int MA_FromXStatusHeader(char *xstatusflags);
 void  MA_SetupEmbeddedReadPane(void);
+void  MA_SetupQuickSearchBar(void);
+char *MA_GetRealSubject(char *sub);
+
 
 #endif /* YAM_MAIN_H */

@@ -3587,7 +3587,7 @@ HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
          }
          fclose(fh);
 
-         DisplayMailList(folder, G->MA->GUI.NL_MAILS);
+         DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
          AppendLog(50, GetStr(MSG_LOG_Importing), (void *)ts.Msgs_Done, G->TR->ImportFile, folder->Name, "");
          DisplayStatistics(folder, TRUE);
       }
@@ -3652,7 +3652,9 @@ static BOOL TR_LoadMessage(struct TransStat *ts, int number)
             new->sflags = SFLAG_NEW;
             MA_UpdateMailFile(new);
 
-            if (FO_GetCurrentFolder() == infolder) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
+            if(FO_GetCurrentFolder() == infolder)
+              DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
+
             AppendLogVerbose(32, GetStr(MSG_LOG_RetrievingVerbose), AddrName(new->From), new->Subject, (void *)new->Size, "");
             MA_StartMacro(MACRO_NEWMSG, mfile);
             MA_FreeEMailStruct(mail);

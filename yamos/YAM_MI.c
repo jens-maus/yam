@@ -1530,8 +1530,6 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
         }
         else if(read > 0)
         {
-          //kprintf("next line_len: %ld %ld\n", line_len, read);
-
           // ok, there isn't enough studd in the input buffer
           // so we break out here and parse the stuff on
           // the next iteration

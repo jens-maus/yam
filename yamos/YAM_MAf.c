@@ -636,9 +636,13 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
   // if this folder should be disabled, lets do it now
   if(folder->Type == FT_GROUP || MA_GetIndex(folder) == FALSE)
   {
-    SetAttrs(gui->NL_MAILS, MUIA_Disabled, TRUE,
-                            MUIA_ShortHelp, NULL,
-                            TAG_DONE);
+    SetAttrs(gui->PG_MAILLIST, MUIA_Disabled, TRUE,
+                               MUIA_ShortHelp, NULL,
+                               TAG_DONE);
+
+    // set the quickbar as disabled as well
+    if(C->QuickSearchBar)
+      set(gui->GR_QUICKSEARCHBAR, MUIA_Disabled, TRUE);
 
     DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
   }
@@ -650,21 +654,26 @@ void MA_ChangeFolder(struct Folder *folder, BOOL set_active)
     // Now we update the InfoBar accordingly
     DoMethod(gui->IB_INFOBAR, MUIM_InfoBar_SetFolder, folder);
 
+    // in case the main window has an quicksearchbar, we have to
+    // clear it as well before changing the folder
+    if(C->QuickSearchBar)
+      DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_Clear);
+
     // Create the Mail List and display it
-    DisplayMailList(folder, gui->NL_MAILS);
+    DisplayMailList(folder, gui->PG_MAILLIST);
 
     // now we have to assure that the folder is enabled
-    set(gui->NL_MAILS, MUIA_Disabled, FALSE);
+    set(gui->PG_MAILLIST, MUIA_Disabled, FALSE);
 
     // Now we jump to messages that are NEW
     if(C->JumpToNewMsg)
       MA_JumpToNewMsg();
     else if(folder->LastActive >= 0)
-      set(gui->NL_MAILS, MUIA_NList_Active, folder->LastActive);
+      set(gui->PG_MAILLIST, MUIA_NList_Active, folder->LastActive);
 
     // if there is still no entry active in the NList we make the first one active
-    if(xget(gui->NL_MAILS, MUIA_NList_Active) == (ULONG)MUIV_NList_Active_Off)
-      set(gui->NL_MAILS, MUIA_NList_Active, MUIV_NList_Active_Top);
+    if(xget(gui->PG_MAILLIST, MUIA_NList_Active) == (ULONG)MUIV_NList_Active_Off)
+      set(gui->PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Top);
   }
 }
 
@@ -684,7 +693,7 @@ BOOL MA_JumpToNewMsg(VOID)
 
   if(folder->Sort[0] < 0 || folder->Sort[1] < 0)
   {
-    i = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries);
+    i = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
     i--;
     incr = -1;
   }
@@ -697,7 +706,7 @@ BOOL MA_JumpToNewMsg(VOID)
   while(1)
   {
     struct Mail *mail;
-    DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
+    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, i, &mail);
     if(!mail) break;
 
     if(hasStatusNew(mail) || !hasStatusRead(mail))
@@ -709,7 +718,7 @@ BOOL MA_JumpToNewMsg(VOID)
     i += incr;
   }
 
-  set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
+  set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, pos >= 0 ? pos : folder->LastActive);
 
   return TRUE;
 }

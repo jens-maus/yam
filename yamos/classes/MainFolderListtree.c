@@ -99,7 +99,9 @@ OVERLOAD(MUIM_DragQuery)
 {
 	struct MUIP_DragQuery *dq = (struct MUIP_DragQuery *)msg;
 
-	if(dq->obj == G->MA->GUI.NL_MAILS)
+	// check if the object that requests the drag operation
+	// is a mail list object or not
+	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, dq->obj) == TRUE)
 		return MUIV_DragQuery_Accept;
 
 	return DoSuperMethodA(cl,obj,msg);

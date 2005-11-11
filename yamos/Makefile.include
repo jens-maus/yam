@@ -62,9 +62,11 @@ CLASSES	= \
 	$(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
 	$(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o \
 	$(OBJDIR)/$(CLASSDIR)/MainMailList.o \
+	$(OBJDIR)/$(CLASSDIR)/MainMailListGroup.o \
 	$(OBJDIR)/$(CLASSDIR)/MainWindow.o \
 	$(OBJDIR)/$(CLASSDIR)/InfoBar.o \
 	$(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
+	$(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
 	$(OBJDIR)/$(CLASSDIR)/YAM.o
 
 # and the other object files

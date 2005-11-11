@@ -2208,13 +2208,6 @@ void MyRemove(struct Mail **list, struct Mail *rem)
       if (mail->Next == rem) { mail->Next = rem->Next; return; }
 }
 ///
-/// WhichLV
-//  Returns pointer to message listview if folder is active
-APTR WhichLV(struct Folder *folder)
-{
-   if (folder == FO_GetCurrentFolder()) return G->MA->GUI.NL_MAILS; else return NULL;
-}
-///
 /// CreateFilename
 //  Prepends mail directory to a file name
 char *CreateFilename(const char * const file)
@@ -2268,30 +2261,6 @@ char *GetMailFile(char *string, struct Folder *folder, struct Mail *mail)
   strmfp(string, (folder == NULL || folder == (struct Folder *)-1) ? C->TempDir : GetFolderDir(folder), mail->MailFile);
 
   return string;
-}
-///
-/// GetMailInfo
-//  Returns location of a message
-struct MailInfo *GetMailInfo(struct Mail *smail)
-{
-   static struct MailInfo mi;
-   int i;
-
-   mi.Display = (smail->Folder == FO_GetCurrentFolder());
-   mi.Pos = -1;
-   mi.FName = GetMailFile(NULL, smail->Folder, smail);
-
-   if (mi.Display)
-   {
-      for(i=0; mi.Pos == -1; i++)
-      {
-        struct Mail *mail;
-        DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
-        if (!mail) break;
-        if (mail == smail) mi.Pos = i;
-      }
-   }
-   return &mi;
 }
 ///
 /// GetReturnAddress
@@ -3181,17 +3150,6 @@ BOOL MailExists(struct Mail *mailptr, struct Folder *folder)
    return FALSE;
 }
 ///
-/// SelectMessage
-//  Activates a message in the message listview
-int SelectMessage(struct Mail *mail)
-{
-   struct MailInfo *mi;
-   MA_ChangeFolder(mail->Folder, TRUE);
-   mi = GetMailInfo(mail);
-   if (mi->Pos >= 0) set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
-   return mi->Pos;
-}
-///
 /// DisplayMailList
 //  Lists folder contents in the message listview
 void DisplayMailList(struct Folder *fo, APTR lv)
@@ -3260,31 +3218,37 @@ struct Mail *AddMailToList(struct Mail *mail, struct Folder *folder)
 //  Removes a message from a folder
 void RemoveMailFromList(struct Mail *mail)
 {
-   struct Folder *folder = mail->Folder;
+  struct Folder *folder = mail->Folder;
 
-   // lets decrease the folder statistics first
-   folder->Total--;
-   folder->Size -= mail->Size;
+  // now we remove the mail from main mail
+  // listviews in case the folder of it is the
+  // currently active one.
+  if(folder == FO_GetCurrentFolder())
+    DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RemoveMail, mail);
 
-   if(hasStatusNew(mail))
-   {
-     folder->New--;
-     folder->Unread--;
-   }
-   else if(!hasStatusRead(mail))
-   {
-     folder->Unread--;
-   }
+  // lets decrease the folder statistics first
+  folder->Total--;
+  folder->Size -= mail->Size;
 
-   // remove the mail from the folderlist now
-   MyRemove(&(folder->Messages), mail);
+  if(hasStatusNew(mail))
+  {
+    folder->New--;
+    folder->Unread--;
+  }
+  else if(!hasStatusRead(mail))
+  {
+    folder->Unread--;
+  }
 
-   // then we have to mark the folder index as expired so
-   // that it will be saved next time.
-   MA_ExpireIndex(folder);
+  // remove the mail from the folderlist now
+  MyRemove(&(folder->Messages), mail);
 
-   // and last, but not least we have to free the mail
-   free(mail);
+  // then we have to mark the folder index as expired so
+  // that it will be saved next time.
+  MA_ExpireIndex(folder);
+
+  // and last, but not least we have to free the mail
+  free(mail);
 }
 ///
 /// ClearMailList
@@ -4215,9 +4179,9 @@ void LoadLayout(void)
 
    // lets set the weight factors to the corresponding GUI elements now
    // if they exist
-   set(G->MA->GUI.LV_FOLDERS,     MUIA_HorizWeight,                G->Weights[0]);
-   set(G->MA->GUI.GR_MAILVIEW,    MUIA_HorizWeight,                G->Weights[1]);
-   set(G->MA->GUI.LV_MAILS,       MUIA_VertWeight,                 G->Weights[6]);
+   set(G->MA->GUI.LV_FOLDERS,  MUIA_HorizWeight, G->Weights[0]);
+   set(G->MA->GUI.GR_MAILVIEW, MUIA_HorizWeight, G->Weights[1]);
+   set(G->MA->GUI.PG_MAILLIST, MUIA_VertWeight,  G->Weights[6]);
 
    // if the embedded read pane is active we set its weight values
    if(C->EmbeddedReadPane)

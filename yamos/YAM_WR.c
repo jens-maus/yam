@@ -1449,7 +1449,6 @@ void WR_NewMail(enum WriteMode mode, int winnum)
 
    if(comp.FH)
    {
-      struct MailInfo *mi;
       struct ExtendedMail *email;
       int stat = mode == WRITE_HOLD ? SFLAG_HOLD : SFLAG_QUEUED;
       BOOL done = WriteOutMessage(&comp);
@@ -1490,14 +1489,12 @@ void WR_NewMail(enum WriteMode mode, int winnum)
          MA_FreeEMailStruct(email);
 
          if(FO_GetCurrentFolder() == outfolder)
-           DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
+           DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, new, MUIV_NList_Insert_Sorted);
 
          MA_UpdateMailFile(new);
 
          if (wr->Mode == NEW_EDIT)
          {
-            mi = GetMailInfo(wr->Mail);
-            if (mi->Display) DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Remove, mi->Pos);
             RemoveMailFromList(wr->Mail);
             wr->Mail = new;
 

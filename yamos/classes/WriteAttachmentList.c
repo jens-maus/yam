@@ -66,7 +66,7 @@ OVERLOAD(MUIM_DragQuery)
 
 	// the attachmentlist either accepts drag requests from the main mail list
 	// or from a readmailgroup object
-	if(d->obj == G->MA->GUI.NL_MAILS)
+	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
 		return MUIV_DragQuery_Accept;
 	else if(xget(d->obj, MUIA_AttachmentImage_MailPart) != 0)
 		return MUIV_DragQuery_Accept;
@@ -80,7 +80,7 @@ OVERLOAD(MUIM_DragDrop)
 {
 	struct MUIP_DragDrop *d = (struct MUIP_DragDrop *)msg;
 	
-	if(d->obj == G->MA->GUI.NL_MAILS)
+	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_IsMailList, d->obj) == TRUE)
 	{
 		struct Attach attach;
 		struct Mail *mail;

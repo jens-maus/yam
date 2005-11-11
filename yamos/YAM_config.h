@@ -251,6 +251,7 @@ struct CO_GUIData
    Object *BT_FILTERDOWN;
    Object *BT_MORE;
    Object *BT_LESS;
+   Object *CH_QUICKSEARCHBAR;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -416,6 +417,7 @@ struct Config
    BOOL  EmbeddedReadPane;
    BOOL  StatusChangeDelayOn;
    BOOL  SysCharsetCheck;
+   BOOL  QuickSearchBar;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

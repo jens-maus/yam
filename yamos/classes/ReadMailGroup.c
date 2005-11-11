@@ -448,10 +448,8 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 						// refresh the maillist depending information
 						if(!isVirtualMail(mail))
 						{
-							struct MailInfo *mi	= GetMailInfo(mail);
-
 							SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
-							DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
+							DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
 						}
 					}
 				}
@@ -961,7 +959,7 @@ DECLARE(SaveDecryptedMail)
 					RepackMailFile(newmail, -1, NULL);
 
 				if(FO_GetCurrentFolder() == folder)
-					DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
+					DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
 				
 				MA_FreeEMailStruct(email);
 				if(choice == 2)

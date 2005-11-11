@@ -63,6 +63,30 @@ struct Data
 };
 */
 
+/* Private Functions */
+/// SelectMessage()
+//  Activates a message in the main window's message listview
+static inline LONG SelectMessage(struct Mail *mail)
+{
+	LONG pos = MUIV_NList_GetPos_Start;
+
+	// make sure the folder of the mail is currently the
+	// active one.
+	MA_ChangeFolder(mail->Folder, TRUE);
+
+	// get the position of the mail in the main mail listview
+	DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, mail, &pos);
+
+	// if it is currently viewable we go and set it as the
+	// active mail
+	if(pos != MUIV_NList_GetPos_End)
+		set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, pos);
+
+	// return the position to the caller
+	return pos;
+}
+///
+
 /* Hooks */
 
 /* Overloaded Methods */
@@ -395,16 +419,12 @@ OVERLOAD(MUIM_Window_Snapshot)
 
 ///
 
-/* Private Functions */
-
 /* Public Methods */
 /// DECLARE(ReadMail)
 DECLARE(ReadMail) // struct Mail *mail
 {
 	GETDATA;
 	struct Mail *mail = msg->mail;
-
-	struct MailInfo *mi = GetMailInfo(mail);
 	struct Folder *folder = mail->Folder;
 	BOOL isRealMail = !isVirtualMail(mail);
 	BOOL isOutgoingMail = isRealMail ? isOutgoingFolder(folder) : FALSE;
@@ -424,8 +444,14 @@ DECLARE(ReadMail) // struct Mail *mail
 
 	if(data->windowToolbar)
 	{
-		DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, isRealMail ? mi->Pos == 0 : TRUE);
-		DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, isRealMail ? mi->Pos == folder->Total-1 : TRUE);
+		LONG pos = MUIV_NList_GetPos_Start;
+
+		// query the position of the mail in the current listview
+		DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, mail, &pos);
+
+		// now set some items of the toolbar ghosted/enabled
+		DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, isRealMail ? pos == 0 : TRUE);
+		DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, isRealMail ? pos == (folder->Total-1) : TRUE);
 		DoMethod(data->windowToolbar, MUIM_Toolbar_Set, 9, MUIV_Toolbar_Set_Ghosted, !isRealMail);
 		DoMethod(data->windowToolbar, MUIM_Toolbar_Set,10, MUIV_Toolbar_Set_Ghosted, !isRealMail);
 		DoMethod(data->windowToolbar, MUIM_Toolbar_Set,11, MUIV_Toolbar_Set_Ghosted, isOutgoingMail);
@@ -587,20 +613,20 @@ DECLARE(MoveMailRequest)
 			if(data->lastDirection == -1)
 			{
 				if(pos-1 >= 0)
-					set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, --pos);
+					set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
 				else
 					closeAfter = TRUE;
 			}
 
-			// move the mail to the selected destionaltion folder
+			// move the mail to the selected destination folder
 			MA_MoveCopy(mail, srcfolder, dstfolder, FALSE);
 
 			// if there are still mails in the current folder we make sure
 			// it is displayed in this window now or close it
 			if(closeAfter == FALSE &&
-				 (entries = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries)) >= pos+1)
+				 (entries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries)) >= pos+1)
 			{
-				DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, pos, &mail);
+				DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, pos, &mail);
 				if(mail)
 					DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
 				else
@@ -649,11 +675,10 @@ DECLARE(CopyMailRequest)
 			else if(RE_Export(rmData, rmData->readFile,
 								MA_NewMailFile(dstfolder, mail->MailFile), "", 0, FALSE, FALSE, (char*)ContType[CT_ME_EMAIL]))
 			{
-				Object *lv;
 				struct Mail *newmail = AddMailToList(mail, dstfolder);
 
-				if((lv = WhichLV(dstfolder)))
-					DoMethod(lv, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
+				if(dstfolder == FO_GetCurrentFolder())
+					DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_InsertSingle, newmail, MUIV_NList_Insert_Sorted);
 
 				setStatusToRead(newmail); // OLD status
 			}
@@ -685,7 +710,7 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 		if(data->lastDirection == -1)
 		{
 			if(pos-1 >= 0)
-				set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, --pos);
+				set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, --pos);
 			else
 				closeAfter = TRUE;
 		}
@@ -696,9 +721,9 @@ DECLARE(DeleteMailRequest) // ULONG qualifier
 		// if there are still mails in the current folder we make sure
 		// it is displayed in this window now or close it
 		if(closeAfter == FALSE &&
-			 (entries = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries)) >= pos+1)
+			 (entries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries)) >= pos+1)
 		{
-			DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, pos, &mail);
+			DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, pos, &mail);
 			if(mail)
 				DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
 			else
@@ -874,14 +899,12 @@ DECLARE(CropAttachmentsRequest)
 	GETDATA;
 	struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 	struct Mail *mail = rmData->mail;
-	struct MailInfo *mi;
-	
+
 	// remove the attchments now
 	MA_RemoveAttach(mail, TRUE);
 	
-	if((mi = GetMailInfo(mail))->Pos >= 0)
+	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
 	{
-		DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
 		CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
 		DisplayStatistics(mail->Folder, TRUE);
 	}
@@ -968,14 +991,11 @@ DECLARE(ChangeSubjectRequest)
 										 GetStr(MSG_MA_ChangeSubjReq),
 										 GetStr(MSG_Okay), NULL, GetStr(MSG_Cancel), FALSE, obj))
 		{
-			struct MailInfo *mi;
-			
 			MA_ChangeSubject(mail, subj);
-			if((mi = GetMailInfo(mail))->Pos >= 0)
+
+			if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
 			{
-				DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, mi->Pos);
 				CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
-				
 				DisplayStatistics(mail->Folder, TRUE);
 			}
 			
@@ -996,11 +1016,10 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 	struct ReadMailData *rmData = (struct ReadMailData *)xget(data->readMailGroup, MUIA_ReadMailGroup_ReadMailData);
 	struct Mail *mail = rmData->mail;
 	struct Folder *folder = mail->Folder;
-	struct MailInfo *mi;
 	LONG direction = msg->direction;
+	LONG act = MUIV_NList_GetPos_Start;
 	BOOL onlynew = hasFlag(msg->qualifier, (IEQUALIFIER_LSHIFT|IEQUALIFIER_RSHIFT));
 	BOOL found = FALSE;
-	int act;
 
 	// save the direction we are going to process now
 	data->lastDirection = direction;
@@ -1010,26 +1029,28 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 	MA_ChangeFolder(folder, TRUE);
 
 	// after changing the folder we have to get the MailInfo (Position etc.)
-	mi = GetMailInfo(mail);
-	act = mi->Pos;
+	DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, mail, &act);
 
 	D(DBF_GUI, "act: %d - direction: %d", act, direction);
 
-	for(act += direction; act >= 0; act += direction)
+	if(act != MUIV_NList_GetPos_End)
 	{
-		DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, act, &mail);
-		if(!mail)
-			break;
-
-		if(!onlynew ||
-			(hasStatusNew(mail) || !hasStatusRead(mail)))
+		for(act += direction; act >= 0; act += direction)
 		{
-			 set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, act);
-			 DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+			DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, act, &mail);
+			if(!mail)
+				break;
 
-			 // this is a valid break and not break because of an error
-			 found = TRUE;
-			 break;
+			if(!onlynew ||
+				(hasStatusNew(mail) || !hasStatusRead(mail)))
+			{
+				 set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, act);
+				 DoMethod(obj, MUIM_ReadWindow_ReadMail, mail);
+
+				 // this is a valid break and not break because of an error
+				 found = TRUE;
+				 break;
+			}
 		}
 	}
 
@@ -1066,7 +1087,7 @@ DECLARE(SwitchMail) // LONG direction, ULONG qualifier
 						}
 
 						MA_ChangeFolder(flist[i], TRUE);
-						DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+						DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
 						if(!mail)
 							break;
 						
@@ -1112,15 +1133,18 @@ DECLARE(FollowThread) // LONG direction
 
 	if(fmail)
 	{
-		struct MailInfo *mi;
+		LONG pos = MUIV_NList_GetPos_Start;
 
 		// we have to make sure that the folder where the message will be showed
 		// from is active and ready to display the mail
 		MA_ChangeFolder(fmail->Folder, TRUE);
 
-		mi = GetMailInfo(fmail);
-		if(mi->Display)
-			set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mi->Pos);
+		// get the position of the mail in the currently active listview
+		DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_GetPos, fmail, &pos);
+
+		// if the mail is displayed we make it the active one
+		if(pos != MUIV_NList_GetPos_End)
+			set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, pos);
 		
 		DoMethod(obj, MUIM_ReadWindow_ReadMail, fmail);
 	}

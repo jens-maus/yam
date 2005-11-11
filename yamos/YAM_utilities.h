@@ -79,13 +79,6 @@ struct ExpandTextData
    char *            HeaderFile;
 };
 
-struct MailInfo
-{
-   int   Pos;
-   BOOL  Display;
-   char *FName;
-};
-
 struct TempFile
 {
    FILE *FP;
@@ -315,7 +308,6 @@ time_t   GetDateStamp(void);
 char *   GetFolderDir(struct Folder *fo);
 char *   GetLine(FILE *fh, char *buffer, int bufsize);
 char *   GetMailFile(char *string, struct Folder *folder, struct Mail *mail);
-struct MailInfo *GetMailInfo(struct Mail *smail);
 BOOL     GetMUICheck(Object *obj);
 int      GetMUICycle(Object *obj);
 int      GetMUIInteger(Object *obj);
@@ -361,7 +353,6 @@ BOOL     RepackMailFile(struct Mail *mail, enum FolderMode dstMode, char *passwd
 int      ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file);
 BOOL     SafeOpenWindow(Object *obj);
 void     SaveLayout(BOOL permanent);
-int      SelectMessage(struct Mail *mail);
 void     SetupToolbar(struct MUIP_Toolbar_Description *tb, char *label, char *help, ULONG flags);
 char     ShortCut(char *label);
 void     SimpleWordWrap(char *filename, int wrapsize);
@@ -383,7 +374,6 @@ char *   TrimStart(char *s);
 BOOL     LoadParsers(void);
 void     SParse(char *);
 LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
-APTR     WhichLV(struct Folder *folder);
 
 // Here we define inline functions that should be inlined by
 // the compiler, if possible.

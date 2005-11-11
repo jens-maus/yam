@@ -922,8 +922,14 @@ void CO_SetDefaults(struct Config *co, int page)
       strcpy(co->Color3rdLevel.buf, "m3");
       strcpy(co->Color4thLevel.buf, "m1");
       strcpy(co->ColorURL.buf, "p6");
-      co->DisplayAllTexts = co->FixedFontEdit = co->UseTextstyles = co->EmbeddedReadPane = TRUE;
-      co->AutomaticTranslationIn = co->WrapHeader = co->MultipleWindows = FALSE;
+      co->DisplayAllTexts = TRUE;
+      co->FixedFontEdit = TRUE;
+      co->UseTextstyles = TRUE;
+      co->EmbeddedReadPane = TRUE;
+      co->QuickSearchBar = TRUE;
+      co->AutomaticTranslationIn = FALSE;
+      co->WrapHeader = FALSE;
+      co->MultipleWindows = FALSE;
       co->SigSepLine = 2;
       *co->TranslationIn = 0;
       co->StatusChangeDelayOn = TRUE;
@@ -1301,12 +1307,12 @@ void CO_Validate(struct Config *co, BOOL update)
 
       if(G->CO->Visited[8] || G->CO->UpdateAll)
       {
-         // First we set the NL_MAILS and NL_FOLDER Quiet
-         set(G->MA->GUI.NL_MAILS,   MUIA_NList_Quiet,     TRUE);
+         // First we set the PG_MAILLIST and NL_FOLDER Quiet
+         set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     TRUE);
          set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, TRUE);
 
          // Modify the ContextMenu flags
-         set(G->MA->GUI.NL_MAILS,   MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
+         set(G->MA->GUI.PG_MAILLIST,MUIA_ContextMenu, C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
          set(G->MA->GUI.NL_FOLDERS, MUIA_ContextMenu, C->FolderCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never);
 
          // Now we reorder the Maingroup accordingly to the InfoBar setting
@@ -1315,13 +1321,17 @@ void CO_Validate(struct Config *co, BOOL update)
          // Now we update the InfoBar because the text could have been changed
          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, FO_GetCurrentFolder());
 
+         // we signal the mainwindow that it may check wheter to include the
+         // quicksearchbar or not
+         MA_SetupQuickSearchBar();
+
          SaveLayout(FALSE);
          MA_MakeFOFormat(G->MA->GUI.NL_FOLDERS);
-         MA_MakeMAFormat(G->MA->GUI.NL_MAILS);
+         DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_MakeFormat);
          LoadLayout();
 
          // Now we give the control back to the NLists
-         set(G->MA->GUI.NL_MAILS,   MUIA_NList_Quiet,     FALSE);
+         set(G->MA->GUI.PG_MAILLIST,MUIA_NList_Quiet,     FALSE);
          set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Quiet, FALSE);
       }
 

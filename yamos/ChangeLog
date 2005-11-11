@@ -5,6 +5,56 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-11-11  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/QuickSearchBar.c: finalized a first working version of the
+      new 'QuickSearchBar' which should mimic the same behavour than the
+      main window's search bar in Thunderbird. It allows to quickly select
+      view and search criterias for displaying mails of a folder. This way
+      large portions of mails shoule be more easily manageable in YAM as
+      the search and view routines allow to only display mail that matches
+      these criteria. Later on the criterias may be user defineable like
+      in Thunderbird, but for the moment the predefined critera should do.
+      Pleas note however, that not all criterias are yet completly
+      implemented, especially the "Entire Message" and "To Or Cc" search
+      criteria as they might require some more work as we have to actually
+      load the whole mail instead of just checking the folder index data.
+      Also this new functionality might not act as expected right from
+      the start, so if you encounter any problems/flaws please let us
+      know ASAP. In addition, please note that this might be the last
+      big change before a stable 2.5 release. Next we will concetrate on
+      bugfixed/minor stuff which is required for the final 2.5 release.
+    * misc: moved certain functionality from our old code passages to the
+      new classes system, wherever possible. In 2.6 we definitly have to
+      get rid of most of the old code and port it to the new internal
+      MUI classes system as this is now definitly an error prove path
+      which should get YAM more and more stable/flexible as we move on.
+
+2005-11-09  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_FI.c: adapted the search window to use the new MainMailList
+      class instead of directly using NList and adapted the GUI to not
+      automatically select the currently active mail in the main
+      window. This has to be done on an explicit request now.
+
+2005-11-06  Jens Langner <Jens.Langner@light-speed.de>
+
+    * extrasrc/genclasses: exported text will now be placed before the
+      generated MUIP structures because it may contain type definitions
+      required by the MUIP structures.
+
+2005-11-05  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/MainMailList.c: moved the Display&Compare Hook of the main
+      mail listview from YAM_MA.c to this file.
+    * classes/MainMailListGroup.c: implemented a new custom class which is
+      derived from the PageGroup class and should carry multiple NListview
+      object for easily switching them for the quick searchbar implementation.
+      It replaces the single NL_MAILS object in YAM_MA.c and should automatically
+      forward all relevant method calls to the currently active NList object.
+    * classes/QuickSearchBar.c: implemented a first version of a new quick
+      searchbar for more easy and direct search in the main window.
+
 2005-10-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/AttachmentGroup.c: fixed bug #1338712 where upon use of the

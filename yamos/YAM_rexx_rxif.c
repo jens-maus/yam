@@ -856,8 +856,9 @@ void rx_mailinfo( UNUSED struct RexxHost *host, struct rxd_mailinfo **rxd, long 
       {
          if (rd->rd.arg.index)
          {
+            Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
             rd->active = *rd->rd.arg.index;
-            DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, rd->active, &mail);
+            DoMethod(lv, MUIM_NList_GetEntry, rd->active, &mail);
          }
          else mail = MA_GetActiveMail(ANYBOX, &folder, (int *)&rd->active);
 
@@ -958,11 +959,14 @@ void rx_setmail( UNUSED struct RexxHost *host, struct rxd_setmail **rxd, long ac
          break;
          
       case RXIF_ACTION:
+      {
+         Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
          mail = *rd->arg.num;
-         max = xget(G->MA->GUI.NL_MAILS, MUIA_NList_Entries);
+         max = xget(lv, MUIA_NList_Entries);
          if (mail < 0 || mail >= max) rd->rc = RETURN_ERROR;
-         else set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, mail);
-         break;
+         else set(lv, MUIA_NList_Active, mail);
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );
@@ -1842,7 +1846,7 @@ void rx_writereplyto( UNUSED struct RexxHost *host, struct rxd_writereplyto **rx
 void rx_listselect( UNUSED struct RexxHost *host, struct rxd_listselect **rxd, long action, UNUSED struct RexxMsg *rexxmsg )
 {
    struct rxd_listselect *rd = *rxd;
-   APTR nl;
+
    switch( action )
    {
       case RXIF_INIT:
@@ -1850,7 +1854,9 @@ void rx_listselect( UNUSED struct RexxHost *host, struct rxd_listselect **rxd, l
          break;
          
       case RXIF_ACTION:
-         nl = G->MA->GUI.NL_MAILS;
+      {
+         Object *nl = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
+
          switch (rd->arg.mode[0])
          {
             case 'a': case 'A': DoMethod(nl, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_On, NULL); break;
@@ -1859,7 +1865,8 @@ void rx_listselect( UNUSED struct RexxHost *host, struct rxd_listselect **rxd, l
             case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7':
             case '8': case '9': DoMethod(nl, MUIM_NList_Select, atol(rd->arg.mode), MUIV_NList_Select_On, NULL); break;
          }
-         break;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );
@@ -1914,15 +1921,26 @@ void rx_setmailfile( UNUSED struct RexxHost *host, struct rxd_setmailfile **rxd,
          break;
          
       case RXIF_ACTION:
+      {
+         Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
+
          mfile = (char *)FilePart(rd->arg.mailfile);
+
          for (i = 0;; i++)
          {
-            DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_GetEntry, i, &mail);
-            if (!mail) break;
-            if (!stricmp(mail->MailFile, mfile)) { set(G->MA->GUI.NL_MAILS, MUIA_NList_Active, i); break; }
+            DoMethod(lv, MUIM_NList_GetEntry, i, &mail);
+            if(!mail)
+              break;
+
+            if(!stricmp(mail->MailFile, mfile))
+            {
+              set(lv, MUIA_NList_Active, i);
+              break;
+            }
          }
          if (!mail) rd->rc = RETURN_WARN;
-         break;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );
@@ -2208,7 +2226,10 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
          break;
          
       case RXIF_ACTION:
-         if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
+      {
+         Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
+
+         if((mlist = MA_CreateMarkedList(lv, FALSE)))
          {
             int i;
             rd->res.num = calloc(1+(int)mlist[0], sizeof(long));
@@ -2220,8 +2241,8 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
             rd->res.num    = calloc(1, sizeof(long));
             rd->res.num[0] = 0;
          }
-
-         break;
+      }
+      break;
       
       case RXIF_FREE:
          if (rd->res.num) free(rd->res.num);
@@ -2469,15 +2490,23 @@ void rx_mailchangesubject( UNUSED struct RexxHost *host, struct rxd_mailchangesu
          break;
          
       case RXIF_ACTION:
-         if ((mlist = MA_CreateMarkedList(G->MA->GUI.NL_MAILS, FALSE)))
+      {
+         Object *lv = (Object *)xget(G->MA->GUI.PG_MAILLIST, MUIA_MainMailListGroup_MainList);
+
+         if((mlist = MA_CreateMarkedList(lv, FALSE)))
          {
             int i, selected = (int)*mlist;
-            for (i = 0; i < selected; i++) MA_ChangeSubject(mlist[i+2], rd->arg.subject);
+
+            for(i = 0; i < selected; i++)
+              MA_ChangeSubject(mlist[i+2], rd->arg.subject);
+
             free(mlist);
-            DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
+
+            DoMethod(lv, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
          }
          else rd->rc = RETURN_ERROR;
-         break;
+      }
+      break;
       
       case RXIF_FREE:
          FreeVec( rd );

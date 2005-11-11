@@ -1415,8 +1415,8 @@ HOOKPROTONHNONP(FO_SaveFunc, void)
    if (success)
    {
       MA_SetSortFlag();
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Redraw, MUIV_NList_Redraw_Title);
-      DoMethod(G->MA->GUI.NL_MAILS, MUIM_NList_Sort);
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_Title);
+      DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Sort);
       MA_ChangeFolder(FO_GetFolderByName(folder.Name, NULL), FALSE);
       FO_SaveTree(CreateFilename(".folders"));
       DisplayStatistics(oldfolder, TRUE);

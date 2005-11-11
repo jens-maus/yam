@@ -313,6 +313,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "MessageCntMenu   = %s\n", Bool2Txt(co->MessageCntMenu));
       fprintf(fh, "InfoBar          = %d\n", co->InfoBar);
       fprintf(fh, "InfoBarText      = %s\n", co->InfoBarText);
+      fprintf(fh, "QuickSearchBar   = %s\n", Bool2Txt(co->QuickSearchBar));
 
       fprintf(fh, "\n[Security]\n");
       fprintf(fh, "PGPCmdPath       = %s\n", co->PGPCmdPath);
@@ -804,6 +805,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "MessageCntMenu")) co->MessageCntMenu = Txt2Bool(value);
                else if (!stricmp(buffer, "InfoBar"))        co->InfoBar = atoi(value);
                else if (!stricmp(buffer, "InfoBarText"))    stccpy(co->InfoBarText, value, SIZE_DEFAULT);
+               else if (!stricmp(buffer, "QuickSearchBar")) co->QuickSearchBar = Txt2Bool(value);
 /*9*/          else if (!stricmp(buffer, "PGPCmdPath"))     stccpy(co->PGPCmdPath, value, SIZE_PATH);
                else if (!stricmp(buffer, "MyPGPID"))        stccpy(co->MyPGPID, value, SIZE_DEFAULT);
                else if (!stricmp(buffer, "EncryptToSelf"))  co->EncryptToSelf = Txt2Bool(value);
@@ -1098,6 +1100,7 @@ void CO_GetConfig(void)
          CE->MessageCntMenu= GetMUICheck(gui->CH_MCNTMENU);
          CE->InfoBar       = GetMUICycle(gui->CY_INFOBAR);
          GetMUIString(CE->InfoBarText, gui->ST_INFOBARTXT);
+         CE->QuickSearchBar= GetMUICheck(gui->CH_QUICKSEARCHBAR);
          break;
       case 9:
          GetMUIString(CE->PGPCmdPath          ,gui->ST_PGPCMD);
@@ -1310,6 +1313,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_MCNTMENU  ,CE->MessageCntMenu);
          setcycle(gui->CY_INFOBAR,       CE->InfoBar);
          setstring(gui->ST_INFOBARTXT   ,CE->InfoBarText);
+         setcheckmark(gui->CH_QUICKSEARCHBAR, CE->QuickSearchBar);
          break;
       case 9:
          setstring   (gui->ST_PGPCMD    ,CE->PGPCmdPath);
