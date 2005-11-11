@@ -1,0 +1,580 @@
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2005 by YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site : http://www.yam.ch
+ YAM OpenSource project		 : http://sourceforge.net/projects/yamos/
+
+ $Id$
+
+ Superclass:  MUIC_Group
+ Description: Provides functionality of a quick search bar in the main win
+
+***************************************************************************/
+
+#include "QuickSearchBar_cl.h"
+
+#include "Debug.h"
+
+/* CLASSDATA
+struct Data
+{
+	Object *CY_VIEWOPTIONS;
+	Object *TX_STATUSTEXT;
+	Object *PO_SEARCHOPTIONPOPUP;
+	Object *NL_SEARCHOPTIONS;
+	Object *ST_SEARCHSTRING;
+	Object *BT_CLEARBUTTON;
+	struct timeval last_statusupdate;
+};
+*/
+
+/* Hooks */
+/// FindAddressHook
+HOOKPROTONHNO(FindAddressFunc, LONG, struct MUIP_NListtree_FindUserDataMessage *msg)
+{
+  struct ABEntry *entry = (struct ABEntry *)msg->UserData;
+  return Stricmp(msg->User, entry->Address);
+}
+MakeStaticHook(FindAddressHook, FindAddressFunc);
+
+///
+
+/* Private Functions */
+enum SearchOptions { SO_SUBJECT=0, SO_SENDER, SO_SUBJORSENDER, SO_TOORCC, SO_ENTIREMSG };
+enum ViewOptions { VO_ALL=0, VO_UNREAD, VO_NEW, VO_MARKED, VO_IMPORTANT, VO_LAST5DAYS, VO_KNOWNPEOPLE, VO_HASATTACHMENTS, VO_MINSIZE };
+/// MatchMail()
+// function to actually check if a struct Mail* matches
+// the currently active criteria
+static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
+														 enum SearchOptions so, char* searchString, struct timeval* curTimeUTC)
+{
+	BOOL foundMatch = FALSE;
+
+	// we first check for viewOption selection
+	switch(vo)
+	{
+		// match all mails
+		case VO_ALL:
+			foundMatch = TRUE;
+		break;
+
+		// check for UNREAD mail status
+		case VO_UNREAD:
+			foundMatch = (!hasStatusRead(mail) || hasStatusNew(mail));
+		break;
+
+		// check for NEW mail status
+		case VO_NEW:
+			foundMatch = hasStatusNew(mail);
+		break;
+
+		// check for MARKED mail status
+		case VO_MARKED:
+			foundMatch = hasStatusMarked(mail);
+		break;
+
+		// check for the Important status
+		case VO_IMPORTANT:
+			foundMatch = getImportanceLevel(mail) == IMP_HIGH;
+		break;
+
+		// check if the mail is not older than 5 days (taken from the receive date)
+		case VO_LAST5DAYS:
+		{
+			struct timeval now;
+
+			memcpy(&now, curTimeUTC, sizeof(struct timeval));
+			SubTime(&now, &mail->transDate);
+
+			// check if after subtime now is <= 5 days
+			foundMatch = (now.tv_secs <= (5*24*60*60));
+		}
+		break;
+
+		// check if the mail comes from a person we know
+		case VO_KNOWNPEOPLE:
+		{
+			set(G->AB->GUI.LV_ADDRESSES, MUIA_NListtree_FindUserDataHook, &FindAddressHook);
+
+			foundMatch = (DoMethod(G->AB->GUI.LV_ADDRESSES, MUIM_NListtree_FindUserData,
+																											MUIV_NListtree_FindUserData_ListNode_Root, &mail->From.Address[0], MUIF_NONE) != 0);
+		}
+		break;
+
+		// check if the mail has attachments
+		case VO_HASATTACHMENTS:
+		{
+			foundMatch = isMP_MixedMail(mail);
+		}
+		break;
+
+		// check if the mail has a size > 1MB
+		case VO_MINSIZE:
+		{
+			foundMatch = (mail->Size > 1024*1024);
+		}
+		break;
+	}
+
+	// now we do a bit more complicated search if a search string
+	// is specified as well
+	if(foundMatch && searchString)
+	{
+		// we check which search option is currently choosen the matching
+		switch(so)
+		{
+			// check if the searchstring matches any string in the mail's subject
+			case SO_SUBJECT:
+			{
+				foundMatch = (stristr(mail->Subject, searchString) != NULL);
+			}
+			break;
+
+			// check if the searchstring matches any string in the mail's sender address
+			case SO_SENDER:
+			{
+				foundMatch = (stristr(mail->From.Address, searchString) != NULL ||
+											(mail->From.RealName[0] && stristr(mail->From.RealName, searchString) != NULL));
+			}
+			break;
+
+			// check if the searchstring matches any string in the mail's subject or sender
+			case SO_SUBJORSENDER:
+			{
+				foundMatch = (stristr(mail->Subject, searchString) != NULL ||
+											stristr(mail->From.Address, searchString) != NULL ||
+											(mail->From.RealName[0] && stristr(mail->From.RealName, searchString) != NULL));
+
+			}
+			break;
+
+			// check if the searchString matches any string in the mail's TO or CC address
+			case SO_TOORCC:
+			{
+				foundMatch = (stristr(mail->To.Address, searchString) != NULL ||
+											(mail->To.RealName[0] && stristr(mail->To.RealName, searchString) != NULL));
+
+				#warning "CC search missing!!"
+			}
+		}
+	}
+
+	return foundMatch;
+}
+
+///
+
+/* Overloaded Methods */
+/// OVERLOAD(OM_NEW)
+OVERLOAD(OM_NEW)
+{
+	struct Data *data;
+	Object *viewOptionCycle;
+	Object *statusText;
+	Object *searchOptionPopup;
+	Object *searchOptionsList;
+	Object *searchString;
+	Object *clearButton;
+	static char *searchOptions[6];
+	static char *viewOptions[10];
+	
+	searchOptions[0] = GetStr(MSG_QUICKSEARCH_SO_SUBJECT);
+	searchOptions[1] = GetStr(MSG_QUICKSEARCH_SO_SENDER);
+	searchOptions[2] = GetStr(MSG_QUICKSEARCH_SO_SUBJORSENDER);
+	searchOptions[3] = GetStr(MSG_QUICKSEARCH_SO_TOORCC);
+	searchOptions[4] = GetStr(MSG_QUICKSEARCH_SO_ENTIREMSG);
+	searchOptions[5] = NULL;
+
+	viewOptions[0] = GetStr(MSG_QUICKSEARCH_VO_ALL);
+	viewOptions[1] = GetStr(MSG_QUICKSEARCH_VO_UNREAD);
+	viewOptions[2] = GetStr(MSG_QUICKSEARCH_VO_NEW);
+	viewOptions[3] = GetStr(MSG_QUICKSEARCH_VO_MARKED);
+	viewOptions[4] = GetStr(MSG_QUICKSEARCH_VO_IMPORTANT);
+	viewOptions[5] = GetStr(MSG_QUICKSEARCH_VO_LAST5DAYS);
+	viewOptions[6] = GetStr(MSG_QUICKSEARCH_VO_KNOWNPEOPLE);
+	viewOptions[7] = GetStr(MSG_QUICKSEARCH_VO_HASATTACHMENTS);
+	viewOptions[8] = GetStr(MSG_QUICKSEARCH_VO_MINSIZE);
+	viewOptions[9] = NULL;
+
+	if(!(obj = DoSuperNew(cl, obj,
+
+		MUIA_Group_Horiz,   TRUE,
+		Child, HGroup,
+			MUIA_Weight, 25,
+			InnerSpacing(0,0),
+			Child, TextObject,
+				MUIA_Font,          MUIV_Font_Tiny,
+				MUIA_Text_PreParse, "\033r",
+				MUIA_Text_Contents,	GetStr(MSG_QUICKSEARCH_VIEW),
+				MUIA_Text_SetMax,		TRUE,
+			End,
+			Child, viewOptionCycle = CycleObject,
+				MUIA_Font,					MUIV_Font_Tiny,
+				MUIA_CycleChain,		TRUE,
+				MUIA_Cycle_Entries,	viewOptions,
+			End,
+		End,
+
+		Child, HGroup,
+			MUIA_Weight, 50,
+			Child, statusText = TextObject,
+				MUIA_Font,					MUIV_Font_Tiny,
+				MUIA_Text_PreParse, "\033c",
+				MUIA_Text_Contents,	" ",
+			End,
+		End,
+
+		Child, HGroup,
+			MUIA_Weight, 25,
+			InnerSpacing(0,0),
+			GroupSpacing(1),
+			Child, searchOptionPopup = PopobjectObject,
+				MUIA_Popstring_Button, PopButton(MUII_PopUp),
+				MUIA_Popobject_Object, NListviewObject,
+					MUIA_NListview_NList, searchOptionsList = NListObject,
+						InputListFrame,
+						MUIA_NList_Active,				SO_SUBJORSENDER,
+						MUIA_NList_SourceArray, 	searchOptions,
+						MUIA_NList_AdjustHeight,	TRUE,
+						MUIA_NList_AdjustWidth,		TRUE,
+					End,
+				End,
+			End,
+			Child, searchString =	BetterStringObject,
+				StringFrame,
+				MUIA_CycleChain,	TRUE,
+				MUIA_Font,				MUIV_Font_Tiny,
+			End,
+			Child, clearButton = TextObject,
+				ButtonFrame,
+				MUIA_CycleChain, 		TRUE,
+				MUIA_Font, 					MUIV_Font_Tiny,
+				MUIA_Text_Contents, "\033bX",
+				MUIA_InputMode, 		MUIV_InputMode_RelVerify,
+				MUIA_Background,		MUII_ButtonBack,
+				MUIA_Text_SetMax,		TRUE,
+			End,
+		End,
+
+		TAG_MORE, inittags(msg))))
+	{
+		return 0;
+	}
+
+	data = (struct Data *)INST_DATA(cl,obj);
+
+	// per default we set the clear button as hided
+	set(clearButton, MUIA_ShowMe, FALSE);
+
+	data->CY_VIEWOPTIONS = viewOptionCycle;
+	data->TX_STATUSTEXT = statusText;
+	data->BT_CLEARBUTTON = clearButton;
+	data->PO_SEARCHOPTIONPOPUP = searchOptionPopup;
+	data->NL_SEARCHOPTIONS = searchOptionsList;
+	data->ST_SEARCHSTRING = searchString;
+
+	// set the help text for each GUI element
+	SetHelp(data->CY_VIEWOPTIONS, 			MSG_HELP_QUICKSEARCH_VIEWOPTIONS);
+	SetHelp(data->ST_SEARCHSTRING, 			MSG_HELP_QUICKSEARCH_SEARCHSTRING);
+	SetHelp(data->PO_SEARCHOPTIONPOPUP, MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP);
+
+	// set notifies
+	DoMethod(data->NL_SEARCHOPTIONS,MUIM_Notify, MUIA_NList_DoubleClick, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_SearchOptionChanged, MUIV_TriggerValue);
+	DoMethod(data->CY_VIEWOPTIONS, 	MUIM_Notify, MUIA_Cycle_Active, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_ViewOptionChanged, MUIV_TriggerValue);
+	DoMethod(data->ST_SEARCHSTRING, MUIM_Notify, MUIA_String_Contents, MUIV_EveryTime, obj, 2, MUIM_QuickSearchBar_SearchContentChanged, MUIV_TriggerValue);
+	DoMethod(data->BT_CLEARBUTTON, 	MUIM_Notify, MUIA_Pressed, FALSE, data->ST_SEARCHSTRING, 3, MUIM_Set, MUIA_String_Contents, "");
+
+	return (ULONG)obj;
+}
+///
+
+/* Public Methods */
+/// DECLARE(SearchContentChanged)
+DECLARE(SearchContentChanged) // char* content;
+{
+	GETDATA;
+
+	ENTER();
+
+	ASSERT(data->BT_CLEARBUTTON != NULL);
+	ASSERT(G->MA->GUI.PG_MAILLIST != NULL);
+
+	// depending on if there is something to search for
+	// we have to prepare something different
+	if(msg->content[0] != '\0')
+	{
+		// make sure the clear button is shown and that
+		// the correct mailview is displayed to the user
+		set(data->BT_CLEARBUTTON, MUIA_ShowMe, TRUE);
+
+		// now we issue a TC_Restart() command to schedule
+		// the actual search in about 400ms from now on
+		TC_Restart(TIO_PROCESSQUICKSEARCH, 0, 400000);
+	}
+	else
+	{
+		// we check wheter the view option is also set to "all"
+		// and if so we clear the whole object
+		if(xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active) == VO_ALL)
+		{
+			// first we make sure no waiting timer is scheduled
+			TC_Stop(TIO_PROCESSQUICKSEARCH);
+
+			// now we switch the ActivePage of the mailview pagegroup
+			DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_MAIN);
+			
+			// now reset some other GUI elements as well.
+			set(data->TX_STATUSTEXT, MUIA_Text_Contents, " ");
+			set(data->BT_CLEARBUTTON, MUIA_ShowMe, FALSE);
+		}
+		else
+		{
+			// otherwise we issue a quicksearch start as well
+			TC_Restart(TIO_PROCESSQUICKSEARCH, 0, 400000);
+		}
+	}
+
+	RETURN(0);
+	return 0;
+}
+
+///
+/// DECLARE(SearchOptionChanged)
+DECLARE(SearchOptionChanged) // int activeSearchOption;
+{
+	GETDATA;
+	char *searchContent = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
+
+	ENTER();
+
+	ASSERT(data->NL_SEARCHOPTIONS != NULL);
+	ASSERT(G->MA->GUI.PG_MAILLIST != NULL);
+
+	// make sure the popup window is closed
+	DoMethod(data->PO_SEARCHOPTIONPOPUP, MUIM_Popstring_Close, TRUE);
+
+	// now we check wheter the there is something to search for or not.
+	if(searchContent != NULL && *searchContent != '\0')
+	{
+		// immediately process the search, but make sure there is no
+		// pending timerIO waiting already
+		TC_Stop(TIO_PROCESSQUICKSEARCH);
+		DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
+	}
+
+	RETURN(0);
+	return 0;
+}
+
+///
+/// DECLARE(ViewOptionChanged)
+DECLARE(ViewOptionChanged) // int activeCycle;
+{
+	GETDATA;
+	char *searchContent = (char *)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
+
+	ENTER();
+
+	ASSERT(data->CY_VIEWOPTIONS != NULL);
+	ASSERT(G->MA->GUI.PG_MAILLIST != NULL);
+
+	// set the active group of the MAILVIEW pageGroup to 1 if one of the view
+	// options is selected by the user
+	if(msg->activeCycle == VO_ALL && (searchContent == NULL || *searchContent == '\0'))
+	{
+		DoMethod(obj, MUIM_QuickSearchBar_Clear);
+	}
+	else
+	{
+		// immediately process the search, but make sure there is no
+		// pending timerIO waiting already
+		TC_Stop(TIO_PROCESSQUICKSEARCH);
+		DoMethod(obj, MUIM_QuickSearchBar_ProcessSearch);
+	}
+
+	RETURN(0);
+	return 0;
+}
+
+///
+/// DECLARE(ProcessSearch)
+DECLARE(ProcessSearch)
+{
+	GETDATA;
+	struct Folder* curFolder = FO_GetCurrentFolder();
+
+	ENTER();
+
+	ASSERT(curFolder != NULL);
+
+	// a use of the quicksearchbar is only possible on
+	// normale folders
+	if(curFolder->Type != FT_GROUP)
+	{
+		struct Mail* curMail;
+		enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
+		enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
+		char* searchString = (char*)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
+		BOOL foundMatch = FALSE;
+		struct timeval curTimeUTC;
+
+		// get the current time in UTC
+		GetSysTimeUTC(&curTimeUTC);
+	
+		// check the searchString settings for an empty string
+		if(searchString && *searchString == '\0')
+			searchString = NULL;
+
+		// make sure the correct mailview list is visible
+		DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_QUICKVIEW);
+
+		// now we can process the search/sorting by searching the mail list of the
+		// current folder querying different criterias of a mail
+		BusyText(GetStr(MSG_BusyDisplayingList), "");
+		for(curMail = curFolder->Messages; curMail; curMail = curMail->Next, foundMatch = FALSE)
+		{
+			// check if that mail matches the search/view criteria
+			if(MatchMail(curMail, viewOption, searchOption, searchString, &curTimeUTC))
+				DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_AddMailToList, LT_QUICKVIEW, curMail);
+		}
+		BusyEnd();
+
+		// make sure the statistics are update as well
+		DoMethod(obj, MUIM_QuickSearchBar_UpdateStats, TRUE);
+
+		// make sure the first message is set active
+		set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Top);
+	}
+	else
+		E(DBF_ALL, "curFolder->Type == FT_GROUP ?????");
+
+	RETURN(0);
+	return 0;
+}
+
+///
+/// DECLARE(MatchMail)
+// method to query the quick search bar to make a match if a certain mail matches
+// the currently active criteria
+DECLARE(MatchMail) // struct Mail* mail
+{
+	GETDATA;
+	enum ViewOptions viewOption = xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active);
+	enum SearchOptions searchOption = xget(data->NL_SEARCHOPTIONS, MUIA_NList_Active);
+	char* searchString = (char*)xget(data->ST_SEARCHSTRING, MUIA_String_Contents);
+	struct timeval curTimeUTC;
+
+	// get the current time in UTC
+	GetSysTimeUTC(&curTimeUTC);
+
+	// check the searchString settings for an empty string
+	if(searchString && *searchString == '\0')
+		searchString = NULL;
+
+	// now we check that a match is really required and if so we process it
+	return ((viewOption != VO_ALL || searchString != NULL) &&
+					MatchMail(msg->mail, viewOption, searchOption, searchString, &curTimeUTC));
+}
+
+///
+/// DECLARE(Clear)
+// This method makes sure all quickbar entries are cleared and that the
+// search NList is cleared as well
+DECLARE(Clear)
+{
+	GETDATA;
+
+	ENTER();
+
+	// first we make sure no waiting timer is scheduled
+	TC_Stop(TIO_PROCESSQUICKSEARCH);
+
+	// now we switch the ActivePage of the mailview pagegroup
+	DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_SwitchToList, LT_MAIN);
+
+	// now we reset the quickbar's GUI elements
+	nnset(data->ST_SEARCHSTRING, MUIA_String_Contents, "");
+	nnset(data->CY_VIEWOPTIONS, MUIA_Cycle_Active, VO_ALL);
+	set(data->TX_STATUSTEXT, MUIA_Text_Contents, " ");
+	set(data->BT_CLEARBUTTON, MUIA_ShowMe, FALSE);
+	set(data->NL_SEARCHOPTIONS, MUIA_NList_Active, SO_SUBJORSENDER);
+
+	// make sure our objects are not disabled
+	set(obj, MUIA_Disabled, FALSE);
+
+	RETURN(0);
+	return 0;
+}
+
+///
+/// DECALRE(UpdateStats)
+DECLARE(UpdateStats) // ULONG force
+{
+	GETDATA;
+	BOOL doUpdate = FALSE;
+
+	ENTER();
+
+	// now we check wheter the user forces the update or if
+	// we have to check that the display is not update too often
+	if(msg->force == FALSE)
+	{
+		// now we check that we don't update the text too often
+		struct timeval now;
+
+		// then we update the gauge, but we take also care of not refreshing
+		// it too often or otherwise it slows down the whole search process.
+		GetSysTime(&now);
+		if(-CmpTime(&now, &data->last_statusupdate) > 0)
+		{
+			struct timeval delta;
+
+			// how much time has passed exactly?
+			memcpy(&delta, &now, sizeof(struct timeval));
+			SubTime(&delta, &data->last_statusupdate);
+
+			// update the display at least twice a second
+			if(delta.tv_secs > 0 || delta.tv_micro > 250000)
+			{
+				doUpdate = TRUE;
+				memcpy(&data->last_statusupdate, &now, sizeof(struct timeval));
+			}
+		}
+
+	}
+	else
+		doUpdate = TRUE;
+
+	if(doUpdate)
+	{
+		static char statusText[SIZE_DEFAULT];
+		struct Folder* curFolder = FO_GetCurrentFolder();
+
+		sprintf(statusText, GetStr(MSG_QUICKSEARCH_SHOWNMSGS), xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries),
+																													 curFolder->Total);
+
+		set(data->TX_STATUSTEXT, MUIA_Text_Contents, statusText);
+	}
+
+	RETURN(0);
+	return 0;
+}
+
+///
