@@ -2662,9 +2662,9 @@ BOOL DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType mode
    dt.dat_Stamp   = *date;
    dt.dat_Format  = (mode == DSS_USDATETIME || mode == DSS_UNIXDATE) ? FORMAT_USA : FORMAT_DEF;
    dt.dat_Flags   = 0; // perhaps later we can add Weekday substitution
-   dt.dat_StrDate = (unsigned char *)datestr;
-   dt.dat_StrTime = (unsigned char *)timestr;
-   dt.dat_StrDay  = (unsigned char *)daystr;
+   dt.dat_StrDate = datestr;
+   dt.dat_StrTime = timestr;
+   dt.dat_StrDay  = daystr;
 
    // now we check wheter we have to convert the datestamp to a specific TZ or not
    if(tzc != TZC_NONE)
@@ -2795,7 +2795,7 @@ long DateStamp2Long(struct DateStamp *date)
    memset(&dt, 0, sizeof(struct DateTime));
    dt.dat_Stamp   = *date;
    dt.dat_Format  = FORMAT_USA;
-   dt.dat_StrDate = (unsigned char *)datestr;
+   dt.dat_StrDate = datestr;
 
    DateToStr(&dt);
    s = Trim(datestr);

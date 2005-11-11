@@ -520,7 +520,7 @@ static BOOL ADSTnotify_start(void)
     {
       struct NotifyRequest *nr = &ADSTdata.nRequest;
 
-      nr->nr_Name  = (UBYTE *)ADSTfile[ADSTdata.method];
+      nr->nr_Name  = (STRPTR)ADSTfile[ADSTdata.method];
       nr->nr_Flags = NRF_SEND_SIGNAL;
 
       // prepare the nr_Signal now
@@ -1364,7 +1364,7 @@ static void Initialise(BOOL hidden)
    for (i = 0; i <= MAXWR; i++)
    {
       G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port = CreateMsgPort();
-      G->WR_NRequest[i].nr_Name = (UBYTE *)G->WR_Filename[i];
+      G->WR_NRequest[i].nr_Name = (STRPTR)G->WR_Filename[i];
       G->WR_NRequest[i].nr_Flags = NRF_SEND_MESSAGE;
    }
 

@@ -713,7 +713,7 @@ void DoRXCommand( struct RexxHost *host, struct RexxMsg *rexxmsg )
    
    if( *cargstr )
    {
-      host->rdargs->RDA_Source.CS_Buffer = (unsigned char *)arg;
+      host->rdargs->RDA_Source.CS_Buffer = arg;
       host->rdargs->RDA_Source.CS_Length = strlen(arg);
       host->rdargs->RDA_Source.CS_CurChr = 0;
       host->rdargs->RDA_DAList = 0;

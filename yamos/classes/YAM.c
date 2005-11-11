@@ -414,7 +414,7 @@ OVERLOAD(OM_NEW)
 		dt.dat_Format          = FORMAT_DEF;
 		dt.dat_Flags           = 0L;
 		dt.dat_StrDay          = NULL;
-		dt.dat_StrDate         = (unsigned char *)data->compileInfo;
+		dt.dat_StrDate         = data->compileInfo;
 		dt.dat_StrTime         = NULL;
 		DateToStr(&dt);
 		data->compileInfo[31] = '\0';  // make sure that the string is really terminated at LEN_DATSTRING.

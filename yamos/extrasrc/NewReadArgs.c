@@ -420,7 +420,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
     }
 
     /*- call ReadArgs() -*/
-    nrdargs->RDArgs->RDA_ExtHelp = (unsigned char *)nrdargs->ExtHelp;
+    nrdargs->RDArgs->RDA_ExtHelp = nrdargs->ExtHelp;
     if(!(nrdargs->FreeArgs = ReadArgs(nrdargs->Template, nrdargs->Parameters, nrdargs->RDArgs)))
     {
       E(DBF_STARTUP, "ReadArgs() error");

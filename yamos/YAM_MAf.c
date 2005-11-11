@@ -2020,8 +2020,8 @@ static BOOL MA_ScanDate(struct Mail *mail, const char *date)
    sprintf(ttime, "%02d:%02d:%02d", hour, min, sec);
    dt.dat_Format  = FORMAT_USA;
    dt.dat_Flags   = 0;
-   dt.dat_StrDate = (unsigned char *)tdate;
-   dt.dat_StrTime = (unsigned char *)ttime;
+   dt.dat_StrDate = tdate;
+   dt.dat_StrTime = ttime;
    if(!StrToDate(&dt))
      return FALSE;
 

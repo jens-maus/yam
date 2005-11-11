@@ -387,8 +387,8 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
         char *time;
         search->Fast = FS_DATE;
         search->DT.dat_Format = FORMAT_DEF;
-        search->DT.dat_StrDate = (unsigned char *)match;
-        search->DT.dat_StrTime = (time = strchr(match,' ')) ? (unsigned char *)time+1 : (unsigned char *)"00:00:00";
+        search->DT.dat_StrDate = match;
+        search->DT.dat_StrTime = (time = strchr(match,' ')) ? time+1 : "00:00:00";
 
         if(!StrToDate(&(search->DT)))
         {
