@@ -4,7 +4,7 @@
  Copyright (C) 2001 by Andrew Bell <mechanismx@lineone.net>
 
  Contributed to the YAM Open Source Team as a special version
- Copyright (C) 2001-2004 by YAM Open Source Team
+ Copyright (C) 2001-2005 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -48,6 +48,9 @@
  *
  * History
  * -------
+ * 0.16 - exported text is now placed before the generated MUIP_ structures
+ *        because it may contain definition which are required there.
+ *
  * 0.15 - changed the variable argument definition to use the new macros from
  *        SDI_stdarg.h
  *
@@ -123,7 +126,7 @@
  *
  */
 
-static const char *verstr = "0.15";
+static const char *verstr = "0.16";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -627,7 +630,7 @@ void gen_gpl( FILE *fp )
   "\n"
   " YAM - Yet Another Mailer\n"
   " Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>\n"
-  " Copyright (C) 2000-2004 by YAM Open Source Team\n"
+  " Copyright (C) 2000-2005 by YAM Open Source Team\n"
   "\n"
   " This program is free software; you can redistribute it and/or modify\n"
   " it under the terms of the GNU General Public License as published by\n"
@@ -915,6 +918,18 @@ long gen_header( char *destfile, struct list *classlist )
 		}
 		fprintf(fp, "\n");
 
+		/***************************************/
+		/* Write exported text for this class  */
+		/***************************************/
+
+		if (nextcd->exportlist.cnt)
+		{
+			fprintf(fp, "/* Exported text */\n\n");
+			for (n = NULL; n = list_getnext(&nextcd->exportlist, n, (void **) &nexted);)
+				fprintf(fp, "%s\n\n", nexted->exporttext);
+
+		}
+
 		/*****************************************/
 		/* Write MUIP_ structures for this class */
 		/*****************************************/
@@ -954,17 +969,6 @@ long gen_header( char *destfile, struct list *classlist )
 		}
 		fprintf(fp, "\n");
 
-		/***************************************/
-		/* Write exported text for this class  */
-		/***************************************/
-			
-		if (nextcd->exportlist.cnt)
-		{
-			fprintf(fp, "/* Exported text */\n\n");
-			for (n = NULL; n = list_getnext(&nextcd->exportlist, n, (void **) &nexted);)
-				fprintf(fp, "%s\n\n", nexted->exporttext);	
-
-		}
 	}
 	fprintf(fp, "\n#endif /* CLASSES_CLASSES_H */\n\n");
 	fclose(fp);
