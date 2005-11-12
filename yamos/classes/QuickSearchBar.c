@@ -304,6 +304,33 @@ OVERLOAD(OM_NEW)
 	return (ULONG)obj;
 }
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+	GETDATA;
+
+	struct TagItem *tags = inittags(msg), *tag;
+	while((tag = NextTagItem(&tags)))
+	{
+		switch(tag->ti_Tag)
+		{
+			// we only disable/enable what is really required to be disables/enabled
+			case MUIA_Disabled:
+			{
+				set(data->CY_VIEWOPTIONS, MUIA_Disabled, tag->ti_Data);
+				set(data->PO_SEARCHOPTIONPOPUP, MUIA_Disabled, tag->ti_Data);
+				set(data->ST_SEARCHSTRING, MUIA_Disabled, tag->ti_Data);
+
+				// do not delegate MUIA_Disabled to the whole group and return immediately.
+				return TRUE;
+			}
+			break;
+		}
+	}
+
+	return DoSuperMethodA(cl, obj, msg);
+}
+///
 
 /* Public Methods */
 /// DECLARE(SearchContentChanged)
