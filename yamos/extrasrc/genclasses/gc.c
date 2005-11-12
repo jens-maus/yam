@@ -48,6 +48,12 @@
  *
  * History
  * -------
+ * 0.17 - removed all 'long' datatype uses as this generates tag values that
+ *        are larger than 32bit and therefore make us run into problems.
+ *        Also modified the whole tagvalue generation code to just generate
+ *        tag values that are between TAG_USER (0x80000000) and the MUI's
+ *        one (0x80010000) because otherwise we might run into problems.
+ *
  * 0.16 - exported text is now placed before the generated MUIP_ structures
  *        because it may contain definition which are required there.
  *
@@ -126,7 +132,7 @@
  *
  */
 
-static const char *verstr = "0.16";
+static const char *verstr = "0.17";
 
 /* Every shitty hack wouldn't be complete without some shitty globals... */
 
@@ -138,9 +144,9 @@ char  arg_mkfile_dest       [256];
 char *arg_mkfile_cc       = NULL;
 char *arg_mkfile_outarg   = NULL;
 char *arg_mkfile_ccopts   = NULL;
-long   arg_gpl             = 0;     /* booleans */
-long   arg_storm           = 0;
-long   arg_v               = 0;
+int   arg_gpl             = 0;     /* booleans */
+int   arg_storm           = 0;
+int   arg_v               = 0;
 
 /*******************************************************************************
  *
@@ -200,7 +206,7 @@ DIR *readdir( DIR *de )
 #else
 #include <dirent.h>
 #ifndef TAG_USER
-#define TAG_USER ((unsigned long)(1UL<<31))
+#define TAG_USER ((unsigned int)(1UL<<31))
 #endif
 #endif /* EMULATE_DIRENT */
 
@@ -216,7 +222,8 @@ DIR *readdir( DIR *de )
 
 char *skipwhitespaces( char *p ) /* Note: isspace() sucks... */
 {
-	char c;
+	unsigned char c;
+
 	while ((c = *p))
   {
     if (c == '\t' || c == '\r' || c == '\n' || c == ' ' || c == 0xa0)
@@ -232,7 +239,8 @@ char *skipwhitespaces( char *p ) /* Note: isspace() sucks... */
 char *stralloc( char *str )
 {
 	/* Copy str to buffer and strip leading and trailing white spaces, LFs, CRs, etc. */
-	char *strvec, *estr, c;			
+	char *strvec, *estr;
+  unsigned c;
 	if (!str) str = "";
 	if (!(strvec = calloc(1, strlen(str) + 1))) return NULL;
 	if (*str == 0) return strvec; /* Empty string? */
@@ -249,7 +257,7 @@ char *stralloc( char *str )
 	return strvec;	
 }
 
-long myaddpart( char *path, char *name, size_t len )
+int myaddpart( char *path, char *name, size_t len )
 {
 	/* A version of dos.library/AddPart() that should
 	   work on both UNIX and Amiga systems. */
@@ -287,27 +295,40 @@ char *myfilepart( char *path )
  *
  */ 
 
-long *collision_cnts;
+int *collision_cnts;
 
-unsigned long gethash( char *str )
+static unsigned int gethash( char *str )
 {
-    static unsigned long primes[10] = { 3, 5, 7, 11, 13, 17, 19, 23, 27, 31 };
-    unsigned long i = 0;
-    unsigned long hash = strlen(str);
+    static unsigned int primes[10] = { 3, 5, 7, 11, 13, 17, 19, 23, 27, 31 };
+    unsigned int i = 0;
+    unsigned int hash = strlen(str);
     while (*str)
     {
         hash *= 13;
         hash += (*str++) * primes[(++i) % 10];
     }
+
     return hash % BUCKET_CNT;
 }
 
-unsigned long gettagvalue( char *tag )
+static unsigned int gettagvalue(char *tag, int checkcol)
 {
-	unsigned long hash = gethash(tag);
-	unsigned long val = TAG_BASE | ((hash << 16) | (hash << 8) | (++collision_cnts[hash]));
-	if (arg_v) printf("Assigning tag %-35s with value %lx\n", tag, val);
-	return val;
+	unsigned int hash = gethash(tag);
+	unsigned int val = TAG_USER + (hash << 8) + collision_cnts[hash];
+
+  /* now we check that val is definitly between TAG_USER and the MUI tag base
+     because anything above/below that might cause problems. */
+  if(val < TAG_USER || val >= 0x80010000)
+  	printf("WARNING: generate tag value '%lx' of class '%s' collides with BOOPSI/MUI tag values!\n", val, tag);
+
+  /* if we should check for a collision we do so */
+  if(checkcol)
+    ++collision_cnts[hash];
+
+	if(arg_v)
+    printf("Assigning tag %-35s with value %lx\n", tag, val);
+	
+  return val;
 }
 
 /*******************************************************************************
@@ -415,10 +436,10 @@ void add_attr( struct classdef *cd, char *name )
 struct classdef *processclasssrc( char *path )
 {
 	FILE *fp;
-	long lineno = 0;
+	int lineno = 0;
 	char line[256], *p, *ob, *cb, *sub;
 	struct classdef *cd;
-	long spos, epos = 0, exlineno = lineno;
+	int spos, epos = 0, exlineno = lineno;
   char *blk = NULL;
 
 	if (!(cd = calloc(1, sizeof(struct classdef)))) return NULL;
@@ -573,12 +594,12 @@ void printclasslist( struct list *classlist )
 	}
 }
 
-long scanclasses( char *dirname, struct list *classlist )
+int scanclasses( char *dirname, struct list *classlist )
 {
 	DIR *dir;
 	struct dirent *de;
 	char *n, dirbuf[256];
-	long len, srccnt = 0;
+	int len, srccnt = 0;
 	struct classdef *cd;
 	strncpy(dirbuf, dirname, 255);
 	if (arg_v) printf("scanning classes dir %s\n", dirbuf);
@@ -661,7 +682,7 @@ void gen_supportroutines( FILE *fp )
 "%s%s%s"
 "Object * STDARGS VARARGS68K %s_NewObject(STRPTR class, ...)\n"
 "{\n"
-"  long i;\n"
+"  unsigned int i;\n"
 "  for(i = 0; i < NUMBEROFCLASSES; i++)\n"
 "  {\n"
 "    if(!strcmp(MCCInfo[i].Name, class))\n"
@@ -679,9 +700,9 @@ void gen_supportroutines( FILE *fp )
 "%s"
 "\n"
 "%s%s%s"
-"long %s_SetupClasses(void)\n"
+"BOOL %s_SetupClasses(void)\n"
 "{\n"
-"  long i;\n"
+"  unsigned int i;\n"
 "  memset(%sClasses, 0, sizeof(%sClasses));\n"
 "  for (i = 0; i < NUMBEROFCLASSES; i++)\n"
 "  {\n"
@@ -690,17 +711,17 @@ void gen_supportroutines( FILE *fp )
 "    if(!%sClasses[i])\n"
 "    {\n"
 "      %s_CleanupClasses();\n"
-"      return 0;\n"
+"      return FALSE;\n"
 "    }\n"
 "  }\n"
-"  return 1;\n"
+"  return TRUE;\n"
 "}\n"
 "%s"
 "\n"
 "%s%s%s"
 "void %s_CleanupClasses(void)\n"
 "{\n"
-"  long i;\n"
+"  int i;\n"
 "  for (i = NUMBEROFCLASSES-1; i >= 0; i--)\n"
 "  {\n"
 "    if (%sClasses[i])\n"
@@ -730,7 +751,7 @@ void gen_supportroutines( FILE *fp )
 	arg_storm ? "///\n"               : "");
 }
 
-long gen_source( char *destfile, struct list *classlist )
+int gen_source( char *destfile, struct list *classlist )
 {
 	FILE *fp;
 	struct classdef *nextcd;
@@ -813,7 +834,7 @@ long gen_source( char *destfile, struct list *classlist )
 	return 1;
 }
 
-long gen_header( char *destfile, struct list *classlist )
+int gen_header( char *destfile, struct list *classlist )
 {
 	FILE *fp;
 	char *bn = arg_basename, *cn, *p;
@@ -875,8 +896,8 @@ long gen_header( char *destfile, struct list *classlist )
 		"\n"
 		"extern struct MUI_CustomClass *%sClasses[NUMBEROFCLASSES];\n"
 		"Object * STDARGS VARARGS68K %s_NewObject(STRPTR class, ...);\n"
-		"long %s_SetupClasses( void );\n"
-		"void %s_CleanupClasses( void );\n"
+		"BOOL %s_SetupClasses(void);\n"
+		"void %s_CleanupClasses(void);\n"
 		"\n",
 		classlist->cnt, bn, bn, bn, bn);
 
@@ -893,17 +914,17 @@ long gen_header( char *destfile, struct list *classlist )
 		/***********************************************/
 
 		fprintf(fp, 
-			"/******** Class: %s ********/\n"
+			"/******** Class: %s (0x%lx) ********/\n"
 			"\n"
 			"#define MUIC_%s \"%s_%s\"\n"
 			"#define %sObject %s_NewObject(MUIC_%s\n",
-			cn, cn, bn, cn, cn, bn, cn);
+			cn, gettagvalue(cn, 0), cn, bn, cn, cn, bn, cn);
 
 		for (n = NULL; n = list_getnext(&nextcd->declarelist, n, (void **) &nextdd);)
 		{
 			char name[128];
 			sprintf(name, "MUIM_%s_%s", cn, nextdd->name);
-			fprintf(fp, "#define %-45s 0x%08lx\n", name, gettagvalue(name));
+			fprintf(fp, "#define %-45s 0x%08lx\n", name, gettagvalue(cn, 1));
 		}
 
 		/***************************************/
@@ -914,7 +935,7 @@ long gen_header( char *destfile, struct list *classlist )
 		{
 			char name[128];
 			sprintf(name, "MUIA_%s_%s", cn, nextad->name);
-			fprintf(fp, "#define %-45s 0x%08lx\n", name, gettagvalue(name));
+			fprintf(fp, "#define %-45s 0x%08lx\n", name, gettagvalue(cn, 1));
 		}
 		fprintf(fp, "\n");
 
@@ -975,7 +996,7 @@ long gen_header( char *destfile, struct list *classlist )
 	return 1;
 }
 
-long gen_classheaders( struct list *classlist )
+int gen_classheaders( struct list *classlist )
 {
 	struct node *n;
 	struct classdef *nextcd;
@@ -1042,7 +1063,7 @@ long gen_classheaders( struct list *classlist )
  *
  */ 
 
-long gen_makefile( char *destfile, struct list *classlist )
+int gen_makefile( char *destfile, struct list *classlist )
 {
 	struct classdef *nextcd;
 	char *cn, *p;
@@ -1090,7 +1111,7 @@ long gen_makefile( char *destfile, struct list *classlist )
  *
  */ 
 
-long getstrarg( char *argid, char *argline, char *dest, size_t destlen )
+int getstrarg( char *argid, char *argline, char *dest, size_t destlen )
 {
 	char *p;
 	size_t arglen = strlen(argid);
@@ -1100,16 +1121,17 @@ long getstrarg( char *argid, char *argline, char *dest, size_t destlen )
 	return 1;
 }
 
-long getblnarg( char *argid, char *argline, long *blnlong )
+int getblnarg( char *argid, char *argline, int *blnlong )
 {
 	if (strncmp(argid, argline, strlen(argid)) != 0) return 0;
 	*blnlong = 1;
 	return 1;
 }
 
-long doargs( int argc, char *argv[] )
+int doargs( int argc, char *argv[] )
 {
-	long i, success;
+	unsigned int i, success;
+
 	if (argc < 2)
 	{
 		printf(
@@ -1121,6 +1143,7 @@ long doargs( int argc, char *argv[] )
 			" -gpl                                         - write GPL headers onto sources\n"
 			" -storm                                       - include storm/GoldED fold markers\n"
 			" -i<includes>                                 - includes for Classes.h (.i.e. -i\"YAM.h\",\"YAM_hook.h\",<stdlib.h>\n"
+      " -v                                           - verbose output while generating files\n"
 			" -mkfile<makefile>,<cc>,<outarg>,<ccopts,...> - Create a makefile\n"
 			"    (.i.e. -mkfileVMakefile,vc,-o,-O3,-+\n");
 		return 0;
@@ -1184,7 +1207,7 @@ int main( int argc, char *argv[] )
 	if (!doargs(argc, argv)) return 0;
 
   /* get memory for the hash */
-  if(!(collision_cnts = calloc(BUCKET_CNT, sizeof(long)))) return 0;
+  if(!(collision_cnts = calloc(BUCKET_CNT, sizeof(int)))) return 0;
 
 	if (scanclasses(arg_classdir, &classlist))
 	{

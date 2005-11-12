@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-11-12  Jens Langner <Jens.Langner@light-speed.de>
+
+    * extrasrc/genclasses: fixed the hash generation code for 64bit systems
+      which caused the automatic tag generation code to fail and generate
+      a defective YAM when compiled on 64bit systems. Also modified the whole
+      tagvalue generation code to just generate tag values that are between
+      TAG_USER (0x80000000) and the MUI's one (0x80010000) because otherwise
+      we might run into problems.
+
 2005-11-11  Jens Langner <Jens.Langner@light-speed.de>
 
     * misc: fixed/removed another bunch of unnecessary casts due to the

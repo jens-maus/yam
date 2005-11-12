@@ -5,6 +5,22 @@ GenClasses Tool - ChangeLog
 $Id$
 $Source$
 
+2005-11-11  Jens Langner <Jens.Langner@light-speed.de>
+
+    * gc.c: replaced all 'long' datatype usages against 'int' as they
+      where anyway not required and caused quite some problems on
+      64bit system. There the hash generation code generated 64bit
+      values instead of 32bit ones, which is of course a requirement.
+      Also modified the whole tagvalue generation code to just generate
+      tag values that are between TAG_USER (0x80000000) and the MUI's
+      one (0x80010000) because otherwise we might run into problems.
+
+2005-11-06  Jens Langner <Jens.Langner@light-speed.de>
+
+    * gc.c: exported text will now be placed before the generated MUIP
+      structures because it may contain type definitions required by
+      the MUIP structures.
+
 2004-07-05  Jens Langner <Jens.Langner@light-speed.de>
 
     * replace the va_list/va_start calls with the much more general
