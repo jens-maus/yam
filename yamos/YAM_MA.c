@@ -162,8 +162,14 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    }
 
    type = fo->Type;
+
+   // get the currently active mail entry.
    DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-   fo->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
+
+   // in case the currently active maillist is the mainmainlist we
+   // have to save the lastactive mail ID
+   if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
+     fo->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
 
    if((active = (mail != NULL)) && isMultiPartMail(mail))
      hasattach = TRUE;

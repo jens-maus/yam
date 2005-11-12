@@ -36,6 +36,8 @@
 struct Data
 {
 	Object *mainListObjects[2];
+	struct Folder *lastActiveFolder;
+	ULONG lastActiveEntry;
 	ULONG activeList;
 };
 */
@@ -337,6 +339,7 @@ DECLARE(SwitchToList) // enum MainListType type
 	// no matter what, we always clear the quickview list on a switch.
 	if(data->activeList != msg->type)
 	{
+		// switch the page of the group now
 		set(obj, MUIA_Group_ActivePage, msg->type);
 
 		// set the new maillist group as the default object of the window it belongs to
@@ -348,8 +351,15 @@ DECLARE(SwitchToList) // enum MainListType type
 		}
 		else
 		{
+			struct Folder *curFolder = FO_GetCurrentFolder();
+
 			if((Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListObjects[LT_QUICKVIEW])
 				set(_win(obj), MUIA_Window_DefaultObject, data->mainListObjects[LT_MAIN]);
+
+			// in case we are switching from LT_QUICKVIEW->LT_MAIN we go and set the
+			// last active mail as well.
+			if(curFolder)
+				set(data->mainListObjects[LT_MAIN], MUIA_NList_Active, curFolder->LastActive);
 		}
 	}
 

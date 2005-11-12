@@ -7,6 +7,9 @@ $Source$
 
 2005-11-12  Jens Langner <Jens.Langner@light-speed.de>
 
+    * classes/MainMailListGroup.c: when switching the QuickSearchBar back to
+      'normal' mail view mode, YAM will now ensure that the mail that was
+      last active will be the new active one again.
     * YAM_mail_lex.l: fixed bug #1346784 where the HOSTNAME flex pattern was
       slightly wrong and caused the URL highlighting to fail and misinterpret
       text with "ftp" and "www" as URLs.
