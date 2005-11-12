@@ -58,7 +58,7 @@
 LOGIN       ({USER}?(":"{PASSWORD})?"@")?{HOSTPORT}
 HOSTPORT    {HOST}(":"{PORT})?
 HOST        ({HOSTNAME}|{HOSTNUMBER})
-HOSTNAME    ({DOMAINLABEL}".")*{TOPLABEL}
+HOSTNAME    ({DOMAINLABEL}".")+{TOPLABEL}
 DOMAINLABEL ([[:alnum:]]|[[:alnum:]]([[:alnum:]]|"-")*[[:alnum:]])
 TOPLABEL    ([[:alpha:]]|[[:alpha:]]([[:alnum:]]|"-")*[[:alnum:]])
 HOSTNUMBER  [[:digit:]]{1,3}"."[[:digit:]]{1,3}"."[[:digit:]]{1,3}"."[[:digit:]]{1,3}

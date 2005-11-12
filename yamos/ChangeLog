@@ -7,8 +7,11 @@ $Source$
 
 2005-11-12  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_mail_lex.l: fixed bug #1346784 where the HOSTNAME flex pattern was
+      slightly wrong and caused the URL highlighting to fail and misinterpret
+      text with "ftp" and "www" as URLs.
     * classes/QuickSerchBar.c: make sure that on a MUIA_Disabled really only
-	   the necessary GUI elements are disabled/enabled.
+      the necessary GUI elements are disabled/enabled.
     * extrasrc/genclasses: fixed the hash generation code for 64bit systems
       which caused the automatic tag generation code to fail and generate
       a defective YAM when compiled on 64bit systems. Also modified the whole
