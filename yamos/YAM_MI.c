@@ -782,7 +782,7 @@ long qpencode_file(FILE *in, FILE *out)
         // 1) it is an unsafe safe
         // 2) it is an upcoming "From " at the start of a line
       else if(!is_qpsafe(c) ||
-              (last = -1 && c == 'F' && strncmp((char *)iptr, "rom ", 4) == 0))
+              (last == -1 && c == 'F' && strncmp((char *)iptr, "rom ", 4) == 0))
       {
 
         // before we can encode the data we have to check
