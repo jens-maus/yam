@@ -66,7 +66,6 @@ static BOOL FI_SearchPatternInBody(struct Search*, struct Mail*);
 static BOOL FI_SearchPatternInHeader(struct Search*, struct Mail*);
 static enum FastSearch FI_IsFastSearch(char*);
 static void FI_GenerateListPatterns(struct Search*);
-static BOOL FI_DoSearch(struct Search*, struct Mail*);
 static struct FI_ClassData *FI_New(void);
 static void CopySearchData(struct Search *dstSearch, struct Search *srcSearch);
 
@@ -360,7 +359,6 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
                       BOOL casesens, int persmode, int compar,
                       char stat, BOOL substr, char *match, char *field)
 {
-   // return value of this function isn't used currently (21.03.2001)
    memset(search, 0, sizeof(struct Search));
    search->Mode      = mode;
    search->CaseSens  = casesens;
@@ -441,13 +439,13 @@ BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode,
         ParsePatternNoCase(search->Match, search->Pattern, (SIZE_PATTERN+4)*2+2);
    }
 
-   return FALSE;
+   return TRUE;
 }
 
 ///
 /// FI_DoSearch
 //  Checks if a message fulfills the search criteria
-static BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
+BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
 {
    BOOL found0, found = FALSE;
    int comp_bak = search->Compare;

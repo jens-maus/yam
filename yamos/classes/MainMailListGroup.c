@@ -133,8 +133,8 @@ OVERLOAD(OM_GET)
 OVERLOAD(OM_SET)
 {
 	GETDATA;
-
 	struct TagItem *tags = inittags(msg), *tag;
+	
 	while((tag = NextTagItem(&tags)))
 	{
 		switch(tag->ti_Tag)
@@ -146,8 +146,12 @@ OVERLOAD(OM_SET)
 			break;
 
 			case MUIA_NList_Active:
+			case MUIA_NList_SelectChange:
 			{
 				set(data->mainListObjects[data->activeList], tag->ti_Tag, tag->ti_Data);
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
 			}
 			break;
 
@@ -159,6 +163,9 @@ OVERLOAD(OM_SET)
 			{
 				set(data->mainListObjects[LT_MAIN], tag->ti_Tag, tag->ti_Data);
 				set(data->mainListObjects[LT_QUICKVIEW], tag->ti_Tag, tag->ti_Data);
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
 			}
 			break;
 		}
@@ -358,8 +365,12 @@ DECLARE(SwitchToList) // enum MainListType type
 
 			// in case we are switching from LT_QUICKVIEW->LT_MAIN we go and set the
 			// last active mail as well.
-			if(curFolder)
-				set(data->mainListObjects[LT_MAIN], MUIA_NList_Active, curFolder->LastActive);
+			if(curFolder && curFolder->LastActive >= 0)
+			{
+				SetAttrs(data->mainListObjects[LT_MAIN], MUIA_NList_Active, 			curFolder->LastActive,
+																								 MUIA_NList_SelectChange, TRUE,
+																								 TAG_DONE);
+			}
 		}
 	}
 

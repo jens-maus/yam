@@ -303,12 +303,18 @@ OVERLOAD(OM_SET)
 					data->resizePushed = TRUE;
 					DoMethod(_app(obj), MUIM_Application_PushMethod, obj, 1, MUIM_AttachmentGroup_Relayout);
 				}
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
 			}
 			break;
 
 			ATTR(MinHeightNoPush):
 			{
 				data->minHeight = tag->ti_Data;
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
 			}
 			break;
 

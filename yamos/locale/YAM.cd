@@ -5642,6 +5642,9 @@ Subject Or Sender
 MSG_QUICKSEARCH_SO_TOORCC (//)
 To Or Cc
 ;
+MSG_QUICKSEARCH_SO_INMSG (//)
+Find In Message
+;
 MSG_QUICKSEARCH_SO_ENTIREMSG (//)
 Entire Message
 ;
@@ -5693,3 +5696,6 @@ MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP (//)
 By using this popup you can select the criteria\n\
 for the specified search text.
 ;
+MSG_BUSY_SEARCHINGFOLDER (//)
+Searching for messages in folder '%s'...
+; FOLDERNAME

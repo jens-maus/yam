@@ -331,8 +331,23 @@ OVERLOAD(OM_SET)
 	{
 		switch(tag->ti_Tag)
 		{
-			ATTR(HGVertWeight) : set(data->headerGroup, MUIA_VertWeight, tag->ti_Data); break;
-			ATTR(TGVertWeight) : set(data->mailBodyGroup, MUIA_VertWeight, tag->ti_Data); break;
+			ATTR(HGVertWeight):
+			{
+				set(data->headerGroup, MUIA_VertWeight, tag->ti_Data);
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
+			}
+			break;
+			
+			ATTR(TGVertWeight):
+			{
+				set(data->mailBodyGroup, MUIA_VertWeight, tag->ti_Data);
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
+			}
+			break;
 		}
 	}
 

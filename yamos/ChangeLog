@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-11-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/QuickSearchBar.c: implemented the missing "To or Cc" and
+      "Entire Message" search modes and also added a new "Find In Message"
+      mode which just searches in the actual mail content without headers.
+    * classes/MainMailListGroup.c: fixed another bug in the maillist
+      switching procedure, where it might have happened that upon a switch
+      no mail was flagged as being Active&Selected. Also revised all
+      classes to properly use TAG_IGNORE in the OM_SET method to signal
+      certain tag values to be ignored by the supermethod call afterwards.
+
 2005-11-12  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/MainMailListGroup.c: when switching the QuickSearchBar back to

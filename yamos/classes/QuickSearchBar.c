@@ -57,7 +57,7 @@ MakeStaticHook(FindAddressHook, FindAddressFunc);
 ///
 
 /* Private Functions */
-enum SearchOptions { SO_SUBJECT=0, SO_SENDER, SO_SUBJORSENDER, SO_TOORCC, SO_ENTIREMSG };
+enum SearchOptions { SO_SUBJECT=0, SO_SENDER, SO_SUBJORSENDER, SO_TOORCC, SO_INMSG, SO_ENTIREMSG };
 enum ViewOptions { VO_ALL=0, VO_UNREAD, VO_NEW, VO_MARKED, VO_IMPORTANT, VO_LAST5DAYS, VO_KNOWNPEOPLE, VO_HASATTACHMENTS, VO_MINSIZE };
 /// MatchMail()
 // function to actually check if a struct Mail* matches
@@ -171,8 +171,76 @@ static inline BOOL MatchMail(struct Mail* mail, enum ViewOptions vo,
 				foundMatch = (stristr(mail->To.Address, searchString) != NULL ||
 											(mail->To.RealName[0] && stristr(mail->To.RealName, searchString) != NULL));
 
-				#warning "CC search missing!!"
+				// if we still haven't found a match with the To: string we go
+				// and do a deeper search
+				if(foundMatch == FALSE)
+				{
+					struct ExtendedMail *email = MA_ExamineMail(mail->Folder, mail->MailFile, TRUE);
+
+					if(email)
+					{
+						int i;
+		
+						for(i = 0; foundMatch == FALSE && i < email->NoCC; i++)
+						{
+							struct Person *cc = &email->CC[i];
+							foundMatch = stristr(cc->Address, searchString) != NULL ||
+														(cc->RealName[0] && stristr(cc->RealName, searchString) != NULL);
+						}
+
+						MA_FreeEMailStruct(email);
+					}
+				}
 			}
+			break;
+
+			// check if the searchString matches anything at all in the actual mail text
+			case SO_INMSG:
+			{
+				struct ReadMailData *rmData;
+
+				// allocate a private readmaildata object in which we readin
+				// the mail text
+				if((rmData = AllocPrivateRMData(mail, PM_TEXTS)))
+				{
+					char *cmsg;
+
+					if((cmsg = RE_ReadInMessage(rmData, RIM_QUIET)))
+					{
+						// as we search the entire message text we can do a single
+						// stristr() call here for matching
+						foundMatch = stristr(cmsg, searchString) != NULL;
+
+						// free the allocated message text immediately
+						free(cmsg);
+					}
+
+					FreePrivateRMData(rmData);
+				}
+			}
+			break;
+
+			// check if the searchString matches anything at all in our entire message
+			case SO_ENTIREMSG:
+			{
+				struct Search search;
+				char *field = "";
+
+				// we use our global find function for searching in the entire message
+				// (including the headers)
+				if(FI_PrepareSearch(&search, SM_WHOLE,
+																		 FALSE,
+																		 0,
+																		 CP_EQUAL,
+																		 0,
+																		 TRUE,
+																		 searchString,
+																		 field))
+				{
+					foundMatch = FI_DoSearch(&search, mail);
+				}
+			}
+			break;
 		}
 	}
 
@@ -192,15 +260,16 @@ OVERLOAD(OM_NEW)
 	Object *searchOptionsList;
 	Object *searchString;
 	Object *clearButton;
-	static char *searchOptions[6];
+	static char *searchOptions[7];
 	static char *viewOptions[10];
 	
 	searchOptions[0] = GetStr(MSG_QUICKSEARCH_SO_SUBJECT);
 	searchOptions[1] = GetStr(MSG_QUICKSEARCH_SO_SENDER);
 	searchOptions[2] = GetStr(MSG_QUICKSEARCH_SO_SUBJORSENDER);
 	searchOptions[3] = GetStr(MSG_QUICKSEARCH_SO_TOORCC);
-	searchOptions[4] = GetStr(MSG_QUICKSEARCH_SO_ENTIREMSG);
-	searchOptions[5] = NULL;
+	searchOptions[4] = GetStr(MSG_QUICKSEARCH_SO_INMSG);
+	searchOptions[5] = GetStr(MSG_QUICKSEARCH_SO_ENTIREMSG);
+	searchOptions[6] = NULL;
 
 	viewOptions[0] = GetStr(MSG_QUICKSEARCH_VO_ALL);
 	viewOptions[1] = GetStr(MSG_QUICKSEARCH_VO_UNREAD);
@@ -321,8 +390,11 @@ OVERLOAD(OM_SET)
 				set(data->PO_SEARCHOPTIONPOPUP, MUIA_Disabled, tag->ti_Data);
 				set(data->ST_SEARCHSTRING, MUIA_Disabled, tag->ti_Data);
 
-				// do not delegate MUIA_Disabled to the whole group and return immediately.
-				return TRUE;
+				if(tag->ti_Data == TRUE)
+					set(data->TX_STATUSTEXT, MUIA_Text_Contents, " ");
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
 			}
 			break;
 		}
@@ -474,20 +546,28 @@ DECLARE(ProcessSearch)
 
 		// now we can process the search/sorting by searching the mail list of the
 		// current folder querying different criterias of a mail
-		BusyText(GetStr(MSG_BusyDisplayingList), "");
-		for(curMail = curFolder->Messages; curMail; curMail = curMail->Next, foundMatch = FALSE)
+		BusyText(GetStr(MSG_BUSY_SEARCHINGFOLDER), curFolder->Name);
+		for(curMail = curFolder->Messages; curMail; curMail = curMail->Next)
 		{
 			// check if that mail matches the search/view criteria
 			if(MatchMail(curMail, viewOption, searchOption, searchString, &curTimeUTC))
+			{
 				DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_AddMailToList, LT_QUICKVIEW, curMail);
+				foundMatch = TRUE;
+			}
 		}
 		BusyEnd();
 
 		// make sure the statistics are update as well
 		DoMethod(obj, MUIM_QuickSearchBar_UpdateStats, TRUE);
 
-		// make sure the first message is set active
-		set(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, MUIV_NList_Active_Top);
+		// make sure the first message is set active or that we notify
+//		if(foundMatch)
+		SetAttrs(G->MA->GUI.PG_MAILLIST, MUIA_NList_Active, 			MUIV_NList_Active_Top,
+																		 MUIA_NList_SelectChange, TRUE,
+																		 TAG_DONE);
+//		else
+//			set(G->MA->GUI.PG_MAILLIST, MUIA_NList_SelectChange, TRUE);
 	}
 	else
 		E(DBF_ALL, "curFolder->Type == FT_GROUP ?????");
@@ -592,9 +672,10 @@ DECLARE(UpdateStats) // ULONG force
 	if(doUpdate)
 	{
 		static char statusText[SIZE_DEFAULT];
+		ULONG numEntries = xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries);
 		struct Folder* curFolder = FO_GetCurrentFolder();
 
-		sprintf(statusText, GetStr(MSG_QUICKSEARCH_SHOWNMSGS), xget(G->MA->GUI.PG_MAILLIST, MUIA_NList_Entries),
+		sprintf(statusText, GetStr(MSG_QUICKSEARCH_SHOWNMSGS), numEntries,
 																													 curFolder->Total);
 
 		set(data->TX_STATUSTEXT, MUIA_Text_Contents, statusText);

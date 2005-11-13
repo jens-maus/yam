@@ -154,6 +154,7 @@ extern const int Mode2Group[12];
 extern const char mailStatusCycleMap[10];
 
 BOOL FI_PrepareSearch(struct Search *search, enum SearchMode mode, BOOL casesens, int persmode, int compar, char stat, BOOL substr, char *match, char *field);
+BOOL FI_DoSearch(struct Search *search, struct Mail *mail);
 
 void FreeSearchPatternList(struct Search *search);
 int AllocFilterSearch(enum ApplyFilterMode mode);

@@ -186,13 +186,48 @@ OVERLOAD(OM_SET)
 	{
 		switch(tag->ti_Tag)
 		{
-			ATTR(ResolveOnCR)        : data->ResolveOnCR = tag->ti_Data        ; break;
-			ATTR(MultipleRecipients) : data->MultipleRecipients = tag->ti_Data ; break;
-			ATTR(FromString)         : data->From = (Object *)tag->ti_Data     ; break;
-			ATTR(ReplyToString)      : data->ReplyTo = (Object *)tag->ti_Data  ; break;
+			ATTR(ResolveOnCR):
+			{
+				data->ResolveOnCR = tag->ti_Data;
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
+			}
+			break;
+			
+			ATTR(MultipleRecipients):
+			{
+				data->MultipleRecipients = tag->ti_Data;
+		 
+			  // make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
+			}
+			break;
+
+			ATTR(FromString):
+			{
+				data->From = (Object *)tag->ti_Data;
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
+			}
+			break;
+
+			ATTR(ReplyToString):
+			{
+				data->ReplyTo = (Object *)tag->ti_Data;
+
+				// make the superMethod call ignore those tags
+				tag->ti_Tag = TAG_IGNORE;
+			}
+			break;
 
 			// we also catch foreign attributes
-			case MUIA_String_AdvanceOnCR: data->AdvanceOnCR = tag->ti_Data     ; break;
+			case MUIA_String_AdvanceOnCR:
+			{
+				data->AdvanceOnCR = tag->ti_Data;
+			}
+			break;
 		}
 	}
 
