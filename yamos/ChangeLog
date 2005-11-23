@@ -7,6 +7,9 @@ $Source$
 
 2005-11-23  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c, QuickSearchBar.c: fixed a minor bug in the main window's
+      hotkey management where even on an active QuickSearchBar search
+      string, the folder was changed if a numerical key has been pressed.
     * YAM.c: cleaned up the INITLIB() macro to make it possible to use
       other interfaces than just the main interface of an OS4 library.
       Also slightly cleaned up the InitLib() function and removed the

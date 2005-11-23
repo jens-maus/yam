@@ -2693,21 +2693,29 @@ HOOKPROTONHNO(MA_FolderKeyFunc, void, int *idx)
   struct MUI_NListtree_TreeNode *tn = NULL;
   int i, count = idx[0];
 
-  // we get the first entry and if it`s a LIST we have to get the next one
-  // and so on, until we have a real entry for that key or we set nothing active
-  for(i=0; i <= count; i++)
+  // we make sure that the quicksearchbar is NOT active
+  // or otherwise we steal it the focus while the user
+  // tried to enter some numbers there
+  if(xget(G->MA->GUI.GR_QUICKSEARCHBAR, MUIA_QuickSearchBar_SearchStringIsActive) == FALSE)
   {
-    tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
-    if(!tn) return;
+    // we get the first entry and if it`s a LIST we have to get the next one
+    // and so on, until we have a real entry for that key or we set nothing active
+    for(i=0; i <= count; i++)
+    {
+      tn = (struct MUI_NListtree_TreeNode *)DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_GetEntry, MUIV_NListtree_GetEntry_ListNode_Root, i, MUIF_NONE);
+      if(!tn)
+        return;
 
-    if(isFlagSet(tn->tn_Flags, TNF_LIST)) count++;
+      if(isFlagSet(tn->tn_Flags, TNF_LIST))
+        count++;
+    }
+
+    // Force that the list is open at this entry
+    DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
+
+    // Now set this treenode activ
+    set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
   }
-
-  // Force that the list is open at this entry
-  DoMethod(G->MA->GUI.NL_FOLDERS, MUIM_NListtree_Open, MUIV_NListtree_Open_ListNode_Parent, tn, MUIF_NONE);
-
-  // Now set this treenode activ
-  set(G->MA->GUI.NL_FOLDERS, MUIA_NListtree_Active, tn);
 }
 MakeHook(MA_FolderKeyHook, MA_FolderKeyFunc);
 

@@ -403,6 +403,24 @@ OVERLOAD(OM_SET)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
+/// OVERLOAD(OM_GET)
+OVERLOAD(OM_GET)
+{
+	GETDATA;
+	ULONG *store = ((struct opGet *)msg)->opg_Storage;
+
+	switch(((struct opGet *)msg)->opg_AttrID)
+	{
+		ATTR(SearchStringIsActive):
+		{
+			*store = (Object *)xget(_win(data->ST_SEARCHSTRING), MUIA_Window_ActiveObject) == data->ST_SEARCHSTRING;
+			return TRUE;
+		}
+	}
+
+	return DoSuperMethodA(cl, obj, msg);
+}
+///
 
 /* Public Methods */
 /// DECLARE(SearchContentChanged)
