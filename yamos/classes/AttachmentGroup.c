@@ -222,7 +222,7 @@ HOOKPROTONH(LayoutFunc, ULONG, Object *obj, struct MUI_LayoutMsg *lm)
 				}
 			}
 
-			// Now that we end up here we have to check wheter our object used all
+			// Now that we end up here we have to check whether our object used all
 			// of its provided height space or if we have to reduce the minHeight here
 			if(lm->lm_Layout.Height-1 > usedHeight+BORDER)
 			{

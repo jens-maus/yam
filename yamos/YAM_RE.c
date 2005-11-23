@@ -931,7 +931,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 
     if(!stricmp(field, "content-type"))
     {
-      // we check wheter we have a content-type value or not, because otherwise
+      // we check whether we have a content-type value or not, because otherwise
       // we have to keep the default "text/plain" content-type value the
       // OpenNewPart() function sets
       if(value[0] != '\0')
@@ -1395,7 +1395,7 @@ static void RE_UndoPart(struct Part *rp)
   FreeStrBuf(rp->ContentDisposition);
   FreeStrBuf(rp->Boundary);
 
-  // now we check wheter the readMailData letterPartNum has to be decreased to
+  // now we check whether the readMailData letterPartNum has to be decreased to
   // point to the correct letterPart number again
   if(rp->rmData)
   {
@@ -1490,7 +1490,7 @@ static void RE_SetPartInfo(struct Part *rp)
    rp->Printable = !strnicmp(rp->ContentType, "text", 4) || rp->Nr == PART_RAW;
 
    // Now that we have defined that this part is printable we have
-   // to check wheter our readMailData structure already contains a reference
+   // to check whether our readMailData structure already contains a reference
    // to the actual readable letterPart or not and if not we do make this
    // part the actual letterPart
    if(rp->rmData->letterPartNum < PART_LETTER &&
@@ -2113,7 +2113,7 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
 	// here we read in the mail in our read mail group
 	GetMailFile(rmData->readFile, folder, mail);
 
-  // check wheter the folder of the mail is using XPK and if so we
+  // check whether the folder of the mail is using XPK and if so we
   // unpack it to a temporarly file
   if(isVirtualMail(mail) == FALSE &&
      isXPKFolder(folder))

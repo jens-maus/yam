@@ -376,7 +376,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
       }
     }
 
-    // now we check wheter the user want to convert each LF into a CRLF
+    // now we check whether the user want to convert each LF into a CRLF
     // and if so we need to parse the whole read bytes for \n and convert
     // them to \r\n before the base64 encoding.
     if(convLF)
@@ -478,7 +478,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
       towrite -= todo;
       optr += todo;
 
-      // then we have to check wheter we have written
+      // then we have to check whether we have written
       // a full 72 char long line or not and if so we can attach
       // a newline.
       if(missing_chars == 0 &&
@@ -786,7 +786,7 @@ long qpencode_file(FILE *in, FILE *out)
       {
 
         // before we can encode the data we have to check
-        // wheter there is enough space left on the line
+        // whether there is enough space left on the line
         // or if we have to put it on the next line
         if(line_len+3 >= QP_LINELEN-1) // one space for the trailing '='
         {
@@ -812,7 +812,7 @@ long qpencode_file(FILE *in, FILE *out)
       {
         // so this char seems to be safe to be directly placed
         // in the output buffer without any encoding. We just
-        // have to check wheter this line is going to be longer
+        // have to check whether this line is going to be longer
         // than the limit
         if(line_len+1 >= QP_LINELEN-1) // one space for the trailing '='
         {
@@ -1621,7 +1621,7 @@ int rfc2047_encode_file(FILE *fh, const char *str,
       }
     }
 
-    // now we have to check wheter we are in the encode mode or not
+    // now we have to check whether we are in the encode mode or not
     // This means, that if we previously found characters which require
     // endcoding, the followed character also should be encoded if
     // it is no whitespace and not quoted printable safe.
@@ -1644,7 +1644,7 @@ int rfc2047_encode_file(FILE *fh, const char *str,
         c_wstart = NULL;
         encode_mode = FALSE;
 
-        // then we check wheter the current line is
+        // then we check whether the current line is
         // larger than 75 chars as this is the limit for a line
         // containing RFC 2047 encoded strings
         while((ebp-encode_buf) > ENCWORD_LEN)
@@ -1753,7 +1753,7 @@ int rfc2047_encode_file(FILE *fh, const char *str,
     }
     else
     {
-      // then we check wheter the current char is a non US-ASCII (7bit)
+      // then we check whether the current char is a non US-ASCII (7bit)
       // char which would require us to encode the full word as a RFC 2047
       // compliant `encoded-word`. 
       if(*c != '\0' &&
@@ -1762,7 +1762,7 @@ int rfc2047_encode_file(FILE *fh, const char *str,
            (c == str || is_lwsp(*(c-1))))))
       {
         // ok, this is a non US-ASCII char and should be encoded
-        // accordingly. so lets check wheter the previous word was
+        // accordingly. so lets check whether the previous word was
         // also encoded or not and if so we concatenate them
         if(eb_wend)
         {
@@ -1835,7 +1835,7 @@ int rfc2047_encode_file(FILE *fh, const char *str,
           eb_wend = NULL;
 
           // only if there is an encoded-word on the current line
-          // we check wheter the line is too long and split
+          // we check whether the line is too long and split
           // it accordingly.
           if((ebp-encode_buf) > ENCWORD_LEN)
           {
@@ -1925,7 +1925,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
   struct rfc2047_decode_info *info = (struct rfc2047_decode_info *)arg;
   BOOL translate = FALSE;
 
-  // before we go on we check wheter we have enough space
+  // before we go on we check whether we have enough space
   // to put the txt in our destination
   if(info->maxlen<len)
     return -1;
@@ -1933,7 +1933,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
   // so we can savely decrease it.
   info->maxlen -= len;
 
-  // check wheter we have a valid translation table or not
+  // check whether we have a valid translation table or not
   if(info->tt && info->tt->SourceCharset)
   {
     if(chset)

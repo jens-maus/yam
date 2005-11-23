@@ -150,7 +150,7 @@ HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
    {
       ULONG numSelected;
 
-      // but before we really issue a readpaneupdate we check wheter the user has
+      // but before we really issue a readpaneupdate we check whether the user has
       // selected more than one mail at a time which then should clear the
       // readpane as it might have been disabled.
       DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
@@ -439,7 +439,7 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
    struct Mail *mail, **mlist = NULL;
    struct Folder *folder;
 
-   // we first have to check wheter this is a valid folder or not
+   // we first have to check whether this is a valid folder or not
    folder = FO_GetCurrentFolder();
    if(!folder || folder->Type == FT_GROUP) return NULL;
 
@@ -2800,7 +2800,7 @@ void MA_SetupEmbeddedReadPane(void)
   Object *mailBalanceObj = G->MA->GUI.BL_MAILVIEW;
   Object *readPaneObj    = G->MA->GUI.MN_EMBEDDEDREADPANE;
 
-  // check wheter the embedded read pane object is already embeeded in our main
+  // check whether the embedded read pane object is already embeeded in our main
   // window so that we know what to do now
   if(readPaneObj)
   {

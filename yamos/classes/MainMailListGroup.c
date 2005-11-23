@@ -237,7 +237,7 @@ OVERLOAD(MUIM_NList_InsertSingle)
 
 	// the InsertSignal method is used by all internal parties
 	// to put a mail into a main listview. But in case we have a
-	// quicksearchbar we have to check wheter this also matches
+	// quicksearchbar we have to check whether this also matches
 	// any criteria of it and also put it in there
 	if(data->activeList == LT_QUICKVIEW)
 	{
@@ -408,7 +408,7 @@ DECLARE(RemoveMail) // struct Mail* mail
 	ULONG result = 0;
 	ENTER();
 
-	// first we check wheter the active one was the quickview and if so we also remove
+	// first we check whether the active one was the quickview and if so we also remove
 	// the mail from the main list
 	if(data->activeList == LT_QUICKVIEW)
 	{

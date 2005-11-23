@@ -1737,10 +1737,10 @@ static BOOL MA_ScanMailBox(struct Folder *folder)
             // give the GUI the chance to refresh
             DoMethod(G->App,MUIM_Application_InputBuffered);
 
-            // then check wheter this is a file as we don't care for subdirectories
+            // then check whether this is a file as we don't care for subdirectories
             if(isFile(ead->ed_Type))
             {
-              // check wheter the filename is a valid mailfilename
+              // check whether the filename is a valid mailfilename
               char fbuf[SIZE_PATHFILE+1];
               char *fname = (char *)ead->ed_Name;
               BOOL validMailFile = isValidMailFile(fname);

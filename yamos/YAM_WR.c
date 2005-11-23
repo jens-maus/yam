@@ -404,7 +404,7 @@ static void HeaderFputs(char *s, FILE *fh)
    }
 
    // now that we have converted the string and analyzed it we
-   // have to check wheter we have to encode some words like proposed
+   // have to check whether we have to encode some words like proposed
    // in RFC 2047
    if(doEncoding ||
       ((c = strstr(s, "=?")) && isascii(*(c+1)) &&
@@ -1468,7 +1468,7 @@ void WR_NewMail(enum WriteMode mode, int winnum)
          email->Mail.sflags = stat;
          new = AddMailToList((struct Mail *)email, outfolder);
 
-         // Now we have to check wheter we have to add the To & CC addresses
+         // Now we have to check whether we have to add the To & CC addresses
          // to the emailCache
          if(C->EmailCache > 0)
          {

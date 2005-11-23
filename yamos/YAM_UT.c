@@ -1693,7 +1693,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
           src += temp_len;
           wrapped = FALSE;
 
-          // check wheter the next char will be a newline or not, because
+          // check whether the next char will be a newline or not, because
           // a newline indicates a new empty line, so there is no need to
           // cat something together at all
           if(*src != '\n')
@@ -1713,7 +1713,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
         temp_len = strlen(temp_buf)-skip_chars;
         wrapped = FALSE;
 
-        // check wheter this line would be zero or not and if so we
+        // check whether this line would be zero or not and if so we
         // have to care about if the user wants to also quote empty lines
         if(line_len == 0 && C->QuoteEmptyLines)
           fputs(prefix, out);
@@ -1745,7 +1745,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
         newline = FALSE;
       }
 
-      // we check wheter this char was a whitespace
+      // we check whether this char was a whitespace
       // or not and if so we set the lastwasspace flag and we also check if
       // we are near the end of the line so that we have to initiate a word wrap
       if((lastwasspace = ISpace(c)) && line_len + Word_Length(src) >= line_max)
@@ -1808,7 +1808,7 @@ void Quote_Text(FILE *out, char *src, int len, int line_max, char *prefix)
       len--;
     }
 
-    // check wheter we finished the quoting with
+    // check whether we finished the quoting with
     // a newline or otherwise the followed signature won`t fit correctly
     if(newline == FALSE)
       fputc('\n', out);
@@ -2666,7 +2666,7 @@ BOOL DateStamp2String(char *dst, struct DateStamp *date, enum DateStampType mode
    dt.dat_StrTime = timestr;
    dt.dat_StrDay  = daystr;
 
-   // now we check wheter we have to convert the datestamp to a specific TZ or not
+   // now we check whether we have to convert the datestamp to a specific TZ or not
    if(tzc != TZC_NONE)
      DateStampTZConvert(&dt.dat_Stamp, tzc);
 
@@ -4285,7 +4285,7 @@ BOOL isChildOfGroup(Object *group, Object *child)
   if(child_list == NULL)
     return FALSE;
 
-  // here we check wheter the child is part of the supplied group
+  // here we check whether the child is part of the supplied group
   cstate = (Object *)child_list->lh_Head;
   while((curchild = NextObject(&cstate)))
   {

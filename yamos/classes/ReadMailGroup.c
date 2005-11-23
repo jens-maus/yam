@@ -472,7 +472,7 @@ DECLARE(ReadMail) // struct Mail *mail, ULONG flags
 			else
 				set(data->attachmentGroup, MUIA_ShowMe, FALSE);
 
-			// then we check wheter we should disable the headerList display
+			// then we check whether we should disable the headerList display
 			// or not.
 			dispheader = (rmData->headerMode != HM_NOHEADER);
 			set(data->headerGroup, MUIA_ShowMe, dispheader);

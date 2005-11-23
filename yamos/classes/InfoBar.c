@@ -184,7 +184,7 @@ DECLARE(SetFolder) // struct Folder *newFolder
 		// MUI will refresh too often
 		if(data->actualImage != bcd)
 		{
-			// now we check wheter we have to remove the old bodychunkobject first
+			// now we check whether we have to remove the old bodychunkobject first
 			if(data->BC_INFO)
 			{
 				DoMethod(obj, OM_REMMEMBER, data->BC_INFO);

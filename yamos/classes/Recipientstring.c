@@ -424,7 +424,7 @@ OVERLOAD(MUIM_HandleEvent)
 				{
 					if(imsg->Code == IECODE_BACKSPACE)
 					{
-						// now we do check wheter everything until the end was selected
+						// now we do check whether everything until the end was selected
 						long pos = xget(obj, MUIA_String_BufferPos)+select_size;
 						char *content = (char *)xget(obj, MUIA_String_Contents);
 

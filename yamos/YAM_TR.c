@@ -555,7 +555,7 @@ static BOOL TR_InitSMTPAUTH(int ServerFlags)
             // NUL terminate the string
             qop[pend-pstart] = '\0';
 
-            // then we check wheter we have a plain "auth" within
+            // then we check whether we have a plain "auth" within
             // qop or not
             pstart = qop;
             while((pstart = strstr(qop+(pstart-qop), "auth")))
@@ -1751,7 +1751,7 @@ static int TR_ConnectPOP(int guilevel)
    strcpy(passwd, C->P3[pop]->Password);
    strcpy(host, C->P3[pop]->Server);
 
-   // now we have to check wheter SSL/TLS is selected for that POP account,
+   // now we have to check whether SSL/TLS is selected for that POP account,
    // but perhaps TLS is not working.
    if(C->P3[pop]->SSLMode != P3SSL_OFF && !G->TR_UseableTLS)
    {
@@ -3247,7 +3247,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
    {
       char host[SIZE_HOST];
 
-      // now we have to check wheter SSL/TLS is selected for SMTP account,
+      // now we have to check whether SSL/TLS is selected for SMTP account,
       // but perhaps TLS is not working.
       if(C->SMTP_SecureMethod != SMTPSEC_NONE &&
          !G->TR_UseableTLS)
@@ -3275,7 +3275,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
       {
          BOOL connected = TRUE;
 
-         // first we check wheter the user wants to connect to a plain SSLv3 server
+         // first we check whether the user wants to connect to a plain SSLv3 server
          // so that we initiate the SSL connection now
          if(C->SMTP_SecureMethod == SMTPSEC_SSL)
          {
@@ -3291,7 +3291,7 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
             }
          }
 
-         // first we have to check wheter the user requested some
+         // first we have to check whether the user requested some
          // feature that requires a ESMTP Server, and if so we connect via ESMTP
          if(C->Use_SMTP_AUTH || C->SMTP_SecureMethod == SMTPSEC_TLS)
          {

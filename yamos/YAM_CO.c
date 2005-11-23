@@ -1218,7 +1218,7 @@ void CO_Validate(struct Config *co, BOOL update)
           strncpy(sysCharset, (char *)var, SIZE_CTYPE);
       }
 
-      // now we check wheter the currently set localCharset matches
+      // now we check whether the currently set localCharset matches
       // the system charset or not
       if(co->LocalCharset[0] && sysCharset[0])
       {
@@ -1289,7 +1289,7 @@ void CO_Validate(struct Config *co, BOOL update)
 
       if(G->CO->Visited[4] || G->CO->UpdateAll)
       {
-         // we signal the mainwindow that it may check wheter to include the
+         // we signal the mainwindow that it may check whether to include the
          // embedded read pane part or not
          MA_SetupEmbeddedReadPane();
 
@@ -1321,7 +1321,7 @@ void CO_Validate(struct Config *co, BOOL update)
          // Now we update the InfoBar because the text could have been changed
          DoMethod(G->MA->GUI.IB_INFOBAR, MUIM_InfoBar_SetFolder, FO_GetCurrentFolder());
 
-         // we signal the mainwindow that it may check wheter to include the
+         // we signal the mainwindow that it may check whether to include the
          // quicksearchbar or not
          MA_SetupQuickSearchBar();
 

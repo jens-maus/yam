@@ -447,7 +447,7 @@ DECLARE(SearchContentChanged) // char* content;
 	}
 	else
 	{
-		// we check wheter the view option is also set to "all"
+		// we check whether the view option is also set to "all"
 		// and if so we clear the whole object
 		if(xget(data->CY_VIEWOPTIONS, MUIA_Cycle_Active) == VO_ALL)
 		{
@@ -487,7 +487,7 @@ DECLARE(SearchOptionChanged) // int activeSearchOption;
 	// make sure the popup window is closed
 	DoMethod(data->PO_SEARCHOPTIONPOPUP, MUIM_Popstring_Close, TRUE);
 
-	// now we check wheter the there is something to search for or not.
+	// now we check whether the there is something to search for or not.
 	if(searchContent != NULL && *searchContent != '\0')
 	{
 		// immediately process the search, but make sure there is no
@@ -657,7 +657,7 @@ DECLARE(UpdateStats) // ULONG force
 
 	ENTER();
 
-	// now we check wheter the user forces the update or if
+	// now we check whether the user forces the update or if
 	// we have to check that the display is not update too often
 	if(msg->force == FALSE)
 	{

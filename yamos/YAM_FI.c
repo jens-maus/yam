@@ -461,7 +461,7 @@ BOOL FI_DoSearch(struct Search *search, struct Mail *mail)
       case SM_HEADLINE:
       case SM_SIZE:
       {
-        // check wheter this is a fast search or not.
+        // check whether this is a fast search or not.
         found = (search->Fast == FS_NONE) ? FI_SearchPatternInHeader(search, mail) : FI_SearchPatternFast(search, mail);
       }
       break;
