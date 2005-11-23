@@ -105,15 +105,15 @@ struct NewToolbarEntry
 
 // Library open/close macros
 #if defined(__amigaos4__)
-#define INITLIB(iface, func)      ((iface)=func)
-#define CLOSELIB(lib, iface)      { if((iface) && (lib)) { DropInterface((APTR)(iface)); iface = NULL; CloseLibrary((struct Library *)lib); lib = NULL; } }
-#define GETINTERFACE(iface, base) (iface = (APTR)GetInterface((struct Library *)(base), "main", 1L, NULL))
-#define DROPINTERFACE(iface)      { DropInterface((APTR)(iface)); iface = NULL; }
+#define INITLIB(lname, v, r, lbase, iname, ibase, req)  (InitLib((lname), (v), (r), (APTR)(lbase), (iname), (APTR)(ibase), (req)))
+#define CLOSELIB(lib, iface)              { if((iface) && (lib)) { DropInterface((APTR)(iface)); iface = NULL; CloseLibrary((struct Library *)lib); lib = NULL; } }
+#define GETINTERFACE(iname, iface, base)  ((iface) = (APTR)GetInterface((struct Library *)(base), (iname), 1L, NULL))
+#define DROPINTERFACE(iface)              { DropInterface((APTR)(iface)); iface = NULL; }
 #else
-#define INITLIB(iface, func)      func
-#define CLOSELIB(lib, iface)      { if((lib)) { CloseLibrary((struct Library *)lib); lib = NULL; } }
-#define GETINTERFACE(iface, base) TRUE
-#define DROPINTERFACE(iface)
+#define INITLIB(lname, v, r, lbase, iname, ibase, req)  (InitLib((lname), (v), (r), (APTR)(lbase), (req)))
+#define CLOSELIB(lib, iface)              { if((lib)) { CloseLibrary((struct Library *)lib); lib = NULL; } }
+#define GETINTERFACE(iname, iface, base)  TRUE
+#define DROPINTERFACE(iface)              ((void)0)
 #endif
 
 // misc defines
@@ -215,7 +215,7 @@ struct NewToolbarEntry
 #define BuildAddrName2(p)     BuildAddrName((p)->Address, (p)->RealName)
 #define SetHelp(o,str)        set(o, MUIA_ShortHelp, GetStr(str))
 #define DisposeModulePush(m)  DoMethod(G->App, MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &DisposeModuleHook, m)
-#define MyStrCpy(a,b)         strncpy((a),(b), sizeof(a)), (a)[sizeof(a)-1] = 0
+#define MyStrCpy(a,b)         memcpy((a), (b), sizeof(a)), (a)[sizeof(a)-1] = '\0'
 #define FreeStrBuf(str)       ((str) ? free(((char *)(str))-sizeof(size_t)) : (void)0)
 #define isSpace(c)            ((BOOL)(G->Locale ? (IsSpace(G->Locale, (ULONG)(c)) != 0) : (ISpace((c)) != 0)))
 #define isGraph(c)            ((BOOL)(G->Locale ? (IsGraph(G->Locale, (ULONG)(c)) != 0) : (isgraph((c)) != 0)))
