@@ -13,6 +13,7 @@ $Source$
       classes/QuickSearchBar.c, classes/ReadMailGroup.c,
       classes/Recipientstring.c: Fix spelling errors.
     * VMakefile: Add MainMailListGroup.o and QuickSearchBar.o to $(CLASSES).
+    * smakefile: Likewise.
 
 2005-11-23  Jens Langner <Jens.Langner@light-speed.de>
 
