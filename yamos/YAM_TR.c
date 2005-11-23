@@ -844,7 +844,7 @@ BOOL TR_IsOnline(void)
    {
       if((MiamiBase = OpenLibrary("miami.library", 10)))
       {
-         if(GETINTERFACE(IMiami, MiamiBase))
+         if(GETINTERFACE("main", IMiami, MiamiBase))
          {
            isonline = MiamiIsOnline(*C->IOCInterface ? C->IOCInterface : NULL);
 
@@ -856,7 +856,7 @@ BOOL TR_IsOnline(void)
       }
       else if((GenesisBase = OpenLibrary("genesis.library", 1)))
       {
-         if(GETINTERFACE(IGenesis, GenesisBase))
+         if(GETINTERFACE("main", IGenesis, GenesisBase))
          {
            isonline = IsOnline(*C->IOCInterface ? (long)C->IOCInterface : 0);
 
@@ -922,7 +922,7 @@ BOOL TR_OpenTCPIP(void)
     if(!(SocketBase = OpenLibrary("bsdsocket.library", 2L)))
       return FALSE;
 
-    if(!GETINTERFACE(ISocket, SocketBase))
+    if(!GETINTERFACE("main", ISocket, SocketBase))
     {
       CloseLibrary(SocketBase);
       SocketBase = NULL;

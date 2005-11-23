@@ -275,6 +275,7 @@ BOOL FO_LoadConfig(struct Folder *fo)
    char fname[SIZE_PATHFILE];
 
    MyStrCpy(fname, GetFolderDir(fo));
+
    AddPart(fname, ".fconfig", sizeof(fname));
 
    if((fh = fopen(fname, "r")))

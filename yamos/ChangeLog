@@ -5,10 +5,19 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-11-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: cleaned up the INITLIB() macro to make it possible to use
+      other interfaces than just the main interface of an OS4 library.
+      Also slightly cleaned up the InitLib() function and removed the
+      obsolete close argument.
+    * YAM_utilities.h: replaced strncpy() usage with memcpy() which might
+      be faster in that case.
+
 2005-11-13  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MI.c: fixed a minor bug in the quoted-printable encoding
-	   routines.
+      routines.
     * classes/QuickSearchBar.c: implemented the missing "To or Cc" and
       "Entire Message" search modes and also added a new "Find In Message"
       mode which just searches in the actual mail content without headers.

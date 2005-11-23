@@ -5184,7 +5184,7 @@ void GotoURL(char *url)
   }
   else if((OpenURLBase=OpenLibrary("openurl.library", 1)))
   {
-    if(GETINTERFACE(IOpenURL, OpenURLBase))
+    if(GETINTERFACE("main", IOpenURL, OpenURLBase))
     {
       URL_OpenA(url, NULL);
 

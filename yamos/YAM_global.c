@@ -126,29 +126,33 @@ struct Device*  TimerBase     = NULL;
 struct Library* GfxBase       = NULL;
 struct Library* LayersBase    = NULL;
 struct Library* DiskfontBase  = NULL;
+#if defined(__amigaos4__)
+struct Library* Application   = NULL; // application.library
+#endif
 
 /* AmigaOS4 style interfaces */
 #if defined(__amigaos4__)
-struct DataTypesIFace*  IDataTypes    = NULL;
-struct GenesisIFace*    IGenesis      = NULL;
-struct IconIFace*       IIcon         = NULL;
-struct IFFParseIFace*   IIFFParse     = NULL;
-struct IntuitionIFace*  IIntuition    = NULL;
-struct KeyMapIFace*     IKeymap       = NULL;
-struct LocaleIFace*     ILocale       = NULL;
-struct MiamiIFace*      IMiami        = NULL;
-struct MUIMasterIFace*  IMUIMaster    = NULL;
-struct OpenURLIFace*    IOpenURL      = NULL;
-struct RexxSysIFace*    IRexxSys      = NULL;
-struct SocketIFace*     ISocket       = NULL;
-struct UtilityIFace*    IUtility      = NULL;
-struct WorkbenchIFace*  IWorkbench    = NULL;
-struct XpkIFace*        IXpk          = NULL;
-struct AmiSSLIFace*     IAmiSSL       = NULL;
-struct TimerIFace*      ITimer        = NULL;
-struct GraphicsIFace*   IGraphics     = NULL;
-struct LayersIFace*     ILayers       = NULL;
-struct DiskfontIFace*   IDiskfont     = NULL;
+struct DataTypesIFace*    IDataTypes    = NULL;
+struct GenesisIFace*      IGenesis      = NULL;
+struct IconIFace*         IIcon         = NULL;
+struct IFFParseIFace*     IIFFParse     = NULL;
+struct IntuitionIFace*    IIntuition    = NULL;
+struct KeyMapIFace*       IKeymap       = NULL;
+struct LocaleIFace*       ILocale       = NULL;
+struct MiamiIFace*        IMiami        = NULL;
+struct MUIMasterIFace*    IMUIMaster    = NULL;
+struct OpenURLIFace*      IOpenURL      = NULL;
+struct RexxSysIFace*      IRexxSys      = NULL;
+struct SocketIFace*       ISocket       = NULL;
+struct UtilityIFace*      IUtility      = NULL;
+struct WorkbenchIFace*    IWorkbench    = NULL;
+struct XpkIFace*          IXpk          = NULL;
+struct AmiSSLIFace*       IAmiSSL       = NULL;
+struct TimerIFace*        ITimer        = NULL;
+struct GraphicsIFace*     IGraphics     = NULL;
+struct LayersIFace*       ILayers       = NULL;
+struct DiskfontIFace*     IDiskfont     = NULL;
+struct ApplicationIFace*  IApplication  = NULL;
 #endif /* __amigaos4__ */
 
 struct WBStartup *WBmsg;

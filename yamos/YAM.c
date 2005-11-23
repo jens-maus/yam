@@ -57,6 +57,10 @@
 #include <proto/xpkmaster.h>
 #include <proto/amissl.h>
 
+#if defined(__amigaos4__)
+#include <proto/application.h>
+#endif
+
 #include "extra.h"
 #include "NewReadArgs.h"
 #include "SDI_hook.h"
@@ -322,7 +326,7 @@ static BOOL TC_Init(void)
       {
         // needed to get GetSysTime() working
         if((TimerBase = (APTR)TCData.timer[0].tr->tr_node.io_Device) &&
-           GETINTERFACE(ITimer, TimerBase))
+           GETINTERFACE("main", ITimer, TimerBase))
         {
           int i;
 
@@ -999,71 +1003,79 @@ static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
 }
 ///
 /// InitLib
-//  Opens a library & on OS4 also the main interface
-static APTR InitLib(STRPTR libname, struct Library **libbase, ULONG version, int revision, BOOL required, BOOL close)
+//  Opens a library & on OS4 also the interface
+#if defined(__amigaos4__)
+static BOOL InitLib(STRPTR libname,
+                    ULONG version,
+                    ULONG revision,
+                    struct Library **libbase,
+                    STRPTR iname,
+                    struct Interface **iface,
+                    BOOL required)
+#else
+static BOOL InitLib(STRPTR libname,
+                    ULONG version,
+                    ULONG revision,
+                    struct Library **libbase,
+                    BOOL required)
+#endif
 {
-   struct Library *base;
+  struct Library *base;
 
-   if(!libbase)
-     return NULL;
+  #if defined(__amigaos4__)
+  if(!libbase || !iface)
+    return FALSE;
+  #else
+  if(!libbase)
+    return FALSE;
+  #endif
 
-   // open the library
-   base = OpenLibrary(libname, version);
+  // open the library base
+  base = OpenLibrary(libname, version);
 
-   if(base && revision)
-   {
-     if(base->lib_Version == version && base->lib_Revision < revision)
-     {
-       D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%d", libname, version, revision);
+  if(base && revision)
+  {
+    if(base->lib_Version == version && base->lib_Revision < revision)
+    {
+      CloseLibrary(base);
+      base = NULL;
+    }
+  }
 
-       CloseLibrary(base);
-       base = NULL;
-     }
-   }
+  // store base
+  *libbase = base;
 
-   if(base && close)
-   {
-     D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened - autoclosed.", libname, base->lib_Version, base->lib_Revision);
+  // if we end up here, we can open the OS4 base library interface
+  if(base)
+  {
+    #if defined(__amigaos4__)
+    struct Interface* i;
 
-     CloseLibrary(base);
-     base = NULL;
-   }
+    // if we weren`t able to obtain the interface, lets close the library also
+    if(GETINTERFACE(iname, i, base) == NULL)
+    {
+      D(DBF_STARTUP, "InitLib: can`t get '%s' interface of library %s", iname, libname);
 
-   // store base
-   *libbase = base;
+      CloseLibrary(base);
+      *libbase = NULL;
+      base = NULL;
+    }
+    else
+      D(DBF_STARTUP, "InitLib: library %s v%ld.%ld with iface '%s' successfully opened.", libname, base->lib_Version, base->lib_Revision, iname);
 
-   // if we end up here, we can open the OS4 base library interface
-   #if defined(__amigaos4__)
-   if(base)
-   {
-     // get the "main" interface
-     APTR iFace;
+    // store interface pointer
+    *iface = i;
+    #else
+    D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened.", libname, base->lib_Version, base->lib_Revision);
+    #endif
+  }
+  else
+    D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%d", libname, version, revision);
 
-     // if we weren`t able to obtain the main interface, lets close the library also
-     if(GETINTERFACE(iFace, base) == NULL)
-     {
-       D(DBF_STARTUP, "InitLib: can`t get main interface of library %s", libname);
+  if(!base && required)
+    Abort(MSG_ERR_OPENLIB, libname, version, revision);
 
-       CloseLibrary(base);
-       *libbase = NULL;
-     }
-     else
-     {
-       D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened.", libname, base->lib_Version, base->lib_Revision);
-     }
-
-     base = iFace;
-   }
-   else if(base)
-   {
-     D(DBF_STARTUP, "InitLib: library %s v%ld.%ld successfully opened.", libname, base->lib_Version, base->lib_Revision);
-   }
-   #endif
-
-   if(!base && required)
-     Abort(MSG_ERR_OPENLIB, libname, version, revision);
-
-   return base;
+  return base != NULL;
 }
 ///
 /// SetupAppIcons
@@ -1297,27 +1309,25 @@ static void Initialise(BOOL hidden)
 
    // First open locale.library, so we can display a translated error requester
    // in case some of the other libraries can't be opened.
-   if(INITLIB(ILocale, InitLib("locale.library", (APTR)&LocaleBase, 38, 0, TRUE, FALSE)))
-   {
+   if(INITLIB("locale.library", 38, 0, &LocaleBase, "main", &ILocale, TRUE))
      G->Locale = OpenLocale(NULL);
-   }
 
    // Now load the catalog of YAM
    OpenYAMCatalog();
 
    // load&initialize all required libraries
-   INITLIB(IGraphics,  InitLib("graphics.library",  (APTR)&GfxBase,       36, 0, TRUE, FALSE));
-   INITLIB(ILayers,    InitLib("layers.library",    (APTR)&LayersBase,    37, 0, TRUE, FALSE));
-   INITLIB(IWorkbench, InitLib("workbench.library", (APTR)&WorkbenchBase, 36, 0, TRUE, FALSE));
-   INITLIB(IKeymap,    InitLib("keymap.library",    (APTR)&KeymapBase,    36, 0, TRUE, FALSE));
-   INITLIB(IIFFParse,  InitLib("iffparse.library",  (APTR)&IFFParseBase,  36, 0, TRUE, FALSE));
-   INITLIB(IRexxSys,   InitLib(RXSNAME,             (APTR)&RexxSysBase,   36, 0, TRUE, FALSE));
-   INITLIB(IMUIMaster, InitLib("muimaster.library", (APTR)&MUIMasterBase, 19, 0, TRUE, FALSE));
-   INITLIB(IDataTypes, InitLib("datatypes.library", (APTR)&DataTypesBase, 39, 0, TRUE, FALSE));
+   INITLIB("graphics.library",  36, 0, &GfxBase,      "main", &IGraphics, TRUE);
+   INITLIB("layers.library",    36, 0, &LayersBase,   "main", &ILayers,   TRUE);
+   INITLIB("workbench.library", 36, 0, &WorkbenchBase,"main", &IWorkbench,TRUE);
+   INITLIB("keymap.library",    36, 0, &KeymapBase,   "main", &IKeymap,   TRUE);
+   INITLIB("iffparse.library",  36, 0, &IFFParseBase, "main", &IIFFParse, TRUE);
+   INITLIB(RXSNAME,             36, 0, &RexxSysBase,  "main", &IRexxSys,  TRUE);
+   INITLIB("muimaster.library", 19, 0, &MUIMasterBase,"main", &IMUIMaster,TRUE);
+   INITLIB("datatypes.library", 39, 0, &DataTypesBase,"main", &IDataTypes,TRUE);
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
-   if(INITLIB(IAmiSSL, InitLib("amissl.library", (APTR)&AmiSSLBase, AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, FALSE, FALSE)))
+   if(INITLIB("amissl.library", AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, &AmiSSLBase, "main", &IAmiSSL, FALSE))
       G->TR_UseableTLS = TRUE;
 
    // Lets check for the correct Toolbar.mcc version (minimum 15.12 because earlier versions are too buggy)
@@ -1354,7 +1364,7 @@ static void Initialise(BOOL hidden)
    SplashProgress(GetStr(MSG_InitLibs), 10);
 
    // load & initialize some optional libraries which are not required, however highly recommended
-   INITLIB(IXpk, InitLib(XPKNAME, (APTR)&XpkBase, 0, 0, FALSE, FALSE));
+   INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE);
 
    if (!TC_Init()) Abort(MSG_ErrorTimer);
    for (i = 0; i < MAXASL; i++)
@@ -1594,7 +1604,7 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
 
   ENTER();
 
-  if(INITLIB(IGenesis, InitLib("genesis.library", (APTR)&GenesisBase, 1, 0, FALSE, FALSE)))
+  if(INITLIB("genesis.library", 1, 0, &GenesisBase, "main", &IGenesis, FALSE))
   {
     struct genUser *guser;
 
@@ -1758,7 +1768,7 @@ int main(int argc, char **argv)
       (SysBase->lib_Version == 51 && SysBase->lib_Revision < 4))
    {
       if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
-         GETINTERFACE(IIntuition, IntuitionBase))
+         GETINTERFACE("main", IIntuition, IntuitionBase))
       {
         struct EasyStruct ErrReq;
 
@@ -1783,10 +1793,10 @@ int main(int argc, char **argv)
      BOOL goon = TRUE;
 
      if((IntuitionBase = (APTR)OpenLibrary("intuition.library", 36)) &&
-        GETINTERFACE(IIntuition, IntuitionBase))
+        GETINTERFACE("main", IIntuition, IntuitionBase))
      {
        if((UtilityBase = (APTR)OpenLibrary("utility.library", 36)) &&
-          GETINTERFACE(IUtility, UtilityBase))
+          GETINTERFACE("main", IUtility, UtilityBase))
        {
          char var;
          struct EasyStruct ErrReq;
@@ -1861,10 +1871,10 @@ int main(int argc, char **argv)
 
    WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
-   INITLIB(IIntuition, InitLib("intuition.library", (APTR)&IntuitionBase, 36, 0, TRUE, FALSE));
-   INITLIB(IIcon,      InitLib("icon.library",      (APTR)&IconBase,      36, 0, TRUE, FALSE));
-   INITLIB(IUtility,   InitLib("utility.library",   (APTR)&UtilityBase,   36, 0, TRUE, FALSE));
-   INITLIB(IDiskfont,  InitLib("diskfont.library",  (APTR)&DiskfontBase,  37, 0, TRUE, FALSE));
+   INITLIB("intuition.library", 36, 0, &IntuitionBase, "main", &IIntuition, TRUE);
+   INITLIB("icon.library",      36, 0, &IconBase,      "main", &IIcon,      TRUE);
+   INITLIB("utility.library",   36, 0, &UtilityBase,   "main", &IUtility,   TRUE);
+   INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", &IDiskfont,  TRUE);
 
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S";
    nrda.ExtHelp = NULL;
