@@ -55,8 +55,9 @@ CLASSES	= classes/Classes.o classes/Recipientstring.o classes/Searchwindow.o \
 	  classes/ReadMailGroup.o classes/ReadWindow.o classes/Splashwindow.o \
 	  classes/StatusIconGroup.o \
 	  classes/UserImage.o classes/MailTextEdit.o classes/MainFolderListtree.o \
-	  classes/MainMailList.o classes/MainWindow.o classes/InfoBar.o \
-	  classes/WriteAttachmentList.o classes/YAM.o
+	  classes/MainMailList.o classes/MainMailListGroup.o classes/MainWindow.o \
+	  classes/InfoBar.o classes/WriteAttachmentList.o classes/QuickSearchBar.o \
+	  classes/YAM.o
 
 EXTRA	= all_vbcc.o
 
@@ -220,9 +221,13 @@ classes/BodychunkImage.o: classes/BodychunkImage.c classes/BodychunkImage_cl.h
 
 classes/WriteAttachmentList.o: classes/WriteAttachmentList.c classes/WriteAttachmentList_cl.h
 
+classes/QuickSearchBar.o: classes/QuickSearchBar.c classes/QuickSearchBar_cl.h
+
 classes/MainFolderListtree.o: classes/MainFolderListtree.c classes/MainFolderListtree_cl.h
 
 classes/MainMailList.o: classes/MainMailList.c classes/MainMailList_cl.h
+
+classes/MainMailListGroup.o: classes/MainMailListGroup.c classes/MainMailListGroup_cl.h
 
 classes/AddrBookEntryList.o: classes/AddrBookEntryList.c classes/AddrBookEntryList_cl.h
 
