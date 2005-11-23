@@ -97,9 +97,11 @@ CLASSES = \
   $(OBJDIR)/$(CLASSDIR)/MailTextEdit.o \
   $(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o \
   $(OBJDIR)/$(CLASSDIR)/MainMailList.o \
+  $(OBJDIR)/$(CLASSDIR)/MainMailListGroup.o \
   $(OBJDIR)/$(CLASSDIR)/MainWindow.o \
   $(OBJDIR)/$(CLASSDIR)/InfoBar.o \
   $(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o \
+  $(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o \
   $(OBJDIR)/$(CLASSDIR)/YAM.o
 
 # and the other object files
@@ -365,11 +367,17 @@ $(OBJDIR)/$(CLASSDIR)/BodychunkImage.o: $(CLASSDIR)/BodychunkImage.c \
 $(OBJDIR)/$(CLASSDIR)/WriteAttachmentList.o: $(CLASSDIR)/WriteAttachmentList.c \
   $(CLASSDIR)/WriteAttachmentList_cl.h
 
+$(OBJDIR)/$(CLASSDIR)/QuickSearchBar.o: $(CLASSDIR)/QuickSearchBar.c \
+  $(CLASSDIR)/QuickSearchBar_cl.h
+
 $(OBJDIR)/$(CLASSDIR)/MainFolderListtree.o: $(CLASSDIR)/MainFolderListtree.c \
   $(CLASSDIR)/MainFolderListtree_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/MainMailList.o: $(CLASSDIR)/MainMailList.c \
   $(CLASSDIR)/MainMailList_cl.h
+
+$(OBJDIR)/$(CLASSDIR)/MainMailListGroup.o: $(CLASSDIR)/MainMailListGroup.c \
+  $(CLASSDIR)/MainMailListGroup_cl.h
 
 $(OBJDIR)/$(CLASSDIR)/AddrBookEntryList.o: $(CLASSDIR)/AddrBookEntryList.c \
   $(CLASSDIR)/AddrBookEntryList_cl.h
