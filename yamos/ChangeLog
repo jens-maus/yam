@@ -5,6 +5,15 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-11-23  Gunther Nikl <gni@gecko.de>
+
+    * YAM.c, YAM_CO.c, YAM_FI.c, YAM_MA.c, YAM_MAf.c, YAM_MI.c, YAM_RE.c,
+      YAM_TR.c, YAM_UT.c, YAM_WR.c, classes/AttachmentGroup.c,
+      classes/InfoBar.c, classes/MainMailListGroup.c,
+      classes/QuickSearchBar.c, classes/ReadMailGroup.c,
+      classes/Recipientstring.c: Fix spelling errors.
+    * VMakefile: Add MainMailListGroup.o and QuickSearchBar.o to $(CLASSES).
+
 2005-11-23  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c, QuickSearchBar.c: fixed a minor bug in the main window's
