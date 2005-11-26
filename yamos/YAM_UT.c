@@ -4630,6 +4630,9 @@ void Busy(char *text, char *parameter, int cur, int max)
 void DisplayAppIconStatistics(void)
 {
   static char apptit[SIZE_DEFAULT/2];
+  struct Folder *fo;
+  struct Folder **flist;
+  char *src, dst[10];
   int mode;
   int new_msg = 0;
   int unr_msg = 0;
@@ -4639,38 +4642,34 @@ void DisplayAppIconStatistics(void)
 
   // if the user wants to show an AppIcon on the workbench,
   // we go and calculate the mail stats for all folders out there.
-  if(C->WBAppIcon)
+  if((flist = FO_CreateList()))
   {
-    struct Folder *fo;
-    struct Folder **flist;
-    char *src, dst[10];
+    int i;
 
-    if((flist = FO_CreateList()))
+    for(i = 1; i <= (int)*flist; i++)
     {
-      int i;
+      fo = flist[i];
+      if(!fo)
+        break;
 
-      for(i = 1; i <= (int)*flist; i++)
+      if(fo->Stats != 0)
       {
-        fo = flist[i];
-        if(!fo)
-          break;
-
-        if(fo->Stats != 0)
-        {
-          new_msg += fo->New;
-          unr_msg += fo->Unread;
-          tot_msg += fo->Total;
-          snt_msg += fo->Sent;
-          del_msg += fo->Deleted;
-        }
+        new_msg += fo->New;
+        unr_msg += fo->Unread;
+        tot_msg += fo->Total;
+        snt_msg += fo->Sent;
+        del_msg += fo->Deleted;
       }
-
-      free(flist);
     }
 
-    // clear AppIcon Label first before we create it new
-    apptit[0] = '\0';
+    free(flist);
+  }
 
+  // clear AppIcon Label first before we create it new
+  apptit[0] = '\0';
+
+  if(C->WBAppIcon)
+  {
     // Lets create the label of the AppIcon now
     for(src = C->AppIconText; *src; src++)
     {

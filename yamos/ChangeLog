@@ -7,6 +7,9 @@ $Source$
 
 2005-11-26  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c, YAM_FO.c: fixed minor bug in the DisplayAppIconStatistics()
+      function where no folder statistics where calculated when the workbench
+      AppIcon was disabled and just the docky icon was active.
     * YAM.c, misc: YAM is now using application.library v50+ in case it
       is compiled for and running on AmigaOS4. It automatically registers
       to application.library upon startup which will bring up a DockyIcon
