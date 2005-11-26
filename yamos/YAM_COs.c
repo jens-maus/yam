@@ -373,7 +373,10 @@ void CO_SaveConfig(struct Config *co, char *fname)
 
       fprintf(fh, "\n[Mixed]\n");
       fprintf(fh, "TempDir          = %s\n", co->TempDir);
+      fprintf(fh, "WBAppIcon        = %s\n", Bool2Txt(co->WBAppIcon));
       fprintf(fh, "IconPosition     = %d;%d\n", co->IconPositionX, co->IconPositionY);
+      fprintf(fh, "AppIconText      = %s\n", co->AppIconText);
+      fprintf(fh, "DockyIcon        = %s\n", Bool2Txt(co->DockyIcon));
       fprintf(fh, "IconifyOnQuit    = %s\n", Bool2Txt(co->IconifyOnQuit));
       fprintf(fh, "Confirm          = %s\n", Bool2Txt(co->Confirm));
       fprintf(fh, "ConfirmDelete    = %d\n", co->ConfirmDelete);
@@ -387,7 +390,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "XPKPack          = %s;%d\n", co->XPKPack, co->XPKPackEff);
       fprintf(fh, "XPKPackEncrypt   = %s;%d\n", co->XPKPackEncrypt, co->XPKPackEncryptEff);
       fprintf(fh, "PackerCommand    = %s\n", co->PackerCommand);
-      fprintf(fh, "AppIconText      = %s\n", co->AppIconText);
 
       fprintf(fh, "\n[Advanced]\n");
       fprintf(fh, "LetterPart       = %d\n", co->LetterPart);
@@ -859,7 +861,10 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                   }
                }
 /*14*/         else if (!stricmp(buffer, "TempDir"))        stccpy(co->TempDir, value, SIZE_PATH);
+               else if (!stricmp(buffer, "WBAppIcon"))      co->WBAppIcon = Txt2Bool(value);
                else if (!stricmp(buffer, "IconPosition"))   sscanf(value, "%d;%d", &(co->IconPositionX), &(co->IconPositionY));
+               else if (!stricmp(buffer, "AppIconText"))    stccpy(co->AppIconText, value, SIZE_DEFAULT/2);
+               else if (!stricmp(buffer, "DockyIcon"))      co->DockyIcon = Txt2Bool(value);
                else if (!stricmp(buffer, "IconifyOnQuit"))  co->IconifyOnQuit = Txt2Bool(value);
                else if (!stricmp(buffer, "Confirm"))        co->Confirm = Txt2Bool(value);
                else if (!stricmp(buffer, "ConfirmDelete"))  co->ConfirmDelete = atoi(value);
@@ -873,7 +878,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "XPKPack"))        { stccpy(co->XPKPack, value, 5); co->XPKPackEff = atoi(&value[5]); }
                else if (!stricmp(buffer, "XPKPackEncrypt")) { stccpy(co->XPKPackEncrypt, value, 5); co->XPKPackEncryptEff = atoi(&value[5]); }
                else if (!stricmp(buffer, "PackerCommand"))  stccpy(co->PackerCommand, value, SIZE_COMMAND);
-               else if (!stricmp(buffer, "AppIconText"))    stccpy(co->AppIconText, value, SIZE_DEFAULT/2);
 /*Hidden*/     else if (!stricmp(buffer, "LetterPart"))     { co->LetterPart = atoi(value); if(co->LetterPart == 0) co->LetterPart=1; }
                else if (!stricmp(buffer, "WriteIndexes"))   co->WriteIndexes = atoi(value);
                else if (!stricmp(buffer, "SupportSite"))    stccpy(co->SupportSite, value, SIZE_HOST);
@@ -1142,8 +1146,11 @@ void CO_GetConfig(void)
          break;
       case 14:
          GetMUIString(CE->TempDir             ,gui->ST_TEMPDIR);
+         CE->WBAppIcon         = GetMUICheck  (gui->CH_WBAPPICON);
          CE->IconPositionX     = GetMUIInteger(gui->ST_APPX);
          CE->IconPositionY     = GetMUIInteger(gui->ST_APPY);
+         GetMUIString(CE->AppIconText         ,gui->ST_APPICON);
+         CE->DockyIcon         = GetMUICheck  (gui->CH_DOCKYICON);
          CE->IconifyOnQuit     = GetMUICheck  (gui->CH_CLGADGET);
          CE->Confirm           = GetMUICheck  (gui->CH_CONFIRM);
          CE->ConfirmDelete     = GetMUINumer  (gui->NB_CONFIRMDEL);
@@ -1159,7 +1166,6 @@ void CO_GetConfig(void)
          CE->XPKPackEff        = GetMUINumer  (gui->NB_PACKER);
          CE->XPKPackEncryptEff = GetMUINumer  (gui->NB_ENCPACK);
          GetMUIString(CE->PackerCommand       ,gui->ST_ARCHIVER);
-         GetMUIString(CE->AppIconText         ,gui->ST_APPICON);
          break;
    }
 
@@ -1361,8 +1367,11 @@ void CO_SetConfig(void)
          break;
       case 14:
          setstring   (gui->ST_TEMPDIR   ,CE->TempDir);
+         setcheckmark(gui->CH_WBAPPICON ,CE->WBAppIcon);
          set(gui->ST_APPX, MUIA_String_Integer, CE->IconPositionX);
          set(gui->ST_APPY, MUIA_String_Integer, CE->IconPositionY);
+         setstring   (gui->ST_APPICON   ,CE->AppIconText);
+         setcheckmark(gui->CH_DOCKYICON ,CE->DockyIcon);
          setcheckmark(gui->CH_CLGADGET  ,CE->IconifyOnQuit);
          setcheckmark(gui->CH_CONFIRM   ,CE->Confirm);
          setslider   (gui->NB_CONFIRMDEL,CE->ConfirmDelete);
@@ -1378,7 +1387,6 @@ void CO_SetConfig(void)
          setslider   (gui->NB_PACKER    ,CE->XPKPackEff);
          setslider   (gui->NB_ENCPACK   ,CE->XPKPackEncryptEff);
          setstring   (gui->ST_ARCHIVER  ,CE->PackerCommand);
-         setstring   (gui->ST_APPICON   ,CE->AppIconText);
          break;
    }
 

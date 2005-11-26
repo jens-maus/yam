@@ -426,7 +426,7 @@ static void TC_Dispatcher(enum TimerIO tio)
     break;
 
     // and in case the AutoSave timerIO was triggered we check
-    // whether there is really need to autosave the content of
+    // wheter there is really need to autosave the content of
     // the currently used editors.
     case TIO_AUTOSAVE:
     {
@@ -625,12 +625,12 @@ MakeStaticHook(DoublestartHook, DoublestartFunc);
 ///
 /// StayInProg
 //  Makes sure that the user really wants to quit the program
-static BOOL StayInProg(void)
+static BOOL StayInProg()
 {
    int i;
    BOOL req = FALSE;
 
-   if (G->AB->Modified)
+   if(G->AB->Modified)
    {
      // make sure the application is uniconified before we popup the requester
      nnset(G->App, MUIA_Application_Iconified, FALSE);
@@ -668,13 +668,16 @@ static int Root_GlobalDispatcher(ULONG app_input)
         {
           ret = (int)!StayInProg();
         }
-        else ret = 1;
+        else
+          ret = 1;
       }
       break;
 
       case ID_CLOSEALL:
       {
-        if(!C->IconifyOnQuit) ret = (int)!StayInProg();
+        if(!C->IconifyOnQuit)
+          ret = (int)!StayInProg();
+
         set(G->App, MUIA_Application_Iconified, TRUE);
       }
       break;
@@ -835,6 +838,15 @@ static void Terminate(void)
 
    CO_FreeConfig(C);
    YAM_CleanupClasses();
+
+   // we deregister the application from
+   // application.library
+   #if defined(__amigaos4__)
+   if(G->applicationID > 0)
+     UnregisterApplication(G->applicationID, NULL);
+
+   CLOSELIB(Application,   IApplication);
+   #endif
 
    // on OS4 we close the Interfaces now
    CLOSELIB(DataTypesBase, IDataTypes);
@@ -1082,15 +1094,16 @@ static BOOL InitLib(STRPTR libname,
 //  Sets location of mailbox status icon on workbench screen
 void SetupAppIcons(void)
 {
-   int i;
-   for (i = 0; i < MAXICONS; i++)
-   {
-      if (G->DiskObj[i])
-      {
-         G->DiskObj[i]->do_CurrentX = C->IconPositionX;
-         G->DiskObj[i]->do_CurrentY = C->IconPositionY;
-      }
-   }
+  int i;
+
+  for(i = 0; i < MAXICONS; i++)
+  {
+    if(G->DiskObj[i])
+    {
+      G->DiskObj[i]->do_CurrentX = C->IconPositionX;
+      G->DiskObj[i]->do_CurrentY = C->IconPositionY;
+    }
+  }
 }
 ///
 /// Initialise2
@@ -1107,6 +1120,27 @@ static void Initialise2(void)
    CO_Validate(C, FALSE);
    SplashProgress(GetStr(MSG_CreatingGUI), 40);
 
+   // before we go and create the first MUI windows
+   // we register the application to application.library
+   #if defined(__amigaos4__)
+   if(Application)
+   {
+     struct ApplicationIconInfo aii;
+
+     aii.iconType = C->DockyIcon ? APPICONT_CustomIcon : APPICONT_None;
+	   aii.info.customIcon = G->HideIcon;
+
+     // register YAM to application.library
+     G->applicationID = RegisterApplication("YAM",
+                                            REGAPP_URLIdentifier, "yam.ch",
+                                            REGAPP_AppIconInfo,   (uint32)&aii,
+                                            REGAPP_Hidden,        xget(G->App, MUIA_Application_Iconified),
+                                            TAG_DONE);
+
+     D(DBF_STARTUP, "Registered YAM to application.library with appID: %ld", G->applicationID);
+   }
+   #endif
+
    // Create a new Main & Addressbook Window
    if(!(G->MA = MA_New()) || !(G->AB = AB_New()))
       Abort(MSG_ErrorMuiApp);
@@ -1121,6 +1155,9 @@ static void Initialise2(void)
 
    MA_SetupDynamicMenus();
    CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
+
+   // make sure all appicon diskobject are actually loaded
+   // and are ready for use.
    SetupAppIcons();
 
    // load the main window GUI layout from the ENV: variable
@@ -1330,6 +1367,13 @@ static void Initialise(BOOL hidden)
    if(INITLIB("amissl.library", AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, &AmiSSLBase, "main", &IAmiSSL, FALSE))
       G->TR_UseableTLS = TRUE;
 
+   // now we try to open the application.library which is part of OS4
+   // and will be used to notify YAM of certain events and also manage
+   // the docky icon accordingly.
+   #if defined(__amigaos4__)
+   INITLIB("application.library", 50, 0, &Application, "application", &IApplication, FALSE);
+   #endif
+
    // Lets check for the correct Toolbar.mcc version (minimum 15.12 because earlier versions are too buggy)
    CheckMCC(MUIC_Toolbar, 15, 12, TRUE);
 
@@ -1434,17 +1478,29 @@ static void Initialise(BOOL hidden)
    }
 
    // now we load the standard icons like (check.info, new.info etc)
+   // but we also try to take care of different icon.library versions.
    strmfp(filebuf, G->ProgDir, G->ProgName);
-   if((G->HideIcon = GetDiskObject(filebuf)))
+   if(IconBase->lib_Version >= 44)
+     G->HideIcon = GetIconTags(filebuf, TAG_DONE);
+   else
+     G->HideIcon = GetDiskObject(filebuf);
+
+   if(G->HideIcon)
       set(G->App, MUIA_Application_DiskObject, G->HideIcon);
 
    for(i=0; i < MAXICONS; i++)
    {
       strmfp(filebuf, pathbuf, icnames[i]);
 
+      // depending on the icon.library version we use either GetIconTags()
+      // or the older GetDiskObject() function
+      if(IconBase->lib_Version >= 44)
+        G->DiskObj[i] = GetIconTags(filebuf, TAG_DONE);
+      else
+        G->DiskObj[i] = GetDiskObject(filebuf);
+
       // load the diskobject and report an error if something went wrong.
-      if((G->DiskObj[i] = GetDiskObject(filebuf)) == NULL &&
-         G->NoImageWarning == FALSE)
+      if(G->DiskObj[i] == NULL && G->NoImageWarning == FALSE)
       {
         int reqResult;
 
@@ -1899,8 +1955,7 @@ int main(int argc, char **argv)
 
    for(yamFirst=TRUE;;)
    {
-      ULONG signals, timsig, adstsig, rexsig, appsig, notsig[MAXWR+1], i;
-      struct Message *msg;
+      ULONG signals, timsig, adstsig, rexsig, appsig, applibsig, notsig[MAXWR+1], i;
       struct User *user;
       int wrwin, ret;
 
@@ -1915,8 +1970,11 @@ int main(int argc, char **argv)
       }
       else
       {
-        GetProgramName(G->ProgName, SIZE_FILE);
-        strcpy(G->ProgName, (char *)FilePart(G->ProgName));
+        char buf[SIZE_PATHFILE];
+
+        GetProgramName((STRPTR)&buf, SIZE_PATHFILE);
+
+        strcpy(G->ProgName, (char *)FilePart(buf));
       }
 
       D(DBF_STARTUP, "ProgDir.: '%s'", G->ProgDir);
@@ -2029,19 +2087,40 @@ int main(int argc, char **argv)
       else
         adstsig = 0;
 
+      // get the msgport of the application.library
+      #if defined(__amigaos4__)
+      if(G->applicationID)
+      {
+        GetApplicationAttrs(G->applicationID,
+                            APPATTR_Port,     (uint32)&G->AppLibPort,
+                            TAG_DONE);
+
+        if(G->AppLibPort)
+          applibsig = (1UL << G->AppLibPort->mp_SigBit);
+        else
+        {
+          E(DBF_STARTUP, "Error on trying to retrieve application libraries MsgPort for YAM.");
+          applibsig = 0;
+        }
+      }
+      else
+      #endif
+        applibsig = 0;
+
       // prepare the other signal bits
-      timsig    = 1UL << TCData.port->mp_SigBit;
-      rexsig    = 1UL << G->RexxHost->port->mp_SigBit;
-      appsig    = 1UL << G->AppPort->mp_SigBit;
-      notsig[0] = 1UL << G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
-      notsig[1] = 1UL << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
-      notsig[2] = 1UL << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit;
+      timsig    = (1UL << TCData.port->mp_SigBit);
+      rexsig    = (1UL << G->RexxHost->port->mp_SigBit);
+      appsig    = (1UL << G->AppPort->mp_SigBit);
+      notsig[0] = (1UL << G->WR_NRequest[0].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
+      notsig[1] = (1UL << G->WR_NRequest[1].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
+      notsig[2] = (1UL << G->WR_NRequest[2].nr_stuff.nr_Msg.nr_Port->mp_SigBit);
 
       D(DBF_STARTUP, "YAM allocated signals:");
       D(DBF_STARTUP, " adstsig  = %08lx", adstsig);
       D(DBF_STARTUP, " timsig   = %08lx", timsig);
       D(DBF_STARTUP, " rexsig   = %08lx", rexsig);
       D(DBF_STARTUP, " appsig   = %08lx", appsig);
+      D(DBF_STARTUP, " applibsig= %08lx", applibsig);
       D(DBF_STARTUP, " notsig[0]= %08lx", notsig[0]);
       D(DBF_STARTUP, " notsig[1]= %08lx", notsig[1]);
       D(DBF_STARTUP, " notsig[2]= %08lx", notsig[2]);
@@ -2060,7 +2139,8 @@ int main(int argc, char **argv)
       {
          if (signals)
          {
-            signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | notsig[0] | notsig[1] | notsig[2] | adstsig);
+            signals = Wait(signals | SIGBREAKF_CTRL_C | SIGBREAKF_CTRL_D | SIGBREAKF_CTRL_F | timsig | rexsig | appsig | applibsig | notsig[0] | notsig[1] | notsig[2] | adstsig);
+
             if (signals & SIGBREAKF_CTRL_C) { ret = 1; break; }
             if (signals & SIGBREAKF_CTRL_D) { ret = 0; break; }
             if (signals & SIGBREAKF_CTRL_F) PopUp();
@@ -2128,7 +2208,7 @@ int main(int argc, char **argv)
                 W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");
 
               #if defined(DEBUG)
-              // let us check whether all necessary maintenance timers are running
+              // let us check wheter all necessary maintenance timers are running
               // because right here ALL maintenance timers should run or something is definitly wrong!
 
               if(C->WriteIndexes > 0 && TCData.timer[TIO_WRINDEX].isRunning == FALSE)
@@ -2149,31 +2229,160 @@ int main(int argc, char **argv)
             if (signals & appsig)
             {
                struct AppMessage *apmsg;
-               while ((apmsg = (struct AppMessage *)GetMsg(G->AppPort)))
+
+               while((apmsg = (struct AppMessage *)GetMsg(G->AppPort)))
                {
                   if (apmsg->am_Type == AMTYPE_APPICON)
                   {
+                     // bring all windows of YAM to front.
                      PopUp();
+
+                     // check if something was dropped onto the AppIcon
                      if (apmsg->am_NumArgs)
                      {
                         int wrwin;
-                        if      (G->WR[0]) wrwin = 0;
-                        else if (G->WR[1]) wrwin = 1;
-                        else wrwin = MA_NewNew(NULL, 0);
-                        if (wrwin >= 0) WR_App(wrwin, apmsg);
+
+                        if(G->WR[0])
+                          wrwin = 0;
+                        else if(G->WR[1])
+                          wrwin = 1;
+                        else
+                          wrwin = MA_NewNew(NULL, 0);
+
+                        if(wrwin >= 0)
+                        {
+                          int i;
+
+                          // lets walk through all arguments in the appMessage
+                          for(i = 0; i < apmsg->am_NumArgs; i++)
+                          {
+                            char buf[SIZE_PATHFILE];
+                            struct WBArg *ap = &apmsg->am_ArgList[i];
+
+                            NameFromLock(ap->wa_Lock, buf, SIZE_PATHFILE);
+                            AddPart(buf, (char *)ap->wa_Name, SIZE_PATHFILE);
+
+                            // call WR_App to let it put in the text of the file
+                            // to the write window
+                            WR_App(wrwin, buf);
+                          }
+                        }
                      }
                   }
+
                   ReplyMsg(&apmsg->am_Message);
                }
             }
 
+            #if defined(__amigaos4__)
+            if(signals & applibsig)
+            {
+              struct ApplicationMsg *msg;
+
+              while((msg = (struct ApplicationMsg *)GetMsg(G->AppLibPort)))
+              {
+                switch(msg->type)
+                {
+                  // ask the user if he really wants to quit the application
+                  case APPLIBMT_Quit:
+                  {
+                    ret = (int)!StayInProg();
+                  }
+                  break;
+
+                  // exit without bothering the user at all.
+                  case APPLIBMT_ForceQuit:
+                  {
+                    ret = 1;
+                  }
+                  break;
+
+                  // simply make sure YAM will be iconified/hided
+                  case APPLIBMT_Hide:
+                  {
+                    set(G->App, MUIA_Application_Iconified, TRUE);
+                  }
+                  break;
+
+                  // simply make sure YAM will be uniconified
+                  case APPLIBMT_Unhide:
+                  {
+                    set(G->App, MUIA_Application_Iconified, FALSE);
+                  }
+                  break;
+
+                  // make sure the GUI of YAM is in front
+                  // and open with the latest document.
+                  case APPLIBMT_ToFront:
+                  {
+                    PopUp();
+                  }
+                  break;
+
+                  // make sure YAM is in front and open
+                  // the configuration window
+                  case APPLIBMT_OpenPrefs:
+                  {
+                    PopUp();
+                    CallHookPkt(&CO_OpenHook, 0, 0);
+                  }
+                  break;
+
+                  // open YAM in front of everyone and
+                  // import the passed document in
+                  // a new or existing write window.
+                  case APPLIBMT_OpenDoc:
+                  {
+                    struct ApplicationOpenPrintDocMsg* appmsg = (struct ApplicationOpenPrintDocMsg*)msg;
+                    int wrwin;
+
+                    if(G->WR[0])
+                      wrwin = 0;
+                    else if(G->WR[1])
+                      wrwin = 1;
+                    else
+                      wrwin = MA_NewNew(NULL, 0);
+
+                    if(wrwin >= 0)
+                    {
+                      PopUp();
+                      WR_App(wrwin, appmsg->fileName);
+                    }
+                  }
+                  break;
+
+                  // make sure YAM is in front and open
+                  // a new write window.
+                  case APPLIBMT_NewBlankDoc:
+                  {
+                    PopUp();
+                    MA_NewNew(NULL, 0);
+                  }
+                  break;
+                }
+
+                ReplyMsg((struct Message *)msg);
+              }
+
+              // make sure to break out here in case
+              // the Quit or ForceQuit succeeded.
+              if(ret == 1)
+                break;
+            }
+            #endif
+
             // check for the write window signals
             for(i = 0; i <= MAXWR; i++)
             {
-               if (signals & notsig[i])
+               if(signals & notsig[i])
                {
-                  while ((msg = GetMsg(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port))) ReplyMsg(msg);
-                  if (G->WR[i]) FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT);
+                  struct Message *msg;
+
+                  while((msg = GetMsg(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port)))
+                    ReplyMsg(msg);
+
+                  if(G->WR[i])
+                    FileToEditor(G->WR_Filename[i], G->WR[i]->GUI.TE_EDIT);
                }
             }
 

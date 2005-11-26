@@ -50,6 +50,7 @@
 #include <proto/exec.h>
 #include <proto/datatypes.h>
 #include <proto/dos.h>
+#include <proto/icon.h>
 #include <proto/iffparse.h>
 #include <proto/intuition.h>
 #include <proto/keymap.h>
@@ -61,6 +62,10 @@
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
 #include <workbench/startup.h>
+
+#if defined(__amigaos4__)
+#include <proto/application.h>
+#endif
 
 #include "extra.h"
 #include "SDI_hook.h"
@@ -4624,83 +4629,126 @@ void Busy(char *text, char *parameter, int cur, int max)
 //  Calculates AppIconStatistic and update the AppIcon
 void DisplayAppIconStatistics(void)
 {
-  struct Folder *fo;
-  struct Folder **flist;
-  char *src, dst[10];
-  int i, mode;
   static char apptit[SIZE_DEFAULT/2];
+  int mode;
   int new_msg = 0;
   int unr_msg = 0;
   int tot_msg = 0;
   int snt_msg = 0;
   int del_msg = 0;
 
-  if(!(flist = FO_CreateList())) return;
-
-  for (i = 1; i <= (int)*flist; i++)
+  // if the user wants to show an AppIcon on the workbench,
+  // we go and calculate the mail stats for all folders out there.
+  if(C->WBAppIcon)
   {
-    fo = flist[i];
-    if(!fo) break;
+    struct Folder *fo;
+    struct Folder **flist;
+    char *src, dst[10];
 
-    if(fo->Stats != 0)
+    if((flist = FO_CreateList()))
     {
-      new_msg += fo->New;
-      unr_msg += fo->Unread;
-      tot_msg += fo->Total;
-      snt_msg += fo->Sent;
-      del_msg += fo->Deleted;
+      int i;
+
+      for(i = 1; i <= (int)*flist; i++)
+      {
+        fo = flist[i];
+        if(!fo)
+          break;
+
+        if(fo->Stats != 0)
+        {
+          new_msg += fo->New;
+          unr_msg += fo->Unread;
+          tot_msg += fo->Total;
+          snt_msg += fo->Sent;
+          del_msg += fo->Deleted;
+        }
+      }
+
+      free(flist);
+    }
+
+    // clear AppIcon Label first before we create it new
+    apptit[0] = '\0';
+
+    // Lets create the label of the AppIcon now
+    for(src = C->AppIconText; *src; src++)
+    {
+      if(*src == '%')
+      {
+        switch (*++src)
+        {
+          case '%': strcpy(dst, "%");            break;
+          case 'n': sprintf(dst, "%d", new_msg); break;
+          case 'u': sprintf(dst, "%d", unr_msg); break;
+          case 't': sprintf(dst, "%d", tot_msg); break;
+          case 's': sprintf(dst, "%d", snt_msg); break;
+          case 'd': sprintf(dst, "%d", del_msg); break;
+        }
+      }
+      else
+      {
+        sprintf(dst, "%c", *src);
+      }
+
+      strcat(apptit, dst);
     }
   }
-
-  free(flist);
 
   // we set the mode accordingly to the status of the folder (new/check/old)
-  if(G->TR && G->TR->Checking) mode = 3;
-  else mode = tot_msg ? (new_msg ? 2 : 1) : 0;
+  if(G->TR && G->TR->Checking)
+    mode = 3;
+  else
+    mode = tot_msg ? (new_msg ? 2 : 1) : 0;
 
-  // clear AppIcon Label first before we create it new
-  apptit[0] = '\0';
-
-  // Lets create the label of the AppIcon now
-  for (src = C->AppIconText; *src; src++)
-  {
-    if (*src == '%')
-    {
-      switch (*++src)
-      {
-        case '%': strcpy(dst, "%");            break;
-        case 'n': sprintf(dst, "%d", new_msg); break;
-        case 'u': sprintf(dst, "%d", unr_msg); break;
-        case 't': sprintf(dst, "%d", tot_msg); break;
-        case 's': sprintf(dst, "%d", snt_msg); break;
-        case 'd': sprintf(dst, "%d", del_msg); break;
-      }
-    }
-    else
-    {
-      sprintf(dst, "%c", *src);
-    }
-
-    strcat(apptit, dst);
-  }
 
   // We first have to remove the appicon before we can change it
-  if (G->AppIcon)
+  if(G->AppIcon)
   {
     RemoveAppIcon(G->AppIcon);
     G->AppIcon = NULL;
   }
 
   // Now we create the new AppIcon and display it
-  if (G->DiskObj[mode])
+  if(G->DiskObj[mode])
   {
     struct DiskObject *dobj=G->DiskObj[mode];
+
     // NOTE:
     // 1.) Using the VARARGS version is better for GCC/68k and it doesn't
     //     hurt other compilers
     // 2.) Using "zero" as lock parameter avoids a header compatibility
     //     issue (old: "struct FileLock *"; new: "BPTR")
-    G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, TAG_DONE);
+    if(C->WBAppIcon)
+      G->AppIcon = AddAppIcon(0, 0, apptit, G->AppPort, 0, dobj, TAG_DONE);
+
+    #if defined(__amigaos4__)
+    // check if application.library is used and then
+    // we also notify it about the AppIcon change
+    if(G->applicationID)
+    {
+      static int lastIconID = -1;
+
+      if(C->DockyIcon)
+      {
+        if(lastIconID != mode)
+        {
+          struct ApplicationIconInfo aii;
+
+          aii.iconType = APPICONT_CustomIcon;
+          aii.info.customIcon = dobj;
+
+          SetApplicationAttrs(G->applicationID,
+                              APPATTR_IconType, (uint32)&aii,
+                              TAG_DONE);
+
+          lastIconID = mode;
+        }
+      }
+      else
+        lastIconID = -1;
+    }
+    #endif
   }
 }
 

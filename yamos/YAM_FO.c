@@ -1694,6 +1694,7 @@ static struct FO_ClassData *FO_New(void)
          DoMethod(G->App, OM_ADDMEMBER, data->GUI.WI);
 
          set(data->GUI.ST_FPATH, MUIA_String_Reject, " \";#?(|)");
+         set(data->GUI.CH_STATS, MUIA_Disabled, C->WBAppIcon == FALSE);
 
          SetHelp(data->GUI.ST_FNAME,            MSG_HELP_FO_ST_FNAME            );
          SetHelp(data->GUI.ST_FPATH,            MSG_HELP_FO_TX_FPATH            );

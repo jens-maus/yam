@@ -5699,3 +5699,18 @@ for the specified search text.
 MSG_BUSY_SEARCHINGFOLDER (//)
 Searching for messages in folder '%s'...
 ; FOLDERNAME
+MSG_CO_WBAPPICON (//)
+AppIcon on workbench
+;
+MSG_HELP_CO_CH_WBAPPICON (//)
+If checked, displays an AppIcon on the Workbench\n\
+with folder statistics.
+;
+MSG_CO_DOCKYICON (//)
+DockyIcon
+;
+MSG_HELP_CO_CH_DOCKYICON (//)
+If enabled, a docky icon is displayed through\n\
+application.library. (only available on AmigaOS4\n\
+systems)
+;

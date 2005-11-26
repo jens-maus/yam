@@ -172,7 +172,7 @@ void  FreePartsList(struct WritePart *p);
 struct WritePart *NewPart(int winnum);
 BOOL  WR_AddFileToList(int winnum, char *filename, char *name, BOOL istemp);
 void  WR_AddSignature(int winnum, int signat);
-void  WR_App(int winnum, struct AppMessage *amsg);
+void  WR_App(int winnum, STRPTR fileName);
 char *WR_AutoSaveFile(int winnr);
 void  WR_Cleanup(int winnum);
 void  WR_NewMail(enum WriteMode mode, int winnum);

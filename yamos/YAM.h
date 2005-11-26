@@ -85,6 +85,10 @@ struct Global
    struct US_ClassData *    US;
    struct ReadMailData *    ActiveRexxRMData;
 
+   #if defined(__amigaos4__)
+   struct MsgPort *         AppLibPort;
+   #endif
+
    LONG                     EdColMap[16];
    LONG                     Weights[12];
    LONG                     TR_Socket;
@@ -93,6 +97,10 @@ struct Global
    int                      CO_DST;
    int                      ER_NumErr;
    int                      ActiveWriteWin;
+
+   #if defined(__amigaos4__)
+   uint32                   applicationID;
+   #endif
 
    BOOL                     Error;
    BOOL                     PGP5;
@@ -114,7 +122,6 @@ struct Global
    struct DownloadResult    LastDL;
    struct NotifyRequest     WR_NRequest[MAXWR+1];
    struct sockaddr_in       TR_INetSocketAddr;
-
    struct MinList           readMailDataList;
 
    char                     ProgDir[SIZE_PATH];

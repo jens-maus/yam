@@ -30,6 +30,10 @@
 
 #include "YAM_cl.h"
 
+#if defined(__amigaos4__)
+#include <proto/application.h>
+#endif
+
 #include "Debug.h"
 
 #define EMAILCACHENAME "PROGDIR:.emailcache"
@@ -468,4 +472,36 @@ OVERLOAD(OM_GET)
 	return DoSuperMethodA(cl, obj, msg);
 }
 ///
+/// OVERLOAD(OM_SET)
+OVERLOAD(OM_SET)
+{
+	struct TagItem *tags = inittags(msg), *tag;
 
+	while((tag = NextTagItem(&tags)))
+	{
+		switch(tag->ti_Tag)
+		{
+			// if the Application is going to be (un)iconified we
+			// have to take care of certain tasks.
+			case MUIA_Application_Iconified:
+			{
+				// in case we have an applicationID we make sure
+				// we notify application.library that YAM was uniconified
+				#if defined(__amigaos4__)
+				if(G->applicationID)
+				{
+					SetApplicationAttrs(G->applicationID,
+															APPATTR_Hidden,   tag->ti_Data,
+															TAG_DONE);
+
+					D(DBF_STARTUP, "Application was %s", tag->ti_Data ? "iconified" : "uniconified");
+				}
+				#endif
+			}
+			break;
+		}
+	}
+
+	return DoSuperMethodA(cl, obj, msg);
+}
+///

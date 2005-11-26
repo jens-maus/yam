@@ -2074,48 +2074,79 @@ MakeStaticHook(WR_UpdateWTitleHook,WR_UpdateWTitleFunc);
 /*** Hooks ***/
 /// WR_App
 /*** WR_App - Handles Drag&Drop ***/
-void WR_App(int winnum, struct AppMessage *amsg)
+void WR_App(int winnum, STRPTR fileName)
 {
-   struct WBArg *ap;
-   int i, mode;
-   char buf[SIZE_PATHFILE];
+  int mode = xget(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage);
 
-   mode = xget(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage);
-   for (i = 0; i < amsg->am_NumArgs; i++)
-   {
-      ap = &amsg->am_ArgList[i];
-      NameFromLock(ap->wa_Lock, buf, SIZE_PATHFILE);
-      AddPart(buf, (char *)ap->wa_Name, SIZE_PATHFILE);
-      if (!mode)
+  if(!mode)
+  {
+    FILE *fh;
+
+    if((fh = fopen(fileName, "r")))
+    {
+      char buffer[SIZE_LARGE];
+      int j;
+      int notascii = 0;
+      int len = fread(buffer, 1, SIZE_LARGE-1, fh);
+
+      buffer[len] = '\0';
+      fclose(fh);
+
+      for(j = 0; j < len; j++)
       {
-         FILE *fh;
-         int len, j, c, notascii = 0;
-         char buffer[SIZE_LARGE];
-         if ((fh = fopen(buf, "r")))
-         {
-            len = fread(buffer, 1, SIZE_LARGE-1, fh);
-            buffer[len] = 0;
-            fclose(fh);
-            for (j = 0; j < len; j++) if (c=(int)buffer[j],c < 32 || c > 127) if (c != '\t' && c != '\n') notascii++;
-            if (notascii) if (len/notascii <= 16) mode = 1;
-         }
+        int c = (int)buffer[j];
+
+        if((c < 32 || c > 127) &&
+            c != '\t' && c != '\n')
+        {
+          notascii++;
+        }
       }
-      if (!mode)
-      {
-         char *text = WR_TransformText(buf, ED_INSERT, "");
-         if (text) DoMethod(G->WR[winnum]->GUI.TE_EDIT, MUIM_TextEditor_InsertText, text);
-         free(text);
-      }
-      else WR_AddFileToList(winnum, buf, NULL, FALSE);
-   }
+
+      if(notascii && len/notascii <= 16)
+        mode = 1;
+    }
+  }
+
+  if(!mode)
+  {
+    char *text = WR_TransformText(fileName, ED_INSERT, "");
+
+    if(text)
+      DoMethod(G->WR[winnum]->GUI.TE_EDIT, MUIM_TextEditor_InsertText, text);
+    else
+      WR_AddFileToList(winnum, fileName, NULL, FALSE);
+
+    free(text);
+  }
+  else
+    WR_AddFileToList(winnum, fileName, NULL, FALSE);
 }
 
 ///
 /// WR_AppFunc
 HOOKPROTONHNO(WR_AppFunc, LONG, ULONG *arg)
 {
-   WR_App((int)arg[1],  (struct AppMessage *)arg[0]);
-   return 0;
+  // manage the AppMessage
+  struct AppMessage *amsg = (struct AppMessage *)arg[0];
+  int winnum = (int)arg[1];
+  int i;
+
+  // lets walk through all arguments in the appMessage
+  for(i = 0; i < amsg->am_NumArgs; i++)
+  {
+    char buf[SIZE_PATHFILE];
+    struct WBArg *ap = &amsg->am_ArgList[i];
+
+    NameFromLock(ap->wa_Lock, buf, SIZE_PATHFILE);
+    AddPart(buf, (char *)ap->wa_Name, SIZE_PATHFILE);
+
+    // call WR_App to let it put in the text of the file
+    // to the write window
+    WR_App(winnum, buf);
+  }
+
+  return 0;
 }
 MakeStaticHook(WR_AppHook, WR_AppFunc);
 

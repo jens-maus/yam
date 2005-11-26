@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-11-26  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c, misc: YAM is now using application.library v50+ in case it
+      is compiled for and running on AmigaOS4. It automatically registers
+      to application.library upon startup which will bring up a DockyIcon
+      in AmiDock if enabled. Also the WorkbenchAppIcon mode can now be
+      explicitly enabled and disabled upon user request. YAM should
+      also take respect of certain application.library messages like
+      Quit, ForceQuit, NewDoc, etc. and react upon them. Overall, this
+      should give a way better OS4 integration.
+
 2005-11-23  Gunther Nikl <gni@gecko.de>
 
     * YAM.c, YAM_CO.c, YAM_FI.c, YAM_MA.c, YAM_MAf.c, YAM_MI.c, YAM_RE.c,

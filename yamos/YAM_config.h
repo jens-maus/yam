@@ -252,6 +252,8 @@ struct CO_GUIData
    Object *BT_MORE;
    Object *BT_LESS;
    Object *CH_QUICKSEARCHBAR;
+   Object *CH_WBAPPICON;
+   Object *CH_DOCKYICON;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -418,6 +420,8 @@ struct Config
    BOOL  StatusChangeDelayOn;
    BOOL  SysCharsetCheck;
    BOOL  QuickSearchBar;
+   BOOL  WBAppIcon;
+   BOOL  DockyIcon;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;

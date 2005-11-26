@@ -379,7 +379,9 @@ static Object *MakeVarPop(Object **string, enum VarPopMode mode, int size, char 
          }
          break;
       }
+
       DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
+      DoMethod(*string, MUIM_Notify, MUIA_Disabled, MUIV_EveryTime, po, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
    }
    return po;
 }
@@ -586,12 +588,16 @@ APTR CO_Page1(struct CO_ClassData *data)
                   Child, VSpace(0),
                End,
                Child, VGroup,
-                  Child, MakeCheckGroup((Object **)&data->GUI.CH_USESMTPAUTH, GetStr(MSG_CO_UseSMTPAUTH)),
-                  Child, authgrp=ColGroup(2),
-                     Child, Label2(GetStr(MSG_CO_SMTPUser)),
-                     Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,GetStr(MSG_CO_SMTPUser)),
-                     Child, Label2(GetStr(MSG_CO_SMTPPass)),
-                     Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(GetStr(MSG_CO_SMTPPass)),
+                  Child, ColGroup(2),
+                    Child, data->GUI.CH_USESMTPAUTH = MakeCheck(GetStr(MSG_CO_UseSMTPAUTH)),
+                    Child, LLabel1(GetStr(MSG_CO_UseSMTPAUTH)),
+                    Child, HSpace(0),
+                    Child, authgrp=ColGroup(2),
+                       Child, Label2(GetStr(MSG_CO_SMTPUser)),
+                       Child, data->GUI.ST_SMTPAUTHUSER = MakeString(SIZE_USERID,GetStr(MSG_CO_SMTPUser)),
+                       Child, Label2(GetStr(MSG_CO_SMTPPass)),
+                       Child, data->GUI.ST_SMTPAUTHPASS = MakePassString(GetStr(MSG_CO_SMTPPass)),
+                    End,
                   End,
                   Child, LLabel(GetStr(MSG_CO_SMTPSECURE)),
                   Child, HGroup,
@@ -1718,13 +1724,9 @@ APTR CO_Page13(struct CO_ClassData *data)
 /// CO_Page14 (Mixed)
 APTR CO_Page14(struct CO_ClassData *data)
 {
-   APTR grp;
-   static char *dispnot[5], *empty[5];
-   dispnot[0] = GetStr(MSG_CO_DispIgnore);
-   dispnot[1] = GetStr(MSG_CO_DispDeny);
-   dispnot[2] = GetStr(MSG_CO_DispAsk);
-   dispnot[3] = GetStr(MSG_CO_DispAccept);
-   dispnot[4] = NULL;
+   Object *grp;
+   static char *empty[5];
+
    empty[0] = empty[1] = empty[2] = empty[3] = "";
    empty[4] = NULL;
 
@@ -1742,16 +1744,22 @@ APTR CO_Page14(struct CO_ClassData *data)
                End,
             End,
             Child, VGroup, GroupFrameT(GetStr(MSG_CO_AppIcon)),
-               Child, HGroup,
-                  Child, Label2(GetStr(MSG_CO_PositionX)),
-                  Child, data->GUI.ST_APPX = MakeInteger(4, "_X"),
-                  Child, Label2("_Y"),
-                  Child, data->GUI.ST_APPY = MakeInteger(4, "_Y"),
+               Child, ColGroup(2),
+                  Child, data->GUI.CH_WBAPPICON = MakeCheck(GetStr(MSG_CO_WBAPPICON)),
+                  Child, LLabel1(GetStr(MSG_CO_WBAPPICON)),
+                  Child, HSpace(0),
+                  Child, ColGroup(2),
+                    Child, Label2(GetStr(MSG_CO_PositionX)),
+                    Child, HGroup,
+                      Child, data->GUI.ST_APPX = MakeInteger(4, "_X"),
+                      Child, Label2("_Y"),
+                      Child, data->GUI.ST_APPY = MakeInteger(4, "_Y"),
+                    End,
+                    Child, Label2(GetStr(MSG_CO_APPICONTEXT)),
+                    Child, MakeVarPop(&data->GUI.ST_APPICON, VPM_MAILSTATS, SIZE_DEFAULT/2, GetStr(MSG_CO_APPICONTEXT)),
+                  End,
                End,
-               Child, HGroup,
-                Child, Label2(GetStr(MSG_CO_APPICONTEXT)),
-                Child, MakeVarPop(&data->GUI.ST_APPICON, VPM_MAILSTATS, SIZE_DEFAULT/2, GetStr(MSG_CO_APPICONTEXT)),
-               End,
+               Child, MakeCheckGroup((Object **)&data->GUI.CH_DOCKYICON, GetStr(MSG_CO_DOCKYICON)),
                Child, MakeCheckGroup((Object **)&data->GUI.CH_CLGADGET, GetStr(MSG_CO_CloseGadget)),
             End,
             Child, VGroup, GroupFrameT(GetStr(MSG_CO_SaveDelete)),
@@ -1766,16 +1774,23 @@ APTR CO_Page14(struct CO_ClassData *data)
                Child, MakeCheckGroup((Object **)&data->GUI.CH_SAVESENT, GetStr(MSG_CO_SaveSent)),
             End,
            Child, VGroup, GroupFrameT(GetStr(MSG_CO_MDN)),
-               Child, ColGroup(5),
+               Child, ColGroup(6),
                   Child, LLabel(GetStr(MSG_Display)),
                   Child, LLabel(GetStr(MSG_Process)),
                   Child, LLabel(GetStr(MSG_CO_Del)),
                   Child, LLabel(GetStr(MSG_Filter)),
                   Child, HSpace(0),
+                  Child, HSpace(0),
                   Child, data->GUI.RA_MDN_DISP = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,
                   Child, data->GUI.RA_MDN_PROC = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,
                   Child, data->GUI.RA_MDN_DELE = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,
-                  Child, data->GUI.RA_MDN_RULE = RadioObject, MUIA_Radio_Entries, dispnot, MUIA_CycleChain, TRUE, End,
+                  Child, data->GUI.RA_MDN_RULE = RadioObject, MUIA_Radio_Entries, empty, MUIA_CycleChain, TRUE, End,
+                  Child, VGroup,
+                    Child, LLabel(GetStr(MSG_CO_DispIgnore)),
+                    Child, LLabel(GetStr(MSG_CO_DispDeny)),
+                    Child, LLabel(GetStr(MSG_CO_DispAsk)),
+                    Child, LLabel(GetStr(MSG_CO_DispAccept)),
+                  End,
                   Child, HSpace(0),
                End,
                Child, MakeCheckGroup((Object **)&data->GUI.CH_SEND_MDN, GetStr(MSG_CO_SendAtOnce)),
@@ -1802,8 +1817,10 @@ APTR CO_Page14(struct CO_ClassData *data)
       End))
    {
       SetHelp(data->GUI.ST_TEMPDIR   ,MSG_HELP_CO_ST_TEMPDIR   );
+      SetHelp(data->GUI.CH_WBAPPICON ,MSG_HELP_CO_CH_WBAPPICON );
       SetHelp(data->GUI.ST_APPX      ,MSG_HELP_CO_ST_APP       );
       SetHelp(data->GUI.ST_APPY      ,MSG_HELP_CO_ST_APP       );
+      SetHelp(data->GUI.CH_DOCKYICON ,MSG_HELP_CO_CH_DOCKYICON );
       SetHelp(data->GUI.CH_CLGADGET  ,MSG_HELP_CO_CH_CLGADGET  );
       SetHelp(data->GUI.CH_CONFIRM   ,MSG_HELP_CO_CH_CONFIRM   );
       SetHelp(data->GUI.NB_CONFIRMDEL,MSG_HELP_CO_NB_CONFIRMDEL);
@@ -1820,6 +1837,14 @@ APTR CO_Page14(struct CO_ClassData *data)
       SetHelp(data->GUI.NB_PACKER    ,MSG_HELP_CO_NB_ENCPACK   );
       SetHelp(data->GUI.ST_ARCHIVER  ,MSG_HELP_CO_ST_ARCHIVER  );
       SetHelp(data->GUI.ST_APPICON   ,MSG_HELP_CO_ST_APPICON   );
+
+      DoMethod(grp, MUIM_MultiSet, MUIA_Disabled, TRUE, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
+      DoMethod(data->GUI.CH_WBAPPICON, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, MUIV_Notify_Application, 7, MUIM_MultiSet, MUIA_Disabled, MUIV_NotTriggerValue, data->GUI.ST_APPX, data->GUI.ST_APPY, data->GUI.ST_APPICON, NULL);
+
+      #if defined(__amigaos4__)
+      if(G->applicationID == 0)
+      #endif
+        set(data->GUI.CH_DOCKYICON, MUIA_Disabled, TRUE);
    }
    return grp;
 }
