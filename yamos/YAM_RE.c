@@ -966,16 +966,27 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 
       // As the content-transfer-encoding field is mostly used in
       // attachment MIME fields, we first check for common attachement encodings
-      if     (!stricmp(p, "base64"))                        rp->EncodingCode = ENC_B64;
-      else if(!stricmp(p, "quoted-printable"))              rp->EncodingCode = ENC_QP;
-      else if(!strnicmp(p, "x-uue", 5))                     rp->EncodingCode = ENC_UUE;
-      else if(!stricmp(p, "8bit") || !stricmp(p, "8-bit"))  rp->EncodingCode = ENC_8BIT;
-      else if(!stricmp(p, "binary"))                        rp->EncodingCode = ENC_BIN;
-      else if(!stricmp(p, "7bit") || !stricmp(p, "7-bit") ||
-              !stricmp(p, "none"))                          rp->EncodingCode = ENC_NONE;
+      if(!strnicmp(p, "base64", 6))
+        rp->EncodingCode = ENC_B64;
+      else if(!strnicmp(p, "quoted-printable", 16))
+        rp->EncodingCode = ENC_QP;
+      else if(!strnicmp(p, "8bit", 4) || !strnicmp(p, "8-bit", 5))
+        rp->EncodingCode = ENC_8BIT;
+      else if(!strnicmp(p, "7bit", 4) || !strnicmp(p, "7-bit", 5) ||
+              !strnicmp(p, "plain", 5) || !strnicmp(p, "none", 4))
+      {
+        rp->EncodingCode = ENC_NONE;
+      }
+      else if(!strnicmp(p, "x-uue", 5))
+        rp->EncodingCode = ENC_UUE;
+      else if(!strnicmp(p, "binary", 6))
+        rp->EncodingCode = ENC_BIN;
       else
       {
         ER_NewError(GetStr(MSG_ER_UnknownEnc), p);
+
+        // set the default to ENC_NONE
+        rp->EncodingCode = ENC_NONE;
       }
     }
     else if(!stricmp(field, "content-description"))

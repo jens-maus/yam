@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-12-03  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: as some mail clients seems to misinterpret RFC 2045 and send
+      mails with a content-transfer-encoding of type "plain", YAM always
+      throwed an error about that. Now YAM will interpret that as a 7bit
+      encoding instead and keep silent.
+
 2005-11-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_UT.c, YAM_FO.c: fixed minor bug in the DisplayAppIconStatistics()
