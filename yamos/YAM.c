@@ -425,9 +425,9 @@ static void TC_Dispatcher(enum TimerIO tio)
     }
     break;
 
-    // and in case the AutoSave timerIO was triggered we check
-    // wheter there is really need to autosave the content of
-    // the currently used editors.
+    // in case the AutoSave timerIO was triggered we check
+    // whether there is really need to autosave the content
+    // of the currently used editors.
     case TIO_AUTOSAVE:
     {
       int i;
@@ -2208,7 +2208,7 @@ int main(int argc, char **argv)
                 W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");
 
               #if defined(DEBUG)
-              // let us check wheter all necessary maintenance timers are running
+              // let us check whether all necessary maintenance timers are running
               // because right here ALL maintenance timers should run or something is definitly wrong!
 
               if(C->WriteIndexes > 0 && TCData.timer[TIO_WRINDEX].isRunning == FALSE)
