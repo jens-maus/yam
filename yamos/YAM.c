@@ -1378,7 +1378,7 @@ static void Initialise(BOOL hidden)
    CheckMCC(MUIC_Toolbar, 15, 12, TRUE);
 
    // Lets check for the correct TextEditor.mcc version
-   CheckMCC(MUIC_TextEditor, 15, 16, TRUE);
+   CheckMCC(MUIC_TextEditor, 15, 17, TRUE);
 
    // Lets check for the correct BetterString.mcc version
    CheckMCC(MUIC_BetterString, 11, 7, TRUE);
