@@ -78,9 +78,6 @@ _Cancel
 MSG_Yes (19//)
 _Yes
 ;
-MSG_No (20//)
-_No
-;
 MSG_OkayReq (21//)
 *_Okay
 ;
@@ -131,9 +128,6 @@ Real name
 ;
 MSG_Filename (37//)
 Filename
-;
-MSG_Alias (38//)
-Alias
 ;
 MSG_Description (39//)
 Description
@@ -192,12 +186,6 @@ Columns
 MSG_Path (57//)
 Path
 ;
-MSG_Directory (58//)
-Directory
-;
-;
-; Module Root
-;
 MSG_Copyright1 (59//)
 Open Source E-mail package for the Amiga\n\
 \n\
@@ -224,19 +212,11 @@ The latest news about YAM can be found at the YAM Support Site at \e5http://www.
 MSG_UserLogin (65//)
 Click your name to login
 ;
-; Obsolete
-MSG_AppDescription (66//)
-SMTP/POP3 Client & Mailer for AmigaOS
-;
 MSG_ErrorStartup (67//)
 Error during startup
 ;
 MSG_Quit (68//)
 Quit
-;
-MSG_ErrorLib (69//)
-Can't open library '%s', version %ld
-; LIBRARY_NAME, LIBRARY_VERSION
 ;
 MSG_LoadingConfig (70//)
 Loading configuration...
@@ -486,10 +466,6 @@ MSG_UT_PGPPassReq (140//)
 Please enter your PGP pass phrase:
 ;
 ; Replaced by MSG_APPICON_STATS
-MSG_UT_AppStats (141//)
-
-;
-;
 MSG_UT_NoPrinter (142//)
 No printer or printer offline!
 ;
@@ -656,13 +632,6 @@ Sent
 MSG_MA_Deleted (182//)
 Deleted
 ;
-; Obsolete
-MSG_MA_Archived (183//)
-Archived
-;
-;
-; Module MA - Toolbar
-;
 MSG_MA_TBRead (184//)
 Rea_d
 ;
@@ -737,9 +706,6 @@ Q\000Quit
 MSG_MA_NewFolder (206//)
 New folder
 ;This is the title of the new folder window, not the menu item.
-;
-MSG_MA_NewSeparator (207//)
-New separator...
 ;
 MSG_MA_SortOrder (208//)
 Order
@@ -915,10 +881,6 @@ Modify YAM's preferences
 ;
 ;
 ; Module CO - Procedures
-;
-; Obsolete
-MSG_CO_SelectDir (261//)
-Please select a directory for the new folder:
 ;
 MSG_CO_ChangeFolderPass (262//)
 Enter a new password for this folder:
@@ -1294,9 +1256,6 @@ Co_mmand
 ;
 MSG_CO_Name (381//)
 N_ame
-;
-MSG_CO_CTNone (382//)
-don't combine
 ;
 MSG_CO_CTAnd (383//)
 and
@@ -1809,9 +1768,6 @@ Restore
 MSG_CO_Extras (551//)
 Extras
 ;
-MSG_CO_ScanForFolders (552//)
-Scan for folders
-;
 MSG_CO_ImportMIME (553//)
 Import MIME viewers & types...
 ;
@@ -2107,10 +2063,6 @@ on new messages
 MSG_HELP_CO_ST_EDWRAP (628//)
 Word-wrap message text\n\
 at this column
-;
-MSG_HELP_CO_CH_AUTOBREAK (629//)
-Insert real line breaks\n\
-while entering a message
 ;
 MSG_HELP_CO_CY_EDWRAP (630//)
 Select 'as you type' to insert linebreak\n\
@@ -3176,10 +3128,6 @@ Mail is incomplete: no recipient!
 MSG_WR_NoRcptReqGad (915//)
 _Add recipient later|*_Cancel
 ;
-; Obsolete
-MSG_WR_PGPMIMEconflict (916//)
-PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
-;
 MSG_WR_DiscardChanges (917//)
 Do you really want to discard all\n\
 modifications to this message?
@@ -3490,11 +3438,6 @@ Importance
 MSG_HELP_WR_ST_TO (1014//)
 Address (and name) or alias\n\
 of the primary recipient(s)
-;
-; Obsolete
-MSG_HELP_WR_BT_VER (1015//)
-Verify recipient: find email\n\
-address for alias or name
 ;
 MSG_HELP_WR_BT_ADR (1016//)
 Select recipient from\n\
@@ -3860,9 +3803,6 @@ The date has to be in AmigaDOS format.\n\
 Example: %s
 ; DATE
 ;
-MSG_ER_ErrorMaxFilters (1108//)
-Maximum number of filters reached! You can't add more filters.
-;
 MSG_ER_CantOpenTempfile (1109//)
 Couldn't open temporary file '%s'.\n\
 \n\
@@ -3880,10 +3820,6 @@ Couldn't open console window for script.
 MSG_ER_ErrorARexxScript (1112//)
 Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
-;
-MSG_ER_UnexpEOFB64 (1113//)
-Unexpected EOF while decoding a BASE64 encoded file. \
-The message seems to be truncated.
 ;
 MSG_ER_UnexpEOFUU (1114//)
 Unexpected EOF while decoding a UUencoded file. \
@@ -3992,12 +3928,6 @@ YAM can't save the message to disk, maybe you're out of disk space.
 MSG_ER_ConnectionBroken (1133//)
 TCP/IP connection broken, probably due to a carrier drop.
 ;
-MSG_ER_InvalidAddress (1134//)
-Invalid address '%s'.\n\
-\n\
-The SMTP server didn't accept the address. Check for illegal characters.
-; ADDRESS
-;
 MSG_ER_ErrorReadMailfile (1135//)
 Read error on mail file: %s.\n\
 \n\
@@ -4035,29 +3965,12 @@ Couldn't execute PGP command.\n\
 Check if %s exists.
 ; FILENAME
 ;
-MSG_ER_InvalidAlias (1142//)
-Invalid alias: %s.\n\
-\n\
-Multiple addresses are not allowed in this field.
-; ALIAS
-;
 MSG_ER_AliasNotFound (1143//)
 Unknown alias or name: %s.\n\
 \n\
 YAM couldn't find the email address of this recipient \
 in the address book. Please verify the spelling.
 ; ALIAS
-;
-MSG_ER_AmbiguousAlias (1144//)
-Ambiguous alias or name: %s.\n\
-\n\
-There is more than one entry with this name in the address book. \
-Please remove duplicate entries or use unique aliases.
-; ALIAS
-;
-MSG_ER_ErrorAddrDontFit (1145//)
-Addresses don't fit in the string gadget. \
-Use a distribution list to avoid this problem.
 ;
 MSG_ER_ErrorNoPGPId (1146//)
 Couldn't find PGP ID for '%s' in the address book, now trying '%s'.
@@ -4389,10 +4302,6 @@ Remove selected account
 ;
 ; Module FO - Routines
 ;
-; Obsolete
-MSG_FO_NewSepReq (1236//)
-Optional label for the separator
-;
 MSG_FO_NewFolderReq (1237//)
 What settings do you want to use for the new folder?\n\
 Select 'Existing directory' if the folder already exists\n\
@@ -4433,10 +4342,6 @@ sent mail
 ;
 MSG_FO_FTBothMail (1248//)
 received and sent
-;
-; Obsolete
-MSG_FO_FTSeparate (1249//)
-separator
 ;
 MSG_FO_EditFolder (1250//)
 Folder settings
@@ -4623,10 +4528,6 @@ Check version
 MSG_FOLDER_NEWFOLDER (1300//)
 New folder...
 ;
-; Obsolete
-MSG_FOLDER_NEWSEPARATOR (1301//)
-New separator...
-;
 MSG_FOLDER_EDIT (1302//)
 Edit...
 ;
@@ -4678,9 +4579,6 @@ B\000Bounce...
 MSG_MESSAGE_GETADDRESS (1318//)
 J\000Save address...
 ;
-MSG_MESSAGE_CHANGESUBJECT (1319//)
-Change subject...
-;
 MSG_SETTINGS_ADDRESSBOOK (1320//)
 A\000Address Book...
 ;
@@ -4727,7 +4625,6 @@ MSG_WR_DefSecurityConflictGads (1332//)
 MSG_WR_SecDefaults (1333//)
 Default
 ;
-; Obsolete
 MSG_ER_PGPMultipart (1334//)
 Error creating multipart PGP message. Encrypting/signing disabled!
 ;
@@ -4772,20 +4669,8 @@ MSG_RE_MoveNextFolderReq (1347//)
 Next folder with unread messages is \eb%s\en\n\
 Go to this folder and continue reading there?
 ;
-; Obsolete
-MSG_WR_NoSubjectReqGad (1348//)
-*_Set subject|_Continue without subject
-;
-; Obsolete
-MSG_NoSubjectReq (1349//)
-Warning: Subject is empty
-;
 MSG_MA_ABookModifiedGad (1350//)
 *_Save now|_Quit without saving
-;
-MSG_APPICON_STATS (1351//)
-N:%lD U:%lD T:%lD
-; COUNT, COUNT, COUNT
 ;
 MSG_ATTACH_NO (1352//)
 No.
@@ -4879,11 +4764,6 @@ Would you like to see this\n\
 folder's statistics in the\n\
 YAM AppIcon's label?
 ;
-MSG_ERROR_IMGLOAD (1379//)
-The image file\n\
-PROGDIR:Icons/%s\n\
-couldn't be loaded.
-;
 MSG_OPENGUI (1380//)
 Opening GUI...
 ;
@@ -4961,11 +4841,9 @@ be moved to the parent folder on deletion.\n\
 \n\
 Do you really want to delete this group?
 ;
-; Obsolete
 MSG_FOLDER_NONSEL (1403//)
 (none selected)
 ;
-; Obsolete
 MSG_MAIL_NONSEL (1404//)
 (none selected)
 ;
@@ -5038,14 +4916,6 @@ MSG_HELP_CO_NB_EMAILCACHE (1424//)
 Cache size for the most recently used\n\
 recipients not yet in the address book.\n\
 Select 0 to disable this feature.
-;
-MSG_CO_USESMTPTLS (1425//)
-Use SMTP TLSv_1/SSLv3
-;
-MSG_HELP_CO_CH_USESMTPTLS (1426//)
-A TLSv1/SSLv3 secure connection will be established between\n\
-the SMTP server and YAM to send email. If this checkbox is\n\
-ghosted, it means AmiSSL support is not available.
 ;
 MSG_CO_POP3SSL (1427//)
 Use POP3 TLSv1/SSLv3

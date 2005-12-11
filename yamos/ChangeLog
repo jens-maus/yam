@@ -7,13 +7,19 @@ $Source$
 
 2005-12-11  Jens Langner <Jens.Langner@light-speed.de>
 
+    * locale/YAM.cd, locale/cleanup.sh: added a small shell script
+      for searching for orphaned catalog strings in the YAM.cd file. It will
+      automatically strip these orphaned strings off the YAM.cd file causing
+      the resulting binary of YAM to be significantely smaller afterwards.
+      Please note however, that the script still needs to be adapted to also
+      search through the *.ct files, stripping off not required strings.
     * YAM_RE.c, YAM_MI.c: YAM will now display even partly base64 decoded MIME
       parts if they are considered as readable text. This may be the case
       where base64 encoded mail parts have been malformed. However, YAM will
       throw out a warning to the user to let him know that not everything
       of the mail may show up (correctly).
     * YAM.c: bumped minimum required version of TextEditor.mcc to 15.17 to
-      make sure the users doesn't use a buggy version of TextEditor.mcc
+      make sure the users don't use a buggy version of TextEditor.mcc
       causing unnecessary bugreports to be sent to the YAM project.
 
 2005-12-03  Jens Langner <Jens.Langner@light-speed.de>
