@@ -5679,7 +5679,7 @@ MSG_QUICKSEARCH_VIEW (//)
 View:
 ;
 MSG_QUICKSEARCH_SHOWNMSGS (//)
-%ld of %d shown
+%ld of %ld shown
 ; COUNT, COUNT
 MSG_FI_NOFOLDERS (//)
 _nowhere
@@ -5714,3 +5714,19 @@ If enabled, a docky icon is displayed through\n\
 application.library. (only available on AmigaOS4\n\
 systems)
 ;
+MSG_ER_B64DECTRUNC (//)
+An error occurred while trying to base64 decode MIME \
+part %ld of mail '%s'. The decoding has been aborted.\n\
+\n\
+This may be caused by an incorrect encoding done by the \
+sending mail client or because the base64 part has been malformed \
+during transmission.
+; PARTNR, MSGFILE
+MSG_ER_B64DECTRUNCTXT (//)
+Some readable text from MIME part %ld of mail '%s' couldn't \
+be base64 decoded and may show up incorrect or is even missing.\n\
+\n\
+This may be caused by an incorrect encoding done by the \
+sending mail client or because the base64 part has been malformed \
+during transmission.
+; PARTNR, MSGFILE

@@ -510,7 +510,10 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
 //  table as well as a CRLF->LF translation for printable text. It reads in the base64
 //  strings line by line from the in file stream, decodes it and writes out the
 //  decoded data with fwrite() to the out stream. It returns the total bytes of
-//  written (decoded) data.
+//  written (decoded) data. In case of an error it returns -1 and in case it
+//  found a short item count during decoding it return -2 asking the user
+//  to still consider the string decoded (however it should be treated with
+//  care)
 long base64decode_file(FILE *in, FILE *out,
                        struct TranslationTable *tt, BOOL convCRLF)
 {
@@ -520,6 +523,7 @@ long base64decode_file(FILE *in, FILE *out,
   long decodedChars = 0;
   size_t next_unget = 0;
   BOOL eof_reached = FALSE;
+  BOOL problemDuringDecode = FALSE;
 
   ENTER();
 
@@ -607,9 +611,9 @@ long base64decode_file(FILE *in, FILE *out,
       }
       else
       {
-        // on an EOF we shouldn`t have any unget chars
-        RETURN(-1);
-        return -1;
+        W(DBF_MIME, "unget chars at EOF???");
+
+        problemDuringDecode = TRUE;
       }
     }
 
@@ -621,10 +625,24 @@ long base64decode_file(FILE *in, FILE *out,
     {
       E(DBF_MIME, "error on decoding: %ld %ld", read, outLength);
 
-      // it should not happen that we face a shortCount
-      // or error
-      RETURN(-1);
-      return -1;
+      if(outLength < 0)
+      {
+        // we faced a short item count. That can actually be a signs that the text
+        // in question is not a fully base64 compliant string. However, to
+        // at least display the text to the user we redefine the outLength and
+        // let the write function output that string (even if not correctly
+        // decoded)
+        outLength = read+outLength;
+
+        problemDuringDecode = TRUE;
+      }
+      else
+      {
+        // it should not happen that we face a shortCount
+        // or error
+        RETURN(-1);
+        return -1;
+      }
     }
     #if defined(DEBUG)
     else if(outLength > B64DEC_BUF/4*3)
@@ -691,6 +709,12 @@ long base64decode_file(FILE *in, FILE *out,
     // increase the decodedChars counter
     decodedChars += outLength;
   }
+
+  // if there was a problem during
+  // the decoding phase we go and warn the user with a
+  // return value of -2
+  if(problemDuringDecode)
+    decodedChars = -2;
 
   RETURN(decodedChars);
   return decodedChars;

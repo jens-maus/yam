@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-12-11  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c, YAM_MI.c: YAM will now display even partly base64 decoded MIME
+      parts if they are considered as readable text. This may be the case
+      where base64 encoded mail parts have been malformed. However, YAM will
+      throw out a warning to the user to let him know that not everything
+      of the mail may show up (correctly).
+    * YAM.c: bumped minimum required version of TextEditor.mcc to 15.17 to
+      make sure the users doesn't use a buggy version of TextEditor.mcc
+      causing unnecessary bugreports to be sent to the YAM project.
+
 2005-12-03  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: as some mail clients seems to misinterpret RFC 2045 and send

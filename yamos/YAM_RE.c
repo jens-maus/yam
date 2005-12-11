@@ -1138,7 +1138,25 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
         if(decoded > 0)
           decodeResult = 1;
         else
-          ER_NewError(GetStr(MSG_ER_UnexpEOFB64));
+        {
+          // now we check whether the part we decoded was
+          // a printable one, and if so we have to just throw a warning at
+          // the user abour the problem and still set the decodeResult to 1
+          if(rp->Printable)
+          {
+            ER_NewError(GetStr(MSG_ER_B64DECTRUNCTXT), rp->Nr, rp->rmData->readFile);
+
+            decodeResult = 1;
+          }
+          else
+          {
+            // if that part was not a printable/viewable one we
+            // have to make sure decode Result is set to 0 to signal
+            // the caller that it should not expect that the decoded part
+            // is valid
+            ER_NewError(GetStr(MSG_ER_B64DECTRUNC), rp->Nr, rp->rmData->readFile);
+          }
+        }
       }
       break;
 
