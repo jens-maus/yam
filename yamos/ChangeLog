@@ -7,6 +7,10 @@ $Source$
 
 2005-12-12  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c,YAM_CO.c,YAM_global.c: fixed bug #1378621 where we did incorrectly
+      use "Application" instead of "ApplicationBase" for the basetype of
+      application.library. This caused the compilation to fail with the public
+      OS4 SDK available.
     * YAM_MI.c: fixed a serious bug in the uuencoding/decoding routines where
       we used way too small buffers for handling uuencoded text. This caused
       memory areas to be overwritten, resulting in an unstable/crashing YAM.

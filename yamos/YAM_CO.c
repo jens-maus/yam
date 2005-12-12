@@ -1076,7 +1076,7 @@ void CO_SetDefaults(struct Config *co, int page)
       // depending on the operating system we set the AppIcon
       // and docky icon defaults different
       #if defined(__amigaos4__)
-      if(Application)
+      if(ApplicationBase)
       {
         co->DockyIcon = TRUE;
         co->WBAppIcon = FALSE;

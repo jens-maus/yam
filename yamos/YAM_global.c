@@ -127,7 +127,7 @@ struct Library* GfxBase       = NULL;
 struct Library* LayersBase    = NULL;
 struct Library* DiskfontBase  = NULL;
 #if defined(__amigaos4__)
-struct Library* Application   = NULL; // application.library
+struct Library* ApplicationBase = NULL; // application.library
 #endif
 
 /* AmigaOS4 style interfaces */

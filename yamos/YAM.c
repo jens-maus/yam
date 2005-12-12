@@ -845,7 +845,7 @@ static void Terminate(void)
    if(G->applicationID > 0)
      UnregisterApplication(G->applicationID, NULL);
 
-   CLOSELIB(Application,   IApplication);
+   CLOSELIB(ApplicationBase, IApplication);
    #endif
 
    // on OS4 we close the Interfaces now
@@ -1123,7 +1123,7 @@ static void Initialise2(void)
    // before we go and create the first MUI windows
    // we register the application to application.library
    #if defined(__amigaos4__)
-   if(Application)
+   if(ApplicationBase)
    {
      struct ApplicationIconInfo aii;
 
@@ -1371,7 +1371,7 @@ static void Initialise(BOOL hidden)
    // and will be used to notify YAM of certain events and also manage
    // the docky icon accordingly.
    #if defined(__amigaos4__)
-   INITLIB("application.library", 50, 0, &Application, "application", &IApplication, FALSE);
+   INITLIB("application.library", 50, 0, &ApplicationBase, "application", &IApplication, FALSE);
    #endif
 
    // Lets check for the correct Toolbar.mcc version (minimum 15.12 because earlier versions are too buggy)
