@@ -87,10 +87,10 @@ static const unsigned char index_hex[128] =
 #define QPENC_BUF   4096  // bytes to use as a quoted-printable file encoding buffer
 #define QPDEC_BUF   4096  // bytes to use as a quoted-printable file decoding buffer
 
-#define UUENC_IWIDTH 45                     // number of unencoded input chars
-#define UUENC_OWIDTH (UUENC_IWIDTH*8/6)     // number of final output chars after encoding
-#define UUENC_IBUF   (UUENC_IWIDTH*100)     // bytes to use as a uucode input encoding buffer
-#define UUENC_OBUF   ((UUENC_OWIDTH+4)*80)  // bytes to use as a uucode output encoding buffer
+#define UUENC_OWIDTH (60+3)                 // (60+3) length of the output string: +3 for len+checksum+newline char
+#define UUENC_IWIDTH ((UUENC_OWIDTH-3)/4*3) // (45)   input length of data that should be uuencoded
+#define UUENC_OBUF   (UUENC_OWIDTH*100)     // (6200) bytes to use as a uucode output buffer
+#define UUENC_IBUF   (UUENC_IWIDTH*100)     // (4500) bytes to use as a uucode input buffer
 #define UUDEC_IBUF   UUENC_OBUF             // bytes to use as a uucode input decoding buffer
 #define UUDEC_OBUF   UUENC_IBUF             // bytes to use as a uucode output decoding buffer
 #define UUDEC_BUF    4096                   // bytes to use as a uucode file decoding buffer
@@ -1259,6 +1259,10 @@ long uuencode_file(FILE *in, FILE *out)
          eof_reached == TRUE)
       {
         size_t todo = optr-outbuffer;
+
+        // make sure that we haven't overwritten the outbuffer
+        // or otherwise some memory will be corrupted for sure.
+        ASSERT(todo <= UUENC_OBUF);
 
         // now we do a binary write of the data
         if(fwrite(outbuffer, 1, todo, out) != todo)
