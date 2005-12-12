@@ -620,6 +620,8 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 {
    FILE *ifh;
 
+   ENTER();
+
    if ((ifh = fopen(part->Filename, "r")))
    {
       switch (part->EncType)
@@ -677,6 +679,8 @@ static void EncodePart(FILE *ofh, struct WritePart *part)
 
       fclose(ifh);
    }
+
+   LEAVE();
 }
 
 ///
@@ -976,10 +980,15 @@ static const char *PGPwarn  =
   "mail reader doesn't support MIME/PGP as specified in RFC 2015, or\n"
   "the message was encrypted for someone else. To read the encrypted\n"
   "message, run the next body part through Pretty Good Privacy.\n\n";
+
 static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
 {
    struct WritePart *p;
+
+   ENTER();
+
    fprintf(fh, "Content-type: multipart/report; report-type=disposition-notification; boundary=\"%s\"\n\n", boundary);
+
    for (p = comp->FirstPart; p; p = p->Next)
    {
       fprintf(fh, "\n--%s\n", boundary);
@@ -988,6 +997,8 @@ static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
       EncodePart(fh, p);
    }
    fprintf(fh, "\n--%s--\n\n", boundary);
+
+   LEAVE();
 }
 
 ///
@@ -1069,6 +1080,8 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
    char *ids = AllocStrBuf(SIZE_DEFAULT), pgpfile[SIZE_PATHFILE], options[SIZE_LARGE];
    struct TempFile *tf, *tf2;
 
+   ENTER();
+
    pgppart.Filename = pgpfile; *pgpfile = 0;
    pgppart.EncType = ENC_NONE;
    if((sec == SEC_ENCRYPT) || (sec == SEC_BOTH))
@@ -1130,6 +1143,8 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
    fprintf(fh, "\n--%s--\n\n", boundary);
    FreeStrBuf(ids);
    PGPClearPassPhrase(!success);
+
+   RETURN(success);
    return success;
 }
 
@@ -1138,18 +1153,30 @@ static BOOL WR_ComposePGP(FILE *fh, struct Compose *comp, char *boundary)
 //  Assembles a multipart message
 static void WR_ComposeMulti(FILE *fh, struct Compose *comp, char *boundary)
 {
-   struct WritePart *p;
-   fprintf(fh, "Content-type: multipart/mixed; boundary=\"%s\"\n\n", boundary);
-   fputs(MIMEwarn, fh);
-   for (p = comp->FirstPart; p; p = p->Next)
-   {
-      fprintf(fh, "\n--%s\n", boundary);
-      WriteContentTypeAndEncoding(fh, p);
-      if (comp->Security == SEC_SENDANON) WR_Anonymize(fh, comp->MailTo);
-      fputs("\n", fh);
-      EncodePart(fh, p);
-   }
-   fprintf(fh, "\n--%s--\n\n", boundary);
+  struct WritePart *p;
+
+  ENTER();
+
+  fprintf(fh, "Content-type: multipart/mixed; boundary=\"%s\"\n\n", boundary);
+  fputs(MIMEwarn, fh);
+
+  for(p = comp->FirstPart; p; p = p->Next)
+  {
+    fprintf(fh, "\n--%s\n", boundary);
+
+    WriteContentTypeAndEncoding(fh, p);
+
+    if(comp->Security == SEC_SENDANON)
+      WR_Anonymize(fh, comp->MailTo);
+
+    fputs("\n", fh);
+
+    EncodePart(fh, p);
+  }
+
+  fprintf(fh, "\n--%s--\n\n", boundary);
+
+  LEAVE();
 }
 
 ///
@@ -1163,6 +1190,8 @@ BOOL WriteOutMessage(struct Compose *comp)
    struct WritePart *firstpart = comp->FirstPart;
    char boundary[SIZE_DEFAULT], options[SIZE_DEFAULT], *rcptto;
 
+   ENTER();
+
    if (comp->Mode == NEW_BOUNCE)
    {
       if (comp->DelSend) EmitHeader(fh, "X-YAM-Options", "delsent");
@@ -1170,11 +1199,20 @@ BOOL WriteOutMessage(struct Compose *comp)
    }
    else if (comp->Mode == NEW_SAVEDEC)
    {
-      if (!WR_SaveDec(fh, comp)) return FALSE;
-      else goto mimebody;
+      if(!WR_SaveDec(fh, comp))
+      {
+        RETURN(FALSE);
+        return FALSE;
+      }
+      else
+        goto mimebody;
    }
 
-   if (!firstpart) return FALSE;
+   if(!firstpart)
+   {
+     RETURN(FALSE);
+     return FALSE;
+   }
 
    /* encrypted multipart message requested? */
    if (firstpart->Next && comp->Security > SEC_NONE  && comp->Security <= SEC_BOTH)
@@ -1205,7 +1243,8 @@ BOOL WriteOutMessage(struct Compose *comp)
                comp->FirstPart->ContentType = "message/rfc822";    /* the only part is an email message */
                comp->FirstPart->Filename = tf->Filename;           /* set filename to tempfile */
                comp->Signature = 0;                                /* only use sig in enclosed mail */
-            } else
+            }
+            else
             {
                /* no errormsg here - the window probably won't open anyway... */
                DisplayBeep(NULL);
@@ -1213,13 +1252,16 @@ BOOL WriteOutMessage(struct Compose *comp)
                comp->Security = 0;          /* switch off security */
                /* we'll most likely get more errors further down :( */
             }
-         } else
+         }
+         else
          {
             ER_NewError(GetStr(MSG_ER_PGPMultipart));
             comp->Security = 0;
          }
+
          fclose(tfh);
-      } else
+      }
+      else
       {
          ER_NewError(GetStr(MSG_ER_PGPMultipart));
          comp->Security = 0;
@@ -1274,6 +1316,8 @@ mimebody:
       success = TRUE;
    }
    CloseTempFile(tf);
+
+   RETURN(success);
    return success;
 }
 
