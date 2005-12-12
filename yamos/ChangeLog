@@ -7,6 +7,8 @@ $Source$
 
 2005-12-12  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_mail_lex.l: fixed bug #1369169 where an URL with a hexadecimal
+      escape sequence at the end wasn't correctly identified as such.
     * YAM.c,YAM_CO.c,YAM_global.c: fixed bug #1378621 where we did incorrectly
       use "Application" instead of "ApplicationBase" for the basetype of
       application.library. This caused the compilation to fail with the public
