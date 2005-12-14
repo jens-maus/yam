@@ -9,7 +9,7 @@ $Source$
 
     * classes/AttachmentGroup.c: fixed a possible crash bug which occurred when
       using Arexx functions to open a readwindow in "QUIET" mode. There the
-      group was querying _font(obj) which in fact was valid at that time.
+      group was querying _font(obj) which in fact wasn't valid at that time.
 
 2005-12-13  Jens Langner <Jens.Langner@light-speed.de>
 
