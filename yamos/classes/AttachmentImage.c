@@ -132,6 +132,8 @@ MakeStaticHook(SelectionHook, SelectionFunc);
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+	ENTER();
+
 	if((obj = DoSuperNew(cl, obj,
 			MUIA_FillArea,		FALSE, // do not care about background filling
 		TAG_MORE, inittags(msg))))
@@ -164,6 +166,7 @@ OVERLOAD(OM_NEW)
 		}
 	}
 
+	RETURN((ULONG)obj);
 	return (ULONG)obj;
 }
 ///

@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-12-14  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/AttachmentGroup.c: fixed a possible crash bug which occurred when
+      using Arexx functions to open a readwindow in "QUIET" mode. There the
+      group was querying _font(obj) which in fact was valid at that time.
+
+2005-12-13  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_mail_lex.l: another minor twirk to the URL recognition routines of
+      YAM. Now it also successfully recognize URI locators ending with a "=".
+
 2005-12-12  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l: fixed bug #1369169 where an URL with a hexadecimal

@@ -249,12 +249,15 @@ enum { AMEN_DISPLAY=100, AMEN_SAVEAS, AMEN_PRINT, AMEN_SAVEALL, AMEN_SAVESEL, AM
 /// OVERLOAD(OM_NEW)
 OVERLOAD(OM_NEW)
 {
+	ENTER();
+
 	obj = DoSuperNew(cl, obj,
 										MUIA_Font,						 MUIV_Font_Tiny,
 										MUIA_Group_LayoutHook, &LayoutHook,
 										MUIA_ContextMenu,			 TRUE,
 									TAG_MORE, inittags(msg));
 
+	RETURN((ULONG)obj);
 	return (ULONG)obj;
 }
 ///
@@ -593,8 +596,8 @@ DECLARE(Refresh) // struct Part *firstPart
 			Object *newImage = AttachmentImageObject,
 													 MUIA_CycleChain,								 TRUE,
 													 MUIA_AttachmentImage_MailPart,  rp,
-													 MUIA_AttachmentImage_MaxHeight, TEXTROWS*_font(obj)->tf_YSize,
-													 MUIA_AttachmentImage_MaxWidth,	 TEXTROWS*_font(obj)->tf_YSize,
+													 MUIA_AttachmentImage_MaxHeight, _font(obj) ? TEXTROWS*_font(obj)->tf_YSize : TAG_IGNORE,
+													 MUIA_AttachmentImage_MaxWidth,	 _font(obj) ? TEXTROWS*_font(obj)->tf_YSize : TAG_IGNORE,
 												 End;
 
 			// connect some notifies which we might be interested in

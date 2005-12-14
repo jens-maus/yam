@@ -2946,6 +2946,8 @@ HOOKPROTONHNO(ClosedReadWindowFunc, void, struct ReadMailData **arg)
 {
   struct ReadMailData *rmData = *arg;
 
+  ENTER();
+
   // only if this is not a close operation because the application
   // is getting iconified we really cleanup our readmail data
   if(xget(G->App, MUIA_Application_Iconified) == FALSE)
@@ -2959,6 +2961,8 @@ HOOKPROTONHNO(ClosedReadWindowFunc, void, struct ReadMailData **arg)
     // calls the CleanupReadMailData to clean everything else up
     CleanupReadMailData(rmData, TRUE);
   }
+
+  LEAVE();
 }
 MakeStaticHook(ClosedReadWindowHook, ClosedReadWindowFunc);
 ///
