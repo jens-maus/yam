@@ -2940,32 +2940,6 @@ void RE_ClickedOnMessage(char *address)
 ///
 
 /*** GUI ***/
-/// ClosedReadWindowHook()
-//  Hook that will be called as soon as a read window is closed
-HOOKPROTONHNO(ClosedReadWindowFunc, void, struct ReadMailData **arg)
-{
-  struct ReadMailData *rmData = *arg;
-
-  ENTER();
-
-  // only if this is not a close operation because the application
-  // is getting iconified we really cleanup our readmail data
-  if(xget(G->App, MUIA_Application_Iconified) == FALSE)
-  {
-    // check if this rmData is the current active Rexx background
-    // processing one and if so set the ptr to NULL to signal the rexx
-    // commands that their active window was closed
-    if(rmData == G->ActiveRexxRMData)
-      G->ActiveRexxRMData = NULL;
-
-    // calls the CleanupReadMailData to clean everything else up
-    CleanupReadMailData(rmData, TRUE);
-  }
-
-  LEAVE();
-}
-MakeStaticHook(ClosedReadWindowHook, ClosedReadWindowFunc);
-///
 /// CreateReadWindow()
 // Function that creates a new ReadWindow object and returns
 // the referencing ReadMailData structure which was created
@@ -3011,16 +2985,6 @@ struct ReadMailData *CreateReadWindow(BOOL forceNewWindow)
     if(rmData && rmData->readWindow == newReadWindow)
     {
       D(DBF_GUI, "Read window created: 0x%08lx", rmData);
-
-      // before we continue we make sure we connect a notify to the new window
-      // so that we get informed if the window is closed and therefore can be
-      // disposed
-      // However, please note that because we do kill the window upon closing it
-      // we have to use MUIM_Application_PushMethod instead of calling the ClosedReadWindowHook
-      // directly
-      DoMethod(newReadWindow, MUIM_Notify, MUIA_Window_Open, FALSE,
-                              MUIV_Notify_Application, 6,
-                                MUIM_Application_PushMethod, G->App, 3, MUIM_CallHook, &ClosedReadWindowHook, rmData);
 
       RETURN(rmData);
       return rmData;

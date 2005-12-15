@@ -829,7 +829,8 @@ HOOKPROTONHNONP(MA_ReadMessage, void)
 
         // check if the active mail is already open in another read
         // window, and if so we just bring it to the front.
-        if(rmData->readWindow &&
+        if(rmData != G->ActiveRexxRMData &&
+           rmData->readWindow &&
            rmData->mail == mail)
         {
           DoMethod(rmData->readWindow, MUIM_Window_ToFront);

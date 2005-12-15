@@ -1891,8 +1891,8 @@ void rx_readclose( UNUSED struct RexxHost *host, struct rxd_readclose **rxd, lon
       {
          struct ReadMailData *rmData = G->ActiveRexxRMData;
 
-         if(rmData && rmData->readWindow)
-           set(rmData->readWindow, MUIA_Window_Open, FALSE);
+         if(rmData)
+           CleanupReadMailData(rmData, TRUE);
          else
            rd->rc = RETURN_ERROR;
       }
