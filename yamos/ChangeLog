@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-12-17  Jens Langner <Jens.Langner@light-speed.de>
+
+    * classes/MainMailListGroup.c: now the column widths of the normal mail list
+      is always copied over to the quickview one and vice versa. This should sync
+      both listview a bit better and also fix the problem where one objectID for
+      both listview's caused problems in permanently saving the column width.
+
 2005-12-14  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c, YAM_RE.c, YAM_rexx_rxif.c, classes/ReadWindow.c: fixed another

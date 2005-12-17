@@ -72,11 +72,8 @@ OVERLOAD(OM_NEW)
     End,
     Child, NListviewObject,
 			 MUIA_NListview_NList, quickviewList = MainMailListObject,
-          MUIA_ObjectID,                   MAKE_ID('N','L','0','2'),
 					MUIA_ContextMenu,                C->MessageCntMenu ? MUIV_NList_ContextMenu_Always : MUIV_NList_ContextMenu_Never,
 					MUIA_NList_DragType,             MUIV_NList_DragType_Default,
-          MUIA_NList_Exports,              MUIV_NList_Exports_ColWidth|MUIV_NList_Exports_ColOrder,
-          MUIA_NList_Imports,              MUIV_NList_Imports_ColWidth|MUIV_NList_Imports_ColOrder,
        End,
     End,
 
@@ -343,25 +340,35 @@ DECLARE(SwitchToList) // enum MainListType type
 {
 	GETDATA;
 
+	ENTER();
+
 	// no matter what, we always clear the quickview list on a switch.
 	if(data->activeList != msg->type)
 	{
+		int i;
+
+		// before we switch the activePage of the group object we
+		// have to set the individual column width of the two NLists as we only save
+		// the width of one.
+		for(i=0; i < MACOLNUM; i++)
+		{
+			LONG colWidth = DoMethod(data->mainListObjects[data->activeList], MUIM_NList_ColWidth, i, MUIV_NList_ColWidth_Get);
+
+			// set the columnwidth of the LT_QUICKVIEW maillist also the same
+			DoMethod(data->mainListObjects[msg->type], MUIM_NList_ColWidth, i, colWidth != -1 ? colWidth : MUIV_NList_ColWidth_Default);
+		}
+
 		// switch the page of the group now
 		set(obj, MUIA_Group_ActivePage, msg->type);
 
 		// set the new maillist group as the default object of the window it belongs to
 		// but only if not another one is yet active
-		if(msg->type == LT_QUICKVIEW)
-		{
-			if((Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListObjects[LT_MAIN])
-				set(_win(obj), MUIA_Window_DefaultObject, data->mainListObjects[LT_QUICKVIEW]);
-		}
-		else
+		if((Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListObjects[data->activeList])
+			set(_win(obj), MUIA_Window_DefaultObject, data->mainListObjects[msg->type]);
+
+		if(msg->type == LT_MAIN)
 		{
 			struct Folder *curFolder = FO_GetCurrentFolder();
-
-			if((Object*)xget(_win(obj), MUIA_Window_DefaultObject) == data->mainListObjects[LT_QUICKVIEW])
-				set(_win(obj), MUIA_Window_DefaultObject, data->mainListObjects[LT_MAIN]);
 
 			// in case we are switching from LT_QUICKVIEW->LT_MAIN we go and set the
 			// last active mail as well.
@@ -376,6 +383,7 @@ DECLARE(SwitchToList) // enum MainListType type
 
 	DoMethod(data->mainListObjects[LT_QUICKVIEW], MUIM_NList_Clear);
 
+	RETURN(0);
 	return 0;
 }
 
