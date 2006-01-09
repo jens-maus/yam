@@ -226,8 +226,8 @@ Sökväg
 ;#DEF Path
 ;#SET (57//)
 MSG_Copyright1
-E-postprogram i öppen källkod för Amiga\n\nCopyright (C) 1995-2000 Marcel Beck\nCopyright (C) 2000-2005 YAM Open Source Team
-;#DEF Open Source E-mail package for the Amiga\n\nCopyright (C) 1995-2000 Marcel Beck\nCopyright (C) 2000-2005 YAM Open Source Team
+E-postprogram i öppen källkod för Amiga\n\nCopyright (C) 1995-2000 Marcel Beck\nCopyright (C) 2000-2006 YAM Open Source Team
+;#DEF Open Source E-mail package for the Amiga\n\nCopyright (C) 1995-2000 Marcel Beck\nCopyright (C) 2000-2006 YAM Open Source Team
 ;#SET (59//)
 MSG_Version
 Version:

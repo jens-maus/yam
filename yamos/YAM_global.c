@@ -2,7 +2,7 @@
 
  YAM - Yet Another Mailer
  Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
- Copyright (C) 2000-2005 by YAM Open Source Team
+ Copyright (C) 2000-2006 by YAM Open Source Team
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ static const char USED_VAR yam_stack_size[] = "$STACK:65536\n";  // Shell v45 an
 #ifndef __YAM_BUILDID
 #define __YAM_BUILDID   ""
 #endif
-#define __YAM_COPYRIGHT "Copyright (c) 2000-2005 YAM Open Source Team"
+#define __YAM_COPYRIGHT "Copyright (C) 2000-2006 YAM Open Source Team"
 
 const char * const yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
 const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;

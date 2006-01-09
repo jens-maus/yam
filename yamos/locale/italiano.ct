@@ -278,12 +278,12 @@ Directory
 MSG_Copyright1
 Programma open source di posta elettronica per Amiga\n\
 \n\
-Copyright © 1995-2000 Marcel Beck\n\
-Copyright © 2000-2005 YAM Open Source Team
+Copyright (C) 1995-2000 Marcel Beck\n\
+Copyright (C) 2000-2006 YAM Open Source Team
 ; Open Source E-mail package for the Amiga\n\
 ; \n\
-; Copyright © 1995-2000 Marcel Beck\n\
-; Copyright © 2000-2001 YAM Open Source Team
+; Copyright (C) 1995-2000 Marcel Beck\n\
+; Copyright (C) 2000-2006 YAM Open Source Team
 ;
 MSG_Version
 Versione:

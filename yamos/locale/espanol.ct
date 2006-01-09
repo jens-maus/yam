@@ -247,12 +247,12 @@ Directorio
 ;
 MSG_Copyright1
 Programa Código Abierto de correo electrónico para Amiga\n\n\
-Copyright © 1995-2000 de Marcel Beck\n\
-Copyright © 2000-2004 del equipo YAM Open Source
+Copyright (C) 1995-2000 de Marcel Beck\n\
+Copyright (C) 2000-2004 del equipo YAM Open Source
 ; Open Source E-mail package for the Amiga\n\
 ; \n\
-; Copyright © 1995-2000 Marcel Beck\n\
-; Copyright © 2000-2003 YAM Open Source Team
+; Copyright (C) 1995-2000 Marcel Beck\n\
+; Copyright (C) 2000-2006 YAM Open Source Team
 ;
 MSG_Version
 Versión:

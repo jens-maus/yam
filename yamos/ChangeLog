@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2005-01-09  Jens Langner <Jens.Langner@light-speed.de>
+
+    * housekeeping: bumped the copyright year to 2006 now that a new year has
+      begun. Lets see how fast we can proceed this year so that we will see
+      a new full release hopefully in Q1 of 2006.
+	 
 2005-12-17  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/MainMailListGroup.c: now the column widths of the normal mail list
