@@ -3238,48 +3238,48 @@ MSG_AB_ModifiedGads
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\e8Becenév
-; \e8Alias
+Becenév
+; Alias
 ;
 MSG_AB_TitleName
-\e8Név
-; \e8Name
+Név
+; Name
 ;
 MSG_AB_TitleDescription
-\e8Leírás
-; \e8Description
+Leírás
+; Description
 ;
 MSG_AB_TitleAddress
-\e8Cím
-; \e8Address
+Cím
+; Address
 ;
 MSG_AB_TitleStreet
-\e8Utca
-; \e8Street
+Utca
+; Street
 ;
 MSG_AB_TitleCity
-\e8Város
-; \e8City
+Város
+; City
 ;
 MSG_AB_TitleCountry
-\e8Ország
-; \e8Country
+Ország
+; Country
 ;
 MSG_AB_TitlePhone
-\e8Telefon
-; \e8Phone
+Telefon
+; Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Születési dátum
-; \e8Birth date
+Születési dátum
+; Birth date
 ;
 MSG_AB_TitlePGPId
-\e8PGP Id
-; \e8PGP Id
+PGP Id
+; PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Honlap
-; \e8Homepage
+Honlap
+; Homepage
 ;
 ;
 ; Module AB - Window
@@ -4215,24 +4215,24 @@ Fájl beillesztése...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\e8Fájl neve
-; \e8File name
+Fájl neve
+; File name
 ;
 MSG_WR_TitleSize
-\e8Méret
-; \e8Size
+Méret
+; Size
 ;
 MSG_WR_TitleContents
-\e8Tartalom
-; \e8Contents
+Tartalom
+; Contents
 ;
 MSG_WR_TitleEncoding
-\e8Kódolás
-; \e8Enc.
+Kódolás
+; Enc.
 ;
 MSG_WR_TitleDescription
-\e8Leírás
-; \e8Description
+Leírás
+; Description
 ;
 ;
 ; Module WR - Window

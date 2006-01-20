@@ -3343,48 +3343,48 @@ MSG_AB_ModifiedGads
 ;Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\x1B8Псевдоним
-;\e8Alias
+Псевдоним
+;Alias
 ;
 MSG_AB_TitleName
-\x1B8Имя
-;\e8Name
+Имя
+;Name
 ;
 MSG_AB_TitleDescription
-\x1B8Описание
-;\e8Description
+Описание
+;Description
 ;
 MSG_AB_TitleAddress
-\x1B8Адрес
-;\e8Address
+Адрес
+;Address
 ;
 MSG_AB_TitleStreet
-\x1B8Улица
-;\e8Street
+Улица
+;Street
 ;
 MSG_AB_TitleCity
-\x1B8Город
-;\e8City
+Город
+;City
 ;
 MSG_AB_TitleCountry
-\x1B8Страна
-;\e8Country
+Страна
+;Country
 ;
 MSG_AB_TitlePhone
-\x1B8Телефон
-;\e8Phone
+Телефон
+;Phone
 ;
 MSG_AB_TitleBirthDate
-\x1B8Дата рождения
-;\e8Birth date
+Дата рождения
+;Birth date
 ;
 MSG_AB_TitlePGPId
-\x1B8PGP Id
-;\e8PGP Id
+PGP Id
+;PGP Id
 ;
 MSG_AB_TitleHomepage
-\x1B8Домашняя страница
-;\e8Homepage
+Домашняя страница
+;Homepage
 ;
 ;Module AB - Window
 ;
@@ -4387,24 +4387,24 @@ MSG_WR_InsertFile
 ;Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\x1B8Имя файла
-;\e8File name
+Имя файла
+;File name
 ;
 MSG_WR_TitleSize
-\x1B8Размер
-;\e8Size
+Размер
+;Size
 ;
 MSG_WR_TitleContents
-\x1B8Содержание
-;\e8Contents
+Содержание
+;Contents
 ;
 MSG_WR_TitleEncoding
-\x1B8Шифрование
-;\e8Enc.
+Шифрование
+;Enc.
 ;
 MSG_WR_TitleDescription
-\x1B8Описание
-;\e8Description
+Описание
+;Description
 ;
 ;Module WR - Window
 ;

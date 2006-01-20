@@ -3221,48 +3221,48 @@ MSG_AB_ModifiedGads
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\e8Alias
-; \e8Alias
+Alias
+; Alias
 ;
 MSG_AB_TitleName
-\e8Ime
-; \e8Name
+Ime
+; Name
 ;
 MSG_AB_TitleDescription
-\e8Opis
-; \e8Description
+Opis
+; Description
 ;
 MSG_AB_TitleAddress
-\e8Adresa
-; \e8Address
+Adresa
+; Address
 ;
 MSG_AB_TitleStreet
-\e8Ulica
-; \e8Street
+Ulica
+; Street
 ;
 MSG_AB_TitleCity
-\e8Grad
-; \e8City
+Grad
+; City
 ;
 MSG_AB_TitleCountry
-\e8Zemlja
-; \e8Country
+Zemlja
+; Country
 ;
 MSG_AB_TitlePhone
-\e8Telefon
-; \e8Phone
+Telefon
+; Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Datum roâenja
-; \e8Birth date
+Datum roâenja
+; Birth date
 ;
 MSG_AB_TitlePGPId
-\e8PGP ID
-; \e8PGP Id
+PGP ID
+; PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Strana na Mreäi
-; \e8Homepage
+Strana na Mreäi
+; Homepage
 ;
 ; Module AB - Window
 ;
@@ -4161,24 +4161,24 @@ Ubaci fajl...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\e8Ime fajla
-; \e8File name
+Ime fajla
+; File name
 ;
 MSG_WR_TitleSize
-\e8Veliàina
-; \e8Size
+Veliàina
+; Size
 ;
 MSG_WR_TitleContents
-\e8Sadräaj
-; \e8Contents
+Sadräaj
+; Contents
 ;
 MSG_WR_TitleEncoding
-\e8Kod.
-; \e8Enc.
+Kod.
+; Enc.
 ;
 MSG_WR_TitleDescription
-\e8Opis
-; \e8Description
+Opis
+; Description
 ;
 ; Module WR - Window
 ;

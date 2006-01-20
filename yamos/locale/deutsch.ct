@@ -3166,48 +3166,48 @@ MSG_AB_ModifiedGads
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\e8Alias
-; \e8Alias
+Alias
+; Alias
 ;
 MSG_AB_TitleName
-\e8Name
-; \e8Name
+Name
+; Name
 ;
 MSG_AB_TitleDescription
-\e8Beschreibung
-; \e8Description
+Beschreibung
+; Description
 ;
 MSG_AB_TitleAddress
-\e8Adresse
-; \e8Address
+Adresse
+; Address
 ;
 MSG_AB_TitleStreet
-\e8Straße
-; \e8Street
+Straße
+; Street
 ;
 MSG_AB_TitleCity
-\e8Stadt
-; \e8City
+Stadt
+; City
 ;
 MSG_AB_TitleCountry
-\e8Land
-; \e8Country
+Land
+; Country
 ;
 MSG_AB_TitlePhone
-\e8Telefon
-; \e8Phone
+Telefon
+; Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Geburtsdatum
-; \e8Birth date
+Geburtsdatum
+; Birth date
 ;
 MSG_AB_TitlePGPId
-\e8PGP-ID
-; \e8PGP Id
+PGP-ID
+; PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Homepage
-; \e8Homepage
+Homepage
+; Homepage
 ;
 ;
 ; Module AB - Window
@@ -4122,24 +4122,24 @@ Datei einfügen...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\e8Dateiname
-; \e8File name
+Dateiname
+; File name
 ;
 MSG_WR_TitleSize
-\e8Größe
-; \e8Size
+Größe
+; Size
 ;
 MSG_WR_TitleContents
-\e8Inhalt
-; \e8Contents
+Inhalt
+; Contents
 ;
 MSG_WR_TitleEncoding
-\e8Kod.
-; \e8Enc.
+Kod.
+; Enc.
 ;
 MSG_WR_TitleDescription
-\e8Beschreibung
-; \e8Description
+Beschreibung
+; Description
 ;
 ;
 ; Module WR - Window

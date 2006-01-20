@@ -3316,48 +3316,48 @@ MSG_AB_ModifiedGads
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\e8Alias
-; \e8Alias
+Alias
+; Alias
 ;
 MSG_AB_TitleName
-\e8Jméno
-; \e8Name
+Jméno
+; Name
 ;
 MSG_AB_TitleDescription
-\e8Popis
-; \e8Description
+Popis
+; Description
 ;
 MSG_AB_TitleAddress
-\e8Adresa
-; \e8Address
+Adresa
+; Address
 ;
 MSG_AB_TitleStreet
-\e8Ulice
-; \e8Street
+Ulice
+; Street
 ;
 MSG_AB_TitleCity
-\e8Mësto
-; \e8City
+Mësto
+; City
 ;
 MSG_AB_TitleCountry
-\e8Zemë
-; \e8Country
+Zemë
+; Country
 ;
 MSG_AB_TitlePhone
-\e8Telefon
-; \e8Phone
+Telefon
+; Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Datum narození
-; \e8Birth date
+Datum narození
+; Birth date
 ;
 MSG_AB_TitlePGPId
-\e8Çíslo PGP klíçe
-; \e8PGP Id
+Çíslo PGP klíçe
+; PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Domovská stránka
-; \e8Homepage
+Domovská stránka
+; Homepage
 ;
 ;
 ; Module AB - Window
@@ -4322,24 +4322,24 @@ Vloùit soubor...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\e8Název souboru
-; \e8File name
+Název souboru
+; File name
 ;
 MSG_WR_TitleSize
-\e8Velikost
-; \e8Size
+Velikost
+; Size
 ;
 MSG_WR_TitleContents
-\e8Typ souboru
-; \e8Contents
+Typ souboru
+; Contents
 ;
 MSG_WR_TitleEncoding
-\e8Kód.
-; \e8Enc.
+Kód.
+; Enc.
 ;
 MSG_WR_TitleDescription
-\e8Popis
-; \e8Description
+Popis
+; Description
 ;
 ;
 ; Module WR - Window

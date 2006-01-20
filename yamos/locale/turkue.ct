@@ -3342,48 +3342,48 @@ MSG_AB_ModifiedGads
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\e8Takma ad
-; \e8Alias
+Takma ad
+; Alias
 ;
 MSG_AB_TitleName
-\e8Ýsim
-; \e8Name
+Ýsim
+; Name
 ;
 MSG_AB_TitleDescription
-\e8Taným
-; \e8Description
+Taným
+; Description
 ;
 MSG_AB_TitleAddress
-\e8Adres
-; \e8Address
+Adres
+; Address
 ;
 MSG_AB_TitleStreet
-\e8Cadde
-; \e8Street
+Cadde
+; Street
 ;
 MSG_AB_TitleCity
-\e8Þehir
-; \e8City
+Þehir
+; City
 ;
 MSG_AB_TitleCountry
-\e8Ülke
-; \e8Country
+Ülke
+; Country
 ;
 MSG_AB_TitlePhone
-\e8Telefon
-; \e8Phone
+Telefon
+; Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Doðum Tarihi
-; \e8Birth date
+Doðum Tarihi
+; Birth date
 ;
 MSG_AB_TitlePGPId
-\e8PGP Id
-; \e8PGP Id
+PGP Id
+; PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Anasayfasý
-; \e8Homepage
+Anasayfasý
+; Homepage
 ;
 ; Module AB - Window
 ;
@@ -4370,24 +4370,24 @@ Dosya yerleþtir...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\e8Dosya ismi
-; \e8File name
+Dosya ismi
+; File name
 ;
 MSG_WR_TitleSize
-\e8Boyut
-; \e8Size
+Boyut
+; Size
 ;
 MSG_WR_TitleContents
-\e8Ýçerik
-; \e8Contents
+Ýçerik
+; Contents
 ;
 MSG_WR_TitleEncoding
-\e8Kod.
-; \e8Enc.
+Kod.
+; Enc.
 ;
 MSG_WR_TitleDescription
-\e8Taným
-; \e8Description
+Taným
+; Description
 ;
 ; Module WR - Window
 ;

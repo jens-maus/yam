@@ -3400,48 +3400,48 @@ MSG_AB_ModifiedGads
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\e8Alias
-; \e8Alias
+Alias
+; Alias
 ;
 MSG_AB_TitleName
-\e8Navn
-; \e8Name
+Navn
+; Name
 ;
 MSG_AB_TitleDescription
-\e8Beskrivelse
-; \e8Description
+Beskrivelse
+; Description
 ;
 MSG_AB_TitleAddress
-\e8Adresse
-; \e8Address
+Adresse
+; Address
 ;
 MSG_AB_TitleStreet
-\e8Gate
-; \e8Street
+Gate
+; Street
 ;
 MSG_AB_TitleCity
-\e8By
-; \e8City
+By
+; City
 ;
 MSG_AB_TitleCountry
-\e8Land
-; \e8Country
+Land
+; Country
 ;
 MSG_AB_TitlePhone
-\e8Telefon
-; \e8Phone
+Telefon
+; Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Fødselsdato
-; \e8Birth date
+Fødselsdato
+; Birth date
 ;
 MSG_AB_TitlePGPId
-\e8PGP ID
-; \e8PGP Id
+PGP ID
+; PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Hjemmeside
-; \e8Homepage
+Hjemmeside
+; Homepage
 ;
 ; Module AB - Window
 ;
@@ -4427,24 +4427,24 @@ Sette inn fil...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\e8Fil navn
-; \e8File name
+Fil navn
+; File name
 ;
 MSG_WR_TitleSize
-\e8Strørrelse
-; \e8Size
+Strørrelse
+; Size
 ;
 MSG_WR_TitleContents
-\e8Innhold
-; \e8Contents
+Innhold
+; Contents
 ;
 MSG_WR_TitleEncoding
-\e8koder
-; \e8Enc.
+koder
+; Enc.
 ;
 MSG_WR_TitleDescription
-\e8Beskrivelse
-; \e8Description
+Beskrivelse
+; Description
 ;
 ; Module WR - Window
 ;

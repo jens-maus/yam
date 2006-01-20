@@ -998,9 +998,10 @@ MakeStaticHook(AB_LV_DesFuncHook, AB_LV_DesFunc);
 /*** AB_LV_DspFunc - Address book listview display hook ***/
 HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
 {
-   static char dispal[SIZE_DEFAULT];
+   if(msg == NULL)
+     return 0;
 
-   if (msg && msg->TreeNode)
+   if(msg->TreeNode)
    {
       struct ABEntry *entry = msg->TreeNode->tn_User;
 
@@ -1022,6 +1023,7 @@ HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
          {
             case AET_LIST:
             {
+              static char dispal[SIZE_DEFAULT];
               sprintf(msg->Array[0] = dispal, "\033o[0] %s", entry->Alias);
             }
             break;
@@ -1053,6 +1055,7 @@ HOOKPROTONHNO(AB_LV_DspFunc, long, struct MUIP_NListtree_DisplayMessage *msg)
       msg->Array[9] = GetStr(MSG_AB_TitlePGPId);
       msg->Array[10]= GetStr(MSG_AB_TitleHomepage);
    }
+
    return 0;
 }
 MakeHook(AB_LV_DspFuncHook, AB_LV_DspFunc);
@@ -1249,7 +1252,7 @@ struct AB_ClassData *AB_New(void)
                   MUIA_NListtree_DestructHook,    &AB_LV_DesFuncHook,
                   MUIA_NListtree_DisplayHook,     &AB_LV_DspFuncHook,
                   MUIA_NListtree_EmptyNodes,      TRUE,
-                  MUIA_Font,                      C->FixedFontList ? MUIV_Font_Fixed : MUIV_Font_List,
+                  MUIA_Font,                      C->FixedFontList ? MUIV_NList_Font_Fixed : MUIV_NList_Font,
                End,
             End,
          End,

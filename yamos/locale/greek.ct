@@ -2882,48 +2882,48 @@ MSG_AB_ModifiedGads
 ;*_Save|_Use|_Discard changes|_Cancel
 ;
 MSG_AB_TitleAlias
-\e8Ψευδόνυμο
-;\e8Alias
+Ψευδόνυμο
+;Alias
 ;
 MSG_AB_TitleName
-\e8Όνομα
-;\e8Name
+Όνομα
+;Name
 ;
 MSG_AB_TitleDescription
-\e8Περιγραφή
-;\e8Description
+Περιγραφή
+;Description
 ;
 MSG_AB_TitleAddress
-\e8Διεύθυνση
-;\e8Address
+Διεύθυνση
+;Address
 ;
 MSG_AB_TitleStreet
-\e8Οδός
-;\e8Street
+Οδός
+;Street
 ;
 MSG_AB_TitleCity
-\e8Πόλη
-;\e8City
+Πόλη
+;City
 ;
 MSG_AB_TitleCountry
-\e8Χώρα
-;\e8Country
+Χώρα
+;Country
 ;
 MSG_AB_TitlePhone
-\e8Τηλέφωνο
-;\e8Phone
+Τηλέφωνο
+;Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Ημερομηνία Γεννήσεως
-;\e8Birth date
+Ημερομηνία Γεννήσεως
+;Birth date
 ;
 MSG_AB_TitlePGPId
-\e8PGP Id
-;\e8PGP Id
+PGP Id
+;PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Ιστοσελίδα
-;\e8Homepage
+Ιστοσελίδα
+;Homepage
 ;
 MSG_AB_MIFind
 Εύρεση...
@@ -3702,24 +3702,24 @@ MSG_WR_InsertFile
 ;Insert file...
 ;
 MSG_WR_TitleFile
-\e8Όνομα αρχείου
-;\e8File name
+Όνομα αρχείου
+;File name
 ;
 MSG_WR_TitleSize
-\e8Μέγεθος
-;\e8Size
+Μέγεθος
+;Size
 ;
 MSG_WR_TitleContents
-\e8Περιεχόμενα
-;\e8Contents
+Περιεχόμενα
+;Contents
 ;
 MSG_WR_TitleEncoding
-\e8Κωδ.
-;\e8Enc.
+Κωδ.
+;Enc.
 ;
 MSG_WR_TitleDescription
-\e8Περιγραφή
-;\e8Description
+Περιγραφή
+;Description
 ;
 MSG_WR_SecNone
 Καθόλου

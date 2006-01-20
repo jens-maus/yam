@@ -3226,48 +3226,48 @@ MSG_AB_ModifiedGads
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\e8Vzdevek
-; \e8Alias
+Vzdevek
+; Alias
 ;
 MSG_AB_TitleName
-\e8Ime
-; \e8Name
+Ime
+; Name
 ;
 MSG_AB_TitleDescription
-\e8Opis
-; \e8Description
+Opis
+; Description
 ;
 MSG_AB_TitleAddress
-\e8Naslov
-; \e8Address
+Naslov
+; Address
 ;
 MSG_AB_TitleStreet
-\e8Ulica
-; \e8Street
+Ulica
+; Street
 ;
 MSG_AB_TitleCity
-\e8Kraj
-; \e8City
+Kraj
+; City
 ;
 MSG_AB_TitleCountry
-\e8Dr¾ava
-; \e8Country
+Dr¾ava
+; Country
 ;
 MSG_AB_TitlePhone
-\e8Telefon
-; \e8Phone
+Telefon
+; Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Rojstni dan
-; \e8Birth date
+Rojstni dan
+; Birth date
 ;
 MSG_AB_TitlePGPId
-\e8ID PGP
-; \e8PGP Id
+ID PGP
+; PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Domaèa stran
-; \e8Homepage
+Domaèa stran
+; Homepage
 ;
 ;
 ; Module AB - Window
@@ -4194,24 +4194,24 @@ Vstavi datoteko...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\e8Ime datoteke
-; \e8File name
+Ime datoteke
+; File name
 ;
 MSG_WR_TitleSize
-\e8Velikost
-; \e8Size
+Velikost
+; Size
 ;
 MSG_WR_TitleContents
-\e8Vsebina
-; \e8Contents
+Vsebina
+; Contents
 ;
 MSG_WR_TitleEncoding
-\e8Kodiranje
-; \e8Enc.
+Kodiranje
+; Enc.
 ;
 MSG_WR_TitleDescription
-\e8Opis
-; \e8Description
+Opis
+; Description
 ;
 ;
 ; Module WR - Window

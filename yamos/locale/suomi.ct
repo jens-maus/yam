@@ -3012,48 +3012,48 @@ MSG_AB_ModifiedGads
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\e8Alias
-; \e8Alias
+Alias
+; Alias
 ;
 MSG_AB_TitleName
-\e8Nimi
-; \e8Name
+Nimi
+; Name
 ;
 MSG_AB_TitleDescription
-\e8Kuvaus
-; \e8Description
+Kuvaus
+; Description
 ;
 MSG_AB_TitleAddress
-\e8Osoite
-; \e8Address
+Osoite
+; Address
 ;
 MSG_AB_TitleStreet
-\e8Lähiosoite
-; \e8Street
+Lähiosoite
+; Street
 ;
 MSG_AB_TitleCity
-\e8Kaupunki
-; \e8City
+Kaupunki
+; City
 ;
 MSG_AB_TitleCountry
-\e8Maa
-; \e8Country
+Maa
+; Country
 ;
 MSG_AB_TitlePhone
-\e8Puhelin
-; \e8Phone
+Puhelin
+; Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Syntymäpäivä
-; \e8Birth date
+Syntymäpäivä
+; Birth date
 ;
 MSG_AB_TitlePGPId
-\e8PGP-tunnus
-; \e8PGP Id
+PGP-tunnus
+; PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Kotisivu
-; \e8Homepage
+Kotisivu
+; Homepage
 ;
 ; Module AB - Window
 ;
@@ -3864,24 +3864,24 @@ Lisää tiedosto...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\e8Tiedostonimi
-; \e8File name
+Tiedostonimi
+; File name
 ;
 MSG_WR_TitleSize
-\e8Koko
-; \e8Size
+Koko
+; Size
 ;
 MSG_WR_TitleContents
-\e8Sisältö
-; \e8Contents
+Sisältö
+; Contents
 ;
 MSG_WR_TitleEncoding
-\e8Salaus
-; \e8Enc.
+Salaus
+; Enc.
 ;
 MSG_WR_TitleDescription
-\e8Selitys
-; \e8Description
+Selitys
+; Description
 ;
 ; Module WR - Window
 ;

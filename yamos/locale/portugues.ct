@@ -2399,37 +2399,37 @@ MSG_AB_ModifiedGads
 *_Gravar|_Usar|_Ignorar as Alterações|_Cancelar
 ;
 MSG_AB_TitleAlias
-\e8Pseudónimo
+Pseudónimo
 ;
 MSG_AB_TitleName
-\e8Nome
+Nome
 ;
 MSG_AB_TitleDescription
-\e8Descrição
+Descrição
 ;
 MSG_AB_TitleAddress
-\e8Endereço
+Endereço
 ;
 MSG_AB_TitleStreet
-\e8Rua
+Rua
 ;
 MSG_AB_TitleCity
-\e8Cidade
+Cidade
 ;
 MSG_AB_TitleCountry
-\e8País
+País
 ;
 MSG_AB_TitlePhone
-\e8Telefone
+Telefone
 ;
 MSG_AB_TitleBirthDate
-\e8Data de Nascimento
+Data de Nascimento
 ;
 MSG_AB_TitlePGPId
-\e8ID da Chave PGP
+ID da Chave PGP
 ;
 MSG_AB_TitleHomepage
-\e8Página Pessoal
+Página Pessoal
 ;
 MSG_AB_MIFind
 Procurar...
@@ -3100,19 +3100,19 @@ MSG_WR_InsertFile
 Escolha o ficheiro a inserir:
 ;
 MSG_WR_TitleFile
-\e8Nome do Ficheiro
+Nome do Ficheiro
 ;
 MSG_WR_TitleSize
-\e8Tamanho
+Tamanho
 ;
 MSG_WR_TitleContents
-\e8Conteúdo
+Conteúdo
 ;
 MSG_WR_TitleEncoding
-\e8Cod.
+Cod.
 ;
 MSG_WR_TitleDescription
-\e8Descrição
+Descrição
 ;
 MSG_WR_SecNone
 Nenhuma

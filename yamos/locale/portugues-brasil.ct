@@ -2351,37 +2351,37 @@ MSG_AB_ModifiedGads
 *_Salvar|_Usar|_Descartar mudanças|_Cancelar
 ;
 MSG_AB_TitleAlias
-\e8Atalho
+Atalho
 ;
 MSG_AB_TitleName
-\e8Nome
+Nome
 ;
 MSG_AB_TitleDescription
-\e8Descrição
+Descrição
 ;
 MSG_AB_TitleAddress
-\e8Endereço
+Endereço
 ;
 MSG_AB_TitleStreet
-\e8Rua
+Rua
 ;
 MSG_AB_TitleCity
-\e8Cidade
+Cidade
 ;
 MSG_AB_TitleCountry
-\e8País
+País
 ;
 MSG_AB_TitlePhone
-\e8Telefone
+Telefone
 ;
 MSG_AB_TitleBirthDate
-\e8Nascimento
+Nascimento
 ;
 MSG_AB_TitlePGPId
-\e8ID PGP
+ID PGP
 ;
 MSG_AB_TitleHomepage
-\e8Home page
+Home page
 ;
 MSG_AB_MIFind
 Procurar...
@@ -3067,19 +3067,19 @@ MSG_WR_InsertFile
 Inserir arquivo...
 ;
 MSG_WR_TitleFile
-\e8Nome do arquivo
+Nome do arquivo
 ;
 MSG_WR_TitleSize
-\e8Tamanho
+Tamanho
 ;
 MSG_WR_TitleContents
-\e8Conteúdo
+Conteúdo
 ;
 MSG_WR_TitleEncoding
-\e8Cod.
+Cod.
 ;
 MSG_WR_TitleDescription
-\e8Descrição
+Descrição
 ;
 MSG_WR_SecNone
 Nenhuma

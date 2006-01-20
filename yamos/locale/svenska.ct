@@ -2830,48 +2830,48 @@ MSG_AB_ModifiedGads
 ;#DEF *_Save|_Use|_Discard changes|_Cancel
 ;#SET (718//)
 MSG_AB_TitleAlias
-\e8Alias
-;#DEF \e8Alias
+Alias
+;#DEF Alias
 ;#SET (719//)
 MSG_AB_TitleName
-\e8Namn
-;#DEF \e8Name
+Namn
+;#DEF Name
 ;#SET (720//)
 MSG_AB_TitleDescription
-\e8Beskrivning
-;#DEF \e8Description
+Beskrivning
+;#DEF Description
 ;#SET (721//)
 MSG_AB_TitleAddress
-\e8Adress
-;#DEF \e8Address
+Adress
+;#DEF Address
 ;#SET (722//)
 MSG_AB_TitleStreet
-\e8Gata
-;#DEF \e8Street
+Gata
+;#DEF Street
 ;#SET (723//)
 MSG_AB_TitleCity
-\e8Stad
-;#DEF \e8City
+Stad
+;#DEF City
 ;#SET (724//)
 MSG_AB_TitleCountry
-\e8Land
-;#DEF \e8Country
+Land
+;#DEF Country
 ;#SET (725//)
 MSG_AB_TitlePhone
-\e8Telefon
-;#DEF \e8Phone
+Telefon
+;#DEF Phone
 ;#SET (726//)
 MSG_AB_TitleBirthDate
-\e8Födelsedatum
-;#DEF \e8Birth date
+Födelsedatum
+;#DEF Birth date
 ;#SET (727//)
 MSG_AB_TitlePGPId
-\e8PGP-ID
-;#DEF \e8PGP Id
+PGP-ID
+;#DEF PGP Id
 ;#SET (728//)
 MSG_AB_TitleHomepage
-\e8Hemsida
-;#DEF \e8Homepage
+Hemsida
+;#DEF Homepage
 ;#SET (729//)
 MSG_AB_MIFind
 Sök...
@@ -3646,24 +3646,24 @@ Infoga fil...
 ;#DEF Insert file...
 ;#SET (923//)
 MSG_WR_TitleFile
-\e8Filnamn
-;#DEF \e8File name
+Filnamn
+;#DEF File name
 ;#SET (924//)
 MSG_WR_TitleSize
-\e8Storlek
-;#DEF \e8Size
+Storlek
+;#DEF Size
 ;#SET (925//)
 MSG_WR_TitleContents
-\e8Innehåll
-;#DEF \e8Contents
+Innehåll
+;#DEF Contents
 ;#SET (926//)
 MSG_WR_TitleEncoding
-\e8Kodning
-;#DEF \e8Enc.
+Kodning
+;#DEF Enc.
 ;#SET (927//)
 MSG_WR_TitleDescription
-\e8Beskrivning
-;#DEF \e8Description
+Beskrivning
+;#DEF Description
 ;#SET (928//)
 MSG_WR_SecNone
 Inget

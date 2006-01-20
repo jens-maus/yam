@@ -743,12 +743,6 @@ U\000Update index
 MSG_MA_FlushIndices (219//)
 Flush indices
 ;
-MSG_MA_ExportMessages (220//)
-Export...
-;
-MSG_MA_ImportMessages (221//)
-Import...
-;
 MSG_MA_MSendAll (222//)
 S\000Send queued mail
 ;
@@ -2407,37 +2401,37 @@ MSG_AB_ModifiedGads (718//)
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias (719//)
-\e8Alias
+Alias
 ;
 MSG_AB_TitleName (720//)
-\e8Name
+Name
 ;
 MSG_AB_TitleDescription (721//)
-\e8Description
+Description
 ;
 MSG_AB_TitleAddress (722//)
-\e8Address
+Address
 ;
 MSG_AB_TitleStreet (723//)
-\e8Street
+Street
 ;
 MSG_AB_TitleCity (724//)
-\e8City
+City
 ;
 MSG_AB_TitleCountry (725//)
-\e8Country
+Country
 ;
 MSG_AB_TitlePhone (726//)
-\e8Phone
+Phone
 ;
 MSG_AB_TitleBirthDate (727//)
-\e8Birth date
+Birth date
 ;
 MSG_AB_TitlePGPId (728//)
-\e8PGP Id
+PGP Id
 ;
 MSG_AB_TitleHomepage (729//)
-\e8Homepage
+Homepage
 ;
 ;
 ; Module AB - Window
@@ -3154,19 +3148,19 @@ Insert file...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile (924//)
-\e8File name
+File name
 ;
 MSG_WR_TitleSize (925//)
-\e8Size
+Size
 ;
 MSG_WR_TitleContents (926//)
-\e8Contents
+Contents
 ;
 MSG_WR_TitleEncoding (927//)
-\e8Enc.
+Enc.
 ;
 MSG_WR_TitleDescription (928//)
-\e8Description
+Description
 ;
 ;
 ; Module WR - Window
@@ -4977,13 +4971,6 @@ Couldn't transfer mail '%s' to folder '%s'.\n\
 Either the file doesn't exist or it couldn't be copied for some reason.
 ; MAILFILE, FOLDERNAME
 ;
-MSG_ER_IMPORTMAIL (1444//)
-Couldn't import any mail from file '%s'.\n\
-\n\
-Make sure that the file really contains emails in the \
-standard MBOX format (separated by a single "From " line).
-; FILENAME
-;
 MSG_ER_ADDRBOOKLOAD (1445//)
 Couldn't load address book from file '%s'.\n\
 \n\
@@ -5611,3 +5598,20 @@ This may be caused by an incorrect encoding done by the \
 sending mail client or because the base64 part has been malformed \
 during transmission.
 ; PARTNR, MSGFILE
+MSG_MA_MessageImport (1606//)
+Import messages from MBOX, DBX or plain mail files...
+;
+MSG_ER_MESSAGEIMPORT (1607//)
+An error occurred while trying to import mails from file '%s'.\n\
+\n\
+Make sure that the choosen file is readable and contains \
+RFC822 compliant emails in one of YAM's supported import data \
+formats. YAM is currently able to import mails from either a 'MBOX', \
+'DBX' (Outlook Express) or even a plain RFC822 mail file. Please \
+check the documentation for more information on the supported import \
+formats and alternative methods to import mails.
+; FILENAME
+;
+MSG_MA_MessageExport (1608//)
+Export messages to a MBOX compliant mail file...
+;

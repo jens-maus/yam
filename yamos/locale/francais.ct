@@ -1,8 +1,10 @@
-## version $VER: YAM.catalog 5.99 (28.05.2003) ATO-Fr
+## version $VER: YAM.catalog 5.100 (12.01.2006) ATO-Fr
 ## language français
 ## codeset 0
 ;
 ; $Id$
+;
+; TRANSLATION IS STILL NOT 100% COMPLETE!!!
 ;
 ; General
 ;
@@ -86,8 +88,8 @@ MSG_Yes
 _Oui
 ; _Yes
 ;
-MSG_No
-_Non
+;MSG_No
+;_Non
 ; _No
 ;
 MSG_OkayReq
@@ -158,8 +160,8 @@ MSG_Filename
 Nom du fichier
 ; Filename
 ;
-MSG_Alias
-Alias
+;MSG_Alias
+;Alias
 ; Alias
 ;
 MSG_Description
@@ -238,10 +240,9 @@ MSG_Path
 Chemin
 ; Path
 ;
-MSG_Directory
-Répertoire
+;MSG_Directory
+;Répertoire
 ; Directory
-;
 ;
 ; Module Root
 ;
@@ -283,11 +284,6 @@ MSG_UserLogin
 Sélectionnez un utilisateur
 ; Click your name to login
 ;
-; Obsolete
-MSG_AppDescription
-Client SMTP/POP3 pour AmigaOS
-; SMTP/POP3 Client & Mailer for AmigaOS
-;
 MSG_ErrorStartup
 Erreur au démarrage
 ; Error during startup
@@ -296,8 +292,8 @@ MSG_Quit
 Quitter
 ; Quit
 ;
-MSG_ErrorLib
-Impossible d'ouvrir la bibliothèque « %s », version %ld
+;MSG_ErrorLib
+;Impossible d'ouvrir la bibliothèque « %s », version %ld
 ; Can't open library '%s', version %ld
 ; LIBRARY_NAME, LIBRARY_VERSION
 ;
@@ -621,10 +617,9 @@ Entrez votre phrase secrète PGP :
 ; Please enter your PGP pass phrase:
 ;
 ; Replaced by MSG_APPICON_STATS
-MSG_UT_AppStats
-
+;MSG_UT_AppStats
 ; 
-;
+; 
 ;
 MSG_UT_NoPrinter
 Pas d'imprimante en ligne !
@@ -859,14 +854,6 @@ MSG_MA_Deleted
 Effacés
 ; Deleted
 ;
-; Obsolete
-MSG_MA_Archived
-Archivés
-; Archived
-;
-;
-; Module MA - Toolbar
-;
 MSG_MA_TBRead
 _Lire
 ; Rea_d
@@ -965,8 +952,8 @@ Nouveau dossier
 ; New folder
 ;This is the title of the new folder window, not the menu item.
 ;
-MSG_MA_NewSeparator
-Nouveau séparateur...
+;MSG_MA_NewSeparator
+;Nouveau séparateur...
 ; New separator...
 ;
 MSG_MA_SortOrder
@@ -1200,13 +1187,7 @@ MSG_HELP_MA_BT_CONFIG
 Ouvre la fenêtre de configuration de YAM
 ; Modify YAM's preferences
 ;
-;
 ; Module CO - Procedures
-;
-; Obsolete
-MSG_CO_SelectDir
-Choisir un répertoire pour le nouveau dossier :
-; Please select a directory for the new folder:
 ;
 MSG_CO_ChangeFolderPass
 Entrer un nouveau mot de passe pour ce dossier :
@@ -1715,8 +1696,8 @@ MSG_CO_Name
 No_m
 ; N_ame
 ;
-MSG_CO_CTNone
-ne pas combiner
+;MSG_CO_CTNone
+;ne pas combiner
 ; don't combine
 ;
 MSG_CO_CTAnd
@@ -2399,8 +2380,8 @@ MSG_CO_Extras
 Extras
 ; Extras
 ;
-MSG_CO_ScanForFolders
-Recherche dans les dossiers
+;MSG_CO_ScanForFolders
+;Recherche dans les dossiers
 ; Scan for folders
 ;
 MSG_CO_ImportMIME
@@ -2846,9 +2827,9 @@ le texte doit être interrompu
 ; Word-wrap message text\n\
 ; at this column
 ;
-MSG_HELP_CO_CH_AUTOBREAK
-Insert des sauts de ligne\n\
-automatiquement pendant la frappe
+;MSG_HELP_CO_CH_AUTOBREAK
+;Insert des sauts de ligne\n\
+;automatiquement pendant la frappe
 ; Insert real line breaks\n\
 ; while entering a message
 ;
@@ -3360,48 +3341,48 @@ MSG_AB_ModifiedGads
 ; Module AB - Hooks
 ;
 MSG_AB_TitleAlias
-\e8Alias
-; \e8Alias
+Alias
+; Alias
 ;
 MSG_AB_TitleName
-\e8Nom
-; \e8Name
+Nom
+; Name
 ;
 MSG_AB_TitleDescription
-\e8Description
-; \e8Description
+Description
+; Description
 ;
 MSG_AB_TitleAddress
-\e8Adresse
-; \e8Address
+Adresse
+; Address
 ;
 MSG_AB_TitleStreet
-\e8Rue
-; \e8Street
+Rue
+; Street
 ;
 MSG_AB_TitleCity
-\e8Ville
-; \e8City
+Ville
+; City
 ;
 MSG_AB_TitleCountry
-\e8Pays
-; \e8Country
+Pays
+; Country
 ;
 MSG_AB_TitlePhone
-\e8Téléphone
-; \e8Phone
+Téléphone
+; Phone
 ;
 MSG_AB_TitleBirthDate
-\e8Date de naissance
-; \e8Birth date
+Date de naissance
+; Birth date
 ;
 MSG_AB_TitlePGPId
-\e8ID PGP
-; \e8PGP Id
+ID PGP
+; PGP Id
 ;
 MSG_AB_TitleHomepage
-\e8Page Web
-; \e8Homepage
+Page Web
+; Homepage
 ;
 ;
 ; Module AB - Window
@@ -4364,12 +4345,6 @@ MSG_WR_NoRcptReqGad
 Ajouter _le(s) destinataire(s) plus tard|*_Annuler
 ; _Add recipient later|*_Cancel
 ;
-; Obsolete
-MSG_WR_PGPMIMEconflict
-Le MIME/PGP n'accepte pas les documents joints :\n\
-la signature et le chiffrement ont été désactivés.
-; PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
-;
 MSG_WR_DiscardChanges
 Voulez-vous vraiment perdre toutes les modifications\n\
 apportées à ce message ?
@@ -4404,24 +4379,24 @@ Insère un fichier...
 ; Module WR - Hooks
 ;
 MSG_WR_TitleFile
-\e8Nom du fichier
-; \e8File name
+Nom du fichier
+; File name
 ;
 MSG_WR_TitleSize
-\e8Taille
-; \e8Size
+Taille
+; Size
 ;
 MSG_WR_TitleContents
-\e8Contenu
-; \e8Contents
+Contenu
+; Contents
 ;
 MSG_WR_TitleEncoding
-\e8Cod.
-; \e8Enc.
+Cod.
+; Enc.
 ;
 MSG_WR_TitleDescription
-\e8Description
-; \e8Description
+Description
+; Description
 ;
 ;
 ; Module WR - Window
@@ -4780,13 +4755,6 @@ Adresse (et nom) ou alias\n\
 du premier destinataire
 ; Address (and name) or alias\n\
 ; of the primary recipient(s)
-;
-; Obsolete
-MSG_HELP_WR_BT_VER
-Vérifie le destinataire : cherche une adresse\n\
-électronique correspondant à l'alias ou au nom.
-; Verify recipient: find email\n\
-; address for alias or name
 ;
 MSG_HELP_WR_BT_ADR
 Choisir un destinataire\n\
@@ -5306,8 +5274,8 @@ Exemple : %s
 ; Example: %s
 ; DATE
 ;
-MSG_ER_ErrorMaxFilters
-Nombre maximum de filtres atteints ! Vous ne pouvez plus en ajouter.
+;MSG_ER_ErrorMaxFilters
+;Nombre maximum de filtres atteints ! Vous ne pouvez plus en ajouter.
 ; Maximum number of filters reached! You can't add more filters.
 ;
 MSG_ER_CantOpenTempfile
@@ -5337,9 +5305,9 @@ Impossible d'exécuter la commande ARexx « %s ». Vérifiez l'existance du script.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
 ;
-MSG_ER_UnexpEOFB64
-EOF inatendu durant le décodage BASE64 d'un fichier. \
-Le message semble être tronqué.
+;MSG_ER_UnexpEOFB64
+;EOF inatendu durant le décodage BASE64 d'un fichier. \
+;Le message semble être tronqué.
 ; Unexpected EOF while decoding a BASE64 encoded file. \
 ; The message seems to be truncated.
 ;
@@ -5369,7 +5337,7 @@ Raison : chemin ou répertoire invalide, ou espace disque insuffisant.
 MSG_ER_UnknownEnc
 Encodage MIME inconnu : %s.\n\
 \n\
-YAM n'a pas réussi à décoder une partie du message. \
+YAM n'a pas réussi à décoder une partie du message. \n\
 Sauvez le message sur le disque et essayez avec un autre décodeur.
 ; Unknown MIME encoding: %s.\n\
 ; \n\
@@ -5387,7 +5355,7 @@ YAM ne peut pas afficher correctement cet en-tête.
 ; ENCODING_TYPE
 ;
 MSG_ER_MultipartEOF
-Message multipartie incomplet : fin de fichier non trouvé. \
+Message multipartie incomplet : fin de fichier non trouvé. \n\
 Le message semble tronqué.
 ; Unexpected EOF while decoding multipart message. \
 ; The message seems to be truncated.
@@ -5507,11 +5475,11 @@ MSG_ER_ConnectionBroken
 Connexion TCP/IP suspendu, probablement du à un problème de porteuse.
 ; TCP/IP connection broken, probably due to a carrier drop.
 ;
-MSG_ER_InvalidAddress
-Adresse « %s » invalide.\n\
-\n\
-Le serveur SMTP ne peut pas accepter cette adresse. Vérifiez la présence \
-de caractères illégaux.
+;MSG_ER_InvalidAddress
+;Adresse « %s » invalide.\n\
+;\n\
+;Le serveur SMTP ne peut pas accepter cette adresse. Vérifiez la présence \
+;de caractères illégaux.
 ; Invalid address '%s'.\n\
 ; \n\
 ; The SMTP server didn't accept the address. Check for illegal characters.
@@ -5573,10 +5541,10 @@ Vérifiez si %s existe.
 ; Check if %s exists.
 ; FILENAME
 ;
-MSG_ER_InvalidAlias
-Alias invalide : %s.\n\
-\n\
-Les adresses multiples ne sont pas permises dans ce champ.
+;MSG_ER_InvalidAlias
+;Alias invalide : %s.\n\
+;\n\
+;Les adresses multiples ne sont pas permises dans ce champ.
 ; Invalid alias: %s.\n\
 ; \n\
 ; Multiple addresses are not allowed in this field.
@@ -5593,20 +5561,20 @@ dans le carnet d'adresses. Vérifiez l'orthographe.
 ; in the address book. Please verify the spelling.
 ; ALIAS
 ;
-MSG_ER_AmbiguousAlias
-Nom ou alias ambigü : « %s ».\n\
-\n\
-Il y a plus d'une personne avec ce nom dans le carnet d'adresses. \
-Retirez le doublon, ou utilisez un alias unique.
+;MSG_ER_AmbiguousAlias
+;Nom ou alias ambigü : « %s ».\n\
+;\n\
+;Il y a plus d'une personne avec ce nom dans le carnet d'adresses. \
+;Retirez le doublon, ou utilisez un alias unique.
 ; Ambiguous alias or name: %s.\n\
 ; \n\
 ; There is more than one entry with this name in the address book. \
 ; Please remove duplicate entries or use unique aliases.
 ; ALIAS
 ;
-MSG_ER_ErrorAddrDontFit
-Toutes les adresses ne rentrent pas dans le gadget de chaînes. \
-Utilisez une liste de distribution pour pallier à ce problème.
+;MSG_ER_ErrorAddrDontFit
+;Toutes les adresses ne rentrent pas dans le gadget de chaînes. \
+;Utilisez une liste de distribution pour pallier à ce problème.
 ; Addresses don't fit in the string gadget. \
 ; Use a distribution list to avoid this problem.
 ;
@@ -6057,13 +6025,7 @@ MSG_HELP_US_BT_DEL
 Supprime le compte sélectionné
 ; Remove selected account
 ;
-;
 ; Module FO - Routines
-;
-; Obsolete
-MSG_FO_NewSepReq
-Nom du groupe ou du séparateur
-; Optional label for the separator
 ;
 MSG_FO_NewFolderReq
 Quel type de nouveau dossier voulez-vous créer ?\n\
@@ -6119,11 +6081,6 @@ messages envoyés
 MSG_FO_FTBothMail
 reçus et envoyés
 ; received and sent
-;
-; Obsolete
-MSG_FO_FTSeparate
-séparateur
-; separator
 ;
 MSG_FO_EditFolder
 Réglages du dossier
@@ -6373,11 +6330,6 @@ MSG_FOLDER_NEWFOLDER
 Nouveau dossier...
 ; New folder...
 ;
-; Obsolete
-MSG_FOLDER_NEWSEPARATOR
-Nouveau séparateur...
-; New separator...
-;
 MSG_FOLDER_EDIT
 Éditer...
 ; Edit...
@@ -6446,8 +6398,8 @@ MSG_MESSAGE_GETADDRESS
 J\000Sauver adresse...
 ; J\000Save address...
 ;
-MSG_MESSAGE_CHANGESUBJECT
-Changer de sujet...
+;MSG_MESSAGE_CHANGESUBJECT
+;Changer de sujet...
 ; Change subject...
 ;
 MSG_SETTINGS_ADDRESSBOOK
@@ -6514,10 +6466,9 @@ MSG_WR_SecDefaults
 Défaut
 ; Default
 ;
-; Obsolete
 MSG_ER_PGPMultipart
-Erreur durant la création d'un message PGP multi-partie. \
-Désactivation des fonctions de chiffrage et de signature !
+Erreur lors de la création multipart PGP du messge.\n\
+Cryptage/Signature désactivé !
 ; Error creating multipart PGP message. Encrypting/signing disabled!
 ;
 MSG_RE_FixedFont
@@ -6578,24 +6529,9 @@ la lecture des messages dans celui-ci ?
 ; Next folder with unread messages is \eb%s\en\n\
 ; Go to this folder and continue reading there?
 ;
-; Obsolete
-MSG_WR_NoSubjectReqGad
-*_Mettre un sujet|_Continuer sans sujet
-; *_Set subject|_Continue without subject
-;
-; Obsolete
-MSG_NoSubjectReq
-Attention : Il n'y a pas de sujet
-; Warning: Subject is empty
-;
 MSG_MA_ABookModifiedGad
 *_Sauver maintenant|_Quitter sans sauver
 ; *_Save now|_Quit without saving
-;
-MSG_APPICON_STATS
-Nv:%lD Nl:%lD T:%lD
-; N:%lD U:%lD T:%lD
-; COUNT, COUNT, COUNT
 ;
 MSG_ATTACH_NO
 N°
@@ -6724,10 +6660,10 @@ et les afficher dans le nom de l'icône d'application ?
 ; folder's statistics in the\n\
 ; YAM AppIcon's label?
 ;
-MSG_ERROR_IMGLOAD
-Le fichier image\n\
-PROGDIR:Icons/%s\n\
-ne peut pas être chargé.
+;MSG_ERROR_IMGLOAD
+;Le fichier image\n\
+;PROGDIR:Icons/%s\n\
+;ne peut pas être chargé.
 ; The image file\n\
 ; PROGDIR:Icons/%s\n\
 ; couldn't be loaded.
@@ -6839,14 +6775,12 @@ Voulez-vous vraiment effacer ce groupe ?
 ; \n\
 ; Do you really want to delete this group?
 ;
-; Obsolete
 MSG_FOLDER_NONSEL
-(aucune sélection)
+(Aucune sélection)
 ; (none selected)
 ;
-; Obsolete
 MSG_MAIL_NONSEL
-(aucune sélection)
+(Aucune sélection)
 ; (none selected)
 ;
 MSG_FO_NEWFGROUP
@@ -6913,7 +6847,7 @@ de discussions pour ce dossier.
 ; support for this folder
 ;
 MSG_FO_AUTODETECT
-Auto_-détection
+_Détection automatique
 ; Auto_detect
 ;
 MSG_HELP_FO_BT_AUTODETECT
@@ -6948,14 +6882,14 @@ Mettre 0 pour désactiver cette caractéristique.
 ; recipients not yet in the address book.\n\
 ; Select 0 mails to disable this feature.
 ;
-MSG_CO_USESMTPTLS
-Utiliser SMTP TLSv_1/SSLv3
+;MSG_CO_USESMTPTLS
+;Utiliser SMTP TLSv_1/SSLv3
 ; Use SMTP TLSv_1/SSLv3
 ;
-MSG_HELP_CO_CH_USESMTPTLS
-Une connexion sécurisée TLSv1/SSLv3 sera établie entre le\n\
-serveur SMTP et YAM pour envoyer les courriers. Si cette option\n\
-est grisée, c'est que la gestion AmiSSL n'est pas disponible.
+;MSG_HELP_CO_CH_USESMTPTLS
+;Une connexion sécurisée TLSv1/SSLv3 sera établie entre le\n\
+;serveur SMTP et YAM pour envoyer les courriers. Si cette option\n\
+;est grisée, c'est que la gestion AmiSSL n'est pas disponible.
 ; A TLSv1/SSLv3 secure connection will be established between\n\
 ; the SMTP server and YAM to send email. If this checkbox is\n\
 ; ghosted, it means AmiSSL support is not available.
@@ -7319,3 +7253,469 @@ Voulez-vous continuer l'opération ?
 MSG_YesNoReq2
 _Oui|*_Non
 ; _Yes|*_No
+;
+MSG_HELP_FO_ST_HELLOTEXT
+Texte à insèrer en haut\n\
+du nouveau message
+; Text to insert at the\ntop of a new message
+;
+MSG_HELP_FO_ST_BYETEXT
+Texte à insèrer au bas\n\
+du nouveau message
+; Text to insert at the\nbottom of a new message
+;
+MSG_FO_Welcome
+Phrase de _bienvenue
+; _Welcome phrase
+;
+MSG_FO_Greetings
+Phrase de _fin
+; C_losing phrase
+;
+MSG_ER_SOCKETOPTION
+Attention: Il a été impossible de saisir l'option socket spécifiée: '%s'.\n\
+\n\
+Elle ne doit pas être supportée par la pile TCP/IP que vous utilisez, \
+ou icorrectement configurée.
+; Warning: Wasn`t able to set the specified socket option '%s'.\n\nIt may not be supported by the TCP/IP Stack your are using, or it is incorrectly specified in your configuration.
+;
+MSG_ER_B64FILEENCODE
+An unexpected error occurred while trying to encode the file '%s' with the base64 file encoding routines.
+; An unexpected error occurred while trying to encode the file '%s' with the base64 file encoding routines.
+;
+MSG_ER_QPFILEENCODE
+An unexpected error occurred while trying to encode the file '%s' with the quoted-printable file encoding routines.
+; An unexpected error occurred while trying to encode the file '%s' with the quoted-printable file encoding routines.
+;
+MSG_ER_UUFILEENCODE
+An unexpected error occurred while trying to encode the file '%s' with the UUcode file encoding routines.
+; An unexpected error occurred while trying to encode the file '%s' with the UUcode file encoding routines.
+;
+MSG_ER_QPDEC_FILEIO
+A file input/output error occurred during decoding of the quoted printable encoded file '%s'.
+; A file input/output error occurred during decoding of the quoted printable encoded file '%s'.
+;
+MSG_ER_QPDEC_UNEXP
+An unexpected error occurred while trying to decode the file '%s' with the quoted-printable file decoding routines.
+; An unexpected error occurred while trying to decode the file '%s' with the quoted-printable file decoding routines.
+;
+MSG_ER_QPDEC_WARN
+During the quoted-printable decoding of file '%s', some broken control sequences where found and kept undecoded in the resulting data stream.
+; During the quoted-printable decoding of file '%s', some broken control sequences where found and kept undecoded in the resulting data stream.
+;
+MSG_ER_QPDEC_CHAR
+Some not allowed characters have been spotted during the quoted-printable decoding of file '%s' and where therefore removed during the decoding.
+; Some not allowed characters have been spotted during the quoted-printable decoding of file '%s' and where therefore removed during the decoding.
+;
+MSG_ER_UUDEC_TAGMISS
+While trying to UUdecode file '%s', YAM wasn't able to find the required '%s' tag as proposed by the UUcode standard.
+; While trying to UUdecode file '%s', YAM wasn't able to find the required '%s' tag as proposed by the UUcode standard.
+;
+MSG_ER_UUDEC_CHECKSUM
+While trying to UUdecode file '%s', YAM has found that some embedded checksums were invalid and therefore suggests to check that the resulting file isn't corrupted.\n\nA defective UUencoder was used or the message is truncated.
+; While trying to UUdecode file '%s', YAM has found that some embedded checksums were invalid and therefore suggests to check that the resulting file isn't corrupted.\n\nA defective UUencoder was used or the message is truncated.
+;
+MSG_ER_UUDEC_CORRUPT
+While trying to UUdecode file '%s', YAM has found that the UUencoded part seems to be corrupt. \n\nA defective UUencoder was used or the message is truncated.
+; While trying to UUdecode file '%s', YAM has found that the UUencoded part seems to be corrupt. \n\nA defective UUencoder was used or the message is truncated.
+;
+MSG_FI_StatMarked
+Marqués
+; Marked
+;
+MSG_MA_CREQUEST_OLDFILE
+YAM a trouvé le fichier '%s' dans le dossier '%s',\n\
+étant un ancien format email utilisé dans les\n\
+versions précédente de YAM.\n\
+\n\
+Voulez-vous convertir ce fichier au nouveau format ?
+; YAM has found file '%s' in folder '%s' to be an old mailfile normally\nused in YAM versions prior to the current version.\n\nDo you want to convert this file to the new format?
+;
+MSG_MA_CREQUEST_UNKNOWN
+YAM a trouvé le fichier iconnu '%s' dans le dossier '%s'.\n\
+\n\
+Voulez-vous l'importer comme format email ?
+; YAM has found an unknown file '%s' in the folder directory of folder '%s'.\n\nDo you want to import it as a normal mailfile?
+;
+MSG_MA_YESNOTOALL
+*_Oui|O_ui pour tout|_Non|N_on pour tout
+; *_Yes|Y_es to all|_No|N_o to all
+;
+MSG_ER_CONVERTMFILE
+Une erreur a été occasionnée durant la conversion au format email du fichier '%s' du dossier '%s'.\n\
+\n\
+Sil vous plaît, verifiez l'espace disponible pour ce dossier et si l'accès en écriture \
+est activée.
+; An error occurred during mailfile conversion of file '%s' of folder '%s'.\n\nPlease check if the folder directory has enough space and has proper write access.
+;
+MSG_ER_XPKUSAGE
+Une erreur a été occasionnée durant la compression/décompression du fichier '%s' via XPK.\n\
+\n\
+S'il vous plaît, vérifiez votre installation XPK et l'option de compression \
+dans la configuration de YAM.
+; An error occurred while trying to compress/uncompress the file '%s' via XPK.\n\nPlease check your XPK installation and the associated compression settings in the YAM configuration.
+;
+MSG_MA_CREQ_OLDFILE_TITLE
+Email au vieux format
+; Mailfile in old format found
+;
+MSG_MA_CREQ_UNKNOWN_TITLE
+Fichier iconnu trouvé dans le dossier
+; Unknown file in folder directory found
+;
+MSG_CO_SMTPSECURE
+Utiliser une connection sécurisée :
+; Use secure connection:
+;
+MSG_CO_SMTPSECURE_NO
+Non
+; No
+;
+MSG_CO_SMTPSECURE_TLS
+avec TLSv1
+; with TLSv1
+;
+MSG_CO_SMTPSECURE_SSL
+avec SSLv3
+; with SSLv3
+;
+MSG_HELP_CO_RA_SMTPSECURE
+A TLSv1 or SSLv3 secure connection will be established between\nthe SMTP server and YAM to send email through an encrypted connection.\nIf these radio buttons are ghosted, it means AmiSSL support is\ncurrently not available.
+; A TLSv1 or SSLv3 secure connection will be established between\nthe SMTP server and YAM to send email through an encrypted connection.\nIf these radio buttons are ghosted, it means AmiSSL support is\ncurrently not available.
+;
+MSG_CO_SHOWEMBEDDEDREADPANE
+_Voir le contenu du message dans la fenêtre principale
+; Embedded mail read _pane in main window
+;
+MSG_HELP_CO_CH_EMBEDDEDREADPANE
+Afficher le contenu du message lu, directement\ndans la fenêtre principale.
+; Activates an embeeded mail read pane directly\nin the main window.
+;
+MSG_CO_SETSTATUSDELAYED1
+Délai d'attente de l'email affiché, comme lu
+; Delay marking of displayed mail as read for
+;
+MSG_CO_SETSTATUSDELAYED2
+second(s)
+; second(s)
+;
+MSG_HELP_CO_SETSTATUSDELAYED
+Upon switching mails or showing a mail in the embedded mail view,\nYAM will delay the marking of a mail as read for the specified amount\nof seconds.
+; Upon switching mails or showing a mail in the embedded mail view,\nYAM will delay the marking of a mail as read for the specified amount\nof seconds.
+;
+MSG_MA_ATTACHMENT
+Attachement
+; Attachment
+;
+MSG_MA_ATTACHMENTS
+Attachements :
+; Attachments:
+;
+MSG_MA_ATTACHMENTINFO
+\ebAttachement - MIME-Part #%lD\en\n\
+Nom : %s\n\
+Description : %s\n\
+Type de contenu : %s <%s>\n\
+Taille : ~%lD octets
+; \ebAttachment - MIME-Part #%lD\en\nName: %s\nDescription: %s\nContent-Type: %s <%s>\nSize: ~%lD bytes
+;
+MSG_MA_ATTACHMENT_PART
+Attachement/MIME-Part #%lD
+; Attachment/MIME-Part #%lD
+;
+MSG_MA_ATTACHMENT_DISPLAY
+Affichage
+; Display
+;
+MSG_MA_ATTACHMENT_SAVEAS
+Sauver sous...
+; Save as...
+;
+MSG_MA_ATTACHMENT_PRINT
+Imprimer
+; Print
+;
+MSG_MA_ATTACHMENT_SAVEALL
+Tout sauver...
+; Save all...
+;
+MSG_MA_ATTACHMENT_SAVESEL
+Sauver séléctionné(s)...
+; Save selected...
+;
+MSG_MA_ATTACHMENT_CROPALL
+Tout couper
+; Crop all
+;
+MSG_CO_SImageOnly
+image seulement
+; image only
+;
+MSG_RE_SImageOnly
+Image seulement
+; Image only
+;
+MSG_CO_CHARSETWARN_TITLE
+Local Charset configuration warning
+; Local Charset configuration warning
+;
+MSG_CO_CHARSETWARN
+The charset configured for YAM is '%s' and doesn't\nmatch the system's default charset '%s'.\n\nHow do you want to proceed?
+; The charset configured for YAM is '%s' and doesn't\nmatch the system's default charset '%s'.\n\nHow do you want to proceed?
+;
+MSG_CO_CHARSETWARN_BT
+*_Changeer|_Toujours ignorer|_Ignorer
+; *_Change|Ignore _always|_Ignore
+;
+MSG_CO_SenderRFCDateTime
+%c  Original sender: RFC2822 Date&Time
+; %c  Original sender: RFC2822 Date&Time
+;
+MSG_CO_SenderTimeZone
+%z  Original sender: TimeZone (+0000)
+; %z  Original sender: TimeZone (+0000)
+;
+MSG_CO_Filter_Name
+Nom
+; Name
+;
+MSG_CO_Filter_RType
+R
+; R
+;
+MSG_CO_Filter_NType
+N
+; N
+;
+MSG_CO_Filter_SType
+S
+; S
+;
+MSG_CO_Filter_UType
+U
+; U
+;
+MSG_CTunknown
+inconnu
+; unknown
+;
+MSG_CO_More
+_Plus
+; _More
+;
+MSG_CO_Less
+_Moins
+; _Less
+;
+MSG_ER_EXITIGNOREALL
+*_Sortir|_Tout ignorer|_Ignorer
+; *_Exit|Ignore _all|_Ignore
+;
+MSG_ER_ICONOBJECT_TITLE
+Error on loading icon image!
+; Error on loading icon image!
+;
+MSG_ER_ICONOBJECT
+ An error occurred while trying to load the icon\nobject '%s.info' from directory '%s'.\n\nPlease make sure your image directory contains all\nnecessary icons as defined in the latest image layout.
+; An error occurred while trying to load the icon\nobject '%s.info' from directory '%s'.\n\nPlease make sure your image directory contains all\nnecessary icons as defined in the latest image layout.
+;
+MSG_ER_IMAGEOBJECT_TITLE
+Erreur chargant l'image !
+; Error on loading image!
+;
+MSG_ER_IMAGEOBJECT
+An error occurred while trying to load the image\nfile '%s' from directory '%s'.\n\nPlease make sure your image directory contains all\nnecessary images as defined in the latest image layout.
+; An error occurred while trying to load the image\nfile '%s' from directory '%s'.\n\nPlease make sure your image directory contains all\nnecessary images as defined in the latest image layout.
+;
+MSG_ER_IMGLAYOUTFAILURE
+Image layout failure!
+; Image layout failure!
+;
+MSG_ER_EXITIGNORE
+*_Sortir|_Ignorer
+; *_Exit|_Ignore
+;
+MSG_ER_MISSINGIMGVERFILE
+The layout of your '%s' image directory\ncontains no version information and needs to be updated\naccordingly.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
+; The layout of your '%s' image directory\ncontains no version information and needs to be updated\naccordingly.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
+;
+MSG_ER_LOADIMGLAYOUTFAILED
+An error occurred while trying to load the image\nlayout information from your '%s' directory.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
+; An error occurred while trying to load the image\nlayout information from your '%s' directory.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
+;
+MSG_ER_WRONGIMGLAYOUTVER
+The layout of your '%s' image directory\ncontains an incompatible version information and needs\nto be updated accordingly.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
+; The layout of your '%s' image directory\ncontains an incompatible version information and needs\nto be updated accordingly.\n\nPlease make sure you are using a compatible image layout\nor some images may be displayed incorrectly in YAM.
+;
+MSG_MA_AUTOSAVEFOUND
+YAM has found the autosaved file '%s' which\nhave been created in a previous session. This may be due\nto a possible crash or reboot during writing a message.\n\nWhat do you want to do with that file?
+; YAM has found the autosaved file '%s' which\nhave been created in a previous session. This may be due\nto a possible crash or reboot during writing a message.\n\nWhat do you want to do with that file?
+;
+MSG_MA_AUTOSAVEFOUND_TITLE
+Fichier d'auto-sauvegarde trouvé
+; Autosave file found
+;
+MSG_MA_AUTOSAVEFOUND_BT
+*_Ouvrir en fenêtre d'écriture|_Effacer|_Ignorer
+; *_Open in write window|_Delete|_Ignore
+;
+MSG_CO_NB_AUTOSAVE
+Intreval de la sauvegarde automatique
+; Autosave interval
+;
+MSG_CO_NB_AUTOSAVEFMT
+%ld minute(s)
+; %ld minute(s)
+;
+MSG_HELP_CO_NB_AUTOSAVE
+Number of minutes YAM should automatically\ngenerate a save copy of the mail you are\ncurrently composing.\nSelect 0 to disable this feature.
+; Number of minutes YAM should automatically\ngenerate a save copy of the mail you are\ncurrently composing.\nSelect 0 to disable this feature.
+;
+MSG_ER_GENESISUSER_TITLE
+Compte utilisateur Genesis/AmiTCP inconnu !
+; Unknown Genesis/AmiTCP user account!
+;
+MSG_ER_GENESISUSER
+YAM has identified that you are using Genesis/AmiTCP, but\ncould not find a YAM user account which corresponds to\nthe currently active global account you have configured\nin Genesis: '%s'\n\nPlease make sure your Genesis username and YAM username\nare in sync. Otherwise the autologin feature will not work\ncorrectly.
+; YAM has identified that you are using Genesis/AmiTCP, but\ncould not find a YAM user account which corresponds to\nthe currently active global account you have configured\nin Genesis: '%s'\n\nPlease make sure your Genesis username and YAM username\nare in sync. Otherwise the autologin feature will not work\ncorrectly.
+;
+MSG_ER_CONTINUEEXIT
+*_Continuer|Sortir
+; *_Continue|Exit
+;
+MSG_MA_ALLTOREAD
+#\000Tout comme lu
+; #\000All to Read
+;
+MSG_ER_MOVEFOLDERDIR
+An error occurred while trying to move the content of folder\n'%s' to directory '%s'. This may either be due to insufficient\nspace or because the destination path is not valid or writable.
+; An error occurred while trying to move the content of folder\n'%s' to directory '%s'. This may either be due to insufficient\nspace or because the destination path is not valid or writable.
+;
+MSG_CO_QUICKSEARCHBAR
+Afficher la barre de recherche rapide dans la fenêtre principale
+; Show QuickSearchBar in main window
+;
+MSG_HELP_CO_CH_QUICKSEARCHBAR
+If enabled, provides an embedded search bar in the\nmain window for quickly searching for mails.
+; If enabled, provides an embedded search bar in the\nmain window for quickly searching for mails.
+;
+MSG_FI_SELECTACTIVE
+Select _active matched
+; Select _active matched
+;
+MSG_HELP_FI_BT_SELECTACTIVE
+Selects the currently active mails in the\n\
+main window.
+; Selects the currently active mails in the\nmain window.
+;
+MSG_QUICKSEARCH_SO_SUBJECT
+Sujet
+; Subject
+;
+MSG_QUICKSEARCH_SO_SENDER
+Expéditeur
+; Sender
+;
+MSG_QUICKSEARCH_SO_SUBJORSENDER
+Sujet ou expéditeur
+; Subject Or Sender
+;
+MSG_QUICKSEARCH_SO_TOORCC
+A ou Cc
+; To Or Cc
+;
+MSG_QUICKSEARCH_SO_INMSG
+Trouver dans message
+; Find In Message
+;
+MSG_QUICKSEARCH_SO_ENTIREMSG
+Message entier
+; Entire Message
+;
+MSG_QUICKSEARCH_VO_ALL
+Tout
+; All
+;
+MSG_QUICKSEARCH_VO_UNREAD
+Non lu
+; Unread
+;
+MSG_QUICKSEARCH_VO_NEW
+Nouveau
+; New
+;
+MSG_QUICKSEARCH_VO_MARKED
+Marqué
+; Marked
+;
+MSG_QUICKSEARCH_VO_IMPORTANT
+Important
+; Important
+;
+MSG_QUICKSEARCH_VO_LAST5DAYS
+5 derniers jours
+; Last 5 Days
+;
+MSG_QUICKSEARCH_VO_KNOWNPEOPLE
+Personnes connues
+; People I Know
+;
+MSG_QUICKSEARCH_VO_HASATTACHMENTS
+Avec attachements
+; Has Attachments
+;
+MSG_QUICKSEARCH_VO_MINSIZE
+Taille message > 1MO
+; Message Size > 1 MB
+;
+MSG_QUICKSEARCH_VIEW
+Vue :
+; View:
+;
+MSG_QUICKSEARCH_SHOWNMSGS
+%ld de %ld affichés
+; %ld of %ld shown
+;
+MSG_FI_NOFOLDERS
+_Nulle part
+; _nowhere
+;
+MSG_HELP_QUICKSEARCH_VIEWOPTIONS
+Si utilisé, seuls les messages correspondants au critère\nde l'option sélectionnée, seront affichés.
+; If used, only mail matching the selected\nview criteria will be displayed.
+;
+MSG_HELP_QUICKSEARCH_SEARCHSTRING
+Le texte insèré ici, sera utilisé comme critère de reherche\npour l'affichage des mesages dans ce dossier.
+; Text inserted here will be used as the search\ncriteria for displaying mail in the current folder.
+;
+MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
+En utilisant ce popup vous pouvez sélectionner le critére\ndu texte de recherche spécifié.
+; By using this popup you can select the criteria\nfor the specified search text.
+;
+MSG_BUSY_SEARCHINGFOLDER
+Recherche de message dans le dossier '%s'...
+; Searching for messages in folder '%s'...
+;
+MSG_CO_WBAPPICON
+Icône App sur le bureau
+; AppIcon on workbench
+;
+MSG_HELP_CO_CH_WBAPPICON
+Si coché, une icône App sera placée sur le bureau\ncomportant les statistiques du dossier.
+; If checked, displays an AppIcon on the Workbench\nwith folder statistics.
+;
+MSG_CO_DOCKYICON
+DockyIcon
+; DockyIcon
+;
+MSG_HELP_CO_CH_DOCKYICON
+If enabled, a docky icon is displayed through\napplication.library. (only available on AmigaOS4\nsystems)
+; If enabled, a docky icon is displayed through\napplication.library. (only available on AmigaOS4\nsystems)
+;
+MSG_ER_B64DECTRUNC
+An error occurred while trying to base64 decode MIME part %ld of mail '%s'. The decoding has been aborted.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
+; An error occurred while trying to base64 decode MIME part %ld of mail '%s'. The decoding has been aborted.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
+;
+MSG_ER_B64DECTRUNCTXT
+Some readable text from MIME part %ld of mail '%s' couldn't be base64 decoded and may show up incorrect or is even missing.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
+; Some readable text from MIME part %ld of mail '%s' couldn't be base64 decoded and may show up incorrect or is even missing.\n\nThis may be caused by an incorrect encoding done by the sending mail client or because the base64 part has been malformed during transmission.
