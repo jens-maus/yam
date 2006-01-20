@@ -180,6 +180,17 @@ static const char *POPcmd[] =
 #define hasTCP_FREEBUFFER(v)  (isFlagSet((v), TCPF_FREEBUFFER))
 
 /**************************************************************************/
+// mail transfer structure
+struct MailTransferNode
+{
+  struct MinNode node;      // required for placing it into "struct TR_ClassData"
+  struct Mail   *mail;      // pointer to the corresponding mail
+  unsigned char tflags;     // transfer flags
+  int           position;   // current position of the mail in the GUI NList
+  int           index;      // the index value of the mail as told by a POP3 server
+  long          importAddr; // the position (addr) within an export file to find the mail
+};
+
 // flags for the Transfer preselection stuff
 #define TRF_NONE              (0)
 #define TRF_LOAD              (1<<0)
@@ -212,6 +223,10 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr);
 static SSL_METHOD *method;
 static SSL_CTX *ctx;
 static SSL *ssl;
+
+/**************************************************************************/
+// local macros & defines
+#define GetLong(p,o)  ((((unsigned char*)(p))[o]) | (((unsigned char*)(p))[o+1]<<8) | (((unsigned char*)(p))[o+2]<<16) | (((unsigned char*)(p))[o+3]<<24))
 
 /***************************************************************************
  Module: Transfer
@@ -1887,96 +1902,29 @@ static int TR_ConnectPOP(int guilevel)
 //  Displays a list of messages ready for download
 static void TR_DisplayMailList(BOOL largeonly)
 {
-   struct Mail *mail;
-   APTR lv = G->TR->GUI.LV_MAILS;
-   int pos = 0;
-   set(lv, MUIA_NList_Quiet, TRUE);
-   for (mail = G->TR->List; mail; mail = mail->Next)
-      if (mail->Size >= C->WarnSize<<10 || !largeonly)
+  Object *lv = G->TR->GUI.LV_MAILS;
+
+  if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+  {
+    // search through our transferList
+    struct MinNode *curNode;
+    int pos=0;
+
+    set(lv, MUIA_NList_Quiet, TRUE);
+    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+      struct Mail *mail = mtn->mail;
+
+      if(mail->Size >= C->WarnSize<<10 || !largeonly)
       {
-         mail->Position = pos++;
-         DoMethod(lv, MUIM_NList_InsertSingle, mail, MUIV_NList_Insert_Bottom);
+        mtn->position = pos++;
+
+        DoMethod(lv, MUIM_NList_InsertSingle, mtn, MUIV_NList_Insert_Bottom);
       }
-   set(lv, MUIA_NList_Quiet, FALSE);
-}
-///
-/// TR_AddMessageHeader
-//  Parses downloaded message header
-static void TR_AddMessageHeader(int *count, int size, char *tfname)
-{
-   struct ExtendedMail *email;
-
-   if((email = MA_ExamineMail(NULL, tfname, FALSE)))
-   {
-      struct Mail *mail = malloc(sizeof(struct Mail));
-      if (mail)
-      {
-        *mail = email->Mail;
-        mail->Folder  = NULL;
-        mail->Index   = ++(*count);
-        mail->Size    = size;
-
-        // flag the mail as being transfered
-        mail->tflags  = TRF_LOAD;
-
-        MyAddTail(&(G->TR->List), mail);
-      }
-      MA_FreeEMailStruct(email);
-   }
-}
-///
-/// TR_GetMessageList_IMPORT
-//  Collects messages from a MBOX mailbox file
-BOOL TR_GetMessageList_IMPORT(FILE *fh)
-{
-   BOOL body = FALSE;
-   int c = 0, size = 0;
-   char tfname[SIZE_MFILE];
-   char buffer[SIZE_LINE], *ptr;
-   char fname[SIZE_PATHFILE];
-   FILE *f = NULL;
-
-   // generate the temporary filename
-   sprintf(tfname, "YAMi%02d.tmp", G->RexxHost->portnumber);
-   strmfp(fname, C->TempDir, tfname);
-
-   G->TR->List = NULL;
-   fseek(fh, 0, SEEK_SET);
-   while(fgets(buffer, SIZE_LINE, fh))
-   {
-      if (f || body) size += strlen(buffer);
-      if ((ptr = strpbrk(buffer, "\r\n"))) *ptr = 0;
-      if (!f && !strncmp(buffer, "From ", 5))
-      {
-         if (body)
-         {
-            TR_AddMessageHeader(&c, size, tfname);
-            DeleteFile(fname);
-         }
-         if (!(f = fopen(fname, "w"))) break;
-         size = 0; body = FALSE;
-      }
-      if (f)
-      {
-         fputs(buffer, f); fputc('\n', f);
-         if (!*buffer)
-         {
-            fclose(f); f = NULL;
-            body = TRUE;
-         }
-      }
-   }
-
-   if(body)
-   {
-      TR_AddMessageHeader(&c, size, tfname);
-      DeleteFile(fname);
-   }
-   TR_DisplayMailList(FALSE);
-
-   if(c > 0) return TRUE;
-
-   return FALSE;
+    }
+    set(lv, MUIA_NList_Quiet, FALSE);
+  }
 }
 ///
 /// TR_GetMessageList_GET
@@ -1990,7 +1938,7 @@ static BOOL TR_GetMessageList_GET(void)
    {
       char buf[SIZE_LINE];
 
-      G->TR->List = NULL;
+      NewList((struct List *)&G->TR->transferList);
 
       // get the first line the pop server returns after the LINE command
       if(TR_ReadLine(G->TR_Socket, buf, SIZE_LINE) <= 0) return FALSE;
@@ -2008,6 +1956,7 @@ static BOOL TR_GetMessageList_GET(void)
          if(index > 0 && (newMail = calloc(1, sizeof(struct Mail))))
          {
             int mode;
+            struct MailTransferNode *mtn;
             static const int mode2tflags[16] = { TRF_LOAD, TRF_LOAD, (TRF_LOAD|TRF_DELETE),
                                                  (TRF_LOAD|TRF_DELETE), TRF_LOAD, TRF_LOAD,
                                                  (TRF_LOAD|TRF_DELETE), (TRF_LOAD|TRF_DELETE),
@@ -2015,7 +1964,6 @@ static BOOL TR_GetMessageList_GET(void)
                                                  TRF_NONE, TRF_LOAD, TRF_NONE, (TRF_LOAD|TRF_DELETE)
                                                };
 
-            newMail->Index = index;
             newMail->Size  = size;
 
             mode = (C->DownloadLarge ? 1 : 0) +
@@ -2023,8 +1971,16 @@ static BOOL TR_GetMessageList_GET(void)
                    (G->TR->GUIlevel == POP_USER ? 4 : 0) +
                    ((C->WarnSize && newMail->Size >= (C->WarnSize<<10)) ? 8 : 0);
 
-            newMail->tflags = mode2tflags[mode];
-            MyAddTail(&(G->TR->List), newMail);
+            // allocate a new MailTransferNode and add it to our
+            // new transferlist
+            if((mtn = calloc(1, sizeof(struct MailTransferNode))))
+            {
+              mtn->mail = newMail;
+              mtn->tflags = mode2tflags[mode];
+              mtn->index = index;
+
+              AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
+            }
          }
 
          // now read the next Line
@@ -2105,7 +2061,6 @@ static BOOL TR_GetUIDLonServer(void)
       {
          int num;
          char uidl[SIZE_DEFAULT+SIZE_HOST];
-         struct Mail *mail;
 
          // now parse the line and get the message number and UIDL
          sscanf(buf, "%d %s", &num, uidl);
@@ -2116,12 +2071,19 @@ static BOOL TR_GetUIDLonServer(void)
          strcat(uidl, C->P3[G->TR->POP_Nr]->Server);
 
          // iterate to the mail the UIDL is for and save it in the variable
-         for(mail = G->TR->List; mail; mail = mail->Next)
+         if(IsMinListEmpty(&G->TR->transferList) == FALSE)
          {
-            if(mail->Index == num)
+            // search through our transferList
+            struct MinNode *curNode;
+            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
             {
-               mail->UIDL = AllocCopy(uidl, strlen(uidl)+1);
-               break;
+              struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+
+              if(mtn->index == num)
+              {
+                mtn->mail->UIDL = AllocCopy(uidl, strlen(uidl)+1);
+                break;
+              }
             }
          }
 
@@ -2136,7 +2098,7 @@ static BOOL TR_GetUIDLonServer(void)
 ///
 /// TR_ApplyRemoteFilters
 //  Applies remote filters to a message
-static void TR_ApplyRemoteFilters(struct Mail *mail)
+static void TR_ApplyRemoteFilters(struct MailTransferNode *mtn)
 {
   struct MinNode *curNode;
 
@@ -2149,7 +2111,7 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
   {
     struct FilterNode *filter = (struct FilterNode *)curNode;
 
-    if(DoFilterSearch(filter, mail))
+    if(DoFilterSearch(filter, mtn->mail))
     {
       if(hasExecuteAction(filter) && *filter->executeCmd)
          ExecuteCommand(filter->executeCmd, FALSE, OUT_DOS);
@@ -2158,14 +2120,14 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
          PlaySound(filter->playSound);
 
       if(hasDeleteAction(filter))
-         SET_FLAG(mail->tflags, TRF_DELETE);
+         SET_FLAG(mtn->tflags, TRF_DELETE);
       else
-         CLEAR_FLAG(mail->tflags, TRF_DELETE);
+         CLEAR_FLAG(mtn->tflags, TRF_DELETE);
 
       if(hasSkipMsgAction(filter))
-         CLEAR_FLAG(mail->tflags, TRF_LOAD);
+         CLEAR_FLAG(mtn->tflags, TRF_LOAD);
       else
-         SET_FLAG(mail->tflags, TRF_LOAD);
+         SET_FLAG(mtn->tflags, TRF_LOAD);
 
       return;
     }
@@ -2174,8 +2136,10 @@ static void TR_ApplyRemoteFilters(struct Mail *mail)
 ///
 /// TR_GetMessageDetails
 //  Gets header from a message stored on the POP3 server
-static void TR_GetMessageDetails(struct Mail *mail, int lline)
+static void TR_GetMessageDetails(struct MailTransferNode *mtn, int lline)
 {
+   struct Mail *mail = mtn->mail;
+
    if(!*mail->From.Address && !G->TR->Abort && !G->Error)
    {
       char cmdbuf[SIZE_SMALL];
@@ -2184,7 +2148,7 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
       //
       // This command is optional within the RFC 1939 specification
       // and therefore we don`t throw any error
-      sprintf(cmdbuf, "%d 1", mail->Index);
+      sprintf(cmdbuf, "%d 1", mtn->index);
       if(TR_SendPOP3Cmd(POPCMD_TOP, cmdbuf, NULL))
       {
          char *tfname = "yamTOP.msg";
@@ -2233,7 +2197,8 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
                   sprintf(uidl, "%s@%s", Trim(email->MsgID), C->P3[G->TR->POP_Nr]->Server);
                   mail->UIDL = AllocCopy(uidl, strlen(uidl)+1);
                }
-               else if(lline == -2) TR_ApplyRemoteFilters(mail);
+               else if(lline == -2)
+                  TR_ApplyRemoteFilters(mtn);
 
                MA_FreeEMailStruct(email);
             }
@@ -2251,25 +2216,31 @@ static void TR_GetMessageDetails(struct Mail *mail, int lline)
 //  Filters out duplicate messages
 static void TR_GetUIDL(void)
 {
-   struct Mail *mail;
+  G->TR->supportUIDL = TR_GetUIDLonServer();
+  G->TR->UIDLloc = TR_GetUIDLonDisk();
 
-   G->TR->supportUIDL = TR_GetUIDLonServer();
-   G->TR->UIDLloc = TR_GetUIDLonDisk();
+  if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+  {
+    // search through our transferList
+    struct MinNode *curNode;
+    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+      struct Mail *mail = mtn->mail;
 
-   for(mail = G->TR->List; mail; mail = mail->Next)
-   {
       // if the server doesn`t support the UIDL command we
       // use the TOP command and generate our own UIDL within
       // the GetMessageDetails function
       if(!G->TR->supportUIDL)
-         TR_GetMessageDetails(mail, -1);
+         TR_GetMessageDetails(mtn, -1);
 
       if(TR_FindUIDL(mail->UIDL))
       {
         G->TR->Stats.DupSkipped++;
-        MASK_FLAG(mail->tflags, TRF_DELETE);
+        MASK_FLAG(mtn->tflags, TRF_DELETE);
       }
-   }
+    }
+  }
 }
 ///
 /// TR_DisconnectPOP
@@ -2286,7 +2257,6 @@ static void TR_DisconnectPOP(void)
 //  Downloads and filters mail from a POP3 account
 void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 {
-   struct Mail *mail;
    static int laststats;
    int msgs, pop = singlepop;
 
@@ -2378,17 +2348,32 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
             G->TR->Stats.OnServer += msgs;
             if(G->TR->SearchCount > 0)                   // filter messages on server?
             {
+               struct MinNode *curNode;
+
                set(G->TR->GUI.TX_STATUS, MUIA_Text_Contents, GetStr(MSG_TR_ApplyFilters));
-               for (mail = G->TR->List; mail; mail = mail->Next)
-                  TR_GetMessageDetails(mail, -2);
+               for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+                  TR_GetMessageDetails((struct MailTransferNode *)curNode, -2);
             }
             if (C->AvoidDuplicates) TR_GetUIDL();        // read UIDL file to compare against already received messages
             if (G->TR->GUIlevel == POP_USER)             // manually initiated transfer
             {
-               if (C->PreSelection >= 2) preselect = TRUE;           // preselect messages if preference is "always [sizes only]"
-               else if (C->WarnSize && C->PreSelection)              // ...or any sort of preselection and there is a maximum size
-                  for (mail = G->TR->List; mail; mail = mail->Next)  // ...and one of the messages is at least this big
-                     if (mail->Size >= C->WarnSize<<10) { preselect = TRUE; break; }
+               if(C->PreSelection >= 2)
+                  preselect = TRUE;           // preselect messages if preference is "always [sizes only]"
+               else if(C->WarnSize && C->PreSelection) // ...or any sort of preselection and there is a maximum size
+               {
+                  struct MinNode *curNode;
+                  for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+                  {
+                    struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+                    struct Mail *mail = mtn->mail;
+
+                    if(mail->Size >= C->WarnSize<<10)
+                    {
+                      preselect = TRUE;
+                      break;
+                    }
+                  }
+               }
             }
             if (preselect)                               // anything to preselect?
             {
@@ -2412,7 +2397,7 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
                set(G->TR->GUI.WI, MUIA_Window_Activate, xget(G->MA->GUI.WI, MUIA_Window_Activate));
 
                set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 0);
-               G->TR->GMD_Mail = G->TR->List;
+               G->TR->GMD_Mail = G->TR->transferList.mlh_Head;
                G->TR->GMD_Line = 0;
                TR_CompleteMsgList();
             }
@@ -2669,21 +2654,22 @@ static void TR_DisconnectSMTP(void)
 //  Changes transfer flags of all selected messages
 HOOKPROTONHNO(TR_ChangeTransFlagsFunc, void, int *arg)
 {
-   int id = MUIV_NList_NextSelected_Start;
-   struct Mail *mail;
+  int id = MUIV_NList_NextSelected_Start;
 
-   do
-   {
-      DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_NextSelected, &id);
-      if(id == MUIV_NList_NextSelected_End)
-        break;
+  do
+  {
+    struct MailTransferNode *mtn;
 
-      DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, id, &mail);
-      mail->tflags = *arg;
+    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_NextSelected, &id);
+    if(id == MUIV_NList_NextSelected_End)
+      break;
 
-      DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, id);
-   }
-   while(1);
+    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, id, &mtn);
+    mtn->tflags = *arg;
+
+    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Redraw, id);
+  }
+  while(TRUE);
 }
 MakeStaticHook(TR_ChangeTransFlagsHook, TR_ChangeTransFlagsFunc);
 ///
@@ -2691,23 +2677,28 @@ MakeStaticHook(TR_ChangeTransFlagsHook, TR_ChangeTransFlagsFunc);
 //  Initializes transfer statistics
 static void TR_TransStat_Init(struct TransStat *ts)
 {
-   struct Mail *mail;
+  ts->Msgs_Tot = ts->Size_Tot = 0;
 
-   ts->Msgs_Tot = ts->Size_Tot = 0;
+  if(G->TR->GUI.GR_LIST)
+  {
+    set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 1);
+    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
+  }
 
-   if(G->TR->GUI.GR_LIST)
-   {
-      set(G->TR->GUI.GR_PAGE, MUIA_Group_ActivePage, 1);
-      DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Off, NULL);
-   }
+  if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+  {
+    // search through our transferList
+    struct MinNode *curNode;
+    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
 
-   for (mail = G->TR->List; mail; mail = mail->Next)
-   {
       ts->Msgs_Tot++;
 
-      if(hasTR_LOAD(mail))
-        ts->Size_Tot += mail->Size;
-   }
+      if(hasTR_LOAD(mtn))
+        ts->Size_Tot += mtn->mail->Size;
+    }
+  }
 }
 ///
 /// TR_TransStat_Start
@@ -2853,21 +2844,41 @@ static void TR_TransStat_Update(struct TransStat *ts, int size_incr)
 //  Free temporary message and UIDL lists
 void TR_Cleanup(void)
 {
-   struct Mail *work, *next;
+  if(G->TR->GUI.LV_MAILS)
+    DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
 
-   if (G->TR->GUI.LV_MAILS) DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_Clear);
+  if(IsMinListEmpty(&G->TR->transferList) == FALSE)
+  {
+    struct MinNode *curNode;
+    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ;)
+    {
+      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+      struct Mail *mail = mtn->mail;
 
-   for (work = G->TR->List; work; work = next)
-   {
-      next = work->Next;
+      // before we remove the node we have to save the pointer to the next one
+      curNode = curNode->mln_Succ;
 
-      if (work->UIDL) free(work->UIDL);
-      free(work);
+      // Remove node from list
+      Remove((struct Node *)mtn);
 
-   }
-   if (G->TR->UIDLloc) free(G->TR->UIDLloc);
-   G->TR->UIDLloc = NULL;
-   G->TR->List = NULL;
+      // Free everything of the node
+      if(mail->UIDL)
+        free(mail->UIDL);
+
+      // free the mail pointer
+      free(mail);
+
+      // free the node itself
+      free(mtn);
+    }
+  }
+
+  if(G->TR->UIDLloc)
+    free(G->TR->UIDLloc);
+
+  G->TR->UIDLloc = NULL;
+
+  NewList((struct List *)&G->TR->transferList);
 }
 ///
 /// TR_AbortnClose
@@ -2913,28 +2924,31 @@ static BOOL TR_ApplySentFilters(struct Mail *mail)
 BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 {
    BOOL success = FALSE;
-   struct TransStat ts;
-   char buf[SIZE_LINE], fullfile[SIZE_PATHFILE];
-   FILE *fh, *mfh;
-   struct Mail *mail;
    int i;
 
    // reset our processing list
-   G->TR->List = NULL;
+   NewList((struct List *)&G->TR->transferList);
 
    // temporarly copy all data out of our mlist to the
    // processing list and mark all mails to get "loaded"
-   for(i = 0; i < (int)*mlist; i++)
+   for(i=0; i < (int)*mlist; i++)
    {
-      if((mail = malloc(sizeof(struct Mail))))
+      struct MailTransferNode *mtn;
+
+      if((mtn = calloc(1, sizeof(struct MailTransferNode))))
       {
-         memcpy(mail, mlist[i+2], sizeof(struct Mail));
-         mail->Index  = i+1;
+        if((mtn->mail = malloc(sizeof(struct Mail))))
+        {
+           memcpy(mtn->mail, mlist[i+2], sizeof(struct Mail));
+           mtn->index  = i+1;
 
-         // set to LOAD
-         mail->tflags = TRF_LOAD;
+           // set to LOAD
+           mtn->tflags = TRF_LOAD;
 
-         MyAddTail(&(G->TR->List), mail);
+           AddTail((struct List *)&(G->TR->transferList), (struct Node *)mtn);
+        }
+        else
+          return FALSE;
       }
       else
         return FALSE;
@@ -2942,8 +2956,11 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
 
    // if we have now something in our processing list,
    // lets go on
-   if(G->TR->List)
+   if(IsMinListEmpty(&G->TR->transferList) == FALSE)
    {
+      FILE *fh;
+      struct TransStat ts;
+
       TR_SetWinTitle(FALSE, (char *)FilePart(fname));
       TR_TransStat_Init(&ts);
       TR_TransStat_Start(&ts);
@@ -2952,19 +2969,29 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
       // write mode.
       if((fh = fopen(fname, append ? "a" : "w")))
       {
+         struct MinNode *curNode;
+
          success = TRUE;
-         for(mail = G->TR->List; mail && !G->TR->Abort && success; mail = mail->Next)
+
+         for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort && success; curNode = curNode->mln_Succ)
          {
+            struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+            struct Mail *mail = mtn->mail;
+            char fullfile[SIZE_PATHFILE];
+
             // update the transfer status
             ts.Msgs_Done++;
-            TR_TransStat_NextMsg(&ts, mail->Index, -1, mail->Size, GetStr(MSG_TR_Exporting));
+            TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, GetStr(MSG_TR_Exporting));
 
             if(StartUnpack(GetMailFile(NULL, NULL, mail), fullfile, mail->Folder))
             {
+               FILE *mfh;
+
                // open the message file to start exporting it
                if((mfh = fopen(fullfile, "r")))
                {
                   char datstr[64];
+                  char buf[SIZE_LINE];
                   BOOL inHeader = TRUE;
 
                   // printf out our leading "From " MBOX format line first
@@ -3055,7 +3082,7 @@ BOOL TR_ProcessEXPORT(char *fname, struct Mail **mlist, BOOL append)
          fclose(fh);
 
          // write the status to our logfile
-         AppendLog(51, GetStr(MSG_LOG_Exporting), (void *)ts.Msgs_Done, G->TR->List->Folder->Name, fname, "");
+         AppendLog(51, GetStr(MSG_LOG_Exporting), (void *)ts.Msgs_Done, mlist[2]->Folder->Name, fname, "");
       }
    }
 
@@ -3215,30 +3242,40 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
    struct TransStat ts;
    int c, i, err;
    int port = C->SMTP_Port;
-   struct Mail *mail, *new;
    struct Folder *outfolder = FO_GetFolderByType(FT_OUTGOING, NULL);
    struct Folder *sentfolder = FO_GetFolderByType(FT_SENT, NULL);
    BOOL success = FALSE;
    char *p;
 
-   G->TR->List = NULL;
+   NewList((struct List *)&G->TR->transferList);
    G->TR_Allow = G->TR->Abort = G->Error = FALSE;
+
    for(c = i = 0; i < (int)*mlist; i++)
    {
+      struct Mail *mail;
       mail = mlist[i+2];
+
       if(hasStatusQueued(mail) || hasStatusError(mail))
       {
-        if((new = malloc(sizeof(struct Mail))))
+        struct MailTransferNode *mtn;
+        if((mtn = calloc(1, sizeof(struct MailTransferNode))))
         {
-          memcpy(new, mail, sizeof(struct Mail));
-          new->Index = ++c;
-          new->Reference = mail;
-          new->Next = NULL;
+          struct Mail *newMail;
+          if((newMail = malloc(sizeof(struct Mail))))
+          {
+            memcpy(newMail, mail, sizeof(struct Mail));
+            newMail->Reference = mail;
+            newMail->Next = NULL;
 
-          // set transfer flags to LOAD
-          new->tflags = TRF_LOAD;
+            // set index and transfer flags to LOAD
+            mtn->index = ++c;
+            mtn->tflags = TRF_LOAD;
+            mtn->mail = newMail;
 
-          MyAddTail(&(G->TR->List), new);
+            AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
+          }
+          else
+            free(mtn);
         }
       }
    }
@@ -3331,14 +3368,21 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
          // If we are still "connected" we can proceed with transfering the data
          if(connected)
          {
+            struct MinNode *curNode;
+
             success = TRUE;
             AppendLogVerbose(41, GetStr(MSG_LOG_ConnectSMTP), host, "", "", "");
 
-            for (mail = G->TR->List; mail; mail = mail->Next)
+            for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
             {
-               if (G->TR->Abort || G->Error) break;
+               struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+               struct Mail *mail = mtn->mail;
+
+               if(G->TR->Abort || G->Error)
+                 break;
+
                ts.Msgs_Done++;
-               TR_TransStat_NextMsg(&ts, mail->Index, -1, mail->Size, GetStr(MSG_TR_Sending));
+               TR_TransStat_NextMsg(&ts, mtn->index, -1, mail->Size, GetStr(MSG_TR_Sending));
 
                switch (TR_SendMessage(&ts, mail))
                {
@@ -3409,6 +3453,625 @@ BOOL TR_ProcessSEND(struct Mail **mlist)
 ///
 
 /*** IMPORT ***/
+/// TR_AddMessageHeader
+//  Parses downloaded message header
+static struct MailTransferNode *TR_AddMessageHeader(int *count, int size, long addr, char *tfname)
+{
+  struct MailTransferNode *ret = NULL;
+  struct ExtendedMail *email;
+
+  ENTER();
+
+  if((email = MA_ExamineMail(NULL, tfname, FALSE)))
+  {
+    struct MailTransferNode *mtn;
+
+    if((mtn = calloc(1, sizeof(struct MailTransferNode))))
+    {
+      struct Mail *mail;
+      if((mail = malloc(sizeof(struct Mail))))
+      {
+        memcpy(mail, &email->Mail, sizeof(struct Mail));
+        mail->Folder  = NULL;
+        mail->Size    = size;
+
+        // flag the mail as being transfered
+        mtn->index      = ++(*count);
+        mtn->tflags     = TRF_LOAD;
+        mtn->mail       = mail;
+        mtn->importAddr = addr;
+
+        AddTail((struct List *)&G->TR->transferList, (struct Node *)mtn);
+
+        D(DBF_IMPORT, "added mail '%s' (%d bytes) to import list.", mail->Subject, size);
+
+        ret = mtn;
+      }
+      else
+        E(DBF_IMPORT, "Couldn't allocate enough memory for struct Mail");
+    }
+    else
+      E(DBF_IMPORT, "Couldn't allocate enough memory for struct MailTransferNode");
+
+    MA_FreeEMailStruct(email);
+  }
+  else
+    E(DBF_IMPORT, "MA_ExamineMail() returned an error!");
+
+  RETURN(ret);
+  return ret;
+}
+
+///
+/// ReadDBXMessage()
+// Extract a certain message from a dbx (Outlook Express) file into
+// a separate output file.
+static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
+{
+	// This can be static as this function is the leave of the recursion
+	static unsigned char buf[0x210];
+	unsigned int size;
+  BOOL result = TRUE;
+
+  ENTER();
+
+  D(DBF_IMPORT, "reading message from addr 0x%lx", addr);
+
+	while(addr)
+	{
+    unsigned char *pLast;
+    unsigned char *pCur;
+
+    // seek to the actual message position
+		if(fseek(fh, addr, SEEK_SET))
+    {
+      result = FALSE;
+      break;
+    }
+
+    // read out the whole message at once
+		if(fread(buf, 1, sizeof(buf), fh) != sizeof(buf))
+    {
+      result = FALSE;
+      break;
+    }
+
+    // get the size of the read part and the addr
+    // of the next part of the message
+		size = GetLong(buf, 8);
+		addr = GetLong(buf, 12);
+
+    // as *.dbx files are created under Windows they
+    // may carry "\r\n" return sequences. But as we are
+    // on amiga we do not need and want them, that's why
+    // we strip them off
+    pLast = &buf[16]; // start of the message part
+
+    // we search for \r chars and split the write
+    // operations on each occurance
+    while(size > 0 && (pCur = (unsigned char *)strchr((char *)pLast, '\r')))
+    {
+      unsigned int writeSize = pCur-pLast;
+
+  		if(fwrite(pLast, 1, writeSize, out) != writeSize)
+      {
+        result = FALSE;
+        break;
+      }
+
+      pLast = pCur+1;
+      size -= (writeSize+1);
+    }
+
+    // write out all rest of the message data if we didn't
+    // have faced an error already.
+		if(result == FALSE || fwrite(pLast, 1, size, out) != size)
+    {
+      result = FALSE;
+      break;
+    }
+	}
+
+  RETURN(result);
+	return result;
+}
+
+///
+/// ReadDBXMessageInfo()
+// reads out the message info of a dbx (Outlook Express) Mail Archive file
+static BOOL ReadDBXMessageInfo(FILE *fh, char *outFileName, unsigned int addr, unsigned int size, int *mail_accu, BOOL preview)
+{
+	BOOL rc = FALSE;
+	unsigned char *buf;
+	FILE *mailout = NULL;
+
+	unsigned char *data;
+	unsigned char *body;
+	unsigned int i;
+	unsigned int length_of_idxs;
+	unsigned int num_of_idxs;
+	unsigned int object_marker;
+	unsigned char *entries[32];
+	unsigned char *msg_entry;
+	unsigned int msg_addr = 0;
+	unsigned int mailStatusFlags = SFLAG_NONE;
+
+  ENTER();
+
+	if(size < 12)
+    size = 12;
+
+	if(!(buf = malloc(size)))
+  {
+		E(DBF_IMPORT, "Couldn't allocate %d bytes", size);
+    RETURN(FALSE);
+    return FALSE;
+  }
+
+  // seek to the position where to find the message info object
+	if(fseek(fh, addr, SEEK_SET))
+  {
+		E(DBF_IMPORT, "Unable to seek at %x", addr);
+		goto out;
+  }
+
+  // read in the whole message info object
+	if(fread(buf, 1, size, fh) != size)
+  {
+		E(DBF_IMPORT, "Unable to read %d bytes", size);
+		goto out;
+  }
+
+  // check if the object marker matches
+	object_marker = GetLong(buf, 0);
+	if(object_marker != addr)
+  {
+		E(DBF_IMPORT, "Object marker didn't match");
+		goto out;
+  }
+
+  // check the number of indexes
+	length_of_idxs = GetLong(buf, 4);
+	num_of_idxs = buf[10];
+	if(num_of_idxs > sizeof(entries)/sizeof(entries[0]))
+  {
+		E(DBF_IMPORT, "Too many indexes");
+		goto out;
+  }
+
+	// check if we have read enough data, if not we must read more
+	if(size-12 < length_of_idxs)
+	{
+		unsigned char *newbuf;
+
+		D(DBF_IMPORT, "read in %d bytes of object at 0x%x, but index length is %d", size, addr, length_of_idxs);
+
+		if(!(newbuf = malloc(length_of_idxs + 12)))
+    {
+  		E(DBF_IMPORT, "Couldn't allocate %d bytes", length_of_idxs+12);
+			goto out;
+    }
+
+		memcpy(newbuf, buf, size);
+		if(fread(&newbuf[size], 1, length_of_idxs - size, fh) != length_of_idxs - size)
+		{
+			E(DBF_IMPORT, "Couldn't load more bytes");
+
+			free(newbuf);
+			goto out;
+		}
+
+		free(buf);
+		buf = newbuf;
+	}
+
+	body = buf + 12;
+	data = body + num_of_idxs * 4;
+
+	memset(entries, 0, sizeof(entries));
+
+	for(i=0; i<num_of_idxs; i++)
+	{
+		unsigned int idx = body[0];
+		unsigned int addr = body[1] | (body[2] << 8) | (body[3] << 16);
+
+    // check the index value
+		if((idx & 0x7f) > sizeof(entries)/sizeof(entries[0]))
+    {
+			E(DBF_IMPORT, "Wrong index");
+			goto out;
+    }
+
+		if(idx & 0x80)
+		{
+			// overwrite the body (and enforce little endian)
+			body[0] = addr & 0xff;
+			body[1] = (addr & 0xff00) >> 8;
+			body[2] = (addr & 0xff0000) >> 16;
+			body[3] = 0;
+
+			// is direct value
+			entries[idx & 0x7f] = body;
+		}
+    else
+		{
+			entries[idx] = data + addr;
+		}
+		
+    body += 4;
+	}
+
+	// Index number 1 points to flags
+	if(entries[1])
+	{
+    unsigned int flags = GetLong(entries[1], 0);
+
+    // check all flags and set the new mail status
+    if(flags & (1UL << 5)) // mail has been marked
+      SET_FLAG(mailStatusFlags, SFLAG_MARKED);
+
+    if(flags & (1UL << 7)) // mail has been read
+      SET_FLAG(mailStatusFlags, SFLAG_READ);
+
+		if(flags & (1UL << 19)) // mail has replied status
+      SET_FLAG(mailStatusFlags, SFLAG_REPLIED);
+	}
+
+	// Index number 4 points to the whole message
+	if(!(msg_entry = entries[4]))
+  {
+		E(DBF_IMPORT, "Did not find a message");
+		goto out;
+  }
+
+	// extract the message address
+	msg_addr = GetLong(msg_entry, 0);
+
+	// Open the output file
+	if(!(mailout = fopen(outFileName, "wb")))
+  {
+		E(DBF_IMPORT, "Couldn't open %s for output", outFileName);
+		goto out;
+  }
+
+	// Write the message into the out file */
+	if(ReadDBXMessage(fh, mailout, msg_addr) == FALSE)
+	{
+		E(DBF_IMPORT, "Couldn't read dbx message @ addr %x", msg_addr);
+
+		fclose(mailout);
+    mailout = NULL;
+    DeleteFile(outFileName);
+		goto out;
+	}
+
+	rc = TRUE;
+
+out:
+	if(mailout)
+    fclose(mailout);
+
+	free(buf);
+	
+  if(rc)
+  {
+    if(preview == TRUE)
+    {
+      struct MailTransferNode *mtn;
+
+      // if this is the preview run we go and
+      // use the TR_AddMessageHeader method to
+      // add the found mail to our mail list
+      if((mtn = TR_AddMessageHeader(mail_accu, FileSize(outFileName), msg_addr, FilePart(outFileName))))
+      {
+        SET_FLAG(mtn->mail->sflags, mailStatusFlags);
+      }
+
+      DeleteFile(outFileName);
+    }
+    else
+      ++(*mail_accu);
+  }
+
+  RETURN(rc);
+  return rc;
+}
+
+///
+/// ReadDBXNode()
+// Function that reads in a node within the tree of a DBX Mail archive
+// file from Outlook Express.
+static BOOL ReadDBXNode(FILE *fh, char *outFileName, unsigned int addr, int *mail_accu, BOOL preview)
+{
+	unsigned char *buf;
+	unsigned char *body;
+	unsigned int child;
+	int object_marker;
+	int entries;
+
+  ENTER();
+
+  // alloc enough memory to facilitate the the whole tree
+	if(!(buf = malloc((0x18+0x264))))
+  {
+		E(DBF_IMPORT, "Couldn't allocate enough memory for node");
+    RETURN(FALSE);
+    return FALSE;
+  }
+
+  // seek to the start of the tree node
+	if(fseek(fh, addr, SEEK_SET))
+	{
+		free(buf);
+
+		E(DBF_IMPORT, "Unable to seek at %x", addr);
+    RETURN(FALSE);
+		return FALSE;
+	}
+
+  // read in the whole tree with one read operation
+	if(fread(buf, 1, (0x18+0x264), fh) != (0x18+0x264))
+	{
+		free(buf);
+
+		E(DBF_IMPORT, "Unable to read %d bytes", 0x18+0x264);
+    RETURN(FALSE);
+		return FALSE;
+	}
+
+	object_marker = GetLong(buf, 0);
+	child = GetLong(buf, 8);
+	entries = buf[17];
+	body = &buf[0x18];
+
+	while(entries--)
+	{
+		unsigned int value = GetLong(body, 0);
+		unsigned int chld = GetLong(body, 4);
+		unsigned int novals = GetLong(body, 8);
+
+		// value points to a pointer to a message
+		if(value)
+		{
+			if(ReadDBXMessageInfo(fh, outFileName, value, novals, mail_accu, preview) == FALSE)
+			{
+				free(buf);
+
+				E(DBF_IMPORT, "Failed to read the indexed info");
+        RETURN(FALSE);
+				return FALSE;
+			}
+		}
+
+		if(chld)
+		{
+			if(ReadDBXNode(fh, outFileName, chld, mail_accu, preview) == FALSE)
+			{
+				free(buf);
+
+				E(DBF_IMPORT, "Failed to read node at %p", chld);
+        RETURN(FALSE);
+				return FALSE;
+			}
+		}
+
+		body += 12;
+	}
+
+	free(buf);
+
+	if(child)
+		return ReadDBXNode(fh, outFileName, child, mail_accu, preview);
+
+  RETURN(TRUE);
+	return TRUE;
+}
+
+///
+/// TR_GetMessageList_IMPORT
+//  Collects messages from our different supported import formats
+BOOL TR_GetMessageList_IMPORT()
+{
+  BOOL result = FALSE;
+  char tfname[SIZE_MFILE];
+  char fname[SIZE_PATHFILE];
+  int c = 0;
+
+  ENTER();
+
+  // check if MA_ImportMessages() did correctly set all required
+  // data
+  if(G->TR->ImportFile[0] == '\0' || G->TR->ImportFolder == NULL)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
+
+  // clear the found mail list per default
+  NewList((struct List *)&G->TR->transferList);
+
+  // prepare the temporary filename buffers
+  sprintf(tfname, "YAMi%02d.tmp", G->RexxHost->portnumber);
+  strmfp(fname, C->TempDir, tfname);
+
+  // before this function is called the MA_ImportMessages() function
+  // already found out which import format we can expect. So we
+  // distinguish between the different known formats here
+  switch(G->TR->ImportFormat)
+  {
+    // treat the file as a MBOX compliant file
+    case IMF_MBOX:
+    {
+      FILE *ifh;
+
+      D(DBF_IMPORT, "trying to retrieve mail list from MBOX compliant file");
+
+      if((ifh = fopen(G->TR->ImportFile, "r")))
+      {
+        FILE *ofh = NULL;
+        char buffer[SIZE_LINE];
+        BOOL foundBody = FALSE;
+        int size = 0;
+        long addr = 0;
+
+        while(GetLine(ifh, buffer, SIZE_LINE))
+        {
+          // now we parse through the input file until we
+          // find the "From " separator
+          if(strncmp(buffer, "From ", 5) == 0)
+          {
+            // now we know that a new mail has started so if
+            // we already found a previous mail we can add it
+            // to our list
+            if(foundBody)
+            {
+              D(DBF_IMPORT, "found subsequent 'From ' separator: '%s'", buffer);
+
+              result = (TR_AddMessageHeader(&c, size, addr, tfname) != NULL);
+              DeleteFile(fname);
+
+              if(result == FALSE)
+                break;
+            }
+            else
+              D(DBF_IMPORT, "found first 'From ' separator: '%s'", buffer);
+
+            // as a new mail is starting we have to
+            // open a new file handler
+            if((ofh = fopen(fname, "w")) == NULL)
+              break;
+
+            size = 0;
+            foundBody = FALSE;
+            addr = ftell(ifh);
+
+            // continue with the next iteration
+            continue;
+          }
+
+          // if we already have an opened tempfile
+          // and we didn't found the separating mail body
+          // yet we go and write out the buffer content
+          if(ofh && foundBody == FALSE)
+          {
+            fprintf(ofh, "%s\n", buffer);
+
+            // if the buffer is empty we found the corresponding body
+            // of the mail and can close the ofh pointer
+            if(buffer[0] == '\0')
+            {
+              fclose(ofh);
+              ofh = NULL;
+              foundBody = TRUE;
+
+              D(DBF_IMPORT, "found body part of import mail");
+            }
+          }
+
+          // to sum the size we count the length of our read buffer
+          if(ofh || foundBody)
+            size += strlen(buffer)+1;
+        }
+
+        // check the reason why we exited the while loop
+        if(feof(ifh) == 0)
+        {
+          E(DBF_IMPORT, "while loop seems to have exited without having scanned until EOF!");
+          result = foundBody = FALSE;
+        }
+
+        // after quiting the while() loop, we have to check
+        // if there is still some data to process
+        if(foundBody)
+        {
+          result = (TR_AddMessageHeader(&c, size, addr, tfname) != NULL);
+          DeleteFile(fname);
+        }
+        else if(ofh)
+        {
+          fclose(ofh);
+          ofh = NULL;
+          DeleteFile(fname);
+        }
+
+        fclose(ifh);
+      }
+      else
+        E(DBF_IMPORT, "Error on trying to open file '%s'", G->TR->ImportFile);
+    }
+    break;
+
+    // treat the file as a file that contains a single
+    // unencoded mail (*.eml alike file)
+    case IMF_PLAIN:
+    {
+      if(CopyFile(fname, NULL, G->TR->ImportFile, NULL))
+      {
+        // if the file was identified as a plain .eml file we
+        // just have to go and call TR_AddMessageHeader to let
+        // YAM analyze the file
+        result = (TR_AddMessageHeader(&c, FileSize(fname), 0, tfname) != NULL);
+
+        DeleteFile(fname);
+      }
+    }
+    break;
+
+    // treat the file as a DBX (Outlook Express) compliant mail archive
+    case IMF_DBX:
+    {
+      FILE *ifh;
+
+      // lets open the file and read out the root node of the dbx mail file
+      if((ifh = fopen(G->TR->ImportFile, "rb")))
+      {
+        unsigned char *file_header;
+
+        // read the 9404 bytes long file header for properly identifying
+        // an Outlook Express database file.
+        if((file_header = (unsigned char *)malloc(0x24bc)))
+        {
+      		if(fread(file_header, 1, 0x24bc, ifh) == 0x24bc)
+          {
+            // try to identify the file as a CLSID_MessageDatabase file
+  		  	  if((file_header[0] == 0xcf && file_header[1] == 0xad &&
+                file_header[2] == 0x12 && file_header[3] == 0xfe) &&
+               (file_header[4] == 0xc5 && file_header[5] == 0xfd &&
+                file_header[6] == 0x74 && file_header[7] == 0x6f))
+            {
+  						int number_of_mails = GetLong(file_header, 0xc4);
+							unsigned int root_node = GetLong(file_header, 0xe4);
+
+              D(DBF_IMPORT, "number of mails in dbx file: %d", number_of_mails);
+
+              // now we actually start at the root node and read in all messages
+              // accordingly
+              if(ReadDBXNode(ifh, fname, root_node, &c, TRUE) && c == number_of_mails)
+                result = TRUE;
+              else
+        				E(DBF_IMPORT, "Failed to read from root_node; c=%d", c);
+            }
+          }
+
+          free(file_header);
+        }
+
+        fclose(ifh);
+      }
+    }
+    break;
+
+    case IMF_UNKNOWN:
+      // nothing
+    break;
+  };
+
+  TR_DisplayMailList(FALSE);
+
+  RETURN(result && c > 0);
+  return result && c > 0;
+}
+///
 /// TR_AbortIMPORTFunc
 //  Aborts import process
 HOOKPROTONHNONP(TR_AbortIMPORTFunc, void)
@@ -3421,178 +4084,265 @@ MakeStaticHook(TR_AbortIMPORTHook, TR_AbortIMPORTFunc);
 //  Imports messages from a MBOX mailbox file
 HOOKPROTONHNONP(TR_ProcessIMPORTFunc, void)
 {
-   struct TransStat ts;
-   FILE *fh, *f = NULL;
+  struct TransStat ts;
 
-   TR_TransStat_Init(&ts);
-   if (ts.Msgs_Tot)
-   {
-      TR_TransStat_Start(&ts);
-      if ((fh = fopen(G->TR->ImportFile, "r")))
+  // if there is nothing to import we can skip
+  // immediately.
+  if(IsMinListEmpty(&G->TR->transferList))
+    return;
+
+  TR_TransStat_Init(&ts);
+  if(ts.Msgs_Tot)
+  {
+    struct Folder *folder = G->TR->ImportFolder;
+    enum FolderType ftype = folder->Type;
+
+    TR_TransStat_Start(&ts);
+
+    // now we distinguish between the different import format
+    // and import the mails out of it
+    switch(G->TR->ImportFormat)
+    {
+      // treat the file as a MBOX compliant file but also
+      // in case of plain (*.eml) file we can that the very same
+      // routines.
+      case IMF_MBOX:
+      case IMF_PLAIN:
       {
-         struct ExtendedMail *email;
-         struct Mail *mail = G->TR->List;
-         struct Mail *newmail;
-         static char mfile[SIZE_MFILE];
-         BOOL header = FALSE, body = FALSE;
-         struct Folder *folder = G->TR->ImportBox;
-         int btype = folder->Type;
-         char buffer[SIZE_LINE];
-         unsigned int stat = 0;
-         BOOL ownStatusFound = FALSE;
+        FILE *ifh;
 
-         while(fgets(buffer, SIZE_LINE, fh) && !G->TR->Abort)
-         {
-            if(!header && strncmp(buffer, "From ", 5) == 0)
+        if((ifh = fopen(G->TR->ImportFile, "r")))
+        {
+          struct MinNode *curNode;
+
+          // iterate through our transferList and seek to
+          // each position/address of a mail
+          for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
+          {
+            struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+            struct Mail *mail = mtn->mail;
+            FILE *ofh = NULL;
+            char mfile[SIZE_MFILE];
+            char buffer[SIZE_LINE];
+            BOOL foundBody = FALSE;
+            unsigned int stat = SFLAG_NONE;
+            BOOL ownStatusFound = FALSE;
+
+            // if the mail is not flagged as 'loading' we can continue with the next
+            // node
+            if(hasTR_LOAD(mtn) == FALSE)
+              continue;
+
+            // seek to the file position where the mail resist
+            if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
+              break;
+
+            TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Importing));
+
+            if((ofh = fopen(MA_NewMailFile(folder, mfile), "w")) == NULL)
+              break;
+
+            // now that we seeked to the mail address we go
+            // and read in line by line
+            while(GetLine(ifh, buffer, SIZE_LINE) && !G->TR->Abort)
             {
-               if(body)
-               {
-                  if(f)
+              // if we did not find the message body yet
+              if(foundBody == FALSE)
+              {
+                if(buffer[0] == '\0')
+                  foundBody = TRUE; // we found the body part
+                else
+                {
+                  // we search for some interesting header lines (i.e. X-Status: etc.)
+                  if(strnicmp(buffer, "X-Status: ", 10) == 0)
                   {
-                     fclose(f);
-                     f = NULL;
+                    if(ownStatusFound)
+                      stat |= MA_FromXStatusHeader(&buffer[10]);
+                    else
+                      stat = MA_FromXStatusHeader(&buffer[10]);
 
-                     if((email = MA_ExamineMail(folder, mfile, FALSE)))
-                     {
-                        if(ownStatusFound == FALSE)
-                        {
-                          // define the default status flags depending on the
-                          // folder
-                          if(btype == FT_OUTGOING)
-                            stat = SFLAG_QUEUED;
-                          else if(btype == FT_SENT || btype == FT_CUSTOMSENT)
-                            stat = SFLAG_SENT;
-                          else
-                            stat = SFLAG_NEW;
-                        }
-                        email->Mail.sflags = stat;
-
-                        // depending on the Status we have to set the transDate or not
-                        if(!hasStatusQueued(&(email->Mail)) && !hasStatusHold(&(email->Mail)))
-                          GetSysTimeUTC(&email->Mail.transDate);
-
-                        // add the mail to the folderlist now
-                        newmail = AddMailToList((struct Mail *)email, folder);
-
-                        // if this was a compressed/encrypted folder we need to pack the mail now
-                        if(folder->Mode > FM_SIMPLE)
-                          RepackMailFile(newmail, -1, NULL);
-
-                        MA_FreeEMailStruct(email);
-
-                        // update the mailfile accordingly.
-                        MA_UpdateMailFile(newmail);
-
-                        // put the transferStat to 100%
-                        TR_TransStat_Update(&ts, TS_SETMAX);
-                     }
-
-                     ownStatusFound = FALSE;
+                     ownStatusFound = TRUE;
                   }
-                  mail = mail->Next;
-               }
+                  else if(strnicmp(buffer, "Status: ", 8) == 0)
+                  {
+                    if(ownStatusFound)
+                      stat |= MA_FromStatusHeader(&buffer[8]);
+                    else
+                      stat = MA_FromStatusHeader(&buffer[8]);
 
-               header = TRUE; body = FALSE;
-               if(hasTR_LOAD(mail))
-               {
-                  ts.Msgs_Done++;
-                  TR_TransStat_NextMsg(&ts, mail->Index, mail->Position, mail->Size, GetStr(MSG_TR_Importing));
-                  f = fopen(MA_NewMailFile(folder, mfile), "w");
-               }
+                    ownStatusFound = TRUE;
+                  }
+                }
+
+                fprintf(ofh, "%s\n", buffer);
+              }
+              else
+              {
+                char *p;
+
+                // now that we are parsing within the message body we have to
+                // search for new "From " lines as well.
+                if(strncmp(buffer, "From ", 5) == 0)
+                  break;
+
+                // the mboxrd format specifies that we need to unquote any >From, >>From etc. occurance.
+                // http://www.qmail.org/man/man5/mbox.html
+                p = buffer;
+                while(*p == '>')
+                  p++;
+
+                // if we found a quoted line we need to check if there is a following "From " and if so
+                // we have to skip ONE quote.
+                if(p != buffer && strncmp(p, "From ", 5) == 0)
+                  fprintf(ofh, "%s\n", &buffer[1]);
+                else
+                  fprintf(ofh, "%s\n", buffer);
+              }
+
+              // update the transfer statistics
+              TR_TransStat_Update(&ts, strlen(buffer)+1);
             }
-            else if(f && (header || body))
+
+            fclose(ofh);
+            ofh = NULL;
+
+            // after writing out the mail to a
+            // new mail file we go and add it to the folder
+            if(ownStatusFound == FALSE)
             {
-               char *tmp = buffer;
-
-               // the mboxrd format specifies that we need to unquote any >From, >>From etc. occurance.
-               // http://www.qmail.org/man/man5/mbox.html
-               while(*tmp == '>')
-                 tmp++;
-
-               // if we found a quoted line we need to check if there is a following "From " and if so
-               // we have to skip ONE quote.
-               if(tmp != buffer && strncmp(tmp, "From ", 5) == 0)
-                 fputs(&buffer[0]+1, f);
-               else
-                 fputs(buffer, f);
-
-               // on import we take the Status: and X-Status: headerline into
-               // account for status definitions
-               if(strnicmp(tmp, "X-Status: ", 10) == 0)
-               {
-                 if(ownStatusFound)
-                   stat |= MA_FromXStatusHeader(tmp+10);
-                 else
-                   stat = MA_FromXStatusHeader(tmp+10);
-
-                 ownStatusFound = TRUE;
-               }
-               else if(strnicmp(tmp, "Status: ", 8) == 0)
-               {
-                 if(ownStatusFound)
-                   stat |= MA_FromStatusHeader(tmp+8);
-                 else
-                   stat = MA_FromStatusHeader(tmp+8);
-
-                 ownStatusFound = TRUE;
-               }
-
-               TR_TransStat_Update(&ts, strlen(buffer));
+              // define the default status flags depending on the
+              // folder
+              if(ftype == FT_OUTGOING)
+                stat = SFLAG_QUEUED;
+              else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
+                stat = SFLAG_SENT;
+              else
+                stat = SFLAG_NEW;
             }
 
-            if(header && buffer[1] == '\0')
+            SET_FLAG(mail->sflags, stat);
+
+            // depending on the Status we have to set the transDate or not
+            if(!hasStatusQueued(mail) && !hasStatusHold(mail))
+              GetSysTimeUTC(&mail->transDate);
+
+            // add the mail to the folderlist now
+            if((mail = AddMailToList(mail, folder)))
             {
-              body = TRUE;
-              header = FALSE;
+              // update the mailFile Path
+              memcpy(mail->MailFile, mfile, SIZE_MFILE*sizeof(char));
+
+              // if this was a compressed/encrypted folder we need to pack the mail now
+              if(folder->Mode > FM_SIMPLE)
+                RepackMailFile(mail, -1, NULL);
+
+              // update the mailfile accordingly.
+              MA_UpdateMailFile(mail);
+
+              // put the transferStat to 100%
+              TR_TransStat_Update(&ts, TS_SETMAX);
             }
-         }
+          }
 
-         if (body && f)
-         {
-            fclose(f);
-            if ((email = MA_ExamineMail(folder, mfile, FALSE)))
-            {
-               if(ownStatusFound == FALSE)
-               {
-                  // define the default status flags depending on the
-                  // folder
-                  if(btype == FT_OUTGOING)
-                    stat = SFLAG_QUEUED;
-                  else if(btype == FT_SENT || btype == FT_CUSTOMSENT)
-                    stat = SFLAG_SENT;
-                  else
-                    stat = SFLAG_NEW;
-               }
-               email->Mail.sflags = stat;
-
-               // depending on the Status we have to set the transDate or not
-               if(!hasStatusQueued(&(email->Mail)) && !hasStatusHold(&(email->Mail)))
-                 GetSysTimeUTC(&email->Mail.transDate);
-
-               // add the mail to the folderlist now
-               newmail = AddMailToList((struct Mail *)email, folder);
-
-               // if this was a compressed/encrypted folder we need to pack the mail now
-               if(folder->Mode > FM_SIMPLE)
-                 RepackMailFile(newmail, -1, NULL);
-
-               MA_FreeEMailStruct(email);
-
-               // update the mailfile accordingly.
-               MA_UpdateMailFile(newmail);
-
-               // put the transferStat to 100%
-               TR_TransStat_Update(&ts, TS_SETMAX);
-            }
-         }
-         fclose(fh);
-
-         DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
-         AppendLog(50, GetStr(MSG_LOG_Importing), (void *)ts.Msgs_Done, G->TR->ImportFile, folder->Name, "");
-         DisplayStatistics(folder, TRUE);
+          fclose(ifh);
+        }
       }
-   }
-   TR_AbortnClose();
+      break;
+
+      // the file was previously identified as a *.dbx file which
+      // was created by Outlook Express.
+      case IMF_DBX:
+      {
+        FILE *ifh;
+
+        if((ifh = fopen(G->TR->ImportFile, "rb")))
+        {
+          struct MinNode *curNode;
+
+          // iterate through our transferList and seek to
+          // each position/address of a mail
+          for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort; curNode = curNode->mln_Succ)
+          {
+            struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+            struct Mail *mail = mtn->mail;
+            FILE *ofh = NULL;
+            char mfile[SIZE_MFILE];
+
+            // if the mail is not flagged as 'loading' we can continue with the next
+            // node
+            if(hasTR_LOAD(mtn) == FALSE)
+              continue;
+
+            // seek to the file position where the mail resist
+            if(fseek(ifh, mtn->importAddr, SEEK_SET) != 0)
+              break;
+
+            TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Importing));
+
+            if((ofh = fopen(MA_NewMailFile(folder, mfile), "wb")) == NULL)
+              break;
+
+          	if(ReadDBXMessage(ifh, ofh, mtn->importAddr) == FALSE)
+          		E(DBF_IMPORT, "Couldn't import dbx message from addr %x", mtn->importAddr);
+
+        		fclose(ofh);
+
+            // after writing out the mail to a
+            // new mail file we go and add it to the folder
+            if(mail->sflags != SFLAG_NONE)
+            {
+              unsigned int stat = SFLAG_NONE;
+
+              // define the default status flags depending on the
+              // folder
+              if(ftype == FT_OUTGOING)
+                stat = SFLAG_QUEUED;
+              else if(ftype == FT_SENT || ftype == FT_CUSTOMSENT)
+                stat = SFLAG_SENT;
+              else
+                stat = SFLAG_NEW;
+
+              SET_FLAG(mail->sflags, stat);
+            }
+
+            // depending on the Status we have to set the transDate or not
+            if(!hasStatusQueued(mail) && !hasStatusHold(mail))
+              GetSysTimeUTC(&mail->transDate);
+
+            // add the mail to the folderlist now
+            if((mail = AddMailToList(mail, folder)))
+            {
+              // update the mailFile Path
+              memcpy(mail->MailFile, mfile, SIZE_MFILE*sizeof(char));
+
+              // if this was a compressed/encrypted folder we need to pack the mail now
+              if(folder->Mode > FM_SIMPLE)
+                RepackMailFile(mail, -1, NULL);
+
+              // update the mailfile accordingly.
+              MA_UpdateMailFile(mail);
+
+              // put the transferStat to 100%
+              TR_TransStat_Update(&ts, TS_SETMAX);
+            }
+          }
+
+          fclose(ifh);
+        }
+
+        case IMF_UNKNOWN:
+          // nothing
+        break;
+      }
+      break;
+    }
+
+    DisplayMailList(folder, G->MA->GUI.PG_MAILLIST);
+    AppendLog(50, GetStr(MSG_LOG_Importing), (void *)ts.Msgs_Done, G->TR->ImportFile, folder->Name, "");
+    DisplayStatistics(folder, TRUE);
+  }
+
+  TR_AbortnClose();
 }
 MakeHook(TR_ProcessIMPORTHook, TR_ProcessIMPORTFunc);
 ///
@@ -3710,37 +4460,47 @@ static void TR_NewMailAlert(void)
 /*** TR_ProcessGETFunc - Downloads messages from a POP3 server ***/
 HOOKPROTONHNONP(TR_ProcessGETFunc, void)
 {
-   struct TransStat ts;
-   struct Mail *mail;
+  struct TransStat ts;
+  TR_TransStat_Init(&ts);
 
-   TR_TransStat_Init(&ts);
-   if (ts.Msgs_Tot)
-   {
-      if (C->TransferWindow == 2 && !xget(G->TR->GUI.WI, MUIA_Window_Open)) set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
-      TR_TransStat_Start(&ts);
-      for (mail = G->TR->List; mail && !G->TR->Abort && !G->Error; mail = mail->Next)
+  if(ts.Msgs_Tot)
+  {
+    struct MinNode *curNode;
+
+    if(C->TransferWindow == 2 && !xget(G->TR->GUI.WI, MUIA_Window_Open))
+      set(G->TR->GUI.WI, MUIA_Window_Open, TRUE);
+
+    TR_TransStat_Start(&ts);
+
+    for(curNode = G->TR->transferList.mlh_Head; curNode->mln_Succ && !G->TR->Abort && !G->Error; curNode = curNode->mln_Succ)
+    {
+      struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+      struct Mail *mail = mtn->mail;
+
+      TR_TransStat_NextMsg(&ts, mtn->index, mtn->position, mail->Size, GetStr(MSG_TR_Downloading));
+      if(hasTR_LOAD(mtn))
       {
-         TR_TransStat_NextMsg(&ts, mail->Index, mail->Position, mail->Size, GetStr(MSG_TR_Downloading));
-         if(hasTR_LOAD(mail))
-         {
-            if (TR_LoadMessage(&ts, mail->Index))
-            {
-               // put the transferStat to 100%
-               TR_TransStat_Update(&ts, TS_SETMAX);
+        if(TR_LoadMessage(&ts, mtn->index))
+        {
+          // put the transferStat to 100%
+          TR_TransStat_Update(&ts, TS_SETMAX);
 
-               G->TR->Stats.Downloaded++;
-               if (C->AvoidDuplicates) TR_AppendUIDL(mail->UIDL);
-               if(hasTR_DELETE(mail)) TR_DeleteMessage(mail->Index);
-            }
-         }
-         else if(hasTR_DELETE(mail))
-         {
-            TR_DeleteMessage(mail->Index);
-         }
+          G->TR->Stats.Downloaded++;
+          if(C->AvoidDuplicates)
+            TR_AppendUIDL(mail->UIDL);
+
+          if(hasTR_DELETE(mtn))
+            TR_DeleteMessage(mtn->index);
+        }
       }
-      DisplayStatistics((struct Folder *)-1, TRUE);
-   }
-   TR_GetMailFromNextPOP(FALSE, 0, 0);
+      else if(hasTR_DELETE(mtn))
+        TR_DeleteMessage(mtn->index);
+    }
+
+    DisplayStatistics((struct Folder *)-1, TRUE);
+  }
+
+  TR_GetMailFromNextPOP(FALSE, 0, 0);
 }
 MakeHook(TR_ProcessGETHook, TR_ProcessGETFunc);
 
@@ -3750,10 +4510,10 @@ MakeHook(TR_ProcessGETHook, TR_ProcessGETFunc);
 HOOKPROTONHNONP(TR_GetMessageInfoFunc, void)
 {
    int line;
-   struct Mail *mail;
+   struct MailTransferNode *mtn;
    line = xget(G->TR->GUI.LV_MAILS, MUIA_NList_Active);
-   DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, line, &mail);
-   TR_GetMessageDetails(mail, line);
+   DoMethod(G->TR->GUI.LV_MAILS, MUIM_NList_GetEntry, line, &mtn);
+   TR_GetMessageDetails(mtn, line);
 }
 MakeStaticHook(TR_GetMessageInfoHook, TR_GetMessageInfoFunc);
 ///
@@ -3762,7 +4522,6 @@ MakeStaticHook(TR_GetMessageInfoHook, TR_GetMessageInfoFunc);
 static void TR_CompleteMsgList(void)
 {
    struct TR_ClassData *tr = G->TR;
-   struct Mail *mail = tr->GMD_Mail;
 
    // first we have to set the notifies to the default values.
    // this is needed so that if we get mail from more than one POP3 at a line this
@@ -3776,19 +4535,29 @@ static void TR_CompleteMsgList(void)
 
    if(C->PreSelection < 3)
    {
-      while(mail && !tr->Abort)
+      struct MinNode *curNode = tr->GMD_Mail;
+
+      for(; curNode->mln_Succ && !tr->Abort && !G->Error; curNode = curNode->mln_Succ)
       {
-        if(tr->Pause) break;
-        if(tr->Start) { TR_ProcessGETFunc(); break; }
-        if(C->PreSelection != 1 || mail->Size >= C->WarnSize*1024)
+        struct MailTransferNode *mtn = (struct MailTransferNode *)curNode;
+
+        if(tr->Pause)
+          break;
+
+        if(tr->Start)
         {
-          TR_GetMessageDetails(mail, tr->GMD_Line++);
+          TR_ProcessGETFunc();
+          break;
+        }
+
+        if(C->PreSelection != 1 || mtn->mail->Size >= C->WarnSize*1024)
+        {
+          TR_GetMessageDetails(mtn, tr->GMD_Line++);
 
           // set the next mail as the active one for the display,
           // so that if the user pauses we can go on here
-          tr->GMD_Mail = mail->Next;
+          tr->GMD_Mail = curNode->mln_Succ;
         }
-        mail = mail->Next;
       }
    }
 
@@ -3818,38 +4587,38 @@ MakeStaticHook(TR_PauseHook, TR_PauseFunc);
 /*** GUI ***/
 /// TR_LV_DspFunc
 //  Message listview display hook
-HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct Mail *entry)
+HOOKPROTONH(TR_LV_DspFunc, long, char **array, struct MailTransferNode *entry)
 {
-   if (entry)
-   {
-      static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL], dispdate[64];
+  if(entry)
+  {
+    static char dispfro[SIZE_DEFAULT], dispsta[SIZE_DEFAULT], dispsiz[SIZE_SMALL], dispdate[64];
+    struct Mail *mail = entry->mail;
+    struct Person *pe = &mail->From;
 
-      struct Person *pe = &entry->From;
-      sprintf(array[0] = dispsta, "%3d ", entry->Index);
-      if(hasTR_LOAD(entry))   strcat(dispsta, "\033o[10]");
-      if(hasTR_DELETE(entry)) strcat(dispsta, "\033o[9]");
-      if (entry->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);
-      FormatSize(entry->Size, array[1] = dispsiz);
-      array[2] = dispfro;
-      MyStrCpy(dispfro, AddrName((*pe)));
-      array[3] = entry->Subject;
-      array[4] = dispdate;
-      *dispdate = '\0';
+    sprintf(array[0] = dispsta, "%3d ", entry->index);
+    if(hasTR_LOAD(entry))   strcat(dispsta, "\033o[10]");
+    if(hasTR_DELETE(entry)) strcat(dispsta, "\033o[9]");
+    if(mail->Size >= C->WarnSize<<10) strcat(dispsiz, MUIX_PH);
+    FormatSize(mail->Size, array[1] = dispsiz);
+    array[2] = dispfro;
+    MyStrCpy(dispfro, AddrName((*pe)));
+    array[3] = mail->Subject;
+    array[4] = dispdate;
+    *dispdate = '\0';
 
-      if(entry->Date.ds_Days)
-      {
-        DateStamp2String(dispdate, &entry->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
-      }
-   }
-   else
-   {
-      array[0] = GetStr(MSG_MA_TitleStatus);
-      array[1] = GetStr(MSG_Size);
-      array[2] = GetStr(MSG_From);
-      array[3] = GetStr(MSG_Subject);
-      array[4] = GetStr(MSG_Date);
-   }
-   return 0;
+    if(mail->Date.ds_Days)
+      DateStamp2String(dispdate, &mail->Date, C->SwatchBeat ? DSS_DATEBEAT : DSS_DATETIME, TZC_LOCAL);
+  }
+  else
+  {
+    array[0] = GetStr(MSG_MA_TitleStatus);
+    array[1] = GetStr(MSG_Size);
+    array[2] = GetStr(MSG_From);
+    array[3] = GetStr(MSG_Subject);
+    array[4] = GetStr(MSG_Date);
+  }
+
+  return 0;
 }
 MakeStaticHook(TR_LV_DspFuncHook,TR_LV_DspFunc);
 ///
@@ -3863,6 +4632,8 @@ struct TR_ClassData *TR_New(enum TransferType TRmode)
       APTR bt_all = NULL, bt_none = NULL, bt_loadonly = NULL, bt_loaddel = NULL, bt_delonly = NULL, bt_leave = NULL;
       APTR gr_sel, gr_proc, gr_win;
       BOOL fullwin = (TRmode == TR_GET || TRmode == TR_IMPORT);
+
+      NewList((struct List *)&data->transferList);
 
       gr_proc = ColGroup(2), GroupFrameT(GetStr(MSG_TR_Status)),
          Child, data->GUI.TX_STATS = TextObject,

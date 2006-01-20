@@ -30,6 +30,8 @@
 
 #include <stdio.h>
 
+#include "YAM_mainFolder.h"
+
 enum TransferType   { TR_IMPORT, TR_EXPORT, TR_GET, TR_SEND };
 enum SMTPSecMethod  { SMTPSEC_NONE, SMTPSEC_TLS, SMTPSEC_SSL };
 
@@ -78,14 +80,16 @@ struct TR_GUIData
    char *ST_STATUS;
 };
 
-enum GuiLevel { POP_USER, POP_START, POP_TIMED, POP_REXX };
+enum GuiLevel { POP_USER=0, POP_START, POP_TIMED, POP_REXX };
+enum ImportFormat { IMF_UNKNOWN=0, IMF_MBOX, IMF_DBX, IMF_PLAIN };
 
-struct TR_ClassData  /* transfer window */
+// transfer window class data
+struct TR_ClassData
 {
-   struct TR_GUIData     GUI;
-   struct Mail *         List;
-   struct Mail *         GMD_Mail;
-   struct Folder *       ImportBox;
+   struct TR_GUIData     GUI;          // the actual GUI relevant data
+   struct MinList        transferList; // list for managing the downloads
+   struct MinNode       *GMD_Mail;
+   struct Folder *       ImportFolder;
    char *                UIDLloc;
 
    long                  Abort;
@@ -94,6 +98,7 @@ struct TR_ClassData  /* transfer window */
    int                   SearchCount;
    int                   GMD_Line;
    enum GuiLevel         GUIlevel;
+   enum ImportFormat     ImportFormat;
    int                   POP_Nr;
    BOOL                  SinglePOP;
    BOOL                  Checking;
@@ -114,7 +119,7 @@ void  TR_Cleanup(void);
 void  TR_CloseTCPIP(void);
 BOOL  TR_DownloadURL(char *url0, char *url1, char *url2, char *filename);
 void  TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel);
-BOOL  TR_GetMessageList_IMPORT(FILE *fh);
+BOOL  TR_GetMessageList_IMPORT();
 BOOL  TR_IsOnline(void);
 struct TR_ClassData *TR_New(enum TransferType TRmode);
 BOOL  TR_OpenTCPIP(void);

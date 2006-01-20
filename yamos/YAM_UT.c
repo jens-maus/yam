@@ -1851,15 +1851,23 @@ void SimpleWordWrap(char *filename, int wrapsize)
 //  Puts up a file requester
 int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *drawer, char *file)
 {
-   // the following arrays depend on the ReqFileType enumeration
-   static const char *pattern[MAXASL] =
-   {
-     "#?.addressbook#?", "#?.config#?", NULL, "~(#?.info)", "#?.(yam|rexx)", "#?.(gif|jpg|jpeg|png|iff|ilbm)", NULL, NULL
-   };
+  // the following arrays depend on the ReqFileType enumeration
+  static const char *pattern[MAXASL] =
+  {
+    "#?.addressbook#?",               // ASL_ABOOK
+    "#?.config#?",                    // ASL_CONFIG
+    NULL,                             // ASL_DETACH
+    "~(#?.info)",                     // ASL_ATTACH
+    "#?.(yam|rexx)",                  // ASL_REXX
+    "#?.(gif|jpg|jpeg|png|iff|ilbm)", // ASL_PHOTO
+    "#?.((mbx|eml|dbx)|#?,#?)",       // ASL_IMPORT
+    "#?.mbx",                         // ASL_EXPORT
+    NULL                              // ASL_FOLDER
+  };
 
    static BOOL init[MAXASL] =
    {
-     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
+     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
    };
    char *postext = hasSaveModeFlag(mode) ? GetStr(MSG_UT_Save) : GetStr(MSG_UT_Load);
    int skip = *file ? 1 : 2;
@@ -2192,20 +2200,9 @@ long FileCount(char *directory)
 ///
 
 /*** Mail related ***/
-/// MyAddTail
-//  Adds a message to a message list
-void MyAddTail(struct Mail **list, struct Mail *new)
-{
-   struct Mail *mail;
-   new->Next = NULL;
-   if (!*list) { *list = new; return; }
-   for (mail = *list; mail->Next; mail = mail->Next);
-   mail->Next = new;
-}
-///
 /// MyRemove
 //  Removes a message from a message list
-void MyRemove(struct Mail **list, struct Mail *rem)
+static void MyRemove(struct Mail **list, struct Mail *rem)
 {
    struct Mail *mail;
    if (*list == rem) { *list = rem->Next; return; }

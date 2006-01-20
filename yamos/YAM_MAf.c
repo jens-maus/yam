@@ -1067,8 +1067,13 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
   BOOL success = FALSE;
   int linesread = 0;
 
+  ENTER();
+
   if(headerList == NULL)
+  {
+    RETURN(FALSE);
     return FALSE;
+  }
 
   // Allocate some memory for use as a read buffer
   if((buffer = calloc(SIZE_LINE, sizeof(char))))
@@ -1212,6 +1217,7 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
   if(!success)
     FreeHeaderList(headerList);
 
+  RETURN((BOOL)((success == TRUE && IsMinListEmpty(headerList) == FALSE) || linesread == 1));
   return (BOOL)((success == TRUE && IsMinListEmpty(headerList) == FALSE) || linesread == 1);
 }
 
@@ -1271,9 +1277,14 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
    BOOL dateFound = FALSE;
    FILE *fh;
 
+   ENTER();
+
    // first we generate a new ExtendedMail buffer
    if(!(email = calloc(1, sizeof(struct ExtendedMail))))
+   {
+     RETURN(NULL);
      return NULL;
+   }
 
    mail = &email->Mail;
    stccpy(mail->MailFile, file, SIZE_MFILE);
@@ -1291,6 +1302,8 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
          if(!StartUnpack(GetMailFile(NULL, folder, mail), fullfile, folder))
          {
            free(email);
+
+           RETURN(NULL);
            return NULL;
          }
 
@@ -1665,14 +1678,19 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
 
       FinishUnpack(fullfile);
 
+      RETURN(email);
       return email;
    }
 
    FinishUnpack(fullfile);
 
    // finish up everything before we exit with an error
-   fclose(fh);
+   if(fh)
+    fclose(fh);
+
    free(email);
+
+   RETURN(NULL);
    return NULL;
 }
 

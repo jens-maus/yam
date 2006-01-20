@@ -58,7 +58,7 @@ enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
 enum TZConvert { TZC_NONE, TZC_UTC, TZC_LOCAL };
 
 enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
-  ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_FOLDER };
+  ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_EXPORT, ASL_FOLDER };
 
 struct Person
 {       
@@ -337,7 +337,6 @@ Object * MakePGPKeyList(Object **st, BOOL secret, char *label);
 Object * MakeString(int maxlen, char *label);
 Object * MakeAddressField(Object **string, char *label, APTR help, int abmode, int winnum, BOOL allowmulti);
 BOOL     MatchNoCase(const char *string, const char *match);
-void     MyAddTail(struct Mail **list, struct Mail *new);
 char *   MyStrChr(const char *s, int c);
 struct TempFile *OpenTempFile(char *mode);
 BOOL     AllFolderLoaded(void);

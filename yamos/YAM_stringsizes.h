@@ -62,7 +62,7 @@
 #define MAXIMAGES      (MAXBCSTATUSIMG+MAXBCFOLDERIMG+MAXBCCFGIMG)
 
 #define MAXICONS         4
-#define MAXASL           8
+#define MAXASL           9
 #define MAXERR          50
 #define MAXUSERS        16
 #define MAXCTYPE        25

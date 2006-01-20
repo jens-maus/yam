@@ -458,7 +458,7 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
             DoMethod(lv, MUIM_NList_NextSelected, &id);
             if (id == MUIV_NList_NextSelected_End) break;
             DoMethod(lv, MUIM_NList_GetEntry, id, &mail);
-            mail->Position = id;
+            mail->position = id;
 
             if(!onlyNew || hasStatusNew(mail))
             {
@@ -476,7 +476,7 @@ struct Mail **MA_CreateMarkedList(Object *lv, BOOL onlyNew)
         if ((mlist = calloc(3, sizeof(struct Mail *))))
         {
           id = xget(lv, MUIA_NList_Active);
-          mail->Position = id;
+          mail->position = id;
           mlist[0] = (struct Mail *)1;
           mlist[2] = mail;
         }
@@ -2223,14 +2223,14 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 
    if (mlist)
    {
-      if (!filename) if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ExportMessages), REQF_SAVEMODE, C->DetachDir, ""))
+      if (!filename) if (ReqFile(ASL_EXPORT, G->MA->GUI.WI, GetStr(MSG_MA_MessageExport), REQF_SAVEMODE, C->DetachDir, ""))
       {
-         strmfp(filename = outname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
+         strmfp(filename = outname, G->ASLReq[ASL_EXPORT]->fr_Drawer, G->ASLReq[ASL_EXPORT]->fr_File);
          if (FileExists(filename))
          {
             char * a = GetStr(MSG_MA_ExportAppendOpts);
             char * b = GetStr(MSG_MA_ExportAppendReq);
-            switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_ExportMessages), a, b))
+            switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_MessageExport), a, b))
             {
                case 1: append = FALSE; break;
                case 2: append = TRUE; break;
@@ -2266,48 +2266,149 @@ MakeHook(MA_ExportMessagesHook, MA_ExportMessagesFunc);
 //  Imports messages from a MBOX mailbox file
 BOOL MA_ImportMessages(char *fname)
 {
-   BOOL result = FALSE;
-   struct Folder *actfo = FO_GetCurrentFolder();
-   FILE *fh;
+  BOOL result = FALSE;
+  struct Folder *actfo = FO_GetCurrentFolder();
+  enum ImportFormat foundFormat = IMF_UNKNOWN;
+  FILE *fh;
 
-   if(!actfo) return FALSE;
+  ENTER();
 
-   if ((fh = fopen(fname, "r")))
-   {
-      if ((G->TR = TR_New(TR_IMPORT)))
+  // check that a real folder is active
+  if(!actfo)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
+
+  // check if the file exists or not and if so, open
+  // it immediately.
+  if((fh = fopen(fname, "r")))
+  {
+    char buffer[SIZE_LINE];
+
+    // what we do first is to try to find out which
+    // file the user tries to import and if it is a valid
+    // and supported one.
+
+    // try to identify the file as an MBOX file
+    D(DBF_IMPORT, "processing MBOX file identification");
+    while(fgets(buffer, SIZE_LINE, fh) && foundFormat == IMF_UNKNOWN)
+    {
+      if(strncmp(buffer, "From ", 5) == 0)
+        foundFormat = IMF_MBOX;
+    }
+
+    // if we still couldn't identify the file
+    // we go and try to identify it as a dbx (Outlook Express)
+    // message file
+    // Please check http://oedbx.aroh.de/ for a recent description
+    // of the format!
+    if(foundFormat == IMF_UNKNOWN)
+    {
+      unsigned char *file_header;
+
+      D(DBF_IMPORT, "processing DBX file identification");
+
+      // seek the file pointer back
+      fseek(fh, 0, SEEK_SET);
+
+      // read the 9404 bytes long file header for properly identifying
+      // an Outlook Express database file.
+      if((file_header = (unsigned char *)malloc(0x24bc)))
       {
-         stccpy(G->TR->ImportFile, fname, SIZE_PATHFILE);
-         TR_SetWinTitle(TRUE, (char *)FilePart(fname));
-         G->TR->ImportBox = actfo;
+    		if(fread(file_header, 1, 0x24bc, fh) == 0x24bc)
+        {
+          // try to identify the file as a CLSID_MessageDatabase file
+  		  	if((file_header[0] == 0xcf && file_header[1] == 0xad &&
+              file_header[2] == 0x12 && file_header[3] == 0xfe) &&
+             (file_header[4] == 0xc5 && file_header[5] == 0xfd &&
+              file_header[6] == 0x74 && file_header[7] == 0x6f))
+          {
+            // the file seems to be indeed an Outlook Express
+            // message database file (.dbx)
+            foundFormat = IMF_DBX;
+          }
+        }
 
-         if(TR_GetMessageList_IMPORT(fh) && SafeOpenWindow(G->TR->GUI.WI))
-         {
-            result = TRUE;
-         }
-         else
-         {
-            MA_ChangeTransfer(TRUE);
-            DisposeModulePush(&G->TR);
-         }
+        free(file_header);
       }
-      fclose(fh);
-   }
-   return result;
+    }
+
+    // if we still haven't identified the file we try to find out
+    // if it might be just a RAW mail file without a common "From "
+    // phrase a MBOX compliant mail file normally contains.
+    if(foundFormat == IMF_UNKNOWN || foundFormat == IMF_MBOX)
+    {
+      int foundTokens = 0;
+
+      D(DBF_IMPORT, "processing PLAIN mail file identification");
+
+      // seek the file pointer back
+      fseek(fh, 0, SEEK_SET);
+
+      while(fgets(buffer, SIZE_LINE, fh) && foundTokens < 2)
+      {
+        if(strnicmp(buffer, "From:", 5) == 0)
+          foundTokens = 1;
+        else if(strnicmp(buffer, "Subject:", 8) == 0)
+          foundTokens = 2;
+      }
+
+      // if we found all tokens we can set the ImportFormat accordingly.
+      if(foundTokens == 2)
+        foundFormat = (foundFormat == IMF_UNKNOWN ? IMF_PLAIN : IMF_MBOX);
+      else
+        foundFormat = IMF_UNKNOWN;
+    }
+
+    fclose(fh);
+  }
+
+  SHOWVALUE(DBF_IMPORT, foundFormat);
+
+  // if we found that the file contains a valid import format
+  // we go and create a transfer window object and let the user
+  // choose which mail he wants to actually import.
+  if(foundFormat != IMF_UNKNOWN && (G->TR = TR_New(TR_IMPORT)))
+  {
+    TR_SetWinTitle(TRUE, (char *)FilePart(fname));
+
+    // put some import relevant data into variables of our
+    // transfer window object
+    stccpy(G->TR->ImportFile, fname, SIZE_PATHFILE);
+    G->TR->ImportFolder = actfo;
+    G->TR->ImportFormat = foundFormat;
+
+    // call GetMessageList_IMPORT() to parse the file once again
+    // and present the user with a selectable list of mails the file
+    // contains.
+    if(TR_GetMessageList_IMPORT() && SafeOpenWindow(G->TR->GUI.WI))
+      result = TRUE;
+    else
+    {
+      MA_ChangeTransfer(TRUE);
+      DisposeModulePush(&G->TR);
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 
 ///
 /// MA_ImportMessagesFunc
 HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 {
-   if (ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_ImportMessages), REQF_NONE, C->DetachDir, ""))
-   {
-      char inname[SIZE_PATHFILE];
-      strmfp(inname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
-      if(!MA_ImportMessages(inname))
-      {
-        ER_NewError(GetStr(MSG_ER_IMPORTMAIL), inname);
-      }
-   }
+  // put up an Requester to query the user for the input file.
+  if(ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, ""))
+  {
+    char inname[SIZE_PATHFILE];
+    strmfp(inname, G->ASLReq[ASL_IMPORT]->fr_Drawer, G->ASLReq[ASL_IMPORT]->fr_File);
+
+    // now start the actual importing of the messages
+    if(!MA_ImportMessages(inname))
+      ER_NewError(GetStr(MSG_ER_MESSAGEIMPORT), inname);
+  }
 }
 MakeStaticHook(MA_ImportMessagesHook, MA_ImportMessagesFunc);
 

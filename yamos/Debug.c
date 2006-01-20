@@ -93,6 +93,7 @@ void SetupDebug(void)
 			{ "rexx",     DBF_REXX    },
 			{ "net",      DBF_NET     },
 			{ "util",     DBF_UTIL    },
+			{ "import",   DBF_IMPORT  },
 			{ "all",      DBF_ALL     },
 			{ NULL,       0           }
 		};

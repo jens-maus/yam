@@ -2231,9 +2231,14 @@ void rx_getselected( UNUSED struct RexxHost *host, struct rxd_getselected **rxd,
 
          if((mlist = MA_CreateMarkedList(lv, FALSE)))
          {
-            int i;
-            rd->res.num = calloc(1+(int)mlist[0], sizeof(long));
-            for (i = 0; i < (int)mlist[0]; i++) rd->res.num[i] = (long *)&(mlist[i+2]->Position);
+            if((rd->res.num = calloc(1+(int)mlist[0], sizeof(long))))
+            {
+              int i;
+
+              for(i = 0; i < (int)mlist[0]; i++)
+                rd->res.num[i] = (long *)&(mlist[i+2]->position);
+            }
+
             free(mlist);
          }
          else

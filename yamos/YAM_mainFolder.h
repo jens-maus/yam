@@ -44,9 +44,7 @@ struct Mail
    long             Size;       // the message size in bytes
    unsigned int     mflags;     // internal mail flags (no status flags)
    unsigned int     sflags;     // mail status flags (read/new etc.)
-   unsigned char    tflags;     // temporary transfer flags
-   int              Position;   // current position of the mail
-   int              Index;      // the index value of the mail
+   int              position;   // current position of the mail (various uses)
    int              tzone;      // the timezone which this mail is based on
    struct DateStamp Date;       // the datestamp of the mail (UTC)
    struct timeval   transDate;  // the date/time when this messages arrived/was sent. (UTC)

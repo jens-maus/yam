@@ -1023,73 +1023,51 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 //  Processes body of a message part
 static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *tt, struct Part *rp)
 {
-   char c = 0;
-   char buf[SIZE_LINE];
-   int blen = 0;
-   long cpos = 0;
-   BOOL cempty = TRUE;
+  char buf[SIZE_LINE];
+  int blen = 0;
 
-   if(!in) return FALSE;
-   if(rp) blen = strlen(rp->Boundary);
-   if(out) cpos = ftell(in);
+  if(!in)
+    return FALSE;
 
-   while(fgets(buf, SIZE_LINE, in))
-   {
-      // first we check if we reached the boundary yet.
-      if(rp && strncmp(buf, rp->Boundary, blen) == 0)
+  if(rp)
+    blen = strlen(rp->Boundary);
+
+  // we process the file line-by-line, analyze it if it is between the boundary
+  // do an eventually existing charset translation and write it out again.
+  while(GetLine(in, buf, SIZE_LINE))
+  {
+    // first we check if we reached the boundary yet.
+    if(rp && strncmp(buf, rp->Boundary, blen) == 0)
+    {
+      if(buf[blen] == '-' && buf[blen+1] == '-' && buf[blen+2] == '\0')
+        return TRUE;
+      else
+        return FALSE;
+    }
+
+    if(out)
+    {
+      // if this function was invoked with a translation table, we have to change
+      // all chars accordingly
+      if(tt)
       {
-         if(buf[blen] == '-' && buf[blen+1] == '-' && buf[blen+2] == '\n')
-           return TRUE;
-         else
-           return FALSE;
+        unsigned char *p = (unsigned char *)buf;
+
+        // iterate through the buffer and change the chars accordingly.
+        for(; *p; p++)
+          *p = tt->Table[*p];
       }
 
-      if(out)
-      {
-         long size = ftell(in)-cpos; // get new position and size of read chars
-
-         // if this function was invokes with a translation table, we have to change
-         // all chars accordingly
-         if(tt)
-         {
-            long t = size;
-            unsigned char *p = (unsigned char *)buf;
-
-            // iterate through the buffer and change the chars accordingly.
-            for(;size; size--, p++)
-              *p = tt->Table[*p];
-
-            size = t;
-         }
-
-         // if there is some endchar in the c variable we write it first
-         // out to the fh.
-         if(!cempty)
-           fputc(c, out);
-
-         // lets save the last char of the buffer in a temp variable because
-         // we need to skip the last byte of the stream later on
-         c = buf[size-1];
-         cempty = FALSE;
-
-         // now write back exactly the same amount of bytes we read previously
-         if(fwrite(buf, 1, (size_t)size-1, out) != (size_t)(size-1))
-           return FALSE;
-
-         // increase cpos for next iteration
-         cpos += size;
-      }
-   }
+      // now write back exactly the same amount of bytes we read previously
+      if(fprintf(out, "%s\n", buf) <= 0)
+        return FALSE;
+    }
+  }
 
    // if we end up here because of a EOF we have check
    // if there is still something in c and then write it into the out fh.
    if(feof(in))
-   {
-      if(out && !cempty)
-        fputc(c, out);
-
       return TRUE;
-   }
 
    return FALSE;
 }
