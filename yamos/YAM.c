@@ -1633,7 +1633,16 @@ static void DoStartup(BOOL nocheck, BOOL hide)
    // so check if it is properly running.
    if(TR_IsOnline())
    {
-      if (C->GetOnStartup && !nocheck)
+      // send all mail in the Outgoing folder
+      if(C->SendOnStartup && !nocheck)
+      {
+         SendWaitingMail();
+         if (G->TR) DisposeModule(&G->TR);
+         DoMethod(G->App, MUIM_Application_InputBuffered);
+      }
+
+      // get all mail waiting on the POP3 servers
+      if(C->GetOnStartup && !nocheck)
       {
          if(hide || C->PreSelection == 0)
          {
@@ -1641,46 +1650,7 @@ static void DoStartup(BOOL nocheck, BOOL hide)
             if (G->TR) DisposeModule(&G->TR);
          }
          else
-         {
             MA_PopNow(POP_USER, -1);
-
-            // If the user has some preselection transfer
-            // selected we have to get into a local event loop
-            if(G->TR && xget(G->TR->GUI.WI, MUIA_Window_Open))
-            {
-              LONG result;
-
-              set(G->MA->GUI.WI, MUIA_Window_Sleep, TRUE);
-
-              DoMethod(G->TR->GUI.WI, MUIM_Notify, MUIA_Window_Open, FALSE, G->App, 2, MUIM_Application_ReturnID, 100);
-
-              // lets collect the waiting returnIDs now
-              COLLECT_RETURNIDS;
-
-              do {
-                ULONG signals;
-                result = DoMethod(G->App, MUIM_Application_NewInput, &signals);
-                if (result > 0) break;
-                if (signals) Wait(signals);
-              } while (result == 0);
-
-              // now lets reissue the collected returnIDs again
-              REISSUE_RETURNIDS;
-
-              set(G->MA->GUI.WI, MUIA_Window_Sleep, FALSE);
-            }
-
-            if(G->TR) DisposeModule(&G->TR);
-         }
-
-         DoMethod(G->App, MUIM_Application_InputBuffered);
-      }
-
-      if (C->SendOnStartup && !nocheck)
-      {
-         SendWaitingMail();
-         if (G->TR) DisposeModule(&G->TR);
-         DoMethod(G->App, MUIM_Application_InputBuffered);
       }
    }
 

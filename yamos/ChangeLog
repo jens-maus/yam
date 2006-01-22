@@ -7,6 +7,11 @@ $Source$
 
 2006-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: removed the temporary local event loop which is used during
+      startup if preselection of mails is the selected transfermode. It
+      prevented that the KeepAlive interval also worked on the very first
+      mail check operation in case mailchecking during startup was enabled.
+      Now the main event loop will manage all that stuff instead.
     * YAM_TR.c: implemented a POP3 KeepAlive facility which makes sure that
       a POP3 server doesn't drop a connection while the preselection window
       is in use. In fact, a timer is now issued as soon as the preselection
