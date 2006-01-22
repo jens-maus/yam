@@ -1,5 +1,5 @@
-## chunk AUTH Dirk Neubauer, Horst Schumann [ATO]
-## version $VER: YAM.catalog 5.13 (13.02.2005)
+## chunk AUTH Jens Langner
+## version $VER: YAM.catalog 5.14 (22.01.2006)
 ## language deutsch
 ## codeset 0
 ;
@@ -87,10 +87,6 @@ MSG_Yes
 _Ja
 ; _Yes
 ;
-MSG_No
-_Nein
-; _No
-;
 MSG_OkayReq
 *_Okay
 ; *_Okay
@@ -158,10 +154,6 @@ Voller Name
 MSG_Filename
 Dateiname
 ; Filename
-;
-MSG_Alias
-Alias
-; Alias
 ;
 MSG_Description
 Beschreibung
@@ -239,22 +231,8 @@ MSG_Path
 Pfad
 ; Path
 ;
-MSG_Directory
-Verzeichnis
-; Directory
-;
 ;
 ; Module Root
-;
-MSG_Copyright1
-Open Source E-Mail Software für den Amiga\n\
-\n\
-Copyright (C) 1995-2000 Marcel Beck\n\
-Copyright (C) 2000-2006 YAM Open Source Team
-; Open Source E-mail package for the Amiga\n\
-; \n\
-; Copyright (C) 1995-2000 Marcel Beck\n\
-; Copyright (C) 2000-2006 YAM Open Source Team
 ;
 MSG_Version
 Version:
@@ -282,11 +260,6 @@ MSG_UserLogin
 Klicken Sie auf Ihren Namen um sich anzumelden
 ; Click your name to login
 ;
-; Obsolete
-MSG_AppDescription
-SMTP/POP3 Client & Mailer für AmigaOS
-; SMTP/POP3 Client & Mailer for AmigaOS
-;
 MSG_ErrorStartup
 Fehler beim Programmstart
 ; Error during startup
@@ -294,11 +267,6 @@ Fehler beim Programmstart
 MSG_Quit
 Beenden
 ; Quit
-;
-MSG_ErrorLib
-Kann Bibliothek '%s' Version %ld nicht öffnen
-; Can't open library '%s', version %ld
-; LIBRARY_NAME, LIBRARY_VERSION
 ;
 MSG_LoadingConfig
 Lade Konfiguration...
@@ -618,12 +586,6 @@ MSG_UT_PGPPassReq
 Bitte geben Sie Ihr PGP Passwort ein:
 ; Please enter your PGP pass phrase:
 ;
-; Replaced by MSG_APPICON_STATS
-MSG_UT_AppStats
-
-; 
-;
-;
 MSG_UT_NoPrinter
 Kein Drucker oder Drucker offline!
 ; No printer or printer offline!
@@ -831,11 +793,6 @@ MSG_MA_Deleted
 Gelöschte
 ; Deleted
 ;
-; Obsolete
-MSG_MA_Archived
-Archivierte
-; Archived
-;
 ;
 ; Module MA - Toolbar
 ;
@@ -937,10 +894,6 @@ Neues Postfach
 ; New folder
 ;This is the title of the new folder window, not the menu item.
 ;
-MSG_MA_NewSeparator
-Neue Trennlinie...
-; New separator...
-;
 MSG_MA_SortOrder
 Anordnung
 ; Order
@@ -988,14 +941,6 @@ U\000Index erneuern
 MSG_MA_FlushIndices
 Indizes freigeben
 ; Flush indices
-;
-MSG_MA_ExportMessages
-Exportieren...
-; Export...
-;
-MSG_MA_ImportMessages
-Importieren...
-; Import...
 ;
 MSG_MA_MSendAll
 S\000Post in Warteschlange senden
@@ -1168,11 +1113,6 @@ Die Einstellungen\nvon YAM ändern
 ;
 ;
 ; Module CO - Procedures
-;
-; Obsolete
-MSG_CO_SelectDir
-Wählen Sie ein Verzeichnis für das neue Postfach:
-; Please select a directory for the new folder:
 ;
 MSG_CO_ChangeFolderPass
 Geben Sie ein neues Passwort für dieses Postfach ein:
@@ -1668,10 +1608,6 @@ B_efehl
 MSG_CO_Name
 Na_me
 ; N_ame
-;
-MSG_CO_CTNone
-nicht verknüpfen
-; don't combine
 ;
 MSG_CO_CTAnd
 und
@@ -2353,10 +2289,6 @@ MSG_CO_Extras
 Extras
 ; Extras
 ;
-MSG_CO_ScanForFolders
-Nach Postfächern suchen
-; Scan for folders
-;
 MSG_CO_ImportMIME
 MIME Einstellungen importieren
 ; Import MIME viewers & types...
@@ -2728,11 +2660,6 @@ MSG_HELP_CO_ST_EDWRAP
 Spalte, bei der Nachrichtentext umgebrochen wird
 ; Word-wrap message text\n\
 ; at this column
-;
-MSG_HELP_CO_CH_AUTOBREAK
-Fügt beim Eingeben der Nachricht\nechte Zeilenumbrüche ein
-; Insert real line breaks\n\
-; while entering a message
 ;
 MSG_HELP_CO_CY_EDWRAP
 Wählen Sie 'beim Eintippen', um bei der Eingabe\nder Nachricht Zeilenumbrüche einzufügen
@@ -4084,11 +4011,6 @@ MSG_WR_NoRcptReqGad
 _Empfänger später hinzufügen|*_Abbrechen
 ; _Add recipient later|*_Cancel
 ;
-; Obsolete
-MSG_WR_PGPMIMEconflict
-PGP/MIME unterstützt keine Anhänge: Signieren/Verschlüsseln wurde ausgeschaltet.
-; PGP/MIME doesn't support attachments: signing/encrypting has been disabled.
-;
 MSG_WR_DiscardChanges
 Wollen Sie wirklich alle Änderungen\nan dieser Nachricht verwerfen?
 ; Do you really want to discard all\n\
@@ -4497,12 +4419,6 @@ MSG_HELP_WR_ST_TO
 Adresse (und Name) oder Alias\ndes primären Empfängers
 ; Address (and name) or alias\n\
 ; of the primary recipient(s)
-;
-; Obsolete
-MSG_HELP_WR_BT_VER
-Empfänger überprüfen: sucht E-Mail-\nAdresse zu einem Alias oder Namen
-; Verify recipient: find email\n\
-; address for alias or name
 ;
 MSG_HELP_WR_BT_ADR
 Wählt einen Empfänger\naus dem Adressbuch
@@ -4960,10 +4876,6 @@ Ungültiges Datums/Zeit-Format.\n\nDas Datum muss in AmigaDOS-Format sein.\nBeisp
 ; Example: %s
 ; DATE
 ;
-MSG_ER_ErrorMaxFilters
-Maximale Anzahl von Filtern erreicht! Sie können keine weiteren Filter hinzufügen.
-; Maximum number of filters reached! You can't add more filters.
-;
 MSG_ER_CantOpenTempfile
 Kann temporäre Datei '%s' nicht öffnen.\n\nÜberprüfen Sie die Pfadeinstellung in der Konfiguration.
 ; Couldn't open temporary file '%s'.\n\
@@ -4985,11 +4897,6 @@ MSG_ER_ErrorARexxScript
 Kann ARexx-Befehl '%s' nicht senden. Versichern Sie sich, dass das Skript existiert.
 ; Couldn't send ARexx command '%s'. Make sure that the script exists.
 ; REXX_COMMAND
-;
-MSG_ER_UnexpEOFB64
-Unerwartetes Dateiende beim Dekodieren einer BASE64-kodierten Datei. Die Nachricht scheint unvollständig zu sein.
-; Unexpected EOF while decoding a BASE64 encoded file. \
-; The message seems to be truncated.
 ;
 MSG_ER_UnexpEOFUU
 Unerwartetes Dateiende beim Dekodieren einer UU-kodierten Datei. Die Nachricht scheint unvollständig zu sein.
@@ -5118,13 +5025,6 @@ MSG_ER_ConnectionBroken
 TCP/IP-Verbindung wurde unterbrochen, vermutlich hat das Modem aufgelegt.
 ; TCP/IP connection broken, probably due to a carrier drop.
 ;
-MSG_ER_InvalidAddress
-Ungültige Adresse '%s'.\n\nDer SMTP-Server hat diese Adresse nicht akzeptiert. Verwenden Sie keine unerlaubten Zeichen.
-; Invalid address '%s'.\n\
-; \n\
-; The SMTP server didn't accept the address. Check for illegal characters.
-; ADDRESS
-;
 MSG_ER_ErrorReadMailfile
 Fehler beim Lesen der Nachrichtendatei: %s.\n\nDie Datei existiert zwar, aber beim Lesen trat ein Fehler auf.
 ; Read error on mail file: %s.\n\
@@ -5169,13 +5069,6 @@ Konnte PGP-Befehl nicht ausführen.\n\nÜberprüfen Sie, ob %s existiert.
 ; Check if %s exists.
 ; FILENAME
 ;
-MSG_ER_InvalidAlias
-Ungültiger Alias: %s.\n\nMehrere Adressen sind in diesem Feld nicht erlaubt.
-; Invalid alias: %s.\n\
-; \n\
-; Multiple addresses are not allowed in this field.
-; ALIAS
-;
 MSG_ER_AliasNotFound
 Unbekannter Alias oder Name: %s.\n\nYAM konnte die E-Mail-Adresse dieses Benutzers im Adressbuch nicht finden. Überprüfen Sie die Schreibweise.
 ; Unknown alias or name: %s.\n\
@@ -5183,19 +5076,6 @@ Unbekannter Alias oder Name: %s.\n\nYAM konnte die E-Mail-Adresse dieses Benutze
 ; YAM couldn't find the email address of this recipient \
 ; in the address book. Please verify the spelling.
 ; ALIAS
-;
-MSG_ER_AmbiguousAlias
-Mehrdeutiger Alias oder Name: %s.\n\nEs gibt mehr als einen Eintrag mit diesem Namen im Adressbuch. Bitte entfernen Sie doppelte Einträge oder verwenden Sie eindeutige Aliase.
-; Ambiguous alias or name: %s.\n\
-; \n\
-; There is more than one entry with this name in the address book. \
-; Please remove duplicate entries or use unique aliases.
-; ALIAS
-;
-MSG_ER_ErrorAddrDontFit
-Adressen passen nicht in Textfeld. Benutzen Sie eine Verteilerliste, um diese Problem zu umgehen.
-; Addresses don't fit in the string gadget. \
-; Use a distribution list to avoid this problem.
 ;
 MSG_ER_ErrorNoPGPId
 Konnte das PGP-Kürzel von '%s' im Adressbuch nicht finden, versuche es nun mit '%s'.
@@ -5617,11 +5497,6 @@ Ausgewählten Zugang entfernen
 ;
 ; Module FO - Routines
 ;
-; Obsolete
-MSG_FO_NewSepReq
-Optionale Beschriftung der Trennlinie
-; Optional label for the separator
-;
 MSG_FO_NewFolderReq
 Welche Einstellungen wollen Sie für das neue Postfach\nverwenden? Falls das Postfach bereits auf der Festplatte\nexistiert, wählen Sie 'Vorhandenes Verzeichnis'
 ; What settings do you want to use for the new folder?\n\
@@ -5674,11 +5549,6 @@ versandte Post
 MSG_FO_FTBothMail
 empfangene und versandte
 ; received and sent
-;
-; Obsolete
-MSG_FO_FTSeparate
-Trennlinie
-; separator
 ;
 MSG_FO_EditFolder
 Postfacheinstellungen
@@ -5916,11 +5786,6 @@ MSG_FOLDER_NEWFOLDER
 Neues Postfach...
 ; New folder...
 ;
-; Obsolete
-MSG_FOLDER_NEWSEPARATOR
-Neue Trennlinie...
-; New separator...
-;
 MSG_FOLDER_EDIT
 Bearbeiten...
 ; Edit...
@@ -5988,10 +5853,6 @@ B\000Umleiten...
 MSG_MESSAGE_GETADDRESS
 J\000Adresse speichern...
 ; J\000Save address...
-;
-MSG_MESSAGE_CHANGESUBJECT
-Betreff ändern...
-; Change subject...
 ;
 MSG_SETTINGS_ADDRESSBOOK
 A\000Adressbuch...
@@ -6112,24 +5973,9 @@ Das nächste Postfach mit ungelesenen Nachrichten\nist: \eb%s\en\nZu diesem Postf
 ; Next folder with unread messages is \eb%s\en\n\
 ; Go to this folder and continue reading there?
 ;
-; Obsolete
-MSG_WR_NoSubjectReqGad
-*Betreff _setzen|_Fortsetzen ohne Betreff
-; *_Set subject|_Continue without subject
-;
-; Obsolete
-MSG_NoSubjectReq
-Achtung: Betreffzeile ist leer
-; Warning: Subject is empty
-;
 MSG_MA_ABookModifiedGad
 *Jetzt _speichern|_Beenden ohne speichern
 ; *_Save now|_Quit without saving
-;
-MSG_APPICON_STATS
-N:%lD U:%lD T:%lD
-; N:%lD U:%lD T:%lD
-; COUNT, COUNT, COUNT
 ;
 MSG_ATTACH_NO
 Nr.
@@ -6249,12 +6095,6 @@ Sollen die Postfachstatistiken im\nAppIcon-Text von YAM angezeigt werden?
 ; Would you like to see this\n\
 ; folder's statistics in the\n\
 ; YAM AppIcon's label?
-;
-MSG_ERROR_IMGLOAD
-Fehler beim Laden der\nBilddatei PROGDIR:Icons/%s.
-; The image file\n\
-; PROGDIR:Icons/%s\n\
-; couldn't be loaded.
 ;
 MSG_OPENGUI
 Oberfläche wird geöffnet...
@@ -6456,16 +6296,6 @@ Puffergröße für die zuletzt verwendeten Empfänger,\nwelche sich nicht im Adressb
 ; recipients not yet in the address book.\n\
 ; Select 0 mails to disable this feature.
 ;
-MSG_CO_USESMTPTLS
-SMTP TLSv_1/SSLv3 benutzen
-; Use SMTP TLSv_1/SSLv3
-;
-MSG_HELP_CO_CH_USESMTPTLS
-Eine sichere Verbindung über TLSv1/SSLv3 wird zwischen dem SMTP-Server\nund YAM zum Senden von Nachrichten aufgebaut. Falls dieser Schalter nicht\nanwählbar ist, steht keine AmiSSL-Unterstützung zur Verfügung.
-; A TLSv1/SSLv3 secure connection will be established between\n\
-; the SMTP server and YAM to send email. If this checkbox is\n\
-; ghosted, it means AmiSSL support is not available.
-;
 MSG_CO_POP3SSL
 POP3 TLSv1/SSLv3 benut_zen
 ; Use POP3 TLSv1/SSLv3
@@ -6544,17 +6374,6 @@ kopiert werden.
 ; \n\
 ; Either the file doesn't exist or it couldn't be copied for some reason.
 ; MAILFILE, FOLDERNAME
-;
-MSG_ER_IMPORTMAIL
-Konnte keine Nachrichten aus der Datei '%s' importieren.\n\
-Bitte stellen Sie sicher, dass diese Datei wirklich Nachrichten \
-im standard MBOX Format enthält (getrennt durch einzelne "From " \
-Zeilen).
-; Couldn't import any mail from file '%s'.\n\
-; \n\
-; Make sure that the file really contains emails in the \
-; standard MBOX format (separated by a single "From " line).
-; FILENAME
 ;
 MSG_ER_ADDRBOOKLOAD
 Konnte Addressbuch von Datei '%s' nicht laden.\n\n\
@@ -7003,4 +6822,306 @@ Speichere ausgewählte...
 ;
 MSG_MA_ATTACHMENT_CROPALL
 Alle Abschneiden
+;
+MSG_CO_SImageOnly
+nur Bild
+;
+MSG_RE_SImageOnly
+Nur Bild
+;
+MSG_CO_CHARSETWARN_TITLE
+Zeichenkodierungswarnung
+;
+MSG_CO_CHARSETWARN
+Die Zeichenkodierung von YAM ist momentan auf '%s'\n\
+eingestellt und stimmt nicht mit der des Systemes\n\
+('%s') überein.\n\
+\n\
+Wie möchten Sie fortfahren?
+;
+MSG_CO_CHARSETWARN_BT
+*_Ändern|_Dauerhaft Ignorieren|_Ignorieren
+;
+MSG_CO_SenderRFCDateTime
+%c  Ursprünglicher Sender: RFC822 Datum und Zeit
+;
+MSG_CO_SenderTimeZone
+%z  Ursprünglicher Sender: Zeitzone (+0000)
+;
+MSG_CO_Filter_Name
+Name
+;
+MSG_CO_Filter_RType
+R
+;
+MSG_CO_Filter_NType
+N
+;
+MSG_CO_Filter_SType
+S
+;
+MSG_CO_Filter_UType
+U
+;
+MSG_CTunknown
+unbekannt
+;
+MSG_CO_More
+_Hinzufügen
+;
+MSG_CO_Less
+_Entfernen
+;
+MSG_ER_EXITIGNOREALL
+*_Beenden|_Dauerhaft Ignorieren|_Ignorieren
+;
+MSG_ER_ICONOBJECT_TITLE
+Fehler beim Laden eines Piktogrammbildes!
+;
+MSG_ER_ICONOBJECT
+Ein Fehler trat während des Versuches auf das Bild\n\
+des Piktogrammes '%s.info' vom Verzeichnis '%s' zu\n\
+laden.\n\
+\n\
+Bitte stellen Sie sicher das ihr Grafikverzeichnis\n\
+alle notwendigen Piktogramme im aktuellen Layout\n\
+enthält und diese lesbar sind.
+;
+MSG_ER_IMAGEOBJECT_TITLE
+Fehler beim Laden einer Bilddatei!
+;
+MSG_ER_IMAGEOBJECT
+Ein Fehler trat während des Versuches auf die Bilddatei\n\
+'%s' vom Verzeichnis '%s' zu laden.\n\
+\n\
+Bitte stellen Sie sicher das ihr Grafikverzeichnis\n\
+alle notwendigen Bilddateien im aktuellen Layout\n\
+enthält und diese lesbar sind.
+;
+MSG_ER_IMGLAYOUTFAILURE
+Grafiklayout Fehler!
+;
+MSG_ER_EXITIGNORE
+*_Beenden|_Ignorieren
+;
+MSG_ER_MISSINGIMGVERFILE
+Das Layout ihres '%s' Grafikverzeichnises besitzt keine\n\
+Versionsinformationen und muss geupdated werden.\n\
+\n\
+Bitte stellen Sie sicher das sie ein zum aktuellen\n\
+Layout kompatibles Grafikverzeichnis verwenden oder\n\
+es könnten Bilder mitunter inkorrekt angezeigt werden.
+;
+MSG_ER_LOADIMGLAYOUTFAILED
+Ein Fehler trat während des Versuches auf das Layout\n\
+ihres Grafikverzeichnisses '%s' zu laden.\n\
+\n\
+Bitte stellen Sie sicher das sie ein zum aktuellen\n\
+Layout kompatibles Grafikverzeichnis verwenden oder\n\
+es könnten Bilder mitunter inkorrekt angezeigt werden.
+;
+MSG_ER_WRONGIMGLAYOUTVER
+Das Layout ihres '%s' Grafikverzeichnisses besitzt eine\n\
+zum aktuellen YAM inkompatible Versionsinformation und\n\
+muss entsprechend geupdated werden.\n\
+\n\
+Bitte stellen Sie sicher das sie ein zum aktuellen\n\
+Layout kompatibles Grafikverzeichnis verwenden oder\n\
+es könnten Bilder mitunter inkorrekt angezeigt werden.
+;
+MSG_MA_AUTOSAVEFOUND
+YAM hat eine automatische Sicherungsdatei '%s' gefunden\n\
+die in einer vorherigen Sitzung erzeugt wurde. Dies\n\
+könnte durch einen event. Absturz oder Neustart ihres\n\
+Systems während Sie eine Mail geschrieben haben\n\
+geschehen sein.\n\
+\n\
+Was möchten Sie mit dieser Datei tun?
+;
+MSG_MA_AUTOSAVEFOUND_TITLE
+Sicherungskopie gefunden
+;
+MSG_MA_AUTOSAVEFOUND_BT
+*_Editieren|_Löschen|_Ignorieren
+;
+MSG_CO_NB_AUTOSAVE
+Sicherungskopieinterval
+;
+MSG_CO_NB_AUTOSAVEFMT
+%ld Minute(n)
+;
+MSG_HELP_CO_NB_AUTOSAVE
+Anzahl der Intervalminuten in denen YAM eine\n\
+Sicherungskopie Ihrer momentan editierten Nachricht\n\
+anlegen soll.\n\
+Wählen Sie 0 für keine Sicherungskopie aus.
+;
+MSG_ER_GENESISUSER_TITLE
+Unbekannter Genesis/AmiTCP Nutzeraccount!
+;
+MSG_ER_GENESISUSER
+YAM hat festgestellt das sie Genesis/AmiTCP nutzen, konnte\n\
+jedoch Ihren Genesis-Nutzernamen '%s' keinem YAM\n\
+Nutzerzugang zuordnen.\n\
+\n\
+Bitte stellen Sie sicher das sie Ihren Genesis Nutzernamen\n\
+mit dem in YAM synchronisieren. Ansonsten kann YAM keinen\n\
+automatischen Login Ihres Nutzers vornehmen.
+;
+MSG_ER_CONTINUEEXIT
+*_Fortfahren|Beenden
+;
+MSG_MA_ALLTOREAD
+#\000Alle auf Gelesen
+;
+MSG_ER_MOVEFOLDERDIR
+Ein Fehler trat beim Versuch auf den Inhalt des Postfaches\n\
+'%s' in das Verzeichnis '%s' zu verschieben. Dies könnte\n\
+an zu wenig Speicherplatz, einem falschen Verzeichnis oder\n\
+aber daran liegen das ein Schreiben in das Verzeichnis nicht\n\
+möglich ist.
+;
+MSG_CO_QUICKSEARCHBAR
+Schnellsuchleiste im Hauptfenster
+;
+MSG_HELP_CO_CH_QUICKSEARCHBAR
+Wenn ausgewählt erscheint im Hauptfenster eine\n\
+Schnellsuchleiste die es Ihnen erlaubt schnell\n\
+nach Nachrichten anhand von Kriterien zu suchen.
+;
+MSG_FI_SELECTACTIVE
+Markierte auswählen
+;
+MSG_HELP_FI_BT_SELECTACTIVE
+Wählt alle momentan markierten Nachrichten im\n\
+Hauptfenster aus.
+;
+MSG_QUICKSEARCH_SO_SUBJECT
+Betreff
+;
+MSG_QUICKSEARCH_SO_SENDER
+Absender
+;
+MSG_QUICKSEARCH_SO_SUBJORSENDER
+Betreff oder Absender
+;
+MSG_QUICKSEARCH_SO_TOORCC
+Empfänger (An oder CC)
+;
+MSG_QUICKSEARCH_SO_INMSG
+Nachrichtentext
+;
+MSG_QUICKSEARCH_SO_ENTIREMSG
+Gesamte Nachricht
+;
+MSG_QUICKSEARCH_VO_ALL
+Alle
+;
+MSG_QUICKSEARCH_VO_UNREAD
+Ungelesene
+;
+MSG_QUICKSEARCH_VO_NEW
+Neue
+;
+MSG_QUICKSEARCH_VO_MARKED
+Markierte
+;
+MSG_QUICKSEARCH_VO_IMPORTANT
+Wichtige
+;
+MSG_QUICKSEARCH_VO_LAST5DAYS
+Letzte 5 Tage
+;
+MSG_QUICKSEARCH_VO_KNOWNPEOPLE
+Bekannte Personen
+;
+MSG_QUICKSEARCH_VO_HASATTACHMENTS
+Nachrichten mit Anhang
+;
+MSG_QUICKSEARCH_VO_MINSIZE
+Nachrichtengröße > 1 MB
+;
+MSG_QUICKSEARCH_VIEW
+Ansicht:
+;
+MSG_QUICKSEARCH_SHOWNMSGS
+%ld von %ld angezeigt
+; COUNT, COUNT
+MSG_FI_NOFOLDERS
+_nirgends
+;
+MSG_HELP_QUICKSEARCH_VIEWOPTIONS
+Wenn ausgewählt werden nur Nachrichten angezeigt\n\
+die dem Suchkriterium entsprechen.
+;
+MSG_HELP_QUICKSEARCH_SEARCHSTRING
+Der hier eingegebene Text wird als Eingabe für das\n\
+Suchkriterium verwendet nach dem die Nachrichten\n\
+des aktuellen Postfaches zur Anzeige ausgewählt\n\
+werden.
+;
+MSG_HELP_QUICKSEARCH_SEARCHOPTIONPOPUP
+Mit diesem Popup können sie das Suchkriterium\n\
+auswählen.
+;
+MSG_BUSY_SEARCHINGFOLDER
+Suche Nachrichten im Postfach '%s'...
+; FOLDERNAME
+MSG_CO_WBAPPICON
+AppIcon auf der Workbench
+;
+MSG_HELP_CO_CH_WBAPPICON
+Wenn ausgewählt, zeigt ein AppIcon auf der\n\
+Workbench an das Statistiken anzeigt.
+;
+MSG_CO_DOCKYICON
+DockyIcon
+;
+MSG_HELP_CO_CH_DOCKYICON
+Wenn ausgewählt, zeigt mit Hilfe der application.library\n\
+innerhalb von AmiDock ein sog. DockyIcon über den\n\
+momentanen Status von YAM an.\n\
+(nur auf AmigaOS4 systemen verfügbar)
+;
+MSG_ER_B64DECTRUNC
+Ein Fehler trat während des Versuches auf den MIME \
+Part %ld der Nachricht '%s' mittels base64 zu dekodieren. \
+Der Vorgang wurde daraufhin abgebrochen.\n\
+\n\
+Dies könnte durch eine falsche Kodierung der Nachricht \
+durch den Sender hervorgerufen worden sein oder da der \
+base64 kodierte Teil der Nachricht während der Transmission \
+verstümmelt wurde.
+; PARTNR, MSGFILE
+MSG_ER_B64DECTRUNCTXT
+Manch lesbarer Text des MIME Part %ld der Nachricht '%s' \
+konnte nicht base64 dekodiert werden und könnte inkorrekt \
+oder garnicht dargestellt werden.\n\
+\n\
+Dies könnte durch eine falsche Kodierung der Nachricht \
+durch den Sender hervorgerufen worden sein oder da der \
+base64 kodierte Teil der Nachricht während der Transmission \
+verstümmelt wurde.
+; PARTNR, MSGFILE
+MSG_MA_MessageImport
+Nachrichtenimport von MBOX, DBX bzw.reinen Maildateien...
+;
+MSG_ER_MESSAGEIMPORT
+Ein Fehler trat beim Versuch auf Nachrichten von der Datei '%s' \
+aus zu importieren.\n\
+\n\
+Bitte stellen Sie sicher das die ausgewählte Datei lesbar ist und \
+RFC822 konforme Nachrichten in einem von YAM unterstützen \
+Nachrichtenformat enthält. YAM ist momentan in der Lage Nachrichten \
+von Dateien im 'MBOX', 'DBX' (Outlook Express) oder aber reine RFC822 \
+Maildateien zu importieren. Bitte konsultieren Sie die Dokumentation \
+für eine genauere Beschreibung der unterstützen Formate sowie für \
+alternative Wege Nachrichten in YAM zu importieren.
+; FILENAME
+;
+MSG_MA_MESSAGEEXPORT
+Nachrichtenexport als MBOX konforme Datei...
+;
+MSG_YAMINFO
+Open Source E-Mail Software für den Amiga
 ;

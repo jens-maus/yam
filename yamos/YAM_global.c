@@ -79,7 +79,8 @@ static const char USED_VAR yam_stack_size[] = "$STACK:65536\n";  // Shell v45 an
 #ifndef __YAM_BUILDID
 #define __YAM_BUILDID   ""
 #endif
-#define __YAM_COPYRIGHT "Copyright (C) 2000-2006 YAM Open Source Team"
+#define __YAM_COPYRIGHT     "Copyright (C) 2000-2006 YAM Open Source Team"
+#define __YAM_FULLCOPYRIGHT "Copyright (C) 1995-2000 Marcel Beck\n" __YAM_COPYRIGHT
 
 const char * const yamversion       = "YAM " __YAM_VERSION __YAM_DEVEL CPU;
 const char * const yamversionver    = __YAM_VERSION __YAM_DEVEL CPU;
@@ -87,6 +88,7 @@ const char * const yamversionstring = "$VER: YAM " __YAM_VERSION __YAM_DEVEL CPU
 const char * const yamverxmailer    = "YAM " __YAM_VERSION __YAM_DEVEL __YAM_BUILDID CPU \
                                       " AmigaOS E-mail Client (C) 2000-2006 YAM Open Source Team - http://www.yam.ch/";
 const char * const yamcopyright     = __YAM_COPYRIGHT;
+const char * const yamfullcopyright = __YAM_FULLCOPYRIGHT;
 const char * const yamversiondate   = __YAM_VERDATE;
 const unsigned long yamversiondays  = __YAM_VERDAYS;
 

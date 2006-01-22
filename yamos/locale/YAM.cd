@@ -186,12 +186,6 @@ Columns
 MSG_Path (57//)
 Path
 ;
-MSG_Copyright1 (59//)
-Open Source E-mail package for the Amiga\n\
-\n\
-Copyright (C) 1995-2000 Marcel Beck\n\
-Copyright (C) 2000-2006 YAM Open Source Team
-;
 MSG_Version (60//)
 Version:
 ;
@@ -5508,7 +5502,7 @@ MSG_QUICKSEARCH_SO_SUBJORSENDER (1580//)
 Subject Or Sender
 ;
 MSG_QUICKSEARCH_SO_TOORCC (1581//)
-To Or Cc
+Recipient (To Or CC)
 ;
 MSG_QUICKSEARCH_SO_INMSG (1582//)
 Find In Message
@@ -5612,6 +5606,9 @@ check the documentation for more information on the supported import \
 formats and alternative methods to import mails.
 ; FILENAME
 ;
-MSG_MA_MessageExport (1608//)
+MSG_MA_MESSAGEEXPORT (1608//)
 Export messages to a MBOX compliant mail file...
+;
+MSG_YAMINFO (1609//)
+Open Source E-mail package for the Amiga
 ;

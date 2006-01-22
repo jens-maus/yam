@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2006-01-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * Aboutwindow/Splashwindow: updated the about and splash window
+      accordingly to the latest copyright catalog changes.
+    * locale, YAM_global.c: splitted the copyright information text formerly
+      placed in each single catalog translation into a part that stays in
+      each translation, but the actual copyright text and years are now
+      internal strings only like it should have been right from the start.
+    * locale/deutsch.ct: updated the german catalog to match the very latest
+      YAM.cd changes.
+
 2006-01-20  Jens Langner <Jens.Langner@light-speed.de>
 
     * locale/italiano.ct: updated italian catalog translation kindly provided

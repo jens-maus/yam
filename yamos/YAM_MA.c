@@ -2223,14 +2223,15 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 
    if (mlist)
    {
-      if (!filename) if (ReqFile(ASL_EXPORT, G->MA->GUI.WI, GetStr(MSG_MA_MessageExport), REQF_SAVEMODE, C->DetachDir, ""))
+      if(!filename && ReqFile(ASL_EXPORT, G->MA->GUI.WI, GetStr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, ""))
       {
          strmfp(filename = outname, G->ASLReq[ASL_EXPORT]->fr_Drawer, G->ASLReq[ASL_EXPORT]->fr_File);
          if (FileExists(filename))
          {
             char * a = GetStr(MSG_MA_ExportAppendOpts);
             char * b = GetStr(MSG_MA_ExportAppendReq);
-            switch (MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_MessageExport), a, b))
+
+            switch(MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_MESSAGEEXPORT), a, b))
             {
                case 1: append = FALSE; break;
                case 2: append = TRUE; break;
@@ -2238,6 +2239,7 @@ BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
             }
          }
       }
+
       if (filename) if ((G->TR = TR_New(TR_EXPORT)))
       {
          if (SafeOpenWindow(G->TR->GUI.WI)) success = TR_ProcessEXPORT(filename, mlist, append);

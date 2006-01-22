@@ -3,7 +3,7 @@
 ;
 ; $Id$
 ;
-## version $VER: YAM.catalog 5.5 (10.01.2006)
+## version $VER: YAM.catalog 5.6 (22.01.2006)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone
@@ -175,12 +175,6 @@ Colonne
 ;
 MSG_Path
 Percorso
-;
-MSG_Copyright1
-Programma Open Source di posta elettronica per Amiga\n\
-\n\
-Copyright © 1995-2000 Marcel Beck\n\
-Copyright © 2000-2003 YAM Open Source Team
 ;
 MSG_Version
 Versione:
@@ -5318,6 +5312,9 @@ Un errore si è verificato provando a importare i messaggi dal file '%s'.\n\
 \n\
 Assicurati che il file sia leggibile e contenga email secondo l'RFC822 in uno dei formati dati supportati da YAM. YAM al momento è in grado di importare file da 'MBOX', 'DBX' (Outlook Express) o anche file di mail semplici RFC822. Prego consulta la documentazione per maggiori informazioni sui formati supportati in importazione e metodi alternativi per importare messaggi.
 ;
-MSG_MA_MessageExport
+MSG_MA_MESSAGEEXPORT
 Esporta messaggi in un file di mail secondo MBOX...
+;
+MSG_YAMINFO
+Programma Open Source di posta elettronica per Amiga
 ;
