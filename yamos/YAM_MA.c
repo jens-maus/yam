@@ -2237,44 +2237,62 @@ MakeHook(MA_RescanIndexHook, MA_RescanIndexFunc);
 //  Saves messages to a MBOX mailbox file
 BOOL MA_ExportMessages(BOOL all, char *filename, BOOL append)
 {
-   BOOL success = FALSE;
-   char outname[SIZE_PATHFILE];
-   struct Mail **mlist;
-   if (all) mlist = MA_CreateFullList(FO_GetCurrentFolder(), FALSE);
-   else mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
+  BOOL success = FALSE;
+  char outname[SIZE_PATHFILE];
+  struct Folder *actfo = FO_GetCurrentFolder();
+  struct Mail **mlist;
 
-   if (mlist)
-   {
-      if(!filename && ReqFile(ASL_EXPORT, G->MA->GUI.WI, GetStr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, ""))
+  ENTER();
+
+  // check that a real folder is active
+  if(!actfo || actfo->Type == FT_GROUP)
+  {
+    RETURN(FALSE);
+    return FALSE;
+  }
+
+  if(all)
+    mlist = MA_CreateFullList(actfo, FALSE);
+  else
+    mlist = MA_CreateMarkedList(G->MA->GUI.PG_MAILLIST, FALSE);
+
+  if(mlist)
+  {
+    if(!filename && ReqFile(ASL_EXPORT, G->MA->GUI.WI, GetStr(MSG_MA_MESSAGEEXPORT), REQF_SAVEMODE, C->DetachDir, ""))
+    {
+      strmfp(filename = outname, G->ASLReq[ASL_EXPORT]->fr_Drawer, G->ASLReq[ASL_EXPORT]->fr_File);
+
+      if(FileExists(filename))
       {
-         strmfp(filename = outname, G->ASLReq[ASL_EXPORT]->fr_Drawer, G->ASLReq[ASL_EXPORT]->fr_File);
-         if (FileExists(filename))
-         {
-            char * a = GetStr(MSG_MA_ExportAppendOpts);
-            char * b = GetStr(MSG_MA_ExportAppendReq);
+        char * a = GetStr(MSG_MA_ExportAppendOpts);
+        char * b = GetStr(MSG_MA_ExportAppendReq);
 
-            switch(MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_MESSAGEEXPORT), a, b))
-            {
-               case 1: append = FALSE; break;
-               case 2: append = TRUE; break;
-               case 0: filename = NULL;
-            }
-         }
+        switch(MUI_Request(G->App, G->MA->GUI.WI, 0, GetStr(MSG_MA_MESSAGEEXPORT), a, b))
+        {
+          case 1: append = FALSE; break;
+          case 2: append = TRUE; break;
+          case 0: filename = NULL;
+        }
       }
+    }
 
-      if (filename) if ((G->TR = TR_New(TR_EXPORT)))
+    if(filename && (G->TR = TR_New(TR_EXPORT)))
+    {
+      if(SafeOpenWindow(G->TR->GUI.WI))
+        success = TR_ProcessEXPORT(filename, mlist, append);
+
+      if(success == FALSE)
       {
-         if (SafeOpenWindow(G->TR->GUI.WI)) success = TR_ProcessEXPORT(filename, mlist, append);
-
-         if(success == FALSE)
-         {
-            MA_ChangeTransfer(TRUE);
-            DisposeModulePush(&G->TR);
-         }
+        MA_ChangeTransfer(TRUE);
+        DisposeModulePush(&G->TR);
       }
-      free(mlist);
-   }
-   return success;
+    }
+
+    free(mlist);
+  }
+
+  RETURN(success);
+  return success;
 }
 
 ///
@@ -2298,7 +2316,7 @@ BOOL MA_ImportMessages(char *fname)
   ENTER();
 
   // check that a real folder is active
-  if(!actfo)
+  if(!actfo || actfo->Type == FT_GROUP)
   {
     RETURN(FALSE);
     return FALSE;
@@ -2423,6 +2441,11 @@ BOOL MA_ImportMessages(char *fname)
 /// MA_ImportMessagesFunc
 HOOKPROTONHNONP(MA_ImportMessagesFunc, void)
 {
+  struct Folder *actfo = FO_GetCurrentFolder();
+
+  if(!actfo || actfo->Type == FT_GROUP)
+    return;
+
   // put up an Requester to query the user for the input file.
   if(ReqFile(ASL_IMPORT, G->MA->GUI.WI, GetStr(MSG_MA_MessageImport), REQF_NONE, C->DetachDir, ""))
   {

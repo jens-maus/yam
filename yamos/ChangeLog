@@ -7,6 +7,8 @@ $Source$
 
 2006-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: fixed bug #1258940 where using the Export function on
+      folder groups caused YAM to crash.
     * YAM.c: removed the temporary local event loop which is used during
       startup if preselection of mails is the selected transfermode. It
       prevented that the KeepAlive interval also worked on the very first
