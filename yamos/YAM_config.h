@@ -362,6 +362,7 @@ struct Config
    int   TRBufferSize;
    int   EmbeddedMailDelay;
    int   StatusChangeDelay;
+   int   KeepAliveInterval;
 
    enum  PrintMethod   PrintMethod;
    enum  SMTPSecMethod SMTP_SecureMethod;

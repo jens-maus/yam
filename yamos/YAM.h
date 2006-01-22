@@ -50,6 +50,7 @@ enum TimerIO { TIO_WRINDEX=0,
                TIO_READPANEUPDATE,
                TIO_READSTATUSUPDATE,
                TIO_PROCESSQUICKSEARCH,
+               TIO_POP3_KEEPALIVE,
              };
 
 /*** Global Structure ***/

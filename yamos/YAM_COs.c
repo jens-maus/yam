@@ -430,6 +430,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "SocketOptions    =%s\n", buf);
       fprintf(fh, "TRBufferSize     = %d\n", co->TRBufferSize);
       fprintf(fh, "EmbeddedMailDelay= %d\n", co->EmbeddedMailDelay);
+      fprintf(fh, "KeepAliveInterval= %d\n", co->KeepAliveInterval);
 
       fclose(fh);
       AppendLogVerbose(60, GetStr(MSG_LOG_SavingConfig), fname, "", "", "");
@@ -949,6 +950,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                }
                else if (!stricmp(buffer, "TRBufferSize")) co->TRBufferSize = atoi(value);
                else if (!stricmp(buffer, "EmbeddedMailDelay")) co->EmbeddedMailDelay = atoi(value);
+               else if (!stricmp(buffer, "KeepAliveInterval")) co->KeepAliveInterval = atoi(value);
             }
          }
          fclose(fh);

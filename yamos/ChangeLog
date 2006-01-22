@@ -7,6 +7,12 @@ $Source$
 
 2006-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_TR.c: implemented a POP3 KeepAlive facility which makes sure that
+      a POP3 server doesn't drop a connection while the preselection window
+      is in use. In fact, a timer is now issued as soon as the preselection
+      window is open and will send 'NOOP' commands in a predefined and
+      configurable interval (30s per default) to let the POP3 server know
+      that the client is still listening.
     * YAM_MA.c: modified MA_ChangeSelectedHook/Func to check if the previously
       selected mail is the same one and if so doesn't issue any mail info
       and embeeded read pane update. This should eliminate some unnecessary

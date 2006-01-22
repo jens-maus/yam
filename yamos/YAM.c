@@ -109,7 +109,7 @@ struct Args
 /**************************************************************************/
 
 // the used number of timerIO requests (refer to YAM.h)
-#define TIO_NUM (6)
+#define TIO_NUM (7)
 
 // TimerIO structures we use
 struct TC_Request
@@ -370,6 +370,10 @@ static BOOL TC_ActiveEditor(int wrwin)
 ///
 /// TC_Dispatcher
 //  Dispatcher for timer class
+//  WARNING: Do NOT use TC_Start() directly in this function as it is
+//           called within the timer eventloop which is undefined!
+//           Do a TC_Prepare() instead here and a TC_Start() in the
+//           the parent eventloop at the end of the file here.
 static void TC_Dispatcher(enum TimerIO tio)
 {
   // prepare some debug information
@@ -503,6 +507,22 @@ static void TC_Dispatcher(enum TimerIO tio)
 
       // signal the QuickSearchBar now.
       DoMethod(gui->GR_QUICKSEARCHBAR, MUIM_QuickSearchBar_ProcessSearch);
+    }
+    break;
+
+    // one a POP3_KEEPALIVE we make sure that a currently active, but waiting
+    // POP3 connection (preselection) doesn't die by sending NOOP commands regularly
+    // to the currently connected POP3 server.
+    case TIO_POP3_KEEPALIVE:
+    {
+      D(DBF_TIMERIO, "timer[%ld]: TIO_POP3_KEEPALIVE received: %s", tio, dateString);
+
+      // send the POP3 server a 'NOOP'
+      if(TR_SendPOP3KeepAlive())
+      {
+        // prepare the timer to get fired again
+        TC_Prepare(tio, C->KeepAliveInterval, 0);
+      }
     }
     break;
   }
@@ -1114,6 +1134,8 @@ static void Initialise2(void)
    int i;
    struct Folder *folder, **oldfolders = NULL;
 
+   ENTER();
+
    SplashProgress(GetStr(MSG_LoadingConfig), 30);
    CO_SetDefaults(C, -1);
    CO_LoadConfig(C, G->CO_PrefsFile, &oldfolders);
@@ -1301,6 +1323,8 @@ static void Initialise2(void)
             TAG_DONE);
 
    set(G->SplashWinObject, MUIA_Window_Open, FALSE);
+
+   LEAVE();
 }
 ///
 /// Initialise
@@ -1344,6 +1368,8 @@ static void Initialise(BOOL hidden)
    {
      "empty", "old", "new", "check"
    };
+
+   ENTER();
 
    // lets save the current date/time in our startDate value
    DateStamp(&G->StartDate);
@@ -1546,6 +1572,8 @@ static void Initialise(BOOL hidden)
 
       DoMethod(G->App, MUIM_Application_InputBuffered);
    }
+
+   LEAVE();
 }
 ///
 /// SendWaitingMail
@@ -1581,6 +1609,8 @@ static void SendWaitingMail(void)
 //  Performs different checks/cleanup operations on startup
 static void DoStartup(BOOL nocheck, BOOL hide)
 {
+   ENTER();
+
    // Display the AppIcon now because if non of the below
    // do it it could happen that no AppIcon will be displayed at all.
    DisplayAppIconStatistics();
@@ -1653,6 +1683,8 @@ static void DoStartup(BOOL nocheck, BOOL hide)
          DoMethod(G->App, MUIM_Application_InputBuffered);
       }
    }
+
+   LEAVE();
 }
 ///
 /// Login
@@ -2207,6 +2239,9 @@ int main(int argc, char **argv)
 
                 if(TCData.timer[TIO_AUTOSAVE].isPrepared)
                   TC_Start(TIO_AUTOSAVE);
+
+                if(TCData.timer[TIO_POP3_KEEPALIVE].isPrepared)
+                  TC_Start(TIO_POP3_KEEPALIVE);
               }
               else
                 W(DBF_TIMERIO, "timer signal received, but no timer request was processed!!!");
