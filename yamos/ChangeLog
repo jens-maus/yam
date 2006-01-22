@@ -7,6 +7,11 @@ $Source$
 
 2006-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_MA.c: modified MA_ChangeSelectedHook/Func to check if the previously
+      selected mail is the same one and if so doesn't issue any mail info
+      and embeeded read pane update. This should eliminate some unnecessary
+      readpane updates in case a mail is viewed while somethin in a folder
+      changes.
     * Aboutwindow/Splashwindow: updated the about and splash window
       accordingly to the latest copyright catalog changes.
     * locale, YAM_global.c: splitted the copyright information text formerly

@@ -942,7 +942,7 @@ DECLARE(CropAttachmentsRequest)
 	
 	if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
 	{
-		CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
+		MA_ChangeSelected(TRUE);
 		DisplayStatistics(mail->Folder, TRUE);
 	}
 	
@@ -1032,7 +1032,7 @@ DECLARE(ChangeSubjectRequest)
 
 			if(DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail))
 			{
-				CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
+				MA_ChangeSelected(TRUE);
 				DisplayStatistics(mail->Folder, TRUE);
 			}
 			

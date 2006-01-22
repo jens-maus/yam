@@ -119,87 +119,109 @@ void MA_ChangeTransfer(BOOL on)
 }
 
 ///
+/// MA_ChangeSelected()
+// function which updates some mail information on the main
+// window and triggers an update of the embeeded read pane if required.
+void MA_ChangeSelected(BOOL forceUpdate)
+{
+  static struct Mail *lastMail = NULL;
+  struct MA_GUIData *gui = &G->MA->GUI;
+  struct Folder *fo = FO_GetCurrentFolder();
+  int selected;
+  int i;
+  BOOL active, hasattach = FALSE;
+  BOOL beingedited = FALSE;
+  struct Mail *mail;
+
+  ENTER();
+
+  if(!fo)
+  {
+    LEAVE();
+    return;
+  }
+
+  // get the currently active mail entry.
+  DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
+
+  // now we check if the previously selected mail is the same one as
+  // the currently active one, then we don't have to proceed.
+  if(forceUpdate == FALSE && mail == lastMail)
+  {
+    LEAVE();
+    return;
+  }
+  else
+    lastMail = mail;
+
+  // we make sure the an eventually running timer event for setting the mail
+  // status of a previous mail to read is canceled beforehand
+  if(C->StatusChangeDelayOn)
+    TC_Stop(TIO_READSTATUSUPDATE);
+
+  // make sure the mail is displayed in our readMailGroup of the main window
+  // (if enabled) - but we do only issue a timer event here so the read pane
+  // is only refreshed about 100 milliseconds after the last change in the listview
+  // was recognized.
+  if(C->EmbeddedReadPane)
+  {
+    ULONG numSelected;
+
+    // but before we really issue a readpaneupdate we check whether the user has
+    // selected more than one mail at a time which then should clear the
+    // readpane as it might have been disabled.
+    DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
+
+    if(numSelected == 1)
+      TC_Restart(TIO_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
+    else
+      DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
+  }
+
+  // in case the currently active maillist is the mainmainlist we
+  // have to save the lastactive mail ID
+  if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
+    fo->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
+
+  if((active = (mail != NULL)) && isMultiPartMail(mail))
+    hasattach = TRUE;
+
+  for(i = 0; i < MAXWR; i++)
+  {
+    if(mail && G->WR[i] && G->WR[i]->Mail == mail)
+    {
+      beingedited = TRUE;
+      break;
+    }
+  }
+
+  DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
+
+  if(gui->TO_TOOLBAR)
+  {
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || beingedited);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, !active);
+    DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active && !selected, 2,3,4,7,8, -1);
+  }
+
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active || selected,
+                   gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_REPLY, gui->MI_FORWARD, gui->MI_STATUS,
+                   gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_CHSUBJ, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, gui->MI_BOUNCE, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && isOutgoingFolder(fo) && !beingedited, gui->MI_EDIT, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, fo->Type == FT_OUTGOING && (active || selected), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isOutgoingFolder(fo) && (active || selected) , gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, NULL);
+  DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || selected), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
+
+  LEAVE();
+}
+
+///
 /// MA_ChangeSelectedFunc
 //  User selected some message(s) in the message list
 HOOKPROTONHNONP(MA_ChangeSelectedFunc, void)
 {
-   struct MA_GUIData *gui = &G->MA->GUI;
-   struct Folder *fo = FO_GetCurrentFolder();
-   int selected, type, i;
-   BOOL active, hasattach = FALSE, beingedited = FALSE;
-   struct Mail *mail;
-
-   ENTER();
-
-   if(!fo)
-   {
-     LEAVE();
-     return;
-   }
-
-   // we make sure the an eventually running timer event for setting the mail
-   // status of a previous mail to read is canceled beforehand
-   if(C->StatusChangeDelayOn)
-      TC_Stop(TIO_READSTATUSUPDATE);
-
-   // make sure the mail is displayed in our readMailGroup of the main window
-   // (if enabled) - but we do only issue a timer event here so the read pane
-   // is only refreshed about 100 milliseconds after the last change in the listview
-   // was recognized.
-   if(C->EmbeddedReadPane)
-   {
-      ULONG numSelected;
-
-      // but before we really issue a readpaneupdate we check whether the user has
-      // selected more than one mail at a time which then should clear the
-      // readpane as it might have been disabled.
-      DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &numSelected);
-
-      if(numSelected == 1)
-        TC_Restart(TIO_READPANEUPDATE, 0, C->EmbeddedMailDelay*1000);
-      else
-        DoMethod(gui->MN_EMBEDDEDREADPANE, MUIM_ReadMailGroup_Clear, FALSE);
-   }
-
-   type = fo->Type;
-
-   // get the currently active mail entry.
-   DoMethod(gui->PG_MAILLIST, MUIM_NList_GetEntry, MUIV_NList_GetEntry_Active, &mail);
-
-   // in case the currently active maillist is the mainmainlist we
-   // have to save the lastactive mail ID
-   if(xget(gui->PG_MAILLIST, MUIA_MainMailListGroup_ActiveList) == LT_MAIN)
-     fo->LastActive = xget(gui->PG_MAILLIST, MUIA_NList_Active);
-
-   if((active = (mail != NULL)) && isMultiPartMail(mail))
-     hasattach = TRUE;
-
-   for(i = 0; i < MAXWR; i++)
-   {
-     if(mail && G->WR[i] && G->WR[i]->Mail == mail)
-     {
-       beingedited = TRUE;
-       break;
-     }
-   }
-
-   DoMethod(gui->PG_MAILLIST, MUIM_NList_Select, MUIV_NList_Select_All, MUIV_NList_Select_Ask, &selected);
-   if (gui->TO_TOOLBAR)
-   {
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 1, MUIV_Toolbar_Set_Ghosted, !active || !isOutgoingFolder(fo) || beingedited);
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_Set, 0, MUIV_Toolbar_Set_Ghosted, !active);
-      DoMethod(gui->TO_TOOLBAR, MUIM_Toolbar_MultiSet, MUIV_Toolbar_Set_Ghosted, !active && !selected, 2,3,4,7,8, -1);
-   }
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active || selected,
-      gui->MI_MOVE, gui->MI_DELETE, gui->MI_GETADDRESS, gui->MI_REPLY, gui->MI_FORWARD, gui->MI_STATUS,
-      gui->MI_EXPMSG, gui->MI_COPY, gui->MI_PRINT, gui->MI_SAVE, gui->MI_CHSUBJ, NULL);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active, gui->MI_READ, gui->MI_BOUNCE, NULL);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, active && isOutgoingFolder(fo) && !beingedited, gui->MI_EDIT, NULL);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, type == FT_OUTGOING && (active || selected), gui->MI_SEND, gui->MI_TOHOLD, gui->MI_TOQUEUED, NULL);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, !isOutgoingFolder(fo) && (active || selected) , gui->MI_TOREAD, gui->MI_TOUNREAD, gui->MI_ALLTOREAD, NULL);
-   DoMethod(G->App, MUIM_MultiSet, MUIA_Menuitem_Enabled, hasattach && (active || selected), gui->MI_ATTACH, gui->MI_SAVEATT, gui->MI_REMATT, NULL);
-
-   LEAVE();
+  MA_ChangeSelected(FALSE);
 }
 MakeHook(MA_ChangeSelectedHook, MA_ChangeSelectedFunc);
 
@@ -633,7 +655,7 @@ void MA_MoveCopy(struct Mail *mail, struct Folder *frombox, struct Folder *tobox
   if(!copyit) DisplayStatistics(frombox, FALSE);
   DisplayStatistics(tobox, TRUE);
 
-  MA_ChangeSelectedFunc();
+  MA_ChangeSelected(FALSE);
 }
 
 ///
@@ -1620,7 +1642,7 @@ HOOKPROTONHNONP(MA_RemoveAttachFunc, void)
          BusySet(i+1);
       }
       DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_NList_Redraw, MUIV_NList_Redraw_All);
-      MA_ChangeSelectedFunc();
+      MA_ChangeSelected(TRUE);
       DisplayStatistics(NULL, TRUE);
       BusyEnd();
    }
@@ -1824,7 +1846,7 @@ void MA_DeleteMessage(BOOL delatonce, BOOL force)
       DisplayStatistics(delfolder, FALSE);
    }
    DisplayStatistics(NULL, TRUE);
-   MA_ChangeSelectedFunc();
+   MA_ChangeSelected(FALSE);
 }
 
 ///

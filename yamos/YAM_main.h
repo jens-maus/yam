@@ -319,6 +319,7 @@ unsigned int MA_FromXStatusHeader(char *xstatusflags);
 void  MA_SetupEmbeddedReadPane(void);
 void  MA_SetupQuickSearchBar(void);
 char *MA_GetRealSubject(char *sub);
+void  MA_ChangeSelected(BOOL forceUpdate);
 
 
 #endif /* YAM_MAIN_H */

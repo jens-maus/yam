@@ -1312,7 +1312,7 @@ void CO_Validate(struct Config *co, BOOL update)
          // and to not let the embedded read pane be empty when it is newly created
          // we have to make sure the actual selected mail is loaded
          if(C->EmbeddedReadPane)
-           DoMethod(G->App, MUIM_CallHook, &MA_ChangeSelectedHook);
+           MA_ChangeSelected(TRUE);
       }
 
       if(G->CO->Visited[5] || G->CO->UpdateAll)

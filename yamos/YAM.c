@@ -1153,8 +1153,12 @@ static void Initialise2(void)
    if(C->InfoBar != IB_POS_CENTER && C->InfoBar != IB_POS_OFF)
       MA_SortWindow();
 
+   // setup some dynamic (changing) menus
    MA_SetupDynamicMenus();
-   CallHookPkt(&MA_ChangeSelectedHook, 0, 0);
+
+   // do some initial call to ChangeSelected() for correctly setting up
+   // some mail information
+   MA_ChangeSelected(TRUE);
 
    // make sure all appicon diskobject are actually loaded
    // and are ready for use.
