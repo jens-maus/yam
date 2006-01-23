@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2006-01-23  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_TR.c: replaced the NOOP command use for the POP3 KeepAlive
+      messages by the STAT command. The NOOP command seems to be ignored
+      by some POP3 server and therefore STAT may be the better choice to
+      keep the POP3 from dropping a connection.
+
 2006-01-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_MA.c: fixed bug #1258940 where using the Export function on

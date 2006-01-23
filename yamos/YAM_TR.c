@@ -2419,14 +2419,18 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 }
 ///
 /// TR_SendPOP3KeepAlive()
-// Function that sends a NOOP command regularly to a POP3 to
+// Function that sends a STAT command regularly to a POP3 to
 // prevent it from dropping the connection.
 BOOL TR_SendPOP3KeepAlive(void)
 {
   BOOL result;
   ENTER();
 
-  result = (TR_SendPOP3Cmd(POPCMD_NOOP, NULL, MSG_ER_BadResponse) != NULL);
+  // here we send a STAT command instead of a NOOP which normally
+  // should do the job as well. But there are several known POP3
+  // servers out there which are known to ignore the NOOP commands
+  // for keepalive message, so STAT should be the better choice.
+  result = (TR_SendPOP3Cmd(POPCMD_STAT, NULL, MSG_ER_BadResponse) != NULL);
 
   RETURN(result);
   return result;
