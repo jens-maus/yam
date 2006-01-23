@@ -7,6 +7,9 @@ $Source$
 
 2006-01-23  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM.c: modified the DoStartup() function to be compatible to the
+      general SMTP-after-POP3 behaviour of YAM in case bot SMTP and POP3
+      during startup is selected.
     * YAM_TR.c: replaced the NOOP command use for the POP3 KeepAlive
       messages by the STAT command. The NOOP command seems to be ignored
       by some POP3 server and therefore STAT may be the better choice to

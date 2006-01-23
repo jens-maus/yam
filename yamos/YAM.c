@@ -1631,26 +1631,45 @@ static void DoStartup(BOOL nocheck, BOOL hide)
 
    // the rest of the startup jobs require a running TCP/IP stack,
    // so check if it is properly running.
-   if(TR_IsOnline())
+   if(!nocheck && TR_IsOnline())
    {
-      // send all mail in the Outgoing folder
-      if(C->SendOnStartup && !nocheck)
-      {
-         SendWaitingMail();
-         if (G->TR) DisposeModule(&G->TR);
-         DoMethod(G->App, MUIM_Application_InputBuffered);
-      }
+      BOOL noSendOnStartup = FALSE;
 
-      // get all mail waiting on the POP3 servers
-      if(C->GetOnStartup && !nocheck)
+      // first get all mail waiting on the POP3 servers (SMTP-after-POP3
+      if(C->GetOnStartup)
       {
          if(hide || C->PreSelection == 0)
          {
             MA_PopNow(POP_START, -1);
-            if (G->TR) DisposeModule(&G->TR);
+            if(G->TR)
+               DisposeModule(&G->TR);
+
+            DoMethod(G->App, MUIM_Application_InputBuffered);
          }
          else
+         {
+            // if SendOnStartup is active as well we do a full exchange
+            // to preserve the SMTP-after-POP3 rule.
+            if(C->SendOnStartup)
+            {
+              if(hide || MUI_Request(G->App, G->MA->GUI.WI, 0, NULL, GetStr(MSG_YesNoReq), GetStr(MSG_SendStartReq)))
+                G->TR_Exchange = TRUE;
+
+              noSendOnStartup = TRUE;
+            }
+
             MA_PopNow(POP_USER, -1);
+         }
+      }
+
+      // send all mail from the Outgoing folder
+      if(C->SendOnStartup && !noSendOnStartup)
+      {
+         SendWaitingMail();
+         if(G->TR)
+           DisposeModule(&G->TR);
+
+         DoMethod(G->App, MUIM_Application_InputBuffered);
       }
    }
 
