@@ -2423,8 +2423,8 @@ void TR_GetMailFromNextPOP(BOOL isfirst, int singlepop, int guilevel)
 // prevent it from dropping the connection.
 BOOL TR_SendPOP3KeepAlive(void)
 {
-  ENTER();
   BOOL result;
+  ENTER();
 
   result = (TR_SendPOP3Cmd(POPCMD_NOOP, NULL, MSG_ER_BadResponse) != NULL);
 
