@@ -5,6 +5,14 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2006-01-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: replaced the AllocMem/FreeMem uses to allocate and free
+      resources for the multiple TimerIOs in YAM with calls to
+      AllocSysObject/FreeSysObject if compiled for AmigaOS4. These
+      functions should give the OS a better way to free the data in case
+      the application crashes.
+
 2006-01-23  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_TR.c: fixed bug #1413103 where importing of certain DBX files

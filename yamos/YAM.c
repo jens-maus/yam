@@ -286,7 +286,12 @@ static void TC_Exit(void)
     {
       if(TCData.timer[i].tr != NULL)
       {
+        #if defined(__amigaos4__)
+        FreeSysObject(ASOT_IOREQUEST, TCData.timer[i].tr);
+        #else
         FreeMem(TCData.timer[i].tr, sizeof(struct timerequest));
+        #endif
+
         TCData.timer[i].tr = NULL;
       }
     }
@@ -334,8 +339,15 @@ static BOOL TC_Init(void)
           for(i=1; i < TIO_NUM; i++)
           {
             #if defined(__amigaos4__)
-            if(!(TCData.timer[i].tr = AllocMem(sizeof(struct timerequest), MEMF_SHARED)))
+            // on OS4 we use AllocSysObjectTags to give the OS a better chance to
+            // free the data in case YAM crashes
+            if(!(TCData.timer[i].tr = AllocSysObjectTags(ASOT_IOREQUEST,
+                                                         ASOIOR_Size,      sizeof(struct timerequest),
+                                                         ASOIOR_ReplyPort, TCData.port,
+                                                         TAG_DONE)))
+            {
               break;
+            }
             #else
             if(!(TCData.timer[i].tr = AllocMem(sizeof(struct timerequest), MEMF_PUBLIC)))
               break;
