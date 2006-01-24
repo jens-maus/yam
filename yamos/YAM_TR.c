@@ -3537,8 +3537,11 @@ static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
 
 	while(addr)
 	{
+    unsigned char *pFirst;
     unsigned char *pLast;
     unsigned char *pCur;
+    unsigned char *pPrev;
+    unsigned int writeSize;
 
     // seek to the actual message position
 		if(fseek(fh, addr, SEEK_SET))
@@ -3556,37 +3559,38 @@ static BOOL ReadDBXMessage(FILE *fh, FILE *out, unsigned int addr)
 
     // get the size of the read part and the addr
     // of the next part of the message
-		size = GetLong(buf, 8);
+		size = writeSize = GetLong(buf, 8);
 		addr = GetLong(buf, 12);
 
     // as *.dbx files are created under Windows they
     // may carry "\r\n" return sequences. But as we are
     // on amiga we do not need and want them, that's why
     // we strip them off
-    pLast = &buf[16]; // start of the message part
+    pFirst = pPrev = &buf[16]; // start of the message part
+    pLast = pFirst+size;       // end of the message part
 
-    // we search for \r chars and split the write
-    // operations on each occurance
-    while(size > 0 && (pCur = (unsigned char *)strchr((char *)pLast, '\r')))
+    // we search for '\r' chars and strip them
+    for(pCur = pPrev; pCur < pLast; pCur++)
     {
-      unsigned int writeSize = pCur-pLast;
+      if(*pCur != '\r')
+      {
+        if(pCur != pPrev)
+          *pPrev = *pCur;
 
-  		if(fwrite(pLast, 1, writeSize, out) != writeSize)
+        pPrev++;
+      }
+      else
+        writeSize--;
+    }
+
+    // write out the message part at one
+    if(writeSize > 0)
+    {
+  		if(fwrite(pFirst, 1, writeSize, out) != writeSize)
       {
         result = FALSE;
         break;
       }
-
-      pLast = pCur+1;
-      size -= (writeSize+1);
-    }
-
-    // write out all rest of the message data if we didn't
-    // have faced an error already.
-		if(result == FALSE || fwrite(pLast, 1, size, out) != size)
-    {
-      result = FALSE;
-      break;
     }
 	}
 

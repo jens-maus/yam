@@ -7,6 +7,9 @@ $Source$
 
 2006-01-23  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_TR.c: fixed bug #1413103 where importing of certain DBX files
+      caused the '\r' stripping routines to fail and cause YAM to eat up
+      all memory.
     * YAM.c: modified the DoStartup() function to be compatible to the
       general SMTP-after-POP3 behaviour of YAM in case bot SMTP and POP3
       during startup is selected.
