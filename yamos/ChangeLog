@@ -10,6 +10,8 @@ $Source$
     * YAM_mail_lex.l: replaced the unput() uses in our ParseEmailText()
       function with calls to yyunput() instead. This in fact should fix
       problems with the latest version of flex 2.5.31.
+    * includes: updated all OpenURL dependant includes with the very
+      latest ones.
     * extrasrc/NewReadArgs.c: replaced all AllocVec/FreeVec uses by
       the more general malloc/free combos.
     * locale/francais.ct: updated french translation according to

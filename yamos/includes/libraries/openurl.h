@@ -2,14 +2,20 @@
 #define LIBRARIES_OPENURL_H
 
 /*
-** openurl.library - universal URL display and browser launcher library
-** Written by Troels Walsted Hansen <troels@thule.no>
-** Placed in the public domain.
+**  $VER: openurl.h 7.2 (1.12.2005)
+**  Includes Release 7.2
 **
-** Library definitions and structures.
+**  openurl.library - universal URL display and browser
+**  launcher library
+**
+**  Written by Troels Walsted Hansen <troels@thule.no>
+**  Placed in the public domain.
+**
+**  Developed by:
+**  - Alfonso Ranieri <alforan@tin.it>
+**  - Stefan Kost <ensonic@sonicpulse.de>
+**
 */
-
-/**************************************************************************/
 
 #ifndef EXEC_TYPES_H
 #include <exec/types.h>
@@ -27,85 +33,195 @@
 #include <utility/tagitem.h>
 #endif
 
-#include "amiga-align.h"
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack(2)
+  #elif defined(__VBCC__)
+    #pragma amiga-align
+  #endif
+#endif
+
+/**************************************************************************/
+/*
+** Names
+*/
+
+#define OPENURLNAME "openurl.library"
+#define OPENURLVER  7
+#define OPENURLREV  2
+
+/**************************************************************************/
+/*
+** Tags
+*/
+
+#define URL_Tagbase                  ((int)0x81480000)
+
+#define URL_Show                     (URL_Tagbase +  1) /* BOOL    - Uniconify browser                   */
+#define URL_BringToFront             (URL_Tagbase +  2) /* BOOL    - Bring browser to front              */
+#define URL_NewWindow                (URL_Tagbase +  3) /* BOOL    - Open URL in new window              */
+#define URL_Launch                   (URL_Tagbase +  4) /* BOOL    - Launch browser when not running     */
+#define URL_PubScreenName            (URL_Tagbase +  5) /* UBYTE * - Name of public screen to launch at  */
+
+#define URL_GetPrefs_Mode            (URL_Tagbase + 20) /* BOOL    - Get default prefs                   */
+#define URL_GetPrefs_FallBack        (URL_Tagbase + 21) /* BOOL    - Do not fail (TRUE)                  */
+
+#define URL_SetPrefs_Save            (URL_Tagbase + 30) /* BOOL    - Save prefs to ENVARC: also          */
+
+#define URL_GetAttr_Version          (URL_Tagbase + 60) /* ULONG   - Library version                     */
+#define URL_GetAttr_Revision         (URL_Tagbase + 61) /* ULONG   - Library revision                    */
+#define URL_GetAttr_VerString        (URL_Tagbase + 62) /* STRPTR  - "openurl.library 6.4 (27.7.2005)"   */
+#define URL_GetAttr_PrefsVer         (URL_Tagbase + 63) /* ULONG   - Library preferences version         */
+
+#define URL_GetAttr_HandlerVersion   (URL_Tagbase + 64) /* Obsolete !!! DON'T USE !!!                    */
+#define URL_GetAttr_HandlerRevision  (URL_Tagbase + 65) /* Obsolete !!! DON'T USE !!!                    */
+#define URL_GetAttr_HandlerVerString (URL_Tagbase + 66) /* Obsolete !!! DON'T USE !!!                    */
+
+enum
+{
+    URL_GetPrefs_Mode_Env,
+    URL_GetPrefs_Mode_Envarc,
+    URL_GetPrefs_Mode_Default,
+    URL_GetPrefs_Mode_InUse,
+};
 
 /**************************************************************************/
 
-#define URL_Tagbase TAG_USER
+#define REXX_CMD_LEN       64
+#define NAME_LEN           32
+#define PATH_LEN          256
+#define PORT_LEN           32
 
-/* these tags are all you need to use openurl.library, the rest of the stuff 
-   in this include file is only of interest to prefs program writers.
+#define SHOWCMD_LEN       REXX_CMD_LEN
+#define TOFRONTCMD_LEN    REXX_CMD_LEN
+#define OPENURLCMD_LEN    REXX_CMD_LEN
+#define OPENURLWCMD_LEN   REXX_CMD_LEN
+#define WRITEMAILCMD_LEN  (REXX_CMD_LEN*2)
+
+/**************************************************************************/
+/*
+** Version 4 Prefs
 */
 
-#define URL_Show         (URL_Tagbase + 1) /* BOOL - show/uniconify browser */
-#define URL_BringToFront (URL_Tagbase + 2) /* BOOL - bring browser to front */
-#define URL_NewWindow    (URL_Tagbase + 3) /* BOOL - open URL in new window */
-#define URL_Launch       (URL_Tagbase + 4) /* BOOL - launch browser when not running */
-
-/* this is Version 3 of this structure */
-
-#define UPF_ISDEFAULTS  (1<<0) /* V2 - structure contains the default settings */
-#define UPF_PREPENDHTTP (1<<1) /* V3 - prepend "http://" to URLs w/o scheme */
-#define UPF_DOMAILTO    (1<<2) /* V3 - mailto URLs get special treatment */
+#define PREFS_VERSION ((UBYTE)4)
 
 struct URL_Prefs
 {
-	UBYTE          up_Version;         /* always check this version number! */
-	struct MinList up_BrowserList;     /* list of struct URL_BrowserNodes */
-	struct MinList up_MailerList;      /* V3 - list of struct URL_MailerNodes */
+	UBYTE          up_Version;         /* always check this version number!     */
+	struct MinList up_BrowserList;     /* list of struct URL_BrowserNodes       */
+	struct MinList up_MailerList;      /* list of struct URL_MailerNodes        */
+	struct MinList up_FTPList;         /* list of struct URL_MailerNodes        */
 
-	LONGBITS       up_Flags;           /* V2 - flags, see above            */
-	BOOL           up_DefShow;         /* these BOOLs are the defaults for */
-	BOOL           up_DefBringToFront; /* the similarly named tags         */
-	BOOL           up_DefNewWindow;    /* they are all new with Version 2  */
-	BOOL           up_DefLaunch;
+	ULONG          up_Flags;           /* flags, see below                      */
+	
+    ULONG          up_DefShow;         /* these BOOLs are the defaults for      */
+	ULONG          up_DefBringToFront; /* the similarly named tags              */
+	ULONG          up_DefNewWindow;    /* they are all new with Version 2       */
+	ULONG          up_DefLaunch;
 };
 
-#define REXX_CMD_LEN 64
+/* up_Flags */
+enum
+{
+    UPF_ISDEFAULTS  = 1<<0, /* structure contains the default settings     */
+    UPF_PREPENDHTTP = 1<<1, /* prepend "http://" to URLs w/o scheme        */
+    UPF_DOMAILTO    = 1<<2, /* mailto: URLs get special treatment          */
+    UPF_DOFTP       = 1<<3, /* ftp:// URLs get special treatment           */
+};
 
-#define UBNF_URLONCMDLINE (1<<0) /* if set, browser supports getting an URL on 
-                                    the commandline when launched. obsolete as
-                                    of V3 - use %u on commandline instead */
-#define UBN_NAME_LEN         32
-#define UBN_PATH_LEN        256
-#define UBN_PORT_LEN         32
-#define UBN_SHOWCMD_LEN      REXX_CMD_LEN
-#define UBN_TOFRONTCMD_LEN   REXX_CMD_LEN
-#define UBN_OPENURLCMD_LEN   REXX_CMD_LEN
-#define UBN_OPENURLWCMD_LEN  REXX_CMD_LEN
+/**************************************************************************/
+/*
+** Common #?_Flags values
+*/
+
+enum
+{
+    UNF_DISABLED = 1<<1,  /* The entry is disabled */
+
+    UNF_NEW      = 1<<16, /* Reserved for OpenURL preferences application */
+    UNF_NTALLOC  = 1<<17, /* Reserved for OpenURL preferences application */
+};
+
+/**************************************************************************/
+/*
+** Browsers
+*/
 
 struct URL_BrowserNode
 {
 	struct MinNode ubn_Node;
-	LONGBITS       ubn_Flags;                            /* flags, see above */
-	TEXT           ubn_Name[UBN_NAME_LEN];               /* name of webbrowser */
-	TEXT           ubn_Path[UBN_PATH_LEN];               /* complete path to browser */
-	TEXT           ubn_Port[UBN_PORT_LEN];               /* webbrowser arexx port */
-	TEXT           ubn_ShowCmd[UBN_SHOWCMD_LEN];         /* command to show/uniconify browser */
-	TEXT           ubn_ToFrontCmd[UBN_TOFRONTCMD_LEN];   /* command to bring browser to front */
-	TEXT           ubn_OpenURLCmd[UBN_OPENURLCMD_LEN];   /* command to open url */
-	TEXT           ubn_OpenURLWCmd[UBN_OPENURLWCMD_LEN]; /* command to open url in new window */
+	ULONG          ubn_Flags;                        /* flags, see below                 */
+	UBYTE          ubn_Name[NAME_LEN];               /* name of webbrowser                */
+	UBYTE          ubn_Path[PATH_LEN];               /* complete path to browser          */
+	UBYTE          ubn_Port[PORT_LEN];               /* webbrowser arexx port             */
+	UBYTE          ubn_ShowCmd[SHOWCMD_LEN];         /* command to show/uniconify browser */
+	UBYTE          ubn_ToFrontCmd[TOFRONTCMD_LEN];   /* command to bring browser to front */
+	UBYTE          ubn_OpenURLCmd[OPENURLCMD_LEN];   /* command to open url               */
+	UBYTE          ubn_OpenURLWCmd[OPENURLWCMD_LEN]; /* command to open url in new window */
 };
 
-#define UMN_NAME_LEN         32
-#define UMN_PATH_LEN        256
-#define UMN_PORT_LEN         32
-#define UMN_SHOWCMD_LEN      REXX_CMD_LEN
-#define UMN_TOFRONTCMD_LEN   REXX_CMD_LEN
-#define UMN_WRITEMAILCMD_LEN (REXX_CMD_LEN * 2)
+/* ubn_Flags */
+enum
+{
+    /*
+    ** If set, browser supports getting an URL on
+    ** the commandline when launched. obsolete as
+    ** of V3 - use %u on commandline instead
+    */
+    UBNF_URLONCMDLINE = 1<<0,
+};
+
+/**************************************************************************/
+/*
+** Mailers
+*/
 
 struct URL_MailerNode
 {
 	struct MinNode umn_Node;
-	LONGBITS       umn_Flags;                              /* flags, see above */
-	TEXT           umn_Name[UMN_NAME_LEN];                 /* name of mailer */
-	TEXT           umn_Path[UMN_PATH_LEN];                 /* complete path to mailer */
-	TEXT           umn_Port[UMN_PORT_LEN];                 /* mailer arexx port */
-	TEXT           umn_ShowCmd[UMN_SHOWCMD_LEN];           /* command to show/uniconify mailer */
-	TEXT           umn_ToFrontCmd[UMN_TOFRONTCMD_LEN];     /* command to bring mailer to front */
-	TEXT           umn_WriteMailCmd[UMN_WRITEMAILCMD_LEN]; /* command to write mail */
+	ULONG          umn_Flags;                          /* flags, none defined              */
+	UBYTE          umn_Name[NAME_LEN];                 /* name of mailer                   */
+	UBYTE          umn_Path[PATH_LEN];                 /* complete path to mailer          */
+	UBYTE          umn_Port[PORT_LEN];                 /* mailer arexx port                */
+	UBYTE          umn_ShowCmd[SHOWCMD_LEN];           /* command to show/uniconify mailer */
+	UBYTE          umn_ToFrontCmd[TOFRONTCMD_LEN];     /* command to bring mailer to front */
+	UBYTE          umn_WriteMailCmd[WRITEMAILCMD_LEN]; /* command to write mail            */
 };
 
-#include "default-align.h"
+/**************************************************************************/
+/*
+** FTPs
+*/
 
-#endif  /* LIBRARIES_OPENURL_H */
+struct URL_FTPNode
+{
+	struct MinNode ufn_Node;
+	ULONG          ufn_Flags;                        /* flags, see below                     */
+	UBYTE          ufn_Name[NAME_LEN];               /* name of ftp client                   */
+	UBYTE          ufn_Path[PATH_LEN];               /* complete path to ftp client          */
+	UBYTE          ufn_Port[PORT_LEN];               /* webbrowser arexx port                */
+	UBYTE          ufn_ShowCmd[SHOWCMD_LEN];         /* command to show/uniconify ftp client */
+	UBYTE          ufn_ToFrontCmd[TOFRONTCMD_LEN];   /* command to bring ftp client to front */
+	UBYTE          ufn_OpenURLCmd[OPENURLCMD_LEN];   /* command to open url                  */
+	UBYTE          ufn_OpenURLWCmd[OPENURLWCMD_LEN]; /* command to open url in new window    */
+};
+
+/* ufn_Flags */
+enum
+{
+    /* If set, ftp:// ise removed from the URL */
+    UFNF_REMOVEFTP = 1<<0,
+};
+
+/**************************************************************************/
+
+#if defined(__PPC__)
+  #if defined(__GNUC__)
+    #pragma pack()
+  #elif defined(__VBCC__)
+    #pragma default-align
+  #endif
+#endif
+
+#endif /* LIBRARIES_OPENURL_H */
+
