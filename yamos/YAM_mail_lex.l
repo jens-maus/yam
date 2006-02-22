@@ -233,7 +233,7 @@ char *ParseEmailText(char *mailTxt)
             yytext[yyleng-2] = '\0';
             cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
-            unput(yytext[yyleng-1]);
+            yyunput(yytext[yyleng-1], yytext);
           }
           break;
 
@@ -252,7 +252,7 @@ char *ParseEmailText(char *mailTxt)
             yytext[yyleng-2] = '\0';
             cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
-            unput(yytext[yyleng-1]);
+            yyunput(yytext[yyleng-1], yytext);
           }
           break;
 
@@ -271,7 +271,7 @@ char *ParseEmailText(char *mailTxt)
             yytext[yyleng-2] = '\0';
             cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
             cmsg = AppendToBuffer(cmsg, &wptr, &len, "\033n");
-            unput(yytext[yyleng-1]);
+            yyunput(yytext[yyleng-1], yytext);
           }
           break;
 
@@ -290,7 +290,7 @@ char *ParseEmailText(char *mailTxt)
             yytext[yyleng-2] = '\0';
             cmsg = AppendToBuffer(cmsg, &wptr, &len, &yytext[1]);
             cmsg = AppendToBuffer(cmsg, &wptr, &len, colorTag ? colorTag : "\033p[0]");
-            unput(yytext[yyleng-1]);
+            yyunput(yytext[yyleng-1], yytext);
           }
           break;
 

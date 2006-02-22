@@ -5,6 +5,12 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2006-02-22  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_mail_lex.l: replaced the unput() uses in our ParseEmailText()
+      function with calls to yyunput() instead. This in fact should fix
+      problems with the latest version of flex 2.5.31.
+
 2006-01-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM.c: replaced the AllocMem/FreeMem uses to allocate and free
