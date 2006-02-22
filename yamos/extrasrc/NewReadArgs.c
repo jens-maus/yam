@@ -23,6 +23,8 @@
 #include <proto/icon.h>
 #include <proto/exec.h>
 #include <proto/dos.h>
+
+#include <stdlib.h>
 #include <string.h>
 
 #include "Debug.h"
@@ -75,7 +77,7 @@ void NewFreeArgs(struct NewRDArgs *rdargs)
 
   if(rdargs->RDArgs)
   {
-    FreeVec((APTR)rdargs->RDArgs->RDA_Source.CS_Buffer);
+    free((void*)rdargs->RDArgs->RDA_Source.CS_Buffer);
 
     D(DBF_STARTUP, "FreeDosObject(DOS_RDARGS, rdargs->RDArgs)");
     FreeDosObject(DOS_RDARGS, rdargs->RDArgs);
@@ -382,7 +384,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       if(num)
       {
         nrdargs->RDArgs->RDA_Source.CS_Length = (num+=MaxArgs);
-        nrdargs->RDArgs->RDA_Source.CS_Buffer = AllocVec(num+1, MEMF_ANY);
+        nrdargs->RDArgs->RDA_Source.CS_Buffer = malloc(num+1);
         ptr = (char *)nrdargs->RDArgs->RDA_Source.CS_Buffer;
 
         if(ptr)
@@ -411,7 +413,7 @@ LONG NewReadArgs( struct WBStartup *WBStartup, struct NewRDArgs *nrdargs)
       else
       {
         nrdargs->RDArgs->RDA_Source.CS_Length = 1;
-        nrdargs->RDArgs->RDA_Source.CS_Buffer = AllocVec(1, MEMF_ANY);
+        nrdargs->RDArgs->RDA_Source.CS_Buffer = malloc(1);
         ptr = (char *)nrdargs->RDArgs->RDA_Source.CS_Buffer;
 
         if(ptr)
