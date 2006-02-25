@@ -131,13 +131,11 @@ struct CO_GUIData
    Object *CH_MULTIWIN;
    Object *CH_WRAPHEAD;
    Object *CH_TEXTSTYLES;
-   Object *ST_INTRANS;
    Object *ST_REPLYTO;
    Object *ST_ORGAN;
    Object *ST_EXTHEADER;
    Object *ST_HELLOTEXT;
    Object *ST_BYETEXT;
-   Object *ST_OUTTRANS;
    Object *ST_EDWRAP;
    Object *CY_EDWRAP;
    Object *ST_EDITOR;
@@ -254,6 +252,7 @@ struct CO_GUIData
    Object *CH_QUICKSEARCHBAR;
    Object *CH_WBAPPICON;
    Object *CH_DOCKYICON;
+   Object *ST_DEFAULTCHARSET;
 };
 
 struct CO_ClassData  /* configuration window */
@@ -442,13 +441,11 @@ struct Config
    char  NotifySound[SIZE_PATHFILE];
    char  NotifyCommand[SIZE_COMMAND];
    char  ShortHeaders[SIZE_PATTERN];
-   char  TranslationIn[SIZE_PATHFILE];
    char  ReplyTo[SIZE_ADDRESS];
    char  Organization[SIZE_DEFAULT];
    char  ExtraHeaders[SIZE_LARGE];
    char  NewIntro[SIZE_INTRO];
    char  Greetings[SIZE_INTRO];
-   char  TranslationOut[SIZE_PATHFILE];
    char  Editor[SIZE_PATHFILE];
    char  ReplyHello[SIZE_INTRO];
    char  ReplyIntro[SIZE_INTRO];

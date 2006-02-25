@@ -1122,8 +1122,7 @@ BOOL MA_ReadHeader(FILE *fh, struct MinList *headerList)
 
           // we first decode the header according to RFC 2047 which
           // should give us the full charset interpretation
-          if((len = rfc2047_decode(hdrContents, hdrContents, strlen(hdrContents),
-             (G->TTin && G->TTin->Header) ? G->TTin : NULL)) == -1)
+          if((len = rfc2047_decode(hdrContents, hdrContents, strlen(hdrContents))) == -1)
           {
             E(DBF_FOLDER, "ERROR: malloc() error during rfc2047() decoding");
             break; // break-out

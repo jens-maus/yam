@@ -30,40 +30,30 @@
 
 #include <stdio.h>
 
-#include "YAM_stringsizes.h"
+#include <proto/codesets.h>
 
-struct TranslationTable
-{
-   BOOL  Header;
-   UBYTE Table[256];
-   char  Name[SIZE_DEFAULT];
-   char  File[SIZE_PATHFILE];
-   char  SourceCharset[SIZE_NAME];
-   char  DestCharset[SIZE_NAME];
-};
+#include "YAM_stringsizes.h"
 
 // base64 encoding/decoding routines
 int base64encode(char *to, const unsigned char *from, unsigned int len);
 int base64decode(char *to, const unsigned char *from, unsigned int len);
 long base64encode_file(FILE *in, FILE *out, BOOL convLF);
 long base64decode_file(FILE *in, FILE *out,
-                       struct TranslationTable *tt, BOOL convCRLF);
+                       struct codeset *srcCodeset, BOOL convCRLF);
 
 // quoted-printable encoding/decoding routines
 long qpencode_file(FILE *in, FILE *out);
-long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt);
+long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset);
 
 // uucode encoding/decoding routines
 long uuencode_file(FILE *in, FILE *out);
-long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt);
+long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset);
 
 // rfc2047 decoding routines
-int rfc2047_encode_file(FILE *fh, const char *str,
-                        const struct TranslationTable *tt);
-int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
-                   struct TranslationTable *tt);
+int rfc2047_encode_file(FILE *fh, const char *str);
+int rfc2047_decode(char *dst, const char *src, unsigned int maxlen);
 
 // the OLD MIME routines which we are going to replace step-by-step
-void  fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt);
+void fromform(FILE *infile, FILE *outfile, struct codeset *srcCodeset);
 
 #endif /* YAM_MIME_H */

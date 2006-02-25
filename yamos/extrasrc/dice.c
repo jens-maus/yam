@@ -18,11 +18,11 @@ struct DiskObject *GetIconTags(MY_CONST_STRPTR name, ... )
 { return GetIconTagList(name, (struct TagItem *)(&name+1)); }
 
 #include <proto/xpkmaster.h>
-LONG XpkQueryTags(ULONG tag, ...)
+LONG XpkQueryTags(Tag tag, ...)
 { return XpkQuery((struct TagItem *)&tag); }
-LONG XpkPackTags(ULONG tag, ...)
+LONG XpkPackTags(Tag tag, ...)
 { return XpkPack((struct TagItem *)&tag); }
-LONG XpkUnpackTags(ULONG tag, ...)
+LONG XpkUnpackTags(Tag tag, ...)
 { return XpkUnpack((struct TagItem *)&tag); }
 
 #include <proto/openurl.h>
@@ -30,9 +30,19 @@ BOOL URL_Open(STRPTR str, ULONG tag, ...)
 { return URL_OpenA(str,(struct TagItem *)&tag); }
 
 #include <proto/amissl.h>
-long InitAmiSSL(ULONG tag, ...)
+long InitAmiSSL(Tag tag, ...)
 { return InitAmiSSLA((struct TagItem *)&tag); }
-long CleanupAmiSSL(ULONG tag, ...)
+long CleanupAmiSSL(Tag tag, ...)
 { return CleanupAmiSSLA((struct TagItem *)&tag); }
+
+#include <proto/codesets.h>
+STRPTR *CodesetsSupported(Tag tag1, ...)
+{ return CodesetsSupportedA((struct TagItem *)&tag1); }
+struct codeset *CodesetsFind(STRPTR name, Tag tag1, ...)
+{ return CodesetsFindA(name, (struct TagItem *)&tag1); }
+STRPTR CodesetsConvertStr(Tag tag1, ...)
+{ return CodesetsConvertStrA((struct TagItem *)&tag1); }
+BOOL CodesetsListDelete(Tag tag1, ...)
+{ return CodesetsListDeleteA((struct TagItem *)&tag1); }
 
 #endif

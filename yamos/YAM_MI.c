@@ -29,6 +29,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <proto/codesets.h>
+
+#include "YAM.h"
 #include "YAM_config.h"
 #include "YAM_error.h"
 #include "YAM_locale.h"
@@ -515,7 +518,7 @@ long base64encode_file(FILE *in, FILE *out, BOOL convLF)
 //  to still consider the string decoded (however it should be treated with
 //  care)
 long base64decode_file(FILE *in, FILE *out,
-                       struct TranslationTable *tt, BOOL convCRLF)
+                       struct codeset *srcCodeset, BOOL convCRLF)
 {
   char inbuffer[B64DEC_BUF+1];
   char outbuffer[B64DEC_BUF/4*3];
@@ -654,13 +657,44 @@ long base64decode_file(FILE *in, FILE *out,
     }
     #endif
 
-    // if we got a translation table or need to convert a CRLF we have to parse through
-    // the decoded string again and convert some chars.
-    if(tt || convCRLF)
+    // if the caller supplied a source codeset, we have to
+    // make sure we convert our outbuffer before writing it out
+    // to the file into our local charset
+    if(srcCodeset)
+    {
+      ULONG strLen = 0;
+      STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                      CSA_DestCodeset,   G->localCharset,
+                                      CSA_Source,        outbuffer,
+                                      CSA_SourceLen,     outLength,
+                                      CSA_DestLenPtr,    &strLen,
+                                      TAG_DONE);
+
+      if(str && strLen > 0)
+      {
+        // if we end up here we successfully converted the
+        // sourcebuffer to a destination buffer which complies to our local
+        // charset
+        dptr = str;
+        outLength = strLen;
+      }
+      else
+      {
+        W(DBF_MIME, "error while trying to convert base64decoded string to local charset!");
+
+        dptr = outbuffer;
+      }
+    }
+    else
+      dptr = outbuffer;
+
+    // if the user also wants to convert CRLF to LF only,
+    // we do it right now
+    if(convCRLF)
     {
       long r;
-      char *rc = outbuffer;
-      char *wc = outbuffer;
+      char *rc = dptr;
+      char *wc = dptr;
 
       for(r=0; r < outLength; r++, rc++)
       {
@@ -670,14 +704,6 @@ long base64decode_file(FILE *in, FILE *out,
         {
           // if so, skip the \r
           continue;
-        }
-        else if(tt)
-        {
-          // if not, convert the char
-          *wc = tt->Table[(UBYTE)*rc];
-
-          // increase the write counter
-          wc++;
         }
         else
         {
@@ -697,7 +723,7 @@ long base64decode_file(FILE *in, FILE *out,
 
     // now that we got the string decoded we write it into
     // our file
-    if(fwrite(outbuffer, sizeof(char), (size_t)outLength, out) != (size_t)outLength)
+    if(fwrite(dptr, sizeof(char), (size_t)outLength, out) != (size_t)outLength)
     {
       E(DBF_MIME, "error on writing data!");
 
@@ -705,6 +731,11 @@ long base64decode_file(FILE *in, FILE *out,
       RETURN(-1);
       return -1;
     }
+
+    // in case the dptr buffer was allocated by codesets.library,
+    // we have to free it now
+    if(dptr != outbuffer)
+      CodesetsFreeA(dptr, NULL);
 
     // increase the decodedChars counter
     decodedChars += outLength;
@@ -902,7 +933,7 @@ long qpencode_file(FILE *in, FILE *out)
 /// qpdecode_file()
 // Decodes a whole file using the quoted-printable format defined in
 // RFC 2045 (page 19)
-long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
+long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 {
   unsigned char inbuffer[QPDEC_BUF+1]; // lets use a 4096 byte large input buffer
   unsigned char outbuffer[QPDEC_BUF+1];// to speed things up we use the same amount
@@ -992,7 +1023,7 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
           // check if the two chars are really hexadecimal chars
           if(c1 != 255 && c2 != 255)
           {
-            *optr++ = tt ? tt->Table[(UBYTE)(c1<<4 | c2)] : c1<<4 | c2;
+            *optr++ = c1<<4 | c2;
 
             // increase the counters
             iptr += 2;
@@ -1035,24 +1066,66 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
       {
         // the current char seems to be a normal
         // char, so lets output it
-        *optr++ = tt ? tt->Table[(UBYTE)c] : c;
+        *optr++ = c;
       }
 
       // let us now check if our outbuffer is filled up so that we can write
       // out the data to our out stream.
       if(optr-outbuffer >= QPDEC_BUF)
       {
+        unsigned char *dptr;
         size_t todo = optr-outbuffer;
 
+        // if the caller supplied a source codeset, we have to
+        // make sure we convert our outbuffer before writing it out
+        // to the file into our local charset
+        if(srcCodeset)
+        {
+          ULONG strLen = 0;
+          STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                          CSA_DestCodeset,   G->localCharset,
+                                          CSA_Source,        outbuffer,
+                                          CSA_SourceLen,     todo,
+                                          CSA_DestLenPtr,    &strLen,
+                                          TAG_DONE);
+
+          if(str && strLen > 0)
+          {
+            // if we end up here we successfully converted the
+            // sourcebuffer to a destination buffer which complies to our local
+            // charset
+            dptr = (unsigned char *)str;
+            todo = strLen;
+          }
+          else
+          {
+            W(DBF_MIME, "error while trying to convert qpdecoded string to local charset!");
+
+            dptr = outbuffer;
+          }
+        }
+        else
+          dptr = outbuffer;
+
         // now we do a binary write of the data
-        if(fwrite(outbuffer, 1, todo, out) != todo)
+        if(fwrite(dptr, 1, todo, out) != todo)
         {
           E(DBF_MIME, "error on writing data!");
+
+          // in case the dptr buffer was allocated by codesets.library,
+          // we have to free it now
+          if(dptr != outbuffer)
+            CodesetsFreeA(dptr, NULL);
 
           // an error must have occurred.
           RETURN(-1);
           return -1;
         }
+
+        // in case the dptr buffer was allocated by codesets.library,
+        // we have to free it now
+        if(dptr != outbuffer)
+          CodesetsFreeA(dptr, NULL);
 
         // now reset the outbuffer and stuff
         optr = outbuffer;
@@ -1064,17 +1137,59 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
   // hasn't been written out yet
   if(optr-outbuffer > 0)
   {
+    unsigned char *dptr;
     size_t todo = optr-outbuffer;
 
+    // if the caller supplied a source codeset, we have to
+    // make sure we convert our outbuffer before writing it out
+    // to the file into our local charset
+    if(srcCodeset)
+    {
+      ULONG strLen = 0;
+      STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                      CSA_DestCodeset,   G->localCharset,
+                                      CSA_Source,        outbuffer,
+                                      CSA_SourceLen,     todo,
+                                      CSA_DestLenPtr,    &strLen,
+                                      TAG_DONE);
+
+      if(str && strLen > 0)
+      {
+        // if we end up here we successfully converted the
+        // sourcebuffer to a destination buffer which complies to our local
+        // charset
+        dptr = (unsigned char *)str;
+        todo = strLen;
+      }
+      else
+      {
+        W(DBF_MIME, "error while trying to convert qpdecoded string to local charset!");
+
+        dptr = outbuffer;
+      }
+    }
+    else
+      dptr = outbuffer;
+
     // now we do a binary write of the data
-    if(fwrite(outbuffer, 1, todo, out) != todo)
+    if(fwrite(dptr, 1, todo, out) != todo)
     {
       E(DBF_MIME, "error on writing data!");
+
+      // in case the dptr buffer was allocated by codesets.library,
+      // we have to free it now
+      if(dptr != outbuffer)
+        CodesetsFreeA(dptr, NULL);
 
       // an error must have occurred.
       RETURN(-1);
       return -1;
     }
+
+    // in case the dptr buffer was allocated by codesets.library,
+    // we have to free it now
+    if(dptr != outbuffer)
+      CodesetsFreeA(dptr, NULL);
   }
 
   // if we end up here and read > 0 then the decoding wasn't finished
@@ -1096,7 +1211,7 @@ long qpdecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
 /*** URL decoding routines ***/
 /// fromform
 //  Converts an url-encoded file into plain text
-void fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt)
+void fromform(FILE *infile, FILE *outfile, struct codeset *srcCodeset)
 {
    unsigned int c;
    while ((c = fgetc(infile)) != (unsigned int)-1)
@@ -1109,12 +1224,18 @@ void fromform(FILE *infile, FILE *outfile, struct TranslationTable *tt)
                    {
                       case '\n': fputs("\n ", outfile); break;
                       case '\r': break;
-                      default  : fputc(tt ? (unsigned int)tt->Table[(UBYTE)c] : c, outfile); break;
+
+                      #warning "tt convert"
+                      //default  : fputc(tt ? (unsigned int)tt->Table[(UBYTE)c] : c, outfile); break;
+                      default  : fputc(c, outfile); break;
                    }
                    break;
          case '+': fputc(' ', outfile); break;
          case '=': fputs(" = ", outfile); break;
-         default : fputc(tt ? (unsigned int)tt->Table[(UBYTE)c] : c, outfile); break;
+
+         #warning "tt convert"
+         //default : fputc(tt ? (unsigned int)tt->Table[(UBYTE)c] : c, outfile); break;
+         default : fputc(c, outfile); break;
       }
    }
 }
@@ -1290,7 +1411,7 @@ long uuencode_file(FILE *in, FILE *out)
 // processing. It also takes respect of eventually existing checksums and
 // tries to validate the UUencoded file to conform to the BSD standard or
 // otherwise return an error/warning by returning negative values.
-long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
+long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 {
   unsigned char inbuffer[UUDEC_IBUF+1]; // we read out data in ~4500 byte chunks
   unsigned char outbuffer[UUDEC_OBUF+1];// the output buffer
@@ -1463,21 +1584,21 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
           // now that we have our input chars we can
           // decode them to our output buffer directly
           tempsum = c = c1 << 2 | c2 >> 4;
-          *optr++ = tt ? tt->Table[(UBYTE)c] : c;
+          *optr++ = c;
           line_len--;
           decoded++;
 
           if(line_len)
           {
             tempsum += c = c2 << 4 | c3 >> 2;
-            *optr++ = tt ? tt->Table[(UBYTE)c] : c;
+            *optr++ = c;
             line_len--;
             decoded++;
 
             if(line_len)
             {
               tempsum += c = c3 << 6 | c4;
-              *optr++ = tt ? tt->Table[(UBYTE)c] : c;
+              *optr++ = c;
               line_len--;
               decoded++;
             }
@@ -1494,17 +1615,59 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
         // out the data to our out stream.
         if(optr-outbuffer >= UUDEC_OBUF)
         {
+          unsigned char *dptr;
           size_t todo = optr-outbuffer;
 
+          // if the caller supplied a source codeset, we have to
+          // make sure we convert our outbuffer before writing it out
+          // to the file into our local charset
+          if(srcCodeset)
+          {
+            ULONG strLen = 0;
+            STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                            CSA_DestCodeset,   G->localCharset,
+                                            CSA_Source,        outbuffer,
+                                            CSA_SourceLen,     todo,
+                                            CSA_DestLenPtr,    &strLen,
+                                            TAG_DONE);
+
+            if(str && strLen > 0)
+            {
+              // if we end up here we successfully converted the
+              // sourcebuffer to a destination buffer which complies to our local
+              // charset
+              dptr = (unsigned char *)str;
+              todo = strLen;
+            }
+            else
+            {
+              W(DBF_MIME, "error while trying to convert uudecoded string to local charset!");
+
+              dptr = outbuffer;
+            }
+          }
+          else
+            dptr = outbuffer;
+
           // now we do a binary write of the data
-          if(fwrite(outbuffer, 1, todo, out) != todo)
+          if(fwrite(dptr, 1, todo, out) != todo)
           {
             E(DBF_MIME, "error on writing data!");
+
+            // in case the dptr buffer was allocated by codesets.library,
+            // we have to free it now
+            if(dptr != outbuffer)
+              CodesetsFreeA(dptr, NULL);
 
             // an error must have occurred.
             RETURN(-1);
             return -1;
           }
+
+          // in case the dptr buffer was allocated by codesets.library,
+          // we have to free it now
+          if(dptr != outbuffer)
+            CodesetsFreeA(dptr, NULL);
 
           // now reset the outbuffer and stuff
           optr = outbuffer;
@@ -1574,17 +1737,59 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
   // hasn't been written out yet
   if(optr-outbuffer > 0)
   {
+    unsigned char *dptr;
     size_t todo = optr-outbuffer;
 
+    // if the caller supplied a source codeset, we have to
+    // make sure we convert our outbuffer before writing it out
+    // to the file into our local charset
+    if(srcCodeset)
+    {
+      ULONG strLen = 0;
+      STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                      CSA_DestCodeset,   G->localCharset,
+                                      CSA_Source,        outbuffer,
+                                      CSA_SourceLen,     todo,
+                                      CSA_DestLenPtr,    &strLen,
+                                      TAG_DONE);
+
+      if(str && strLen > 0)
+      {
+        // if we end up here we successfully converted the
+        // sourcebuffer to a destination buffer which complies to our local
+        // charset
+        dptr = (unsigned char *)str;
+        todo = strLen;
+      }
+      else
+      {
+        W(DBF_MIME, "error while trying to convert uudecoded string to local charset!");
+
+        dptr = outbuffer;
+      }
+    }
+    else
+      dptr = outbuffer;
+
     // now we do a binary write of the data
-    if(fwrite(outbuffer, 1, todo, out) != todo)
+    if(fwrite(dptr, 1, todo, out) != todo)
     {
       E(DBF_MIME, "error on writing data!");
+
+      // in case the dptr buffer was allocated by codesets.library,
+      // we have to free it now
+      if(dptr != outbuffer)
+        CodesetsFreeA(dptr, NULL);
 
       // an error must have occurred.
       RETURN(-1);
       return -1;
     }
+
+    // in case the dptr buffer was allocated by codesets.library,
+    // we have to free it now
+    if(dptr != outbuffer)
+      CodesetsFreeA(dptr, NULL);
   }
 
   // on success lets return the number of decoded
@@ -1603,8 +1808,7 @@ long uudecode_file(FILE *in, FILE *out, struct TranslationTable *tt)
 // that it does not simply generate a large huge encoded-word with text
 // in it. It tries to only encode those passages which really require
 // this encoding because of special characters in it.
-int rfc2047_encode_file(FILE *fh, const char *str,
-                        const struct TranslationTable *tt)
+int rfc2047_encode_file(FILE *fh, const char *str)
 {
   char *c = (char *)str;
   char *c_wstart = NULL;      // pointer to the start of the actual word
@@ -1731,10 +1935,7 @@ int rfc2047_encode_file(FILE *fh, const char *str,
 
                 // as we splitted an encoded-word we have to start the next
                 // line with a proper encoded-word start again.
-                if(tt && tt->DestCharset && tt->DestCharset[0])
-                  move_start = sprintf(encode_buf, "=?%s?Q?", tt->DestCharset);
-                else
-                  move_start = sprintf(encode_buf, "=?%s?Q?", C->LocalCharset);
+                move_start = sprintf(encode_buf, "=?%s?Q?", C->LocalCharset);
 
                 // then move the other stuff to the start again
                 memmove(encode_buf+move_start, split_pos, ebp-split_pos);
@@ -1810,10 +2011,7 @@ int rfc2047_encode_file(FILE *fh, const char *str,
           // before we place encoded data in our encode buffer we have to
           // place the "=?charset?Q?" string at the beginning because here
           // the encoding starts
-          if(tt && tt->DestCharset && tt->DestCharset[0])
-            ebp += sprintf(ebp, "=?%s?Q?", tt->DestCharset);
-          else
-            ebp += sprintf(ebp, "=?%s?Q?", C->LocalCharset);
+          ebp += sprintf(ebp, "=?%s?Q?", C->LocalCharset);
         }
 
         // so this is where the actual encoding is performed now.
@@ -1913,7 +2111,6 @@ struct rfc2047_decode_info
 {
   char *dst;
   unsigned int maxlen;
-  struct TranslationTable *tt;
 };
 
 // this function uses the decode_int() function and attachs a callback
@@ -1922,8 +2119,7 @@ struct rfc2047_decode_info
 // to translate the charsets. returns the number of translated chars or
 // -1 if an malloc error occurred and -2 if some unknown encoding was
 // specified in the text, -3 if the base64 decoding failed.
-int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
-                   struct TranslationTable *tt)
+int rfc2047_decode(char *dst, const char *src, unsigned int maxlen)
 {
   int result;
   // pack all the necessary information in the decode_info
@@ -1931,7 +2127,6 @@ int rfc2047_decode(char *dst, const char *src, unsigned int maxlen,
   struct rfc2047_decode_info info;
   info.dst    = dst;
   info.maxlen = maxlen;
-  info.tt     = tt;
 
   // call the decode_int function to start decoding our
   // data.
@@ -1951,49 +2146,84 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
                                 UNUSED const char *lang, void *arg)
 {
   struct rfc2047_decode_info *info = (struct rfc2047_decode_info *)arg;
-  BOOL translate = FALSE;
 
-  // before we go on we check whether we have enough space
-  // to put the txt in our destination
-  if(info->maxlen<len)
+  // now we try to get the src codeset from codesets.library
+  // and convert the string into our local charset if required
+  if(chset != NULL && chset[0] != '\0')
+  {
+    // check if the src codeset of the string isn't the same
+    // like our local one.
+    if(stricmp(chset, C->LocalCharset) != 0)
+    {
+      struct codeset *srcCodeset;
+
+      if((srcCodeset = CodesetsFind((char *)chset,
+                                    CSA_CodesetList,       G->codesetsList,
+                                    CSA_FallbackToDefault, FALSE,
+                                    TAG_DONE)) != NULL)
+      {
+        ULONG dstLen = 0;
+
+        // now we convert the text from the source codeset to our
+        // local codeset
+        STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                        CSA_DestCodeset,   G->localCharset,
+                                        CSA_Source,        txt,
+                                        CSA_SourceLen,     len,
+                                        CSA_DestLenPtr,    &dstLen,
+                                        TAG_DONE);
+
+        // now that we have our converted string we can go and
+        // copy it over our destination buffer
+        if(str)
+        {
+          // before we go on we check whether we have enough space
+          // to put the txt in our destination
+          if(info->maxlen < dstLen)
+          {
+            W(DBF_MIME, "not enough space to put converted string with len %d into info->dst!");
+
+            CodesetsFreeA(str, NULL);
+            return -1;
+          }
+
+          // so we can savely decrease it.
+          info->maxlen -= dstLen;
+
+          // lets copy all data from our converted string to
+          // our own destination buffer
+          memcpy(info->dst, str, dstLen);
+
+          // free our codesets buffer.
+          CodesetsFreeA(str, NULL);
+
+          // increase the destination pointer so that the
+          // next iteration can profit out of it.
+          info->dst += dstLen;
+
+          // return without an error
+          return 0;
+        }
+        else
+          W(DBF_MIME, "couldn't convert src str via CodesetsConvertStr()!");
+      }
+      else
+        W(DBF_MIME, "couldn't find charset '%s' in codesets.library!", chset);
+    }
+  }
+
+  if(info->maxlen < len)
+  {
+    W(DBF_MIME, "not enough space to put string with len %d into info->dst!");
     return -1;
+  }
 
   // so we can savely decrease it.
   info->maxlen -= len;
 
-  // check whether we have a valid translation table or not
-  if(info->tt && info->tt->SourceCharset)
-  {
-    if(chset)
-    {
-      if(MatchNoCase((char *)chset, info->tt->SourceCharset))
-        translate = TRUE;
-    }
-    else if(strcmp(info->tt->SourceCharset, "#?") == 0)
-    {
-      translate = TRUE;
-    }
-  }
-
-  // if we recognized a valid charset translation, lets start
-  if(translate)
-  {
-    unsigned int i;
-
-    // it seems we have a valid translation table, so lets
-    // parse through our text and put the translated char in
-    // our destination.
-    for(i=0; i < len; i++)
-    {
-      info->dst[i] = info->tt->Table[(UBYTE)(txt[i])];
-    }
-  }
-  else
-  {
-    // no translation table is available, so lets just
-    // copy the decoded stuff in our destination pointer
-    memcpy(info->dst, txt, len);
-  }
+  // lets copy all data from our converted string to
+  // our own destination buffer
+  memcpy(info->dst, txt, len);
 
   // increase the destination pointer so that the
   // next iteration can profit out of it.

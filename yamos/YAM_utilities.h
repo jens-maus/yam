@@ -44,10 +44,6 @@
 struct Folder;
 #endif
 
-#ifndef YAM_MIME_H
-struct TranslationTable;
-#endif
-
 #ifndef YAM_READ_H
 struct ReadMailData;
 #endif
@@ -105,12 +101,12 @@ struct NewToolbarEntry
 
 // Library open/close macros
 #if defined(__amigaos4__)
-#define INITLIB(lname, v, r, lbase, iname, ibase, req)  (InitLib((lname), (v), (r), (APTR)(lbase), (iname), (APTR)(ibase), (req)))
+#define INITLIB(lname, v, r, lbase, iname, ibase, req, url)  (InitLib((lname), (v), (r), (APTR)(lbase), (iname), (APTR)(ibase), (req), (url)))
 #define CLOSELIB(lib, iface)              { if((iface) && (lib)) { DropInterface((APTR)(iface)); iface = NULL; CloseLibrary((struct Library *)lib); lib = NULL; } }
 #define GETINTERFACE(iname, iface, base)  ((iface) = (APTR)GetInterface((struct Library *)(base), (iname), 1L, NULL))
 #define DROPINTERFACE(iface)              { DropInterface((APTR)(iface)); iface = NULL; }
 #else
-#define INITLIB(lname, v, r, lbase, iname, ibase, req)  (InitLib((lname), (v), (r), (APTR)(lbase), (req)))
+#define INITLIB(lname, v, r, lbase, iname, ibase, req, url)  (InitLib((lname), (v), (r), (APTR)(lbase), (req), (url)))
 #define CLOSELIB(lib, iface)              { if((lib)) { CloseLibrary((struct Library *)lib); lib = NULL; } }
 #define GETINTERFACE(iname, iface, base)  TRUE
 #define DROPINTERFACE(iface)              ((void)0)
@@ -284,7 +280,7 @@ void     DisplayStatistics(struct Folder *fo, BOOL updateAppIcon);
 void     DisposeModule(void *modptr);
 BOOL     DoPack(char *file, char *newfile, struct Folder *folder);
 BOOL     DumpClipboard(FILE *out);
-BOOL     EditorToFile(Object *editor, char *file, struct TranslationTable *tt);
+BOOL     EditorToFile(Object *editor, char *file);
 char *   Encrypt(char *source);
 char *   GetRealPath(char *path);
 BOOL     ExecuteCommand(char *cmd, BOOL asynch, BPTR outdef);
@@ -323,7 +319,6 @@ void     InsertAddresses(APTR obj, char **addr, BOOL add);
 char *   itoa(int val);
 struct BodyChunkData *LoadBCImage(char *fname);
 void     LoadLayout(void);
-BOOL     LoadTranslationTable(struct TranslationTable **tt, char *file);
 BOOL     MailExists(struct Mail *mailptr, struct Folder *folder);
 Object * MakeButton(char *txt);
 Object * MakeCheck(char *label);

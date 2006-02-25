@@ -374,53 +374,46 @@ void FreePartsList(struct WritePart *p)
 //  QP MIME encoding (RFC2047) and automatic charset translation.
 static void HeaderFputs(char *s, FILE *fh)
 {
-   BOOL doEncoding = FALSE;
-   char *c = s;
+  BOOL doEncoding = FALSE;
+  char *c = s;
 
-   // get the charset translation table, if available
-   struct TranslationTable *tt = (G->TTout && G->TTout->Header) ? G->TTout : NULL;
+  ENTER();
 
-   // let us now search for any non-ascii compliant character aswell
-   // as converting each character with the translation table
-   while(*c)
-   {
-      // translate the character
-      if(tt)
-        *c = tt->Table[(UBYTE)*c];
+  // let us now search for any non-ascii compliant character aswell
+  // as converting each character with the translation table
+  while(*c)
+  {
+    // check for any non-ascii character
+    if(!doEncoding && (!isascii(*c) || iscntrl(*c)))
+    {
+      doEncoding = TRUE;
+      break;
+    }
 
-      // check for any non-ascii character
-      if(!doEncoding && (!isascii(*c) || iscntrl(*c)))
-      {
-        doEncoding = TRUE;
+    // increment the pointer
+    c++;
+  }
 
-        // if we don`t have a translation table, there is no reason
-        // to go on.
-        if(!tt)
-          break;
-      }
+  // now that we have converted the string and analyzed it we
+  // have to check whether we have to encode some words like proposed
+  // in RFC 2047
+  if(doEncoding ||
+     ((c = strstr(s, "=?")) && isascii(*(c+1)) &&
+      (c == s || ISpace(*(c-1))))) // to find stray =? strings
+  {
+     // now that we found out that the string contains non ASCII
+     // characters, lets encode them accoding to RFC 2047
+     rfc2047_encode_file(fh, s);
+  }
+  else
+  {
+     // there seems to be non "violating" characters in the string, so lets
+     // simply put it out to the FILE pointer without encoding some text
+     // according to RFC 2047
+     fputs(s, fh);
+  }
 
-      // increment the pointer
-      c++;
-   }
-
-   // now that we have converted the string and analyzed it we
-   // have to check whether we have to encode some words like proposed
-   // in RFC 2047
-   if(doEncoding ||
-      ((c = strstr(s, "=?")) && isascii(*(c+1)) &&
-       (c == s || ISpace(*(c-1))))) // to find stray =? strings
-   {
-      // now that we found out that the string contains non ASCII
-      // characters, lets encode them accoding to RFC 2047
-      rfc2047_encode_file(fh, s, tt);
-   }
-   else
-   {
-      // there seems to be non "violating" characters in the string, so lets
-      // simply put it out to the FILE pointer without encoding some text
-      // according to RFC 2047
-      fputs(s, fh);
-   }
+  LEAVE();
 }
 
 ///
@@ -532,10 +525,12 @@ static void WriteCtypeNicely(FILE *fh, char *ct)
 static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
 {
    char *p;
+
    fputs("Content-Type: ", fh);
    WriteCtypeNicely(fh, part->ContentType);
-   if (!strncmp(part->ContentType, "text/", 5) && (part->EncType != ENC_NONE || part->TTable))
-      fprintf(fh, "; charset=%s", part->TTable ? part->TTable->DestCharset : C->LocalCharset);
+   if(!strncmp(part->ContentType, "text/", 5) && part->EncType != ENC_NONE)
+      fprintf(fh, "; charset=%s", C->LocalCharset);
+
    if ((p = part->Name)) if (*p)
    {
       fputs("; name=\"", fh);
@@ -1468,9 +1463,8 @@ void WR_NewMail(enum WriteMode mode, int winnum)
       comp.DelSend = GetMUICheck(gui->CH_DELSEND);
       comp.UserInfo = GetMUICheck(gui->CH_ADDINFO);
       att = xget(gui->LV_ATTACH, MUIA_NList_Entries);
-      EditorToFile(gui->TE_EDIT, G->WR_Filename[winnum], G->TTout);
+      EditorToFile(gui->TE_EDIT, G->WR_Filename[winnum]);
       comp.FirstPart = BuildPartsList(winnum);
-      comp.FirstPart->TTable = G->TTout;
    }
 
    if (wr->Mode == NEW_EDIT)
@@ -1692,7 +1686,7 @@ HOOKPROTONHNO(WR_SaveAsFunc, void, int *arg)
    {
       char filename[SIZE_PATHFILE];
       strmfp(filename, G->ASLReq[ASL_ATTACH]->fr_Drawer, G->ASLReq[ASL_ATTACH]->fr_File);
-      EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum], NULL);
+      EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
       if (!CopyFile(filename, NULL, G->WR_Filename[winnum], NULL))
          ER_NewError(GetStr(MSG_ER_CantCreateFile), filename);
    }
@@ -1714,7 +1708,7 @@ HOOKPROTONHNO(WR_Edit, void, int *arg)
       if (winopen) set(G->WR[winnum]->GUI.RG_PAGE, MUIA_Group_ActivePage, 0);
       /* Workaround for a MUI bug */
 
-      EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum], NULL);
+      EditorToFile(G->WR[winnum]->GUI.TE_EDIT, G->WR_Filename[winnum]);
       sprintf(buffer,"%s \"%s\"", C->Editor, GetRealPath(G->WR_Filename[winnum]));
       ExecuteCommand(buffer, TRUE, OUT_NIL);
    }
@@ -1866,7 +1860,7 @@ HOOKPROTONHNO(WR_ChangeSignatureFunc, void, int *arg)
 
    if ((tf = OpenTempFile(NULL)))
    {
-      EditorToFile(G->WR[winnum]->GUI.TE_EDIT, tf->Filename, NULL);
+      EditorToFile(G->WR[winnum]->GUI.TE_EDIT, tf->Filename);
       if ((in = fopen(tf->Filename, "r")))
       {
          if ((out = fopen(G->WR_Filename[winnum], "w")))

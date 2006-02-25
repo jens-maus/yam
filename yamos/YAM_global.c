@@ -128,6 +128,7 @@ struct Device*  TimerBase     = NULL;
 struct Library* GfxBase       = NULL;
 struct Library* LayersBase    = NULL;
 struct Library* DiskfontBase  = NULL;
+struct Library* CodesetsBase  = NULL;
 #if defined(__amigaos4__)
 struct Library* ApplicationBase = NULL; // application.library
 #endif
@@ -154,6 +155,7 @@ struct TimerIFace*        ITimer        = NULL;
 struct GraphicsIFace*     IGraphics     = NULL;
 struct LayersIFace*       ILayers       = NULL;
 struct DiskfontIFace*     IDiskfont     = NULL;
+struct CodesetsIFace*     ICodesets     = NULL;
 struct ApplicationIFace*  IApplication  = NULL;
 #endif /* __amigaos4__ */
 

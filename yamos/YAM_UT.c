@@ -3623,7 +3623,7 @@ void FinishUnpack(char *file)
 /*** Editor related ***/
 /// EditorToFile
 //  Saves contents of a texteditor object to a file
-BOOL EditorToFile(Object *editor, char *file, struct TranslationTable *tt)
+BOOL EditorToFile(Object *editor, char *file)
 {
   FILE *fh;
   BOOL result = FALSE;
@@ -3631,19 +3631,9 @@ BOOL EditorToFile(Object *editor, char *file, struct TranslationTable *tt)
   if((fh = fopen(file, "w")))
   {
     char *text = (char *)DoMethod((Object *)editor, MUIM_TextEditor_ExportText);
-    long txtlen = strlen(text);
-
-    // if a translation tables is given we convert the whole test
-    if(tt)
-    {
-      unsigned char *p;
-
-      for(p = (unsigned char *)text; *p; ++p)
-        *p = tt->Table[*p];
-    }
 
     // write out the whole text to the file
-    if(fwrite(text, txtlen, 1, fh) == 1)
+    if(fwrite(text, strlen(text), 1, fh) == 1)
       result = TRUE;
 
     FreeVec(text); // use FreeVec() because TextEditor.mcc uses AllocVec()
@@ -5046,90 +5036,6 @@ char *IdentifyFile(char *fname)
       }
    }
    return ctype;
-}
-///
-/// LoadTranslationTable
-//  Load a translation table into memory
-BOOL LoadTranslationTable(struct TranslationTable **tt, char *file)
-{
-  FILE *fp;
-  if(*tt)
-    free(*tt);
-  *tt = NULL;
-
-  if(!file || !*file)
-    return FALSE;
-
-  if(!(*tt = calloc(1,sizeof(struct TranslationTable))))
-    return FALSE;
-
-  if((fp = fopen(file, "r")))
-  {
-    UBYTE buf[SIZE_DEFAULT], *p;
-    int i;
-
-    for(i = 0; i < 256; i++)
-      (*tt)->Table[i] = (UBYTE)i;
-
-    MyStrCpy((*tt)->File, file);
-    fgets((char *)buf, SIZE_DEFAULT, fp);
-
-    if(!strncmp((char *)buf, "YCT1", 4))
-    {
-      fgets((*tt)->Name, SIZE_DEFAULT, fp);
-
-      if((p = (UBYTE *)strchr((*tt)->Name, '\n')))
-        *p = '\0';
-
-      while(fgets((char *)buf, SIZE_DEFAULT, fp))
-      {
-        if(!strnicmp((char *)buf, "from", 4))
-        {
-          MyStrCpy((*tt)->SourceCharset, Trim((char *)&buf[5]));
-        }
-        else if(!strnicmp((char *)buf, "to", 2))
-        {
-          MyStrCpy((*tt)->DestCharset, Trim((char *)&buf[3]));
-        }
-        else if(!strnicmp((char *)buf, "header", 6))
-          (*tt)->Header = TRUE;
-        else if(!strnicmp((char *)buf, "author", 6))
-          ; // void
-        else if(strchr((char *)buf, '='))
-        {
-          int source, dest;
-
-          p = buf;
-          if(*p == '$')
-            sscanf((char *)&p[1], "%x", &source);
-          else
-            source = (int)*p;
-
-          while(*p++ != '=');
-
-          if(*p == '$')
-            sscanf((char *)&p[1], "%x", &dest);
-          else
-            dest = (int)*p;
-
-          if(source >= 0 && source <= 0xFF && dest >= 0 && dest <= 0xFF)
-            (*tt)->Table[source] = (UBYTE)dest;
-        }
-      }
-
-      fclose(fp);
-
-      return TRUE;
-    }
-
-    fclose(fp);
-  }
-
-  ER_NewError(GetStr(MSG_ER_ErrorTTable), file);
-  free(*tt);
-  *tt = NULL;
-
-  return FALSE;
 }
 ///
 /// GetRealPath

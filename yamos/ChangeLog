@@ -5,6 +5,32 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2006-02-25  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM.c: changed the warning/error requesters in case a library was
+      wasn't found or was found to be of an old version. Now YAM will also
+      advice the user to visit the correct webpage for updating/installing
+      the library. This should make YAM even more intuitive as the user
+      just have to visit the webpage for installing the component.
+    * misc: dropped the whole manual 'TranslationTable' functionality in
+      favour of a much more sophisticated use of the newly available
+      codesets.library. (http://www.sf.net/projects/codesetslib/)
+
+      Now, YAM will do all the common charset translation/conversion
+      automatically without having the user to create a very own translation
+      table. This and the use of codesets.library enables YAM now not only
+      to perfectly decode UTF-8 mails to the local charset for display.
+      But also provides direct conversions between codesets like ISO-8859-1
+      and KOI8-R fully automatically. However, in case a charset isn't
+      internally supported by codesets.library, a user may still generate
+      an own charset translation table file in a standarized format and
+      put it into the PROGDIR:Charsets directory.
+      (see: http://www.unicode.org/Public/MAPPINGS/)
+
+      NOTE: Please note that this change renders _ALL_ previously stored
+      translation tables from PROGDIR:Charsets obsolete! So either users
+      remove them manually, or YAM simply ignore them from now on
+
 2006-02-22  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_mail_lex.l: replaced the unput() uses in our ParseEmailText()

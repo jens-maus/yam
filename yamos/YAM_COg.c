@@ -36,6 +36,7 @@
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
 #include <proto/xpkmaster.h>
+#include <proto/codesets.h>
 
 #include "extra.h"
 #include "SDI_hook.h"
@@ -76,28 +77,6 @@ HOOKPROTONH(PO_List2TextFunc, void, Object *list, Object *text)
    if (selection) if (strcmp(selection, GetStr(MSG_MA_Cancel))) set(text, MUIA_Text_Contents, selection);
 }
 MakeStaticHook(PO_List2TextHook, PO_List2TextFunc);
-
-///
-/// CO_LV_TDspFunc
-//  Translation table listview display hook
-HOOKPROTONH(CO_LV_TDspFunc, long, char **array, struct TranslationTable *entry)
-{
-   array[0] = entry->Name;
-   return 0;
-}
-MakeStaticHook(CO_LV_TDspHook,CO_LV_TDspFunc);
-
-///
-/// CO_LV_TConFunc
-//  Translation table listview construction hook
-HOOKPROTONHNO(CO_LV_TConFunc, struct TranslationTable *, struct TranslationTable *tt)
-{
-   struct TranslationTable *entry = malloc(sizeof(struct TranslationTable));
-   if (entry)
-     *entry = *tt;
-   return entry;
-}
-MakeStaticHook(CO_LV_TConHook, CO_LV_TConFunc);
 
 ///
 /// CO_LV_RxDspFunc
@@ -191,100 +170,150 @@ static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
 }
 
 ///
-/// PO_HandleTrans
-//  Copies filename of selected translation table to the string gadget
-HOOKPROTONH(PO_HandleTrans, void, APTR pop, APTR string)
+/// PO_CharsetOpenHook
+//  Sets the popup listview accordingly to the string gadget
+HOOKPROTONH(PO_CharsetOpenFunc, BOOL, Object *list, Object *str)
 {
-   struct TranslationTable *entry;
-   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
-   if (entry) setstring(string, entry->File);
+  char *s;
+
+  if((s = (char *)xget(str, MUIA_String_Contents)))
+  {
+    int i;
+
+    for(i=0;;i++)
+    {
+      char *x;
+
+      DoMethod(list, MUIM_List_GetEntry, i, &x);
+      if(!x)
+      {
+        set(list, MUIA_List_Active, MUIV_List_Active_Off);
+        break;
+      }
+      else if(!stricmp(x, s))
+      {
+        set(list, MUIA_List_Active, i);
+        break;
+      }
+    }
+  }
+
+  return TRUE;
 }
-MakeStaticHook(PO_HandleTransHook, PO_HandleTrans);
+MakeStaticHook(PO_CharsetOpenHook, PO_CharsetOpenFunc);
 
 ///
-/// MakeTransPop
-//  Creates a popup list of available translation tables
-static Object *MakeTransPop(Object **string, BOOL output,  char *shortcut)
+/// PO_CharsetCloseHook
+//  Pastes an entry from the popup listview into string gadget
+HOOKPROTONH(PO_CharsetCloseFunc, void, Object *list, Object *str)
 {
-   Object *lv, *po;
+  char *var = NULL;
+  DoMethod(list, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &var);
+  if(var)
+    set(str, MUIA_String_Contents, var);
+}
+MakeStaticHook(PO_CharsetCloseHook, PO_CharsetCloseFunc);
 
-   if ((po = PopobjectObject,
-      MUIA_Popstring_String, *string = MakeString(SIZE_PATHFILE, shortcut),
-      MUIA_Popstring_Button, PopButton(MUII_PopUp),
-      MUIA_Popobject_ObjStrHook, &PO_HandleTransHook,
-      MUIA_Popobject_WindowHook, &PO_WindowHook,
-      MUIA_Popobject_Object, lv = ListviewObject,
-         MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
-         MUIA_Listview_List, ListObject,
-            InputListFrame,
-            MUIA_List_DisplayHook, &CO_LV_TDspHook,
-            MUIA_List_ConstructHook, &CO_LV_TConHook,
-            MUIA_List_DestructHook, &GeneralDesHook,
-         End,
-      End,
-   End))
-   {
-      char dir[SIZE_PATH];
-      BPTR dirLock;
+///
+/// PO_CharsetListDisplayHook
+//  Pastes an entry from the popup listview into string gadget
+HOOKPROTONH(PO_CharsetListDisplayFunc, LONG, char **array, STRPTR str)
+{
+  if(str)
+  {
+    struct codeset *cs;
 
-      strmfp(dir, G->ProgDir, "charsets");
-      if((dirLock = Lock(dir, ACCESS_READ)))
-      {
-        struct ExAllControl *eac;
+    // the standard name is always in column 0
+    array[0] = str;
 
-        if((eac = AllocDosObject(DOS_EXALLCONTROL, NULL)))
-        {
-          struct ExAllData *ead;
-          struct ExAllData *eabuffer;
-          LONG more;
-          eac->eac_LastKey = 0;
-          eac->eac_MatchString = NULL;
-          eac->eac_MatchFunc = NULL;
+    // try to find the codeset via codesets.library and
+    // display some more information about it.
+    if((cs = CodesetsFind(str,
+                          CSA_CodesetList,       G->codesetsList,
+                          CSA_FallbackToDefault, FALSE,
+                          TAG_DONE)))
+    {
+      if(cs->characterization && stricmp(cs->characterization, str) != 0)
+        array[1] = cs->characterization;
+      else
+        array[1] = "";
+    }
+    else
+      array[1] = "";
+  }
+  else
+  {
+    array[0] = "";
+    array[1] = "";
+  }
 
-          if((eabuffer = malloc(SIZE_EXALLBUF)))
-          {
-            do
-            {
-              more = ExAll(dirLock, eabuffer, SIZE_EXALLBUF, ED_NAME, eac);
-              if(!more && IoErr() != ERROR_NO_MORE_ENTRIES)
-                break;
+  return 0;
+}
+MakeStaticHook(PO_CharsetListDisplayHook, PO_CharsetListDisplayFunc);
 
-              if(eac->eac_Entries == 0)
-                continue;
+///
+/// MakeCharsetPop
+//  Creates a popup list of available charsets supported by codesets.library
+static Object *MakeCharsetPop(Object **string)
+{
+  Object *lv;
+  Object *po;
+  Object *bt;
 
-              ead = (struct ExAllData *)eabuffer;
-              do
-              {
-                char file[SIZE_PATHFILE];
-                struct TranslationTable *tt = NULL;
+  ENTER();
 
-                strmfp(file, dir, (char *)ead->ed_Name);
-                if(LoadTranslationTable(&tt, file))
-                {
-                  if((output && *tt->DestCharset) || (!output && *tt->SourceCharset))
-                    DoMethod(lv, MUIM_List_InsertSingle, tt, MUIV_List_Insert_Bottom);
+  if((po = PopobjectObject,
 
-                  free(tt);
-                }
-              }
-              while((ead = ead->ed_Next));
-            }
-            while(more);
+    MUIA_Popstring_String, *string = BetterStringObject,
+      StringFrame,
+      MUIA_BetterString_NoInput,  TRUE,
+      MUIA_String_AdvanceOnCR,    TRUE,
+      MUIA_CycleChain,            TRUE,
+    End,
 
-            free(eabuffer);
-          }
+    MUIA_Popstring_Button, bt = PopButton(MUII_PopUp),
+    MUIA_Popobject_StrObjHook, &PO_CharsetOpenHook,
+    MUIA_Popobject_ObjStrHook, &PO_CharsetCloseHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_Object, lv = ListviewObject,
+       MUIA_Listview_ScrollerPos, MUIV_Listview_ScrollerPos_Right,
+       MUIA_Listview_List, ListObject,
+          InputListFrame,
+          MUIA_List_Format,        "BAR,",
+          MUIA_List_AutoVisible,   TRUE,
+          MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
+          MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
+          MUIA_List_DisplayHook,   &PO_CharsetListDisplayHook,
+       End,
+    End,
 
-          FreeDosObject(DOS_EXALLCONTROL, eac);
-        }
+  End))
+  {
+    struct codeset *codeset;
+    STRPTR *array;
 
-        UnLock(dirLock);
-      }
+    set(bt, MUIA_CycleChain,TRUE);
+    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
 
-      DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
-			DoMethod(*string,MUIM_Notify,MUIA_Disabled,MUIV_EveryTime,po,3,MUIM_Set,MUIA_Disabled,MUIV_TriggerValue);
-   }
+    // Build list of available codesets
+    if((array = CodesetsSupported(CSA_CodesetList, G->codesetsList,
+                                  TAG_DONE)))
+    {
+      DoMethod(lv, MUIM_List_Insert, array, -1, MUIV_List_Insert_Sorted);
+      CodesetsFreeA(array, NULL);
+    }
+    else
+      set(po, MUIA_Disabled, TRUE);
 
-   return po;
+    // Use the system's default codeset
+    if((codeset = CodesetsFindA(NULL, NULL)))
+      set(*string, MUIA_String_Contents, codeset->name);
+  }
+  else
+    *string = NULL;
+
+  RETURN(po);
+  return po;
 }
 
 ///
@@ -489,6 +518,9 @@ APTR CO_Page0(struct CO_ClassData *data)
 {
    APTR grp;
    static char *tzone[34];
+
+   ENTER();
+
    tzone[ 0] = GetStr(MSG_CO_TZoneM12);
    tzone[ 1] = GetStr(MSG_CO_TZoneM11);
    tzone[ 2] = GetStr(MSG_CO_TZoneM10);
@@ -523,9 +555,9 @@ APTR CO_Page0(struct CO_ClassData *data)
    tzone[31] = GetStr(MSG_CO_TZone12);
    tzone[32] = GetStr(MSG_CO_TZone13);
    tzone[33] = NULL;
+
    if ((grp = VGroup,
          MUIA_HelpNode, "CO00",
-         Child, HVSpace,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_MinConfig)),
             Child, Label2(GetStr(MSG_CO_RealName)),
             Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,GetStr(MSG_CO_RealName)),
@@ -536,9 +568,14 @@ APTR CO_Page0(struct CO_ClassData *data)
             Child, Label2(GetStr(MSG_CO_Password)),
             Child, data->GUI.ST_PASSWD0   = MakePassString(GetStr(MSG_CO_Password)),
          End,
-         Child, VGroup, GroupFrameT(GetStr(MSG_CO_TimeZone)),
-            Child, data->GUI.CY_TZONE = MakeCycle(tzone,GetStr(MSG_CO_TimeZone)),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_DLSAVING, GetStr(MSG_CO_DaylightSaving)),
+         Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_SYSTEMSETTINGS)),
+            Child, Label2(GetStr(MSG_CO_TimeZone)),
+            Child, VGroup,
+              Child, data->GUI.CY_TZONE = MakeCycle(tzone,GetStr(MSG_CO_TimeZone)),
+              Child, MakeCheckGroup((Object **)&data->GUI.CH_DLSAVING, GetStr(MSG_CO_DaylightSaving)),
+            End,
+            Child, Label2(GetStr(MSG_CO_DEFAULTCHARSET)),
+            Child, MakeCharsetPop((Object **)&data->GUI.ST_DEFAULTCHARSET),
          End,
          Child, HVSpace,
       End))
@@ -554,6 +591,8 @@ APTR CO_Page0(struct CO_ClassData *data)
       DoMethod(data->GUI.ST_POPHOST0 ,MUIM_Notify,MUIA_String_Contents, MUIV_EveryTime,MUIV_Notify_Application ,3,MUIM_CallHook,&CO_GetDefaultPOPHook,0);
       DoMethod(data->GUI.ST_PASSWD0  ,MUIM_Notify,MUIA_String_Contents, MUIV_EveryTime,MUIV_Notify_Application ,3,MUIM_CallHook,&CO_GetDefaultPOPHook,0);
    }
+
+   RETURN(grp);
    return grp;
 }
 
@@ -708,7 +747,6 @@ APTR CO_Page2(struct CO_ClassData *data)
    trwopt[3] = NULL;
    if ((grp = VGroup,
          MUIA_HelpNode, "CO02",
-         Child, HVSpace,
          Child, HGroup, GroupFrameT(GetStr(MSG_CO_Download)),
             Child, ColGroup(2),
 
@@ -1036,10 +1074,6 @@ APTR CO_Page4(struct CO_ClassData *data)
             Child, HSpace(0),
          End,
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_OtherOptions)),
-            Child, HGroup,
-               Child, Label2(GetStr(MSG_CO_CharsetTrans)),
-               Child, MakeTransPop(&data->GUI.ST_INTRANS, FALSE, GetStr(MSG_CO_CharsetTrans)),
-            End,
             Child, MakeCheckGroup((Object **)&data->GUI.CH_AUTOTRANSLATEIN, GetStr(MSG_CO_AutoTranslateIn)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, GetStr(MSG_CO_MultiReadWin)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, GetStr(MSG_CO_SHOWEMBEDDEDREADPANE)),
@@ -1063,7 +1097,6 @@ APTR CO_Page4(struct CO_ClassData *data)
       SetHelp(data->GUI.CY_HEADER,          MSG_HELP_CO_CY_HEADER);
       SetHelp(data->GUI.ST_HEADERS,         MSG_HELP_CO_ST_HEADERS);
       SetHelp(data->GUI.CY_SENDERINFO,      MSG_HELP_CO_CY_SENDERINFO);
-      SetHelp(data->GUI.ST_INTRANS,         MSG_HELP_CO_ST_INTRANS);
       SetHelp(data->GUI.CA_COLTEXT,         MSG_HELP_CO_CA_COLTEXT);
       SetHelp(data->GUI.CA_COL1QUOT,        MSG_HELP_CO_CA_COL1QUOT);
       SetHelp(data->GUI.CA_COL2QUOT,        MSG_HELP_CO_CA_COL2QUOT);
@@ -1081,11 +1114,11 @@ APTR CO_Page4(struct CO_ClassData *data)
       SetHelp(data->GUI.CH_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
       SetHelp(data->GUI.NB_DELAYEDSTATUS,   MSG_HELP_CO_SETSTATUSDELAYED);
 
-      DoMethod(data->GUI.CH_AUTOTRANSLATEIN, MUIM_Notify, MUIA_Selected, MUIV_EveryTime, data->GUI.ST_INTRANS, 3, MUIM_Set, MUIA_Disabled, MUIV_TriggerValue);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,0             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,1             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,FALSE);
       DoMethod(data->GUI.CY_HEADER   ,MUIM_Notify,MUIA_Cycle_Active   ,2             ,data->GUI.ST_HEADERS   ,3,MUIM_Set,MUIA_Disabled,TRUE);
    }
+
    return grp;
 }
 
@@ -1101,7 +1134,6 @@ APTR CO_Page5(struct CO_ClassData *data)
    wrapmode[3] = NULL;
    if ((grp = VGroup,
          MUIA_HelpNode, "CO05",
-         Child, HVSpace,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_MessageHeader)),
             Child, Label2(GetStr(MSG_CO_ReplyTo)),
             Child, MakeAddressField(&data->GUI.ST_REPLYTO, GetStr(MSG_CO_ReplyTo), MSG_HELP_CO_ST_REPLYTO, ABM_TO, -1, FALSE),
@@ -1116,8 +1148,6 @@ APTR CO_Page5(struct CO_ClassData *data)
                Child, data->GUI.ST_HELLOTEXT = MakeString(SIZE_INTRO,GetStr(MSG_CO_Welcome)),
                Child, Label2(GetStr(MSG_CO_Greetings)),
                Child, data->GUI.ST_BYETEXT = MakeString(SIZE_INTRO,GetStr(MSG_CO_Greetings)),
-               Child, Label2(GetStr(MSG_CO_CharsetTrans)),
-               Child, MakeTransPop(&data->GUI.ST_OUTTRANS, TRUE, GetStr(MSG_CO_CharsetTrans)),
             End,
             Child, MakeCheckGroup((Object **)&data->GUI.CH_WARNSUBJECT, GetStr(MSG_CO_WARNSUBJECT)),
          End,
@@ -1165,7 +1195,6 @@ APTR CO_Page5(struct CO_ClassData *data)
       SetHelp(data->GUI.ST_EXTHEADER    ,MSG_HELP_CO_ST_EXTHEADER   );
       SetHelp(data->GUI.ST_HELLOTEXT    ,MSG_HELP_CO_ST_HELLOTEXT   );
       SetHelp(data->GUI.ST_BYETEXT      ,MSG_HELP_CO_ST_BYETEXT     );
-      SetHelp(data->GUI.ST_OUTTRANS     ,MSG_HELP_CO_ST_OUTTRANS    );
       SetHelp(data->GUI.CH_WARNSUBJECT  ,MSG_HELP_CO_CH_WARNSUBJECT );
       SetHelp(data->GUI.ST_EDWRAP       ,MSG_HELP_CO_ST_EDWRAP      );
       SetHelp(data->GUI.CY_EDWRAP       ,MSG_HELP_CO_CY_EDWRAP      );
@@ -1185,7 +1214,6 @@ APTR CO_Page6(struct CO_ClassData *data)
    APTR grp;
    if ((grp = VGroup,
          MUIA_HelpNode, "CO06",
-         Child, HVSpace,
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_Forwarding)),
             Child, Label2(GetStr(MSG_CO_FwdInit)),
             Child, MakeVarPop(&data->GUI.ST_FWDSTART, VPM_FORWARD, SIZE_INTRO, GetStr(MSG_CO_FwdInit)),
@@ -1406,7 +1434,6 @@ APTR CO_Page9(struct CO_ClassData *data)
    logfmode[3] = NULL;
    if ((grp = VGroup,
          MUIA_HelpNode, "CO09",
-         Child, HVSpace,
          Child, ColGroup(2), GroupFrameT("PGP"),
             Child, Label2(GetStr(MSG_CO_PGPExe)),
             Child, PopaslObject,
@@ -1475,7 +1502,6 @@ APTR CO_Page10(struct CO_ClassData *data)
    APTR grp;
    if ((grp = VGroup,
          MUIA_HelpNode, "CO10",
-         Child, HVSpace,
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_OnStartup)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_LOADALL, GetStr(MSG_CO_LoadAll)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_MARKNEW, GetStr(MSG_CO_MarkNew)),

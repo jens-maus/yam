@@ -32,7 +32,9 @@
 #include <exec/types.h>
 #include <libraries/asl.h>
 #include <libraries/mui.h>
+
 #include <proto/bsdsocket.h>
+#include <proto/codesets.h>
 
 #include "YAM_rexx_rxif.h"   /* struct RuleResult */
 #include "YAM_stringsizes.h"
@@ -71,8 +73,6 @@ struct Global
    struct BodyChunkData *   BImage[MAXIMAGES];
    struct FileRequester *   ASLReq[MAXASL];
    struct Locale *          Locale;
-   struct TranslationTable *TTin;
-   struct TranslationTable *TTout;
    struct MA_ClassData *    MA;
    struct CO_ClassData *    CO;
    struct AB_ClassData *    AB;
@@ -124,6 +124,8 @@ struct Global
    struct NotifyRequest     WR_NRequest[MAXWR+1];
    struct sockaddr_in       TR_INetSocketAddr;
    struct MinList           readMailDataList;
+   struct codeset           *localCharset;
+   struct codesetList       *codesetsList;
 
    char                     ProgDir[SIZE_PATH];
    char                     ProgName[SIZE_FILE];

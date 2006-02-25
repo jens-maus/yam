@@ -117,14 +117,13 @@ enum Encoding { ENC_NONE, ENC_QP, ENC_B64, ENC_UUE, ENC_BIN, ENC_8BIT, ENC_FORM 
 
 struct WritePart
 {
-   struct WritePart *       Next;
-   char *                   ContentType;
-   char *                   Filename;
-   char *                   Description;
-   char *                   Name;
-   struct TranslationTable *TTable;
-   BOOL                     IsTemp;
-   enum Encoding            EncType;
+   struct WritePart *Next;
+   char *            ContentType;
+   char *            Filename;
+   char *            Description;
+   char *            Name;
+   BOOL              IsTemp;
+   enum Encoding     EncType;
 };
 
 /* if you add anything here, check the following places for potential changes:

@@ -56,6 +56,7 @@
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
 #include <proto/amissl.h>
+#include <proto/codesets.h>
 
 #if defined(__amigaos4__)
 #include <proto/application.h>
@@ -453,7 +454,7 @@ static void TC_Dispatcher(enum TimerIO tio)
       for(i=0; i < MAXWR; i++)
       {
         if(G->WR[i] && G->WR[i]->Mode != NEW_BOUNCE)
-          EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i), NULL);
+          EditorToFile(G->WR[i]->GUI.TE_EDIT, WR_AutoSaveFile(i));
       }
 
       // prepare the timer to get fired again
@@ -763,146 +764,193 @@ static BOOL Root_New(BOOL hidden)
 //  Deallocates used memory and MUI modules and terminates
 static void Terminate(void)
 {
-   int i;
+  int i;
 
-   ENTER();
+  ENTER();
 
-   while (PNum > 0)
-      if (PPtr[PNum-1]) free(PPtr[--PNum]);
+  D(DBF_STARTUP, "freeing parsers...");
+  while(PNum > 0)
+  {
+    if(PPtr[PNum-1])
+      free(PPtr[--PNum]);
+  }
 
-   if (G->CO)
-   {
-      CO_FreeConfig(CE);
-      free(CE);
-      DisposeModule(&G->CO);
-   }
+  D(DBF_STARTUP, "freeing config module...");
+  if(G->CO)
+  {
+    CO_FreeConfig(CE);
+    free(CE);
+    DisposeModule(&G->CO);
+  }
 
-   for (i = 0; i < MAXEA; i++)
-      DisposeModule(&G->EA[i]);
+  D(DBF_STARTUP, "freeing addressbook entries...");
+  for(i = 0; i < MAXEA; i++)
+    DisposeModule(&G->EA[i]);
 
-   // cleanup the still existing readmailData objects
-   if(IsMinListEmpty(&G->readMailDataList) == FALSE)
-   {
-      // search through our ReadDataList
-      struct MinNode *curNode;
-      for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
-      {
-        struct ReadMailData *rmData = (struct ReadMailData *)curNode;
+  D(DBF_STARTUP, "freeing readmailData...");
+  // cleanup the still existing readmailData objects
+  if(IsMinListEmpty(&G->readMailDataList) == FALSE)
+  {
+    // search through our ReadDataList
+    struct MinNode *curNode;
+    for(curNode = G->readMailDataList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct ReadMailData *rmData = (struct ReadMailData *)curNode;
 
-        CleanupReadMailData(rmData, TRUE);
-      }
-   }
+      CleanupReadMailData(rmData, TRUE);
+    }
+  }
 
-   for (i = 0; i <= MAXWR; i++)
-   {
-      if (G->WR[i])
-      {
-         WR_Cleanup(i);
-         DisposeModule(&G->WR[i]);
-      }
-   }
+  D(DBF_STARTUP, "freeing write mail module...");
+  for(i = 0; i <= MAXWR; i++)
+  {
+    if(G->WR[i])
+    {
+      WR_Cleanup(i);
+      DisposeModule(&G->WR[i]);
+    }
+  }
 
-   if (G->TR)
-   {
-      TR_Cleanup();
-      TR_CloseTCPIP();
-      DisposeModule(&G->TR);
-   }
+  D(DBF_STARTUP, "freeing tcp/ip stuff...");
+  if(G->TR)
+  {
+    TR_Cleanup();
+    TR_CloseTCPIP();
+    DisposeModule(&G->TR);
+  }
 
-   if (G->FO) DisposeModule(&G->FO);
-   if (G->FI) DisposeModule(&G->FI);
-   if (G->ER) DisposeModule(&G->ER);
-   if (G->US) DisposeModule(&G->US);
+  if(G->FO) DisposeModule(&G->FO);
+  if(G->FI) DisposeModule(&G->FI);
+  if(G->ER) DisposeModule(&G->ER);
+  if(G->US) DisposeModule(&G->US);
 
-   if (G->MA)
-   {
-      MA_UpdateIndexes(FALSE);
-      set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
-   }
+  D(DBF_STARTUP, "finalizing indexes and closing main window...");
+  if(G->MA)
+  {
+    MA_UpdateIndexes(FALSE);
+    set(G->MA->GUI.WI, MUIA_Window_Open, FALSE);
+  }
 
-   if(G->AB)
-     DisposeModule(&G->AB);
+  D(DBF_STARTUP, "freeing addressbook module...");
+  if(G->AB)
+    DisposeModule(&G->AB);
 
-   if(G->MA)
-     DisposeModule(&G->MA);
+  D(DBF_STARTUP, "freeing main window module...");
+  if(G->MA)
+    DisposeModule(&G->MA);
 
-   if (G->TTin) free(G->TTin);
-   if (G->TTout) free(G->TTout);
+  D(DBF_STARTUP, "freeing ASL structures...");
+  for(i = 0; i < MAXASL; i++)
+  {
+    if(G->ASLReq[i])
+      MUI_FreeAslRequest(G->ASLReq[i]);
+  }
 
-   for (i = 0; i < MAXASL; i++)
-      if (G->ASLReq[i])
-         MUI_FreeAslRequest(G->ASLReq[i]);
+  D(DBF_STARTUP, "freeing write window notifies...");
+  for(i = 0; i <= MAXWR; i++)
+  {
+    if(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port)
+      DeleteMsgPort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+  }
 
-   for (i = 0; i <= MAXWR; i++)
-      if (G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port)
-         DeleteMsgPort(G->WR_NRequest[i].nr_stuff.nr_Msg.nr_Port);
+  D(DBF_STARTUP, "freeing AppIcon...");
+  if(G->AppIcon)
+    RemoveAppIcon(G->AppIcon);
 
-   if (G->AppIcon) RemoveAppIcon(G->AppIcon);
-   if (G->AppPort) DeleteMsgPort(G->AppPort);
-   if (G->RexxHost) CloseDownARexxHost(G->RexxHost);
+  D(DBF_STARTUP, "freeing AppPort...");
+  if(G->AppPort)
+    DeleteMsgPort(G->AppPort);
 
-   TC_Exit();
+  D(DBF_STARTUP, "freeing Arexx port...");
+  if(G->RexxHost)
+    CloseDownARexxHost(G->RexxHost);
 
-   // stop the AutoDST notify
-   ADSTnotify_stop();
+  D(DBF_STARTUP, "freeing timerIOs...");
+  TC_Exit();
 
-   // check if we have an allocated NewMailSound_Obj and dispose it.
-   if(G->NewMailSound_Obj)
-     DisposeDTObject(G->NewMailSound_Obj);
+  // stop the AutoDST notify
+  D(DBF_STARTUP, "stoping ADSTnotify...");
+  ADSTnotify_stop();
 
-   if(G->HideIcon)
-     FreeDiskObject(G->HideIcon);
+  // check if we have an allocated NewMailSound_Obj and dispose it.
+  D(DBF_STARTUP, "freeing newmailsound object...");
+  if(G->NewMailSound_Obj)
+    DisposeDTObject(G->NewMailSound_Obj);
 
-   if(G->App)
-     MUI_DisposeObject(G->App);
+  D(DBF_STARTUP, "freeing hideIcon...");
+  if(G->HideIcon)
+    FreeDiskObject(G->HideIcon);
 
-   for(i = 0; i < MAXICONS; i++)
-   {
-      if(G->DiskObj[i])
-        FreeDiskObject(G->DiskObj[i]);
-   }
+  D(DBF_STARTUP, "freeing main application object...");
+  if(G->App)
+    MUI_DisposeObject(G->App);
 
-   for(i = 0; i < MAXIMAGES; i++)
-   {
-      if(G->BImage[i])
-        FreeBCImage(G->BImage[i]);
-   }
+  D(DBF_STARTUP, "freeing disk objects...");
+  for(i = 0; i < MAXICONS; i++)
+  {
+    if(G->DiskObj[i])
+      FreeDiskObject(G->DiskObj[i]);
+  }
 
-   CO_FreeConfig(C);
-   YAM_CleanupClasses();
+  D(DBF_STARTUP, "freeing bodychunk images...");
+  for(i = 0; i < MAXIMAGES; i++)
+  {
+    if(G->BImage[i])
+      FreeBCImage(G->BImage[i]);
+  }
 
-   // we deregister the application from
-   // application.library
-   #if defined(__amigaos4__)
-   if(G->applicationID > 0)
-     UnregisterApplication(G->applicationID, NULL);
+  D(DBF_STARTUP, "freeing config...");
+  CO_FreeConfig(C);
 
-   CLOSELIB(ApplicationBase, IApplication);
-   #endif
+  D(DBF_STARTUP, "freeing internal MUI classes...");
+  YAM_CleanupClasses();
 
-   // on OS4 we close the Interfaces now
-   CLOSELIB(DataTypesBase, IDataTypes);
-   CLOSELIB(XpkBase,       IXpk);
-   CLOSELIB(AmiSSLBase,    IAmiSSL);
-   CLOSELIB(MUIMasterBase, IMUIMaster);
-   CLOSELIB(RexxSysBase,   IRexxSys);
-   CLOSELIB(IFFParseBase,  IIFFParse);
-   CLOSELIB(KeymapBase,    IKeymap);
-   CLOSELIB(LayersBase,    ILayers);
-   CLOSELIB(WorkbenchBase, IWorkbench);
-   CLOSELIB(GfxBase,       IGraphics);
+  // free our private codesets list
+  D(DBF_STARTUP, "freeing private codesets list...");
+  if(G->codesetsList)
+  {
+    CodesetsListDelete(CSA_CodesetList, G->codesetsList,
+                       TAG_DONE);
 
-   // close the catalog and locale now
-   CloseYAMCatalog();
-   if(G->Locale)
-     CloseLocale(G->Locale);
+    G->codesetsList = NULL;
+  }
 
-   CLOSELIB(LocaleBase, ILocale);
+  // we deregister the application from
+  // application.library
+  #if defined(__amigaos4__)
+  D(DBF_STARTUP, "unregister from application.library...");
+  if(G->applicationID > 0)
+    UnregisterApplication(G->applicationID, NULL);
 
-   free(C);
-   free(G);
+  CLOSELIB(ApplicationBase, IApplication);
+  #endif
 
-   LEAVE();
+  // close all libraries now.
+  D(DBF_STARTUP, "closing all opened libraries...");
+  CLOSELIB(CodesetsBase,  ICodesets);
+  CLOSELIB(DataTypesBase, IDataTypes);
+  CLOSELIB(XpkBase,       IXpk);
+  CLOSELIB(AmiSSLBase,    IAmiSSL);
+  CLOSELIB(MUIMasterBase, IMUIMaster);
+  CLOSELIB(RexxSysBase,   IRexxSys);
+  CLOSELIB(IFFParseBase,  IIFFParse);
+  CLOSELIB(KeymapBase,    IKeymap);
+  CLOSELIB(LayersBase,    ILayers);
+  CLOSELIB(WorkbenchBase, IWorkbench);
+  CLOSELIB(GfxBase,       IGraphics);
+
+  // close the catalog and locale now
+  D(DBF_STARTUP, "closing catalog...");
+  CloseYAMCatalog();
+  if(G->Locale)
+    CloseLocale(G->Locale);
+
+  CLOSELIB(LocaleBase, ILocale);
+
+  free(C);
+  free(G);
+
+  LEAVE();
 }
 ///
 /// Abort
@@ -945,105 +993,105 @@ static void Abort(APTR formatnum, ...)
 ///
 /// CheckMCC
 //  Checks if a certain version of a MCC is available
-static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req)
+static BOOL CheckMCC(char *name, ULONG minver, ULONG minrev, BOOL req, STRPTR url)
 {
-   BOOL flush = TRUE;
+  BOOL flush = TRUE;
 
-   ENTER();
+  ENTER();
 
-   for(;;)
-   {
-     // First we attempt to acquire the version and revision through MUI
-     Object *obj = MUI_NewObject(name, TAG_DONE);
-     if (obj)
-     {
-       ULONG ver = xget(obj, MUIA_Version);
-       ULONG rev = xget(obj, MUIA_Revision);
+  for(;;)
+  {
+    // First we attempt to acquire the version and revision through MUI
+    Object *obj = MUI_NewObject(name, TAG_DONE);
+    if (obj)
+    {
+      ULONG ver = xget(obj, MUIA_Version);
+      ULONG rev = xget(obj, MUIA_Revision);
 
-       struct Library *base;
-       char libname[256];
+      struct Library *base;
+      char libname[256];
 
-       MUI_DisposeObject(obj);
+      MUI_DisposeObject(obj);
 
-       if(ver > minver || (ver == minver && rev >= minrev))
-       {
-         D(DBF_STARTUP, "%s v%ld.%ld found through MUIA_Version/Revision", name, ver, rev);
+      if(ver > minver || (ver == minver && rev >= minrev))
+      {
+        D(DBF_STARTUP, "%s v%ld.%ld found through MUIA_Version/Revision", name, ver, rev);
 
-         RETURN(TRUE);
-         return TRUE;
-       }
+        RETURN(TRUE);
+        return TRUE;
+      }
 
-       // If we did't get the version we wanted, let's try to open the
-       // libraries ourselves and see what happens...
-       strcpy(libname, "PROGDIR:mui/");
-       strcat(libname, name);
+      // If we did't get the version we wanted, let's try to open the
+      // libraries ourselves and see what happens...
+      strcpy(libname, "PROGDIR:mui/");
+      strcat(libname, name);
 
-       if ((base = OpenLibrary(&libname[8], 0)) || (base = OpenLibrary(&libname[0], 0)))
-       {
-         UWORD OpenCnt = base->lib_OpenCnt;
+      if ((base = OpenLibrary(&libname[8], 0)) || (base = OpenLibrary(&libname[0], 0)))
+      {
+        UWORD OpenCnt = base->lib_OpenCnt;
 
-         ver = base->lib_Version;
-         rev = base->lib_Revision;
+        ver = base->lib_Version;
+        rev = base->lib_Revision;
 
-         CloseLibrary(base);
+        CloseLibrary(base);
 
-         // we add some additional check here so that eventual broken .mcc also have
-         // a chance to pass this test (i.e. Toolbar.mcc is broken)
-         if (ver > minver || (ver == minver && rev >= minrev))
-         {
-           D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
+        // we add some additional check here so that eventual broken .mcc also have
+        // a chance to pass this test (i.e. Toolbar.mcc is broken)
+        if (ver > minver || (ver == minver && rev >= minrev))
+        {
+          D(DBF_STARTUP, "%s v%ld.%ld found through OpenLibrary()", name, ver, rev);
 
-           RETURN(TRUE);
-           return TRUE;
-         }
+          RETURN(TRUE);
+          return TRUE;
+        }
 
-         if (OpenCnt > 1)
-         {
-           if (req && MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_IN_USE), name, minver, minrev, ver, rev))
-             flush = TRUE;
-           else
-             break;
-         }
+        if (OpenCnt > 1)
+        {
+          if (req && MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_ER_MCC_IN_USE), name, minver, minrev, ver, rev, url))
+            flush = TRUE;
+          else
+            break;
+        }
 
-         // Attempt to flush the library if open count is 0 or because the
-         // user wants to retry (meaning there's a chance that it's 0 now)
-         if(flush)
-         {
-           struct Library *result;
-           Forbid();
-           if ((result = (struct Library *)FindName(&((struct ExecBase *)SysBase)->LibList, name)))
-             RemLibrary(result);
-           Permit();
-           flush = FALSE;
-         }
-         else
-         {
-           E(DBF_STARTUP, "%s: couldn`t find minimum required version.", name);
+        // Attempt to flush the library if open count is 0 or because the
+        // user wants to retry (meaning there's a chance that it's 0 now)
+        if(flush)
+        {
+          struct Library *result;
+          Forbid();
+          if ((result = (struct Library *)FindName(&((struct ExecBase *)SysBase)->LibList, name)))
+            RemLibrary(result);
+          Permit();
+          flush = FALSE;
+        }
+        else
+        {
+          E(DBF_STARTUP, "%s: couldn`t find minimum required version.", name);
 
-           // We're out of luck - open count is 0, we've tried to flush
-           // and still haven't got the version we want
-           if (req && MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_MCC_OLD), name, minver, minrev, ver, rev))
-             flush = TRUE;
-           else
-             break;
-         }
-       }
-     }
-     else
-     {
-       // No MCC at all - no need to attempt flush
-       flush = FALSE;
-       if (!MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_NO_MCC), name, minver, minrev))
-         break;
-     }
+          // We're out of luck - open count is 0, we've tried to flush
+          // and still haven't got the version we want
+          if (req && MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_ER_MCC_OLD), name, minver, minrev, ver, rev, url))
+            flush = TRUE;
+          else
+            break;
+        }
+      }
+    }
+    else
+    {
+      // No MCC at all - no need to attempt flush
+      flush = FALSE;
+      if (!MUI_Request(NULL, NULL, 0L, GetStr(MSG_ErrorStartup), GetStr(MSG_RETRY_QUIT_GAD), GetStr(MSG_ER_NO_MCC), name, minver, minrev, url))
+        break;
+    }
 
-   }
+  }
 
-   if(req)
-     exit(RETURN_ERROR); // Ugly
+  if(req)
+    exit(RETURN_ERROR); // Ugly
 
-   RETURN(FALSE);
-   return FALSE;
+  RETURN(FALSE);
+  return FALSE;
 }
 ///
 /// InitLib
@@ -1055,13 +1103,15 @@ static BOOL InitLib(STRPTR libname,
                     struct Library **libbase,
                     STRPTR iname,
                     struct Interface **iface,
-                    BOOL required)
+                    BOOL required,
+                    STRPTR homepage)
 #else
 static BOOL InitLib(STRPTR libname,
                     ULONG version,
                     ULONG revision,
                     struct Library **libbase,
-                    BOOL required)
+                    BOOL required,
+                    STRPTR homepage)
 #endif
 {
   struct Library *base;
@@ -1117,7 +1167,12 @@ static BOOL InitLib(STRPTR libname,
     D(DBF_STARTUP, "InitLib: can`t open library %s with minimum version v%ld.%d", libname, version, revision);
 
   if(!base && required)
-    Abort(MSG_ERR_OPENLIB, libname, version, revision);
+  {
+    if(homepage != NULL)
+      Abort(MSG_ER_LIB_URL, libname, version, revision, homepage);
+    else
+      Abort(MSG_ER_LIB, libname, version, revision);
+  }
 
   return base != NULL;
 }
@@ -1388,55 +1443,60 @@ static void Initialise(BOOL hidden)
 
    // First open locale.library, so we can display a translated error requester
    // in case some of the other libraries can't be opened.
-   if(INITLIB("locale.library", 38, 0, &LocaleBase, "main", &ILocale, TRUE))
+   if(INITLIB("locale.library", 38, 0, &LocaleBase, "main", &ILocale, TRUE, NULL))
      G->Locale = OpenLocale(NULL);
 
    // Now load the catalog of YAM
    OpenYAMCatalog();
 
    // load&initialize all required libraries
-   INITLIB("graphics.library",  36, 0, &GfxBase,      "main", &IGraphics, TRUE);
-   INITLIB("layers.library",    36, 0, &LayersBase,   "main", &ILayers,   TRUE);
-   INITLIB("workbench.library", 36, 0, &WorkbenchBase,"main", &IWorkbench,TRUE);
-   INITLIB("keymap.library",    36, 0, &KeymapBase,   "main", &IKeymap,   TRUE);
-   INITLIB("iffparse.library",  36, 0, &IFFParseBase, "main", &IIFFParse, TRUE);
-   INITLIB(RXSNAME,             36, 0, &RexxSysBase,  "main", &IRexxSys,  TRUE);
-   INITLIB("muimaster.library", 19, 0, &MUIMasterBase,"main", &IMUIMaster,TRUE);
-   INITLIB("datatypes.library", 39, 0, &DataTypesBase,"main", &IDataTypes,TRUE);
+   INITLIB("graphics.library",  36, 0, &GfxBase,      "main", &IGraphics, TRUE, NULL);
+   INITLIB("layers.library",    36, 0, &LayersBase,   "main", &ILayers,   TRUE, NULL);
+   INITLIB("workbench.library", 36, 0, &WorkbenchBase,"main", &IWorkbench,TRUE, NULL);
+   INITLIB("keymap.library",    36, 0, &KeymapBase,   "main", &IKeymap,   TRUE, NULL);
+   INITLIB("iffparse.library",  36, 0, &IFFParseBase, "main", &IIFFParse, TRUE, NULL);
+   INITLIB(RXSNAME,             36, 0, &RexxSysBase,  "main", &IRexxSys,  TRUE, NULL);
+   INITLIB("muimaster.library", 19, 0, &MUIMasterBase,"main", &IMUIMaster,TRUE, "http://www.sasg.com/");
+   INITLIB("datatypes.library", 39, 0, &DataTypesBase,"main", &IDataTypes,TRUE, NULL);
+   INITLIB("codesets.library",   6, 0, &CodesetsBase, "main", &ICodesets, TRUE, "http://www.sf.net/projects/codesetslib/");
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
-   if(INITLIB("amissl.library", AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, &AmiSSLBase, "main", &IAmiSSL, FALSE))
+   if(INITLIB("amissl.library", AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, &AmiSSLBase, "main", &IAmiSSL, FALSE, NULL))
       G->TR_UseableTLS = TRUE;
 
    // now we try to open the application.library which is part of OS4
    // and will be used to notify YAM of certain events and also manage
    // the docky icon accordingly.
    #if defined(__amigaos4__)
-   INITLIB("application.library", 50, 0, &ApplicationBase, "application", &IApplication, FALSE);
+   INITLIB("application.library", 50, 0, &ApplicationBase, "application", &IApplication, FALSE, NULL);
    #endif
 
    // Lets check for the correct Toolbar.mcc version (minimum 15.12 because earlier versions are too buggy)
-   CheckMCC(MUIC_Toolbar, 15, 12, TRUE);
+   CheckMCC(MUIC_Toolbar, 15, 12, TRUE, "http://www.aminet.net/");
 
    // Lets check for the correct TextEditor.mcc version
-   CheckMCC(MUIC_TextEditor, 15, 17, TRUE);
+   CheckMCC(MUIC_TextEditor, 15, 17, TRUE, "http://www.sf.net/projects/texteditor-mcc/");
 
    // Lets check for the correct BetterString.mcc version
-   CheckMCC(MUIC_BetterString, 11, 7, TRUE);
+   CheckMCC(MUIC_BetterString, 11, 7, TRUE, "http://www.sf.net/projects/bstring-mcc/");
 
    // we have to have at least v20.116 of NList.mcc to get YAM working without risking
    // to have it buggy - so we make it a requirement. And also 111 is the fastest one ATM.
-   CheckMCC(MUIC_NList, 20, 116, TRUE);
+   CheckMCC(MUIC_NList, 20, 116, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
    // we also make sure the user uses the latest brand of all other NList classes, such as
    // NListview, NFloattext etc.
-   CheckMCC(MUIC_NListview, 19, 71, TRUE);
-   CheckMCC(MUIC_NFloattext, 19, 52, TRUE);
+   CheckMCC(MUIC_NListview, 19, 71, TRUE, "http://www.sf.net/projects/nlist-classes/");
+   CheckMCC(MUIC_NFloattext, 19, 52, TRUE, "http://www.sf.net/projects/nlist-classes/");
 
    // we make v18.23 the minimum requirement for YAM because earlier versions are
    // buggy
-   CheckMCC(MUIC_NListtree, 18, 23, TRUE);
+   CheckMCC(MUIC_NListtree, 18, 23, TRUE, "http://www.sf.net/projects/nlist-classes/");
+
+   // now we search through PROGDIR:Charsets and load all user defined
+   // codesets via codesets.library
+   G->codesetsList = CodesetsListCreateA(NULL);
 
    // Initialise and Setup our own MUI custom classes before we go on
    if(!YAM_SetupClasses())
@@ -1450,7 +1510,7 @@ static void Initialise(BOOL hidden)
    SplashProgress(GetStr(MSG_InitLibs), 10);
 
    // load & initialize some optional libraries which are not required, however highly recommended
-   INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE);
+   INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
 
    if (!TC_Init()) Abort(MSG_ErrorTimer);
    for (i = 0; i < MAXASL; i++)
@@ -1697,7 +1757,7 @@ static void Login(char *user, char *password, char *maildir, char *prefsfile)
 
   ENTER();
 
-  if(INITLIB("genesis.library", 1, 0, &GenesisBase, "main", &IGenesis, FALSE))
+  if(INITLIB("genesis.library", 1, 0, &GenesisBase, "main", &IGenesis, FALSE, NULL))
   {
     struct genUser *guser;
 
@@ -1928,9 +1988,9 @@ int main(int argc, char **argv)
                                     "of data and no regular support for this version\n"
                                     "will be provided in any form.\n\n"
                                     "In addition, this version will automatically\n"
-                                    "expire 30 days after its compilation date.\n\n"
+                                    "expire after a certain time interval.\n\n"
                                     "So if you're unsure and prefer to have a stable\n"
-                                    "installation instead of a possible dangerous\n"
+                                    "installation instead of a possibly dangerous\n"
                                     "version, please consider to use the current\n"
                                     "stable release version available from:\n\n"
                                     "http://www.yam.ch/\n\n"
@@ -1964,10 +2024,10 @@ int main(int argc, char **argv)
 
    WBmsg = (struct WBStartup *)(0 == argc ? argv : NULL);
 
-   INITLIB("intuition.library", 36, 0, &IntuitionBase, "main", &IIntuition, TRUE);
-   INITLIB("icon.library",      36, 0, &IconBase,      "main", &IIcon,      TRUE);
-   INITLIB("utility.library",   36, 0, &UtilityBase,   "main", &IUtility,   TRUE);
-   INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", &IDiskfont,  TRUE);
+   INITLIB("intuition.library", 36, 0, &IntuitionBase, "main", &IIntuition, TRUE, NULL);
+   INITLIB("icon.library",      36, 0, &IconBase,      "main", &IIcon,      TRUE, NULL);
+   INITLIB("utility.library",   36, 0, &UtilityBase,   "main", &IUtility,   TRUE, NULL);
+   INITLIB("diskfont.library",  37, 0, &DiskfontBase,  "main", &IDiskfont,  TRUE, NULL);
 
    nrda.Template = "USER/K,PASSWORD/K,MAILDIR/K,PREFSFILE/K,NOCHECK/S,HIDE/S,DEBUG/S,MAILTO/K,SUBJECT/K,LETTER/K,ATTACH/M,NOIMGWARNING/S";
    nrda.ExtHelp = NULL;

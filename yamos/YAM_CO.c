@@ -36,6 +36,7 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <proto/codesets.h>
 #include <proto/diskfont.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
@@ -935,7 +936,6 @@ void CO_SetDefaults(struct Config *co, int page)
       co->WrapHeader = FALSE;
       co->MultipleWindows = FALSE;
       co->SigSepLine = 2;
-      *co->TranslationIn = 0;
       co->StatusChangeDelayOn = TRUE;
       co->StatusChangeDelay   = 1000; // 1s=1000ms delay by default
    }
@@ -943,7 +943,7 @@ void CO_SetDefaults(struct Config *co, int page)
    // [Write]
    if(page == 5 || page < 0)
    {
-      *co->ReplyTo = *co->Organization = *co->ExtraHeaders = *co->TranslationOut = 0;
+      *co->ReplyTo = *co->Organization = *co->ExtraHeaders = '\0';
       strcpy(co->NewIntro, GetStr(MSG_CO_NewIntroDef));
       strcpy(co->Greetings, GetStr(MSG_CO_GreetingsDef));
       co->WarnSubject = TRUE;
@@ -1165,6 +1165,8 @@ void CO_Validate(struct Config *co, BOOL update)
    BOOL saveAtEnd = FALSE;
    int i;
 
+   ENTER();
+
    if (!*co->SMTP_Server) strcpy(co->SMTP_Server, co->P3[0]->Server);
    if (co->SMTP_Port == 0) co->SMTP_Port = 25;
    if (!*co->SMTP_Domain) { p = strchr(co->EmailAddress, '@'); strcpy(co->SMTP_Domain, p ? p+1 : ""); }
@@ -1202,76 +1204,82 @@ void CO_Validate(struct Config *co, BOOL update)
       strmfp(G->WR_Filename[i], co->TempDir, filename);
    }
 
-   LoadTranslationTable(&(G->TTin), co->AutomaticTranslationIn ? NULL : co->TranslationIn);
    G->CO_AutoTranslateIn = co->AutomaticTranslationIn;
-   LoadTranslationTable(&(G->TTout), co->TranslationOut);
    G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
 
    // we try to find out the system charset and validate it with the
    // currently configured local charset
    if(co->SysCharsetCheck)
    {
-      char sysCharset[SIZE_CTYPE+1];
+      struct codeset *sysCodeset;
 
-      memset(sysCharset, 0, sizeof(sysCharset));
-
-      #ifdef __amigaos4__
+      // get the system's default codeset
+      if((sysCodeset = CodesetsFindA(NULL, NULL)))
       {
-	      LONG default_charset = GetDiskFontCtrl(DFCTRL_CHARSET);
-		    char *charset = (char *)ObtainCharsetInfo(DFCS_NUMBER, default_charset, DFCS_MIMENAME);
-
-        if(charset && charset[0])
-          strncpy(sysCharset, charset, SIZE_CTYPE);
-      }
-      #endif
-
-      // if we still do not have our default charset we try to load
-      // it from and environment variable ENVARC:CHARSET
-      if(sysCharset[0] == '\0')
-      {
-        char var[SIZE_CTYPE+1];
-
-        if(GetVar("CHARSET", var, sizeof(var), 0) > 0)
-          strncpy(sysCharset, (char *)var, SIZE_CTYPE);
-      }
-
-      // now we check whether the currently set localCharset matches
-      // the system charset or not
-      if(co->LocalCharset[0] && sysCharset[0])
-      {
-        if(stricmp(co->LocalCharset, sysCharset) != 0)
+        // now we check whether the currently set localCharset matches
+        // the system charset or not
+        if(co->LocalCharset[0] && sysCodeset->name[0])
         {
-          int res = MUI_Request(G->App, NULL, 0,
-                                GetStr(MSG_CO_CHARSETWARN_TITLE),
-                                GetStr(MSG_CO_CHARSETWARN_BT),
-                                GetStr(MSG_CO_CHARSETWARN),
-                                co->LocalCharset, sysCharset);
+          if(stricmp(co->LocalCharset, sysCodeset->name) != 0)
+          {
+            int res = MUI_Request(G->App, NULL, 0,
+                                  GetStr(MSG_CO_CHARSETWARN_TITLE),
+                                  GetStr(MSG_CO_CHARSETWARN_BT),
+                                  GetStr(MSG_CO_CHARSETWARN),
+                                  co->LocalCharset, sysCodeset->name);
 
-          // if the user has clicked on Change, we do
-          // change the charset and save it immediatly
-          if(res == 1)
-          {
-            strncpy(co->LocalCharset, sysCharset, SIZE_CTYPE);
-            saveAtEnd = TRUE;
-          }
-          else if(res == 2)
-          {
-            co->SysCharsetCheck = FALSE;
-            saveAtEnd = TRUE;
+            // if the user has clicked on Change, we do
+            // change the charset and save it immediatly
+            if(res == 1)
+            {
+              strncpy(co->LocalCharset, sysCodeset->name, SIZE_CTYPE);
+              saveAtEnd = TRUE;
+            }
+            else if(res == 2)
+            {
+              co->SysCharsetCheck = FALSE;
+              saveAtEnd = TRUE;
+            }
           }
         }
+        else if(sysCodeset->name[0])
+        {
+          strncpy(co->LocalCharset, sysCodeset->name, SIZE_CTYPE);
+          saveAtEnd = TRUE;
+        }
+        else
+          W(DBF_CONFIG, "checking the system's codeset seem to have failed?!?");
       }
-      else if(sysCharset[0])
-      {
-        strncpy(co->LocalCharset, sysCharset, SIZE_CTYPE);
-        saveAtEnd = TRUE;
-      }
+      else
+        W(DBF_CONFIG, "CodesetsFindA(NULL) failed!");
    }
 
+   // if the local charset is still empty we set the default
+   // charset to 'iso-8859-1' as this one is probably the most common one.
    if(co->LocalCharset[0] == '\0')
    {
       strcpy(co->LocalCharset, "ISO-8859-1");
       saveAtEnd = TRUE;
+   }
+
+   // now we check if the set charset is a valid one also supported
+   // by codesets.library and if not we warn the user
+   if((G->localCharset = CodesetsFind(co->LocalCharset,
+                                      CSA_CodesetList,       G->codesetsList,
+                                      CSA_FallbackToDefault, FALSE,
+                                      TAG_DONE)) == NULL)
+   {
+     int res = MUI_Request(G->App, NULL, 0,
+                           GetStr(MSG_CO_CHARSETWARN_TITLE),
+                           GetStr(MSG_CO_CHARSETUNKNOWNWARN_BT),
+                           GetStr(MSG_CO_CHARSETUNKNOWNWARN),
+                           co->LocalCharset);
+     if(res == 1)
+     {
+       // fallback to the system's default codeset
+       if((G->localCharset = CodesetsFindA(NULL, NULL)))
+         strncpy(co->LocalCharset, G->localCharset->name, SIZE_CTYPE);
+     }
    }
 
    if(G->CO_AutoTranslateIn)
@@ -1415,6 +1423,8 @@ void CO_Validate(struct Config *co, BOOL update)
    // if some items have modified the config we do save it again.
    if(saveAtEnd == TRUE)
       CO_SaveConfig(co, G->CO_PrefsFile);
+
+   LEAVE();
 }
 
 ///
@@ -1517,7 +1527,7 @@ HOOKPROTONHNO(CO_EditSignatFunc, void, int *arg)
    modified = xget(ed, MUIA_TextEditor_HasChanged);
    if(modified)
    {
-      EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]), NULL);
+      EditorToFile(ed, CreateFilename(SigNames[G->CO->LastSig]));
    }
 
    if(*arg)

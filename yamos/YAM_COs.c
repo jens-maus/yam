@@ -146,6 +146,7 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "EmailAddress     = %s\n", co->EmailAddress);
       fprintf(fh, "TimeZone         = %d\n", co->TimeZone);
       fprintf(fh, "DaylightSaving   = %s\n", Bool2Txt(co->DaylightSaving));
+      fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
 
       fprintf(fh, "\n[TCP/IP]\n");
       fprintf(fh, "SMTP-Server      = %s\n", co->SMTP_Server);
@@ -258,7 +259,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "FixedFontEdit    = %s\n", Bool2Txt(co->FixedFontEdit));
       fprintf(fh, "UseTextstyles    = %s\n", Bool2Txt(co->UseTextstyles));
       fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleWindows));
-      fprintf(fh, "TranslationIn    = %s\n", co->TranslationIn);
       fprintf(fh, "AutoTranslationIn= %s\n", Bool2Txt(co->AutomaticTranslationIn));
       fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
       fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
@@ -269,7 +269,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "ExtraHeaders     = %s\n", co->ExtraHeaders);
       fprintf(fh, "NewIntro         = %s\n", co->NewIntro);
       fprintf(fh, "Greetings        = %s\n", co->Greetings);
-      fprintf(fh, "TranslationOut   = %s\n", co->TranslationOut);
       fprintf(fh, "WarnSubject      = %s\n", Bool2Txt(co->WarnSubject));
       fprintf(fh, "EdWrapCol        = %d\n", co->EdWrapCol);
       fprintf(fh, "EdWrapMode       = %d\n", co->EdWrapMode);
@@ -403,7 +402,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "IOCInterface     = %s\n", co->IOCInterface);
       fprintf(fh, "ConfirmOnQuit    = %s\n", Bool2Txt(co->ConfirmOnQuit));
       fprintf(fh, "HideGUIElements  = %d\n", co->HideGUIElements);
-      fprintf(fh, "LocalCharset     = %s\n", co->LocalCharset);
       fprintf(fh, "SysCharsetCheck  = %s\n", Bool2Txt(co->SysCharsetCheck));
       fprintf(fh, "StackSize        = %d\n", co->StackSize);
       fprintf(fh, "PrintMethod      = %d\n", co->PrintMethod);
@@ -566,6 +564,7 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "EmailAddress"))   stccpy(co->EmailAddress, value, SIZE_ADDRESS);
                else if (!stricmp(buffer, "TimeZone"))       co->TimeZone = atoi(value);
                else if (!stricmp(buffer, "DaylightSaving")) co->DaylightSaving = Txt2Bool(value);
+               else if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
 /*1*/          else if (!stricmp(buffer, "SMTP-Server"))    stccpy(co->SMTP_Server, value, SIZE_HOST);
                else if (!stricmp(buffer, "SMTP-Port"))      co->SMTP_Port = atoi(value);
                else if (!stricmp(buffer, "SMTP-Domain"))    stccpy(co->SMTP_Domain, value, SIZE_HOST);
@@ -747,7 +746,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "FixedFontEdit"))  co->FixedFontEdit = Txt2Bool(value);
                else if (!stricmp(buffer, "UseTextstyles"))  co->UseTextstyles = Txt2Bool(value);
                else if (!stricmp(buffer, "MultipleWindows"))co->MultipleWindows = Txt2Bool(value);
-               else if (!stricmp(buffer, "TranslationIn"))  stccpy(co->TranslationIn, value, SIZE_PATHFILE);
                else if (!stricmp(buffer, "AutoTranslationIn"))co->AutomaticTranslationIn = Txt2Bool(value);
                else if (!stricmp(buffer, "EmbeddedReadPane"))    co->EmbeddedReadPane = Txt2Bool(value);
                else if (!stricmp(buffer, "StatusChangeDelay"))
@@ -770,7 +768,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "ExtraHeaders"))   stccpy(co->ExtraHeaders, value, SIZE_LARGE);
                else if (!stricmp(buffer, "NewIntro"))       stccpy(co->NewIntro, value2, SIZE_INTRO);
                else if (!stricmp(buffer, "Greetings"))      stccpy(co->Greetings, value2, SIZE_INTRO);
-               else if (!stricmp(buffer, "TranslationOut")) stccpy(co->TranslationOut, value, SIZE_PATHFILE);
                else if (!stricmp(buffer, "WarnSubject"))    co->WarnSubject = Txt2Bool(value);
                else if (!stricmp(buffer, "EdWrapCol"))      co->EdWrapCol = atoi(value);
                else if (!stricmp(buffer, "EdWrapMode"))     co->EdWrapMode = atoi(value);
@@ -890,7 +887,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "IOCInterface"))   stccpy(co->IOCInterface, value, SIZE_SMALL);
                else if (!stricmp(buffer, "ConfirmOnQuit"))  co->ConfirmOnQuit = Txt2Bool(value);
                else if (!stricmp(buffer, "HideGUIElements")) co->HideGUIElements = atoi(value);
-               else if (!stricmp(buffer, "LocalCharset"))   stccpy(co->LocalCharset, value, SIZE_CTYPE);
                else if (!stricmp(buffer, "SysCharsetCheck"))co->SysCharsetCheck = Txt2Bool(value);
                else if (!stricmp(buffer, "StackSize"))      co->StackSize = atoi(value);
                else if (!stricmp(buffer, "PrintMethod"))    co->PrintMethod = atoi(value);
@@ -976,9 +972,9 @@ void CO_GetConfig(void)
       case 0:
          GetMUIString(CE->RealName        ,gui->ST_REALNAME);
          GetMUIString(CE->EmailAddress    ,gui->ST_EMAIL);
-
          CE->TimeZone          = MapTZ(GetMUICycle(gui->CY_TZONE), TRUE);
          CE->DaylightSaving    = GetMUICheck  (gui->CH_DLSAVING);
+         GetMUIString(CE->LocalCharset, gui->ST_DEFAULTCHARSET);
          break;
       case 1:
          GetMUIString(CE->SMTP_Server     ,gui->ST_SMTPHOST);
@@ -1051,7 +1047,6 @@ void CO_GetConfig(void)
          CE->EmbeddedReadPane  = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
          CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
          CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
-         GetMUIString(CE->TranslationIn       ,gui->ST_INTRANS);
          CE->AutomaticTranslationIn = GetMUICheck(gui->CH_AUTOTRANSLATEIN);
          break;
       case 5:
@@ -1060,7 +1055,6 @@ void CO_GetConfig(void)
          GetMUIString(CE->ExtraHeaders        ,gui->ST_EXTHEADER);
          GetMUIString(CE->NewIntro            ,gui->ST_HELLOTEXT);
          GetMUIString(CE->Greetings           ,gui->ST_BYETEXT);
-         GetMUIString(CE->TranslationOut      ,gui->ST_OUTTRANS);
          CE->WarnSubject       = GetMUICheck  (gui->CH_WARNSUBJECT);
          CE->EdWrapCol         = GetMUIInteger(gui->ST_EDWRAP);
          CE->EdWrapMode        = GetMUICycle  (gui->CY_EDWRAP);
@@ -1094,7 +1088,7 @@ void CO_GetConfig(void)
          GetMUIString(CE->TagsFile            ,gui->ST_TAGFILE);
          GetMUIString(CE->TagsSeparator       ,gui->ST_TAGSEP);
          if(xget(gui->TE_SIGEDIT, MUIA_TextEditor_HasChanged))
-            EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]), NULL);
+            EditorToFile(gui->TE_SIGEDIT, CreateFilename(SigNames[G->CO->LastSig]));
          break;
       case 8:
          CE->FolderCols = 1; for (i = 1; i < FOCOLNUM; i++) if (GetMUICheck(gui->CH_FCOLS[i])) CE->FolderCols += (1<<i);
@@ -1194,6 +1188,7 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_DLSAVING  ,CE->DaylightSaving);
          nnset(gui->ST_POPHOST0, MUIA_String_Contents, CE->P3[0]->Server);
          nnset(gui->ST_PASSWD0,  MUIA_String_Contents, CE->P3[0]->Password);
+         nnset(gui->ST_DEFAULTCHARSET,  MUIA_String_Contents, CE->LocalCharset);
          break;
       case 1:
          setstring(gui->ST_SMTPHOST, CE->SMTP_Server);
@@ -1265,7 +1260,6 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
          setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
          set(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay/1000);
-         setstring   (gui->ST_INTRANS   ,CE->TranslationIn);
          setcheckmark(gui->CH_AUTOTRANSLATEIN, CE->AutomaticTranslationIn);
          break;
       case 5:
@@ -1274,7 +1268,6 @@ void CO_SetConfig(void)
          setstring   (gui->ST_EXTHEADER ,CE->ExtraHeaders);
          setstring   (gui->ST_HELLOTEXT ,CE->NewIntro);
          setstring   (gui->ST_BYETEXT   ,CE->Greetings);
-         setstring   (gui->ST_OUTTRANS  ,CE->TranslationOut);
          setcheckmark(gui->CH_WARNSUBJECT,CE->WarnSubject);
          set(gui->ST_EDWRAP, MUIA_String_Integer, CE->EdWrapCol);
          setcycle    (gui->CY_EDWRAP    ,CE->EdWrapMode);

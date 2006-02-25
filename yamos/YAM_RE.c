@@ -36,6 +36,7 @@
 #include <mui/NList_mcc.h>
 #include <mui/NListview_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/muimaster.h>
@@ -834,13 +835,13 @@ static void RE_ParseContentParameters(struct Part *rp)
 
          if (!stricmp(s, "name"))
          {
-            rfc2047_decode(eq, eq, strlen(eq), G->TTin);
+            rfc2047_decode(eq, eq, strlen(eq));
             SParse(eq);
             rp->CParName = eq;
          }
          else if (!stricmp(s, "description"))
          {
-            rfc2047_decode(eq, eq, strlen(eq), G->TTin);
+            rfc2047_decode(eq, eq, strlen(eq));
             SParse(eq);
             rp->CParDesc = eq;
          }
@@ -873,7 +874,7 @@ static void RE_ParseContentDispositionParameters(struct Part *rp)
          UnquoteString(eq, FALSE);
          if (!stricmp(s, "filename"))
          {
-            rfc2047_decode(eq, eq, strlen(eq), G->TTin);
+            rfc2047_decode(eq, eq, strlen(eq));
             SParse(eq);
             rp->CParFileName = eq;
          }
@@ -1021,13 +1022,18 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
 ///
 /// RE_ConsumeRestOfPart
 //  Processes body of a message part
-static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *tt, struct Part *rp)
+static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct codeset *srcCodeset, struct Part *rp)
 {
   char buf[SIZE_LINE];
   int blen = 0;
 
+  ENTER();
+
   if(!in)
+  {
+    RETURN(FALSE);
     return FALSE;
+  }
 
   if(rp)
     blen = strlen(rp->Boundary);
@@ -1040,36 +1046,75 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
     if(rp && strncmp(buf, rp->Boundary, blen) == 0)
     {
       if(buf[blen] == '-' && buf[blen+1] == '-' && buf[blen+2] == '\0')
+      {
+        RETURN(TRUE);
         return TRUE;
+      }
       else
+      {
+        RETURN(FALSE);
         return FALSE;
+      }
     }
 
     if(out)
     {
-      // if this function was invoked with a translation table, we have to change
-      // all chars accordingly
-      if(tt)
+      int buflen = strlen(buf);
+
+      // if this function was invoked with a source Codeset we have to make sure
+      // we convert from the supplied source Codeset to our current local codeset with
+      // help of the functions codesets.library provides.
+      if(srcCodeset && buflen > 0)
       {
-        unsigned char *p = (unsigned char *)buf;
+        STRPTR str = CodesetsConvertStr(CSA_SourceCodeset, srcCodeset,
+                                        CSA_DestCodeset,   G->localCharset,
+                                        CSA_Source,        buf,
+                                        CSA_SourceLen,     buflen,
+                                        TAG_DONE);
 
-        // iterate through the buffer and change the chars accordingly.
-        for(; *p; p++)
-          *p = tt->Table[*p];
+        // now that we have the utf8 string we can go and
+        // convert it into the local charset immediately.
+        if(str)
+        {
+          // now write back exactly the same amount of bytes we have read
+          // previously
+          if(fprintf(out, "%s\n", str) <= 0)
+          {
+            E(DBF_MAIL, "error during write operation!");
+
+            RETURN(FALSE);
+            return FALSE;
+          }
+
+          CodesetsFreeA(str, NULL);
+        }
+        else
+          W(DBF_MAIL, "couldn't convert str with CodesetsConvertStr()");
       }
+      else
+      {
+        // now write back exactly the same amount of bytes we read previously
+        if(fprintf(out, "%s\n", buf) <= 0)
+        {
+          E(DBF_MAIL, "error during write operation!");
 
-      // now write back exactly the same amount of bytes we read previously
-      if(fprintf(out, "%s\n", buf) <= 0)
-        return FALSE;
+          RETURN(FALSE);
+          return FALSE;
+        }
+      }
     }
   }
 
-   // if we end up here because of a EOF we have check
-   // if there is still something in c and then write it into the out fh.
-   if(feof(in))
-      return TRUE;
+  // if we end up here because of a EOF we have check
+  // if there is still something in c and then write it into the out fh.
+  if(feof(in))
+  {
+    RETURN(TRUE);
+    return TRUE;
+  }
 
-   return FALSE;
+  RETURN(FALSE);
+  return FALSE;
 }
 ///
 /// RE_DecodeStream
@@ -1080,200 +1125,206 @@ static BOOL RE_ConsumeRestOfPart(FILE *in, FILE *out, struct TranslationTable *t
 //  return 3 on success (no decode required, data without headers written to out)
 static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
 {
-   struct TranslationTable *tt = NULL;
-   int decodeResult = 0;
+  int decodeResult = 0;
+  struct codeset *sourceCodeset = NULL;
 
-   if(rp->Nr != PART_RAW && rp->Nr == rp->rmData->letterPartNum &&
-      G->TTin && G->TTin->SourceCharset
-     )
-   {
-      char *srcCharset = G->TTin->SourceCharset;
+  ENTER();
 
-      if(!rp->CParCSet)
+  // now we find out if we should decode charset aware. This means
+  // that we make sure that we convert the text in "in" into our
+  // local charset or not.
+  if(rp->Nr != PART_RAW && rp->Printable && rp->CParCSet != NULL)
+  {
+    // now we check that the codeset of the mail part really
+    // differs from the local one we are currently using
+    if(stricmp(rp->CParCSet, C->LocalCharset) != 0)
+    {
+      D(DBF_MAIL, "found Part #%d encoded in charset '%s' which is different than local one.", rp->Nr, rp->CParCSet);
+
+      // try to obtain the source codeset from codesets.library
+      // such that we can convert to our local charset accordingly.
+      if((sourceCodeset = CodesetsFind(rp->CParCSet,
+                                       CSA_CodesetList,       G->codesetsList,
+                                       CSA_FallbackToDefault, FALSE,
+                                       TAG_DONE)) == NULL)
       {
-         if(MatchNoCase(C->LocalCharset, srcCharset) ||
-            MatchNoCase("us-ascii", srcCharset))
-         {
-            tt = G->TTin;
-         }
+        W(DBF_MAIL, "the specified codeset wasn't found in codesets.library.");
       }
-      else if(MatchNoCase(rp->CParCSet, srcCharset))
-      {
-         tt = G->TTin;
-      }
-   }
+    }
+  }
 
-   // lets check if we got some encoding here and
-   // if so we have to decode it immediatly
-   switch(rp->EncodingCode)
-   {
-      // process a base64 decoding.
-      case ENC_B64:
-      {
-        long decoded = base64decode_file(in, out, tt, rp->Printable);
-        D(DBF_MAIL, "base64 decoded %ld bytes of part %ld.", decoded, rp->Nr);
+  // lets check if we got some encoding here and
+  // if so we have to decode it immediatly
+  switch(rp->EncodingCode)
+  {
+    // process a base64 decoding.
+    case ENC_B64:
+    {
+      long decoded = base64decode_file(in, out, sourceCodeset, rp->Printable);
+      D(DBF_MAIL, "base64 decoded %ld bytes of part %ld.", decoded, rp->Nr);
 
-        if(decoded > 0)
-          decodeResult = 1;
-        else
+      if(decoded > 0)
+        decodeResult = 1;
+      else
+      {
+        // now we check whether the part we decoded was
+        // a printable one, and if so we have to just throw a warning at
+        // the user abour the problem and still set the decodeResult to 1
+        if(rp->Printable)
         {
-          // now we check whether the part we decoded was
-          // a printable one, and if so we have to just throw a warning at
-          // the user abour the problem and still set the decodeResult to 1
-          if(rp->Printable)
-          {
-            ER_NewError(GetStr(MSG_ER_B64DECTRUNCTXT), rp->Nr, rp->rmData->readFile);
+          ER_NewError(GetStr(MSG_ER_B64DECTRUNCTXT), rp->Nr, rp->rmData->readFile);
 
-            decodeResult = 1;
-          }
-          else
-          {
-            // if that part was not a printable/viewable one we
-            // have to make sure decode Result is set to 0 to signal
-            // the caller that it should not expect that the decoded part
-            // is valid
-            ER_NewError(GetStr(MSG_ER_B64DECTRUNC), rp->Nr, rp->rmData->readFile);
-          }
-        }
-      }
-      break;
-
-      // process a Quoted-Printable decoding
-      case ENC_QP:
-      {
-        long decoded = qpdecode_file(in, out, tt);
-        D(DBF_MAIL, "quoted-printable decoded %ld chars of part %ld.", decoded, rp->Nr);
-
-        if(decoded >= 0)
-          decodeResult = 1;
-        else
-        {
-          switch(decoded)
-          {
-            case -1:
-            {
-              ER_NewError(GetStr(MSG_ER_QPDEC_FILEIO), rp->Filename);
-            }
-            break;
-
-            case -2:
-            {
-              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
-            }
-            break;
-
-            case -3:
-            {
-              ER_NewError(GetStr(MSG_ER_QPDEC_WARN), rp->Filename);
-
-              decodeResult = 1; // allow to save the resulting file
-            }
-            break;
-
-            case -4:
-            {
-              ER_NewError(GetStr(MSG_ER_QPDEC_CHAR), rp->Filename);
-
-              decodeResult = 1; // allow to save the resulting file
-            }
-            break;
-
-            default:
-              ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
-          }
-        }
-      }
-      break;
-
-      // process UU-Encoded decoding
-      case ENC_UUE:
-      {
-        long decoded = uudecode_file(in, out, tt);
-        D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, rp->Nr);
-
-        if(decoded >= 0 &&
-           RE_ConsumeRestOfPart(in, NULL, NULL, NULL))
-        {
           decodeResult = 1;
         }
         else
         {
-          switch(decoded)
-          {
-            case -1:
-            {
-              ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
-            }
-            break;
-
-            case -2:
-            {
-              ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "begin");
-            }
-            break;
-
-            case -3:
-            {
-              ER_NewError(GetStr(MSG_ER_InvalidLength), 0);
-            }
-            break;
-
-            case -4:
-            {
-              ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), rp->Filename);
-
-              decodeResult = 1; // allow to save the resulting file
-            }
-            break;
-
-            case -5:
-            {
-              ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), rp->Filename);
-            }
-            break;
-
-            case -6:
-            {
-              ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "end");
-
-              decodeResult = 1; // allow to save the resulting file
-            }
-            break;
-
-            default:
-              ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
-          }
+          // if that part was not a printable/viewable one we
+          // have to make sure decode Result is set to 0 to signal
+          // the caller that it should not expect that the decoded part
+          // is valid
+          ER_NewError(GetStr(MSG_ER_B64DECTRUNC), rp->Nr, rp->rmData->readFile);
         }
       }
-      break;
+    }
+    break;
 
-      // process URL encoded decoding
-      case ENC_FORM:
+    // process a Quoted-Printable decoding
+    case ENC_QP:
+    {
+      long decoded = qpdecode_file(in, out, sourceCodeset);
+      D(DBF_MAIL, "quoted-printable decoded %ld chars of part %ld.", decoded, rp->Nr);
+
+      if(decoded >= 0)
+        decodeResult = 1;
+      else
       {
-        fromform(in, out, tt);
+        switch(decoded)
+        {
+          case -1:
+          {
+            ER_NewError(GetStr(MSG_ER_QPDEC_FILEIO), rp->Filename);
+          }
+          break;
 
+          case -2:
+          {
+            ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
+          }
+          break;
+
+          case -3:
+          {
+            ER_NewError(GetStr(MSG_ER_QPDEC_WARN), rp->Filename);
+
+            decodeResult = 1; // allow to save the resulting file
+          }
+          break;
+
+          case -4:
+          {
+            ER_NewError(GetStr(MSG_ER_QPDEC_CHAR), rp->Filename);
+
+            decodeResult = 1; // allow to save the resulting file
+          }
+          break;
+
+          default:
+            ER_NewError(GetStr(MSG_ER_QPDEC_UNEXP), rp->Filename);
+        }
+      }
+    }
+    break;
+
+    // process UU-Encoded decoding
+    case ENC_UUE:
+    {
+      long decoded = uudecode_file(in, out, sourceCodeset);
+      D(DBF_MAIL, "UU decoded %ld chars of part %ld.", decoded, rp->Nr);
+
+      if(decoded >= 0 &&
+        RE_ConsumeRestOfPart(in, NULL, NULL, NULL))
+      {
         decodeResult = 1;
       }
-      break;
-
-      default:
+      else
       {
-        if(tt)
+        switch(decoded)
         {
-          if(RE_ConsumeRestOfPart(in, out, tt, NULL))
-            decodeResult = 1;
-        }
-        else if(rp->HasHeaders)
-        {
-          if(CopyFile(NULL, out, NULL, in))
-            decodeResult = 3;
-        }
-        else
-          decodeResult = 2;
-      }
-   }
+          case -1:
+          {
+            ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
+          }
+          break;
 
-   return decodeResult;
+          case -2:
+          {
+            ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "begin");
+          }
+          break;
+
+          case -3:
+          {
+            ER_NewError(GetStr(MSG_ER_InvalidLength), 0);
+          }
+          break;
+
+          case -4:
+          {
+            ER_NewError(GetStr(MSG_ER_UUDEC_CHECKSUM), rp->Filename);
+
+            decodeResult = 1; // allow to save the resulting file
+          }
+          break;
+
+          case -5:
+          {
+            ER_NewError(GetStr(MSG_ER_UUDEC_CORRUPT), rp->Filename);
+          }
+          break;
+
+          case -6:
+          {
+            ER_NewError(GetStr(MSG_ER_UUDEC_TAGMISS), rp->Filename, "end");
+
+            decodeResult = 1; // allow to save the resulting file
+          }
+          break;
+
+          default:
+            ER_NewError(GetStr(MSG_ER_UnexpEOFUU));
+        }
+      }
+    }
+    break;
+
+    // process URL encoded decoding
+    case ENC_FORM:
+    {
+      fromform(in, out, sourceCodeset);
+
+      decodeResult = 1;
+    }
+    break;
+
+    default:
+    {
+      if(sourceCodeset)
+      {
+        if(RE_ConsumeRestOfPart(in, out, sourceCodeset, NULL))
+          decodeResult = 1;
+      }
+      else if(rp->HasHeaders)
+      {
+        if(CopyFile(NULL, out, NULL, in))
+          decodeResult = 3;
+      }
+      else
+        decodeResult = 2;
+    }
+  }
+
+  RETURN(decodeResult);
+  return decodeResult;
 }
 ///
 /// RE_OpenNewPart
@@ -1652,6 +1703,7 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
       D(DBF_MAIL, "Part[%lx]:#%ld%s", rp, rp->Nr, rp->Nr == rp->rmData->letterPartNum ? ":LETTERPART" : "");
       D(DBF_MAIL, "  Name.......: [%s]", rp->Name);
       D(DBF_MAIL, "  ContentType: [%s]", rp->ContentType);
+      D(DBF_MAIL, "  Charset....: [%s]", rp->CParCSet ? rp->CParCSet : "NULL");
       D(DBF_MAIL, "  Printable..: %ld",  rp->Printable);
       D(DBF_MAIL, "  Encoding...: %ld",  rp->EncodingCode);
       D(DBF_MAIL, "  Filename...: [%s]", rp->Filename);

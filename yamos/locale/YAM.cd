@@ -1359,9 +1359,6 @@ Colored text
 MSG_CO_MultiReadWin (420//)
 _Multiple windows
 ;
-MSG_CO_CharsetTrans (421//)
-Charset _translation
-;
 MSG_CO_DisplayAll (422//)
 Display _all texts
 ;
@@ -1977,10 +1974,6 @@ MSG_HELP_CO_CY_SIGSEPLINE (609//)
 Type of the signature\n\
 separation line
 ;
-MSG_HELP_CO_ST_INTRANS (610//)
-Apply this character set translation\n\
-when reading messages
-;
 MSG_HELP_CO_CH_ALLTEXTS (611//)
 Display all textual parts\n\
 of a multipart message
@@ -2043,10 +2036,6 @@ top of a new message
 MSG_HELP_CO_ST_BYETEXT (626//)
 Text to insert at the\n\
 bottom of a new message
-;
-MSG_HELP_CO_ST_OUTTRANS (627//)
-Apply this character set translation\n\
-on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP (628//)
 Word-wrap message text\n\
@@ -4755,10 +4744,6 @@ YAM AppIcon's label?
 MSG_OPENGUI (1380//)
 Opening GUI...
 ;
-MSG_ERR_OPENLIB (1381//)
-Can't open '%s', version v%lu.%lu
-; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
-;
 MSG_CO_CONTEXTMENU (1382//)
 Context menu
 ;
@@ -4991,23 +4976,6 @@ MSG_ER_UNUSABLEAMISSL (1450//)
 You have selected TLSv1/SSLv3 for this connection, but AmiSSL \
 couldn't be initialized. Please check your AmiSSL installation \
 or disable TLS/SSL for this connection.
-;
-MSG_NO_MCC (1451//)
-Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-The class is not installed.
-;
-MSG_MCC_OLD (1452//)
-Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-\n\
-Currently installed is V%lu.%lu, please upgrade!
-;
-MSG_MCC_IN_USE (1453//)
-Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-%lu.%lu is currently in use by other applications.\n\
-\n\
-Once you have installed the required version,\n\
-close all MUI programs, make sure the old class\n\
-is flushed from memory and try again.
 ;
 MSG_RETRY_QUIT_GAD (1454//)
 Try again|Quit
@@ -5611,4 +5579,58 @@ Export messages to a MBOX compliant mail file...
 ;
 MSG_YAMINFO (1609//)
 Open Source E-mail package for the Amiga
+;
+MSG_CO_SYSTEMSETTINGS (1610//)
+System Settings
+;
+MSG_CO_DEFAULTCHARSET (1611//)
+Default Charset
+;
+MSG_CO_CHARSETUNKNOWNWARN (1612//)
+The charset configured for YAM is '%s' but isn't\n\
+supported by the installed codesets.library version.\n\
+\n\
+How do you want to proceed?
+; LOCALCHARSET
+MSG_CO_CHARSETUNKNOWNWARN_BT (1613//)
+*_Change to default|_Ignore
+;
+MSG_ER_LIB (1614//)
+Can't open required '%s', version v%lu.%lu\n\
+\n\
+Please make sure you have at least this minimum\n\
+version installed in your library path.
+; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
+;
+MSG_ER_LIB_URL (1615//)
+Can't open required '%s', version v%lu.%lu\n\
+\n\
+Please consult '%s'\n\
+for downloading the very latest version and make\n\
+sure you have it properly installed in your library path.
+; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION, LIBRARY_URL
+;
+MSG_ER_NO_MCC (1616//)
+Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
+\n\
+Please consult '%s'\n\
+and make sure you have the latest version installed.
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
+;
+MSG_ER_MCC_OLD (1617//)
+Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
+\n\
+Currently installed is v%lu.%lu, please upgrade by downloading\n\
+the latest version from '%s'.
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
+;
+MSG_ER_MCC_IN_USE (1618//)
+Couldn't open required MUI custom class '%s' v%lu.%lu.\n\
+%lu.%lu is currently in use by other applications.\n\
+\n\
+Please consult '%s'.\n\
+Once you have installed the required version,\n\
+close all MUI programs, make sure the old class\n\
+is flushed from memory and try again.
+; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
