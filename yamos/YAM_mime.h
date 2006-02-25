@@ -53,7 +53,4 @@ long uudecode_file(FILE *in, FILE *out, struct codeset *srcCodeset);
 int rfc2047_encode_file(FILE *fh, const char *str);
 int rfc2047_decode(char *dst, const char *src, unsigned int maxlen);
 
-// the OLD MIME routines which we are going to replace step-by-step
-void fromform(FILE *infile, FILE *outfile, struct codeset *srcCodeset);
-
 #endif /* YAM_MIME_H */

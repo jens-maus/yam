@@ -1208,40 +1208,6 @@ long qpdecode_file(FILE *in, FILE *out, struct codeset *srcCodeset)
 
 ///
 
-/*** URL decoding routines ***/
-/// fromform
-//  Converts an url-encoded file into plain text
-void fromform(FILE *infile, FILE *outfile, struct codeset *srcCodeset)
-{
-   unsigned int c;
-   while ((c = fgetc(infile)) != (unsigned int)-1)
-   {
-      switch (c)
-      {
-         case '&': fputc('\n', outfile); break;
-         case '%': c = (index_hex[fgetc(infile)]<<4)+index_hex[fgetc(infile)];
-                   switch (c)
-                   {
-                      case '\n': fputs("\n ", outfile); break;
-                      case '\r': break;
-
-                      #warning "tt convert"
-                      //default  : fputc(tt ? (unsigned int)tt->Table[(UBYTE)c] : c, outfile); break;
-                      default  : fputc(c, outfile); break;
-                   }
-                   break;
-         case '+': fputc(' ', outfile); break;
-         case '=': fputs(" = ", outfile); break;
-
-         #warning "tt convert"
-         //default : fputc(tt ? (unsigned int)tt->Table[(UBYTE)c] : c, outfile); break;
-         default : fputc(c, outfile); break;
-      }
-   }
-}
-
-///
-
 /*** UU encode/decode routines ***/
 /// uuencode_file()
 // Encodes a whole file using the good-old UUEncode algorithm which isn't

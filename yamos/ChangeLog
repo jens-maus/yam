@@ -7,6 +7,13 @@ $Source$
 
 2006-02-25  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c, YAM_MI.c: dropped the whole "x-www-form-urlencoded"
+      content-type related decoding routines as they seem to be somewhat
+      never used and there exist no RFC where such a content-type is
+      mentioned in combination with email. This seems to be a content-type
+      for HTTP transfers only. So we are better off saving the processing
+      time than supporting a content-type that is never really used in
+      emails.
     * YAM.c: changed the warning/error requesters in case a library was
       wasn't found or was found to be of an old version. Now YAM will also
       advice the user to visit the correct webpage for updating/installing

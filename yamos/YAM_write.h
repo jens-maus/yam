@@ -113,7 +113,7 @@ enum TransformMode {
 
 enum WriteMode { WRITE_HOLD, WRITE_SEND, WRITE_QUEUE };
 
-enum Encoding { ENC_NONE, ENC_QP, ENC_B64, ENC_UUE, ENC_BIN, ENC_8BIT, ENC_FORM };
+enum Encoding { ENC_NONE, ENC_QP, ENC_B64, ENC_UUE, ENC_BIN, ENC_8BIT };
 
 struct WritePart
 {

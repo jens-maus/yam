@@ -1297,15 +1297,6 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
     }
     break;
 
-    // process URL encoded decoding
-    case ENC_FORM:
-    {
-      fromform(in, out, sourceCodeset);
-
-      decodeResult = 1;
-    }
-    break;
-
     default:
     {
       if(sourceCodeset)
@@ -1495,14 +1486,6 @@ static int RE_RequiresSpecialHandling(struct Part *hrp)
    return 0;
 }
 ///
-/// RE_IsURLencoded
-//  Checks if part contains encoded form data
-static BOOL RE_IsURLencoded(struct Part *rp)
-{
-   return (BOOL)(!stricmp(rp->ContentType, "application/x-www-form-urlencoded") ||
-                 !stricmp(rp->ContentType, "application/x-url-encoded"));
-}
-///
 /// RE_SaveThisPart
 //  Decides if the part should be kept in memory
 static BOOL RE_SaveThisPart(struct Part *rp)
@@ -1511,7 +1494,7 @@ static BOOL RE_SaveThisPart(struct Part *rp)
   {
     case PM_ALL:   return TRUE;
     case PM_NONE:  return FALSE;
-    case PM_TEXTS: return (BOOL)(!strnicmp(rp->ContentType, "text", 4) || RE_IsURLencoded(rp));
+    case PM_TEXTS: return (BOOL)(strnicmp(rp->ContentType, "text", 4) == 0);
   }
 
   E(DBF_MAIL, "ERROR on RE_SaveThisPart()");
@@ -2136,13 +2119,7 @@ static void RE_LoadMessagePart(struct ReadMailData *rmData, struct Part *part)
 
         for(rp = part->Next; rp; rp = rp->Next)
         {
-          if(RE_IsURLencoded(rp))
-          {
-            rp->ContentType = StrBufCpy(rp->ContentType, "text/plain");
-            rp->EncodingCode = ENC_FORM;
-            RE_DecodePart(rp);
-          }
-          else if(!stricmp(rp->ContentType, "application/pgp-keys"))
+          if(stricmp(rp->ContentType, "application/pgp-keys") == 0)
           {
             rmData->hasPGPKey = TRUE;
           }
