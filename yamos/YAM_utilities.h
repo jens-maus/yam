@@ -365,8 +365,6 @@ int      TransferMailFile(BOOL copyit, struct Mail *mail, struct Folder *dstfold
 char *   Trim(char *s);
 char *   TrimEnd(char *s);
 char *   TrimStart(char *s);
-BOOL     LoadParsers(void);
-void     SParse(char *);
 LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *gadgets, char *format, ...);
 
 // Here we define inline functions that should be inlined by

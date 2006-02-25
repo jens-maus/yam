@@ -113,7 +113,6 @@ struct Global
    BOOL                     TR_Exchange;
    BOOL                     TR_UseableTLS;
    BOOL                     TR_UseTLS;
-   BOOL                     CO_AutoTranslateIn;
    BOOL                     InStartupPhase;
    BOOL                     NoImageWarning;
 

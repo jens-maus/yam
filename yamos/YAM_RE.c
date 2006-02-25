@@ -836,13 +836,11 @@ static void RE_ParseContentParameters(struct Part *rp)
          if (!stricmp(s, "name"))
          {
             rfc2047_decode(eq, eq, strlen(eq));
-            SParse(eq);
             rp->CParName = eq;
          }
          else if (!stricmp(s, "description"))
          {
             rfc2047_decode(eq, eq, strlen(eq));
-            SParse(eq);
             rp->CParDesc = eq;
          }
          else if (!stricmp(s, "boundary"))    rp->CParBndr  = eq;
@@ -875,7 +873,6 @@ static void RE_ParseContentDispositionParameters(struct Part *rp)
          if (!stricmp(s, "filename"))
          {
             rfc2047_decode(eq, eq, strlen(eq));
-            SParse(eq);
             rp->CParFileName = eq;
          }
       }
@@ -2260,7 +2257,6 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
         char *linebuf = malloc(buflen);
         while(fgets(linebuf, buflen, fh))
         {
-          SParse(linebuf);
           cmsg = AppendToBuffer(cmsg, &wptr, &len, linebuf);
         }
         free(linebuf);
@@ -2672,8 +2668,6 @@ char *RE_ReadInMessage(struct ReadMailData *rmData, enum ReadInMode mode)
           fclose(fh);
         }
       }
-
-      SParse(cmsg + prewptr);
     }
 
     if(mode != RIM_QUIET)

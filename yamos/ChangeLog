@@ -7,6 +7,12 @@ $Source$
 
 2006-02-25  Jens Langner <Jens.Langner@light-speed.de>
 
+    * misc: dropped the "Codepage Autodetect/Translation" functionality
+      from YAM as it should not be required anymore since the use of
+      codesets.library. The library may be the better choice for adding
+      such properitary codepage translation routines. YAM should now be
+      able to automatically identify the correct charset/codeset and
+      convert/translate into the local charset if necessary.
     * YAM_RE.c, YAM_MI.c: dropped the whole "x-www-form-urlencoded"
       content-type related decoding routines as they seem to be somewhat
       never used and there exist no RFC where such a content-type is

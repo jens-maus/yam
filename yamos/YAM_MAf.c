@@ -1331,14 +1331,12 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
          if(!stricmp(field, "from"))
          {
            SET_FLAG(ok, 1);
-           SParse(value);
            ExtractAddress(value, &pe);
            mail->From = pe;
          }
          else if(!stricmp(field, "reply-to"))
          {
            SET_FLAG(ok, 8);
-           SParse(value);
            ExtractAddress(value, &pe);
            mail->ReplyTo = pe;
          }
@@ -1369,7 +1367,6 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
            if(!(ok & 2))
            {
              SET_FLAG(ok, 2);
-             SParse(value);
              if((p = MyStrChr(value, ',')))
                *p++ = 0;
 
@@ -1396,7 +1393,6 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
            {
              if(email->NoCC == 0)
              {
-               SParse(value);
                MA_GetRecipients(value, &(email->CC), &(email->NoCC));
              }
 
@@ -1412,7 +1408,6 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
            {
              if(email->NoBCC == 0)
              {
-               SParse(value);
                MA_GetRecipients(value, &(email->BCC), &(email->NoBCC));
              }
 
@@ -1425,7 +1420,6 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
          else if(!stricmp(field, "subject"))
          {
            SET_FLAG(ok, 4);
-           SParse(value);
            stccpy(mail->Subject, Trim(value), SIZE_SUBJECT);
          }
          else if(!stricmp(field, "message-id"))
@@ -1499,7 +1493,6 @@ struct ExtendedMail *MA_ExamineMail(struct Folder *folder, char *file, BOOL deep
          else if(!stricmp(field, "x-senderinfo"))
          {
             SET_FLAG(mail->mflags, MFLAG_SENDERINFO);
-            SParse(value);
             if(deep)
               email->SenderInfo = StrBufCpy(email->SenderInfo, value);
          }

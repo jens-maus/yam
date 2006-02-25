@@ -259,7 +259,6 @@ void CO_SaveConfig(struct Config *co, char *fname)
       fprintf(fh, "FixedFontEdit    = %s\n", Bool2Txt(co->FixedFontEdit));
       fprintf(fh, "UseTextstyles    = %s\n", Bool2Txt(co->UseTextstyles));
       fprintf(fh, "MultipleWindows  = %s\n", Bool2Txt(co->MultipleWindows));
-      fprintf(fh, "AutoTranslationIn= %s\n", Bool2Txt(co->AutomaticTranslationIn));
       fprintf(fh, "EmbeddedReadPane = %s\n", Bool2Txt(co->EmbeddedReadPane));
       fprintf(fh, "StatusChangeDelay= %d\n", co->StatusChangeDelayOn ? co->StatusChangeDelay : -co->StatusChangeDelay);
 
@@ -746,7 +745,6 @@ BOOL CO_LoadConfig(struct Config *co, char *fname, struct Folder ***oldfolders)
                else if (!stricmp(buffer, "FixedFontEdit"))  co->FixedFontEdit = Txt2Bool(value);
                else if (!stricmp(buffer, "UseTextstyles"))  co->UseTextstyles = Txt2Bool(value);
                else if (!stricmp(buffer, "MultipleWindows"))co->MultipleWindows = Txt2Bool(value);
-               else if (!stricmp(buffer, "AutoTranslationIn"))co->AutomaticTranslationIn = Txt2Bool(value);
                else if (!stricmp(buffer, "EmbeddedReadPane"))    co->EmbeddedReadPane = Txt2Bool(value);
                else if (!stricmp(buffer, "StatusChangeDelay"))
                {
@@ -1047,7 +1045,6 @@ void CO_GetConfig(void)
          CE->EmbeddedReadPane  = GetMUICheck  (gui->CH_EMBEDDEDREADPANE);
          CE->StatusChangeDelayOn  = GetMUICheck  (gui->CH_DELAYEDSTATUS);
          CE->StatusChangeDelay    = GetMUINumer  (gui->NB_DELAYEDSTATUS)*1000;
-         CE->AutomaticTranslationIn = GetMUICheck(gui->CH_AUTOTRANSLATEIN);
          break;
       case 5:
          GetMUIString(CE->ReplyTo             ,gui->ST_REPLYTO);
@@ -1260,7 +1257,6 @@ void CO_SetConfig(void)
          setcheckmark(gui->CH_EMBEDDEDREADPANE, CE->EmbeddedReadPane);
          setcheckmark(gui->CH_DELAYEDSTATUS, CE->StatusChangeDelayOn);
          set(gui->NB_DELAYEDSTATUS, MUIA_Numeric_Value, CE->StatusChangeDelay/1000);
-         setcheckmark(gui->CH_AUTOTRANSLATEIN, CE->AutomaticTranslationIn);
          break;
       case 5:
          setstring   (gui->ST_REPLYTO   ,CE->ReplyTo);

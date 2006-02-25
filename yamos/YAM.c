@@ -1256,9 +1256,6 @@ static void Initialise2(void)
    // load the main window GUI layout from the ENV: variable
    LoadLayout();
 
-   if(G->CO_AutoTranslateIn)
-     LoadParsers();
-
    SplashProgress(GetStr(MSG_LoadingFolders), 50);
    if(!FO_LoadTree(CreateFilename(".folders")) && oldfolders)
    {

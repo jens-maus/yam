@@ -1074,7 +1074,6 @@ APTR CO_Page4(struct CO_ClassData *data)
             Child, HSpace(0),
          End,
          Child, VGroup, GroupFrameT(GetStr(MSG_CO_OtherOptions)),
-            Child, MakeCheckGroup((Object **)&data->GUI.CH_AUTOTRANSLATEIN, GetStr(MSG_CO_AutoTranslateIn)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_MULTIWIN, GetStr(MSG_CO_MultiReadWin)),
             Child, MakeCheckGroup((Object **)&data->GUI.CH_EMBEDDEDREADPANE, GetStr(MSG_CO_SHOWEMBEDDEDREADPANE)),
             Child, HGroup,
@@ -1104,7 +1103,6 @@ APTR CO_Page4(struct CO_ClassData *data)
       SetHelp(data->GUI.CA_COL4QUOT,        MSG_HELP_CO_CA_COL4QUOT);
       SetHelp(data->GUI.CA_COLURL,          MSG_HELP_CO_CA_COLURL);
       SetHelp(data->GUI.CH_ALLTEXTS,        MSG_HELP_CO_CH_ALLTEXTS);
-      SetHelp(data->GUI.CH_AUTOTRANSLATEIN, MSG_HELP_CO_CH_AUTOTRANSLATEIN);
       SetHelp(data->GUI.CH_MULTIWIN,        MSG_HELP_CO_CH_MULTIWIN);
       SetHelp(data->GUI.CH_EMBEDDEDREADPANE,MSG_HELP_CO_CH_EMBEDDEDREADPANE);
       SetHelp(data->GUI.CY_SIGSEPLINE,      MSG_HELP_CO_CY_SIGSEPLINE);

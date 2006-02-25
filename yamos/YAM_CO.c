@@ -1204,7 +1204,6 @@ void CO_Validate(struct Config *co, BOOL update)
       strmfp(G->WR_Filename[i], co->TempDir, filename);
    }
 
-   G->CO_AutoTranslateIn = co->AutomaticTranslationIn;
    G->CO_Valid = (*co->SMTP_Server && *co->EmailAddress && *co->RealName);
 
    // we try to find out the system charset and validate it with the
@@ -1281,9 +1280,6 @@ void CO_Validate(struct Config *co, BOOL update)
          strncpy(co->LocalCharset, G->localCharset->name, SIZE_CTYPE);
      }
    }
-
-   if(G->CO_AutoTranslateIn)
-     LoadParsers();
 
    if(update && G->CO)
    {

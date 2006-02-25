@@ -4934,13 +4934,6 @@ Couldn't initialize TLSv1/SSLv3 session for %s
 MSG_TR_SENDAUTH (1439//)
 Sending SMTP AUTH request...
 ;
-MSG_CO_AutoTranslateIn (1440//)
-Codepage Autodetect/T_ranslation
-;
-MSG_HELP_CO_CH_AUTOTRANSLATEIN (1441//)
-Helps reading strange character sets.\n\
-Mainly for cyrillic users.
-;
 MSG_CO_IMPORTMIMETITLE (1442//)
 Import MIME viewers & types
 ;
