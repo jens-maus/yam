@@ -1470,7 +1470,7 @@ static void Initialise(BOOL hidden)
    #endif
 
    // Lets check for the correct Toolbar.mcc version (minimum 15.12 because earlier versions are too buggy)
-   CheckMCC(MUIC_Toolbar, 15, 12, TRUE, "http://www.aminet.net/");
+   CheckMCC(MUIC_Toolbar, 15, 12, TRUE, "http://www.sf.net/projects/toolbar-mcc/");
 
    // Lets check for the correct TextEditor.mcc version
    CheckMCC(MUIC_TextEditor, 15, 17, TRUE, "http://www.sf.net/projects/texteditor-mcc/");

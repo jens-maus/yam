@@ -30,6 +30,8 @@
 
 #include "Aboutwindow_cl.h"
 
+#include <mui/NFloattext_mcc.h>
+
 /* CLASSDATA
 struct Data
 {
@@ -65,13 +67,36 @@ OVERLOAD(OM_NEW)
 	aboutText = AllocStrBuf(SIZE_LARGE);
 	aboutText = StrBufCat(aboutText, GetStr(MSG_Copyright2));
 	aboutText = StrBufCat(aboutText, GetStr(MSG_UsedSoftware));
-	aboutText = StrBufCat(aboutText, "\0338Magic User Interface\0332 (Stefan Stuntz)\n"
-																	 "\0338TextEditor.mcc, BetterString.mcc\0332 (Allan Odgaard)\n"
-																	 "\0338Toolbar.mcc\0332 (Benny Kjær Nielsen)\n"
-																	 "\0338NList.mcc, NListview.mcc\0332 (Gilles Masson)\n"
-																	 "\0338NListtree.mcc\0332 (Carsten Scholling)\n"
-																	 "\0338XPK\0332 (Urban D. Müller, Dirk Stöcker)\n"
-																	 "\0338amissl.library\0332 (Andrija Antonijevic)\n\n");
+	aboutText = StrBufCat(aboutText, "\n"
+																	 "\033bMagic User Interface\0332\n"
+																	 "\033iStefan Stuntz\0332\n"
+																	 "http://www.sasg.com/\n\n"
+																	 "\033bTextEditor.mcc\0332\n"
+																	 "\033iTextEditor.mcc Open Source Team\0332\n"
+																	 "http://www.sf.net/projects/texteditor-mcc/\n\n"
+																	 "\033bBetterString.mcc\0332\n"
+																	 "\033iBetterString.mcc Open Source Team\0332\n"
+																	 "http://www.sf.net/projects/bstring-mcc/\n\n"
+																	 "\033bToolbar.mcc\0332\n"
+																	 "\033iToolbar.mcc Open Source Team\0332\n"
+																	 "http://www.sf.net/projects/toolbar-mcc/\n\n"
+																	 "\033bNList MCC classes\0332\n"
+																	 "\033iNList Open Source Team\0332\n"
+																	 "http://www.sf.net/projects/nlist-classes/\n\n"
+																	 "\033bcodesets.library\0332\n"
+																	 "\033icodesets.library Open Source Team\0332\n"
+																	 "http://www.sf.net/projects/codesetslib/\n\n"
+																	 "\033bxpkmaster.library\0332\n"
+																	 "\033iDirk Stöcker\0332\n"
+																	 "http://www.dstoecker.de/xpkmaster.html\n\n"
+																	 "\033bamissl.library\0332\n"
+																	 "\033iAndrija Antonijevic, Stefan Burström\0332\n"
+																	 "http://www.heightanxiety.com/AmiSSL/\n\n"
+																	 "\033bSetDST\0332\n"
+																	 "\033iStefan Falke\0332\n"
+																	 "http://www.sfxsoft.de/setdst.html\n\n"
+																	 "\033bPretty Good Privacy (PGP)\0332\n"
+																	 "\033iPhil Zimmermann\0332\n\n");
 	aboutText = StrBufCat(aboutText, GetStr(MSG_WebSite));
 
 	if(!(obj = DoSuperNew(cl, obj,
@@ -111,11 +136,12 @@ OVERLOAD(OM_NEW)
 					 Child, LLabel(compileInfo),
 				End,
 			End)),
-			Child, ListviewObject,
-				MUIA_Listview_Input, FALSE,
-				MUIA_Listview_List, FloattextObject,
-					ReadListFrame,
-					MUIA_Floattext_Text, aboutText,
+			Child, NListviewObject,
+				MUIA_NListview_NList, NFloattextObject,
+					MUIA_Font,					 	MUIV_Font_Tiny,
+					MUIA_NList_Format,	  "P=\33c",
+					MUIA_NList_Input,			FALSE,
+					MUIA_NFloattext_Text, aboutText,
 				End,
 			End,
 			Child, HGroup,
