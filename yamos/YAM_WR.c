@@ -962,19 +962,22 @@ static void WR_EmitExtHeader(FILE *fh, struct Compose *comp)
 /// WR_ComposeReport
 //  Assembles the parts of a message disposition notification
 static const char *MIMEwarn =
-  "Warning: This is a message in MIME format. Your mail reader does not\n"
-  "support MIME. Some parts of this message will be readable as plain text.\n"
-  "To see the rest, you will need to upgrade your mail reader. Following are\n"
-  "some URLs where you can find MIME-capable mail programs for common platforms:\n\n"
-  "  AmigaOS...........: YAM          http://www.yam.ch/\n"
-  "  Unix/MacOS/Windows: Thunderbird  http://www.mozilla.org/products/thunderbird/\n"
-  "General info about MIME can be found at:\n\n"
-  "http://www.faqs.org/faqs/mail/mime-faq/\n\n";
+  "Warning: This is a message in MIME format. Your mail reader does\n"
+  "not support MIME. Some parts of this message will be readable as\n"
+  "plain text. To see the rest, you will need to upgrade your mail\n"
+  "reader. Following are some URLs where you can find MIME-capable\n"
+  "mail programs for common platforms:\n"
+  "\n"
+  "  AmigaOS...........: http://www.yam.ch/\n"
+  "  Unix/MacOS/Windows: http://www.mozilla.com/thunderbird/\n"
+  "\n"
+  "General information about MIME can be found at:\n"
+  "http://en.wikipedia.org/wiki/MIME\n\n";
 static const char *PGPwarn  =
-  "The following body part contains a PGP encrypted message. Either your\n"
-  "mail reader doesn't support MIME/PGP as specified in RFC 2015, or\n"
-  "the message was encrypted for someone else. To read the encrypted\n"
-  "message, run the next body part through Pretty Good Privacy.\n\n";
+  "The following body part contains a PGP encrypted message. Either\n"
+  "your mail reader doesn't support MIME/PGP as specified in RFC 2015,\n"
+  "or the message was encrypted for someone else. To read the encrypted\n"
+  "message, run the next body part through Pretty Good Privacy (PGP).\n\n";
 
 static void WR_ComposeReport(FILE *fh, struct Compose *comp, char *boundary)
 {
