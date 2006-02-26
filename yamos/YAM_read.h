@@ -113,7 +113,6 @@ struct Part
    struct MinList      *headerList;         // ptr to a list of headers or NULL
    char                *ContentType;
    char                *ContentDisposition;
-   char                *JunkParameter;
    char                *CParName;
    char                *CParFileName;
    char                *CParBndr;

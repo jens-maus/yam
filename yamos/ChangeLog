@@ -7,6 +7,10 @@ $Source$
 
 2006-02-26  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c: merged the two separate content parameter parsing
+      routines as they are used more or less equally.
+    * YAM_RE.c: dropped the unused 'JunkParameter' member of the
+      multipart structure as the purpose of it is really doubtable.
     * YAM_RE.c: fixed a minor memory leak where we forgot to free
       the allocated unquoted copy of each mail boundary string.
     * YAM_WR.c: updated the static warning texts include the MIME

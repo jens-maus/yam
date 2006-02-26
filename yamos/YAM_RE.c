@@ -850,72 +850,109 @@ static char *UnquoteString(char *s, BOOL new)
 ///
 /// RE_ParseContentParameters
 //  Parses parameters of Content-Type header field
-static void RE_ParseContentParameters(struct Part *rp)
+enum parameterType { PT_CONTENTTYPE, PT_CONTENTDISPOSITION };
+
+static void RE_ParseContentParameters(struct Part *rp, enum parameterType pType)
 {
-  char *s, *t, *eq, *ct = rp->ContentType;
+  char *s = NULL;
 
-  D(DBF_MAIL, "ct: '%s'", rp->ContentType);
+  // depending on the parameterType we
+  // have to use different source string
+  switch(pType)
+  {
+    case PT_CONTENTTYPE:
+      s = rp->ContentType;
+    break;
 
-   s = strchr(ct, ';');
-   if (!s) return;
-   *s++ = 0;
-   do {
-      if ((t = ParamEnd(s))) *t++ = 0;
-      if (!(eq = strchr(s, '='))) rp->JunkParameter = Cleanse(s);
-      else
+    case PT_CONTENTDISPOSITION:
+      s = rp->ContentDisposition;
+    break;
+  }
+
+  // each parameter is separated by single ';' characters,
+  // so we parse it ; wise. And in fact we can skip the
+  // very first one as this is normally already the
+  // value of the header itself
+  s = strchr(s, ';');
+
+  // no additional parameters found, return immediately
+  if(!s)
+    return;
+
+  *s++ = '\0'; // NUL termination
+
+  // now we go and parse the first additional
+  // parameter.
+  do
+  {
+    char *t;
+    char *eq;
+
+    // try to find the end of the parameter
+    // (which may also be another ';'. However, ParamEnd()
+    // also takes care of quoted strings.
+    if((t = ParamEnd(s)))
+      *t++ = '\0';
+
+    // now that 's' is pointing to the actual
+    // parameter name, we try to obtain the actual
+    // value of the parameter
+    if((eq = strchr(s, '=')))
+    {
+      // make eq point to the actual start of the
+      // parameter value and also make sure the string
+      // is unquoted.
+      *eq++ = '\0';
+      eq = TrimStart(eq);
+      TrimEnd(eq);
+      UnquoteString(eq, FALSE);
+
+      // now we also make sure the parameter name
+      // is trimmed and lowercase only
+      s = Cleanse(s);
+
+      // depending on the parameterType we
+      // have to parse different parameters
+      switch(pType)
       {
-         *eq++ = 0;
-         s = Cleanse(s); eq = TrimStart(eq);
-         TrimEnd(eq);
-         UnquoteString(eq, FALSE);
-
-         D(DBF_MAIL, "cpar: '%s'", s);
-
-         if (!stricmp(s, "name"))
-         {
+        case PT_CONTENTTYPE:
+        {
+          if(!strncmp(s, "name", 4))
+          {
             rfc2047_decode(eq, eq, strlen(eq));
             rp->CParName = eq;
-         }
-         else if (!stricmp(s, "description"))
-         {
+          }
+          else if(!strncmp(s, "description", 11))
+          {
             rfc2047_decode(eq, eq, strlen(eq));
             rp->CParDesc = eq;
-         }
-         else if (!stricmp(s, "boundary"))    rp->CParBndr  = eq;
-         else if (!stricmp(s, "protocol"))    rp->CParProt  = eq;
-         else if (!stricmp(s, "report-type")) rp->CParRType = eq;
-         else if (!stricmp(s, "charset"))     rp->CParCSet  = eq;
-      }
-      s = t;
-   } while (t);
-}
-///
-/// RE_ParseContentDispositionParameters
-//  Parses parameters of Content-Disposition header field
-static void RE_ParseContentDispositionParameters(struct Part *rp)
-{
-   char *s, *t, *eq, *cd = rp->ContentDisposition;
+          }
+          else if(!strcmp(s, "boundary"))
+            rp->CParBndr = eq;
+          else if(!strcmp(s, "protocol"))
+            rp->CParProt = eq;
+          else if(!strcmp(s, "report-type"))
+            rp->CParRType = eq;
+          else if(!strcmp(s, "charset"))
+            rp->CParCSet = eq;
+        }
+        break;
 
-   s = strchr(cd, ';');
-   if (!s) return;
-   *s++ = 0;
-   do {
-      if ((t = ParamEnd(s))) *t++ = 0;
-      if (!(eq = strchr(s, '='))) rp->JunkParameter = Cleanse(s);
-      else
-      {
-         *eq++ = 0;
-         s = Cleanse(s); eq = TrimStart(eq);
-         TrimEnd(eq);
-         UnquoteString(eq, FALSE);
-         if (!stricmp(s, "filename"))
-         {
+        case PT_CONTENTDISPOSITION:
+        {
+          if(!strncmp(s, "filename", 8))
+          {
             rfc2047_decode(eq, eq, strlen(eq));
             rp->CParFileName = eq;
-         }
+          }
+        }
+        break;
       }
-      s = t;
-   } while (t);
+    }
+
+    s = t;
+  }
+  while(s);
 }
 ///
 /// RE_ScanHeader
@@ -988,7 +1025,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
         while(1);
 
         TrimEnd(rp->ContentType);
-        RE_ParseContentParameters(rp);
+        RE_ParseContentParameters(rp, PT_CONTENTTYPE);
       }
       else
         W(DBF_MAIL, "Empty 'Content-Type' headerline found.. using default '%s'.", rp->ContentType);
@@ -1048,7 +1085,7 @@ static BOOL RE_ScanHeader(struct Part *rp, FILE *in, FILE *out, int mode)
       while(1);
 
       TrimEnd(rp->ContentDisposition);
-      RE_ParseContentDispositionParameters(rp);
+      RE_ParseContentParameters(rp, PT_CONTENTDISPOSITION);
     }
   }
 
@@ -1606,7 +1643,6 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
   {
     FILE *out;
     struct Part *rp;
-    char *boundary;
 
     if(hrp == NULL)
     {
@@ -1625,10 +1661,9 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
 
     if(hrp)
     {
-      if(!(boundary = hrp->CParBndr))
-        boundary = hrp->JunkParameter;
+      char *boundary = hrp->CParBndr;
 
-      if(!strnicmp(hrp->ContentType, "multipart", 9))
+      if(boundary != NULL && strnicmp(hrp->ContentType, "multipart", 9) == 0)
       {
         if(!boundary)
           ER_NewError(GetStr(MSG_ER_MissingBoundary));
