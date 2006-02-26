@@ -763,62 +763,98 @@ void RE_GetSigFromLog(struct ReadMailData *rmData, char *decrFor)
 //  Finds next parameter in header field
 static char *ParamEnd(char *s)
 {
-   BOOL inquotes = FALSE;
+  BOOL inquotes = FALSE;
 
-   while (*s)
-   {
-      if (inquotes)
-      {
-         if (*s == '"') inquotes = FALSE; else if (*s == '\\') ++s;
-      }
-      else if (*s == ';') return(s);
-      else if (*s == '"') inquotes = TRUE;
-      ++s;
-   }
-   return NULL;
+  while(*s)
+  {
+    if(inquotes)
+    {
+      if(*s == '"')
+        inquotes = FALSE;
+      else if(*s == '\\')
+        ++s;
+    }
+    else if(*s == ';')
+      return(s);
+    else if(*s == '"')
+      inquotes = TRUE;
+
+    ++s;
+  }
+
+  return NULL;
 }
 ///
 /// Cleanse
 //  Removes trailing and leading spaces and converts string to lower case
 static char *Cleanse(char *s)
 {
-   char *tmp, *news;
+  char *tmp;
 
-   news = s = TrimStart(s);
-   for (tmp=s; *tmp; ++tmp) if (isupper((int)*tmp)) *tmp = tolower((int)*tmp);
-   while (tmp > news && *--tmp && ISpace(*tmp)) *tmp = 0;
-   return news;
+  // skip all leading spaces and return pointer
+  // to first real char.
+  s = TrimStart(s);
+
+  // convert all chars to lowercase no matter what
+  for(tmp=s; *tmp; ++tmp)
+    *tmp = tolower((int)*tmp);
+
+  // now we walk back from the end of the string
+  // and strip the trailing spaces.
+  while(tmp > s && *--tmp && ISpace(*tmp))
+    *tmp = '\0';
+
+  return s;
 }
+
 ///
 /// UnquoteString
 //  Removes quotes from a string, skipping "escaped" quotes
 static char *UnquoteString(char *s, BOOL new)
 {
-   char *ans, *t, *o = s;
+  char *ans, *t, *o = s;
 
-   if (*s != '"') return s;
-   ans = malloc(1+strlen(s));
-   ++s;
-   t = ans;
-   while (*s)
-   {
-      if (*s == '\\') *t++ = *++s;
-      else if (*s == '"') break;
-      else *t++ = *s;
+  if(*s != '"')
+    return s;
+
+  if((ans = malloc(strlen(s)+1)))
+  {
+    ++s;
+    t = ans;
+
+    while(*s)
+    {
+      if(*s == '\\')
+        *t++ = *++s;
+      else if(*s == '"')
+        break;
+      else
+        *t++ = *s;
+
       ++s;
-   }
-   *t = 0;
-   if (new) return ans;
-   strcpy(o, ans);
-   free(ans);
-   return o;
+    }
+
+    *t = '\0';
+
+    // in case the user wants to have the copy lets do it
+    if(new)
+      return ans;
+
+    // otherwise overwrite the original string array
+    strcpy(o, ans);
+    free(ans);
+  }
+
+  return o;
 }
 ///
 /// RE_ParseContentParameters
 //  Parses parameters of Content-Type header field
 static void RE_ParseContentParameters(struct Part *rp)
 {
-   char *s, *t, *eq, *ct = rp->ContentType;
+  char *s, *t, *eq, *ct = rp->ContentType;
+
+  D(DBF_MAIL, "ct: '%s'", rp->ContentType);
 
    s = strchr(ct, ';');
    if (!s) return;
@@ -832,6 +868,8 @@ static void RE_ParseContentParameters(struct Part *rp)
          s = Cleanse(s); eq = TrimStart(eq);
          TrimEnd(eq);
          UnquoteString(eq, FALSE);
+
+         D(DBF_MAIL, "cpar: '%s'", s);
 
          if (!stricmp(s, "name"))
          {
@@ -1596,14 +1634,22 @@ static struct Part *RE_ParseMessage(struct ReadMailData *rmData,
           ER_NewError(GetStr(MSG_ER_MissingBoundary));
         else
         {
+          char *unquotedBoundary;
           BOOL done;
 
           if(*boundary == '"')
-            boundary = UnquoteString(boundary, TRUE);
+            unquotedBoundary = UnquoteString(boundary, TRUE);
+          else
+            unquotedBoundary = boundary;
 
           // form the Boundary specification
-          hrp->Boundary = AllocStrBuf(strlen(boundary)+3);
-          sprintf(hrp->Boundary, "--%s", boundary);
+          hrp->Boundary = AllocStrBuf(strlen(unquotedBoundary)+3);
+          sprintf(hrp->Boundary, "--%s", unquotedBoundary);
+
+          // in case we allocated a new boundary
+          // string we go and free it immediately.
+          if(unquotedBoundary != boundary)
+            free(unquotedBoundary);
 
           done = RE_ConsumeRestOfPart(in, NULL, NULL, hrp);
           rp = hrp;

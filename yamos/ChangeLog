@@ -5,6 +5,13 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2006-02-26  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: fixed a minor memory leak where we forgot to free
+      the allocated unquoted copy of each mail boundary string.
+    * YAM_WR.c: updated the static warning texts include the MIME
+      information as well as the PGP information text.
+
 2006-02-25  Jens Langner <Jens.Langner@light-speed.de>
 
     * classes/Aboutwindow.c: updated About window to carry an updated
