@@ -3,9 +3,8 @@
 ## codeset 0
 ;
 ; francais.ct - YAM 2.5 catalog translation file
-; based on v1.124 of YAM.cd
-;
-; > Still unfinished! <
+; $Id$
+; based on v1.126 of YAM.cd
 ;
 ; General
 ;
@@ -1805,10 +1804,6 @@ MSG_CO_MultiReadWin
 _Fenêtres multiples
 ; _Multiple windows
 ;
-MSG_CO_CharsetTrans
-Con_vertisseur de caractères
-; Charset _translation
-;
 MSG_CO_DisplayAll
 Affiche _tous les textes
 ; Display _all texts
@@ -2662,12 +2657,6 @@ entre le texte et la signature
 ; Type of the signature\n\
 ; separation line
 ;
-MSG_HELP_CO_ST_INTRANS
-Utilise la conversion de caractères\n\
-pour la visualisation des messages
-; Apply this character set translation\n\
-; when reading messages
-;
 MSG_HELP_CO_CH_ALLTEXTS
 Affiche toutes les différentes\n\
 parties d'un message composé
@@ -2763,12 +2752,6 @@ Texte à insérer à la fin\n\
 de chaque nouveau message
 ; Text to insert at the\n\
 ; bottom of a new message
-;
-MSG_HELP_CO_ST_OUTTRANS
-Utilise cette conversion de caractères\n\
-pour les nouveaux messages
-; Apply this character set translation\n\
-; on new messages
 ;
 MSG_HELP_CO_ST_EDWRAP
 N° de colonne à laquelle\n\
@@ -6558,11 +6541,6 @@ MSG_OPENGUI
 Ouverture de l'interface graphique...
 ; Opening GUI...
 ;
-MSG_ERR_OPENLIB
-Impossible d'ouvrir « %s », version v%lu.%lu
-; Can't open '%s', version v%lu.%lu
-; LIBRARY_NAME, LIBRARY_VERSION, LIBRARY_REVISION
-;
 MSG_CO_CONTEXTMENU
 Menu contextuel
 ; Context menu
@@ -6833,16 +6811,6 @@ MSG_TR_SENDAUTH
 Envoi la requête d'authentification SMTP...
 ; Sending SMTP AUTH request...
 ;
-MSG_CO_AutoTranslateIn
-Auto-détection et t_ranscription
-; Codepage Autodetect/T_ranslation
-;
-MSG_HELP_CO_CH_AUTOTRANSLATEIN
-Aide à décoder les jeux de caractères particuliers.\n\
-Surtout pour les utilisateurs cyrillics.
-; Helps reading strange character sets.\n\
-; Mainly for cyrillic users.
-;
 MSG_CO_IMPORTMIMETITLE
 Importer les programmes et types MIME
 ; Import MIME viewers & types
@@ -6897,34 +6865,6 @@ de AmiSSL ou désactivez TLS/SSL pour cette connexion.
 ; You have selected TLSv1/SSLv3 for this connection, but AmiSSL \
 ; couldn't be initialized. Please check your AmiSSL installation \
 ; or disable TLS/SSL for this connection.
-;
-MSG_NO_MCC
-Impossible d'ouvrir la classe MUI « %s » V%lu.%lu.\n\
-La classe n'est pas installée.
-; Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-; The class is not installed.
-;
-MSG_MCC_OLD
-Impossible d'ouvrir la classe MUI « %s » V%lu.%lu.\n\
-\n\
-La version installée est la : %lu.%lu, vous devez\n\
-la mettre à jour.
-; Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-; \n\
-; Currently installed is V%lu.%lu, please upgrade!
-;
-MSG_MCC_IN_USE
-Impossible d'ouvrir la classe MUI « %s » V%lu.%lu.\n\
-%lu.%lu est actuellement utilisée par une autre application.\n\
-\n\
-Une fois la bonne version installée, fermez tous les\n\
-programmes utilisant MUI et essayez de nouveau.
-; Couldn't open MUI custom class '%s' V%lu.%lu.\n\
-; %lu.%lu is currently in use by other applications.\n\
-; \n\
-; Once you have installed the required version,\n\
-; close all MUI programs, make sure the old class\n\
-; is flushed from memory and try again.
 ;
 MSG_RETRY_QUIT_GAD
 Ré-essayer|Quitter
@@ -7762,23 +7702,27 @@ Cela peut être du à un encodage incorrect  par le client de mail émetteur ou à u
 ; during transmission.
 ;
 MSG_MA_MessageImport
-Import messages from MBOX, DBX or plain mail files...
+Importation des messages depuis fichier MBOX, BX ou texte...
+;Import messages from MBOX, DBX or plain mail files...
 ;
 MSG_ER_MESSAGEIMPORT
-An error occurred while trying to import mails from file '%s'.\n\
-\n\
-Make sure that the choosen file is readable and contains \
-RFC822 compliant emails in one of YAM's supported import data \
-formats. YAM is currently able to import mails from either a 'MBOX', \
-'DBX' (Outlook Express) or even a plain RFC822 mail file. Please \
-check the documentation for more information on the supported import \
-formats and alternative methods to import mails.
+Une erreur est survenue lors de l'import des messages depuis le fichier '%s'.\n\n\
+Veuillez vous assurer que le fichier choisi est lisible et qu'il contient bien des messages conformes à la RFC822 dans l'un des formats  d'import supporté par YAM. YAM est actuellement capable d'importer des messages depuis un fichier 'MBOX', 'DBX' (Outlook Express) et même un fichier texte RFC822. Veuillez vérifier la documentation pour plus d'information sur les formats d'imports supportés et les méthodes alternatives d'import de messages.
+; An error occurred while trying to import mails from file '%s'.\n\
+; \n\
+; Make sure that the choosen file is readable and contains \
+; RFC822 compliant emails in one of YAM's supported import data \
+; formats. YAM is currently able to import mails from either a 'MBOX', \
+; 'DBX' (Outlook Express) or even a plain RFC822 mail file. Please \
+; check the documentation for more information on the supported import \
+; formats and alternative methods to import mails.
 ; FILENAME
 ;
 MSG_MA_MESSAGEEXPORT
-Export messages to a MBOX compliant mail file...
+Exportation des messages vers un fichier de messages compatible MBOX...
+; Export messages to a MBOX compliant mail file...
 ;
 MSG_YAMINFO
-Logiciel en Open Source de courriers électroniques pour Amiga\n\
+Logiciel de courrier électronique en Open Source pour Amiga\n
 ; Open Source E-mail package for the Amiga
 ;
