@@ -95,6 +95,12 @@ OVERLOAD(OM_NEW)
 																	 "\033bSetDST\0332\n"
 																	 "\033iStefan Falke\0332\n"
 																	 "http://www.sfxsoft.de/setdst.html\n\n"
+																	 "\033bFlexCat\0332\n"
+																	 "\033iFlexCat Open Source Team\0332\n"
+																	 "http://www.sf.net/projects/flexcat/\n\n"
+																	 "\033bflex: The Fast Lexical Analyzer\0332\n"
+																	 "\033iflex Open Source Team\0332\n"
+																	 "http://flex.sourceforge.net/\n\n"
 																	 "\033bPretty Good Privacy (PGP)\0332\n"
 																	 "\033iPhil Zimmermann\0332\n\n");
 	aboutText = StrBufCat(aboutText, GetStr(MSG_WebSite));
