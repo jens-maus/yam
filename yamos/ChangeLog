@@ -5,6 +5,18 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2006-02-28  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_RE.c: non-mulipart mails containing only one not printable
+      mail part (e.g. a jpg attachment) didn't make the attachment
+      group show up and therefore seemed to be just empty. YAM should
+      now treat these mails correctly and also show the attachment
+      icon as soon as the mail is selected. However, we are only
+      able to identify such mails as mails containing attachments
+      right at the time when we load it (user selects it) - therefore
+      the attachment icon will still not be shown right after the
+      mail was received or the index was rescanned.
+
 2006-02-26  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: merged the two separate content parameter parsing

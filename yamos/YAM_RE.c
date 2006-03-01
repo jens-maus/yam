@@ -1540,6 +1540,8 @@ static void RE_UndoPart(struct Part *rp)
     }
     else if(rmData->letterPartNum > rp->Nr)
       rmData->letterPartNum--;
+
+    D(DBF_MAIL, "new letterpart is #%ld", rmData->letterPartNum);
   }
 
   // and last, but not least we free the part
@@ -2270,6 +2272,39 @@ BOOL RE_LoadMessage(struct ReadMailData *rmData, enum ParseMode pMode)
 
     if(i > 0)
       result = TRUE;
+
+    // now we do a check because there might be mails with no actual
+    // readable letterPart - however, they just have one part and it
+    // is just a binary attachment (perhaps a jpg). For these mails we do
+    // have to do things a bit different and stll flag them as being a
+    // multipart mail so that an attachment icon is shown.
+    if(rmData->letterPartNum == 0 && i == 2)
+    {
+      // we copy some meta information from the firstPart to
+      // the actual part containing the attachment.
+      struct Part *firstPart = rmData->firstPart;
+      struct Part *attachPart = firstPart->Next;
+
+      strcpy(attachPart->Name, firstPart->Name);
+      strcpy(attachPart->Description, firstPart->Description);
+      attachPart->CParFileName = firstPart->CParFileName;
+
+      // in case the mail is already flagged as a
+      // multipart mail we don't have to go on...
+      if(isMultiPartMail(mail) == FALSE)
+      {
+        // set the MultiPart-Mixed flag
+    		SET_FLAG(mail->mflags, MFLAG_MP_MIXED);
+
+		  	// if the mail is no virtual mail we can also
+			  // refresh the maillist depending information
+  			if(!isVirtualMail(mail))
+	  		{
+		  		SET_FLAG(mail->Folder->Flags, FOFL_MODIFY);  // flag folder as modified
+			  	DoMethod(G->MA->GUI.PG_MAILLIST, MUIM_MainMailListGroup_RedrawMail, mail);
+  			}
+      }
+    }
   }
 
   BusyEnd();
