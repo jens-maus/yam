@@ -5,6 +5,17 @@ YAM Open Source - ChangeLog
 $Id$
 $Source$
 
+2006-03-01  Jens Langner <Jens.Langner@light-speed.de>
+
+    * YAM_CO.c: removed the on-the-fly config pane generation and
+      exchange mechanism via MUIM_Group_InitChange() because this
+      was the reason for the window messup which occurred to the
+      config window while switching preference panes. Also slightly
+      did some cosmetic changes to the configuration window to make
+      it look more consistent and doesn't mix up the NListview.
+    * classes/Aboutwindow.c: added FlexCat and 'flex' to the list
+      of used third party tools.
+
 2006-02-28  Jens Langner <Jens.Langner@light-speed.de>
 
     * YAM_RE.c: non-mulipart mails containing only one not printable

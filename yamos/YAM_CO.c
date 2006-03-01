@@ -71,7 +71,6 @@ struct Config *CE = NULL;
 /* local protos */
 static void CO_NewPrefsFile(char*);
 static int CO_DetectPGP(struct Config*);
-static APTR CO_BuildPage(struct CO_ClassData*, int);
 static struct CO_ClassData *CO_New(void);
 static void CopyConfigData(struct Config*, struct Config*);
 
@@ -1626,65 +1625,23 @@ HOOKPROTONHNO(CO_ResetToDefaultFunc, void, int *arg)
 MakeStaticHook(CO_ResetToDefaultHook,CO_ResetToDefaultFunc);
 
 ///
-/// CO_BuildPage
-//  Creates a GUI section of the configuration
-static APTR CO_BuildPage(struct CO_ClassData *data, int page)
-{
-   switch (page)
-   {
-      case  0: return CO_Page0(data);
-      case  1: return CO_Page1(data);
-      case  2: return CO_Page2(data);
-      case  3: return CO_Page3(data);
-      case  4: return CO_Page4(data);
-      case  5: return CO_Page5(data);
-      case  6: return CO_Page6(data);
-      case  7: return CO_Page7(data);
-      case  8: return CO_Page8(data);
-      case  9: return CO_Page9(data);
-      case 10: return CO_Page10(data);
-      case 11: return CO_Page11(data);
-      case 12: return CO_Page12(data);
-      case 13: return CO_Page13(data);
-      case 14: return CO_Page14(data);
-   }
-
-   return NULL;
-}
-
-///
 /// CO_ChangePageFunc
 //  Selects a different section of the configuration
 HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
 {
-  struct CO_GUIData *gui = &G->CO->GUI;
-
   if(*arg < 0 || *arg >= MAXCPAGES)
     return;
 
-  set(gui->WI, MUIA_Window_Sleep, TRUE);
   CO_GetConfig();
 
-  if(DoMethod(gui->GR_PAGE, MUIM_Group_InitChange))
-  {
-    DoMethod(gui->GR_PAGE, OM_REMMEMBER, gui->GR_SUBPAGE);
-    MUI_DisposeObject(gui->GR_SUBPAGE);
+  G->CO->VisiblePage = *arg;
+  G->CO->Visited[*arg] = TRUE;
+  set(G->CO->GUI.GR_PAGE, MUIA_Group_ActivePage, *arg);
+  set(G->CO->GUI.MI_IMPMIME, MUIA_Menuitem_Enabled, *arg == 11);
 
-    if((gui->GR_SUBPAGE = CO_BuildPage(G->CO, *arg)))
-    {
-      DoMethod(gui->GR_PAGE, OM_ADDMEMBER, gui->GR_SUBPAGE);
-      G->CO->VisiblePage = *arg;
-      G->CO->Visited[*arg] = TRUE;
-    }
-
-    DoMethod(gui->GR_PAGE, MUIM_Group_ExitChange);
-    set(gui->MI_IMPMIME, MUIA_Menuitem_Enabled, *arg == 11);
-    CO_SetConfig();
-  }
-  set(gui->WI, MUIA_Window_Sleep, FALSE);
+  CO_SetConfig();
 }
 MakeStaticHook(CO_ChangePageHook,CO_ChangePageFunc);
-
 ///
 /// CO_CloseFunc
 //  Closes configuration window
@@ -1793,26 +1750,36 @@ static struct CO_ClassData *CO_New(void)
          MUIA_Window_ID, MAKE_ID('C','O','N','F'),
          WindowContents, VGroup,
             Child, HGroup,
-               GroupSpacing(3),
                Child, data->GUI.NLV_PAGE = NListviewObject,
-                  MUIA_HorizWeight, 25,
                   MUIA_CycleChain,  TRUE,
-                  MUIA_NListview_Horiz_ScrollBar, MUIV_NListview_HSB_None,
                   MUIA_NListview_NList, data->GUI.LV_PAGE = ConfigPageListObject,
-                     InputListFrame,
-                     MUIA_NList_Format,         "MW=-1 W=-1",
+                     MUIA_NList_Format,         "",
+                     MUIA_NList_Title,          FALSE,
+                     MUIA_NList_AdjustWidth,    TRUE,
+                     MUIA_NList_AutoVisible,    TRUE,
                      MUIA_NList_MinLineHeight,  16,
                      MUIA_NList_SourceArray,    pages,
                      MUIA_NList_Active,         MUIV_NList_Active_Top,
                   End,
                End,
-               Child, BalanceObject, End,
-               Child, data->GUI.GR_PAGE = VGroup,
-                  MUIA_HorizWeight, 100,
-                  TextFrame,
-                  InnerSpacing(6,6),
-                  MUIA_Background, MUII_PageBack,
-                  Child, data->GUI.GR_SUBPAGE = CO_BuildPage(data, 0),
+               Child, data->GUI.GR_PAGE = PageGroup,
+                  NoFrame,
+            			MUIA_Group_ActivePage, 0,
+                  Child, CO_Page0(data),
+                  Child, CO_Page1(data),
+                  Child, CO_Page2(data),
+                  Child, CO_Page3(data),
+                  Child, CO_Page4(data),
+                  Child, CO_Page5(data),
+                  Child, CO_Page6(data),
+                  Child, CO_Page7(data),
+                  Child, CO_Page8(data),
+                  Child, CO_Page9(data),
+                  Child, CO_Page10(data),
+                  Child, CO_Page11(data),
+                  Child, CO_Page12(data),
+                  Child, CO_Page13(data),
+                  Child, CO_Page14(data),
                End,
             End,
             Child, HGroup,

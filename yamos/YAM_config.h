@@ -47,7 +47,6 @@ struct CO_GUIData
    Object *NLV_PAGE;
    Object *LV_PAGE;
    Object *GR_PAGE;
-   Object *GR_SUBPAGE;
    Object *ST_REALNAME;
    Object *ST_EMAIL;
    Object *ST_POPHOST0;

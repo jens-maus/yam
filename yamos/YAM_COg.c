@@ -558,6 +558,7 @@ APTR CO_Page0(struct CO_ClassData *data)
 
    if ((grp = VGroup,
          MUIA_HelpNode, "CO00",
+
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_MinConfig)),
             Child, Label2(GetStr(MSG_CO_RealName)),
             Child, data->GUI.ST_REALNAME = MakeString(SIZE_REALNAME,GetStr(MSG_CO_RealName)),
@@ -568,6 +569,7 @@ APTR CO_Page0(struct CO_ClassData *data)
             Child, Label2(GetStr(MSG_CO_Password)),
             Child, data->GUI.ST_PASSWD0   = MakePassString(GetStr(MSG_CO_Password)),
          End,
+
          Child, ColGroup(2), GroupFrameT(GetStr(MSG_CO_SYSTEMSETTINGS)),
             Child, Label2(GetStr(MSG_CO_TimeZone)),
             Child, VGroup,
