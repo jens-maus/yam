@@ -529,7 +529,7 @@ static void WriteContentTypeAndEncoding(FILE *fh, struct WritePart *part)
    fputs("Content-Type: ", fh);
    WriteCtypeNicely(fh, part->ContentType);
    if(!strncmp(part->ContentType, "text/", 5) && part->EncType != ENC_NONE)
-      fprintf(fh, "; charset=%s", C->LocalCharset);
+      fprintf(fh, "; charset=%s", strippedCharsetName(G->localCharset));
 
    if ((p = part->Name)) if (*p)
    {

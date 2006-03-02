@@ -166,6 +166,30 @@ enum {
 
 ///
 
+/*** Helper functions for codesets.library ***/
+/// strippedCharsetName()
+// return the charset code stripped and without any white spaces
+char *strippedCharsetName(const struct codeset* codeset)
+{
+  char *strStart = TrimStart(codeset->name);
+  char *strEnd = strchr(strStart, ' ');
+
+  if(strEnd != NULL || strStart > codeset->name)
+  {
+    static char strippedName[SIZE_CTYPE+1];
+    int len = strEnd-strStart;
+
+    strncpy(strippedName, strStart, len);
+    strippedName[len] = '\0';
+
+    return strippedName;
+  }
+  else
+    return codeset->name;
+}
+
+///
+
 /*** BASE64 encode/decode routines (RFC 2045) ***/
 /// base64encode()
 // optimized base64 encoding function returning the length of the
@@ -1901,7 +1925,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
 
                 // as we splitted an encoded-word we have to start the next
                 // line with a proper encoded-word start again.
-                move_start = sprintf(encode_buf, "=?%s?Q?", C->LocalCharset);
+                move_start = sprintf(encode_buf, "=?%s?Q?", strippedCharsetName(G->localCharset));
 
                 // then move the other stuff to the start again
                 memmove(encode_buf+move_start, split_pos, ebp-split_pos);
@@ -1977,7 +2001,7 @@ int rfc2047_encode_file(FILE *fh, const char *str)
           // before we place encoded data in our encode buffer we have to
           // place the "=?charset?Q?" string at the beginning because here
           // the encoding starts
-          ebp += sprintf(ebp, "=?%s?Q?", C->LocalCharset);
+          ebp += sprintf(ebp, "=?%s?Q?", strippedCharsetName(G->localCharset));
         }
 
         // so this is where the actual encoding is performed now.
@@ -2119,7 +2143,7 @@ static int rfc2047_dec_callback(const char *txt, unsigned int len, const char *c
   {
     // check if the src codeset of the string isn't the same
     // like our local one.
-    if(stricmp(chset, C->LocalCharset) != 0)
+    if(stricmp(chset, strippedCharsetName(G->localCharset)) != 0)
     {
       struct codeset *srcCodeset;
 
@@ -2376,9 +2400,13 @@ static int rfc2047_decode_int(const char *text,
     }
     else
     {
-      // RFC 2231 language
-      lang = strrchr(chset, '*');
-      if(lang) *lang++ = 0;
+      // rfc2231 updates rfc2047 encoded words...
+      // The ABNF given in RFC 2047 for encoded-words is:
+      //   encoded-word := "=?" charset "?" encoding "?" encoded-text "?="
+      // This specification changes this ABNF to:
+      //   encoded-word := "=?" charset ["*" language] "?" encoding "?" encoded-
+      if((lang = strrchr(chset, '*')))
+        *lang++ = '\0';
 
       rc = (*func)(enctext, strlen(enctext), chset, lang, arg);
     }
@@ -2397,3 +2425,8 @@ static int rfc2047_decode_int(const char *text,
 }
 
 ///
+
+/*** RFC 2231 MIME parameter encoding/decoding routines ***/
+#warning "implement RFC 2231 decoding/encoding ASAP!"
+
+

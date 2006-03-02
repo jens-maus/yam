@@ -85,6 +85,8 @@ struct Global
    struct DI_ClassData *    DI;
    struct US_ClassData *    US;
    struct ReadMailData *    ActiveRexxRMData;
+   struct codeset *         localCharset;
+   struct codesetList *     codesetsList;
 
    #if defined(__amigaos4__)
    struct MsgPort *         AppLibPort;
@@ -123,8 +125,6 @@ struct Global
    struct NotifyRequest     WR_NRequest[MAXWR+1];
    struct sockaddr_in       TR_INetSocketAddr;
    struct MinList           readMailDataList;
-   struct codeset           *localCharset;
-   struct codesetList       *codesetsList;
 
    char                     ProgDir[SIZE_PATH];
    char                     ProgName[SIZE_FILE];

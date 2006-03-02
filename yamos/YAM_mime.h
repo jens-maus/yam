@@ -34,6 +34,9 @@
 
 #include "YAM_stringsizes.h"
 
+// codesets.library helper functions
+char *strippedCharsetName(const struct codeset* codeset);
+
 // base64 encoding/decoding routines
 int base64encode(char *to, const unsigned char *from, unsigned int len);
 int base64decode(char *to, const unsigned char *from, unsigned int len);

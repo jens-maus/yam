@@ -7,6 +7,9 @@ $Source$
 
 2006-03-01  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_RE.c,YAM_MI.c,YAM_WR.c: fixed a bug in the localCharset
+      routines when generating/reading mails which codeset names
+      containing whitespaces. Now YAM will strip them accordingly.
     * YAM_CO.c: removed the on-the-fly config pane generation and
       exchange mechanism via MUIM_Group_InitChange() because this
       was the reason for the window messup which occurred to the

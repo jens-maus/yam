@@ -919,7 +919,23 @@ static void RE_ParseContentParameters(struct Part *rp, enum parameterType pType)
         {
           if(!strncmp(s, "name", 4))
           {
-            rfc2047_decode(eq, eq, strlen(eq));
+            // we try to find out which encoding the
+            // parameter is actually using by checking for
+            // an asterisk sign (see: RFC 2231)
+            if(s[4] == '*')
+            {
+              #warning "implement RFC 2231 decoding ASAP!"
+            }
+            else
+            {
+              // otherwise we use our rfc2047 decoding
+              // routines even if this is not defined
+              // by any RFC. However, many mail clients
+              // seem to use RFC2047 encoding also
+              // for the content parameters.
+              rfc2047_decode(eq, eq, strlen(eq));
+            }
+
             rp->CParName = eq;
           }
           else if(!strncmp(s, "description", 11))
@@ -1209,7 +1225,7 @@ static int RE_DecodeStream(struct Part *rp, FILE *in, FILE *out)
   {
     // now we check that the codeset of the mail part really
     // differs from the local one we are currently using
-    if(stricmp(rp->CParCSet, C->LocalCharset) != 0)
+    if(stricmp(rp->CParCSet, strippedCharsetName(G->localCharset)) != 0)
     {
       D(DBF_MAIL, "found Part #%d encoded in charset '%s' which is different than local one.", rp->Nr, rp->CParCSet);
 
