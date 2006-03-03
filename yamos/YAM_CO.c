@@ -1636,10 +1636,11 @@ HOOKPROTONHNO(CO_ChangePageFunc, void, int *arg)
 
   G->CO->VisiblePage = *arg;
   G->CO->Visited[*arg] = TRUE;
-  set(G->CO->GUI.GR_PAGE, MUIA_Group_ActivePage, *arg);
   set(G->CO->GUI.MI_IMPMIME, MUIA_Menuitem_Enabled, *arg == 11);
 
   CO_SetConfig();
+
+  set(G->CO->GUI.GR_PAGE, MUIA_Group_ActivePage, *arg);
 }
 MakeStaticHook(CO_ChangePageHook,CO_ChangePageFunc);
 ///
@@ -1782,6 +1783,12 @@ static struct CO_ClassData *CO_New(void)
                   Child, CO_Page14(data),
                End,
             End,
+
+    				Child, RectangleObject,
+          	   MUIA_Rectangle_HBar, TRUE,
+    		       MUIA_FixHeight,      4,
+    				End,
+
             Child, HGroup,
                MUIA_Group_SameWidth, TRUE,
                Child, data->GUI.BT_SAVE   = MakeButton(GetStr(MSG_CO_Save)),

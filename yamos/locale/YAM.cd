@@ -5627,3 +5627,93 @@ close all MUI programs, make sure the old class\n\
 is flushed from memory and try again.
 ; MCC_NAME, MCC_VERSION, MCC_REVISION, MCC_URL
 ;
+MSG_CO_FIRSTSTEPS_TITLE (1619//)
+First Steps Settings
+;
+MSG_CO_FIRSTSTEPS_SUMMARY (1620//)
+For quickly configurating the bare minimum...
+;
+MSG_CO_TCPIP_TITLE (1621//)
+TCP/IP Settings
+;
+MSG_CO_TCPIP_SUMMARY (1622//)
+For configuring your SMTP and POP3 server...
+;
+MSG_CO_NEWMAIL_TITLE (1623//)
+New Mail Settings
+;
+MSG_CO_NEWMAIL_SUMMARY (1624//)
+How to react upon receiving new mails...
+;
+MSG_CO_FILTER_TITLE (1625//)
+Mail Filter Settings
+;
+MSG_CO_FILTER_SUMMARY (1626//)
+Define your own mail filters...
+;
+MSG_CO_READ_TITLE (1627//)
+Mail Reading Settings
+;
+MSG_CO_READ_SUMMARY (1628//)
+Configure mail reading...
+;
+MSG_CO_WRITE_TITLE (1629//)
+Mail Writing Settings
+;
+MSG_CO_WRITE_SUMMARY (1630//)
+Configure mail writing...
+;
+MSG_CO_REPLY_TITLE (1631//)
+Mail Replying Settings
+;
+MSG_CO_REPLY_SUMMARY (1632//)
+Configure mail replying...
+;
+MSG_CO_SIGNATURE_TITLE (1633//)
+Mail Signature Settings
+;
+MSG_CO_SIGNATURE_SUMMARY (1634//)
+Configure your signatures...
+;
+MSG_CO_LISTS_TITLE (1635//)
+Mail Lists Settings
+;
+MSG_CO_LISTS_SUMMARY (1636//)
+Change the mail lists appearance...
+;
+MSG_CO_SECURITY_TITLE (1637//)
+Security Settings
+;
+MSG_CO_SECURITY_SUMMARY (1638//)
+Configure security relevant settings...
+;
+MSG_CO_STARTUP_TITLE (1639//)
+Startup/Quit Actions Setup
+;
+MSG_CO_STARTUP_SUMMARY (1640//)
+Maintenance processing during startup and shutdown of YAM...
+;
+MSG_CO_MIME_TITLE (1641//)
+MIME Datatype Setup
+;
+MSG_CO_MIME_SUMMARY (1642//)
+Setup how MIME types should be handled...
+;
+MSG_CO_ABOOK_TITLE (1643//)
+Adressbook Settings
+;
+MSG_CO_ABOOK_SUMMARY (1644//)
+Handle additional adressbook related option...
+;
+MSG_CO_SCRIPTS_TITLE (1645//)
+User-definable Scripts
+;
+MSG_CO_SCRIPTS_SUMMARY (1646//)
+Configure your helper scripts...
+;
+MSG_CO_MIXED_TITLE (1647//)
+Miscellaneous
+;
+MSG_CO_MIXED_SUMMARY (1648//)
+Configure various mixed settings...
+;
