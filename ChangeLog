@@ -6,6 +6,8 @@ $Id$
 
 2006-03-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * locale/italiano.ct: updated italian catalog translation kindly
+      provided by Luca Longone.
     * YAM_UT.c: added #?.msg extension to the recognized extension
       for a mail import requester.
     * misc: now that sf.net supports subversion repositories we

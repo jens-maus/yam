@@ -3,7 +3,7 @@
 ;
 ; $Id$
 ;
-## version $VER: YAM.catalog 5.6 (22.01.2006)
+## version $VER: YAM.catalog 5.7 (05.03.2006)
 ## codeset 0
 ## language italiano
 ## chunk AUTH Luca Longone
@@ -838,7 +838,7 @@ MSG_CO_AltRepPatternDef
 MSG_CO_ForwardIntroDef
 *** Inizio del messaggio inoltrato ***\\\\n\
 \\\\n\
-Data: %d %t\\\\n\
+Data: %c\\\\n\
 Da: %n <%e>\\\\n\
 Oggetto: %s\\\\n\
 \\\\n\
@@ -863,7 +863,7 @@ MSG_CO_MLRepHelloDef
 \0
 ;
 MSG_CO_MLRepIntroDef
-Il %d, %n scrisse:\\\\n\
+Il %c, %n scrisse:\\\\n\
 
 ;
 MSG_CO_MLRepByeDef
@@ -1292,9 +1292,6 @@ Testo _colorato
 ;
 MSG_CO_MultiReadWin
 Fin_estre multiple
-;
-MSG_CO_CharsetTrans
-Caratteri tra_d.
 ;
 MSG_CO_DisplayAll
 Most_ra tutti i testi
@@ -1908,10 +1905,6 @@ MSG_HELP_CO_CY_SIGSEPLINE
 Tipo di linea di separazione\n\
 della firma.
 ;
-MSG_HELP_CO_ST_INTRANS
-Applica questa tabella di conversione\n\
-caratteri quando leggi i messaggi.
-;
 MSG_HELP_CO_CH_ALLTEXTS
 Mostra tutte le parti di testo\n\
 di un messaggio multipart.
@@ -1973,10 +1966,6 @@ di un nuovo messaggio.
 MSG_HELP_CO_ST_BYETEXT
 Testo da inserire alla fine\n\
 di un nuovo messaggio.
-;
-MSG_HELP_CO_ST_OUTTRANS
-Applica questa tabella di conversione\n\
-caratteri nei nuovi messaggi.
 ;
 MSG_HELP_CO_ST_EDWRAP
 Lunghezza del testo del messaggio\n\
@@ -4514,9 +4503,6 @@ AppIcon di YAM?
 MSG_OPENGUI
 Apertura GUI...
 ;
-MSG_ERR_OPENLIB
-Impossibile aprire '%s', versione v%lu.%lu
-;
 MSG_CO_CONTEXTMENU
 Menu contestuale
 ;
@@ -4705,13 +4691,6 @@ Impossibile inizializzare sessione TLSv1/SSLv3 per %s
 MSG_TR_SENDAUTH
 Spedisco richiesta SMTP AUTH...
 ;
-MSG_CO_AutoTranslateIn
-Riconoscimento automatico Codice-pagina/T_raduzione
-;
-MSG_HELP_CO_CH_AUTOTRANSLATEIN
-Aiuta a decifrare strani set di caratteri.\n\
-Principalmente per chi usa il cirillico.
-;
 MSG_CO_IMPORTMIMETITLE
 Importa visualizzatori e tipi MIME
 ;
@@ -4741,23 +4720,6 @@ Nome del gruppo cartelle:
 ;
 MSG_ER_UNUSABLEAMISSL
 Hai selezionato il TLSv1/SSLv3 per questa connessione, ma AmiSSL non può essere inizializzato. Prego, controlla la tua installazione AmiSSL o disabilita il TLS/SSL per questa connessione.
-;
-MSG_NO_MCC
-Impossibile aprire la classe custom MUI '%s' V%lu.%lu.\n\
-La classe non è installata.
-;
-MSG_MCC_OLD
-Impossbile aprire la classe custom MUI '%s' V%lu.%lu.\n\
-\n\
-Al momento è installata la V%lu.%lu, aggiornala prego!
-;
-MSG_MCC_IN_USE
-Impossibile aprire classe custom MUI '%s' V%lu.%lu.\n\
-%lu.%lu è attualmente in uso in altre applicazioni.\n\
-\n\
-Una volta installata la versione richiesta, chiudi\n\
-tutti i programmi MUI, assicurati che la vecchia classe\n\
-sia stata liberata dalla memoria e riprova.
 ;
 MSG_RETRY_QUIT_GAD
 Riprova|Esci
@@ -5260,7 +5222,7 @@ MSG_QUICKSEARCH_VIEW
 Vedi:
 ;
 MSG_QUICKSEARCH_SHOWNMSGS
-mostrati %ld su %d
+mostrati %ld su %ld
 ;
 MSG_FI_NOFOLDERS
 _nessuna parte
@@ -5313,8 +5275,148 @@ Un errore si è verificato provando a importare i messaggi dal file '%s'.\n\
 Assicurati che il file sia leggibile e contenga email secondo l'RFC822 in uno dei formati dati supportati da YAM. YAM al momento è in grado di importare file da 'MBOX', 'DBX' (Outlook Express) o anche file di mail semplici RFC822. Prego consulta la documentazione per maggiori informazioni sui formati supportati in importazione e metodi alternativi per importare messaggi.
 ;
 MSG_MA_MESSAGEEXPORT
-Esporta messaggi in un file di mail secondo MBOX...
+Esporta messaggi verso un file compatibile MBOX...
 ;
 MSG_YAMINFO
-Programma Open Source di posta elettronica per Amiga
+Pacchetto E-mail Open Source per Amiga
 ;
+MSG_CO_SYSTEMSETTINGS
+Impostazioni di sistema
+;
+MSG_CO_DEFAULTCHARSET
+Set di caratteri predefinito
+;
+MSG_CO_CHARSETUNKNOWNWARN
+Il set di caratteri configurato per YAM è '%s' ma non è\n\
+supportato dalla versione installata della codesets.library.\n\
+\n\
+Come vuoi procedere?
+;
+MSG_CO_CHARSETUNKNOWNWARN_BT
+*_Cambia in predefinito|_Ignora
+;
+MSG_ER_LIB
+Impossibile aprire '%s', versione v%lu.%lu\n\
+\n\
+Prego assicurati di avere almeno questa versione\n\
+minima installata nel tuo percorso delle librerie.
+;
+MSG_ER_LIB_URL
+Impossibile aprire '%s', versione v%lu.%lu\n\
+\n\
+Prego consulta '%s'\n\
+per scaricare l'ultima versione e assicurati di averla\n\
+installata in modo corretto nel tuo percorso di librerie.
+;
+MSG_ER_NO_MCC
+Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
+\n\
+Prego consulta '%s'\n\
+e assicurati di aver installato l'ultima versione.
+;
+MSG_ER_MCC_OLD
+Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
+\n\
+Quella correntemente installata è v%lu.%lu, prego aggiornala\n\
+scaricando l'ultima versione da '%s'.
+;
+MSG_ER_MCC_IN_USE
+Impossibile aprire la classe MUI custom '%s' v%lu.%lu.\n\
+%lu.%lu è correntemente in uso da un altra applicazione.\n\
+\n\
+Prego consulta '%s'.\n\
+Una volta installata la versione richiesta,\n\
+chiudi tutti i programmi MUI, assicurati che la\n\
+vecchia classe sia liberata dalla memoria e riprova.
+;
+MSG_CO_FIRSTSTEPS_TITLE
+Impostazioni Primi Passi
+;
+MSG_CO_FIRSTSTEPS_SUMMARY
+Per configurare velocemente il minimo...
+;
+MSG_CO_TCPIP_TITLE
+Impostazioni TCP/IP
+;
+MSG_CO_TCPIP_SUMMARY
+Per configurare il tuo server SMTP e POP3...
+;
+MSG_CO_NEWMAIL_TITLE
+Impostazioni Nuova Posta
+;
+MSG_CO_NEWMAIL_SUMMARY
+Come reagire alla ricezione di nuova posta...
+;
+MSG_CO_FILTER_TITLE
+Impostazione Filtri di Posta
+;
+MSG_CO_FILTER_SUMMARY
+Definisci i tuoi filtri di posta...
+;
+MSG_CO_READ_TITLE
+Impostazioni Lettura Posta
+;
+MSG_CO_READ_SUMMARY
+Configura lettura della posta...
+;
+MSG_CO_WRITE_TITLE
+Impostazioni Scrittura Posta
+;
+MSG_CO_WRITE_SUMMARY
+Configura scrittura della posta...
+;
+MSG_CO_REPLY_TITLE
+Impostazioni Risposta Posta
+;
+MSG_CO_REPLY_SUMMARY
+Configura risposta posta...
+;
+MSG_CO_SIGNATURE_TITLE
+Impostazioni Firma della Posta
+;
+MSG_CO_SIGNATURE_SUMMARY
+Configura le tue firme...
+;
+MSG_CO_LISTS_TITLE
+Impostazioni Liste Posta
+;
+MSG_CO_LISTS_SUMMARY
+Cambia l'aspetto delle liste di posta...
+;
+MSG_CO_SECURITY_TITLE
+Impostazioni Sicurezza
+;
+MSG_CO_SECURITY_SUMMARY
+Configura impostazioni riguardanti la sicurezza...
+;
+MSG_CO_STARTUP_TITLE
+Impostazioni Azioni Lancio/Uscita
+;
+MSG_CO_STARTUP_SUMMARY
+Supervisione cose da fare durante lancio e chiusura di YAM...
+;
+MSG_CO_MIME_TITLE
+Impostazione Datatype MIME
+;
+MSG_CO_MIME_SUMMARY
+Imposta come i tipi MIME possono essere gestiti...
+;
+MSG_CO_ABOOK_TITLE
+Impostazioni Rubrica
+;
+MSG_CO_ABOOK_SUMMARY
+Gestisci opzioni addizionali riguardanti la rubrica..
+;
+MSG_CO_SCRIPTS_TITLE
+Script definiti dall'Utente
+;
+MSG_CO_SCRIPTS_SUMMARY
+Configura i tuoi script di aiuto...
+;
+MSG_CO_MIXED_TITLE
+Varie
+;
+MSG_CO_MIXED_SUMMARY
+Configura varie impostazioni...
+;
+
