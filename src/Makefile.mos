@@ -41,7 +41,7 @@ FC        = flexcat
 # Directories
 PREFIX    = .
 CLASSDIR  = $(PREFIX)/classes
-LOCALE    = $(PREFIX)/locale
+LOCALE    = $(PREFIX)/../locale
 EXTRASRC  = $(PREFIX)/extrasrc
 GENCLASSES= $(EXTRASRC)/genclasses
 OBJDIR    = .obj_mos
@@ -55,7 +55,7 @@ CDEFS    = -D__YAM_VERDATE=\"`date +%d.%m.%Y`\" \
 WARN     = -W -Wall
 OPTFLAGS = -O2 -fomit-frame-pointer -funroll-loops
 DEBUG    = -DDEBUG -g3 -O0
-CFLAGS   = -noixemul -pipe -I. -I./includes $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
+CFLAGS   = -noixemul -pipe -I. -I./include $(CPU) $(CPUFLAGS) $(WARN) $(OPTFLAGS) $(DEBUG) -c
 LDFLAGS  = -noixemul $(CPU)
 LDLIBS   = -lm -ldebug -lxpk -lamissl
 
