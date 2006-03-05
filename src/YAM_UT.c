@@ -1695,7 +1695,7 @@ int ReqFile(enum ReqFileType num, Object *win, char *title, int mode, char *draw
     "~(#?.info)",                     // ASL_ATTACH
     "#?.(yam|rexx)",                  // ASL_REXX
     "#?.(gif|jpg|jpeg|png|iff|ilbm)", // ASL_PHOTO
-    "#?.((mbx|eml|dbx)|#?,#?)",       // ASL_IMPORT
+    "#?.((mbx|eml|dbx|msg)|#?,#?)",   // ASL_IMPORT
     "#?.mbx",                         // ASL_EXPORT
     NULL                              // ASL_FOLDER
   };

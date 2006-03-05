@@ -6,6 +6,8 @@ $Id$
 
 2006-03-05  Jens Langner <Jens.Langner@light-speed.de>
 
+    * YAM_UT.c: added #?.msg extension to the recognized extension
+      for a mail import requester.
     * misc: now that sf.net supports subversion repositories we
       switched our whole repository from CVS to SVN and restructured
       our directory layout. In fact, now that we are using
