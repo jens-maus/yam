@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-10  Jens Langner <Jens.Langner@light-speed.de>
+
+    * src/YAM.c, src/YAM.h, src/YAM_COg.c, src/Debug.c, src/Debug.h:
+      moved the XPK packerlist loading routines to startup of YAM.
+      This should hopefully speed up the popup of the configuration
+      window now that all page groups are directly generated rather
+      than loading it on display of each page.
+
 2006-03-06  Gunther Nikl <gni@gecko.de>
 
     * src/VMakefile, src/smakefile: adapted for new repository layout.

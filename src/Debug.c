@@ -94,6 +94,7 @@ void SetupDebug(void)
 			{ "net",      DBF_NET     },
 			{ "util",     DBF_UTIL    },
 			{ "import",   DBF_IMPORT  },
+			{ "xpk",      DBF_XPK     },
 			{ "all",      DBF_ALL     },
 			{ NULL,       0           }
 		};

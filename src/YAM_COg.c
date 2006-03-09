@@ -108,65 +108,99 @@ HOOKPROTONH(CO_LV_RxDspFunc, long, char **array, int num)
 MakeStaticHook(CO_LV_RxDspHook,CO_LV_RxDspFunc);
 
 ///
-/// PO_HandleXPKFunc
-//  Copies XPK sublibrary id from list to string gadget
-HOOKPROTONH(PO_HandleXPKFunc, void, APTR pop, APTR text)
+/// PO_XPKOpenHook
+//  Sets the popup listview accordingly to the string gadget
+HOOKPROTONH(PO_XPKOpenFunc, BOOL, Object *list, Object *str)
 {
-   char *entry;
-   DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
-   if (entry) set(text, MUIA_Text_Contents, entry);
+  char *s;
+
+  if((s = (char *)xget(str, MUIA_Text_Contents)))
+  {
+    int i;
+
+    for(i=0;;i++)
+    {
+      char *x;
+
+      DoMethod(list, MUIM_List_GetEntry, i, &x);
+      if(!x)
+      {
+        set(list, MUIA_List_Active, MUIV_List_Active_Off);
+        break;
+      }
+      else if(!stricmp(x, s))
+      {
+        set(list, MUIA_List_Active, i);
+        break;
+      }
+    }
+  }
+
+  return TRUE;
 }
-MakeStaticHook(PO_HandleXPKHook, PO_HandleXPKFunc);
+MakeStaticHook(PO_XPKOpenHook, PO_XPKOpenFunc);
+
+///
+/// PO_XPKCloseHook
+//  Copies XPK sublibrary id from list to string gadget
+HOOKPROTONH(PO_XPKCloseFunc, void, Object *pop, Object *text)
+{
+  char *entry;
+
+  DoMethod(pop, MUIM_List_GetEntry, MUIV_List_GetEntry_Active, &entry);
+
+  if(entry)
+    set(text, MUIA_Text_Contents, entry);
+}
+MakeStaticHook(PO_XPKCloseHook, PO_XPKCloseFunc);
 
 ///
 /// MakeXPKPop
 //  Creates a popup list of available XPK sublibraries
 static Object *MakeXPKPop(Object **text, BOOL pack, BOOL encrypt)
 {
-   Object *lv, *po;
+  Object *lv, *po;
 
-   if ((po = PopobjectObject,
-      MUIA_Popstring_String, *text = TextObject, TextFrame,
-         MUIA_Background, MUII_TextBack,
-         MUIA_FixWidthTxt, "MMMM",
+  if((po = PopobjectObject,
+    MUIA_Popstring_String, *text = TextObject,
+      TextFrame,
+      MUIA_Background, MUII_TextBack,
+      MUIA_FixWidthTxt, "MMMM",
+    End,
+    MUIA_Popstring_Button, PopButton(MUII_PopUp),
+    MUIA_Popobject_StrObjHook, &PO_XPKOpenHook,
+    MUIA_Popobject_ObjStrHook, &PO_XPKCloseHook,
+    MUIA_Popobject_WindowHook, &PO_WindowHook,
+    MUIA_Popobject_Object, lv = ListviewObject,
+      MUIA_Listview_List, ListObject,
+        InputListFrame,
+        MUIA_List_AutoVisible,   TRUE,
+        MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
+        MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
       End,
-      MUIA_Popstring_Button, PopButton(MUII_PopUp),
-      MUIA_Popobject_ObjStrHook, &PO_HandleXPKHook,
-      MUIA_Popobject_WindowHook, &PO_WindowHook,
-      MUIA_Popobject_Object, lv = ListviewObject,
-         MUIA_Listview_List, ListObject,
-            InputListFrame,
-            MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
-            MUIA_List_DestructHook, MUIV_List_DestructHook_String,
-         End,
-      End,
-   End))
-   {
-      struct XpkPackerList xpl;
-      if (XpkBase) if (!XpkQueryTags(XPK_PackersQuery, &xpl, TAG_DONE))
-      {
-         struct XpkPackerInfo xpi;
-         ULONG i;
+    End,
+  End))
+  {
+    struct MinNode *curNode;
 
-         D(DBF_CONFIG, "Loaded XPK Packerlist: %ld packers found", xpl.xpl_NumPackers);
+    for(curNode = G->xpkPackerList.mlh_Head; curNode->mln_Succ; curNode = curNode->mln_Succ)
+    {
+      struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
+      BOOL suits = TRUE;
 
-         for (i = 0; i < xpl.xpl_NumPackers; i++)
-         {
-            if (!XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE))
-            {
-               BOOL suits = TRUE;
-               if (encrypt && isFlagClear(xpi.xpi_Flags, XPKIF_ENCRYPTION)) suits = FALSE;
-               if (pack && isFlagClear(xpi.xpi_Flags, 0x3f)) suits = FALSE;
+      if(encrypt && isFlagClear(xpkNode->info.xpi_Flags, XPKIF_ENCRYPTION))
+        suits = FALSE;
+      else if(pack && isFlagClear(xpkNode->info.xpi_Flags, 0x3f))
+        suits = FALSE;
 
-               D(DBF_CONFIG, "Found XPKPacker: %ld: [%s] - suits: %d", i, xpl.xpl_Packer[i], suits);
+      if(suits)
+        DoMethod(lv, MUIM_List_InsertSingle, xpkNode->info.xpi_Name, MUIV_List_Insert_Sorted);
+    }
 
-               if (suits) DoMethod(lv, MUIM_List_InsertSingle, xpl.xpl_Packer[i], MUIV_List_Insert_Sorted);
-            }
-         }
-      }
-      DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,po,2,MUIM_Popstring_Close,TRUE);
-   }
-   return po;
+    DoMethod(lv, MUIM_Notify, MUIA_Listview_DoubleClick, TRUE, po, 2, MUIM_Popstring_Close, TRUE);
+  }
+
+  return po;
 }
 
 ///
@@ -943,7 +977,6 @@ APTR CO_Page3(struct CO_ClassData *data)
 				 End,
 
          Child, HGroup,
-           //MUIA_Background, MUII_GroupBack,
               Child, VGroup,
                  MUIA_Weight, 70,
                  Child, NListviewObject,

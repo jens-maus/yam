@@ -93,6 +93,7 @@
 #define DBF_NET      (1<<10)    // for Network management output (YAM_TR.c)
 #define DBF_UTIL     (1<<11)    // for utility management output (YAM_UT.c)
 #define DBF_IMPORT   (1<<12)    // for import of messages (YAM_MA.c,YAM_TR.c)
+#define DBF_XPK      (1<<13)    // for XPKmaster.library stuff
 #define DBF_ALL      0xffffffff
 
 void SetupDebug(void);

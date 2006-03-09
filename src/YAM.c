@@ -138,6 +138,7 @@ static struct ADST_Data
 
 } ADSTdata;
 
+/*** TimerIO management routines ***/
 /// TC_Prepare
 //  prepares a timer for being started with TC_Start later on
 static void TC_Prepare(enum TimerIO tio, int seconds, int micros)
@@ -544,6 +545,8 @@ static void TC_Dispatcher(enum TimerIO tio)
 }
 
 ///
+
+/*** Auto-DST management routines ***/
 /// ADSTnotify_start
 //  AutoDST Notify start function
 static BOOL ADSTnotify_start(void)
@@ -594,6 +597,94 @@ static void ADSTnotify_stop(void)
 }
 
 ///
+
+/*** XPK Packer initialization routines ***/
+/// initXPKPackerList()
+// initializes the internal XPK PackerList
+static BOOL initXPKPackerList(void)
+{
+  ENTER();
+  BOOL result = FALSE;
+
+  NewList((struct List *)&G->xpkPackerList);
+
+  if(XpkBase)
+  {
+    struct XpkPackerList xpl;
+
+    if(XpkQueryTags(XPK_PackersQuery, &xpl, TAG_DONE) == 0)
+    {
+      struct XpkPackerInfo xpi;
+      unsigned int i;
+
+      D(DBF_XPK, "Loaded XPK Packerlist: %ld packers found", xpl.xpl_NumPackers);
+
+      for(i=0; i < xpl.xpl_NumPackers; i++)
+      {
+        if(XpkQueryTags(XPK_PackMethod, xpl.xpl_Packer[i], XPK_PackerQuery, &xpi, TAG_DONE) == 0)
+        {
+          struct xpkPackerNode* newPacker = malloc(sizeof(struct xpkPackerNode));
+
+          if(newPacker)
+          {
+            memcpy(&newPacker->info, &xpi, sizeof(struct XpkPackerInfo));
+
+            // because the short name isn't always equal to the packer short name
+            // we work around that problem and make sure they are equal.
+            strcpy(newPacker->info.xpi_Name, xpl.xpl_Packer[i]);
+
+            D(DBF_XPK, "Found XPKPacker: %ld: [%s] = '%s'", i, xpl.xpl_Packer[i], newPacker->info.xpi_Name);
+
+            // add the new packer to our internal list.
+            AddTail((struct List *)&G->xpkPackerList, (struct Node *)newPacker);
+
+            result = TRUE;
+          }
+        }
+        else
+        {
+          result = FALSE;
+          break;
+        }
+      }
+    }
+  }
+
+  RETURN(result);
+  return result;
+}
+
+///
+/// freeXPKPackerList()
+// free all content of our previously loaded XPK packer list
+static void freeXPKPackerList(void)
+{
+  ENTER();
+  struct MinNode *curNode;
+
+  if(IsMinListEmpty(&G->xpkPackerList) == TRUE)
+    return;
+
+  // Now we process the read header to set all flags accordingly
+  for(curNode = G->xpkPackerList.mlh_Head; curNode->mln_Succ;)
+  {
+    struct xpkPackerNode *xpkNode = (struct xpkPackerNode *)curNode;
+
+    // before we remove the node we have to save the pointer to the next one
+    curNode = curNode->mln_Succ;
+
+    // Remove node from list
+    Remove((struct Node *)xpkNode);
+
+    // Free everything of the node
+    free(xpkNode);
+  }
+
+  LEAVE();
+}
+
+///
+
 /// SplashProgress
 //  Shows progress of program initialization in the splash window
 static void SplashProgress(char *txt, int percent)
@@ -924,6 +1015,9 @@ static void Terminate(void)
 
   CLOSELIB(ApplicationBase, IApplication);
   #endif
+
+  // free our private internal XPK PackerList
+  freeXPKPackerList();
 
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
@@ -1459,7 +1553,7 @@ static void Initialise(BOOL hidden)
 
    // Check if the amissl.library is installed with the correct version
    // so that we can use it later
-   if(INITLIB("amissl.library", AmiSSL_CurrentVersion, AmiSSL_CurrentRevision, &AmiSSLBase, "main", &IAmiSSL, FALSE, NULL))
+   if(INITLIB("amissl.library", 1, 0, &AmiSSLBase, "main", &IAmiSSL, FALSE, NULL))
       G->TR_UseableTLS = TRUE;
 
    // now we try to open the application.library which is part of OS4
@@ -1508,6 +1602,7 @@ static void Initialise(BOOL hidden)
 
    // load & initialize some optional libraries which are not required, however highly recommended
    INITLIB(XPKNAME, 0, 0, &XpkBase, "main", &IXpk, FALSE, NULL);
+   initXPKPackerList();
 
    if (!TC_Init()) Abort(MSG_ErrorTimer);
    for (i = 0; i < MAXASL; i++)

@@ -35,6 +35,7 @@
 
 #include <proto/bsdsocket.h>
 #include <proto/codesets.h>
+#include <proto/xpkmaster.h>
 
 #include "YAM_rexx_rxif.h"   /* struct RuleResult */
 #include "YAM_stringsizes.h"
@@ -125,6 +126,7 @@ struct Global
    struct NotifyRequest     WR_NRequest[MAXWR+1];
    struct sockaddr_in       TR_INetSocketAddr;
    struct MinList           readMailDataList;
+   struct MinList           xpkPackerList;
 
    char                     ProgDir[SIZE_PATH];
    char                     ProgName[SIZE_FILE];
@@ -138,8 +140,15 @@ struct Global
 
 extern struct Global *G;
 
+struct xpkPackerNode
+{
+  struct MinNode node;
+  struct XpkPackerInfo info;
+};
+
 void TC_Restart(enum TimerIO tio, int seconds, int micros);
 void TC_Stop(enum TimerIO tio);
+
 void PopUp(void);
 void SetupAppIcons(void);
 
