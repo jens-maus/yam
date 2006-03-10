@@ -108,27 +108,28 @@ const unsigned long yamversiondays  = __YAM_VERDAYS;
 #endif
 
 /* no longer external visible, this is done by proto files! */
-struct Library* DataTypesBase = NULL;
-struct Library* GenesisBase   = NULL;
-struct Library* IconBase      = NULL;
-struct Library* IFFParseBase  = NULL;
-struct Library* IntuitionBase = NULL;
-struct Library* KeymapBase    = NULL;
-struct Library* LocaleBase    = NULL;
-struct Library* MiamiBase     = NULL;
-struct Library* MUIMasterBase = NULL;
-struct Library* OpenURLBase   = NULL;
-struct Library* RexxSysBase   = NULL;
-struct Library* SocketBase    = NULL;
-struct Library* UtilityBase   = NULL;
-struct Library* WorkbenchBase = NULL;
-struct Library* XpkBase       = NULL;
-struct Library* AmiSSLBase    = NULL;
-struct Device*  TimerBase     = NULL;
-struct Library* GfxBase       = NULL;
-struct Library* LayersBase    = NULL;
-struct Library* DiskfontBase  = NULL;
-struct Library* CodesetsBase  = NULL;
+struct Library* DataTypesBase     = NULL;
+struct Library* GenesisBase       = NULL;
+struct Library* IconBase          = NULL;
+struct Library* IFFParseBase      = NULL;
+struct Library* IntuitionBase     = NULL;
+struct Library* KeymapBase        = NULL;
+struct Library* LocaleBase        = NULL;
+struct Library* MiamiBase         = NULL;
+struct Library* MUIMasterBase     = NULL;
+struct Library* OpenURLBase       = NULL;
+struct Library* RexxSysBase       = NULL;
+struct Library* SocketBase        = NULL;
+struct Library* UtilityBase       = NULL;
+struct Library* WorkbenchBase     = NULL;
+struct Library* XpkBase           = NULL;
+struct Library* AmiSSLMasterBase  = NULL;
+struct Library* AmiSSLBase        = NULL;
+struct Device*  TimerBase         = NULL;
+struct Library* GfxBase           = NULL;
+struct Library* LayersBase        = NULL;
+struct Library* DiskfontBase      = NULL;
+struct Library* CodesetsBase      = NULL;
 #if defined(__amigaos4__)
 struct Library* ApplicationBase = NULL; // application.library
 #endif
@@ -150,6 +151,7 @@ struct SocketIFace*       ISocket       = NULL;
 struct UtilityIFace*      IUtility      = NULL;
 struct WorkbenchIFace*    IWorkbench    = NULL;
 struct XpkIFace*          IXpk          = NULL;
+struct AmiSSLMasterIFace* IAmiSSLMaster = NULL;
 struct AmiSSLIFace*       IAmiSSL       = NULL;
 struct TimerIFace*        ITimer        = NULL;
 struct GraphicsIFace*     IGraphics     = NULL;

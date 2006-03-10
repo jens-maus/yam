@@ -32,6 +32,7 @@
 
 #include <clib/alib_protos.h>
 #include <exec/execbase.h>
+#include <libraries/amisslmaster.h>
 #include <libraries/asl.h>
 #include <libraries/genesis.h>
 #include <mui/NList_mcc.h>
@@ -56,6 +57,7 @@
 #include <proto/wb.h>
 #include <proto/xpkmaster.h>
 #include <proto/amissl.h>
+#include <proto/amisslmaster.h>
 #include <proto/codesets.h>
 
 #if defined(__amigaos4__)
@@ -603,8 +605,8 @@ static void ADSTnotify_stop(void)
 // initializes the internal XPK PackerList
 static BOOL initXPKPackerList(void)
 {
-  ENTER();
   BOOL result = FALSE;
+  ENTER();
 
   NewList((struct List *)&G->xpkPackerList);
 
@@ -631,7 +633,7 @@ static BOOL initXPKPackerList(void)
 
             // because the short name isn't always equal to the packer short name
             // we work around that problem and make sure they are equal.
-            strcpy(newPacker->info.xpi_Name, xpl.xpl_Packer[i]);
+            strcpy((char *)newPacker->info.xpi_Name, (char *)xpl.xpl_Packer[i]);
 
             D(DBF_XPK, "Found XPKPacker: %ld: [%s] = '%s'", i, xpl.xpl_Packer[i], newPacker->info.xpi_Name);
 
@@ -659,8 +661,8 @@ static BOOL initXPKPackerList(void)
 // free all content of our previously loaded XPK packer list
 static void freeXPKPackerList(void)
 {
-  ENTER();
   struct MinNode *curNode;
+  ENTER();
 
   if(IsMinListEmpty(&G->xpkPackerList) == TRUE)
     return;
@@ -1017,14 +1019,26 @@ static void Terminate(void)
   #endif
 
   // free our private internal XPK PackerList
+  D(DBF_STARTUP, "cleaning up XPK stuff...");
   freeXPKPackerList();
+  CLOSELIB(XpkBase, IXpk);
+
+  // cleaning up all AmiSSL stuff
+  D(DBF_STARTUP, "cleaning up AmiSSL stuff...");
+  if(AmiSSLBase)
+  {
+    CleanupAmiSSLA(NULL);
+
+    DROPINTERFACE(IAmiSSL);
+    CloseAmiSSL();
+    AmiSSLBase = NULL;
+  }
+  CLOSELIB(AmiSSLMasterBase, IAmiSSLMaster);
 
   // close all libraries now.
   D(DBF_STARTUP, "closing all opened libraries...");
   CLOSELIB(CodesetsBase,  ICodesets);
   CLOSELIB(DataTypesBase, IDataTypes);
-  CLOSELIB(XpkBase,       IXpk);
-  CLOSELIB(AmiSSLBase,    IAmiSSL);
   CLOSELIB(MUIMasterBase, IMUIMaster);
   CLOSELIB(RexxSysBase,   IRexxSys);
   CLOSELIB(IFFParseBase,  IIFFParse);
@@ -1551,10 +1565,20 @@ static void Initialise(BOOL hidden)
    INITLIB("datatypes.library", 39, 0, &DataTypesBase,"main", &IDataTypes,TRUE, NULL);
    INITLIB("codesets.library",   6, 0, &CodesetsBase, "main", &ICodesets, TRUE, "http://www.sf.net/projects/codesetslib/");
 
-   // Check if the amissl.library is installed with the correct version
-   // so that we can use it later
-   if(INITLIB("amissl.library", 1, 0, &AmiSSLBase, "main", &IAmiSSL, FALSE, NULL))
-      G->TR_UseableTLS = TRUE;
+   // we check for the amisslmaster.library v3 accordingly
+   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 0, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
+   {
+     if(InitAmiSSLMaster(AMISSL_CURRENT_VERSION, TRUE))
+     {
+       if((AmiSSLBase = OpenAmiSSL()) &&
+          GETINTERFACE("main", IAmiSSL, AmiSSLBase))
+       {
+         G->TR_UseableTLS = TRUE;
+
+         D(DBF_STARTUP, "successfully opened AmiSSL library.");
+       }
+     }
+   }
 
    // now we try to open the application.library which is part of OS4
    // and will be used to notify YAM of certain events and also manage

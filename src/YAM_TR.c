@@ -949,17 +949,20 @@ BOOL TR_OpenTCPIP(void)
   // Now we have to check for TLS/SSL support
   if(G->TR_UseableTLS && AmiSSLBase && SocketBase)
   {
-    if(InitAmiSSL(AmiSSL_Version,     AmiSSL_CurrentVersion,
-                  AmiSSL_Revision,    AmiSSL_CurrentRevision,
-                  AmiSSL_SocketBase,  SocketBase,
-                  /*AmiSSL_VersionOverride, TRUE,*/ /* If you insist */
+    #if defined(__amigaos4__)
+    if(InitAmiSSL(AmiSSL_ISocket, ISocket,
                   TAG_DONE) != 0)
+    #else
+    if(InitAmiSSL(AmiSSL_SocketBase, SocketBase,
+                  TAG_DONE) != 0)
+    #endif
     {
       ER_NewError(GetStr(MSG_ER_INITAMISSL));
       G->TR_UseableTLS = G->TR_UseTLS = FALSE;
     }
   }
-  else G->TR_UseTLS = FALSE;
+  else
+    G->TR_UseTLS = FALSE;
 
   return (BOOL)(SocketBase != NULL);
 }

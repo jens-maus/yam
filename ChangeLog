@@ -6,6 +6,10 @@ $Id$
 
 2006-03-10  Jens Langner <Jens.Langner@light-speed.de>
 
+    * src/YAM.c, src/YAM_TR.c: now that AmiSSL v3 is also available
+      for m68k machines, we briefly adapted YAM to the new AmiSSLv3
+      SDK. However, minor changes will be needed to address things
+      like certificating checking and such.
     * src/YAM.c, src/YAM.h, src/YAM_COg.c, src/Debug.c, src/Debug.h:
       moved the XPK packerlist loading routines to startup of YAM.
       This should hopefully speed up the popup of the configuration
