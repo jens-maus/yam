@@ -1566,7 +1566,7 @@ static void Initialise(BOOL hidden)
    INITLIB("codesets.library",   6, 0, &CodesetsBase, "main", &ICodesets, TRUE, "http://www.sf.net/projects/codesetslib/");
 
    // we check for the amisslmaster.library v3 accordingly
-   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 0, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
+   if(INITLIB("amisslmaster.library", AMISSLMASTER_MIN_VERSION, 5, &AmiSSLMasterBase, "main", &IAmiSSLMaster, FALSE, NULL))
    {
      if(InitAmiSSLMaster(AMISSL_CURRENT_VERSION, TRUE))
      {

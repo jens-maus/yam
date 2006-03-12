@@ -30,12 +30,15 @@
 
 #include <clib/alib_protos.h>
 #include <diskfont/diskfonttag.h>
+#include <libraries/amisslmaster.h>
 #include <libraries/asl.h>
 #include <libraries/iffparse.h>
 #include <libraries/locale.h>
 #include <mui/NList_mcc.h>
 #include <mui/NListtree_mcc.h>
 #include <mui/TextEditor_mcc.h>
+#include <proto/amissl.h>
+#include <proto/amisslmaster.h>
 #include <proto/codesets.h>
 #include <proto/diskfont.h>
 #include <proto/dos.h>
@@ -1097,6 +1100,7 @@ void CO_SetDefaults(struct Config *co, int page)
       co->HideGUIElements = 0;
       strcpy(co->LocalCharset, "ISO-8859-1");
       co->SysCharsetCheck = TRUE;
+      co->AmiSSLCheck = TRUE;
       co->PrintMethod = PRINTMETHOD_RAW;
       co->StackSize = 40000;
       co->AutoColumnResize = TRUE;
@@ -1277,6 +1281,46 @@ void CO_Validate(struct Config *co, BOOL update)
        // fallback to the system's default codeset
        if((G->localCharset = CodesetsFindA(NULL, NULL)))
          strncpy(co->LocalCharset, G->localCharset->name, SIZE_CTYPE);
+     }
+   }
+
+   // we also check if AmiSSL was found installed or not. And in case the
+   // AmiSSL warning is enabled we notify the user about a not running
+   // amissl installation.
+   if(co->AmiSSLCheck)
+   {
+     if(AmiSSLMasterBase == NULL || AmiSSLBase == NULL ||
+        G->TR_UseableTLS == FALSE)
+     {
+        int res = MUI_Request(G->App, NULL, 0,
+                              GetStr(MSG_CO_AMISSLWARN_TITLE),
+                              GetStr(MSG_CO_AMISSLWARN_BT),
+                              GetStr(MSG_CO_AMISSLWARN),
+                              AMISSLMASTER_MIN_VERSION, 5);
+
+        // if the user has clicked on "Ignore always", we do
+        // change the AmiSSLCheck variables and save the config
+        // immediatly
+        if(res == 1)
+        {
+          exit(RETURN_ERROR);
+        }
+        else if(res == 2)
+        {
+          co->AmiSSLCheck = FALSE;
+          saveAtEnd = TRUE;
+        }
+     }
+   }
+   else
+   {
+     // we reenable the AmiSSLCheck as soon as we found
+     // the library to be working fine.
+     if(AmiSSLMasterBase != NULL && AmiSSLBase != NULL &&
+        G->TR_UseableTLS == TRUE)
+     {
+       co->AmiSSLCheck = TRUE;
+       saveAtEnd = TRUE;
      }
    }
 

@@ -4,6 +4,14 @@ YAM Open Source - ChangeLog
 
 $Id$
 
+2006-03-12  Jens Langner <Jens.Langner@light-speed.de>
+
+    * src/YAM_CO.c: implemented a warning requester for warning the
+      user in case no correctly installed AmiSSL v3.5+ installation
+      was found during startup. Then either the user may exit
+      immediately or ignore the warning. This should make the switch
+      from AmiSSLv1 to v3 more obvious.
+
 2006-03-11  Jens Langner <Jens.Langner@light-speed.de>
 
     * src/YAM.c, src/YAM_TR.c: now that AmiSSL v3 is also available

@@ -421,6 +421,7 @@ struct Config
    BOOL  QuickSearchBar;
    BOOL  WBAppIcon;
    BOOL  DockyIcon;
+   BOOL  AmiSSLCheck;
 
    struct MUI_PenSpec ColoredText;
    struct MUI_PenSpec Color1stLevel;
