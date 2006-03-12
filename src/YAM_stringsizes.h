@@ -58,7 +58,7 @@
 
 #define MAXBCSTATUSIMG  18
 #define MAXBCFOLDERIMG   9
-#define MAXBCCFGIMG     15
+#define MAXBCCFGIMG     32
 #define MAXIMAGES      (MAXBCSTATUSIMG+MAXBCFOLDERIMG+MAXBCCFGIMG)
 
 #define MAXICONS         4
@@ -66,7 +66,7 @@
 #define MAXERR          50
 #define MAXUSERS        16
 #define MAXCTYPE        25
-#define MAXCPAGES       15
+#define MAXCPAGES       16
 #define MAXEA            4
 #define MAXWR            2 /* BEWARE: Don't change this value - it's hardcoded many places! */
 

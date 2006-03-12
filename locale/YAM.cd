@@ -5717,10 +5717,19 @@ Miscellaneous
 MSG_CO_MIXED_SUMMARY (1648//)
 Configure various mixed settings...
 ;
-MSG_CO_AMISSLWARN_TITLE (1649//)
+MSG_CO_UPDATE_TITLE (1649//)
+Software Update
+;
+MSG_CO_UPDATE_SUMMARY (1650//)
+Check for updates of YAM...
+;
+MSG_CO_CrdUpdate (1651//)
+Update
+;
+MSG_CO_AMISSLWARN_TITLE (1652//)
 AmiSSL availibility warning
 ;
-MSG_CO_AMISSLWARN (1650//)
+MSG_CO_AMISSLWARN (1653//)
 YAM has found AmiSSL to be unavailable for its\n\
 internal SSLv3/TLSv1 functionality. Therefore all\n\
 secure connections were disabled until AmiSSL is\n\
@@ -5729,6 +5738,6 @@ found to be installed correctly.\n\
 Please make sure you correctly installed at least\n\
 AmiSSL v%lu.%lu on your system and restart YAM.
 ; AMISSL_VERSION, AMISSL_REVISION
-MSG_CO_AMISSLWARN_BT (1651//)
+MSG_CO_AMISSLWARN_BT (1654//)
 *_Exit|Ignore _always|Ignore
 ;

@@ -30,20 +30,21 @@
 
 #include <exec/types.h>
 
-APTR CO_Page0(struct CO_ClassData *data);
-APTR CO_Page1(struct CO_ClassData *data);
-APTR CO_Page2(struct CO_ClassData *data);
-APTR CO_Page3(struct CO_ClassData *data);
-APTR CO_Page4(struct CO_ClassData *data);
-APTR CO_Page5(struct CO_ClassData *data);
-APTR CO_Page6(struct CO_ClassData *data);
-APTR CO_Page7(struct CO_ClassData *data);
-APTR CO_Page8(struct CO_ClassData *data);
-APTR CO_Page9(struct CO_ClassData *data);
-APTR CO_Page10(struct CO_ClassData *data);
-APTR CO_Page11(struct CO_ClassData *data);
-APTR CO_Page12(struct CO_ClassData *data);
-APTR CO_Page13(struct CO_ClassData *data);
-APTR CO_Page14(struct CO_ClassData *data);
+Object *CO_Page0(struct CO_ClassData *data);
+Object *CO_Page1(struct CO_ClassData *data);
+Object *CO_Page2(struct CO_ClassData *data);
+Object *CO_Page3(struct CO_ClassData *data);
+Object *CO_Page4(struct CO_ClassData *data);
+Object *CO_Page5(struct CO_ClassData *data);
+Object *CO_Page6(struct CO_ClassData *data);
+Object *CO_Page7(struct CO_ClassData *data);
+Object *CO_Page8(struct CO_ClassData *data);
+Object *CO_Page9(struct CO_ClassData *data);
+Object *CO_Page10(struct CO_ClassData *data);
+Object *CO_Page11(struct CO_ClassData *data);
+Object *CO_Page12(struct CO_ClassData *data);
+Object *CO_Page13(struct CO_ClassData *data);
+Object *CO_Page14(struct CO_ClassData *data);
+Object *CO_Page15(struct CO_ClassData *data);
 
 #endif /* YAM_CONFIGGUI_H */

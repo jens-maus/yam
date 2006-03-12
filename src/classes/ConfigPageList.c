@@ -91,6 +91,7 @@ OVERLOAD(OM_NEW)
 		data->configIcon[12] = MakeBCImage("config_abook");
 		data->configIcon[13] = MakeBCImage("config_scripts");
 		data->configIcon[14] = MakeBCImage("config_misc");
+		data->configIcon[15] = MakeBCImage("config_update");
 
 		// now we can add the config icon objects and use UseImage
 		// to prepare it for displaying it in the NList

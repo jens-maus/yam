@@ -1523,19 +1523,37 @@ static void Initialise(BOOL hidden)
    #define IMGLAYOUT_VERSION 3
    static const char *imnames[MAXIMAGES] =
    {
+     // Status information images
      "status_unread",   "status_old",    "status_forward",  "status_reply",
      "status_waitsend", "status_error",  "status_hold",     "status_sent",
      "status_new",      "status_delete", "status_download", "status_group",
      "status_urgent",   "status_attach", "status_report",   "status_crypt",
      "status_signed",   "status_mark",
+
+     // Default images for the folder list
      "folder_fold",     "folder_unfold",       "folder_incoming", "folder_incoming_new",
      "folder_outgoing", "folder_outgoing_new", "folder_deleted",  "folder_deleted_new",
      "folder_sent",
-		 "config_firststep",  "config_network", "config_newmail", "config_filters",
-		 "config_read",       "config_write",   "config_answer",  "config_signature",
-     "config_lists",      "config_security","config_start",   "config_mime",
-     "config_abook",      "config_scripts", "config_misc"
+
+     // Images for the YAM configuration window
+		 "config_firststep", "config_firststep_big",
+     "config_network",   "config_network_big",
+     "config_newmail",   "config_newmail_big",
+     "config_filters",   "config_filters_big",
+     "config_read",      "config_read_big",
+     "config_write",     "config_write_big",
+     "config_answer",    "config_answer_big",
+     "config_signature", "config_signature_big",
+     "config_lists",     "config_lists_big",
+     "config_security",  "config_security_big",
+     "config_start",     "config_start_big",
+     "config_mime",      "config_mime_big",
+     "config_abook",     "config_abook_big",
+     "config_scripts",   "config_scripts_big",
+     "config_misc",      "config_misc_big",
+     "config_update",    "config_update_big"
    };
+
    static const char *icnames[MAXICONS] =
    {
      "empty", "old", "new", "check"

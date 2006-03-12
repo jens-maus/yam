@@ -6,6 +6,18 @@ $Id$
 
 2006-03-12  Jens Langner <Jens.Langner@light-speed.de>
 
+    * src/YAM_CO.c, src/YAM.c, src/YAM_COg.c: updated the config
+      images with new versions kindly provided by Martin Merz. Also
+      added a bunch of new larger config images which will be
+      displayed in parallel to the small ones in the YAM config
+      window. However, please note that these images are still under
+      construction and work in progress. However, they should give
+      a first grasp look on design changes which YAM is currently
+      undergoing.
+    * src/YAM_CO.c, src/YAM_COg.c: added a new 'update' preferences
+      page to the configuration window which will be used for the
+      upcoming "update check" facility to directly check for
+      version updates.
     * src/YAM_CO.c: implemented a warning requester for warning the
       user in case no correctly installed AmiSSL v3.5+ installation
       was found during startup. Then either the user may exit

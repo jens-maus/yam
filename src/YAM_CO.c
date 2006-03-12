@@ -1755,9 +1755,14 @@ static struct CO_ClassData *CO_New(void)
       static struct PageList page[MAXCPAGES], *pages[MAXCPAGES+1];
       int i;
 
-      for (i = 0; i < MAXCPAGES; i++) { page[i].Offset = i; pages[i] = &page[i]; }
+      for(i = 0; i < MAXCPAGES; i++)
+      {
+        page[i].Offset = i;
+        pages[i] = &page[i];
+      }
       pages[i] = NULL;
 
+      // put some labels on our configpagelist objects
       page[ 0].PageLabel = MSG_CO_CrdFirstSteps;
       page[ 1].PageLabel = MSG_CO_CrdTCPIP;
       page[ 2].PageLabel = MSG_CO_CrdNewMail;
@@ -1773,6 +1778,7 @@ static struct CO_ClassData *CO_New(void)
       page[12].PageLabel = MSG_CO_CrdABook;
       page[13].PageLabel = MSG_CO_CrdScripts;
       page[14].PageLabel = MSG_CO_CrdMixed;
+      page[15].PageLabel = MSG_CO_CrdUpdate;
 
       data->GUI.WI = WindowObject,
          MUIA_Window_Title, GetStr(MSG_MA_MConfig),
@@ -1825,6 +1831,7 @@ static struct CO_ClassData *CO_New(void)
                   Child, CO_Page12(data),
                   Child, CO_Page13(data),
                   Child, CO_Page14(data),
+                  Child, CO_Page15(data),
                End,
             End,
 

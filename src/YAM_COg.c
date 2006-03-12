@@ -548,9 +548,9 @@ MakeStaticHook(FilterDisplayHook, FilterDisplayFunc);
 
 /*** Pages ***/
 /// CO_Page0  (Start)
-APTR CO_Page0(struct CO_ClassData *data)
+Object *CO_Page0(struct CO_ClassData *data)
 {
-   APTR grp;
+   Object *grp;
    static char *tzone[34];
 
    ENTER();
@@ -594,6 +594,7 @@ APTR CO_Page0(struct CO_ClassData *data)
          MUIA_HelpNode, "CO00",
 
          Child, HGroup,
+            Child, MakeBCImage("config_firststep_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -655,9 +656,10 @@ APTR CO_Page0(struct CO_ClassData *data)
 
 ///
 /// CO_Page1  (TCP/IP)
-APTR CO_Page1(struct CO_ClassData *data)
+Object *CO_Page1(struct CO_ClassData *data)
 {
-   APTR grp, authgrp;
+   Object *grp;
+   Object *authgrp;
    static char *secureMethods[4];
 
    secureMethods[0] = GetStr(MSG_CO_SMTPSECURE_NO);
@@ -669,6 +671,7 @@ APTR CO_Page1(struct CO_ClassData *data)
          MUIA_HelpNode, "CO01",
 
          Child, HGroup,
+            Child, MakeBCImage("config_network_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -816,10 +819,14 @@ APTR CO_Page1(struct CO_ClassData *data)
 
 ///
 /// CO_Page2  (New Mail)
-APTR CO_Page2(struct CO_ClassData *data)
+Object *CO_Page2(struct CO_ClassData *data)
 {
    static char *mpsopt[5], *trwopt[4];
-   APTR grp, pa_notisound, bt_notisound, pa_noticmd;
+   Object *grp;
+   Object *pa_notisound;
+   Object *bt_notisound;
+   Object *pa_noticmd;
+
    mpsopt[0] = GetStr(MSG_CO_PSNever);
    mpsopt[1] = GetStr(MSG_CO_PSLarge);
    mpsopt[2] = GetStr(MSG_CO_PSAlways);
@@ -829,10 +836,12 @@ APTR CO_Page2(struct CO_ClassData *data)
    trwopt[1] = GetStr(MSG_CO_TWAuto);
    trwopt[2] = GetStr(MSG_CO_TWAlways);
    trwopt[3] = NULL;
+
    if ((grp = VGroup,
          MUIA_HelpNode, "CO02",
 
          Child, HGroup,
+            Child, MakeBCImage("config_newmail_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -941,7 +950,7 @@ APTR CO_Page2(struct CO_ClassData *data)
 
 ///
 /// CO_Page3  (Filters)
-APTR CO_Page3(struct CO_ClassData *data)
+Object *CO_Page3(struct CO_ClassData *data)
 {
    static char *rtitles[4];
    Object *grp;
@@ -956,6 +965,7 @@ APTR CO_Page3(struct CO_ClassData *data)
          MUIA_HelpNode, "CO03",
 
          Child, HGroup,
+            Child, MakeBCImage("config_filters_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1155,9 +1165,9 @@ APTR CO_Page3(struct CO_ClassData *data)
 
 ///
 /// CO_Page4  (Read)
-APTR CO_Page4(struct CO_ClassData *data)
+Object *CO_Page4(struct CO_ClassData *data)
 {
-   APTR grp;
+   Object *grp;
    static char *headopt[4], *siopt[5], *slopt[5];
    headopt[0] = GetStr(MSG_CO_HeadNone);
    headopt[1] = GetStr(MSG_CO_HeadShort);
@@ -1177,6 +1187,7 @@ APTR CO_Page4(struct CO_ClassData *data)
          MUIA_HelpNode, "CO04",
 
          Child, HGroup,
+            Child, MakeBCImage("config_read_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1273,9 +1284,9 @@ APTR CO_Page4(struct CO_ClassData *data)
 
 ///
 /// CO_Page5  (Write)
-APTR CO_Page5(struct CO_ClassData *data)
+Object *CO_Page5(struct CO_ClassData *data)
 {
-   APTR grp;
+   Object *grp;
    static char *wrapmode[4];
    wrapmode[0] = GetStr(MSG_CO_EWOff);
    wrapmode[1] = GetStr(MSG_CO_EWAsYouType);
@@ -1285,6 +1296,7 @@ APTR CO_Page5(struct CO_ClassData *data)
          MUIA_HelpNode, "CO05",
 
          Child, HGroup,
+            Child, MakeBCImage("config_write_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1380,13 +1392,14 @@ APTR CO_Page5(struct CO_ClassData *data)
 
 ///
 /// CO_Page6  (Reply/Forward)
-APTR CO_Page6(struct CO_ClassData *data)
+Object *CO_Page6(struct CO_ClassData *data)
 {
-   APTR grp;
+   Object *grp;
    if ((grp = VGroup,
          MUIA_HelpNode, "CO06",
 
          Child, HGroup,
+            Child, MakeBCImage("config_answer_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1456,18 +1469,22 @@ APTR CO_Page6(struct CO_ClassData *data)
 
 ///
 /// CO_Page7  (Signature)
-APTR CO_Page7(struct CO_ClassData *data)
+Object *CO_Page7(struct CO_ClassData *data)
 {
    static char *signat[4];
-   APTR grp, slider = ScrollbarObject, End;
+   Object *grp;
+   Object *slider = ScrollbarObject, End;
+
    signat[0] = GetStr(MSG_CO_DefSig);
    signat[1] = GetStr(MSG_CO_AltSig1);
    signat[2] = GetStr(MSG_CO_AltSig2);
    signat[3] = NULL;
+
    if ((grp = VGroup,
          MUIA_HelpNode, "CO07",
 
          Child, HGroup,
+            Child, MakeBCImage("config_signature_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1543,9 +1560,9 @@ APTR CO_Page7(struct CO_ClassData *data)
 
 ///
 /// CO_Page8  (Lists)
-APTR CO_Page8(struct CO_ClassData *data)
+Object *CO_Page8(struct CO_ClassData *data)
 {
-   APTR grp;
+   Object *grp;
    static char *sizef[6];
    static char *infob[5];
 
@@ -1566,6 +1583,7 @@ APTR CO_Page8(struct CO_ClassData *data)
          MUIA_HelpNode, "CO08",
 
          Child, HGroup,
+            Child, MakeBCImage("config_lists_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1667,9 +1685,9 @@ APTR CO_Page8(struct CO_ClassData *data)
 
 ///
 /// CO_Page9  (Security)
-APTR CO_Page9(struct CO_ClassData *data)
+Object *CO_Page9(struct CO_ClassData *data)
 {
-   APTR grp;
+   Object *grp;
    static char *logfmode[4];
    logfmode[0] = GetStr(MSG_CO_LogNone);
    logfmode[1] = GetStr(MSG_CO_LogNormal);
@@ -1679,6 +1697,7 @@ APTR CO_Page9(struct CO_ClassData *data)
          MUIA_HelpNode, "CO09",
 
          Child, HGroup,
+            Child, MakeBCImage("config_security_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1762,13 +1781,14 @@ APTR CO_Page9(struct CO_ClassData *data)
 
 ///
 /// CO_Page10 (Start/Quit)
-APTR CO_Page10(struct CO_ClassData *data)
+Object *CO_Page10(struct CO_ClassData *data)
 {
-   APTR grp;
+   Object *grp;
    if ((grp = VGroup,
          MUIA_HelpNode, "CO10",
 
          Child, HGroup,
+            Child, MakeBCImage("config_start_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1822,7 +1842,7 @@ APTR CO_Page10(struct CO_ClassData *data)
 
 ///
 /// CO_Page11 (MIME)
-APTR CO_Page11(struct CO_ClassData *data)
+Object *CO_Page11(struct CO_ClassData *data)
 {
    Object *grp;
 
@@ -1830,6 +1850,7 @@ APTR CO_Page11(struct CO_ClassData *data)
          MUIA_HelpNode, "CO11",
 
          Child, HGroup,
+            Child, MakeBCImage("config_mime_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -1930,7 +1951,7 @@ APTR CO_Page11(struct CO_ClassData *data)
 
 ///
 /// CO_Page12 (Address book)
-APTR CO_Page12(struct CO_ClassData *data)
+Object *CO_Page12(struct CO_ClassData *data)
 {
    Object *grp;
    static char *atab[6];
@@ -1946,6 +1967,7 @@ APTR CO_Page12(struct CO_ClassData *data)
          MUIA_HelpNode, "CO12",
 
          Child, HGroup,
+            Child, MakeBCImage("config_abook_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -2028,9 +2050,9 @@ APTR CO_Page12(struct CO_ClassData *data)
 
 ///
 /// CO_Page13 (Scripts)
-APTR CO_Page13(struct CO_ClassData *data)
+Object *CO_Page13(struct CO_ClassData *data)
 {
-   APTR grp;
+   Object *grp;
    static char *stype[3] = {
      "ARexx", "AmigaDOS", NULL
    };
@@ -2039,6 +2061,7 @@ APTR CO_Page13(struct CO_ClassData *data)
          MUIA_HelpNode, "CO13",
 
          Child, HGroup,
+            Child, MakeBCImage("config_scripts_big"),
             Child, VGroup,
               Child, TextObject,
                 MUIA_Text_PreParse, "\033b",
@@ -2106,7 +2129,7 @@ APTR CO_Page13(struct CO_ClassData *data)
 
 ///
 /// CO_Page14 (Mixed)
-APTR CO_Page14(struct CO_ClassData *data)
+Object *CO_Page14(struct CO_ClassData *data)
 {
    Object *grp;
    static char *empty[5];
@@ -2118,6 +2141,7 @@ APTR CO_Page14(struct CO_ClassData *data)
        MUIA_HelpNode, "CO14",
 
        Child, HGroup,
+          Child, MakeBCImage("config_misc_big"),
           Child, VGroup,
             Child, TextObject,
               MUIA_Text_PreParse, "\033b",
@@ -2255,5 +2279,47 @@ APTR CO_Page14(struct CO_ClassData *data)
         set(data->GUI.CH_DOCKYICON, MUIA_Disabled, TRUE);
    }
    return grp;
+}
+///
+/// CO_Page15 (Update)
+Object *CO_Page15(struct CO_ClassData *data)
+{
+  Object *grp;
+
+  if((grp = VGroup,
+      MUIA_HelpNode, "CO15",
+
+      Child, HGroup,
+        Child, MakeBCImage("config_update_big"),
+        Child, VGroup,
+          Child, TextObject,
+            MUIA_Text_PreParse, "\033b",
+            MUIA_Text_Contents, GetStr(MSG_CO_UPDATE_TITLE),
+            MUIA_Weight,        100,
+          End,
+          Child, TextObject,
+            MUIA_Text_PreParse, "",
+            MUIA_Text_Contents, GetStr(MSG_CO_UPDATE_SUMMARY),
+            MUIA_Font,          MUIV_Font_Tiny,
+            MUIA_Weight,        100,
+          End,
+        End,
+      End,
+
+      Child, RectangleObject,
+    	  MUIA_Rectangle_HBar, TRUE,
+	      MUIA_FixHeight,      4,
+	    End,
+
+      Child, VGroup,
+        // more to come...
+        Child, HVSpace,
+      End,
+    End))
+  {
+
+  }
+
+  return grp;
 }
 ///
