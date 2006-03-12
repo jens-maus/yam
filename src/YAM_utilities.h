@@ -49,54 +49,54 @@ struct ReadMailData;
 #endif
 
 enum DateStampType { DSS_DATE, DSS_TIME, DSS_WEEKDAY, DSS_DATETIME,
-  DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT };
+	DSS_USDATETIME, DSS_UNIXDATE, DSS_BEAT, DSS_DATEBEAT };
 
 enum TZConvert { TZC_NONE, TZC_UTC, TZC_LOCAL };
 
 enum ReqFileType { ASL_ABOOK=0, ASL_CONFIG, ASL_DETACH, ASL_ATTACH,
-  ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_EXPORT, ASL_FOLDER };
+	ASL_REXX, ASL_PHOTO, ASL_IMPORT, ASL_EXPORT, ASL_FOLDER };
 
 struct Person
 {       
-   char Address[SIZE_ADDRESS];
-   char RealName[SIZE_REALNAME];
+	 char Address[SIZE_ADDRESS];
+	 char RealName[SIZE_REALNAME];
 };
 
 struct ExpandTextData
 {
-   char *            OS_Name;
-   char *            OS_Address;
-   char *            OM_Subject;
-   struct DateStamp *OM_Date;
-   int               OM_TimeZone;
-   char *            OM_MessageID;
-   char *            R_Name;
-   char *            R_Address;
-   char *            HeaderFile;
+	 char *            OS_Name;
+	 char *            OS_Address;
+	 char *            OM_Subject;
+	 struct DateStamp *OM_Date;
+	 int               OM_TimeZone;
+	 char *            OM_MessageID;
+	 char *            R_Name;
+	 char *            R_Address;
+	 char *            HeaderFile;
 };
 
 struct TempFile
 {
-   FILE *FP;
-   char  Filename[SIZE_PATH+SIZE_MFILE];
+	 FILE *FP;
+	 char  Filename[SIZE_PATH+SIZE_MFILE];
 };
 
 struct BodyChunkData
 {
-   ULONG * Colors;
-   UBYTE * Body;
-   int     Width;
-   int     Height;
-   int     Depth;
-   int     Compression;
-   int     Masking;
-   char    File[SIZE_NAME];
+	 ULONG * Colors;
+	 UBYTE * Body;
+	 int     Width;
+	 int     Height;
+	 int     Depth;
+	 int     Compression;
+	 int     Masking;
+	 char    File[SIZE_NAME];
 };
 
 struct NewToolbarEntry
 {
-   APTR label;
-   APTR help;
+	 APTR label;
+	 APTR help;
 };
 
 // Library open/close macros
@@ -192,13 +192,13 @@ struct NewToolbarEntry
 */
 #define COLLECT_SIZE 32
 #define COLLECT_RETURNIDS { \
-                            ULONG returnID[COLLECT_SIZE], csize = COLLECT_SIZE, rpos = COLLECT_SIZE, userData, userSigs = 0; \
-                            while(csize && userSigs == 0 && (userData = DoMethod(G->App, MUIM_Application_NewInput, &userSigs))) \
-                              returnID[--csize] = userData
+														ULONG returnID[COLLECT_SIZE], csize = COLLECT_SIZE, rpos = COLLECT_SIZE, userData, userSigs = 0; \
+														while(csize && userSigs == 0 && (userData = DoMethod(G->App, MUIM_Application_NewInput, &userSigs))) \
+															returnID[--csize] = userData
 
 #define REISSUE_RETURNIDS   while(rpos > csize) \
-                              DoMethod(G->App, MUIM_Application_ReturnID, returnID[--rpos]); \
-                          }
+															DoMethod(G->App, MUIM_Application_ReturnID, returnID[--rpos]); \
+													}
 
 // Wrapper define to be able to use the standard call of MUI_Request
 #ifdef MUI_Request
@@ -229,8 +229,6 @@ struct NewToolbarEntry
 extern int            BusyLevel;
 extern struct Hook    GeneralDesHook;
 extern struct Hook    DisposeModuleHook;
-extern long           PNum;
-extern unsigned char  *PPtr[16];
 
 // only prototypes needed for AmigaOS
 #if !defined(__MORPHOS__)
@@ -356,7 +354,7 @@ char *   StrBufCat(char *strbuf, const char *source);
 char *   StrBufCpy(char *strbuf, const char *source);
 char *   AppendToBuffer(char *buf, int *wptr, int *len, char *add);
 int      StringRequest(char *string, int size, char *title, char *body,
-                       char *yestext, char *alttext, char *notext, BOOL secret, Object *parent);
+											 char *yestext, char *alttext, char *notext, BOOL secret, Object *parent);
 char *   StripUnderscore(char *label);
 char *   stristr(const char *a, const char *b);
 char *   StrTok_R(char **s, char *sep);
@@ -374,11 +372,11 @@ LONG STDARGS YAMMUIRequest(APTR app, APTR win, LONG flags, char *title, char *ga
 //  Gets an attribute value from a MUI object
 ULONG xget(Object *obj, const ULONG attr);
 #if defined(__GNUC__) || ((__STDC__ == 1L) && (__STDC_VERSION__ >= 199901L))
-  // please note that we do not evaluate the return value of GetAttr()
-  // as some attributes (e.g. MUIA_Selected) always return FALSE, even
-  // when they are supported by the object. But setting b=0 right before
-  // the GetAttr() should catch the case when attr doesn't exist at all
-  #define xget(OBJ, ATTR) ({ULONG b=0; GetAttr(ATTR, OBJ, &b); b;})
+	// please note that we do not evaluate the return value of GetAttr()
+	// as some attributes (e.g. MUIA_Selected) always return FALSE, even
+	// when they are supported by the object. But setting b=0 right before
+	// the GetAttr() should catch the case when attr doesn't exist at all
+	#define xget(OBJ, ATTR) ({ULONG b=0; GetAttr(ATTR, OBJ, &b); b;})
 #endif
 ///
 
