@@ -1,0 +1,467 @@
+/***************************************************************************
+
+ YAM - Yet Another Mailer
+ Copyright (C) 1995-2000 by Marcel Beck <mbeck@yam.ch>
+ Copyright (C) 2000-2006 by YAM Open Source Team
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ YAM Official Support Site :  http://www.yam.ch/
+ YAM OpenSource project    :  http://sourceforge.net/projects/yamos/
+
+ $Id$
+
+***************************************************************************/
+
+This document is meant to be a general coding styleguide for development on
+YAM. It carries information on how to structure and layout the source code
+during development. All registered developers of YAM should at least have
+read once through this guide and stick to the particular rules and
+suggestions on how to structure particular code passages. That way future
+developers may more easily find a way into the complex source code of YAM
+and take it as a reference on how to find out the YAM developers expect
+their source code to look like.
+
+So please, any YAM developer, try to stick to the rules listed in this guide
+as much as possible so that the code will stay readable even if more than
+one developer is working on a certain section.
+
+YAM Development Team
+March 2006
+
+############################################################################
+
+1. Indentation - Tabulator use (TAB)
+------------------------------------
+
+In the past we had too much trouble with excessive tabulator use in the
+source code of YAM. Therefore, any use of tabulator characters (0x09) to
+structure the source code should be considered FORBIDDEN. Instead, we agree
+that for indentation of source code we use TWO (2) spaces (0x20) instead:
+
+Example:
+
+   win = OpenWindowTags(NULL,
+                        WA_Title,       "Test",
+                        WA_InnerWidth,  width,
+                        WA_InnerHeight, height,
+                        TAG_DONE);
+
+^^^^^^^^^^^^^^^^^^^^^^^^ - 24 (12x2) spaces / *NO* tabs
+
+############################################################################
+
+2. Blocks
+---------
+
+Blocks start on a new line, with the same indentation as the previous line,
+and end likewise. Example:
+
+  for(i=0; i < 10; i++)
+  {
+    ...code...
+  }
+
+The braces can be omitted for one-line blocks. E.g.
+
+  for(i=0; i < 10; i++)
+    array[i] += 30;
+
+One exception from this rule is the do-while. These should be formatted like
+this:
+
+  do
+  {
+    ...code...
+  }
+  while(a < 10);
+
+############################################################################
+
+3. if/then
+----------
+
+Normal block rules apply. However, if both branches of an if-else statement
+are one line blocks, then they should be formatted like this:
+
+  if(a < 20)
+    Foo();
+  else
+    Bar();
+
+If-then-else-if should be merged like this:
+
+  if(a < 20)
+  {
+    ...code...
+  }
+  else if(a < 40)
+  {
+    ...code...
+  }
+
+All blocks in a merged if-then-else-if sequence should share the same style
+when it comes to have their braces or not, where the latter is then only
+possible when all branches are one line blocks.
+
+############################################################################
+
+4. Tuples
+---------
+
+A tuple is one parenthesis immediately followed by first member. If more
+members are present, they should be separated with ", ". Example:
+
+  (unsigned long first, unsigned long second, unsigned long last)
+                       ^                     ^
+                       +---------------------+- note the spaces here !
+
+############################################################################
+
+5. Functions
+------------
+
+Functions are always proper case, meaning the first letter is a capital
+letter. If the function name is made up of several words, they should
+also start with a capital letter.
+
+There is one space after the return type, unless this is a pointer
+(marked by an asterisk), then the space is between the type and the
+asterisk. There is NO space between the function name and the opening
+pharatesis
+
+There is exactly one blank line between functions.
+
+Sample functions:
+
+  int AllocateBuffer(unsigned long size)
+  {
+    ...code...
+  }
+
+or
+
+  char *AllocateArray(unsigned long size)
+  {
+    ...code...
+  }
+
+############################################################################
+
+6. return
+---------
+
+A function should only have an exit point at the end of that function.
+An exception to this rule is resource allocation or similar sanity checks
+placed at the beginning of the function (at outermost scope). Here one can
+immediately return a failure. Example:
+
+  BOOL IsLegal(char *str)
+  {
+    if(str == NULL)
+      return FALSE;
+
+    ...code...
+
+    return res;
+  }
+
+The rule says »...*an* exit point at the end« rather than *one*. This allows
+to make a function with several exit points all placed at the end, like this:
+
+  BOOL IsWhitespace(char *character)
+  {
+    if(character == ' ' || ...)
+      return TRUE;
+    else
+      return FALSE;
+  }
+
+Just for the record, return is a flow-control-directive similar to case,
+break, continue and goto, and therefore the value provided should not be
+enclosed between parenthesis.
+
+############################################################################
+
+7. switch/case
+--------------
+
+A switch case looks like this:
+
+  switch(value)
+  {
+    case ONE:
+    {
+      ...code...
+    }
+    break;
+
+    case TWO:
+    {
+      ...code...
+    }
+    // continue
+
+    default:
+    {
+      ...code...
+    }
+    break;
+  }
+
+If a case needs to fall through to the next one, then a comment should be
+put instead of the break, as in the example above. The text within this
+comment is situation-specific, but generally 'continue' will do.
+
+The case follows normal block rules, but extends the rule about braces
+being optional for one-line blocks.
+
+Whenever possible, a switch-case should use symbolic names rather than
+numbers. This also applies to state-machines implemented through
+if-then-else-if, even if there are only two states.
+
+If a set of cases exists with only one command, then one can write a
+block of compact cases. The colons and semi-colons should be aligned
+with one space after each and one space in front of each on the longest
+line. It is allowed to have a compact block of cases within a normal
+switch/case sequence. Example:
+
+  switch(value)
+  {
+    case ONE:   number = "one";   break;
+    case TWO:   number = "two";   break;
+    case THREE: number = "three"; break;
+    case FOUR:  number = "four";  break;
+    case FIVE:  number = "five";  break;
+
+    case FOURTYTWO:
+    {
+      ...code...
+    }
+    break;
+  }
+
+############################################################################
+
+8. Variables
+------------
+
+Variables should generally have as meaningful names as possible. Avoid
+custom abbreviations but do use common ones (like scr, win, obj etc.).
+Do not use negating words like 'no' in a boolean value but try instead
+to use something like 'is', as in "isUppercase". This applies both to
+boolean values and functions which return a boolean.
+
+Local variables and function arguments are either completely lowercase or
+camelon notation, where the first letter is lowercase and the first
+letter of the following words is uppercase, as shown in the previous
+example.
+
+MUI custom class names should also conform to camelon notation. Example:
+"TextEditor" instead of "Texteditor".
+
+Defines (both constants and macros) are completely uppercase. However, if
+the defines are such as like "#define isUppercase" then a mixed case
+writing is allowed.
+
+Multiple variable definitions on a single line should be avoided and better
+be expanded to multiple lines for better readability.
+
+Example:
+
+  struct CustomEntry
+  {
+    char *Name;
+    char *Address;
+  };
+
+rather than
+
+  struct CustomEntry
+  {
+    char *Name, *Address;
+  };
+
+Enumerations, global variables and structure names and members are proper
+case as defined under "Functions". Generally static variables should also
+comply with this rule (when they are really meant as global, but local not
+to clutter the global namespace).
+
+Abbreviations which normally appear in uppercase (e.g. HTML) should still
+be uppercase despite the above rules.
+
+Some examples:
+
+  #define ABS(x) ((x) < 0 ? -(x) : (x))
+  #define PI     3.14159265358979323846
+
+  Object *GlobalConfig = DataspaceObject, ..., End;
+
+  struct CustomEntry *CreateEntry(char *name, char *address)
+  {
+    struct CustomEntry *res;
+
+    if((res = malloc(sizeof(struct CustomEntry)))
+    {
+      res->Name = name;
+      res->Address = address;
+    }
+
+    return res;
+  }
+
+############################################################################
+
+9. Types
+--------
+
+We mostly use standard C-types wherever possible. This is 'char *' for
+STRPTR, 'char' for TEXT, 'void' for VOID and 'void *' for APTR. However,
+for certain Amiga specific tasks we stick to the special Amiga types. For
+Example, for defining MUI objects we use "Object *" rather than 'void *',
+but also rather than APTR.
+
+Further, although YAM is currently ANSI-C, one should always use proper
+types, so that we may later compile the project with a C++ compiler.
+This means that if you e.g. have an IntuiMessage pointer that must be
+supplied to 'ReplyMsg()', you should use the format
+'ReplyMsg(&imsg->ExecMessage)'.
+
+For strings embedded in structures, pass a pointer to first character,
+as this also serves as extra information for the person who reads the
+source. For example,
+
+  struct Person
+  {
+    char Address[SIZE_ADDRESS];
+    char RealName[SIZE_REALNAME];
+  };
+
+  ...
+
+  struct Person *pe = SomePerson();
+  printf("Letter came from %s\n", &pe->Address[0]);
+
+as opposed to:
+
+  printf("Letter came from %s\n", pe);
+
+############################################################################
+
+10. Taglists
+------------
+
+When providing taglists, one can either put all tags on the same line
+(if only a few tags are supplied), or put one tag on each line, which
+is then indented with as many spaces until the opening pharatesis of the
+taglist function. When putting one tag on its own line, the first line that
+contain the 'receiver' should NOT contain a tag.
+
+The comma should come immediately after the tag ID, and at least one
+space should follow. More spaces are allowed for padding (but no tabs -
+see rule about Tabs, which btw also contains a taglist example). For
+example:
+
+  SetAttrs(obj,
+           MUIA_Window_LeftEdge,   left,
+           MUIA_Window_TopEdge,    top,
+           MUIA_Window_Width,      _width(msg->other),
+           TAG_DONE);
+
+^^^^^^^^^^^ - 11 spaces - NO tabs
+
+############################################################################
+
+11. ANSI-C vs. AmigaOS
+----------------------
+
+As a general rule: Use the ANSI-C functions like memcpy, malloc etc.
+
+The exception is when the Amiga versions handle locale specific things
+which the ANSI-C functions lack. As of this writing, only ToUpper,
+ToLower, Stricmp and Strnicmp are cases where the Amiga versions should
+be used. The same applies to variable types as mentioned in section 9 of
+this styleguide.
+
+############################################################################
+
+12. Comments
+------------
+
+A general rule for commenting is: Comment as much as possible while you
+are developing your algorithms!
+
+For comment style, we highly prefer using the C++ single line commenting
+variant. Even for multiples lines we prefer to use the C++ style (//)
+comment characters as we than can more easily comment out things temporarly
+with the "/* ... */" comments. So please use the "//" C++ style comments
+wherever possible.
+
+############################################################################
+
+13. Debugging statements
+------------------------
+
+As we recently implemented a very flexible runtime debugging functions in
+YAM, all developers are adviced to make use of the provided debugging macros
+as much as possible! Especially for the function entry and exit positions
+the special macros 'ENTER()', 'LEAVE()' and 'RETURN()' should be considered
+mandatory for every new function introduced in YAM.
+
+Example:
+
+  BOOL Function(char *text)
+  {
+    BOOL result = FALSE;
+    ENTER();
+
+    ... code ...
+
+    RETURN(result);
+    return result;
+  }
+
+Another mandatory/important debugging macro is the so-called 'ASSERT()'.
+It allows to check for a certain condition and if that conditition isn't true
+anymore, it will immediately output an error string and exit the application.
+It should be used whenever possible and where ultimative conditions should
+be checked.
+
+Example:
+
+  BOOL Function(char *text)
+  {
+    BOOL result = FALSE;
+    ENTER();
+
+    ASSERT(text != NULL);
+
+    text[10] = 'h'; // if text == NULL a crash would occur!
+
+    ... code ...
+
+    RETURN(result);
+    return result;
+  }
+
+In addition, the macros like 'SHOWVALUE()' and 'SHOWSTRING()' also can come
+handy during debugging a certain situation. So please check the "debug.h" file
+in the 'src' directory of YAM. It contains all currently supported debugging
+macros including the printf-like macros "D()", "W()" and "E()" for outputting
+variable texts for debugging, warning or even error conditions.
+
+Please note that in case YAM will be compiled without the "DEBUG" define, all
+code normally emitted by these macros will be omitted. They are really plainly
+meant to be usefull during debugging.
